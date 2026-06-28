@@ -1,0 +1,58 @@
+name: Atualizar site em outro repo
+
+# Envia o index.html (de _novo/) para um repositorio de destino, usando
+# PAGES_TOKEN. Requer que o token tenha permissao Contents: Read and write.
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de destino (ex: Sistemasolar3ano)"
+        required: true
+        type: string
+      source_dir:
+        description: "Pasta deste repo com o index.html novo"
+        required: false
+        default: "_novo"
+        type: string
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deste repositorio
+        uses: actions/checkout@v4
+
+      - name: Enviar index.html para o repositorio de destino
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+          SRC: ${{ inputs.source_dir }}
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SRC/index.html" ]; then
+            echo "::error::Nao encontrei $SRC/index.html neste repositorio."
+            exit 1
+          fi
+          tmp="$(mktemp -d)"
+          echo "Clonando $OWNER/$DEST ..."
+          git clone "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" "$tmp"
+          cp "$SRC/index.html" "$tmp/index.html"
+          cd "$tmp"
+          git config user.name "Atualizador"
+          git config user.email "atualizador@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "Nenhuma mudanca (arquivo identico ao atual)."
+          else
+            git commit -m "Atualiza index.html"
+            git push
+          fi
+          {
+            echo "## Site atualizado"
+            echo ""
+            echo "Destino: **$OWNER/$DEST**"
+            echo ""
+            echo "Link: https://$OWNER.github.io/$DEST/"
+          } >> "$GITHUB_STEP_SUMMARY"
