@@ -40,6 +40,16 @@ arquivo novo em `_novo/` e rode um workflow que escreve no repo de destino,
 **ou** peça ao usuário para adicionar aquele repositório ao escopo da conexão
 GitHub do Claude Code.
 
+## Se a sessão for aberta em OUTRO repositório
+
+Este `CLAUDE.md` só é lido quando a sessão abre **neste** repositório
+(`floresta-dos-numeros-1ano`). Se o usuário abrir a sessão em outro lugar e
+mencionar a "Fábrica de Sites", oriente-o a apontar para cá. Frase que o
+usuário pode usar para te situar em qualquer sessão:
+
+> "As instruções da Fábrica de Sites estão no `CLAUDE.md` do repositório
+> `vidalprof/floresta-dos-numeros-1ano`. Leia de lá antes de agir."
+
 ## Observações de segurança
 
 - **Nunca** peça nem aceite o valor do token colado no chat. Ele vive apenas
