@@ -16,14 +16,15 @@ on:
         default: ""
         type: string
 
+permissions:
+  contents: write
+
 jobs:
   recuperar:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout deste repositorio
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.PAGES_TOKEN }}
 
       - name: Buscar index.html do repositorio de origem
         env:
