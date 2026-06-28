@@ -1,0 +1,64 @@
+name: Recuperar index de outro repo
+
+# Busca o index.html de um repositorio de origem (usando PAGES_TOKEN) e
+# salva uma copia em _recuperado/index.html neste repositorio.
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de origem (ex: Sistemasolar3ano)"
+        required: true
+        type: string
+      branch:
+        description: "Branch de origem (deixe em branco para a branch padrao)"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  recuperar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deste repositorio
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.PAGES_TOKEN }}
+
+      - name: Buscar index.html do repositorio de origem
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          SRC: ${{ inputs.repo_name }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          set -euo pipefail
+          mkdir -p _recuperado
+          REF_ARGS=()
+          if [ -n "$BRANCH" ]; then REF_ARGS=(-f "ref=$BRANCH"); fi
+          echo "Buscando index.html de $OWNER/$SRC ..."
+          gh api "repos/$OWNER/$SRC/contents/index.html" \
+            -H "Accept: application/vnd.github.raw" "${REF_ARGS[@]}" \
+            > _recuperado/index.html
+          echo "Recuperado. Tamanho:"
+          wc -l _recuperado/index.html
+
+      - name: Salvar copia neste repositorio
+        run: |
+          set -euo pipefail
+          git config user.name "Recuperador"
+          git config user.email "recuperador@users.noreply.github.com"
+          git add _recuperado/index.html
+          if git diff --cached --quiet; then
+            echo "Nenhuma mudanca (arquivo identico ao que ja estava salvo)."
+          else
+            git commit -m "Recupera index.html de ${{ inputs.repo_name }}"
+            git push
+          fi
+          {
+            echo "## index.html recuperado"
+            echo ""
+            echo "Origem: **${{ inputs.repo_name }}**"
+            echo ""
+            echo "Salvo neste repositorio em \`_recuperado/index.html\`."
+          } >> "$GITHUB_STEP_SUMMARY"
