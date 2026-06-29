@@ -323,6 +323,7 @@ function falar(txt){
   if(!somAtivo || !("speechSynthesis" in window)) return;
   try{
     window.speechSynthesis.cancel();
+    window.speechSynthesis.resume();
     var u = new SpeechSynthesisUtterance(txt);
     u.lang = "pt-BR"; if(vozPT) u.voice = vozPT; u.rate = 0.98; u.pitch = 1.12;
     window.speechSynthesis.speak(u);
@@ -351,17 +352,32 @@ function hoverIlha(faseId){ var f = MUNDO[faseId]; if(f){ falar(f.nome + ". " + 
 function hoverAtiv(el){ var t = (el && el.getAttribute) ? el.getAttribute("data-t") : ""; if(t){ falar("Atividade: " + t); } }
 function hoverTurma(turmaId){ var f = MUNDO[faseAtual]; if(!f) return; var nm = turmaId; for(var i=0;i<f.turmas.length;i++){ if(f.turmas[i].id===turmaId){ nm = f.turmas[i].nome; } } falar("Aqui é a ilha do " + nm + "."); }
 /* tenta narrar sozinho ao abrir */
+var _armado = false;
+function _destrava(){
+  if(_armado) return;
+  _armado = true;
+  try{ var ac = getAC(); if(ac && ac.state === "suspended" && ac.resume){ ac.resume(); } }catch(e){}
+  /* "acorda" a fala: alguns navegadores so liberam apos um speak() dentro do gesto */
+  try{ if("speechSynthesis" in window){ window.speechSynthesis.resume(); } }catch(e){}
+  if(!_falou){ falarIntro(); }
+}
 if(window.addEventListener){
+  /* tentativa automatica ao abrir (funciona se o navegador permitir) */
   window.addEventListener("load", function(){ setTimeout(function(){ try{ falarIntro(); }catch(e){} }, 450); });
-  /* se o navegador bloquear, a 1a interacao destrava */
+  /* a 1a interacao da crianca (qualquer toque/clique/tecla) destrava tudo:
+     o navegador exige UM gesto antes de liberar som — regra de seguranca */
   var _primeiro = function(){
-    document.removeEventListener("click", _primeiro, true);
+    document.removeEventListener("pointerdown", _primeiro, true);
+    document.removeEventListener("mousedown", _primeiro, true);
     document.removeEventListener("touchstart", _primeiro, true);
+    document.removeEventListener("click", _primeiro, true);
     document.removeEventListener("keydown", _primeiro, true);
-    if(!_falou){ falarIntro(); }
+    _destrava();
   };
-  document.addEventListener("click", _primeiro, true);
+  document.addEventListener("pointerdown", _primeiro, true);
+  document.addEventListener("mousedown", _primeiro, true);
   document.addEventListener("touchstart", _primeiro, true);
+  document.addEventListener("click", _primeiro, true);
   document.addEventListener("keydown", _primeiro, true);
 }
 
