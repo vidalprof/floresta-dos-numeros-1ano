@@ -101,7 +101,9 @@
 
   /* ===== Som / narracao ===== */
   .btn-som { position: fixed; top: 10px; right: 12px; z-index: 6; width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; font-size: 22px; color: #fff; background-color: rgba(0,0,0,.45); -webkit-box-shadow: 0 3px 10px rgba(0,0,0,.35); box-shadow: 0 3px 10px rgba(0,0,0,.35); }
-  .btn-ouvir { display: inline-block; margin: 8px 0 0; padding: 9px 20px; border: 0; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: bold; color: #2a1c00; background-color: #ffc04d; background: -webkit-linear-gradient(top,#ffd97a,#ffb43c); background: linear-gradient(to bottom,#ffd97a,#ffb43c); -webkit-box-shadow: 0 3px 8px rgba(0,0,0,.3); box-shadow: 0 3px 8px rgba(0,0,0,.3); }
+  .btn-ouvir { display: inline-block; margin: 8px 0 0; padding: 9px 20px; border: 0; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: bold; color: #2a1c00; background-color: #ffc04d; background: -webkit-linear-gradient(top,#ffd97a,#ffb43c); background: linear-gradient(to bottom,#ffd97a,#ffb43c); -webkit-box-shadow: 0 3px 8px rgba(0,0,0,.3); box-shadow: 0 3px 8px rgba(0,0,0,.3); -webkit-animation: pulsa 1.2s ease-in-out infinite; animation: pulsa 1.2s ease-in-out infinite; }
+  @-webkit-keyframes pulsa { 0%,100%{ -webkit-transform: scale(1);} 50%{ -webkit-transform: scale(1.09);} }
+  @keyframes pulsa { 0%,100%{ transform: scale(1); box-shadow: 0 3px 8px rgba(0,0,0,.3);} 50%{ transform: scale(1.09); box-shadow: 0 0 0 7px rgba(255,210,90,.35), 0 3px 8px rgba(0,0,0,.3);} }
 
   /* ===== Telas (mapa / turmas / atividades) ===== */
   .tela { display: none; }
@@ -198,17 +200,17 @@
 
       <div class="ilhas">
         <!-- ILHA 1 - TESOURO -->
-        <button class="ilha a" type="button" onclick="abrirFase('tesouro')" aria-label="Ilha do Tesouro"><span class="flutua"><img src="img/ilha-tesouro.png" alt="Ilha do Tesouro"></span>
+        <button class="ilha a" type="button" onmouseenter="hoverIlha('tesouro')" onclick="abrirFase('tesouro')" aria-label="Ilha do Tesouro"><span class="flutua"><img src="img/ilha-tesouro.png" alt="Ilha do Tesouro"></span>
           <span class="rotulo"><b>Ilha do Tesouro</b><span>Pré • 1º • 2º ano</span></span>
         </button>
 
         <!-- ILHA 2 - EXPLORADORES -->
-        <button class="ilha b" type="button" onclick="abrirFase('exploradores')" aria-label="Ilha dos Exploradores"><span class="flutua"><img src="img/ilha-exploradores.png" alt="Ilha dos Exploradores"></span>
+        <button class="ilha b" type="button" onmouseenter="hoverIlha('exploradores')" onclick="abrirFase('exploradores')" aria-label="Ilha dos Exploradores"><span class="flutua"><img src="img/ilha-exploradores.png" alt="Ilha dos Exploradores"></span>
           <span class="rotulo"><b>Ilha dos Exploradores</b><span>3º • 4º • 5º ano</span></span>
         </button>
 
         <!-- ILHA 3 - AVENTUREIROS -->
-        <button class="ilha c" type="button" onclick="abrirFase('aventureiros')" aria-label="Ilha dos Aventureiros"><span class="flutua"><img src="img/ilha-aventureiros.png" alt="Ilha dos Aventureiros"></span>
+        <button class="ilha c" type="button" onmouseenter="hoverIlha('aventureiros')" onclick="abrirFase('aventureiros')" aria-label="Ilha dos Aventureiros"><span class="flutua"><img src="img/ilha-aventureiros.png" alt="Ilha dos Aventureiros"></span>
           <span class="rotulo"><b>Ilha dos Aventureiros</b><span>6º • 7º • 8º • 9º ano</span></span>
         </button>
       </div>
@@ -314,7 +316,35 @@ function toggleSom(){
   if(!somAtivo && "speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} }
   if(somAtivo) som("clique");
 }
-function ouvirIntro(){ som("clique"); falar("Ola, exploradores! Bem-vindos ao Mundo das Atividades. Toque na ilha da sua turma para comecar a aventura!"); }
+var _falou = false;
+function falarIntro(){
+  som("clique");
+  if(!somAtivo || !("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance("Olá, exploradores! Bem-vindos ao Mundo das Atividades. Toque na ilha da sua turma para começar a aventura!");
+    u.lang = "pt-BR"; if(vozPT) u.voice = vozPT; u.rate = 0.98; u.pitch = 1.12;
+    u.onstart = function(){ _falou = true; };
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function ouvirIntro(){ falarIntro(); }
+function hoverIlha(faseId){ var f = MUNDO[faseId]; if(f){ falar(f.nome + ". " + f.sub + "."); } }
+function hoverTurma(turmaId){ var f = MUNDO[faseAtual]; if(!f) return; var nm = turmaId; for(var i=0;i<f.turmas.length;i++){ if(f.turmas[i].id===turmaId){ nm = f.turmas[i].nome; } } falar("Aqui é a ilha do " + nm + "."); }
+/* tenta narrar sozinho ao abrir */
+if(window.addEventListener){
+  window.addEventListener("load", function(){ setTimeout(function(){ try{ falarIntro(); }catch(e){} }, 450); });
+  /* se o navegador bloquear, a 1a interacao destrava */
+  var _primeiro = function(){
+    document.removeEventListener("click", _primeiro, true);
+    document.removeEventListener("touchstart", _primeiro, true);
+    document.removeEventListener("keydown", _primeiro, true);
+    if(!_falou){ falarIntro(); }
+  };
+  document.addEventListener("click", _primeiro, true);
+  document.addEventListener("touchstart", _primeiro, true);
+  document.addEventListener("keydown", _primeiro, true);
+}
 
 function mostrar(idTela) {
   var telas = document.getElementsByClassName("tela");
@@ -339,7 +369,7 @@ function abrirFase(faseId) {
   for (var i = 0; i < fase.turmas.length; i++) {
     var t = fase.turmas[i];
     if (t.arte) {
-      html += '<button class="card" type="button" onclick="abrirTurma(\'' + t.id + '\')">' +
+      html += '<button class="card" type="button" onmouseenter="hoverTurma(\'' + t.id + '\')" onclick="abrirTurma(\'' + t.id + '\')">' +
                 '<div class="ilhota-wrap">' +
                   '<img class="ilhota-img" src="img/ilhota-' + t.id + '.png" alt="">' +
                   '<span class="mascote-pos"><img src="img/mascote-' + t.id + '.png" alt=""></span>' +
@@ -347,7 +377,7 @@ function abrirFase(faseId) {
                 '<span class="rotulo-turma"><b>' + t.nome + '</b><span>ver atividades</span></span>' +
               '</button>';
     } else {
-      html += '<button class="card" type="button" onclick="abrirTurma(\'' + t.id + '\')">' +
+      html += '<button class="card" type="button" onmouseenter="hoverTurma(\'' + t.id + '\')" onclick="abrirTurma(\'' + t.id + '\')">' +
                 '<div class="bolha">' + t.mascote + '</div>' +
                 '<span class="rotulo-turma"><b>' + t.nome + '</b><span>ver atividades</span></span>' +
               '</button>';
