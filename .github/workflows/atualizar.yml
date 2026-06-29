@@ -38,11 +38,11 @@ jobs:
           tmp="$(mktemp -d)"
           echo "Clonando $OWNER/$DEST ..."
           git clone "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" "$tmp"
-          cp "$SRC/index.html" "$tmp/index.html"
+          cp -r "$SRC/." "$tmp/"
           cd "$tmp"
           git config user.name "Atualizador"
           git config user.email "atualizador@users.noreply.github.com"
-          git add index.html
+          git add -A
           if git diff --cached --quiet; then
             echo "Nenhuma mudanca (arquivo identico ao atual)."
           else
