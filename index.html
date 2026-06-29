@@ -1376,6 +1376,11 @@ function iniciarFase(chave){ somClique(); faseAtual=chave; indiceAtual=0;
 function mostrarDesafio(){
   respondeu=false;
   var fase=FASES[faseAtual], dd=fase.desafios[indiceAtual], total=fase.desafios.length, pct=Math.round((indiceAtual/total)*100);
+  if(dd && !dd._mix){
+    dd._mix=true;
+    if(dd.opcoes && dd.opcoes.length>1){ dd.opcoes=embaralhar(dd.opcoes.slice()); }
+    if(dd.opcoesImg && dd.opcoesImg.length>1){ dd.opcoesImg=embaralhar(dd.opcoesImg.slice()); }
+  }
   var html='<div class="progress">'+(indiceAtual+1)+' / '+total+'</div><div class="bar"><i style="width:'+pct+'%"></i></div>';
   html+='<h2>'+iconeFase(faseAtual,26)+' '+fase.titulo+'</h2>';
   if(indiceAtual===0 && !treinoAtivo && MASC_FALA[faseAtual]){ var an=ANIMAIS[faseAtual];
@@ -2645,6 +2650,7 @@ function oferecerDesafioExtra(){
 }
 function iniciarDesafioExtra(){ somClique();
   var dd=DESAFIOS_EXTRA[faseAtual]; faseGuardada=faseAtual;
+  if(dd && !dd._mix && dd.opcoes && dd.opcoes.length>1){ dd._mix=true; dd.opcoes=embaralhar(dd.opcoes.slice()); }
   var html='<h2>'+svgEmo("foguete")+' Desafio Extra</h2><div class="masc-fala"><span class="masc-pic">'+mascote(56,"explicando")+'</span><div class="masc-balao">Mostre que você é um expert!</div></div>';
   html+='<div class="pergunta">'+dd.enunciado+'</div>';
   if(dd.ilustra){ html+=desenharIlustra(dd.ilustra); }
