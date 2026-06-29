@@ -33,12 +33,39 @@ Passo a passo quando o usuário pedir um site novo:
 
 ## 3. Atualizar um site que JÁ existe em OUTRO repositório
 
-A conexão direta da sessão normalmente só alcança ESTE repositório. Para mexer
-em outro repo do usuário, use a mesma ideia da Fábrica com o `PAGES_TOKEN`
-(que tem permissão em todos os repositórios da conta `vidalprof`): coloque o
-arquivo novo em `_novo/` e rode um workflow que escreve no repo de destino,
-**ou** peça ao usuário para adicionar aquele repositório ao escopo da conexão
-GitHub do Claude Code.
+A conexão direta da sessão normalmente só alcança ESTE repositório. Para gravar
+em outro repo do usuário, use o workflow **`.github/workflows/atualizar.yml`**
+(acionado por `workflow_dispatch`), que usa o `PAGES_TOKEN`.
+
+Passo a passo:
+1. Salve o HTML novo em **`_novo/index.html`** neste repositório, commit e push na `main`.
+2. Acione `atualizar.yml` via `actions_run_trigger`, input `repo_name` =
+   nome do repositório de destino (ex.: `Sistemasolar3ano`). O input
+   `source_dir` já tem default `_novo`.
+3. No log, confirme a linha de push (`<sha>..<sha>  main -> main`) = gravou.
+4. Devolva o link **https://vidalprof.github.io/<repo_name>/** (Ctrl+F5 para ver).
+
+## 4. Recuperar o index.html de OUTRO repositório
+
+Workflow **`.github/workflows/recuperar.yml`** (`workflow_dispatch`). Lê o
+`index.html` do repo de origem (input `repo_name`) e salva uma cópia em
+`_recuperado/index.html` neste repositório. Depois é só dar `git pull` e
+entregar o arquivo ao usuário (ferramenta de envio de arquivo).
+
+## 5. Pré-requisito do token (IMPORTANTE) + diagnóstico
+
+O `PAGES_TOKEN` precisa ter, no mínimo, estas permissões para tudo funcionar:
+- **Contents: Read and write** ← grava os arquivos (HTML). SEM isso, dá erro
+  `403 "Resource not accessible by personal access token"` na hora do push.
+- **Administration: Read and write** ← criar repositórios (Fábrica).
+- **Pages: Read and write** ← ligar/publicar o Pages.
+- Repository access = **All repositories**. E o valor do token tem que estar
+  realmente salvo no secret `PAGES_TOKEN` (campo não pode ficar vazio).
+
+Se a escrita falhar, rode **`.github/workflows/diagnostico.yml`**
+(`workflow_dispatch`) e leia o log: ele diz se o token lê e se consegue gravar
+(`ESCRITA: SIM/NAO`), sem ficar tentando às cegas. Em telas de token em
+português: "Contents" = **Conteúdo**, "Read and write" = **Leitura e gravação**.
 
 ## Se a sessão for aberta em OUTRO repositório
 
