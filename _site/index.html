@@ -213,6 +213,42 @@
     background: -webkit-linear-gradient(left, rgba(255,216,128,0), #ffd67a, rgba(255,216,128,0));
     background: linear-gradient(to right, rgba(255,216,128,0), #ffd67a, rgba(255,216,128,0)); }
 
+  /* sol um pouco maior e mais luminoso */
+  #sol { width: 560px; height: 560px; margin-left: -280px; }
+
+  /* gaivotas planando no ceu */
+  .gaivota { position: fixed; z-index: 1; pointer-events: none; width: 20px; height: 12px; opacity: .8; }
+  .gaivota:before, .gaivota:after { content: ""; position: absolute; top: 0; width: 13px; height: 13px; border-top: 3px solid #fff; border-radius: 50%; }
+  .gaivota:before { left: -8px; -webkit-transform: rotate(18deg); transform: rotate(18deg); }
+  .gaivota:after  { right: -8px; -webkit-transform: rotate(-18deg); transform: rotate(-18deg); }
+  .g1 { top: 7%;  -webkit-animation: voa 34s linear infinite; animation: voa 34s linear infinite; }
+  .g2 { top: 11%; -webkit-transform: scale(.78); transform: scale(.78); -webkit-animation: voa 48s linear infinite; animation: voa 48s linear infinite; -webkit-animation-delay: -16s; animation-delay: -16s; }
+  @-webkit-keyframes voa { from{ left: -40px; } to{ left: 108%; } }
+  @keyframes voa { from{ left: -40px; } to{ left: 108%; } }
+
+  /* bolhinhas subindo do mar */
+  .bolhas { position: fixed; left: 0; right: 0; bottom: 0; height: 40%; z-index: 1; pointer-events: none; overflow: hidden; }
+  .bsobe { position: absolute; bottom: -24px; width: 12px; height: 12px; border-radius: 50%;
+    background: -webkit-radial-gradient(30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.12) 65%, rgba(255,255,255,0));
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.12) 65%, rgba(255,255,255,0));
+    -webkit-animation: sobe 11s linear infinite; animation: sobe 11s linear infinite; }
+  @-webkit-keyframes sobe { 0%{ -webkit-transform: translateY(0) scale(.5); opacity: 0; } 12%{ opacity: .7; } 100%{ -webkit-transform: translateY(-300px) scale(1); opacity: 0; } }
+  @keyframes sobe { 0%{ transform: translateY(0) scale(.5); opacity: 0; } 12%{ opacity: .7; } 100%{ transform: translateY(-300px) scale(1); opacity: 0; } }
+  .bb1 { left: 8%;  -webkit-animation-delay: -1s;   animation-delay: -1s; }
+  .bb2 { left: 22%; width: 8px; height: 8px; -webkit-animation-delay: -4s; animation-delay: -4s; }
+  .bb3 { left: 41%; -webkit-animation-delay: -7s;   animation-delay: -7s; }
+  .bb4 { left: 58%; width: 9px; height: 9px; -webkit-animation-delay: -2.5s; animation-delay: -2.5s; }
+  .bb5 { left: 73%; -webkit-animation-delay: -6s;   animation-delay: -6s; }
+  .bb6 { left: 89%; width: 7px; height: 7px; -webkit-animation-delay: -3.5s; animation-delay: -3.5s; }
+
+  /* placa do titulo com brilho deslizante */
+  .placa { position: relative; overflow: hidden; }
+  .placa:after { content: ""; position: absolute; top: 0; left: -60%; width: 32%; height: 100%; pointer-events: none;
+    -webkit-transform: skewX(-22deg); transform: skewX(-22deg);
+    background: -webkit-linear-gradient(left, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+    -webkit-animation: brilha 5s ease-in-out infinite; animation: brilha 5s ease-in-out infinite; }
+
   /* botoes com acabamento premium */
   .voltar { border: 1px solid rgba(255,255,255,.22); }
   .btn-ouvir { border: 2px solid #fff3cf; }
@@ -240,6 +276,12 @@
   <div class="nuvem n1"></div>
   <div class="nuvem n2"></div>
   <div class="nuvem n3"></div>
+  <div class="gaivota g1"></div>
+  <div class="gaivota g2"></div>
+  <div class="bolhas">
+    <span class="bsobe bb1"></span><span class="bsobe bb2"></span><span class="bsobe bb3"></span>
+    <span class="bsobe bb4"></span><span class="bsobe bb5"></span><span class="bsobe bb6"></span>
+  </div>
   <div id="vinheta"></div>
 
   <div class="conteudo">
