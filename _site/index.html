@@ -413,19 +413,14 @@ if(window.addEventListener){
   window.addEventListener("load", function(){ setTimeout(function(){ try{ falarIntro(); }catch(e){} }, 450); });
   /* a 1a interacao da crianca (qualquer toque/clique/tecla) destrava tudo:
      o navegador exige UM gesto antes de liberar som — regra de seguranca */
+  /* inclui movimento do mouse: em muitos navegadores ja libera a voz no
+     1o hover; em outros (Chrome novo) o 1o clique/toque garante */
+  var _eventos = ["pointerdown","mousedown","touchstart","click","keydown","mouseover","mousemove","pointermove"];
   var _primeiro = function(){
-    document.removeEventListener("pointerdown", _primeiro, true);
-    document.removeEventListener("mousedown", _primeiro, true);
-    document.removeEventListener("touchstart", _primeiro, true);
-    document.removeEventListener("click", _primeiro, true);
-    document.removeEventListener("keydown", _primeiro, true);
+    for(var _e=0; _e<_eventos.length; _e++){ document.removeEventListener(_eventos[_e], _primeiro, true); }
     _destrava();
   };
-  document.addEventListener("pointerdown", _primeiro, true);
-  document.addEventListener("mousedown", _primeiro, true);
-  document.addEventListener("touchstart", _primeiro, true);
-  document.addEventListener("click", _primeiro, true);
-  document.addEventListener("keydown", _primeiro, true);
+  for(var _e=0; _e<_eventos.length; _e++){ document.addEventListener(_eventos[_e], _primeiro, true); }
 }
 
 function mostrar(idTela) {
