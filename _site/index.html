@@ -131,6 +131,10 @@
     background-color: #ffd97a; line-height: 76px; font-size: 30px; color: #6b4419;
     -webkit-box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); box-shadow: inset 0 -4px 0 rgba(0,0,0,.12);
   }
+  .ilhota-wrap { position: relative; width: 100%; max-width: 160px; margin: 0 auto 8px; }
+  .ilhota-img { width: 100%; height: auto; display: block; -webkit-filter: drop-shadow(0 5px 6px rgba(0,0,0,.25)); filter: drop-shadow(0 5px 6px rgba(0,0,0,.25)); }
+  .mascote-pos { position: absolute; left: 50%; bottom: 30%; width: 54%; -webkit-transform: translateX(-50%); transform: translateX(-50%); }
+  .mascote-pos img { width: 100%; display: block; -webkit-animation: flutua 3.4s ease-in-out infinite; animation: flutua 3.4s ease-in-out infinite; -webkit-filter: drop-shadow(0 4px 5px rgba(0,0,0,.3)); filter: drop-shadow(0 4px 5px rgba(0,0,0,.3)); }
   .card b { font-size: 20px; display: block; }
   .card small { display:block; color:#777; margin-top:4px; font-size: 12px; }
 
@@ -222,9 +226,9 @@ var MUNDO = {
   tesouro: {
     nome: "Ilha do Tesouro", sub: "Pré, 1º e 2º ano", emoji: "🐢",
     turmas: [
-      { id: "pre",  nome: "Pré",     mascote: "🐚" },
-      { id: "1ano", nome: "1º Ano",  mascote: "🐢" },
-      { id: "2ano", nome: "2º Ano",  mascote: "⭐" }
+      { id: "pre",  nome: "Pré",     mascote: "🐚", arte: true },
+      { id: "1ano", nome: "1º Ano",  mascote: "🐢", arte: true },
+      { id: "2ano", nome: "2º Ano",  mascote: "⭐", arte: true }
     ]
   },
   exploradores: {
@@ -278,10 +282,20 @@ function abrirFase(faseId) {
   var html = "";
   for (var i = 0; i < fase.turmas.length; i++) {
     var t = fase.turmas[i];
-    html += '<button class="card" type="button" onclick="abrirTurma(\'' + t.id + '\')">' +
-              '<div class="bolha">' + t.mascote + '</div>' +
-              '<b>' + t.nome + '</b><small>ver atividades</small>' +
-            '</button>';
+    if (t.arte) {
+      html += '<button class="card" type="button" onclick="abrirTurma(\'' + t.id + '\')">' +
+                '<div class="ilhota-wrap">' +
+                  '<img class="ilhota-img" src="img/ilhota-' + t.id + '.png" alt="">' +
+                  '<span class="mascote-pos"><img src="img/mascote-' + t.id + '.png" alt=""></span>' +
+                '</div>' +
+                '<b>' + t.nome + '</b><small>ver atividades</small>' +
+              '</button>';
+    } else {
+      html += '<button class="card" type="button" onclick="abrirTurma(\'' + t.id + '\')">' +
+                '<div class="bolha">' + t.mascote + '</div>' +
+                '<b>' + t.nome + '</b><small>ver atividades</small>' +
+              '</button>';
+    }
   }
   document.getElementById("turmas-lista").innerHTML = html;
   mostrar("tela-turmas");
