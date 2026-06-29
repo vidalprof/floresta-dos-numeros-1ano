@@ -99,6 +99,10 @@
   .rotulo b { display: block; font-size: 18px; }
   .rotulo span { display: block; font-size: 13px; color: #ffe9b8; margin-top: 2px; }
 
+  /* ===== Som / narracao ===== */
+  .btn-som { position: fixed; top: 10px; right: 12px; z-index: 6; width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; font-size: 22px; color: #fff; background-color: rgba(0,0,0,.45); -webkit-box-shadow: 0 3px 10px rgba(0,0,0,.35); box-shadow: 0 3px 10px rgba(0,0,0,.35); }
+  .btn-ouvir { display: inline-block; margin: 8px 0 0; padding: 9px 20px; border: 0; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: bold; color: #2a1c00; background-color: #ffc04d; background: -webkit-linear-gradient(top,#ffd97a,#ffb43c); background: linear-gradient(to bottom,#ffd97a,#ffb43c); -webkit-box-shadow: 0 3px 8px rgba(0,0,0,.3); box-shadow: 0 3px 8px rgba(0,0,0,.3); }
+
   /* ===== Telas (mapa / turmas / atividades) ===== */
   .tela { display: none; }
   .tela.ativa { display: block; -webkit-animation: aparece .4s ease both; animation: aparece .4s ease both; }
@@ -173,6 +177,7 @@
 </style>
 </head>
 <body>
+  <button id="btnSom" class="btn-som" type="button" onclick="toggleSom()" aria-label="Ligar ou desligar o som">🔊</button>
   <div id="mar"><div class="brilho"></div></div>
   <div class="nuvem n1"></div>
   <div class="nuvem n2"></div>
@@ -189,6 +194,7 @@
     <!-- ===================== TELA: MAPA ===================== -->
     <div id="tela-mapa" class="tela ativa">
       <p class="intro">Bem-vindo(a), explorador(a)! 🧭 Escolha a sua <b>ilha</b> e comece a aventura das atividades.</p>
+      <div><button class="btn-ouvir" type="button" onclick="ouvirIntro()">🔊 Ouvir instruções</button></div>
 
       <div class="ilhas">
         <!-- ILHA 1 - TESOURO -->
@@ -268,6 +274,48 @@ var ATIVIDADES = {
 /* ===== Navegação ===== */
 var faseAtual = null, turmaAtual = null;
 
+/* ===== Som e narracao (extra; degrada com seguranca) ===== */
+var somAtivo = true, _ac = null, vozPT = null;
+function getAC(){ if(!_ac){ var C = window.AudioContext || window.webkitAudioContext; if(C){ try{ _ac = new C(); }catch(e){} } } return _ac; }
+function som(tipo){
+  if(!somAtivo) return;
+  var ac = getAC(); if(!ac) return;
+  try{
+    if(ac.state === "suspended" && ac.resume){ ac.resume(); }
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.connect(g); g.connect(ac.destination); o.type = "sine";
+    var t = ac.currentTime, sobe = (tipo !== "voltar");
+    o.frequency.setValueAtTime(sobe ? 620 : 520, t);
+    o.frequency.exponentialRampToValueAtTime(sobe ? 980 : 300, t + 0.12);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.start(t); o.stop(t + 0.24);
+  }catch(e){}
+}
+function carregaVozes(){
+  if(!("speechSynthesis" in window)) return;
+  var vs = window.speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang && vs[i].lang.toLowerCase().indexOf("pt")===0){ vozPT = vs[i]; break; } }
+}
+if("speechSynthesis" in window){ carregaVozes(); window.speechSynthesis.onvoiceschanged = carregaVozes; }
+function falar(txt){
+  if(!somAtivo || !("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance(txt);
+    u.lang = "pt-BR"; if(vozPT) u.voice = vozPT; u.rate = 0.98; u.pitch = 1.12;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function toggleSom(){
+  somAtivo = !somAtivo;
+  document.getElementById("btnSom").innerHTML = somAtivo ? "\uD83D\uDD0A" : "\uD83D\uDD07";
+  if(!somAtivo && "speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+  if(somAtivo) som("clique");
+}
+function ouvirIntro(){ som("clique"); falar("Ola, exploradores! Bem-vindos ao Mundo das Atividades. Toque na ilha da sua turma para comecar a aventura!"); }
+
 function mostrar(idTela) {
   var telas = document.getElementsByClassName("tela");
   for (var i = 0; i < telas.length; i++) {
@@ -278,11 +326,12 @@ function mostrar(idTela) {
   if (window.scrollTo) window.scrollTo(0, 0);
 }
 
-function irMapa() { mostrar("tela-mapa"); }
+function irMapa() { som("voltar"); mostrar("tela-mapa"); }
 
 function abrirFase(faseId) {
   faseAtual = faseId;
   var fase = MUNDO[faseId];
+  som("clique"); falar(fase.nome + ". Escolha a sua turma!");
   var mEl = document.getElementById("turmas-mascote"); mEl.src = "img/mascote-" + faseId + ".png"; mEl.alt = fase.nome;
   document.getElementById("turmas-titulo").innerHTML = fase.emoji + " " + fase.nome;
   document.getElementById("turmas-sub").innerHTML = fase.sub + " — escolha a sua turma";
@@ -315,6 +364,7 @@ function abrirTurma(turmaId) {
   var fase = MUNDO[faseAtual];
   var nomeTurma = turmaId;
   for (var i = 0; i < fase.turmas.length; i++) { if (fase.turmas[i].id === turmaId) nomeTurma = fase.turmas[i].nome; }
+  som("clique"); falar(nomeTurma + ". Escolha uma atividade!");
   document.getElementById("ativ-titulo").innerHTML = fase.emoji + " " + nomeTurma + " — " + fase.nome;
 
   var lista = ATIVIDADES[faseAtual + ":" + turmaId];
