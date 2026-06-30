@@ -116,8 +116,13 @@ pesado, que fazia o build falhar com "Page build failed").
      altura → `optimize` → salva em `_site/img/ativ-<slug>.png` (~50KB, leve).
    - Aponte `mascote: "img/ativ-<slug>.png"` no item. **Sempre confira a
      imagem com o usuário** (montagem/screenshot) antes de fechar.
-4. Valide o JS (extrair `<script>` + `node --check`), publique o hub (commit na
-   `main` + `atualizar.yml` repo_name=mundo-das-atividades, source_dir=_site).
+4. Valide o JS (extrair `<script>` + `node --check`) e publique o hub. O build
+   do Pages do `mundo-das-atividades` às vezes falha de forma **intermitente**
+   ("Page build failed"). O jeito mais confiável de publicar é com **histórico
+   limpo**: `republicar-limpo.yml` (`repo_name=mundo-das-atividades`,
+   `source_dir=_site`) — faz 1 commit limpo + força 1 build. Confirme com
+   `deploy-pages.yml` que ficou `built`. (O `atualizar.yml` também funciona,
+   mas o build engasga com mais frequência.)
 
 ### Se uma atividade nova não aparecer no ar (build do Pages)
 O repositório pode atualizar mas o **build do Pages falhar** ("Page build
