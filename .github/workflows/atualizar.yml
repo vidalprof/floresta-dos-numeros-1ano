@@ -38,6 +38,9 @@ jobs:
           tmp="$(mktemp -d)"
           echo "Clonando $OWNER/$DEST ..."
           git clone "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" "$tmp"
+          # Espelha exatamente a origem: limpa o conteudo antigo do destino
+          # (mantendo apenas .git) para nao acumular peso de versoes passadas.
+          find "$tmp" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
           cp -r "$SRC/." "$tmp/"
           # Garante .nojekyll no destino (publica os arquivos como estao, sem
           # Jekyll) — sem isso o build do GitHub Pages falha em sites maiores.

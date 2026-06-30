@@ -85,28 +85,46 @@ ilhota/mascote, e dentro de cada turma ficam as **atividades** (jogos).
   Aventureiros=bronze (objeto `TOM` no JS). Turmas: tesouro=pre/1ano/2ano,
   exploradores=3ano/4ano/5ano, aventureiros=6ano/7ano/8ano/9ano.
 
+### Arquitetura: PORTAL LEVE (regra de ouro p/ escalar)
+Cada atividade mora no **seu próprio repositório** (e tem o seu link
+`https://vidalprof.github.io/<repo>/`). O hub `_site` é só o **mapa + cards**;
+o card **aponta para o link** da atividade — **NÃO** se copia o jogo pesado
+para dentro do hub. Assim o site fica pequeno e o build do Pages **nunca
+engasga**, com qualquer volume de atividades (cada uma adiciona só o mascote
+~50KB). O `atualizar.yml` **espelha** o destino (limpa o conteúdo antigo), então
+o hub não acumula peso. NÃO criar `_site/atividades/` (era o modelo antigo,
+pesado, que fazia o build falhar com "Page build failed").
+
 ### Hospedar uma atividade nova (padrão fixo — "será sempre desse jeito")
-1. O usuário aponta o link de uma atividade já existente (ex.:
-   `https://vidalprof.github.io/<repo>/`). Recupere o `index.html` dela com
-   `recuperar.yml` (`repo_name=<repo>`) → cai em `_recuperado/index.html`
-   (dê `git pull`). **Mantenha a cópia original no repo de origem funcionando**
-   (não apague) até o usuário migrar tudo.
-2. Copie para **`_site/atividades/<slug>/index.html`**.
-3. Adicione no objeto `ATIVIDADES` (chave `"fase:turma"`, ex.
-   `"tesouro:1ano"`) um item `{ titulo, desc, ic (emoji reserva), mascote,
-   link }`. A ORDEM importa (o usuário pode pedir "antes/depois" de outra).
-4. **Mascote do card = o mascote da PRÓPRIA atividade** (o personagem que
+1. A atividade já está (ou será criada) no **próprio repositório** dela.
+   Se for nova, use a **Fábrica** (`fabrica.yml`) para criar o repo; se for
+   atualizar uma existente, use `atualizar.yml` (`repo_name=<repo>`,
+   `source_dir=_novo`). Pegue o `index.html` dela com `recuperar.yml` para
+   extrair o mascote. **Não apague o repo de origem** — é ele que serve o jogo.
+2. Adicione no objeto `ATIVIDADES` (chave `"fase:turma"`, ex. `"tesouro:1ano"`)
+   um item `{ titulo, desc, ic (emoji reserva), mascote, link }`, onde **`link`
+   é a URL do site da atividade** (`https://vidalprof.github.io/<repo>/`).
+   A ORDEM importa (o usuário pode pedir "antes/depois" de outra).
+3. **Mascote do card = o mascote da PRÓPRIA atividade** (o personagem que
    anda pelo mapa do jogo), como imagem com animação suave. Extraia assim:
    - No HTML do jogo, ache `var MASCOTE_POSES={` e pegue o valor da pose
      `"feliz"` (data URI base64). **Ancore a busca em `MASCOTE_POSES`** —
      há jogos com mais de uma chave `"feliz"`; pegar a 1ª do arquivo traz o
      personagem errado. Alguns jogos usam outro objeto/chave (ex. Ilha das
-     Letras = `A["ZEZE_FELIZ"]`).
+     Letras = `A["ZEZE_FELIZ"]`; inglês = `A["OWL_FELIZ"]`, com `A["chave"]=`).
    - Decode base64 → Pillow → autocrop (getbbox) → redimensiona p/ ~200px de
      altura → `optimize` → salva em `_site/img/ativ-<slug>.png` (~50KB, leve).
    - Aponte `mascote: "img/ativ-<slug>.png"` no item. **Sempre confira a
      imagem com o usuário** (montagem/screenshot) antes de fechar.
-5. Valide o JS (extrair `<script>` + `node --check`), publique (passo acima).
+4. Valide o JS (extrair `<script>` + `node --check`), publique o hub (commit na
+   `main` + `atualizar.yml` repo_name=mundo-das-atividades, source_dir=_site).
+
+### Se uma atividade nova não aparecer no ar (build do Pages)
+O repositório pode atualizar mas o **build do Pages falhar** ("Page build
+failed", às vezes intermitente em sites grandes). Rode
+`.github/workflows/deploy-pages.yml` (`repo_name=<repo>`): ele mostra o último
+commit, o status real do build e **força um novo deploy** a partir da `main`.
+`.nojekyll` já é garantido no destino pelo `atualizar.yml`.
 
 ### Estilo dos cards (premium) e prévia local
 - Cards = **plaquinhas de alumínio gravadas** (dog tag): metal escovado com
