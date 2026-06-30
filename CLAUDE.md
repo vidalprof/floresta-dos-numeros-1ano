@@ -121,10 +121,19 @@ pesado, que fazia o build falhar com "Page build failed").
 
 ### Se uma atividade nova não aparecer no ar (build do Pages)
 O repositório pode atualizar mas o **build do Pages falhar** ("Page build
-failed", às vezes intermitente em sites grandes). Rode
-`.github/workflows/deploy-pages.yml` (`repo_name=<repo>`): ele mostra o último
-commit, o status real do build e **força um novo deploy** a partir da `main`.
-`.nojekyll` já é garantido no destino pelo `atualizar.yml`.
+failed"). Diagnóstico: rode `.github/workflows/deploy-pages.yml`
+(`repo_name=<repo>`) — mostra o último commit, o status REAL do build
+(`built`/`errored`) e força um novo deploy. `.nojekyll` já é garantido no
+destino pelo `atualizar.yml`.
+
+**Causa que já mordeu (importante):** o build falha quando o **histórico do
+`.git` fica inchado** (ex.: jogos pesados de ~2,5 MB que entraram e saíram
+continuam guardados no histórico; o GitHub baixa esse peso para montar e
+engasga). Conserto definitivo: `.github/workflows/republicar-limpo.yml`
+(`repo_name=<repo>`, `source_dir=_site`) — republica com **1 commit limpo**
+(force-push), zerando o histórico e deixando o `.git` minúsculo. Depois disso
+o build volta a `built`. Com o modelo **portal leve** (atividades por link, não
+copiadas pra dentro) o histórico não incha de novo.
 
 ### Estilo dos cards (premium) e prévia local
 - Cards = **plaquinhas de alumínio gravadas** (dog tag): metal escovado com
