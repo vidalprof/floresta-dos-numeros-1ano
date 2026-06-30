@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#1b4a6b">
-<title>Mundo das Atividades - E.B.M. Vidal Ramos</title>
+<title>Ilhas do Saber - E.B.M. Vidal Ramos</title>
 <style>
   /* ===== Base / compatibilidade ===== */
   * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0); }
@@ -287,7 +287,7 @@
   <div class="conteudo">
     <header class="topo">
       <div class="placa">
-        <h1>🌍 Mundo das Atividades</h1>
+        <h1>🏝️ Ilhas do Saber</h1>
         <span class="escola">E.B.M. VIDAL RAMOS</span>
       </div>
     </header>
@@ -375,6 +375,8 @@ var ATIVIDADES = {
       link: "atividades/mundo-das-palavras-6ano/" }
   ],
   "tesouro:1ano": [
+    { titulo: "Ilha das Letras — Aventura do Alfabeto", desc: "Aprenda a sequência do alfabeto brincando", ic: "🔤",
+      link: "atividades/ilha-das-letras-1ano/" },
     { titulo: "A Floresta dos Números", desc: "Aventura de contagem e números", ic: "🌳",
       link: "atividades/floresta-dos-numeros/" }
   ]
@@ -430,7 +432,7 @@ function falarIntro(){
   if(!somAtivo || !("speechSynthesis" in window)) return;
   try{
     window.speechSynthesis.cancel();
-    var u = new SpeechSynthesisUtterance("Olá, exploradores! Bem-vindos ao Mundo das Atividades. Toque na ilha da sua turma para começar a aventura!");
+    var u = new SpeechSynthesisUtterance("Olá, exploradores! Bem-vindos às Ilhas do Saber. Toque na ilha da sua turma para começar a aventura!");
     u.lang = "pt-BR"; if(vozPT) u.voice = vozPT; u.rate = 0.98; u.pitch = 1.12;
     u.onstart = function(){ _falou = true; };
     window.speechSynthesis.speak(u);
