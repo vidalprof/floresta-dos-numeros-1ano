@@ -67,6 +67,70 @@ Se a escrita falhar, rode **`.github/workflows/diagnostico.yml`**
 (`ESCRITA: SIM/NAO`), sem ficar tentando às cegas. Em telas de token em
 português: "Contents" = **Conteúdo**, "Read and write" = **Leitura e gravação**.
 
+## 6. Hub "Ilhas do Saber" (mapa de ilhas com as atividades)
+
+Existe um site-portal gamificado chamado **"Ilhas do Saber"** (E.B.M. Vidal
+Ramos). É um mapa com 3 ilhas grandes por faixa de ano, cada turma tem sua
+ilhota/mascote, e dentro de cada turma ficam as **atividades** (jogos).
+
+- **Onde mora o código:** neste repositório, na pasta **`_site/`**
+  (`_site/index.html` + `_site/img/` + `_site/atividades/<slug>/index.html`).
+- **Repositório publicado:** `mundo-das-atividades` → no ar em
+  **https://vidalprof.github.io/mundo-das-atividades/** (o NOME na tela é
+  "Ilhas do Saber"; o endereço/repo continua `mundo-das-atividades`).
+- **Como publicar:** commit/push na `main` deste repo e acione
+  `atualizar.yml` com `repo_name=mundo-das-atividades`, `source_dir=_site`.
+  Confirme `success` e devolva o link com `?v=N` (cache-busting; suba o N).
+- **Ilhas (fase) → tom da plaquinha:** Tesouro=ouro, Exploradores=prata,
+  Aventureiros=bronze (objeto `TOM` no JS). Turmas: tesouro=pre/1ano/2ano,
+  exploradores=3ano/4ano/5ano, aventureiros=6ano/7ano/8ano/9ano.
+
+### Hospedar uma atividade nova (padrão fixo — "será sempre desse jeito")
+1. O usuário aponta o link de uma atividade já existente (ex.:
+   `https://vidalprof.github.io/<repo>/`). Recupere o `index.html` dela com
+   `recuperar.yml` (`repo_name=<repo>`) → cai em `_recuperado/index.html`
+   (dê `git pull`). **Mantenha a cópia original no repo de origem funcionando**
+   (não apague) até o usuário migrar tudo.
+2. Copie para **`_site/atividades/<slug>/index.html`**.
+3. Adicione no objeto `ATIVIDADES` (chave `"fase:turma"`, ex.
+   `"tesouro:1ano"`) um item `{ titulo, desc, ic (emoji reserva), mascote,
+   link }`. A ORDEM importa (o usuário pode pedir "antes/depois" de outra).
+4. **Mascote do card = o mascote da PRÓPRIA atividade** (o personagem que
+   anda pelo mapa do jogo), como imagem com animação suave. Extraia assim:
+   - No HTML do jogo, ache `var MASCOTE_POSES={` e pegue o valor da pose
+     `"feliz"` (data URI base64). **Ancore a busca em `MASCOTE_POSES`** —
+     há jogos com mais de uma chave `"feliz"`; pegar a 1ª do arquivo traz o
+     personagem errado. Alguns jogos usam outro objeto/chave (ex. Ilha das
+     Letras = `A["ZEZE_FELIZ"]`).
+   - Decode base64 → Pillow → autocrop (getbbox) → redimensiona p/ ~200px de
+     altura → `optimize` → salva em `_site/img/ativ-<slug>.png` (~50KB, leve).
+   - Aponte `mascote: "img/ativ-<slug>.png"` no item. **Sempre confira a
+     imagem com o usuário** (montagem/screenshot) antes de fechar.
+5. Valide o JS (extrair `<script>` + `node --check`), publique (passo acima).
+
+### Estilo dos cards (premium) e prévia local
+- Cards = **plaquinhas de alumínio gravadas** (dog tag): metal escovado com
+  brilho deslizante, título e "JOGAR" em **baixo-relevo**, **mascote colorido
+  cravado** num medalhão, **furo + correntinha** no canto sup. direito; tom por
+  ilha (ver `TOM`). Tudo CSS leve com fallback (PCs antigos), responsivo.
+- **Compatibilidade é regra de ouro:** prefixos `-webkit-`/`-o-`, fallback
+  antes de flex/gradiente, imagens otimizadas, poucas animações.
+- **Prévia sem publicar:** há Chromium em
+  `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`. Renderize com
+  `--headless --no-sandbox --disable-gpu --screenshot=... --virtual-time-budget=4500`
+  (use ≥4000ms: a tela tem fade `aparece .4s` e budget curto captura no meio
+  da animação). Para telas internas, injete antes de `</body>` um
+  `<script>window.addEventListener("load",function(){setTimeout(function(){abrirFase("...");abrirTurma("...");},80);});</script>`
+  e copie `_site/img` + `_site/atividades` para o lado do HTML temporário.
+  Mande o screenshot ao usuário com a ferramenta de enviar arquivo.
+
+### Narração por voz (limite do navegador — explicar com honestidade)
+O hub fala (Web Speech API) e tem barulhinho (Web Audio). **Nenhum navegador
+deixa o som começar antes de UM gesto** (clique/toque) — é regra de segurança,
+não é defeito. O código tenta destravar no 1º gesto (inclui mover o mouse);
+em navegadores rígidos (Chrome novo) ainda exige o 1º clique/toque. O botão
+"Ouvir instruções" (piscando) é o "start" garantido.
+
 ## Se a sessão for aberta em OUTRO repositório
 
 Este `CLAUDE.md` só é lido quando a sessão abre **neste** repositório

@@ -151,38 +151,69 @@
   .rotulo-turma b { font-size: 18px; display: block; }
   .rotulo-turma span { display: block; font-size: 12px; color: #ffe9b8; margin-top: 1px; }
 
+  /* ===== Cards = plaquinhas de aluminio gravadas (premium; degrada em PC antigo) ===== */
   .atividade {
     display: block; /* fallback p/ navegador antigo */
     display: -webkit-box; display: -webkit-flex; display: flex;
     -webkit-box-align: center; -webkit-align-items: center; align-items: center;
-    position: relative; overflow: hidden; width: 94%; max-width: 560px; margin: 16px auto;
-    padding: 16px 122px 16px 18px; min-height: 110px; text-align: left; text-decoration: none; color: #fff; border-radius: 20px;
-    background-color: #1f8f63;
-    -webkit-box-shadow: 0 8px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22); box-shadow: 0 8px 22px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22);
-    -webkit-transition: -webkit-transform .15s ease, box-shadow .15s ease; transition: transform .15s ease, box-shadow .15s ease;
-  }
-  .atividade.ativ-c0 { background: -webkit-linear-gradient(135deg,#34c98a,#1f8f63 60%,#14704c); background: linear-gradient(135deg,#34c98a,#1f8f63 60%,#14704c); }
-  .atividade.ativ-c1 { background: -webkit-linear-gradient(135deg,#5aa6ff,#3a6fd8 60%,#274fae); background: linear-gradient(135deg,#5aa6ff,#3a6fd8 60%,#274fae); }
-  .atividade.ativ-c2 { background: -webkit-linear-gradient(135deg,#ff9a5a,#f0682f 60%,#c94d1e); background: linear-gradient(135deg,#ff9a5a,#f0682f 60%,#c94d1e); }
-  .atividade:hover { -webkit-transform: translateY(-4px) scale(1.02); transform: translateY(-4px) scale(1.02); -webkit-box-shadow: 0 14px 30px rgba(0,0,0,.45); box-shadow: 0 14px 30px rgba(0,0,0,.45); }
-  .atividade:before { content: ""; position: absolute; top: 0; left: -70%; width: 45%; height: 100%; pointer-events: none; -webkit-transform: skewX(-20deg); transform: skewX(-20deg); background: -webkit-linear-gradient(left, rgba(255,255,255,0), rgba(255,255,255,.28), rgba(255,255,255,0)); background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.28), rgba(255,255,255,0)); -webkit-animation: brilha 3.6s ease-in-out infinite; animation: brilha 3.6s ease-in-out infinite; }
-  @-webkit-keyframes brilha { 0%{left:-70%;} 55%,100%{left:130%;} }
-  @keyframes brilha { 0%{left:-70%;} 55%,100%{left:130%;} }
-  .atividade .ativ-ic { -webkit-box-flex: 0; -webkit-flex: 0 0 auto; flex: 0 0 auto; display: inline-block; vertical-align: middle; width: 60px; height: 60px; line-height: 60px; text-align: center; font-size: 32px; border-radius: 50%; background: rgba(255,255,255,.22); margin-right: 14px; -webkit-box-shadow: inset 0 -3px 0 rgba(0,0,0,.12); box-shadow: inset 0 -3px 0 rgba(0,0,0,.12); }
-  /* quando e mascote (imagem), sem o circulo: so a figurinha animada */
-  .atividade .ativ-ic.masc { width: 74px; height: 74px; line-height: 0; background: transparent; -webkit-box-shadow: none; box-shadow: none; }
+    position: relative; overflow: visible; width: 94%; max-width: 560px; margin: 22px auto;
+    padding: 18px 132px 18px 20px; min-height: 118px; text-align: left; text-decoration: none; color: #555; border-radius: 16px;
+    -webkit-box-shadow: 0 10px 22px rgba(0,0,0,.42), inset 0 2px 0 rgba(255,255,255,.75), inset 0 -4px 7px rgba(0,0,0,.32);
+    box-shadow: 0 10px 22px rgba(0,0,0,.42), inset 0 2px 0 rgba(255,255,255,.75), inset 0 -4px 7px rgba(0,0,0,.32);
+    -webkit-transition: -webkit-transform .15s ease; transition: transform .15s ease; }
+  .atividade:hover { -webkit-transform: translateY(-4px) scale(1.015); transform: translateY(-4px) scale(1.015); }
+  .metal { position: absolute; left: 0; top: 0; right: 0; bottom: 0; border-radius: 16px; overflow: hidden; z-index: 0; }
+  .brush { position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: .5; pointer-events: none;
+    background: repeating-linear-gradient(90deg, rgba(255,255,255,.06) 0, rgba(255,255,255,.06) 1px, rgba(0,0,0,.05) 1px, rgba(0,0,0,.05) 3px); }
+  .shine { position: absolute; top: 0; left: -60%; width: 34%; height: 100%; pointer-events: none;
+    -webkit-transform: skewX(-22deg); transform: skewX(-22deg);
+    background: -webkit-linear-gradient(left, rgba(255,255,255,0), rgba(255,255,255,.5), rgba(255,255,255,0));
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.5), rgba(255,255,255,0));
+    -webkit-animation: brilha 5s ease-in-out infinite; animation: brilha 5s ease-in-out infinite; }
+  @-webkit-keyframes brilha { 0%{left:-60%;} 55%,100%{left:130%;} }
+  @keyframes brilha { 0%{left:-60%;} 55%,100%{left:130%;} }
+  /* tons por ilha */
+  .tag-prata  .metal { background: -webkit-linear-gradient(-45deg,#f2f3f5,#c4c8cc 28%,#e9ebed 50%,#b1b5ba 72%,#dde0e3); background: linear-gradient(135deg,#f2f3f5,#c4c8cc 28%,#e9ebed 50%,#b1b5ba 72%,#dde0e3); }
+  .tag-ouro   .metal { background: -webkit-linear-gradient(-45deg,#fff1bf,#d8ab3c 28%,#f6db83 50%,#bf8e2c 72%,#ecc961); background: linear-gradient(135deg,#fff1bf,#d8ab3c 28%,#f6db83 50%,#bf8e2c 72%,#ecc961); }
+  .tag-bronze .metal { background: -webkit-linear-gradient(-45deg,#f3c79a,#b06a34 28%,#dd9a62 50%,#8e4f25 72%,#c98a55); background: linear-gradient(135deg,#f3c79a,#b06a34 28%,#dd9a62 50%,#8e4f25 72%,#c98a55); }
+  /* furo + correntinha */
+  .furo { position: absolute; top: 13px; right: 18px; width: 17px; height: 17px; border-radius: 50%; z-index: 3;
+    background: -webkit-radial-gradient(42% 38%, #23262a, #5d6166 80%); background: radial-gradient(circle at 42% 38%, #23262a, #5d6166 80%);
+    -webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.65); box-shadow: inset 0 2px 3px rgba(0,0,0,.85), 0 1px 0 rgba(255,255,255,.65); }
+  .corrente { position: absolute; top: -16px; right: 12px; z-index: 3; }
+  .corrente i { display: block; width: 13px; height: 19px; margin: -7px 0; border: 3px solid #c2c6ca; border-radius: 7px;
+    -webkit-box-shadow: 0 1px 1px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.6); box-shadow: 0 1px 1px rgba(0,0,0,.4), inset 0 1px 1px rgba(255,255,255,.6); }
+  .corrente i:nth-child(odd)  { -webkit-transform: rotate(38deg); transform: rotate(38deg); }
+  .corrente i:nth-child(even) { -webkit-transform: rotate(-38deg); transform: rotate(-38deg); }
+  .tag-ouro .corrente i   { border-color: #d8b65a; }
+  .tag-bronze .corrente i { border-color: #c08a5c; }
+  /* mascote = medalhao colorido cravado */
+  .atividade .ativ-ic { -webkit-box-flex: 0; -webkit-flex: 0 0 auto; flex: 0 0 auto; position: relative; z-index: 2; display: inline-block; vertical-align: middle; width: 60px; height: 60px; line-height: 60px; text-align: center; font-size: 32px; border-radius: 50%; background: rgba(255,255,255,.4); margin-right: 16px; }
+  .atividade .ativ-ic.masc { width: 84px; height: 84px; line-height: 0; padding: 5px; background: -webkit-radial-gradient(38% 32%, #fdfdfd, #c7cbcf 70%, #9aa0a6); background: radial-gradient(circle at 38% 32%, #fdfdfd, #c7cbcf 70%, #9aa0a6);
+    -webkit-box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -3px 5px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.35); box-shadow: inset 0 2px 3px rgba(255,255,255,.9), inset 0 -3px 5px rgba(0,0,0,.4), 0 4px 8px rgba(0,0,0,.35); }
+  .tag-ouro   .ativ-ic.masc { background: -webkit-radial-gradient(38% 32%, #fff6d8, #e0bd5c 70%, #b58e2e); background: radial-gradient(circle at 38% 32%, #fff6d8, #e0bd5c 70%, #b58e2e); }
+  .tag-bronze .ativ-ic.masc { background: -webkit-radial-gradient(38% 32%, #f7dcc0, #cf9b6a 70%, #9c5f31); background: radial-gradient(circle at 38% 32%, #f7dcc0, #cf9b6a 70%, #9c5f31); }
   .atividade .ativ-masc { width: 74px; height: 74px; -o-object-fit: contain; object-fit: contain; display: block;
-    -webkit-filter: drop-shadow(0 4px 5px rgba(0,0,0,.32)); filter: drop-shadow(0 4px 5px rgba(0,0,0,.32));
+    -webkit-filter: drop-shadow(0 3px 3px rgba(0,0,0,.4)); filter: drop-shadow(0 3px 3px rgba(0,0,0,.4));
     -webkit-animation: flutua 4s ease-in-out infinite; animation: flutua 4s ease-in-out infinite; }
-  .atividade .ativ-info { -webkit-box-flex: 1; -webkit-flex: 1 1 auto; flex: 1 1 auto; min-width: 0; display: inline-block; vertical-align: middle; }
-  .atividade .ativ-info b { font-size: 20px; display: block; text-shadow: 0 1px 2px rgba(0,0,0,.3); }
-  .atividade .ativ-info span { display: block; font-size: 13px; color: rgba(255,255,255,.92); margin-top: 2px; }
-  .atividade .ativ-play { position: absolute; right: 16px; top: 50%; margin-top: -18px; padding: 9px 16px; border-radius: 999px; font-weight: bold; font-size: 14px; color: #5a3000; background: -webkit-linear-gradient(top,#ffe07a,#ffb43c); background: linear-gradient(to bottom,#ffe07a,#ffb43c); -webkit-box-shadow: 0 4px 10px rgba(0,0,0,.3); box-shadow: 0 4px 10px rgba(0,0,0,.3); -webkit-animation: pulsa 1.5s ease-in-out infinite; animation: pulsa 1.5s ease-in-out infinite; }
+  /* textos GRAVADOS (baixo-relevo) */
+  .atividade .ativ-info { -webkit-box-flex: 1; -webkit-flex: 1 1 auto; flex: 1 1 auto; min-width: 0; position: relative; z-index: 2; display: inline-block; vertical-align: middle; }
+  .atividade .ativ-info b { display: block; font-size: 19px; line-height: 1.15; letter-spacing: .3px; color: #565c63; text-shadow: 0 -1px 0 rgba(0,0,0,.32), 0 1px 0 rgba(255,255,255,.85); }
+  .tag-ouro   .ativ-info b { color: #6c5519; text-shadow: 0 -1px 0 rgba(0,0,0,.32), 0 1px 0 rgba(255,238,176,.9); }
+  .tag-bronze .ativ-info b { color: #5a3318; text-shadow: 0 -1px 0 rgba(0,0,0,.34), 0 1px 0 rgba(255,224,194,.75); }
+  .atividade .ativ-info span { display: block; font-size: 13px; margin-top: 3px; color: #6f757c; text-shadow: 0 1px 0 rgba(255,255,255,.7); }
+  .tag-ouro   .ativ-info span { color: #7d6526; text-shadow: 0 1px 0 rgba(255,240,186,.7); }
+  .tag-bronze .ativ-info span { color: #6d4424; text-shadow: 0 1px 0 rgba(255,226,196,.6); }
+  /* JOGAR gravado num quadro estampado */
+  .atividade .ativ-play { position: absolute; right: 16px; top: 50%; margin-top: -19px; z-index: 2; padding: 9px 15px; border-radius: 10px; font-weight: bold; font-size: 14px; letter-spacing: .5px; color: #4f555c; text-shadow: 0 1px 0 rgba(255,255,255,.8); border: 2px solid rgba(0,0,0,.16);
+    -webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,.26), inset 0 -1px 0 rgba(255,255,255,.6), 0 1px 0 rgba(255,255,255,.5); box-shadow: inset 0 2px 3px rgba(0,0,0,.26), inset 0 -1px 0 rgba(255,255,255,.6), 0 1px 0 rgba(255,255,255,.5); }
+  .tag-ouro   .ativ-play { color: #6b5318; text-shadow: 0 1px 0 rgba(255,238,176,.85); }
+  .tag-bronze .ativ-play { color: #5a3318; text-shadow: 0 1px 0 rgba(255,224,194,.75); }
   .vazio { margin: 22px auto; max-width: 480px; color: #fff; background: rgba(255,255,255,.12); border: 2px dashed rgba(255,255,255,.55); border-radius: 20px; padding: 24px 18px; font-size: 17px; -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15); box-shadow: inset 0 1px 0 rgba(255,255,255,.15); }
   .vazio b { font-size: 22px; }
   @media (max-width: 520px) {
-    .atividade { display: block; padding: 14px; }
-    .atividade .ativ-play { position: static; display: inline-block; margin: 12px 0 0 74px; top: auto; }
+    .atividade { display: block; padding: 16px 16px 18px; }
+    .atividade .ativ-play { position: static; display: inline-block; margin: 12px 0 0 100px; top: auto; }
   }
 
   footer { margin-top: 26px; font-size: 12px; color: rgba(255,255,255,.8); }
@@ -392,6 +423,8 @@ var ATIVIDADES = {
 
 /* ===== Navegação ===== */
 var faseAtual = null, turmaAtual = null;
+/* tom da plaquinha de aluminio por ilha */
+var TOM = { tesouro: "ouro", exploradores: "prata", aventureiros: "bronze" };
 
 /* ===== Som e narracao (extra; degrada com seguranca) ===== */
 var somAtivo = true, _ac = null, vozPT = null;
@@ -532,7 +565,11 @@ function abrirTurma(turmaId) {
     for (var j = 0; j < lista.length; j++) {
       var a = lista[j];
       var masc = a.mascote ? a.mascote : ("img/mascote-" + turmaId + ".png");
-      html += '<a class="atividade ativ-c' + (j % 3) + '" href="' + a.link + '" target="_blank" rel="noopener" data-t="' + a.titulo + '" onmouseenter="hoverAtiv(this)" onclick="som(\'clique\')">' +
+      var tom = TOM[faseAtual] || "prata";
+      html += '<a class="atividade tag-' + tom + '" href="' + a.link + '" target="_blank" rel="noopener" data-t="' + a.titulo + '" onmouseenter="hoverAtiv(this)" onclick="som(\'clique\')">' +
+                '<span class="metal"><span class="brush"></span><span class="shine"></span></span>' +
+                '<span class="furo"></span>' +
+                '<span class="corrente"><i></i><i></i><i></i></span>' +
                 '<span class="ativ-ic masc">' +
                   '<img class="ativ-masc" src="' + masc + '" alt="" onerror="this.onerror=null;var p=this.parentNode;p.className=\'ativ-ic\';p.innerHTML=\'' + a.ic + '\';">' +
                 '</span>' +
