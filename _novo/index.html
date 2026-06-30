@@ -231,14 +231,23 @@
 .mapa-tesouro.pronto .trof-img{-webkit-animation:trofFlutua 2.4s ease-in-out infinite;animation:trofFlutua 2.4s ease-in-out infinite;}
 .mapa-tesouro:not(.pronto) .trof-img{-webkit-filter:grayscale(60%);filter:grayscale(60%);opacity:.6;}
 
-.levelup-pop{position:fixed;top:30%;left:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
-  background:#fff;border:4px solid #ffd23f;border-radius:20px;padding:18px 26px;text-align:center;z-index:9999;
-  box-shadow:0 10px 40px rgba(0,0,0,0.4);-webkit-animation:luPop .5s ease-out both;animation:luPop .5s ease-out both;}
-.lu-txt{color:#c1121f;font-weight:bold;font-size:18px;margin-top:6px;}
-@-webkit-keyframes luPop{0%{-webkit-transform:translate(-50%,-50%) scale(0.5);opacity:0;}100%{-webkit-transform:translate(-50%,-50%) scale(1);opacity:1;}}
-@keyframes luPop{0%{transform:translate(-50%,-50%) scale(0.5);opacity:0;}100%{transform:translate(-50%,-50%) scale(1);opacity:1;}}
+.levelup-pop{position:fixed;top:14px;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  background:#fff;border:3px solid #ffd23f;border-radius:16px;padding:10px 18px;text-align:center;z-index:9999;
+  display:-webkit-box;display:flex;-webkit-box-align:center;-webkit-box-orient:horizontal;align-items:center;
+  box-shadow:0 8px 28px rgba(0,0,0,0.35);-webkit-animation:luPop .5s ease-out both;animation:luPop .5s ease-out both;}
+.levelup-pop img{margin-right:10px;}
+.lu-txt{color:#c1121f;font-weight:bold;font-size:15px;text-align:left;line-height:1.2;}
+@-webkit-keyframes luPop{0%{-webkit-transform:translateX(-50%) translateY(-12px) scale(0.7);opacity:0;}100%{-webkit-transform:translateX(-50%) translateY(0) scale(1);opacity:1;}}
+@keyframes luPop{0%{transform:translateX(-50%) translateY(-12px) scale(0.7);opacity:0;}100%{transform:translateX(-50%) translateY(0) scale(1);opacity:1;}}
 .rank-linha{margin:4px 0;}
 .curiosidade{background:#fff7e0;border:2px solid #ffd23f;border-radius:14px;padding:10px 14px;color:#b8860b;font-size:14px;margin:12px 0;font-weight:bold;}
+
+.btn-ouvir{background:-webkit-gradient(linear,left top,left bottom,from(#c1121f),to(#9e2a2b));background:linear-gradient(#c1121f,#9e2a2b);color:#fff;border:none;border-radius:14px;padding:9px 16px;font-size:14px;font-weight:bold;cursor:pointer;box-shadow:0 4px 0 #780000;margin:6px 0;}
+.btn-ouvir:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 2px 0 #780000;}
+
+.build-instr{font-size:12px;color:#9e2a2b;margin:4px 0;}
+.build-linha{min-height:46px;border:2px dashed #ffd23f;border-radius:12px;padding:6px;}
+.build-palavra{cursor:grab;-webkit-user-select:none;user-select:none;}
 </style>
 </head>
 <body>
@@ -331,7 +340,7 @@ function addPontos(n){ var antes=rankAtual(); score+=n; scoreEl.innerHTML=score;
   if(depois.nome!==antes.nome){ subiuDeNivel(depois); } }
 function subiuDeNivel(rk){ try{ if(typeof confete==='function')confete(70); }catch(e){}
   var box=document.createElement('div'); box.className='levelup-pop';
-  box.innerHTML='<img src="'+(A[rk.emb]||"")+'" style="width:70px;height:auto" alt=""/><div class="lu-txt">Level up!<br><b>'+rk.nome+'</b></div>';
+  box.innerHTML='<img src="'+(A[rk.emb]||"")+'" style="width:54px;height:auto" alt=""/><div class="lu-txt">Level up!<br><b>'+rk.nome+'</b></div>';
   document.body.appendChild(box);
   setTimeout(function(){ if(box.parentNode)box.parentNode.removeChild(box); },2600);
   falar && falar("Você subiu de nível! | "+rk.nome+" | "); }
@@ -350,6 +359,7 @@ function somClique(){ tocar([{f:520,d:0.06}]); }
 /* fala em INGLÊS (pronuncia as frases) */
 function limparFala(t){ if(!t)return ""; t=(""+t).replace(/<br\s*\/?>/gi," | ").replace(/<[^>]+>/g," ").replace(/&[a-z]+;/gi," ");
   t=t.replace(/[\u2192\u2794]/g," | "); t=t.replace(/["\u201c\u201d]/g," | ");
+  t=t.replace(/[\(\)\[\]]/g," | "); t=t.replace(/\s[=;]\s/g," | ");
   t=t.replace(/\s*([,.!?:])\s*/g,"$1 ").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
   if(t && !/[.!?]$/.test(t)) t=t+"."; return t; }
 function escolherVozPt(){ var vs=window.speechSynthesis.getVoices(), melhor=null, best=-1;
@@ -368,8 +378,10 @@ function escolherVozEn(){ var vs=window.speechSynthesis.getVoices(), melhor=null
   return melhor; }
 function detectaPT(t){ t=(""+t).toLowerCase();
   var pt=t.match(/\b(são|é|usado|usada|para|com|você|seu|sua|nome|frase|lugar|coisa|coisas|pessoa|pessoas|posse|certo|errado|construir|arraste|toque|ligar|ligam|junte|sobre|palavra|palavras|ideia|ideias|duas|dois|evita|evitam|deixa|deixam|mais|quando|tempo|onde|cujo|cuja|veja|escolha|complete|qual|que|não|sim|uma|um|os|as|do|da|de|em|no|na|vez|usamos|pronome|relativo|ganhou|prêmio|premio|irmã|garota|menino|parabéns|parabens|reconstruiu|orgulhoso|orgulho|ilhas|ilha|pontes|ponte|arquipélago|conectadas|viajar|verdadeiro|mestre|continue|completou|olá|ola|siga|trilha|coruja|sábia|ajude|mágicas|todas|todos|está|esta|indo|muito|bem|comemorar|troféu|dourado|nossas|nossa|aventura|começar|primeira|gramática)\b/g);
-  var en=t.match(/\b(the|is|are|am|i|you|your|my|me|we|he|she|it|who|which|that|whose|where|when|a|an|of|to|for|and|with|next|door|doctor|girl|boy|man|woman|prize|sister|brother|friend|speaks|english|lives|won|book|house|people|things|place|time|possession|example|hello|hi|name|wise|owl|what|welcome|back|let|let's|tap|island|bridge|bridges|congratulations|amazing|perfect|score|challenge|level|complete|did|know|fact|fun|beginner|learner|intermediate|advanced|expert|grammar|master|points|point)\b/g);
+  var en=t.match(/\b(the|is|are|am|i|you|your|my|me|we|he|she|it|who|which|that|whose|where|when|a|an|of|to|for|and|with|next|door|doctor|girl|boy|man|woman|prize|sister|brother|friend|speaks|english|lives|won|book|house|people|things|place|time|possession|example|hello|hi|name|wise|owl|what|welcome|back|let|let's|tap|island|bridge|bridges|congratulations|amazing|perfect|score|challenge|level|complete|did|know|fact|fun|beginner|learner|intermediate|advanced|expert|grammar|master|points|point|animals|animal|car|phone|movie|teacher|students|student|city|live|cat|dog|home|water|day|year|thing|works|work|play|guitar|street|window)\b/g);
   var np=pt?pt.length:0, ne=en?en.length:0;
+  var soPron=/^\s*(who|which|that|whose|where|when)\s*\.?\s*$/i.test(t);
+  if(soPron) return false;
   return np>=ne; }
 function falar(texto, aoTerminar){ if(!SOM_LIGADO){ if(aoTerminar)aoTerminar(); return; }
   if(!('speechSynthesis' in window)){ if(aoTerminar)aoTerminar(); return; }
@@ -722,6 +734,7 @@ function mostrarDesafio(){
     html+='<h2 style="color:#9e2a2b">'+dd.titulo+'</h2>';
     html+='<div class="regra-box">'+dd.texto+'</div>';
     if(dd.diagrama) html+=diagramaConexao(dd.diagrama.f1, dd.diagrama.f2, dd.diagrama.rep, dd.diagrama.res, dd.diagrama.pron);
+    html+='<div>'+botaoOuvir()+'</div>';
     html+='<div id="navarea"></div>';
     card.innerHTML=html;
     var nav=document.getElementById("navarea"), ultimo=(indiceAtual===total-1);
@@ -735,7 +748,7 @@ function mostrarDesafio(){
   if(dd.tipo==="spot"){ html+=montarSpot(dd); card.innerHTML=html; atualizarComboBar(); narrarDesafio(dd); return; }
   if(dd.tipo==="build"){ html+=montarBuild(dd); card.innerHTML=html; buildRedesenhar(); atualizarComboBar(); narrarDesafio(dd); return; }
   html+='<div class="enunciado-q">'+dd.frase.replace("___",'<span class="lacuna">?</span>')+'</div>';
-  if(dd.fala) html+='<div><button class="btn-falar" onclick="falar(\''+dd.fala.replace(/'/g,"")+'\')">🔊 Listen</button></div>';
+  html+='<div>'+botaoOuvir()+'</div>';
   html+='<div class="options">';
   for(var i=0;i<dd.opcoes.length;i++) html+='<button class="opt" id="opt'+i+'" onclick="respEscolha('+i+')">'+dd.opcoes[i]+'</button>';
   html+='</div>';
@@ -744,14 +757,23 @@ function mostrarDesafio(){
   atualizarComboBar();
   narrarDesafio(dd);
 }
+var _ultimaNarracao="";
+function textoDesafio(dd){
+  if(!dd) return "";
+  if(dd.fala) return dd.fala;
+  if(dd.enunciado) return dd.enunciado;
+  if(dd.texto) return dd.texto;
+  if(dd.traducao) return dd.traducao;
+  if(dd.frase) return (""+dd.frase).replace(/_+/g," blank ");
+  return "";
+}
 function narrarDesafio(dd){
-  if(!dd) return;
-  var txt="";
-  if(dd.fala) txt=dd.fala;
-  else if(dd.enunciado) txt=dd.enunciado;
-  else if(dd.texto) txt=dd.texto;
-  else if(dd.frase) txt=(""+dd.frase).replace(/_+/g," blank ");
+  var txt=textoDesafio(dd); _ultimaNarracao=txt;
   if(txt) setTimeout(function(){ falar(txt); }, 350);
+}
+function repetirNarracao(){ if(_ultimaNarracao) falar(_ultimaNarracao); }
+function botaoOuvir(){
+  return '<button class="btn-ouvir pulsa" onclick="repetirNarracao()">🔊 Ouvir de novo</button>';
 }
 function atualizarComboBar(){
   var cb=document.getElementById("comboBar"); if(!cb)return;
@@ -803,7 +825,7 @@ function proximo(){ indiceAtual++; mostrarDesafio(); }
 function montarSpot(dd){
   var h='<div class="enunciado-q">A frase abaixo está certa ou errada?</div>';
   h+='<div class="se-frase">"'+dd.frase+'"</div>';
-  if(dd.fala) h+='<div><button class="btn-falar" onclick="falar(\''+dd.fala.replace(/'/g,"")+'\')">🔊 Listen</button></div>';
+  h+='<div>'+botaoOuvir()+'</div>';
   h+='<div class="se-btns"><button class="opt" id="optC" onclick="respSpot(true)">✓ Correct</button><button class="opt" id="optW" onclick="respSpot(false)">✗ Wrong</button></div>';
   h+='<div class="feedback" id="fb"></div><div id="navarea"></div>';
   return h;
@@ -829,8 +851,9 @@ function montarBuild(dd){
   buildMontado=[]; buildPool=[];
   var arr=embaralhar(dd.palavras.slice());
   for(var i=0;i<arr.length;i++) buildPool.push({t:arr[i], __usada:false});
-  var h='<div class="build-alvo">🔨 '+dd.dica2+'</div>';
+  var h='<div class="build-alvo">🔨 '+dd.dica2+'</div><div class="build-instr">Arraste as palavras para a linha (ou toque nelas)</div>';
   h+='<div class="enunciado-q" style="font-size:15px;color:#888">'+dd.traducao+'</div>';
+  h+='<div>'+botaoOuvir()+'</div>';
   h+='<div class="build-linha" id="buildLinha"><span class="build-vazio">Toque nas palavras na ordem certa</span></div>';
   h+='<div class="build-pool" id="buildPool"></div>';
   h+='<div><button class="nav-btn" onclick="buildConferir()">Check ✓</button> <button class="nav-btn ghost" onclick="buildLimpar()">Clear</button></div>';
@@ -839,12 +862,33 @@ function montarBuild(dd){
 }
 function buildRedesenhar(){
   var linha=document.getElementById("buildLinha"), pool=document.getElementById("buildPool"); if(!linha||!pool)return;
-  if(buildMontado.length===0){ linha.innerHTML='<span class="build-vazio">Toque nas palavras na ordem certa</span>'; }
+  if(buildMontado.length===0){ linha.innerHTML='<span class="build-vazio">Arraste as palavras na ordem certa (ou toque)</span>'; }
   else { var h=''; for(var i=0;i<buildMontado.length;i++){ h+='<button class="build-peca" onclick="buildRemover('+i+')">'+buildMontado[i]+'</button>'; } linha.innerHTML=h; }
-  var ph=''; for(var j=0;j<buildPool.length;j++){ var usada=buildPool[j].__usada?' usada':''; ph+='<button class="build-palavra'+usada+'" onclick="buildAdd('+j+')">'+buildPool[j].t+'</button>'; }
+  var ph=''; for(var j=0;j<buildPool.length;j++){ var usada=buildPool[j].__usada?' usada':'';
+    ph+='<button class="build-palavra'+usada+'" draggable="true" data-bidx="'+j+'" onclick="buildAdd('+j+')" ondragstart="buildDragStart(event,'+j+')">'+buildPool[j].t+'</button>'; }
   pool.innerHTML=ph;
+  linha.setAttribute("ondragover","buildDragOver(event)");
+  linha.setAttribute("ondrop","buildDrop(event)");
+  instalarTouchBuild();
 }
-function buildAdd(j){ if(respondeu)return; if(buildPool[j].__usada)return; somClique(); buildPool[j].__usada=true; buildMontado.push(buildPool[j].t); buildRedesenhar(); }
+var _bDrag=-1;
+function buildDragStart(ev,j){ _bDrag=j; if(ev.dataTransfer){ ev.dataTransfer.effectAllowed="move"; try{ev.dataTransfer.setData("text","x");}catch(e){} } }
+function buildDragOver(ev){ if(ev.preventDefault)ev.preventDefault(); return false; }
+function buildDrop(ev){ if(ev.preventDefault)ev.preventDefault(); if(_bDrag>=0){ buildAdd(_bDrag); _bDrag=-1; } return false; }
+function instalarTouchBuild(){
+  var pool=document.getElementById("buildPool"), linha=document.getElementById("buildLinha"); if(!pool||!linha)return;
+  var pecas=pool.getElementsByClassName("build-palavra");
+  for(var i=0;i<pecas.length;i++){ (function(btn){
+    btn.ontouchstart=function(e){ btn.setAttribute("data-touch","1"); };
+    btn.ontouchend=function(e){
+      var t=e.changedTouches?e.changedTouches[0]:null; if(!t){return;}
+      var el=document.elementFromPoint(t.clientX,t.clientY);
+      var dentro=false; var p=el; while(p){ if(p===linha){dentro=true;break;} p=p.parentNode; }
+      if(dentro){ if(e.preventDefault)e.preventDefault(); var j=parseInt(btn.getAttribute("data-bidx"),10); if(!isNaN(j))buildAdd(j); }
+    };
+  })(pecas[i]); }
+}
+function buildAdd(j){ if(respondeu)return; if(j==null||!buildPool[j])return; if(buildPool[j].__usada)return; somClique(); buildPool[j].__usada=true; buildMontado.push(buildPool[j].t); buildRedesenhar(); }
 function buildRemover(i){ if(respondeu)return; somClique(); var palavra=buildMontado[i]; buildMontado.splice(i,1);
   for(var j=0;j<buildPool.length;j++){ if(buildPool[j].t===palavra && buildPool[j].__usada){ buildPool[j].__usada=false; break; } } buildRedesenhar(); }
 function buildLimpar(){ if(respondeu)return; somClique(); buildMontado=[]; for(var j=0;j<buildPool.length;j++)buildPool[j].__usada=false; buildRedesenhar(); }
