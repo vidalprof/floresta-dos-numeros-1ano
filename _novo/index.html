@@ -255,7 +255,7 @@
 .gancho-fala img{-webkit-box-flex:0;-webkit-flex:none;flex:none;margin-right:8px;}
 .gancho-txt{color:#7a5b00;font-size:14px;font-weight:bold;text-align:left;line-height:1.35;}
 </style>
-<style>.qc-ficha{cursor:-webkit-grab;cursor:grab;}.qc-ficha:active{cursor:-webkit-grabbing;cursor:grabbing;}.qc-ordem.sobre{outline:3px dashed #f4b400;outline-offset:3px;background:rgba(244,180,0,.12);border-radius:14px;}</style>
+<style>.qc-ficha{cursor:-webkit-grab;cursor:grab;-webkit-user-select:none;-moz-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;}.qc-ficha:active{cursor:-webkit-grabbing;cursor:grabbing;}.qc-arrastando{opacity:.92;-webkit-box-shadow:0 8px 18px rgba(0,0,0,.35);box-shadow:0 8px 18px rgba(0,0,0,.35);-webkit-transform:scale(1.06);transform:scale(1.06);}.qc-ordem{min-height:56px;}.qc-ordem.sobre{outline:3px dashed #f4b400;outline-offset:3px;background:rgba(244,180,0,.12);border-radius:14px;}</style>
 </head>
 <body>
 <div id="ceu"></div>
@@ -1062,12 +1062,24 @@ if(typeof FASES!=="undefined"){ FASES.memoria=_memoriaFase; }
 
 /* QUEBRA-CABECA - ordenar valores do menor para o maior (alivio ludico) */
 var qcValores=[];var qcEscolhidos=[];
-var _qcDrag=null;
-function qcDragStart(e,v){ _qcDrag=v; try{ e.dataTransfer.setData('text/plain',''+v); e.dataTransfer.effectAllowed='move'; }catch(_e){} }
-function qcDragEnd(e){ _qcDrag=null; var z=document.querySelector('.qc-ordem'); if(z)z.className='qc-ordem'; }
-function qcDragOver(e){ if(e.preventDefault)e.preventDefault(); try{ e.dataTransfer.dropEffect='move'; }catch(_e){} var z=e.currentTarget; if(z&&(''+z.className).indexOf('sobre')<0)z.className='qc-ordem sobre'; return false; }
-function qcDragLeave(e){ var z=e.currentTarget; if(z)z.className='qc-ordem'; }
-function qcDrop(e){ if(e.preventDefault)e.preventDefault(); if(e.stopPropagation)e.stopPropagation(); var v=_qcDrag; if(v===null||v===undefined){ try{ v=parseFloat(e.dataTransfer.getData('text/plain')); }catch(_e){} } var z=e.currentTarget; if(z)z.className='qc-ordem'; if(v!==null&&v!==undefined&&!isNaN(v)) escolherQC(v); _qcDrag=null; return false; }
+var _qcDragV=null,_qcDragEl=null,_qcClone=null,_qcMoved=false,_qcSX=0,_qcSY=0;
+function _qcPt(e){ if(e.touches&&e.touches.length)return{x:e.touches[0].clientX,y:e.touches[0].clientY}; if(e.changedTouches&&e.changedTouches.length)return{x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY}; return{x:e.clientX,y:e.clientY}; }
+function qcPointerDown(e,v,el){ _qcDragV=v; _qcDragEl=el; _qcMoved=false; var p=_qcPt(e); _qcSX=p.x; _qcSY=p.y;
+  document.addEventListener('mousemove',qcPointerMove,false); document.addEventListener('mouseup',qcPointerUp,false);
+  document.addEventListener('touchmove',qcPointerMove,{passive:false}); document.addEventListener('touchend',qcPointerUp,false); }
+function qcPointerMove(e){ if(_qcDragV===null)return; var p=_qcPt(e); var dx=p.x-_qcSX,dy=p.y-_qcSY;
+  if(!_qcMoved&&(Math.abs(dx)>6||Math.abs(dy)>6)){ _qcMoved=true; _qcClone=_qcDragEl.cloneNode(true); _qcClone.className='qc-ficha qc-arrastando';
+    _qcClone.style.position='fixed'; _qcClone.style.zIndex='9999'; _qcClone.style.pointerEvents='none'; _qcClone.style.margin='0'; document.body.appendChild(_qcClone); _qcDragEl.style.opacity='0.35'; }
+  if(_qcMoved){ if(e.preventDefault)e.preventDefault(); _qcClone.style.left=(p.x-34)+'px'; _qcClone.style.top=(p.y-22)+'px';
+    var z=document.querySelector('.qc-ordem'); if(z){ var r=z.getBoundingClientRect(); z.className=(p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom)?'qc-ordem sobre':'qc-ordem'; } } }
+function qcPointerUp(e){ document.removeEventListener('mousemove',qcPointerMove,false); document.removeEventListener('mouseup',qcPointerUp,false);
+  document.removeEventListener('touchmove',qcPointerMove,false); document.removeEventListener('touchend',qcPointerUp,false);
+  var v=_qcDragV, moved=_qcMoved, over=false;
+  if(_qcClone&&_qcClone.parentNode)_qcClone.parentNode.removeChild(_qcClone); if(_qcDragEl)_qcDragEl.style.opacity='';
+  if(moved){ var p=_qcPt(e); var z=document.querySelector('.qc-ordem'); if(z){ var r=z.getBoundingClientRect(); z.className='qc-ordem'; if(p.x>=r.left&&p.x<=r.right&&p.y>=r.top&&p.y<=r.bottom)over=true; } }
+  _qcClone=null; _qcDragEl=null; _qcDragV=null; _qcMoved=false;
+  if(v===null||v===undefined)return;
+  if(moved&&over){ escolherQC(v); } }
 function iniciarQuebra(){
   somClique(); faseAtual="quebra"; treinoAtivo=false;
   var todos=[0.25,0.50,1,2,5,10,20,50,100];
@@ -1084,7 +1096,7 @@ function desenharQuebra(){
   html+='<div class="hint">Arraste do MENOR para o MAIOR valor! (ou toque)</div>';
   html+='<div><button class="btn-falar" onclick="falar(\'Arraste as moedas e notas em ordem, do menor valor para o maior. Se preferir, pode tocar nelas.\')">\uD83D\uDD0A Ouvir</button></div>';
   // slots da ordem montada
-  html+='<div class="qc-ordem" ondragover="qcDragOver(event)" ondragleave="qcDragLeave(event)" ondrop="qcDrop(event)">';
+  html+='<div class="qc-ordem">';
   for(var s=0;s<qcValores.length;s++){
     if(qcEscolhidos[s]!==undefined){ html+='<span class="qc-slot cheio">'+reaisQC(qcEscolhidos[s])+'</span>'; }
     else { html+='<span class="qc-slot">?</span>'; }
@@ -1096,7 +1108,7 @@ function desenharQuebra(){
   for(var i=0;i<mostra.length;i++){
     var v=mostra[i];
     var usado=false; for(var u=0;u<qcEscolhidos.length;u++){ if(qcEscolhidos[u]===v){usado=true;break;} }
-    if(!usado){ html+='<button class="qc-ficha" draggable="true" ondragstart="qcDragStart(event,'+v+')" ondragend="qcDragEnd(event)" onclick="escolherQC('+v+')">'+reaisQC(v)+'</button>'; }
+    if(!usado){ html+='<button class="qc-ficha" onmousedown="qcPointerDown(event,'+v+',this)" ontouchstart="qcPointerDown(event,'+v+',this)" onclick="escolherQC('+v+')">'+reaisQC(v)+'</button>'; }
   }
   html+='</div>';
   html+='<div class="feedback" id="fb"></div><div id="navarea"></div>';
