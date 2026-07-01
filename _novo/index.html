@@ -450,20 +450,20 @@ function escolherVozPt(){ if(_vozPt)return _vozPt; if(!('speechSynthesis' in win
     if(p>melhorP){melhorP=p;melhor=v;} }
   _vozPt=melhor; return melhor; }
 function falar(texto, aoTerminar){ if(!SOM_LIGADO){ if(aoTerminar)aoTerminar(); return; } if(!('speechSynthesis' in window)){ if(aoTerminar)aoTerminar(); return; }
-  try{ window.speechSynthesis.cancel(); var limpo=limparFala(texto);
-    var brutas=limpo.split("|"); var partes=[];
-    for(var p=0;p<brutas.length;p++){ var seg=brutas[p]; var atual="";
-      for(var c=0;c<seg.length;c++){ atual+=seg.charAt(c); var ch=seg.charAt(c);
-        if(ch==="."||ch==="!"||ch==="?"||ch===":"){ if(atual.replace(/\s/g,"").length>0)partes.push(atual); atual=""; } }
-      if(atual.replace(/\s/g,"").length>0) partes.push(atual); }
-    if(partes.length===0) partes=[limpo];
-    var voz=escolherVozPt(); var idx=0;
-    function proxima(){ if(idx>=partes.length){ if(aoTerminar)aoTerminar(); return; }
-      var frase=partes[idx]; if(frase.replace(/[\s.]/g,"").length<1){ idx++; proxima(); return; }
-      var u=new SpeechSynthesisUtterance(frase); u.lang='pt-BR'; u.rate=0.92; u.pitch=1.08;
-      if(voz)u.voice=voz; u.onend=function(){ idx++; setTimeout(proxima,180); };
-      window.speechSynthesis.speak(u); }
-    proxima();
+  try{ window.speechSynthesis.cancel();
+    /* Fala o texto INTEIRO numa unica locucao. Antes o texto era quebrado em
+       varios pedacos encadeados por onend; quando o navegador nao disparava o
+       onend (bug conhecido do Chrome), a corrente parava no meio e a fala saia
+       incompleta. Como aqui e tudo em portugues, uma locucao so ja resolve.
+       O "|" (usado como pausa) vira virgula. Um watchdog garante o callback. */
+    var limpo=limparFala(texto).replace(/\s*\|\s*/g,", ").replace(/\s{2,}/g," ").replace(/^[\s,]+|[\s,]+$/g,"");
+    if(!limpo || limpo.replace(/[\s.,;:]/g,"").length<1){ if(aoTerminar)aoTerminar(); return; }
+    var voz=escolherVozPt();
+    var terminou=false; function fim(){ if(terminou)return; terminou=true; if(aoTerminar)aoTerminar(); }
+    var u=new SpeechSynthesisUtterance(limpo); u.lang='pt-BR'; u.rate=0.92; u.pitch=1.08;
+    if(voz)u.voice=voz; u.onend=fim; u.onerror=fim;
+    setTimeout(fim, Math.max(4000, limpo.length*95 + 1500));
+    window.speechSynthesis.speak(u);
   }catch(e){ if(aoTerminar)aoTerminar(); } }
 if('speechSynthesis' in window){ try{ window.speechSynthesis.onvoiceschanged=function(){ _vozPt=null; escolherVozPt(); }; }catch(e){} }
 var _ultimaNarracao="";
