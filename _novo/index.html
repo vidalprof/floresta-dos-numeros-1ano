@@ -812,18 +812,18 @@ function cabecalhoFase(){
 function falarComando(){ falar(MASC_FALA[faseAtual].replace(/<[^>]+>/g,"").replace(/🐰/g,"")); }
 
 var CURIOSIDADES={
-  sombra:"Voce sabia? Toda coisa tem a sua sombra quando o sol brilha nela!",
-  contar:"Voce sabia? Contar com os dedinhos ajuda muito a aprender os numeros!",
-  ligar:"Voce sabia? Achar coisas iguais deixa o seu olhinho bem espertinho!",
-  pares:"Voce sabia? Algumas coisas combinam, como a chuva e o guarda-chuva!",
-  sequencia:"Voce sabia? Descobrir o que vem depois e coisa de gente inteligente!",
-  memoria:"Voce sabia? Brincar de memoria deixa a sua cabecinha super forte!",
-  diferente:"Voce sabia? Olhar com atencao ajuda a achar o que e diferente!",
-  tamanho:"Voce sabia? Existe coisa grande, media e pequena. Como voce cresce cada dia!",
-  cor:"Voce sabia? O arco-iris tem sete cores lindas no ceu!",
-  forma:"Voce sabia? A roda do carro e um circulo, e a casa parece um quadrado!",
-  labirinto:"Voce sabia? Achar o caminho certo e coisa de explorador corajoso!",
-  quebra:"Voce sabia? Juntar as pecinhas certas monta um desenho lindo!"
+  sombra:"Você sabia? Toda coisa tem a sua sombra quando o sol brilha nela!",
+  contar:"Você sabia? Contar com os dedinhos ajuda muito a aprender os numeros!",
+  ligar:"Você sabia? Achar coisas iguais deixa o seu olhinho bem espertinho!",
+  pares:"Você sabia? Algumas coisas combinam, como a chuva e o guarda-chuva!",
+  sequencia:"Você sabia? Descobrir o que vem depois e coisa de gente inteligente!",
+  memoria:"Você sabia? Brincar de memoria deixa a sua cabecinha super forte!",
+  diferente:"Você sabia? Olhar com atencao ajuda a achar o que e diferente!",
+  tamanho:"Você sabia? Existe coisa grande, media e pequena. Como voce cresce cada dia!",
+  cor:"Você sabia? O arco-iris tem sete cores lindas no ceu!",
+  forma:"Você sabia? A roda do carro e um circulo, e a casa parece um quadrado!",
+  labirinto:"Você sabia? Achar o caminho certo e coisa de explorador corajoso!",
+  quebra:"Você sabia? Juntar as pecinhas certas monta um desenho lindo!"
 };
 function curiosidadeDe(ch){ return CURIOSIDADES[ch]||""; }
 var GANCHOS={
@@ -831,21 +831,21 @@ var GANCHOS={
   contar:"Que demais! Mais um brilho na estrela! Bora atravessar a ponte do arco-iris ligando as coisas iguais!",
   ligar:"Olho espertinho! A estrela brilha cada vez mais! Vamos ate a casinha de cogumelo ver o que combina!",
   pares:"Que dupla magica! Olha a estrela brilhando! O que sera que vem agora no caminho encantado?",
-  sequencia:"Voce descobriu! A estrela ta ficando linda! Vamos abrir o bau da memoria?",
+  sequencia:"Você descobriu! A estrela ta ficando linda! Vamos abrir o bau da memoria?",
   memoria:"Que memoria magica! Mais brilho pra estrela! Agora vamos achar o que e diferente com a lupa!",
   diferente:"Achou tudo! A estrela brilha forte! Bora ver o que e grande e o que e pequeno?",
   tamanho:"Muito bem! Quase la! Vamos pintar o mundo com as cores do arco-iris?",
   cor:"Que colorido magico! A estrela ta quase cheia de brilho! Bora conhecer as formas?",
-  forma:"Voce sabe as formas! So mais um pouquinho! Vamos achar o caminho no labirinto?",
+  forma:"Você sabe as formas! So mais um pouquinho! Vamos achar o caminho no labirinto?",
   labirinto:"Chegou la, corajoso! A estrela ta radiante! So falta montar o quebra-cabeca do tesouro!",
-  quebra:"Voce e magico! A Estrela Magica brilhou toda! Vamos ver o seu tesouro!"
+  quebra:"Você e magico! A Estrela Mágica brilhou toda! Vamos ver o seu tesouro!"
 };
 function ganchoDe(ch){ return GANCHOS[ch]||"Vamos para a proxima brincadeira!"; }
 var NIVEIS=[
   {min:0, nome:"Novata", emoji:"\u2b50", img:"NIVEL1"},
   {min:40, nome:"Estrelinha", emoji:"\u2b50", img:"NIVEL2"},
   {min:100, nome:"Brilhante", emoji:"\u2b50", img:"NIVEL3"},
-  {min:180, nome:"Magica", emoji:"\u2b50", img:"NIVEL4"},
+  {min:180, nome:"Mágica", emoji:"\u2b50", img:"NIVEL4"},
   {min:280, nome:"Super Estrela", emoji:"\u2b50", img:"NIVEL5"}
 ];
 function emblemaNivel(nv, tam){ tam=tam||60;
@@ -858,11 +858,11 @@ function checarNivel(){ var novo=nivelDe(score); if(novo>nivelAtualIdx){ nivelAt
 function subiuDeNivel(nv){
   try{
     var box=document.createElement("div"); box.className="levelup-pop";
-    box.innerHTML=emblemaNivel(nv,58)+'<div class="lu-txt">Voce subiu!<br><b>'+nv.nome+'</b></div>';
+    box.innerHTML=emblemaNivel(nv,58)+'<div class="lu-txt">Você subiu!<br><b>'+nv.nome+'</b></div>';
     document.body.appendChild(box);
     if(typeof confete==="function")confete(70);
     if(typeof somFanfarra==="function")somFanfarra();
-    falar("Voce subiu de nivel! Agora voce e "+nv.nome+"!");
+    falar("Você subiu de nivel! Agora voce e "+nv.nome+"!");
     setTimeout(function(){ if(box.parentNode)box.parentNode.removeChild(box); }, 3000);
   }catch(e){}
 }
@@ -883,7 +883,7 @@ function fimFase(){
   html+='<div class="big-score">\u2b50 '+score+'</div>';
   if(medal){ html+='<div class="premio-ganho"><div style="font-size:17px;color:#a020c0;font-weight:bold;margin-bottom:6px">\uD83C\uDF81 Voc\u00EA ganhou uma medalha!</div><img src="'+medal+'" alt="Medalha" class="medalha-revela" /></div>'; }
   var cur=curiosidadeDe(faseAtual);
-  if(cur) html+='<div class="curiosidade"><b>\u2b50 Voce sabia?</b><br>'+cur+'</div>';
+  if(cur) html+='<div class="curiosidade"><b>\u2b50 Você sabia?</b><br>'+cur+'</div>';
   if(prox){
     html+='<div class="gancho-fala">'+mascote(70,"explicando")+'<span class="gancho-txt">'+ganchoDe(faseAtual)+'</span></div>';
     html+='<button class="nav-btn btn-grande pulsa" onclick="iniciarFase(\''+prox+'\')">Continuar \u279C</button>';
@@ -892,7 +892,7 @@ function fimFase(){
   }
   html+='<br><button class="nav-btn ghost" onclick="telaMenu()">\uD83C\uDFE0 Mapa</button>';
   card.innerHTML=html; somFanfarra(); confete(100);
-  falar("Muito bem! Voce ganhou uma medalha! "+(cur?cur+" ":"")+(prox?ganchoDe(faseAtual):""));
+  falar("Muito bem! Você ganhou uma medalha! "+(cur?cur+" ":"")+(prox?ganchoDe(faseAtual):""));
 }
 function grandeFinal(){
   if(typeof confete==="function"){ confete(140); setTimeout(function(){confete(90);},500); setTimeout(function(){confete(90);},1100); }
@@ -907,7 +907,7 @@ function grandeFinal(){
   html+='<button class="nav-btn ghost" onclick="telaMenu()">\uD83C\uDFE0 Mapa</button>';
   html+='</div>';
   card.innerHTML=html; if(typeof somFanfarra==="function")somFanfarra();
-  falar("Parabens "+nome+"! Voce devolveu todo o brilho da Estrela Magica e achou o tesouro! A Lila esta muito orgulhosa de voce!");
+  falar("Parabéns "+nome+"! Você devolveu todo o brilho da Estrela Mágica e achou o tesouro! A Lila esta muito orgulhosa de voce!");
 }
 
 /* ===== FASE 1: SOMBRAS (arrastar objeto -> sombra; toque de reserva) ===== */
@@ -1560,8 +1560,8 @@ function moverLab(dl, dc){
       setTimeout(carregarLabirinto, 1500);
     } else {
       registrar("labirinto",true); comemorar();
-      var fb2=document.getElementById("fb"); if(fb2){fb2.className="feedback ok"; fb2.innerHTML="\uD83C\uDF89 Voce pegou todas as cenouras! Muito bem!";}
-      falar("Voce conseguiu! A Lila pegou todas as cenouras! Voce e demais!");
+      var fb2=document.getElementById("fb"); if(fb2){fb2.className="feedback ok"; fb2.innerHTML="\uD83C\uDF89 Você pegou todas as cenouras! Muito bem!";}
+      falar("Você conseguiu! A Lila pegou todas as cenouras! Você e demais!");
       concluirFase();
     }
   } else {
@@ -1686,13 +1686,13 @@ function telaInicio(){
     html+='<button class="nav-btn btn-grande" onclick="telaMenu()">Continuar ➜</button><br><button class="nav-btn ghost" onclick="reiniciarTudo()">🔄 Começar do zero</button>';
   } else {
     html+='<div class="bounce">'+mascote(150)+'</div>';
-    html+='<p class="lead">Oi! Eu sou a <b>Lila</b>, a coelhinha magica! \uD83D\uDC30<br>Perdi o brilho da minha <b>Estrela Magica</b>! Cada brincadeira que voce fizer devolve um pouquinho do brilho dela. No fim, achamos o <b>tesouro</b> juntos! Vamos?</p>';
+    html+='<p class="lead">Oi! Eu sou a <b>Lila</b>, a coelhinha mágica! \uD83D\uDC30<br>Perdi o brilho da minha <b>Estrela Mágica</b>! Cada brincadeira que voce fizer devolve um pouquinho do brilho dela. No fim, achamos o <b>tesouro</b> juntos! Vamos?</p>';
     html+='<input class="inp-nome" id="inpNome" type="text" maxlength="20" placeholder="Seu nome" />';
     html+='<br><button class="nav-btn btn-grande" onclick="comecarComNome()">\u25B6 Come\u00e7ar!</button>';
   }
   card.innerHTML=html;
   var inp=document.getElementById("inpNome"); if(inp){ inp.onkeydown=function(e){if(e.keyCode===13)comecarComNome();}; inp.focus(); }
-  if(!(tem && ALUNO)) setTimeout(function(){ falar("Oi! Eu sou a Lila, a coelhinha magica! Perdi o brilho da minha estrela magica. Cada brincadeira devolve um pouquinho do brilho dela. No fim, achamos o tesouro juntos! Diga o seu nome para comecar!"); }, 400);
+  if(!(tem && ALUNO)) setTimeout(function(){ falar("Oi! Eu sou a Lila, a coelhinha mágica! Perdi o brilho da minha estrela magica. Cada brincadeira devolve um pouquinho do brilho dela. No fim, achamos o tesouro juntos! Diga o seu nome para comecar!"); }, 400);
 }
 function comecarComNome(){ var inp=document.getElementById("inpNome");
   ALUNO=(inp&&inp.value? inp.value.replace(/[<>]/g,'').trim():"")||"Amiguinho"; somClique(); salvar(); telaMenu();
