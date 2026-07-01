@@ -624,19 +624,24 @@ function montarCeu(){ var ceu=document.getElementById("ceu"); if(!ceu)return;
 /* ===== OBJETOS ===== */
 /* chave : {nome, cor, forma} para classificações */
 var OBJETOS={
-  apple:{nome:"maçã", cor:"vermelho", forma:"redondo"},
-  sun:{nome:"sol", cor:"amarelo", forma:"redondo"},
-  fish:{nome:"peixe", cor:"azul", forma:"outro"},
-  tree:{nome:"árvore", cor:"verde", forma:"triângulo"},
-  butterfly:{nome:"borboleta", cor:"laranja", forma:"outro"},
-  grapes:{nome:"uvas", cor:"roxo", forma:"redondo"},
-  car:{nome:"carro", cor:"vermelho", forma:"quadrado"},
-  duck:{nome:"patinho", cor:"amarelo", forma:"outro"},
-  balloon:{nome:"balão", cor:"azul", forma:"redondo"},
-  frog:{nome:"sapo", cor:"verde", forma:"outro"},
-  flower:{nome:"flor", cor:"rosa", forma:"redondo"},
-  teddy:{nome:"ursinho", cor:"marrom", forma:"outro"}
+  apple:{nome:"maçã", p:"maçãs", g:"a", cor:"vermelho", forma:"redondo"},
+  sun:{nome:"sol", p:"sóis", g:"o", cor:"amarelo", forma:"redondo"},
+  fish:{nome:"peixe", p:"peixes", g:"o", cor:"azul", forma:"outro"},
+  tree:{nome:"árvore", p:"árvores", g:"a", cor:"verde", forma:"triângulo"},
+  butterfly:{nome:"borboleta", p:"borboletas", g:"a", cor:"laranja", forma:"outro"},
+  grapes:{nome:"uva", p:"uvas", g:"a", cor:"roxo", forma:"redondo"},
+  car:{nome:"carro", p:"carros", g:"o", cor:"vermelho", forma:"quadrado"},
+  duck:{nome:"patinho", p:"patinhos", g:"o", cor:"amarelo", forma:"outro"},
+  balloon:{nome:"balão", p:"balões", g:"o", cor:"azul", forma:"redondo"},
+  frog:{nome:"sapo", p:"sapos", g:"o", cor:"verde", forma:"outro"},
+  flower:{nome:"flor", p:"flores", g:"a", cor:"rosa", forma:"redondo"},
+  teddy:{nome:"ursinho", p:"ursinhos", g:"o", cor:"marrom", forma:"outro"}
 };
+/* artigo/pergunta por genero e plural (para nomear objetos com concordancia) */
+function artObj(ch){ var o=OBJETOS[ch]; return o&&o.g==="a"?"a":"o"; }
+function artPlur(ch){ var o=OBJETOS[ch]; return o&&o.g==="a"?"as":"os"; }
+function plObj(ch){ var o=OBJETOS[ch]; return o?(o.p||o.nome):""; }
+function quantObj(ch){ var o=OBJETOS[ch]; return (o&&o.g==="a"?"Quantas":"Quantos")+" "+plObj(ch); }
 var CHAVES=["apple","sun","fish","tree","butterfly","grapes","car","duck","balloon","frog","flower","teddy"];
 
 /* ===== FASES ===== */
@@ -950,7 +955,7 @@ function sombraAcertou(ch){
   var objEl=document.getElementById("obj_"+ch); if(objEl) objEl.className="item-fig ok";
   if(alvo){ alvo.className="alvo-sombra ok"; alvo.innerHTML=figura(ch,80); } /* revela o objeto colorido na sombra */
   sombraSel=null; sombraFeitos++;
-  var fb=document.getElementById("fb"); if(fb){ fb.className="feedback ok"; fb.innerHTML="🎉 Isso! É a "+OBJETOS[ch].nome+"!"; }
+  var fb=document.getElementById("fb"); if(fb){ fb.className="feedback ok"; fb.innerHTML="🎉 Isso! É "+artObj(ch)+" "+OBJETOS[ch].nome+"!"; }
   if(sombraFeitos>=sombraObjs.length){ concluirFase(); }
 }
 function sombraErrou(ch){
@@ -987,7 +992,7 @@ function ligarPica(i){
   if(chA===ch){ /* par igual */
     registrar("ligar",true); addEstrela(10); somAcerto(); festejarAcerto(); confete(40);
     elA.className="item-fig ok"; el.className="item-fig ok"; ligarSel=null; ligarFeitos++;
-    var fb=document.getElementById("fb"); fb.className="feedback ok"; fb.innerHTML="🎉 Iguais! Duas "+OBJETOS[ch].nome+"!";
+    var fb=document.getElementById("fb"); fb.className="feedback ok"; fb.innerHTML="🎉 Iguais! "+(OBJETOS[ch].g==="a"?"Duas":"Dois")+" "+OBJETOS[ch].p+"!";
     if(ligarFeitos===ligarTotal){ concluirFase(); }
   } else { registrar("ligar",false); somErro(); registrarStreak(false); el.className="item-fig no";
     var fb2=document.getElementById("fb"); fb2.className="feedback no"; fb2.innerHTML="💡 Não são iguais. Tente!";
@@ -1267,7 +1272,7 @@ function novaContagem(){
   html+='<div class="area-jogo"><div class="grid-itens" style="min-height:110px">';
   for(var i=0;i<n;i++){ html+='<div class="item-fig" id="cItem'+i+'" style="cursor:default">'+figura(ch,68)+'</div>'; }
   html+='</div>';
-  html+='<div style="font-weight:bold;color:#7b4fc4;margin:8px 0 4px">Conte os objetos. Quantos são? Toque no número:</div>';
+  html+='<div style="font-weight:bold;color:#7b4fc4;margin:8px 0 4px">'+quantObj(ch)+' você vê? Toque no número:</div>';
   html+='<div class="grid-itens">';
   var ops=[n]; while(ops.length<3){ var c=1+Math.floor(Math.random()*5); if(ops.indexOf(c)<0)ops.push(c); }
   ops=embaralhar(ops);
@@ -1275,7 +1280,7 @@ function novaContagem(){
   html+='</div></div><div class="feedback" id="fb"></div>';
   card.innerHTML=html;
   respondeu=false;
-  falar("Conte os objetos. Quantos são?");
+  falar("Conte "+artPlur(ch)+" "+plObj(ch)+"! "+quantObj(ch)+" você vê?");
 }
 function contarResponde(val, el){
   if(respondeu)return; somClique();
