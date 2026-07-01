@@ -721,7 +721,7 @@ FASES.caixa={ titulo:"Caixa Registradora", cor:"lv3", icone:"🛒", dica:"Rápid
 (function(){
   var d=[
     { tipo:"escolha", enunciado:"Onde a caneta é mais barata: Loja A R$ 4,50 ou Loja B R$ 3,90?", opcoes:embaralhar(["Loja B","Loja A","Mesmo preço"]), certa:"Loja B", explica:"R$ 3,90 é menos que R$ 4,50.", falar:"onde a caneta é mais barata, loja A com quatro e cinquenta ou loja B com três e noventa", bonus:true },
-    { tipo:"digite-reais", enunciado:"2 pacotes de R$ 6,50 ou 1 pacote grande de R$ 12,00? Quanto custam os 2 pacotes?", resposta:13, explica:"2 × R$ 6,50 = R$ 13,00. O grande (R$ 12) sai mais barato!", falar:"quanto custam dois pacotes de seis e cinquenta", bonus:true },
+    { tipo:"digite-reais", enunciado:"Quanto custam 2 pacotes de R$ 6,50 cada?", resposta:13, explica:"2 × R$ 6,50 = R$ 13,00.", bonus:true },
     { tipo:"escolha", enunciado:"Com R$ 30,00, dá para comprar um jogo de R$ 27,90?", opcoes:embaralhar(["Sim, e sobra troco","Não, falta dinheiro","Sim, exato"]), certa:"Sim, e sobra troco", explica:"Sobram R$ 2,10 de troco.", falar:"com trinta reais dá para comprar um jogo de vinte e sete e noventa", bonus:true },
     { tipo:"digite-reais", enunciado:"Promoção: leve 3 e pague 2. Cada item R$ 5,00. Quanto você paga por 3?", resposta:10, explica:"Paga 2 itens: 2 × R$ 5 = R$ 10,00.", falar:"leve três pague dois, cada item cinco reais", bonus:true },
     { tipo:"digite-reais", enunciado:"Um caderno custa R$ 8,00. Com R$ 50,00, quantos cadernos dá para comprar?", resposta:6, explica:"6 × R$ 8 = R$ 48. Dá para 6 cadernos (sobram R$ 2).", falar:"caderno de oito reais, quantos compro com cinquenta", bonus:true },
