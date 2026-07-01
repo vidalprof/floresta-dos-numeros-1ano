@@ -514,6 +514,7 @@ function limparFala(t){ if(!t)return ""; t=(""+t).replace(/<br\s*\/?>/gi," | ").
   t=t.replace(/\bso\b/gi,function(m){return m.charAt(0)==="S"?"S\u00F3":"s\u00F3";});
   t=t.replace(/\bla\b/gi,function(m){return m.charAt(0)==="L"?"L\u00E1":"l\u00E1";});
   t=t.replace(/\bta\b/gi,function(m){return m.charAt(0)==="T"?"T\u00E1":"t\u00E1";});
+  t=t.replace(/\bsera\b/gi,function(m){return m.charAt(0)==="S"?"Ser\u00E1":"ser\u00E1";});
   /* "esta" -> "est\u00e1" apenas como VERBO (seguido de ger\u00fandio/adjetivo/adv\u00e9rbio); nunca "esta ilha/fase/estrela" */
   t=t.replace(/\besta\b(?=\s+(?:brilhando|indo|super|muito|mais|aqui|quase|pront[ao]|chei[ao]|orgulhos[ao]|feliz|bem|cert[ao]|errad[ao]|faltando|chegando|voando|brincando|escondid[ao]|aces[ao]|apagad[ao]|lind[ao]|melhor|pertinho|quentinha|quentinho))/gi,function(m){return m.charAt(0)==="E"?"Est\u00E1":"est\u00E1";});
   t=t.replace(/\s*([,.!?:])\s*/g,"$1 ").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
