@@ -492,6 +492,7 @@ function limparFala(t){ if(!t)return ""; t=(""+t).replace(/<br\s*\/?>/gi," | ").
   t=t.replace(/\bvoces\b/gi,function(m){return m.charAt(0)==="V"?(m==="VOCES"?"VOC\u00CAS":"Voc\u00EAs"):"voc\u00EAs";});
   t=t.replace(/\bvoce\b/gi,function(m){return m.charAt(0)==="V"?(m==="VOCE"?"VOC\u00CA":"Voc\u00EA"):"voc\u00EA";});
   t=t.replace(/\bm([aá])gic([ao]s?)\b/gi,function(m,v,suf){var cap=(m.charAt(0)==="M");return (cap?"M":"m")+"\u00E1gic"+suf;});
+  t=t.replace(/\bba([uú])s?\b/gi,function(m){var cap=(m.charAt(0)==="B");var pl=(m.charAt(m.length-1)==="s"||m.charAt(m.length-1)==="S");return (cap?"B":"b")+"a\u00FA"+(pl?"s":"");});
   t=t.replace(/\s*([,.!?:])\s*/g,"$1 ").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
   if(t && !/[.!?]$/.test(t)) t=t+"."; return t; }
 var _vozPt=null;
@@ -636,7 +637,7 @@ var MASC_FALA={
   memoria:"Vire as cartas e ache os pares iguais!",
   diferente:"Olhe bem! Ache o objeto diferente dos outros e toque nele!",
   tamanho:"Coloque cada objeto na caixa certa: GRANDE ou pequeno!",
-  cor:"Separe os objetos pela COR! Arraste para a caixa da cor.",
+  cor:"Olhe a cor de cada objeto! Arraste ou toque cada um na caixa da cor certa.",
   forma:"Separe pela FORMA: redondo, quadrado ou triângulo!",
   labirinto:"Ajude a Lila a pegar a cenoura! Toque nas setas para andar. Mas cuidado com o monstrinho: escolha o caminho que NAO tem ele!",
   quebra:"Monte a figura! Arraste cada peça para o lugar dela."
