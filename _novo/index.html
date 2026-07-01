@@ -467,7 +467,7 @@ function falar(texto, aoTerminar){ if(!SOM_LIGADO){ if(aoTerminar)aoTerminar(); 
   }catch(e){ if(aoTerminar)aoTerminar(); } }
 if('speechSynthesis' in window){ try{ window.speechSynthesis.onvoiceschanged=function(){ _vozPt=null; escolherVozPt(); }; }catch(e){} }
 var _ultimaNarracao="";
-function narrarDesafio(dd){ if(!dd)return; var t=dd.falar||dd.enunciado||""; _ultimaNarracao=t; if(t) setTimeout(function(){ falar(t); }, 350); }
+function narrarDesafio(dd){ if(!dd)return; var t=dd.enunciado||dd.falar||""; _ultimaNarracao=t; if(t) setTimeout(function(){ falar(t); }, 350); }
 function repetirNarracao(){ if(_ultimaNarracao) falar(_ultimaNarracao); }
 function toggleSom(){ SOM_LIGADO=!SOM_LIGADO; if(!SOM_LIGADO&&'speechSynthesis' in window){try{window.speechSynthesis.cancel();}catch(e){}}
   var b=document.getElementById('btnSom'); if(b)b.innerHTML=SOM_LIGADO?'🔊':'🔇'; if(SOM_LIGADO)somClique(); }
@@ -855,7 +855,7 @@ function mostrarDesafio(){
   html+='<h2>'+iconeFase(faseAtual,30)+' '+fase.titulo+'</h2><div class="hint">💡 '+fase.dica+'</div>';
   html+='<div class="enunciado-q">'+dd.enunciado+'</div>';
   if(dd.money) html+=mostrarDinheiro(dd.money);
-  if(dd.falar) html+='<div><button class="btn-falar" onclick="repetirNarracao()">🔊 Ouvir de novo</button></div>';
+  if(dd.enunciado||dd.falar) html+='<div><button class="btn-falar" onclick="repetirNarracao()">🔊 Ouvir de novo</button></div>';
   if(dd.tipo==="escolha"){
     if(dd && !dd._mix && dd.opcoes && dd.opcoes.length>1){ dd._mix=true; dd.opcoes=embaralhar(dd.opcoes.slice()); }
     html+='<div class="options">';
@@ -1056,7 +1056,7 @@ function respExtra(val, idx, ch){
 /* JOGO DA MEMORIA - parear valor com escrita (alivio ludico) */
 var memPares=[];var memVirada=[];var memCertos=0;var memTrava=false;
 function proximaFase(atual){ for(var i=0;i<ORDEM.length-1;i++){ if(ORDEM[i]===atual) return ORDEM[i+1]; } return null; }
-var _memoriaFase={ titulo:"Jogo da Memoria", cor:"lv2", icone:"M", jogo:true };
+var _memoriaFase={ titulo:"Jogo da Memória", cor:"lv2", icone:"M", jogo:true };
 if(typeof FASES!=="undefined"){ FASES.memoria=_memoriaFase; }
 
 /* QUEBRA-CABECA - ordenar valores do menor para o maior (alivio ludico) */
@@ -1069,11 +1069,11 @@ function iniciarQuebra(){
   qcValores.sort(function(a,b){return a-b;}); // ordem correta
   qcEscolhidos=[];
   desenharQuebra();
-  falar("Quebra-cabeca dos valores! Toque nas moedas e notas em ordem, do menor valor para o maior.");
+  falar("Quebra-cabeça dos valores! Toque nas moedas e notas em ordem, do menor valor para o maior.");
 }
 function reaisQC(v){ if(v<1){ return Math.round(v*100)+" centavos"; } return v+(v===1?" real":" reais"); }
 function desenharQuebra(){
-  var html='<h2>'+iconeFase("quebra",30)+' Quebra-Cabeca dos Valores</h2>';
+  var html='<h2>'+iconeFase("quebra",30)+' Quebra-Cabeça dos Valores</h2>';
   html+='<div class="hint">Toque do MENOR para o MAIOR valor!</div>';
   html+='<div><button class="btn-falar" onclick="falar(\'Toque nas moedas e notas em ordem, do menor valor para o maior.\')">\uD83D\uDD0A Ouvir</button></div>';
   // slots da ordem montada
@@ -1111,17 +1111,17 @@ function quebraCompleto(){
   concluidas["quebra"]=true; if(typeof salvar==="function")salvar();
   if(typeof confete==="function")confete(90); addPontos(30);
   var html='<div class="anim-pula">'+mascote(110,"comemorando")+'</div>';
-  html+='<h1>Quebra-cabeca resolvido!</h1>';
-  html+='<p class="lead">Voce colocou todos os valores em ordem, do menor para o maior! Saber comparar valores ajuda muito nas compras.</p>';
+  html+='<h1>Quebra-cabeça resolvido!</h1>';
+  html+='<p class="lead">Você colocou todos os valores em ordem, do menor para o maior! Saber comparar valores ajuda muito nas compras.</p>';
   html+='<div class="curiosidade"><b>\u2605 Voce sabia?</b><br>Quando voce sabe qual valor e maior, fica facil escolher a melhor compra e conferir o troco!</div>';
   var prox=proximaFase("quebra");
   if(prox) html+='<button class="nav-btn pulsa" onclick="iniciarFase(\''+prox+'\')">Proxima parada \u279C</button>';
   html+='<br><button class="nav-btn ghost" onclick="telaMenu()">\uD83D\uDDFA Mapa</button>';
   card.innerHTML=html;
   if(typeof somFanfarra==="function")somFanfarra();
-  falar("Quebra-cabeca resolvido! Voce colocou tudo em ordem. Muito bem!");
+  falar("Quebra-cabeça resolvido! Você colocou tudo em ordem. Muito bem!");
 }
-var _quebraFase={ titulo:"Quebra-Cabeca dos Valores", cor:"lv3", icone:"Q", jogo:true };
+var _quebraFase={ titulo:"Quebra-Cabeça dos Valores", cor:"lv3", icone:"Q", jogo:true };
 if(typeof FASES!=="undefined"){ FASES.quebra=_quebraFase; }
 function iniciarMemoria(){
   somClique(); faseAtual="memoria"; treinoAtivo=false;
@@ -1135,10 +1135,10 @@ function iniciarMemoria(){
   }
   memPares=embaralhar(cartas); memVirada=[]; memCertos=0; memTrava=false;
   desenharMemoria();
-  falar("Jogo da memoria! Encontre os pares: o valor em numero e o mesmo valor escrito. Toque em duas cartas.");
+  falar("Jogo da memória! Encontre os pares: o valor em número e o mesmo valor escrito. Toque em duas cartas.");
 }
 function desenharMemoria(){
-  var html='<h2>'+iconeFase("memoria",30)+' Jogo da Memoria</h2>';
+  var html='<h2>'+iconeFase("memoria",30)+' Jogo da Memória</h2>';
   html+='<div class="hint">Ache os pares: o valor e o mesmo valor escrito!</div>';
   html+='<div><button class="btn-falar" onclick="falar(\'Encontre os pares iguais. Toque em duas cartas para virar.\')">\uD83D\uDD0A Ouvir</button></div>';
   html+='<div class="mem-grade">';
@@ -1178,15 +1178,15 @@ function memoriaCompleta(){
     if(typeof confete==="function")confete(90);
     addPontos(30);
     var html='<div class="anim-pula">'+mascote(110,"comemorando")+'</div>';
-    html+='<h1>Memoria completa!</h1>';
-    html+='<p class="lead">Voce encontrou todos os pares! Otima memoria. Cada valor tem o seu jeito de escrever.</p>';
+    html+='<h1>Memória completa!</h1>';
+    html+='<p class="lead">Você encontrou todos os pares! Ótima memória. Cada valor tem o seu jeito de escrever.</p>';
     html+='<div class="curiosidade"><b>\u2605 Voce sabia?</b><br>Lembrar dos valores ajuda muito na hora de pagar e receber troco no dia a dia!</div>';
     var prox=proximaFase("memoria");
     if(prox) html+='<button class="nav-btn pulsa" onclick="iniciarFase(\''+prox+'\')">Proxima parada \u279C</button>';
     html+='<br><button class="nav-btn ghost" onclick="telaMenu()">\uD83D\uDDFA Mapa</button>';
     card.innerHTML=html;
     if(typeof somFanfarra==="function")somFanfarra();
-    falar("Memoria completa! Voce encontrou todos os pares. Muito bem!");
+    falar("Memória completa! Você encontrou todos os pares. Muito bem!");
   }, 700);
 }
 var GANCHOS={
