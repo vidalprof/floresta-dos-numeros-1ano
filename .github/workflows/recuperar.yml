@@ -2,6 +2,9 @@ name: Recuperar index de outro repo
 
 # Busca o index.html de um repositorio de origem (usando PAGES_TOKEN) e
 # salva uma copia em _recuperado/index.html neste repositorio.
+# Tambem lista e baixa as imagens (png/jpg/webp) da raiz e da pasta img/ do
+# repositorio de origem para _recuperado/fetched/ (util para pegar imagens
+# que o usuario subiu com nomes proprios).
 
 on:
   workflow_dispatch:
@@ -40,26 +43,52 @@ jobs:
           echo "Buscando index.html de $OWNER/$SRC ..."
           gh api "repos/$OWNER/$SRC/contents/index.html" \
             -H "Accept: application/vnd.github.raw" "${REF_ARGS[@]}" \
-            > _recuperado/index.html
+            > _recuperado/index.html || echo "(sem index.html na raiz)"
           echo "Recuperado. Tamanho:"
-          wc -l _recuperado/index.html
+          wc -l _recuperado/index.html || true
+
+      - name: Listar e baixar imagens do repositorio de origem
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          SRC: ${{ inputs.repo_name }}
+        run: |
+          set -uo pipefail
+          mkdir -p _recuperado/fetched
+          baixa_de() {
+            local dir="$1"
+            local api="repos/$OWNER/$SRC/contents"
+            [ -n "$dir" ] && api="$api/$dir"
+            echo "=== Conteudo de: ${dir:-(raiz)} ==="
+            gh api "$api" --jq '.[] | .type + "  " + .name' 2>&1 | head -80 || true
+            echo ""
+            gh api "$api" --jq '.[] | select(.type=="file") | select(.name|test("(?i)\\.(png|jpe?g|webp)$")) | .path' 2>/dev/null | while read -r p; do
+              [ -z "$p" ] && continue
+              out="_recuperado/fetched/$(basename "$p")"
+              echo "baixando: $p -> $out"
+              gh api "repos/$OWNER/$SRC/contents/$p" -H "Accept: application/vnd.github.raw" > "$out" 2>/dev/null || echo "  (falhou $p)"
+            done
+          }
+          baixa_de ""
+          if gh api "repos/$OWNER/$SRC/contents/img" >/dev/null 2>&1; then baixa_de "img"; fi
+          if gh api "repos/$OWNER/$SRC/contents/imagens" >/dev/null 2>&1; then baixa_de "imagens"; fi
+          echo "=== Arquivos baixados ==="
+          ls -la _recuperado/fetched/ || true
 
       - name: Salvar copia neste repositorio
         run: |
           set -euo pipefail
           git config user.name "Recuperador"
           git config user.email "recuperador@users.noreply.github.com"
-          git add _recuperado/index.html
+          git add _recuperado
           if git diff --cached --quiet; then
-            echo "Nenhuma mudanca (arquivo identico ao que ja estava salvo)."
+            echo "Nenhuma mudanca (arquivos identicos aos que ja estavam salvos)."
           else
-            git commit -m "Recupera index.html de ${{ inputs.repo_name }}"
+            git commit -m "Recupera de ${{ inputs.repo_name }} (index.html + imagens)"
             git push
           fi
           {
-            echo "## index.html recuperado"
+            echo "## Recuperado de ${{ inputs.repo_name }}"
             echo ""
-            echo "Origem: **${{ inputs.repo_name }}**"
-            echo ""
-            echo "Salvo neste repositorio em \`_recuperado/index.html\`."
+            echo "index.html + imagens (se houver) salvos em \`_recuperado/\` e \`_recuperado/fetched/\`."
           } >> "$GITHUB_STEP_SUMMARY"
