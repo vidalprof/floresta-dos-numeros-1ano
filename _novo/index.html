@@ -1596,7 +1596,7 @@ function reiniciarTudo(){
 
 /* ===== CAMADA PREMIUM ===== */
 /* ============================================================
-   CAMADA PREMIUM — "O Livro Magico das Palavras"
+   CAMADA PREMIUM — "O Livro Mágico das Palavras"
    Sobrescreve funcoes-alvo e adiciona historia, mapa vivo,
    narracao tratada, streak, emblema de nivel, ganchos e
    apoio ao erro. Definida DEPOIS das originais (ultima vence).
@@ -1609,7 +1609,7 @@ function reiniciarTudo(){
    (uma por parada). No fim, o livro volta inteiro, a floresta reflorece
    e Tato reune os netinhos ao luar para a grande historia. */
 
-var TITULO_JOGO = "O Livro Magico das Palavras";
+var TITULO_JOGO = "O Livro Mágico das Palavras";
 
 function tatoPose(p){ return (TATO&&TATO[p])?TATO[p]:IMG_MASCOTE; }
 
@@ -1660,18 +1660,18 @@ var IMG_FINAL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBAUEBA
 
 /* ===== DESAFIO EXTRA (100% de acerto) — um degrau acima, coerente com a fase ===== */
 var EXTRAS = {
-  vf: { pergunta:"Qual palavra esta ESCRITA CERTA?", opcoes:["aVentura","aFentura"], certa:"aVentura",
-        explica:"Aventura e com V! O V faz a garganta vibrar." },
-  pb: { pergunta:"Qual palavra esta ESCRITA CERTA?", opcoes:["borboleta","porboleta"], certa:"borboleta",
-        explica:"Borboleta comeca com B, que faz a voz vibrar." },
-  td: { pergunta:"Qual palavra esta ESCRITA CERTA?", opcoes:["estrela","esdrela"], certa:"estrela",
-        explica:"Estrela e com T, som seco (ttt)." },
-  nh: { pergunta:"Qual palavra esta ESCRITA CERTA?", opcoes:["montanha","montania"], certa:"montanha",
-        explica:"Montanha e com NH, o som suavinho de nariz." },
-  bonus1: { pergunta:"Qual palavra esta ESCRITA CERTA?", opcoes:["chuva","xuva"], certa:"chuva",
-        explica:"Chuva e com CH! Um mestre nao cai nessa." },
-  bonus2: { pergunta:"Qual palavra esta ESCRITA CERTA?", opcoes:["passaro","paçaro"], certa:"passaro",
-        explica:"Passaro e com SS. Voce e um mestre das letras!" }
+  vf: { pergunta:"Qual palavra está ESCRITA CERTA?", opcoes:["aVentura","aFentura"], certa:"aVentura",
+        explica:"Aventura é com V! O V faz a garganta vibrar." },
+  pb: { pergunta:"Qual palavra está ESCRITA CERTA?", opcoes:["borboleta","porboleta"], certa:"borboleta",
+        explica:"Borboleta começa com B, que faz a voz vibrar." },
+  td: { pergunta:"Qual palavra está ESCRITA CERTA?", opcoes:["estrela","esdrela"], certa:"estrela",
+        explica:"Estrela é com T, som seco (ttt)." },
+  nh: { pergunta:"Qual palavra está ESCRITA CERTA?", opcoes:["montanha","montania"], certa:"montanha",
+        explica:"Montanha é com NH, o som suavinho de nariz." },
+  bonus1: { pergunta:"Qual palavra está ESCRITA CERTA?", opcoes:["chuva","xuva"], certa:"chuva",
+        explica:"Chuva é com CH! Um mestre não cai nessa." },
+  bonus2: { pergunta:"Qual palavra está ESCRITA CERTA?", opcoes:["pássaro","paçaro"], certa:"pássaro",
+        explica:"Pássaro é com SS. Você e um mestre das letras!" }
 };
 var extraOferecido = {};
 var extraAtual = null;
@@ -1733,7 +1733,7 @@ function responderExtra(escolha, idx){
     if(btn){ btn.className="opt opt-extra wrong"; }
     fb.className="feedback no"; fb.innerHTML="💡 Quase! O certo e \""+dd.certa+"\". "+dd.explica;
     somErro();
-    falar("Nao foi dessa vez. O certo e "+dd.certa+". "+dd.explica);
+    falar("Não foi dessa vez. O certo e "+dd.certa+". "+dd.explica);
     for(var i=0;i<dd.opcoes.length;i++){ if(dd.opcoes[i]===dd.certa && document.getElementById("xopt"+i)) document.getElementById("xopt"+i).className="opt opt-extra correct"; }
   }
   atualizarEmblemaTopo();
@@ -1769,14 +1769,14 @@ function numParada(ch){ for(var i=0;i<ORDEM.length;i++){ if(ORDEM[i]===ch) retur
 /* nomes de lugar para cada parada (dentro da historia) */
 var LUGARES = {
   vf: "Clareira do Vento",
-  pb: "Poco das Bolhas",
+  pb: "Poço das Bolhas",
   td: "Toca do Tatu",
   nh: "Ninho da Montanha",
   memoria: "Lago das Lembrancas",
   caca: "Mata das Palavras Escondidas",
   arrasta: "Ponte das Letras",
   bonus1: "Gruta do Erro",
-  bonus2: "Torre da Arvore-Biblioteca"
+  bonus2: "Torre da Árvore-Biblioteca"
 };
 
 /* icone tematico curto por parada (emojis Unicode 6.0 seguros) */
@@ -1787,28 +1787,28 @@ var ICONE_LUGAR = {
 
 /* ganchos narrativos: mascote provoca o proximo lugar (historia, nao "proximo" seco) */
 var GANCHOS = {
-  vf: "A primeira pagina voltou pro Livro Magico! Uma pena de vento levou outra ate o Poco das Bolhas. Vamos buscar?",
-  pb: "Mais uma pagina no lugar! Escuto um barulhinho vindo da Toca do Tatu... sera que tem pagina la?",
-  td: "Que bom te ver caminhando comigo! La no alto, no Ninho da Montanha, brilha algo parecido com uma pagina...",
-  nh: "A floresta ja esta ganhando um pouco de cor! Vamos descansar um pouco no Lago das Lembrancas com um joguinho?",
-  memoria: "Que memoria boa a sua! Na Mata das Palavras Escondidas tem palavras se escondendo no meio das letras. Bora cacar?",
-  caca: "Voce achou todas! Agora, na Ponte das Letras, algumas palavras perderam uma letrinha. Vamos completar?",
-  arrasta: "Ponte atravessada! So faltam as ultimas paginas. Na Gruta do Erro elas se escondem entre palavras trocadas...",
-  bonus1: "Uau, quase la! So resta subir ate a Torre da Arvore-Biblioteca para a ultima pagina de todas!",
+  vf: "A primeira página voltou pro Livro Mágico! Uma pena de vento levou outra até o Poço das Bolhas. Vamos buscar?",
+  pb: "Mais uma página no lugar! Escuto um barulhinho vindo da Toca do Tatu... será que tem página lá?",
+  td: "Que bom te ver caminhando comigo! Lá no alto, no Ninho da Montanha, brilha algo parecido com uma página...",
+  nh: "A floresta já está ganhando um pouco de cor! Vamos descansar um pouco no Lago das Lembrancas com um joguinho?",
+  memoria: "Que memória boa a sua! Na Mata das Palavras Escondidas tem palavras se escondendo no meio das letras. Bora cacar?",
+  caca: "Você achou todas! Agora, na Ponte das Letras, algumas palavras perderam uma letrinha. Vamos completar?",
+  arrasta: "Ponte atravessada! Só faltam as últimas páginas. Na Gruta do Erro elas se escondem entre palavras trocadas...",
+  bonus1: "Uau, quase lá! Só resta subir até a Torre da Árvore-Biblioteca para a última página de todas!",
   bonus2: ""
 };
 
 /* curiosidades "Uau" por parada (1 por fase, na tela final) */
 var CURIOSIDADES = {
-  vf: "Voce sabia? A letra V faz a garganta tremer, e o F e so um sopro. Encoste a mao no pescoco e sinta!",
+  vf: "Você sabia? A letra V faz a garganta tremer, e o F e só um sopro. Encoste a mao no pescoco e sinta!",
   pb: "Curiosidade: o B e o P nascem no mesmo lugar da boca! A diferenca e que o B faz a voz vibrar.",
-  td: "Sabia? O T e o D tambem sao irmaos: mesma posicao da lingua, mas o D faz a voz vibrar e o T nao.",
+  td: "Sabia? O T e o D também são irmãos: mesma posição da língua, mas o D faz a voz vibrar e o T não.",
   nh: "O som do NH e feito quase pelo nariz! Por isso ele e tao suavinho: nha, nhe, nhi, nho, nhu.",
-  memoria: "O nosso cerebro adora jogo da memoria! Cada vez que voce lembra, ele fica mais fortinho.",
+  memoria: "O nosso cerebro adora jogo da memória! Cada vez que você lembra, ele fica mais fortinho.",
   caca: "Ler palavras escondidas ajuda seus olhos a reconhecerem as palavras mais rapido na leitura!",
-  arrasta: "Cada palavra que voce monta e uma pecinha a mais para escrever historias suas um dia!",
+  arrasta: "Cada palavra que você monta e uma pecinha a mais para escrever histórias suas um dia!",
   bonus1: "Achar o erro numa palavra e coisa de detetive! Bons escritores revisam o que escrevem.",
-  bonus2: "Parabens, guardia das palavras! Voce ajudou o Tato a salvar todas as historias da floresta."
+  bonus2: "Parabéns, guardia das palavras! Você ajudou o Tato a salvar todas as histórias da floresta."
 };
 
 /* ---------- NIVEIS / EMBLEMA ---------- */
@@ -1840,7 +1840,7 @@ function atualizarEmblemaTopo(){
 /* ---------- STREAK ---------- */
 var streak=0;
 function reforcoStreak(){
-  var p=["Voce e demais!","Uau!","Continue assim!","Que craque!","Imparavel!","Show de bola!"];
+  var p=["Você e demais!","Uau!","Continue assim!","Que craque!","Imparavel!","Show de bola!"];
   return p[Math.floor(Math.random()*p.length)];
 }
 function mostrarStreak(n){
@@ -1849,7 +1849,7 @@ function mostrarStreak(n){
   div.innerHTML='<div class="streak-wrap"><span class="streak-fogo">🔥</span><div class="streak-txt">Voce acertou '+n+' seguidas!</div><div class="streak-sub">'+reforcoStreak()+'</div></div>';
   document.body.appendChild(div);
   confete(28);
-  falar("Voce acertou "+n+" seguidas! "+reforcoStreak());
+  falar("Você acertou "+n+" seguidas! "+reforcoStreak());
   setTimeout(function(){ if(div&&div.parentNode) div.parentNode.removeChild(div); }, 1700);
 }
 function registrarStreak(acertou){
@@ -1861,8 +1861,8 @@ function registrarStreak(acertou){
 
 /* ---------- ELOGIO VARIADO ---------- */
 var ELOGIOS=[
-  "Muito bem!","Isso mesmo!","Voce acertou!","Perfeito!","Mandou bem!",
-  "Boa, explorador!","Que orgulho!","Acertou em cheio!","Excelente!","Voce e fera!"
+  "Muito bem!","Isso mesmo!","Você acertou!","Perfeito!","Mandou bem!",
+  "Boa, explorador!","Que orgulho!","Acertou em cheio!","Excelente!","Você e fera!"
 ];
 function elogio(){ return ELOGIOS[Math.floor(Math.random()*ELOGIOS.length)]; }
 
@@ -1906,6 +1906,20 @@ function limparFala(t){
   t=t.replace(/\bpagina\b/g,"p\u00e1gina").replace(/\bPagina\b/g,"P\u00e1gina");
   t=t.replace(/\bpaginas\b/g,"p\u00e1ginas").replace(/\bPaginas\b/g,"P\u00e1ginas");
   t=t.replace(/\barvore\b/gi,"\u00e1rvore").replace(/\bguardia\b/gi,"guardi\u00e3o");
+  /* dicionario de acentos que o texto nao tem (afeta SO a fala; HTML ja foi removido acima) */
+  var _AC={nao:"não",sao:"são",entao:"então",estao:"estão",tambem:"também",sera:"será",parabens:"parabéns",posicao:"posição",posicoes:"posições",nivel:"nível",niveis:"níveis",historia:"história",historias:"histórias",memoria:"memória",memorias:"memórias",ultima:"última",ultimo:"último",ultimas:"últimas",ultimos:"últimos",proxima:"próxima",proximo:"próximo",otimo:"ótimo",otima:"ótima",lingua:"língua",linguas:"línguas",trofeu:"troféu",trofeus:"troféus",ceu:"céu",ja:"já",ate:"até",passaro:"pássaro",passaros:"pássaros",musica:"música",poco:"poço",pocos:"poços",coracao:"coração",irmao:"irmão",irmaos:"irmãos",guardiao:"guardião",silaba:"sílaba",silabas:"sílabas",tonica:"tônica",tonicas:"tônicas",tonico:"tônico",comeca:"começa",comecar:"começar",comecou:"começou",comeco:"começo",comecam:"começam",so:"só",la:"lá",ta:"tá",voce:"você",voces:"vocês"};
+  t=t.replace(/[A-Za-zçÇ]+/g,function(w,off,str){
+    var lw=w.toLowerCase(); if(!_AC[lw]) return w;
+    if(off>0 && str.charAt(off-1)==="-") return w;           /* -la/-lo: pronome, nao mexe */
+    if(w.length>1 && w===w.toUpperCase()) return w;          /* MAIUSCULA: silaba/sigla, nao mexe */
+    var a=_AC[lw];
+    return (w.charAt(0)===w.charAt(0).toUpperCase())?a.charAt(0).toUpperCase()+a.slice(1):a;
+  });
+  t=t.replace(/\besta\b(?=\s+(?:completo|completa|colorid[ao]|escrit[ao]|ganhando|pronto|pronta|no|na|em|aqui|indo|brilhando|faltando|quase|cheia|cheio|salv|guardad|escondid|perdid))/gi,function(m){return m.charAt(0)==="E"?"Está":"está";});
+  t=t.replace(/\bvocê(\s+)e\b/g,"você$1é");
+  t=t.replace(/\be(\s+com\s+[A-ZÇ])/g,"é$1");
+  /* grupos de 3+ letras MAIUSCULAS: minusculiza para o TTS ler como SOM (ex.: NHO->nho) */
+  t=t.replace(/\b[A-ZÇ]{3,}\b/g,function(m){return m.toLowerCase();});
   t=t.replace(/([,.!?:;])([^\s])/g,"$1 $2");
   t=t.replace(/\s{2,}/g," ").replace(/\s+([,.!?:;])/g,"$1");
   t=t.replace(/\s+$/,"");
@@ -1969,7 +1983,7 @@ function narrarDesafioAtual(){
     /* bonus tipo "Qual e o certo?" */
     texto="Qual e a forma certa?";
   } else {
-    texto="Complete a palavra. Qual letra falta?";
+    var _r=(d.certa||d.resposta||"")+""; var _n=_r.replace(/[^A-Za-zÀ-ÿ]/g,"").length; if(!_n && d.palavra){ var _mm=(""+d.palavra).match(/_+/); _n=_mm?_mm[0].length:1; } texto=(_n>1)?"Complete a palavra. Qual sílaba falta?":"Complete a palavra. Qual letra falta?";
   }
   falar(texto);
 }
@@ -1999,15 +2013,15 @@ function narrarMapa(){
   var ola = nome?("Oi, "+nome+"! "):"Oi! ";
   var texto;
   if(feitas===0){
-    texto = ola+"Eu sou o Tato, o guardiao da Arvore-Biblioteca. Um vendaval espalhou as paginas do Livro Magico pela floresta, e sem elas tudo perdeu a cor. Vamos recuperar cada pagina juntos?";
+    texto = ola+"Eu sou o Tato, o guardião da Árvore-Biblioteca. Um vendaval espalhou as páginas do Livro Mágico pela floresta, e sem elas tudo perdeu a cor. Vamos recuperar cada página juntos?";
   } else if(feitas>=tot){
-    texto = "Conseguimos! Todas as paginas voltaram para o Livro Magico. A floresta esta colorida de novo e hoje a noite vou reunir meus netinhos para a grande historia. Voce e um verdadeiro guardiao das palavras!";
+    texto = "Conseguimos! Todas as páginas voltaram para o Livro Mágico. A floresta está colorida de novo e hoje a noite vou reunir meus netinhos para a grande história. Você e um verdadeiro guardião das palavras!";
   } else {
     var faltam=tot-feitas;
     var faltamTxt = pluralG(faltam, "f", "parada", "paradas");
-    var recuperadas = pluralG(feitas, "f", "pagina recuperada", "paginas recuperadas");
-    texto = "Otimo trabalho! Voce ja tem "+recuperadas+". A floresta esta ganhando cor! "+
-            (faltam===1?"Falta so a ultima parada para o Livro Magico ficar completo!":("Faltam "+faltamTxt+" para completar o Livro Magico!"));
+    var recuperadas = pluralG(feitas, "f", "página recuperada", "páginas recuperadas");
+    texto = "Ótimo trabalho! Você já tem "+recuperadas+". A floresta está ganhando cor! "+
+            (faltam===1?"Falta só a última parada para o Livro Mágico ficar completo!":("Faltam "+faltamTxt+" para completar o Livro Mágico!"));
   }
   falar(texto);
 }
@@ -2018,7 +2032,7 @@ function telaMenu(){
   var html="";
   html+='<div class="mapa-topo">';
   html+='<div class="mapa-livro">'+livroRecompensa()+'<div class="mapa-livro-cap">Livro Magico</div></div>';
-  html+='<h1 class="mapa-h1">'+(nome?("A aventura de "+nome):"O Livro Magico das Palavras")+'</h1>';
+  html+='<h1 class="mapa-h1">'+(nome?("A aventura de "+nome):"O Livro Mágico das Palavras")+'</h1>';
   html+='<div class="mapa-tato"><img src="'+IMG_MASCOTE+'" alt="Tato" class="tato-mini floatie"/>';
   html+='<button class="btn-ouvir pulsa" onclick="narrarMapa()">🔊 Ouvir a historia</button></div>';
   html+='</div>';
@@ -2051,7 +2065,7 @@ function telaMenu(){
   var tudo=feitasCount()>=totalConteudo();
   html+=trilhaHtml("esq", tudo);
   html+='<div class="mapa-linha centro"><div class="mapa-tesouro '+(tudo?'aberto pulsa':'trancado')+'"'+(tudo?' onclick="grandeFinal()"':'')+'>';
-  html+=(IMG_TROFEU?'<img class="trofeu-img" src="'+IMG_TROFEU+'" alt="Trofeu"/>':svgTrofeu(56))+'<div class="mapa-nome tesouro-nome">'+(tudo?"Abrir o Livro Magico!":"Livro Magico")+'</div></div></div>';
+  html+=(IMG_TROFEU?'<img class="trofeu-img" src="'+IMG_TROFEU+'" alt="Trofeu"/>':svgTrofeu(56))+'<div class="mapa-nome tesouro-nome">'+(tudo?"Abrir o Livro Mágico!":"Livro Mágico")+'</div></div></div>';
   html+='</div>';
   /* botoes extras */
   html+='<div class="extras">';
@@ -2107,7 +2121,7 @@ function responderQuiz(letra,idx){
   else { registrar(faseAtual,false); registrarStreak(false);
     btn.className="opt wrong"; fb.className="feedback no"; fb.innerHTML="💡 Quase! O certo e \""+d.certa+"\". "+d.explica;
     somErro(); if(fig){ fig.className="figura anim-treme"; }
-    falar("Nao foi dessa vez. O certo e "+d.certa+". "+d.explica);
+    falar("Não foi dessa vez. O certo e "+d.certa+". "+d.explica);
     var jaTem=false; for(var z=0;z<ERROS.length;z++){ if(ERROS[z].palavra===d.palavra&&ERROS[z].certa===d.certa) jaTem=true; }
     if(!jaTem && !treinoAtivo) ERROS.push(d);
     for(var i=0;i<d.opcoes.length;i++){ if(d.opcoes[i]===d.certa) document.getElementById("opt"+i).className="opt correct"; } }
@@ -2166,10 +2180,10 @@ function telaFinal(){
   atualizarEmblemaTopo();
   somFanfarra(); confete(80);
   /* narrar fechamento: curiosidade + gancho (nunca a resposta) */
-  var falaFim="Pagina recuperada! ";
+  var falaFim="Página recuperada! ";
   if(CURIOSIDADES[faseAtual]) falaFim+=CURIOSIDADES[faseAtual]+" ";
   if(proxima && !jaFeita && gancho) falaFim+=gancho;
-  else if(!proxima && feitasCount()>=totalConteudo()) falaFim+="O Livro Magico esta completo! Vamos abri-lo?";
+  else if(!proxima && feitasCount()>=totalConteudo()) falaFim+="O Livro Mágico está completo! Vamos abri-lo?";
   setTimeout(function(){ falar(falaFim); }, 600);
 }
 
@@ -2183,8 +2197,8 @@ function grandeFinal(){
   html+='<div class="final-banner"><img src="'+IMG_FINAL+'" alt="Tato e os netinhos ao luar"/></div>';
   html+='<h1 class="final-h1">A floresta voltou a brilhar! 🌟</h1>';
   html+='<p class="lead final-lead">Todas as paginas voltaram para o Livro Magico, '+nome+'! '+
-        'A floresta se encheu de cor outra vez. Ao cair da noite, o Tato reuniu seus netinhos embaixo da Arvore-Biblioteca, '+
-        'abriu o livro e comecou a contar a mais linda das historias... a sua! '+
+        'A floresta se encheu de cor outra vez. Ao cair da noite, o Tato reuniu seus netinhos embaixo da Árvore-Biblioteca, '+
+        'abriu o livro e começou a contar a mais linda das histórias... a sua! '+
         'Voce e, para sempre, um Guardiao das Palavras.</p>';
   var nvf=nivelAtual(); var nvic=(nvf.img&&EMBLEMAS&&EMBLEMAS[nvf.img])?'<img class="nivel-final-img" src="'+EMBLEMAS[nvf.img]+'" alt=""/>':'<span class="nivel-final-ico">'+nvf.ico+'</span>'; html+='<div class="nivel-final">'+nvic+'<div class="nivel-final-txt">Nivel: '+nvf.nome+'</div></div>';
   html+='<button class="nav-btn pulsa" onclick="telaRelatorio()">🏆 Ver meu diploma</button>';
@@ -2195,7 +2209,7 @@ function grandeFinal(){
   confete(120);
   setTimeout(function(){ confete(90); }, 700);
   setTimeout(function(){ confete(90); }, 1400);
-  falar("A floresta voltou a brilhar, "+nome+"! Todas as paginas voltaram para o Livro Magico. Hoje a noite o Tato vai reunir os netinhos embaixo da Arvore-Biblioteca e contar a mais linda das historias. Voce e um Guardiao das Palavras!");
+  falar("A floresta voltou a brilhar, "+nome+"! Todas as páginas voltaram para o Livro Mágico. Hoje a noite o Tato vai reunir os netinhos embaixo da Árvore-Biblioteca e contar a mais linda das histórias. Você e um Guardião das Palavras!");
 }
 
 /* ============================================================
@@ -2225,7 +2239,7 @@ function reiniciarTudo(){
   html+='<br><button class="nav-btn ghost" onclick="telaInicio()">Nao, voltar</button>';
   card.innerHTML=html;
   atualizarEmblemaTopo();
-  falar("Voce quer mesmo comecar tudo de novo? Isso vai apagar o seu progresso.");
+  falar("Você quer mesmo começar tudo de novo? Isso vai apagar o seu progresso.");
 }
 function confirmarReset(){
   if(STORAGE_OK){ try{ window.localStorage.removeItem('cacaletras'); }catch(e){} }
@@ -2254,9 +2268,9 @@ function telaInicio(){
   card.innerHTML=html;
   atualizarEmblemaTopo();
   if(temProgresso && ALUNO){
-    falar("Que bom te ver de volta, "+ALUNO+"! Vamos continuar recuperando as paginas do Livro Magico?");
+    falar("Que bom te ver de volta, "+ALUNO+"! Vamos continuar recuperando as páginas do Livro Mágico?");
   } else {
-    falar("Oi! Eu sou o Tato, o guardiao da Arvore-Biblioteca. Um vendaval espalhou as paginas do meu Livro Magico pela floresta. Voce me ajuda a recupera-las? Como voce se chama?");
+    falar("Oi! Eu sou o Tato, o guardião da Árvore-Biblioteca. Um vendaval espalhou as páginas do meu Livro Mágico pela floresta. Você me ajuda a recupera-las? Como você se chama?");
   }
 }
 
