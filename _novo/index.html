@@ -878,7 +878,7 @@ var FASES = {
   },
   nh: {
     titulo: "Fase 4 — NHA NHE NHI NHO NHU", cor: "lv4", tipo: "quiz", bonus: false,
-    dica: "O grupo NH tem som suavinho, de nariz: nha, nhe, nhi, nho, nhu.",
+    dica: "O grupo NH tem som suavinho, de nariz, como em ninho, aranha e sonho.",
     desafios: [
       { palavra:"SO_", opcoes:["NHO","NHA","NHU"], certa:"NHO", svg:"sonho", img:"😴", explica:"Sonho — NHO." },
       { palavra:"U_", opcoes:["NHA","NHE","NHI"], certa:"NHA", svg:"unha", img:"💅", explica:"Unha — NHA." },
@@ -1215,7 +1215,7 @@ function responderQuiz(letra,idx){
   var fig=document.getElementById("fig");
   if(letra===d.certa){
     registrar(faseAtual,true); addPontos(pontos);
-    btn.className="opt correct"; fb.className="feedback ok"; fb.innerHTML="🎉 Muito bem! "+d.explica;
+    btn.className="opt correct"; fb.className="feedback ok"; fb.innerHTML="🎉 Muito bem! "+d.explica+silabaInfo(d.explica);
     somAcerto(); confete(60); comemorar();
     if(fig){ fig.className="figura anim-pula"; }
     var alvo=palavraAlvo(d); if(alvo) setTimeout(function(){ falar(alvo); }, 250);
@@ -1725,7 +1725,7 @@ function responderExtra(escolha, idx){
   if(escolha===dd.certa){
     addPontos(25);
     if(btn){ btn.className="opt opt-extra correct"; }
-    fb.className="feedback ok"; fb.innerHTML="🎉 Perfeito! "+dd.explica;
+    fb.className="feedback ok"; fb.innerHTML="🎉 Perfeito! "+dd.explica+silabaInfo(dd.explica);
     somAcerto(); confete(90); comemorar();
     desbloquearExpert();
     falar("Perfeito! "+dd.explica);
@@ -1891,6 +1891,9 @@ function escolherVoz(){
   }
   return melhor;
 }
+var SILABAS={aranha:"a-ra-nha",banana:"ba-na-na",barco:"bar-co",bebe:"be-bê",bola:"bo-la",bolo:"bo-lo",bruxa:"bru-xa",caminho:"ca-mi-nho",carinho:"ca-ri-nho",castanho:"cas-ta-nho",castanha:"cas-ta-nha",dado:"da-do",dedo:"de-do",dente:"den-te",dinheiro:"di-nhei-ro",doce:"do-ce",dragao:"dra-gão",faca:"fa-ca",fada:"fa-da",festa:"fes-ta",flor:"flor",foca:"fo-ca",fogo:"fo-go",folha:"fo-lha",galinha:"ga-li-nha",lenha:"le-nha",montanha:"mon-ta-nha",panela:"pa-ne-la",pato:"pa-to",peixe:"pei-xe",pipa:"pi-pa",pombo:"pom-bo",porta:"por-ta",punho:"pu-nho",rainha:"ra-i-nha",sonho:"so-nho",tambor:"tam-bor",tartaruga:"tar-ta-ru-ga",tatu:"ta-tu",telefone:"te-le-fo-ne",tomate:"to-ma-te",trem:"trem",unha:"u-nha",vaca:"va-ca",vela:"ve-la",vinho:"vi-nho",violao:"vi-o-lão",vovo:"vo-vô",passaro:"pás-sa-ro",chuva:"chu-va",estrela:"es-tre-la",borboleta:"bor-bo-le-ta",aventura:"a-ven-tu-ra",vento:"ven-to"};
+function _semAcento(w){ w=(""+w).toLowerCase(); var f="áàâãäéèêëíìîïóòôõöúùûüç",t="aaaaaeeeeiiiiooooouuuuc",o="",i,pp; for(i=0;i<w.length;i++){ pp=f.indexOf(w.charAt(i)); o+=(pp<0?w.charAt(i):t.charAt(pp)); } return o; }
+function silabaInfo(explica){ var m=(""+explica).match(/^([A-Za-zÀ-ÿ]+)/); if(!m) return ""; var s=SILABAS[_semAcento(m[1])]; return s? " Sílabas: "+s+"." : ""; }
 function limparFala(t){
   if(!t) return "";
   t=String(t);
@@ -2113,7 +2116,7 @@ function responderQuiz(letra,idx){
   var fig=document.getElementById("fig");
   if(letra===d.certa){
     registrar(faseAtual,true); addPontos(pontos); registrarStreak(true);
-    btn.className="opt correct"; fb.className="feedback ok"; fb.innerHTML="🎉 "+elogio()+" "+d.explica;
+    btn.className="opt correct"; fb.className="feedback ok"; fb.innerHTML="🎉 "+elogio()+" "+d.explica+silabaInfo(d.explica);
     somAcerto(); confete(60); comemorar();
     if(fig){ fig.className="figura anim-pula"; }
     falar(elogio()+". "+d.explica);
