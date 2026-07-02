@@ -1047,23 +1047,58 @@ function respNum(val, idx){
     }
   }
 }
-/* apoio ao erro por contagem acesa (ritmo FIXO por setTimeout) */
-function apoioContagem(dd){
-  falar("Não foi dessa vez!");
-  setTimeout(function(){ falar("Agora vamos contar. Bem devagar."); }, 1500);
-  var inicio=3300, passo=850, n=dd.qtd1;
-  for(var i=0;i<n;i++){ (function(k){ setTimeout(function(){
-    var el=document.getElementById("cItem"+k); if(el)el.className="obj-item sel";
-    falar(numExt(k+1));
-  }, inicio+k*passo); })(i); }
+/* fala UMA frase e só avança quando o motor de voz REALMENTE parou de falar
+   (monitora speechSynthesis.speaking em vez de confiar no onend, que o Chrome
+   dispara cedo demais e cortava a frase). O speak() sai com um pequeno atraso
+   depois do cancel() para o Chrome não "engolir" a fala (bug do cancel+speak). */
+function _dizUma(txt, cb){
+  if(!SOM_LIGADO || !('speechSynthesis' in window)){ setTimeout(cb, 500); return; }
+  var ss=window.speechSynthesis;
+  var done=false, iv=null;
+  function fim(){ if(done)return; done=true; if(iv)clearInterval(iv); if(cb)cb(); }
+  try{ ss.cancel(); }catch(e){}
+  var u;
+  try{ u=new SpeechSynthesisUtterance(limparFala(txt)); }catch(e){ setTimeout(fim, 400); return; }
+  u.lang='pt-BR'; u.rate=0.9; u.pitch=1.08;
+  try{ var v=escolherVoz(); if(v)u.voice=v; }catch(e){}
+  u.onerror=function(){ fim(); };
   setTimeout(function(){
+    try{ ss.speak(u); }catch(e){ fim(); return; }
+    var iniciou=false, t=0;
+    iv=setInterval(function(){
+      t++;
+      if(ss.speaking) iniciou=true;
+      if(iniciou && !ss.speaking) fim();          /* terminou de falar */
+      else if(!iniciou && t>=28) fim();            /* ~3,4s e nao comecou: segue */
+      else if(t>=160) fim();                       /* teto de seguranca (~19s) */
+    }, 120);
+  }, 110);
+}
+/* apoio ao erro por contagem acesa (SEQUENCIAL: espera cada fala terminar de
+   verdade antes de seguir — nunca corta a frase nem perde o "um") */
+function apoioContagem(dd){
+  var n=dd.qtd1;
+  for(var c=0;c<n;c++){ var e0=document.getElementById("cItem"+c); if(e0)e0.className="obj-item"; }
+  var fb=document.getElementById("fb"); if(fb)fb.innerHTML="Vamos contar juntos!";
+  _dizUma("Não foi dessa vez! Agora vamos contar juntos, bem devagar.", function(){
+    setTimeout(function(){ contaPasso(dd, 0); }, 500);
+  });
+}
+function contaPasso(dd, k){
+  var n=dd.qtd1;
+  if(k>=n){
     var fb=document.getElementById("fb"); if(fb)fb.innerHTML="São <b>"+dd.resposta+"</b>! Toque no número "+dd.resposta+".";
-    falar("São "+numExt(dd.resposta)+"! Toque no número "+numExt(dd.resposta)+".");
+    _dizUma("São "+numExt(dd.resposta)+"! Agora toque no número "+numExt(dd.resposta)+".");
     /* libera nova tentativa */
     respondeu=false;
     var botoes=document.getElementsByClassName("opt");
     for(var i=0;i<botoes.length;i++){ botoes[i].className="opt"; }
-  }, inicio+n*passo+400);
+    return;
+  }
+  var el=document.getElementById("cItem"+k); if(el)el.className="obj-item sel";
+  _dizUma(numExt(k+1), function(){
+    setTimeout(function(){ contaPasso(dd, k+1); }, 450);
+  });
 }
 function botaoProximo(){
   var nav=document.getElementById("navarea"), ultimo=(indiceAtual===FASES[faseAtual].desafios.length-1);
