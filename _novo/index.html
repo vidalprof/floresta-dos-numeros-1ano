@@ -47,7 +47,9 @@
   .enunciado-q { font-weight: bold; color: #333; font-size: 19px; margin: 10px 0; line-height: 1.5; }
   /* área de objetos para contar */
   .obj-cena { background: #f0f9ff; border: 3px solid #cce8fb; border-radius: 18px; padding: 16px; margin: 12px 0; }
-  .obj-grupo { display: -webkit-box; display: flex; flex-wrap: wrap; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+  .obj-grupo { display: -webkit-box; display: flex; flex-wrap: wrap; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; margin: 0 auto; }
+  /* juntar: cada grupo num quadro leve, deixando claro que sao DOIS grupos */
+  .obj-soma > .obj-grupo { background: rgba(255,255,255,0.7); border: 2px solid #cfe6f7; border-radius: 14px; padding: 6px 8px; margin: 4px; }
   .obj-item { margin: 3px; -webkit-transition: -webkit-transform .2s ease; transition: transform .2s ease; }
   .obj-item.sai { opacity: 0.28; -webkit-transform: scale(0.85); transform: scale(0.85); }
   /* luz da contagem: bem destacada mesmo no fundo branco (halo colorido + aro + pulo) */
@@ -282,9 +284,15 @@ function objeto(chave, tam){
   return '<span class="obj-img" style="display:inline-block;width:'+tam+'px;height:'+tam+'px;line-height:'+tam+'px;background:#cce8fb;border-radius:50%;text-align:center;font-weight:bold;color:#1c6fb3">●</span>';
 }
 /* mostra N cópias do mesmo objeto */
-function grupoObjetos(chave, n, classe){
-  var html='<span class="obj-grupo">';
-  for(var i=0;i<n;i++){ html+='<span class="obj-item'+(classe?' '+classe:'')+'">'+objeto(chave)+'</span>'; }
+/* tamanho do objeto conforme a quantidade (evita que o grupo quebre feio) */
+function tamObj(n){ if(n<=4)return 52; if(n<=6)return 46; if(n<=9)return 40; if(n<=12)return 34; if(n<=16)return 30; return 26; }
+/* colunas por linha: mantém linhas iguais (10 = 2x5, e não 9+1 solto) */
+function colsObj(n){ if(n<=5)return n; if(n<=10)return Math.ceil(n/2); if(n<=18)return Math.ceil(n/3); return Math.ceil(n/4); }
+function larguraGrupo(n, tam){ return colsObj(n)*(tam+6)+24; }
+function grupoObjetos(chave, n, classe, tam){
+  tam=tam||tamObj(n);
+  var html='<span class="obj-grupo" style="max-width:'+larguraGrupo(n,tam)+'px">';
+  for(var i=0;i<n;i++){ html+='<span class="obj-item'+(classe?' '+classe:'')+'">'+objeto(chave,tam)+'</span>'; }
   html+='</span>';
   return html;
 }
@@ -1012,19 +1020,23 @@ function narrarDesafio(){ var fase=FASES[faseAtual], dd=fase&&fase.desafios?fase
 function montarCenaVisual(dd){
   var html='<div class="obj-cena">';
   if(dd.modo==="contar"){
-    html+='<span class="obj-grupo">';
-    for(var c=0;c<dd.qtd1;c++){ html+='<span class="obj-item" id="cItem'+c+'">'+objeto(dd.obj)+'</span>'; }
+    var tC=tamObj(dd.qtd1);
+    html+='<span class="obj-grupo" style="max-width:'+larguraGrupo(dd.qtd1,tC)+'px">';
+    for(var c=0;c<dd.qtd1;c++){ html+='<span class="obj-item" id="cItem'+c+'">'+objeto(dd.obj,tC)+'</span>'; }
     html+='</span>';
   } else if(dd.modo==="juntar" || dd.modo==="acrescentar"){
-    html+='<span class="obj-grupo">'+grupoObjetos(dd.obj,dd.qtd1)+'<span class="sinal">+</span>'+grupoObjetos(dd.obj,dd.qtd2)+'</span>';
+    var tJ=tamObj(Math.max(dd.qtd1,dd.qtd2));
+    html+='<span class="obj-grupo obj-soma">'+grupoObjetos(dd.obj,dd.qtd1,null,tJ)+'<span class="sinal">+</span>'+grupoObjetos(dd.obj,dd.qtd2,null,tJ)+'</span>';
   } else if(dd.modo==="separar"){
-    html+='<span class="obj-grupo">';
-    for(var i=0;i<dd.qtd1;i++){ var saiu=(i<dd.qtdSep); html+='<span class="obj-item'+(saiu?' sai':'')+'">'+objeto(dd.obj)+'</span>'; }
+    var tS=tamObj(dd.qtd1);
+    html+='<span class="obj-grupo" style="max-width:'+larguraGrupo(dd.qtd1,tS)+'px">';
+    for(var i=0;i<dd.qtd1;i++){ var saiu=(i<dd.qtdSep); html+='<span class="obj-item'+(saiu?' sai':'')+'">'+objeto(dd.obj,tS)+'</span>'; }
     html+='</span>';
     html+='<div style="font-size:13px;color:#888;margin-top:6px">(os apagados foram separados)</div>';
   } else if(dd.modo==="retirar"){
-    html+='<span class="obj-grupo">';
-    for(var j=0;j<dd.qtd1;j++){ var tira=(j<dd.qtdTira); html+='<span class="obj-item'+(tira?' sai':'')+'">'+objeto(dd.obj)+'</span>'; }
+    var tR=tamObj(dd.qtd1);
+    html+='<span class="obj-grupo" style="max-width:'+larguraGrupo(dd.qtd1,tR)+'px">';
+    for(var j=0;j<dd.qtd1;j++){ var tira=(j<dd.qtdTira); html+='<span class="obj-item'+(tira?' sai':'')+'">'+objeto(dd.obj,tR)+'</span>'; }
     html+='</span>';
     html+='<div style="font-size:13px;color:#888;margin-top:6px">(os apagados foram tirados)</div>';
   }
