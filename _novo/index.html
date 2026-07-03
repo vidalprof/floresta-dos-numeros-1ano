@@ -638,6 +638,7 @@ function limparFala(t){
   var s=String(t||"");
   s=s.replace(/<[^>]*>/g," ");
   s=s.replace(/&nbsp;/g," ").replace(/&amp;/g,"e").replace(/&lt;/g," ").replace(/&gt;/g," ");
+  s=s.replace(/\s*\.\s*(?:\.\s*)+/g,". ");   /* reticências (...) viram 1 ponto, senão a voz lê "ponto ponto" */
   s=acentuaPalavra(s,"voce","você");
   s=acentuaPalavra(s,"voces","vocês");
   s=acentuaPalavra(s,"magica","mágica");
@@ -858,7 +859,7 @@ function mostrarPop(html, dur){
 /* ================= ELOGIOS ================= */
 var ELOGIOS=[
   "Mandou muito bem!",
-  "Isso aí, explorador(a) de primeira!",
+  "Isso aí, viajante de primeira!",
   "Perfeito! O balão subiu mais um pouco!",
   "Excelente! Você entende mesmo de climas!",
   "Acertou em cheio!",
@@ -1894,7 +1895,7 @@ function tocarTrofeu(){
   }
 }
 function historiaMapaTexto(feitas){
-  var quem=nomeAluno?(nomeAluno):"explorador(a)";
+  var quem=nomeAluno?(nomeAluno):"viajante";
   if(feitas===0){
     return "Uma supertempestade espalhou as páginas do <b>Atlas do Clima</b> do Nimbo pelo mundo! Viaje pelos climas do planeta e recupere cada página. A cada página, o Atlas cresce e ganha brilho. Complete as paradas para libertar o <b>Globo Dourado</b>!";
   } else if(feitas<ORDEM.length){
@@ -1911,14 +1912,14 @@ function narrarMapa(){
   var quem=nomeAluno?(nomeAluno+"! "):"";
   var t="";
   if(feitas===0){
-    t="Olá, "+(quem||"explorador(a)! ")+"Eu sou o Nimbo! A supertempestade espalhou as páginas do meu Atlas do Clima pelo mundo. Olha só como ele está apagado e sem cor... Cada parada da viagem guarda uma página. A cada página que voltar, o Atlas cresce e ganha brilho! Suba no balão e toque na primeira parada: a Estação do Vento!";
+    t="Olá, "+(quem||"viajante! ")+"Eu sou o Nimbo! A supertempestade espalhou as páginas do meu Atlas do Clima pelo mundo. Olha só como ele está apagado e sem cor... Cada parada da viagem guarda uma página. A cada página que voltar, o Atlas cresce e ganha brilho! Suba no balão e toque na primeira parada: a Estação do Vento!";
   } else if(feitas<ORDEM.length){
     var resto=ORDEM.length-feitas;
-    t="Que viagem, "+(quem||"parceiro(a)! ")+"Você já recuperou "+pluralG(feitas,"f","página do Atlas","páginas do Atlas")+", e olha como ele está ficando mais colorido e brilhante! ";
+    t="Que viagem, "+(quem||"piloto! ")+"Você já recuperou "+pluralG(feitas,"f","página do Atlas","páginas do Atlas")+", e olha como ele está ficando mais colorido e brilhante! ";
     if(resto===1){ t+="Falta só a última parada para o Atlas ficar completo e libertar o Globo Dourado! Vamos lá!"; }
     else { t+="Faltam "+pluralG(resto,"f","parada","paradas")+" para o Atlas brilhar de vez. Toque na parada que está brilhando!"; }
   } else {
-    t="Você conseguiu, "+(quem||"campeão(ã)! ")+"Todas as páginas voltaram e o Atlas do Clima está completo, brilhando como nunca! O Globo Dourado é seu! Toque nele para ver o grande final da nossa aventura!";
+    t="Você conseguiu, "+(quem||"estrela! ")+"Todas as páginas voltaram e o Atlas do Clima está completo, brilhando como nunca! O Globo Dourado é seu! Toque nele para ver o grande final da nossa aventura!";
   }
   falar(t);
 }
@@ -1948,7 +1949,7 @@ var ABERTURA_FASE={
   subtropical:{img:"subtropical", clima:"subtropical", txt:"Bem-vindo(a) às <b>Colinas do Sul</b>! Aqui o clima é <b>subtropical</b>: tem as <b>quatro estações</b> bem marcadas, verões quentes e invernos frios com geada (às vezes até neve!). É o clima do Sul do Brasil, terra das araucárias e do quero-quero."},
   gelo:{img:"gelo", clima:"polar", txt:"Brrr, que frio! Estas são as terras dos climas frios: o <b>subpolar</b> (invernos longos e muito frios, verões curtos, como a Sibéria) e o <b>polar</b> (o mais frio de todos, com gelo quase o ano inteiro, como a Antártida)."},
   mundi:{img:"mundi", clima:"", txt:"Hora de revisar o mundo inteiro! Vamos lembrar qual é o clima de cada lugar famoso que visitamos na nossa volta ao mundo."},
-  tempestade:{img:"tempestade", clima:"", txt:"A última página está presa na Tempestade Final! Para libertá-la, você vai usar tudo o que aprendeu na viagem. Respire fundo, explorador... é a prova final!"}
+  tempestade:{img:"tempestade", clima:"", txt:"A última página está presa na Tempestade Final! Para libertá-la, você vai usar tudo o que aprendeu na viagem. Respire fundo, viajante... é a prova final!"}
 };
 function svgClima(climaKey, cenFb, tam){
   var t=tam||150;
@@ -2749,12 +2750,12 @@ function telaFimReforco(){
   var html='<div class="card centro">';
   html+='<div style="width:100px;height:100px;margin:0 auto;" class="mascimg">'+svgMascote("comemorando",100)+'</div>';
   html+='<h1 class="titulo" style="font-size:20px;">Reforço concluído!</h1>';
-  html+='<p class="texto centro">Treinar de novo é coisa de grande explorador(a). Agora sim, vamos em frente!</p>';
+  html+='<p class="texto centro">Treinar de novo é coisa de grande viajante. Agora sim, vamos em frente!</p>';
   html+='<button class="btn pulsa" onclick="telaMenu()">Continuar a viagem &#10145;</button>';
   html+='</div>';
   $("app").innerHTML=html;
   emReforco=false;
-  falar("Reforço concluído! Treinar de novo é coisa de grande explorador(a). Agora sim, vamos em frente!");
+  falar("Reforço concluído! Treinar de novo é coisa de grande viajante. Agora sim, vamos em frente!");
 }
 
 /* ===== TREINO DOS ERROS ===== */
