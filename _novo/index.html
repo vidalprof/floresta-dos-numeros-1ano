@@ -1914,6 +1914,7 @@ function limparFala(t){
   /* nao ler pontuacao/simbolos em voz alta */
   t=t.replace(/[\u2014\u2013]/g,", ");                 /* travessao/meia-risca -> pausa */
   t=t.replace(/\s*\.\s*(?:\.\s*)+/g,". ");            /* reticencias -> 1 ponto */
+  t=t.replace(/([!?])\s*\./g,"$1");                     /* "Excelente!." -> "Excelente!" (nao ler "ponto") */
   t=t.replace(/[()\[\]{}"\u00ab\u00bb_*#~^`|<>]/g," ");  /* parenteses/aspas/simbolos */
   /* normalizar pronuncia de acentos que o texto nao tem */
   t=t.replace(/\bvoce\b/gi, function(m){ return m[0]==="V"?(m==="VOCE"?"VOCE":"Voce"):"voce"; });
