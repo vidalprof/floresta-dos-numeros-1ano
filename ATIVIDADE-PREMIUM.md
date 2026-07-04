@@ -170,6 +170,8 @@ NENHUM texto da atividade pode ter erro de português. Antes de entregar, revisa
 
 **PRINCÍPIO (não esquecer):** o prompt do ChatGPT NÃO resolve sozinho o problema de parte branca/franja. Um prompt bem-feito (fundo branco puro + SEM sombra + contorno escuro definido) PREVINE a maior fonte (a sombra na base) e facilita o recorte, mas SEMPRE sobra uma franja fina de borda e às vezes vãos internos — e isso só some com a LIMPEZA obrigatória do lado do código (passos 5, 6b). **Garantia = prompt bom + limpeza obrigatória juntos.** Nunca embutir uma imagem sem ter passado pela limpeza e pela conferência visual.
 
+**CORPO BRANCO SEM CONTORNO ESCURO = FRANJA IRRECUPERÁVEL (lição paga, crítica):** se a cartela desenhar um objeto/animal BRANCO (coelho, ovelha, galinha, ovo, pato) SEM uma linha de contorno escura e fechada, o corpo branco encosta direto no fundo branco — não há fronteira. O recorte deixa uma borda branca esfarrapada, e tentar removê-la por código só PIORA (expõe mais branco do corpo; medido: coelho foi de 21% de franja para 78% e comeu 8,5% do corpo). **NÃO existe conserto por código nesse caso — a ÚNICA solução é REGERAR a cartela** com o prompt exigindo "contorno preto grosso e fechado em volta de cada objeto, INCLUSIVE os brancos". Diagnóstico rápido: medir % de contorno escuro na borda do recorte; se for ~0% e houver muito branco na borda, a cartela veio sem contorno → pedir para regerar, não tentar limpar. (Com o contorno, a franja cai para 0%.)
+
 **OBJETOS DE CONTAGEM — variedade (não cansar a criança):** cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase ALTERNA entre eles por desafio (helper `objDaFase()` cicla pela lista `F.objs` por `idxDesafio`; mantém `F.obj` como fallback). Nunca um único objeto repetido em 5-6 desafios seguidos. Gerar todos os objetos da fase na MESMA cartela.
 
 **Fluxo:**
@@ -214,7 +216,7 @@ NENHUM texto da atividade pode ter erro de português. Antes de entregar, revisa
 - Níveis com XP (5 níveis temáticos), emblema do nível SEMPRE visível na topbar (atualiza em addPontos/carregar/boot).
 - Subir de nível: fanfarra + confete + fala.
 - Selos/conquistas (imagens do tema) em marcos: 1º acerto, streak, 1ª fase, metade, jogo, tudo.
-- Medalha por fase (imagem dourada temática; NÚMERO adicionado por código via overlay `.med-num` centralizado).
+- Medalha por fase: um MEDALHÃO DOURADO (círculo de ouro com fita/laço colorido e borda serrilhada) com o SÍMBOLO da fase no centro (ovo, maçã, vaca, cenoura, osso, troféu...) — NÃO é o bicho/mascote inteiro nem emoji. Imagem dourada temática recortada; o NÚMERO (1..N) é adicionado por código via overlay `.med-num` centralizado. Regerar ao refazer a atividade. (Lição paga: uma cartela de "bichos" no lugar de medalhões passou como medalha sem ser — conferir % de dourado no recorte: medalhão tem ~37-56% dourado; se der 1-3%, é figura, não medalha → regerar.)
 - Toda fase termina chamando a tela de fim de fase (registra `concluidas[fase]` e conquistas).
 
 ================================================================
