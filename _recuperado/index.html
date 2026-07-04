@@ -1056,7 +1056,7 @@ function falar(texto){
   if(!('speechSynthesis' in window)) return;
   try{
     window.speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(texto);
+    var u=new SpeechSynthesisUtterance(limparFala(texto));
     u.lang='pt-BR'; u.rate=0.9; u.pitch=1.1;
     /* tenta achar voz pt */
     var vs=window.speechSynthesis.getVoices();
@@ -1911,6 +1911,10 @@ function limparFala(t){
   t=String(t);
   t=t.replace(/<[^>]+>/g,' ');
   t=t.replace(/&middot;/g,' ').replace(/&nbsp;/g,' ').replace(/&[a-z]+;/g,' ');
+  /* nao ler pontuacao/simbolos em voz alta */
+  t=t.replace(/[\u2014\u2013]/g,", ");                 /* travessao/meia-risca -> pausa */
+  t=t.replace(/\s*\.\s*(?:\.\s*)+/g,". ");            /* reticencias -> 1 ponto */
+  t=t.replace(/[()\[\]{}"\u00ab\u00bb_*#~^`|<>]/g," ");  /* parenteses/aspas/simbolos */
   /* normalizar pronuncia de acentos que o texto nao tem */
   t=t.replace(/\bvoce\b/gi, function(m){ return m[0]==="V"?(m==="VOCE"?"VOCE":"Voce"):"voce"; });
   t=t.replace(/\bvoce\b/g,"voc\u00ea").replace(/\bVoce\b/g,"Voc\u00ea").replace(/\bVOCE\b/g,"VOC\u00ea");
