@@ -1386,8 +1386,8 @@ function renderMontar(dd,extra){
   window._montado=[];
   var h=cabecalhoFase(extra);
   h+='<div class="masc-linha"><div class="masc">'+figTeco("explicando")+'</div><div class="balao">'+dd.pergunta+'</div></div>';
-  h+='<div class="dica" id="dica">Toque nas peças na ordem certa.</div>';
-  h+='<div class="montar-slots" id="slots">';
+  h+='<div class="dica" id="dica">Arraste as peças para os espaços, na ordem certa (ou toque nelas).</div>';
+  h+='<div class="montar-slots solta" id="slots">';
   var i;
   for(i=0;i<dd.resposta.length;i++){ h+='<div class="slot" id="slot'+i+'"></div>'; }
   h+='<div class="slot" id="slotR" style="border-color:#ffe27a">?</div>';
@@ -1395,7 +1395,7 @@ function renderMontar(dd,extra){
   h+='<div class="checkbox" id="chk"></div>';
   h+='<div class="banco" id="banco">';
   for(i=0;i<dd._banco.length;i++){
-    h+='<button class="ficha" id="fic'+i+'" onclick="tocaFicha('+i+',\''+jsesc(dd._banco[i])+'\')">'+dd._banco[i]+'</button>';
+    h+='<button class="ficha arrasta" data-i="'+i+'" id="fic'+i+'" onclick="tocaFicha('+i+',\''+jsesc(dd._banco[i])+'\')">'+dd._banco[i]+'</button>';
   }
   h+='</div>';
   h+='<div class="feedback" id="fb"></div><div id="navarea"></div>';
@@ -1900,6 +1900,8 @@ function arrSolta(dragEl, zona){
     if(!isNaN(c) && typeof soltaCesto==="function"){ window._pegou=idx; soltaCesto(c); }
   } else if(zc.indexOf(" ord-slots ")>=0){
     if(typeof tocaOrd==="function"){ tocaOrd(idx); }
+  } else if(zc.indexOf(" montar-slots ")>=0){
+    if(typeof tocaFicha==="function"){ tocaFicha(idx, (dragEl.textContent||"").replace(/^\s+|\s+$/g,"")); }
   }
 }
 document.addEventListener("click", function(e){
