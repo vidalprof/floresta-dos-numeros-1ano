@@ -180,6 +180,7 @@ Seguro porque a verificação compara por **valor** (`dd.opcoes[idx]===dd.certa`
 - Fase complexa demais para a idade → **trocar** por uma concreta mais simples, não remendar.
 
 ### Calibragem por SÉRIE (alinhar ao currículo/BNCC)
+- **Conferir a HABILIDADE contra a SÉRIE, não só o tema (lição paga).** Um conteúdo pode "caber" no tema mas ser de outro ano. Ex. real: classificar/nomear "artigo definido/indefinido" é metalinguagem de 8º ano (EF08LP09) — NÃO é 2º ano; no 2º ano vale o USO natural (o/a/um/uma pelo sentido) e habilidades como sílabas (EF02LP02), sinônimos/antônimos (EF02LP10), aumentativo/diminutivo (EF02LP11). Antes de aprovar uma fase, casar o objetivo com o código BNCC do ano. Remover a metalinguagem das falas/explicações quando a série não pede (a criança escolhe pelo sentido, não pelo rótulo gramatical).
 - Cobrir o conteúdo ESPERADO da série, não só o "seguro". Ex.: dinheiro no 5º ano (EF05MA) pede **porcentagem e desconto** (50%=metade, 10%=÷10, 25%=¼) e decimais — sem isso o teto fica em 4º ano. "Está adequado mas seguro demais para a série?" é sinal de que falta um degrau.
 - O conteúdo mais avançado vem como ÚLTIMA parada de conteúdo antes dos bônus.
 - Variar o ENUNCIADO dentro da fase (3-4 formas equivalentes por `i%`), para não repetir "Quanto vale?" 10x.
@@ -229,6 +230,16 @@ A leitura usa `speechSynthesis`. Web Speech é o teto viável (vozes neurais pes
 
 - **Narração automática em TUDO:** tela inicial, mapa (história), intro de fase, cada enunciado ao abrir, feedback ao responder, fim de fase, grande final, jogos. Botão para repetir onde couber.
 - **Bilíngue:** detectar idioma FRASE A FRASE (`detectaPT`) e usar a voz certa (`escolherVozPt`/`escolherVozEn`); pular a frase se não houver voz do idioma (nunca voz errada lendo o outro idioma).
+
+**GRAFIA DE TELA ≠ GRAFIA FALADA — sílabas, siglas, símbolos (lição paga):** o TTS soletra maiúsculas curtas ("GA"→"gê-á", "BO"→"bê-ô", "SA-PA-TO" letra a letra) e não lê "+" direito. Quando a TELA precisa de maiúsculas (destacar sílabas numa fase de consciência fonológica, siglas) mas isso soa errado na fala:
+- **Campos opcionais `fala` e `falaExplica` no desafio.** A narração do enunciado usa `dd.fala||dd.enun`; o feedback usa `dd.falaExplica||dd.explica`. A criança VÊ "GA mais TO formam qual palavra?" e OUVE "ga, mais to, formam qual palavra?".
+- Regras da versão falada: sílabas em MINÚSCULAS (o TTS lê o som, não as letras), separadas por VÍRGULA (micro-pausa), "+" escrito "mais", palavra-alvo como palavra inteira minúscula.
+- A `fala` obedece à mesma regra do enunciado: NÃO revela a resposta após o "?". O fallback de tempo sem voz mede o comprimento do texto FALADO.
+- Implementação: `falarDepois(dd.fala?dd.fala:dd.enun)` no render do desafio; `falar(el1+" "+(dd.falaExplica?dd.falaExplica:dd.explica),liberar)` no `feedbackAcerto`.
+
+**RETICÊNCIAS PICOTAM A FALA (lição paga):** "..." vira ". . ." após o `limparFala` (espaço depois de cada ponto) e o TTS lê cada ponto como pausa isolada — a frase sai picotada. NUNCA "..." no que será falado; usar vírgula para a pausa. Na tela "..." pode aparecer, desde que o que vai ao `falar()` seja a string SEM reticências (ex.: mostrar "Pense de novo..." mas falar "Quase! Pense de novo.").
+
+**Adicionar ao `pronuncia()`** as palavras que o TTS erra sem acento — quando houver fase de sílabas, incluir "silaba"→"sílaba", "silabas"→"sílabas", "pedaco/pedacos"→"pedaço/pedaços".
 
 ================================================================
 ## 8. LÍNGUA PORTUGUESA IMPECÁVEL — CONCORDÂNCIA DINÂMICA
@@ -299,6 +310,7 @@ Cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase
 ================================================================
 - **NUNCA `width:100%; height:100%; object-fit:contain` em imagem** — em Firefox 106/Chrome antigo COLAPSA a imagem para tamanho zero (some). Usar largura em px OU `width:100%; height:auto`, com `display:block`. Auditar o CSS inteiro.
 - **Imagem RETRATO em container fixo — dimensionar pela ALTURA, nunca pela largura (lição paga: mascote sobrepondo o desafio).** O mascote ChatGPT é retrato (~163×220); com `width:100%;height:auto` num container 78×78 ele estoura para baixo e COBRE o conteúdo. Correto: container em px + `img{display:block;height:100%;width:auto;margin:0 auto}` + `overflow:hidden`. O mascote JAMAIS pode sobrepor o conteúdo — auditar renderizando.
+- **Companheiro do mapa ao LADO da ilha, nunca por `bottom` (lição paga: personagem cobrindo o nome da parada).** Companheiro é imagem retrato alta (~163×220). Ancorado por `bottom` (com `.paradaNome` fluindo abaixo) ele desce e cobre o título. Correto: ancorar por `top` na altura do meio do cenário (cenário 80px → companheiro ~48px em `top:24px`, `right:-14px`), `overflow:hidden`, e `.paradaNome{margin-top:4px}`. Auditar renderizando com companheiro retrato ALTO a 360/320px: a base do companheiro tem que ficar ACIMA do topo do nome em todas as paradas.
 - Glow em PNG recortado: `filter:drop-shadow` (par `-webkit-`), NUNCA `box-shadow` (desenha retângulo).
 - Objetos de contagem: `display:block; width:100%; height:auto` no container com px.
 - Flexbox com fallback `-webkit-box` (+ `-webkit-box-flex` explícito nos filhos).
@@ -330,6 +342,7 @@ Cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase
 - **Memória:** parear cartas iguais (conceito ↔ representação). 4 pares (8 cartas) para a idade.
 - **Quebra-cabeça de ordenação:** ordenar itens tocando do menor ao maior. Slots `?` no topo; banco embaralhado embaixo; toque errado avisa sem punir.
 - **Caça-palavras:** grade 10x10, célula ~27px para caber no celular.
+- **Sílabas (consciência fonológica — EF02LP02):** juntar sílabas para formar a palavra, apontar a sílaba que falta, contar sílabas, trocar a sílaba inicial. Tela em MAIÚSCULAS para destaque; fala via `fala`/`falaExplica` em minúsculas (o TTS soletra maiúsculas — ver Seção 7). Como fase de conteúdo, o Desafio Extra é uma palavra com uma sílaba a mais; se tratada como fase-jogo, não leva Extra.
 - **Frase em ordem:** "Monte a Frase" — ordenar palavras embaralhadas.
 - **Escolha múltipla com imagem (`escolha-img`):** mesma regra de embaralhar.
 - **Classificar fichas:** arrastar ou clicar (mouse + touch).
@@ -363,7 +376,7 @@ Ao reformular, é fácil deixar DUAS versões da mesma função — a última so
 ### VALIDAÇÃO OBRIGATÓRIA — 3 NÍVEIS (antes de entregar, executando, não de memória)
 **NÍVEL 1 — DEV:** (1) modo estrito `new Function('"use strict";'+js)` sem erro; (2) zero JS moderno; (3) zero CSS moderno; (4) nº `@keyframes` == nº `@-webkit-keyframes`; (5) zero funções duplicadas; (6) zero variável acentuada; (7) CSS de imagem robusto (nada que colapse, mascote pela altura, glow com drop-shadow).
 **NÍVEL 2 — QA:** (8) play-through de TODAS as fases (simulador `node sim.js` ou Playwright) com **0 erros**, sem overflow em 414/390/360/320px; (9) zero emoji moderno/VS16; (10) toda função de `onclick` existe; (11) embaralhamento REAL (posição da certa varia entre execuções); (12) fala nunca cortada (elogio+explicação inteiros, streak/nível/conquista depois; clicar "Próximo" não corta; trocar de tela corta); (13) adaptatividade (100%→Extra, <50%→Reforço, erros→Treino); (14) mapa (só atual clicável, demais trancadas, conectores, troféu, relatório só no fim, barra de progresso).
-**NÍVEL 3 — PEDAGOGO:** (15) matemática/conteúdo consistente (resposta nas opções, produtos/divisões corretos, divisões exatas, zero opções duplicadas); (16) concordância n=1 E n>1 (tela E fala; forçar 1 ponto/1 medalha, varrer `\b1\s+(plural)`); (17) numExt ACENTUADO ("três"); (18) normalização de pronúncia cobre as palavras; (19) narração não entrega resposta (nada declarativo após o "?"); (20) enunciados coerentes + explicações verdadeiras; (21) português impecável (varrer palavras sem acento); (22) imagens conferidas (cor/mosaico, transparência real, sem franja/sombra/vão, mascote não sobrepõe).
+**NÍVEL 3 — PEDAGOGO:** (15) matemática/conteúdo consistente (resposta nas opções, produtos/divisões corretos, divisões exatas, zero opções duplicadas); (16) concordância n=1 E n>1 (tela E fala; forçar 1 ponto/1 medalha, varrer `\b1\s+(plural)`); (17) numExt ACENTUADO ("três"); (18) normalização de pronúncia cobre as palavras; (19) narração não entrega resposta (nada declarativo após o "?"); (20) enunciados coerentes + explicações verdadeiras; (21) português impecável (varrer palavras sem acento); (22) imagens conferidas (cor/mosaico, transparência real, sem franja/sombra/vão, mascote não sobrepõe). (23) fala conferida: rodar cada enunciado/explicação pelo `limparFala` e LER a saída (zero sigla soletrada, zero "..." picotando, zero "+" cru; usar `fala`/`falaExplica` onde a grafia falada difere da de tela); (24) série casada: cada fase batendo com a habilidade BNCC do ano correto.
 **ENTREGA:** (23) único `index.html` (sem cópia com nome descritivo); (24) relatar honestamente o cumprido e o pendente.
 
 ================================================================
