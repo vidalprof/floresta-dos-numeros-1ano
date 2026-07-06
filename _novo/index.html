@@ -222,7 +222,10 @@ h2{font-size:20px;color:#aef0c8;text-align:center;line-height:1.2;}
 .cacaCel{width:27px;height:27px;line-height:27px;text-align:center;font-size:14px;font-weight:bold;
   color:#eafff2;cursor:pointer;border-radius:5px;}
 .cacaCel.sel{background:#ffd23f;color:#06301c;}
+.cacaCel.ponta{background:#ff8a3d;color:#06301c;-webkit-box-shadow:0 0 0 2px #ffd23f;box-shadow:0 0 0 2px #ffd23f;}
 .cacaCel.achou{background:#4fbf82;color:#06301c;}
+.cacaPal{display:inline-block;margin:2px 3px;padding:2px 7px;border-radius:7px;background:#0c2418;color:#dff6e8;font-weight:bold;}
+.cacaPal.ok{text-decoration:line-through;opacity:.6;background:#173d29;color:#8fe0ab;}
 
 /* arrastar / montar frase */
 .slots{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;margin:10px 0;min-height:44px;}
@@ -1712,7 +1715,7 @@ function iniciarCaca(){
   faseAtual="caca";
   montarCaca();
   renderCaca();
-  falar("Ca\u00e7a-palavras! Ache as palavras escondidas na grade. Toque nas letras em sequ\u00eancia.");
+  falar("Ca\u00e7a-palavras! Ache as palavras escondidas na grade. Toque na primeira letra e depois na \u00faltima letra de cada palavra.");
 }
 function montarCaca(){
   var N=8;
@@ -1752,8 +1755,12 @@ function renderCaca(){
   var t=$("telaFase");t.innerHTML="";
   var card=el("div","card");
   card.appendChild(el("h2",null,INFO.caca.titulo));
-  var faltam=[];var i;for(i=0;i<_cacaAlvos.length;i++){if(!_cacaAchadas[_cacaAlvos[i]]){faltam.push(_cacaAlvos[i]);}}
-  card.appendChild(el("div","dica","\ud83d\udca1 Ache: "+_cacaAlvos.join(", ")));
+  var i;
+  var dica=el("div","dica");dica.appendChild(document.createTextNode("\ud83d\udca1 Ache: "));
+  for(i=0;i<_cacaAlvos.length;i++){
+    dica.appendChild(el("span","cacaPal"+(_cacaAchadas[_cacaAlvos[i]]?" ok":""),_cacaAlvos[i]));
+  }
+  card.appendChild(dica);
   var grade=el("div","cacaGrade");
   for(i=0;i<_cacaGrade.length;i++){
     var lin=el("div","cacaLinha");
@@ -1775,37 +1782,83 @@ function renderCaca(){
 }
 var _cacaCelsAchadas={};
 function _cacaCelAchada(r,c){return !!_cacaCelsAchadas[r+"_"+c];}
+/* devolve as celulas em linha reta (horizontal, vertical ou diagonal) entre
+   dois pontos, inclusive as pontas; ou null se os pontos nao estao alinhados */
+function _cacaLinha(r1,c1,r2,c2){
+  var dr=r2-r1, dc=c2-c1;
+  var pr, pc, n;
+  if(r1===r2 && c1===c2){ return null; } /* mesma celula: nao vale palavra */
+  if(r1===r2){ pr=0; pc=(dc>0?1:-1); n=Math.abs(dc); }
+  else if(c1===c2){ pr=(dr>0?1:-1); pc=0; n=Math.abs(dr); }
+  else if(Math.abs(dr)===Math.abs(dc)){ pr=(dr>0?1:-1); pc=(dc>0?1:-1); n=Math.abs(dr); }
+  else{ return null; } /* nao estao na mesma linha/coluna/diagonal */
+  var cels=[],i,rr=r1,cc=c1;
+  for(i=0;i<=n;i++){
+    cels.push({r:rr,c:cc,key:rr+"_"+cc,ch:_cacaGrade[rr][cc]});
+    rr+=pr; cc+=pc;
+  }
+  return cels;
+}
+function _cacaLimparPonta(){
+  if(_cacaSel.length){
+    var p=_cacaSel[0];var e=$("cc_"+p.r+"_"+p.c);
+    if(e){ e.className="cacaCel"+(_cacaCelAchada(p.r,p.c)?" achou":""); }
+  }
+  _cacaSel=[];
+}
+function _cacaConcluir(cels,w){
+  _cacaAchadas[w]=1;
+  var k;for(k=0;k<cels.length;k++){_cacaCelsAchadas[cels[k].key]=1;}
+  _cacaSel=[];
+  addPontos(8);confete(8);
+  var achou=0,tot=_cacaAlvos.length,m;for(m=0;m<_cacaAlvos.length;m++){if(_cacaAchadas[_cacaAlvos[m]]){achou++;}}
+  if(achou>=tot){
+    carimbo();
+    setTimeout(function(){
+      acertosFase=tot;totalFase=tot;errosFase=0;
+      _cacaCelsAchadas={};
+      telaFimFase();
+    },1100);
+    falar("Voc\u00ea achou todas as palavras! Muito bem!");
+  }else{
+    falar("Achou "+w+"! Continue!");
+    renderCaca();
+  }
+}
+/* 1o toque = primeira letra (ponta); 2o toque = ultima letra.
+   Verifica a linha reta entre as duas pontas contra a lista (nos dois sentidos). */
 function tocarCaca(r,c,cel){
-  var key=r+"_"+c;
-  var pos=-1,i;for(i=0;i<_cacaSel.length;i++){if(_cacaSel[i].key===key){pos=i;}}
-  if(pos>=0){_cacaSel.splice(pos,1);cel.className="cacaCel";}
-  else{_cacaSel.push({r:r,c:c,key:key,ch:_cacaGrade[r][c]});cel.className="cacaCel sel";}
-  /* verifica se forma alguma palavra */
-  var montada="";for(i=0;i<_cacaSel.length;i++){montada+=_cacaSel[i].ch;}
+  /* nenhuma ponta ainda: marca esta como o comeco */
+  if(!_cacaSel.length){
+    _cacaSel=[{r:r,c:c,key:r+"_"+c,ch:_cacaGrade[r][c]}];
+    cel.className="cacaCel ponta";
+    return;
+  }
+  var ini=_cacaSel[0];
+  /* tocou de novo na mesma ponta: cancela a selecao */
+  if(ini.r===r && ini.c===c){ _cacaLimparPonta(); return; }
+  /* 2a ponta: pega a linha entre as duas */
+  var cels=_cacaLinha(ini.r,ini.c,r,c);
+  if(!cels){
+    /* pontas fora de linha reta: recomeca marcando esta como novo inicio */
+    _cacaLimparPonta();
+    _cacaSel=[{r:r,c:c,key:r+"_"+c,ch:_cacaGrade[r][c]}];
+    cel.className="cacaCel ponta";
+    return;
+  }
+  var montada="",i;for(i=0;i<cels.length;i++){montada+=cels[i].ch;}
+  var invertida="";for(i=cels.length-1;i>=0;i--){invertida+=cels[i].ch;}
   for(i=0;i<_cacaAlvos.length;i++){
     var w=_cacaAlvos[i];
-    if(!_cacaAchadas[w]&&montada===w){
-      _cacaAchadas[w]=1;
-      var k;for(k=0;k<_cacaSel.length;k++){_cacaCelsAchadas[_cacaSel[k].key]=1;}
-      _cacaSel=[];
-      addPontos(8);confete(8);
-      var achou=0,tot=_cacaAlvos.length,m;for(m=0;m<_cacaAlvos.length;m++){if(_cacaAchadas[_cacaAlvos[m]]){achou++;}}
-      if(achou>=tot){
-        carimbo();
-        var fb=$("fbBox");
-        setTimeout(function(){
-          acertosFase=tot;totalFase=tot;errosFase=0;
-          _cacaCelsAchadas={};
-          telaFimFase();
-        },900);
-        falar("Voc\u00ea achou todas as palavras! Muito bem!");
-      }else{
-        falar("Achou "+w+"! Continue!");
-        renderCaca();
-      }
+    if(!_cacaAchadas[w] && (montada===w||invertida===w)){
+      _cacaConcluir(cels,w);
       return;
     }
   }
+  /* nao formou palavra: limpa e deixa tentar de novo, sem punir */
+  _cacaLimparPonta();
+  var fb=$("fbBox");if(fb){fb.className="feedback no";fb.innerHTML="Quase! Tente a primeira e a \u00faltima letra de uma palavra da lista.";
+    setTimeout(function(){var f=$("fbBox");if(f){f.className="feedback";f.innerHTML="";}},1600);}
 }
 
 /* ============================================================
