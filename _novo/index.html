@@ -1427,7 +1427,7 @@ function tocaFicha(idx,val){
   } else {
     document.getElementById("dica").innerHTML="Essa não é a próxima peça. Qual vem agora?";
     var fic2=document.getElementById("fic"+idx);
-    if(fic2){ fic2.className="ficha errado"; setTimeout(function(){ if(fic2){ fic2.className="ficha"; } },400); }
+    if(fic2){ fic2.className="ficha arrasta errado"; setTimeout(function(){ if(fic2){ fic2.className="ficha arrasta"; } },400); }
     registrarStreak(false);
     if(!window._errouMontar){ window._errouMontar=true; if(!window._extra){ errosFase++; } guardarErro(dd); }
   }
@@ -1466,11 +1466,11 @@ function pegaCenoura(i){
   if(!el || el.getAttribute("data-usada")==="1"){ return; }
   /* desmarca outras */
   var p=document.getElementById("pilha").getElementsByClassName("bicho");
-  var k; for(k=0;k<p.length;k++){ p[k].className=p[k].getAttribute("data-usada")==="1"?"bicho drag usada":"bicho drag"; }
-  el.className="bicho drag sel";
+  var k; for(k=0;k<p.length;k++){ p[k].className=p[k].getAttribute("data-usada")==="1"?"bicho drag arrasta usada":"bicho drag arrasta"; }
+  el.className="bicho drag arrasta sel";
   window._pegou=i;
   var cs=document.getElementById("cestos").getElementsByClassName("cesto");
-  for(k=0;k<cs.length;k++){ cs[k].className="cesto hl"; }
+  for(k=0;k<cs.length;k++){ cs[k].className="cesto solta hl"; }
 }
 function soltaCesto(c){
   if(_travado){ return; }
@@ -1487,7 +1487,7 @@ function soltaCesto(c){
   document.getElementById("lab"+c).innerHTML=repEstado.colocados[c];
   window._pegou=-1;
   var cs=document.getElementById("cestos").getElementsByClassName("cesto");
-  var k; for(k=0;k<cs.length;k++){ cs[k].className="cesto"; }
+  var k; for(k=0;k<cs.length;k++){ cs[k].className="cesto solta"; }
   /* terminou de repartir tudo? */
   if(repEstado.restante===0){ conferirReparte(); }
 }
