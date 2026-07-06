@@ -158,6 +158,7 @@ p.lead b { color:#ffe27a; }
 .cesto .prato { font-size:22px; height:34px; overflow:hidden; text-align:center; }
 .prato img { display:block; height:34px; width:auto; margin:0 auto; }
 .arrasta { -ms-touch-action:none; touch-action:none; }
+.btn.esperando { opacity:.5; cursor:default; -webkit-box-shadow:none; box-shadow:none; -webkit-filter:grayscale(.35); filter:grayscale(.35); }
 .arrasta img { -webkit-user-drag:none; user-select:none; -webkit-user-select:none; }
 .arr-ghost { position:fixed; z-index:9999; pointer-events:none; opacity:.9; margin:0; -webkit-transform:scale(1.1); transform:scale(1.1); }
 .cesto .cont { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; }
@@ -397,6 +398,18 @@ var falaFila=[], falando=false, _falaSeq=0;
 /* pararFala: corta tudo (usar SO em troca de tela/contexto) */
 function pararFala(){ falaFila=[]; falando=false; _falaSeq++; if("speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
 /* falar: inicia uma NOVA narracao, cancelando a anterior (troca de contexto) */
+function liberarAudioBtns(){
+  var bs=document.getElementsByClassName("aguarda-audio");
+  var i; for(i=0;i<bs.length;i++){
+    bs[i].disabled=false;
+    if((" "+bs[i].className+" ").indexOf(" esperando ")>=0){ bs[i].className=("btn verde aguarda-audio pulsa"); }
+  }
+}
+function armarAguardaAudio(){
+  /* libera logo se nao houver fala tocando; e seguranca para nunca travar */
+  setTimeout(function(){ if(!falando){ liberarAudioBtns(); } }, 400);
+  setTimeout(liberarAudioBtns, 12000);
+}
 function falar(txt,aoTerminar){
   pararFala();
   if(!txt){ if(aoTerminar){ setTimeout(aoTerminar,60); } return; }
@@ -426,7 +439,7 @@ function splitFrases(t){
   return res;
 }
 function proximaFrase(aoTerminar){
-  if(!falaFila.length){ falando=false; if(aoTerminar){ aoTerminar(); } return; }
+  if(!falaFila.length){ falando=false; if(aoTerminar){ aoTerminar(); } liberarAudioBtns(); return; }
   var meuSeq=_falaSeq;
   var f=falaFila.shift();
   if(!vozPt){ /* sem voz pt: nao lê, apenas encadeia com tempo para nao travar */ setTimeout(function(){ if(meuSeq!==_falaSeq){ return; } proximaFrase(aoTerminar); }, Math.min(2600, 500+f.length*55)); return; }
@@ -1243,11 +1256,12 @@ function respEscolha(btn,val){
 function mostrarNav(extra){
   var nav=document.getElementById("navarea");
   if(!nav){ return; }
-  if(extra){ nav.innerHTML='<button class="btn verde pulsa" onclick="irMapaAposExtra()">Voltar ao mapa \u25b6</button>'; return; }
+  if(extra){ nav.innerHTML='<button class="btn verde aguarda-audio esperando" disabled onclick="irMapaAposExtra()">Voltar ao mapa \u25b6</button>'; armarAguardaAudio(); return; }
   var ultimo=(idxDesafio>=desafiosFase.length-1);
-  if(window._emTreino){ nav.innerHTML='<button class="btn verde pulsa" onclick="avancar()">'+(ultimo?"Terminar treino \ud83c\udf1f":"Próximo \u25b6")+'</button>'; return; }
-  if(ultimo){ nav.innerHTML='<button class="btn verde pulsa" onclick="avancar()">Ver resultado \ud83c\udfc1</button>'; }
-  else { nav.innerHTML='<button class="btn verde pulsa" onclick="avancar()">Próximo \u25b6</button>'; }
+  if(window._emTreino){ nav.innerHTML='<button class="btn verde aguarda-audio esperando" disabled onclick="avancar()">'+(ultimo?"Terminar treino \ud83c\udf1f":"Próximo \u25b6")+'</button>'; armarAguardaAudio(); return; }
+  if(ultimo){ nav.innerHTML='<button class="btn verde aguarda-audio esperando" disabled onclick="avancar()">Ver resultado \ud83c\udfc1</button>'; }
+  else { nav.innerHTML='<button class="btn verde aguarda-audio esperando" disabled onclick="avancar()">Próximo \u25b6</button>'; }
+  armarAguardaAudio();
 }
 
 /* escolhe o objeto de contagem da fase; se a fase tem lista (objs), alterna por desafio */
@@ -1630,12 +1644,12 @@ function telaFimJogo(ch){
     +'<div class="medalha-rev">'+figMedalha(ch)+'</div>'
     +'<div class="uau">'+CURIOS[ch]+'</div>'
     +'<div class="masc-linha"><div class="masc">'+figTeco("comemorando")+'</div><div class="balao">'+(GANCHOS[ch]||"Vamos continuar!")+'</div></div>';
-  if(prox){ h+='<button class="btn verde pulsa" onclick="iniciarFase(\''+prox+'\')">Próxima parada</button>'; }
+  if(prox){ h+='<button class="btn verde aguarda-audio esperando" disabled onclick="iniciarFase(\''+prox+'\')">Próxima parada</button>'; }
   h+='<button class="btn peq azul" onclick="irMapa()">Ver o mapa</button></div>';
   wrap.innerHTML=h; atualizarTopbar(); window.scrollTo(0,0);
   var falaCur=CURIOS[ch].replace(/<[^>]+>/g,"");
   var falaG=(GANCHOS[ch]||"").replace(/<[^>]+>/g,"");
-  setTimeout(function(){ falar("Muito bem! "+falaCur+" "+falaG); },400);
+  setTimeout(function(){ falar("Muito bem! "+falaCur+" "+falaG); armarAguardaAudio(); },400);
 }
 /* ============ FIM DOS DESAFIOS: ADAPTATIVIDADE ============ */
 function fimDosDesafios(){
@@ -1706,7 +1720,7 @@ function telaFimFase(ch){
     +'<div class="masc-linha"><div class="masc">'+figTeco("comemorando")+'</div><div class="balao">'+(GANCHOS[ch]||"Você mandou muito bem!")+'</div></div>';
   if(prox){
     h+='<div class="unlock-msg">\ud83d\udd13 Você abriu a próxima parada: <b>'+FASES[prox].titulo+'</b>!</div>'
-      +'<button class="btn verde pulsa" onclick="iniciarFase(\''+prox+'\')">\u25b6 Próxima parada</button>';
+      +'<button class="btn verde aguarda-audio esperando" disabled onclick="iniciarFase(\''+prox+'\')">\u25b6 Próxima parada</button>';
   }
   else if(todasFeitas()){
     h+='<div class="unlock-msg">\ud83c\udf1f Você terminou TODAS as paradas! Bora para a festa!</div>'
@@ -1720,8 +1734,8 @@ function telaFimFase(ch){
   var falaCur=CURIOS[ch].replace(/<[^>]+>/g,"");
   var falaG=(GANCHOS[ch]||"").replace(/<[^>]+>/g,"");
   var falaFim="Parada concluída! Você ganhou uma medalha. "+falaCur+" "+falaG;
-  if(window._avancando){ window._avancando=false; setTimeout(function(){ falarDepois(falaFim); },500); }
-  else { setTimeout(function(){ falar(falaFim); },500); }
+  if(window._avancando){ window._avancando=false; setTimeout(function(){ falarDepois(falaFim); armarAguardaAudio(); },500); }
+  else { setTimeout(function(){ falar(falaFim); armarAguardaAudio(); },500); }
 }
 
 /* ============ TREINO DOS ERROS ============ */
