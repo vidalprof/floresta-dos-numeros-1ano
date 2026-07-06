@@ -307,6 +307,9 @@ var concluidas={}, medalhasGanhas={}, selos={};
 var ERROS=[];
 var faseAtual=null, idxDesafio=0, acertosFase=0, errosFase=0, desafiosFase=[];
 var jaOfereceu=false, _travado=false;
+/* modo professor: destrava todas as fases so no mapa, SEM alterar o progresso
+   real do aluno (a flag so muda o que o mapa mostra como liberado). */
+var _adminLivre=false;
 
 /* localStorage com fallback em memoria */
 var MEM={};
@@ -395,6 +398,34 @@ function normPron(t){
   return t;
 }
 var falaFila=[], falando=false, _falaSeq=0;
+
+/* ====== SENHA MESTRA DO PROFESSOR (1275@) ======
+   Digitada no teclado a qualquer momento: LIGA/DESLIGA o modo professor, que
+   libera todas as fases para teste. Desligar volta ao progresso real do aluno
+   (a senha nao altera o que ja foi concluido; so muda as travas do mapa). */
+(function(){
+  var _buf="", _senha="1275@";
+  document.addEventListener("keydown", function(e){
+    var k=e.key;
+    if(!k || k.length!==1){ return; } /* ignora Shift, Enter, setas, etc. */
+    _buf=(_buf+k).slice(-8);
+    if(_buf.indexOf(_senha)>=0){
+      _buf="";
+      _adminLivre=!_adminLivre;
+      avisoAdmin(_adminLivre);
+      try{ irMapa(); }catch(err){} /* mostra o mapa ja com o novo estado */
+    }
+  }, false);
+})();
+function avisoAdmin(ligado){
+  var t=document.createElement("div");
+  t.style.cssText="position:fixed;left:50%;top:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);"
+    +"background:"+(ligado?"#2f7d32":"#8a2a2a")+";color:#fff;padding:10px 16px;border-radius:12px;"
+    +"font-weight:bold;font-size:14px;z-index:99999;-webkit-box-shadow:0 4px 14px rgba(0,0,0,.45);box-shadow:0 4px 14px rgba(0,0,0,.45)";
+  t.innerHTML=ligado?"🔓 Modo professor: fases liberadas":"🔒 Modo professor desligado";
+  document.body.appendChild(t);
+  setTimeout(function(){ if(t.parentNode){ t.parentNode.removeChild(t); } },2200);
+}
 /* pararFala: corta tudo (usar SO em troca de tela/contexto) */
 function pararFala(){ falaFila=[]; falando=false; _falaSeq++; if("speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
 /* falar: inicia uma NOVA narracao, cancelando a anterior (troca de contexto) */
@@ -1067,6 +1098,7 @@ function irMapa(){
     var estado="", tag="", trancada=false;
     if(concluidas[ch]){ cls+=" feita"; estado="Concluída ✓"; }
     else if(!achou1){ cls+=" atual"; achou1=true; tag='<div class="aqui">você está aqui</div>'; estado="Vamos lá!"; }
+    else if(_adminLivre){ cls+=" atual"; estado="Liberada (prof)"; }
     else { cls+=" trancada"; estado="Trancada"; trancada=true; }
     var clique = trancada ? ' onclick="avisarBloqueio()"' : ' onclick="iniciarFase(\''+ch+'\')"';
     var selo = trancada ? '<span class="cadeado-parada">\ud83d\udd12</span>' : '';
@@ -1077,9 +1109,10 @@ function irMapa(){
       +'<div class="estado">'+estado+'</div>'+tag+'</div></div>';
     h+='<div class="conector'+(concluidas[ch]?" feito":"")+'"></div>';
   }
-  var tcls="mapa-tesouro "+(todasFeitas()?"aberto":"locked");
-  h+='<div class="'+tcls+'" onclick="'+(todasFeitas()?"grandeFinal()":"avisoTesouro()")+'">'
-    +'<div class="cen">'+figTrofeu()+(todasFeitas()?'':'<span class="cadeado">\ud83d\udd12</span>')+'</div>'
+  var abreFinal=todasFeitas()||_adminLivre;
+  var tcls="mapa-tesouro "+(abreFinal?"aberto":"locked");
+  h+='<div class="'+tcls+'" onclick="'+(abreFinal?"grandeFinal()":"avisoTesouro()")+'">'
+    +'<div class="cen">'+figTrofeu()+(abreFinal?'':'<span class="cadeado">\ud83d\udd12</span>')+'</div>'
     +'<div class="mapa-nome">A Festa da Colheita</div></div>';
   h+='</div>';
   h+='<div class="extras">'
