@@ -157,6 +157,8 @@ p.lead b { color:#ffe27a; }
 .cesto.hl { background:rgba(255,226,122,.3); border-color:#ffe27a; }
 .cesto .prato { font-size:22px; height:34px; overflow:hidden; text-align:center; }
 .prato img { display:block; height:34px; width:auto; margin:0 auto; }
+.arrasta { -ms-touch-action:none; touch-action:none; }
+.arrasta img { -webkit-user-drag:none; user-select:none; -webkit-user-select:none; }
 .arr-ghost { position:fixed; z-index:9999; pointer-events:none; opacity:.9; margin:0; -webkit-transform:scale(1.1); transform:scale(1.1); }
 .cesto .cont { display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; }
 .cesto .cont .bicho { width:26px; height:26px; margin:2px; }
@@ -607,8 +609,8 @@ var GANCHOS={
   memoria:"Que memória boa! Agora o cavalo quer testar você na tabuada da fazenda. Segura firme!",
   tabuada:"Você virou fera na tabuada! Chegou a parte mais legal: <b>repartir</b> igualzinho com as ovelhas.",
   repartir:"Repartiu certinho! Vamos ao lago dividir a ração dos patinhos tocando na resposta.",
-  divisaotoca:"Patos alimentados! Hora de outro descanso: um quebra-cabeça de ordenar com o coelho.",
-  quebra:"Quebra-cabeça resolvido! Agora vamos <b>montar</b> as continhas de divisão com o cachorro.",
+  divisaotoca:"Patos alimentados! Hora de outro descanso: uma brincadeira de pôr em ordem com o coelho.",
+  quebra:"Tudo em ordem! Agora vamos <b>montar</b> as continhas de divisão com o cachorro.",
   montardiv:"Quase lá! A abelha quer te mostrar como multiplicação e divisão são <b>irmãs</b>.",
   relacao:"Você entendeu o segredo! Falta só o Grande Desafio da Colheita para virar Dono da Fazenda!",
   desafio:""
@@ -1861,6 +1863,8 @@ function arrInicio(e){
   if(!alvo || arrBloqueada(alvo)){ return; }
   var pt=e.touches?e.touches[0]:e;
   _arr.el=alvo; _arr.moveu=false; _arr.x0=pt.clientX; _arr.y0=pt.clientY;
+  /* mouse: impede o arrasto NATIVO de imagem e a selecao de texto (senao sequestra o mouseup) */
+  if(!e.touches && e.preventDefault){ e.preventDefault(); }
 }
 function arrMove(e){
   if(!_arr.el){ return; }
@@ -1907,6 +1911,7 @@ function arrSolta(dragEl, zona){
 document.addEventListener("click", function(e){
   if(_arr.ocorreu){ _arr.ocorreu=false; e.stopPropagation(); if(e.cancelable){ e.preventDefault(); } }
 }, true);
+document.addEventListener("dragstart", function(e){ if(arrAncestral(e.target,"arrasta")){ if(e.preventDefault){ e.preventDefault(); } } }, false);
 document.addEventListener("mousedown", arrInicio, false);
 document.addEventListener("mousemove", arrMove, false);
 document.addEventListener("mouseup", arrFim, false);
