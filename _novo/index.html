@@ -1376,13 +1376,19 @@ function feedbackAcerto(dd){
     var bb=$("btnProx");if(bb){bb.disabled=false;bb.className="btn pulsa";}
     var av=$("proxAviso");if(av){av.parentNode&&av.parentNode.removeChild(av);}
   };
-  /* fala: elogio + explicacao (fila limpa); ao terminar, libera o botao */
-  falar(el1+" "+(dd.falaExplica?dd.falaExplica:dd.explica),liberar);
-  /* seguranca: se nao houver voz, libera por tempo estimado tambem */
-  if(!(_vozReady&&_vozPt&&window.speechSynthesis)){
-    var ms=Math.max(1200,(el1+" "+(dd.falaExplica?dd.falaExplica:dd.explica)).length*55);
-    setTimeout(liberar,ms);
-  }
+  /* fala: elogio + explicacao (fila limpa) */
+  falar(el1+" "+(dd.falaExplica?dd.falaExplica:dd.explica));
+  /* habilita o botao SO quando TODA a narracao terminar de verdade
+     (inclui streak/conquista/nivel que sao enfileirados depois, por setTimeout) */
+  var tIni=(new Date()).getTime();
+  var poll=function(){
+    var esperou=((new Date()).getTime()-tIni)>=1100;
+    var quieto=(typeof _falando==="undefined"||!_falando) && (typeof _fila==="undefined"||!_fila.length);
+    if(esperou&&quieto){ liberar(); }
+    else { setTimeout(poll,200); }
+  };
+  setTimeout(poll,300);
+  setTimeout(liberar,15000); /* seguranca: nunca fica preso */
 }
 function avancar(){
   /* caso: treino dos erros */
