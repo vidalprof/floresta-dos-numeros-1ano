@@ -1263,6 +1263,7 @@ function abrirFase(fase){
   card.appendChild(b);
   t.appendChild(card);
   falar(info.intro);
+  travarBotaoAteFala(b);
 }
 
 function iniciarFase(fase){
@@ -1353,6 +1354,21 @@ function responder(val,btn){
   }
 }
 
+function travarBotaoAteFala(btn){
+  if(!btn){return;}
+  var clsOrig=btn.className;
+  btn.disabled=true;
+  btn.className="btn proxAguarda";
+  var tIni=(new Date()).getTime();
+  var liberar=function(){ if(btn){ btn.disabled=false; btn.className=clsOrig; } };
+  var poll=function(){
+    var esperou=((new Date()).getTime()-tIni)>=1100;
+    var quieto=(typeof _falando==="undefined"||!_falando) && (typeof _fila==="undefined"||!_fila.length);
+    if(esperou&&quieto){ liberar(); } else { setTimeout(poll,200); }
+  };
+  setTimeout(poll,300);
+  setTimeout(liberar,15000);
+}
 function feedbackAcerto(dd){
   var fb=$("fbBox");fb.className="feedback ok";
   var el1=elogio();
@@ -1527,10 +1543,12 @@ function telaFimFase(){
     var bp=el("button","btn pulsa","\u25b6 Pr\u00f3xima parada");
     bp.onclick=function(){abrirFase(FASES[idx+1]);};
     card.appendChild(bp);
+    travarBotaoAteFala(bp);
   }else{
     var bp2=el("button","btn pulsa","\u25b6 Ver o Grande Livro");
     bp2.onclick=irFinal;
     card.appendChild(bp2);
+    travarBotaoAteFala(bp2);
   }
   card.appendChild(el("br"));
   var bmapa=el("button","btn btn2 btn-peq","Ver o mapa");bmapa.onclick=function(){irMapa(false);};
