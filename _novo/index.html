@@ -26,6 +26,9 @@ body{
 @keyframes flutuaOrbe{0%,100%{transform:translateY(0);opacity:.5;}50%{transform:translateY(-22px);opacity:.9;}}
 
 .wrap{max-width:460px;margin:0 auto;padding:14px 12px 40px;position:relative;z-index:1;}
+/* telas grandes (PC/tablet) e TELA CHEIA: usa mais espaco, sem esticar demais */
+@media (min-width:700px){ .wrap{max-width:680px;padding:18px 18px 48px;} }
+@media (min-width:1000px){ .wrap{max-width:860px;} }
 
 h1{font-size:26px;color:#aef0c8;text-align:center;line-height:1.15;text-shadow:0 2px 0 #06301c;}
 h2{font-size:20px;color:#aef0c8;text-align:center;line-height:1.2;}
@@ -247,6 +250,7 @@ h2{font-size:20px;color:#aef0c8;text-align:center;line-height:1.2;}
   cursor:pointer;padding:0;-webkit-box-shadow:0 2px 8px rgba(0,0,0,.35);box-shadow:0 2px 8px rgba(0,0,0,.35);}
 .btn-tela-cheia:hover{background:rgba(12,36,24,.96);border-color:#ffe27a;}
 body.tem-botao-tc .wrap{padding-top:46px;}
+@media (min-width:700px){ body.tem-botao-tc .wrap{padding-top:20px;} }
 
 /* ====== CARIMBO / COMEMORACAO ====== */
 #carimbo{position:fixed;top:0;left:0;right:0;bottom:0;z-index:60;display:none;pointer-events:none;
