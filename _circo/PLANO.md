@@ -55,7 +55,6 @@ corta, gamificação, relatório). Só mudam tema/mascote/conteúdo/cores/imagen
 ## Status
 - [x] Plano aprovado (tema, mascote, 11 paradas + pintar, 7-erros por código, pintar completo)
 - [ ] Mascote + capa (1ª fatia)
-- [ ] Tela inicial + mapa (mostrar p/ aprovar estilo)
-- [ ] Paradas 1..11
+- [ ] Paradas 2..11 (proxima: Contando no Picadeiro)
 - [ ] Tela de pintar
 - [ ] Validação + publicação
