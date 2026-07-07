@@ -22,9 +22,12 @@ Não precisa mexer em código nem em base64: sobe o arquivo e avisa.
 2. Entre na pasta **`_imagens`**.
 3. **Add file → Upload files** → escolha as imagens → **Commit changes**.
 
-## Nome do arquivo
-- Use o nome que o Claude indicou na lista de prompts.
-- Só **minúsculas, números e hífen**, sem espaço/acento. Formatos: **png/jpg/webp**.
+## NÃO precisa renomear!
+Pode subir com o nome que a imagem vier do celular (IMG_1234.jpg, etc.). O
+Claude **abre e olha cada imagem**, reconhece o que é e renomeia sozinho.
+A professora só precisa dizer no chat **o que subiu** (ex.: "subi o mascote
+e a capa"). Formatos: **png/jpg/webp**. Se duas imagens forem muito
+parecidas e o Claude ficar na dúvida de qual é qual, ele pergunta.
 
 ## Imagens de contexto nas questões
 Além da capa e do mascote, as **questões podem ter imagem própria**
