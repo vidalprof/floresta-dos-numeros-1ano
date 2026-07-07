@@ -522,16 +522,20 @@ function telaLeituraN(n){
  h+='<h1>'+L.titulo+'</h1>';
  h+='<p class="lema">'+nomeAluno+' &bull; Turma '+turmaAluno+'</p>';
  h+='<button class="btn2 btn" id="ouvirtexto">🔊 Ouvir o texto</button>';
- h+='<p class="notasub" style="margin:6px 0 12px">Leia e ouça o texto, depois toque em <b>'+(ultimo?"Começar":"Próximo")+'</b>.</p>';
+ h+='<p class="notasub" style="margin:6px 0 12px">Ouça o texto todo para liberar o botão.</p>';
  if(L.deco && typeof OBJ!=="undefined" && OBJ[L.deco]){ h+='<div style="margin:6px 0 4px"><img src="'+OBJ[L.deco]+'" alt="Estádio" style="display:block;max-width:100%;max-height:200px;height:auto;width:auto;margin:0 auto;border-radius:12px;-webkit-box-shadow:0 4px 12px rgba(0,0,0,.22);box-shadow:0 4px 12px rgba(0,0,0,.22)"></div>'; }
  h+='<div style="margin:12px 0"><img src="'+L.img+'" alt="Texto para leitura" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:12px;-webkit-box-shadow:0 4px 14px rgba(0,0,0,.25);box-shadow:0 4px 14px rgba(0,0,0,.25)"></div>';
- h+='<button class="btn pulsa" id="iravancar">'+(ultimo?"Começar a prova":"Próximo texto")+' &#10132;</button>';
+ h+='<button class="btn" id="iravancar" style="opacity:.55" disabled>'+(ultimo?"Começar a prova":"Próximo texto")+' &#10132;</button>';
  h+='</div>';
  el().innerHTML=h;
- document.getElementById("iravancar").onclick=function(){ if(window.speechSynthesis){window.speechSynthesis.cancel();} if(ultimo){ atual=0; telaQuestao(); } else { telaLeituraN(n+1); } };
- document.getElementById("ouvirtexto").onclick=function(){ falar(L.texto); };
+ var liberado=false, seq=0;
+ function liberar(){ liberado=true; var b=document.getElementById("iravancar"); if(b){ b.disabled=false; b.style.opacity="1"; b.className="btn pulsa"; } }
+ function tocar(){ seq++; var meu=seq; falar(L.texto, function(){ if(meu===seq){ liberar(); } }); }
+ document.getElementById("iravancar").onclick=function(){ if(this.disabled){ return; } if(window.speechSynthesis){window.speechSynthesis.cancel();} if(ultimo){ atual=0; telaQuestao(); } else { telaLeituraN(n+1); } };
+ document.getElementById("ouvirtexto").onclick=function(){ tocar(); };
  window.scrollTo(0,0);
- setTimeout(function(){ falar(L.texto); },350);
+ setTimeout(tocar,350);
+ setTimeout(function(){ if(!liberado){ liberar(); } },180000);
 }
 function telaLeitura(){ telaLeituraN(0); }
 function telaQuestao(){
