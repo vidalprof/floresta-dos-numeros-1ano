@@ -105,7 +105,16 @@ h2{font-size:20px;color:#aef0c8;text-align:center;line-height:1.2;}
 .xpTxt{font-size:11px;color:#9fd9b5;margin-top:2px;}
 
 /* ====== CENA ABERTURA / FINAL ====== */
-.cena{width:100%;height:auto;display:block;border-radius:16px;margin:6px 0 4px;border:2px solid rgba(150,240,180,.25);}
+/* imagem de abertura/final como MEDALHAO REDONDO (estilo Poli): circulo com borda,
+   sombra e leve flutuar; recorta no centro (object-fit) sem distorcer */
+.cena{display:block;width:220px;height:220px;border-radius:50%;margin:14px auto;
+  -o-object-fit:cover;object-fit:cover;-o-object-position:center;object-position:center;
+  border:5px solid rgba(140,230,170,.55);
+  -webkit-box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 0 4px rgba(12,54,32,.5);box-shadow:0 8px 22px rgba(0,0,0,.45),0 0 0 4px rgba(12,54,32,.5);
+  -webkit-animation:boia 4.5s ease-in-out infinite;animation:boia 4.5s ease-in-out infinite;}
+@media (min-width:700px){ .cena{width:260px;height:260px;} }
+@-webkit-keyframes boia{0%,100%{-webkit-transform:translateY(0) scale(1) rotate(-1deg);}50%{-webkit-transform:translateY(-9px) scale(1.02) rotate(1deg);}}
+@keyframes boia{0%,100%{transform:translateY(0) scale(1) rotate(-1deg);}50%{transform:translateY(-9px) scale(1.02) rotate(1deg);}}
 
 /* ====== MAPA ====== */
 .recompensaBox{text-align:center;margin:6px 0;}
