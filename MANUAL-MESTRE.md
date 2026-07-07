@@ -86,6 +86,7 @@ Gatilho: Marcos descreve tema, série e disciplina SEM anexar arquivo.
 - Imagens: base64 embutidas no HTML.
 - Ícones de interface: SVG inline (que mudam de cor/estado).
 - Áudio: Web Audio API.
+- **SONS DE EFEITO sintetizados com Web Audio (lição paga):** para o "gostinho de jogo" (som de moeda ao acertar, "pop" ao encaixar, tom gentil ao errar, arpejo ao subir de nível, fanfarra ao concluir fase), SINTETIZAR os sons na hora com osciladores (`AudioContext` + `OscillatorNode` + `GainNode` com envelope rápido) — NÃO embutir arquivos de áudio (pesam MB). É leve (poucos KB de código), funciona em navegador antigo e não depende de baixar nada. Motor `tocarSom(nome)` com um `AudioContext` único; o contexto começa "suspenso" e só toca após o 1º gesto do usuário (regra de autoplay) — `resume()` no primeiro clique. Flag para poder desligar; volume discreto (~0.15).
 - Narração: `speechSynthesis` pt-BR (só narra se houver voz pt-BR real instalada).
 - `localStorage` funciona em GitHub Pages; usar variáveis em memória como fallback.
 - Sem overflow horizontal em 414/390/360/320px.
@@ -103,6 +104,7 @@ Gatilho: Marcos descreve tema, série e disciplina SEM anexar arquivo.
 - **Bem infantil e fofinho:** cantos arredondados, botões "gordinhos" com sombra, cores vivas, animações suaves.
 - **Botões importantes pulsam e brilham** (classe `pulsa` = pulso suave de escala) para guiar o aluno. NUNCA salto/pulinho/brilho piscando (o modelo não tem — ver seção 9 do ATIVIDADE-PREMIUM.md).
 - Testar responsivo: 414/390/360/320px — nada vaza da borda.
+- **ELEMENTOS ANIMADOS DE FUNDO — POUCOS E DISCRETOS (lição paga):** dá pra dar vida ao cenário com elementos temáticos cruzando o fundo (ex.: 2-3 peixinhos nadando lento atrás do conteúdo), reusando imagens já embutidas — mas com PARCIMÔNIA. O fundo é onde a criança lê enunciados e arrasta itens; se ficar movimentado demais, compete pela atenção (pré-escola). Regra: poucos (2-3), bem TRANSLÚCIDOS (opacity ~0.12), LENTOS (26-40s pra cruzar), sempre ATRÁS do conteúdo (`z-index` baixo), sem vazar a borda (`overflow:hidden`). Animar só `transform` (par `-webkit-`). Vida sutil, nunca "puxar o olho".
 
 ================================================================
 ## 5. HISTÓRIA, ENGAJAMENTO E MAPA-AVENTURA VIVO
@@ -164,6 +166,7 @@ Seguro porque a verificação compara por **valor** (`dd.opcoes[idx]===dd.certa`
 
 **ZDP (Vygotsky) — ADAPTATIVIDADE:**
 - 100% de acertos → **Desafio Extra** opcional, coerente com a fase (mesma habilidade, um degrau acima; NUNCA um extra fixo igual em todas). Embaralhar opções do Extra.
+- **O DESAFIO EXTRA TEM CÓDIGO PRÓPRIO — ao corrigir uma fase, corrigir TAMBÉM o extra dela (lição paga):** o `desafioExtra(fase)` define seus próprios `pede`/`opcoes`/gênero/imagens, separados das rodadas normais. Um bug de concordância ou de imagem faltando pode estar corrigido nas rodadas normais mas PERSISTIR no extra (sintoma real: "peixinho roxa" e um peixe em SVG só apareciam no Desafio Extra, que só surge com 100% de acerto — por isso o bug parecia intermitente). Ao consertar/auditar uma fase, varrer TAMBÉM o `desafioExtra` correspondente, não só as rodadas normais.
 - <50% → **Reforço** (treino dos erros) antes de seguir.
 - 50-99% → nada (segue normal). Auditar os 3 casos.
 - Fases-jogo (memória, caça, forca, quebra-cabeça) NÃO levam Desafio Extra.
@@ -180,7 +183,6 @@ Seguro porque a verificação compara por **valor** (`dd.opcoes[idx]===dd.certa`
 - Fase complexa demais para a idade → **trocar** por uma concreta mais simples, não remendar.
 
 ### Calibragem por SÉRIE (alinhar ao currículo/BNCC)
-- **Conferir a HABILIDADE contra a SÉRIE, não só o tema (lição paga).** Um conteúdo pode "caber" no tema mas ser de outro ano. Ex. real: classificar/nomear "artigo definido/indefinido" é metalinguagem de 8º ano (EF08LP09) — NÃO é 2º ano; no 2º ano vale o USO natural (o/a/um/uma pelo sentido) e habilidades como sílabas (EF02LP02), sinônimos/antônimos (EF02LP10), aumentativo/diminutivo (EF02LP11). Antes de aprovar uma fase, casar o objetivo com o código BNCC do ano. Remover a metalinguagem das falas/explicações quando a série não pede (a criança escolhe pelo sentido, não pelo rótulo gramatical).
 - Cobrir o conteúdo ESPERADO da série, não só o "seguro". Ex.: dinheiro no 5º ano (EF05MA) pede **porcentagem e desconto** (50%=metade, 10%=÷10, 25%=¼) e decimais — sem isso o teto fica em 4º ano. "Está adequado mas seguro demais para a série?" é sinal de que falta um degrau.
 - O conteúdo mais avançado vem como ÚLTIMA parada de conteúdo antes dos bônus.
 - Variar o ENUNCIADO dentro da fase (3-4 formas equivalentes por `i%`), para não repetir "Quanto vale?" 10x.
@@ -192,13 +194,11 @@ Seguro porque a verificação compara por **valor** (`dd.opcoes[idx]===dd.certa`
 
 ### Apoio ao erro (correção com contagem — fases concretas)
 Obrigatório em TODA fase de contar quantidade:
-1. Mascote fala **"Não foi dessa vez!"** (com carinho, sem punir).
-2. Pausa ~1,5s.
-3. Fala separada **"Agora vamos contar. Bem devagar."** (frase à parte, dá tempo à criança).
-4. Pausa.
-5. **ACENDE cada objeto UM POR UM** — classe que dá SÓ glow via `filter:drop-shadow`, **SEM `transform:scale`** (aumentar o objeto some com a referência de tamanho/posição). Ex.: `.obj-item.sel .obj-img`. Conta em voz alta POR EXTENSO ("um... dois... três...") com ~850ms por objeto.
-6. Todos acesos: **"São N! Agora toque no número N."** e apaga.
-- **CRÍTICO:** a cadeia de acender usa `setTimeout` de RITMO FIXO, **NÃO** o `onend` da fala (em PC sem voz pt-BR o onend pode nunca disparar e travar). Cada objeto tem `id` próprio (`cItem0`, `cItem1`...). Números por extenso via `numExt(n)` (que evita o TTS ler o dígito "1" como "um" masculino) — e ACENTUADOS ("três", não "tres", senão o TTS erra a tônica).
+1. Mascote fala **"Não foi dessa vez! Agora vamos contar juntos, bem devagar."** (com carinho, sem punir).
+2. Quando essa frase de abertura TERMINA (callback do `falar`), uma pausa curta e começa a contagem sincronizada.
+3. **ACENDE cada objeto UM POR UM, EM SINCRONIA COM A FALA** — a luz do objeto k acende JUNTO com a voz dizendo o número k; classe que dá SÓ glow via `filter:drop-shadow`, **SEM `transform:scale`** (aumentar o objeto some com a referência de tamanho/posição). Ex.: `.obj-item.sel .obj-img`.
+4. Todos contados: **"São N ao todo! Agora toque no número N."** e apaga.
+- **A FALA COMANDA A LUZ — NÃO dois relógios separados (lição paga, crítica):** a versão antiga acendia a luz por `setTimeout` de ritmo FIXO (850ms) enquanto a fala corria numa fila com ritmo próprio — os dois se DESENCONTRAVAM (a luz acendia adiantada ou atrasada em relação à voz). Correto: encadear pela fala. `contarPasso(k, n)`: acende a luz do objeto k, chama `falar(numExt(k+1), callback)`, e SÓ no callback (quando a voz termina aquele número) faz uma pausa de ~260ms e chama `contarPasso(k+1, n)`. Assim a luz acende exatamente quando a voz diz o número, no ritmo natural e pausado da fala. Garantir que TODAS as luzes estão apagadas durante a frase de abertura (nenhuma acende antes de começar a contar). O `falar` com callback já degrada sem voz (dispara o callback por tempo estimado), então não trava em PC sem TTS. Cada objeto tem `id` próprio (`cItem0`, `cItem1`...). Números por extenso via `numExt(n)` (que evita o TTS ler o dígito "1" como "um" masculino) — e ACENTUADOS ("três", não "tres", senão o TTS erra a tônica).
 
 ### Checklist de qualidade de conteúdo
 1. **Coerência texto-imagem:** enunciado nomeia o MESMO objeto que a ilustração desenha.
@@ -214,7 +214,11 @@ Obrigatório em TODA fase de contar quantidade:
 ================================================================
 A leitura usa `speechSynthesis`. Web Speech é o teto viável (vozes neurais pesam MB e quebram offline; nuvem é paga).
 
-- **`limparFala()`**: remove tags/entidades HTML; corrige espaço após `, . ! ? :`; junta espaços duplos; SEMPRE põe ponto final. **Normaliza pronúncia** de palavras sem acento que o TTS erra: "voce"→"você", "voces"→"vocês", "numero"→"número", "proxima"→"próxima", "magica"→"mágica", "divisao"→"divisão", "multiplicacao"→"multiplicação", etc. (regex `\bpalavra\b/gi` preservando capitalização; adicionar palavras sempre que uma pronúncia errada for notada).
+- **`limparFala()`**: remove tags/entidades HTML; corrige espaço após `, . ! ? :`; junta espaços duplos; SEMPRE põe ponto final. Converte reticências (`…`) e pontos repetidos em vírgula (evita pausa fragmentada). **Normaliza pronúncia** de palavras sem acento que o TTS erra: "voce"→"você", "voces"→"vocês", "numero"→"número", "proxima"→"próxima", "magica"→"mágica", "divisao"→"divisão", "multiplicacao"→"multiplicação", "Poli"→"Póli" (tônica de nome de mascote), etc. (regex `\bpalavra\b/gi` preservando capitalização; adicionar palavras sempre que uma pronúncia errada for notada).
+
+**VOGAIS FALADAS FONETICAMENTE E PAUSADAS (lição paga):** o TTS pt-BR NÃO lê o nome da letra vogal corretamente quando ela está isolada — lê o som aberto/fechado errado ou engole. Para a criança ouvir a vogal certa, escrever FONETICAMENTE na fala (tela ≠ fala): **A→"á", E→"é", I→"i", O→"ó", U→"úú"** (o U sai fraco; alongar/repetir dá mais presença). Helper `vogalFalada(letra)`. E para SOAREM PAUSADAS E DESTACADAS, cada vogal deve ser uma FRASE SEPARADA (com PONTO, não vírgula) — a vírgula dá pausa curtinha e as vogais saem emendadas; o ponto faz o `fatiarFrases` dividir e falar cada uma isolada com pausa real de ~180ms. Ex.: a lista "A, E, I, O, U" vira "á. é. i. ó. úú." na fala.
+- **CUIDADO com artigos:** NUNCA converter "A"/"E" soltos globalmente (viram artigo "a"/"e" e conjunção — "a estrela" vira "á estrela", quebrando toda a fala). A regra segura no `limparFala` só converte a SEQUÊNCIA COMPLETA das 5 vogais em ordem (`\bA[,\s]+E[,\s]+I[,\s]+O[,\s]+U\b`), que nunca é uma frase normal. Vogais únicas ensinadas (acertos, "toque na vogal X") usam `vogalFalada` explicitamente no código da fase.
+- **"olho" vira "óio" na fala:** o TTS tropeça no "lh" e lê "olho" como "óleo". Na tabela de pronúncia, "olho"→"óio" (o `\b` word-boundary garante que "orgulho" não é afetado). Padrão geral: toda palavra que o TTS pronuncia errado ganha uma entrada foneticamente escrita na tabela.
 - **`escolherVoz()`**: melhor voz pt-BR (prioriza natural/neural/enhanced/google/microsoft/maria/francisca/luciana; cai para básica só se não houver outra).
 - **Ritmo:** `rate ~0.92`, `pitch ~1.08`. Quebrar em frases (`. ! ? :`) faladas em fila com ~180ms de pausa.
 - **Valores monetários por extenso:** "R$ 3,50" → "3 reais e 50 centavos"; "R$ 1,00" → "1 real"; "R$ 0,25" → "25 centavos" (o TTS lê "R$" errado — converter no limparFala).
@@ -224,25 +228,15 @@ A leitura usa `speechSynthesis`. Web Speech é o teto viável (vozes neurais pes
 - **`enfileirarFala(txt)`** — ADICIONA ao fim da fila SEM cortar. Usar quando duas falas devem ser ouvidas em sequência (elogio + streak, nível, conquista). O pop de streak/nível/conquista usa `popCaixaFila()`.
 - **`falarDepois(txt)`** — se já há fala tocando, enfileira; senão fala na hora. Usado ao AVANÇAR de desafio: o próximo enunciado não corta o feedback anterior.
 - **Ordem no acerto:** `feedbackAcerto()` narra elogio+explicação PRIMEIRO (via `falar`, fila limpa) e SÓ DEPOIS dispara streak/nível/conquista (que entram na fila) — tudo ouvido em ordem.
+- **TELA ≠ FALA (lição paga):** `feedbackAcerto(explica, semAvancar, falaExplica)` — a TELA mostra `explica` (ex.: "começa com a vogal A") mas a FALA usa `falaExplica` quando dado (ex.: "começa com a vogal, á. á."). Serve para qualquer caso onde o que se lê difere do que se fala bem (vogais foneticas, letras, siglas). Mesmo princípio: a tela mostra a letra "U" e a fala diz "úú".
 - **Proteção de fila (`_falaSeq`):** contador incrementado a cada `pararFala()`; cada frase só continua a fila se o contador não mudou (impede fila antiga voltar após troca de tela).
 - **Sem voz pt-BR:** a fila roda em modo silencioso com tempo estimado por frase (nunca `onend`) — nada trava.
-- **Botão de avançar VISÍVEL mas DESABILITADO até a fala terminar (lição paga — repetida):** a regra é "o botão aparece, porém só habilita quando o áudio acaba, contando bem pausadamente, sem cortar nada". Deixar o botão habilitado e confiar em "clicar não corta" NÃO basta — a criança clica e corta. Padrão obrigatório: renderizar o botão já visível com `disabled` + classe de "aguardando" (ex.: `esperando`/`proxAguarda`, opacidade menor), e só habilitar quando a narração REALMENTE terminou.
-- **Habilitar só após SILÊNCIO CONTÍNUO (não numa pausinha entre falas):** o elogio, o streak, o "subiu de nível" e a conquista entram na fila DEPOIS, por `setTimeout` (600–900ms). Um poll simples que checa "fila vazia + não falando" uma vez pode liberar numa fresta de silêncio ANTES de a comemoração começar — e aí o clique corta. Usar um helper (`esperarFalaTerminar`/`travarBotaoAteFala`) que só libera quando a fala fica **em silêncio CONTÍNUO por ~650ms** (após um mínimo inicial ~900ms): se algo for enfileirado nesse meio, o cronômetro do silêncio ZERA e a espera recomeça. Trava de segurança (`setTimeout` ~15s) para nunca ficar preso. Aplicar em TODAS as telas que narram + têm botão: feedback de acerto, "Começar!" da fase, fim de fase (inclusive botões secundários "Ver o mapa"/"Jogar de novo"), ofertas de Desafio Extra e Treino, e o Grande Final. Em PC sem voz o tempo estimado por frase alimenta o mesmo helper — avança normal.
+- **Botão "Próximo" ao acertar:** aparece IMEDIATAMENTE (a criança nunca espera), mas clicar NÃO corta o feedback — o áudio termina e emenda no próximo. Em PC sem voz, avança normal.
+
+**BOTÃO NARRADO EM TODA A ATIVIDADE, não só nos desafios (lição paga):** o botão principal de CADA tela que abre com narração aparece na hora, mas começa DESABILITADO mostrando "🔊 Ouvindo..." e só habilita quando a narração termina (via callback), para a criança não pular a fala do Poli. Vale para: tela inicial (Começar/Continuar), intro de fase (Começar!), fim de fase (Próxima parada/Ver final), oferta de Extra (Aceitar), oferta de Reforço (Continuar), grande final (Ver relatório) — além dos desafios, que já tinham. Helper único: `botaoNarrado(txt, onclickAttr, extraCls)` gera o botão desabilitado + aviso; `falarComBotao(texto)` narra e libera via `liberarBotaoNarrado` (callback do `falar`), com RESERVA por tempo estimado se não houver voz pt-BR (nunca `onend`). **Cancelar o timer de liberação anterior ao criar um novo** (`clearTimeout`) — senão timers empilham ao longo das fases e podem liberar um botão de uma tela que já saiu.
 
 - **Narração automática em TUDO:** tela inicial, mapa (história), intro de fase, cada enunciado ao abrir, feedback ao responder, fim de fase, grande final, jogos. Botão para repetir onde couber.
 - **Bilíngue:** detectar idioma FRASE A FRASE (`detectaPT`) e usar a voz certa (`escolherVozPt`/`escolherVozEn`); pular a frase se não houver voz do idioma (nunca voz errada lendo o outro idioma).
-
-**GRAFIA DE TELA ≠ GRAFIA FALADA — sílabas, siglas, símbolos (lição paga):** o TTS soletra maiúsculas curtas ("GA"→"gê-á", "BO"→"bê-ô", "SA-PA-TO" letra a letra) e não lê "+" direito. Quando a TELA precisa de maiúsculas (destacar sílabas numa fase de consciência fonológica, siglas) mas isso soa errado na fala:
-- **Campos opcionais `fala` e `falaExplica` no desafio.** A narração do enunciado usa `dd.fala||dd.enun`; o feedback usa `dd.falaExplica||dd.explica`. A criança VÊ "GA mais TO formam qual palavra?" e OUVE "ga, mais to, formam qual palavra?".
-- Regras da versão falada: sílabas em MINÚSCULAS (o TTS lê o som, não as letras), separadas por VÍRGULA (micro-pausa), "+" escrito "mais", palavra-alvo como palavra inteira minúscula.
-- A `fala` obedece à mesma regra do enunciado: NÃO revela a resposta após o "?". O fallback de tempo sem voz mede o comprimento do texto FALADO.
-- Implementação: `falarDepois(dd.fala?dd.fala:dd.enun)` no render do desafio; `falar(el1+" "+(dd.falaExplica?dd.falaExplica:dd.explica),liberar)` no `feedbackAcerto`.
-
-**RETICÊNCIAS PICOTAM A FALA (lição paga):** "..." vira ". . ." após o `limparFala` (espaço depois de cada ponto) e o TTS lê cada ponto como pausa isolada — a frase sai picotada. NUNCA "..." no que será falado; usar vírgula para a pausa. Na tela "..." pode aparecer, desde que o que vai ao `falar()` seja a string SEM reticências (ex.: mostrar "Pense de novo..." mas falar "Quase! Pense de novo.").
-
-**NÃO NARRAR SÍMBOLOS, PONTUAÇÃO SOLTA NEM LACUNAS (lição paga):** o TTS lê em voz alta caracteres que só existem no visual — sublinhados de lacuna ("Complete: gato ___" o TTS fala "underline underline underline"), parênteses, colchetes, chaves, aspas «»""‘’, asterisco, cerquilha, til/circunflexo soltos, barras, `< > | = + @ • ~`. O `limparFala()` DEVE, antes de falar: trocar sequências de `_` por espaço (a lacuna vira uma pausa, não "traço traço"); colapsar reticências; trocar travessão `—`/`–` por vírgula; e REMOVER os símbolos avulsos acima (viram espaço). Também colar `([!?])\s*\.` → `$1` para não sobrar ". " depois de "!"/"?" (evita a pausa isolada que picota). Regra geral: o que vai ao `falar()` deve conter só letras, números e a pontuação que gera prosódia natural (`. , ! ? :`).
-
-**Adicionar ao `pronuncia()`** as palavras que o TTS erra sem acento — quando houver fase de sílabas, incluir "silaba"→"sílaba", "silabas"→"sílabas", "pedaco/pedacos"→"pedaço/pedaços".
 
 ================================================================
 ## 8. LÍNGUA PORTUGUESA IMPECÁVEL — CONCORDÂNCIA DINÂMICA
@@ -263,8 +257,6 @@ function pluralG(n, genero, sing, plur){
 ```
 Manter `plural(n, sing, plur)` simples para casos sem gênero (n=1 → "1 "+sing). E `numExt(n)` ACENTUADO para contagens faladas.
 
-- **O DÍGITO "2" TAMBÉM tem gênero na fala (lição paga — "duas baldes"):** o TTS lê "2" como "dois" (masculino), então "2 baldes" fica certo mas "2 vacas" deveria ser "duas vacas" e "2 vezes" deveria ser "duas vezes". Em português só **1 e 2** flexionam (um/uma, dois/duas); de 3 em diante o número é invariável. Quando a fala tiver "2" diante de substantivo/palavra FEMININA, converter para "duas" (no `normPron`/`limparFala`, regex por palavra: `\b2\s+vacas\b`→"duas vacas", `\b2\s+vezes\b`→"duas vezes"; e um `\b2\b`→"dois" como padrão masculino). "vezes" é feminino ("duas vezes"). Preferir gerar a fala já por extenso com `numExt`/`pluralG` quando o gênero é conhecido.
-- **ENUNCIADO FALADO/ESCRITO DEVE BATER COM A FIGURA MOSTRADA (lição paga):** se a tela mostra ovos, o enunciado não pode dizer "maçãs". O bug clássico aparece quando o objeto do desafio CICLA (sorteio) mas o texto ficou fixo, ou vice-versa. Em cada fase, a figura, o enunciado, a fala (`dd.fala`) e a explicação têm que nomear o MESMO objeto. Ao auditar, varrer fase a fase conferindo figura × texto × fala.
 - **NUNCA substantivo em plural fixo ao lado de número variável** ("1 acertos", "1 moedas", "1 pontos" são bugs REAIS já encontrados — sempre passar por `plural()`/`pluralG()`).
 - **Auditoria obrigatória com n=1:** forçar 1 ponto / 1 medalha / 1 acerto / 1 parada no RELATÓRIO e no GRANDE FINAL; varrer por regex `\b1\s+(pontos|acertos|medalhas|paradas|moedas|...)`. Esses bugs só aparecem quando o valor é exatamente 1.
 - **Referência de gênero:** feminino = palavra, ilha, medalha, letra, estrela, moeda, fase, cesta, parada; masculino = ponto, acerto, erro, amigo, tesouro, dia, número.
@@ -282,6 +274,12 @@ Para qualidade premium, gerar os assets-chave como **imagens no ChatGPT**, não 
 **PRINCÍPIO (não esquecer):** o prompt do ChatGPT NÃO resolve sozinho o problema de parte branca/franja. Um prompt bom (fundo branco puro + SEM sombra + contorno escuro definido) PREVINE a maior fonte (sombra na base) e facilita o recorte, mas SEMPRE sobra franja fina e às vezes vãos internos — só some com a LIMPEZA obrigatória do código. **Garantia = prompt bom + limpeza obrigatória juntos.** Nunca embutir sem passar pela limpeza e pela conferência visual.
 
 **CORPO BRANCO SEM CONTORNO ESCURO = FRANJA IRRECUPERÁVEL (lição paga, crítica):** se a cartela desenhar um objeto/animal BRANCO (coelho, ovelha, galinha, ovo, pato) SEM linha de contorno escura e fechada, o corpo branco encosta direto no fundo branco — não há fronteira. O recorte deixa borda branca esfarrapada, e removê-la por código só PIORA (medido: coelho foi de 21% de franja para 78% e comeu 8,5% do corpo). **NÃO existe conserto por código — a ÚNICA solução é REGERAR** a cartela exigindo "contorno preto grosso e fechado em volta de cada objeto, INCLUSIVE os brancos". Diagnóstico: medir % de contorno escuro na borda; se ~0% e muito branco na borda, veio sem contorno → regerar. (Com contorno, a franja cai para 0%.)
+
+**ORIENTAÇÃO SILHUETA vs COLORIDO — DEVEM APONTAR PARA O MESMO LADO (lição paga):** na fase da sombra (objeto colorido em cima, silhueta preta embaixo), a silhueta e o colorido do MESMO bichinho precisam apontar para o mesmo lado — senão a criança vê a tartaruga virada para a direita e a sombra dela para a esquerda, o que confunde e quebra a associação. As cartelas do ChatGPT saem em orientações aleatórias, então isto acontece com frequência. **Diagnóstico automático:** para cada bichinho, comparar o "lado que pesa" (centro de massa horizontal dos pixels opacos vs. centro geométrico) do colorido (`comp_`/`obj_`) e da silhueta (`sil_`); se um pesa-esquerda e o outro pesa-direita → estão invertidos. **Correção (sem regerar):** espelhar a silhueta por código (`PIL Image.transpose(FLIP_LEFT_RIGHT)`) e re-embutir — é 100% seguro porque a silhueta é uma forma preta chapada; espelhar não distorce nada. Regerar a cartela só se o próprio colorido estiver ruim. Auditar SEMPRE a orientação de todos os pares antes de entregar a fase da sombra.
+
+**SILHUETAS PRETAS (fase da sombra) — recorte por LUMINÂNCIA, não por branco (lição paga):** silhueta é forma preta chapada sobre fundo branco. Recortar detectando os pixels ESCUROS (luminância < ~110), pintar o RGB de preto puro `[0,0,0]`, erodir 1px, alpha = máscara. NÃO aplicar de-fringe de "matar escuros" (apagaria o próprio objeto). Comprimem pra <1KB. Guardar num dicionário separado `SOMBRA["sil_<chave>"]` (não no IMG). O colorido de cada bichinho é reaproveitado do companheiro já embutido (`comp_<chave>`) — NÃO precisa gerar coloridos novos; só as silhuetas.
+
+**QUANDO A VISUALIZAÇÃO DE IMAGEM DO CLAUDE FALHA — AVISAR, NÃO SEGUIR NO ESCURO (lição paga):** a ferramenta de visualização do Claude pode retornar vazio (`[image]` em branco) de forma intermitente. Quando isso acontece, as métricas numéricas (franja, cor dominante, componentes) continuam confiáveis para franja/cor, mas NÃO enxergam problemas de ENQUADRAMENTO que só o olho pega: orientação virada, objeto de cabeça para baixo, recorte cortando um pedaço, dois bichos colados. Nesses casos o Claude deve: (a) AVISAR o Marcos de forma DESTACADA que não conseguiu ver a imagem ("minha visualização falhou nesta imagem — confira a orientação/enquadramento no mosaico `conferir_*.png`"), (b) embutir por número apenas quando o risco é baixo e puramente de franja/cor (contorno fechado + franja ≤1%), e (c) deixar o mosaico de conferência salvo em outputs para o Marcos validar com os olhos. NUNCA tratar "franja ok pelos números" como se fosse "imagem ok" — franja e orientação são coisas DIFERENTES, e só a segunda precisa de olho humano. Ambíguo ou não pôde ver = apontar como PENDÊNCIA de conferência visual, não como concluído.
 
 ### Regra do anexo — CARTELA ÚNICA
 Sempre pedir todos os objetos numa **cartela única** (vários itens em grade, numa imagem só), nunca um a um (estoura o limite de anexos). Gerar e enviar uma cartela por vez.
@@ -315,11 +313,19 @@ Cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase
 ================================================================
 - **NUNCA `width:100%; height:100%; object-fit:contain` em imagem** — em Firefox 106/Chrome antigo COLAPSA a imagem para tamanho zero (some). Usar largura em px OU `width:100%; height:auto`, com `display:block`. Auditar o CSS inteiro.
 - **Imagem RETRATO em container fixo — dimensionar pela ALTURA, nunca pela largura (lição paga: mascote sobrepondo o desafio).** O mascote ChatGPT é retrato (~163×220); com `width:100%;height:auto` num container 78×78 ele estoura para baixo e COBRE o conteúdo. Correto: container em px + `img{display:block;height:100%;width:auto;margin:0 auto}` + `overflow:hidden`. O mascote JAMAIS pode sobrepor o conteúdo — auditar renderizando.
-- **Companheiro do mapa ao LADO da ilha, nunca por `bottom` (lição paga: personagem cobrindo o nome da parada).** Companheiro é imagem retrato alta (~163×220). Ancorado por `bottom` (com `.paradaNome` fluindo abaixo) ele desce e cobre o título. Correto: ancorar por `top` na altura do meio do cenário (cenário 80px → companheiro ~48px em `top:24px`, `right:-14px`), `overflow:hidden`, e `.paradaNome{margin-top:4px}`. Auditar renderizando com companheiro retrato ALTO a 360/320px: a base do companheiro tem que ficar ACIMA do topo do nome em todas as paradas.
 - Glow em PNG recortado: `filter:drop-shadow` (par `-webkit-`), NUNCA `box-shadow` (desenha retângulo).
 - Objetos de contagem: `display:block; width:100%; height:auto` no container com px.
 - Flexbox com fallback `-webkit-box` (+ `-webkit-box-flex` explícito nos filhos).
 - Imagens não-quadradas: altura fixa + `width:auto`. Cards com `overflow:visible` onde há halo/animação.
+
+**TELA CHEIA (fullscreen) COM FALLBACK SEGURO (lição paga):** botão flutuante no canto superior (`requestFullscreen` com TODOS os prefixos: `webkit`/`moz`/`ms`), que só APARECE se `telaCheiaSuportada()` — em navegador antigo sem a API, o botão fica `display:none` e não quebra nada. O ícone alterna (entrar/sair) via listeners de `fullscreenchange` (todos os prefixos). Ativar fullscreen exige gesto do usuário (clique) — nunca automático.
+
+**BOTÕES DE AÇÃO NO TOQUE — `onclick` SOZINHO NÃO FUNCIONA EM MUITOS CELULARES (lição paga, crítica):** botões que a criança usa para agir direto (setas do labirinto, controles de jogo, D-pad) precisam de `ontouchstart` ALÉM do `onclick`, senão em vários celulares reais a criança toca e NADA acontece (bug medido nas setas do labirinto). O `ontouchstart` executa a ação na hora (com `preventDefault`/`stopPropagation`); o `onclick` só age se NÃO veio de um toque nos últimos ~500ms (guardar timestamp do último toque e ignorar o click-fantasma). CSS do botão: `touch-action:manipulation` (tira o atraso de 300ms e evita zoom), `-webkit-tap-highlight-color:transparent`, `user-select:none`. Testar SEMPRE em modo toque (Playwright com `devices["iPhone 12"]` e `page.tap`), NUNCA só com clique de desktop — o bug só aparece no toque real.
+
+**TOQUE-DUPLO DO CELULAR DISPARA O EVENTO 2× (lição paga, crítica):** no touchscreen, um único toque pode disparar o handler DUAS vezes (o touch e o click-fantasma logo depois). Em qualquer mecânica que AVANÇA um contador/sequência a cada toque (ligar-pontos em ordem, etapas), isso faz o contador pular (de 1 para 3) e o próximo toque "certo" passa a ser considerado errado — sintoma clássico: "toco no número/ponto certo e diz que não é o próximo". Proteção: guardar o último valor tocado + timestamp; se o MESMO valor vier de novo em menos de ~350ms, ignorar. Isso só reproduz no celular real (o Playwright normal não duplica o toque) — testar com `page.tap` em modo device.
+
+**BUG QUE "PERSISTE" NA VERSÃO PUBLICADA PODE SER CACHE, NÃO CÓDIGO (lição paga):** quando o Marcos relata que um bug já corrigido continua aparecendo na versão publicada, a causa frequente é o CACHE do navegador servindo a versão ANTIGA do `index.html` — não um bug real no código atual. Antes de reinvestigar a lógica, confirmar que o código atual já está correto (rodando o teste) e orientar o Marcos a recarregar forçando atualização (puxar pra baixo no celular / aba anônima) ou usar "Começar do zero". Não perder tempo reinvestigando lógica que os testes mostram correta. SEMPRE lembrar o Marcos de limpar o cache ao republicar.
+**LAYOUT ADAPTATIVO SEM QUEBRAR O CELULAR (lição paga):** aproveitar telas grandes AUMENTANDO o `max-width` do `.wrap` só via `@media (min-width:700px)` e `(min-width:1000px)` (ex.: 520px → 680px → 820px). No CELULAR (≤699px) NADA muda — o conteúdo continua 100% da largura, igual antes. `@media` é seguro em navegador antigo. **Auditar sobreposição do botão flutuante:** no celular estreito o botão de tela cheia cobre o título — reservar um respiro no topo (`body.tem-botao-tc .wrap{padding-top:48px}` no celular) e deixá-lo menor (38px celular / 44px PC). Testar 320–1920px: zero overflow, zero sobreposição.
 
 ================================================================
 ## 11. GAMIFICAÇÃO (estrutura padrão)
@@ -347,80 +353,43 @@ Cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase
 - **Memória:** parear cartas iguais (conceito ↔ representação). 4 pares (8 cartas) para a idade.
 - **Quebra-cabeça de ordenação:** ordenar itens tocando do menor ao maior. Slots `?` no topo; banco embaralhado embaixo; toque errado avisa sem punir.
 - **Caça-palavras:** grade 10x10, célula ~27px para caber no celular.
-- **Sílabas (consciência fonológica — EF02LP02):** juntar sílabas para formar a palavra, apontar a sílaba que falta, contar sílabas, trocar a sílaba inicial. Tela em MAIÚSCULAS para destaque; fala via `fala`/`falaExplica` em minúsculas (o TTS soletra maiúsculas — ver Seção 7). Como fase de conteúdo, o Desafio Extra é uma palavra com uma sílaba a mais; se tratada como fase-jogo, não leva Extra.
 - **Frase em ordem:** "Monte a Frase" — ordenar palavras embaralhadas.
 - **Escolha múltipla com imagem (`escolha-img`):** mesma regra de embaralhar.
 - **Classificar fichas:** arrastar ou clicar (mouse + touch).
 - **Forca:** tradicional, com figura simples (traço não-gráfico, sem sofrimento); dica + teclado + 6 vidas. Relief games NÃO levam Desafio Extra.
 
+### Ligar os Pontos (revela o desenho)
+- A criança TOCA nos números em ordem (1→N); ao ligar o último, some com as bolinhas numeradas e aparece a IMAGEM PNG do objeto (animação de revelar por OPACIDADE — nunca `scale` no SVG, que voa pra fora), com o SVG poligonal só como reserva.
+- **SÓ TOQUE — nunca "passar o mouse por cima" (lição paga):** ligar por hover (`onmouseenter`) quebra no celular e dispara "esse não é o próximo" à toa. Ligar exclusivamente por toque/clique no ponto. Proteger contra toque-duplo (ver seção 10) — senão o contador pula.
+- **O CONTORNO DOS PONTOS DEVE FORMAR A MESMA SILHUETA DA IMAGEM REVELADA (lição paga):** as coordenadas não podem ser "chutadas" — se o desenho revelado é uma concha, ligar os pontos tem de traçar uma concha. Extrair o contorno REAL da imagem por código (amostrar o raio máximo do centro em vários ângulos com PIL, normalizar 0–100, reduzir a ~10 pontos bem distribuídos) e conferir a ORIENTAÇÃO (imagem e contorno apontam para o mesmo lado). Preferir figuras de silhueta SIMPLES (estrela, concha) a formas complexas (peixe com cauda/barbatanas). A imagem revelada e as coordenadas são um PAR: trocar uma exige refazer a outra. Fala com artigo de gênero por figura ("desenho da concha").
+
+### Labirinto (setas na tela + teclado)
+- Grade de células SEPARADAS com cantos arredondados (não grade contínua). Mascote como imagem andando; objetivo = troféu/imagem; paredes de coral (cor sólida, sem emoji). Labirintos como strings 5×5 (`S`=início, `E`=tesouro, `X`=monstro, `0`=caminho, `1`=parede).
+- **Setas NA TELA (4 botões, funcionam no toque) + teclado juntos:** a criança no celular não tem teclado, então os botões de seta na tela são obrigatórios (~60px). Ver a lição de toque (seção 10): `ontouchstart`+`onclick`+`touch-action:manipulation`, senão não movem no celular. O teclado (setas) chama a MESMA função de mover por direção.
+- **Monstrinho** (célula "X"): se o mascote toca, volta ao início com aviso gentil. **Vários labirintos em sequência** (ex.: 3 mapas); ao vencer um, carrega o próximo; ao vencer todos, fim de fase. É fase-jogo: NÃO leva Desafio Extra.
+- **Variar a posição do TESOURO (e do início) entre os labirintos (lição paga):** se o tesouro fica sempre no mesmo canto, a criança decora o caminho. Cada labirinto com o `E` em lugar diferente (e às vezes o `S` no lado oposto). Validar por BFS que cada um é resolvível E que o monstro fica adjacente ao caminho certo (senão vira decoração inútil).
+- Listeners do teclado instalados UMA vez (guardar com flag), removidos ao concluir a fase.
+
+### Quebra-cabeça (grade 2×2)
+- **Os espaços (slots) precisam formar uma GRADE, não uma fileira (lição paga):** `text-align:center` + `inline-block` põe todos os slots em UMA linha (horizontal), o que não parece quebra-cabeça. Para 2×2, dar ao container `.slots` uma LARGURA FIXA que caiba exatamente 2 slots por linha (ex.: 2×90px = 184px) — aí os `inline-block` quebram naturalmente em 2 linhas de 2. As peças da imagem real vêm de fatiar a foto (grade 2×2 via `background-size:200% 200%` + `background-position` 0%/100%).
+
 ### Contas de dois algarismos
 - Progredir de 1 para 2 algarismos, sem pedir emprestado nas séries iniciais.
 - Resultados variados. Piscar a coluna das unidades ao abrir e mascote fala (com pausa): "Esta conta tem dezena e unidade. Começamos sempre pelas unidades!".
 
-### Sistema de arrastar
-- `tornarArrastavel`, `instalarDragGlobal`, `marcarSoltavel`, `data-drop`.
-- **`instalarDragGlobal()` precisa ser chamado** quando a fase de arrastar inicia — senão não funciona.
-- **ARRASTAR é a 1ª opção; TOQUE é a reserva** (regra dos dois manuais). Em todo mecanismo onde faz sentido arrastar, o arrastar DEVE funcionar de verdade (não só o toque), e o enunciado/fala diz "arraste". O toque continua como alternativa para quem não consegue arrastar.
-- **Imagem dentro do arrastável SEQUESTRA o mouse (lição paga — arrastar "não funcionava"):** um `<img>` dentro do item dispara o **drag nativo de imagem** do navegador, que rouba os eventos de mouse (chega 1 `mousemove` e nenhum `mouseup` no document) — o arrastar quebra em PC. Consertar: (a) `document.addEventListener("dragstart", ...)` com `preventDefault()` quando o alvo é arrastável; (b) `preventDefault()` no `mousedown` (só mouse, não toque: `if(!e.touches && e.preventDefault)`); (c) CSS `.arrasta{ touch-action:none; }` (impede o scroll do celular roubar o gesto) e `.arrasta img{ -webkit-user-drag:none; }`.
-- **Preservar classes ao reconstruir o `className` (lição paga — "1ª vez arrasta, 2ª não"):** funções que remontam a classe do zero (`el.className="bicho drag"`, `el.className="cesto"`) APAGAM as classes `arrasta`/`solta` — depois do 1º drop não há mais zona de arrasto/solta e o jogo trava. Sempre reanexar `arrasta`/`solta` (e o estado, ex.: `hl`) ao reconstruir a classe.
-- **Testar com evento REAL, não sintético:** eventos sintéticos disparados por JS passam mesmo com o bug do drag nativo. Validar com CDP (`Input.dispatchMouseEvent`) ou toque real; e usar `user-data-dir` limpo por teste (páginas reaproveitadas acumulam listeners e mascaram o bug).
+### Sistema de arrastar (motor GLOBAL + GHOST — lição paga)
+- **Motor global, instalado UMA vez:** `instalarDragGlobal()` registra UM conjunto de listeners no `document` (mousemove/touchmove/up/end), guardado por `window.__dragInstalado`. NUNCA adicionar/remover listeners por elemento a cada arraste — acumula listeners órfãos e trava a página em fases longas (bug medido: `Target closed` na 11ª fase).
+- **GHOST:** ao arrastar, `criarGhost()` clona o elemento num "fantasma" `position:fixed` que segue o cursor (`pointer-events:none`); o ORIGINAL fica parado. Isso evita que `elementFromPoint` pegue o próprio arrastado e evita bagunçar o layout. `moverGhost`/`removerGhost` cuidam do resto.
+- **Assinatura:** `tornarArrastavel(el, chave, idx, onSolta)`; o callback recebe `(dropId, chave, idx)`. `marcarSoltavel(el, id)` seta `data-drop=id`. Ao soltar, `aoSoltar` sobe pelos pais (`parentNode`) procurando `data-drop` — então soltar sobre um filho do alvo (a imagem dentro do cesto) funciona igual.
+- `instalarDragGlobal()` DEVE ser chamado quando a fase de arrastar inicia.
+- **ARRASTAR PRIMÁRIO, TOQUE RESERVA** onde a ação é "levar um item até um lugar" (sombra=ligar, sequência=ordenar nos slots, classificar cor/tamanho/forma no "cesto", quebra-cabeça). Onde a ação é "apontar/escolher um" (achar o diferente, letra inicial, vogais, contar), fica TOQUE — arrastar seria forçado. Memória (virar carta) e labirinto (setas) têm mecânica própria.
 
-### Caça-palavras — interação por PONTAS (1ª e última letra)
-- **NÃO pedir para tocar letra por letra em sequência** acumulando numa string que nunca zera: um toque errado embaralha tudo e nada mais é reconhecido (bug real — "não funciona"). Padrão certo, intuitivo: a criança toca na **primeira letra** (fica destacada/laranja) e depois na **última letra** da palavra.
-- Validar a **linha reta** entre as duas pontas (horizontal, vertical ou diagonal; rejeitar se não estiverem alinhadas) e comparar a sequência de letras com a lista de alvos **nos dois sentidos** (frente e de trás pra frente).
-- Ao achar: células ficam **verdes**, a palavra fica **riscada na lista**, confete + pontos; ao achar todas, carimbo e fim de fase. Toque fora de linha reta apenas recomeça a seleção; toque que não forma palavra dá dica gentil, sem punir.
-
-### Nomes de jogos honestos
-- **"Pôr em ordem"** (ou "ordenar"), NUNCA "quebra-cabeça", para a fase de ordenar elementos — a fala do enunciado deve dizer "arraste/ponha em ordem", não "monte o quebra-cabeça". O nome anunciado tem que descrever o que a criança realmente faz.
-
-### MODO PROFESSOR — senha mestra `1275@` (opcional, mas padrão em toda atividade)
-Recurso para o professor **testar o jogo** sem precisar concluir fase por fase.
-Digitar `1275@` no teclado a QUALQUER momento LIGA/DESLIGA o "modo professor",
-que **destrava todas as fases no mapa**. Digitar de novo volta ao normal.
-- **NÃO altera o progresso real do aluno** — é só uma flag `_adminLivre` que muda
-  o que o mapa mostra como liberado. Ao desligar, volta exatamente ao estado real.
-- **Não é segurança de verdade** (a senha fica visível no código-fonte) — é um
-  atalho de conveniência. Só destrava fases; nada sensível. Funciona em **teclado
-  físico** (PC); em celular/tablet sem teclado não há como digitar.
-- **Emoji:** use os caracteres LITERAIS 🔓 🔒 na string (Unicode 6.0, ok). NUNCA
-  escapes `\U0001F513`/`\u{...}` (em JS viram texto literal e quebram o toast).
-
-**Bloco genérico** (idêntico em toda atividade; inserir no topo do script, perto
-das globais de estado):
-```javascript
-/* ====== SENHA MESTRA DO PROFESSOR (1275@) ====== */
-var _adminLivre=false;
-(function(){
-  var _buf="", _senha="1275@";
-  document.addEventListener("keydown", function(e){
-    var k=e.key;
-    if(!k || k.length!==1){ return; } /* ignora Shift/Enter/setas */
-    _buf=(_buf+k).slice(-8);
-    if(_buf.indexOf(_senha)>=0){ _buf=""; _adminLivre=!_adminLivre; avisoAdmin(_adminLivre); _adminIrMapa(); }
-  }, false);
-})();
-function avisoAdmin(ligado){
-  var t=document.createElement("div");
-  t.style.cssText="position:fixed;left:50%;top:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:"+(ligado?"#2f7d32":"#8a2a2a")+";color:#fff;padding:10px 16px;border-radius:12px;font-weight:bold;font-size:14px;z-index:99999;box-shadow:0 4px 14px rgba(0,0,0,.45)";
-  t.innerHTML=ligado?"🔓 Modo professor: fases liberadas":"🔒 Modo professor desligado";
-  document.body.appendChild(t);
-  setTimeout(function(){ if(t.parentNode){ t.parentNode.removeChild(t); } },2200);
-}
-```
-
-**Ganchos por atividade (2 pontos):**
-1. `_adminIrMapa()` chama a função que RENDERIZA o mapa da atividade (redesenha já
-   com o novo estado). Ex.: `function _adminIrMapa(){ try{ telaMenu(); }catch(e){} }`
-   (ou `irMapa(false)`, conforme o nome real).
-2. **Bypass na trava de fase.** Quase toda atividade tem uma função central que
-   diz se a fase está liberada (`liberada(chave)`, `faseDesbloqueada(i)`...). Basta
-   `if(_adminLivre){ return true; }` no INÍCIO dela — o mapa passa a mostrar todas
-   clicáveis. Se o acesso ao FINAL/troféu tiver gate SEPARADO por contagem
-   (`feitas===ORDEM.length`, `feitasCount()>=...` num `onclick`), some `|| _adminLivre`
-   nessa condição também. Se o final for evento natural (disparado ao concluir a
-   última fase, sem `onclick`), não precisa mexer. **Nunca** alterar `concluidas`.
-- **Validar** com `node --check` e testar de verdade: digitar a senha destrava
-  todas as fases; digitar de novo retranca, sem mudar o que o aluno já concluiu.
+### Fase da SOMBRA (padrão: revela o colorido ao acertar)
+- Duas colunas: à esquerda os bichinhos COLORIDOS (imagem `comp_`/`obj_`); à direita as SILHUETAS PRETAS (`SOMBRA["sil_<chave>"]`). A criança ARRASTA cada bichinho até a sombra igual.
+- **Ao acertar, a silhueta REVELA o colorido** por cima dela (troca a `<img>` preta pela colorida) — feedback lindo e claro.
+- **Sem quadrado/card nos dois lados** (bichinhos e silhuetas ficam soltos, fundo transparente, sem borda) — fica mais bonito. Um leve `drop-shadow` no bichinho o destaca do fundo.
+- **ÁREA DE ACERTO para formas VAZADAS (caranguejo, polvo, estrela, água-viva) — lição paga:** a `<img>` da silhueta precisa de `pointer-events:none` para que `elementFromPoint` sempre pegue o CONTAINER (o box inteiro, `data-drop`), e não caia num vão transparente da forma. Sem isso, soltar no "meio" do caranguejo não acerta. A área de acerto é o retângulo inteiro do alvo.
+- Orientação silhueta↔colorido conferida (ver seção 9). Fallbacks de emoji devem ser Unicode 6.0 seguros (a imagem real sempre vence, mas o validador checa).
 
 ### Integração de fase-jogo
 - Registrar `FASES.x={titulo,cor,icone,jogo:true}` e tratar no `iniciarFase` (`if(chave==="memoria"){iniciarMemoria();return;}`).
@@ -440,8 +409,8 @@ Ao reformular, é fácil deixar DUAS versões da mesma função — a última so
 
 ### VALIDAÇÃO OBRIGATÓRIA — 3 NÍVEIS (antes de entregar, executando, não de memória)
 **NÍVEL 1 — DEV:** (1) modo estrito `new Function('"use strict";'+js)` sem erro; (2) zero JS moderno; (3) zero CSS moderno; (4) nº `@keyframes` == nº `@-webkit-keyframes`; (5) zero funções duplicadas; (6) zero variável acentuada; (7) CSS de imagem robusto (nada que colapse, mascote pela altura, glow com drop-shadow).
-**NÍVEL 2 — QA:** (8) play-through de TODAS as fases (simulador `node sim.js` ou Playwright) com **0 erros**, sem overflow em 414/390/360/320px; (9) zero emoji moderno/VS16; (10) toda função de `onclick` existe; (11) embaralhamento REAL (posição da certa varia entre execuções); (12) fala nunca cortada (elogio+explicação inteiros, streak/nível/conquista depois; trocar de tela corta de propósito) E botão de avançar VISÍVEL porém DESABILITADO até o silêncio CONTÍNUO — testar clicando durante a narração em cada tela (feedback, Começar, fim de fase e secundários, ofertas, final): o clique não pode cortar; não narra símbolos/lacunas/`_`; (13) adaptatividade (100%→Extra, <50%→Reforço, erros→Treino); (14) mapa (só atual clicável, demais trancadas, conectores, troféu, relatório só no fim, barra de progresso).
-**NÍVEL 3 — PEDAGOGO:** (15) matemática/conteúdo consistente (resposta nas opções, produtos/divisões corretos, divisões exatas, zero opções duplicadas); (16) concordância n=1 E n>1 (tela E fala; forçar 1 ponto/1 medalha, varrer `\b1\s+(plural)`); (17) numExt ACENTUADO ("três"); (18) normalização de pronúncia cobre as palavras; (19) narração não entrega resposta (nada declarativo após o "?"); (20) enunciados coerentes + explicações verdadeiras; (21) português impecável (varrer palavras sem acento); (22) imagens conferidas (cor/mosaico, transparência real, sem franja/sombra/vão, mascote não sobrepõe). (23) fala conferida: rodar cada enunciado/explicação pelo `limparFala` e LER a saída (zero sigla soletrada, zero "..." picotando, zero "+" cru; usar `fala`/`falaExplica` onde a grafia falada difere da de tela); (24) série casada: cada fase batendo com a habilidade BNCC do ano correto.
+**NÍVEL 2 — QA:** (8) play-through de TODAS as fases (simulador `node sim.js` ou Playwright) com **0 erros**, sem overflow em 414/390/360/320px; (9) zero emoji moderno/VS16; (10) toda função de `onclick` existe; (11) embaralhamento REAL (posição da certa varia entre execuções); (12) fala nunca cortada (elogio+explicação inteiros, streak/nível/conquista depois; clicar "Próximo" não corta; trocar de tela corta); (13) adaptatividade (100%→Extra, <50%→Reforço, erros→Treino); (14) mapa (só atual clicável, demais trancadas, conectores, troféu, relatório só no fim, barra de progresso).
+**NÍVEL 3 — PEDAGOGO:** (15) matemática/conteúdo consistente (resposta nas opções, produtos/divisões corretos, divisões exatas, zero opções duplicadas); (16) concordância n=1 E n>1 (tela E fala; forçar 1 ponto/1 medalha, varrer `\b1\s+(plural)`); (17) numExt ACENTUADO ("três"); (18) normalização de pronúncia cobre as palavras; (19) narração não entrega resposta (nada declarativo após o "?"); (20) enunciados coerentes + explicações verdadeiras; (21) português impecável (varrer palavras sem acento); (22) imagens conferidas (cor/mosaico, transparência real, sem franja/sombra/vão, mascote não sobrepõe).
 **ENTREGA:** (23) único `index.html` (sem cópia com nome descritivo); (24) relatar honestamente o cumprido e o pendente.
 
 ================================================================
@@ -482,8 +451,39 @@ Ao reformular, é fácil deixar DUAS versões da mesma função — a última so
 - Calibrar à série/BNCC: cobrir o conteúdo esperado, não só o seguro.
 - Anexou arquivo → transformar a CAMADA, preservar conteúdo (Cenário A). Descreveu tema → criar do zero já premium (Cenário B).
 - Mapa CONTA A HISTÓRIA (início/meio/fim ligados ao enredo, com nome do aluno; botão "Ouvir" reconta).
-- Fases de contar têm apoio ao erro por contagem acesa (acende objeto a objeto, conta por extenso, ritmo fixo por setTimeout).
+- Fases de contar têm apoio ao erro por contagem acesa (acende objeto a objeto EM SINCRONIA COM A FALA — a voz diz o número e a luz acende junto; encadeado pelo callback do `falar`, nunca por timers fixos separados).
 - Peças (medalhas/selos) recortadas por componente conectado + margem transparente, exibidas centralizadas com proporção preservada; auditar corte renderizando DURANTE a animação.
 - Pronúncia: normalizar acentos no limparFala; streak diz "Você acertou N seguidas".
 - Auditoria honesta de pedagogo: apontar furos REAIS (cansaço, falta de degrau da série, fechamento seco), não só elogiar. Verificar de verdade (rodar, contar, testar n=1), não de memória.
 - Sempre validar rodando, sempre entregar `index.html`.
+
+
+================================================================
+## 18. ÚLTIMOS APRENDIZADOS (novas lições pagas)
+================================================================
+
+**BOTÃO NARRADO — LIBERAR SÓ APÓS SILÊNCIO CONTÍNUO (refina a seção 7):** o botão que só habilita ao fim da narração NÃO pode confiar num teste único de "não está falando / fila vazia". O elogio, o streak, o "subiu de nível" e a conquista entram na fila DEPOIS (por `setTimeout` ~600–900ms); um poll único pode liberar numa FRESTA de silêncio antes da comemoração começar — e o clique corta. Correto: liberar só quando a fala ficar em SILÊNCIO CONTÍNUO por ~650ms (após um mínimo inicial ~700–900ms); se algo for enfileirado nesse meio, o cronômetro do silêncio ZERA e recomeça. Trava de segurança (`setTimeout` ~15s; até ~180s em textos longos de leitura) para nunca ficar preso. Em aparelho sem voz, o `falar` chama o callback na hora → libera (não trava o aluno). Aplicar em TODA tela com narração + botão de avançar.
+
+**NÃO NARRAR SÍMBOLOS, PONTUAÇÃO SOLTA NEM LACUNAS (lição paga):** o TTS lê em voz alta caracteres que só existem no visual — o sublinhado de lacuna ("Complete: gato ___" vira "underline underline"), parênteses, colchetes, chaves, aspas «»“”‘’, asterisco, cerquilha, til/circunflexo soltos, barras, `< > | = + @ •`. O `limparFala()` DEVE, antes de falar: trocar sequências de `_` por espaço (a lacuna vira pausa); colapsar reticências; trocar travessão `—`/`–` por vírgula; e REMOVER os símbolos avulsos (viram espaço); colar `([!?])\s*\.`→`$1`. O que vai ao `falar()` fica só com letras, números e `. , ! ? :`.
+
+**O DÍGITO "2" TAMBÉM TEM GÊNERO NA FALA (complementa a seção 8):** o TTS lê "2" como "dois" (masculino). Em português só **1 e 2** flexionam (um/uma, dois/duas); de 3 em diante o número é invariável. Então "2 baldes" fica certo, mas "2 vacas" deveria ser "duas vacas" e "2 vezes" deveria ser "duas vezes" ("vezes" é feminino). Quando a fala tiver "2" diante de palavra FEMININA, gerar "duas" (por `numExt`/`pluralG`, ou regex no `normPron`: `\b2\s+vacas\b`→"duas vacas", `\b2\s+vezes\b`→"duas vezes"). O bug real que mordeu: a fazendinha falava "duas baldes".
+
+**ENUNCIADO (TEXTO + FALA) BATE COM A FIGURA MOSTRADA:** se a tela mostra ovos, o enunciado/`dd.fala` não pode dizer "maçãs". O bug clássico aparece quando o objeto do desafio é SORTEADO/cicla mas o texto ficou fixo (ou vice-versa). Auditar fase a fase: figura × enunciado × fala × explicação nomeiam o MESMO objeto.
+
+**ARRASTAR — A IMAGEM DENTRO DO ITEM SEQUESTRA O MOUSE (lição paga, complementa a seção 12):** um `<img>` dentro do arrastável dispara o **drag nativo de imagem** do navegador, que rouba os eventos de mouse (chega 1 `mousemove` e nenhum `mouseup` no document) — o arrastar quebra em PC (funciona na 1ª vez e trava depois, ou nem começa). Consertar: (a) `document.addEventListener("dragstart", ...)` com `preventDefault()` quando o alvo é arrastável; (b) `preventDefault()` no `mousedown` (só mouse, não toque: `if(!e.touches && e.preventDefault)`); (c) CSS `.arrasta{ touch-action:none; }` (impede o scroll do celular roubar o gesto) e `.arrasta img{ -webkit-user-drag:none; }`.
+- **PRESERVAR AS CLASSES ao reconstruir o `className` (lição paga — "arrasta na 1ª vez, na 2ª não"):** funções que remontam a classe do zero (`el.className="bicho drag"`) APAGAM as classes `arrasta`/`solta` — depois do 1º drop não há mais zona de arrasto/solta e o jogo trava. Sempre reanexar `arrasta`/`solta` (e o estado, ex.: `hl`).
+- **Testar com evento REAL, não sintético:** eventos disparados por JS passam mesmo com o bug do drag nativo. Validar com CDP (`Input.dispatchMouseEvent`) ou toque real; usar `user-data-dir` limpo por teste (páginas reaproveitadas acumulam listeners e mascaram o bug).
+
+**CAÇA-PALAVRAS — INTERAÇÃO POR PONTAS (1ª e última letra):** NÃO pedir para tocar letra por letra numa string que nunca zera (um toque errado embaralha tudo e nada mais é reconhecido — bug real "não funciona"). Certo: a criança toca na PRIMEIRA letra (fica destacada) e depois na ÚLTIMA. Validar a linha reta entre as duas pontas (horizontal, vertical ou diagonal; rejeitar se não alinhadas) e comparar com a lista de alvos NOS DOIS SENTIDOS (frente e de trás pra frente). Ao achar: células verdes, palavra riscada na lista, confete + pontos.
+
+**NOME DE JOGO HONESTO — "PÔR EM ORDEM", nunca "quebra-cabeça" (corrige a seção 12):** para a fase de ORDENAR elementos (do menor ao maior), o nome anunciado e a fala do enunciado dizem "arraste/ponha em ordem", NÃO "monte o quebra-cabeça" (isso é a outra fase, a de fatiar a foto 2×2). E o ordenar é ARRASTAR primário (toque reserva), como toda mecânica de "levar um item a um lugar".
+
+**MONTAR A CONTA — MULTIPLICAÇÃO É COMUTATIVA:** na fase de montar a conta de multiplicação, aceitar os operandos em QUALQUER ordem (3 × 5 = 15 e também 5 × 3 = 15) — validar contra as sequências aceitas por comutatividade (trocar os operandos ao redor do "×"). A DIVISÃO NÃO é comutativa (6 : 2 ≠ 2 : 6): só a ordem correta vale.
+
+**MODO PROFESSOR — senha mestra `1275@` (recurso padrão opcional):** digitar `1275@` no teclado a QUALQUER momento LIGA/DESLIGA o "modo professor", que destrava todas as fases no mapa para teste (digitar de novo volta ao normal). NÃO altera o progresso real do aluno — só uma flag `_adminLivre` muda as travas exibidas no mapa. NÃO é segurança (a senha fica visível no código-fonte) — é atalho de conveniência; funciona em teclado físico (PC). Ganchos: (1) um listener de `keydown` acumula as últimas teclas e compara com a senha; ao bater, inverte `_adminLivre`, mostra um toast e re-renderiza o mapa; (2) bypass `if(_adminLivre){ return true; }` no INÍCIO da função central de liberação de fase (`liberada(chave)`/`faseDesbloqueada(i)`); (3) se o FINAL/troféu tiver gate por contagem num `onclick`, somar `|| _adminLivre`. Emoji do toast: 🔓 / 🔒 LITERAIS (nunca escapes `\U0001F513`, que em JS viram texto "U0001F513").
+
+**PROVA/QUIZ COM RELATÓRIO EM PLANILHA (Google Apps Script):** para o professor receber nome + turma + nota numa planilha, usar um Web App do Google Apps Script (`doPost(e)` com `appendRow`) como backend gratuito de um site estático; o jogo faz `fetch(URL, {method:"POST", mode:"no-cors", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:...})`. A NOTA vai na escala 0 a 10 (`Math.round(ac/total*100)/10`, vírgula no pt-BR), com os acertos "ac/total" numa coluna à parte. A URL do Web App vive no `index.html` (é do próprio professor, não é secret).
+
+**TELA DE LEITURA ANTES DA PROVA (quiz com texto):** quando a prova pede um texto de leitura antes das perguntas, usar um LEITOR GENÉRICO por índice (`telaLeituraN(n)` sobre uma lista `LEITURAS=[{img,texto,titulo,deco}]`), permitindo vários textos em sequência (texto 1 → texto 2 → prova). Cada tela: a imagem do texto EMBUTIDA em base64 (self-contained — o `republicar-limpo` espelha só o `_novo`, então imagem solta no repo some), narração automática do texto ao abrir, botão "🔊 Ouvir o texto" (reouvir), e o botão de avançar (Próximo/Começar a prova) só habilita ao FIM da narração (mesma trava do botão narrado). Ao avançar, `speechSynthesis.cancel()` para a narração. Uma ilustração pode reusar imagem já embutida na prova (resolver em tempo de render, ex.: `OBJ[chave]`, para não quebrar no load se o objeto é definido depois).
+
+**SCREENSHOT HEADLESS ≠ VIEWPORT REAL (lição paga — falso "estouro"):** o Chromium headless às vezes faz o layout num viewport MAIOR (ex.: 500px) do que o `--window-size` pedido, então o screenshot sai CORTADO à direita e PARECE que a imagem estourou a largura — quando NÃO estourou. Antes de "consertar" um overflow aparente, MEDIR: injetar um script que reporta `window.innerWidth`, `document.body.scrollWidth` e o `offsetWidth` do card/imagem. Se `bodyScroll ≤ innerWidth`, não há overflow real — é só o screenshot mais estreito que o viewport; renderizar com a janela = viewport para conferir de verdade. `max-width:100%` (padrão) escala a imagem no container e funciona; não trocar por `width:100%`/`vw` achando que conserta.
