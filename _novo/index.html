@@ -507,19 +507,22 @@ function embaralharOpts(qi){
  ordemOpts[qi]=arr;return arr;
 }
 
+var TEXTO_PELE="Pelé. Edson Arantes do Nascimento, conhecido como Pelé, nasceu no dia 23 de outubro de 1940, na cidade de Três Corações, em Minas Gerais. Desde pequeno, Pelé gostava muito de futebol. Ele brincava com bola nas ruas e sonhava em ser jogador profissional. Sua família não tinha muito dinheiro, mas isso não o impediu de seguir seu sonho. Pelé começou sua carreira muito jovem e se destacou rapidamente. Ele jogou no time Santos Futebol Clube, onde fez muitos gols e conquistou vários títulos. Pela seleção brasileira, Pelé fez história ao vencer três Copas do Mundo: 1958, 1962 e 1970. Ele ficou conhecido como o Rei do Futebol por seu talento e habilidade dentro de campo. Ele é considerado um dos maiores jogadores de futebol de todos os tempos e se tornou um símbolo do esporte no mundo todo.";
 function telaLeitura(){
  var h="";
  h+='<div class="card" style="text-align:center">';
- h+='<h1>Antes de come\u00e7ar, leia! \ud83d\udcd6</h1>';
+ h+='<h1>Antes de começar, leia! 📖</h1>';
  h+='<p class="lema">'+nomeAluno+' &bull; Turma '+turmaAluno+'</p>';
- h+='<p class="notasub" style="margin:6px 0 12px">Leia o texto e toque em <b>Come\u00e7ar a prova</b>.</p>';
- h+='<div style="margin:12px 0"><img src="'+IMG_PELE+'" alt="Texto: Copa do Mundo 2026 - Pel\u00e9" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:12px;-webkit-box-shadow:0 4px 14px rgba(0,0,0,.25);box-shadow:0 4px 14px rgba(0,0,0,.25)"></div>';
- h+='<button class="btn pulsa" id="irprova">Come\u00e7ar a prova &#10132;</button>';
+ h+='<button class="btn2 btn" id="ouvirtexto">🔊 Ouvir o texto</button>';
+ h+='<p class="notasub" style="margin:6px 0 12px">Leia e ouça o texto, depois toque em <b>Começar</b>.</p>';
+ h+='<div style="margin:12px 0"><img src="'+IMG_PELE+'" alt="Texto: Copa do Mundo 2026 - Pelé" style="display:block;max-width:100%;height:auto;margin:0 auto;border-radius:12px;-webkit-box-shadow:0 4px 14px rgba(0,0,0,.25);box-shadow:0 4px 14px rgba(0,0,0,.25)"></div>';
+ h+='<button class="btn pulsa" id="irprova">Começar a prova &#10132;</button>';
  h+='</div>';
  el().innerHTML=h;
- document.getElementById("irprova").onclick=function(){ atual=0; telaQuestao(); };
+ document.getElementById("irprova").onclick=function(){ if(window.speechSynthesis){window.speechSynthesis.cancel();} atual=0; telaQuestao(); };
+ document.getElementById("ouvirtexto").onclick=function(){ falar(TEXTO_PELE); };
  window.scrollTo(0,0);
- setTimeout(function(){ narrar("Antes de come\u00e7ar, leia com aten\u00e7\u00e3o o texto sobre o Rei Pel\u00e9 e a Copa do Mundo. Quando terminar de ler, toque no bot\u00e3o come\u00e7ar a prova."); },350);
+ setTimeout(function(){ falar(TEXTO_PELE); },350);
 }
 function telaQuestao(){
  var Q=QUESTOES[atual];
