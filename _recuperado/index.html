@@ -45,6 +45,28 @@ body {
 @keyframes sobebalao { 0%{transform:translateY(60px); opacity:0;} 8%{opacity:.75;} 92%{opacity:.75;} 100%{transform:translateY(-105vh); opacity:0;} }
 
 #wrap { position:relative; z-index:2; max-width:560px; margin:0 auto; padding:8px 10px 30px 10px; }
+/* telas grandes (PC/tablet) e TELA CHEIA: aproveitar mais espaco */
+@media (min-width:700px){ #wrap{ max-width:700px; } }
+@media (min-width:1000px){ #wrap{ max-width:860px; } }
+/* botao flutuante de TELA CHEIA (fullscreen) */
+.btn-tela-cheia{ position:fixed; top:6px; right:6px; z-index:60; width:40px; height:40px; border-radius:10px;
+  border:2px solid rgba(140,200,240,.55); background:rgba(20,50,80,.80); color:#eaf5ff; font-size:20px; line-height:1;
+  cursor:pointer; padding:0; -webkit-box-shadow:0 2px 8px rgba(0,0,0,.35); box-shadow:0 2px 8px rgba(0,0,0,.35); }
+.btn-tela-cheia:hover{ background:rgba(20,50,80,.96); border-color:#ffe27a; }
+body.tem-botao-tc #wrap{ padding-top:44px; }
+@media (min-width:700px){ body.tem-botao-tc #wrap{ padding-top:16px; } }
+/* TELA CHEIA ATIVA: aumenta a area e os elementos do jogo (vale ate no celular,
+   onde a media query de largura nao dispara em tela cheia) */
+body.tc-ativa #wrap{ max-width:860px; }
+body.tc-ativa .opcao{ font-size:19px; padding:17px 16px; }
+body.tc-ativa .btn{ max-width:300px; font-size:18px; }
+body.tc-ativa .d-figura img{ max-width:240px; width:auto; }
+body.tc-ativa .texto{ font-size:17px; }
+body.tc-ativa .montar-pal{ font-size:18px; padding:12px 15px; }
+/* botao de avancar TRAVADO enquanto a narracao nao termina */
+.btn.travado-audio, .opcao.travado-audio{ opacity:.55; cursor:default;
+  -webkit-animation:none; animation:none; -webkit-box-shadow:none; box-shadow:none;
+  -webkit-filter:grayscale(.25); filter:grayscale(.25); }
 
 /* ===== TOPBAR ===== */
 #topbar { display:-webkit-box; display:flex; -webkit-box-align:center; align-items:center;
@@ -454,6 +476,7 @@ input.campo { display:block; width:100%; font-size:17px; padding:12px 14px; bord
 </style>
 </head>
 <body>
+<button class="btn-tela-cheia" id="btn-tela-cheia" onclick="alternarTelaCheia()" title="Tela cheia" style="display:none">&#9974;</button>
 <div id="ceu"></div>
 <div id="confs"></div>
 <div id="popzona"></div>
@@ -663,16 +686,49 @@ function falarDepois(texto){
   if(_falando){ _falaPend=texto; return; }
   falar(texto);
 }
+/* ===== TRAVA DE AUDIO: botoes de AVANCAR so habilitam quando a narracao termina =====
+   Evita que o aluno pule e corte o audio. Alvos dentro de #app: botoes com
+   onclick "proximoDesafio" (feedback) e os marcados com a classe "gate-audio"
+   (abertura, fim de fase). NAO trava botoes de acao (Conferir). Liberado no fim
+   da fala (via callback do falar) ou em 20s, por seguranca. */
+function _gatearAvanco(){
+  var raiz=document.getElementById("app");
+  if(!raiz){ return null; }
+  var bts=raiz.getElementsByTagName("button"), alvo=[], i;
+  for(i=0;i<bts.length;i++){
+    var oc=bts[i].getAttribute("onclick")||"";
+    var cl=bts[i].className||"";
+    if(oc.indexOf("proximoDesafio")>=0 || cl.indexOf("gate-audio")>=0){ alvo.push(bts[i]); }
+  }
+  if(!alvo.length){ return null; }
+  for(i=0;i<alvo.length;i++){
+    alvo[i].disabled=true;
+    if(alvo[i].className.indexOf("travado-audio")<0){ alvo[i].className+=" travado-audio"; }
+  }
+  var solto=false;
+  function liberar(){
+    if(solto){ return; }
+    solto=true;
+    for(var k=0;k<alvo.length;k++){
+      alvo[k].disabled=false;
+      alvo[k].className=alvo[k].className.replace(/\s*travado-audio\b/g,"");
+    }
+  }
+  setTimeout(liberar, 20000);
+  return liberar;
+}
 function falar(texto, aoTerminar){
   var s=limparFala(texto);
+  var _rg=_gatearAvanco();
+  var cb=function(){ if(_rg){ _rg(); } if(aoTerminar){ aoTerminar(); } };
   if(!window.speechSynthesis || !window.SpeechSynthesisUtterance){
-    if(aoTerminar){ setTimeout(aoTerminar, 300); }
+    setTimeout(cb, 300);
     return;
   }
   pararFala();
   if(!vozEscolhida){ vozEscolhida=escolherVoz(); }
   if(!vozEscolhida){
-    if(aoTerminar){ setTimeout(aoTerminar, 300); }
+    setTimeout(cb, 300);
     return;
   }
   var frases=s.match(/[^.!?:]+[.!?:]+/g);
@@ -683,7 +739,7 @@ function falar(texto, aoTerminar){
     if(!_falando){ return; }
     if(idx>=frases.length){
       _falando=false;
-      if(aoTerminar){ aoTerminar(); }
+      cb();
       if(_falaPend && !_falando){ var _p=_falaPend; _falaPend=null; falar(_p); }
       return;
     }
@@ -2015,7 +2071,7 @@ function aberturaFase(ch){
   html+='<div class="d-figura" style="min-height:120px;">'+svgClima(ab.clima, ab.img, 150)+'</div>';
   html+='<div class="mascbox" style="text-align:left;"><div class="mascimg">'+svgMascote("explicando",86)+'</div>';
   html+='<div class="balao-fala">'+ab.txt+'</div></div>';
-  html+='<button class="btn pulsa" onclick="comecarDesafios(\''+ch+'\')">Começar os desafios &#10145;</button>';
+  html+='<button class="btn pulsa gate-audio" onclick="comecarDesafios(\''+ch+'\')">Começar os desafios &#10145;</button>';
   html+='<div class="centro" style="margin:4px 0 8px;"><button class="btn-ouvir-mini" onclick="falarAbertura(\''+ch+'\')">🔊</button></div>';
   html+='<button class="btn suave" onclick="telaMenu()">Voltar ao mapa</button>';
   html+='</div>';
@@ -2699,12 +2755,12 @@ function telaFinalFase(){
   var mostraExtra=(pct===100 && !f.jogo && EXTRAS[ch] && !_extraDado[ch]);
   var mostraReforco=(pct<50 && !f.jogo && dEfase.length>0 && !_refDado[ch]);
   if(mostraExtra){
-    html+='<button class="btn azul pulsa" onclick="iniciarExtra()">🌟 Desafio Extra (opcional)</button>';
+    html+='<button class="btn azul pulsa gate-audio" onclick="iniciarExtra()">🌟 Desafio Extra (opcional)</button>';
   }
   if(mostraReforco){
-    html+='<button class="btn azul pulsa" onclick="iniciarReforco()">🔄 Reforçar antes de seguir</button>';
+    html+='<button class="btn azul pulsa gate-audio" onclick="iniciarReforco()">🔄 Reforçar antes de seguir</button>';
   }
-  html+='<button class="btn'+((mostraExtra||mostraReforco)?"":" pulsa")+'" onclick="telaMenu()">Continuar a viagem &#10145;</button>';
+  html+='<button class="btn gate-audio'+((mostraExtra||mostraReforco)?"":" pulsa")+'" onclick="telaMenu()">Continuar a viagem &#10145;</button>';
   html+='</div>';
   $("app").innerHTML=html;
   var falaTxt="Parada concluída! ";
@@ -3323,12 +3379,53 @@ function relatorio(){
 }
 
 /* ================= BOOT ================= */
+/* ===== TELA CHEIA (fullscreen) com fallback seguro ===== */
+function telaCheiaSuportada(){
+  var el=document.documentElement;
+  return !!(el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen);
+}
+function estaEmTelaCheia(){
+  return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);
+}
+function alternarTelaCheia(){
+  var el=document.documentElement;
+  try{
+    if(!estaEmTelaCheia()){
+      if(el.requestFullscreen){ el.requestFullscreen(); }
+      else if(el.webkitRequestFullscreen){ el.webkitRequestFullscreen(); }
+      else if(el.mozRequestFullScreen){ el.mozRequestFullScreen(); }
+      else if(el.msRequestFullscreen){ el.msRequestFullscreen(); }
+    }else{
+      if(document.exitFullscreen){ document.exitFullscreen(); }
+      else if(document.webkitExitFullscreen){ document.webkitExitFullscreen(); }
+      else if(document.mozCancelFullScreen){ document.mozCancelFullScreen(); }
+      else if(document.msExitFullscreen){ document.msExitFullscreen(); }
+    }
+  }catch(e){ /* navegador antigo/bloqueado: ignora sem quebrar */ }
+}
+function atualizarTelaCheia(){
+  var cheia=estaEmTelaCheia();
+  var b=document.getElementById("btn-tela-cheia");
+  if(b){ b.innerHTML=cheia?"✕":"⛶"; b.title=cheia?"Sair da tela cheia":"Tela cheia"; }
+  if(document.body){
+    var cls=document.body.className.replace(/\s*tc-ativa\b/g,"");
+    document.body.className=cheia?(cls+" tc-ativa"):cls;
+  }
+}
 function boot(){
   montarCeu();
   carregar();
   $("tbMasc").innerHTML=svgMascote("feliz",44);
   atualizarEmblemaTopo();
   vozEscolhida=escolherVoz();
+  /* botao de tela cheia: so aparece se o navegador suportar */
+  var btf=document.getElementById("btn-tela-cheia");
+  if(btf && telaCheiaSuportada()){
+    btf.style.display="block";
+    if(document.body){ document.body.className+=" tem-botao-tc"; }
+    var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"];
+    var k; for(k=0;k<evs.length;k++){ document.addEventListener(evs[k], atualizarTelaCheia); }
+  }
   telaInicio();
 }
 document.addEventListener("click", function(){ pegarAudio(); }, false);
