@@ -279,4 +279,5 @@ Antes de entregar QUALQUER atividade (criação ou upgrade), rodar a auditoria n
 - Uma cartela de imagem por vez; conferir SEMPRE o que chegou no disco antes de recortar; de-fringe + limpeza de sombra/vão/franja; mosaico em fundo escuro antes de embutir.
 - Na dúvida sobre conteúdo pedagógico ou qualquer coisa fora do modelo, PERGUNTAR antes de mexer — nunca inventar.
 - Validar rodando (modo estrito, play-through, concordância n=1, fala sem corte), não de memória.
+- **Modo professor (senha `1275@`):** toda atividade já nasce com a senha mestra que destrava todas as fases para teste (liga/desliga pelo teclado, sem alterar o progresso do aluno). Snippet e ganchos no MANUAL-MESTRE.md, seção 12 → "MODO PROFESSOR".
 - Entregar sempre como único `index.html`. Honestidade total sobre bugs, pendências e limitações.

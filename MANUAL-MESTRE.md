@@ -373,6 +373,55 @@ Cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase
 ### Nomes de jogos honestos
 - **"Pôr em ordem"** (ou "ordenar"), NUNCA "quebra-cabeça", para a fase de ordenar elementos — a fala do enunciado deve dizer "arraste/ponha em ordem", não "monte o quebra-cabeça". O nome anunciado tem que descrever o que a criança realmente faz.
 
+### MODO PROFESSOR — senha mestra `1275@` (opcional, mas padrão em toda atividade)
+Recurso para o professor **testar o jogo** sem precisar concluir fase por fase.
+Digitar `1275@` no teclado a QUALQUER momento LIGA/DESLIGA o "modo professor",
+que **destrava todas as fases no mapa**. Digitar de novo volta ao normal.
+- **NÃO altera o progresso real do aluno** — é só uma flag `_adminLivre` que muda
+  o que o mapa mostra como liberado. Ao desligar, volta exatamente ao estado real.
+- **Não é segurança de verdade** (a senha fica visível no código-fonte) — é um
+  atalho de conveniência. Só destrava fases; nada sensível. Funciona em **teclado
+  físico** (PC); em celular/tablet sem teclado não há como digitar.
+- **Emoji:** use os caracteres LITERAIS 🔓 🔒 na string (Unicode 6.0, ok). NUNCA
+  escapes `\U0001F513`/`\u{...}` (em JS viram texto literal e quebram o toast).
+
+**Bloco genérico** (idêntico em toda atividade; inserir no topo do script, perto
+das globais de estado):
+```javascript
+/* ====== SENHA MESTRA DO PROFESSOR (1275@) ====== */
+var _adminLivre=false;
+(function(){
+  var _buf="", _senha="1275@";
+  document.addEventListener("keydown", function(e){
+    var k=e.key;
+    if(!k || k.length!==1){ return; } /* ignora Shift/Enter/setas */
+    _buf=(_buf+k).slice(-8);
+    if(_buf.indexOf(_senha)>=0){ _buf=""; _adminLivre=!_adminLivre; avisoAdmin(_adminLivre); _adminIrMapa(); }
+  }, false);
+})();
+function avisoAdmin(ligado){
+  var t=document.createElement("div");
+  t.style.cssText="position:fixed;left:50%;top:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:"+(ligado?"#2f7d32":"#8a2a2a")+";color:#fff;padding:10px 16px;border-radius:12px;font-weight:bold;font-size:14px;z-index:99999;box-shadow:0 4px 14px rgba(0,0,0,.45)";
+  t.innerHTML=ligado?"🔓 Modo professor: fases liberadas":"🔒 Modo professor desligado";
+  document.body.appendChild(t);
+  setTimeout(function(){ if(t.parentNode){ t.parentNode.removeChild(t); } },2200);
+}
+```
+
+**Ganchos por atividade (2 pontos):**
+1. `_adminIrMapa()` chama a função que RENDERIZA o mapa da atividade (redesenha já
+   com o novo estado). Ex.: `function _adminIrMapa(){ try{ telaMenu(); }catch(e){} }`
+   (ou `irMapa(false)`, conforme o nome real).
+2. **Bypass na trava de fase.** Quase toda atividade tem uma função central que
+   diz se a fase está liberada (`liberada(chave)`, `faseDesbloqueada(i)`...). Basta
+   `if(_adminLivre){ return true; }` no INÍCIO dela — o mapa passa a mostrar todas
+   clicáveis. Se o acesso ao FINAL/troféu tiver gate SEPARADO por contagem
+   (`feitas===ORDEM.length`, `feitasCount()>=...` num `onclick`), some `|| _adminLivre`
+   nessa condição também. Se o final for evento natural (disparado ao concluir a
+   última fase, sem `onclick`), não precisa mexer. **Nunca** alterar `concluidas`.
+- **Validar** com `node --check` e testar de verdade: digitar a senha destrava
+  todas as fases; digitar de novo retranca, sem mudar o que o aluno já concluiu.
+
 ### Integração de fase-jogo
 - Registrar `FASES.x={titulo,cor,icone,jogo:true}` e tratar no `iniciarFase` (`if(chave==="memoria"){iniciarMemoria();return;}`).
 - Inserir na ORDEM no MEIO, espalhados. Mapa: cenário + companheiro como qualquer parada.
