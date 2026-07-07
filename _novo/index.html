@@ -189,9 +189,17 @@ document.addEventListener("click",function(){ac();},false);
 document.addEventListener("touchstart",function(){ac();},false);
 /* ====== NARRACAO ====== */
 var _voz=null,_falando=false,_pollAtivo=null;
-function escolherVoz(){if(!window.speechSynthesis)return null;var vs=window.speechSynthesis.getVoices(),i;
-  for(i=0;i<vs.length;i++){if(/pt-BR|pt_BR/i.test(vs[i].lang)&&/natural|neural|google|luciana|francisca|maria/i.test(vs[i].name))return vs[i];}
-  for(i=0;i<vs.length;i++){if(/pt/i.test(vs[i].lang))return vs[i];}return null;}
+function escolherVoz(){if(!window.speechSynthesis)return null;var vs=window.speechSynthesis.getVoices();
+  if(!vs||!vs.length)return null;
+  function score(v){var l=(v.lang||"").toLowerCase(),n=(v.name||"").toLowerCase(),s;
+    if(l.indexOf("pt-br")>=0||l.indexOf("pt_br")>=0){s=100;}else if(l.indexOf("pt")>=0){s=40;}else{return -1;}
+    if(/natural|neural|enhanced|premium|multilingual/.test(n)){s+=30;}
+    if(/google|microsoft/.test(n)){s+=15;}
+    if(/luciana|francisca|camila|vit[oó]ria|maria|thalita|brenda|giovanna|helo[ií]sa|\bana\b/.test(n)){s+=12;}
+    if(v.localService===false){s+=6;}
+    return s;}
+  var best=null,bs=-1,i,sc;for(i=0;i<vs.length;i++){sc=score(vs[i]);if(sc>bs){bs=sc;best=vs[i];}}
+  return (bs>=40)?best:null;}
 function limparFala(t){var s=String(t||"");s=s.replace(/<[^>]*>/g," ");
   s=s.replace(/\s*\.\s*(?:\.\s*)+/g,". ");s=s.replace(/\s*([,.!?:])\s*/g,"$1 ");s=s.replace(/\s{2,}/g," ");
   s=s.replace(/^\s+|\s+$/g,"");if(s&&"..!?:".indexOf(s.charAt(s.length-1))<0){s=s+".";}return s;}
@@ -209,14 +217,14 @@ function falar(texto,aoTerminar){var s=limparFala(texto);var rg=_gatearAvanco();
   var frases=s.match(/[^.!?:]+[.!?:]+/g);if(!frases||!frases.length)frases=[s];var idx=0;_falando=true;
   function prox(){if(!_falando)return;if(idx>=frases.length){_falando=false;cb();return;}
     var fr=frases[idx].replace(/^\s+|\s+$/g,"");idx++;if(!fr){prox();return;}
-    var u=new SpeechSynthesisUtterance(fr);u.voice=_voz;u.lang=_voz.lang||"pt-BR";u.rate=0.95;u.pitch=1.1;
+    var u=new SpeechSynthesisUtterance(fr);u.voice=_voz;u.lang=_voz.lang||"pt-BR";u.rate=0.97;u.pitch=1.04;
     var fim=false,started=false,tk=0;
-    function acabou(){if(fim)return;fim=true;if(_pollAtivo){clearInterval(_pollAtivo);_pollAtivo=null;}setTimeout(prox,50);}
+    function acabou(){if(fim)return;fim=true;if(_pollAtivo){clearInterval(_pollAtivo);_pollAtivo=null;}setTimeout(prox,30);}
     u.onend=acabou;u.onerror=acabou;
     try{window.speechSynthesis.speak(u);}catch(e){acabou();return;}
     _pollAtivo=setInterval(function(){tk++;var sp=false;try{sp=window.speechSynthesis.speaking;}catch(e){}
       if(sp){started=true;}
-      if(started&&!sp){acabou();}else if(!started&&tk>12){acabou();}else if(tk>80){acabou();}},150);}
+      if(started&&!sp){acabou();}else if(!started&&tk>12){acabou();}else if(tk>80){acabou();}},90);}
   prox();}
 if(window.speechSynthesis&&window.speechSynthesis.onvoiceschanged!==undefined){window.speechSynthesis.onvoiceschanged=function(){_voz=escolherVoz();};}
 /* ====== EFEITOS ====== */
