@@ -319,7 +319,7 @@ var ordemOpts=[];    /* ordem embaralhada por questao (guardada p/ consistencia)
 /* ====== ENVIO PARA PLANILHA GOOGLE (Apps Script) ======
    Cole aqui o link do SEU Web App do Apps Script (termina em /exec).
    Enquanto estiver vazio, a prova funciona normal e NAO tenta enviar. */
-var URL_PLANILHA="";
+var URL_PLANILHA="https://script.google.com/macros/s/AKfycbwDGvwSK7HU-B9rYENhnT9Tbr1dPI6pCwz7sng7fclJosKlnRXNeHQ_MdtpU5zLmmqUiQ/exec";
 var enviado=false;
 
 /* ============ FIGURAS (fallback SVG; troca por imagem quando chegar) ============ */
@@ -597,6 +597,10 @@ function codigoResultado(ac){
  return (nm||"ALUNO")+"-"+(tur||"?")+"-"+ac+"of"+QUESTOES.length+"-"+s;
 }
 
+function notaDez(ac){
+ var n=Math.round(ac/QUESTOES.length*100)/10;
+ return (n===Math.floor(n))?String(n):String(n).replace(".",",");
+}
 function enviarPlanilha(ac){
  if(!URL_PLANILHA||enviado){return;}
  enviado=true;
@@ -604,8 +608,8 @@ function enviarPlanilha(ac){
  for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":letraDe(i,respostas[i]));}
  var dados="nome="+encodeURIComponent(nomeAluno)+
    "&turma="+encodeURIComponent(turmaAluno)+
-   "&nota="+encodeURIComponent(ac+"/"+QUESTOES.length)+
-   "&acertos="+encodeURIComponent(ac)+
+   "&nota="+encodeURIComponent(notaDez(ac))+
+   "&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
    "&respostas="+encodeURIComponent(letras)+
    "&data="+encodeURIComponent(new Date().toLocaleString("pt-BR"));
  try{
@@ -632,8 +636,8 @@ function telaResultado(){
  h+=mascotePose("taca");
  h+='<h1>Fim da provinha!</h1>';
  h+='<p class="lema">'+nomeAluno+' &bull; Turma '+turmaAluno+'</p>';
- h+='<div class="notabox"><div class="nota">'+ac+'<span style="font-size:28px;color:#a07d2c">/'+QUESTOES.length+'</span></div></div>';
- h+='<p class="notasub">'+msg+'</p>';
+ h+='<div class="notabox"><div class="nota">'+notaDez(ac)+'<span style="font-size:28px;color:#a07d2c"> / 10</span></div></div>';
+ h+='<p class="notasub"><b>'+ac+' de '+QUESTOES.length+' acertos</b><br>'+msg+'</p>';
  h+='<p class="lema" id="statusenvio" style="font-weight:bold;margin-top:6px"></p>';
  h+='</div>';
 
