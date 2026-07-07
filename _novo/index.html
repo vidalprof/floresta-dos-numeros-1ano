@@ -251,6 +251,21 @@ h2{font-size:20px;color:#aef0c8;text-align:center;line-height:1.2;}
 .btn-tela-cheia:hover{background:rgba(12,36,24,.96);border-color:#ffe27a;}
 body.tem-botao-tc .wrap{padding-top:46px;}
 @media (min-width:700px){ body.tem-botao-tc .wrap{padding-top:20px;} }
+/* ===== TELA CHEIA ATIVA: aumenta os elementos do jogo p/ aproveitar o espaco =====
+   (funciona tambem no celular, onde a media query de largura nao dispara) */
+body.tc-ativa .wrap{max-width:820px;}
+body.tc-ativa .memCarta{width:96px;height:96px;margin:7px;border-radius:16px;}
+body.tc-ativa .memCarta .verso{font-size:36px;}
+body.tc-ativa .memCarta .frente{font-size:22px;border-radius:16px;}
+body.tc-ativa .cacaCel{width:34px;height:34px;line-height:34px;font-size:18px;border-radius:7px;}
+body.tc-ativa .cacaPal{font-size:19px;padding:4px 11px;}
+body.tc-ativa .forcaPalavra{font-size:34px;letter-spacing:8px;}
+body.tc-ativa .tecla{width:44px;height:50px;font-size:21px;}
+body.tc-ativa .pecaP{font-size:21px;padding:13px 18px;}
+body.tc-ativa .slot{min-width:64px;height:52px;line-height:52px;font-size:21px;}
+body.tc-ativa h1{font-size:32px;}
+body.tc-ativa h2{font-size:25px;}
+body.tc-ativa .lead{font-size:18px;}
 
 /* ====== CARIMBO / COMEMORACAO ====== */
 #carimbo{position:fixed;top:0;left:0;right:0;bottom:0;z-index:60;display:none;pointer-events:none;
@@ -2144,8 +2159,14 @@ function alternarTelaCheia(){
   }catch(e){/* navegador antigo/bloqueado: ignora sem quebrar */}
 }
 function atualizarIconeTelaCheia(){
+  var cheia=estaEmTelaCheia();
   var b=$("btn-tela-cheia");
-  if(b){ b.innerHTML=estaEmTelaCheia()?"✕":"⛶"; b.title=estaEmTelaCheia()?"Sair da tela cheia":"Tela cheia"; }
+  if(b){ b.innerHTML=cheia?"✕":"⛶"; b.title=cheia?"Sair da tela cheia":"Tela cheia"; }
+  /* marca o body em tela cheia: o CSS aumenta os elementos do jogo (aproveita o espaco) */
+  if(document.body){
+    var cls=document.body.className.replace(/\s*tc-ativa\b/g,"");
+    document.body.className=cheia?(cls+" tc-ativa"):cls;
+  }
 }
 function boot(){
   carregar();
