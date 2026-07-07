@@ -308,6 +308,8 @@ var CORES=[
  {pede:"vermelho",img:IMG.balVermelho},{pede:"azul",img:IMG.balAzul},{pede:"amarelo",img:IMG.balAmarelo},
  {pede:"verde",img:IMG.balVerde},{pede:"roxo",img:IMG.balRoxo},{pede:"laranja",img:IMG.balLaranja}];
 var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
+var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={};
+function guardarErroFase(q){var i;for(i=0;i<dEfase.length;i++){if(dEfase[i].pede===q.pede)return;}dEfase.push(q);}
 function embaralhar(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor((( (i*97+dIdx*13+ESTADO.pontos*7)%(i+1) )));t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function introFase(ch){faseAtual=ch;var h='<div class="card">';
@@ -317,13 +319,13 @@ function introFase(ch){faseAtual=ch;var h='<div class="card">';
   h+='<button class="btn pulsa gate-audio" onclick="comecarFase()">Começar! &#9654;</button>';
   h+='<button class="btn suave peq" onclick="telaMapa()">Voltar ao mapa</button></div>';
   $("app").innerHTML=h;falar("O vento espalhou os balões coloridos! Eu vou pedir uma cor, e você toca no balão daquela cor. Vamos lá?");}
-function comecarFase(){somClique();
+function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   var base=CORES.slice();shuffleReal(base);d=base.slice(0,5);
-  dIdx=0;dAcertos=0;dErros=0;streak=0;renderDesafio();}
+  dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];renderDesafio();}
 function renderDesafio(){var q=d[dIdx];
   /* monta 3 opcoes: a certa + 2 distratoras */
   var outras=[],i;for(i=0;i<CORES.length;i++){if(CORES[i].pede!==q.pede)outras.push(CORES[i]);}
-  shuffleReal(outras);var ops=[q,outras[0],outras[1]];shuffleReal(ops);
+  shuffleReal(outras);var ops=[q];for(i=0;i<_numOpc-1&&i<outras.length;i++){ops.push(outras[i]);}shuffleReal(ops);
   var h='<div class="card"><div class="progtxt">Desafio '+(dIdx+1)+' de '+d.length+'</div>';
   h+='<div class="enunciado">Toque no balão <b>'+q.pede+'</b>!</div>';
   h+='<div class="dica">&#128161; Olhe bem a cor que o Teo pediu.</div>';
@@ -341,23 +343,52 @@ function responder(i,cor){if(_resp)return;var q=d[dIdx];var certo=(cor===q.pede)
     var fala=elogio()+" Esse é o balão "+q.pede+".";
     $("zonaFeed").innerHTML='<div class="fbok">&#127881; '+elogio()+' Esse é o balão <b>'+q.pede+'</b>!</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';
     falar(fala);
-  }else{$("op"+i).className="opbal errada tremer";somErro();streak=0;dErros++;
+  }else{$("op"+i).className="opbal errada tremer";somErro();streak=0;dErros++;guardarErroFase(q);
     _resp=false;
     (function(el){setTimeout(function(){el.className="opbal";},450);})($("op"+i));
     $("zonaFeed").innerHTML='<div class="fbno"><b>Quase!</b> Esse é o balão '+cor+'. Procure o balão <b>'+q.pede+'</b>!</div>';
     falar("Quase! Esse é o balão "+cor+". Procure o balão "+q.pede+"!");}}
-function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){fimFase();}else{renderDesafio();}}
+function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
 function fimFase(){ESTADO.concluidas[faseAtual]=true;salvar();somFanfarra();confete(40);
-  var pct=Math.round(100*dAcertos/(dAcertos+dErros||1));
+  var tot=dAcertos+dErros;var pct=Math.round(100*dAcertos/(tot||1));
+  var ofereceExtra=(pct===100 && !_extraDado[faseAtual]);
+  var ofereceRef=(pct<50 && dEfase.length>0 && !_refDado[faseAtual]);
   var h='<div class="card"><h2>Parada concluída!</h2>';
   h+='<div class="medalha">&#127752;</div>';
-  h+='<p class="lead">Você arrumou os <b>Balões Coloridos</b>! Acertou '+dAcertos+' de '+(dAcertos+dErros)+'.</p>';
+  h+='<p class="lead">Você arrumou os <b>Balões Coloridos</b>! Acertou '+dAcertos+' de '+tot+'.</p>';
   h+='<div class="mascbox"><img src="'+IMG.mComemora+'" alt="Teo"><div class="balao">Muito bem! Você deixou os balões lindos! Agora vem aí a próxima parada: Contando no Picadeiro!</div></div>';
   h+='<p class="progtxt" style="color:#ffd23f;">&#128275; Você abriu a próxima parada!</p>';
-  h+='<button class="btn pulsa gate-audio" onclick="telaMapa()">&#9654; Voltar ao mapa</button>';
+  if(ofereceExtra){h+='<button class="btn pulsa gate-audio" onclick="iniciarExtra()">&#127775; Desafio Extra (opcional)</button>';}
+  if(ofereceRef){h+='<button class="btn pulsa gate-audio" onclick="iniciarReforco()">&#128257; Reforçar antes de seguir</button>';}
+  h+='<button class="btn'+((ofereceExtra||ofereceRef)?' suave peq':' pulsa gate-audio')+'" onclick="telaMapa()">&#9654; Voltar ao mapa</button>';
   h+='<button class="btn suave peq" onclick="comecarFase()">&#128257; Jogar de novo</button></div>';
   $("app").innerHTML=h;window.scrollTo(0,0);
-  falar("Parada concluída! Você deixou os balões lindos e ganhou uma medalha! Você abriu a próxima parada.");}
+  var f="Parada concluída! Você deixou os balões lindos e ganhou uma medalha! ";
+  if(ofereceExtra){f+="Que tal um desafio extra? É um pouquinho mais difícil!";}
+  else if(ofereceRef){f+="Quer treinar mais um pouquinho os balões que enrolaram?";}
+  else{f+="Você abriu a próxima parada!";}
+  falar(f);}
+function iniciarExtra(){somClique();_extraDado[faseAtual]=true;emExtra=true;emReforco=false;_numOpc=4;
+  var base=CORES.slice();shuffleReal(base);d=base.slice(0,3);dIdx=0;dAcertos=0;dErros=0;dEfase=[];
+  var h='<div class="card"><div class="mini" style="font-size:13px;color:#e6c9ff;">Desafio Extra</div><h2>&#127775; Mais difícil!</h2>';
+  h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor. Bora?</div></div>';
+  h+='<button class="btn pulsa gate-audio" onclick="renderDesafio()">Começar! &#9654;</button></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);falar("Agora o desafio extra! Vão aparecer mais balões pra você escolher. Preste bem atenção na cor. Vamos lá?");}
+function fimExtra(){somFanfarra();confete(40);emExtra=false;ESTADO.pontos+=3;salvar();atualizarTopo();
+  var h='<div class="card"><h2>Desafio Extra concluído! &#127775;</h2><div class="medalha">&#127775;</div>';
+  h+='<div class="mascbox"><img src="'+IMG.mComemora+'" alt="Teo"><div class="balao">Uau! Você é um artista de circo de verdade! Ganhou pontos extras!</div></div>';
+  h+='<button class="btn pulsa gate-audio" onclick="telaMapa()">&#9654; Voltar ao mapa</button></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);falar("Desafio extra concluído! Você é um artista de circo de verdade e ganhou pontos extras!");}
+function iniciarReforco(){somClique();_refDado[faseAtual]=true;emReforco=true;emExtra=false;_numOpc=3;
+  d=dEfase.slice();shuffleReal(d);dIdx=0;dAcertos=0;dErros=0;
+  var h='<div class="card"><div class="mini" style="font-size:13px;color:#e6c9ff;">Reforço</div><h2>&#128257; Vamos treinar!</h2>';
+  h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">Vamos praticar de novo os balões que enrolaram. Você consegue!</div></div>';
+  h+='<button class="btn pulsa gate-audio" onclick="renderDesafio()">Começar! &#9654;</button></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);falar("Vamos treinar de novo os balões que enrolaram. Você consegue!");}
+function fimReforco(){somFanfarra();confete(30);emReforco=false;
+  var h='<div class="card"><h2>Muito melhor! &#127881;</h2><div class="mascbox"><img src="'+IMG.mComemora+'" alt="Teo"><div class="balao">Você treinou e mandou muito bem! Agora pode seguir viagem.</div></div>';
+  h+='<button class="btn pulsa gate-audio" onclick="telaMapa()">&#9654; Voltar ao mapa</button></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);falar("Você treinou e mandou muito bem! Agora pode seguir viagem.");}
 /* ====== TELA CHEIA ====== */
 function tcSup(){var e=document.documentElement;return !!(e.requestFullscreen||e.webkitRequestFullscreen||e.mozRequestFullScreen||e.msRequestFullscreen);}
 function emTC(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
