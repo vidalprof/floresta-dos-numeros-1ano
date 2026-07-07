@@ -180,7 +180,7 @@ function nota(freq,dur,delay,tipo,vol){var a=ac();if(!a)return;var o=a.createOsc
   var t=a.currentTime+(delay||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(vol||0.15,t+0.02);
   g.gain.exponentialRampToValueAtTime(0.0001,t+dur);o.start(t);o.stop(t+dur+0.02);}
 function somClique(){nota(520,0.08,0,"triangle",0.09);}
-function somAcerto(){nota(660,0.12,0,"triangle",0.12);nota(880,0.16,0.1,"triangle",0.12);nota(1174,0.2,0.22,"triangle",0.1);}
+function somAcerto(){nota(784,0.10,0,"triangle",0.17);nota(1046,0.12,0.085,"triangle",0.17);nota(1318,0.20,0.18,"triangle",0.15);nota(1568,0.22,0.28,"sine",0.11);}
 function somErro(){nota(300,0.18,0,"sine",0.1);nota(230,0.22,0.12,"sine",0.09);}
 function somFanfarra(){nota(523,0.14,0,"triangle",0.12);nota(659,0.14,0.14,"triangle",0.12);nota(784,0.14,0.28,"triangle",0.12);nota(1046,0.3,0.42,"triangle",0.12);}
 document.addEventListener("click",function(){ac();},false);
@@ -334,6 +334,7 @@ function renderDesafio(){var q=d[dIdx];
   falar("Toque no balão "+q.pede+"!");}
 var _resp=false;
 function responder(i,cor){if(_resp)return;var q=d[dIdx];var certo=(cor===q.pede);
+  somClique();
   _resp=true;
   if(certo){$("op"+i).className="opbal certa";somAcerto();comemorar();confete(26);dAcertos++;streak++;
     ESTADO.pontos+=2;salvar();atualizarTopo();
