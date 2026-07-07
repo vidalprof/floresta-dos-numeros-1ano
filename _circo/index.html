@@ -210,8 +210,13 @@ function falar(texto,aoTerminar){var s=limparFala(texto);var rg=_gatearAvanco();
   function prox(){if(!_falando)return;if(idx>=frases.length){_falando=false;cb();return;}
     var fr=frases[idx].replace(/^\s+|\s+$/g,"");idx++;if(!fr){prox();return;}
     var u=new SpeechSynthesisUtterance(fr);u.voice=_voz;u.lang=_voz.lang||"pt-BR";u.rate=0.95;u.pitch=1.1;
-    var fim=false;function acabou(){if(fim)return;fim=true;setTimeout(prox,70);}u.onend=acabou;u.onerror=acabou;
-    setTimeout(acabou,600+fr.length*55);try{window.speechSynthesis.speak(u);}catch(e){acabou();}}
+    var fim=false,started=false,tk=0,_poll=null;
+    function acabou(){if(fim)return;fim=true;if(_poll){clearInterval(_poll);_poll=null;}setTimeout(prox,50);}
+    u.onend=acabou;u.onerror=acabou;
+    try{window.speechSynthesis.speak(u);}catch(e){acabou();return;}
+    _poll=setInterval(function(){tk++;var sp=false;try{sp=window.speechSynthesis.speaking;}catch(e){}
+      if(sp){started=true;}
+      if(started&&!sp){acabou();}else if(!started&&tk>12){acabou();}else if(tk>80){acabou();}},150);}
   prox();}
 if(window.speechSynthesis&&window.speechSynthesis.onvoiceschanged!==undefined){window.speechSynthesis.onvoiceschanged=function(){_voz=escolherVoz();};}
 /* ====== EFEITOS ====== */
@@ -317,10 +322,10 @@ function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.ra
 function introFase(ch){faseAtual=ch;var h='<div class="card">';
   h+='<div class="mini" style="font-size:13px;color:#e6c9ff;">Parada 1</div>';
   h+='<h2>Balões Coloridos</h2>';
-  h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">O vento espalhou os balões! Eu vou pedir uma cor e você toca no balão daquela cor. Vamos lá?</div></div>';
+  h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">O vento espalhou os balões! Eu vou dizer uma cor, e você toca no balão certo dessa cor. Vamos lá?</div></div>';
   h+='<button class="btn pulsa gate-audio" onclick="comecarFase()">Começar! &#9654;</button>';
   h+='<button class="btn suave peq" onclick="telaMapa()">Voltar ao mapa</button></div>';
-  $("app").innerHTML=h;falar("O vento espalhou os balões coloridos! Eu vou pedir uma cor, e você toca no balão daquela cor. Vamos lá?");}
+  $("app").innerHTML=h;falar("O vento espalhou os balões coloridos! Eu vou dizer uma cor, e você toca no balão certo dessa cor. Vamos lá?");}
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   var base=CORES.slice();shuffleReal(base);d=base.slice(0,5);
   dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];renderDesafio();}
