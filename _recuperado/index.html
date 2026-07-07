@@ -420,10 +420,18 @@ p.texto { font-size:15px; line-height:1.5; color:#26476b; }
   -webkit-animation:capaDrop .5s ease-out both; animation:capaDrop .5s ease-out both; }
 .capa-arte { position:relative; margin:6px auto 4px; max-width:380px;
   -webkit-animation:capaRise .55s ease-out both; animation:capaRise .55s ease-out both; }
-.capa-arte:before { content:""; position:absolute; left:8%; right:8%; bottom:-6px; height:14px;
+.capa-arte:before { content:""; position:absolute; left:50%; margin-left:-95px; width:190px; bottom:-6px; height:14px;
   background:rgba(90,140,190,.25); border-radius:50%; -webkit-filter:blur(6px); filter:blur(6px); z-index:0; }
-.capa-img { position:relative; z-index:1; display:block; width:100%; height:auto; border-radius:20px;
-  border:3px solid #fff; box-shadow:0 10px 26px rgba(60,110,160,.35); }
+/* imagem inicial como MEDALHAO REDONDO (estilo Poli): circulo com borda, sombra e leve flutuar;
+   recorta no centro (object-fit) sem distorcer */
+.capa-img { position:relative; z-index:1; display:block; width:220px; height:220px; margin:0 auto; border-radius:50%;
+  -o-object-fit:cover; object-fit:cover; -o-object-position:center; object-position:center;
+  border:5px solid #fff; -webkit-box-shadow:0 10px 26px rgba(60,110,160,.35), 0 0 0 4px rgba(120,180,230,.4);
+  box-shadow:0 10px 26px rgba(60,110,160,.35), 0 0 0 4px rgba(120,180,230,.4);
+  -webkit-animation:boiaCapa 4.5s ease-in-out .55s infinite; animation:boiaCapa 4.5s ease-in-out .55s infinite; }
+@media (min-width:700px){ .capa-img{ width:260px; height:260px; } }
+@-webkit-keyframes boiaCapa{ 0%,100%{ -webkit-transform:translateY(0) scale(1) rotate(-1deg); } 50%{ -webkit-transform:translateY(-9px) scale(1.02) rotate(1deg); } }
+@keyframes boiaCapa{ 0%,100%{ transform:translateY(0) scale(1) rotate(-1deg); } 50%{ transform:translateY(-9px) scale(1.02) rotate(1deg); } }
 .capa-titulo { margin-top:14px; line-height:1;
   -webkit-animation:capaRise .55s ease-out .08s both; animation:capaRise .55s ease-out .08s both; }
 .capa-t1 { display:block; font-size:34px; font-weight:800; letter-spacing:-.5px; color:#1a5f9e;
