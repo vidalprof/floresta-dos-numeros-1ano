@@ -347,8 +347,8 @@ function responder(i,cor){if(_resp)return;var q=d[dIdx];var certo=(cor===q.pede)
   _resp=true;
   if(certo){$("op"+i).className="opbal certa";somAcerto();comemorar();confete(26);dAcertos++;streak++;
     ESTADO.pontos+=2;salvar();atualizarTopo();
-    var fala=elogio()+" Esse é o balão "+q.pede+".";
-    $("zonaFeed").innerHTML='<div class="fbok">&#127881; '+elogio()+' Esse é o balão <b>'+q.pede+'</b>!</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';
+    var el=elogio();var fala=el+" Esse é o balão "+q.pede+".";
+    $("zonaFeed").innerHTML='<div class="fbok">&#127881; '+el+' Esse é o balão <b>'+q.pede+'</b>!</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';
     falar(fala);
   }else{$("op"+i).className="opbal errada tremer";somErro();streak=0;dErros++;guardarErroFase(q);
     _resp=false;
