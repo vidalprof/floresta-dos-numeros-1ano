@@ -303,6 +303,13 @@ h1 { font-size:26px; text-align:center; color:#8ff0d6; text-shadow:0 2px 0 #0438
 .peca .peca-emoji { font-size:38px; line-height:64px; text-align:center; }
 .peca.arrastando { opacity:.5; }
 .peca-num { font-size:34px; font-weight:bold; color:#08344a; line-height:64px; text-align:center; }
+/* fase de TAMANHO: peixinhos em FILA (uma unica linha horizontal, do menor ao maior).
+   quadros um pouco menores p/ caber ate 4 sem quebrar linha em celular estreito;
+   overflow-x:auto e so uma rede de seguranca em telas muito pequenas. */
+.slots.fila { width:auto; max-width:100%; white-space:nowrap; overflow-x:auto; overflow-y:hidden; }
+.slots.fila .slot { width:64px; height:64px; margin:3px; }
+.banco.fila { white-space:nowrap; overflow-x:auto; overflow-y:hidden; min-height:70px; }
+.banco.fila .peca { width:62px; height:64px; margin:3px; }
 
 /* ligar pontos */
 .pontos-area { position:relative; width:100%; height:300px; margin:10px 0; background:rgba(255,255,255,.05); border-radius:16px; border:2px solid rgba(140,230,255,.25); }
@@ -2008,13 +2015,14 @@ function renderSequencia(){
   var enun = d.tipo==="tamanho" ? "Arraste os peixinhos do menor para o maior!" : "Arraste os n\u00fameros na ordem, "+d.legenda+"!";
   h += '<div class="enunciado">'+enun+'</div>';
   h += '<div class="dica">\ud83d\udca1 Arraste para os quadros na ordem. (ou toque em ordem)</div>';
-  h += '<div class="slots" id="seq-slots">';
+  var filaCls = (d.tipo==="tamanho") ? " fila" : "";
+  h += '<div class="slots'+filaCls+'" id="seq-slots">';
   var i;
   for(i=0;i<ordem.length;i++){
     h += '<div class="slot" id="seqslot'+i+'" data-drop="slot'+i+'"></div>';
   }
   h += '</div>';
-  h += '<div class="banco" id="seq-banco">';
+  h += '<div class="banco'+filaCls+'" id="seq-banco">';
   for(i=0;i<banco.length;i++){
     h += pecaSeqHTML(banco[i], d.tipo);
   }
