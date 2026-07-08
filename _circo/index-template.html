@@ -250,6 +250,7 @@ IMG.balVerde="{{B_verde}}";IMG.balRoxo="{{B_roxo}}";IMG.balLaranja="{{B_laranja}
 IMG.lpCartola="{{LP_cartola}}";IMG.lpGravata="{{LP_gravata}}";
 IMG.vogIoio="{{VOG_ioio}}";IMG.vogUrso="{{VOG_urso}}";IMG.vogOculos="{{VOG_oculos}}";
 IMG.voglA="{{VOGL_A}}";IMG.voglE="{{VOGL_E}}";IMG.voglI="{{VOGL_I}}";IMG.voglO="{{VOGL_O}}";IMG.voglU="{{VOGL_U}}";
+IMG.gulPipoca="{{GUL_pipoca}}";IMG.gulAlgodao="{{GUL_algodao}}";IMG.gulMaca="{{GUL_maca}}";IMG.gulSorvete="{{GUL_sorvete}}";IMG.gulPirulito="{{GUL_pirulito}}";IMG.gulCachorro="{{GUL_cachorro}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -468,13 +469,11 @@ var LETRA_IMG={A:IMG.voglA,E:IMG.voglE,I:IMG.voglI,O:IMG.voglO,U:IMG.voglU};
 function vogalFalada(v){var t={A:"á",E:"é",I:"i",O:"ó",U:"úú"};return t[v]||v;}
 /* Qual e o Diferente: grupos de imagens que ja temos */
 var DIF_CATS={
- animais:[IMG.cLeao,IMG.cElefante,IMG.cFoca,IMG.cMacaco,IMG.cArara,IMG.cPonei],
- baloes:[IMG.balVermelho,IMG.balAzul,IMG.balVerde,IMG.balAmarelo,IMG.balRoxo,IMG.balLaranja],
- objetos:[IMG.oBola,IMG.oArgola,IMG.oPipoca,IMG.oEstrela,IMG.oChapeu,IMG.oBandeirinha]};
-var DIF_CHAVES=["animais","baloes","objetos"];
+ guloseimas:[IMG.gulPipoca,IMG.gulAlgodao,IMG.gulMaca,IMG.gulSorvete,IMG.gulPirulito,IMG.gulCachorro]};
+var DIF_CHAVES=["guloseimas"];
 var FCFG={
  diferente:{parada:7,titulo:"Qual é o Diferente?",tipo:"diferente",
-   intro:"O Teo misturou umas coisas do circo! Em cada rodada quase tudo é igual, mas tem UM diferente. Olhe bem e toque no que é diferente dos outros!",
+   intro:"O Teo comprou as guloseimas do circo! Em cada rodada quase todas são iguais, mas tem UMA diferente. Olhe bem e toque na que é diferente das outras!",
    gancho:"Muito bem! Você tem um olhar de águia! Agora vem a próxima parada da nossa aventura!"},
  vogais:{parada:6,titulo:"Vogais do Circo",tipo:"vogais",
    intro:"No circo tem muita coisa começando com as vogais! Eu vou mostrar uma figura e falar o nome. Você toca na vogal com que o nome começa. Bora?",
@@ -526,7 +525,7 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
   if(f.tipo==="luzes"){var fonte=(emExtra?LUZES_EXTRA:LUZES);var lz=fonte.slice();shuffleReal(lz);return lz.slice(0,Math.min(qtd,lz.length));}
   if(f.tipo==="vogais"){var vg=VOGAIS.slice();shuffleReal(vg);return vg.slice(0,Math.min(qtd,vg.length));}
-  if(f.tipo==="diferente"){var seq=seqSemRepetir(DIF_CHAVES,qtd),rd=[],k;for(k=0;k<qtd;k++){var pool=DIF_CATS[seq[k]].slice();shuffleReal(pool);rd.push({cat:seq[k],base:pool[0],dif:pool[1]});}return rd;}
+  if(f.tipo==="diferente"){var rd=[],k,lastBase=null;for(k=0;k<qtd;k++){var cat=DIF_CHAVES[Math.floor(Math.random()*DIF_CHAVES.length)];var pool=DIF_CATS[cat].slice();shuffleReal(pool);var base=pool[0];if(base===lastBase&&pool.length>1){base=pool[1];}var dif=null,z;for(z=0;z<pool.length;z++){if(pool[z]!==base){dif=pool[z];break;}}lastBase=base;rd.push({cat:cat,base:base,dif:dif});}return rd;}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}

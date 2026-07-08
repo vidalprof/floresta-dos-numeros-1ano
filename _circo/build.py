@@ -45,6 +45,9 @@ for k in ["ioio","urso","oculos"]:
 # Letras-vogais de circo (bolha-imagem)
 for L in ["A","E","I","O","U"]:
     m("VOGL_" + L, "vog-letra-" + L + ".png")
+# Guloseimas de circo (Parada 7 - Qual e o Diferente)
+for k in ["pipoca","algodao","maca","sorvete","pirulito","cachorro"]:
+    m("GUL_" + k, "gul-" + k + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:
