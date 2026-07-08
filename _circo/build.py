@@ -60,6 +60,9 @@ for k in range(6):
 # Medalhas por parada (1..11)
 for k in range(1, 12):
     m("MED_" + str(k), "med-" + str(k) + ".png")
+# Recompensa que cresce (circo em 3 fases)
+for k in range(1, 4):
+    m("REC_" + str(k), "recompensa-" + str(k) + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:

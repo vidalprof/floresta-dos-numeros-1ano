@@ -258,6 +258,9 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .medcel.trav .med-num{background:#7a6a99;}
 .medlock{position:absolute;left:0;top:0;right:0;bottom:0;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:28px;}
 .medlbl{font-size:12px;color:#e6c9ff;margin-top:3px;line-height:1.2;}
+.recompensa{text-align:center;margin:4px auto 8px;}
+.recompensa img{display:block;margin:0 auto;height:122px;width:auto;-webkit-filter:drop-shadow(0 5px 9px rgba(0,0,0,.45));filter:drop-shadow(0 5px 9px rgba(0,0,0,.45));-webkit-animation:flutua 3.6s ease-in-out infinite;animation:flutua 3.6s ease-in-out infinite;}
+.rectxt{font-size:13px;color:#ffd23f;font-weight:bold;margin-top:3px;}
 .opnum{display:inline-block;cursor:pointer;border:none;background:transparent;margin:8px 12px;padding:2px;}
 .opnum img{display:block;height:80px;width:auto;-webkit-animation:flutua 3s ease-in-out infinite;animation:flutua 3s ease-in-out infinite;}
 .opnum:active img{-webkit-transform:scale(.94);transform:scale(.94);}
@@ -306,6 +309,7 @@ IMG.pz0="{{PZ_0}}";IMG.pz1="{{PZ_1}}";IMG.pz2="{{PZ_2}}";IMG.pz3="{{PZ_3}}";
 IMG.errCerta="{{ERR_CERTA}}";IMG.errErrada="{{ERR_ERRADA}}";
 IMG.q20="{{Q2_0}}";IMG.q21="{{Q2_1}}";IMG.q22="{{Q2_2}}";IMG.q23="{{Q2_3}}";IMG.q24="{{Q2_4}}";IMG.q25="{{Q2_5}}";
 IMG.med1="{{MED_1}}";IMG.med2="{{MED_2}}";IMG.med3="{{MED_3}}";IMG.med4="{{MED_4}}";IMG.med5="{{MED_5}}";IMG.med6="{{MED_6}}";IMG.med7="{{MED_7}}";IMG.med8="{{MED_8}}";IMG.med9="{{MED_9}}";IMG.med10="{{MED_10}}";IMG.med11="{{MED_11}}";
+IMG.rec1="{{REC_1}}";IMG.rec2="{{REC_2}}";IMG.rec3="{{REC_3}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -459,6 +463,9 @@ function telaMapa(){pararMusPinta();$("topbar").className="topbar";atualizarTopo
   var feitas=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])feitas++;}
   var h='<div class="card">';
   h+='<h2>A aventura de '+(ESTADO.nome||"amiguinho")+'!</h2>';
+  var recF=(feitas<PARADAS.length/3)?1:((feitas<2*PARADAS.length/3)?2:3);
+  var recTxt=(recF===1)?"Vamos montar o circo do Teo!":((recF===2)?"O circo está ficando pronto!":(feitas>=PARADAS.length?"O grande espetáculo está pronto! 🎉":"Falta pouco para o grande espetáculo!"));
+  h+='<div class="recompensa"><img src="'+IMG["rec"+recF]+'" alt="Circo do Teo"><div class="rectxt">'+recTxt+'</div></div>';
   h+='<div class="progbar"><i style="width:'+Math.round(100*feitas/PARADAS.length)+'%"></i></div>';
   h+='<div class="progtxt">Coleção: '+feitas+' de '+PARADAS.length+' paradas</div>';
   h+='<div class="guia">Siga a trilha do picadeiro! Complete cada parada para abrir a próxima. &#127914;</div>';
