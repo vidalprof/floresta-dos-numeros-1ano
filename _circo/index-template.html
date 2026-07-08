@@ -622,10 +622,13 @@ function tocarLuz(n){if(_resp)return;var t=(new Date()).getTime();
   if(_luzProx>1){_linhaLuz(_luzProx-1,n);}
   _luzProx++;
   var prx=$("luzd"+_luzProx);if(prx){prx.className="luzdot proxima2";}
-  if(_luzProx>_luzFig.pts.length){_linhaLuz(_luzFig.pts.length,1);/* fecha */
-    _resp=true;var q=_luzFig;var fig=$("luzfig");if(fig){fig.className="luzfig revelada";}
-    var svg=$("luzsvg");if(svg){svg.className="luzsvg some";}
-    var i;for(i=1;i<=_luzFig.pts.length;i++){var dd2=$("luzd"+i);if(dd2){dd2.className="luzdot some";}}
+  if(_luzProx>_luzFig.pts.length){_linhaLuz(_luzFig.pts.length,1);/* fecha o contorno */
+    _resp=true;var q=_luzFig;var np=_luzFig.pts.length;
+    var i;for(i=1;i<=np;i++){var dd2=$("luzd"+i);if(dd2){dd2.className="luzdot some";}}
+    var fig=$("luzfig");if(fig){fig.className="luzfig revelada";}
+    /* deixa SO a imagem limpa: some com as linhas e os pontos em volta */
+    setTimeout(function(){var s=$("luzsvg");if(s){s.className="luzsvg some";}var j;for(j=1;j<=np;j++){var e=$("luzd"+j);if(e){e.style.display="none";}}},420);
+    setTimeout(function(){var s=$("luzsvg");if(s){s.innerHTML="";s.style.display="none";}},1000);
     acertou();var el=elogio();
     $("zonaFeed").innerHTML=fbOk(el+' Você acendeu '+artG(q.g).toLowerCase()+' <b>'+q.nome+'</b>!');
     falar(el+" Você acendeu "+artG(q.g).toLowerCase()+" "+q.nome+"!");}}
