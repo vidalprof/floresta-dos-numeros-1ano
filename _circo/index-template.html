@@ -559,7 +559,7 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
   if(f.tipo==="luzes"){var fonte=(emExtra?LUZES_EXTRA:LUZES);var lz=fonte.slice();shuffleReal(lz);return lz.slice(0,Math.min(qtd,lz.length));}
   if(f.tipo==="vogais"){var vg=VOGAIS.slice();shuffleReal(vg);return vg.slice(0,Math.min(qtd,vg.length));}
-  if(f.tipo==="diferente"){var rd=[],k,lastBase=null;for(k=0;k<qtd;k++){var cat=DIF_CHAVES[Math.floor(Math.random()*DIF_CHAVES.length)];var pool=DIF_CATS[cat].slice();shuffleReal(pool);var base=pool[0];if(base===lastBase&&pool.length>1){base=pool[1];}var dif=null,z;for(z=0;z<pool.length;z++){if(pool[z]!==base){dif=pool[z];break;}}lastBase=base;rd.push({cat:cat,base:base,dif:dif});}return rd;}
+  if(f.tipo==="diferente"){var cat=DIF_CHAVES[Math.floor(Math.random()*DIF_CHAVES.length)];var pool=DIF_CATS[cat].slice();shuffleReal(pool);var rd=[],k;for(k=0;k<qtd;k++){var base=pool[k%pool.length];var dp=[],z;for(z=0;z<pool.length;z++){if(pool[z]!==base){dp.push(pool[z]);}}shuffleReal(dp);rd.push({cat:cat,base:base,dif:dp[0]});}return rd;}
   if(f.tipo==="quebra"){return [{pz:true}];}
   if(f.tipo==="memoria"){return [{mem:true}];}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
