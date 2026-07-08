@@ -36,6 +36,9 @@ for k in ["cores","numeros","formas","sombra","luzes","vogais","diferente","queb
 # Silhuetas (fase da sombra)
 for k in ["leao","elefante","foca","macaco","arara","ponei"]:
     m("SIL_" + k, "sil-" + k + ".png")
+# Figuras do ligar-pontos (Caminho das Luzes)
+for k in ["cartola","gravata"]:
+    m("LP_" + k, "lp-" + k + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:
