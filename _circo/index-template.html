@@ -436,6 +436,7 @@ var FCFG={
 var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
 var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={},_resp=false;
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function seqSemRepetir(lista,qtd){var res=[],i,prev=null;for(i=0;i<qtd;i++){var cand=[],j;for(j=0;j<lista.length;j++){if(lista[j]!==prev){cand.push(lista[j]);}}shuffleReal(cand);var pick=cand.length?cand[0]:lista[0];res.push(pick);prev=pick;}return res;}
 function chaveDesafio(q){if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
 function guardarErroFase(q){var i,k=chaveDesafio(q);for(i=0;i<dEfase.length;i++){if(chaveDesafio(dEfase[i])===k)return;}dEfase.push(q);}
 function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];return (n>=0&&n<u.length)?u[n]:String(n);}
@@ -459,7 +460,7 @@ function introFase(ch){faseAtual=ch;var f=FCFG[ch];
   $("app").innerHTML=h;falar(f.intro);}
 function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="cor"){var base=CORES.slice();shuffleReal(base);return base.slice(0,qtd);}
-  if(f.tipo==="forma"){var rf=[],k;for(k=0;k<qtd;k++){rf.push({target:FORMAS_TIPOS[k%FORMAS_TIPOS.length]});}shuffleReal(rf);return rf;}
+  if(f.tipo==="forma"){var tg=seqSemRepetir(FORMAS_TIPOS,qtd),rf=[],k;for(k=0;k<qtd;k++){rf.push({target:tg[k]});}return rf;}
   if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
