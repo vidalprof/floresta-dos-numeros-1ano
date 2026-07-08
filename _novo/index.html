@@ -168,6 +168,18 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .ghost img{max-width:100%;max-height:100%;}
 @-webkit-keyframes revela{0%{-webkit-transform:scale(.6);opacity:.2;}60%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);opacity:1;}}
 @keyframes revela{0%{transform:scale(.6);opacity:.2;}60%{transform:scale(1.12);}100%{transform:scale(1);opacity:1;}}
+/* fase MEMORIA */
+.memgrid{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;max-width:340px;margin:10px auto;}
+.memcarta{position:relative;width:74px;height:74px;margin:5px;cursor:pointer;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+.memface{position:absolute;left:0;top:0;width:74px;height:74px;-webkit-border-radius:12px;border-radius:12px;overflow:hidden;-webkit-box-align:center;-webkit-box-pack:center;display:-webkit-box;display:flex;align-items:center;justify-content:center;-webkit-transition:opacity .18s;transition:opacity .18s;}
+.memback{background:-webkit-linear-gradient(#7a2fb0,#4a1d6b);background:linear-gradient(#7a2fb0,#4a1d6b);border:3px solid #ffd23f;color:#ffe27a;font-size:26px;z-index:2;opacity:1;-webkit-box-shadow:0 3px 5px rgba(0,0,0,.4);box-shadow:0 3px 5px rgba(0,0,0,.4);}
+.memfront{background:#fff;border:3px solid #ffd23f;z-index:1;opacity:0;}
+.memfront img{width:64px;height:64px;-o-object-fit:contain;object-fit:contain;display:block;}
+.memcarta.aberta .memback{opacity:0;}
+.memcarta.aberta .memfront{opacity:1;}
+.memcarta.achada .memback{opacity:0;}
+.memcarta.achada .memfront{opacity:1;border-color:#4dff9e;-webkit-box-shadow:0 0 10px rgba(77,255,158,.8);box-shadow:0 0 10px rgba(77,255,158,.8);}
+.memcarta.achada{-webkit-animation:revela .4s;animation:revela .4s;}
 /* fase QUEBRA-CABECA */
 .pzgrid{width:212px;margin:8px auto 12px;display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;-webkit-border-radius:12px;border-radius:12px;overflow:hidden;-webkit-box-shadow:0 0 0 3px rgba(255,210,63,.5);box-shadow:0 0 0 3px rgba(255,210,63,.5);}
 .pzslot{width:104px;height:104px;position:relative;-ms-touch-action:none;touch-action:none;background:rgba(0,0,0,.25);overflow:hidden;}
@@ -372,7 +384,7 @@ var PARADAS=[
  {ch:"vogais",n:"Vogais do Circo",c:IMG.cArara,jog:true},
  {ch:"diferente",n:"Qual é o Diferente?",c:IMG.cPonei,jog:true},
  {ch:"quebra1",n:"Quebra-Cabeça do Circo",c:IMG.cCachorro,jog:true},
- {ch:"memoria",n:"Memória do Circo",c:IMG.cElefante},
+ {ch:"memoria",n:"Memória do Circo",c:IMG.cElefante,jog:true},
  {ch:"erros",n:"Caça aos 7 Erros",c:IMG.cMacaco},
  {ch:"quebra2",n:"Quebra-Cabeça 2",c:IMG.cLeao}
 ];
@@ -485,10 +497,15 @@ var DIF_CATS={
 var DIF_CHAVES=["guloseimas"];
 /* Quebra-Cabeca 2x2: 4 pecas (TL,TR,BL,BR) */
 var PUZZLE=[IMG.pz0,IMG.pz1,IMG.pz2,IMG.pz3];
+/* Memoria: pares de imagens (guloseimas) */
+var MEMORIA=[IMG.gulPipoca,IMG.gulAlgodao,IMG.gulMaca,IMG.gulSorvete,IMG.gulPirulito,IMG.gulCachorro];
 var FCFG={
  diferente:{parada:7,titulo:"Qual é o Diferente?",tipo:"diferente",
    intro:"O Teo comprou as guloseimas do circo! Em cada rodada quase todas são iguais, mas tem UMA diferente. Olhe bem e toque na que é diferente das outras!",
    gancho:"Muito bem! Você tem um olhar de águia! Agora vem a próxima parada da nossa aventura!"},
+ memoria:{parada:9,titulo:"Memória do Circo",tipo:"memoria",jogo:true,
+   intro:"O Teo espalhou as cartas das guloseimas! Vire duas cartas de cada vez e ache os pares iguais. Vamos treinar a memória?",
+   gancho:"Muito bem! Que memória boa! Agora vem a próxima parada da nossa aventura!"},
  quebra1:{parada:8,titulo:"Quebra-Cabeça do Circo",tipo:"quebra",jogo:true,
    intro:"O vento embaralhou a foto do circo do Teo! Arraste cada peça para o lugar certo e monte a foto de novo. Você consegue?",
    gancho:"Muito bem! Você montou o quebra-cabeça do circo! Agora vem a próxima parada da nossa aventura!"},
@@ -515,7 +532,7 @@ var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
 var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={},_resp=false;
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function seqSemRepetir(lista,qtd){var res=[],i,prev=null;for(i=0;i<qtd;i++){var cand=[],j;for(j=0;j<lista.length;j++){if(lista[j]!==prev){cand.push(lista[j]);}}shuffleReal(cand);var pick=cand.length?cand[0]:lista[0];res.push(pick);prev=pick;}return res;}
-function chaveDesafio(q){if(q.pz!==undefined){return "pz";}if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.vogal!==undefined){return "v"+q.vogal;}if(q.cat!==undefined){return "d"+q.cat+"_"+dIdx;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
+function chaveDesafio(q){if(q.mem!==undefined){return "mem";}if(q.pz!==undefined){return "pz";}if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.vogal!==undefined){return "v"+q.vogal;}if(q.cat!==undefined){return "d"+q.cat+"_"+dIdx;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
 function guardarErroFase(q){var i,k=chaveDesafio(q);for(i=0;i<dEfase.length;i++){if(chaveDesafio(dEfase[i])===k)return;}dEfase.push(q);}
 function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];return (n>=0&&n<u.length)?u[n]:String(n);}
 function numExtG(n,g){if(n===1){return g==="f"?"uma":"um";}if(n===2){return g==="f"?"duas":"dois";}return numExt(n);}
@@ -544,12 +561,13 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="vogais"){var vg=VOGAIS.slice();shuffleReal(vg);return vg.slice(0,Math.min(qtd,vg.length));}
   if(f.tipo==="diferente"){var rd=[],k,lastBase=null;for(k=0;k<qtd;k++){var cat=DIF_CHAVES[Math.floor(Math.random()*DIF_CHAVES.length)];var pool=DIF_CATS[cat].slice();shuffleReal(pool);var base=pool[0];if(base===lastBase&&pool.length>1){base=pool[1];}var dif=null,z;for(z=0;z<pool.length;z++){if(pool[z]!==base){dif=pool[z];break;}}lastBase=base;rd.push({cat:cat,base:base,dif:dif});}return rd;}
   if(f.tipo==="quebra"){return [{pz:true}];}
+  if(f.tipo==="memoria"){return [{mem:true}];}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   d=montarRodadas(5);dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];_resp=false;renderDesafio();}
-function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else if(f.tipo==="diferente"){renderDiferente();}else if(f.tipo==="quebra"){renderQuebra();}else{renderContar();}}
+function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else if(f.tipo==="diferente"){renderDiferente();}else if(f.tipo==="quebra"){renderQuebra();}else if(f.tipo==="memoria"){renderMemoria();}else{renderContar();}}
 function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;ESTADO.pontos+=2;salvar();atualizarTopo();}
 function fbOk(txt){return '<div class="fbok">&#127881; '+txt+'</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';}
 function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
@@ -756,6 +774,28 @@ function onSoltaPeca(dropId,chave){var slot=parseInt(dropId,10),peca=parseInt(ch
     var bad=$("pzs"+dropId);if(bad&&(""+bad.className).indexOf("cheio")<0){bad.className="pzslot tremer";
       (function(b){setTimeout(function(){if((""+b.className).indexOf("cheio")<0){b.className="pzslot";}},450);})(bad);}
     falar("Essa peça não é desse lugar. Tente outro!");}}
+/* ---- tipo MEMORIA (achar pares) ---- */
+var _memCartas=[],_memViradas=[],_memPares=0,_memTrava=false,_memTotal=4;
+function renderMemoria(){_resp=false;_memPares=0;_memViradas=[];_memTrava=false;
+  var pool=MEMORIA.slice();shuffleReal(pool);var esc=pool.slice(0,_memTotal);
+  var cartas=[],i;for(i=0;i<esc.length;i++){cartas.push({img:esc[i],par:i});cartas.push({img:esc[i],par:i});}
+  shuffleReal(cartas);_memCartas=cartas;
+  var h='<div class="card"><div class="progtxt">Memória do Circo</div>';
+  h+='<div class="enunciado">Ache os pares iguais!</div>';
+  h+='<div class="dica">&#128161; Vire duas cartas; se forem iguais, ficam abertas.</div>';
+  h+='<div class="memgrid">';
+  for(i=0;i<cartas.length;i++){h+='<div class="memcarta" id="mc'+i+'" onclick="virarCarta('+i+')"><div class="memface memback">&#11088;</div><div class="memface memfront"><img src="'+cartas[i].img+'" alt=""></div></div>';}
+  h+='</div><div id="zonaFeed"></div></div>';
+  $("app").innerHTML=h;falar("Vire as cartas e ache os pares iguais!");}
+function virarCarta(i){if(_memTrava){return;}var c=$("mc"+i);if(!c){return;}
+  var cl=""+c.className;if(cl.indexOf("aberta")>=0||cl.indexOf("achada")>=0){return;}
+  somClique();c.className="memcarta aberta";_memViradas.push(i);
+  if(_memViradas.length>=2){_memTrava=true;var a=_memViradas[0],b=_memViradas[1];
+    if(_memCartas[a].par===_memCartas[b].par){
+      setTimeout(function(){var ea=$("mc"+a),eb=$("mc"+b);if(ea){ea.className="memcarta achada";}if(eb){eb.className="memcarta achada";}somAcerto();_memPares++;_memViradas=[];_memTrava=false;
+        if(_memPares>=_memTotal){_resp=true;acertou();var el=elogio();$("zonaFeed").innerHTML=fbOk(el+' Você achou todos os pares!');falar(el+" Você achou todos os pares!");}},420);
+    }else{streak=0;dErros++;somErro();
+      setTimeout(function(){var ea=$("mc"+a),eb=$("mc"+b);if(ea){ea.className="memcarta";}if(eb){eb.className="memcarta";}_memViradas=[];_memTrava=false;},850);}}}
 /* ---- tipo CONTAR ---- */
 function opcoesNumero(n){var set={},arr=[],tent=0;set[n]=true;arr.push(n);
   while(arr.length<3&&tent<40){tent++;var d2=n+(Math.floor(Math.random()*5)-2);if(d2<1){d2=n+1;}if(d2>10){d2=n-1;}if(d2>=1&&d2<=10&&!set[d2]){set[d2]=true;arr.push(d2);}}
