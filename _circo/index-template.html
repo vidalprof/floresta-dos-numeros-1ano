@@ -355,7 +355,7 @@ var PARADAS=[
  {ch:"sombra",n:"Ligar à Sombra",c:IMG.cLeao,jog:true},
  {ch:"luzes",n:"Caminho das Luzes",c:IMG.cMacaco,jog:true},
  {ch:"vogais",n:"Vogais do Circo",c:IMG.cArara,jog:true},
- {ch:"diferente",n:"Qual é o Diferente?",c:IMG.cPonei},
+ {ch:"diferente",n:"Qual é o Diferente?",c:IMG.cPonei,jog:true},
  {ch:"quebra1",n:"Quebra-Cabeça do Circo",c:IMG.cCachorro},
  {ch:"memoria",n:"Memória do Circo",c:IMG.cElefante},
  {ch:"erros",n:"Caça aos 7 Erros",c:IMG.cMacaco},
@@ -463,7 +463,16 @@ var VOGAIS=[
  {img:IMG.vogUrso,nome:"urso",vogal:"U"}];
 var LETRAS_VOGAIS=["A","E","I","O","U"];
 function vogalFalada(v){var t={A:"á",E:"é",I:"i",O:"ó",U:"úú"};return t[v]||v;}
+/* Qual e o Diferente: grupos de imagens que ja temos */
+var DIF_CATS={
+ animais:[IMG.cLeao,IMG.cElefante,IMG.cFoca,IMG.cMacaco,IMG.cArara,IMG.cPonei],
+ baloes:[IMG.balVermelho,IMG.balAzul,IMG.balVerde,IMG.balAmarelo,IMG.balRoxo,IMG.balLaranja],
+ objetos:[IMG.oBola,IMG.oArgola,IMG.oPipoca,IMG.oEstrela,IMG.oChapeu,IMG.oBandeirinha]};
+var DIF_CHAVES=["animais","baloes","objetos"];
 var FCFG={
+ diferente:{parada:7,titulo:"Qual é o Diferente?",tipo:"diferente",
+   intro:"O Teo misturou umas coisas do circo! Em cada rodada quase tudo é igual, mas tem UM diferente. Olhe bem e toque no que é diferente dos outros!",
+   gancho:"Muito bem! Você tem um olhar de águia! Agora vem a próxima parada da nossa aventura!"},
  vogais:{parada:6,titulo:"Vogais do Circo",tipo:"vogais",
    intro:"No circo tem muita coisa começando com as vogais! Eu vou mostrar uma figura e falar o nome. Você toca na vogal com que o nome começa. Bora?",
    gancho:"Muito bem! Você conhece as vogais do circo! Agora vem a próxima parada da nossa aventura!"},
@@ -487,7 +496,7 @@ var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
 var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={},_resp=false;
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function seqSemRepetir(lista,qtd){var res=[],i,prev=null;for(i=0;i<qtd;i++){var cand=[],j;for(j=0;j<lista.length;j++){if(lista[j]!==prev){cand.push(lista[j]);}}shuffleReal(cand);var pick=cand.length?cand[0]:lista[0];res.push(pick);prev=pick;}return res;}
-function chaveDesafio(q){if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.vogal!==undefined){return "v"+q.vogal;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
+function chaveDesafio(q){if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.vogal!==undefined){return "v"+q.vogal;}if(q.cat!==undefined){return "d"+q.cat+"_"+dIdx;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
 function guardarErroFase(q){var i,k=chaveDesafio(q);for(i=0;i<dEfase.length;i++){if(chaveDesafio(dEfase[i])===k)return;}dEfase.push(q);}
 function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];return (n>=0&&n<u.length)?u[n]:String(n);}
 function numExtG(n,g){if(n===1){return g==="f"?"uma":"um";}if(n===2){return g==="f"?"duas":"dois";}return numExt(n);}
@@ -514,12 +523,13 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
   if(f.tipo==="luzes"){var fonte=(emExtra?LUZES_EXTRA:LUZES);var lz=fonte.slice();shuffleReal(lz);return lz.slice(0,Math.min(qtd,lz.length));}
   if(f.tipo==="vogais"){var vg=VOGAIS.slice();shuffleReal(vg);return vg.slice(0,Math.min(qtd,vg.length));}
+  if(f.tipo==="diferente"){var seq=seqSemRepetir(DIF_CHAVES,qtd),rd=[],k;for(k=0;k<qtd;k++){var pool=DIF_CATS[seq[k]].slice();shuffleReal(pool);rd.push({cat:seq[k],base:pool[0],dif:pool[1]});}return rd;}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   d=montarRodadas(5);dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];_resp=false;renderDesafio();}
-function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else{renderContar();}}
+function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else if(f.tipo==="diferente"){renderDiferente();}else{renderContar();}}
 function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;ESTADO.pontos+=2;salvar();atualizarTopo();}
 function fbOk(txt){return '<div class="fbok">&#127881; '+txt+'</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';}
 function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
@@ -678,6 +688,24 @@ function responderVogal(v){if(_resp){return;}var q=d[dIdx];somClique();
   else{if($("vb"+v)){$("vb"+v).className="vogbolha errada tremer";}somErro();streak=0;dErros++;guardarErroFase(q);
     (function(e2){setTimeout(function(){if(e2){e2.className="vogbolha";}},450);})($("vb"+v));
     falar("Quase! Ouça de novo: "+q.nome+". Toque na primeira vogal.");}}
+/* ---- tipo DIFERENTE (achar o diferente) ---- */
+function renderDiferente(){var q=d[dIdx];_resp=false;var n=5;var difPos=Math.floor(Math.random()*n);
+  var h='<div class="card"><div class="progtxt">Desafio '+(dIdx+1)+' de '+d.length+'</div>';
+  h+='<div class="enunciado">Toque no que é <b>diferente</b> dos outros!</div>';
+  h+='<div class="dica">&#128161; Olhe bem: quase todos são iguais, só um é diferente.</div>';
+  h+='<div class="opcoes">';
+  var i;for(i=0;i<n;i++){var ehdif=(i===difPos);var im=ehdif?q.dif:q.base;
+    h+='<div class="opbal" id="op'+i+'" onclick="responderDiferente('+i+','+(ehdif?1:0)+')"><img src="'+im+'" alt=""></div>';}
+  h+='</div><div id="zonaFeed"></div></div>';
+  $("app").innerHTML=h;falar("Olhe bem! Toque no que é diferente dos outros.");}
+function responderDiferente(i,ehdif){if(_resp){return;}somClique();
+  if(ehdif){_resp=true;if($("op"+i)){$("op"+i).className="opbal certa";}acertou();var el=elogio();
+    $("zonaFeed").innerHTML=fbOk(el+' Esse é o <b>diferente</b>!');
+    falar(el+" Esse é o diferente!");}
+  else{if($("op"+i)){$("op"+i).className="opbal errada tremer";}somErro();streak=0;dErros++;guardarErroFase(d[dIdx]);
+    (function(e2){setTimeout(function(){if(e2){e2.className="opbal";}},450);})($("op"+i));
+    $("zonaFeed").innerHTML='<div class="fbno"><b>Quase!</b> Esse é igual aos outros. Procure o <b>diferente</b>!</div>';
+    falar("Quase! Esse é igual aos outros. Procure o que é diferente!");}}
 /* ---- tipo CONTAR ---- */
 function opcoesNumero(n){var set={},arr=[],tent=0;set[n]=true;arr.push(n);
   while(arr.length<3&&tent<40){tent++;var d2=n+(Math.floor(Math.random()*5)-2);if(d2<1){d2=n+1;}if(d2>10){d2=n-1;}if(d2>=1&&d2<=10&&!set[d2]){set[d2]=true;arr.push(d2);}}
@@ -734,9 +762,10 @@ function iniciarExtra(){somClique();_extraDado[faseAtual]=true;emExtra=true;emRe
   else if(f.tipo==="sombra"){d=montarRodadas(3);}
   else if(f.tipo==="luzes"){d=montarRodadas(2);}
   else if(f.tipo==="vogais"){d=montarRodadas(3);}
+  else if(f.tipo==="diferente"){d=montarRodadas(3);}
   else{d=montarRodadas(3);var i;for(i=0;i<d.length;i++){if(d[i].n<6){d[i].n=6+Math.floor(Math.random()*4);}}}
   dIdx=0;dAcertos=0;dErros=0;dEfase=[];_resp=false;
-  var msg;if(f.tipo==="cor"){msg="Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor.";}else if(f.tipo==="forma"){msg="Agora vou misturar mais formas! Olhe bem o formato de cada objeto.";}else if(f.tipo==="sombra"){msg="Agora vão aparecer mais bichinhos e mais sombras! Olhe bem o formato de cada um.";}else if(f.tipo==="luzes"){msg="Vamos acender mais luzes do circo! Toque na ordem, do 1 ao 10.";}else if(f.tipo==="vogais"){msg="Agora mais figuras do circo! Ouça o nome e toque na vogal com que começa.";}else{msg="Agora os números vão ser maiores! Conte com bastante atenção.";}
+  var msg;if(f.tipo==="cor"){msg="Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor.";}else if(f.tipo==="forma"){msg="Agora vou misturar mais formas! Olhe bem o formato de cada objeto.";}else if(f.tipo==="sombra"){msg="Agora vão aparecer mais bichinhos e mais sombras! Olhe bem o formato de cada um.";}else if(f.tipo==="luzes"){msg="Vamos acender mais luzes do circo! Toque na ordem, do 1 ao 10.";}else if(f.tipo==="vogais"){msg="Agora mais figuras do circo! Ouça o nome e toque na vogal com que começa.";}else if(f.tipo==="diferente"){msg="Agora vai ficar mais difícil achar o diferente! Olhe com bastante atenção.";}else{msg="Agora os números vão ser maiores! Conte com bastante atenção.";}
   var h='<div class="card"><div class="mini" style="font-size:13px;color:#e6c9ff;">Desafio Extra</div><h2>&#127775; Mais difícil!</h2>';
   h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">'+msg+' Bora?</div></div>';
   h+='<button class="btn pulsa gate-audio" onclick="renderDesafio()">Começar! &#9654;</button></div>';
