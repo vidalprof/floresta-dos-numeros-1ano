@@ -51,6 +51,9 @@ for k in ["pipoca","algodao","maca","sorvete","pirulito","cachorro"]:
 # Pecas do quebra-cabeca (Parada 8)
 for k in range(4):
     m("PZ_" + str(k), "pz-" + str(k) + ".png")
+# Cena dos 7 erros (Parada 10)
+m("ERR_CERTA", "err-certa.png")
+m("ERR_ERRADA", "err-errada.png")
 
 def datauri(path):
     with open(path, "rb") as f:

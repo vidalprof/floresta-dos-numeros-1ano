@@ -180,6 +180,15 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .memcarta.achada .memback{opacity:0;}
 .memcarta.achada .memfront{opacity:1;border-color:#4dff9e;-webkit-box-shadow:0 0 10px rgba(77,255,158,.8);box-shadow:0 0 10px rgba(77,255,158,.8);}
 .memcarta.achada{-webkit-animation:revela .4s;animation:revela .4s;}
+/* fase 7 ERROS */
+.errosWrap{max-width:480px;margin:6px auto 0;}
+.errLabel{font-size:14px;color:#e6c9ff;font-weight:700;margin:10px 0 4px;text-align:center;}
+.errCount{font-size:16px;color:#ffd23f;font-weight:700;text-align:center;margin:6px auto;}
+.errosImg{position:relative;width:100%;padding-bottom:54.43%;-webkit-border-radius:14px;border-radius:14px;overflow:hidden;border:3px solid #4a2f80;background:#bfe6fb;}
+.errosImg>img{position:absolute;left:0;top:0;width:100%;height:100%;display:block;-webkit-user-select:none;user-select:none;-webkit-user-drag:none;}
+.errosImg.clicavel{cursor:pointer;border-color:#ffd23f;}
+.ehot{position:absolute;width:13%;height:0;padding-bottom:13%;-webkit-border-radius:50%;border-radius:50%;-webkit-box-sizing:border-box;box-sizing:border-box;border:4px solid #2ec77e;background:rgba(46,199,126,.22);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);display:none;-webkit-box-shadow:0 0 8px rgba(46,199,126,.9);box-shadow:0 0 8px rgba(46,199,126,.9);}
+.ehot.show{display:block;-webkit-animation:revela .4s;animation:revela .4s;}
 /* fase QUEBRA-CABECA */
 .pzgrid{width:212px;margin:8px auto 12px;display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;-webkit-border-radius:12px;border-radius:12px;overflow:hidden;-webkit-box-shadow:0 0 0 3px rgba(255,210,63,.5);box-shadow:0 0 0 3px rgba(255,210,63,.5);}
 .pzslot{width:104px;height:104px;position:relative;-ms-touch-action:none;touch-action:none;background:rgba(0,0,0,.25);overflow:hidden;}
@@ -275,6 +284,7 @@ IMG.vogIoio="{{VOG_ioio}}";IMG.vogUrso="{{VOG_urso}}";IMG.vogOculos="{{VOG_oculo
 IMG.voglA="{{VOGL_A}}";IMG.voglE="{{VOGL_E}}";IMG.voglI="{{VOGL_I}}";IMG.voglO="{{VOGL_O}}";IMG.voglU="{{VOGL_U}}";
 IMG.gulPipoca="{{GUL_pipoca}}";IMG.gulAlgodao="{{GUL_algodao}}";IMG.gulMaca="{{GUL_maca}}";IMG.gulSorvete="{{GUL_sorvete}}";IMG.gulPirulito="{{GUL_pirulito}}";IMG.gulCachorro="{{GUL_cachorro}}";
 IMG.pz0="{{PZ_0}}";IMG.pz1="{{PZ_1}}";IMG.pz2="{{PZ_2}}";IMG.pz3="{{PZ_3}}";
+IMG.errCerta="{{ERR_CERTA}}";IMG.errErrada="{{ERR_ERRADA}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -386,7 +396,7 @@ var PARADAS=[
  {ch:"diferente",n:"Qual é o Diferente?",c:IMG.cPonei,jog:true},
  {ch:"quebra1",n:"Quebra-Cabeça do Circo",c:IMG.cCachorro,jog:true},
  {ch:"memoria",n:"Memória do Circo",c:IMG.cElefante,jog:true},
- {ch:"erros",n:"Caça aos 7 Erros",c:IMG.cMacaco},
+ {ch:"erros",n:"Caça aos 7 Erros",c:IMG.cMacaco,jog:true},
  {ch:"quebra2",n:"Quebra-Cabeça 2",c:IMG.cLeao}
 ];
 function idxParada(ch){var i;for(i=0;i<PARADAS.length;i++){if(PARADAS[i].ch===ch)return i;}return -1;}
@@ -507,6 +517,9 @@ var FCFG={
  memoria:{parada:9,titulo:"Memória do Circo",tipo:"memoria",jogo:true,
    intro:"O Teo espalhou as cartas das guloseimas! Vire duas cartas de cada vez e ache os pares iguais. Vamos treinar a memória?",
    gancho:"Muito bem! Que memória boa! Agora vem a próxima parada da nossa aventura!"},
+ erros:{parada:10,titulo:"Caça aos 7 Erros",tipo:"erros",jogo:true,
+   intro:"O Teo tirou duas fotos do circo, mas nas fotos tem 7 coisinhas diferentes! Olhe as duas imagens e toque na foto de baixo em cada coisa que mudou. Vamos achar as 7 diferenças?",
+   gancho:"Uau! Você tem olhos de detetive! Achou todas as 7 diferenças do circo do Teo! Agora vem a última parada da nossa aventura!"},
  quebra1:{parada:8,titulo:"Quebra-Cabeça do Circo",tipo:"quebra",jogo:true,
    intro:"O vento embaralhou a foto do circo do Teo! Arraste cada peça para o lugar certo e monte a foto de novo. Você consegue?",
    gancho:"Muito bem! Você montou o quebra-cabeça do circo! Agora vem a próxima parada da nossa aventura!"},
@@ -533,7 +546,7 @@ var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
 var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={},_resp=false;
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function seqSemRepetir(lista,qtd){var res=[],i,prev=null;for(i=0;i<qtd;i++){var cand=[],j;for(j=0;j<lista.length;j++){if(lista[j]!==prev){cand.push(lista[j]);}}shuffleReal(cand);var pick=cand.length?cand[0]:lista[0];res.push(pick);prev=pick;}return res;}
-function chaveDesafio(q){if(q.mem!==undefined){return "mem";}if(q.pz!==undefined){return "pz";}if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.vogal!==undefined){return "v"+q.vogal;}if(q.cat!==undefined){return "d"+q.cat+"_"+dIdx;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
+function chaveDesafio(q){if(q.erros!==undefined){return "erros";}if(q.mem!==undefined){return "mem";}if(q.pz!==undefined){return "pz";}if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.vogal!==undefined){return "v"+q.vogal;}if(q.cat!==undefined){return "d"+q.cat+"_"+dIdx;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
 function guardarErroFase(q){var i,k=chaveDesafio(q);for(i=0;i<dEfase.length;i++){if(chaveDesafio(dEfase[i])===k)return;}dEfase.push(q);}
 function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];return (n>=0&&n<u.length)?u[n]:String(n);}
 function numExtG(n,g){if(n===1){return g==="f"?"uma":"um";}if(n===2){return g==="f"?"duas":"dois";}return numExt(n);}
@@ -563,12 +576,13 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="diferente"){var cat=DIF_CHAVES[Math.floor(Math.random()*DIF_CHAVES.length)];var pool=DIF_CATS[cat].slice();shuffleReal(pool);var rd=[],k;for(k=0;k<qtd;k++){var base=pool[k%pool.length];var dp=[],z;for(z=0;z<pool.length;z++){if(pool[z]!==base){dp.push(pool[z]);}}shuffleReal(dp);rd.push({cat:cat,base:base,dif:dp[0]});}return rd;}
   if(f.tipo==="quebra"){return [{pz:true}];}
   if(f.tipo==="memoria"){return [{mem:true}];}
+  if(f.tipo==="erros"){return [{erros:true}];}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   d=montarRodadas(5);dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];_resp=false;renderDesafio();}
-function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else if(f.tipo==="diferente"){renderDiferente();}else if(f.tipo==="quebra"){renderQuebra();}else if(f.tipo==="memoria"){renderMemoria();}else{renderContar();}}
+function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else if(f.tipo==="diferente"){renderDiferente();}else if(f.tipo==="quebra"){renderQuebra();}else if(f.tipo==="memoria"){renderMemoria();}else if(f.tipo==="erros"){renderErros();}else{renderContar();}}
 function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;ESTADO.pontos+=2;salvar();atualizarTopo();}
 function fbOk(txt){return '<div class="fbok">&#127881; '+txt+'</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';}
 function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
@@ -797,6 +811,35 @@ function virarCarta(i){if(_memTrava){return;}var c=$("mc"+i);if(!c){return;}
         if(_memPares>=_memTotal){_resp=true;acertou();var el=elogio();$("zonaFeed").innerHTML=fbOk(el+' Você achou todos os pares!');falar(el+" Você achou todos os pares!");}},420);
     }else{streak=0;dErros++;somErro();
       setTimeout(function(){var ea=$("mc"+a),eb=$("mc"+b);if(ea){ea.className="memcarta";}if(eb){eb.className="memcarta";}_memViradas=[];_memTrava=false;},850);}}}
+/* ---- tipo ERROS (caça aos 7 erros) ---- */
+var ERR_W=700,ERR_H=381,ERR_R=44;
+var ERROS_PTS=[[168,58],[212,50],[315,55],[402,150],[347,208],[305,304],[515,300]];
+var _errAch=0,_errFound=[];
+function renderErros(){_resp=false;_errAch=0;_errFound=[];var i;for(i=0;i<ERROS_PTS.length;i++){_errFound.push(false);}
+  var h='<div class="card"><div class="progtxt">Caça aos 7 Erros</div>';
+  h+='<div class="enunciado">Ache as <b>7 diferenças</b>!</div>';
+  h+='<div class="dica">&#128161; Compare as duas fotos e toque na de baixo onde algo mudou.</div>';
+  h+='<div class="errCount" id="errCount">Você já achou <b>0</b> de 7</div>';
+  h+='<div class="errosWrap">';
+  h+='<div class="errLabel">&#128247; A foto certa do Teo:</div>';
+  h+='<div class="errosImg">'+erroMarcadores("c")+'<img src="'+IMG.errCerta+'" alt="Foto certa do circo"></div>';
+  h+='<div class="errLabel">&#128269; Ache o que mudou &mdash; toque aqui:</div>';
+  h+='<div class="errosImg clicavel" onclick="cacaErro(event)"><img id="errImg" src="'+IMG.errErrada+'" alt="Foto com as diferenças">'+erroMarcadores("e")+'</div>';
+  h+='</div><div id="zonaFeed"></div></div>';
+  $("app").innerHTML=h;falar("Ache as 7 diferenças! Compare as duas fotos e toque na foto de baixo em cada coisinha que mudou.");}
+function erroMarcadores(pre){var s="",i;for(i=0;i<ERROS_PTS.length;i++){var xp=ERROS_PTS[i][0]/ERR_W*100,yp=ERROS_PTS[i][1]/ERR_H*100;s+='<span class="ehot" id="h'+pre+i+'" style="left:'+xp.toFixed(2)+'%;top:'+yp.toFixed(2)+'%"></span>';}return s;}
+function cacaErro(ev){if(_resp){return;}var im=$("errImg");if(!im){return;}
+  var r=im.getBoundingClientRect();var cx=(ev.clientX-r.left)/r.width*ERR_W,cy=(ev.clientY-r.top)/r.height*ERR_H;
+  var best=-1,bd=ERR_R*ERR_R,i;
+  for(i=0;i<ERROS_PTS.length;i++){if(_errFound[i]){continue;}var dx=cx-ERROS_PTS[i][0],dy=cy-ERROS_PTS[i][1];var dist=dx*dx+dy*dy;if(dist<=bd){bd=dist;best=i;}}
+  if(best<0){somErro();var no=$("zonaFeed");if(no){no.innerHTML='<div class="fbno">Olhe com bem atenção e toque na diferença!</div>';}return;}
+  _errFound[best]=true;_errAch++;somAcerto();confete(10);
+  var hc=$("hc"+best),he=$("he"+best);if(hc){hc.className="ehot show";}if(he){he.className="ehot show";}
+  var cont=$("errCount");if(cont){cont.innerHTML='Você já achou <b>'+_errAch+'</b> de 7';}
+  if(_errAch>=ERROS_PTS.length){_resp=true;acertou();var el=elogio();
+    var zf=$("zonaFeed");if(zf){zf.innerHTML=fbOk(el+' Você achou as 7 diferenças!');}
+    falar(el+" Você achou as 7 diferenças do circo do Teo!");}
+  else{var falt=ERROS_PTS.length-_errAch;falar("Isso! Achou uma diferença! Faltam "+numExt(falt)+".");}}
 /* ---- tipo CONTAR ---- */
 function opcoesNumero(n){var set={},arr=[],tent=0;set[n]=true;arr.push(n);
   while(arr.length<3&&tent<40){tent++;var d2=n+(Math.floor(Math.random()*5)-2);if(d2<1){d2=n+1;}if(d2>10){d2=n-1;}if(d2>=1&&d2<=10&&!set[d2]){set[d2]=true;arr.push(d2);}}
