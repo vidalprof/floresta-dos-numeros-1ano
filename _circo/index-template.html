@@ -434,7 +434,14 @@ var FORMAS=[
 function artG(g){return g==="f"?"A":"O";}
 var FORMAS_TIPOS=["círculo","quadrado","triângulo"];
 var ANIM_SOMBRA=["leao","elefante","foca","macaco","arara","ponei"];
+function ptsEstrela(){var p=[],i;for(i=0;i<10;i++){var a=(-90+i*36)*Math.PI/180;var r=(i%2===0)?0.44:0.185;p.push([0.5+r*Math.cos(a),0.5+r*Math.sin(a)]);}return p;}
+function ptsBalao(){var p=[],i,cx=0.5,cy=0.46,rx=0.30,ry=0.40;for(i=0;i<10;i++){var a=(-90+i*36)*Math.PI/180;p.push([cx+rx*Math.cos(a),cy+ry*Math.sin(a)]);}return p;}
+/* rodadas normais = objetos que ja aparecem (estrela, balao) */
 var LUZES=[
+ {img:IMG.oEstrela,pts:ptsEstrela(),nome:"estrela",g:"f",escala:0.94},
+ {img:IMG.balVermelho,pts:ptsBalao(),nome:"balão",g:"m",escala:0.9}];
+/* Desafio Extra = objetos NOVOS (cartola, gravata) */
+var LUZES_EXTRA=[
  {img:IMG.lpCartola,nome:"cartola",g:"f",escala:0.72,
   pts:[[0.46,0.2],[0.7004,0.2225],[0.7225,0.4329],[0.7648,0.635],[0.7734,0.765],[0.5362,0.795],[0.2947,0.78],[0.1684,0.6616],[0.2825,0.5052],[0.255,0.269]]},
  {img:IMG.lpGravata,nome:"gravata-borboleta",g:"f",escala:0.72,
@@ -485,7 +492,7 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="cor"){var base=CORES.slice();shuffleReal(base);return base.slice(0,qtd);}
   if(f.tipo==="forma"){var tg=seqSemRepetir(FORMAS_TIPOS,qtd),rf=[],k;for(k=0;k<qtd;k++){rf.push({target:tg[k]});}return rf;}
   if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
-  if(f.tipo==="luzes"){var lz=LUZES.slice();shuffleReal(lz);return lz.slice(0,Math.min(qtd,lz.length));}
+  if(f.tipo==="luzes"){var fonte=(emExtra?LUZES_EXTRA:LUZES);var lz=fonte.slice();shuffleReal(lz);return lz.slice(0,Math.min(qtd,lz.length));}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}

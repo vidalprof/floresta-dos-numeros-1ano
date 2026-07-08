@@ -6,7 +6,21 @@ from collections import deque
 import scipy.ndimage as nd
 
 BASE=os.path.dirname(os.path.abspath(__file__)); IMG=os.path.join(BASE,"img")
-SRC=os.path.join(BASE,"..","_imagens","IMG_2957.png")
+SRC=os.path.join(BASE,"img","originais","ligarpontos-cartola-gravata-original.png")
+
+def limpar_bolinhas_brancas(cut):
+    # gravata: troca as bolinhas brancas (miolo claro + anel) pela cor vermelha do laco
+    a=np.array(cut); r,g,b,al=a[:,:,0].astype(int),a[:,:,1].astype(int),a[:,:,2].astype(int),a[:,:,3]
+    op=al>128; mn=np.minimum(np.minimum(r,g),b)
+    core=nd.binary_dilation(op&(mn>185),iterations=5)  # miolo + anel
+    preto=op&(mn<70)
+    alvo=core&op&(~preto)
+    red=op&(r>180)&(g<95)&(b<95)
+    if red.sum()<50: return cut
+    rc=[int(np.median(a[:,:,0][red])),int(np.median(a[:,:,1][red])),int(np.median(a[:,:,2][red]))]
+    for c in range(3):
+        ch=a[:,:,c]; ch[alvo]=rc[c]; a[:,:,c]=ch
+    return Image.fromarray(a,"RGBA")
 
 def ink_mask(arr):
     r,g,b=arr[:,:,0].astype(int),arr[:,:,1].astype(int),arr[:,:,2].astype(int)
@@ -92,6 +106,7 @@ for idx,(x0,y0,x1,y1) in enumerate(boxes[:2]):
     nome=nomes[idx]
     pad=8; box=(max(0,x0-pad),max(0,y0-pad),min(W,x1+pad),min(H,y1+pad))
     cut=flood_transp(im.crop(box))
+    if nome=="gravata": cut=limpar_bolinhas_brancas(cut)
     # salva colorido otimizado
     cw,ch=cut.size
     if ch>240: cut=cut.resize((int(round(cw*240.0/ch)),240),Image.LANCZOS)
