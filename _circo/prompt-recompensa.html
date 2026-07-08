@@ -1,0 +1,35 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt — Recompensa que cresce (circo em 3 fases)</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:19px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
+  textarea{width:100%;box-sizing:border-box;min-height:320px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+</style>
+<header>
+  <h1>&#127914; Recompensa que cresce &mdash; circo em 3 fases</h1>
+  <p>O mesmo circo se montando (3 fases), flutuando no branco. Gere e suba no <b>_imagens/</b>.</p>
+</header>
+<div class="nota">
+  As 3 fases v&atilde;o no <b>topo do mapa</b> e mudam conforme a crian&ccedil;a avan&ccedil;a. Precisam ser <b>o mesmo circo, mesmo &acirc;ngulo</b>, mudando s&oacute; o quanto est&aacute; montado. Fundo <b>branco puro, sem ret&acirc;ngulo</b>, bem separados pra eu recortar.
+</div>
+<div class="card">
+  <h2>Cartela &mdash; Circo em 3 fases de montagem</h2>
+  <textarea id="p" readonly>Gere uma CARTELA (folha única) mostrando o MESMO circo em 3 FASES de montagem, lado a lado numa fileira, bem separados com bastante espaço branco entre eles (vou recortar cada um).
+
+FASE 1 (começo): um picadeiro/terreno de circo quase VAZIO — só o chão redondo do picadeiro e um mastro/poste, SEM tenda montada, esperando ser arrumado. Simples e meio sem graça.
+
+FASE 2 (meio): o MESMO circo pela METADE — a tenda listrada parcialmente montada, algumas bandeirinhas aparecendo, começando a ficar bonito.
+
+FASE 3 (pronto): o MESMO circo COMPLETO e FESTIVO — a tenda grande listrada (vermelha e branca) toda montada, muitas bandeirinhas, luzes/holofotes acesos, balões coloridos, tudo brilhando e alegre. É o grande espetáculo pronto!
+
+Os três no MESMO estilo, mesmo tamanho e mesmo ângulo, mudando SÓ o quanto o circo está montado e decorado. Cada um FLUTUANDO no fundo BRANCO PURO #FFFFFF (sem chão extra, sem cenário atrás, SEM retângulo/moldura/cartão). Cartoon flat infantil, cores vivas, CONTORNO PRETO GROSSO. SEM sombras. SEM texto, SEM letras, SEM números.</textarea>
+  <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
+</div>
