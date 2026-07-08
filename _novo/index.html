@@ -189,6 +189,14 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .errosImg.clicavel{cursor:pointer;border-color:#ffd23f;}
 .ehot{position:absolute;width:13%;height:0;padding-bottom:13%;-webkit-border-radius:50%;border-radius:50%;-webkit-box-sizing:border-box;box-sizing:border-box;border:4px solid #2ec77e;background:rgba(46,199,126,.22);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);display:none;-webkit-box-shadow:0 0 8px rgba(46,199,126,.9);box-shadow:0 0 8px rgba(46,199,126,.9);}
 .ehot.show{display:block;-webkit-animation:revela .4s;animation:revela .4s;}
+/* GRANDE FINAL + TELA DE PINTAR */
+.finalstats{font-size:16px;color:#ffe27a;text-align:center;margin:10px auto;line-height:1.5;}
+.pintatela{display:block;width:100%;max-width:520px;height:auto;margin:8px auto;background:#fff;-webkit-border-radius:14px;border-radius:14px;border:3px solid #ffd23f;-ms-touch-action:none;touch-action:none;cursor:crosshair;-webkit-box-shadow:0 3px 8px rgba(0,0,0,.4);box-shadow:0 3px 8px rgba(0,0,0,.4);}
+.paleta{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;margin:8px auto;max-width:420px;}
+.corbtn{width:46px;height:46px;margin:5px;padding:0;border:3px solid #fff;-webkit-border-radius:50%;border-radius:50%;cursor:pointer;-webkit-appearance:none;-webkit-box-shadow:0 2px 4px rgba(0,0,0,.4),0 0 0 1px rgba(0,0,0,.18);box-shadow:0 2px 4px rgba(0,0,0,.4),0 0 0 1px rgba(0,0,0,.18);-webkit-transition:-webkit-transform .12s;transition:transform .12s;}
+.corbtn.sel{border-color:#2a1550;-webkit-transform:scale(1.2);transform:scale(1.2);-webkit-box-shadow:0 0 0 3px #ffd23f;box-shadow:0 0 0 3px #ffd23f;}
+.pintactrl{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap;margin-top:6px;}
+.trofeubox.clicavel{cursor:pointer;-webkit-animation:flutua 2.4s ease-in-out infinite;animation:flutua 2.4s ease-in-out infinite;}
 /* fase QUEBRA-CABECA */
 .pzgrid{width:212px;margin:8px auto 12px;display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;-webkit-border-radius:12px;border-radius:12px;overflow:hidden;-webkit-box-shadow:0 0 0 3px rgba(255,210,63,.5);box-shadow:0 0 0 3px rgba(255,210,63,.5);}
 .pzslot{width:104px;height:104px;position:relative;-ms-touch-action:none;touch-action:none;background:rgba(0,0,0,.25);overflow:hidden;}
@@ -433,7 +441,7 @@ function pedirReset(){var h='<div class="card"><h2>Começar do zero?</h2><p clas
 function fazerReset(){somClique();ESTADO={nome:"",pontos:0,concluidas:{}};salvar();telaInicio();}
 /* ====== MAPA ====== */
 function irMapa(){telaMapa();}
-function telaMapa(){$("topbar").className="topbar";atualizarTopo();
+function telaMapa(){pararMusPinta();$("topbar").className="topbar";atualizarTopo();
   var feitas=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])feitas++;}
   var h='<div class="card">';
   h+='<h2>A aventura de '+(ESTADO.nome||"amiguinho")+'!</h2>';
@@ -458,16 +466,71 @@ function telaMapa(){$("topbar").className="topbar";atualizarTopo();
     h+='</div><div class="nonome">'+p.n+'</div></div></div>';
     if(i<PARADAS.length-1){h+='<div class="conector"></div>';}}
   var tudo=(feitas>=PARADAS.length);
-  h+='<div class="conector"></div><div class="trofeubox"><img class="trofeuimg" src="'+IMG.trofeu+'" alt="Troféu"'+(tudo?' style="-webkit-filter:none;filter:none;"':'')+'>';
+  h+='<div class="conector"></div><div class="trofeubox'+(tudo?' clicavel':'')+'"'+(tudo?' onclick="telaFinal()"':'')+'><img class="trofeuimg" src="'+IMG.trofeu+'" alt="Troféu"'+(tudo?' style="-webkit-filter:none;filter:none;"':'')+'>';
   if(!tudo){h+='<div class="cadeado" style="position:static;font-size:20px;">&#128274;</div>';}
   h+='<div class="trofnome"'+(tudo?' style="color:#ffd23f;"':'')+'>Grande Espetáculo Final</div></div>';
   h+='<button class="btn suave peq" onclick="telaInicio()">Voltar ao início</button>';
   $("app").innerHTML=h;window.scrollTo(0,0);narrarMapa();}
 function narrarMapa(){var feitas=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])feitas++;}
   if(feitas===0){falar("Bem-vindo ao circo, "+(ESTADO.nome||"amiguinho")+"! Toque na primeira parada, os Balões Coloridos, para começar!");}
-  else if(feitas>=PARADAS.length){falar("Você arrumou o circo todo! O grande espetáculo vai começar!");}
+  else if(feitas>=PARADAS.length){falar("Você arrumou o circo todo! Toque no troféu dourado para ver o Grande Espetáculo!");}
   else{falar("Você já arrumou "+numExtG(feitas,"f")+(feitas===1?" parada":" paradas")+"! Continue na parada que está brilhando.");}}
 function avisoTrancada(){somClique();falar("Esta parada ainda está trancada! Termine a parada anterior para abrir esta.");}
+/* ====== GRANDE FINAL ====== */
+function telaFinal(){somClique();pararMusPinta();somFanfarra();confete(50);
+  setTimeout(function(){confete(40);},650);setTimeout(function(){confete(40);},1350);
+  var tot=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])tot++;}
+  var h='<div class="card"><h2>&#127881; O Grande Espetáculo! &#127881;</h2>';
+  h+='<div class="mascbox"><img src="'+IMG.mComemora+'" alt="Teo"><div class="balao">Você arrumou o circo inteiro e salvou o Grande Espetáculo do Teo! Todo mundo está de pé aplaudindo você!</div></div>';
+  h+='<div class="finalstats">Você completou <b>'+tot+'</b> '+(tot===1?"parada":"paradas")+' e ganhou <b>'+ESTADO.pontos+'</b> '+(ESTADO.pontos===1?"ponto":"pontos")+'! &#11088;</div>';
+  h+='<button class="btn pulsa gate-audio" onclick="telaPintar()">&#127912; Pintar o Circo do Teo!</button>';
+  h+='<button class="btn suave peq" onclick="telaMapa()">&#9654; Voltar ao mapa</button></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);
+  falar("Uhuul! Você arrumou o circo inteiro e salvou o Grande Espetáculo do Teo! Você completou "+numExtG(tot,"f")+(tot===1?" parada":" paradas")+" e ganhou "+ESTADO.pontos+(ESTADO.pontos===1?" ponto":" pontos")+"! Agora, de presente, você pode pintar o circo do jeito que quiser!");}
+/* ====== TELA DE PINTAR (presente do grande final) ====== */
+var _pintaCor="#e53935",_pintaCorNome="vermelho",_pintaDesenhando=false,_pintaX=0,_pintaY=0,_pintaCtx=null,_pintaMusOn=false,_pintaMusT=null,_PINTA_CORES=[];
+function telaPintar(){somClique();pararMusPinta();
+  var cores=[["vermelho","#e53935"],["laranja","#fb8c00"],["amarelo","#fdd835"],["verde","#43a047"],["azul","#1e88e5"],["roxo","#8e24aa"],["rosa","#ec407a"],["marrom","#8d6e63"],["preto","#333333"],["branco","#ffffff"]];
+  _PINTA_CORES=cores;
+  var h='<div class="card"><h2>Pinte o Circo do Teo! &#127912;</h2>';
+  h+='<div class="dica">&#128161; Escolha uma cor e pinte com o dedo! O Teo fala o nome da cor.</div>';
+  h+='<canvas id="pintatela" class="pintatela" width="600" height="440"></canvas>';
+  h+='<div class="paleta">';
+  var i;for(i=0;i<cores.length;i++){var sel=(cores[i][1]===_pintaCor)?" sel":"";h+='<button class="corbtn'+sel+'" id="cor'+i+'" style="background:'+cores[i][1]+'" onclick="escolherCor('+i+')"></button>';}
+  h+='</div><div class="pintactrl">';
+  h+='<button class="btn peq" onclick="limparPintura()">&#129532; Limpar</button>';
+  h+='<button class="btn peq" id="musbtn" onclick="alternarMusPinta()">&#127925; Música</button>';
+  h+='<button class="btn suave peq" onclick="telaFinal()">&#9654; Voltar</button>';
+  h+='</div></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);
+  var cv=$("pintatela");if(cv&&cv.getContext){_pintaCtx=cv.getContext("2d");
+    _pintaCtx.fillStyle="#ffffff";_pintaCtx.fillRect(0,0,600,440);
+    _pintaCtx.lineJoin="round";_pintaCtx.lineCap="round";instalarPintura(cv);}
+  falar("Escolha uma cor e pinte o circo do Teo do jeito que você quiser!");}
+function pintaPos(cv,ev){var r=cv.getBoundingClientRect(),cx,cy;
+  if(ev.touches&&ev.touches.length){cx=ev.touches[0].clientX;cy=ev.touches[0].clientY;}
+  else if(ev.changedTouches&&ev.changedTouches.length){cx=ev.changedTouches[0].clientX;cy=ev.changedTouches[0].clientY;}
+  else{cx=ev.clientX;cy=ev.clientY;}
+  return {x:(cx-r.left)/r.width*cv.width,y:(cy-r.top)/r.height*cv.height};}
+function instalarPintura(cv){
+  function ini(ev){ev.preventDefault();_pintaDesenhando=true;var p=pintaPos(cv,ev);_pintaX=p.x;_pintaY=p.y;pontoPinta(p.x,p.y);}
+  function mov(ev){if(!_pintaDesenhando)return;ev.preventDefault();var p=pintaPos(cv,ev);linhaPinta(_pintaX,_pintaY,p.x,p.y);_pintaX=p.x;_pintaY=p.y;}
+  function fim(){_pintaDesenhando=false;}
+  cv.onmousedown=ini;cv.onmousemove=mov;cv.onmouseup=fim;cv.onmouseleave=fim;
+  cv.ontouchstart=ini;cv.ontouchmove=mov;cv.ontouchend=fim;cv.ontouchcancel=fim;}
+function pontoPinta(x,y){if(!_pintaCtx)return;_pintaCtx.beginPath();_pintaCtx.arc(x,y,11,0,Math.PI*2);_pintaCtx.fillStyle=_pintaCor;_pintaCtx.fill();}
+function linhaPinta(x0,y0,x1,y1){if(!_pintaCtx)return;_pintaCtx.strokeStyle=_pintaCor;_pintaCtx.lineWidth=22;_pintaCtx.beginPath();_pintaCtx.moveTo(x0,y0);_pintaCtx.lineTo(x1,y1);_pintaCtx.stroke();}
+function escolherCor(i){somClique();_pintaCor=_PINTA_CORES[i][1];_pintaCorNome=_PINTA_CORES[i][0];
+  var b=document.getElementsByClassName("corbtn"),k;for(k=0;k<b.length;k++){b[k].className=b[k].className.replace(/\s*sel\b/g,"");}
+  var me=$("cor"+i);if(me&&me.className.indexOf("sel")<0){me.className+=" sel";}
+  falar(_pintaCorNome);}
+function limparPintura(){somClique();if(_pintaCtx){_pintaCtx.fillStyle="#ffffff";_pintaCtx.fillRect(0,0,600,440);}falar("Limpei a tela! Pode pintar de novo.");}
+function tocarMusPinta(){var esc=[523,587,659,784,880,784,659,587],i=0;
+  _pintaMusT=setInterval(function(){var f=esc[i%esc.length];nota(f,0.45,0,"sine",0.05);nota(f*2,0.45,0.02,"sine",0.025);i++;},470);}
+function pararMusPinta(){if(_pintaMusT){clearInterval(_pintaMusT);_pintaMusT=null;}_pintaMusOn=false;}
+function alternarMusPinta(){somClique();var b=$("musbtn");
+  if(_pintaMusOn){pararMusPinta();if(b){b.className="btn peq";}}
+  else{_pintaMusOn=true;tocarMusPinta();if(b){b.className="btn peq ativo";}}}
 /* ====== FASES: motor generico (tipo "cor" e tipo "contar") ====== */
 var CORES=[
  {pede:"vermelho",img:IMG.balVermelho},{pede:"azul",img:IMG.balAzul},{pede:"amarelo",img:IMG.balAmarelo},
