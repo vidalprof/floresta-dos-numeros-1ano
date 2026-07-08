@@ -168,6 +168,20 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .ghost img{max-width:100%;max-height:100%;}
 @-webkit-keyframes revela{0%{-webkit-transform:scale(.6);opacity:.2;}60%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);opacity:1;}}
 @keyframes revela{0%{transform:scale(.6);opacity:.2;}60%{transform:scale(1.12);}100%{transform:scale(1);opacity:1;}}
+/* fase LUZES (ligar os pontos) */
+.luzwrap{position:relative;width:280px;height:280px;margin:8px auto;max-width:88vw;}
+.luzfig{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);width:auto;height:auto;opacity:.14;-webkit-filter:grayscale(1);filter:grayscale(1);z-index:1;}
+.luzfig.revelada{opacity:1;-webkit-filter:none;filter:none;-webkit-animation:revela .6s ease-out;animation:revela .6s ease-out;}
+.luzsvg{position:absolute;left:0;top:0;width:100%;height:100%;z-index:2;pointer-events:none;}
+.luzsvg.some{-webkit-transition:opacity .5s;transition:opacity .5s;opacity:0;}
+.luzln{stroke:#ffe27a;stroke-width:1.6;stroke-linecap:round;-webkit-filter:drop-shadow(0 0 2px #ffd23f);filter:drop-shadow(0 0 2px #ffd23f);}
+.luzdot{position:absolute;width:30px;height:30px;margin-left:-15px;margin-top:-15px;border-radius:50%;background:#3a2470;border:2px solid #ffd23f;color:#ffe9b0;font-size:14px;font-weight:bold;line-height:26px;text-align:center;cursor:pointer;z-index:3;-webkit-box-shadow:0 0 5px rgba(255,210,63,.5);box-shadow:0 0 5px rgba(255,210,63,.5);}
+.luzdot.proxima2{border-color:#fff;color:#fff;-webkit-animation:pulsaLuz 1s ease-in-out infinite;animation:pulsaLuz 1s ease-in-out infinite;}
+.luzdot.proxima{-webkit-animation:tremer .4s;animation:tremer .4s;}
+.luzdot.aceso{background:#ffd23f;color:#5a2410;border-color:#fff8d0;-webkit-box-shadow:0 0 12px 3px rgba(255,215,90,.95);box-shadow:0 0 12px 3px rgba(255,215,90,.95);}
+.luzdot.some{-webkit-transition:opacity .5s;transition:opacity .5s;opacity:0;}
+@-webkit-keyframes pulsaLuz{0%,100%{-webkit-transform:scale(1);-webkit-box-shadow:0 0 6px rgba(255,255,255,.6);}50%{-webkit-transform:scale(1.18);-webkit-box-shadow:0 0 14px 3px rgba(255,255,255,.9);}}
+@keyframes pulsaLuz{0%,100%{transform:scale(1);box-shadow:0 0 6px rgba(255,255,255,.6);}50%{transform:scale(1.18);box-shadow:0 0 14px 3px rgba(255,255,255,.9);}}
 .fbok{background:rgba(77,180,120,.18);border:2px solid #4dbf82;border-radius:14px;padding:10px;margin:10px auto;max-width:360px;color:#d8ffe8;font-size:15px;line-height:1.4;}
 .fbno{background:rgba(200,80,90,.16);border:2px solid #c86a6a;border-radius:14px;padding:10px;margin:10px auto;max-width:360px;color:#ffdede;font-size:15px;line-height:1.4;}
 /* carimbo */
@@ -329,7 +343,7 @@ var PARADAS=[
  {ch:"numeros",n:"Contando no Picadeiro",c:IMG.cFoca,jog:true},
  {ch:"formas",n:"Formas da Festa",c:IMG.cElefante,jog:true},
  {ch:"sombra",n:"Ligar à Sombra",c:IMG.cLeao,jog:true},
- {ch:"luzes",n:"Caminho das Luzes",c:IMG.cMacaco},
+ {ch:"luzes",n:"Caminho das Luzes",c:IMG.cMacaco,jog:true},
  {ch:"vogais",n:"Vogais do Circo",c:IMG.cArara},
  {ch:"diferente",n:"Qual é o Diferente?",c:IMG.cPonei},
  {ch:"quebra1",n:"Quebra-Cabeça do Circo",c:IMG.cCachorro},
@@ -419,10 +433,18 @@ var FORMAS=[
 function artG(g){return g==="f"?"A":"O";}
 var FORMAS_TIPOS=["círculo","quadrado","triângulo"];
 var ANIM_SOMBRA=["leao","elefante","foca","macaco","arara","ponei"];
+function ptsEstrela(){var p=[],i;for(i=0;i<10;i++){var a=(-90+i*36)*Math.PI/180;var r=(i%2===0)?0.44:0.185;p.push([0.5+r*Math.cos(a),0.5+r*Math.sin(a)]);}return p;}
+function ptsBalao(){var p=[],i,cx=0.5,cy=0.46,rx=0.30,ry=0.40;for(i=0;i<10;i++){var a=(-90+i*36)*Math.PI/180;p.push([cx+rx*Math.cos(a),cy+ry*Math.sin(a)]);}return p;}
+var LUZES=[
+ {img:IMG.oEstrela,pts:ptsEstrela(),nome:"estrela",g:"f",escala:0.94},
+ {img:IMG.balVermelho,pts:ptsBalao(),nome:"balão",g:"m",escala:0.9}];
 var FCFG={
  sombra:{parada:4,titulo:"Ligar à Sombra",tipo:"sombra",
    intro:"O holofote do circo acendeu e apareceram as sombras dos bichos! Arraste cada animal colorido até a sombra igual a ele. Vamos ajudar o Teo?",
    gancho:"Muito bem! Você achou a sombra de cada bichinho! Agora vem a próxima parada da nossa aventura!"},
+ luzes:{parada:5,titulo:"Caminho das Luzes",tipo:"luzes",
+   intro:"As luzes do circo apagaram! Toque nas luzes na ordem certa, do 1 até o 10, para acender o caminho e revelar a figura. Vamos iluminar o circo?",
+   gancho:"Que lindo! Você acendeu todas as luzes do circo! Agora vem a próxima parada da nossa aventura!"},
  cores:{parada:1,titulo:"Balões Coloridos",tipo:"cor",
    intro:"O vento espalhou os balões! Eu vou dizer uma cor, e você toca no balão dessa cor. Vamos lá?",
    gancho:"Muito bem! Você deixou os balões lindos! Agora vem aí a próxima parada: Contando no Picadeiro!"},
@@ -437,7 +459,7 @@ var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
 var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={},_resp=false;
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
 function seqSemRepetir(lista,qtd){var res=[],i,prev=null;for(i=0;i<qtd;i++){var cand=[],j;for(j=0;j<lista.length;j++){if(lista[j]!==prev){cand.push(lista[j]);}}shuffleReal(cand);var pick=cand.length?cand[0]:lista[0];res.push(pick);prev=pick;}return res;}
-function chaveDesafio(q){if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
+function chaveDesafio(q){if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pts!==undefined){return "l"+q.nome;}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
 function guardarErroFase(q){var i,k=chaveDesafio(q);for(i=0;i<dEfase.length;i++){if(chaveDesafio(dEfase[i])===k)return;}dEfase.push(q);}
 function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];return (n>=0&&n<u.length)?u[n]:String(n);}
 function numExtG(n,g){if(n===1){return g==="f"?"uma":"um";}if(n===2){return g==="f"?"duas":"dois";}return numExt(n);}
@@ -462,12 +484,13 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="cor"){var base=CORES.slice();shuffleReal(base);return base.slice(0,qtd);}
   if(f.tipo==="forma"){var tg=seqSemRepetir(FORMAS_TIPOS,qtd),rf=[],k;for(k=0;k<qtd;k++){rf.push({target:tg[k]});}return rf;}
   if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
+  if(f.tipo==="luzes"){var lz=LUZES.slice();shuffleReal(lz);return lz.slice(0,Math.min(qtd,lz.length));}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   d=montarRodadas(5);dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];_resp=false;renderDesafio();}
-function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else{renderContar();}}
+function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else{renderContar();}}
 function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;ESTADO.pontos+=2;salvar();atualizarTopo();}
 function fbOk(txt){return '<div class="fbok">&#127881; '+txt+'</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';}
 function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
@@ -570,6 +593,42 @@ function onSoltaSombra(dropId,chave,idx){var q=d[dIdx];
     var bad=$("sd_"+dropId);if(bad&&(""+bad.className).indexOf("revelado")<0){bad.className="sildrop tremer";
       (function(b){setTimeout(function(){if((""+b.className).indexOf("revelado")<0){b.className="sildrop";}},450);})(bad);}
     falar("Essa não é a sombra "+nomeDoAnim(chave)+". Olhe bem o formato e tente de novo!");}}
+/* ---- tipo LUZES (ligar os pontos em ordem) ---- */
+var _luzProx=1,_luzUlt=0,_luzUltT=0,_luzFig=null;
+function renderLuzes(){var q=d[dIdx];_resp=false;_luzProx=1;_luzUlt=0;_luzFig=q;
+  var h='<div class="card"><div class="progtxt">Desafio '+(dIdx+1)+' de '+d.length+'</div>';
+  h+='<div class="enunciado">Toque nas luzes na ordem, do <b>1</b> ao <b>10</b>!</div>';
+  h+='<div class="dica">&#128161; Comece no número 1 e vá seguindo a ordem.</div>';
+  h+='<div class="luzwrap" id="luzwrap">';
+  h+='<img class="luzfig" id="luzfig" src="'+q.img+'" alt="" style="max-width:'+Math.round(q.escala*100)+'%;max-height:'+Math.round(q.escala*100)+'%;">';
+  h+='<svg class="luzsvg" id="luzsvg" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>';
+  var i;for(i=0;i<q.pts.length;i++){var x=q.pts[i][0]*100,y=q.pts[i][1]*100;
+    h+='<div class="luzdot" id="luzd'+(i+1)+'" style="left:'+x+'%;top:'+y+'%;" onclick="tocarLuz('+(i+1)+')">'+(i+1)+'</div>';}
+  h+='</div><div id="zonaFeed"></div></div>';
+  $("app").innerHTML=h;var d1=$("luzd1");if(d1){d1.className="luzdot proxima2";}
+  falar("Toque nas luzes na ordem, do um ao dez, para acender "+artG(q.g).toLowerCase()+" "+q.nome+"!");}
+function _luzXY(n){var q=_luzFig,w=$("luzwrap");var W=w.offsetWidth||280,H=w.offsetHeight||W;return {x:q.pts[n-1][0]*100,y:q.pts[n-1][1]*100};}
+function _linhaLuz(a,b){var svg=$("luzsvg");if(!svg)return;var p1=_luzXY(a),p2=_luzXY(b);
+  var ln=document.createElementNS("http://www.w3.org/2000/svg","line");
+  ln.setAttribute("x1",p1.x);ln.setAttribute("y1",p1.y);ln.setAttribute("x2",p2.x);ln.setAttribute("y2",p2.y);
+  ln.setAttribute("class","luzln");svg.appendChild(ln);}
+function tocarLuz(n){if(_resp)return;var t=(new Date()).getTime();
+  if(n===_luzUlt&&(t-_luzUltT)<380){return;} /* anti toque-duplo */
+  if(n<_luzProx){return;} /* ja aceso */
+  if(n>_luzProx){somErro();var dd=$("luzd"+_luzProx);if(dd){dd.className="luzdot proxima";(function(e){setTimeout(function(){if((""+e.className).indexOf("aceso")<0)e.className="luzdot proxima2";},600);})(dd);}
+    falar("Agora toque no número "+numExt(_luzProx)+".");return;}
+  _luzUlt=n;_luzUltT=t;somClique();
+  var d1=$("luzd"+n);if(d1){d1.className="luzdot aceso";}
+  if(_luzProx>1){_linhaLuz(_luzProx-1,n);}
+  _luzProx++;
+  var prx=$("luzd"+_luzProx);if(prx){prx.className="luzdot proxima2";}
+  if(_luzProx>_luzFig.pts.length){_linhaLuz(_luzFig.pts.length,1);/* fecha */
+    _resp=true;var q=_luzFig;var fig=$("luzfig");if(fig){fig.className="luzfig revelada";}
+    var svg=$("luzsvg");if(svg){svg.className="luzsvg some";}
+    var i;for(i=1;i<=_luzFig.pts.length;i++){var dd2=$("luzd"+i);if(dd2){dd2.className="luzdot some";}}
+    acertou();var el=elogio();
+    $("zonaFeed").innerHTML=fbOk(el+' Você acendeu '+artG(q.g).toLowerCase()+' <b>'+q.nome+'</b>!');
+    falar(el+" Você acendeu "+artG(q.g).toLowerCase()+" "+q.nome+"!");}}
 /* ---- tipo CONTAR ---- */
 function opcoesNumero(n){var set={},arr=[],tent=0;set[n]=true;arr.push(n);
   while(arr.length<3&&tent<40){tent++;var d2=n+(Math.floor(Math.random()*5)-2);if(d2<1){d2=n+1;}if(d2>10){d2=n-1;}if(d2>=1&&d2<=10&&!set[d2]){set[d2]=true;arr.push(d2);}}
@@ -624,9 +683,10 @@ function iniciarExtra(){somClique();_extraDado[faseAtual]=true;emExtra=true;emRe
   if(f.tipo==="cor"){var base=CORES.slice();shuffleReal(base);d=base.slice(0,3);}
   else if(f.tipo==="forma"){d=montarRodadas(3);}
   else if(f.tipo==="sombra"){d=montarRodadas(3);}
+  else if(f.tipo==="luzes"){d=montarRodadas(2);}
   else{d=montarRodadas(3);var i;for(i=0;i<d.length;i++){if(d[i].n<6){d[i].n=6+Math.floor(Math.random()*4);}}}
   dIdx=0;dAcertos=0;dErros=0;dEfase=[];_resp=false;
-  var msg;if(f.tipo==="cor"){msg="Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor.";}else if(f.tipo==="forma"){msg="Agora vou misturar mais formas! Olhe bem o formato de cada objeto.";}else if(f.tipo==="sombra"){msg="Agora vão aparecer mais bichinhos e mais sombras! Olhe bem o formato de cada um.";}else{msg="Agora os números vão ser maiores! Conte com bastante atenção.";}
+  var msg;if(f.tipo==="cor"){msg="Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor.";}else if(f.tipo==="forma"){msg="Agora vou misturar mais formas! Olhe bem o formato de cada objeto.";}else if(f.tipo==="sombra"){msg="Agora vão aparecer mais bichinhos e mais sombras! Olhe bem o formato de cada um.";}else if(f.tipo==="luzes"){msg="Vamos acender mais luzes do circo! Toque na ordem, do 1 ao 10.";}else{msg="Agora os números vão ser maiores! Conte com bastante atenção.";}
   var h='<div class="card"><div class="mini" style="font-size:13px;color:#e6c9ff;">Desafio Extra</div><h2>&#127775; Mais difícil!</h2>';
   h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">'+msg+' Bora?</div></div>';
   h+='<button class="btn pulsa gate-audio" onclick="renderDesafio()">Começar! &#9654;</button></div>';
