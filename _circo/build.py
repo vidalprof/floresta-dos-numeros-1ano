@@ -39,6 +39,9 @@ for k in ["leao","elefante","foca","macaco","arara","ponei"]:
 # Figuras do ligar-pontos (Caminho das Luzes)
 for k in ["cartola","gravata"]:
     m("LP_" + k, "lp-" + k + ".png")
+# Imagens das vogais (Parada 6)
+for k in ["ioio","urso","oculos"]:
+    m("VOG_" + k, "vog-" + k + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:
