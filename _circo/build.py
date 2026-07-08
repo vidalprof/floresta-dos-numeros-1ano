@@ -30,6 +30,9 @@ for n in range(1, 11):
 # Formas (parada 3)
 for k in ["bola","presente","chapeu","tambor","dado","bandeirinha"]:
     m("F_" + k, "form-" + k + ".png")
+# Ilhas (cenario de cada parada)
+for k in ["cores","numeros","formas","sombra","luzes","vogais","diferente","quebra1","memoria","erros","quebra2"]:
+    m("ILHA_" + k, "ilha-" + k + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:

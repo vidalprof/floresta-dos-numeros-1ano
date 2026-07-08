@@ -63,7 +63,7 @@ def main(path):
 
     # 10) CENARIO/ILHA da parada (obrigatorio §2/§3): cada parada tem a sua imagem de cenario
     #     no topo da intro da fase. Avisa se nenhuma fase renderiza cenario (facil de esquecer).
-    if not re.search(r'class="cenariofase"', html):
+    if not re.search(r'class="[^"]*\bcenariofase\b', html):
         avisos.append("PENDENCIA: nenhuma parada mostra CENARIO/ILHA tematica (img class='cenariofase') — cada parada precisa da sua ilha no topo da intro (§2/§3).")
 
     print("=== AUDITORIA:", os.path.basename(path), "===")
