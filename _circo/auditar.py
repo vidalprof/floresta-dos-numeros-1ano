@@ -45,6 +45,14 @@ def main(path):
     # varredura direta por '1 <feminino>' hardcoded em qualquer string
     for m in re.findall(r'"([^"]*\b1\s+(?:' + fem + r')\b[^"]*)"', js):
         avisos.append("String com '1 + feminino' (checar se e falada): " + m[:70])
+    # 6b) CONCORDANCIA de ARTIGO x GENERO (ex.: "do foca" -> "da foca"; "da leao" -> "do leao")
+    femN = ["foca","arara","bola","bandeirinha","estrela","argola","pipoca","medalha","parada","tenda","concha"]
+    mascN = ["le[aã]o","elefante","macaco","p[oô]nei","presente","dado","chap[eé]u","tambor","bal[aã]o","n[uú]mero","tesouro"]
+    for m in re.findall(r'"([^"]*)"', js):
+        for w in femN:
+            if re.search(r'\bdo '+w+r'\b', m, re.I): avisos.append("Concordancia artigo/genero: 'do "+w+"' (e feminino -> 'da'): "+m[:60])
+        for w in mascN:
+            if re.search(r'\bda (?:'+w+r')\b', m, re.I): avisos.append("Concordancia artigo/genero: 'da "+w+"' (e masculino -> 'do'): "+m[:60])
 
     # 7) CSS moderno proibido (no HTML/CSS)
     css = html

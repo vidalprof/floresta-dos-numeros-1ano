@@ -99,7 +99,15 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .linhap.esq{-webkit-box-pack:start;justify-content:flex-start;}
 .linhap.centro{-webkit-box-pack:center;justify-content:center;}
 .linhap.dir{-webkit-box-pack:end;justify-content:flex-end;}
-.no{width:132px;text-align:center;cursor:pointer;position:relative;}
+.no{width:156px;text-align:center;cursor:pointer;position:relative;}
+.paradafig{position:relative;width:150px;height:106px;margin:0 auto;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;}
+.holomap{position:absolute;left:50%;top:50%;width:134px;height:100px;margin-left:-67px;margin-top:-50px;border-radius:50%;background:-webkit-radial-gradient(center,rgba(255,226,146,.34),rgba(255,210,90,0) 70%);background:radial-gradient(circle,rgba(255,226,146,.34),rgba(255,210,90,0) 70%);}
+.ilhamapa{position:relative;max-height:98px;max-width:132px;width:auto;display:block;-webkit-filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));-webkit-animation:flutua 3.4s ease-in-out infinite;animation:flutua 3.4s ease-in-out infinite;}
+.compmapa{position:absolute;right:0;bottom:-2px;height:48px;width:auto;z-index:3;-webkit-filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));filter:drop-shadow(0 2px 3px rgba(0,0,0,.5));-webkit-animation:flutua 2.8s ease-in-out infinite;animation:flutua 2.8s ease-in-out infinite;}
+.no.atual .ilhamapa{-webkit-filter:drop-shadow(0 0 9px rgba(255,210,63,.95));filter:drop-shadow(0 0 9px rgba(255,210,63,.95));}
+.no.atual .holomap{background:-webkit-radial-gradient(center,rgba(255,226,146,.55),rgba(255,210,90,0) 70%);background:radial-gradient(circle,rgba(255,226,146,.55),rgba(255,210,90,0) 70%);}
+.no.trav .ilhamapa,.no.trav .compmapa{-webkit-filter:grayscale(1) brightness(.6);filter:grayscale(1) brightness(.6);}
+.no.trav .holomap{display:none;}
 .teotrilha{position:absolute;left:-6px;top:26px;height:60px;width:auto;z-index:4;pointer-events:none;-webkit-filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));-webkit-animation:andaTeo 1.05s ease-in-out infinite;animation:andaTeo 1.05s ease-in-out infinite;}
 @-webkit-keyframes andaTeo{0%,100%{-webkit-transform:translateY(0) rotate(-5deg);}50%{-webkit-transform:translateY(-5px) rotate(5deg);}}
 @keyframes andaTeo{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-5px) rotate(5deg);}}
@@ -222,6 +230,8 @@ var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_form
 var SOMBRA={leao:"{{SIL_leao}}",elefante:"{{SIL_elefante}}",foca:"{{SIL_foca}}",macaco:"{{SIL_macaco}}",arara:"{{SIL_arara}}",ponei:"{{SIL_ponei}}"};
 var ANIMCOR={leao:IMG.cLeao,elefante:IMG.cElefante,foca:IMG.cFoca,macaco:IMG.cMacaco,arara:IMG.cArara,ponei:IMG.cPonei};
 var ANIMNOME={leao:"leão",elefante:"elefante",foca:"foca",macaco:"macaco",arara:"arara",ponei:"pônei"};
+var ANIMGEN={leao:"m",elefante:"m",foca:"f",macaco:"m",arara:"f",ponei:"m"};
+function nomeDoAnim(ch){return (ANIMGEN[ch]==="f"?"da ":"do ")+ANIMNOME[ch];}
 
 function $(id){return document.getElementById(id);}
 /* ====== ESTADO ====== */
@@ -376,7 +386,10 @@ function telaMapa(){$("topbar").className="topbar";atualizarTopo();
     var clic=lib?(' onclick="abrirParada(\''+p.ch+'\')"'):(' onclick="avisoTrancada()"');
     h+='<div class="linhap '+lados[i%3]+'"><div class="no '+est+'"'+clic+'>';
     if(atual){h+='<img class="teotrilha" src="'+IMG.mFeliz+'" alt="Teo">';h+='<div class="aqui">você está aqui!</div>';}
-    h+='<div class="nofig"><img src="'+p.c+'" alt="">';
+    var il=ILHAS[p.ch];
+    h+='<div class="paradafig">';
+    if(il){h+='<div class="holomap"></div><img class="ilhamapa" src="'+il+'" alt="">';h+='<img class="compmapa" src="'+p.c+'" alt="">';}
+    else{h+='<div class="nofig"><img src="'+p.c+'" alt=""></div>';}
     if(est==="trav"){h+='<div class="cadeado">&#128274;</div>';}
     if(feita){h+='<div class="check">&#9989;</div>';}
     h+='</div><div class="nonome">'+p.n+'</div></div></div>';
@@ -400,9 +413,10 @@ var CONTAR=[
  {img:IMG.oBola,nome:"bola",g:"f"},{img:IMG.oArgola,nome:"argola",g:"f"},{img:IMG.oPipoca,nome:"pipoca",g:"f"},
  {img:IMG.oEstrela,nome:"estrela",g:"f"},{img:IMG.oChapeu,nome:"chapéu",g:"m"},{img:IMG.oBandeirinha,nome:"bandeirinha",g:"f"}];
 var FORMAS=[
- {img:IMG.fBola,forma:"círculo"},{img:IMG.fTambor,forma:"círculo"},
- {img:IMG.fPresente,forma:"quadrado"},{img:IMG.fDado,forma:"quadrado"},
- {img:IMG.fChapeu,forma:"triângulo"},{img:IMG.fBandeirinha,forma:"triângulo"}];
+ {img:IMG.fBola,forma:"círculo",nome:"bola",g:"f"},{img:IMG.fTambor,forma:"círculo",nome:"tambor",g:"m"},
+ {img:IMG.fPresente,forma:"quadrado",nome:"presente",g:"m"},{img:IMG.fDado,forma:"quadrado",nome:"dado",g:"m"},
+ {img:IMG.fChapeu,forma:"triângulo",nome:"chapéu",g:"m"},{img:IMG.fBandeirinha,forma:"triângulo",nome:"bandeirinha",g:"f"}];
+function artG(g){return g==="f"?"A":"O";}
 var FORMAS_TIPOS=["círculo","quadrado","triângulo"];
 var ANIM_SOMBRA=["leao","elefante","foca","macaco","arara","ponei"];
 var FCFG={
@@ -488,13 +502,13 @@ function renderForma(){var q=d[dIdx];_resp=false;
   h+='<div class="enunciado">Toque no que tem forma de <b>'+q.target+'</b>!</div>';
   h+='<div class="dica">&#128161; Olhe bem o formato do objeto.</div>';
   h+='<div class="opcoes">';
-  for(i=0;i<ops.length;i++){h+='<div class="opbal" id="op'+i+'" data-forma="'+ops[i].forma+'" onclick="responderForma('+i+',\''+ops[i].forma+'\')"><img src="'+ops[i].img+'" alt=""></div>';}
+  for(i=0;i<ops.length;i++){h+='<div class="opbal" id="op'+i+'" data-forma="'+ops[i].forma+'" onclick="responderForma('+i+',\''+ops[i].forma+'\',\''+ops[i].nome+'\',\''+ops[i].g+'\')"><img src="'+ops[i].img+'" alt=""></div>';}
   h+='</div><div id="zonaFeed"></div></div>';
   $("app").innerHTML=h;falar("Toque no que tem forma de "+q.target+"!");}
-function responderForma(i,forma){if(_resp){return;}var q=d[dIdx];var certo=(forma===q.target);somClique();_resp=true;
+function responderForma(i,forma,nome,g){if(_resp){return;}var q=d[dIdx];var certo=(forma===q.target);somClique();_resp=true;
   if(certo){$("op"+i).className="opbal certa";acertou();var el=elogio();
-    $("zonaFeed").innerHTML=fbOk(el+' Esse tem forma de <b>'+q.target+'</b>!');
-    falar(el+" Esse tem forma de "+q.target+".");}
+    $("zonaFeed").innerHTML=fbOk(el+' '+artG(g)+' <b>'+nome+'</b> tem forma de '+q.target+'!');
+    falar(el+" "+artG(g)+" "+nome+" tem forma de "+q.target+".");}
   else{$("op"+i).className="opbal errada tremer";somErro();streak=0;dErros++;guardarErroFase(q);_resp=false;
     (function(el){setTimeout(function(){el.className="opbal";},450);})($("op"+i));
     $("zonaFeed").innerHTML='<div class="fbno"><b>Quase!</b> Procure o que tem forma de <b>'+q.target+'</b>!</div>';
@@ -550,11 +564,11 @@ function onSoltaSombra(dropId,chave,idx){var q=d[dIdx];
     if(_sombraFeitos>=q.animais.length){_resp=true;acertou();var el=elogio();
       $("zonaFeed").innerHTML=fbOk(el+' Você achou a sombra certa de todos os bichinhos!');
       falar(el+" Você achou a sombra certa de todos os bichinhos!");}
-    else{falar("Isso! A sombra do "+ANIMNOME[chave]+".");}}
+    else{falar("Isso! A sombra "+nomeDoAnim(chave)+".");}}
   else{somErro();streak=0;dErros++;guardarErroFase(q);
     var bad=$("sd_"+dropId);if(bad&&(""+bad.className).indexOf("revelado")<0){bad.className="sildrop tremer";
       (function(b){setTimeout(function(){if((""+b.className).indexOf("revelado")<0){b.className="sildrop";}},450);})(bad);}
-    falar("Essa não é a sombra do "+ANIMNOME[chave]+". Olhe bem o formato e tente de novo!");}}
+    falar("Essa não é a sombra "+nomeDoAnim(chave)+". Olhe bem o formato e tente de novo!");}}
 /* ---- tipo CONTAR ---- */
 function opcoesNumero(n){var set={},arr=[],tent=0;set[n]=true;arr.push(n);
   while(arr.length<3&&tent<40){tent++;var d2=n+(Math.floor(Math.random()*5)-2);if(d2<1){d2=n+1;}if(d2>10){d2=n-1;}if(d2>=1&&d2<=10&&!set[d2]){set[d2]=true;arr.push(d2);}}
