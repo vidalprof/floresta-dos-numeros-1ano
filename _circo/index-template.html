@@ -131,9 +131,11 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 @-webkit-keyframes cai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1;}100%{-webkit-transform:translateY(110vh) rotate(540deg);opacity:.9;}}
 @keyframes cai{0%{transform:translateY(0) rotate(0);opacity:1;}100%{transform:translateY(110vh) rotate(540deg);opacity:.9;}}
 .medalha{width:120px;height:120px;margin:6px auto;border-radius:50%;background:-webkit-radial-gradient(circle,#ffe27a,#e0a018);background:radial-gradient(circle,#ffe27a,#e0a018);border:4px solid #fff2c0;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:54px;-webkit-box-shadow:0 0 22px rgba(255,210,120,.7);box-shadow:0 0 22px rgba(255,210,120,.7);}
-.opnum{display:inline-block;min-width:62px;font-size:30px;font-weight:bold;color:#5a2410;cursor:pointer;border:none;margin:8px;padding:10px 18px;border-radius:16px;background:-webkit-linear-gradient(#ffe27a,#ffc21f);background:linear-gradient(#ffe27a,#ffc21f);-webkit-box-shadow:0 5px 0 #b8801a;box-shadow:0 5px 0 #b8801a;}
-.opnum:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
-.opnum[disabled]{opacity:.45;}
+.opnum{display:inline-block;cursor:pointer;border:none;background:transparent;margin:8px 12px;padding:2px;}
+.opnum img{display:block;height:80px;width:auto;-webkit-animation:flutua 3s ease-in-out infinite;animation:flutua 3s ease-in-out infinite;}
+.opnum:active img{-webkit-transform:scale(.94);transform:scale(.94);}
+.opnum[disabled]{opacity:.4;}
+.opnum[disabled] img{-webkit-animation:none;animation:none;}
 .contzona{margin:10px 0;text-align:center;}
 .citem{display:inline-block;margin:5px 6px;}
 .citem img{height:52px;width:auto;display:block;}
@@ -166,6 +168,7 @@ IMG.cLeao="{{C_leao}}";IMG.cElefante="{{C_elefante}}";IMG.cFoca="{{C_foca}}";IMG
 IMG.cPalhaco="{{C_palhaco}}";IMG.cPonei="{{C_ponei}}";IMG.cCachorro="{{C_cachorro}}";IMG.cArara="{{C_arara}}";
 IMG.balVermelho="{{B_vermelho}}";IMG.balAzul="{{B_azul}}";IMG.balAmarelo="{{B_amarelo}}";
 IMG.oBola="{{O_bola}}";IMG.oArgola="{{O_argola}}";IMG.oPipoca="{{O_pipoca}}";IMG.oEstrela="{{O_estrela}}";IMG.oChapeu="{{O_chapeu}}";IMG.oBandeirinha="{{O_bandeirinha}}";
+IMG.n1="{{N_1}}";IMG.n2="{{N_2}}";IMG.n3="{{N_3}}";IMG.n4="{{N_4}}";IMG.n5="{{N_5}}";IMG.n6="{{N_6}}";IMG.n7="{{N_7}}";IMG.n8="{{N_8}}";IMG.n9="{{N_9}}";IMG.n10="{{N_10}}";
 IMG.balVerde="{{B_verde}}";IMG.balRoxo="{{B_roxo}}";IMG.balLaranja="{{B_laranja}}";
 
 function $(id){return document.getElementById(id);}
@@ -350,6 +353,7 @@ function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","se
 function numExtG(n,g){if(n===1){return g==="f"?"uma":"um";}if(n===2){return g==="f"?"duas":"dois";}return numExt(n);}
 function plObj(nome){return nome+"s";}
 function artPl(g){return g==="f"?"as":"os";}
+function numImg(v){return IMG["n"+v];}
 function abrirParada(ch){somClique();var p=PARADAS[idxParada(ch)];
   if(p.jog){introFase(ch);}
   else{falar("Essa parada ainda está sendo montada pelo Teo! Em breve ela fica pronta.");
@@ -403,7 +407,7 @@ function renderContar(){var q=d[dIdx];_resp=false;
   var i;for(i=0;i<q.n;i++){h+='<span class="citem" id="citem'+i+'"><img src="'+q.obj.img+'" alt=""></span>';}
   h+='</div><div class="opcoes">';
   var ops=opcoesNumero(q.n);
-  for(i=0;i<ops.length;i++){h+='<button class="opnum" id="on'+i+'" onclick="responderNum('+ops[i]+')">'+ops[i]+'</button>';}
+  for(i=0;i<ops.length;i++){h+='<button class="opnum" id="on'+i+'" onclick="responderNum('+ops[i]+')"><img src="'+numImg(ops[i])+'" alt="'+ops[i]+'"></button>';}
   h+='</div><div id="zonaFeed"></div></div>';
   $("app").innerHTML=h;falar("Conte "+artPl(q.obj.g)+" "+plObj(q.obj.nome)+" e toque no número!");}
 function responderNum(escolha){if(_resp){return;}var q=d[dIdx];somClique();
