@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prompt — Ilha das Vogais (blocos de letras)</title>
+<title>Prompt — Ilha das Vogais (barraca de argolas)</title>
 <style>
   body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
   header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
@@ -7,25 +7,23 @@
   header p{margin:6px 0 0;font-size:13px;opacity:.9}
   .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
   .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
-  textarea{width:100%;box-sizing:border-box;min-height:240px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  textarea{width:100%;box-sizing:border-box;min-height:230px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
   button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
   button:active{-webkit-transform:scale(.97);transform:scale(.97)}
   .ok{background:#7CFC9A}
   .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
 </style>
 <header>
-  <h1>&#127914; Ilha das Vogais &mdash; blocos de letras</h1>
-  <p>1 objeto (grupo de blocos A E I O U) flutuando no branco. Gere e suba no <b>_imagens/</b>.</p>
+  <h1>&#127914; Ilha das Vogais &mdash; barraca de argolas</h1>
+  <p>1 barraca (lugar do circo) flutuando no branco. Gere e suba no <b>_imagens/</b>.</p>
 </header>
 <div class="nota">
-  Estilo das outras ilhas: <b>objeto flutuando no branco</b>, <b>sem cenário/retângulo atrás</b>, contorno grosso, sem sombra. Letras <b>grandes e legíveis</b>: só A E I O U.
+  Estilo das outras ilhas: <b>a barraca flutuando no branco</b>, <b>sem cenário/retângulo atrás</b>, contorno grosso, sem sombra, sem texto.
 </div>
 <div class="card">
-  <h2>Cartela &mdash; Blocos de Letras (A E I O U)</h2>
-  <textarea id="p" readonly>Gere uma CARTELA (folha única) com UM grupo de BLOCOS DE LETRAS de circo: cubos de brinquedo coloridos, agrupados/empilhados, cada bloco com UMA vogal grande e bem legível — as cinco vogais A, E, I, O, U (uma letra por bloco, só essas cinco).
+  <h2>Cartela &mdash; Barraca de Argolas</h2>
+  <textarea id="p" readonly>Gere uma CARTELA (folha única) com UMA barraca de ARGOLAS de circo (jogo de argolas / ring toss): uma banca colorida com vários pinos (ou garrafas) coloridos em fila e várias argolas coloridas (algumas penduradas ou no ar), com listras de circo e bandeirinhas no topo da barraca.
 
-Blocos em cores vivas de circo (vermelho, azul, verde, amarelo, roxo), com listras ou bolinhas e CONTORNO PRETO GROSSO e fechado. Cartoon flat infantil.
-
-FLUTUANDO no fundo BRANCO PURO #FFFFFF (sem parede, sem chão, sem cenário atrás, SEM retângulo/moldura/cartão). SEM sombras. Nenhuma outra letra, palavra ou número além de A E I O U. Grupo compacto, silhueta bem definida.</textarea>
+FLUTUANDO no fundo BRANCO PURO #FFFFFF (sem parede, sem chão, sem cenário atrás, SEM retângulo/moldura/cartão). Cartoon flat infantil, cores vivas, CONTORNO PRETO GROSSO e fechado. SEM sombras. Sem texto, sem letras, sem números. A barraca inteira, com silhueta bem definida.</textarea>
   <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
 </div>
