@@ -506,8 +506,9 @@ function vogalFalada(v){var t={A:"á",E:"é",I:"i",O:"ó",U:"úú"};return t[v]|
 var DIF_CATS={
  guloseimas:[IMG.gulPipoca,IMG.gulAlgodao,IMG.gulMaca,IMG.gulSorvete,IMG.gulPirulito,IMG.gulCachorro]};
 var DIF_CHAVES=["guloseimas"];
-/* Quebra-Cabeca 2x2: 4 pecas (TL,TR,BL,BR) */
-var PUZZLE=[IMG.pz0,IMG.pz1,IMG.pz2,IMG.pz3];
+/* Quebra-Cabeca: pecas fatiadas em ordem linha-a-linha (esq->dir, cima->baixo) */
+var PZCFG={quebra1:{pre:"pz",cols:2,rows:2},quebra2:{pre:"q2",cols:3,rows:2}};
+function pzSet(pre,n){var a=[],i;for(i=0;i<n;i++){a.push(IMG[pre+i]);}return a;}
 /* Memoria: pares de imagens (guloseimas) */
 var MEMORIA=[IMG.gulPipoca,IMG.gulAlgodao,IMG.gulMaca,IMG.gulSorvete,IMG.gulPirulito,IMG.gulCachorro];
 var FCFG={
@@ -520,6 +521,9 @@ var FCFG={
  erros:{parada:10,titulo:"Caça aos 7 Erros",tipo:"erros",jogo:true,
    intro:"O Teo tirou duas fotos do circo, mas nas fotos tem 7 coisinhas diferentes! Olhe as duas imagens e toque na foto de baixo em cada coisa que mudou. Vamos achar as 7 diferenças?",
    gancho:"Uau! Você tem olhos de detetive! Achou todas as 7 diferenças do circo do Teo! Agora vem a última parada da nossa aventura!"},
+ quebra2:{parada:11,titulo:"Quebra-Cabeça 2",tipo:"quebra",jogo:true,
+   intro:"Este é o último desafio da nossa aventura! O Teo tirou uma foto nova do espetáculo, mas ela se partiu em 6 pedaços. Arraste cada peça para o lugar certo e monte a foto do grande show!",
+   gancho:"Uhuuul! Você montou a foto do grande espetáculo e terminou toda a aventura no circo do Teo! Você é demais!"},
  quebra1:{parada:8,titulo:"Quebra-Cabeça do Circo",tipo:"quebra",jogo:true,
    intro:"O vento embaralhou a foto do circo do Teo! Arraste cada peça para o lugar certo e monte a foto de novo. Você consegue?",
    gancho:"Muito bem! Você montou o quebra-cabeça do circo! Agora vem a próxima parada da nossa aventura!"},
@@ -760,28 +764,31 @@ function responderDiferente(i,ehdif){if(_resp){return;}somClique();
     $("zonaFeed").innerHTML='<div class="fbno"><b>Quase!</b> Esse é igual aos outros. Procure o <b>diferente</b>!</div>';
     falar("Quase! Esse é igual aos outros. Procure o que é diferente!");}}
 /* ---- tipo QUEBRA (quebra-cabeca 2x2, arrastar pecas) ---- */
-var _pzFeitos=0;
+var _pzFeitos=0,_pzPcs=[],_pzTotal=4,_pzSlotPx=104;
 function renderQuebra(){_resp=false;_pzFeitos=0;
-  var ordem=[0,1,2,3];shuffleReal(ordem);
+  var cfg=PZCFG[faseAtual]||PZCFG.quebra1;var cols=cfg.cols,rows=cfg.rows,n=cols*rows;
+  _pzPcs=pzSet(cfg.pre,n);_pzTotal=n;_pzSlotPx=(cols>=3?90:104);var tp=(cols>=3?78:88);
+  var gw=_pzSlotPx*cols;
+  var ordem=[],z;for(z=0;z<n;z++){ordem.push(z);}shuffleReal(ordem);
   var h='<div class="card"><div class="progtxt">Monte o quebra-cabeça!</div>';
   h+='<div class="enunciado">Arraste cada peça para o lugar certo!</div>';
   h+='<div class="dica">&#128161; Olhe o desenho clarinho pra saber onde vai cada peça.</div>';
-  h+='<div class="pzgrid">';
-  var i;for(i=0;i<4;i++){h+='<div class="pzslot" id="pzs'+i+'"><img class="pzguia" src="'+PUZZLE[i]+'" alt=""></div>';}
+  h+='<div class="pzgrid" style="width:'+gw+'px">';
+  var i;for(i=0;i<n;i++){h+='<div class="pzslot" id="pzs'+i+'" style="width:'+_pzSlotPx+'px;height:'+_pzSlotPx+'px"><img class="pzguia" style="width:'+_pzSlotPx+'px;height:'+_pzSlotPx+'px" src="'+_pzPcs[i]+'" alt=""></div>';}
   h+='</div>';
   h+='<div class="pztray">';
-  for(i=0;i<4;i++){var p=ordem[i];h+='<div class="pzpeca" id="pzp'+p+'"><img src="'+PUZZLE[p]+'" alt=""></div>';}
+  for(i=0;i<n;i++){var p=ordem[i];h+='<div class="pzpeca" id="pzp'+p+'" style="width:'+tp+'px;height:'+tp+'px"><img style="width:'+tp+'px;height:'+tp+'px" src="'+_pzPcs[p]+'" alt=""></div>';}
   h+='</div><div id="zonaFeed"></div></div>';
   $("app").innerHTML=h;instalarDragGlobal();
-  for(i=0;i<4;i++){(function(p){tornarArrastavel($("pzp"+p),""+p,0,onSoltaPeca);})(i);}
-  for(i=0;i<4;i++){(function(s){marcarSoltavel($("pzs"+s),""+s);})(i);}
+  for(i=0;i<n;i++){(function(p){tornarArrastavel($("pzp"+p),""+p,0,onSoltaPeca);})(i);}
+  for(i=0;i<n;i++){(function(s){marcarSoltavel($("pzs"+s),""+s);})(i);}
   falar("Arraste cada peça para o lugar certo e monte a foto do circo do Teo!");}
 function onSoltaPeca(dropId,chave){var slot=parseInt(dropId,10),peca=parseInt(chave,10);
   if(slot===peca){var sl=$("pzs"+slot),pc=$("pzp"+peca);
-    if(sl){sl.className="pzslot cheio";sl.innerHTML='<img src="'+PUZZLE[peca]+'" alt="">';}
+    if(sl){sl.className="pzslot cheio";sl.innerHTML='<img style="width:'+_pzSlotPx+'px;height:'+_pzSlotPx+'px" src="'+_pzPcs[peca]+'" alt="">';}
     if(pc){pc.className="pzpeca feito";pc.setAttribute("data-feito","1");pc.onmousedown=null;pc.ontouchstart=null;}
     somAcerto();_pzFeitos++;
-    if(_pzFeitos>=4){_resp=true;acertou();var el=elogio();
+    if(_pzFeitos>=_pzTotal){_resp=true;acertou();var el=elogio();
       $("zonaFeed").innerHTML=fbOk(el+' Você montou a foto do circo do Teo!');
       falar(el+" Você montou a foto do circo do Teo!");}
     else{falar("Isso! Encaixou certinho!");}}
