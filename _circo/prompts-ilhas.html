@@ -1,0 +1,56 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompts das Ilhas — Circo do Teo</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:20px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 4px;font-size:16px;color:#ffd23f}
+  .card .meq{font-size:12px;opacity:.75;margin:0 0 10px}
+  textarea{width:100%;box-sizing:border-box;min-height:150px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:10px 16px;font-size:14px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+</style>
+<header>
+  <h1>&#127914; Ilhas Tem&aacute;ticas &mdash; O Grande Circo do Teo</h1>
+  <p>Um prompt por parada. Toque em <b>Copiar</b>, cole no ChatGPT (gerar imagem), salve e suba tudo no <b>_imagens/</b>.</p>
+</header>
+
+<div class="nota">
+  <b>Regras (iguais pra todas):</b> ilustra&ccedil;&atilde;o cartoon flat infantil, cores vivas de circo, <b>contorno preto fechado</b>, <b>fundo branco puro #FFFFFF liso</b> (sem textura, sem moldura, sem cart&atilde;o), <b>SEM sombras projetadas</b>, sem texto, sem letras, sem n&uacute;meros. A cena ocupa o centro deixando um respiro &agrave; direita (o companheiro entra ao lado depois). Proporção paisagem 3:2.
+</div>
+
+<div id="lista"></div>
+
+<script>
+var COMUM=" Estilo: ilustração cartoon flat infantil, cores vivas de circo, contorno preto fechado e nítido em cada elemento, fundo BRANCO PURO #FFFFFF totalmente liso (sem textura, sem moldura, sem cartão, sem borda). SEM sombras projetadas nem sombra de contato. Sem texto, sem letras, sem números. Composição em paisagem 3:2, a cena agrupada no centro deixando um respiro livre à direita para encaixar um personagem depois. Alta qualidade, contornos limpos.";
+var PROMPTS=[
+ ["1","Balões Coloridos (Cores)","Uma cena de circo festiva: um arco de entrada de circo listrado de vermelho e branco, com muitos balões coloridos amarrados (vermelho, azul, verde, amarelo, roxo e laranja) subindo, bandeirinhas triangulares coloridas no alto e o chão do picadeiro embaixo."],
+ ["2","Contando no Picadeiro (Números)","O picadeiro central de um circo: um tapete redondo vermelho no chão, dois ou três banquinhos/pódios de apresentação, estrelas douradas flutuando no ar e cortinas de circo vermelhas ao fundo. Clima mágico de espetáculo."],
+ ["3","Formas da Festa (Formas)","Uma mesa de festa de circo cheia de objetos de festa: uma bola listrada (redonda), um presente embrulhado com laço (quadrado), um chapéu de festa pontudo (triângulo), um tamborzinho e bandeirinhas coloridas penduradas atrás. Clima alegre de comemoração."],
+ ["4","Ligar à Sombra (Observação)","Um palco de circo com um grande holofote aceso lá no alto projetando um facho de luz amarelo claro que desce sobre o chão do picadeiro, com cortinas de circo vermelhas ao fundo. Clima de apresentação."],
+ ["5","Caminho das Luzes (Ligar pontos)","A tenda de um circo à noite, com o céu escuro azulado cheio de estrelinhas, e uma guirlanda de lampadinhas redondas acesas (amarelas) contornando toda a tenda. Clima mágico e aconchegante."],
+ ["6","Vogais do Circo (Vogais)","A marquise/letreiro luminoso da entrada de um circo, um painel arredondado grande cercado por muitas lâmpadas redondas acesas, com cortinas vermelhas dos lados. O painel do letreiro fica VAZIO (sem nenhuma letra e sem número)."],
+ ["7","Qual é o Diferente? (Atenção)","Um mural de bastidores de circo com vários cartazes/pôsteres coloridos pendurados por cordinhas lado a lado, todos alegres e chamativos. Clima de bastidor de circo."],
+ ["8","Quebra-Cabeça do Circo 1","Os bastidores de um circo com um grande cartaz colorido de espetáculo apoiado, algumas peças de quebra-cabeça soltas espalhadas por perto, baús e cordas. Clima de preparação do show."],
+ ["9","Memória do Circo","Uma parede de circo com uma grade organizada de cartas viradas de costas (os versos, todos iguais, com uma estampa de estrela dourada e listras), como um jogo de memória. Clima lúdico."],
+ ["10","Caça aos 7 Erros (Atenção)","O picadeiro de um circo em plena apresentação, uma cena rica e detalhada: a tenda listrada ao fundo, holofotes, bandeirinhas, um pódio central e enfeites variados. Muitos detalhes coloridos (será usada para achar diferenças)."],
+ ["11","Quebra-Cabeça do Circo 2","Os bastidores de um circo, variação do anterior: baús abertos com fantasias, cordas penduradas, um cartaz colorido apoiado e algumas peças de quebra-cabeça espalhadas. Clima de bastidor animado."]
+];
+var lista=document.getElementById("lista"),i;
+for(i=0;i<PROMPTS.length;i++){
+  var p=PROMPTS[i];
+  var full="Ilustração de uma ilha temática de circo para a parada \""+p[1]+"\". "+p[2]+COMUM;
+  var d=document.createElement("div");d.className="card";
+  var h=document.createElement("h2");h.innerHTML="Parada "+p[0]+" — "+p[1];
+  var meq=document.createElement("p");meq.className="meq";meq.textContent="Cenário/ilha desta parada";
+  var ta=document.createElement("textarea");ta.readOnly=true;ta.value=full;
+  var bt=document.createElement("button");bt.textContent="Copiar";
+  (function(ta,bt){bt.onclick=function(){ta.select();try{document.execCommand("copy");}catch(e){}bt.textContent="Copiado! ✓";bt.className="ok";setTimeout(function(){bt.textContent="Copiar";bt.className="";},1400);};})(ta,bt);
+  d.appendChild(h);d.appendChild(meq);d.appendChild(ta);d.appendChild(bt);
+  lista.appendChild(d);
+}
+</script>

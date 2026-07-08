@@ -61,6 +61,11 @@ def main(path):
     faltando = sorted([o for o in ocs if o not in defined])
     if faltando: falhas.append("onclick sem funcao definida: " + ", ".join(faltando))
 
+    # 10) CENARIO/ILHA da parada (obrigatorio §2/§3): cada parada tem a sua imagem de cenario
+    #     no topo da intro da fase. Avisa se nenhuma fase renderiza cenario (facil de esquecer).
+    if not re.search(r'class="cenariofase"', html):
+        avisos.append("PENDENCIA: nenhuma parada mostra CENARIO/ILHA tematica (img class='cenariofase') — cada parada precisa da sua ilha no topo da intro (§2/§3).")
+
     print("=== AUDITORIA:", os.path.basename(path), "===")
     if not falhas and not avisos:
         print("OK — nenhum problema encontrado.")

@@ -59,7 +59,9 @@ Ordem dos elementos, de cima para baixo:
 3. **Balão do mascote com a HISTÓRIA** (só na primeira visita, 0 fases concluídas): o enredo completo e o convite.
 4. **TRILHA** serpenteante:
    - Cada parada = cenário próprio (imagem) + companheiro (imagem de animal/personagem) + nome da fase + estado.
+     **⚠️ CENÁRIO/ILHA DA PARADA É OBRIGATÓRIO E FÁCIL DE ESQUECER (lição paga):** cada parada tem a SUA imagem de cenário temático (a "ilha"), gerada no ChatGPT (nunca SVG), mostrada no topo da tela de introdução da fase (~140px, contida, sem sobrepor o título) — ver §3. É comum montar a mecânica do desafio e ESQUECER o cenário; ao montar CADA parada, pedir/gerar a ilha temática junto. A auditoria (`auditar.py`) avisa quando uma parada jogável está sem cenário.
    - **Parada atual**: destacada, glow `drop-shadow` pulsando (NUNCA `box-shadow` — desenha quadrado), tag "você está aqui". Clicável.
+   - **MASCOTE CAMINHA PELA TRILHA (padrão fixo):** o mascote (imagem, pose feliz) fica posicionado ao lado da parada ATUAL; como a parada atual desce a trilha a cada conclusão, o mascote parece **caminhar pelas ilhas** conforme a criança avança. Posição absoluta DENTRO do nó (`.no{position:relative}`), à esquerda do anel e ABAIXO da tag "você está aqui" (não pode cobri-la), com animação leve de andar (`translateY`+`rotate` no par `-webkit-`), `pointer-events:none`. Mantê-lo dentro da largura do nó pra não estourar nas paradas alinhadas à esquerda/direita.
    - **Paradas concluídas**: "Concluída ✓", trecho dourado. Clicáveis (rejogar).
    - **Paradas ainda não jogadas: TRANCADAS** — acinzentadas (`grayscale`), com **cadeado 🔒** sobreposto no cenário, clique bloqueado. Ao tocar, o mascote avisa com carinho: "Esta parada ainda está trancada! Termine a parada anterior para abrir esta." Cada parada só abre quando a ANTERIOR é concluída.
    - **Conector pontilhado** entre cada parada (linha vertical pontilhada dourada; dourado forte nos trechos concluídos).

@@ -80,7 +80,10 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .linhap.esq{-webkit-box-pack:start;justify-content:flex-start;}
 .linhap.centro{-webkit-box-pack:center;justify-content:center;}
 .linhap.dir{-webkit-box-pack:end;justify-content:flex-end;}
-.no{width:132px;text-align:center;cursor:pointer;}
+.no{width:132px;text-align:center;cursor:pointer;position:relative;}
+.teotrilha{position:absolute;left:-6px;top:26px;height:60px;width:auto;z-index:4;pointer-events:none;-webkit-filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));-webkit-animation:andaTeo 1.05s ease-in-out infinite;animation:andaTeo 1.05s ease-in-out infinite;}
+@-webkit-keyframes andaTeo{0%,100%{-webkit-transform:translateY(0) rotate(-5deg);}50%{-webkit-transform:translateY(-5px) rotate(5deg);}}
+@keyframes andaTeo{0%,100%{transform:translateY(0) rotate(-5deg);}50%{transform:translateY(-5px) rotate(5deg);}}
 .aqui{display:inline-block;background:#ffd23f;color:#5a2410;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin-bottom:3px;-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite;}
 .nofig{width:92px;height:92px;margin:0 auto;position:relative;border-radius:50%;background:rgba(255,255,255,.06);border:3px solid rgba(255,210,63,.5);display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;}
 .nofig img{max-height:76px;width:auto;display:block;}
@@ -313,7 +316,7 @@ function telaMapa(){$("topbar").className="topbar";atualizarTopo();
     var atual=lib&&!feita;var est=feita?"feita":(atual?"atual":"trav");
     var clic=lib?(' onclick="abrirParada(\''+p.ch+'\')"'):(' onclick="avisoTrancada()"');
     h+='<div class="linhap '+lados[i%3]+'"><div class="no '+est+'"'+clic+'>';
-    if(atual){h+='<div class="aqui">você está aqui!</div>';}
+    if(atual){h+='<img class="teotrilha" src="'+IMG.mFeliz+'" alt="Teo">';h+='<div class="aqui">você está aqui!</div>';}
     h+='<div class="nofig"><img src="'+p.c+'" alt="">';
     if(est==="trav"){h+='<div class="cadeado">&#128274;</div>';}
     if(feita){h+='<div class="check">&#9989;</div>';}
