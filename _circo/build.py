@@ -48,6 +48,9 @@ for L in ["A","E","I","O","U"]:
 # Guloseimas de circo (Parada 7 - Qual e o Diferente)
 for k in ["pipoca","algodao","maca","sorvete","pirulito","cachorro"]:
     m("GUL_" + k, "gul-" + k + ".png")
+# Pecas do quebra-cabeca (Parada 8)
+for k in range(4):
+    m("PZ_" + str(k), "pz-" + str(k) + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:
