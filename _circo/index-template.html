@@ -792,7 +792,7 @@ function virarCarta(i){if(_memTrava){return;}var c=$("mc"+i);if(!c){return;}
   somClique();c.className="memcarta aberta";_memViradas.push(i);
   if(_memViradas.length>=2){_memTrava=true;var a=_memViradas[0],b=_memViradas[1];
     if(_memCartas[a].par===_memCartas[b].par){
-      setTimeout(function(){var ea=$("mc"+a),eb=$("mc"+b);if(ea){ea.className="memcarta achada";}if(eb){eb.className="memcarta achada";}somAcerto();_memPares++;_memViradas=[];_memTrava=false;
+      setTimeout(function(){var ea=$("mc"+a),eb=$("mc"+b);if(ea){ea.className="memcarta achada";}if(eb){eb.className="memcarta achada";}somAcerto();confete(14);_memPares++;_memViradas=[];_memTrava=false;
         if(_memPares>=_memTotal){_resp=true;acertou();var el=elogio();$("zonaFeed").innerHTML=fbOk(el+' Você achou todos os pares!');falar(el+" Você achou todos os pares!");}},420);
     }else{streak=0;dErros++;somErro();
       setTimeout(function(){var ea=$("mc"+a),eb=$("mc"+b);if(ea){ea.className="memcarta";}if(eb){eb.className="memcarta";}_memViradas=[];_memTrava=false;},850);}}}
