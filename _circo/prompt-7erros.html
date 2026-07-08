@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prompt — Cena dos 7 Erros (Circo)</title>
+<title>Prompt — Cena dos 7 Erros (versão LIMPA)</title>
 <style>
   body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
   header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
@@ -7,25 +7,30 @@
   header p{margin:6px 0 0;font-size:13px;opacity:.9}
   .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
   .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
-  textarea{width:100%;box-sizing:border-box;min-height:250px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  textarea{width:100%;box-sizing:border-box;min-height:270px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
   button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
   button:active{-webkit-transform:scale(.97);transform:scale(.97)}
   .ok{background:#7CFC9A}
   .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
 </style>
 <header>
-  <h1>&#127914; Cena dos 7 Erros &mdash; Circo</h1>
-  <p>1 cena CHEIA (retângulo preenchido). Gere e suba no <b>_imagens/</b>. Eu crio os 7 erros por código.</p>
+  <h1>&#127914; Cena dos 7 Erros &mdash; vers&atilde;o LIMPA</h1>
+  <p>Cena simples (poucos elementos grandes, fundo liso). Gere e suba no <b>_imagens/</b>.</p>
 </header>
 <div class="nota">
-  Diferente das ilhas: aqui é uma <b>CENA inteira preenchendo o quadro</b> (pode ter fundo e sombras). Quanto <b>mais elementos pequenos e coloridos</b> (estrelas, bandeirinhas, confetes), melhores as diferenças. <b>Sem texto.</b>
+  A cena anterior ficou <b>complexa demais</b> (mar de confete/estrelinhas). Esta pede <b>poucos elementos GRANDES e bem separados</b> e <b>fundo liso</b> &mdash; á a criança do Pré acha as 7 diferenças fácil. Sem texto.
 </div>
 <div class="card">
-  <h2>Cartela &mdash; Cena de circo detalhada</h2>
-  <textarea id="p" readonly>Ilustração de uma CENA de circo bem cheia e detalhada, em retângulo deitado (paisagem, 3:2), preenchendo TODO o quadro:
+  <h2>Cartela &mdash; Cena de circo LIMPA</h2>
+  <textarea id="p" readonly>Ilustração de uma CENA de circo SIMPLES e LIMPA para crianças pequenas, em retângulo deitado (paisagem 3:2), preenchendo o quadro. POUCOS elementos, GRANDES e bem separados, com bastante espaço entre eles:
 
-O picadeiro do circo com a tenda listrada de vermelho e branco ao fundo, o céu com VÁRIAS estrelas e uma lua, muitas BANDEIRINHAS coloridas penduradas em cordões, uma fileira de LAMPADINHAS acesas, alguns BALÕES coloridos flutuando, um ELEFANTINHO e um LEÃOZINHO de circo no picadeiro, um pódio, e PIPOCA e CONFETE espalhados pelo chão. Muitos elementos pequenos e coloridos espalhados pela cena (estrelas, bandeirinhas, confetes).
+- A tenda listrada de circo ao fundo (vermelha e branca).
+- Um elefantinho em cima de um pódio e um leãozinho ao lado.
+- 3 ou 4 balões coloridos GRANDES.
+- Um cordão com poucas bandeirinhas GRANDES.
+- 3 ou 4 estrelas GRANDES no céu e uma lua.
+- Um pouquinho de pipoca no chão.
 
-Estilo: cartoon flat infantil, cores vivas, contorno preto. Cena inteira preenchendo o quadro (pode ter sombras e fundo). SEM texto, sem letras, sem números.</textarea>
+Fundo LIMPO: céu liso (azul) e chão liso, SEM montes de confete e SEM estrelinhas miúdas espalhadas. Cartoon flat infantil, cores vivas, contorno preto grosso. Cena inteira preenchendo o quadro. SEM texto, sem letras, sem números.</textarea>
   <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
 </div>
