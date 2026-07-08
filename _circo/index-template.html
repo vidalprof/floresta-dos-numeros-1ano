@@ -47,9 +47,17 @@ body{font-family:"Segoe UI",Verdana,sans-serif;background:#2a1550;
   border:2px solid rgba(255,210,63,.4);border-radius:16px;padding:8px 12px;margin-bottom:10px;
   -webkit-box-shadow:0 6px 18px rgba(0,0,0,.4);box-shadow:0 6px 18px rgba(0,0,0,.4);}
 .topbar.hidden{display:none;}
-.emblema{width:42px;height:42px;border-radius:50%;-webkit-box-flex:0;flex:0 0 auto;margin-right:10px;
-  background:-webkit-linear-gradient(#ffe27a,#ffbe1f);background:linear-gradient(#ffe27a,#ffbe1f);
-  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:22px;border:2px solid #b8801a;}
+.emblema{width:48px;height:46px;-webkit-box-flex:0;flex:0 0 auto;margin-right:10px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:22px;}
+.tbembimg{height:46px;width:auto;display:block;-webkit-filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));filter:drop-shadow(0 2px 3px rgba(0,0,0,.45));}
+.levelup{position:fixed;left:0;top:0;right:0;bottom:0;z-index:60;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;background:rgba(18,8,34,.78);pointer-events:none;}
+.lucard{-webkit-animation:revela .5s;animation:revela .5s;}
+.lucard{background:#241542;background:-webkit-linear-gradient(#2e1c56,#1c1238);background:linear-gradient(#2e1c56,#1c1238);border:3px solid #ffd23f;-webkit-border-radius:18px;border-radius:18px;padding:18px 26px;text-align:center;-webkit-box-shadow:0 8px 30px rgba(0,0,0,.6);box-shadow:0 8px 30px rgba(0,0,0,.6);}
+.lucard img{height:120px;width:auto;display:block;margin:6px auto;-webkit-animation:revela .5s;animation:revela .5s;}
+.lutit{font-size:18px;color:#ffd23f;font-weight:bold;}
+.lunome{font-size:16px;color:#fff;font-weight:bold;}
+@-webkit-keyframes lufade{0%{opacity:0;}12%{opacity:1;}82%{opacity:1;}100%{opacity:0;}}
+@keyframes lufade{0%{opacity:0;}12%{opacity:1;}82%{opacity:1;}100%{opacity:0;}}
 .tbmeio{-webkit-box-flex:1;flex:1;}
 .tbnivel{font-size:13px;color:#ffd23f;font-weight:bold;}
 .xptrilho{height:10px;background:rgba(0,0,0,.35);border-radius:6px;overflow:hidden;margin-top:3px;border:1px solid rgba(255,210,63,.3);}
@@ -310,6 +318,7 @@ IMG.errCerta="{{ERR_CERTA}}";IMG.errErrada="{{ERR_ERRADA}}";
 IMG.q20="{{Q2_0}}";IMG.q21="{{Q2_1}}";IMG.q22="{{Q2_2}}";IMG.q23="{{Q2_3}}";IMG.q24="{{Q2_4}}";IMG.q25="{{Q2_5}}";
 IMG.med1="{{MED_1}}";IMG.med2="{{MED_2}}";IMG.med3="{{MED_3}}";IMG.med4="{{MED_4}}";IMG.med5="{{MED_5}}";IMG.med6="{{MED_6}}";IMG.med7="{{MED_7}}";IMG.med8="{{MED_8}}";IMG.med9="{{MED_9}}";IMG.med10="{{MED_10}}";IMG.med11="{{MED_11}}";
 IMG.rec1="{{REC_1}}";IMG.rec2="{{REC_2}}";IMG.rec3="{{REC_3}}";
+IMG.emb1="{{EMB_1}}";IMG.emb2="{{EMB_2}}";IMG.emb3="{{EMB_3}}";IMG.emb4="{{EMB_4}}";IMG.emb5="{{EMB_5}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -326,9 +335,10 @@ function salvar(){try{localStorage.setItem("circoTeo",JSON.stringify(ESTADO));}c
 function carregar(){try{var s=localStorage.getItem("circoTeo");if(s){ESTADO=JSON.parse(s);}}catch(e){}
   if(!ESTADO.concluidas){ESTADO.concluidas={};}}
 /* ====== NIVEIS ====== */
-var NIVEIS=[{p:0,n:"Aprendiz de Palhaço"},{p:20,n:"Ajudante do Picadeiro"},{p:50,n:"Artista de Circo"},{p:90,n:"Estrela do Show"},{p:140,n:"Mestre do Circo"}];
-function nivelAtual(){var i,r=NIVEIS[0];for(i=0;i<NIVEIS.length;i++){if(ESTADO.pontos>=NIVEIS[i].p){r=NIVEIS[i];}}return r;}
-function atualizarTopo(){$("tbNivel").innerHTML=nivelAtual().n;$("tbPts").innerHTML=ESTADO.pontos+" pontos";
+var NIVEIS=[{p:0,n:"Aprendiz de Palhaço",img:IMG.emb1},{p:15,n:"Explorador do Circo",img:IMG.emb2},{p:35,n:"Artista do Picadeiro",img:IMG.emb3},{p:55,n:"Mestre do Circo",img:IMG.emb4},{p:75,n:"Estrela do Circo",img:IMG.emb5}];
+function nivelIdx(){var i,r=0;for(i=0;i<NIVEIS.length;i++){if(ESTADO.pontos>=NIVEIS[i].p){r=i;}}return r;}
+function nivelAtual(){return NIVEIS[nivelIdx()];}
+function atualizarTopo(){var nv=nivelAtual();$("tbEmb").innerHTML='<img class="tbembimg" src="'+nv.img+'" alt="">';$("tbNivel").innerHTML=nv.n;$("tbPts").innerHTML=ESTADO.pontos+" pontos";
   var prox=NIVEIS[NIVEIS.length-1].p,i;for(i=0;i<NIVEIS.length;i++){if(ESTADO.pontos<NIVEIS[i].p){prox=NIVEIS[i].p;break;}}
   var pct=Math.min(100,Math.round(100*ESTADO.pontos/prox));$("tbXp").style.width=pct+"%";}
 /* ====== FUNDO ====== */
@@ -687,7 +697,12 @@ function montarRodadas(qtd){var f=FCFG[faseAtual];
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   d=montarRodadas(5);dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];_resp=false;renderDesafio();}
 function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else if(f.tipo==="luzes"){renderLuzes();}else if(f.tipo==="vogais"){renderVogais();}else if(f.tipo==="diferente"){renderDiferente();}else if(f.tipo==="quebra"){renderQuebra();}else if(f.tipo==="memoria"){renderMemoria();}else if(f.tipo==="erros"){renderErros();}else{renderContar();}}
-function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;ESTADO.pontos+=2;salvar();atualizarTopo();}
+function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;var na=nivelIdx();ESTADO.pontos+=2;salvar();atualizarTopo();if(nivelIdx()>na){levelUp(nivelIdx());}}
+function levelUp(idx){var nv=NIVEIS[idx];somFanfarra();confete(30);
+  var d=document.createElement("div");d.className="levelup";
+  d.innerHTML='<div class="lucard"><div class="lutit">&#11088; Subiu de nível!</div><img src="'+nv.img+'" alt=""><div class="lunome">'+nv.n+'</div></div>';
+  document.body.appendChild(d);
+  setTimeout(function(){if(d.parentNode){d.parentNode.removeChild(d);}},3400);}
 function fbOk(txt){return '<div class="fbok">&#127881; '+txt+'</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';}
 function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
 /* ---- tipo COR ---- */
@@ -1012,7 +1027,7 @@ function iniciarExtra(){somClique();_extraDado[faseAtual]=true;emExtra=true;emRe
   h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">'+msg+' Bora?</div></div>';
   h+='<button class="btn pulsa gate-audio" onclick="renderDesafio()">Começar! &#9654;</button></div>';
   $("app").innerHTML=h;window.scrollTo(0,0);falar(msg+" Vamos lá?");}
-function fimExtra(){somFanfarra();confete(40);emExtra=false;ESTADO.pontos+=3;salvar();atualizarTopo();
+function fimExtra(){somFanfarra();confete(40);emExtra=false;var na=nivelIdx();ESTADO.pontos+=3;salvar();atualizarTopo();if(nivelIdx()>na){levelUp(nivelIdx());}
   var h='<div class="card"><h2>Desafio Extra concluído! &#127775;</h2><div class="medalha">&#127775;</div>';
   h+='<div class="mascbox"><img src="'+IMG.mComemora+'" alt="Teo"><div class="balao">Uau! Você é um artista de circo de verdade! Ganhou pontos extras!</div></div>';
   h+='<button class="btn pulsa gate-audio" onclick="telaMapa()">&#9654; Voltar ao mapa</button></div>';
