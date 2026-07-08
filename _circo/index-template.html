@@ -247,6 +247,17 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 @-webkit-keyframes cai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1;}100%{-webkit-transform:translateY(110vh) rotate(540deg);opacity:.9;}}
 @keyframes cai{0%{transform:translateY(0) rotate(0);opacity:1;}100%{transform:translateY(110vh) rotate(540deg);opacity:.9;}}
 .medalha{width:120px;height:120px;margin:6px auto;border-radius:50%;background:-webkit-radial-gradient(circle,#ffe27a,#e0a018);background:radial-gradient(circle,#ffe27a,#e0a018);border:4px solid #fff2c0;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:54px;-webkit-box-shadow:0 0 22px rgba(255,210,120,.7);box-shadow:0 0 22px rgba(255,210,120,.7);}
+.medganha{margin:6px auto 4px;text-align:center;-webkit-animation:revela .5s;animation:revela .5s;}
+.medganha img{display:block;margin:0 auto;width:auto;height:150px;-webkit-filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));}
+.medgrid{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;max-width:470px;margin:10px auto;}
+.medcel{width:138px;margin:6px 4px;text-align:center;}
+.medwrap{position:relative;display:inline-block;}
+.medwrap img{display:block;margin:0 auto;width:auto;height:96px;}
+.medcel.trav .medwrap img{-webkit-filter:grayscale(1) opacity(.4);filter:grayscale(1) opacity(.4);}
+.med-num{position:absolute;right:0;bottom:6px;min-width:24px;height:24px;line-height:22px;background:#e5332a;color:#fff;font-weight:bold;font-size:13px;-webkit-border-radius:50%;border-radius:50%;border:2px solid #fff;text-align:center;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.4);box-shadow:0 1px 3px rgba(0,0,0,.4);}
+.medcel.trav .med-num{background:#7a6a99;}
+.medlock{position:absolute;left:0;top:0;right:0;bottom:0;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:28px;}
+.medlbl{font-size:12px;color:#e6c9ff;margin-top:3px;line-height:1.2;}
 .opnum{display:inline-block;cursor:pointer;border:none;background:transparent;margin:8px 12px;padding:2px;}
 .opnum img{display:block;height:80px;width:auto;-webkit-animation:flutua 3s ease-in-out infinite;animation:flutua 3s ease-in-out infinite;}
 .opnum:active img{-webkit-transform:scale(.94);transform:scale(.94);}
@@ -294,6 +305,7 @@ IMG.gulPipoca="{{GUL_pipoca}}";IMG.gulAlgodao="{{GUL_algodao}}";IMG.gulMaca="{{G
 IMG.pz0="{{PZ_0}}";IMG.pz1="{{PZ_1}}";IMG.pz2="{{PZ_2}}";IMG.pz3="{{PZ_3}}";
 IMG.errCerta="{{ERR_CERTA}}";IMG.errErrada="{{ERR_ERRADA}}";
 IMG.q20="{{Q2_0}}";IMG.q21="{{Q2_1}}";IMG.q22="{{Q2_2}}";IMG.q23="{{Q2_3}}";IMG.q24="{{Q2_4}}";IMG.q25="{{Q2_5}}";
+IMG.med1="{{MED_1}}";IMG.med2="{{MED_2}}";IMG.med3="{{MED_3}}";IMG.med4="{{MED_4}}";IMG.med5="{{MED_5}}";IMG.med6="{{MED_6}}";IMG.med7="{{MED_7}}";IMG.med8="{{MED_8}}";IMG.med9="{{MED_9}}";IMG.med10="{{MED_10}}";IMG.med11="{{MED_11}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -409,6 +421,8 @@ var PARADAS=[
  {ch:"quebra2",n:"Quebra-Cabeça 2",c:IMG.cLeao,jog:true}
 ];
 function idxParada(ch){var i;for(i=0;i<PARADAS.length;i++){if(PARADAS[i].ch===ch)return i;}return -1;}
+function medalDaParada(ch){var i=idxParada(ch);return i>=0?IMG["med"+(i+1)]:"";}
+function numDaParada(ch){var i=idxParada(ch);return i>=0?(i+1):0;}
 function liberada(i){if(i===0)return true;return ESTADO.concluidas[PARADAS[i-1].ch]===true;}
 /* ====== TELA INICIAL ====== */
 function telaInicio(){$("topbar").className="topbar hidden";var h="";
@@ -469,6 +483,7 @@ function telaMapa(){pararMusPinta();$("topbar").className="topbar";atualizarTopo
   h+='<div class="conector"></div><div class="trofeubox'+(tudo?' clicavel':'')+'"'+(tudo?' onclick="telaFinal()"':'')+'><img class="trofeuimg" src="'+IMG.trofeu+'" alt="Troféu"'+(tudo?' style="-webkit-filter:none;filter:none;"':'')+'>';
   if(!tudo){h+='<div class="cadeado" style="position:static;font-size:20px;">&#128274;</div>';}
   h+='<div class="trofnome"'+(tudo?' style="color:#ffd23f;"':'')+'>Grande Espetáculo Final</div></div>';
+  h+='<button class="btn suave peq" onclick="telaMedalhas()">&#127941; Minhas Medalhas</button>';
   h+='<button class="btn suave peq" onclick="telaInicio()">Voltar ao início</button>';
   $("app").innerHTML=h;window.scrollTo(0,0);narrarMapa();}
 function narrarMapa(){var feitas=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])feitas++;}
@@ -477,6 +492,20 @@ function narrarMapa(){var feitas=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.con
   else{falar("Você já arrumou "+numExtG(feitas,"f")+(feitas===1?" parada":" paradas")+"! Continue na parada que está brilhando.");}}
 function avisoTrancada(){somClique();falar("Esta parada ainda está trancada! Termine a parada anterior para abrir esta.");}
 /* ====== GRANDE FINAL ====== */
+/* ====== MINHAS MEDALHAS ====== */
+function telaMedalhas(){somClique();pararMusPinta();
+  var ganhas=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])ganhas++;}
+  var h='<div class="card"><h2>&#127941; Minhas Medalhas</h2>';
+  h+='<div class="progtxt">Você ganhou <b>'+ganhas+'</b> de '+PARADAS.length+' '+(ganhas===1?"medalha":"medalhas")+'!</div>';
+  h+='<div class="medgrid">';
+  for(i=0;i<PARADAS.length;i++){var p=PARADAS[i];var tem=ESTADO.concluidas[p.ch]===true;var n=i+1;
+    h+='<div class="medcel'+(tem?"":" trav")+'"><div class="medwrap"><img src="'+IMG["med"+n]+'" alt="Medalha '+n+'"><span class="med-num">'+n+'</span>';
+    if(!tem){h+='<div class="medlock">&#128274;</div>';}
+    h+='</div><div class="medlbl">'+p.n+'</div></div>';}
+  h+='</div>';
+  h+='<button class="btn pulsa" onclick="telaMapa()">&#9654; Voltar ao mapa</button></div>';
+  $("app").innerHTML=h;window.scrollTo(0,0);
+  falar(ganhas===0?"Aqui ficam as suas medalhas! Complete as paradas para ganhar cada uma.":"Você já ganhou "+numExtG(ganhas,"f")+(ganhas===1?" medalha":" medalhas")+"! Continue para completar a coleção.");}
 function telaFinal(){somClique();pararMusPinta();somFanfarra();confete(50);
   setTimeout(function(){confete(40);},650);setTimeout(function(){confete(40);},1350);
   var tot=0,i;for(i=0;i<PARADAS.length;i++){if(ESTADO.concluidas[PARADAS[i].ch])tot++;}
@@ -946,8 +975,9 @@ function fimFase(){var f=FCFG[faseAtual];ESTADO.concluidas[faseAtual]=true;salva
   var tot=dAcertos+dErros;var pct=Math.round(100*dAcertos/(tot||1));
   var ofereceExtra=(pct===100 && !_extraDado[faseAtual] && !f.jogo);
   var ofereceRef=(pct<50 && dEfase.length>0 && !_refDado[faseAtual]);
-  var h='<div class="card"><h2>Parada concluída!</h2><div class="medalha">&#127752;</div>';
-  h+='<p class="lead">Você completou a parada <b>'+f.titulo+'</b>! Acertou '+dAcertos+' de '+tot+'.</p>';
+  var h='<div class="card"><h2>Parada concluída!</h2>';
+  h+='<div class="medganha"><div class="medwrap"><img src="'+medalDaParada(faseAtual)+'" alt="Medalha"><span class="med-num">'+numDaParada(faseAtual)+'</span></div></div>';
+  h+='<p class="lead">Você ganhou a medalha da parada <b>'+f.titulo+'</b>! Acertou '+dAcertos+' de '+tot+'.</p>';
   h+='<div class="mascbox"><img src="'+IMG.mComemora+'" alt="Teo"><div class="balao">'+f.gancho+'</div></div>';
   h+='<p class="progtxt" style="color:#ffd23f;">&#128275; Você abriu a próxima parada!</p>';
   if(ofereceExtra){h+='<button class="btn pulsa gate-audio" onclick="iniciarExtra()">&#127775; Desafio Extra (opcional)</button>';}
@@ -955,7 +985,7 @@ function fimFase(){var f=FCFG[faseAtual];ESTADO.concluidas[faseAtual]=true;salva
   h+='<button class="btn'+((ofereceExtra||ofereceRef)?' suave peq':' pulsa gate-audio')+'" onclick="telaMapa()">&#9654; Voltar ao mapa</button>';
   h+='<button class="btn suave peq" onclick="comecarFase()">&#128257; Jogar de novo</button></div>';
   $("app").innerHTML=h;window.scrollTo(0,0);
-  var fa="Parada concluída! Você ganhou uma medalha! ";
+  var fa="Parada concluída! Você ganhou a medalha número "+numDaParada(faseAtual)+"! ";
   if(ofereceExtra){fa+="Que tal um desafio extra? É um pouquinho mais difícil!";}
   else if(ofereceRef){fa+="Quer treinar mais um pouquinho?";}
   else{fa+=f.gancho;}

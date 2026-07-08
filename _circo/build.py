@@ -57,6 +57,9 @@ m("ERR_ERRADA", "err-errada.png")
 # Quebra-cabeca 2 (Parada 11) - 6 pecas 2x3
 for k in range(6):
     m("Q2_" + str(k), "q2-" + str(k) + ".png")
+# Medalhas por parada (1..11)
+for k in range(1, 12):
+    m("MED_" + str(k), "med-" + str(k) + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:
