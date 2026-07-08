@@ -42,6 +42,9 @@ for k in ["cartola","gravata"]:
 # Imagens das vogais (Parada 6)
 for k in ["ioio","urso","oculos"]:
     m("VOG_" + k, "vog-" + k + ".png")
+# Letras-vogais de circo (bolha-imagem)
+for L in ["A","E","I","O","U"]:
+    m("VOGL_" + L, "vog-letra-" + L + ".png")
 
 def datauri(path):
     with open(path, "rb") as f:

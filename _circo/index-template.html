@@ -172,9 +172,10 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .vogfig{height:150px;margin:8px auto 6px;text-align:center;}
 .vogfig img{height:150px;width:auto;display:inline-block;-webkit-filter:drop-shadow(0 5px 6px rgba(0,0,0,.4));filter:drop-shadow(0 5px 6px rgba(0,0,0,.4));-webkit-animation:flutua 3s ease-in-out infinite;animation:flutua 3s ease-in-out infinite;}
 .vogopcoes{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;margin:10px 0 4px;}
-.vogbolha{width:56px;height:56px;line-height:56px;margin:7px;border-radius:50%;background:-webkit-linear-gradient(#ffd23f,#f0a92e);background:linear-gradient(#ffd23f,#f0a92e);color:#5a2410;font-size:27px;font-weight:bold;cursor:pointer;text-align:center;-webkit-box-shadow:0 4px 0 #b9761b;box-shadow:0 4px 0 #b9761b;}
-.vogbolha.certa{background:#4dff9e;color:#0a3a22;-webkit-box-shadow:0 4px 0 #2a9c63;box-shadow:0 4px 0 #2a9c63;-webkit-transform:scale(1.08);transform:scale(1.08);}
-.vogbolha.errada{background:#f0708a;color:#5a1020;-webkit-box-shadow:0 4px 0 #a83048;box-shadow:0 4px 0 #a83048;}
+.vogbolha{display:inline-block;margin:6px 8px;cursor:pointer;vertical-align:middle;}
+.vogbolha img{height:66px;width:auto;display:block;-webkit-filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));filter:drop-shadow(0 3px 4px rgba(0,0,0,.4));-webkit-transition:-webkit-transform .12s;transition:transform .12s;}
+.vogbolha.certa img{-webkit-filter:drop-shadow(0 0 12px #4dff9e);filter:drop-shadow(0 0 12px #4dff9e);-webkit-transform:scale(1.12);transform:scale(1.12);}
+.vogbolha.errada img{-webkit-filter:drop-shadow(0 0 12px #f0708a);filter:drop-shadow(0 0 12px #f0708a);}
 .vogbolha.tremer{-webkit-animation:tremer .4s;animation:tremer .4s;}
 /* fase LUZES (ligar os pontos) */
 .luzwrap{position:relative;width:280px;height:280px;margin:8px auto;max-width:88vw;}
@@ -248,6 +249,7 @@ IMG.fBola="{{F_bola}}";IMG.fPresente="{{F_presente}}";IMG.fChapeu="{{F_chapeu}}"
 IMG.balVerde="{{B_verde}}";IMG.balRoxo="{{B_roxo}}";IMG.balLaranja="{{B_laranja}}";
 IMG.lpCartola="{{LP_cartola}}";IMG.lpGravata="{{LP_gravata}}";
 IMG.vogIoio="{{VOG_ioio}}";IMG.vogUrso="{{VOG_urso}}";IMG.vogOculos="{{VOG_oculos}}";
+IMG.voglA="{{VOGL_A}}";IMG.voglE="{{VOGL_E}}";IMG.voglI="{{VOGL_I}}";IMG.voglO="{{VOGL_O}}";IMG.voglU="{{VOGL_U}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -462,6 +464,7 @@ var VOGAIS=[
  {img:IMG.vogOculos,nome:"óculos",vogal:"O"},
  {img:IMG.vogUrso,nome:"urso",vogal:"U"}];
 var LETRAS_VOGAIS=["A","E","I","O","U"];
+var LETRA_IMG={A:IMG.voglA,E:IMG.voglE,I:IMG.voglI,O:IMG.voglO,U:IMG.voglU};
 function vogalFalada(v){var t={A:"á",E:"é",I:"i",O:"ó",U:"úú"};return t[v]||v;}
 /* Qual e o Diferente: grupos de imagens que ja temos */
 var DIF_CATS={
@@ -678,7 +681,7 @@ function renderVogais(){var q=d[dIdx];_resp=false;
   h+='<div class="dica">&#128161; Ouça bem o comecinho da palavra.</div>';
   h+='<div class="vogfig"><img src="'+q.img+'" alt=""></div>';
   h+='<div class="vogopcoes">';
-  var i;for(i=0;i<LETRAS_VOGAIS.length;i++){var v=LETRAS_VOGAIS[i];h+='<div class="vogbolha" id="vb'+v+'" onclick="responderVogal(\''+v+'\')">'+v+'</div>';}
+  var i;for(i=0;i<LETRAS_VOGAIS.length;i++){var v=LETRAS_VOGAIS[i];h+='<div class="vogbolha" id="vb'+v+'" onclick="responderVogal(\''+v+'\')"><img src="'+LETRA_IMG[v]+'" alt="'+v+'"></div>';}
   h+='</div><div id="zonaFeed"></div></div>';
   $("app").innerHTML=h;falar("Ouça: "+q.nome+". Toque na vogal com que a palavra começa!");}
 function responderVogal(v){if(_resp){return;}var q=d[dIdx];somClique();
