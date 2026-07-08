@@ -1,5 +1,5 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prompts das Ilhas (2 cartelas) — Circo do Teo</title>
+<title>Prompts das Ilhas (2 cartelas, versão rígida) — Circo do Teo</title>
 <style>
   body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
   header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
@@ -8,30 +8,30 @@
   .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
   .card h2{margin:0 0 4px;font-size:16px;color:#ffd23f}
   .card .meq{font-size:12px;opacity:.75;margin:0 0 10px}
-  textarea{width:100%;box-sizing:border-box;min-height:250px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  textarea{width:100%;box-sizing:border-box;min-height:260px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
   button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
   button:active{-webkit-transform:scale(.97);transform:scale(.97)}
   .ok{background:#7CFC9A}
   .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
 </style>
 <header>
-  <h1>&#127914; Ilhas Tem&aacute;ticas &mdash; 2 cartelas</h1>
-  <p>S&oacute; <b>2 imagens</b>: Cartela A (6 ilhas) e Cartela B (5 ilhas). Toque em <b>Copiar</b>, gere no ChatGPT e suba as duas no <b>_imagens/</b>. Eu recorto cada quadro, deixo <b>sem fundo</b> e animo.</p>
+  <h1>&#127914; Ilhas &mdash; 2 cartelas (vers&atilde;o R&Iacute;GIDA)</h1>
+  <p>Regeração: <b>s&oacute; o objeto flutuando no branco, SEM cen&aacute;rio de fundo, SEM texto.</b> Gere as 2 e suba no <b>_imagens/</b>.</p>
 </header>
 
 <div class="nota">
-  <b>Regra de ouro:</b> cada ilha &eacute; um <b>agrupamento de elementos do circo FLUTUANDO no branco</b> &mdash; <b>SEM fundo de c&eacute;u/parede</b>, <b>SEM ret&acirc;ngulo/moldura em volta</b>, <b>sem sombras</b>, <b>sem texto/letras/n&uacute;meros</b>. Fundo branco puro #FFFFFF s&oacute; pra eu recortar. Mantenha a <b>ordem</b> das cenas (&eacute; por ela que eu identifico cada parada).
+  <b>Por que refazer:</b> a 1&ordf; leva veio como <b>cena retangular com fundo</b> (parede/ch&atilde;o/c&eacute;u/cortina) e alguns cartazes com a palavra "CIRCUS". Aqui a regra &eacute; dura: <b>cada item &eacute; s&oacute; o objeto, flutuando no branco, sem nenhum fundo/ret&acirc;ngulo e sem nenhuma palavra</b>.
 </div>
 
 <div id="lista"></div>
 
 <script>
-var COMUM="\n\nEstilo de TODAS as cenas: cartoon flat infantil, cores vivas de circo, contorno preto fechado em cada elemento. REGRA IMPORTANTE: cada cena é um AGRUPAMENTO de elementos do circo FLUTUANDO diretamente sobre fundo BRANCO PURO #FFFFFF — NÃO desenhe fundo de céu, parede, chão preenchido ou qualquer retângulo colorido atrás das cenas; NÃO coloque moldura, cartão nem retângulo/borda em volta de nenhuma cena; os elementos ficam soltos no branco. SEM sombras projetadas. Sem texto, sem letras, sem números. Distribua as cenas numa grade bem alinhada e MUITO espaçada, com bastante espaço branco entre cada uma (para recorte), cada cena compacta e completa, sem sobreposição.";
+var COMUM="\n\nEstilo: cartoon flat infantil, cores vivas de circo, contorno preto fechado em cada item. REGRA RÍGIDA: cada item é APENAS o objeto/conjunto do circo indicado, FLUTUANDO sozinho no fundo BRANCO PURO #FFFFFF. NÃO desenhe NENHUM cenário atrás: sem parede, sem chão, sem céu, sem cortina, sem palco, sem qualquer retângulo ou fundo colorido — só o objeto no branco. SEM sombras. SEM nenhuma palavra, letra ou número (nem em cartazes/placas). Distribua numa grade bem alinhada e MUITO espaçada, com bastante branco entre os itens, cada item compacto e completo, sem sobreposição.";
 var CARTELAS=[
  ["A","6 ilhas — Paradas 1 a 6","Grade 2 colunas x 3 linhas",
-  "Seis cenas de circo DIFERENTES na mesma folha, numa grade de 2 COLUNAS por 3 LINHAS, exatamente nesta ordem (da esquerda para a direita, de cima para baixo). Cada uma é um agrupamento de elementos flutuando no branco (sem fundo, sem retângulo):\n\n1) Um arco de entrada de circo listrado de vermelho e branco, com vários balões coloridos amarrados (vermelho, azul, verde, amarelo, roxo e laranja) e bandeirinhas triangulares coloridas.\n2) Um tapete redondo vermelho de picadeiro com dois ou três banquinhos/pódios de apresentação em cima e algumas estrelas douradas em volta.\n3) Uma mesa de festa com uma bola listrada redonda, um presente embrulhado com laço, um chapéu de festa pontudo, um tamborzinho e bandeirinhas coloridas.\n4) Um holofote de circo aceso projetando um facho de luz amarelo claro para baixo, formando um círculo de luz no chão (só o holofote e o facho, sem fundo).\n5) Uma tenda de circo listrada com uma guirlanda de lampadinhas redondas acesas (amarelas) contornando a tenda e algumas estrelinhas soltas em volta (SEM céu, sem fundo).\n6) A marquise/letreiro luminoso da entrada do circo: um painel arredondado grande e VAZIO (sem nenhuma letra e sem número) cercado por muitas lâmpadas redondas acesas (só o letreiro flutuando, sem parede atrás)."],
+  "seis itens de circo DIFERENTES, numa grade de 2 COLUNAS por 3 LINHAS, exatamente nesta ordem (esquerda para a direita, cima para baixo):\n\n1) Um arco de circo listrado de vermelho e branco com balões coloridos (vermelho, azul, verde, amarelo, roxo, laranja) amarrados no topo e bandeirinhas triangulares coloridas.\n2) Dois ou três banquinhos/pódios de circo redondos e listrados, com algumas estrelas douradas flutuando em volta.\n3) Uma mesinha de festa com uma bola listrada redonda, um presente com laço, um chapéu de festa pontudo, um tamborzinho e bandeirinhas coloridas.\n4) Um holofote de circo aceso projetando um facho de luz amarelo claro para baixo (apenas o holofote e o facho de luz).\n5) Uma tenda de circo listrada de vermelho e branco com uma guirlanda de lampadinhas redondas acesas contornando a tenda e algumas estrelinhas soltas.\n6) Uma placa/letreiro arredondado de circo totalmente VAZIO (sem nenhuma letra e sem número), toda contornada por muitas lâmpadas redondas acesas."],
  ["B","5 ilhas — Paradas 7 a 11","Grade 2+2+1 (últimas)",
-  "Cinco cenas de circo DIFERENTES na mesma folha, numa grade alinhada (duas na primeira linha, duas na segunda, uma centralizada na terceira), exatamente nesta ordem (da esquerda para a direita, de cima para baixo). Cada uma é um agrupamento de elementos flutuando no branco (sem fundo, sem retângulo):\n\n1) Um grupo de cartazes/pôsteres de circo coloridos pendurados por cordinhas lado a lado, todos alegres (só os cartazes e a cordinha, flutuando).\n2) Um grande cartaz colorido de espetáculo de circo apoiado, com algumas peças de quebra-cabeça soltas ao redor, um baú e uma corda.\n3) Um conjunto de cartas de jogo viradas de costas, organizadas em grade (os versos todos iguais, com estampa de estrela dourada e listras), como jogo de memória.\n4) Um picadeiro de circo em apresentação, agrupamento mais rico: uma tenda listrada pequena, holofotes, bandeirinhas, um pódio central e enfeites variados juntos (ainda flutuando no branco, sem fundo).\n5) Bastidores do circo: um baú aberto com fantasias, cordas penduradas, um cartaz colorido apoiado e algumas peças de quebra-cabeça espalhadas."]
+  "cinco itens de circo DIFERENTES, numa grade alinhada (duas na 1a linha, duas na 2a, uma centralizada na 3a), exatamente nesta ordem (esquerda para a direita, cima para baixo):\n\n1) Quatro cartazes de circo coloridos e alegres (SEM nenhuma palavra, letra ou número neles) pendurados numa cordinha com prendedores de roupa.\n2) Um cavalete de madeira com um cartaz de circo colorido (SEM texto) e três ou quatro peças de quebra-cabeça coloridas ao lado.\n3) Um conjunto de cartas de jogo viradas de costas em grade (os versos todos iguais, com estampa de estrela dourada e listras), apenas as cartas, SEM moldura de madeira.\n4) Uma tenda de circo listrada com bandeirinhas coloridas em cima e um pequeno pódio na frente (apenas esse conjunto, sem chão nem picadeiro).\n5) Um baú de circo aberto cheio de fantasias coloridas e chapéus de bobo da corte, com algumas peças de quebra-cabeça ao lado."]
 ];
 var lista=document.getElementById("lista"),i;
 for(i=0;i<CARTELAS.length;i++){
