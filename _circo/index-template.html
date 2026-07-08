@@ -285,6 +285,7 @@ IMG.voglA="{{VOGL_A}}";IMG.voglE="{{VOGL_E}}";IMG.voglI="{{VOGL_I}}";IMG.voglO="
 IMG.gulPipoca="{{GUL_pipoca}}";IMG.gulAlgodao="{{GUL_algodao}}";IMG.gulMaca="{{GUL_maca}}";IMG.gulSorvete="{{GUL_sorvete}}";IMG.gulPirulito="{{GUL_pirulito}}";IMG.gulCachorro="{{GUL_cachorro}}";
 IMG.pz0="{{PZ_0}}";IMG.pz1="{{PZ_1}}";IMG.pz2="{{PZ_2}}";IMG.pz3="{{PZ_3}}";
 IMG.errCerta="{{ERR_CERTA}}";IMG.errErrada="{{ERR_ERRADA}}";
+IMG.q20="{{Q2_0}}";IMG.q21="{{Q2_1}}";IMG.q22="{{Q2_2}}";IMG.q23="{{Q2_3}}";IMG.q24="{{Q2_4}}";IMG.q25="{{Q2_5}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
 /* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
@@ -397,7 +398,7 @@ var PARADAS=[
  {ch:"quebra1",n:"Quebra-Cabeça do Circo",c:IMG.cCachorro,jog:true},
  {ch:"memoria",n:"Memória do Circo",c:IMG.cElefante,jog:true},
  {ch:"erros",n:"Caça aos 7 Erros",c:IMG.cMacaco,jog:true},
- {ch:"quebra2",n:"Quebra-Cabeça 2",c:IMG.cLeao}
+ {ch:"quebra2",n:"Quebra-Cabeça 2",c:IMG.cLeao,jog:true}
 ];
 function idxParada(ch){var i;for(i=0;i<PARADAS.length;i++){if(PARADAS[i].ch===ch)return i;}return -1;}
 function liberada(i){if(i===0)return true;return ESTADO.concluidas[PARADAS[i-1].ch]===true;}
