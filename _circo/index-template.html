@@ -144,6 +144,21 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .opbal.tremer{-webkit-animation:tremer .4s;animation:tremer .4s;}
 @-webkit-keyframes tremer{0%,100%{-webkit-transform:translateX(0);}25%{-webkit-transform:translateX(-6px);}75%{-webkit-transform:translateX(6px);}}
 @keyframes tremer{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+/* fase SOMBRA (arrastar) */
+.sombrawrap{display:-webkit-box;display:flex;-webkit-box-pack:justify;justify-content:space-between;max-width:340px;margin:10px auto 4px;}
+.scol{display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-box-direction:normal;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;}
+.animdrag{width:98px;height:98px;margin:8px 0;cursor:pointer;cursor:-webkit-grab;cursor:grab;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;-webkit-animation:flutua 3s ease-in-out infinite;animation:flutua 3s ease-in-out infinite;}
+.animdrag,.sildrop{-ms-touch-action:none;touch-action:none;}
+.animdrag img{max-width:100%;max-height:100%;display:block;pointer-events:none;-webkit-user-drag:none;}
+.animdrag.feito{opacity:0;pointer-events:none;}
+.sildrop{width:98px;height:98px;margin:8px 0;border-radius:16px;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;background:rgba(255,255,255,.05);border:2px dashed rgba(255,210,63,.35);}
+.sildrop img{max-width:82%;max-height:82%;display:block;pointer-events:none;}
+.sildrop.revelado{border-color:#4dff9e;background:rgba(77,255,158,.12);-webkit-animation:revela .45s ease-out;animation:revela .45s ease-out;}
+.sildrop.tremer{-webkit-animation:tremer .4s;animation:tremer .4s;}
+.ghost{opacity:.9;-webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));}
+.ghost img{max-width:100%;max-height:100%;}
+@-webkit-keyframes revela{0%{-webkit-transform:scale(.6);opacity:.2;}60%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);opacity:1;}}
+@keyframes revela{0%{transform:scale(.6);opacity:.2;}60%{transform:scale(1.12);}100%{transform:scale(1);opacity:1;}}
 .fbok{background:rgba(77,180,120,.18);border:2px solid #4dbf82;border-radius:14px;padding:10px;margin:10px auto;max-width:360px;color:#d8ffe8;font-size:15px;line-height:1.4;}
 .fbno{background:rgba(200,80,90,.16);border:2px solid #c86a6a;border-radius:14px;padding:10px;margin:10px auto;max-width:360px;color:#ffdede;font-size:15px;line-height:1.4;}
 /* carimbo */
@@ -202,6 +217,10 @@ IMG.fBola="{{F_bola}}";IMG.fPresente="{{F_presente}}";IMG.fChapeu="{{F_chapeu}}"
 IMG.balVerde="{{B_verde}}";IMG.balRoxo="{{B_roxo}}";IMG.balLaranja="{{B_laranja}}";
 /* Ilhas (cenario de cada parada) */
 var ILHAS={cores:"{{ILHA_cores}}",numeros:"{{ILHA_numeros}}",formas:"{{ILHA_formas}}",sombra:"{{ILHA_sombra}}",luzes:"{{ILHA_luzes}}",vogais:"{{ILHA_vogais}}",diferente:"{{ILHA_diferente}}",quebra1:"{{ILHA_quebra1}}",memoria:"{{ILHA_memoria}}",erros:"{{ILHA_erros}}",quebra2:"{{ILHA_quebra2}}"};
+/* Sombras (silhueta preta gerada por codigo do proprio companheiro) */
+var SOMBRA={leao:"{{SIL_leao}}",elefante:"{{SIL_elefante}}",foca:"{{SIL_foca}}",macaco:"{{SIL_macaco}}",arara:"{{SIL_arara}}",ponei:"{{SIL_ponei}}"};
+var ANIMCOR={leao:IMG.cLeao,elefante:IMG.cElefante,foca:IMG.cFoca,macaco:IMG.cMacaco,arara:IMG.cArara,ponei:IMG.cPonei};
+var ANIMNOME={leao:"leão",elefante:"elefante",foca:"foca",macaco:"macaco",arara:"arara",ponei:"pônei"};
 
 function $(id){return document.getElementById(id);}
 /* ====== ESTADO ====== */
@@ -298,7 +317,7 @@ var PARADAS=[
  {ch:"cores",n:"Balões Coloridos",c:IMG.cPalhaco,jog:true},
  {ch:"numeros",n:"Contando no Picadeiro",c:IMG.cFoca,jog:true},
  {ch:"formas",n:"Formas da Festa",c:IMG.cElefante,jog:true},
- {ch:"sombra",n:"Ligar à Sombra",c:IMG.cLeao},
+ {ch:"sombra",n:"Ligar à Sombra",c:IMG.cLeao,jog:true},
  {ch:"luzes",n:"Caminho das Luzes",c:IMG.cMacaco},
  {ch:"vogais",n:"Vogais do Circo",c:IMG.cArara},
  {ch:"diferente",n:"Qual é o Diferente?",c:IMG.cPonei},
@@ -384,7 +403,11 @@ var FORMAS=[
  {img:IMG.fPresente,forma:"quadrado"},{img:IMG.fDado,forma:"quadrado"},
  {img:IMG.fChapeu,forma:"triângulo"},{img:IMG.fBandeirinha,forma:"triângulo"}];
 var FORMAS_TIPOS=["círculo","quadrado","triângulo"];
+var ANIM_SOMBRA=["leao","elefante","foca","macaco","arara","ponei"];
 var FCFG={
+ sombra:{parada:4,titulo:"Ligar à Sombra",tipo:"sombra",
+   intro:"O holofote do circo acendeu e apareceram as sombras dos bichos! Arraste cada animal colorido até a sombra igual a ele. Vamos ajudar o Teo?",
+   gancho:"Muito bem! Você achou a sombra de cada bichinho! Agora vem a próxima parada da nossa aventura!"},
  cores:{parada:1,titulo:"Balões Coloridos",tipo:"cor",
    intro:"O vento espalhou os balões! Eu vou dizer uma cor, e você toca no balão dessa cor. Vamos lá?",
    gancho:"Muito bem! Você deixou os balões lindos! Agora vem aí a próxima parada: Contando no Picadeiro!"},
@@ -398,7 +421,7 @@ var FCFG={
 var d=[],dIdx=0,dAcertos=0,dErros=0,streak=0,faseAtual="";
 var dEfase=[],emExtra=false,emReforco=false,_numOpc=3,_extraDado={},_refDado={},_resp=false;
 function shuffleReal(a){var i,j,t;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));t=a[i];a[i]=a[j];a[j]=t;}return a;}
-function chaveDesafio(q){if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
+function chaveDesafio(q){if(q.animais!==undefined){return "s"+q.animais.join("_");}if(q.pede!==undefined){return "c"+q.pede;}if(q.target!==undefined){return "f"+q.target;}return "n"+q.n+"_"+q.obj.nome;}
 function guardarErroFase(q){var i,k=chaveDesafio(q);for(i=0;i<dEfase.length;i++){if(chaveDesafio(dEfase[i])===k)return;}dEfase.push(q);}
 function numExt(n){var u=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];return (n>=0&&n<u.length)?u[n]:String(n);}
 function numExtG(n,g){if(n===1){return g==="f"?"uma":"um";}if(n===2){return g==="f"?"duas":"dois";}return numExt(n);}
@@ -422,12 +445,13 @@ function introFase(ch){faseAtual=ch;var f=FCFG[ch];
 function montarRodadas(qtd){var f=FCFG[faseAtual];
   if(f.tipo==="cor"){var base=CORES.slice();shuffleReal(base);return base.slice(0,qtd);}
   if(f.tipo==="forma"){var rf=[],k;for(k=0;k<qtd;k++){rf.push({target:FORMAS_TIPOS[k%FORMAS_TIPOS.length]});}shuffleReal(rf);return rf;}
+  if(f.tipo==="sombra"){var rs=[],k,npar=(_numOpc>=4?4:3);for(k=0;k<qtd;k++){var pool=ANIM_SOMBRA.slice();shuffleReal(pool);rs.push({animais:pool.slice(0,npar)});}return rs;}
   var objs=CONTAR.slice();shuffleReal(objs);var r=[],i;
   for(i=0;i<qtd;i++){var n=2+Math.floor(Math.random()*8);r.push({n:n,obj:objs[i%objs.length]});}
   return r;}
 function comecarFase(){somClique();emExtra=false;emReforco=false;_numOpc=3;
   d=montarRodadas(5);dIdx=0;dAcertos=0;dErros=0;streak=0;dEfase=[];_resp=false;renderDesafio();}
-function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else{renderContar();}}
+function renderDesafio(){var f=FCFG[faseAtual];if(f.tipo==="cor"){renderCor();}else if(f.tipo==="forma"){renderForma();}else if(f.tipo==="sombra"){renderSombra();}else{renderContar();}}
 function acertou(){somAcerto();comemorar();confete(26);dAcertos++;streak++;ESTADO.pontos+=2;salvar();atualizarTopo();}
 function fbOk(txt){return '<div class="fbok">&#127881; '+txt+'</div><button class="btn pulsa" onclick="proximo()">'+(dIdx>=d.length-1?"Ver resultado &#127937;":"Próximo &#10145;")+'</button>';}
 function proximo(){somClique();_resp=false;dIdx++;if(dIdx>=d.length){if(emExtra){fimExtra();}else if(emReforco){fimReforco();}else{fimFase();}}else{renderDesafio();}}
@@ -474,6 +498,62 @@ function responderForma(i,forma){if(_resp){return;}var q=d[dIdx];var certo=(form
     (function(el){setTimeout(function(){el.className="opbal";},450);})($("op"+i));
     $("zonaFeed").innerHTML='<div class="fbno"><b>Quase!</b> Procure o que tem forma de <b>'+q.target+'</b>!</div>';
     falar("Quase! Procure o que tem forma de "+q.target+"!");}}
+/* ---- MOTOR DE ARRASTAR (global + ghost) ---- */
+var _drag=null;
+function instalarDragGlobal(){if(window.__dragInstalado){return;}window.__dragInstalado=true;
+  document.addEventListener("mousemove",dragMove,false);
+  document.addEventListener("touchmove",dragMove,{passive:false});
+  document.addEventListener("mouseup",dragUp,false);
+  document.addEventListener("touchend",dragUp,false);
+  document.addEventListener("dragstart",function(e){var t=e.target;if(_drag||(t&&(""+ (t.className||"")).indexOf("animdrag")>=0)){if(e.preventDefault)e.preventDefault();}},false);}
+function _pt(e){if(e.touches&&e.touches.length){return{x:e.touches[0].clientX,y:e.touches[0].clientY};}if(e.changedTouches&&e.changedTouches.length){return{x:e.changedTouches[0].clientX,y:e.changedTouches[0].clientY};}return{x:e.clientX,y:e.clientY};}
+function dragStart(e,el){if(el.getAttribute("data-feito")==="1"){return;}
+  var p=_pt(e),r=el.getBoundingClientRect();
+  var g=el.cloneNode(true);g.className="ghost";g.style.position="fixed";g.style.width=r.width+"px";g.style.height=r.height+"px";g.style.pointerEvents="none";g.style.zIndex="9999";g.style.margin="0";
+  document.body.appendChild(g);
+  _drag={el:el,chave:el.getAttribute("data-chave"),idx:el.getAttribute("data-idx"),onSolta:el.__onSolta,ghost:g};
+  _moveG(p.x,p.y);el.style.opacity="0.3";
+  if(!e.touches&&e.preventDefault){e.preventDefault();}}
+function _moveG(x,y){if(!_drag||!_drag.ghost){return;}var g=_drag.ghost;g.style.left=(x-g.offsetWidth/2)+"px";g.style.top=(y-g.offsetHeight/2)+"px";}
+function dragMove(e){if(!_drag){return;}var p=_pt(e);_moveG(p.x,p.y);if(e.cancelable){e.preventDefault();}}
+function dragUp(e){if(!_drag){return;}var p=_pt(e),d0=_drag;_drag=null;
+  if(d0.ghost&&d0.ghost.parentNode){d0.ghost.parentNode.removeChild(d0.ghost);}
+  if(d0.el){d0.el.style.opacity="";}
+  var el=document.elementFromPoint(p.x,p.y),dropId=null;
+  while(el){if(el.getAttribute&&el.getAttribute("data-drop")!==null&&el.getAttribute("data-drop")!==undefined){dropId=el.getAttribute("data-drop");break;}el=el.parentNode;}
+  if(dropId!==null&&d0.onSolta){d0.onSolta(dropId,d0.chave,d0.idx);}}
+function tornarArrastavel(el,chave,idx,onSolta){el.setAttribute("data-chave",chave);el.setAttribute("data-idx",idx);el.__onSolta=onSolta;
+  el.onmousedown=function(e){dragStart(e,el);};el.ontouchstart=function(e){dragStart(e,el);};}
+function marcarSoltavel(el,id){if(el){el.setAttribute("data-drop",id);}}
+/* ---- tipo SOMBRA (arrastar bicho ate a silhueta) ---- */
+var _sombraFeitos=0;
+function renderSombra(){var q=d[dIdx];_resp=false;_sombraFeitos=0;
+  var esq=q.animais.slice();shuffleReal(esq);var dir=q.animais.slice();shuffleReal(dir);
+  var h='<div class="card"><div class="progtxt">Desafio '+(dIdx+1)+' de '+d.length+'</div>';
+  h+='<div class="enunciado">Arraste cada animal até a sombra dele!</div>';
+  h+='<div class="dica">&#128161; Leve o bichinho colorido para a sombra com o mesmo formato.</div>';
+  h+='<div class="sombrawrap"><div class="scol">';
+  var i;for(i=0;i<esq.length;i++){h+='<div class="animdrag" id="ad_'+esq[i]+'"><img src="'+ANIMCOR[esq[i]]+'" alt=""></div>';}
+  h+='</div><div class="scol">';
+  for(i=0;i<dir.length;i++){h+='<div class="sildrop" id="sd_'+dir[i]+'"><img src="'+SOMBRA[dir[i]]+'" alt=""></div>';}
+  h+='</div></div><div id="zonaFeed"></div></div>';
+  $("app").innerHTML=h;instalarDragGlobal();
+  for(i=0;i<esq.length;i++){(function(ch){tornarArrastavel($("ad_"+ch),ch,dIdx,onSoltaSombra);})(esq[i]);}
+  for(i=0;i<dir.length;i++){(function(ch){marcarSoltavel($("sd_"+ch),ch);})(dir[i]);}
+  falar("Arraste cada animal até a sombra dele!");}
+function onSoltaSombra(dropId,chave,idx){var q=d[dIdx];
+  if(dropId===chave){var sd=$("sd_"+chave),ad=$("ad_"+chave);
+    if(sd){sd.className="sildrop revelado";sd.innerHTML='<img src="'+ANIMCOR[chave]+'" alt="">';}
+    if(ad){ad.className="animdrag feito";ad.setAttribute("data-feito","1");ad.onmousedown=null;ad.ontouchstart=null;}
+    somAcerto();_sombraFeitos++;
+    if(_sombraFeitos>=q.animais.length){_resp=true;acertou();var el=elogio();
+      $("zonaFeed").innerHTML=fbOk(el+' Você achou a sombra certa de todos os bichinhos!');
+      falar(el+" Você achou a sombra certa de todos os bichinhos!");}
+    else{falar("Isso! A sombra do "+ANIMNOME[chave]+".");}}
+  else{somErro();streak=0;dErros++;guardarErroFase(q);
+    var bad=$("sd_"+dropId);if(bad&&(""+bad.className).indexOf("revelado")<0){bad.className="sildrop tremer";
+      (function(b){setTimeout(function(){if((""+b.className).indexOf("revelado")<0){b.className="sildrop";}},450);})(bad);}
+    falar("Essa não é a sombra do "+ANIMNOME[chave]+". Olhe bem o formato e tente de novo!");}}
 /* ---- tipo CONTAR ---- */
 function opcoesNumero(n){var set={},arr=[],tent=0;set[n]=true;arr.push(n);
   while(arr.length<3&&tent<40){tent++;var d2=n+(Math.floor(Math.random()*5)-2);if(d2<1){d2=n+1;}if(d2>10){d2=n-1;}if(d2>=1&&d2<=10&&!set[d2]){set[d2]=true;arr.push(d2);}}
@@ -527,9 +607,10 @@ function iniciarExtra(){somClique();_extraDado[faseAtual]=true;emExtra=true;emRe
   var f=FCFG[faseAtual];
   if(f.tipo==="cor"){var base=CORES.slice();shuffleReal(base);d=base.slice(0,3);}
   else if(f.tipo==="forma"){d=montarRodadas(3);}
+  else if(f.tipo==="sombra"){d=montarRodadas(3);}
   else{d=montarRodadas(3);var i;for(i=0;i<d.length;i++){if(d[i].n<6){d[i].n=6+Math.floor(Math.random()*4);}}}
   dIdx=0;dAcertos=0;dErros=0;dEfase=[];_resp=false;
-  var msg;if(f.tipo==="cor"){msg="Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor.";}else if(f.tipo==="forma"){msg="Agora vou misturar mais formas! Olhe bem o formato de cada objeto.";}else{msg="Agora os números vão ser maiores! Conte com bastante atenção.";}
+  var msg;if(f.tipo==="cor"){msg="Agora vão aparecer mais balões pra você escolher! Preste bem atenção na cor.";}else if(f.tipo==="forma"){msg="Agora vou misturar mais formas! Olhe bem o formato de cada objeto.";}else if(f.tipo==="sombra"){msg="Agora vão aparecer mais bichinhos e mais sombras! Olhe bem o formato de cada um.";}else{msg="Agora os números vão ser maiores! Conte com bastante atenção.";}
   var h='<div class="card"><div class="mini" style="font-size:13px;color:#e6c9ff;">Desafio Extra</div><h2>&#127775; Mais difícil!</h2>';
   h+='<div class="mascbox"><img src="'+IMG.mExplica+'" alt="Teo"><div class="balao">'+msg+' Bora?</div></div>';
   h+='<button class="btn pulsa gate-audio" onclick="renderDesafio()">Começar! &#9654;</button></div>';
