@@ -860,3 +860,53 @@ calibram a dificuldade por idade, o "game feel".
 > nosso mascote e no nosso padrão"), sempre elevando ao **nível premium** nosso (fotos reais,
 > dark, adaptativo, narração, recompensas) — que é o que nos **destaca** frente a esses sites.
 > Quando o Marcos trouxer um jogo específico que gostou, registrar aqui a mecânica + o que copiar.
+
+### Gamificação & Narrativa/História — as camadas que envolvem a mecânica
+
+Mecânica é o "como se joga"; **gamificação e narrativa são o que fazem a criança QUERER continuar.**
+São as camadas por cima do leque de mecânicas.
+
+**1) Gamificação — os 8 motores (Octalysis, Yu-kai Chou).** Em vez de só "pontos/medalhas/ranking"
+(PBL, que é superficial e cansa em 3 semanas), pensar nas **motivações**:
+1. **Propósito/Missão** (Epic Meaning): "salvar o Atlas do Clima", "consertar o balão". → dá sentido.
+2. **Progresso/Conquista** (Development): XP, níveis, barra, medalhas, "X de N". *← já temos.*
+3. **Criatividade & Feedback** (Empowerment): experimentar e ver a resposta na hora. *← feedback juicy.*
+4. **Posse/Coleção** (Ownership): colecionar selos, mascotes, o "atlas" que cresce. *← selos/conquistas.*
+5. **Social** (Relatedness): comparar, mostrar — *usamos leve* (mascote como "companheiro"; ranking
+   entre colegas NÃO, é escola/turma).
+6. **Escassez** (Scarcity): "vidas/corações", tempo. **Black Hat — usar com MUITO cuidado com
+   criança** (gera ansiedade). No máximo um relógio leve e opcional; nunca punir.
+7. **Curiosidade/Surpresa** (Unpredictability): "o que vem na próxima página?", recompensa surpresa. *← "próxima parada".*
+8. **Perda/Evitar** (Loss & Avoidance): streak ("não perca a sequência"). **Também Black Hat** — o
+   nosso streak é **só mérito e elogio, nunca castigo** (some no erro sem punir). Manter assim.
+   > **REGRA para crianças: White Hat > Black Hat.** Priorizar propósito, progresso, criatividade,
+   > posse e curiosidade (motores de cima, positivos). Escassez/perda/pressão de tempo só em dose
+   > mínima e nunca de forma que castigue ou estresse. (Duolingo usa os 8; pra escola, pegamos os
+   > positivos.)
+
+**2) Narrativa/História — o que faz o aprendizado virar aventura.** Pesquisa (serious games):
+- **Estruturas:** **Jornada do Herói** (monomito — "chamado à aventura" … "provação/chefão final"),
+  **episódica** (paradas/capítulos), **ramificada** (a escolha muda o caminho — personaliza), e
+  emergente. → nosso **mapa-aventura narrado** JÁ é uma jornada do herói por episódios (cada ilha =
+  uma etapa; a Tempestade Final = o chefão). A **ramificação** (escolher caminhos) é evolução futura.
+- **As 4 marcas de uma boa narrativa de jogo** (pesquisa): narrativa **distribuída** (a história
+  aparece aos poucos, em cada tela), **fantasia INTRINSECAMENTE INTEGRADA** (a história CARREGA o
+  conteúdo, não é enfeite), **personagens empáticos** (o mascote com quem a criança se importa),
+  **responsividade** (a história reage ao que a criança faz).
+  > **A mais importante — "fantasia integrada":** a história tem que estar **grudada no conteúdo**.
+  > Ex. bom: o Nimbo cruza o planeta e *para aprender clima é que ele avança* (a aventura É o
+  > conteúdo). Ex. ruim: uma historinha decorativa que podia ser trocada por qualquer tema sem mudar
+  > o aprendizado. Sempre perguntar: "se eu tirar a história, o aprendizado muda? Se não muda, ela
+  > está solta." (Malone/Habgood: fantasia integrada motiva e ensina mais que fantasia externa.)
+
+**Como o especialista aplica (na FASE 1):** além de escolher as **mecânicas** (leque), desenhar a
+**moldura**: (a) uma **missão** com propósito; (b) um **mascote empático** que narra e reage; (c) a
+jornada em **episódios** com um **chefão final**; (d) **coleção** que cresce (selos/atlas); (e)
+**curiosidade** entre as telas; (f) recompensas **White Hat**. Isso é o que transforma "lista de
+exercícios" em "jogo que a criança pede pra jogar de novo".
+
+> Fontes: **Octalysis / 8 Core Drives** (Yu-kai Chou —
+> [octalysis](https://yukaichou.com/gamification-examples/octalysis-gamification-framework/)); **Why
+> Story Matters — narrative in serious games** (Naul & Liu, 2020); **A storytelling model for
+> educational games: Hero's interactive journey** (ResearchGate); "fantasia intrinsecamente
+> integrada" (Malone; Habgood & Ainsworth).
