@@ -406,7 +406,7 @@ function escolherVoz(){if(!window.speechSynthesis)return null;var vs=window.spee
   return (bs>=40)?best:null;}
 function limparFala(t){var s=String(t||"");s=s.replace(/<[^>]*>/g," ");
   s=s.replace(/\bcores\b/gi,"c\u00f4res");s=s.replace(/\bcor\b/gi,"c\u00f4r");
-  s=s.replace(/\bTeo\b/g,"T\u00e9u");
+  s=s.replace(/\bTeo\b/g,"T\u00e9u");s=s.replace(/\bsombras\b/gi,"sonbras");
   s=s.replace(/\s*\.\s*(?:\.\s*)+/g,". ");s=s.replace(/\s*([,.!?:])\s*/g,"$1 ");s=s.replace(/\s{2,}/g," ");
   s=s.replace(/^\s+|\s+$/g,"");if(s&&"..!?:".indexOf(s.charAt(s.length-1))<0){s=s+".";}return s;}
 function _gatearAvanco(){var raiz=$("app");if(!raiz)return null;var bts=raiz.getElementsByTagName("button"),alvo=[],i;
