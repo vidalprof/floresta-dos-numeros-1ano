@@ -107,6 +107,12 @@ RECURSOS = [
     ("streak",     [r'streak', r'Streak']),
 ]
 
+# CHECKLIST DA "BASE-MAE": o que TODA atividade nova precisa nascer com (barra),
+# e o que e so recomendado (avisa). Recursos por idade (pintar, etc.) NAO entram
+# aqui — sao decididos por ano na FASE 1; estes valem para qualquer idade.
+OBRIGATORIOS = ["reset55","adap_extra","adap_reforco","relatorio","niveis","medalhas","conquistas"]
+RECOMENDADOS = ["narracao","som","streak"]
+
 def checar_recursos(html):
     feats = {}
     for nome, pats in RECURSOS:
@@ -124,17 +130,27 @@ def nome_curto(path):
     return d if d and d not in (".","_novo","_lote") else os.path.basename(path)
 
 def main(args):
-    matriz = False
-    if args and args[0] == "--matriz":
-        matriz = True; args = args[1:]
+    matriz = False; exigir = False
+    args = list(args)
+    while args and args[0] in ("--matriz","--exigir"):
+        if args[0] == "--matriz": matriz = True
+        if args[0] == "--exigir": exigir = True
+        args = args[1:]
     if not args:
-        print("uso: python3 _circo/auditar-geral.py [--matriz] <index.html> [...]"); return 2
+        print("uso: python3 _circo/auditar-geral.py [--matriz] [--exigir] <index.html> [...]")
+        print("  --exigir: reprova atividade NOVA que nasca sem recurso obrigatorio (checklist base-mae)")
+        return 2
 
     resultados = []
     for p in args:
         if not os.path.isfile(p):
             print("!! nao achei: " + p); continue
         f, a, feats = auditar(p)
+        if exigir:  # checklist da base-mae vira barreira
+            for k in OBRIGATORIOS:
+                if not feats[k]: f = f + ["Recurso OBRIGATORIO ausente (base-mae): " + k]
+            for k in RECOMENDADOS:
+                if not feats[k]: a = a + ["Recurso recomendado ausente: " + k]
         resultados.append((nome_curto(p), f, a, feats))
 
     if matriz:
