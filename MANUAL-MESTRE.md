@@ -176,6 +176,14 @@ Gatilho: Marcos descreve tema, série e disciplina SEM anexar arquivo.
 - **SONS DE EFEITO sintetizados com Web Audio (lição paga):** para o "gostinho de jogo" (som de moeda ao acertar, "pop" ao encaixar, tom gentil ao errar, arpejo ao subir de nível, fanfarra ao concluir fase), SINTETIZAR os sons na hora com osciladores (`AudioContext` + `OscillatorNode` + `GainNode` com envelope rápido) — NÃO embutir arquivos de áudio (pesam MB). É leve (poucos KB de código), funciona em navegador antigo e não depende de baixar nada. Motor `tocarSom(nome)` com um `AudioContext` único; o contexto começa "suspenso" e só toca após o 1º gesto do usuário (regra de autoplay) — `resume()` no primeiro clique. Flag para poder desligar; volume discreto (~0.15).
 - Narração: `speechSynthesis` pt-BR (só narra se houver voz pt-BR real instalada).
 - `localStorage` funciona em GitHub Pages; usar variáveis em memória como fallback.
+- **DURAÇÃO-ALVO ≥ 40 min (pedido do Marcos — aula tem 55 min):** a atividade premium precisa ter
+  **conteúdo suficiente pra ocupar no MÍNIMO 40 minutos** de uma criança de 6º ano (sobra folga
+  pros 55 do reset). Como garantir sem ficar monótono: **8+ ilhas/paradas** × ~5-6 desafios, **+ os
+  mini-jogos** (memória, climograma, mapa, ligar, caça, forca, experimento) intercalados, **+
+  narração** (o mascote falando some tempo), **+ adaptativo** (Extra estende quem vai bem, Reforço
+  repete quem erra). Estimar antes de fechar: nº de telas × ~40-60s. Se der < 40 min, ADICIONAR
+  paradas/desafios; se passar de ~55, cuidar da monotonia (sortear 6 de N por fase). Conferir o
+  volume real, não de memória.
 - **PROGRESSO EXPIRA EM 1 AULA (55 min) — padrão de escola (pedido do usuário):** o "continuar de onde parou" vale só por **55 min desde o início** do aluno; depois **zera sozinho**, pra a PRÓXIMA TURMA começar do zero SEM o professor resetar cada PC. Como: `ESTADO.inicio = new Date().getTime()` gravado no `comecar()` (1ª vez); `carregar()` zera se `agora-inicio > 55min` (pega quando reabre/atualiza o navegador); e um `setInterval(30s)` zera **até com o navegador deixado aberto** entre as turmas (volta pro `telaInicio`). Usar `new Date().getTime()` (compat IE) e um helper `estadoNovo()` p/ o reset. Constante `_DUR_AULA` fácil de mudar. "Começar do zero" e `fazerReset` usam `estadoNovo()` (limpam o `inicio` → próximo `comecar` reinicia o relógio).
 - **RETROFIT do reset de 55 min em atividades JÁ publicadas (lição paga):** para
   atividades antigas que não têm o relógio nativo, injeta-se um **trecho universal
