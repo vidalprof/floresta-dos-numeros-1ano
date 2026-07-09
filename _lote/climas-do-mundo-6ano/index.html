@@ -677,6 +677,8 @@ function limparFala(t){
   s=acentuaPalavra(s,"magicas","mágicas");
   s=acentuaPalavra(s,"magico","mágico");
   s=acentuaPalavra(s,"magicos","mágicos");
+  s=acentuaPalavra(s,"deserto","dêserto");   /* voz lia "diserto"; forca o "e" fechado */
+  s=acentuaPalavra(s,"desertos","dêsertos");
   s=s.replace(/\s*([,.!?:;])\s*/g,"$1 ");
   s=s.replace(/\s{2,}/g," ");
   s=s.replace(/^\s+|\s+$/g,"");
