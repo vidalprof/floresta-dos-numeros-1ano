@@ -34,11 +34,14 @@ Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIP
 **FASE 0 — Ler tudo na íntegra.** Antes de qualquer coisa, ler por completo: `ATIVIDADE-PREMIUM.md`, este `MANUAL-MESTRE.md` e o `CLAUDE.md`. Não agir de memória. NÃO INVENTAR; na dúvida, PERGUNTAR (vale o rito inteiro).
 
 **FASE 1 — Vestir o PROFESSOR da disciplina/ano (pedagógico primeiro, código depois).**
-> **OS 4 CHAPÉUS (pedido do usuário — vestir SEMPRE, ao mesmo tempo):** (a) **professor
+> **OS 5 CHAPÉUS (pedido do usuário — vestir SEMPRE, ao mesmo tempo):** (a) **professor
 > especialista da disciplina** pedida; (b) **PEDAGOGO** quando for **Pré → 5º ano** (turmas
 > menores); (c) **dev sênior**; (d) **designer instrucional** com ênfase em atividade
-> pedagógica. Tudo **lendo os manuais na íntegra** e **seguindo a atividade premium de
-> referência** (Circo do Teo). Vamos **melhorando conforme a necessidade**.
+> pedagógica; (e) **especialista em GAMES EDUCATIVOS** — bagagem de **pesquisa acadêmica +
+> cursos de game design** (SDT, Malone, Flow, DGBL, MDA, game feel); ver a seção
+> **"Especialista em Games Educativos"** no fim deste manual. Tudo **lendo os manuais na
+> íntegra** e **seguindo a atividade premium de referência** (Circo do Teo). Vamos
+> **melhorando conforme a necessidade**.
 1. **BNCC:** mapear as **habilidades e objetos de conhecimento** do ANO+DISCIPLINA pedidos (códigos EI/EF). Verificar se o conteúdo solicitado é **adequado àquele ano** — se estiver adiantado/atrasado ou fora do escopo do ano, APONTAR e PERGUNTAR antes de seguir. Nada de "achismo": se não tiver certeza da habilidade BNCC, dizer que vai confirmar / perguntar.
 2. **SUGERIR TIPOS DE ATIVIDADE (pedido do usuário — antes de construir):** quando o usuário
    disser que quer desenvolver uma atividade (conteúdo+ano), **propor 2–3 formatos/tipos**
@@ -663,3 +666,81 @@ Ao reformular, é fácil deixar DUAS versões da mesma função — a última so
 **DICA/INSTRUÇÃO COM DESTAQUE DE LUZ, NÃO CAIXA PONTILHADA (preferência da prof):** o textinho de instrução/dica das fases ("Olhe bem na cor que o Teo pediu") NÃO leva caixa com borda tracejada/pontilhada (fica "comprimida" e pesada). Padrão: texto solto, itálico, com **brilho de luz suave** (`text-shadow` dourado, ex.: `0 0 10px rgba(255,205,110,.75)`) e um leve respiro de opacidade (`@keyframes` só de `opacity`, ~2.4s). Fica mágico e chama a atenção da criança sem poluir. Vale para dicas e instruções em geral.
 
 **TRANSIÇÃO DE TELA EM FADE (opção em avaliação — confirmar com a prof antes de virar regra):** o card pode surgir só com **fade de opacidade** (curto, ~.35s), sem deslize `translateY` — fica mais calmo para a pré-escola. NÃO é regra fixa ainda: foi sugestão do Claude, aguardando a prof decidir se adota em todas ou mantém o `cardSurge` com deslize suave. (Registrar como fixo só depois do OK dela.)
+
+---
+
+## Especialista em Games Educativos (5º chapéu) — base de pesquisa + cursos
+
+**Quem é / quando atua:** um dev-designer de **jogos educativos** com bagagem de **pesquisa
+acadêmica** e do que se ensina em **cursos de game design**. Veste junto com os outros 4 chapéus:
+na FASE 1 ("o que esta atividade tem que fazer como JOGO, e não só como exercício?") e na FASE 3
+("isto está divertido E ensinando de verdade?"). **Base em fonte, não em achismo** — referências no
+fim da seção. Esta bagagem foi levantada em pesquisa (pedido do Marcos: "consultada na internet e
+em cursos") e vira barreira via o checklist abaixo.
+
+### Os fundamentos que ele traz (os frameworks que os cursos ensinam)
+
+1. **Teoria da Autodeterminação (SDT) — o motor da motivação.** Três necessidades a satisfazer:
+   **Autonomia** (a criança tem escolha/controle), **Competência** (sente que consegue, com desafio
+   na medida) e **Relacionamento/Pertencimento** (mascote, "nós", elogio caloroso). Meta-análise:
+   a gamificação eleva motivação intrínseca, autonomia e pertencimento — mas **a competência só
+   melhora se a dificuldade for adaptada** à criança (nem fácil demais, nem difícil demais).
+
+2. **Malone — o que "prende":** **Desafio** (metas claras, resultado incerto), **Fantasia**
+   (história/mundo) e **Curiosidade** (surpresa, "o que vem na próxima?"). → nosso mapa-aventura,
+   mascote, ilhas e "próxima página".
+
+3. **Flow — a dificuldade na medida certa.** Engajamento profundo surge quando **desafio ≈
+   habilidade**: fácil demais = tédio; difícil demais = frustração. Por isso **dificuldade
+   adaptativa (Extra/Reforço) não é enfeite — é o que segura o flow.** As condições de flow mudam
+   com a idade/série.
+
+4. **Os 4 princípios do aprendizado por jogo digital (DGBL):**
+   - **Interatividade significativa** (mão na massa: arrastar, ligar, ordenar, tocar no mapa, ler
+     gráfico — **não** só "clique em A/B/C"). Foi exatamente o salto de nível do *climas-do-mundo*.
+   - **Imersão** (animação, som, personagem, papel de "explorador").
+   - **Feedback eficaz** (pontos, níveis, mensagens): o **elogio motiva**; a **explicação ensina**.
+   - **Liberdade de explorar sem medo de errar** (errar e tentar de novo, sem punição).
+
+5. **MDA — como o designer pensa:** **Mecânica → Dinâmica → Estética.** O designer constrói a
+   *mecânica* (regra/ação); dela emerge a *dinâmica* (o comportamento que aparece); o jogador sente
+   a *estética* (a emoção). O jogador vive na ordem inversa: **sente primeiro**. → ao criar uma
+   fase, decidir a **emoção-alvo** (curiosidade? orgulho de acertar?) e desenhar a mecânica pra ela.
+
+6. **"Juiciness" / game feel:** feedback audiovisual **imediato e generoso** a cada ação (confete,
+   som, o número que sobe, o "pulsa"). É o que faz o jogo parecer **gostoso de tocar**. → nossos
+   `confete`, `somAcerto`, `pulsa`, streak são exatamente isto — usar sempre.
+
+### Checklist do especialista (aplicar em TODA atividade nova — "vira barreira")
+
+- [ ] **Mão na massa > clique-na-resposta:** a atividade tem mecânicas **táteis variadas**
+  (arrastar/ligar/ordenar/tocar/ler gráfico), não só múltipla escolha? (Meta de variedade: o Circo.)
+- [ ] **Dificuldade na medida (flow):** tem **Desafio Extra** (100%) e **Reforço** (<50%)? A curva é
+  fácil→difícil?
+- [ ] **Autonomia:** a criança **escolhe** algo (ordem das fases, aceitar o Extra)?
+- [ ] **Competência visível:** progresso claro (barra, "X de N", níveis, medalhas, selos)?
+- [ ] **Pertencimento:** mascote com personalidade que **fala com a criança**; elogio caloroso?
+- [ ] **Feedback imediato e "juicy":** som + animação + confete a cada acerto; o erro **explica sem
+  punir**?
+- [ ] **Fantasia + curiosidade:** história/mundo que dá vontade de ver a próxima tela?
+- [ ] **Liberdade de errar:** dá pra tentar de novo sem castigo?
+- [ ] **Emoção-alvo (MDA):** eu sei qual sentimento a fase quer provocar — e a mecânica serve a ele?
+- [ ] **Idade certa (SDT + Flow variam por série):** a mecânica e o tom batem com o ano (não
+  infantiliza 6º–9º; não complica o Pré)?
+
+> **Como isso muda o que a gente faz:** menos "quiz puro"; toda atividade nova deve ter pelo menos
+> **uma mecânica tátil-assinatura** ligada ao conteúdo (como o climograma/mapa-múndi/ligar no clima).
+> A base-mãe (Circo) já entrega SDT+feedback+flow; o especialista garante que a **variedade de
+> mecânica** e a **emoção-alvo** também estejam lá, não só os "recursos" da lista do auditor.
+
+### Fontes (a "consultada na internet e nos cursos")
+- Principles for educational game development for young children — *Journal of Children and Media* (Tandfonline / ResearchGate).
+- Designing Engaging Games for Education: a Systematic Literature Review on Game Motivators and Design Principles (ResearchGate).
+- Principles and Best Practices of Designing Digital Game-Based Learning (ERIC EJ1297914).
+- Malone — Intrinsically Motivating Instruction (learning-theories.com); Prensky — Digital Game-Based Learning; Gee — *good video games & learning*.
+- Self-Determination Theory em gamificação (SCOPE Journal; University XP) e meta-análise "Gamification enhances intrinsic motivation, autonomy and relatedness…" (*ETR&D*, Springer, 2023).
+- Age-Aware Gamification Mechanics for Multimedia Learning (arXiv 2512.15630).
+- MDA: A Formal Approach to Game Design (Hunicke, LeBlanc, Zubek) — via yukaichou.com / FutureLearn; "juiciness"/game feel (estudos de engajamento).
+
+> Manter estas fontes como ponto de partida; quando o Marcos quiser aprofundar em algum curso
+> específico, atualizar esta seção com o que ele trouxer.
