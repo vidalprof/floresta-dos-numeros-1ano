@@ -551,6 +551,16 @@ input.campo { display:block; width:100%; font-size:17px; padding:12px 14px; bord
 .cg-opt{display:block;width:100%;margin:0 0 8px;background:rgba(120,180,230,.08);border:2px solid #33404f;color:#e8eef5;border-radius:12px;padding:12px;font-size:15px;font-family:inherit;cursor:pointer;text-align:center}
 .cg-opt.ok{border-color:#2f9d57;background:rgba(47,157,87,.18);color:#8ff0b6}
 .cg-opt.no{border-color:#c0392b;background:rgba(192,57,43,.15);color:#f3a29a}
+
+/* ---- ligar (trilhas do clima) ---- */
+.lig-area{position:relative}
+.lig-svg{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:1}
+.lig-cols{position:relative;display:-webkit-box;display:flex;-webkit-box-pack:justify;justify-content:space-between;z-index:2}
+.lig-col{width:46%}
+.lig-it{position:relative;background:rgba(120,180,230,.08);border:2px solid #33404f;color:#e8eef5;border-radius:12px;padding:12px 10px;margin:0 0 10px;font-size:14px;cursor:pointer;text-align:center;min-height:56px;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
+.lig-it.sel{border-color:#ffb300;background:rgba(255,201,77,.16)}
+.lig-it.feito{border-color:#2f9d57;background:rgba(47,157,87,.16);color:#8ff0b6;cursor:default}
+.lig-it.erro{border-color:#c0392b;background:rgba(192,57,43,.15)}
 </style>
 </head>
 <body>
@@ -1392,7 +1402,7 @@ function svgTrofeuFallback(tam){
     '</svg>';
 }
 /* ================= HISTORIA / MAPA ================= */
-var ORDEM=["estacao","fatores","equatorial","memoria","deserto","cacapalavras","temperado","subtropical","climograma","quebra","gelo","forca","mundi","tempestade"];
+var ORDEM=["estacao","fatores","equatorial","memoria","deserto","cacapalavras","temperado","subtropical","climograma","quebra","gelo","forca","ligar","mundi","tempestade"];
 
 var FASES={
   estacao:{ titulo:"Estação do Vento", sub:"Tempo ou clima?", cenario:"estacao", comp:"gaivota" },
@@ -1407,6 +1417,7 @@ var FASES={
   quebra:{ titulo:"Oficina do Balão", sub:"Quebra-cabeça dos climas", cenario:"oficina", comp:"coruja", jogo:true },
   gelo:{ titulo:"Terras Geladas", sub:"Subpolar e Polar", cenario:"gelo", comp:"pinguim" },
   forca:{ titulo:"Iglu das Letras", sub:"Jogo da forca", cenario:"gelo", comp:"pinguim", jogo:true },
+  ligar:{ titulo:"Trilhas do Clima", sub:"Ligue clima e característica", cenario:"vale", comp:"ovelha", jogo:true },
   mundi:{ titulo:"Volta ao Mundo", sub:"Onde fica cada clima?", cenario:"mundi", comp:"pomba", jogo:true },
   tempestade:{ titulo:"A Tempestade Final", sub:"Missão: última página!", cenario:"tempestade", comp:"aguia" }
 };
@@ -2147,6 +2158,7 @@ function iniciarFase(ch){
     if(ch==="forca"){ iniciarForca(); return; }
     if(ch==="mundi"){ iniciarMapa(); return; }
     if(ch==="climograma"){ iniciarClima(); return; }
+    if(ch==="ligar"){ iniciarLigar(); return; }
   }
   faseAtual=ch;
   emTreino=false;
@@ -3225,6 +3237,91 @@ function cgProx(){
   }
   cgRender();
   falar(CG_RODADAS[cgIdx].perg);
+}
+
+/* ---------- 3) LIGAR / TRILHAS DO CLIMA (fase "ligar") ---------- */
+var LIG_PARES=[
+  { clima:"Equatorial",   carac:"Chove o ano todo, sempre quente" },
+  { clima:"Desértico",    carac:"Quase não chove" },
+  { clima:"Polar",        carac:"Gelo e frio o ano inteiro" },
+  { clima:"Mediterrâneo", carac:"Verão seco, inverno chuvoso" },
+  { clima:"Tropical",     carac:"Verão chuvoso e inverno seco" }
+];
+var ligOrdemB=[], ligSelA=-1, ligFeitos=0, ligErros=0, ligLock=false;
+
+function iniciarLigar(){
+  pararFala();
+  faseAtual="ligar";
+  emTreino=false; emReforco=false;
+  streak=0;
+  ligSelA=-1; ligFeitos=0; ligErros=0; ligLock=false;
+  var idxs=[]; var i;
+  for(i=0;i<LIG_PARES.length;i++){ idxs.push(i); }
+  ligOrdemB=embaralhar(idxs);
+  if(ligOrdemB.join(",")===idxs.slice().sort().join(",")){ var t=ligOrdemB[0]; ligOrdemB[0]=ligOrdemB[1]; ligOrdemB[1]=t; }
+  ligRender();
+  falar("Bem-vindo às Trilhas do Clima! Toque num clima e depois na sua característica certa. Se ligar direito, aparece uma trilha ligando os dois!");
+}
+function ligRender(){
+  var html='<div class="card">';
+  html+='<h2 class="subt">Trilhas do Clima</h2>';
+  html+='<p class="texto centro" style="font-size:14px;margin:0 0 10px;">Ligue cada clima à sua característica!</p>';
+  html+='<div class="lig-area" id="ligarea">';
+  html+='<svg class="lig-svg" id="ligsvg"></svg>';
+  html+='<div class="lig-cols">';
+  html+='<div class="lig-col" id="ligA">';
+  var i;
+  for(i=0;i<LIG_PARES.length;i++){ html+='<div class="lig-it" id="liga'+i+'" onclick="ligTocaA('+i+')">'+LIG_PARES[i].clima+'</div>'; }
+  html+='</div><div class="lig-col" id="ligB">';
+  for(i=0;i<ligOrdemB.length;i++){ var idx=ligOrdemB[i]; html+='<div class="lig-it" id="ligb'+idx+'" onclick="ligTocaB('+idx+')">'+LIG_PARES[idx].carac+'</div>'; }
+  html+='</div></div></div>';
+  html+='<div class="fbmapa" id="ligfb"></div>';
+  html+='<div class="centro" style="margin:8px 0 2px;"><button class="btn-ouvir-mini" onclick="falar(\'Toque num clima e depois na sua característica certa.\')">🔊</button></div>';
+  html+='</div>';
+  $("app").innerHTML=html;
+}
+function ligTocaA(i){
+  if(ligLock){ return; }
+  var el=$("liga"+i); if(!el || el.className.indexOf("feito")>=0){ return; }
+  somClique();
+  var k; for(k=0;k<LIG_PARES.length;k++){ var e=$("liga"+k); if(e && e.className.indexOf("feito")<0){ e.className="lig-it"; } }
+  el.className="lig-it sel"; ligSelA=i;
+}
+function ligTocaB(idx){
+  if(ligLock || ligSelA<0){ return; }
+  var b=$("ligb"+idx); if(!b || b.className.indexOf("feito")>=0){ return; }
+  var a=$("liga"+ligSelA);
+  var fb=$("ligfb");
+  if(idx===ligSelA){
+    a.className="lig-it feito"; b.className="lig-it feito";
+    ligLinha(a,b); ligFeitos++; ligSelA=-1;
+    somAcerto(); addPontos(4);
+    if(fb){ fb.style.color="#8ff0b6"; fb.innerHTML="&#10003; Ligou certo!"; }
+    if(ligFeitos>=LIG_PARES.length){
+      if(fb){ fb.innerHTML="&#127881; Todas as trilhas ligadas!"; }
+      addPontos(15);
+      dAcertos=LIG_PARES.length; dErros=ligErros;
+      setTimeout(telaFinalFase, 800);
+    }
+  } else {
+    ligLock=true; ligErros++;
+    b.className="lig-it erro"; a.className="lig-it erro";
+    if(fb){ fb.style.color="#f3a29a"; fb.innerHTML="Ops! Essa característica é de outro clima."; }
+    setTimeout(function(){ if($("liga"+ligSelA)){ $("liga"+ligSelA).className="lig-it"; } b.className="lig-it"; ligSelA=-1; ligLock=false; if(fb){ fb.innerHTML=""; } }, 900);
+  }
+}
+function ligLinha(a,b){
+  var area=$("ligarea"), svg=$("ligsvg");
+  if(!area || !svg || !area.getBoundingClientRect){ return; }
+  var ra=a.getBoundingClientRect(), rb=b.getBoundingClientRect(), rc=area.getBoundingClientRect();
+  if(rc.width<=0){ return; }
+  var x1=ra.right-rc.left, y1=ra.top+ra.height/2-rc.top;
+  var x2=rb.left-rc.left, y2=rb.top+rb.height/2-rc.top;
+  svg.setAttribute("viewBox","0 0 "+rc.width+" "+rc.height);
+  var ln=document.createElementNS("http://www.w3.org/2000/svg","line");
+  ln.setAttribute("x1",x1); ln.setAttribute("y1",y1); ln.setAttribute("x2",x2); ln.setAttribute("y2",y2);
+  ln.setAttribute("stroke","#2f9d57"); ln.setAttribute("stroke-width","3"); ln.setAttribute("stroke-linecap","round");
+  svg.appendChild(ln);
 }
 
 /* ================= JOGO DA MEMÓRIA ================= */
