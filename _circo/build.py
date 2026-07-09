@@ -68,11 +68,15 @@ for k in range(1, 6):
     m("EMB_" + str(k), "emblema-" + str(k) + ".png")
 # Desenho de colorir (tela de pintar)
 m("COLORIR", "colorir.png")
+# Cena grande do Grande Final (banner JPEG)
+m("CENA_FINAL", "cena-final.jpg")
 
 def datauri(path):
+    ext = os.path.splitext(path)[1].lower()
+    mime = "image/jpeg" if ext in (".jpg", ".jpeg") else "image/png"
     with open(path, "rb") as f:
         b = base64.b64encode(f.read()).decode("ascii")
-    return "data:image/png;base64," + b
+    return "data:" + mime + ";base64," + b
 
 with open(os.path.join(BASE, "index-template.html"), "r", encoding="utf-8") as f:
     html = f.read()
