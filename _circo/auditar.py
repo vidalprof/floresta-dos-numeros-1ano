@@ -74,6 +74,14 @@ def main(path):
     if not re.search(r'class="[^"]*\bcenariofase\b', html):
         avisos.append("PENDENCIA: nenhuma parada mostra CENARIO/ILHA tematica (img class='cenariofase') — cada parada precisa da sua ilha no topo da intro (§2/§3).")
 
+    # 11) NOME DA PARADA consistente: PARADAS n:"..." deve ser IDENTICO ao FCFG titulo:"..."
+    #     (pega o caso "Formas da Festa" no mapa x "Festa das Formas" no texto).
+    nomes = dict(re.findall(r'\{ch:"([a-z0-9]+)",n:"([^"]+)"', js))
+    titulos = dict(re.findall(r'\b([a-z0-9]+):\{parada:\d+,titulo:"([^"]+)"', js))
+    for ch in sorted(set(nomes) & set(titulos)):
+        if nomes[ch] != titulos[ch]:
+            falhas.append("Nome da parada '%s' inconsistente: mapa=\"%s\" x titulo=\"%s\"" % (ch, nomes[ch], titulos[ch]))
+
     print("=== AUDITORIA:", os.path.basename(path), "===")
     if not falhas and not avisos:
         print("OK — nenhum problema encontrado.")
