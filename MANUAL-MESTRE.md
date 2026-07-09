@@ -828,3 +828,35 @@ arrastar (GHOST global)** já documentado ("Sistema de arrastar").
 > Fontes do leque: catálogo **H5P** ([content types](https://h5p.org/content-types-and-applications),
 > testados p/ WCAG 2.1 AA) e a nossa própria experiência de build (motor GHOST, caça por pontas,
 > ligar com linha, hotspots, climograma).
+
+### Estudo de campo — sites de jogos educativos consagrados (referência de mecânica e "feeling")
+
+Além da teoria (H5P/frameworks), o especialista **estuda plataformas reais e conhecidas** para tirar
+ideias de **mecânica, ritmo, recompensa e o que engaja a criança brasileira** — e as adapta ao nosso
+padrão (dark/premium, compat SAGRADA, 1 HTML). **NÃO se copia jogo nem asset — copia-se a IDEIA de
+mecânica e o que funciona.** O que observar em cada um: quais mecânicas usam, como dão feedback, como
+calibram a dificuldade por idade, o "game feel".
+
+**Brasileiros (mais próximos do nosso público / BNCC):**
+- **Escola Games** ([escolagames.com.br](https://www.escolagames.com.br/)) — anos iniciais do EF,
+  com pedagogos, alinhado à BNCC (matemática, português, ciências, geografia, história, inglês, meio
+  ambiente). Traz colorir, quebra-cabeça, raciocínio, "eu sei contar", alfabetização com som+imagem.
+  Melhor referência de **mecânica simples bem-feita para os anos iniciais**.
+- **Coquinhos** ([coquinhos.com](https://www.coquinhos.com/)) — jogos educativos variados, visual
+  leve.
+- **Racha Cuca** ([rachacuca.com.br](https://rachacuca.com.br/)) — quebra-cabeças, lógica, cruzadas,
+  caça-palavras, sudoku, trivia. Referência de **jogos de raciocínio** para os anos finais/adultos.
+- **Digipuzzle** ([digipuzzle.net](https://www.digipuzzle.net/)) — enorme variedade de mini-jogos
+  (arrasta, encaixa, memória, palavras) — bom "cardápio" de mecânicas.
+
+**Internacionais (referência de polimento e "game feel"):**
+- **ABCya** ([abcya.com](https://www.abcya.com/)) — jogos por série (K-6), muito polidos.
+- **PBS Kids** ([pbskids.org/games](https://pbskids.org/games)) — jogos com personagem/narrativa,
+  ótimo exemplo de **imersão e mascote**.
+- (Complementares: ABCmouse, Coolmath Games, Khan Academy Kids.)
+
+> **Como o especialista usa isto:** ao **sugerir tipos** (FASE 1) e ao **construir** (FASE 2),
+> lembrar-se de exemplos concretos desses sites ("tipo o 'eu sei contar' do Escola Games, mas com o
+> nosso mascote e no nosso padrão"), sempre elevando ao **nível premium** nosso (fotos reais,
+> dark, adaptativo, narração, recompensas) — que é o que nos **destaca** frente a esses sites.
+> Quando o Marcos trouxer um jogo específico que gostou, registrar aqui a mecânica + o que copiar.
