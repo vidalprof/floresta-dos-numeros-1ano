@@ -965,3 +965,50 @@ pixel".*
 **Barreira (testar antes de publicar):** renderizar em **320×480** (PC/celular antigo), **414×896** e
 numa **tela larga** (desktop). Em TODAS: nada cortado, sem rolagem, nada minúsculo — e o mais cheio
 possível sem perder nitidez.
+
+---
+
+## ⭐ PADRÃO 3D VIVO (última geração) — novo padrão premium (decisão do Marcos)
+
+**Decisão:** as atividades premium agora nascem com **imagens 3D geradas, personalizadas ao tema**
+(estilo Pixar/última geração) e **TUDO vivo** (animado). É o nosso diferencial — nível de game
+comercial, **rodando em PC antigo**. Vale para atividades NOVAS (as antigas ficam como estão até o
+Marcos pedir "melhorar").
+
+**1) Imagens 3D personalizadas ao tema** (o Marcos gera; **front-load de TODAS de uma vez**):
+- **Mascote temático em 6 poses:** parado (boca fechada), **falando (boca ABERTA)**, acenando,
+  comemorando, pensando, apontando.
+- **Capa** (cena épica), **tela final/recompensa**, **cartela de gamificação** (moeda, estrela,
+  medalhas bronze/prata/ouro, troféu, baú), **cadeado** (fechado/aberto = ilha bloqueada/liberada),
+  **ilhas** (ou usar fotos reais de contexto).
+- Regras: **arquivo, NÃO print** (print tem a UI do app + baixa qualidade); **fundo TRANSPARENTE**
+  nos cutouts/ícones; cenas (capa/final) podem ter fundo; alta resolução.
+
+**2) Recorte/limpeza (lição paga — sempre dá trabalho):** as gerações costumam vir em **fundo
+xadrez** (claro OU escuro) ou branco. Pipeline: **matar o fundo** dessaturado (xadrez, `sat<~18`) /
+branco puro → **restaurar SÓ buracos pequenos** (dentes/olhos, via *opening* morfológico: erode×N →
+dilate×N; buracos grandes = vãos do fundo, ficam transparentes) → **de-fringe** (erodir o anel
+claro/dessaturado na borda) → autocrop (`getbbox`) → **resize HD com LANCZOS** (~2× o tamanho de uso,
+nítido no pequeno). Conferir SEMPRE no fundo escuro antes de embutir.
+
+**3) TUDO VIVO** (só CSS leve + troca de `src` → roda em PC antigo; **nada de vídeo/WebGL**):
+- **Mascote vivo em TODA a atividade:** **respira** (`transform`), **fala com a boquinha**
+  (alterna boca-fechada↔boca-aberta sincronizado com a narração), **salta + comemora no acerto**.
+  Sistema: classe `js-masc` + `data-pose` no `<img>`; `mascoteFala(on)` liga/desliga dentro do
+  `falar()`; `mascoteSalta()` chamado no `somAcerto()`; `nimbo-vivo` (respirar) + `nimbo-hop` (pulo).
+- **Capa/telas:** brilho pulsante, **zoom lento (Ken Burns)**, faíscas/partículas, o mascote animado
+  na frente.
+- **Gamificação:** **moeda gira e voa** até o contador, que **conta subindo**; medalha entra com
+  **pop + brilho**; **confete** na vitória.
+- Técnica: `@keyframes` de `transform`/`opacity` (par `-webkit-`), troca de `src`, SMIL leve.
+
+**4) Peso & compat — a disciplina que faz CABER (regra de ouro):** 3D pesa → **otimizar forte**:
+JPEG (~q80) p/ cenas com fundo, PNG otimizado p/ cutouts, **resize ao tamanho real de uso** (não
+embutir 1200px pra mostrar em 100px), base64. Poucas animações simultâneas. **Auditor APROVADO +
+play-through headless 0 erro** antes de publicar. Se engasgar em máquina fraca, **aliviar**
+(menos animação / imagem menor). O filtro da realidade continua mandando: se não roda no PC antigo,
+não sobe.
+
+**5) Front-load (velocidade):** entregar a **cartela COMPLETA de prompts de uma vez** (tudo que a
+atividade precisa), o Marcos gera em LOTE e sobe junto, e o Claude **constrói o resto sem idas por
+imagem**. Reaproveitar o que já existe (não regerar à toa).
