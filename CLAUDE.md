@@ -104,7 +104,9 @@ pesado, que fazia o build falhar com "Page build failed").
 2. Adicione no objeto `ATIVIDADES` (chave `"fase:turma"`, ex. `"tesouro:1ano"`)
    um item `{ titulo, desc, ic (emoji reserva), mascote, link }`, onde **`link`
    é a URL do site da atividade** (`https://vidalprof.github.io/<repo>/`).
-   A ORDEM importa (o usuário pode pedir "antes/depois" de outra).
+   A ORDEM importa. **REGRA PADRÃO: atividade NOVA entra sempre no TOPO da lista
+   da turma** (primeiro item do array `"fase:turma"`), a não ser que o usuário
+   peça outra posição.
 3. **Mascote do card = o mascote da PRÓPRIA atividade** (o personagem que
    anda pelo mapa do jogo), como imagem com animação suave. Extraia assim:
    - No HTML do jogo, ache `var MASCOTE_POSES={` e pegue o valor da pose
