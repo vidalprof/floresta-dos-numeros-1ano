@@ -71,6 +71,10 @@ m("COLORIR", "colorir.png")
 # Cena grande do Grande Final (banner JPEG)
 m("CENA_FINAL", "cena-final.jpg")
 
+# Selos de conquista (5 marcos)
+for k in range(1, 6):
+    m("SELO_" + str(k), "selo-" + str(k) + ".png")
+
 def datauri(path):
     ext = os.path.splitext(path)[1].lower()
     mime = "image/jpeg" if ext in (".jpg", ".jpeg") else "image/png"
