@@ -848,15 +848,17 @@ function falar(texto, aoTerminar){
     u.onerror=fim;
     try{ window.speechSynthesis.speak(u); }catch(e){ fim(); return; }
     /* vigia a fala REAL: assim que speaking cai, libera JA (onend nao e confiavel) */
+    var _estTk=Math.ceil((fr.length*75+500)/90);   /* fim ESTIMADO da fala (ms->ticks de 90ms) */
     _pollTimer=setInterval(function(){
       _tk++;
       var sp=false; try{ sp=window.speechSynthesis.speaking; }catch(e){}
       if(sp){ comecou=true; }
-      if(comecou && !sp){ fim(); }            /* acabou de falar -> fim imediato */
-      else if(!comecou && _tk>16){ fim(); }   /* nunca comecou (~1.5s) -> desiste */
-      else if(_tk>240){ fim(); }              /* teto absoluto (~22s) */
+      if(comecou && !sp){ fim(); }               /* detectou o fim REAL -> imediato */
+      else if(comecou && _tk>=_estTk){ fim(); }  /* Chrome trava speaking=true -> solta no fim estimado */
+      else if(!comecou && _tk>16){ fim(); }      /* nunca comecou (~1.5s) -> desiste */
+      else if(_tk>240){ fim(); }                 /* teto absoluto (~22s) */
     }, 90);
-    _safeTimer=setTimeout(fim, 3000 + fr.length*110);   /* backstop, caso o poll falhe */
+    _safeTimer=setTimeout(fim, 1500 + fr.length*90);   /* backstop final, caso tudo falhe */
   }
   proxima();
 }
