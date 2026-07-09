@@ -14,6 +14,29 @@
 - Isso vale em TODA conversa, do início ao fim, mesmo sob pressão de pressa. Preferir a pergunta curta à suposição.
 
 ================================================================
+## PROCESSO OFICIAL — CRIAR UMA ATIVIDADE PREMIUM (o rito, seguir sempre)
+================================================================
+Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIPLINA**, seguir esta ordem, sem pular etapa. A base premium de referência é **"O Grande Circo do Teo"** (Pré) — CLONAR ela, não recomeçar.
+
+**FASE 0 — Ler tudo na íntegra.** Antes de qualquer coisa, ler por completo: `ATIVIDADE-PREMIUM.md`, este `MANUAL-MESTRE.md` e o `CLAUDE.md`. Não agir de memória. NÃO INVENTAR; na dúvida, PERGUNTAR (vale o rito inteiro).
+
+**FASE 1 — Vestir o PROFESSOR da disciplina/ano (pedagógico primeiro, código depois).**
+1. **BNCC:** mapear as **habilidades e objetos de conhecimento** do ANO+DISCIPLINA pedidos (códigos EI/EF). Verificar se o conteúdo solicitado é **adequado àquele ano** — se estiver adiantado/atrasado ou fora do escopo do ano, APONTAR e PERGUNTAR antes de seguir. Nada de "achismo": se não tiver certeza da habilidade BNCC, dizer que vai confirmar / perguntar.
+2. **Plano didático:** objetivos de aprendizagem; **progressão** do concreto→abstrato / fácil→difícil (escada de Bloom); apoio ao erro (não punir, ensinar); linguagem e comandos na medida da idade; enunciados que batem com a figura.
+3. **Escolher os MÓDULOS de fase** do catálogo (seção "MECÂNICAS DE FASE") que servem AO ANO E AO CONTEÚDO — e SÓ esses. Módulos são por idade: ex. Pré usa cores/vogais/contar/**pintar**; anos maiores usam contas armadas/monte-a-frase/interpretação/caça-palavras… e **NÃO** levam "pintar". A **recompensa final também troca por idade** (Pré=Tela de Pintar; maiores=estúdio de criação / desafio-mestre / diploma).
+
+**FASE 2 — Vestir o DEV SÊNIOR + DESIGNER INSTRUCIONAL (construir).**
+1. **Clonar o template-base** (Circo do Teo): o NÚCLEO já vem pronto e serve toda idade — mapa-aventura narrado, mascote, XP/níveis/emblemas, medalhas, conquistas/selos, relatório do professor, adaptatividade (Extra/Reforço/Treino), recompensa que cresce + barra, narração, compatibilidade, `build.py`, `auditar.py`. Trocar só TEMA (mascote/cores/ilhas), CONTEÚDO (dados dos desafios) e RECOMPENSA final.
+2. **Front-load de TODAS as imagens (acelera muito):** logo no começo, entregar **UM documento com TODOS os prompts** que a atividade vai precisar (mascote 4 poses, companheiros, ilhas de cada parada, objetos, cartela de medalhas, cartela de emblemas, cartela de selos, recompensa em 3 fases, capa, cena final, e — se for do Pré — desenho de colorir). O usuário gera em LOTE e sobe tudo; aí recorto/monto em paralelo, sem ida-e-volta peça por peça. **Prompt sempre colado no CHAT** (além do arquivo).
+3. **Compatibilidade SAGRADA sempre** (só `var`/`function`/`for`, prefixos `-webkit-`, emoji ≤ Unicode 6.0, imagens otimizadas, **1 HTML único autossuficiente** com tudo em base64).
+
+**FASE 3 — Precisão (sem erros) ANTES de publicar.** `auditar.py` = APROVADO **+** QA nos 3 níveis (estático; play-through headless de TODAS as telas em 320/414px com 0 erro/overflow — lembrar do viewport fixo do headless, forçar `#wrap:340px` p/ testar estreito; pedagógico: concordância n=1, pronúncia, português, enunciado×figura, narração não entrega resposta). Conferir imagens COM o usuário (mosaico/screenshot).
+
+**FASE 4 — Publicar em BLOCOS (não peça por peça).** Juntar 3–4 features → 1 build → 1 QA → 1 deploy. Publicar a atividade (repo próprio, 1 HTML), **adicionar o card no TOPO da turma no hub** (mascote da própria atividade) e confirmar os builds (`status=built`).
+
+**Meta:** muito preciso, sem erros, e MAIS RÁPIDO que a 1ª vez — o ganho vem de (a) clonar o núcleo pronto, (b) gerar as imagens em lote no começo, (c) publicar em blocos.
+
+================================================================
 ## COMO USAR ESTE MANUAL (leia primeiro)
 ================================================================
 - O **ATIVIDADE-PREMIUM.md** diz o FORMATO EXATO da atividade (telas, botões, fluxo, comemoração) — é o molde.

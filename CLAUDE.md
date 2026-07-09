@@ -4,6 +4,14 @@ Este repositório publica páginas educativas no **GitHub Pages** e contém uma
 **"Fábrica de Sites"** que cria/atualiza outros repositórios automaticamente.
 Leia tudo antes de agir e responda sempre em **português**.
 
+> **CRIAR ATIVIDADE PREMIUM (conteúdo + ano/disciplina):** siga o **"PROCESSO
+> OFICIAL"** no topo do `MANUAL-MESTRE.md` — ler os manuais na íntegra; primeiro
+> como PROFESSOR da disciplina (verificar BNCC do ano, planejar didática e
+> progressão); depois como DEV SÊNIOR + DESIGNER INSTRUCIONAL (CLONAR a base
+> premium **"O Grande Circo do Teo"**, gerar TODAS as imagens em lote no começo,
+> auditar + QA 3 níveis, publicar em blocos, card no topo do hub). NÃO INVENTAR;
+> na dúvida, PERGUNTAR. Cada atividade é **1 HTML único autossuficiente**.
+
 ## 1. Este site (repositório atual)
 
 - O site fica em **`index.html`** na branch **`main`**.
