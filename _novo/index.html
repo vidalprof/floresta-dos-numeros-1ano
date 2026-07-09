@@ -347,13 +347,18 @@ function nomeDoAnim(ch){return (ANIMGEN[ch]==="f"?"da ":"do ")+ANIMNOME[ch];}
 
 function $(id){return document.getElementById(id);}
 /* ====== ESTADO ====== */
-var ESTADO={nome:"",pontos:0,concluidas:{},stats:{},conquistas:{},maxStreak:0};
+var _DUR_AULA=55*60*1000; /* progresso vale por 1 aula (55 min); depois zera sozinho */
+function estadoNovo(){return {nome:"",pontos:0,concluidas:{},stats:{},conquistas:{},maxStreak:0};}
+var ESTADO=estadoNovo();
 var _adminLivre=false;
+function agoraMs(){return new Date().getTime();}
+function progVenceu(){return ESTADO.inicio && (agoraMs()-ESTADO.inicio)>_DUR_AULA;}
 function salvar(){try{localStorage.setItem("circoTeo",JSON.stringify(ESTADO));}catch(e){}}
 function carregar(){try{var s=localStorage.getItem("circoTeo");if(s){ESTADO=JSON.parse(s);}}catch(e){}
   if(!ESTADO.concluidas){ESTADO.concluidas={};}
   if(!ESTADO.stats){ESTADO.stats={};}if(!ESTADO.conquistas){ESTADO.conquistas={};}
-  if(typeof ESTADO.maxStreak!=="number"){ESTADO.maxStreak=0;}}
+  if(typeof ESTADO.maxStreak!=="number"){ESTADO.maxStreak=0;}
+  if(progVenceu()){ESTADO=estadoNovo();salvar();}}
 /* ====== NIVEIS ====== */
 var NIVEIS=[{p:0,n:"Aprendiz de Palhaço",img:IMG.emb1},{p:15,n:"Explorador do Circo",img:IMG.emb2},{p:35,n:"Artista do Picadeiro",img:IMG.emb3},{p:55,n:"Mestre do Circo",img:IMG.emb4},{p:75,n:"Estrela do Circo",img:IMG.emb5}];
 function nivelIdx(){var i,r=0;for(i=0;i<NIVEIS.length;i++){if(ESTADO.pontos>=NIVEIS[i].p){r=i;}}return r;}
@@ -494,11 +499,11 @@ function montarPiscaPisca(){var wrap=$("capaWrap");if(!wrap)return;var W=wrap.of
     var b=document.createElement("div");b.className="bulbo";b.style.left=x+"px";b.style.top=y+"px";
     var dl=((i%2)*0.5)+((i%4)*0.12);b.style.webkitAnimationDelay=dl+"s";b.style.animationDelay=dl+"s";wrap.appendChild(b);}}
 function temProgresso(){var k;for(k in ESTADO.concluidas){if(ESTADO.concluidas[k])return true;}return ESTADO.pontos>0;}
-function comecar(){somClique();var v=$("inpNome")?$("inpNome").value.replace(/^\s+|\s+$/g,""):"";ESTADO.nome=v;salvar();irMapa();}
+function comecar(){somClique();var v=$("inpNome")?$("inpNome").value.replace(/^\s+|\s+$/g,""):"";ESTADO.nome=v;if(!ESTADO.inicio){ESTADO.inicio=agoraMs();}salvar();irMapa();}
 function pedirReset(){var h='<div class="card"><h2>Começar do zero?</h2><p class="lead">Isso vai apagar todo o seu progresso. Tem certeza?</p>';
   h+='<button class="btn" onclick="fazerReset()">Sim, apagar tudo</button><button class="btn suave peq" onclick="telaInicio()">Não, voltar</button></div>';
   $("app").innerHTML=h;}
-function fazerReset(){somClique();ESTADO={nome:"",pontos:0,concluidas:{}};salvar();telaInicio();}
+function fazerReset(){somClique();ESTADO=estadoNovo();salvar();telaInicio();}
 /* ====== MAPA ====== */
 function irMapa(){telaMapa();}
 function telaMapa(){pararMusPinta();$("topbar").className="topbar";atualizarTopo();
@@ -1158,7 +1163,9 @@ function atualizarTC(){var b=$("btn-tela-cheia");if(b){b.innerHTML=emTC()?"&#100
 /* ====== BOOT ====== */
 function boot(){carregar();var b=$("btn-tela-cheia");if(b&&tcSup()){b.style.display="block";if(document.body)document.body.className+=" tem-tc";
     var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"],k;for(k=0;k<evs.length;k++)document.addEventListener(evs[k],atualizarTC);}
-  instalarSenhaMestra();telaInicio();}
+  instalarSenhaMestra();telaInicio();
+  /* mesmo com o navegador aberto, zera ao passar o tempo da aula (proxima turma comeca do zero) */
+  setInterval(function(){if(progVenceu()){ESTADO=estadoNovo();salvar();pararFala();telaInicio();}},30000);}
 boot();
 </script>
 </body>
