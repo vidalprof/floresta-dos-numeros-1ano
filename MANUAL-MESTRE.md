@@ -369,6 +369,14 @@ Para qualidade premium, gerar os assets-chave como **imagens no ChatGPT**, não 
 
 ### Regra do anexo — CARTELA ÚNICA
 Sempre pedir todos os objetos numa **cartela única** (vários itens em grade, numa imagem só), nunca um a um (estoura o limite de anexos). Gerar e enviar uma cartela por vez.
+> **O QUE VIRA CARTELA (quanto mais, melhor — barateia e facilita):** mascote (4 poses),
+> companheiros, objetos de cada parada, medalhas, emblemas, selos, recompensa 3 fases, **e as
+> ILHAS/cenários das paradas** (o Marcos já fez cartela de ilhas e funciona — são recortáveis,
+> NÃO precisam ser solo). **Fica SOLO só o que vira fundo de tela cheia:** capa, cena final
+> (viram JPEG de fundo) e o desenho de colorir. **Por que juntar em cartela:** menos gerações →
+> **cabe no limite GRÁTIS** (app do ChatGPT/Gemini na assinatura, ou API grátis do Gemini/AI
+> Studio com a chave em secret) — só a API da OpenAI é paga. **Corte limpo:** elementos em grade,
+> bem separados, fundo liso/transparente, mesmo tamanho; recorto com PIL e **confiro com o Marcos**.
 
 ### Objetos de contagem — variedade (não cansar)
 Cada fase de contagem tem 2-3 objetos temáticos coerentes com o lugar, e a fase ALTERNA entre eles por desafio (`objDaFase()` cicla pela lista `F.objs` por `idxDesafio`; `F.obj` como fallback). Nunca um único objeto repetido em 5-6 desafios seguidos. Gerar todos os objetos da fase na MESMA cartela.
