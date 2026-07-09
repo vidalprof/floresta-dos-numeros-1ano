@@ -2177,7 +2177,6 @@ function aberturaFase(ch){
   html+='<div class="balao-fala">'+ab.txt+'</div></div>';
   html+='<button class="btn pulsa gate-audio" onclick="comecarDesafios(\''+ch+'\')">Começar os desafios &#10145;</button>';
   html+='<div class="centro" style="margin:4px 0 8px;"><button class="btn-ouvir-mini" onclick="falarAbertura(\''+ch+'\')">🔊</button></div>';
-  html+='<button class="btn suave" onclick="telaMenu()">Voltar ao mapa</button>';
   html+='</div>';
   $("app").innerHTML=html;
   setTimeout(function(){ falarAbertura(ch); }, 350);
