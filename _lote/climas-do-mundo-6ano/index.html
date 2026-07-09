@@ -45,7 +45,14 @@ body {
 @-webkit-keyframes sobebalao { 0%{-webkit-transform:translateY(60px); opacity:0;} 8%{opacity:.75;} 92%{opacity:.75;} 100%{-webkit-transform:translateY(-105vh); opacity:0;} }
 @keyframes sobebalao { 0%{transform:translateY(60px); opacity:0;} 8%{opacity:.75;} 92%{opacity:.75;} 100%{transform:translateY(-105vh); opacity:0;} }
 
-#wrap { position:relative; z-index:2; max-width:560px; margin:0 auto; padding:8px 10px 30px 10px; }
+#wrap { position:relative; z-index:2; max-width:560px; margin:0 auto; padding:8px 10px 30px 10px;
+  min-height:100vh;
+  background:rgba(13,28,50,.34);
+  -webkit-box-shadow:0 0 34px rgba(0,0,0,.32); box-shadow:0 0 34px rgba(0,0,0,.32);
+  -webkit-animation:appEntra .5s ease-out both; animation:appEntra .5s ease-out both; }
+/* fade suave de entrada do app (SO opacidade: nao cria containing-block p/ position:fixed dos jogos) */
+@-webkit-keyframes appEntra { 0%{opacity:0;} 100%{opacity:1;} }
+@keyframes appEntra { 0%{opacity:0;} 100%{opacity:1;} }
 /* telas grandes (PC/tablet) e TELA CHEIA: aproveitar mais espaco */
 @media (min-width:700px){ #wrap{ max-width:700px; } }
 @media (min-width:1000px){ #wrap{ max-width:860px; } }
@@ -70,11 +77,12 @@ body.tc-ativa .montar-pal{ font-size:18px; padding:12px 15px; }
   -webkit-filter:grayscale(.25); filter:grayscale(.25); }
 
 /* ===== TOPBAR ===== */
-#topbar { display:-webkit-box; display:flex; -webkit-box-align:center; align-items:center;
-  background:rgba(255,255,255,.75);
+#topbar { position:-webkit-sticky; position:sticky; top:6px; z-index:40;
+  display:-webkit-box; display:flex; -webkit-box-align:center; align-items:center;
+  background:rgba(255,255,255,.92);
   border:1px solid rgba(120,180,230,.45);
   border-radius:18px; padding:7px 10px; margin-bottom:10px;
-  box-shadow:0 4px 18px rgba(0,0,0,.35); }
+  -webkit-box-shadow:0 6px 22px rgba(0,0,0,.45); box-shadow:0 6px 22px rgba(0,0,0,.45); }
 #tbMasc { width:44px; height:44px; margin-right:8px; }
 #tbMasc svg, #tbMasc img { width:44px; height:44px; display:block; }
 #tbMeio { -webkit-box-flex:1; flex:1 1 auto; min-width:0; }
@@ -488,7 +496,7 @@ input.campo { display:block; width:100%; font-size:17px; padding:12px 14px; bord
    (celular/tablet ficam identicos). O TEXTO CORRIDO segue em coluna estreita
    (max-width 540 herdado) mesmo com o card mais largo. ===== */
 @media (min-width:900px){
-  #wrap{ max-width:900px; }
+  #wrap{ max-width:900px; border-radius:26px; border:1px solid rgba(120,180,230,.18); }
   .card{ padding:26px 30px; }
   .capa{ padding-top:30px; }
   h1.titulo{ font-size:29px; }
