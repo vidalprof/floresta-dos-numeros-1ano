@@ -82,6 +82,28 @@ def main(path):
         if nomes[ch] != titulos[ch]:
             falhas.append("Nome da parada '%s' inconsistente: mapa=\"%s\" x titulo=\"%s\"" % (ch, nomes[ch], titulos[ch]))
 
+    # 12) EMOJI MODERNO (quebra em navegador antigo): so <= Unicode 6.0.
+    #     Verifica caracteres literais E entidades numericas (&#N; / &#xHH;), fora dos data URIs.
+    sem_img = re.sub(r'data:[^;]+;base64,[A-Za-z0-9+/=]+', '', html)
+    def _emoji_moderno(o):
+        # VS16, ZWJ, tons de pele, e tudo >= U+1F900 (Unicode 7.0+) -> quebra garantida
+        return o == 0xFE0F or o == 0x200D or (0x1F3FB <= o <= 0x1F3FF) or o >= 0x1F900
+    modernos = {}
+    for c in sem_img:
+        if _emoji_moderno(ord(c)):
+            modernos[ord(c)] = True
+    for mnum in re.findall(r'&#(\d+);', sem_img):
+        o = int(mnum)
+        if _emoji_moderno(o):
+            modernos[o] = True
+    for mhex in re.findall(r'&#x([0-9A-Fa-f]+);', sem_img):
+        o = int(mhex, 16)
+        if _emoji_moderno(o):
+            modernos[o] = True
+    if modernos:
+        falhas.append("Emoji moderno (quebra em navegador antigo, use <= Unicode 6.0): " +
+                      ", ".join("U+%04X" % o for o in sorted(modernos)))
+
     print("=== AUDITORIA:", os.path.basename(path), "===")
     if not falhas and not avisos:
         print("OK — nenhum problema encontrado.")

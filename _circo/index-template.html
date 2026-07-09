@@ -609,7 +609,7 @@ function telaPintar(){somClique();pararMusPinta();
   h+='<div class="paleta">';
   var i;for(i=0;i<cores.length;i++){var sel=(cores[i][1]===_pintaCor)?" sel":"";h+='<button class="corbtn'+sel+'" id="cor'+i+'" style="background:'+cores[i][1]+'" onclick="escolherCor('+i+')"></button>';}
   h+='</div><div class="pintactrl">';
-  h+='<button class="btn peq" onclick="limparPintura()">&#129532; Limpar</button>';
+  h+='<button class="btn peq" onclick="limparPintura()">&#128260; Limpar</button>';
   h+='<button class="btn suave peq" onclick="telaFinal()">&#9654; Voltar</button>';
   h+='</div></div>';
   $("app").innerHTML=h;window.scrollTo(0,0);

@@ -32,6 +32,12 @@ Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIP
 
 **FASE 3 — Precisão (sem erros) ANTES de publicar.** `auditar.py` = APROVADO **+** QA nos 3 níveis (estático; play-through headless de TODAS as telas em 320/414px com 0 erro/overflow — lembrar do viewport fixo do headless, forçar `#wrap:340px` p/ testar estreito; pedagógico: concordância n=1, pronúncia, português, enunciado×figura, narração não entrega resposta). Conferir imagens COM o usuário (mosaico/screenshot).
 
+### POLÍTICA DE AUDITORIA — "todo erro vira barreira" (pedido do usuário, facilitar o trabalho dele)
+1. **Toda classe de erro que aparecer UMA vez vira um CHECK no `auditar.py` que REPROVA** — não pode voltar a acontecer. Já embutidos: tokens não resolvidos, JS inválido, JS moderno proibido, funções duplicadas, var acentuada, concordância (1+feminino, artigo/gênero), CSS moderno, keyframes pareados, onclick órfão, cenário/ilha, **nome da parada (mapa×título, check 11)**, **emoji moderno >Unicode 6.0 incl. entidades `&#N;` (check 12)**. Ao descobrir um novo tipo de bug, ADICIONAR o check ANTES de fechar.
+2. **NUNCA publicar com FALHA.** `auditar.py` REPROVADO = não sobe. Aviso = revisar.
+3. **Correção AUTOMÁTICA só quando o certo é ÚNICO e determinístico** (ex.: emoji fora de compat → trocar por equivalente ≤6.0; `-webkit-` faltando; token trocado). Nesses casos EU corrijo sozinho e sigo — não devolvo pro usuário.
+4. **Onde há JULGAMENTO/conteúdo (qual nome é o certo, qual imagem, qual redação) — NÃO inventar: PERGUNTAR** (curto e objetivo). A auditoria BARRA; a decisão do "certo" é do usuário quando não é determinístico. Isso mantém o "não inventar" intacto e ainda facilita, porque o quebrado nunca chega a publicar.
+
 **FASE 4 — Publicar em BLOCOS (não peça por peça).** Juntar 3–4 features → 1 build → 1 QA → 1 deploy. Publicar a atividade (repo próprio, 1 HTML), **adicionar o card no TOPO da turma no hub** (mascote da própria atividade) e confirmar os builds (`status=built`).
 
 **Meta:** muito preciso, sem erros, e MAIS RÁPIDO que a 1ª vez — o ganho vem de (a) clonar o núcleo pronto, (b) gerar as imagens em lote no começo, (c) publicar em blocos.
