@@ -126,6 +126,21 @@ Gatilho: Marcos descreve tema, série e disciplina SEM anexar arquivo.
 - Narração: `speechSynthesis` pt-BR (só narra se houver voz pt-BR real instalada).
 - `localStorage` funciona em GitHub Pages; usar variáveis em memória como fallback.
 - **PROGRESSO EXPIRA EM 1 AULA (55 min) — padrão de escola (pedido do usuário):** o "continuar de onde parou" vale só por **55 min desde o início** do aluno; depois **zera sozinho**, pra a PRÓXIMA TURMA começar do zero SEM o professor resetar cada PC. Como: `ESTADO.inicio = new Date().getTime()` gravado no `comecar()` (1ª vez); `carregar()` zera se `agora-inicio > 55min` (pega quando reabre/atualiza o navegador); e um `setInterval(30s)` zera **até com o navegador deixado aberto** entre as turmas (volta pro `telaInicio`). Usar `new Date().getTime()` (compat IE) e um helper `estadoNovo()` p/ o reset. Constante `_DUR_AULA` fácil de mudar. "Começar do zero" e `fazerReset` usam `estadoNovo()` (limpam o `inicio` → próximo `comecar` reinicia o relógio).
+- **RETROFIT do reset de 55 min em atividades JÁ publicadas (lição paga):** para
+  atividades antigas que não têm o relógio nativo, injeta-se um **trecho universal
+  autônomo** logo após `<body>` — ele não depende do código do jogo: grava o carimbo
+  `__aulaInicio` no `localStorage` no 1º dado salvo, zera **tudo** (`localStorage.clear()`
+  + `location.reload()`) quando passa de 55 min, e revalida a cada 30 s. Idempotente
+  (não injeta 2× — testa se `__aulaInicio` já existe). Pipeline por atividade, sob a
+  fila lenta do Actions: `recuperar.yml` (baixa o `index.html` vivo p/ `_recuperado/`)
+  → injeta o trecho (script `inj.py`, âncora `<body[^>]*>`) → **testa headless**
+  (0 erros de JS + tela inicial renderiza) → `_lote/<repo>/index.html` → commit →
+  `atualizar.yml` (`source_dir=_lote/<repo>`). Como as atividades são **1 HTML único
+  autossuficiente**, o `atualizar` pode espelhar só o `index.html` sem perder nada.
+  Há também o `reset-aula.yml` (injeta em vários repos de uma vez, server-side) — mas
+  `workflow_dispatch` só dispara se o arquivo estiver na `main`; sem permissão p/ a
+  `main`, usa-se o pipeline serial acima. **Não injetar** onde já há relógio nativo
+  (ex.: circo-do-teo) nem no site-raiz deste repo (`floresta-dos-numeros-1ano`).
 - Sem overflow horizontal em 414/390/360/320px.
 
 ================================================================
