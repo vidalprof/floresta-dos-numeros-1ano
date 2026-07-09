@@ -537,14 +537,13 @@ function telaFinal(){somClique();pararMusPinta();somFanfarra();confete(50);
   $("app").innerHTML=h;window.scrollTo(0,0);
   falar("Uhuul! Você arrumou o circo inteiro e salvou o Grande Espetáculo do Teo! Você completou "+numExtG(tot,"f")+(tot===1?" parada":" paradas")+" e ganhou "+ESTADO.pontos+(ESTADO.pontos===1?" ponto":" pontos")+"! Agora, de presente, você pode pintar o circo do jeito que quiser!");}
 /* ====== TELA DE PINTAR (presente do grande final) ====== */
-var _pintaCor="#e53935",_pintaCorNome="vermelho",_pintaDesenhando=false,_pintaX=0,_pintaY=0,_pintaCtx=null,_pintaMusOn=false,_pintaMusT=null,_PINTA_CORES=[];
+var _pintaCor="#e53935",_pintaCorNome="vermelho",_pintaCtx=null,_pintaImg=null,_pintaMusOn=false,_pintaMusT=null,_PINTA_CORES=[];
 function telaPintar(){somClique();pararMusPinta();
   var cores=[["vermelho","#e53935"],["laranja","#fb8c00"],["amarelo","#fdd835"],["verde","#43a047"],["azul","#1e88e5"],["roxo","#8e24aa"],["rosa","#ec407a"],["marrom","#8d6e63"],["preto","#333333"],["branco","#ffffff"]];
   _PINTA_CORES=cores;
   var h='<div class="card"><h2>Pinte o Circo do Teo! &#127912;</h2>';
-  h+='<div class="dica">&#128161; Escolha uma cor e pinte o desenho com o dedo! O Teo fala o nome da cor.</div>';
-  h+='<div class="pintawrap"><canvas id="pintatela" class="pintatela" width="600" height="600"></canvas>';
-  h+='<img class="pintadesenho" src="'+IMG.colorir+'" alt="Desenho do circo para pintar"></div>';
+  h+='<div class="dica">&#128161; Escolha uma cor e toque numa parte do desenho para pintá-la! O Teo fala o nome da cor.</div>';
+  h+='<div class="pintawrap"><canvas id="pintatela" class="pintatela" width="600" height="600"></canvas></div>';
   h+='<div class="paleta">';
   var i;for(i=0;i<cores.length;i++){var sel=(cores[i][1]===_pintaCor)?" sel":"";h+='<button class="corbtn'+sel+'" id="cor'+i+'" style="background:'+cores[i][1]+'" onclick="escolherCor('+i+')"></button>';}
   h+='</div><div class="pintactrl">';
@@ -555,26 +554,39 @@ function telaPintar(){somClique();pararMusPinta();
   $("app").innerHTML=h;window.scrollTo(0,0);
   var cv=$("pintatela");if(cv&&cv.getContext){_pintaCtx=cv.getContext("2d");
     _pintaCtx.fillStyle="#ffffff";_pintaCtx.fillRect(0,0,600,600);
-    _pintaCtx.lineJoin="round";_pintaCtx.lineCap="round";instalarPintura(cv);}
-  falar("Escolha uma cor e pinte o circo do Teo do jeito que você quiser!");}
+    _pintaImg=new Image();_pintaImg.onload=function(){if(_pintaCtx){_pintaCtx.drawImage(_pintaImg,0,0,600,600);}};_pintaImg.src=IMG.colorir;
+    instalarPintura(cv);}
+  falar("Escolha uma cor e toque numa parte do desenho para pintá-la!");}
 function pintaPos(cv,ev){var r=cv.getBoundingClientRect(),cx,cy;
   if(ev.touches&&ev.touches.length){cx=ev.touches[0].clientX;cy=ev.touches[0].clientY;}
   else if(ev.changedTouches&&ev.changedTouches.length){cx=ev.changedTouches[0].clientX;cy=ev.changedTouches[0].clientY;}
   else{cx=ev.clientX;cy=ev.clientY;}
   return {x:(cx-r.left)/r.width*cv.width,y:(cy-r.top)/r.height*cv.height};}
 function instalarPintura(cv){
-  function ini(ev){ev.preventDefault();_pintaDesenhando=true;var p=pintaPos(cv,ev);_pintaX=p.x;_pintaY=p.y;pontoPinta(p.x,p.y);}
-  function mov(ev){if(!_pintaDesenhando)return;ev.preventDefault();var p=pintaPos(cv,ev);linhaPinta(_pintaX,_pintaY,p.x,p.y);_pintaX=p.x;_pintaY=p.y;}
-  function fim(){_pintaDesenhando=false;}
-  cv.onmousedown=ini;cv.onmousemove=mov;cv.onmouseup=fim;cv.onmouseleave=fim;
-  cv.ontouchstart=ini;cv.ontouchmove=mov;cv.ontouchend=fim;cv.ontouchcancel=fim;}
-function pontoPinta(x,y){if(!_pintaCtx)return;_pintaCtx.beginPath();_pintaCtx.arc(x,y,11,0,Math.PI*2);_pintaCtx.fillStyle=_pintaCor;_pintaCtx.fill();}
-function linhaPinta(x0,y0,x1,y1){if(!_pintaCtx)return;_pintaCtx.strokeStyle=_pintaCor;_pintaCtx.lineWidth=22;_pintaCtx.beginPath();_pintaCtx.moveTo(x0,y0);_pintaCtx.lineTo(x1,y1);_pintaCtx.stroke();}
+  function toca(ev){ev.preventDefault();var p=pintaPos(cv,ev);baldePintar(Math.round(p.x),Math.round(p.y));}
+  cv.onmousedown=toca;cv.ontouchstart=toca;}
+function hexRgb(h){h=(""+h).replace("#","");if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
+  return [parseInt(h.substring(0,2),16),parseInt(h.substring(2,4),16),parseInt(h.substring(4,6),16)];}
+function baldePintar(sx,sy){if(!_pintaCtx)return;if(sx<0||sy<0||sx>=600||sy>=600)return;
+  var nc=hexRgb(_pintaCor),W=600,H=600;
+  var img=_pintaCtx.getImageData(0,0,W,H),d=img.data;
+  var si=(sy*W+sx)*4,tr=d[si],tg=d[si+1],tb=d[si+2];
+  if((tr+tg+tb)<330)return;                          /* tocou numa linha preta */
+  if(tr===nc[0]&&tg===nc[1]&&tb===nc[2])return;      /* ja esta dessa cor */
+  var stack=[sy*W+sx],pintou=false;
+  while(stack.length){var idx=stack.pop(),i=idx*4;var r=d[i],g=d[i+1],b=d[i+2];
+    if((r+g+b)<360)continue;                          /* barreira: linha */
+    if(Math.abs(r-tr)>60||Math.abs(g-tg)>60||Math.abs(b-tb)>60)continue; /* nao e a cor alvo */
+    d[i]=nc[0];d[i+1]=nc[1];d[i+2]=nc[2];d[i+3]=255;pintou=true;
+    var x=idx%W,y=(idx-x)/W;
+    if(x+1<W)stack.push(idx+1);if(x-1>=0)stack.push(idx-1);
+    if(y+1<H)stack.push(idx+W);if(y-1>=0)stack.push(idx-W);}
+  if(pintou){_pintaCtx.putImageData(img,0,0);somClique();}}
 function escolherCor(i){somClique();_pintaCor=_PINTA_CORES[i][1];_pintaCorNome=_PINTA_CORES[i][0];
   var b=document.getElementsByClassName("corbtn"),k;for(k=0;k<b.length;k++){b[k].className=b[k].className.replace(/\s*sel\b/g,"");}
   var me=$("cor"+i);if(me&&me.className.indexOf("sel")<0){me.className+=" sel";}
   falar(_pintaCorNome);}
-function limparPintura(){somClique();if(_pintaCtx){_pintaCtx.fillStyle="#ffffff";_pintaCtx.fillRect(0,0,600,600);}falar("Limpei a tela! Pode pintar de novo.");}
+function limparPintura(){somClique();if(_pintaCtx){_pintaCtx.fillStyle="#ffffff";_pintaCtx.fillRect(0,0,600,600);if(_pintaImg&&_pintaImg.complete){_pintaCtx.drawImage(_pintaImg,0,0,600,600);}}falar("Limpei o desenho! Pode pintar de novo.");}
 function tocarMusPinta(){var esc=[523,587,659,784,880,784,659,587],i=0;
   _pintaMusT=setInterval(function(){var f=esc[i%esc.length];nota(f,0.45,0,"sine",0.05);nota(f*2,0.45,0.02,"sine",0.025);i++;},470);}
 function pararMusPinta(){if(_pintaMusT){clearInterval(_pintaMusT);_pintaMusT=null;}_pintaMusOn=false;}
