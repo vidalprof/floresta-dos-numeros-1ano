@@ -93,6 +93,7 @@ h2{font-size:21px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
 .btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 3px 0 #b8801a;box-shadow:0 3px 0 #b8801a;}
 .btn.suave{background:-webkit-linear-gradient(#5a4a86,#463ae);background:linear-gradient(#5a4a86,#40356a);color:#ffe9c9;-webkit-box-shadow:0 5px 0 #2a2050;box-shadow:0 5px 0 #2a2050;font-size:15px;max-width:260px;}
 .btn.peq{font-size:14px;padding:10px 20px;max-width:240px;}
+.btn.ativo{background:-webkit-linear-gradient(#7CFC9A,#3fbf6a);background:linear-gradient(#7CFC9A,#3fbf6a);-webkit-box-shadow:0 5px 0 #2a8f4a;box-shadow:0 5px 0 #2a8f4a;color:#0f3d20;}
 .btn.pulsa{-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite;}
 .btn.travado-audio{opacity:.5;cursor:default;-webkit-animation:none;animation:none;-webkit-filter:grayscale(.3);filter:grayscale(.3);-webkit-box-shadow:0 3px 0 #b8801a;box-shadow:0 3px 0 #b8801a;}
 @-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.05);}}
@@ -587,12 +588,14 @@ function escolherCor(i){somClique();_pintaCor=_PINTA_CORES[i][1];_pintaCorNome=_
   var me=$("cor"+i);if(me&&me.className.indexOf("sel")<0){me.className+=" sel";}
   falar(_pintaCorNome);}
 function limparPintura(){somClique();if(_pintaCtx){_pintaCtx.fillStyle="#ffffff";_pintaCtx.fillRect(0,0,600,600);if(_pintaImg&&_pintaImg.complete){_pintaCtx.drawImage(_pintaImg,0,0,600,600);}}falar("Limpei o desenho! Pode pintar de novo.");}
-function tocarMusPinta(){var esc=[523,587,659,784,880,784,659,587],i=0;
-  _pintaMusT=setInterval(function(){var f=esc[i%esc.length];nota(f,0.45,0,"sine",0.05);nota(f*2,0.45,0.02,"sine",0.025);i++;},470);}
+function tocarNotaMus(k){var esc=[523,587,659,784,880,784,659,587],f=esc[k%esc.length];
+  nota(f,0.42,0,"triangle",0.11);nota(f/2,0.42,0,"sine",0.05);}
+function tocarMusPinta(){if(_pintaMusT){clearInterval(_pintaMusT);_pintaMusT=null;}
+  _pintaMusOn=true;var k=0;tocarNotaMus(0);_pintaMusT=setInterval(function(){k++;tocarNotaMus(k);},460);}
 function pararMusPinta(){if(_pintaMusT){clearInterval(_pintaMusT);_pintaMusT=null;}_pintaMusOn=false;}
-function alternarMusPinta(){somClique();var b=$("musbtn");
-  if(_pintaMusOn){pararMusPinta();if(b){b.className="btn peq";}}
-  else{_pintaMusOn=true;tocarMusPinta();if(b){b.className="btn peq ativo";}}}
+function alternarMusPinta(){somClique();ac();var b=$("musbtn");
+  if(_pintaMusOn){pararMusPinta();if(b){b.className="btn peq";b.innerHTML="&#127925; Música";}}
+  else{tocarMusPinta();if(b){b.className="btn peq ativo";b.innerHTML="&#127925; Música &#10003;";}}}
 /* ====== FASES: motor generico (tipo "cor" e tipo "contar") ====== */
 var CORES=[
  {pede:"vermelho",img:IMG.balVermelho},{pede:"azul",img:IMG.balAzul},{pede:"amarelo",img:IMG.balAmarelo},
