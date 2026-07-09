@@ -1,0 +1,85 @@
+name: Injetar reset de aula (55 min) em varias atividades
+
+# Injeta, de uma so vez, o trecho universal que zera o progresso apos 55 min
+# (tempo de 1 aula) no index.html de cada repositorio de atividade.
+# Usa PAGES_TOKEN (Contents: Read and write). Idempotente: pula o repo que
+# ja tem o trecho (marcador __aulaInicio). Faz commit + push so quando muda.
+
+on:
+  workflow_dispatch:
+    inputs:
+      repos:
+        description: "Lista de repos separada por espaco (vazio = usa a lista padrao)"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  injetar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Injetar trecho de reset em cada repo
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          REPOS_IN: ${{ inputs.repos }}
+        run: |
+          set -uo pipefail
+
+          # Lista padrao: todas as atividades que usam localStorage e NAO tem
+          # expiracao propria. circo-do-teo tem expiracao nativa; a floresta
+          # (este repo) publica da raiz da main e e tratada a parte.
+          DEFAULT="pr-escola-1 alfbetosequencia1- AdicaoSubtra-o2-2-ano ortografia2- vila-dos-livros-miau Sistemasolar3ano climas-do-mundo-6ano sistemamonetario2-5ano classesdepalavras6- InglesRelativePronouns8 fazendinha-do-teco poli-tesouro-do-mar"
+          REPOS="${REPOS_IN:-}"
+          if [ -z "$REPOS" ]; then REPOS="$DEFAULT"; fi
+
+          # Escreve o injetor python (idempotente) num arquivo temporario.
+          cat > /tmp/injetar.py <<'PYEOF'
+          import re, sys
+          SNIP = '<script>(function(){var META="__aulaInicio",DUR=55*60*1000;function n(){return new Date().getTime();}function td(){for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==META)return true;}return false;}function c(){var t=localStorage.getItem(META);if(t&&(n()-parseInt(t,10))>DUR){try{localStorage.clear();}catch(e){}location.reload();return;}if(!t&&td()){try{localStorage.setItem(META,""+n());}catch(e){}}}c();setInterval(c,30000);})();</script>'
+          path = sys.argv[1]
+          h = open(path, encoding="utf-8").read()
+          if "__aulaInicio" in h:
+              print("JA-TEM"); sys.exit(2)
+          m = re.search(r'<body[^>]*>', h, re.I)
+          if not m:
+              print("SEM-BODY"); sys.exit(3)
+          pos = m.end()
+          h2 = h[:pos] + "\n" + SNIP + h[pos:]
+          open(path, "w", encoding="utf-8").write(h2)
+          print("INJETADO")
+          PYEOF
+
+          ok=""; skip=""; fail=""
+          for R in $REPOS; do
+            echo "==== $R ===="
+            tmp="$(mktemp -d)"
+            if ! git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$R.git" "$tmp" 2>/tmp/clone.log; then
+              echo "  ERRO ao clonar"; cat /tmp/clone.log; fail="$fail $R"; continue
+            fi
+            if [ ! -f "$tmp/index.html" ]; then
+              echo "  sem index.html"; fail="$fail $R(sem-index)"; continue
+            fi
+            set +e
+            python3 /tmp/injetar.py "$tmp/index.html"
+            rc=$?
+            set -e
+            if [ "$rc" = "2" ]; then echo "  ja tinha o trecho"; skip="$skip $R"; continue; fi
+            if [ "$rc" != "0" ]; then echo "  FALHOU (rc=$rc)"; fail="$fail $R"; continue; fi
+            ( cd "$tmp"
+              git config user.name "Atualizador"
+              git config user.email "atualizador@users.noreply.github.com"
+              git add index.html
+              git commit -m "Reset de aula: progresso zera apos 55 min" >/dev/null
+              git push )
+            if [ $? -eq 0 ]; then echo "  OK publicado"; ok="$ok $R"; else echo "  ERRO no push"; fail="$fail $R"; fi
+          done
+
+          {
+            echo "## Reset de aula (55 min) injetado"
+            echo ""
+            echo "- **Publicados:**${ok:- (nenhum)}"
+            echo "- **Ja tinham:**${skip:- (nenhum)}"
+            echo "- **Falharam:**${fail:- (nenhum)}"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "RESUMO: ok=[$ok] skip=[$skip] fail=[$fail]"
