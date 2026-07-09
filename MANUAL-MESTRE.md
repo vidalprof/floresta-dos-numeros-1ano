@@ -744,3 +744,87 @@ em cursos") e vira barreira via o checklist abaixo.
 
 > Manter estas fontes como ponto de partida; quando o Marcos quiser aprofundar em algum curso
 > específico, atualizar esta seção com o que ele trouxer.
+
+### Caixa de ferramentas do especialista — LEQUE de mecânicas interativas + COMO fazer
+
+Referência de amplitude: **H5P** (biblioteca aberta com 50+ "content types" interativos, todos
+testados para acessibilidade **WCAG 2.1 AA**) — é o cardápio consagrado de atividade interativa em
+educação. Abaixo, o leque adaptado à **nossa stack** (1 HTML, compat SAGRADA, base64), dizendo
+**COMO fazer cada uma aqui**. Cross-ref: catálogo por idade na **seção 12**, e o **motor de
+arrastar (GHOST global)** já documentado ("Sistema de arrastar").
+
+> **REGRA DE OURO da interação (compat + acessibilidade):** o **arrastar nativo do HTML5
+> (`draggable`) NÃO serve** — falha no touch e em PC antigo. Duas formas válidas: **(1) TOQUE-TOQUE**
+> (toca na origem, toca no destino) — a mais acessível e à prova de touch ruim, **preferir sempre
+> que der**; **(2) ARRASTO por PONTEIRO** — o **motor GHOST global** (mousedown/touchstart + move +
+> up/end no `document`; ghost `position:fixed` seguindo o dedo; `elementFromPoint` no alvo), usar
+> quando o GESTO de arrastar é parte do sentido (ex.: levar a sombra até o objeto). H5P sempre
+> oferece alternativa por teclado/toque ao arrasto — **espelhar isso**. Alvos **≥44px**, contraste
+> alto, nunca depender só de cor.
+
+**A) Escolha & leitura**
+- **Quiz ilustrado (escolha):** enunciado + figura + 2-3 opções (resposta + vizinhos plausíveis),
+  embaralhadas. Base de tudo — mas **não pode ser a única mecânica** (ver checklist do especialista).
+- **Verdadeiro/Falso rápido:** 2 botões; ótimo pra "mito ou verdade", com relógio opcional.
+- **Ler gráfico/dado (climograma, tabela):** desenhar em **SVG** (barras+linha), interação = tocar
+  no ponto certo OU escolher. *Nosso ex.: Estação de Leitura (climas).*
+
+**B) Arrastar & soltar (usar o motor GHOST; oferecer toque-toque alternativo)**
+- **Arrasta-e-solta livre (encaixe):** levar item ao alvo certo (letra→palavra, animal→habitat).
+- **Categorizar/classificar:** caixas rotuladas + fichas → cada ficha na caixa certa (quente/frio…).
+  *Nosso ex.: "classificar" no climas; cesta de adição/subtração no de números.*
+- **Ordenar/sequência:** fileira de slots; arrastar (ou **tocar na ordem**) do 1º ao último
+  (mais quente→mais frio; passos de uma receita). *Nosso ex.: quebra-cabeça dos climas.*
+
+**C) Palavras (letras & texto)**
+- **Caça-palavras:** grade ~10×10 (célula ~27px p/ caber no celular); **interação por PONTAS**
+  (toca 1ª e última letra), validar linha reta e comparar **nos dois sentidos** (lição paga —
+  seção da caça). *Nosso ex.: Oásis das Palavras.*
+- **Palavras cruzadas:** **montar a grade À MÃO** (matriz pré-definida com números e as posições —
+  gerar cruzada por algoritmo no cliente é frágil); cada célula = 1 input de 1 letra ou preenche por
+  **teclado virtual**; validar célula a célula; dica numerada (horizontal/vertical). Idade: 3º+.
+- **Lacuna / completar (fill-in-the-blanks):** frase com espaços; **banco de palavras** que a
+  criança **arrasta ou toca** para o espaço (evita digitar nas séries iniciais); comparar
+  normalizado (sem acento/caixa). *Ex. próximo: monte-a-frase.*
+- **Marque as palavras (mark-the-words):** um texto onde cada palavra é um `<span>` clicável; a
+  criança **toca nas certas** (ex.: "marque os substantivos", "ache as palavras do clima quente").
+  Verde ao acertar, conta X de N. Ótimo p/ Português/leitura.
+- **Forca:** palavra escondida + teclado virtual; erra = parte do desenho; dica temática. *Nosso ex.:
+  Iglu das Letras.* (Cuidado: no Pré é frustrante — usar do 2º ano pra cima.)
+
+**D) Associar & memória**
+- **Ligar/associar (com linha):** duas colunas; **toca na origem e no par certo** → traça uma
+  **linha SVG**; erro pisca vermelho. *Nosso ex.: Trilhas do Clima.*
+- **Pares/Memória:** cartas viradas; achar os pares (clima↔característica, palavra↔figura).
+  *Nosso ex.: Acampamento das Nuvens.*
+- **Flashcards / cartas de diálogo:** vira a carta (frente pergunta, verso resposta); bom p/
+  vocabulário/revisão. Implementar com flip por classe (`-webkit-transform`) ou troca de face.
+
+**E) Espacial & visual (tocar na imagem)**
+- **Hotspot / mapa interativo:** zonas clicáveis (divs `position:absolute` transparentes) sobre uma
+  imagem base64; acerta a região certa. *Nosso ex.: Sala de Mapas (mapa-múndi por faixas).*
+- **Achar as diferenças:** duas fotos empilhadas; toca nas diferenças; conta "achou X de N"; toque
+  errado só avisa carinhoso (lição paga — ver seção). Idade: todas.
+- **Colorir (Pré):** paleta + zonas pintáveis (flood-fill / troca de faixa de cor com cuidado de
+  cores repetidas — lição paga). Recompensa/relaxamento no Pré.
+
+**F) Tempo & valor**
+- **Linha do tempo (timeline):** eventos que a criança **ordena** ou posiciona; bom p/
+  História/sequência. Implementar como "ordenar" horizontal.
+- **Slider / termômetro:** um marcador que se **arrasta** numa régua (ou `input range` estilizado
+  com par `-webkit-`); "ajuste a temperatura", "quanto de chuva?". Feedback ao soltar.
+- **Contar objetos:** bichinhos/objetos fofos; toca/arrasta pra contar; opções = resposta+vizinhos
+  (concreto, Piaget — séries iniciais).
+
+**G) Computação (pensamento computacional)**
+- **Programe o robô:** monta uma sequência de comandos **clicando** (não arrastando) e roda; ver
+  **`ATIVIDADE-COMPUTACAO.md`** (formato próprio, BNCC Computação).
+
+> **Como usar este leque:** na FASE 1, o especialista escolhe **2-4 mecânicas DIFERENTES** que
+> sirvam ao conteúdo e à idade (variar a ação, não só o enunciado — seção 5), sempre com **pelo
+> menos uma tátil-assinatura** ligada ao tema. Cada mecânica nova que a gente construir e validar
+> entra aqui com o "como fazer" + a lição paga, pra virar patrimônio reutilizável.
+>
+> Fontes do leque: catálogo **H5P** ([content types](https://h5p.org/content-types-and-applications),
+> testados p/ WCAG 2.1 AA) e a nossa própria experiência de build (motor GHOST, caça por pontas,
+> ligar com linha, hotspots, climograma).
