@@ -910,3 +910,27 @@ exercícios" em "jogo que a criança pede pra jogar de novo".
 > Story Matters — narrative in serious games** (Naul & Liu, 2020); **A storytelling model for
 > educational games: Hero's interactive journey** (ResearchGate); "fantasia intrinsecamente
 > integrada" (Malone; Habgood & Ainsworth).
+
+### ⚠️ FILTRO DA REALIDADE — TUDO passa pelo PC/navegador ANTIGO da escola (regra que governa o resto)
+
+**Esta é a regra mais importante da caixa do especialista.** Tudo que ele estuda (H5P, Octalysis,
+narrativa, Duolingo, Escola Games…) é **INSPIRAÇÃO de IDEIA — nunca de código.** A escola pública do
+Marcos roda em **PC antigo e navegador antigo**. Então **toda ideia passa por este filtro ANTES de
+virar atividade** — se não passa no PC velho, **não sobe, por mais bonita que seja**:
+
+- **Código:** só `var`/`function`/`for`; **ZERO ES6** (let/const/arrow/template/spread/optional/
+  nullish/async/await); prefixos `-webkit-`/`-o-`; **1 HTML único** autossuficiente; **tudo em
+  base64** (sem CDN, sem fonte/rede/fetch); emoji ≤ Unicode 6.0; imagens otimizadas.
+- **Sem framework/engine:** nada de React/Phaser/Unity/WebGL/canvas pesado. As referências usam
+  stack moderna — a gente pega só a **MECÂNICA + o FEELING** e reescreve leve, do nosso jeito.
+- **Interação:** **toque-toque > arrastar**; arrasto só pelo **motor GHOST** (mouse+touch); alvos
+  ≥44px; nunca depender de gesto fino, hover ou hardware novo.
+- **Desempenho:** poucas animações, só `transform`/`opacity`; fundo discreto; nada que "engasgue" em
+  máquina fraca; o build do Pages não pode inchar (**portal leve**).
+- **Gamificação/narrativa cabem de boa:** as camadas (missão, jornada, coleção, medalhas, streak,
+  mascote) são **CSS/JS leves + imagem + texto narrado** — não exigem tecnologia nova nenhuma.
+- **Prova final:** **auditor de compatibilidade APROVADO** + play-through headless em 320/414px com
+  **0 erro**. Só então publica.
+
+> **Resumo (o nosso diferencial):** a **IDEIA vem do mundo todo**; o **CÓDIGO é sempre à prova de
+> escola pública com máquina velha**. Premium **E** roda em qualquer PC — é isso que nos destaca.
