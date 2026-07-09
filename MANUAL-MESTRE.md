@@ -934,3 +934,34 @@ virar atividade** — se não passa no PC velho, **não sobe, por mais bonita qu
 
 > **Resumo (o nosso diferencial):** a **IDEIA vem do mundo todo**; o **CÓDIGO é sempre à prova de
 > escola pública com máquina velha**. Premium **E** roda em qualquer PC — é isso que nos destaca.
+
+### Layout: PREENCHER a tela, mostrar TUDO, sem perder qualidade nem cortar o jogo
+
+**Requisito (pedido do Marcos):** a atividade tem que **usar a tela toda** (cara de app/tela cheia),
+com **tudo visível sem zoom nem rolagem** e **sem perder resolução** — **nada do jogo pode ficar
+escondido ou cortado**.
+
+**Como conseguir (compat-safe):**
+- **Fundo edge-to-edge:** o gradiente/cenário preenche a tela inteira (já fazemos) — dá sensação de
+  tela cheia mesmo com o card centralizado.
+- **Ajuste-à-tela (fit-to-viewport):** desenhar a atividade num "tamanho de projeto" (ex.: 400×760) e
+  um escalonador ajusta pra caber: `escala = min(largura/projW, altura/projH)`, aplicado com
+  `transform: scale()` (+ `-webkit-transform`; `transform-origin` topo-centro). Assim **tudo cabe**
+  (nada cortado, sem rolagem) e **fica NÍTIDO** — DOM/SVG/texto escalam **vetorialmente**, não borram
+  como imagem esticada. Recalcular no `resize`/`orientationchange`. **Limitar o upscale** (ex.: até
+  ~1.4×) pra não estourar/borrar; o resto do espaço quem preenche é o fundo.
+- **Unidades fluidas onde der:** `vw`/`vh`/`vmin` (existem em navegador antigo); **evitar `clamp()`**
+  (não existe no IE/antigos).
+- **Imagens com resolução suficiente:** fotos/base64 entram um pouco MAIORES que o tamanho de tela
+  (pra escalar sem borrar), mas otimizadas (peso controlado).
+- **Tela cheia real (botão ⛶):** o modo fullscreen tem que **AUMENTAR os elementos do jogo**
+  (`body.tc-ativa`), não só a moldura — ver a lição paga "TELA CHEIA PRECISA AUMENTAR O JOGO".
+
+**Limite honesto (dizer ao usuário):** preencher **100% em largura E altura** só dá se a proporção do
+jogo == a da tela. Quando diferem, a escolha é **mostrar TUDO (nada cortado) e preencher o resto com
+o fundo** — **NUNCA cortar o jogo pra preencher**. Regra: *"tudo aparece" ganha de "preencher cada
+pixel".*
+
+**Barreira (testar antes de publicar):** renderizar em **320×480** (PC/celular antigo), **414×896** e
+numa **tela larga** (desktop). Em TODAS: nada cortado, sem rolagem, nada minúsculo — e o mais cheio
+possível sem perder nitidez.
