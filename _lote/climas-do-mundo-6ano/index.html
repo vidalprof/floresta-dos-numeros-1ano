@@ -9,10 +9,11 @@
 html,body { width:100%; min-height:100%; }
 body {
   font-family: 'Segoe UI', 'Trebuchet MS', Arial, sans-serif;
-  background:#cdeaff;
-  background:-webkit-linear-gradient(top, #bfe6ff 0%, #e4f4ff 50%, #fff2dc 100%);
-  background:linear-gradient(to bottom, #bfe6ff 0%, #e4f4ff 50%, #fff2dc 100%);
-  color:#1a3a5c;
+  background:#2c5680;
+  background:-webkit-linear-gradient(top, #1e3a5f 0%, #2c5680 55%, #3d6e99 100%);
+  background:linear-gradient(to bottom, #1e3a5f 0%, #2c5680 55%, #3d6e99 100%);
+  background-attachment:fixed;
+  color:#e8f1fa;
   min-height:100vh;
   overflow-x:hidden;
 }
@@ -938,13 +939,13 @@ function addPontos(n){
     var html='<div class="popnivel">'+svgEmblema(depois,76)+'Você subiu de nível!<br>'+NIVEIS_FALA[depois]+'</div>';
     mostrarPop(html, 3400);
     setTimeout(function(){
-      falar("Uau! Você subiu de nível! Agora você é "+NIVEIS_FALA[depois]+"!");
+      falar("Você subiu de nível! Agora você é "+NIVEIS_FALA[depois]+"!");
     }, 250);
   }
 }
 
 /* ================= STREAK ================= */
-var STREAK_MARCOS={3:"Você é demais!",5:"Uau, que sequência!",8:"Impressionante!",10:"Você é uma lenda dos céus!"};
+var STREAK_MARCOS={3:"Ritmo firme!",5:"Sequência impecável!",8:"Precisão impressionante!",10:"Domínio total do clima!"};
 function registrarStreak(acertou){
   if(acertou){
     streak++;
@@ -972,18 +973,18 @@ function mostrarPop(html, dur){
 
 /* ================= ELOGIOS ================= */
 var ELOGIOS=[
-  "Mandou muito bem!",
-  "Isso aí, viajante de primeira!",
-  "Perfeito! O balão subiu mais um pouco!",
-  "Excelente! Você entende mesmo de climas!",
+  "Análise correta!",
+  "Certeiro! Leitura precisa do clima.",
+  "Resposta exata.",
+  "Você domina o assunto!",
   "Acertou em cheio!",
-  "Muito bem! O Atlas está brilhando!",
-  "Que resposta incrível!",
+  "Raciocínio afiado!",
+  "Leitura perfeita do clima!",
+  "Isso mesmo — resposta precisa!",
+  "Diagnóstico correto, continue assim.",
+  "Conclusão bem fundamentada!",
   "Você entende de clima de verdade!",
-  "Sensacional! Continue assim!",
-  "Brilhante como o sol do Equador!",
-  "É isso! Você está voando alto!",
-  "Ótimo trabalho, parceiro(a) de viagem!"
+  "Trabalho de expedição de primeira!"
 ];
 var _elogioIdx=-1;
 var _elogiosMix=null;
@@ -1016,7 +1017,7 @@ function confete(qtd){
 }
 
 /* ================= CARIMBO DE ACERTO (círculo verde saltando) ================= */
-var FRASES_FESTA=["ACERTOU!","MUITO BEM!","BOA!","ISSO!","PERFEITO!","MANDOU BEM!","UHUL!","SHOW!"];
+var FRASES_FESTA=["CORRETO!","PRECISO!","EXATO!","CERTEIRO!","AFIADO!","ANÁLISE CERTA!","DOMINOU!","PERFEITO!"];
 function comemorar(){
   var velho=document.getElementById("carimbo");
   if(velho && velho.parentNode){ velho.parentNode.removeChild(velho); }
@@ -1873,9 +1874,9 @@ function telaInicio(){
     html+='<div id="zonaResetInicio"></div>';
   } else {
     /* estado inicial: apresentação + campo de nome */
-    html+='<div class="capa-lead">Uma supertempestade espalhou as páginas do <b>Atlas do Clima</b> pelo mundo. Ajude o Nimbo a recuperá-las viajando pelos climas do planeta!</div>';
-    html+='<div class="capa-campo"><input class="campo" id="campoNome" type="text" maxlength="20" placeholder="Como você se chama?" value="'+(nomeAluno||"")+'"></div>';
-    html+='<button class="btn pulsa compacto" onclick="comecarComNome()">Começar a aventura &#10145;</button>';
+    html+='<div class="capa-lead">Uma expedição vai cruzar o planeta para <b>investigar os climas da Terra</b>. As páginas do <b>Atlas do Clima</b> se perderam — cabe a você lê-las e remontá-las, região por região. O explorador Nimbo é o seu guia.</div>';
+    html+='<div class="capa-campo"><input class="campo" id="campoNome" type="text" maxlength="20" placeholder="Seu nome de expedição"'+' value="'+(nomeAluno||"")+'"></div>';
+    html+='<button class="btn pulsa compacto" onclick="comecarComNome()">Iniciar a expedição &#10145;</button>';
   }
   html+='</div>';
   $("app").innerHTML=html;
@@ -1886,7 +1887,7 @@ function narrarInicio(temProg, feitas){
   if(temProg && nomeAluno){
     t="Bem-vindo(a) de volta, "+nomeAluno+"! Você já recuperou "+pluralG(feitas,"f","página","páginas")+" do Atlas do Clima. Toque em continuar para seguir a viagem!";
   } else {
-    t="Olá! Eu sou o Nimbo, explorador de balão! Uma supertempestade espalhou as páginas do meu Atlas do Clima pelo mundo inteiro. Você me ajuda a recuperar as páginas, viajando pelos climas do planeta? Escreva seu nome, se quiser, e toque em começar!";
+    t="Bem-vindo à expedição. Eu sou o Nimbo, o explorador que vai guiar você. Nossa missão é investigar os climas da Terra e remontar as páginas perdidas do Atlas do Clima, região por região. Registre seu nome de expedição, se quiser, e toque em iniciar.";
   }
   falar(t);
 }
@@ -2835,7 +2836,7 @@ function responderExtra(i){
     addPontos(20);
     confete(20);
     comemorar();
-    falaTxt="Uau! Você manja mesmo de climas! "+dd.explica;
+    falaTxt="Análise correta! Você domina o assunto. "+dd.explica;
   } else {
     somErro();
     falaTxt="Quase! Esse era difícil mesmo. "+dd.explica;
