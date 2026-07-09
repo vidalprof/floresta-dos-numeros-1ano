@@ -20,12 +20,14 @@ Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIP
 
 > **NEM TUDO É PREMIUM — o rito premium é SÓ quando o Marcos PEDIR (pedido dele):** existem
 > pedidos **à parte**, que NÃO seguem este molde nem o checklist premium — ex.: o **Desafio da
-> Copa** (leitura), um **jogo de colorir com várias imagens**, ou qualquer atividade pontual/mais
-> simples. Nesses, construir **do jeito que o Marcos pediu**, SEM impor a máquina premium (base-mãe,
-> medalhas/níveis, adaptativo, `--exigir`). **O que vale nos DOIS casos:** o QA de "funciona e não
-> quebra" — compatibilidade (navegador antigo) + 0 erro de JS (`auditar-geral.py`, `testar-jogando.py`).
-> O que é SÓ do premium: o checklist de recursos (`--exigir`). **Na dúvida se é premium ou simples,
-> PERGUNTAR** — não presumir premium.
+> Copa** (leitura), um **jogo de colorir com várias imagens**, uma atividade pontual/mais simples,
+> **OU um estilo/formato totalmente NOVO** que a gente nunca fez. **O ESTILO é livre — o Marcos
+> manda no formato.** Nesses, construir **do jeito que ele pediu**, SEM impor a máquina premium
+> (base-mãe, medalhas/níveis, adaptativo, `--exigir`) nem nenhum molde antigo. **O MÍNIMO que vale
+> em QUALQUER estilo (não-negociável):** 1 HTML único autossuficiente; roda em navegador antigo
+> (compatibilidade) + 0 erro de JS (`auditar-geral.py`, `testar-jogando.py`); imagens reais (nunca
+> SVG); português; e "na dúvida, PERGUNTAR, não inventar". O que é SÓ do premium: o checklist de
+> recursos (`--exigir`). **Na dúvida se é premium ou outro estilo, PERGUNTAR** — não presumir molde.
 
 **FASE 0 — Ler tudo na íntegra.** Antes de qualquer coisa, ler por completo: `ATIVIDADE-PREMIUM.md`, este `MANUAL-MESTRE.md` e o `CLAUDE.md`. Não agir de memória. NÃO INVENTAR; na dúvida, PERGUNTAR (vale o rito inteiro).
 
