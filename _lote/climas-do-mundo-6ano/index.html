@@ -482,6 +482,39 @@ input.campo { display:block; width:100%; font-size:17px; padding:12px 14px; bord
 .centro { text-align:center; }
 .mini { font-size:12px; color:#5a7ea6; }
 .dourado { color:#ffe27a; font-weight:bold; }
+
+/* ===== DESKTOP (telas largas): so AMPLIA e PROPORCIONA. Nada muda abaixo de 900px
+   (celular/tablet ficam identicos). O TEXTO CORRIDO segue em coluna estreita
+   (max-width 540 herdado) mesmo com o card mais largo. ===== */
+@media (min-width:900px){
+  #wrap{ max-width:900px; }
+  .card{ padding:26px 30px; }
+  .capa{ padding-top:30px; }
+  h1.titulo{ font-size:29px; }
+  h2.subt{ font-size:20px; }
+  p.texto{ font-size:17px; }
+  .btn{ max-width:280px; font-size:19px; padding:16px 22px; }
+  .btn.compacto{ font-size:18px; padding:15px 34px; }
+  .opcao{ font-size:18px; padding:16px 18px; }
+  .d-figura img{ max-width:240px; }
+  .cena-banner{ max-width:680px; }
+  .capa-img{ width:280px; height:280px; }
+  .capa-t1{ font-size:40px; }
+  .capa-t2{ font-size:23px; }
+  .capa-lead{ font-size:16px; }
+  .capa-boasvindas{ font-size:18px; }
+  .comp-frase{ font-size:19px; }
+  .balao-fala{ font-size:16px; }
+}
+@media (min-width:1200px){
+  #wrap{ max-width:1000px; }
+  .card{ padding:30px 42px; }
+  h1.titulo{ font-size:32px; }
+  h2.subt{ font-size:22px; }
+  .d-figura img{ max-width:280px; }
+  .cena-banner{ max-width:760px; }
+  .capa-img{ width:300px; height:300px; }
+}
 </style>
 </head>
 <body>
