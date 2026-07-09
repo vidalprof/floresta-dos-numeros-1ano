@@ -632,6 +632,7 @@ var vozEscolhida=null;
 var _falando=false;
 var _filaTimer=null;
 var _safeTimer=null;
+var _pollTimer=null;
 function escolherVoz(){
   try{
     var vs=window.speechSynthesis.getVoices();
@@ -690,6 +691,7 @@ function pararFala(){
   _falaPend=null;
   if(_filaTimer){ clearTimeout(_filaTimer); _filaTimer=null; }
   if(_safeTimer){ clearTimeout(_safeTimer); _safeTimer=null; }
+  if(_pollTimer){ clearInterval(_pollTimer); _pollTimer=null; }
   try{ window.speechSynthesis.cancel(); }catch(e){}
 }
 var _falaPend=null;
@@ -762,17 +764,27 @@ function falar(texto, aoTerminar){
     u.lang=vozEscolhida.lang||"pt-BR";
     u.rate=0.92;
     u.pitch=1.08;
-    var terminou=false;
+    var terminou=false, comecou=false, _tk=0;
     function fim(){
       if(terminou){ return; }
       terminou=true;
       if(_safeTimer){ clearTimeout(_safeTimer); _safeTimer=null; }
-      _filaTimer=setTimeout(proxima, 180);
+      if(_pollTimer){ clearInterval(_pollTimer); _pollTimer=null; }
+      _filaTimer=setTimeout(proxima, 120);
     }
     u.onend=fim;
     u.onerror=fim;
-    _safeTimer=setTimeout(fim, 1400 + fr.length*110);
-    try{ window.speechSynthesis.speak(u); }catch(e){ fim(); }
+    try{ window.speechSynthesis.speak(u); }catch(e){ fim(); return; }
+    /* vigia a fala REAL: assim que speaking cai, libera JA (onend nao e confiavel) */
+    _pollTimer=setInterval(function(){
+      _tk++;
+      var sp=false; try{ sp=window.speechSynthesis.speaking; }catch(e){}
+      if(sp){ comecou=true; }
+      if(comecou && !sp){ fim(); }            /* acabou de falar -> fim imediato */
+      else if(!comecou && _tk>16){ fim(); }   /* nunca comecou (~1.5s) -> desiste */
+      else if(_tk>240){ fim(); }              /* teto absoluto (~22s) */
+    }, 90);
+    _safeTimer=setTimeout(fim, 3000 + fr.length*110);   /* backstop, caso o poll falhe */
   }
   proxima();
 }
