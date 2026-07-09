@@ -57,11 +57,29 @@ function passo(){
   var v=vista(); push(trace, v);
   var el=escolher();
   if(el){try{el.click();}catch(e){push(errs,"[ERR] click: "+((e&&e.message)||""));}}
-  if(steps<MAX){setTimeout(passo,120);} else {fim();}
+  if(steps<MAX){setTimeout(passo,120);} else {forcarNivel();setTimeout(fim,4000);} /* forca subir de nivel, espera popups auto-fecharem, dai checa */
+}
+function forcarNivel(){
+  /* dispara o popup de subida de nivel (pra o check de overlay valer): chama as funcoes de ponto que existirem */
+  var fns=["addPontos","ganharPontos","darPontos","somarPontos","levelUp","subirNivel"];
+  for(var i=0;i<fns.length;i++){try{if(typeof window[fns[i]]==="function"){window[fns[i]](9999);}}catch(e){}}
+}
+function overlayPreso(){
+  /* popup/overlay que ficou VISIVEL e NAO-VAZIO no fim (ex.: pop de nivel preso na tela) */
+  if(!document.querySelectorAll||!window.getComputedStyle)return null;
+  var els=document.querySelectorAll("[id*=pop],[class*=pop],[id*=overlay],[class*=overlay],[class*=modal],[class*=popup],[class*=toast]");
+  for(var i=0;i<els.length;i++){var el=els[i];
+    var st=getComputedStyle(el); if(!st)continue;
+    if(st.display==="none"||st.visibility==="hidden"||parseFloat(st.opacity)===0)continue;
+    var r=el.getBoundingClientRect(); if(r.width<40||r.height<20)continue;
+    var txt=(el.textContent||"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");
+    if(txt.length>=2){return (((el.id||el.className)+"").substring(0,24))+" | "+txt.substring(0,40);}
+  }
+  return null;
 }
 function fim(){
   var out=document.createElement("div");out.id="__drvout";
-  out.appendChild(document.createTextNode(JSON.stringify({erros:errs, telas:trace, passos:steps})));
+  out.appendChild(document.createTextNode(JSON.stringify({erros:errs, overlay:overlayPreso(), telas:trace, passos:steps})));
   (document.documentElement||document).appendChild(out);
 }
 setTimeout(passo,300);
@@ -117,6 +135,9 @@ def jogar(chrome, path, shotdir):
     except Exception as e:
         data = {"erros":["(falha ao ler saida do robo: "+str(e)+")"],"telas":[],"passos":0}
     data["erros"] = _filtrar_benignos(data.get("erros", []))
+    ov = data.get("overlay")
+    if ov:  # popup/overlay que ficou preso na tela = bug visual
+        data["erros"].append("[OVERLAY PRESO] " + str(ov)[:120])
     return nome, data, shot
 
 def main(args):
