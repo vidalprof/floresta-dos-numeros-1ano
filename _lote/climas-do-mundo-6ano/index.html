@@ -949,10 +949,12 @@ function mostrarStreak(n){
   var frase="Você acertou "+numExt(n)+" seguidas! "+STREAK_MARCOS[n];
   mostrarPop('<div class="popmsg">🔥 '+frase+'</div>', 2600);
 }
+var _popSeq=0;
 function mostrarPop(html, dur){
   $("popzona").innerHTML=html;
+  var meu=++_popSeq;   /* nao comparar innerHTML (o navegador re-serializa SVG e nunca bate) */
   setTimeout(function(){
-    if($("popzona").innerHTML===html){ $("popzona").innerHTML=""; }
+    if(meu===_popSeq){ $("popzona").innerHTML=""; }   /* so nao apaga se um popup mais novo apareceu */
   }, dur||2500);
 }
 
