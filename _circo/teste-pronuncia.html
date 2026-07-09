@@ -3,48 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Testador de Pronúncia — dicionário da narração</title>
+<title>Testador de Pronúncia — Ilha das Sombras</title>
 <style>
   body{font-family:Arial,Helvetica,sans-serif;background:#0d2c1d;color:#eafff2;margin:0;padding:16px;}
-  .box{max-width:640px;margin:0 auto;background:#1a4030;border:1px solid rgba(150,240,180,.4);
+  .box{max-width:660px;margin:0 auto;background:#1a4030;border:1px solid rgba(150,240,180,.4);
        border-radius:16px;padding:18px 20px;}
   h1{color:#aef0c8;font-size:20px;margin:.2em 0;}
+  h2{color:#aef0c8;font-size:16px;margin:18px 0 4px;}
   p{line-height:1.45;color:#cdeeda;}
-  .voz{font-size:13px;color:#9fd9b5;margin:8px 0 16px;}
-  .cand{border-top:1px solid rgba(150,240,180,.18);padding:12px 0;}
-  .cand b{color:#ffe27a;font-size:17px;}
+  .voz{font-size:13px;color:#9fd9b5;margin:8px 0 14px;}
+  .blk{border-top:1px solid rgba(150,240,180,.18);padding:12px 0;}
+  .txt{font-size:14px;color:#eafff2;background:#112c20;border-radius:8px;padding:8px 10px;margin:4px 0;}
+  .txt .w{color:#ffe27a;font-weight:bold;}
   button{background:#ffd23f;color:#3a2b00;border:none;border-radius:10px;
          padding:9px 12px;margin:5px 6px 0 0;font-size:14px;font-weight:bold;cursor:pointer;}
   button:hover{background:#ffe27a;}
-  .lin{margin-top:6px;}
-  input{padding:9px;border-radius:8px;border:1px solid #9fd9b5;width:60%;font-size:15px;}
-  .dica{background:#112c20;border-radius:10px;padding:10px 12px;margin-top:14px;font-size:13px;color:#cdeeda;}
+  .sec{background:#153726;border-radius:10px;padding:10px 12px;margin-top:6px;}
+  input{padding:9px;border-radius:8px;border:1px solid #9fd9b5;width:55%;font-size:15px;}
+  small{color:#9fd9b5;}
 </style>
 </head>
 <body>
 <div class="box">
-  <h1>&#127911; Testador de Pronúncia — palavra "sombra"</h1>
-  <p>Clique em cada botão e <b>ouça</b>. Use a <b>mesma voz</b> da atividade (escolhida automaticamente).
-     Depois me diga <b>qual grafia soou certa</b> — eu fixo ela no dicionário e "sombra" fica certo pra sempre.</p>
-  <div class="voz" id="voz">Procurando a voz em português&hellip;</div>
+  <h1>&#127911; Testador — Ilha das Sombras</h1>
+  <p>Ouça os <b>dois primeiros textos reais</b> da ilha (como a atividade fala hoje) e depois as
+     <b>versões de correção</b>. Me diga qual soou certa que eu fixo no dicionário de pronúncia.</p>
+  <div class="voz" id="voz">Procurando a voz&hellip;</div>
 
-  <div id="lista"></div>
-
-  <div class="cand">
-    <b>Testar outra grafia</b>
-    <div class="lin"><input id="livre" type="text" placeholder="ex.: sônbra">
-      <button onclick="falarLivre()">&#128266; Ouvir</button></div>
+  <h2>1) Como está HOJE (o que sai errado)</h2>
+  <div class="blk">
+    <div class="txt">Texto 1 (intro): "O holofote do circo acendeu e apareceram as <span class="w">sombras</span> dos bichos! Arraste cada animal colorido at&eacute; a <span class="w">sombra</span> igual a ele. Vamos ajudar o T&eacute;u?"</div>
+    <button onclick="falar(T1_ORIG)">&#128266; ouvir texto 1</button>
+    <div class="txt" style="margin-top:10px;">Texto 2 (comando): "Arraste cada animal at&eacute; a <span class="w">sombra</span> dele!"</div>
+    <button onclick="falar(T2_ORIG)">&#128266; ouvir texto 2</button>
+    <div><small>Repare especialmente no <b>plural "sombras"</b> do texto 1.</small></div>
   </div>
 
-  <div class="dica">
-    <b>Frases reais da atividade</b> (a que aparece na Ilha das Sombras):<br>
-    1) "Arraste cada animal at&eacute; a <u>sombra</u> dele!" &nbsp; 2) "Isso! A <u>sombra</u> do le&atilde;o." &nbsp;
-    3) "Voc&ecirc; achou a <u>sombra</u> certa de todos os bichinhos!"
+  <h2>2) Versões de CORREÇÃO (escolha a que soar certa)</h2>
+  <div class="sec">
+    <b>Trocar só o plural "sombras" &rarr;</b>
+    <div>
+      <button onclick="falar(t1('sônbras'))">&#128266; texto 1 com "sônbras"</button>
+      <button onclick="falar(t1('sonbras'))">&#128266; texto 1 com "sonbras"</button>
+      <button onclick="falar(t1('somras'))">&#128266; texto 1 com "somras"</button>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:8px;">
+    <b>Palavra "sombras" sozinha (comparar):</b>
+    <div>
+      <button onclick="falar('sombras')">sombras</button>
+      <button onclick="falar('sônbras')">sônbras</button>
+      <button onclick="falar('sonbras')">sonbras</button>
+      <button onclick="falar('somras')">somras</button>
+    </div>
+  </div>
+  <div class="sec" style="margin-top:8px;">
+    <b>Testar sua própria grafia:</b>
+    <div><input id="livre" type="text" placeholder="ex.: sômbrass">
+      <button onclick="falarLivre()">&#128266; ouvir</button></div>
+    <small>ou digite a frase inteira do jeito que quiser testar.</small>
   </div>
 </div>
 
 <script>
-// --- Mesma logica de escolha de voz do Circo (pra bater com a atividade) ---
+var T1_ORIG="O holofote do circo acendeu e apareceram as sombras dos bichos! Arraste cada animal colorido até a sombra igual a ele. Vamos ajudar o Téu?";
+var T2_ORIG="Arraste cada animal até a sombra dele!";
+// troca SO o plural "sombras" (mantem o singular "sombra", que ja soa certo)
+function t1(pl){return T1_ORIG.replace(/sombras/g, pl);}
+
 var _voz=null;
 function escolherVoz(){
   if(!window.speechSynthesis)return null;
@@ -60,19 +86,17 @@ function escolherVoz(){
   return (bs>=40)?best:null;
 }
 function achouVoz(){
-  _voz=escolherVoz();
-  var el=document.getElementById("voz");
+  _voz=escolherVoz();var el=document.getElementById("voz");
   if(_voz){el.innerHTML="Voz em uso: <b>"+_voz.name+"</b> ("+_voz.lang+")";}
-  else{el.innerHTML="&#9888; Não achei voz em português neste navegador. Teste em outro (Chrome costuma ter).";}
+  else{el.innerHTML="&#9888; Não achei voz em português. Teste no Chrome.";}
 }
 if(window.speechSynthesis){
   achouVoz();
   if(window.speechSynthesis.onvoiceschanged!==undefined){window.speechSynthesis.onvoiceschanged=achouVoz;}
   setTimeout(achouVoz,500);
 }
-
 function falar(txt){
-  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){alert("Este navegador não tem síntese de voz.");return;}
+  if(!window.speechSynthesis||!window.SpeechSynthesisUtterance){alert("Sem síntese de voz aqui.");return;}
   try{window.speechSynthesis.cancel();}catch(e){}
   var u=new SpeechSynthesisUtterance(txt);
   if(_voz){u.voice=_voz;u.lang=_voz.lang||"pt-BR";}else{u.lang="pt-BR";}
@@ -80,28 +104,6 @@ function falar(txt){
   try{window.speechSynthesis.resume();}catch(e){}
   window.speechSynthesis.speak(u);
 }
-
-// --- Candidatos de grafia pra "sombra" ---
-var CAND=["sombra","sômbra","sonbra","sônbra"];
-function frase(n,w){
-  if(n===1)return "Arraste cada animal até a "+w+" dele!";
-  if(n===2)return "Isso! A "+w+" do leão.";
-  return "Você achou a "+w+" certa de todos os bichinhos!";
-}
-function montar(){
-  var html="",i;
-  for(i=0;i<CAND.length;i++){(function(w){
-    html+='<div class="cand"><b>'+w+'</b>'+(w==="sombra"?' (atual)':'')+
-      '<div class="lin">'+
-      '<button onclick="falar(\''+w+'\')">&#128266; palavra</button>'+
-      '<button onclick="falar(\''+frase(1,w).replace(/\'/g,"")+'\')">&#128266; frase 1</button>'+
-      '<button onclick="falar(\''+frase(2,w).replace(/\'/g,"")+'\')">&#128266; frase 2</button>'+
-      '<button onclick="falar(\''+frase(3,w).replace(/\'/g,"")+'\')">&#128266; frase 3</button>'+
-      '</div></div>';
-  })(CAND[i]);}
-  document.getElementById("lista").innerHTML=html;
-}
-montar();
 function falarLivre(){var v=document.getElementById("livre").value;if(v){falar(v);}}
 </script>
 </body>
