@@ -66,6 +66,8 @@ for k in range(1, 4):
 # Emblemas de nivel (5 patentes)
 for k in range(1, 6):
     m("EMB_" + str(k), "emblema-" + str(k) + ".png")
+# Desenho de colorir (tela de pintar)
+m("COLORIR", "colorir.png")
 
 def datauri(path):
     with open(path, "rb") as f:
