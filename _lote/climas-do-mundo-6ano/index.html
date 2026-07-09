@@ -89,19 +89,19 @@ body.tc-ativa .montar-pal{ font-size:18px; padding:12px 15px; }
 #tbEmb svg, #tbEmb img { width:44px; height:44px; display:block; }
 
 /* ===== CARDS ===== */
-.card { background:#ffffff;
-  background:-webkit-linear-gradient(top,#ffffff,#eef7ff);
-  background:linear-gradient(to bottom,#ffffff,#eef7ff);
-  border:2px solid rgba(120,180,230,.4);
+.card { background:#f4ecd8;
+  background:-webkit-linear-gradient(top,#f7f0dd,#efe4c8);
+  background:linear-gradient(to bottom,#f7f0dd,#efe4c8);
+  border:2px solid #c9b083;
   border-radius:24px; padding:18px 16px; margin-bottom:14px;
-  box-shadow:0 8px 22px rgba(90,140,190,.25);
+  box-shadow:0 8px 22px rgba(60,50,30,.30), inset 0 0 0 1px rgba(201,176,131,.35);
   -webkit-animation:cardSurge .45s ease-out; animation:cardSurge .45s ease-out; }
 @-webkit-keyframes cardSurge { 0%{opacity:0; -webkit-transform:translateY(18px) scale(.97);} 100%{opacity:1; -webkit-transform:translateY(0) scale(1);} }
 @keyframes cardSurge { 0%{opacity:0; transform:translateY(18px) scale(.97);} 100%{opacity:1; transform:translateY(0) scale(1);} }
 .card img { max-width:100%; }
 h1.titulo { font-size:24px; color:#1a5f9e; text-align:center; margin-bottom:6px; }
 h2.subt { font-size:17px; color:#e8792a; text-align:center; margin-bottom:10px; }
-p.texto { font-size:15px; line-height:1.5; color:#26476b; }
+p.texto { font-size:15px; line-height:1.5; color:#3a2f1e; max-width:540px; margin-left:auto; margin-right:auto; }
 
 /* ===== BOTÕES ===== */
 .btn { display:block; width:100%; max-width:230px; border:0; cursor:pointer; text-align:center;
@@ -410,10 +410,10 @@ p.texto { font-size:15px; line-height:1.5; color:#26476b; }
 
 /* ===== CAPA (tela inicial premium) ===== */
 .capa { position:relative; padding-top:26px; overflow:visible;
-  background:#fff;
-  background:-webkit-linear-gradient(top,#ffffff,#eaf4ff);
-  background:linear-gradient(to bottom,#ffffff,#eaf4ff);
-  border:2px solid rgba(120,180,230,.45); }
+  background:#f4ecd8;
+  background:-webkit-linear-gradient(top,#f7f0dd,#efe4c8);
+  background:linear-gradient(to bottom,#f7f0dd,#efe4c8);
+  border:2px solid #c9b083; }
 .capa-selo { position:absolute; top:-13px; left:50%; -webkit-transform:translateX(-50%); transform:translateX(-50%);
   background:-webkit-linear-gradient(top,#ff8a3d,#ff6f2c); background:linear-gradient(to bottom,#ff8a3d,#ff6f2c);
   color:#fff; font-size:11px; font-weight:bold; letter-spacing:2px; padding:6px 16px; border-radius:999px;
@@ -440,9 +440,9 @@ p.texto { font-size:15px; line-height:1.5; color:#26476b; }
 .capa-t2 { display:block; font-size:20px; font-weight:800; letter-spacing:3px; text-transform:uppercase; color:#e8792a; margin-top:-2px; }
 .capa-sub { font-size:13px; font-style:italic; color:#5a7ea6; margin-top:6px;
   -webkit-animation:capaRise .55s ease-out .12s both; animation:capaRise .55s ease-out .12s both; }
-.capa-lead { font-size:14px; line-height:1.5; color:#26476b; margin:14px 8px 6px;
+.capa-lead { font-size:14px; line-height:1.5; color:#3a2f1e; max-width:540px; margin:14px auto 6px;
   -webkit-animation:capaRise .55s ease-out .16s both; animation:capaRise .55s ease-out .16s both; }
-.capa-boasvindas { font-size:16px; color:#26476b; margin:14px 0 8px;
+.capa-boasvindas { font-size:16px; color:#3a2f1e; max-width:540px; margin:14px auto 8px;
   -webkit-animation:capaRise .55s ease-out .16s both; animation:capaRise .55s ease-out .16s both; }
 .capa-prog { margin:6px 0 4px; line-height:1;
   -webkit-animation:capaRise .55s ease-out .2s both; animation:capaRise .55s ease-out .2s both; }
