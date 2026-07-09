@@ -1061,7 +1061,7 @@ function fimReforco(){somFanfarra();confete(30);emReforco=false;
 function tcSup(){var e=document.documentElement;return !!(e.requestFullscreen||e.webkitRequestFullscreen||e.mozRequestFullScreen||e.msRequestFullscreen);}
 function emTC(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
 function alternarTelaCheia(){var e=document.documentElement;try{if(!emTC()){if(e.requestFullscreen)e.requestFullscreen();else if(e.webkitRequestFullscreen)e.webkitRequestFullscreen();else if(e.mozRequestFullScreen)e.mozRequestFullScreen();else if(e.msRequestFullscreen)e.msRequestFullscreen();}else{if(document.exitFullscreen)document.exitFullscreen();else if(document.webkitExitFullscreen)document.webkitExitFullscreen();}}catch(x){}}
-function atualizarTC(){var b=$("btn-tela-cheia");if(b){b.innerHTML=emTC()?"✕":"⛛";}}
+function atualizarTC(){var b=$("btn-tela-cheia");if(b){b.innerHTML=emTC()?"&#10005;":"&#9974;";}}
 /* ====== BOOT ====== */
 function boot(){carregar();var b=$("btn-tela-cheia");if(b&&tcSup()){b.style.display="block";if(document.body)document.body.className+=" tem-tc";
     var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"],k;for(k=0;k<evs.length;k++)document.addEventListener(evs[k],atualizarTC);}
