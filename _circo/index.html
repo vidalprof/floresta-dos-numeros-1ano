@@ -1084,8 +1084,8 @@ function renderContar(){var q=d[dIdx];_resp=false;
   $("app").innerHTML=h;falar("Conte "+artPl(q.obj.g)+" "+plObj(q.obj.nome)+" e toque no número!");}
 function responderNum(escolha){if(_resp){return;}var q=d[dIdx];somClique();
   if(escolha===q.n){_resp=true;acertou();var el=elogio();
-    $("zonaFeed").innerHTML=fbOk(el+' São <b>'+q.n+'</b> '+plObj(q.obj.nome)+'!');
-    falar(el+" São "+numExtG(q.n,q.obj.g)+" "+plObj(q.obj.nome)+".");}
+    $("zonaFeed").innerHTML=fbOk(el+' Você contou <b>'+q.n+'</b> '+plObj(q.obj.nome)+'!');
+    falar(el+" Você contou "+numExtG(q.n,q.obj.g)+" "+plObj(q.obj.nome)+".");}
   else{somErro();streak=0;dErros++;guardarErroFase(q);contagemAcesa(q);}}
 function contagemAcesa(q){var b=document.getElementsByClassName("opnum"),i;for(i=0;i<b.length;i++){b[i].disabled=true;}
   $("zonaFeed").innerHTML='<div class="fbno"><b>Quase!</b> Vamos contar juntos, bem devagar.</div>';
@@ -1114,7 +1114,7 @@ function fimFase(){var f=FCFG[faseAtual];ESTADO.concluidas[faseAtual]=true;
   h+='<button class="btn'+((ofereceExtra||ofereceRef)?' suave peq':' pulsa gate-audio')+'" onclick="telaMapa()">&#9654; Voltar ao mapa</button>';
   h+='<button class="btn suave peq" onclick="comecarFase()">&#128257; Jogar de novo</button></div>';
   $("app").innerHTML=h;window.scrollTo(0,0);
-  var fa="Parada concluída! Você ganhou a medalha número "+numDaParada(faseAtual)+"! ";
+  var fa="Parada concluída! Você ganhou a medalha número "+numDaParada(faseAtual)+"! Que orgulho: você deve estar muito feliz, não é? ";
   if(ofereceExtra){fa+="Que tal um desafio extra? É um pouquinho mais difícil!";}
   else if(ofereceRef){fa+="Quer treinar mais um pouquinho?";}
   else{fa+=f.gancho;}
