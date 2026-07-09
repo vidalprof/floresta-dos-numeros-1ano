@@ -21,7 +21,9 @@ Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIP
 > **NEM TUDO É PREMIUM — o rito premium é SÓ quando o Marcos PEDIR (pedido dele):** existem
 > pedidos **à parte**, que NÃO seguem este molde nem o checklist premium — ex.: o **Desafio da
 > Copa** (leitura), um **jogo de colorir com várias imagens**, uma atividade pontual/mais simples,
-> **OU um estilo/formato totalmente NOVO** que a gente nunca fez. **O ESTILO é livre — o Marcos
+> **OU um estilo/formato totalmente NOVO** que a gente nunca fez. **FORMATO PRÓPRIO já definido:**
+> quando o Marcos disser **"atividade de computação"** = seguir o **`ATIVIDADE-COMPUTACAO.md`**
+> (BNCC Computação, "programe o robô" etc.), NÃO o molde premium. **O ESTILO é livre — o Marcos
 > manda no formato.** Nesses, construir **do jeito que ele pediu**, SEM impor a máquina premium
 > (base-mãe, medalhas/níveis, adaptativo, `--exigir`) nem nenhum molde antigo. **O MÍNIMO que vale
 > em QUALQUER estilo (não-negociável):** 1 HTML único autossuficiente; roda em navegador antigo

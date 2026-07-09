@@ -12,6 +12,11 @@ Leia tudo antes de agir e responda sempre em **português**.
 > auditar + QA 3 níveis, publicar em blocos, card no topo do hub). NÃO INVENTAR;
 > na dúvida, PERGUNTAR. Cada atividade é **1 HTML único autossuficiente**.
 
+> **"ATIVIDADE DE COMPUTAÇÃO" = FORMATO PRÓPRIO (novo, em teste):** quando o Marcos
+> disser **"atividade de computação"**, seguir o **`ATIVIDADE-COMPUTACAO.md`** (BNCC
+> Computação — pensamento computacional, "programe o robô" etc.), **NÃO** o molde
+> premium. O trabalho premium continua normal; este formato é experimental e evolui.
+
 ## 1. Este site (repositório atual)
 
 - O site fica em **`index.html`** na branch **`main`**.
