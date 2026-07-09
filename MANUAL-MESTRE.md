@@ -38,6 +38,13 @@ Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIP
 3. **Correção AUTOMÁTICA só quando o certo é ÚNICO e determinístico** (ex.: emoji fora de compat → trocar por equivalente ≤6.0; `-webkit-` faltando; token trocado). Nesses casos EU corrijo sozinho e sigo — não devolvo pro usuário.
 4. **Onde há JULGAMENTO/conteúdo (qual nome é o certo, qual imagem, qual redação) — NÃO inventar: PERGUNTAR** (curto e objetivo). A auditoria BARRA; a decisão do "certo" é do usuário quando não é determinístico. Isso mantém o "não inventar" intacto e ainda facilita, porque o quebrado nunca chega a publicar.
 
+### AUDITORIA PEDAGÓGICA — vestir o PROFESSOR/PEDAGOGO experiente da disciplina (2 trilhos)
+A auditoria tem DOIS trilhos: (a) **técnico/erros** (acima — barra e auto-corrige o determinístico) e (b) **pedagógico** (julgamento — NÃO auto-corrige; AVISA + SUGERE, o usuário decide).
+- **Vestir o especialista da disciplina/ano** (ex.: prof. de Matemática do 5º, alfabetizador do Pré) com muita experiência, e **consultar a BNCC**: as habilidades/objetos daquele ano batem com o conteúdo? O nível cognitivo é adequado à idade? A progressão faz sentido (concreto→abstrato)? O enunciado ensina sem confundir? Contextualiza? A explicação do erro é o motivo VERDADEIRO?
+- **Se achar algo pedagógico, NÃO passar batido e NÃO corrigir sozinho:** AVISAR o usuário com (1) o que notei, (2) POR QUE (embasado — BNCC/didática), (3) SUGESTÕES concretas de melhoria, e deixar ELE DECIDIR. Agir como consultor pedagógico, não como dono do conteúdo.
+- Se não tiver certeza de uma habilidade BNCC específica (código EI/EF), dizer que vai confirmar / perguntar — nunca afirmar de cabeça como se fosse certo.
+- Diferença-chave: **erro técnico = barra/auto-corrige; questão pedagógica = aconselha e o usuário decide.** Silêncio pedagógico é falha; decidir conteúdo sozinho também.
+
 **FASE 4 — Publicar em BLOCOS (não peça por peça).** Juntar 3–4 features → 1 build → 1 QA → 1 deploy. Publicar a atividade (repo próprio, 1 HTML), **adicionar o card no TOPO da turma no hub** (mascote da própria atividade) e confirmar os builds (`status=built`).
 
 **Meta:** muito preciso, sem erros, e MAIS RÁPIDO que a 1ª vez — o ganho vem de (a) clonar o núcleo pronto, (b) gerar as imagens em lote no começo, (c) publicar em blocos.
