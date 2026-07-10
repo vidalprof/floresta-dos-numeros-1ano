@@ -61,3 +61,46 @@ Fundo 100% TRANSPARENTE (PNG), sem sombra. Alta resolução.
 MISTAKES" (shield with check), (2) "RAIN OF HITS" (cloud dropping stars), (3) "COLLECTOR"
 (album/atlas), (4) "SPEEDSTER" (fast lightning), (5) "CLIMATE MASTER" (crown with globe). Fully
 TRANSPARENT background (PNG), no shadow. High resolution.
+
+---
+
+## ⬜ NOVAS ILHAS + PERSONAGENS (para acabar com a repetição no mapa)
+
+São **15 paradas** no mapa, mas só existem **8 ilhas** e **8 personagens** — por isso
+repetem. Mantendo as 8 que já temos, faltam **7 ilhas novas** e **7 animais novos**
+(cada fase fica com arte única). Gerar em **2 cartelas** (uma de ilhas, uma de animais).
+Mesmo estilo Pixar/3D do mascote, **fundo 100% PRETO ou TRANSPARENTE**, itens **bem
+separados**, sem sombra no chão, alta resolução.
+
+### `ilhas-novas.png` — 7 ilhas flutuantes 3D
+**PT:** 7 ILHAS flutuantes 3D (estilo Pixar), numa imagem, BEM SEPARADAS, fundo 100% PRETO:
+(1) ACAMPAMENTO NAS NUVENS — pico de montanha entre nuvens fofas com barraquinhas e bandeirinhas;
+(2) OÁSIS NO DESERTO — laguinho azul com palmeiras no meio de dunas douradas;
+(3) VALE DAS QUATRO ESTAÇÕES — vale verde dividido em 4 (flores, verão, folhas de outono, neve);
+(4) ESTAÇÃO METEOROLÓGICA — plataforma de madeira com termômetro gigante, cata-vento e um gráfico;
+(5) OFICINA DO BALÃO — hangar de madeira com um balão de ar quente sendo montado;
+(6) IGLU GELADO — iglu de blocos de gelo sobre a neve, com blocos-letra ao lado;
+(7) TRILHAS DO CLIMA — ilha com placas de trilha e caminhos ligando mini-cenas (sol, chuva, neve).
+Sem sombra no chão, alta resolução.
+**EN:** 7 floating 3D ISLANDS (Pixar style), one image, well SEPARATED, 100% BLACK background:
+(1) CLOUD CAMP — mountain peak among fluffy clouds with little tents and flags;
+(2) DESERT OASIS — blue pond with palm trees amid golden dunes;
+(3) FOUR-SEASONS VALLEY — green valley split in 4 (blossoms, summer, autumn leaves, snow);
+(4) WEATHER STATION — wooden platform with a giant thermometer, weather-vane and a chart;
+(5) BALLOON WORKSHOP — wooden hangar with a hot-air balloon being assembled;
+(6) ICY IGLOO — ice-block igloo on snow, with letter blocks beside it;
+(7) CLIMATE TRAILS — island with trail signs and paths linking mini-scenes (sun, rain, snow).
+No ground shadow, high resolution.
+
+### `animais-novos.png` — 7 personagens 3D fofos
+**PT:** 7 ANIMAIS 3D fofos (estilo Pixar), numa imagem, BEM SEPARADOS, fundo 100% PRETO:
+(1) FENÉCO — raposinha do deserto de orelhas grandes; (2) CORUJA de óculos (leitora);
+(3) GUAXINIM engenhoso segurando uma chavinha; (4) FILHOTE de URSO-POLAR;
+(5) ESQUILO aventureiro com cachecol; (6) POMBA-CORREIO com bolsinha de carta;
+(7) ÁGUIA majestosa. Cada um em pé, olhando pra frente, expressão simpática.
+Sem sombra no chão, alta resolução.
+**EN:** 7 cute 3D ANIMALS (Pixar style), one image, well SEPARATED, 100% BLACK background:
+(1) FENNEC fox with big ears; (2) OWL with glasses (reader); (3) clever RACCOON holding a
+little wrench; (4) baby POLAR BEAR; (5) adventurous SQUIRREL with a scarf; (6) CARRIER PIGEON
+with a mail pouch; (7) majestic EAGLE. Each standing, facing forward, friendly expression.
+No ground shadow, high resolution.
