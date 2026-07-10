@@ -50,7 +50,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
 (function(){
   "use strict";
   function $(id){ return document.getElementById(id); }
-  function par(n){ try{ var m=location.search.match(new RegExp("[?&]"+n+"=([^&]+)")); return m?decodeURIComponent(m[1]):""; }catch(e){ return ""; } }
+  /* le parametro da URL. Tolera "&amp;" (& codificado ao copiar de paginas) e ";" no lugar de "&". */
+  function par(n){ try{ var s=(location.search||"").replace(/&amp;/gi,"&").replace(/;/g,"&"); var m=s.match(new RegExp("[?&]"+n+"=([^&]+)")); return m?decodeURIComponent(m[1]):""; }catch(e){ return ""; } }
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
   /* cookie: sobrevive onde o localStorage as vezes e bloqueado/limpo (NAO mexe na URL) */
   function ck(k,v){ try{ if(v===undefined){ var m=document.cookie.match(new RegExp("(?:^|; )"+k+"=([^;]*)")); return m?decodeURIComponent(m[1]):null; } document.cookie=k+"="+encodeURIComponent(v)+"; max-age=31536000; path=/"; return v; }catch(e){ return null; } }
