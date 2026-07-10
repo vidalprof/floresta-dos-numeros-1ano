@@ -57,7 +57,10 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   function ck(k,v){ try{ if(v===undefined){ var m=document.cookie.match(new RegExp("(?:^|; )"+k+"=([^;]*)")); return m?decodeURIComponent(m[1]):null; } document.cookie=k+"="+encodeURIComponent(v)+"; max-age=31536000; path=/"; return v; }catch(e){ return null; } }
 
   var SALA=par("sala")||ck("labsala")||ls("labsala")||"sala1"; ls("labsala",SALA); ck("labsala",SALA);
-  var DB=par("db")||ck("labdb")||ls("labdb")||"";  if(par("db")){ ls("labdb",DB); ck("labdb",DB); }
+  /* CANAL PADRAO = banco do Google (Firebase). Passa no firewall da escola e nao precisa
+     configurar nada nas maquinas. Pode ser trocado por ?db= na URL ou no controle, se quiser. */
+  var DB_PADRAO="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+  var DB=par("db")||ck("labdb")||ls("labdb")||DB_PADRAO;  if(par("db")){ ls("labdb",DB); ck("labdb",DB); }
   /* MARCA DE RESET: troque este valor p/ forcar TODAS as maquinas a perguntar o numero
      de novo UMA vez (na proxima abertura). Depois que o professor digitar, nao pergunta mais. */
   var RESET_PC="r2026-07-10a";
