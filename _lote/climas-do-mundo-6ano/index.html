@@ -703,17 +703,20 @@ input.campo { display:block; width:100%; font-size:17px; padding:12px 14px; bord
 .lig-it.sel{border-color:#ffb300;background:rgba(255,201,77,.16)}
 .lig-it.feito{border-color:#2f9d57;background:rgba(47,157,87,.16);color:#8ff0b6;cursor:default}
 .lig-it.erro{border-color:#c0392b;background:rgba(192,57,43,.15)}
-/* ===== TEMA ATLAS nas telas internas: diario de expedicao (couro/madeira) =====
-   Fundo escuro-quente + latao + titulos dourados serifados. Mantem o texto claro
-   dos mini-jogos legivel (nao vira papel), so muda o "couro" do caderno.
-   Escopado em body.atlas -> reverter = tirar a classe. */
-body.atlas .card{ background:#2b2115;
-  background:-webkit-linear-gradient(top,#352a1b,#241a10); background:linear-gradient(to bottom,#352a1b,#241a10);
-  border:1px solid #8a6a34;
-  -webkit-box-shadow:0 8px 22px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,224,170,.14); box-shadow:0 8px 22px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,224,170,.14); }
-body.atlas h1.titulo{ color:#ffe9c0; font-family:'Georgia','Times New Roman',serif; text-shadow:0 1px 2px rgba(0,0,0,.5); }
-body.atlas h2.subt{ color:#e6c15f; font-family:'Georgia',serif; }
-body.atlas p.texto{ color:#e7d8bf; }
+/* ===== TEMA ATLAS UNIFICADO: telas internas em PAPEL de atlas (igual capa/mapa) =====
+   Card vira folha de papel; textos escuros; mini-jogos com contraste ajustado.
+   Pecas de jogo que tem fundo escuro proprio (grade da caca, teclas) ficam como
+   "pecas" sobre o papel. Escopado em body.atlas -> reverter = tirar a classe. */
+body.atlas .card{ color:#3a2c1a; border-radius:8px;
+  background:#efe1c2; background:-webkit-linear-gradient(top,#f5ecd4,#e7d6b0); background:linear-gradient(to bottom,#f5ecd4,#e7d6b0);
+  border:1px solid #c3a875;
+  -webkit-box-shadow:0 8px 22px rgba(0,0,0,.5), inset 0 0 50px rgba(120,90,45,.14); box-shadow:0 8px 22px rgba(0,0,0,.5), inset 0 0 50px rgba(120,90,45,.14); }
+body.atlas h1.titulo{ color:#23384a; font-family:'Georgia','Times New Roman',serif; text-shadow:1px 1px 0 rgba(255,250,235,.6); }
+body.atlas h2.subt{ color:#8a3222; font-family:'Georgia',serif; }
+body.atlas p.texto{ color:#46351f; }
+body.atlas .fb-exp{ color:#6a512f; }
+body.atlas .mini{ color:#6a512f; }
+/* botoes */
 body.atlas .btn{ color:#fff3dd;
   background:#1c5658; background:-webkit-linear-gradient(top,#2c7c7e,#164648); background:linear-gradient(to bottom,#2c7c7e,#164648);
   -webkit-box-shadow:0 5px 0 #0d3233, 0 6px 16px rgba(0,0,0,.35); box-shadow:0 5px 0 #0d3233, 0 6px 16px rgba(0,0,0,.35); }
@@ -722,7 +725,20 @@ body.atlas .btn.azul{ color:#f3e6cc;
   background:#6e4a26; background:-webkit-linear-gradient(top,#7d5730,#4a2f18); background:linear-gradient(to bottom,#7d5730,#4a2f18);
   -webkit-box-shadow:0 5px 0 #3a2410, 0 6px 16px rgba(0,0,0,.35); box-shadow:0 5px 0 #3a2410, 0 6px 16px rgba(0,0,0,.35); }
 body.atlas .btn.azul:active{ box-shadow:0 2px 0 #3a2410; }
-body.atlas .btn.suave{ color:#e7d8bf; background:rgba(180,140,80,.10); border:2px solid #8a6a34; box-shadow:none; }
+body.atlas .btn.suave{ color:#5a3a1c; background:rgba(120,90,45,.10); border:2px solid #b08a4e; box-shadow:none; }
+/* --- mini-jogos: texto direto no papel vira escuro --- */
+body.atlas .forca-palavra{ color:#23384a; }
+body.atlas .forca-vidas{ color:#6a512f; }
+body.atlas .forca-dica{ color:#8a3222; }
+body.atlas .caca-palavra{ color:#46351f; background:rgba(120,90,45,.10); border-color:#c3a875; }
+body.atlas .caca-palavra.ok{ color:#1e7a42; border-color:#4c9a68; background:rgba(47,157,87,.16); }
+body.atlas .cg-leg{ color:#6a512f; }
+body.atlas .cg-opt{ color:#33261a; background:#fffdf3; border-color:#bd9f68; }
+body.atlas .cg-opt.ok{ color:#1e7a42; border-color:#2f9d57; background:rgba(47,157,87,.14); }
+body.atlas .cg-opt.no{ color:#a3161a; border-color:#c0392b; background:rgba(192,57,43,.10); }
+body.atlas .lig-it{ color:#33261a; background:#fffdf3; border-color:#bd9f68; }
+body.atlas .lig-it.feito{ color:#1e7a42; border-color:#2f9d57; background:rgba(47,157,87,.14); }
+body.atlas .pergmapa, body.atlas .fbmapa{ color:#3a2c1a; }
 </style>
 </head>
 <body class="atlas">
@@ -3495,7 +3511,7 @@ function mapaTap(i){
     mapaErros++;
     /* acende a(s) faixa(s) corretas */
     var k; for(k=0;k<MAPA_FAIXAS.length;k++){ if(MAPA_FAIXAS[k][r.campo]){ var c=document.getElementById("fx"+k); if(c){ c.className="faixa ok"; } } }
-    if(fb){ fb.style.color="#f3a29a"; fb.innerHTML=r.no; }
+    if(fb){ fb.style.color="#a3161a"; fb.innerHTML=r.no; }
   }
   setTimeout(mapaProx, 1500);
 }
@@ -3632,7 +3648,7 @@ function cgTap(m){
   } else {
     if(bars[m]){ bars[m].setAttribute("fill","#c0392b"); }
     cgErros++;
-    if(fb){ fb.style.color="#f3a29a"; fb.innerHTML=d.no; }
+    if(fb){ fb.style.color="#a3161a"; fb.innerHTML=d.no; }
   }
   setTimeout(cgProx, 1600);
 }
@@ -3651,7 +3667,7 @@ function cgEscolha(k){
   } else {
     botoes[k].className="cg-opt no"; cgErros++;
     for(j=0;j<d.opts.length;j++){ if(d.opts[j].ok){ botoes[j].className="cg-opt ok"; } }
-    if(fb){ fb.style.color="#f3a29a"; fb.innerHTML=d.no; }
+    if(fb){ fb.style.color="#a3161a"; fb.innerHTML=d.no; }
   }
   setTimeout(cgProx, 1600);
 }
@@ -3735,7 +3751,7 @@ function ligTocaB(idx){
   } else {
     ligLock=true; ligErros++;
     b.className="lig-it erro"; a.className="lig-it erro";
-    if(fb){ fb.style.color="#f3a29a"; fb.innerHTML="Ops! Essa característica é de outro clima."; }
+    if(fb){ fb.style.color="#a3161a"; fb.innerHTML="Ops! Essa característica é de outro clima."; }
     setTimeout(function(){ if($("liga"+ligSelA)){ $("liga"+ligSelA).className="lig-it"; } b.className="lig-it"; ligSelA=-1; ligLock=false; if(fb){ fb.innerHTML=""; } }, 900);
   }
 }
