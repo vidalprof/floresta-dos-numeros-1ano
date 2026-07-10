@@ -394,6 +394,29 @@ Manter `plural(n, sing, plur)` simples para casos sem gênero (n=1 → "1 "+sing
 ================================================================
 Para qualidade premium, gerar os assets-chave como **imagens 3D (estilo Pixar/última geração) no ChatGPT/Gemini**, não SVG/emoji desenhado — e o **Claude as deixa VIVAS/animadas** (ver a seção **⭐ PADRÃO 3D VIVO**). PNG/JPEG renderiza garantido em navegador antigo e fica muito mais bonito.
 
+### 🎨 CHAPÉU NOVO — ESPECIALISTA EM PROMPTS DO POLLINATIONS (plataforma principal de imagem)
+O **Claude gera imagens sozinho** via o workflow `gerar-imagens.yml` (no `main`), sem o Marcos subir nada. **Duas plataformas, estratégia de custo:**
+- 🆓 **Pollinations (Flux) — GRÁTIS, sem chave, PADRÃO.** `modelo=free`. **Excelente para CENAS/paisagens/fotos de clima/texturas/UM item sozinho.** Fundo sai **escuro-degradê** (não preto liso) → **não serve pra recorte com fundo transparente**. Fraqueza: **cartela cheia de itens EMBOLA** (não segue lista longa).
+- 💰 **Gemini pago (`gemini-3.1-flash-image`, ~R$0,20/imagem) — só quando precisa RECORTE limpo.** Fundo **preto liso perfeito**, segue lista de itens → **cartela de ícones/personagens recortáveis**, **enchendo o MÁXIMO de itens por cartela** (1 chamada = custo de 1). Precisa do secret `GEMINI_API_KEY` + billing com saldo (pré-pago). Erros já vistos: `free_tier=0` p/ imagem (precisa billing) e `prepayment credits depleted` (falta carregar saldo).
+- **Regra de custo:** a atividade INTEIRA sai por **centavos** — quase tudo no Pollinations grátis, e no máximo 1–2 cartelas pagas (~R$0,40). Sempre preferir o grátis; pago só pro que precisa fundo transparente.
+
+**Como pedir prompt PERFEITO no Pollinations (Flux):**
+1. **Estrutura:** *[assunto claro] + [estilo] + [luz/atmosfera] + [enquadramento] + "sem texto"*. Ex.: "Foto de expedição de um deserto de dunas douradas ao entardecer, céu alaranjado, estilo ilustração 3D vibrante para crianças, sem texto."
+2. **Âncora de estilo repetida** em todas as imagens do MESMO conjunto → cenas ficam consistentes (ex.: sempre "estilo ilustração 3D vibrante para crianças").
+3. **Um assunto por imagem** (Flux foca melhor). Vários itens juntos → embola; se precisar vários, é cartela paga no Gemini.
+4. **Params na URL** (o workflow já manda): `model=flux`, `width/height`, `nologo=true`. Dá pra testar `model=flux-3d` (3D desenho), `flux-realism` (realista), `turbo` (rápido) e `enhance=true` (um LLM melhora o prompt). `seed=N` fixa o resultado (reproduzir).
+5. **Nada de fundo preto pra recorte no Pollinations** — não vem limpo. Recorte transparente = Gemini pago.
+6. **Sem texto/rótulo** na imagem (Flux erra letras) — pôr "sem texto" e escrever rótulos em CSS por cima.
+
+### 🔌 OUTRAS FERRAMENTAS GRÁTIS p/ elevar (o que dá e o que NÃO dá)
+**A regra de ouro NÃO muda:** a atividade é **1 HTML único autossuficiente** que roda em **PC/navegador antigo** — então **NADA de CDN/ferramenta externa em tempo de execução** (quebraria o offline/antigo e o "self-contained"). O que dá é **usar ferramentas grátis no BUILD e EMBUTIR o resultado**:
+- ✅ **Pollinations** (imagens) — feito.
+- ✅ **Web Audio API** (sons sintetizados, já usado) — sem baixar arquivo.
+- ✅ **Canvas** para partículas (confete, chuva/neve, faíscas) — nativo, sem lib, compat OK, mais rico que CSS puro.
+- ⚠️ **Lottie** (animações vetoriais grátis do LottieFiles): premium, mas exige embutir o player (~KB) e **testar em navegador antigo** — usar com parcimônia e só se passar no compat.
+- ⚠️ **Libs de animação** (GSAP/anime.js): só INLINE e se compat aprovar; em geral **CSS `transform` + `-webkit-` já entrega** sem risco.
+- ❌ Qualquer coisa que **carregue de fora em runtime** (script/estilo/fonte via CDN, fetch) — proibido pelo self-contained + compat.
+
 **Sempre imagem 3D TEMÁTICA (cartela — Pixar/última geração; o Claude ANIMA):** TUDO personalizado ao tema da atividade (nada genérico). mascote (**6 poses**, incl. **boca aberta p/ falar**), **personagem-mascote de CADA ilha** (temático), ilhas/cenários do mapa, objetos das questões (temáticos, vários), **emblemas** de nível, **selos/conquistas** (incl. o de **sequência**), **medalhas** (bronze/prata/ouro), moeda/estrela/troféu/baú, **cadeado** (fechado/aberto), a **recompensa-que-cresce (3 fases)**, cena de abertura e grande final (estas duas viram JPEG de fundo, não recorte). Nunca emoji/SVG nos elementos-chave.
 **Ilha/cenário de cada parada = OBJETO flutuante recortado (sem fundo/retângulo/texto), NÃO "cena":** obrigatório por parada (fácil de esquecer); no prompt pedir "só o objeto do circo flutuando no branco, sem parede/chão/céu/cortina/palco/retângulo, sem palavra" — se pedir "cena", o ChatGPT devolve retângulo com fundo. Na tela flutua sobre um holofote redondo suave feito no CÓDIGO (radial-gradient), não na imagem. Detalhes e recorte (flood-fill do branco pelas bordas) no ATIVIDADE-PREMIUM §2/§8. O mascote CAMINHA pela trilha (fica ao lado da parada atual e desce a cada conclusão).
 **Pode ficar SVG:** ícones minúsculos de interface que mudam de cor/estado. Se um SVG falhar no PC antigo, vira imagem.
