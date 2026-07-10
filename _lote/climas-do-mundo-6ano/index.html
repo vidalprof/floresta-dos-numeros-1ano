@@ -854,7 +854,8 @@ function limparFala(t){
   var s=String(t||"");
   s=s.replace(/<[^>]*>/g," ");
   s=s.replace(/&nbsp;/g," ").replace(/&amp;/g,"e").replace(/&lt;/g," ").replace(/&gt;/g," ");
-  s=s.replace(/\s*\.\s*(?:\.\s*)+/g,". ");   /* reticências (...) viram 1 ponto, senão a voz lê "ponto ponto" */
+  s=s.replace(/\s*\.\s*(?:\.\s*)+/g,"… ");   /* reticências (...) viram 1 símbolo … (pausa maior, tratada na fala) */
+  s=s.replace(/…+/g,"…");           /* nunca deixa … repetido */
   s=acentuaPalavra(s,"voce","você");
   s=acentuaPalavra(s,"voces","vocês");
   s=acentuaPalavra(s,"magica","mágica");
@@ -866,7 +867,7 @@ function limparFala(t){
   s=s.replace(/\s*([,.!?:;])\s*/g,"$1 ");
   s=s.replace(/\s{2,}/g," ");
   s=s.replace(/^\s+|\s+$/g,"");
-  if(s && "..!?:".indexOf(s.charAt(s.length-1))<0){ s=s+"."; }
+  if(s && "..!?:…".indexOf(s.charAt(s.length-1))<0){ s=s+"."; }
   return s;
 }
 function pararFala(){
@@ -927,7 +928,7 @@ function falar(texto, aoTerminar){
     setTimeout(cb, 300);
     return;
   }
-  var frases=s.match(/[^.!?:]+[.!?:]+/g);
+  var frases=s.match(/[^.!?:…]+[.!?:…]+/g);
   if(!frases || !frases.length){ frases=[s]; }
   var idx=0;
   _falando=true;
@@ -942,7 +943,10 @@ function falar(texto, aoTerminar){
     }
     var fr=frases[idx].replace(/^\s+|\s+$/g,"");
     idx++;
+    var _retic=/…/.test(fr);                       /* frase terminou em reticências? -> pausa maior */
+    fr=fr.replace(/…/g,"").replace(/\s{2,}/g," ").replace(/^\s+|\s+$/g,"");  /* a voz NÃO lê o símbolo … */
     if(!fr){ proxima(); return; }
+    var _gap=_retic?520:240;                        /* pausa entre frases (reticências = mais longa) */
     var u=new SpeechSynthesisUtterance(fr);
     u.voice=vozEscolhida;
     u.lang=vozEscolhida.lang||"pt-BR";
@@ -954,7 +958,7 @@ function falar(texto, aoTerminar){
       terminou=true;
       if(_safeTimer){ clearTimeout(_safeTimer); _safeTimer=null; }
       if(_pollTimer){ clearInterval(_pollTimer); _pollTimer=null; }
-      _filaTimer=setTimeout(proxima, 120);
+      _filaTimer=setTimeout(proxima, _gap);
     }
     u.onend=fim;
     u.onerror=fim;
