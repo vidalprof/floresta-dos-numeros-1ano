@@ -109,5 +109,8 @@ jobs:
             echo "Nenhuma imagem nova (ou modo diagnostico)."
           else
             git commit -m "Gera imagem: ${{ inputs.nome }}"
-            git push
+            for k in 1 2 3 4 5 6 7 8; do
+              git pull --rebase origin main 2>/dev/null || true
+              git push && break || sleep $((k*3))
+            done
           fi
