@@ -54,6 +54,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Instalar ffmpeg (p/ voz masculina)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
       - name: Gerar audio
         env:
           TEXTO: ${{ inputs.texto }}
