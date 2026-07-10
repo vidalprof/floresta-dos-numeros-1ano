@@ -1150,8 +1150,16 @@ telas de verdade (o fade capturava telas "escuras" que eram só animação).
 2. `_circo/auditar-geral.py` → **APROVADO** (recursos completos).
 3. `_circo/testar-jogando.py` → **0 erro jogando**.
 4. `_circo/auditar-contraste.py` → **APROVADO** (0 texto ilegível).
-5. **Prévia renderizada** das telas-chave conferida (e do usuário, se novo visual).
-6. Só então commit + `atualizar.yml` + confirmar `success`.
+5. `_circo/auditar-imagens.py` → **APROVADO** (0 imagem com "restos de outra imagem"
+   grudados — recortes com fragmentos soltos. Foi o buraco que deixou passar as
+   ilhas e a águia com pedaços de outras cenas, escondidos pelo fundo escuro).
+6. **Prévia renderizada** das telas-chave conferida (e do usuário, se novo visual).
+7. Só então commit + `atualizar.yml` + confirmar `success`.
+
+> **Lição (voz):** narração **dinâmica** (com nome/progresso) cai na voz do
+> navegador (costuma ser feminina) e destoa das falas gravadas (masculinas).
+> Regra: toda narração fixa OU com variante genérica deve ter **MP3 embutido**
+> (`tocarFala(id, fallback)`); o fallback do navegador é só rede de segurança.
 
 ## 19.4 TEMA CLARO = padrão visual da fábrica
 Padrão novo: **fundo claro, cards brancos, texto escuro** (contraste alto por
