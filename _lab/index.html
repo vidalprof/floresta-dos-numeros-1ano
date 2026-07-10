@@ -52,10 +52,15 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   function $(id){ return document.getElementById(id); }
   function par(n){ try{ var m=location.search.match(new RegExp("[?&]"+n+"=([^&]+)")); return m?decodeURIComponent(m[1]):""; }catch(e){ return ""; } }
   function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  /* cookie: sobrevive onde o localStorage as vezes e bloqueado/limpo (NAO mexe na URL) */
+  function ck(k,v){ try{ if(v===undefined){ var m=document.cookie.match(new RegExp("(?:^|; )"+k+"=([^;]*)")); return m?decodeURIComponent(m[1]):null; } document.cookie=k+"="+encodeURIComponent(v)+"; max-age=31536000; path=/"; return v; }catch(e){ return null; } }
 
-  var SALA=par("sala")||ls("labsala")||"sala1"; ls("labsala",SALA);
-  var DB=par("db")||ls("labdb")||"";  if(par("db")) ls("labdb",DB);
-  var PC=par("pc")||ls("labpc")||"";  if(par("pc")) ls("labpc",PC);
+  var SALA=par("sala")||ck("labsala")||ls("labsala")||"sala1"; ls("labsala",SALA); ck("labsala",SALA);
+  var DB=par("db")||ck("labdb")||ls("labdb")||"";  if(par("db")){ ls("labdb",DB); ck("labdb",DB); }
+  /* PC: le de qualquer um dos lugares (URL, cookie, localStorage). Grava em cookie + localStorage.
+     NAO altera a barra de endereco (a homepage ja esta configurada nas maquinas). */
+  function salvarPC(v){ PC=v; ls("labpc",v); ck("labpc",v); }
+  var PC=par("pc")||ck("labpc")||ls("labpc")||"";  if(PC){ salvarPC(PC); }
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
   function pintaRodape(){
@@ -71,7 +76,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     $("setpc").style.display="block";
     try{ $("inpc").focus(); $("inpc").select(); }catch(e){}
   }
-  $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; PC=v; ls("labpc",v); $("setpc").style.display="none"; pintaRodape(); };
+  $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; salvarPC(v); $("setpc").style.display="none"; pintaRodape(); };
   pintaRodape();
   if(!PC){ $("setpc").style.display="block"; }
   var pt=$("pt"), stx=$("stx");
