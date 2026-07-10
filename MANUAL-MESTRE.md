@@ -411,6 +411,21 @@ Manter `plural(n, sing, plur)` simples para casos sem gênero (n=1 → "1 "+sing
 Para qualidade premium, gerar os assets-chave como **imagens 3D (estilo Pixar/última geração) no ChatGPT/Gemini**, não SVG/emoji desenhado — e o **Claude as deixa VIVAS/animadas** (ver a seção **⭐ PADRÃO 3D VIVO**). PNG/JPEG renderiza garantido em navegador antigo e fica muito mais bonito.
 
 ### 🎨 CHAPÉU NOVO — ESPECIALISTA EM PROMPTS DO POLLINATIONS (plataforma principal de imagem)
+
+> **⭐ REGRA FIXA (pedido explícito do Marcos — NUNCA esquecer, NUNCA perder):**
+> 1. **SEMPRE preferir o Pollinations — é GRÁTIS.** É o PADRÃO em tudo. O `gerar-imagens.yml`
+>    já vem com `modelo=pollinations` por default. Gemini (pago) só como último recurso,
+>    quando REALMENTE precisa recorte com fundo transparente e o Pollinations não entrega.
+> 2. **SEMPRE tentar gerar em CARTELA** (várias peças numa folha só): o mascote em TODAS as
+>    poses juntas na MESMA imagem, os companheiros juntos, os ícones juntos. Gerar em cartela
+>    = mesmo estilo/proporção/luz para todas as peças (elas saem IRMÃS) e 1 chamada só.
+>    Depois recorto por vãos (PIL). **Nunca gerar pose por pose separada** (sai cada uma de um
+>    jeito, some a consistência — foi o erro do Nino gerado 1 a 1).
+> 3. Se o Pollinations embolar a cartela (ele às vezes não segue lista longa), tentar: menos
+>    peças por cartela, `enhance=true`, `seed` fixo, ou grade explícita no prompt
+>    ("grade 2x3, cada quadro com uma pose, bem separadas, fundo branco"). Só depois de
+>    esgotar o grátis é que se cogita o Gemini pago.
+
 O **Claude gera imagens sozinho** via o workflow `gerar-imagens.yml` (no `main`), sem o Marcos subir nada. **Duas plataformas, estratégia de custo:**
 - 🆓 **Pollinations (Flux) — GRÁTIS, sem chave, PADRÃO.** `modelo=free`. **Excelente para CENAS/paisagens/fotos de clima/texturas/UM item sozinho.** Fundo sai **escuro-degradê** (não preto liso) → **não serve pra recorte com fundo transparente**. Fraqueza: **cartela cheia de itens EMBOLA** (não segue lista longa).
 - 💰 **Gemini pago (`gemini-3.1-flash-image`, ~R$0,20/imagem) — só quando precisa RECORTE limpo.** Fundo **preto liso perfeito**, segue lista de itens → **cartela de ícones/personagens recortáveis**, **enchendo o MÁXIMO de itens por cartela** (1 chamada = custo de 1). Precisa do secret `GEMINI_API_KEY` + billing com saldo (pré-pago). Erros já vistos: `free_tier=0` p/ imagem (precisa billing) e `prepayment credits depleted` (falta carregar saldo).
