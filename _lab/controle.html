@@ -39,16 +39,6 @@ input[type=text]:focus{border-color:#5b8bff;}
   <h1>&#127891; Controle do Laboratório</h1>
   <div class="sub">Você digita aqui e abre na tela dos alunos ao mesmo tempo.</div>
 
-  <div class="aviso" id="avisoDb">
-    <b>Funciona sem configurar nada</b> (canal ntfy). <b>Só se a escola bloquear</b>, crie um Firebase (Google) e cole a URL abaixo.
-  </div>
-
-  <div class="card">
-    <label>FIREBASE (opcional — só se a escola bloquear o padrão)</label>
-    <input id="db" type="text" placeholder="https://SEU-PROJETO-default-rtdb.firebaseio.com">
-    <button class="btn mini" id="salvarDb">Salvar canal</button>
-  </div>
-
   <div class="card">
     <label>LINK PARA ABRIR</label>
     <input id="link" type="text" placeholder="Cole o link da atividade...">
@@ -74,6 +64,11 @@ input[type=text]:focus{border-color:#5b8bff;}
     <div class="dica" style="margin-top:12px;"><b>Página inicial dos PCs dos alunos</b> (copie e ponha na homepage; troque o número do PC em <b>pc=</b>):</div>
     <div class="copia" id="urllab"></div>
   </div>
+  <div class="card" style="opacity:.75;">
+    <label style="font-size:11px;">CANAL AVANÇADO (só se a escola bloquear o padrão)</label>
+    <input id="db" type="text" placeholder="URL do Firebase (deixe vazio p/ usar o padrão)" style="font-size:13px;">
+    <button class="btn mini" id="salvarDb" style="font-size:13px;padding:9px;">Salvar canal alternativo</button>
+  </div>
 </div>
 
 <script>
@@ -94,7 +89,7 @@ input[type=text]:focus{border-color:#5b8bff;}
   }
   function pinta(){
     $("urllab").textContent = DB()? urlLab() : "(cole a URL do Firebase primeiro)";
-    $("avisoDb").style.display = DB()? "none":"block";
+    var _a=$("avisoDb"); if(_a){ _a.style.display = DB()? "none":"block"; }
   }
   pinta();
 

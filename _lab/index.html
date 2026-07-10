@@ -35,6 +35,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     <div class="ico">&#128225;</div>
     <h1>Aguardando o professor&hellip;</h1>
     <p id="txtEspera">Esta tela vai abrir a atividade sozinha quando o professor enviar. Pode deixar assim.</p>
+    <div id="setpc" style="display:none;margin-top:18px;">
+      <div style="font-size:15px;color:#cfe0ff;margin-bottom:8px;">Qual o n&uacute;mero deste computador?</div>
+      <input id="inpc" type="text" inputmode="numeric" placeholder="ex.: 01" style="font-size:20px;text-align:center;width:120px;padding:10px;border-radius:10px;border:2px solid #33477e;background:#0c1730;color:#fff;">
+      <button id="okpc" style="font-size:18px;font-weight:bold;padding:11px 18px;margin-left:8px;border:0;border-radius:10px;background:#35d27e;color:#04240f;cursor:pointer;">OK</button>
+    </div>
   </div>
   <div id="bloqueio"><div class="ico" style="font-size:56px;">&#9995;</div><h1>Aula pausada</h1><p>Aguarde o professor.</p></div>
   <iframe id="quadro" allow="fullscreen; autoplay; microphone" allowfullscreen></iframe>
@@ -52,17 +57,25 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   var DB=par("db")||ls("labdb")||"";  if(par("db")) ls("labdb",DB);
   var PC=par("pc")||ls("labpc")||"";  if(par("pc")) ls("labpc",PC);
 
-  $("rodape").innerHTML="Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):"");
+  function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
+  function pintaRodape(){ $("rodape").innerHTML="Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>"); }
+  pintaRodape();
+  if(!PC){
+    $("setpc").style.display="block";
+    $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; PC=v; ls("labpc",v); $("setpc").style.display="none"; pintaRodape(); };
+  }
   var pt=$("pt"), stx=$("stx");
   var quadro=$("quadro"), espera=$("espera"), bloqueio=$("bloqueio");
   function conectado(ok){ pt.className=ok?"on":""; stx.innerHTML=ok?"conectado":"reconectando…"; }
 
 
   function tela(modo){
+    _urlAtual="";
     if(modo==="voltar"){ quadro.style.display="none"; quadro.src="about:blank"; bloqueio.style.display="none"; espera.style.display="flex"; return; }
     if(modo==="bloquear"){ quadro.style.display="none"; quadro.src="about:blank"; espera.style.display="none"; bloqueio.style.display="flex"; return; }
   }
-  function abrir(url){ espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; quadro.src=url; }
+  var _urlAtual="";
+  function abrir(url){ espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } }
 
   var ultimoId=null;
   function aplica(cmd){
@@ -72,7 +85,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     var alvo=(cmd.alvo||"todos");
     if(alvo!=="todos"){
       var achou=false, arr=(""+alvo).split(","), i;
-      for(i=0;i<arr.length;i++){ if(arr[i].replace(/^\s+|\s+$/g,"")===PC){ achou=true; } }
+      for(i=0;i<arr.length;i++){ if(norm(arr[i])===norm(PC) && PC){ achou=true; } }
       if(!achou){ ultimoId=cmd.id; return; }  /* nao e p/ este PC */
     }
     ultimoId=cmd.id;
