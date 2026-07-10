@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel do Laboratório</title>
+<style>
+*{margin:0;padding:0;-webkit-box-sizing:border-box;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:'Segoe UI',Arial,sans-serif;}
+#espera{position:fixed;left:0;top:0;right:0;bottom:0;z-index:2;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;text-align:center;color:#eaf2ff;
+  background:#0e1524;background:-webkit-radial-gradient(50% 30%,#1b2a4d,#0b1120 80%);background:radial-gradient(120% 90% at 50% 25%,#1b2a4d,#0b1120 80%);}
+#espera h1{font-size:34px;margin-bottom:10px;}
+#espera p{font-size:17px;color:#9fb2d6;max-width:520px;padding:0 16px;line-height:1.5;}
+.ico{font-size:64px;margin-bottom:14px;-webkit-animation:pisca 1.6s ease-in-out infinite;animation:pisca 1.6s ease-in-out infinite;}
+@-webkit-keyframes pisca{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes pisca{0%,100%{opacity:.5}50%{opacity:1}}
+#status{position:fixed;left:10px;bottom:10px;z-index:5;font-size:12px;color:#7f93bd;}
+#pt{display:inline-block;width:9px;height:9px;border-radius:50%;background:#e05a5a;margin-right:6px;vertical-align:middle;}
+#pt.on{background:#3ad07a;}
+#quadro{position:fixed;left:0;top:0;width:100%;height:100%;z-index:3;border:0;display:none;background:#fff;}
+#sala{position:fixed;right:10px;bottom:10px;z-index:5;font-size:12px;color:#7f93bd;}
+</style>
+</head>
+<body>
+  <div id="espera">
+    <div class="ico">&#128225;</div>
+    <h1>Aguardando o professor&hellip;</h1>
+    <p>Esta tela vai abrir a atividade automaticamente quando o professor enviar. Pode deixar assim.</p>
+  </div>
+  <iframe id="quadro" allow="fullscreen; autoplay; microphone" allowfullscreen></iframe>
+  <div id="status"><span id="pt"></span><span id="stx">conectando&hellip;</span></div>
+  <div id="sala"></div>
+
+<script>
+(function(){
+  "use strict";
+  /* ==== CANAL (gratis, sem instalar). Se a escola bloquear ntfy.sh, troca-se aqui. ==== */
+  var HOST="https://ntfy.sh/";
+  function pegarSala(){
+    try{ var q=location.search.match(/[?&]sala=([\w-]+)/); if(q){ localStorage.setItem("labsala",q[1]); return q[1]; } }catch(e){}
+    try{ var s=localStorage.getItem("labsala"); if(s) return s; }catch(e){}
+    return "sala1";
+  }
+  var SALA=pegarSala();
+  var TOPICO="vidalprofLab_"+SALA;
+  document.getElementById("sala").innerHTML="Sala: <b>"+SALA+"</b>";
+
+  var quadro=document.getElementById("quadro");
+  var espera=document.getElementById("espera");
+  var pt=document.getElementById("pt"), stx=document.getElementById("stx");
+  var ultimoId=null, inicio=Math.floor((new Date()).getTime()/1000);
+
+  function conectado(ok){ pt.className=ok?"on":""; stx.innerHTML=ok?"conectado":"reconectando…"; }
+
+  function abrir(url){
+    if(!url){ return; }
+    if(url==="__voltar__"){ quadro.style.display="none"; quadro.src="about:blank"; espera.style.display="flex"; return; }
+    espera.style.display="none"; quadro.style.display="block"; quadro.src=url;
+  }
+
+  function tratar(msg){
+    if(!msg || !msg.id) return;
+    if(msg.event!=="message") return;
+    if(msg.id===ultimoId) return;          /* nao repete o mesmo comando */
+    if(msg.time && msg.time < inicio-3) { ultimoId=msg.id; return; } /* ignora comando velho ao abrir */
+    ultimoId=msg.id;
+    abrir((msg.message||"").replace(/^\s+|\s+$/g,""));
+  }
+
+  /* POLLING (mais amigo de proxy de escola que SSE) */
+  function poll(){
+    var xhr=new XMLHttpRequest();
+    var url=HOST+TOPICO+"/json?poll=1&since=15s";
+    try{ xhr.open("GET",url,true); }catch(e){ conectado(false); return agenda(); }
+    xhr.timeout=8000;
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState!==4) return;
+      if(xhr.status>=200 && xhr.status<300){
+        conectado(true);
+        var linhas=(xhr.responseText||"").split("\n");
+        for(var i=0;i<linhas.length;i++){
+          var ln=linhas[i].replace(/^\s+|\s+$/g,""); if(!ln) continue;
+          try{ tratar(JSON.parse(ln)); }catch(e){}
+        }
+      } else { conectado(false); }
+      agenda();
+    };
+    xhr.ontimeout=function(){ conectado(false); agenda(); };
+    xhr.onerror=function(){ conectado(false); agenda(); };
+    try{ xhr.send(); }catch(e){ conectado(false); agenda(); }
+  }
+  var t=null;
+  function agenda(){ if(t){clearTimeout(t);} t=setTimeout(poll, 2500); }
+  poll();
+})();
+</script>
+</body>
+</html>
