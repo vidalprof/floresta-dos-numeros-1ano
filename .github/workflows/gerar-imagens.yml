@@ -3,20 +3,23 @@ name: Gerar imagem com Gemini
 # Gera uma imagem a partir de um prompt usando a API do Gemini e salva em _imagens/.
 # Requer o secret GEMINI_API_KEY (Settings -> Secrets and variables -> Actions).
 # A chave vive SO como secret; nunca colar o valor em lugar nenhum do codigo/chat.
+# Diagnostico: use modelo="listar" para listar os modelos que a chave acessa.
 
 on:
   workflow_dispatch:
     inputs:
       prompt:
         description: "Descricao da imagem (dica: fundo PRETO, itens BEM separados, sem sombra)"
-        required: true
+        required: false
+        default: "listar modelos"
         type: string
       nome:
         description: "Nome do arquivo (sem extensao), salvo em _imagens/<nome>.png"
-        required: true
+        required: false
+        default: "teste"
         type: string
       modelo:
-        description: "Modelo (padrao gemini-2.5-flash-image; alternativas: gemini-2.0-flash-preview-image-generation, imagen-3.0-generate-002)"
+        description: "Modelo (gemini-2.5-flash-image | imagen-3.0-generate-002 | listar)"
         required: false
         default: "gemini-2.5-flash-image"
         type: string
@@ -43,6 +46,26 @@ jobs:
           prompt=os.environ["PROMPT"]; nome=os.environ["NOME"].strip(); modelo=os.environ["MODELO"].strip()
           if not key:
               raise SystemExit("::error::GEMINI_API_KEY vazio. Cadastre o secret em Settings > Secrets > Actions.")
+          # --- modo diagnostico: listar modelos que a chave acessa ---
+          if modelo=="listar" or prompt.strip().lower().startswith("listar"):
+              url="https://generativelanguage.googleapis.com/v1beta/models?key=%s&pageSize=200"%key
+              try:
+                  raw=urllib.request.urlopen(url, timeout=60).read()
+              except urllib.error.HTTPError as e:
+                  print("::error::HTTP %s"%e.code); print(e.read().decode("utf-8","ignore")[:2000]); raise SystemExit(1)
+              d=json.loads(raw); ms=d.get("models",[])
+              print("== MODELOS DE IMAGEM DISPONIVEIS PARA ESTA CHAVE ==")
+              achou=False
+              for m in ms:
+                  nm=m.get("name",""); meth=m.get("supportedGenerationMethods",[])
+                  if ("image" in nm.lower()) or ("imagen" in nm.lower()) or ("predict" in meth):
+                      print(" -", nm, "| metodos:", ",".join(meth)); achou=True
+              if not achou:
+                  print("(nenhum modelo de imagem visivel — provavel free tier sem imagem)")
+              print("\n== TODOS OS MODELOS (nome) ==")
+              print(", ".join(m.get("name","").replace("models/","") for m in ms))
+              raise SystemExit(0)
+          # --- geracao normal ---
           nome=re.sub(r'[^A-Za-z0-9_-]','_', nome) or "imagem"
           if modelo.startswith("imagen"):
               url="https://generativelanguage.googleapis.com/v1beta/models/%s:predict?key=%s"%(modelo,key)
@@ -79,16 +102,10 @@ jobs:
         run: |
           git config user.name "GeraImagem"
           git config user.email "gera@users.noreply.github.com"
-          git add _imagens/*.png
+          git add _imagens/*.png 2>/dev/null || true
           if git diff --cached --quiet; then
-            echo "Nenhuma imagem nova."
+            echo "Nenhuma imagem nova (ou modo diagnostico)."
           else
             git commit -m "Gera imagem: ${{ inputs.nome }}"
             git push
           fi
-          {
-            echo "## Imagem gerada"
-            echo ""
-            echo "Arquivo: **_imagens/${{ inputs.nome }}.png**"
-            echo "Modelo: ${{ inputs.modelo }}"
-          } >> "$GITHUB_STEP_SUMMARY"
