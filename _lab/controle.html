@@ -6,144 +6,150 @@
 <title>Controle do Laboratório &mdash; Professor</title>
 <style>
 *{margin:0;padding:0;-webkit-box-sizing:border-box;box-sizing:border-box;}
-body{font-family:'Segoe UI',Arial,sans-serif;background:#0e1524;background:-webkit-radial-gradient(50% 0%,#1b2a4d,#0b1120 80%);background:radial-gradient(120% 90% at 50% 0%,#1b2a4d,#0b1120 80%);color:#eaf2ff;min-height:100vh;padding:18px 14px 40px;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#0e1524;background:-webkit-radial-gradient(50% 0%,#1b2a4d,#0b1120 80%);background:radial-gradient(120% 90% at 50% 0%,#1b2a4d,#0b1120 80%);color:#eaf2ff;min-height:100vh;padding:16px 12px 40px;}
 .wrap{max-width:560px;margin:0 auto;}
-h1{font-size:24px;text-align:center;margin-bottom:2px;}
-.sub{text-align:center;color:#9fb2d6;font-size:14px;margin-bottom:16px;}
-.card{background:#16213b;border:1px solid #2a3c63;border-radius:16px;padding:16px;margin-bottom:14px;-webkit-box-shadow:0 8px 22px rgba(0,0,0,.4);box-shadow:0 8px 22px rgba(0,0,0,.4);}
-label{display:block;font-size:13px;color:#9fb2d6;margin:0 0 6px 2px;font-weight:bold;letter-spacing:.5px;}
-input[type=text]{width:100%;font-size:16px;color:#eaf2ff;background:#0c1730;border:2px solid #33477e;border-radius:12px;padding:13px 14px;outline:none;}
+h1{font-size:23px;text-align:center;margin-bottom:2px;}
+.sub{text-align:center;color:#9fb2d6;font-size:14px;margin-bottom:14px;}
+.card{background:#16213b;border:1px solid #2a3c63;border-radius:16px;padding:15px;margin-bottom:13px;-webkit-box-shadow:0 8px 22px rgba(0,0,0,.4);box-shadow:0 8px 22px rgba(0,0,0,.4);}
+label{display:block;font-size:13px;color:#9fb2d6;margin:0 0 6px 2px;font-weight:bold;letter-spacing:.4px;}
+input[type=text]{width:100%;font-size:16px;color:#eaf2ff;background:#0c1730;border:2px solid #33477e;border-radius:12px;padding:12px 13px;outline:none;}
 input[type=text]:focus{border-color:#5b8bff;}
-.linha{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;}
-.linha input{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto;min-width:0;}
-.btn{display:block;width:100%;cursor:pointer;border:0;font-family:inherit;font-size:19px;font-weight:bold;color:#04240f;padding:16px;border-radius:14px;margin-top:12px;
+.btn{display:block;width:100%;cursor:pointer;border:0;font-family:inherit;font-size:18px;font-weight:bold;color:#04240f;padding:15px;border-radius:14px;margin-top:11px;
   background:#35d27e;background:-webkit-linear-gradient(top,#6ff0a8,#20b866);background:linear-gradient(to bottom,#6ff0a8,#20b866);
   -webkit-box-shadow:0 6px 0 #148047,0 10px 18px rgba(20,150,90,.4);box-shadow:0 6px 0 #148047,0 10px 18px rgba(20,150,90,.4);}
 .btn:active{-webkit-transform:translateY(4px);transform:translateY(4px);-webkit-box-shadow:0 2px 0 #148047;box-shadow:0 2px 0 #148047;}
-.btn.volta{color:#3a1a04;background:#ffb84d;background:-webkit-linear-gradient(top,#ffd487,#ff9e2e);background:linear-gradient(to bottom,#ffd487,#ff9e2e);-webkit-box-shadow:0 6px 0 #b56f12,0 10px 18px rgba(200,130,20,.35);box-shadow:0 6px 0 #b56f12,0 10px 18px rgba(200,130,20,.35);}
-.presets{margin-top:6px;}
-.preset{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;
-  background:#0c1730;border:1px solid #2a3c63;border-radius:10px;padding:8px 10px;margin-top:8px;}
+.btn.amarelo{color:#3a1a04;background:#ffb84d;background:-webkit-linear-gradient(top,#ffd487,#ff9e2e);background:linear-gradient(to bottom,#ffd487,#ff9e2e);-webkit-box-shadow:0 6px 0 #b56f12,0 10px 18px rgba(200,130,20,.35);box-shadow:0 6px 0 #b56f12,0 10px 18px rgba(200,130,20,.35);}
+.btn.vermelho{color:#fff;background:#e0574f;background:-webkit-linear-gradient(top,#f0837c,#c33a33);background:linear-gradient(to bottom,#f0837c,#c33a33);-webkit-box-shadow:0 6px 0 #8a2620,0 10px 18px rgba(180,50,40,.35);box-shadow:0 6px 0 #8a2620,0 10px 18px rgba(180,50,40,.35);}
+.btn.mini{font-size:15px;padding:11px;}
+.preset{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background:#0c1730;border:1px solid #2a3c63;border-radius:10px;padding:8px 10px;margin-top:8px;}
 .preset span{font-size:14px;color:#cfe0ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-box-flex:1;-webkit-flex:1;flex:1;min-width:0;margin-right:8px;}
 .preset button{cursor:pointer;border:0;background:#3a6bd6;color:#fff;font-weight:bold;border-radius:8px;padding:8px 14px;font-family:inherit;font-size:13px;}
 .msg{text-align:center;font-size:14px;color:#8fe0b0;min-height:20px;margin-top:8px;}
-.salaline{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;}
-.salaline input{width:120px;-webkit-box-flex:0;-webkit-flex:0 0 auto;flex:0 0 auto;margin-right:8px;text-align:center;font-weight:bold;}
 .dica{font-size:12.5px;color:#8296bd;line-height:1.5;margin-top:8px;}
 .dica b{color:#cfe0ff;}
-a.link{color:#8fb6ff;}
+.copia{word-break:break-all;background:#0c1730;border:1px dashed #33477e;border-radius:8px;padding:8px;color:#8fb6ff;font-size:12.5px;margin-top:6px;}
+.linha{display:-webkit-box;display:-webkit-flex;display:flex;}
+.linha input{-webkit-box-flex:1;-webkit-flex:1;flex:1;min-width:0;}
+.aviso{background:#3a2a12;border:1px solid #7a5a1e;color:#ffd89a;border-radius:10px;padding:10px;font-size:13px;margin-bottom:12px;line-height:1.5;}
+.aviso a{color:#ffe0a0;}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>&#127891; Controle do Laboratório</h1>
-  <div class="sub">Digite aqui e abre na tela de todos os alunos ao mesmo tempo.</div>
+  <div class="sub">Você digita aqui e abre na tela dos alunos ao mesmo tempo.</div>
+
+  <div class="aviso" id="avisoDb">
+    <b>1º passo:</b> cole abaixo a URL do seu <b>Firebase</b> (canal do Google). Faço isso só uma vez.
+  </div>
 
   <div class="card">
-    <label>LINK PARA ABRIR EM TODOS</label>
-    <input id="link" type="text" placeholder="Cole o link da atividade aqui..." value="">
-    <button class="btn" id="abrir">&#9654; Abrir em todos</button>
-    <button class="btn volta" id="voltar">&#8634; Trazer todos de volta (aguardando)</button>
+    <label>URL DO FIREBASE (canal — cole uma vez)</label>
+    <input id="db" type="text" placeholder="https://SEU-PROJETO-default-rtdb.firebaseio.com">
+    <button class="btn mini" id="salvarDb">Salvar canal</button>
+  </div>
+
+  <div class="card">
+    <label>LINK PARA ABRIR</label>
+    <input id="link" type="text" placeholder="Cole o link da atividade...">
+    <label style="margin-top:12px;">ENVIAR PARA</label>
+    <input id="alvo" type="text" placeholder="todos  (ou números: 01,03,07)" value="todos">
+    <button class="btn" id="abrir">&#9654; Abrir</button>
+    <button class="btn amarelo" id="voltar">&#8634; Trazer de volta (aguardando)</button>
+    <button class="btn vermelho" id="bloquear">&#9995; Pausar / bloquear tela</button>
     <div class="msg" id="msg"></div>
   </div>
 
   <div class="card">
-    <label>ATALHOS (opcional)</label>
-    <div class="presets" id="presets"></div>
-    <div class="linha" style="margin-top:10px;">
-      <input id="novoLink" type="text" placeholder="Link do atalho...">
-    </div>
-    <div class="linha" style="margin-top:8px;">
-      <input id="novoNome" type="text" placeholder="Nome do atalho (ex.: Climas do Mundo)">
-    </div>
-    <button class="btn" id="salvarPreset" style="font-size:15px;padding:11px;">Salvar atalho</button>
+    <label>ATALHOS</label>
+    <div id="presets"></div>
+    <input id="novoLink" type="text" placeholder="Link do atalho..." style="margin-top:10px;">
+    <input id="novoNome" type="text" placeholder="Nome (ex.: Climas do Mundo)" style="margin-top:8px;">
+    <button class="btn mini" id="salvarPreset">Salvar atalho</button>
   </div>
 
   <div class="card">
-    <label>SALA (precisa ser a MESMA nos PCs dos alunos)</label>
-    <div class="salaline">
-      <input id="sala" type="text" value="sala1">
-      <button class="btn" id="salvarSala" style="margin-top:0;font-size:15px;padding:12px 16px;-webkit-box-flex:1;flex:1;">Usar esta sala</button>
-    </div>
-    <div class="dica">
-      Nos PCs dos alunos, a <b>página inicial</b> deve ser a tela de aguardar com a mesma sala:<br>
-      <span id="urllab" class="link"></span>
-      <br><br>Se a escola bloquear, me avise que a gente troca o canal de comunicação.
-    </div>
+    <label>SALA</label>
+    <div class="linha"><input id="sala" type="text" value="sala1" style="margin-right:8px;"><button class="btn mini" id="salvarSala" style="margin-top:0;-webkit-box-flex:0;flex:0 0 auto;padding:12px 16px;">Usar</button></div>
+    <div class="dica" style="margin-top:12px;"><b>Página inicial dos PCs dos alunos</b> (copie e ponha na homepage; troque o número do PC em <b>pc=</b>):</div>
+    <div class="copia" id="urllab"></div>
   </div>
 </div>
 
 <script>
 (function(){
   "use strict";
-  var HOST="https://ntfy.sh/";
   function $(id){ return document.getElementById(id); }
-  function getSala(){ try{ return localStorage.getItem("labsala")||"sala1"; }catch(e){ return "sala1"; } }
-  var SALA=getSala();
-  $("sala").value=SALA;
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  function rid(){ return (new Date()).getTime()+"_"+Math.floor(Math.random()*100000); }
 
-  function topico(){ return "vidalprofLab_"+getSala(); }
+  $("db").value=ls("labdb")||"";
+  $("sala").value=ls("labsala")||"sala1";
+  function DB(){ return (ls("labdb")||"").replace(/\/+$/,""); }
+  function SALA(){ return ls("labsala")||"sala1"; }
+
   function urlLab(){
     var base=location.href.replace(/controle\.html.*$/,"index.html");
-    return base+"?sala="+encodeURIComponent(getSala());
+    return base+"?sala="+encodeURIComponent(SALA())+"&pc=01&db="+encodeURIComponent(DB());
   }
-  function mostraUrlLab(){ $("urllab").textContent=urlLab(); }
-  mostraUrlLab();
+  function pinta(){
+    $("urllab").textContent = DB()? urlLab() : "(cole a URL do Firebase primeiro)";
+    $("avisoDb").style.display = DB()? "none":"block";
+  }
+  pinta();
 
-  function enviar(texto, okmsg){
+  function enviar(cmd, okmsg){
+    if(!DB()){ $("msg").textContent="Cole a URL do Firebase primeiro."; return; }
+    cmd.id=rid(); cmd.ts=(new Date()).getTime();
     var xhr=new XMLHttpRequest();
-    try{ xhr.open("POST",HOST+topico(),true); }catch(e){ $("msg").textContent="Erro ao conectar."; return; }
-    xhr.setRequestHeader("Content-Type","text/plain");
+    try{ xhr.open("PUT",DB()+"/lab/"+SALA()+".json",true); }catch(e){ $("msg").textContent="Erro ao conectar."; return; }
+    xhr.setRequestHeader("Content-Type","application/json");
     xhr.onreadystatechange=function(){
       if(xhr.readyState!==4) return;
       if(xhr.status>=200 && xhr.status<300){ $("msg").textContent=okmsg; }
-      else{ $("msg").textContent="Não consegui enviar (verifique a internet/bloqueio)."; }
+      else{ $("msg").textContent="Não enviou (verifique a URL do Firebase e as regras públicas)."; }
     };
-    xhr.onerror=function(){ $("msg").textContent="Não consegui enviar (verifique a internet/bloqueio)."; };
-    try{ xhr.send(texto); }catch(e){ $("msg").textContent="Erro ao enviar."; }
+    xhr.onerror=function(){ $("msg").textContent="Sem conexão com o Firebase (bloqueio?)."; };
+    try{ xhr.send(JSON.stringify(cmd)); }catch(e){ $("msg").textContent="Erro ao enviar."; }
   }
 
-  $("abrir").onclick=function(){
-    var l=($("link").value||"").replace(/^\s+|\s+$/g,"");
-    if(!l){ $("msg").textContent="Cole um link primeiro."; return; }
-    if(!/^https?:\/\//i.test(l)){ l="https://"+l; }
-    enviar(l, "Enviado! As telas dos alunos vão abrir em poucos segundos.");
-  };
-  $("voltar").onclick=function(){ enviar("__voltar__","Todos voltaram para a tela de aguardar."); };
+  function alvo(){ var a=($("alvo").value||"todos").replace(/^\s+|\s+$/g,""); return a||"todos"; }
 
-  /* ==== ATALHOS (salvos no navegador do professor) ==== */
-  function getPresets(){ try{ return JSON.parse(localStorage.getItem("labpresets")||"[]"); }catch(e){ return []; } }
-  function setPresets(a){ try{ localStorage.setItem("labpresets",JSON.stringify(a)); }catch(e){} }
-  function pintaPresets(){
-    var a=getPresets(), h="", i;
-    if(!a.length){ h='<div class="dica">Nenhum atalho ainda. Salve os links que você mais usa.</div>'; }
-    for(i=0;i<a.length;i++){
-      h+='<div class="preset"><span title="'+a[i].url+'">'+a[i].nome+'</span>'+
-         '<button data-u="'+encodeURIComponent(a[i].url)+'">Abrir</button>'+
-         '<button data-x="'+i+'" style="background:#8a3a3a;margin-left:6px;">x</button></div>';
-    }
+  $("salvarDb").onclick=function(){
+    var u=($("db").value||"").replace(/^\s+|\s+$/g,"").replace(/\/+$/,"");
+    if(u && !/^https?:\/\//i.test(u)){ u="https://"+u; }
+    ls("labdb",u); pinta(); $("msg").textContent=u?"Canal salvo!":"Canal apagado.";
+  };
+  $("salvarSala").onclick=function(){ var s=($("sala").value||"sala1").replace(/[^\w-]/g,"")||"sala1"; ls("labsala",s); pinta(); $("msg").textContent="Sala: "+s; };
+
+  $("abrir").onclick=function(){
+    var l=($("link").value||"").replace(/^\s+|\s+$/g,""); if(!l){ $("msg").textContent="Cole um link."; return; }
+    if(!/^https?:\/\//i.test(l)){ l="https://"+l; }
+    enviar({acao:"abrir",url:l,alvo:alvo()}, "Enviado! Abrindo em "+(alvo()==="todos"?"todos":alvo())+"…");
+  };
+  $("voltar").onclick=function(){ enviar({acao:"voltar",alvo:alvo()}, "Voltando para aguardar ("+alvo()+")."); };
+  $("bloquear").onclick=function(){ enviar({acao:"bloquear",alvo:alvo()}, "Tela pausada ("+alvo()+")."); };
+
+  /* atalhos */
+  function getP(){ try{ return JSON.parse(ls("labpresets")||"[]"); }catch(e){ return []; } }
+  function setP(a){ ls("labpresets",JSON.stringify(a)); }
+  function pintaP(){
+    var a=getP(), h="", i;
+    if(!a.length){ h='<div class="dica">Salve os links que você mais usa.</div>'; }
+    for(i=0;i<a.length;i++){ h+='<div class="preset"><span title="'+a[i].url+'">'+a[i].nome+'</span><button data-u="'+encodeURIComponent(a[i].url)+'">Abrir</button><button data-x="'+i+'" style="background:#8a3a3a;margin-left:6px;">x</button></div>'; }
     $("presets").innerHTML=h;
-    var bs=$("presets").getElementsByTagName("button"), k;
-    for(k=0;k<bs.length;k++){
-      bs[k].onclick=(function(b){ return function(){
-        if(b.getAttribute("data-u")){ enviar(decodeURIComponent(b.getAttribute("data-u")),"Enviado! Abrindo em todos…"); }
-        else if(b.getAttribute("data-x")!==null){ var a2=getPresets(); a2.splice(parseInt(b.getAttribute("data-x"),10),1); setPresets(a2); pintaPresets(); }
-      };})(bs[k]);
-    }
+    var bs=$("presets").getElementsByTagName("button"),k;
+    for(k=0;k<bs.length;k++){ bs[k].onclick=(function(b){ return function(){
+      if(b.getAttribute("data-u")){ enviar({acao:"abrir",url:decodeURIComponent(b.getAttribute("data-u")),alvo:alvo()},"Enviado! Abrindo…"); }
+      else{ var a2=getP(); a2.splice(parseInt(b.getAttribute("data-x"),10),1); setP(a2); pintaP(); }
+    };})(bs[k]); }
   }
   $("salvarPreset").onclick=function(){
     var u=($("novoLink").value||"").replace(/^\s+|\s+$/g,""); var n=($("novoNome").value||"").replace(/^\s+|\s+$/g,"");
     if(!u){ return; } if(!/^https?:\/\//i.test(u)){ u="https://"+u; } if(!n){ n=u; }
-    var a=getPresets(); a.push({nome:n,url:u}); setPresets(a);
-    $("novoLink").value=""; $("novoNome").value=""; pintaPresets();
+    var a=getP(); a.push({nome:n,url:u}); setP(a); $("novoLink").value=""; $("novoNome").value=""; pintaP();
   };
-  pintaPresets();
-
-  $("salvarSala").onclick=function(){
-    var s=($("sala").value||"sala1").replace(/[^\w-]/g,"")||"sala1";
-    try{ localStorage.setItem("labsala",s); }catch(e){}
-    mostraUrlLab(); $("msg").textContent="Sala definida: "+s;
-  };
+  pintaP();
 })();
 </script>
 </body>
