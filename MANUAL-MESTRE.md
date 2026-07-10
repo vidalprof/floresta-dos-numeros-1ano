@@ -1119,3 +1119,54 @@ imagem**. Reaproveitar o que já existe (não regerar à toa).
 - **NÃO usar** pitch-shift do Google (soa artificial) nem Gemini TTS (pago). Edge TTS é o padrão.
 - **Como o áudio funciona (igual à API de imagem):** manda os textos em lote (`_lote_falas.json`, input `lote` vazio → o workflow lê o arquivo) → gera todos os MP3 em `_audio/<id>.mp3` numa rodada → **embute base64** num mapa `var AUDIO={...}` no HTML → toca com `<audio>`/`new Audio()`. Em runtime **não depende de navegador/internet/API** — a voz vai colada no arquivo, igual em qualquer PC, offline.
 - O `gerar-audio.yml` instala `ffmpeg` e `edge-tts` (pip) no runner. `tocarFala(id, fallback)` gate o botão de avançar até o áudio acabar; a boca sincroniza pela **amplitude** do áudio (Web Audio), com fallback no flip por tempo.
+
+---
+
+# 19. PROCESSO PROFISSIONAL — QA e TEMA CLARO (padrão da fábrica)
+
+Decidido com o Marcos: elevar o padrão, **menos erros**, tudo verificado antes de publicar.
+
+## 19.1 Auditor de CONTRASTE (obrigatório antes de publicar)
+Ferramenta: **`_circo/auditar-contraste.py <arquivo.html>`**. Abre a atividade no
+Chromium headless, percorre **todas as telas** (capa, mapa, desafio e cada
+mini-jogo), **desliga o fade/animação e a narração**, e mede o contraste de
+**cada texto** contra o fundo efetivo (padrão **WCAG**: ≥ 4,5:1 texto normal,
+≥ 3:1 texto grande). **Reprova qualquer texto que "some no fundo"** e sai com
+código ≠ 0. Foi criado porque o tema Atlas tinha textos ilegíveis que a gente
+não conseguia enxergar (ex.: "Globo Dourado" preto sobre fundo escuro).
+- **Regra de ouro:** trocou cor/tema? **Rode o auditor de contraste** e conserte
+  até dar **APROVADO (0 texto ilegível)**. Não publique com reprovação.
+- Texto sobre **imagem** (ex.: rótulos no mapa-múndi) o auditor pula (não dá p/
+  medir com segurança) — esses confira **visualmente** (renderização).
+
+## 19.2 QA visual de TODAS as telas (não só o robô)
+O robô (`testar-jogando.py`) prova que **funciona**; ele **não vê** contraste/layout.
+Renderize cada tela com o **fade desligado** (`*{animation:none!important;
+opacity:1!important}` + narração no-op) e **olhe** — foi assim que enxergamos as
+telas de verdade (o fade capturava telas "escuras" que eram só animação).
+
+## 19.3 Checklist de publicação (todo deploy de atividade)
+1. `node --check` no `<script>` (JS válido).
+2. `_circo/auditar-geral.py` → **APROVADO** (recursos completos).
+3. `_circo/testar-jogando.py` → **0 erro jogando**.
+4. `_circo/auditar-contraste.py` → **APROVADO** (0 texto ilegível).
+5. **Prévia renderizada** das telas-chave conferida (e do usuário, se novo visual).
+6. Só então commit + `atualizar.yml` + confirmar `success`.
+
+## 19.4 TEMA CLARO = padrão visual da fábrica
+Padrão novo: **fundo claro, cards brancos, texto escuro** (contraste alto por
+construção — o oposto do risco do papel-Atlas claro misturado com áreas escuras).
+- Paleta: página `#eef3f9` (grad. `#eaf3fb→#eef3f9`); card `#ffffff` borda
+  `#e4ebf4`; texto `#17263a` (títulos) / `#42566b` (corpo) / `#5b6b7f` (legenda);
+  azul acento `#1f79d6`; âmbar de TEXTO **escuro** `#8a5300` (âmbar claro não passa
+  no branco); verde texto `#0f7a4e` (fill `#22b573`); vermelho `#b23636` (fill
+  `#c0392b`); dica `#fff8e6`/borda `#f0cf85`/texto `#7a5a12`.
+- **Como aplicar num arquivo que já é escuro:** bloco `body.claro{...}` no fim do
+  `<style>` que sobrescreve **todas** as superfícies (inclua os fundos por fase
+  `body.claro.cl-sol` etc. — foi a parte que o Atlas esqueceu) + `<body class="claro">`.
+  As superfícies usam gradiente → **redefina o `background` inteiro** (não só a cor).
+  Depois **rode o auditor de contraste** e ajuste até `APROVADO`.
+- **Compatibilidade continua sagrada:** prefixos `-webkit-`, **cor sólida antes de
+  todo gradiente**, sem `grid/gap/var()/clamp`, emojis ≤ Unicode 6.0.
+- Referência viva: **`climas-do-mundo-6ano`** foi migrada p/ o tema claro (mantendo
+  voz, reset e Nino inteiro), com contraste verificado.
