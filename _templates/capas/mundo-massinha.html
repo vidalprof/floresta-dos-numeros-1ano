@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Mundo de Massinha - Capa</title>
+<style>
+* { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; }
+html, body { width:100%; }
+body {
+  font-family: 'Trebuchet MS', 'Segoe UI', Verdana, Geneva, Arial, sans-serif;
+  color:#4a3b52;
+  background:#bfe9d6;
+  background:-webkit-radial-gradient(50% 0%, circle, #d8f6e8 0%, #a8e0c8 55%, #8fd0c9 100%);
+  background:-o-radial-gradient(50% 0%, circle, #d8f6e8 0%, #a8e0c8 55%, #8fd0c9 100%);
+  background:radial-gradient(circle at 50% 0%, #d8f6e8 0%, #a8e0c8 55%, #8fd0c9 100%);
+  min-height:100%;
+  padding:16px 12px 26px 12px;
+  -webkit-box-orient:vertical;
+  -webkit-box-align:center;
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-flex-direction:column;
+  flex-direction:column;
+  -webkit-align-items:center;
+  align-items:center;
+  overflow-x:hidden;
+}
+.card {
+  position:relative;
+  width:100%;
+  max-width:430px;
+  background:#fff7ef;
+  background:-webkit-linear-gradient(top, #fffdf9 0%, #fdeede 100%);
+  background:-o-linear-gradient(top, #fffdf9 0%, #fdeede 100%);
+  background:linear-gradient(to bottom, #fffdf9 0%, #fdeede 100%);
+  border-radius:34px;
+  padding:20px 20px 24px 20px;
+  text-align:center;
+  border:5px solid #ffffff;
+  -webkit-box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 -14px 26px rgba(214,150,120,0.18) inset, 0 22px 40px rgba(120,90,110,0.28), 0 8px 12px rgba(120,90,110,0.16);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.9) inset, 0 -14px 26px rgba(214,150,120,0.18) inset, 0 22px 40px rgba(120,90,110,0.28), 0 8px 12px rgba(120,90,110,0.16);
+  overflow:hidden;
+}
+.eyebrow {
+  display:inline-block;
+  background:#ffd86b;
+  background:-webkit-linear-gradient(top, #ffe58c 0%, #ffc94d 100%);
+  background:-o-linear-gradient(top, #ffe58c 0%, #ffc94d 100%);
+  background:linear-gradient(to bottom, #ffe58c 0%, #ffc94d 100%);
+  color:#8a5a12;
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:1.5px;
+  text-transform:uppercase;
+  padding:7px 16px 6px 16px;
+  border-radius:20px;
+  border:2px solid #fff3cf;
+  -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, 0 5px 10px rgba(200,150,40,0.35);
+  box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset, 0 5px 10px rgba(200,150,40,0.35);
+  text-shadow:0 1px 0 rgba(255,255,255,0.6);
+  margin-bottom:12px;
+}
+.eyebrow .spk { color:#c07a12; }
+.title {
+  font-size:44px;
+  line-height:0.98;
+  font-weight:bold;
+  letter-spacing:-0.5px;
+  color:#ff7aa8;
+  margin-bottom:4px;
+}
+.title .l2 { display:block; color:#5bb6e0; }
+.title .word {
+  color:#ff7aa8;
+  text-shadow:
+     0 1px 0 #ffd0e0,
+     0 2px 0 #ffb9d1,
+     0 3px 0 #f79bbb,
+     0 5px 6px rgba(180,80,120,0.35);
+}
+.title .word.blue {
+  color:#5bb6e0;
+  text-shadow:
+     0 1px 0 #cdeeff,
+     0 2px 0 #a9dcf5,
+     0 3px 0 #7cc3ea,
+     0 5px 6px rgba(50,110,160,0.35);
+}
+.subtitle {
+  font-size:15px;
+  color:#8a7b90;
+  font-weight:bold;
+  margin-top:6px;
+  margin-bottom:4px;
+}
+.scene {
+  position:relative;
+  width:100%;
+  height:210px;
+  margin:6px 0 2px 0;
+}
+.scene svg { display:block; width:100%; height:100%; }
+.floaty {
+  -webkit-animation: floaty 3.6s ease-in-out infinite;
+  animation: floaty 3.6s ease-in-out infinite;
+  -webkit-transform-origin:center bottom;
+  transform-origin:center bottom;
+}
+@-webkit-keyframes floaty {
+  0%,100% { -webkit-transform:translateY(0); }
+  50% { -webkit-transform:translateY(-9px); }
+}
+@keyframes floaty {
+  0%,100% { transform:translateY(0); }
+  50% { transform:translateY(-9px); }
+}
+.sunspin {
+  -webkit-transform-origin:76px 52px;
+  transform-origin:76px 52px;
+  -webkit-animation: sunspin 22s linear infinite;
+  animation: sunspin 22s linear infinite;
+}
+@-webkit-keyframes sunspin { 0%{-webkit-transform:rotate(0)} 100%{-webkit-transform:rotate(360deg)} }
+@keyframes sunspin { 0%{transform:rotate(0)} 100%{transform:rotate(360deg)} }
+.story {
+  background:#eafaf2;
+  background:-webkit-linear-gradient(top, #f2fdf8 0%, #e2f6ec 100%);
+  background:-o-linear-gradient(top, #f2fdf8 0%, #e2f6ec 100%);
+  background:linear-gradient(to bottom, #f2fdf8 0%, #e2f6ec 100%);
+  border:2px solid #ffffff;
+  border-radius:20px;
+  padding:11px 15px;
+  font-size:15px;
+  line-height:1.35;
+  color:#5a7a68;
+  font-weight:bold;
+  margin:8px 4px 15px 4px;
+  -webkit-box-shadow: 0 6px 12px rgba(90,140,110,0.15), 0 1px 0 #fff inset;
+  box-shadow: 0 6px 12px rgba(90,140,110,0.15), 0 1px 0 #fff inset;
+}
+.story .star { color:#ffb02e; }
+.field-label {
+  text-align:left;
+  display:block;
+  font-size:13px;
+  font-weight:bold;
+  color:#a48fb0;
+  margin:0 0 6px 12px;
+  letter-spacing:0.5px;
+}
+.field-label .pen { color:#ff9ec0; }
+.name-input {
+  width:100%;
+  font-family:inherit;
+  font-size:19px;
+  font-weight:bold;
+  color:#6a5578;
+  text-align:center;
+  padding:15px 16px;
+  border:3px solid #ffd1e2;
+  border-radius:22px;
+  background:#fff;
+  background:-webkit-linear-gradient(top, #fff 0%, #fff4f8 100%);
+  background:-o-linear-gradient(top, #fff 0%, #fff4f8 100%);
+  background:linear-gradient(to bottom, #fff 0%, #fff4f8 100%);
+  -webkit-box-shadow: 0 4px 0 #f6d6e2 inset, 0 8px 14px rgba(190,120,150,0.14);
+  box-shadow: 0 4px 0 #f6d6e2 inset, 0 8px 14px rgba(190,120,150,0.14);
+  outline:none;
+  -webkit-appearance:none;
+  margin-bottom:16px;
+  -webkit-transition: border-color .2s ease, box-shadow .2s ease;
+  -o-transition: border-color .2s ease, box-shadow .2s ease;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.name-input:focus {
+  border-color:#ff9ec0;
+  -webkit-box-shadow: 0 4px 0 #ffc0d6 inset, 0 0 0 4px rgba(255,158,192,0.25), 0 8px 14px rgba(190,120,150,0.2);
+  box-shadow: 0 4px 0 #ffc0d6 inset, 0 0 0 4px rgba(255,158,192,0.25), 0 8px 14px rgba(190,120,150,0.2);
+}
+.btn-start {
+  display:block;
+  width:100%;
+  font-family:inherit;
+  cursor:pointer;
+  border:none;
+  border-radius:26px;
+  padding:0;
+  background:#57c785;
+  background:-webkit-linear-gradient(top, #74e0a0 0%, #45bd7a 100%);
+  background:-o-linear-gradient(top, #74e0a0 0%, #45bd7a 100%);
+  background:linear-gradient(to bottom, #74e0a0 0%, #45bd7a 100%);
+  -webkit-box-shadow: 0 2px 0 rgba(255,255,255,0.6) inset, 0 -8px 14px rgba(30,120,70,0.35) inset, 0 9px 0 #2f9a5e, 0 16px 22px rgba(40,130,80,0.4);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.6) inset, 0 -8px 14px rgba(30,120,70,0.35) inset, 0 9px 0 #2f9a5e, 0 16px 22px rgba(40,130,80,0.4);
+  -webkit-transition: -webkit-transform .09s ease, box-shadow .09s ease;
+  transition: transform .09s ease, box-shadow .09s ease;
+  margin-bottom:20px;
+  -webkit-animation: pulse 2.4s ease-in-out infinite;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+.btn-inner {
+  display:block;
+  padding:17px 12px 19px 12px;
+  color:#fff;
+  font-size:23px;
+  font-weight:bold;
+  letter-spacing:0.5px;
+  text-shadow:0 2px 3px rgba(20,90,50,0.45);
+}
+.btn-start:active {
+  -webkit-transform:translateY(7px);
+  transform:translateY(7px);
+  -webkit-box-shadow: 0 2px 0 rgba(255,255,255,0.5) inset, 0 -6px 12px rgba(30,120,70,0.35) inset, 0 2px 0 #2f9a5e, 0 6px 10px rgba(40,130,80,0.4);
+  box-shadow: 0 2px 0 rgba(255,255,255,0.5) inset, 0 -6px 12px rgba(30,120,70,0.35) inset, 0 2px 0 #2f9a5e, 0 6px 10px rgba(40,130,80,0.4);
+}
+@-webkit-keyframes pulse {
+  0%,100% { -webkit-transform:scale(1); }
+  50% { -webkit-transform:scale(1.03); }
+}
+@keyframes pulse {
+  0%,100% { transform:scale(1); }
+  50% { transform:scale(1.03); }
+}
+.trail-label {
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:#b3a3bd;
+  margin-bottom:10px;
+}
+.trail {
+  display:-webkit-box;
+  display:-webkit-flex;
+  display:flex;
+  -webkit-box-pack:justify;
+  -webkit-justify-content:space-between;
+  justify-content:space-between;
+  -webkit-box-align:end;
+  -webkit-align-items:flex-end;
+  align-items:flex-end;
+  position:relative;
+  padding:0 6px;
+}
+.trail:before {
+  content:"";
+  position:absolute;
+  left:44px; right:44px; top:30px;
+  height:0;
+  border-top:4px dotted #d9cbe2;
+  z-index:0;
+}
+.stop {
+  position:relative;
+  z-index:1;
+  text-align:center;
+  width:31%;
+}
+.pebble {
+  width:60px;
+  height:60px;
+  margin:0 auto 6px auto;
+  border-radius:50%;
+  color:#fff;
+  font-size:26px;
+  font-weight:bold;
+  line-height:60px;
+  text-shadow:0 2px 3px rgba(0,0,0,0.28);
+  border:3px solid #ffffff;
+}
+.pebble.p1 {
+  background:#ff9ec0;
+  background:-webkit-radial-gradient(35% 28%, circle, #ffd0e2 0%, #ff96bd 55%, #f06fa0 100%);
+  background:-o-radial-gradient(35% 28%, circle, #ffd0e2 0%, #ff96bd 55%, #f06fa0 100%);
+  background:radial-gradient(circle at 35% 28%, #ffd0e2 0%, #ff96bd 55%, #f06fa0 100%);
+  -webkit-box-shadow: 0 8px 12px rgba(200,90,140,0.4), 0 2px 0 #fff inset;
+  box-shadow: 0 8px 12px rgba(200,90,140,0.4), 0 2px 0 #fff inset;
+}
+.pebble.p2 {
+  background:#7cc9f0;
+  background:-webkit-radial-gradient(35% 28%, circle, #cdeeff 0%, #74c1ec 55%, #4a9fd8 100%);
+  background:-o-radial-gradient(35% 28%, circle, #cdeeff 0%, #74c1ec 55%, #4a9fd8 100%);
+  background:radial-gradient(circle at 35% 28%, #cdeeff 0%, #74c1ec 55%, #4a9fd8 100%);
+  -webkit-box-shadow: 0 8px 12px rgba(60,130,190,0.4), 0 2px 0 #fff inset;
+  box-shadow: 0 8px 12px rgba(60,130,190,0.4), 0 2px 0 #fff inset;
+}
+.pebble.p3 {
+  background:#ffcf5c;
+  background:-webkit-radial-gradient(35% 28%, circle, #fff0bf 0%, #ffcb54 55%, #f2a92e 100%);
+  background:-o-radial-gradient(35% 28%, circle, #fff0bf 0%, #ffcb54 55%, #f2a92e 100%);
+  background:radial-gradient(circle at 35% 28%, #fff0bf 0%, #ffcb54 55%, #f2a92e 100%);
+  color:#8a5a12;
+  text-shadow:0 1px 0 rgba(255,255,255,0.5);
+  -webkit-box-shadow: 0 8px 12px rgba(200,150,40,0.4), 0 2px 0 #fff inset;
+  box-shadow: 0 8px 12px rgba(200,150,40,0.4), 0 2px 0 #fff inset;
+}
+.stop .cap {
+  font-size:12px;
+  font-weight:bold;
+  color:#96869f;
+}
+.stop .trophy { font-size:15px; }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="eyebrow"><span class="spk">&#9733;</span> COLE&Ccedil;&Atilde;O MASSINHA M&Aacute;GICA</div>
+    <div class="title">
+      <span class="word">Mundo</span><br>
+      <span class="word blue">de Massinha</span>
+    </div>
+    <div class="subtitle">Uma aventura fofinha de contar e brincar! &#10024;</div>
+    <div class="scene">
+      <svg viewBox="0 0 300 210" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="sky" cx="50%" cy="20%" r="90%">
+            <stop offset="0%" stop-color="#eafcff"/>
+            <stop offset="100%" stop-color="#d5f3f0"/>
+          </radialGradient>
+          <radialGradient id="sun" cx="38%" cy="32%" r="70%">
+            <stop offset="0%" stop-color="#fff6c4"/>
+            <stop offset="60%" stop-color="#ffdf6b"/>
+            <stop offset="100%" stop-color="#ffc23c"/>
+          </radialGradient>
+          <radialGradient id="grass" cx="50%" cy="18%" r="95%">
+            <stop offset="0%" stop-color="#b9ef9d"/>
+            <stop offset="100%" stop-color="#7bd07a"/>
+          </radialGradient>
+          <radialGradient id="body" cx="38%" cy="30%" r="80%">
+            <stop offset="0%" stop-color="#ffe0a0"/>
+            <stop offset="55%" stop-color="#ffb761"/>
+            <stop offset="100%" stop-color="#f39238"/>
+          </radialGradient>
+          <radialGradient id="tummy" cx="50%" cy="35%" r="75%">
+            <stop offset="0%" stop-color="#fff4dd"/>
+            <stop offset="100%" stop-color="#ffe1b0"/>
+          </radialGradient>
+          <radialGradient id="cloud" cx="40%" cy="30%" r="80%">
+            <stop offset="0%" stop-color="#ffffff"/>
+            <stop offset="100%" stop-color="#e5f4fb"/>
+          </radialGradient>
+        </defs>
+        <rect x="0" y="0" width="300" height="210" rx="18" fill="url(#sky)"/>
+        <g class="sunspin">
+          <g>
+            <circle cx="76" cy="52" r="46" fill="#ffd45c" opacity="0.35"/>
+            <g fill="#ffcf4d">
+              <rect x="72" y="0" width="8" height="16" rx="4"/>
+              <rect x="72" y="88" width="8" height="16" rx="4"/>
+              <rect x="24" y="48" width="16" height="8" rx="4"/>
+              <rect x="112" y="48" width="16" height="8" rx="4"/>
+              <rect x="36" y="16" width="8" height="16" rx="4" transform="rotate(-45 40 24)"/>
+              <rect x="108" y="16" width="8" height="16" rx="4" transform="rotate(45 112 24)"/>
+              <rect x="36" y="72" width="8" height="16" rx="4" transform="rotate(45 40 80)"/>
+              <rect x="108" y="72" width="8" height="16" rx="4" transform="rotate(-45 112 80)"/>
+            </g>
+          </g>
+        </g>
+        <circle cx="76" cy="52" r="30" fill="url(#sun)"/>
+        <ellipse cx="66" cy="43" rx="10" ry="7" fill="#fff8d8" opacity="0.85"/>
+        <circle cx="68" cy="52" r="3.4" fill="#7a5218"/>
+        <circle cx="84" cy="52" r="3.4" fill="#7a5218"/>
+        <path d="M66 60 Q76 69 86 60" stroke="#7a5218" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <circle cx="61" cy="60" r="4" fill="#ff9ea6" opacity="0.7"/>
+        <circle cx="91" cy="60" r="4" fill="#ff9ea6" opacity="0.7"/>
+        <g fill="url(#cloud)">
+          <ellipse cx="238" cy="42" rx="30" ry="17"/>
+          <ellipse cx="220" cy="48" rx="17" ry="12"/>
+          <ellipse cx="256" cy="49" rx="17" ry="12"/>
+        </g>
+        <ellipse cx="235" cy="38" rx="18" ry="7" fill="#ffffff" opacity="0.8"/>
+        <path d="M0 150 Q60 132 110 148 Q170 168 220 148 Q270 132 300 150 L300 210 L0 210 Z" fill="url(#grass)"/>
+        <path d="M0 150 Q60 132 110 148 Q170 168 220 148 Q270 132 300 150" stroke="#ffffff" stroke-width="3" fill="none" opacity="0.5"/>
+        <g fill="#6cc16a">
+          <ellipse cx="40" cy="176" rx="10" ry="6"/>
+          <ellipse cx="262" cy="180" rx="12" ry="7"/>
+        </g>
+        <g fill="#ff7aa8">
+          <circle cx="42" cy="168" r="4"/><circle cx="266" cy="172" r="4"/>
+        </g>
+        <g class="floaty">
+          <ellipse cx="150" cy="188" rx="52" ry="12" fill="#3f8f55" opacity="0.28"/>
+          <circle cx="118" cy="96" r="17" fill="url(#body)"/>
+          <circle cx="182" cy="96" r="17" fill="url(#body)"/>
+          <circle cx="118" cy="98" r="8" fill="#ffc9d6"/>
+          <circle cx="182" cy="98" r="8" fill="#ffc9d6"/>
+          <ellipse cx="150" cy="130" rx="56" ry="52" fill="url(#body)"/>
+          <ellipse cx="128" cy="106" rx="20" ry="13" fill="#fff2d4" opacity="0.65"/>
+          <ellipse cx="150" cy="142" rx="34" ry="30" fill="url(#tummy)"/>
+          <circle cx="112" cy="140" r="11" fill="#ff9bb6" opacity="0.75"/>
+          <circle cx="188" cy="140" r="11" fill="#ff9bb6" opacity="0.75"/>
+          <ellipse cx="131" cy="124" rx="8.5" ry="10" fill="#4b3527"/>
+          <ellipse cx="169" cy="124" rx="8.5" ry="10" fill="#4b3527"/>
+          <circle cx="128" cy="120" r="3.2" fill="#fff"/>
+          <circle cx="166" cy="120" r="3.2" fill="#fff"/>
+          <ellipse cx="150" cy="140" rx="7" ry="5" fill="#7a5238"/>
+          <path d="M143 148 Q150 155 157 148" stroke="#7a5238" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <ellipse cx="102" cy="150" rx="13" ry="16" fill="url(#body)" transform="rotate(-18 102 150)"/>
+          <ellipse cx="198" cy="150" rx="13" ry="16" fill="url(#body)" transform="rotate(18 198 150)"/>
+          <path d="M150 106 l6 12 13 2 -9.5 9 2.5 13 -12 -6.5 -12 6.5 2.5 -13 -9.5 -9 13 -2 z" fill="#ffd94f" stroke="#ffbe2e" stroke-width="2"/>
+        </g>
+      </svg>
+    </div>
+    <div class="story">
+      <span class="star">&#9733;</span> Ajude o Tato a juntar as estrelinhas perdidas no jardim de doce!
+    </div>
+    <label class="field-label" for="nome"><span class="pen">&#9999;</span> SEU NOME</label>
+    <input class="name-input" id="nome" type="text" placeholder="Escreva aqui..." autocomplete="off" maxlength="18">
+    <button class="btn-start" type="button">
+      <span class="btn-inner">&#9654; Come&ccedil;ar a Aventura!</span>
+    </button>
+    <div class="trail-label">SUA TRILHA DE HOJE</div>
+    <div class="trail">
+      <div class="stop">
+        <div class="pebble p1">1</div>
+        <div class="cap">Come&ccedil;o</div>
+      </div>
+      <div class="stop">
+        <div class="pebble p2">2</div>
+        <div class="cap">Desafio</div>
+      </div>
+      <div class="stop">
+        <div class="pebble p3">3</div>
+        <div class="cap"><span class="trophy">&#127942;</span> Prêmio</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
