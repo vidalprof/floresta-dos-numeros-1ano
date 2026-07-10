@@ -580,7 +580,6 @@
 </style>
 </head>
 <body>
-<script>(function(){var META="__aulaInicio",DUR=55*60*1000;function n(){return new Date().getTime();}function td(){for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==META)return true;}return false;}function c(){var t=localStorage.getItem(META);if(t&&(n()-parseInt(t,10))>DUR){try{localStorage.clear();}catch(e){}location.reload();return;}if(!t&&td()){try{localStorage.setItem(META,""+n());}catch(e){}}}c();setInterval(c,30000);})();</script>
 <div id="ceu"></div>
 <div class="orbe orbe1"></div>
 <div class="orbe orbe2"></div>
@@ -1047,9 +1046,18 @@ function comemorar(){
 
 /* ===== PERSISTENCIA ===== */
 var STORAGE_OK=(function(){try{var k='__t';window.localStorage.setItem(k,'1');window.localStorage.removeItem(k);return true;}catch(e){return false;}})();
-function salvar(){ if(!STORAGE_OK)return; try{ window.localStorage.setItem('aventuraespaco',JSON.stringify({aluno:ALUNO,score:score,concluidas:concluidas,stats:STATS,conquistas:conquistas,streakMax:streakMax,totalAcertos:totalAcertos})); }catch(e){} }
+/* O progresso vale so durante a AULA. A cada acao o horario e renovado; se ficar
+   mais de VALIDADE_MIN minutos parado (outra aula/outro dia), ele EXPIRA sozinho e
+   a tela abre direto no campo do nome — sem precisar zerar de maquina em maquina.
+   Se o aluno sair sem querer no meio da aula, o Continuar ainda funciona. */
+var VALIDADE_MIN=70;
+function agoraMs(){ try{ return (new Date()).getTime(); }catch(e){ return 0; } }
+function salvar(){ if(!STORAGE_OK)return; try{ window.localStorage.setItem('aventuraespaco',JSON.stringify({aluno:ALUNO,score:score,concluidas:concluidas,stats:STATS,conquistas:conquistas,streakMax:streakMax,totalAcertos:totalAcertos,t:agoraMs()})); }catch(e){} }
 function carregar(){ if(!STORAGE_OK)return false; try{ var raw=window.localStorage.getItem('aventuraespaco'); if(!raw)return false;
-  var d=JSON.parse(raw); ALUNO=d.aluno||""; score=d.score||0; concluidas=d.concluidas||{}; STATS=d.stats||{}; conquistas=d.conquistas||{}; streakMax=d.streakMax||0; totalAcertos=d.totalAcertos||0; if(scoreEl)scoreEl.innerHTML=score; atualizarTopo(); return true; }catch(e){return false;} }
+  var d=JSON.parse(raw);
+  /* expira progresso de aula antiga (sem carimbo de tempo = antigo tambem) */
+  if(!d.t || (agoraMs()-d.t) > VALIDADE_MIN*60*1000){ try{window.localStorage.removeItem('aventuraespaco');}catch(e){} return false; }
+  ALUNO=d.aluno||""; score=d.score||0; concluidas=d.concluidas||{}; STATS=d.stats||{}; conquistas=d.conquistas||{}; streakMax=d.streakMax||0; totalAcertos=d.totalAcertos||0; if(scoreEl)scoreEl.innerHTML=score; atualizarTopo(); return true; }catch(e){return false;} }
 function apagarProgresso(){ if(STORAGE_OK){try{window.localStorage.removeItem('aventuraespaco');}catch(e){}} ALUNO="";score=0;concluidas={};STATS={};ERROS=[];conquistas={};streak=0;streakMax=0;totalAcertos=0; if(scoreEl)scoreEl.innerHTML=0; atualizarTopo(); }
 
 /* ===== MASCOTE - astronauta "Estrelinha" ===== */
