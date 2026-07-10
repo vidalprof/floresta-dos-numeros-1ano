@@ -153,22 +153,22 @@ body.tc-ativa .montar-pal{ font-size:18px; padding:12px 15px; }
 /* ===== TOPBAR ===== */
 #topbar { position:-webkit-sticky; position:sticky; top:6px; z-index:40;
   display:-webkit-box; display:flex; -webkit-box-align:center; align-items:center;
-  background:#1a212b;
-  background:-webkit-linear-gradient(top,#1c242f,#171d26);
-  background:linear-gradient(to bottom,#1c242f,#171d26);
-  border:1px solid #2a333f;
-  border-radius:18px; padding:7px 10px; margin-bottom:10px;
-  -webkit-box-shadow:0 6px 22px rgba(0,0,0,.45), 0 0 22px rgba(255,179,0,.08); box-shadow:0 6px 22px rgba(0,0,0,.45), 0 0 22px rgba(255,179,0,.08); }
+  background:#5a3a1c;
+  background:-webkit-linear-gradient(top,#6e4a26,#4a2f18);
+  background:linear-gradient(to bottom,#6e4a26,#4a2f18);
+  border:1px solid #c9a24a;
+  border-radius:14px; padding:7px 10px; margin-bottom:10px;
+  -webkit-box-shadow:0 6px 22px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,224,170,.25); box-shadow:0 6px 22px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,224,170,.25); }
 #tbMasc { width:44px; height:44px; margin-right:8px; }
 #tbMasc svg, #tbMasc img { width:44px; height:44px; display:block; }
 #tbMeio { -webkit-box-flex:1; flex:1 1 auto; min-width:0; }
-#tbTitulo { font-size:13px; font-weight:bold; color:#f1f5f9; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-#xpTrilho { height:10px; background:rgba(120,160,200,.18); border-radius:8px; margin-top:4px; overflow:hidden; }
+#tbTitulo { font-size:13px; font-weight:bold; color:#fff2d8; font-family:'Georgia',serif; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+#xpTrilho { height:10px; background:rgba(0,0,0,.28); border-radius:8px; margin-top:4px; overflow:hidden; -webkit-box-shadow:inset 0 1px 2px rgba(0,0,0,.4); box-shadow:inset 0 1px 2px rgba(0,0,0,.4); }
 #xpBarra { height:10px; width:0%; border-radius:8px;
-  background:#ffb300;
-  background:-webkit-linear-gradient(left,#e69800,#ffc94d);
-  background:linear-gradient(to right,#e69800,#ffc94d); }
-#tbPts { font-size:12px; color:#ffb300; font-weight:bold; margin-top:3px; }
+  background:#e6c15f;
+  background:-webkit-linear-gradient(left,#b8892f,#ffe38a);
+  background:linear-gradient(to right,#b8892f,#ffe38a); }
+#tbPts { font-size:12px; color:#ffe0a0; font-weight:bold; font-family:'Georgia',serif; margin-top:3px; }
 #tbEmb { width:44px; height:44px; margin-left:8px; }
 #tbEmb svg, #tbEmb img { width:44px; height:44px; display:block; }
 
@@ -347,9 +347,21 @@ p.texto { font-size:15px; line-height:1.5; color:#c7d0da; max-width:540px; margi
 .mascote-aqui { position:absolute; right:-14px; bottom:-6px; width:54px; height:54px; object-fit:contain; z-index:5;
   -webkit-filter:drop-shadow(0 3px 4px rgba(0,0,0,.5)); filter:drop-shadow(0 3px 4px rgba(0,0,0,.5));
   -webkit-animation:floaty 3s ease-in-out infinite; animation:floaty 3s ease-in-out infinite; }
-.mapa-nome { color:#f1f5f9; text-shadow:none; font-size:14px; font-weight:bold; line-height:1.2;
-  background:rgba(26,33,43,.94); border:1px solid #2a333f; border-radius:10px; padding:3px 10px; display:inline-block; margin-top:4px; }
-.mapa-sub { color:#aab4c0; font-size:13px; margin-top:3px; }
+.mapa-nome { color:#fff2d8; font-family:'Georgia',serif; text-shadow:0 1px 1px rgba(0,0,0,.45); font-size:14px; font-weight:bold; line-height:1.2;
+  background:#6e4a26; background:-webkit-linear-gradient(top,#7d5730,#5a3a1c); background:linear-gradient(to bottom,#7d5730,#5a3a1c);
+  border:1px solid #c9a24a; border-radius:8px; padding:3px 10px; display:inline-block; margin-top:4px;
+  -webkit-box-shadow:inset 0 1px 0 rgba(255,224,170,.25), 0 2px 5px rgba(0,0,0,.35); box-shadow:inset 0 1px 0 rgba(255,224,170,.25), 0 2px 5px rgba(0,0,0,.35); }
+.mapa-sub { color:#6a512f; font-size:13px; margin-top:3px; }
+/* ===== MAPA como FOLHA DE ATLAS (papel), escopado p/ nao afetar mini-jogos ===== */
+.mapa-card { font-family:'Georgia','Times New Roman',serif; color:#3a2c1a; border-radius:6px;
+  background:#efe1c2; background:-webkit-linear-gradient(top,#f5ecd4,#e7d6b0); background:linear-gradient(to bottom,#f5ecd4,#e7d6b0);
+  border:1px solid #c3a875;
+  -webkit-box-shadow:0 12px 30px rgba(0,0,0,.5), inset 0 0 60px rgba(120,90,45,.16); box-shadow:0 12px 30px rgba(0,0,0,.5), inset 0 0 60px rgba(120,90,45,.16); }
+.mapa-card h1.titulo{ color:#23384a; font-family:'Georgia',serif; text-shadow:1px 1px 0 rgba(255,250,235,.6); }
+.mapa-card .mini{ color:#6a512f; font-family:'Courier New',monospace; letter-spacing:1px; }
+.mapa-card .mapa-historia{ color:#46351f; }
+.mapa-card .mapa-historia b{ color:#8a3222; }
+.mapa-card .btn.suave{ color:#5a3a1c; background:rgba(120,90,45,.10); border:2px solid #b08a4e; }
 .voce-aqui { font-size:12px; color:#161a1f; font-weight:bold; margin-top:4px;
   background:#ffb300; border-radius:8px; padding:1px 8px; display:inline-block; }
 .mapa-conector { width:4px; height:24px; margin:2px auto;
@@ -2394,7 +2406,7 @@ function telaMenu(){
   var atlasNivel=0;
   if(pct>=100){ atlasNivel=2; } else if(pct>=34){ atlasNivel=1; }
   var html='';
-  html+='<div class="card">';
+  html+='<div class="card mapa-card">';
   html+='<div class="mapa-topo">';
   html+='<div class="atlas-box">'+svgAtlas(atlasNivel)+'</div>';
   html+='<h1 class="titulo" style="font-size:20px; margin-top:4px;">'+(nomeAluno?("A volta ao mundo de "+nomeAluno+"!"):"A volta ao mundo!")+'</h1>';
