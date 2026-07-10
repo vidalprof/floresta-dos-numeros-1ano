@@ -185,6 +185,20 @@ Gatilho: Marcos descreve tema, série e disciplina SEM anexar arquivo.
   paradas/desafios; se passar de ~55, cuidar da monotonia (sortear 6 de N por fase). Conferir o
   volume real, não de memória.
 - **PROGRESSO EXPIRA EM 1 AULA (55 min) — padrão de escola (pedido do usuário):** o "continuar de onde parou" vale só por **55 min desde o início** do aluno; depois **zera sozinho**, pra a PRÓXIMA TURMA começar do zero SEM o professor resetar cada PC. Como: `ESTADO.inicio = new Date().getTime()` gravado no `comecar()` (1ª vez); `carregar()` zera se `agora-inicio > 55min` (pega quando reabre/atualiza o navegador); e um `setInterval(30s)` zera **até com o navegador deixado aberto** entre as turmas (volta pro `telaInicio`). Usar `new Date().getTime()` (compat IE) e um helper `estadoNovo()` p/ o reset. Constante `_DUR_AULA` fácil de mudar. "Começar do zero" e `fazerReset` usam `estadoNovo()` (limpam o `inicio` → próximo `comecar` reinicia o relógio).
+- **✅ JEITO CERTO (canônico, jul/2026 — substitui os anteriores): carimbo DENTRO do
+  progresso + expiração DESLIZANTE.** Os métodos antigos (relógio `ESTADO.inicio` de janela
+  FIXA, e o retrofit `__aulaInicio` com `localStorage.clear()`+`reload()`) **falharam na
+  prática** (na Floresta continuava aparecendo "Começar do zero" dias depois). O jeito
+  robusto e simples: gravar `t: (new Date()).getTime()` **dentro do próprio objeto de
+  progresso** no `salvar()` (renovado a CADA ação → nunca expira durante a aula ativa); e no
+  `carregar()`, logo após o `JSON.parse`, `if(!d.t || (agora-d.t) > VALIDADE_MIN*60000){ remove
+  a chave; return false; }`. Assim: mesma aula/aluno saiu sem querer → **Continuar**; outra
+  aula/outro dia (ou dado antigo SEM carimbo) → **expira e abre no campo do nome**, sem zerar
+  PC a PC. `VALIDADE_MIN=70` (55 da aula + folga). Vantagens vs. os antigos: **1 só chave**
+  (não dessincroniza), **deslizante** (não corta no meio da aula), **sem `clear()` global nem
+  `reload()`**. `apagarProgresso()`/"Começar do zero" seguem limpando a chave. (Aplicado na
+  Floresta dos Números; **FALTA propagar para as outras atividades** — mesmo patch no
+  `salvar`/`carregar` de cada `index.html`.)
 - **RETROFIT do reset de 55 min em atividades JÁ publicadas (lição paga):** para
   atividades antigas que não têm o relógio nativo, injeta-se um **trecho universal
   autônomo** logo após `<body>` — ele não depende do código do jogo: grava o carimbo
