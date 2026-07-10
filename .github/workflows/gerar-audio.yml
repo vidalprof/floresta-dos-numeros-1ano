@@ -106,7 +106,7 @@ jobs:
               r=subprocess.run(["ffmpeg","-y","-i",din.name,"-af",af,dout],
                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
               if r.returncode!=0 or not os.path.exists(dout):
-                  print("::warning::ffmpeg falhou, mantendo voz original"); return mp3
+                  raise Exception("ffmpeg indisponivel/falhou - voz masculina exige ffmpeg")
               out=open(dout,"rb").read()
               try: os.remove(din.name); os.remove(dout)
               except Exception: pass
@@ -116,7 +116,7 @@ jobs:
               # Google TTS (unica voz gratis que funciona no Actions).
               # male = Google + tom mais grave (ffmpeg) -> soa masculino/Nino.
               raw=tts_google(texto)
-              if modelo=="male":   return pitch_shift(raw, 0.86)
+              if modelo=="male":   return pitch_shift(raw, 0.80)
               if modelo=="deep":   return pitch_shift(raw, 0.80)
               return raw  # female/google = voz padrao
 
