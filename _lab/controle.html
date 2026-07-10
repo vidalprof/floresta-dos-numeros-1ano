@@ -41,6 +41,11 @@ input[type=text]:focus{border-color:#5b8bff;}
 .linha{display:-webkit-box;display:-webkit-flex;display:flex;}
 .linha input{-webkit-box-flex:1;-webkit-flex:1;flex:1;min-width:0;margin-right:8px;}
 .hide{display:none;}
+.preslin{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background:#0c1730;border:1px solid #26375d;border-radius:9px;padding:7px 10px;margin-top:6px;font-size:14px;color:#cfe0ff;}
+.preslin b{color:#8fb6ff;min-width:32px;display:inline-block;}
+.preslin .st{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;background:#5a6b8a;vertical-align:middle;}
+.dot.on{background:#3ad07a;}.dot.wait{background:#ffcf6a;}.dot.pause{background:#f0837c;}.dot.off{background:#465574;}
 .link-add{cursor:pointer;color:#7fa8ff;font-size:13px;font-weight:700;margin-top:10px;display:inline-block;}
 hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
 </style>
@@ -59,13 +64,18 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     <input id="alvo" type="text" placeholder="todos  (ou números: 01,03,07)" value="todos">
 
     <button class="btn" id="abrir">&#9654;&nbsp; Abrir (com controle)</button>
-    <button class="btn ghost" id="abrirCheia">&#9974;&nbsp; Abrir em tela cheia &middot; qualquer site (sem controle)</button>
+    <button class="btn ghost" id="abrirNova">&#9974;&nbsp; Abrir por cima &middot; qualquer site (aluno toca 1x, volta pelo controle)</button>
 
     <div class="row">
       <button class="btn amarelo sec" id="voltar">&#8634;&nbsp; Trazer de volta</button>
       <button class="btn vermelho sec" id="bloquear">&#9995;&nbsp; Pausar</button>
     </div>
     <div class="msg" id="msg"></div>
+  </div>
+
+  <div class="card">
+    <label>Painel de presen&ccedil;a &middot; m&aacute;quinas</label>
+    <div id="presencaLista"><div class="subtle">Ligue as telas dos alunos que elas aparecem aqui.</div></div>
   </div>
 
   <div class="card">
@@ -150,9 +160,9 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     var l=lerLink(); if(!l) return;
     enviar({acao:"abrir",url:l,alvo:alvo()}, "Enviado! Abrindo em "+(alvo()==="todos"?"todos":alvo())+"…");
   };
-  $("abrirCheia").onclick=function(){
+  $("abrirNova").onclick=function(){
     var l=lerLink(); if(!l) return;
-    enviar({acao:"cheia",url:l,alvo:alvo()}, "Enviado em tela cheia ("+(alvo()==="todos"?"todos":alvo())+"). Nesse modo o controle NÃO alcança a máquina: para voltar, use o botão Início (🏠) do navegador nela.");
+    enviar({acao:"nova_aba",url:l,alvo:alvo()}, "Enviado ("+(alvo()==="todos"?"todos":alvo())+")! Na tela do aluno aparece um botão “Abrir” — ele toca 1 vez. Depois é só “Trazer de volta” que você fecha à distância.");
   };
   $("voltar").onclick=function(){ enviar({acao:"voltar",alvo:alvo()}, "Voltando para aguardar ("+alvo()+")."); };
   $("bloquear").onclick=function(){ enviar({acao:"bloquear",alvo:alvo()}, "Tela pausada ("+alvo()+")."); };
@@ -177,6 +187,36 @@ hr.sep{border:0;border-top:1px solid #23345a;margin:13px 0 11px;}
     var a=getP(); a.push({nome:n,url:u}); setP(a); $("novoLink").value=""; $("novoNome").value=""; $("addForm").className="hide"; pintaP();
   };
   pintaP();
+
+  /* ===== PAINEL DE PRESENCA: mostra o que cada maquina esta fazendo (le do Firebase) ===== */
+  function pintaPresenca(obj){
+    var wrap=$("presencaLista"); if(!wrap){ return; }
+    obj=obj||{}; var now=(new Date()).getTime(); var keys=[],k;
+    for(k in obj){ if(obj.hasOwnProperty(k)){ keys.push(k); } }
+    keys.sort(function(a,b){ var na=parseInt((""+a).replace(/\D/g,""),10)||0, nb=parseInt((""+b).replace(/\D/g,""),10)||0; return na-nb; });
+    if(!keys.length){ wrap.innerHTML='<div class="subtle">Ligue as telas dos alunos que elas aparecem aqui.</div>'; return; }
+    var h="",i;
+    for(i=0;i<keys.length;i++){ var s=obj[keys[i]]||{}; var off=(now-(s.ts||0))>25000; var cls,txt;
+      if(off){ cls="off"; txt="fora / desligada"; }
+      else if(s.e==="atividade"){ cls="on"; txt="na atividade"+(s.r?(" · "+s.r):""); }
+      else if(s.e==="novaaba"){ cls="on"; txt="site aberto"+(s.r?(" · "+s.r):""); }
+      else if(s.e==="pausada"){ cls="pause"; txt="pausada"; }
+      else { cls="wait"; txt="aguardando"; }
+      h+='<div class="preslin"><b>'+keys[i]+'</b><span class="st"><span class="dot '+cls+'"></span>'+txt+'</span></div>';
+    }
+    wrap.innerHTML=h;
+  }
+  function pollPresenca(){
+    if(!DB()){ agP(); return; }
+    var x=new XMLHttpRequest();
+    try{ x.open("GET", DB()+"/labstatus/"+encodeURIComponent(SALA())+".json", true); }catch(e){ return agP(); }
+    x.timeout=8000;
+    x.onreadystatechange=function(){ if(x.readyState!==4) return; if(x.status>=200&&x.status<300){ try{ pintaPresenca(JSON.parse(x.responseText||"null")); }catch(e){} } agP(); };
+    x.ontimeout=function(){ agP(); }; x.onerror=function(){ agP(); };
+    try{ x.send(); }catch(e){ agP(); }
+  }
+  var tP=null; function agP(){ if(tP)clearTimeout(tP); tP=setTimeout(pollPresenca,5000); }
+  pollPresenca();
 
   /* mostrar/esconder painel de configuracoes e formulario de novo atalho */
   $("cfgBtn").onclick=function(){ var c=$("cfgPanel"); c.className=(c.className.indexOf("hide")>=0?"card":"card hide"); };

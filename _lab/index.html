@@ -28,6 +28,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   -webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;text-align:center;color:#fff;
   background:#12203a;background:-webkit-linear-gradient(top,#1a2c50,#0b1120);background:linear-gradient(to bottom,#1a2c50,#0b1120);}
 #bloqueio h1{font-size:40px;}#bloqueio p{color:#9fb2d6;font-size:18px;margin-top:8px;}
+#novaAba{position:fixed;left:0;top:0;right:0;bottom:0;z-index:6;display:none;text-align:center;color:#eaf2ff;
+  background:#0e1524;background:-webkit-radial-gradient(50% 30%,#1b2a4d,#0b1120 80%);background:radial-gradient(120% 90% at 50% 25%,#1b2a4d,#0b1120 80%);}
+#novaAba .inner{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);width:92%;max-width:560px;}
+#novaAba h1{font-size:27px;margin-bottom:8px;}
+#btnNova:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
 </style>
 </head>
 <body>
@@ -42,6 +47,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     </div>
   </div>
   <div id="bloqueio"><div class="ico" style="font-size:56px;">&#9995;</div><h1>Aula pausada</h1><p>Aguarde o professor.</p></div>
+  <div id="novaAba"><div class="inner">
+    <div class="ico" style="font-size:60px;">&#128279;</div>
+    <h1>O professor enviou um site</h1>
+    <p style="font-size:16px;color:#9fb2d6;margin:0 auto 22px;max-width:520px;line-height:1.5;">Toque no bot&atilde;o para abrir. Quando quiser, o professor traz voc&ecirc; de volta.</p>
+    <button id="btnNova" style="font-size:24px;font-weight:bold;padding:16px 42px;border:0;border-radius:14px;background:#35d27e;color:#04240f;cursor:pointer;">Abrir &#10142;</button>
+  </div></div>
   <iframe id="quadro" allow="fullscreen; autoplay; microphone" allowfullscreen></iframe>
   <div id="status"><span id="pt"></span><span id="stx">conectando&hellip;</span></div>
   <div id="rodape"></div>
@@ -103,15 +114,31 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   function conectado(ok){ pt.className=ok?"on":""; stx.innerHTML=ok?"conectado":"reconectando…"; }
 
 
+  function agora(){ try{ return (new Date()).getTime(); }catch(e){ return 0; } }
+  function host(u){ try{ var m=(""+u).match(/^https?:\/\/([^\/?#]+)/i); return m?m[1].replace(/^www\./,""):(""+u).slice(0,26); }catch(e){ return ""; } }
+  /* ==== status p/ o painel de presenca do professor (poucos bytes de vez em quando) ==== */
+  var _estado="aguardando", _rotulo="";
+  function reportar(){ if(!DB||!PC){ return; } var body=JSON.stringify({e:_estado,r:_rotulo,ts:agora()});
+    var x=new XMLHttpRequest(); try{ x.open("PUT", DB.replace(/\/+$/,"")+"/labstatus/"+encodeURIComponent(SALA)+"/"+encodeURIComponent(PC)+".json", true); }catch(e){ return; }
+    x.setRequestHeader("Content-Type","application/json"); try{ x.send(body); }catch(e){} }
+  function setEstado(e,r){ _estado=e; _rotulo=r||""; reportar(); }
+
+  /* ==== nova aba: abre QUALQUER site (Google/YouTube/teimosos) numa aba nova, com 1 toque do
+     aluno; a nossa tela continua viva, entao o professor traz de volta pelo controle. ==== */
+  var _janelaAluno=null, _novaUrl="";
+  function fecharNova(){ if(_janelaAluno){ try{ if(!_janelaAluno.closed){ _janelaAluno.close(); } }catch(e){} _janelaAluno=null; } }
+  function pedirNovaAba(url){ fecharNova(); _novaUrl=url;
+    quadro.style.display="none"; try{ quadro.src="about:blank"; }catch(e){} espera.style.display="none"; bloqueio.style.display="none";
+    $("novaAba").style.display="block"; setEstado("aguardando",""); }
+
   function tela(modo){
-    _urlAtual="";
-    if(modo==="voltar"){ quadro.style.display="none"; quadro.src="about:blank"; bloqueio.style.display="none"; espera.style.display="flex"; return; }
-    if(modo==="bloquear"){ quadro.style.display="none"; quadro.src="about:blank"; espera.style.display="none"; bloqueio.style.display="flex"; return; }
+    _urlAtual=""; fecharNova(); $("novaAba").style.display="none";
+    if(modo==="voltar"){ quadro.style.display="none"; quadro.src="about:blank"; bloqueio.style.display="none"; espera.style.display="flex"; setEstado("aguardando",""); return; }
+    if(modo==="bloquear"){ quadro.style.display="none"; quadro.src="about:blank"; espera.style.display="none"; bloqueio.style.display="flex"; setEstado("pausada",""); return; }
   }
   var _urlAtual="";
-  function abrir(url){ espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } }
-  /* tela cheia: abre QUALQUER site (inclusive Google/YouTube, que travam a moldura),
-     saindo da nossa pagina. O controle so volta com "Trazer de volta" (novo comando). */
+  function abrir(url){ fecharNova(); $("novaAba").style.display="none"; espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } setEstado("atividade", host(url)); }
+  /* tela cheia (sai da pagina, sem retorno remoto) - mantido p/ compatibilidade */
   function abrirCheia(url){ try{ window.top.location.href=url; }catch(e){ try{ location.href=url; }catch(e2){} } }
 
   /* lembra o ultimo comando aplicado (em cookie+localStorage) p/ NAO repetir ao recarregar
@@ -130,6 +157,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     }
     setUltimo(cmd.id);
     if(cmd.acao==="abrir" && cmd.url){ abrir(cmd.url); }
+    else if(cmd.acao==="nova_aba" && cmd.url){ pedirNovaAba(cmd.url); }
     else if(cmd.acao==="cheia" && cmd.url){ abrirCheia(cmd.url); }
     else if(cmd.acao==="voltar"){ tela("voltar"); }
     else if(cmd.acao==="bloquear"){ tela("bloquear"); }
@@ -162,6 +190,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     try{ xhr.send(); }catch(e){ conectado(false); agenda(); }
   }
   var t=null; function agenda(){ if(t)clearTimeout(t); t=setTimeout(poll,2500); }
+
+  /* botao "Abrir" da nova aba: precisa do TOQUE do aluno (o navegador bloqueia aba nova sem gesto) */
+  $("btnNova").onclick=function(){ if(!_novaUrl){ return; }
+    try{ _janelaAluno=window.open(_novaUrl,"labtab"); }catch(e){ _janelaAluno=null; }
+    $("novaAba").style.display="none"; espera.style.display="flex"; setEstado("novaaba", host(_novaUrl)); };
+  /* avisa o status ao professor de vez em quando (leve) */
+  if(typeof setInterval!=="undefined"){ setInterval(reportar, 8000); }
+  reportar();
   poll();
 })();
 </script>
