@@ -57,6 +57,9 @@ jobs:
       - name: Instalar ffmpeg (p/ voz masculina)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
 
+      - name: Instalar edge-tts (voz natural GRATIS)
+        run: pip3 install --quiet edge-tts || pip install --quiet edge-tts
+
       - name: Gerar audio
         env:
           TEXTO: ${{ inputs.texto }}
@@ -90,6 +93,17 @@ jobs:
                       atual=(atual+" "+palavra).strip()
               if atual: partes.append(atual)
               return partes or [texto]
+
+          def tts_edge(texto, voice):
+              out=tempfile.NamedTemporaryFile(suffix=".mp3", delete=False); out.close()
+              r=subprocess.run(["edge-tts","--voice",voice,"--text",texto,"--write-media",out.name],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or os.path.getsize(out.name)<800:
+                  raise Exception("edge-tts falhou: "+r.stderr.decode("utf-8","ignore")[:300])
+              b=open(out.name,"rb").read()
+              try: os.remove(out.name)
+              except Exception: pass
+              return b
 
           def tts_google(texto):
               buf=b""; partes=chunk(texto,180)
@@ -146,13 +160,12 @@ jobs:
               return out
 
           def gerar(texto):
-              if modelo=="gemini":  return tts_gemini(texto, (voz if voz and voz not in ("Ricardo","") else "Puck"))
-              # Google TTS (unica voz gratis que funciona no Actions).
-              # male = Google + tom mais grave (ffmpeg) -> soa masculino/Nino.
-              raw=tts_google(texto)
-              if modelo=="male":   return pitch_shift(raw, 0.80)
-              if modelo=="deep":   return pitch_shift(raw, 0.80)
-              return raw  # female/google = voz padrao
+              # PADRAO GRATIS E NATURAL: Edge TTS (Microsoft), voz masculina BR "Antonio".
+              if modelo in ("male","edge"):      return tts_edge(texto, "pt-BR-AntonioNeural")
+              if modelo in ("male2","donato"):   return tts_edge(texto, "pt-BR-DonatoNeural")
+              if modelo in ("female","edgef"):   return tts_edge(texto, "pt-BR-FranciscaNeural")
+              if modelo=="gemini":               return tts_gemini(texto, (voz if voz and voz not in ("Ricardo","") else "Puck"))
+              return tts_google(texto)  # google = fallback
 
           def salvar(idnome, texto):
               idnome=re.sub(r'[^A-Za-z0-9_-]','_', idnome) or "fala"
