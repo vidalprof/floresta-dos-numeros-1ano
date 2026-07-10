@@ -57,10 +57,17 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
 
   var SALA=par("sala")||ck("labsala")||ls("labsala")||"sala1"; ls("labsala",SALA); ck("labsala",SALA);
   var DB=par("db")||ck("labdb")||ls("labdb")||"";  if(par("db")){ ls("labdb",DB); ck("labdb",DB); }
-  /* PC: le de qualquer um dos lugares (URL, cookie, localStorage). Grava em cookie + localStorage.
+  /* MARCA DE RESET: troque este valor p/ forcar TODAS as maquinas a perguntar o numero
+     de novo UMA vez (na proxima abertura). Depois que o professor digitar, nao pergunta mais. */
+  var RESET_PC="r2026-07-10a";
+  function verPC(){ return ck("labpc_ver")||ls("labpc_ver")||""; }
+  /* PC: le de qualquer lugar (URL, cookie, localStorage). Grava em cookie + localStorage + a marca.
      NAO altera a barra de endereco (a homepage ja esta configurada nas maquinas). */
-  function salvarPC(v){ PC=v; ls("labpc",v); ck("labpc",v); }
-  var PC=par("pc")||ck("labpc")||ls("labpc")||"";  if(PC){ salvarPC(PC); }
+  function salvarPC(v){ PC=v; ls("labpc",v); ck("labpc",v); ls("labpc_ver",RESET_PC); ck("labpc_ver",RESET_PC); }
+  var urlPC=par("pc");
+  var PC=urlPC||ck("labpc")||ls("labpc")||"";
+  if(!urlPC && PC && verPC()!==RESET_PC){ PC=""; }  /* reset unico: ignora o numero antigo -> pergunta de novo */
+  if(PC){ salvarPC(PC); }
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
   function pintaRodape(){
