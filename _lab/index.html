@@ -65,13 +65,21 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
      de novo UMA vez (na proxima abertura). Depois que o professor digitar, nao pergunta mais. */
   var RESET_PC="r2026-07-10a";
   function verPC(){ return ck("labpc_ver")||ls("labpc_ver")||""; }
-  /* PC: le de qualquer lugar (URL, cookie, localStorage). Grava em cookie + localStorage + a marca.
-     NAO altera a barra de endereco (a homepage ja esta configurada nas maquinas). */
-  function salvarPC(v){ PC=v; ls("labpc",v); ck("labpc",v); ls("labpc_ver",RESET_PC); ck("labpc_ver",RESET_PC); }
+  /* PC: grava em cookie + localStorage + a marca. "manual" = numero digitado no "trocar numero".
+     O numero MANUAL sempre vence o pc= da URL, senao a homepage (que tem pc=01 fixo) sobrescreveria
+     o numero digitado a cada abertura. NAO altera a barra de endereco. */
+  function salvarPC(v, manual){ PC=v; ls("labpc",v); ck("labpc",v); ls("labpc_ver",RESET_PC); ck("labpc_ver",RESET_PC);
+    if(manual){ ls("labpc_manual","1"); ck("labpc_manual","1"); } }
   var urlPC=par("pc");
-  var PC=urlPC||ck("labpc")||ls("labpc")||"";
-  if(!urlPC && PC && verPC()!==RESET_PC){ PC=""; }  /* reset unico: ignora o numero antigo -> pergunta de novo */
-  if(PC){ salvarPC(PC); }
+  var savedPC=ck("labpc")||ls("labpc")||"";
+  var manualPC=(ck("labpc_manual")||ls("labpc_manual"))?true:false;
+  var PC;
+  if(manualPC && savedPC){ PC=savedPC; }             /* numero digitado pelo professor vence a URL */
+  else {
+    PC=urlPC||savedPC||"";
+    if(!urlPC && PC && verPC()!==RESET_PC){ PC=""; } /* reset unico (so p/ nao-manual e sem pc= na URL) */
+  }
+  if(PC){ salvarPC(PC, manualPC); }
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
   function pintaRodape(){
@@ -87,7 +95,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     $("setpc").style.display="block";
     try{ $("inpc").focus(); $("inpc").select(); }catch(e){}
   }
-  $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; salvarPC(v); $("setpc").style.display="none"; pintaRodape(); };
+  $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; salvarPC(v, true); $("setpc").style.display="none"; pintaRodape(); };
   pintaRodape();
   if(!PC){ $("setpc").style.display="block"; }
   var pt=$("pt"), stx=$("stx");
