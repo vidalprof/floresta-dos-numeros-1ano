@@ -18,9 +18,14 @@ nome → botão → prévia da trilha com 3 paradas) e liga-se às funções rea
 | `grimorio-encantado.html` | Livro iluminado, moldura dourada, vitral, capitular | Leitura, Português, Alfabetização · 2º–6º |
 | `numeros-arcade.html` | Fliperama neon, tela CRT, gabinete cromado, robô | Matemática (cálculo rápido) · 3º–9º |
 | `mundo-massinha.html` | Diorama fofo de massinha, sol sorridente, bichinho | Pré-escola ao 2º ano |
+| `laboratorio-cientista.html` | Laboratório neon, poções borbulhantes, robô cientista | Ciências · 4º–9º |
+| `safari-selvagem.html` | Savana, leãozinho explorador, jipe, capim, acácia | Ciências/Geografia/animais · 2º–6º |
+| `missao-espacial.html` | Cabine de nave, planeta anelado, astronauta, estrelas | Matemática/Ciências · 3º–8º |
+| `fundo-do-mar.html` | Vigia de submarino, polvo fofo, peixes, corais, bolhas | Ciências/Leitura · Pré–4º |
+| `cordel-sertao.html` | Folheto de cordel, xilogravura, bandeirinhas, mandacaru | Português/Leitura/Cultura · 2º–6º |
 
 > Aplicado de verdade: a pele **Atlas de Expedição** foi usada na capa do
-> `climas-do-mundo-6ano`.
+> `climas-do-mundo-6ano` (no ar).
 
 ## Regras ao reaproveitar
 - Trocar textos/mascote/nomes das paradas conforme a atividade (a ordem e a

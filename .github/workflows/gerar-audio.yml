@@ -1,0 +1,115 @@
+name: Gerar voz (TTS natural) para embutir
+
+# Gera um AUDIO natural a partir de um texto e salva em _audio/<nome>.mp3.
+# A ideia: as falas FIXAS da atividade sao gravadas aqui (voz natural, servidor)
+# e depois embutidas como base64 no HTML e tocadas com <audio> — SEM depender da
+# voz robotica do navegador (Web Speech), que sai diferente/errada de PC a PC.
+#
+# - modelo=free  -> Pollinations (openai-audio), GRATIS e sem chave. Voz natural.
+# - modelo=google-> Google Translate TTS, GRATIS, PT-BR ok (corta em pedacos ~180 char).
+#
+# Roda no GitHub Actions (internet liberada). O texto vai como input.
+
+on:
+  workflow_dispatch:
+    inputs:
+      texto:
+        description: "O que a voz deve falar (uma fala fixa da atividade)"
+        required: true
+        default: "Ola! Bem-vindo a expedicao. Eu sou o Nino, o seu guia."
+        type: string
+      nome:
+        description: "Nome do arquivo (sem extensao), salvo em _audio/<nome>.mp3"
+        required: false
+        default: "fala"
+        type: string
+      voz:
+        description: "Voz (Pollinations): alloy | echo | fable | onyx | nova | shimmer"
+        required: false
+        default: "nova"
+        type: string
+      modelo:
+        description: "free (Pollinations, natural) | google (Google TTS)"
+        required: false
+        default: "free"
+        type: string
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gerar audio
+        env:
+          TEXTO: ${{ inputs.texto }}
+          NOME: ${{ inputs.nome }}
+          VOZ: ${{ inputs.voz }}
+          MODELO: ${{ inputs.modelo }}
+        run: |
+          python3 - <<'PY'
+          import os, re, time, urllib.request, urllib.error, urllib.parse
+          texto=os.environ["TEXTO"]; nome=os.environ["NOME"].strip()
+          voz=os.environ["VOZ"].strip() or "nova"; modelo=os.environ["MODELO"].strip() or "free"
+          nome=re.sub(r'[^A-Za-z0-9_-]','_', nome) or "fala"
+          os.makedirs("_audio", exist_ok=True)
+          out="_audio/%s.mp3"%nome
+
+          def baixar(url, headers, timeout=240):
+              req=urllib.request.Request(url, headers=headers)
+              return urllib.request.urlopen(req, timeout=timeout).read()
+
+          # --- GRATIS e natural: Pollinations openai-audio (sem chave) ---
+          if modelo in ("free","pollinations","natural"):
+              p=urllib.parse.quote(texto, safe="")
+              url="https://text.pollinations.ai/%s?model=openai-audio&voice=%s"%(p, urllib.parse.quote(voz))
+              try:
+                  raw=baixar(url, {"User-Agent":"gera-audio/1.0","Accept":"audio/mpeg"})
+              except urllib.error.HTTPError as e:
+                  print("::error::HTTP %s do Pollinations"%e.code); print(e.read().decode("utf-8","ignore")[:1200]); raise SystemExit(1)
+              if len(raw)<1500:
+                  print("::error::Pollinations devolveu algo pequeno demais (talvez texto/voz invalidos):"); print(raw[:400]); raise SystemExit(1)
+              open(out,"wb").write(raw)
+              print("OK (Pollinations, voz "+voz+") -> "+out+" ("+str(len(raw))+" bytes)"); raise SystemExit(0)
+
+          # --- GRATIS: Google Translate TTS (corta em pedacos ~180 char) ---
+          if modelo in ("google","gtts"):
+              # quebra em frases <=180 char sem cortar palavra
+              partes=[]; atual=""
+              for palavra in texto.split():
+                  if len(atual)+len(palavra)+1>180:
+                      partes.append(atual); atual=palavra
+                  else:
+                      atual=(atual+" "+palavra).strip()
+              if atual: partes.append(atual)
+              buf=b""
+              for i,pt in enumerate(partes):
+                  q=urllib.parse.quote(pt, safe="")
+                  url="https://translate.google.com/translate_tts?ie=UTF-8&q=%s&tl=pt-BR&client=tw-ob&total=%d&idx=%d&textlen=%d"%(q,len(partes),i,len(pt))
+                  try:
+                      buf+=baixar(url, {"User-Agent":"Mozilla/5.0"}, timeout=60)
+                  except urllib.error.HTTPError as e:
+                      print("::error::HTTP %s do Google TTS no pedaco %d"%(e.code,i)); raise SystemExit(1)
+                  time.sleep(0.4)
+              if len(buf)<1000:
+                  print("::error::Google TTS devolveu pouco audio"); raise SystemExit(1)
+              open(out,"wb").write(buf)
+              print("OK (Google TTS) -> "+out+" ("+str(len(buf))+" bytes)"); raise SystemExit(0)
+
+          raise SystemExit("::error::modelo desconhecido: use free ou google")
+          PY
+
+      - name: Commit do audio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _audio/ || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "audio: gera _audio/${{ inputs.nome }}.mp3 (voz natural, ${{ inputs.modelo }})"
+          for k in 1 2 3 4 5 6 7 8; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

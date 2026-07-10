@@ -349,7 +349,12 @@ Obrigatório em TODA fase de contar quantidade:
 ================================================================
 ## 7. NARRAÇÃO / VOZ (TTS) — A CRIANÇA OUVE TUDO
 ================================================================
-A leitura usa `speechSynthesis`. Web Speech é o teto viável (vozes neurais pesam MB e quebram offline; nuvem é paga).
+A leitura usa `speechSynthesis` por padrão (leve, dinâmico). **PORÉM, pra voz NATURAL e
+sempre igual** (o Web Speech sai robótico/diferente de PC a PC), agora há a opção premium de
+**pré-gravar as falas fixas** com TTS natural GRÁTIS no build e embutir como base64 MP3
+(ver "🔊 VOZ NATURAL PRÉ-GRAVADA" na seção de ferramentas + `gerar-audio.yml`). Regra:
+falas fixas → MP3 embutido (natural); partes dinâmicas (nome/números) → Web Speech ou banco
+de números pré-gravado; sempre com fallback pro `speechSynthesis` se o áudio travar.
 
 - **`limparFala()`**: remove tags/entidades HTML; corrige espaço após `, . ! ? :`; junta espaços duplos; SEMPRE põe ponto final. Converte reticências (`…`) e pontos repetidos em vírgula (evita pausa fragmentada). **Normaliza pronúncia** de palavras sem acento que o TTS erra: "voce"→"você", "voces"→"vocês", "numero"→"número", "proxima"→"próxima", "magica"→"mágica", "divisao"→"divisão", "multiplicacao"→"multiplicação", "Poli"→"Póli" (tônica de nome de mascote), etc. (regex `\bpalavra\b/gi` preservando capitalização; adicionar palavras sempre que uma pronúncia errada for notada).
 
@@ -427,6 +432,38 @@ O **Claude gera imagens sozinho** via o workflow `gerar-imagens.yml` (no `main`)
 - ⚠️ **Lottie** (animações vetoriais grátis do LottieFiles): premium, mas exige embutir o player (~KB) e **testar em navegador antigo** — usar com parcimônia e só se passar no compat.
 - ⚠️ **Libs de animação** (GSAP/anime.js): só INLINE e se compat aprovar; em geral **CSS `transform` + `-webkit-` já entrega** sem risco.
 - ❌ Qualquer coisa que **carregue de fora em runtime** (script/estilo/fonte via CDN, fetch) — proibido pelo self-contained + compat.
+
+### 🔊 VOZ NATURAL PRÉ-GRAVADA (novo — resolve a "voz robótica do navegador")
+Problema real (pedido do Marcos): o `speechSynthesis` (Web Speech) sai **diferente/robótico
+de PC a PC** e às vezes pronuncia errado. **Solução premium:** gerar a voz NATURAL no
+**build** (servidor, via Actions) e **embutir como base64** no HTML, tocando com `<audio>`/
+`new Audio()` — **sem depender da voz do navegador**. Igual à estratégia das imagens.
+- **Workflow:** `.github/workflows/gerar-audio.yml` (`workflow_dispatch`). Salva em
+  `_audio/<nome>.mp3`. `modelo=free` → **Pollinations `openai-audio`** (GRÁTIS, sem chave,
+  voz natural OpenAI; escolher `voz`: nova/alloy/echo/fable/onyx/shimmer). `modelo=google`
+  → **Google Translate TTS** (grátis, PT-BR, corta em pedaços ~180 char). Roda no Actions
+  (internet liberada); **o sandbox do Claude tem proxy restrito e bloqueia esses hosts —
+  por isso a geração é sempre server-side, nunca por curl local.**
+- **Quando usar:** as falas são **FIXAS** (enunciados, elogios, história) → grava cada uma
+  1× e embute. Depois `document.getElementById(...).play()` no gesto. Para as partes
+  DINÂMICAS (nome do aluno, número sorteado): manter Web Speech só nelas, OU pré-gravar um
+  banco de números por extenso (0–100) e emendar os MP3.
+- **Vantagem:** voz idêntica e correta em qualquer PC, sem sotaque robótico; funciona
+  offline (já está embutida). **Custo:** zero no Pollinations. **Peso:** MP3 de fala curta
+  é leve (~10–30KB); embutir só as falas essenciais pra não inchar o HTML.
+- Fallback obrigatório: se o `<audio>` falhar (navegador travou o autoplay), cair no
+  `speechSynthesis` — nunca deixar a criança sem áudio.
+
+### 🗂️ BIBLIOTECA DE CAPAS (telas de abertura reutilizáveis) — `_templates/capas/`
+Coleção de **capas premium** prontas (HTML autossuficiente, compat OK), cada uma com um
+tema/identidade forte, pra não recomeçar o visual do zero. Ao criar/reformar uma atividade,
+escolher um tema, copiar a estrutura da capa (selo → título → mascote → história → campo do
+nome → botão → prévia da trilha) e ligar às funções reais (`campoNome`, `comecarComNome()`,
+Continuar/`telaMenu()`, reset de aula). Temas atuais: **Atlas de Expedição** (geografia/
+ciências — JÁ usado no `climas-do-mundo-6ano`), **Grimório Encantado** (leitura/português),
+**Números Arcade** (matemática), **Mundo de Massinha** (Pré–2º), **Laboratório do Cientista**
+(ciências), **Safári Selvagem** (animais/geografia), **Missão Espacial** (mat/ciências),
+**Fundo do Mar** (Pré–4º), **Cordel do Sertão** (português/cultura). Ver `_templates/capas/README.md`.
 
 **Sempre imagem 3D TEMÁTICA (cartela — Pixar/última geração; o Claude ANIMA):** TUDO personalizado ao tema da atividade (nada genérico). mascote (**6 poses**, incl. **boca aberta p/ falar**), **personagem-mascote de CADA ilha** (temático), ilhas/cenários do mapa, objetos das questões (temáticos, vários), **emblemas** de nível, **selos/conquistas** (incl. o de **sequência**), **medalhas** (bronze/prata/ouro), moeda/estrela/troféu/baú, **cadeado** (fechado/aberto), a **recompensa-que-cresce (3 fases)**, cena de abertura e grande final (estas duas viram JPEG de fundo, não recorte). Nunca emoji/SVG nos elementos-chave.
 **Ilha/cenário de cada parada = OBJETO flutuante recortado (sem fundo/retângulo/texto), NÃO "cena":** obrigatório por parada (fácil de esquecer); no prompt pedir "só o objeto do circo flutuando no branco, sem parede/chão/céu/cortina/palco/retângulo, sem palavra" — se pedir "cena", o ChatGPT devolve retângulo com fundo. Na tela flutua sobre um holofote redondo suave feito no CÓDIGO (radial-gradient), não na imagem. Detalhes e recorte (flood-fill do branco pelas bordas) no ATIVIDADE-PREMIUM §2/§8. O mascote CAMINHA pela trilha (fica ao lado da parada atual e desce a cada conclusão).

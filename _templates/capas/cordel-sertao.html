@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cordel do Sertão — Capa</title>
+<style>
+  * { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background-color: #7a3b1d;
+    background: -webkit-radial-gradient(50% 0%, circle, #a85a2e 0%, #7a3b1d 55%, #5a2a13 100%);
+    background: -o-radial-gradient(50% 0%, circle, #a85a2e 0%, #7a3b1d 55%, #5a2a13 100%);
+    background: radial-gradient(circle at 50% 0%, #a85a2e 0%, #7a3b1d 55%, #5a2a13 100%);
+    font-family: Georgia, 'Times New Roman', serif; color: #2b1c0f; min-height: 100vh; padding: 18px 12px 30px 12px; -webkit-text-size-adjust: 100%;
+  }
+  .varal { display: block; max-width: 430px; margin: 0 auto 0 auto; text-align: center; line-height: 0; }
+  .varal svg { width: 100%; height: 46px; display: block; }
+  .folheto {
+    position: relative; max-width: 430px; margin: 0 auto;
+    background-color: #efe0c2;
+    background: -webkit-linear-gradient(top, #f3e7cd 0%, #e7d4ac 100%);
+    background: -o-linear-gradient(top, #f3e7cd 0%, #e7d4ac 100%);
+    background: linear-gradient(to bottom, #f3e7cd 0%, #e7d4ac 100%);
+    border: 2px solid #3b2410; -webkit-border-radius: 4px; border-radius: 4px; padding: 22px 18px 20px 18px;
+    -webkit-box-shadow: 0 10px 26px rgba(0,0,0,0.45), inset 0 0 0 6px rgba(59,36,16,0.06); box-shadow: 0 10px 26px rgba(0,0,0,0.45), inset 0 0 0 6px rgba(59,36,16,0.06); overflow: hidden;
+  }
+  .folheto:before {
+    content: ""; position: absolute; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; opacity: 0.5;
+    background-image: -webkit-repeating-linear-gradient(0deg, rgba(90,60,30,0.05) 0px, rgba(90,60,30,0.05) 1px, transparent 1px, transparent 4px), -webkit-repeating-linear-gradient(90deg, rgba(90,60,30,0.04) 0px, rgba(90,60,30,0.04) 1px, transparent 1px, transparent 5px);
+    background-image: repeating-linear-gradient(0deg, rgba(90,60,30,0.05) 0px, rgba(90,60,30,0.05) 1px, transparent 1px, transparent 4px), repeating-linear-gradient(90deg, rgba(90,60,30,0.04) 0px, rgba(90,60,30,0.04) 1px, transparent 1px, transparent 5px);
+  }
+  .furo { position: absolute; top: 8px; left: 50%; margin-left: -7px; width: 14px; height: 14px; background: #3b2410; -webkit-border-radius: 50%; border-radius: 50%; -webkit-box-shadow: inset 0 2px 3px rgba(0,0,0,0.6); box-shadow: inset 0 2px 3px rgba(0,0,0,0.6); z-index: 3; }
+  .inner { position: relative; z-index: 2; text-align: center; }
+  .selo { display: inline-block; margin-top: 8px; padding: 4px 16px; background: #3b2410; color: #f3e7cd; font-family: 'Courier New', Courier, monospace; font-size: 12px; font-weight: bold; letter-spacing: 3px; text-transform: uppercase; -webkit-border-radius: 2px; border-radius: 2px; border: 1px solid #1c1006; }
+  .titulo { margin: 12px 0 2px 0; font-family: Georgia, 'Times New Roman', serif; font-weight: bold; font-size: 40px; line-height: 0.96; color: #2b1c0f; text-transform: uppercase; letter-spacing: 1px; text-shadow: 1px 1px 0 #d8bf8f, 2px 2px 0 rgba(0,0,0,0.15); }
+  .titulo .ret { color: #a3161a; }
+  .subtitulo { margin: 2px 0 4px 0; font-style: italic; font-size: 16px; color: #6b4a26; }
+  .rule { width: 78%; height: 0; margin: 10px auto 4px auto; border: 0; border-top: 2px solid #3b2410; position: relative; }
+  .rule:after { content: "\2726"; position: absolute; top: -11px; left: 50%; margin-left: -9px; color: #a3161a; background: #ecdcbc; padding: 0 6px; font-size: 14px; }
+  .medalhao { width: 178px; height: 178px; margin: 8px auto 6px auto; background: #f4ead0; border: 3px solid #2b1c0f; -webkit-border-radius: 50%; border-radius: 50%; -webkit-box-shadow: 0 0 0 6px #ecdcbc, 0 0 0 8px #2b1c0f, 0 6px 14px rgba(0,0,0,0.35); box-shadow: 0 0 0 6px #ecdcbc, 0 0 0 8px #2b1c0f, 0 6px 14px rgba(0,0,0,0.35); overflow: hidden; position: relative; -webkit-animation: flutua 4s ease-in-out infinite; animation: flutua 4s ease-in-out infinite; }
+  .medalhao svg { width: 100%; height: 100%; display: block; }
+  .enredo { margin: 8px auto 14px auto; max-width: 340px; font-size: 15px; line-height: 1.5; color: #4a3218; font-style: italic; }
+  .enredo strong { color: #a3161a; font-style: normal; }
+  .campo { margin: 0 auto 14px auto; max-width: 320px; text-align: left; }
+  .campo label { display: block; font-family: 'Courier New', Courier, monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: #3b2410; margin: 0 0 5px 4px; font-weight: bold; }
+  .campo input { display: block; width: 100%; padding: 11px 12px; font-family: Georgia, serif; font-size: 16px; color: #2b1c0f; background: #fbf4e2; border: 2px solid #3b2410; -webkit-border-radius: 3px; border-radius: 3px; -webkit-box-shadow: inset 0 2px 4px rgba(90,60,30,0.25); box-shadow: inset 0 2px 4px rgba(90,60,30,0.25); outline: none; }
+  .campo input:focus { border-color: #a3161a; }
+  .btn-wrap { text-align: center; }
+  .btn { display: inline-block; width: 92%; max-width: 320px; padding: 15px 10px; font-family: Georgia, serif; font-weight: bold; font-size: 21px; text-transform: uppercase; letter-spacing: 1px; color: #f7ecd2; text-decoration: none; cursor: pointer; border: 2px solid #4c0d0f; -webkit-border-radius: 6px; border-radius: 6px; background-color: #b81c1f; background: -webkit-linear-gradient(top, #d8262a 0%, #a3161a 100%); background: -o-linear-gradient(top, #d8262a 0%, #a3161a 100%); background: linear-gradient(to bottom, #d8262a 0%, #a3161a 100%); text-shadow: 0 -1px 0 rgba(0,0,0,0.4); -webkit-box-shadow: 0 5px 0 #6e0f11, 0 8px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35); box-shadow: 0 5px 0 #6e0f11, 0 8px 12px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35); -webkit-transition: all 0.08s ease; transition: all 0.08s ease; }
+  .btn:active { -webkit-transform: translateY(4px); transform: translateY(4px); -webkit-box-shadow: 0 1px 0 #6e0f11, 0 3px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35); box-shadow: 0 1px 0 #6e0f11, 0 3px 6px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.35); }
+  .btn .arr { font-size: 16px; }
+  .trilha { margin: 20px auto 2px auto; padding-top: 14px; border-top: 2px dashed #8a6a3e; display: -webkit-box; display: -webkit-flex; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between; -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start; max-width: 340px; }
+  .trilha-lbl { text-align: center; font-family: 'Courier New', Courier, monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: #6b4a26; margin: 0 auto 8px auto; display: block; max-width: 340px; font-weight: bold; }
+  .parada { -webkit-box-flex: 1; -webkit-flex: 1 1 0; flex: 1 1 0; text-align: center; position: relative; }
+  .parada .num { display: inline-block; width: 42px; height: 42px; line-height: 38px; font-family: Georgia, serif; font-weight: bold; font-size: 20px; color: #f4ead0; background: #3b2410; border: 2px solid #1c1006; -webkit-border-radius: 50%; border-radius: 50%; -webkit-box-shadow: inset 0 2px 0 rgba(255,255,255,0.15), 0 3px 5px rgba(0,0,0,0.3); box-shadow: inset 0 2px 0 rgba(255,255,255,0.15), 0 3px 5px rgba(0,0,0,0.3); position: relative; z-index: 1; }
+  .parada.p2 .num { background: #a3161a; border-color: #4c0d0f; }
+  .parada.p3 .num { background: #e0a21c; border-color: #8a5f0d; color: #2b1c0f; }
+  .parada .cap { display: block; margin-top: 6px; font-size: 11px; color: #6b4a26; line-height: 1.2; }
+  .parada:before { content: ""; position: absolute; top: 20px; left: -50%; width: 100%; height: 0; border-top: 2px dotted #8a6a3e; z-index: 0; }
+  .parada.p1:before { display: none; }
+  .assin { display: block; text-align: center; margin: 14px auto 0 auto; max-width: 430px; font-family: 'Courier New', Courier, monospace; font-size: 11px; color: #e7cfa2; letter-spacing: 1px; }
+  @-webkit-keyframes flutua { 0% { -webkit-transform: translateY(0); } 50% { -webkit-transform: translateY(-4px); } 100% { -webkit-transform: translateY(0); } }
+  @keyframes flutua { 0% { transform: translateY(0); } 50% { transform: translateY(-4px); } 100% { transform: translateY(0); } }
+</style>
+</head>
+<body>
+  <div class="varal">
+    <svg viewBox="0 0 430 46" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0 8 Q215 30 430 8" stroke="#2b1c0f" stroke-width="2" fill="none"/>
+      <g>
+        <polygon points="18,10 46,13 32,34" fill="#d8262a" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="58,13 86,15 72,36" fill="#e0a21c" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="98,15 126,17 112,37" fill="#2f7d3a" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="138,17 166,18 152,38" fill="#d8262a" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="178,18 206,19 192,39" fill="#e0a21c" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="224,19 252,19 238,39" fill="#2f7d3a" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="264,18 292,18 278,38" fill="#d8262a" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="304,17 332,16 318,37" fill="#e0a21c" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="344,15 372,13 358,35" fill="#2f7d3a" stroke="#2b1c0f" stroke-width="1.2"/>
+        <polygon points="384,13 412,10 398,33" fill="#d8262a" stroke="#2b1c0f" stroke-width="1.2"/>
+      </g>
+    </svg>
+  </div>
+  <div class="folheto">
+    <span class="furo"></span>
+    <div class="inner">
+      <span class="selo">&#9733; Coleca&#771;o Cordel &#9733;</span>
+      <h1 class="titulo">Cordel do <span class="ret">Serta&#771;o</span></h1>
+      <p class="subtitulo">versos, rimas e causos do Nordeste</p>
+      <hr class="rule">
+      <div class="medalhao">
+        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-label="Cantador de viola">
+          <circle cx="50" cy="46" r="34" fill="#e7cf9e"/>
+          <g stroke="#2b1c0f" stroke-width="1.4">
+            <line x1="50" y1="4" x2="50" y2="14"/>
+            <line x1="82" y1="14" x2="75" y2="21"/>
+            <line x1="18" y1="14" x2="25" y2="21"/>
+            <line x1="88" y1="46" x2="79" y2="46"/>
+            <line x1="12" y1="46" x2="21" y2="46"/>
+          </g>
+          <g fill="#2f5d2f" stroke="#2b1c0f" stroke-width="1.2">
+            <rect x="82" y="52" width="6" height="30" rx="2"/>
+            <rect x="78" y="60" width="5" height="12" rx="2"/>
+            <rect x="87" y="56" width="5" height="12" rx="2"/>
+          </g>
+          <path d="M8 82 Q50 74 92 82 L92 100 L8 100 Z" fill="#c69a5f" stroke="#2b1c0f" stroke-width="1.2"/>
+          <g stroke="#2b1c0f" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round">
+            <path d="M30 30 Q50 20 70 30 Q66 26 50 24 Q34 26 30 30 Z" fill="#5a3a1c"/>
+            <path d="M35 30 Q50 12 65 30 Z" fill="#6b4a26"/>
+            <circle cx="50" cy="40" r="10" fill="#e9c9a0"/>
+            <circle cx="46" cy="39" r="1.4" fill="#2b1c0f" stroke="none"/>
+            <circle cx="54" cy="39" r="1.4" fill="#2b1c0f" stroke="none"/>
+            <path d="M45 44 Q50 48 55 44" fill="none"/>
+            <path d="M45 43 Q50 45 55 43" fill="none" stroke-width="2"/>
+            <path d="M38 52 Q50 48 62 52 L60 74 Q50 78 40 74 Z" fill="#b81c1f"/>
+            <path d="M38 54 Q30 62 34 70" fill="none"/>
+            <path d="M62 54 Q70 60 66 68" fill="none"/>
+            <g fill="#c98a2e">
+              <ellipse cx="42" cy="70" rx="12" ry="9"/>
+              <ellipse cx="36" cy="70" rx="6" ry="5"/>
+            </g>
+            <circle cx="44" cy="70" r="3" fill="#7a4a12"/>
+            <rect x="52" y="55" width="4" height="16" rx="1.5" fill="#7a4a12"/>
+            <line x1="53" y1="58" x2="45" y2="70"/>
+            <line x1="55" y1="58" x2="47" y2="70"/>
+          </g>
+        </svg>
+      </div>
+      <p class="enredo">O velho cantador perdeu os versos do seu folheto no vento do sertão! <strong>Ajude a juntar as rimas</strong> e devolva a poesia &agrave; feira.</p>
+      <div class="campo">
+        <label for="nome">&#9998; Seu nome de poeta</label>
+        <input id="nome" type="text" placeholder="Escreva aqui..." maxlength="24" autocomplete="off">
+      </div>
+      <div class="btn-wrap">
+        <a class="btn" href="#" role="button">Comecar a cantoria <span class="arr">&#9654;</span></a>
+      </div>
+      <span class="trilha-lbl">&#9733; Sua trilha de versos &#9733;</span>
+      <div class="trilha">
+        <div class="parada p1"><span class="num">1</span><span class="cap">As rimas</span></div>
+        <div class="parada p2"><span class="num">2</span><span class="cap">Os causos</span></div>
+        <div class="parada p3"><span class="num">3</span><span class="cap">O folheto</span></div>
+      </div>
+    </div>
+  </div>
+  <span class="assin">&#9733; feito com viola e verso &bull; E.B.M. Vidal Ramos &#9733;</span>
+</body>
+</html>

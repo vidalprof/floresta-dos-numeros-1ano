@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Mergulho dos Números — Fundo do Mar</title>
+<style>
+* { -webkit-box-sizing: border-box; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Segoe UI", "Trebuchet MS", Arial, sans-serif;
+  background: #06375e;
+  background: -webkit-linear-gradient(top, #3fb6e0 0%, #1176b6 45%, #052a4a 100%);
+  background: -o-linear-gradient(top, #3fb6e0 0%, #1176b6 45%, #052a4a 100%);
+  background: linear-gradient(to bottom, #3fb6e0 0%, #1176b6 45%, #052a4a 100%);
+  min-height: 100%; color: #063a5e; -webkit-text-size-adjust: 100%; overflow-x: hidden;
+}
+.palco { position: relative; width: 100%; min-height: 100vh; padding: 22px 12px 34px 12px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-box-align: center; -webkit-box-pack: center; display: -webkit-flex; -webkit-flex-direction: column; -webkit-align-items: center; display: flex; flex-direction: column; align-items: center; }
+.raio { position: absolute; top: -12%; width: 120px; height: 150%; background: #bff0ff; background: -webkit-linear-gradient(top, rgba(210,245,255,0.55), rgba(210,245,255,0)); background: -o-linear-gradient(top, rgba(210,245,255,0.55), rgba(210,245,255,0)); background: linear-gradient(to bottom, rgba(210,245,255,0.55), rgba(210,245,255,0)); -webkit-transform: rotate(16deg); -o-transform: rotate(16deg); transform: rotate(16deg); opacity: 0.55; pointer-events: none; z-index: 0; }
+.raio.r1 { left: 8%; }
+.raio.r2 { left: 42%; width: 70px; opacity: 0.4; -webkit-transform: rotate(12deg); transform: rotate(12deg); }
+.raio.r3 { right: 10%; width: 90px; -webkit-transform: rotate(-14deg); -o-transform: rotate(-14deg); transform: rotate(-14deg); opacity: 0.45; }
+.bfundo { position: absolute; bottom: -40px; border-radius: 50%; background: rgba(255,255,255,0.20); border: 1px solid rgba(255,255,255,0.35); z-index: 0; pointer-events: none; -webkit-animation: sobe 9s linear infinite; animation: sobe 9s linear infinite; }
+.bfundo.a { left: 10%; width: 16px; height: 16px; -webkit-animation-duration: 8s; animation-duration: 8s; }
+.bfundo.b { left: 26%; width: 10px; height: 10px; -webkit-animation-delay: 1.5s; animation-delay: 1.5s; -webkit-animation-duration: 11s; animation-duration: 11s; }
+.bfundo.c { left: 68%; width: 22px; height: 22px; -webkit-animation-delay: 0.6s; animation-delay: 0.6s; -webkit-animation-duration: 10s; animation-duration: 10s; }
+.bfundo.d { left: 82%; width: 13px; height: 13px; -webkit-animation-delay: 2.2s; animation-delay: 2.2s; -webkit-animation-duration: 12s; animation-duration: 12s; }
+.bfundo.e { left: 48%; width: 9px; height: 9px; -webkit-animation-delay: 3s; animation-delay: 3s; -webkit-animation-duration: 9s; animation-duration: 9s; }
+@-webkit-keyframes sobe { 0% { -webkit-transform: translateY(0); opacity: 0; } 12% { opacity: 0.9; } 100% { -webkit-transform: translateY(-108vh); opacity: 0; } }
+@keyframes sobe { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: 0.9; } 100% { transform: translateY(-108vh); opacity: 0; } }
+.card { position: relative; z-index: 2; width: 100%; max-width: 430px; background: #eaf7ff; background: -webkit-linear-gradient(top, #f4fbff, #d9f0fb); background: -o-linear-gradient(top, #f4fbff, #d9f0fb); background: linear-gradient(to bottom, #f4fbff, #d9f0fb); border-radius: 30px; padding: 20px 18px 24px 18px; border: 4px solid #ffffff; -webkit-box-shadow: 0 18px 40px rgba(2,25,45,0.45), inset 0 2px 0 rgba(255,255,255,0.9); box-shadow: 0 18px 40px rgba(2,25,45,0.45), inset 0 2px 0 rgba(255,255,255,0.9); text-align: center; -webkit-animation: aparece 0.6s ease both; animation: aparece 0.6s ease both; }
+@-webkit-keyframes aparece { 0% { opacity: 0; -webkit-transform: translateY(24px); } 100% { opacity: 1; -webkit-transform: translateY(0); } }
+@keyframes aparece { 0% { opacity: 0; transform: translateY(24px); } 100% { opacity: 1; transform: translateY(0); } }
+.selo { display: inline-block; background: #ff8a3d; background: -webkit-linear-gradient(top, #ffb066, #ff7a2f); background: -o-linear-gradient(top, #ffb066, #ff7a2f); background: linear-gradient(to bottom, #ffb066, #ff7a2f); color: #fff; font-size: 12px; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; padding: 6px 16px; border-radius: 999px; -webkit-box-shadow: 0 3px 0 #d95f1c, 0 6px 10px rgba(217,95,28,0.35); box-shadow: 0 3px 0 #d95f1c, 0 6px 10px rgba(217,95,28,0.35); text-shadow: 0 1px 1px rgba(0,0,0,0.2); }
+.selo .brilho { color: #fff3d6; }
+.titulo { margin: 14px 0 2px 0; font-family: "Trebuchet MS", "Segoe UI", Arial, sans-serif; font-size: 40px; line-height: 1.02; font-weight: bold; color: #0a5fa0; letter-spacing: -0.5px; }
+.titulo .l2 { display: block; color: #0e86c9; }
+.subtitulo { margin: 6px 0 4px 0; font-size: 15px; color: #2a6f9e; font-weight: bold; }
+.vigia-wrap { margin: 14px auto 6px auto; width: 210px; height: 210px; position: relative; }
+.vigia-svg { display: block; width: 210px; height: 210px; }
+.polvo-bal { -webkit-animation: flutua 3.4s ease-in-out infinite; animation: flutua 3.4s ease-in-out infinite; -webkit-transform-origin: 50% 60%; transform-origin: 50% 60%; }
+@-webkit-keyframes flutua { 0%,100% { -webkit-transform: translateY(0); } 50% { -webkit-transform: translateY(-7px); } }
+@keyframes flutua { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+.historia { margin: 8px auto 4px auto; max-width: 340px; background: #ffffff; border: 2px dashed #7ec9ec; border-radius: 18px; padding: 12px 14px; font-size: 15px; line-height: 1.35; color: #12557f; -webkit-box-shadow: inset 0 2px 6px rgba(126,201,236,0.18); box-shadow: inset 0 2px 6px rgba(126,201,236,0.18); }
+.historia b { color: #e8720c; }
+.campo { margin: 14px auto 4px auto; max-width: 340px; text-align: left; }
+.campo label { display: block; font-size: 12px; font-weight: bold; color: #0a5fa0; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 5px 8px; }
+.campo-in { position: relative; display: -webkit-box; display: -webkit-flex; display: flex; -webkit-box-align: center; -webkit-align-items: center; align-items: center; background: #ffffff; border: 3px solid #8bd3f0; border-radius: 16px; padding: 4px 6px 4px 12px; -webkit-box-shadow: 0 3px 0 #cdeaf7; box-shadow: 0 3px 0 #cdeaf7; }
+.campo-in .ico { font-size: 18px; margin-right: 6px; }
+.campo input { -webkit-box-flex: 1; -webkit-flex: 1; flex: 1; border: 0; outline: 0; background: transparent; font-family: inherit; font-size: 17px; color: #0a3f66; padding: 10px 4px; min-width: 10px; font-weight: bold; }
+.campo input::-webkit-input-placeholder { color: #9dc4d9; font-weight: normal; }
+.btn { display: block; width: 100%; max-width: 340px; margin: 16px auto 4px auto; cursor: pointer; border: 0; font-family: inherit; font-size: 22px; font-weight: bold; padding: 16px 10px; border-radius: 20px; background: #35d29a; background: -webkit-linear-gradient(top, #6ff0c0, #17bd83); background: -o-linear-gradient(top, #6ff0c0, #17bd83); background: linear-gradient(to bottom, #6ff0c0, #17bd83); color: #05432b; -webkit-box-shadow: 0 6px 0 #0e9161, 0 12px 18px rgba(14,145,97,0.45), inset 0 2px 0 rgba(255,255,255,0.7); box-shadow: 0 6px 0 #0e9161, 0 12px 18px rgba(14,145,97,0.45), inset 0 2px 0 rgba(255,255,255,0.7); text-shadow: 0 1px 0 rgba(255,255,255,0.45); -webkit-transition: -webkit-transform 0.08s ease; transition: transform 0.08s ease; -webkit-animation: pulsa 2.2s ease-in-out infinite; animation: pulsa 2.2s ease-in-out infinite; }
+.btn:active { -webkit-transform: translateY(4px); transform: translateY(4px); -webkit-box-shadow: 0 2px 0 #0e9161, 0 4px 8px rgba(14,145,97,0.4); box-shadow: 0 2px 0 #0e9161, 0 4px 8px rgba(14,145,97,0.4); }
+@-webkit-keyframes pulsa { 0%,100% { -webkit-transform: scale(1); } 50% { -webkit-transform: scale(1.03); } }
+@keyframes pulsa { 0%,100% { transform: scale(1); } 50% { transform: scale(1.03); } }
+.btn .seta { font-size: 20px; }
+.trilha { margin: 20px auto 2px auto; max-width: 360px; display: -webkit-box; display: -webkit-flex; display: flex; -webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between; -webkit-box-align: start; -webkit-align-items: flex-start; align-items: flex-start; position: relative; }
+.trilha .linha { position: absolute; top: 24px; left: 16%; right: 16%; height: 4px; background: #9fd8f0; border-radius: 4px; z-index: 0; }
+.parada { position: relative; z-index: 1; width: 33%; text-align: center; }
+.bolha { width: 50px; height: 50px; line-height: 46px; margin: 0 auto; border-radius: 50%; font-size: 22px; font-weight: bold; color: #fff; border: 3px solid #ffffff; background: #2aa7e0; background: -webkit-linear-gradient(top, #62c8f2, #1f8fd0); background: -o-linear-gradient(top, #62c8f2, #1f8fd0); background: linear-gradient(to bottom, #62c8f2, #1f8fd0); -webkit-box-shadow: 0 5px 10px rgba(20,90,140,0.35), inset 0 2px 0 rgba(255,255,255,0.6); box-shadow: 0 5px 10px rgba(20,90,140,0.35), inset 0 2px 0 rgba(255,255,255,0.6); }
+.parada.p2 .bolha { background: #ff9e57; background: -webkit-linear-gradient(top, #ffbe86, #ff8a3d); background: -o-linear-gradient(top, #ffbe86, #ff8a3d); background: linear-gradient(to bottom, #ffbe86, #ff8a3d); }
+.parada.p3 .bolha { background: #ffcf3f; color: #7a4d00; background: -webkit-linear-gradient(top, #ffe38a, #ffbe1f); background: -o-linear-gradient(top, #ffe38a, #ffbe1f); background: linear-gradient(to bottom, #ffe38a, #ffbe1f); }
+.parada .rot { display: block; margin-top: 6px; font-size: 12px; font-weight: bold; color: #12557f; }
+@media (max-width: 380px) { .titulo { font-size: 34px; } .vigia-wrap, .vigia-svg { width: 186px; height: 186px; } }
+</style>
+</head>
+<body>
+<div class="palco">
+  <div class="raio r1"></div>
+  <div class="raio r2"></div>
+  <div class="raio r3"></div>
+  <div class="bfundo a"></div>
+  <div class="bfundo b"></div>
+  <div class="bfundo c"></div>
+  <div class="bfundo d"></div>
+  <div class="bfundo e"></div>
+  <div class="card">
+    <div class="selo"><span class="brilho">✦</span> Coleção Fundo do Mar <span class="brilho">✦</span></div>
+    <h1 class="titulo">Mergulho <span class="l2">dos Números</span></h1>
+    <div class="subtitulo">Uma aventura no fundo do oceano ✨</div>
+    <div class="vigia-wrap">
+      <svg class="vigia-svg" viewBox="0 0 210 210" width="210" height="210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Polvo fofo na vigia">
+        <defs>
+          <radialGradient id="agua" cx="42%" cy="34%" r="78%"><stop offset="0%" stop-color="#8fe6ff"/><stop offset="55%" stop-color="#2aa3d8"/><stop offset="100%" stop-color="#0a5a8f"/></radialGradient>
+          <linearGradient id="aro" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#f4f9fc"/><stop offset="45%" stop-color="#b9cdd8"/><stop offset="100%" stop-color="#7d94a2"/></linearGradient>
+          <linearGradient id="polvoG" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ff9ad0"/><stop offset="100%" stop-color="#e85fa8"/></linearGradient>
+          <clipPath id="vidro"><circle cx="105" cy="105" r="78"/></clipPath>
+        </defs>
+        <circle cx="105" cy="105" r="98" fill="url(#aro)"/>
+        <circle cx="105" cy="105" r="98" fill="none" stroke="#5c7280" stroke-width="2"/>
+        <g fill="#6d8290">
+          <circle cx="105" cy="17" r="6"/><circle cx="105" cy="193" r="6"/>
+          <circle cx="17" cy="105" r="6"/><circle cx="193" cy="105" r="6"/>
+          <circle cx="43" cy="43" r="5"/><circle cx="167" cy="43" r="5"/>
+          <circle cx="43" cy="167" r="5"/><circle cx="167" cy="167" r="5"/>
+        </g>
+        <circle cx="105" cy="105" r="82" fill="#dfe9ee"/>
+        <circle cx="105" cy="105" r="78" fill="url(#agua)"/>
+        <g clip-path="url(#vidro)">
+          <polygon points="60,27 78,27 52,183 40,183" fill="#d6f5ff" opacity="0.28"/>
+          <polygon points="96,27 108,27 92,183 82,183" fill="#d6f5ff" opacity="0.2"/>
+          <path d="M28,190 C20,160 38,150 26,120 C18,150 34,168 22,190 Z" fill="#2fb87e"/>
+          <path d="M40,190 C34,166 50,156 40,132 C32,158 46,170 34,190 Z" fill="#37cf8e"/>
+          <path d="M182,190 C190,158 172,150 184,122 C192,152 176,168 190,190 Z" fill="#2fb87e"/>
+          <g fill="#ff7a59">
+            <path d="M150,190 C150,168 138,166 150,150 C162,166 150,168 152,190 Z"/>
+            <circle cx="150" cy="150" r="8"/><circle cx="140" cy="162" r="7"/><circle cx="162" cy="160" r="7"/>
+          </g>
+          <path d="M0,178 Q60,166 105,176 T210,176 L210,210 L0,210 Z" fill="#ffe6a8"/>
+          <g class="polvo-bal">
+            <g fill="url(#polvoG)">
+              <path d="M78,128 C64,142 62,158 72,168 C76,160 78,150 86,146 Z"/>
+              <path d="M92,134 C86,152 82,166 90,176 C96,166 94,152 100,146 Z"/>
+              <path d="M118,134 C124,152 128,166 120,176 C114,166 116,152 110,146 Z"/>
+              <path d="M132,128 C146,142 148,158 138,168 C134,160 132,150 124,146 Z"/>
+            </g>
+            <path d="M70,104 C70,74 140,74 140,104 C140,132 122,140 105,140 C88,140 70,132 70,104 Z" fill="url(#polvoG)"/>
+            <circle cx="83" cy="112" r="8" fill="#ff6fb0" opacity="0.55"/>
+            <circle cx="127" cy="112" r="8" fill="#ff6fb0" opacity="0.55"/>
+            <circle cx="93" cy="100" r="12" fill="#ffffff"/>
+            <circle cx="117" cy="100" r="12" fill="#ffffff"/>
+            <circle cx="96" cy="102" r="6" fill="#20344a"/>
+            <circle cx="120" cy="102" r="6" fill="#20344a"/>
+            <circle cx="98" cy="100" r="2" fill="#ffffff"/>
+            <circle cx="122" cy="100" r="2" fill="#ffffff"/>
+            <path d="M96,120 Q105,130 114,120" fill="none" stroke="#a63a72" stroke-width="3" stroke-linecap="round"/>
+          </g>
+          <g>
+            <ellipse cx="170" cy="70" rx="14" ry="9" fill="#ffd23f"/>
+            <polygon points="156,70 146,62 146,78" fill="#ffb01f"/>
+            <circle cx="176" cy="68" r="2.4" fill="#20344a"/>
+          </g>
+          <g>
+            <ellipse cx="44" cy="80" rx="11" ry="7" fill="#ff7a59"/>
+            <polygon points="55,80 63,74 63,86" fill="#ff5a34"/>
+            <circle cx="39" cy="78" r="2" fill="#20344a"/>
+          </g>
+          <circle cx="150" cy="60" r="4" fill="#ffffff" opacity="0.7"/>
+          <circle cx="156" cy="48" r="2.5" fill="#ffffff" opacity="0.6"/>
+          <circle cx="60" cy="55" r="3" fill="#ffffff" opacity="0.6"/>
+        </g>
+        <path d="M55,55 A78,78 0 0 1 120,40" fill="none" stroke="#ffffff" stroke-width="10" stroke-linecap="round" opacity="0.35"/>
+      </svg>
+    </div>
+    <p class="historia">Olá, mergulhador(a)! O <b>Polvo Pipo</b> perdeu os números no fundo do mar. Vamos ajudar a encontrar cada um e trazer de volta o tesouro? ✦</p>
+    <div class="campo">
+      <label for="nome">Seu nome de mergulhador(a)</label>
+      <div class="campo-in">
+        <span class="ico">✏</span>
+        <input id="nome" type="text" placeholder="Escreva seu nome aqui..." autocomplete="off">
+      </div>
+    </div>
+    <button type="button" class="btn"><span class="seta">▶</span> Começar o Mergulho</button>
+    <div class="trilha">
+      <div class="linha"></div>
+      <div class="parada p1"><div class="bolha">1</div><span class="rot">Partida</span></div>
+      <div class="parada p2"><div class="bolha">2</div><span class="rot">Corais</span></div>
+      <div class="parada p3"><div class="bolha">3</div><span class="rot">Tesouro</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
