@@ -46,7 +46,7 @@ input[type=text]:focus{border-color:#5b8bff;}
     <label style="margin-top:12px;">ENVIAR PARA</label>
     <input id="alvo" type="text" placeholder="todos  (ou números: 01,03,07)" value="todos">
     <button class="btn" id="abrir">&#9654; Abrir (com controle)</button>
-    <button class="btn roxo" id="abrirCheia">&#9974; Abrir em tela cheia (qualquer site)</button>
+    <button class="btn roxo" id="abrirCheia">&#9974; Abrir em tela cheia (qualquer site, sem controle)</button>
     <button class="btn amarelo" id="voltar">&#8634; Trazer de volta (aguardando)</button>
     <button class="btn vermelho" id="bloquear">&#9995; Pausar / bloquear tela</button>
     <div class="msg" id="msg"></div>
@@ -130,7 +130,7 @@ input[type=text]:focus{border-color:#5b8bff;}
   };
   $("abrirCheia").onclick=function(){
     var l=lerLink(); if(!l) return;
-    enviar({acao:"cheia",url:l,alvo:alvo()}, "Enviado em tela cheia ("+(alvo()==="todos"?"todos":alvo())+"). Para retomar o controle, clique em “Trazer de volta”.");
+    enviar({acao:"cheia",url:l,alvo:alvo()}, "Enviado em tela cheia ("+(alvo()==="todos"?"todos":alvo())+"). Nesse modo o controle NÃO alcança a máquina: para voltar, use o botão Início (🏠) do navegador nela.");
   };
   $("voltar").onclick=function(){ enviar({acao:"voltar",alvo:alvo()}, "Voltando para aguardar ("+alvo()+")."); };
   $("bloquear").onclick=function(){ enviar({acao:"bloquear",alvo:alvo()}, "Tela pausada ("+alvo()+")."); };
