@@ -20,6 +20,7 @@ input[type=text]:focus{border-color:#5b8bff;}
 .btn:active{-webkit-transform:translateY(4px);transform:translateY(4px);-webkit-box-shadow:0 2px 0 #148047;box-shadow:0 2px 0 #148047;}
 .btn.amarelo{color:#3a1a04;background:#ffb84d;background:-webkit-linear-gradient(top,#ffd487,#ff9e2e);background:linear-gradient(to bottom,#ffd487,#ff9e2e);-webkit-box-shadow:0 6px 0 #b56f12,0 10px 18px rgba(200,130,20,.35);box-shadow:0 6px 0 #b56f12,0 10px 18px rgba(200,130,20,.35);}
 .btn.vermelho{color:#fff;background:#e0574f;background:-webkit-linear-gradient(top,#f0837c,#c33a33);background:linear-gradient(to bottom,#f0837c,#c33a33);-webkit-box-shadow:0 6px 0 #8a2620,0 10px 18px rgba(180,50,40,.35);box-shadow:0 6px 0 #8a2620,0 10px 18px rgba(180,50,40,.35);}
+.btn.roxo{color:#fff;background:#8b6ef0;background:-webkit-linear-gradient(top,#a99bf5,#6c4fd6);background:linear-gradient(to bottom,#a99bf5,#6c4fd6);-webkit-box-shadow:0 6px 0 #4a33a0,0 10px 18px rgba(90,60,170,.35);box-shadow:0 6px 0 #4a33a0,0 10px 18px rgba(90,60,170,.35);}
 .btn.mini{font-size:15px;padding:11px;}
 .preset{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;background:#0c1730;border:1px solid #2a3c63;border-radius:10px;padding:8px 10px;margin-top:8px;}
 .preset span{font-size:14px;color:#cfe0ff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-box-flex:1;-webkit-flex:1;flex:1;min-width:0;margin-right:8px;}
@@ -44,7 +45,8 @@ input[type=text]:focus{border-color:#5b8bff;}
     <input id="link" type="text" placeholder="Cole o link da atividade...">
     <label style="margin-top:12px;">ENVIAR PARA</label>
     <input id="alvo" type="text" placeholder="todos  (ou números: 01,03,07)" value="todos">
-    <button class="btn" id="abrir">&#9654; Abrir</button>
+    <button class="btn" id="abrir">&#9654; Abrir (com controle)</button>
+    <button class="btn roxo" id="abrirCheia">&#9974; Abrir em tela cheia (qualquer site)</button>
     <button class="btn amarelo" id="voltar">&#8634; Trazer de volta (aguardando)</button>
     <button class="btn vermelho" id="bloquear">&#9995; Pausar / bloquear tela</button>
     <div class="msg" id="msg"></div>
@@ -121,10 +123,14 @@ input[type=text]:focus{border-color:#5b8bff;}
   };
   $("salvarSala").onclick=function(){ var s=($("sala").value||"sala1").replace(/[^\w-]/g,"")||"sala1"; ls("labsala",s); pinta(); $("msg").textContent="Sala: "+s; };
 
+  function lerLink(){ var l=($("link").value||"").replace(/^\s+|\s+$/g,""); if(!l){ $("msg").textContent="Cole um link."; return ""; } if(!/^https?:\/\//i.test(l)){ l="https://"+l; } return l; }
   $("abrir").onclick=function(){
-    var l=($("link").value||"").replace(/^\s+|\s+$/g,""); if(!l){ $("msg").textContent="Cole um link."; return; }
-    if(!/^https?:\/\//i.test(l)){ l="https://"+l; }
+    var l=lerLink(); if(!l) return;
     enviar({acao:"abrir",url:l,alvo:alvo()}, "Enviado! Abrindo em "+(alvo()==="todos"?"todos":alvo())+"…");
+  };
+  $("abrirCheia").onclick=function(){
+    var l=lerLink(); if(!l) return;
+    enviar({acao:"cheia",url:l,alvo:alvo()}, "Enviado em tela cheia ("+(alvo()==="todos"?"todos":alvo())+"). Para retomar o controle, clique em “Trazer de volta”.");
   };
   $("voltar").onclick=function(){ enviar({acao:"voltar",alvo:alvo()}, "Voltando para aguardar ("+alvo()+")."); };
   $("bloquear").onclick=function(){ enviar({acao:"bloquear",alvo:alvo()}, "Tela pausada ("+alvo()+")."); };

@@ -102,8 +102,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   }
   var _urlAtual="";
   function abrir(url){ espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } }
+  /* tela cheia: abre QUALQUER site (inclusive Google/YouTube, que travam a moldura),
+     saindo da nossa pagina. O controle so volta com "Trazer de volta" (novo comando). */
+  function abrirCheia(url){ try{ window.top.location.href=url; }catch(e){ try{ location.href=url; }catch(e2){} } }
 
-  var ultimoId=null;
+  /* lembra o ultimo comando aplicado (em cookie+localStorage) p/ NAO repetir ao recarregar
+     nem ao voltar de um site em tela cheia. */
+  var ultimoId=ck("lab_lastid")||ls("lab_lastid")||null;
+  function setUltimo(id){ ultimoId=id; if(id){ ls("lab_lastid",id); ck("lab_lastid",id); } }
   function aplica(cmd){
     if(!cmd) return;
     if(cmd.id && cmd.id===ultimoId) return;
@@ -112,10 +118,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
     if(alvo!=="todos"){
       var achou=false, arr=(""+alvo).split(","), i;
       for(i=0;i<arr.length;i++){ if(norm(arr[i])===norm(PC) && PC){ achou=true; } }
-      if(!achou){ ultimoId=cmd.id; return; }  /* nao e p/ este PC */
+      if(!achou){ setUltimo(cmd.id); return; }  /* nao e p/ este PC */
     }
-    ultimoId=cmd.id;
+    setUltimo(cmd.id);
     if(cmd.acao==="abrir" && cmd.url){ abrir(cmd.url); }
+    else if(cmd.acao==="cheia" && cmd.url){ abrirCheia(cmd.url); }
     else if(cmd.acao==="voltar"){ tela("voltar"); }
     else if(cmd.acao==="bloquear"){ tela("bloquear"); }
   }
