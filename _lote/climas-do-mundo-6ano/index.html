@@ -79,6 +79,18 @@ body {
   -webkit-animation:venta linear infinite; animation:venta linear infinite; }
 @-webkit-keyframes venta { 0%{opacity:0; -webkit-transform:translateX(-30vw);} 22%{opacity:.7;} 78%{opacity:.7;} 100%{opacity:0; -webkit-transform:translateX(120vw);} }
 @keyframes venta { 0%{opacity:0; transform:translateX(-30vw);} 22%{opacity:.7;} 78%{opacity:.7;} 100%{opacity:0; transform:translateX(120vw);} }
+/* HOLOFOTES (feixes de luz balançando, igual ao Circo) */
+.beam { position:absolute; top:-80px; width:160px; height:150%; opacity:.14; pointer-events:none;
+  background:-webkit-linear-gradient(top, rgba(255,240,200,.9), rgba(255,240,200,0) 72%);
+  background:linear-gradient(to bottom, rgba(255,240,200,.9), rgba(255,240,200,0) 72%);
+  -webkit-animation:balanca 6s ease-in-out infinite; animation:balanca 6s ease-in-out infinite; }
+.beamE { left:2%; -webkit-transform-origin:top center; transform-origin:top center; }
+.beamD { right:2%; -webkit-transform-origin:top center; transform-origin:top center;
+  -webkit-animation:balancaD 6s ease-in-out infinite; animation:balancaD 6s ease-in-out infinite; -webkit-animation-delay:1.4s; animation-delay:1.4s; }
+@-webkit-keyframes balanca { 0%,100%{-webkit-transform:rotate(15deg);} 50%{-webkit-transform:rotate(26deg);} }
+@keyframes balanca { 0%,100%{transform:rotate(15deg);} 50%{transform:rotate(26deg);} }
+@-webkit-keyframes balancaD { 0%,100%{-webkit-transform:rotate(-15deg);} 50%{-webkit-transform:rotate(-26deg);} }
+@keyframes balancaD { 0%,100%{transform:rotate(-15deg);} 50%{transform:rotate(-26deg);} }
 /* PÁSSAROS (gaivotas planando) */
 .passaro { position:absolute; pointer-events:none; opacity:.55;
   -webkit-animation:voa linear infinite; animation:voa linear infinite; }
@@ -1241,6 +1253,9 @@ function _htmlVento(n){
   for(i=0;i<n;i++){ h+='<div class="rajada" style="top:'+(8+Math.round(Math.random()*80))+'%; width:'+(60+Math.round(Math.random()*90))+'px; -webkit-animation-duration:'+(3+Math.random()*3).toFixed(1)+'s; animation-duration:'+(3+Math.random()*3).toFixed(1)+'s; -webkit-animation-delay:'+(Math.random()*4).toFixed(2)+'s; animation-delay:'+(Math.random()*4).toFixed(2)+'s;"></div>'; }
   return h;
 }
+function _htmlBeams(){
+  return '<div class="beam beamE"></div><div class="beam beamD"></div>';
+}
 function _htmlPassaros(n){
   var i, h="";
   for(i=0;i<n;i++){
@@ -1293,17 +1308,17 @@ function aplicarFundo(modo){
   fundoAtual=modo;
   var html="";
   if(modo==="menu"){
-    html=_htmlEstrelas(16)+_htmlSol(84,10)+_htmlPassaros(5)+_htmlMotes(12);
+    html=_htmlBeams()+_htmlEstrelas(16)+_htmlSol(84,10)+_htmlPassaros(5)+_htmlMotes(12);
   } else if(modo==="sol"){
-    html=_htmlEstrelas(12)+_htmlSol(82,9)+_htmlPassaros(3)+_htmlMotes(10)+_htmlVento(3);
+    html=_htmlBeams()+_htmlEstrelas(12)+_htmlSol(82,9)+_htmlPassaros(3)+_htmlMotes(10)+_htmlVento(3);
   } else if(modo==="nuvens"){
-    html=_htmlEstrelas(14)+_htmlSol(85,8)+_htmlPassaros(4)+_htmlVento(2);
+    html=_htmlBeams()+_htmlEstrelas(14)+_htmlSol(85,8)+_htmlPassaros(4)+_htmlVento(2);
   } else if(modo==="chuva"){
     html=_htmlEstrelas(8)+_htmlChuva(38);
   } else if(modo==="neve"){
     html=_htmlEstrelas(12)+_htmlNeve(38);
   } else if(modo==="vento"){
-    html=_htmlEstrelas(12)+_htmlSol(84,10)+_htmlPassaros(5)+_htmlVento(9);
+    html=_htmlBeams()+_htmlEstrelas(12)+_htmlSol(84,10)+_htmlPassaros(5)+_htmlVento(9);
   } else if(modo==="tempestade"){
     html=_htmlEstrelas(4)+_htmlChuva(44)+'<div class="flash"></div>';
   } else {
