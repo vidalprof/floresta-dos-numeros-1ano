@@ -104,3 +104,35 @@ Sem sombra no chão, alta resolução.
 little wrench; (4) baby POLAR BEAR; (5) adventurous SQUIRREL with a scarf; (6) CARRIER PIGEON
 with a mail pouch; (7) majestic EAGLE. Each standing, facing forward, friendly expression.
 No ground shadow, high resolution.
+
+---
+
+## ⬜ REFAZER AS 8 PRIMEIRAS ILHAS (padrão das novas, que ficaram melhores)
+
+As 8 ilhas originais devem ser regeradas no MESMO estilo das 7 novas (IMG_2996):
+ilha flutuante 3D Pixar, com plaquinha de madeira, **fundo 100% PRETO**, bem separadas,
+sem sombra no chão, alta resolução. 1 cartela só.
+
+### `ilhas-melhores.png` — 8 ilhas 3D (mesmo padrão das novas)
+**PT:** 8 ILHAS flutuantes 3D (estilo Pixar, igual às ilhas do acampamento/oásis/vale),
+numa imagem, BEM SEPARADAS, fundo 100% PRETO, cada uma com plaquinha de madeira:
+(1) ESTAÇÃO DO VENTO — campo verde ventoso com moinho de vento, cata-ventos e uma biruta;
+(2) MONTANHA DOS FATORES — montanha alta e imponente com neve no topo e rochas em camadas;
+(3) FLORESTA ENCHARCADA — selva tropical densa e molhada, com cachoeira e vapor de calor;
+(4) DESERTO DOURADO — dunas douradas com cactos e um sol forte;
+(5) COLINAS DO SUL — colinas verdes suaves com araucárias (pinheiros do sul);
+(6) TERRAS GELADAS — geleira azulada com iceberg e neve;
+(7) VOLTA AO MUNDO — ilha com um globo terrestre grande e uma bússola (ou um farol);
+(8) TEMPESTADE FINAL — ilha sombria com mar revolto, nuvens negras e raios caindo.
+Sem sombra no chão, alta resolução.
+**EN:** 8 floating 3D ISLANDS (Pixar style, matching the camp/oasis/valley islands), one image,
+well SEPARATED, 100% BLACK background, each with a little wooden sign:
+(1) WIND STATION — windy green field with a windmill, pinwheels and a windsock;
+(2) FACTORS MOUNTAIN — tall imposing mountain with a snowy peak and layered rocks;
+(3) SOAKED RAINFOREST — dense wet tropical jungle with a waterfall and heat haze;
+(4) GOLDEN DESERT — golden dunes with cacti and a strong sun;
+(5) SOUTHERN HILLS — soft green hills with araucaria (southern pine) trees;
+(6) FROZEN LANDS — bluish glacier with an iceberg and snow;
+(7) AROUND THE WORLD — island with a big globe and a compass (or a lighthouse);
+(8) FINAL STORM — dark island with rough sea, black clouds and lightning striking.
+No ground shadow, high resolution.
