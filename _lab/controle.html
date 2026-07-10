@@ -40,11 +40,11 @@ input[type=text]:focus{border-color:#5b8bff;}
   <div class="sub">Você digita aqui e abre na tela dos alunos ao mesmo tempo.</div>
 
   <div class="aviso" id="avisoDb">
-    <b>1º passo:</b> cole abaixo a URL do seu <b>Firebase</b> (canal do Google). Faço isso só uma vez.
+    <b>Funciona sem configurar nada</b> (canal ntfy). <b>Só se a escola bloquear</b>, crie um Firebase (Google) e cole a URL abaixo.
   </div>
 
   <div class="card">
-    <label>URL DO FIREBASE (canal — cole uma vez)</label>
+    <label>FIREBASE (opcional — só se a escola bloquear o padrão)</label>
     <input id="db" type="text" placeholder="https://SEU-PROJETO-default-rtdb.firebaseio.com">
     <button class="btn mini" id="salvarDb">Salvar canal</button>
   </div>
@@ -99,18 +99,20 @@ input[type=text]:focus{border-color:#5b8bff;}
   pinta();
 
   function enviar(cmd, okmsg){
-    if(!DB()){ $("msg").textContent="Cole a URL do Firebase primeiro."; return; }
     cmd.id=rid(); cmd.ts=(new Date()).getTime();
+    var body=JSON.stringify(cmd), method, url;
+    if(DB()){ method="PUT"; url=DB()+"/lab/"+SALA()+".json"; }          /* Firebase (se configurado) */
+    else { method="POST"; url="https://ntfy.sh/vidalprofLab_"+SALA(); } /* ntfy (padrao, sem config) */
     var xhr=new XMLHttpRequest();
-    try{ xhr.open("PUT",DB()+"/lab/"+SALA()+".json",true); }catch(e){ $("msg").textContent="Erro ao conectar."; return; }
+    try{ xhr.open(method,url,true); }catch(e){ $("msg").textContent="Erro ao conectar."; return; }
     xhr.setRequestHeader("Content-Type","application/json");
     xhr.onreadystatechange=function(){
       if(xhr.readyState!==4) return;
       if(xhr.status>=200 && xhr.status<300){ $("msg").textContent=okmsg; }
-      else{ $("msg").textContent="Não enviou (verifique a URL do Firebase e as regras públicas)."; }
+      else{ $("msg").textContent="Não consegui enviar (a escola pode estar bloqueando este canal)."; }
     };
-    xhr.onerror=function(){ $("msg").textContent="Sem conexão com o Firebase (bloqueio?)."; };
-    try{ xhr.send(JSON.stringify(cmd)); }catch(e){ $("msg").textContent="Erro ao enviar."; }
+    xhr.onerror=function(){ $("msg").textContent="Sem conexão com o canal (bloqueio?). Se for na escola, tente o Firebase."; };
+    try{ xhr.send(body); }catch(e){ $("msg").textContent="Erro ao enviar."; }
   }
 
   function alvo(){ var a=($("alvo").value||"todos").replace(/^\s+|\s+$/g,""); return a||"todos"; }
