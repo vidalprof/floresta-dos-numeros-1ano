@@ -1153,13 +1153,28 @@ telas de verdade (o fade capturava telas "escuras" que eram só animação).
 5. `_circo/auditar-imagens.py` → **APROVADO** (0 imagem com "restos de outra imagem"
    grudados — recortes com fragmentos soltos. Foi o buraco que deixou passar as
    ilhas e a águia com pedaços de outras cenas, escondidos pelo fundo escuro).
-6. **Prévia renderizada** das telas-chave conferida (e do usuário, se novo visual).
-7. Só então commit + `atualizar.yml` + confirmar `success`.
+6. `_circo/auditar-som.py` → **APROVADO** (voz CONSISTENTE). Dispara cada narração
+   e reprova qualquer uma que caia na **voz do navegador** (feminina, destoa das
+   falas gravadas do Nino) em vez do **MP3 embutido**; e valida o mapa `AUDIO`
+   (cada entrada é áudio real, e toda chave de `tocarFala("x",…)` existe). Foi o
+   buraco que deixou a voz do **mapa** feminina.
+7. **Prévia renderizada** das telas-chave conferida (e do usuário, se novo visual).
+8. Só então commit + `atualizar.yml` + confirmar `success`.
 
 > **Lição (voz):** narração **dinâmica** (com nome/progresso) cai na voz do
 > navegador (costuma ser feminina) e destoa das falas gravadas (masculinas).
 > Regra: toda narração fixa OU com variante genérica deve ter **MP3 embutido**
 > (`tocarFala(id, fallback)`); o fallback do navegador é só rede de segurança.
+
+### 19.5 A EQUIPE da fábrica (papéis) e o QA de cada um
+Para cada frente há um "profissional" **e** um auditor automático que o cobre:
+- **Web designer / instrucional** → `auditar-geral.py` (recursos/estrutura).
+- **Dev / testador** → `testar-jogando.py` (o robô que joca a atividade).
+- **Designer de contraste (acessibilidade)** → `auditar-contraste.py`.
+- **Artista / recorte de imagem** → `auditar-imagens.py` (restos soltos).
+- **Profissional de som** → `auditar-som.py` (voz consistente, áudios válidos).
+Regra de ouro: **nenhuma frente sem auditor**. Achou um erro que passou? O
+conserto não é só o erro — é criar/ajustar o auditor pra ele **não passar de novo**.
 
 ## 19.4 TEMA CLARO = padrão visual da fábrica
 Padrão novo: **fundo claro, cards brancos, texto escuro** (contraste alto por
