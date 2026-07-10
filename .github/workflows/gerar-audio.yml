@@ -70,6 +70,10 @@ jobs:
           modelo=os.environ["MODELO"].strip() or "male"
           voz=os.environ["VOZ"].strip() or "Ricardo"
           lote_raw=os.environ.get("LOTE","").strip()
+          # se o input "lote" vier vazio, tenta ler o arquivo _lote_falas.json do repo
+          if not lote_raw and os.path.exists("_lote_falas.json"):
+              lote_raw=open("_lote_falas.json",encoding="utf-8").read().strip()
+              print("lote lido de _lote_falas.json")
           os.makedirs("_audio", exist_ok=True)
 
           def baixar(url, headers, timeout=180):
