@@ -958,6 +958,8 @@ function falar(texto, aoTerminar){
     }
     u.onend=fim;
     u.onerror=fim;
+    u.onboundary=function(){ try{ mascoteBocaPalavra(); }catch(e){} };
+    u.onstart=function(){ try{ mascoteBoca(true); }catch(e){} };
     try{ window.speechSynthesis.speak(u); }catch(e){ fim(); return; }
     /* vigia a fala REAL: assim que speaking cai, libera JA (onend nao e confiavel) */
     var _estTk=Math.ceil((fr.length*75+500)/90);   /* fim ESTIMADO da fala (ms->ticks de 90ms) */
@@ -1349,17 +1351,36 @@ function fundoDaFase(ch){
 }
 
 /* ================= ASSETS SVG (FALLBACK até as cartelas ChatGPT) ================= */
+var _bocaBoundary=false, _bocaCloseTimer=null;
+/* abre (falando) ou fecha (feliz) a boca de TODOS os mascotes na tela */
+function mascoteBoca(open){
+  if(!document.querySelectorAll||typeof NIMBO_IMG==="undefined"||!NIMBO_IMG.falando||!NIMBO_IMG.feliz){ return; }
+  var src=open?NIMBO_IMG.falando:NIMBO_IMG.feliz;
+  var e=document.querySelectorAll(".js-masc"),k; for(k=0;k<e.length;k++){ e[k].src=src; }
+}
+/* chamado a CADA palavra falada (evento boundary da voz) -> boca sincronizada */
+function mascoteBocaPalavra(){
+  _bocaBoundary=true;
+  if(window.__falaFlip){ clearInterval(window.__falaFlip); window.__falaFlip=null; }  /* a voz assume o controle */
+  mascoteBoca(true);
+  if(_bocaCloseTimer){ clearTimeout(_bocaCloseTimer); }
+  _bocaCloseTimer=setTimeout(function(){ mascoteBoca(false); }, 130);
+}
 function mascoteFala(on){
   if(!document.querySelectorAll){ return; }
   if(window.__falaFlip){ clearInterval(window.__falaFlip); window.__falaFlip=null; }
+  if(_bocaCloseTimer){ clearTimeout(_bocaCloseTimer); _bocaCloseTimer=null; }
   if(on){
     if(typeof NIMBO_IMG==="undefined"||!NIMBO_IMG.falando||!NIMBO_IMG.feliz){ return; }
+    _bocaBoundary=false;
     var aberto=false;
+    /* fallback: se o navegador NAO disparar 'boundary', a boca ainda mexe no tempo */
     window.__falaFlip=setInterval(function(){
-      aberto=!aberto; var src=aberto?NIMBO_IMG.falando:NIMBO_IMG.feliz;
-      var e=document.querySelectorAll(".js-masc"),k; for(k=0;k<e.length;k++){ e[k].src=src; }
-    },190);
+      if(_bocaBoundary){ return; }
+      aberto=!aberto; mascoteBoca(aberto);
+    },170);
   } else {
+    _bocaBoundary=false;
     var e=document.querySelectorAll(".js-masc"),k;
     for(k=0;k<e.length;k++){ var p=e[k].getAttribute("data-pose")||"feliz"; if(typeof NIMBO_IMG!=="undefined"&&NIMBO_IMG[p]){ e[k].src=NIMBO_IMG[p]; } }
   }

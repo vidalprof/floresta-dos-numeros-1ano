@@ -136,3 +136,20 @@ well SEPARATED, 100% BLACK background, each with a little wooden sign:
 (7) AROUND THE WORLD — island with a big globe and a compass (or a lighthouse);
 (8) FINAL STORM — dark island with rough sea, black clouds and lightning striking.
 No ground shadow, high resolution.
+
+### `animais-melhores.png` — 8 personagens 3D (substituem os 8 do 1º lote)
+Mesmo padrão dos 7 novos (IMG_2997): 3D Pixar fofo, **fundo 100% PRETO**, bem separados,
+em pé, olhando pra frente, sem sombra no chão, alta resolução. Substituem TODOS os
+personagens reaproveitados do 1º lote (nada da versão antiga fica).
+**PT:** 8 ANIMAIS 3D fofos (estilo Pixar), numa imagem, BEM SEPARADOS, fundo 100% PRETO:
+(1) GAIVOTA de asas abertas (vento/litoral); (2) CABRA-DA-MONTANHA de chifrinhos;
+(3) TUCANO colorido (floresta tropical); (4) NUVENZINHA fofa com carinha e bochechas
+(acampamento das nuvens); (5) CAMELO simpático (deserto); (6) RAPOSA (vale temperado);
+(7) QUERO-QUERO — ave típica do sul do Brasil (colinas do sul); (8) PINGUIM (terras geladas).
+Cada um em pé, expressão simpática. Sem sombra no chão, alta resolução.
+**EN:** 8 cute 3D ANIMALS (Pixar style), one image, well SEPARATED, 100% BLACK background:
+(1) SEAGULL with open wings (wind/coast); (2) MOUNTAIN GOAT with little horns; (3) colorful
+TOUCAN (tropical forest); (4) cute little CLOUD with a face and cheeks (cloud camp);
+(5) friendly CAMEL (desert); (6) FOX (temperate valley); (7) SOUTHERN LAPWING / "quero-quero"
+bird (southern hills); (8) PENGUIN (frozen lands). Each standing, friendly expression.
+No ground shadow, high resolution.
