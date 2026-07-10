@@ -184,36 +184,47 @@ Gatilho: Marcos descreve tema, série e disciplina SEM anexar arquivo.
   repete quem erra). Estimar antes de fechar: nº de telas × ~40-60s. Se der < 40 min, ADICIONAR
   paradas/desafios; se passar de ~55, cuidar da monotonia (sortear 6 de N por fase). Conferir o
   volume real, não de memória.
-- **PROGRESSO EXPIRA EM 1 AULA (55 min) — padrão de escola (pedido do usuário):** o "continuar de onde parou" vale só por **55 min desde o início** do aluno; depois **zera sozinho**, pra a PRÓXIMA TURMA começar do zero SEM o professor resetar cada PC. Como: `ESTADO.inicio = new Date().getTime()` gravado no `comecar()` (1ª vez); `carregar()` zera se `agora-inicio > 55min` (pega quando reabre/atualiza o navegador); e um `setInterval(30s)` zera **até com o navegador deixado aberto** entre as turmas (volta pro `telaInicio`). Usar `new Date().getTime()` (compat IE) e um helper `estadoNovo()` p/ o reset. Constante `_DUR_AULA` fácil de mudar. "Começar do zero" e `fazerReset` usam `estadoNovo()` (limpam o `inicio` → próximo `comecar` reinicia o relógio).
-- **✅ JEITO CERTO (canônico, jul/2026 — substitui os anteriores): carimbo DENTRO do
-  progresso + expiração DESLIZANTE.** Os métodos antigos (relógio `ESTADO.inicio` de janela
-  FIXA, e o retrofit `__aulaInicio` com `localStorage.clear()`+`reload()`) **falharam na
-  prática** (na Floresta continuava aparecendo "Começar do zero" dias depois). O jeito
-  robusto e simples: gravar `t: (new Date()).getTime()` **dentro do próprio objeto de
-  progresso** no `salvar()` (renovado a CADA ação → nunca expira durante a aula ativa); e no
-  `carregar()`, logo após o `JSON.parse`, `if(!d.t || (agora-d.t) > VALIDADE_MIN*60000){ remove
-  a chave; return false; }`. Assim: mesma aula/aluno saiu sem querer → **Continuar**; outra
-  aula/outro dia (ou dado antigo SEM carimbo) → **expira e abre no campo do nome**, sem zerar
-  PC a PC. `VALIDADE_MIN=70` (55 da aula + folga). Vantagens vs. os antigos: **1 só chave**
-  (não dessincroniza), **deslizante** (não corta no meio da aula), **sem `clear()` global nem
-  `reload()`**. `apagarProgresso()`/"Começar do zero" seguem limpando a chave. (Aplicado na
-  Floresta dos Números; **FALTA propagar para as outras atividades** — mesmo patch no
-  `salvar`/`carregar` de cada `index.html`.)
-- **RETROFIT do reset de 55 min em atividades JÁ publicadas (lição paga):** para
-  atividades antigas que não têm o relógio nativo, injeta-se um **trecho universal
-  autônomo** logo após `<body>` — ele não depende do código do jogo: grava o carimbo
-  `__aulaInicio` no `localStorage` no 1º dado salvo, zera **tudo** (`localStorage.clear()`
-  + `location.reload()`) quando passa de 55 min, e revalida a cada 30 s. Idempotente
-  (não injeta 2× — testa se `__aulaInicio` já existe). Pipeline por atividade, sob a
-  fila lenta do Actions: `recuperar.yml` (baixa o `index.html` vivo p/ `_recuperado/`)
-  → injeta o trecho (script `inj.py`, âncora `<body[^>]*>`) → **testa headless**
-  (0 erros de JS + tela inicial renderiza) → `_lote/<repo>/index.html` → commit →
-  `atualizar.yml` (`source_dir=_lote/<repo>`). Como as atividades são **1 HTML único
-  autossuficiente**, o `atualizar` pode espelhar só o `index.html` sem perder nada.
-  Há também o `reset-aula.yml` (injeta em vários repos de uma vez, server-side) — mas
-  `workflow_dispatch` só dispara se o arquivo estiver na `main`; sem permissão p/ a
-  `main`, usa-se o pipeline serial acima. **Não injetar** onde já há relógio nativo
-  (ex.: circo-do-teo) nem no site-raiz deste repo (`floresta-dos-numeros-1ano`).
+- **PROGRESSO EXPIRA EM 1 AULA — padrão de escola (pedido do usuário):** o "continuar de onde
+  parou" vale só durante a aula; depois **zera sozinho**, pra a PRÓXIMA TURMA começar do zero SEM
+  o professor resetar cada PC. ⚠️ *(A 1ª tentativa — relógio `ESTADO.inicio` de janela FIXA +
+  `setInterval` — foi **abandonada**; o método correto e único é o **carimbo deslizante** logo
+  abaixo.)*
+- **🔒 OBRIGATÓRIO EM TODA ATIVIDADE PREMIUM — e TEM QUE FUNCIONAR (pedido do Marcos, jul/2026):**
+  **nenhuma atividade premium sobe sem o reset de aula, e ele precisa ser TESTADO funcionando**
+  (não basta ter o código: rodar os 3 cenários abaixo em node/headless antes de publicar). O
+  auditor cobra isso no checklist (`reset55`); atividade nova sem reset é **BARRADA** por
+  `--exigir`. É o padrão da escola: a próxima turma começa do zero **sem o professor zerar PC a PC**.
+- **✅ JEITO CERTO — ÚNICO método aceito (canônico, jul/2026): carimbo DENTRO do progresso +
+  expiração DESLIZANTE.** Os métodos antigos (relógio `ESTADO.inicio` de janela FIXA, e o
+  retrofit `__aulaInicio` com `localStorage.clear()`+`reload()`) **falharam na prática** (na
+  Floresta continuava aparecendo "Começar do zero" dias depois) e estão **APOSENTADOS — não usar
+  mais, nem em retrofit**. O jeito robusto e simples:
+  1. gravar `t: (new Date()).getTime()` **dentro do próprio objeto de progresso** no `salvar()`
+     (renovado a CADA ação → nunca expira durante a aula ativa);
+  2. no `carregar()`, logo após o `JSON.parse`, `if(!d.t || (agora-d.t) > VALIDADE_MIN*60000){
+     remove a chave; return false/return; }` **antes** de popular os globais;
+  3. helper `agoraMs(){ try{ return (new Date()).getTime(); }catch(e){ return 0; } }` (compat IE)
+     e a constante `var VALIDADE_MIN=70;` (55 da aula + 15 de folga, fácil de mudar).
+  Assim: mesma aula/aluno saiu sem querer → **Continuar**; outra aula/outro dia (ou dado antigo
+  SEM carimbo) → **expira e abre no campo do nome**, sem zerar PC a PC. Vantagens vs. os antigos:
+  **1 só chave** (não dessincroniza), **deslizante** (não corta no meio da aula), **sem `clear()`
+  global nem `reload()`**. `apagarProgresso()`/"Começar do zero" seguem limpando a chave.
+  **Já aplicado e testado em:** `floresta-dos-numeros-1ano` (raiz) e `climas-do-mundo-6ano`.
+- **RETROFIT em atividade JÁ publicada = o MESMO patch canônico** (não o `__aulaInicio`!):
+  achar `salvar()`/`carregar()` (ou o `localStorage.setItem/getItem` do progresso) e aplicar os
+  3 passos acima na chave própria de cada jogo (ex.: `climasNino`, `aventuraespaco`). Se o HTML
+  tiver o script velho `__aulaInicio` logo após `<body>`, **removê-lo** (ele dá `clear()`+`reload()`
+  e briga com o carimbo). Pipeline por atividade: pegar o HTML vivo (`recuperar.yml` → `_recuperado/`)
+  ou editar em `_lote/<repo>/index.html` → **validar** (`node --check` do JS + os 3 cenários) →
+  **QA** (`testar-jogando.py` 0 erro + `auditar-geral.py` APROVADO) → commit → `atualizar.yml`
+  (`source_dir=_lote/<repo>`). Como cada atividade é **1 HTML único autossuficiente**, o
+  `atualizar` espelha só o `index.html` sem perder nada. **Não mexer** onde já há relógio nativo
+  funcionando (ex.: circo-do-teo).
+- **TESTE OBRIGATÓRIO do reset (3 cenários, em node com `localStorage`/`Date` mockados) — só
+  publicar se os 3 passarem:** (1) **mesma aula** (salvou, "recarregou" a RAM, `carregar()` <70min)
+  → volta com nome+pontos = **Continuar**; (2) **pausa curta no meio da aula** (ex.: +10min) →
+  ainda **Continuar**; (3) **próxima aula / outro dia** (+71min) → nome vazio, pontos 0, chave
+  **limpa** = **abre no campo do nome**. Guardar os prints do teste.
 - Sem overflow horizontal em 414/390/360/320px.
 
 ================================================================

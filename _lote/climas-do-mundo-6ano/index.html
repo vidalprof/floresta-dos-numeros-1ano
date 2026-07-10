@@ -676,7 +676,8 @@ input.campo { display:block; width:100%; font-size:17px; padding:12px 14px; bord
 </style>
 </head>
 <body>
-<script>(function(){var META="__aulaInicio",DUR=55*60*1000;function n(){return new Date().getTime();}function td(){for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==META)return true;}return false;}function c(){var t=localStorage.getItem(META);if(t&&(n()-parseInt(t,10))>DUR){try{localStorage.clear();}catch(e){}location.reload();return;}if(!t&&td()){try{localStorage.setItem(META,""+n());}catch(e){}}}c();setInterval(c,30000);})();</script>
+<!-- O reset de aula agora e feito com CARIMBO DESLIZANTE dentro do proprio
+     progresso (ver salvar()/carregar() no JS). Nao usa mais __aulaInicio. -->
 <button class="btn-tela-cheia" id="btn-tela-cheia" onclick="alternarTelaCheia()" title="Tela cheia" style="display:none">&#9974;</button>
 <button class="btn-home-fixo" id="btn-home-fixo" onclick="telaMenu()" title="Voltar ao mapa">&#127968;</button>
 <div id="ceu"></div>
@@ -1084,9 +1085,15 @@ var dErros=0;
 var emTreino=false;
 var emReforco=false;
 
+/* O progresso vale so durante a AULA. A cada acao o horario e renovado; se ficar
+   mais de VALIDADE_MIN minutos parado (outra aula/outro dia), ele EXPIRA sozinho e
+   a tela abre direto no campo do nome — sem precisar zerar de maquina em maquina.
+   Se o aluno sair sem querer no meio da aula, o Continuar ainda funciona. */
+var VALIDADE_MIN=70;
+function agoraMs(){ try{ return (new Date()).getTime(); }catch(e){ return 0; } }
 function salvar(){
   try{
-    var dados={p:PONTOS, c:concluidas, s:SELOS, m:MEDALHAS_G, n:nomeAluno, st:STATS};
+    var dados={p:PONTOS, c:concluidas, s:SELOS, m:MEDALHAS_G, n:nomeAluno, st:STATS, t:agoraMs()};
     localStorage.setItem("climasNino", JSON.stringify(dados));
   }catch(e){}
 }
@@ -1095,6 +1102,11 @@ function carregar(){
     var raw=localStorage.getItem("climasNino");
     if(!raw){ return; }
     var dados=JSON.parse(raw);
+    /* expira progresso de aula antiga (sem carimbo de tempo = antigo tambem) */
+    if(!dados || !dados.t || (agoraMs()-dados.t) > VALIDADE_MIN*60*1000){
+      try{ localStorage.removeItem("climasNino"); }catch(e){}
+      return;
+    }
     if(dados){
       PONTOS=dados.p||0;
       concluidas=dados.c||{};

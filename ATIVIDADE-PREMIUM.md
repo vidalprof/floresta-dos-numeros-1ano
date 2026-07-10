@@ -249,6 +249,12 @@ NENHUM texto da atividade pode ter erro de português. Antes de entregar, revisa
 - **Emojis: só Unicode 6.0 (2010) ou anterior.** Seguros já validados: ⭐ ✨ 🌟 💫 🎉 🔊 ▶ ✏ 🔒 🔓 🔁 🔄 🚀 🏁 📊 🏅 ✓ ✔ 🏆 💡 🔥. REMOVER variation selectors (FE0F). Proibidos (viram quadrado): 🗺 🤔 🥇🥈🥉 bandeiras 🦊🦉 e qualquer 2014+.
 - Arquivo único `index.html`, assets base64, `localStorage` com fallback em memória.
 - Sem overflow horizontal em 414/390/360/320px.
+- **🔒 RESET DE AULA — OBRIGATÓRIO E TESTADO EM TODA ATIVIDADE PREMIUM:** o progresso vale só
+  durante a aula (**carimbo deslizante** `t` dentro do objeto salvo, `VALIDADE_MIN=70`; ver §
+  reset no MANUAL-MESTRE). A próxima turma abre no campo do nome sozinha, sem zerar PC a PC.
+  Método ÚNICO aceito = carimbo deslizante (o `__aulaInicio` com `clear()`+`reload()` está
+  aposentado). **Não publicar** sem rodar os 3 cenários do teste (mesma aula → Continuar; pausa
+  curta → Continuar; próxima aula/+71min → expira e abre no nome).
 
 ================================================================
 ## 15. GAMIFICAÇÃO (estrutura padrão)
@@ -280,6 +286,7 @@ Antes de entregar QUALQUER atividade (criação ou upgrade), rodar a auditoria n
 11. **Embaralhamento REAL**: rodar a mesma fase várias vezes e confirmar que a posição da resposta certa VARIA (`_mix`, checagem por VALOR); `opcoesImg` também embaralhado quando houver.
 12. **Fala nunca cortada**: existem `falar`/`enfileirarFala`/`falarDepois`/`popCaixaFila`; no acerto, elogio+explicação é ouvido inteiro e streak/nível/conquista entram DEPOIS sem cortar; clicar "Próximo"/"Ver resultado" NÃO corta o feedback (áudio termina e emenda no próximo); trocar de tela CORTA de propósito. Testar a sequência de um acerto com streak: todas as falas em ordem, zero cortes após iniciar.
 13. **Adaptatividade**: 100%→oferece Desafio Extra; <50%→oferece Reforço; erros→Treino aparece embaixo do mapa. Reset apaga tudo e volta à tela inicial.
+13b. **Reset de aula FUNCIONANDO** (carimbo deslizante): rodar os 3 cenários (mesma aula → Continuar; pausa curta → Continuar; próxima aula/+71min → expira e abre no nome). Sem os 3 verdes, NÃO publica.
 14. **Mapa**: só a parada atual clicável; demais TRANCADAS com cadeado (clique dá aviso); conectores pontilhados presentes; troféu visível (cadeado até 100%); Relatório só aparece com tudo concluído; barra de progresso da recompensa enche por %.
 
 ### NÍVEL 3 — PEDAGOGO EXPERIENTE (conteúdo, língua, áudio)
