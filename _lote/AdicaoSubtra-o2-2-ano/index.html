@@ -580,7 +580,7 @@ FASES.contar={ titulo:"Vamos Contar!", cor:"lv0", iconeTipo:"contar", dica:"Cont
 
 /* FASE 2 - JUNTAR (adição: dois grupos juntos) */
 FASES.juntar={ titulo:"Juntar", cor:"lv1", iconeTipo:"juntar", dica:"JUNTAR é pôr os dois grupos juntos e contar tudo!",
-  gerar:function(){ var d=[{ tipo:"regra", titulo:"Juntar 🤝", texto:"<b>Juntar</b> é colocar dois grupos <b>juntos</b> e contar tudo.<br><br>Se eu junto 3 estrelas com 2 estrelas, fico com 5 estrelas!<br><br>Juntar é uma <b>adição</b>. Usamos o sinal de <b>mais</b> (+).",
+  gerar:function(){ var d=[{ tipo:"regra", titulo:"Juntar ➕", texto:"<b>Juntar</b> é colocar dois grupos <b>juntos</b> e contar tudo.<br><br>Se eu junto 3 estrelas com 2 estrelas, fico com 5 estrelas!<br><br>Juntar é uma <b>adição</b>. Usamos o sinal de <b>mais</b> (+).",
       fala:"Juntar é colocar dois grupos juntos e contar tudo. Se eu junto três estrelas com duas estrelas, fico com cinco estrelas! Juntar é uma adição. Usamos o sinal de mais." }];
     for(var i=0;i<7;i++){ var ch=objAleatorio(), a=1+Math.floor(Math.random()*6), b=1+Math.floor(Math.random()*6);
       d.push({ tipo:"conta-visual", obj:ch, qtd1:a, qtd2:b, modo:"juntar", resposta:a+b,
@@ -846,6 +846,7 @@ GANCHOS._forca="Mistério resolvido! Só falta o DESAFIO final de mestre. Corage
 
 /* ===== CACA-NUMEROS (alivio) ===== */
 var _cn={};
+function _cnEhAlvo(d,alvos){ for(var i=0;i<alvos.length;i++){ if(alvos[i]===d){ return true; } } return false; }
 function iniciarCacaNum(){ somClique(); faseAtual="cacanum"; treinoAtivo=false; streak=0;
   /* 4 contas simples ate ~2o ano; achar cada resultado na grade */
   var contas=[]; var usados={};
@@ -865,7 +866,13 @@ function iniciarCacaNum(){ somClique(); faseAtual="cacanum"; treinoAtivo=false; 
   var mapAlvo={}; for(var k=0;k<alvos.length;k++){ mapAlvo[pos[k]]=alvos[k]; }
   for(var q=0;q<total;q++){
     if(mapAlvo[q]!==undefined){ celulas.push({n:mapAlvo[q],alvo:true,ok:false}); }
-    else { var d=2+Math.floor(Math.random()*17); celulas.push({n:d,alvo:false,ok:false}); }
+    else {
+      /* distrator NUNCA pode ser igual a um resultado-alvo (senao o numero do
+         resultado aparece repetido na grade e confunde a crianca) */
+      var d, tent=0;
+      do { d=2+Math.floor(Math.random()*17); tent++; } while(_cnEhAlvo(d,alvos) && tent<50);
+      celulas.push({n:d,alvo:false,ok:false});
+    }
   }
   _cn={contas:contas,celulas:celulas,cols:cols,idx:0,achados:0};
   renderCacaNum();
