@@ -85,6 +85,17 @@ def estatico(src):
     for k in sorted(usadas):
         if k not in audio_keys:
             problemas.append("tocarFala(\"%s\", …) mas AUDIO['%s'] NÃO existe → cairia na voz do navegador" % (k, k))
+    # 3) escolherVoz() das narrações DINÂMICAS (voz do navegador) deve preferir MASCULINO
+    ei = h.find("function escolherVoz")
+    if ei >= 0:
+        corpo = h[ei:h.find("\nfunction ", ei + 10)]
+        # reprova se dá boost POSITIVO a nome feminino
+        fem_boost = re.search(r'"(maria|francisca|luciana|camila|joana|fernanda|helena)"[^;]{0,30}p\s*\+=', corpo)
+        if fem_boost:
+            problemas.append("escolherVoz() dá preferência a voz FEMININA (\"%s\") → narração dinâmica sai feminina" % fem_boost.group(1))
+        tem_masc = re.search(r'(masculin|antonio|ant\\u00f4nio|daniel|donato|"male")', corpo)
+        if not tem_masc:
+            problemas.append("escolherVoz() não prefere voz MASCULINA (falta boost p/ nomes masculinos)")
     return audio_keys, problemas
 
 def main():
