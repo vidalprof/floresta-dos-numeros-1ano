@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Climas do Mundo — A Volta ao Mundo de Nimbo</title>
+<title>Climas do Mundo — A Volta ao Mundo de Nino</title>
 <style>
 * { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; }
 html,body { width:100%; min-height:100%; }
@@ -209,7 +209,7 @@ p.texto { font-size:15px; line-height:1.5; color:#c7d0da; max-width:540px; margi
 .mascimg { width:86px; height:86px; margin-right:8px;
   -webkit-animation:floaty 3.2s ease-in-out infinite; animation:floaty 3.2s ease-in-out infinite; }
 .mascimg svg, .mascimg img { width:86px; height:86px; display:block; }
-/* VIDA do Nimbo: respiracao + balanco leve (so transform -> roda em PC antigo) */
+/* VIDA do Nino: respiracao + balanco leve (so transform -> roda em PC antigo) */
 .nimbo-vivo{ -webkit-transform-origin:50% 92%; transform-origin:50% 92%;
   -webkit-animation:nimboVida 3.6s ease-in-out infinite; animation:nimboVida 3.6s ease-in-out infinite; }
 @-webkit-keyframes nimboVida{
@@ -973,12 +973,12 @@ var emReforco=false;
 function salvar(){
   try{
     var dados={p:PONTOS, c:concluidas, s:SELOS, m:MEDALHAS_G, n:nomeAluno, st:STATS};
-    localStorage.setItem("climasNimbo", JSON.stringify(dados));
+    localStorage.setItem("climasNino", JSON.stringify(dados));
   }catch(e){}
 }
 function carregar(){
   try{
-    var raw=localStorage.getItem("climasNimbo");
+    var raw=localStorage.getItem("climasNino");
     if(!raw){ return; }
     var dados=JSON.parse(raw);
     if(dados){
@@ -1189,7 +1189,7 @@ function mascoteSalta(){
 function svgMascote(pose, tam){
   var t=tam||86;
   if(typeof NIMBO_IMG!=="undefined" && NIMBO_IMG[pose]){
-    return '<img class="nimbo-vivo js-masc" data-pose="'+pose+'" src="'+NIMBO_IMG[pose]+'" alt="Nimbo" style="width:'+t+'px;height:'+t+'px;object-fit:contain;" />';
+    return '<img class="nimbo-vivo js-masc" data-pose="'+pose+'" src="'+NIMBO_IMG[pose]+'" alt="Nino" style="width:'+t+'px;height:'+t+'px;object-fit:contain;" />';
   }
   return svgMascoteFallback(pose, tam);
 }
@@ -1968,7 +1968,7 @@ function telaInicio(){
   /* banner do mascote com moldura e profundidade */
   html+='<div class="capa-arte">';
   if(typeof IMG_ABERTURA!=="undefined"){
-    html+='<img class="capa-img" src="'+IMG_ABERTURA+'" alt="Nimbo no balão em meio à tempestade" />';
+    html+='<img class="capa-img" src="'+IMG_ABERTURA+'" alt="Nino no balão em meio à tempestade" />';
   } else {
     html+='<div class="mascimg anim-pula" style="width:130px;height:130px;margin:0 auto;">'+svgMascote("feliz",130)+'</div>';
   }
@@ -1976,7 +1976,7 @@ function telaInicio(){
 
   /* título com tratamento tipográfico */
   html+='<div class="capa-titulo"><span class="capa-t1">Climas</span><span class="capa-t2">do Mundo</span></div>';
-  html+='<div class="capa-sub">A Volta ao Mundo de Nimbo</div>';
+  html+='<div class="capa-sub">A Volta ao Mundo de Nino</div>';
 
   if(temProg && nomeAluno){
     /* estado de volta: progresso visual em bolinhas */
@@ -1993,7 +1993,7 @@ function telaInicio(){
     html+='<div id="zonaResetInicio"></div>';
   } else {
     /* estado inicial: apresentação + campo de nome */
-    html+='<div class="capa-lead">Uma expedição vai cruzar o planeta para <b>investigar os climas da Terra</b>. As páginas do <b>Atlas do Clima</b> se perderam — cabe a você lê-las e remontá-las, região por região. O explorador Nimbo é o seu guia.</div>';
+    html+='<div class="capa-lead">Uma expedição vai cruzar o planeta para <b>investigar os climas da Terra</b>. O <b>Atlas do Clima</b> começou em branco — cabe a você preencher cada página vendo os climas de perto, ilha por ilha. O explorador Nino é o seu guia.</div>';
     html+='<div class="capa-campo"><input class="campo" id="campoNome" type="text" maxlength="20" placeholder="Seu nome de expedição"'+' value="'+(nomeAluno||"")+'"></div>';
     html+='<button class="btn pulsa compacto" onclick="comecarComNome()">Iniciar a expedição &#10145;</button>';
   }
@@ -2006,7 +2006,7 @@ function narrarInicio(temProg, feitas){
   if(temProg && nomeAluno){
     t="Bem-vindo(a) de volta, "+nomeAluno+"! Você já recuperou "+pluralG(feitas,"f","página","páginas")+" do Atlas do Clima. Toque em continuar para seguir a viagem!";
   } else {
-    t="Bem-vindo à expedição. Eu sou o Nimbo, o explorador que vai guiar você. Nossa missão é investigar os climas da Terra e remontar as páginas perdidas do Atlas do Clima, região por região. Registre seu nome de expedição, se quiser, e toque em iniciar.";
+    t="Bem-vindo à expedição. Eu sou o Nino, o explorador que vai guiar você. Nossa missão é investigar os climas da Terra e remontar as páginas perdidas do Atlas do Clima, região por região. Registre seu nome de expedição, se quiser, e toque em iniciar.";
   }
   falar(t);
 }
@@ -2132,7 +2132,7 @@ function tocarTrofeu(){
 function historiaMapaTexto(feitas){
   var quem=nomeAluno?(nomeAluno):"viajante";
   if(feitas===0){
-    return "Uma supertempestade espalhou as páginas do <b>Atlas do Clima</b> do Nimbo pelo mundo! Viaje pelos climas do planeta e recupere cada página. A cada página, o Atlas cresce e ganha brilho. Complete as paradas para libertar o <b>Globo Dourado</b>!";
+    return "Uma supertempestade espalhou as páginas do <b>Atlas do Clima</b> do Nino pelo mundo! Viaje pelos climas do planeta e recupere cada página. A cada página, o Atlas cresce e ganha brilho. Complete as paradas para libertar o <b>Globo Dourado</b>!";
   } else if(feitas<ORDEM.length){
     var resto=ORDEM.length-feitas;
     var s="Muito bem, "+quem+"! O <b>Atlas do Clima</b> já está mais colorido e brilhante. ";
@@ -2147,7 +2147,7 @@ function narrarMapa(){
   var quem=nomeAluno?(nomeAluno+"! "):"";
   var t="";
   if(feitas===0){
-    t="Olá, "+(quem||"viajante! ")+"Eu sou o Nimbo! A supertempestade espalhou as páginas do meu Atlas do Clima pelo mundo. Olha só como ele está apagado e sem cor... Cada parada da viagem guarda uma página. A cada página que voltar, o Atlas cresce e ganha brilho! Suba no balão e toque na primeira parada: a Estação do Vento!";
+    t="Olá, "+(quem||"viajante! ")+"Eu sou o Nino! A supertempestade espalhou as páginas do meu Atlas do Clima pelo mundo. Olha só como ele está apagado e sem cor... Cada parada da viagem guarda uma página. A cada página que voltar, o Atlas cresce e ganha brilho! Suba no balão e toque na primeira parada: a Estação do Vento!";
   } else if(feitas<ORDEM.length){
     var resto=ORDEM.length-feitas;
     t="Que viagem, "+(quem||"piloto! ")+"Você já recuperou "+pluralG(feitas,"f","página do Atlas","páginas do Atlas")+", e olha como ele está ficando mais colorido e brilhante! ";
@@ -2167,7 +2167,7 @@ function pedirReset(){
 function confirmarReset(){
   PONTOS=0; streak=0; concluidas={}; STATS={}; ERROS=[]; SELOS={}; MEDALHAS_G={};
   _extraDado={}; _refDado={};
-  try{ localStorage.removeItem("climasNimbo"); }catch(e){}
+  try{ localStorage.removeItem("climasNino"); }catch(e){}
   salvar();
   atualizarEmblemaTopo();
   telaInicio();
@@ -3804,7 +3804,7 @@ function grandeFinal(){
   var n=nivelAtual();
   var html='<div class="card centro">';
   if(typeof IMG_FINAL!=="undefined"){
-    html+='<div class="cena-banner"><img src="'+IMG_FINAL+'" alt="Nimbo comemorando com o Atlas completo" /></div>';
+    html+='<div class="cena-banner"><img src="'+IMG_FINAL+'" alt="Nino comemorando com o Atlas completo" /></div>';
   } else {
     html+='<div style="width:130px;height:130px;margin:0 auto;" class="mascimg">'+svgMascote("comemorando",130)+'</div>';
   }
