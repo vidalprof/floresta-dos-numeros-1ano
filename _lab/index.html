@@ -58,12 +58,22 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   var PC=par("pc")||ls("labpc")||"";  if(par("pc")) ls("labpc",PC);
 
   function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
-  function pintaRodape(){ $("rodape").innerHTML="Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>"); }
-  pintaRodape();
-  if(!PC){
-    $("setpc").style.display="block";
-    $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; PC=v; ls("labpc",v); $("setpc").style.display="none"; pintaRodape(); };
+  function pintaRodape(){
+    $("rodape").innerHTML="Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>")
+      +' &middot; <a href="#" id="trocarpc" style="color:#8fb6ff;text-decoration:underline;">trocar n&uacute;mero</a>';
+    var tp=$("trocarpc"); if(tp){ tp.onclick=function(e){ if(e&&e.preventDefault)e.preventDefault(); abrirSetPc(); return false; }; }
   }
+  function abrirSetPc(){
+    /* volta p/ a tela de espera e mostra o campo do numero (funciona a qualquer momento) */
+    quadro.style.display="none"; try{ quadro.src="about:blank"; }catch(e){} bloqueio.style.display="none"; espera.style.display="flex";
+    _urlAtual="";
+    $("inpc").value=PC||"";
+    $("setpc").style.display="block";
+    try{ $("inpc").focus(); $("inpc").select(); }catch(e){}
+  }
+  $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; PC=v; ls("labpc",v); $("setpc").style.display="none"; pintaRodape(); };
+  pintaRodape();
+  if(!PC){ $("setpc").style.display="block"; }
   var pt=$("pt"), stx=$("stx");
   var quadro=$("quadro"), espera=$("espera"), bloqueio=$("bloqueio");
   function conectado(ok){ pt.className=ok?"on":""; stx.innerHTML=ok?"conectado":"reconectando…"; }
