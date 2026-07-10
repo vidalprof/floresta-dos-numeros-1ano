@@ -439,9 +439,11 @@ de PC a PC** e às vezes pronuncia errado. **Solução premium:** gerar a voz NA
 **build** (servidor, via Actions) e **embutir como base64** no HTML, tocando com `<audio>`/
 `new Audio()` — **sem depender da voz do navegador**. Igual à estratégia das imagens.
 - **Workflow:** `.github/workflows/gerar-audio.yml` (`workflow_dispatch`). Salva em
-  `_audio/<nome>.mp3`. `modelo=free` → **Pollinations `openai-audio`** (GRÁTIS, sem chave,
-  voz natural OpenAI; escolher `voz`: nova/alloy/echo/fable/onyx/shimmer). `modelo=google`
-  → **Google Translate TTS** (grátis, PT-BR, corta em pedaços ~180 char). Roda no Actions
+  `_audio/<nome>.mp3`. **USAR `modelo=google` → Google Translate TTS (GRÁTIS, PT-BR, FUNCIONA
+  hoje — TESTADO OK)**, corta o texto em pedaços ~180 char e emenda os MP3. `modelo=free`
+  (Pollinations `openai-audio`) **saiu do ar** no endpoint legado (`text.pollinations.ai`
+  devolve 404 "Model not found"; a API nova pede conta) — fica no código como opção futura.
+  Roda no Actions
   (internet liberada); **o sandbox do Claude tem proxy restrito e bloqueia esses hosts —
   por isso a geração é sempre server-side, nunca por curl local.**
 - **Quando usar:** as falas são **FIXAS** (enunciados, elogios, história) → grava cada uma
