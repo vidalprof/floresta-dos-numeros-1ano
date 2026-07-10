@@ -141,10 +141,11 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:
   /* tela cheia (sai da pagina, sem retorno remoto) - mantido p/ compatibilidade */
   function abrirCheia(url){ try{ window.top.location.href=url; }catch(e){ try{ location.href=url; }catch(e2){} } }
 
-  /* lembra o ultimo comando aplicado (em cookie+localStorage) p/ NAO repetir ao recarregar
-     nem ao voltar de um site em tela cheia. */
-  var ultimoId=ck("lab_lastid")||ls("lab_lastid")||null;
-  function setUltimo(id){ ultimoId=id; if(id){ ls("lab_lastid",id); ck("lab_lastid",id); } }
+  /* dedup do comando SO na memoria (NAO persiste): ao recarregar, a maquina REABRE
+     sozinha a atividade que estiver no canal (auto-retomar). O modo "nova aba" nao
+     navega p/ fora, entao nao precisa mais persistir p/ evitar loop. */
+  var ultimoId=null;
+  function setUltimo(id){ ultimoId=id; }
   function aplica(cmd){
     if(!cmd) return;
     if(cmd.id && cmd.id===ultimoId) return;
