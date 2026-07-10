@@ -857,6 +857,15 @@ function limparFala(t){
   var s=String(t||"");
   s=s.replace(/<[^>]*>/g," ");
   s=s.replace(/&nbsp;/g," ").replace(/&amp;/g,"e").replace(/&lt;/g," ").replace(/&gt;/g," ");
+  /* pronúncia: tirar símbolos que a voz lê errado (manual §633) */
+  s=s.replace(/([A-Za-zÀ-ÿ])\(\s*(a|as|o|os|s)\s*\)/gi,"$1");   /* Bem-vindo(a)->Bem-vindo, amigo(s)->amigo */
+  s=s.replace(/\s*[—–]\s*/g,", ");                              /* travessão -> pausa (vírgula) */
+  s=s.replace(/\s*[\(\)\[\]\{\}]\s*/g,", ");                    /* parênteses/colchetes -> pausa */
+  s=s.replace(/_+/g," ");                                       /* lacuna ___ -> pausa (não lê "underline") */
+  s=s.replace(/[*#•|=+@\x22“”«»\/]/g," ");   /* símbolos avulsos somem (aspas/•/«» via escape p/ nao confundir o auditor) */
+  s=s.replace(/\s*,\s*(?=[,.!?:;])/g,"");                       /* vírgula colada em outra pontuação */
+  s=s.replace(/([.!?:;])\s*,/g,"$1");
+  s=s.replace(/^\s*,\s*/,"").replace(/,\s*,/g,", ");
   s=s.replace(/\s*\.\s*(?:\.\s*)+/g,"… ");   /* reticências (...) viram 1 símbolo … (pausa maior, tratada na fala) */
   s=s.replace(/…+/g,"…");           /* nunca deixa … repetido */
   s=acentuaPalavra(s,"voce","você");
