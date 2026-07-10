@@ -1,0 +1,94 @@
+name: Gerar imagem com Gemini
+
+# Gera uma imagem a partir de um prompt usando a API do Gemini e salva em _imagens/.
+# Requer o secret GEMINI_API_KEY (Settings -> Secrets and variables -> Actions).
+# A chave vive SO como secret; nunca colar o valor em lugar nenhum do codigo/chat.
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Descricao da imagem (dica: fundo PRETO, itens BEM separados, sem sombra)"
+        required: true
+        type: string
+      nome:
+        description: "Nome do arquivo (sem extensao), salvo em _imagens/<nome>.png"
+        required: true
+        type: string
+      modelo:
+        description: "Modelo (padrao gemini-2.5-flash-image; alternativas: gemini-2.0-flash-preview-image-generation, imagen-3.0-generate-002)"
+        required: false
+        default: "gemini-2.5-flash-image"
+        type: string
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gerar imagem
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          PROMPT: ${{ inputs.prompt }}
+          NOME: ${{ inputs.nome }}
+          MODELO: ${{ inputs.modelo }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, urllib.request, urllib.error, re
+          key=os.environ.get("GEMINI_API_KEY","").strip()
+          prompt=os.environ["PROMPT"]; nome=os.environ["NOME"].strip(); modelo=os.environ["MODELO"].strip()
+          if not key:
+              raise SystemExit("::error::GEMINI_API_KEY vazio. Cadastre o secret em Settings > Secrets > Actions.")
+          nome=re.sub(r'[^A-Za-z0-9_-]','_', nome) or "imagem"
+          if modelo.startswith("imagen"):
+              url="https://generativelanguage.googleapis.com/v1beta/models/%s:predict?key=%s"%(modelo,key)
+              body={"instances":[{"prompt":prompt}],"parameters":{"sampleCount":1,"aspectRatio":"1:1"}}
+          else:
+              url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(modelo,key)
+              body={"contents":[{"parts":[{"text":prompt}]}],"generationConfig":{"responseModalities":["TEXT","IMAGE"]}}
+          req=urllib.request.Request(url, data=json.dumps(body).encode("utf-8"), headers={"Content-Type":"application/json"})
+          try:
+              raw=urllib.request.urlopen(req, timeout=180).read()
+          except urllib.error.HTTPError as e:
+              print("::error::HTTP %s do Gemini"%e.code)
+              print(e.read().decode("utf-8","ignore")[:2000]); raise SystemExit(1)
+          d=json.loads(raw)
+          img=None
+          if "predictions" in d:
+              img=(d["predictions"][0] or {}).get("bytesBase64Encoded")
+          else:
+              cands=d.get("candidates") or []
+              parts=(cands[0].get("content",{}) if cands else {}).get("parts",[]) or []
+              for p in parts:
+                  inl=p.get("inlineData") or p.get("inline_data")
+                  if inl and inl.get("data"): img=inl["data"]; break
+          if not img:
+              print("::error::A resposta nao trouxe imagem (modelo/cota?). Resposta:")
+              print(json.dumps(d)[:2000]); raise SystemExit(1)
+          os.makedirs("_imagens", exist_ok=True)
+          out="_imagens/%s.png"%nome
+          open(out,"wb").write(base64.b64decode(img))
+          print("OK -> "+out+" ("+str(os.path.getsize(out))+" bytes)")
+          PY
+
+      - name: Commit da imagem
+        run: |
+          git config user.name "GeraImagem"
+          git config user.email "gera@users.noreply.github.com"
+          git add _imagens/*.png
+          if git diff --cached --quiet; then
+            echo "Nenhuma imagem nova."
+          else
+            git commit -m "Gera imagem: ${{ inputs.nome }}"
+            git push
+          fi
+          {
+            echo "## Imagem gerada"
+            echo ""
+            echo "Arquivo: **_imagens/${{ inputs.nome }}.png**"
+            echo "Modelo: ${{ inputs.modelo }}"
+          } >> "$GITHUB_STEP_SUMMARY"
