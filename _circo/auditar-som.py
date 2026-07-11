@@ -106,9 +106,32 @@ def estatico(src):
     if niveis:
         for nv in re.findall(r'"([^"]+)"', niveis.group(1)):
             criticas.append("Você subiu de nível! Agora você é " + nv + "!")
+    # 2c) FEEDBACK COMPOSTO (falarComposto): cada PEÇA tem de ter áudio embutido —
+    #     todos os elogios, TODAS as explicações do banco, os "cabeçalhos" fixos
+    #     (Quase!, Não foi dessa vez!, …) e os avisos de sequência. Assim qualquer
+    #     combinação elogio+explicação sai 100% em áudio gravado (masculino).
+    def _unesc(s):
+        try: return bytes(s, "utf-8").decode("unicode_escape").encode("latin1").decode("utf-8") if "\\u" in s else s.replace('\\"', '"')
+        except Exception: return s
+    mel = re.search(r'var ELOGIOS=\[(.*?)\]', h, re.S)
+    if mel:
+        for e in re.findall(r'"((?:[^"\\]|\\.)*)"', mel.group(1)): criticas.append(_unesc(e))
+    for e in set(re.findall(r'explica:"((?:[^"\\]|\\.)*)"', h)): criticas.append(_unesc(e))
+    criticas += ["Quase!", "Não foi dessa vez!", "Análise correta! Você domina o assunto.",
+                 "Quase! Esse era difícil mesmo.", "Isso! Você descobriu a palavra!",
+                 "Ah, não! Dessa vez o desenho se completou. Vamos tentar de novo!",
+                 "Descubra a palavra do clima!",
+                 "Treino concluído! Errar e treinar de novo é assim que os grandes cientistas aprendem!",
+                 "Você acertou três seguidas!", "Você acertou cinco seguidas!",
+                 "Você acertou oito seguidas!", "Você acertou dez seguidas!"]
+    faltando = 0
     for t in criticas:
         if _chave_voz(t) not in txt_keys:
-            problemas.append("narração dinâmica sem áudio embutido (cairia na voz do navegador): \"%s…\"" % t[:45])
+            faltando += 1
+            if faltando <= 8:
+                problemas.append("fala sem áudio embutido (cairia na voz do navegador): \"%s…\"" % t[:45])
+    if faltando > 8:
+        problemas.append("... e mais %d fala(s) de feedback sem áudio embutido" % (faltando - 8))
     # 3) escolherVoz() das narrações DINÂMICAS (voz do navegador) deve preferir MASCULINO
     ei = h.find("function escolherVoz")
     if ei >= 0:
