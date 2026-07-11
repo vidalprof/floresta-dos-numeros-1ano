@@ -210,7 +210,7 @@ function cenaHTML(q){
   var lado, h='<div class="cena">';
   if(q.tipo==="masc"){
     lado=(q.lado==="dir")?"rd":"ld";
-    h+='<img class="masc" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'.png" alt="explorador">';
+    h+='<img class="masc" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'_'+(q.lado==="dir"?"dir":"esq")+'.png" alt="explorador apontando">';
     h+='<img class="obj '+lado+'" src="img/'+q.obj+'.png" alt="objeto">';
   }
   h+='</div>';
