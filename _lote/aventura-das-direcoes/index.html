@@ -116,17 +116,17 @@ var QUESTOES=[
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"estrela", lado:"dir",
   pergunta:"A Estrela-Guia está à direita ou à esquerda dele?",
-  fala:"Pista dois! O explorador está de costas, igual a você, seguindo a Estrela-Guia. De que lado ela está: direito ou esquerdo dele?",
+  fala:"Pista dois! O explorador está de costas, igual a você, seguindo a Estrela-Guia. Ela está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
 
  {tipo:"par", ref:"voce", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
-  pergunta:"A árvore está do seu lado esquerdo ou do seu lado direito?",
-  fala:"Pista três! De dia, o caminho tem uma árvore grande e o sol. Olhando para a tela, a árvore está do seu lado esquerdo ou do seu lado direito?",
+  pergunta:"A árvore está à sua esquerda ou à sua direita?",
+  fala:"Pista três! De dia, o caminho tem uma árvore grande e o sol. Olhando para a tela, a árvore está à sua esquerda ou à sua direita?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"cogumelo", lado:"esq",
   pergunta:"O cogumelo está à direita ou à esquerda dele?",
-  fala:"Pista quatro! No caminho aparece um cogumelo. O explorador está de costas. O cogumelo está do lado direito ou do lado esquerdo dele?",
+  fala:"Pista quatro! No caminho aparece um cogumelo. O explorador está de costas. O cogumelo está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
 
  {tipo:"seta", ref:"voce", aponta:"dir",
@@ -136,27 +136,27 @@ var QUESTOES=[
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"flor", lado:"dir",
   pergunta:"A flor está à direita ou à esquerda dele?",
-  fala:"Pista seis! O explorador de costas acha um canteiro de flores. A flor está do lado direito ou do lado esquerdo dele?",
+  fala:"Pista seis! O explorador de costas acha um canteiro de flores. A flor está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
 
  {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
   pergunta:"O explorador está de FRENTE. A Estrela-Guia está à direita ou à esquerda dele?",
-  fala:"Pista sete, atenção! Agora a Estrela-Guia voltou e o explorador está te olhando de frente. A estrela está na direita ou na esquerda dele?",
+  fala:"Pista sete, atenção! Agora a Estrela-Guia voltou e o explorador está te olhando de frente. Ela está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
 
  {tipo:"par", ref:"voce", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
-  pergunta:"O sol está do seu lado esquerdo ou do seu lado direito?",
-  fala:"Pista oito! O sol está bem alto no céu. Olhando para a tela, o sol está do seu lado esquerdo ou do seu lado direito?",
+  pergunta:"O sol está à sua esquerda ou à sua direita?",
+  fala:"Pista oito! O sol está bem alto no céu. Olhando para a tela, o sol está à sua esquerda ou à sua direita?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
 
  {tipo:"masc", ref:"frente", vista:"frente", obj:"arvore", lado:"dir",
   pergunta:"O explorador está de FRENTE. A árvore está à direita ou à esquerda dele?",
-  fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está na direita ou na esquerda dele?",
+  fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
   pergunta:"O baú do tesouro está à direita ou à esquerda do explorador?",
-  fala:"Pista dez, a última! Chegamos! O baú do tesouro apareceu. O explorador está de costas. O baú está do lado direito ou do lado esquerdo dele?",
+  fala:"Pista dez, a última! Chegamos! O baú do tesouro apareceu. O explorador está de costas. O baú está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1}
 ];
 
@@ -221,7 +221,7 @@ function cenaHTML(q){
 }
 function refHTML(q){
   var m={
-    voce:'&#128064; Pense no SEU corpo &mdash; seu lado direito e seu lado esquerdo',
+    voce:'&#128064; Pense no SEU corpo &mdash; a sua direita e a sua esquerda',
     costas:'&#128281; O explorador est&aacute; DE COSTAS (igual a voc&ecirc;) &mdash; o lado dele &eacute; o seu lado',
     frente:'&#9888;&#65039; Aten&ccedil;&atilde;o! O explorador est&aacute; DE FRENTE, te olhando'
   };
