@@ -738,10 +738,10 @@ body.claro .med-lock{background:#eef3f9;color:#5b6b7f;border:2px dashed #cbd8e8;
 body.claro table.rel th,body.claro table.rel td{color:#42566b;border:1px solid #dbe6f2;}
 body.claro table.rel th{background:#eef3f9;color:#8a5300;}
 /* controles de voz sempre visiveis (mudo / repetir) */
-#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;display:-webkit-box;display:flex;gap:6px;}
-#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:40px;height:40px;border:2px solid #1f79d6;border-radius:50%;background:#ffffff;color:#1f79d6;font-size:18px;line-height:36px;text-align:center;cursor:pointer;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0;}
+#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;display:-webkit-box;display:flex;}
+#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:40px;height:40px;border:2px solid #1668bf;border-radius:50%;background:#ffffff;color:#1668bf;font-size:18px;line-height:36px;text-align:center;cursor:pointer;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0;margin-left:6px;}
 #ctrlVoz .cv-bt:hover{background:#eaf2fd;}
-.btn-ouvir-mini{-webkit-appearance:none;appearance:none;border:1px solid #1f79d6;border-radius:14px;background:#eaf2fd;color:#1f79d6;font-size:14px;line-height:1;padding:3px 8px;margin-left:6px;cursor:pointer;vertical-align:middle;}
+.btn-ouvir-mini{-webkit-appearance:none;appearance:none;border:1px solid #1668bf;border-radius:14px;background:#eaf2fd;color:#1668bf;font-size:14px;line-height:1;padding:3px 8px;margin-left:6px;cursor:pointer;vertical-align:middle;}
 </style>
 </head>
 <body class="claro">
@@ -1020,13 +1020,13 @@ function falarComposto(partes, aoTerminar){
 }
 function falarComposto2(lista, aoTerminar, _forcar){
   var idx=0;
-  function proxima(){
+  function _proxParte(){
     if(idx>=lista.length){ _emComposto=false; if(aoTerminar){ try{ aoTerminar(); }catch(e){} } return; }
     var t=lista[idx]; idx++;
     _emComposto=true;
-    falar(t, proxima, false, _forcar);
+    falar(t, _proxParte, false, _forcar);
   }
-  proxima();
+  _proxParte();
 }
 /* 🔊 do feedback: guarda a explicacao atual e devolve o botao (ou "" se nao ha) */
 function fbExplica(exp){ _explicaAtual=exp||""; return _explicaAtual ? '<button class="btn-ouvir-mini" onclick="ouvirExplica()" title="Ouvir a explicação">🔊</button>' : ''; }
