@@ -39,6 +39,10 @@
   }
   .bt.sec{ background:#1668bf; }
   .bt.gh{ background:#5a6b7b; }
+  .bt.del{ background:#c0392b; }
+  th.chk, td.chk{ width:34px; text-align:center; }
+  td.chk input, th.chk input{ width:20px; height:20px; cursor:pointer; }
+  tr.marc td{ background:#fdeaea !important; }
   .status{ text-align:center; color:#5a6b7b; font-size:13px; margin:6px 0 12px; min-height:16px; }
   .toggle{ display:-webkit-box; display:-webkit-flex; display:flex; -webkit-justify-content:center; justify-content:center; margin:0 0 12px; }
   .toggle button{
@@ -86,6 +90,7 @@
     <button class="bt" id="btAtu" onclick="carregar()">&#8635; Atualizar</button>
     <button class="bt sec" id="btAuto" onclick="alternarAuto()">&#9210; Auto: ligado</button>
     <button class="bt gh" onclick="baixarCSV()">&#8681; Baixar CSV</button>
+    <button class="bt del" id="btDel" onclick="apagarSelecionados()">&#128465; Apagar selecionados</button>
   </div>
 
   <div class="toggle">
@@ -107,6 +112,7 @@
       <table>
         <thead>
           <tr>
+            <th class="chk"><input type="checkbox" id="selTodos" onclick="selecionarTodos(this.checked)" title="Selecionar tudo"></th>
             <th class="num">#</th>
             <th>Nome</th>
             <th>Turma</th>
@@ -116,7 +122,7 @@
           </tr>
         </thead>
         <tbody id="corpo">
-          <tr><td colspan="6" class="vazio">Carregando&hellip;</td></tr>
+          <tr><td colspan="7" class="vazio">Carregando&hellip;</td></tr>
         </tbody>
       </table>
     </div>
@@ -131,10 +137,11 @@ var FIREBASE_DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.c
 var CAMINHO     = "/provas/lateralidade-3ano";
 
 /* ===== Estado ===== */
-var DADOS = [];      /* lista normalizada */
+var DADOS = [];      /* lista normalizada (cada item guarda .key do Firebase) */
 var ORDEM = "chegada";
 var AUTO  = true;
 var timer = null;
+var SEL   = {};      /* keys marcados p/ apagar (persistem entre atualizacoes) */
 
 function $(id){ return document.getElementById(id); }
 
@@ -174,12 +181,14 @@ function pintar(){
   var arr = ordenar(DADOS), i, h = "";
   $("tot").innerHTML = DADOS.length;
   if(!arr.length){
-    $("corpo").innerHTML = '<tr><td colspan="6" class="vazio">Ainda n&atilde;o chegou nenhuma resposta. Assim que um aluno terminar, aparece aqui.</td></tr>';
+    $("corpo").innerHTML = '<tr><td colspan="7" class="vazio">Ainda n&atilde;o chegou nenhuma resposta. Assim que um aluno terminar, aparece aqui.</td></tr>';
     return;
   }
   for(i=0; i<arr.length; i++){
     var r = arr[i];
-    h += '<tr>'+
+    var mk = SEL[r.key] ? " checked" : "";
+    h += '<tr'+(SEL[r.key]?' class="marc"':'')+'>'+
+      '<td class="chk"><input type="checkbox" class="sel" value="'+esc(r.key)+'" onclick="toggleSel(this)"'+mk+'></td>'+
       '<td class="num">'+(i+1)+'</td>'+
       '<td>'+esc(r.nome)+'</td>'+
       '<td>'+esc(r.turma)+'</td>'+
@@ -189,6 +198,41 @@ function pintar(){
       '</tr>';
   }
   $("corpo").innerHTML = h;
+}
+function toggleSel(cb){
+  if(cb.checked){ SEL[cb.value] = true; } else { delete SEL[cb.value]; }
+  var tr = cb; while(tr && tr.tagName !== "TR"){ tr = tr.parentNode; }
+  if(tr){ tr.className = cb.checked ? "marc" : ""; }
+}
+function selecionarTodos(on){
+  var cbs = document.getElementsByClassName("sel"), i;
+  for(i=0;i<cbs.length;i++){ cbs[i].checked = on; toggleSel(cbs[i]); }
+}
+function apagarSelecionados(){
+  var keys = [], k;
+  for(k in SEL){ if(SEL.hasOwnProperty(k)){ keys.push(k); } }
+  if(!keys.length){ alert("Marque as respostas que quer apagar (a caixinha na primeira coluna)."); return; }
+  if(!confirm("Apagar "+keys.length+" resposta(s) marcada(s)? Isto não tem volta.")){ return; }
+  $("status").innerHTML = "Apagando "+keys.length+" resposta(s)&hellip;";
+  var restantes = keys.length, erros = 0;
+  var i2; for(i2=0;i2<keys.length;i2++){
+    (function(key){
+      var x = new XMLHttpRequest();
+      x.open("DELETE", FIREBASE_DB + CAMINHO + "/" + key + ".json", true);
+      x.onreadystatechange = function(){
+        if(x.readyState !== 4){ return; }
+        if(!(x.status>=200 && x.status<300)){ erros++; }
+        delete SEL[key];
+        restantes--;
+        if(restantes===0){
+          var st=$("selTodos"); if(st){ st.checked=false; }
+          $("status").innerHTML = erros ? ("Apagadas com "+erros+" erro(s). Veja abaixo.") : "Respostas apagadas!";
+          carregar();
+        }
+      };
+      try{ x.send(); }catch(e){ erros++; restantes--; }
+    })(keys[i2]);
+  }
 }
 
 function carregar(){
@@ -208,6 +252,7 @@ function carregar(){
           if(k.charAt(0) === "_"){ continue; } /* ignora chaves de teste _... */
           var v = obj[k] || {};
           lista.push({
+            key:    k,
             nome:   v.nome || "",
             turma:  v.turma || "",
             nota:   (v.nota==null?"":v.nota),
