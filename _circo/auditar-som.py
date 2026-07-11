@@ -25,9 +25,13 @@ FASES = ["estacao","fatores","equatorial","deserto","temperado","subtropical","g
 DIN = r"""
 <script>window.addEventListener("load",function(){setTimeout(function(){
  var log=[];
+ /* rota REAL da fala: com AUDIO_TXT, o proprio falar() toca audio embutido pela
+    chave do texto. Entao aqui consultamos AUDIO_TXT/_chaveVoz p/ saber se a fala
+    tem audio gravado (EMBUTIDO) ou cairia na voz do navegador (NAVEGADOR). */
+ function _rota(t){ try{ var k=_chaveVoz(t); if(typeof AUDIO_TXT!=="undefined" && AUDIO_TXT && AUDIO_TXT[k]){ return "EMBUTIDO"; } }catch(e){} return "NAVEGADOR"; }
  try{ window.tocarFalaAudio=function(uri,fb){ log.push(["EMBUTIDO",window.__ctx||"?"]); };
-      window.falar=function(t){ log.push(["NAVEGADOR",window.__ctx||"?"]); };
-      window.falarDepois=function(t){ log.push(["NAVEGADOR",window.__ctx||"?"]); }; }catch(e){}
+      window.falar=function(t){ log.push([_rota(t),window.__ctx||"?"]); };
+      window.falarDepois=function(t){ log.push([_rota(t),window.__ctx||"?"]); }; }catch(e){}
  function tst(ctx,fn){ window.__ctx=ctx; var n=log.length; try{ fn(); }catch(e){ log.push(["ERRO",ctx+": "+e.message]); } if(log.length===n){ log.push(["SEM-FALA",ctx]); } }
  try{
    try{ nomeAluno="Teste"; }catch(e){}
@@ -37,6 +41,7 @@ DIN = r"""
    tst("inicio_com_prog", function(){ narrarInicio(true,3); });
    var F=%s;
    for(var i=0;i<F.length;i++){ (function(ch){ tst("fase_"+ch, function(){ falarAbertura(ch); }); })(F[i]); }
+   tst("grande_final", function(){ grandeFinal(); });
  }catch(e){ log.push(["ERRO","setup: "+e.message]); }
  document.title="SOM::"+JSON.stringify(log);
 },650);});</script>""" % json.dumps(FASES)
@@ -85,6 +90,25 @@ def estatico(src):
     for k in sorted(usadas):
         if k not in audio_keys:
             problemas.append("tocarFala(\"%s\", …) mas AUDIO['%s'] NÃO existe → cairia na voz do navegador" % (k, k))
+    # 2b) NARRAÇÕES DINÂMICAS CRÍTICAS (comemoração/subir de nível): o texto é
+    #     montado na hora e NÃO era gravado → caía na voz do navegador (feminina).
+    #     Agora cada uma tem de ter áudio embutido em AUDIO_TXT pela chave do texto.
+    def _chave_voz(t):
+        s = " ".join(str(t).split()); hh = 5381
+        for ch in s: hh = ((hh * 33) + ord(ch)) & 0xffffffff
+        b36 = ""; n = hh
+        if n == 0: b36 = "0"
+        while n > 0: b36 = "0123456789abcdefghijklmnopqrstuvwxyz"[n % 36] + b36; n //= 36
+        return "v0" if hh == 0 else "v" + b36
+    txt_keys = set(re.findall(r'"(v[0-9a-z]{3,})"\s*:\s*"data:audio', h))
+    niveis = re.search(r'NIVEIS_FALA\s*=\s*\[([^\]]*)\]', h)
+    criticas = ["Você conseguiu! Você viajou pelo mundo inteiro, enfrentou a Tempestade Final e preencheu todas as páginas do Atlas do Clima! Agora você conhece os climas do planeta como quem viajou o mundo inteiro. Parabéns!"]
+    if niveis:
+        for nv in re.findall(r'"([^"]+)"', niveis.group(1)):
+            criticas.append("Você subiu de nível! Agora você é " + nv + "!")
+    for t in criticas:
+        if _chave_voz(t) not in txt_keys:
+            problemas.append("narração dinâmica sem áudio embutido (cairia na voz do navegador): \"%s…\"" % t[:45])
     # 3) escolherVoz() das narrações DINÂMICAS (voz do navegador) deve preferir MASCULINO
     ei = h.find("function escolherVoz")
     if ei >= 0:
