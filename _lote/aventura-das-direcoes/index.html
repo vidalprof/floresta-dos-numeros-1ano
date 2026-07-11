@@ -107,54 +107,54 @@ var URL_PLANILHA="";
    Em 'masc': vista=costas|frente, obj, lado=dir|esq (lado da IMAGEM). A 'correta' ja
    considera o espelho quando a vista e' frente. */
 var QUESTOES=[
- {tipo:"vert", ref:"cima", cima:"estrela", baixo:"bau",
-  pergunta:"A estrela está em cima ou embaixo?",
-  fala:"Pista um! Olha o que está no céu e no chão. A estrela está em cima ou embaixo?",
+ {tipo:"vert", ref:"cima", cima:"estrela", baixo:"flor",
+  pergunta:"A Estrela-Guia está em cima ou embaixo?",
+  fala:"Pista um! O explorador abre o mapa. À noite, a Estrela-Guia brilha lá no alto. Ela está em cima ou embaixo?",
   opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:0},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"estrela", lado:"dir",
-  pergunta:"A estrela está à direita ou à esquerda dele?",
-  fala:"Pista dois! O explorador está de costas, igual a você. A estrela está do lado direito ou do lado esquerdo dele?",
+  pergunta:"A Estrela-Guia está à direita ou à esquerda dele?",
+  fala:"Pista dois! O explorador está de costas, igual a você, seguindo a Estrela-Guia. De que lado ela está: direito ou esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
 
  {tipo:"par", ref:"voce", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
   pergunta:"A árvore está do seu lado esquerdo ou do seu lado direito?",
-  fala:"Pista três! Olhando para a tela, a árvore está do seu lado esquerdo ou do seu lado direito?",
+  fala:"Pista três! De dia, o caminho tem uma árvore grande e o sol. Olhando para a tela, a árvore está do seu lado esquerdo ou do seu lado direito?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
 
- {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
-  pergunta:"O baú do tesouro está à direita ou à esquerda dele?",
-  fala:"Pista quatro! O explorador continua de costas. O baú do tesouro está do lado direito ou do lado esquerdo dele?",
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"cogumelo", lado:"esq",
+  pergunta:"O cogumelo está à direita ou à esquerda dele?",
+  fala:"Pista quatro! No caminho aparece um cogumelo. O explorador está de costas. O cogumelo está do lado direito ou do lado esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
 
  {tipo:"seta", ref:"voce", aponta:"dir",
-  pergunta:"Para que lado a seta está apontando?",
-  fala:"Pista cinco! Olhando para a tela, para que lado a seta está apontando?",
+  pergunta:"Para que lado a placa está apontando?",
+  fala:"Pista cinco! Uma placa de madeira no caminho! Olhando para a tela, para que lado a seta está apontando?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
-
- {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
-  pergunta:"O explorador está de FRENTE. A estrela está à direita ou à esquerda dele?",
-  fala:"Pista seis, atenção! Agora o explorador está te olhando de frente. A estrela está na direita ou na esquerda dele?",
-  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"flor", lado:"dir",
   pergunta:"A flor está à direita ou à esquerda dele?",
-  fala:"Pista sete! O explorador de costas achou uma flor. Ela está do lado direito ou do lado esquerdo dele?",
+  fala:"Pista seis! O explorador de costas acha um canteiro de flores. A flor está do lado direito ou do lado esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
+  pergunta:"O explorador está de FRENTE. A Estrela-Guia está à direita ou à esquerda dele?",
+  fala:"Pista sete, atenção! Agora a Estrela-Guia voltou e o explorador está te olhando de frente. A estrela está na direita ou na esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
 
  {tipo:"par", ref:"voce", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
   pergunta:"O sol está do seu lado esquerdo ou do seu lado direito?",
-  fala:"Pista oito! Olhando para a tela, o sol está do seu lado esquerdo ou do seu lado direito?",
+  fala:"Pista oito! O sol está bem alto no céu. Olhando para a tela, o sol está do seu lado esquerdo ou do seu lado direito?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
 
- {tipo:"masc", ref:"frente", vista:"frente", obj:"bau", lado:"dir",
-  pergunta:"O explorador está de FRENTE. O baú está à direita ou à esquerda dele?",
-  fala:"Pista nove, a mais esperta! O explorador está te olhando de frente. O baú está na direita ou na esquerda dele?",
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"arvore", lado:"dir",
+  pergunta:"O explorador está de FRENTE. A árvore está à direita ou à esquerda dele?",
+  fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está na direita ou na esquerda dele?",
   opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
-  pergunta:"O baú está à direita ou à esquerda do explorador?",
-  fala:"Pista dez, a última! Achamos o tesouro. O baú está do lado direito ou do lado esquerdo do explorador?",
+  pergunta:"O baú do tesouro está à direita ou à esquerda do explorador?",
+  fala:"Pista dez, a última! Chegamos! O baú do tesouro apareceu. O explorador está de costas. O baú está do lado direito ou do lado esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1}
 ];
 
@@ -184,7 +184,7 @@ function telaCapa(){
   h+='<div class="card">';
   h+='<img class="masc-capa" src="img/masc_acena.png" alt="explorador">';
   h+='<h1>Aventura das Direções</h1>';
-  h+='<p class="grande">Ajude o explorador a achar o tesouro seguindo as direções: esquerda, direita, em cima e embaixo!</p>';
+  h+='<p class="grande">O explorador achou um mapa do tesouro! Ajude ele a ler cada sinal do caminho até chegar no baú!</p>';
   h+='<label>Qual é o seu nome?</label>';
   h+='<input id="cNome" maxlength="24" placeholder="Escreva seu nome">';
   h+='<label>Qual é a sua turma?</label>';
@@ -195,7 +195,7 @@ function telaCapa(){
   h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
   h+='</div>';
   $("app").innerHTML=h;
-  falar("Olá, explorador! Eu preciso da sua ajuda para achar o tesouro. Vamos seguir as direções. Escreva o seu nome, escolha a sua turma e toque em começar a aventura!");
+  falar("Olá, explorador! Eu achei um mapa do tesouro! O mapa mostra vários sinais no caminho. Vamos ler a direção de cada um até chegar no baú. Escreva o seu nome, escolha a sua turma e toque em começar a aventura!");
 }
 function comecar(){
   var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
