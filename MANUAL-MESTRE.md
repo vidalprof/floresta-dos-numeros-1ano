@@ -510,10 +510,18 @@ rápido **não fica preso** esperando a voz terminar (era isso que cansava). No 
 `_gatearAvanco()` foi neutralizada (`return null`) e `proximoDesafio()` chama `pararFala()`.
 A informação continua **escrita na tela**, então ninguém perde conteúdo por não ouvir.
 
-**Dose por FAIXA DE ANO:** Pré/1º/2º (ainda não leem) → voz **essencial**, pode narrar
-bastante. 6º–9º (leem bem) → voz pro **personagem/instrução/emoção**; feedback **curto**,
-e a explicação longa fica na **tela** (com 🔊 opcional se quiser ouvir). **Nunca** narrar o
-que a criança acabou de ler na tela — isso cansa e soa repetitivo.
+**Dose por FAIXA DE ANO (já implementado no climas — copiar p/ as outras):** um `var FAIXA`
+controla a dose — `"peq"` (Pré–2º, ainda não leem → narra tudo, inclusive a explicação),
+`"med"` (3º–5º), `"gde"` (6º–9º, leem bem → voz curta). Deriva `VOZ_EXPLICA=(FAIXA!=="gde")`:
+no 6º–9º o feedback fala **só o elogio curto**; a explicação vai só pra **tela** com um botão
+**🔊 (`fbExplica`/`ouvirExplica`)** pra ouvir se quiser. **Nunca** narrar o que a criança
+acabou de ler.
+**Controles de voz SEMPRE visíveis** (`montarControlesVoz`, canto inf. direito): **mudo**
+(🔊/🔇, persiste em `localStorage`) e **repetir** (↻, reouve a última narração via
+`_ultimaRepeticao`). `VOZ_MUDA` é checado em `falar`/`tocarFala` (com bypass `_forcar` p/ o
+botão repetir e p/ o 🔊). **Narração automática só na 1ª vez** de cada tela
+(`_telasNarradas` + `narrarTela`/guardas no mapa e nas aberturas de fase) — ao voltar não
+repete, mas o botão repetir continua funcionando.
 
 **⭐ ÁUDIO EXTERNO = PADRÃO NOVO (as atividades são SEMPRE ONLINE):** embutir tudo em base64
 deixava o HTML gigante (~16 MB) porque o áudio é ~77% do peso. Como é sempre online, o áudio

@@ -737,6 +737,11 @@ body.claro .mapa-tesouro .mapa-nome{background:rgba(255,250,235,.96);color:#7a53
 body.claro .med-lock{background:#eef3f9;color:#5b6b7f;border:2px dashed #cbd8e8;}
 body.claro table.rel th,body.claro table.rel td{color:#42566b;border:1px solid #dbe6f2;}
 body.claro table.rel th{background:#eef3f9;color:#8a5300;}
+/* controles de voz sempre visiveis (mudo / repetir) */
+#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;display:-webkit-box;display:flex;gap:6px;}
+#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:40px;height:40px;border:2px solid #1f79d6;border-radius:50%;background:#ffffff;color:#1f79d6;font-size:18px;line-height:36px;text-align:center;cursor:pointer;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);padding:0;}
+#ctrlVoz .cv-bt:hover{background:#eaf2fd;}
+.btn-ouvir-mini{-webkit-appearance:none;appearance:none;border:1px solid #1f79d6;border-radius:14px;background:#eaf2fd;color:#1f79d6;font-size:14px;line-height:1;padding:3px 8px;margin-left:6px;cursor:pointer;vertical-align:middle;}
 </style>
 </head>
 <body class="claro">
@@ -984,19 +989,51 @@ function _chaveVoz(t){ var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"")
    combinam de infinitas formas) tocam SEMPRE audio gravado masculino, pois cada
    pedaco (elogio, explicacao, "Quase!", …) foi gravado uma vez. Parte sem audio
    sai masculina-ou-muda (nunca feminina), como no falar(). */
+/* ===== FAIXA ETARIA + CONTROLES DE VOZ (mudo/repetir) + narrar 1a vez ===== */
+var FAIXA="gde";   /* peq = Pre-2o (le pouco -> narra mais) | med = 3-5 | gde = 6-9 (le bem -> voz curta) */
+var VOZ_EXPLICA=(FAIXA==="peq"||FAIXA==="med");   /* explicacao FALADA so p/ os mais novos; 6-9 le na tela */
+var VOZ_MUDA=false; try{ VOZ_MUDA=(localStorage.getItem("climas_mudo")==="1"); }catch(e){}
+var _emComposto=false, _explicaAtual="", _telasNarradas={}, _ultimaRepeticao=null;
+function _guardaRep(fn){ if(!_emComposto){ _ultimaRepeticao=fn; } }
+function repetirUltima(){ pararFala(); if(_ultimaRepeticao){ try{ _ultimaRepeticao(); }catch(e){} } }
+function alternarMudo(){ VOZ_MUDA=!VOZ_MUDA; try{ localStorage.setItem("climas_mudo", VOZ_MUDA?"1":"0"); }catch(e){} if(VOZ_MUDA){ pararFala(); } _attMudoIcon(); }
+function _attMudoIcon(){ var b=document.getElementById("btnMudo"); if(b){ b.innerHTML=VOZ_MUDA?"🔇":"🔊"; b.title=VOZ_MUDA?"Voz desligada (tocar p/ ligar)":"Voz ligada (tocar p/ desligar)"; } }
+function montarControlesVoz(){
+  if(document.getElementById("ctrlVoz")){ return; }
+  var d=document.createElement("div"); d.id="ctrlVoz";
+  d.innerHTML='<button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>'+
+              '<button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">↻</button>';
+  document.body.appendChild(d); _attMudoIcon();
+}
+/* narra SO na 1a vez que a tela aparece (nao repete ao voltar); o botao repetir sempre funciona */
+function narrarTela(chave, texto){
+  _guardaRep((function(t){ return function(){ _emComposto=false; falar(t, null, false, true); }; })(texto));
+  if(_telasNarradas[chave]){ return; }
+  _telasNarradas[chave]=1; falar(texto);
+}
 function falarComposto(partes, aoTerminar){
   var lista=[], i, p;
   for(i=0;i<partes.length;i++){ p=(""+(partes[i]||"")).replace(/^\s+|\s+$/g,""); if(p){ lista.push(p); } }
   if(!lista.length){ if(aoTerminar){ try{ aoTerminar(); }catch(e){} } return; }
+  _guardaRep((function(l){ return function(){ _emComposto=false; falarComposto2(l.slice(), null, true); }; })(lista));
+  falarComposto2(lista, aoTerminar, false);
+}
+function falarComposto2(lista, aoTerminar, _forcar){
   var idx=0;
   function proxima(){
-    if(idx>=lista.length){ if(aoTerminar){ try{ aoTerminar(); }catch(e){} } return; }
+    if(idx>=lista.length){ _emComposto=false; if(aoTerminar){ try{ aoTerminar(); }catch(e){} } return; }
     var t=lista[idx]; idx++;
-    falar(t, proxima);
+    _emComposto=true;
+    falar(t, proxima, false, _forcar);
   }
   proxima();
 }
-function falar(texto, aoTerminar, _semAudio){
+/* 🔊 do feedback: guarda a explicacao atual e devolve o botao (ou "" se nao ha) */
+function fbExplica(exp){ _explicaAtual=exp||""; return _explicaAtual ? '<button class="btn-ouvir-mini" onclick="ouvirExplica()" title="Ouvir a explicação">🔊</button>' : ''; }
+function ouvirExplica(){ if(_explicaAtual){ pararFala(); _emComposto=false; falar(_explicaAtual, null, false, true); } }
+function falar(texto, aoTerminar, _semAudio, _forcar){
+  if(!_emComposto){ _guardaRep((function(t){ return function(){ _emComposto=false; falar(t, null, false, true); }; })(texto)); }
+  if(VOZ_MUDA && !_forcar){ if(aoTerminar){ setTimeout(aoTerminar, 0); } return; }
   /* VOZ EMBUTIDA (voz Antonio): se existir audio gravado p/ este texto, toca ele
      no lugar da voz do navegador. Zero dependencia de navegador quando ha audio.
      _semAudio evita loop quando o proprio audio falha e cai no fallback. */
@@ -2428,7 +2465,10 @@ function tocarFalaAudio(dataUri, textoFallback, aoTerminar){
   }catch(e){ falar(textoFallback); }
 }
 function tocarFala(id, textoFallback){
-  if(typeof AUDIO!=="undefined" && AUDIO[id]){ tocarFalaAudio("audio/"+id+".mp3", textoFallback); }
+  var _temClipe=(typeof AUDIO!=="undefined" && AUDIO[id]);
+  _guardaRep((function(i2,fb,tem){ return function(){ if(tem){ tocarFalaAudio("audio/"+i2+".mp3", fb); } else { _emComposto=false; falar(fb, null, false, true); } }; })(id, textoFallback, _temClipe));
+  if(VOZ_MUDA){ return; }
+  if(_temClipe){ tocarFalaAudio("audio/"+id+".mp3", textoFallback); }
   else { falar(textoFallback); }
 }
 function narrarInicio(temProg, feitas){
@@ -2596,7 +2636,11 @@ function narrarMapa(){
   /* voz MASCULINA consistente: MP3 embutido generico (sem o nome); a fala dinamica
      com o nome fica de fallback (voz do navegador) so se faltar o audio. */
   var _kMapa=(feitas===0?"mapa_ini":(feitas<ORDEM.length?"mapa_meio":"mapa_fim"));
-  tocarFala(_kMapa, t);
+  if(_telasNarradas[_kMapa]){   /* narra so 1x cada estado do mapa; ao voltar fica quieto (repetir continua pronto) */
+    _guardaRep((function(k,tt){ return function(){ tocarFalaAudio("audio/"+k+".mp3", tt); }; })(_kMapa, t));
+  } else {
+    _telasNarradas[_kMapa]=1; tocarFala(_kMapa, t);
+  }
 }
 function pedirReset(){
   $("zonaReset").innerHTML='<div class="card centro" style="border-color:#f08a96;">'+
@@ -2669,7 +2713,13 @@ function aberturaFase(ch){
   setTimeout(function(){ falarAbertura(ch); }, 350);
 }
 function falarAbertura(ch){
-  if(ABERTURA_FASE[ch]){ tocarFala("fase_"+ch, ABERTURA_FASE[ch].txt); }
+  if(!ABERTURA_FASE[ch]){ return; }
+  var _k="fase_"+ch, _t=ABERTURA_FASE[ch].txt;
+  if(_telasNarradas[_k]){   /* abertura da fase narra so 1x; ao voltar nao repete */
+    _guardaRep((function(k,tt){ return function(){ tocarFalaAudio("audio/"+k+".mp3", tt); }; })(_k, _t));
+  } else {
+    _telasNarradas[_k]=1; tocarFala(_k, _t);
+  }
 }
 var MIX_FIXO={};
 function comecarDesafios(ch){
@@ -2835,14 +2885,14 @@ function responder(i){
     if(fig){ fig.className="d-figura pula"; }
     comemorar();
     if(STREAK_MARCOS[streak]){ falaTxt+="Você acertou "+numExt(streak)+" seguidas!§"; }
-    falaTxt+=elogio()+"§"+dd.explica;
-    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span></div>'+
+    falaTxt+=elogio(); if(VOZ_EXPLICA){ falaTxt+="§"+dd.explica; }
+    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span> '+fbExplica(dd.explica)+'</div>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
   } else {
     marcaErroComum(dd);
     if(fig){ fig.className="d-figura treme"; }
-    falaTxt="Não foi dessa vez!§"+dd.explica;
-    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> '+dd.explica+'</p>'+
+    falaTxt="Não foi dessa vez!"+(VOZ_EXPLICA?("§"+dd.explica):"");
+    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> '+dd.explica+' '+fbExplica(dd.explica)+'</p>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
   }
   falarComposto(falaTxt.split("§"));
@@ -3053,16 +3103,16 @@ function compConfere(){
     comemorar();
     var falaTxt="";
     if(STREAK_MARCOS[streak]){ falaTxt+="Você acertou "+numExt(streak)+" seguidas!§"; }
-    falaTxt+=elogio()+"§"+dd.explica;
-    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span></div>'+
+    falaTxt+=elogio(); if(VOZ_EXPLICA){ falaTxt+="§"+dd.explica; }
+    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span> '+fbExplica(dd.explica)+'</div>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
     falarComposto(falaTxt.split("§"));
   } else {
     marcaErroComum(dd);
     if(fig){ fig.className="d-figura treme"; }
-    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> A palavra certa era <b>'+dd.certa+'</b>. '+dd.explica+'</p>'+
+    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> A palavra certa era <b>'+dd.certa+'</b>. '+dd.explica+' '+fbExplica(dd.explica)+'</p>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
-    falarComposto(["Quase!", dd.explica]);
+    falarComposto(VOZ_EXPLICA?["Quase!", dd.explica]:["Quase!"]);
   }
 }
 
@@ -3108,8 +3158,8 @@ function montarConfere(){
     comemorar();
     var falaTxt="";
     if(STREAK_MARCOS[streak]){ falaTxt+="Você acertou "+numExt(streak)+" seguidas!§"; }
-    falaTxt+=elogio()+"§"+dd.explica;
-    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span></div>'+
+    falaTxt+=elogio(); if(VOZ_EXPLICA){ falaTxt+="§"+dd.explica; }
+    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span> '+fbExplica(dd.explica)+'</div>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
     falarComposto(falaTxt.split("§"));
   } else {
@@ -3119,9 +3169,9 @@ function montarConfere(){
     if(fig){ fig.className="d-figura treme"; }
     if(!emTreino){ guardarErro(dd); dEfase.push(dd); }
     dd._respondido=true;
-    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> A ordem certa era: <b>'+dd.partes.join(" ")+'</b>. '+dd.explica+'</p>'+
+    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> A ordem certa era: <b>'+dd.partes.join(" ")+'</b>. '+dd.explica+' '+fbExplica(dd.explica)+'</p>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
-    falarComposto(["Não foi dessa vez!", dd.explica]);
+    falarComposto(VOZ_EXPLICA?["Não foi dessa vez!", dd.explica]:["Não foi dessa vez!"]);
   }
 }
 
@@ -3279,8 +3329,8 @@ function clasVerFim(dd){
     comemorar();
     var falaTxt="";
     if(STREAK_MARCOS[streak]){ falaTxt+="Você acertou "+numExt(streak)+" seguidas!§"; }
-    falaTxt+=elogio()+"§"+dd.explica;
-    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span></div>'+
+    falaTxt+=elogio(); if(VOZ_EXPLICA){ falaTxt+="§"+dd.explica; }
+    $("zonaFeed").innerHTML='<div class="fb-ok">🎉 '+elogio()+' <span class="fb-exp">'+dd.explica+'</span> '+fbExplica(dd.explica)+'</div>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
     falarComposto(falaTxt.split("§"));
   } else {
@@ -3289,9 +3339,9 @@ function clasVerFim(dd){
     somErro();
     if(fig){ fig.className="d-figura treme"; }
     if(!emTreino){ guardarErro(dd); dEfase.push(dd); }
-    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> '+dd.explica+'</p>'+
+    $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;"><span style="color:#c0392b; font-weight:bold;">Quase!</span> '+dd.explica+' '+fbExplica(dd.explica)+'</p>'+
       '<button class="btn pulsa" onclick="proximoDesafio()">Próximo &#10145;</button>';
-    falarComposto(["Quase!", dd.explica]);
+    falarComposto(VOZ_EXPLICA?["Quase!", dd.explica]:["Quase!"]);
   }
 }
 
@@ -3400,13 +3450,13 @@ function responderExtra(i){
     addPontos(20);
     confete(20);
     comemorar();
-    falaTxt="Análise correta! Você domina o assunto.§"+dd.explica;
+    falaTxt="Análise correta! Você domina o assunto."+(VOZ_EXPLICA?("§"+dd.explica):"");
   } else {
     somErro();
-    falaTxt="Quase! Esse era difícil mesmo.§"+dd.explica;
+    falaTxt="Quase! Esse era difícil mesmo."+(VOZ_EXPLICA?("§"+dd.explica):"");
   }
   var prefExtra=certo?"Você acertou! ":"Não foi dessa vez. ";
-  $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;">'+prefExtra+dd.explica+'</p>'+
+  $("zonaFeed").innerHTML='<p class="texto" style="margin-top:8px;">'+prefExtra+dd.explica+' '+fbExplica(dd.explica)+'</p>'+
     '<button class="btn pulsa" onclick="telaMenu()">Continuar a viagem &#10145;</button>';
   falarComposto(falaTxt.split("§"));
 }
@@ -4361,6 +4411,7 @@ function boot(){
     var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"];
     var k; for(k=0;k<evs.length;k++){ document.addEventListener(evs[k], atualizarTelaCheia); }
   }
+  try{ montarControlesVoz(); }catch(e){}
   telaInicio();
 }
 document.addEventListener("click", function(){ pegarAudio(); }, false);
