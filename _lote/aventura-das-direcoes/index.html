@@ -254,7 +254,9 @@ function telaCapa(){
   h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
   h+='</div>';
   $("app").innerHTML=h;
-  falar(HISTORIA);
+  /* NAO faz autoplay (o navegador bloqueia e sobra audio "orfao" que vaza p/ a proxima tela).
+     A historia toca SO no botao "Ouvir a historia". Guarda p/ o botao repetir tambem. */
+  _ultimaFala=HISTORIA;
 }
 function ouvirHistoria(){ falar(HISTORIA,true); }
 var turmaSel="";
@@ -269,6 +271,7 @@ function comecar(){
   var t=turmaSel;
   if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
   if(!t){ falar("Escolha a sua turma para começar!",true); return; }
+  pararFala();                 /* corta a narracao da historia ao sair da capa */
   nomeAluno=n; turmaAluno=t; atual=0;
   telaPista();
 }
