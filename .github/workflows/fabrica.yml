@@ -42,9 +42,9 @@ jobs:
             --description "Publicado automaticamente pela Fabrica de Sites" \
             || echo "Repositorio ja existe; vou apenas atualizar o conteudo."
 
-          # Monta o conteudo a publicar
+          # Monta o conteudo a publicar (pasta INTEIRA: index.html + img/ + audio/ etc)
           work="$(mktemp -d)"
-          cp "$SRC/index.html" "$work/index.html"
+          cp -r "$SRC/." "$work/"
           : > "$work/.nojekyll"
 
           cd "$work"
