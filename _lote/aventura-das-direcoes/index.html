@@ -77,6 +77,8 @@ label{font-size:17px;font-weight:bold;color:#2b6cb0;display:block;margin-top:8px
 #btnOuvir{background:#fff6e6;border:3px solid #e07a1f;color:#b8600f;border-radius:16px;font-size:18px;font-weight:bold;padding:8px 16px;cursor:pointer;font-family:inherit;margin-top:4px;}
 #statusenvio{font-weight:bold;margin-top:6px;font-size:15px;}
 .mini{font-size:14px;color:#8aa0b8;}
+/* enunciado escrito (le + ouve + ve = codificacao dupla) */
+.pergunta{font-size:21px;font-weight:bold;color:#2b5f9e;margin:2px 6px 10px;line-height:1.3;}
 /* plaquinha do referencial (em relacao a quem?) */
 .refbadge{display:inline-block;font-size:15px;font-weight:bold;border-radius:14px;padding:8px 14px;margin:2px auto 10px;line-height:1.35;max-width:96%;}
 .refbadge.voce{background:#e6f0ff;color:#1f5fb0;border:2px solid #b9d4ec;}
@@ -106,42 +108,52 @@ var URL_PLANILHA="";
    considera o espelho quando a vista e' frente. */
 var QUESTOES=[
  {tipo:"vert", ref:"cima", cima:"estrela", baixo:"bau",
+  pergunta:"A estrela está em cima ou embaixo?",
   fala:"Pista um! Olha o que está no céu e no chão. A estrela está em cima ou embaixo?",
   opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:0},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"estrela", lado:"dir",
+  pergunta:"A estrela está à direita ou à esquerda dele?",
   fala:"Pista dois! O explorador está de costas, igual a você. A estrela está do lado direito ou do lado esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
 
  {tipo:"par", ref:"voce", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
+  pergunta:"A árvore está do seu lado esquerdo ou do seu lado direito?",
   fala:"Pista três! Olhando para a tela, a árvore está do seu lado esquerdo ou do seu lado direito?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
+  pergunta:"O baú do tesouro está à direita ou à esquerda dele?",
   fala:"Pista quatro! O explorador continua de costas. O baú do tesouro está do lado direito ou do lado esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
 
  {tipo:"seta", ref:"voce", aponta:"dir",
+  pergunta:"Para que lado a seta está apontando?",
   fala:"Pista cinco! Olhando para a tela, para que lado a seta está apontando?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
 
  {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
+  pergunta:"O explorador está de FRENTE. A estrela está à direita ou à esquerda dele?",
   fala:"Pista seis, atenção! Agora o explorador está te olhando de frente. A estrela está na direita ou na esquerda dele?",
   opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"flor", lado:"dir",
+  pergunta:"A flor está à direita ou à esquerda dele?",
   fala:"Pista sete! O explorador de costas achou uma flor. Ela está do lado direito ou do lado esquerdo dele?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
 
  {tipo:"par", ref:"voce", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
+  pergunta:"O sol está do seu lado esquerdo ou do seu lado direito?",
   fala:"Pista oito! Olhando para a tela, o sol está do seu lado esquerdo ou do seu lado direito?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
 
  {tipo:"masc", ref:"frente", vista:"frente", obj:"bau", lado:"dir",
+  pergunta:"O explorador está de FRENTE. O baú está à direita ou à esquerda dele?",
   fala:"Pista nove, a mais esperta! O explorador está te olhando de frente. O baú está na direita ou na esquerda dele?",
   opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
 
  {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
+  pergunta:"O baú está à direita ou à esquerda do explorador?",
   fala:"Pista dez, a última! Achamos o tesouro. O baú está do lado direito ou do lado esquerdo do explorador?",
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1}
 ];
@@ -208,8 +220,7 @@ function refHTML(q){
   var m={
     voce:'&#128064; Pense no SEU corpo &mdash; seu lado direito e seu lado esquerdo',
     costas:'&#128281; O explorador est&aacute; DE COSTAS (igual a voc&ecirc;) &mdash; o lado dele &eacute; o seu lado',
-    frente:'&#9888;&#65039; Aten&ccedil;&atilde;o! O explorador est&aacute; DE FRENTE, te olhando',
-    cima:'&#11014;&#65039;&#11015;&#65039; Est&aacute; em cima ou embaixo?'
+    frente:'&#9888;&#65039; Aten&ccedil;&atilde;o! O explorador est&aacute; DE FRENTE, te olhando'
   };
   var t=m[q.ref]; if(!t){return '';}
   return '<div class="refbadge '+q.ref+'">'+t+'</div>';
@@ -219,6 +230,7 @@ function telaPista(){
   h+='<div id="trilha">Pista '+(atual+1)+' de '+QUESTOES.length+' &#128075;</div>';
   h+='<div id="barra"><i style="width:'+Math.round(atual/QUESTOES.length*100)+'%"></i></div>';
   h+='<div class="card">';
+  if(q.pergunta){ h+='<h2 class="pergunta">'+q.pergunta+'</h2>'; }
   h+=refHTML(q);
   if(q.tipo==="vert"){
     h+='<div class="vert"><div><img src="img/'+q.cima+'.png" alt="em cima"></div>';
