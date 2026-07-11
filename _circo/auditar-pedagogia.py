@@ -37,7 +37,7 @@ CHECKS = [
      [r'embaralhar|montarMix|MIX_FIXO|shuffle|Math\.random']),
     ("dual_coding", True,
      "Codificação dupla (palavra + IMAGEM juntas — duas rotas de memória)",
-     [r'figura\(|IMG\[|data:image|svg[A-Z]|MASCOTE']),
+     [r'figura\(|IMG\[|data:image|svg[A-Z]|MASCOTE|<img|img/|\.png']),
     ("competencia", True,
      "Competência VISÍVEL (progresso: barra, X de N, níveis, medalhas, selos)",
      [r'barra|progress|NIVEIS|nivel|medalha|selo|emblema|PONTOS|contarFeitas']),
@@ -64,16 +64,23 @@ CHECKS = [
 
 def auditar(src):
     h = open(src, encoding="utf-8").read()
+    # MODO PROVA (avaliacao): NAO mostra certo/errado nem explica o erro DE PROPOSITO.
+    # Nesse caso feedback/erro-sem-punir/espacamento/adaptativo sao intencionalmente
+    # ausentes — nao contam como falha essencial (mas retrieval, dual coding,
+    # competencia, celebracao e carga cognitiva continuam valendo).
+    modo_prova = bool(re.search(r'URL_PLANILHA|FIREBASE_DB|enviarResultado|enviarPlanilha|\bprova\b|avalia', h, re.I))
+    RELAXA = {"feedback_explica", "erro_sem_punir", "espacamento", "adaptativo"}
     presentes, faltando_ess, faltando_op = [], [], []
     for chave, essencial, desc, regexes in CHECKS:
         achou = any(re.search(rx, h) for rx in regexes)
+        ess = essencial and not (modo_prova and chave in RELAXA)
         if achou:
             presentes.append((chave, desc))
-        elif essencial:
+        elif ess:
             faltando_ess.append((chave, desc))
         else:
-            faltando_op.append((chave, desc))
-    return presentes, faltando_ess, faltando_op
+            faltando_op.append((chave, desc + (" [modo prova: opcional]" if (modo_prova and chave in RELAXA) else "")))
+    return presentes, faltando_ess, faltando_op, modo_prova
 
 
 def main():
@@ -86,9 +93,10 @@ def main():
     if not os.path.exists(src):
         print("arquivo nao encontrado:", src); sys.exit(2)
 
-    presentes, faltando_ess, faltando_op = auditar(src)
+    presentes, faltando_ess, faltando_op, modo_prova = auditar(src)
     total = len(CHECKS)
-    print("  🧠 NEUROCIÊNCIA DO APRENDIZADO — %d/%d marcadores presentes" % (len(presentes), total))
+    print("  🧠 NEUROCIÊNCIA DO APRENDIZADO%s — %d/%d marcadores presentes" % (
+        " (MODO PROVA)" if modo_prova else "", len(presentes), total))
     for _, d in presentes:
         print("    ✓", d)
     for _, d in faltando_op:
