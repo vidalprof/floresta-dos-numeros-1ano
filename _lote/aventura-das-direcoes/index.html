@@ -52,8 +52,10 @@ img{max-width:100%;}
 .vert{width:200px;margin:6px auto;}
 .vert div{padding:8px;}
 .vert img{height:120px;}
-/* seta */
+/* seta = placa de madeira (imagem) */
 .setaimg{font-size:120px;line-height:1;display:inline-block;color:#e07a1f;text-shadow:0 3px 0 #ffcf8a;}
+.cena .placaseta{position:absolute;left:50%;top:50%;height:216px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));}
+.cena .placaseta.flip{-webkit-transform:translate(-50%,-50%) scaleX(-1);transform:translate(-50%,-50%) scaleX(-1);}
 /* botoes */
 .btn{
   display:inline-block;font-family:inherit;font-size:22px;font-weight:bold;
@@ -283,7 +285,7 @@ function telaPista(){
     h+='<div class="par"><span class="cel"><img src="img/'+q.esq+'.png" alt="esquerda"><span>&#9668; lado de cá</span></span>';
     h+='<span class="cel"><img src="img/'+q.dir+'.png" alt="direita"><span>lado de lá &#9658;</span></span></div>';
   }else if(q.tipo==="seta"){
-    h+='<div class="cena"><span class="setaimg">'+(q.aponta==="dir"?"&#10145;":"&#11013;")+'</span></div>';
+    h+='<div class="cena"><img class="placaseta'+(q.aponta==="dir"?"":" flip")+'" src="img/placa_seta.png" alt="placa de madeira com uma seta"></div>';
   }else{
     h+=cenaHTML(q);
   }
