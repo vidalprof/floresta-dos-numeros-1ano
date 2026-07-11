@@ -139,6 +139,7 @@ input{border-color:#b8862f;background:#fff8e8;color:#4a2f12;}
 var TURMAS=["3º A","3º B","3º C","3º D"];
 /* Historia contada na capa (narrada). Muda o texto = regerar o audio. */
 var HISTORIA="Olá, explorador! Eu achei um mapa do tesouro bem antigo. No caminho tem vários sinais: a Estrela-Guia lá no céu, uma árvore, uma placa de madeira e muito mais. Cada sinal mostra uma direção. Se a gente ler as direções certas, esquerda, direita, em cima e embaixo, vamos achar o baú do tesouro no final! Agora escreva o seu nome, escolha a sua turma e toque em começar a aventura.";
+var _histTocada=false; /* a historia da capa toca 1x, no 1o gesto (o navegador exige um toque) */
 /* Firebase (canal Google que passa no firewall) — testar ja */
 var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 /* Apps Script (planilha real): cole aqui o link /exec do SEU Web App. Vazio = nao envia p/ planilha. */
@@ -258,7 +259,7 @@ function telaCapa(){
      A historia toca SO no botao "Ouvir a historia". Guarda p/ o botao repetir tambem. */
   _ultimaFala=HISTORIA;
 }
-function ouvirHistoria(){ falar(HISTORIA,true); }
+function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
 var turmaSel="";
 function selTurma(el,t){
   turmaSel=t;
@@ -267,6 +268,7 @@ function selTurma(el,t){
   el.className="tbox on";
 }
 function comecar(){
+  _histTocada=true;   /* nao deixa a historia auto-tocar por causa deste clique */
   var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
   var t=turmaSel;
   if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
@@ -403,6 +405,12 @@ function confete(){
 
 /* ====== boot ====== */
 function boot(){ attMudo(); telaCapa(); }
-document.addEventListener("click",function(){ /* destrava audio no 1o gesto */ },false);
+document.addEventListener("click",function(){
+  /* 1o gesto na CAPA: toca a historia automaticamente (o navegador so libera som apos um toque).
+     So dispara enquanto estamos na capa (existe o campo de nome) e uma unica vez. */
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true; falar(HISTORIA,true);
+},false);
 boot();
 </script>
