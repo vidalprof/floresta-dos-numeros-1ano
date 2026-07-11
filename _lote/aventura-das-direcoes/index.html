@@ -130,7 +130,7 @@ var QUESTOES=[
   opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
 
  {tipo:"seta", ref:"voce", aponta:"dir",
-  pergunta:"Para que lado a placa está apontando?",
+  pergunta:"Para que lado a seta está apontando?",
   fala:"Pista cinco! Uma placa de madeira no caminho! Olhando para a tela, para que lado a seta está apontando?",
   opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
 
@@ -314,9 +314,9 @@ function enviarResultado(ac){
   if(!ok){ marcarEnvio(false); }
 }
 function marcarEnvio(ok){
-  var s=$("statusenvio"); if(!s){return;}
-  s.innerHTML=ok?"&#9989; Aventura registrada para a professora!":"&#9888;&#65039; Peça para a professora conferir no computador.";
-  s.style.color=ok?"#2e7d3a":"#c0392b";
+  /* registro SILENCIOSO: o aluno nao ve nada sobre a professora nem sobre envio.
+     (a nota/resultado vai por baixo dos panos p/ Firebase/planilha) */
+  var s=$("statusenvio"); if(s){ s.innerHTML=""; }
 }
 
 /* ====== confete leve (canvas, compat) ====== */
