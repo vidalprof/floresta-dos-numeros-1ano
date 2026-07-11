@@ -32,13 +32,15 @@ img{max-width:100%;}
 #barra{height:14px;background:#e6eef7;border-radius:10px;overflow:hidden;margin:6px 20px 2px;}
 #barra i{display:block;height:100%;width:0;background:#4caf50;background:-webkit-linear-gradient(left,#7ed957,#3fa34d);background:linear-gradient(to right,#7ed957,#3fa34d);-webkit-transition:width .4s;transition:width .4s;}
 /* cena da pista */
-.cena{position:relative;width:100%;max-width:440px;height:300px;margin:8px auto;}
-.cena .masc{position:absolute;left:50%;top:50%;height:280px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);}
-.cena .obj{position:absolute;top:50%;height:150px;-webkit-transform:translateY(-50%);transform:translateY(-50%);
+.cena{position:relative;width:100%;max-width:480px;height:300px;margin:8px auto;}
+.cena .masc{position:absolute;top:50%;height:262px;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
+.cena .masc.ml{left:0;}
+.cena .masc.mr{right:0;}
+.cena .obj{position:absolute;top:50%;height:146px;-webkit-transform:translateY(-50%);transform:translateY(-50%);
   -webkit-filter:drop-shadow(0 0 10px #ffe08a);filter:drop-shadow(0 0 10px #ffe08a);
   -webkit-animation:flutua 2s ease-in-out infinite;animation:flutua 2s ease-in-out infinite;}
-.cena .obj.ld{left:2%;}
-.cena .obj.rd{right:2%;}
+.cena .obj.ld{left:1%;}
+.cena .obj.rd{right:1%;}
 @-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(-50%);}50%{-webkit-transform:translateY(-62%);}}
 @keyframes flutua{0%,100%{transform:translateY(-50%);}50%{transform:translateY(-62%);}}
 /* par de objetos lado a lado */
@@ -210,7 +212,8 @@ function cenaHTML(q){
   var lado, h='<div class="cena">';
   if(q.tipo==="masc"){
     lado=(q.lado==="dir")?"rd":"ld";
-    h+='<img class="masc" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'_'+(q.lado==="dir"?"dir":"esq")+'.png" alt="explorador apontando">';
+    var mside=(q.lado==="dir")?"ml":"mr";
+    h+='<img class="masc '+mside+'" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'_'+(q.lado==="dir"?"dir":"esq")+'.png" alt="explorador apontando">';
     h+='<img class="obj '+lado+'" src="img/'+q.obj+'.png" alt="objeto">';
   }
   h+='</div>';
