@@ -1,0 +1,307 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Aventura das Direções</title>
+<style>
+/* ===== Aventura das Direções — prova de lateralidade 3º ano (compat PC antigo) ===== */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;
+  color:#243b53;
+  background:#cfeafc;
+  background:-webkit-linear-gradient(top,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
+  background:linear-gradient(to bottom,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+#app{max-width:620px;margin:0 auto;padding:14px 14px 90px;}
+.card{
+  background:#ffffff;border:3px solid #ffd98a;border-radius:22px;
+  padding:18px 16px;margin:10px 0;text-align:center;
+  -webkit-box-shadow:0 8px 22px rgba(60,90,130,.18);box-shadow:0 8px 22px rgba(60,90,130,.18);
+  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;
+}
+@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+h1{font-size:30px;margin:6px 0 2px;color:#e07a1f;text-shadow:0 2px 0 #ffe0b0;}
+h2{font-size:20px;margin:4px 0;color:#2b6cb0;}
+p{font-size:18px;line-height:1.4;margin:8px 4px;}
+.grande{font-size:22px;font-weight:bold;color:#2b6cb0;}
+img{max-width:100%;}
+/* trilha de progresso (pegadas) */
+#trilha{display:block;text-align:center;margin:4px 0 6px;font-size:16px;color:#7a8aa0;font-weight:bold;}
+#barra{height:14px;background:#e6eef7;border-radius:10px;overflow:hidden;margin:6px 20px 2px;}
+#barra i{display:block;height:100%;width:0;background:#4caf50;background:-webkit-linear-gradient(left,#7ed957,#3fa34d);background:linear-gradient(to right,#7ed957,#3fa34d);-webkit-transition:width .4s;transition:width .4s;}
+/* cena da pista */
+.cena{position:relative;width:100%;max-width:440px;height:300px;margin:8px auto;}
+.cena .masc{position:absolute;left:50%;top:50%;height:280px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);}
+.cena .obj{position:absolute;top:50%;height:150px;-webkit-transform:translateY(-50%);transform:translateY(-50%);
+  -webkit-filter:drop-shadow(0 0 10px #ffe08a);filter:drop-shadow(0 0 10px #ffe08a);
+  -webkit-animation:flutua 2s ease-in-out infinite;animation:flutua 2s ease-in-out infinite;}
+.cena .obj.ld{left:2%;}
+.cena .obj.rd{right:2%;}
+@-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(-50%);}50%{-webkit-transform:translateY(-62%);}}
+@keyframes flutua{0%,100%{transform:translateY(-50%);}50%{transform:translateY(-62%);}}
+/* par de objetos lado a lado */
+.par{display:block;width:100%;max-width:460px;margin:10px auto;}
+.par .cel{display:inline-block;width:46%;vertical-align:middle;text-align:center;}
+.par .cel img{height:150px;}
+.par .cel span{display:block;font-size:15px;color:#8aa0b8;margin-top:2px;}
+/* cima/baixo */
+.vert{width:200px;margin:6px auto;}
+.vert div{padding:8px;}
+.vert img{height:120px;}
+/* seta */
+.setaimg{font-size:120px;line-height:1;display:inline-block;color:#e07a1f;text-shadow:0 3px 0 #ffcf8a;}
+/* botoes */
+.btn{
+  display:inline-block;font-family:inherit;font-size:22px;font-weight:bold;
+  border:none;border-radius:16px;padding:16px 10px;margin:8px 6px;cursor:pointer;
+  color:#fff;background:#2b8ae0;min-width:150px;
+  -webkit-box-shadow:0 5px 0 #1f6fb8;box-shadow:0 5px 0 #1f6fb8;
+}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 2px 0 #1f6fb8;box-shadow:0 2px 0 #1f6fb8;}
+.btn.verde{background:#3fa34d;-webkit-box-shadow:0 5px 0 #2e7d3a;box-shadow:0 5px 0 #2e7d3a;}
+.btn.laranja{background:#f08a1f;-webkit-box-shadow:0 5px 0 #c86f10;box-shadow:0 5px 0 #c86f10;}
+.btn.roxo{background:#8a63d2;-webkit-box-shadow:0 5px 0 #6d49b0;box-shadow:0 5px 0 #6d49b0;}
+.btn.grandao{font-size:24px;padding:18px 26px;}
+.opcoes{margin-top:6px;}
+/* campos */
+input,select{font-family:inherit;font-size:20px;padding:12px 10px;border:3px solid #b9d4ec;border-radius:14px;width:82%;max-width:320px;margin:6px auto;display:block;text-align:center;color:#243b53;background:#f7fbff;}
+label{font-size:17px;font-weight:bold;color:#2b6cb0;display:block;margin-top:8px;}
+.masc-capa{height:210px;margin:2px auto 0;-webkit-animation:balanca 2.4s ease-in-out infinite;animation:balanca 2.4s ease-in-out infinite;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+/* controles de voz */
+#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;}
+#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:46px;height:46px;border:3px solid #1668bf;border-radius:50%;background:#fff;color:#1668bf;font-size:20px;line-height:40px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
+#btnOuvir{background:#fff6e6;border:3px solid #e07a1f;color:#b8600f;border-radius:16px;font-size:18px;font-weight:bold;padding:8px 16px;cursor:pointer;font-family:inherit;margin-top:4px;}
+#statusenvio{font-weight:bold;margin-top:6px;font-size:15px;}
+.mini{font-size:14px;color:#8aa0b8;}
+</style>
+
+<div id="app"></div>
+
+<div id="ctrlVoz">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
+  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+var TURMAS=["3º A","3º B","3º C","3º D","3º E"];
+/* Firebase (canal Google que passa no firewall) — testar ja */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+/* Apps Script (planilha real): cole aqui o link /exec do SEU Web App. Vazio = nao envia p/ planilha. */
+var URL_PLANILHA="";
+
+/* ====== As 10 pistas (resposta 100% controlada aqui) ======
+   tipos: vert (cima/baixo), masc (mascote+objeto num lado), par (2 objetos), seta.
+   Em 'masc': vista=costas|frente, obj, lado=dir|esq (lado da IMAGEM). A 'correta' ja
+   considera o espelho quando a vista e' frente. */
+var QUESTOES=[
+ {tipo:"vert", cima:"estrela", baixo:"bau",
+  fala:"Pista um! Olha o que está no céu e no chão. A estrela está em cima ou embaixo?",
+  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:0},
+
+ {tipo:"masc", vista:"costas", obj:"estrela", lado:"dir",
+  fala:"Pista dois! O explorador está de costas, olhando para a frente igual a você. A estrela está do lado direito ou do lado esquerdo dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"par", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
+  fala:"Pista três! Olha os dois. A árvore está do lado esquerdo ou do lado direito?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", vista:"costas", obj:"bau", lado:"esq",
+  fala:"Pista quatro! O explorador continua de costas. O baú do tesouro está do lado direito ou do lado esquerdo dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
+
+ {tipo:"seta", aponta:"dir",
+  fala:"Pista cinco! Para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"masc", vista:"frente", obj:"estrela", lado:"esq",
+  fala:"Pista seis, atenção! Agora o explorador está te olhando de frente. A estrela está na direita ou na esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
+
+ {tipo:"masc", vista:"costas", obj:"flor", lado:"dir",
+  fala:"Pista sete! O explorador de costas achou uma flor. Ela está do lado direito ou do lado esquerdo dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"par", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
+  fala:"Pista oito! O sol está do lado esquerdo ou do lado direito?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", vista:"frente", obj:"bau", lado:"dir",
+  fala:"Pista nove, a mais esperta! O explorador está te olhando de frente. O baú está na direita ou na esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
+
+ {tipo:"masc", vista:"costas", obj:"bau", lado:"esq",
+  fala:"Pista dez, a última! Achamos o tesouro. O baú está do lado direito ou do lado esquerdo do explorador?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1}
+];
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false;
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+
+/* ====== VOZ (arquivos audio/<chave>.mp3, voz Antonio, zero navegador) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("avdir_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{ var a=new Audio("audio/"+_chaveVoz(texto)+".mp3"); _falaAudio=a; a.play(); }catch(e){}
+}
+function repetirUltima(){ if(_ultimaFala){ pararFala(); falar(_ultimaFala,true); } }
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("avdir_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== TELAS ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/masc_acena.png" alt="explorador">';
+  h+='<h1>Aventura das Direções</h1>';
+  h+='<p class="grande">Ajude o explorador a achar o tesouro seguindo as direções: esquerda, direita, em cima e embaixo!</p>';
+  h+='<label>Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="24" placeholder="Escreva seu nome">';
+  h+='<label>Qual é a sua turma?</label>';
+  h+='<select id="cTurma"><option value="">Escolha a turma</option>';
+  var i;for(i=0;i<TURMAS.length;i++){h+='<option>'+TURMAS[i]+'</option>';}
+  h+='</select>';
+  h+='<div><button class="btn verde grandao" onclick="comecar()">Começar a aventura!</button></div>';
+  h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
+  h+='</div>';
+  $("app").innerHTML=h;
+  falar("Olá, explorador! Eu preciso da sua ajuda para achar o tesouro. Vamos seguir as direções. Escreva o seu nome, escolha a sua turma e toque em começar a aventura!");
+}
+function comecar(){
+  var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
+  var t=$("cTurma").value;
+  if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
+  if(!t){ falar("Escolha a sua turma para começar!",true); $("cTurma").focus(); return; }
+  nomeAluno=n; turmaAluno=t; atual=0;
+  telaPista();
+}
+
+function cenaHTML(q){
+  var lado, h='<div class="cena">';
+  if(q.tipo==="masc"){
+    lado=(q.lado==="dir")?"rd":"ld";
+    h+='<img class="masc" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'.png" alt="explorador">';
+    h+='<img class="obj '+lado+'" src="img/'+q.obj+'.png" alt="objeto">';
+  }
+  h+='</div>';
+  return h;
+}
+function telaPista(){
+  var q=QUESTOES[atual], h='';
+  h+='<div id="trilha">Pista '+(atual+1)+' de '+QUESTOES.length+' &#128075;</div>';
+  h+='<div id="barra"><i style="width:'+Math.round(atual/QUESTOES.length*100)+'%"></i></div>';
+  h+='<div class="card">';
+  if(q.tipo==="vert"){
+    h+='<div class="vert"><div><img src="img/'+q.cima+'.png" alt="em cima"></div>';
+    h+='<div style="border-top:3px dashed #cdd9e6"></div>';
+    h+='<div><img src="img/'+q.baixo+'.png" alt="embaixo"></div></div>';
+  }else if(q.tipo==="par"){
+    h+='<div class="par"><span class="cel"><img src="img/'+q.esq+'.png" alt="esquerda"><span>&#9668; lado de cá</span></span>';
+    h+='<span class="cel"><img src="img/'+q.dir+'.png" alt="direita"><span>lado de lá &#9658;</span></span></div>';
+  }else if(q.tipo==="seta"){
+    h+='<div class="cena"><span class="setaimg">'+(q.aponta==="dir"?"&#10145;":"&#11013;")+'</span></div>';
+  }else{
+    h+=cenaHTML(q);
+  }
+  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pista</button>';
+  h+='<div class="opcoes">';
+  var i;for(i=0;i<q.opcoes.length;i++){ h+='<button class="btn '+q.opcoes[i].cor+'" onclick="responder('+i+')">'+q.opcoes[i].t+'</button>'; }
+  h+='</div></div>';
+  $("app").innerHTML=h;
+  falar(q.fala);
+}
+function responder(idx){
+  respostas[atual]=idx;
+  pararFala();
+  atual++;
+  if(atual>=QUESTOES.length){ telaFinal(); }
+  else {
+    /* transicao NEUTRA (nao revela certo/errado) */
+    var frases=["Vamos para a próxima pista!","Seguindo a aventura!","Muito bem, vamos lá!","Continue, explorador!"];
+    falar(frases[atual%frases.length]);
+    setTimeout(telaPista,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+
+function telaFinal(){
+  var ac=calcularAcertos();
+  confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/masc_festa.png" alt="explorador comemorando">';
+  h+='<h1>&#127881; Parabéns! &#127881;</h1>';
+  h+='<h2>'+nomeAluno+', você concluiu a Aventura das Direções!</h2>';
+  h+='<img src="img/bau.png" alt="tesouro" style="height:150px;margin:6px auto">';
+  h+='<p class="grande">Você achou o tesouro! Muito bem, explorador!</p>';
+  h+='<p id="statusenvio"></p>';
+  h+='</div>';
+  $("app").innerHTML=h;
+  falar("Parabéns! Você concluiu a Aventura das Direções e achou o tesouro! Você foi um explorador incrível!");
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase + Apps Script), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;} enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
+  var quando=new Date().toLocaleString("pt-BR");
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:ac,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  var ok=false;
+  /* 1) Firebase (funciona ja) */
+  try{
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/lateralidade-3ano/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.onreadystatechange=function(){ if(x.readyState===4){ marcarEnvio(x.status>=200&&x.status<300); } };
+    x.send(JSON.stringify(reg)); ok=true;
+  }catch(e){}
+  /* 2) Apps Script (planilha real), se configurado */
+  if(URL_PLANILHA){
+    try{
+      var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+
+        "&nota="+encodeURIComponent(ac)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
+        "&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
+      var y=new XMLHttpRequest(); y.open("POST",URL_PLANILHA,true);
+      y.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); y.send(dados);
+    }catch(e){}
+  }
+  if(!ok){ marcarEnvio(false); }
+}
+function marcarEnvio(ok){
+  var s=$("statusenvio"); if(!s){return;}
+  s.innerHTML=ok?"&#9989; Aventura registrada para a professora!":"&#9888;&#65039; Peça para a professora conferir no computador.";
+  s.style.color=ok?"#2e7d3a":"#c0392b";
+}
+
+/* ====== confete leve (canvas, compat) ====== */
+function confete(){
+  try{
+    var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+    c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+    var x=c.getContext("2d"),ps=[],i,cores=["#f08a1f","#3fa34d","#2b8ae0","#8a63d2","#ffd23f"];
+    for(i=0;i<80;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+    var t=0,tot=140;
+    function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}
+    loop();
+  }catch(e){}
+}
+
+/* ====== boot ====== */
+function boot(){ attMudo(); telaCapa(); }
+document.addEventListener("click",function(){ /* destrava audio no 1o gesto */ },false);
+boot();
+</script>
