@@ -1218,6 +1218,72 @@ imagem**. Reaproveitar o que já existe (não regerar à toa).
 
 Decidido com o Marcos: elevar o padrão, **menos erros**, tudo verificado antes de publicar.
 
+## 🧠 NEUROCIÊNCIA DO APRENDIZADO (novo especialista do time — pedido do Marcos)
+
+Um **neurocientista do aprendizado** entrou no time: foco em COMO o cérebro **retém** e
+**se engaja**, com as técnicas de maior evidência. Complementa o "especialista em games"
+(que cuida de mecânica/emoção). Auditor dele: **`_circo/auditar-pedagogia.py`**.
+
+### Pilar A — APRENDER DE VERDADE (o que fixa na memória)
+- **Recuperação ativa (retrieval practice / efeito do teste):** *lembrar* fixa muito mais que
+  *reler*. A atividade JÁ é recall — garantir que a criança **produz** a resposta (não só
+  reconhece) e variar o formato. *(Roediger & Karpicke; retrievalpractice.org.)*
+- **Espaçamento (spaced practice):** rever o conteúdo **mais tarde**, não tudo de uma vez.
+  O **Reforço** reapresenta os ERROS depois; intercalar revisão de fases antigas. *(Cepeda et al.)*
+- **Intercalação (interleaving):** misturar tipos de problema (não blocos iguais) — o
+  `embaralhar`/`MIX_FIXO`. *(Rohrer.)*
+- **Feedback imediato e elaborativo:** corrigir na hora **e explicar o porquê** (a `explica`). O
+  feedback é o momento em que o cérebro consolida. *(Hattie; Make It Stick.)*
+- **Dificuldades desejáveis:** um tiquinho de esforço (não fácil demais) fixa melhor →
+  adaptatividade (Extra/Reforço). *(Bjork.)*
+- **Codificação dupla (dual coding):** palavra + **imagem** juntas = duas rotas de memória
+  (`figura()` + mascote + cenário). *(Paivio; Mayer — multimídia.)*
+- **Carga cognitiva baixa (Sweller):** uma ideia por tela, tirar ruído, **narração curta / 1ª
+  vez** — liga direto ao anti-cansaço (`narrarTela`, `VOZ_EXPLICA`, feedback curto). Sobrecarga
+  = não aprende.
+- **Elaboração / "explique":** pedir pra criança **explicar** (Bloom, "explique ao mascote")
+  ativa compreensão profunda. **Concreto → abstrato** (concreteness fading).
+
+### Pilar B — QUERER FAZER (não achar chato e realmente fazer)
+- **Curiosidade (dopamina antecipatória):** "lacunas de curiosidade", **ganchos** de história,
+  surpresa/novidade abrem o cérebro pra aprender e dão vontade da próxima tela (`GANCHOS`,
+  cenários variados, mini-jogos). *(Gruber & Ranganath.)*
+- **Recompensa & previsão de erro (dopamina):** a recompensa engaja mais quando é ligada a
+  **esforço** e um pouco imprevisível; celebrar o **progresso** (confete/medalha) — mas a
+  recompensa **intrínseca** (sentir que consegue) vale mais que só pontos.
+- **Progresso e meta (goal-gradient):** ver o **Atlas encher** / a barra subir; a motivação
+  cresce perto do fim. Sempre mostrar "X de N".
+- **SDT — Autonomia, Competência, Pertencimento** (base neurobiológica da motivação intrínseca):
+  escolhas, desafio na medida, mascote + nome. *(Deci & Ryan.)*
+- **Flow:** desafio ≈ habilidade, metas claras, feedback na hora, **sem interrupção** (não
+  travar o "Próximo"!). *(Csikszentmihalyi.)*
+- **Mentalidade de crescimento (Dweck):** elogiar **esforço/estratégia** (não "inteligente");
+  **normalizar o erro** ("errar e treinar é assim que os cientistas aprendem"). Erro sem medo =
+  cérebro aberto.
+- **Emoção positiva amplia atenção e memória:** humor, mascote carismático, história — o afeto
+  é "cola" da memória.
+- **Sessões curtas + pausas:** fases curtas e **jogos de alívio** ajudam a consolidar.
+
+### Checklist do neurocientista (vira BARREIRA — cobre pelo `auditar-pedagogia.py`)
+- [ ] Recuperação ativa (produz a resposta, não só reconhece).
+- [ ] Feedback imediato **que explica o porquê**.
+- [ ] Erro sem punir + frase de **mentalidade de crescimento**.
+- [ ] Revisão **espaçada** dos erros (Reforço reapresenta depois).
+- [ ] Intercalação (embaralha tipos/itens).
+- [ ] Codificação dupla (imagem + palavra).
+- [ ] Competência visível (progresso/medalha/nível).
+- [ ] Autonomia (escolha) + personalização (nome/mascote).
+- [ ] Curiosidade/gancho + celebração "juicy".
+- [ ] **Carga cognitiva baixa** (narração curta/1ª vez, uma ideia por tela).
+
+### Fontes (ponto de partida — atualizar quando o Marcos trouxer cursos)
+*Make It Stick* (Brown, Roediger, McDaniel); *Understanding How We Learn* e The Learning
+Scientists (Weinstein & Sumeracki — "6 strategies"); retrievalpractice.org (Agarwal); spacing
+(Cepeda et al.); interleaving (Rohrer); cognitive load (Sweller); multimídia (Mayer);
+dual coding (Paivio); desirable difficulties (Bjork); growth mindset (Dweck); SDT (Deci &
+Ryan); flow (Csikszentmihalyi); curiosidade & dopamina (Gruber, Ranganath); *How People Learn II*
+(National Academies).
+
 ## 19.1 Auditor de CONTRASTE (obrigatório antes de publicar)
 Ferramenta: **`_circo/auditar-contraste.py <arquivo.html>`**. Abre a atividade no
 Chromium headless, percorre **todas as telas** (capa, mapa, desafio e cada
@@ -1265,6 +1331,9 @@ Para cada frente há um "profissional" **e** um auditor automático que o cobre:
 - **Designer de contraste (acessibilidade)** → `auditar-contraste.py`.
 - **Artista / recorte de imagem** → `auditar-imagens.py` (restos soltos).
 - **Profissional de som** → `auditar-som.py` (voz consistente, áudios válidos).
+- **Neurocientista do aprendizado** → `auditar-pedagogia.py` (ingredientes de
+  retenção + engajamento: retrieval, espaçamento, feedback elaborativo, mentalidade
+  de crescimento, dual coding, competência, curiosidade, carga cognitiva baixa).
 Regra de ouro: **nenhuma frente sem auditor**. Achou um erro que passou? O
 conserto não é só o erro — é criar/ajustar o auditor pra ele **não passar de novo**.
 
