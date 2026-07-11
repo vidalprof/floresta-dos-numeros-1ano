@@ -501,6 +501,33 @@ de PC a PC** e às vezes pronuncia errado. **Solução premium:** gerar a voz NA
   feminina/robótica do navegador **não**. Por isso o `auditar-som.py` barra qualquer fala
   sem áudio embutido ANTES de publicar.
 
+### 🔉 DOSE DE VOZ (não cansar o aluno) + PESO DO ARQUIVO
+
+**Voz NÃO-BLOQUEANTE (regra):** a narração toca, mas **nunca trava o avanço**. O aluno
+pode clicar "Próximo" a qualquer momento — o clique chama `pararFala()`, que **corta o
+áudio** (o `<audio>` embutido, via `_falaAudio.pause()`, e o do navegador) e segue. Quem lê
+rápido **não fica preso** esperando a voz terminar (era isso que cansava). No climas:
+`_gatearAvanco()` foi neutralizada (`return null`) e `proximoDesafio()` chama `pararFala()`.
+A informação continua **escrita na tela**, então ninguém perde conteúdo por não ouvir.
+
+**Dose por FAIXA DE ANO:** Pré/1º/2º (ainda não leem) → voz **essencial**, pode narrar
+bastante. 6º–9º (leem bem) → voz pro **personagem/instrução/emoção**; feedback **curto**,
+e a explicação longa fica na **tela** (com 🔊 opcional se quiser ouvir). **Nunca** narrar o
+que a criança acabou de ler na tela — isso cansa e soa repetitivo.
+
+**Peso do arquivo (o áudio é ~77% do HTML):** recomprimir **TODO** o áudio a **24 kbps mono**
+antes de embutir (`miniaudio`+`lameenc` no build, ou `otimizar-audio.yml`). Voz de fala fica
+ótima nesse bitrate; não precisa de mais. 16 kbps encolhe mais, mas soa "abafado" — só se
+realmente precisar. **O tamanho em si NÃO quebra o Pages** (serve até 100 MB/arquivo,
+~1 GB/site) — o climas roda com ~16 MB, build `built`. O custo real é a **1ª carga** (numa
+sala inteira abrindo junto): manter o áudio a 24 kbps ajuda.
+
+**Histórico do `.git` = o que REALMENTE trava o build (importante):** cada republicação de um
+HTML grande empilha ~MB no histórico do repo de destino → é a causa do **"Page build failed"
+intermitente**. Publicar com **`republicar-limpo.yml`** (1 commit limpo, force-push) **zera o
+histórico** e o `.git` volta a ficar minúsculo → o build volta a `built`. Usar quando o build
+começar a falhar (ou periodicamente em atividades que republicam muito).
+
 ### 🗂️ BIBLIOTECA DE CAPAS (telas de abertura reutilizáveis) — `_templates/capas/`
 Coleção de **capas premium** prontas (HTML autossuficiente, compat OK), cada uma com um
 tema/identidade forte, pra não recomeçar o visual do zero. Ao criar/reformar uma atividade,
