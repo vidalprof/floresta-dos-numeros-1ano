@@ -1341,8 +1341,21 @@ Para cada frente há um "profissional" **e** um auditor automático que o cobre:
 - **Neurocientista do aprendizado** → `auditar-pedagogia.py` (ingredientes de
   retenção + engajamento: retrieval, espaçamento, feedback elaborativo, mentalidade
   de crescimento, dual coding, competência, curiosidade, carga cognitiva baixa).
+- **Auditor de PROVA (avaliação)** → `auditar-prova.py` (nasceu porque estes erros
+  escaparam de todos os outros numa prova de lateralidade). Checa: (1) **concordância
+  escrito × falado** por pista (mesmo eixo cima/baixo × esquerda/direita); (2) **gênero
+  uniforme** — direção sempre no feminino "direita/esquerda" (igual aos botões), barra a
+  forma masculina "direito/esquerdo"; (3) **gabarito de lateralidade** recomputado (de
+  costas = alinhado, de frente = espelho, par = lado do alvo, seta = sentido, vert =
+  objeto de cima) vs. o `correta` do código; (4) **final não revela nem fala em
+  "professora"/registro** ao aluno; (5) **assets** — pose `masc_<vista>_<lado>.png`,
+  objeto `<obj>.png` e `audio/<chave>.mp3` de cada fala existem. Rodar SEMPRE antes de
+  publicar uma prova: `python3 _circo/auditar-prova.py _lote/<ativ>/index.html --rigoroso`.
 Regra de ouro: **nenhuma frente sem auditor**. Achou um erro que passou? O
 conserto não é só o erro — é criar/ajustar o auditor pra ele **não passar de novo**.
+(Foi assim que nasceu o `auditar-prova.py`: concordância escrito×falado, gênero,
+gabarito e a mensagem "registrada para a professora" passaram porque não havia um
+auditor específico — agora há, e ele **reprova** a publicação se algo disso voltar.)
 
 ## 19.4 TEMA CLARO = padrão visual da fábrica
 Padrão novo: **fundo claro, cards brancos, texto escuro** (contraste alto por
