@@ -87,6 +87,39 @@ label{font-size:17px;font-weight:bold;color:#2b6cb0;display:block;margin-top:8px
 .refbadge.costas{background:#e7f6ea;color:#1c7a34;border:2px solid #b6e0c0;}
 .refbadge.frente{background:#fff0e0;color:#b5600a;border:2px solid #f2c98a;}
 .refbadge.cima{background:#f0ecff;color:#5a49b0;border:2px solid #d3caf0;}
+/* seletor de turma em CAIXAS (permanente) */
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:6px;min-width:76px;padding:13px 10px;border:3px solid #b9d4ec;border-radius:16px;background:#f7fbff;color:#2b6cb0;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe0f0;box-shadow:0 4px 0 #cfe0f0;}
+.tbox.on{background:#2b8ae0;color:#fff;border-color:#1f6fb8;-webkit-box-shadow:0 4px 0 #1f6fb8;box-shadow:0 4px 0 #1f6fb8;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+
+/* ============================================================
+   TEMA PIRATA — "Ilha do Tesouro" (TESTE).
+   Para VOLTAR AO NORMAL: apague este bloco inteiro (ate a tag que fecha o style).
+   ============================================================ */
+body{background:#0f2c47;background:-webkit-linear-gradient(top,#164066,#0a1f36);background:linear-gradient(to bottom,#164066,#0a1f36);}
+.card{background:#f1e2bf;border:4px solid #7a4a17;-webkit-box-shadow:0 12px 30px rgba(0,0,0,.5);box-shadow:0 12px 30px rgba(0,0,0,.5);}
+.card:before{content:"";position:absolute;left:8px;right:8px;top:8px;bottom:8px;border:2px dashed #b8862f;border-radius:14px;pointer-events:none;}
+.card{position:relative;}
+h1{color:#7a4a17;text-shadow:1px 1px 0 #e8cf9a;}
+h2{color:#8a5a1a;}
+.grande{color:#7a4a17;}
+p{color:#4a2f12;}
+label{color:#8a5a1a;}
+.mini{color:#9a7a4a;}
+#trilha{color:#e8cf9a;}
+#barra{background:#c7ad78;}
+#barra i{background:#e8b923;background:-webkit-linear-gradient(left,#f0cf5a,#c9931a);background:linear-gradient(to right,#f0cf5a,#c9931a);}
+.pergunta{color:#7a4a17;}
+input{border-color:#b8862f;background:#fff8e8;color:#4a2f12;}
+.btn.grandao{background:#b0311f;background:-webkit-linear-gradient(top,#c0392b,#8f2418);background:linear-gradient(#c0392b,#8f2418);-webkit-box-shadow:0 6px 0 #6a1a10;box-shadow:0 6px 0 #6a1a10;}
+#btnOuvir{background:#fff2d6;border-color:#b0311f;color:#8f2418;}
+#ctrlVoz .cv-bt{border-color:#7a4a17;color:#7a4a17;}
+.setaimg{color:#b0311f;text-shadow:0 3px 0 #e8b46a;}
+.par .cel span{color:#9a7a4a;}
+/* turma = moedas de ouro */
+.tbox{border:3px solid #7a4a17;background:#e8cf9a;color:#5a3512;-webkit-box-shadow:0 4px 0 #b8862f;box-shadow:0 4px 0 #b8862f;border-radius:50px;}
+.tbox.on{background:#e8b923;color:#3a2408;border-color:#5a3512;-webkit-box-shadow:0 4px 0 #5a3512;box-shadow:0 4px 0 #5a3512;}
 </style>
 
 <div id="app"></div>
@@ -190,20 +223,27 @@ function telaCapa(){
   h+='<label>Qual é o seu nome?</label>';
   h+='<input id="cNome" maxlength="24" placeholder="Escreva seu nome">';
   h+='<label>Qual é a sua turma?</label>';
-  h+='<select id="cTurma"><option value="">Escolha a turma</option>';
-  var i;for(i=0;i<TURMAS.length;i++){h+='<option>'+TURMAS[i]+'</option>';}
-  h+='</select>';
+  h+='<div class="turmas">';
+  var i;for(i=0;i<TURMAS.length;i++){ h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>'; }
+  h+='</div>';
   h+='<div><button class="btn verde grandao" onclick="comecar()">Começar a aventura!</button></div>';
   h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
   h+='</div>';
   $("app").innerHTML=h;
   falar("Olá, explorador! Eu achei um mapa do tesouro! O mapa mostra vários sinais no caminho. Vamos ler a direção de cada um até chegar no baú. Escreva o seu nome, escolha a sua turma e toque em começar a aventura!");
 }
+var turmaSel="";
+function selTurma(el,t){
+  turmaSel=t;
+  var bs=document.getElementsByClassName("tbox"),i;
+  for(i=0;i<bs.length;i++){ bs[i].className="tbox"; }
+  el.className="tbox on";
+}
 function comecar(){
   var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
-  var t=$("cTurma").value;
+  var t=turmaSel;
   if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
-  if(!t){ falar("Escolha a sua turma para começar!",true); $("cTurma").focus(); return; }
+  if(!t){ falar("Escolha a sua turma para começar!",true); return; }
   nomeAluno=n; turmaAluno=t; atual=0;
   telaPista();
 }
