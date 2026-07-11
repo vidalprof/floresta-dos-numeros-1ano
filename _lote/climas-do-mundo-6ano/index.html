@@ -720,6 +720,7 @@ body.claro .cg-opt{background:#f6f9fd;color:#22344a;border:2px solid #dbe6f2;}
 body.claro .cg-opt.ok{background:#e7f8ef;color:#0f7a4e;border-color:#37c98a;}
 body.claro .cg-opt.no{background:#fdecec;color:#b23636;border-color:#e0a2a2;}
 body.claro .caca-cel{background:#f4f8fc;color:#22344a;border:1px solid #dbe6f2;}
+body.claro .caca-cel.sel{background:#ffb300;color:#161a1f;border-color:#ffc94d;}
 body.claro .caca-palavra{background:#eef3f9;color:#5b6b7f;border:1px solid #dbe6f2;}
 body.claro .caca-palavra.ok{background:#e7f8ef;color:#0f7a4e;border-color:#8fe0b0;}
 body.claro .qc-slot{background:#eef3f9;color:#6b7d92;border:2px dashed #bcd0e6;}
@@ -4007,6 +4008,22 @@ var cacaSol=[];
 var cacaAchadas=[];
 var cacaSel=[];
 var cacaTam=10;
+/* uma cor distinta por palavra (inline vence o CSS do tema claro que estava apagando a marcacao) */
+var CACA_CORES=["#e74c3c","#2f80ed","#27ae60","#f2994a","#9b51e0","#12b5b5","#eb2f96","#c0392b"];
+function cacaCorDaCel(id){
+  var i,j;
+  for(i=0;i<cacaSol.length;i++){
+    var achou=false;
+    for(j=0;j<cacaAchadas.length;j++){ if(cacaAchadas[j]===cacaSol[i].palavra){ achou=true; break; } }
+    if(!achou){ continue; }
+    for(j=0;j<cacaSol[i].cels.length;j++){ if(cacaSol[i].cels[j]===id){ return CACA_CORES[i%CACA_CORES.length]; } }
+  }
+  return "";
+}
+function cacaCorDaPalavra(pal){
+  var i; for(i=0;i<cacaSol.length;i++){ if(cacaSol[i].palavra===pal){ return CACA_CORES[i%CACA_CORES.length]; } }
+  return "#27ae60";
+}
 function iniciarCaca(){
   pararFala();
   faseAtual="cacapalavras";
@@ -4069,10 +4086,11 @@ function cacaRender(){
     html+='<div class="caca-linha">';
     for(j=0;j<N;j++){
       id=i+"_"+j;
-      cls="caca-cel";
-      if(cacaEstaAchada(id)){ cls+=" achada"; }
+      cls="caca-cel"; var stl="";
+      var corCel=cacaCorDaCel(id);
+      if(corCel){ cls+=" achada"; stl=' style="background:'+corCel+';border-color:'+corCel+';color:#fff;"'; }
       else if(cacaSelInclui(id)){ cls+=" sel"; }
-      html+='<span class="'+cls+'" id="cc'+id+'" onclick="cacaToque(\''+id+'\')">'+cacaGrade[i][j]+'</span>';
+      html+='<span class="'+cls+'"'+stl+' id="cc'+id+'" onclick="cacaToque(\''+id+'\')">'+cacaGrade[i][j]+'</span>';
     }
     html+='</div>';
   }
@@ -4081,7 +4099,8 @@ function cacaRender(){
   for(i=0;i<cacaSol.length;i++){
     var achou=false;
     for(j=0;j<cacaAchadas.length;j++){ if(cacaAchadas[j]===cacaSol[i].palavra){ achou=true; } }
-    html+='<span class="caca-palavra'+(achou?" ok":"")+'">'+cacaSol[i].palavra+'</span>';
+    var stlb = achou ? (' style="color:'+CACA_CORES[i%CACA_CORES.length]+';border-color:'+CACA_CORES[i%CACA_CORES.length]+';text-decoration:line-through;"') : '';
+    html+='<span class="caca-palavra'+(achou?" ok":"")+'"'+stlb+'>'+cacaSol[i].palavra+'</span>';
   }
   html+='</div>';
   html+='<div class="centro" style="margin:4px 0 8px;"><button class="btn-ouvir-mini" onclick="falar(\'Encontre as palavras dos climas! Toque na primeira e na última letra de cada palavra.\')">🔊</button></div>';
@@ -4117,6 +4136,7 @@ function cacaToque(id){
       if(alvo){
         cacaAchadas.push(alvo);
         somAcerto();
+        confete(14);            /* confete a cada palavra encontrada */
         addPontos(8);
         cacaSel=[];
         cacaRender();
