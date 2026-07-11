@@ -540,7 +540,14 @@ o `audio/` mora **no repo da atividade**, não na fábrica. Repos separados = pe
 (nenhum vira monstro). Este repo-fábrica fica **leve** (templates/manual/HTML-fonte); não
 deve acumular o áudio de todas no histórico — publicar com `republicar-limpo.yml` mantém cada
 `.git` de destino minúsculo. Limites do GitHub (~1 GB/repo e /site) cabem centenas de
-atividades de ~8–10 MB. Se a fábrica inchar (ver `du -sh .git`), limpar o histórico dela.
+atividades de ~8–10 MB.
+**Se a fábrica inchar (ver `git count-objects -vH` → `size-pack`):** o jeito **SEGURO** é
+**mesclar a PR (squash) + apagar a branch** — o peso antigo (versões grandes já superadas) fica
+inalcançável e o **GitHub recolhe sozinho** (garbage collection), sem reescrever nada.
+**Reescrever histórico** (`git filter-repo` + force-push) só quando precisar mesmo e, de
+preferência, **com a PR já mesclada** (com a PR aberta é arriscado). A causa nº 1 do inchaço
+eram os HTMLs **embutidos de ~16 MB**; com o **áudio externo** (HTML ~4 MB) isso acabou —
+a fábrica praticamente não incha mais.
 
 **Histórico do `.git` = o que REALMENTE trava o build (importante):** cada republicação de um
 HTML grande empilha ~MB no histórico do repo de destino → é a causa do **"Page build failed"
