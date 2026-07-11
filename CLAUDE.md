@@ -188,6 +188,22 @@ usuário pode usar para te situar em qualquer sessão:
 > "As instruções da Fábrica de Sites estão no `CLAUDE.md` do repositório
 > `vidalprof/floresta-dos-numeros-1ano`. Leia de lá antes de agir."
 
+## Contexto enxuto ao checar workflows (evitar estourar a conversa)
+
+Checar status de Actions pelo MCP (`actions_list` / `actions_get`
+`get_workflow_run`) devolve **payload gigante** (300–430 mil caracteres: cada
+run traz o objeto do repositório inteiro, 2×) e **incha o contexto do chat**.
+Para confirmar workflow sem estourar:
+- **Triggar** com `actions_run_trigger` — resposta é pequena, ok.
+- **Confirmar que terminou:** dar `git fetch origin <branch>` e ver se o commit
+  do workflow chegou (ex.: `git log origin/<branch> -1 --pretty=%s` mostra
+  "audio: gera vozes…"). Barato e direto.
+- **Ler resultado/build:** `get_job_logs` com `tail_lines` pequeno (8–15) e
+  `return_content:true` — pega só o fim do log (status `built`/`errored`).
+- **Se precisar de `actions_list`/`get_workflow_run`:** usar `per_page:1` e, se
+  vier grande, parsear o arquivo salvo com `python3` (fatiar por range), nunca
+  despejar no chat.
+
 ## Observações de segurança
 
 - **Nunca** peça nem aceite o valor do token colado no chat. Ele vive apenas

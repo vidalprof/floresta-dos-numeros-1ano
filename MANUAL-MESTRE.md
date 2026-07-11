@@ -449,6 +449,33 @@ O **Claude gera imagens sozinho** via o workflow `gerar-imagens.yml` (no `main`)
 - ❌ Qualquer coisa que **carregue de fora em runtime** (script/estilo/fonte via CDN, fetch) — proibido pelo self-contained + compat.
 
 ### 🔊 VOZ NATURAL PRÉ-GRAVADA (novo — resolve a "voz robótica do navegador")
+
+> **⭐ REGRA FIXA (pedido explícito do Marcos — vale para TODAS as atividades, sem exceção):**
+> **Toda voz da atividade é GRAVADA na voz que combinamos (Edge TTS "Antonio",
+> `modelo=male` no `gerar-audio.yml`) e EMBUTIDA no HTML. ZERO voz de navegador.**
+> Mecânica que garante isso (usada e PROVADA no `climas-do-mundo-6ano`) — copiar p/ toda atividade:
+> 1. **`AUDIO_TXT`** = mapa `{ chave: "data:audio/mpeg;base64,…" }`, chave = `_chaveVoz(texto)`
+>    (hash djb2 base36 do texto). `falar(texto)` procura a chave e toca o áudio gravado;
+>    só cairia no navegador se não achasse.
+> 2. **Falas DINÂMICAS** (montadas na hora: elogio+explicação, "subiu de nível X",
+>    comemoração com nome) NÃO se gravam inteiras (combinações infinitas). Quebrar em
+>    PEDAÇOS fixos e tocar com **`falarComposto([parte1, parte2, …])`** — cada pedaço
+>    (elogio, explicação, "Quase!", nome do nível…) é gravado 1×. O que varia de verdade
+>    (nome do aluno, palavra sorteada) sai só na TELA, **não no áudio**.
+> 3. **`escolherVoz()` = só voz EXPLICITAMENTE masculina** (nome na lista MASC); nome
+>    feminino OU genérico (ex.: "Google português do Brasil", que costuma ser feminina)
+>    é RECUSADO → no pior caso fica MUDO, **nunca feminino**. (PCs da escola só têm
+>    "Maria" → por isso qualquer fala não-gravada saía feminina.)
+> 4. **`_circo/auditar-som.py` é OBRIGATÓRIO** antes de publicar: exige áudio embutido p/
+>    toda narração fixa, todos os elogios, TODAS as explicações do banco e os cabeçalhos
+>    ("Quase!", "Não foi dessa vez!"…), e dirige o grande final. Só publica com
+>    **0 falas na voz do navegador**.
+> 5. Voz padrão = **`modelo=male` (Edge TTS "pt-BR-AntonioNeural")**. `_lote_falas.json`
+>    guarda `{id: chave, texto}` de cada fala p/ regerar quando precisar. Como capturar as
+>    falas: instrumentar `falar`/`falarComposto` no headless e varrer o jogo (perguntas,
+>    acertos/erros, fim de fase, grande final) OU extrair estaticamente elogios+explicações+
+>    cabeçalhos do código (foi assim no climas).
+
 Problema real (pedido do Marcos): o `speechSynthesis` (Web Speech) sai **diferente/robótico
 de PC a PC** e às vezes pronuncia errado. **Solução premium:** gerar a voz NATURAL no
 **build** (servidor, via Actions) e **embutir como base64** no HTML, tocando com `<audio>`/
@@ -461,15 +488,18 @@ de PC a PC** e às vezes pronuncia errado. **Solução premium:** gerar a voz NA
   Roda no Actions
   (internet liberada); **o sandbox do Claude tem proxy restrito e bloqueia esses hosts —
   por isso a geração é sempre server-side, nunca por curl local.**
-- **Quando usar:** as falas são **FIXAS** (enunciados, elogios, história) → grava cada uma
-  1× e embute. Depois `document.getElementById(...).play()` no gesto. Para as partes
-  DINÂMICAS (nome do aluno, número sorteado): manter Web Speech só nelas, OU pré-gravar um
-  banco de números por extenso (0–100) e emendar os MP3.
+- **Quando usar:** SEMPRE (regra fixa acima). Falas **FIXAS** (enunciados, história,
+  cabeçalhos) → grava 1× e embute. Falas **DINÂMICAS** → `falarComposto` com pedaços
+  gravados (ver regra fixa); o que varia de verdade (nome do aluno, número/palavra
+  sorteada) fica só na TELA, nunca no áudio.
 - **Vantagem:** voz idêntica e correta em qualquer PC, sem sotaque robótico; funciona
-  offline (já está embutida). **Custo:** zero no Pollinations. **Peso:** MP3 de fala curta
-  é leve (~10–30KB); embutir só as falas essenciais pra não inchar o HTML.
-- Fallback obrigatório: se o `<audio>` falhar (navegador travou o autoplay), cair no
-  `speechSynthesis` — nunca deixar a criança sem áudio.
+  offline (já está embutida). **Peso:** MP3 de fala curta é leve (~10–30KB); recomprimir
+  p/ 24kbps mono (miniaudio+lameenc, ou `otimizar-audio.yml`) antes de embutir muitas.
+- **NÃO tem fallback pra voz do navegador** (era o furo que deixava sair voz feminina):
+  se por acaso faltar um áudio, `escolherVoz()` só usa voz explicitamente masculina —
+  senão fica **mudo** (a informação continua visível na tela). Mudo é aceitável; voz
+  feminina/robótica do navegador **não**. Por isso o `auditar-som.py` barra qualquer fala
+  sem áudio embutido ANTES de publicar.
 
 ### 🗂️ BIBLIOTECA DE CAPAS (telas de abertura reutilizáveis) — `_templates/capas/`
 Coleção de **capas premium** prontas (HTML autossuficiente, compat OK), cada uma com um
