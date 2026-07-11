@@ -69,7 +69,22 @@ def dinamico(src):
 def estatico(src):
     h = open(src, encoding="utf-8").read()
     problemas = []
-    # 1) mapa AUDIO: chaves -> valida cada data:audio
+    # ÁUDIO EXTERNO (padrão novo, sempre online): os clipes moram em audio/<chave>.mp3
+    # ao lado do HTML; nos mapas fica só "chave":1. Se houver a pasta audio/, os
+    # arquivos SÃO a fonte da verdade. Senão, cai no modo antigo (data:audio embutido).
+    base_dir = os.path.dirname(os.path.abspath(src))
+    audio_dir = os.path.join(base_dir, "audio")
+    externo = os.path.isdir(audio_dir)
+    arqs = set()
+    if externo:
+        for fn in os.listdir(audio_dir):
+            if fn.endswith(".mp3"):
+                sz = os.path.getsize(os.path.join(audio_dir, fn))
+                if sz >= 800:
+                    arqs.add(fn[:-4])
+                else:
+                    problemas.append("audio/%s muito pequeno (%d bytes) — pode estar corrompido" % (fn, sz))
+    # 1) mapa AUDIO (nomeado): cada chave tem áudio (embutido OU arquivo)?
     mi = h.find("var AUDIO=")
     audio_keys = {}
     if mi >= 0:
@@ -83,6 +98,11 @@ def estatico(src):
                     problemas.append("AUDIO['%s'] muito pequeno (%d bytes) — pode estar vazio/corrompido" % (k, len(b)))
             except Exception:
                 problemas.append("AUDIO['%s'] não é base64 válido" % k)
+        for k in re.findall(r'"([A-Za-z0-9_]+)"\s*:\s*1\b', bloco):   # modo externo ("chave":1)
+            if k in arqs:
+                audio_keys[k] = 1
+            else:
+                problemas.append("AUDIO['%s']=1 mas audio/%s.mp3 NÃO existe → cairia na voz do navegador" % (k, k))
     # 2) chaves usadas em tocarFala("x", …) existem no AUDIO?
     #    exige VÍRGULA logo após a aspas (chave literal completa); assim NÃO pega
     #    concatenação dinâmica como tocarFala("fase_"+ch, …).
@@ -100,7 +120,7 @@ def estatico(src):
         if n == 0: b36 = "0"
         while n > 0: b36 = "0123456789abcdefghijklmnopqrstuvwxyz"[n % 36] + b36; n //= 36
         return "v0" if hh == 0 else "v" + b36
-    txt_keys = set(re.findall(r'"(v[0-9a-z]{3,})"\s*:\s*"data:audio', h))
+    txt_keys = set(re.findall(r'"(v[0-9a-z]{3,})"\s*:\s*"data:audio', h)) | arqs
     niveis = re.search(r'NIVEIS_FALA\s*=\s*\[([^\]]*)\]', h)
     criticas = ["Você conseguiu! Você viajou pelo mundo inteiro, enfrentou a Tempestade Final e preencheu todas as páginas do Atlas do Clima! Agora você conhece os climas do planeta como quem viajou o mundo inteiro. Parabéns!"]
     if niveis:

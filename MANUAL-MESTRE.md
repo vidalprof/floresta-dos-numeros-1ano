@@ -515,12 +515,24 @@ bastante. 6º–9º (leem bem) → voz pro **personagem/instrução/emoção**; 
 e a explicação longa fica na **tela** (com 🔊 opcional se quiser ouvir). **Nunca** narrar o
 que a criança acabou de ler na tela — isso cansa e soa repetitivo.
 
-**Peso do arquivo (o áudio é ~77% do HTML):** recomprimir **TODO** o áudio a **24 kbps mono**
-antes de embutir (`miniaudio`+`lameenc` no build, ou `otimizar-audio.yml`). Voz de fala fica
-ótima nesse bitrate; não precisa de mais. 16 kbps encolhe mais, mas soa "abafado" — só se
-realmente precisar. **O tamanho em si NÃO quebra o Pages** (serve até 100 MB/arquivo,
-~1 GB/site) — o climas roda com ~16 MB, build `built`. O custo real é a **1ª carga** (numa
-sala inteira abrindo junto): manter o áudio a 24 kbps ajuda.
+**⭐ ÁUDIO EXTERNO = PADRÃO NOVO (as atividades são SEMPRE ONLINE):** embutir tudo em base64
+deixava o HTML gigante (~16 MB) porque o áudio é ~77% do peso. Como é sempre online, o áudio
+**mora em arquivos** `audio/<chave>.mp3` **ao lado do `index.html`** (mesmo site, caminho
+relativo — compat com PC antigo, `new Audio("audio/"+chave+".mp3")`). Nos mapas fica só
+`"chave":1` (presença). Resultado no climas: **HTML de 16 MB → ~4 MB**; o navegador baixa
+**só o clipe que vai tocar** e guarda em cache. **Mesma voz Antônio, zero navegador.**
+Como fazer: extrair cada `data:audio` p/ `audio/<chave>.mp3`, trocar o valor do mapa por `1`,
+e apontar `tocarFalaAudio("audio/"+chave+".mp3", …)`. O `auditar-som.py` já valida os dois
+modos (embutido OU pasta `audio/`). Recomprimir os MP3 a **24 kbps mono** antes (voz fica
+ótima). **O tamanho não quebra o Pages** (100 MB/arquivo, ~1 GB/site); o áudio externo
+resolve a **1ª carga** e o **histórico**.
+
+**SUSTENTABILIDADE (muitas atividades):** cada atividade no SEU repo (modelo portal-leve) →
+o `audio/` mora **no repo da atividade**, não na fábrica. Repos separados = peso distribuído
+(nenhum vira monstro). Este repo-fábrica fica **leve** (templates/manual/HTML-fonte); não
+deve acumular o áudio de todas no histórico — publicar com `republicar-limpo.yml` mantém cada
+`.git` de destino minúsculo. Limites do GitHub (~1 GB/repo e /site) cabem centenas de
+atividades de ~8–10 MB. Se a fábrica inchar (ver `du -sh .git`), limpar o histórico dela.
 
 **Histórico do `.git` = o que REALMENTE trava o build (importante):** cada republicação de um
 HTML grande empilha ~MB no histórico do repo de destino → é a causa do **"Page build failed"
