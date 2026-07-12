@@ -198,6 +198,13 @@
   .barrow .bt{flex:1;height:11px;background:var(--surface2);border-radius:6px;overflow:hidden}
   .barrow .bt i{display:block;height:100%;background:var(--primary);border-radius:6px}
   .barrow .bv{width:30px;text-align:right;font-weight:800;font-size:13px}
+  .recentes{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .recentes::-webkit-scrollbar{display:none}
+  .rec{flex:0 0 auto;width:184px;text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .rec:active{transform:scale(.97)}
+  .rec .rt{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rec .ro{font-size:12px;color:var(--muted);margin-top:3px;height:33px;overflow:hidden;line-height:1.35}
+  .rec .rtag{font-size:11px;color:var(--primary);font-weight:800;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   @media print{
     body{background:#fff!important;color:#000!important}
     .topbar,.bottomnav,.rel-tools,#installbtn,#avisobar,#modal,[data-act="imprimir"]{display:none!important}
@@ -303,7 +310,7 @@ const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
   turmaLetras:["A","B","C","D"], liberadoAte:"", periodos:[]};
 
 /* ================= STATE ================= */
-const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, dataSel:null, tab:"hoje"};
+const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, recentes:[], dataSel:null, tab:"hoje"};
 let _pollTimer=null;
 
 /* ================= HELPERS ================= */
@@ -461,6 +468,7 @@ function sair(){ localStorage.removeItem("agenda_user"); S.user=null; if(_pollTi
 async function abrirApp(){
   S.dataSel = hojeStr(); S.tab="hoje";
   await recarregarReservas();
+  try{ S.recentes = (await fbGet("/recentes/"+sanId(S.user.id))) || []; }catch(e){ S.recentes=[]; }
   desenharShell();
   if(_pollTimer) clearInterval(_pollTimer);
   _pollTimer = setInterval(async()=>{ await recarregarReservas(); if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }, 15000);
@@ -481,7 +489,7 @@ function desenharShell(){
     <nav class="bottomnav"><div class="wrap">
       <button class="tab" data-tab="hoje"><span class="ic">🗓️</span>Hoje</button>
       <button class="tab" data-tab="proximos"><span class="ic">📆</span>${adm?"Próximos":"Minhas aulas"}</button>
-      <button class="tab" data-tab="insights"><span class="ic">📊</span>Insights</button>
+      ${adm?'<button class="tab" data-tab="insights"><span class="ic">📊</span>Insights</button>':''}
     </div></nav>
   </div>`;
   attTemaIcon();
@@ -498,6 +506,7 @@ function renderAviso(){
   }else bar.innerHTML="";
 }
 function renderTab(){
+  if(S.tab==="insights" && !S.user.admin) S.tab="hoje";
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===S.tab));
   if(S.tab==="hoje") viewHoje();
   else if(S.tab==="proximos") viewProximos();
@@ -761,8 +770,15 @@ function sheetAgendar(turnoK,aula){
   discAtivas.forEach(d=> h+=`<button class="chip" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
   h+=`</div>
     <label class="fld">Tema da aula</label><input id="fTema" class="input" placeholder="Digite o tema da aula">
-    <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>
-    <div style="height:18px"></div>
+    <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>`;
+  if(S.recentes && S.recentes.length){
+    h+=`<div class="sectitle">🕘 Recentes (toque para reaproveitar)</div><div class="recentes">`;
+    S.recentes.slice(0,8).forEach((r,i)=>{
+      h+=`<button type="button" class="rec" data-act="usar-recente" data-i="${i}"><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></button>`;
+    });
+    h+=`</div>`;
+  }
+  h+=`<div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
   /* menos toques: pre-seleciona a ultima turma/disciplina que este usuario usou */
@@ -791,6 +807,13 @@ async function salvarAgenda(){
   const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
   if(!ok) return toast("Não foi possível salvar. Tente de novo.");
   try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
+  if(tema||obj){ try{
+    const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
+    const chave=(t)=>((t.tema||"")+"||"+(t.objetivo||"")).toLowerCase().replace(/\s+/g," ").trim();
+    S.recentes=(S.recentes||[]).filter(x=>chave(x)!==chave(nova));
+    S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
+    fbSet("/recentes/"+sanId(S.user.id), S.recentes);
+  }catch(e){} }
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Aula agendada! ✅");
 }
 
@@ -1178,6 +1201,12 @@ document.addEventListener("click", async (ev)=>{
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
+    if(a==="usar-recente"){ const r=S.recentes[+el.dataset.i]; if(!r) return;
+      if($("fTema")) $("fTema").value=r.tema||""; if($("fObj")) $("fObj").value=r.objetivo||"";
+      if(r.disciplina) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===r.disciplina){ document.querySelectorAll("#discChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.disc=r.disciplina; } });
+      if(r.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===r.turma){ document.querySelectorAll("#turmaChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.turma=r.turma; } });
+      if(r.letra) document.querySelectorAll("#letraChips .chip").forEach(c=>{ if(c.dataset.v===r.letra){ document.querySelectorAll("#letraChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.letra=r.letra; } });
+      toast("Preenchido! Confira e confirme."); return; }
     if(a==="verres"){ S.dataSel=el.dataset.data; const rt=(S.reservas[el.dataset.data]&&S.reservas[el.dataset.data][el.dataset.t])||{}; const r=rt["a"+el.dataset.i]; if(r) return sheetReserva(el.dataset.t,+el.dataset.i,r); return; }
     if(a==="menuadmin") return menuAdmin();
     if(a==="tela-prof") return telaProfessores();
