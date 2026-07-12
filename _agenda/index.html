@@ -204,6 +204,11 @@
   .lembrete .lb-h{font-weight:800;font-size:13px;color:var(--primary);margin-bottom:6px}
   .lembrete .lb-it{font-size:14px;padding:3px 0}
   .lembrete .lb-it span{color:var(--muted)}
+  .grupobanner{border-radius:12px;padding:9px 14px;margin-bottom:14px;font-weight:800;font-size:13px}
+  .grupobanner.ini{background:var(--free-tint);color:var(--free)}
+  .grupobanner.fin{background:var(--primary-tint);color:var(--primary)}
+  .slotcard.exc{border-left-color:var(--amber)}
+  .slotcard.exc .sc-ic{background:var(--amber-tint);color:var(--amber)}
   .semnav{width:36px;height:36px;border-radius:11px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--shadow)}
   .semnav:active{transform:scale(.92)}
   .semana-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;-webkit-overflow-scrolling:touch}
@@ -329,7 +334,8 @@ const DEF_HORARIOS = {
 const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
   obrigatorios:true, apenasProximoDia:true, limiteMeses:1,
   aviso:"", haeLabel:"HAE — Professor de Informática", hae:[],
-  turmaLetras:["A","B","C","D"], liberadoAte:"", periodos:[]};
+  turmaLetras:["A","B","C","D"], liberadoAte:"", periodos:[],
+  rodizio:{ativo:false, refSeg:"", refGrupo:"ini"}};
 
 /* ================= STATE ================= */
 const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, recentes:[], dataSel:null, tab:"hoje"};
@@ -377,6 +383,25 @@ function horarioLabel(turnoK, idx){
   if(h && h[idx]) return h[idx][0]+" – "+h[idx][1];
   return "";
 }
+/* rodízio de semanas: anos iniciais (Pré–5º) x anos finais (6º–9º) */
+function grupoDaTurma(turma){
+  const s=(""+turma).toLowerCase();
+  if(/pr[eé]/.test(s)) return "ini";
+  const m=s.match(/(\d+)/); if(!m) return null;
+  const n=+m[1];
+  if(n>=0 && n<=5) return "ini";
+  if(n>=6 && n<=9) return "fin";
+  return null;
+}
+function segDaSemana(dataStr){ const d=dateFromStr(dataStr), dow=(d.getDay()+6)%7; return addDias(dataStr,-dow); }
+function grupoDaSemana(dataStr){
+  const r=S.config && S.config.rodizio;
+  if(!r || !r.ativo || !r.refSeg) return null;
+  const semanas=Math.round(diffDias(r.refSeg, segDaSemana(dataStr))/7);
+  const par=((semanas%2)+2)%2, g=r.refGrupo||"ini";
+  return par===0 ? g : (g==="ini"?"fin":"ini");
+}
+function nomeGrupo(g){ return g==="ini" ? "Anos Iniciais (Pré–5º)" : (g==="fin" ? "Anos Finais (6º–9º)" : ""); }
 /* período (recesso/férias): dia dentro de um intervalo configurado */
 function periodoDoDia(dataStr){
   const arr=(S.config && S.config.periodos) || [];
@@ -414,6 +439,7 @@ async function carregarBase(){
     if(!S.config.turmaLetras) S.config.turmaLetras = ["A","B","C","D"];
     if(!S.config.liberadoAte) S.config.liberadoAte = fimDoMes(hojeStr());
     if(!S.config.periodos) S.config.periodos = [];
+    if(!S.config.rodizio) S.config.rodizio = {ativo:false, refSeg:"", refGrupo:"ini"};
   }
   S.professores = prof || {};
   S.disciplinas = disc || [];
@@ -650,13 +676,15 @@ function contarDisponiveis(dataStr){
   });
   return {tot,disp};
 }
-var _hojeModo="dia";  /* dia | semana */
+var _hojeModo="dia";  /* dia | semana (semana é só do admin) */
 function viewHoje(){
-  const modoTop=`<div class="rel-tools"><div class="chips">
+  const adm=S.user.admin;
+  if(!adm) _hojeModo="dia";
+  const modoTop = adm ? `<div class="rel-tools"><div class="chips">
       <button class="chip ${_hojeModo==="dia"?"on":""}" data-act="hoje-modo" data-v="dia">📅 Dia</button>
       <button class="chip ${_hojeModo==="semana"?"on":""}" data-act="hoje-modo" data-v="semana">🗓️ Semana</button>
-    </div></div>`;
-  if(_hojeModo==="semana") return viewSemana(modoTop);
+    </div></div>` : "";
+  if(adm && _hojeModo==="semana") return viewSemana(modoTop);
   const data=S.dataSel, hoje=hojeStr();
   const ate=(S.config.liberadoAte && S.config.liberadoAte>=hoje) ? S.config.liberadoAte : fimDoMes(hoje);
   const nDias=Math.min(62, Math.max(1, diffDias(hoje,ate)+1));
@@ -677,6 +705,8 @@ function viewHoje(){
     ? `<span class="livrebadge" style="background:color-mix(in srgb,${per.cor||"#0ea3a3"} 16%,transparent);color:${per.cor||"#0ea3a3"}">${esc(per.rotulo||"Sem aula")}</span>`
     : `<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
   h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
+  const gsem=grupoDaSemana(data);
+  if(gsem) h+=`<div class="grupobanner ${gsem}">🔁 Semana dos ${esc(nomeGrupo(gsem))}</div>`;
   h+=lembreteHTML();
   if(per){
     const ico=/f[ée]rias/i.test(per.rotulo||"")?"🏖️":"🌴";
@@ -706,7 +736,7 @@ function viewHoje(){
         body+=`<button class="slotcard lock" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">🔒</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo||"Indisponível")}</div><div class="sc-s">${S.user.admin?"toque para liberar":"bloqueado"}</div></div>${meta}</button>`;
       }else{
         const minha=sanId(r.profId)===sanId(S.user.id);
-        body+=`<button class="slotcard ${minha?"mine":"busy"}" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">${minha?"👤":"📘"}</div><div class="sc-m"><div class="sc-t">${esc(r.turma||"")}</div><div class="sc-s">${esc(r.profNome||"")}${r.disciplina?" · "+esc(r.disciplina):""}</div></div>${meta}</button>`;
+        body+=`<button class="slotcard ${minha?"mine":"busy"}${r.excecao?" exc":""}" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">${r.excecao?"⚠️":(minha?"👤":"📘")}</div><div class="sc-m"><div class="sc-t">${esc(r.turma||"")}</div><div class="sc-s">${r.excecao?"⚠️ exceção · ":""}${esc(r.profNome||"")}${r.disciplina?" · "+esc(r.disciplina):""}</div></div>${meta}</button>`;
       }
     }
     body+="</div>";
@@ -972,15 +1002,21 @@ function sheetAgendar(turnoK,aula){
 async function salvarAgenda(){
   const ano=_form.turma, disc=_form.disc, turnoK=_form.turnoK, aula=_form.aula;
   const turma = ano ? (ano + (_form.letra ? " "+_form.letra : "")) : null;
-  const tema=($("fTema")?$("fTema").value.trim():""), obj=($("fObj")?$("fObj").value.trim():"");
+  const tema=($("fTema")?$("fTema").value.trim():(_form.tema||"")), obj=($("fObj")?$("fObj").value.trim():(_form.obj||""));
   if(!ano) return toast("Escolha a turma.");
   if((S.config.turmaLetras||[]).length && !_form.letra) return toast("Escolha a letra da turma (A, B, C…).");
   if(!disc) return toast("Escolha a disciplina.");
   if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
+  // rodízio: professor só agenda na semana do grupo da turma; fora disso, exige exceção
+  if(!S.user.admin && !_form.excecao){
+    const sg=grupoDaSemana(S.dataSel), tg=grupoDaTurma(turma);
+    if(sg && tg && sg!==tg){ _form.tema=tema; _form.obj=obj; return sheetExcecao(sg,tg); }
+  }
   // checa se o slot continua livre (anti-choque simples)
   const atual = await fbGet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
   if(atual){ await recarregarReservas(); fecharSheet(); renderTab(); return toast("Ops! Esse horário acabou de ser reservado."); }
   const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
+  if(_form.excecao) reg.excecao=true;
   const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
   if(!ok) return toast("Não foi possível salvar. Tente de novo.");
   try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
@@ -991,7 +1027,20 @@ async function salvarAgenda(){
     S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
     fbSet("/recentes/"+sanId(S.user.id), S.recentes);
   }catch(e){} }
-  await recarregarReservas(); fecharSheet(); renderTab(); toast("Aula agendada! ✅");
+  await recarregarReservas(); fecharSheet(); renderTab(); toast(reg.excecao ? "Agendado como exceção. ⚠️" : "Aula agendada! ✅");
+}
+function sheetExcecao(sg,tg){
+  const turnoK=_form.turnoK, aula=_form.aula;
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><div class="t">Fora da sua semana</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    <div class="card" style="border-color:var(--amber);background:var(--amber-tint)">
+      <div style="font-weight:800;color:var(--amber)">⚠️ Esta semana é dos ${esc(nomeGrupo(sg))}</div>
+      <div style="font-size:14px;margin-top:6px;color:var(--text)">A turma escolhida é dos <b>${esc(nomeGrupo(tg))}</b>. O agendamento normal é só na semana do seu grupo.</div>
+    </div>
+    <p class="hint" style="text-align:left">Fale com a coordenação. Se já for uma <b>exceção autorizada</b>, confirme abaixo — a reserva ficará <b>marcada como exceção</b>.</p>
+    <button class="btn primary" data-act="conf-excecao">⚠️ Marcar como exceção autorizada</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
 }
 
 /* ver / excluir reserva */
@@ -1227,7 +1276,7 @@ function telaProfessores(){
   if(!keys.length) list+=`<div class="empty" style="padding:20px">Nenhum professor ainda.</div>`;
   keys.forEach(k=>{ const p=S.professores[k];
     list+=`<div class="rowitem"><div class="main"><div class="l1">${esc(p.nome)} ${p.admin?'<span class="tag">admin</span>':''}${p.senha?'':' <span class="tag" style="background:var(--amber-tint);color:var(--amber)">sem senha</span>'}</div><div class="l2">ID: ${esc(p.id)}</div></div>
-      ${p.senha?`<button class="minibtn" data-act="reset-senha" data-k="${esc(k)}">Resetar senha</button>`:''}
+      ${k!==sanId(S.user.id)?`<button class="minibtn" data-act="reset-senha" data-k="${esc(k)}">Resetar senha</button>`:''}
       <button class="minibtn" data-act="del-prof" data-k="${esc(k)}">Excluir</button></div>`; });
   list+=`</div>`;
   openSheet(`<div class="grab"></div>
@@ -1392,6 +1441,14 @@ function telaOpcoes(){
       <button class="minibtn" data-act="liberar-mes" data-off="-1">− mês</button>
       <button class="minibtn acc" data-act="liberar-mes" data-off="1" style="flex:1">Liberar próximo mês ▶</button>
     </div>
+    <label class="fld">🔁 Rodízio de semanas (Iniciais × Finais)</label>
+    <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
+      <input type="checkbox" id="oRodizio" ${(c.rodizio&&c.rodizio.ativo)?"checked":""} style="width:20px;height:20px"> Ativar (professor só agenda na semana do grupo dele)</label>
+    <div class="chips" style="margin-top:6px">
+      <button class="chip ${(c.rodizio&&c.rodizio.refGrupo==="fin")?"":"on"}" data-act="rodizio-grupo" data-v="ini">Esta semana: Iniciais (Pré–5º)</button>
+      <button class="chip ${(c.rodizio&&c.rodizio.refGrupo==="fin")?"on":""}" data-act="rodizio-grupo" data-v="fin">Esta semana: Finais (6º–9º)</button>
+    </div>
+    <p class="hint" style="text-align:left">Alterna sozinho a cada semana. Fora da semana do grupo, o professor só agenda marcando como <b>exceção autorizada</b>.</p>
     <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
     <textarea id="oAviso" class="input" placeholder="Ex.: Sala em manutenção na sexta. Agendem com atenção!">${esc(c.aviso||"")}</textarea>
     <div style="height:16px"></div>
@@ -1403,7 +1460,12 @@ async function salvarOpcoes(){
   S.config.obrigatorios=$("oObr").checked;
   S.config.apenasProximoDia=$("oProx").checked;
   S.config.aviso=($("oAviso")?$("oAviso").value.trim():"");
+  const rodAtivo=$("oRodizio")?$("oRodizio").checked:false;
+  let rodGrupo=(S.config.rodizio&&S.config.rodizio.refGrupo)||"ini";
+  const gsel=document.querySelector('[data-act="rodizio-grupo"].on'); if(gsel) rodGrupo=gsel.dataset.v;
+  S.config.rodizio={ativo:rodAtivo, refSeg:segDaSemana(hojeStr()), refGrupo:rodGrupo};
   await fbUpdate("/config",{appNome:S.config.appNome,escolaNome:S.config.escolaNome,obrigatorios:S.config.obrigatorios,apenasProximoDia:S.config.apenasProximoDia,aviso:S.config.aviso});
+  await fbSet("/config/rodizio", S.config.rodizio);
   try{ localStorage.removeItem("agenda_aviso_visto"); }catch(e){}
   fecharSheet(); desenharShell(); toast("Configurações salvas! 💾");
 }
@@ -1448,6 +1510,8 @@ document.addEventListener("click", async (ev)=>{
     if(a==="excluir") return excluirReserva(t,i);
     if(a==="salvar-edicao") return salvarEdicao();
     if(a==="salvar-agenda") return salvarAgenda();
+    if(a==="conf-excecao"){ _form.excecao=true; return salvarAgenda(); }
+    if(a==="rodizio-grupo"){ document.querySelectorAll('[data-act="rodizio-grupo"]').forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
