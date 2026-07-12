@@ -328,6 +328,12 @@ const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="
 async function _fbFetch(path, opts){
   let r = await fetch(url(path), opts);
   if((r.status===401||r.status===403) && await authRefresh()){ r = await fetch(url(path), opts); }
+  // Após gravar em /reservas, atualiza um "marcador" leve (poucos bytes). O poll lê só
+  // esse marcador e só baixa a agenda inteira quando ele muda -> economiza banda/cota.
+  if(r.ok && opts && opts.method && opts.method!=="GET" && path.indexOf("/reservas")===0){
+    S._lwSeen=Date.now();
+    try{ fetch(url("/config/reservasLastWrite"), {method:"PUT", body:JSON.stringify(S._lwSeen)}); }catch(e){}
+  }
   return r;
 }
 async function fbGetRaw(path){
@@ -798,6 +804,7 @@ function _sigReservas(){ try{ return JSON.stringify(S.reservas); }catch(e){ retu
 async function abrirApp(){
   S.tab="hoje";
   await recarregarReservas();
+  try{ S._lwSeen = await fbGet("/config/reservasLastWrite"); }catch(e){ S._lwSeen=null; }
   S.dataSel = primeiroDiaAgendavel();
   try{ S.recentes = (await fbGet("/recentes/"+sanId(S.user.id))) || []; }catch(e){ S.recentes=[]; }
   S._ocultos={}; try{ await carregarOcultos(S.user.id); }catch(e){}
@@ -813,6 +820,10 @@ async function abrirApp(){
     if(document.hidden) return;
     if($("modal") && $("modal").innerHTML) return;
     if(authAtivo() && S.auth.expira < Date.now()+180000){ try{ await authRefresh(); }catch(e){} }
+    // lê só o marcador (poucos bytes); só baixa a agenda inteira se algo mudou
+    const lw = await fbGet("/config/reservasLastWrite");
+    if(lw!=null && lw===S._lwSeen) return;
+    S._lwSeen = lw;
     const antes=_sigReservas(); await recarregarReservas();
     if(_sigReservas()!==antes && (S.tab==="hoje"||S.tab==="proximos")) renderTab();
   }, 30000);
