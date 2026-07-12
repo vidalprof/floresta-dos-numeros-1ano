@@ -293,11 +293,27 @@ function somAcerto(){ tocar([{f:660,d:0.12},{f:880,d:0.16}]); }
 function somErro(){ tocar([{f:200,d:0.18,tipo:'square'}]); }
 function somFanfarra(){ tocar([{f:523,d:0.14},{f:659,d:0.14},{f:784,d:0.14},{f:1047,d:0.30}]); }
 function somClique(){ tocar([{f:440,d:0.06}]); }
-function falar(texto){ if(!SOM_LIGADO)return; if(!('speechSynthesis' in window))return;
-  try{ window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(texto); u.lang='pt-BR'; u.rate=0.9; u.pitch=1.05;
-    var vs=window.speechSynthesis.getVoices(); for(var i=0;i<vs.length;i++){ if(/pt/i.test(vs[i].lang)){u.voice=vs[i];break;} }
+/* ===== VOZ (voz Antonio gravada -> audio/<chave>.mp3, ZERO dependencia do navegador) =====
+   DOSE DE VOZ por faixa etaria (ver MANUAL): 3o ano = "med" -> narra a PERGUNTA
+   automaticamente; as explicacoes ficam escritas na tela (a crianca ja le).
+   FAIXA: peq = Pre-2o (narra tudo) | med = 3o-5o | gde = 6o-9o (voz curta). */
+var FAIXA="med";
+var VOZ_QUESTAO=(FAIXA==="peq"||FAIXA==="med");   /* narra a pergunta sozinha p/ os mais novos */
+/* falas com audio Antonio gravado (chave djb2 do texto). Se a chave existe aqui, toca o mp3; senao, cai na voz do navegador. */
+var AUDIO_TXT={"vli5t3d":1,"v11iqgxa":1,"vvrs3qr":1,"v1uk7r72":1,"vd8o1ir":1,"v1xbve9c":1,"vnyymci":1,"v1o3e96a":1,"v377czr":1,"v1jv4xju":1,"vspiuwd":1,"vnvqaqo":1,"vl4quhb":1,"vhi914":1,"v57vna1":1,"v170g7bs":1,"v114gcp0":1,"vc2sso2":1,"v1t4w8aw":1,"vu36e6a":1,"vadpsvr":1,"v2qdxpo":1,"v77ha91":1,"v1s6lt07":1,"v77hb7v":1,"v1s6lw4p":1,"v77hfi4":1,"v1m5ps51":1,"voriaax":1,"v1m5qjva":1,"vorjvc0":1,"v1m5sb4j":1,"v1xnso5w":1,"vs037mj":1,"vpsla50":1,"v15l1la5":1,"v13djnsm":1,"v1gyi1g8":1,"vl5tfm2":1,"v1j5zx99":1,"v1ujgcl3":1,"v1si5p1p":1,"v1b3cgy6":1,"v173e20u":1,"v1fghlvh":1,"v1wqybol":1,"v1e78l0m":1,"v1mwqsjn":1,"vhx9kx5":1,"vrm9826":1,"vuulmyg":1,"vxw5fbp":1,"vzkxivl":1,"vrbhyhk":1,"vm6eopi":1,"vh1bexg":1,"v1fq8tgi":1,"vsry9so":1,"vx04tmu":1,"vjs1i0d":1,"v1qrcd5g":1,"v1hh0qsa":1,"v1ct541h":1,"v1roi1rb":1,"v2kzfuf":1,"v262j7p":1,"vxa70rf":1,"vdtur3y":1,"v2u7fqi":1,"v1uhvafm":1,"v6jfdn0":1,"v73cwf9":1,"vet0ed7":1,"v9b9v2b":1,"v1s65i9q":1,"v1dgg7ec":1,"v19pvkku":1,"v1sz5c5m":1,"vlryj2l":1,"vyq1g8t":1,"v9c25vb":1,"v1khdns4":1,"v1njq9nn":1,"v2p2x8":1,"vmnyuz1":1,"v65lxzd":1,"v1pvqmuy":1,"vybinkx":1,"vw29ngr":1,"v1009qg2":1,"vval8h5":1,"v3i8lnx":1,"vx5w4zs":1,"v3py8f8":1,"v1kyp8lh":1};
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){ var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,""); var h=5381,i; for(i=0;i<s.length;i++){ h=((h*33)+s.charCodeAt(i))>>>0; } return h===0?"v0":("v"+h.toString(36)); }
+function pararFala(){ if(_falaAudio){ try{ _falaAudio.pause(); _falaAudio.src=""; }catch(e){} _falaAudio=null; } if('speechSynthesis' in window){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
+function falar(texto){ _ultimaFala=texto; if(!SOM_LIGADO)return; pararFala();
+  /* toca o audio gravado (voz masculina Antonio) se existir p/ este texto */
+  try{ var kv=_chaveVoz(texto); if(AUDIO_TXT&&AUDIO_TXT[kv]){ var a=new Audio("audio/"+kv+".mp3"); _falaAudio=a; a.play(); return; } }catch(e){}
+  /* fallback: voz do navegador SO quando nao ha audio gravado (nunca deixa mudo total) */
+  if(!('speechSynthesis' in window))return;
+  try{ window.speechSynthesis.cancel(); var u=new SpeechSynthesisUtterance(texto); u.lang='pt-BR'; u.rate=0.9; u.pitch=1.0;
+    var vs=window.speechSynthesis.getVoices(),i; for(i=0;i<vs.length;i++){ if(/pt/i.test(vs[i].lang)){u.voice=vs[i];break;} }
     window.speechSynthesis.speak(u); }catch(e){} }
-function toggleSom(){ SOM_LIGADO=!SOM_LIGADO; if(!SOM_LIGADO&&'speechSynthesis' in window){try{window.speechSynthesis.cancel();}catch(e){}}
+function repetirFala(){ if(_ultimaFala){ pararFala(); falar(_ultimaFala); } }
+function toggleSom(){ SOM_LIGADO=!SOM_LIGADO; if(!SOM_LIGADO){ pararFala(); }
   var b=document.getElementById('btnSom'); if(b)b.innerHTML=SOM_LIGADO?'🔊':'🔇'; if(SOM_LIGADO)somClique(); }
 
 /* ===== CONFETE ===== */
@@ -490,6 +506,7 @@ function svgNumeroFase(n){ return '<svg viewBox="0 0 40 40" width="34" height="3
 function svgEstrela(){ return '<svg viewBox="0 0 20 20" width="14" height="14" style="vertical-align:middle" xmlns="http://www.w3.org/2000/svg"><path d="M10 1 l2.5 5.5 l6 .5 l-4.5 4 l1.4 5.8 l-5.4 -3.2 l-5.4 3.2 l1.4 -5.8 l-4.5 -4 l6 -.5 z" fill="#ffd23f" stroke="#d4ad00" stroke-width="0.8"/></svg>'; }
 
 function telaMenu(){
+  pararFala();
   faseAtual=null;
   var html="";
   html+='<h1>🗺️ Reino dos Números</h1><h2>A Aventura Matemática!</h2>';
@@ -565,6 +582,8 @@ function mostrarDesafio(){
   card.innerHTML=html;
   var ri=document.getElementById("respInput");
   if(ri){ ri.onkeydown=function(e){ if(e.keyCode===13) respDigite(); }; ri.focus(); }
+  /* DOSE DE VOZ: narra a pergunta sozinha (3o ano = med). A explicacao fica escrita. */
+  if(VOZ_QUESTAO && dd.falar){ falar(dd.falar); }
 }
 function finalizarDesafio(ok, dd){
   var nav=document.getElementById("navarea"), ultimo=(indiceAtual===FASES[faseAtual].desafios.length-1);
@@ -575,8 +594,8 @@ function finalizarDesafio(ok, dd){
 function respEscolha(val, idx){
   if(respondeu)return; respondeu=true;
   var fase=FASES[faseAtual], dd=fase.desafios[indiceAtual], fb=document.getElementById("fb"), btn=document.getElementById("opt"+idx), pts=fase.bonus?15:10;
-  if(val===dd.certa){ registrar(faseAtual,true); addPontos(pts); btn.className="opt correct"; fb.className="feedback ok"; fb.innerHTML="🎉 Muito bem! "+dd.explica; somAcerto(); confete(70); comemorar(); }
-  else { registrar(faseAtual,false); btn.className="opt wrong"; fb.className="feedback no"; fb.innerHTML="🤔 Quase! O certo é "+dd.certa+". "+dd.explica; somErro();
+  if(val===dd.certa){ registrar(faseAtual,true); addPontos(pts); btn.className="opt correct"; fb.className="feedback ok"; fb.innerHTML="🎉 Muito bem! "+dd.explica; somAcerto(); confete(70); comemorar(); if(VOZ_QUESTAO)falar("Muito bem!"); }
+  else { registrar(faseAtual,false); btn.className="opt wrong"; fb.className="feedback no"; fb.innerHTML="🤔 Quase! O certo é "+dd.certa+". "+dd.explica; somErro(); if(VOZ_QUESTAO)falar("Quase!");
     var jaTem=false; for(var z=0;z<ERROS.length;z++){if(ERROS[z].destaque===dd.destaque&&ERROS[z].certa===dd.certa)jaTem=true;}
     if(!jaTem&&!treinoAtivo) ERROS.push(dd);
     for(var i=0;i<dd.opcoes.length;i++){ if(dd.opcoes[i]===dd.certa) document.getElementById("opt"+i).className="opt correct"; } }
@@ -589,13 +608,13 @@ function respDigite(){
   if(bruto==="") { ri.focus(); return; }
   respondeu=true;
   var val=parseInt(bruto,10), fb=document.getElementById("fb"), pts=fase.bonus?15:10;
-  if(val===dd.resposta){ registrar(faseAtual,true); addPontos(pts); fb.className="feedback ok"; fb.innerHTML="🎉 Isso! "+dd.explica; somAcerto(); confete(70); comemorar(); ri.style.borderColor="#27ae60"; }
-  else { registrar(faseAtual,false); fb.className="feedback no"; fb.innerHTML="🤔 Quase! A resposta é "+fmt(dd.resposta)+". "+dd.explica; somErro(); ri.style.borderColor="#e74c3c";
+  if(val===dd.resposta){ registrar(faseAtual,true); addPontos(pts); fb.className="feedback ok"; fb.innerHTML="🎉 Isso! "+dd.explica; somAcerto(); confete(70); comemorar(); ri.style.borderColor="#27ae60"; if(VOZ_QUESTAO)falar("Isso!"); }
+  else { registrar(faseAtual,false); fb.className="feedback no"; fb.innerHTML="🤔 Quase! A resposta é "+fmt(dd.resposta)+". "+dd.explica; somErro(); ri.style.borderColor="#e74c3c"; if(VOZ_QUESTAO)falar("Quase!");
     var jaTem=false; for(var z=0;z<ERROS.length;z++){if(ERROS[z].destaque===dd.destaque&&ERROS[z].resposta===dd.resposta)jaTem=true;}
     if(!jaTem&&!treinoAtivo) ERROS.push(dd); }
   finalizarDesafio(val===dd.resposta, dd);
 }
-function proximo(){ indiceAtual++; mostrarDesafio(); }
+function proximo(){ pararFala(); indiceAtual++; mostrarDesafio(); }
 
 /* ===== TREINO DOS ERROS ===== */
 function iniciarTreino(){ if(ERROS.length===0)return; treinoAtivo=true; somClique();
@@ -610,6 +629,7 @@ function fimTreino(){ treinoAtivo=false;
 
 /* ===== TELA FINAL DA FASE ===== */
 function telaFinal(){
+  pararFala();
   var fase=FASES[faseAtual]; concluidas[faseAtual]=true; statFase(faseAtual).feita=true; salvar();
   var s=STATS[faseAtual], total=s.acertos+s.erros, pct=total?Math.round(s.acertos/total*100):0;
   var html='<div class="trophy">'+(pct>=70?'🎉':'💪')+'</div>';
