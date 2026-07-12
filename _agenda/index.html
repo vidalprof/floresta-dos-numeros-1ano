@@ -480,7 +480,7 @@ function desenharShell(){
     <div id="view" class="view"></div>
     <nav class="bottomnav"><div class="wrap">
       <button class="tab" data-tab="hoje"><span class="ic">🗓️</span>Hoje</button>
-      <button class="tab" data-tab="proximos"><span class="ic">📆</span>Próximos</button>
+      <button class="tab" data-tab="proximos"><span class="ic">📆</span>${adm?"Próximos":"Minhas aulas"}</button>
       <button class="tab" data-tab="insights"><span class="ic">📊</span>Insights</button>
     </div></nav>
   </div>`;
@@ -575,34 +575,43 @@ function viewHoje(){
   const onEl=document.querySelector(".daychip.on"); if(onEl&&onEl.scrollIntoView){ try{ onEl.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
 }
 
-/* ================= VIEW: PRÓXIMOS ================= */
+/* ================= VIEW: MINHAS AULAS / PRÓXIMOS ================= */
+var _minhasFiltro="prox";  /* prox | todas */
 function viewProximos(){
-  const hoje=hojeStr();
+  const hoje=hojeStr(), admin=S.user.admin;
   const lista=[];
   Object.keys(S.reservas).sort().forEach(data=>{
-    if(data<hoje) return;
+    if(_minhasFiltro==="prox" && data<hoje) return;
     TURNOS.forEach(t=>{
       const rt=S.reservas[data][t.k]; if(!rt) return;
       Object.keys(rt).forEach(ak=>{
         const r=rt[ak]; if(!r||r.bloqueado) return;
         const minha = sanId(r.profId)===sanId(S.user.id);
-        if(S.user.admin || minha) lista.push({data,turno:t,aula:+ak.replace("a",""),r,minha});
+        if(admin || minha) lista.push({data,turno:t,aula:+ak.replace("a",""),r,minha});
       });
     });
   });
   lista.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(a.turno.k<b.turno.k?-1:1)||a.aula-b.aula);
-  let h=`<div class="sectitle">${S.user.admin?"Próximas reservas (todos)":"Minhas próximas aulas"}</div>`;
-  if(!lista.length){ h+=`<div class="empty"><span class="big">📭</span>Nenhuma aula agendada por aqui.<br>Vá em <b>Hoje</b> e toque num horário livre.</div>`; }
+  const titulo = admin ? "Reservas" : "Minhas aulas";
+  let h=`<div class="rel-tools"><div class="chips">
+      <button class="chip ${_minhasFiltro==="prox"?"on":""}" data-act="minhas-filtro" data-v="prox">Próximas</button>
+      <button class="chip ${_minhasFiltro==="todas"?"on":""}" data-act="minhas-filtro" data-v="todas">Todas</button>
+    </div></div>`;
+  h+=`<div class="sectitle">${titulo} — ${lista.length} aula${lista.length===1?"":"s"}</div>`;
+  if(!lista.length){ h+=`<div class="empty"><span class="big">📭</span>${admin?"Nenhuma reserva aqui.":"Você ainda não tem aulas agendadas."}<br>Vá em <b>Hoje</b> e toque num horário livre.</div>`; }
   else{
-    h+=`<div class="card" style="padding:4px 14px">`;
-    lista.slice(0,60).forEach(it=>{
+    h+=`<div id="relprint"><div class="rel-cab"><b>${esc(admin?(S.config.escolaNome||S.config.appNome):S.user.nome)}</b><div>${esc(titulo)} · ${lista.length} aula${lista.length===1?"":"s"}</div></div><div class="card" style="padding:4px 14px">`;
+    lista.slice(0,200).forEach(it=>{
       const hora=horarioLabel(it.turno.k,it.aula-1);
-      h+=`<div class="rowitem" data-act="verres" data-data="${it.data}" data-t="${it.turno.k}" data-i="${it.aula}">
+      const passou = it.data<hoje;
+      h+=`<div class="rowitem" data-act="verres" data-data="${it.data}" data-t="${it.turno.k}" data-i="${it.aula}"${passou?' style="opacity:.6"':''}>
         <div class="main"><div class="l1">${esc(it.r.turma)} · ${it.turno.n} ${it.aula}ª</div>
-        <div class="l2">${esc(fmtDia(it.data))} (${esc(fmtSem(it.data).replace("-feira",""))})${hora?" · "+esc(hora):""}${S.user.admin&&!it.minha?" · "+esc(it.r.profNome):""}</div></div>
+        <div class="l2">${esc(fmtDia(it.data))} (${esc(fmtSem(it.data).replace("-feira",""))})${hora?" · "+esc(hora):""}${admin&&!it.minha?" · "+esc(it.r.profNome):""}</div></div>
         <div class="tag">${esc(it.r.disciplina||"")}</div></div>`;
     });
-    h+=`</div>`;
+    h+=`</div></div>
+      <button class="btn primary" data-act="imprimir" style="margin-top:10px">🖨️ Imprimir ${admin?"lista":"minha agenda"}</button>
+      <div style="height:8px"></div>`;
   }
   $("view").innerHTML=h;
 }
@@ -1186,6 +1195,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="add-periodo") return addPeriodo();
     if(a==="del-periodo") return delPeriodo(+el.dataset.i);
     if(a==="rel-per"){ _relPeriodo=el.dataset.v; return viewInsights(); }
+    if(a==="minhas-filtro"){ _minhasFiltro=el.dataset.v; return viewProximos(); }
     if(a==="imprimir"){ try{ window.print(); }catch(e){} return; }
     if(a==="add-prof") return addProf();
     if(a==="del-prof") return delProf(el.dataset.k);
