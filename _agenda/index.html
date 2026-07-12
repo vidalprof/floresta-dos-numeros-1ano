@@ -310,7 +310,10 @@
 </style>
 </head>
 <body>
-  <div id="root"></div>
+  <div id="root"><div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#8a90a3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+    <div style="font-size:44px">🗓️</div>
+    <div style="font-weight:700">Carregando…</div>
+  </div></div>
   <div id="modal"></div>
   <div id="toast" class="hidden" role="status" aria-live="polite"></div>
 
@@ -326,9 +329,10 @@ let _acFalhou=false;
 async function _acHeader(){
   if(_acFalhou || !window._acToken) return {};
   try{
-    const t = await Promise.race([ window._acToken(), new Promise(function(res){ setTimeout(function(){res(null);}, 2500); }) ]);
-    if(t) return {"X-Firebase-AppCheck": t};
-    _acFalhou=true;
+    const t = await Promise.race([ window._acToken(), new Promise(function(res){ setTimeout(function(){res("__TO__");}, 2500); }) ]);
+    if(t==="__TO__"){ _acFalhou=true; return {}; }  // demorou demais (ex.: reCAPTCHA bloqueado) -> desiste na sessão
+    if(t) return {"X-Firebase-AppCheck": t};        // token pronto
+    // token vazio agora (ainda cunhando): NÃO desiste — tenta de novo na próxima chamada
   }catch(e){ _acFalhou=true; }
   return {};
 }
@@ -344,17 +348,29 @@ const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="
    sem isso, uma queda de rede parece "banco vazio" e assusta o usuário. */
 /* Faz a chamada ao banco; se o crachá venceu (401/403), renova UMA vez e repete.
    Cobre leitura e gravação — evita "agenda vazia" e "não salvou" por token expirado. */
+/* fetch com LIMITE DE TEMPO: se a rede estagnar (conectada mas pendurada), aborta e
+   vira falha "limpa" — evita a tela branca congelada no PWA. */
+async function _fetchT(u, opts, ms){
+  let ctrl=null, t=null;
+  try{ ctrl = new AbortController(); t = setTimeout(function(){ try{ctrl.abort();}catch(e){} }, ms||9000); }catch(e){ ctrl=null; }
+  try{ return await fetch(u, ctrl?Object.assign({}, opts||{}, {signal:ctrl.signal}):(opts||{})); }
+  finally{ if(t) clearTimeout(t); }
+}
 async function _fbFetch(path, opts){
   opts = opts || {};
   const ac = await _acHeader();
   const withAC = (o)=> Object.assign({}, o, {headers: Object.assign({}, o.headers||{}, ac)});
-  let r = await fetch(url(path), withAC(opts));
-  if((r.status===401||r.status===403) && await authRefresh()){ r = await fetch(url(path), withAC(opts)); }
+  let r;
+  try{ r = await _fetchT(url(path), withAC(opts)); }
+  catch(e){ return {ok:false, status:0}; }   // timeout/rede -> falha limpa (não pendura)
+  if((r.status===401||r.status===403) && await authRefresh()){
+    try{ r = await _fetchT(url(path), withAC(opts)); }catch(e){ return {ok:false, status:0}; }
+  }
   // Após gravar em /reservas, atualiza um "marcador" leve (poucos bytes). O poll lê só
   // esse marcador e só baixa a agenda inteira quando ele muda -> economiza banda/cota.
   if(r.ok && opts.method && opts.method!=="GET" && path.indexOf("/reservas")===0){
     S._lwSeen=Date.now();
-    try{ fetch(url("/config/reservasLastWrite"), {method:"PUT", body:JSON.stringify(S._lwSeen), headers:ac}); }catch(e){}
+    try{ _fetchT(url("/config/reservasLastWrite"), {method:"PUT", body:JSON.stringify(S._lwSeen), headers:ac}).catch(function(){}); }catch(e){}
   }
   return r;
 }
@@ -382,9 +398,10 @@ function _guardaAuth(idToken, refreshToken, expiresIn){
 }
 function authAtivo(){ return !!(S.auth && S.auth.idToken); }
 async function _authIdentity(kind, id, senha, ver){
-  const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:"+kind+"?key="+FB_API_KEY,
+  let r; try{ r = await _fetchT("https://identitytoolkit.googleapis.com/v1/accounts:"+kind+"?key="+FB_API_KEY,
     {method:"POST", headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
-     body: JSON.stringify({email:_authEmail(id, ver), password:""+senha, returnSecureToken:true})});
+     body: JSON.stringify({email:_authEmail(id, ver), password:""+senha, returnSecureToken:true})}); }
+  catch(e){ throw new Error("REDE"); }
   const j = await r.json().catch(function(){return {};});
   if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
   _guardaAuth(j.idToken, j.refreshToken, j.expiresIn); return j;
@@ -396,9 +413,10 @@ async function authCriar(id, senha, ver){   // cria; se já existir, apenas entr
 async function authRefresh(){          // renova o crachá a partir do refresh token salvo
   let rt = (S.auth&&S.auth.refreshToken); if(!rt){ try{ rt=localStorage.getItem("agenda_rt"); }catch(e){} }
   if(!rt) return false;
-  const r = await fetch("https://securetoken.googleapis.com/v1/token?key="+FB_API_KEY,
+  let r; try{ r = await _fetchT("https://securetoken.googleapis.com/v1/token?key="+FB_API_KEY,
     {method:"POST", headers:Object.assign({"Content-Type":"application/x-www-form-urlencoded"}, await _acHeader()),
-     body: "grant_type=refresh_token&refresh_token="+encodeURIComponent(rt)});
+     body: "grant_type=refresh_token&refresh_token="+encodeURIComponent(rt)}); }
+  catch(e){ return false; }
   const j = await r.json().catch(function(){return {};});
   if(!r.ok) return false;
   _guardaAuth(j.id_token, j.refresh_token, j.expires_in); return true;
@@ -563,7 +581,7 @@ async function init(){
     let tok=false; try{ tok=await authRefresh(); }catch(e){}
     // Sem crachá válido, as regras fechadas não deixam ler a agenda -> pede a senha de novo
     // (em vez de abrir uma agenda vazia sem explicação).
-    if(!tok){ _loginPend=S.professores[saved]; telaSenha(); return; }
+    if(!tok){ _sessaoExpirou=true; _loginPend=S.professores[saved]; telaSenha(); return; }
     abrirApp();
   }
   else telaLogin();
@@ -641,8 +659,9 @@ async function fazerBootstrap(){
 }
 
 /* ================= LOGIN ================= */
-var _loginPend=null;
+var _loginPend=null, _sessaoExpirou=false;
 function telaLogin(){
+  _sessaoExpirou=false;
   const nome = S.config ? S.config.appNome : "Agenda de Aulas";
   const escola = S.config ? S.config.escolaNome : "";
   $("root").innerHTML = `
@@ -673,11 +692,18 @@ async function fazerLogin(){
 }
 function telaSenha(){
   const p=_loginPend, novo=!p.fbAuth;
+  let sub;
+  if(_sessaoExpirou) sub="Sua sessão expirou — entre novamente";
+  else if(novo){
+    if(+p.authVer>1) sub="Crie uma nova senha (mínimo 6)";
+    else if(p.senha) sub="Atualizamos a segurança do login — crie sua senha de novo (pode ser a mesma)";
+    else sub="Primeiro acesso — crie a sua senha";
+  } else sub="Digite a sua senha";
   $("root").innerHTML = `
   <div class="authwrap">
     <div class="logo">🗓️</div>
     <h1>Olá, ${esc(p.nome.split(" ")[0])}!</h1>
-    <p class="sub">${novo?((+p.authVer>1)?"Crie uma nova senha (mínimo 6)":"Primeiro acesso — crie a sua senha"):"Digite a sua senha"}</p>
+    <p class="sub">${esc(sub)}</p>
     ${novo?`
       <label class="fld">Nova senha</label>
       <input id="sNova" type="password" data-pw class="input" placeholder="mínimo 6 caracteres" autocomplete="new-password">
@@ -708,9 +734,11 @@ async function loginCriar(){
   try{
     // O Firebase Auth é o portão: cria a conta (ou entra, se já existir com esta senha).
     try{ await authCriar(_loginPend.id, a, _loginPend.authVer); }
-    catch(e){
-      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message)) return toast("Esta conta já tem senha. Volte e entre, ou peça um reset ao administrador.");
-      if(/WEAK_PASSWORD/.test(e.message)) return toast("A senha precisa ter pelo menos 6 caracteres.");
+    catch(e){ const m=e.message||"";
+      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(m)) return toast("Esta conta já tem senha. Volte e entre, ou peça um reset ao administrador.");
+      if(/WEAK_PASSWORD/.test(m)) return toast("A senha precisa ter pelo menos 6 caracteres.");
+      if(/TOO_MANY_ATTEMPTS/.test(m)) return toast("Muitas tentativas. Aguarde um minuto e tente de novo.");
+      if(/RECAPTCHA|APP.?CHECK|Forbidden/i.test(m)) return toast("Não foi possível validar a segurança. Desative bloqueadores e tente de novo.");
       return toast("Sem conexão. Tente de novo.");
     }
     try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){}
@@ -727,8 +755,11 @@ async function loginEntrar(){
   try{
     // O Firebase Auth é o portão real (não há mais senha guardada no banco).
     try{ await _authIdentity("signInWithPassword", _loginPend.id, s, _loginPend.authVer); }
-    catch(e){
-      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|EMAIL_NOT_FOUND|MISSING_PASSWORD/.test(e.message)) return toast("Senha incorreta.");
+    catch(e){ const m=e.message||"";
+      if(/EMAIL_NOT_FOUND/.test(m)) return toast("Não encontramos sua conta. Peça um reset de senha ao administrador.");
+      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|MISSING_PASSWORD/.test(m)) return toast("Senha incorreta.");
+      if(/TOO_MANY_ATTEMPTS/.test(m)) return toast("Muitas tentativas. Aguarde um minuto e tente de novo.");
+      if(/RECAPTCHA|APP.?CHECK|Forbidden/i.test(m)) return toast("Não foi possível validar a segurança. Desative bloqueadores e tente de novo.");
       return toast("Sem conexão. Tente de novo.");
     }
     if(!_loginPend.fbAuth){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} }
@@ -799,9 +830,10 @@ async function trocarSenha(){
   try{
     // A senha vive só no Firebase Auth (não guardamos mais no banco).
     if(authAtivo()){
-      const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update?key="+FB_API_KEY,
+      let r; try{ r=await _fetchT("https://identitytoolkit.googleapis.com/v1/accounts:update?key="+FB_API_KEY,
         {method:"POST",headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
-         body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})});
+         body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})}); }
+      catch(e){ return toast("Não foi possível trocar a senha agora. Tente de novo."); }
       const j=await r.json().catch(function(){return {};});
       if(!r.ok) return toast("Não foi possível trocar a senha agora. Tente de novo.");
       if(j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
@@ -821,9 +853,10 @@ async function trocarSenha(){
 function primeiroDiaAgendavel(){
   const hoje=hojeStr();
   const limite=(S.config.liberadoAte && S.config.liberadoAte>=hoje)?S.config.liberadoAte:fimDoMes(hoje);
-  let d=S.config.apenasProximoDia?addDias(hoje,1):hoje;
+  const soProx = S.config.apenasProximoDia && !S.user.admin;  // admin pode agendar hoje
+  let d=soProx?addDias(hoje,1):hoje;
   for(let k=0;k<62;k++){ if(contarDisponiveis(d).tot>0) return d; if(d>=limite) break; d=addDias(d,1); }
-  return S.config.apenasProximoDia?addDias(hoje,1):hoje;
+  return soProx?addDias(hoje,1):hoje;
 }
 function _sigReservas(){ try{ return JSON.stringify(S.reservas); }catch(e){ return ""+Date.now(); } }
 async function abrirApp(){
@@ -837,8 +870,14 @@ async function abrirApp(){
   S._ocultos={}; try{ await carregarOcultos(S.user.id); }catch(e){}
   desenharShell();
   checarNotificacao();
-  if(!S._visBound){ S._visBound=true; document.addEventListener("visibilitychange", function(){
-    if(!document.hidden && S.user){ recarregarReservas().then(function(){ if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }); }
+  if(!S._visBound){ S._visBound=true; document.addEventListener("visibilitychange", async function(){
+    if(document.hidden || !S.user) return;
+    if($("modal") && $("modal").innerHTML) return;                 // não redesenha com uma janela aberta
+    const lw = await fbGet("/config/reservasLastWrite");           // lê só o marcador; só baixa tudo se mudou
+    if(lw!=null && lw===S._lwSeen) return;
+    S._lwSeen = lw;
+    await recarregarReservas();
+    if(S.tab==="hoje"||S.tab==="proximos") renderTab();
   }); }
   if(_pollTimer) clearInterval(_pollTimer);
   // Poll econômico: pausa quando o app não está visível, não redesenha com uma janela
@@ -1162,7 +1201,8 @@ async function abrirSlot(turnoK, aula){
   // livre
   const hoje=hojeStr();
   if(data<hoje) return toast("Não dá para agendar num dia que já passou.");
-  if(S.config.apenasProximoDia && data===hoje) return toast("Só é possível agendar a partir do próximo dia.");
+  // professor não agenda no mesmo dia; o admin pode (override)
+  if(!S.user.admin && S.config.apenasProximoDia && data===hoje) return toast("Só é possível agendar a partir do próximo dia.");
   if(!S.user.admin && S.config.liberadoAte && data>S.config.liberadoAte) return toast("Este período ainda não foi liberado pelo administrador.");
   if(S.user.admin) sheetEscolha(turnoK,aula);
   else sheetAgendar(turnoK,aula);
@@ -1421,7 +1461,8 @@ function sheetConfExcluir(turnoK,aula){
     <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
 }
 async function excluirReserva(turnoK,aula){
-  await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
+  const ok=await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
+  if(!ok){ toast("Não foi possível excluir. Tente de novo."); return; }
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Reserva excluída.");
 }
 var _editAlvo=null;
@@ -1483,7 +1524,8 @@ function exportarCSV(){
 
 /* bloquear / desbloquear (admin) */
 async function bloquearSlot(turnoK,aula,rotulo){
-  await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, {bloqueado:true, rotulo:(rotulo||"Indisponível"), byAdmin:S.user.nome, ts:Date.now()});
+  const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, {bloqueado:true, rotulo:(rotulo||"Indisponível"), byAdmin:S.user.nome, ts:Date.now()});
+  if(!ok){ toast("Não foi possível bloquear. Tente de novo."); return; }
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Horário bloqueado. 🔒");
 }
 function sheetBloqueio(turnoK,aula){
@@ -1494,7 +1536,8 @@ function sheetBloqueio(turnoK,aula){
     <button class="btn ghost" data-act="desbloquear" data-t="${turnoK}" data-i="${aula}">🔓 Liberar este horário</button>`);
 }
 async function desbloquearSlot(turnoK,aula){
-  await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
+  const ok=await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
+  if(!ok){ toast("Não foi possível liberar. Tente de novo."); return; }
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Horário liberado. 🔓");
 }
 

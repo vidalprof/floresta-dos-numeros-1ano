@@ -1,6 +1,6 @@
 /* Service Worker — app shell offline + HTML sempre fresco.
    Os dados (Firebase, outra origem) NUNCA são cacheados: passam direto pela rede. */
-const CACHE = "agenda-shell-v1";
+const CACHE = "agenda-shell-v2";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -22,12 +22,14 @@ self.addEventListener("fetch", (e) => {
   try { url = new URL(req.url); } catch (_) { return; }
   // Requisições de outra origem (Firebase, etc.): deixa a rede cuidar — não cacheia dados.
   if (url.origin !== location.origin) return;
-  // Navegação / HTML: rede primeiro (nunca fica velho); se offline, cai no cache.
+  // Navegação / HTML: rede primeiro (nunca fica velho); MAS com limite de tempo — se a
+  // rede estagnar (conectada e pendurada), cai no cache em vez de travar a tela branca.
   if (req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html")) {
+    const fromCache = () => caches.match(req).then((m) => m || caches.match("./index.html"));
+    const net = fetch(req).then((r) => { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); return r; });
+    const timeout = new Promise((res) => setTimeout(() => res(null), 4000));
     e.respondWith(
-      fetch(req)
-        .then((r) => { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); return r; })
-        .catch(() => caches.match(req).then((m) => m || caches.match("./index.html")))
+      Promise.race([net.catch(() => null), timeout]).then((r) => r || fromCache())
     );
     return;
   }
