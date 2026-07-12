@@ -178,6 +178,67 @@ não é defeito. O código tenta destravar no 1º gesto (inclui mover o mouse);
 em navegadores rígidos (Chrome novo) ainda exige o 1º clique/toque. O botão
 "Ouvir instruções" (piscando) é o "start" garantido.
 
+## 7. Agenda de Aulas (app do laboratório — `_agenda/`)
+
+App de **agendamento de aulas** do laboratório de informática (professor Marcos
+= admin; **sempre tratá-lo no masculino**, "o professor"/"o senhor").
+
+- **Onde mora:** `_agenda/index.html` (1 HTML autossuficiente) + `_agenda/sw.js`
+  (service worker/PWA) + `_agenda/manifest.json` + ícones.
+- **Repositório publicado:** `agenda-aulas` → no ar em
+  **https://vidalprof.github.io/agenda-aulas/**
+- **Como publicar:** commit/push na branch de trabalho e acione `atualizar.yml`
+  (`actions_run_trigger`) com `repo_name=agenda-aulas`, `source_dir=_agenda`,
+  **`ref` = a branch onde estão as mudanças** (o workflow dá checkout dessa ref).
+  Confirme `success` e devolva o link com `?v=N` (cache-busting).
+- **Testar sem publicar:** Firebase é **bloqueado no container**; renderize com o
+  Chromium headless injetando um **`window.fetch` mockado** (retornando config/
+  professores/reservas fake) antes do script do app — screenshot confirma o boot
+  sem tela branca. Valide o JS extraindo os `<script>` sem atributo + `node --check`.
+
+### Backend Firebase
+- **Projeto:** `atividades-educativas-16860`; RTDB
+  `atividades-educativas-16860-default-rtdb`; gaveta **`/agenda/vidal-ramos`**.
+- **Login:** Firebase Auth (REST). Matrícula → e-mail sintético
+  `<sanId>@vidalramos.agenda`; reset de senha usa versão (`-vN`, campo `authVer`).
+- **App Check:** reCAPTCHA v3, **modo observação** (NÃO enforced). Só ligar o
+  "enforce" DEPOIS de testar em PC real da escola (rede filtrada pode bloquear os
+  scripts do Google e trancar todo mundo). O `SECRET` do reCAPTCHA vive só no
+  console, **nunca no código** (só a *site key* pública fica no HTML).
+- **Robustez (já resolvida):** todo fetch tem prazo (`_fetchT` + `_corpoJson` para
+  o corpo), `localStorage` protegido no boot, service worker com timeout e que só
+  cacheia HTML 200 (portal cativo não vira "o app"). Isso curou o "travou tudo".
+
+### 🔒 ISOLAMENTO por dono (blindagem aplicada — jul/2026)
+As regras do RTDB **não são mais** `auth != null` aberto. Agora:
+- **Quem é admin** = estar em **`/agenda/vidal-ramos/admins/<uid> = true`**, um nó
+  **semeado À MÃO no console** (aba Dados). `/admins` tem `.read/.write:false` (só o
+  console grava; as regras sempre conseguem lê-lo). O app **mostra o uid** do admin
+  em **Minha conta** (linha "Seu identificador (uid)", botão Copiar) — só admin vê.
+- **Cada reserva carrega `ownerUid`** (uid do autor, carimbado em `salvarAgenda`;
+  a edição preserva via `Object.assign` do registro base). Regra de `/reservas/
+  $data/$turno/$aula`: só grava/apaga quem for **admin** OU o **dono**
+  (`data/newData.child('ownerUid').val() === auth.uid`).
+- **config/professores/disciplinas/turmas:** só admin grava (carve-out
+  `|| !data.exists()` p/ o 1º bootstrap; e `config/reservasLastWrite` fica
+  `auth != null` p/ o marcador do poll não quebrar).
+- **provas/lab/labstatus** (fora de `/agenda`): **intactos**, não mexer.
+- **Resultado:** de fora ninguém entra (Auth); dentro, um professor cadastrado
+  **não** mexe na aula do outro nem vira admin, nem via F12/REST. Blindagem completa,
+  de graça, sem servidor pago.
+
+**Ordem OBRIGATÓRIA ao (re)aplicar as regras** (nunca inverter, senão o admin se
+tranca pra fora): **1)** semear `/admins/<uid>` na aba Dados; **2)** só então
+publicar as regras estritas. **Nunca aplicar regras às cegas** (não dá p/ testar
+do container). Sempre testar: **Teste 1** = admin agenda/edita/apaga (tem que
+funcionar); **Teste 2** = professor comum tenta apagar aula alheia (tem que
+recusar). Se travar, **desfazer** colando as regras abertas antigas
+(`config/professores/... = "auth != null || !data.exists()"`, reservas/recentes/
+recentesOcultos `= "auth != null"`).
+
+- **Console — aba Dados:** `https://console.firebase.google.com/project/atividades-educativas-16860/database/atividades-educativas-16860-default-rtdb/data`
+- **Console — aba Regras:** `https://console.firebase.google.com/project/atividades-educativas-16860/database/atividades-educativas-16860-default-rtdb/rules`
+
 ## Se a sessão for aberta em OUTRO repositório
 
 Este `CLAUDE.md` só é lido quando a sessão abre **neste** repositório
