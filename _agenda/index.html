@@ -315,7 +315,9 @@
 const DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 const ESCOLA = "vidal-ramos";               // gaveta desta escola (multi-escola desde ja)
 const P = `/agenda/${ESCOLA}`;
-const url = (path) => `${DB}${P}${path}.json`;
+// Anexa o "crachá" (idToken) do Firebase Auth quando existir. Enquanto as regras
+// estiverem abertas (Fase A) ele é opcional; na Fase B passa a ser exigido.
+const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="+encodeURIComponent(S.auth.idToken)):""}`;
 
 /* Distingue "leu e veio vazio" (ok:true, val:null) de "falhou" (ok:false):
    sem isso, uma queda de rede parece "banco vazio" e assusta o usuário. */
@@ -327,6 +329,45 @@ async function fbGet(path){ const r = await fbGetRaw(path); return r.ok ? r.val 
 async function fbSet(path,val){ const r=await fetch(url(path),{method:'PUT',body:JSON.stringify(val)}); return r.ok; }
 async function fbUpdate(path,val){ const r=await fetch(url(path),{method:'PATCH',body:JSON.stringify(val)}); return r.ok; }
 async function fbDel(path){ const r=await fetch(url(path),{method:'DELETE'}); return r.ok; }
+
+/* ===== Firebase Authentication (REST) — o "crachá" que as regras vão exigir.
+   FASE A: regras ainda abertas; tudo aqui roda em best-effort e, se falhar, NÃO
+   bloqueia o login (o app segue igual a hoje). Login por matrícula vira um e-mail
+   interno (matrícula@dominio), sem caixa de e-mail real. ===== */
+const FB_API_KEY = "AIzaSyCWX-lK7pr6yW_E5jDvDhVewe20lB3E6Ks";  // chave PÚBLICA (segura em cliente)
+const AUTH_DOMINIO = "vidalramos.agenda";
+function _authEmail(id){ return sanId(id).toLowerCase().replace(/[^a-z0-9_.-]/g,"") + "@" + AUTH_DOMINIO; }
+function _guardaAuth(idToken, refreshToken, expiresIn){
+  S.auth = { idToken:idToken, refreshToken:refreshToken, expira: Date.now() + ((parseInt(expiresIn||"3600",10)-60)*1000) };
+  try{ if(refreshToken) localStorage.setItem("agenda_rt", refreshToken); }catch(e){}
+}
+function authAtivo(){ return !!(S.auth && S.auth.idToken); }
+async function _authIdentity(kind, id, senha){
+  const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:"+kind+"?key="+FB_API_KEY,
+    {method:"POST", headers:{"Content-Type":"application/json"},
+     body: JSON.stringify({email:_authEmail(id), password:""+senha, returnSecureToken:true})});
+  const j = await r.json().catch(function(){return {};});
+  if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
+  _guardaAuth(j.idToken, j.refreshToken, j.expiresIn); return j;
+}
+async function authEntrar(id, senha){  // entra; se a conta não existe ainda, cria (migração transparente)
+  try{ return await _authIdentity("signInWithPassword", id, senha); }
+  catch(e){ if(/EMAIL_NOT_FOUND/.test(e.message)) return await _authIdentity("signUp", id, senha); throw e; }
+}
+async function authCriar(id, senha){   // cria; se já existir, apenas entra
+  try{ return await _authIdentity("signUp", id, senha); }
+  catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha); throw e; }
+}
+async function authRefresh(){          // renova o crachá a partir do refresh token salvo
+  let rt = (S.auth&&S.auth.refreshToken); if(!rt){ try{ rt=localStorage.getItem("agenda_rt"); }catch(e){} }
+  if(!rt) return false;
+  const r = await fetch("https://securetoken.googleapis.com/v1/token?key="+FB_API_KEY,
+    {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
+     body: "grant_type=refresh_token&refresh_token="+encodeURIComponent(rt)});
+  const j = await r.json().catch(function(){return {};});
+  if(!r.ok) return false;
+  _guardaAuth(j.id_token, j.refresh_token, j.expires_in); return true;
+}
 
 /* ================= DEFAULTS (semeados no 1o acesso) ================= */
 const DIAS = ["dom","seg","ter","qua","qui","sex","sab"];
@@ -348,7 +389,7 @@ const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
   rodizio:{ativo:false, refSeg:"", refGrupo:"ini"}};
 
 /* ================= STATE ================= */
-const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, recentes:[], _ocultos:{}, dataSel:null, tab:"hoje"};
+const S = {user:null, auth:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, recentes:[], _ocultos:{}, dataSel:null, tab:"hoje"};
 let _pollTimer=null;
 
 /* ================= HELPERS ================= */
@@ -477,7 +518,7 @@ async function init(){
   if(_baseErro){ telaSemConexao(); return; }
   if(!S.professores || Object.keys(S.professores).length===0){ telaBootstrap(); return; }
   const saved = localStorage.getItem("agenda_user");
-  if(saved && S.professores[saved]){ S.user = S.professores[saved]; abrirApp(); }
+  if(saved && S.professores[saved]){ S.user = S.professores[saved]; try{ await authRefresh(); }catch(e){} abrirApp(); }
   else telaLogin();
 }
 function telaSemConexao(){
@@ -592,7 +633,7 @@ function telaSenha(){
     <p class="sub">${novo?"Primeiro acesso — crie a sua senha":"Digite a sua senha"}</p>
     ${novo?`
       <label class="fld">Nova senha</label>
-      <input id="sNova" type="password" class="input" placeholder="mínimo 4 caracteres" autocomplete="new-password">
+      <input id="sNova" type="password" class="input" placeholder="mínimo 6 caracteres" autocomplete="new-password">
       <label class="fld">Confirmar senha</label>
       <input id="sConf" type="password" class="input" placeholder="repita a senha" autocomplete="new-password">
       <div style="height:16px"></div>
@@ -611,29 +652,41 @@ function telaSenha(){
 }
 async function loginCriar(){
   const a=($("sNova")?$("sNova").value:""), b=($("sConf")?$("sConf").value:"");
-  if(a.length<4) return toast("A senha precisa ter pelo menos 4 caracteres.");
+  if(a.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
   if(a!==b) return toast("As senhas não coincidem.");
   const key=sanId(_loginPend.id), hash=_hashSenha(a);
-  await fbSet("/professores/"+key+"/senha", hash);
-  _loginPend.senha=hash; S.user=_loginPend; localStorage.setItem("agenda_user", key);
-  toast("Senha criada! 🔑"); abrirApp();
+  const restore=btnBusy('[data-act="login-criar"]',"Criando…");
+  try{
+    try{ await authCriar(_loginPend.id, a); }catch(e){ console.warn("login seguro:", e.message); }
+    await fbSet("/professores/"+key+"/senha", hash);
+    if(authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} }
+    _loginPend.senha=hash; S.user=_loginPend; localStorage.setItem("agenda_user", key);
+    toast("Senha criada! 🔑"); abrirApp();
+  } finally { restore(); }
 }
-function loginEntrar(){
+async function loginEntrar(){
   const s=($("sSenha")?$("sSenha").value:"");
   if(_hashSenha(s)!==_loginPend.senha) return toast("Senha incorreta.");
   const key=sanId(_loginPend.id);
-  S.user=_loginPend; localStorage.setItem("agenda_user", key);
-  abrirApp();
+  const restore=btnBusy('[data-act="login-entrar"]',"Entrando…");
+  try{
+    // best-effort: entra (ou migra) no login seguro do Firebase, sem bloquear o acesso
+    try{ await authEntrar(_loginPend.id, s); if(!_loginPend.fbAuth && authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} } }
+    catch(e){ console.warn("login seguro:", e.message); }
+    S.user=_loginPend; localStorage.setItem("agenda_user", key);
+    abrirApp();
+  } finally { restore(); }
 }
-function sair(){ localStorage.removeItem("agenda_user"); S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
+function sair(){ localStorage.removeItem("agenda_user"); try{localStorage.removeItem("agenda_rt");}catch(e){} S.auth=null; S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
 function sheetConta(){
   const temSenha=!!S.user.senha;
   openSheet(`<div class="grab"></div>
     <div class="sh-head"><div class="t">Minha conta</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     <div class="card"><div class="rowitem"><div class="main"><div class="l2">Nome</div><div class="l1">${esc(S.user.nome)}</div></div></div>
-      <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div></div>
+      <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div>
+      <div class="rowitem"><div class="main"><div class="l2">Login seguro</div><div class="l1">${authAtivo()?"🔒 Ativo":"⚠️ Inativo (use sua senha ao entrar)"}</div></div></div></div>
     <label class="fld">${temSenha?"Trocar minha senha":"Criar minha senha"}</label>
-    <input id="ntSenha" type="password" class="input" placeholder="nova senha (mínimo 4)" autocomplete="new-password">
+    <input id="ntSenha" type="password" class="input" placeholder="nova senha (mínimo 6)" autocomplete="new-password">
     <div style="height:8px"></div>
     <input id="ntConf" type="password" class="input" placeholder="repita a nova senha" autocomplete="new-password">
     <div style="height:14px"></div>
@@ -679,11 +732,23 @@ function checarNotificacao(){
 }
 async function trocarSenha(){
   const a=($("ntSenha")?$("ntSenha").value:""), b=($("ntConf")?$("ntConf").value:"");
-  if(a.length<4) return toast("A senha precisa ter pelo menos 4 caracteres.");
+  if(a.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
   if(a!==b) return toast("As senhas não coincidem.");
   const key=sanId(S.user.id), hash=_hashSenha(a);
   await fbSet("/professores/"+key+"/senha", hash);
   S.user.senha=hash; if(S.professores[key]) S.professores[key].senha=hash;
+  // atualiza também a senha do login seguro (Firebase Auth), best-effort
+  try{
+    if(authAtivo()){
+      const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update?key="+FB_API_KEY,
+        {method:"POST",headers:{"Content-Type":"application/json"},
+         body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})});
+      const j=await r.json().catch(function(){return {};});
+      if(r.ok && j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
+    } else {
+      try{ await authCriar(S.user.id, a); if(authAtivo()){ await fbSet("/professores/"+key+"/fbAuth", true); S.user.fbAuth=true; } }catch(e){}
+    }
+  }catch(e){ console.warn("login seguro (troca):", e.message); }
   fecharSheet(); toast("Senha salva! 🔑");
 }
 
@@ -696,7 +761,7 @@ async function abrirApp(){
   desenharShell();
   checarNotificacao();
   if(_pollTimer) clearInterval(_pollTimer);
-  _pollTimer = setInterval(async()=>{ await recarregarReservas(); if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }, 15000);
+  _pollTimer = setInterval(async()=>{ if(authAtivo() && S.auth.expira < Date.now()+180000){ try{ await authRefresh(); }catch(e){} } await recarregarReservas(); if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }, 15000);
 }
 function desenharShell(){
   const c=S.config, adm=S.user.admin;
