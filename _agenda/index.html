@@ -1087,7 +1087,6 @@ function sheetAgendar(turnoK,aula){
   // histórico DELE (tema/objetivo). Vem das aulas já agendadas + histórico salvo.
   h+=`<div id="recBox">${recBoxHTML(_form.profId)}</div>`;
   h+=`<label class="fld">Turma (ano)</label>`;
-  if(S.turmas.length>8) h+=`<input class="chipfilter input" data-alvo="turmaChips" placeholder="🔍 buscar turma" style="margin-bottom:8px">`;
   h+=`<div class="chips" id="turmaChips">`;
   S.turmas.forEach(t=> h+=`<button class="chip" data-act="pickturma" data-v="${esc(t)}">${esc(t)}</button>`);
   h+=`</div>`;
