@@ -439,6 +439,17 @@ function feriadoNacional(dataStr){
   if(dataStr===addDias(pascoa(ano),-2)) return "Sexta-feira Santa";
   return null;
 }
+/* Ponto facultativo (Carnaval e Corpus Christi): nem toda escola fecha, então
+   fica num botão à parte (config.facultativos). Ligado por padrão. */
+function feriadoFacultativo(dataStr){
+  if(S.config && S.config.facultativos===false) return null;
+  const pa=pascoa(+dataStr.slice(0,4));
+  if(dataStr===addDias(pa,-48) || dataStr===addDias(pa,-47)) return "Carnaval";
+  if(dataStr===addDias(pa,60)) return "Corpus Christi";
+  return null;
+}
+/* Qualquer feriado que fecha a agenda para o professor (nacional OU facultativo). */
+function diaFeriado(dataStr){ return feriadoNacional(dataStr) || feriadoFacultativo(dataStr); }
 /* HAE recorrente: slot (dia-da-semana + turno + aula) fixo como hora-atividade */
 function ehHAE(dataStr, turnoK, aula){
   const wk = DIAS[dateFromStr(dataStr).getDay()];
@@ -699,8 +710,8 @@ function renderTab(){
 /* ================= VIEW: HOJE (agenda do dia) ================= */
 function contarDisponiveis(dataStr){
   if(periodoDoDia(dataStr)) return {tot:0,disp:0};
-  // feriado nacional fecha o dia para o professor (o admin continua vendo/agendando)
-  if(feriadoNacional(dataStr) && !(S.user&&S.user.admin)) return {tot:0,disp:0};
+  // feriado fecha o dia para o professor (o admin continua vendo/agendando)
+  if(diaFeriado(dataStr) && !(S.user&&S.user.admin)) return {tot:0,disp:0};
   let tot=0,disp=0;
   TURNOS.forEach(t=>{
     const n=aulasDoDia(dataStr,t.c); tot+=n;
@@ -733,7 +744,7 @@ function viewHoje(){
   strip+='</div>';
   const cd=contarDisponiveis(data);
   const per=periodoDoDia(data);
-  const fer=feriadoNacional(data);
+  const fer=diaFeriado(data);
   let h=modoTop+strip;
   let badge;
   if(per) badge=`<span class="livrebadge" style="background:color-mix(in srgb,${per.cor||"#0ea3a3"} 16%,transparent);color:${per.cor||"#0ea3a3"}">${esc(per.rotulo||"Sem aula")}</span>`;
@@ -759,7 +770,7 @@ function viewHoje(){
     const nota = adm
       ? "Fechado para os professores. Você (admin) pode agendar mesmo assim."
       : "Não há aulas neste dia — a agenda fica fechada.";
-    h+=`<div class="periodo" style="--pc:#e5533c"><span class="pico">🎌</span><b>Feriado nacional: ${esc(fer)}</b>
+    h+=`<div class="periodo" style="--pc:#e5533c"><span class="pico">🎌</span><b>Feriado: ${esc(fer)}</b>
       <div class="pd">${nota}</div></div>`;
     if(!adm){
       $("view").innerHTML=h;
@@ -948,7 +959,7 @@ function viewInsights(){
 async function abrirSlot(turnoK, aula){
   const data=S.dataSel;
   if(periodoDoDia(data)) return;
-  if(feriadoNacional(data) && !S.user.admin) return toast("Feriado nacional — agenda fechada.");
+  if(diaFeriado(data) && !S.user.admin) return toast("Feriado — agenda fechada.");
   const rt=(S.reservas[data]&&S.reservas[data][turnoK])||{};
   const r=rt["a"+aula];
   if(r && r.bloqueado){ if(S.user.admin) sheetBloqueio(turnoK,aula,true); return; }
@@ -1066,7 +1077,7 @@ async function salvarAgenda(){
   if((S.config.turmaLetras||[]).length && !_form.letra) return toast("Escolha a letra da turma (A, B, C…).");
   if(!disc) return toast("Escolha a disciplina.");
   if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
-  if(feriadoNacional(S.dataSel) && !S.user.admin) return toast("Feriado nacional — agenda fechada.");
+  if(diaFeriado(S.dataSel) && !S.user.admin) return toast("Feriado — agenda fechada.");
   // rodízio: professor só agenda na semana do grupo da turma; fora disso, exige exceção
   if(!S.user.admin && !_form.excecao){
     const sg=grupoDaSemana(S.dataSel), tg=grupoDaTurma(turma);
@@ -1495,7 +1506,10 @@ function telaOpcoes(){
       <input type="checkbox" id="oProx" ${c.apenasProximoDia?"checked":""} style="width:20px;height:20px"> Só permite agendar a partir do dia seguinte</label>
     <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
       <input type="checkbox" id="oFerNac" ${c.feriadosNac!==false?"checked":""} style="width:20px;height:20px"> 🎌 Fechar a agenda nos feriados nacionais (só o admin agenda)</label>
-    <p class="hint" style="text-align:left;margin:2px 2px 16px">Já vêm embutidos: Ano Novo, Tiradentes, Sexta-feira Santa, Dia do Trabalho, Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra e Natal. Feriados locais/municipais você marca em <b>Recesso e férias</b> (preset “Feriado”).</p>
+    <p class="hint" style="text-align:left;margin:2px 2px 12px">Já vêm embutidos: Ano Novo, Tiradentes, Sexta-feira Santa, Dia do Trabalho, Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra e Natal.</p>
+    <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
+      <input type="checkbox" id="oFacult" ${c.facultativos!==false?"checked":""} style="width:20px;height:20px"> 🎭 Fechar também no Carnaval e Corpus Christi (ponto facultativo)</label>
+    <p class="hint" style="text-align:left;margin:2px 2px 16px">Como nem toda escola fecha nesses dias, você decide aqui — desmarque se na sua escola houver aula. Feriados locais/municipais você marca em <b>Recesso e férias</b> (preset “Feriado”).</p>
     <label class="fld">📅 Agendamentos liberados até</label>
     <div class="card" style="margin-bottom:8px">
       <b style="font-size:16px">${esc(fmtDia(c.liberadoAte))}</b>
@@ -1524,12 +1538,13 @@ async function salvarOpcoes(){
   S.config.obrigatorios=$("oObr").checked;
   S.config.apenasProximoDia=$("oProx").checked;
   S.config.feriadosNac=$("oFerNac")?$("oFerNac").checked:true;
+  S.config.facultativos=$("oFacult")?$("oFacult").checked:true;
   S.config.aviso=($("oAviso")?$("oAviso").value.trim():"");
   const rodAtivo=$("oRodizio")?$("oRodizio").checked:false;
   let rodGrupo=(S.config.rodizio&&S.config.rodizio.refGrupo)||"ini";
   const gsel=document.querySelector('[data-act="rodizio-grupo"].on'); if(gsel) rodGrupo=gsel.dataset.v;
   S.config.rodizio={ativo:rodAtivo, refSeg:segDaSemana(hojeStr()), refGrupo:rodGrupo};
-  await fbUpdate("/config",{appNome:S.config.appNome,escolaNome:S.config.escolaNome,obrigatorios:S.config.obrigatorios,apenasProximoDia:S.config.apenasProximoDia,feriadosNac:S.config.feriadosNac,aviso:S.config.aviso});
+  await fbUpdate("/config",{appNome:S.config.appNome,escolaNome:S.config.escolaNome,obrigatorios:S.config.obrigatorios,apenasProximoDia:S.config.apenasProximoDia,feriadosNac:S.config.feriadosNac,facultativos:S.config.facultativos,aviso:S.config.aviso});
   await fbSet("/config/rodizio", S.config.rodizio);
   try{ localStorage.removeItem("agenda_aviso_visto"); }catch(e){}
   fecharSheet(); desenharShell(); toast("Configurações salvas! 💾");
