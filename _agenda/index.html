@@ -122,6 +122,16 @@
   .slotcard.lock{border-left-color:var(--amber)}
   .slotcard.lock .sc-ic{background:var(--amber-tint);color:var(--amber)}
   .slotcard.lock .sc-t{color:var(--muted)}
+  .slotcard.hae{border-left-color:var(--primary)}
+  .slotcard.hae .sc-ic{background:var(--primary-tint);color:var(--primary)}
+  .slotcard.hae .sc-t{color:var(--primary)}
+  #avisobar{padding-top:12px}
+  .aviso{display:flex;align-items:center;gap:10px;margin:0 16px;padding:12px 14px;border-radius:14px;
+    background:var(--amber-tint);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent)}
+  .aviso .ai{font-size:18px;flex-shrink:0}
+  .aviso .am{flex:1;font-size:14px;font-weight:700;color:var(--text);line-height:1.45}
+  .aviso .ax{width:28px;height:28px;border-radius:9px;background:transparent;color:var(--muted);font-size:15px;flex-shrink:0}
+  select.input{appearance:none;-webkit-appearance:none;-moz-appearance:none}
 
   .empty{color:var(--muted);text-align:center;padding:40px 16px;font-size:15px;line-height:1.6}
   .empty .big{font-size:40px;display:block;margin-bottom:10px}
@@ -254,7 +264,8 @@ const DEF_HORARIOS = {
   noturno:[["19:00","19:50"],["19:50","20:40"],["20:55","21:45"],["21:45","22:35"]]
 };
 const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
-  obrigatorios:true, apenasProximoDia:true, limiteMeses:1};
+  obrigatorios:true, apenasProximoDia:true, limiteMeses:1,
+  aviso:"", haeLabel:"HAE — Professor de Informática", hae:[]};
 
 /* ================= STATE ================= */
 const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, dataSel:null, tab:"hoje"};
@@ -279,6 +290,16 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.add("hidden"),2400);
 }
 
+/* ===== TEMA (claro/escuro) — preferência de cada usuário, salva no aparelho ===== */
+function _temaPref(){ try{ return localStorage.getItem("agenda_tema")||"auto"; }catch(e){ return "auto"; } }
+function aplicarTema(){ const p=_temaPref(), r=document.documentElement;
+  if(p==="light"||p==="dark") r.setAttribute("data-theme",p); else r.removeAttribute("data-theme"); }
+function temaEscuro(){ const p=_temaPref();
+  if(p==="dark") return true; if(p==="light") return false;
+  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); }
+function alternarTema(){ try{ localStorage.setItem("agenda_tema", temaEscuro()?"light":"dark"); }catch(e){} aplicarTema(); attTemaIcon(); }
+function attTemaIcon(){ const b=$("btnTema"); if(b){ b.innerHTML=temaEscuro()?"☀️":"🌙"; b.title=temaEscuro()?"Mudar para tema claro":"Mudar para tema escuro"; } }
+
 function aulasDoDia(dataStr, turnoC){
   const wk = DIAS[dateFromStr(dataStr).getDay()];
   const a = (S.config.aulas && S.config.aulas[wk]) || {m:0,v:0,n:0};
@@ -289,9 +310,17 @@ function horarioLabel(turnoK, idx){
   if(h && h[idx]) return h[idx][0]+" – "+h[idx][1];
   return "";
 }
+/* HAE recorrente: slot (dia-da-semana + turno + aula) fixo como hora-atividade */
+function ehHAE(dataStr, turnoK, aula){
+  const wk = DIAS[dateFromStr(dataStr).getDay()];
+  const arr = (S.config && S.config.hae) || [];
+  for(let i=0;i<arr.length;i++){ const x=arr[i]; if(x.wk===wk && x.turno===turnoK && (+x.aula)===(+aula)) return true; }
+  return false;
+}
 
 /* ================= INIT ================= */
 async function init(){
+  aplicarTema();
   await carregarBase();
   if(!S.professores || Object.keys(S.professores).length===0){ telaBootstrap(); return; }
   const saved = localStorage.getItem("agenda_user");
@@ -306,6 +335,9 @@ async function carregarBase(){
   if(S.config){
     if(!S.config.aulas) S.config.aulas = DEF_AULAS;
     if(!S.config.horarios) S.config.horarios = DEF_HORARIOS;
+    if(!S.config.hae) S.config.hae = [];
+    if(!S.config.haeLabel) S.config.haeLabel = "HAE — Professor de Informática";
+    if(S.config.aviso==null) S.config.aviso = "";
   }
   S.professores = prof || {};
   S.disciplinas = disc || [];
@@ -392,9 +424,11 @@ function desenharShell(){
     <div class="topbar">
       <div class="avatar">${esc(S.user.nome.trim().charAt(0).toUpperCase())}</div>
       <div class="brand"><b>${esc(c.appNome)}</b><span>Olá, ${esc(S.user.nome.split(" ")[0])}${adm?" · admin":""}</span></div>
+      <button class="icon-btn" id="btnTema" data-act="tema"></button>
       ${adm?'<button class="icon-btn" data-act="menuadmin" title="Administração">⚙️</button>':''}
       <button class="icon-btn" data-act="sair" title="Sair">⏻</button>
     </div>
+    <div id="avisobar"></div>
     <div id="view" class="view"></div>
     <nav class="bottomnav"><div class="wrap">
       <button class="tab" data-tab="hoje"><span class="ic">🗓️</span>Hoje</button>
@@ -402,7 +436,18 @@ function desenharShell(){
       <button class="tab" data-tab="insights"><span class="ic">📊</span>Insights</button>
     </div></nav>
   </div>`;
+  attTemaIcon();
+  renderAviso();
   renderTab();
+}
+/* aviso do admin no topo (some quando o admin apaga; some pra quem fechar até mudar o texto) */
+function renderAviso(){
+  const bar=$("avisobar"); if(!bar) return;
+  const msg=((S.config&&S.config.aviso)||"").replace(/^\s+|\s+$/g,"");
+  let visto=""; try{ visto=localStorage.getItem("agenda_aviso_visto")||""; }catch(e){}
+  if(msg && visto!==msg){
+    bar.innerHTML=`<div class="aviso"><span class="ai">📢</span><div class="am">${esc(msg)}</div><button class="ax" data-act="fecharaviso" title="Fechar">✕</button></div>`;
+  }else bar.innerHTML="";
 }
 function renderTab(){
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===S.tab));
@@ -413,13 +458,13 @@ function renderTab(){
 
 /* ================= VIEW: HOJE (agenda do dia) ================= */
 function contarDisponiveis(dataStr){
-  let tot=0,ocup=0;
+  let tot=0,disp=0;
   TURNOS.forEach(t=>{
     const n=aulasDoDia(dataStr,t.c); tot+=n;
     const rt=(S.reservas[dataStr]&&S.reservas[dataStr][t.k])||{};
-    for(let i=1;i<=n;i++){ if(rt["a"+i]) ocup++; }
+    for(let i=1;i<=n;i++){ if(!rt["a"+i] && !ehHAE(dataStr,t.k,i)) disp++; }
   });
-  return {tot,disp:tot-ocup};
+  return {tot,disp};
 }
 function viewHoje(){
   const data=S.dataSel, hoje=hojeStr();
@@ -447,9 +492,13 @@ function viewHoje(){
       const r=rt["a"+i], hora=horarioLabel(t.k,i-1);
       const meta=`<div class="sc-r">${i}ª${hora?`<small>${esc(hora)}</small>`:""}</div>`;
       if(!r){
-        body+=`<button class="slotcard free" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">＋</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">toque para agendar</div></div>${meta}</button>`;
+        if(ehHAE(data,t.k,i)){
+          body+=`<button class="slotcard hae" data-act="haeinfo"><div class="sc-ic">📋</div><div class="sc-m"><div class="sc-t">${esc(S.config.haeLabel||"Hora-atividade")}</div><div class="sc-s">hora-atividade</div></div>${meta}</button>`;
+        }else{
+          body+=`<button class="slotcard free" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">＋</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">toque para agendar</div></div>${meta}</button>`;
+        }
       }else if(r.bloqueado){
-        body+=`<button class="slotcard lock" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">🔒</div><div class="sc-m"><div class="sc-t">Indisponível</div><div class="sc-s">${S.user.admin?"toque para liberar":"bloqueado"}</div></div>${meta}</button>`;
+        body+=`<button class="slotcard lock" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">🔒</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo||"Indisponível")}</div><div class="sc-s">${S.user.admin?"toque para liberar":"bloqueado"}</div></div>${meta}</button>`;
       }else{
         const minha=sanId(r.profId)===sanId(S.user.id);
         body+=`<button class="slotcard ${minha?"mine":"busy"}" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">${minha?"👤":"📘"}</div><div class="sc-m"><div class="sc-t">${esc(r.turma||"")}</div><div class="sc-s">${esc(r.profNome||"")}${r.disciplina?" · "+esc(r.disciplina):""}</div></div>${meta}</button>`;
@@ -520,6 +569,7 @@ async function abrirSlot(turnoK, aula){
   const r=rt["a"+aula];
   if(r && r.bloqueado){ if(S.user.admin) sheetBloqueio(turnoK,aula,true); return; }
   if(r){ sheetReserva(turnoK,aula,r); return; }
+  if(ehHAE(data,turnoK,aula)){ toast("Hora-atividade — horário reservado (configure em ⚙️)."); return; }
   // livre
   const hoje=hojeStr();
   if(data<hoje) return toast("Não dá para agendar num dia que já passou.");
@@ -544,7 +594,24 @@ function sheetEscolha(turnoK,aula){
     <div style="height:14px"></div>
     <button class="btn primary" data-act="ir-agendar" data-t="${turnoK}" data-i="${aula}">➕ Agendar uma aula</button>
     <div style="height:10px"></div>
-    <button class="btn ghost" data-act="bloquear" data-t="${turnoK}" data-i="${aula}">🔒 Marcar como indisponível</button>`);
+    <button class="btn ghost" data-act="bloquear-motivo" data-t="${turnoK}" data-i="${aula}">🔒 Marcar como indisponível</button>`);
+}
+/* admin: bloquear com um motivo/rótulo (ex.: HAE, Reunião) */
+function sheetBloquearMotivo(turnoK,aula){
+  const hae=esc(S.config.haeLabel||"HAE — Professor de Informática");
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><div class="t">Marcar indisponível</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    ${ctxHtml(turnoK,aula)}
+    <label class="fld">Motivo (aparece no horário)</label>
+    <input id="bMotivo" class="input" value="Indisponível" placeholder="Ex.: Reunião, Manutenção…">
+    <div style="height:10px"></div>
+    <div class="chips">
+      <button class="chip" data-act="motivo-preset" data-v="Indisponível">Indisponível</button>
+      <button class="chip" data-act="motivo-preset" data-v="${hae}">${hae}</button>
+      <button class="chip" data-act="motivo-preset" data-v="Reunião">Reunião</button>
+    </div>
+    <div style="height:16px"></div>
+    <button class="btn primary" data-act="conf-bloquear" data-t="${turnoK}" data-i="${aula}">🔒 Bloquear horário</button>`);
 }
 
 /* formulário de agendar */
@@ -622,8 +689,8 @@ async function excluirReserva(turnoK,aula){
 }
 
 /* bloquear / desbloquear (admin) */
-async function bloquearSlot(turnoK,aula){
-  await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, {bloqueado:true, byAdmin:S.user.nome, ts:Date.now()});
+async function bloquearSlot(turnoK,aula,rotulo){
+  await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, {bloqueado:true, rotulo:(rotulo||"Indisponível"), byAdmin:S.user.nome, ts:Date.now()});
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Horário bloqueado. 🔒");
 }
 function sheetBloqueio(turnoK,aula){
@@ -716,24 +783,56 @@ function telaConfig(){
   S.disciplinas.forEach((d,i)=>{ const nome=typeof d==="string"?d:d.nome; discH+=`<span class="chip">${esc(nome)} <b data-act="del-disc" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`; });
   discH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaDisc" class="input" placeholder="Nova disciplina" style="flex:1"><button class="minibtn acc" data-act="add-disc">Add</button></div>`;
 
+  /* HAE fixas (recorrentes por dia da semana) */
+  let maxAulas=4; DIAS.forEach(d=>{ maxAulas=Math.max(maxAulas,a[d].m,a[d].v,a[d].n); });
+  const optDia=DIAS.map(d=>`<option value="${d}">${DIAS_NOME[d]}</option>`).join("");
+  const optTurno=TURNOS.map(tt=>`<option value="${tt.k}">${tt.n}</option>`).join("");
+  let optAula=""; for(let i=1;i<=maxAulas;i++) optAula+=`<option value="${i}">${i}ª</option>`;
+  let haeList=`<div class="chips" style="margin-top:4px">`;
+  (S.config.hae||[]).forEach((x,i)=>{ const tn=(TURNOS.find(tt=>tt.k===x.turno)||{}).n||x.turno;
+    haeList+=`<span class="chip">${DIAS_NOME[x.wk]||x.wk} · ${esc(tn)} · ${x.aula}ª <b data-act="del-hae" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`; });
+  if(!(S.config.hae||[]).length) haeList+=`<span style="color:var(--muted);font-size:13px">Nenhuma HAE fixa ainda.</span>`;
+  haeList+=`</div>`;
+  const haeH=`
+    <label class="fld">Rótulo que aparece nas HAE</label>
+    <input id="haeLabel" class="input" value="${esc(S.config.haeLabel||"")}" placeholder="HAE — Professor de Informática">
+    <div style="display:flex;gap:6px;margin-top:12px">
+      <select id="haeDia" class="input" style="flex:1">${optDia}</select>
+      <select id="haeTurno" class="input" style="flex:1">${optTurno}</select>
+      <select id="haeAula" class="input" style="width:82px">${optAula}</select>
+    </div>
+    <div style="height:8px"></div>
+    <button class="minibtn acc" data-act="add-hae">➕ Adicionar HAE fixa</button>
+    ${haeList}`;
+
   openSheet(`<div class="grab"></div>
     <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Horários e turmas</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     <div class="sectitle">Aulas por turno (quantas em cada dia)</div>
     <div class="card">${grade}</div>
     ${hor}
     <div style="height:6px"></div>
-    <button class="btn primary" data-act="salvar-config">💾 Salvar horários</button>
+    <button class="btn primary" data-act="salvar-config">💾 Salvar horários e rótulo HAE</button>
+    <div class="sectitle">Horas-atividade (HAE) fixas — toda semana</div>${haeH}
     <div class="sectitle">Turmas</div>${turmasH}
     <div class="sectitle">Disciplinas</div>${discH}
     <div style="height:20px"></div>`);
 }
+async function addHAE(){
+  const wk=$("haeDia").value, turno=$("haeTurno").value, aula=+$("haeAula").value;
+  if(!S.config.hae) S.config.hae=[];
+  if(S.config.hae.some(x=>x.wk===wk&&x.turno===turno&&(+x.aula)===aula)) return toast("Essa HAE já está na lista.");
+  S.config.hae.push({wk,turno,aula});
+  await fbSet("/config/hae",S.config.hae); telaConfig(); toast("HAE fixa adicionada. 📋");
+}
+async function delHAE(i){ S.config.hae.splice(i,1); await fbSet("/config/hae",S.config.hae); telaConfig(); }
 async function salvarConfig(){
   const aulas=JSON.parse(JSON.stringify(S.config.aulas));
   document.querySelectorAll("[data-aula]").forEach(inp=>{ const [d,c]=inp.dataset.aula.split("."); aulas[d][c]=Math.max(0,parseInt(inp.value,10)||0); });
   const hor=JSON.parse(JSON.stringify(S.config.horarios||{}));
   document.querySelectorAll("[data-hor]").forEach(inp=>{ const [tk,i,j]=inp.dataset.hor.split("."); if(!hor[tk])hor[tk]=[]; if(!hor[tk][i])hor[tk][i]=["",""]; hor[tk][+i][+j]=inp.value.trim(); });
-  await Promise.all([fbSet("/config/aulas",aulas), fbSet("/config/horarios",hor)]);
-  S.config.aulas=aulas; S.config.horarios=hor;
+  const hl=$("haeLabel"); const haeLabel = hl ? (hl.value.trim()||S.config.haeLabel) : S.config.haeLabel;
+  await Promise.all([fbSet("/config/aulas",aulas), fbSet("/config/horarios",hor), fbSet("/config/haeLabel",haeLabel)]);
+  S.config.aulas=aulas; S.config.horarios=hor; S.config.haeLabel=haeLabel;
   toast("Horários salvos! 💾");
 }
 async function addTurma(){ const v=$("novaTurma").value.trim(); if(!v)return; S.turmas.push(v); await fbSet("/turmas",S.turmas); telaConfig(); }
@@ -755,6 +854,9 @@ function telaOpcoes(){
       <input type="checkbox" id="oObr" ${c.obrigatorios?"checked":""} style="width:20px;height:20px"> Tema e objetivo obrigatórios</label>
     <label style="display:flex;align-items:center;gap:10px;margin:6px 2px 18px;font-size:15px">
       <input type="checkbox" id="oProx" ${c.apenasProximoDia?"checked":""} style="width:20px;height:20px"> Só permite agendar a partir do dia seguinte</label>
+    <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
+    <textarea id="oAviso" class="input" placeholder="Ex.: Sala em manutenção na sexta. Agendem com atenção!">${esc(c.aviso||"")}</textarea>
+    <div style="height:16px"></div>
     <button class="btn primary" data-act="salvar-opcoes">💾 Salvar</button>`);
 }
 async function salvarOpcoes(){
@@ -762,7 +864,9 @@ async function salvarOpcoes(){
   S.config.escolaNome=$("oEsc").value.trim();
   S.config.obrigatorios=$("oObr").checked;
   S.config.apenasProximoDia=$("oProx").checked;
-  await fbUpdate("/config",{appNome:S.config.appNome,escolaNome:S.config.escolaNome,obrigatorios:S.config.obrigatorios,apenasProximoDia:S.config.apenasProximoDia});
+  S.config.aviso=($("oAviso")?$("oAviso").value.trim():"");
+  await fbUpdate("/config",{appNome:S.config.appNome,escolaNome:S.config.escolaNome,obrigatorios:S.config.obrigatorios,apenasProximoDia:S.config.apenasProximoDia,aviso:S.config.aviso});
+  try{ localStorage.removeItem("agenda_aviso_visto"); }catch(e){}
   fecharSheet(); desenharShell(); toast("Configurações salvas! 💾");
 }
 
@@ -779,9 +883,15 @@ document.addEventListener("click", async (ev)=>{
     if(a==="login") return fazerLogin();
     if(a==="sair") return sair();
     if(a==="setdia"){ S.dataSel=el.dataset.d; return viewHoje(); }
+    if(a==="tema") return alternarTema();
+    if(a==="fecharaviso"){ try{ localStorage.setItem("agenda_aviso_visto", (S.config&&S.config.aviso)||""); }catch(e){} return renderAviso(); }
+    if(a==="haeinfo") return toast("Hora-atividade — horário reservado para o professor de informática.");
     if(a==="slot") return abrirSlot(t,i);
     if(a==="fecharsheet") return fecharSheet();
     if(a==="ir-agendar") return sheetAgendar(t,i);
+    if(a==="bloquear-motivo") return sheetBloquearMotivo(t,i);
+    if(a==="motivo-preset"){ const inp=$("bMotivo"); if(inp) inp.value=el.dataset.v; return; }
+    if(a==="conf-bloquear"){ const inp=$("bMotivo"); return bloquearSlot(t,i,(inp?inp.value.trim():"")||"Indisponível"); }
     if(a==="bloquear") return bloquearSlot(t,i);
     if(a==="desbloquear") return desbloquearSlot(t,i);
     if(a==="excluir") return excluirReserva(t,i);
@@ -801,6 +911,8 @@ document.addEventListener("click", async (ev)=>{
     if(a==="del-turma") return delTurma(+el.dataset.i);
     if(a==="add-disc") return addDisc();
     if(a==="del-disc") return delDisc(+el.dataset.i);
+    if(a==="add-hae") return addHAE();
+    if(a==="del-hae") return delHAE(+el.dataset.i);
     if(a==="salvar-opcoes") return salvarOpcoes();
   }catch(e){ console.error(e); toast("Algo deu errado. Tente de novo."); }
 });
