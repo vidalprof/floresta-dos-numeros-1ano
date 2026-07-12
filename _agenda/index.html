@@ -1025,8 +1025,8 @@ function _sepTurma(turmaCheia){
 /* Lista de "Reaproveitar": monta a partir das PRÓPRIAS reservas do professor
    (inclui as aulas antigas, já carregadas em S.reservas) + o histórico salvo em
    /recentes (cobre outro aparelho e reservas já excluídas). Dedup por tema+obj. */
-function montarRecentes(){
-  const mine=sanId(S.user.id);
+function montarRecentes(profId){
+  const mine=sanId(profId||S.user.id);
   const chave=(t)=>((t.tema||"")+"||"+(t.objetivo||"")).toLowerCase().replace(/\s+/g," ").trim();
   const vistos=new Set(), out=[];
   const add=(r)=>{ if(!r||!(r.tema||r.objetivo)) return; const k=chave(r); if(!k||k==="||"||vistos.has(k)) return; vistos.add(k); out.push(r); };
@@ -1043,8 +1043,26 @@ function montarRecentes(){
   });
   minhas.sort((a,b)=>(b.ts||0)-(a.ts||0));
   minhas.forEach(add);
-  (S.recentes||[]).forEach(add);
+  // O histórico salvo em /recentes é do usuário logado; só entra quando o alvo é ele mesmo.
+  if(mine===sanId(S.user.id)) (S.recentes||[]).forEach(add);
   return out.slice(0,10);
+}
+/* Monta o HTML da caixa "Reaproveitar" para um professor (segue quem o admin escolhe). */
+function recBoxHTML(profId){
+  const recs=montarRecentes(profId); S._recAtual=recs;
+  if(!recs.length){
+    if(S.user.admin && sanId(profId)!==sanId(S.user.id))
+      return `<div class="hint" style="text-align:left;margin:2px 2px 10px">🕘 Este professor ainda não tem planejamentos para reaproveitar.</div>`;
+    return "";
+  }
+  let h=`<div class="sectitle">🕘 Reaproveitar um planejamento</div>
+    <div class="hint" style="text-align:left;margin:-2px 2px 6px">Toque num cartão para preencher tudo. É a mesma aula para <b>outra turma</b>? Toque no cartão e depois é só escolher a turma nova — o tema e o objetivo continuam.</div>
+    <div class="recentes">`;
+  recs.forEach((r,i)=>{
+    h+=`<button type="button" class="rec" data-act="usar-recente" data-i="${i}"><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></button>`;
+  });
+  h+=`</div>`;
+  return h;
 }
 function sheetAgendar(turnoK,aula){
   _form={turma:null,letra:null,disc:null,turnoK,aula};
@@ -1062,19 +1080,10 @@ function sheetAgendar(turnoK,aula){
     h+=`</div>`;
     _form.profId=S.user.id; _form.profNome=S.user.nome;
   }else{ _form.profId=S.user.id; _form.profNome=S.user.nome; }
-  // Reaproveitar planejamento: fica no TOPO do formulário (bem visível). Toque
-  // preenche turma, disciplina, tema e objetivo de uma vez. Vem das próprias
-  // aulas já agendadas pelo professor (inclui as antigas) + histórico salvo.
-  const recs=montarRecentes(); S._recAtual=recs;
-  if(recs.length){
-    h+=`<div class="sectitle">🕘 Reaproveitar um planejamento</div>
-      <div class="hint" style="text-align:left;margin:-2px 2px 6px">Toque num cartão para preencher tudo. É a mesma aula para <b>outra turma</b>? Toque no cartão e depois é só escolher a turma nova — o tema e o objetivo continuam.</div>
-      <div class="recentes">`;
-    recs.forEach((r,i)=>{
-      h+=`<button type="button" class="rec" data-act="usar-recente" data-i="${i}"><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></button>`;
-    });
-    h+=`</div>`;
-  }
+  // Reaproveitar planejamento: fica no TOPO do formulário (bem visível). Segue o
+  // professor selecionado — se o admin agenda para outro professor, mostra o
+  // histórico DELE (tema/objetivo). Vem das aulas já agendadas + histórico salvo.
+  h+=`<div id="recBox">${recBoxHTML(_form.profId)}</div>`;
   h+=`<label class="fld">Turma (ano)</label>`;
   if(S.turmas.length>8) h+=`<input class="chipfilter input" data-alvo="turmaChips" placeholder="🔍 buscar turma" style="margin-bottom:8px">`;
   h+=`<div class="chips" id="turmaChips">`;
@@ -1628,7 +1637,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="salvar-agenda") return salvarAgenda();
     if(a==="conf-excecao"){ _form.excecao=true; return salvarAgenda(); }
     if(a==="rodizio-grupo"){ document.querySelectorAll('[data-act="rodizio-grupo"]').forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
+    if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); const box=$("recBox"); if(box) box.innerHTML=recBoxHTML(_form.profId); return; }
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
