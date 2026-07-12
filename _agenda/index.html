@@ -309,7 +309,7 @@
 <body>
   <div id="root"></div>
   <div id="modal"></div>
-  <div id="toast" class="hidden"></div>
+  <div id="toast" class="hidden" role="status" aria-live="polite"></div>
 
 <script>
 "use strict";
@@ -323,14 +323,21 @@ const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="
 
 /* Distingue "leu e veio vazio" (ok:true, val:null) de "falhou" (ok:false):
    sem isso, uma queda de rede parece "banco vazio" e assusta o usuário. */
+/* Faz a chamada ao banco; se o crachá venceu (401/403), renova UMA vez e repete.
+   Cobre leitura e gravação — evita "agenda vazia" e "não salvou" por token expirado. */
+async function _fbFetch(path, opts){
+  let r = await fetch(url(path), opts);
+  if((r.status===401||r.status===403) && await authRefresh()){ r = await fetch(url(path), opts); }
+  return r;
+}
 async function fbGetRaw(path){
-  try{ const r = await fetch(url(path)); if(!r.ok) return {ok:false, status:r.status}; return {ok:true, val: await r.json()}; }
+  try{ const r = await _fbFetch(path); if(!r.ok) return {ok:false, status:r.status}; return {ok:true, val: await r.json()}; }
   catch(e){ return {ok:false, net:true}; }
 }
 async function fbGet(path){ const r = await fbGetRaw(path); return r.ok ? r.val : null; }
-async function fbSet(path,val){ const r=await fetch(url(path),{method:'PUT',body:JSON.stringify(val)}); return r.ok; }
-async function fbUpdate(path,val){ const r=await fetch(url(path),{method:'PATCH',body:JSON.stringify(val)}); return r.ok; }
-async function fbDel(path){ const r=await fetch(url(path),{method:'DELETE'}); return r.ok; }
+async function fbSet(path,val){ const r=await _fbFetch(path,{method:'PUT',body:JSON.stringify(val)}); return r.ok; }
+async function fbUpdate(path,val){ const r=await _fbFetch(path,{method:'PATCH',body:JSON.stringify(val)}); return r.ok; }
+async function fbDel(path){ const r=await _fbFetch(path,{method:'DELETE'}); return r.ok; }
 
 /* ===== Firebase Authentication (REST) — o "crachá" que as regras vão exigir.
    FASE A: regras ainda abertas; tudo aqui roda em best-effort e, se falhar, NÃO
@@ -355,8 +362,16 @@ async function _authIdentity(kind, id, senha, ver){
   _guardaAuth(j.idToken, j.refreshToken, j.expiresIn); return j;
 }
 async function authEntrar(id, senha, ver){  // entra; se a conta não existe ainda, cria (migração transparente)
+  // Firebase novo (proteção anti-enumeração) devolve INVALID_LOGIN_CREDENTIALS em vez de
+  // EMAIL_NOT_FOUND; como aqui a senha já foi validada (djb2), tratamos como "conta ainda não existe".
   try{ return await _authIdentity("signInWithPassword", id, senha, ver); }
-  catch(e){ if(/EMAIL_NOT_FOUND/.test(e.message)) return await _authIdentity("signUp", id, senha, ver); throw e; }
+  catch(e){
+    if(/EMAIL_NOT_FOUND|INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message)){
+      try{ return await _authIdentity("signUp", id, senha, ver); }
+      catch(e2){ if(/EMAIL_EXISTS/.test(e2.message)) throw e; throw e2; }
+    }
+    throw e;
+  }
 }
 async function authCriar(id, senha, ver){   // cria; se já existir, apenas entra
   try{ return await _authIdentity("signUp", id, senha, ver); }
@@ -399,6 +414,9 @@ let _pollTimer=null;
 /* ================= HELPERS ================= */
 const $ = (id)=>document.getElementById(id);
 const esc = (s)=> (""+(s==null?"":s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+/* Só aceita cor hexadecimal válida; qualquer outra coisa (vinda do banco) vira a cor padrão.
+   Evita injeção de HTML/CSS via campo de cor interpolado em style="...". */
+const corSegura = (c)=> (/^#[0-9a-fA-F]{3,8}$/.test(""+c) ? (""+c) : "#0ea3a3");
 const sanId = (s)=> (""+s).replace(/[.#$\[\]\/\s]/g,"_");
 const pad = (n)=> (n<10?"0":"")+n;
 const hojeStr = ()=>{ const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
@@ -522,7 +540,14 @@ async function init(){
   if(_baseErro){ telaSemConexao(); return; }
   if(!S.professores || Object.keys(S.professores).length===0){ telaBootstrap(); return; }
   const saved = localStorage.getItem("agenda_user");
-  if(saved && S.professores[saved]){ S.user = S.professores[saved]; try{ await authRefresh(); }catch(e){} abrirApp(); }
+  if(saved && S.professores[saved]){
+    S.user = S.professores[saved];
+    let tok=false; try{ tok=await authRefresh(); }catch(e){}
+    // Sem crachá válido, as regras fechadas não deixam ler a agenda -> pede a senha de novo
+    // (em vez de abrir uma agenda vazia sem explicação).
+    if(!tok){ _loginPend=S.professores[saved]; telaSenha(); return; }
+    abrirApp();
+  }
   else telaLogin();
 }
 function telaSemConexao(){
@@ -634,7 +659,7 @@ function telaSenha(){
   <div class="authwrap">
     <div class="logo">🗓️</div>
     <h1>Olá, ${esc(p.nome.split(" ")[0])}!</h1>
-    <p class="sub">${novo?"Primeiro acesso — crie a sua senha":"Digite a sua senha"}</p>
+    <p class="sub">${novo?((+p.authVer>1)?"Crie uma nova senha (mínimo 6)":"Primeiro acesso — crie a sua senha"):"Digite a sua senha"}</p>
     ${novo?`
       <label class="fld">Nova senha</label>
       <input id="sNova" type="password" data-pw class="input" placeholder="mínimo 6 caracteres" autocomplete="new-password">
@@ -683,7 +708,7 @@ async function loginEntrar(){
     abrirApp();
   } finally { restore(); }
 }
-function sair(){ localStorage.removeItem("agenda_user"); try{localStorage.removeItem("agenda_rt");}catch(e){} S.auth=null; S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
+function sair(){ if(!confirm("Sair da conta? Você precisará entrar com ID e senha de novo.")) return; localStorage.removeItem("agenda_user"); try{localStorage.removeItem("agenda_rt");}catch(e){} S.auth=null; S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
 function sheetConta(){
   const temSenha=!!S.user.senha;
   openSheet(`<div class="grab"></div>
@@ -872,7 +897,7 @@ function viewHoje(){
   const fer=diaFeriado(data);
   let h=modoTop+strip;
   let badge;
-  if(per) badge=`<span class="livrebadge" style="background:color-mix(in srgb,${per.cor||"#0ea3a3"} 16%,transparent);color:${per.cor||"#0ea3a3"}">${esc(per.rotulo||"Sem aula")}</span>`;
+  if(per) badge=`<span class="livrebadge" style="background:color-mix(in srgb,${corSegura(per.cor)} 16%,transparent);color:${corSegura(per.cor)}">${esc(per.rotulo||"Sem aula")}</span>`;
   else if(fer) badge=`<span class="livrebadge" style="background:color-mix(in srgb,#e5533c 16%,transparent);color:#e5533c">🎌 Feriado</span>`;
   else badge=`<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
   h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
@@ -890,7 +915,7 @@ function viewHoje(){
   if(per){
     const rot=per.rotulo||"";
     const ico=/feriado/i.test(rot)?"🎌":(/f[ée]rias/i.test(rot)?"🏖️":"🌴");
-    h+=`<div class="periodo" style="--pc:${per.cor||"#0ea3a3"}"><span class="pico">${ico}</span><b>${esc(per.rotulo||"Sem aula")}</b>
+    h+=`<div class="periodo" style="--pc:${corSegura(per.cor)}"><span class="pico">${ico}</span><b>${esc(per.rotulo||"Sem aula")}</b>
       <div class="pd">${esc(fmtDia(per.inicio))} até ${esc(fmtDia(per.fim))}</div>
       <div class="pd">Não há aulas neste período — a agenda fica fechada.</div></div>`;
     $("view").innerHTML=h;
@@ -1406,7 +1431,9 @@ function exportarCSV(){
     TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
       Object.keys(rt).sort().forEach(ak=>{ const r=rt[ak]; if(!r||r.bloqueado) return;
         linhas.push([data, t.n, ak.replace("a",""), r.turma||"", r.profNome||"", r.disciplina||"", r.tema||"", r.objetivo||""]); }); }); });
-  const csv=linhas.map(l=>l.map(c=>'"'+(""+c).replace(/"/g,'""')+'"').join(";")).join("\r\n");
+  // neutraliza injeção de fórmula: célula que começa com = + - @ (ou tab/CR) ganha um ' na frente
+  const cel=(c)=>{ let s=""+c; if(/^[=+\-@\t\r]/.test(s)) s="'"+s; return '"'+s.replace(/"/g,'""')+'"'; };
+  const csv=linhas.map(l=>l.map(cel).join(";")).join("\r\n");
   try{
     const blob=new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8;"});
     const url=URL.createObjectURL(blob), a=document.createElement("a");
@@ -1456,7 +1483,7 @@ function telaPeriodos(){
   let list=`<div class="card" style="padding:4px 14px">`;
   const arr=S.config.periodos||[];
   if(!arr.length) list+=`<div class="empty" style="padding:18px">Nenhum período cadastrado.</div>`;
-  arr.forEach((p,i)=>{ list+=`<div class="rowitem"><span style="width:14px;height:14px;border-radius:5px;background:${p.cor||"#0ea3a3"};flex-shrink:0"></span>
+  arr.forEach((p,i)=>{ list+=`<div class="rowitem"><span style="width:14px;height:14px;border-radius:5px;background:${corSegura(p.cor)};flex-shrink:0"></span>
     <div class="main"><div class="l1">${esc(p.rotulo)}</div><div class="l2">${esc(fmtDia(p.inicio))} até ${esc(fmtDia(p.fim))}</div></div>
     <button class="minibtn" data-act="del-periodo" data-i="${i}">Excluir</button></div>`; });
   list+=`</div>`;
@@ -1794,6 +1821,13 @@ async function salvarOpcoes(){
 }
 
 /* ================= EVENT DELEGATION ================= */
+// Enter no teclado envia o formulário das telas de login/senha/primeiro acesso.
+document.addEventListener("keydown", function(ev){
+  if(ev.key!=="Enter") return;
+  const t=ev.target; if(!t || t.tagName!=="INPUT" || t.type==="date") return;
+  const wrap=t.closest(".authwrap"); if(!wrap) return;
+  const btn=wrap.querySelector(".btn.primary"); if(btn){ ev.preventDefault(); btn.click(); }
+});
 document.addEventListener("click", async (ev)=>{
   const el = ev.target.closest("[data-act]");
   // fechar sheet ao tocar no fundo
