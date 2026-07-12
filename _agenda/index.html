@@ -200,6 +200,28 @@
   .barrow .bv{width:30px;text-align:right;font-weight:800;font-size:13px}
   .recentes{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .recentes::-webkit-scrollbar{display:none}
+  .lembrete{background:var(--primary-tint);border:1px solid color-mix(in srgb,var(--primary) 25%,transparent);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+  .lembrete .lb-h{font-weight:800;font-size:13px;color:var(--primary);margin-bottom:6px}
+  .lembrete .lb-it{font-size:14px;padding:3px 0}
+  .lembrete .lb-it span{color:var(--muted)}
+  .semnav{width:36px;height:36px;border-radius:11px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--shadow)}
+  .semnav:active{transform:scale(.92)}
+  .semana-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;-webkit-overflow-scrolling:touch}
+  .semana{border-collapse:collapse;width:100%;min-width:330px;font-size:12px}
+  .semana th,.semana td{border:1px solid var(--line);padding:6px 3px;text-align:center}
+  .semana th{background:var(--surface);color:var(--muted);font-weight:700}
+  .semana th.hoje .sdn{color:var(--primary)}
+  .semana th .swd{display:block;font-size:10px;text-transform:uppercase}
+  .semana th .sdn{display:block;font-size:15px;font-weight:800;color:var(--text)}
+  .semana td.al{background:var(--surface);font-weight:800;color:var(--muted);width:28px}
+  .semana tr.tsep td{background:var(--surface2);text-align:left;font-weight:800;font-size:11px;text-transform:uppercase;color:var(--muted);padding:5px 8px}
+  .semana td.sc{font-weight:700;height:36px}
+  .semana td.sc.free{color:var(--free);background:var(--free-tint)}
+  .semana td.sc.busy{color:var(--muted);background:var(--surface2)}
+  .semana td.sc.mine{color:#fff;background:var(--primary)}
+  .semana td.sc.lock{color:var(--amber);background:var(--amber-tint)}
+  .semana td.sc.hae{color:var(--primary);background:var(--primary-tint);font-size:10px}
+  .semana td.sc.per{color:var(--faint)}
   .rec{flex:0 0 auto;width:184px;text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px}
   .rec:active{transform:scale(.97)}
   .rec .rt{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -518,8 +540,44 @@ function sheetConta(){
     <input id="ntConf" type="password" class="input" placeholder="repita a nova senha" autocomplete="new-password">
     <div style="height:14px"></div>
     <button class="btn primary" data-act="trocar-senha">🔑 Salvar senha</button>
+    ${(("Notification" in window) && Notification.permission!=="granted")?'<div style="height:14px"></div><button class="btn ghost" data-act="ativar-lembretes">🔔 Ativar lembretes de aula</button>':''}
     <div style="height:14px"></div>
     <button class="btn ghost" data-act="sair">⏻ Sair da conta</button>`);
+}
+function ativarLembretes(){
+  try{ if("Notification" in window){ Notification.requestPermission().then(function(){ fecharSheet(); toast(Notification.permission==="granted"?"Lembretes ativados! 🔔":"Lembretes não permitidos."); checarNotificacao(); }); } else toast("Este aparelho não suporta lembretes."); }catch(e){}
+}
+/* aulas do usuário logado num intervalo de datas */
+function minhasAulasEntre(iniData, fimData){
+  const out=[];
+  Object.keys(S.reservas).forEach(data=>{ if(data<iniData||data>fimData) return; if(periodoDoDia(data)) return;
+    TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
+      Object.keys(rt).forEach(ak=>{ const r=rt[ak]; if(!r||r.bloqueado) return;
+        if(sanId(r.profId)===sanId(S.user.id)) out.push({data,turno:t,aula:+ak.replace("a",""),r}); }); }); });
+  out.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(a.turno.k<b.turno.k?-1:1)||a.aula-b.aula);
+  return out;
+}
+function lembreteHTML(){
+  const hoje=hojeStr(), amanha=addDias(hoje,1);
+  const l=minhasAulasEntre(hoje,amanha);
+  if(!l.length) return "";
+  const itens=l.slice(0,4).map(x=>`<div class="lb-it"><b>${esc(x.r.turma)}</b> · ${x.turno.n} ${x.aula}ª · <span>${x.data===hoje?"hoje":"amanhã"}</span></div>`).join("");
+  return `<div class="lembrete"><div class="lb-h">🔔 Sua${l.length>1?"s":""} próxima${l.length>1?"s":""} aula${l.length>1?"s":""}</div>${itens}</div>`;
+}
+/* notificação do sistema ao abrir o app (1x por dia) — lembra a aula de amanhã.
+   OBS: só dispara quando o app é ABERTO; alerta com o app fechado exige servidor. */
+function checarNotificacao(){
+  try{
+    if(!("Notification" in window) || Notification.permission!=="granted") return;
+    const amanha=addDias(hojeStr(),1);
+    const l=minhasAulasEntre(amanha,amanha);
+    if(!l.length) return;
+    const chave="agenda_notif_"+amanha;
+    if(localStorage.getItem(chave)) return;
+    localStorage.setItem(chave,"1");
+    const x=l[0];
+    new Notification("Agenda de Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192.png"});
+  }catch(e){}
 }
 async function trocarSenha(){
   const a=($("ntSenha")?$("ntSenha").value:""), b=($("ntConf")?$("ntConf").value:"");
@@ -537,6 +595,7 @@ async function abrirApp(){
   await recarregarReservas();
   try{ S.recentes = (await fbGet("/recentes/"+sanId(S.user.id))) || []; }catch(e){ S.recentes=[]; }
   desenharShell();
+  checarNotificacao();
   if(_pollTimer) clearInterval(_pollTimer);
   _pollTimer = setInterval(async()=>{ await recarregarReservas(); if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }, 15000);
 }
@@ -591,7 +650,13 @@ function contarDisponiveis(dataStr){
   });
   return {tot,disp};
 }
+var _hojeModo="dia";  /* dia | semana */
 function viewHoje(){
+  const modoTop=`<div class="rel-tools"><div class="chips">
+      <button class="chip ${_hojeModo==="dia"?"on":""}" data-act="hoje-modo" data-v="dia">📅 Dia</button>
+      <button class="chip ${_hojeModo==="semana"?"on":""}" data-act="hoje-modo" data-v="semana">🗓️ Semana</button>
+    </div></div>`;
+  if(_hojeModo==="semana") return viewSemana(modoTop);
   const data=S.dataSel, hoje=hojeStr();
   const ate=(S.config.liberadoAte && S.config.liberadoAte>=hoje) ? S.config.liberadoAte : fimDoMes(hoje);
   const nDias=Math.min(62, Math.max(1, diffDias(hoje,ate)+1));
@@ -607,11 +672,12 @@ function viewHoje(){
   strip+='</div>';
   const cd=contarDisponiveis(data);
   const per=periodoDoDia(data);
-  let h=strip;
+  let h=modoTop+strip;
   const badge = per
     ? `<span class="livrebadge" style="background:color-mix(in srgb,${per.cor||"#0ea3a3"} 16%,transparent);color:${per.cor||"#0ea3a3"}">${esc(per.rotulo||"Sem aula")}</span>`
     : `<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
   h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
+  h+=lembreteHTML();
   if(per){
     const ico=/f[ée]rias/i.test(per.rotulo||"")?"🏖️":"🌴";
     h+=`<div class="periodo" style="--pc:${per.cor||"#0ea3a3"}"><span class="pico">${ico}</span><b>${esc(per.rotulo||"Sem aula")}</b>
@@ -651,6 +717,44 @@ function viewHoje(){
   const onEl=document.querySelector(".daychip.on"); if(onEl&&onEl.scrollIntoView){ try{ onEl.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
 }
 
+/* ================= VIEW: SEMANA (grade da semana inteira) ================= */
+function cShort(turma){ if(!turma) return ""; let s=(""+turma).replace(/\s*ano\s*/i," ").replace(/º/g,"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,""); const p=s.split(" "); if(p.length>=2) return p[0]+p[p.length-1]; return s.slice(0,4); }
+function viewSemana(modoTop){
+  const hoje=hojeStr();
+  const base=dateFromStr(S.dataSel), dow=(base.getDay()+6)%7, monday=addDias(S.dataSel,-dow);
+  const dias=[];
+  for(let k=0;k<6;k++){ const ds=addDias(monday,k), wk=DIAS[dateFromStr(ds).getDay()], a=(S.config.aulas[wk]||{m:0,v:0,n:0});
+    if((a.m+a.v+a.n)>0 || periodoDoDia(ds)) dias.push(ds); }
+  let h=modoTop;
+  h+=`<div class="daysum"><div><b>Semana</b><div class="sub">${esc(fmtDia(monday))} — ${esc(fmtDia(addDias(monday,5)))}</div></div>
+      <div style="display:flex;gap:6px"><button class="semnav" data-act="setsemana" data-n="-7">‹</button><button class="semnav" data-act="setsemana" data-n="7">›</button></div></div>`;
+  if(!dias.length){ h+=`<div class="empty"><span class="big">🌤️</span>Sem aulas nesta semana.</div>`; $("view").innerHTML=h; return; }
+  let head=`<tr><th></th>`;
+  dias.forEach(ds=>{ const d=dateFromStr(ds); head+=`<th class="${ds===hoje?"hoje":""}"><span class="swd">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][d.getDay()]}</span><span class="sdn">${d.getDate()}</span></th>`; });
+  head+=`</tr>`;
+  let body="";
+  TURNOS.forEach(t=>{
+    let maxA=0; dias.forEach(ds=>{ maxA=Math.max(maxA, aulasDoDia(ds,t.c)); });
+    if(maxA<=0) return;
+    body+=`<tr class="tsep"><td colspan="${dias.length+1}">${t.n}</td></tr>`;
+    for(let i=1;i<=maxA;i++){
+      body+=`<tr><td class="al">${i}ª</td>`;
+      dias.forEach(ds=>{
+        if(periodoDoDia(ds)){ body+=`<td class="sc per">·</td>`; return; }
+        const n=aulasDoDia(ds,t.c); if(i>n){ body+=`<td class="sc vazio"></td>`; return; }
+        const rt=(S.reservas[ds]&&S.reservas[ds][t.k])||{}, r=rt["a"+i];
+        if(r&&r.bloqueado){ body+=`<td class="sc lock" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">🔒</td>`; return; }
+        if(r){ const minha=sanId(r.profId)===sanId(S.user.id); body+=`<td class="sc ${minha?"mine":"busy"}" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}" title="${esc(r.turma||"")} · ${esc(r.profNome||"")}">${esc(cShort(r.turma))}</td>`; return; }
+        if(ehHAE(ds,t.k,i)){ body+=`<td class="sc hae" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">HAE</td>`; return; }
+        body+=`<td class="sc free" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">+</td>`;
+      });
+      body+=`</tr>`;
+    }
+  });
+  h+=`<div class="semana-wrap"><table class="semana">${head}${body}</table></div>
+     <div class="legend" style="margin-top:12px"><span><i class="lg free"></i>Livre</span><span><i class="lg busy"></i>Reservada</span><span><i class="lg lock"></i>Bloqueada</span></div>`;
+  $("view").innerHTML=h;
+}
 /* ================= VIEW: MINHAS AULAS / PRÓXIMOS ================= */
 var _minhasFiltro="prox";  /* prox | todas */
 function viewProximos(){
@@ -813,20 +917,24 @@ function sheetBloquearMotivo(turnoK,aula){
 /* formulário de agendar */
 let _form={turma:null,disc:null,turnoK:null,aula:null};
 function sheetAgendar(turnoK,aula){
-  _form={turma:null,letra:null,disc:null,turnoK,aula};
+  _form={turma:null,letra:null,disc:null,turnoK,aula,repetir:false};
   const discAtivas = S.disciplinas.map(d=> typeof d==="string"?{nome:d,ativa:true}:d).filter(d=>d.ativa!==false);
   const adm=S.user.admin;
   let h=`<div class="grab"></div>
     <div class="sh-head"><div class="t">Agendar aula</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     ${ctxHtml(turnoK,aula)}`;
   if(adm){
-    h+=`<label class="fld">Professor</label><div class="chips" id="profChips">`;
+    h+=`<label class="fld">Professor</label>`;
+    if(Object.keys(S.professores).length>6) h+=`<input class="chipfilter input" data-alvo="profChips" placeholder="🔍 buscar professor" style="margin-bottom:8px">`;
+    h+=`<div class="chips" id="profChips">`;
     Object.keys(S.professores).forEach(k=>{ const p=S.professores[k];
       h+=`<button class="chip ${sanId(p.id)===sanId(S.user.id)?"on":""}" data-act="pickprof" data-id="${esc(p.id)}">${esc(p.nome)}</button>`; });
     h+=`</div>`;
     _form.profId=S.user.id; _form.profNome=S.user.nome;
   }else{ _form.profId=S.user.id; _form.profNome=S.user.nome; }
-  h+=`<label class="fld">Turma (ano)</label><div class="chips" id="turmaChips">`;
+  h+=`<label class="fld">Turma (ano)</label>`;
+  if(S.turmas.length>8) h+=`<input class="chipfilter input" data-alvo="turmaChips" placeholder="🔍 buscar turma" style="margin-bottom:8px">`;
+  h+=`<div class="chips" id="turmaChips">`;
   S.turmas.forEach(t=> h+=`<button class="chip" data-act="pickturma" data-v="${esc(t)}">${esc(t)}</button>`);
   h+=`</div>`;
   const letras=S.config.turmaLetras||[];
@@ -847,7 +955,12 @@ function sheetAgendar(turnoK,aula){
     });
     h+=`</div>`;
   }
-  h+=`<div style="height:18px"></div>
+  const ateR=S.config.liberadoAte||"";
+  h+=`<label class="fld">Repetir</label><div class="chips" id="repetirChips">
+      <button class="chip on" data-act="pickrepetir" data-v="0">Só este dia</button>
+      <button class="chip" data-act="pickrepetir" data-v="1">Toda semana${ateR?" (até "+esc(fmtDia(ateR))+")":""}</button>
+    </div>
+    <div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
   /* menos toques: pre-seleciona a ultima turma/disciplina que este usuario usou */
@@ -875,6 +988,21 @@ async function salvarAgenda(){
   const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
   const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
   if(!ok) return toast("Não foi possível salvar. Tente de novo.");
+  let extras=0;
+  if(_form.repetir){
+    const ate=S.config.liberadoAte||fimDoMes(hojeStr());
+    const turnoC=(TURNOS.find(x=>x.k===turnoK)||{}).c;
+    let ds=addDias(S.dataSel,7);
+    while(ds<=ate){
+      const rt=(S.reservas[ds]&&S.reservas[ds][turnoK])||{};
+      const jaTem=rt["a"+aula];
+      if(!jaTem && !ehHAE(ds,turnoK,aula) && !periodoDoDia(ds) && aula<=aulasDoDia(ds,turnoC)){
+        await fbSet(`/reservas/${ds}/${turnoK}/a${aula}`, Object.assign({}, reg, {ts:Date.now()}));
+        extras++;
+      }
+      ds=addDias(ds,7);
+    }
+  }
   try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
   if(tema||obj){ try{
     const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
@@ -883,7 +1011,8 @@ async function salvarAgenda(){
     S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
     fbSet("/recentes/"+sanId(S.user.id), S.recentes);
   }catch(e){} }
-  await recarregarReservas(); fecharSheet(); renderTab(); toast("Aula agendada! ✅");
+  await recarregarReservas(); fecharSheet(); renderTab();
+  toast(extras>0 ? ("Agendado em "+(extras+1)+" semanas! ✅") : "Aula agendada! ✅");
 }
 
 /* ver / excluir reserva */
@@ -1316,11 +1445,15 @@ document.addEventListener("click", async (ev)=>{
     if(a==="login-voltar") return telaLogin();
     if(a==="sair") return sair();
     if(a==="conta") return sheetConta();
+    if(a==="ativar-lembretes") return ativarLembretes();
+    if(a==="hoje-modo"){ _hojeModo=el.dataset.v; return viewHoje(); }
     if(a==="trocar-senha") return trocarSenha();
     if(a==="reset-senha") return resetarSenha(el.dataset.k);
     if(a==="editar-reserva") return editarReserva(t,i);
     if(a==="exportar-csv") return exportarCSV();
     if(a==="setdia"){ S.dataSel=el.dataset.d; return viewHoje(); }
+    if(a==="setsemana"){ S.dataSel=addDias(S.dataSel, +el.dataset.n); return viewHoje(); }
+    if(a==="semana-cell"){ S.dataSel=el.dataset.d; return abrirSlot(el.dataset.t, +el.dataset.i); }
     if(a==="tema") return alternarTema();
     if(a==="fecharaviso"){ try{ localStorage.setItem("agenda_aviso_visto", (S.config&&S.config.aviso)||""); }catch(e){} return renderAviso(); }
     if(a==="haeinfo") return toast("Hora-atividade — horário reservado para o professor de informática.");
@@ -1339,6 +1472,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
+    if(a==="pickrepetir"){ _form.repetir=(el.dataset.v==="1"); document.querySelectorAll("#repetirChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="usar-recente"){ const r=S.recentes[+el.dataset.i]; if(!r) return;
       if($("fTema")) $("fTema").value=r.tema||""; if($("fObj")) $("fObj").value=r.objetivo||"";
@@ -1380,6 +1514,13 @@ document.addEventListener("click", async (ev)=>{
   }catch(e){ console.error(e); toast("Algo deu errado. Tente de novo."); }
 });
 document.addEventListener("click",(ev)=>{ const tab=ev.target.closest("[data-tab]"); if(tab){ S.tab=tab.dataset.tab; renderTab(); } });
+/* busca: filtra os chips de um grupo (professor/turma) ao digitar */
+document.addEventListener("input",(ev)=>{
+  const f=ev.target.closest(".chipfilter"); if(!f) return;
+  const alvo=document.getElementById(f.dataset.alvo); if(!alvo) return;
+  const q=(f.value||"").toLowerCase().replace(/^\s+|\s+$/g,"");
+  alvo.querySelectorAll(".chip").forEach(c=>{ c.style.display=(!q||c.textContent.toLowerCase().indexOf(q)>=0)?"":"none"; });
+});
 
 /* ================= GO ================= */
 init();
