@@ -3,9 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
-<meta name="theme-color" content="#0d0f14">
+<meta name="theme-color" content="#5a4bd6">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Agenda">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
 <title>Agenda de Aulas</title>
 <style>
   :root{
@@ -195,6 +200,12 @@
     background:var(--text);color:var(--bg);padding:12px 18px;border-radius:999px;font-size:14px;font-weight:700;
     z-index:80;box-shadow:var(--shadow2);max-width:90%;text-align:center;animation:toastin .25s ease}
   @keyframes toastin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translateX(-50%)}}
+  #installbtn{position:fixed;right:14px;bottom:calc(94px + env(safe-area-inset-bottom));z-index:40;
+    background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:800;font-size:14px;
+    padding:12px 16px;border-radius:999px;border:none;display:none;align-items:center;gap:8px;
+    box-shadow:0 10px 26px color-mix(in srgb,var(--primary) 45%,transparent)}
+  #installbtn.show{display:inline-flex;animation:toastin .3s ease}
+  #installbtn:active{transform:translateY(1px)}
 
   .sectitle{font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:22px 2px 10px}
   .minibtn{padding:9px 13px;border-radius:11px;background:var(--surface2);border:1px solid var(--line);font-size:13px;font-weight:800}
@@ -562,6 +573,14 @@ function sheetAgendar(turnoK,aula){
     <div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
+  /* menos toques: pre-seleciona a ultima turma/disciplina que este usuario usou */
+  try{
+    const last=JSON.parse(localStorage.getItem("agenda_last_"+sanId(S.user.id))||"null");
+    if(last){
+      if(last.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===last.turma){ c.classList.add("on"); _form.turma=last.turma; } });
+      if(last.disc) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===last.disc){ c.classList.add("on"); _form.disc=last.disc; } });
+    }
+  }catch(e){}
 }
 
 async function salvarAgenda(){
@@ -576,6 +595,7 @@ async function salvarAgenda(){
   const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
   const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
   if(!ok) return toast("Não foi possível salvar. Tente de novo.");
+  try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma,disc})); }catch(e){}
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Aula agendada! ✅");
 }
 
@@ -788,6 +808,37 @@ document.addEventListener("click",(ev)=>{ const tab=ev.target.closest("[data-tab
 
 /* ================= GO ================= */
 init();
+</script>
+<script>
+/* ===== PWA: instalar como app + service worker ===== */
+(function(){
+  if("serviceWorker" in navigator){
+    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
+  }
+  var deferred=null, btn=null;
+  function ensureBtn(){
+    if(btn) return btn;
+    btn=document.createElement("button"); btn.id="installbtn"; btn.type="button"; btn.innerHTML="📲 Instalar app";
+    btn.addEventListener("click", function(){ if(!deferred) return; deferred.prompt();
+      deferred.userChoice.then(function(){ deferred=null; btn.classList.remove("show"); }); });
+    document.body.appendChild(btn); return btn;
+  }
+  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferred=e; ensureBtn().classList.add("show"); });
+  window.addEventListener("appinstalled", function(){ if(btn) btn.classList.remove("show"); });
+  /* iOS (Safari não tem beforeinstallprompt): dá a dica uma vez */
+  try{
+    var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+    var standalone=window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
+    if(isIOS && !standalone && !localStorage.getItem("agenda_ios_dica")){
+      setTimeout(function(){
+        localStorage.setItem("agenda_ios_dica","1");
+        var t=document.getElementById("toast");
+        if(t){ t.textContent="Dica: toque em Compartilhar e “Adicionar à Tela de Início” para instalar o app."; t.classList.remove("hidden");
+          setTimeout(function(){ t.classList.add("hidden"); }, 6500); }
+      }, 2600);
+    }
+  }catch(e){}
+})();
 </script>
 </body>
 </html>
