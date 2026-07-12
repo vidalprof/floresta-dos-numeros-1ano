@@ -917,7 +917,7 @@ function sheetBloquearMotivo(turnoK,aula){
 /* formulário de agendar */
 let _form={turma:null,disc:null,turnoK:null,aula:null};
 function sheetAgendar(turnoK,aula){
-  _form={turma:null,letra:null,disc:null,turnoK,aula,repetir:false};
+  _form={turma:null,letra:null,disc:null,turnoK,aula};
   const discAtivas = S.disciplinas.map(d=> typeof d==="string"?{nome:d,ativa:true}:d).filter(d=>d.ativa!==false);
   const adm=S.user.admin;
   let h=`<div class="grab"></div>
@@ -955,12 +955,7 @@ function sheetAgendar(turnoK,aula){
     });
     h+=`</div>`;
   }
-  const ateR=S.config.liberadoAte||"";
-  h+=`<label class="fld">Repetir</label><div class="chips" id="repetirChips">
-      <button class="chip on" data-act="pickrepetir" data-v="0">Só este dia</button>
-      <button class="chip" data-act="pickrepetir" data-v="1">Toda semana${ateR?" (até "+esc(fmtDia(ateR))+")":""}</button>
-    </div>
-    <div style="height:18px"></div>
+  h+=`<div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
   /* menos toques: pre-seleciona a ultima turma/disciplina que este usuario usou */
@@ -988,21 +983,6 @@ async function salvarAgenda(){
   const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
   const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
   if(!ok) return toast("Não foi possível salvar. Tente de novo.");
-  let extras=0;
-  if(_form.repetir){
-    const ate=S.config.liberadoAte||fimDoMes(hojeStr());
-    const turnoC=(TURNOS.find(x=>x.k===turnoK)||{}).c;
-    let ds=addDias(S.dataSel,7);
-    while(ds<=ate){
-      const rt=(S.reservas[ds]&&S.reservas[ds][turnoK])||{};
-      const jaTem=rt["a"+aula];
-      if(!jaTem && !ehHAE(ds,turnoK,aula) && !periodoDoDia(ds) && aula<=aulasDoDia(ds,turnoC)){
-        await fbSet(`/reservas/${ds}/${turnoK}/a${aula}`, Object.assign({}, reg, {ts:Date.now()}));
-        extras++;
-      }
-      ds=addDias(ds,7);
-    }
-  }
   try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
   if(tema||obj){ try{
     const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
@@ -1011,8 +991,7 @@ async function salvarAgenda(){
     S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
     fbSet("/recentes/"+sanId(S.user.id), S.recentes);
   }catch(e){} }
-  await recarregarReservas(); fecharSheet(); renderTab();
-  toast(extras>0 ? ("Agendado em "+(extras+1)+" semanas! ✅") : "Aula agendada! ✅");
+  await recarregarReservas(); fecharSheet(); renderTab(); toast("Aula agendada! ✅");
 }
 
 /* ver / excluir reserva */
@@ -1472,7 +1451,6 @@ document.addEventListener("click", async (ev)=>{
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="pickrepetir"){ _form.repetir=(el.dataset.v==="1"); document.querySelectorAll("#repetirChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="usar-recente"){ const r=S.recentes[+el.dataset.i]; if(!r) return;
       if($("fTema")) $("fTema").value=r.tema||""; if($("fObj")) $("fObj").value=r.objetivo||"";
