@@ -122,6 +122,9 @@
   .slotcard.lock{border-left-color:var(--amber)}
   .slotcard.lock .sc-ic{background:var(--amber-tint);color:var(--amber)}
   .slotcard.lock .sc-t{color:var(--muted)}
+  .slotcard.off{border-left-color:var(--line);opacity:.72;cursor:default}
+  .slotcard.off .sc-ic{background:var(--surface2);color:var(--muted)}
+  .slotcard.off .sc-t{color:var(--muted)}
   .slotcard.hae{border-left-color:var(--primary)}
   .slotcard.hae .sc-ic{background:var(--primary-tint);color:var(--primary)}
   .slotcard.hae .sc-t{color:var(--primary)}
@@ -141,9 +144,9 @@
   select.input{appearance:none;-webkit-appearance:none;-moz-appearance:none}
   .btnlink{background:transparent;border:0;color:var(--primary);font-weight:700;font-size:13px;padding:8px 2px;cursor:pointer;display:inline-block}
   .grecaptcha-badge{visibility:hidden!important}
-  .recaptcha-terms{font-size:11px;color:var(--faint);text-align:center;margin-top:14px;line-height:1.5}
+  .recaptcha-terms{font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.5}
   .recaptcha-terms a{color:var(--muted)}
-  .delx{margin-left:3px;color:#ff8b76;background:transparent;border:0;font-size:14px;padding:5px 9px;cursor:pointer;line-height:1;vertical-align:middle}
+  .delx{margin-left:2px;color:#ff8b76;background:transparent;border:0;font-size:15px;padding:8px 12px;cursor:pointer;line-height:1;vertical-align:middle}
 
   .empty{color:var(--muted);text-align:center;padding:40px 16px;font-size:15px;line-height:1.6}
   .empty .big{font-size:40px;display:block;margin-bottom:10px}
@@ -237,7 +240,7 @@
   .rec .rt{padding-right:24px}
   .rec.sel{border-color:var(--primary);background:var(--primary-tint);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 35%,transparent)}
   .rec.sel::after{content:"✓";position:absolute;top:8px;right:9px;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--primary);color:var(--primary-ink);font-size:12px;font-weight:800}
-  .recdel{position:absolute;top:6px;right:7px;width:22px;height:22px;line-height:1;text-align:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:12px;font-weight:700;padding:0;cursor:pointer}
+  .recdel{position:absolute;top:5px;right:5px;width:30px;height:30px;line-height:1;text-align:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:13px;font-weight:700;padding:0;cursor:pointer}
   .recdel:active{transform:scale(.9)}
   .rec.sel .recdel{display:none}
   .rec .rt{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -283,7 +286,7 @@
     font-size:42px;box-shadow:0 14px 34px color-mix(in srgb,var(--primary) 40%,transparent)}
   .authwrap h1{text-align:center;font-size:27px;font-weight:800}
   .authwrap .sub{text-align:center;color:var(--muted);margin-bottom:20px;font-size:14px}
-  .authwrap .hint{font-size:12.5px;color:var(--faint);text-align:center;margin-top:14px;line-height:1.55}
+  .authwrap .hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.55}
 
   .toast{position:fixed;left:50%;bottom:calc(94px + env(safe-area-inset-bottom));transform:translateX(-50%);
     background:var(--text);color:var(--bg);padding:12px 18px;border-radius:999px;font-size:14px;font-weight:700;
@@ -693,7 +696,7 @@ async function fazerLogin(){
 function telaSenha(){
   const p=_loginPend, novo=!p.fbAuth;
   let sub;
-  if(_sessaoExpirou) sub="Sua sessão expirou — entre novamente";
+  if(_sessaoExpirou) sub = novo ? "Confirme criando sua senha para continuar" : "Sua sessão expirou — entre novamente";
   else if(novo){
     if(+p.authVer>1) sub="Crie uma nova senha (mínimo 6)";
     else if(p.senha) sub="Atualizamos a segurança do login — crie sua senha de novo (pode ser a mesma)";
@@ -735,7 +738,7 @@ async function loginCriar(){
     // O Firebase Auth é o portão: cria a conta (ou entra, se já existir com esta senha).
     try{ await authCriar(_loginPend.id, a, _loginPend.authVer); }
     catch(e){ const m=e.message||"";
-      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(m)) return toast("Esta conta já tem senha. Volte e entre, ou peça um reset ao administrador.");
+      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(m)) return toast("Esta conta já tem uma senha. Peça ao administrador para resetar a sua.");
       if(/WEAK_PASSWORD/.test(m)) return toast("A senha precisa ter pelo menos 6 caracteres.");
       if(/TOO_MANY_ATTEMPTS/.test(m)) return toast("Muitas tentativas. Aguarde um minuto e tente de novo.");
       if(/RECAPTCHA|APP.?CHECK|Forbidden/i.test(m)) return toast("Não foi possível validar a segurança. Desative bloqueadores e tente de novo.");
@@ -886,9 +889,12 @@ async function abrirApp(){
     if(document.hidden) return;
     if($("modal") && $("modal").innerHTML) return;
     if(authAtivo() && S.auth.expira < Date.now()+180000){ try{ await authRefresh(); }catch(e){} }
+    // rede de segurança: a cada ~5 min recarrega tudo mesmo sem mudança no marcador
+    // (cobre um "bump" de marcador que tenha falhado num aparelho).
+    S._pollN=(S._pollN||0)+1; const forcar=(S._pollN%10===0);
     // lê só o marcador (poucos bytes); só baixa a agenda inteira se algo mudou
     const lw = await fbGet("/config/reservasLastWrite");
-    if(lw!=null && lw===S._lwSeen) return;
+    if(!forcar && lw===S._lwSeen) return;
     S._lwSeen = lw;
     const antes=_sigReservas(); await recarregarReservas();
     if(_sigReservas()!==antes && (S.tab==="hoje"||S.tab==="proximos")) renderTab();
@@ -972,10 +978,13 @@ function viewHoje(){
   const cd=contarDisponiveis(data);
   const per=periodoDoDia(data);
   const fer=diaFeriado(data);
+  // Professor não agenda no mesmo dia: mostra os horários travados, não verdes enganosos.
+  const diaFechadoProf = (!adm && S.config.apenasProximoDia && data===hojeStr());
   let h=modoTop+strip;
   let badge;
   if(per) badge=`<span class="livrebadge" style="background:color-mix(in srgb,${corSegura(per.cor)} 16%,transparent);color:${corSegura(per.cor)}">${esc(per.rotulo||"Sem aula")}</span>`;
   else if(fer) badge=`<span class="livrebadge" style="background:color-mix(in srgb,#e5533c 16%,transparent);color:#e5533c">🎌 Feriado</span>`;
+  else if(diaFechadoProf) badge=`<span class="livrebadge zero">Só a partir de amanhã</span>`;
   else badge=`<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
   h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
   const gsem=grupoDaSemana(data);
@@ -988,6 +997,9 @@ function viewHoje(){
     if(faltam<0) h+=`<div class="grupobanner" style="background:var(--amber-tint);color:var(--amber)">📅 O período de agendamento fechou em ${esc(fmtDia(S.config.liberadoAte))}. Libere o próximo mês em ⚙️ → Outras configurações.</div>`;
     else if(faltam<=6) h+=`<div class="grupobanner" style="background:var(--amber-tint);color:var(--amber)">📅 O mês liberado termina ${faltam===0?"hoje":("em "+faltam+" dia"+(faltam>1?"s":""))} (${esc(fmtDia(S.config.liberadoAte))}). Considere liberar o próximo em ⚙️.</div>`;
   }
+  // admin agendando no dia de hoje: deixa claro que é permissão só dele
+  if(adm && S.config.apenasProximoDia && data===hojeStr() && !per && !fer)
+    h+=`<div class="grupobanner" style="background:var(--primary-tint);color:var(--primary)">🔓 Você (admin) pode agendar hoje. Os professores só a partir de amanhã.</div>`;
   h+=lembreteHTML();
   if(per){
     const rot=per.rotulo||"";
@@ -1023,6 +1035,8 @@ function viewHoje(){
       if(!r){
         if(ehHAE(data,t.k,i)){
           body+=`<button class="slotcard hae" data-act="haeinfo"><div class="sc-ic">📋</div><div class="sc-m"><div class="sc-t">${esc(S.config.haeLabel||"Hora-atividade")}</div><div class="sc-s">hora-atividade</div></div>${meta}</button>`;
+        }else if(diaFechadoProf){
+          body+=`<div class="slotcard off"><div class="sc-ic">⏳</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">agende a partir de amanhã</div></div>${meta}</div>`;
         }else{
           body+=`<button class="slotcard free" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">＋</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">toque para agendar</div></div>${meta}</button>`;
         }
@@ -1655,7 +1669,8 @@ async function bloquearEmMassa(escopo, turnoArg, aulaArg){
     feitos++;
   });
   if(!feitos) return toast(pulados?"Só há aulas já reservadas aqui.":"Nada para bloquear neste dia.");
-  await fbUpdate("/reservas/"+data, patch);
+  const ok=await fbUpdate("/reservas/"+data, patch);
+  if(!ok){ toast("Não foi possível bloquear. Tente de novo."); return; }
   await recarregarReservas(); renderTab();
   toast(feitos+" horário(s) bloqueado(s)"+(pulados?" ("+pulados+" reservado(s), mantido(s))":"")+".");
   telaBloqueios();
@@ -1665,7 +1680,8 @@ async function liberarDia(){
   const rtDay=(S.reservas[data])||{}; const patch={}; let n=0;
   TURNOS.forEach(t=>{ const rt=rtDay[t.k]||{}; Object.keys(rt).forEach(ak=>{ if(rt[ak]&&rt[ak].bloqueado){ patch[t.k+"/"+ak]=null; n++; } }); });
   if(!n) return toast("Não há bloqueios neste dia.");
-  await fbUpdate("/reservas/"+data, patch);
+  const ok=await fbUpdate("/reservas/"+data, patch);
+  if(!ok){ toast("Não foi possível liberar. Tente de novo."); return; }
   await recarregarReservas(); renderTab(); toast(n+" bloqueio(s) liberado(s)."); telaBloqueios();
 }
 
@@ -1736,10 +1752,13 @@ function telaConfig(){
   grade+=`</table>`;
 
   let hor="";
-  ["matutino","vespertino"].forEach(tk=>{
+  const _colDe={matutino:"m",vespertino:"v",noturno:"n"};
+  let _turnosHor=["matutino","vespertino"];
+  if(DIAS.some(d=>(a[d].n||0)>0) || (S.config.horarios.noturno||[]).length>0) _turnosHor.push("noturno");
+  _turnosHor.forEach(tk=>{
     hor+=`<div class="sectitle">Horários — ${tk}</div>`;
     const arr=(S.config.horarios[tk]||[]);
-    const maxA=Math.max(...DIAS.map(d=>a[d][tk==="matutino"?"m":"v"]),arr.length,0);
+    const maxA=Math.max(...DIAS.map(d=>a[d][_colDe[tk]]||0),arr.length,0);
     for(let i=0;i<maxA;i++){ const hh=arr[i]||["",""];
       hor+=`<div class="horrow"><div class="lbl">${i+1}ª</div>
         <input data-hor="${tk}.${i}.0" value="${esc(hh[0])}" placeholder="início">
