@@ -317,10 +317,13 @@ const ESCOLA = "vidal-ramos";               // gaveta desta escola (multi-escola
 const P = `/agenda/${ESCOLA}`;
 const url = (path) => `${DB}${P}${path}.json`;
 
-async function fbGet(path){
-  try{ const r = await fetch(url(path)); if(!r.ok) return null; return await r.json(); }
-  catch(e){ return null; }
+/* Distingue "leu e veio vazio" (ok:true, val:null) de "falhou" (ok:false):
+   sem isso, uma queda de rede parece "banco vazio" e assusta o usuário. */
+async function fbGetRaw(path){
+  try{ const r = await fetch(url(path)); if(!r.ok) return {ok:false, status:r.status}; return {ok:true, val: await r.json()}; }
+  catch(e){ return {ok:false, net:true}; }
 }
+async function fbGet(path){ const r = await fbGetRaw(path); return r.ok ? r.val : null; }
 async function fbSet(path,val){ const r=await fetch(url(path),{method:'PUT',body:JSON.stringify(val)}); return r.ok; }
 async function fbUpdate(path,val){ const r=await fetch(url(path),{method:'PATCH',body:JSON.stringify(val)}); return r.ok; }
 async function fbDel(path){ const r=await fetch(url(path),{method:'DELETE'}); return r.ok; }
@@ -329,6 +332,7 @@ async function fbDel(path){ const r=await fetch(url(path),{method:'DELETE'}); re
 const DIAS = ["dom","seg","ter","qua","qui","sex","sab"];
 const DIAS_NOME = {dom:"Dom",seg:"Seg",ter:"Ter",qua:"Qua",qui:"Qui",sex:"Sex",sab:"Sab"};
 const TURNOS = [{k:"matutino",n:"Matutino",c:"m"},{k:"vespertino",n:"Vespertino",c:"v"},{k:"noturno",n:"Noturno",c:"n"}];
+const ORD_TURNO = {matutino:0, vespertino:1, noturno:2};  // ordem real do dia (não alfabética)
 const DEF_DISCIPLINAS = ["Língua Portuguesa","Matemática","Ciências","História","Geografia","Inglês","Ensino Religioso","Artes","Ed. Física"];
 const DEF_TURMAS = ["0 - Pré","1º ano","2º ano","3º ano","4º ano","5º ano","6º ano","7º ano","8º ano","9º ano"];
 const DEF_AULAS = {dom:{m:0,v:0,n:0},seg:{m:4,v:4,n:0},ter:{m:4,v:4,n:0},qua:{m:0,v:0,n:0},qui:{m:4,v:4,n:0},sex:{m:4,v:4,n:0},sab:{m:0,v:0,n:0}};
@@ -468,16 +472,31 @@ function ehHAE(dataStr, turnoK, aula){
 async function init(){
   aplicarTema();
   await carregarBase();
+  // Se a busca dos dados essenciais FALHOU (rede/servidor), não é "primeiro acesso":
+  // mostra "sem conexão" em vez da tela de criar administrador.
+  if(_baseErro){ telaSemConexao(); return; }
   if(!S.professores || Object.keys(S.professores).length===0){ telaBootstrap(); return; }
   const saved = localStorage.getItem("agenda_user");
   if(saved && S.professores[saved]){ S.user = S.professores[saved]; abrirApp(); }
   else telaLogin();
 }
+function telaSemConexao(){
+  $("root").innerHTML = `<div class="authwrap">
+    <div class="logo">📡</div>
+    <h1>Sem conexão</h1>
+    <p class="sub">Não consegui carregar os dados agora. Verifique sua internet e tente de novo.</p>
+    <button class="btn primary" data-act="recarregar-app">🔄 Tentar de novo</button>
+    <p class="hint">Seus dados estão salvos no servidor — nada foi perdido.</p>
+  </div>`;
+}
+var _baseErro=false;
 async function carregarBase(){
   const [config,prof,disc,turmas] = await Promise.all([
-    fbGet("/config"), fbGet("/professores"), fbGet("/disciplinas"), fbGet("/turmas")
+    fbGetRaw("/config"), fbGetRaw("/professores"), fbGetRaw("/disciplinas"), fbGetRaw("/turmas")
   ]);
-  S.config = config || null;
+  // Falha nos dois essenciais (config/professores) => sem conexão de verdade.
+  _baseErro = !config.ok || !prof.ok;
+  S.config = (config.ok ? config.val : null) || null;
   if(S.config){
     if(!S.config.aulas) S.config.aulas = DEF_AULAS;
     if(!S.config.horarios) S.config.horarios = DEF_HORARIOS;
@@ -489,11 +508,12 @@ async function carregarBase(){
     if(!S.config.periodos) S.config.periodos = [];
     if(!S.config.rodizio) S.config.rodizio = {ativo:false, refSeg:"", refGrupo:"ini"};
   }
-  S.professores = prof || {};
-  S.disciplinas = disc || [];
-  S.turmas = turmas || [];
+  S.professores = (prof.ok ? prof.val : null) || {};
+  S.disciplinas = (disc.ok ? disc.val : null) || [];
+  S.turmas = (turmas.ok ? turmas.val : null) || [];
 }
-async function recarregarReservas(){ S.reservas = (await fbGet("/reservas")) || {}; }
+/* Em falha de recarga, MANTÉM as reservas já carregadas (evita a agenda "piscar vazia"). */
+async function recarregarReservas(){ const r = await fbGetRaw("/reservas"); if(r.ok) S.reservas = r.val || {}; }
 
 /* ================= BOOTSTRAP (1o acesso: cria admin + semeia) ================= */
 function telaBootstrap(){
@@ -554,10 +574,14 @@ function telaLogin(){
 async function fazerLogin(){
   const id=$("lId").value.trim(); if(!id) return toast("Digite o seu ID.");
   const key=sanId(id);
-  await carregarBase();
-  const p = S.professores[key];
-  if(!p){ return toast("ID não encontrado. Confira com o administrador."); }
-  _loginPend=p; telaSenha();
+  const restore=btnBusy('[data-act="login"]',"Entrando…");
+  try{
+    await carregarBase();
+    if(_baseErro){ toast("Sem conexão. Verifique a internet e tente de novo."); return; }
+    const p = S.professores[key];
+    if(!p){ toast("ID não encontrado. Confira com o administrador."); return; }
+    _loginPend=p; telaSenha();
+  } finally { restore(); }
 }
 function telaSenha(){
   const p=_loginPend, novo=!p.senha;
@@ -628,7 +652,7 @@ function minhasAulasEntre(iniData, fimData){
     TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
       Object.keys(rt).forEach(ak=>{ const r=rt[ak]; if(!r||r.bloqueado) return;
         if(sanId(r.profId)===sanId(S.user.id)) out.push({data,turno:t,aula:+ak.replace("a",""),r}); }); }); });
-  out.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(a.turno.k<b.turno.k?-1:1)||a.aula-b.aula);
+  out.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(ORD_TURNO[a.turno.k]-ORD_TURNO[b.turno.k])||(a.aula-b.aula));
   return out;
 }
 function lembreteHTML(){
@@ -873,7 +897,7 @@ function viewProximos(){
       });
     });
   });
-  lista.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(a.turno.k<b.turno.k?-1:1)||a.aula-b.aula);
+  lista.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(ORD_TURNO[a.turno.k]-ORD_TURNO[b.turno.k])||(a.aula-b.aula));
   const titulo = admin ? "Reservas" : "Minhas aulas";
   let h=`<div class="rel-tools"><div class="chips">
       <button class="chip ${_minhasFiltro==="prox"?"on":""}" data-act="minhas-filtro" data-v="prox">Próximas</button>
@@ -988,6 +1012,15 @@ function ctxHtml(turnoK,aula){
 }
 function openSheet(html){ $("modal").innerHTML=`<div class="backdrop"><div class="sheet">${html}</div></div>`; }
 function fecharSheet(){ $("modal").innerHTML=""; }
+/* Desabilita um botão e mostra "…" enquanto grava; devolve função para restaurar
+   (se o botão ainda existir — após re-render some sozinho). Evita toque duplo e
+   dá sinal de "estou salvando" em internet lenta. */
+function btnBusy(sel, txt){
+  const b=(typeof sel==="string")?document.querySelector(sel):sel;
+  if(!b) return function(){};
+  const old=b.innerHTML; b.disabled=true; b.innerHTML=txt;
+  return function(){ if(b && b.isConnected){ b.disabled=false; b.innerHTML=old; } };
+}
 
 /* admin: escolher Agendar ou Bloquear */
 function sheetEscolha(turnoK,aula){
@@ -1160,22 +1193,25 @@ async function salvarAgenda(){
     const sg=grupoDaSemana(S.dataSel), tg=grupoDaTurma(turma);
     if(sg && tg && sg!==tg){ _form.tema=tema; _form.obj=obj; return sheetExcecao(sg,tg); }
   }
-  // checa se o slot continua livre (anti-choque simples)
-  const atual = await fbGet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
-  if(atual){ await recarregarReservas(); fecharSheet(); renderTab(); return toast("Ops! Esse horário acabou de ser reservado."); }
-  const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
-  if(_form.excecao) reg.excecao=true;
-  const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
-  if(!ok) return toast("Não foi possível salvar. Tente de novo.");
-  try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
-  if(tema||obj){ try{
-    const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
-    const chave=(t)=>((t.tema||"")+"||"+(t.objetivo||"")).toLowerCase().replace(/\s+/g," ").trim();
-    S.recentes=(S.recentes||[]).filter(x=>chave(x)!==chave(nova));
-    S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
-    fbSet("/recentes/"+sanId(S.user.id), S.recentes);
-  }catch(e){} }
-  await recarregarReservas(); fecharSheet(); renderTab(); toast(reg.excecao ? "Agendado como exceção. ⚠️" : "Aula agendada! ✅");
+  const restore=btnBusy('[data-act="salvar-agenda"]',"Salvando…");
+  try{
+    // checa se o slot continua livre (anti-choque simples)
+    const atual = await fbGet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
+    if(atual){ await recarregarReservas(); fecharSheet(); renderTab(); toast("Ops! Esse horário acabou de ser reservado."); return; }
+    const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
+    if(_form.excecao) reg.excecao=true;
+    const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
+    if(!ok){ toast("Não foi possível salvar. Tente de novo."); return; }
+    try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
+    if(tema||obj){ try{
+      const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
+      const chave=(t)=>((t.tema||"")+"||"+(t.objetivo||"")).toLowerCase().replace(/\s+/g," ").trim();
+      S.recentes=(S.recentes||[]).filter(x=>chave(x)!==chave(nova));
+      S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
+      fbSet("/recentes/"+sanId(S.user.id), S.recentes);
+    }catch(e){} }
+    await recarregarReservas(); fecharSheet(); renderTab(); toast(reg.excecao ? "Agendado como exceção. ⚠️" : "Aula agendada! ✅");
+  } finally { restore(); }
 }
 function sheetExcecao(sg,tg){
   const turnoK=_form.turnoK, aula=_form.aula;
@@ -1248,8 +1284,12 @@ async function salvarEdicao(){
   const disc=_form.disc||base.disciplina, tema=($("eTema")?$("eTema").value.trim():""), obj=($("eObj")?$("eObj").value.trim():"");
   if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
   const reg=Object.assign({}, base, {disciplina:disc, tema:tema, objetivo:obj, ts:Date.now()});
-  await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
-  await recarregarReservas(); fecharSheet(); renderTab(); toast("Alterações salvas! ✅");
+  const restore=btnBusy('[data-act="salvar-edicao"]',"Salvando…");
+  try{
+    const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
+    if(!ok){ toast("Não foi possível salvar. Tente de novo."); return; }
+    await recarregarReservas(); fecharSheet(); renderTab(); toast("Alterações salvas! ✅");
+  } finally { restore(); }
 }
 async function resetarSenha(k){
   await fbDel("/professores/"+k+"/senha");
@@ -1393,6 +1433,7 @@ async function bloquearEmMassa(escopo, turnoArg, aulaArg){
     const n=aulasDoDia(data,t.c);
     for(let i=1;i<=n;i++){ if(escopo==="aula" && i!==aulaArg) continue; alvos.push({turno:t.k,aula:i}); }
   });
+  await recarregarReservas();  // relê antes: evita sobrescrever uma reserva feita nos últimos segundos
   const rtDay=(S.reservas[data])||{};
   const patch={}; let feitos=0, pulados=0;
   alvos.forEach(s=>{
@@ -1451,7 +1492,11 @@ async function addProf(){
 }
 async function delProf(k){
   if(k===sanId(S.user.id)) return toast("Você não pode excluir a si mesmo.");
-  await fbDel("/professores/"+k); await carregarBase(); telaProfessores(); toast("Professor removido.");
+  const p=S.professores[k], nome=p?p.nome:"este professor";
+  if(!confirm("Excluir "+nome+"?\n\nIsso não volta. As aulas já agendadas por ele continuam na agenda.")) return;
+  const ok=await fbDel("/professores/"+k);
+  if(!ok) return toast("Não foi possível excluir. Tente de novo.");
+  await carregarBase(); telaProfessores(); toast("Professor removido.");
 }
 
 /* --- Config: aulas por turno + horários + turmas + disciplinas --- */
@@ -1568,6 +1613,10 @@ async function addDisc(){ const v=$("novaDisc").value.trim(); if(!v)return; S.di
 async function delDisc(i){ S.disciplinas.splice(i,1); await fbSet("/disciplinas",S.disciplinas); telaConfig(); }
 
 /* --- Outras opções --- */
+/* Grupo REAL da semana atual (calculado pela paridade). Se o rodízio está
+   desligado/sem âncora, cai no refGrupo salvo ou "ini". Usado para pré-marcar o
+   botão certo — evita inverter a fase ao salvar sem tocar nos botões. */
+function _grupoAtualConfig(){ return grupoDaSemana(hojeStr()) || (S.config.rodizio&&S.config.rodizio.refGrupo) || "ini"; }
 function telaOpcoes(){
   fecharSheet();
   const c=S.config;
@@ -1600,8 +1649,8 @@ function telaOpcoes(){
     <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
       <input type="checkbox" id="oRodizio" ${(c.rodizio&&c.rodizio.ativo)?"checked":""} style="width:20px;height:20px"> Ativar (professor só agenda na semana do grupo dele)</label>
     <div class="chips" style="margin-top:6px">
-      <button class="chip ${(c.rodizio&&c.rodizio.refGrupo==="fin")?"":"on"}" data-act="rodizio-grupo" data-v="ini">Esta semana: Iniciais (Pré–5º)</button>
-      <button class="chip ${(c.rodizio&&c.rodizio.refGrupo==="fin")?"on":""}" data-act="rodizio-grupo" data-v="fin">Esta semana: Finais (6º–9º)</button>
+      <button class="chip ${_grupoAtualConfig()==="fin"?"":"on"}" data-act="rodizio-grupo" data-v="ini">Esta semana: Iniciais (Pré–5º)</button>
+      <button class="chip ${_grupoAtualConfig()==="fin"?"on":""}" data-act="rodizio-grupo" data-v="fin">Esta semana: Finais (6º–9º)</button>
     </div>
     <p class="hint" style="text-align:left">Você está definindo o grupo da <b>semana atual (${esc(fmtDia(segDaSemana(hojeStr())))} a ${esc(fmtDia(addDias(segDaSemana(hojeStr()),5)))})</b>; depois alterna sozinho. Voltando das férias, é só vir aqui <b>na semana do retorno</b> e escolher o grupo — pode repetir o mesmo grupo, sem problema. Fora da semana, o professor só agenda como <b>exceção autorizada</b>.</p>
     <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
@@ -1636,6 +1685,7 @@ document.addEventListener("click", async (ev)=>{
   const a=el.dataset.act;
   const t=el.dataset.t, i=el.dataset.i?+el.dataset.i:null;
   try{
+    if(a==="recarregar-app"){ location.reload(); return; }
     if(a==="bootstrap") return fazerBootstrap();
     if(a==="login") return fazerLogin();
     if(a==="login-criar") return loginCriar();
