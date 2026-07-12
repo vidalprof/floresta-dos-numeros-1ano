@@ -706,10 +706,13 @@ function viewHoje(){
     : `<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
   h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
   const gsem=grupoDaSemana(data);
-  if(gsem) h+=`<div class="grupobanner ${gsem}">🔁 Semana dos ${esc(nomeGrupo(gsem))}</div>`;
+  // Só mostra a plaquinha do rodízio em dia letivo (não em fim de semana,
+  // feriado, recesso ou férias — aí não há agendamento mesmo).
+  if(gsem && cd.tot>0) h+=`<div class="grupobanner ${gsem}">🔁 Semana dos ${esc(nomeGrupo(gsem))}</div>`;
   h+=lembreteHTML();
   if(per){
-    const ico=/f[ée]rias/i.test(per.rotulo||"")?"🏖️":"🌴";
+    const rot=per.rotulo||"";
+    const ico=/feriado/i.test(rot)?"🎌":(/f[ée]rias/i.test(rot)?"🏖️":"🌴");
     h+=`<div class="periodo" style="--pc:${per.cor||"#0ea3a3"}"><span class="pico">${ico}</span><b>${esc(per.rotulo||"Sem aula")}</b>
       <div class="pd">${esc(fmtDia(per.inicio))} até ${esc(fmtDia(per.fim))}</div>
       <div class="pd">Não há aulas neste período — a agenda fica fechada.</div></div>`;
@@ -741,7 +744,11 @@ function viewHoje(){
     }
     body+="</div>";
   });
-  if(!algum){ h+=`<div class="empty"><span class="big">🌤️</span>Não há aulas neste dia.<br>Escolha outro dia na faixa acima.</div>`; }
+  if(!algum){
+    const dw=dateFromStr(data).getDay();
+    if(dw===0||dw===6){ h+=`<div class="empty"><span class="big">🗓️</span><b>${esc(cap1(fmtSem(data)))}</b> — sem agendas neste dia.<br>A agenda funciona nos dias letivos.</div>`; }
+    else{ h+=`<div class="empty"><span class="big">🌤️</span>Não há aulas neste dia.<br>Escolha outro dia na faixa acima.</div>`; }
+  }
   else{ h+=`<div class="legend"><span><i class="lg free"></i>Livre</span><span><i class="lg busy"></i>Reservada</span><span><i class="lg lock"></i>Bloqueada</span></div>`+body; }
   $("view").innerHTML=h;
   const onEl=document.querySelector(".daychip.on"); if(onEl&&onEl.scrollIntoView){ try{ onEl.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
@@ -1170,12 +1177,13 @@ function telaPeriodos(){
   list+=`</div>`;
   openSheet(`<div class="grab"></div>
     <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Recesso e férias</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <p class="hint" style="text-align:left">Nos dias dentro de um período a agenda fica fechada (sem aulas), com os dizeres e a cor que você escolher — ex.: <b>Recesso escolar</b> (meio do ano) e <b>Férias escolares</b> (fim do ano).</p>
+    <p class="hint" style="text-align:left">Nos dias dentro de um período a agenda fica fechada (sem aulas), com os dizeres e a cor que você escolher — ex.: <b>Recesso escolar</b> (meio do ano), <b>Férias escolares</b> (fim do ano) ou um <b>Feriado</b>. Para um feriado de um dia só, use a <b>mesma data</b> em Início e Fim.</p>
     <label class="fld">Dizeres (rótulo)</label>
     <input id="perRotulo" class="input" placeholder="Ex.: Recesso escolar" value="Recesso escolar">
     <div class="chips" style="margin-top:10px">
       <button class="chip" data-act="periodo-preset" data-v="Recesso escolar">Recesso escolar</button>
       <button class="chip" data-act="periodo-preset" data-v="Férias escolares">Férias escolares</button>
+      <button class="chip" data-act="periodo-preset" data-v="Feriado">Feriado</button>
     </div>
     <label class="fld">Cor</label>${sw}
     <div style="display:flex;gap:8px;margin-top:14px">
