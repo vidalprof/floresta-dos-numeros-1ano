@@ -367,18 +367,6 @@ async function _authIdentity(kind, id, senha, ver){
   if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
   _guardaAuth(j.idToken, j.refreshToken, j.expiresIn); return j;
 }
-async function authEntrar(id, senha, ver){  // entra; se a conta não existe ainda, cria (migração transparente)
-  // Firebase novo (proteção anti-enumeração) devolve INVALID_LOGIN_CREDENTIALS em vez de
-  // EMAIL_NOT_FOUND; como aqui a senha já foi validada (djb2), tratamos como "conta ainda não existe".
-  try{ return await _authIdentity("signInWithPassword", id, senha, ver); }
-  catch(e){
-    if(/EMAIL_NOT_FOUND|INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message)){
-      try{ return await _authIdentity("signUp", id, senha, ver); }
-      catch(e2){ if(/EMAIL_EXISTS/.test(e2.message)) throw e; throw e2; }
-    }
-    throw e;
-  }
-}
 async function authCriar(id, senha, ver){   // cria; se já existir, apenas entra
   try{ return await _authIdentity("signUp", id, senha, ver); }
   catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha, ver); throw e; }
@@ -629,7 +617,6 @@ async function fazerBootstrap(){
 }
 
 /* ================= LOGIN ================= */
-function _hashSenha(s){ var t=(""+s), h=5381, i; for(i=0;i<t.length;i++){ h=((h*33)+t.charCodeAt(i))>>>0; } return "h"+h.toString(36); }
 var _loginPend=null;
 function telaLogin(){
   const nome = S.config ? S.config.appNome : "Agenda de Aulas";
@@ -660,7 +647,7 @@ async function fazerLogin(){
   } finally { restore(); }
 }
 function telaSenha(){
-  const p=_loginPend, novo=!p.senha;
+  const p=_loginPend, novo=!p.fbAuth;
   $("root").innerHTML = `
   <div class="authwrap">
     <div class="logo">🗓️</div>
@@ -691,38 +678,48 @@ async function loginCriar(){
   const a=($("sNova")?$("sNova").value:""), b=($("sConf")?$("sConf").value:"");
   if(a.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
   if(a!==b) return toast("As senhas não coincidem.");
-  const key=sanId(_loginPend.id), hash=_hashSenha(a);
+  const key=sanId(_loginPend.id);
   const restore=btnBusy('[data-act="login-criar"]',"Criando…");
   try{
-    try{ await authCriar(_loginPend.id, a, _loginPend.authVer); }catch(e){ console.warn("login seguro:", e.message); }
-    await fbSet("/professores/"+key+"/senha", hash);
-    if(authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} }
-    _loginPend.senha=hash; S.user=_loginPend; localStorage.setItem("agenda_user", key);
+    // O Firebase Auth é o portão: cria a conta (ou entra, se já existir com esta senha).
+    try{ await authCriar(_loginPend.id, a, _loginPend.authVer); }
+    catch(e){
+      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(e.message)) return toast("Esta conta já tem senha. Volte e entre, ou peça um reset ao administrador.");
+      if(/WEAK_PASSWORD/.test(e.message)) return toast("A senha precisa ter pelo menos 6 caracteres.");
+      return toast("Sem conexão. Tente de novo.");
+    }
+    try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){}
+    if(_loginPend.senha){ try{ await fbUpdate("/professores/"+key, {senha:null}); delete _loginPend.senha; }catch(e){} }
+    S.user=_loginPend; localStorage.setItem("agenda_user", key);
     toast("Senha criada! 🔑"); abrirApp();
   } finally { restore(); }
 }
 async function loginEntrar(){
   const s=($("sSenha")?$("sSenha").value:"");
-  if(_hashSenha(s)!==_loginPend.senha) return toast("Senha incorreta.");
+  if(!s) return toast("Digite a sua senha.");
   const key=sanId(_loginPend.id);
   const restore=btnBusy('[data-act="login-entrar"]',"Entrando…");
   try{
-    // best-effort: entra (ou migra) no login seguro do Firebase, sem bloquear o acesso
-    try{ await authEntrar(_loginPend.id, s, _loginPend.authVer); if(!_loginPend.fbAuth && authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} } }
-    catch(e){ console.warn("login seguro:", e.message); }
+    // O Firebase Auth é o portão real (não há mais senha guardada no banco).
+    try{ await _authIdentity("signInWithPassword", _loginPend.id, s, _loginPend.authVer); }
+    catch(e){
+      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|EMAIL_NOT_FOUND|MISSING_PASSWORD/.test(e.message)) return toast("Senha incorreta.");
+      return toast("Sem conexão. Tente de novo.");
+    }
+    if(!_loginPend.fbAuth){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} }
+    if(_loginPend.senha){ try{ await fbUpdate("/professores/"+key, {senha:null}); delete _loginPend.senha; }catch(e){} }
     S.user=_loginPend; localStorage.setItem("agenda_user", key);
     abrirApp();
   } finally { restore(); }
 }
 function sair(){ if(!confirm("Sair da conta? Você precisará entrar com ID e senha de novo.")) return; localStorage.removeItem("agenda_user"); try{localStorage.removeItem("agenda_rt");}catch(e){} S.auth=null; S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
 function sheetConta(){
-  const temSenha=!!S.user.senha;
   openSheet(`<div class="grab"></div>
     <div class="sh-head"><div class="t">Minha conta</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     <div class="card"><div class="rowitem"><div class="main"><div class="l2">Nome</div><div class="l1">${esc(S.user.nome)}</div></div></div>
       <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div>
-      <div class="rowitem"><div class="main"><div class="l2">Login seguro</div><div class="l1">${authAtivo()?"🔒 Ativo":"⚠️ Inativo (use sua senha ao entrar)"}</div></div></div></div>
-    <label class="fld">${temSenha?"Trocar minha senha":"Criar minha senha"}</label>
+      <div class="rowitem"><div class="main"><div class="l2">Acesso</div><div class="l1">🔒 Login protegido</div></div></div></div>
+    <label class="fld">Trocar minha senha</label>
     <input id="ntSenha" type="password" data-pw class="input" placeholder="nova senha (mínimo 6)" autocomplete="new-password">
     <div style="height:8px"></div>
     <input id="ntConf" type="password" data-pw class="input" placeholder="repita a nova senha" autocomplete="new-password">
@@ -772,22 +769,25 @@ async function trocarSenha(){
   const a=($("ntSenha")?$("ntSenha").value:""), b=($("ntConf")?$("ntConf").value:"");
   if(a.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
   if(a!==b) return toast("As senhas não coincidem.");
-  const key=sanId(S.user.id), hash=_hashSenha(a);
-  await fbSet("/professores/"+key+"/senha", hash);
-  S.user.senha=hash; if(S.professores[key]) S.professores[key].senha=hash;
-  // atualiza também a senha do login seguro (Firebase Auth), best-effort
+  const key=sanId(S.user.id);
+  const restore=btnBusy('[data-act="trocar-senha"]',"Salvando…");
   try{
+    // A senha vive só no Firebase Auth (não guardamos mais no banco).
     if(authAtivo()){
       const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update?key="+FB_API_KEY,
         {method:"POST",headers:{"Content-Type":"application/json"},
          body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})});
       const j=await r.json().catch(function(){return {};});
-      if(r.ok && j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
+      if(!r.ok) return toast("Não foi possível trocar a senha agora. Tente de novo.");
+      if(j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
     } else {
-      try{ await authCriar(S.user.id, a, S.user.authVer); if(authAtivo()){ await fbSet("/professores/"+key+"/fbAuth", true); S.user.fbAuth=true; } }catch(e){}
+      try{ await authCriar(S.user.id, a, S.user.authVer); if(authAtivo()){ await fbSet("/professores/"+key+"/fbAuth", true); S.user.fbAuth=true; } }
+      catch(e){ return toast("Não foi possível trocar a senha agora."); }
     }
-  }catch(e){ console.warn("login seguro (troca):", e.message); }
-  fecharSheet(); toast("Senha salva! 🔑");
+    // limpa qualquer resíduo do hash antigo no banco
+    if(S.user.senha){ try{ await fbUpdate("/professores/"+key, {senha:null}); delete S.user.senha; if(S.professores[key]) delete S.professores[key].senha; }catch(e){} }
+    fecharSheet(); toast("Senha salva! 🔑");
+  } finally { restore(); }
 }
 
 /* ================= APP SHELL ================= */
@@ -803,6 +803,8 @@ function primeiroDiaAgendavel(){
 function _sigReservas(){ try{ return JSON.stringify(S.reservas); }catch(e){ return ""+Date.now(); } }
 async function abrirApp(){
   S.tab="hoje";
+  // limpeza única: remove do banco qualquer hash de senha antigo (não é mais usado)
+  if(S.user.senha){ try{ fbUpdate("/professores/"+sanId(S.user.id), {senha:null}); delete S.user.senha; }catch(e){} }
   await recarregarReservas();
   try{ S._lwSeen = await fbGet("/config/reservasLastWrite"); }catch(e){ S._lwSeen=null; }
   S.dataSel = primeiroDiaAgendavel();
@@ -1607,7 +1609,7 @@ function telaProfessores(){
   let list=`<div class="card" style="padding:4px 14px">`;
   if(!keys.length) list+=`<div class="empty" style="padding:20px">Nenhum professor ainda.</div>`;
   keys.forEach(k=>{ const p=S.professores[k];
-    list+=`<div class="rowitem"><div class="main"><div class="l1">${esc(p.nome)} ${p.admin?'<span class="tag">admin</span>':''}${p.senha?'':' <span class="tag" style="background:var(--amber-tint);color:var(--amber)">sem senha</span>'}</div><div class="l2">ID: ${esc(p.id)}</div></div>
+    list+=`<div class="rowitem"><div class="main"><div class="l1">${esc(p.nome)} ${p.admin?'<span class="tag">admin</span>':''}${p.fbAuth?'':' <span class="tag" style="background:var(--amber-tint);color:var(--amber)">sem senha</span>'}</div><div class="l2">ID: ${esc(p.id)}</div></div>
       ${k!==sanId(S.user.id)?`<button class="minibtn" data-act="reset-senha" data-k="${esc(k)}">Resetar senha</button>`:''}
       <button class="minibtn" data-act="del-prof" data-k="${esc(k)}">Excluir</button></div>`; });
   list+=`</div>`;
