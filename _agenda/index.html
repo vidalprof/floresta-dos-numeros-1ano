@@ -1448,7 +1448,7 @@ function telaOpcoes(){
       <button class="chip ${(c.rodizio&&c.rodizio.refGrupo==="fin")?"":"on"}" data-act="rodizio-grupo" data-v="ini">Esta semana: Iniciais (Pré–5º)</button>
       <button class="chip ${(c.rodizio&&c.rodizio.refGrupo==="fin")?"on":""}" data-act="rodizio-grupo" data-v="fin">Esta semana: Finais (6º–9º)</button>
     </div>
-    <p class="hint" style="text-align:left">Alterna sozinho a cada semana. Fora da semana do grupo, o professor só agenda marcando como <b>exceção autorizada</b>.</p>
+    <p class="hint" style="text-align:left">Você está definindo o grupo da <b>semana atual (${esc(fmtDia(segDaSemana(hojeStr())))} a ${esc(fmtDia(addDias(segDaSemana(hojeStr()),5)))})</b>; depois alterna sozinho. Voltando das férias, é só vir aqui <b>na semana do retorno</b> e escolher o grupo — pode repetir o mesmo grupo, sem problema. Fora da semana, o professor só agenda como <b>exceção autorizada</b>.</p>
     <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
     <textarea id="oAviso" class="input" placeholder="Ex.: Sala em manutenção na sexta. Agendem com atenção!">${esc(c.aviso||"")}</textarea>
     <div style="height:16px"></div>
