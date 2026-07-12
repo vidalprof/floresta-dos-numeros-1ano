@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#5a4bd6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -139,6 +139,8 @@
   .aviso .am{flex:1;font-size:14px;font-weight:700;color:var(--text);line-height:1.45}
   .aviso .ax{width:28px;height:28px;border-radius:9px;background:transparent;color:var(--muted);font-size:15px;flex-shrink:0}
   select.input{appearance:none;-webkit-appearance:none;-moz-appearance:none}
+  .btnlink{background:transparent;border:0;color:var(--primary);font-weight:700;font-size:13px;padding:8px 2px;cursor:pointer;display:inline-block}
+  .delx{margin-left:3px;color:#ff8b76;background:transparent;border:0;font-size:14px;padding:5px 9px;cursor:pointer;line-height:1;vertical-align:middle}
 
   .empty{color:var(--muted);text-align:center;padding:40px 16px;font-size:15px;line-height:1.6}
   .empty .big{font-size:40px;display:block;margin-bottom:10px}
@@ -336,27 +338,29 @@ async function fbDel(path){ const r=await fetch(url(path),{method:'DELETE'}); re
    interno (matrícula@dominio), sem caixa de e-mail real. ===== */
 const FB_API_KEY = "AIzaSyCWX-lK7pr6yW_E5jDvDhVewe20lB3E6Ks";  // chave PÚBLICA (segura em cliente)
 const AUTH_DOMINIO = "vidalramos.agenda";
-function _authEmail(id){ return sanId(id).toLowerCase().replace(/[^a-z0-9_.-]/g,"") + "@" + AUTH_DOMINIO; }
+/* ver>1 gera um e-mail novo (matricula-v2@...) — usado quando o admin RESETA a senha:
+   a conta segura antiga é abandonada e uma nova é criada no primeiro acesso. */
+function _authEmail(id, ver){ const v=(+ver>1)?("-v"+(+ver)):""; return sanId(id).toLowerCase().replace(/[^a-z0-9_.-]/g,"") + v + "@" + AUTH_DOMINIO; }
 function _guardaAuth(idToken, refreshToken, expiresIn){
   S.auth = { idToken:idToken, refreshToken:refreshToken, expira: Date.now() + ((parseInt(expiresIn||"3600",10)-60)*1000) };
   try{ if(refreshToken) localStorage.setItem("agenda_rt", refreshToken); }catch(e){}
 }
 function authAtivo(){ return !!(S.auth && S.auth.idToken); }
-async function _authIdentity(kind, id, senha){
+async function _authIdentity(kind, id, senha, ver){
   const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:"+kind+"?key="+FB_API_KEY,
     {method:"POST", headers:{"Content-Type":"application/json"},
-     body: JSON.stringify({email:_authEmail(id), password:""+senha, returnSecureToken:true})});
+     body: JSON.stringify({email:_authEmail(id, ver), password:""+senha, returnSecureToken:true})});
   const j = await r.json().catch(function(){return {};});
   if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
   _guardaAuth(j.idToken, j.refreshToken, j.expiresIn); return j;
 }
-async function authEntrar(id, senha){  // entra; se a conta não existe ainda, cria (migração transparente)
-  try{ return await _authIdentity("signInWithPassword", id, senha); }
-  catch(e){ if(/EMAIL_NOT_FOUND/.test(e.message)) return await _authIdentity("signUp", id, senha); throw e; }
+async function authEntrar(id, senha, ver){  // entra; se a conta não existe ainda, cria (migração transparente)
+  try{ return await _authIdentity("signInWithPassword", id, senha, ver); }
+  catch(e){ if(/EMAIL_NOT_FOUND/.test(e.message)) return await _authIdentity("signUp", id, senha, ver); throw e; }
 }
-async function authCriar(id, senha){   // cria; se já existir, apenas entra
-  try{ return await _authIdentity("signUp", id, senha); }
-  catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha); throw e; }
+async function authCriar(id, senha, ver){   // cria; se já existir, apenas entra
+  try{ return await _authIdentity("signUp", id, senha, ver); }
+  catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha, ver); throw e; }
 }
 async function authRefresh(){          // renova o crachá a partir do refresh token salvo
   let rt = (S.auth&&S.auth.refreshToken); if(!rt){ try{ rt=localStorage.getItem("agenda_rt"); }catch(e){} }
@@ -633,15 +637,17 @@ function telaSenha(){
     <p class="sub">${novo?"Primeiro acesso — crie a sua senha":"Digite a sua senha"}</p>
     ${novo?`
       <label class="fld">Nova senha</label>
-      <input id="sNova" type="password" class="input" placeholder="mínimo 6 caracteres" autocomplete="new-password">
+      <input id="sNova" type="password" data-pw class="input" placeholder="mínimo 6 caracteres" autocomplete="new-password">
       <label class="fld">Confirmar senha</label>
-      <input id="sConf" type="password" class="input" placeholder="repita a senha" autocomplete="new-password">
-      <div style="height:16px"></div>
+      <input id="sConf" type="password" data-pw class="input" placeholder="repita a senha" autocomplete="new-password">
+      <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
+      <div style="height:12px"></div>
       <button class="btn primary" data-act="login-criar">Criar senha e entrar</button>
     `:`
       <label class="fld">Senha</label>
-      <input id="sSenha" type="password" class="input" placeholder="sua senha" autocomplete="current-password">
-      <div style="height:16px"></div>
+      <input id="sSenha" type="password" data-pw class="input" placeholder="sua senha" autocomplete="current-password">
+      <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
+      <div style="height:12px"></div>
       <button class="btn primary" data-act="login-entrar">Entrar</button>
       <p class="hint">Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua — no próximo acesso você cria uma nova.</p>
     `}
@@ -657,7 +663,7 @@ async function loginCriar(){
   const key=sanId(_loginPend.id), hash=_hashSenha(a);
   const restore=btnBusy('[data-act="login-criar"]',"Criando…");
   try{
-    try{ await authCriar(_loginPend.id, a); }catch(e){ console.warn("login seguro:", e.message); }
+    try{ await authCriar(_loginPend.id, a, _loginPend.authVer); }catch(e){ console.warn("login seguro:", e.message); }
     await fbSet("/professores/"+key+"/senha", hash);
     if(authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} }
     _loginPend.senha=hash; S.user=_loginPend; localStorage.setItem("agenda_user", key);
@@ -671,7 +677,7 @@ async function loginEntrar(){
   const restore=btnBusy('[data-act="login-entrar"]',"Entrando…");
   try{
     // best-effort: entra (ou migra) no login seguro do Firebase, sem bloquear o acesso
-    try{ await authEntrar(_loginPend.id, s); if(!_loginPend.fbAuth && authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} } }
+    try{ await authEntrar(_loginPend.id, s, _loginPend.authVer); if(!_loginPend.fbAuth && authAtivo()){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} } }
     catch(e){ console.warn("login seguro:", e.message); }
     S.user=_loginPend; localStorage.setItem("agenda_user", key);
     abrirApp();
@@ -686,10 +692,11 @@ function sheetConta(){
       <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div>
       <div class="rowitem"><div class="main"><div class="l2">Login seguro</div><div class="l1">${authAtivo()?"🔒 Ativo":"⚠️ Inativo (use sua senha ao entrar)"}</div></div></div></div>
     <label class="fld">${temSenha?"Trocar minha senha":"Criar minha senha"}</label>
-    <input id="ntSenha" type="password" class="input" placeholder="nova senha (mínimo 6)" autocomplete="new-password">
+    <input id="ntSenha" type="password" data-pw class="input" placeholder="nova senha (mínimo 6)" autocomplete="new-password">
     <div style="height:8px"></div>
-    <input id="ntConf" type="password" class="input" placeholder="repita a nova senha" autocomplete="new-password">
-    <div style="height:14px"></div>
+    <input id="ntConf" type="password" data-pw class="input" placeholder="repita a nova senha" autocomplete="new-password">
+    <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
+    <div style="height:10px"></div>
     <button class="btn primary" data-act="trocar-senha">🔑 Salvar senha</button>
     ${(("Notification" in window) && Notification.permission!=="granted")?'<div style="height:14px"></div><button class="btn ghost" data-act="ativar-lembretes">🔔 Ativar lembretes de aula</button>':''}
     <div style="height:14px"></div>
@@ -746,22 +753,44 @@ async function trocarSenha(){
       const j=await r.json().catch(function(){return {};});
       if(r.ok && j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
     } else {
-      try{ await authCriar(S.user.id, a); if(authAtivo()){ await fbSet("/professores/"+key+"/fbAuth", true); S.user.fbAuth=true; } }catch(e){}
+      try{ await authCriar(S.user.id, a, S.user.authVer); if(authAtivo()){ await fbSet("/professores/"+key+"/fbAuth", true); S.user.fbAuth=true; } }catch(e){}
     }
   }catch(e){ console.warn("login seguro (troca):", e.message); }
   fecharSheet(); toast("Senha salva! 🔑");
 }
 
 /* ================= APP SHELL ================= */
+/* Primeiro dia em que dá para agendar (pula fim de semana/feriado/período e respeita
+   "só a partir de amanhã"). Evita abrir num "hoje morto" onde nada pode ser marcado. */
+function primeiroDiaAgendavel(){
+  const hoje=hojeStr();
+  const limite=(S.config.liberadoAte && S.config.liberadoAte>=hoje)?S.config.liberadoAte:fimDoMes(hoje);
+  let d=S.config.apenasProximoDia?addDias(hoje,1):hoje;
+  for(let k=0;k<62;k++){ if(contarDisponiveis(d).tot>0) return d; if(d>=limite) break; d=addDias(d,1); }
+  return S.config.apenasProximoDia?addDias(hoje,1):hoje;
+}
+function _sigReservas(){ try{ return JSON.stringify(S.reservas); }catch(e){ return ""+Date.now(); } }
 async function abrirApp(){
-  S.dataSel = hojeStr(); S.tab="hoje";
+  S.tab="hoje";
   await recarregarReservas();
+  S.dataSel = primeiroDiaAgendavel();
   try{ S.recentes = (await fbGet("/recentes/"+sanId(S.user.id))) || []; }catch(e){ S.recentes=[]; }
   S._ocultos={}; try{ await carregarOcultos(S.user.id); }catch(e){}
   desenharShell();
   checarNotificacao();
+  if(!S._visBound){ S._visBound=true; document.addEventListener("visibilitychange", function(){
+    if(!document.hidden && S.user){ recarregarReservas().then(function(){ if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }); }
+  }); }
   if(_pollTimer) clearInterval(_pollTimer);
-  _pollTimer = setInterval(async()=>{ if(authAtivo() && S.auth.expira < Date.now()+180000){ try{ await authRefresh(); }catch(e){} } await recarregarReservas(); if(S.tab==="hoje"||S.tab==="proximos") renderTab(); }, 15000);
+  // Poll econômico: pausa quando o app não está visível, não redesenha com uma janela
+  // aberta, e só re-renderiza se algo mudou (não "pula" a rolagem à toa). Intervalo 30s.
+  _pollTimer = setInterval(async()=>{
+    if(document.hidden) return;
+    if($("modal") && $("modal").innerHTML) return;
+    if(authAtivo() && S.auth.expira < Date.now()+180000){ try{ await authRefresh(); }catch(e){} }
+    const antes=_sigReservas(); await recarregarReservas();
+    if(_sigReservas()!==antes && (S.tab==="hoje"||S.tab==="proximos")) renderTab();
+  }, 30000);
 }
 function desenharShell(){
   const c=S.config, adm=S.user.admin;
@@ -851,6 +880,12 @@ function viewHoje(){
   // Só mostra a plaquinha do rodízio em dia letivo (não em fim de semana,
   // feriado, recesso ou férias — aí não há agendamento mesmo).
   if(gsem && cd.tot>0 && !fer) h+=`<div class="grupobanner ${gsem}">🔁 Semana dos ${esc(nomeGrupo(gsem))}</div>`;
+  // Lembrete só para o admin: o período liberado está acabando/acabou (evita "esquecer de liberar o mês").
+  if(adm && S.config.liberadoAte){
+    const faltam=diffDias(hoje, S.config.liberadoAte);
+    if(faltam<0) h+=`<div class="grupobanner" style="background:var(--amber-tint);color:var(--amber)">📅 O período de agendamento fechou em ${esc(fmtDia(S.config.liberadoAte))}. Libere o próximo mês em ⚙️ → Outras configurações.</div>`;
+    else if(faltam<=6) h+=`<div class="grupobanner" style="background:var(--amber-tint);color:var(--amber)">📅 O mês liberado termina ${faltam===0?"hoje":("em "+faltam+" dia"+(faltam>1?"s":""))} (${esc(fmtDia(S.config.liberadoAte))}). Considere liberar o próximo em ⚙️.</div>`;
+  }
   h+=lembreteHTML();
   if(per){
     const rot=per.rotulo||"";
@@ -1357,7 +1392,11 @@ async function salvarEdicao(){
   } finally { restore(); }
 }
 async function resetarSenha(k){
-  await fbDel("/professores/"+k+"/senha");
+  const p=S.professores[k], nome=p?p.nome:"este professor";
+  if(!confirm("Resetar a senha de "+nome+"?\n\nNo próximo acesso ele cria uma senha nova.")) return;
+  const ver=(p&&+p.authVer)||1;
+  // limpa a senha e a conta segura antiga; bump da versão => o próximo acesso cria uma conta nova
+  await fbUpdate("/professores/"+k, {senha:null, fbAuth:null, authVer:ver+1});
   await carregarBase(); telaProfessores(); toast("Senha resetada — o professor cria uma nova no próximo acesso.");
 }
 function exportarCSV(){
@@ -1451,7 +1490,7 @@ async function addPeriodo(){
   S.config.periodos.sort((a,b)=> a.inicio<b.inicio?-1:1);
   await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); toast("Período adicionado. 🏖️");
 }
-async function delPeriodo(i){ S.config.periodos.splice(i,1); await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); }
+async function delPeriodo(i){ const p=S.config.periodos[i]; if(!confirm("Excluir o período \""+((p&&p.rotulo)||"")+"\"?")) return; S.config.periodos.splice(i,1); await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); }
 /* admin: bloquear em massa (dia inteiro / turno / aula) numa data */
 function telaBloqueios(){
   fecharSheet();
@@ -1565,7 +1604,20 @@ async function delProf(k){
 }
 
 /* --- Config: aulas por turno + horários + turmas + disciplinas --- */
+/* Captura o que está digitado na grade/horários para a memória (não perde ao
+   redesenhar a tela ao adicionar/remover turma, disciplina ou HAE). */
+function _lerGradeMem(){
+  if(!document.querySelector("[data-aula]")) return;
+  const aulas=JSON.parse(JSON.stringify(S.config.aulas));
+  document.querySelectorAll("[data-aula]").forEach(function(inp){ const p=inp.dataset.aula.split("."); if(aulas[p[0]]) aulas[p[0]][p[1]]=Math.max(0,parseInt(inp.value,10)||0); });
+  const hor=JSON.parse(JSON.stringify(S.config.horarios||{}));
+  document.querySelectorAll("[data-hor]").forEach(function(inp){ const p=inp.dataset.hor.split("."); if(!hor[p[0]])hor[p[0]]=[]; if(!hor[p[0]][p[1]])hor[p[0]][p[1]]=["",""]; hor[p[0]][+p[1]][+p[2]]=inp.value.trim(); });
+  S.config.aulas=aulas; S.config.horarios=hor;
+  const hl=$("haeLabel"); if(hl) S.config.haeLabel=hl.value.trim()||S.config.haeLabel;
+  const tl=$("turmaLetras"); if(tl) S.config.turmaLetras=tl.value.split(",").map(function(x){return x.replace(/^\s+|\s+$/g,"");}).filter(Boolean);
+}
 function telaConfig(){
+  _lerGradeMem();
   fecharSheet();
   const a=S.config.aulas;
   let grade=`<table class="grade"><tr><th></th><th>Mat</th><th>Ves</th><th>Not</th></tr>`;
@@ -1588,14 +1640,14 @@ function telaConfig(){
   });
 
   let turmasH=`<div class="chips" style="margin-top:4px">`;
-  S.turmas.forEach((t,i)=> turmasH+=`<span class="chip">${esc(t)} <b data-act="del-turma" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`);
+  S.turmas.forEach((t,i)=> turmasH+=`<span class="chip">${esc(t)} <button class="delx" data-act="del-turma" data-i="${i}" aria-label="Excluir turma">✕</button></span>`);
   turmasH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaTurma" class="input" placeholder="Nova turma (ano)" style="flex:1"><button class="minibtn acc" data-act="add-turma">Add</button></div>
     <label class="fld">Letras das turmas (separadas por vírgula)</label>
     <input id="turmaLetras" class="input" value="${esc((S.config.turmaLetras||[]).join(", "))}" placeholder="A, B, C, D">
     <p class="hint" style="text-align:left;margin-top:6px">Ao agendar, o professor escolhe o ano (ex.: 1º ano) e a letra (A, B, C…). Deixe vazio se a escola não usa letras.</p>`;
 
   let discH=`<div class="chips" style="margin-top:4px">`;
-  S.disciplinas.forEach((d,i)=>{ const nome=typeof d==="string"?d:d.nome; discH+=`<span class="chip">${esc(nome)} <b data-act="del-disc" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`; });
+  S.disciplinas.forEach((d,i)=>{ const nome=typeof d==="string"?d:d.nome; discH+=`<span class="chip">${esc(nome)} <button class="delx" data-act="del-disc" data-i="${i}" aria-label="Excluir disciplina">✕</button></span>`; });
   discH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaDisc" class="input" placeholder="Nova disciplina" style="flex:1"><button class="minibtn acc" data-act="add-disc">Add</button></div>`;
 
   /* HAE fixas (recorrentes por dia da semana) */
@@ -1605,7 +1657,7 @@ function telaConfig(){
   let optAula=""; for(let i=1;i<=maxAulas;i++) optAula+=`<option value="${i}">${i}ª</option>`;
   let haeList=`<div class="chips" style="margin-top:4px">`;
   (S.config.hae||[]).forEach((x,i)=>{ const tn=(TURNOS.find(tt=>tt.k===x.turno)||{}).n||x.turno;
-    haeList+=`<span class="chip">${DIAS_NOME[x.wk]||x.wk} · ${esc(tn)} · ${x.aula}ª <b data-act="del-hae" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`; });
+    haeList+=`<span class="chip">${DIAS_NOME[x.wk]||x.wk} · ${esc(tn)} · ${x.aula}ª <button class="delx" data-act="del-hae" data-i="${i}" aria-label="Remover HAE">✕</button></span>`; });
   if(!(S.config.hae||[]).length) haeList+=`<span style="color:var(--muted);font-size:13px">Nenhuma HAE fixa ainda.</span>`;
   haeList+=`</div>`;
   const haeH=`
@@ -1645,7 +1697,7 @@ async function addHAE(){
   S.config.hae.push({wk,turno,aula});
   await fbSet("/config/hae",S.config.hae); telaConfig(); toast("HAE fixa adicionada. 📋");
 }
-async function delHAE(i){ S.config.hae.splice(i,1); await fbSet("/config/hae",S.config.hae); telaConfig(); }
+async function delHAE(i){ if(!confirm("Remover esta hora-atividade (HAE)?")) return; S.config.hae.splice(i,1); await fbSet("/config/hae",S.config.hae); telaConfig(); }
 async function sortearHAE(){
   const qtd=Math.max(1, parseInt(($("haeQtd")?$("haeQtd").value:"6"),10)||6);
   const pool=[];
@@ -1673,9 +1725,9 @@ async function salvarConfig(){
   toast("Salvo! 💾");
 }
 async function addTurma(){ const v=$("novaTurma").value.trim(); if(!v)return; S.turmas.push(v); await fbSet("/turmas",S.turmas); telaConfig(); }
-async function delTurma(i){ S.turmas.splice(i,1); await fbSet("/turmas",S.turmas); telaConfig(); }
+async function delTurma(i){ if(!confirm("Excluir a turma \""+(S.turmas[i]||"")+"\"?")) return; S.turmas.splice(i,1); await fbSet("/turmas",S.turmas); telaConfig(); }
 async function addDisc(){ const v=$("novaDisc").value.trim(); if(!v)return; S.disciplinas.push(v); await fbSet("/disciplinas",S.disciplinas); telaConfig(); }
-async function delDisc(i){ S.disciplinas.splice(i,1); await fbSet("/disciplinas",S.disciplinas); telaConfig(); }
+async function delDisc(i){ const d=S.disciplinas[i]; const nome=typeof d==="string"?d:(d&&d.nome)||""; if(!confirm("Excluir a disciplina \""+nome+"\"?")) return; S.disciplinas.splice(i,1); await fbSet("/disciplinas",S.disciplinas); telaConfig(); }
 
 /* --- Outras opções --- */
 /* Grupo REAL da semana atual (calculado pela paridade). Se o rodízio está
@@ -1756,6 +1808,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="login-criar") return loginCriar();
     if(a==="login-entrar") return loginEntrar();
     if(a==="login-voltar") return telaLogin();
+    if(a==="toggle-senha"){ const on=el.dataset.on==="1"; document.querySelectorAll("input[data-pw]").forEach(function(inp){ inp.type=on?"password":"text"; }); el.dataset.on=on?"0":"1"; el.textContent=on?"👁 Mostrar senha":"🙈 Ocultar senha"; return; }
     if(a==="sair") return sair();
     if(a==="conta") return sheetConta();
     if(a==="ativar-lembretes") return ativarLembretes();
