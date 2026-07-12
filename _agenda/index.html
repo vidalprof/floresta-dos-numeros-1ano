@@ -125,6 +125,13 @@
   .slotcard.hae{border-left-color:var(--primary)}
   .slotcard.hae .sc-ic{background:var(--primary-tint);color:var(--primary)}
   .slotcard.hae .sc-t{color:var(--primary)}
+  .periodo{margin-top:8px;border-radius:18px;padding:30px 20px;text-align:center;
+    background:color-mix(in srgb, var(--pc) 13%, var(--surface));
+    border:1px solid color-mix(in srgb, var(--pc) 40%, transparent)}
+  .periodo .pico{font-size:44px;display:block;margin-bottom:10px}
+  .periodo b{font-size:22px;color:var(--pc);display:block}
+  .periodo .pd{font-size:13px;color:var(--muted);margin-top:6px}
+  .chip.perc.on{outline:3px solid color-mix(in srgb,var(--text) 30%,transparent);outline-offset:1px}
   #avisobar{padding-top:12px}
   .aviso{display:flex;align-items:center;gap:10px;margin:0 16px;padding:12px 14px;border-radius:14px;
     background:var(--amber-tint);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent)}
@@ -266,7 +273,7 @@ const DEF_HORARIOS = {
 const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
   obrigatorios:true, apenasProximoDia:true, limiteMeses:1,
   aviso:"", haeLabel:"HAE — Professor de Informática", hae:[],
-  turmaLetras:["A","B","C","D"], liberadoAte:""};
+  turmaLetras:["A","B","C","D"], liberadoAte:"", periodos:[]};
 
 /* ================= STATE ================= */
 const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, dataSel:null, tab:"hoje"};
@@ -314,6 +321,12 @@ function horarioLabel(turnoK, idx){
   if(h && h[idx]) return h[idx][0]+" – "+h[idx][1];
   return "";
 }
+/* período (recesso/férias): dia dentro de um intervalo configurado */
+function periodoDoDia(dataStr){
+  const arr=(S.config && S.config.periodos) || [];
+  for(let i=0;i<arr.length;i++){ const p=arr[i]; if(p.inicio && p.fim && dataStr>=p.inicio && dataStr<=p.fim) return p; }
+  return null;
+}
 /* HAE recorrente: slot (dia-da-semana + turno + aula) fixo como hora-atividade */
 function ehHAE(dataStr, turnoK, aula){
   const wk = DIAS[dateFromStr(dataStr).getDay()];
@@ -344,6 +357,7 @@ async function carregarBase(){
     if(S.config.aviso==null) S.config.aviso = "";
     if(!S.config.turmaLetras) S.config.turmaLetras = ["A","B","C","D"];
     if(!S.config.liberadoAte) S.config.liberadoAte = fimDoMes(hojeStr());
+    if(!S.config.periodos) S.config.periodos = [];
   }
   S.professores = prof || {};
   S.disciplinas = disc || [];
@@ -465,6 +479,7 @@ function renderTab(){
 
 /* ================= VIEW: HOJE (agenda do dia) ================= */
 function contarDisponiveis(dataStr){
+  if(periodoDoDia(dataStr)) return {tot:0,disp:0};
   let tot=0,disp=0;
   TURNOS.forEach(t=>{
     const n=aulasDoDia(dataStr,t.c); tot+=n;
@@ -488,9 +503,21 @@ function viewHoje(){
   }
   strip+='</div>';
   const cd=contarDisponiveis(data);
+  const per=periodoDoDia(data);
   let h=strip;
-  h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>
-    <span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span></div>`;
+  const badge = per
+    ? `<span class="livrebadge" style="background:color-mix(in srgb,${per.cor||"#0ea3a3"} 16%,transparent);color:${per.cor||"#0ea3a3"}">${esc(per.rotulo||"Sem aula")}</span>`
+    : `<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
+  h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
+  if(per){
+    const ico=/f[ée]rias/i.test(per.rotulo||"")?"🏖️":"🌴";
+    h+=`<div class="periodo" style="--pc:${per.cor||"#0ea3a3"}"><span class="pico">${ico}</span><b>${esc(per.rotulo||"Sem aula")}</b>
+      <div class="pd">${esc(fmtDia(per.inicio))} até ${esc(fmtDia(per.fim))}</div>
+      <div class="pd">Não há aulas neste período — a agenda fica fechada.</div></div>`;
+    $("view").innerHTML=h;
+    const onEl2=document.querySelector(".daychip.on"); if(onEl2&&onEl2.scrollIntoView){ try{ onEl2.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
+    return;
+  }
   let algum=false, body="";
   TURNOS.forEach(t=>{
     const n=aulasDoDia(data,t.c); if(n<=0) return; algum=true;
@@ -574,6 +601,7 @@ function viewInsights(){
 /* ================= AÇÃO EM UM SLOT ================= */
 async function abrirSlot(turnoK, aula){
   const data=S.dataSel;
+  if(periodoDoDia(data)) return;
   const rt=(S.reservas[data]&&S.reservas[data][turnoK])||{};
   const r=rt["a"+aula];
   if(r && r.bloqueado){ if(S.user.admin) sheetBloqueio(turnoK,aula,true); return; }
@@ -593,7 +621,7 @@ function ctxHtml(turnoK,aula){
   const hora=horarioLabel(turnoK,aula-1);
   return `<div class="ctx"><span class="ico">🖥️</span><div><div class="d">${esc(fmtSem(S.dataSel).replace("-feira",""))}, ${esc(fmtDia(S.dataSel))}</div><div class="s">${aula}ª aula no ${turnoNome(turnoK)}${hora?" · "+esc(hora):""}</div></div></div>`;
 }
-function openSheet(html){ $("modal").innerHTML=`<div class="backdrop" data-act="fecharsheet"><div class="sheet" data-stop="1">${html}</div></div>`; }
+function openSheet(html){ $("modal").innerHTML=`<div class="backdrop"><div class="sheet">${html}</div></div>`; }
 function fecharSheet(){ $("modal").innerHTML=""; }
 
 /* admin: escolher Agendar ou Bloquear */
@@ -733,8 +761,55 @@ function menuAdmin(){
     <button class="btn ghost" data-act="tela-prof">👥 Professores</button><div style="height:10px"></div>
     <button class="btn ghost" data-act="tela-config">🕐 Horários e turmas</button><div style="height:10px"></div>
     <button class="btn ghost" data-act="tela-bloqueios">🔒 Bloquear horários (dia/turno/aula)</button><div style="height:10px"></div>
+    <button class="btn ghost" data-act="tela-periodos">🏖️ Recesso e férias (períodos)</button><div style="height:10px"></div>
     <button class="btn ghost" data-act="tela-opcoes">⚙️ Outras configurações</button>`);
 }
+/* admin: períodos de recesso/férias (intervalos sem aula) */
+var _perCor="#e0913f";
+function telaPeriodos(){
+  fecharSheet();
+  const hoje=hojeStr();
+  const cores=["#0ea3a3","#e0913f","#7c5cff","#e5533c","#0ea371"];
+  let sw=`<div class="chips" style="margin-top:4px">`;
+  cores.forEach(c=> sw+=`<button class="chip perc ${c===_perCor?"on":""}" data-act="periodo-cor" data-v="${c}" style="background:${c};color:#fff;border-color:${c};width:38px;padding:10px 0"> </button>`);
+  sw+=`</div>`;
+  let list=`<div class="card" style="padding:4px 14px">`;
+  const arr=S.config.periodos||[];
+  if(!arr.length) list+=`<div class="empty" style="padding:18px">Nenhum período cadastrado.</div>`;
+  arr.forEach((p,i)=>{ list+=`<div class="rowitem"><span style="width:14px;height:14px;border-radius:5px;background:${p.cor||"#0ea3a3"};flex-shrink:0"></span>
+    <div class="main"><div class="l1">${esc(p.rotulo)}</div><div class="l2">${esc(fmtDia(p.inicio))} até ${esc(fmtDia(p.fim))}</div></div>
+    <button class="minibtn" data-act="del-periodo" data-i="${i}">Excluir</button></div>`; });
+  list+=`</div>`;
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Recesso e férias</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    <p class="hint" style="text-align:left">Nos dias dentro de um período a agenda fica fechada (sem aulas), com os dizeres e a cor que você escolher — ex.: <b>Recesso escolar</b> (meio do ano) e <b>Férias escolares</b> (fim do ano).</p>
+    <label class="fld">Dizeres (rótulo)</label>
+    <input id="perRotulo" class="input" placeholder="Ex.: Recesso escolar" value="Recesso escolar">
+    <div class="chips" style="margin-top:10px">
+      <button class="chip" data-act="periodo-preset" data-v="Recesso escolar">Recesso escolar</button>
+      <button class="chip" data-act="periodo-preset" data-v="Férias escolares">Férias escolares</button>
+    </div>
+    <label class="fld">Cor</label>${sw}
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <div style="flex:1"><label class="fld" style="margin-top:0">Início</label><input id="perInicio" type="date" class="input" min="${hoje}"></div>
+      <div style="flex:1"><label class="fld" style="margin-top:0">Fim</label><input id="perFim" type="date" class="input" min="${hoje}"></div>
+    </div>
+    <div style="height:14px"></div>
+    <button class="btn primary" data-act="add-periodo">➕ Adicionar período</button>
+    <div class="sectitle">Períodos cadastrados</div>${list}
+    <div style="height:16px"></div>`);
+}
+async function addPeriodo(){
+  const rotulo=($("perRotulo")?$("perRotulo").value.trim():""), ini=($("perInicio")?$("perInicio").value:""), fim=($("perFim")?$("perFim").value:"");
+  if(!rotulo) return toast("Escreva os dizeres (ex.: Recesso escolar).");
+  if(!ini||!fim) return toast("Escolha as datas de início e fim.");
+  if(fim<ini) return toast("A data de fim não pode ser antes do início.");
+  if(!S.config.periodos) S.config.periodos=[];
+  S.config.periodos.push({inicio:ini, fim:fim, rotulo:rotulo, cor:_perCor});
+  S.config.periodos.sort((a,b)=> a.inicio<b.inicio?-1:1);
+  await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); toast("Período adicionado. 🏖️");
+}
+async function delPeriodo(i){ S.config.periodos.splice(i,1); await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); }
 /* admin: bloquear em massa (dia inteiro / turno / aula) numa data */
 function telaBloqueios(){
   fecharSheet();
@@ -1034,6 +1109,11 @@ document.addEventListener("click", async (ev)=>{
     if(a==="blq-turno") return bloquearEmMassa("turno", t);
     if(a==="blq-aula") return bloquearEmMassa("aula", ($("blqTurno")?$("blqTurno").value:"matutino"), (+($("blqAula")?$("blqAula").value:1)));
     if(a==="blq-liberar") return liberarDia();
+    if(a==="tela-periodos") return telaPeriodos();
+    if(a==="periodo-preset"){ const inp=$("perRotulo"); if(inp) inp.value=el.dataset.v; return; }
+    if(a==="periodo-cor"){ _perCor=el.dataset.v; document.querySelectorAll(".perc").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
+    if(a==="add-periodo") return addPeriodo();
+    if(a==="del-periodo") return delPeriodo(+el.dataset.i);
     if(a==="add-prof") return addProf();
     if(a==="del-prof") return delProf(el.dataset.k);
     if(a==="salvar-config") return salvarConfig();
