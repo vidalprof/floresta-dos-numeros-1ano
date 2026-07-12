@@ -183,6 +183,33 @@
   .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
   .stat .n{font-size:30px;font-weight:800;color:var(--primary)}
   .stat .t{font-size:13px;color:var(--muted);margin-top:2px}
+  .rel-tools{margin-bottom:14px}
+  .rel-cab{margin:0 2px 14px}
+  .rel-cab b{font-size:17px}
+  .rel-cab div{font-size:12px;color:var(--muted)}
+  .donutwrap{text-align:center}
+  .donut{width:88px;height:88px;border-radius:50%;margin:0 auto 8px;position:relative;
+    background:conic-gradient(var(--primary) calc(var(--p)*1%), var(--surface2) 0);
+    display:flex;align-items:center;justify-content:center}
+  .donut::before{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--surface)}
+  .donut span{position:relative;font-weight:800;font-size:19px}
+  .barrow{display:flex;align-items:center;gap:10px;padding:7px 0}
+  .barrow .bl{width:40%;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .barrow .bt{flex:1;height:11px;background:var(--surface2);border-radius:6px;overflow:hidden}
+  .barrow .bt i{display:block;height:100%;background:var(--primary);border-radius:6px}
+  .barrow .bv{width:30px;text-align:right;font-weight:800;font-size:13px}
+  @media print{
+    body{background:#fff!important;color:#000!important}
+    .topbar,.bottomnav,.rel-tools,#installbtn,#avisobar,#modal,[data-act="imprimir"]{display:none!important}
+    #app{padding:0!important;max-width:100%!important}
+    .view{padding:0!important;animation:none!important}
+    .card,.stat{box-shadow:none!important;border:1px solid #ccc!important;background:#fff!important}
+    .stat .n{color:#000!important}
+    .barrow .bt{background:#eee!important} .barrow .bt i{background:#555!important}
+    .donut{background:conic-gradient(#444 calc(var(--p)*1%), #eee 0)!important}
+    .donut::before{background:#fff!important}
+    .rel-cab b,.rel-cab div,.sectitle{color:#000!important}
+  }
   .rowitem{display:flex;align-items:center;gap:12px;padding:14px 4px;border-top:1px solid var(--line)}
   .rowitem:first-child{border-top:none}
   .rowitem .main{flex:1;min-width:0}
@@ -580,22 +607,66 @@ function viewProximos(){
   $("view").innerHTML=h;
 }
 
-/* ================= VIEW: INSIGHTS (resumo simples; completo no Bloco 3) ================= */
+/* ================= VIEW: RELATÓRIOS (aulas por turma/professor/disciplina/período + ocupação + imprimir) ================= */
+var _relPeriodo="mes";  /* mes | 30d | ano | tudo */
+function relIntervalo(){
+  const hoje=hojeStr(), d=dateFromStr(hoje);
+  if(_relPeriodo==="30d") return [addDias(hoje,-29), hoje];
+  if(_relPeriodo==="ano") return [d.getFullYear()+"-01-01", d.getFullYear()+"-12-31"];
+  if(_relPeriodo==="tudo"){ const ks=Object.keys(S.reservas).sort(); return [ks[0]||hoje, ks[ks.length-1]||hoje]; }
+  return [d.getFullYear()+"-"+pad(d.getMonth()+1)+"-01", fimDoMes(hoje)];
+}
+function coletarRelatorio(ini, fim){
+  const porTurno={matutino:0,vespertino:0,noturno:0}, porProf={}, porTurma={}, porDisc={};
+  let total=0, bloqueados=0;
+  Object.keys(S.reservas).forEach(data=>{
+    if(data<ini||data>fim) return; if(periodoDoDia(data)) return;
+    TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
+      Object.keys(rt).forEach(ak=>{ const r=rt[ak]; if(!r) return;
+        if(r.bloqueado){ bloqueados++; return; }
+        total++; porTurno[t.k]=(porTurno[t.k]||0)+1;
+        if(r.profNome) porProf[r.profNome]=(porProf[r.profNome]||0)+1;
+        if(r.turma) porTurma[r.turma]=(porTurma[r.turma]||0)+1;
+        if(r.disciplina) porDisc[r.disciplina]=(porDisc[r.disciplina]||0)+1;
+      });
+    });
+  });
+  let capacidade=0; const dd=diffDias(ini,fim);
+  if(dd>=0 && dd<=420){ for(let k=0;k<=dd;k++){ const ds=addDias(ini,k); if(periodoDoDia(ds)) continue;
+    TURNOS.forEach(t=>{ const n=aulasDoDia(ds,t.c); for(let i=1;i<=n;i++){ if(!ehHAE(ds,t.k,i)) capacidade++; } }); } }
+  return {total,bloqueados,porTurno,porProf,porTurma,porDisc,capacidade};
+}
+function secBarras(titulo, obj){
+  const ents=Object.keys(obj).filter(k=>obj[k]>0).map(k=>[k,obj[k]]).sort((a,b)=>b[1]-a[1]);
+  if(!ents.length) return "";
+  const max=ents[0][1];
+  let h=`<div class="sectitle">${esc(titulo)}</div><div class="card">`;
+  ents.forEach(e=>{ const pct=Math.max(4,Math.round(e[1]/max*100));
+    h+=`<div class="barrow"><div class="bl">${esc(e[0])}</div><div class="bt"><i style="width:${pct}%"></i></div><div class="bv">${e[1]}</div></div>`; });
+  h+=`</div>`; return h;
+}
 function viewInsights(){
-  let total=0, mat=0, ves=0;
-  Object.keys(S.reservas).forEach(data=>TURNOS.forEach(t=>{
-    const rt=S.reservas[data][t.k]; if(!rt) return;
-    Object.keys(rt).forEach(ak=>{ const r=rt[ak]; if(r&&!r.bloqueado){ total++; if(t.k==="matutino")mat++; else if(t.k==="vespertino")ves++; } });
-  }));
-  const nProf=Object.keys(S.professores).length, nTur=S.turmas.length;
-  $("view").innerHTML=`
+  const iv=relIntervalo(), ini=iv[0], fim=iv[1];
+  const R=coletarRelatorio(ini,fim);
+  const ocup = R.capacidade>0 ? Math.round(R.total/R.capacidade*100) : 0;
+  const chips=[["mes","Este mês"],["30d","Últimos 30 dias"],["ano","Este ano"],["tudo","Tudo"]]
+    .map(c=>`<button class="chip ${_relPeriodo===c[0]?"on":""}" data-act="rel-per" data-v="${c[0]}">${c[1]}</button>`).join("");
+  let h=`<div class="rel-tools"><div class="chips">${chips}</div></div>
+    <div id="relprint">
+    <div class="rel-cab"><b>${esc(S.config.escolaNome||S.config.appNome)}</b><div>Relatório de aulas · ${esc(fmtDia(ini))} a ${esc(fmtDia(fim))}</div></div>
     <div class="grid2" style="margin-bottom:12px">
-      <div class="stat"><div class="n">${total}</div><div class="t">Total de reservas</div></div>
-      <div class="stat"><div class="n">${nProf}</div><div class="t">Professores</div></div>
-      <div class="stat"><div class="n">${nTur}</div><div class="t">Turmas</div></div>
-      <div class="stat"><div class="n">${mat}·${ves}</div><div class="t">Matutino · Vespertino</div></div>
-    </div>
-    <div class="empty" style="padding:22px 16px">📈 As estatísticas completas (taxa de ocupação, por professor, filtros) chegam no próximo bloco.</div>`;
+      <div class="stat"><div class="n">${R.total}</div><div class="t">Aulas agendadas</div></div>
+      <div class="stat donutwrap"><div class="donut" style="--p:${ocup}"><span>${ocup}%</span></div><div class="t">Ocupação da sala</div></div>
+    </div>`;
+  h+=secBarras("Por período", {"Matutino":R.porTurno.matutino,"Vespertino":R.porTurno.vespertino,"Noturno":R.porTurno.noturno});
+  h+=secBarras("Por professor", R.porProf);
+  h+=secBarras("Por turma", R.porTurma);
+  h+=secBarras("Por disciplina", R.porDisc);
+  if(R.total===0) h+=`<div class="empty"><span class="big">📭</span>Nenhuma aula agendada neste período.</div>`;
+  h+=`</div>
+    <button class="btn primary" data-act="imprimir" style="margin-top:8px">🖨️ Imprimir / Salvar PDF</button>
+    <div style="height:8px"></div>`;
+  $("view").innerHTML=h;
 }
 
 /* ================= AÇÃO EM UM SLOT ================= */
@@ -1114,6 +1185,8 @@ document.addEventListener("click", async (ev)=>{
     if(a==="periodo-cor"){ _perCor=el.dataset.v; document.querySelectorAll(".perc").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="add-periodo") return addPeriodo();
     if(a==="del-periodo") return delPeriodo(+el.dataset.i);
+    if(a==="rel-per"){ _relPeriodo=el.dataset.v; return viewInsights(); }
+    if(a==="imprimir"){ try{ window.print(); }catch(e){} return; }
     if(a==="add-prof") return addProf();
     if(a==="del-prof") return delProf(el.dataset.k);
     if(a==="salvar-config") return salvarConfig();
