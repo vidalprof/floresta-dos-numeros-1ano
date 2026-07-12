@@ -1017,6 +1017,17 @@ function sheetAgendar(turnoK,aula){
     h+=`</div>`;
     _form.profId=S.user.id; _form.profNome=S.user.nome;
   }else{ _form.profId=S.user.id; _form.profNome=S.user.nome; }
+  // Reaproveitar planejamento: fica no TOPO do formulário (bem visível). Toque
+  // preenche turma, disciplina, tema e objetivo de uma vez.
+  if(S.recentes && S.recentes.length){
+    h+=`<div class="sectitle">🕘 Reaproveitar um planejamento</div>
+      <div class="hint" style="text-align:left;margin:-2px 2px 6px">Toque num cartão para preencher tudo automaticamente. Depois é só conferir e confirmar.</div>
+      <div class="recentes">`;
+    S.recentes.slice(0,8).forEach((r,i)=>{
+      h+=`<button type="button" class="rec" data-act="usar-recente" data-i="${i}"><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></button>`;
+    });
+    h+=`</div>`;
+  }
   h+=`<label class="fld">Turma (ano)</label>`;
   if(S.turmas.length>8) h+=`<input class="chipfilter input" data-alvo="turmaChips" placeholder="🔍 buscar turma" style="margin-bottom:8px">`;
   h+=`<div class="chips" id="turmaChips">`;
@@ -1033,13 +1044,6 @@ function sheetAgendar(turnoK,aula){
   h+=`</div>
     <label class="fld">Tema da aula</label><input id="fTema" class="input" placeholder="Digite o tema da aula">
     <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>`;
-  if(S.recentes && S.recentes.length){
-    h+=`<div class="sectitle">🕘 Recentes (toque para reaproveitar)</div><div class="recentes">`;
-    S.recentes.slice(0,8).forEach((r,i)=>{
-      h+=`<button type="button" class="rec" data-act="usar-recente" data-i="${i}"><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></button>`;
-    });
-    h+=`</div>`;
-  }
   h+=`<div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
