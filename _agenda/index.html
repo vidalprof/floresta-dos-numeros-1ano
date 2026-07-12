@@ -265,7 +265,8 @@ const DEF_HORARIOS = {
 };
 const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
   obrigatorios:true, apenasProximoDia:true, limiteMeses:1,
-  aviso:"", haeLabel:"HAE — Professor de Informática", hae:[]};
+  aviso:"", haeLabel:"HAE — Professor de Informática", hae:[],
+  turmaLetras:["A","B","C","D"], liberadoAte:""};
 
 /* ================= STATE ================= */
 const S = {user:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, dataSel:null, tab:"hoje"};
@@ -284,6 +285,9 @@ const fmtDia = (s)=>{ const d=dateFromStr(s); return `${d.getDate()} de ${MES[d.
 const fmtSem = (s)=> SEM[dateFromStr(s).getDay()];
 const cap1 = (s)=> s? s.charAt(0).toUpperCase()+s.slice(1) : s;
 const addDias = (s,n)=>{ const d=dateFromStr(s); d.setDate(d.getDate()+n); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const fimDoMes = (s)=>{ const d=dateFromStr(s); const e=new Date(d.getFullYear(), d.getMonth()+1, 0); return `${e.getFullYear()}-${pad(e.getMonth()+1)}-${pad(e.getDate())}`; };
+const fimMesOffset = (s,off)=>{ const d=dateFromStr(s); const e=new Date(d.getFullYear(), d.getMonth()+1+off, 0); return `${e.getFullYear()}-${pad(e.getMonth()+1)}-${pad(e.getDate())}`; };
+const diffDias = (a,b)=> Math.round((dateFromStr(b)-dateFromStr(a))/86400000);
 
 function toast(msg){
   const t=$("toast"); t.textContent=msg; t.classList.remove("hidden");
@@ -338,6 +342,8 @@ async function carregarBase(){
     if(!S.config.hae) S.config.hae = [];
     if(!S.config.haeLabel) S.config.haeLabel = "HAE — Professor de Informática";
     if(S.config.aviso==null) S.config.aviso = "";
+    if(!S.config.turmaLetras) S.config.turmaLetras = ["A","B","C","D"];
+    if(!S.config.liberadoAte) S.config.liberadoAte = fimDoMes(hojeStr());
   }
   S.professores = prof || {};
   S.disciplinas = disc || [];
@@ -370,6 +376,7 @@ async function fazerBootstrap(){
     fbSet("/config", DEF_CONFIG),
     fbSet("/config/aulas", DEF_AULAS),
     fbSet("/config/horarios", DEF_HORARIOS),
+    fbSet("/config/liberadoAte", fimDoMes(hojeStr())),
     fbSet("/disciplinas", DEF_DISCIPLINAS),
     fbSet("/turmas", DEF_TURMAS),
     fbSet("/professores/"+key, {nome, id, admin:true})
@@ -468,8 +475,10 @@ function contarDisponiveis(dataStr){
 }
 function viewHoje(){
   const data=S.dataSel, hoje=hojeStr();
+  const ate=(S.config.liberadoAte && S.config.liberadoAte>=hoje) ? S.config.liberadoAte : fimDoMes(hoje);
+  const nDias=Math.min(62, Math.max(1, diffDias(hoje,ate)+1));
   let strip='<div class="weekstrip">';
-  for(let k=0;k<30;k++){
+  for(let k=0;k<nDias;k++){
     const ds=addDias(hoje,k), d=dateFromStr(ds), c=contarDisponiveis(ds);
     const on=ds===data, semAula=c.tot===0;
     strip+=`<button class="daychip ${on?"on":""} ${semAula?"off":""}" data-act="setdia" data-d="${ds}">
@@ -574,6 +583,7 @@ async function abrirSlot(turnoK, aula){
   const hoje=hojeStr();
   if(data<hoje) return toast("Não dá para agendar num dia que já passou.");
   if(S.config.apenasProximoDia && data===hoje) return toast("Só é possível agendar a partir do próximo dia.");
+  if(!S.user.admin && S.config.liberadoAte && data>S.config.liberadoAte) return toast("Este período ainda não foi liberado pelo administrador.");
   if(S.user.admin) sheetEscolha(turnoK,aula);
   else sheetAgendar(turnoK,aula);
 }
@@ -617,7 +627,7 @@ function sheetBloquearMotivo(turnoK,aula){
 /* formulário de agendar */
 let _form={turma:null,disc:null,turnoK:null,aula:null};
 function sheetAgendar(turnoK,aula){
-  _form={turma:null,disc:null,turnoK,aula};
+  _form={turma:null,letra:null,disc:null,turnoK,aula};
   const discAtivas = S.disciplinas.map(d=> typeof d==="string"?{nome:d,ativa:true}:d).filter(d=>d.ativa!==false);
   const adm=S.user.admin;
   let h=`<div class="grab"></div>
@@ -630,9 +640,16 @@ function sheetAgendar(turnoK,aula){
     h+=`</div>`;
     _form.profId=S.user.id; _form.profNome=S.user.nome;
   }else{ _form.profId=S.user.id; _form.profNome=S.user.nome; }
-  h+=`<label class="fld">Turma</label><div class="chips" id="turmaChips">`;
+  h+=`<label class="fld">Turma (ano)</label><div class="chips" id="turmaChips">`;
   S.turmas.forEach(t=> h+=`<button class="chip" data-act="pickturma" data-v="${esc(t)}">${esc(t)}</button>`);
-  h+=`</div><label class="fld">Disciplina</label><div class="chips" id="discChips">`;
+  h+=`</div>`;
+  const letras=S.config.turmaLetras||[];
+  if(letras.length){
+    h+=`<label class="fld">Letra da turma</label><div class="chips" id="letraChips">`;
+    letras.forEach(L=> h+=`<button class="chip" data-act="pickletra" data-v="${esc(L)}">${esc(L)}</button>`);
+    h+=`</div>`;
+  }
+  h+=`<label class="fld">Disciplina</label><div class="chips" id="discChips">`;
   discAtivas.forEach(d=> h+=`<button class="chip" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
   h+=`</div>
     <label class="fld">Tema da aula</label><input id="fTema" class="input" placeholder="Digite o tema da aula">
@@ -645,15 +662,18 @@ function sheetAgendar(turnoK,aula){
     const last=JSON.parse(localStorage.getItem("agenda_last_"+sanId(S.user.id))||"null");
     if(last){
       if(last.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===last.turma){ c.classList.add("on"); _form.turma=last.turma; } });
+      if(last.letra) document.querySelectorAll("#letraChips .chip").forEach(c=>{ if(c.dataset.v===last.letra){ c.classList.add("on"); _form.letra=last.letra; } });
       if(last.disc) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===last.disc){ c.classList.add("on"); _form.disc=last.disc; } });
     }
   }catch(e){}
 }
 
 async function salvarAgenda(){
-  const turma=_form.turma, disc=_form.disc, turnoK=_form.turnoK, aula=_form.aula;
+  const ano=_form.turma, disc=_form.disc, turnoK=_form.turnoK, aula=_form.aula;
+  const turma = ano ? (ano + (_form.letra ? " "+_form.letra : "")) : null;
   const tema=($("fTema")?$("fTema").value.trim():""), obj=($("fObj")?$("fObj").value.trim():"");
-  if(!turma) return toast("Escolha a turma.");
+  if(!ano) return toast("Escolha a turma.");
+  if((S.config.turmaLetras||[]).length && !_form.letra) return toast("Escolha a letra da turma (A, B, C…).");
   if(!disc) return toast("Escolha a disciplina.");
   if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
   // checa se o slot continua livre (anti-choque simples)
@@ -662,7 +682,7 @@ async function salvarAgenda(){
   const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
   const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
   if(!ok) return toast("Não foi possível salvar. Tente de novo.");
-  try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma,disc})); }catch(e){}
+  try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Aula agendada! ✅");
 }
 
@@ -777,7 +797,10 @@ function telaConfig(){
 
   let turmasH=`<div class="chips" style="margin-top:4px">`;
   S.turmas.forEach((t,i)=> turmasH+=`<span class="chip">${esc(t)} <b data-act="del-turma" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`);
-  turmasH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaTurma" class="input" placeholder="Nova turma" style="flex:1"><button class="minibtn acc" data-act="add-turma">Add</button></div>`;
+  turmasH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaTurma" class="input" placeholder="Nova turma (ano)" style="flex:1"><button class="minibtn acc" data-act="add-turma">Add</button></div>
+    <label class="fld">Letras das turmas (separadas por vírgula)</label>
+    <input id="turmaLetras" class="input" value="${esc((S.config.turmaLetras||[]).join(", "))}" placeholder="A, B, C, D">
+    <p class="hint" style="text-align:left;margin-top:6px">Ao agendar, o professor escolhe o ano (ex.: 1º ano) e a letra (A, B, C…). Deixe vazio se a escola não usa letras.</p>`;
 
   let discH=`<div class="chips" style="margin-top:4px">`;
   S.disciplinas.forEach((d,i)=>{ const nome=typeof d==="string"?d:d.nome; discH+=`<span class="chip">${esc(nome)} <b data-act="del-disc" data-i="${i}" style="margin-left:6px;color:#ff8b76">✕</b></span>`; });
@@ -803,6 +826,12 @@ function telaConfig(){
     </div>
     <div style="height:8px"></div>
     <button class="minibtn acc" data-act="add-hae">➕ Adicionar HAE fixa</button>
+    <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
+      <span style="font-size:13px;color:var(--muted)">Sortear</span>
+      <input id="haeQtd" class="input" inputmode="numeric" value="6" style="width:64px;text-align:center;padding:9px">
+      <button class="minibtn" data-act="sortear-hae">🎲 HAE aleatórias</button>
+    </div>
+    <p class="hint" style="text-align:left;margin-top:8px">O sorteio distribui a quantidade escolhida em horários aleatórios da semana. Depois é só ajustar removendo/adicionando.</p>
     ${haeList}`;
 
   openSheet(`<div class="grab"></div>
@@ -825,15 +854,31 @@ async function addHAE(){
   await fbSet("/config/hae",S.config.hae); telaConfig(); toast("HAE fixa adicionada. 📋");
 }
 async function delHAE(i){ S.config.hae.splice(i,1); await fbSet("/config/hae",S.config.hae); telaConfig(); }
+async function sortearHAE(){
+  const qtd=Math.max(1, parseInt(($("haeQtd")?$("haeQtd").value:"6"),10)||6);
+  const pool=[];
+  DIAS.forEach(wk=>{ TURNOS.forEach(t=>{ const n=(S.config.aulas[wk]||{})[t.c]||0; for(let i=1;i<=n;i++) pool.push({wk,turno:t.k,aula:i}); }); });
+  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=pool[i]; pool[i]=pool[j]; pool[j]=tmp; }
+  S.config.hae=pool.slice(0, Math.min(qtd, pool.length));
+  await fbSet("/config/hae",S.config.hae); telaConfig(); toast("HAE sorteadas! 🎲");
+}
+async function liberarMes(off){
+  let nova=fimMesOffset(S.config.liberadoAte||fimDoMes(hojeStr()), off);
+  const minimo=fimDoMes(hojeStr());
+  if(nova<minimo) nova=minimo;
+  S.config.liberadoAte=nova; await fbSet("/config/liberadoAte",nova); telaOpcoes(); toast("Liberado até "+fmtDia(nova)+".");
+}
 async function salvarConfig(){
   const aulas=JSON.parse(JSON.stringify(S.config.aulas));
   document.querySelectorAll("[data-aula]").forEach(inp=>{ const [d,c]=inp.dataset.aula.split("."); aulas[d][c]=Math.max(0,parseInt(inp.value,10)||0); });
   const hor=JSON.parse(JSON.stringify(S.config.horarios||{}));
   document.querySelectorAll("[data-hor]").forEach(inp=>{ const [tk,i,j]=inp.dataset.hor.split("."); if(!hor[tk])hor[tk]=[]; if(!hor[tk][i])hor[tk][i]=["",""]; hor[tk][+i][+j]=inp.value.trim(); });
   const hl=$("haeLabel"); const haeLabel = hl ? (hl.value.trim()||S.config.haeLabel) : S.config.haeLabel;
-  await Promise.all([fbSet("/config/aulas",aulas), fbSet("/config/horarios",hor), fbSet("/config/haeLabel",haeLabel)]);
-  S.config.aulas=aulas; S.config.horarios=hor; S.config.haeLabel=haeLabel;
-  toast("Horários salvos! 💾");
+  const tl=$("turmaLetras");
+  const letras = tl ? tl.value.split(",").map(x=>x.replace(/^\s+|\s+$/g,"")).filter(Boolean) : (S.config.turmaLetras||[]);
+  await Promise.all([fbSet("/config/aulas",aulas), fbSet("/config/horarios",hor), fbSet("/config/haeLabel",haeLabel), fbSet("/config/turmaLetras",letras)]);
+  S.config.aulas=aulas; S.config.horarios=hor; S.config.haeLabel=haeLabel; S.config.turmaLetras=letras;
+  toast("Salvo! 💾");
 }
 async function addTurma(){ const v=$("novaTurma").value.trim(); if(!v)return; S.turmas.push(v); await fbSet("/turmas",S.turmas); telaConfig(); }
 async function delTurma(i){ S.turmas.splice(i,1); await fbSet("/turmas",S.turmas); telaConfig(); }
@@ -854,6 +899,15 @@ function telaOpcoes(){
       <input type="checkbox" id="oObr" ${c.obrigatorios?"checked":""} style="width:20px;height:20px"> Tema e objetivo obrigatórios</label>
     <label style="display:flex;align-items:center;gap:10px;margin:6px 2px 18px;font-size:15px">
       <input type="checkbox" id="oProx" ${c.apenasProximoDia?"checked":""} style="width:20px;height:20px"> Só permite agendar a partir do dia seguinte</label>
+    <label class="fld">📅 Agendamentos liberados até</label>
+    <div class="card" style="margin-bottom:8px">
+      <b style="font-size:16px">${esc(fmtDia(c.liberadoAte))}</b>
+      <div style="font-size:12px;color:var(--muted)">${esc(cap1(fmtSem(c.liberadoAte)))} — os professores só conseguem agendar até esta data.</div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="minibtn" data-act="liberar-mes" data-off="-1">− mês</button>
+      <button class="minibtn acc" data-act="liberar-mes" data-off="1" style="flex:1">Liberar próximo mês ▶</button>
+    </div>
     <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
     <textarea id="oAviso" class="input" placeholder="Ex.: Sala em manutenção na sexta. Agendem com atenção!">${esc(c.aviso||"")}</textarea>
     <div style="height:16px"></div>
@@ -898,6 +952,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="salvar-agenda") return salvarAgenda();
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
+    if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="verres"){ S.dataSel=el.dataset.data; const rt=(S.reservas[el.dataset.data]&&S.reservas[el.dataset.data][el.dataset.t])||{}; const r=rt["a"+el.dataset.i]; if(r) return sheetReserva(el.dataset.t,+el.dataset.i,r); return; }
     if(a==="menuadmin") return menuAdmin();
@@ -913,6 +968,8 @@ document.addEventListener("click", async (ev)=>{
     if(a==="del-disc") return delDisc(+el.dataset.i);
     if(a==="add-hae") return addHAE();
     if(a==="del-hae") return delHAE(+el.dataset.i);
+    if(a==="sortear-hae") return sortearHAE();
+    if(a==="liberar-mes") return liberarMes(+el.dataset.off);
     if(a==="salvar-opcoes") return salvarOpcoes();
   }catch(e){ console.error(e); toast("Algo deu errado. Tente de novo."); }
 });
