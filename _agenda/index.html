@@ -227,8 +227,10 @@
   .semana td.sc.lock{color:var(--amber);background:var(--amber-tint)}
   .semana td.sc.hae{color:var(--primary);background:var(--primary-tint);font-size:10px}
   .semana td.sc.per{color:var(--faint)}
-  .rec{flex:0 0 auto;width:184px;text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px}
+  .rec{flex:0 0 auto;width:184px;text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px;position:relative}
   .rec:active{transform:scale(.97)}
+  .rec.sel{border-color:var(--primary);background:var(--primary-tint);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 35%,transparent)}
+  .rec.sel::after{content:"✓";position:absolute;top:8px;right:9px;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--primary);color:var(--primary-ink);font-size:12px;font-weight:800}
   .rec .rt{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rec .ro{font-size:12px;color:var(--muted);margin-top:3px;height:33px;overflow:hidden;line-height:1.35}
   .rec .rtag{font-size:11px;color:var(--primary);font-weight:800;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -1642,6 +1644,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="usar-recente"){ const r=(S._recAtual||S.recentes)[+el.dataset.i]; if(!r) return;
+      document.querySelectorAll(".rec").forEach(c=>c.classList.remove("sel")); el.classList.add("sel");
       if($("fTema")) $("fTema").value=r.tema||""; if($("fObj")) $("fObj").value=r.objetivo||"";
       if(r.disciplina) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===r.disciplina){ document.querySelectorAll("#discChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.disc=r.disciplina; } });
       if(r.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===r.turma){ document.querySelectorAll("#turmaChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.turma=r.turma; } });
