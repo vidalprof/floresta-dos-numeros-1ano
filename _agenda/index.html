@@ -732,7 +732,76 @@ function menuAdmin(){
     <div style="height:6px"></div>
     <button class="btn ghost" data-act="tela-prof">👥 Professores</button><div style="height:10px"></div>
     <button class="btn ghost" data-act="tela-config">🕐 Horários e turmas</button><div style="height:10px"></div>
+    <button class="btn ghost" data-act="tela-bloqueios">🔒 Bloquear horários (dia/turno/aula)</button><div style="height:10px"></div>
     <button class="btn ghost" data-act="tela-opcoes">⚙️ Outras configurações</button>`);
+}
+/* admin: bloquear em massa (dia inteiro / turno / aula) numa data */
+function telaBloqueios(){
+  fecharSheet();
+  const hoje=hojeStr();
+  const d=(S.dataSel&&S.dataSel>=hoje)?S.dataSel:hoje;
+  const hae=esc(S.config.haeLabel||"HAE");
+  const turnoBtns=TURNOS.map(t=>`<button class="btn ghost" data-act="blq-turno" data-t="${t.k}" style="margin-bottom:8px">🔒 Bloquear o ${t.n} inteiro</button>`).join("");
+  const optTurno=TURNOS.map(t=>`<option value="${t.k}">${t.n}</option>`).join("");
+  let optAula=""; for(let i=1;i<=8;i++) optAula+=`<option value="${i}">${i}ª aula</option>`;
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Bloquear horários</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    <label class="fld">Dia</label>
+    <input id="blqData" type="date" class="input" value="${d}" min="${hoje}">
+    <label class="fld">Motivo (aparece no horário)</label>
+    <input id="blqMotivo" class="input" value="Indisponível" placeholder="Digite o motivo ou toque num pronto">
+    <div class="chips" style="margin-top:10px">
+      <button class="chip" data-act="blq-preset" data-v="Indisponível">Indisponível</button>
+      <button class="chip" data-act="blq-preset" data-v="${hae}">${hae}</button>
+      <button class="chip" data-act="blq-preset" data-v="Reunião">Reunião</button>
+      <button class="chip" data-act="blq-preset" data-v="Manutenção">Manutenção</button>
+    </div>
+    <div class="sectitle">Bloquear</div>
+    <button class="btn primary" data-act="blq-dia">🔒 O dia inteiro</button>
+    <div style="height:10px"></div>
+    ${turnoBtns}
+    <div class="sectitle">Uma aula específica</div>
+    <div style="display:flex;gap:8px">
+      <select id="blqTurno" class="input" style="flex:1">${optTurno}</select>
+      <select id="blqAula" class="input" style="flex:1">${optAula}</select>
+      <button class="minibtn acc" data-act="blq-aula">🔒</button>
+    </div>
+    <div class="sectitle">Desfazer</div>
+    <button class="btn ghost" data-act="blq-liberar">🔓 Liberar todos os bloqueios deste dia</button>
+    <p class="hint" style="text-align:left">Aulas já reservadas por professores não são bloqueadas — apague-as antes, se precisar.</p>
+    <div style="height:16px"></div>`);
+}
+async function bloquearEmMassa(escopo, turnoArg, aulaArg){
+  const data=$("blqData")?$("blqData").value:S.dataSel;
+  if(!data) return toast("Escolha o dia.");
+  const motivo=(($("blqMotivo")?$("blqMotivo").value.trim():"")||"Indisponível");
+  const alvos=[];
+  TURNOS.forEach(t=>{
+    if((escopo==="turno"||escopo==="aula") && t.k!==turnoArg) return;
+    const n=aulasDoDia(data,t.c);
+    for(let i=1;i<=n;i++){ if(escopo==="aula" && i!==aulaArg) continue; alvos.push({turno:t.k,aula:i}); }
+  });
+  const rtDay=(S.reservas[data])||{};
+  const patch={}; let feitos=0, pulados=0;
+  alvos.forEach(s=>{
+    const cur=rtDay[s.turno] && rtDay[s.turno]["a"+s.aula];
+    if(cur && !cur.bloqueado){ pulados++; return; }
+    patch[s.turno+"/a"+s.aula]={bloqueado:true, rotulo:motivo, byAdmin:S.user.nome, ts:Date.now()};
+    feitos++;
+  });
+  if(!feitos) return toast(pulados?"Só há aulas já reservadas aqui.":"Nada para bloquear neste dia.");
+  await fbUpdate("/reservas/"+data, patch);
+  await recarregarReservas(); renderTab();
+  toast(feitos+" horário(s) bloqueado(s)"+(pulados?" ("+pulados+" reservado(s), mantido(s))":"")+".");
+  telaBloqueios();
+}
+async function liberarDia(){
+  const data=$("blqData")?$("blqData").value:S.dataSel; if(!data) return;
+  const rtDay=(S.reservas[data])||{}; const patch={}; let n=0;
+  TURNOS.forEach(t=>{ const rt=rtDay[t.k]||{}; Object.keys(rt).forEach(ak=>{ if(rt[ak]&&rt[ak].bloqueado){ patch[t.k+"/"+ak]=null; n++; } }); });
+  if(!n) return toast("Não há bloqueios neste dia.");
+  await fbUpdate("/reservas/"+data, patch);
+  await recarregarReservas(); renderTab(); toast(n+" bloqueio(s) liberado(s)."); telaBloqueios();
 }
 
 /* --- Professores --- */
@@ -959,6 +1028,12 @@ document.addEventListener("click", async (ev)=>{
     if(a==="tela-prof") return telaProfessores();
     if(a==="tela-config") return telaConfig();
     if(a==="tela-opcoes") return telaOpcoes();
+    if(a==="tela-bloqueios") return telaBloqueios();
+    if(a==="blq-preset"){ const inp=$("blqMotivo"); if(inp) inp.value=el.dataset.v; return; }
+    if(a==="blq-dia") return bloquearEmMassa("dia");
+    if(a==="blq-turno") return bloquearEmMassa("turno", t);
+    if(a==="blq-aula") return bloquearEmMassa("aula", ($("blqTurno")?$("blqTurno").value:"matutino"), (+($("blqAula")?$("blqAula").value:1)));
+    if(a==="blq-liberar") return liberarDia();
     if(a==="add-prof") return addProf();
     if(a==="del-prof") return delProf(el.dataset.k);
     if(a==="salvar-config") return salvarConfig();
