@@ -1068,7 +1068,7 @@ function sheetAgendar(turnoK,aula){
   const recs=montarRecentes(); S._recAtual=recs;
   if(recs.length){
     h+=`<div class="sectitle">🕘 Reaproveitar um planejamento</div>
-      <div class="hint" style="text-align:left;margin:-2px 2px 6px">Toque num cartão para preencher tudo automaticamente. Depois é só conferir e confirmar.</div>
+      <div class="hint" style="text-align:left;margin:-2px 2px 6px">Toque num cartão para preencher tudo. É a mesma aula para <b>outra turma</b>? Toque no cartão e depois é só escolher a turma nova — o tema e o objetivo continuam.</div>
       <div class="recentes">`;
     recs.forEach((r,i)=>{
       h+=`<button type="button" class="rec" data-act="usar-recente" data-i="${i}"><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></button>`;
@@ -1637,7 +1637,7 @@ document.addEventListener("click", async (ev)=>{
       if(r.disciplina) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===r.disciplina){ document.querySelectorAll("#discChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.disc=r.disciplina; } });
       if(r.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===r.turma){ document.querySelectorAll("#turmaChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.turma=r.turma; } });
       if(r.letra) document.querySelectorAll("#letraChips .chip").forEach(c=>{ if(c.dataset.v===r.letra){ document.querySelectorAll("#letraChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.letra=r.letra; } });
-      toast("Preenchido! Confira e confirme."); return; }
+      toast("Preenchido! Se for para outra turma, toque na turma nova."); return; }
     if(a==="verres"){ S.dataSel=el.dataset.data; const rt=(S.reservas[el.dataset.data]&&S.reservas[el.dataset.data][el.dataset.t])||{}; const r=rt["a"+el.dataset.i]; if(r) return sheetReserva(el.dataset.t,+el.dataset.i,r); return; }
     if(a==="menuadmin") return menuAdmin();
     if(a==="tela-prof") return telaProfessores();
