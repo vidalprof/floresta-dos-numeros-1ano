@@ -437,6 +437,8 @@ async function fazerBootstrap(){
 }
 
 /* ================= LOGIN ================= */
+function _hashSenha(s){ var t=(""+s), h=5381, i; for(i=0;i<t.length;i++){ h=((h*33)+t.charCodeAt(i))>>>0; } return "h"+h.toString(36); }
+var _loginPend=null;
 function telaLogin(){
   const nome = S.config ? S.config.appNome : "Agenda de Aulas";
   const escola = S.config ? S.config.escolaNome : "";
@@ -448,7 +450,7 @@ function telaLogin(){
     <label class="fld">Digite o seu ID de acesso</label>
     <input id="lId" class="input" inputmode="text" placeholder="seu número de acesso" autocomplete="off">
     <div style="height:16px"></div>
-    <button class="btn primary" data-act="login">Entrar</button>
+    <button class="btn primary" data-act="login">Continuar</button>
     <p class="hint">É o ID que o administrador cadastrou pra você (matrícula, telefone…). Não tem ID? Fale com o administrador da sala.</p>
   </div>`;
   setTimeout(()=>{ const el=$("lId"); if(el) el.focus(); },100);
@@ -459,10 +461,75 @@ async function fazerLogin(){
   await carregarBase();
   const p = S.professores[key];
   if(!p){ return toast("ID não encontrado. Confira com o administrador."); }
-  S.user=p; localStorage.setItem("agenda_user", key);
+  _loginPend=p; telaSenha();
+}
+function telaSenha(){
+  const p=_loginPend, novo=!p.senha;
+  $("root").innerHTML = `
+  <div class="authwrap">
+    <div class="logo">🗓️</div>
+    <h1>Olá, ${esc(p.nome.split(" ")[0])}!</h1>
+    <p class="sub">${novo?"Primeiro acesso — crie a sua senha":"Digite a sua senha"}</p>
+    ${novo?`
+      <label class="fld">Nova senha</label>
+      <input id="sNova" type="password" class="input" placeholder="mínimo 4 caracteres" autocomplete="new-password">
+      <label class="fld">Confirmar senha</label>
+      <input id="sConf" type="password" class="input" placeholder="repita a senha" autocomplete="new-password">
+      <div style="height:16px"></div>
+      <button class="btn primary" data-act="login-criar">Criar senha e entrar</button>
+    `:`
+      <label class="fld">Senha</label>
+      <input id="sSenha" type="password" class="input" placeholder="sua senha" autocomplete="current-password">
+      <div style="height:16px"></div>
+      <button class="btn primary" data-act="login-entrar">Entrar</button>
+      <p class="hint">Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua — no próximo acesso você cria uma nova.</p>
+    `}
+    <div style="height:8px"></div>
+    <button class="btn ghost" data-act="login-voltar">‹ Voltar</button>
+  </div>`;
+  setTimeout(()=>{ const el=$(novo?"sNova":"sSenha"); if(el) el.focus(); },100);
+}
+async function loginCriar(){
+  const a=($("sNova")?$("sNova").value:""), b=($("sConf")?$("sConf").value:"");
+  if(a.length<4) return toast("A senha precisa ter pelo menos 4 caracteres.");
+  if(a!==b) return toast("As senhas não coincidem.");
+  const key=sanId(_loginPend.id), hash=_hashSenha(a);
+  await fbSet("/professores/"+key+"/senha", hash);
+  _loginPend.senha=hash; S.user=_loginPend; localStorage.setItem("agenda_user", key);
+  toast("Senha criada! 🔑"); abrirApp();
+}
+function loginEntrar(){
+  const s=($("sSenha")?$("sSenha").value:"");
+  if(_hashSenha(s)!==_loginPend.senha) return toast("Senha incorreta.");
+  const key=sanId(_loginPend.id);
+  S.user=_loginPend; localStorage.setItem("agenda_user", key);
   abrirApp();
 }
-function sair(){ localStorage.removeItem("agenda_user"); S.user=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
+function sair(){ localStorage.removeItem("agenda_user"); S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
+function sheetConta(){
+  const temSenha=!!S.user.senha;
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><div class="t">Minha conta</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    <div class="card"><div class="rowitem"><div class="main"><div class="l2">Nome</div><div class="l1">${esc(S.user.nome)}</div></div></div>
+      <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div></div>
+    <label class="fld">${temSenha?"Trocar minha senha":"Criar minha senha"}</label>
+    <input id="ntSenha" type="password" class="input" placeholder="nova senha (mínimo 4)" autocomplete="new-password">
+    <div style="height:8px"></div>
+    <input id="ntConf" type="password" class="input" placeholder="repita a nova senha" autocomplete="new-password">
+    <div style="height:14px"></div>
+    <button class="btn primary" data-act="trocar-senha">🔑 Salvar senha</button>
+    <div style="height:14px"></div>
+    <button class="btn ghost" data-act="sair">⏻ Sair da conta</button>`);
+}
+async function trocarSenha(){
+  const a=($("ntSenha")?$("ntSenha").value:""), b=($("ntConf")?$("ntConf").value:"");
+  if(a.length<4) return toast("A senha precisa ter pelo menos 4 caracteres.");
+  if(a!==b) return toast("As senhas não coincidem.");
+  const key=sanId(S.user.id), hash=_hashSenha(a);
+  await fbSet("/professores/"+key+"/senha", hash);
+  S.user.senha=hash; if(S.professores[key]) S.professores[key].senha=hash;
+  fecharSheet(); toast("Senha salva! 🔑");
+}
 
 /* ================= APP SHELL ================= */
 async function abrirApp(){
@@ -478,7 +545,7 @@ function desenharShell(){
   $("root").innerHTML = `
   <div id="app">
     <div class="topbar">
-      <div class="avatar">${esc(S.user.nome.trim().charAt(0).toUpperCase())}</div>
+      <button class="avatar" data-act="conta" title="Minha conta">${esc(S.user.nome.trim().charAt(0).toUpperCase())}</button>
       <div class="brand"><b>${esc(c.appNome)}</b><span>Olá, ${esc(S.user.nome.split(" ")[0])}${adm?" · admin":""}</span></div>
       <button class="icon-btn" id="btnTema" data-act="tema"></button>
       ${adm?'<button class="icon-btn" data-act="menuadmin" title="Administração">⚙️</button>':''}
@@ -683,6 +750,8 @@ function viewInsights(){
   if(R.total===0) h+=`<div class="empty"><span class="big">📭</span>Nenhuma aula agendada neste período.</div>`;
   h+=`</div>
     <button class="btn primary" data-act="imprimir" style="margin-top:8px">🖨️ Imprimir / Salvar PDF</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" data-act="exportar-csv">📊 Exportar Excel / CSV</button>
     <div style="height:8px"></div>`;
   $("view").innerHTML=h;
 }
@@ -830,13 +899,72 @@ function sheetReserva(turnoK,aula,r){
       ${r.tema?`<div class="rowitem"><div class="main"><div class="l2">Tema</div><div class="l1">${esc(r.tema)}</div></div></div>`:""}
       ${r.objetivo?`<div class="rowitem"><div class="main"><div class="l2">Objetivo</div><div class="l1" style="font-weight:500">${esc(r.objetivo)}</div></div></div>`:""}
     </div>`;
-  if(podeExcluir) h+=`<button class="btn danger" data-act="excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Excluir ${minha?"minha reserva":"reserva"}</button>`;
-  else h+=`<p class="hint">Só o professor que reservou (ou o administrador) pode excluir.</p>`;
+  if(podeExcluir){
+    h+=`<button class="btn ghost" data-act="editar-reserva" data-t="${turnoK}" data-i="${aula}">✏️ Editar (tema/objetivo)</button>
+      <div style="height:10px"></div>
+      <button class="btn danger" data-act="pedir-excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Excluir ${minha?"minha reserva":"reserva"}</button>`;
+  } else h+=`<p class="hint">Só o professor que reservou (ou o administrador) pode editar/excluir.</p>`;
   openSheet(h);
+}
+function sheetConfExcluir(turnoK,aula){
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><div class="t">Excluir reserva?</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    ${ctxHtml(turnoK,aula)}
+    <p class="hint" style="text-align:left;font-size:15px;color:var(--text);margin-top:10px">Tem certeza? Essa ação não volta.</p>
+    <div style="height:10px"></div>
+    <button class="btn danger" data-act="excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Sim, excluir</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
 }
 async function excluirReserva(turnoK,aula){
   await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Reserva excluída.");
+}
+var _editAlvo=null;
+function editarReserva(turnoK,aula){
+  const rt=(S.reservas[S.dataSel]&&S.reservas[S.dataSel][turnoK])||{}; const r=rt["a"+aula]; if(!r||r.bloqueado) return;
+  _editAlvo={turnoK,aula,base:r}; _form={turma:null,letra:null,disc:r.disciplina||null,turnoK,aula};
+  const discAtivas=S.disciplinas.map(d=> typeof d==="string"?{nome:d,ativa:true}:d).filter(d=>d.ativa!==false);
+  let h=`<div class="grab"></div>
+    <div class="sh-head"><div class="t">Editar aula</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    ${ctxHtml(turnoK,aula)}
+    <div class="card" style="margin-top:12px"><div class="rowitem"><div class="main"><div class="l2">Turma · Professor</div><div class="l1">${esc(r.turma||"")} · ${esc(r.profNome||"")}</div></div></div></div>
+    <label class="fld">Disciplina</label><div class="chips" id="discChips">`;
+  discAtivas.forEach(d=> h+=`<button class="chip ${d.nome===r.disciplina?"on":""}" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
+  h+=`</div>
+    <label class="fld">Tema da aula</label><input id="eTema" class="input" value="${esc(r.tema||"")}" placeholder="Tema da aula">
+    <label class="fld">Objetivo</label><textarea id="eObj" class="input" placeholder="Objetivo">${esc(r.objetivo||"")}</textarea>
+    <div style="height:16px"></div>
+    <button class="btn ok" data-act="salvar-edicao">✓ Salvar alterações</button>`;
+  openSheet(h);
+}
+async function salvarEdicao(){
+  if(!_editAlvo) return; const turnoK=_editAlvo.turnoK, aula=_editAlvo.aula, base=_editAlvo.base;
+  const disc=_form.disc||base.disciplina, tema=($("eTema")?$("eTema").value.trim():""), obj=($("eObj")?$("eObj").value.trim():"");
+  if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
+  const reg=Object.assign({}, base, {disciplina:disc, tema:tema, objetivo:obj, ts:Date.now()});
+  await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
+  await recarregarReservas(); fecharSheet(); renderTab(); toast("Alterações salvas! ✅");
+}
+async function resetarSenha(k){
+  await fbDel("/professores/"+k+"/senha");
+  await carregarBase(); telaProfessores(); toast("Senha resetada — o professor cria uma nova no próximo acesso.");
+}
+function exportarCSV(){
+  const iv=relIntervalo(), ini=iv[0], fim=iv[1];
+  const linhas=[["Data","Turno","Aula","Turma","Professor","Disciplina","Tema","Objetivo"]];
+  Object.keys(S.reservas).sort().forEach(data=>{ if(data<ini||data>fim) return; if(periodoDoDia(data)) return;
+    TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
+      Object.keys(rt).sort().forEach(ak=>{ const r=rt[ak]; if(!r||r.bloqueado) return;
+        linhas.push([data, t.n, ak.replace("a",""), r.turma||"", r.profNome||"", r.disciplina||"", r.tema||"", r.objetivo||""]); }); }); });
+  const csv=linhas.map(l=>l.map(c=>'"'+(""+c).replace(/"/g,'""')+'"').join(";")).join("\r\n");
+  try{
+    const blob=new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8;"});
+    const url=URL.createObjectURL(blob), a=document.createElement("a");
+    a.href=url; a.download="relatorio-aulas-"+ini+"-a-"+fim+".csv"; document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 600);
+    toast("Relatório exportado (CSV/Excel).");
+  }catch(e){ toast("Não foi possível exportar aqui."); }
 }
 
 /* bloquear / desbloquear (admin) */
@@ -990,7 +1118,8 @@ function telaProfessores(){
   let list=`<div class="card" style="padding:4px 14px">`;
   if(!keys.length) list+=`<div class="empty" style="padding:20px">Nenhum professor ainda.</div>`;
   keys.forEach(k=>{ const p=S.professores[k];
-    list+=`<div class="rowitem"><div class="main"><div class="l1">${esc(p.nome)} ${p.admin?'<span class="tag">admin</span>':''}</div><div class="l2">ID: ${esc(p.id)}</div></div>
+    list+=`<div class="rowitem"><div class="main"><div class="l1">${esc(p.nome)} ${p.admin?'<span class="tag">admin</span>':''}${p.senha?'':' <span class="tag" style="background:var(--amber-tint);color:var(--amber)">sem senha</span>'}</div><div class="l2">ID: ${esc(p.id)}</div></div>
+      ${p.senha?`<button class="minibtn" data-act="reset-senha" data-k="${esc(k)}">Resetar senha</button>`:''}
       <button class="minibtn" data-act="del-prof" data-k="${esc(k)}">Excluir</button></div>`; });
   list+=`</div>`;
   openSheet(`<div class="grab"></div>
@@ -1182,7 +1311,15 @@ document.addEventListener("click", async (ev)=>{
   try{
     if(a==="bootstrap") return fazerBootstrap();
     if(a==="login") return fazerLogin();
+    if(a==="login-criar") return loginCriar();
+    if(a==="login-entrar") return loginEntrar();
+    if(a==="login-voltar") return telaLogin();
     if(a==="sair") return sair();
+    if(a==="conta") return sheetConta();
+    if(a==="trocar-senha") return trocarSenha();
+    if(a==="reset-senha") return resetarSenha(el.dataset.k);
+    if(a==="editar-reserva") return editarReserva(t,i);
+    if(a==="exportar-csv") return exportarCSV();
     if(a==="setdia"){ S.dataSel=el.dataset.d; return viewHoje(); }
     if(a==="tema") return alternarTema();
     if(a==="fecharaviso"){ try{ localStorage.setItem("agenda_aviso_visto", (S.config&&S.config.aviso)||""); }catch(e){} return renderAviso(); }
@@ -1195,7 +1332,9 @@ document.addEventListener("click", async (ev)=>{
     if(a==="conf-bloquear"){ const inp=$("bMotivo"); return bloquearSlot(t,i,(inp?inp.value.trim():"")||"Indisponível"); }
     if(a==="bloquear") return bloquearSlot(t,i);
     if(a==="desbloquear") return desbloquearSlot(t,i);
+    if(a==="pedir-excluir") return sheetConfExcluir(t,i);
     if(a==="excluir") return excluirReserva(t,i);
+    if(a==="salvar-edicao") return salvarEdicao();
     if(a==="salvar-agenda") return salvarAgenda();
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
