@@ -320,7 +320,18 @@
    o "carimbo" estiver pronto. _acToken() devolve o token (ou "" se indisponível). */
 window._acReady = new Promise(function(res){ window._acResolve = res; });
 window._acToken = window._acToken || (async function(){ return ""; });
-async function _acHeader(){ try{ const t=await window._acToken(); if(t) return {"X-Firebase-AppCheck": t}; }catch(e){} return {}; }
+/* Nunca deixa o carimbo travar o app: espera no máx. 2,5s por token; se falhar/demorar
+   (ex.: reCAPTCHA bloqueado por ad-blocker), desiste na sessão e segue sem ele. */
+let _acFalhou=false;
+async function _acHeader(){
+  if(_acFalhou || !window._acToken) return {};
+  try{
+    const t = await Promise.race([ window._acToken(), new Promise(function(res){ setTimeout(function(){res(null);}, 2500); }) ]);
+    if(t) return {"X-Firebase-AppCheck": t};
+    _acFalhou=true;
+  }catch(e){ _acFalhou=true; }
+  return {};
+}
 /* ================= CONFIG / FIREBASE (REST, sem SDK) ================= */
 const DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 const ESCOLA = "vidal-ramos";               // gaveta desta escola (multi-escola desde ja)
@@ -539,8 +550,8 @@ function ehHAE(dataStr, turnoK, aula){
 /* ================= INIT ================= */
 async function init(){
   aplicarTema();
-  // espera o App Check ficar pronto (com teto de 5s) antes das chamadas ao banco
-  try{ await Promise.race([ window._acReady, new Promise(function(r){ setTimeout(r,5000); }) ]); }catch(e){}
+  // espera o App Check ficar pronto (com teto de 3s) antes das chamadas ao banco
+  try{ await Promise.race([ window._acReady, new Promise(function(r){ setTimeout(r,3000); }) ]); }catch(e){}
   await carregarBase();
   // Se a busca dos dados essenciais FALHOU (rede/servidor), não é "primeiro acesso":
   // mostra "sem conexão" em vez da tela de criar administrador.
