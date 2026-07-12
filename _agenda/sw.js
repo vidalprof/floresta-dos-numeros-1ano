@@ -1,6 +1,6 @@
 /* Service Worker — app shell offline + HTML sempre fresco.
    Os dados (Firebase, outra origem) NUNCA são cacheados: passam direto pela rede. */
-const CACHE = "agenda-shell-v2";
+const CACHE = "agenda-shell-v3";
 const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -15,6 +15,11 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
+// Só tratamos como "app de verdade" respostas 200 de HTML — assim uma página de bloqueio
+// de Wi-Fi (portal cativo, que responde 200 com HTML de login) NÃO é gravada nem servida
+// no lugar do index.html, e um 403/500 também cai para o cache bom.
+const htmlOk = (r) => !!(r && r.ok && (r.headers.get("content-type") || "").includes("text/html"));
+
 self.addEventListener("fetch", (e) => {
   const req = e.request;
   if (req.method !== "GET") return;
@@ -26,15 +31,21 @@ self.addEventListener("fetch", (e) => {
   // rede estagnar (conectada e pendurada), cai no cache em vez de travar a tela branca.
   if (req.mode === "navigate" || (req.headers.get("accept") || "").includes("text/html")) {
     const fromCache = () => caches.match(req).then((m) => m || caches.match("./index.html"));
-    const net = fetch(req).then((r) => { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); return r; });
+    const net = fetch(req).then((r) => {
+      if (htmlOk(r)) { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); }
+      return r;
+    });
     const timeout = new Promise((res) => setTimeout(() => res(null), 4000));
     e.respondWith(
-      Promise.race([net.catch(() => null), timeout]).then((r) => r || fromCache())
+      Promise.race([net.catch(() => null), timeout]).then((r) => (htmlOk(r) ? r : fromCache()))
     );
     return;
   }
-  // Ícones/estáticos: cache primeiro, atualiza em segundo plano.
+  // Ícones/estáticos: cache primeiro, atualiza em segundo plano (só grava resposta boa).
   e.respondWith(
-    caches.match(req).then((m) => m || fetch(req).then((r) => { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); return r; }))
+    caches.match(req).then((m) => m || fetch(req).then((r) => {
+      if (r && r.ok) { const cp = r.clone(); caches.open(CACHE).then((c) => c.put(req, cp)); }
+      return r;
+    }))
   );
 });

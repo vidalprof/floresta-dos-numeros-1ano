@@ -354,10 +354,21 @@ const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="
 /* fetch com LIMITE DE TEMPO: se a rede estagnar (conectada mas pendurada), aborta e
    vira falha "limpa" — evita a tela branca congelada no PWA. */
 async function _fetchT(u, opts, ms){
+  ms = ms||9000;
   let ctrl=null, t=null;
-  try{ ctrl = new AbortController(); t = setTimeout(function(){ try{ctrl.abort();}catch(e){} }, ms||9000); }catch(e){ ctrl=null; }
-  try{ return await fetch(u, ctrl?Object.assign({}, opts||{}, {signal:ctrl.signal}):(opts||{})); }
+  try{ ctrl = new AbortController(); }catch(e){ ctrl=null; }
+  const f = fetch(u, ctrl?Object.assign({}, opts||{}, {signal:ctrl.signal}):(opts||{}));
+  // Corrida com um prazo: mesmo sem AbortController (navegador antigo) a promessa
+  // NUNCA fica pendurada — o prazo rejeita e vira falha "limpa".
+  const prazo = new Promise(function(_,rej){ t=setTimeout(function(){ try{ if(ctrl) ctrl.abort(); }catch(e){} rej(new Error("TIMEOUT")); }, ms); });
+  try{ return await Promise.race([f, prazo]); }
   finally{ if(t) clearTimeout(t); }
+}
+/* Lê o CORPO da resposta com prazo próprio: o _fetchT só cobre conexão+cabeçalhos;
+   se o servidor manda o header e depois estagna o corpo, r.json() pendura sem isto. */
+function _corpoJson(r, ms){
+  return Promise.race([ r.json(),
+    new Promise(function(_,rej){ setTimeout(function(){ rej(new Error("BODYTO")); }, ms||9000); }) ]);
 }
 async function _fbFetch(path, opts){
   opts = opts || {};
@@ -378,7 +389,7 @@ async function _fbFetch(path, opts){
   return r;
 }
 async function fbGetRaw(path){
-  try{ const r = await _fbFetch(path); if(!r.ok) return {ok:false, status:r.status}; return {ok:true, val: await r.json()}; }
+  try{ const r = await _fbFetch(path); if(!r.ok) return {ok:false, status:r.status}; return {ok:true, val: await _corpoJson(r)}; }
   catch(e){ return {ok:false, net:true}; }
 }
 async function fbGet(path){ const r = await fbGetRaw(path); return r.ok ? r.val : null; }
@@ -395,8 +406,10 @@ const AUTH_DOMINIO = "vidalramos.agenda";
 /* ver>1 gera um e-mail novo (matricula-v2@...) — usado quando o admin RESETA a senha:
    a conta segura antiga é abandonada e uma nova é criada no primeiro acesso. */
 function _authEmail(id, ver){ const v=(+ver>1)?("-v"+(+ver)):""; return sanId(id).toLowerCase().replace(/[^a-z0-9_.-]/g,"") + v + "@" + AUTH_DOMINIO; }
-function _guardaAuth(idToken, refreshToken, expiresIn){
-  S.auth = { idToken:idToken, refreshToken:refreshToken, expira: Date.now() + ((parseInt(expiresIn||"3600",10)-60)*1000) };
+function _guardaAuth(idToken, refreshToken, expiresIn, uid){
+  // uid = localId do Firebase Auth (identidade real do usuário). Guardado para, no
+  // futuro, carimbar o "dono" de cada reserva e as regras isolarem professor a professor.
+  S.auth = { idToken:idToken, refreshToken:refreshToken, uid: uid || (S.auth&&S.auth.uid) || null, expira: Date.now() + ((parseInt(expiresIn||"3600",10)-60)*1000) };
   try{ if(refreshToken) localStorage.setItem("agenda_rt", refreshToken); }catch(e){}
 }
 function authAtivo(){ return !!(S.auth && S.auth.idToken); }
@@ -405,9 +418,9 @@ async function _authIdentity(kind, id, senha, ver){
     {method:"POST", headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
      body: JSON.stringify({email:_authEmail(id, ver), password:""+senha, returnSecureToken:true})}); }
   catch(e){ throw new Error("REDE"); }
-  const j = await r.json().catch(function(){return {};});
+  const j = await _corpoJson(r).catch(function(){return {};});
   if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
-  _guardaAuth(j.idToken, j.refreshToken, j.expiresIn); return j;
+  _guardaAuth(j.idToken, j.refreshToken, j.expiresIn, j.localId); return j;
 }
 async function authCriar(id, senha, ver){   // cria; se já existir, apenas entra
   try{ return await _authIdentity("signUp", id, senha, ver); }
@@ -420,9 +433,9 @@ async function authRefresh(){          // renova o crachá a partir do refresh t
     {method:"POST", headers:Object.assign({"Content-Type":"application/x-www-form-urlencoded"}, await _acHeader()),
      body: "grant_type=refresh_token&refresh_token="+encodeURIComponent(rt)}); }
   catch(e){ return false; }
-  const j = await r.json().catch(function(){return {};});
+  const j = await _corpoJson(r).catch(function(){return {};});
   if(!r.ok) return false;
-  _guardaAuth(j.id_token, j.refresh_token, j.expires_in); return true;
+  _guardaAuth(j.id_token, j.refresh_token, j.expires_in, j.user_id); return true;
 }
 
 /* ================= DEFAULTS (semeados no 1o acesso) ================= */
@@ -578,7 +591,7 @@ async function init(){
   // mostra "sem conexão" em vez da tela de criar administrador.
   if(_baseErro){ telaSemConexao(); return; }
   if(!S.professores || Object.keys(S.professores).length===0){ telaBootstrap(); return; }
-  const saved = localStorage.getItem("agenda_user");
+  let saved=null; try{ saved=localStorage.getItem("agenda_user"); }catch(e){}
   if(saved && S.professores[saved]){
     S.user = S.professores[saved];
     let tok=false; try{ tok=await authRefresh(); }catch(e){}
@@ -606,6 +619,9 @@ async function carregarBase(){
   // Falha nos dois essenciais (config/professores) => sem conexão de verdade.
   _baseErro = !config.ok || !prof.ok;
   S.config = (config.ok ? config.val : null) || null;
+  // /config lido com sucesso porém vazio/corrompido (mas há professores): usa defaults
+  // em memória para o app NÃO estourar (TypeError em S.config.*) e ficar em tela branca.
+  if(!S.config && config.ok && prof.ok && prof.val) S.config = Object.assign({}, DEF_CONFIG);
   if(S.config){
     if(!S.config.aulas) S.config.aulas = DEF_AULAS;
     if(!S.config.horarios) S.config.horarios = DEF_HORARIOS;
@@ -622,7 +638,7 @@ async function carregarBase(){
   S.turmas = (turmas.ok ? turmas.val : null) || [];
 }
 /* Em falha de recarga, MANTÉM as reservas já carregadas (evita a agenda "piscar vazia"). */
-async function recarregarReservas(){ const r = await fbGetRaw("/reservas"); if(r.ok) S.reservas = r.val || {}; }
+async function recarregarReservas(){ const r = await fbGetRaw("/reservas"); if(r.ok){ S.reservas = r.val || {}; return true; } return false; }
 
 /* ================= BOOTSTRAP (1o acesso: cria admin + semeia) ================= */
 function telaBootstrap(){
@@ -819,6 +835,8 @@ function checarNotificacao(){
     if(!l.length) return;
     const chave="agenda_notif_"+amanha;
     if(localStorage.getItem(chave)) return;
+    // remove marcadores de dias já passados (não acumular chaves para sempre)
+    try{ for(let i=localStorage.length-1;i>=0;i--){ const k=localStorage.key(i); if(k && k.indexOf("agenda_notif_")===0 && k<chave) localStorage.removeItem(k); } }catch(e){}
     localStorage.setItem(chave,"1");
     const x=l[0];
     new Notification("Agenda de Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192.png"});
@@ -878,8 +896,9 @@ async function abrirApp(){
     if($("modal") && $("modal").innerHTML) return;                 // não redesenha com uma janela aberta
     const lw = await fbGet("/config/reservasLastWrite");           // lê só o marcador; só baixa tudo se mudou
     if(lw!=null && lw===S._lwSeen) return;
+    const okR = await recarregarReservas();
+    if(!okR) return;                                                // recarga falhou: NÃO consome o marcador (tenta de novo)
     S._lwSeen = lw;
-    await recarregarReservas();
     if(S.tab==="hoje"||S.tab==="proximos") renderTab();
   }); }
   if(_pollTimer) clearInterval(_pollTimer);
@@ -895,8 +914,9 @@ async function abrirApp(){
     // lê só o marcador (poucos bytes); só baixa a agenda inteira se algo mudou
     const lw = await fbGet("/config/reservasLastWrite");
     if(!forcar && lw===S._lwSeen) return;
+    const antes=_sigReservas(); const okR = await recarregarReservas();
+    if(!okR) return;                                                // recarga falhou: mantém o marcador antigo p/ tentar de novo
     S._lwSeen = lw;
-    const antes=_sigReservas(); await recarregarReservas();
     if(_sigReservas()!==antes && (S.tab==="hoje"||S.tab==="proximos")) renderTab();
   }, 30000);
 }
@@ -1163,7 +1183,8 @@ function coletarRelatorio(ini, fim){
     });
   });
   let capacidade=0; const dd=diffDias(ini,fim);
-  if(dd>=0 && dd<=420){ for(let k=0;k<=dd;k++){ const ds=addDias(ini,k); if(periodoDoDia(ds)) continue;
+  // teto amplo (10 anos) só como trava de sanidade — antes 420 zerava a ocupação no "Tudo".
+  if(dd>=0 && dd<=3660){ for(let k=0;k<=dd;k++){ const ds=addDias(ini,k); if(periodoDoDia(ds)) continue;
     TURNOS.forEach(t=>{ const n=aulasDoDia(ds,t.c); for(let i=1;i<=n;i++){ if(!ehHAE(ds,t.k,i)) capacidade++; } }); } }
   return {total,bloqueados,porTurno,porProf,porTurma,porDisc,capacidade};
 }
@@ -1412,10 +1433,12 @@ async function salvarAgenda(){
   }
   const restore=btnBusy('[data-act="salvar-agenda"]',"Salvando…");
   try{
-    // checa se o slot continua livre (anti-choque simples)
-    const atual = await fbGet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
-    if(atual){ await recarregarReservas(); fecharSheet(); renderTab(); toast("Ops! Esse horário acabou de ser reservado."); return; }
-    const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ts:Date.now()};
+    // checa se o slot continua livre (anti-choque simples). Distingue "vazio" de "falha":
+    // se a leitura de checagem falhar, NÃO grava às cegas (evitava sobrescrever reserva alheia).
+    const chk = await fbGetRaw(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
+    if(!chk.ok){ toast("Sem conexão para confirmar o horário. Tente de novo."); return; }
+    if(chk.val){ await recarregarReservas(); fecharSheet(); renderTab(); toast("Ops! Esse horário acabou de ser reservado."); return; }
+    const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ownerUid:(S.auth&&S.auth.uid)||null,ts:Date.now()};
     if(_form.excecao) reg.excecao=true;
     const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
     if(!ok){ toast("Não foi possível salvar. Tente de novo."); return; }
