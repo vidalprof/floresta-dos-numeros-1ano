@@ -793,7 +793,8 @@ function sheetConta(){
     <div class="sh-head"><div class="t">Minha conta</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     <div class="card"><div class="rowitem"><div class="main"><div class="l2">Nome</div><div class="l1">${esc(S.user.nome)}</div></div></div>
       <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div>
-      <div class="rowitem"><div class="main"><div class="l2">Acesso</div><div class="l1">🔒 Login protegido</div></div></div></div>
+      <div class="rowitem"><div class="main"><div class="l2">Acesso</div><div class="l1">🔒 Login protegido</div></div></div>
+      ${(S.user.admin && S.auth && S.auth.uid)?`<div class="rowitem"><div class="main"><div class="l2">Seu identificador (uid) — para o isolamento no Firebase</div><div class="l1" style="font-family:monospace;font-size:12px;word-break:break-all">${esc(S.auth.uid)}</div></div><button class="btnlink" data-act="copiar-uid" data-v="${esc(S.auth.uid)}">📋 Copiar</button></div>`:""}</div>
     <label class="fld">Trocar minha senha</label>
     <input id="ntSenha" type="password" data-pw class="input" placeholder="nova senha (mínimo 6)" autocomplete="new-password">
     <div style="height:8px"></div>
@@ -1968,6 +1969,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="toggle-senha"){ const on=el.dataset.on==="1"; document.querySelectorAll("input[data-pw]").forEach(function(inp){ inp.type=on?"password":"text"; }); el.dataset.on=on?"0":"1"; el.textContent=on?"👁 Mostrar senha":"🙈 Ocultar senha"; return; }
     if(a==="sair") return sair();
     if(a==="conta") return sheetConta();
+    if(a==="copiar-uid"){ const v=el.dataset.v||""; try{ (navigator.clipboard&&navigator.clipboard.writeText)?navigator.clipboard.writeText(v).then(function(){toast("Identificador copiado! 📋");},function(){toast("Copie manualmente: "+v);}):toast("Copie manualmente: "+v); }catch(e){ toast("Copie manualmente: "+v); } return; }
     if(a==="ativar-lembretes") return ativarLembretes();
     if(a==="hoje-modo"){ _hojeModo=el.dataset.v; return viewHoje(); }
     if(a==="trocar-senha") return trocarSenha();
