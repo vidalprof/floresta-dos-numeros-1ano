@@ -140,6 +140,9 @@
   .aviso .ax{width:28px;height:28px;border-radius:9px;background:transparent;color:var(--muted);font-size:15px;flex-shrink:0}
   select.input{appearance:none;-webkit-appearance:none;-moz-appearance:none}
   .btnlink{background:transparent;border:0;color:var(--primary);font-weight:700;font-size:13px;padding:8px 2px;cursor:pointer;display:inline-block}
+  .grecaptcha-badge{visibility:hidden!important}
+  .recaptcha-terms{font-size:11px;color:var(--faint);text-align:center;margin-top:14px;line-height:1.5}
+  .recaptcha-terms a{color:var(--muted)}
   .delx{margin-left:3px;color:#ff8b76;background:transparent;border:0;font-size:14px;padding:5px 9px;cursor:pointer;line-height:1;vertical-align:middle}
 
   .empty{color:var(--muted);text-align:center;padding:40px 16px;font-size:15px;line-height:1.6}
@@ -313,6 +316,11 @@
 
 <script>
 "use strict";
+/* App Check: o módulo no fim da página carrega o SDK e resolve esta promessa quando
+   o "carimbo" estiver pronto. _acToken() devolve o token (ou "" se indisponível). */
+window._acReady = new Promise(function(res){ window._acResolve = res; });
+window._acToken = window._acToken || (async function(){ return ""; });
+async function _acHeader(){ try{ const t=await window._acToken(); if(t) return {"X-Firebase-AppCheck": t}; }catch(e){} return {}; }
 /* ================= CONFIG / FIREBASE (REST, sem SDK) ================= */
 const DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.com";
 const ESCOLA = "vidal-ramos";               // gaveta desta escola (multi-escola desde ja)
@@ -326,13 +334,16 @@ const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="
 /* Faz a chamada ao banco; se o crachá venceu (401/403), renova UMA vez e repete.
    Cobre leitura e gravação — evita "agenda vazia" e "não salvou" por token expirado. */
 async function _fbFetch(path, opts){
-  let r = await fetch(url(path), opts);
-  if((r.status===401||r.status===403) && await authRefresh()){ r = await fetch(url(path), opts); }
+  opts = opts || {};
+  const ac = await _acHeader();
+  const withAC = (o)=> Object.assign({}, o, {headers: Object.assign({}, o.headers||{}, ac)});
+  let r = await fetch(url(path), withAC(opts));
+  if((r.status===401||r.status===403) && await authRefresh()){ r = await fetch(url(path), withAC(opts)); }
   // Após gravar em /reservas, atualiza um "marcador" leve (poucos bytes). O poll lê só
   // esse marcador e só baixa a agenda inteira quando ele muda -> economiza banda/cota.
-  if(r.ok && opts && opts.method && opts.method!=="GET" && path.indexOf("/reservas")===0){
+  if(r.ok && opts.method && opts.method!=="GET" && path.indexOf("/reservas")===0){
     S._lwSeen=Date.now();
-    try{ fetch(url("/config/reservasLastWrite"), {method:"PUT", body:JSON.stringify(S._lwSeen)}); }catch(e){}
+    try{ fetch(url("/config/reservasLastWrite"), {method:"PUT", body:JSON.stringify(S._lwSeen), headers:ac}); }catch(e){}
   }
   return r;
 }
@@ -361,7 +372,7 @@ function _guardaAuth(idToken, refreshToken, expiresIn){
 function authAtivo(){ return !!(S.auth && S.auth.idToken); }
 async function _authIdentity(kind, id, senha, ver){
   const r = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:"+kind+"?key="+FB_API_KEY,
-    {method:"POST", headers:{"Content-Type":"application/json"},
+    {method:"POST", headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
      body: JSON.stringify({email:_authEmail(id, ver), password:""+senha, returnSecureToken:true})});
   const j = await r.json().catch(function(){return {};});
   if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
@@ -375,7 +386,7 @@ async function authRefresh(){          // renova o crachá a partir do refresh t
   let rt = (S.auth&&S.auth.refreshToken); if(!rt){ try{ rt=localStorage.getItem("agenda_rt"); }catch(e){} }
   if(!rt) return false;
   const r = await fetch("https://securetoken.googleapis.com/v1/token?key="+FB_API_KEY,
-    {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"},
+    {method:"POST", headers:Object.assign({"Content-Type":"application/x-www-form-urlencoded"}, await _acHeader()),
      body: "grant_type=refresh_token&refresh_token="+encodeURIComponent(rt)});
   const j = await r.json().catch(function(){return {};});
   if(!r.ok) return false;
@@ -528,6 +539,8 @@ function ehHAE(dataStr, turnoK, aula){
 /* ================= INIT ================= */
 async function init(){
   aplicarTema();
+  // espera o App Check ficar pronto (com teto de 5s) antes das chamadas ao banco
+  try{ await Promise.race([ window._acReady, new Promise(function(r){ setTimeout(r,5000); }) ]); }catch(e){}
   await carregarBase();
   // Se a busca dos dados essenciais FALHOU (rede/servidor), não é "primeiro acesso":
   // mostra "sem conexão" em vez da tela de criar administrador.
@@ -631,6 +644,7 @@ function telaLogin(){
     <div style="height:16px"></div>
     <button class="btn primary" data-act="login">Continuar</button>
     <p class="hint">É o ID que o administrador cadastrou pra você (matrícula, telefone…). Não tem ID? Fale com o administrador da sala.</p>
+    <p class="recaptcha-terms">Protegido por reCAPTCHA — aplicam-se a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Política de Privacidade</a> e os <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Termos</a> do Google.</p>
   </div>`;
   setTimeout(()=>{ const el=$("lId"); if(el) el.focus(); },100);
 }
@@ -775,7 +789,7 @@ async function trocarSenha(){
     // A senha vive só no Firebase Auth (não guardamos mais no banco).
     if(authAtivo()){
       const r=await fetch("https://identitytoolkit.googleapis.com/v1/accounts:update?key="+FB_API_KEY,
-        {method:"POST",headers:{"Content-Type":"application/json"},
+        {method:"POST",headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
          body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})});
       const j=await r.json().catch(function(){return {};});
       if(!r.ok) return toast("Não foi possível trocar a senha agora. Tente de novo.");
@@ -1971,6 +1985,25 @@ init();
     }
   }catch(e){}
 })();
+</script>
+<!-- App Check (reCAPTCHA v3): carrega o SDK do Firebase e prepara o "carimbo" que
+     prova que o pedido vem do app de verdade. Em modo observação até ativarmos. -->
+<script type="module">
+  try{
+    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
+    const { initializeAppCheck, ReCaptchaV3Provider, getToken } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-check.js");
+    const app = initializeApp({
+      apiKey: "AIzaSyCWX-lK7pr6yW_E5jDvDhVewe20lB3E6Ks",
+      projectId: "atividades-educativas-16860",
+      appId: "1:58007108875:web:f4345b617aa70949b9f60e"
+    });
+    const ac = initializeAppCheck(app, {
+      provider: new ReCaptchaV3Provider("6LeoV1AtAAAAAEYaihPZc1WxnVo1gzc0W-KWhPuz"),
+      isTokenAutoRefreshEnabled: true
+    });
+    window._acToken = async function(){ try{ const t = await getToken(ac, false); return (t && t.token) || ""; }catch(e){ return ""; } };
+  }catch(e){ /* App Check indisponível (offline etc.): em modo observação o app segue normal */ }
+  if(window._acResolve) window._acResolve(true);
 </script>
 </body>
 </html>
