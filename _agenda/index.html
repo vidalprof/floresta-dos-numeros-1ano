@@ -367,8 +367,9 @@ async function _fetchT(u, opts, ms){
 /* Lê o CORPO da resposta com prazo próprio: o _fetchT só cobre conexão+cabeçalhos;
    se o servidor manda o header e depois estagna o corpo, r.json() pendura sem isto. */
 function _corpoJson(r, ms){
-  return Promise.race([ r.json(),
-    new Promise(function(_,rej){ setTimeout(function(){ rej(new Error("BODYTO")); }, ms||9000); }) ]);
+  let t=null;
+  const prazo = new Promise(function(_,rej){ t=setTimeout(function(){ rej(new Error("BODYTO")); }, ms||9000); });
+  return Promise.race([ r.json(), prazo ]).finally(function(){ if(t) clearTimeout(t); });
 }
 async function _fbFetch(path, opts){
   opts = opts || {};
@@ -393,9 +394,13 @@ async function fbGetRaw(path){
   catch(e){ return {ok:false, net:true}; }
 }
 async function fbGet(path){ const r = await fbGetRaw(path); return r.ok ? r.val : null; }
-async function fbSet(path,val){ const r=await _fbFetch(path,{method:'PUT',body:JSON.stringify(val)}); return r.ok; }
-async function fbUpdate(path,val){ const r=await _fbFetch(path,{method:'PATCH',body:JSON.stringify(val)}); return r.ok; }
-async function fbDel(path){ const r=await _fbFetch(path,{method:'DELETE'}); return r.ok; }
+// _httpStatus guarda o status da última gravação: 403 = a regra recusou (sem permissão),
+// diferente de falha de rede — permite mostrar a mensagem certa em vez de "tente de novo".
+var _httpStatus=0;
+async function fbSet(path,val){ const r=await _fbFetch(path,{method:'PUT',body:JSON.stringify(val)}); _httpStatus=r.status||0; return r.ok; }
+async function fbUpdate(path,val){ const r=await _fbFetch(path,{method:'PATCH',body:JSON.stringify(val)}); _httpStatus=r.status||0; return r.ok; }
+async function fbDel(path){ const r=await _fbFetch(path,{method:'DELETE'}); _httpStatus=r.status||0; return r.ok; }
+function _msgFalha(base){ return _httpStatus===403 ? "Esta reserva não é sua — só quem reservou (ou o administrador) pode alterá-la." : (base||"Não foi possível. Tente de novo."); }
 
 /* ===== Firebase Authentication (REST) — o "crachá" que as regras vão exigir.
    FASE A: regras ainda abertas; tudo aqui roda em best-effort e, se falhar, NÃO
@@ -618,9 +623,11 @@ async function carregarBase(){
   ]);
   // Falha nos dois essenciais (config/professores) => sem conexão de verdade.
   _baseErro = !config.ok || !prof.ok;
-  S.config = (config.ok ? config.val : null) || null;
-  // /config lido com sucesso porém vazio/corrompido (mas há professores): usa defaults
-  // em memória para o app NÃO estourar (TypeError em S.config.*) e ficar em tela branca.
+  // Só aceita /config se for um OBJETO. Se vier nulo OU primitivo corrompido
+  // (string/number), trata como ausente — senão S.config.aulas=... estoura TypeError.
+  S.config = (config.ok && config.val && typeof config.val==="object") ? config.val : null;
+  // /config vazio/corrompido mas há professores: usa defaults em memória p/ o app NÃO
+  // estourar e ficar em tela branca.
   if(!S.config && config.ok && prof.ok && prof.val) S.config = Object.assign({}, DEF_CONFIG);
   if(S.config){
     if(!S.config.aulas) S.config.aulas = DEF_AULAS;
@@ -856,7 +863,7 @@ async function trocarSenha(){
         {method:"POST",headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
          body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})}); }
       catch(e){ return toast("Não foi possível trocar a senha agora. Tente de novo."); }
-      const j=await r.json().catch(function(){return {};});
+      const j=await _corpoJson(r).catch(function(){return {};});
       if(!r.ok) return toast("Não foi possível trocar a senha agora. Tente de novo.");
       if(j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
     } else {
@@ -990,10 +997,12 @@ function viewHoje(){
   for(let k=0;k<nDias;k++){
     const ds=addDias(hoje,k), d=dateFromStr(ds), c=contarDisponiveis(ds);
     const on=ds===data, semAula=c.tot===0;
+    // professor não agenda hoje (regra "só a partir de amanhã") -> pip não fica verde
+    const soPodeAmanha = S.config.apenasProximoDia && !adm && ds===hoje;
     strip+=`<button class="daychip ${on?"on":""} ${semAula?"off":""}" data-act="setdia" data-d="${ds}">
       <span class="wd">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][d.getDay()]}</span>
       <span class="dn">${d.getDate()}</span>
-      <span class="pip ${(!semAula&&c.disp>0)?"has":""}"></span></button>`;
+      <span class="pip ${(!semAula&&c.disp>0&&!soPodeAmanha)?"has":""}"></span></button>`;
   }
   strip+='</div>';
   const cd=contarDisponiveis(data);
@@ -1442,7 +1451,7 @@ async function salvarAgenda(){
     const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ownerUid:(S.auth&&S.auth.uid)||null,ts:Date.now()};
     if(_form.excecao) reg.excecao=true;
     const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
-    if(!ok){ toast("Não foi possível salvar. Tente de novo."); return; }
+    if(!ok){ toast(_msgFalha("Não foi possível salvar. Tente de novo.")); return; }
     try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
     if(tema||obj){ try{
       const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
@@ -1470,8 +1479,14 @@ function sheetExcecao(sg,tg){
 
 /* ver / excluir reserva */
 function sheetReserva(turnoK,aula,r){
-  const minha = sanId(r.profId)===sanId(S.user.id);
-  const podeExcluir = minha || S.user.admin;
+  const minha = sanId(r.profId)===sanId(S.user.id);   // exibição: "é a minha turma"
+  // Permissão de editar/excluir = o MESMO critério das regras do servidor: dono pelo
+  // ownerUid (ou admin). Assim não mostramos botão que o servidor vai recusar (ex.: aula
+  // que o admin agendou para o professor fica com ownerUid do admin). Fallback p/ profId
+  // em registros sem ownerUid (legados).
+  const meuUid = S.auth && S.auth.uid;
+  const souDono = r.ownerUid ? (r.ownerUid===meuUid) : minha;
+  const podeExcluir = souDono || S.user.admin;
   let h=`<div class="grab"></div>
     <div class="sh-head"><div class="t">${esc(r.turma)}</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     ${ctxHtml(turnoK,aula)}
@@ -1484,7 +1499,7 @@ function sheetReserva(turnoK,aula,r){
   if(podeExcluir){
     h+=`<button class="btn ghost" data-act="editar-reserva" data-t="${turnoK}" data-i="${aula}">✏️ Editar (tema/objetivo)</button>
       <div style="height:10px"></div>
-      <button class="btn danger" data-act="pedir-excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Excluir ${minha?"minha reserva":"reserva"}</button>`;
+      <button class="btn danger" data-act="pedir-excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Excluir ${souDono?"minha reserva":"reserva"}</button>`;
   } else h+=`<p class="hint">Só o professor que reservou (ou o administrador) pode editar/excluir.</p>`;
   openSheet(h);
 }
@@ -1500,7 +1515,7 @@ function sheetConfExcluir(turnoK,aula){
 }
 async function excluirReserva(turnoK,aula){
   const ok=await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
-  if(!ok){ toast("Não foi possível excluir. Tente de novo."); return; }
+  if(!ok){ toast(_msgFalha("Não foi possível excluir. Tente de novo.")); return; }
   await recarregarReservas(); fecharSheet(); renderTab(); toast("Reserva excluída.");
 }
 var _editAlvo=null;
@@ -1525,11 +1540,12 @@ async function salvarEdicao(){
   if(!_editAlvo) return; const turnoK=_editAlvo.turnoK, aula=_editAlvo.aula, base=_editAlvo.base;
   const disc=_form.disc||base.disciplina, tema=($("eTema")?$("eTema").value.trim():""), obj=($("eObj")?$("eObj").value.trim():"");
   if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
-  const reg=Object.assign({}, base, {disciplina:disc, tema:tema, objetivo:obj, ts:Date.now()});
+  // preserva o ownerUid do registro; se faltar (legado), recarimba com o usuário atual
+  const reg=Object.assign({}, base, {disciplina:disc, tema:tema, objetivo:obj, ownerUid:base.ownerUid||(S.auth&&S.auth.uid)||null, ts:Date.now()});
   const restore=btnBusy('[data-act="salvar-edicao"]',"Salvando…");
   try{
     const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
-    if(!ok){ toast("Não foi possível salvar. Tente de novo."); return; }
+    if(!ok){ toast(_msgFalha("Não foi possível salvar. Tente de novo.")); return; }
     await recarregarReservas(); fecharSheet(); renderTab(); toast("Alterações salvas! ✅");
   } finally { restore(); }
 }
@@ -1808,7 +1824,7 @@ function telaConfig(){
   let optAula=""; for(let i=1;i<=maxAulas;i++) optAula+=`<option value="${i}">${i}ª</option>`;
   let haeList=`<div class="chips" style="margin-top:4px">`;
   (S.config.hae||[]).forEach((x,i)=>{ const tn=(TURNOS.find(tt=>tt.k===x.turno)||{}).n||x.turno;
-    haeList+=`<span class="chip">${DIAS_NOME[x.wk]||x.wk} · ${esc(tn)} · ${x.aula}ª <button class="delx" data-act="del-hae" data-i="${i}" aria-label="Remover HAE">✕</button></span>`; });
+    haeList+=`<span class="chip">${esc(DIAS_NOME[x.wk]||x.wk)} · ${esc(tn)} · ${x.aula}ª <button class="delx" data-act="del-hae" data-i="${i}" aria-label="Remover HAE">✕</button></span>`; });
   if(!(S.config.hae||[]).length) haeList+=`<span style="color:var(--muted);font-size:13px">Nenhuma HAE fixa ainda.</span>`;
   haeList+=`</div>`;
   const haeH=`

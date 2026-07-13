@@ -15,9 +15,11 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();
 });
 
-// Só tratamos como "app de verdade" respostas 200 de HTML — assim uma página de bloqueio
-// de Wi-Fi (portal cativo, que responde 200 com HTML de login) NÃO é gravada nem servida
-// no lugar do index.html, e um 403/500 também cai para o cache bom.
+// Só tratamos como "app de verdade" respostas 200 de HTML — um 403/500 cai para o cache
+// bom em vez de virar "o app". (Contra portal cativo de Wi-Fi a proteção principal é o
+// HTTPS do github.io + o bypass cross-origin abaixo: o portal não injeta um 200 válido na
+// nossa origem sem quebrar o TLS, então o fetch falha e servimos o cache. Este htmlOk é a
+// segunda camada, e evita cachear lixo caso um dia o app rode em HTTP.)
 const htmlOk = (r) => !!(r && r.ok && (r.headers.get("content-type") || "").includes("text/html"));
 
 self.addEventListener("fetch", (e) => {
