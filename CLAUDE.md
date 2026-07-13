@@ -325,6 +325,14 @@ registrado para não se perder de novo. Para cada um: o que ele cobre + como che
    `toast` com `role="status" aria-live="polite"`; **contraste WCAG nos dois temas**
    (claro `#191d2e/#f2f3fa`, escuro `#e9ecf3/#0f1117`, até o `--muted` passa); alvos de
    toque grandes; Enter envia login/senha; `<img>` com `alt`.
+   - **⚠️ LIÇÃO PAGA (avisos invisíveis) — 2026-07:** o `#toast` tinha só
+     `class="hidden"`, mas o ESTILO que o posiciona/mostra é a CLASSE `.toast`
+     (`position:fixed`, fundo, z-index). Sem a classe, `toast()` só tirava `hidden` e o
+     texto ia pra um `<div>` sem estilo, **invisível** — TODOS os avisos ("Senha
+     incorreta.", "Usuário não encontrado." etc.) sumiam. Certo: `class="toast hidden"`.
+     **Sempre conferir que o elemento tem a MESMA classe que o seletor CSS estiliza**
+     (não confundir `#id` com `.classe`). `#toast`/`#modal` ficam FORA do `#root` (senão
+     `root.innerHTML=...` os apagaria a cada tela).
 
 **Como rodar a banca:** (a) `node --check` no JS extraído dos `<script>`; (b) `grep`
 das proteções (`ownerUid`, `esc(`, `corSegura`, `cel(`+CSV, `_fetchT`, `_acFalhou`,
