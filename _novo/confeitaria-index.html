@@ -160,6 +160,7 @@ function _tocaFala(txt,cb){_ultima=txt;var meu=_falaSeq;if(VOZ_MUDA){if(cb)setTi
 function _popFila(){if(_fila.length){var it=_fila.shift();_tocaFala(it.txt,it.cb);}}
 function falar(txt,cb){if(_encadear){_encadear=false;if(_aud&&!_aud.ended&&!_aud.paused){_fila.push({txt:txt,cb:cb});return;}}pararFala();_tocaFala(txt,cb);}
 function falarDepois(txt,cb){if(_aud&&!_aud.ended&&!_aud.paused){_fila.push({txt:txt,cb:cb});}else{pararFala();_tocaFala(txt,cb);}}
+var STREAK_FALA={"3":"Você acertou 3 seguidas! Você está pegando o jeito!","5":"Você acertou 5 seguidas! Que sequência incrível!","8":"Você acertou 8 seguidas! Você é um mestre da divisão!","10":"Você acertou 10 seguidas! Uau, que fera!"};
 function repetirFala(){if(_ultima){VOZ_MUDA=false;falar(_ultima);}}
 function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("cm_mudo",VOZ_MUDA?"1":"0");}catch(e){}
  $("btMudo").innerHTML=VOZ_MUDA?"&#128263;":"&#128266;";if(VOZ_MUDA)pararFala();}
@@ -286,7 +287,8 @@ function telaInicial(){pararFala();var tem=carregar();var h="";
   h+='<button class="btn pulsa" onclick="comecar()">Começar a aventura! &#128640;</button>';
  }
  $("app").innerHTML=h;
- if(!(tem&&feitas()>0))falar("Oi! Eu sou o Chef Confeito. Preciso da sua ajuda pra preparar os doces da Festa da Cidade, e tudo tem que ser repartido em partes iguais! Escreva seu nome e toque em começar.");
+ if(tem&&feitas()>0)falar("Que bom te ver de novo! Vamos continuar a nossa aventura na Confeitaria? Toque em Continuar a aventura.");
+ else falar("Oi! Eu sou o Chef Confeito. Preciso da sua ajuda pra preparar os doces da Festa da Cidade, e tudo tem que ser repartido em partes iguais! Escreva seu nome e toque em começar.");
 }
 function comecar(){var el=$("inpNome");S.nome=el&&el.value?el.value.replace(/^\s+|\s+$/g,"").substring(0,16):"";irMapa();}
 function confReset(){if(confirm("Começar tudo de novo? Você vai perder o progresso desta aula."))apagar(),telaInicial();}
@@ -441,7 +443,7 @@ function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  if(streak>=3)h+='<div class="dica" style="color:#7dffa8">&#128293; Você acertou '+streak+' seguidas!</div>';
  h+='<button class="btn verde pulsa" onclick="avancar()">'+(ultimo?"Ver resultado &#127937;":"Próximo &#9654;")+'</button>';
  var cont=$("app");cont.innerHTML=h+cont.innerHTML;window.scrollTo(0,0);
- falar(el);if(explica)falarDepois(explica);salvar();
+ falar(el);if(explica)falarDepois(explica);if(STREAK_FALA[streak])falarDepois(STREAK_FALA[streak]);salvar();
 }
 function avancar(){_encadear=true;checarConquistas();if(modoTreino){window._ti++;proxTreino();return;}idx++;proximoDesafio();}
 function erro(el,d){pararFala();streak=0;errosSeg++;
