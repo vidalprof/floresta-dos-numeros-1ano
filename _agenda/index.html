@@ -1507,6 +1507,45 @@ function _iaPapel(turma, disc){
   if(ano != null && ano >= 6) return "um professor "+exp+" de "+disciplina+" dos anos finais (6º ao 9º ano)";
   return "um professor "+exp+" de "+disciplina; // ano desconhecido
 }
+// ÂNCORA CURRICULAR — estrutura REAL do Currículo da Rede Municipal de Blumenau
+// (extraída do PDF oficial 2021; segue as unidades temáticas / campos / eixos da BNCC).
+// Serve para a IA enquadrar tema e objetivo na unidade certa, sem inventar.
+var _CURRIC_BLU = {
+  pre: "Campos de Experiência (Educação Infantil): O Eu, o Outro e o Nós; Corpo, Gestos e Movimentos; Traços, Sons, Cores e Formas; Escuta, Fala, Pensamento e Imaginação; Espaços, Tempos, Quantidades, Relações e Transformações",
+  portugues: "Língua Portuguesa: práticas de linguagem (leitura/escuta, produção de texto oral e escrita/semiose, análise linguística/semiótica) nos campos de atuação: da vida cotidiana, das práticas de estudo e pesquisa, da vida pública, jornalístico-midiático e artístico-literário",
+  matematica: "Matemática: cinco unidades temáticas — Números, Álgebra, Geometria, Grandezas e Medidas, Probabilidade e Estatística",
+  ciencias: "Ciências: três unidades temáticas — Matéria e Energia, Vida e Evolução, Terra e Universo",
+  historia: "História: organizada por processos históricos e objetos de conhecimento por ano (do eu/família/comunidade e noções de tempo, nos anos iniciais, até a formação do mundo contemporâneo), integrando a história local de Blumenau e de Santa Catarina",
+  geografia: "Geografia: cinco unidades temáticas — O Sujeito e seu Lugar no Mundo; Conexões e Escalas; Mundo do Trabalho; Formas de Representação e Pensamento Espacial; Natureza, Ambientes e Qualidade de Vida",
+  arte: "Arte: quatro linguagens — Artes Visuais, Dança, Música e Teatro (mais Artes Integradas) — trabalhadas nas dimensões criação, crítica, estesia, expressão, fruição e reflexão",
+  edfisica: "Educação Física: seis unidades temáticas — Brincadeiras e Jogos, Esportes, Ginásticas, Danças, Lutas e Práticas Corporais de Aventura",
+  ingles: "Língua Inglesa: cinco eixos — Oralidade, Leitura, Escrita, Conhecimentos Linguísticos e Dimensão Intercultural",
+  religiao: "Ensino Religioso: três unidades temáticas — Identidades e Alteridades, Manifestações Religiosas, e Crenças Religiosas e Filosofias de Vida"
+};
+// Descobre a chave da disciplina a partir do texto livre digitado pelo professor.
+function _iaCurricKey(disc){
+  const d = (disc||"").toLowerCase();
+  if(/(portug|l[íi]ngua\s*port|reda[çc]|l[íi]ngua\s*materna|alfabet)/.test(d)) return "portugues";
+  if(/(matem|c[áa]lculo)/.test(d)) return "matematica";
+  if(/(ci[êe]nc|biolog|natureza)/.test(d)) return "ciencias";
+  if(/hist[óo]r/.test(d)) return "historia";
+  if(/geograf/.test(d)) return "geografia";
+  if(/(arte|m[uú]sic|teatro|dan[çc]|visuais)/.test(d)) return "arte";
+  if(/(educa[çc].*f[íi]s|ed\.?\s*f|f[íi]sica)/.test(d)) return "edfisica";
+  if(/(ingl|l[íi]ngua\s*estrangeira|l[íi]ngua\s*alem)/.test(d)) return "ingles";
+  if(/(religi|ensino\s*relig)/.test(d)) return "religiao";
+  return null;
+}
+// Frase-âncora com a estrutura curricular de Blumenau para injetar no prompt.
+function _iaCurric(turma, disc){
+  const ano = _iaAno(turma);
+  let ref = null;
+  if(ano === 0) ref = _CURRIC_BLU.pre;          // Pré = Educação Infantil (campos de experiência)
+  else { const k = _iaCurricKey(disc); if(k) ref = _CURRIC_BLU[k]; }
+  if(!ref) return "";
+  return " ANCORA CURRICULAR (Curriculo de Blumenau, base da resposta) — " + ref
+    + ". Enquadre o tema e o objetivo na unidade/campo/eixo adequado a esta estrutura e ao ano; nao use nomes de unidades diferentes destes.";
+}
 var _IA_BASE = "Voce e "; // prefixo do papel
 // PRIORIDADE: primeiro o Curriculo de Blumenau, depois a BNCC.
 var _IA_BNCC = " Sua referencia PRINCIPAL e o Curriculo da Rede Municipal de Ensino de Blumenau (SC); a BNCC e a referencia COMPLEMENTAR. Baseie o planejamento primeiro no curriculo de Blumenau e, em seguida, na BNCC. Escreva conteudo serio, correto, realista e coerente — nunca generico, nunca bobagem.";
@@ -1520,7 +1559,7 @@ async function sugerirObjetivoIA(temaId, objId){
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
   try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB + _IA_REGRAS
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _iaCurric(ctx.turma, ctx.disc) + _IA_LAB + _IA_REGRAS
       + " Escreva UM objetivo de aprendizagem claro, correto e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula) para uma aula na sala de informatica sobre o tema informado."
       + " O objetivo deve estar TOTALMENTE COERENTE com o tema (o tema e o objetivo tem que combinar entre si) e ser realista para a turma."
       + " RESPEITE totalmente a escolha do professor: NUNCA critique, NUNCA diga que o tema e inadequado, NUNCA sugira trocar o tema — apenas escreva o objetivo para o tema pedido."
@@ -1542,7 +1581,7 @@ async function melhorarTemaIA(temaId){
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
   try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB + _IA_REGRAS
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _iaCurric(ctx.turma, ctx.disc) + _IA_LAB + _IA_REGRAS
       + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, correto, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente primeiro com o Curriculo de Blumenau, depois com a BNCC, e com o uso do computador. Mantenha a INTENCAO original do professor; nunca troque o assunto por outro; nao invente termos tecnicos."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
