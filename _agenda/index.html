@@ -285,6 +285,8 @@
   .authwrap .logo{width:80px;height:80px;border-radius:24px;margin:0 auto 18px;
     background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;
     font-size:42px;box-shadow:0 14px 34px color-mix(in srgb,var(--primary) 40%,transparent)}
+  .authwrap .logoimg{width:92px;height:92px;border-radius:24px;margin:0 auto 18px;display:block;object-fit:cover;
+    box-shadow:0 14px 34px color-mix(in srgb,var(--primary) 40%,transparent)}
   .authwrap h1{text-align:center;font-size:27px;font-weight:800}
   .authwrap .sub{text-align:center;color:var(--muted);margin-bottom:20px;font-size:14px}
   .authwrap .hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.55}
@@ -657,7 +659,7 @@ async function recarregarReservas(){ const r = await fbGetRaw("/reservas"); if(r
 function telaBootstrap(){
   $("root").innerHTML = `
   <div class="authwrap">
-    <div class="logo">🗓️</div>
+    <img class="logoimg" src="icon-192-e.png" alt="Agenda Aulas">
     <h1>Bem-vindo!</h1>
     <p class="sub">Primeiro acesso — crie o <b>administrador</b> da agenda.</p>
     <label class="fld">Seu nome</label>
@@ -698,7 +700,7 @@ function telaLogin(){
   const escola = S.config ? S.config.escolaNome : "";
   $("root").innerHTML = `
   <div class="authwrap">
-    <div class="logo">🗓️</div>
+    <img class="logoimg" src="icon-192-e.png" alt="Agenda Aulas">
     <h1>${esc(nome)}</h1>
     <p class="sub">${esc(escola)}</p>
     <label class="fld">Digite o seu ID de acesso</label>
@@ -733,7 +735,7 @@ function telaSenha(){
   } else sub="Digite a sua senha";
   $("root").innerHTML = `
   <div class="authwrap">
-    <div class="logo">🗓️</div>
+    <img class="logoimg" src="icon-192-e.png" alt="Agenda Aulas">
     <h1>Olá, ${esc(p.nome.split(" ")[0])}!</h1>
     <p class="sub">${esc(sub)}</p>
     ${novo?`
