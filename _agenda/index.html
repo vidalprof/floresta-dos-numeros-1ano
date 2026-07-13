@@ -1096,7 +1096,14 @@ function viewHoje(){
           body+=`<button class="slotcard free" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">＋</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">toque para agendar</div></div>${meta}</button>`;
         }
       }else if(r.bloqueado){
-        body+=`<button class="slotcard lock" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">🔒</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo||"Indisponível")}</div><div class="sc-s">${S.user.admin?"toque para liberar":"bloqueado"}</div></div>${meta}</button>`;
+        // Bloqueio com rótulo "HAE" = hora-atividade do professor de informática:
+        // mostra VERDE com 📋, destacando das aulas e dos bloqueios comuns (âmbar).
+        const ehHaeBloq = r.rotulo && (/\bhae\b/i.test(r.rotulo) || (S.config.haeLabel && r.rotulo===S.config.haeLabel));
+        if(ehHaeBloq){
+          body+=`<button class="slotcard hae" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">📋</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo)}</div><div class="sc-s">hora-atividade${S.user.admin?" · toque para liberar":""}</div></div>${meta}</button>`;
+        }else{
+          body+=`<button class="slotcard lock" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">🔒</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo||"Indisponível")}</div><div class="sc-s">${S.user.admin?"toque para liberar":"bloqueado"}</div></div>${meta}</button>`;
+        }
       }else{
         const minha=sanId(r.profId)===sanId(S.user.id);
         body+=`<button class="slotcard ${minha?"mine":"busy"}${r.excecao?" exc":""}" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">${r.excecao?"⚠️":(minha?"👤":"📘")}</div><div class="sc-m"><div class="sc-t">${esc(r.turma||"")}</div><div class="sc-s">${r.excecao?"⚠️ exceção · ":""}${esc(r.profNome||"")}${r.disciplina?" · "+esc(r.disciplina):""}</div></div>${meta}</button>`;
@@ -1141,7 +1148,7 @@ function viewSemana(modoTop){
         if(periodoDoDia(ds)){ body+=`<td class="sc per">·</td>`; return; }
         const n=aulasDoDia(ds,t.c); if(i>n){ body+=`<td class="sc vazio"></td>`; return; }
         const rt=(S.reservas[ds]&&S.reservas[ds][t.k])||{}, r=rt["a"+i];
-        if(r&&r.bloqueado){ body+=`<td class="sc lock" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">🔒</td>`; return; }
+        if(r&&r.bloqueado){ const hb=r.rotulo&&(/\bhae\b/i.test(r.rotulo)||(S.config.haeLabel&&r.rotulo===S.config.haeLabel)); body+=`<td class="sc ${hb?"hae":"lock"}" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">${hb?"HAE":"🔒"}</td>`; return; }
         if(r){ const minha=sanId(r.profId)===sanId(S.user.id); body+=`<td class="sc ${minha?"mine":"busy"}" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}" title="${esc(r.turma||"")} · ${esc(r.profNome||"")}">${esc(cShort(r.turma))}</td>`; return; }
         if(ehHAE(ds,t.k,i)){ body+=`<td class="sc hae" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">HAE</td>`; return; }
         body+=`<td class="sc free" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">+</td>`;
