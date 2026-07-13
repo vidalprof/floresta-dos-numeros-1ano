@@ -1482,13 +1482,38 @@ function _iaContexto(){
   if(!turma && _editAlvo && _editAlvo.base) turma = _editAlvo.base.turma || "";
   return { turma: turma, disc: _form.disc || (_editAlvo&&_editAlvo.base&&_editAlvo.base.disciplina) || "" };
 }
+// Descobre o ano (0=Pré .. 9). Null se não der pra saber.
+function _iaAno(turma){
+  if(!turma) return null;
+  const t = (""+turma).toLowerCase();
+  if(/pr[eé]/.test(t)) return 0;
+  const m = t.match(/(\d+)/);
+  return m ? parseInt(m[1],10) : null;
+}
+// Papel/persona que a IA assume, conforme ano + disciplina (regente x especialista de área).
+function _iaPapel(turma, disc){
+  const ano = _iaAno(turma);
+  const d = (disc||"").toLowerCase();
+  // disciplinas "de área" (têm professor especialista já nos anos iniciais)
+  const ehArea = /(educa|ed\.?\s*f|f[íi]sic|arte|ingl|m[uú]sic|religios|religi[aã]|dan[çc]|teatro|espanhol)/.test(d);
+  const disciplina = disc ? disc : "sua disciplina";
+  if(ano != null && ano <= 5){
+    if(ehArea) return "um professor especialista e muito experiente de "+disciplina+" dos anos iniciais (Pré ao 5º ano)";
+    return "um pedagogo especialista e muito experiente nos anos iniciais (Pré ao 5º ano), professor regente polivalente";
+  }
+  if(ano != null && ano >= 6) return "um professor especialista e muito experiente de "+disciplina+" dos anos finais (6º ao 9º ano)";
+  return "um professor especialista e muito experiente de "+disciplina; // ano desconhecido
+}
+var _IA_BASE = "Voce e "; // prefixo do papel
+var _IA_BNCC = " Voce e profundo conhecedor da BNCC e do Curriculo de Blumenau (rede municipal de Blumenau/SC).";
 async function sugerirObjetivoIA(temaId, objId){
   const tema = ($(temaId) ? $(temaId).value.trim() : "");
   if(!tema) return toast("Escreva o tema da aula primeiro. ✍️");
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
   try{
-    const prompt = "Voce e um professor experiente no Brasil. Escreva UM objetivo de aprendizagem claro e conciso (no maximo 2 frases, em portugues, com linguagem de plano de aula alinhada a BNCC) para uma aula."
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC
+      + " Escreva UM objetivo de aprendizagem claro, coerente e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula), adequado a faixa etaria e alinhado a BNCC e ao Curriculo de Blumenau, para uma aula."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
       + " Tema: "+tema+"."
@@ -1507,7 +1532,8 @@ async function melhorarTemaIA(temaId){
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
   try{
-    const prompt = "Voce e um professor no Brasil. Reescreva o TEMA de uma aula deixando-o claro, especifico e atraente (curto, no maximo 8 palavras, em portugues)."
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC
+      + " Reescreva o TEMA de uma aula deixando-o claro, especifico, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente com a BNCC e o Curriculo de Blumenau."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
       + " Tema atual: "+tema+"."
