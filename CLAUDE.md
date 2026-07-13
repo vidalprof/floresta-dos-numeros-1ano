@@ -286,6 +286,44 @@ fica salvo em `_curriculo/blumenau.txt` **para o Claude** usar ao montar ativida
 premium — não cabe dentro da IA grátis. Ampliar a âncora (objetos de conhecimento
 por ano) é o caminho de evolução; "navegar na internet" não existe nessa IA grátis.
 
+### 🕵️ BANCA DE AUDITORIA DA AGENDA — os 4 profissionais (rodar a CADA mudança de peso)
+A agenda já passou por **6 rodadas de auditoria** (2ª–6ª nos commits `agenda-aulas:`).
+Antes de publicar qualquer mudança de peso (login, regras do RTDB, rede, PWA),
+passar pelos **MESMOS 4 especialistas** — este é o ritual que sempre fizemos, agora
+registrado para não se perder de novo. Para cada um: o que ele cobre + como checar.
+
+1. **🔐 Segurança & Firebase.** Isolamento por dono (`ownerUid` em toda reserva;
+   editar/excluir só admin OU dono → 403 senão); **XSS** (`esc()` em TODO texto livre
+   — tema/objetivo/nome/disciplina; `corSegura()` valida cor antes do `style`);
+   **injeção de fórmula no CSV** (célula que começa com `= + - @ \t \r` ganha `'` na
+   frente, `cel()` em `exportarCSV`); **sem segredo no código** (só a *site key*
+   pública). **Ordem SAGRADA ao reaplicar regras:** semear `/admins/<uid>` no console
+   ANTES de fechar as regras (senão o admin se tranca pra fora).
+2. **🛡️ App Check / reCAPTCHA.** **Modo observação** (NUNCA `enforce` sem testar no
+   PC real da escola — rede filtrada pode travar o Google e trancar todo mundo). O
+   carimbo `_acHeader` tem **timeout (2,5s) e DESISTE na sessão** (`_acFalhou`) se o
+   reCAPTCHA for bloqueado — nunca trava o professor. O `SECRET` vive só no console.
+3. **🌐 Robustez de rede & PWA.** **Todo** fetch com prazo (`_fetchT` 9s +
+   `_corpoJson` lê o corpo com timeout próprio); `localStorage` no boot com try/catch
+   (PC com armazenamento bloqueado = tela branca); **service worker** rede-com-timeout
+   que só cacheia **HTML 200** (portal cativo não vira "o app"); renova o crachá em
+   401/403 e repete a chamada 1×. Objetivo: **nunca tela branca / nunca "travou tudo"**.
+4. **🎨 UX & Acessibilidade.** Mensagens **específicas** (403 "Esta reserva não é sua",
+   conta órfã "peça reset ao admin", "muitas tentativas", reCAPTCHA/segurança);
+   `toast` com `role="status" aria-live="polite"`; **contraste WCAG nos dois temas**
+   (claro `#191d2e/#f2f3fa`, escuro `#e9ecf3/#0f1117`, até o `--muted` passa); alvos de
+   toque grandes; Enter envia login/senha; `<img>` com `alt`.
+
+**Como rodar a banca:** (a) `node --check` no JS extraído dos `<script>`; (b) `grep`
+das proteções (`ownerUid`, `esc(`, `corSegura`, `cel(`+CSV, `_fetchT`, `_acFalhou`,
+`aria-live`); (c) testar `telaSenha` nos **5 cenários** (normal→Entrar, reset→Criar,
+migração→Criar, link→Criar, sessão expirada→Entrar); (d) **Teste 1/Teste 2** do
+isolamento **no PC real da escola** (admin edita tudo; professor comum leva 403 na
+aula alheia). **Firebase é bloqueado no container** → os fluxos de banco só se validam
+de verdade na escola; aqui, render com `fetch` mockado só confirma que não dá tela
+branca. **Última banca: 2026-07 → APROVADO** (as 4 áreas passaram; única ressalva
+BAIXA: 6 inputs de telas de admin sem `aria-label`, todos com placeholder visual).
+
 ## Se a sessão for aberta em OUTRO repositório
 
 Este `CLAUDE.md` só é lido quando a sessão abre **neste** repositório
