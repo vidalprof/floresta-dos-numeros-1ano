@@ -266,8 +266,16 @@ recentesOcultos `= "auth != null"`).
   (`grupoDaSemana` × `grupoDaTurma`). Isso é regra **do app**, não do servidor.
 - **Fora da semana:** o professor comum **não agenda sozinho** — envia um
   **PEDIDO** (aba **Pedidos** 📨). O pedido **não ocupa horário** na agenda; só o
-  **admin** aprova (vira reserva `excecao:true`, `ownerUid`=admin) ou recusa.
+  **admin** aprova (vira reserva `excecao:true`) ou recusa.
   Admin agendando fora da semana → marca exceção automaticamente.
+- **DONO da reserva de exceção = o professor que PEDIU, não o admin (corrigido
+  2026-07).** `enviarPedido` guarda `ownerUid` = uid do professor; `aprovarPedido`
+  copia esse `p.ownerUid` para a reserva (`ownerUid: p.ownerUid || admin` — fallback
+  ao admin só p/ pedidos legados). ANTES a reserva nascia com `ownerUid`=admin e o
+  professor não conseguia **editar/excluir** a própria aula (dava "só o admin"), pois
+  `sheetReserva` e as regras do RTDB usam o `ownerUid` para permitir dono OU admin.
+  **Legado:** reservas de exceção aprovadas ANTES do conserto continuam com
+  `ownerUid`=admin → só o admin as remove; ou apague e o professor reenvia o pedido.
 - **Onde moram os pedidos (SEM mexer nas regras):** em
   `/agenda/vidal-ramos/recentesOcultos/__PEDIDOS__/<pid>` — a área `recentesOcultos`
   já é `auth != null` r/w, então **não precisou de regra nova**. Cada leitura de

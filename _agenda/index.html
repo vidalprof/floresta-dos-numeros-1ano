@@ -749,7 +749,10 @@ async function aprovarPedido(pid){
     if(!chk.ok){ toast("Sem conexão para confirmar o horário. Tente de novo."); return; }
     if(chk.val){ toast("Esse horário já está ocupado. Recuse ou libere o horário primeiro."); return; }
     const reg={ turma:p.turma, disciplina:p.disciplina, tema:p.tema, objetivo:p.objetivo,
-      profId:p.profId, profNome:p.profNome, ownerUid:(S.auth&&S.auth.uid)||null,
+      profId:p.profId, profNome:p.profNome,
+      // DONO = o professor que PEDIU (p.ownerUid), não o admin que aprova. Assim ele pode
+      // editar/excluir a própria aula de exceção. Fallback ao admin só p/ pedidos legados.
+      ownerUid: p.ownerUid || (S.auth&&S.auth.uid) || null,
       excecao:true, ts:Date.now() };
     const ok=await fbSet("/reservas/"+p.data+"/"+p.turnoK+"/a"+p.aula, reg);
     if(!ok){ toast(_msgFalha("Não consegui registrar na agenda. Tente de novo.")); return; }
