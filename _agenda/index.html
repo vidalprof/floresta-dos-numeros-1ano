@@ -452,6 +452,21 @@ async function authCriar(id, senha, ver){   // cria; se já existir, apenas entr
   try{ return await _authIdentity("signUp", id, senha, ver); }
   catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha, ver); throw e; }
 }
+// Pergunta ao Firebase Auth se a conta (da versão atual) já existe — FONTE DA VERDADE,
+// sem gravar nada no banco. Necessário porque as regras de isolamento não deixam o
+// professor gravar a marca "fbAuth" no próprio cadastro; assim o app deixaria de saber
+// que ele já tem senha e pediria "criar senha" toda vez. Retorna true/false, ou null se
+// não deu pra perguntar (rede/bloqueio) — aí cai no fallback antigo.
+async function authRegistrado(id, ver){
+  try{
+    const r = await _fetchT("https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key="+FB_API_KEY,
+      {method:"POST", headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
+       body: JSON.stringify({identifier:_authEmail(id, ver), continueUri:(location&&location.origin)||"https://vidalprof.github.io"})}, 8000);
+    const j = await _corpoJson(r).catch(function(){return {};});
+    if(!r.ok) return null;
+    return j.registered===true;
+  }catch(e){ return null; }
+}
 async function authRefresh(){          // renova o crachá a partir do refresh token salvo
   let rt = (S.auth&&S.auth.refreshToken); if(!rt){ try{ rt=localStorage.getItem("agenda_rt"); }catch(e){} }
   if(!rt) return false;
@@ -806,11 +821,18 @@ async function fazerLogin(){
     if(_baseErro){ toast("Sem conexão. Verifique a internet e tente de novo."); return; }
     const p = S.professores[key];
     if(!p){ toast("ID não encontrado. Confira com o administrador."); return; }
-    _loginPend=p; telaSenha();
+    _loginPend=p;
+    // Pergunta ao Firebase Auth se a conta já existe (fonte da verdade) — decide
+    // "entrar" x "criar senha" sem depender de marca gravada no banco.
+    try{ const reg = await authRegistrado(p.id, p.authVer); if(reg!==null) _loginPend._reg = reg; }catch(e){}
+    telaSenha();
   } finally { restore(); }
 }
 function telaSenha(){
-  const p=_loginPend, novo=!p.fbAuth;
+  const p=_loginPend;
+  // Se o Firebase Auth respondeu, ELE manda: conta existe -> entrar; não existe -> criar.
+  // Se não deu pra perguntar (_reg indefinido), usa o flag antigo fbAuth como reserva.
+  const novo = (p._reg===true) ? false : (p._reg===false ? true : !p.fbAuth);
   let sub;
   if(_sessaoExpirou) sub = novo ? "Confirme criando sua senha para continuar" : "Sua sessão expirou — entre novamente";
   else if(novo){
