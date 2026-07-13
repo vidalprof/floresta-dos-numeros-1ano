@@ -606,8 +606,6 @@ async function init(){
     // Sem crachá válido, as regras fechadas não deixam ler a agenda -> pede a senha de novo
     // (em vez de abrir uma agenda vazia sem explicação).
     if(!tok){ _sessaoExpirou=true; _loginPend=S.professores[saved]; telaSenha(); return; }
-    // biometria: se ativada neste aparelho, exige Face ID/digital antes de abrir
-    if(_bioAtivoDe(saved)){ telaBiometria(saved); return; }
     abrirApp();
   }
   else telaLogin();
@@ -803,70 +801,6 @@ async function loginEntrar(){
   } finally { restore(); }
 }
 function sair(){ if(!confirm("Sair da conta? Você precisará entrar com ID e senha de novo.")) return; localStorage.removeItem("agenda_user"); try{localStorage.removeItem("agenda_rt");}catch(e){} S.auth=null; S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
-/* ===== Biometria (Face ID / Touch ID / digital) via WebAuthn — cadeado LOCAL =====
-   Após o 1o login com matricula+senha, o professor pode ativar a biometria NESTE
-   aparelho. Nas proximas aberturas, desbloqueia com rosto/digital. É uma trava local
-   de conveniencia/privacidade (nao substitui a senha, que continua a chave da conta). */
-function _bioDisponivel(){ return !!(window.PublicKeyCredential && navigator.credentials && navigator.credentials.create); }
-async function _bioPlatform(){ try{ return _bioDisponivel() && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable(); }catch(e){ return false; } }
-function _bioAtivoDe(key){ try{ return !!localStorage.getItem("agenda_bio_"+key); }catch(e){ return false; } }
-function _bioAtivo(){ return _bioAtivoDe(sanId(S.user.id)); }
-function _b64(buf){ const b=new Uint8Array(buf); let s=""; for(let i=0;i<b.length;i++) s+=String.fromCharCode(b[i]); return btoa(s); }
-function _ub64(str){ const bin=atob(str), a=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++) a[i]=bin.charCodeAt(i); return a.buffer; }
-function _rand(n){ const a=new Uint8Array(n); crypto.getRandomValues(a); return a; }
-async function bioAtivar(){
-  if(!(await _bioPlatform())) return toast("Este aparelho não tem Face ID / biometria disponível.");
-  const restore=btnBusy('[data-act="bio-ativar"]',"Ativando…");
-  try{
-    const cred = await navigator.credentials.create({ publicKey:{
-      challenge:_rand(32),
-      rp:{ name:"Agenda Aulas" },
-      user:{ id:_rand(16), name:(""+(S.user.id||"user")), displayName:(""+(S.user.nome||"Professor")) },
-      pubKeyCredParams:[{type:"public-key",alg:-7},{type:"public-key",alg:-257}],
-      authenticatorSelection:{ authenticatorAttachment:"platform", userVerification:"required", residentKey:"preferred" },
-      timeout:60000, attestation:"none"
-    }});
-    if(!cred) throw new Error("sem cred");
-    localStorage.setItem("agenda_bio_"+sanId(S.user.id), _b64(cred.rawId));
-    fecharSheet(); toast("Biometria ativada! 🔒 Na próxima vez, desbloqueie com o rosto/digital.");
-  }catch(e){ toast("Não foi possível ativar a biometria agora. Tente de novo."); }
-  finally{ restore(); }
-}
-function bioDesativar(){
-  if(!confirm("Desativar a biometria neste aparelho? Você voltará a usar só a senha.")) return;
-  try{ localStorage.removeItem("agenda_bio_"+sanId(S.user.id)); }catch(e){}
-  fecharSheet(); toast("Biometria desativada.");
-}
-async function _bioUnlock(key){
-  let id=null; try{ id=localStorage.getItem("agenda_bio_"+key); }catch(e){}
-  if(!id) throw new Error("sem credencial");
-  const assert = await navigator.credentials.get({ publicKey:{
-    challenge:_rand(32),
-    allowCredentials:[{ type:"public-key", id:_ub64(id), transports:["internal"] }],
-    userVerification:"required", timeout:60000
-  }});
-  if(!assert) throw new Error("falhou");
-  return true;
-}
-function telaBiometria(key){
-  const p=S.professores[key];
-  $("root").innerHTML = `
-  <div class="authwrap">
-    <div class="logo">🔒</div>
-    <h1>Olá, ${esc(p.nome.split(" ")[0])}!</h1>
-    <p class="sub">Desbloqueie com Face ID / biometria</p>
-    <button class="btn primary" data-act="bio-desbloquear" data-k="${esc(key)}">🔓 Desbloquear</button>
-    <div style="height:10px"></div>
-    <button class="btn ghost" data-act="bio-senha" data-k="${esc(key)}">Entrar com senha</button>
-  </div>`;
-}
-async function bioDesbloquear(key){
-  const restore=btnBusy('[data-act="bio-desbloquear"]',"…");
-  try{ await _bioUnlock(key); restore(); abrirApp(); }
-  catch(e){ restore(); toast("Não reconheci a biometria. Tente de novo ou entre com senha."); }
-}
-function bioSenha(key){ _sessaoExpirou=false; _loginPend=S.professores[key]; telaSenha(); }
-
 function sheetConta(){
   openSheet(`<div class="grab"></div>
     <div class="sh-head"><div class="t">Minha conta</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
@@ -882,10 +816,6 @@ function sheetConta(){
     <div style="height:10px"></div>
     <button class="btn primary" data-act="trocar-senha">🔑 Salvar senha</button>
     ${(("Notification" in window) && Notification.permission!=="granted")?'<div style="height:14px"></div><button class="btn ghost" data-act="ativar-lembretes">🔔 Ativar lembretes de aula</button>':''}
-    ${_bioDisponivel()?(_bioAtivo()
-      ? '<div style="height:14px"></div><button class="btn ghost" data-act="bio-desativar">🔓 Desativar Face ID / biometria</button>'
-      : '<div style="height:14px"></div><button class="btn ok" data-act="bio-ativar">🔒 Ativar Face ID / biometria (neste aparelho)</button>')
-      : ''}
     ${!ehStandalone()?'<div style="height:14px"></div><button class="btn ok" data-act="instalar-app">📲 Adicionar à tela do celular</button>':''}
     <div style="height:14px"></div>
     <button class="btn ghost" data-act="sair">⏻ Sair da conta</button>`);
@@ -2187,10 +2117,6 @@ document.addEventListener("click", async (ev)=>{
     if(a==="toggle-senha"){ const on=el.dataset.on==="1"; document.querySelectorAll("input[data-pw]").forEach(function(inp){ inp.type=on?"password":"text"; }); el.dataset.on=on?"0":"1"; el.textContent=on?"👁 Mostrar senha":"🙈 Ocultar senha"; return; }
     if(a==="sair") return sair();
     if(a==="conta") return sheetConta();
-    if(a==="bio-ativar") return bioAtivar();
-    if(a==="bio-desativar") return bioDesativar();
-    if(a==="bio-desbloquear") return bioDesbloquear(el.dataset.k);
-    if(a==="bio-senha") return bioSenha(el.dataset.k);
     if(a==="instalar-app") return instalarApp();
     if(a==="copiar-uid"){ const v=el.dataset.v||""; try{ (navigator.clipboard&&navigator.clipboard.writeText)?navigator.clipboard.writeText(v).then(function(){toast("Identificador copiado! 📋");},function(){toast("Copie manualmente: "+v);}):toast("Copie manualmente: "+v); }catch(e){ toast("Copie manualmente: "+v); } return; }
     if(a==="ativar-lembretes") return ativarLembretes();
