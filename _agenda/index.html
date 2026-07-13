@@ -1582,13 +1582,15 @@ var _IA_BASE = "Voce e "; // prefixo do papel
 var _IA_BNCC = " Sua referencia PRINCIPAL e o Curriculo da Rede Municipal de Ensino de Blumenau (SC); a BNCC e a referencia COMPLEMENTAR. Baseie o planejamento primeiro no curriculo de Blumenau e, em seguida, na BNCC. Escreva conteudo serio, correto, realista e coerente — nunca generico, nunca bobagem.";
 // IMPORTANTE: a aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola.
 var _IA_LAB = " CONTEXTO OBRIGATORIO: esta aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola. Portanto o tema e o objetivo devem SEMPRE integrar o uso do computador e de recursos/ferramentas digitais (softwares educativos, jogos, pesquisa, digitacao, etc.) a disciplina, de forma adequada ao ano.";
+// GUARDA-CORPOS anti-alucinacao/erro (precisao pedagogica):
+var _IA_REGRAS = " REGRAS DE PRECISAO (siga a risca): NAO invente codigos da BNCC (ex.: EF04MA09), numeros/nomes de documentos, paginas nem fontes; NAO afirme nenhum dado especifico do qual nao tenha CERTEZA; se nao souber um detalhe, NAO o cite (melhor omitir do que inventar). Escreva um objetivo pedagogicamente CORRETO, realista e verificavel, focado na HABILIDADE e na acao do aluno (verbo no infinitivo), coerente com o tema e a faixa etaria. Reveja mentalmente para garantir que nao ha erro conceitual nem invencao.";
 async function sugerirObjetivoIA(temaId, objId){
   const tema = ($(temaId) ? $(temaId).value.trim() : "");
   if(!tema) return toast("Escreva o tema da aula primeiro. ✍️");
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
   try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB + _IA_REGRAS
       + " Escreva UM objetivo de aprendizagem claro, correto e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula) para uma aula na sala de informatica sobre o tema informado."
       + " O objetivo deve estar TOTALMENTE COERENTE com o tema (o tema e o objetivo tem que combinar entre si) e ser realista para a turma."
       + " RESPEITE totalmente a escolha do professor: NUNCA critique, NUNCA diga que o tema e inadequado, NUNCA sugira trocar o tema — apenas escreva o objetivo para o tema pedido."
@@ -1610,8 +1612,8 @@ async function melhorarTemaIA(temaId){
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
   try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
-      + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, correto, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente primeiro com o Curriculo de Blumenau, depois com a BNCC, e com o uso do computador. Mantenha a INTENCAO original do professor; nunca troque o assunto por outro."
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB + _IA_REGRAS
+      + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, correto, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente primeiro com o Curriculo de Blumenau, depois com a BNCC, e com o uso do computador. Mantenha a INTENCAO original do professor; nunca troque o assunto por outro; nao invente termos tecnicos."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
       + " Tema atual: "+tema+"."
