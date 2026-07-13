@@ -631,6 +631,9 @@ async function carregarBase(){
   // estourar e ficar em tela branca.
   if(!S.config && config.ok && prof.ok && prof.val) S.config = Object.assign({}, DEF_CONFIG);
   if(S.config){
+    // "máscara" do nome: corrige automaticamente o nome antigo para o novo, sem precisar
+    // editar o Firebase. Se o admin definir OUTRO nome no ⚙️, esse é respeitado.
+    if(!S.config.appNome || S.config.appNome==="Agenda de Aulas") S.config.appNome = "Agenda Aulas";
     if(!S.config.aulas) S.config.aulas = DEF_AULAS;
     if(!S.config.horarios) S.config.horarios = DEF_HORARIOS;
     if(!S.config.hae) S.config.hae = [];
