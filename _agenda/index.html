@@ -1507,6 +1507,8 @@ function _iaPapel(turma, disc){
 }
 var _IA_BASE = "Voce e "; // prefixo do papel
 var _IA_BNCC = " Voce e profundo conhecedor da BNCC e do Curriculo de Blumenau (rede municipal de Blumenau/SC).";
+// IMPORTANTE: a aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola.
+var _IA_LAB = " CONTEXTO OBRIGATORIO: esta aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola. Portanto o tema e o objetivo devem SEMPRE integrar o uso do computador e de recursos/ferramentas digitais (softwares educativos, jogos, pesquisa, digitacao, etc.) a disciplina, de forma adequada ao ano.";
 async function sugerirObjetivoIA(temaId, objId){
   const tema = ($(temaId) ? $(temaId).value.trim() : "");
   if(!tema) return toast("Escreva o tema da aula primeiro. ✍️");
@@ -1514,8 +1516,8 @@ async function sugerirObjetivoIA(temaId, objId){
   const av = $("iaAviso"); if(av){ av.style.display="none"; av.textContent=""; }
   const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
   try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC
-      + " Primeiro avalie se o TEMA é adequado para a turma/ano informada (faixa etaria e progressao da BNCC/Curriculo de Blumenau)."
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
+      + " Primeiro avalie se o TEMA é adequado para a turma/ano informada (faixa etaria e progressao da BNCC/Curriculo de Blumenau) E se cabe numa aula de laboratorio de informatica."
       + " Responda EXATAMENTE neste formato, em portugues, sem mais nada:\n"
       + "ADEQUADO: sim ou nao\n"
       + "AVISO: se nao for adequado, 1 frase curta dizendo por que e sugerindo um tema mais apropriado para este ano; se for adequado escreva apenas -\n"
@@ -1544,8 +1546,8 @@ async function melhorarTemaIA(temaId){
   const ctx = _iaContexto();
   const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
   try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC
-      + " Reescreva o TEMA de uma aula deixando-o claro, especifico, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente com a BNCC e o Curriculo de Blumenau."
+    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
+      + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente com a BNCC, o Curriculo de Blumenau e o uso do computador."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
       + " Tema atual: "+tema+"."
