@@ -1521,8 +1521,7 @@ function sheetAgendar(turnoK,aula){
     <label class="fld">Tema da aula</label><input id="fTema" class="input" placeholder="Digite o tema da aula">
     <button class="btnlink" data-act="ia-tema" data-tema="fTema">✨ Melhorar tema com IA</button>
     <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>
-    <button class="btnlink" data-act="ia-objetivo" data-tema="fTema" data-obj="fObj">✨ Sugerir objetivo com IA</button>
-    <div id="iaAviso" style="display:none;margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--amber-tint);color:var(--amber);font-size:14px;font-weight:600;line-height:1.45"></div>`;
+    <button class="btnlink" data-act="ia-objetivo" data-tema="fTema" data-obj="fObj">✨ Sugerir objetivo com IA</button>`;
   h+=`<div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
@@ -1583,30 +1582,20 @@ async function sugerirObjetivoIA(temaId, objId){
   const tema = ($(temaId) ? $(temaId).value.trim() : "");
   if(!tema) return toast("Escreva o tema da aula primeiro. ✍️");
   const ctx = _iaContexto();
-  const av = $("iaAviso"); if(av){ av.style.display="none"; av.textContent=""; }
   const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
   try{
     const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
-      + " Primeiro avalie se o TEMA é adequado para a turma/ano informada (faixa etaria e progressao da BNCC/Curriculo de Blumenau) E se cabe numa aula de laboratorio de informatica."
-      + " Responda EXATAMENTE neste formato, em portugues, sem mais nada:\n"
-      + "ADEQUADO: sim ou nao\n"
-      + "AVISO: se nao for adequado, 1 frase curta dizendo por que e sugerindo um tema mais apropriado para este ano; se for adequado escreva apenas -\n"
-      + "OBJETIVO: 1 a 2 frases de objetivo de aprendizagem para uma aula sobre o tema informado, RESPEITANDO a escolha do professor, alinhado a BNCC e ao Curriculo de Blumenau.\n"
-      + (ctx.turma ? ("Turma/ano: "+ctx.turma+". ") : "")
-      + (ctx.disc ? ("Disciplina: "+ctx.disc+". ") : "")
-      + "Tema: "+tema+".";
-    const raw = await _iaPollinations(prompt);
-    // interpreta o formato (com tolerância se a IA não seguir à risca)
-    let aviso="";
-    const mAv = raw.match(/AVISO:\s*([\s\S]*?)(?:\n\s*OBJETIVO:|$)/i);
-    if(mAv) aviso = mAv[1].trim();
-    if(/^[-–—\s]*$/.test(aviso) || /^(nenhum|n\/?a|ok|adequad)/i.test(aviso)) aviso="";
-    const mO = raw.match(/OBJETIVO:\s*([\s\S]*)$/i);
-    let out = (mO ? mO[1] : raw).replace(/^["'\s]+|["'\s]+$/g,"").replace(/^objetivo:?\s*/i,"").trim();
+      + " Escreva UM objetivo de aprendizagem claro, coerente e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula) para uma aula na sala de informatica sobre o tema informado."
+      + " RESPEITE totalmente a escolha do professor: NUNCA critique, NUNCA diga que o tema e inadequado, NUNCA sugira trocar o tema — apenas escreva o objetivo para o tema pedido."
+      + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
+      + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
+      + " Tema: "+tema+"."
+      + " Responda APENAS com o texto do objetivo, sem titulo, sem aspas, sem a palavra Objetivo.";
+    let out = await _iaPollinations(prompt);
+    out = out.replace(/^["'\s]+|["'\s]+$/g,"").replace(/^objetivo:?\s*/i,"").trim();
     if(!out) throw new Error("vazio");
-    if($(objId)){ $(objId).value = out; }         // preenche SEMPRE (professor pode insistir no tema)
-    if(aviso && av){ av.textContent = "⚠️ " + aviso + " (Você pode manter seu tema se preferir.)"; av.style.display="block"; }
-    toast(aviso ? "Objetivo pronto — veja a dica da IA sobre o tema. ⚠️" : "Sugestão pronta! Ajuste se quiser. ✨");
+    if($(objId)){ $(objId).value = out; }
+    toast("Sugestão pronta! Ajuste se quiser. ✨");
   }catch(e){ toast("A IA não respondeu agora (pode estar fora do ar ou a rede bloqueou). Tente de novo."); }
   finally{ restore(); }
 }
@@ -1738,7 +1727,6 @@ function editarReserva(turnoK,aula){
     <button class="btnlink" data-act="ia-tema" data-tema="eTema">✨ Melhorar tema com IA</button>
     <label class="fld">Objetivo</label><textarea id="eObj" class="input" placeholder="Objetivo">${esc(r.objetivo||"")}</textarea>
     <button class="btnlink" data-act="ia-objetivo" data-tema="eTema" data-obj="eObj">✨ Sugerir objetivo com IA</button>
-    <div id="iaAviso" style="display:none;margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--amber-tint);color:var(--amber);font-size:14px;font-weight:600;line-height:1.45"></div>
     <div style="height:16px"></div>
     <button class="btn ok" data-act="salvar-edicao">✓ Salvar alterações</button>`;
   openSheet(h);
