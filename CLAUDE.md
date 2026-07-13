@@ -248,6 +248,10 @@ As regras do RTDB **não são mais** `auth != null` aberto. Agora:
 - **Resultado:** de fora ninguém entra (Auth); dentro, um professor cadastrado
   **não** mexe na aula do outro nem vira admin, nem via F12/REST. Blindagem completa,
   de graça, sem servidor pago.
+- **✅ VALIDADO NO PC REAL DA ESCOLA (2026-07):** o Marcos rodou o **Teste 1**
+  (admin agenda/edita/apaga → funcionou) e o **Teste 2** (professor comum tenta
+  mexer na aula alheia → recusado). O isolamento está **confirmado em produção**,
+  não é só teórico. (Não re-pedir esses testes como se estivessem pendentes.)
 
 **Ordem OBRIGATÓRIA ao (re)aplicar as regras** (nunca inverter, senão o admin se
 tranca pra fora): **1)** semear `/admins/<uid>` na aba Dados; **2)** só então
