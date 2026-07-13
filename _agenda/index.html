@@ -846,7 +846,7 @@ async function fazerLogin(){
     await carregarBase();
     if(_baseErro){ toast("Sem conexão. Verifique a internet e tente de novo."); return; }
     const p = S.professores[key];
-    if(!p){ toast("ID não encontrado. Confira com o administrador."); return; }
+    if(!p){ toast("Usuário não encontrado. Confira a matrícula ou fale com o administrador."); return; }
     _loginPend=p;
     // NÃO tentamos adivinhar "entrar x criar" aqui: mostramos ENTRAR por padrão e o
     // authEntrarOuCriar resolve (entra se existe, cria se for 1º acesso). Isso evita o bug
@@ -898,8 +898,13 @@ function telaSenha(){
       <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
       <div style="height:12px"></div>
       <button class="btn primary" data-act="login-entrar">Entrar</button>
-      <p class="hint">É o seu <b>primeiro acesso</b>? Escolha uma senha e toque em Entrar — ela fica sendo a sua. Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua.</p>
-      <button class="btnlink" data-act="login-quero-criar">Prefiro criar a senha com confirmação</button>
+      <div style="height:16px"></div>
+      <div class="card" style="text-align:left;border-color:var(--amber);background:var(--amber-tint)">
+        <div style="font-weight:800;color:var(--amber)">🔑 É o seu primeiro acesso?</div>
+        <div style="font-size:13.5px;color:var(--text);margin-top:4px;margin-bottom:10px">Se você ainda <b>não tem senha</b>, crie a sua agora — você digita <b>duas vezes</b> para confirmar e não errar.</div>
+        <button class="btn ghost" data-act="login-quero-criar">Criar a minha senha</button>
+      </div>
+      <p class="hint">Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua.</p>
     `}
     <div style="height:8px"></div>
     <button class="btn ghost" data-act="login-voltar">‹ Voltar</button>
