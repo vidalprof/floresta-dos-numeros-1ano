@@ -144,14 +144,15 @@ function agoraMs(){try{return (new Date()).getTime();}catch(e){return 0;}}
 
 /* ============ NARRAÇÃO (audio Antonio embutido; não bloqueia o Próximo) ============ */
 var VOZ_MUDA=false;try{VOZ_MUDA=localStorage.getItem("cm_mudo")==="1";}catch(e){}
-var _aud=null,_ultima="",_falaSeq=0;
+var _aud=null,_ultima="",_falaSeq=0,_encadear=false,_aberturas=0;
 function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return "v"+h.toString(36);}
 function limparFala(t){t=(""+t).replace(/<[^>]+>/g," ");t=t.replace(/[_*#~|<>=\[\]{}]/g," ");
  t=t.replace(/\bdivisao\b/gi,"divisão").replace(/\bmultiplicacao\b/gi,"multiplicação");
  t=t.replace(/\s+([,.!?:])/g,"$1").replace(/\s\s+/g," ").replace(/^\s+|\s+$/g,"");
  if(t&&".!?:".indexOf(t.charAt(t.length-1))<0)t+=".";return t;}
 function pararFala(){_falaSeq++;if(_aud){try{_aud.pause();_aud.src="";}catch(e){}_aud=null;}}
-function falar(txt,cb){pararFala();_ultima=txt;var meu=_falaSeq;if(VOZ_MUDA){if(cb)setTimeout(cb,10);return;}
+function falar(txt,cb){if(_encadear){_encadear=false;if(_aud){try{if(!_aud.ended&&!_aud.paused){_aud.onended=function(){falar(txt,cb);};_aud.onerror=function(){falar(txt,cb);};return;}}catch(e){}}}
+ pararFala();_ultima=txt;var meu=_falaSeq;if(VOZ_MUDA){if(cb)setTimeout(cb,10);return;}
  var ch=_chaveVoz(limparFala(txt));var src=AUDIO_TXT[ch];
  if(!src){if(cb)setTimeout(cb,Math.min(4000,600+limparFala(txt).length*55));return;}
  try{_aud=new Audio(src);_aud.onended=function(){if(meu===_falaSeq&&cb)cb();};
@@ -173,6 +174,17 @@ var CONQUISTAS=[
  {id:"c6",cond:function(s){return s.feitas>=PARADAS.length;}}];
 
 /* ============ CONTEÚDO — 8 paradas + 2 jogos ============ */
+/* Curiosidade "Uau" por fase (mostrada e narrada na tela de fim de fase). TEXTOS P/ REVISÃO DO MARCOS. */
+var UAU_FASE={
+ p1:"Repartir em partes iguais é dividir! Toda vez que você divide um lanche igualzinho entre amigos, já está fazendo Matemática.",
+ p2:"Dá pra dividir de dois jeitos: repartindo entre pessoas OU vendo quantos grupos iguais cabem. E o resultado é o mesmo!",
+ p3:"A divisão está em tudo: repartir figurinhas, dividir a pizza, formar times iguais no recreio.",
+ p4:"Dividir e multiplicar são contrários, como subir e descer a escada. Se você sabe a tabuada, já sabe dividir!",
+ p5:"Para dividir de cabeça, pense na tabuada ao contrário: 42 ÷ 6 é “seis vezes quanto dá 42?”.",
+ p6:"Ler com atenção é meio caminho: “juntar grupos iguais” é multiplicar; “repartir igual” é dividir.",
+ p7:"Nem toda divisão dá certinho: o que não dá pra repartir igual é o resto. Até na padaria sobra pãozinho!",
+ p8:"Quem entende divisão reparte tudo com justiça — e isso vale na Matemática e na vida!"
+};
 /* tipos: repartir(concreto), escolha(situação/inversa/mista/resto/2alg), tabuada, memoria, montar */
 var PARADAS=[
  {ch:"p1",ilha:"iPrato",med:0,titulo:"Biscoitos nos pratos",
@@ -228,7 +240,7 @@ var PARADAS=[
    {en:"5 bandejas com 7 cupcakes cada. Quantos cupcakes ao todo?",r:35,op:"×"},
    {en:"São 35 cupcakes em 5 bandejas iguais. Quantos por bandeja?",r:7,op:"÷"}]},
  {ch:"j2",ilha:"iCupcake",med:-1,titulo:"Monte a Conta",jogo:true,
-  hist:"Arraste os números para montar a divisão certa. Lembre: na divisão a ordem importa!",
+  hist:"Toque na divisão certa para montar a conta. Lembre: na divisão a ordem importa — o total vem primeiro!",
   gancho:"Perfeito! Agora, e quando não dá pra repartir tudo igual? Sobra!",
   tipo:"montar",
   desafios:[{d:24,v:6,r:4},{d:20,v:5,r:4},{d:18,v:3,r:6},{d:40,v:8,r:5},{d:30,v:6,r:5}]},
@@ -289,12 +301,13 @@ function desenharMapa(){var h="",i;
  h+='<div class="card recomp"><img src="'+rimg+'" alt="bolo"><div class="prog"><i style="width:'+Math.round(f/tot*100)+'%"></i></div><div class="contparada">'+plural(f,"parada preparada","paradas preparadas")+' de '+tot+'</div>';
  h+='<div style="text-align:center;font-weight:bold;color:#ffd9a8;margin-top:4px">A aventura de '+esc(S.nome||"você")+'!</div>';
  h+='<button class="somap" onclick="narrarMapa()">&#128266;</button></div>';
+ if(f===0)h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:56px;width:auto;float:left;margin-right:8px">Oi, '+esc(S.nome||"chef")+'! Sou o Chef Confeito. Um monte de doces da Festa da Cidade precisa ser repartido em partes iguais. Vem comigo pela trilha: cada parada é um pedacinho da festa. Toque na primeira ilha pra começar!</div>';
  h+='<ul class="trilha">';
  for(i=0;i<PARADAS.length;i++){var p=PARADAS[i],st=(S.feitasMap[p.ch]?"feita":(desbloq(i)?"atual":"trancada"));
   var lado=(i%2===0?"lz":"rz");
   h+='<li class="no '+lado+' '+(st==="atual"?"atual":(st==="trancada"?"trancada":""))+'" style="-webkit-animation-delay:'+(i*0.06)+'s;animation-delay:'+(i*0.06)+'s">';
   h+='<div class="ilhawrap">';
-  h+='<img class="ilha" src="'+IMG[p.ilha]+'" onclick="'+(st==="trancada"?"avisoTranca()":"abrirParada('+i+')")+'" alt="'+esc(p.titulo)+'">';
+  h+='<img class="ilha" src="'+IMG[p.ilha]+'" onclick="'+(st==="trancada"?"avisoTranca()":"abrirParada("+i+")")+'" alt="'+esc(p.titulo)+'">';
   if(st==="atual")h+='<img class="masccaminha" src="'+IMG.mFeliz+'">';
   if(st==="trancada")h+='<span class="cad">&#128274;</span>';
   h+='</div>';
@@ -319,7 +332,7 @@ function avisoTranca(){falar("Essa parada ainda está trancada! Termine a parada
 function avisoTrofeu(){falar("Complete todas as paradas pra ganhar o Diploma de Mestre Confeiteiro!");}
 
 /* ============ FASE ============ */
-function abrirParada(i){atual=PARADAS[i];idx=0;streak=0;errosSeg=0;facil=false;extraOn=false;modoTreino=false;reseed(i*97+7);
+function abrirParada(i){atual=PARADAS[i];idx=0;streak=0;errosSeg=0;facil=false;extraOn=false;modoTreino=false;_aberturas++;reseed(i*97+7+_aberturas*911);
  introFase();}
 function introFase(){var p=atual,h="";
  h+='<div style="text-align:center"><img src="'+IMG[p.ilha]+'" style="height:130px;width:auto" alt=""></div>';
@@ -428,7 +441,7 @@ function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  var cont=$("app");cont.innerHTML=h+cont.innerHTML;window.scrollTo(0,0);
  falar(el+" "+(explica||""));salvar();
 }
-function avancar(){pararFala();checarConquistas();if(modoTreino){window._ti++;proxTreino();return;}idx++;proximoDesafio();}
+function avancar(){_encadear=true;checarConquistas();if(modoTreino){window._ti++;proxTreino();return;}idx++;proximoDesafio();}
 function erro(el,d){pararFala();streak=0;errosSeg++;
  if(!S.stats[atual.ch])S.stats[atual.ch]={a:0,e:0};S.stats[atual.ch].e++;
  if(el){el.className="op erro";}
@@ -475,6 +488,7 @@ function fimFaseReal(){var p=atual;if(p._extra){S.pontos+=4;}
  if(p.med>=0)h+='<div style="text-align:center;position:relative;display:inline-block;width:100%"><img src="'+IMG.med[p.med]+'" style="height:110px;width:auto"></div>';
  else h+='<div style="text-align:center;font-size:60px">&#127881;</div>';
  h+='<div style="text-align:center;font-size:20px;font-weight:bold;color:#ffd9a8">&#11088; '+plural(S.pontos,"ponto","pontos")+' no total</div>';
+ var _uau=UAU_FASE[p.ch];if(_uau)h+='<div class="dica" style="color:#ffe27a">&#11088; Uau! '+esc(_uau)+'</div>';
  h+='<div class="balao"><img src="'+IMG.mComemora+'" style="height:56px;width:auto;float:left;margin-right:8px">'+esc(p.gancho)+'</div>';
  var prox=proximaParadaNome();
  if(prox)h+='<div class="dica">&#128275; Você abriu: '+esc(prox)+'!</div>';
@@ -482,7 +496,7 @@ function fimFaseReal(){var p=atual;if(p._extra){S.pontos+=4;}
  h+='<button class="btn pulsa" onclick="'+(todas?"grandeFinal()":"irMapa()")+'">'+(todas?"Ver o grande final &#127881;":"&#9654; Ir para o mapa")+'</button>';
  h+='<div style="text-align:center"><button class="btn sec" onclick="abrirParadaCh(\''+p.ch+'\')">&#128257; Jogar de novo</button></div>';
  $("app").innerHTML=h;window.scrollTo(0,0);confete(24);
- falar("Parada concluída! "+p.gancho);
+ falar("Parada concluída! "+(_uau?("Uau! "+_uau+" "):"")+p.gancho);
 }
 function marcarFeita(p){S.feitasMap[p.ch]=1;}
 function abrirParadaCh(ch){var i;for(i=0;i<PARADAS.length;i++)if(PARADAS[i].ch===ch){abrirParada(i);return;}}
@@ -521,7 +535,7 @@ function proxTreino(){if(window._ti>=window._treino.length){
  renderDesafio(e.d,0);}
 function relatorio(){var h='<h1 style="font-size:22px">Relatório</h1><table class="reln"><tr><th>Parada</th><th>Acertos</th><th>Erros</th></tr>',i;
  for(i=0;i<PARADAS.length;i++){var p=PARADAS[i];if(p.jogo)continue;var s=S.stats[p.ch]||{a:0,e:0};h+='<tr><td>'+esc(p.titulo)+'</td><td>'+s.a+'</td><td>'+s.e+'</td></tr>';}
- h+='</table><button class="btn" onclick="window.print()">&#128424; Imprimir</button><button class="btn sec" onclick="irMapa()">Voltar</button>';
+ h+='</table><button class="btn" onclick="window.print()">&#128196; Imprimir</button><button class="btn sec" onclick="irMapa()">Voltar</button>';
  $("app").innerHTML=h;window.scrollTo(0,0);
 }
 function grandeFinal(){pararFala();S.feitasMap.fim=1;salvar();
