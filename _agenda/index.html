@@ -9,8 +9,8 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Agenda">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-180.png">
-<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180-e.png">
+<link rel="icon" type="image/png" href="icon-192-e.png">
 <title>Agenda Aulas</title>
 <style>
   :root{
@@ -876,7 +876,7 @@ function checarNotificacao(){
     try{ for(let i=localStorage.length-1;i>=0;i--){ const k=localStorage.key(i); if(k && k.indexOf("agenda_notif_")===0 && k<chave) localStorage.removeItem(k); } }catch(e){}
     localStorage.setItem(chave,"1");
     const x=l[0];
-    new Notification("Agenda Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192.png"});
+    new Notification("Agenda Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192-e.png"});
   }catch(e){}
 }
 async function trocarSenha(){

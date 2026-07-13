@@ -1,7 +1,7 @@
 /* Service Worker — app shell offline + HTML sempre fresco.
    Os dados (Firebase, outra origem) NUNCA são cacheados: passam direto pela rede. */
-const CACHE = "agenda-shell-v6";
-const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192.png", "./icon-512.png"];
+const CACHE = "agenda-shell-v7";
+const SHELL = ["./", "./index.html", "./manifest.json", "./icon-192-e.png", "./icon-512-e.png"];
 
 self.addEventListener("install", (e) => {
   self.skipWaiting();
