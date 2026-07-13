@@ -452,6 +452,23 @@ async function authCriar(id, senha, ver){   // cria; se já existir, apenas entr
   try{ return await _authIdentity("signUp", id, senha, ver); }
   catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha, ver); throw e; }
 }
+// ENTRAR de forma à prova de tudo, sem precisar "adivinhar" se a conta já existe.
+// Motivo: o flag fbAuth não fica gravado (regras de isolamento) e a Proteção contra
+// Enumeração do Firebase esconde se a conta existe (createAuthUri e o próprio login
+// devolvem erro genérico). Então: tenta ENTRAR; se o login falhar de forma ambígua,
+// tenta CRIAR — e é o próprio Firebase que revela a verdade: se responder EMAIL_EXISTS,
+// a conta existe e portanto a senha estava errada; senão, é 1º acesso e a conta é criada.
+async function authEntrarOuCriar(id, senha, ver){
+  try{ return await _authIdentity("signInWithPassword", id, senha, ver); }
+  catch(e){
+    const m=e.message||"";
+    if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|EMAIL_NOT_FOUND|MISSING_PASSWORD/.test(m)){
+      try{ return await _authIdentity("signUp", id, senha, ver); }
+      catch(e2){ if(/EMAIL_EXISTS/.test(e2.message||"")) throw new Error("SENHA_ERRADA"); throw e2; }
+    }
+    throw e;
+  }
+}
 // Pergunta ao Firebase Auth se a conta (da versão atual) já existe — FONTE DA VERDADE,
 // sem gravar nada no banco. Necessário porque as regras de isolamento não deixam o
 // professor gravar a marca "fbAuth" no próprio cadastro; assim o app deixaria de saber
@@ -639,12 +656,10 @@ async function init(){
     // Sem crachá válido, as regras fechadas não deixam ler a agenda -> pede a senha de novo
     // (em vez de abrir uma agenda vazia sem explicação).
     if(!tok){
+      // Sessão expirou mas a pessoa já tinha login salvo -> a conta existe -> tela de ENTRAR
+      // (nunca "criar"). Não perguntamos ao createAuthUri: com a Proteção contra Enumeração
+      // ele pode dizer "não existe" para uma conta que existe, e aí voltaria o bug.
       _sessaoExpirou=true; _loginPend=S.professores[saved];
-      // Pergunta ao Firebase Auth se a conta já existe (fonte da verdade), IGUAL ao login
-      // manual. Sem isto, a reentrada (ao reabrir o app depois de desligar) pediria "criar
-      // senha" TODA vez, porque o flag fbAuth não fica gravado por causa das regras de
-      // isolamento. Era esse o bug de "pede pra criar a senha a cada vez que desligo".
-      try{ const reg=await authRegistrado(_loginPend.id, _loginPend.authVer); if(reg!==null) _loginPend._reg=reg; }catch(e){}
       telaSenha(); return;
     }
     abrirApp();
@@ -801,9 +816,9 @@ async function fazerBootstrap(){
 }
 
 /* ================= LOGIN ================= */
-var _loginPend=null, _sessaoExpirou=false;
+var _loginPend=null, _sessaoExpirou=false, _forcarNovo=false;
 function telaLogin(){
-  _sessaoExpirou=false;
+  _sessaoExpirou=false; _forcarNovo=false;
   const nome = S.config ? S.config.appNome : "Agenda Aulas";
   const escola = S.config ? S.config.escolaNome : "";
   $("root").innerHTML = `
@@ -830,9 +845,10 @@ async function fazerLogin(){
     const p = S.professores[key];
     if(!p){ toast("ID não encontrado. Confira com o administrador."); return; }
     _loginPend=p;
-    // Pergunta ao Firebase Auth se a conta já existe (fonte da verdade) — decide
-    // "entrar" x "criar senha" sem depender de marca gravada no banco.
-    try{ const reg = await authRegistrado(p.id, p.authVer); if(reg!==null) _loginPend._reg = reg; }catch(e){}
+    // NÃO tentamos adivinhar "entrar x criar" aqui: mostramos ENTRAR por padrão e o
+    // authEntrarOuCriar resolve (entra se existe, cria se for 1º acesso). Isso evita o bug
+    // de pedir "criar senha" a quem já tem — o flag fbAuth não grava (isolamento) e o
+    // createAuthUri não é confiável (Proteção contra Enumeração).
     telaSenha();
   } finally { restore(); }
 }
@@ -844,10 +860,15 @@ function telaSenha(){
   //     (tinha login salvo) -> ENTRAR. Nunca "criar" numa reentrada: era isto que fazia pedir
   //     senha nova a cada vez que o app era reaberto.
   //  3) Sem nenhuma pista -> usa o flag antigo fbAuth como reserva (1º acesso de verdade).
-  const novo = (p._reg===true) ? false
-             : (p._reg===false) ? true
-             : _sessaoExpirou ? false
-             : !p.fbAuth;
+  // "novo" = mostrar a tela de CRIAR senha (com confirmação). Só entra em "criar" quando há
+  // CERTEZA de 1º acesso/reset. No caso ambíguo mostramos ENTRAR (a conta do Firebase quase
+  // sempre já existe) — e o authEntrarOuCriar cria sozinho se por acaso ainda não existir.
+  // Assim ninguém mais vê "crie a sua senha" tendo senha (o bug relatado).
+  const novo = _forcarNovo ? true                 // usuário pediu criar com confirmação
+             : _sessaoExpirou ? false             // sessão expirou -> já tinha conta -> entrar
+             : (+p.authVer>1) ? true              // admin resetou -> conta nova -> criar
+             : p.senha ? true                     // migrando do hash antigo -> criar no Firebase
+             : false;                             // PADRÃO: entrar (nunca "criar" no ambíguo)
   let sub;
   if(_sessaoExpirou) sub = novo ? "Confirme criando sua senha para continuar" : "Sua sessão expirou — entre novamente";
   else if(novo){
@@ -874,7 +895,8 @@ function telaSenha(){
       <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
       <div style="height:12px"></div>
       <button class="btn primary" data-act="login-entrar">Entrar</button>
-      <p class="hint">Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua — no próximo acesso você cria uma nova.</p>
+      <p class="hint">É o seu <b>primeiro acesso</b>? Escolha uma senha e toque em Entrar — ela fica sendo a sua. Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua.</p>
+      <button class="btnlink" data-act="login-quero-criar">Prefiro criar a senha com confirmação</button>
     `}
     <div style="height:8px"></div>
     <button class="btn ghost" data-act="login-voltar">‹ Voltar</button>
@@ -907,13 +929,16 @@ async function loginEntrar(){
   const s=($("sSenha")?$("sSenha").value:"");
   if(!s) return toast("Digite a sua senha.");
   const key=sanId(_loginPend.id);
+  if(s.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
   const restore=btnBusy('[data-act="login-entrar"]',"Entrando…");
   try{
-    // O Firebase Auth é o portão real (não há mais senha guardada no banco).
-    try{ await _authIdentity("signInWithPassword", _loginPend.id, s, _loginPend.authVer); }
+    // O Firebase Auth é o portão real. authEntrarOuCriar entra se a conta existe e cria se
+    // for o 1º acesso — sem depender de adivinhar antes (fbAuth/enumeração não são confiáveis).
+    try{ await authEntrarOuCriar(_loginPend.id, s, _loginPend.authVer); }
     catch(e){ const m=e.message||"";
-      if(/EMAIL_NOT_FOUND/.test(m)) return toast("Não encontramos sua conta. Peça um reset de senha ao administrador.");
-      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|MISSING_PASSWORD/.test(m)) return toast("Senha incorreta.");
+      if(/SENHA_ERRADA/.test(m)) return toast("Senha incorreta.");
+      if(/WEAK_PASSWORD/.test(m)) return toast("A senha precisa ter pelo menos 6 caracteres.");
+      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|MISSING_PASSWORD|EMAIL_NOT_FOUND/.test(m)) return toast("Senha incorreta.");
       if(/TOO_MANY_ATTEMPTS/.test(m)) return toast("Muitas tentativas. Aguarde um minuto e tente de novo.");
       if(/RECAPTCHA|APP.?CHECK|Forbidden/i.test(m)) return toast("Não foi possível validar a segurança. Desative bloqueadores e tente de novo.");
       return toast("Sem conexão. Tente de novo.");
@@ -1044,6 +1069,7 @@ function primeiroDiaAgendavel(){
 }
 function _sigReservas(){ try{ return JSON.stringify(S.reservas); }catch(e){ return ""+Date.now(); } }
 async function abrirApp(){
+  _forcarNovo=false;   // consumido: não pode vazar para uma tela de senha futura
   S.tab="hoje";
   // limpeza única: remove do banco qualquer hash de senha antigo (não é mais usado)
   if(S.user.senha){ try{ fbUpdate("/professores/"+sanId(S.user.id), {senha:null}); delete S.user.senha; }catch(e){} }
@@ -2360,6 +2386,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="login") return fazerLogin();
     if(a==="login-criar") return loginCriar();
     if(a==="login-entrar") return loginEntrar();
+    if(a==="login-quero-criar"){ _forcarNovo=true; return telaSenha(); }
     if(a==="login-voltar") return telaLogin();
     if(a==="toggle-senha"){ const on=el.dataset.on==="1"; document.querySelectorAll("input[data-pw]").forEach(function(inp){ inp.type=on?"password":"text"; }); el.dataset.on=on?"0":"1"; el.textContent=on?"👁 Mostrar senha":"🙈 Ocultar senha"; return; }
     if(a==="sair") return sair();
