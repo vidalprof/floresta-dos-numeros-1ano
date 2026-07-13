@@ -291,8 +291,8 @@ function confReset(){if(confirm("Começar tudo de novo? Você vai perder o progr
 
 /* ============ MAPA ============ */
 function irMapa(){pararFala();salvar();desenharMapa();var f=feitas();
- var t=f===0?("Bem-vindo à Confeitaria, "+(S.nome||"chef")+"! Siga a trilha e complete cada parada pra abrir a próxima."):
-        (f>=PARADAS.length?"Você completou tudo! Toque no troféu dourado pra sua festa!":"Você já preparou "+plural(f,"parada","paradas")+"! Continue na parada que está brilhando.");
+ var t=f===0?"Bem-vindo à Confeitaria! Siga a trilha e complete cada parada pra abrir a próxima.":
+        (f>=PARADAS.length?"Você completou tudo! Toque no troféu dourado pra sua festa!":"Você está indo muito bem! Continue na parada que está brilhando.");
  falar(t);}
 function nivelImg(){return IMG.emb[nivelIdx(S.pontos)];}
 function desenharMapa(){var h="",i;
@@ -327,7 +327,7 @@ function desenharMapa(){var h="",i;
  $("app").innerHTML=h;window.scrollTo(0,0);
 }
 function desbloq(i){if(i===0)return true;return !!S.feitasMap[PARADAS[i-1].ch];}
-function narrarMapa(){var f=feitas();falar(f===0?"Siga a trilha, "+(S.nome||"chef")+"! Complete cada parada pra abrir a próxima e chegar ao diploma.":"Você já preparou "+plural(f,"parada","paradas")+"! Falta pouco pra virar Mestre da Divisão.");}
+function narrarMapa(){var f=feitas();falar(f===0?"Siga a trilha! Complete cada parada pra abrir a próxima e chegar ao diploma.":"Você está indo muito bem! Falta pouco pra virar Mestre da Divisão.");}
 function avisoTranca(){falar("Essa parada ainda está trancada! Termine a parada anterior pra abrir esta.");}
 function avisoTrofeu(){falar("Complete todas as paradas pra ganhar o Diploma de Mestre Confeiteiro!");}
 
@@ -413,7 +413,7 @@ function rResto(d){var h=cabecalhoDesafio();
  h+=botoesOpcoes(opcoesNum(d.q,1),"respResto1");
  $("app").innerHTML=h;window.scrollTo(0,0);window._d=d;falar(d.d+" doces em "+d.v+" pratos iguais. Quantos em cada prato?");
 }
-function respResto1(v,el){if(v===window._d.q){falar("Isso! "+window._d.q+" em cada. E quantos sobram?");var h=cabecalhoDesafio();h+='<div class="enun">Certo, '+window._d.q+' em cada prato!<br>Agora: quantos doces <b>sobram</b>?</div>';h+='<div class="dica">'+window._d.v+' × '+window._d.q+' = '+(window._d.v*window._d.q)+'. Falta chegar em '+window._d.d+'.</div>';h+=botoesOpcoes(opcoesNum(window._d.s,0),"respResto2");$("app").innerHTML=h;}else erro(el,window._d);}
+function respResto1(v,el){if(v===window._d.q){falar("Isso! E agora, quantos doces sobram?");var h=cabecalhoDesafio();h+='<div class="enun">Certo, '+window._d.q+' em cada prato!<br>Agora: quantos doces <b>sobram</b>?</div>';h+='<div class="dica">'+window._d.v+' × '+window._d.q+' = '+(window._d.v*window._d.q)+'. Falta chegar em '+window._d.d+'.</div>';h+=botoesOpcoes(opcoesNum(window._d.s,0),"respResto2");$("app").innerHTML=h;}else erro(el,window._d);}
 function respResto2(v,el){if(v===window._d.s)acerto(window._d.d+" dividido por "+window._d.v+" dá "+window._d.q+" e sobra "+window._d.s+". Esse é o resto!");else erro(el,window._d);}
 
 function rMontar(d){var h=cabecalhoDesafio();
@@ -439,7 +439,7 @@ function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  if(streak>=3)h+='<div class="dica" style="color:#7dffa8">&#128293; Você acertou '+streak+' seguidas!</div>';
  h+='<button class="btn verde pulsa" onclick="avancar()">'+(ultimo?"Ver resultado &#127937;":"Próximo &#9654;")+'</button>';
  var cont=$("app");cont.innerHTML=h+cont.innerHTML;window.scrollTo(0,0);
- falar(el+" "+(explica||""));salvar();
+ falar(el,function(){if(explica)falar(explica);});salvar();
 }
 function avancar(){_encadear=true;checarConquistas();if(modoTreino){window._ti++;proxTreino();return;}idx++;proximoDesafio();}
 function erro(el,d){pararFala();streak=0;errosSeg++;
@@ -496,7 +496,7 @@ function fimFaseReal(){var p=atual;if(p._extra){S.pontos+=4;}
  h+='<button class="btn pulsa" onclick="'+(todas?"grandeFinal()":"irMapa()")+'">'+(todas?"Ver o grande final &#127881;":"&#9654; Ir para o mapa")+'</button>';
  h+='<div style="text-align:center"><button class="btn sec" onclick="abrirParadaCh(\''+p.ch+'\')">&#128257; Jogar de novo</button></div>';
  $("app").innerHTML=h;window.scrollTo(0,0);confete(24);
- falar("Parada concluída! "+(_uau?("Uau! "+_uau+" "):"")+p.gancho);
+ if(_uau)falar("Uau! "+_uau,function(){falar("Parada concluída! "+p.gancho);});else falar("Parada concluída! "+p.gancho);
 }
 function marcarFeita(p){S.feitasMap[p.ch]=1;}
 function abrirParadaCh(ch){var i;for(i=0;i<PARADAS.length;i++)if(PARADAS[i].ch===ch){abrirParada(i);return;}}
@@ -546,7 +546,7 @@ function grandeFinal(){pararFala();S.feitasMap.fim=1;salvar();
  h+='<button class="btn pulsa" onclick="relatorio()">&#128202; Ver meu relatório</button>';
  h+='<button class="btn sec" onclick="verMedalhas()">&#127941; Minhas conquistas</button> <button class="btn sec" onclick="irMapa()">Voltar ao mapa</button>';
  $("app").innerHTML=h;window.scrollTo(0,0);confeteOndas();
- falar("Parabéns, "+(S.nome||"chef")+"! Você preparou todos os doces da Festa da Cidade e virou um Mestre Confeiteiro da Divisão!");
+ falar("Parabéns! Você preparou todos os doces da Festa da Cidade e virou um Mestre Confeiteiro da Divisão!");
 }
 
 /* ============ COMEMORAÇÃO / CONFETE ============ */
