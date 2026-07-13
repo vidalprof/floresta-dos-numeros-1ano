@@ -106,6 +106,18 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .memc{width:74px;height:60px;margin:5px;border-radius:12px;background:#e07b2a;color:#fff;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:18px;font-weight:bold;cursor:pointer;-webkit-box-shadow:0 3px 0 #a8531a;box-shadow:0 3px 0 #a8531a;}
 .memc.aberta{background:#fff8f0;color:#5a2e1c;}
 .memc.par{background:#3a9d5a;-webkit-box-shadow:0 3px 0 #257040;box-shadow:0 3px 0 #257040;}
+/* ==== Fase concreta: arrastar e repartir ==== */
+.banco{text-align:center;margin:8px 0;padding:8px 6px;border-radius:16px;background:rgba(255,255,255,.06);min-height:56px;}
+.bancoInfo{font-weight:bold;color:#ffd9a8;margin-bottom:4px;font-size:15px;}
+.dArr{height:44px;width:auto;margin:4px;display:inline-block;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));vertical-align:middle;}
+.pratos{text-align:center;margin:8px 0;}
+.pratoZona{display:inline-block;vertical-align:top;margin:6px;padding:6px 6px 3px;border-radius:16px;border:3px dashed rgba(255,200,140,.55);min-width:76px;min-height:86px;}
+.pratoZona.hover{border-color:#ffd23f;-webkit-filter:drop-shadow(0 0 8px rgba(255,210,80,.85));filter:drop-shadow(0 0 8px rgba(255,210,80,.85));}
+.pratoBase{height:26px;width:auto;display:block;margin:0 auto 2px;pointer-events:none;}
+.pratoDoces{min-height:34px;line-height:1;}
+.pratoDoces img{height:24px;width:auto;margin:1px;vertical-align:middle;cursor:pointer;touch-action:none;}
+.pratoNum{font-weight:bold;color:#fff;font-size:15px;margin-top:2px;}
+.ghostArr{position:fixed;pointer-events:none;z-index:9999;opacity:.92;margin:0;-webkit-transform:translate(-50%,-50%) scale(1.1);transform:translate(-50%,-50%) scale(1.1);}
 </style>
 </head>
 <body>
@@ -359,7 +371,7 @@ function cabecalhoDesafio(){return '<div class="contparada">Desafio '+(idx+1)+' 
 
 /* -- render por tipo -- */
 function renderDesafio(d,i){
- if(atual.tipo==="repartir")return rDivRepartir(d);
+ if(atual.tipo==="repartir")return (atual.modo==="caixas"?rDivRepartir(d):rRepartirConcreto(d));
  if(atual.tipo==="tabuada")return rTabuada(d);
  if(atual.tipo==="resto")return rResto(d);
  if(atual.tipo==="montar")return rMontar(d);
@@ -386,6 +398,82 @@ function explicaEscolha(d){if(d.mul)return "A divisão é o contrário da multip
  if(d.op==="÷")return "Aqui repartimos em partes iguais, então é dividir. A resposta é "+d.r+".";
  if(d.d&&d.v)return "Repartir "+d.d+" em "+d.v+" partes iguais dá "+d.r+". Escrevemos "+d.d+" dividido por "+d.v+" igual a "+d.r+".";
  return "Isso mesmo, a resposta é "+d.r+"!";}
+
+/* ====== MOTOR DE ARRASTAR (mouse + toque) — lição paga: listeners GLOBAIS + ghost ====== */
+window.__dragOn=false;
+var _dg={ativo:false,ghost:null,onSolta:null,origem:null};
+function _pt(ev){var t=(ev.touches&&ev.touches[0])||(ev.changedTouches&&ev.changedTouches[0])||ev;return {x:t.clientX,y:t.clientY};}
+function instalarDragGlobal(){
+ if(window.__dragOn)return;window.__dragOn=true;
+ document.addEventListener("mousemove",_dgMove,false);
+ document.addEventListener("mouseup",_dgUp,false);
+ try{document.addEventListener("touchmove",_dgMove,{passive:false});}catch(e){document.addEventListener("touchmove",_dgMove,false);}
+ document.addEventListener("touchend",_dgUp,false);
+}
+function tornarArrastavel(el,onSolta){el.__os=onSolta;
+ el.onmousedown=function(ev){_dgStart(ev,el);};
+ el.ontouchstart=function(ev){_dgStart(ev,el);};
+}
+function _dgStart(ev,el){
+ if(ev.preventDefault)ev.preventDefault();if(ev.stopPropagation)ev.stopPropagation();
+ var p=_pt(ev);_dg.ativo=true;_dg.onSolta=el.__os;_dg.origem=el;
+ var g=el.cloneNode(true);g.className="dArr ghostArr";g.style.left=p.x+"px";g.style.top=p.y+"px";
+ document.body.appendChild(g);_dg.ghost=g;el.style.visibility="hidden";
+}
+function _limpaHover(){var zs=document.querySelectorAll("[data-drop]"),i;for(i=0;i<zs.length;i++)zs[i].className=zs[i].className.replace(/ hover/g,"");}
+function _dgMove(ev){
+ if(!_dg.ativo)return;if(ev.preventDefault)ev.preventDefault();
+ var p=_pt(ev);if(_dg.ghost){_dg.ghost.style.left=p.x+"px";_dg.ghost.style.top=p.y+"px";}
+ _limpaHover();var z=_alvoSob(p.x,p.y);if(z&&z.className.indexOf("hover")<0)z.className+=" hover";
+}
+function _dgUp(ev){
+ if(!_dg.ativo)return;var p=_pt(ev);var z=_alvoSob(p.x,p.y);
+ if(_dg.ghost&&_dg.ghost.parentNode)_dg.ghost.parentNode.removeChild(_dg.ghost);
+ if(_dg.origem)_dg.origem.style.visibility="";
+ _limpaHover();
+ var on=_dg.onSolta,og=_dg.origem;_dg.ativo=false;_dg.ghost=null;_dg.origem=null;
+ if(z&&on)on(z.getAttribute("data-drop"),og);
+}
+function _alvoSob(x,y){var e=document.elementFromPoint(x,y);while(e&&!(e.getAttribute&&e.getAttribute("data-drop")))e=e.parentNode;return (e&&e.getAttribute)?e:null;}
+
+/* ====== FASE CONCRETA: repartir arrastando os biscoitos nos pratos ====== */
+function _zonaHTML(k,base){return '<div class="pratoZona" data-drop="z'+k+'" id="zona'+k+'"><img class="pratoBase" src="'+base+'"><div class="pratoDoces" id="zd'+k+'"></div><div class="pratoNum"><span id="zn'+k+'">0</span></div></div>';}
+function rRepartirConcreto(d){
+ instalarDragGlobal();
+ var doceImg=IMG[atual.doce]||IMG.dBiscoito;
+ window._d=d;window._rep={tot:d.tot,gr:d.gr,conf:0,pratos:[]};
+ var perg="Arraste os biscoitos e coloque a MESMA quantidade em cada prato.";
+ var h=cabecalhoDesafio()+'<div class="enun">'+esc(perg)+'</div>';
+ h+='<div class="banco" data-drop="banco"><div class="bancoInfo" id="bancoInfo">Faltam: '+d.tot+'</div><div id="bancoDoces">';
+ var i;for(i=0;i<d.tot;i++)h+='<img class="dArr" src="'+doceImg+'">';
+ h+='</div></div><div class="pratos" id="pratos">';
+ var k;for(k=0;k<d.gr;k++)h+=_zonaHTML(k,IMG.dPrato);
+ h+='</div><div class="dica" id="repDica"></div><div id="repBtn" style="text-align:center;min-height:56px"></div>';
+ $("app").innerHTML=h;window.scrollTo(0,0);
+ var imgs=$("bancoDoces").getElementsByTagName("img");for(i=0;i<imgs.length;i++)tornarArrastavel(imgs[i],_soltarRep);
+ _recontRep();falar(perg);
+}
+function _soltarRep(dropId,og){
+ var destino=(dropId==="banco")?$("bancoDoces"):$("zd"+parseInt(dropId.substring(1),10));
+ if(!destino||!og)return;
+ destino.appendChild(og);
+ _recontRep();
+}
+function _recontRep(){var R=window._rep;
+ var nb=$("bancoDoces")?$("bancoDoces").getElementsByTagName("img").length:0;R.noBanco=nb;
+ var k;for(k=0;k<R.gr;k++){var zd=$("zd"+k);var n=zd?zd.getElementsByTagName("img").length:0;R.pratos[k]=n;if($("zn"+k))$("zn"+k).innerHTML=n;}
+ if($("bancoInfo"))$("bancoInfo").innerHTML=nb>0?("Faltam: "+nb):"Tudo repartido! Toque em Conferir.";
+ if($("repBtn"))$("repBtn").innerHTML=(nb===0)?'<button class="btn pulsa" onclick="conferirRep()">Conferir &#10004;</button>':'';
+}
+function conferirRep(){var R=window._rep,d=window._d;var q=d.tot/d.gr;
+ var ok=true,k;for(k=0;k<R.gr;k++)if(R.pratos[k]!==q)ok=false;
+ if(ok){acerto("Você repartiu igualzinho: "+q+" em cada prato! Repartir "+d.tot+" em "+d.gr+" partes iguais é "+d.tot+" ÷ "+d.gr+" = "+q+".");}
+ else{R.conf++;
+  if($("repDica"))$("repDica").innerHTML="⭐ Cada prato precisa ter a MESMA quantidade de biscoitos.";
+  if(R.conf>=2){erro(null,d);}
+  else falar("Quase! Olhe: os pratos estão diferentes. Deixe a mesma quantidade de biscoitos em cada prato.");
+ }
+}
 
 function rDivRepartir(d){var caixas=atual.modo==="caixas";var h=cabecalhoDesafio();
  var pergunta=caixas?("Temos "+d.tot+" doces. Cada caixa leva "+d.gr+". Quantas caixas dá pra encher?"):("Reparta "+d.tot+" biscoitos igualmente em "+d.gr+" pratos. Quantos em cada prato?");
