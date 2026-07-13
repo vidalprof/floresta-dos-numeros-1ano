@@ -195,10 +195,60 @@ var QUESTOES=[
   fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está à direita ou à esquerda dele?",
   opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
 
- {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
+ {tipo:"par", ref:"voce", esq:"cogumelo", dir:"arvore", alvo:"dir", nomeAlvo:"a árvore",
+  pergunta:"A árvore está à sua esquerda ou à sua direita?",
+  fala:"Pista dez! O explorador segue em frente e encontra dois sinais: um cogumelo e uma árvore alta. Olhando para a tela, a árvore está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"vert", ref:"cima", cima:"sol", baixo:"flor",
+  pergunta:"A flor está em cima ou embaixo?",
+  fala:"Pista onze! O caminho desce por uma trilha. Lá em cima brilha o sol e, mais embaixo, nasce uma florzinha. A flor está em cima ou embaixo?",
+  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:1},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"cogumelo", lado:"dir",
+  pergunta:"O cogumelo está à direita ou à esquerda dele?",
+  fala:"Pista doze! O explorador está de costas, igual a você, e passa por um cogumelo na beira do caminho. O cogumelo está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"seta", ref:"voce", aponta:"esq",
+  pergunta:"Para que lado a seta está apontando?",
+  fala:"Pista treze! Mais uma placa de madeira apareceu na trilha! Olhando para a tela, para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"sol", lado:"esq",
+  pergunta:"O sol está à direita ou à esquerda dele?",
+  fala:"Pista quatorze! Ainda de costas, o explorador vê o sol descer pertinho do horizonte. O sol está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
+
+ {tipo:"par", ref:"voce", esq:"flor", dir:"cogumelo", alvo:"esq", nomeAlvo:"a flor",
+  pergunta:"A flor está à sua esquerda ou à sua direita?",
+  fala:"Pista quinze! No chão da floresta há uma flor e um cogumelo, um de cada lado. Olhando para a tela, a flor está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"arvore", lado:"dir",
+  pergunta:"A árvore está à direita ou à esquerda dele?",
+  fala:"Pista dezesseis! O explorador, de costas, chega perto de uma árvore que faz sombra no caminho. A árvore está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"seta", ref:"voce", aponta:"dir",
+  pergunta:"Para que lado a seta está apontando?",
+  fala:"Pista dezessete! Quase lá! Outra placa aponta o caminho do tesouro. Olhando para a tela, para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"cogumelo", lado:"dir",
+  pergunta:"O explorador está de FRENTE. O cogumelo está à direita ou à esquerda dele?",
+  fala:"Pista dezoito, atenção! Agora o explorador virou e está te olhando de frente, ao lado de um cogumelo. O cogumelo está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"sol", lado:"esq",
+  pergunta:"O explorador está de FRENTE. O sol está à direita ou à esquerda dele?",
+  fala:"Pista dezenove, a mais espertinha! O explorador continua de frente, te olhando, e o sol brilha ao lado dele. O sol está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"dir",
   pergunta:"O baú do tesouro está à direita ou à esquerda do explorador?",
-  fala:"Pista dez, a última! Chegamos! O baú do tesouro apareceu. O explorador está de costas. O baú está à direita ou à esquerda dele?",
-  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1}
+  fala:"Pista vinte, a última! Chegamos ao fim do mapa e o baú do tesouro apareceu! O explorador está de costas, igual a você. O baú está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0}
 ];
 
 /* ====== estado ====== */
@@ -361,7 +411,9 @@ function enviarResultado(ac){
   if(enviado){return;} enviado=true;
   var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
   var quando=new Date().toLocaleString("pt-BR");
-  var reg={nome:nomeAluno,turma:turmaAluno,nota:ac,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  /* nota SEMPRE em escala 0..10 (independe do nº de questões): acertos/total*10 */
+  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
   var ok=false;
   /* 1) Firebase (funciona ja) */
   try{
@@ -376,7 +428,7 @@ function enviarResultado(ac){
   if(URL_PLANILHA){
     try{
       var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+
-        "&nota="+encodeURIComponent(ac)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
+        "&nota="+encodeURIComponent(nota10)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
         "&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
       var y=new XMLHttpRequest(); y.open("POST",URL_PLANILHA,true);
       y.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); y.send(dados);
