@@ -475,9 +475,9 @@ function fecharOferta(){extraOn=true;fimFaseReal();}
 function fimFase(){pararFala();var p=atual;
  var tot=totalDesafios(),ac=runAc;
  if(!p.jogo&&!modoTreino&&!p._extra){
-  if(!extraOn&&tot>0&&ac>=tot){return ofertaExtra(p);}
   var ef=errosDaFase(p.ch);
-  if(!reforcoOn&&ef.length>0&&ac<Math.ceil(tot*0.5)){return ofertaReforco(p,ef);}
+  if(!reforcoOn&&ef.length>=Math.ceil(tot*0.5)){return ofertaReforco(p,ef);}
+  if(!extraOn&&tot>0&&ef.length===0){return ofertaExtra(p);}
  }
  fimFaseReal();
 }
