@@ -1449,7 +1449,9 @@ function sheetAgendar(turnoK,aula){
   discAtivas.forEach(d=> h+=`<button class="chip" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
   h+=`</div>
     <label class="fld">Tema da aula</label><input id="fTema" class="input" placeholder="Digite o tema da aula">
-    <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>`;
+    <button class="btnlink" data-act="ia-tema" data-tema="fTema">✨ Melhorar tema com IA</button>
+    <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>
+    <button class="btnlink" data-act="ia-objetivo" data-tema="fTema" data-obj="fObj">✨ Sugerir objetivo com IA</button>`;
   h+=`<div style="height:18px"></div>
     <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
   openSheet(h);
@@ -1462,6 +1464,61 @@ function sheetAgendar(turnoK,aula){
       if(last.disc) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===last.disc){ c.classList.add("on"); _form.disc=last.disc; } });
     }
   }catch(e){}
+}
+
+/* ===== IA (Pollinations texto — GRÁTIS, sem chave, sem servidor) =====
+   Chama do navegador do professor (o container do Claude é bloqueado, mas o navegador
+   tem internet). Se a rede da escola bloquear o serviço, o botão só não funciona ali. */
+async function _iaPollinations(prompt, ms){
+  const url = "https://text.pollinations.ai/" + encodeURIComponent(prompt);
+  const r = await _fetchT(url, {headers:{"Accept":"text/plain"}}, ms||22000);
+  if(!r || !r.ok) throw new Error("resp");
+  const t = await r.text();
+  return (t||"").trim();
+}
+function _iaContexto(){
+  let turma = (_form.turma||"") + (_form.letra ? (" "+_form.letra) : "");
+  turma = turma.trim();
+  if(!turma && _editAlvo && _editAlvo.base) turma = _editAlvo.base.turma || "";
+  return { turma: turma, disc: _form.disc || (_editAlvo&&_editAlvo.base&&_editAlvo.base.disciplina) || "" };
+}
+async function sugerirObjetivoIA(temaId, objId){
+  const tema = ($(temaId) ? $(temaId).value.trim() : "");
+  if(!tema) return toast("Escreva o tema da aula primeiro. ✍️");
+  const ctx = _iaContexto();
+  const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
+  try{
+    const prompt = "Voce e um professor experiente no Brasil. Escreva UM objetivo de aprendizagem claro e conciso (no maximo 2 frases, em portugues, com linguagem de plano de aula alinhada a BNCC) para uma aula."
+      + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
+      + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
+      + " Tema: "+tema+"."
+      + " Responda APENAS com o texto do objetivo, sem titulo, sem aspas, sem a palavra Objetivo.";
+    let out = await _iaPollinations(prompt);
+    out = out.replace(/^["'\s]+|["'\s]+$/g,"").replace(/^objetivo:?\s*/i,"").trim();
+    if(!out) throw new Error("vazio");
+    if($(objId)){ $(objId).value = out; }
+    toast("Sugestão pronta! Ajuste se quiser. ✨");
+  }catch(e){ toast("A IA não respondeu agora (pode estar fora do ar ou a rede bloqueou). Tente de novo."); }
+  finally{ restore(); }
+}
+async function melhorarTemaIA(temaId){
+  const tema = ($(temaId) ? $(temaId).value.trim() : "");
+  if(!tema) return toast("Escreva um tema (mesmo curtinho) primeiro. ✍️");
+  const ctx = _iaContexto();
+  const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
+  try{
+    const prompt = "Voce e um professor no Brasil. Reescreva o TEMA de uma aula deixando-o claro, especifico e atraente (curto, no maximo 8 palavras, em portugues)."
+      + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
+      + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
+      + " Tema atual: "+tema+"."
+      + " Responda APENAS com o novo tema, sem aspas e sem explicacao.";
+    let out = await _iaPollinations(prompt);
+    out = (out.split("\n")[0]||"").replace(/^["'\s]+|["'\s]+$/g,"").trim();
+    if(!out) throw new Error("vazio");
+    if($(temaId)){ $(temaId).value = out; }
+    toast("Tema melhorado! ✨");
+  }catch(e){ toast("A IA não respondeu agora. Tente de novo."); }
+  finally{ restore(); }
 }
 
 async function salvarAgenda(){
@@ -1568,7 +1625,9 @@ function editarReserva(turnoK,aula){
   discAtivas.forEach(d=> h+=`<button class="chip ${d.nome===r.disciplina?"on":""}" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
   h+=`</div>
     <label class="fld">Tema da aula</label><input id="eTema" class="input" value="${esc(r.tema||"")}" placeholder="Tema da aula">
+    <button class="btnlink" data-act="ia-tema" data-tema="eTema">✨ Melhorar tema com IA</button>
     <label class="fld">Objetivo</label><textarea id="eObj" class="input" placeholder="Objetivo">${esc(r.objetivo||"")}</textarea>
+    <button class="btnlink" data-act="ia-objetivo" data-tema="eTema" data-obj="eObj">✨ Sugerir objetivo com IA</button>
     <div style="height:16px"></div>
     <button class="btn ok" data-act="salvar-edicao">✓ Salvar alterações</button>`;
   openSheet(h);
@@ -2047,6 +2106,8 @@ document.addEventListener("click", async (ev)=>{
     if(a==="pedir-excluir") return sheetConfExcluir(t,i);
     if(a==="excluir") return excluirReserva(t,i);
     if(a==="salvar-edicao") return salvarEdicao();
+    if(a==="ia-objetivo") return sugerirObjetivoIA(el.dataset.tema, el.dataset.obj);
+    if(a==="ia-tema") return melhorarTemaIA(el.dataset.tema);
     if(a==="salvar-agenda") return salvarAgenda();
     if(a==="conf-excecao"){ _form.excecao=true; return salvarAgenda(); }
     if(a==="rodizio-grupo"){ document.querySelectorAll('[data-act="rodizio-grupo"]').forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
