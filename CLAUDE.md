@@ -209,6 +209,28 @@ App de **agendamento de aulas** do laboratório de informática (professor Marco
   o corpo), `localStorage` protegido no boot, service worker com timeout e que só
   cacheia HTML 200 (portal cativo não vira "o app"). Isso curou o "travou tudo".
 
+### Login: ENTRAR × CRIAR senha (a tela de senha — `telaSenha`)
+Ao digitar a matrícula, cai na **tela de senha**. Ela decide sozinha entre
+**Entrar** (1 campo) e **Criar senha com confirmação** (2 campos: "Nova senha" +
+"Confirmar senha"), em ORDEM DE CONFIANÇA (variável `novo` em `telaSenha`):
+1. `_forcarNovo` (usuário clicou no link "**Prefiro criar a senha com
+   confirmação**") → **CRIAR**. O flag é **consumido/zerado** depois (`_forcarNovo=false`)
+   para não vazar pra uma tela de senha futura.
+2. `_sessaoExpirou` (reentrada — já tinha login salvo) → **ENTRAR**. Nunca "criar"
+   numa reentrada (era o bug: pedia senha nova toda vez que reabria o app).
+3. `authVer>1` (admin resetou a senha) → **CRIAR**.
+4. `p.senha` (migrando do hash antigo) → **CRIAR**.
+5. PADRÃO (caso ambíguo) → **ENTRAR**. Nunca "criar" no ambíguo.
+- **`authEntrarOuCriar(id,senha,ver)`** é o coração: tenta **entrar**; se o login
+  falhar de forma ambígua, tenta **criar** — e o próprio Firebase revela a verdade
+  (`EMAIL_EXISTS` = a conta já existe, então era só senha errada; senão, cria no 1º
+  acesso). Assim **ninguém mais vê "crie a sua senha" tendo senha**.
+- O link "**Prefiro criar a senha com confirmação**" é OPCIONAL (só na tela de
+  Entrar): é o caminho mais seguro pra quem quer digitar a senha 2× e não errar. O
+  padrão continua sendo o rápido (1 campo). É app de PROFESSOR (adulto) → confirmar
+  senha ajuda, não atrapalha. **Auditado 2026-07: os 5 cenários batem** (normal→Entrar,
+  reset→Criar, migração→Criar, link→Criar, sessão expirada→Entrar).
+
 ### 🔒 ISOLAMENTO por dono (blindagem aplicada — jul/2026)
 As regras do RTDB **não são mais** `auth != null` aberto. Agora:
 - **Quem é admin** = estar em **`/agenda/vidal-ramos/admins/<uid> = true`**, um nó

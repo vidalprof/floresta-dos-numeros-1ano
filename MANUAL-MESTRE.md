@@ -1374,3 +1374,22 @@ construção — o oposto do risco do papel-Atlas claro misturado com áreas esc
   todo gradiente**, sem `grid/gap/var()/clamp`, emojis ≤ Unicode 6.0.
 - Referência viva: **`climas-do-mundo-6ano`** foi migrada p/ o tema claro (mantendo
   voz, reset e Nino inteiro), com contraste verificado.
+
+## 20. `git fetch` ANTES de dizer "não existe" (lição paga — 2026-07)
+**A cópia local do repositório pode estar MUITO atrasada** — num caso real ela
+estava **445 commits atrás** do remoto. Resultado: `git log`, `git grep` e ler o
+`CLAUDE.md` mostravam uma versão VELHA, sem uma pasta inteira (`_agenda/`) e sem
+uma seção inteira do manual que **já existiam** no remoto. Eu afirmei com
+convicção que "a agenda nunca passou por este repo" — **e estava errado**; era só
+a cópia local defasada. Regra:
+- **Antes de concluir que algo "não existe" / "nunca foi feito aqui"**, rodar
+  `git fetch origin <branch>` e comparar com `origin/<branch>` (`git log
+  origin/<branch>`, `git status -sb` mostra "behind N"). Só depois afirmar.
+- **Pistas de que a cópia está velha:** `git status -sb` diz `behind N`; o
+  `head_commit` de um workflow run (retornado pelas ferramentas do GitHub) menciona
+  arquivos/pastas que você "não tem"; o usuário insiste que fez algo aqui e você não
+  acha. Nesses casos: **fetch/pull primeiro, investigar depois.**
+- **Nunca prometer ao usuário que "nunca vou esquecer".** Entre sessões NÃO há
+  memória — a única memória real é o que está ESCRITO no repo (`CLAUDE.md` + manuais
+  + histórico do git). Quando o usuário pedir "para não esquecer", a resposta certa é
+  **registrar no repo**, não prometer lembrança.
