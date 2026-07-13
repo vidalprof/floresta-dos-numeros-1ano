@@ -1655,7 +1655,7 @@ function sheetAgendar(turnoK,aula){
     ${ctxHtml(turnoK,aula)}`;
   if(adm){
     h+=`<label class="fld">Professor</label>`;
-    if(Object.keys(S.professores).length>6) h+=`<input class="chipfilter input" data-alvo="profChips" placeholder="🔍 buscar professor" style="margin-bottom:8px">`;
+    if(Object.keys(S.professores).length>6) h+=`<input class="chipfilter input" aria-label="Buscar professor" data-alvo="profChips" placeholder="🔍 buscar professor" style="margin-bottom:8px">`;
     h+=`<div class="chips" id="profChips">`;
     Object.keys(S.professores).forEach(k=>{ const p=S.professores[k];
       h+=`<button class="chip ${sanId(p.id)===sanId(S.user.id)?"on":""}" data-act="pickprof" data-id="${esc(p.id)}">${esc(p.nome)}</button>`; });
@@ -2191,9 +2191,9 @@ function telaConfig(){
   const a=S.config.aulas;
   let grade=`<table class="grade"><tr><th></th><th>Mat</th><th>Ves</th><th>Not</th></tr>`;
   DIAS.forEach(d=>{ grade+=`<tr><td class="d">${DIAS_NOME[d]}</td>
-    <td><input inputmode="numeric" data-aula="${d}.m" value="${a[d].m}"></td>
-    <td><input inputmode="numeric" data-aula="${d}.v" value="${a[d].v}"></td>
-    <td><input inputmode="numeric" data-aula="${d}.n" value="${a[d].n}"></td></tr>`; });
+    <td><input inputmode="numeric" aria-label="Aulas de manhã — ${DIAS_NOME[d]}" data-aula="${d}.m" value="${a[d].m}"></td>
+    <td><input inputmode="numeric" aria-label="Aulas à tarde — ${DIAS_NOME[d]}" data-aula="${d}.v" value="${a[d].v}"></td>
+    <td><input inputmode="numeric" aria-label="Aulas à noite — ${DIAS_NOME[d]}" data-aula="${d}.n" value="${a[d].n}"></td></tr>`; });
   grade+=`</table>`;
 
   let hor="";
@@ -2206,9 +2206,9 @@ function telaConfig(){
     const maxA=Math.max(...DIAS.map(d=>a[d][_colDe[tk]]||0),arr.length,0);
     for(let i=0;i<maxA;i++){ const hh=arr[i]||["",""];
       hor+=`<div class="horrow"><div class="lbl">${i+1}ª</div>
-        <input data-hor="${tk}.${i}.0" value="${esc(hh[0])}" placeholder="início">
+        <input aria-label="Início da ${i+1}ª aula (${tk})" data-hor="${tk}.${i}.0" value="${esc(hh[0])}" placeholder="início">
         <span style="color:var(--faint)">—</span>
-        <input data-hor="${tk}.${i}.1" value="${esc(hh[1])}" placeholder="fim"></div>`; }
+        <input aria-label="Fim da ${i+1}ª aula (${tk})" data-hor="${tk}.${i}.1" value="${esc(hh[1])}" placeholder="fim"></div>`; }
   });
 
   let turmasH=`<div class="chips" style="margin-top:4px">`;
