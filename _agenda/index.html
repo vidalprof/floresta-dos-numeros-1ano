@@ -1569,15 +1569,17 @@ function _iaPapel(turma, disc){
   // disciplinas "de área" (têm professor especialista já nos anos iniciais)
   const ehArea = /(educa|ed\.?\s*f|f[íi]sic|arte|ingl|m[uú]sic|religios|religi[aã]|dan[çc]|teatro|espanhol)/.test(d);
   const disciplina = disc ? disc : "sua disciplina";
+  const exp = "especialista em didatica e planejamento pedagogico, com dominio profundo do Curriculo da Rede Municipal de Blumenau e da BNCC, muito experiente";
   if(ano != null && ano <= 5){
-    if(ehArea) return "um professor especialista e muito experiente de "+disciplina+" dos anos iniciais (Pré ao 5º ano)";
-    return "um pedagogo especialista e muito experiente nos anos iniciais (Pré ao 5º ano), professor regente polivalente";
+    if(ehArea) return "um professor "+exp+" de "+disciplina+" dos anos iniciais (Pré ao 5º ano)";
+    return "um pedagogo "+exp+" nos anos iniciais (Pré ao 5º ano), professor regente polivalente";
   }
-  if(ano != null && ano >= 6) return "um professor especialista e muito experiente de "+disciplina+" dos anos finais (6º ao 9º ano)";
-  return "um professor especialista e muito experiente de "+disciplina; // ano desconhecido
+  if(ano != null && ano >= 6) return "um professor "+exp+" de "+disciplina+" dos anos finais (6º ao 9º ano)";
+  return "um professor "+exp+" de "+disciplina; // ano desconhecido
 }
 var _IA_BASE = "Voce e "; // prefixo do papel
-var _IA_BNCC = " Voce e profundo conhecedor da BNCC e do Curriculo de Blumenau (rede municipal de Blumenau/SC).";
+// PRIORIDADE: primeiro o Curriculo de Blumenau, depois a BNCC.
+var _IA_BNCC = " Sua referencia PRINCIPAL e o Curriculo da Rede Municipal de Ensino de Blumenau (SC); a BNCC e a referencia COMPLEMENTAR. Baseie o planejamento primeiro no curriculo de Blumenau e, em seguida, na BNCC. Escreva conteudo serio, correto, realista e coerente — nunca generico, nunca bobagem.";
 // IMPORTANTE: a aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola.
 var _IA_LAB = " CONTEXTO OBRIGATORIO: esta aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola. Portanto o tema e o objetivo devem SEMPRE integrar o uso do computador e de recursos/ferramentas digitais (softwares educativos, jogos, pesquisa, digitacao, etc.) a disciplina, de forma adequada ao ano.";
 async function sugerirObjetivoIA(temaId, objId){
@@ -1587,12 +1589,13 @@ async function sugerirObjetivoIA(temaId, objId){
   const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
   try{
     const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
-      + " Escreva UM objetivo de aprendizagem claro, coerente e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula) para uma aula na sala de informatica sobre o tema informado."
+      + " Escreva UM objetivo de aprendizagem claro, correto e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula) para uma aula na sala de informatica sobre o tema informado."
+      + " O objetivo deve estar TOTALMENTE COERENTE com o tema (o tema e o objetivo tem que combinar entre si) e ser realista para a turma."
       + " RESPEITE totalmente a escolha do professor: NUNCA critique, NUNCA diga que o tema e inadequado, NUNCA sugira trocar o tema — apenas escreva o objetivo para o tema pedido."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
       + " Tema: "+tema+"."
-      + " Responda APENAS com o texto do objetivo, sem titulo, sem aspas, sem a palavra Objetivo.";
+      + " Responda APENAS com o texto do objetivo, sem titulo, sem aspas, sem a palavra Objetivo, sem nenhum comentario extra.";
     let out = await _iaPollinations(prompt);
     out = out.replace(/^["'\s]+|["'\s]+$/g,"").replace(/^objetivo:?\s*/i,"").trim();
     if(!out) throw new Error("vazio");
@@ -1608,7 +1611,7 @@ async function melhorarTemaIA(temaId){
   const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
   try{
     const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _IA_LAB
-      + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente com a BNCC, o Curriculo de Blumenau e o uso do computador."
+      + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, correto, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente primeiro com o Curriculo de Blumenau, depois com a BNCC, e com o uso do computador. Mantenha a INTENCAO original do professor; nunca troque o assunto por outro."
       + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
       + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
       + " Tema atual: "+tema+"."
