@@ -1,2537 +1,416 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#5a4bd6">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Agenda">
-<link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-180-e.png">
-<link rel="icon" type="image/png" href="icon-192-e.png">
-<title>Agenda Aulas</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Aventura das Direções</title>
 <style>
-  :root{
-    --bg:#f2f3fa; --surface:#ffffff; --surface2:#eceef8; --surface3:#e1e4f1;
-    --line:#e5e8f3; --text:#191d2e; --muted:#666d84; --faint:#9aa0b6;
-    --primary:#5a4bd6; --primary2:#6f60ea; --primary-ink:#ffffff; --primary-tint:#eeecfb;
-    --free:#0ea371; --free-tint:#e4f6ef;
-    --amber:#b8860b; --amber-tint:#f8efd7;
-    --danger:#e5484d; --danger-tint:#fbe7e7;
-    --radius:18px; --radius-sm:12px;
-    --shadow:0 5px 18px rgba(31,26,80,.06); --shadow2:0 12px 34px rgba(31,26,80,.12);
-  }
-  @media (prefers-color-scheme:dark){:root{
-    --bg:#0f1117; --surface:#161a23; --surface2:#1e2330; --surface3:#28303f;
-    --line:#272d3a; --text:#e9ecf3; --muted:#98a0b2; --faint:#697187;
-    --primary:#8a7bff; --primary2:#9c8fff; --primary-ink:#12121c; --primary-tint:#221f3b;
-    --free:#2fd39a; --free-tint:#102b23;
-    --amber:#e0a83a; --amber-tint:#2c2411;
-    --danger:#ff6b6b; --danger-tint:#2c1518;
-    --shadow:0 8px 22px rgba(0,0,0,.34); --shadow2:0 14px 40px rgba(0,0,0,.5);
-  }}
-  :root[data-theme="light"]{
-    --bg:#f2f3fa; --surface:#ffffff; --surface2:#eceef8; --surface3:#e1e4f1;
-    --line:#e5e8f3; --text:#191d2e; --muted:#666d84; --faint:#9aa0b6;
-    --primary:#5a4bd6; --primary2:#6f60ea; --primary-ink:#ffffff; --primary-tint:#eeecfb;
-    --free:#0ea371; --free-tint:#e4f6ef; --amber:#b8860b; --amber-tint:#f8efd7;
-    --danger:#e5484d; --danger-tint:#fbe7e7;
-    --shadow:0 5px 18px rgba(31,26,80,.06); --shadow2:0 12px 34px rgba(31,26,80,.12);
-  }
-  :root[data-theme="dark"]{
-    --bg:#0f1117; --surface:#161a23; --surface2:#1e2330; --surface3:#28303f;
-    --line:#272d3a; --text:#e9ecf3; --muted:#98a0b2; --faint:#697187;
-    --primary:#8a7bff; --primary2:#9c8fff; --primary-ink:#12121c; --primary-tint:#221f3b;
-    --free:#2fd39a; --free-tint:#102b23; --amber:#e0a83a; --amber-tint:#2c2411;
-    --danger:#ff6b6b; --danger-tint:#2c1518;
-    --shadow:0 8px 22px rgba(0,0,0,.34); --shadow2:0 14px 40px rgba(0,0,0,.5);
-  }
-  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
-  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
-  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
-  input,select,textarea{font-family:inherit;font-size:16px}
-  .hidden{display:none!important}
+/* ===== Aventura das Direções — prova de lateralidade 3º ano (compat PC antigo) ===== */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;
+  color:#243b53;
+  background:#cfeafc;
+  background:-webkit-linear-gradient(top,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
+  background:linear-gradient(to bottom,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+#app{max-width:620px;margin:0 auto;padding:14px 14px 90px;}
+.card{
+  background:#ffffff;border:3px solid #ffd98a;border-radius:22px;
+  padding:18px 16px;margin:10px 0;text-align:center;
+  -webkit-box-shadow:0 8px 22px rgba(60,90,130,.18);box-shadow:0 8px 22px rgba(60,90,130,.18);
+  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;
+}
+@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+h1{font-size:30px;margin:6px 0 2px;color:#e07a1f;text-shadow:0 2px 0 #ffe0b0;}
+h2{font-size:20px;margin:4px 0;color:#2b6cb0;}
+p{font-size:18px;line-height:1.4;margin:8px 4px;}
+.grande{font-size:22px;font-weight:bold;color:#2b6cb0;}
+img{max-width:100%;}
+/* trilha de progresso (pegadas) */
+#trilha{display:block;text-align:center;margin:4px 0 6px;font-size:16px;color:#7a8aa0;font-weight:bold;}
+#barra{height:14px;background:#e6eef7;border-radius:10px;overflow:hidden;margin:6px 20px 2px;}
+#barra i{display:block;height:100%;width:0;background:#4caf50;background:-webkit-linear-gradient(left,#7ed957,#3fa34d);background:linear-gradient(to right,#7ed957,#3fa34d);-webkit-transition:width .4s;transition:width .4s;}
+/* cena da pista */
+.cena{position:relative;width:100%;max-width:480px;height:300px;margin:8px auto;}
+.cena .masc{position:absolute;top:50%;height:262px;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
+.cena .masc.ml{left:0;}
+.cena .masc.mr{right:0;}
+.cena .obj{position:absolute;top:50%;height:146px;-webkit-transform:translateY(-50%);transform:translateY(-50%);
+  -webkit-filter:drop-shadow(0 0 10px #ffe08a);filter:drop-shadow(0 0 10px #ffe08a);
+  -webkit-animation:flutua 2s ease-in-out infinite;animation:flutua 2s ease-in-out infinite;}
+.cena .obj.ld{left:1%;}
+.cena .obj.rd{right:1%;}
+@-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(-50%);}50%{-webkit-transform:translateY(-62%);}}
+@keyframes flutua{0%,100%{transform:translateY(-50%);}50%{transform:translateY(-62%);}}
+/* par de objetos lado a lado */
+.par{display:block;width:100%;max-width:460px;margin:10px auto;}
+.par .cel{display:inline-block;width:46%;vertical-align:middle;text-align:center;}
+.par .cel img{height:150px;}
+.par .cel span{display:block;font-size:15px;color:#8aa0b8;margin-top:2px;}
+/* cima/baixo */
+.vert{width:200px;margin:6px auto;}
+.vert div{padding:8px;}
+.vert img{height:120px;}
+/* seta = placa de madeira (imagem) */
+.setaimg{font-size:120px;line-height:1;display:inline-block;color:#e07a1f;text-shadow:0 3px 0 #ffcf8a;}
+.cena .placaseta{position:absolute;left:50%;top:50%;height:216px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));}
+.cena .placaseta.flip{-webkit-transform:translate(-50%,-50%) scaleX(-1);transform:translate(-50%,-50%) scaleX(-1);}
+/* botoes */
+.btn{
+  display:inline-block;font-family:inherit;font-size:22px;font-weight:bold;
+  border:none;border-radius:16px;padding:16px 10px;margin:8px 6px;cursor:pointer;
+  color:#fff;background:#2b8ae0;min-width:150px;
+  -webkit-box-shadow:0 5px 0 #1f6fb8;box-shadow:0 5px 0 #1f6fb8;
+}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 2px 0 #1f6fb8;box-shadow:0 2px 0 #1f6fb8;}
+.btn.verde{background:#3fa34d;-webkit-box-shadow:0 5px 0 #2e7d3a;box-shadow:0 5px 0 #2e7d3a;}
+.btn.laranja{background:#f08a1f;-webkit-box-shadow:0 5px 0 #c86f10;box-shadow:0 5px 0 #c86f10;}
+.btn.roxo{background:#8a63d2;-webkit-box-shadow:0 5px 0 #6d49b0;box-shadow:0 5px 0 #6d49b0;}
+.btn.grandao{font-size:24px;padding:18px 26px;}
+.opcoes{margin-top:6px;}
+/* campos */
+input,select{font-family:inherit;font-size:20px;padding:12px 10px;border:3px solid #b9d4ec;border-radius:14px;width:82%;max-width:320px;margin:6px auto;display:block;text-align:center;color:#243b53;background:#f7fbff;}
+label{font-size:17px;font-weight:bold;color:#2b6cb0;display:block;margin-top:8px;}
+.masc-capa{height:210px;margin:2px auto 0;-webkit-animation:balanca 2.4s ease-in-out infinite;animation:balanca 2.4s ease-in-out infinite;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+/* controles de voz */
+#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;}
+#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:46px;height:46px;border:3px solid #1668bf;border-radius:50%;background:#fff;color:#1668bf;font-size:20px;line-height:40px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
+#btnOuvir,#btnHist{background:#fff6e6;border:3px solid #e07a1f;color:#b8600f;border-radius:16px;font-size:18px;font-weight:bold;padding:8px 16px;cursor:pointer;font-family:inherit;margin-top:4px;}
+#btnHist{margin:6px auto 4px;-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.06);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+#statusenvio{font-weight:bold;margin-top:6px;font-size:15px;}
+.mini{font-size:14px;color:#8aa0b8;}
+/* enunciado escrito (le + ouve + ve = codificacao dupla) */
+.pergunta{font-size:21px;font-weight:bold;color:#2b5f9e;margin:2px 6px 10px;line-height:1.3;}
+/* plaquinha do referencial (em relacao a quem?) */
+.refbadge{display:inline-block;font-size:15px;font-weight:bold;border-radius:14px;padding:8px 14px;margin:2px auto 10px;line-height:1.35;max-width:96%;}
+.refbadge.voce{background:#e6f0ff;color:#1f5fb0;border:2px solid #b9d4ec;}
+.refbadge.costas{background:#e7f6ea;color:#1c7a34;border:2px solid #b6e0c0;}
+.refbadge.frente{background:#fff0e0;color:#b5600a;border:2px solid #f2c98a;}
+.refbadge.cima{background:#f0ecff;color:#5a49b0;border:2px solid #d3caf0;}
+/* seletor de turma em CAIXAS (permanente) */
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:6px;min-width:76px;padding:13px 10px;border:3px solid #b9d4ec;border-radius:16px;background:#f7fbff;color:#2b6cb0;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe0f0;box-shadow:0 4px 0 #cfe0f0;}
+.tbox.on{background:#2b8ae0;color:#fff;border-color:#1f6fb8;-webkit-box-shadow:0 4px 0 #1f6fb8;box-shadow:0 4px 0 #1f6fb8;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
 
-  #app{max-width:680px;margin:0 auto;min-height:100%;position:relative;
-    padding-bottom:calc(80px + env(safe-area-inset-bottom))}
-  .topbar{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 82%, transparent);
-    -webkit-backdrop-filter:saturate(160%) blur(14px);backdrop-filter:saturate(160%) blur(14px);
-    border-bottom:1px solid var(--line);padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
-    display:flex;align-items:center;gap:10px}
-  .topbar .avatar{width:40px;height:40px;border-radius:13px;flex-shrink:0;
-    background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;
-    display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px}
-  .topbar .brand{display:flex;flex-direction:column;line-height:1.15;flex:1;min-width:0}
-  .topbar .brand b{font-size:16px;font-weight:800;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .topbar .brand span{font-size:12px;color:var(--muted)}
-  .icon-btn{width:40px;height:40px;border-radius:12px;background:var(--surface);
-    display:flex;align-items:center;justify-content:center;font-size:18px;border:1px solid var(--line);flex-shrink:0;box-shadow:var(--shadow)}
-  .icon-btn:active{transform:scale(.94)}
-
-  .view{padding:16px;animation:fade .28s ease}
-  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-  /* week strip */
-  .weekstrip{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 12px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .weekstrip::-webkit-scrollbar{display:none}
-  .daychip{flex:0 0 auto;width:54px;padding:11px 0 9px;border-radius:16px;background:var(--surface);
-    border:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:4px;box-shadow:var(--shadow)}
-  .daychip:active{transform:scale(.95)}
-  .daychip .wd{font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.3px}
-  .daychip .dn{font-size:19px;font-weight:800}
-  .daychip .pip{width:6px;height:6px;border-radius:50%;background:transparent}
-  .daychip .pip.has{background:var(--free)}
-  .daychip.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 8px 18px color-mix(in srgb,var(--primary) 40%, transparent)}
-  .daychip.on .wd{color:rgba(255,255,255,.82)}
-  .daychip.on .pip.has{background:#fff}
-  .daychip.off{opacity:.42}
-
-  .daysum{display:flex;align-items:center;justify-content:space-between;margin:6px 2px 16px;gap:10px}
-  .daysum b{font-size:19px;font-weight:800;display:block}
-  .daysum .sub{font-size:13px;color:var(--muted)}
-  .livrebadge{background:var(--free-tint);color:var(--free);font-weight:800;font-size:13px;
-    padding:7px 13px;border-radius:999px;white-space:nowrap;flex-shrink:0}
-  .livrebadge.zero{background:var(--surface2);color:var(--muted)}
-
-  .legend{display:flex;gap:16px;margin:0 2px 14px;font-size:12px;color:var(--muted)}
-  .legend i{width:11px;height:11px;border-radius:4px;display:inline-block;margin-right:5px;vertical-align:-1px}
-  .legend i.free{background:var(--free)} .legend i.busy{background:var(--primary)} .legend i.lock{background:var(--amber)}
-
-  .turnohd{font-size:13px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);
-    margin:18px 2px 9px;display:flex;align-items:center;gap:8px}
-  .cards{display:flex;flex-direction:column;gap:9px}
-  .slotcard{display:flex;align-items:center;gap:12px;text-align:left;width:100%;background:var(--surface);
-    border:1px solid var(--line);border-left:4px solid var(--line);border-radius:15px;padding:13px 15px;box-shadow:var(--shadow)}
-  .slotcard:active{transform:translateY(1px)}
-  .slotcard .sc-ic{width:38px;height:38px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
-  .slotcard .sc-m{flex:1;min-width:0}
-  .slotcard .sc-t{font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .slotcard .sc-s{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
-  .slotcard .sc-r{text-align:right;font-size:14px;color:var(--faint);font-weight:800;white-space:nowrap;flex-shrink:0}
-  .slotcard .sc-r small{display:block;font-weight:500;font-size:11px;color:var(--faint)}
-  .slotcard.free{border-left-color:var(--free)}
-  .slotcard.free .sc-ic{background:var(--free-tint);color:var(--free)}
-  .slotcard.free .sc-t{color:var(--free)}
-  .slotcard.busy .sc-ic{background:var(--surface2);color:var(--muted)}
-  .slotcard.mine{border-left-color:var(--primary);background:var(--primary-tint)}
-  .slotcard.mine .sc-ic{background:var(--primary);color:#fff}
-  .slotcard.lock{border-left-color:var(--amber)}
-  .slotcard.lock .sc-ic{background:var(--amber-tint);color:var(--amber)}
-  .slotcard.lock .sc-t{color:var(--muted)}
-  .slotcard.off{border-left-color:var(--line);opacity:.72;cursor:default}
-  .slotcard.off .sc-ic{background:var(--surface2);color:var(--muted)}
-  .slotcard.off .sc-t{color:var(--muted)}
-  .slotcard.hae{border-left-color:var(--free);background:var(--free-tint);background:color-mix(in srgb,var(--free) 16%,transparent);border:1px solid color-mix(in srgb,var(--free) 45%,transparent);border-left-width:5px}
-  .slotcard.hae .sc-ic{background:var(--free);color:#fff}
-  .slotcard.hae .sc-t{color:var(--free)}
-  .slotcard.hae .sc-s{color:var(--free);opacity:.85}
-  .periodo{margin-top:8px;border-radius:18px;padding:30px 20px;text-align:center;
-    background:color-mix(in srgb, var(--pc) 13%, var(--surface));
-    border:1px solid color-mix(in srgb, var(--pc) 40%, transparent)}
-  .periodo .pico{font-size:44px;display:block;margin-bottom:10px}
-  .periodo b{font-size:22px;color:var(--pc);display:block}
-  .periodo .pd{font-size:13px;color:var(--muted);margin-top:6px}
-  .chip.perc.on{outline:3px solid color-mix(in srgb,var(--text) 30%,transparent);outline-offset:1px}
-  #avisobar{padding-top:12px}
-  .aviso{display:flex;align-items:center;gap:10px;margin:0 16px;padding:12px 14px;border-radius:14px;
-    background:var(--amber-tint);border:1px solid color-mix(in srgb,var(--amber) 35%,transparent)}
-  .aviso .ai{font-size:18px;flex-shrink:0}
-  .aviso .am{flex:1;font-size:14px;font-weight:700;color:var(--text);line-height:1.45}
-  .aviso .ax{width:28px;height:28px;border-radius:9px;background:transparent;color:var(--muted);font-size:15px;flex-shrink:0}
-  select.input{appearance:none;-webkit-appearance:none;-moz-appearance:none}
-  .btnlink{background:transparent;border:0;color:var(--primary);font-weight:700;font-size:13px;padding:8px 2px;cursor:pointer;display:inline-block}
-  .grecaptcha-badge{visibility:hidden!important}
-  .recaptcha-terms{font-size:11.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.5}
-  .recaptcha-terms a{color:var(--muted)}
-  .delx{margin-left:2px;color:#ff8b76;background:transparent;border:0;font-size:15px;padding:8px 12px;cursor:pointer;line-height:1;vertical-align:middle}
-
-  .empty{color:var(--muted);text-align:center;padding:40px 16px;font-size:15px;line-height:1.6}
-  .empty .big{font-size:40px;display:block;margin-bottom:10px}
-
-  /* bottom nav */
-  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;
-    padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-    background:color-mix(in srgb,var(--bg) 86%, transparent);
-    -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
-  .bottomnav .wrap{display:flex;gap:4px;max-width:680px;width:100%;justify-content:space-around}
-  .tab{flex:1;max-width:130px;display:flex;flex-direction:column;align-items:center;gap:3px;
-    padding:8px 4px;border-radius:14px;color:var(--faint);font-size:11px;font-weight:700}
-  .tab .ic{font-size:20px;position:relative}
-  .tab.on{color:var(--primary);background:var(--primary-tint)}
-  .tab{position:relative}
-  .tabbadge{position:absolute;top:2px;right:14px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;
-    background:#e0453a;color:#fff;font-size:11px;font-weight:800;line-height:17px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.25)}
-  /* ---- Pedidos ---- */
-  .viewpad{padding:14px 16px 96px}
-  .vtitle{font-size:19px;font-weight:800;margin-bottom:6px;color:var(--text)}
-  .pedlist{display:flex;flex-direction:column;gap:12px;margin-top:6px}
-  .pedcard{padding:12px 14px}
-  .pedtop{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
-  .pedturma{font-weight:800;font-size:15px;color:var(--text)}
-  .peddisc{font-weight:600;color:var(--faint)}
-  .pedst{font-weight:800;font-size:12px;white-space:nowrap}
-  .pedwhen,.pedwho{font-size:13px;color:var(--faint);margin-top:4px}
-  .pedlin{font-size:14px;color:var(--text);margin-top:6px;line-height:1.35}
-  .pedacoes{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-  .pedacoes .btn{flex:1;min-width:120px;margin:0}
-  .empty{text-align:center;color:var(--faint);padding:40px 10px}
-  .empty .ei{font-size:40px;margin-bottom:8px}
-
-  /* buttons / chips */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 18px;
-    border-radius:14px;font-weight:800;font-size:16px;width:100%}
-  .btn.primary{background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;
-    box-shadow:0 8px 20px color-mix(in srgb,var(--primary) 35%, transparent)}
-  .btn.ok{background:var(--free);color:#fff}
-  .btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--text);box-shadow:var(--shadow)}
-  .btn.danger{background:var(--danger-tint);color:var(--danger);border:1px solid color-mix(in srgb,var(--danger) 40%,transparent)}
-  .btn:active{transform:translateY(1px)}
-  .btn[disabled]{opacity:.5;pointer-events:none}
-
-  .chips{display:flex;flex-wrap:wrap;gap:8px}
-  .chip{padding:10px 15px;border-radius:12px;background:var(--surface2);border:1px solid var(--line);
-    font-size:14px;font-weight:600;color:var(--text)}
-  .chip:active{transform:scale(.96)}
-  .chip.on{background:var(--primary);color:#fff;border-color:var(--primary)}
-
-  label.fld{display:block;font-size:12px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;
-    color:var(--muted);margin:18px 2px 8px}
-  .input,textarea.input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);
-    padding:14px;color:var(--text);outline:none;box-shadow:var(--shadow)}
-  .input:focus,textarea.input:focus{border-color:var(--primary)}
-  textarea.input{resize:vertical;min-height:82px}
-
-  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
-  .stat .n{font-size:30px;font-weight:800;color:var(--primary)}
-  .stat .t{font-size:13px;color:var(--muted);margin-top:2px}
-  .rel-tools{margin-bottom:14px}
-  .rel-cab{margin:0 2px 14px}
-  .rel-cab b{font-size:17px}
-  .rel-cab div{font-size:12px;color:var(--muted)}
-  .donutwrap{text-align:center}
-  .donut{width:88px;height:88px;border-radius:50%;margin:0 auto 8px;position:relative;
-    background:conic-gradient(var(--primary) calc(var(--p)*1%), var(--surface2) 0);
-    display:flex;align-items:center;justify-content:center}
-  .donut::before{content:"";position:absolute;inset:11px;border-radius:50%;background:var(--surface)}
-  .donut span{position:relative;font-weight:800;font-size:19px}
-  .barrow{display:flex;align-items:center;gap:10px;padding:7px 0}
-  .barrow .bl{width:40%;font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .barrow .bt{flex:1;height:11px;background:var(--surface2);border-radius:6px;overflow:hidden}
-  .barrow .bt i{display:block;height:100%;background:var(--primary);border-radius:6px}
-  .barrow .bv{width:30px;text-align:right;font-weight:800;font-size:13px}
-  .recentes{display:flex;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .recentes::-webkit-scrollbar{display:none}
-  .lembrete{background:var(--primary-tint);border:1px solid color-mix(in srgb,var(--primary) 25%,transparent);border-radius:14px;padding:12px 14px;margin-bottom:14px}
-  .lembrete .lb-h{font-weight:800;font-size:13px;color:var(--primary);margin-bottom:6px}
-  .lembrete .lb-it{font-size:14px;padding:3px 0}
-  .lembrete .lb-it span{color:var(--muted)}
-  .grupobanner{border-radius:12px;padding:9px 14px;margin-bottom:14px;font-weight:800;font-size:13px}
-  .grupobanner.ini{background:var(--free-tint);color:var(--free)}
-  .grupobanner.fin{background:var(--primary-tint);color:var(--primary)}
-  .slotcard.exc{border-left-color:var(--amber)}
-  .slotcard.exc .sc-ic{background:var(--amber-tint);color:var(--amber)}
-  .semnav{width:36px;height:36px;border-radius:11px;background:var(--surface);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:19px;box-shadow:var(--shadow)}
-  .semnav:active{transform:scale(.92)}
-  .semana-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;-webkit-overflow-scrolling:touch}
-  .semana{border-collapse:collapse;width:100%;min-width:330px;font-size:12px}
-  .semana th,.semana td{border:1px solid var(--line);padding:6px 3px;text-align:center}
-  .semana th{background:var(--surface);color:var(--muted);font-weight:700}
-  .semana th.hoje .sdn{color:var(--primary)}
-  .semana th .swd{display:block;font-size:10px;text-transform:uppercase}
-  .semana th .sdn{display:block;font-size:15px;font-weight:800;color:var(--text)}
-  .semana td.al{background:var(--surface);font-weight:800;color:var(--muted);width:28px}
-  .semana tr.tsep td{background:var(--surface2);text-align:left;font-weight:800;font-size:11px;text-transform:uppercase;color:var(--muted);padding:5px 8px}
-  .semana td.sc{font-weight:700;height:36px}
-  .semana td.sc.free{color:var(--free);background:var(--free-tint)}
-  .semana td.sc.busy{color:var(--muted);background:var(--surface2)}
-  .semana td.sc.mine{color:#fff;background:var(--primary)}
-  .semana td.sc.lock{color:var(--amber);background:var(--amber-tint)}
-  .semana td.sc.hae{color:var(--free);background:var(--free-tint);font-size:10px}
-  .semana td.sc.per{color:var(--faint)}
-  .rec{flex:0 0 auto;width:184px;text-align:left;background:var(--surface2);border:1px solid var(--line);border-radius:14px;padding:12px;position:relative;cursor:pointer}
-  .rec:active{transform:scale(.97)}
-  .rec .rt{padding-right:24px}
-  .rec.sel{border-color:var(--primary);background:var(--primary-tint);box-shadow:0 0 0 2px color-mix(in srgb,var(--primary) 35%,transparent)}
-  .rec.sel::after{content:"✓";position:absolute;top:8px;right:9px;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;background:var(--primary);color:var(--primary-ink);font-size:12px;font-weight:800}
-  .recdel{position:absolute;top:5px;right:5px;width:30px;height:30px;line-height:1;text-align:center;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:13px;font-weight:700;padding:0;cursor:pointer}
-  .recdel:active{transform:scale(.9)}
-  .rec.sel .recdel{display:none}
-  .rec .rt{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rec .ro{font-size:12px;color:var(--muted);margin-top:3px;height:33px;overflow:hidden;line-height:1.35}
-  .rec .rtag{font-size:11px;color:var(--primary);font-weight:800;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  @media print{
-    body{background:#fff!important;color:#000!important}
-    .topbar,.bottomnav,.rel-tools,#installbtn,#avisobar,#modal,[data-act="imprimir"]{display:none!important}
-    #app{padding:0!important;max-width:100%!important}
-    .view{padding:0!important;animation:none!important}
-    .card,.stat{box-shadow:none!important;border:1px solid #ccc!important;background:#fff!important}
-    .stat .n{color:#000!important}
-    .barrow .bt{background:#eee!important} .barrow .bt i{background:#555!important}
-    .donut{background:conic-gradient(#444 calc(var(--p)*1%), #eee 0)!important}
-    .donut::before{background:#fff!important}
-    .rel-cab b,.rel-cab div,.sectitle{color:#000!important}
-  }
-  .rowitem{display:flex;align-items:center;gap:12px;padding:14px 4px;border-top:1px solid var(--line)}
-  .rowitem:first-child{border-top:none}
-  .rowitem .main{flex:1;min-width:0}
-  .rowitem .main .l1{font-weight:700}
-  .rowitem .main .l2{font-size:13px;color:var(--muted)}
-  .rowitem .tag{font-size:11px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--primary-tint);color:var(--primary)}
-
-  .backdrop{position:fixed;inset:0;z-index:50;background:rgba(10,12,20,.5);display:flex;align-items:flex-end;
-    justify-content:center;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);animation:fade .2s ease}
-  .sheet{background:var(--surface);width:100%;max-width:680px;border-radius:24px 24px 0 0;border:1px solid var(--line);
-    border-bottom:none;max-height:92vh;overflow-y:auto;padding:8px 18px calc(22px + env(safe-area-inset-bottom));
-    box-shadow:var(--shadow2);animation:slideup .3s cubic-bezier(.2,.9,.3,1)}
-  @keyframes slideup{from{transform:translateY(100%)}to{transform:none}}
-  .sheet .grab{width:44px;height:5px;border-radius:3px;background:var(--surface3);margin:8px auto 8px}
-  .sheet .sh-head{display:flex;align-items:center;gap:12px;padding:4px 0 4px}
-  .sheet .sh-head .t{font-size:20px;font-weight:800;flex:1}
-  .sheet .ctx{display:flex;align-items:center;gap:12px;background:var(--primary-tint);border:1px solid color-mix(in srgb,var(--primary) 22%,transparent);
-    border-radius:14px;padding:13px 15px;margin:12px 0 4px}
-  .sheet .ctx .ico{font-size:22px}
-  .sheet .ctx .d{font-weight:800}
-  .sheet .ctx .s{font-size:13px;color:var(--muted)}
-
-  .authwrap{max-width:430px;margin:0 auto;padding:0 22px;min-height:100vh;display:flex;flex-direction:column;justify-content:center;gap:6px}
-  .authwrap .logo{width:80px;height:80px;border-radius:24px;margin:0 auto 18px;
-    background:linear-gradient(135deg,var(--primary),var(--primary2));display:flex;align-items:center;justify-content:center;
-    font-size:42px;box-shadow:0 14px 34px color-mix(in srgb,var(--primary) 40%,transparent)}
-  .authwrap .logoimg{width:92px;height:92px;border-radius:24px;margin:0 auto 18px;display:block;object-fit:cover;
-    box-shadow:0 14px 34px color-mix(in srgb,var(--primary) 40%,transparent)}
-  .authwrap h1{text-align:center;font-size:27px;font-weight:800}
-  .authwrap .sub{text-align:center;color:var(--muted);margin-bottom:20px;font-size:14px}
-  .authwrap .hint{font-size:12.5px;color:var(--muted);text-align:center;margin-top:14px;line-height:1.55}
-
-  .toast{position:fixed;left:50%;bottom:calc(94px + env(safe-area-inset-bottom));transform:translateX(-50%);
-    background:var(--text);color:var(--bg);padding:12px 18px;border-radius:999px;font-size:14px;font-weight:700;
-    z-index:80;box-shadow:var(--shadow2);max-width:90%;text-align:center;animation:toastin .25s ease}
-  @keyframes toastin{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translateX(-50%)}}
-  #installbtn{position:fixed;right:14px;bottom:calc(94px + env(safe-area-inset-bottom));z-index:40;
-    background:linear-gradient(135deg,var(--primary),var(--primary2));color:#fff;font-weight:800;font-size:14px;
-    padding:12px 16px;border-radius:999px;border:none;display:none;align-items:center;gap:8px;
-    box-shadow:0 10px 26px color-mix(in srgb,var(--primary) 45%,transparent)}
-  #installbtn.show{display:inline-flex;animation:toastin .3s ease}
-  #installbtn:active{transform:translateY(1px)}
-
-  .sectitle{font-size:12px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:22px 2px 10px}
-  .minibtn{padding:9px 13px;border-radius:11px;background:var(--surface2);border:1px solid var(--line);font-size:13px;font-weight:800}
-  .minibtn.acc{background:var(--primary);color:#fff;border-color:var(--primary)}
-  table.grade{width:100%;border-collapse:collapse;font-size:14px}
-  table.grade th,table.grade td{padding:8px 6px;text-align:center;border-bottom:1px solid var(--line)}
-  table.grade th{color:var(--muted);font-weight:800;font-size:12px}
-  table.grade td.d{text-align:left;font-weight:800}
-  table.grade input{width:52px;text-align:center;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:7px 4px;color:var(--text)}
-  .horrow{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-  .horrow .lbl{width:60px;font-weight:800;font-size:14px}
-  .horrow input{flex:1;background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:9px;color:var(--text);text-align:center}
+/* ============================================================
+   TEMA PIRATA — "Ilha do Tesouro" (TESTE).
+   Para VOLTAR AO NORMAL: apague este bloco inteiro (ate a tag que fecha o style).
+   ============================================================ */
+body{background:#0f2c47;background:-webkit-linear-gradient(top,#164066,#0a1f36);background:linear-gradient(to bottom,#164066,#0a1f36);}
+.card{background:#f1e2bf;border:4px solid #7a4a17;-webkit-box-shadow:0 12px 30px rgba(0,0,0,.5);box-shadow:0 12px 30px rgba(0,0,0,.5);}
+.card:before{content:"";position:absolute;left:8px;right:8px;top:8px;bottom:8px;border:2px dashed #b8862f;border-radius:14px;pointer-events:none;}
+.card{position:relative;}
+h1{color:#7a4a17;text-shadow:1px 1px 0 #e8cf9a;}
+h2{color:#8a5a1a;}
+.grande{color:#7a4a17;}
+p{color:#4a2f12;}
+label{color:#8a5a1a;}
+.mini{color:#9a7a4a;}
+#trilha{color:#e8cf9a;}
+#barra{background:#c7ad78;}
+#barra i{background:#e8b923;background:-webkit-linear-gradient(left,#f0cf5a,#c9931a);background:linear-gradient(to right,#f0cf5a,#c9931a);}
+.pergunta{color:#7a4a17;}
+input{border-color:#b8862f;background:#fff8e8;color:#4a2f12;}
+.btn.grandao{background:#b0311f;background:-webkit-linear-gradient(top,#c0392b,#8f2418);background:linear-gradient(#c0392b,#8f2418);-webkit-box-shadow:0 6px 0 #6a1a10;box-shadow:0 6px 0 #6a1a10;}
+#btnOuvir{background:#fff2d6;border-color:#b0311f;color:#8f2418;}
+#ctrlVoz .cv-bt{border-color:#7a4a17;color:#7a4a17;}
+.setaimg{color:#b0311f;text-shadow:0 3px 0 #e8b46a;}
+.par .cel span{color:#9a7a4a;}
+/* turma = moedas de ouro */
+.tbox{border:3px solid #7a4a17;background:#e8cf9a;color:#5a3512;-webkit-box-shadow:0 4px 0 #b8862f;box-shadow:0 4px 0 #b8862f;border-radius:50px;}
+.tbox.on{background:#e8b923;color:#3a2408;border-color:#5a3512;-webkit-box-shadow:0 4px 0 #5a3512;box-shadow:0 4px 0 #5a3512;}
 </style>
-</head>
-<body>
-  <div id="root"><div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:#8a90a3;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
-    <div style="font-size:44px">🗓️</div>
-    <div style="font-weight:700">Carregando…</div>
-  </div></div>
-  <div id="modal"></div>
-  <div id="toast" class="hidden" role="status" aria-live="polite"></div>
+
+<div id="app"></div>
+
+<div id="ctrlVoz">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
+  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+</div>
 
 <script>
-"use strict";
-/* App Check: o módulo no fim da página carrega o SDK e resolve esta promessa quando
-   o "carimbo" estiver pronto. _acToken() devolve o token (ou "" se indisponível). */
-window._acReady = new Promise(function(res){ window._acResolve = res; });
-window._acToken = window._acToken || (async function(){ return ""; });
-/* Nunca deixa o carimbo travar o app: espera no máx. 2,5s por token; se falhar/demorar
-   (ex.: reCAPTCHA bloqueado por ad-blocker), desiste na sessão e segue sem ele. */
-let _acFalhou=false;
-async function _acHeader(){
-  if(_acFalhou || !window._acToken) return {};
+/* ====== CONFIG ====== */
+var TURMAS=["2º A","2º B","2º C","2º D"];
+/* Historia contada na capa (narrada). Muda o texto = regerar o audio. */
+var HISTORIA="Olá, explorador! Eu achei um mapa do tesouro bem antigo. No caminho tem vários sinais: a Estrela-Guia lá no céu, uma árvore, uma placa de madeira e muito mais. Cada sinal mostra uma direção. Se a gente ler as direções certas, esquerda, direita, em cima e embaixo, vamos achar o baú do tesouro no final! Agora escreva o seu nome, escolha a sua turma e toque em começar a aventura.";
+var _histTocada=false; /* a historia da capa toca 1x, no 1o gesto (o navegador exige um toque) */
+/* Firebase (canal Google que passa no firewall) — testar ja */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+/* Apps Script (planilha real): cole aqui o link /exec do SEU Web App. Vazio = nao envia p/ planilha. */
+var URL_PLANILHA="";
+
+/* ====== As 10 pistas (resposta 100% controlada aqui) ======
+   tipos: vert (cima/baixo), masc (mascote+objeto num lado), par (2 objetos), seta.
+   Em 'masc': vista=costas|frente, obj, lado=dir|esq (lado da IMAGEM). A 'correta' ja
+   considera o espelho quando a vista e' frente. */
+var QUESTOES=[
+ {tipo:"vert", ref:"cima", cima:"estrela", baixo:"flor",
+  pergunta:"A Estrela-Guia está em cima ou embaixo?",
+  fala:"Pista um! O explorador abre o mapa. À noite, a Estrela-Guia brilha lá no alto. Ela está em cima ou embaixo?",
+  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"estrela", lado:"dir",
+  pergunta:"A Estrela-Guia está à direita ou à esquerda dele?",
+  fala:"Pista dois! O explorador está de costas, igual a você, seguindo a Estrela-Guia. Ela está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"par", ref:"voce", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
+  pergunta:"A árvore está à sua esquerda ou à sua direita?",
+  fala:"Pista três! De dia, o caminho tem uma árvore grande e o sol. Olhando para a tela, a árvore está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"cogumelo", lado:"esq",
+  pergunta:"O cogumelo está à direita ou à esquerda dele?",
+  fala:"Pista quatro! No caminho aparece um cogumelo. O explorador está de costas. O cogumelo está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
+
+ {tipo:"seta", ref:"voce", aponta:"dir",
+  pergunta:"Para que lado a seta está apontando?",
+  fala:"Pista cinco! Uma placa de madeira no caminho! Olhando para a tela, para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"flor", lado:"dir",
+  pergunta:"A flor está à direita ou à esquerda dele?",
+  fala:"Pista seis! O explorador de costas acha um canteiro de flores. A flor está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
+  pergunta:"O explorador está de FRENTE. A Estrela-Guia está à direita ou à esquerda dele?",
+  fala:"Pista sete, atenção! Agora a Estrela-Guia voltou e o explorador está te olhando de frente. Ela está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
+
+ {tipo:"par", ref:"voce", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
+  pergunta:"O sol está à sua esquerda ou à sua direita?",
+  fala:"Pista oito! O sol está bem alto no céu. Olhando para a tela, o sol está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"arvore", lado:"dir",
+  pergunta:"O explorador está de FRENTE. A árvore está à direita ou à esquerda dele?",
+  fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"esq",
+  pergunta:"O baú do tesouro está à direita ou à esquerda do explorador?",
+  fala:"Pista dez, a última! Chegamos! O baú do tesouro apareceu. O explorador está de costas. O baú está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1}
+];
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false;
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+
+/* ====== VOZ (arquivos audio/<chave>.mp3, voz Antonio, zero navegador) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("avdir_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+/* som NEUTRO de toque (Web Audio, sem arquivo). Igual p/ qualquer resposta: NAO revela certo/errado. */
+var _actx=null;
+function somToque(){
+  if(VOZ_MUDA){return;}
   try{
-    const t = await Promise.race([ window._acToken(), new Promise(function(res){ setTimeout(function(){res("__TO__");}, 2500); }) ]);
-    if(t==="__TO__"){ _acFalhou=true; return {}; }  // demorou demais (ex.: reCAPTCHA bloqueado) -> desiste na sessão
-    if(t) return {"X-Firebase-AppCheck": t};        // token pronto
-    // token vazio agora (ainda cunhando): NÃO desiste — tenta de novo na próxima chamada
-  }catch(e){ _acFalhou=true; }
-  return {};
-}
-/* ================= CONFIG / FIREBASE (REST, sem SDK) ================= */
-const DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.com";
-const ESCOLA = "vidal-ramos";               // gaveta desta escola (multi-escola desde ja)
-const P = `/agenda/${ESCOLA}`;
-// Anexa o "crachá" (idToken) do Firebase Auth quando existir. Enquanto as regras
-// estiverem abertas (Fase A) ele é opcional; na Fase B passa a ser exigido.
-const url = (path) => `${DB}${P}${path}.json${(S.auth&&S.auth.idToken)?("?auth="+encodeURIComponent(S.auth.idToken)):""}`;
-
-/* Distingue "leu e veio vazio" (ok:true, val:null) de "falhou" (ok:false):
-   sem isso, uma queda de rede parece "banco vazio" e assusta o usuário. */
-/* Faz a chamada ao banco; se o crachá venceu (401/403), renova UMA vez e repete.
-   Cobre leitura e gravação — evita "agenda vazia" e "não salvou" por token expirado. */
-/* fetch com LIMITE DE TEMPO: se a rede estagnar (conectada mas pendurada), aborta e
-   vira falha "limpa" — evita a tela branca congelada no PWA. */
-async function _fetchT(u, opts, ms){
-  ms = ms||9000;
-  let ctrl=null, t=null;
-  try{ ctrl = new AbortController(); }catch(e){ ctrl=null; }
-  const f = fetch(u, ctrl?Object.assign({}, opts||{}, {signal:ctrl.signal}):(opts||{}));
-  // Corrida com um prazo: mesmo sem AbortController (navegador antigo) a promessa
-  // NUNCA fica pendurada — o prazo rejeita e vira falha "limpa".
-  const prazo = new Promise(function(_,rej){ t=setTimeout(function(){ try{ if(ctrl) ctrl.abort(); }catch(e){} rej(new Error("TIMEOUT")); }, ms); });
-  try{ return await Promise.race([f, prazo]); }
-  finally{ if(t) clearTimeout(t); }
-}
-/* Lê o CORPO da resposta com prazo próprio: o _fetchT só cobre conexão+cabeçalhos;
-   se o servidor manda o header e depois estagna o corpo, r.json() pendura sem isto. */
-function _corpoJson(r, ms){
-  let t=null;
-  const prazo = new Promise(function(_,rej){ t=setTimeout(function(){ rej(new Error("BODYTO")); }, ms||9000); });
-  return Promise.race([ r.json(), prazo ]).finally(function(){ if(t) clearTimeout(t); });
-}
-async function _fbFetch(path, opts){
-  opts = opts || {};
-  const ac = await _acHeader();
-  const withAC = (o)=> Object.assign({}, o, {headers: Object.assign({}, o.headers||{}, ac)});
-  let r;
-  try{ r = await _fetchT(url(path), withAC(opts)); }
-  catch(e){ return {ok:false, status:0}; }   // timeout/rede -> falha limpa (não pendura)
-  if((r.status===401||r.status===403) && await authRefresh()){
-    try{ r = await _fetchT(url(path), withAC(opts)); }catch(e){ return {ok:false, status:0}; }
-  }
-  // Após gravar em /reservas, atualiza um "marcador" leve (poucos bytes). O poll lê só
-  // esse marcador e só baixa a agenda inteira quando ele muda -> economiza banda/cota.
-  if(r.ok && opts.method && opts.method!=="GET" && path.indexOf("/reservas")===0){
-    S._lwSeen=Date.now();
-    try{ _fetchT(url("/config/reservasLastWrite"), {method:"PUT", body:JSON.stringify(S._lwSeen), headers:ac}).catch(function(){}); }catch(e){}
-  }
-  return r;
-}
-async function fbGetRaw(path){
-  try{ const r = await _fbFetch(path); if(!r.ok) return {ok:false, status:r.status}; return {ok:true, val: await _corpoJson(r)}; }
-  catch(e){ return {ok:false, net:true}; }
-}
-async function fbGet(path){ const r = await fbGetRaw(path); return r.ok ? r.val : null; }
-// _httpStatus guarda o status da última gravação: 403 = a regra recusou (sem permissão),
-// diferente de falha de rede — permite mostrar a mensagem certa em vez de "tente de novo".
-var _httpStatus=0;
-async function fbSet(path,val){ const r=await _fbFetch(path,{method:'PUT',body:JSON.stringify(val)}); _httpStatus=r.status||0; return r.ok; }
-async function fbUpdate(path,val){ const r=await _fbFetch(path,{method:'PATCH',body:JSON.stringify(val)}); _httpStatus=r.status||0; return r.ok; }
-async function fbDel(path){ const r=await _fbFetch(path,{method:'DELETE'}); _httpStatus=r.status||0; return r.ok; }
-function _msgFalha(base){ return _httpStatus===403 ? "Esta reserva não é sua — só quem reservou (ou o administrador) pode alterá-la." : (base||"Não foi possível. Tente de novo."); }
-
-/* ===== Firebase Authentication (REST) — o "crachá" que as regras vão exigir.
-   FASE A: regras ainda abertas; tudo aqui roda em best-effort e, se falhar, NÃO
-   bloqueia o login (o app segue igual a hoje). Login por matrícula vira um e-mail
-   interno (matrícula@dominio), sem caixa de e-mail real. ===== */
-const FB_API_KEY = "AIzaSyCWX-lK7pr6yW_E5jDvDhVewe20lB3E6Ks";  // chave PÚBLICA (segura em cliente)
-const AUTH_DOMINIO = "vidalramos.agenda";
-/* ver>1 gera um e-mail novo (matricula-v2@...) — usado quando o admin RESETA a senha:
-   a conta segura antiga é abandonada e uma nova é criada no primeiro acesso. */
-function _authEmail(id, ver){ const v=(+ver>1)?("-v"+(+ver)):""; return sanId(id).toLowerCase().replace(/[^a-z0-9_.-]/g,"") + v + "@" + AUTH_DOMINIO; }
-function _guardaAuth(idToken, refreshToken, expiresIn, uid){
-  // uid = localId do Firebase Auth (identidade real do usuário). Guardado para, no
-  // futuro, carimbar o "dono" de cada reserva e as regras isolarem professor a professor.
-  S.auth = { idToken:idToken, refreshToken:refreshToken, uid: uid || (S.auth&&S.auth.uid) || null, expira: Date.now() + ((parseInt(expiresIn||"3600",10)-60)*1000) };
-  try{ if(refreshToken) localStorage.setItem("agenda_rt", refreshToken); }catch(e){}
-}
-function authAtivo(){ return !!(S.auth && S.auth.idToken); }
-async function _authIdentity(kind, id, senha, ver){
-  let r; try{ r = await _fetchT("https://identitytoolkit.googleapis.com/v1/accounts:"+kind+"?key="+FB_API_KEY,
-    {method:"POST", headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
-     body: JSON.stringify({email:_authEmail(id, ver), password:""+senha, returnSecureToken:true})}); }
-  catch(e){ throw new Error("REDE"); }
-  const j = await _corpoJson(r).catch(function(){return {};});
-  if(!r.ok) throw new Error((j&&j.error&&j.error.message)||"AUTH_ERRO");
-  _guardaAuth(j.idToken, j.refreshToken, j.expiresIn, j.localId); return j;
-}
-async function authCriar(id, senha, ver){   // cria; se já existir, apenas entra
-  try{ return await _authIdentity("signUp", id, senha, ver); }
-  catch(e){ if(/EMAIL_EXISTS/.test(e.message)) return await _authIdentity("signInWithPassword", id, senha, ver); throw e; }
-}
-// ENTRAR de forma à prova de tudo, sem precisar "adivinhar" se a conta já existe.
-// Motivo: o flag fbAuth não fica gravado (regras de isolamento) e a Proteção contra
-// Enumeração do Firebase esconde se a conta existe (createAuthUri e o próprio login
-// devolvem erro genérico). Então: tenta ENTRAR; se o login falhar de forma ambígua,
-// tenta CRIAR — e é o próprio Firebase que revela a verdade: se responder EMAIL_EXISTS,
-// a conta existe e portanto a senha estava errada; senão, é 1º acesso e a conta é criada.
-async function authEntrarOuCriar(id, senha, ver){
-  try{ return await _authIdentity("signInWithPassword", id, senha, ver); }
-  catch(e){
-    const m=e.message||"";
-    if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|EMAIL_NOT_FOUND|MISSING_PASSWORD/.test(m)){
-      try{ return await _authIdentity("signUp", id, senha, ver); }
-      catch(e2){ if(/EMAIL_EXISTS/.test(e2.message||"")) throw new Error("SENHA_ERRADA"); throw e2; }
-    }
-    throw e;
-  }
-}
-// Pergunta ao Firebase Auth se a conta (da versão atual) já existe — FONTE DA VERDADE,
-// sem gravar nada no banco. Necessário porque as regras de isolamento não deixam o
-// professor gravar a marca "fbAuth" no próprio cadastro; assim o app deixaria de saber
-// que ele já tem senha e pediria "criar senha" toda vez. Retorna true/false, ou null se
-// não deu pra perguntar (rede/bloqueio) — aí cai no fallback antigo.
-async function authRegistrado(id, ver){
-  try{
-    const r = await _fetchT("https://identitytoolkit.googleapis.com/v1/accounts:createAuthUri?key="+FB_API_KEY,
-      {method:"POST", headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
-       body: JSON.stringify({identifier:_authEmail(id, ver), continueUri:(location&&location.origin)||"https://vidalprof.github.io"})}, 8000);
-    const j = await _corpoJson(r).catch(function(){return {};});
-    if(!r.ok) return null;
-    return j.registered===true;
-  }catch(e){ return null; }
-}
-async function authRefresh(){          // renova o crachá a partir do refresh token salvo
-  let rt = (S.auth&&S.auth.refreshToken); if(!rt){ try{ rt=localStorage.getItem("agenda_rt"); }catch(e){} }
-  if(!rt) return false;
-  let r; try{ r = await _fetchT("https://securetoken.googleapis.com/v1/token?key="+FB_API_KEY,
-    {method:"POST", headers:Object.assign({"Content-Type":"application/x-www-form-urlencoded"}, await _acHeader()),
-     body: "grant_type=refresh_token&refresh_token="+encodeURIComponent(rt)}); }
-  catch(e){ return false; }
-  const j = await _corpoJson(r).catch(function(){return {};});
-  if(!r.ok) return false;
-  _guardaAuth(j.id_token, j.refresh_token, j.expires_in, j.user_id); return true;
-}
-
-/* ================= DEFAULTS (semeados no 1o acesso) ================= */
-const DIAS = ["dom","seg","ter","qua","qui","sex","sab"];
-const DIAS_NOME = {dom:"Dom",seg:"Seg",ter:"Ter",qua:"Qua",qui:"Qui",sex:"Sex",sab:"Sab"};
-const TURNOS = [{k:"matutino",n:"Matutino",c:"m"},{k:"vespertino",n:"Vespertino",c:"v"},{k:"noturno",n:"Noturno",c:"n"}];
-const ORD_TURNO = {matutino:0, vespertino:1, noturno:2};  // ordem real do dia (não alfabética)
-const DEF_DISCIPLINAS = ["Língua Portuguesa","Matemática","Ciências","História","Geografia","Inglês","Ensino Religioso","Artes","Ed. Física"];
-const DEF_TURMAS = ["0 - Pré","1º ano","2º ano","3º ano","4º ano","5º ano","6º ano","7º ano","8º ano","9º ano"];
-const DEF_AULAS = {dom:{m:0,v:0,n:0},seg:{m:4,v:4,n:0},ter:{m:4,v:4,n:0},qua:{m:0,v:0,n:0},qui:{m:4,v:4,n:0},sex:{m:4,v:4,n:0},sab:{m:0,v:0,n:0}};
-const DEF_HORARIOS = {
-  matutino:[["07:25","08:21"],["08:21","09:17"],["09:33","10:29"],["10:29","11:25"]],
-  vespertino:[["12:55","13:51"],["13:51","14:47"],["15:03","15:59"],["15:59","16:55"]],
-  noturno:[["19:00","19:50"],["19:50","20:40"],["20:55","21:45"],["21:45","22:35"]]
-};
-const DEF_CONFIG = {appNome:"Agenda Aulas",escolaNome:"E.B.M. Vidal Ramos",
-  obrigatorios:true, apenasProximoDia:true, limiteMeses:1,
-  aviso:"", haeLabel:"HAE — Professor de Informática", hae:[],
-  turmaLetras:["A","B","C","D"], liberadoAte:"", periodos:[],
-  rodizio:{ativo:false, refSeg:"", refGrupo:"ini"}};
-
-/* ================= STATE ================= */
-const S = {user:null, auth:null, config:null, professores:{}, disciplinas:[], turmas:[], reservas:{}, recentes:[], _ocultos:{}, dataSel:null, tab:"hoje"};
-let _pollTimer=null;
-
-/* ================= HELPERS ================= */
-const $ = (id)=>document.getElementById(id);
-const esc = (s)=> (""+(s==null?"":s)).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-/* Só aceita cor hexadecimal válida; qualquer outra coisa (vinda do banco) vira a cor padrão.
-   Evita injeção de HTML/CSS via campo de cor interpolado em style="...". */
-const corSegura = (c)=> (/^#[0-9a-fA-F]{3,8}$/.test(""+c) ? (""+c) : "#0ea3a3");
-const sanId = (s)=> (""+s).replace(/[.#$\[\]\/\s]/g,"_");
-const pad = (n)=> (n<10?"0":"")+n;
-const hojeStr = ()=>{ const d=new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
-const dateFromStr = (s)=>{ const p=s.split("-"); return new Date(+p[0],+p[1]-1,+p[2]); };
-const MES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
-const SEM = ["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
-const fmtDia = (s)=>{ const d=dateFromStr(s); return `${d.getDate()} de ${MES[d.getMonth()]}`; };
-const fmtSem = (s)=> SEM[dateFromStr(s).getDay()];
-const cap1 = (s)=> s? s.charAt(0).toUpperCase()+s.slice(1) : s;
-const addDias = (s,n)=>{ const d=dateFromStr(s); d.setDate(d.getDate()+n); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
-const fimDoMes = (s)=>{ const d=dateFromStr(s); const e=new Date(d.getFullYear(), d.getMonth()+1, 0); return `${e.getFullYear()}-${pad(e.getMonth()+1)}-${pad(e.getDate())}`; };
-const fimMesOffset = (s,off)=>{ const d=dateFromStr(s); const e=new Date(d.getFullYear(), d.getMonth()+1+off, 0); return `${e.getFullYear()}-${pad(e.getMonth()+1)}-${pad(e.getDate())}`; };
-const diffDias = (a,b)=> Math.round((dateFromStr(b)-dateFromStr(a))/86400000);
-
-function toast(msg){
-  const t=$("toast"); t.textContent=msg; t.classList.remove("hidden");
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.add("hidden"),2400);
-}
-
-/* ===== TEMA (claro/escuro) — preferência de cada usuário, salva no aparelho ===== */
-function _temaPref(){ try{ return localStorage.getItem("agenda_tema")||"auto"; }catch(e){ return "auto"; } }
-function aplicarTema(){ const p=_temaPref(), r=document.documentElement;
-  if(p==="light"||p==="dark") r.setAttribute("data-theme",p); else r.removeAttribute("data-theme"); }
-function temaEscuro(){ const p=_temaPref();
-  if(p==="dark") return true; if(p==="light") return false;
-  return !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches); }
-function alternarTema(){ try{ localStorage.setItem("agenda_tema", temaEscuro()?"light":"dark"); }catch(e){} aplicarTema(); attTemaIcon(); }
-function attTemaIcon(){ const b=$("btnTema"); if(b){ b.innerHTML=temaEscuro()?"☀️":"🌙"; b.title=temaEscuro()?"Mudar para tema claro":"Mudar para tema escuro"; } }
-
-function aulasDoDia(dataStr, turnoC){
-  const wk = DIAS[dateFromStr(dataStr).getDay()];
-  const a = (S.config.aulas && S.config.aulas[wk]) || {m:0,v:0,n:0};
-  return a[turnoC]||0;
-}
-function horarioLabel(turnoK, idx){
-  const h = S.config.horarios && S.config.horarios[turnoK];
-  if(h && h[idx]) return h[idx][0]+" – "+h[idx][1];
-  return "";
-}
-/* rodízio de semanas: anos iniciais (Pré–5º) x anos finais (6º–9º) */
-function grupoDaTurma(turma){
-  const s=(""+turma).toLowerCase();
-  if(/pr[eé]/.test(s)) return "ini";
-  const m=s.match(/(\d+)/); if(!m) return null;
-  const n=+m[1];
-  if(n>=0 && n<=5) return "ini";
-  if(n>=6 && n<=9) return "fin";
-  return null;
-}
-function segDaSemana(dataStr){ const d=dateFromStr(dataStr), dow=(d.getDay()+6)%7; return addDias(dataStr,-dow); }
-function grupoDaSemana(dataStr){
-  const r=S.config && S.config.rodizio;
-  if(!r || !r.ativo || !r.refSeg) return null;
-  const semanas=Math.round(diffDias(r.refSeg, segDaSemana(dataStr))/7);
-  const par=((semanas%2)+2)%2, g=r.refGrupo||"ini";
-  return par===0 ? g : (g==="ini"?"fin":"ini");
-}
-function nomeGrupo(g){ return g==="ini" ? "Anos Iniciais (Pré–5º)" : (g==="fin" ? "Anos Finais (6º–9º)" : ""); }
-/* período (recesso/férias): dia dentro de um intervalo configurado */
-function periodoDoDia(dataStr){
-  const arr=(S.config && S.config.periodos) || [];
-  for(let i=0;i<arr.length;i++){ const p=arr[i]; if(p.inicio && p.fim && dataStr>=p.inicio && dataStr<=p.fim) return p; }
-  return null;
-}
-/* Feriados NACIONAIS (dias em que ninguém trabalha): agenda fechada para os
-   professores — só o admin pode agendar. Calculados sozinhos todo ano.
-   Fixos + Sexta-feira Santa (móvel, depende da Páscoa). O admin pode desligar
-   tudo em ⚙️ → Outras configurações (config.feriadosNac === false). */
-const FERIADOS_FIXOS = {
-  "01-01":"Confraternização Universal (Ano Novo)",
-  "04-21":"Tiradentes",
-  "05-01":"Dia do Trabalho",
-  "09-07":"Independência do Brasil",
-  "10-12":"Nossa Senhora Aparecida",
-  "11-02":"Finados",
-  "11-15":"Proclamação da República",
-  "11-20":"Consciência Negra",
-  "12-25":"Natal"
-};
-/* Domingo de Páscoa (algoritmo de Meeus/Butcher) → "YYYY-MM-DD" */
-function pascoa(ano){
-  const a=ano%19, b=Math.floor(ano/100), c=ano%100, d=Math.floor(b/4), e=b%4,
-    f=Math.floor((b+8)/25), g=Math.floor((b-f+1)/3), h=(19*a+b-d-g+15)%30,
-    i=Math.floor(c/4), k=c%4, l=(32+2*e+2*i-h-k)%7, m=Math.floor((a+11*h+22*l)/451),
-    mes=Math.floor((h+l-7*m+114)/31), dia=((h+l-7*m+114)%31)+1;
-  return ano+"-"+pad(mes)+"-"+pad(dia);
-}
-function feriadoNacional(dataStr){
-  if(S.config && S.config.feriadosNac===false) return null;
-  const nome=FERIADOS_FIXOS[dataStr.slice(5)];
-  if(nome) return nome;
-  const ano=+dataStr.slice(0,4);
-  if(dataStr===addDias(pascoa(ano),-2)) return "Sexta-feira Santa";
-  return null;
-}
-/* Ponto facultativo (Carnaval e Corpus Christi): nem toda escola fecha, então
-   fica num botão à parte (config.facultativos). Ligado por padrão. */
-function feriadoFacultativo(dataStr){
-  if(S.config && S.config.facultativos===false) return null;
-  const pa=pascoa(+dataStr.slice(0,4));
-  if(dataStr===addDias(pa,-48) || dataStr===addDias(pa,-47)) return "Carnaval";
-  if(dataStr===addDias(pa,60)) return "Corpus Christi";
-  return null;
-}
-/* Qualquer feriado que fecha a agenda para o professor (nacional OU facultativo). */
-function diaFeriado(dataStr){ return feriadoNacional(dataStr) || feriadoFacultativo(dataStr); }
-/* HAE recorrente: slot (dia-da-semana + turno + aula) fixo como hora-atividade */
-function ehHAE(dataStr, turnoK, aula){
-  const wk = DIAS[dateFromStr(dataStr).getDay()];
-  const arr = (S.config && S.config.hae) || [];
-  for(let i=0;i<arr.length;i++){ const x=arr[i]; if(x.wk===wk && x.turno===turnoK && (+x.aula)===(+aula)) return true; }
-  return false;
-}
-
-/* ================= INIT ================= */
-async function init(){
-  aplicarTema();
-  // espera o App Check ficar pronto (com teto de 3s) antes das chamadas ao banco
-  try{ await Promise.race([ window._acReady, new Promise(function(r){ setTimeout(r,3000); }) ]); }catch(e){}
-  await carregarBase();
-  // Se a busca dos dados essenciais FALHOU (rede/servidor), não é "primeiro acesso":
-  // mostra "sem conexão" em vez da tela de criar administrador.
-  if(_baseErro){ telaSemConexao(); return; }
-  if(!S.professores || Object.keys(S.professores).length===0){ telaBootstrap(); return; }
-  let saved=null; try{ saved=localStorage.getItem("agenda_user"); }catch(e){}
-  if(saved && S.professores[saved]){
-    S.user = S.professores[saved];
-    let tok=false; try{ tok=await authRefresh(); }catch(e){}
-    // Sem crachá válido, as regras fechadas não deixam ler a agenda -> pede a senha de novo
-    // (em vez de abrir uma agenda vazia sem explicação).
-    if(!tok){
-      // Sessão expirou mas a pessoa já tinha login salvo -> a conta existe -> tela de ENTRAR
-      // (nunca "criar"). Não perguntamos ao createAuthUri: com a Proteção contra Enumeração
-      // ele pode dizer "não existe" para uma conta que existe, e aí voltaria o bug.
-      _sessaoExpirou=true; _loginPend=S.professores[saved];
-      telaSenha(); return;
-    }
-    abrirApp();
-  }
-  else telaLogin();
-}
-function telaSemConexao(){
-  $("root").innerHTML = `<div class="authwrap">
-    <div class="logo">📡</div>
-    <h1>Sem conexão</h1>
-    <p class="sub">Não consegui carregar os dados agora. Verifique sua internet e tente de novo.</p>
-    <button class="btn primary" data-act="recarregar-app">🔄 Tentar de novo</button>
-    <p class="hint">Seus dados estão salvos no servidor — nada foi perdido.</p>
-  </div>`;
-}
-var _baseErro=false;
-async function carregarBase(){
-  const [config,prof,disc,turmas] = await Promise.all([
-    fbGetRaw("/config"), fbGetRaw("/professores"), fbGetRaw("/disciplinas"), fbGetRaw("/turmas")
-  ]);
-  // Falha nos dois essenciais (config/professores) => sem conexão de verdade.
-  _baseErro = !config.ok || !prof.ok;
-  // Só aceita /config se for um OBJETO. Se vier nulo OU primitivo corrompido
-  // (string/number), trata como ausente — senão S.config.aulas=... estoura TypeError.
-  S.config = (config.ok && config.val && typeof config.val==="object") ? config.val : null;
-  // /config vazio/corrompido mas há professores: usa defaults em memória p/ o app NÃO
-  // estourar e ficar em tela branca.
-  if(!S.config && config.ok && prof.ok && prof.val) S.config = Object.assign({}, DEF_CONFIG);
-  if(S.config){
-    // "máscara" do nome: corrige automaticamente o nome antigo para o novo, sem precisar
-    // editar o Firebase. Se o admin definir OUTRO nome no ⚙️, esse é respeitado.
-    if(!S.config.appNome || S.config.appNome==="Agenda de Aulas") S.config.appNome = "Agenda Aulas";
-    if(!S.config.aulas) S.config.aulas = DEF_AULAS;
-    if(!S.config.horarios) S.config.horarios = DEF_HORARIOS;
-    if(!S.config.hae) S.config.hae = [];
-    if(!S.config.haeLabel) S.config.haeLabel = "HAE — Professor de Informática";
-    if(S.config.aviso==null) S.config.aviso = "";
-    if(!S.config.turmaLetras) S.config.turmaLetras = ["A","B","C","D"];
-    if(!S.config.liberadoAte) S.config.liberadoAte = fimDoMes(hojeStr());
-    if(!S.config.periodos) S.config.periodos = [];
-    if(!S.config.rodizio) S.config.rodizio = {ativo:false, refSeg:"", refGrupo:"ini"};
-  }
-  S.professores = (prof.ok ? prof.val : null) || {};
-  S.disciplinas = (disc.ok ? disc.val : null) || [];
-  S.turmas = (turmas.ok ? turmas.val : null) || [];
-}
-/* Em falha de recarga, MANTÉM as reservas já carregadas (evita a agenda "piscar vazia"). */
-async function recarregarReservas(){ const r = await fbGetRaw("/reservas"); if(r.ok){ S.reservas = r.val || {}; return true; } return false; }
-
-/* ===== PEDIDOS de agendamento (fora da semana do rodízio) =====
-   O professor comum não agenda fora da sua semana: manda um PEDIDO que fica pendente
-   (NÃO ocupa horário na agenda). O admin (professor de informática) aprova — aí vira
-   aula na grade, marcada como exceção — ou recusa. Guardado em recentesOcultos/__PEDIDOS__
-   (área que as regras já liberam p/ qualquer professor logado): não precisa mexer nas
-   regras, e a AGENDA continua protegida (a aula só entra pela regra normal, ao aprovar). */
-var PED_PATH = "/recentesOcultos/__PEDIDOS__";
-async function carregarPedidos(){ try{ S.pedidos = (await fbGet(PED_PATH)) || {}; }catch(e){ S.pedidos = S.pedidos||{}; } return S.pedidos; }
-function pedidosArr(){ const o=S.pedidos||{}; return Object.keys(o).map(function(k){return o[k];}).filter(Boolean); }
-function pedidosPendentes(){ return pedidosArr().filter(function(p){return p.status==="pendente";}); }
-function meusPedidos(){ const me=sanId(S.user.id); return pedidosArr().filter(function(p){return sanId(p.profId)===me;}).sort(function(a,b){return (b.ts||0)-(a.ts||0);}); }
-function _pedBadge(){ return S.user.admin ? pedidosPendentes().length : meusPedidos().filter(function(p){return p.status==="pendente";}).length; }
-function _temPedidos(){ return S.user.admin ? pedidosArr().length>0 : meusPedidos().length>0; }
-async function enviarPedido(){
-  const p = {
-    pid: "p"+Date.now()+"_"+Math.floor(Math.random()*1000000),
-    data: S.dataSel, turnoK: _form.turnoK, aula: _form.aula,
-    turmaBase: _form.turma, letra: _form.letra||"",
-    turma: (_form.turma||"") + (_form.letra?(" "+_form.letra):""),
-    disciplina: _form.disc||"", tema: _form.tema||"", objetivo: _form.obj||"",
-    profId: _form.profId, profNome: _form.profNome,
-    ownerUid: (S.auth&&S.auth.uid)||null, ts: Date.now(), status: "pendente"
-  };
-  const restore=btnBusy('[data-act="enviar-pedido"]',"Enviando…");
-  try{
-    const ok = await fbSet(PED_PATH+"/"+p.pid, p);
-    if(!ok){ toast(_msgFalha("Não consegui enviar o pedido. Tente de novo.")); return; }
-    S.pedidos = S.pedidos||{}; S.pedidos[p.pid]=p;
-    fecharSheet(); S.tab="pedidos"; desenharShell();
-    toast("Pedido enviado ao professor de informática. ✅");
-  } finally { restore(); }
-}
-async function aprovarPedido(pid){
-  const p = S.pedidos && S.pedidos[pid]; if(!p || !S.user.admin) return;
-  const restore=btnBusy('[data-pid="'+pid+'"] [data-act="aprovar-pedido"]',"Aprovando…");
-  try{
-    const chk = await fbGetRaw("/reservas/"+p.data+"/"+p.turnoK+"/a"+p.aula);
-    if(!chk.ok){ toast("Sem conexão para confirmar o horário. Tente de novo."); return; }
-    if(chk.val){ toast("Esse horário já está ocupado. Recuse ou libere o horário primeiro."); return; }
-    const reg={ turma:p.turma, disciplina:p.disciplina, tema:p.tema, objetivo:p.objetivo,
-      profId:p.profId, profNome:p.profNome, ownerUid:(S.auth&&S.auth.uid)||null,
-      excecao:true, ts:Date.now() };
-    const ok=await fbSet("/reservas/"+p.data+"/"+p.turnoK+"/a"+p.aula, reg);
-    if(!ok){ toast(_msgFalha("Não consegui registrar na agenda. Tente de novo.")); return; }
-    p.status="aprovado"; p.decidTs=Date.now();
-    await fbSet(PED_PATH+"/"+pid, p);
-    await recarregarReservas(); renderTab();
-    toast("Pedido aprovado e agendado! ✅");
-  } finally { restore(); }
-}
-async function recusarPedido(pid){
-  const p=S.pedidos&&S.pedidos[pid]; if(!p||!S.user.admin) return;
-  p.status="recusado"; p.decidTs=Date.now();
-  const ok=await fbSet(PED_PATH+"/"+pid, p);
-  if(!ok){ toast("Não consegui recusar agora. Tente de novo."); return; }
-  renderTab(); toast("Pedido recusado.");
-}
-async function apagarPedido(pid){
-  const p=S.pedidos&&S.pedidos[pid]; if(!p) return;
-  // admin apaga qualquer um já decidido; professor cancela o SEU pendente
-  if(!S.user.admin && !(sanId(p.profId)===sanId(S.user.id) && p.status==="pendente")) return;
-  const ok=await fbSet(PED_PATH+"/"+pid, null);
-  if(!ok){ toast("Não consegui remover agora. Tente de novo."); return; }
-  if(S.pedidos) delete S.pedidos[pid];
-  if(!_temPedidos() && S.tab==="pedidos") S.tab="hoje";
-  desenharShell();
-  toast(S.user.admin?"Pedido removido.":"Pedido cancelado.");
-}
-
-/* ================= BOOTSTRAP (1o acesso: cria admin + semeia) ================= */
-function telaBootstrap(){
-  $("root").innerHTML = `
-  <div class="authwrap">
-    <img class="logoimg" src="icon-192-e.png" alt="Agenda Aulas">
-    <h1>Bem-vindo!</h1>
-    <p class="sub">Primeiro acesso — crie o <b>administrador</b> da agenda.</p>
-    <label class="fld">Seu nome</label>
-    <input id="bNome" class="input" placeholder="Ex.: Marcos Anderson" autocomplete="off">
-    <label class="fld">Seu ID de acesso</label>
-    <input id="bId" class="input" inputmode="text" placeholder="matrícula, telefone, um número só seu" autocomplete="off">
-    <div style="height:20px"></div>
-    <button class="btn primary" data-act="bootstrap">Criar administrador</button>
-    <p class="hint">O administrador cadastra os professores e configura os horários. Guarde bem o seu ID — é com ele que você entra.</p>
-  </div>`;
-}
-async function fazerBootstrap(){
-  const nome=$("bNome").value.trim(), id=$("bId").value.trim();
-  if(nome.length<2) return toast("Escreva o seu nome.");
-  if(id.length<2) return toast("Escreva um ID de acesso.");
-  const key=sanId(id);
-  await Promise.all([
-    fbSet("/config", DEF_CONFIG),
-    fbSet("/config/aulas", DEF_AULAS),
-    fbSet("/config/horarios", DEF_HORARIOS),
-    fbSet("/config/liberadoAte", fimDoMes(hojeStr())),
-    fbSet("/disciplinas", DEF_DISCIPLINAS),
-    fbSet("/turmas", DEF_TURMAS),
-    fbSet("/professores/"+key, {nome, id, admin:true})
-  ]);
-  await carregarBase();
-  S.user = S.professores[key];
-  localStorage.setItem("agenda_user", key);
-  toast("Administrador criado! 🎉");
-  abrirApp();
-}
-
-/* ================= LOGIN ================= */
-var _loginPend=null, _sessaoExpirou=false, _forcarNovo=false;
-function telaLogin(){
-  _sessaoExpirou=false; _forcarNovo=false;
-  const nome = S.config ? S.config.appNome : "Agenda Aulas";
-  const escola = S.config ? S.config.escolaNome : "";
-  $("root").innerHTML = `
-  <div class="authwrap">
-    <img class="logoimg" src="icon-192-e.png" alt="Agenda Aulas">
-    <h1>${esc(nome)}</h1>
-    <p class="sub">${esc(escola)}</p>
-    <label class="fld">Digite o seu ID de acesso</label>
-    <input id="lId" class="input" inputmode="text" placeholder="seu número de acesso" autocomplete="off">
-    <div style="height:16px"></div>
-    <button class="btn primary" data-act="login">Continuar</button>
-    <p class="hint">É o ID que o administrador cadastrou pra você (matrícula, telefone…). Não tem ID? Fale com o administrador da sala.</p>
-    <p class="recaptcha-terms">Protegido por reCAPTCHA — aplicam-se a <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Política de Privacidade</a> e os <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Termos</a> do Google.</p>
-  </div>`;
-  setTimeout(()=>{ const el=$("lId"); if(el) el.focus(); },100);
-}
-async function fazerLogin(){
-  const id=$("lId").value.trim(); if(!id) return toast("Digite o seu ID.");
-  const key=sanId(id);
-  const restore=btnBusy('[data-act="login"]',"Entrando…");
-  try{
-    await carregarBase();
-    if(_baseErro){ toast("Sem conexão. Verifique a internet e tente de novo."); return; }
-    const p = S.professores[key];
-    if(!p){ toast("ID não encontrado. Confira com o administrador."); return; }
-    _loginPend=p;
-    // NÃO tentamos adivinhar "entrar x criar" aqui: mostramos ENTRAR por padrão e o
-    // authEntrarOuCriar resolve (entra se existe, cria se for 1º acesso). Isso evita o bug
-    // de pedir "criar senha" a quem já tem — o flag fbAuth não grava (isolamento) e o
-    // createAuthUri não é confiável (Proteção contra Enumeração).
-    telaSenha();
-  } finally { restore(); }
-}
-function telaSenha(){
-  const p=_loginPend;
-  // Decisão "entrar" x "criar senha", em ordem de confiança:
-  //  1) Firebase Auth respondeu -> ELE manda (conta já existe = entrar; não existe = criar).
-  //  2) Não respondeu (rede/proteção), MAS a sessão expirou -> a pessoa JÁ tinha conta antes
-  //     (tinha login salvo) -> ENTRAR. Nunca "criar" numa reentrada: era isto que fazia pedir
-  //     senha nova a cada vez que o app era reaberto.
-  //  3) Sem nenhuma pista -> usa o flag antigo fbAuth como reserva (1º acesso de verdade).
-  // "novo" = mostrar a tela de CRIAR senha (com confirmação). Só entra em "criar" quando há
-  // CERTEZA de 1º acesso/reset. No caso ambíguo mostramos ENTRAR (a conta do Firebase quase
-  // sempre já existe) — e o authEntrarOuCriar cria sozinho se por acaso ainda não existir.
-  // Assim ninguém mais vê "crie a sua senha" tendo senha (o bug relatado).
-  const novo = _forcarNovo ? true                 // usuário pediu criar com confirmação
-             : _sessaoExpirou ? false             // sessão expirou -> já tinha conta -> entrar
-             : (+p.authVer>1) ? true              // admin resetou -> conta nova -> criar
-             : p.senha ? true                     // migrando do hash antigo -> criar no Firebase
-             : false;                             // PADRÃO: entrar (nunca "criar" no ambíguo)
-  let sub;
-  if(_sessaoExpirou) sub = novo ? "Confirme criando sua senha para continuar" : "Sua sessão expirou — entre novamente";
-  else if(novo){
-    if(+p.authVer>1) sub="Crie uma nova senha (mínimo 6)";
-    else if(p.senha) sub="Atualizamos a segurança do login — crie sua senha de novo (pode ser a mesma)";
-    else sub="Primeiro acesso — crie a sua senha";
-  } else sub="Digite a sua senha";
-  $("root").innerHTML = `
-  <div class="authwrap">
-    <img class="logoimg" src="icon-192-e.png" alt="Agenda Aulas">
-    <h1>Olá, ${esc(p.nome.split(" ")[0])}!</h1>
-    <p class="sub">${esc(sub)}</p>
-    ${novo?`
-      <label class="fld">Nova senha</label>
-      <input id="sNova" type="password" data-pw class="input" placeholder="mínimo 6 caracteres" autocomplete="new-password">
-      <label class="fld">Confirmar senha</label>
-      <input id="sConf" type="password" data-pw class="input" placeholder="repita a senha" autocomplete="new-password">
-      <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
-      <div style="height:12px"></div>
-      <button class="btn primary" data-act="login-criar">Criar senha e entrar</button>
-    `:`
-      <label class="fld">Senha</label>
-      <input id="sSenha" type="password" data-pw class="input" placeholder="sua senha" autocomplete="current-password">
-      <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
-      <div style="height:12px"></div>
-      <button class="btn primary" data-act="login-entrar">Entrar</button>
-      <p class="hint">É o seu <b>primeiro acesso</b>? Escolha uma senha e toque em Entrar — ela fica sendo a sua. Esqueceu a senha? Peça ao administrador para <b>resetar</b> a sua.</p>
-      <button class="btnlink" data-act="login-quero-criar">Prefiro criar a senha com confirmação</button>
-    `}
-    <div style="height:8px"></div>
-    <button class="btn ghost" data-act="login-voltar">‹ Voltar</button>
-  </div>`;
-  setTimeout(()=>{ const el=$(novo?"sNova":"sSenha"); if(el) el.focus(); },100);
-}
-async function loginCriar(){
-  const a=($("sNova")?$("sNova").value:""), b=($("sConf")?$("sConf").value:"");
-  if(a.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
-  if(a!==b) return toast("As senhas não coincidem.");
-  const key=sanId(_loginPend.id);
-  const restore=btnBusy('[data-act="login-criar"]',"Criando…");
-  try{
-    // O Firebase Auth é o portão: cria a conta (ou entra, se já existir com esta senha).
-    try{ await authCriar(_loginPend.id, a, _loginPend.authVer); }
-    catch(e){ const m=e.message||"";
-      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD/.test(m)) return toast("Esta conta já tem uma senha. Peça ao administrador para resetar a sua.");
-      if(/WEAK_PASSWORD/.test(m)) return toast("A senha precisa ter pelo menos 6 caracteres.");
-      if(/TOO_MANY_ATTEMPTS/.test(m)) return toast("Muitas tentativas. Aguarde um minuto e tente de novo.");
-      if(/RECAPTCHA|APP.?CHECK|Forbidden/i.test(m)) return toast("Não foi possível validar a segurança. Desative bloqueadores e tente de novo.");
-      return toast("Sem conexão. Tente de novo.");
-    }
-    try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){}
-    if(_loginPend.senha){ try{ await fbUpdate("/professores/"+key, {senha:null}); delete _loginPend.senha; }catch(e){} }
-    S.user=_loginPend; localStorage.setItem("agenda_user", key);
-    toast("Senha criada! 🔑"); abrirApp();
-  } finally { restore(); }
-}
-async function loginEntrar(){
-  const s=($("sSenha")?$("sSenha").value:"");
-  if(!s) return toast("Digite a sua senha.");
-  const key=sanId(_loginPend.id);
-  if(s.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
-  const restore=btnBusy('[data-act="login-entrar"]',"Entrando…");
-  try{
-    // O Firebase Auth é o portão real. authEntrarOuCriar entra se a conta existe e cria se
-    // for o 1º acesso — sem depender de adivinhar antes (fbAuth/enumeração não são confiáveis).
-    try{ await authEntrarOuCriar(_loginPend.id, s, _loginPend.authVer); }
-    catch(e){ const m=e.message||"";
-      if(/SENHA_ERRADA/.test(m)) return toast("Senha incorreta.");
-      if(/WEAK_PASSWORD/.test(m)) return toast("A senha precisa ter pelo menos 6 caracteres.");
-      if(/INVALID_LOGIN_CREDENTIALS|INVALID_PASSWORD|MISSING_PASSWORD|EMAIL_NOT_FOUND/.test(m)) return toast("Senha incorreta.");
-      if(/TOO_MANY_ATTEMPTS/.test(m)) return toast("Muitas tentativas. Aguarde um minuto e tente de novo.");
-      if(/RECAPTCHA|APP.?CHECK|Forbidden/i.test(m)) return toast("Não foi possível validar a segurança. Desative bloqueadores e tente de novo.");
-      return toast("Sem conexão. Tente de novo.");
-    }
-    if(!_loginPend.fbAuth){ try{ await fbSet("/professores/"+key+"/fbAuth", true); _loginPend.fbAuth=true; }catch(e){} }
-    if(_loginPend.senha){ try{ await fbUpdate("/professores/"+key, {senha:null}); delete _loginPend.senha; }catch(e){} }
-    S.user=_loginPend; localStorage.setItem("agenda_user", key);
-    abrirApp();
-  } finally { restore(); }
-}
-function sair(){ if(!confirm("Sair da conta? Você precisará entrar com ID e senha de novo.")) return; localStorage.removeItem("agenda_user"); try{localStorage.removeItem("agenda_rt");}catch(e){} S.auth=null; S.user=null; _loginPend=null; if(_pollTimer)clearInterval(_pollTimer); telaLogin(); }
-function sheetConta(){
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Minha conta</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <div class="card"><div class="rowitem"><div class="main"><div class="l2">Nome</div><div class="l1">${esc(S.user.nome)}</div></div></div>
-      <div class="rowitem"><div class="main"><div class="l2">ID de acesso</div><div class="l1">${esc(S.user.id)}</div></div></div>
-      <div class="rowitem"><div class="main"><div class="l2">Acesso</div><div class="l1">🔒 Login protegido</div></div></div>
-      ${(S.user.admin && S.auth && S.auth.uid)?`<div class="rowitem"><div class="main"><div class="l2">Seu identificador (uid) — para o isolamento no Firebase</div><div class="l1" style="font-family:monospace;font-size:12px;word-break:break-all">${esc(S.auth.uid)}</div></div><button class="btnlink" data-act="copiar-uid" data-v="${esc(S.auth.uid)}">📋 Copiar</button></div>`:""}</div>
-    <label class="fld">Trocar minha senha</label>
-    <input id="ntSenha" type="password" data-pw class="input" placeholder="nova senha (mínimo 6)" autocomplete="new-password">
-    <div style="height:8px"></div>
-    <input id="ntConf" type="password" data-pw class="input" placeholder="repita a nova senha" autocomplete="new-password">
-    <button class="btnlink" data-act="toggle-senha" data-on="0">👁 Mostrar senha</button>
-    <div style="height:10px"></div>
-    <button class="btn primary" data-act="trocar-senha">🔑 Salvar senha</button>
-    ${(("Notification" in window) && Notification.permission!=="granted")?'<div style="height:14px"></div><button class="btn ghost" data-act="ativar-lembretes">🔔 Ativar lembretes de aula</button>':''}
-    ${!ehStandalone()?'<div style="height:14px"></div><button class="btn ok" data-act="instalar-app">📲 Adicionar à tela do celular</button>':''}
-    <div style="height:14px"></div>
-    <button class="btn ghost" data-act="sair">⏻ Sair da conta</button>`);
-}
-/* PWA: "instalar" = criar o ícone na tela inicial (não há loja para baixar). */
-function ehStandalone(){ try{ return !!(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)); }catch(e){ return false; } }
-function instalarApp(){
-  const d=window._pwaDeferred;
-  if(d && d.prompt){ try{ d.prompt(); d.userChoice.then(function(){ if(window._pwaClearDeferred) window._pwaClearDeferred(); }); }catch(e){ sheetInstalar(); } return; }
-  sheetInstalar();   // iOS / desktop / sem prompt nativo -> passo a passo
-}
-function sheetInstalar(){
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent||"");
-  const passos = isIOS
-    ? `<li>Toque no botão <b>Compartilhar</b> (o quadrado com uma seta para cima ⬆️), na barra do Safari.</li>
-       <li>Role para baixo e toque em <b>“Adicionar à Tela de Início”</b>.</li>
-       <li>Confirme em <b>Adicionar</b>.</li>`
-    : `<li>Abra o menu do navegador (os três pontinhos <b>⋮</b>, no canto).</li>
-       <li>Toque em <b>“Adicionar à tela inicial”</b> (ou <b>“Instalar aplicativo”</b>).</li>
-       <li>Confirme.</li>`;
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">📲 Adicionar à tela do celular</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <p class="hint" style="text-align:left;font-size:15px;color:var(--text)">A Agenda vira um <b>ícone no seu celular</b> e abre como um aplicativo — não precisa baixar de loja nenhuma. É só seguir:</p>
-    <ol style="text-align:left;line-height:1.7;padding-left:22px;color:var(--text);font-size:15px">${passos}</ol>
-    <p class="hint" style="text-align:left">Pronto! O ícone da Agenda aparece junto com os outros apps. 🎉</p>
-    <div style="height:8px"></div>
-    <button class="btn primary" data-act="fecharsheet">Entendi</button>`);
-}
-function ativarLembretes(){
-  try{ if("Notification" in window){ Notification.requestPermission().then(function(){ fecharSheet(); toast(Notification.permission==="granted"?"Lembretes ativados! 🔔":"Lembretes não permitidos."); checarNotificacao(); }); } else toast("Este aparelho não suporta lembretes."); }catch(e){}
-}
-/* aulas do usuário logado num intervalo de datas */
-function minhasAulasEntre(iniData, fimData){
-  const out=[];
-  Object.keys(S.reservas).forEach(data=>{ if(data<iniData||data>fimData) return; if(periodoDoDia(data)) return;
-    TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
-      Object.keys(rt).forEach(ak=>{ const r=rt[ak]; if(!r||r.bloqueado) return;
-        if(sanId(r.profId)===sanId(S.user.id)) out.push({data,turno:t,aula:+ak.replace("a",""),r}); }); }); });
-  out.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(ORD_TURNO[a.turno.k]-ORD_TURNO[b.turno.k])||(a.aula-b.aula));
-  return out;
-}
-function lembreteHTML(){
-  const hoje=hojeStr(), amanha=addDias(hoje,1);
-  const l=minhasAulasEntre(hoje,amanha);
-  if(!l.length) return "";
-  const itens=l.slice(0,4).map(x=>`<div class="lb-it"><b>${esc(x.r.turma)}</b> · ${x.turno.n} ${x.aula}ª · <span>${x.data===hoje?"hoje":"amanhã"}</span></div>`).join("");
-  return `<div class="lembrete"><div class="lb-h">🔔 Sua${l.length>1?"s":""} próxima${l.length>1?"s":""} aula${l.length>1?"s":""}</div>${itens}</div>`;
-}
-/* notificação do sistema ao abrir o app (1x por dia) — lembra a aula de amanhã.
-   OBS: só dispara quando o app é ABERTO; alerta com o app fechado exige servidor. */
-function checarNotificacao(){
-  try{
-    if(!("Notification" in window) || Notification.permission!=="granted") return;
-    const amanha=addDias(hojeStr(),1);
-    const l=minhasAulasEntre(amanha,amanha);
-    if(!l.length) return;
-    const chave="agenda_notif_"+amanha;
-    if(localStorage.getItem(chave)) return;
-    // remove marcadores de dias já passados (não acumular chaves para sempre)
-    try{ for(let i=localStorage.length-1;i>=0;i--){ const k=localStorage.key(i); if(k && k.indexOf("agenda_notif_")===0 && k<chave) localStorage.removeItem(k); } }catch(e){}
-    localStorage.setItem(chave,"1");
-    const x=l[0];
-    new Notification("Agenda Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192-e.png"});
+    if(!_actx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC){return;} _actx=new AC(); }
+    if(_actx.state==="suspended"&&_actx.resume){ _actx.resume(); }
+    var t=_actx.currentTime, o=_actx.createOscillator(), g=_actx.createGain();
+    o.type="triangle"; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(760,t+0.10);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.16,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g); g.connect(_actx.destination);
+    o.start(t); o.stop(t+0.18);
   }catch(e){}
 }
-async function trocarSenha(){
-  const a=($("ntSenha")?$("ntSenha").value:""), b=($("ntConf")?$("ntConf").value:"");
-  if(a.length<6) return toast("A senha precisa ter pelo menos 6 caracteres.");
-  if(a!==b) return toast("As senhas não coincidem.");
-  const key=sanId(S.user.id);
-  const restore=btnBusy('[data-act="trocar-senha"]',"Salvando…");
-  try{
-    // A senha vive só no Firebase Auth (não guardamos mais no banco).
-    if(authAtivo()){
-      let r; try{ r=await _fetchT("https://identitytoolkit.googleapis.com/v1/accounts:update?key="+FB_API_KEY,
-        {method:"POST",headers:Object.assign({"Content-Type":"application/json"}, await _acHeader()),
-         body:JSON.stringify({idToken:S.auth.idToken, password:a, returnSecureToken:true})}); }
-      catch(e){ return toast("Não foi possível trocar a senha agora. Tente de novo."); }
-      const j=await _corpoJson(r).catch(function(){return {};});
-      if(!r.ok) return toast("Não foi possível trocar a senha agora. Tente de novo.");
-      if(j.idToken) _guardaAuth(j.idToken, j.refreshToken||S.auth.refreshToken, j.expiresIn||"3600");
-    } else {
-      try{ await authCriar(S.user.id, a, S.user.authVer); if(authAtivo()){ await fbSet("/professores/"+key+"/fbAuth", true); S.user.fbAuth=true; } }
-      catch(e){ return toast("Não foi possível trocar a senha agora."); }
-    }
-    // limpa qualquer resíduo do hash antigo no banco
-    if(S.user.senha){ try{ await fbUpdate("/professores/"+key, {senha:null}); delete S.user.senha; if(S.professores[key]) delete S.professores[key].senha; }catch(e){} }
-    fecharSheet(); toast("Senha salva! 🔑");
-  } finally { restore(); }
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{ var a=new Audio("audio/"+_chaveVoz(texto)+".mp3"); _falaAudio=a; a.play(); }catch(e){}
+}
+function repetirUltima(){ if(_ultimaFala){ pararFala(); falar(_ultimaFala,true); } }
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("avdir_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== TELAS ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/masc_acena.png" alt="explorador">';
+  h+='<h1>Aventura das Direções</h1>';
+  h+='<p class="grande">O explorador achou um mapa do tesouro! Ajude ele a ler cada sinal do caminho até chegar no baú!</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a história</button>';
+  h+='<label>Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="24" placeholder="Escreva seu nome">';
+  h+='<label>Qual é a sua turma?</label>';
+  h+='<div class="turmas">';
+  var i;for(i=0;i<TURMAS.length;i++){ h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>'; }
+  h+='</div>';
+  h+='<div><button class="btn verde grandao" onclick="comecar()">Começar a aventura!</button></div>';
+  h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
+  h+='</div>';
+  $("app").innerHTML=h;
+  /* NAO faz autoplay (o navegador bloqueia e sobra audio "orfao" que vaza p/ a proxima tela).
+     A historia toca SO no botao "Ouvir a historia". Guarda p/ o botao repetir tambem. */
+  _ultimaFala=HISTORIA;
+}
+function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
+var turmaSel="";
+function selTurma(el,t){
+  turmaSel=t;
+  var bs=document.getElementsByClassName("tbox"),i;
+  for(i=0;i<bs.length;i++){ bs[i].className="tbox"; }
+  el.className="tbox on";
+}
+function comecar(){
+  _histTocada=true;   /* nao deixa a historia auto-tocar por causa deste clique */
+  var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
+  var t=turmaSel;
+  if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
+  if(!t){ falar("Escolha a sua turma para começar!",true); return; }
+  pararFala();                 /* corta a narracao da historia ao sair da capa */
+  nomeAluno=n; turmaAluno=t; atual=0;
+  telaPista();
 }
 
-/* ================= APP SHELL ================= */
-/* Primeiro dia em que dá para agendar (pula fim de semana/feriado/período e respeita
-   "só a partir de amanhã"). Evita abrir num "hoje morto" onde nada pode ser marcado. */
-function primeiroDiaAgendavel(){
-  const hoje=hojeStr();
-  const limite=(S.config.liberadoAte && S.config.liberadoAte>=hoje)?S.config.liberadoAte:fimDoMes(hoje);
-  const soProx = S.config.apenasProximoDia && !S.user.admin;  // admin pode agendar hoje
-  let d=soProx?addDias(hoje,1):hoje;
-  for(let k=0;k<62;k++){ if(contarDisponiveis(d).tot>0) return d; if(d>=limite) break; d=addDias(d,1); }
-  return soProx?addDias(hoje,1):hoje;
-}
-function _sigReservas(){ try{ return JSON.stringify(S.reservas); }catch(e){ return ""+Date.now(); } }
-async function abrirApp(){
-  _forcarNovo=false;   // consumido: não pode vazar para uma tela de senha futura
-  S.tab="hoje";
-  // limpeza única: remove do banco qualquer hash de senha antigo (não é mais usado)
-  if(S.user.senha){ try{ fbUpdate("/professores/"+sanId(S.user.id), {senha:null}); delete S.user.senha; }catch(e){} }
-  // limpeza do ADMIN: apaga o resíduo de senha antiga de TODOS os cadastros (o professor
-  // comum não consegue apagar o próprio por causa das regras de isolamento). Roda em
-  // segundo plano, uma vez só (depois de limpo não há mais o que fazer), e avisa se limpou.
-  if(S.user.admin && S.professores){
-    (async function(){
-      try{
-        const alvos = Object.keys(S.professores).filter(function(k){ return S.professores[k] && S.professores[k].senha!=null; });
-        let n=0;
-        for(let i=0;i<alvos.length;i++){ const k=alvos[i]; const ok=await fbUpdate("/professores/"+k, {senha:null}); if(ok){ delete S.professores[k].senha; n++; } }
-        if(n) toast("Limpeza: "+n+" cadastro(s) antigos ajustados. 🧹");
-      }catch(e){}
-    })();
+function cenaHTML(q){
+  var lado, h='<div class="cena">';
+  if(q.tipo==="masc"){
+    lado=(q.lado==="dir")?"rd":"ld";
+    var mside=(q.lado==="dir")?"ml":"mr";
+    h+='<img class="masc '+mside+'" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'_'+(q.lado==="dir"?"dir":"esq")+'.png" alt="explorador apontando">';
+    h+='<img class="obj '+lado+'" src="img/'+q.obj+'.png" alt="objeto">';
   }
-  await recarregarReservas();
-  try{ S._lwSeen = await fbGet("/config/reservasLastWrite"); }catch(e){ S._lwSeen=null; }
-  S.dataSel = primeiroDiaAgendavel();
-  try{ S.recentes = (await fbGet("/recentes/"+sanId(S.user.id))) || []; }catch(e){ S.recentes=[]; }
-  S._ocultos={}; try{ await carregarOcultos(S.user.id); }catch(e){}
-  try{ await carregarPedidos(); }catch(e){}
-  S._pedSig = JSON.stringify(pedidosArr().map(function(p){return p.pid+":"+p.status;}));
-  desenharShell();
-  checarNotificacao();
-  if(!S._visBound){ S._visBound=true; document.addEventListener("visibilitychange", async function(){
-    if(document.hidden || !S.user) return;
-    if($("modal") && $("modal").innerHTML) return;                 // não redesenha com uma janela aberta
-    const lw = await fbGet("/config/reservasLastWrite");           // lê só o marcador; só baixa tudo se mudou
-    if(lw!=null && lw===S._lwSeen) return;
-    const okR = await recarregarReservas();
-    if(!okR) return;                                                // recarga falhou: NÃO consome o marcador (tenta de novo)
-    S._lwSeen = lw;
-    if(S.tab==="hoje"||S.tab==="proximos") renderTab();
-  }); }
-  if(_pollTimer) clearInterval(_pollTimer);
-  // Poll econômico: pausa quando o app não está visível, não redesenha com uma janela
-  // aberta, e só re-renderiza se algo mudou (não "pula" a rolagem à toa). Intervalo 30s.
-  _pollTimer = setInterval(async()=>{
-    if(document.hidden) return;
-    if($("modal") && $("modal").innerHTML) return;
-    if(authAtivo() && S.auth.expira < Date.now()+180000){ try{ await authRefresh(); }catch(e){} }
-    // rede de segurança: a cada ~5 min recarrega tudo mesmo sem mudança no marcador
-    // (cobre um "bump" de marcador que tenha falhado num aparelho).
-    S._pollN=(S._pollN||0)+1; const forcar=(S._pollN%10===0);
-    // lê só o marcador (poucos bytes); só baixa a agenda inteira se algo mudou
-    const lw = await fbGet("/config/reservasLastWrite");
-    if(!forcar && lw===S._lwSeen) return;
-    const antes=_sigReservas(); const okR = await recarregarReservas();
-    if(!okR) return;                                                // recarga falhou: mantém o marcador antigo p/ tentar de novo
-    S._lwSeen = lw;
-    if(_sigReservas()!==antes && (S.tab==="hoje"||S.tab==="proximos")) renderTab();
-    // pedidos: recarrega e, se algo mudou (novo pedido / status), atualiza o selo e a aba
-    try{
-      await carregarPedidos();
-      const sig = JSON.stringify(pedidosArr().map(function(p){return p.pid+":"+p.status;}));
-      if(sig!==S._pedSig){ S._pedSig=sig; if(S.tab==="pedidos") renderTab(); else desenharShell(); }
-    }catch(e){}
-  }, 30000);
-}
-function desenharShell(){
-  const c=S.config, adm=S.user.admin;
-  $("root").innerHTML = `
-  <div id="app">
-    <div class="topbar">
-      <button class="avatar" data-act="conta" title="Minha conta">${esc(S.user.nome.trim().charAt(0).toUpperCase())}</button>
-      <div class="brand"><b>${esc(c.appNome)}</b><span>Olá, ${esc(S.user.nome.split(" ")[0])}${adm?" · admin":""}</span></div>
-      <button class="icon-btn" id="btnTema" data-act="tema"></button>
-      ${adm?'<button class="icon-btn" data-act="menuadmin" title="Administração">⚙️</button>':''}
-      <button class="icon-btn" data-act="sair" title="Sair">⏻</button>
-    </div>
-    <div id="avisobar"></div>
-    <div id="view" class="view"></div>
-    <nav class="bottomnav"><div class="wrap">
-      <button class="tab" data-tab="hoje"><span class="ic">🗓️</span>Hoje</button>
-      <button class="tab" data-tab="proximos"><span class="ic">📆</span>${adm?"Próximos":"Minhas aulas"}</button>
-      ${(adm||_temPedidos())?`<button class="tab" data-tab="pedidos"><span class="ic">📨</span>Pedidos${_pedBadge()?`<span class="tabbadge">${_pedBadge()}</span>`:''}</button>`:''}
-      ${adm?'<button class="tab" data-tab="insights"><span class="ic">📊</span>Insights</button>':''}
-    </div></nav>
-  </div>`;
-  attTemaIcon();
-  renderAviso();
-  renderTab();
-}
-/* aviso do admin no topo (some quando o admin apaga; some pra quem fechar até mudar o texto) */
-function renderAviso(){
-  const bar=$("avisobar"); if(!bar) return;
-  const msg=((S.config&&S.config.aviso)||"").replace(/^\s+|\s+$/g,"");
-  let visto=""; try{ visto=localStorage.getItem("agenda_aviso_visto")||""; }catch(e){}
-  if(msg && visto!==msg){
-    bar.innerHTML=`<div class="aviso"><span class="ai">📢</span><div class="am">${esc(msg)}</div><button class="ax" data-act="fecharaviso" title="Fechar">✕</button></div>`;
-  }else bar.innerHTML="";
-}
-function renderTab(){
-  if(S.tab==="insights" && !S.user.admin) S.tab="hoje";
-  if(S.tab==="pedidos" && !(S.user.admin||_temPedidos())) S.tab="hoje";
-  document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===S.tab));
-  if(S.tab==="hoje") viewHoje();
-  else if(S.tab==="proximos") viewProximos();
-  else if(S.tab==="pedidos") viewPedidos();
-  else viewInsights();
-}
-/* ================= VIEW: PEDIDOS ================= */
-function _pedCard(p){
-  const adm=S.user.admin;
-  const st = p.status||"pendente";
-  const tomSt = st==="aprovado" ? "var(--free)" : (st==="recusado" ? "var(--red,#d9534f)" : "var(--amber)");
-  const rotSt = st==="aprovado" ? "✅ Aprovado" : (st==="recusado" ? "✖️ Recusado" : "⏳ Pendente");
-  const quando = (fmtSem(p.data).replace("-feira","")) + ", " + fmtDia(p.data);
-  const hora = _horaPedido(p);
-  let acoes="";
-  if(adm && st==="pendente"){
-    acoes=`<div class="pedacoes">
-      <button class="btn primary" data-act="aprovar-pedido">✅ Aprovar e agendar</button>
-      <button class="btn ghost" data-act="recusar-pedido">✖️ Recusar</button></div>`;
-  } else if(adm){
-    acoes=`<div class="pedacoes"><button class="btn ghost" data-act="apagar-pedido">🗑️ Remover</button></div>`;
-  } else if(st==="pendente"){
-    acoes=`<div class="pedacoes"><button class="btn ghost" data-act="apagar-pedido">Cancelar pedido</button></div>`;
-  }
-  return `<div class="card pedcard" data-pid="${esc(p.pid)}" style="border-left:5px solid ${tomSt}">
-    <div class="pedtop"><div class="pedturma">${esc(p.turma||"—")}${p.disciplina?` · <span class="peddisc">${esc(p.disciplina)}</span>`:""}</div>
-      <span class="pedst" style="color:${tomSt}">${rotSt}</span></div>
-    <div class="pedwhen">📅 ${esc(quando)}${hora?` · 🕐 ${esc(hora)}`:""}</div>
-    ${adm?`<div class="pedwho">👤 ${esc(p.profNome||"")}</div>`:""}
-    ${p.tema?`<div class="pedlin"><b>Tema:</b> ${esc(p.tema)}</div>`:""}
-    ${p.objetivo?`<div class="pedlin"><b>Objetivo:</b> ${esc(p.objetivo)}</div>`:""}
-    ${acoes}
-  </div>`;
-}
-function _horaPedido(p){
-  try{ const hl=horarioLabel(p.turnoK, p.aula-1);
-    return p.aula+"ª aula no "+turnoNome(p.turnoK)+(hl?" · "+hl:"");
-  }catch(e){ return "aula "+p.aula; }
-}
-function viewPedidos(){
-  const v=$("view"); if(!v) return;
-  const adm=S.user.admin;
-  const lista = adm ? pedidosArr().slice().sort(function(a,b){
-      const w={pendente:0,aprovado:1,recusado:2}; const da=(w[a.status]||0)-(w[b.status]||0);
-      return da!==0?da:(b.ts||0)-(a.ts||0);
-    }) : meusPedidos();
-  const pend = adm ? pedidosPendentes().length : 0;
-  let h=`<div class="viewpad">
-    <div class="vtitle">📨 Pedidos de agendamento</div>
-    <p class="hint" style="text-align:left">${adm
-      ? (pend? `Você tem <b>${pend}</b> pedido(s) aguardando. Ao aprovar, a aula entra na agenda marcada como exceção ⚠️.`
-             : "Nenhum pedido aguardando no momento.")
-      : "Aqui ficam os seus pedidos de aula fora da sua semana do rodízio, com o status de cada um."}</p>`;
-  if(!lista.length){
-    h+=`<div class="empty"><div class="ei">📭</div><div>Nenhum pedido ${adm?"":"seu "}por aqui.</div></div>`;
-  } else {
-    h+=`<div class="pedlist">${lista.map(_pedCard).join("")}</div>`;
-  }
-  h+=`</div>`;
-  v.innerHTML=h;
-}
-
-/* ================= VIEW: HOJE (agenda do dia) ================= */
-function contarDisponiveis(dataStr){
-  if(periodoDoDia(dataStr)) return {tot:0,disp:0};
-  // feriado fecha o dia para o professor (o admin continua vendo/agendando)
-  if(diaFeriado(dataStr) && !(S.user&&S.user.admin)) return {tot:0,disp:0};
-  let tot=0,disp=0;
-  TURNOS.forEach(t=>{
-    const n=aulasDoDia(dataStr,t.c); tot+=n;
-    const rt=(S.reservas[dataStr]&&S.reservas[dataStr][t.k])||{};
-    for(let i=1;i<=n;i++){ if(!rt["a"+i] && !ehHAE(dataStr,t.k,i)) disp++; }
-  });
-  return {tot,disp};
-}
-var _hojeModo="dia";  /* dia | semana (semana é só do admin) */
-function viewHoje(){
-  const adm=S.user.admin;
-  if(!adm) _hojeModo="dia";
-  const modoTop = adm ? `<div class="rel-tools"><div class="chips">
-      <button class="chip ${_hojeModo==="dia"?"on":""}" data-act="hoje-modo" data-v="dia">📅 Dia</button>
-      <button class="chip ${_hojeModo==="semana"?"on":""}" data-act="hoje-modo" data-v="semana">🗓️ Semana</button>
-    </div></div>` : "";
-  if(adm && _hojeModo==="semana") return viewSemana(modoTop);
-  const data=S.dataSel, hoje=hojeStr();
-  const ate=(S.config.liberadoAte && S.config.liberadoAte>=hoje) ? S.config.liberadoAte : fimDoMes(hoje);
-  const nDias=Math.min(62, Math.max(1, diffDias(hoje,ate)+1));
-  let strip='<div class="weekstrip">';
-  for(let k=0;k<nDias;k++){
-    const ds=addDias(hoje,k), d=dateFromStr(ds), c=contarDisponiveis(ds);
-    const on=ds===data, semAula=c.tot===0;
-    // professor não agenda hoje (regra "só a partir de amanhã") -> pip não fica verde
-    const soPodeAmanha = S.config.apenasProximoDia && !adm && ds===hoje;
-    strip+=`<button class="daychip ${on?"on":""} ${semAula?"off":""}" data-act="setdia" data-d="${ds}">
-      <span class="wd">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][d.getDay()]}</span>
-      <span class="dn">${d.getDate()}</span>
-      <span class="pip ${(!semAula&&c.disp>0&&!soPodeAmanha)?"has":""}"></span></button>`;
-  }
-  strip+='</div>';
-  const cd=contarDisponiveis(data);
-  const per=periodoDoDia(data);
-  const fer=diaFeriado(data);
-  // Professor não agenda no mesmo dia: mostra os horários travados, não verdes enganosos.
-  const diaFechadoProf = (!adm && S.config.apenasProximoDia && data===hojeStr());
-  let h=modoTop+strip;
-  let badge;
-  if(per) badge=`<span class="livrebadge" style="background:color-mix(in srgb,${corSegura(per.cor)} 16%,transparent);color:${corSegura(per.cor)}">${esc(per.rotulo||"Sem aula")}</span>`;
-  else if(fer) badge=`<span class="livrebadge" style="background:color-mix(in srgb,#e5533c 16%,transparent);color:#e5533c">🎌 Feriado</span>`;
-  else if(diaFechadoProf) badge=`<span class="livrebadge zero">Só a partir de amanhã</span>`;
-  else badge=`<span class="livrebadge ${cd.disp>0?"":"zero"}">${cd.disp} ${cd.disp===1?"livre":"livres"}</span>`;
-  h+=`<div class="daysum"><div><b>${esc(cap1(fmtSem(data)))}</b><div class="sub">${esc(fmtDia(data))}</div></div>${badge}</div>`;
-  const gsem=grupoDaSemana(data);
-  // Só mostra a plaquinha do rodízio em dia letivo (não em fim de semana,
-  // feriado, recesso ou férias — aí não há agendamento mesmo).
-  if(gsem && cd.tot>0 && !fer) h+=`<div class="grupobanner ${gsem}">🔁 Semana dos ${esc(nomeGrupo(gsem))}</div>`;
-  // Lembrete só para o admin: o período liberado está acabando/acabou (evita "esquecer de liberar o mês").
-  if(adm && S.config.liberadoAte){
-    const faltam=diffDias(hoje, S.config.liberadoAte);
-    if(faltam<0) h+=`<div class="grupobanner" style="background:var(--amber-tint);color:var(--amber)">📅 O período de agendamento fechou em ${esc(fmtDia(S.config.liberadoAte))}. Libere o próximo mês em ⚙️ → Outras configurações.</div>`;
-    else if(faltam<=6) h+=`<div class="grupobanner" style="background:var(--amber-tint);color:var(--amber)">📅 O mês liberado termina ${faltam===0?"hoje":("em "+faltam+" dia"+(faltam>1?"s":""))} (${esc(fmtDia(S.config.liberadoAte))}). Considere liberar o próximo em ⚙️.</div>`;
-  }
-  // admin agendando no dia de hoje: deixa claro que é permissão só dele
-  if(adm && S.config.apenasProximoDia && data===hojeStr() && !per && !fer)
-    h+=`<div class="grupobanner" style="background:var(--primary-tint);color:var(--primary)">🔓 Você (admin) pode agendar hoje. Os professores só a partir de amanhã.</div>`;
-  h+=lembreteHTML();
-  if(per){
-    const rot=per.rotulo||"";
-    const ico=/feriado/i.test(rot)?"🎌":(/f[ée]rias/i.test(rot)?"🏖️":"🌴");
-    h+=`<div class="periodo" style="--pc:${corSegura(per.cor)}"><span class="pico">${ico}</span><b>${esc(per.rotulo||"Sem aula")}</b>
-      <div class="pd">${esc(fmtDia(per.inicio))} até ${esc(fmtDia(per.fim))}</div>
-      <div class="pd">Não há aulas neste período — a agenda fica fechada.</div></div>`;
-    $("view").innerHTML=h;
-    const onEl2=document.querySelector(".daychip.on"); if(onEl2&&onEl2.scrollIntoView){ try{ onEl2.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
-    return;
-  }
-  if(fer){
-    const nota = adm
-      ? "Fechado para os professores. Você (admin) pode agendar mesmo assim."
-      : "Não há aulas neste dia — a agenda fica fechada.";
-    h+=`<div class="periodo" style="--pc:#e5533c"><span class="pico">🎌</span><b>Feriado: ${esc(fer)}</b>
-      <div class="pd">${nota}</div></div>`;
-    if(!adm){
-      $("view").innerHTML=h;
-      const onEl3=document.querySelector(".daychip.on"); if(onEl3&&onEl3.scrollIntoView){ try{ onEl3.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
-      return;
-    }
-  }
-  let algum=false, body="";
-  TURNOS.forEach(t=>{
-    const n=aulasDoDia(data,t.c); if(n<=0) return; algum=true;
-    const ic = t.k==="matutino"?"🌅":(t.k==="vespertino"?"🌤️":"🌙");
-    body+=`<div class="turnohd"><span>${ic}</span>${t.n}</div><div class="cards">`;
-    const rt=(S.reservas[data]&&S.reservas[data][t.k])||{};
-    for(let i=1;i<=n;i++){
-      const r=rt["a"+i], hora=horarioLabel(t.k,i-1);
-      const meta=`<div class="sc-r">${i}ª${hora?`<small>${esc(hora)}</small>`:""}</div>`;
-      if(!r){
-        if(ehHAE(data,t.k,i)){
-          body+=`<button class="slotcard hae" data-act="haeinfo"><div class="sc-ic">📋</div><div class="sc-m"><div class="sc-t">${esc(S.config.haeLabel||"Hora-atividade")}</div><div class="sc-s">hora-atividade</div></div>${meta}</button>`;
-        }else if(diaFechadoProf){
-          body+=`<div class="slotcard off"><div class="sc-ic">⏳</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">agende a partir de amanhã</div></div>${meta}</div>`;
-        }else{
-          body+=`<button class="slotcard free" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">＋</div><div class="sc-m"><div class="sc-t">Disponível</div><div class="sc-s">toque para agendar</div></div>${meta}</button>`;
-        }
-      }else if(r.bloqueado){
-        // Bloqueio com rótulo "HAE" = hora-atividade do professor de informática:
-        // mostra VERDE com 📋, destacando das aulas e dos bloqueios comuns (âmbar).
-        const ehHaeBloq = r.rotulo && (/\bhae\b/i.test(r.rotulo) || (S.config.haeLabel && r.rotulo===S.config.haeLabel));
-        if(ehHaeBloq){
-          body+=`<button class="slotcard hae" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">📋</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo)}</div><div class="sc-s">hora-atividade${S.user.admin?" · toque para liberar":""}</div></div>${meta}</button>`;
-        }else{
-          body+=`<button class="slotcard lock" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">🔒</div><div class="sc-m"><div class="sc-t">${esc(r.rotulo||"Indisponível")}</div><div class="sc-s">${S.user.admin?"toque para liberar":"bloqueado"}</div></div>${meta}</button>`;
-        }
-      }else{
-        const minha=sanId(r.profId)===sanId(S.user.id);
-        body+=`<button class="slotcard ${minha?"mine":"busy"}${r.excecao?" exc":""}" data-act="slot" data-t="${t.k}" data-i="${i}"><div class="sc-ic">${r.excecao?"⚠️":(minha?"👤":"📘")}</div><div class="sc-m"><div class="sc-t">${esc(r.turma||"")}</div><div class="sc-s">${r.excecao?"⚠️ exceção · ":""}${esc(r.profNome||"")}${r.disciplina?" · "+esc(r.disciplina):""}</div></div>${meta}</button>`;
-      }
-    }
-    body+="</div>";
-  });
-  if(!algum){
-    const dw=dateFromStr(data).getDay();
-    if(dw===0||dw===6){ h+=`<div class="empty"><span class="big">🗓️</span><b>${esc(cap1(fmtSem(data)))}</b> — sem agendas neste dia.<br>A agenda funciona nos dias letivos.</div>`; }
-    else if(dw===3){ h+=`<div class="empty"><span class="big">📋</span><b>Sem agendamento</b><br>HAE externa do professor de informática.</div>`; }
-    else{ h+=`<div class="empty"><span class="big">🌤️</span>Não há aulas neste dia.<br>Escolha outro dia na faixa acima.</div>`; }
-  }
-  else{ h+=`<div class="legend"><span><i class="lg free"></i>Livre</span><span><i class="lg busy"></i>Reservada</span><span><i class="lg lock"></i>Bloqueada</span></div>`+body; }
-  $("view").innerHTML=h;
-  const onEl=document.querySelector(".daychip.on"); if(onEl&&onEl.scrollIntoView){ try{ onEl.scrollIntoView({inline:"center",block:"nearest"}); }catch(e){} }
-}
-
-/* ================= VIEW: SEMANA (grade da semana inteira) ================= */
-function cShort(turma){ if(!turma) return ""; let s=(""+turma).replace(/\s*ano\s*/i," ").replace(/º/g,"").replace(/\s+/g," ").replace(/^\s+|\s+$/g,""); const p=s.split(" "); if(p.length>=2) return p[0]+p[p.length-1]; return s.slice(0,4); }
-function viewSemana(modoTop){
-  const hoje=hojeStr();
-  const base=dateFromStr(S.dataSel), dow=(base.getDay()+6)%7, monday=addDias(S.dataSel,-dow);
-  const dias=[];
-  for(let k=0;k<6;k++){ const ds=addDias(monday,k), wk=DIAS[dateFromStr(ds).getDay()], a=(S.config.aulas[wk]||{m:0,v:0,n:0});
-    if((a.m+a.v+a.n)>0 || periodoDoDia(ds)) dias.push(ds); }
-  let h=modoTop;
-  h+=`<div class="daysum"><div><b>Semana</b><div class="sub">${esc(fmtDia(monday))} — ${esc(fmtDia(addDias(monday,5)))}</div></div>
-      <div style="display:flex;gap:6px"><button class="semnav" data-act="setsemana" data-n="-7">‹</button><button class="semnav" data-act="setsemana" data-n="7">›</button></div></div>`;
-  if(!dias.length){ h+=`<div class="empty"><span class="big">🌤️</span>Sem aulas nesta semana.</div>`; $("view").innerHTML=h; return; }
-  let head=`<tr><th></th>`;
-  dias.forEach(ds=>{ const d=dateFromStr(ds); head+=`<th class="${ds===hoje?"hoje":""}"><span class="swd">${["Dom","Seg","Ter","Qua","Qui","Sex","Sáb"][d.getDay()]}</span><span class="sdn">${d.getDate()}</span></th>`; });
-  head+=`</tr>`;
-  let body="";
-  TURNOS.forEach(t=>{
-    let maxA=0; dias.forEach(ds=>{ maxA=Math.max(maxA, aulasDoDia(ds,t.c)); });
-    if(maxA<=0) return;
-    body+=`<tr class="tsep"><td colspan="${dias.length+1}">${t.n}</td></tr>`;
-    for(let i=1;i<=maxA;i++){
-      body+=`<tr><td class="al">${i}ª</td>`;
-      dias.forEach(ds=>{
-        if(periodoDoDia(ds)){ body+=`<td class="sc per">·</td>`; return; }
-        const n=aulasDoDia(ds,t.c); if(i>n){ body+=`<td class="sc vazio"></td>`; return; }
-        const rt=(S.reservas[ds]&&S.reservas[ds][t.k])||{}, r=rt["a"+i];
-        if(r&&r.bloqueado){ const hb=r.rotulo&&(/\bhae\b/i.test(r.rotulo)||(S.config.haeLabel&&r.rotulo===S.config.haeLabel)); body+=`<td class="sc ${hb?"hae":"lock"}" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">${hb?"HAE":"🔒"}</td>`; return; }
-        if(r){ const minha=sanId(r.profId)===sanId(S.user.id); body+=`<td class="sc ${minha?"mine":"busy"}" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}" title="${esc(r.turma||"")} · ${esc(r.profNome||"")}">${esc(cShort(r.turma))}</td>`; return; }
-        if(ehHAE(ds,t.k,i)){ body+=`<td class="sc hae" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">HAE</td>`; return; }
-        body+=`<td class="sc free" data-act="semana-cell" data-d="${ds}" data-t="${t.k}" data-i="${i}">+</td>`;
-      });
-      body+=`</tr>`;
-    }
-  });
-  h+=`<div class="semana-wrap"><table class="semana">${head}${body}</table></div>
-     <div class="legend" style="margin-top:12px"><span><i class="lg free"></i>Livre</span><span><i class="lg busy"></i>Reservada</span><span><i class="lg lock"></i>Bloqueada</span></div>`;
-  $("view").innerHTML=h;
-}
-/* ================= VIEW: MINHAS AULAS / PRÓXIMOS ================= */
-var _minhasFiltro="prox";  /* prox | todas */
-function viewProximos(){
-  const hoje=hojeStr(), admin=S.user.admin;
-  const lista=[];
-  Object.keys(S.reservas).sort().forEach(data=>{
-    if(_minhasFiltro==="prox" && data<hoje) return;
-    TURNOS.forEach(t=>{
-      const rt=S.reservas[data][t.k]; if(!rt) return;
-      Object.keys(rt).forEach(ak=>{
-        const r=rt[ak]; if(!r||r.bloqueado) return;
-        const minha = sanId(r.profId)===sanId(S.user.id);
-        if(admin || minha) lista.push({data,turno:t,aula:+ak.replace("a",""),r,minha});
-      });
-    });
-  });
-  lista.sort((a,b)=> a.data<b.data?-1:a.data>b.data?1:(ORD_TURNO[a.turno.k]-ORD_TURNO[b.turno.k])||(a.aula-b.aula));
-  const titulo = admin ? "Reservas" : "Minhas aulas";
-  let h=`<div class="rel-tools"><div class="chips">
-      <button class="chip ${_minhasFiltro==="prox"?"on":""}" data-act="minhas-filtro" data-v="prox">Próximas</button>
-      <button class="chip ${_minhasFiltro==="todas"?"on":""}" data-act="minhas-filtro" data-v="todas">Todas</button>
-    </div></div>`;
-  h+=`<div class="sectitle">${titulo} — ${lista.length} aula${lista.length===1?"":"s"}</div>`;
-  if(!lista.length){ h+=`<div class="empty"><span class="big">📭</span>${admin?"Nenhuma reserva aqui.":"Você ainda não tem aulas agendadas."}<br>Vá em <b>Hoje</b> e toque num horário livre.</div>`; }
-  else{
-    h+=`<div id="relprint"><div class="rel-cab"><b>${esc(admin?(S.config.escolaNome||S.config.appNome):S.user.nome)}</b><div>${esc(titulo)} · ${lista.length} aula${lista.length===1?"":"s"}</div></div><div class="card" style="padding:4px 14px">`;
-    lista.slice(0,200).forEach(it=>{
-      const hora=horarioLabel(it.turno.k,it.aula-1);
-      const passou = it.data<hoje;
-      h+=`<div class="rowitem" data-act="verres" data-data="${it.data}" data-t="${it.turno.k}" data-i="${it.aula}"${passou?' style="opacity:.6"':''}>
-        <div class="main"><div class="l1">${esc(it.r.turma)} · ${it.turno.n} ${it.aula}ª</div>
-        <div class="l2">${esc(fmtDia(it.data))} (${esc(fmtSem(it.data).replace("-feira",""))})${hora?" · "+esc(hora):""}${admin&&!it.minha?" · "+esc(it.r.profNome):""}</div></div>
-        <div class="tag">${esc(it.r.disciplina||"")}</div></div>`;
-    });
-    h+=`</div></div>
-      <button class="btn primary" data-act="imprimir" style="margin-top:10px">🖨️ Imprimir ${admin?"lista":"minha agenda"}</button>
-      <div style="height:8px"></div>`;
-  }
-  $("view").innerHTML=h;
-}
-
-/* ================= VIEW: RELATÓRIOS (aulas por turma/professor/disciplina/período + ocupação + imprimir) ================= */
-var _relPeriodo="mes";  /* mes | 30d | ano | tudo */
-function relIntervalo(){
-  const hoje=hojeStr(), d=dateFromStr(hoje);
-  if(_relPeriodo==="30d") return [addDias(hoje,-29), hoje];
-  if(_relPeriodo==="ano") return [d.getFullYear()+"-01-01", d.getFullYear()+"-12-31"];
-  if(_relPeriodo==="tudo"){ const ks=Object.keys(S.reservas).sort(); return [ks[0]||hoje, ks[ks.length-1]||hoje]; }
-  return [d.getFullYear()+"-"+pad(d.getMonth()+1)+"-01", fimDoMes(hoje)];
-}
-function coletarRelatorio(ini, fim){
-  const porTurno={matutino:0,vespertino:0,noturno:0}, porProf={}, porTurma={}, porDisc={};
-  let total=0, bloqueados=0;
-  Object.keys(S.reservas).forEach(data=>{
-    if(data<ini||data>fim) return; if(periodoDoDia(data)) return;
-    TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
-      Object.keys(rt).forEach(ak=>{ const r=rt[ak]; if(!r) return;
-        if(r.bloqueado){ bloqueados++; return; }
-        total++; porTurno[t.k]=(porTurno[t.k]||0)+1;
-        if(r.profNome) porProf[r.profNome]=(porProf[r.profNome]||0)+1;
-        if(r.turma) porTurma[r.turma]=(porTurma[r.turma]||0)+1;
-        if(r.disciplina) porDisc[r.disciplina]=(porDisc[r.disciplina]||0)+1;
-      });
-    });
-  });
-  let capacidade=0; const dd=diffDias(ini,fim);
-  // teto amplo (10 anos) só como trava de sanidade — antes 420 zerava a ocupação no "Tudo".
-  if(dd>=0 && dd<=3660){ for(let k=0;k<=dd;k++){ const ds=addDias(ini,k); if(periodoDoDia(ds)) continue;
-    TURNOS.forEach(t=>{ const n=aulasDoDia(ds,t.c); for(let i=1;i<=n;i++){ if(!ehHAE(ds,t.k,i)) capacidade++; } }); } }
-  return {total,bloqueados,porTurno,porProf,porTurma,porDisc,capacidade};
-}
-function secBarras(titulo, obj){
-  const ents=Object.keys(obj).filter(k=>obj[k]>0).map(k=>[k,obj[k]]).sort((a,b)=>b[1]-a[1]);
-  if(!ents.length) return "";
-  const max=ents[0][1];
-  let h=`<div class="sectitle">${esc(titulo)}</div><div class="card">`;
-  ents.forEach(e=>{ const pct=Math.max(4,Math.round(e[1]/max*100));
-    h+=`<div class="barrow"><div class="bl">${esc(e[0])}</div><div class="bt"><i style="width:${pct}%"></i></div><div class="bv">${e[1]}</div></div>`; });
-  h+=`</div>`; return h;
-}
-function viewInsights(){
-  const iv=relIntervalo(), ini=iv[0], fim=iv[1];
-  const R=coletarRelatorio(ini,fim);
-  const ocup = R.capacidade>0 ? Math.round(R.total/R.capacidade*100) : 0;
-  const chips=[["mes","Este mês"],["30d","Últimos 30 dias"],["ano","Este ano"],["tudo","Tudo"]]
-    .map(c=>`<button class="chip ${_relPeriodo===c[0]?"on":""}" data-act="rel-per" data-v="${c[0]}">${c[1]}</button>`).join("");
-  let h=`<div class="rel-tools"><div class="chips">${chips}</div></div>
-    <div id="relprint">
-    <div class="rel-cab"><b>${esc(S.config.escolaNome||S.config.appNome)}</b><div>Relatório de aulas · ${esc(fmtDia(ini))} a ${esc(fmtDia(fim))}</div></div>
-    <div class="grid2" style="margin-bottom:12px">
-      <div class="stat"><div class="n">${R.total}</div><div class="t">Aulas agendadas</div></div>
-      <div class="stat donutwrap"><div class="donut" style="--p:${ocup}"><span>${ocup}%</span></div><div class="t">Ocupação da sala</div></div>
-    </div>`;
-  h+=secBarras("Por período", {"Matutino":R.porTurno.matutino,"Vespertino":R.porTurno.vespertino,"Noturno":R.porTurno.noturno});
-  h+=secBarras("Por professor", R.porProf);
-  h+=secBarras("Por turma", R.porTurma);
-  h+=secBarras("Por disciplina", R.porDisc);
-  if(R.total===0) h+=`<div class="empty"><span class="big">📭</span>Nenhuma aula agendada neste período.</div>`;
-  h+=`</div>
-    <button class="btn primary" data-act="imprimir" style="margin-top:8px">🖨️ Imprimir / Salvar PDF</button>
-    <div style="height:10px"></div>
-    <button class="btn ghost" data-act="exportar-csv">📊 Exportar Excel / CSV</button>
-    <div style="height:8px"></div>`;
-  $("view").innerHTML=h;
-}
-
-/* ================= AÇÃO EM UM SLOT ================= */
-async function abrirSlot(turnoK, aula){
-  const data=S.dataSel;
-  if(periodoDoDia(data)) return;
-  if(diaFeriado(data) && !S.user.admin) return toast("Feriado — agenda fechada.");
-  const rt=(S.reservas[data]&&S.reservas[data][turnoK])||{};
-  const r=rt["a"+aula];
-  if(r && r.bloqueado){ if(S.user.admin) sheetBloqueio(turnoK,aula,true); return; }
-  if(r){ sheetReserva(turnoK,aula,r); return; }
-  if(ehHAE(data,turnoK,aula)){ toast("Hora-atividade — horário reservado (configure em ⚙️)."); return; }
-  // livre
-  const hoje=hojeStr();
-  if(data<hoje) return toast("Não dá para agendar num dia que já passou.");
-  // professor não agenda no mesmo dia; o admin pode (override)
-  if(!S.user.admin && S.config.apenasProximoDia && data===hoje) return toast("Só é possível agendar a partir do próximo dia.");
-  if(!S.user.admin && S.config.liberadoAte && data>S.config.liberadoAte) return toast("Este período ainda não foi liberado pelo administrador.");
-  if(S.user.admin) sheetEscolha(turnoK,aula);
-  else sheetAgendar(turnoK,aula);
-}
-function turnoNome(k){ const t=TURNOS.find(x=>x.k===k); return t?t.n:k; }
-
-function ctxHtml(turnoK,aula){
-  const hora=horarioLabel(turnoK,aula-1);
-  return `<div class="ctx"><span class="ico">🖥️</span><div><div class="d">${esc(fmtSem(S.dataSel).replace("-feira",""))}, ${esc(fmtDia(S.dataSel))}</div><div class="s">${aula}ª aula no ${turnoNome(turnoK)}${hora?" · "+esc(hora):""}</div></div></div>`;
-}
-function openSheet(html){ $("modal").innerHTML=`<div class="backdrop"><div class="sheet">${html}</div></div>`; }
-function fecharSheet(){ $("modal").innerHTML=""; }
-/* Desabilita um botão e mostra "…" enquanto grava; devolve função para restaurar
-   (se o botão ainda existir — após re-render some sozinho). Evita toque duplo e
-   dá sinal de "estou salvando" em internet lenta. */
-function btnBusy(sel, txt){
-  const b=(typeof sel==="string")?document.querySelector(sel):sel;
-  if(!b) return function(){};
-  const old=b.innerHTML; b.disabled=true; b.innerHTML=txt;
-  return function(){ if(b && b.isConnected){ b.disabled=false; b.innerHTML=old; } };
-}
-
-/* admin: escolher Agendar ou Bloquear */
-function sheetEscolha(turnoK,aula){
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Horário livre</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}
-    <div style="height:14px"></div>
-    <button class="btn primary" data-act="ir-agendar" data-t="${turnoK}" data-i="${aula}">➕ Agendar uma aula</button>
-    <div style="height:10px"></div>
-    <button class="btn ghost" data-act="bloquear-motivo" data-t="${turnoK}" data-i="${aula}">🔒 Marcar como indisponível</button>`);
-}
-/* admin: bloquear com um motivo/rótulo (ex.: HAE, Reunião) */
-function sheetBloquearMotivo(turnoK,aula){
-  const hae=esc(S.config.haeLabel||"HAE — Professor de Informática");
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Marcar indisponível</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}
-    <label class="fld">Motivo (aparece no horário)</label>
-    <input id="bMotivo" class="input" value="Indisponível" placeholder="Ex.: Reunião, Manutenção…">
-    <div style="height:10px"></div>
-    <div class="chips">
-      <button class="chip" data-act="motivo-preset" data-v="Indisponível">Indisponível</button>
-      <button class="chip" data-act="motivo-preset" data-v="${hae}">${hae}</button>
-      <button class="chip" data-act="motivo-preset" data-v="Reunião">Reunião</button>
-    </div>
-    <div style="height:16px"></div>
-    <button class="btn primary" data-act="conf-bloquear" data-t="${turnoK}" data-i="${aula}">🔒 Bloquear horário</button>`);
-}
-
-/* formulário de agendar */
-let _form={turma:null,disc:null,turnoK:null,aula:null};
-/* Reservas guardam a turma junta ("5º ano A"); o cartão precisa de ano + letra
-   separados para preencher os chips. Separa quando a última "palavra" é uma
-   letra configurada (A, B, C…). */
-function _sepTurma(turmaCheia){
-  let turma=turmaCheia||"", letra="";
-  const letras=(S.config.turmaLetras||[]).map(x=>(""+x).toUpperCase());
-  const m=turma.match(/^(.*\S)\s+([A-Za-z])$/);
-  if(m && letras.indexOf(m[2].toUpperCase())>=0){ turma=m[1]; letra=m[2].toUpperCase(); }
-  return {turma, letra};
-}
-/* Lista de "Reaproveitar": monta a partir das PRÓPRIAS reservas do professor
-   (inclui as aulas antigas, já carregadas em S.reservas) + o histórico salvo em
-   /recentes (cobre outro aparelho e reservas já excluídas). Dedup por tema+obj. */
-/* Planejamentos que o usuário escolheu esconder do reaproveitar (por professor).
-   Apagar aqui NÃO apaga a aula agendada — só tira da lista de sugestões. */
-function chaveRec(t){ return ((t.tema||"")+"||"+(t.objetivo||"")).toLowerCase().replace(/\s+/g," ").trim(); }
-async function carregarOcultos(profId){ const k=sanId(profId); if(!(k in S._ocultos)) S._ocultos[k]=(await fbGet("/recentesOcultos/"+k))||[]; return S._ocultos[k]; }
-function ocultosDe(profId){ return S._ocultos[sanId(profId)]||[]; }
-function montarRecentes(profId){
-  const mine=sanId(profId||S.user.id);
-  const chave=chaveRec;
-  const escondidos=ocultosDe(profId||S.user.id);
-  const vistos=new Set(), out=[];
-  const add=(r)=>{ if(!r||!(r.tema||r.objetivo)) return; const k=chave(r); if(!k||k==="||"||vistos.has(k)||escondidos.indexOf(k)>=0) return; vistos.add(k); out.push(r); };
-  const minhas=[];
-  Object.keys(S.reservas||{}).forEach(data=>{ const dia=S.reservas[data]||{};
-    Object.keys(dia).forEach(tk=>{ const rt=dia[tk]||{};
-      Object.keys(rt).forEach(ak=>{ const r=rt[ak];
-        if(r && !r.bloqueado && sanId(r.profId)===mine && (r.tema||r.objetivo)){
-          const sp=_sepTurma(r.turma);
-          minhas.push({tema:r.tema||"",objetivo:r.objetivo||"",disciplina:r.disciplina||"",turma:sp.turma,letra:sp.letra,ts:r.ts||0});
-        }
-      });
-    });
-  });
-  minhas.sort((a,b)=>(b.ts||0)-(a.ts||0));
-  minhas.forEach(add);
-  // O histórico salvo em /recentes é do usuário logado; só entra quando o alvo é ele mesmo.
-  if(mine===sanId(S.user.id)) (S.recentes||[]).forEach(add);
-  return out.slice(0,10);
-}
-/* Monta o HTML da caixa "Reaproveitar" para um professor (segue quem o admin escolhe). */
-function recBoxHTML(profId){
-  const recs=montarRecentes(profId); S._recAtual=recs;
-  if(!recs.length){
-    if(S.user.admin && sanId(profId)!==sanId(S.user.id))
-      return `<div class="hint" style="text-align:left;margin:2px 2px 10px">🕘 Este professor ainda não tem planejamentos para reaproveitar.</div>`;
-    return "";
-  }
-  let h=`<div class="sectitle">🕘 Reaproveitar um planejamento</div>
-    <div class="hint" style="text-align:left;margin:-2px 2px 6px">Toque num cartão para preencher tudo. É a mesma aula para <b>outra turma</b>? Toque no cartão e depois é só escolher a turma nova. Para remover um da lista, toque no <b>✕</b> do cartão (a aula já agendada continua na agenda).</div>
-    <div class="recentes">`;
-  recs.forEach((r,i)=>{
-    h+=`<div class="rec" data-act="usar-recente" data-i="${i}"><button type="button" class="recdel" data-act="del-recente" data-i="${i}" title="Remover do reaproveitar" aria-label="Remover do reaproveitar">✕</button><div class="rt">${esc(r.tema||"(sem tema)")}</div><div class="ro">${esc((r.objetivo||"").slice(0,70))}</div><div class="rtag">${esc(r.disciplina||"")}${r.turma?" · "+esc(r.turma)+(r.letra?" "+esc(r.letra):""):""}</div></div>`;
-  });
-  h+=`</div>`;
+  h+='</div>';
   return h;
 }
-/* Remove um planejamento da lista de reaproveitar (não apaga a aula agendada). */
-async function apagarRecente(idx){
-  const r=(S._recAtual||[])[idx]; if(!r) return;
-  const profId=_form.profId||S.user.id;
-  // permissão: professor só apaga os dele; admin pode apagar do professor escolhido
-  if(!S.user.admin && sanId(profId)!==sanId(S.user.id)) return toast("Você só pode apagar os seus.");
-  if(!confirm("Remover este planejamento da lista de reaproveitar?\n\nA aula que já foi agendada continua na agenda — some apenas das sugestões.")) return;
-  const k=sanId(profId), key=chaveRec(r);
-  const arr = (k in S._ocultos) ? S._ocultos[k] : ((await fbGet("/recentesOcultos/"+k))||[]);
-  if(arr.indexOf(key)<0) arr.push(key);
-  S._ocultos[k]=arr;
-  await fbSet("/recentesOcultos/"+k, arr);
-  // se estiver no histórico salvo do próprio usuário, também remove de lá
-  if(k===sanId(S.user.id) && (S.recentes||[]).length){
-    S.recentes=S.recentes.filter(x=>chaveRec(x)!==key);
-    fbSet("/recentes/"+k, S.recentes);
-  }
-  const box=$("recBox"); if(box) box.innerHTML=recBoxHTML(profId);
-  toast("Removido do reaproveitar.");
+function refHTML(q){
+  var m={
+    voce:'&#128064; Pense no SEU corpo &mdash; a sua direita e a sua esquerda',
+    costas:'&#128281; O explorador est&aacute; DE COSTAS (igual a voc&ecirc;) &mdash; o lado dele &eacute; o seu lado',
+    frente:'&#9888;&#65039; Aten&ccedil;&atilde;o! O explorador est&aacute; DE FRENTE, te olhando'
+  };
+  var t=m[q.ref]; if(!t){return '';}
+  return '<div class="refbadge '+q.ref+'">'+t+'</div>';
 }
-function sheetAgendar(turnoK,aula){
-  _form={turma:null,letra:null,disc:null,turnoK,aula};
-  const discAtivas = S.disciplinas.map(d=> typeof d==="string"?{nome:d,ativa:true}:d).filter(d=>d.ativa!==false);
-  const adm=S.user.admin;
-  let h=`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Agendar aula</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}`;
-  if(adm){
-    h+=`<label class="fld">Professor</label>`;
-    if(Object.keys(S.professores).length>6) h+=`<input class="chipfilter input" data-alvo="profChips" placeholder="🔍 buscar professor" style="margin-bottom:8px">`;
-    h+=`<div class="chips" id="profChips">`;
-    Object.keys(S.professores).forEach(k=>{ const p=S.professores[k];
-      h+=`<button class="chip ${sanId(p.id)===sanId(S.user.id)?"on":""}" data-act="pickprof" data-id="${esc(p.id)}">${esc(p.nome)}</button>`; });
-    h+=`</div>`;
-    _form.profId=S.user.id; _form.profNome=S.user.nome;
-  }else{ _form.profId=S.user.id; _form.profNome=S.user.nome; }
-  // Reaproveitar planejamento: fica no TOPO do formulário (bem visível). Segue o
-  // professor selecionado — se o admin agenda para outro professor, mostra o
-  // histórico DELE (tema/objetivo). Vem das aulas já agendadas + histórico salvo.
-  h+=`<div id="recBox">${recBoxHTML(_form.profId)}</div>`;
-  h+=`<label class="fld">Turma (ano)</label>`;
-  h+=`<div class="chips" id="turmaChips">`;
-  S.turmas.forEach(t=> h+=`<button class="chip" data-act="pickturma" data-v="${esc(t)}">${esc(t)}</button>`);
-  h+=`</div>`;
-  const letras=S.config.turmaLetras||[];
-  if(letras.length){
-    h+=`<label class="fld">Letra da turma</label><div class="chips" id="letraChips">`;
-    letras.forEach(L=> h+=`<button class="chip" data-act="pickletra" data-v="${esc(L)}">${esc(L)}</button>`);
-    h+=`</div>`;
+function telaPista(){
+  var q=QUESTOES[atual], h='';
+  h+='<div id="trilha">Pista '+(atual+1)+' de '+QUESTOES.length+' &#128075;</div>';
+  h+='<div id="barra"><i style="width:'+Math.round(atual/QUESTOES.length*100)+'%"></i></div>';
+  h+='<div class="card">';
+  if(q.pergunta){ h+='<h2 class="pergunta">'+q.pergunta+'</h2>'; }
+  h+=refHTML(q);
+  if(q.tipo==="vert"){
+    h+='<div class="vert"><div><img src="img/'+q.cima+'.png" alt="em cima"></div>';
+    h+='<div style="border-top:3px dashed #cdd9e6"></div>';
+    h+='<div><img src="img/'+q.baixo+'.png" alt="embaixo"></div></div>';
+  }else if(q.tipo==="par"){
+    h+='<div class="par"><span class="cel"><img src="img/'+q.esq+'.png" alt="esquerda"><span>&#9668; lado de cá</span></span>';
+    h+='<span class="cel"><img src="img/'+q.dir+'.png" alt="direita"><span>lado de lá &#9658;</span></span></div>';
+  }else if(q.tipo==="seta"){
+    h+='<div class="cena"><img class="placaseta'+(q.aponta==="dir"?"":" flip")+'" src="img/placa_seta.png" alt="placa de madeira com uma seta"></div>';
+  }else{
+    h+=cenaHTML(q);
   }
-  h+=`<label class="fld">Disciplina</label><div class="chips" id="discChips">`;
-  discAtivas.forEach(d=> h+=`<button class="chip" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
-  h+=`</div>
-    <label class="fld">Tema da aula</label><input id="fTema" class="input" placeholder="Digite o tema da aula">
-    <button class="btnlink" data-act="ia-tema" data-tema="fTema">✨ Melhorar tema com IA</button>
-    <label class="fld">Objetivo</label><textarea id="fObj" class="input" placeholder="Detalhes / objetivo da aula"></textarea>
-    <button class="btnlink" data-act="ia-objetivo" data-tema="fTema" data-obj="fObj">✨ Sugerir objetivo com IA</button>`;
-  h+=`<div style="height:18px"></div>
-    <button class="btn ok" data-act="salvar-agenda">✓ Confirmar agendamento</button>`;
-  openSheet(h);
-  /* menos toques: pre-seleciona a ultima turma/disciplina que este usuario usou */
+  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pista</button>';
+  h+='<div class="opcoes">';
+  var i;for(i=0;i<q.opcoes.length;i++){ h+='<button class="btn '+q.opcoes[i].cor+'" onclick="responder('+i+')">'+q.opcoes[i].t+'</button>'; }
+  h+='</div></div>';
+  $("app").innerHTML=h;
+  falar(q.fala);
+}
+function responder(idx){
+  somToque();
+  respostas[atual]=idx;
+  pararFala();
+  atual++;
+  if(atual>=QUESTOES.length){ telaFinal(); }
+  else {
+    /* transicao NEUTRA (nao revela certo/errado) */
+    var frases=["Vamos para a próxima pista!","Seguindo a aventura!","Muito bem, vamos lá!","Continue, explorador!"];
+    falar(frases[atual%frases.length]);
+    setTimeout(telaPista,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+
+function telaFinal(){
+  var ac=calcularAcertos();
+  confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/masc_festa.png" alt="explorador comemorando">';
+  h+='<h1>&#127881; Parabéns! &#127881;</h1>';
+  h+='<h2>'+nomeAluno+', você concluiu a Aventura das Direções!</h2>';
+  h+='<img src="img/bau.png" alt="tesouro" style="height:150px;margin:6px auto">';
+  h+='<p class="grande">Você achou o tesouro! Muito bem, explorador!</p>';
+  h+='<p id="statusenvio"></p>';
+  h+='</div>';
+  $("app").innerHTML=h;
+  falar("Parabéns! Você concluiu a Aventura das Direções e achou o tesouro! Você foi um explorador incrível!");
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase + Apps Script), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;} enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
+  var quando=new Date().toLocaleString("pt-BR");
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:ac,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  var ok=false;
+  /* 1) Firebase (funciona ja) */
   try{
-    const last=JSON.parse(localStorage.getItem("agenda_last_"+sanId(S.user.id))||"null");
-    if(last){
-      if(last.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===last.turma){ c.classList.add("on"); _form.turma=last.turma; } });
-      if(last.letra) document.querySelectorAll("#letraChips .chip").forEach(c=>{ if(c.dataset.v===last.letra){ c.classList.add("on"); _form.letra=last.letra; } });
-      if(last.disc) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===last.disc){ c.classList.add("on"); _form.disc=last.disc; } });
-    }
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/lateralidade-3ano/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.onreadystatechange=function(){ if(x.readyState===4){ marcarEnvio(x.status>=200&&x.status<300); } };
+    x.send(JSON.stringify(reg)); ok=true;
+  }catch(e){}
+  /* 2) Apps Script (planilha real), se configurado */
+  if(URL_PLANILHA){
+    try{
+      var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+
+        "&nota="+encodeURIComponent(ac)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
+        "&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
+      var y=new XMLHttpRequest(); y.open("POST",URL_PLANILHA,true);
+      y.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); y.send(dados);
+    }catch(e){}
+  }
+  if(!ok){ marcarEnvio(false); }
+}
+function marcarEnvio(ok){
+  /* registro SILENCIOSO: o aluno nao ve nada sobre a professora nem sobre envio.
+     (a nota/resultado vai por baixo dos panos p/ Firebase/planilha) */
+  var s=$("statusenvio"); if(s){ s.innerHTML=""; }
+}
+
+/* ====== confete leve (canvas, compat) ====== */
+function confete(){
+  try{
+    var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+    c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+    var x=c.getContext("2d"),ps=[],i,cores=["#f08a1f","#3fa34d","#2b8ae0","#8a63d2","#ffd23f"];
+    for(i=0;i<80;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+    var t=0,tot=140;
+    function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}
+    loop();
   }catch(e){}
 }
 
-/* ===== IA (Pollinations texto — GRÁTIS, sem chave, sem servidor) =====
-   Chama do navegador do professor (o container do Claude é bloqueado, mas o navegador
-   tem internet). Se a rede da escola bloquear o serviço, o botão só não funciona ali. */
-async function _iaPollinations(prompt, ms){
-  const url = "https://text.pollinations.ai/" + encodeURIComponent(prompt);
-  const r = await _fetchT(url, {headers:{"Accept":"text/plain"}}, ms||22000);
-  if(!r || !r.ok) throw new Error("resp");
-  const t = await r.text();
-  return (t||"").trim();
-}
-function _iaContexto(){
-  let turma = (_form.turma||"") + (_form.letra ? (" "+_form.letra) : "");
-  turma = turma.trim();
-  if(!turma && _editAlvo && _editAlvo.base) turma = _editAlvo.base.turma || "";
-  return { turma: turma, disc: _form.disc || (_editAlvo&&_editAlvo.base&&_editAlvo.base.disciplina) || "" };
-}
-// Descobre o ano (0=Pré .. 9). Null se não der pra saber.
-function _iaAno(turma){
-  if(!turma) return null;
-  const t = (""+turma).toLowerCase();
-  if(/pr[eé]/.test(t)) return 0;
-  const m = t.match(/(\d+)/);
-  return m ? parseInt(m[1],10) : null;
-}
-// Papel/persona que a IA assume, conforme ano + disciplina (regente x especialista de área).
-function _iaPapel(turma, disc){
-  const ano = _iaAno(turma);
-  const d = (disc||"").toLowerCase();
-  // disciplinas "de área" (têm professor especialista já nos anos iniciais)
-  const ehArea = /(educa|ed\.?\s*f|f[íi]sic|arte|ingl|m[uú]sic|religios|religi[aã]|dan[çc]|teatro|espanhol)/.test(d);
-  const disciplina = disc ? disc : "sua disciplina";
-  const exp = "especialista em didatica e planejamento pedagogico, com dominio profundo do Curriculo da Rede Municipal de Blumenau e da BNCC, muito experiente";
-  if(ano != null && ano <= 5){
-    if(ehArea) return "um professor "+exp+" de "+disciplina+" dos anos iniciais (Pré ao 5º ano)";
-    return "um pedagogo "+exp+" nos anos iniciais (Pré ao 5º ano), professor regente polivalente";
-  }
-  if(ano != null && ano >= 6) return "um professor "+exp+" de "+disciplina+" dos anos finais (6º ao 9º ano)";
-  return "um professor "+exp+" de "+disciplina; // ano desconhecido
-}
-// ÂNCORA CURRICULAR — estrutura REAL do Currículo da Rede Municipal de Blumenau
-// (extraída do PDF oficial 2021; segue as unidades temáticas / campos / eixos da BNCC).
-// Serve para a IA enquadrar tema e objetivo na unidade certa, sem inventar.
-var _CURRIC_BLU = {
-  pre: "Campos de Experiência (Educação Infantil): O Eu, o Outro e o Nós; Corpo, Gestos e Movimentos; Traços, Sons, Cores e Formas; Escuta, Fala, Pensamento e Imaginação; Espaços, Tempos, Quantidades, Relações e Transformações",
-  portugues: "Língua Portuguesa: práticas de linguagem (leitura/escuta, produção de texto oral e escrita/semiose, análise linguística/semiótica) nos campos de atuação: da vida cotidiana, das práticas de estudo e pesquisa, da vida pública, jornalístico-midiático e artístico-literário",
-  matematica: "Matemática: cinco unidades temáticas — Números, Álgebra, Geometria, Grandezas e Medidas, Probabilidade e Estatística",
-  ciencias: "Ciências: três unidades temáticas — Matéria e Energia, Vida e Evolução, Terra e Universo",
-  historia: "História: organizada por processos históricos e objetos de conhecimento por ano (do eu/família/comunidade e noções de tempo, nos anos iniciais, até a formação do mundo contemporâneo), integrando a história local de Blumenau e de Santa Catarina",
-  geografia: "Geografia: cinco unidades temáticas — O Sujeito e seu Lugar no Mundo; Conexões e Escalas; Mundo do Trabalho; Formas de Representação e Pensamento Espacial; Natureza, Ambientes e Qualidade de Vida",
-  arte: "Arte: quatro linguagens — Artes Visuais, Dança, Música e Teatro (mais Artes Integradas) — trabalhadas nas dimensões criação, crítica, estesia, expressão, fruição e reflexão",
-  edfisica: "Educação Física: seis unidades temáticas — Brincadeiras e Jogos, Esportes, Ginásticas, Danças, Lutas e Práticas Corporais de Aventura",
-  ingles: "Língua Inglesa: cinco eixos — Oralidade, Leitura, Escrita, Conhecimentos Linguísticos e Dimensão Intercultural",
-  religiao: "Ensino Religioso: três unidades temáticas — Identidades e Alteridades, Manifestações Religiosas, e Crenças Religiosas e Filosofias de Vida"
-};
-// Descobre a chave da disciplina a partir do texto livre digitado pelo professor.
-function _iaCurricKey(disc){
-  const d = (disc||"").toLowerCase();
-  if(/(portug|l[íi]ngua\s*port|reda[çc]|l[íi]ngua\s*materna|alfabet)/.test(d)) return "portugues";
-  if(/(matem|c[áa]lculo)/.test(d)) return "matematica";
-  if(/(ci[êe]nc|biolog|natureza)/.test(d)) return "ciencias";
-  if(/hist[óo]r/.test(d)) return "historia";
-  if(/geograf/.test(d)) return "geografia";
-  if(/(arte|m[uú]sic|teatro|dan[çc]|visuais)/.test(d)) return "arte";
-  if(/(educa[çc].*f[íi]s|ed\.?\s*f|f[íi]sica)/.test(d)) return "edfisica";
-  if(/(ingl|l[íi]ngua\s*estrangeira|l[íi]ngua\s*alem)/.test(d)) return "ingles";
-  if(/(religi|ensino\s*relig)/.test(d)) return "religiao";
-  return null;
-}
-// Frase-âncora com a estrutura curricular de Blumenau para injetar no prompt.
-function _iaCurric(turma, disc){
-  const ano = _iaAno(turma);
-  let ref = null;
-  if(ano === 0) ref = _CURRIC_BLU.pre;          // Pré = Educação Infantil (campos de experiência)
-  else { const k = _iaCurricKey(disc); if(k) ref = _CURRIC_BLU[k]; }
-  if(!ref) return "";
-  return " ANCORA CURRICULAR (Curriculo de Blumenau, base da resposta) — " + ref
-    + ". Enquadre o tema e o objetivo na unidade/campo/eixo adequado a esta estrutura e ao ano; nao use nomes de unidades diferentes destes.";
-}
-var _IA_BASE = "Voce e "; // prefixo do papel
-// PRIORIDADE: primeiro o Curriculo de Blumenau, depois a BNCC.
-var _IA_BNCC = " Sua referencia PRINCIPAL e o Curriculo da Rede Municipal de Ensino de Blumenau (SC); a BNCC e a referencia COMPLEMENTAR. Baseie o planejamento primeiro no curriculo de Blumenau e, em seguida, na BNCC. Escreva conteudo serio, correto, realista e coerente — nunca generico, nunca bobagem.";
-// IMPORTANTE: a aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola.
-var _IA_LAB = " CONTEXTO OBRIGATORIO: esta aula acontece na SALA DE INFORMATICA (laboratorio de tecnologia) da escola. Portanto o tema e o objetivo devem SEMPRE integrar o uso do computador e de recursos/ferramentas digitais (softwares educativos, jogos, pesquisa, digitacao, etc.) a disciplina, de forma adequada ao ano.";
-// GUARDA-CORPOS anti-alucinacao/erro (precisao pedagogica):
-var _IA_REGRAS = " REGRAS DE PRECISAO (siga a risca): NAO invente codigos da BNCC (ex.: EF04MA09), numeros/nomes de documentos, paginas nem fontes; NAO afirme nenhum dado especifico do qual nao tenha CERTEZA; se nao souber um detalhe, NAO o cite (melhor omitir do que inventar). Escreva um objetivo pedagogicamente CORRETO, realista e verificavel, focado na HABILIDADE e na acao do aluno (verbo no infinitivo), coerente com o tema e a faixa etaria. Reveja mentalmente para garantir que nao ha erro conceitual nem invencao.";
-async function sugerirObjetivoIA(temaId, objId){
-  const tema = ($(temaId) ? $(temaId).value.trim() : "");
-  if(!tema) return toast("Escreva o tema da aula primeiro. ✍️");
-  const ctx = _iaContexto();
-  const restore = btnBusy('[data-act="ia-objetivo"]', "✨ Gerando…");
-  try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _iaCurric(ctx.turma, ctx.disc) + _IA_LAB + _IA_REGRAS
-      + " Escreva UM objetivo de aprendizagem claro, correto e bem redigido (no maximo 2 frases, em portugues, com linguagem de plano de aula) para uma aula na sala de informatica sobre o tema informado."
-      + " O objetivo deve estar TOTALMENTE COERENTE com o tema (o tema e o objetivo tem que combinar entre si) e ser realista para a turma."
-      + " RESPEITE totalmente a escolha do professor: NUNCA critique, NUNCA diga que o tema e inadequado, NUNCA sugira trocar o tema — apenas escreva o objetivo para o tema pedido."
-      + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
-      + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
-      + " Tema: "+tema+"."
-      + " Responda APENAS com o texto do objetivo, sem titulo, sem aspas, sem a palavra Objetivo, sem nenhum comentario extra.";
-    let out = await _iaPollinations(prompt);
-    out = out.replace(/^["'\s]+|["'\s]+$/g,"").replace(/^objetivo:?\s*/i,"").trim();
-    if(!out) throw new Error("vazio");
-    if($(objId)){ $(objId).value = out; }
-    toast("Sugestão pronta! Ajuste se quiser. ✨");
-  }catch(e){ toast("A IA não respondeu agora (pode estar fora do ar ou a rede bloqueou). Tente de novo."); }
-  finally{ restore(); }
-}
-async function melhorarTemaIA(temaId){
-  const tema = ($(temaId) ? $(temaId).value.trim() : "");
-  if(!tema) return toast("Escreva um tema (mesmo curtinho) primeiro. ✍️");
-  const ctx = _iaContexto();
-  const restore = btnBusy('[data-act="ia-tema"]', "✨ Melhorando…");
-  try{
-    const prompt = _IA_BASE + _iaPapel(ctx.turma, ctx.disc) + "." + _IA_BNCC + _iaCurric(ctx.turma, ctx.disc) + _IA_LAB + _IA_REGRAS
-      + " Reescreva o TEMA de uma aula (na sala de informatica) deixando-o claro, especifico, correto, adequado a faixa etaria e atraente (curto, no maximo 8 palavras, em portugues), coerente primeiro com o Curriculo de Blumenau, depois com a BNCC, e com o uso do computador. Mantenha a INTENCAO original do professor; nunca troque o assunto por outro; nao invente termos tecnicos."
-      + (ctx.turma ? (" Turma/ano: "+ctx.turma+".") : "")
-      + (ctx.disc ? (" Disciplina: "+ctx.disc+".") : "")
-      + " Tema atual: "+tema+"."
-      + " Responda APENAS com o novo tema, sem aspas e sem explicacao.";
-    let out = await _iaPollinations(prompt);
-    out = (out.split("\n")[0]||"").replace(/^["'\s]+|["'\s]+$/g,"").trim();
-    if(!out) throw new Error("vazio");
-    if($(temaId)){ $(temaId).value = out; }
-    toast("Tema melhorado! ✨");
-  }catch(e){ toast("A IA não respondeu agora. Tente de novo."); }
-  finally{ restore(); }
-}
-
-async function salvarAgenda(){
-  const ano=_form.turma, disc=_form.disc, turnoK=_form.turnoK, aula=_form.aula;
-  const turma = ano ? (ano + (_form.letra ? " "+_form.letra : "")) : null;
-  const tema=($("fTema")?$("fTema").value.trim():(_form.tema||"")), obj=($("fObj")?$("fObj").value.trim():(_form.obj||""));
-  if(!ano) return toast("Escolha a turma.");
-  if((S.config.turmaLetras||[]).length && !_form.letra) return toast("Escolha a letra da turma (A, B, C…).");
-  if(!disc) return toast("Escolha a disciplina.");
-  if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
-  if(diaFeriado(S.dataSel) && !S.user.admin) return toast("Feriado — agenda fechada.");
-  // rodízio: cada professor só agenda na SEMANA do grupo da sua turma. Fora dessa semana o
-  // professor COMUM não agenda sozinho — precisa falar com a coordenação e com o professor de
-  // informática (admin). Só o admin agenda fora da semana, e a aula fica marcada como EXCEÇÃO.
-  {
-    const sg=grupoDaSemana(S.dataSel), tg=grupoDaTurma(turma);
-    const foraDaSemana = sg && tg && sg!==tg;
-    if(foraDaSemana){
-      if(!S.user.admin){ _form.tema=tema; _form.obj=obj; return sheetForaSemana(sg,tg); }
-      _form.excecao = true; // admin agendando fora da semana → registra como exceção
-    }
-  }
-  const restore=btnBusy('[data-act="salvar-agenda"]',"Salvando…");
-  try{
-    // checa se o slot continua livre (anti-choque simples). Distingue "vazio" de "falha":
-    // se a leitura de checagem falhar, NÃO grava às cegas (evitava sobrescrever reserva alheia).
-    const chk = await fbGetRaw(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
-    if(!chk.ok){ toast("Sem conexão para confirmar o horário. Tente de novo."); return; }
-    if(chk.val){ await recarregarReservas(); fecharSheet(); renderTab(); toast("Ops! Esse horário acabou de ser reservado."); return; }
-    const reg={turma,disciplina:disc,tema,objetivo:obj,profId:_form.profId,profNome:_form.profNome,ownerUid:(S.auth&&S.auth.uid)||null,ts:Date.now()};
-    if(_form.excecao) reg.excecao=true;
-    const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
-    if(!ok){ toast(_msgFalha("Não foi possível salvar. Tente de novo.")); return; }
-    try{ localStorage.setItem("agenda_last_"+sanId(S.user.id), JSON.stringify({turma:ano,letra:_form.letra,disc})); }catch(e){}
-    if(tema||obj){ try{
-      const nova={tema:tema,objetivo:obj,disciplina:disc,turma:ano,letra:_form.letra,ts:Date.now()};
-      const chave=(t)=>((t.tema||"")+"||"+(t.objetivo||"")).toLowerCase().replace(/\s+/g," ").trim();
-      S.recentes=(S.recentes||[]).filter(x=>chave(x)!==chave(nova));
-      S.recentes.unshift(nova); S.recentes=S.recentes.slice(0,10);
-      fbSet("/recentes/"+sanId(S.user.id), S.recentes);
-    }catch(e){} }
-    await recarregarReservas(); fecharSheet(); renderTab(); toast(reg.excecao ? "Agendado como exceção. ⚠️" : "Aula agendada! ✅");
-  } finally { restore(); }
-}
-function sheetForaSemana(sg,tg){
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Fora da sua semana</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <div class="card" style="border-color:var(--amber);background:var(--amber-tint)">
-      <div style="font-weight:800;color:var(--amber)">⚠️ Esta semana é dos ${esc(nomeGrupo(sg))}</div>
-      <div style="font-size:14px;margin-top:6px;color:var(--text)">A turma escolhida é dos <b>${esc(nomeGrupo(tg))}</b>. Cada grupo agenda só na sua semana do rodízio.</div>
-    </div>
-    <p class="hint" style="text-align:left">Você pode <b>enviar um pedido</b> ao professor de informática. Ele avalia e, se aprovar, a aula entra na agenda <b>marcada como exceção</b> ⚠️. O pedido leva a turma, a disciplina, o tema e o objetivo que você preencheu.</p>
-    <button class="btn primary" data-act="enviar-pedido">📨 Enviar pedido de agendamento</button>
-    <div style="height:10px"></div>
-    <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
-}
-
-/* ver / excluir reserva */
-function sheetReserva(turnoK,aula,r){
-  const minha = sanId(r.profId)===sanId(S.user.id);   // exibição: "é a minha turma"
-  // Permissão de editar/excluir = o MESMO critério das regras do servidor: dono pelo
-  // ownerUid (ou admin). Assim não mostramos botão que o servidor vai recusar (ex.: aula
-  // que o admin agendou para o professor fica com ownerUid do admin). Fallback p/ profId
-  // em registros sem ownerUid (legados).
-  const meuUid = S.auth && S.auth.uid;
-  const souDono = r.ownerUid ? (r.ownerUid===meuUid) : minha;
-  const podeExcluir = souDono || S.user.admin;
-  let h=`<div class="grab"></div>
-    <div class="sh-head"><div class="t">${esc(r.turma)}</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}
-    <div class="card" style="margin-top:12px">
-      <div class="rowitem"><div class="main"><div class="l2">Professor</div><div class="l1">${esc(r.profNome||"")}</div></div></div>
-      <div class="rowitem"><div class="main"><div class="l2">Disciplina</div><div class="l1">${esc(r.disciplina||"—")}</div></div></div>
-      ${r.tema?`<div class="rowitem"><div class="main"><div class="l2">Tema</div><div class="l1">${esc(r.tema)}</div></div></div>`:""}
-      ${r.objetivo?`<div class="rowitem"><div class="main"><div class="l2">Objetivo</div><div class="l1" style="font-weight:500">${esc(r.objetivo)}</div></div></div>`:""}
-    </div>`;
-  if(podeExcluir){
-    h+=`<button class="btn ghost" data-act="editar-reserva" data-t="${turnoK}" data-i="${aula}">✏️ Editar (tema/objetivo)</button>
-      <div style="height:10px"></div>
-      <button class="btn danger" data-act="pedir-excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Excluir ${souDono?"minha reserva":"reserva"}</button>`;
-  } else h+=`<p class="hint">Só o professor que reservou (ou o administrador) pode editar/excluir.</p>`;
-  openSheet(h);
-}
-function sheetConfExcluir(turnoK,aula){
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Excluir reserva?</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}
-    <p class="hint" style="text-align:left;font-size:15px;color:var(--text);margin-top:10px">Tem certeza? Essa ação não volta.</p>
-    <div style="height:10px"></div>
-    <button class="btn danger" data-act="excluir" data-t="${turnoK}" data-i="${aula}">🗑️ Sim, excluir</button>
-    <div style="height:10px"></div>
-    <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
-}
-async function excluirReserva(turnoK,aula){
-  const ok=await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
-  if(!ok){ toast(_msgFalha("Não foi possível excluir. Tente de novo.")); return; }
-  await recarregarReservas(); fecharSheet(); renderTab(); toast("Reserva excluída.");
-}
-var _editAlvo=null;
-function editarReserva(turnoK,aula){
-  const rt=(S.reservas[S.dataSel]&&S.reservas[S.dataSel][turnoK])||{}; const r=rt["a"+aula]; if(!r||r.bloqueado) return;
-  _editAlvo={turnoK,aula,base:r}; _form={turma:null,letra:null,disc:r.disciplina||null,turnoK,aula};
-  const discAtivas=S.disciplinas.map(d=> typeof d==="string"?{nome:d,ativa:true}:d).filter(d=>d.ativa!==false);
-  let h=`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Editar aula</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}
-    <div class="card" style="margin-top:12px"><div class="rowitem"><div class="main"><div class="l2">Turma · Professor</div><div class="l1">${esc(r.turma||"")} · ${esc(r.profNome||"")}</div></div></div></div>
-    <label class="fld">Disciplina</label><div class="chips" id="discChips">`;
-  discAtivas.forEach(d=> h+=`<button class="chip ${d.nome===r.disciplina?"on":""}" data-act="pickdisc" data-v="${esc(d.nome)}">${esc(d.nome)}</button>`);
-  h+=`</div>
-    <label class="fld">Tema da aula</label><input id="eTema" class="input" value="${esc(r.tema||"")}" placeholder="Tema da aula">
-    <button class="btnlink" data-act="ia-tema" data-tema="eTema">✨ Melhorar tema com IA</button>
-    <label class="fld">Objetivo</label><textarea id="eObj" class="input" placeholder="Objetivo">${esc(r.objetivo||"")}</textarea>
-    <button class="btnlink" data-act="ia-objetivo" data-tema="eTema" data-obj="eObj">✨ Sugerir objetivo com IA</button>
-    <div style="height:16px"></div>
-    <button class="btn ok" data-act="salvar-edicao">✓ Salvar alterações</button>`;
-  openSheet(h);
-}
-async function salvarEdicao(){
-  if(!_editAlvo) return; const turnoK=_editAlvo.turnoK, aula=_editAlvo.aula, base=_editAlvo.base;
-  const disc=_form.disc||base.disciplina, tema=($("eTema")?$("eTema").value.trim():""), obj=($("eObj")?$("eObj").value.trim():"");
-  if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
-  // preserva o ownerUid do registro; se faltar (legado), recarimba com o usuário atual
-  const reg=Object.assign({}, base, {disciplina:disc, tema:tema, objetivo:obj, ownerUid:base.ownerUid||(S.auth&&S.auth.uid)||null, ts:Date.now()});
-  const restore=btnBusy('[data-act="salvar-edicao"]',"Salvando…");
-  try{
-    const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, reg);
-    if(!ok){ toast(_msgFalha("Não foi possível salvar. Tente de novo.")); return; }
-    await recarregarReservas(); fecharSheet(); renderTab(); toast("Alterações salvas! ✅");
-  } finally { restore(); }
-}
-async function resetarSenha(k){
-  const p=S.professores[k], nome=p?p.nome:"este professor";
-  if(!confirm("Resetar a senha de "+nome+"?\n\nNo próximo acesso ele cria uma senha nova.")) return;
-  const ver=(p&&+p.authVer)||1;
-  // limpa a senha e a conta segura antiga; bump da versão => o próximo acesso cria uma conta nova
-  await fbUpdate("/professores/"+k, {senha:null, fbAuth:null, authVer:ver+1});
-  await carregarBase(); telaProfessores(); toast("Senha resetada — o professor cria uma nova no próximo acesso.");
-}
-function exportarCSV(){
-  const iv=relIntervalo(), ini=iv[0], fim=iv[1];
-  const linhas=[["Data","Turno","Aula","Turma","Professor","Disciplina","Tema","Objetivo"]];
-  Object.keys(S.reservas).sort().forEach(data=>{ if(data<ini||data>fim) return; if(periodoDoDia(data)) return;
-    TURNOS.forEach(t=>{ const rt=S.reservas[data][t.k]; if(!rt) return;
-      Object.keys(rt).sort().forEach(ak=>{ const r=rt[ak]; if(!r||r.bloqueado) return;
-        linhas.push([data, t.n, ak.replace("a",""), r.turma||"", r.profNome||"", r.disciplina||"", r.tema||"", r.objetivo||""]); }); }); });
-  // neutraliza injeção de fórmula: célula que começa com = + - @ (ou tab/CR) ganha um ' na frente
-  const cel=(c)=>{ let s=""+c; if(/^[=+\-@\t\r]/.test(s)) s="'"+s; return '"'+s.replace(/"/g,'""')+'"'; };
-  const csv=linhas.map(l=>l.map(cel).join(";")).join("\r\n");
-  try{
-    const blob=new Blob(["﻿"+csv], {type:"text/csv;charset=utf-8;"});
-    const url=URL.createObjectURL(blob), a=document.createElement("a");
-    a.href=url; a.download="relatorio-aulas-"+ini+"-a-"+fim+".csv"; document.body.appendChild(a); a.click();
-    setTimeout(function(){ URL.revokeObjectURL(url); a.remove(); }, 600);
-    toast("Relatório exportado (CSV/Excel).");
-  }catch(e){ toast("Não foi possível exportar aqui."); }
-}
-
-/* bloquear / desbloquear (admin) */
-async function bloquearSlot(turnoK,aula,rotulo){
-  const ok=await fbSet(`/reservas/${S.dataSel}/${turnoK}/a${aula}`, {bloqueado:true, rotulo:(rotulo||"Indisponível"), byAdmin:S.user.nome, ts:Date.now()});
-  if(!ok){ toast("Não foi possível bloquear. Tente de novo."); return; }
-  await recarregarReservas(); fecharSheet(); renderTab(); toast("Horário bloqueado. 🔒");
-}
-function sheetBloqueio(turnoK,aula){
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Horário indisponível</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    ${ctxHtml(turnoK,aula)}
-    <div style="height:14px"></div>
-    <button class="btn ghost" data-act="desbloquear" data-t="${turnoK}" data-i="${aula}">🔓 Liberar este horário</button>`);
-}
-async function desbloquearSlot(turnoK,aula){
-  const ok=await fbDel(`/reservas/${S.dataSel}/${turnoK}/a${aula}`);
-  if(!ok){ toast("Não foi possível liberar. Tente de novo."); return; }
-  await recarregarReservas(); fecharSheet(); renderTab(); toast("Horário liberado. 🔓");
-}
-
-/* ================= ADMIN: menu ================= */
-function menuAdmin(){
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><div class="t">Administração</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <div style="height:6px"></div>
-    <button class="btn ghost" data-act="tela-prof">👥 Professores</button><div style="height:10px"></div>
-    <button class="btn ghost" data-act="tela-config">🕐 Horários e turmas</button><div style="height:10px"></div>
-    <button class="btn ghost" data-act="tela-bloqueios">🔒 Bloquear horários (dia/turno/aula)</button><div style="height:10px"></div>
-    <button class="btn ghost" data-act="tela-periodos">🏖️ Recesso e férias (períodos)</button><div style="height:10px"></div>
-    <button class="btn ghost" data-act="tela-opcoes">⚙️ Outras configurações</button>`);
-}
-/* admin: períodos de recesso/férias (intervalos sem aula) */
-var _perCor="#e0913f";
-function telaPeriodos(){
-  fecharSheet();
-  const hoje=hojeStr();
-  const cores=["#0ea3a3","#e0913f","#7c5cff","#e5533c","#0ea371"];
-  let sw=`<div class="chips" style="margin-top:4px">`;
-  cores.forEach(c=> sw+=`<button class="chip perc ${c===_perCor?"on":""}" data-act="periodo-cor" data-v="${c}" style="background:${c};color:#fff;border-color:${c};width:38px;padding:10px 0"> </button>`);
-  sw+=`</div>`;
-  let list=`<div class="card" style="padding:4px 14px">`;
-  const arr=S.config.periodos||[];
-  if(!arr.length) list+=`<div class="empty" style="padding:18px">Nenhum período cadastrado.</div>`;
-  arr.forEach((p,i)=>{ list+=`<div class="rowitem"><span style="width:14px;height:14px;border-radius:5px;background:${corSegura(p.cor)};flex-shrink:0"></span>
-    <div class="main"><div class="l1">${esc(p.rotulo)}</div><div class="l2">${esc(fmtDia(p.inicio))} até ${esc(fmtDia(p.fim))}</div></div>
-    <button class="minibtn" data-act="del-periodo" data-i="${i}">Excluir</button></div>`; });
-  list+=`</div>`;
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Recesso e férias</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <p class="hint" style="text-align:left">Nos dias dentro de um período a agenda fica fechada (sem aulas), com os dizeres e a cor que você escolher — ex.: <b>Recesso escolar</b> (meio do ano), <b>Férias escolares</b> (fim do ano) ou um <b>Feriado</b>. Para um feriado de um dia só, use a <b>mesma data</b> em Início e Fim.</p>
-    <label class="fld">Dizeres (rótulo)</label>
-    <input id="perRotulo" class="input" placeholder="Ex.: Recesso escolar" value="Recesso escolar">
-    <div class="chips" style="margin-top:10px">
-      <button class="chip" data-act="periodo-preset" data-v="Recesso escolar">Recesso escolar</button>
-      <button class="chip" data-act="periodo-preset" data-v="Férias escolares">Férias escolares</button>
-      <button class="chip" data-act="periodo-preset" data-v="Feriado">Feriado</button>
-    </div>
-    <label class="fld">Cor</label>${sw}
-    <div style="display:flex;gap:8px;margin-top:14px">
-      <div style="flex:1"><label class="fld" style="margin-top:0">Início</label><input id="perInicio" type="date" class="input" min="${hoje}"></div>
-      <div style="flex:1"><label class="fld" style="margin-top:0">Fim</label><input id="perFim" type="date" class="input" min="${hoje}"></div>
-    </div>
-    <div style="height:14px"></div>
-    <button class="btn primary" data-act="add-periodo">➕ Adicionar período</button>
-    <div class="sectitle">Períodos cadastrados</div>${list}
-    <div style="height:16px"></div>`);
-}
-async function addPeriodo(){
-  const rotulo=($("perRotulo")?$("perRotulo").value.trim():""), ini=($("perInicio")?$("perInicio").value:""), fim=($("perFim")?$("perFim").value:"");
-  if(!rotulo) return toast("Escreva os dizeres (ex.: Recesso escolar).");
-  if(!ini||!fim) return toast("Escolha as datas de início e fim.");
-  if(fim<ini) return toast("A data de fim não pode ser antes do início.");
-  if(!S.config.periodos) S.config.periodos=[];
-  S.config.periodos.push({inicio:ini, fim:fim, rotulo:rotulo, cor:_perCor});
-  S.config.periodos.sort((a,b)=> a.inicio<b.inicio?-1:1);
-  await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); toast("Período adicionado. 🏖️");
-}
-async function delPeriodo(i){ const p=S.config.periodos[i]; if(!confirm("Excluir o período \""+((p&&p.rotulo)||"")+"\"?")) return; S.config.periodos.splice(i,1); await fbSet("/config/periodos", S.config.periodos); telaPeriodos(); renderTab(); }
-/* admin: bloquear em massa (dia inteiro / turno / aula) numa data */
-function telaBloqueios(){
-  fecharSheet();
-  const hoje=hojeStr();
-  const d=(S.dataSel&&S.dataSel>=hoje)?S.dataSel:hoje;
-  const hae=esc(S.config.haeLabel||"HAE");
-  const turnoBtns=TURNOS.map(t=>`<button class="btn ghost" data-act="blq-turno" data-t="${t.k}" style="margin-bottom:8px">🔒 Bloquear o ${t.n} inteiro</button>`).join("");
-  const optTurno=TURNOS.map(t=>`<option value="${t.k}">${t.n}</option>`).join("");
-  let optAula=""; for(let i=1;i<=8;i++) optAula+=`<option value="${i}">${i}ª aula</option>`;
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Bloquear horários</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <label class="fld">Dia</label>
-    <input id="blqData" type="date" class="input" value="${d}" min="${hoje}">
-    <label class="fld">Motivo (aparece no horário)</label>
-    <input id="blqMotivo" class="input" value="Indisponível" placeholder="Digite o motivo ou toque num pronto">
-    <div class="chips" style="margin-top:10px">
-      <button class="chip" data-act="blq-preset" data-v="Indisponível">Indisponível</button>
-      <button class="chip" data-act="blq-preset" data-v="${hae}">${hae}</button>
-      <button class="chip" data-act="blq-preset" data-v="Reunião">Reunião</button>
-      <button class="chip" data-act="blq-preset" data-v="Manutenção">Manutenção</button>
-    </div>
-    <div class="sectitle">Bloquear</div>
-    <button class="btn primary" data-act="blq-dia">🔒 O dia inteiro</button>
-    <div style="height:10px"></div>
-    ${turnoBtns}
-    <div class="sectitle">Uma aula específica</div>
-    <div style="display:flex;gap:8px">
-      <select id="blqTurno" class="input" style="flex:1">${optTurno}</select>
-      <select id="blqAula" class="input" style="flex:1">${optAula}</select>
-      <button class="minibtn acc" data-act="blq-aula">🔒</button>
-    </div>
-    <div class="sectitle">Desfazer</div>
-    <button class="btn ghost" data-act="blq-liberar">🔓 Liberar todos os bloqueios deste dia</button>
-    <p class="hint" style="text-align:left">Aulas já reservadas por professores não são bloqueadas — apague-as antes, se precisar.</p>
-    <div style="height:16px"></div>`);
-}
-async function bloquearEmMassa(escopo, turnoArg, aulaArg){
-  const data=$("blqData")?$("blqData").value:S.dataSel;
-  if(!data) return toast("Escolha o dia.");
-  const motivo=(($("blqMotivo")?$("blqMotivo").value.trim():"")||"Indisponível");
-  const alvos=[];
-  TURNOS.forEach(t=>{
-    if((escopo==="turno"||escopo==="aula") && t.k!==turnoArg) return;
-    const n=aulasDoDia(data,t.c);
-    for(let i=1;i<=n;i++){ if(escopo==="aula" && i!==aulaArg) continue; alvos.push({turno:t.k,aula:i}); }
-  });
-  await recarregarReservas();  // relê antes: evita sobrescrever uma reserva feita nos últimos segundos
-  const rtDay=(S.reservas[data])||{};
-  const patch={}; let feitos=0, pulados=0;
-  alvos.forEach(s=>{
-    const cur=rtDay[s.turno] && rtDay[s.turno]["a"+s.aula];
-    if(cur && !cur.bloqueado){ pulados++; return; }
-    patch[s.turno+"/a"+s.aula]={bloqueado:true, rotulo:motivo, byAdmin:S.user.nome, ts:Date.now()};
-    feitos++;
-  });
-  if(!feitos) return toast(pulados?"Só há aulas já reservadas aqui.":"Nada para bloquear neste dia.");
-  const ok=await fbUpdate("/reservas/"+data, patch);
-  if(!ok){ toast("Não foi possível bloquear. Tente de novo."); return; }
-  await recarregarReservas(); renderTab();
-  toast(feitos+" horário(s) bloqueado(s)"+(pulados?" ("+pulados+" reservado(s), mantido(s))":"")+".");
-  telaBloqueios();
-}
-async function liberarDia(){
-  const data=$("blqData")?$("blqData").value:S.dataSel; if(!data) return;
-  const rtDay=(S.reservas[data])||{}; const patch={}; let n=0;
-  TURNOS.forEach(t=>{ const rt=rtDay[t.k]||{}; Object.keys(rt).forEach(ak=>{ if(rt[ak]&&rt[ak].bloqueado){ patch[t.k+"/"+ak]=null; n++; } }); });
-  if(!n) return toast("Não há bloqueios neste dia.");
-  const ok=await fbUpdate("/reservas/"+data, patch);
-  if(!ok){ toast("Não foi possível liberar. Tente de novo."); return; }
-  await recarregarReservas(); renderTab(); toast(n+" bloqueio(s) liberado(s)."); telaBloqueios();
-}
-
-/* --- Professores --- */
-function telaProfessores(){
-  fecharSheet();
-  let h=`<div class="sh-wrapper">`;
-  const keys=Object.keys(S.professores);
-  let list=`<div class="card" style="padding:4px 14px">`;
-  if(!keys.length) list+=`<div class="empty" style="padding:20px">Nenhum professor ainda.</div>`;
-  keys.forEach(k=>{ const p=S.professores[k];
-    list+=`<div class="rowitem"><div class="main"><div class="l1">${esc(p.nome)} ${p.admin?'<span class="tag">admin</span>':''}${p.fbAuth?'':' <span class="tag" style="background:var(--amber-tint);color:var(--amber)">sem senha</span>'}</div><div class="l2">ID: ${esc(p.id)}</div></div>
-      ${k!==sanId(S.user.id)?`<button class="minibtn" data-act="reset-senha" data-k="${esc(k)}">Resetar senha</button>`:''}
-      <button class="minibtn" data-act="del-prof" data-k="${esc(k)}">Excluir</button></div>`; });
-  list+=`</div>`;
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Professores</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <label class="fld">Novo professor</label>
-    <input id="npNome" class="input" placeholder="Nome do professor" autocomplete="off">
-    <div style="height:8px"></div>
-    <input id="npId" class="input" placeholder="ID (matrícula/telefone/nº só dele)" autocomplete="off">
-    <label style="display:flex;align-items:center;gap:8px;margin:12px 2px;font-size:14px;color:var(--muted)">
-      <input type="checkbox" id="npAdm" style="width:18px;height:18px"> Também é administrador</label>
-    <button class="btn primary" data-act="add-prof">➕ Cadastrar</button>
-    <div class="sectitle">Cadastrados (${keys.length})</div>
-    ${list}`);
-}
-async function addProf(){
-  const nome=$("npNome").value.trim(), id=$("npId").value.trim(), adm=$("npAdm").checked;
-  if(nome.length<2) return toast("Escreva o nome.");
-  if(id.length<1) return toast("Escreva o ID.");
-  const key=sanId(id);
-  if(S.professores[key]) return toast("Já existe um professor com esse ID.");
-  await fbSet("/professores/"+key,{nome,id,admin:adm});
-  await carregarBase(); telaProfessores(); toast("Professor cadastrado! ✅");
-}
-async function delProf(k){
-  if(k===sanId(S.user.id)) return toast("Você não pode excluir a si mesmo.");
-  const p=S.professores[k], nome=p?p.nome:"este professor";
-  if(!confirm("Excluir "+nome+"?\n\nIsso não volta. As aulas já agendadas por ele continuam na agenda.")) return;
-  const ok=await fbDel("/professores/"+k);
-  if(!ok) return toast("Não foi possível excluir. Tente de novo.");
-  await carregarBase(); telaProfessores(); toast("Professor removido.");
-}
-
-/* --- Config: aulas por turno + horários + turmas + disciplinas --- */
-/* Captura o que está digitado na grade/horários para a memória (não perde ao
-   redesenhar a tela ao adicionar/remover turma, disciplina ou HAE). */
-function _lerGradeMem(){
-  if(!document.querySelector("[data-aula]")) return;
-  const aulas=JSON.parse(JSON.stringify(S.config.aulas));
-  document.querySelectorAll("[data-aula]").forEach(function(inp){ const p=inp.dataset.aula.split("."); if(aulas[p[0]]) aulas[p[0]][p[1]]=Math.max(0,parseInt(inp.value,10)||0); });
-  const hor=JSON.parse(JSON.stringify(S.config.horarios||{}));
-  document.querySelectorAll("[data-hor]").forEach(function(inp){ const p=inp.dataset.hor.split("."); if(!hor[p[0]])hor[p[0]]=[]; if(!hor[p[0]][p[1]])hor[p[0]][p[1]]=["",""]; hor[p[0]][+p[1]][+p[2]]=inp.value.trim(); });
-  S.config.aulas=aulas; S.config.horarios=hor;
-  const hl=$("haeLabel"); if(hl) S.config.haeLabel=hl.value.trim()||S.config.haeLabel;
-  const tl=$("turmaLetras"); if(tl) S.config.turmaLetras=tl.value.split(",").map(function(x){return x.replace(/^\s+|\s+$/g,"");}).filter(Boolean);
-}
-function telaConfig(){
-  _lerGradeMem();
-  fecharSheet();
-  const a=S.config.aulas;
-  let grade=`<table class="grade"><tr><th></th><th>Mat</th><th>Ves</th><th>Not</th></tr>`;
-  DIAS.forEach(d=>{ grade+=`<tr><td class="d">${DIAS_NOME[d]}</td>
-    <td><input inputmode="numeric" data-aula="${d}.m" value="${a[d].m}"></td>
-    <td><input inputmode="numeric" data-aula="${d}.v" value="${a[d].v}"></td>
-    <td><input inputmode="numeric" data-aula="${d}.n" value="${a[d].n}"></td></tr>`; });
-  grade+=`</table>`;
-
-  let hor="";
-  const _colDe={matutino:"m",vespertino:"v",noturno:"n"};
-  let _turnosHor=["matutino","vespertino"];
-  if(DIAS.some(d=>(a[d].n||0)>0) || (S.config.horarios.noturno||[]).length>0) _turnosHor.push("noturno");
-  _turnosHor.forEach(tk=>{
-    hor+=`<div class="sectitle">Horários — ${tk}</div>`;
-    const arr=(S.config.horarios[tk]||[]);
-    const maxA=Math.max(...DIAS.map(d=>a[d][_colDe[tk]]||0),arr.length,0);
-    for(let i=0;i<maxA;i++){ const hh=arr[i]||["",""];
-      hor+=`<div class="horrow"><div class="lbl">${i+1}ª</div>
-        <input data-hor="${tk}.${i}.0" value="${esc(hh[0])}" placeholder="início">
-        <span style="color:var(--faint)">—</span>
-        <input data-hor="${tk}.${i}.1" value="${esc(hh[1])}" placeholder="fim"></div>`; }
-  });
-
-  let turmasH=`<div class="chips" style="margin-top:4px">`;
-  S.turmas.forEach((t,i)=> turmasH+=`<span class="chip">${esc(t)} <button class="delx" data-act="del-turma" data-i="${i}" aria-label="Excluir turma">✕</button></span>`);
-  turmasH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaTurma" class="input" placeholder="Nova turma (ano)" style="flex:1"><button class="minibtn acc" data-act="add-turma">Add</button></div>
-    <label class="fld">Letras das turmas (separadas por vírgula)</label>
-    <input id="turmaLetras" class="input" value="${esc((S.config.turmaLetras||[]).join(", "))}" placeholder="A, B, C, D">
-    <p class="hint" style="text-align:left;margin-top:6px">Ao agendar, o professor escolhe o ano (ex.: 1º ano) e a letra (A, B, C…). Deixe vazio se a escola não usa letras.</p>`;
-
-  let discH=`<div class="chips" style="margin-top:4px">`;
-  S.disciplinas.forEach((d,i)=>{ const nome=typeof d==="string"?d:d.nome; discH+=`<span class="chip">${esc(nome)} <button class="delx" data-act="del-disc" data-i="${i}" aria-label="Excluir disciplina">✕</button></span>`; });
-  discH+=`</div><div style="display:flex;gap:8px;margin-top:10px"><input id="novaDisc" class="input" placeholder="Nova disciplina" style="flex:1"><button class="minibtn acc" data-act="add-disc">Add</button></div>`;
-
-  /* HAE fixas (recorrentes por dia da semana) */
-  let maxAulas=4; DIAS.forEach(d=>{ maxAulas=Math.max(maxAulas,a[d].m,a[d].v,a[d].n); });
-  const optDia=DIAS.map(d=>`<option value="${d}">${DIAS_NOME[d]}</option>`).join("");
-  const optTurno=TURNOS.map(tt=>`<option value="${tt.k}">${tt.n}</option>`).join("");
-  let optAula=""; for(let i=1;i<=maxAulas;i++) optAula+=`<option value="${i}">${i}ª</option>`;
-  let haeList=`<div class="chips" style="margin-top:4px">`;
-  (S.config.hae||[]).forEach((x,i)=>{ const tn=(TURNOS.find(tt=>tt.k===x.turno)||{}).n||x.turno;
-    haeList+=`<span class="chip">${esc(DIAS_NOME[x.wk]||x.wk)} · ${esc(tn)} · ${x.aula}ª <button class="delx" data-act="del-hae" data-i="${i}" aria-label="Remover HAE">✕</button></span>`; });
-  if(!(S.config.hae||[]).length) haeList+=`<span style="color:var(--muted);font-size:13px">Nenhuma HAE fixa ainda.</span>`;
-  haeList+=`</div>`;
-  const haeH=`
-    <label class="fld">Rótulo que aparece nas HAE</label>
-    <input id="haeLabel" class="input" value="${esc(S.config.haeLabel||"")}" placeholder="HAE — Professor de Informática">
-    <div style="display:flex;gap:6px;margin-top:12px">
-      <select id="haeDia" class="input" style="flex:1">${optDia}</select>
-      <select id="haeTurno" class="input" style="flex:1">${optTurno}</select>
-      <select id="haeAula" class="input" style="width:82px">${optAula}</select>
-    </div>
-    <div style="height:8px"></div>
-    <button class="minibtn acc" data-act="add-hae">➕ Adicionar HAE fixa</button>
-    <div style="display:flex;gap:8px;margin-top:12px;align-items:center">
-      <span style="font-size:13px;color:var(--muted)">Sortear</span>
-      <input id="haeQtd" class="input" inputmode="numeric" value="6" style="width:64px;text-align:center;padding:9px">
-      <button class="minibtn" data-act="sortear-hae">🎲 HAE aleatórias</button>
-    </div>
-    <p class="hint" style="text-align:left;margin-top:8px">O sorteio distribui a quantidade escolhida em horários aleatórios da semana. Depois é só ajustar removendo/adicionando.</p>
-    ${haeList}`;
-
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Horários e turmas</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <div class="sectitle">Aulas por turno (quantas em cada dia)</div>
-    <div class="card">${grade}</div>
-    ${hor}
-    <div style="height:6px"></div>
-    <button class="btn primary" data-act="salvar-config">💾 Salvar horários e rótulo HAE</button>
-    <div class="sectitle">Horas-atividade (HAE) fixas — toda semana</div>${haeH}
-    <div class="sectitle">Turmas</div>${turmasH}
-    <div class="sectitle">Disciplinas</div>${discH}
-    <div style="height:20px"></div>`);
-}
-async function addHAE(){
-  const wk=$("haeDia").value, turno=$("haeTurno").value, aula=+$("haeAula").value;
-  if(!S.config.hae) S.config.hae=[];
-  if(S.config.hae.some(x=>x.wk===wk&&x.turno===turno&&(+x.aula)===aula)) return toast("Essa HAE já está na lista.");
-  S.config.hae.push({wk,turno,aula});
-  await fbSet("/config/hae",S.config.hae); telaConfig(); toast("HAE fixa adicionada. 📋");
-}
-async function delHAE(i){ if(!confirm("Remover esta hora-atividade (HAE)?")) return; S.config.hae.splice(i,1); await fbSet("/config/hae",S.config.hae); telaConfig(); }
-async function sortearHAE(){
-  const qtd=Math.max(1, parseInt(($("haeQtd")?$("haeQtd").value:"6"),10)||6);
-  const pool=[];
-  DIAS.forEach(wk=>{ TURNOS.forEach(t=>{ const n=(S.config.aulas[wk]||{})[t.c]||0; for(let i=1;i<=n;i++) pool.push({wk,turno:t.k,aula:i}); }); });
-  for(let i=pool.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); const tmp=pool[i]; pool[i]=pool[j]; pool[j]=tmp; }
-  S.config.hae=pool.slice(0, Math.min(qtd, pool.length));
-  await fbSet("/config/hae",S.config.hae); telaConfig(); toast("HAE sorteadas! 🎲");
-}
-async function liberarMes(off){
-  let nova=fimMesOffset(S.config.liberadoAte||fimDoMes(hojeStr()), off);
-  const minimo=fimDoMes(hojeStr());
-  if(nova<minimo) nova=minimo;
-  S.config.liberadoAte=nova; await fbSet("/config/liberadoAte",nova); telaOpcoes(); toast("Liberado até "+fmtDia(nova)+".");
-}
-async function salvarConfig(){
-  const aulas=JSON.parse(JSON.stringify(S.config.aulas));
-  document.querySelectorAll("[data-aula]").forEach(inp=>{ const [d,c]=inp.dataset.aula.split("."); aulas[d][c]=Math.max(0,parseInt(inp.value,10)||0); });
-  const hor=JSON.parse(JSON.stringify(S.config.horarios||{}));
-  document.querySelectorAll("[data-hor]").forEach(inp=>{ const [tk,i,j]=inp.dataset.hor.split("."); if(!hor[tk])hor[tk]=[]; if(!hor[tk][i])hor[tk][i]=["",""]; hor[tk][+i][+j]=inp.value.trim(); });
-  const hl=$("haeLabel"); const haeLabel = hl ? (hl.value.trim()||S.config.haeLabel) : S.config.haeLabel;
-  const tl=$("turmaLetras");
-  const letras = tl ? tl.value.split(",").map(x=>x.replace(/^\s+|\s+$/g,"")).filter(Boolean) : (S.config.turmaLetras||[]);
-  await Promise.all([fbSet("/config/aulas",aulas), fbSet("/config/horarios",hor), fbSet("/config/haeLabel",haeLabel), fbSet("/config/turmaLetras",letras)]);
-  S.config.aulas=aulas; S.config.horarios=hor; S.config.haeLabel=haeLabel; S.config.turmaLetras=letras;
-  toast("Salvo! 💾");
-}
-async function addTurma(){ const v=$("novaTurma").value.trim(); if(!v)return; S.turmas.push(v); await fbSet("/turmas",S.turmas); telaConfig(); }
-async function delTurma(i){ if(!confirm("Excluir a turma \""+(S.turmas[i]||"")+"\"?")) return; S.turmas.splice(i,1); await fbSet("/turmas",S.turmas); telaConfig(); }
-async function addDisc(){ const v=$("novaDisc").value.trim(); if(!v)return; S.disciplinas.push(v); await fbSet("/disciplinas",S.disciplinas); telaConfig(); }
-async function delDisc(i){ const d=S.disciplinas[i]; const nome=typeof d==="string"?d:(d&&d.nome)||""; if(!confirm("Excluir a disciplina \""+nome+"\"?")) return; S.disciplinas.splice(i,1); await fbSet("/disciplinas",S.disciplinas); telaConfig(); }
-
-/* --- Outras opções --- */
-/* Grupo REAL da semana atual (calculado pela paridade). Se o rodízio está
-   desligado/sem âncora, cai no refGrupo salvo ou "ini". Usado para pré-marcar o
-   botão certo — evita inverter a fase ao salvar sem tocar nos botões. */
-function _grupoAtualConfig(){ return grupoDaSemana(hojeStr()) || (S.config.rodizio&&S.config.rodizio.refGrupo) || "ini"; }
-function telaOpcoes(){
-  fecharSheet();
-  const c=S.config;
-  openSheet(`<div class="grab"></div>
-    <div class="sh-head"><button class="icon-btn" data-act="menuadmin">‹</button><div class="t">Outras configurações</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
-    <label class="fld">Nome que aparece no topo</label>
-    <input id="oApp" class="input" value="${esc(c.appNome)}">
-    <label class="fld">Nome da escola</label>
-    <input id="oEsc" class="input" value="${esc(c.escolaNome)}">
-    <label style="display:flex;align-items:center;gap:10px;margin:18px 2px;font-size:15px">
-      <input type="checkbox" id="oObr" ${c.obrigatorios?"checked":""} style="width:20px;height:20px"> Tema e objetivo obrigatórios</label>
-    <label style="display:flex;align-items:center;gap:10px;margin:6px 2px 18px;font-size:15px">
-      <input type="checkbox" id="oProx" ${c.apenasProximoDia?"checked":""} style="width:20px;height:20px"> Só permite agendar a partir do dia seguinte</label>
-    <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
-      <input type="checkbox" id="oFerNac" ${c.feriadosNac!==false?"checked":""} style="width:20px;height:20px"> 🎌 Fechar a agenda nos feriados nacionais (só o admin agenda)</label>
-    <p class="hint" style="text-align:left;margin:2px 2px 12px">Já vêm embutidos: Ano Novo, Tiradentes, Sexta-feira Santa, Dia do Trabalho, Independência, N. Sra. Aparecida, Finados, Proclamação da República, Consciência Negra e Natal.</p>
-    <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
-      <input type="checkbox" id="oFacult" ${c.facultativos!==false?"checked":""} style="width:20px;height:20px"> 🎭 Fechar também no Carnaval e Corpus Christi (ponto facultativo)</label>
-    <p class="hint" style="text-align:left;margin:2px 2px 16px">Como nem toda escola fecha nesses dias, você decide aqui — desmarque se na sua escola houver aula. Feriados locais/municipais você marca em <b>Recesso e férias</b> (preset “Feriado”).</p>
-    <label class="fld">📅 Agendamentos liberados até</label>
-    <div class="card" style="margin-bottom:8px">
-      <b style="font-size:16px">${esc(fmtDia(c.liberadoAte))}</b>
-      <div style="font-size:12px;color:var(--muted)">${esc(cap1(fmtSem(c.liberadoAte)))} — os professores só conseguem agendar até esta data.</div>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="minibtn" data-act="liberar-mes" data-off="-1">− mês</button>
-      <button class="minibtn acc" data-act="liberar-mes" data-off="1" style="flex:1">Liberar próximo mês ▶</button>
-    </div>
-    <label class="fld">🔁 Rodízio de semanas (Iniciais × Finais)</label>
-    <label style="display:flex;align-items:center;gap:10px;margin:6px 2px;font-size:15px">
-      <input type="checkbox" id="oRodizio" ${(c.rodizio&&c.rodizio.ativo)?"checked":""} style="width:20px;height:20px"> Ativar (professor só agenda na semana do grupo dele)</label>
-    <div class="chips" style="margin-top:6px">
-      <button class="chip ${_grupoAtualConfig()==="fin"?"":"on"}" data-act="rodizio-grupo" data-v="ini">Esta semana: Iniciais (Pré–5º)</button>
-      <button class="chip ${_grupoAtualConfig()==="fin"?"on":""}" data-act="rodizio-grupo" data-v="fin">Esta semana: Finais (6º–9º)</button>
-    </div>
-    <p class="hint" style="text-align:left">Você está definindo o grupo da <b>semana atual (${esc(fmtDia(segDaSemana(hojeStr())))} a ${esc(fmtDia(addDias(segDaSemana(hojeStr()),5)))})</b>; depois alterna sozinho. Voltando das férias, é só vir aqui <b>na semana do retorno</b> e escolher o grupo — pode repetir o mesmo grupo, sem problema. Fora da semana, o professor <b>não agenda sozinho</b>: ele envia um <b>pedido</b> que aparece para você aprovar (aba <b>Pedidos</b> 📨); ao aprovar, a aula entra marcada como exceção ⚠️.</p>
-    <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
-    <textarea id="oAviso" class="input" placeholder="Ex.: Sala em manutenção na sexta. Agendem com atenção!">${esc(c.aviso||"")}</textarea>
-    <div style="height:16px"></div>
-    <button class="btn primary" data-act="salvar-opcoes">💾 Salvar</button>`);
-}
-async function salvarOpcoes(){
-  S.config.appNome=$("oApp").value.trim()||"Agenda Aulas";
-  S.config.escolaNome=$("oEsc").value.trim();
-  S.config.obrigatorios=$("oObr").checked;
-  S.config.apenasProximoDia=$("oProx").checked;
-  S.config.feriadosNac=$("oFerNac")?$("oFerNac").checked:true;
-  S.config.facultativos=$("oFacult")?$("oFacult").checked:true;
-  S.config.aviso=($("oAviso")?$("oAviso").value.trim():"");
-  const rodAtivo=$("oRodizio")?$("oRodizio").checked:false;
-  let rodGrupo=(S.config.rodizio&&S.config.rodizio.refGrupo)||"ini";
-  const gsel=document.querySelector('[data-act="rodizio-grupo"].on'); if(gsel) rodGrupo=gsel.dataset.v;
-  S.config.rodizio={ativo:rodAtivo, refSeg:segDaSemana(hojeStr()), refGrupo:rodGrupo};
-  await fbUpdate("/config",{appNome:S.config.appNome,escolaNome:S.config.escolaNome,obrigatorios:S.config.obrigatorios,apenasProximoDia:S.config.apenasProximoDia,feriadosNac:S.config.feriadosNac,facultativos:S.config.facultativos,aviso:S.config.aviso});
-  await fbSet("/config/rodizio", S.config.rodizio);
-  try{ localStorage.removeItem("agenda_aviso_visto"); }catch(e){}
-  fecharSheet(); desenharShell(); toast("Configurações salvas! 💾");
-}
-
-/* ================= EVENT DELEGATION ================= */
-// Enter no teclado envia o formulário das telas de login/senha/primeiro acesso.
-document.addEventListener("keydown", function(ev){
-  if(ev.key!=="Enter") return;
-  const t=ev.target; if(!t || t.tagName!=="INPUT" || t.type==="date") return;
-  const wrap=t.closest(".authwrap"); if(!wrap) return;
-  const btn=wrap.querySelector(".btn.primary"); if(btn){ ev.preventDefault(); btn.click(); }
-});
-document.addEventListener("click", async (ev)=>{
-  const el = ev.target.closest("[data-act]");
-  // fechar sheet ao tocar no fundo
-  if(ev.target.classList && ev.target.classList.contains("backdrop")){ fecharSheet(); return; }
-  if(!el) return;
-  const a=el.dataset.act;
-  const t=el.dataset.t, i=el.dataset.i?+el.dataset.i:null;
-  try{
-    if(a==="recarregar-app"){ location.reload(); return; }
-    if(a==="bootstrap") return fazerBootstrap();
-    if(a==="login") return fazerLogin();
-    if(a==="login-criar") return loginCriar();
-    if(a==="login-entrar") return loginEntrar();
-    if(a==="login-quero-criar"){ _forcarNovo=true; return telaSenha(); }
-    if(a==="login-voltar") return telaLogin();
-    if(a==="toggle-senha"){ const on=el.dataset.on==="1"; document.querySelectorAll("input[data-pw]").forEach(function(inp){ inp.type=on?"password":"text"; }); el.dataset.on=on?"0":"1"; el.textContent=on?"👁 Mostrar senha":"🙈 Ocultar senha"; return; }
-    if(a==="sair") return sair();
-    if(a==="conta") return sheetConta();
-    if(a==="instalar-app") return instalarApp();
-    if(a==="copiar-uid"){ const v=el.dataset.v||""; try{ (navigator.clipboard&&navigator.clipboard.writeText)?navigator.clipboard.writeText(v).then(function(){toast("Identificador copiado! 📋");},function(){toast("Copie manualmente: "+v);}):toast("Copie manualmente: "+v); }catch(e){ toast("Copie manualmente: "+v); } return; }
-    if(a==="ativar-lembretes") return ativarLembretes();
-    if(a==="hoje-modo"){ _hojeModo=el.dataset.v; return viewHoje(); }
-    if(a==="trocar-senha") return trocarSenha();
-    if(a==="reset-senha") return resetarSenha(el.dataset.k);
-    if(a==="editar-reserva") return editarReserva(t,i);
-    if(a==="exportar-csv") return exportarCSV();
-    if(a==="setdia"){ S.dataSel=el.dataset.d; return viewHoje(); }
-    if(a==="setsemana"){ S.dataSel=addDias(S.dataSel, +el.dataset.n); return viewHoje(); }
-    if(a==="semana-cell"){ S.dataSel=el.dataset.d; return abrirSlot(el.dataset.t, +el.dataset.i); }
-    if(a==="tema") return alternarTema();
-    if(a==="fecharaviso"){ try{ localStorage.setItem("agenda_aviso_visto", (S.config&&S.config.aviso)||""); }catch(e){} return renderAviso(); }
-    if(a==="haeinfo") return toast("Hora-atividade — horário reservado para o professor de informática.");
-    if(a==="slot") return abrirSlot(t,i);
-    if(a==="fecharsheet") return fecharSheet();
-    if(a==="ir-agendar") return sheetAgendar(t,i);
-    if(a==="bloquear-motivo") return sheetBloquearMotivo(t,i);
-    if(a==="motivo-preset"){ const inp=$("bMotivo"); if(inp) inp.value=el.dataset.v; return; }
-    if(a==="conf-bloquear"){ const inp=$("bMotivo"); return bloquearSlot(t,i,(inp?inp.value.trim():"")||"Indisponível"); }
-    if(a==="bloquear") return bloquearSlot(t,i);
-    if(a==="desbloquear") return desbloquearSlot(t,i);
-    if(a==="pedir-excluir") return sheetConfExcluir(t,i);
-    if(a==="excluir") return excluirReserva(t,i);
-    if(a==="salvar-edicao") return salvarEdicao();
-    if(a==="ia-objetivo") return sugerirObjetivoIA(el.dataset.tema, el.dataset.obj);
-    if(a==="ia-tema") return melhorarTemaIA(el.dataset.tema);
-    if(a==="salvar-agenda") return salvarAgenda();
-    if(a==="enviar-pedido") return enviarPedido();
-    if(a==="aprovar-pedido"){ const c=el.closest("[data-pid]"); return c?aprovarPedido(c.dataset.pid):null; }
-    if(a==="recusar-pedido"){ const c=el.closest("[data-pid]"); return c?recusarPedido(c.dataset.pid):null; }
-    if(a==="apagar-pedido"){ const c=el.closest("[data-pid]"); return c?apagarPedido(c.dataset.pid):null; }
-    if(a==="rodizio-grupo"){ document.querySelectorAll('[data-act="rodizio-grupo"]').forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); try{ await carregarOcultos(_form.profId); }catch(e){} const box=$("recBox"); if(box) box.innerHTML=recBoxHTML(_form.profId); return; }
-    if(a==="del-recente"){ return apagarRecente(+el.dataset.i); }
-    if(a==="pickturma"){ _form.turma=el.dataset.v; document.querySelectorAll("#turmaChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="pickletra"){ _form.letra=el.dataset.v; document.querySelectorAll("#letraChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="pickdisc"){ _form.disc=el.dataset.v; document.querySelectorAll("#discChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="usar-recente"){ const r=(S._recAtual||S.recentes)[+el.dataset.i]; if(!r) return;
-      document.querySelectorAll(".rec").forEach(c=>c.classList.remove("sel")); el.classList.add("sel");
-      if($("fTema")) $("fTema").value=r.tema||""; if($("fObj")) $("fObj").value=r.objetivo||"";
-      if(r.disciplina) document.querySelectorAll("#discChips .chip").forEach(c=>{ if(c.dataset.v===r.disciplina){ document.querySelectorAll("#discChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.disc=r.disciplina; } });
-      if(r.turma) document.querySelectorAll("#turmaChips .chip").forEach(c=>{ if(c.dataset.v===r.turma){ document.querySelectorAll("#turmaChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.turma=r.turma; } });
-      if(r.letra) document.querySelectorAll("#letraChips .chip").forEach(c=>{ if(c.dataset.v===r.letra){ document.querySelectorAll("#letraChips .chip").forEach(x=>x.classList.remove("on")); c.classList.add("on"); _form.letra=r.letra; } });
-      toast("Preenchido! Se for para outra turma, toque na turma nova."); return; }
-    if(a==="verres"){ S.dataSel=el.dataset.data; const rt=(S.reservas[el.dataset.data]&&S.reservas[el.dataset.data][el.dataset.t])||{}; const r=rt["a"+el.dataset.i]; if(r) return sheetReserva(el.dataset.t,+el.dataset.i,r); return; }
-    if(a==="menuadmin") return menuAdmin();
-    if(a==="tela-prof") return telaProfessores();
-    if(a==="tela-config") return telaConfig();
-    if(a==="tela-opcoes") return telaOpcoes();
-    if(a==="tela-bloqueios") return telaBloqueios();
-    if(a==="blq-preset"){ const inp=$("blqMotivo"); if(inp) inp.value=el.dataset.v; return; }
-    if(a==="blq-dia") return bloquearEmMassa("dia");
-    if(a==="blq-turno") return bloquearEmMassa("turno", t);
-    if(a==="blq-aula") return bloquearEmMassa("aula", ($("blqTurno")?$("blqTurno").value:"matutino"), (+($("blqAula")?$("blqAula").value:1)));
-    if(a==="blq-liberar") return liberarDia();
-    if(a==="tela-periodos") return telaPeriodos();
-    if(a==="periodo-preset"){ const inp=$("perRotulo"); if(inp) inp.value=el.dataset.v; return; }
-    if(a==="periodo-cor"){ _perCor=el.dataset.v; document.querySelectorAll(".perc").forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
-    if(a==="add-periodo") return addPeriodo();
-    if(a==="del-periodo") return delPeriodo(+el.dataset.i);
-    if(a==="rel-per"){ _relPeriodo=el.dataset.v; return viewInsights(); }
-    if(a==="minhas-filtro"){ _minhasFiltro=el.dataset.v; return viewProximos(); }
-    if(a==="imprimir"){ try{ window.print(); }catch(e){} return; }
-    if(a==="add-prof") return addProf();
-    if(a==="del-prof") return delProf(el.dataset.k);
-    if(a==="salvar-config") return salvarConfig();
-    if(a==="add-turma") return addTurma();
-    if(a==="del-turma") return delTurma(+el.dataset.i);
-    if(a==="add-disc") return addDisc();
-    if(a==="del-disc") return delDisc(+el.dataset.i);
-    if(a==="add-hae") return addHAE();
-    if(a==="del-hae") return delHAE(+el.dataset.i);
-    if(a==="sortear-hae") return sortearHAE();
-    if(a==="liberar-mes") return liberarMes(+el.dataset.off);
-    if(a==="salvar-opcoes") return salvarOpcoes();
-  }catch(e){ console.error(e); toast("Algo deu errado. Tente de novo."); }
-});
-document.addEventListener("click",(ev)=>{ const tab=ev.target.closest("[data-tab]"); if(tab){ S.tab=tab.dataset.tab; renderTab(); } });
-/* busca: filtra os chips de um grupo (professor/turma) ao digitar */
-document.addEventListener("input",(ev)=>{
-  const f=ev.target.closest(".chipfilter"); if(!f) return;
-  const alvo=document.getElementById(f.dataset.alvo); if(!alvo) return;
-  const q=(f.value||"").toLowerCase().replace(/^\s+|\s+$/g,"");
-  alvo.querySelectorAll(".chip").forEach(c=>{ c.style.display=(!q||c.textContent.toLowerCase().indexOf(q)>=0)?"":"none"; });
-});
-
-/* ================= GO ================= */
-init();
+/* ====== boot ====== */
+function boot(){ attMudo(); telaCapa(); }
+document.addEventListener("click",function(){
+  /* 1o gesto na CAPA: toca a historia automaticamente (o navegador so libera som apos um toque).
+     So dispara enquanto estamos na capa (existe o campo de nome) e uma unica vez. */
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true; falar(HISTORIA,true);
+},false);
+boot();
 </script>
-<script>
-/* ===== PWA: instalar como app + service worker ===== */
-(function(){
-  if("serviceWorker" in navigator){
-    window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
-  }
-  var btn=null;
-  function standalone(){ try{ return !!(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)); }catch(e){ return false; } }
-  function ensureBtn(){
-    if(btn) return btn;
-    btn=document.createElement("button"); btn.id="installbtn"; btn.type="button"; btn.innerHTML="📲 Instalar";
-    btn.addEventListener("click", function(){
-      try{ localStorage.setItem("agenda_pwa_visto","1"); }catch(e){}
-      btn.classList.remove("show");
-      if(typeof window.instalarApp==="function") window.instalarApp();   // prompt nativo OU passo a passo
-    });
-    document.body.appendChild(btn); return btn;
-  }
-  // Android/Chrome: guarda o convite nativo e mostra o botão flutuante.
-  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); window._pwaDeferred=e; if(!standalone()) ensureBtn().classList.add("show"); });
-  window.addEventListener("appinstalled", function(){ window._pwaDeferred=null; if(btn) btn.classList.remove("show"); });
-  window._pwaClearDeferred=function(){ window._pwaDeferred=null; if(btn) btn.classList.remove("show"); };
-  // Celular SEM convite nativo (iPhone/Safari, ou Android que já dispensou): mostra o botão
-  // do mesmo jeito depois de um tempinho; o clique abre o passo a passo. Some depois de visto.
-  try{
-    var isMobile=/iphone|ipad|ipod|android/i.test(navigator.userAgent||"");
-    var visto=false; try{ visto=!!localStorage.getItem("agenda_pwa_visto"); }catch(e){}
-    if(isMobile && !standalone() && !visto){
-      window.addEventListener("load", function(){ setTimeout(function(){ if(!standalone()) ensureBtn().classList.add("show"); }, 3000); });
-    }
-  }catch(e){}
-})();
-</script>
-<!-- App Check (reCAPTCHA v3): carrega o SDK do Firebase e prepara o "carimbo" que
-     prova que o pedido vem do app de verdade. Em modo observação até ativarmos. -->
-<script type="module">
-  try{
-    const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js");
-    const { initializeAppCheck, ReCaptchaV3Provider, getToken } = await import("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-check.js");
-    const app = initializeApp({
-      apiKey: "AIzaSyCWX-lK7pr6yW_E5jDvDhVewe20lB3E6Ks",
-      projectId: "atividades-educativas-16860",
-      appId: "1:58007108875:web:f4345b617aa70949b9f60e"
-    });
-    const ac = initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider("6LeoV1AtAAAAAEYaihPZc1WxnVo1gzc0W-KWhPuz"),
-      isTokenAutoRefreshEnabled: true
-    });
-    window._acToken = async function(){ try{ const t = await getToken(ac, false); return (t && t.token) || ""; }catch(e){ return ""; } };
-  }catch(e){ /* App Check indisponível (offline etc.): em modo observação o app segue normal */ }
-  if(window._acResolve) window._acResolve(true);
-</script>
-</body>
-</html>
