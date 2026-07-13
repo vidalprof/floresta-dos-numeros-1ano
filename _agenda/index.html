@@ -810,8 +810,33 @@ function sheetConta(){
     <div style="height:10px"></div>
     <button class="btn primary" data-act="trocar-senha">🔑 Salvar senha</button>
     ${(("Notification" in window) && Notification.permission!=="granted")?'<div style="height:14px"></div><button class="btn ghost" data-act="ativar-lembretes">🔔 Ativar lembretes de aula</button>':''}
+    ${!ehStandalone()?'<div style="height:14px"></div><button class="btn ok" data-act="instalar-app">📲 Adicionar à tela do celular</button>':''}
     <div style="height:14px"></div>
     <button class="btn ghost" data-act="sair">⏻ Sair da conta</button>`);
+}
+/* PWA: "instalar" = criar o ícone na tela inicial (não há loja para baixar). */
+function ehStandalone(){ try{ return !!(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)); }catch(e){ return false; } }
+function instalarApp(){
+  const d=window._pwaDeferred;
+  if(d && d.prompt){ try{ d.prompt(); d.userChoice.then(function(){ if(window._pwaClearDeferred) window._pwaClearDeferred(); }); }catch(e){ sheetInstalar(); } return; }
+  sheetInstalar();   // iOS / desktop / sem prompt nativo -> passo a passo
+}
+function sheetInstalar(){
+  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent||"");
+  const passos = isIOS
+    ? `<li>Toque no botão <b>Compartilhar</b> (o quadrado com uma seta para cima ⬆️), na barra do Safari.</li>
+       <li>Role para baixo e toque em <b>“Adicionar à Tela de Início”</b>.</li>
+       <li>Confirme em <b>Adicionar</b>.</li>`
+    : `<li>Abra o menu do navegador (os três pontinhos <b>⋮</b>, no canto).</li>
+       <li>Toque em <b>“Adicionar à tela inicial”</b> (ou <b>“Instalar aplicativo”</b>).</li>
+       <li>Confirme.</li>`;
+  openSheet(`<div class="grab"></div>
+    <div class="sh-head"><div class="t">📲 Adicionar à tela do celular</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
+    <p class="hint" style="text-align:left;font-size:15px;color:var(--text)">A Agenda vira um <b>ícone no seu celular</b> e abre como um aplicativo — não precisa baixar de loja nenhuma. É só seguir:</p>
+    <ol style="text-align:left;line-height:1.7;padding-left:22px;color:var(--text);font-size:15px">${passos}</ol>
+    <p class="hint" style="text-align:left">Pronto! O ícone da Agenda aparece junto com os outros apps. 🎉</p>
+    <div style="height:8px"></div>
+    <button class="btn primary" data-act="fecharsheet">Entendi</button>`);
 }
 function ativarLembretes(){
   try{ if("Notification" in window){ Notification.requestPermission().then(function(){ fecharSheet(); toast(Notification.permission==="granted"?"Lembretes ativados! 🔔":"Lembretes não permitidos."); checarNotificacao(); }); } else toast("Este aparelho não suporta lembretes."); }catch(e){}
@@ -1986,6 +2011,7 @@ document.addEventListener("click", async (ev)=>{
     if(a==="toggle-senha"){ const on=el.dataset.on==="1"; document.querySelectorAll("input[data-pw]").forEach(function(inp){ inp.type=on?"password":"text"; }); el.dataset.on=on?"0":"1"; el.textContent=on?"👁 Mostrar senha":"🙈 Ocultar senha"; return; }
     if(a==="sair") return sair();
     if(a==="conta") return sheetConta();
+    if(a==="instalar-app") return instalarApp();
     if(a==="copiar-uid"){ const v=el.dataset.v||""; try{ (navigator.clipboard&&navigator.clipboard.writeText)?navigator.clipboard.writeText(v).then(function(){toast("Identificador copiado! 📋");},function(){toast("Copie manualmente: "+v);}):toast("Copie manualmente: "+v); }catch(e){ toast("Copie manualmente: "+v); } return; }
     if(a==="ativar-lembretes") return ativarLembretes();
     if(a==="hoje-modo"){ _hojeModo=el.dataset.v; return viewHoje(); }
@@ -2076,27 +2102,29 @@ init();
   if("serviceWorker" in navigator){
     window.addEventListener("load", function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); });
   }
-  var deferred=null, btn=null;
+  var btn=null;
+  function standalone(){ try{ return !!(window.navigator.standalone || (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches)); }catch(e){ return false; } }
   function ensureBtn(){
     if(btn) return btn;
-    btn=document.createElement("button"); btn.id="installbtn"; btn.type="button"; btn.innerHTML="📲 Instalar app";
-    btn.addEventListener("click", function(){ if(!deferred) return; deferred.prompt();
-      deferred.userChoice.then(function(){ deferred=null; btn.classList.remove("show"); }); });
+    btn=document.createElement("button"); btn.id="installbtn"; btn.type="button"; btn.innerHTML="📲 Instalar";
+    btn.addEventListener("click", function(){
+      try{ localStorage.setItem("agenda_pwa_visto","1"); }catch(e){}
+      btn.classList.remove("show");
+      if(typeof window.instalarApp==="function") window.instalarApp();   // prompt nativo OU passo a passo
+    });
     document.body.appendChild(btn); return btn;
   }
-  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); deferred=e; ensureBtn().classList.add("show"); });
-  window.addEventListener("appinstalled", function(){ if(btn) btn.classList.remove("show"); });
-  /* iOS (Safari não tem beforeinstallprompt): dá a dica uma vez */
+  // Android/Chrome: guarda o convite nativo e mostra o botão flutuante.
+  window.addEventListener("beforeinstallprompt", function(e){ e.preventDefault(); window._pwaDeferred=e; if(!standalone()) ensureBtn().classList.add("show"); });
+  window.addEventListener("appinstalled", function(){ window._pwaDeferred=null; if(btn) btn.classList.remove("show"); });
+  window._pwaClearDeferred=function(){ window._pwaDeferred=null; if(btn) btn.classList.remove("show"); };
+  // Celular SEM convite nativo (iPhone/Safari, ou Android que já dispensou): mostra o botão
+  // do mesmo jeito depois de um tempinho; o clique abre o passo a passo. Some depois de visto.
   try{
-    var isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-    var standalone=window.navigator.standalone || window.matchMedia("(display-mode: standalone)").matches;
-    if(isIOS && !standalone && !localStorage.getItem("agenda_ios_dica")){
-      setTimeout(function(){
-        localStorage.setItem("agenda_ios_dica","1");
-        var t=document.getElementById("toast");
-        if(t){ t.textContent="Dica: toque em Compartilhar e “Adicionar à Tela de Início” para instalar o app."; t.classList.remove("hidden");
-          setTimeout(function(){ t.classList.add("hidden"); }, 6500); }
-      }, 2600);
+    var isMobile=/iphone|ipad|ipod|android/i.test(navigator.userAgent||"");
+    var visto=false; try{ visto=!!localStorage.getItem("agenda_pwa_visto"); }catch(e){}
+    if(isMobile && !standalone() && !visto){
+      window.addEventListener("load", function(){ setTimeout(function(){ if(!standalone()) ensureBtn().classList.add("show"); }, 3000); });
     }
   }catch(e){}
 })();
