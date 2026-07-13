@@ -239,6 +239,31 @@ recentesOcultos `= "auth != null"`).
 - **Console — aba Dados:** `https://console.firebase.google.com/project/atividades-educativas-16860/database/atividades-educativas-16860-default-rtdb/data`
 - **Console — aba Regras:** `https://console.firebase.google.com/project/atividades-educativas-16860/database/atividades-educativas-16860-default-rtdb/rules`
 
+### Rodízio + PEDIDOS de agendamento (fora da semana)
+- **Rodízio:** cada professor só agenda na **semana do grupo da sua turma**
+  (`grupoDaSemana` × `grupoDaTurma`). Isso é regra **do app**, não do servidor.
+- **Fora da semana:** o professor comum **não agenda sozinho** — envia um
+  **PEDIDO** (aba **Pedidos** 📨). O pedido **não ocupa horário** na agenda; só o
+  **admin** aprova (vira reserva `excecao:true`, `ownerUid`=admin) ou recusa.
+  Admin agendando fora da semana → marca exceção automaticamente.
+- **Onde moram os pedidos (SEM mexer nas regras):** em
+  `/agenda/vidal-ramos/recentesOcultos/__PEDIDOS__/<pid>` — a área `recentesOcultos`
+  já é `auth != null` r/w, então **não precisou de regra nova**. Cada leitura de
+  recentes/ocultos é por `sanId(user)`, então `__PEDIDOS__` **não colide**. A
+  agenda continua blindada (a aula só entra pela regra normal de `/reservas`, ao
+  aprovar). Trade-off honesto: a *lista de pedidos* (dados não sensíveis) fica na
+  área aberta; se um dia quiser isolá-la de verdade, aí sim precisa de regra nova.
+
+### IA dos campos (tema/objetivo) — como funciona de verdade
+A IA do app (**Pollinations**, grátis, roda no navegador) **NÃO** lê o
+`_curriculo/blumenau.txt` nem navega na internet: é um LLM que gera a partir do
+**treino dele + a "âncora curricular"** que embutimos no prompt (`_CURRIC_BLU` /
+`_iaCurric` = as unidades temáticas/campos/eixos REAIS de Blumenau por
+disciplina/ano, extraídos verbatim do PDF oficial). O documento completo (440 pág.)
+fica salvo em `_curriculo/blumenau.txt` **para o Claude** usar ao montar atividades
+premium — não cabe dentro da IA grátis. Ampliar a âncora (objetos de conhecimento
+por ano) é o caminho de evolução; "navegar na internet" não existe nessa IA grátis.
+
 ## Se a sessão for aberta em OUTRO repositório
 
 Este `CLAUDE.md` só é lido quando a sessão abre **neste** repositório

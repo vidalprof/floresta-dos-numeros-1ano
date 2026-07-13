@@ -160,8 +160,26 @@
   .bottomnav .wrap{display:flex;gap:4px;max-width:680px;width:100%;justify-content:space-around}
   .tab{flex:1;max-width:130px;display:flex;flex-direction:column;align-items:center;gap:3px;
     padding:8px 4px;border-radius:14px;color:var(--faint);font-size:11px;font-weight:700}
-  .tab .ic{font-size:20px}
+  .tab .ic{font-size:20px;position:relative}
   .tab.on{color:var(--primary);background:var(--primary-tint)}
+  .tab{position:relative}
+  .tabbadge{position:absolute;top:2px;right:14px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;
+    background:#e0453a;color:#fff;font-size:11px;font-weight:800;line-height:17px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.25)}
+  /* ---- Pedidos ---- */
+  .viewpad{padding:14px 16px 96px}
+  .vtitle{font-size:19px;font-weight:800;margin-bottom:6px;color:var(--text)}
+  .pedlist{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+  .pedcard{padding:12px 14px}
+  .pedtop{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+  .pedturma{font-weight:800;font-size:15px;color:var(--text)}
+  .peddisc{font-weight:600;color:var(--faint)}
+  .pedst{font-weight:800;font-size:12px;white-space:nowrap}
+  .pedwhen,.pedwho{font-size:13px;color:var(--faint);margin-top:4px}
+  .pedlin{font-size:14px;color:var(--text);margin-top:6px;line-height:1.35}
+  .pedacoes{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .pedacoes .btn{flex:1;min-width:120px;margin:0}
+  .empty{text-align:center;color:var(--faint);padding:40px 10px}
+  .empty .ei{font-size:40px;margin-bottom:8px}
 
   /* buttons / chips */
   .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 18px;
@@ -653,6 +671,75 @@ async function carregarBase(){
 /* Em falha de recarga, MANTÉM as reservas já carregadas (evita a agenda "piscar vazia"). */
 async function recarregarReservas(){ const r = await fbGetRaw("/reservas"); if(r.ok){ S.reservas = r.val || {}; return true; } return false; }
 
+/* ===== PEDIDOS de agendamento (fora da semana do rodízio) =====
+   O professor comum não agenda fora da sua semana: manda um PEDIDO que fica pendente
+   (NÃO ocupa horário na agenda). O admin (professor de informática) aprova — aí vira
+   aula na grade, marcada como exceção — ou recusa. Guardado em recentesOcultos/__PEDIDOS__
+   (área que as regras já liberam p/ qualquer professor logado): não precisa mexer nas
+   regras, e a AGENDA continua protegida (a aula só entra pela regra normal, ao aprovar). */
+var PED_PATH = "/recentesOcultos/__PEDIDOS__";
+async function carregarPedidos(){ try{ S.pedidos = (await fbGet(PED_PATH)) || {}; }catch(e){ S.pedidos = S.pedidos||{}; } return S.pedidos; }
+function pedidosArr(){ const o=S.pedidos||{}; return Object.keys(o).map(function(k){return o[k];}).filter(Boolean); }
+function pedidosPendentes(){ return pedidosArr().filter(function(p){return p.status==="pendente";}); }
+function meusPedidos(){ const me=sanId(S.user.id); return pedidosArr().filter(function(p){return sanId(p.profId)===me;}).sort(function(a,b){return (b.ts||0)-(a.ts||0);}); }
+function _pedBadge(){ return S.user.admin ? pedidosPendentes().length : meusPedidos().filter(function(p){return p.status==="pendente";}).length; }
+function _temPedidos(){ return S.user.admin ? pedidosArr().length>0 : meusPedidos().length>0; }
+async function enviarPedido(){
+  const p = {
+    pid: "p"+Date.now()+"_"+Math.floor(Math.random()*1000000),
+    data: S.dataSel, turnoK: _form.turnoK, aula: _form.aula,
+    turmaBase: _form.turma, letra: _form.letra||"",
+    turma: (_form.turma||"") + (_form.letra?(" "+_form.letra):""),
+    disciplina: _form.disc||"", tema: _form.tema||"", objetivo: _form.obj||"",
+    profId: _form.profId, profNome: _form.profNome,
+    ownerUid: (S.auth&&S.auth.uid)||null, ts: Date.now(), status: "pendente"
+  };
+  const restore=btnBusy('[data-act="enviar-pedido"]',"Enviando…");
+  try{
+    const ok = await fbSet(PED_PATH+"/"+p.pid, p);
+    if(!ok){ toast(_msgFalha("Não consegui enviar o pedido. Tente de novo.")); return; }
+    S.pedidos = S.pedidos||{}; S.pedidos[p.pid]=p;
+    fecharSheet(); S.tab="pedidos"; desenharShell();
+    toast("Pedido enviado ao professor de informática. ✅");
+  } finally { restore(); }
+}
+async function aprovarPedido(pid){
+  const p = S.pedidos && S.pedidos[pid]; if(!p || !S.user.admin) return;
+  const restore=btnBusy('[data-pid="'+pid+'"] [data-act="aprovar-pedido"]',"Aprovando…");
+  try{
+    const chk = await fbGetRaw("/reservas/"+p.data+"/"+p.turnoK+"/a"+p.aula);
+    if(!chk.ok){ toast("Sem conexão para confirmar o horário. Tente de novo."); return; }
+    if(chk.val){ toast("Esse horário já está ocupado. Recuse ou libere o horário primeiro."); return; }
+    const reg={ turma:p.turma, disciplina:p.disciplina, tema:p.tema, objetivo:p.objetivo,
+      profId:p.profId, profNome:p.profNome, ownerUid:(S.auth&&S.auth.uid)||null,
+      excecao:true, ts:Date.now() };
+    const ok=await fbSet("/reservas/"+p.data+"/"+p.turnoK+"/a"+p.aula, reg);
+    if(!ok){ toast(_msgFalha("Não consegui registrar na agenda. Tente de novo.")); return; }
+    p.status="aprovado"; p.decidTs=Date.now();
+    await fbSet(PED_PATH+"/"+pid, p);
+    await recarregarReservas(); renderTab();
+    toast("Pedido aprovado e agendado! ✅");
+  } finally { restore(); }
+}
+async function recusarPedido(pid){
+  const p=S.pedidos&&S.pedidos[pid]; if(!p||!S.user.admin) return;
+  p.status="recusado"; p.decidTs=Date.now();
+  const ok=await fbSet(PED_PATH+"/"+pid, p);
+  if(!ok){ toast("Não consegui recusar agora. Tente de novo."); return; }
+  renderTab(); toast("Pedido recusado.");
+}
+async function apagarPedido(pid){
+  const p=S.pedidos&&S.pedidos[pid]; if(!p) return;
+  // admin apaga qualquer um já decidido; professor cancela o SEU pendente
+  if(!S.user.admin && !(sanId(p.profId)===sanId(S.user.id) && p.status==="pendente")) return;
+  const ok=await fbSet(PED_PATH+"/"+pid, null);
+  if(!ok){ toast("Não consegui remover agora. Tente de novo."); return; }
+  if(S.pedidos) delete S.pedidos[pid];
+  if(!_temPedidos() && S.tab==="pedidos") S.tab="hoje";
+  desenharShell();
+  toast(S.user.admin?"Pedido removido.":"Pedido cancelado.");
+}
+
 /* ================= BOOTSTRAP (1o acesso: cria admin + semeia) ================= */
 function telaBootstrap(){
   $("root").innerHTML = `
@@ -928,6 +1015,8 @@ async function abrirApp(){
   S.dataSel = primeiroDiaAgendavel();
   try{ S.recentes = (await fbGet("/recentes/"+sanId(S.user.id))) || []; }catch(e){ S.recentes=[]; }
   S._ocultos={}; try{ await carregarOcultos(S.user.id); }catch(e){}
+  try{ await carregarPedidos(); }catch(e){}
+  S._pedSig = JSON.stringify(pedidosArr().map(function(p){return p.pid+":"+p.status;}));
   desenharShell();
   checarNotificacao();
   if(!S._visBound){ S._visBound=true; document.addEventListener("visibilitychange", async function(){
@@ -957,6 +1046,12 @@ async function abrirApp(){
     if(!okR) return;                                                // recarga falhou: mantém o marcador antigo p/ tentar de novo
     S._lwSeen = lw;
     if(_sigReservas()!==antes && (S.tab==="hoje"||S.tab==="proximos")) renderTab();
+    // pedidos: recarrega e, se algo mudou (novo pedido / status), atualiza o selo e a aba
+    try{
+      await carregarPedidos();
+      const sig = JSON.stringify(pedidosArr().map(function(p){return p.pid+":"+p.status;}));
+      if(sig!==S._pedSig){ S._pedSig=sig; if(S.tab==="pedidos") renderTab(); else desenharShell(); }
+    }catch(e){}
   }, 30000);
 }
 function desenharShell(){
@@ -975,6 +1070,7 @@ function desenharShell(){
     <nav class="bottomnav"><div class="wrap">
       <button class="tab" data-tab="hoje"><span class="ic">🗓️</span>Hoje</button>
       <button class="tab" data-tab="proximos"><span class="ic">📆</span>${adm?"Próximos":"Minhas aulas"}</button>
+      ${(adm||_temPedidos())?`<button class="tab" data-tab="pedidos"><span class="ic">📨</span>Pedidos${_pedBadge()?`<span class="tabbadge">${_pedBadge()}</span>`:''}</button>`:''}
       ${adm?'<button class="tab" data-tab="insights"><span class="ic">📊</span>Insights</button>':''}
     </div></nav>
   </div>`;
@@ -993,10 +1089,67 @@ function renderAviso(){
 }
 function renderTab(){
   if(S.tab==="insights" && !S.user.admin) S.tab="hoje";
+  if(S.tab==="pedidos" && !(S.user.admin||_temPedidos())) S.tab="hoje";
   document.querySelectorAll(".tab").forEach(t=>t.classList.toggle("on",t.dataset.tab===S.tab));
   if(S.tab==="hoje") viewHoje();
   else if(S.tab==="proximos") viewProximos();
+  else if(S.tab==="pedidos") viewPedidos();
   else viewInsights();
+}
+/* ================= VIEW: PEDIDOS ================= */
+function _pedCard(p){
+  const adm=S.user.admin;
+  const st = p.status||"pendente";
+  const tomSt = st==="aprovado" ? "var(--free)" : (st==="recusado" ? "var(--red,#d9534f)" : "var(--amber)");
+  const rotSt = st==="aprovado" ? "✅ Aprovado" : (st==="recusado" ? "✖️ Recusado" : "⏳ Pendente");
+  const quando = (fmtSem(p.data).replace("-feira","")) + ", " + fmtDia(p.data);
+  const hora = _horaPedido(p);
+  let acoes="";
+  if(adm && st==="pendente"){
+    acoes=`<div class="pedacoes">
+      <button class="btn primary" data-act="aprovar-pedido">✅ Aprovar e agendar</button>
+      <button class="btn ghost" data-act="recusar-pedido">✖️ Recusar</button></div>`;
+  } else if(adm){
+    acoes=`<div class="pedacoes"><button class="btn ghost" data-act="apagar-pedido">🗑️ Remover</button></div>`;
+  } else if(st==="pendente"){
+    acoes=`<div class="pedacoes"><button class="btn ghost" data-act="apagar-pedido">Cancelar pedido</button></div>`;
+  }
+  return `<div class="card pedcard" data-pid="${esc(p.pid)}" style="border-left:5px solid ${tomSt}">
+    <div class="pedtop"><div class="pedturma">${esc(p.turma||"—")}${p.disciplina?` · <span class="peddisc">${esc(p.disciplina)}</span>`:""}</div>
+      <span class="pedst" style="color:${tomSt}">${rotSt}</span></div>
+    <div class="pedwhen">📅 ${esc(quando)}${hora?` · 🕐 ${esc(hora)}`:""}</div>
+    ${adm?`<div class="pedwho">👤 ${esc(p.profNome||"")}</div>`:""}
+    ${p.tema?`<div class="pedlin"><b>Tema:</b> ${esc(p.tema)}</div>`:""}
+    ${p.objetivo?`<div class="pedlin"><b>Objetivo:</b> ${esc(p.objetivo)}</div>`:""}
+    ${acoes}
+  </div>`;
+}
+function _horaPedido(p){
+  try{ const hl=horarioLabel(p.turnoK, p.aula-1);
+    return p.aula+"ª aula no "+turnoNome(p.turnoK)+(hl?" · "+hl:"");
+  }catch(e){ return "aula "+p.aula; }
+}
+function viewPedidos(){
+  const v=$("view"); if(!v) return;
+  const adm=S.user.admin;
+  const lista = adm ? pedidosArr().slice().sort(function(a,b){
+      const w={pendente:0,aprovado:1,recusado:2}; const da=(w[a.status]||0)-(w[b.status]||0);
+      return da!==0?da:(b.ts||0)-(a.ts||0);
+    }) : meusPedidos();
+  const pend = adm ? pedidosPendentes().length : 0;
+  let h=`<div class="viewpad">
+    <div class="vtitle">📨 Pedidos de agendamento</div>
+    <p class="hint" style="text-align:left">${adm
+      ? (pend? `Você tem <b>${pend}</b> pedido(s) aguardando. Ao aprovar, a aula entra na agenda marcada como exceção ⚠️.`
+             : "Nenhum pedido aguardando no momento.")
+      : "Aqui ficam os seus pedidos de aula fora da sua semana do rodízio, com o status de cada um."}</p>`;
+  if(!lista.length){
+    h+=`<div class="empty"><div class="ei">📭</div><div>Nenhum pedido ${adm?"":"seu "}por aqui.</div></div>`;
+  } else {
+    h+=`<div class="pedlist">${lista.map(_pedCard).join("")}</div>`;
+  }
+  h+=`</div>`;
+  v.innerHTML=h;
 }
 
 /* ================= VIEW: HOJE (agenda do dia) ================= */
@@ -1645,8 +1798,10 @@ function sheetForaSemana(sg,tg){
       <div style="font-weight:800;color:var(--amber)">⚠️ Esta semana é dos ${esc(nomeGrupo(sg))}</div>
       <div style="font-size:14px;margin-top:6px;color:var(--text)">A turma escolhida é dos <b>${esc(nomeGrupo(tg))}</b>. Cada grupo agenda só na sua semana do rodízio.</div>
     </div>
-    <p class="hint" style="text-align:left">Para agendar fora da sua semana, fale com a <b>coordenação</b> e com o <b>professor de informática</b>. Ele faz o agendamento para o senhor(a), e a aula aparece <b>marcada como exceção</b> ⚠️.</p>
-    <button class="btn primary" data-act="fecharsheet">Entendi</button>`);
+    <p class="hint" style="text-align:left">Você pode <b>enviar um pedido</b> ao professor de informática. Ele avalia e, se aprovar, a aula entra na agenda <b>marcada como exceção</b> ⚠️. O pedido leva a turma, a disciplina, o tema e o objetivo que você preencheu.</p>
+    <button class="btn primary" data-act="enviar-pedido">📨 Enviar pedido de agendamento</button>
+    <div style="height:10px"></div>
+    <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
 }
 
 /* ver / excluir reserva */
@@ -2110,7 +2265,7 @@ function telaOpcoes(){
       <button class="chip ${_grupoAtualConfig()==="fin"?"":"on"}" data-act="rodizio-grupo" data-v="ini">Esta semana: Iniciais (Pré–5º)</button>
       <button class="chip ${_grupoAtualConfig()==="fin"?"on":""}" data-act="rodizio-grupo" data-v="fin">Esta semana: Finais (6º–9º)</button>
     </div>
-    <p class="hint" style="text-align:left">Você está definindo o grupo da <b>semana atual (${esc(fmtDia(segDaSemana(hojeStr())))} a ${esc(fmtDia(addDias(segDaSemana(hojeStr()),5)))})</b>; depois alterna sozinho. Voltando das férias, é só vir aqui <b>na semana do retorno</b> e escolher o grupo — pode repetir o mesmo grupo, sem problema. Fora da semana, o professor só agenda como <b>exceção autorizada</b>.</p>
+    <p class="hint" style="text-align:left">Você está definindo o grupo da <b>semana atual (${esc(fmtDia(segDaSemana(hojeStr())))} a ${esc(fmtDia(addDias(segDaSemana(hojeStr()),5)))})</b>; depois alterna sozinho. Voltando das férias, é só vir aqui <b>na semana do retorno</b> e escolher o grupo — pode repetir o mesmo grupo, sem problema. Fora da semana, o professor <b>não agenda sozinho</b>: ele envia um <b>pedido</b> que aparece para você aprovar (aba <b>Pedidos</b> 📨); ao aprovar, a aula entra marcada como exceção ⚠️.</p>
     <label class="fld">📢 Aviso no topo do app (deixe vazio para remover)</label>
     <textarea id="oAviso" class="input" placeholder="Ex.: Sala em manutenção na sexta. Agendem com atenção!">${esc(c.aviso||"")}</textarea>
     <div style="height:16px"></div>
@@ -2187,6 +2342,10 @@ document.addEventListener("click", async (ev)=>{
     if(a==="ia-objetivo") return sugerirObjetivoIA(el.dataset.tema, el.dataset.obj);
     if(a==="ia-tema") return melhorarTemaIA(el.dataset.tema);
     if(a==="salvar-agenda") return salvarAgenda();
+    if(a==="enviar-pedido") return enviarPedido();
+    if(a==="aprovar-pedido"){ const c=el.closest("[data-pid]"); return c?aprovarPedido(c.dataset.pid):null; }
+    if(a==="recusar-pedido"){ const c=el.closest("[data-pid]"); return c?recusarPedido(c.dataset.pid):null; }
+    if(a==="apagar-pedido"){ const c=el.closest("[data-pid]"); return c?apagarPedido(c.dataset.pid):null; }
     if(a==="rodizio-grupo"){ document.querySelectorAll('[data-act="rodizio-grupo"]').forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); try{ await carregarOcultos(_form.profId); }catch(e){} const box=$("recBox"); if(box) box.innerHTML=recBoxHTML(_form.profId); return; }
     if(a==="del-recente"){ return apagarRecente(+el.dataset.i); }
