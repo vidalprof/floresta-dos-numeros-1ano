@@ -1605,10 +1605,16 @@ async function salvarAgenda(){
   if(!disc) return toast("Escolha a disciplina.");
   if(S.config.obrigatorios && (!tema||!obj)) return toast("Preencha tema e objetivo.");
   if(diaFeriado(S.dataSel) && !S.user.admin) return toast("Feriado — agenda fechada.");
-  // rodízio: professor só agenda na semana do grupo da turma; fora disso, exige exceção
-  if(!S.user.admin && !_form.excecao){
+  // rodízio: cada professor só agenda na SEMANA do grupo da sua turma. Fora dessa semana o
+  // professor COMUM não agenda sozinho — precisa falar com a coordenação e com o professor de
+  // informática (admin). Só o admin agenda fora da semana, e a aula fica marcada como EXCEÇÃO.
+  {
     const sg=grupoDaSemana(S.dataSel), tg=grupoDaTurma(turma);
-    if(sg && tg && sg!==tg){ _form.tema=tema; _form.obj=obj; return sheetExcecao(sg,tg); }
+    const foraDaSemana = sg && tg && sg!==tg;
+    if(foraDaSemana){
+      if(!S.user.admin){ _form.tema=tema; _form.obj=obj; return sheetForaSemana(sg,tg); }
+      _form.excecao = true; // admin agendando fora da semana → registra como exceção
+    }
   }
   const restore=btnBusy('[data-act="salvar-agenda"]',"Salvando…");
   try{
@@ -1632,18 +1638,15 @@ async function salvarAgenda(){
     await recarregarReservas(); fecharSheet(); renderTab(); toast(reg.excecao ? "Agendado como exceção. ⚠️" : "Aula agendada! ✅");
   } finally { restore(); }
 }
-function sheetExcecao(sg,tg){
-  const turnoK=_form.turnoK, aula=_form.aula;
+function sheetForaSemana(sg,tg){
   openSheet(`<div class="grab"></div>
     <div class="sh-head"><div class="t">Fora da sua semana</div><button class="icon-btn" data-act="fecharsheet">✕</button></div>
     <div class="card" style="border-color:var(--amber);background:var(--amber-tint)">
       <div style="font-weight:800;color:var(--amber)">⚠️ Esta semana é dos ${esc(nomeGrupo(sg))}</div>
-      <div style="font-size:14px;margin-top:6px;color:var(--text)">A turma escolhida é dos <b>${esc(nomeGrupo(tg))}</b>. O agendamento normal é só na semana do seu grupo.</div>
+      <div style="font-size:14px;margin-top:6px;color:var(--text)">A turma escolhida é dos <b>${esc(nomeGrupo(tg))}</b>. Cada grupo agenda só na sua semana do rodízio.</div>
     </div>
-    <p class="hint" style="text-align:left">Fale com a coordenação. Se já for uma <b>exceção autorizada</b>, confirme abaixo — a reserva ficará <b>marcada como exceção</b>.</p>
-    <button class="btn primary" data-act="conf-excecao">⚠️ Marcar como exceção autorizada</button>
-    <div style="height:10px"></div>
-    <button class="btn ghost" data-act="fecharsheet">Cancelar</button>`);
+    <p class="hint" style="text-align:left">Para agendar fora da sua semana, fale com a <b>coordenação</b> e com o <b>professor de informática</b>. Ele faz o agendamento para o senhor(a), e a aula aparece <b>marcada como exceção</b> ⚠️.</p>
+    <button class="btn primary" data-act="fecharsheet">Entendi</button>`);
 }
 
 /* ver / excluir reserva */
@@ -2184,7 +2187,6 @@ document.addEventListener("click", async (ev)=>{
     if(a==="ia-objetivo") return sugerirObjetivoIA(el.dataset.tema, el.dataset.obj);
     if(a==="ia-tema") return melhorarTemaIA(el.dataset.tema);
     if(a==="salvar-agenda") return salvarAgenda();
-    if(a==="conf-excecao"){ _form.excecao=true; return salvarAgenda(); }
     if(a==="rodizio-grupo"){ document.querySelectorAll('[data-act="rodizio-grupo"]').forEach(c=>c.classList.remove("on")); el.classList.add("on"); return; }
     if(a==="pickprof"){ _form.profId=el.dataset.id; const p=Object.values(S.professores).find(x=>x.id===el.dataset.id); _form.profNome=p?p.nome:""; document.querySelectorAll("#profChips .chip").forEach(c=>c.classList.remove("on")); el.classList.add("on"); try{ await carregarOcultos(_form.profId); }catch(e){} const box=$("recBox"); if(box) box.innerHTML=recBoxHTML(_form.profId); return; }
     if(a==="del-recente"){ return apagarRecente(+el.dataset.i); }
