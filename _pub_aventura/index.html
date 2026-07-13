@@ -1,0 +1,468 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Aventura das Direções</title>
+<style>
+/* ===== Aventura das Direções — prova de lateralidade 3º ano (compat PC antigo) ===== */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;
+  color:#243b53;
+  background:#cfeafc;
+  background:-webkit-linear-gradient(top,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
+  background:linear-gradient(to bottom,#bfe6ff 0%,#dff3e6 60%,#fdf0d0 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+#app{max-width:620px;margin:0 auto;padding:14px 14px 90px;}
+.card{
+  background:#ffffff;border:3px solid #ffd98a;border-radius:22px;
+  padding:18px 16px;margin:10px 0;text-align:center;
+  -webkit-box-shadow:0 8px 22px rgba(60,90,130,.18);box-shadow:0 8px 22px rgba(60,90,130,.18);
+  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;
+}
+@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+h1{font-size:30px;margin:6px 0 2px;color:#e07a1f;text-shadow:0 2px 0 #ffe0b0;}
+h2{font-size:20px;margin:4px 0;color:#2b6cb0;}
+p{font-size:18px;line-height:1.4;margin:8px 4px;}
+.grande{font-size:22px;font-weight:bold;color:#2b6cb0;}
+img{max-width:100%;}
+/* trilha de progresso (pegadas) */
+#trilha{display:block;text-align:center;margin:4px 0 6px;font-size:16px;color:#7a8aa0;font-weight:bold;}
+#barra{height:14px;background:#e6eef7;border-radius:10px;overflow:hidden;margin:6px 20px 2px;}
+#barra i{display:block;height:100%;width:0;background:#4caf50;background:-webkit-linear-gradient(left,#7ed957,#3fa34d);background:linear-gradient(to right,#7ed957,#3fa34d);-webkit-transition:width .4s;transition:width .4s;}
+/* cena da pista */
+.cena{position:relative;width:100%;max-width:480px;height:300px;margin:8px auto;}
+.cena .masc{position:absolute;top:50%;height:262px;-webkit-transform:translateY(-50%);transform:translateY(-50%);}
+.cena .masc.ml{left:0;}
+.cena .masc.mr{right:0;}
+.cena .obj{position:absolute;top:50%;height:146px;-webkit-transform:translateY(-50%);transform:translateY(-50%);
+  -webkit-filter:drop-shadow(0 0 10px #ffe08a);filter:drop-shadow(0 0 10px #ffe08a);
+  -webkit-animation:flutua 2s ease-in-out infinite;animation:flutua 2s ease-in-out infinite;}
+.cena .obj.ld{left:1%;}
+.cena .obj.rd{right:1%;}
+@-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(-50%);}50%{-webkit-transform:translateY(-62%);}}
+@keyframes flutua{0%,100%{transform:translateY(-50%);}50%{transform:translateY(-62%);}}
+/* par de objetos lado a lado */
+.par{display:block;width:100%;max-width:460px;margin:10px auto;}
+.par .cel{display:inline-block;width:46%;vertical-align:middle;text-align:center;}
+.par .cel img{height:150px;}
+.par .cel span{display:block;font-size:15px;color:#8aa0b8;margin-top:2px;}
+/* cima/baixo */
+.vert{width:200px;margin:6px auto;}
+.vert div{padding:8px;}
+.vert img{height:120px;}
+/* seta = placa de madeira (imagem) */
+.setaimg{font-size:120px;line-height:1;display:inline-block;color:#e07a1f;text-shadow:0 3px 0 #ffcf8a;}
+.cena .placaseta{position:absolute;left:50%;top:50%;height:216px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));filter:drop-shadow(0 6px 8px rgba(90,50,10,.28));}
+.cena .placaseta.flip{-webkit-transform:translate(-50%,-50%) scaleX(-1);transform:translate(-50%,-50%) scaleX(-1);}
+/* botoes */
+.btn{
+  display:inline-block;font-family:inherit;font-size:22px;font-weight:bold;
+  border:none;border-radius:16px;padding:16px 10px;margin:8px 6px;cursor:pointer;
+  color:#fff;background:#2b8ae0;min-width:150px;
+  -webkit-box-shadow:0 5px 0 #1f6fb8;box-shadow:0 5px 0 #1f6fb8;
+}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 2px 0 #1f6fb8;box-shadow:0 2px 0 #1f6fb8;}
+.btn.verde{background:#3fa34d;-webkit-box-shadow:0 5px 0 #2e7d3a;box-shadow:0 5px 0 #2e7d3a;}
+.btn.laranja{background:#f08a1f;-webkit-box-shadow:0 5px 0 #c86f10;box-shadow:0 5px 0 #c86f10;}
+.btn.roxo{background:#8a63d2;-webkit-box-shadow:0 5px 0 #6d49b0;box-shadow:0 5px 0 #6d49b0;}
+.btn.grandao{font-size:24px;padding:18px 26px;}
+.opcoes{margin-top:6px;}
+/* campos */
+input,select{font-family:inherit;font-size:20px;padding:12px 10px;border:3px solid #b9d4ec;border-radius:14px;width:82%;max-width:320px;margin:6px auto;display:block;text-align:center;color:#243b53;background:#f7fbff;}
+label{font-size:17px;font-weight:bold;color:#2b6cb0;display:block;margin-top:8px;}
+.masc-capa{height:210px;margin:2px auto 0;-webkit-animation:balanca 2.4s ease-in-out infinite;animation:balanca 2.4s ease-in-out infinite;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+/* controles de voz */
+#ctrlVoz{position:fixed;right:8px;bottom:8px;z-index:9999;}
+#ctrlVoz .cv-bt{-webkit-appearance:none;appearance:none;width:46px;height:46px;border:3px solid #1668bf;border-radius:50%;background:#fff;color:#1668bf;font-size:20px;line-height:40px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
+#btnOuvir,#btnHist{background:#fff6e6;border:3px solid #e07a1f;color:#b8600f;border-radius:16px;font-size:18px;font-weight:bold;padding:8px 16px;cursor:pointer;font-family:inherit;margin-top:4px;}
+#btnHist{margin:6px auto 4px;-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.06);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+#statusenvio{font-weight:bold;margin-top:6px;font-size:15px;}
+.mini{font-size:14px;color:#8aa0b8;}
+/* enunciado escrito (le + ouve + ve = codificacao dupla) */
+.pergunta{font-size:21px;font-weight:bold;color:#2b5f9e;margin:2px 6px 10px;line-height:1.3;}
+/* plaquinha do referencial (em relacao a quem?) */
+.refbadge{display:inline-block;font-size:15px;font-weight:bold;border-radius:14px;padding:8px 14px;margin:2px auto 10px;line-height:1.35;max-width:96%;}
+.refbadge.voce{background:#e6f0ff;color:#1f5fb0;border:2px solid #b9d4ec;}
+.refbadge.costas{background:#e7f6ea;color:#1c7a34;border:2px solid #b6e0c0;}
+.refbadge.frente{background:#fff0e0;color:#b5600a;border:2px solid #f2c98a;}
+.refbadge.cima{background:#f0ecff;color:#5a49b0;border:2px solid #d3caf0;}
+/* seletor de turma em CAIXAS (permanente) */
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:6px;min-width:76px;padding:13px 10px;border:3px solid #b9d4ec;border-radius:16px;background:#f7fbff;color:#2b6cb0;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #cfe0f0;box-shadow:0 4px 0 #cfe0f0;}
+.tbox.on{background:#2b8ae0;color:#fff;border-color:#1f6fb8;-webkit-box-shadow:0 4px 0 #1f6fb8;box-shadow:0 4px 0 #1f6fb8;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+
+/* ============================================================
+   TEMA PIRATA — "Ilha do Tesouro" (TESTE).
+   Para VOLTAR AO NORMAL: apague este bloco inteiro (ate a tag que fecha o style).
+   ============================================================ */
+body{background:#0f2c47;background:-webkit-linear-gradient(top,#164066,#0a1f36);background:linear-gradient(to bottom,#164066,#0a1f36);}
+.card{background:#f1e2bf;border:4px solid #7a4a17;-webkit-box-shadow:0 12px 30px rgba(0,0,0,.5);box-shadow:0 12px 30px rgba(0,0,0,.5);}
+.card:before{content:"";position:absolute;left:8px;right:8px;top:8px;bottom:8px;border:2px dashed #b8862f;border-radius:14px;pointer-events:none;}
+.card{position:relative;}
+h1{color:#7a4a17;text-shadow:1px 1px 0 #e8cf9a;}
+h2{color:#8a5a1a;}
+.grande{color:#7a4a17;}
+p{color:#4a2f12;}
+label{color:#8a5a1a;}
+.mini{color:#9a7a4a;}
+#trilha{color:#e8cf9a;}
+#barra{background:#c7ad78;}
+#barra i{background:#e8b923;background:-webkit-linear-gradient(left,#f0cf5a,#c9931a);background:linear-gradient(to right,#f0cf5a,#c9931a);}
+.pergunta{color:#7a4a17;}
+input{border-color:#b8862f;background:#fff8e8;color:#4a2f12;}
+.btn.grandao{background:#b0311f;background:-webkit-linear-gradient(top,#c0392b,#8f2418);background:linear-gradient(#c0392b,#8f2418);-webkit-box-shadow:0 6px 0 #6a1a10;box-shadow:0 6px 0 #6a1a10;}
+#btnOuvir{background:#fff2d6;border-color:#b0311f;color:#8f2418;}
+#ctrlVoz .cv-bt{border-color:#7a4a17;color:#7a4a17;}
+.setaimg{color:#b0311f;text-shadow:0 3px 0 #e8b46a;}
+.par .cel span{color:#9a7a4a;}
+/* turma = moedas de ouro */
+.tbox{border:3px solid #7a4a17;background:#e8cf9a;color:#5a3512;-webkit-box-shadow:0 4px 0 #b8862f;box-shadow:0 4px 0 #b8862f;border-radius:50px;}
+.tbox.on{background:#e8b923;color:#3a2408;border-color:#5a3512;-webkit-box-shadow:0 4px 0 #5a3512;box-shadow:0 4px 0 #5a3512;}
+</style>
+
+<div id="app"></div>
+
+<div id="ctrlVoz">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
+  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+var TURMAS=["2º A","2º B","2º C","2º D"];
+/* Historia contada na capa (narrada). Muda o texto = regerar o audio. */
+var HISTORIA="Olá, explorador! Eu achei um mapa do tesouro bem antigo. No caminho tem vários sinais: a Estrela-Guia lá no céu, uma árvore, uma placa de madeira e muito mais. Cada sinal mostra uma direção. Se a gente ler as direções certas, esquerda, direita, em cima e embaixo, vamos achar o baú do tesouro no final! Agora escreva o seu nome, escolha a sua turma e toque em começar a aventura.";
+var _histTocada=false; /* a historia da capa toca 1x, no 1o gesto (o navegador exige um toque) */
+/* Firebase (canal Google que passa no firewall) — testar ja */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+/* Apps Script (planilha real): cole aqui o link /exec do SEU Web App. Vazio = nao envia p/ planilha. */
+var URL_PLANILHA="";
+
+/* ====== As 10 pistas (resposta 100% controlada aqui) ======
+   tipos: vert (cima/baixo), masc (mascote+objeto num lado), par (2 objetos), seta.
+   Em 'masc': vista=costas|frente, obj, lado=dir|esq (lado da IMAGEM). A 'correta' ja
+   considera o espelho quando a vista e' frente. */
+var QUESTOES=[
+ {tipo:"vert", ref:"cima", cima:"estrela", baixo:"flor",
+  pergunta:"A Estrela-Guia está em cima ou embaixo?",
+  fala:"Pista um! O explorador abre o mapa. À noite, a Estrela-Guia brilha lá no alto. Ela está em cima ou embaixo?",
+  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"estrela", lado:"dir",
+  pergunta:"A Estrela-Guia está à direita ou à esquerda dele?",
+  fala:"Pista dois! O explorador está de costas, igual a você, seguindo a Estrela-Guia. Ela está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"par", ref:"voce", esq:"arvore", dir:"sol", alvo:"esq", nomeAlvo:"a árvore",
+  pergunta:"A árvore está à sua esquerda ou à sua direita?",
+  fala:"Pista três! De dia, o caminho tem uma árvore grande e o sol. Olhando para a tela, a árvore está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"cogumelo", lado:"esq",
+  pergunta:"O cogumelo está à direita ou à esquerda dele?",
+  fala:"Pista quatro! No caminho aparece um cogumelo. O explorador está de costas. O cogumelo está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
+
+ {tipo:"seta", ref:"voce", aponta:"dir",
+  pergunta:"Para que lado a seta está apontando?",
+  fala:"Pista cinco! Uma placa de madeira no caminho! Olhando para a tela, para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"flor", lado:"dir",
+  pergunta:"A flor está à direita ou à esquerda dele?",
+  fala:"Pista seis! O explorador de costas acha um canteiro de flores. A flor está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"estrela", lado:"esq",
+  pergunta:"O explorador está de FRENTE. A Estrela-Guia está à direita ou à esquerda dele?",
+  fala:"Pista sete, atenção! Agora a Estrela-Guia voltou e o explorador está te olhando de frente. Ela está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
+
+ {tipo:"par", ref:"voce", esq:"sol", dir:"flor", alvo:"esq", nomeAlvo:"o sol",
+  pergunta:"O sol está à sua esquerda ou à sua direita?",
+  fala:"Pista oito! O sol está bem alto no céu. Olhando para a tela, o sol está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"arvore", lado:"dir",
+  pergunta:"O explorador está de FRENTE. A árvore está à direita ou à esquerda dele?",
+  fala:"Pista nove, a mais esperta! O explorador está de frente, te olhando, ao lado da árvore que marca o tesouro. A árvore está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
+
+ {tipo:"par", ref:"voce", esq:"pedra", dir:"pinheiro", alvo:"dir", nomeAlvo:"o pinheiro",
+  pergunta:"O pinheiro está à sua esquerda ou à sua direita?",
+  fala:"Pista dez! O explorador segue em frente e vê dois sinais: uma pedra de um lado e um pinheiro alto do outro. Olhando para a tela, o pinheiro está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"vert", ref:"cima", cima:"passaro", baixo:"coelho",
+  pergunta:"O coelho está em cima ou embaixo?",
+  fala:"Pista onze! No caminho, um passarinho voa lá em cima e um coelho pula mais embaixo. O coelho está em cima ou embaixo?",
+  opcoes:[{t:"Em cima",cor:"laranja"},{t:"Embaixo",cor:"verde"}], correta:1},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"cabana", lado:"dir",
+  pergunta:"A cabana está à direita ou à esquerda dele?",
+  fala:"Pista doze! O explorador está de costas, igual a você, e encontra uma cabana no caminho. A cabana está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"seta", ref:"voce", aponta:"esq",
+  pergunta:"Para que lado a seta está apontando?",
+  fala:"Pista treze! Mais uma placa de madeira apareceu na trilha! Olhando para a tela, para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"pedra", lado:"esq",
+  pergunta:"A pedra está à direita ou à esquerda dele?",
+  fala:"Pista quatorze! Ainda de costas, o explorador passa por uma pedra grande na beira do caminho. A pedra está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:1},
+
+ {tipo:"par", ref:"voce", esq:"coelho", dir:"cabana", alvo:"esq", nomeAlvo:"o coelho",
+  pergunta:"O coelho está à sua esquerda ou à sua direita?",
+  fala:"Pista quinze! No caminho aparecem um coelho e uma cabana, um de cada lado. Olhando para a tela, o coelho está à sua esquerda ou à sua direita?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"passaro", lado:"dir",
+  pergunta:"O passarinho está à direita ou à esquerda dele?",
+  fala:"Pista dezesseis! O explorador, de costas, vê um passarinho pousar ao lado dele. O passarinho está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0},
+
+ {tipo:"seta", ref:"voce", aponta:"dir",
+  pergunta:"Para que lado a seta está apontando?",
+  fala:"Pista dezessete! Quase lá! Outra placa aponta o caminho do tesouro. Olhando para a tela, para que lado a seta está apontando?",
+  opcoes:[{t:"Esquerda",cor:"roxo"},{t:"Direita",cor:"laranja"}], correta:1},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"pinheiro", lado:"dir",
+  pergunta:"O explorador está de FRENTE. O pinheiro está à direita ou à esquerda dele?",
+  fala:"Pista dezoito, atenção! Agora o explorador virou e está te olhando de frente, ao lado de um pinheiro. O pinheiro está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:1},
+
+ {tipo:"masc", ref:"frente", vista:"frente", obj:"passaro", lado:"esq",
+  pergunta:"O explorador está de FRENTE. O passarinho está à direita ou à esquerda dele?",
+  fala:"Pista dezenove, a mais espertinha! O explorador continua de frente, te olhando, e um passarinho está pousado ao lado dele. O passarinho está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita dele",cor:"laranja"},{t:"Esquerda dele",cor:"roxo"}], correta:0},
+
+ {tipo:"masc", ref:"costas", vista:"costas", obj:"bau", lado:"dir",
+  pergunta:"O baú do tesouro está à direita ou à esquerda do explorador?",
+  fala:"Pista vinte, a última! Chegamos ao fim do mapa e o baú do tesouro apareceu! O explorador está de costas, igual a você. O baú está à direita ou à esquerda dele?",
+  opcoes:[{t:"Direita",cor:"laranja"},{t:"Esquerda",cor:"roxo"}], correta:0}
+];
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false;
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+
+/* ====== VOZ (arquivos audio/<chave>.mp3, voz Antonio, zero navegador) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("avdir_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+/* som NEUTRO de toque (Web Audio, sem arquivo). Igual p/ qualquer resposta: NAO revela certo/errado. */
+var _actx=null;
+function somToque(){
+  if(VOZ_MUDA){return;}
+  try{
+    if(!_actx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC){return;} _actx=new AC(); }
+    if(_actx.state==="suspended"&&_actx.resume){ _actx.resume(); }
+    var t=_actx.currentTime, o=_actx.createOscillator(), g=_actx.createGain();
+    o.type="triangle"; o.frequency.setValueAtTime(520,t); o.frequency.exponentialRampToValueAtTime(760,t+0.10);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(0.16,t+0.012);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g); g.connect(_actx.destination);
+    o.start(t); o.stop(t+0.18);
+  }catch(e){}
+}
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{ var a=new Audio("audio/"+_chaveVoz(texto)+".mp3"); _falaAudio=a; a.play(); }catch(e){}
+}
+function repetirUltima(){ if(_ultimaFala){ pararFala(); falar(_ultimaFala,true); } }
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("avdir_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== TELAS ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/masc_acena.png" alt="explorador">';
+  h+='<h1>Aventura das Direções</h1>';
+  h+='<p class="grande">O explorador achou um mapa do tesouro! Ajude ele a ler cada sinal do caminho até chegar no baú!</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir a história</button>';
+  h+='<label>Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="24" placeholder="Escreva seu nome">';
+  h+='<label>Qual é a sua turma?</label>';
+  h+='<div class="turmas">';
+  var i;for(i=0;i<TURMAS.length;i++){ h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>'; }
+  h+='</div>';
+  h+='<div><button class="btn verde grandao" onclick="comecar()">Começar a aventura!</button></div>';
+  h+='<p class="mini">Toque no botão azul de som a qualquer momento para ouvir de novo.</p>';
+  h+='</div>';
+  $("app").innerHTML=h;
+  /* NAO faz autoplay (o navegador bloqueia e sobra audio "orfao" que vaza p/ a proxima tela).
+     A historia toca SO no botao "Ouvir a historia". Guarda p/ o botao repetir tambem. */
+  _ultimaFala=HISTORIA;
+}
+function ouvirHistoria(){ _histTocada=true; falar(HISTORIA,true); }
+var turmaSel="";
+function selTurma(el,t){
+  turmaSel=t;
+  var bs=document.getElementsByClassName("tbox"),i;
+  for(i=0;i<bs.length;i++){ bs[i].className="tbox"; }
+  el.className="tbox on";
+}
+function comecar(){
+  _histTocada=true;   /* nao deixa a historia auto-tocar por causa deste clique */
+  var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
+  var t=turmaSel;
+  if(n.length<2){ falar("Escreva o seu nome para começar!",true); $("cNome").focus(); return; }
+  if(!t){ falar("Escolha a sua turma para começar!",true); return; }
+  pararFala();                 /* corta a narracao da historia ao sair da capa */
+  nomeAluno=n; turmaAluno=t; atual=0;
+  telaPista();
+}
+
+function cenaHTML(q){
+  var lado, h='<div class="cena">';
+  if(q.tipo==="masc"){
+    lado=(q.lado==="dir")?"rd":"ld";
+    var mside=(q.lado==="dir")?"ml":"mr";
+    h+='<img class="masc '+mside+'" src="img/masc_'+(q.vista==="frente"?"frente":"costas")+'_'+(q.lado==="dir"?"dir":"esq")+'.png" alt="explorador apontando">';
+    h+='<img class="obj '+lado+'" src="img/'+q.obj+'.png" alt="objeto">';
+  }
+  h+='</div>';
+  return h;
+}
+function refHTML(q){
+  var m={
+    voce:'&#128064; Pense no SEU corpo &mdash; a sua direita e a sua esquerda',
+    costas:'&#128281; O explorador est&aacute; DE COSTAS (igual a voc&ecirc;) &mdash; o lado dele &eacute; o seu lado',
+    frente:'&#9888;&#65039; Aten&ccedil;&atilde;o! O explorador est&aacute; DE FRENTE, te olhando'
+  };
+  var t=m[q.ref]; if(!t){return '';}
+  return '<div class="refbadge '+q.ref+'">'+t+'</div>';
+}
+function telaPista(){
+  var q=QUESTOES[atual], h='';
+  h+='<div id="trilha">Pista '+(atual+1)+' de '+QUESTOES.length+' &#128075;</div>';
+  h+='<div id="barra"><i style="width:'+Math.round(atual/QUESTOES.length*100)+'%"></i></div>';
+  h+='<div class="card">';
+  if(q.pergunta){ h+='<h2 class="pergunta">'+q.pergunta+'</h2>'; }
+  h+=refHTML(q);
+  if(q.tipo==="vert"){
+    h+='<div class="vert"><div><img src="img/'+q.cima+'.png" alt="em cima"></div>';
+    h+='<div style="border-top:3px dashed #cdd9e6"></div>';
+    h+='<div><img src="img/'+q.baixo+'.png" alt="embaixo"></div></div>';
+  }else if(q.tipo==="par"){
+    h+='<div class="par"><span class="cel"><img src="img/'+q.esq+'.png" alt="esquerda"><span>&#9668; lado de cá</span></span>';
+    h+='<span class="cel"><img src="img/'+q.dir+'.png" alt="direita"><span>lado de lá &#9658;</span></span></div>';
+  }else if(q.tipo==="seta"){
+    h+='<div class="cena"><img class="placaseta'+(q.aponta==="dir"?"":" flip")+'" src="img/placa_seta.png" alt="placa de madeira com uma seta"></div>';
+  }else{
+    h+=cenaHTML(q);
+  }
+  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pista</button>';
+  h+='<div class="opcoes">';
+  var i;for(i=0;i<q.opcoes.length;i++){ h+='<button class="btn '+q.opcoes[i].cor+'" onclick="responder('+i+')">'+q.opcoes[i].t+'</button>'; }
+  h+='</div></div>';
+  $("app").innerHTML=h;
+  falar(q.fala);
+}
+function responder(idx){
+  somToque();
+  respostas[atual]=idx;
+  pararFala();
+  atual++;
+  if(atual>=QUESTOES.length){ telaFinal(); }
+  else {
+    /* transicao NEUTRA (nao revela certo/errado) */
+    var frases=["Vamos para a próxima pista!","Seguindo a aventura!","Muito bem, vamos lá!","Continue, explorador!"];
+    falar(frases[atual%frases.length]);
+    setTimeout(telaPista,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+
+function telaFinal(){
+  var ac=calcularAcertos();
+  confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/masc_festa.png" alt="explorador comemorando">';
+  h+='<h1>&#127881; Parabéns! &#127881;</h1>';
+  h+='<h2>'+nomeAluno+', você concluiu a Aventura das Direções!</h2>';
+  h+='<img src="img/bau.png" alt="tesouro" style="height:150px;margin:6px auto">';
+  h+='<p class="grande">Você achou o tesouro! Muito bem, explorador!</p>';
+  h+='<p id="statusenvio"></p>';
+  h+='</div>';
+  $("app").innerHTML=h;
+  falar("Parabéns! Você concluiu a Aventura das Direções e achou o tesouro! Você foi um explorador incrível!");
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase + Apps Script), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;} enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
+  var quando=new Date().toLocaleString("pt-BR");
+  /* nota SEMPRE em escala 0..10 (independe do nº de questões): acertos/total*10 */
+  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  var ok=false;
+  /* 1) Firebase (funciona ja) */
+  try{
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/lateralidade-3ano/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.onreadystatechange=function(){ if(x.readyState===4){ marcarEnvio(x.status>=200&&x.status<300); } };
+    x.send(JSON.stringify(reg)); ok=true;
+  }catch(e){}
+  /* 2) Apps Script (planilha real), se configurado */
+  if(URL_PLANILHA){
+    try{
+      var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+
+        "&nota="+encodeURIComponent(nota10)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+
+        "&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
+      var y=new XMLHttpRequest(); y.open("POST",URL_PLANILHA,true);
+      y.setRequestHeader("Content-Type","application/x-www-form-urlencoded"); y.send(dados);
+    }catch(e){}
+  }
+  if(!ok){ marcarEnvio(false); }
+}
+function marcarEnvio(ok){
+  /* registro SILENCIOSO: o aluno nao ve nada sobre a professora nem sobre envio.
+     (a nota/resultado vai por baixo dos panos p/ Firebase/planilha) */
+  var s=$("statusenvio"); if(s){ s.innerHTML=""; }
+}
+
+/* ====== confete leve (canvas, compat) ====== */
+function confete(){
+  try{
+    var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+    c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+    var x=c.getContext("2d"),ps=[],i,cores=["#f08a1f","#3fa34d","#2b8ae0","#8a63d2","#ffd23f"];
+    for(i=0;i<80;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+    var t=0,tot=140;
+    function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}
+    loop();
+  }catch(e){}
+}
+
+/* ====== boot ====== */
+function boot(){ attMudo(); telaCapa(); }
+document.addEventListener("click",function(){
+  /* 1o gesto na CAPA: toca a historia automaticamente (o navegador so libera som apos um toque).
+     So dispara enquanto estamos na capa (existe o campo de nome) e uma unica vez. */
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true; falar(HISTORIA,true);
+},false);
+boot();
+</script>
