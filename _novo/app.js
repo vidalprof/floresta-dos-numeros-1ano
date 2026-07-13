@@ -119,7 +119,7 @@ var FESTApool=["ACERTOU!","MUITO BEM!","BOA!","ISSO!","PERFEITO!","SHOW!","UAU!"
 /* ============ ESTADO ============ */
 var VALIDADE_MIN=70;
 var S={nome:"",pontos:0,feitasMap:{},stats:{},conq:{},maxStreak:0,acertosTot:0};
-var atual=null,idx=0,streak=0,errosSeg=0,facil=false,ERROS=[],modoTreino=false,extraOn=false;
+var atual=null,idx=0,streak=0,errosSeg=0,facil=false,ERROS=[],modoTreino=false,extraOn=false,runAc=0,reforcoOn=false;
 function feitas(){var k,c=0;for(k in S.feitasMap)if(S.feitasMap[k])c++;return c;}
 function salvar(){try{var o={nome:S.nome,pontos:S.pontos,feitasMap:S.feitasMap,stats:S.stats,conq:S.conq,maxStreak:S.maxStreak,acertosTot:S.acertosTot,t:agoraMs()};localStorage.setItem("cm_prog",JSON.stringify(o));}catch(e){}}
 function carregar(){try{var r=localStorage.getItem("cm_prog");if(!r)return false;var d=JSON.parse(r);if(!d.t||(agoraMs()-d.t)>VALIDADE_MIN*60000){localStorage.removeItem("cm_prog");return false;}
@@ -159,7 +159,8 @@ function desenharMapa(){var h="",i;
  h+='<button class="somap" onclick="narrarMapa()">&#128266;</button></div>';
  h+='<ul class="trilha">';
  for(i=0;i<PARADAS.length;i++){var p=PARADAS[i],st=(S.feitasMap[p.ch]?"feita":(desbloq(i)?"atual":"trancada"));
-  h+='<li class="no '+(st==="atual"?"atual":(st==="trancada"?"trancada":""))+'">';
+  var lado=(i%2===0?"lz":"rz");
+  h+='<li class="no '+lado+' '+(st==="atual"?"atual":(st==="trancada"?"trancada":""))+'" style="-webkit-animation-delay:'+(i*0.06)+'s;animation-delay:'+(i*0.06)+'s">';
   h+='<div class="ilhawrap">';
   h+='<img class="ilha" src="'+IMG[p.ilha]+'" onclick="'+(st==="trancada"?"avisoTranca()":"abrirParada('+i+')")+'" alt="'+esc(p.titulo)+'">';
   if(st==="atual")h+='<img class="masccaminha" src="'+IMG.mFeliz+'">';
@@ -169,7 +170,7 @@ function desenharMapa(){var h="",i;
   if(st==="atual")h+='<span class="aqui">você está aqui!</span>';
   if(st==="feita")h+='<span class="check">Concluída &#10003;</span>';
   h+='</li>';
-  if(i<PARADAS.length-1)h+='<div class="conector '+(S.feitasMap[p.ch]?"feito":"")+'"></div>';
+  if(i<PARADAS.length-1)h+='<div class="conector '+(i%2===0?"lr":"rl")+' '+(S.feitasMap[p.ch]?"feito":"")+'"></div>';
  }
  h+='</ul>';
  var todas=f>=PARADAS.length;
@@ -196,7 +197,7 @@ function introFase(){var p=atual,h="";
  $("app").innerHTML=h;window.scrollTo(0,0);
  falar(p.hist);
 }
-function rodarFase(){idx=0;streak=0;
+function rodarFase(){idx=0;streak=0;runAc=0;
  if(atual.tipo==="memoria"){jogoMemoria();return;}
  proximoDesafio();
 }
@@ -282,7 +283,7 @@ function rMontar(d){var h=cabecalhoDesafio();
 function respMontar(v,el){if(v===window._cert)acerto("Certo! "+window._d.d+" dividido por "+window._d.v+" dá "+window._d.r+". O total sempre vem primeiro na divisão.");else erro(el,window._d);}
 
 /* ============ ACERTO / ERRO / ADAPTATIVO ============ */
-function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;
+function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  var pts=2+(streak>=3?1:0);S.pontos+=pts;
  var st=atual.stats||0;if(!S.stats[atual.ch])S.stats[atual.ch]={a:0,e:0};S.stats[atual.ch].a++;
  if(streak>S.maxStreak)S.maxStreak=streak;
@@ -308,8 +309,32 @@ function guardarErro(d){var k=JSON.stringify([atual.ch,d]);var i;for(i=0;i<ERROS
 function checarConquistas(){var i;for(i=0;i<CONQUISTAS.length;i++){if(!S.conq[CONQUISTAS[i].id]&&CONQUISTAS[i].cond(S)){S.conq[CONQUISTAS[i].id]=1;}}}
 
 /* ============ FIM DE FASE ============ */
+function errosDaFase(ch){var r=[],i;for(i=0;i<ERROS.length;i++)if(ERROS[i].ch===ch)r.push(ERROS[i]);return r;}
+function ofertaExtra(p){pararFala();var h='<h1 style="font-size:22px">Você acertou tudo! &#11088;</h1>';
+ h+='<div class="balao"><img src="'+IMG.mComemora+'" style="height:56px;width:auto;float:left;margin-right:8px">Uau, '+esc(S.nome||"chef")+'! Você mandou muito bem. Quer encarar um <b>desafio extra</b>, um pouquinho mais difícil?</div>';
+ h+='<button class="btn pulsa" onclick="iniciarExtra()">Aceitar o desafio! &#128293;</button>';
+ h+='<div style="text-align:center"><button class="btn sec" onclick="fecharOferta()">Agora não</button></div>';
+ $("app").innerHTML=h;window.scrollTo(0,0);falar("Você acertou tudo! Quer encarar um desafio extra, um pouquinho mais difícil?");}
+function iniciarExtra(){extraOn=true;var base=[[64,8],[81,9],[96,8],[72,6]];reseed(atual.ch.length*13+runAc);var pick=embaralhar(base.slice()).slice(0,2);
+ atual={ch:atual.ch,tipo:"escolha",titulo:atual.titulo,gancho:atual.gancho,med:atual.med,jogo:false,_extra:true,
+  desafios:[{en:pick[0][0]+" ÷ "+pick[0][1]+" = ?",r:pick[0][0]/pick[0][1]},{en:pick[1][0]+" ÷ "+pick[1][1]+" = ?",r:pick[1][0]/pick[1][1]}]};
+ idx=0;streak=0;runAc=0;proximoDesafio();}
+function ofertaReforco(p,errs){pararFala();var h='<h1 style="font-size:22px">Vamos treinar juntos!</h1>';
+ h+='<div class="balao"><img src="'+IMG.mExplica+'" style="height:56px;width:auto;float:left;margin-right:8px">Sem problema! Vamos refazer com calma o que passou, pra você fixar. Você consegue!</div>';
+ h+='<button class="btn pulsa" onclick="iniciarReforco()">Continuar &#9654;</button>';
+ $("app").innerHTML=h;window.scrollTo(0,0);falar("Vamos treinar juntos, com calma, pra você fixar. Você consegue!");}
+function iniciarReforco(){reforcoOn=true;window._reforcoParada=atual;var errs=errosDaFase(atual.ch);window._treino=errs.slice();window._ti=0;modoTreino=true;facil=true;proxTreino();}
+function fecharOferta(){extraOn=true;fimFaseReal();}
 function fimFase(){pararFala();var p=atual;
- var tot=totalDesafios(),ac=(S.stats[p.ch]?S.stats[p.ch].a:0);
+ var tot=totalDesafios(),ac=runAc;
+ if(!p.jogo&&!modoTreino&&!p._extra){
+  if(!extraOn&&tot>0&&ac>=tot){return ofertaExtra(p);}
+  var ef=errosDaFase(p.ch);
+  if(!reforcoOn&&ef.length>0&&ac<Math.ceil(tot*0.5)){return ofertaReforco(p,ef);}
+ }
+ fimFaseReal();
+}
+function fimFaseReal(){var p=atual;if(p._extra){S.pontos+=4;}
  if(!p.jogo&&!S.feitasMap[p.ch])marcarFeita(p);
  else if(p.jogo)S.feitasMap[p.ch]=1;
  checarConquistas();salvar();
@@ -357,7 +382,9 @@ function verMedalhas(){var h='<h1 style="font-size:22px">Minhas Medalhas</h1><di
  $("app").innerHTML=h;window.scrollTo(0,0);
 }
 function treinarErros(){if(!ERROS.length)return;modoTreino=true;window._treino=ERROS.slice();window._ti=0;proxTreino();}
-function proxTreino(){if(window._ti>=window._treino.length){modoTreino=false;ERROS=[];falar("Muito bem! Você treinou tudo.");irMapa();return;}
+function proxTreino(){if(window._ti>=window._treino.length){
+  if(reforcoOn){reforcoOn=false;modoTreino=false;facil=false;atual=window._reforcoParada;falar("Muito bem! Agora você fixou.");fimFaseReal();return;}
+  modoTreino=false;ERROS=[];falar("Muito bem! Você treinou tudo.");irMapa();return;}
  var e=window._treino[window._ti];atual={ch:e.ch,tipo:e.tipo,desafios:[e.d],doce:"dBiscoito"};idx=0;
  renderDesafio(e.d,0);}
 function relatorio(){var h='<h1 style="font-size:22px">Relatório</h1><table class="reln"><tr><th>Parada</th><th>Acertos</th><th>Erros</th></tr>',i;

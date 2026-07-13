@@ -39,7 +39,7 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .xpbar i{display:block;height:100%;background:#ffbf3f;width:0;}
 .card{background:rgba(255,248,240,.06);border:2px solid rgba(255,191,122,.35);border-radius:18px;padding:14px;margin:10px 0;}
 .recomp{text-align:center;}
-.recomp img{height:120px;width:auto;display:block;margin:0 auto;-webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.4));filter:drop-shadow(0 6px 8px rgba(0,0,0,.4));}
+.recomp img{height:120px;width:auto;display:block;margin:0 auto;-webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.4));filter:drop-shadow(0 6px 8px rgba(0,0,0,.4));-webkit-animation:boia 3.8s ease-in-out infinite;animation:boia 3.8s ease-in-out infinite;}
 .prog{height:14px;background:rgba(0,0,0,.28);border-radius:8px;overflow:hidden;margin:8px auto;max-width:320px;}
 .prog i{display:block;height:100%;background:-webkit-linear-gradient(left,#ffbf3f,#ff9d3f);background:linear-gradient(90deg,#ffbf3f,#ff9d3f);width:0;}
 .contparada{text-align:center;color:#ffd9a8;font-weight:bold;font-size:14px;}
@@ -47,11 +47,15 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .balao b{color:#c0561a;}
 .somap{display:block;width:40px;height:40px;border-radius:50%;border:0;background:#e07b2a;color:#fff;font-size:18px;margin:6px auto;cursor:pointer;-webkit-box-shadow:0 3px 0 #a8531a;box-shadow:0 3px 0 #a8531a;}
 .somap:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
-.trilha{list-style:none;margin:6px 0;padding:0;}
-.no{position:relative;margin:6px auto;text-align:center;padding:6px;}
+.trilha{list-style:none;margin:6px 0;padding:0;position:relative;}
+.no{position:relative;width:66%;padding:6px;text-align:center;-webkit-animation:surge .5s ease both;animation:surge .5s ease both;}
+.no.lz{margin:2px 2%;margin-right:auto;}
+.no.rz{margin:2px 2%;margin-left:auto;}
+@-webkit-keyframes surge{from{opacity:0;-webkit-transform:scale(.7)}to{opacity:1;-webkit-transform:scale(1)}}
+@keyframes surge{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
 .no .ilhawrap{position:relative;display:inline-block;padding:14px 30px;border-radius:20px;}
 .no.atual .ilhawrap{background:-webkit-radial-gradient(center,circle,rgba(255,200,120,.4),transparent 70%);background:radial-gradient(circle,rgba(255,200,120,.4),transparent 70%);}
-.no img.ilha{height:96px;width:auto;-webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));cursor:pointer;}
+.no img.ilha{height:96px;width:auto;-webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));filter:drop-shadow(0 4px 6px rgba(0,0,0,.4));cursor:pointer;-webkit-animation:boia 4.2s ease-in-out infinite;animation:boia 4.2s ease-in-out infinite;}
 .no.trancada img.ilha{-webkit-filter:grayscale(1) brightness(.7);filter:grayscale(1) brightness(.7);cursor:default;}
 .no.atual img.ilha{-webkit-animation:pulsa 1.4s ease-in-out infinite;animation:pulsa 1.4s ease-in-out infinite;}
 .no .masccaminha{position:absolute;bottom:0;left:6px;height:56px;width:auto;pointer-events:none;-webkit-animation:anda 1.1s ease-in-out infinite;animation:anda 1.1s ease-in-out infinite;}
@@ -61,8 +65,10 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .no .aqui{display:inline-block;background:#ffbf3f;color:#5a2e1c;font-size:11px;font-weight:bold;border-radius:10px;padding:2px 8px;margin-top:2px;}
 .no .check{color:#7dffa8;font-weight:bold;font-size:13px;}
 .no .nomeparada{display:block;color:#ffeeda;font-size:13px;font-weight:bold;margin-top:2px;}
-.conector{width:4px;height:18px;margin:0 auto;background:-webkit-repeating-linear-gradient(top,#8a6a52 0,#8a6a52 5px,transparent 5px,transparent 10px);background:repeating-linear-gradient(180deg,#8a6a52 0,#8a6a52 5px,transparent 5px,transparent 10px);}
-.conector.feito{background:-webkit-repeating-linear-gradient(top,#ffbf3f 0,#ffbf3f 5px,transparent 5px,transparent 10px);background:repeating-linear-gradient(180deg,#ffbf3f 0,#ffbf3f 5px,transparent 5px,transparent 10px);}
+.conector{width:60%;height:26px;margin:-4px auto;border-bottom:4px dotted #8a6a52;border-radius:0 0 40px 40px;}
+.conector.rl{border-radius:0 0 40px 0;border-right:4px dotted #8a6a52;margin-left:14%;}
+.conector.lr{border-radius:0 0 0 40px;border-left:4px dotted #8a6a52;margin-right:14%;}
+.conector.feito{border-color:#ffbf3f;}
 .enun{font-size:19px;font-weight:bold;text-align:center;line-height:1.35;margin:6px 8px;color:#fff6ec;}
 .cena{text-align:center;margin:8px 0;min-height:60px;}
 .cena .doce{height:52px;width:auto;margin:3px;vertical-align:middle;-webkit-filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));}
@@ -245,7 +251,7 @@ var FESTApool=["ACERTOU!","MUITO BEM!","BOA!","ISSO!","PERFEITO!","SHOW!","UAU!"
 /* ============ ESTADO ============ */
 var VALIDADE_MIN=70;
 var S={nome:"",pontos:0,feitasMap:{},stats:{},conq:{},maxStreak:0,acertosTot:0};
-var atual=null,idx=0,streak=0,errosSeg=0,facil=false,ERROS=[],modoTreino=false,extraOn=false;
+var atual=null,idx=0,streak=0,errosSeg=0,facil=false,ERROS=[],modoTreino=false,extraOn=false,runAc=0,reforcoOn=false;
 function feitas(){var k,c=0;for(k in S.feitasMap)if(S.feitasMap[k])c++;return c;}
 function salvar(){try{var o={nome:S.nome,pontos:S.pontos,feitasMap:S.feitasMap,stats:S.stats,conq:S.conq,maxStreak:S.maxStreak,acertosTot:S.acertosTot,t:agoraMs()};localStorage.setItem("cm_prog",JSON.stringify(o));}catch(e){}}
 function carregar(){try{var r=localStorage.getItem("cm_prog");if(!r)return false;var d=JSON.parse(r);if(!d.t||(agoraMs()-d.t)>VALIDADE_MIN*60000){localStorage.removeItem("cm_prog");return false;}
@@ -285,7 +291,8 @@ function desenharMapa(){var h="",i;
  h+='<button class="somap" onclick="narrarMapa()">&#128266;</button></div>';
  h+='<ul class="trilha">';
  for(i=0;i<PARADAS.length;i++){var p=PARADAS[i],st=(S.feitasMap[p.ch]?"feita":(desbloq(i)?"atual":"trancada"));
-  h+='<li class="no '+(st==="atual"?"atual":(st==="trancada"?"trancada":""))+'">';
+  var lado=(i%2===0?"lz":"rz");
+  h+='<li class="no '+lado+' '+(st==="atual"?"atual":(st==="trancada"?"trancada":""))+'" style="-webkit-animation-delay:'+(i*0.06)+'s;animation-delay:'+(i*0.06)+'s">';
   h+='<div class="ilhawrap">';
   h+='<img class="ilha" src="'+IMG[p.ilha]+'" onclick="'+(st==="trancada"?"avisoTranca()":"abrirParada('+i+')")+'" alt="'+esc(p.titulo)+'">';
   if(st==="atual")h+='<img class="masccaminha" src="'+IMG.mFeliz+'">';
@@ -295,7 +302,7 @@ function desenharMapa(){var h="",i;
   if(st==="atual")h+='<span class="aqui">você está aqui!</span>';
   if(st==="feita")h+='<span class="check">Concluída &#10003;</span>';
   h+='</li>';
-  if(i<PARADAS.length-1)h+='<div class="conector '+(S.feitasMap[p.ch]?"feito":"")+'"></div>';
+  if(i<PARADAS.length-1)h+='<div class="conector '+(i%2===0?"lr":"rl")+' '+(S.feitasMap[p.ch]?"feito":"")+'"></div>';
  }
  h+='</ul>';
  var todas=f>=PARADAS.length;
@@ -322,7 +329,7 @@ function introFase(){var p=atual,h="";
  $("app").innerHTML=h;window.scrollTo(0,0);
  falar(p.hist);
 }
-function rodarFase(){idx=0;streak=0;
+function rodarFase(){idx=0;streak=0;runAc=0;
  if(atual.tipo==="memoria"){jogoMemoria();return;}
  proximoDesafio();
 }
@@ -408,7 +415,7 @@ function rMontar(d){var h=cabecalhoDesafio();
 function respMontar(v,el){if(v===window._cert)acerto("Certo! "+window._d.d+" dividido por "+window._d.v+" dá "+window._d.r+". O total sempre vem primeiro na divisão.");else erro(el,window._d);}
 
 /* ============ ACERTO / ERRO / ADAPTATIVO ============ */
-function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;
+function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  var pts=2+(streak>=3?1:0);S.pontos+=pts;
  var st=atual.stats||0;if(!S.stats[atual.ch])S.stats[atual.ch]={a:0,e:0};S.stats[atual.ch].a++;
  if(streak>S.maxStreak)S.maxStreak=streak;
@@ -434,8 +441,32 @@ function guardarErro(d){var k=JSON.stringify([atual.ch,d]);var i;for(i=0;i<ERROS
 function checarConquistas(){var i;for(i=0;i<CONQUISTAS.length;i++){if(!S.conq[CONQUISTAS[i].id]&&CONQUISTAS[i].cond(S)){S.conq[CONQUISTAS[i].id]=1;}}}
 
 /* ============ FIM DE FASE ============ */
+function errosDaFase(ch){var r=[],i;for(i=0;i<ERROS.length;i++)if(ERROS[i].ch===ch)r.push(ERROS[i]);return r;}
+function ofertaExtra(p){pararFala();var h='<h1 style="font-size:22px">Você acertou tudo! &#11088;</h1>';
+ h+='<div class="balao"><img src="'+IMG.mComemora+'" style="height:56px;width:auto;float:left;margin-right:8px">Uau, '+esc(S.nome||"chef")+'! Você mandou muito bem. Quer encarar um <b>desafio extra</b>, um pouquinho mais difícil?</div>';
+ h+='<button class="btn pulsa" onclick="iniciarExtra()">Aceitar o desafio! &#128293;</button>';
+ h+='<div style="text-align:center"><button class="btn sec" onclick="fecharOferta()">Agora não</button></div>';
+ $("app").innerHTML=h;window.scrollTo(0,0);falar("Você acertou tudo! Quer encarar um desafio extra, um pouquinho mais difícil?");}
+function iniciarExtra(){extraOn=true;var base=[[64,8],[81,9],[96,8],[72,6]];reseed(atual.ch.length*13+runAc);var pick=embaralhar(base.slice()).slice(0,2);
+ atual={ch:atual.ch,tipo:"escolha",titulo:atual.titulo,gancho:atual.gancho,med:atual.med,jogo:false,_extra:true,
+  desafios:[{en:pick[0][0]+" ÷ "+pick[0][1]+" = ?",r:pick[0][0]/pick[0][1]},{en:pick[1][0]+" ÷ "+pick[1][1]+" = ?",r:pick[1][0]/pick[1][1]}]};
+ idx=0;streak=0;runAc=0;proximoDesafio();}
+function ofertaReforco(p,errs){pararFala();var h='<h1 style="font-size:22px">Vamos treinar juntos!</h1>';
+ h+='<div class="balao"><img src="'+IMG.mExplica+'" style="height:56px;width:auto;float:left;margin-right:8px">Sem problema! Vamos refazer com calma o que passou, pra você fixar. Você consegue!</div>';
+ h+='<button class="btn pulsa" onclick="iniciarReforco()">Continuar &#9654;</button>';
+ $("app").innerHTML=h;window.scrollTo(0,0);falar("Vamos treinar juntos, com calma, pra você fixar. Você consegue!");}
+function iniciarReforco(){reforcoOn=true;window._reforcoParada=atual;var errs=errosDaFase(atual.ch);window._treino=errs.slice();window._ti=0;modoTreino=true;facil=true;proxTreino();}
+function fecharOferta(){extraOn=true;fimFaseReal();}
 function fimFase(){pararFala();var p=atual;
- var tot=totalDesafios(),ac=(S.stats[p.ch]?S.stats[p.ch].a:0);
+ var tot=totalDesafios(),ac=runAc;
+ if(!p.jogo&&!modoTreino&&!p._extra){
+  if(!extraOn&&tot>0&&ac>=tot){return ofertaExtra(p);}
+  var ef=errosDaFase(p.ch);
+  if(!reforcoOn&&ef.length>0&&ac<Math.ceil(tot*0.5)){return ofertaReforco(p,ef);}
+ }
+ fimFaseReal();
+}
+function fimFaseReal(){var p=atual;if(p._extra){S.pontos+=4;}
  if(!p.jogo&&!S.feitasMap[p.ch])marcarFeita(p);
  else if(p.jogo)S.feitasMap[p.ch]=1;
  checarConquistas();salvar();
@@ -483,7 +514,9 @@ function verMedalhas(){var h='<h1 style="font-size:22px">Minhas Medalhas</h1><di
  $("app").innerHTML=h;window.scrollTo(0,0);
 }
 function treinarErros(){if(!ERROS.length)return;modoTreino=true;window._treino=ERROS.slice();window._ti=0;proxTreino();}
-function proxTreino(){if(window._ti>=window._treino.length){modoTreino=false;ERROS=[];falar("Muito bem! Você treinou tudo.");irMapa();return;}
+function proxTreino(){if(window._ti>=window._treino.length){
+  if(reforcoOn){reforcoOn=false;modoTreino=false;facil=false;atual=window._reforcoParada;falar("Muito bem! Agora você fixou.");fimFaseReal();return;}
+  modoTreino=false;ERROS=[];falar("Muito bem! Você treinou tudo.");irMapa();return;}
  var e=window._treino[window._ti];atual={ch:e.ch,tipo:e.tipo,desafios:[e.d],doce:"dBiscoito"};idx=0;
  renderDesafio(e.d,0);}
 function relatorio(){var h='<h1 style="font-size:22px">Relatório</h1><table class="reln"><tr><th>Parada</th><th>Acertos</th><th>Erros</th></tr>',i;
