@@ -1032,6 +1032,19 @@ async function abrirApp(){
   S.tab="hoje";
   // limpeza única: remove do banco qualquer hash de senha antigo (não é mais usado)
   if(S.user.senha){ try{ fbUpdate("/professores/"+sanId(S.user.id), {senha:null}); delete S.user.senha; }catch(e){} }
+  // limpeza do ADMIN: apaga o resíduo de senha antiga de TODOS os cadastros (o professor
+  // comum não consegue apagar o próprio por causa das regras de isolamento). Roda em
+  // segundo plano, uma vez só (depois de limpo não há mais o que fazer), e avisa se limpou.
+  if(S.user.admin && S.professores){
+    (async function(){
+      try{
+        const alvos = Object.keys(S.professores).filter(function(k){ return S.professores[k] && S.professores[k].senha!=null; });
+        let n=0;
+        for(let i=0;i<alvos.length;i++){ const k=alvos[i]; const ok=await fbUpdate("/professores/"+k, {senha:null}); if(ok){ delete S.professores[k].senha; n++; } }
+        if(n) toast("Limpeza: "+n+" cadastro(s) antigos ajustados. 🧹");
+      }catch(e){}
+    })();
+  }
   await recarregarReservas();
   try{ S._lwSeen = await fbGet("/config/reservasLastWrite"); }catch(e){ S._lwSeen=null; }
   S.dataSel = primeiroDiaAgendavel();
