@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-180.png">
 <link rel="icon" type="image/png" href="icon-192.png">
-<title>Agenda de Aulas</title>
+<title>Agenda Aulas</title>
 <style>
   :root{
     --bg:#f2f3fa; --surface:#ffffff; --surface2:#eceef8; --surface3:#e1e4f1;
@@ -457,7 +457,7 @@ const DEF_HORARIOS = {
   vespertino:[["12:55","13:51"],["13:51","14:47"],["15:03","15:59"],["15:59","16:55"]],
   noturno:[["19:00","19:50"],["19:50","20:40"],["20:55","21:45"],["21:45","22:35"]]
 };
-const DEF_CONFIG = {appNome:"Agenda de Aulas",escolaNome:"E.B.M. Vidal Ramos",
+const DEF_CONFIG = {appNome:"Agenda Aulas",escolaNome:"E.B.M. Vidal Ramos",
   obrigatorios:true, apenasProximoDia:true, limiteMeses:1,
   aviso:"", haeLabel:"HAE — Professor de Informática", hae:[],
   turmaLetras:["A","B","C","D"], liberadoAte:"", periodos:[],
@@ -689,7 +689,7 @@ async function fazerBootstrap(){
 var _loginPend=null, _sessaoExpirou=false;
 function telaLogin(){
   _sessaoExpirou=false;
-  const nome = S.config ? S.config.appNome : "Agenda de Aulas";
+  const nome = S.config ? S.config.appNome : "Agenda Aulas";
   const escola = S.config ? S.config.escolaNome : "";
   $("root").innerHTML = `
   <div class="authwrap">
@@ -873,7 +873,7 @@ function checarNotificacao(){
     try{ for(let i=localStorage.length-1;i>=0;i--){ const k=localStorage.key(i); if(k && k.indexOf("agenda_notif_")===0 && k<chave) localStorage.removeItem(k); } }catch(e){}
     localStorage.setItem(chave,"1");
     const x=l[0];
-    new Notification("Agenda de Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192.png"});
+    new Notification("Agenda Aulas", {body:"Amanhã você tem: "+x.r.turma+" · "+x.turno.n+" "+x.aula+"ª aula"+(l.length>1?" (+"+(l.length-1)+" aula"+(l.length>2?"s":"")+")":""), icon:"icon-192.png"});
   }catch(e){}
 }
 async function trocarSenha(){
@@ -1977,7 +1977,7 @@ function telaOpcoes(){
     <button class="btn primary" data-act="salvar-opcoes">💾 Salvar</button>`);
 }
 async function salvarOpcoes(){
-  S.config.appNome=$("oApp").value.trim()||"Agenda de Aulas";
+  S.config.appNome=$("oApp").value.trim()||"Agenda Aulas";
   S.config.escolaNome=$("oEsc").value.trim();
   S.config.obrigatorios=$("oObr").checked;
   S.config.apenasProximoDia=$("oProx").checked;
