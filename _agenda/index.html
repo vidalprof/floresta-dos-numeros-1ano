@@ -638,7 +638,15 @@ async function init(){
     let tok=false; try{ tok=await authRefresh(); }catch(e){}
     // Sem crachá válido, as regras fechadas não deixam ler a agenda -> pede a senha de novo
     // (em vez de abrir uma agenda vazia sem explicação).
-    if(!tok){ _sessaoExpirou=true; _loginPend=S.professores[saved]; telaSenha(); return; }
+    if(!tok){
+      _sessaoExpirou=true; _loginPend=S.professores[saved];
+      // Pergunta ao Firebase Auth se a conta já existe (fonte da verdade), IGUAL ao login
+      // manual. Sem isto, a reentrada (ao reabrir o app depois de desligar) pediria "criar
+      // senha" TODA vez, porque o flag fbAuth não fica gravado por causa das regras de
+      // isolamento. Era esse o bug de "pede pra criar a senha a cada vez que desligo".
+      try{ const reg=await authRegistrado(_loginPend.id, _loginPend.authVer); if(reg!==null) _loginPend._reg=reg; }catch(e){}
+      telaSenha(); return;
+    }
     abrirApp();
   }
   else telaLogin();
@@ -830,9 +838,16 @@ async function fazerLogin(){
 }
 function telaSenha(){
   const p=_loginPend;
-  // Se o Firebase Auth respondeu, ELE manda: conta existe -> entrar; não existe -> criar.
-  // Se não deu pra perguntar (_reg indefinido), usa o flag antigo fbAuth como reserva.
-  const novo = (p._reg===true) ? false : (p._reg===false ? true : !p.fbAuth);
+  // Decisão "entrar" x "criar senha", em ordem de confiança:
+  //  1) Firebase Auth respondeu -> ELE manda (conta já existe = entrar; não existe = criar).
+  //  2) Não respondeu (rede/proteção), MAS a sessão expirou -> a pessoa JÁ tinha conta antes
+  //     (tinha login salvo) -> ENTRAR. Nunca "criar" numa reentrada: era isto que fazia pedir
+  //     senha nova a cada vez que o app era reaberto.
+  //  3) Sem nenhuma pista -> usa o flag antigo fbAuth como reserva (1º acesso de verdade).
+  const novo = (p._reg===true) ? false
+             : (p._reg===false) ? true
+             : _sessaoExpirou ? false
+             : !p.fbAuth;
   let sub;
   if(_sessaoExpirou) sub = novo ? "Confirme criando sua senha para continuar" : "Sua sessão expirou — entre novamente";
   else if(novo){
