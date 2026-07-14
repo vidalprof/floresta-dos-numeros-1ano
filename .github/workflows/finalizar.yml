@@ -20,6 +20,55 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  imagens:
+    if: contains(github.event.head_commit.message, '[imagens]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar imagens do _gerar_imagens.json (Gemini)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, time, urllib.request
+          key=os.environ["GEMINI_API_KEY"].strip()
+          itens=json.load(open("_gerar_imagens.json",encoding="utf-8"))
+          os.makedirs("_novo", exist_ok=True)
+          modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
+          ok=0
+          for it in itens:
+              body={"contents":[{"parts":[{"text":it["prompt"]}]}]}
+              img=None
+              for tent in range(3):
+                  for m in modelos:
+                      url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(m,key)
+                      req=urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type":"application/json"})
+                      try: d=json.loads(urllib.request.urlopen(req, timeout=180).read())
+                      except Exception as e: print("erro",m,str(e)[:150]); continue
+                      for c in d.get("candidates",[]) or []:
+                          for p in (c.get("content",{}) or {}).get("parts",[]) or []:
+                              inl=p.get("inlineData") or p.get("inline_data")
+                              if inl and inl.get("data"): img=base64.b64decode(inl["data"])
+                      if img: break
+                  if img: break
+                  time.sleep(6)
+              if img:
+                  open("_novo/%s.png"%it["nome"],"wb").write(img); ok+=1; print("OK",it["nome"],len(img))
+              else: print("::error::falhou",it["nome"])
+          if ok==0: raise SystemExit(1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/
+          git diff --cached --quiet && exit 0
+          git commit -m "imagens: gera lote (gemini, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
   medalha:
     if: contains(github.event.head_commit.message, '[medalha]')
     runs-on: ubuntu-latest
