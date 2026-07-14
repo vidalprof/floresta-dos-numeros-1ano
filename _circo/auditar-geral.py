@@ -95,11 +95,11 @@ def checar_compat(html):
 # ---------- (B) CHECKLIST DE RECURSOS (o que a atividade tem) ----------
 # Cada recurso: nome -> lista de padroes (regex). Presente se QUALQUER padrao casar.
 RECURSOS = [
-    ("reset55",    [r'__aulaInicio', r'_DUR_AULA', r'progVenceu', r'ESTADO\.inicio']),
+    ("reset55",    [r'VALIDADE_MIN', r'__aulaInicio', r'_DUR_AULA', r'progVenceu', r'ESTADO\.inicio']),
     ("adap_extra", [r'iniciarExtra', r'ofereceExtra', r'Desafio Extra']),
     ("adap_reforco",[r'iniciarReforco', r'ofereceRef', r'Refor[cç]ar']),
     ("relatorio",  [r'telaRelatorio', r'\bimprimir\s*\(', r'relat[oó]rio do professor', r'window\.print']),
-    ("narracao",   [r'speechSynthesis']),
+    ("narracao",   [r'speechSynthesis', r'AUDIO_TXT', r'_chaveVoz']),
     ("som",        [r'AudioContext', r'webkitAudioContext']),
     ("niveis",     [r'\bNIVEIS\b', r'nivelIdx', r'emblema']),
     ("medalhas",   [r'medal', r'medalha']),
