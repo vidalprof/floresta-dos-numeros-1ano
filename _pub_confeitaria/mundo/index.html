@@ -288,7 +288,7 @@ h1{color:#7a4a17;text-shadow:none;}
 
 </style>
 </head>
-<body class="temInterior">
+<body style="background-color:#f6e7cf">
 <div class="confete" id="confete"></div>
 <div class="voz"><button id="btMudo" onclick="alternarMudo()">&#128266;</button><button onclick="repetirFala()">&#8635;</button></div>
 <div class="wrap" id="app"></div>
@@ -497,6 +497,7 @@ function apagar(){try{localStorage.removeItem("cm_prog");}catch(e){}S={nome:"",p
 
 /* ============ TELA INICIAL ============ */
 function telaInicial(){pararFala();var tem=carregar();
+ document.body.className="";document.body.style.backgroundImage="";
  if(!MV.montado)mvMontar();
  $("mundoLayer").style.display="block";$("app").style.display="none";
  $("mundoLayer").className="modoTitulo";
@@ -570,6 +571,7 @@ function avisoTrofeu(){falar("Complete todas as paradas pra ganhar o Diploma de 
 
 /* ============ FASE ============ */
 function abrirParada(i){sairMundo();atual=PARADAS[i];
+ document.body.className="temInterior";
  try{if(window.INTERIORES&&INTERIORES[atual.ch])document.body.style.backgroundImage="url("+INTERIORES[atual.ch]+")";}catch(e){}idx=0;streak=0;errosSeg=0;facil=false;extraOn=false;modoTreino=false;_aberturas++;reseed(i*97+7+_aberturas*911);
  introFase();}
 function introFase(){var p=atual,h="";
@@ -1531,6 +1533,7 @@ function mvRenderNpcs(){var c=$("mvNpcs");if(!c)return;var h="",i;
  c.innerHTML=h;mvAplicaDim();
 }
 function entrarMundo(){pararFala();salvar();
+ document.body.className="";document.body.style.backgroundImage="";
  var cfp=$("confete");if(cfp)cfp.innerHTML="";
  if(!MV.montado)mvMontar();
  MV.on=true;MV.passeio=false;MV.held=0;$("mundoLayer").style.display="block";$("app").style.display="none";
