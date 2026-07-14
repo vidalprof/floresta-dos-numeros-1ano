@@ -704,12 +704,13 @@ var DIAG={
  prop:"Primeiro divida para achar o valor de UM. Depois multiplique pelo tanto que você quer."
 };
 function mostrarDiag(t){var b=$("diagBox");
- if(!b){var c=$("app");if(!c)return;b=document.createElement("div");b.className="dica diag";b.id="diagBox";c.insertBefore(b,c.firstChild);}
- b.innerHTML="&#128161; "+esc(t);}
+ if(!b){var c=$("app");if(!c)return;b=document.createElement("div");b.className="dica diag";b.id="diagBox";c.appendChild(b);}
+ b.innerHTML="&#128161; "+esc(t);try{b.scrollIntoView(false);}catch(e){}}
 function revelarAjuda(){var a=$("ajudaBox");if(a)a.style.display="";var b=$("ajudaBtn");if(b)b.style.display="none";}
 function pedirAjuda(){revelarAjuda();}
 function acerto(explica){if(window._respondido)return;window._respondido=true;
  if($("repBtn"))$("repBtn").innerHTML="";if($("cxBtn"))$("cxBtn").innerHTML="";
+ var _dgb=$("diagBox");if(_dgb&&_dgb.parentNode)_dgb.parentNode.removeChild(_dgb);
  var _ops=document.getElementsByClassName("op"),_oi;for(_oi=0;_oi<_ops.length;_oi++){_ops[_oi].onclick=null;_ops[_oi].disabled=true;}
  pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  var pts=2+(streak>=3?1:0);S.pontos+=pts;
@@ -723,7 +724,8 @@ function acerto(explica){if(window._respondido)return;window._respondido=true;
  var h='<div class="fb ok"><b>'+el+'</b> '+esc(explica||"")+'</div>';
  if(streak>=3)h+='<div class="dica" style="color:#7dffa8">&#128293; Você acertou '+streak+' seguidas!</div>';
  h+='<button class="btn verde pulsa" onclick="avancar()">'+(ultimo?"Ver resultado &#127937;":"Próximo &#9654;")+'</button>';
- var cont=$("app");cont.innerHTML=h+cont.innerHTML;window.scrollTo(0,0);
+ var cont=$("app");var fb=document.createElement("div");fb.innerHTML=h;cont.appendChild(fb);
+ try{fb.scrollIntoView(false);}catch(e){}
  falar(el);if(explica)falarDepois(explica);if(STREAK_FALA[streak])falarDepois(STREAK_FALA[streak]);salvar();
 }
 function avancar(){_encadear=true;checarConquistas();if(modoTreino){window._ti++;proxTreino();return;}idx++;proximoDesafio();}
