@@ -1427,6 +1427,9 @@ a cópia local defasada. Regra:
 **Regra de custo-benefício:** onde precisa de força criativa/diagnóstica vai o modelo
 mais FORTE disponível; onde o trabalho é seguir padrão, o **Opus 4.8 em esforço alto
 dá conta** — e é o padrão.
+**ABRANGÊNCIA: vale para TUDO nesta fábrica** — Mundo Vivo, atividades premium,
+provas/quiz, hub Ilhas do Saber, retrofits, demos e **qualquer pedido futuro do
+Marcos**. Não é política de um projeto; é a política da casa.
 
 **Que tarefa pede qual nível:**
 - **Opus 4.8 esforço alto (padrão — produção em série):** construir bairros/missões
