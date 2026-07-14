@@ -122,5 +122,33 @@ balão do mundo só atualiza com `MV.perto=-2` ao voltar; gênero nos rótulos.
 7. **Avisar o Marcos** se aparecer mecânica nova, bug resistente ou decisão
    pedagógica ambígua → é hora do modelo forte (não improvisar).
 
+================================================================
+## 8. LIÇÕES PAGAS DO POLIMENTO (não repetir — já mordeu)
+================================================================
+- **Sprites do mascote:** recortar TODAS as poses da MESMA cartela em escala
+  1:1 (célula fixa + maior componente + pés alinhados num canvas comum).
+  Autocrop+resize por pose = personagem "pulsando" ao andar. Caminhada de
+  verdade = cartela 2x1 "só pernas/braços trocam, resto idêntico".
+- **Passo por DISTÂNCIA, não por tempo:** trocar o quadro a cada ~34px
+  percorridos (senão o pé patina na aceleração) + quique |sin| e balancinho
+  ±2,3° presos à mesma fase, pivô nos pés. Respiração idle: scale(1.018,1.05)
+  com transform-origin nos pés (do centro parece zoom).
+- **Entrada = PORTA de verdade:** medir a fração x da porta em cada fachada
+  (objeto `FACH_INFO={ch:{pt,asp}}`), gatilho e plaquinha "⬆ Entrar" ancorados
+  nela; entrar = seta pra CIMA na porta (mvPular vira entrar). NPC ao lado da
+  porta, nunca no meio da rua. Setas na tela SÓ com toque (desktop = teclado).
+- **Som:** navegador destrava áudio só após gesto — registrar keydown/
+  mousedown/touchstart chamando resume() do AudioContext. Ao trocar de
+  desafio: `_encadear=false; pararFala()` (senão a fala velha invade a cena).
+- **Interiores:** 1 por loja (INTERIORES={ch:dataURI}, JPEG ~66 q, 900px),
+  vestido SÓ em abrirParada (no boot dá flash de fundo); wrap rgba .84 para
+  o tema respirar. Bandeja: padding 20/58/46 + doce 32px quando lote ≥18 —
+  NUNCA objeto vazando da bandeja nem texto sobreposto (auditar com
+  screenshots das cenas extremas: 30 itens, 7 grupos, textos longos).
+- **Clima vivo:** ciclo dia(70s)/noite(45s) + tempo aleatório (limpo/chuva/
+  neve); noite = overlay rgba(8,16,52,.42) + estrelas + lua + `.mvLuz`
+  (vitrines acesas) — tudo transform/opacity, roda em PC velho.
+- **Espaçamento:** MV_SP = fach*1.05+400 (a criança ANDA entre as lojas).
+
 > Fatias seguintes registradas (IDEIA-MUNDO-VIVO.md): ovo/bichinho, login
 > por figurinhas + save Firebase, senha de estepe, bairros por bimestre.
