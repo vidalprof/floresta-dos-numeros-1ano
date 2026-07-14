@@ -450,7 +450,7 @@ function cabecalhoDesafio(){return '<div class="contparada">Desafio '+(idx+1)+' 
 
 /* -- render por tipo -- */
 function renderDesafio(d,i){
- window._errouNeste=false;window._diagDito=false;
+ window._errouNeste=false;window._diagDito=false;window._respondido=false;
  if(atual.tipo==="repartir")return (atual.modo==="caixas"?rCaixasConcreto(d):rRepartirConcreto(d));
  if(atual.tipo==="tabuada")return rTabuada(d);
  if(atual.tipo==="resto")return rResto(d);
@@ -500,6 +500,7 @@ function tornarArrastavel(el,onSolta){el.__os=onSolta;
  el.ontouchstart=function(ev){_dgStart(ev,el);};
 }
 function _dgStart(ev,el){
+ if(window._respondido)return;
  if(ev.preventDefault)ev.preventDefault();if(ev.stopPropagation)ev.stopPropagation();
  var p=_pt(ev);_dg.ativo=true;_dg.onSolta=el.__os;_dg.origem=el;
  var g=el.cloneNode(true);g.className="dArr ghostArr";g.style.left=p.x+"px";g.style.top=p.y+"px";
@@ -566,10 +567,8 @@ function _recontRep(){var R=window._rep;
 function conferirRep(){var R=window._rep,d=window._d;var q=d.tot/d.gr;
  var ok=true,k;for(k=0;k<R.gr;k++)if(R.pratos[k]!==q)ok=false;
  if(ok){acerto("Você repartiu igualzinho: "+q+" em cada prato! Repartir "+d.tot+" em "+d.gr+" partes iguais é "+d.tot+" dividido por "+d.gr+", que dá "+q+".");}
- else{R.conf++;
-  if($("repDica"))$("repDica").innerHTML="⭐ Cada prato precisa ter a MESMA quantidade de biscoitos.";
-  if(R.conf>=2){erro(null,d);}
-  else falar("Quase! Olhe: os pratos estão diferentes. Deixe a mesma quantidade de biscoitos em cada prato.");
+ else{R.conf++;erro(null,d);
+  mostrarDiag("A divisão certa: "+d.tot+" ÷ "+d.gr+" = "+q+". Deixe "+q+" biscoitos em cada prato.");
  }
 }
 
@@ -619,10 +618,8 @@ function _recontCaixa(){var cx=window._cx;
 }
 function conferirCaixa(){var cx=window._cx,d=window._d;var q=d.tot/d.gr;
  if(cx.cheias===q){acerto("Você encheu "+q+" caixas cheias! Cada caixa leva "+d.gr+" doces, e "+d.tot+" doces dão pra "+q+" caixas. Isso é "+d.tot+" dividido por "+d.gr+", que dá "+q+".");}
- else{cx.conf++;
-  if($("cxDica"))$("cxDica").innerHTML="⭐ Encha cada caixa até dar "+d.gr+" para ela fechar. Você tem "+cx.cheias+" caixa(s) cheia(s).";
-  if(cx.conf>=2)erro(null,d);
-  else falar("Quase! Cada caixa fecha só quando tem "+d.gr+" doces. Encha todas até acabar a bandeja.");
+ else{cx.conf++;erro(null,d);
+  mostrarDiag("A divisão certa: "+d.tot+" ÷ "+d.gr+" = "+q+" caixas. Encha "+q+" caixas até elas fecharem.");
  }
 }
 function rDivRepartir(d){var caixas=atual.modo==="caixas";var h=cabecalhoDesafio();
@@ -711,7 +708,10 @@ function mostrarDiag(t){var b=$("diagBox");
  b.innerHTML="&#128161; "+esc(t);}
 function revelarAjuda(){var a=$("ajudaBox");if(a)a.style.display="";var b=$("ajudaBtn");if(b)b.style.display="none";}
 function pedirAjuda(){revelarAjuda();}
-function acerto(explica){pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
+function acerto(explica){if(window._respondido)return;window._respondido=true;
+ if($("repBtn"))$("repBtn").innerHTML="";if($("cxBtn"))$("cxBtn").innerHTML="";
+ var _ops=document.getElementsByClassName("op"),_oi;for(_oi=0;_oi<_ops.length;_oi++){_ops[_oi].onclick=null;_ops[_oi].disabled=true;}
+ pararFala();S.acertosTot++;streak++;errosSeg=0;runAc++;
  var pts=2+(streak>=3?1:0);S.pontos+=pts;
  if(!S.stats[atual.ch])S.stats[atual.ch]={a:0,e:0};
  var st=S.stats[atual.ch];st.a++;
