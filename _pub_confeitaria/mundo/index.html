@@ -192,6 +192,7 @@ h1{font-size:26px;color:#8a5300;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .mvBadge.ok{color:#0f7a4e;font-weight:bold;}
 .mvNpc .mvFesta{position:absolute;left:-10px;right:-10px;}
 .mvNpc .mvAlerta{position:absolute;left:0;right:0;}
+.mvCompBox img.comp{-webkit-animation:mvResp 2.6s ease-in-out infinite;animation:mvResp 2.6s ease-in-out infinite;}
 .mvSign{font-size:12px;font-weight:bold;color:#5a2e1c;background:#ffe9b0;border-radius:9px;padding:3px 7px;margin-bottom:5px;display:inline-block;max-width:150px;white-space:normal;line-height:1.15;-webkit-box-shadow:0 2px 0 #c99a4e;box-shadow:0 2px 0 #c99a4e;}
 .mvSign.trancada{background:#b8a894;color:#4a3f30;}
 .mvSign.feita{background:#a8e6b8;}
@@ -207,7 +208,8 @@ h1{font-size:26px;color:#8a5300;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .mvCtl{position:absolute;bottom:14px;width:66px;height:66px;border-radius:50%;border:0;font-size:26px;font-weight:bold;color:#fff;background:rgba(50,30,12,.55);-webkit-box-shadow:0 4px 0 rgba(30,18,6,.6);box-shadow:0 4px 0 rgba(30,18,6,.6);cursor:pointer;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:none;}
 .mvCtl:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
 #mvEsq{left:14px;}#mvDir{left:92px;}#mvPulo{right:14px;background:rgba(201,105,31,.85);}
-#mvEntrar{position:absolute;left:0;bottom:112px;-webkit-transform:translateX(-50%);transform:translateX(-50%);padding:8px 14px;border-radius:14px;border:0;font-size:15px;font-weight:bold;color:#fff;background:#2e9e57;-webkit-box-shadow:0 5px 0 #1d6b3a;box-shadow:0 5px 0 #1d6b3a;display:none;z-index:9;cursor:pointer;-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite;}
+#mvEntrar{position:absolute;left:0;bottom:112px;-webkit-transform:translateX(-50%);transform:translateX(-50%);padding:8px 13px;border-radius:14px;border:2px solid #e0c9a8;font-size:14px;font-weight:bold;color:#5a2e1c;background:#fff;-webkit-box-shadow:0 4px 10px rgba(0,0,0,.22);box-shadow:0 4px 10px rgba(0,0,0,.22);display:none;z-index:9;cursor:pointer;-webkit-animation:mvquica 2s ease-in-out infinite;animation:mvquica 2s ease-in-out infinite;max-width:180px;line-height:1.2;text-align:center;}
+#mvEntrar:after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-7px;border-left:7px solid transparent;border-right:7px solid transparent;border-top:9px solid #fff;}
 
 
 .tituloChef{-webkit-animation:mvquica 1.6s ease-in-out infinite;animation:mvquica 1.6s ease-in-out infinite;}
@@ -1505,7 +1507,7 @@ function mvDim(){var vw=mvW(),vh=mvH();
  var compH=Math.round(Math.max(50,Math.min(86,fachH*0.26)));
  return {casas:casasH,col:colH,fach:fachH,chef:chefH,comp:compH};}
 function mvAplicaDim(){var d=mvDim(),i;
- MV_SP=Math.round(d.fach*1.05+400);MV.W=MV_ST+PARADAS.length*MV_SP+560;MV.lim=Math.max(46,Math.round(d.fach*0.16));MV.entrarAlt=34+d.chef+16;MV.fachH=d.fach;
+ MV_SP=Math.round(d.fach*1.05+400);MV.W=MV_ST+PARADAS.length*MV_SP+560;MV.lim=Math.max(46,Math.round(d.fach*0.16));MV.entrarAlt=34+d.comp+14;MV.fachH=d.fach;
  var cbs=document.getElementsByClassName("mvCompBox");
  for(i=0;i<cbs.length;i++){var pai=cbs[i].parentNode,pid=pai&&pai.id?parseInt(pai.id.substring(3),10):-1;
   if(pid>=0&&PARADAS[pid]&&FACH_INFO[PARADAS[pid].ch]){var fi=FACH_INFO[PARADAS[pid].ch];var fw=d.fach*fi.asp;
@@ -1548,6 +1550,9 @@ var FACH_INFO={p1:{pt:0.81,asp:0.932},p2:{pt:0.64,asp:0.929},p3:{pt:0.79,asp:0.8
  p7:{pt:0.50,asp:0.876},p8:{pt:0.30,asp:0.962},p9:{pt:0.30,asp:0.868},p10:{pt:0.28,asp:0.956},p11:{pt:0.52,asp:0.995}};
 function mvPortaX(i){var p=PARADAS[i],fi=FACH_INFO[p.ch];if(!fi)return mvNpcX(i);
  return mvNpcX(i)+Math.round((fi.pt-0.5)*((MV.fachH||220)*fi.asp));}
+function mvNpcLadoX(i){var p=PARADAS[i],fi=FACH_INFO[p.ch];if(!fi)return mvNpcX(i);
+ var npt=fi.pt+(fi.pt>0.55?-0.17:(fi.pt<0.45?0.17:-0.19));
+ return mvNpcX(i)+Math.round((npt-0.5)*((MV.fachH||220)*fi.asp));}
 function mvNpcX(i){return MV_ST+i*MV_SP;}
 function mvTrofX(){return MV_ST+PARADAS.length*MV_SP;}
 function mvEstado(i){if(S.feitasMap[PARADAS[i].ch])return"feita";if(desbloq(i))return"atual";return"trancada";}
@@ -1664,7 +1669,7 @@ function mvTick(){if(!MV.on)return;var VW=mvW(),VH=mvH();
  var lim=MV.lim||60,alvoX=(perto>=0)?mvPortaX(perto):(perto===-1?tx:-9999);
  MV.naPorta=(perto>=-1&&Math.abs(MV.pos-alvoX)<lim);
  var be=$("mvEntrar");
- if(be){if(MV.naPorta&&MV.entrarOk&&(!$("mvTitulo")||$("mvTitulo").style.display==="none")){be.style.display="block";be.style.left=(alvoX-MV.cam)+"px";be.style.bottom=(MV.entrarAlt||130)+"px";}
+ if(be){if(MV.naPorta&&MV.entrarOk&&(!$("mvTitulo")||$("mvTitulo").style.display==="none")){be.style.display="block";be.style.left=(((perto>=0)?mvNpcLadoX(perto):alvoX)-MV.cam)+"px";be.style.bottom=(MV.entrarAlt||130)+"px";}
  else be.style.display="none";}
  mvPassaro(VW,VH);
  mvClimaTick(ag);
@@ -1672,11 +1677,11 @@ function mvTick(){if(!MV.on)return;var VW=mvW(),VH=mvH();
 function mvAtualizaPerto(){var i=MV.perto,b=$("mvBalao"),e=$("mvEntrar");
  MV.entrarOk=false;
  if(i<-1){b.className="";return;}
- if(i===-1){var tro=(feitas()>=PARADAS.length||_adminLivre);mvDiz(tro?"O Diploma de Mestre te espera! Aperte a seta pra cima.":"Complete as lojas pra abrir o Diploma.");MV.entrarOk=tro;e.innerHTML="&#11014; Diploma &#127891;";return;}
+ if(i===-1){var tro=(feitas()>=PARADAS.length||_adminLivre);mvDiz(tro?"O Diploma de Mestre te espera! Aperte a seta pra cima.":"Complete as lojas pra abrir o Diploma.");MV.entrarOk=tro;e.innerHTML=(("ontouchstart" in window)?"Toque em &#11014; pra ver o Diploma!":"Aperte &#11014; pra ver o Diploma!");return;}
  var p=PARADAS[i],st=mvEstado(i);
  if(st==="trancada"){mvDiz(p.titulo+": ainda trancada!");}
- else if(st==="feita"){mvDiz(p.titulo+": quer jogar de novo? Vá até a porta e aperte a seta pra cima!");MV.entrarOk=true;e.innerHTML="&#11014; De novo &#128257;";}
- else{mvDiz((p.jogo?(p.titulo+": vamos brincar?"):(p.titulo+": precisam de você!"))+" Vá até a porta e aperte a seta pra cima!");MV.entrarOk=true;e.innerHTML="&#11014; Entrar";}
+ else if(st==="feita"){mvDiz(p.titulo+": quer jogar de novo? Vá até a porta e aperte a seta pra cima!");MV.entrarOk=true;e.innerHTML=(("ontouchstart" in window)?"Quer de novo? Toque em &#11014;!":"Quer de novo? Aperte &#11014;!");}
+ else{mvDiz((p.jogo?(p.titulo+": vamos brincar?"):(p.titulo+": precisam de você!"))+" Vá até a porta e aperte a seta pra cima!");MV.entrarOk=true;e.innerHTML=(("ontouchstart" in window)?"Toque em &#11014; pra entrar!":"Aperte &#11014; pra entrar!");}
 }
 function mvVoaMoeda(){var m=document.createElement("div");m.className="mvMoedaVoa";
  m.style.left=(mvW()*.5)+"px";m.style.bottom=(mvH()*.5)+"px";document.body.appendChild(m);
