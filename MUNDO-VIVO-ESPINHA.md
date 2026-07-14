@@ -164,6 +164,11 @@ antes de seguir, nunca "depois eu volto".
   âncora exata, qual gate do §5 está falhando.
 - **NUNCA escala** (trabalho normal da série): trocar dados, textos,
   imagens, áudios, cores; ajustar `desafios`; rodar QA; publicar.
+- **Regra do Marcos (permanente):** se está DIFÍCIL ou saindo MALFEITO,
+  PEDIR para elevar o modelo — vale para a sessão (avisar o Marcos de
+  trocar no /model) e para agentes delegados (o coordenador refaz num
+  modelo mais alto após 2 entregas ruins). Nunca insistir no barato em
+  trabalho que já mostrou precisar do forte.
 - Após a intervenção do forte, a solução vira **atualização deste
   documento** (item no §4, gate no §5 ou barreira no §6) — nunca conserto
   em silêncio.
