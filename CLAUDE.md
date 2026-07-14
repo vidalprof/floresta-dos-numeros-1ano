@@ -370,6 +370,15 @@ Para confirmar workflow sem estourar:
   vier grande, parsear o arquivo salvo com `python3` (fatiar por range), nunca
   despejar no chat.
 
+## Política de modelos (resumo — detalhes no MANUAL-MESTRE §22)
+
+Produção em série (moldes, cartelas, áudio, QA, publicar) = **Opus 4.8 esforço
+alto dá conta**. Criação/diagnóstico difícil (motor novo, bug resistente,
+decisão pedagógica ambígua) = **modelo mais forte**. O Claude não troca o
+modelo da sessão sozinho: deve **avisar o Marcos** a hora certa de trocar
+(`/model`) nos dois sentidos, e escolher o modelo adequado **automaticamente**
+apenas nas subtarefas delegadas a subagentes.
+
 ## Observações de segurança
 
 - **Nunca** peça nem aceite o valor do token colado no chat. Ele vive apenas

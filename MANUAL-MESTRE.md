@@ -1422,3 +1422,34 @@ a cópia local defasada. Regra:
   build do Pages, ESPERA o resultado e grava `_status/confeitaria.txt` neste repo
   (basta `git pull` para ler o status do build sem MCP). Commits dos jobs não levam
   marcador → sem loop.
+
+## 22. POLÍTICA DE MODELOS — forte onde precisa, Opus 4.8 esforço alto no resto (decisão do Marcos, jul/2026)
+**Regra de custo-benefício:** onde precisa de força criativa/diagnóstica vai o modelo
+mais FORTE disponível; onde o trabalho é seguir padrão, o **Opus 4.8 em esforço alto
+dá conta** — e é o padrão.
+
+**Que tarefa pede qual nível:**
+- **Opus 4.8 esforço alto (padrão — produção em série):** construir bairros/missões
+  sobre moldes existentes, gerar/recortar cartelas, lotes de áudio, publicar,
+  rodar QA/auditores, retrofits guiados por manual, conteúdo novo em mecânica
+  já pronta.
+- **Modelo mais forte (pontual — criação e diagnóstico difícil):** desenhar
+  mecânica/motor INÉDITO (ex.: motor de andar/física do Mundo Vivo), caçar bug
+  sutil de timing/física/voz que resistiu a 2 tentativas, decisão pedagógica
+  ambígua, auditoria profunda de arquitetura.
+
+**Como aplicar na prática (3 camadas):**
+1. **Sessão principal:** o Claude NÃO troca o próprio modelo — quem troca é o
+   Marcos com `/model`. O Claude deve AVISAR ativamente quando a tarefa mudar de
+   natureza: "esta etapa é de motor/criação — sugiro trocar para o modelo forte"
+   ou, no sentido inverso, "isto é produção em série, o Opus 4.8 esforço alto
+   resolve — pode economizar". Avisar É obrigação; trocar é decisão do Marcos.
+2. **Subtarefas delegadas (AUTOMÁTICO):** ao despachar subagentes/workflows, o
+   Claude escolhe o modelo POR subtarefa: leve/padrão para varreduras e tarefas
+   mecânicas; forte para verificação crítica ou criação. Isso não depende do
+   Marcos e deve ser feito por padrão.
+3. **Transparência:** em trabalhos longos, dizer no começo qual nível está ativo
+   e se serve para a etapa. Evidência desta política: a Confeitaria começou no
+   Opus 4.8 (motor de arrastar, P1/P2) e seguiu no modelo forte (rodadas 2-3,
+   demo do Mundo Vivo) — os dois entregaram no padrão dos manuais, porque o
+   segredo é o que está ESCRITO no repo (manuais + referências), não o modelo.
