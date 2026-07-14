@@ -176,9 +176,9 @@ h1{font-size:26px;color:#8a5300;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 #mvChef{position:absolute;bottom:0;left:0;}#mvChef img{width:auto;max-width:none;display:block;}
 #mvSombra{position:absolute;bottom:0;left:0;width:86px;height:16px;border-radius:50%;background:rgba(40,25,10,.28);}
 .mvSquash img{-webkit-transform:scaleY(.82) scaleX(1.12)!important;transform:scaleY(.82) scaleX(1.12)!important;}
-.mvResp img{-webkit-animation:mvResp 2.6s ease-in-out infinite;animation:mvResp 2.6s ease-in-out infinite;}
-@-webkit-keyframes mvResp{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.025)}}
-@keyframes mvResp{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+.mvResp img{-webkit-animation:mvResp 2.4s ease-in-out infinite;animation:mvResp 2.4s ease-in-out infinite;-webkit-transform-origin:50% 100%;transform-origin:50% 100%;}
+@-webkit-keyframes mvResp{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.018,1.05)}}
+@keyframes mvResp{0%,100%{transform:scale(1)}50%{transform:scale(1.018,1.05)}}
 .mvPuff{position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(200,170,130,.7);-webkit-animation:mvPuff .5s ease-out forwards;animation:mvPuff .5s ease-out forwards;}
 @-webkit-keyframes mvPuff{0%{opacity:.8;-webkit-transform:scale(.6)}100%{opacity:0;-webkit-transform:scale(1.7) translateY(-16px)}}
 @keyframes mvPuff{0%{opacity:.8;transform:scale(.6)}100%{opacity:0;transform:scale(1.7) translateY(-16px)}}
@@ -569,7 +569,8 @@ function avisoTranca(){falar("Essa parada ainda está trancada! Termine a parada
 function avisoTrofeu(){falar("Complete todas as paradas pra ganhar o Diploma de Mestre Confeiteiro!");}
 
 /* ============ FASE ============ */
-function abrirParada(i){sairMundo();atual=PARADAS[i];idx=0;streak=0;errosSeg=0;facil=false;extraOn=false;modoTreino=false;_aberturas++;reseed(i*97+7+_aberturas*911);
+function abrirParada(i){sairMundo();atual=PARADAS[i];
+ try{if(window.INTERIORES&&INTERIORES[atual.ch])document.body.style.backgroundImage="url("+INTERIORES[atual.ch]+")";}catch(e){}idx=0;streak=0;errosSeg=0;facil=false;extraOn=false;modoTreino=false;_aberturas++;reseed(i*97+7+_aberturas*911);
  introFase();}
 function introFase(){var p=atual,h="";
  var comp=(IMG.comp&&IMG.comp[p.ch])?IMG.comp[p.ch]:IMG.mExplica;
