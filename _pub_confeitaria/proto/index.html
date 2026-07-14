@@ -22,12 +22,12 @@ html,body{height:100%;overflow:hidden;background:#2a2018;font-family:'Segoe UI',
 .dbtn:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
 #bC{left:49px;top:0;}#bB{left:49px;bottom:0;}#bE{left:0;top:49px;}#bD{right:0;top:49px;}
 .desktop #ctrl{display:none;}
-#painel{position:fixed;left:50%;bottom:12px;width:330px;margin-left:-165px;background:rgba(255,250,242,.97);border-radius:18px;padding:10px 10px 14px;z-index:400;text-align:center;-webkit-box-shadow:0 10px 40px rgba(60,35,10,.45);box-shadow:0 10px 40px rgba(60,35,10,.45);display:none;}
-#painel .ped{font-size:14px;font-weight:bold;color:#5a2e1c;margin-bottom:6px;}
-.pratoz{display:inline-block;position:relative;width:96px;height:96px;margin:2px 6px;background-size:contain;background-repeat:no-repeat;background-position:center;cursor:pointer;}
+#painel{position:fixed;left:50%;top:54px;width:90%;max-width:500px;-webkit-transform:translateX(-50%);transform:translateX(-50%);background:rgba(255,250,242,.97);border-radius:20px;padding:14px 12px 18px;z-index:400;text-align:center;-webkit-box-shadow:0 12px 48px rgba(60,35,10,.5);box-shadow:0 12px 48px rgba(60,35,10,.5);display:none;}
+#painel .ped{font-size:16px;font-weight:bold;color:#5a2e1c;margin-bottom:8px;}
+.pratoz{display:inline-block;position:relative;width:128px;height:128px;margin:2px 6px;background-size:contain;background-repeat:no-repeat;background-position:center;cursor:pointer;}
 .pratoz .num{position:absolute;right:2px;bottom:2px;background:rgba(255,255,255,.9);border-radius:8px;font-size:13px;font-weight:bold;color:#7a4a17;padding:0 6px;}
-.doceimg{position:absolute;width:26px;height:26px;background-size:contain;background-repeat:no-repeat;margin-left:-13px;margin-top:-13px;}
-#bandz{position:relative;width:210px;height:96px;margin:2px auto 0;background-size:contain;background-repeat:no-repeat;background-position:center;}
+.doceimg{position:absolute;width:34px;height:34px;margin-left:-17px;margin-top:-17px;cursor:pointer;touch-action:none;background-size:contain;background-repeat:no-repeat;}
+#bandz{position:relative;width:270px;height:120px;margin:2px auto 0;background-size:contain;background-repeat:no-repeat;background-position:center;}
 #bandz .num{position:absolute;right:0;bottom:0;background:rgba(255,255,255,.9);border-radius:8px;font-size:13px;font-weight:bold;color:#7a4a17;padding:0 6px;}
 #msg{font-size:14px;font-weight:bold;min-height:18px;margin-top:4px;color:#0f7a4e;}
 @-webkit-keyframes pop{0%{-webkit-transform:scale(.5)}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1)}}
@@ -233,7 +233,8 @@ function tick(){
  }
  // fila anda quando mesa vaga (promove 1o da fila)
  promoveFila();
- if(pertoC&&pd<150&&!atendendo&&pertoC.estado==="esperando")abrirPedido(pertoC);
+ var lim=(pertoC&&pertoC.mesa>=0)?155:112;
+ if(pertoC&&pd<lim&&!atendendo&&pertoC.estado==="esperando")abrirPedido(pertoC);
  // ondas: proxima onda so quando a loja esvazia
  if(!fim&&clientes.length===0&&aSpawnar===0&&!atendendo){
   if(onda<ONDAS.length){var n=ONDAS[onda];onda++;aSpawnar=n;var w;
@@ -265,7 +266,7 @@ function abrirPedido(c){atendendo=c;
  repEstado={ped:ped,q:q,banco:ped.tot,pratos:[]};
  var h='',i;
  for(i=0;i<ped.gr;i++){repEstado.pratos.push(0);
-  h+='<div class="pratoz" onclick="poeDoce('+i+')" style="background-image:url('+IMG.prato+')"><span class="num" id="zn'+i+'">0</span></div>';}
+  h+='<div class="pratoz" data-ix="'+i+'" onclick="poeDoce('+i+')" style="background-image:url('+IMG.prato+')"><span class="num" id="zn'+i+'">0</span></div>';}
  $("pPed").innerHTML=c.ped.txt;
  $("pZonas").innerHTML=h;
  $("bandz").style.backgroundImage="url("+IMG.bandeja+")";
@@ -283,10 +284,35 @@ function renderBand(){var n=repEstado.banco;$("bandN").innerHTML=n;
  for(i=olds.length-1;i>=0;i--){if(olds[i].className==="doceimg")b.removeChild(olds[i]);}
  for(i=0;i<n;i++){var d=document.createElement("div");d.className="doceimg";
   d.style.backgroundImage="url("+IMG[repEstado.ped.doce]+")";
+  d.onmousedown=function(ev){_dgIni(ev,this);};d.ontouchstart=function(ev){_dgIni(ev,this);};
   var sl=SLOTS[i%SLOTS.length];
-  d.style.left=(sl[0]*2.1)+"px";d.style.top=(sl[1]*0.9+8)+"px";
+  d.style.left=(sl[0]*2.7)+"px";d.style.top=(sl[1]*1.1+12)+"px";
   b.appendChild(d);}
 }
+var _dg={on:false,ghost:null};
+function _dgIni(ev,el){if(!repEstado||repEstado.banco<=0)return;
+ if(ev.preventDefault)ev.preventDefault();
+ _dg.on=true;
+ var g=document.createElement("div");g.className="doceimg";
+ g.style.backgroundImage=el.style.backgroundImage;
+ g.style.position="fixed";g.style.zIndex=999;g.style.pointerEvents="none";
+ document.body.appendChild(g);_dg.ghost=g;_dgMove(ev);
+}
+function _pt(ev){var t=(ev.touches&&ev.touches.length)?ev.touches[0]:((ev.changedTouches&&ev.changedTouches.length)?ev.changedTouches[0]:ev);return {x:t.clientX,y:t.clientY};}
+function _dgMove(ev){if(!_dg.on)return;if(ev.preventDefault)ev.preventDefault();
+ var p=_pt(ev);_dg.ghost.style.left=(p.x-17)+"px";_dg.ghost.style.top=(p.y-17)+"px";}
+function _dgFim(ev){if(!_dg.on)return;_dg.on=false;
+ var p=_pt(ev);_dg.ghost.style.display="none";
+ var el=document.elementFromPoint(p.x,p.y);
+ if(_dg.ghost.parentNode)_dg.ghost.parentNode.removeChild(_dg.ghost);_dg.ghost=null;
+ while(el&&el!==document.body){
+  if(el.className&&(" "+el.className+" ").indexOf(" pratoz ")>=0){var ix=parseInt(el.getAttribute("data-ix"),10);if(ix>=0)poeDoce(ix);return;}
+  el=el.parentNode;}
+}
+document.addEventListener("mousemove",_dgMove,false);
+document.addEventListener("mouseup",_dgFim,false);
+try{document.addEventListener("touchmove",_dgMove,{passive:false});}catch(e){document.addEventListener("touchmove",_dgMove,false);}
+document.addEventListener("touchend",_dgFim,false);
 function poeDoce(i){if(!repEstado)return;
  if(repEstado.banco<=0)return;
  repEstado.banco--;repEstado.pratos[i]++;
@@ -295,7 +321,7 @@ function poeDoce(i){if(!repEstado)return;
  var d=document.createElement("div");d.className="doceimg pop";
  d.style.backgroundImage="url("+IMG[repEstado.ped.doce]+")";
  var sl=SLOTS[(repEstado.pratos[i]-1)%SLOTS.length];
- d.style.left=(sl[0]*0.96)+"px";d.style.top=(sl[1]*0.96)+"px";
+ d.style.left=(sl[0]*1.28)+"px";d.style.top=(sl[1]*1.28)+"px";
  z.appendChild(d);
  try{plimP(700+((repEstado.pratos[i]%5)*60));}catch(e){}
  renderBand();
