@@ -131,7 +131,9 @@ antes de seguir, nunca "depois eu volto".
 ================================================================
 - Sprite "pulsando" ao andar → recorte 1:1 da MESMA cartela, pés alinhados
   num canvas comum (nunca autocrop independente por pose).
-- Pé patinando ao acelerar → trocar quadro por DISTÂNCIA (~34px), não tempo.
+- Andar "duro"/sem vida → o problema NUNCA é o timing (135ms do demo é
+  canônico): é o PAR de poses — exigir CONTATO (passada larga) + PASSAGEM
+  (pernas cruzando) na mesma cartela, corpo idêntico nos dois quadros.
 - Clique engolido pelo arrasto → guarda de 280ms (`MM.tDrop`).
 - Fala velha invadindo a cena nova → `_encadear=false; pararFala()` na troca.
 - Som travado até o navegador liberar → destravar no 1º keydown/mousedown/
@@ -157,14 +159,14 @@ antes de seguir, nunca "depois eu volto".
   §2; necessidade de tocar função do motor (`mvTick`, `renderDesafio`,
   `mmCena*`, física, câmera); login/save novos; decisão pedagógica ambígua.
 - **Regra das 2 tentativas:** bug que resiste a 2 hipóteses de conserto =
-  escalar. Nunca a 5ª tentativa às cegas num arquivo de 3 MB.
-- **Aviso ao Marcos/modelo forte:** o que travou, o que já foi tentado,
-  arquivo + âncora exata, qual gate do §5 está falhando.
-- **NUNCA escala** (é trabalho normal da produção em série): trocar dados,
-  textos, imagens, áudios, cores; ajustar `desafios`; rodar QA; publicar.
-- Depois da intervenção do modelo forte, a solução vira **atualização
-  deste documento** (novo item no §4, novo gate no §5 ou nova barreira no
-  §6) — o forte não conserta em silêncio, o documento fica mais forte.
+  escalar — nunca a 5ª tentativa às cegas num arquivo de 3 MB.
+- **Aviso ao modelo forte:** o que travou, o que já foi tentado, arquivo +
+  âncora exata, qual gate do §5 está falhando.
+- **NUNCA escala** (trabalho normal da série): trocar dados, textos,
+  imagens, áudios, cores; ajustar `desafios`; rodar QA; publicar.
+- Após a intervenção do forte, a solução vira **atualização deste
+  documento** (item no §4, gate no §5 ou barreira no §6) — nunca conserto
+  em silêncio.
 
 ================================================================
 ## 8. PRÓXIMAS FATIAS DA IDEIA — ordem sugerida
