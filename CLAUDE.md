@@ -375,9 +375,11 @@ Para confirmar workflow sem estourar:
 Produção em série (moldes, cartelas, áudio, QA, publicar) = **Opus 4.8 esforço
 alto dá conta**. Criação/diagnóstico difícil (motor novo, bug resistente,
 decisão pedagógica ambígua) = **modelo mais forte**. O Claude não troca o
-modelo da sessão sozinho: deve **avisar o Marcos** a hora certa de trocar
-(`/model`) nos dois sentidos, e escolher o modelo adequado **automaticamente**
-apenas nas subtarefas delegadas a subagentes.
+modelo da sessão sozinho: deve **avisar o Marcos AUTOMATICAMENTE** na hora
+certa, sugerindo exatamente o quê — qual modelo (`/model`) e/ou o nível de
+**esforço** (aumentar/baixar) — nos dois sentidos (forte quando precisa,
+economizar quando dá). Em subtarefas delegadas a subagentes, a escolha do
+modelo é automática por tarefa.
 
 ## Observações de segurança
 

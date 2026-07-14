@@ -30,3 +30,5 @@ O assistente cria o repositório, publica e devolve o link no padrão
 ### Para atualizar este site:
 Envie o novo `index.html` e peça para atualizar — ele se republica sozinho
 em cerca de 1 minuto.
+
+> **Política de modelos:** produção em série = Opus 4.8 esforço alto; criação/diagnóstico difícil = modelo forte. O Claude avisa quando trocar. Detalhes: MANUAL-MESTRE §22.

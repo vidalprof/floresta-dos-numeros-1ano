@@ -155,6 +155,12 @@ de uma Confeitaria (que produzimos em dias):
 - **Auditores/QA:** os mesmos do padrão premium + novos checks que a
   experiência exigir (regra "todo erro vira barreira").
 
+### Política de modelos aplicada ao Mundo Vivo (MANUAL-MESTRE §22)
+- **Motor** (andar/física/câmera/login/save) e mecânica inédita → modelo FORTE;
+- **Bairros/missões em série** sobre o motor pronto → Opus 4.8 esforço alto;
+- O Claude avisa o Marcos automaticamente quando a etapa pedir troca de modelo
+  ou de nível de esforço, sugerindo qual.
+
 ================================================================
 ## 7. DECISÕES PENDENTES (para iniciar o piloto)
 ================================================================

@@ -306,6 +306,20 @@ Antes de entregar QUALQUER atividade (criação ou upgrade), rodar a auditoria n
 24. Relatar honestamente o que foi cumprido e o que ficou pendente (ex.: cartela que só o Marcos gera, imagem segurada por dúvida) — nunca entregar como completo se faltar item; na dúvida, perguntar.
 
 ================================================================
+## POLÍTICA DE MODELOS (resumo — a completa está no MANUAL-MESTRE §22)
+================================================================
+Vale para TUDO nesta fábrica. Produção em série (seguir moldes: paradas,
+cartelas, áudio, QA, publicar) = **Opus 4.8 em esforço alto dá conta** (padrão,
+economiza). Criação/diagnóstico difícil (motor/mecânica inédita, bug que
+resistiu a 2 tentativas, decisão pedagógica ambígua) = **modelo mais forte**.
+O Claude não troca o modelo da sessão sozinho: é OBRIGAÇÃO dele **avisar o
+Marcos automaticamente**, na hora em que a natureza da tarefa mudar, sugerindo
+exatamente o quê: trocar o modelo (`/model` — e qual) **ou aumentar/baixar o
+nível de esforço**. Nos dois sentidos: subir para o forte quando precisa,
+voltar para o 4.8 quando dá para economizar. Em subtarefas delegadas a
+subagentes, a escolha do modelo é automática por tarefa.
+
+================================================================
 ## 17. POSTURA
 ================================================================
 - **Toda atividade nova ou upgrade deve ficar IDÊNTICA ao modelo deste arquivo** — mesma tela inicial, mapa, fluxo, botões/animações, comemoração, narração (fila que não corta), gamificação, relatório, regras de imagem e de português. Só muda tema, conteúdo, cores e imagens. Divergiu do modelo = está errado, corrigir antes de entregar.

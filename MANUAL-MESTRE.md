@@ -1446,7 +1446,10 @@ Marcos**. Não é política de um projeto; é a política da casa.
    Marcos com `/model`. O Claude deve AVISAR ativamente quando a tarefa mudar de
    natureza: "esta etapa é de motor/criação — sugiro trocar para o modelo forte"
    ou, no sentido inverso, "isto é produção em série, o Opus 4.8 esforço alto
-   resolve — pode economizar". Avisar É obrigação; trocar é decisão do Marcos.
+   resolve — pode economizar". A sugestão deve dizer EXATAMENTE o quê: qual
+   modelo (`/model ...`) e/ou qual nível de ESFORÇO (aumentar para
+   alto/máximo em etapa difícil; baixar quando for mecânico). Avisar É
+   obrigação e é AUTOMÁTICO (sem o Marcos pedir); trocar é decisão do Marcos.
 2. **Subtarefas delegadas (AUTOMÁTICO):** ao despachar subagentes/workflows, o
    Claude escolhe o modelo POR subtarefa: leve/padrão para varreduras e tarefas
    mecânicas; forte para verificação crítica ou criação. Isso não depende do
