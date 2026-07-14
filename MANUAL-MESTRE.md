@@ -1459,3 +1459,33 @@ Marcos**. Não é política de um projeto; é a política da casa.
    Opus 4.8 (motor de arrastar, P1/P2) e seguiu no modelo forte (rodadas 2-3,
    demo do Mundo Vivo) — os dois entregaram no padrão dos manuais, porque o
    segredo é o que está ESCRITO no repo (manuais + referências), não o modelo.
+
+## 23. CUSTO ZERO / AUTOSSUSTENTÁVEL — o que é garantido (decisão do Marcos, jul/2026)
+**Autossustentável (GARANTIDO):** depois de publicado, tudo roda sozinho, SEM
+mensalidade e SEM servidor para manter — GitHub Pages (site estático grátis),
+1 HTML autossuficiente (sem CDN/rede em runtime), GitHub Actions grátis, voz
+Edge TTS "Antonio" grátis, Firebase no plano gratuito (Spark) suficiente para a
+escala de uma escola (turmas de ~30; NÃO milhares simultâneos — esse é o único
+teto honesto do grátis).
+
+**Imagens — 2 modos, e o que eu garanto de cada:**
+- **HÍBRIDO (padrão recomendado — GARANTIDO praticamente grátis + bonito):**
+  Pollinations (Flux) GRÁTIS para cenas/fundos/capa/final/personagem sozinho
+  (fica tão bom quanto Gemini nesses); Gemini pago (~R$0,20) SÓ para cartelas
+  recortáveis (poses/companheiros/medalhas) que exigem fundo transparente +
+  seguir lista. Custo por atividade = centavos.
+- **CUSTO ZERO ABSOLUTO (0 centavo — funciona, com ressalva HONESTA):** gerar os
+  recortáveis UM POR IMAGEM no Pollinations (prompt de fundo claro) e limpar
+  cada um no nosso motor de recorte (flood-fill/scipy/de-fringe). São mais
+  gerações (todas grátis) e um pouco mais de trabalho/retentativas; a nitidez
+  do recorte fica LEVEMENTE abaixo do Gemini. NÃO prometo "idêntico ao Gemini"
+  em cartela recortável — prometo que FUNCIONA e não custa nada.
+- **Limite honesto do Pollinations:** embola listas longas numa cartela só e o
+  fundo sai em degradê escuro (ruim p/ recorte). Por isso, no modo custo-zero,
+  gera-se 1 assunto por imagem, não cartela cheia. O especialista de prompt
+  (§9) reduz a diferença, mas não zera para recortes.
+
+**Regra prática:** usar HÍBRIDO por padrão (fica ~de graça e mais bonito).
+Quando o Marcos pedir CUSTO ZERO explícito, cair no Pollinations-only 1-por-
+imagem, avisando da ressalva de nitidez. Nunca prometer "grátis = igual ao
+pago" sem essa ressalva.

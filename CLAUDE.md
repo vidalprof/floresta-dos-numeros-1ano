@@ -381,6 +381,15 @@ certa, sugerindo exatamente o quê — qual modelo (`/model`) e/ou o nível de
 economizar quando dá). Em subtarefas delegadas a subagentes, a escolha do
 modelo é automática por tarefa.
 
+## Custo/sustentabilidade (resumo — MANUAL-MESTRE §23)
+
+Autossustentável GARANTIDO: Pages + 1 HTML + Actions + voz Edge + Firebase
+grátis (escala de escola). Imagens: HÍBRIDO padrão (Pollinations grátis p/
+cenas/fundos/personagem; Gemini centavos só p/ recorte transparente) = ~de
+graça. CUSTO ZERO absoluto é possível (Pollinations 1-por-imagem + recorte),
+com ressalva honesta de nitidez levemente menor. Nunca prometer "grátis =
+igual ao pago" em recorte sem a ressalva.
+
 ## Observações de segurança
 
 - **Nunca** peça nem aceite o valor do token colado no chat. Ele vive apenas
