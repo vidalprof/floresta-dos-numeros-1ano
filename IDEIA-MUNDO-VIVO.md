@@ -59,6 +59,37 @@ decisão do Marcos, ver mais pra frente.)
    do mundo.
 
 ================================================================
+## 2b. O PERSONAGEM VIVO — movimento de game DE VERDADE (destaque do Marcos)
+================================================================
+O Marcos pediu explicitamente: o mascote andando pelo mundo tem que parecer
+um personagem de jogo de verdade, com movimento bem real — não uma imagem
+deslizando. A receita (tudo compat, só troca de sprite + transform):
+
+- **Ciclo de caminhada:** 3-4 sprites (parado, passo-esquerdo, passo-direito,
+  pulo) gerados no Gemini NA MESMA CARTELA (mesmo personagem, mesma luz);
+  alternar os frames a cada ~140ms enquanto anda = perninhas mexendo de
+  verdade. Virar de lado = `scaleX(-1)` (espelha na direção do movimento).
+- **Aceleração e frenagem (easing):** o personagem não "liga/desliga" — ele
+  ACELERA ao começar a andar e FREIA suave ao soltar a seta (velocidade com
+  easing por código, não linear). É o que o cérebro lê como "peso real".
+- **Squash & stretch:** ao pular/aterrissar, o corpo estica no ar e amassa
+  levemente no chão (`scaleY`), como nos desenhos da Pixar. No passo, um
+  balancinho sutil de `rotate(±2°)`.
+- **Vida parada (idle):** se a criança para 3s, o mascote RESPIRA (escala
+  sutil), pisca, olha pros lados, bate o pezinho — o personagem existe mesmo
+  sem input. (Sprites de idle na mesma cartela.)
+- **Poeirinha nos pés:** 2-3 partículas de poeira ao correr/frear/aterrissar
+  (reusa o motor de confete, cor terra, opacidade baixa).
+- **Câmera de game:** a câmera segue com um LEVE atraso elástico (lerp), e o
+  personagem fica ~1/3 da tela à frente da direção do movimento — nunca
+  "colado" no centro (é o que dá cinema ao andar).
+- **Sombra no chão:** elipse suave sob o personagem que estica/encolhe no
+  pulo — cola o personagem no cenário.
+- **Sons de passo:** tic-tic sutil sintetizado (Web Audio) no ritmo do ciclo
+  de caminhada; som de "puf" na aterrissagem.
+Tudo isso é sprite + `transform`/`opacity` + timer — roda no PC de 2012.
+
+================================================================
 ## 3. UM MUNDO POR ANO — o currículo como mapa
 ================================================================
 - **Bairros/regiões = unidades do ano** (ex.: 5º ano matemática na "Cidade":
