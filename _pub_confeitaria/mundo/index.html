@@ -264,8 +264,23 @@ h1{font-size:26px;color:#8a5300;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 @-webkit-keyframes mvNeva{0%{-webkit-transform:translate(0,0)}50%{-webkit-transform:translate(26px,470px)}100%{-webkit-transform:translate(-8px,960px)}}
 @keyframes mvNeva{0%{transform:translate(0,0)}50%{transform:translate(26px,470px)}100%{transform:translate(-8px,960px)}}
 
+
+/* ===== DIORAMA: dentro da loja o painel some, a cena e o lugar ===== */
+body.temInterior .wrap{background:transparent;-webkit-box-shadow:none;box-shadow:none;border-radius:0;margin:0 auto;max-width:560px;}
+body.temInterior .enun,body.temInterior .bancoInfo,body.temInterior .dica{background:rgba(255,255,255,.86);border-radius:12px;padding:6px 12px;-webkit-box-shadow:0 2px 8px rgba(90,50,20,.15);box-shadow:0 2px 8px rgba(90,50,20,.15);}
+body.temInterior .contparada,body.temInterior .prog{display:none;}
+body.temInterior .mmFila{background:rgba(255,255,255,.75);border-radius:14px;display:inline-block;padding:3px 12px;margin:4px auto;}
+body.temInterior .mmRotulo,body.temInterior .pratoNum{background:rgba(255,255,255,.78);border-radius:8px;padding:1px 8px;display:inline-block;}
+body.temInterior .dica:empty,body.temInterior .bancoInfo:empty{display:none;}
+body.temInterior .caixaCont{background:rgba(255,255,255,.85);border-radius:8px;padding:0 6px;}
+body.temInterior .mmPedido .mmCliImg{height:84px;}
+body.temInterior h1{background:rgba(255,255,255,.8);border-radius:14px;display:inline-block;padding:4px 16px;}
+.mmChefCena{position:fixed;left:6px;bottom:6px;height:92px;width:auto;z-index:2;pointer-events:none;-webkit-animation:mvResp 2.6s ease-in-out infinite;animation:mvResp 2.6s ease-in-out infinite;-webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));}
+@media (max-height:520px){.mmChefCena{height:64px;}}
+
 /* ===== MOTOR MICROMUNDO: cenas vivas ===== */
 .mmFila{text-align:center;padding:2px 0 4px;}
+.mmFilaWrap{text-align:center;}
 .mmFilaCli{height:30px;width:auto;margin:0 3px;vertical-align:middle;opacity:.5;-webkit-filter:grayscale(.5);filter:grayscale(.5);}
 .mmFilaCli.mmFilaAtual{height:40px;opacity:1;-webkit-filter:none;filter:none;-webkit-animation:mvquica 1.6s ease-in-out infinite;animation:mvquica 1.6s ease-in-out infinite;}
 .mmFilaRot{font-size:12px;font-weight:bold;color:#8a6a3a;margin-left:8px;vertical-align:middle;}
@@ -681,7 +696,8 @@ function mmCliImg(){var i,pi=0;for(i=0;i<PARADAS.length;i++)if(PARADAS[i]===atua
  return (IMG.comp&&IMG.comp[outro.ch])||IMG.mFala;}
 function mmFila(){var tot=totalDesafios(),i,pi=0;
  for(i=0;i<PARADAS.length;i++)if(PARADAS[i]===atual)pi=i;
- var h='<div class="mmFila">';
+ var h='<img class="mmChefCena" src="'+IMG.mv.parado+'">';
+ h+='<div class="mmFila">';
  for(i=idx;i<tot&&i<idx+8;i++){var outro=PARADAS[(pi+1+i)%PARADAS.length];
   var im=(IMG.comp&&IMG.comp[outro.ch])||IMG.mFala;
   h+='<img class="mmFilaCli'+(i===idx?' mmFilaAtual':'')+'" src="'+im+'">';}
