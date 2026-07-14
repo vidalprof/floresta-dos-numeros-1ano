@@ -71,6 +71,44 @@ jobs:
             git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
           done
 
+  audio:
+    if: contains(github.event.head_commit.message, '[audio]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar edge-tts
+        run: pip3 install --quiet edge-tts
+      - name: Gerar falas do _lote_falas.json (voz Antonio)
+        run: |
+          python3 - <<'PY'
+          import os, re, json, subprocess, tempfile
+          itens=json.load(open("_lote_falas.json",encoding="utf-8"))
+          os.makedirs("_audio", exist_ok=True)
+          ok=0; fail=0
+          for it in itens:
+              idn=re.sub(r'[^A-Za-z0-9_-]','_', it.get("id") or "fala")
+              out=tempfile.NamedTemporaryFile(suffix=".mp3", delete=False); out.close()
+              r=subprocess.run(["edge-tts","--voice","pt-BR-AntonioNeural","--text",it["texto"],"--write-media",out.name],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or os.path.getsize(out.name)<800:
+                  print("::error::falhou", idn, r.stderr.decode("utf-8","ignore")[:200]); fail+=1; continue
+              open("_audio/%s.mp3"%idn,"wb").write(open(out.name,"rb").read())
+              os.remove(out.name); ok+=1; print("OK", idn)
+          print("== %d ok, %d falha =="%(ok,fail))
+          if ok==0: raise SystemExit(1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _audio/
+          git diff --cached --quiet && exit 0
+          git commit -m "audio: gera vozes (male, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
   publicar:
     if: contains(github.event.head_commit.message, '[publicar]')
     runs-on: ubuntu-latest
