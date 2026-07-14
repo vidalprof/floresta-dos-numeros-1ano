@@ -434,7 +434,7 @@ function opcoesNum(certa,min){var set={},arr=[],tent=0;set[certa]=1;arr.push(cer
 function botoesOpcoes(opts,onclick){var h='<div class="opcoes">',i;for(i=0;i<opts.length;i++)h+='<button class="op" onclick="'+onclick+'('+opts[i]+',this)">'+opts[i]+'</button>';return h+'</div>';}
 
 function rEscolha(d){var h=cabecalhoDesafio();
- h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:52px;width:auto;float:left;margin-right:8px"><span class="enun" style="display:block;text-align:left;font-size:17px;margin:0">'+esc(d.en)+'</span></div>';
+ h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:52px;width:auto;float:left;margin-right:8px"><span class="enun" style="display:block;text-align:left;font-size:17px;margin:0;color:#5a2e1c">'+esc(d.en)+'</span></div>';
  if(d.est)h+='<div class="dica">&#129504; Estimativa: '+esc(d.est)+'</div>';
  if(d.mul){h+='<div id="ajudaBox" style="display:'+(facil?'':'none')+'"><div class="dica">Dica: '+d.mul+'</div></div>';
   if(!facil)h+='<div style="text-align:center"><button class="btn sec" id="ajudaBtn" onclick="pedirAjuda()">&#128161; Pedir uma ajudinha</button></div>';}
@@ -620,7 +620,7 @@ function rTabuada(d){var h=cabecalhoDesafio();
 function respTab(v,el){if(v===window._ans)acerto(window._d.v+" vezes "+window._ans+" é "+window._d.d+", então "+window._d.d+" dividido por "+window._d.v+" é "+window._ans+"!");else{var t=$("tb"+window._ans);if(t)t.className="on";erro(el,window._d,"tab");}}
 
 function rResto(d){var h=cabecalhoDesafio();
- if(d.en)h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:52px;width:auto;float:left;margin-right:8px"><span class="enun" style="display:block;text-align:left;font-size:17px;margin:0">'+esc(d.en)+'</span></div>';
+ if(d.en)h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:52px;width:auto;float:left;margin-right:8px"><span class="enun" style="display:block;text-align:left;font-size:17px;margin:0;color:#5a2e1c">'+esc(d.en)+'</span></div>';
  else h+='<div class="enun">'+d.d+' doces em '+d.v+' pratos iguais.<br>Quantos em cada prato?</div>';
  h+='<div class="dica">Reparta o máximo igual. O que não dá é a sobra (resto).</div>';
  h+=botoesOpcoes(opcoesNum(d.q,1),"respResto1");
@@ -638,7 +638,7 @@ function opcoesDin(c){var set={},arr=[c];set[c]=1;var deltas=[10,-10,100,-100,50
 function rDinheiro(d){var h=cabecalhoDesafio();
  var en="Na lojinha: "+d.n+" "+d.q+" custam juntos "+fmtDin(d.cents)+". Quanto custa CADA "+d.un+"?";
  var fala="Na lojinha: "+d.n+" "+d.q+" custam juntos "+dinFala(d.cents)+". Quanto custa cada "+d.un+"?";
- h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:52px;width:auto;float:left;margin-right:8px"><span class="enun" style="display:block;text-align:left;font-size:17px;margin:0">'+esc(en)+'</span></div>';
+ h+='<div class="balao"><img src="'+IMG.mFala+'" style="height:52px;width:auto;float:left;margin-right:8px"><span class="enun" style="display:block;text-align:left;font-size:17px;margin:0;color:#5a2e1c">'+esc(en)+'</span></div>';
  h+='<div class="dica">Divida o total em '+d.n+' partes iguais. Os centavos vão junto!</div>';
  var certa=d.cents/d.n,opts=opcoesDin(certa),i;
  h+='<div class="opcoes">';for(i=0;i<opts.length;i++)h+='<button class="op" onclick="respDin('+opts[i]+',this)">'+fmtDin(opts[i])+'</button>';h+='</div>';
