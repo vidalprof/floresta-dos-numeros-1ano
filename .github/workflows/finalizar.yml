@@ -33,8 +33,9 @@ jobs:
           import os, json, base64, time, urllib.request, urllib.error
           key=os.environ["GEMINI_API_KEY"].strip()
           prompt=("Medalha redonda dourada infantil estilo cartoon 3D fofo, fita azul, "
-                  "no centro um LIVRO DE RECEITAS aberto com um ovo e um bolinho, "
-                  "brilho suave, fundo totalmente branco liso para recorte, sem texto")
+                  "no centro um livro de receitas aberto mostrando APENAS DESENHOS: um ovo e um bolinho. "
+                  "PROIBIDO qualquer letra, palavra ou numero na imagem (paginas do livro so com desenhos). "
+                  "Brilho suave, fundo totalmente branco liso para recorte")
           os.makedirs("_novo", exist_ok=True)
           body={"contents":[{"parts":[{"text":prompt}]}]}
           modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
