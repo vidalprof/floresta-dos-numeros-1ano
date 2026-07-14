@@ -1,6 +1,9 @@
 # 🌍 MUNDO VIVO — o game-mundo anual (ideia registrada)
 ## Marcos + Claude — jul/2026
 ## STATUS: ideia aprovada para registro. NÃO é manual de produção ainda.
+## ✅ ATUALIZAÇÃO jul/2026: o MOTOR das missões-micromundo (sem pergunta-e-
+## resposta) FOI CONSTRUÍDO e testado na Confeitaria (rua + 13 lojas + cenas
+## vivas). Receita de produção: **MUNDO-VIVO-MOTOR.md** (molde p/ Opus).
 ## Piloto aguarda 2 decisões do Marcos: (1) ano/disciplina, (2) tema do mundo.
 
 ================================================================
