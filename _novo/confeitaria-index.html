@@ -445,7 +445,7 @@ function introFase(){var p=atual,h="";
  $("app").innerHTML=h;window.scrollTo(0,0);
  falar(p.hist);
 }
-function rodarFase(){idx=0;streak=0;runAc=0;
+function rodarFase(){idx=0;streak=0;runAc=0;window._runErrDes=0;
  if(atual.tipo==="memoria"){jogoMemoria();return;}
  proximoDesafio();
 }
@@ -726,7 +726,7 @@ function acerto(explica){if(window._respondido)return;window._respondido=true;
  var pts=2+(streak>=3?1:0);S.pontos+=pts;
  if(!S.stats[atual.ch])S.stats[atual.ch]={a:0,e:0};
  var st=S.stats[atual.ch];st.a++;
- if(!modoTreino&&!atual._extra){st.n=(st.n||0)+1;if(!window._errouNeste)st.p1=(st.p1||0)+1;}
+ if(!modoTreino&&!atual._extra){st.n=(st.n||0)+1;if(!window._errouNeste)st.p1=(st.p1||0)+1;else window._runErrDes=(window._runErrDes||0)+1;}
  if(streak>S.maxStreak)S.maxStreak=streak;
  carimbo();confete(16);
  var el=ELOGIOS[Math.floor(rnd()*ELOGIOS.length)];
@@ -779,11 +779,10 @@ function ofertaReforco(p,errs){pararFala();var h='<h1 style="font-size:22px">Vam
 function iniciarReforco(){reforcoOn=true;window._reforcoParada=atual;var errs=errosDaFase(atual.ch);window._treino=errs.slice();window._ti=0;modoTreino=true;facil=true;proxTreino();}
 function fecharOferta(){extraOn=true;fimFaseReal();}
 function fimFase(){pararFala();var p=atual;
- var tot=totalDesafios(),ac=runAc;
+ var tot=totalDesafios(),re=window._runErrDes||0;
  if(!p.jogo&&!modoTreino&&!p._extra){
-  var ef=errosDaFase(p.ch);
-  if(!reforcoOn&&ef.length>=Math.ceil(tot*0.5)){return ofertaReforco(p,ef);}
-  if(!extraOn&&tot>0&&ef.length===0){return ofertaExtra(p);}
+  if(!reforcoOn&&re>=Math.ceil(tot*0.5)){return ofertaReforco(p,errosDaFase(p.ch));}
+  if(!extraOn&&tot>0&&re===0){return ofertaExtra(p);}
  }
  fimFaseReal();
 }
