@@ -1393,3 +1393,30 @@ a cópia local defasada. Regra:
   memória — a única memória real é o que está ESCRITO no repo (`CLAUDE.md` + manuais
   + histórico do git). Quando o usuário pedir "para não esquecer", a resposta certa é
   **registrar no repo**, não prometer lembrança.
+
+## 21. Lições da Confeitaria Mágica (2026-07 — rodadas 1 a 3)
+- **Texto do enunciado dentro do balão:** `.enun` global é quase branco (feito p/
+  fundo escuro). Dentro de `.balao` (fundo claro) fica **invisível**. Todo `<span
+  class="enun">` dentro de balão precisa de `color:#5a2e1c` inline. Esse bug ficou
+  meses sem ser notado porque as montagens de teste não incluíam telas de escolha.
+  **QA visual deve incluir pelo menos 1 tela de CADA renderizador.**
+- **Conquistas com snapshot:** condições `cond(s)` que usam `s.feitas` quebram se o
+  estado real guarda `feitasMap` (mapa). Passar um **snapshot** `{acertosTot,
+  maxStreak, feitas: feitas()}` para as condições — nunca o objeto `S` cru.
+- **Zonas de arrastar SEM retângulo pontilhado:** o dono pediu para remover TODOS os
+  `border: dashed`. O alvo do drop é a PRÓPRIA imagem (prato/caixa); o feedback de
+  hover é brilho + leve escala (`drop-shadow` + `scale(1.06)`), não borda.
+- **Áudio com hash ≠ conteúdo falado:** a chave em `AUDIO_TXT` vem do hash do texto
+  EXIBIDO (`_chaveVoz(limparFala(texto))`), mas o MP3 pode ser gerado com outro
+  texto (ex.: "R$ 4,80" exibido → "quatro reais e oitenta centavos" falado). No
+  lote: `id` = hash do texto exibido, `texto` = forma falada.
+- **Falas compostas:** fim de fase fala `"Uau! " + UAU_FASE[ch]` e `"Parada
+  concluída! " + gancho` — o áudio precisa ser gerado da string COMPOSTA.
+  Reusar ganchos entre paradas = reusar o MP3 (string idêntica, hash idêntico).
+- **Plano B sem MCP (token expirado no meio do trabalho):** o push do git continua
+  funcionando. `.github/workflows/finalizar.yml` roda por PUSH nesta branch com
+  marcadores na mensagem do commit: `[medalha]` gera imagem no Gemini; `[publicar]`
+  republica `_pub_confeitaria` → `confeitaria-da-divisao` (histórico limpo), força o
+  build do Pages, ESPERA o resultado e grava `_status/confeitaria.txt` neste repo
+  (basta `git pull` para ler o status do build sem MCP). Commits dos jobs não levam
+  marcador → sem loop.
