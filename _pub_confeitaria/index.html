@@ -11,7 +11,7 @@ html,body{height:100%;}
 body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
  background:#4a2418;background:-webkit-linear-gradient(top,#5a2e1c,#3a1c12);background:linear-gradient(180deg,#5a2e1c,#3a1c12);
  color:#fff4ec;-webkit-tap-highlight-color:transparent;overflow-x:hidden;}
-.wrap{max-width:560px;margin:0 auto;min-height:100%;padding:14px 12px 90px;position:relative;}
+.wrap{max-width:560px;margin:0 auto;min-height:100%;padding:14px 12px 90px;position:relative;z-index:1;}
 img{max-width:100%;}
 .hide{display:none!important;}
 h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;margin:8px 0 2px;}
@@ -109,8 +109,7 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 /* ==== Fase concreta: arrastar e repartir ==== */
 .banco{text-align:center;margin:8px 0;padding:8px 6px;border-radius:16px;background:rgba(255,255,255,.06);min-height:56px;}
 .banco.bandeja{background-color:transparent;background-repeat:no-repeat;background-size:100% 100%;padding:18px 48px 30px;min-height:96px;}
-.bandeja .bancoInfo{color:#6b3f1d;text-shadow:0 1px 0 rgba(255,255,255,.4);}
-.bancoInfo{font-weight:bold;color:#ffd9a8;margin-bottom:4px;font-size:15px;}
+.bancoInfo{font-weight:bold;color:#ffd9a8;margin:6px 0 4px;font-size:15px;text-align:center;}
 .dArr{height:44px;width:auto;margin:4px;display:inline-block;cursor:pointer;touch-action:none;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));filter:drop-shadow(0 3px 3px rgba(0,0,0,.35));vertical-align:middle;}
 .pratos{text-align:center;margin:8px 0;}
 .pratoZona{display:inline-block;vertical-align:top;margin:6px;padding:4px 4px 2px;border-radius:16px;width:150px;}
@@ -120,6 +119,15 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .pratoDoces{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;}
 .pratoDoces img{position:absolute;height:38px;width:auto;margin:0;cursor:pointer;touch-action:none;pointer-events:auto;-webkit-transform:translate(-50%,-62%);transform:translate(-50%,-62%);-webkit-filter:drop-shadow(0 3px 2px rgba(0,0,0,.3));filter:drop-shadow(0 3px 2px rgba(0,0,0,.3));}
 .dica.diag{color:#ffe27a;font-weight:bold;font-size:15px;text-shadow:0 0 10px rgba(255,205,110,.75);-webkit-animation:respira 2.4s ease-in-out infinite;animation:respira 2.4s ease-in-out infinite;}
+#fundoVivo{position:fixed;left:0;top:0;right:0;bottom:0;z-index:0;overflow:hidden;pointer-events:none;}
+#fundoVivo img{position:absolute;height:44px;width:auto;opacity:.14;pointer-events:auto;cursor:pointer;-webkit-animation-timing-function:linear;animation-timing-function:linear;}
+#fundoVivo img.pulaFV{-webkit-animation:pulaFV .5s ease-out !important;animation:pulaFV .5s ease-out !important;opacity:.5;}
+@-webkit-keyframes derivaD{0%{-webkit-transform:translateX(-60px) rotate(0deg)}100%{-webkit-transform:translateX(480px) rotate(24deg)}}
+@keyframes derivaD{0%{transform:translateX(-60px) rotate(0deg)}100%{transform:translateX(480px) rotate(24deg)}}
+@-webkit-keyframes derivaE{0%{-webkit-transform:translateX(480px) rotate(0deg)}100%{-webkit-transform:translateX(-60px) rotate(-24deg)}}
+@keyframes derivaE{0%{transform:translateX(480px) rotate(0deg)}100%{transform:translateX(-60px) rotate(-24deg)}}
+@-webkit-keyframes pulaFV{0%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.5) rotate(14deg)}100%{-webkit-transform:scale(1)}}
+@keyframes pulaFV{0%{transform:scale(1)}50%{transform:scale(1.5) rotate(14deg)}100%{transform:scale(1)}}
 #certif .cWrap{background:#fff8f0;color:#5a2e1c;border:6px solid #ffd93f;border-radius:18px;padding:18px 14px;text-align:center;margin:8px 0;}
 #certif .cTit{font-size:22px;font-weight:bold;margin:6px 0;color:#a05a1c;}
 #certif .cNome{font-size:26px;font-weight:bold;margin:8px 0;border-bottom:2px solid #a05a1c;display:inline-block;padding:0 18px 2px;}
@@ -147,7 +155,7 @@ h1{font-size:26px;color:#ffd9a8;text-align:center;text-shadow:0 2px 0 #7a3a1e;ma
 .caixaBase{width:100%;height:auto;display:block;pointer-events:none;}
 .caixaDoces{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;}
 .caixaDoces img{position:absolute;height:26px;width:auto;margin:0;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));filter:drop-shadow(0 2px 2px rgba(0,0,0,.3));}
-.caixaCont{position:absolute;left:0;right:0;bottom:2px;font-weight:bold;color:#fff;font-size:14px;text-shadow:0 1px 2px rgba(0,0,0,.6);}
+.caixaCont{font-weight:bold;color:#ffd9a8;font-size:15px;margin-top:2px;text-align:center;}
 .caixaCheia.pop{-webkit-animation:cxpop .35s;animation:cxpop .35s;}
 @-webkit-keyframes respira{0%,100%{opacity:1}50%{opacity:.72}}
 @keyframes respira{0%,100%{opacity:1}50%{opacity:.72}}
@@ -541,7 +549,8 @@ function rRepartirConcreto(d){
  window._d=d;window._rep={tot:d.tot,gr:d.gr,conf:0,pratos:[]};
  var perg="Arraste os biscoitos e coloque a MESMA quantidade em cada prato.";
  var h=cabecalhoDesafio()+'<div class="enun">'+esc(perg)+'</div>';
- h+='<div class="banco bandeja" data-drop="banco" style="background-image:url('+IMG.dBandeja+')"><div class="bancoInfo" id="bancoInfo">Faltam: '+d.tot+'</div><div id="bancoDoces">';
+ h+='<div class="bancoInfo" id="bancoInfo">Faltam: '+d.tot+'</div>';
+ h+='<div class="banco bandeja" data-drop="banco" style="background-image:url('+IMG.dBandeja+')"><div id="bancoDoces">';
  var i;for(i=0;i<d.tot;i++)h+='<img class="dArr" src="'+doceImg+'">';
  h+='</div></div><div class="pratos" id="pratos">';
  var k;for(k=0;k<d.gr;k++)h+=_zonaHTML(k,IMG.dPrato);
@@ -579,7 +588,8 @@ function rCaixasConcreto(d){
  window._d=d;window._cx={tot:d.tot,cap:d.gr,cheias:0,conf:0};
  var perg="Arraste os doces para dentro da caixa. Quando encher com "+d.gr+", ela fecha sozinha e aparece outra vazia!";
  var h=cabecalhoDesafio()+'<div class="enun">'+esc(perg)+'</div>';
- h+='<div class="banco bandeja" data-drop="banco" style="background-image:url('+IMG.dBandeja+')"><div class="bancoInfo" id="cxInfo">Doces na bandeja: '+d.tot+'</div><div id="cxBanco">';
+ h+='<div class="bancoInfo" id="cxInfo">Doces na bandeja: '+d.tot+'</div>';
+ h+='<div class="banco bandeja" data-drop="banco" style="background-image:url('+IMG.dBandeja+')"><div id="cxBanco">';
  var i;for(i=0;i<d.tot;i++)h+='<img class="dArr" src="'+doceImg+'">';
  h+='</div></div>';
  h+='<div class="caixasLinha" id="cxLinha"></div>';
@@ -887,6 +897,17 @@ function confeteOndas(){var k;for(k=0;k<4;k++)setTimeout(function(){confete(20);
 function esc(t){return (""+(t==null?"":t)).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
 
 /* ============ BOOT ============ */
+function iniciarFundoVivo(){if($("fundoVivo"))return;
+ var c=document.createElement("div");c.id="fundoVivo";
+ var cfg=[[ "dBiscoito",10,34,"derivaD",0],["dCupcake",36,42,"derivaE",8],["dDonut",62,38,"derivaD",16],["dPirulito",82,46,"derivaE",4]];
+ var i;for(i=0;i<cfg.length;i++){var im=document.createElement("img");im.src=IMG[cfg[i][0]];
+  im.style.top=cfg[i][1]+"%";
+  var anim=cfg[i][3]+" "+cfg[i][2]+"s linear "+(-cfg[i][4])+"s infinite";
+  im.style.webkitAnimation=anim;im.style.animation=anim;
+  im.onclick=(function(el){return function(){if(el.className.indexOf("pulaFV")>=0)return;el.className="pulaFV";plim(920);setTimeout(function(){el.className="";},520);};})(im);
+  c.appendChild(im);}
+ document.body.insertBefore(c,document.body.firstChild);}
+iniciarFundoVivo();
 telaInicial();
 
 </script>
