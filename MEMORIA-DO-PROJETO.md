@@ -88,7 +88,13 @@ O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho)
   cama e DORMIR um pouquinho → amanhece → sai e continua a jornada.
 - **Fases de ALÍVIO** intercaladas (memória-no-chão, pegar vaga-lumes, etc.).
 - **Muita animação e SOM:** chave destrancando, jaula abrindo, o amigo agradecendo, fumaça,
-  machado do lenhador.
+  machado do lenhador, porta batendo, vento, gato miando, trovoada.
+- **Como o SOM funciona (2 camadas, honesto):** (1) **Web Audio sintetizado** (grátis, minúsculo,
+  offline) — vento (ruído filtrado + LFO), trovão (rajada de ruído), porta (batida grave + rangido),
+  machado (toc percussivo), passos, chave (tilintar), faísca, UI. JÁ uso trovão assim. (2) **Sons
+  realistas** (miado real, pássaros, lenhador) ficam melhores como **clipes mp3 CC0** embutidos —
+  origem: pacote livre (CC0) ou o professor fornece (o chat não baixa; workflow pode). Regra do
+  navegador: som e voz só começam após o 1º clique/toque → botão "🔊 Som" + mudo (volume).
 - **A pedagogia mora DENTRO:** cada chave/labirinto/jaula guarda um desafio de aprendizado do
   currículo — a aventura é o embrulho; o aprender é o conteúdo (aprender sem perceber).
 - **Blocos que JÁ temos (prova de conceito):** mundo explorável + dia/noite/clima (demo Mundo
