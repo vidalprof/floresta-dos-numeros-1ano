@@ -149,6 +149,21 @@ NÃO é contradição — são DUAS CAMADAS:
   (Computação, próximo ano). Ancorar sempre no currículo real (Blumenau + BNCC Computação;
   ver `ATIVIDADE-COMPUTACAO.md`).
 
+## 🎯 META CRÍTICA do Marcos: EducaVerso cobre TODO o currículo de Computação
+- Ano que vem o Marcos ministra o **currículo de Computação**. A **coordenadora** pede
+  **atividades DESPLUGADAS** + **sequências didáticas**.
+- O Marcos QUER que o **EducaVerso atinja TODOS os objetivos de aprendizagem** (3 eixos × turma)
+  como uma **SEQUÊNCIA DIDÁTICA COMPLETA** — **sem** precisar fazer atividades desplugadas soltas
+  nem outras sequências à parte. **Tudo alcançado no EducaVerso.**
+- **Como provar/entregar:** um **MAPA DE COBERTURA CURRICULAR** — cada objetivo (BNCC Computação
+  + currículo de Blumenau) → uma **missão/atividade EducaVerso**, em sequência ao longo do ano.
+  Isso É a sequência didática **e** a prova de cobertura para a coordenadora.
+- **Honestidade (tensão a alinhar):** EducaVerso é **PLUGADO** (tela); a coordenadora pede
+  **DESPLUGADO** (sem computador). EducaVerso entrega os MESMOS objetivos com o mesmo espírito
+  (construir/fazer/manipular) e pode **GERAR materiais desplugados imprimíveis** (cartas de
+  comando, tabuleiros, trilhas) das mesmas missões. Se "conta" como desplugada é decisão
+  pedagógica do Marcos + coordenadora — a gente dá as duas formas.
+
 ## 🛡️ Regra de ouro contra ESQUECER
 1. **Sincronizar com o GitHub ANTES de agir** (o hook `.claude/hooks/sync-remoto.sh`
    já faz automático no início da sessão).
