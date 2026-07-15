@@ -131,6 +131,19 @@ NÃO é contradição — são DUAS CAMADAS:
   **workflow baixa** (a montar: `baixar-sons.yml`, igual gerar-imagens) OU o professor fornece.
   Regra séria: só **CC0 / livre de direitos** (é produto de escola).
 
+## 🎓 ROADMAP CURRICULAR do Marcos (o que a Fábrica precisa saber)
+- **ESTE ANO:** disciplinas **normais** do currículo (Português, Matemática, Ciências, etc.). As
+  atividades EducaVerso deste ano servem essas disciplinas.
+- **PRÓXIMO ANO:** **Computação específica** — objetivos de aprendizagem **POR TURMA**, pelos
+  **TRÊS EIXOS da BNCC Computação**: (1) **Pensamento Computacional**, (2) **Mundo Digital**,
+  (3) **Cultura Digital**. **Começar por PENSAMENTO COMPUTACIONAL.**
+- **Encaixe:** a atividade Jardim/Placas (programar o caminho — sequência, algoritmo, lógica)
+  **JÁ é Pensamento Computacional** → alinhada com o início do próximo ano. É um baita ponto de
+  partida.
+- **Fábrica de Atividades:** organizar por **DISCIPLINA** (este ano) e por **EIXO + TURMA**
+  (Computação, próximo ano). Ancorar sempre no currículo real (Blumenau + BNCC Computação;
+  ver `ATIVIDADE-COMPUTACAO.md`).
+
 ## 🛡️ Regra de ouro contra ESQUECER
 1. **Sincronizar com o GitHub ANTES de agir** (o hook `.claude/hooks/sync-remoto.sh`
    já faz automático no início da sessão).
