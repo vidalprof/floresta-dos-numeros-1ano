@@ -2,11 +2,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EducaVerso - A Floresta do Byte</title>
 <style>
- html,body{margin:0;height:100%;background:#0a1120;color:#eaf2ff;font-family:Verdana,Geneva,sans-serif;text-align:center;overflow:hidden;}
- #wrap{height:100%;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+ html,body{margin:0;min-height:100%;background:#0a1120;color:#eaf2ff;font-family:Verdana,Geneva,sans-serif;text-align:center;overflow-x:hidden;}
+ #wrap{min-height:100vh;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0;}
  h1{font-size:15px;margin:4px 0 0;letter-spacing:.3px;width:100%;} .sub{font-size:11px;color:#9fb6df;margin:0 auto 4px;width:100%;max-width:94vw;box-sizing:border-box;padding:0 8px;line-height:1.35;}
  #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:96vw;box-sizing:border-box;}
- canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;height:auto;cursor:pointer;}
+ canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:56vh;width:auto;height:auto;cursor:pointer;}
  #painel{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;padding:0 6px;}
  .bt{font-family:inherit;font-weight:bold;border:0;border-radius:14px;cursor:pointer;padding:9px 16px;font-size:15px;color:#0a1120;-webkit-transition:transform .05s;transition:transform .05s;}
  .bt.vai{background:-webkit-linear-gradient(#bff7d6,#4fcf8e);background:linear-gradient(#bff7d6,#4fcf8e);box-shadow:0 3px 0 #2f9463;}
