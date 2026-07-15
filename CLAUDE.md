@@ -11,6 +11,10 @@ Leia tudo antes de agir e responda sempre em **português**.
 > Como eu começo cada sessão sem memória, tudo importante fica escrito ali: é a
 > cura do "esquecimento". Toda capacidade/decisão nova → anotar lá.
 >
+> **Toda atividade EducaVerso passa pelo `EDUCAVERSO-QA.md`** (3 portões: Verificar
+> → Auditar → Aprovação do professor) ANTES de chegar ao Marcos. Nada de "entregar e
+> ver depois"; nunca afirmar que funciona sem testar; todo asset visto pela criança é IA.
+>
 > **SEMPRE sincronize com o GitHub ANTES de agir.** Já aconteceu de o ambiente
 > reiniciar e deixar a cópia local num ponto ANTIGO da história — aí manuais e
 > workflows que EXISTEM ficam invisíveis, e é fácil concluir errado que "não
