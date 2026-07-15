@@ -6,6 +6,11 @@ Leia tudo antes de agir e responda sempre em **português**.
 
 > ## 0. ORIENTAÇÃO OBRIGATÓRIA — LER PRIMEIRO (evita o erro de "cópia velha")
 >
+> **Leia também o `MEMORIA-DO-PROJETO.md`** — é a memória do que já construímos e
+> do que EU consigo fazer (gerar imagem/áudio por workflow, secrets, atividades).
+> Como eu começo cada sessão sem memória, tudo importante fica escrito ali: é a
+> cura do "esquecimento". Toda capacidade/decisão nova → anotar lá.
+>
 > **SEMPRE sincronize com o GitHub ANTES de agir.** Já aconteceu de o ambiente
 > reiniciar e deixar a cópia local num ponto ANTIGO da história — aí manuais e
 > workflows que EXISTEM ficam invisíveis, e é fácil concluir errado que "não
