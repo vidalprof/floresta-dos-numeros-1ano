@@ -9,7 +9,8 @@ def b64(p):
     with open(p,"rb") as f: return base64.b64encode(f.read()).decode()
 # imagens (algumas opcionais: so entram se existirem)
 IMGF={"grama":"grama.png","caminho":"caminho.png","arvore":"arvore.png","byte":"byte.png",
-      "chave":"chave.png","flores":"flores.png","muro":"muro.png","passaro":"passarinho.png"}
+      "chave":"chave.png","flores":"flores.png","muro":"muro.png","passaro":"passarinho.png",
+      "borboleta":"borboleta.png"}
 SRCJS={}
 for k,fn in IMGF.items():
     p=os.path.join(S,fn)
@@ -82,22 +83,38 @@ var TREES=[[120,520],[150,780],[470,880],[640,300],[430,360],[760,700],[560,690]
 var TR=16; // raio tronco
 // flores decorativas
 var FLORES=[[420,800],[300,690],[560,560],[700,470],[860,520],[1000,430],[1120,330],[240,820],[640,640],[900,700]];
-var leaves=[],birds=[],pollen=[],estrelas=[];
-for(var i=0;i<26;i++)pollen.push({x:Math.random()*WW,y:Math.random()*WH,f:i,r:1+Math.random()*1.6});
+var leaves=[],birds=[],pollen=[],estrelas=[],borbs=[];
+for(var i=0;i<30;i++)pollen.push({x:Math.random()*WW,y:Math.random()*WH,f:i,r:1+Math.random()*1.6});
+var luzChao=[];for(var i=0;i<3;i++)luzChao.push({y:120+i*320,ph:i*2.1,sp:14+i*4});
 
-/* ---------- AUDIO ---------- */
-var AC=null,ventoG=null,som=false;
+/* ---------- AUDIO (ambiente rico em camadas) ---------- */
+var AC=null,ventoG=null,ambMaster=null,som=false,gust=0.5,birdTimer=2.2,coruja=9;
 function initAudio(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
+ ambMaster=AC.createGain();ambMaster.gain.value=0;ambMaster.connect(AC.destination);
  var n=Math.floor(AC.sampleRate*2),buf=AC.createBuffer(1,n,AC.sampleRate),d=buf.getChannelData(0);
  for(var i=0;i<n;i++)d[i]=(Math.random()*2-1);
- var s=AC.createBufferSource();s.buffer=buf;s.loop=true;var f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=430;
- ventoG=AC.createGain();ventoG.gain.value=0;s.connect(f);f.connect(ventoG);ventoG.connect(AC.destination);s.start();}
+ // 1) vento grave (com rajadas via ventoG)
+ var s=AC.createBufferSource();s.buffer=buf;s.loop=true;var f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=440;
+ ventoG=AC.createGain();ventoG.gain.value=0.05;s.connect(f);f.connect(ventoG);ventoG.connect(ambMaster);s.start();
+ // 2) folhas farfalhando (medio, com swell lento)
+ var s2=AC.createBufferSource();s2.buffer=buf;s2.loop=true;var f2=AC.createBiquadFilter();f2.type="bandpass";f2.frequency.value=2400;f2.Q.value=0.6;
+ var rg=AC.createGain();rg.gain.value=0.016;var rlfo=AC.createOscillator();rlfo.frequency.value=0.12;var rlg=AC.createGain();rlg.gain.value=0.012;rlfo.connect(rlg);rlg.connect(rg.gain);
+ s2.connect(f2);f2.connect(rg);rg.connect(ambMaster);s2.start();rlfo.start();
+ // 3) grilinhos (agudo, pulsante)
+ var s3=AC.createBufferSource();s3.buffer=buf;s3.loop=true;var f3=AC.createBiquadFilter();f3.type="bandpass";f3.frequency.value=5600;f3.Q.value=9;
+ var cg=AC.createGain();cg.gain.value=0.003;var clfo=AC.createOscillator();clfo.type="triangle";clfo.frequency.value=6.5;var clg=AC.createGain();clg.gain.value=0.006;clfo.connect(clg);clg.connect(cg.gain);
+ s3.connect(f3);f3.connect(cg);cg.connect(ambMaster);s3.start();clfo.start();}
 function bip(fr,dur,tp,vol,del){if(!AC||!som)return;var o=AC.createOscillator(),g=AC.createGain();o.type=tp||"sine";o.frequency.value=fr;
  var t=AC.currentTime+(del||0);g.gain.setValueAtTime(vol||.14,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+dur);}
 function somPasso(){bip(150,.05,"square",.03);}
 function somChave(){bip(880,.09,"sine",.15,0);bip(1175,.09,"sine",.15,.1);bip(1568,.16,"sine",.15,.2);}
 function somPio(){var b=1200+Math.floor((byte.passo*7)%5)*120;bip(b,.07,"sine",.09,0);bip(b*1.35,.08,"sine",.09,.08);bip(b*1.15,.09,"sine",.08,.17);}
 function somVitoria(){bip(523,.13,"sine",.14,0);bip(659,.13,"sine",.14,.13);bip(784,.13,"sine",.14,.26);bip(1047,.24,"sine",.14,.39);}
+// canto de passaro: sequencia melodica curta e variada
+var CANTO=[[0,4,7,12,7],[0,7,5,9],[0,3,7,10,7,3],[0,5,9,14]];
+function somCanto(){if(!AC||!som)return;var base=1650+Math.floor(Math.random()*6)*120;var seq=CANTO[Math.floor((birdTimer*7)%CANTO.length)];
+ for(var i=0;i<seq.length;i++){var fr=base*Math.pow(2,seq[i]/12);bip(fr,.085,"sine",.055,i*0.10);bip(fr*2,.06,"sine",.02,i*0.10);}}
+function somCoruja(){if(!AC||!som)return;bip(360,.5,"sine",.05,0);bip(300,.6,"sine",.05,.55);}
 
 /* ---------- VOZ (com FILA: nao corta) ---------- */
 function vozPt(){var vs=(window.speechSynthesis?speechSynthesis.getVoices():[])||[],b=null;for(var i=0;i<vs.length;i++){var l=(vs[i].lang||"").toLowerCase().replace("_","-");if(l.indexOf("pt-br")===0)return vs[i];if(l.indexOf("pt")===0&&!b)b=vs[i];}return b;}
@@ -115,7 +132,7 @@ function pararVoz(){try{if(curAudio){curAudio.onended=null;curAudio.pause();}}ca
 var balaoTxt=null,balaoT=0;
 function balao(t,id,pitch){balaoTxt=t;balaoT=5.5;playFala(id,t,pitch);}
 function unlock(){initAudio();if(!window._u&&window.speechSynthesis){window._u=1;try{speechSynthesis.speak(new SpeechSynthesisUtterance(" "));}catch(e){}}}
-function toggleSom(){unlock();som=!som;var b=document.getElementById("bSom");if(ventoG)ventoG.gain.value=som?0.06:0;
+function toggleSom(){unlock();som=!som;var b=document.getElementById("bSom");if(ambMaster)ambMaster.gain.value=som?0.85:0;
  if(som){b.innerHTML="&#128266; Som ligado";if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
  else{b.innerHTML="&#128263; Mudo";pararVoz();}}
 
@@ -146,6 +163,7 @@ function bloqueado(nx,ny){
 function iniciar(){patG=IMG.grama?cx.createPattern(IMG.grama,"repeat"):null;
  patC=IMG.caminho?cx.createPattern(IMG.caminho,"repeat"):null;
  var p=cellCam();cam.x=p[0];cam.y=p[1];
+ if(IMG.borboleta)for(var i=0;i<3;i++)borbs.push({x:FLORES[i*3][0]+40,y:FLORES[i*3][1]-30,ang:Math.random()*6.28,ph:Math.random()*6.28,t:Math.random()*6.28});
  balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");
  requestAnimationFrame(frame);}
 var patG=null,patC=null;
@@ -165,9 +183,9 @@ function desCaminho(){ // caminho de terra que DESBOTA na grama (bordas fundidas
  // passagens concentricas: de fora (fraca) p/ dentro (cheia) => borda fundida na grama
  traca(112,0.20,col);traca(100,0.42,col);traca(90,0.70,col);traca(80,1.0,col);
  cx.restore();cx.globalAlpha=1;}
-function desArvore(o,t){var x=o[0],y=o[1];sombra(x,y+2,26,8);var sw=Math.sin(t*.0015+x)*0.025;
+function desArvore(o,t){var x=o[0],y=o[1];sombra(x,y+2,26,8);var sw=Math.sin(t*.0016+x*.05)*(0.016+gust*0.03);
  cx.save();cx.translate(x,y);cx.rotate(sw);imgH(IMG.arvore,0,0,120);cx.restore();}
-function desFlor(o,t){if(!IMG.flores)return;var x=o[0],y=o[1];var sw=Math.sin(t*.003+x)*0.04;
+function desFlor(o,t){if(!IMG.flores)return;var x=o[0],y=o[1];var sw=Math.sin(t*.003+x)*(0.03+gust*0.06);
  cx.save();cx.translate(x,y);cx.rotate(sw);imgH(IMG.flores,0,0,34);cx.restore();}
 function desChave(t){if(chave.got)return;var x=chave.x,y=chave.y-8-Math.sin(t*.004)*5;
  cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(x,y,2,x,y,34);
@@ -200,6 +218,11 @@ var ult=null;
 function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=ts;var t=ts;
  if(!patM&&IMG.muro)patM=cx.createPattern(IMG.muro,"repeat");
  byte.resp+=dt*3;if(balaoT>0)balaoT-=dt;
+ // vento em rajadas + agenda de sons ambientes
+ gust=0.45+0.35*Math.sin(t*.0004)+0.30*Math.max(0,Math.sin(t*.00013+1.2));
+ if(ventoG&&som)ventoG.gain.value=0.028+0.05*gust;
+ birdTimer-=dt;if(birdTimer<=0){birdTimer=3.2+Math.random()*4.2;somCanto();}
+ coruja-=dt;if(coruja<=0){coruja=16+Math.random()*16;somCoruja();}
  // ---- movimento ----
  if(!fim){var v=inputVec(),vx=v[0],vy=v[1];byte.mov=(vx||vy)?true:false;
   if(byte.mov){var L=Math.sqrt(vx*vx+vy*vy);vx/=L;vy/=L;var sp=140;
@@ -218,9 +241,13 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  if(hasKey&&!fim){var ax=byte.x-arco.x,ay=byte.y-(arco.y-16);if(ax*ax+ay*ay<80*80){fim=true;fimT=0;somVitoria();
    balao("Ali está o labirinto de pedra! É onde o Nimbo prendeu os amiguinhos. Na próxima aventura a gente entra para salvá-los.","s1_labirinto");}}
  if(fim)fimT+=dt;
- // ---- efeitos: folhas, passaros, pollen, estrelas ----
- if(Math.sin(t*.017)>0.9996 || leaves.length<18){ if(leaves.length<26)leaves.push({x:cam.x+Math.random()*VW,y:cam.y-10,vx:-14-Math.random()*20,vy:16+Math.random()*22,rot:Math.random()*6.28,vr:(Math.random()-.5)*3,s:5+Math.random()*5,a:.9,c:Math.random()<.5?"#7fae3a":"#d98a2b"}); }
- for(i=leaves.length-1;i>=0;i--){var lf=leaves[i];lf.x+=(lf.vx+Math.sin(t*.002+lf.y)*10)*dt;lf.y+=lf.vy*dt;lf.rot+=lf.vr*dt;if(lf.y>cam.y+VH+20){leaves.splice(i,1);}}
+ // ---- efeitos: folhas/petalas, passaros, borboletas, pollen ----
+ if(leaves.length<40 && (Math.random()<0.06+gust*0.06)){var tipo=Math.random();var col=tipo<.4?"#7fae3a":tipo<.7?"#d98a2b":(tipo<.85?"#f2a6c0":"#e7d24a");
+  leaves.push({x:cam.x+Math.random()*VW,y:cam.y-10,vx:-(10+Math.random()*24)*(0.6+gust),vy:14+Math.random()*22,rot:Math.random()*6.28,vr:(Math.random()-.5)*3.5,s:(tipo<.7?5:3.5)+Math.random()*4,a:.92,c:col,petal:tipo>=.7}); }
+ for(i=leaves.length-1;i>=0;i--){var lf=leaves[i];lf.x+=(lf.vx+Math.sin(t*.002+lf.y)*12*(0.5+gust))*dt;lf.y+=lf.vy*dt;lf.rot+=lf.vr*dt;if(lf.y>cam.y+VH+20||lf.x<cam.x-30){leaves.splice(i,1);}}
+ // borboletas: vagueiam suave
+ for(i=0;i<borbs.length;i++){var bo=borbs[i];bo.t+=dt;bo.ang+=Math.sin(t*.0013+bo.ph)*0.03;bo.x+=Math.cos(bo.ang)*36*dt;bo.y+=(Math.sin(bo.ang*1.4+bo.ph)*24+Math.sin(t*.004+bo.ph)*10)*dt;
+  if(bo.x<40)bo.ang=0;if(bo.x>WW-40)bo.ang=Math.PI;if(bo.y<60)bo.y=60;if(bo.y>WH-60)bo.y=WH-60;}
  if(birds.length<2 && Math.sin(t*.013+2)>0.999){birds.push({x:cam.x-40,y:cam.y+40+Math.random()*120,vx:60+Math.random()*40,ph:Math.random()*6.28,chirp:0});}
  for(i=birds.length-1;i>=0;i--){var bd=birds[i];bd.x+=bd.vx*dt;bd.y+=Math.sin(t*.005+bd.ph)*10*dt;bd.chirp-=dt;if(bd.chirp<=0){somPio();bd.chirp=1.2+Math.random();}if(bd.x>cam.x+VW+60)birds.splice(i,1);}
  for(i=estrelas.length-1;i>=0;i--){var s=estrelas[i];s.x+=s.vx*dt;s.y+=s.vy*dt;s.vy+=120*dt;s.a-=dt*.5;if(s.a<=0)estrelas.splice(i,1);}
@@ -230,6 +257,12 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  // chao
  if(patG){cx.fillStyle=patG;cx.fillRect(cam.x,cam.y,VW,VH);}else{cx.fillStyle="#3f7a34";cx.fillRect(cam.x,cam.y,VW,VH);}
  desCaminho();
+ // brilho de luz do vento passando no chao
+ cx.save();cx.globalCompositeOperation="lighter";
+ for(i=0;i<luzChao.length;i++){var lc=luzChao[i];var lx=((t*0.012*lc.sp+lc.ph*500)%(WW+800))-400;
+  var grd=cx.createRadialGradient(lx,lc.y,10,lx,lc.y,250);grd.addColorStop(0,"rgba(255,250,190,"+(0.05+0.03*gust)+")");grd.addColorStop(1,"rgba(255,250,190,0)");
+  cx.fillStyle=grd;cx.beginPath();cx.ellipse(lx,lc.y,250,150,0,0,Math.PI*2);cx.fill();}
+ cx.restore();
  // flores (no chao, atras dos personagens)
  for(i=0;i<FLORES.length;i++)desFlor(FLORES[i],t);
  // lista y-sort: arvores + chave + byte + arco
@@ -244,6 +277,11 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  for(i=0;i<birds.length;i++){var bd2=birds[i],by=bd2.y,wing=Math.sin(t*.02+bd2.ph)*6;
   if(IMG.passaro){cx.save();cx.translate(bd2.x,by);cx.scale(-0.5,0.5);cx.globalAlpha=.95;imgH(IMG.passaro,0,10,34);cx.restore();}
   else{cx.strokeStyle="#333";cx.lineWidth=2;cx.beginPath();cx.moveTo(bd2.x-8,by-wing);cx.lineTo(bd2.x,by);cx.lineTo(bd2.x+8,by-wing);cx.stroke();}}
+ // borboletas (esvoacando por cima do prado)
+ if(IMG.borboleta)for(i=0;i<borbs.length;i++){var bo=borbs[i];var flap=Math.abs(Math.sin(t*.02+bo.ph));
+  var w=IMG.borboleta.width*26/IMG.borboleta.height;
+  cx.save();cx.translate(bo.x,bo.y-Math.sin(t*.004+bo.ph)*4);cx.scale((0.45+0.55*flap)*(Math.cos(bo.ang)<0?-1:1),0.72+0.28*flap);
+  cx.drawImage(IMG.borboleta,-w/2,-13,w,26);cx.restore();}
  // folhas
  for(i=0;i<leaves.length;i++){var lf2=leaves[i];cx.save();cx.translate(lf2.x,lf2.y);cx.rotate(lf2.rot);cx.globalAlpha=lf2.a;cx.fillStyle=lf2.c;
   cx.beginPath();cx.ellipse(0,0,lf2.s*.5,lf2.s,0,0,Math.PI*2);cx.fill();cx.restore();cx.globalAlpha=1;}
