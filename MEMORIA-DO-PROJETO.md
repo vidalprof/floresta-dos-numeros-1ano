@@ -102,6 +102,20 @@ O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho)
   guiar personagem por caminho com placas (demo Jardim/Placas). FALTA costurar num mapa contínuo
   + o labirinto + a cena de dormir + mais personagens/animações/sons.
 
+## 📦 Dinâmica do EducaVerso: 1 repo por atividade + empacotamento + som
+- **Um repositório por atividade** (regra "portal leve" do CLAUDE.md): cada atividade =
+  `index.html` + `img/` + `audio/`, publicada no GitHub Pages, com **link próprio**. O hub
+  "Ilhas do Saber" é só um **mapa leve** que APONTA os links — não carrega o peso. Assim escala
+  (5 ou 500 atividades) sem o build engasgar. Cada atividade é **independente e descartável**.
+- **Empacotamento:** TESTE rápido = HTML self-contained (assets em base64, 1 arquivo). PUBLICADA
+  = pasta leve (`index.html` + `img/` + `audio/`). Fábrica cria/atualiza o repo por workflow.
+- **FALA (narração/diálogo)** = TEXTO → `gerar-audio.yml` (edge-tts) → mp3. (Voz por API, sim.)
+- **SFX de ambiente/ação** (vento, trovão, porta, machado, passos, chave) = **Web Audio
+  sintetizado** (grátis, offline).
+- **SFX realistas** (miado, pássaros, lenhador) = **clipes mp3 CC0**: o chat NÃO baixa, mas um
+  **workflow baixa** (a montar: `baixar-sons.yml`, igual gerar-imagens) OU o professor fornece.
+  Regra séria: só **CC0 / livre de direitos** (é produto de escola).
+
 ## 🛡️ Regra de ouro contra ESQUECER
 1. **Sincronizar com o GitHub ANTES de agir** (o hook `.claude/hooks/sync-remoto.sh`
    já faz automático no início da sessão).
