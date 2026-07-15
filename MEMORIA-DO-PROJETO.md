@@ -268,3 +268,25 @@ Antonio = Nimbo). Voz por personagem fica pra depois. Dois caminhos já mapeados
   no workflow (testar 1 fala antes — nunca confirmar sem ouvir).
 - **Elenco proposto:** Byte/Narrador = clara/acolhedora; Nimbo = grave/resmungona;
   Gato Pigo = agudo/brincalhão; Coelha Nina = doce; Passarinho Tuim = bem agudo/rápido.
+
+## ⭐ FILOSOFIA DO EDUVERSE (LEI — trazida pelo Marcos, 2026-07-15)
+Documento oficial: **`EDUVERSE-FILOSOFIA.md`** (é o **Portão 0** do QA). Resumo do que NÃO
+esquecer NUNCA:
+- **Não é jogo de pergunta/resposta. Não é prova disfarçada.** Nada de "acerte a conta →
+  abre o baú/porta/ganha moeda". Esse modelo já existe; o EduVerse é OUTRA coisa.
+- O aluno aprende porque **O MUNDO PRECISA** daquele conhecimento. **Problema primeiro**;
+  o **conteúdo/pergunta NUNCA aparece primeiro**; o **conceito é nomeado por ÚLTIMO**.
+- Arco fixo: **História → Exploração → Problema → Experimentação → Descoberta → Conceito →
+  Aplicação → Reflexão** (nunca invertido).
+- Conhecimento = **ferramenta** (resolve), nunca **obstáculo** (bloqueia).
+- **Byte pergunta** ("o que você percebe?", "tem jeito mais rápido?", "achou um padrão?",
+  "como organizar isso?"), nunca "qual é a resposta?".
+- Eu (IA) transformo conteúdo escolar em **experiência** (história/construção/investigação),
+  **nunca** em lista de perguntas. Exemplos do Marcos (multiplicação): plantar 6 canteiros ×
+  4 árvores; caixas de 8 rodas × 7 caixas; galinheiros de 6 galinhas — o aluno organiza
+  grupos, conta, vê padrão, e a multiplicação **nasce** disso.
+- No fim o aluno diz "hoje **ajudei/construí/salvei/descobri**", e só depois "…aprendi X".
+
+**Aplicar já na "Floresta do Byte":** o Byte deve **provocar** (perguntas), a mecânica de
+guiar/empurrar é a **ferramenta** pra salvar o amigo (problema do mundo), e fechar com a
+**descoberta + nome do conceito** (algoritmo/sequência/depuração) + **reflexão**, de leve.

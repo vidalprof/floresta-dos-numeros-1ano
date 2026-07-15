@@ -6,7 +6,22 @@
 
 ---
 
-## Os 3 PORTÕES (nesta ordem — não pular)
+## Os PORTÕES (nesta ordem — não pular)
+
+### 🌱 Portão 0 — FILOSOFIA (a atividade É EduVerse? — ver `EDUVERSE-FILOSOFIA.md`)
+Antes de qualquer código, a missão passa por este crivo. Se falhar, **redesenhar** — não codar.
+- [ ] Começa com um **problema do mundo** (história), **nunca** com o conteúdo/pergunta.
+- [ ] O conhecimento é **ferramenta** que resolve o problema, **nunca obstáculo/tranca**.
+- [ ] Aluno **age/constrói/experimenta ANTES** de qualquer conceito; o **padrão** emerge da ação.
+- [ ] O **conceito escolar é nomeado por ÚLTIMO** (de leve) + **Reflexão** no fim.
+- [ ] **Byte pergunta** ("o que você percebe?", "tem jeito mais rápido?", "achou um padrão?") —
+      nunca "qual é a resposta?" nem "faça X".
+- [ ] **NÃO** é prova disfarçada: sem pergunta-para-abrir-porta, sem X vermelho, sem alternativa.
+- [ ] Segue o arco: História → Exploração → Problema → Experimentação → Descoberta → Conceito →
+      Aplicação → Reflexão (nunca invertido).
+- [ ] No fim o aluno diria "hoje **ajudei/construí/salvei/descobri**", e só depois "…aprendi X".
+
+## Os 3 PORTÕES seguintes (nesta ordem — não pular)
 
 ### 🔧 Portão 1 — VERIFICAR (a máquina prova que funciona)
 - [ ] `node --check` em todo o JavaScript extraído — **zero** erro de sintaxe.

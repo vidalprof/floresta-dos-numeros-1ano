@@ -6,6 +6,10 @@ Leia tudo antes de agir e responda sempre em **português**.
 
 > ## 0. ORIENTAÇÃO OBRIGATÓRIA — LER PRIMEIRO (evita o erro de "cópia velha")
 >
+> **⭐ ANTES DE TUDO, leia o `EDUVERSE-FILOSOFIA.md`** — é a LEI pedagógica do EduVerse:
+> nunca é prova disfarçada; o aluno aprende porque **o MUNDO PRECISA**; o problema vem
+> primeiro e o conceito por ÚLTIMO; o Byte **pergunta**, não responde. É o **Portão 0** do QA.
+>
 > **Leia também o `MEMORIA-DO-PROJETO.md`** — é a memória do que já construímos e
 > do que EU consigo fazer (gerar imagem/áudio por workflow, secrets, atividades).
 > Como eu começo cada sessão sem memória, tudo importante fica escrito ali: é a
