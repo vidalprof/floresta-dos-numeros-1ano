@@ -150,6 +150,8 @@ NÃO é contradição — são DUAS CAMADAS:
   ver `ATIVIDADE-COMPUTACAO.md`).
 
 ## 🎯 META CRÍTICA do Marcos: EducaVerso cobre TODO o currículo de Computação
+> ⏳ **ADIADO a pedido do Marcos — DIALOGAR DEPOIS** (o mapa de cobertura + a questão
+> plugado/desplugado). Registrado aqui para retomar. Prioridade agora: construir a 1ª atividade.
 - Ano que vem o Marcos ministra o **currículo de Computação**. A **coordenadora** pede
   **atividades DESPLUGADAS** + **sequências didáticas**.
 - O Marcos QUER que o **EducaVerso atinja TODOS os objetivos de aprendizagem** (3 eixos × turma)
