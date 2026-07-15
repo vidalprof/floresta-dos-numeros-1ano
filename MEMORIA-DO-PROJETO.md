@@ -82,6 +82,10 @@ O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho)
   frente → entrar numa CASA/CABANA (interagir, achar a próxima chave) → próximo labirinto → e assim
   vai (achar chaves, interagir, salvar personagens).
 - **Vários** labirintos e **vários** personagens para salvar, ao longo do caminho.
+- **LABIRINTO DE PEDRA (ideia do Marcos):** o labirinto é feito de **muros de pedra** (tile premium
+  gerado por IA); o Byte **atravessa programando o caminho** (as setas de madeira) até chegar no
+  personagem preso. Mais interessante e desafiador que grid aberto com poucas árvores. Usar na
+  atividade "A Floresta do Byte".
 - **Casas/cabanas vivas:** chaminé soltando fumaça, lenhador cortando lenha, detalhes que as
   crianças amam.
 - **Ciclo dia/noite com HISTÓRIA:** escurece → o Byte precisa entrar na cabana, chegar perto da
