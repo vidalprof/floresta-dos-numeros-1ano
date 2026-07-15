@@ -65,6 +65,13 @@ Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir n
 - **MISSÕES são o formato "legal de aprender":** cada aprendizado vira uma MISSÃO no mundo
   (um objetivo de história: ajudar X, recuperar Y, construir Z) e o conteúdo é o CAMINHO para
   cumprir. Curtas e concretas para os pequenos; quests de várias etapas para os maiores.
+- **ALUNO ATIVO/PROTAGONISTA (inegociável):** a criança CONSTRÓI, interage e participa — nunca
+  só assiste/escolhe alternativa. Ela monta a máquina, programa o robô, constrói a ponte, cria a
+  solução. A construção SÓ funciona se o conceito estiver certo → construir = provar que entendeu.
+- **AS FASES DEVEM ENTREGAR O OBJETIVO DO CURRÍCULO (gating + medição):** cada fase é desenhada a
+  partir de um objetivo do currículo que o professor inseriu; completar a missão EXIGE demonstrar
+  aquele objetivo (a construção "trava" até estar correta). A avaliação invisível MEDE quem
+  alcançou o objetivo e quem precisa de apoio → relatório descritivo para o professor agir.
 - Estado: groundwork existe (baixar-curriculo.yml, ATIVIDADE-COMPUTACAO.md, catálogo de
   interatividades); FALTA o montador que casa currículo→mecânica→mundo→faixa de forma semiautomática.
 
