@@ -80,3 +80,8 @@ salvei uma floresta / descobri uma solução." E **só depois** perceber:
 8. **Sem** X vermelho, sem "resposta certa/errada", sem pergunta-para-abrir-porta.
 9. Erro = **consequência no mundo** que convida a tentar de novo (depuração natural).
 10. No fim, o aluno sente que **fez algo**, não que **foi testado**.
+
+---
+> **Parte 2 — Computação:** o jeito de ensinar Computação (foco do PRÓXIMO ano) e o
+> **mapa de progressão** (sequência → condição → repetição → função → depuração) estão
+> em **`EDUVERSE-COMPUTACAO.md`**. Mesma filosofia, aplicada ao currículo de Computação.

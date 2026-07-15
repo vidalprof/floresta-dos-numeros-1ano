@@ -290,3 +290,18 @@ esquecer NUNCA:
 **Aplicar já na "Floresta do Byte":** o Byte deve **provocar** (perguntas), a mecânica de
 guiar/empurrar é a **ferramenta** pra salvar o amigo (problema do mundo), e fechar com a
 **descoberta + nome do conceito** (algoritmo/sequência/depuração) + **reflexão**, de leve.
+
+## 🤖 FILOSOFIA DA COMPUTAÇÃO + MAPA DA SEQUÊNCIA DIDÁTICA (Marcos, 2026-07-15)
+Documento oficial: **`EDUVERSE-COMPUTACAO.md`** (Parte 2 da filosofia). É o **mapa** que a
+coordenação pede pro ano que vem. Progressão dos conceitos, cada um nascendo de um PROBLEMA
+do mundo (nunca apresentado primeiro):
+1. **Sequência/Algoritmo** — desenhar o caminho do robô; ele executa exatamente; erra na tela.
+2. **Condição (SE)** — rio em que o robô cai → "SE achar rio → vira".
+3. **Repetição (loop)** — 10 entregas iguais → "dá pra mandar repetir sozinho?".
+4. **Função** — vários robôs iguais → "uma instrução que qualquer robô use".
+5. **Depuração** — o robô executa o erro de verdade; observa, acha, corrige, testa.
+Mundo-exemplo: **Vale das Máquinas** (robôs, trem, fábrica, esteiras, rio, ponte, cidade) —
+cenário ideal pro ano da Computação, com o mesmo Byte.
+**JÁ FAZEMOS o item 1** na "Floresta do Byte" (põe setas = desenha caminho; VAI; Byte erra no
+muro = depuração sem X). FALTA: Byte perguntando + condição + repetição explícita + função.
+A Floresta do Byte é a **Missão 1** dessa jornada (ponte pro currículo de Computação).
