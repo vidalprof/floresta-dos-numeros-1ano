@@ -234,3 +234,25 @@ Primeira atividade do EducaVerso, montada com todos os especialistas e aprovada 
 - **A-FAZER (próximas etapas):** mais amiguinhos (tartaruga/Lelê, esquilo/Tuca, sapo/Coaxo),
   missões de depuração e loop com a placa "repetir", mais alívios (memória-no-chão, regar
   flores), fechar os 55 min; depois: nome do estudante na narração + salvar progresso.
+
+## 🔊 Voz gerada + controles no celular — "A Floresta do Byte" — 2026-07-15
+- **VOZ GERADA (não a do navegador):** as falas fixas são geradas pelo workflow
+  `gerar-audio.yml` (edge-tts) em **lote** (`_audio/<id>.mp3`) e **embutidas em
+  base64** no HTML, tocadas por `<audio>`. A `speechSynthesis` do navegador vira só
+  **reserva**. Vozes: narrador/Byte/amiguinhos = **female (Francisca)**; Nimbo =
+  **male (Antonio)**. **LIÇÃO PAGA:** a voz `male2`/**Donato** FALHOU no edge-tts
+  ("edge-tts falhou") — saiu do catálogo; usar `male` (Antonio) ou `female`
+  (Francisca), que funcionam. Sempre restringir o embed à LISTA de ids da atividade
+  (o `_audio/` do repo tem centenas de mp3 de outras atividades — embutir tudo incha).
+- **D-PAD no celular (pedido do Marcos):** em telas de toque aparece um teclado de
+  setas (▲◀✖▶▼); no PC ele **some** (detecção `pointer:coarse`/`ontouchstart`;
+  `?dpad=1` força p/ teste). Dinâmica no toque: **tocar numa pedra** (anel de
+  destaque) → **escolher a direção** no D-pad → **VAI**; ✖ remove. No PC continua o
+  clique-que-cicla a seta.
+- **LIÇÃO PAGA (screenshot):** o Chromium headless tem **largura mínima ~500px** —
+  foto com `--window-size=400` corta a direita e PARECE overflow. Diagnosticar com
+  `document.body.scrollWidth` vs `innerWidth` (deu 500==500 = sem estouro), não confiar
+  no corte da foto. Fotografar em ≥500px de largura p/ prévia mobile fiel.
+- **Publicação:** repo próprio **`floresta-do-byte`** → `atualizar.yml`
+  (`repo_name=floresta-do-byte`, `source_dir=_novo`). No ar em
+  **https://vidalprof.github.io/floresta-do-byte/**.
