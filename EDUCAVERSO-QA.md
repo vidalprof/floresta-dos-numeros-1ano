@@ -29,6 +29,11 @@ Um passe cético — de preferência **um agente separado** — confere item a i
 - [ ] **Estilo consistente** entre os assets (mesma "cara" cartoon premium pintada à mão).
 - [ ] **Animações de verdade:** respiração no idle, andar suave, clima, luz, vento, água — o
       mundo **VIVO** (idêntico ao padrão premium de antes, só que 2D/tile).
+- [ ] **Imagens NÃO se sobrepõem indevidamente** *(lição paga do Marcos)*: ordenação por
+      profundidade (**y-sort**) correta; sprites **ancorados nos pés** e dimensionados pela
+      **ALTURA** (não estouram a célula/container); o **balão de fala não cobre o personagem**;
+      no **labirinto**, o muro não esconde o Byte no corredor; personagem/jaula/props não se
+      tampam. Conferir renderizando cada tela e cada momento.
 
 **Mecânica**
 - [ ] Funciona ponta a ponta; o **gating** trava até o objetivo ser cumprido.
