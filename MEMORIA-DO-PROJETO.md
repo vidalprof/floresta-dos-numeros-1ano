@@ -68,3 +68,10 @@ documento-mestre (`EDUCAVERSO.md`, seção Personagens Vivos) e para implementar
   Fácil e alto impacto: o aluno informa o nome (login simples por código de turma) e
   o nome entra nas falas/narração (Web Speech interpola o texto). Já existe a ideia
   de `S.nome` nos manuais.
+- **Guardar o progresso do estudante (a aventura dura o ANO INTEIRO):** o jogo salva
+  onde a criança parou (mundos/áreas abertos, itens, atividades feitas, evidências).
+  Duas camadas: **local** (localStorage, funciona offline) + **nuvem** (Firebase, com
+  login simples por código de turma + nome) — a criança volta e CONTINUA de onde
+  parou, a aventura seguindo o ano letivo (campanha por bimestre/semestre). **O mesmo
+  dado salvo alimenta a avaliação descritiva** e o painel do professor (o que a criança
+  fez = a evidência). É a "jornada do estudante" da visão do EducaVerso.
