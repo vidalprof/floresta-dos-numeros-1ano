@@ -202,3 +202,35 @@ documento-mestre (`EDUCAVERSO.md`, seção Personagens Vivos) e para implementar
   parou, a aventura seguindo o ano letivo (campanha por bimestre/semestre). **O mesmo
   dado salvo alimenta a avaliação descritiva** e o painel do professor (o que a criança
   fez = a evidência). É a "jornada do estudante" da visão do EducaVerso.
+
+## ✅ CONSTRUÍDO — "A Floresta do Byte" (Etapa 1, versão incrível) — 2026-07-15
+Primeira atividade do EducaVerso, montada com todos os especialistas e aprovada nos
+**Portões 1 e 2** do `EDUCAVERSO-QA.md` (falta o Portão 3, do Marcos).
+- **Arquivo:** `_demos/educaverso/floresta/index.html` (HTML único, ~611 KB, base64,
+  offline). Builder: `_demos/educaverso/floresta/build_floresta2.py`. Assets (todos IA):
+  grama (chão), muro de pedra (paredes), árvore, byte, gato, coelho, passarinho, nimbo,
+  jaula, chave, seta de madeira, cabana.
+- **Labirinto REAL de pedra:** chão de grama (IA) + muros de pedra (IA) preenchendo a
+  maioria das células; corredores sinuosos com becos (M2). Grid 9×7. **Byte sempre
+  desenhado por cima dos muros** (regra: muro nunca esconde o Byte). Muros em relevo
+  (topo levantado + face frontal + sombra), y-sort linha a linha.
+- **História:** Nimbo (nuvem cinzenta resmungona, com raio e trovão) prende 3 amiguinhos;
+  no final o Nimbo vira bonzinho e há festa na cabana (chaminé com fumaça).
+- **3 missões** guiando o Byte com **setas de madeira no chão** (clicar cicla a direção):
+  M1 sequência (serpentina), M2 desvio (becos sem saída), M3 repetição (espiral até o
+  centro). Amiguinhos: Gato Pigo → Coelha Nina → Passarinho Tuim.
+- **1 alívio:** pegar vaga-lumes (após M1), volta ao mundo sozinho.
+- **Som Web Audio:** vento (loop), passo, erro, chave, faísca, miau, pio, trovão, twinkle,
+  vitória. **Voz** pt-BR (Nimbo com pitch grave). Destrava no 1º gesto + botão "Som e Voz".
+- **Pedagogia (Pensamento Computacional, sem perceber):** a criança CONSTRÓI o algoritmo
+  (sequência de setas), erra e depura (seta no muro = tremor + som, sem X vermelho),
+  vê consequência no mundo. Gating: só liberta quem chega na jaula.
+- **LIÇÃO PAGA (nova):** *screenshot com `--virtual-time-budget` engana* — o tempo virtual
+  pode capturar o meio de uma animação/ciclo e parecer que "voltou ao início". Para PROVAR
+  a mecânica, **dirigir de forma determinística**: `_qaSolve()` (BFS resolve o labirinto) +
+  simular o `prox()` passo a passo e **despejar o resultado no `document.title` com
+  `--dump-dom`** (não confiar só na foto). Assim confirmei M1/M2/M3 `reached=true` e a
+  cadeia missão→alívio→missão→final `salvos=3`.
+- **A-FAZER (próximas etapas):** mais amiguinhos (tartaruga/Lelê, esquilo/Tuca, sapo/Coaxo),
+  missões de depuração e loop com a placa "repetir", mais alívios (memória-no-chão, regar
+  flores), fechar os 55 min; depois: nome do estudante na narração + salvar progresso.
