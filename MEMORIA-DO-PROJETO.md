@@ -75,6 +75,27 @@ Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir n
 - Estado: groundwork existe (baixar-curriculo.yml, ATIVIDADE-COMPUTACAO.md, catálogo de
   interatividades); FALTA o montador que casa currículo→mecânica→mundo→faixa de forma semiautomática.
 
+## 🗺️ A GRANDE AVENTURA — estrutura do mundo (visão do Marcos)
+O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
+- **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
+  JAULA → SALVAR o amiguinho preso (animação: chave destranca, som, o amigo agradece) → seguir em
+  frente → entrar numa CASA/CABANA (interagir, achar a próxima chave) → próximo labirinto → e assim
+  vai (achar chaves, interagir, salvar personagens).
+- **Vários** labirintos e **vários** personagens para salvar, ao longo do caminho.
+- **Casas/cabanas vivas:** chaminé soltando fumaça, lenhador cortando lenha, detalhes que as
+  crianças amam.
+- **Ciclo dia/noite com HISTÓRIA:** escurece → o Byte precisa entrar na cabana, chegar perto da
+  cama e DORMIR um pouquinho → amanhece → sai e continua a jornada.
+- **Fases de ALÍVIO** intercaladas (memória-no-chão, pegar vaga-lumes, etc.).
+- **Muita animação e SOM:** chave destrancando, jaula abrindo, o amigo agradecendo, fumaça,
+  machado do lenhador.
+- **A pedagogia mora DENTRO:** cada chave/labirinto/jaula guarda um desafio de aprendizado do
+  currículo — a aventura é o embrulho; o aprender é o conteúdo (aprender sem perceber).
+- **Blocos que JÁ temos (prova de conceito):** mundo explorável + dia/noite/clima (demo Mundo
+  Vivo); entrar em casa + interior + lampião + NPCs + chave/inventário/porta (demo Taberna);
+  guiar personagem por caminho com placas (demo Jardim/Placas). FALTA costurar num mapa contínuo
+  + o labirinto + a cena de dormir + mais personagens/animações/sons.
+
 ## 🛡️ Regra de ouro contra ESQUECER
 1. **Sincronizar com o GitHub ANTES de agir** (o hook `.claude/hooks/sync-remoto.sh`
    já faz automático no início da sessão).
