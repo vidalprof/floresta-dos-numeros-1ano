@@ -85,3 +85,6 @@ salvei uma floresta / descobri uma solução." E **só depois** perceber:
 > **Parte 2 — Computação:** o jeito de ensinar Computação (foco do PRÓXIMO ano) e o
 > **mapa de progressão** (sequência → condição → repetição → função → depuração) estão
 > em **`EDUVERSE-COMPUTACAO.md`**. Mesma filosofia, aplicada ao currículo de Computação.
+> **Parte 3 — Pipeline de construção:** COMO construir (mundo→vida→personagens→objetos→
+> problema→exploração→necessidade→conceito→reflexão) e a biblioteca reutilizável de
+> **tiles + personagens + animações (LEGO digital)** estão em **`EDUVERSE-PIPELINE.md`**.

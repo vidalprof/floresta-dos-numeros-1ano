@@ -305,3 +305,15 @@ cenário ideal pro ano da Computação, com o mesmo Byte.
 **JÁ FAZEMOS o item 1** na "Floresta do Byte" (põe setas = desenha caminho; VAI; Byte erra no
 muro = depuração sem X). FALTA: Byte perguntando + condição + repetição explícita + função.
 A Floresta do Byte é a **Missão 1** dessa jornada (ponte pro currículo de Computação).
+
+## 🏗️ PIPELINE DE CONSTRUÇÃO + BIBLIOTECA LEGO (Marcos, 2026-07-15)
+Documento oficial: **`EDUVERSE-PIPELINE.md`** (Parte 3). Regra-mãe: **não criamos atividades,
+criamos MUNDOS VIVOS**; a atividade nasce dentro. Pipeline de 10 etapas (mundo → vida →
+personagens → rotina → objetos inteligentes → PROBLEMA → exploração → necessidade → conceito
+natural → reflexão). **Mapas por TILES** (32/48/64) tipo LEGO; **biblioteca reutilizável** de
+tiles/objetos/personagens; **folha de animações padrão** por personagem (parado, andar ↑↓←→,
+falar, feliz, pensando, comemorando, triste, esperando). Tech: Canvas 2D, sprite sheets, tiles,
+Firebase; compat. Win7/Chrome antigo, 1024×768. **Objetivo:** nova atividade = MONTADA com peças
+reutilizáveis, não do zero (é isso que deixa a criação FÁCIL). Futuro: editor arrastar-e-soltar.
+FALTA construir o KIT base (estilo travado → tiles + Byte animado + objetos) e passar a montar as
+atividades a partir dele.
