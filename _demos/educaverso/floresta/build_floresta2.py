@@ -12,27 +12,60 @@ NM={"grama":"grama.png","muro":"muro.png","arvore":"arvore.png","byte":"byte.png
     "gato":"gato.png","coelho":"coelho.png","passaro":"passarinho.png","nimbo":"nimbo.png",
     "jaula":"jaula.png","chave":"chave.png","seta":"seta.png","cabana":"cabana.png"}
 A={("__%s__"%k.upper()):b64(v) for k,v in NM.items()}
+# Falas geradas (edge-tts) embutidas como base64 -> _audio/<id>.mp3
+# SO as falas desta atividade (o _audio do repo tem centenas de outras).
+import json as _json
+FALA_IDS=["h_byte1","h_nimbo","h_byte2","h_byte3",
+  "m1_intro","m2_intro","m3_intro","m1_livre","m2_livre","m3_livre",
+  "alivio_ini","alivio_fim","err_muro","err_semseta","err_circulo","final"]
+AUD=os.path.join(S,"_audio");FAL={}
+for idn in FALA_IDS:
+    p=os.path.join(AUD,idn+".mp3")
+    if os.path.exists(p):
+        with open(p,"rb") as f:
+            FAL[idn]="data:audio/mpeg;base64,"+base64.b64encode(f.read()).decode()
+    else:
+        print("!! FALTA audio:",idn)
+print("falas embutidas:",len(FAL),"/",len(FALA_IDS))
+FALAS_JSON=_json.dumps(FAL)
 
 HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>EducaVerso - A Floresta do Byte</title>
 <style>
  html,body{margin:0;height:100%;background:#0a1120;color:#eaf2ff;font-family:Verdana,Geneva,sans-serif;text-align:center;overflow:hidden;}
- #wrap{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
- h1{font-size:15px;margin:4px 0 0;letter-spacing:.3px;} .sub{font-size:11px;color:#9fb6df;margin:0 0 4px;}
- #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;}
- canvas{display:block;border-radius:10px;background:#3f7a34;max-width:96vw;height:auto;cursor:pointer;}
- #painel{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;}
+ #wrap{height:100%;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;}
+ h1{font-size:15px;margin:4px 0 0;letter-spacing:.3px;width:100%;} .sub{font-size:11px;color:#9fb6df;margin:0 auto 4px;width:100%;max-width:94vw;box-sizing:border-box;padding:0 8px;line-height:1.35;}
+ #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:96vw;box-sizing:border-box;}
+ canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;height:auto;cursor:pointer;}
+ #painel{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;padding:0 6px;}
  .bt{font-family:inherit;font-weight:bold;border:0;border-radius:14px;cursor:pointer;padding:9px 16px;font-size:15px;color:#0a1120;-webkit-transition:transform .05s;transition:transform .05s;}
  .bt.vai{background:-webkit-linear-gradient(#bff7d6,#4fcf8e);background:linear-gradient(#bff7d6,#4fcf8e);box-shadow:0 3px 0 #2f9463;}
  .bt.vai:active{transform:translateY(2px);box-shadow:0 1px 0 #2f9463;}
  .bt.lp{background:linear-gradient(#ffd0d0,#f08a8a);box-shadow:0 3px 0 #b04d4d;}
  .bt.vz{background:linear-gradient(#ffe08a,#f5b73f);box-shadow:0 3px 0 #b07d1e;}
  .bt:disabled{opacity:.5;filter:grayscale(.5);cursor:default;}
+ .subPC{display:block;} .subTouch{display:none;}
+ /* D-pad de setas: some no PC, aparece no toque */
+ #dpad{display:none;margin:8px auto 0;grid-template-columns:repeat(3,58px);grid-template-rows:repeat(3,50px);gap:6px;justify-content:center;}
+ #dpad button{font-family:inherit;font-size:22px;font-weight:bold;border:0;border-radius:13px;color:#12325a;
+   background:-webkit-linear-gradient(#eaf3ff,#b7cbe9);background:linear-gradient(#eaf3ff,#b7cbe9);box-shadow:0 3px 0 #7f93b3;cursor:pointer;}
+ #dpad button:active{transform:translateY(2px);box-shadow:0 1px 0 #7f93b3;}
+ #dpad .dx{background:linear-gradient(#ffd6d6,#f19a9a);box-shadow:0 3px 0 #b05a5a;color:#5a1616;}
+ .dU{grid-column:2;grid-row:1;} .dL{grid-column:1;grid-row:2;} .dC{grid-column:2;grid-row:2;} .dR{grid-column:3;grid-row:2;} .dD{grid-column:2;grid-row:3;}
+ body.touch .subPC{display:none;} body.touch .subTouch{display:block;} body.touch #dpad{display:grid;}
 </style></head><body><div id="wrap">
  <h1>&#127795; A Floresta do Byte</h1>
- <p class="sub">clique no ch&#227;o p/ p&#245;r as setas de madeira &#183; aperte VAI &#183; guie o Byte pelo labirinto at&#233; a jaula!</p>
+ <p class="sub subPC">clique no ch&#227;o p/ p&#245;r as setas de madeira &#183; aperte VAI &#183; guie o Byte pelo labirinto at&#233; a jaula!</p>
+ <p class="sub subTouch">toque numa pedra do caminho &#183; escolha a seta &#8595; &#183; aperte VAI p/ o Byte andar!</p>
  <div id="frame"><canvas id="tela" width="720" height="500"></canvas></div>
+ <div id="dpad">
+   <button class="dU" onclick="setDir('cima')">&#9650;</button>
+   <button class="dL" onclick="setDir('esq')">&#9664;</button>
+   <button class="dC dx" onclick="setDir('x')" title="tirar seta">&#10006;</button>
+   <button class="dR" onclick="setDir('dir')">&#9654;</button>
+   <button class="dD" onclick="setDir('baixo')">&#9660;</button>
+ </div>
  <div id="painel">
    <button class="bt vai" id="bVai" onclick="vai()">&#9654; VAI!</button>
    <button class="bt lp" id="bLp" onclick="limpar()">&#128465; Limpar setas</button>
@@ -45,6 +78,11 @@ var SRC={grama:"__GRAMA__",muro:"__MURO__",arvore:"__ARVORE__",byte:"__BYTE__",g
  seta:"__SETA__",cabana:"__CABANA__"};
 var IMG={},patG=null,patM=null,carreg=0,NN=0;for(var kk in SRC)NN++;
 for(var k in SRC){(function(key){var im=new Image();im.onload=function(){IMG[key]=im;if(++carreg===NN)iniciar();};im.src=SRC[key];})(k);}
+var FALAS=__FALAS_JSON__;
+// no celular/tablet mostra o D-pad de setas; no PC ele some (?dpad=1 força p/ teste)
+var IS_TOUCH=(("ontouchstart" in window)||(navigator.maxTouchPoints>0)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches)||(location.search.indexOf("dpad=1")>=0));
+if(IS_TOUCH){try{document.body.classList.add("touch");}catch(e){}}
+var selCell=null;
 
 /* ---------- LABIRINTO ---------- */
 var GW=9,GH=7,CELL=62,OX=(VW-GW*CELL)/2,OY=40,LIFT=13;
@@ -53,7 +91,7 @@ var MIS=[
  {friend:"gato", nome:"o Gato Pigo",
   maze:["#########","#S......#","#######.#","#.......#","#.#######","#......J#","#########"],
   intro:"O Gato Pigo está preso na jaula de pedra! Ponha as setas no chão, uma de cada vez, para o Byte seguir até ele.",
-  livre:"Você me libertou! Obrigado, Byte!"},
+  livre:"Você me libertou! Muito obrigado, Byte!"},
  {friend:"coelho", nome:"a Coelha Nina",
   maze:["#########","#S..#..J#","#.#.#.#.#","#.#...#.#","#.#####.#","#.......#","#########"],
   intro:"A Coelha Nina está do outro lado! Cuidado: alguns caminhos não levam a lugar nenhum. Desvie das paredes!",
@@ -100,27 +138,33 @@ function somVitoria(){bip(523,.13,"sine",.15,0);bip(659,.13,"sine",.15,.13);bip(
 
 /* ---------- VOZ ---------- */
 function vozPt(){var vs=(window.speechSynthesis?speechSynthesis.getVoices():[])||[],b=null;for(var i=0;i<vs.length;i++){var l=(vs[i].lang||"").toLowerCase().replace("_","-");if(l.indexOf("pt-br")===0)return vs[i];if(l.indexOf("pt")===0&&!b)b=vs[i];}return b;}
-function falar(t,pitch){if(!som||!window.speechSynthesis)return;try{speechSynthesis.cancel();}catch(e){}var u=new SpeechSynthesisUtterance(t);u.lang="pt-BR";u.rate=.97;u.pitch=pitch||1.12;var v=vozPt();if(v)u.voice=v;try{speechSynthesis.speak(u);}catch(e){}}
-function balao(t,quem,pitch){balaoTxt=t;balaoT=5.2;balaoQuem=quem||"byte";falar(t,pitch);}
+function falarTTS(t,pitch){if(!som||!window.speechSynthesis)return;try{speechSynthesis.cancel();}catch(e){}var u=new SpeechSynthesisUtterance(t);u.lang="pt-BR";u.rate=.97;u.pitch=pitch||1.12;var v=vozPt();if(v)u.voice=v;try{speechSynthesis.speak(u);}catch(e){}}
+var curAudio=null;
+function pararVoz(){try{if(curAudio){curAudio.pause();curAudio.currentTime=0;}}catch(e){}try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(e){}}
+// toca a VOZ GERADA (mp3 embutido). Se nao existir/ falhar, usa a voz do navegador como reserva.
+function playFala(id,texto,pitch){if(!som)return;
+ if(id&&FALAS[id]){pararVoz();try{curAudio=new Audio(FALAS[id]);var pr=curAudio.play();if(pr&&pr.catch)pr.catch(function(){falarTTS(texto,pitch);});}catch(e){falarTTS(texto,pitch);}}
+ else falarTTS(texto,pitch);}
+function balao(t,quem,id,pitch){balaoTxt=t;balaoT=5.2;balaoQuem=quem||"byte";playFala(id,t,pitch);}
 function unlock(){initAudio();if(!window._u&&window.speechSynthesis){window._u=1;try{speechSynthesis.speak(new SpeechSynthesisUtterance(" "));}catch(e){}}}
 function toggleSom(){unlock();som=!som;var b=document.getElementById("bSom");if(ventoG)ventoG.gain.value=som?0.05:0;
- if(som){b.innerHTML="&#128266; Som ligado";repetirFala();}else{b.innerHTML="&#128263; Mudo";try{speechSynthesis.cancel();}catch(e){}}}
-function repetirFala(){if(fase==="hist")balao(HIST[histIdx].t,HIST[histIdx].q,HIST[histIdx].p);
- else if(fase==="jogo")balao(MIS[mi].intro,"byte");
- else if(fase==="alivio")balao("Hora de brincar! Toque nos vaga-lumes para pegá-los.","byte");}
+ if(som){b.innerHTML="&#128266; Som ligado";repetirFala();}else{b.innerHTML="&#128263; Mudo";pararVoz();}}
+function repetirFala(){if(fase==="hist")balao(HIST[histIdx].t,HIST[histIdx].q,HIST[histIdx].id,HIST[histIdx].p);
+ else if(fase==="jogo")balao(MIS[mi].intro,"byte","m"+(mi+1)+"_intro");
+ else if(fase==="alivio")balao("Que tal um descanso? Toque nos vaga-lumes para pegá-los!","byte","alivio_ini");}
 
 /* ---------- HISTORIA (intro Nimbo) ---------- */
 var HIST=[
- {t:"Esta é a Floresta do Byte. O Byte é um robô curioso e bem legal.",q:"byte",p:1.12},
- {t:"Mas o Nimbo, uma nuvem cinzenta e resmungona, prendeu os amiguinhos em jaulas de pedra dentro do labirinto!",q:"nimbo",p:0.72},
- {t:"Só você pode ajudar! Ponha setas de madeira no chão para o Byte achar o caminho e libertar todos.",q:"byte",p:1.12},
- {t:"Toque na tela para começar a aventura!",q:"byte",p:1.12}
+ {t:"Esta é a Floresta do Byte. O Byte é um robô curioso e bem legal.",q:"byte",p:1.12,id:"h_byte1"},
+ {t:"Mas o Nimbo, uma nuvem cinzenta e resmungona, prendeu os amiguinhos em jaulas de pedra dentro do labirinto!",q:"nimbo",p:0.72,id:"h_nimbo"},
+ {t:"Só você pode ajudar! Ponha setas de madeira no chão para o Byte achar o caminho e libertar todos.",q:"byte",p:1.12,id:"h_byte2"},
+ {t:"Toque na tela para começar a aventura!",q:"byte",p:1.12,id:"h_byte3"}
 ];
 var histIdx=0;
 
 function setMissao(i){mi=i;var m=MIS[i];parseMaze(m.maze);byte.gx=start[0];byte.gy=start[1];
- var p=cellPx(byte.gx,byte.gy);byte.px=p[0];byte.py=p[1];byte.dir=1;signs={};exec.ativo=false;lib.ativo=false;fase="jogo";
- document.getElementById("bVai").disabled=false;balao(m.intro,"byte");}
+ var p=cellPx(byte.gx,byte.gy);byte.px=p[0];byte.py=p[1];byte.dir=1;signs={};selCell=null;exec.ativo=false;lib.ativo=false;fase="jogo";
+ document.getElementById("bVai").disabled=false;balao(m.intro,"byte","m"+(i+1)+"_intro");}
 
 /* ---------- ENTRADA ---------- */
 cv.addEventListener("mousedown",function(e){clic(e.clientX,e.clientY);});
@@ -132,28 +176,34 @@ function clic(cxp,cyp){unlock();var c=xyCanvas(cxp,cyp),mx=c[0],my=c[1];
  if(fase!=="jogo"||exec.ativo||lib.ativo)return;
  var gx=Math.floor((mx-OX)/CELL),gy=Math.floor((my-OY)/CELL);
  if(gx<0||gy<0||gx>=GW||gy>=GH)return;if(ehMuro(gx,gy))return;if(gx===jaula.gx&&gy===jaula.gy)return;
+ if(IS_TOUCH){selCell={gx:gx,gy:gy};bip(480,.03,"triangle",.05);return;}
  var key=gx+","+gy,cur=signs[key],idx=(DIRS.indexOf(cur)+1)%DIRS.length;
- if(DIRS[idx]===undefined)delete signs[key];else signs[key]=DIRS[idx];bip(520,.04,"triangle",.05);}
+ if(DIRS[idx]===undefined)delete signs[key];else signs[key]=DIRS[idx];selCell={gx:gx,gy:gy};bip(520,.04,"triangle",.05);}
+// D-pad (celular): usa a pedra selecionada e poe a seta na direcao escolhida
+function setDir(d){unlock();if(fase!=="jogo"||exec.ativo||lib.ativo)return;
+ if(!selCell){balao("Toque numa pedra do caminho primeiro!","byte","");return;}
+ var key=selCell.gx+","+selCell.gy;
+ if(d==="x"){delete signs[key];bip(300,.07,"triangle",.07);}else{signs[key]=d;bip(560,.05,"triangle",.07);}}
 function avancaHist(){histIdx++;if(histIdx>=HIST.length){setMissao(0);return;}
- if(HIST[histIdx].q==="nimbo")somTrovao();balao(HIST[histIdx].t,HIST[histIdx].q,HIST[histIdx].p);}
+ if(HIST[histIdx].q==="nimbo")somTrovao();balao(HIST[histIdx].t,HIST[histIdx].q,HIST[histIdx].id,HIST[histIdx].p);}
 
 function limpar(){if(exec.ativo||lib.ativo||fase!=="jogo")return;signs={};bip(300,.08,"triangle",.08);}
-function vai(){unlock();if(fase!=="jogo"||exec.ativo||lib.ativo)return;exec.ativo=true;exec.steps=0;exec.de=null;
+function vai(){unlock();if(fase!=="jogo"||exec.ativo||lib.ativo)return;selCell=null;exec.ativo=true;exec.steps=0;exec.de=null;
  document.getElementById("bVai").disabled=true;prox();}
 function prox(){
  if(byte.gx===jaula.gx&&byte.gy===jaula.gy){libertar();return;}
  var d=signs[byte.gx+","+byte.gy];
- if(!d){errou("O Byte parou! Falta uma seta nesta pedra para ele saber pra onde ir.");return;}
+ if(!d){errou("O Byte parou! Falta uma seta nesta pedra para ele saber pra onde ir.","err_semseta");return;}
  var nx=byte.gx+(d==="dir"?1:d==="esq"?-1:0),ny=byte.gy+(d==="baixo"?1:d==="cima"?-1:0);
- if(ehMuro(nx,ny)){byte.tremor=.5;somErro();errou("Opa! A seta apontou para o muro de pedra. Vamos virar ela?");return;}
- exec.steps++;if(exec.steps>60){errou("O Byte está rodando em círculos! Confira as setas.");return;}
+ if(ehMuro(nx,ny)){byte.tremor=.5;somErro();errou("Opa! A seta apontou para o muro de pedra. Vamos virar ela?","err_muro");return;}
+ exec.steps++;if(exec.steps>60){errou("O Byte está rodando em círculos! Confira as setas.","err_circulo");return;}
  if(d==="esq")byte.dir=-1;else if(d==="dir")byte.dir=1;
  exec.de=cellPx(byte.gx,byte.gy);exec.para=cellPx(nx,ny);exec.nx=nx;exec.ny=ny;exec.t=0;somPasso();}
-function errou(m){exec.ativo=false;document.getElementById("bVai").disabled=false;balao(m,"byte");}
+function errou(m,id){exec.ativo=false;document.getElementById("bVai").disabled=false;balao(m,"byte",id);}
 function libertar(){exec.ativo=false;lib.ativo=true;lib.t=0;somChave();salvos++;
  var jp=cellPx(jaula.gx,jaula.gy);
  for(var i=0;i<20;i++)estrelas.push({x:jp[0]+(Math.random()*70-35),y:jp[1]-24,vx:Math.random()*80-40,vy:-(45+Math.random()*80),a:1,r:3+Math.random()*4});
- var m=MIS[mi];balao(m.livre,"friend");
+ var m=MIS[mi];balao(m.livre,"friend","m"+(mi+1)+"_livre");
  setTimeout(function(){if(m.friend==="gato")somMiau();else if(m.friend==="passaro")somPio();else somFaisca();somFaisca();},430);
  var ult=(mi>=MIS.length-1);
  document.getElementById("bVai").disabled=false;
@@ -168,23 +218,23 @@ function libertar(){exec.ativo=false;lib.ativo=true;lib.t=0;somChave();salvos++;
 function irAlivio(){fase="alivio";alivioPegos=0;vagalumes=[];
  for(var i=0;i<9;i++)vagalumes.push({x:80+Math.random()*(VW-160),y:80+Math.random()*(VH-160),
    ph:Math.random()*6.28,sp:.4+Math.random()*.6,ang:Math.random()*6.28,pego:false,pop:0});
- balao("Que tal um descanso? Toque nos vaga-lumes para pegá-los!","byte");}
+ balao("Que tal um descanso? Toque nos vaga-lumes para pegá-los!","byte","alivio_ini");}
 function pegaVagalume(mx,my){for(var i=0;i<vagalumes.length;i++){var v=vagalumes[i];if(v.pego)continue;
   var dx=mx-v.x,dy=my-v.y;if(dx*dx+dy*dy<26*26){v.pego=true;v.pop=1;alivioPegos++;hitos++;somTwinkle();
    for(var k=0;k<8;k++)estrelas.push({x:v.x,y:v.y,vx:Math.random()*90-45,vy:Math.random()*90-45,a:1,r:2+Math.random()*3});
-   if(alivioPegos>=alivioAlvo){balao("Que lindo! Agora vamos salvar os outros amiguinhos!","byte");
+   if(alivioPegos>=alivioAlvo){balao("Que lindo! Agora vamos salvar os outros amiguinhos!","byte","alivio_fim");
      setTimeout(function(){setMissao(1);},1800);}
    return;}}}
 
 /* ---------- FINAL ---------- */
 var fumaca=[];
 function irFinal(){fase="final";somVitoria();
- setTimeout(function(){balao("O Nimbo viu tanta amizade que ficou bonzinho! Agora é festa na floresta!","nimbo",0.95);},400);}
+ setTimeout(function(){balao("O Nimbo viu tanta amizade que ficou bonzinho! Agora é festa na floresta!","nimbo","final",0.95);},400);}
 
 /* ---------- INICIO ---------- */
 function iniciar(){patG=cx.createPattern(IMG.grama,"repeat");patM=cx.createPattern(IMG.muro,"repeat");
  parseMaze(MIS[0].maze);var p=cellPx(byte.gx,byte.gy);byte.px=p[0];byte.py=p[1];
- balao(HIST[0].t,HIST[0].q,HIST[0].p);requestAnimationFrame(frame);}
+ balao(HIST[0].t,HIST[0].q,HIST[0].id,HIST[0].p);requestAnimationFrame(frame);}
 
 /* ---------- DESENHO ---------- */
 function sombra(x,y,rx,ry){cx.save();cx.fillStyle="rgba(12,8,20,.30)";cx.beginPath();cx.ellipse(x,y,rx,ry,0,0,Math.PI*2);cx.fill();cx.restore();}
@@ -261,6 +311,10 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
    var fw=fim.width*26/fim.height;cx.drawImage(fim,jp[0]-fw/2,jp[1]-8,fw,26); }
  else { var hop=Math.abs(Math.sin(lib.t*6))*10; var fw2=fim.width*40/fim.height;
    cx.drawImage(fim,jp[0]-fw2/2+14,jp[1]+14-40-hop,fw2,40); img(IMG.jaula,jp[0],jp[1]+16,60); }
+ // pedra selecionada (D-pad no celular)
+ if(IS_TOUCH&&selCell&&!ehMuro(selCell.gx,selCell.gy)){var sp=cellPx(selCell.gx,selCell.gy),pul=3+Math.sin(t*.008)*2;
+  cx.save();cx.strokeStyle="rgba(255,224,120,.95)";cx.lineWidth=4;cx.shadowColor="#ffe07a";cx.shadowBlur=12;
+  roundR(sp[0]-CELL/2+5,sp[1]-CELL/2+5-6,CELL-10,CELL-10,10);cx.stroke();cx.restore();cx.shadowBlur=0;}
  // setas colocadas
  for(var key in signs){var pp=key.split(",");desSeta(+pp[0],+pp[1],signs[key]);}
  // BYTE — sempre por cima dos muros (regra: muro nunca esconde o Byte)
@@ -352,6 +406,7 @@ function _bfsSolve(){var s=start.slice(),j=[jaula.gx,jaula.gy];var prev={},q=[s]
 window._qaSolve=function(){var p=_bfsSolve();if(!p)return false;signs={};for(var i=0;i<p.length;i++)signs[p[i].gx+","+p[i].gy]=p[i].d;return true;};
 </script></body></html>"""
 for ph,uri in A.items(): HTML=HTML.replace(ph,uri)
+HTML=HTML.replace("__FALAS_JSON__",FALAS_JSON)
 out=os.path.join(S,"byte-floresta2.html")
 open(out,"w",encoding="utf-8").write(HTML)
 print("OK ->",out,"(",round(len(HTML)/1024),"KB )")
