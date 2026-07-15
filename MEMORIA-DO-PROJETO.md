@@ -116,6 +116,10 @@ NÃO é contradição — são DUAS CAMADAS:
   independente/descartável) · (B) mundo 100% contínuo = imersivo mas pesado/difícil de escalar.
   **Híbrido ideal:** mapa como espinha (A) + cada atividade pode ser mini-aventura + o próprio
   mapa bonito e vivo (mascote andando nele).
+- **POR ORA (decisão do Marcos):** usar o **hub que JÁ existe — "Ilhas do Saber"** (repo
+  `mundo-das-atividades`), **não** construir um mapa-mundo novo agora. **EducaVerso = o nome do
+  novo projeto = as novas atividades-aventura**, adicionadas como **cards** no hub existente
+  (cada atividade no seu repo/link). O mapa-mundo com bairros é evolução futura, quando fizer sentido.
 
 ## 📦 Dinâmica do EducaVerso: 1 repo por atividade + empacotamento + som
 - **Um repositório por atividade** (regra "portal leve" do CLAUDE.md): cada atividade =
