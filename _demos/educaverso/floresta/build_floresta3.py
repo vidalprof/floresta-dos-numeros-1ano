@@ -157,13 +157,14 @@ function estrela(x,y,r,a){cx.save();cx.globalAlpha=Math.max(0,a);cx.fillStyle="#
  for(var i=0;i<5;i++){var an=-Math.PI/2+i*2*Math.PI/5;cx.lineTo(x+Math.cos(an)*r,y+Math.sin(an)*r);var a2=an+Math.PI/5;cx.lineTo(x+Math.cos(a2)*r*.45,y+Math.sin(a2)*r*.45);}
  cx.closePath();cx.fill();cx.restore();cx.shadowBlur=0;}
 function imgH(im,x,yBase,h){var w=im.width*h/im.height;cx.drawImage(im,x-w/2,yBase-h,w,h);}
-function desCaminho(){ // banda do caminho (textura de terra) sob as arvores
+function desCaminho(){ // caminho de terra que DESBOTA na grama (bordas fundidas)
  cx.save();cx.lineJoin="round";cx.lineCap="round";
- cx.strokeStyle="rgba(120,86,50,1)";cx.lineWidth=96;cx.beginPath();cx.moveTo(PATH[0][0],PATH[0][1]);
- for(var i=1;i<PATH.length;i++)cx.lineTo(PATH[i][0],PATH[i][1]);cx.stroke();
- if(patC){cx.strokeStyle=patC;cx.lineWidth=88;cx.stroke();}
- // bordinha suave
- cx.strokeStyle="rgba(60,120,50,.35)";cx.lineWidth=100;cx.globalAlpha=.25;cx.stroke();cx.restore();cx.globalAlpha=1;}
+ function traca(w,a,st){cx.globalAlpha=a;cx.strokeStyle=st;cx.lineWidth=w;cx.beginPath();cx.moveTo(PATH[0][0],PATH[0][1]);
+  for(var i=1;i<PATH.length;i++)cx.lineTo(PATH[i][0],PATH[i][1]);cx.stroke();}
+ var col=patC||"rgba(150,112,72,1)";
+ // passagens concentricas: de fora (fraca) p/ dentro (cheia) => borda fundida na grama
+ traca(112,0.20,col);traca(100,0.42,col);traca(90,0.70,col);traca(80,1.0,col);
+ cx.restore();cx.globalAlpha=1;}
 function desArvore(o,t){var x=o[0],y=o[1];sombra(x,y+2,26,8);var sw=Math.sin(t*.0015+x)*0.025;
  cx.save();cx.translate(x,y);cx.rotate(sw);imgH(IMG.arvore,0,0,120);cx.restore();}
 function desFlor(o,t){if(!IMG.flores)return;var x=o[0],y=o[1];var sw=Math.sin(t*.003+x)*0.04;
