@@ -256,3 +256,15 @@ Primeira atividade do EducaVerso, montada com todos os especialistas e aprovada 
 - **Publicação:** repo próprio **`floresta-do-byte`** → `atualizar.yml`
   (`repo_name=floresta-do-byte`, `source_dir=_novo`). No ar em
   **https://vidalprof.github.io/floresta-do-byte/**.
+
+## 🎭 A-FAZER: voz PRÓPRIA por personagem (adiado pelo Marcos — 2026-07-15)
+Decisão do Marcos: por ora fica com 2 vozes (Francisca = narrador/amiguinhos;
+Antonio = Nimbo). Voz por personagem fica pra depois. Dois caminhos já mapeados:
+- **edge-tts (grátis):** poucas vozes nativas pt-BR (Antonio/Francisca) → multiplicar
+  por **pitch/velocidade** (função `pitch_shift` já existe no `gerar-audio.yml`, só
+  falta ligar no `gerar()`): Nimbo grave, bichinhos agudos.
+- **Gemini TTS (pago, chave configurada):** MUITAS vozes atuadas (Puck, Kore, Charon,
+  Fenrir, Aoede...) + direção de atuação ("leia como vilão/gatinho"). `modelo=gemini`
+  no workflow (testar 1 fala antes — nunca confirmar sem ouvir).
+- **Elenco proposto:** Byte/Narrador = clara/acolhedora; Nimbo = grave/resmungona;
+  Gato Pigo = agudo/brincalhão; Coelha Nina = doce; Passarinho Tuim = bem agudo/rápido.
