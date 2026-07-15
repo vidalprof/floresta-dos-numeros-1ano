@@ -51,3 +51,20 @@ código — só é usado dentro do workflow.
    (sincronizar + reler os manuais). **"Não achei" ≠ "não existe".** Nunca insistir.
 3. **Anotar aqui** toda capacidade, secret ou decisão nova — para a próxima
    sessão (que sou eu, sem memória) já nascer sabendo.
+
+## 🎭 Ideias do Marcos para PERSONAGENS VIVOS (incorporar no EducaVerso)
+Pedidos do professor para os personagens ficarem "de videogame" — anotar para o
+documento-mestre (`EDUCAVERSO.md`, seção Personagens Vivos) e para implementar:
+- **Boca mexendo ao falar** + **piscar os olhos** + **respirar** no idle (já planejado).
+- **Movimento suave e realista de mãos e pernas** — inclusive AÇÕES como
+  *entregar a chave* (braço estende, a chave passa, braço recolhe). Caminho técnico:
+  (a) **cartela de poses** gerada por IA (idle, andar, "entregando", feliz) trocada
+  como sprite sheet — mais simples, é o que o pipeline já faz; OU (b) **recorte em
+  partes** (corpo/braço/mão/pernas) animadas por código com easing — mais suave,
+  mais trabalho. Começar por (a).
+- **Interagir com o MASCOTE da criança** — o aluno tem seu próprio mascote/avatar
+  que o acompanha; o Byte e os NPCs interagem com ele (legal p/ pertencimento).
+- **O mascote/Byte SEMPRE fala o NOME do estudante** na narração ("Muito bem, João!").
+  Fácil e alto impacto: o aluno informa o nome (login simples por código de turma) e
+  o nome entra nas falas/narração (Web Speech interpola o texto). Já existe a ideia
+  de `S.nome` nos manuais.
