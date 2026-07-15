@@ -44,6 +44,22 @@ código — só é usado dentro do workflow.
 - **Ideia em estudo:** mundo 2D em *tiles* (leve/escalável) + arte premium
   gerada por IA + Byte animado — o "casamento" que aproxima da confeitaria.
 
+## 🏭 FÁBRICA DE ATIVIDADES por currículo (pedido do Marcos — incorporar no EducaVerso)
+Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir no mundo.
+- **Fontes de currículo:** BNCC geral, **Computação BNCC** (já há `ATIVIDADE-COMPUTACAO.md`),
+  ou o **currículo de Blumenau** (já há `.github/workflows/baixar-curriculo.yml` que baixa o
+  PDF e extrai o texto para ancorar a IA). O professor escolhe fonte + ano/turma + habilidade.
+- **Como monta:** a IA LÊ o objetivo real do currículo (ancorada no texto — não inventa a
+  habilidade) → escolhe a MECÂNICA (do catálogo de interatividades) → cria conteúdo/desafios →
+  embrulha na narrativa do mundo (um personagem/lugar) → gera a arte (pipeline de imagem) e a voz.
+- **Aprovação do professor** (as 3 aprovações: missões/pedagogia, arte, jogável) — a pedagogia
+  passa pelo olho dele. "Automático" com portão de qualidade (a IA rascunha, o professor confirma).
+- **Inserção no mundo:** a atividade vira ponto/NPC/gatilho no mundo; o resultado alimenta a
+  avaliação descritiva. Fábrica de MUNDOS (o cenário) + Fábrica de ATIVIDADES (o aprendizado) =
+  sistema de produção completo do EducaVerso.
+- Estado: groundwork existe (baixar-curriculo.yml, ATIVIDADE-COMPUTACAO.md, catálogo de
+  interatividades); FALTA o montador que casa currículo→mecânica→mundo de forma semiautomática.
+
 ## 🛡️ Regra de ouro contra ESQUECER
 1. **Sincronizar com o GitHub ANTES de agir** (o hook `.claude/hooks/sync-remoto.sh`
    já faz automático no início da sessão).
