@@ -1489,3 +1489,20 @@ teto honesto do grátis).
 Quando o Marcos pedir CUSTO ZERO explícito, cair no Pollinations-only 1-por-
 imagem, avisando da ressalva de nitidez. Nunca prometer "grátis = igual ao
 pago" sem essa ressalva.
+
+**LIÇÃO PAGA — CÓPIA LOCAL VELHA ENGANA (incidente real, jul/2026):** depois de
+um reset do ambiente, a cópia local ficou parada num commit ANTIGO (atrás do
+GitHub). Manuais e workflows que EXISTIAM (`gerar-imagens.yml`, `gerar-audio.yml`,
+os arquivos do Mundo Vivo, os 297 áudios) ficaram INVISÍVEIS — e o assistente
+concluiu, errado, que "não existiam" e ainda INSISTIU contra o Marcos. **Nada
+tinha se perdido:** estava tudo salvo no GitHub — o trabalho vive nos COMMITS, não
+na pasta local. Prevenção (3 camadas): **(1)** SEMPRE `git fetch origin <branch>
+&& git status` ANTES de agir; se atrás, `git merge --ff-only origin/<branch>`. O
+hook `.claude/hooks/sync-remoto.sh` (SessionStart) já faz isso automático. **(2)**
+A geração de imagem/áudio é REAL e roda por WORKFLOW do GitHub (Gemini/Pollinations/
+edge-tts com os secrets), **NÃO pelo chat** — testar a API direto do chat dá 403, e
+isso é NORMAL (a rede do chat é travada), não é "quebrado". **(3)** Se o Marcos
+disser "isso a gente já fez", **ACREDITAR e verificar a fundo** (sincronizar +
+reler os manuais) ANTES de concluir — nunca insistir no contrário. Regra-mãe:
+**"não achei X" ≠ "X não existe"** — primeiro pergunte "estou vendo o repositório
+COMPLETO e ATUAL?".
