@@ -102,6 +102,21 @@ O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho)
   guiar personagem por caminho com placas (demo Jardim/Placas). FALTA costurar num mapa contínuo
   + o labirinto + a cena de dormir + mais personagens/animações/sons.
 
+## 🧭 ARQUITETURA (a reconciliação): mundo-mapa + atividades-peça
+NÃO é contradição — são DUAS CAMADAS:
+- **Camada 1 — O MUNDO / MAPA com BAIRROS** (o hub "Ilhas do Saber", só que mais "mundo"): dá a
+  sensação de **um universo só** e da **jornada do ano**. Bairros por faixa/turma/tema.
+- **Camada 2 — AS ATIVIDADES:** cada **bairro/parada** é uma atividade, e cada uma é **seu próprio
+  repo/link** (portal leve). Pode ser focada (55 min) OU uma **mini-aventura rica** (a floresta com
+  labirintos). A criança está no mapa, entra num lugar, joga, volta ao mapa.
+- **AO LONGO DO ANO = SEQUÊNCIA DIDÁTICA:** os bairros/atividades **abrem na ordem do currículo**
+  (bimestre a bimestre); o **save** transforma em jornada contínua do ano letivo.
+- É o **EduVerse (visão da outra IA) realizado**, mas de um jeito **leve e que escala**.
+- **Decisão de design (do Marcos):** (A) mapa + atividades = recomendado (leve, escala, peça
+  independente/descartável) · (B) mundo 100% contínuo = imersivo mas pesado/difícil de escalar.
+  **Híbrido ideal:** mapa como espinha (A) + cada atividade pode ser mini-aventura + o próprio
+  mapa bonito e vivo (mascote andando nele).
+
 ## 📦 Dinâmica do EducaVerso: 1 repo por atividade + empacotamento + som
 - **Um repositório por atividade** (regra "portal leve" do CLAUDE.md): cada atividade =
   `index.html` + `img/` + `audio/`, publicada no GitHub Pages, com **link próprio**. O hub
