@@ -1,0 +1,354 @@
+{
+  "_nota": "TEMA-SPEC completo do 'Mar dos Numeros' (piratas, 3o ano, multiplicacao). Um mundo inteiro descrito em UM JSON: o professor mexe em 'entrada'; a fabrica preenche o resto e o professor so aprova. NENHUMA funcao do motor aparece aqui - so DADOS. As chaves de voz (DJB2) NAO sao escritas a mao neste arquivo: sao derivadas em tempo de execucao por extrair_falas.py a partir da string EXATA que chega em falar(). Ver FABRICA-DE-MUNDOS.md, costuras 1 a 10.",
+  "_correcoes_cetico": "Este spec ja incorpora os 12 furos do cetico: (1) missoes '×'/'÷' carregam 'ng' = numero de grupos, pra nao depender da regex de vocabulario travado do roteador; (2) paradas[].uau; (3) bloco 'diag'; (4) bloco 'niveis'; (5) meta.logo + paleta.splash; (6) bloco 'final' + 'certificado' + falas_mapa.avisoTrofeu; (7) 'falas_intro' + 'balao_mapa' + meta.nome_fallback; (8) rotulos de recipiente saem do 'lexico', nao de 'Bandeja' fixo; (10) FACH_INFO medido nas fachadas geradas; (11) meta.card_hub {desc,ic}; (12) 'en' e o texto FALADO sao a MESMA string (sem versao 'a mao' divergente).",
+
+  "entrada": {
+    "_nota": "As alavancas que o professor mexe. Todo o resto e derivado disto.",
+    "tema": "fundo do mar com piratas, ilhas, tesouros e um navio",
+    "turma": "3o ano",
+    "conteudo": "multiplicacao",
+    "bncc": ["EF03MA07", "EF03MA08"],
+    "faixa_numerica": {"min": 2, "max": 10, "total_max": 40}
+  },
+
+  "meta": {
+    "slug": "mar-dos-numeros-3ano",
+    "nome_mundo": "Mar dos Numeros",
+    "subtitulo": "Multiplicacao",
+    "_nota_title": "<title> vira 'Mar dos Numeros - Multiplicacao' (linha 7 do clone).",
+    "fase_hub": "exploradores:3ano",
+    "save_key": "mn3_prog",
+    "_nota_save": "UNICO por mundo. NUNCA reusar 'cm_prog' (linhas 549-552) senao dois mundos brigam pelo mesmo progresso salvo.",
+    "nome_fallback": "marujo",
+    "_nota_fallback": "Substitui o default 'chef' que vaza em varios pontos (ex. linha 598 esc(S.nome||'chef')). Furo 7 do cetico.",
+    "logo": {
+      "_nota": "Furo 5 do cetico: HA DUAS telas de abertura com texto fixo - o #mvSplash estatico (linhas 342-343) e a tela de titulo em JS (linhas 571-572). AMBAS precisam receber estas linhas na Fase C.",
+      "linha1": "MAR DOS",
+      "linha2": "NUMEROS",
+      "sub": "Multiplicacao - 3o ano"
+    },
+    "card_hub": {
+      "_nota": "Furo 11 do cetico: a Fase G insere {titulo, desc, ic, mascote, link} no ATIVIDADES do hub. 'desc' e 'ic' nao tinham campo e eram inventados na hora. Agora saem daqui.",
+      "desc": "Vire pirata e conte o tesouro em grupos iguais: multiplicacao concreta, do conves ao bau do capitao.",
+      "ic": "🐙"
+    }
+  },
+
+  "paleta": {
+    "_nota": "Substitui :root/body (linha 12) e os acentos. Furo 5: o gradiente do #mvSplash (linha 341) TAMBEM e paleta e nao mora no :root - precisa entrar aqui e ser trocado na Fase C.",
+    "fundo_topo": "#0a3a5c",
+    "fundo_base": "#05202f",
+    "acento": "#f2b134",
+    "plaquinha": "#c98a3a",
+    "tom_hub": "prata",
+    "_nota_tom": "exploradores = prata (regra do CLAUDE.md).",
+    "splash": {"topo": "#0a3a5c", "meio": "#0e5b7a", "base": "#0aa0c0"}
+  },
+
+  "mascote": {
+    "nome": "Capitao Tentaculo",
+    "papel": "polvo pirata guia do mundo",
+    "poses": ["feliz", "fala", "anda_contato", "anda_passagem"],
+    "_nota_poses": "feliz->IMG.mFeliz ; fala->IMG.mFala ; anda_contato+anda_passagem->__MV_IMG (o par que da a caminhada viva). Cortadas com canvas comum (cortar_sprites.py normaliza_set) pra nao 'piscar'.",
+    "cartela_prompt": "Sprite sheet on PURE SOLID WHITE #FFFFFF background, 2 columns by 2 rows, cells well separated with generous white space. The SAME single character in 4 poses: a cute cartoon PIRATE OCTOPUS captain, round friendly head, big happy eyes, small red pirate bandana with white polka dots, a tiny gold hoop earring, a little brown belt with a gold buckle across the body, 8 short tentacles. Polished vibrant 3D game render like a modern cozy mobile game, soft rim light. Pose (1) top-left: standing facing the viewer, ONE tentacle raised WAVING hello, big smile. Pose (2) top-right: same pose but MOUTH OPEN talking, one tentacle pointing forward. Pose (3) bottom-left: WALKING to the right, front tentacles reaching forward, weight on the leading tentacles (contact frame). Pose (4) bottom-right: WALKING to the right, tentacles gathered under the body crossing (passing frame) - SAME body, size and colors as pose 3, only the tentacles move. Identical scale, identical lighting, feet/tentacle tips aligned to a common baseline in all four cells. NO ground, NO shadow, NO chair, pure white right up to the body. STRICTLY FORBIDDEN: any text, letter, number, watermark, speech bubble."
+  },
+
+  "lexico": {
+    "_nota": "Alimenta mmDoceImg/mmLugar (linhas 672-693) DEPOIS da costura 2 (A). Substitui o vocabulario confeitaria fixo (brigadeiro/cupcake/Mesa/Sacolinha). Furos 1 e 8: a MESMA lista de recipientes tambem alimenta a contagem de grupos do roteador (mmEscolhaCena, linhas 1000/1007) e os rotulos 'Bandeja' fixos (linhas 995/1013/1014/1017).",
+    "itens": [
+      {"palavra": ["peixe", "peixinho", "peixes"], "sprite": "iPeixe"},
+      {"palavra": ["moeda", "moedas", "dobrao", "dobroes", "ouro"], "sprite": "iMoeda"},
+      {"palavra": ["perola", "perolas"], "sprite": "iPerola"},
+      {"palavra": ["coco", "cocos"], "sprite": "iCoco"},
+      {"palavra": ["bala de canhao", "bala", "balas"], "sprite": "iBala"}
+    ],
+    "recipientes": [
+      {"palavra": ["rede", "redes"], "nome": "Rede", "fem": true, "sprite": "rRede"},
+      {"palavra": ["bau", "baus"], "nome": "Bau", "fem": false, "sprite": "rBau"},
+      {"palavra": ["saco", "sacos"], "nome": "Saco", "fem": false, "sprite": "rSaco"},
+      {"palavra": ["barril", "barris"], "nome": "Barril", "fem": false, "sprite": "rBarril"},
+      {"palavra": ["fileira", "fileiras"], "nome": "Fileira", "fem": true, "sprite": "rBarril"},
+      {"palavra": ["concha", "conchas"], "nome": "Concha", "fem": true, "sprite": "rConcha"},
+      {"palavra": ["tripulante", "marujo", "amigo", "amigos"], "nome": "Marujo", "fem": false, "gente": true, "sprite": "rMarujo"}
+    ]
+  },
+
+  "niveis": {
+    "_nota": "Furo 4 do cetico: NIVEIS (linha 405) e um array de 5 patentes VISIVEIS na topbar (593), no final (1444) e no HUD. Era 'Ajudante de Confeitaria'...'Grande Chef da Divisao'. Zona de dados orfa - nao estava no mapa de zonas do montador. Os cortes 'p' (pontos) sao os mesmos do motor.",
+    "lista": [
+      {"p": 0, "n": "Grumete"},
+      {"p": 14, "n": "Marujo"},
+      {"p": 30, "n": "Timoneiro"},
+      {"p": 48, "n": "Imediato"},
+      {"p": 66, "n": "Capitao dos Sete Mares"}
+    ]
+  },
+
+  "falas_motor": {
+    "_nota": "Override do MMF (linhas 654-670). 15 chaves obrigatorias. Depois da costura 3 (B) o MMF deixa de ser literal no HTML e passa a ser injetado destes valores.",
+    "reparta": "Arraste, ou toque no lugar pra mandar um tesouro. Deixe todos os baus igualzinhos!",
+    "agrupe": "Encha uma rede de cada vez. Quando encher, ela fecha sozinha!",
+    "monte": "Encha cada rede com a quantidade do pedido. O porao do navio nunca fica vazio!",
+    "desigual": "Olha, tem bau com mais e bau com menos. Deixa todos igualzinhos!",
+    "desigual2": "Vou te ajudar: conte quantos tem em cada, e va trocando ate ficar igual.",
+    "tirar": "Pra tirar um tesouro, arraste ele de volta pro porao.",
+    "sobrou": "Repartiu certinho, e o que sobrou ficou no bau do capitao. Isso e o resto!",
+    "sobrademais": "O bau do capitao esta cheio demais! Ainda da pra repartir mais uma rodada.",
+    "propoe": "Escolha um numero e toque em FAZER. A tripulacao monta tudo na sua frente!",
+    "faltou": "Faltou pra completar o pedido do capitao! Tente um numero maior.",
+    "passou": "Passou do pedido! Tente um numero menor.",
+    "conte": "Olhe as redes e conte de grupo em grupo, junto comigo!",
+    "dinpropoe": "Monte o preco de UM tesouro e toque em FAZER. Vamos ver se as moedas batem!",
+    "dinmaior": "As moedas juntas ficaram menos que o total. Cada tesouro vale mais!",
+    "dinmenor": "As moedas passaram do total. Cada tesouro vale menos!"
+  },
+
+  "diag": {
+    "_nota": "Furo 3 do cetico: DIAG (linhas 1287-1298) e um SEGUNDO conjunto de 11 frases fixas, NARRADAS no 1o erro. Era todo de divisao ('aqui a gente reparte... e conta de dividir!'). Num mundo de multiplicacao daria dica INVERTIDA. Precisa ser injetado do spec junto com o MMF (costura 3). Chaves iguais as do motor.",
+    "reler": "Leia de novo com calma: junte grupos iguais e conte quantos ha AO TODO.",
+    "inversa": "Lembre: multiplicar e somar o mesmo grupo varias vezes.",
+    "opx": "Olhe de novo: aqui a gente JUNTA grupos iguais. E conta de vezes!",
+    "opd": "Olhe de novo: aqui a gente REPARTE o saque igualzinho. E conta de dividir!",
+    "tab": "Pense na tabuada do capitao: quantas vezes esse grupo cabe ate o total?",
+    "resto1": "Primeiro reparta o maximo que der igual pra todos os baus. A sobra fica de fora.",
+    "resto2": "A sobra e o que faltou pra completar mais uma rodada igual.",
+    "montar": "Monte a conta na ordem: primeiro o numero de grupos, depois o sinal.",
+    "din": "Divida o total de moedas em partes iguais pra achar o preco de UM tesouro.",
+    "g2": "Use a estimativa: pense perto de qual numero a resposta cai.",
+    "prop": "Primeiro descubra quanto vale UM, depois multiplique pelo tanto que voce quer."
+  },
+
+  "falas_mapa": {
+    "_nota": "Override do narrarMapa (linha 629) - 3 estados (f=0, meio, fim). O cetico (furo 6) mostrou que avisoTrofeu (linha 631) e avisoTranca (linha 630) tambem sao narrados e nao tinham slot - entram aqui.",
+    "boasVindas": "Bem-vindo ao Mar dos Numeros, marujo! Siga a trilha de ilhas e conquiste cada parada pra abrir a proxima.",
+    "meio": "Voce esta velejando muito bem! Continue na ilha que esta brilhando.",
+    "fim": "Voce conquistou todo o mar! Toque no bau dourado pra pegar seu tesouro!",
+    "avisoTrofeu": "Termine todas as paradas pra ganhar o Bau de Capitao dos Sete Mares!",
+    "avisoTranca": "Essa ilha ainda esta trancada! Conquiste a ilha anterior pra abrir esta."
+  },
+
+  "falas_intro": {
+    "_nota": "Furo 7 do cetico: as 2 falas da tela inicial (linhas 583-584) sao narracao FIXA fora do MMF e do narrarMapa. Entram no lote de audio.",
+    "volta": "Que bom te ver de novo, marujo! Vamos continuar nossa viagem pelo Mar dos Numeros? Toque em Voltar ao meu mundo.",
+    "primeira": "Ahoy! Eu sou o Capitao Tentaculo. Preciso da sua ajuda pra contar o tesouro das ilhas, sempre juntando grupos iguais! Escreva seu nome e toque em comecar."
+  },
+
+  "balao_mapa": {
+    "_nota": "Furo 7: o balao VISIVEL do mapa (linha 598) tinha texto fixo de confeitaria e usava default S.nome||'chef'. {nome} e substituido em runtime; o fallback vem de meta.nome_fallback.",
+    "texto": "Oi, {nome}! Sou o Capitao Tentaculo. Um tesouro enorme esta espalhado pelas ilhas e a gente precisa contar tudo em grupos iguais. Vem comigo pela trilha: cada ilha e uma parada. Toque na primeira pra comecar!"
+  },
+
+  "final": {
+    "_nota": "Furo 6 do cetico: grandeFinal (linhas 1440-1450) e o certificado imprimivel (1451-1465) tinham texto VISIVEL e NARRADO todo de divisao/confeitaria. Sem override, o mundo pirata diria 'Mestre da Divisao'. Tudo entra no lote de audio.",
+    "titulo": "Voce e Capitao dos Sete Mares!",
+    "lead": "Parabens, {nome}! Voce ajudou o Capitao Tentaculo a contar TODO o tesouro das ilhas, sempre juntando grupos iguais. Agora voce e um Capitao dos Sete Mares da Multiplicacao!",
+    "fala": "Parabens! Voce contou todo o tesouro do Mar dos Numeros e virou um Capitao dos Sete Mares!",
+    "certificado": {
+      "titulo": "Certificado de Capitao dos Sete Mares",
+      "texto": "completou a aventura Mar dos Numeros - A Rota da Multiplicacao (3o ano) com {pontos}, praticando: juntar grupos iguais, arranjos em fileiras, tabuada ate 10, proporcao e dobro, repartir o saque e o valor de um tesouro.",
+      "assinatura": "Capitao Tentaculo, Mar dos Numeros",
+      "_nota_habilidades": "A lista de destaques do certificado (linha 1461) e derivada em runtime de paradas[].hab / HAB - nao precisa repetir aqui."
+    }
+  },
+
+  "assets_cenario": {
+    "_nota": "Prompts de fundos/objetos globais (Gemini), fundo branco puro pra recorte, sem texto.",
+    "capa": "Cozy 3D cartoon pirate cove key art, treasure chest and a friendly octopus captain, warm sunset over the sea, PURE WHITE background, no text.",
+    "trofeu": "Cute 3D golden pirate treasure chest overflowing with gold coins and a shiny gem, sparkles, PURE WHITE background, no text.",
+    "ceu_dia": "Bright cartoon tropical sea sky, soft clouds, gentle sun, seamless, no text.",
+    "ceu_noite": "Cartoon night sea sky, moon and stars over calm water, cozy, no text.",
+    "chao": "Cartoon wooden ship deck planks tileable texture, warm tones, no text.",
+    "medalha": "Round golden cartoon medal with a small ship wheel drawing in the center (ONLY drawing, NO letters or numbers), blue ribbon, soft glow, PURE WHITE background."
+  },
+
+  "paradas": [
+    {
+      "ch": "p1", "ilha": "iNavio", "titulo": "O Conves do Navio",
+      "hab": "Juntar grupos iguais",
+      "uau": "Multiplicar e juntar grupos iguais! Toda vez que voce conta de 5 em 5 ou de 3 em 3, ja esta multiplicando.",
+      "_nota_uau": "Furo 2 do cetico: campo novo (UAU_FASE, linhas 417-429), mostrado E narrado no fim da fase. Entra no lote de audio.",
+      "fachada_prompt": "Cartoon front of a pirate ship deck stand with a big FLAT BLANK wooden sign above a clear central door, cozy 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Bright cartoon interior of a pirate ship deck, ropes and barrels, warm light, no text.",
+      "hist": "Ahoy do conves! Precisamos contar os peixes que a tripulacao pescou, sempre em redes iguais.",
+      "gancho": "Otimo! Agora vamos empilhar as balas de canhao em fileiras.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "_nota": "Missao 1 - multiplicacao concreta, A-montar. 'ng' = numero de grupos (redes). Furo 1: SEM 'ng' o roteador tentaria adivinhar por regex de vocabulario e montaria 5 redes de 3 em vez de 3 redes de 5.",
+          "en": "O do conves! Monte 3 redes com 5 peixes cada. Quantos peixes ao todo?",
+          "r": 15, "op": "×", "ng": 3,
+          "expl": "Voce encheu 3 redes com 5 peixes cada. 3 vezes 5 da 15 peixes ao todo!"
+        }
+      ]
+    },
+    {
+      "ch": "p2", "ilha": "iCanhao", "titulo": "A Coberta dos Canhoes",
+      "hab": "Multiplicacao como fileiras (arranjo retangular)",
+      "uau": "Coisas arrumadas em fileiras iguais sao faceis de contar: e so multiplicar as fileiras pelo que tem em cada uma!",
+      "fachada_prompt": "Cartoon pirate cannon deck entrance with a FLAT BLANK plank sign over a clear central door, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon interior of a cannon deck, stacked cannonballs, lanterns, warm light, no text.",
+      "hist": "O artilheiro empilhou as balas em fileiras certinhas. Vamos contar quantas ao todo!",
+      "gancho": "Perfeito! Agora ao mercado do porto.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "en": "O artilheiro empilhou balas em 4 fileiras de 6. Quantas balas de canhao ao todo?",
+          "r": 24, "op": "×", "ng": 4,
+          "expl": "4 fileiras de 6 balas: 4 vezes 6 da 24 balas de canhao!"
+        }
+      ]
+    },
+    {
+      "ch": "p3", "ilha": "iPorto", "titulo": "Mercado do Porto",
+      "hab": "Sacos iguais de moedas",
+      "uau": "No mercado tudo vem em pacotes iguais: sabendo quantos pacotes e quanto tem em cada um, voce descobre o total sem contar um por um.",
+      "fachada_prompt": "Cartoon port market stall with a FLAT BLANK hanging sign over a clear central door, sacks of coins, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon port market interior, sacks and crates, warm daylight, no text.",
+      "hist": "O comerciante guarda o ouro em sacos iguais. Vamos contar todas as moedas!",
+      "gancho": "Muito bem! A ilha das palmeiras te espera.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "en": "O comerciante encheu 5 sacos com 4 moedas cada. Quantas moedas ao todo?",
+          "r": 20, "op": "×", "ng": 5,
+          "expl": "5 sacos de 4 moedas: 5 vezes 4 da 20 moedas!"
+        }
+      ]
+    },
+    {
+      "ch": "p4", "ilha": "iPalmeira", "titulo": "A Ilha das Palmeiras",
+      "hab": "Tabuada ate 5 (grupos concretos)",
+      "uau": "Saber a tabuada e um atalho: quando voce ja decora quanto da cada grupo, conta o tesouro num piscar de olhos!",
+      "fachada_prompt": "Cartoon tropical palm island hut with a FLAT BLANK wooden sign over a clear central door, coconuts, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon interior of a beach hut, coconuts in nets, sunlight, no text.",
+      "hist": "As palmeiras deram muitos cocos. Vamos juntar em redes iguais e contar!",
+      "gancho": "Isso! Agora, um jogo de memoria pirata.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "en": "Junte 4 redes de 3 cocos. Quantos cocos ao todo?",
+          "r": 12, "op": "×", "ng": 4,
+          "expl": "4 redes de 3 cocos: 4 vezes 3 da 12 cocos!"
+        }
+      ]
+    },
+    {
+      "ch": "j1", "ilha": "iMemoria", "titulo": "Memoria dos Piratas",
+      "hab": "Fatos 'vezes' <-> total",
+      "uau": "Decorar fatos de multiplicacao e como ter um mapa do tesouro na cabeca: a resposta aparece na hora!",
+      "fachada_prompt": "Cartoon pirate memory-cards tent with a FLAT BLANK sign over a clear central door, playful, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon interior with face-down pirate cards on a table, warm light, no text.",
+      "hist": "Vire as cartas e ache o par: a conta de vezes e o seu total!",
+      "gancho": "Boa memoria, marujo! A caverna do tesouro te chama.",
+      "tipo": "memoria",
+      "missoes": [
+        {
+          "_nota": "Jogo proprio do motor (mmMemoria). 'pares' = [[conta, total], ...].",
+          "pares": [["2 x 5", "10"], ["3 x 4", "12"], ["6 x 2", "12"], ["4 x 5", "20"]]
+        }
+      ]
+    },
+    {
+      "ch": "p5", "ilha": "iCaverna", "titulo": "A Caverna do Tesouro",
+      "hab": "Tabuada 6 a 10",
+      "uau": "Os numeros maiores tambem sao grupos iguais - so que com mais tesouro em cada um!",
+      "fachada_prompt": "Cartoon treasure cave entrance with a FLAT BLANK rock sign over a clear central opening, glowing gold inside, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon treasure cave interior, chests of gold, torch light, no text.",
+      "hist": "A caverna guarda muito ouro em baus iguais. Vamos contar tudo!",
+      "gancho": "Uau, que fortuna! Agora, o recife das perolas.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "en": "Monte 6 baus com 7 dobroes cada. Quantos dobroes ao todo?",
+          "r": 42, "op": "×", "ng": 6,
+          "expl": "6 baus de 7 dobroes: 6 vezes 7 da 42 dobroes!"
+        }
+      ]
+    },
+    {
+      "ch": "p6", "ilha": "iRecife", "titulo": "O Recife das Perolas",
+      "hab": "Proporcao / dobro (valor de varios sabendo o de um)",
+      "uau": "Esse truque tem nome de gente grande: proporcao! Primeiro ache quanto vale UM, depois multiplique.",
+      "fachada_prompt": "Cartoon coral reef arch entrance with a FLAT BLANK shell sign over a clear central opening, pearls, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon underwater reef interior, oysters with pearls, soft light, no text.",
+      "hist": "Cada concha guarda a mesma quantidade de perolas. Vamos descobrir o total!",
+      "gancho": "Brilhante! Cuidado agora com o navio fantasma.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "_nota": "prop:1 com 3o numero >1 -> o roteador escolhe B 'tot' (linhas 1021-1025): descobre o valor de UM (per=8) e propoe o total.",
+          "en": "Se 1 concha guarda 8 perolas, quantas perolas ha em 3 conchas iguais?",
+          "r": 24, "prop": 1,
+          "expl": "Uma concha tem 8 perolas. 8 vezes 3 da 24 perolas em 3 conchas."
+        }
+      ]
+    },
+    {
+      "ch": "p7", "ilha": "iFantasma", "titulo": "O Navio Fantasma",
+      "hab": "Repartir o saque igualmente (contraste com a multiplicacao)",
+      "uau": "Repartir igual e o contrario de juntar grupos: aqui a gente DIVIDE o saque em partes iguais.",
+      "fachada_prompt": "Cartoon ghost ship entrance with a FLAT BLANK tattered sign over a clear central door, spooky-friendly, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon ghost ship interior, glowing loot, misty light, no text.",
+      "hist": "O saque do navio fantasma tem que ser repartido igualzinho entre os baus. Nada de trapaca!",
+      "gancho": "Justo e certo! Agora monte a rota.",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "_nota": "op:'÷' repartir. 'ng' = numero de baus (grupos) em que se reparte. Mesma correcao do furo 1 aplicada ao ramo da divisao (linhas 1006-1010).",
+          "en": "Reparta 24 dobroes igualzinho em 4 baus. Quantos dobroes em cada bau?",
+          "r": 6, "op": "÷", "ng": 4,
+          "expl": "24 dobroes repartidos em 4 baus: 24 dividido por 4 da 6 dobroes em cada bau."
+        }
+      ]
+    },
+    {
+      "ch": "j2", "ilha": "iRota", "titulo": "Monte a Rota",
+      "hab": "Montar a conta certa",
+      "uau": "Ler o problema com calma e montar a conta na ordem certa e meio caminho pra achar o tesouro!",
+      "fachada_prompt": "Cartoon navigation table tent with a FLAT BLANK map sign over a clear central door, compass, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon interior with a big sea map and route pieces, warm light, no text.",
+      "hist": "Arraste os pedacos e monte a conta certa da rota ate o tesouro!",
+      "gancho": "Rota tracada! So falta o farol e a ilha do tesouro.",
+      "tipo": "montar",
+      "missoes": [
+        {
+          "_nota": "Jogo proprio (mmMontar). Formato do motor: {d (numeros/pecas), v, r}.",
+          "d": "3 x 5", "v": 15, "r": "3 x 5 = 15"
+        }
+      ]
+    },
+    {
+      "ch": "p8", "ilha": "iFarol", "titulo": "O Farol do Capitao",
+      "hab": "Valor de um tesouro (dinheiro, modo D)",
+      "uau": "Sabendo quanto custam VARIOS tesouros juntos, da pra descobrir o preco de UM so, repartindo em partes iguais.",
+      "fachada_prompt": "Cartoon lighthouse shop entrance with a FLAT BLANK sign over a clear central door, coins and supplies, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon lighthouse shop interior, shelves with pirate supplies, warm light, no text.",
+      "hist": "No farol vende-se de tudo pra viagem. Vamos descobrir o preco de UM item!",
+      "gancho": "Contas em dia! Rumo a ilha do tesouro final.",
+      "tipo": "dinheiro",
+      "missoes": [
+        {
+          "_nota": "Modo D (mmCenaD). O motor MONTA o enunciado sozinho ('Na lojinha: N Q custam juntos R$X. Quanto custa CADA un?') a partir de {cents,n,q,un}. cents=total em centavos, n=quantidade, q=plural, un=singular. AVISO: o modo D formata o valor como R$ (fmtDin) - 'dobroes' nao aparecem; se o professor quiser moeda pirata pura, e um ajuste de motor. A palavra fixa 'Na lojinha:' (linhas 936/1261) e um vazamento latente leve - candidato a parametrizacao junto da costura 2/3.",
+          "cents": 900, "n": 3, "q": "lunetas", "un": "luneta"
+        }
+      ]
+    },
+    {
+      "ch": "p9", "ilha": "iTesouro", "titulo": "A Ilha do Tesouro",
+      "hab": "Receita do dobro / proporcao (final)",
+      "uau": "Voce fechou o mapa! Multiplicar e o superpoder de contar muito tesouro sem se perder.",
+      "fachada_prompt": "Cartoon treasure island X-marks-the-spot entrance with a FLAT BLANK sign over a clear central path, palm and chest, 3D, PURE WHITE background, no text.",
+      "interior_prompt": "Cartoon treasure island interior, giant open chest, gems and gold, golden light, no text.",
+      "hist": "Chegamos ao grande tesouro! Uma ultima conta pra abrir o bau do capitao.",
+      "gancho": "Tesouro conquistado! Voce e Capitao dos Sete Mares!",
+      "tipo": "escolha",
+      "missoes": [
+        {
+          "en": "Se 1 bau guarda 9 gemas, quantas gemas ha em 4 baus iguais?",
+          "r": 36, "prop": 1,
+          "expl": "Um bau tem 9 gemas. 9 vezes 4 da 36 gemas em 4 baus."
+        }
+      ]
+    }
+  ]
+}
