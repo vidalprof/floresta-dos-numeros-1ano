@@ -57,8 +57,16 @@ Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir n
 - **Inserção no mundo:** a atividade vira ponto/NPC/gatilho no mundo; o resultado alimenta a
   avaliação descritiva. Fábrica de MUNDOS (o cenário) + Fábrica de ATIVIDADES (o aprendizado) =
   sistema de produção completo do EducaVerso.
+- **Adequação à TURMA (faixa etária) é obrigatória:** a partir de DISCIPLINA + TEMA + TURMA, a
+  Fábrica cria cenário, personagens, dificuldade, mecânica, narração e missões ADEQUADOS à faixa.
+  Bandas: **pré/1º-2º (NÃO leitores → só ícone+voz+cor, missões curtas de 1 passo, muita
+  recompensa)**; **3º-5º (leitura simples, missões de poucos passos)**; **6º-9º (missões
+  multi-etapas, mais autonomia)**. A IA rascunha adequado à faixa; o professor confirma.
+- **MISSÕES são o formato "legal de aprender":** cada aprendizado vira uma MISSÃO no mundo
+  (um objetivo de história: ajudar X, recuperar Y, construir Z) e o conteúdo é o CAMINHO para
+  cumprir. Curtas e concretas para os pequenos; quests de várias etapas para os maiores.
 - Estado: groundwork existe (baixar-curriculo.yml, ATIVIDADE-COMPUTACAO.md, catálogo de
-  interatividades); FALTA o montador que casa currículo→mecânica→mundo de forma semiautomática.
+  interatividades); FALTA o montador que casa currículo→mecânica→mundo→faixa de forma semiautomática.
 
 ## 🛡️ Regra de ouro contra ESQUECER
 1. **Sincronizar com o GitHub ANTES de agir** (o hook `.claude/hooks/sync-remoto.sh`
