@@ -311,6 +311,12 @@ imersivo dentro do mundo estava difícil demais para uma tacada só:
   em outro mundo = outras paradas temáticas, e assim por diante.
 - **As ATIVIDADES entram como POPUP no CENTRO da tela** — as atividades **premium que já conhecemos**
   (contar/ordenar/arrastar/memória/etc., reusadas do catálogo). Pragmático: entrega já, sem travar.
+- **QUALIDADE DA ATIVIDADE/POPUP (regra firme do Marcos, jul/2026) — NÃO baixar:** a atividade que abre NÃO
+  é um modalzinho pequeno que "o aluno nem enxerga direito". É uma **TELA CHEIA (FULLSCREEN)**, GRANDE. A ARTE
+  dela tem que ser **GERADA e BEM BONITA**, com **EFEITOS, SONS, FALAS (voz gerada)** — o padrão PREMIUM que
+  as atividades tinham, ENGAJADOR (o aluno gosta e quer jogar). Ex.: um **jogo da memória bonito com efeitos**,
+  um **caça-palavras bonito com efeitos**. Cada tipo de atividade premium (memória, caça, quebra-cabeça, contar,
+  arrastar...) é uma tela cheia caprichada, não um popup apertado. (Combina com o mundo, que também é fullscreen.)
 - **CADA MUNDO tem VÁRIAS PARADAS, cada uma com SEU MASCOTE TEMÁTICO** (os mesmos mascotes das atividades
   premium — a atividade premium NÃO morre, vira uma PARADA com mascote dentro do mundo). **O DIFERENCIAL
   (definição do Marcos):** aqui não é uma página solta — é um **MUNDO que dá pra EXPLORAR**, com personagens,
