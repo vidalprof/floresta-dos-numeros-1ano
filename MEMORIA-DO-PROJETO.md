@@ -253,6 +253,17 @@ Marcos nem o Claude posicionando coisa a coisa.
 > entrar em cabana/taberna com interior+lampião, NPCs vivos) — falta STITCHAR num
 > caminho contínuo de ~10 fases com recompensa/gate por fase. Cada mundo do banco
 > de temas nasce como uma dessas jornadas.
+>
+> **ESCLARECIMENTO CRÍTICO (Marcos):** o exemplo "chave→caverna→dormir" foi SÓ um
+> exemplo — **NÃO é template fixo.** Quem DEFINE o enredo, as recompensas e o FINAL
+> é a **IA (o roteirista da fábrica)**, ÚNICO por mundo/tema. A estrutura acima é só
+> a FORMA (fases encadeadas por história com recompensa/gate); o CONTEÚDO da história
+> (qual é o problema, o que se ganha, qual o desfecho) a IA cria. E a **criança é
+> PROTAGONISTA**: ela **CRIA/CONSTRÓI e cumpre os objetivos** de cada fase para
+> avançar e **CONCLUIR a história** (não só assiste/escolhe — casa com o "ALUNO
+> ATIVO/PROTAGONISTA" e a FILOSOFIA do EDUVERSE: o mundo precisa, ela resolve). O
+> roteirista gera: enredo + arco de ~10 fases + recompensa de cada fase + FINAL que
+> fecha o enredo; o montador encadeia; os portões conferem coerência/pedagogia.
 
 O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
 - **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
