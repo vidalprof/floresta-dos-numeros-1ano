@@ -197,6 +197,23 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
   `MUNDO-VIVO-*.md` + `IDEIA-MUNDO-VIVO.md` + `PLANO-FORA-DA-CAIXA.md` + `_plano/*.md` (linhagem Mundo
   Vivo do Marcos) · `EDUCAVERSO-QA.md` (os Portões 0-3) · `ATIVIDADE-PREMIUM.md` (formato fixo).
 
+## 🏭 ESPECIFICAÇÃO-MÃE DA FÁBRICA (Marcos, jul/2026 — o produto em 1 parágrafo)
+> "Eu passo o TEMA DA AULA e a TURMA (ex.: adição para o 1º ano) → a fábrica me
+> SUGERE o tema/ambiente (pirata, espacial, floresta, cidade...) → nesses temas
+> JÁ EXISTEM os personagens, objetos, sons, animação, tudo pronto → deve haver um
+> BANCO com ~10 TEMAS diferentes, com personagens e tudo mais pronto em cada tema
+> para REAPROVEITAR → e quando eu pedir, GERAR um tema de ambiente NOVO (que
+> entra no banco)."
+- **BANCO DE TEMAS** = a peça central: cada tema é um pacote completo (cenário/tiles,
+  personagens com poses, props com contexto, paleta, sons, falas-modelo) validado UMA
+  vez pelos portões; as atividades só o REUSAM (custo marginal ~zero, qualidade estável).
+- Entrada da fábrica: `disciplina + conteúdo + turma` → saída: atividade completa
+  (tema do banco + mecânica do catálogo + história própria + voz gerada) já auditada.
+- Tema novo = pipeline de criação de tema (gera assets via gerar-imagens.yml, valida
+  nos portões, registra no banco) — roda só quando o Marcos pede.
+- Meta do Marcos: "usar o Claude como uma EQUIPE que entrega produto espetacular
+  pronto" — cada especialista faz sua parte e SAI PRONTO (sem o Marcos corrigir arte).
+
 ## 🗺️ A GRANDE AVENTURA — estrutura do mundo (visão do Marcos)
 O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
 - **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
