@@ -33,7 +33,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
         run: |
-          set -uo pipefail
+          set +e +u +o pipefail 2>/dev/null || true
           echo "=================================================="
           echo "A) TODOS OS REPOS de vidalprof (recentes primeiro): ATUALIZADO | priv | NOME | descricao"
           echo "=================================================="
