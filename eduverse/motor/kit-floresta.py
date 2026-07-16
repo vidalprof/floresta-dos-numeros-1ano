@@ -210,6 +210,10 @@ var WW=1500,WH=1050;
 var cam={x:0,y:0};
 var byte={x:250,y:860,dir:1,resp:0,passo:0,mov:false,r:18};
 byte.mvx=0;byte.mvy=1;byte.idle=0;  // vetor de movimento + tempo parado (poses vivas)
+// --- Byte = UM ator do MOTOR DE PERSONAGEM VIVO UNIVERSAL (mesmo sistema dos NPCs) ---
+byte.sprite="byte";byte.esc=1;byte.h0=64;byte.foot=8;byte.shrx=18;byte.shry=6;byte.seed=0; // seed=0 => respira/balanca IDENTICO ao Byte de antes
+byte.descansa=true;byte.zzz=true;byte.levaChave=true;byte.ventoIdle=0;byte.semPerna=false;  // o Byte senta/deita, dorme com Zzz, carrega a chave, anda com pernas
+byte.falando=false;byte.feliz=false;byte.acen=0;byte.cartela={};                             // flags atualizadas por frame (feliz/falando); cartela montada em iniciar()
 var hasKey=false, fase="andar", fim=false, fimT=0;
 var chave={x:560,y:470,got:false,bob:0};
 var arco={x:1150,y:340};
@@ -270,10 +274,17 @@ var nuvSombra=[],nuvCeu=[];
 // NPCS VIVOS (data-driven): habitantes do mundo. Default [] -> floresta identica.
 var npcs=[];(function(){var L=(typeof MUNDO!=="undefined"&&MUNDO.npcs)?MUNDO.npcs:[];
  for(var i=0;i<L.length;i++){var d=L[i];
+  // Cada NPC e um ATOR do motor universal: mesma vida do Byte. Se a biblioteca tiver a
+  // cartela do sprite (<sprite>_anda/_lado/...), o NPC anda com pernas; senao usa o
+  // sprite unico + modo so-suave (respira/pisca/desliza/gesto). Declare no dados.json:
+  // { sprite, x, y, nome, escala?, vel?, rota?, fala?/falas?, semPerna? }.
   npcs.push({sprite:d.sprite,x:d.x,y:d.y,ox:d.x,oy:d.y,
    esc:d.escala||1,vel:d.vel||30,nome:d.nome||"",fala:d.fala||"",falas:d.falas||null,fi:0,
-   rota:d.rota||null,ri:0,paus:0,dir:1,mvx:0,passo:0,
-   olha:0,acen:0,cd:0});}})();
+   rota:d.rota||null,ri:0,paus:0,dir:1,mvx:0,mvy:0,mov:false,passo:0,idle:0,resp:Math.random()*6.28,
+   seed:d.x*0.1+d.y*0.13,h0:d.h0||42,foot:d.foot||4,shrx:15,shry:5,               // tamanho/pes/sombra do NPC (menor que o Byte)
+   descansa:false,ventoIdle:1,zzz:false,levaChave:false,semPerna:(d.semPerna===true), // NPC nao senta/deita; balanca no vento; perna so se tiver cartela
+   falando:false,feliz:false,cartela:{},
+   olha:0,acen:0,cd:0,gestT:4+Math.random()*7});}})();                            // gestT: relogio de aceno ocasional (vida)
 
 
 /* ===== ESTADO: MOTOR DE RODADAS (data-driven; DEFAULT AUSENTE = floresta intacta) ===== */
@@ -387,6 +398,10 @@ function bloqueado(nx,ny){
 function iniciar(){patG=IMG.grama?cx.createPattern(IMG.grama,"repeat"):null;
  patC=IMG.caminho?cx.createPattern(IMG.caminho,"repeat"):null;
  var p=cellCam();cam.x=p[0];cam.y=p[1];
+ // MOTOR DE PERSONAGEM VIVO UNIVERSAL: monta a cartela de poses de CADA ator (Byte + NPCs)
+ // a partir dos sprites que carregaram. Feito AQUI (depois das imagens) 1x -> zero custo por frame.
+ byte.cartela=montaCartela(byte.sprite);
+ for(var _ni=0;_ni<npcs.length;_ni++)npcs[_ni].cartela=montaCartela(npcs[_ni].sprite);
  if(IMG.borboleta)for(var i=0;i<3;i++)borbs.push({x:FLORES[i*3][0]+40,y:FLORES[i*3][1]-30,ang:Math.random()*6.28,ph:Math.random()*6.28,t:Math.random()*6.28});
  if(MODO_AULA){aulaInit();}else{balao((HIST.intro&&HIST.intro.txt)||"Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.",(HIST.intro&&HIST.intro.id)||"s1_intro");}
  requestAnimationFrame(frame);}
@@ -441,58 +456,117 @@ function desZzz(t,mx,my){cx.save();cx.textAlign="left";cx.lineJoin="round";
   cx.globalAlpha=Math.max(0,0.95*(1-ph*0.85));cx.font="bold "+sz+"px Verdana";
   cx.strokeText("Z",zx,zy);cx.fillText("Z",zx,zy);}
  cx.restore();cx.globalAlpha=1;}
-// CARTELA DE POSES (Byte vivo): cada pose tem escala propria p/ o personagem NAO mudar de tamanho
-var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"byte_lado",f:1.12},
- frente_anda:{im:"byte_frente_anda",f:1.14},costas_anda:{im:"byte_costas_anda",f:1.19}, // f calibrado p/ a CABECA ficar do mesmo tamanho do frame parado (pernas em passo alongam o sprite)
- frente_anda2:{im:"byte_frente_anda2",f:1.14},costas_anda2:{im:"byte_costas_anda2",f:1.19}, // QUADRO DO PASSO OPOSTO (perna oposta a frente): alterna com o _anda p/ pernas caminharem de verdade
- senta:{im:"byte_senta",f:0.95},deita:{im:"byte_deita",f:0.62},fala:{im:"byte_fala",f:0.98},feliz:{im:"byte_feliz",f:1.06}};
-function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
- if(fim||aulaComemora) return "feliz";
- if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
-  if(ay>ax){                                        // caminhada frente/costas: SEMPRE o frame de passo (sem pop parado<->passo)
-   if(byte.mvy<0) return "costas_anda";             // sobe=costas
-   return "frente_anda";}                           // desce=frente
-  return "lado";}                                   // esquerda/direita
- if(balaoT>0&&!balaoFimTxt&&!balaoAlvo) return "fala";
- if(byte.idle>13) return "deita";
- if(byte.idle>6)  return "senta";
+/* =====================================================================
+   MOTOR DE PERSONAGEM VIVO UNIVERSAL — "ator vivo" reutilizavel.
+   ---------------------------------------------------------------------
+   A MESMA vida (respira/pisca/balanca/anda com 2 quadros de perna/senta/
+   deita/fala/feliz/gesto) que era exclusiva do Byte agora anima QUALQUER
+   personagem, a partir da sua CARTELA de poses + do seu ESTADO. O Byte e
+   apenas UM ator; os NPCs sao outros atores do MESMO sistema.
+
+   Um ator e um objeto simples com:
+    - sprite : id-base do personagem (ex.: "byte","coelho","byte_pirata").
+               A pose PARADA de frente = a propria chave <sprite> em IMG.
+    - cartela: {pose:{im,f}} montada por montaCartela() a partir das poses
+               que EXISTIREM na biblioteca (probing em IMG). Um ator com UM
+               UNICO sprite ainda respira/pisca/balanca/desliza (nao quebra).
+    - estado de movimento: x,y,dir, mvx,mvy (vetor unit.), mov, passo, idle.
+    - flags: falando, feliz, acen (gesto/aceno), semPerna (forca modo suave),
+             descansa (senta/deita ao ficar parado), ventoIdle (balanca no
+             vento parado), zzz (Zzz ao deitar), levaChave (chave na mao),
+             esc/h0/foot/shrx/shry/seed (tamanho, pes, sombra, fase propria).
+
+   REGRA DE OURO (pedido do Marcos): SUAVIDADE acima de tudo. Se um ator NAO
+   tem os quadros de perna (ou pediu semPerna:true, quando a perna fica dura),
+   ele cai no MODO SO-SUAVE: respira + DESLIZA com micro-bob + inclina de leve
+   + faz gesto/aceno — SEM perna alternando. ES5 puro; anima so transform/alpha.
+   ===================================================================== */
+// Fatores de escala por pose (a CABECA fica do mesmo tamanho do frame parado):
+// calibrado no Byte; serve de DEFAULT para qualquer ator. Um mascote proprio pode
+// sobrescrever passando fover a montaCartela(sprite,fover).
+var POSEF={frente:1.00,costas:1.00,lado:1.12,
+ frente_anda:1.14,costas_anda:1.19,frente_anda2:1.14,costas_anda2:1.19, // quadros de passo alongam o sprite (perna) -> f maior
+ senta:0.95,deita:0.62,fala:0.98,feliz:1.06};
+var POSES_CARTELA=["frente","costas","lado","frente_anda","costas_anda","frente_anda2","costas_anda2","senta","deita","fala","feliz"];
+// Monta a CARTELA de um ator: descobre quais poses EXISTEM em IMG para o prefixo
+// <sprite>. A pose "frente" (parada) = a propria chave <sprite>; as demais sao
+// <sprite>_<pose> (ex.: byte_costas, coelho_lado). So entram as que carregaram
+// -> um ator com 1 sprite so tem {frente} e usa o modo so-suave, sem quebrar.
+function montaCartela(sprite,fover){var C={},fp=fover||{},i,nome,imk;
+ for(i=0;i<POSES_CARTELA.length;i++){nome=POSES_CARTELA[i];
+  imk=(nome==="frente")?sprite:(sprite+"_"+nome);
+  if(IMG[imk]){C[nome]={im:imk,f:(fp[nome]!=null?fp[nome]:(POSEF[nome]!=null?POSEF[nome]:1))};}}
+ return C;}
+// decide a pose do ator pela acao (prioridade: feliz>anda>fala>descanso>parado).
+// Retorna o NOME da pose; desAtor faz o fallback se o sprite nao existir.
+function poseAtor(a){
+ if(a.feliz) return "feliz";
+ if(a.mov){var ax=Math.abs(a.mvx),ay=Math.abs(a.mvy);
+  if(ay>ax){ if(a.mvy<0) return "costas_anda"; return "frente_anda"; } // sobe=costas / desce=frente
+  return "lado";}                                                      // esquerda/direita
+ if(a.falando) return "fala";
+ if(a.descansa){ if(a.idle>13) return "deita"; if(a.idle>6) return "senta"; }
  return "frente";}
-function desByte(t){var x=byte.x,y=byte.y;
- var nome=poseByte(),P=POSE[nome]||POSE.frente;
- if(!IMG[P.im]){nome=(nome==="frente_anda")?"frente":(nome==="costas_anda")?"costas":nome; // sem frame de passo -> pose estatica da mesma direcao
-  P=POSE[nome]||POSE.frente;
-  if(!IMG[P.im]){P=POSE.frente;nome=(nome==="costas"||nome==="lado")?nome:"frente";}} // sem sprite da pose -> usa frente
- var vertAnda=(nome==="frente_anda"||nome==="costas_anda");            // caminhada de FRENTE/COSTAS (vista frontal)
- // ---- PASSADA REAL (pernas alternam de verdade): fase da caminhada, sincronizada com o bob abaixo.
- //      1a metade do ciclo -> quadro "_anda"; 2a metade -> quadro "_anda2" (perna OPOSTA a frente).
- //      Cadencia natural: sin(passo*0.9) troca de sinal a cada ~0.32s (nem corrida nem vibracao). ----
- if(vertAnda){
-  if(Math.sin(byte.passo*0.9)<0){                    // 2a metade da passada -> perna oposta
-   var nm2=nome+"2";                                 // frente_anda2 / costas_anda2
-   if(POSE[nm2]&&IMG[POSE[nm2].im]){nome=nm2;}       // quadro real do passo oposto -> pernas caminham
-   else{nome=(nome==="frente_anda")?"frente":"costas";} // PLANO B (sem 2o quadro): alterna com o PARADO da direcao, sem espelhar
-   P=POSE[nome]||P;}
- }
- var im=IMG[P.im]||IMG.byte,h=64*P.f;
- var andaLado=(byte.mov&&nome==="lado");
- var bob;
- if(vertAnda)bob=Math.abs(Math.sin(byte.passo*0.9))*1.9;   // MICRO-bob (~1.9px) em sincronia com a passada: balanco natural, SEM pulo
- else if(andaLado)bob=Math.abs(Math.sin(byte.passo*.9))*6; // perfil (lado): bob maior, como ja era
- else bob=0;
+// desenha UM ator vivo (Byte ou NPC ou mascote proprio) a partir da cartela+estado.
+function desAtor(a,t){var x=a.x,y=a.y,C=a.cartela,seed=(a.seed!=null)?a.seed:0;
+ if(!C||!C.frente){if(IMG[a.sprite]){C=a.cartela=montaCartela(a.sprite);}if(!C||!C.frente)return;} // seguranca: cartela ausente
+ var nome=poseAtor(a);
+ if(a.semPerna){ if(nome==="frente_anda")nome="frente"; else if(nome==="costas_anda")nome="costas"; } // forca modo suave (sem perna)
+ var P=C[nome];
+ if(!P){ // sem o sprite dessa pose -> cai na estatica compativel (mesma direcao / frente)
+  if(nome==="frente_anda"||nome==="frente_anda2")nome="frente";
+  else if(nome==="costas_anda"||nome==="costas_anda2")nome=(C.costas?"costas":"frente");
+  else if(nome==="lado"||nome==="costas"||nome==="senta"||nome==="deita"||nome==="fala"||nome==="feliz")nome="frente";
+  P=C[nome]||C.frente; if(!P)return; }
+ var vertAnda=(nome==="frente_anda"||nome==="costas_anda");            // caminhada FRENTE/COSTAS (perna alternada)
+ // ---- PASSADA REAL (pernas alternam): 1a metade do ciclo -> "_anda"; 2a metade -> "_anda2"
+ //      (perna OPOSTA). sin(passo*0.9) troca de sinal a cada ~0.32s (nem corrida nem vibracao). ----
+ if(vertAnda&&Math.sin(a.passo*0.9)<0){var nm2=nome+"2";
+  if(C[nm2]){nome=nm2;P=C[nm2];}                                        // quadro real do passo oposto
+  else{nome=(nome==="frente_anda")?"frente":"costas";P=C[nome]||P;}}   // sem 2o quadro -> alterna com o parado
+ var im=IMG[P.im]; if(!im)return;
+ var esc=a.esc||1,h=(a.h0||64)*esc*P.f;
  var deitado=(nome==="deita");
- var rp=(!byte.mov&&!deitado&&nome!=="senta")?Math.sin(byte.resp)*.03:0; // respira parado em pe
- var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;             // boca/squash ao falar
- var flip=byte.dir;
- if(vertAnda)flip=1;   // FRENTE/COSTAS: flip ESTAVEL (nunca inverte). Espelhar o corpo visto de frente = balanco lateral = o "tremor" (removido).
- var ron=deitado?Math.sin(t*0.0026):0;               // respiracao lenta do sono (roncar)
- var sx=deitado?(1+ron*0.035):(1+rp);                // infla/desincha o corpo
- var sy=deitado?(1+ron*0.02):((1-rp*.6)*(1-talk));
- var swayAnda=vertAnda?Math.sin(byte.passo*0.45)*0.01:0; // leve balanco/inclinacao do corpo na caminhada (~0.01 rad), natural, nao tremor
- var rot=deitado?ron*0.02:(vertAnda?swayAnda:((!byte.mov&&nome!=="senta")?sway(t,0,0.014):0));        // leve balanco de roncar
- sombra(x,y+8,deitado?(32+ron*2):18,deitado?7:6);
- cx.save();cx.translate(x,y+8-bob);cx.rotate(rot);cx.scale(flip*sx,sy);imgH(im,0,0,h);cx.restore();
- if(deitado)desZzz(t,x-h*0.30,y+8-h*0.75);           // Zzz saindo da boca (acima da carinha)
- if(hasKey&&IMG.chave){var kw=IMG.chave.width*18/IMG.chave.height;cx.drawImage(IMG.chave,x+11,y-52,kw,18);}}
+ var andaLado=(a.mov&&nome==="lado");
+ var slide=(a.mov&&!vertAnda&&!andaLado&&!deitado);                    // MODO SO-SUAVE: anda sem perna -> desliza
+ var bob;
+ if(vertAnda)bob=Math.abs(Math.sin(a.passo*0.9))*1.9;                  // MICRO-bob (~1.9px) natural, SEM pulo
+ else if(andaLado)bob=Math.abs(Math.sin(a.passo*0.9))*6;              // perfil (lado): bob maior
+ else if(slide)bob=Math.abs(Math.sin(a.passo*0.9))*1;                 // deslize: pulinho quase imperceptivel
+ else bob=0;
+ var rp=(!a.mov&&!deitado&&nome!=="senta")?Math.sin(a.resp+seed)*.03:0;// respira parado em pe (seed=fase propria; byte.seed=0 => identico ao antigo)
+ var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;           // boca/squash ao falar
+ // PISCADA: micro-fecho vertical rapido (~0.11s a cada ~4.2s) em qualquer sprite (transform-only).
+ var blk=(!a.mov&&!deitado&&a.pisca!==false&&blink(t,seed)===0)?0.93:1;
+ var flip=a.dir;
+ if(vertAnda)flip=1;   // FRENTE/COSTAS: flip ESTAVEL (nunca inverte -> sem "tremor" de espelhamento).
+ var ron=deitado?Math.sin(t*0.0026):0;                                 // respiracao lenta do sono (roncar)
+ var sx=deitado?(1+ron*0.035):(1+rp);
+ var sy=deitado?(1+ron*0.02):((1-rp*.6)*(1-talk)*blk);
+ // MOVIMENTO LATERAL/INCLINACAO: deslize (NPC), passada (byte), ou balanco no vento (parado).
+ var windX=(!a.mov&&a.ventoIdle)?Math.sin(t*0.0016+seed)*(0.6+gust)*a.ventoIdle:0;
+ var slideX=slide?Math.sin(a.passo*0.9)*1.1:0;
+ var offx=slide?slideX:windX;
+ var rot;
+ if(deitado)rot=ron*0.02;
+ else if(vertAnda)rot=Math.sin(a.passo*0.45)*0.01;                     // leve inclinacao na caminhada (~0.01 rad)
+ else if(slide)rot=slideX*0.02;                                        // inclina de leve no deslize
+ else if(!a.mov&&nome!=="senta")rot=(a.ventoIdle?windX*0.02:sway(t,seed,0.014)); // balanca parado (vento ou sway)
+ else rot=0;
+ var foot=(a.foot!=null)?a.foot:8;
+ var shrx=deitado?(32+ron*2):((a.shrx!=null?a.shrx:18)*esc), shry=deitado?7:((a.shry!=null?a.shry:6)*esc);
+ sombra(x,y+foot,shrx,shry);
+ cx.save();cx.translate(x+offx,y+foot-bob);cx.rotate(rot);cx.scale(flip*sx,sy);imgH(im,0,0,h);cx.restore();
+ if(deitado&&a.zzz)desZzz(t,x-h*0.30,y+foot-h*0.75);                   // Zzz saindo da boca (so quem dorme)
+ // GESTO/ACENO: patinha/mao levantada (traco simples) ao cumprimentar / de vez em quando.
+ if(a.acen>0){cx.save();cx.globalAlpha=Math.min(1,a.acen);
+  cx.strokeStyle="rgba(70,55,40,.85)";cx.lineWidth=3;cx.lineCap="round";var aw=Math.sin(t*0.02)*0.3;
+  cx.beginPath();cx.moveTo(x+flip*h*0.26,y+foot-h*0.5);cx.lineTo(x+flip*(h*0.32+aw*8),y+foot-h*0.74);cx.stroke();
+  cx.restore();cx.globalAlpha=1;}
+ if(a.levaChave&&hasKey&&IMG.chave){var kw=IMG.chave.width*18/IMG.chave.height;cx.drawImage(IMG.chave,x+11,y-52,kw,18);}}
+// compat: o Byte continua sendo desenhado por desByte() (agora so um atalho do ator universal).
+function poseByte(){byte.feliz=(fim||aulaComemora);byte.falando=(balaoT>0&&!balaoFimTxt&&!balaoAlvo);return poseAtor(byte);}
+function desByte(t){byte.feliz=(fim||aulaComemora);byte.falando=(balaoT>0&&!balaoFimTxt&&!balaoAlvo);desAtor(byte,t);}
 function desArco(t){var x=arco.x,y=arco.y; // arco de pedra = destino final (so existe se OBJETIVO=="chave")
  sombra(x,y+8,120,20);
  function bloco(bx,by,bw,bh){cx.fillStyle=patM||"#6a6a72";cx.fillRect(bx,by,bw,bh);
@@ -988,39 +1062,27 @@ function updateNPCs(dt,t){
     if(typeof balaoNPC==="function")balaoNPC(n.nome,nf,nid,null,n);
     else balao(n.nome?n.nome+": "+nf:nf,nid);}                     // fallback: balao atual
   } else { n.olha=Math.max(0,n.olha-dt*2); }
+  n.resp+=dt*3;                                                    // relogio de respiracao (mesmo do Byte)
   if(n.acen>0)n.acen-=dt;
+  var mexeu=false;                                                 // andou neste frame?
   // ROTINA: patrulha a rota devagar; congela enquanto encara o Byte
   if(n.rota&&n.rota.length>1&&n.olha<0.2){
-   if(n.paus>0){n.paus-=dt;n.mvx=0;}                               // pausa no ponto
+   if(n.paus>0){n.paus-=dt;}                                       // pausa no ponto
    else{var tp=n.rota[n.ri],ax=tp[0]-n.x,ay=tp[1]-n.y,L=Math.sqrt(ax*ax+ay*ay);
-    if(L<3){n.paus=1.2+(n.ri*0.7)%1.0;n.ri=(n.ri+1)%n.rota.length;n.mvx=0;} // chegou->pausa->proximo
-    else{var st=Math.min(L,n.vel*dt);n.x+=ax/L*st;n.y+=ay/L*st;n.mvx=ax;
+    if(L<3){n.paus=1.2+(n.ri*0.7)%1.0;n.ri=(n.ri+1)%n.rota.length;} // chegou->pausa->proximo
+    else{var st=Math.min(L,n.vel*dt);n.x+=ax/L*st;n.y+=ay/L*st;
+     n.mvx=ax/L;n.mvy=ay/L;mexeu=true;                             // VETOR UNITARIO (estado do ator: decide anda/desliza/direcao)
      if(ax<-1)n.dir=-1;else if(ax>1)n.dir=1;n.passo+=dt*8;}}       // vira pra onde anda
-  } else { n.mvx=0; }
+  }
+  n.mov=mexeu; if(!mexeu){n.mvx=0;n.mvy=0;}
+  n.idle=mexeu?0:n.idle+dt;                                        // tempo parado (vida ociosa)
+  // GESTO OCASIONAL (vida): parado e longe do Byte, acena de vez em quando.
+  if(!mexeu&&n.olha<0.2){n.gestT-=dt;if(n.gestT<=0){n.gestT=7+Math.random()*8;if(n.acen<=0)n.acen=0.9;}}
  }
 }
-function desNPC(n,t){var im=IMG[n.sprite];if(!im)return;            // sem sprite -> nao desenha
- var seed=n.ox*0.1+n.oy*0.13;                                      // semente deterministica (nao pisca)
- var andando=n.mvx!==0;
- // micro-movimento parado (respira + balanca no vento), com fallback deterministico
- var br=andando?0:((typeof breathe==="function")?breathe(t,seed):Math.sin(t*0.0028+seed));
- // ANDANDO: em vez de PULAR (subir/descer), o NPC DESLIZA com um leve balanco lateral (sway) +
- // inclinacao sutil -> movimento natural de caminhada, nao saltitante.
- var sw=andando?Math.sin(n.passo*0.9)*1.1:Math.sin(t*0.0016+seed)*(0.6+gust);
- var bob=andando?Math.abs(Math.sin(n.passo*0.9))*1:0;             // pulinho quase imperceptivel (era *4 = o gato "pulava")
- var h=42*n.esc;
- sombra(n.x,n.y+4,15*n.esc,5*n.esc);
- cx.save();cx.translate(n.x+sw,n.y+4-bob);cx.rotate(sw*0.02);
- cx.scale(n.dir*(1+br*0.03),1-br*0.03);                            // flip + squash da respiracao
- imgH(im,0,0,h);cx.restore();
- // ACENO: patinha/mao levantada (traco simples) ao cumprimentar o Byte
- if(n.acen>0){cx.save();cx.globalAlpha=Math.min(1,n.acen);
-  cx.strokeStyle="rgba(70,55,40,.85)";cx.lineWidth=3;cx.lineCap="round";
-  var aw=Math.sin(t*0.02)*0.3;
-  cx.beginPath();cx.moveTo(n.x+n.dir*h*0.26,n.y+4-h*0.5);
-  cx.lineTo(n.x+n.dir*(h*0.32+aw*8),n.y+4-h*0.74);cx.stroke();
-  cx.restore();cx.globalAlpha=1;}
-}
+// NPC = ator do MOTOR DE PERSONAGEM VIVO UNIVERSAL: mesma vida do Byte (respira/pisca/
+// balanca/gesto; anda com pernas se tiver cartela, senao desliza suave).
+function desNPC(n,t){desAtor(n,t);}
 
 /* ---------- LOOP ---------- */
 var ult=null;

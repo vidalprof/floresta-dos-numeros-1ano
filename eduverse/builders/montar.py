@@ -38,13 +38,32 @@ for key,idn in assets.items():
     p=os.path.join(PROC,idn+".png")
     if os.path.exists(p): SRCJS[key]="data:image/png;base64,"+b64(p)
     else: print("!! falta asset:",idn)
-# ---- CARTELA DE POSES DO BYTE (personagem vivo): auto-incluida em TODO mundo que usa o byte.
-#      Segue o id do byte do mundo (ex.: byte_pirata_costas), com chave estavel byte_<pose>. ----
+# ---- CARTELA DE POSES (MOTOR DE PERSONAGEM VIVO UNIVERSAL) ----
+# Cada ator (o personagem principal E os NPCs) pode ter uma CARTELA de poses. O motor
+# usa a chave estavel <spriteKey>_<pose> (ex.: byte_costas, coelho_lado); as poses que NAO
+# existirem na biblioteca simplesmente nao entram -> o ator usa o sprite unico + vida suave.
+# Um mundo declara um MASCOTE PROPRIO so trocando o id do asset (ex.: assets["byte"]="byte_pirata"
+# + arquivos byte_pirata_costas.png ...); as chaves em IMG continuam byte_<pose>, entao o motor
+# nao muda. Um NPC declara { "sprite":"<chave-de-asset>", ... } e, se houver <idn>_<pose>.png na
+# biblioteca, anda com pernas/senta/etc.; senao vive suave (respira/pisca/desliza/gesto).
+POSES_ATOR=["costas","lado","senta","deita","fala","feliz","frente_anda","costas_anda","frente_anda2","costas_anda2"]
+def _cartela(spriteKey):
+    idn=assets.get(spriteKey)
+    if not idn: return
+    for pose in POSES_ATOR:
+        pp=os.path.join(PROC,idn+"_"+pose+".png")
+        if os.path.exists(pp) and (spriteKey+"_"+pose) not in SRCJS:
+            SRCJS[spriteKey+"_"+pose]="data:image/png;base64,"+b64(pp)
+# personagem principal (auto-incluido em TODO mundo que usa o byte)
 if "byte" in assets:
-    for pose in ["costas","lado","senta","deita","fala","feliz","frente_anda","costas_anda","frente_anda2","costas_anda2"]:
+    for pose in POSES_ATOR:
         pp=os.path.join(PROC,assets["byte"]+"_"+pose+".png")
         if os.path.exists(pp): SRCJS["byte_"+pose]="data:image/png;base64,"+b64(pp)
         else: print("(sem pose)",assets["byte"]+"_"+pose)
+# NPCs do mundo: inclui a cartela de cada sprite de NPC, se existir na biblioteca
+for _npc in (mundo.get("npcs",[]) if isinstance(mundo.get("npcs",[]),list) else []):
+    _spk=_npc.get("sprite")
+    if _spk: _cartela(_spk)
 # ---- FALAS (voz gerada) ----
 FAL={}
 for idn in dados.get("falas",[]):
