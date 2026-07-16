@@ -18,6 +18,8 @@ def checar(slug):
     objetivo=hist.get("objetivo","chave")   # sem historia declarada => mundo legado da chave
     if objetivo=="chave":
         return {"gate":"coerencia_tema","ok":True,"detalhes":"objetivo=chave (lexico da chave e nativo)"}
+    # data URIs (base64) nao sao TEXTO: fora da varredura (evita falso positivo tipo "nimbo" no meio do base64)
+    html=re.sub(r"data:[a-z/+.-]+;base64,[A-Za-z0-9+/=]+","data:B64",html)
     # separa VISIVEL x SCRIPT
     scripts=re.findall(r"<script>.*?</script>",html,re.S)
     visivel=re.sub(r"<script>.*?</script>","",html,flags=re.S)

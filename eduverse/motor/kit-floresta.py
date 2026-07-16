@@ -351,14 +351,14 @@ function desByte(t){var x=byte.x,y=byte.y;
  cx.save();cx.translate(x,y+8-bob);cx.rotate(rot);cx.scale(flip*sx,sy);imgH(im,0,0,h);cx.restore();
  if(deitado)desZzz(t,x-h*0.30,y+8-h*0.75);           // Zzz saindo da boca (acima da carinha)
  if(hasKey&&IMG.chave){var kw=IMG.chave.width*18/IMG.chave.height;cx.drawImage(IMG.chave,x+11,y-52,kw,18);}}
-function desArco(t){var x=arco.x,y=arco.y; // arco de pedra = entrada do labirinto
+function desArco(t){var x=arco.x,y=arco.y; // arco de pedra = destino final (so existe se OBJETIVO=="chave")
  sombra(x,y+8,120,20);
  function bloco(bx,by,bw,bh){cx.fillStyle=patM||"#6a6a72";cx.fillRect(bx,by,bw,bh);
   cx.fillStyle="rgba(255,244,225,.10)";cx.fillRect(bx,by,bw,3);cx.strokeStyle="rgba(10,7,16,.5)";cx.lineWidth=2;cx.strokeRect(bx+1,by+1,bw-2,bh-2);}
- // abertura escura (tunel do labirinto)
+ // abertura escura (tunel de passagem)
  cx.fillStyle="#0b0f18";cx.fillRect(x-50,y-104,100,104);
  var gg=cx.createLinearGradient(0,y-104,0,y);gg.addColorStop(0,"rgba(18,26,44,.25)");gg.addColorStop(1,"rgba(0,0,0,.78)");cx.fillStyle=gg;cx.fillRect(x-50,y-104,100,104);
- // pedras do fundo (dentro, sugerindo o labirinto)
+ // pedras do fundo (dentro, sugerindo profundidade)
  cx.save();cx.globalAlpha=.5;cx.fillStyle=patM||"#555";cx.fillRect(x-50,y-44,44,44);cx.fillRect(x+8,y-72,42,72);cx.restore();
  // pilares + verga
  bloco(x-84,y-116,34,116); bloco(x+50,y-116,34,116); bloco(x-84,y-142,168,30);

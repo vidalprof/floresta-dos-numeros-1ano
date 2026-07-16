@@ -97,10 +97,26 @@ falas_txt=" ".join([f.get("texto","") if isinstance(f,dict) else str(f) for f in
 import re as _re
 tem_simbolo=bool(_re.search(r"[#*_<>{}\\^~|]", falas_txt))
 gate("texto_sem_simbolo", not tem_simbolo, "fala com simbolo que o TTS le errado")
-# AUDITOR PEDAGOGICO (Portao 0 estrutural) — o arco do EducaVerso esta nos dados?
-tem_arco = ("arco" in dados) or ("missoes" in dados) or ("arco" in dados.get("pedagogia",{}))
-laudo["pedagogia_arco"]= "OK" if tem_arco else "PENDENTE_HUMANO"
-print(("  [OK] " if tem_arco else "  [PENDENTE] ")+"pedagogia_arco  (arco Historia->...->Reflexao nos dados)")
+# ===== PORTOES NOVOS (FASE D): coerencia + arte + variedade + pedagogia =====
+# Em modo --avisa eles reportam mas nao derrubam o exit code (transicao); default = rigoroso.
+def gate_novo(nome, ok, detalhe=""):
+    if ok or not AVISA: gate(nome, ok, detalhe)
+    else:
+        laudo[nome]="AVISO"
+        print("  [AVISO] "+nome+("  -> "+detalhe if detalhe else ""))
+
+for _r in [portao_coerencia.checar(slug)]+portao_arte.checar(slug)+portao_variedade.checar(slug):
+    gate_novo(_r["gate"], _r["ok"], _r.get("detalhes",""))
+
+# AUDITOR PEDAGOGICO (era stub PENDENTE_HUMANO; agora e gate de verdade):
+# exige mundo.historia.objetivo e, quando ha MODO aula, aula.fim roteirizado.
+_mundo=dados.get("mundo",{}) or {}
+_hist=_mundo.get("historia",{}) or {}
+_ped_faltas=[]
+if not _hist.get("objetivo"): _ped_faltas.append("falta mundo.historia.objetivo")
+_aula=_mundo.get("aula")
+if _aula and not (_aula.get("fim")): _ped_faltas.append("MODO aula sem aula.fim roteirizado")
+gate_novo("pedagogia_arco", not _ped_faltas, "; ".join(_ped_faltas))
 
 # LAUDO
 laudo_path=os.path.join(REPO,"eduverse","missoes",slug); os.makedirs(laudo_path,exist_ok=True)
