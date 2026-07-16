@@ -135,8 +135,14 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
 - **Mundo-vivo v2 no motor (FEITO, auditado):** balões RPG (nome+typewriter+▼+toque, acima de quem
   fala), sombra direcional, poeira ao andar, nuvens, clima (chuva/neve/tempestade+trovão), NPCs vivos.
   Ver `eduverse/style-bible/ambiente-vivo.md`.
-- **Balões:** compactados (estilo videogame). **PENDENTE decisão do Marcos: balão BRANCO (quadrinho,
-  arredondado) × ESCURO (caixa RPG).** Renderizei os dois; ele inclina pro branco (mais fofo/leve p/ crianças).
+- **Balões — DECISÃO FINAL do Marcos (jul/2026):** ele NÃO gostou do balão de fundo PRETO/escuro
+  atual (`balaoDes` em `kit-floresta.py`) e pediu **CAIXA DE RPG CLÁSSICO** (estilo Zelda/Pokémon
+  16-bit): retangular, **FIXA na parte de baixo da tela** (não segue o personagem/não flutua acima
+  da cabeça), **fundo claro sólido** (branco/bege, NUNCA preto/transparente escuro), **borda grossa
+  dupla** no estilo pixel-art. Substitui a caixa escura por essa; manter typewriter+▼+nome na placa
+  (já existentes) só trocando a paleta/formato/posição. Aplicar em TODO mundo (é o motor, não por
+  atividade). (Havia 2 opções candidatas — branco-quadrinho-arredondado × caixa-RPG-clara-fixa-embaixo
+  — ele escolheu a 2ª.)
 - **EQUIPE AMPLIADA** (rodar como agentes por workflow): além dos 6 (eng. software, eng. jogos,
   pedagogo, IA/prompts, produção/ops, produto), CONTRATAR: **Roteirista de histórias** · **Especialista
   em temática** (temas das fases por faixa) · **Especialista em PROMPT do GEMINI** — foco: **gastar o
