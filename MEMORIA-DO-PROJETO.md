@@ -311,6 +311,11 @@ imersivo dentro do mundo estava difícil demais para uma tacada só:
   em outro mundo = outras paradas temáticas, e assim por diante.
 - **As ATIVIDADES entram como POPUP no CENTRO da tela** — as atividades **premium que já conhecemos**
   (contar/ordenar/arrastar/memória/etc., reusadas do catálogo). Pragmático: entrega já, sem travar.
+- **CADA MUNDO tem VÁRIAS PARADAS, cada uma com SEU MASCOTE TEMÁTICO** (os mesmos mascotes das atividades
+  premium — a atividade premium NÃO morre, vira uma PARADA com mascote dentro do mundo). **O DIFERENCIAL
+  (definição do Marcos):** aqui não é uma página solta — é um **MUNDO que dá pra EXPLORAR**, com personagens,
+  sons, vozes e efeitos, tudo que já combinamos do EducaVerso. O mundo dá a ALMA (exploração + vida); a
+  parada entrega a PEDAGOGIA (popup premium com o mascote dela).
 - **O PLANO OUSADO (aprender 100% DENTRO do mundo, interagindo) fica pra DEPOIS** — "mais pra frente a
   gente volta". NÃO é descartado; é adiado de propósito para não bloquear o lançamento. (O meio-termo já
   guarda alma: entrar na cabana e interagir no interior é imersivo; só a tarefa pedagógica é popup por ora.)
