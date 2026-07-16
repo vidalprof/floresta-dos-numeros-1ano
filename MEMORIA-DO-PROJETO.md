@@ -159,6 +159,16 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
   flutuando; fogueira só como cena de NOITE c/ aldeões); (3) **tudo pintado por IA**, nada geométrico
   code-drawn à mostra; (4) coerência com o style-bible. O mundo tem que chegar DIRIGIDO (o Marcos não
   corrige arte). E o **Montador automático** (conteudo.json→dados.json) ainda é a-fazer (hoje manual).
+- **O ROTEIRO DIRIGE A CENA (modelo-mestre da fábrica — pedido do Marcos):** a história do
+  **roteirista** NÃO é só as missões — é um **roteiro de cena por cena (breakdown)** que já ESPECIFICA
+  o que cada cena precisa: **cenário, hora do dia, clima, quais PERSONAGENS estão presentes, quais
+  EFEITOS, quais PROPS (e o porquê/contexto de cada um), a PROPORÇÃO dos objetos vs o Byte, e a ação
+  da criança.** A fábrica trabalha A PARTIR desse roteiro: o **Diretor de Arte** realiza o visual, o
+  **Engenheiro** liga os efeitos/mecânicas que a cena pede, e um **Portão de Coerência** verifica
+  ("faz sentido? falta algo nesta cena? está coerente com a história?"). Isso faz a fábrica PENSAR em
+  tudo (proporção, contexto, efeitos, personagens) de forma organizada, saindo da história — em vez de
+  remendo depois. ➜ **AÇÃO:** expandir o schema do roteirista p/ incluir o breakdown de cena; e o
+  Portão de Coerência entra na linha. (Foi a lição da 1ª aula: a arte/contexto tem que vir do roteiro.)
 - **VOZ (decisão firme do Marcos — corrige o estudo da equipe):** NADA de voz do navegador
   (speechSynthesis). A narração é **SEMPRE gerada via API (edge-tts — Antonio/Francisca…) e volta como
   MP3 embutido** (base64). Voz natural, padrão premium. Peso: `otimizar-audio.yml` + cache por hash.
