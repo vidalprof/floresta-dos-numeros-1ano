@@ -131,6 +131,43 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
 - **Régua de qualidade (Marcos):** 2D tile + **arte pintada por IA premium** = qualidade "quase real"
   que **prende o estudante** — é o diferencial que chama a atenção. Não baixar essa régua.
 
+## 🗓️ SESSÃO jul/2026 — decisões e pedidos novos ("documentar tudo p/ nada se perder" — Marcos)
+- **Mundo-vivo v2 no motor (FEITO, auditado):** balões RPG (nome+typewriter+▼+toque, acima de quem
+  fala), sombra direcional, poeira ao andar, nuvens, clima (chuva/neve/tempestade+trovão), NPCs vivos.
+  Ver `eduverse/style-bible/ambiente-vivo.md`.
+- **Balões:** compactados (estilo videogame). **PENDENTE decisão do Marcos: balão BRANCO (quadrinho,
+  arredondado) × ESCURO (caixa RPG).** Renderizei os dois; ele inclina pro branco (mais fofo/leve p/ crianças).
+- **EQUIPE AMPLIADA** (rodar como agentes por workflow): além dos 6 (eng. software, eng. jogos,
+  pedagogo, IA/prompts, produção/ops, produto), CONTRATAR: **Roteirista de histórias** · **Especialista
+  em temática** (temas das fases por faixa) · **Especialista em PROMPT do GEMINI** — foco: **gastar o
+  MÍNIMO possível sendo PRECISO** (Gemini é pago; economizar tokens/chamadas + precisão ao editar a
+  imagem-âncora do Byte). Fazer um "playbook" de prompts econômicos p/ imagem.
+- **Tela inicial = branded EducaVerso** (logo/identidade própria), MODELO "seus mundos" do Minecraft
+  (continuar o mundo salvo) — **NÃO pode ser CÓPIA do Minecraft** (nada de blocos; visual pintado
+  premium PRÓPRIO). Concept visual publicado (conceito, com efeitos + musiquinha Web Audio):
+  https://claude.ai/code/artifact/ac466f52-adb6-4a9a-b21f-4be67b2197b7
+- **3 PILARES inegociáveis (Marcos):** (1) 2D tile + **arte IA premium** = qualidade "quase real" que
+  **prende o aluno**; (2) **adequação TOTAL por turma/idade** (tema, mecânica, falas, missão, voz);
+  (3) **rápido, funcional, sustentável e vivo** (experiência maravilhosa, leve p/ escola).
+- **ARQUITETURA DA FÁBRICA (estudo da equipe):** ver **`EDUCAVERSO-PLANO-FABRICA.md`** — recomendação
+  **HÍBRIDA**: uma ESPINHA (linha em fases: briefing→mecânica→roteiro→arte→voz→montador→auditor→3
+  portões→publicação) + FÁBRICAS-SIDECAR (os workflows do GitHub, como funções puras cacheadas por
+  hash) + CATÁLOGO DE MECÂNICAS como BIBLIOTECA fixa (não gerador). Contratos = JSON versionados no git
+  (briefing→receita→conteudo→dados→index). MVP = rodar a pipeline INTEIRA com a mecânica atual.
+- **UX da tela inicial — COMPUTADOR COMPARTILHADO (pedido/problema do Marcos):** muitas turmas, VÁRIOS
+  alunos usam o MESMO PC no dia (troca de aula rápida), turmas têm seções **A, B, C…**. Desafio: pôr isso
+  sem poluir. **Recomendação (proposta):** DIVULGAÇÃO PROGRESSIVA em 3 toques, 1 tela limpa por vez —
+  (1) escolher o ANO; (2) aparece a letra da seção (A/B/C…); (3) **grade de NOMES da turma** (nome +
+  mini-avatar/mascote) → o aluno **TOCA no próprio nome** (SEM digitar — ideal p/ não-leitores e p/
+  troca rápida). Fallback "não achei meu nome → digitar". O PC **lembra a última turma** (a próxima
+  criança da mesma turma já cai na grade de nomes). Só se vê UMA turma por vez → nunca polui. Depende da
+  LISTA DE TURMAS/alunos (o professor fornece) + save no Firebase (`/mundos/<turma>/<aluno>`). Casa com o
+  login documentado "código de turma + primeiro nome".
+- **União das 2 ideias (já documentada — reler quando esquecer):** `EDUCAVERSO.md` (mestre da união) ·
+  `EDUVERSE-*.md` (visão da outra IA "EduVerse": FILOSOFIA/PIPELINE/PLANO/EQUIPE/FASE0/COMPUTACAO) ·
+  `MUNDO-VIVO-*.md` + `IDEIA-MUNDO-VIVO.md` + `PLANO-FORA-DA-CAIXA.md` + `_plano/*.md` (linhagem Mundo
+  Vivo do Marcos) · `EDUCAVERSO-QA.md` (os Portões 0-3) · `ATIVIDADE-PREMIUM.md` (formato fixo).
+
 ## 🗺️ A GRANDE AVENTURA — estrutura do mundo (visão do Marcos)
 O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
 - **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
