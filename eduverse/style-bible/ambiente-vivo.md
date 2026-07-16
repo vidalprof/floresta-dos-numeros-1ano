@@ -44,7 +44,9 @@
       Byte** (para, olha, fala) quando ele chega perto. Data-driven, reusa a lib breathe/sway.
 - [ ] **ANIMAIS COM VIDA (comportamento próprio) — pedido do Marcos:** animais como NPCs com AÇÃO:
       **cachorro correndo com poeirinha nas patas + latido** (Web Audio), **coelho pulando** (arco de
-      salto + squash/stretch), pássaros, gato. Parecerem VIVOS. Reusa a poeira e a lib de micro-mov.
+      salto + squash/stretch), gato. Parecerem VIVOS. Reusa a poeira e a lib de micro-mov.
+      Pássaros: **voando + cantando JÁ FEITO**; falta alguns **pousados na árvore** (balançam no galho +
+      cantam de vez em quando + levantam voo quando o Byte passa perto).
 - [ ] **ROSTO VIVO (olhinhos e boca mexendo) — pedido do Marcos:** os olhos **piscam** e a **boca mexe**
       ao falar/latir. Sprite é imagem estática → fazer pelo **caminho documentado** (`EDUCAVERSO.md`
       §Personagens Vivos): desenhar olhos+boca POR CÓDIGO por cima do sprite (custo ~zero, sincroniza
