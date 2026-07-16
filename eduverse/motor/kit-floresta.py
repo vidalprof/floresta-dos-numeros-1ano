@@ -68,6 +68,22 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  #dpad button:active{transform:translateY(2px);box-shadow:0 1px 0 #7f93b3;}
  .dU{grid-column:2;grid-row:1;} .dL{grid-column:1;grid-row:2;} .dR{grid-column:3;grid-row:2;} .dD{grid-column:2;grid-row:3;}
  body.touch .subPC{display:none;} body.touch .subTouch{display:block;} body.touch #dpad{display:grid;}
+ /* ---------- MODO APP TELA CHEIA (mobile/tablet): o JOGO cobre o VIEWPORT INTEIRO por padrao,
+    sem moldura/margem/titulo empurrando o canvas -- like um app/jogo mobile (Stardew/Minecraft).
+    A classe "app-cheio" e aplicada no <html> via JS (so em tela pequena/touch); em desktop grande
+    nada muda (continua a moldura com margem de hoje). Tudo com !important pontual so onde precisa
+    vencer regras existentes (tem-botao-tc, touch) que foram pensadas p/ o layout NAO-tela-cheia. */
+ html.app-cheio,html.app-cheio body{margin:0;padding:0;overflow:hidden;height:100%;width:100%;position:fixed;top:0;left:0;}
+ html.app-cheio #wrap{position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100%;margin:0;padding:0!important;gap:0;}
+ html.app-cheio body.tem-botao-tc #wrap{padding-top:0!important;}
+ html.app-cheio #frame{position:absolute;top:0;left:0;width:100%;height:100%;padding:0;margin:0;border-radius:0;box-shadow:none;max-width:100vw;display:flex;display:-webkit-box;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;}
+ html.app-cheio canvas{max-width:100%;max-height:100%;border-radius:0;}
+ html.app-cheio h1,html.app-cheio .sub{position:fixed;left:0;right:0;z-index:40;margin:0;width:100%;max-width:100%;box-sizing:border-box;background:rgba(8,14,28,.5);-webkit-transition:opacity .7s;transition:opacity .7s;opacity:1;}
+ html.app-cheio h1{top:0;font-size:11px;padding:3px 8px 1px;}
+ html.app-cheio .sub{top:16px;font-size:8px;line-height:1.2;padding:0 8px 3px;}
+ html.app-cheio h1.oculto,html.app-cheio .sub.oculto{opacity:0;pointer-events:none;}
+ html.app-cheio #dpad{position:fixed;left:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));margin:0;z-index:50;background:rgba(10,18,36,.35);padding:6px;border-radius:14px;}
+ html.app-cheio #btn-tela-cheia{top:calc(6px + env(safe-area-inset-top,0px));}
 </style></head><body>
  <button id="btn-tela-cheia" onclick="alternarTelaCheia()" title="Tela cheia" style="display:none">&#9974;</button>
  <div id="wrap">
@@ -101,27 +117,50 @@ function atualizarIconeTelaCheia(){var cheia=estaEmTelaCheia();var b=document.ge
  if(btf&&telaCheiaSuportada()){btf.style.display="block";if(document.body){document.body.className+=" tem-botao-tc";}
   var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"],k;
   for(k=0;k<evs.length;k++){document.addEventListener(evs[k],atualizarIconeTelaCheia);}}}catch(e){}})();
-/* tela estreita (celular em pe): calcula a altura do CANVAS p/ ocupar o espaco vertical de VERDADE.
-   Em vez de chutar um numero fixo (que estoura em tela curta tipo iPhone SE e sobra em tela alta),
-   MEDE o que sobra depois do titulo/subtitulo/D-pad/botao de tela cheia (classes "touch" e
-   "tem-botao-tc" acima ja aplicadas, entao o layout medido aqui e o layout FINAL) e deriva a
-   resolucao do canvas p/ preencher esse espaco. O CSS (max-width:100%/max-height:92vh) e uma rede
-   de seguranca: mesmo se a estimativa nao for perfeita, nunca estoura a tela. */
+/* ---------- LAYOUT: MODO APP TELA CHEIA (mobile/tablet) vs MOLDURA (desktop) ----------
+   Tela pequena OU ponteiro grosso (touch) => o jogo vira um APP DE TELA CHEIA (edge-to-edge),
+   igual jogo mobile: sem titulo/subtitulo empurrando o canvas, #frame cobre o viewport inteiro.
+   Em desktop grande continua a moldura com margem de sempre (nada muda ali).
+   A altura/largura REAIS do viewport sao lidas via JS e aplicadas DIRETO no style (el.style.height=
+   px+"px") -- nao usamos var(--) no CSS (proibido pelo padrao do projeto) nem confiamos cegamente
+   em 100vh (a barra de endereco do celular muda innerHeight ao rolar/orientar; por isso recalculamos
+   em resize/orientationchange, e usamos visualViewport quando existe p/ medida mais estavel). */
+var APP_CHEIO=false;
+function _vpH(){return Math.round((window.visualViewport?window.visualViewport.height:window.innerHeight)||800);}
+function _vpW(){return Math.round((window.visualViewport?window.visualViewport.width:window.innerWidth)||360);}
 (function(){try{
- var w=window.innerWidth||720;
- if(w<600){
-  var h1=document.querySelector("h1"),subs=document.querySelectorAll(".sub"),dpad=document.getElementById("dpad"),frame=document.getElementById("frame"),wrap=document.getElementById("wrap");
-  var hh1=h1?h1.getBoundingClientRect().height:16,hsub=0,i;
-  for(i=0;i<subs.length;i++){if(getComputedStyle(subs[i]).display!=="none")hsub=Math.max(hsub,subs[i].getBoundingClientRect().height);}
-  var hdpad=(dpad&&getComputedStyle(dpad).display!=="none")?(dpad.getBoundingClientRect().height+10):0;
-  var padTop=wrap?parseFloat(getComputedStyle(wrap).paddingTop)||0:4,padBot=wrap?parseFloat(getComputedStyle(wrap).paddingBottom)||0:4;
-  var reservado=hh1+hsub+hdpad+padTop+padBot+18;                   // titulo+subtitulo+dpad+padding real do #wrap (ja com tela-cheia) + folga
-  var availH=Math.max(320,(window.innerHeight||860)-reservado);
-  var availW=Math.max(240,(frame?frame.clientWidth:w)-8);
-  var novaAltura=Math.round(cv.width*(availH/availW));
-  cv.height=Math.max(700,Math.min(1300,novaAltura));
- }
+ APP_CHEIO=(_vpW()<700)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches);
+ if(APP_CHEIO){document.documentElement.className+=" app-cheio";}
 }catch(e){}})();
+var _frameEl=document.getElementById("frame"),_wrapEl=document.getElementById("wrap");
+var _h1El=document.querySelector("h1"),_subEls=document.querySelectorAll(".sub");
+/* calcula a resolucao INTERNA do canvas (cv.width/cv.height) p/ casar com a proporcao do espaco
+   disponivel de verdade -- assim o CSS (max-width/max-height:100%) escala o canvas SEM sobrar
+   letterbox (o mundo preenche a tela toda, largura E altura), sem esticar de forma feia. */
+function recalcLayout(){try{
+ var vw=_vpW(),vh=_vpH();
+ if(APP_CHEIO){
+  if(_frameEl){_frameEl.style.width=vw+"px";_frameEl.style.height=vh+"px";}
+  if(_wrapEl){_wrapEl.style.width=vw+"px";_wrapEl.style.height=vh+"px";}
+  var availW=Math.max(240,vw-4),availH=Math.max(320,vh-4);
+  var novaAltura=Math.round(cv.width*(availH/availW));
+  cv.height=Math.max(420,Math.min(1600,novaAltura));
+  if(typeof VH!=="undefined")VH=cv.height;
+ }
+}catch(e){}}
+recalcLayout();
+if(APP_CHEIO){
+ // titulo/subtitulo somem sozinhos depois de alguns segundos (viram overlay minimalista no topo
+ // enquanto isso): a instrucao inicial ja e falada/mostrada no balao RPG dentro do proprio jogo
+ // (balao() chamado em iniciar()), entao sumir o texto da DOM aqui e seguro.
+ setTimeout(function(){try{
+  if(_h1El)_h1El.className+=" oculto";
+  for(var i=0;i<_subEls.length;i++)_subEls[i].className+=" oculto";
+ }catch(e){}},4200);
+}
+window.addEventListener("resize",recalcLayout);
+window.addEventListener("orientationchange",function(){setTimeout(recalcLayout,60);});
+if(window.visualViewport)window.visualViewport.addEventListener("resize",recalcLayout);
 var cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
 var HIST=(typeof MUNDO!=="undefined"&&MUNDO.historia)?MUNDO.historia:{}; // historia data-driven (default {} = floresta identica)
@@ -1113,53 +1152,42 @@ var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColo
 function corPlaca(nome){ if(nome==="Byte")return "#3ec6a6";
  var h=0;for(var i=0;i<nome.length;i++)h=(h*31+nome.charCodeAt(i))>>>0;
  var HS=["#e08a3c","#5aa0e0","#c56ad0","#7bb84a","#e0693c","#4ab0c0"];return HS[h%HS.length]; }
-// caixa de dialogo RPG. (ancX,feetY) = base do personagem na TELA
+// caixa de dialogo RPG CLASSICO (estilo Zelda/Pokemon 16-bit): janela FIXA no rodape da tela,
+// fundo claro/solido, borda grossa dupla, texto escuro. NAO segue o personagem (sem cauda/
+// posicao acima-da-cabeca) -- (ancX,feetY) ficam nos parametros so p/ nao mudar a assinatura
+// da chamada (balaoDes(_spk.x-cam.x,_spk.y-cam.y)) mas nao sao mais usados p/ posicionar a caixa.
 function balaoDes(ancX,feetY){ if(!(balaoT>0&&balaoFull))return;
- var PAD=8,LH=15,MAXW=238,GAP=9,TOPO=30,fundo="rgba(18,26,48,.92)"; // TOPO=abaixo da HUD (26px)
+ var PAD=10,LH=16,MAXW=VW-40,fundo="#f5efe0",corTxt="#2a2216";
  // 1) quebra o TEXTO COMPLETO (box FIXO: nao pula enquanto digita)
- cx.font="bold 12px Verdana";var words=balaoFull.split(" "),linhas=[],cur="";
+ cx.font="bold 13px Verdana";var words=balaoFull.split(" "),linhas=[],cur="";
  for(var i=0;i<words.length;i++){var tt=cur?cur+" "+words[i]:words[i];
   if(cx.measureText(tt).width>MAXW&&cur){linhas.push(cur);cur=words[i];}else cur=tt;}
  if(cur)linhas.push(cur);
- // 2) medidas
- var bw=0;for(i=0;i<linhas.length;i++)bw=Math.max(bw,cx.measureText(linhas[i]).width);
- bw=Math.min(bw+PAD*2,VW-16);var bh=linhas.length*LH+PAD*2;
- // 3) ACIMA da cabeca; se nao couber (perto do topo), CAI abaixo do personagem
- var headY=feetY-50,acima=(headY-GAP-bh)>=TOPO;
- var ly=acima?(headY-GAP-bh):Math.min(feetY+GAP,VH-bh-8);
- var lx=Math.max(8,Math.min(VW-bw-8,ancX-bw/2));
- var tx=Math.max(lx+20,Math.min(lx+bw-20,ancX)); // cauda presa na caixa
- // 4) aparece com leve fade+subida
- var ap=balaoAppear;cx.save();cx.globalAlpha=ap;cx.translate(0,acima?(1-ap)*6:-(1-ap)*6);
- // 5) corpo: fundo translucido + BORDA DUPLA arredondada
- roundR(lx,ly,bw,bh,8);cx.fillStyle=fundo;cx.fill();
- cx.lineWidth=2.5;cx.strokeStyle="rgba(196,214,250,.92)";cx.stroke();
- roundR(lx+3,ly+3,bw-6,bh-6,6);cx.lineWidth=1;cx.strokeStyle="rgba(120,150,210,.5)";cx.stroke();
- // 6) cauda POR CIMA (cobre a costura) apontando pro personagem
- cx.fillStyle=fundo;cx.beginPath();
- if(acima){cx.moveTo(tx-9,ly+bh-2);cx.lineTo(tx+9,ly+bh-2);cx.lineTo(tx,ly+bh+12);}
- else{cx.moveTo(tx-9,ly+2);cx.lineTo(tx+9,ly+2);cx.lineTo(tx,ly-12);}
- cx.closePath();cx.fill();
- cx.lineWidth=2.5;cx.strokeStyle="rgba(196,214,250,.92)";cx.beginPath();
- if(acima){cx.moveTo(tx-9,ly+bh-2);cx.lineTo(tx,ly+bh+12);cx.lineTo(tx+9,ly+bh-2);}
- else{cx.moveTo(tx-9,ly+2);cx.lineTo(tx,ly-12);cx.lineTo(tx+9,ly+2);}
- cx.stroke();
- // 7) TEXTO letra a letra (substring sobre linhas FIXAS -> nao treme)
- var vis=Math.floor(balaoN),used=0;cx.textAlign="left";cx.fillStyle="#f2f6ff";
+ // 2) medidas: janela ocupa quase a largura toda, com margem lateral pequena
+ var bw=VW-20,bh=linhas.length*LH+PAD*2;
+ var lx=10,ly=VH-bh-14; // SEMPRE no rodape (nao muda com quem fala nem com a camera)
+ // 3) aparece com leve fade+subida (sem escolha acima/abaixo: e uma janela fixa)
+ var ap=balaoAppear;cx.save();cx.globalAlpha=ap;cx.translate(0,(1-ap)*8);
+ // 4) corpo: fundo CLARO SOLIDO + BORDA GROSSA DUPLA, cantos quase retos (estilo pixel-art classico)
+ roundR(lx,ly,bw,bh,5);cx.fillStyle=fundo;cx.fill();
+ cx.lineWidth=4;cx.strokeStyle="#3a2b1a";cx.stroke();
+ roundR(lx+5,ly+5,bw-10,bh-10,3);cx.lineWidth=2;cx.strokeStyle="#c9a86a";cx.stroke();
+ // 5) TEXTO letra a letra (substring sobre linhas FIXAS -> nao treme), ESCURO sobre o fundo claro
+ var vis=Math.floor(balaoN),used=0;cx.textAlign="left";cx.fillStyle=corTxt;cx.font="13px Verdana";
  for(i=0;i<linhas.length;i++){var ln=linhas[i];
-  if(used<vis)cx.fillText(ln.substr(0,Math.min(ln.length,vis-used)),lx+PAD,ly+PAD+11+i*LH);
+  if(used<vis)cx.fillText(ln.substr(0,Math.min(ln.length,vis-used)),lx+PAD,ly+PAD+12+i*LH);
   used+=ln.length+1;}
- // 8) SETINHA piscando quando terminou (deterministica: sin de acumulador de tempo)
+ // 6) SETINHA piscando quando terminou (deterministica: sin de acumulador de tempo)
  if(balaoFimTxt){var pb=0.3+0.7*(0.5+0.5*Math.sin(balaoBlink*6));
-  cx.globalAlpha=ap*pb;cx.fillStyle="#ffe38a";cx.textAlign="center";cx.font="bold 10px Verdana";
-  cx.fillText("▼",lx+bw-10,ly+bh-5);cx.globalAlpha=ap;}
- // 9) PLACA com o NOME (topo-esq, colorida, encaixada na borda de cima)
- cx.font="bold 10px Verdana";cx.textAlign="left";var nm=balaoNome,nw=cx.measureText(nm).width;
- var pw=nw+12,ph=15,plx=lx+9,ply=ly-ph+5;
- roundR(plx,ply,pw,ph,5);cx.fillStyle=corPlaca(nm);cx.fill();
- cx.lineWidth=1.5;cx.strokeStyle="rgba(0,0,0,.28)";cx.stroke();
- cx.fillStyle="rgba(255,255,255,.28)";cx.fillRect(plx+3,ply+2,pw-6,2);
- cx.fillStyle="#10202e";cx.fillText(nm,plx+6,ply+11);
+  cx.globalAlpha=ap*pb;cx.fillStyle="#7a5a2a";cx.textAlign="center";cx.font="bold 11px Verdana";
+  cx.fillText("▼",lx+bw-14,ly+bh-7);cx.globalAlpha=ap;}
+ // 7) PLACA com o NOME (topo-esq, colorida por personagem, encaixada na borda de cima como aba)
+ cx.font="bold 11px Verdana";cx.textAlign="left";var nm=balaoNome,nw=cx.measureText(nm).width;
+ var pw=nw+14,ph=17,plx=lx+10,ply=ly-ph+4;
+ roundR(plx,ply,pw,ph,4);cx.fillStyle=corPlaca(nm);cx.fill();
+ cx.lineWidth=2;cx.strokeStyle="#3a2b1a";cx.stroke();
+ cx.fillStyle="rgba(255,255,255,.35)";cx.fillRect(plx+3,ply+2,pw-6,2);
+ cx.fillStyle="#12141c";cx.fillText(nm,plx+7,ply+12);
  cx.restore();cx.globalAlpha=1; }
 function roundR(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);cx.quadraticCurveTo(x+w,y,x+w,y+r);cx.lineTo(x+w,y+h-r);cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);cx.lineTo(x+r,y+h);cx.quadraticCurveTo(x,y+h,x,y+h-r);cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);cx.closePath();}
 if(window.speechSynthesis)speechSynthesis.onvoiceschanged=function(){};
