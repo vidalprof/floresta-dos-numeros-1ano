@@ -63,3 +63,13 @@ especialista + auditoria), não no seu colo. Você só vê o que já passou.
 - A parte **técnica** dessa fábrica (estrutura do repositório, modelo de dados das missões,
   motor de tiles/animações, "audit runner") está sendo desenhada pelos engenheiros de
   software e de games e entra no **plano-mestre** (`EDUVERSE-PLANO.md`, em montagem).
+
+## 🔎 O AUDITOR É UM PAINEL (uma dimensão cada) — pedido do Marcos (2026-07-16)
+Não é UM auditor monolítico: são **vários auditores**, um por dimensão, rodados pelo
+`eduverse/audit/runner.py` (cada erro novo vira um teste do auditor da dimensão certa):
+- **Técnico/Funcional:** node --check, render sem erro, DIRIGIR a mecânica, colisão, peso, offline.
+- **Som:** voz gerada embutida + som ambiente em camadas (não corta).
+- **Texto/Língua:** português certo, sem símbolo/emoji lido pelo TTS, Byte pergunta (não instrui).
+- **Pedagógico (Portão 0):** segue o arco História→…→Reflexão nos dados; não é prova disfarçada.
+- **Arte/Visual:** tudo temático (Byte vestido do tema), mundo VIVO (2 frames diferentes),
+  som no canto, sem sobreposição, estilo consistente. (Gosto fino = Diretor de Arte + Portão 3.)

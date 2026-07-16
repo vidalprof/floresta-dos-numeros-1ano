@@ -14,7 +14,7 @@ laudo={}; falhou=[]
 def gate(nome, ok, detalhe=""):
     laudo[nome]="OK" if ok else "FALHA"
     if not ok: falhou.append(nome+(" ("+detalhe+")" if detalhe else ""))
-    print(("  [OK] " if ok else "  [FALHA] ")+nome+("  "+detalhe if detalhe else ""))
+    print(("  [OK] "+nome) if ok else ("  [FALHA] "+nome+("  -> "+detalhe if detalhe else "")))
 
 # 0) existe o build?
 gate("build_existe", os.path.exists(dist))
@@ -75,6 +75,20 @@ try:
         gate("mundo_vivo", False, "tamanhos diferentes")
 except Exception as e:
     gate("mundo_vivo", True, "sem PIL/numpy - checagem pulada")
+
+# ===== PAINEL DE AUDITORES (uma dimensao cada) =====
+# AUDITOR DE SOM
+gate("som_voz_embutida", ("data:audio/mpeg" in html), "sem voz gerada embutida")
+gate("som_ambiente", ("ambMaster" in js or "initAudio" in js), "sem som ambiente")
+# AUDITOR DE TEXTO/LINGUA (nao pode ter simbolo/emoji dentro de fala narrada)
+falas_txt=" ".join([f.get("texto","") if isinstance(f,dict) else str(f) for f in (dados.get("dialogos",{}) or {}).values()]) if isinstance(dados.get("dialogos",{}),dict) else ""
+import re as _re
+tem_simbolo=bool(_re.search(r"[#*_<>{}\\^~|]", falas_txt))
+gate("texto_sem_simbolo", not tem_simbolo, "fala com simbolo que o TTS le errado")
+# AUDITOR PEDAGOGICO (Portao 0 estrutural) — o arco do EducaVerso esta nos dados?
+tem_arco = ("arco" in dados) or ("missoes" in dados) or ("arco" in dados.get("pedagogia",{}))
+laudo["pedagogia_arco"]= "OK" if tem_arco else "PENDENTE_HUMANO"
+print(("  [OK] " if tem_arco else "  [PENDENTE] ")+"pedagogia_arco  (arco Historia->...->Reflexao nos dados)")
 
 # LAUDO
 laudo_path=os.path.join(REPO,"eduverse","missoes",slug); os.makedirs(laudo_path,exist_ok=True)
