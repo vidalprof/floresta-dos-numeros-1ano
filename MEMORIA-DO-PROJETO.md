@@ -41,8 +41,19 @@ código — só é usado dentro do workflow.
   `MUNDO-VIVO-*.md`, `FABRICA-DE-MUNDOS.md`, `PLANO-FORA-DA-CAIXA.md`, os 5
   pareceres em `_plano/`.
 - **Byte** (mascote robô) gerado em `_novo/byte.png`.
-- **Ideia em estudo:** mundo 2D em *tiles* (leve/escalável) + arte premium
-  gerada por IA + Byte animado — o "casamento" que aproxima da confeitaria.
+- **✅ DECISÃO FIRME DO MARCOS (não reabrir):** o motor é o **2D em TILE + pintura IA
+  premium** (linhagem `eduverse/kit-floresta.py` — "A Floresta do Byte"), **NÃO** o motor
+  antigo da confeitaria (`_pub_confeitaria/mundo/index.html`, que é **PESADO: 3 MB**).
+  **Por quê:** o tile é **mais fácil de criar, mais rápido, mais leve e mais sustentável**
+  (mundo novo = DADOS + peças reusadas, não um motor de 3 MB do zero) — e mantém o **mesmo
+  visual lindo** (a arte é pintada por IA). **A FÁBRICA CLONA O MOTOR DE TILE**, não o da
+  confeitaria. O "injetor" do tile **já existe** = `eduverse/builders/montar.py`
+  (`dados.json` → `index.html`). **REGRA:** nunca reconstruir/clonar o motor pesado; se eu
+  cismar de codar mundo na mão ou clonar a confeitaria, PARAR — a decisão é o tile leve.
+- **Byte VESTE o tema:** cada atividade tem o Byte fantasiado do tema (pirata, viking…),
+  gerado **editando a imagem-âncora** `byte.png` (mesmo personagem, só a fantasia) via
+  `gerar-imagens.yml` (`modelo=gemini`, `base=eduverse/biblioteca/proc/byte.png`). O navio
+  pirata foi o piloto que PROVOU que qualquer tema funciona.
 
 ## 🏭 FÁBRICA DE ATIVIDADES por currículo (pedido do Marcos — incorporar no EducaVerso)
 Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir no mundo.
