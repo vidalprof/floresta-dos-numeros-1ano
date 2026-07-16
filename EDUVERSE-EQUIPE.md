@@ -20,6 +20,17 @@
 4. **Diretor de Arte** — a **identidade visual única** (style bible); especifica os assets
    a gerar (mesmo estilo, gerando por edição da base) e aprova recorte/consistência.
    *Portão:* tudo é IA, recorte limpo, estilo consistente, imagens não se sobrepõem.
+4b. **Especialista em Prompts** (pedido do Marcos) — escreve o **prompt certo para cada
+   motor**, extraindo o melhor de cada um. **Receitas por motor:**
+   - **Pollinations (grátis, tende ao fotográfico):** tokens de estilo FORTES na frente —
+     "flat 2D cartoon illustration, hand-painted storybook, soft cel shading, thick soft
+     outlines, NOT photorealistic/no photo", material/cor, "seamless tile" p/ texturas.
+     Bom para **texturas de chão** (grama, mar, convés) e decoração não-crítica.
+   - **Gemini (pago, recorte limpo):** **edita a imagem-âncora** (`base=`) em linguagem
+     natural — "o MESMO personagem/estilo, agora fazendo X, fundo transparente". Melhor
+     para **personagens, poses (cartela) e props** que a criança vê de perto.
+   *Portão:* cada geração usa a receita do motor certo; se sair fora do estilo, **reescreve
+   o prompt** (não empurra torto). Os prompts que funcionam entram no **style-bible**.
 5. **Sound Designer** — **som ambiente em camadas** + efeitos + **narração gerada**
    (edge-tts) embutida; fila de falas (não corta). *Portão:* mundo soa vivo; voz de verdade.
 6. **Engenheiro (build)** — **monta** a atividade a partir dos DADOS + biblioteca (LEGO)
