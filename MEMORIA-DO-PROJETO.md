@@ -333,7 +333,11 @@ imersivo dentro do mundo estava difícil demais para uma tacada só:
   premium. Difícil/novo = a camada do estudante (backend/save/avaliação).
 - **Ordem de construção proposta (MVP fatia vertical, pra NÃO espalhar):** (1) trazer "entrar na cabana +
   interior vivo" pro motor de produção; (2) uma parada abre um POPUP com uma atividade premium; (3) concluir
-  a atividade = parada "resolvida" + avança no caminho; (4) tela inicial/login + SAVE local; (5) backend
+  a atividade = parada "resolvida" + avança no caminho; (4) TELA INICIAL do EducaVerso LINDA (branded,
+  logo/identidade própria, modelo "seus mundos" do Minecraft mas pintado premium, com efeitos + musiquinha
+  Web Audio) — o Marcos quer "bem linda como a PRIMEIRA que você me passou" = o CONCEITO que ja publiquei:
+  https://claude.ai/code/artifact/ac466f52-adb6-4a9a-b21f-4be67b2197b7 (RECUPERAR esse conceito e construir
+  a tela real a partir dele; digita NOME+TURMA) + SAVE local; (5) backend
   Firebase (progresso + avaliação + painel do professor). Provar a fatia com 1 mundo (floresta) + 2 paradas
   antes de escalar.
 
