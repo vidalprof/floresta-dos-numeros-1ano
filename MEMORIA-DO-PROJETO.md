@@ -102,6 +102,29 @@ Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir n
 - Estado: groundwork existe (baixar-curriculo.yml, ATIVIDADE-COMPUTACAO.md, catálogo de
   interatividades); FALTA o montador que casa currículo→mecânica→mundo→faixa de forma semiautomática.
 
+## 🎒 CAMADA DO ESTUDANTE + AVALIAÇÃO DESCRITIVA (pedido do Marcos, jul/2026) — "tudo que nossa ideia tinha"
+O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCIÁVEIS):
+- **Tela inicial MARAVILHOSA:** o estudante entra, digita **NOME + TURMA** (e dados), e as
+  informações dele são **puxadas** (histórico, progresso, personagem) → o mundo vira DELE.
+- **Interação pelo NOME:** o jogo/Byte/NPCs chamam o aluno pelo nome (voz + balão).
+- **Progresso SALVO:** cada missão/atividade concluída fica registrada (retoma de onde parou).
+- **AVALIAÇÃO DESCRITIVA contínua:** o sistema descreve o que o aluno demonstrou (por habilidade
+  do currículo), acumulando por **mês / semestre / ano**. Alimentada pelo gating pedagógico
+  (completar a missão = provou a habilidade → vira frase descritiva).
+- **Opção de virar NOTA:** se o professor quiser, a avaliação descritiva converte em nota.
+- **Painel do PROFESSOR:** ele vê a turma, o progresso e a avaliação de cada aluno (relatório).
+- **DESAFIO TÉCNICO (honesto):** salvar progresso + o professor ver central = precisa de BACKEND
+  (não só localStorage, que é por-aparelho/por-navegador e o professor não enxerga). Candidato
+  natural: **Firebase** (Firestore + Auth) — há indício de Firebase nos secrets (`GEMINI_API_KEY`
+  "Firebase/Pollinations conforme uso"); free tier, funciona a partir do Pages estático. Alternativas:
+  Google Sheet/Apps Script. **A EQUIPE precisa desenhar esta camada** (persistência + modelo de dados
+  do aluno + tela inicial + agregação da avaliação + conversão em nota + painel do professor).
+- **Adequação por TURMA/idade** vale aqui também: tema, mecânica, FALAS, missão e voz mudam por faixa
+  (pré/1-2 não-leitores → só ícone+voz+cor; 3-5 leitura simples; 6-9 multi-etapas). `dialogo.cps`
+  (velocidade do balão) mais lento pros pequenos.
+- **Régua de qualidade (Marcos):** 2D tile + **arte pintada por IA premium** = qualidade "quase real"
+  que **prende o estudante** — é o diferencial que chama a atenção. Não baixar essa régua.
+
 ## 🗺️ A GRANDE AVENTURA — estrutura do mundo (visão do Marcos)
 O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
 - **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
