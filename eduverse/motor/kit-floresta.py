@@ -10,7 +10,9 @@ def b64(p):
 # imagens (algumas opcionais: so entram se existirem)
 IMGF={"grama":"grama.png","caminho":"caminho.png","arvore":"arvore.png","byte":"byte.png",
       "chave":"chave.png","flores":"flores.png","muro":"muro.png","passaro":"passarinho.png",
-      "borboleta":"borboleta.png"}
+      "borboleta":"borboleta.png",
+      # --- sprites de NPCS (opcionais; o loader ja pula os que nao existem) ---
+      "gato":"gato.png","coelho":"coelho.png","passarinho":"passarinho.png"}
 # ---- TEMA (peca trocavel): o MESMO motor, mundo diferente ----
 TEMA=os.environ.get("TEMA","floresta")
 CFG={
@@ -102,6 +104,51 @@ var temFogo=false;for(var _pi=0;_pi<PROPS.length;_pi++){var _tp=PROPS[_pi].tipo;
 for(var i=0;i<30;i++)pollen.push({x:Math.random()*WW,y:Math.random()*WH,f:i,r:1+Math.random()*1.6});
 var luzChao=[];for(var i=0;i<3;i++)luzChao.push({y:120+i*320,ph:i*2.1,sp:14+i*4});
 
+/* ===== ESTADO: subsistemas de mundo-vivo (mundo-vivo v2) ===== */
+var balaoAlvo=null; // quem esta falando (obj com x,y no mundo); null=Byte
+// --- POEIRINHA AO ANDAR: array + config data-driven (DEFAULT OFF: mundos sem o campo ficam IDENTICOS) ---
+var poeira=[];
+var POEIRA_ON=(typeof MUNDO!=="undefined"&&MUNDO.poeira)?true:false;                 // ligue com MUNDO.poeira:true
+var POEIRA_COR=(typeof MUNDO!=="undefined"&&MUNDO.poeiraCor)?MUNDO.poeiraCor:"rgb(198,180,150)"; // terra clara (transparencia vem do globalAlpha)
+// SOMBRA DIRECIONAL: liga por PADRAO (feature pedida); um mundo pode desligar com MUNDO.sombraDir===false
+var SOMBRA_DIR=!(typeof MUNDO!=="undefined"&&MUNDO.sombraDir===false);
+// estado global da luz, recalculado 1x/frame: dx=lado(xrx), dy=queda(xry), sx=esticao, a=opacidade, col=cor.
+// DEFAULT SEGURO = igualzinho a sombra antiga (offset 0, alpha .28, rgba(12,8,20)); se SOMBRA_DIR=false, fica assim.
+var luz={dx:0,dy:0,sx:0,a:0.28,col:"rgb(12,8,20)"};
+/* ---------- CLIMA (data-driven; DEFAULT ""=nada, floresta identica) ---------- */
+var CLIMA=(typeof MUNDO!=="undefined"&&MUNDO.clima)?MUNDO.clima:"";           // ""|"chuva"|"neve"|"tempestade"
+var CLIMAF=(typeof MUNDO!=="undefined"&&MUNDO.climaForca)?MUNDO.climaForca:1; // intensidade (1=padrao)
+var CLIMA_MOLHA=(typeof MUNDO!=="undefined"&&MUNDO.climaMolha)?true:false;    // brilho de chao molhado (opcional)
+var chuvaOn=(CLIMA==="chuva"||CLIMA==="tempestade");
+var trovaoOn=(CLIMA==="tempestade");
+// pool FIXO de gotas (coord de TELA): cada gota tem posicao/velocidade proprias e recicla no topo (nada alocado por frame)
+var gotas=[];if(chuvaOn){for(var _cg=0,_ng=Math.round(80*CLIMAF);_cg<_ng;_cg++)gotas.push({x:Math.random()*VW,y:Math.random()*VH,l:8+Math.random()*10,sp:520+Math.random()*280,s:0,sx:0});}
+// pool FIXO de rajadas visiveis (linhas de vento cruzando a tela)
+var ventos=[];for(var _cv=0;_cv<8;_cv++)ventos.push({on:false,x:0,y:0,len:0,sp:0,a:0});
+// flash + trovao (tempestade)
+var flash=0,flashT=3+Math.random()*5,trovaoDelay=-1;
+// NUVENS (data-driven): MUNDO.nuvens -> false=off | true=ligado leve (default) | N=numero de sombras.
+// DEFAULT LIGADO LEVE e bem discreto (a floresta ganha uma sombra de nuvem sutil).
+var _nuvCfg=(typeof MUNDO!=="undefined"&&MUNDO.nuvens!==undefined)?MUNDO.nuvens:true;
+var _nQtd=(_nuvCfg===false)?0:(typeof _nuvCfg==="number"?Math.max(2,Math.min(4,Math.round(_nuvCfg))):2); // 2-4 sombras
+var _nCeu=(_nuvCfg===false)?0:2; // 2 nuvens claras no ceu (0 desliga; discreto)
+var nuvSombra=[],nuvCeu=[];
+// monta as nuvens UMA vez, com forma DETERMINISTICA (hash seeded, nao Math.random -> nao pisca nem varia)
+(function(){function H(s,k){var v=Math.sin(s*12.9898+k*78.233)*43758.5453;return v-Math.floor(v);}
+ for(var i=0;i<_nQtd;i++){var s=(i+1)*97.13,bl=[],nb=2+Math.floor(H(s,1)*2); // 2-3 blobs = manchas grandes
+  for(var b=0;b<nb;b++)bl.push({dx:(H(s,b*3+2)-0.5)*170,dy:(H(s,b*3+3)-0.5)*70,r:120+H(s,b*3+4)*120});
+  nuvSombra.push({x:H(s,5)*(WW+900),y:130+H(s,6)*(WH-260),w:0.85+H(s,7)*0.55,sp:0.7+H(s,8)*0.6,a:0.055+H(s,9)*0.035,ph:H(s,10)*6.28,bl:bl});}
+ for(i=0;i<_nCeu;i++){var s2=(i+1)*53.7,bl2=[],nb2=3+Math.floor(H(s2,1)*2); // 3-4 puffs por nuvem de ceu
+  for(var b2=0;b2<nb2;b2++)bl2.push({dx:(b2-nb2/2)*24+(H(s2,b2+2)-0.5)*10,dy:(H(s2,b2+9)-0.5)*8,r:15+H(s2,b2+5)*15});
+  nuvCeu.push({x:H(s2,6)*(VW+300),y:18+H(s2,7)*44,s:0.9+H(s2,8)*0.7,sp:0.6+H(s2,9)*0.7,a:0.10+H(s2,10)*0.08,ph:H(s2,11)*6.28,bl:bl2});}})();
+// NPCS VIVOS (data-driven): habitantes do mundo. Default [] -> floresta identica.
+var npcs=[];(function(){var L=(typeof MUNDO!=="undefined"&&MUNDO.npcs)?MUNDO.npcs:[];
+ for(var i=0;i<L.length;i++){var d=L[i];
+  npcs.push({sprite:d.sprite,x:d.x,y:d.y,ox:d.x,oy:d.y,
+   esc:d.escala||1,vel:d.vel||30,nome:d.nome||"",fala:d.fala||"",
+   rota:d.rota||null,ri:0,paus:0,dir:1,mvx:0,passo:0,
+   olha:0,acen:0,cd:0});}})();
+
 /* ---------- AUDIO (ambiente rico em camadas) ---------- */
 var AC=null,ventoG=null,ambMaster=null,som=false,gust=0.5,birdTimer=2.2,coruja=9;
 var noite=0; // ciclo dia/noite: 0=dia, 1=noite profunda (computado no loop)
@@ -150,15 +197,28 @@ function playFala(id,texto,pitch){if(!som)return;
  if(id&&FALAS[id]){ if(tocando){fila={id:id,t:texto,p:pitch};return;} _play(id,texto,pitch); }
  else { if(!tocando)falarTTS(texto,pitch); else fila={id:null,t:texto,p:pitch}; } }
 function pararVoz(){try{if(curAudio){curAudio.onended=null;curAudio.pause();}}catch(e){}curAudio=null;tocando=false;fila=null;try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(e){}}
-var balaoTxt=null,balaoT=0;
-function balao(t,id,pitch){balaoTxt=t;balaoT=5.5;playFala(id,t,pitch);}
+/* ---------- CAIXA DE DIALOGO RPG (placa de nome + typewriter + setinha) ---------- */
+var balaoT=0;                 // >0 = caixa aberta (tambem liga a pose "fala")
+var balaoNome="Byte",balaoFull="",balaoN=0,balaoFimTxt=false,balaoBlink=0,balaoAppear=0;
+var balaoCPS=(typeof MUNDO!=="undefined"&&MUNDO.dialogo&&MUNDO.dialogo.cps)?MUNDO.dialogo.cps:34; // letras/s (default seguro)
+// balaoNPC: quem chama diz o NOME de quem fala; a fila de voz (playFala) NAO muda -> audio toca junto
+function balaoNPC(nome,t,id,pitch,alvo){balaoNome=nome||"Byte";balaoFull=t||"";balaoN=0;balaoFimTxt=(balaoFull.length===0);balaoBlink=0;balaoAppear=0;balaoT=1;balaoAlvo=alvo||null;playFala(id,t,pitch);}
+// assinatura ANTIGA intacta: quem ja chamava balao() nao muda -> nome vira "Byte"
+function balao(t,id,pitch){balaoNPC("Byte",t,id,pitch);}
+function balaoFecha(){balaoT=0;balaoFull="";balaoFimTxt=false;balaoAlvo=null;}
 function unlock(){initAudio();if(!window._u&&window.speechSynthesis){window._u=1;try{speechSynthesis.speak(new SpeechSynthesisUtterance(" "));}catch(e){}}}
 function toggleSom(){unlock();som=!som;if(ambMaster)ambMaster.gain.value=som?0.85:0;
  if(som){if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
  else{pararVoz();}}
 cv.addEventListener("mousedown",function(e){cliqueCv(e.clientX,e.clientY);});
 cv.addEventListener("touchstart",function(e){if(e.touches[0]){cliqueCv(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
-function cliqueCv(cxp,cyp){var r=cv.getBoundingClientRect();var mx=(cxp-r.left)*(VW/r.width),my=(cyp-r.top)*(VH/r.height);if(mx>VW-46&&my<30){toggleSom();}}
+function cliqueCv(cxp,cyp){var r=cv.getBoundingClientRect();var mx=(cxp-r.left)*(VW/r.width),my=(cyp-r.top)*(VH/r.height);
+ if(mx>VW-46&&my<30){toggleSom();return;}                 // botao de som (canto sup. dir) tem prioridade
+ if(balaoT>0&&balaoFull){                                 // caixa aberta: o toque avanca a fala
+  if(!balaoFimTxt){balaoN=balaoFull.length;balaoFimTxt=true;} // 1o toque: completa o texto na hora
+  else{balaoFecha();}                                     // 2o toque (texto ja completo): fecha
+  return;}
+}
 function desBotaoSom(){var bx=VW-26,by=13;cx.save();cx.fillStyle="rgba(255,255,255,.9)";cx.beginPath();cx.arc(bx,by,12,0,Math.PI*2);cx.fill();cx.fillStyle="#17324a";cx.beginPath();cx.moveTo(bx-6,by-3);cx.lineTo(bx-2,by-3);cx.lineTo(bx+2,by-7);cx.lineTo(bx+2,by+7);cx.lineTo(bx-2,by+3);cx.lineTo(bx-6,by+3);cx.closePath();cx.fill();if(som){cx.strokeStyle="#17324a";cx.lineWidth=1.6;cx.beginPath();cx.arc(bx+2,by,4,-0.7,0.7);cx.stroke();cx.beginPath();cx.arc(bx+2,by,7,-0.7,0.7);cx.stroke();}else{cx.strokeStyle="#c0392b";cx.lineWidth=2;cx.beginPath();cx.moveTo(bx+4,by-4);cx.lineTo(bx+9,by+4);cx.moveTo(bx+9,by-4);cx.lineTo(bx+4,by+4);cx.stroke();}cx.restore();}
 
 /* ---------- ENTRADA (teclado + D-pad segurar) ---------- */
@@ -196,7 +256,14 @@ var patG=null,patC=null;
 function cellCam(){return [Math.max(0,Math.min(WW-VW,byte.x-VW/2)), Math.max(0,Math.min(WH-VH,byte.y-VH/2))];}
 
 /* ---------- DESENHO ---------- */
-function sombra(x,y,rx,ry){cx.save();cx.fillStyle="rgba(12,8,20,.28)";cx.beginPath();cx.ellipse(x,y,rx,ry,0,0,Math.PI*2);cx.fill();cx.restore();}
+// SOMBRA DIRECIONAL (compartilhada): MESMA assinatura p/ nao quebrar as ~10 chamadas.
+// Usa o estado global "luz" (lado/comprimento/opacidade/cor) calculado 1x por frame no UPDATE.
+// E chamada DENTRO do translate da camera (coords de mundo). Sutil, nunca preta demais.
+function sombra(x,y,rx,ry){var ex=x+luz.dx*rx,ey=y+luz.dy*ry;   // desloca p/ o lado oposto a luz
+ var RX=rx*(1+luz.sx),RY=ry*(1+luz.sx*0.14);                    // estica no comprimento (sol baixo=longa)
+ cx.save();cx.globalAlpha=luz.a;cx.fillStyle=luz.col;
+ cx.beginPath();cx.ellipse(ex,ey,RX,RY,0,0,Math.PI*2);cx.fill();
+ cx.restore();cx.globalAlpha=1;}                                // SEMPRE restaura globalAlpha
 function estrela(x,y,r,a){cx.save();cx.globalAlpha=Math.max(0,a);cx.fillStyle="#ffd24a";cx.shadowColor="#ffd24a";cx.shadowBlur=10;cx.beginPath();
  for(var i=0;i<5;i++){var an=-Math.PI/2+i*2*Math.PI/5;cx.lineTo(x+Math.cos(an)*r,y+Math.sin(an)*r);var a2=an+Math.PI/5;cx.lineTo(x+Math.cos(a2)*r*.45,y+Math.sin(a2)*r*.45);}
  cx.closePath();cx.fill();cx.restore();cx.shadowBlur=0;}
@@ -244,7 +311,7 @@ function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda
  if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
   if(ay>ax) return byte.mvy<0?"costas":"frente";   // sobe=costas / desce=frente
   return "lado";}                                   // esquerda/direita
- if(balaoT>0) return "fala";
+ if(balaoT>0&&!balaoFimTxt&&!balaoAlvo) return "fala";
  if(byte.idle>13) return "deita";
  if(byte.idle>6)  return "senta";
  return "frente";}
@@ -261,7 +328,7 @@ function desByte(t){var x=byte.x,y=byte.y;
  var ron=deitado?Math.sin(t*0.0026):0;               // respiracao lenta do sono (roncar)
  var sx=deitado?(1+ron*0.035):(1+rp);                // infla/desincha o corpo
  var sy=deitado?(1+ron*0.02):((1-rp*.6)*(1-talk));
- var rot=deitado?ron*0.02:0;                          // leve balanco de roncar
+ var rot=deitado?ron*0.02:((!byte.mov&&nome!=="senta")?sway(t,0,0.014):0);                          // leve balanco de roncar
  sombra(x,y+8,deitado?(32+ron*2):18,deitado?7:6);
  cx.save();cx.translate(x,y+8-bob);cx.rotate(rot);cx.scale(flip*sx,sy);imgH(im,0,0,h);cx.restore();
  if(deitado)desZzz(t,x-h*0.30,y+8-h*0.75);           // Zzz saindo da boca (acima da carinha)
@@ -333,14 +400,202 @@ function desProp(p,t){if(p.tipo==="fogueira")desFogueira(p,t);
  else if(p.tipo==="lampiao")desLampiao(p,t);
  else if(p.tipo==="cabana"&&IMG.cabana){sombra(p.x,p.y+4,44,11);imgH(IMG.cabana,p.x,p.y,p.h||110);}}
 
+/* ===== FUNCOES: subsistemas de mundo-vivo (mundo-vivo v2) ===== */
+// ================= POEIRINHA AO ANDAR (reutilizavel) =================
+// emite 1 nuvenzinha de poeira nos pes (x,y). Math.random SO aqui (no spawn),
+// NUNCA no render -> nao pisca. Teto baixo p/ nao pesar no celular.
+function emitePoeira(x,y){if(poeira.length>26)return;
+ poeira.push({x:x+(Math.random()-.5)*7, y:y-Math.random()*3,
+  vx:(-byte.dir)*(5+Math.random()*9)+(gust-0.5)*18, // chuta pra tras do passo + deriva do vento
+  vy:-(7+Math.random()*9),                           // sobe
+  r:2.3+Math.random()*1.8, gro:9+Math.random()*7,    // raio inicial + quanto expande
+  a:0.26+Math.random()*0.13});}                       // ja nasce translucida (alpha baixo)
+
+// ================= MICRO-MOVIMENTOS (biblioteca pura, sem estado) =================
+// Determinísticas por FASE (ph): mesmo t+ph => mesmo valor (nao aloca, nao pisca).
+// Cada personagem passa um ph proprio (ex.: o seu x) p/ nao ficarem sincronizados.
+function breathe(t,ph){return Math.sin(t*0.0028+(ph||0));}            // respiro lento -> [-1,1]; o caller escala (ex.: *0.03 no scaleY)
+function sway(t,ph,amp){return (amp||0.03)*Math.sin(t*0.0016+(ph||0));} // balanco suave do corpo -> RADIANOS (usar em cx.rotate)
+function blink(t,ph){var c=(t*0.001+(ph||0)*3.3)%4.2;return c<0.11?0:1;} // 1=olho aberto / 0=piscando (~1 piscada a cada 4.2s)
+/* ================= CLIMA / ATMOSFERA (data-driven, default off) ================= */
+/* Decisao de camada: CHUVA e VENTO sao camada de TELA (colados na camera), nao de
+   mundo. Motivo: gota/risco nao tem "posicao no mundo" util — teriamos que popular
+   1500x1050 inteiro so pra ver ~80 gotas na viewport. Em TELA um pool fixo de ~80
+   gotas cobre sempre o que aparece, de graca, e nunca depende do tamanho do mapa.
+   O FLASH tambem e TELA (por cima de tudo, ate do HUD). Ja "chao molhado" (opcional)
+   e do MUNDO (brilho no chao), entao desenha DENTRO do translate da camera. NEVE
+   reusa os flocos de leaves (que ja sao spawnados em coord de tela via cam.x/cam.y). */
+
+/* som de trovao — no MESMO estilo dos bip/somCoruja (usa o AC/ambMaster ja criados).
+   Estrondo = ruido grave que decai; buffer curto criado SO no trovao (raro), nunca por frame. */
+function somTrovao(){if(!AC||!som)return;
+ var dur=1.5,n=Math.floor(AC.sampleRate*dur),buf=AC.createBuffer(1,n,AC.sampleRate),d=buf.getChannelData(0);
+ for(var i=0;i<n;i++){var k=1-i/n;d[i]=(Math.random()*2-1)*k*k;}          // envelope de decaimento
+ var s=AC.createBufferSource();s.buffer=buf;
+ var f=AC.createBiquadFilter();f.type="lowpass";f.frequency.value=170;    // grave: nao estressa a crianca
+ var g=AC.createGain(),t0=AC.currentTime;
+ g.gain.setValueAtTime(0.0001,t0);g.gain.exponentialRampToValueAtTime(0.45,t0+0.06);g.gain.exponentialRampToValueAtTime(0.001,t0+dur);
+ s.connect(f);f.connect(g);g.connect(ambMaster||AC.destination);s.start(t0);s.stop(t0+dur);
+ bip(46,dur*0.7,"sine",0.10,0.03);}                                       // rombo grave extra p/ peso
+
+/* update por frame: move gotas, sorteia rajadas visiveis, agenda flash+trovao */
+function climaUpdate(dt,t){
+ if(!CLIMA)return;                                            // "" = nada (floresta intacta)
+ var slope=0.32+gust*0.55;                                    // inclinacao segue o vento (gust)
+ if(chuvaOn){for(var i=0;i<gotas.length;i++){var g=gotas[i];
+   g.y+=g.sp*dt; g.x+=g.sp*slope*dt;                          // cai na diagonal
+   if(g.s>0)g.s-=dt*3.2;                                      // decai o splash
+   if(g.y>VH){ g.sx=g.x; g.s=1;                               // bateu no chao -> marca splash e recicla no topo
+     g.y=-10-Math.random()*40; g.x=Math.random()*VW-40; g.l=8+Math.random()*10; g.sp=520+Math.random()*280; }
+   if(g.x>VW+20)g.x-=VW+40;                                   // volta pela esquerda (nao esvazia a tela)
+ }}
+ // rajadas visiveis: so quando o vento aperta. recicla o pool fixo (nada de alocar).
+ if(gust>0.72){for(var k=0;k<ventos.length;k++){var w=ventos[k];
+   if(!w.on&&Math.random()<0.04){w.on=true;w.x=-40;w.y=20+Math.random()*(VH-60);w.len=40+Math.random()*70;w.sp=340+Math.random()*260;w.a=0.10+Math.random()*0.12;break;} }}
+ for(var k2=0;k2<ventos.length;k2++){var w2=ventos[k2];if(w2.on){w2.x+=w2.sp*dt;w2.y+=w2.sp*0.12*dt;if(w2.x>VW+80)w2.on=false;}}
+ // flash + trovao (tempestade): frequencia BAIXA p/ nao assustar
+ if(flash>0)flash-=dt*7;                                      // clarao curto (~0.14s)
+ if(trovaoOn){flashT-=dt;if(flashT<=0){flashT=7+Math.random()*8;flash=1;trovaoDelay=0.3+Math.random()*1.2;}
+   if(trovaoDelay>0){trovaoDelay-=dt;if(trovaoDelay<=0){somTrovao();trovaoDelay=-1;}}}
+}
+
+/* desenho na TELA (chuva + rajadas). NAO usa o translate da camera. */
+function climaDesenha(t){
+ if(!CLIMA)return;
+ var slope=0.32+gust*0.55;
+ if(chuvaOn){
+   // escurece MUITO pouco (ceu carregado); um tico a mais na tempestade
+   cx.save();cx.fillStyle="rgba(30,40,66,"+(0.06+(trovaoOn?0.05:0))+")";cx.fillRect(0,0,VW,VH);cx.restore();
+   // gotas: riscos finos, num unico traçado (barato)
+   cx.save();cx.strokeStyle="rgba(190,215,255,0.5)";cx.lineWidth=1.2;cx.lineCap="round";cx.beginPath();
+   for(var i=0;i<gotas.length;i++){var g=gotas[i];cx.moveTo(g.x,g.y);cx.lineTo(g.x-g.l*slope,g.y-g.l);}
+   cx.stroke();cx.restore();
+   // splash sutil onde cada gota bateu (arco no chao que abre e some)
+   cx.save();cx.strokeStyle="rgba(200,220,255,0.35)";cx.lineWidth=1;
+   for(var j=0;j<gotas.length;j++){var s2=gotas[j];if(s2.s>0){cx.globalAlpha=s2.s*0.5;var rr=(1-s2.s)*6+1;
+     cx.beginPath();cx.arc(s2.sx,VH-6,rr,Math.PI*1.15,Math.PI*1.85);cx.stroke();}}
+   cx.globalAlpha=1;cx.restore();
+ }
+ // rajadas de vento visiveis (linhas claras cruzando a tela)
+ cx.save();cx.strokeStyle="rgba(255,255,255,0.6)";cx.lineWidth=1.4;cx.lineCap="round";
+ for(var k=0;k<ventos.length;k++){var w=ventos[k];if(w.on){cx.globalAlpha=w.a;
+   cx.beginPath();cx.moveTo(w.x,w.y);cx.lineTo(w.x-w.len,w.y-w.len*0.16);cx.stroke();}}
+ cx.globalAlpha=1;cx.restore();
+}
+
+/* FLASH do raio: tela inteira, por CIMA de tudo (ate do HUD/fim) */
+function climaFlash(){
+ if(flash>0){cx.save();cx.fillStyle="rgba(255,255,255,"+Math.min(0.6,flash*0.6)+")";cx.fillRect(0,0,VW,VH);cx.restore();cx.globalAlpha=1;}
+}
+
+/* brilho de chao molhado (opcional, MUNDO) — desenha DENTRO do translate da camera */
+function climaMolha(){
+ if(!CLIMA_MOLHA||!chuvaOn)return;
+ cx.save();cx.globalCompositeOperation="lighter";cx.globalAlpha=0.05;
+ cx.fillStyle="rgba(150,180,230,1)";cx.fillRect(cam.x,cam.y,VW,VH);cx.restore();cx.globalAlpha=1;
+}
+/* ---------- NUVENS (sombras de nuvem no chao + nuvens claras no ceu) ---------- */
+// SOMBRAS: manchas grandes e macias cruzando o chao (plano do MUNDO, dentro da camera).
+// deterministicas em forma (blobs fixos) -> NAO piscam; movimento vem de t (sem random no loop).
+function desNuvSombra(t){if(!nuvSombra.length||noite>0.92)return;
+ var dim=1-noite*0.85;                                    // a noite quase somem
+ var lo=-450,hi=WW+450,span=hi-lo;                        // faixa de loop no mundo
+ for(var i=0;i<nuvSombra.length;i++){var c=nuvSombra[i];
+  var px=((c.x+t*0.001*c.sp-lo)%span+span)%span+lo;       // deriva devagar no eixo do vento (+x), em loop
+  var py=c.y+Math.sin(t*0.00008+c.ph)*40;                 // leve vaivem lento no y
+  var env=Math.max(0,Math.min(1,Math.min(px-lo,hi-px)/300)); // some/reaparece suave nas pontas
+  var breath=0.72+0.28*Math.sin(t*0.00013+c.ph);          // respiro proprio (nascer/morrer)
+  var a=c.a*dim*env*breath; if(a<0.004)continue;
+  for(var b=0;b<c.bl.length;b++){var bb=c.bl[b];           // cluster de blobs = 1 nuvem
+   var bx=px+bb.dx*c.w,by=py+bb.dy*c.w,r=bb.r*c.w;
+   var g=cx.createRadialGradient(bx,by,r*0.15,bx,by,r);
+   g.addColorStop(0,"rgba(16,20,32,"+a+")");g.addColorStop(0.6,"rgba(16,20,32,"+(a*0.5)+")");g.addColorStop(1,"rgba(16,20,32,0)");
+   cx.fillStyle=g;cx.beginPath();cx.arc(bx,by,r,0,Math.PI*2);cx.fill();}}}
+// CEU: nuvens claras baixinhas no topo (coordenada de TELA), derivando devagar, bem discretas.
+function desNuvCeu(t){if(!nuvCeu.length)return;var dim=1-noite*0.7;if(dim<=0.02)return;
+ var lo=-150,hi=VW+150,span=hi-lo;
+ for(var i=0;i<nuvCeu.length;i++){var c=nuvCeu[i];
+  var px=((c.x+t*0.0016*c.sp-lo)%span+span)%span+lo;       // deriva lenta no topo, em loop
+  var py=c.y+Math.sin(t*0.0001+c.ph)*4;
+  var env=Math.max(0,Math.min(1,Math.min(px-lo,hi-px)/120)); // borda suave (sem pop no loop)
+  var a=c.a*dim*env; if(a<0.004)continue;
+  for(var b=0;b<c.bl.length;b++){var bb=c.bl[b];
+   var bx=px+bb.dx*c.s,by=py+bb.dy*c.s,r=bb.r*c.s;
+   var g=cx.createRadialGradient(bx,by-r*0.25,r*0.2,bx,by,r);
+   g.addColorStop(0,"rgba(255,255,255,"+a+")");g.addColorStop(0.55,"rgba(250,252,255,"+(a*0.55)+")");g.addColorStop(1,"rgba(250,252,255,0)");
+   cx.fillStyle=g;cx.beginPath();cx.arc(bx,by,r,0,Math.PI*2);cx.fill();}}}
+/* ---------- NPCS VIVOS (IA de personagem leve) ---------- */
+// Reaproveita a lib de micro-movimentos do subsistema "poeira-micromov"
+// (breathe(seed,t)/sway(seed,t)/blink(seed,t)) e o balao do "baloes-rpg"
+// (balaoNPC(nome,texto,id)). Todos com FALLBACK (guard typeof) p/ funcionar
+// mesmo antes desses subsistemas serem integrados -> ordem-independente.
+function updateNPCs(dt,t){
+ for(var i=0;i<npcs.length;i++){var n=npcs[i];
+  var dbx=byte.x-n.x,dby=byte.y-n.y,perto=(dbx*dbx+dby*dby)<90*90; // raio de interacao ~90
+  n.cd-=dt;                                                        // cooldown do balao
+  if(perto){                                                       // INTERACAO: encara o Byte
+   n.olha=Math.min(1,n.olha+dt*4);
+   if(dbx<-4)n.dir=-1;else if(dbx>4)n.dir=1;                       // olha na direcao dele
+   if(n.fala&&n.cd<=0){n.cd=8;n.acen=1.0;                          // fala 1x, reacena so apos 8s
+    if(typeof balaoNPC==="function")balaoNPC(n.nome,n.fala,"npc"+i,null,n);
+    else balao(n.nome?n.nome+": "+n.fala:n.fala,"npc"+i);}         // fallback: balao atual
+  } else { n.olha=Math.max(0,n.olha-dt*2); }
+  if(n.acen>0)n.acen-=dt;
+  // ROTINA: patrulha a rota devagar; congela enquanto encara o Byte
+  if(n.rota&&n.rota.length>1&&n.olha<0.2){
+   if(n.paus>0){n.paus-=dt;n.mvx=0;}                               // pausa no ponto
+   else{var tp=n.rota[n.ri],ax=tp[0]-n.x,ay=tp[1]-n.y,L=Math.sqrt(ax*ax+ay*ay);
+    if(L<3){n.paus=1.2+(n.ri*0.7)%1.0;n.ri=(n.ri+1)%n.rota.length;n.mvx=0;} // chegou->pausa->proximo
+    else{var st=Math.min(L,n.vel*dt);n.x+=ax/L*st;n.y+=ay/L*st;n.mvx=ax;
+     if(ax<-1)n.dir=-1;else if(ax>1)n.dir=1;n.passo+=dt*8;}}       // vira pra onde anda
+  } else { n.mvx=0; }
+ }
+}
+function desNPC(n,t){var im=IMG[n.sprite];if(!im)return;            // sem sprite -> nao desenha
+ var seed=n.ox*0.1+n.oy*0.13;                                      // semente deterministica (nao pisca)
+ var andando=n.mvx!==0;
+ // micro-movimento parado (respira + balanca no vento), com fallback deterministico
+ var br=andando?0:((typeof breathe==="function")?breathe(t,seed):Math.sin(t*0.0028+seed));
+ var sw=andando?0:Math.sin(t*0.0016+seed)*(0.6+gust);
+ var bob=andando?Math.abs(Math.sin(n.passo*0.9))*4:0;             // pulinho ao andar
+ var h=42*n.esc;
+ sombra(n.x,n.y+4,15*n.esc,5*n.esc);
+ cx.save();cx.translate(n.x+sw,n.y+4-bob);cx.rotate(sw*0.02);
+ cx.scale(n.dir*(1+br*0.03),1-br*0.03);                            // flip + squash da respiracao
+ imgH(im,0,0,h);cx.restore();
+ // ACENO: patinha/mao levantada (traco simples) ao cumprimentar o Byte
+ if(n.acen>0){cx.save();cx.globalAlpha=Math.min(1,n.acen);
+  cx.strokeStyle="rgba(70,55,40,.85)";cx.lineWidth=3;cx.lineCap="round";
+  var aw=Math.sin(t*0.02)*0.3;
+  cx.beginPath();cx.moveTo(n.x+n.dir*h*0.26,n.y+4-h*0.5);
+  cx.lineTo(n.x+n.dir*(h*0.32+aw*8),n.y+4-h*0.74);cx.stroke();
+  cx.restore();cx.globalAlpha=1;}
+}
+
 /* ---------- LOOP ---------- */
 var ult=null;
 function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/1000));ult=ts;var t=ts;
  if(!patM&&IMG.muro)patM=cx.createPattern(IMG.muro,"repeat");
- byte.resp+=dt*3;if(balaoT>0)balaoT-=dt;
+ byte.resp+=dt*3;
+ // ---- caixa de dialogo RPG: typewriter (revela letra a letra) + setinha piscando ----
+ if(balaoT>0&&balaoFull){ if(balaoAppear<1)balaoAppear=Math.min(1,balaoAppear+dt/0.16);
+  if(!balaoFimTxt){balaoN+=balaoCPS*dt;if(balaoN>=balaoFull.length){balaoN=balaoFull.length;balaoFimTxt=true;}}
+  balaoBlink+=dt; }
  // vento em rajadas + agenda de sons ambientes
  gust=0.45+0.35*Math.sin(t*.0004)+0.30*Math.max(0,Math.sin(t*.00013+1.2));
  var _sol=Math.cos(t*0.00005);noite=Math.max(0,Math.min(1,(0.35-_sol)/0.7)); // ciclo dia/noite (~125s, comeca de DIA)
+ // ---- LUZ DIRECIONAL: deriva o VETOR do sol/lua do MESMO relogio t (_sol ja e a altura) ----
+ if(SOMBRA_DIR){var _sunX=Math.sin(t*0.00005);         // leste/oeste do sol no ceu ( _sol=Math.cos = altura )
+  var _A=Math.abs(_sol),_spread=1-_A;                  // _A=altura do luminar dominante: 1=a pino(curta) .. 0=baixo(longa)
+  var _side=-_sunX*(1-2*noite);                        // lado OPOSTO a luz; a lua e o oposto do sol -> inverte sozinho de dia p/ noite
+  luz.dx=_side*_spread*1.9;                            // (x rx) desloca a sombra p/ o lado oposto
+  luz.dy=_spread*0.25;                                 // (x ry) leve queda p/ o chao quando o sol/lua esta baixo
+  luz.sx=_spread*1.5;                                  // estica a elipse no comprimento (curta ao meio-dia, longa de manha/tarde)
+  var _aD=(1-noite)*(0.30-0.13*_A);                    // DIA: cai ao meio-dia (_A alto) e forte de manha/tarde
+  var _aN=noite*0.10;                                  // NOITE: bem fraca
+  luz.a=Math.max(0.05,_aD+_aN);                         // nunca preta demais, nunca some de vez
+  var _r=Math.round(18+12*noite),_g=Math.round(14+32*noite),_b=Math.round(28+68*noite);
+  luz.col="rgb("+_r+","+_g+","+_b+")";}                 // neutra escura de dia -> AZULADA a noite
  if(ventoG&&som)ventoG.gain.value=0.028+0.05*gust;
  birdTimer-=dt;if(birdTimer<=0){birdTimer=3.2+Math.random()*4.2;if(TEMA.passaros)somCanto();}
  coruja-=dt;if(coruja<=0){coruja=16+Math.random()*16;somCoruja();}
@@ -350,7 +605,7 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
    var nx=byte.x+vx*sp*dt,ny=byte.y+vy*sp*dt;
    if(!bloqueado(nx,byte.y))byte.x=nx; if(!bloqueado(byte.x,ny))byte.y=ny;
    if(vx<-0.2)byte.dir=-1;else if(vx>0.2)byte.dir=1;
-   byte.passo+=dt*11;if((byte.passo%1.2)<dt*11)somPasso();}
+   byte.passo+=dt*11;if((byte.passo%1.2)<dt*11){somPasso();if(POEIRA_ON){emitePoeira(byte.x,byte.y+8);if(gust>0.6&&Math.random()<gust*0.55)emitePoeira(byte.x,byte.y+8);}}}
  } else { byte.mov=false; }
  byte.idle = byte.mov ? 0 : byte.idle+dt;  // acumula tempo parado -> senta/deita
  // ---- camera segue ----
@@ -363,8 +618,9 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  if(hasKey&&!fim){var ax=byte.x-arco.x,ay=byte.y-(arco.y-16);if(ax*ax+ay*ay<80*80){fim=true;fimT=0;somVitoria();
    balao("Ali está o labirinto de pedra! É onde o Nimbo prendeu os amiguinhos. Na próxima aventura a gente entra para salvá-los.","s1_labirinto");}}
  if(fim)fimT+=dt;
+ updateNPCs(dt,t); // IA dos NPCs: rotina/patrulha + interacao com o Byte
  // ---- efeitos: folhas/petalas, passaros, borboletas, pollen ----
- if(leaves.length<40 && (Math.random()<0.06+gust*0.06)){var neve=(TEMA.part==="neve");var tipo=Math.random();
+ if(leaves.length<(CLIMA==="neve"?72:40) && (Math.random()<0.06+gust*0.06+(CLIMA==="neve"?0.14*CLIMAF:0))){var neve=(TEMA.part==="neve"||CLIMA==="neve");var tipo=Math.random();
   var col=neve?(tipo<.5?"#ffffff":"#dbeafe"):(tipo<.4?"#7fae3a":tipo<.7?"#d98a2b":(tipo<.85?"#f2a6c0":"#e7d24a"));
   leaves.push({x:cam.x+Math.random()*VW,y:cam.y-10,vx:-(neve?4+Math.random()*10:10+Math.random()*24)*(0.6+gust),vy:(neve?22+Math.random()*20:14+Math.random()*22),rot:Math.random()*6.28,vr:(Math.random()-.5)*(neve?1.2:3.5),s:(neve?2.5+Math.random()*2.5:(tipo<.7?5:3.5)+Math.random()*4),a:.92,c:col,petal:!neve&&tipo>=.7,neve:neve}); }
  for(i=leaves.length-1;i>=0;i--){var lf=leaves[i];lf.x+=(lf.vx+Math.sin(t*.002+lf.y)*12*(0.5+gust))*dt;lf.y+=lf.vy*dt;lf.rot+=lf.vr*dt;if(lf.y>cam.y+VH+20||lf.x<cam.x-30){leaves.splice(i,1);}}
@@ -380,14 +636,21 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
    if(Math.random()<0.35)faiscas.push({x:pr.x+(Math.random()-.5)*12,y:pr.y-8,vx:(Math.random()-.5)*34,vy:-(28+Math.random()*46),a:1,r:1+Math.random()*1.6});}
   else if(pr.tipo==="cabana"){if(Math.random()<0.22)emiteFumaca(pr.x+(pr.cx||24),pr.y-(pr.cy||96),0.55);}}
  if(temFogo){fogoTimer-=dt;if(fogoTimer<=0){fogoTimer=0.25+Math.random()*0.7;somEstalo();}}
+ climaUpdate(dt,t); // clima: move gotas, sorteia rajadas, agenda flash/trovao (no-op se MUNDO.clima vazio)
  for(i=fumos.length-1;i>=0;i--){var fm=fumos[i];fm.y+=fm.vy*dt;fm.x+=(fm.vx+Math.sin(t*.001+fm.y)*7)*dt;fm.r+=fm.gro*dt;fm.a-=dt*0.12;if(fm.a<=0||fm.r>48)fumos.splice(i,1);}
  for(i=faiscas.length-1;i>=0;i--){var fs=faiscas[i];fs.x+=fs.vx*dt;fs.y+=fs.vy*dt;fs.vy+=42*dt;fs.a-=dt*1.1;if(fs.a<=0)faiscas.splice(i,1);}
+ // poeira dos pes: sobe, expande e some rapido (gravidade leve freia a subida; atrito no vx)
+ for(i=poeira.length-1;i>=0;i--){var du=poeira[i];
+  du.x+=du.vx*dt;du.y+=du.vy*dt;du.vy+=6*dt;du.vx*=(1-dt*2.4);
+  du.r+=du.gro*dt;du.a-=dt*0.85;if(du.a<=0)poeira.splice(i,1);}
 
  // ======== RENDER ========
  cx.save();cx.translate(-cam.x,-cam.y);
  // chao
  if(patG){cx.fillStyle=patG;cx.fillRect(cam.x,cam.y,VW,VH);}else{cx.fillStyle="#3f7a34";cx.fillRect(cam.x,cam.y,VW,VH);}
  desCaminho(t);
+ desNuvSombra(t); // sombras de nuvem cruzando o chao (DENTRO da camera, sobre grama+trilha, sob arvores/byte)
+ climaMolha(); // brilho de chao molhado (MUNDO, dentro do translate da camera; off por padrao)
  // brilho de luz do vento passando no chao
  cx.save();cx.globalCompositeOperation="lighter";
  for(i=0;i<luzChao.length;i++){var lc=luzChao[i];var lx=((t*0.012*lc.sp+lc.ph*500)%(WW+800))-400;
@@ -396,6 +659,11 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  cx.restore();
  // flores (no chao, atras dos personagens)
  for(i=0;i<FLORES.length;i++)desFlor(FLORES[i],t);
+ // poeirinha dos pes (terra clara translucida) — no chao, dentro da camera, ATRAS dos personagens (y-sort vem depois)
+ for(i=0;i<poeira.length;i++){var du=poeira[i];if(du.a<=0)continue;
+  cx.globalAlpha=du.a;cx.fillStyle=POEIRA_COR;
+  cx.beginPath();cx.arc(du.x,du.y,du.r,0,Math.PI*2);cx.fill();}
+ cx.globalAlpha=1;
  // lista y-sort: arvores + chave + byte + arco
  var draws=[];
  for(i=0;i<TREES.length;i++)draws.push({y:TREES[i][1],f:(function(o){return function(){desArvore(o,t);};})(TREES[i])});
@@ -403,6 +671,7 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  draws.push({y:arco.y,f:function(){desArco(t);}});
  draws.push({y:byte.y,f:function(){desByte(t);}});
  for(i=0;i<PROPS.length;i++)draws.push({y:PROPS[i].y,f:(function(p){return function(){desProp(p,t);};})(PROPS[i])});
+ for(i=0;i<npcs.length;i++)draws.push({y:npcs[i].y,f:(function(n){return function(){desNPC(n,t);};})(npcs[i])}); // NPCs no y-sort
  draws.sort(function(a,b){return a.y-b.y;});
  for(i=0;i<draws.length;i++)draws[i].f();
  // passaros (por cima)
@@ -433,8 +702,10 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
   var px=pp.x+Math.sin(t*.0006+pp.f)*24,py=pp.y+Math.cos(t*.0007+pp.f)*18;var aa=.10+.18*Math.sin(t*.002+pp.f*2);
   cx.fillStyle="rgba(255,245,180,"+Math.max(0,aa)+")";cx.beginPath();cx.arc(px,py,pp.r,0,Math.PI*2);cx.fill();}cx.restore();
  cx.restore();
+ climaDesenha(t); // chuva/rajadas na TELA (apos o restore do mundo, coladas na camera)
  // ---- clima/luz (tela) + CICLO DIA/NOITE ----
- var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColorStop(1,TEMA.ceu1);cx.fillStyle=lg;cx.fillRect(0,0,VW,VH);
+  desNuvCeu(t); // nuvens claras no topo do ceu (coord de TELA); o tint do ceu e a noite passam por cima logo abaixo
+var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColorStop(1,TEMA.ceu1);cx.fillStyle=lg;cx.fillRect(0,0,VW,VH);
  // escurece a cena a noite (azul profundo)
  if(noite>0.01){cx.fillStyle="rgba(12,18,45,"+(noite*0.58)+")";cx.fillRect(0,0,VW,VH);}
  // estrelas + lua quando anoitece
@@ -451,21 +722,65 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  cx.fillText(hasKey?"Leve a chave dourada até o labirinto de pedra 🔑":"Passeie pela floresta e pegue a chave dourada 🔑",VW/2,17);
  desBotaoSom();
  // balao acima do Byte
- balaoDes(byte.x-cam.x, byte.y-cam.y-70);
+ var _spk=balaoAlvo||byte;balaoDes(_spk.x-cam.x, _spk.y-cam.y);   // caixa acima de QUEM fala (Byte ou NPC)
  if(fim&&fimT>1.2){cx.fillStyle="rgba(6,10,22,"+Math.min(.55,(fimT-1.2)*.6)+")";cx.fillRect(0,0,VW,VH);
   cx.fillStyle="#ffe38a";cx.font="bold 22px Verdana";cx.textAlign="center";cx.fillText("✨ Fim da Etapa 1 ✨",VW/2,VH/2-10);
   cx.fillStyle="#eaf2ff";cx.font="13px Verdana";cx.fillText("Na próxima: entrar no labirinto e empurrar as pedras-seta!",VW/2,VH/2+18);}
+ climaFlash(); // FLASH do raio por CIMA de tudo (ultimo desenho do frame)
  requestAnimationFrame(frame);
 }
-function balaoDes(bx,by){if(!(balaoT>0&&balaoTxt))return;cx.font="bold 13px Verdana";
- var words=balaoTxt.split(" "),linhas=[],cur="";
- for(var i=0;i<words.length;i++){var tt=cur?cur+" "+words[i]:words[i];if(cx.measureText(tt).width>320&&cur){linhas.push(cur);cur=words[i];}else cur=tt;}
+// cor da placa de nome: Byte tem a sua; cada NPC ganha uma cor ESTAVEL pelo nome
+function corPlaca(nome){ if(nome==="Byte")return "#3ec6a6";
+ var h=0;for(var i=0;i<nome.length;i++)h=(h*31+nome.charCodeAt(i))>>>0;
+ var HS=["#e08a3c","#5aa0e0","#c56ad0","#7bb84a","#e0693c","#4ab0c0"];return HS[h%HS.length]; }
+// caixa de dialogo RPG. (ancX,feetY) = base do personagem na TELA
+function balaoDes(ancX,feetY){ if(!(balaoT>0&&balaoFull))return;
+ var PAD=12,LH=18,MAXW=340,GAP=14,TOPO=30,fundo="rgba(18,26,48,.9)"; // TOPO=abaixo da HUD (26px)
+ // 1) quebra o TEXTO COMPLETO (box FIXO: nao pula enquanto digita)
+ cx.font="bold 14px Verdana";var words=balaoFull.split(" "),linhas=[],cur="";
+ for(var i=0;i<words.length;i++){var tt=cur?cur+" "+words[i]:words[i];
+  if(cx.measureText(tt).width>MAXW&&cur){linhas.push(cur);cur=words[i];}else cur=tt;}
  if(cur)linhas.push(cur);
- var bw=0;for(i=0;i<linhas.length;i++)bw=Math.max(bw,cx.measureText(linhas[i]).width);bw=Math.min(bw+24,VW-20);
- var lh=17,bh=linhas.length*lh+12;var lx=Math.max(8,Math.min(VW-bw-8,bx-bw/2)),ly=Math.max(30,by-bh);
- cx.globalAlpha=Math.min(1,balaoT/.6);cx.fillStyle="rgba(255,255,255,.97)";roundR(lx,ly,bw,bh,10);cx.fill();
- cx.beginPath();cx.moveTo(bx-7,ly+bh);cx.lineTo(bx+7,ly+bh);cx.lineTo(bx,ly+bh+9);cx.closePath();cx.fill();
- cx.fillStyle="#17324a";cx.textAlign="center";for(i=0;i<linhas.length;i++)cx.fillText(linhas[i],lx+bw/2,ly+16+i*lh);cx.globalAlpha=1;}
+ // 2) medidas
+ var bw=0;for(i=0;i<linhas.length;i++)bw=Math.max(bw,cx.measureText(linhas[i]).width);
+ bw=Math.min(bw+PAD*2,VW-16);var bh=linhas.length*LH+PAD*2;
+ // 3) ACIMA da cabeca; se nao couber (perto do topo), CAI abaixo do personagem
+ var headY=feetY-64,acima=(headY-GAP-bh)>=TOPO;
+ var ly=acima?(headY-GAP-bh):Math.min(feetY+GAP,VH-bh-8);
+ var lx=Math.max(8,Math.min(VW-bw-8,ancX-bw/2));
+ var tx=Math.max(lx+20,Math.min(lx+bw-20,ancX)); // cauda presa na caixa
+ // 4) aparece com leve fade+subida
+ var ap=balaoAppear;cx.save();cx.globalAlpha=ap;cx.translate(0,acima?(1-ap)*6:-(1-ap)*6);
+ // 5) corpo: fundo translucido + BORDA DUPLA arredondada
+ roundR(lx,ly,bw,bh,12);cx.fillStyle=fundo;cx.fill();
+ cx.lineWidth=2.5;cx.strokeStyle="rgba(196,214,250,.92)";cx.stroke();
+ roundR(lx+4,ly+4,bw-8,bh-8,9);cx.lineWidth=1.3;cx.strokeStyle="rgba(120,150,210,.55)";cx.stroke();
+ // 6) cauda POR CIMA (cobre a costura) apontando pro personagem
+ cx.fillStyle=fundo;cx.beginPath();
+ if(acima){cx.moveTo(tx-9,ly+bh-2);cx.lineTo(tx+9,ly+bh-2);cx.lineTo(tx,ly+bh+12);}
+ else{cx.moveTo(tx-9,ly+2);cx.lineTo(tx+9,ly+2);cx.lineTo(tx,ly-12);}
+ cx.closePath();cx.fill();
+ cx.lineWidth=2.5;cx.strokeStyle="rgba(196,214,250,.92)";cx.beginPath();
+ if(acima){cx.moveTo(tx-9,ly+bh-2);cx.lineTo(tx,ly+bh+12);cx.lineTo(tx+9,ly+bh-2);}
+ else{cx.moveTo(tx-9,ly+2);cx.lineTo(tx,ly-12);cx.lineTo(tx+9,ly+2);}
+ cx.stroke();
+ // 7) TEXTO letra a letra (substring sobre linhas FIXAS -> nao treme)
+ var vis=Math.floor(balaoN),used=0;cx.textAlign="left";cx.fillStyle="#f2f6ff";
+ for(i=0;i<linhas.length;i++){var ln=linhas[i];
+  if(used<vis)cx.fillText(ln.substr(0,Math.min(ln.length,vis-used)),lx+PAD,ly+PAD+13+i*LH);
+  used+=ln.length+1;}
+ // 8) SETINHA piscando quando terminou (deterministica: sin de acumulador de tempo)
+ if(balaoFimTxt){var pb=0.3+0.7*(0.5+0.5*Math.sin(balaoBlink*6));
+  cx.globalAlpha=ap*pb;cx.fillStyle="#ffe38a";cx.textAlign="center";cx.font="bold 13px Verdana";
+  cx.fillText("▼",lx+bw-14,ly+bh-6);cx.globalAlpha=ap;}
+ // 9) PLACA com o NOME (topo-esq, colorida, encaixada na borda de cima)
+ cx.font="bold 12px Verdana";cx.textAlign="left";var nm=balaoNome,nw=cx.measureText(nm).width;
+ var pw=nw+16,ph=19,plx=lx+12,ply=ly-ph+6;
+ roundR(plx,ply,pw,ph,7);cx.fillStyle=corPlaca(nm);cx.fill();
+ cx.lineWidth=1.5;cx.strokeStyle="rgba(0,0,0,.28)";cx.stroke();
+ cx.fillStyle="rgba(255,255,255,.28)";cx.fillRect(plx+4,ply+3,pw-8,2);
+ cx.fillStyle="#10202e";cx.fillText(nm,plx+8,ply+13);
+ cx.restore();cx.globalAlpha=1; }
 function roundR(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);cx.quadraticCurveTo(x+w,y,x+w,y+r);cx.lineTo(x+w,y+h-r);cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);cx.lineTo(x+r,y+h);cx.quadraticCurveTo(x,y+h,x,y+h-r);cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);cx.closePath();}
 if(window.speechSynthesis)speechSynthesis.onvoiceschanged=function(){};
 /* QA hooks */

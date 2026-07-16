@@ -52,8 +52,24 @@ código — só é usado dentro do workflow.
   cismar de codar mundo na mão ou clonar a confeitaria, PARAR — a decisão é o tile leve.
 - **Byte VESTE o tema:** cada atividade tem o Byte fantasiado do tema (pirata, viking…),
   gerado **editando a imagem-âncora** `byte.png` (mesmo personagem, só a fantasia) via
-  `gerar-imagens.yml` (`modelo=gemini`, `base=eduverse/biblioteca/proc/byte.png`). O navio
-  pirata foi o piloto que PROVOU que qualquer tema funciona.
+  `gerar-imagens.yml` (`modelo=gemini`, `base=eduverse/biblioteca/proc/byte.png`). O `byte_pirata`
+  gerado (chapéu tricórnio + caveira + casaco vermelho, **rosto/tela idênticos**) PROVOU que
+  qualquer tema funciona. A cartela de poses da fantasia entra sozinha no injetor
+  (`assets.byte:"byte_pirata"` → puxa `byte_pirata_costas`, `_lado`, etc.). Falta gerar as 6 poses.
+- **✅ MUNDO-VIVO v2 (jul/2026) — efeitos ricos JÁ no motor (equipe → integração auditada):**
+  a equipe de especialistas (6 agentes por workflow + revisão do engenheiro-chefe) projetou
+  e eu integrei no `kit-floresta.py`, tudo **data-driven e default-seguro** (mundo sem o campo
+  fica igual): 🗨️ **balões RPG** (placa de nome + typewriter + ▼ + avança no toque, acima de
+  QUEM fala — Byte ou NPC), 🌓 **sombra direcional** (sol/lua), 💨 **poeira ao andar** + lib de
+  micro-movimento (`breathe/sway/blink`), ☁️ **nuvens** (chão+céu), 🌧️ **clima** (`MUNDO.clima`
+  = chuva/neve/tempestade com trovão por Web Audio + vento visível), 🐾 **NPCs vivos**
+  (`MUNDO.npcs`: patrulham rota, interagem com o Byte, acenam, abrem balão). **Checklist completo
+  em `eduverse/style-bible/ambiente-vivo.md`.** Como os efeitos moram no MOTOR, TODO mundo que a
+  fábrica gerar já nasce com eles — é o oposto de fazer na mão em cada atividade.
+  **Nota de QA:** no screenshot headless (virtual-time) o rAF quase não acumula tempo → efeitos
+  temporais (balão/typewriter) exigem um **driver `setInterval`** na foto; no navegador real (60fps)
+  roda normal. Ainda pendentes (ver checklist): porta que range, tábuas, água (ondas/peixes),
+  sons de animais CC0 (precisa `baixar-sons.yml`).
 
 ## 🏭 FÁBRICA DE ATIVIDADES por currículo (pedido do Marcos — incorporar no EducaVerso)
 Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir no mundo.
