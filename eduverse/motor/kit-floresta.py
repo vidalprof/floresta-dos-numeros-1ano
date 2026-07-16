@@ -125,12 +125,16 @@ function atualizarIconeTelaCheia(){var cheia=estaEmTelaCheia();var b=document.ge
    px+"px") -- nao usamos var(--) no CSS (proibido pelo padrao do projeto) nem confiamos cegamente
    em 100vh (a barra de endereco do celular muda innerHeight ao rolar/orientar; por isso recalculamos
    em resize/orientationchange, e usamos visualViewport quando existe p/ medida mais estavel). */
-var APP_CHEIO=false;
+var APP_CHEIO=true;   // SEMPRE tela cheia (edge-to-edge), no PC tambem: o jogo cobre a janela toda, SEM moldura.
+var MODO_MOBILE=false; // mobile/tablet (tela pequena OU ponteiro grosso) => canvas 1:1 crisp; desktop => canvas com TETO de resolucao + upscale CSS
 function _vpH(){return Math.round((window.visualViewport?window.visualViewport.height:window.innerHeight)||800);}
 function _vpW(){return Math.round((window.visualViewport?window.visualViewport.width:window.innerWidth)||360);}
+// TETO da resolucao INTERNA de MUNDO visivel no desktop: evita ver mundo demais / deformar em telas largas (16:9).
+// O canvas preenche a janela via CSS (upscale uniforme, mantendo a proporcao da janela => sem esticar).
+var CAP_VW=1000,CAP_VH=720;
 (function(){try{
- APP_CHEIO=(_vpW()<700)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches);
- if(APP_CHEIO){document.documentElement.className+=" app-cheio";}
+ MODO_MOBILE=(_vpW()<700)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches);
+ document.documentElement.className+=" app-cheio";   // sempre: remove a moldura/margem/sombra tambem no PC
 }catch(e){}})();
 var _frameEl=document.getElementById("frame"),_wrapEl=document.getElementById("wrap");
 var _h1El=document.querySelector("h1"),_subEls=document.querySelectorAll(".sub");
@@ -152,22 +156,31 @@ function _recriaPatterns(){try{ if(!cx||typeof IMG==="undefined"||!IMG)return; /
 var _lastAW=-1,_lastAH=-1,_rzTimer=null;
 function recalcLayout(){try{
  var vw=_vpW(),vh=_vpH();
- if(APP_CHEIO){
-  if(_frameEl){_frameEl.style.width=vw+"px";_frameEl.style.height=vh+"px";}
-  if(_wrapEl){_wrapEl.style.width=vw+"px";_wrapEl.style.height=vh+"px";}
-  var availW=Math.max(240,vw),availH=Math.max(320,vh);
-  // 1x (SEM devicePixelRatio): mantem a escala CSS ~1.0 (crisp, sem letterbox) e casa com o padrao
-  // de compatibilidade do projeto. (Retina em 2x seria nitido tambem, mas 1x e o seguro.)
-  var cw=Math.round(availW),ch=Math.round(availH);
-  // so re-seta o canvas se o tamanho MUDOU DE VERDADE (>2px): o mobile dispara resize em rajada
-  // quando a barra de endereco anima; re-resetar o canvas a toa PIORA o tremor.
-  if(Math.abs(cw-_lastAW)<=2 && Math.abs(ch-_lastAH)<=2)return;
-  _lastAW=cw;_lastAH=ch;
-  cv.width=cw;cv.height=ch;
-  VW=cv.width;VH=cv.height;              // GLOBAIS reatribuidas (atribuicao simples, NAO var)
-  _recriaPatterns();                     // recria grama/caminho/muro (o contexto resetou ao mudar cv.width/height)
-  try{var _c=cellCam();cam.x=_c[0];cam.y=_c[1];}catch(e){} // recentra a camera p/ nao "pular"
+ if(_frameEl){_frameEl.style.width=vw+"px";_frameEl.style.height=vh+"px";}
+ if(_wrapEl){_wrapEl.style.width=vw+"px";_wrapEl.style.height=vh+"px";}
+ var availW=Math.max(240,vw),availH=Math.max(320,vh);
+ var cw,ch;
+ if(MODO_MOBILE){
+  // MOBILE/TABLET: 1x (SEM devicePixelRatio) => resolucao interna 1:1 com os pixels REAIS. Escala CSS
+  // ~1.0 (crisp, sem letterbox, sem reescala fracionaria = sem tremor). Cobre a tela toda.
+  cw=Math.round(availW);ch=Math.round(availH);
+ }else{
+  // DESKTOP/PC: resolucao interna com a MESMA proporcao da janela (upscale CSS uniforme -> NAO deforma),
+  // mas limitada ao TETO (CAP_VW x CAP_VH) p/ NAO mostrar mundo demais / esticar em telas largas 16:9.
+  // s<=1: nunca AUMENTA a resolucao alem dos pixels reais (em telas menores que o teto vira 1:1 crisp).
+  var s=Math.min(CAP_VW/availW,CAP_VH/availH,1);
+  cw=Math.max(320,Math.round(availW*s));ch=Math.max(240,Math.round(availH*s));
  }
+ // O CANVAS preenche a JANELA via CSS (mobile: 1:1; desktop: upscale uniforme da resolucao com teto).
+ cv.style.width=availW+"px";cv.style.height=availH+"px";
+ // so re-seta a resolucao interna se MUDOU DE VERDADE (>2px): mobile dispara resize em rajada quando a
+ // barra de endereco anima; re-resetar o canvas a toa PIORA o tremor.
+ if(Math.abs(cw-_lastAW)<=2 && Math.abs(ch-_lastAH)<=2)return;
+ _lastAW=cw;_lastAH=ch;
+ cv.width=cw;cv.height=ch;
+ VW=cv.width;VH=cv.height;              // GLOBAIS reatribuidas (atribuicao simples, NAO var)
+ _recriaPatterns();                     // recria grama/caminho/muro (o contexto resetou ao mudar cv.width/height)
+ try{var _c=cellCam();cam.x=_c[0];cam.y=_c[1];}catch(e){} // recentra a camera p/ nao "pular"
 }catch(e){}}
 // debounce: so recalcula ~170ms apos o ULTIMO evento (mobile dispara resize em rajada na barra de endereco)
 function agendaLayout(){if(_rzTimer)clearTimeout(_rzTimer);_rzTimer=setTimeout(function(){_rzTimer=null;recalcLayout();},170);}
@@ -431,6 +444,7 @@ function desZzz(t,mx,my){cx.save();cx.textAlign="left";cx.lineJoin="round";
 // CARTELA DE POSES (Byte vivo): cada pose tem escala propria p/ o personagem NAO mudar de tamanho
 var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"byte_lado",f:1.12},
  frente_anda:{im:"byte_frente_anda",f:1.14},costas_anda:{im:"byte_costas_anda",f:1.19}, // f calibrado p/ a CABECA ficar do mesmo tamanho do frame parado (pernas em passo alongam o sprite)
+ frente_anda2:{im:"byte_frente_anda2",f:1.14},costas_anda2:{im:"byte_costas_anda2",f:1.19}, // QUADRO DO PASSO OPOSTO (perna oposta a frente): alterna com o _anda p/ pernas caminharem de verdade
  senta:{im:"byte_senta",f:0.95},deita:{im:"byte_deita",f:0.62},fala:{im:"byte_fala",f:0.98},feliz:{im:"byte_feliz",f:1.06}};
 function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
  if(fim||aulaComemora) return "feliz";
@@ -448,21 +462,33 @@ function desByte(t){var x=byte.x,y=byte.y;
  if(!IMG[P.im]){nome=(nome==="frente_anda")?"frente":(nome==="costas_anda")?"costas":nome; // sem frame de passo -> pose estatica da mesma direcao
   P=POSE[nome]||POSE.frente;
   if(!IMG[P.im]){P=POSE.frente;nome=(nome==="costas"||nome==="lado")?nome:"frente";}} // sem sprite da pose -> usa frente
+ var vertAnda=(nome==="frente_anda"||nome==="costas_anda");            // caminhada de FRENTE/COSTAS (vista frontal)
+ // ---- PASSADA REAL (pernas alternam de verdade): fase da caminhada, sincronizada com o bob abaixo.
+ //      1a metade do ciclo -> quadro "_anda"; 2a metade -> quadro "_anda2" (perna OPOSTA a frente).
+ //      Cadencia natural: sin(passo*0.9) troca de sinal a cada ~0.32s (nem corrida nem vibracao). ----
+ if(vertAnda){
+  if(Math.sin(byte.passo*0.9)<0){                    // 2a metade da passada -> perna oposta
+   var nm2=nome+"2";                                 // frente_anda2 / costas_anda2
+   if(POSE[nm2]&&IMG[POSE[nm2].im]){nome=nm2;}       // quadro real do passo oposto -> pernas caminham
+   else{nome=(nome==="frente_anda")?"frente":"costas";} // PLANO B (sem 2o quadro): alterna com o PARADO da direcao, sem espelhar
+   P=POSE[nome]||P;}
+ }
  var im=IMG[P.im]||IMG.byte,h=64*P.f;
- var vertAnda=(nome==="frente_anda"||nome==="costas_anda");            // caminhada frente/costas com sprite de passo
- var vert=byte.mov&&(nome==="frente"||nome==="costas"||vertAnda);
- var andando=vert||(byte.mov&&nome==="lado");
- var bob=andando?Math.abs(Math.sin(byte.passo*.9))*6:0;
- if(vertAnda)bob=Math.min(bob,1.5);   // frente/costas: SEM pulo — o movimento vem da passada (espelho) + deslocamento real, nao de subir/descer
+ var andaLado=(byte.mov&&nome==="lado");
+ var bob;
+ if(vertAnda)bob=Math.abs(Math.sin(byte.passo*0.9))*1.9;   // MICRO-bob (~1.9px) em sincronia com a passada: balanco natural, SEM pulo
+ else if(andaLado)bob=Math.abs(Math.sin(byte.passo*.9))*6; // perfil (lado): bob maior, como ja era
+ else bob=0;
  var deitado=(nome==="deita");
  var rp=(!byte.mov&&!deitado&&nome!=="senta")?Math.sin(byte.resp)*.03:0; // respira parado em pe
  var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;             // boca/squash ao falar
  var flip=byte.dir;
- if(vertAnda){var passada=(Math.floor(byte.passo/0.6)%2===0)?1:-1;flip=passada;} // passada = espelha o sprite a cada passo (esq-dir-esq = caminhada, nao pulo)
+ if(vertAnda)flip=1;   // FRENTE/COSTAS: flip ESTAVEL (nunca inverte). Espelhar o corpo visto de frente = balanco lateral = o "tremor" (removido).
  var ron=deitado?Math.sin(t*0.0026):0;               // respiracao lenta do sono (roncar)
  var sx=deitado?(1+ron*0.035):(1+rp);                // infla/desincha o corpo
  var sy=deitado?(1+ron*0.02):((1-rp*.6)*(1-talk));
- var rot=deitado?ron*0.02:((!byte.mov&&nome!=="senta")?sway(t,0,0.014):0);                          // leve balanco de roncar
+ var swayAnda=vertAnda?Math.sin(byte.passo*0.45)*0.01:0; // leve balanco/inclinacao do corpo na caminhada (~0.01 rad), natural, nao tremor
+ var rot=deitado?ron*0.02:(vertAnda?swayAnda:((!byte.mov&&nome!=="senta")?sway(t,0,0.014):0));        // leve balanco de roncar
  sombra(x,y+8,deitado?(32+ron*2):18,deitado?7:6);
  cx.save();cx.translate(x,y+8-bob);cx.rotate(rot);cx.scale(flip*sx,sy);imgH(im,0,0,h);cx.restore();
  if(deitado)desZzz(t,x-h*0.30,y+8-h*0.75);           // Zzz saindo da boca (acima da carinha)

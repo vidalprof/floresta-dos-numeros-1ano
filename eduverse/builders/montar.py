@@ -41,7 +41,7 @@ for key,idn in assets.items():
 # ---- CARTELA DE POSES DO BYTE (personagem vivo): auto-incluida em TODO mundo que usa o byte.
 #      Segue o id do byte do mundo (ex.: byte_pirata_costas), com chave estavel byte_<pose>. ----
 if "byte" in assets:
-    for pose in ["costas","lado","senta","deita","fala","feliz","frente_anda","costas_anda"]:
+    for pose in ["costas","lado","senta","deita","fala","feliz","frente_anda","costas_anda","frente_anda2","costas_anda2"]:
         pp=os.path.join(PROC,assets["byte"]+"_"+pose+".png")
         if os.path.exists(pp): SRCJS["byte_"+pose]="data:image/png;base64,"+b64(pp)
         else: print("(sem pose)",assets["byte"]+"_"+pose)
