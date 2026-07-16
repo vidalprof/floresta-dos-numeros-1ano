@@ -25,6 +25,14 @@
 - [ ] **Barulho das folhas** — camada de folhas farfalhando (JÁ existe; subir na rajada).
 - [ ] **Porta que range e bate** — som de rangido (pitch-bend) + batida grave, no prop porta/casa.
 - [ ] **Som das tábuas ao andar** — passo com "toc" de madeira quando o Byte anda sobre convés/tábuas.
+- [ ] **Balões de conversa estilo VIDEOGAME** — caixa de diálogo RPG com o **nome do personagem**,
+      texto que aparece letrinha a letra (typewriter), setinha "▼" e **avança no toque/clique**;
+      balão sai do personagem e nunca cobre o rosto (âncora acima da cabeça, y-sort).
+- [ ] **Personagens VIVOS que INTERAGEM** — NPCs com **rotina** (andam, sentam, trabalham),
+      **conversam entre si e com o Byte**, reagem à presença dele (viram, acenam, dão a missão).
+- [ ] **Micro-movimentos reais e leves** em TODOS (respira, pisca, balança suave, mão/pé com peso,
+      boca ao falar) — "vida" por código (senoidal/easing), nunca boneco estático. É a regra geral
+      que faz "parecer um mundo vivo".
 
 ## 🌊 PRECISA DE MUNDO COM ÁGUA (não tem na floresta; vale pro tema navio/lago/praia)
 - [ ] **Ondas na água** (o tema navio já tinha espuma/ondulação — trazer pro motor como tile água viva).
