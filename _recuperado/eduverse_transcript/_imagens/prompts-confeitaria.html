@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompts de Imagem — Confeitaria Mágica (Divisão 5º ano)</title>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff5ef;color:#4a2f1e;padding:16px;line-height:1.5}
+  .wrap{max-width:820px;margin:0 auto}
+  h1{color:#b5560f;font-size:22px;margin:6px 0}
+  .sub{color:#8a5a3a;font-weight:bold;margin:0 0 14px}
+  .leg{background:#fff;border:2px solid #f0d3bf;border-radius:12px;padding:12px 14px;font-size:14px;margin:0 0 16px}
+  .leg b{color:#b5560f}
+  .card{background:#fff;border:2px solid #f0d3bf;border-radius:14px;padding:12px 14px;margin:0 0 14px;box-shadow:0 4px 12px rgba(150,80,30,.08)}
+  .card h2{font-size:16px;margin:0 0 2px;color:#8a3f0a}
+  .meta{font-size:12.5px;color:#9a7050;margin:0 0 8px}
+  .tag{display:inline-block;font-size:11px;font-weight:bold;padding:2px 8px;border-radius:20px;color:#fff;margin-right:6px}
+  .t-poll{background:#2f8f43}
+  .t-gem{background:#7a3fb5}
+  .t-jpg{background:#1668bf}
+  textarea{width:100%;min-height:96px;border:1.5px solid #e4c6b1;border-radius:10px;padding:10px;font-size:13px;color:#3a2415;background:#fffdfb;resize:vertical;font-family:inherit}
+  .bt{margin-top:8px;-webkit-appearance:none;appearance:none;cursor:pointer;border:0;border-radius:10px;padding:9px 16px;font-size:14px;font-weight:bold;color:#fff;background:#e0781d}
+  .bt:active{transform:translateY(1px)}
+  .filename{font-size:12.5px;color:#b5560f;font-weight:bold}
+  .pe{font-size:12px;color:#9a7050;margin:18px 0 6px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>&#127849; Prompts de Imagem &mdash; Confeitaria M&aacute;gica</h1>
+  <p class="sub">Atividade premium de Divis&atilde;o &mdash; 5&ordm; ano &middot; Mascote: Chef Confeito</p>
+
+  <div class="leg">
+    <b>Como usar:</b> gere <b>uma cartela por vez</b>. Toque em <b>Copiar</b> e cole no gerador.<br>
+    <span class="tag t-poll">POLLINATIONS</span> gr&aacute;tis &mdash; boa para <b>cenas/fundos</b> (capa, cena final). Fundo com paisagem.<br>
+    <span class="tag t-gem">GEMINI</span> para <b>cartelas recort&aacute;veis</b> (fundo preto liso &rarr; recorte transparente). Mascote, objetos, medalhas, ilhas.<br>
+    <span class="tag t-jpg">JPEG</span> = vira fundo de tela inteira (n&atilde;o precisa recorte).<br>
+    <b>Regras j&aacute; embutidas nos prompts:</b> contorno escuro fechado, itens bem separados, sem sombra, sem texto/n&uacute;meros.
+  </div>
+
+  <!-- 1 CAPA -->
+  <div class="card">
+    <h2>1. Capa (tela inicial)</h2>
+    <p class="meta"><span class="tag t-poll">POLLINATIONS</span><span class="tag t-jpg">JPEG</span> proporção 3:2 &middot; arquivo: <span class="filename">capa.jpg</span></p>
+    <textarea readonly>Vitrine de uma confeitaria magica aconchegante ao entardecer, cheia de bolos, cupcakes, biscoitos e doces coloridos organizados em prateleiras, luzes quentes douradas e brilhos magicos, um ursinho confeiteiro fofo de chapeu de chef branco e avental rosa acenando feliz, estilo ilustracao 3D vibrante para criancas estilo Pixar, cores quentes de doceria (chocolate, caramelo, rosa, creme), atmosfera acolhedora e magica, sem texto, sem letras.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 2 CENA FINAL -->
+  <div class="card">
+    <h2>2. Cena do Grande Final (a Festa da Cidade)</h2>
+    <p class="meta"><span class="tag t-poll">POLLINATIONS</span><span class="tag t-jpg">JPEG</span> proporção 3:2 &middot; arquivo: <span class="filename">final.jpg</span></p>
+    <textarea readonly>Grande festa alegre numa praca decorada, com uma mesa enorme cheia de doces repartidos igualmente em pratos e caixas iguais, um ursinho confeiteiro fofo de chapeu de chef comemorando com criancas, confete colorido caindo, baloes, bandeirinhas e luzes, estilo ilustracao 3D vibrante para criancas estilo Pixar, cores quentes e alegres, atmosfera de celebracao magica, sem texto, sem letras.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 3 MASCOTE -->
+  <div class="card">
+    <h2>3. Chef Confeito &mdash; cartela de 6 poses</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; arquivo: <span class="filename">chef-confeito.png</span></p>
+    <textarea readonly>Grade 2x3 com seis quadros bem separados, mostrando o MESMO personagem em seis poses. Personagem: um ursinho confeiteiro fofo, pelo marrom claro, chapeu de chef branco alto e avental cor de rosa e creme. As seis poses: 1) feliz acenando com a patinha; 2) explicando, apontando para o lado com a patinha; 3) comemorando, pulando com os dois bracinhos para cima; 4) pensando, com a patinha no queixo; 5) de boca bem aberta falando; 6) segurando uma bandeja de biscoitos. Estilo 3D fofo estilo Pixar para criancas, cores vivas, contorno escuro fechado em volta do personagem, cada pose flutuando separada, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 4 ILHAS -->
+  <div class="card">
+    <h2>4. Ilhas/cen&aacute;rios das 8 paradas &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; objetos flutuantes (NAO cena) &middot; arquivo: <span class="filename">ilhas.png</span></p>
+    <textarea readonly>Grade 2x4 com oito quadros bem separados, cada um com UM objeto de confeitaria flutuando (nao desenhar mesa, parede, chao nem cenario atras): 1) um prato redondo com biscoitos; 2) tres caixas de doce empilhadas; 3) um bolo de festa decorado; 4) um livro de receitas aberto; 5) uma vitrine pequena de vidro com doces; 6) uma balanca de cozinha antiga; 7) um cupcake com uma cereja em cima; 8) uma coroa de confeiteiro dourada. Estilo 3D fofo estilo Pixar para criancas, cores doces vivas, contorno escuro fechado em volta de cada objeto, objetos flutuando separados, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 5 OBJETOS DE CONTA -->
+  <div class="card">
+    <h2>5. Objetos das contas (para contar/repartir) &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; arquivo: <span class="filename">objetos.png</span></p>
+    <textarea readonly>Grade 2x4 com oito quadros bem separados, cada um com UM doce de confeitaria fofo, inteiro e sozinho: 1) um biscoito redondo com gotas de chocolate; 2) um cupcake rosa; 3) um brigadeiro marrom com granulado; 4) uma rosquinha (donut) com cobertura colorida; 5) um pao doce; 6) um pirulito; 7) um bombom; 8) um prato branco vazio (para receber os doces). Estilo 3D fofo estilo Pixar para criancas, cores vivas, contorno escuro fechado em volta de cada objeto, cada doce flutuando separado, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 6 MEDALHAS -->
+  <div class="card">
+    <h2>6. Medalhas das 8 paradas &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; medalh&otilde;es dourados &middot; arquivo: <span class="filename">medalhas.png</span></p>
+    <textarea readonly>Grade 2x4 com oito medalhoes dourados bem separados, todos no mesmo estilo: circulo de ouro brilhante com borda serrilhada e uma fita colorida embaixo, e no centro de cada um um simbolo DESENHADO (sem texto, sem numeros) de confeitaria: 1) biscoito; 2) caixa de doce; 3) bolo; 4) livro de receitas; 5) cupcake; 6) balanca; 7) docinho; 8) coroa de confeiteiro. Estilo 3D fofo estilo Pixar, dourado bem brilhante, contorno escuro fechado, cada medalhao flutuando separado, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 7 EMBLEMAS -->
+  <div class="card">
+    <h2>7. Emblemas de n&iacute;vel (5 patentes) &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; arquivo: <span class="filename">emblemas.png</span></p>
+    <textarea readonly>Grade 1x5 com cinco emblemas de patente bem separados, em ordem crescente de importancia, tema confeitaria: 1) um chapeu de confeiteiro simples de bronze; 2) um chapeu de confeiteiro de prata com uma colher; 3) um chapeu de confeiteiro de ouro com um batedor; 4) um chapeu de ouro com ramos de louro dos lados; 5) um chapeu de ouro com louros e uma pequena coroa em cima. Estilo 3D fofo estilo Pixar, metais brilhantes (bronze/prata/ouro), contorno escuro fechado, cada emblema flutuando separado, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 8 SELOS -->
+  <div class="card">
+    <h2>8. Selos/conquistas (rosetas) &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; arquivo: <span class="filename">selos.png</span></p>
+    <textarea readonly>Grade 2x3 com seis rosetas de premiacao bem separadas (fitas de premio circulares com pregas, distintas de medalha), cada uma de uma cor doce diferente (rosa, chocolate, caramelo, morango, hortela, baunilha), com um pequeno simbolo de confeitaria no centro (estrela, coracao, cupcake, biscoito, cereja, chef). Estilo 3D fofo estilo Pixar, cores vivas, contorno escuro fechado, cada roseta flutuando separada, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 9 RECOMPENSA 3 FASES -->
+  <div class="card">
+    <h2>9. Recompensa que cresce (bolo em 3 fases) &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; mesmo bolo, 3 fases &middot; arquivo: <span class="filename">bolo3.png</span></p>
+    <textarea readonly>Tres quadros lado a lado bem separados mostrando o MESMO bolo de festa sendo montado, mesmo angulo e tamanho: 1) so a base do bolo sem cobertura (comecando); 2) o bolo pela metade, com uma camada e um pouco de cobertura; 3) o bolo completo, lindo, com cobertura, morangos e velinhas. Estilo 3D fofo estilo Pixar para criancas, cores doces vivas, contorno escuro fechado em volta de cada bolo, os tres flutuando separados, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <!-- 10 TROFEU/DIPLOMA + CADEADO -->
+  <div class="card">
+    <h2>10. Trof&eacute;u, diploma e cadeado &mdash; cartela</h2>
+    <p class="meta"><span class="tag t-gem">GEMINI</span> fundo preto &middot; arquivo: <span class="filename">troqueu-extras.png</span></p>
+    <textarea readonly>Grade 2x2 com quatro objetos bem separados: 1) um trofeu dourado grande de confeiteiro (uma taca de ouro com um cupcake no topo); 2) um diploma enrolado com fita dourada (pergaminho, sem texto); 3) um cadeado dourado FECHADO com formato fofo; 4) o mesmo cadeado dourado ABERTO. Estilo 3D fofo estilo Pixar, dourado brilhante, contorno escuro fechado em volta de cada objeto, objetos flutuando separados, fundo preto liso puro, SEM sombra, sem texto, sem numeros.</textarea>
+    <button class="bt" onclick="cp(this)">Copiar</button>
+  </div>
+
+  <p class="pe">10 cartelas &middot; 2 no Pollinations (gr&aacute;tis) + 8 no Gemini &middot; Confeitaria M&aacute;gica</p>
+</div>
+<script>
+function cp(b){
+  var t=b.previousElementSibling;
+  t.select(); t.setSelectionRange(0,99999);
+  try{ document.execCommand("copy"); }catch(e){}
+  var o=b.textContent; b.textContent="Copiado!"; b.style.background="#2f8f43";
+  setTimeout(function(){ b.textContent=o; b.style.background="#e0781d"; },1200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+name: Recuperar index de outro repo
+
+# Busca o index.html de um repositorio de origem (usando PAGES_TOKEN) e
+# salva uma copia em _recuperado/index.html neste repositorio.
+# Tambem lista e baixa as imagens (png/jpg/webp) da raiz e da pasta img/ do
+# repositorio de origem para _recuperado/fetched/ (util para pegar imagens
+# que o usuario subiu com nomes proprios).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de origem (ex: Sistemasolar3ano)"
+        required: true
+        type: string
+      branch:
+        description: "Branch de origem (deixe em branco para a branch padrao)"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  recuperar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deste repositorio
+        uses: actions/checkout@v4
+
+      - name: DESCOBRIR onde estao a fabrica/auditores/poses (lista repos + busca codigo)
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+        run: |
+          set -uo pipefail
+          echo "=================================================="
+          echo "D) GISTS (notas/memoria entre sessoes): id | desc | arquivos"
+          echo "=================================================="
+          gh api "gists?per_page=100" --paginate \
+            --jq '.[] | .id + " | " + (.description // "(sem desc)") + " | " + ([.files[].filename] | join(", "))' 2>&1 | head -120 || true
+          echo ""
+          echo "=================================================="
+          echo "E) NOMES DE ARQUIVO em TODOS os repos (memoria/eduverse/trava/mundo-vivo/fabrica/kit/pose/fogueira/filosofia)"
+          echo "=================================================="
+          gh api "user/repos?per_page=100&affiliation=owner" --paginate --jq '.[].name' 2>/dev/null | while read -r R; do
+            [ -z "$R" ] && continue
+            DEF=$(gh api "repos/vidalprof/$R" --jq '.default_branch' 2>/dev/null) || continue
+            [ -z "$DEF" ] && continue
+            gh api "repos/vidalprof/$R/git/trees/$DEF?recursive=1" --jq '.tree[].path' 2>/dev/null \
+              | grep -iE "memoria|eduverse|educaverso|trava|mundo.?vivo|fabrica|kit.?floresta|montar|runner|poseByte|byte_costas|fogueira|filosofia|pipeline|equipe|especialista|auditor" \
+              | while read -r P; do echo "$R :: $P"; done
+          done
+          echo "=== FIM DA DESCOBERTA (gists + nomes de arquivo) ==="
+
+      - name: Buscar index.html do repositorio de origem
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          SRC: ${{ inputs.repo_name }}
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          set -euo pipefail
+          mkdir -p _recuperado
+          REF_ARGS=()
+          if [ -n "$BRANCH" ]; then REF_ARGS=(-f "ref=$BRANCH"); fi
+          echo "Buscando index.html de $OWNER/$SRC ..."
+          gh api "repos/$OWNER/$SRC/contents/index.html" \
+            -H "Accept: application/vnd.github.raw" "${REF_ARGS[@]}" \
+            > _recuperado/index.html || echo "(sem index.html na raiz)"
+          echo "Recuperado. Tamanho:"
+          wc -l _recuperado/index.html || true
+
+      - name: Listar e baixar imagens do repositorio de origem
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          SRC: ${{ inputs.repo_name }}
+        run: |
+          set -uo pipefail
+          mkdir -p _recuperado/fetched
+          baixa_de() {
+            local dir="$1"
+            local api="repos/$OWNER/$SRC/contents"
+            [ -n "$dir" ] && api="$api/$dir"
+            echo "=== Conteudo de: ${dir:-(raiz)} ==="
+            gh api "$api" --jq '.[] | .type + "  " + .name' 2>&1 | head -80 || true
+            echo ""
+            gh api "$api" --jq '.[] | select(.type=="file") | select(.name|test("(?i)\\.(png|jpe?g|webp)$")) | .path' 2>/dev/null | while read -r p; do
+              [ -z "$p" ] && continue
+              out="_recuperado/fetched/$(basename "$p")"
+              echo "baixando: $p -> $out"
+              gh api "repos/$OWNER/$SRC/contents/$p" -H "Accept: application/vnd.github.raw" > "$out" 2>/dev/null || echo "  (falhou $p)"
+            done
+          }
+          baixa_de ""
+          if gh api "repos/$OWNER/$SRC/contents/img" >/dev/null 2>&1; then baixa_de "img"; fi
+          if gh api "repos/$OWNER/$SRC/contents/imagens" >/dev/null 2>&1; then baixa_de "imagens"; fi
+          echo "=== Arquivos baixados ==="
+          ls -la _recuperado/fetched/ || true
+
+      - name: Baixar arquivos-fonte (py/md/json/js/html/css/yml/txt)
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          SRC: ${{ inputs.repo_name }}
+        run: |
+          set -uo pipefail
+          mkdir -p _recuperado/src
+          echo "=== ARQUIVOS-FONTE na raiz de $OWNER/$SRC ==="
+          gh api "repos/$OWNER/$SRC/contents/" \
+            --jq '.[] | select(.type=="file") | select(.name|test("(?i)\\.(py|md|json|js|mjs|html|css|ya?ml|txt)$")) | .path' 2>/dev/null | while read -r p; do
+              [ -z "$p" ] && continue
+              out="_recuperado/src/$(basename "$p")"
+              echo "baixando fonte: $p -> $out"
+              gh api "repos/$OWNER/$SRC/contents/$p" -H "Accept: application/vnd.github.raw" > "$out" 2>/dev/null || echo "  (falhou $p)"
+            done
+          echo "=== tambem subpastas de codigo comuns (motor/builders/eduverse/_novo/docs) ==="
+          for d in motor builders eduverse _novo docs scripts src; do
+            if gh api "repos/$OWNER/$SRC/contents/$d" >/dev/null 2>&1; then
+              mkdir -p "_recuperado/src/$d"
+              gh api "repos/$OWNER/$SRC/contents/$d" \
+                --jq '.[] | select(.type=="file") | .path' 2>/dev/null | while read -r p; do
+                  [ -z "$p" ] && continue
+                  case "$p" in *.png|*.jpg|*.jpeg|*.webp) continue;; esac
+                  out="_recuperado/src/$d/$(basename "$p")"
+                  echo "baixando: $p -> $out"
+                  gh api "repos/$OWNER/$SRC/contents/$p" -H "Accept: application/vnd.github.raw" > "$out" 2>/dev/null || echo "  (falhou $p)"
+                done
+            fi
+          done
+          echo "=== fontes baixadas ==="
+          ls -laR _recuperado/src/ 2>/dev/null | head -80 || true
+
+      - name: Salvar copia neste repositorio
+        run: |
+          set -euo pipefail
+          git config user.name "Recuperador"
+          git config user.email "recuperador@users.noreply.github.com"
+          git add _recuperado
+          if git diff --cached --quiet; then
+            echo "Nenhuma mudanca (arquivos identicos aos que ja estavam salvos)."
+          else
+            git commit -m "Recupera de ${{ inputs.repo_name }} (index.html + imagens + fontes)"
+            git push
+          fi
+          {
+            echo "## Recuperado de ${{ inputs.repo_name }}"
+            echo ""
+            echo "index.html + imagens + arquivos-fonte salvos em \`_recuperado/\`, \`_recuperado/fetched/\` e \`_recuperado/src/\`."
+          } >> "$GITHUB_STEP_SUMMARY"

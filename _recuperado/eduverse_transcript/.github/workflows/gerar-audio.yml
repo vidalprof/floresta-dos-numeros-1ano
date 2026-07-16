@@ -1,0 +1,210 @@
+name: Gerar voz (TTS natural) para embutir
+
+# Gera AUDIO natural (voz de verdade) e salva em _audio/<id>.mp3.
+# As falas FIXAS da atividade sao gravadas aqui e embutidas como base64 no HTML,
+# tocadas com <audio> — SEM depender da voz robotica do navegador (Web Speech).
+#
+# VOZES (gratis, sem chave):
+#  - modelo=male    -> StreamElements/Amazon Polly, voz "Ricardo" (masculina BR). BOM p/ o Nino.
+#  - modelo=female  -> StreamElements/Amazon Polly, voz "Camila" (feminina BR).
+#  - modelo=streamelements -> usa a voz do input "voz" (Ricardo/Camila/Vitoria/Ines...).
+#  - modelo=google  -> Google Translate TTS (feminina, corta em pedacos ~180 char).
+#
+# LOTE: preencha "lote" com um JSON [{"id":"abertura","texto":"..."}, ...] p/ gerar
+#       MUITAS falas numa so execucao (cada uma vira _audio/<id>.mp3). Se "lote" vazio,
+#       usa "texto"/"nome" (uma fala so).
+#
+# Roda no GitHub Actions (internet liberada).
+
+on:
+  workflow_dispatch:
+    inputs:
+      texto:
+        description: "Fala unica (use se NAO for lote)"
+        required: false
+        default: "Ola! Bem-vindo a expedicao. Eu sou o Nino, o seu guia."
+        type: string
+      nome:
+        description: "Nome do arquivo (sem extensao) p/ fala unica -> _audio/<nome>.mp3"
+        required: false
+        default: "fala"
+        type: string
+      lote:
+        description: 'JSON com varias falas: [{"id":"abertura","texto":"..."}, ...]'
+        required: false
+        default: ""
+        type: string
+      voz:
+        description: "Voz p/ modelo=streamelements (Ricardo, Camila, Vitoria, Ines...)"
+        required: false
+        default: "Ricardo"
+        type: string
+      modelo:
+        description: "male | female | streamelements | google"
+        required: false
+        default: "male"
+        type: string
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Instalar ffmpeg (p/ voz masculina)
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+
+      - name: Instalar edge-tts (voz natural GRATIS)
+        run: pip3 install --quiet edge-tts || pip install --quiet edge-tts
+
+      - name: Gerar audio
+        env:
+          TEXTO: ${{ inputs.texto }}
+          NOME: ${{ inputs.nome }}
+          LOTE: ${{ inputs.lote }}
+          VOZ: ${{ inputs.voz }}
+          MODELO: ${{ inputs.modelo }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, re, json, time, subprocess, tempfile, urllib.request, urllib.error, urllib.parse
+          modelo=os.environ["MODELO"].strip() or "male"
+          voz=os.environ["VOZ"].strip() or "Ricardo"
+          lote_raw=os.environ.get("LOTE","").strip()
+          # se o input "lote" vier vazio, tenta ler o arquivo _lote_falas.json do repo
+          if not lote_raw and os.path.exists("_lote_falas.json"):
+              lote_raw=open("_lote_falas.json",encoding="utf-8").read().strip()
+              print("lote lido de _lote_falas.json")
+          os.makedirs("_audio", exist_ok=True)
+
+          def baixar(url, headers, timeout=180):
+              req=urllib.request.Request(url, headers=headers)
+              return urllib.request.urlopen(req, timeout=timeout).read()
+
+          def chunk(texto, n):
+              partes=[]; atual=""
+              for palavra in texto.split():
+                  if len(atual)+len(palavra)+1>n:
+                      partes.append(atual); atual=palavra
+                  else:
+                      atual=(atual+" "+palavra).strip()
+              if atual: partes.append(atual)
+              return partes or [texto]
+
+          def tts_edge(texto, voice):
+              out=tempfile.NamedTemporaryFile(suffix=".mp3", delete=False); out.close()
+              r=subprocess.run(["edge-tts","--voice",voice,"--text",texto,"--write-media",out.name],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or os.path.getsize(out.name)<800:
+                  raise Exception("edge-tts falhou: "+r.stderr.decode("utf-8","ignore")[:300])
+              b=open(out.name,"rb").read()
+              try: os.remove(out.name)
+              except Exception: pass
+              return b
+
+          def tts_google(texto):
+              buf=b""; partes=chunk(texto,180)
+              for i,pt in enumerate(partes):
+                  url="https://translate.google.com/translate_tts?ie=UTF-8&q=%s&tl=pt-BR&client=tw-ob&total=%d&idx=%d&textlen=%d"%(urllib.parse.quote(pt),len(partes),i,len(pt))
+                  buf+=baixar(url, {"User-Agent":"Mozilla/5.0"}, timeout=60)
+                  time.sleep(0.4)
+              return buf
+
+          def pitch_shift(mp3, fator):
+              # baixa o tom (fator<1 = mais grave/masculino) SEM mudar a velocidade, via ffmpeg
+              din=tempfile.NamedTemporaryFile(suffix=".mp3", delete=False); din.write(mp3); din.close()
+              dout=din.name+".out.mp3"
+              af="asetrate=24000*%s,aresample=24000,atempo=%s"%(fator, round(1.0/fator,4))
+              r=subprocess.run(["ffmpeg","-y","-i",din.name,"-af",af,dout],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or not os.path.exists(dout):
+                  raise Exception("ffmpeg indisponivel/falhou - voz masculina exige ffmpeg")
+              out=open(dout,"rb").read()
+              try: os.remove(din.name); os.remove(dout)
+              except Exception: pass
+              return out
+
+          def tts_gemini(texto, voice):
+              key=os.environ.get("GEMINI_API_KEY","").strip()
+              if not key: raise Exception("GEMINI_API_KEY vazio (necessario p/ modelo=gemini)")
+              import json as _json
+              url="https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key="+key
+              fala="Leia com voz de um menino explorador animado e simpatico, em portugues do Brasil, num ritmo calmo e claro para criancas: "+texto
+              body={"contents":[{"parts":[{"text":fala}]}],
+                    "generationConfig":{"responseModalities":["AUDIO"],
+                      "speechConfig":{"voiceConfig":{"prebuiltVoiceConfig":{"voiceName":voice}}}}}
+              req=urllib.request.Request(url, data=_json.dumps(body).encode("utf-8"), headers={"Content-Type":"application/json"})
+              raw=urllib.request.urlopen(req, timeout=180).read()
+              d=_json.loads(raw); dat=None
+              for c in d.get("candidates",[]) or []:
+                  for pt in (c.get("content",{}) or {}).get("parts",[]) or []:
+                      inl=pt.get("inlineData") or pt.get("inline_data")
+                      if inl and inl.get("data"): dat=inl["data"]; break
+                  if dat: break
+              if not dat: raise Exception("Gemini TTS sem audio: "+_json.dumps(d)[:400])
+              import base64 as _b64
+              pcm=_b64.decode(dat) if hasattr(_b64,"decode") else _b64.b64decode(dat)
+              # PCM 24kHz 16-bit mono -> MP3 via ffmpeg
+              din=tempfile.NamedTemporaryFile(suffix=".pcm", delete=False); din.write(pcm); din.close()
+              dout=din.name+".mp3"
+              r=subprocess.run(["ffmpeg","-y","-f","s16le","-ar","24000","-ac","1","-i",din.name,dout],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or not os.path.exists(dout):
+                  raise Exception("ffmpeg PCM->MP3 falhou: "+r.stderr.decode("utf-8","ignore")[:300])
+              out=open(dout,"rb").read()
+              try: os.remove(din.name); os.remove(dout)
+              except Exception: pass
+              return out
+
+          def gerar(texto):
+              # PADRAO GRATIS E NATURAL: Edge TTS (Microsoft), voz masculina BR "Antonio".
+              if modelo in ("male","edge"):      return tts_edge(texto, "pt-BR-AntonioNeural")
+              if modelo in ("male2","donato"):   return tts_edge(texto, "pt-BR-DonatoNeural")
+              if modelo in ("female","edgef"):   return tts_edge(texto, "pt-BR-FranciscaNeural")
+              if modelo=="gemini":               return tts_gemini(texto, (voz if voz and voz not in ("Ricardo","") else "Puck"))
+              return tts_google(texto)  # google = fallback
+
+          def salvar(idnome, texto):
+              idnome=re.sub(r'[^A-Za-z0-9_-]','_', idnome) or "fala"
+              out="_audio/%s.mp3"%idnome
+              try:
+                  raw=gerar(texto)
+              except urllib.error.HTTPError as e:
+                  print("::error::HTTP %s gerando '%s'"%(e.code, idnome)); print(e.read().decode("utf-8","ignore")[:400]); return False
+              except Exception as e:
+                  print("::error::falha gerando '%s': %s"%(idnome, e)); return False
+              if len(raw)<800:
+                  print("::error::audio pequeno demais em '%s' (%d bytes)"%(idnome,len(raw))); return False
+              open(out,"wb").write(raw)
+              print("OK -> %s (%d bytes, %s)"%(out, len(raw), modelo)); return True
+
+          ok=0; fail=0
+          if lote_raw:
+              try:
+                  itens=json.loads(lote_raw)
+              except Exception as e:
+                  raise SystemExit("::error::lote nao e JSON valido: %s"%e)
+              for it in itens:
+                  if salvar(it.get("id") or it.get("nome"), it.get("texto","")): ok+=1
+                  else: fail+=1
+          else:
+              if salvar(os.environ["NOME"].strip(), os.environ["TEXTO"]): ok+=1
+              else: fail+=1
+          print("== RESUMO: %d ok, %d falha =="%(ok,fail))
+          if ok==0: raise SystemExit(1)
+          PY
+
+      - name: Commit do audio
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _audio/ || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "audio: gera vozes (${{ inputs.modelo }})"
+          for k in 1 2 3 4 5 6 7 8; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

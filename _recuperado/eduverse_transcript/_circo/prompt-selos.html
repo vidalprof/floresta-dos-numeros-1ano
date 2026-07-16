@@ -1,0 +1,39 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt — 5 Selos de conquista (rosetas de circo)</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:19px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
+  textarea{width:100%;box-sizing:border-box;min-height:300px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+</style>
+<header>
+  <h1>&#127942; 5 Selos de conquista &mdash; rosetas</h1>
+  <p>Rosetas de pr&ecirc;mio (fita), flutuando no branco. Gere e suba no <b>_imagens/</b>.</p>
+</header>
+<div class="nota">
+  S&atilde;o os SELOS de marcos (diferentes das medalhas e dos emblemas). <b>Sem texto/n&uacute;mero</b> &mdash; s&oacute; o s&iacute;mbolo. Fundo <b>branco puro, sem ret&acirc;ngulo</b>, bem separados pra eu recortar.
+</div>
+<div class="card">
+  <h2>Cartela &mdash; 5 rosetas de conquista</h2>
+  <textarea id="p" readonly>Gere uma CARTELA (folha única) com 5 SELOS de premiação de circo, no estilo ROSETA/COCAR de prêmio (um círculo de fita pregueada com duas fitinhas penduradas embaixo), lado a lado numa fileira, bem separados com espaço branco entre eles (vou recortar cada um).
+
+Cada roseta tem uma COR viva diferente e um SÍMBOLO desenhado no centro (sem nenhuma letra e sem nenhum número):
+1) uma ESTRELINHA brilhante
+2) uma CHAMA / foguinho
+3) uma BANDEIRA de circo
+4) um FOGUETE subindo
+5) uma COROA
+
+Todas do mesmo tamanho, tema circo. Fundo BRANCO PURO #FFFFFF (sem cenário, SEM retângulo/moldura/cartão). Cartoon flat infantil, cores vivas, CONTORNO PRETO GROSSO. SEM sombras. SEM texto, SEM letras, SEM números.</textarea>
+  <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
+</div>
+<div class="nota">
+  Marcos: 1 Primeiro Acerto (estrela) &middot; 2 Pegando Fogo / 5 seguidos (chama) &middot; 3 Primeira Parada (bandeira) &middot; 4 Metade da Aventura (foguete) &middot; 5 Campe&atilde;o do Circo / tudo (coroa).
+</div>

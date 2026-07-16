@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>O Sistema Solar - 3º ano</title>
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", Verdana, "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+    background: radial-gradient(circle at 50% 0%, #1b2a6b, #0a0f2c 55%, #05071a);
+    background-attachment: fixed;
+    min-height: 100vh; color: #fff; overflow-x: hidden;
+  }
+  .estrela { position: fixed; background: #fff; border-radius: 50%; opacity: .8;
+    animation: pisca 3s ease-in-out infinite; pointer-events: none; z-index: 0; }
+  @keyframes pisca { 0%,100%{opacity:.25;} 50%{opacity:1;} }
+  .wrap { position: relative; z-index: 1; max-width: 920px; margin: 0 auto; padding: 18px 16px 60px; }
+  header { text-align: center; padding: 14px 0 6px; }
+  header h1 { font-size: clamp(26px, 6vw, 44px); margin: 6px 0; text-shadow: 0 2px 16px rgba(120,160,255,.6); }
+  header p { font-size: clamp(14px, 3.4vw, 18px); color: #cdd7ff; margin: 4px 0 0; }
+  .secao { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14);
+    border-radius: 22px; padding: 18px 16px; margin: 22px 0; backdrop-filter: blur(4px); }
+  .secao h2 { margin: 0 0 4px; font-size: clamp(20px, 4.6vw, 28px); }
+  .secao .dica { color: #b9c4f0; margin: 0 0 14px; font-size: 15px; }
+
+  .planetas { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; }
+  .planeta { cursor: pointer; border: none; border-radius: 18px; padding: 14px 8px 12px;
+    color: #fff; font-family: inherit; text-align: center; transition: transform .15s, box-shadow .15s;
+    box-shadow: 0 6px 18px rgba(0,0,0,.35); }
+  .planeta:hover, .planeta:focus { transform: translateY(-4px) scale(1.04); outline: none;
+    box-shadow: 0 10px 26px rgba(0,0,0,.5); }
+  .planeta .bola { font-size: 40px; line-height: 1; display: block; margin-bottom: 6px; }
+  .planeta .nome { font-size: 16px; font-weight: bold; }
+  .fato { margin-top: 14px; background: rgba(0,0,0,.3); border-radius: 16px; padding: 14px 16px;
+    min-height: 56px; font-size: clamp(15px, 3.6vw, 18px); border: 1px dashed rgba(255,255,255,.25); }
+
+  .ordem-lista { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin-bottom: 12px; }
+  .ordem-btn { cursor: pointer; border: 2px solid rgba(255,255,255,.3); background: rgba(255,255,255,.08);
+    color: #fff; border-radius: 999px; padding: 8px 14px; font-family: inherit; font-size: 15px; transition: .15s; }
+  .ordem-btn:hover { background: rgba(255,255,255,.2); }
+  .ordem-btn:disabled { opacity: .35; cursor: default; }
+  .trilha { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; min-height: 40px;
+    background: rgba(0,0,0,.25); border-radius: 14px; padding: 8px; }
+  .slot { padding: 6px 12px; border-radius: 999px; background: #ffce4d; color: #2a1c00; font-weight: bold; font-size: 14px; }
+
+  .quiz-q { margin: 14px 0; }
+  .quiz-q .pergunta { font-weight: bold; font-size: clamp(16px, 3.8vw, 19px); margin-bottom: 8px; }
+  .opcoes { display: grid; gap: 8px; }
+  .opcao { cursor: pointer; text-align: left; border: 2px solid rgba(255,255,255,.25);
+    background: rgba(255,255,255,.06); color: #fff; border-radius: 14px; padding: 11px 14px;
+    font-family: inherit; font-size: 16px; transition: .15s; }
+  .opcao:hover { background: rgba(255,255,255,.16); }
+  .opcao.certo { background: #2ecc71; border-color: #2ecc71; color: #04230f; font-weight: bold; }
+  .opcao.errado { background: #e74c3c; border-color: #e74c3c; }
+  .opcao:disabled { cursor: default; }
+
+  .botao { display: inline-block; cursor: pointer; border: none; border-radius: 999px;
+    background: linear-gradient(135deg, #ffce4d, #ff9d2e); color: #2a1c00; font-weight: bold;
+    font-family: inherit; font-size: 17px; padding: 12px 26px; margin-top: 10px;
+    box-shadow: 0 6px 16px rgba(255,160,40,.45); transition: transform .12s; }
+  .botao:hover { transform: scale(1.05); }
+  .placar { text-align: center; font-size: clamp(18px, 4.4vw, 24px); margin-top: 14px; min-height: 30px; font-weight: bold; }
+  footer { text-align: center; color: #9aa6d6; font-size: 13px; margin-top: 24px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>🪐 O Sistema Solar</h1>
+    <p>Atividade de Ciências • 3º ano</p>
+  </header>
+
+  <section class="secao">
+    <h2>1. Conheça os planetas ☀️</h2>
+    <p class="dica">Toque em cada astro para descobrir uma curiosidade!</p>
+    <div class="planetas" id="planetas"></div>
+    <div class="fato" id="fato">👆 Escolha um astro acima para ler uma curiosidade.</div>
+  </section>
+
+  <section class="secao">
+    <h2>2. Coloque em ordem 🚀</h2>
+    <p class="dica">Toque nos planetas na ordem do mais perto do Sol para o mais longe.</p>
+    <div class="ordem-lista" id="ordemLista"></div>
+    <div class="trilha" id="trilha"><span style="color:#9aa6d6">A ordem aparece aqui…</span></div>
+    <div class="placar" id="ordemMsg"></div>
+    <div style="text-align:center"><button class="botao" id="ordemReset" type="button">↺ Recomeçar</button></div>
+  </section>
+
+  <section class="secao">
+    <h2>3. Quiz do Sistema Solar 🌟</h2>
+    <p class="dica">Responda as perguntas e veja quantos pontos você faz!</p>
+    <div id="quiz"></div>
+    <div class="placar" id="placar"></div>
+  </section>
+
+  <footer>Feito com 💛 para os exploradores do espaço • Profª. vidalprof</footer>
+</div>
+
+<script>
+  // ----- Fundo de estrelas -----
+  (function () {
+    var n = 70;
+    for (var i = 0; i < n; i++) {
+      var e = document.createElement('div');
+      e.className = 'estrela';
+      var s = Math.random() * 2 + 1;
+      e.style.width = s + 'px'; e.style.height = s + 'px';
+      e.style.left = (Math.random() * 100) + '%';
+      e.style.top = (Math.random() * 100) + '%';
+      e.style.animationDelay = (Math.random() * 3) + 's';
+      document.body.appendChild(e);
+    }
+  })();
+
+  // ----- Dados dos astros -----
+  var astros = [
+    { nome: 'Sol',      emoji: '☀️', cor: '#ff8a00', fato: 'O Sol é uma estrela gigante! Ele dá luz e calor para todos os planetas.' },
+    { nome: 'Mercúrio', emoji: '🪨', cor: '#9e8b7a', fato: 'Mercúrio é o planeta mais perto do Sol e o menor de todos.' },
+    { nome: 'Vênus',    emoji: '🌕', cor: '#d9a441', fato: 'Vênus é o planeta mais quentinho. Ele brilha bastante no céu!' },
+    { nome: 'Terra',    emoji: '🌍', cor: '#3d8bff', fato: 'A Terra é o nosso lar! É o único planeta com água e vida que conhecemos.' },
+    { nome: 'Marte',    emoji: '🔴', cor: '#d1502e', fato: 'Marte é o planeta vermelho, por causa da poeira cor de ferrugem.' },
+    { nome: 'Júpiter',  emoji: '🟠', cor: '#caa472', fato: 'Júpiter é o MAIOR planeta do Sistema Solar. Cabem muitas Terras dentro dele!' },
+    { nome: 'Saturno',  emoji: '🪐', cor: '#e3c97a', fato: 'Saturno tem anéis lindos feitos de gelo e pedrinhas.' },
+    { nome: 'Urano',    emoji: '🔵', cor: '#7fd8e0', fato: 'Urano é um planeta azul-esverdeado e bem geladinho.' },
+    { nome: 'Netuno',   emoji: '🔷', cor: '#3a5bd9', fato: 'Netuno é o planeta mais longe do Sol e tem ventos muito fortes.' }
+  ];
+  var ordemCerta = ['Mercúrio','Vênus','Terra','Marte','Júpiter','Saturno','Urano','Netuno'];
+
+  // ----- Seção 1: cards -----
+  var elPlanetas = document.getElementById('planetas');
+  var elFato = document.getElementById('fato');
+  astros.forEach(function (a) {
+    var b = document.createElement('button');
+    b.className = 'planeta'; b.type = 'button';
+    b.style.background = 'linear-gradient(135deg,' + a.cor + ',rgba(0,0,0,.35))';
+    b.innerHTML = '<span class="bola">' + a.emoji + '</span><span class="nome">' + a.nome + '</span>';
+    b.addEventListener('click', function () { elFato.textContent = a.emoji + ' ' + a.fato; });
+    elPlanetas.appendChild(b);
+  });
+
+  // ----- Seção 2: ordem -----
+  var elLista = document.getElementById('ordemLista');
+  var elTrilha = document.getElementById('trilha');
+  var elOrdemMsg = document.getElementById('ordemMsg');
+  var progresso = 0;
+
+  function embaralhar(arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor((i + 1) * ((i * 7 + 3) % 10) / 10); // pseudo-mistura sem Math.random
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function montarOrdem() {
+    progresso = 0;
+    elTrilha.innerHTML = '<span style="color:#9aa6d6">A ordem aparece aqui…</span>';
+    elOrdemMsg.textContent = '';
+    elLista.innerHTML = '';
+    embaralhar(ordemCerta).forEach(function (nome) {
+      var b = document.createElement('button');
+      b.className = 'ordem-btn'; b.type = 'button'; b.textContent = nome;
+      b.addEventListener('click', function () { escolher(nome, b); });
+      elLista.appendChild(b);
+    });
+  }
+  function escolher(nome, btn) {
+    if (nome === ordemCerta[progresso]) {
+      if (progresso === 0) elTrilha.innerHTML = '';
+      var s = document.createElement('span'); s.className = 'slot';
+      s.textContent = (progresso + 1) + '. ' + nome;
+      elTrilha.appendChild(s);
+      btn.disabled = true;
+      progresso++;
+      if (progresso === ordemCerta.length) {
+        elOrdemMsg.textContent = '🎉 Parabéns! Você acertou a ordem dos planetas!';
+        elOrdemMsg.style.color = '#7CFFB0';
+      }
+    } else {
+      elOrdemMsg.textContent = '🤔 Ops! Esse não é o próximo. Tente o planeta mais perto do Sol.';
+      elOrdemMsg.style.color = '#ffd36b';
+    }
+  }
+  document.getElementById('ordemReset').addEventListener('click', montarOrdem);
+  montarOrdem();
+
+  // ----- Seção 3: quiz -----
+  var perguntas = [
+    { q: 'Qual é a estrela do nosso Sistema Solar?', op: ['A Lua', 'O Sol', 'Marte'], certa: 1 },
+    { q: 'Em qual planeta nós moramos?', op: ['Terra', 'Júpiter', 'Vênus'], certa: 0 },
+    { q: 'Qual planeta é o MAIOR de todos?', op: ['Mercúrio', 'Terra', 'Júpiter'], certa: 2 },
+    { q: 'Qual planeta é conhecido como o "planeta vermelho"?', op: ['Marte', 'Netuno', 'Saturno'], certa: 0 },
+    { q: 'Qual planeta tem anéis bem famosos?', op: ['Vênus', 'Saturno', 'Mercúrio'], certa: 1 }
+  ];
+  var elQuiz = document.getElementById('quiz');
+  var elPlacar = document.getElementById('placar');
+  var pontos = 0, respondidas = 0;
+
+  perguntas.forEach(function (p, idx) {
+    var bloco = document.createElement('div'); bloco.className = 'quiz-q';
+    var titulo = document.createElement('div'); titulo.className = 'pergunta';
+    titulo.textContent = (idx + 1) + ') ' + p.q;
+    bloco.appendChild(titulo);
+    var ops = document.createElement('div'); ops.className = 'opcoes';
+    p.op.forEach(function (texto, i) {
+      var b = document.createElement('button');
+      b.className = 'opcao'; b.type = 'button'; b.textContent = texto;
+      b.addEventListener('click', function () {
+        var botoes = ops.querySelectorAll('.opcao');
+        botoes.forEach(function (x) { x.disabled = true; });
+        if (i === p.certa) { b.classList.add('certo'); pontos++; }
+        else { b.classList.add('errado'); botoes[p.certa].classList.add('certo'); }
+        respondidas++;
+        atualizarPlacar();
+      });
+      ops.appendChild(b);
+    });
+    bloco.appendChild(ops);
+    elQuiz.appendChild(bloco);
+  });
+
+  function atualizarPlacar() {
+    elPlacar.textContent = '⭐ Pontos: ' + pontos + ' de ' + perguntas.length;
+    if (respondidas === perguntas.length) {
+      var msg = pontos === perguntas.length ? ' — Incrível, gabaritou! 🚀'
+              : pontos >= 3 ? ' — Muito bem! 🌟' : ' — Continue explorando! 🛰️';
+      elPlacar.textContent += msg;
+    }
+  }
+</script>
+</body>
+</html>

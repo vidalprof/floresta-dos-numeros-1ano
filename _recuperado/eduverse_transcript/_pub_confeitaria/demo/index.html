@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Mundo Vivo — demo do personagem</title>
+<style>
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#8ed4f2;font-family:'Segoe UI',Arial,sans-serif;-webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;}
+#mundo{position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;
+ background:#8ed4f2;
+ background:-webkit-linear-gradient(top,#6cc4ee 0%,#a8e0f7 55%,#d8f2fd 100%);
+ background:linear-gradient(to bottom,#6cc4ee 0%,#a8e0f7 55%,#d8f2fd 100%);}
+.camada{position:absolute;left:0;bottom:0;height:100%;width:100%;}
+.nuvem{position:absolute;background:#fff;border-radius:40px;opacity:.85;}
+.nuvem:before{content:"";position:absolute;background:#fff;border-radius:50%;width:60%;height:160%;left:12%;top:-60%;}
+.nuvem:after{content:"";position:absolute;background:#fff;border-radius:50%;width:42%;height:120%;right:10%;top:-36%;}
+#colinas,#casas{position:absolute;bottom:0;left:0;white-space:nowrap;font-size:0;}
+#colinas img{height:46vh;width:auto;display:inline-block;vertical-align:bottom;}
+#casas img{height:64vh;width:auto;display:inline-block;vertical-align:bottom;}
+#sol{position:absolute;right:7%;top:7%;width:74px;height:74px;border-radius:50%;background:#ffe98a;
+ -webkit-box-shadow:0 0 60px 22px rgba(255,236,150,.85);box-shadow:0 0 60px 22px rgba(255,236,150,.85);
+ -webkit-animation:solPulsa 5s ease-in-out infinite;animation:solPulsa 5s ease-in-out infinite;}
+@-webkit-keyframes solPulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.07)}}
+@keyframes solPulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+#passaro{position:absolute;top:16%;left:-80px;height:34px;width:auto;opacity:.9;}
+#masc{position:absolute;bottom:0;left:0;}
+#masc img{height:120px;width:auto;display:block;}
+#sombra{position:absolute;bottom:0;left:0;width:86px;height:16px;border-radius:50%;background:rgba(40,25,10,.28);}
+.puff{position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(200,170,130,.7);pointer-events:none;
+ -webkit-animation:puff .5s ease-out forwards;animation:puff .5s ease-out forwards;}
+@-webkit-keyframes puff{0%{opacity:.8;-webkit-transform:scale(.6) translateY(0)}100%{opacity:0;-webkit-transform:scale(1.7) translateY(-16px)}}
+@keyframes puff{0%{opacity:.8;transform:scale(.6) translateY(0)}100%{opacity:0;transform:scale(1.7) translateY(-16px)}}
+#balao{position:absolute;background:#fff;border-radius:14px;padding:9px 12px;font-size:15px;font-weight:bold;color:#5a2e1c;
+ -webkit-box-shadow:0 4px 12px rgba(0,0,0,.25);box-shadow:0 4px 12px rgba(0,0,0,.25);display:none;max-width:230px;text-align:center;}
+#balao:after{content:"";position:absolute;left:50%;bottom:-9px;margin-left:-8px;border:9px solid transparent;border-top-color:#fff;border-bottom:0;}
+#alerta{position:absolute;font-size:26px;font-weight:bold;color:#e33;text-shadow:0 2px 0 #fff;display:none;
+ -webkit-animation:quica 1s ease-in-out infinite;animation:quica 1s ease-in-out infinite;}
+@-webkit-keyframes quica{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-9px)}}
+@keyframes quica{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+#hud{position:absolute;left:10px;top:10px;background:rgba(50,30,12,.55);border-radius:14px;padding:7px 12px;color:#fff;font-weight:bold;font-size:17px;}
+#hud .moeda{display:inline-block;width:20px;height:20px;border-radius:50%;background:#ffd23f;border:2px solid #c99114;vertical-align:-4px;margin-right:6px;}
+#hud .ovo{display:inline-block;width:16px;height:21px;border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#fff6e0;border:2px solid #d9c9a8;vertical-align:-5px;margin-left:14px;margin-right:5px;}
+.moedaVoa{position:absolute;width:20px;height:20px;border-radius:50%;background:#ffd23f;border:2px solid #c99114;z-index:60;
+ -webkit-transition:all .8s ease-in;transition:all .8s ease-in;}
+#controles{position:absolute;left:0;right:0;bottom:0;height:96px;z-index:50;}
+.ctl{position:absolute;bottom:14px;width:68px;height:68px;border-radius:50%;border:0;font-size:28px;font-weight:bold;color:#fff;
+ background:rgba(50,30,12,.55);-webkit-box-shadow:0 4px 0 rgba(30,18,6,.6);box-shadow:0 4px 0 rgba(30,18,6,.6);cursor:pointer;
+ -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:none;}
+.ctl:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
+#bEsq{left:14px;}#bDir{left:96px;}#bPulo{right:14px;background:rgba(201,105,31,.85);}
+#bAjuda{position:absolute;left:50%;bottom:110px;margin-left:-110px;width:220px;padding:13px 0;border-radius:16px;border:0;
+ font-size:17px;font-weight:bold;color:#fff;background:#2e9e57;-webkit-box-shadow:0 5px 0 #1d6b3a;box-shadow:0 5px 0 #1d6b3a;
+ display:none;z-index:55;cursor:pointer;-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.05)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.bandeirinhas{position:absolute;height:26px;}
+.bandeirinhas span{display:inline-block;width:0;height:0;border-left:9px solid transparent;border-right:9px solid transparent;border-top:16px solid #e05a5a;margin:0 2px;}
+.bandeirinhas span.b2{border-top-color:#3f9de0;}
+.bandeirinhas span.b3{border-top-color:#ffd23f;}
+.bandeirinhas span.b4{border-top-color:#5abf6e;}
+#titulo{position:absolute;left:0;top:0;right:0;bottom:0;z-index:100;text-align:center;
+ background:rgba(30,18,40,.55);}
+#titulo h1{margin-top:16vh;font-size:44px;color:#fff;letter-spacing:2px;
+ text-shadow:0 0 18px rgba(255,220,120,.95),0 4px 0 rgba(60,30,10,.6);
+ -webkit-animation:solPulsa 2.6s ease-in-out infinite;animation:solPulsa 2.6s ease-in-out infinite;}
+#titulo .sub{color:#ffe9b0;font-size:16px;font-weight:bold;margin-top:-6px;}
+#titulo img{height:150px;width:auto;margin-top:4vh;
+ -webkit-animation:quica 1.6s ease-in-out infinite;animation:quica 1.6s ease-in-out infinite;}
+#bComecar{margin-top:5vh;padding:16px 44px;font-size:22px;font-weight:bold;color:#fff;border:0;border-radius:18px;
+ background:#c9691f;-webkit-box-shadow:0 5px 0 #8a4712;box-shadow:0 5px 0 #8a4712;cursor:pointer;
+ -webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite;}
+#dica{position:absolute;left:0;right:0;bottom:100px;text-align:center;color:#fff;font-size:14px;font-weight:bold;
+ text-shadow:0 1px 3px rgba(0,0,0,.6);pointer-events:none;}
+.mascSquash img{-webkit-transform:scaleY(.82) scaleX(1.12)!important;transform:scaleY(.82) scaleX(1.12)!important;}
+.respira img{-webkit-animation:respira 2.6s ease-in-out infinite;animation:respira 2.6s ease-in-out infinite;}
+@-webkit-keyframes respira{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.025)}}
+@keyframes respira{0%,100%{transform:scale(1)}50%{transform:scale(1.025)}}
+</style>
+</head>
+<body>
+<div id="mundo">
+ <div id="sol"></div>
+ <div class="camada" id="camNuvens"></div>
+ <div id="colinas"></div>
+ <div id="casas"></div>
+ <img id="passaro" alt="">
+ <div id="sombra"></div>
+ <div id="masc"><img id="mascImg" alt=""></div>
+ <div id="alerta">&#10071;</div>
+ <div id="balao"></div>
+</div>
+<div id="hud"><span class="moeda"></span><span id="nMoedas">0</span><span class="ovo"></span>ovo</div>
+<div id="dica">Segure &#9654; para andar &middot; toque no bot&atilde;o laranja para pular</div>
+<div id="controles">
+ <button class="ctl" id="bEsq">&#9664;</button>
+ <button class="ctl" id="bDir">&#9654;</button>
+ <button class="ctl" id="bPulo">&#11014;</button>
+</div>
+<button id="bAjuda">&#9995; Ajudar a Dona Bela</button>
+<div id="titulo">
+ <h1>MUNDO VIVO</h1>
+ <div class="sub">demo do personagem &middot; feita para o professor Marcos</div>
+ <img id="tituloMasc" alt="">
+ <br><button id="bComecar">&#9654; COME&Ccedil;AR</button>
+</div>
+<script>
+var IMG={
+ parado:"%%POSE_PARADO%%",
+ passoD:"%%POSE_PASSOD%%",
+ passoE:"%%POSE_PASSOE%%",
+ pulo:"%%POSE_PULO%%",
+ acena:"%%POSE_ACENA%%",
+ casas:"%%CASAS%%",
+ colinas:"%%COLINAS%%",
+ passaro:"%%PASSARO%%"
+};
+function $(i){return document.getElementById(i);}
+
+/* ---------- som (Web Audio sintetizado) ---------- */
+var _ac=null;
+function beep(f1,f2,dur,vol,tipo){try{
+ _ac=_ac||new (window.AudioContext||window.webkitAudioContext)();
+ if(_ac.state==="suspended"&&_ac.resume)_ac.resume();
+ var o=_ac.createOscillator(),g=_ac.createGain(),t=_ac.currentTime;
+ o.type=tipo||"sine";o.frequency.setValueAtTime(f1,t);
+ if(f2)o.frequency.linearRampToValueAtTime(f2,t+dur);
+ g.gain.setValueAtTime(vol||.12,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+ o.connect(g);g.connect(_ac.destination);o.start(t);o.stop(t+dur+.02);
+}catch(e){}}
+function somPasso(){beep(150,120,.05,.05,"square");}
+function somPulo(){beep(330,660,.18,.1,"sine");}
+function somCai(){beep(110,70,.12,.12,"sine");}
+function somMoeda(){beep(880,0,.09,.1,"sine");setTimeout(function(){beep(1318,0,.12,.1,"sine");},80);}
+function somPlim(){beep(660,0,.1,.1);setTimeout(function(){beep(990,0,.14,.1);},90);}
+
+/* ---------- mundo ---------- */
+var VW=window.innerWidth,VH=window.innerHeight;
+var MUNDO_W=2600, CHAO=34;
+var pos=150,vx=0,dir=1,held=0,cam=0;
+var y=0,vy=0,noChao=true;
+var frame=0,tFrame=0,parouEm=0,acenouEm=0;
+var moedas=0,missaoFeita=false;
+var PADARIA_X=%%PADARIA_X%%;
+
+function montarCenario(){
+ var i,h="";
+ for(i=0;i<3;i++)h+='<img src="'+IMG.casas+'" alt="">';
+ $("casas").innerHTML=h;
+ h="";for(i=0;i<4;i++)h+='<img src="'+IMG.colinas+'" alt="">';
+ $("colinas").innerHTML=h;
+ var nv=$("camNuvens");h="";
+ var ns=[[12,60,26],[34,120,38],[20,200,30]];
+ for(i=0;i<3;i++)h+='<div class="nuvem" id="nuvem'+i+'" style="top:'+ns[i][0]+'%;width:'+ns[i][1]+'px;height:'+ns[i][2]+'px"></div>';
+ nv.innerHTML=h;
+ $("mascImg").src=IMG.parado;
+ $("tituloMasc").src=IMG.acena;
+ $("passaro").src=IMG.passaro;
+ if(missaoFeita)porBandeirinhas();
+}
+function porBandeirinhas(){
+ if($("bandeiras"))return;
+ var b=document.createElement("div");b.className="bandeirinhas";b.id="bandeiras";
+ var h="",i;for(i=0;i<7;i++)h+='<span class="b'+((i%4)+1)+'"></span>';
+ b.innerHTML=h;$("mundo").appendChild(b);
+}
+function puff(px){
+ var d=document.createElement("div");d.className="puff";
+ d.style.left=(px-cam+28+Math.random()*20)+"px";d.style.bottom=(CHAO+2)+"px";
+ $("mundo").appendChild(d);
+ setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},520);
+}
+
+/* ---------- entrada (toque + teclado) ---------- */
+function segurar(el,vaiDir){
+ el.ontouchstart=function(e){if(e.preventDefault)e.preventDefault();held=vaiDir;};
+ el.ontouchend=function(){if(held===vaiDir)held=0;};
+ el.onmousedown=function(){held=vaiDir;};
+ el.onmouseup=function(){if(held===vaiDir)held=0;};
+ el.onmouseleave=function(){if(held===vaiDir)held=0;};
+}
+segurar($("bEsq"),-1);segurar($("bDir"),1);
+function pular(){if(noChao){vy=13.5;noChao=false;somPulo();}}
+$("bPulo").ontouchstart=function(e){if(e.preventDefault)e.preventDefault();pular();};
+$("bPulo").onmousedown=pular;
+document.onkeydown=function(e){var k=e.keyCode;
+ if(k===37)held=-1;else if(k===39)held=1;
+ else if(k===38||k===32)pular();};
+document.onkeyup=function(e){var k=e.keyCode;
+ if((k===37&&held===-1)||(k===39&&held===1))held=0;};
+
+/* ---------- missão: a padaria ---------- */
+function pertoDaPadaria(){return Math.abs(pos-PADARIA_X)<110;}
+function ajudar(){
+ if(missaoFeita)return;
+ missaoFeita=true;try{localStorage.setItem("mv_demo","1");}catch(e){}
+ $("bAjuda").style.display="none";
+ $("balao").innerHTML="Obrigada! Voc&ecirc; consertou tudo! &#11088;";
+ porBandeirinhas();
+ var i;for(i=0;i<3;i++)(function(n){setTimeout(function(){
+  var m=document.createElement("div");m.className="moedaVoa";
+  m.style.left=(PADARIA_X-cam)+"px";m.style.bottom=(CHAO+120)+"px";
+  document.body.appendChild(m);
+  setTimeout(function(){m.style.left="26px";m.style.bottom=(VH-30)+"px";m.style.opacity="0";},40);
+  setTimeout(function(){if(m.parentNode)m.parentNode.removeChild(m);moedas++;$("nMoedas").innerHTML=moedas;somMoeda();},860);
+ },n*300);})(i);
+}
+$("bAjuda").onclick=ajudar;
+$("bAjuda").ontouchstart=function(e){if(e.preventDefault)e.preventDefault();ajudar();};
+
+/* ---------- passarinho ---------- */
+var passX=-80,passVai=1.6;
+function tickPassaro(){passX+=passVai;
+ if(passX>VW+90)passX=-90;
+ $("passaro").style.left=passX+"px";
+ $("passaro").style.top=(VH*.14+Math.sin(passX/40)*12)+"px";}
+
+/* ---------- laço principal ---------- */
+var tNuvem=0;
+function tick(){
+ VW=window.innerWidth;VH=window.innerHeight;
+ /* física do andar (easing = peso real) */
+ var alvo=held*5.4;
+ vx+=(alvo-vx)*.16;
+ if(Math.abs(vx)<.05)vx=0;
+ pos+=vx;if(pos<60)pos=60;if(pos>MUNDO_W-80)pos=MUNDO_W-80;
+ if(held!==0)dir=held;
+ /* pulo */
+ if(!noChao){vy-=.95;y+=vy;
+  if(y<=0){y=0;noChao=true;somCai();
+   $("masc").className="mascSquash";puff(pos);puff(pos);
+   setTimeout(function(){$("masc").className=(vx===0?"respira":"");},180);}}
+ /* câmera elástica (segue com atraso) */
+ var alvoCam=pos-VW*.42;if(alvoCam<0)alvoCam=0;if(alvoCam>MUNDO_W-VW)alvoCam=MUNDO_W-VW;
+ cam+=(alvoCam-cam)*.1;
+ /* parallax */
+ var tf="translateX("+(-cam)+"px)";
+ $("casas").style.webkitTransform=tf;$("casas").style.transform=tf;
+ tf="translateX("+(-cam*.35)+"px)";
+ $("colinas").style.webkitTransform=tf;$("colinas").style.transform=tf;
+ tNuvem+=.15;
+ tf="translateX("+(-cam*.12-tNuvem)+"px)";
+ $("camNuvens").style.webkitTransform=tf;$("camNuvens").style.transform=tf;
+ /* sprite do mascote */
+ var andando=Math.abs(vx)>.7;
+ var img=$("mascImg"),agora=(new Date()).getTime();
+ if(!noChao)img.src=IMG.pulo;
+ else if(andando){
+  if(agora-tFrame>135){frame=1-frame;tFrame=agora;img.src=(frame?IMG.passoD:IMG.passoE);somPasso();if(Math.random()<.3)puff(pos);}
+  $("masc").className="";parouEm=agora;
+ }else{
+  if(agora-parouEm>200&&img.src!==IMG.acena)img.src=IMG.parado;
+  $("masc").className="respira";
+  if(agora-parouEm>4000&&agora-acenouEm>6000){acenouEm=agora;img.src=IMG.acena;
+   setTimeout(function(){if(Math.abs(vx)<=.7)$("mascImg").src=IMG.parado;},1100);}
+ }
+ var mx=pos-cam-40;
+ tf="translateX("+mx+"px) translateY("+(-CHAO-y)+"px)"+(dir<0?" scaleX(-1)":"");
+ $("masc").style.webkitTransform=tf;$("masc").style.transform=tf;
+ $("masc").style.webkitTransformOrigin="50% 100%";$("masc").style.transformOrigin="50% 100%";
+ var s=1-Math.min(.55,y/240);
+ tf="translateX("+(mx+8)+"px) translateY("+(-CHAO+8)+"px) scale("+s+")";
+ $("sombra").style.webkitTransform=tf;$("sombra").style.transform=tf;
+ /* padaria: alerta, balão e botão */
+ var ax=PADARIA_X-cam;
+ var al=$("alerta"),ba=$("balao");
+ if(!missaoFeita){al.style.display="block";al.style.left=(ax-6)+"px";al.style.bottom=(CHAO+205)+"px";}
+ else al.style.display="none";
+ if($("bandeiras")){var bd=$("bandeiras");
+  bd.style.left=(ax-78)+"px";bd.style.bottom=(CHAO+185)+"px";}
+ if(pertoDaPadaria()){
+  ba.style.display="block";
+  ba.style.left=(ax-105)+"px";ba.style.bottom=(CHAO+215)+"px";
+  if(!missaoFeita){ba.innerHTML="Minha plaquinha quebrou! Me ajuda a enfeitar a padaria?";$("bAjuda").style.display="block";}
+  else if(ba.innerHTML.indexOf("Obrigada")<0)ba.innerHTML="A padaria ficou linda! Volte sempre! &#10084;";
+ }else{ba.style.display="none";$("bAjuda").style.display="none";}
+ tickPassaro();
+}
+
+/* ---------- início ---------- */
+try{if(localStorage.getItem("mv_demo")==="1")missaoFeita=true;}catch(e){}
+montarCenario();
+$("bComecar").onclick=function(){
+ $("titulo").style.display="none";somPlim();
+ setInterval(tick,33);
+};
+</script>
+</body>
+</html>

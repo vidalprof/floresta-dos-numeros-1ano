@@ -1,0 +1,214 @@
+name: Finalizar (medalha/publicar por push, sem MCP)
+
+# Plano B quando a conexao MCP nao esta disponivel: jobs acionados por PUSH
+# nesta branch, controlados por marcadores na mensagem do commit:
+#   [medalha]  -> gera _novo/med_receita.png no Gemini e commita
+#   [publicar] -> republica _pub_confeitaria em confeitaria-da-divisao
+#                 (historico limpo), forca build do Pages, espera o resultado
+#                 e grava _status/confeitaria.txt neste repo (git pull p/ ler).
+# Os commits feitos pelos proprios jobs NAO carregam marcadores -> sem loop.
+
+on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalizar-confeitaria
+  cancel-in-progress: false
+
+jobs:
+  imagens:
+    if: contains(github.event.head_commit.message, '[imagens]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar imagens do _gerar_imagens.json (Gemini)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, time, urllib.request
+          key=os.environ["GEMINI_API_KEY"].strip()
+          itens=json.load(open("_gerar_imagens.json",encoding="utf-8"))
+          os.makedirs("_novo", exist_ok=True)
+          modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
+          ok=0
+          for it in itens:
+              body={"contents":[{"parts":[{"text":it["prompt"]}]}]}
+              img=None
+              for tent in range(3):
+                  for m in modelos:
+                      url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(m,key)
+                      req=urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type":"application/json"})
+                      try: d=json.loads(urllib.request.urlopen(req, timeout=180).read())
+                      except Exception as e: print("erro",m,str(e)[:150]); continue
+                      for c in d.get("candidates",[]) or []:
+                          for p in (c.get("content",{}) or {}).get("parts",[]) or []:
+                              inl=p.get("inlineData") or p.get("inline_data")
+                              if inl and inl.get("data"): img=base64.b64decode(inl["data"])
+                      if img: break
+                  if img: break
+                  time.sleep(6)
+              if img:
+                  open("_novo/%s.png"%it["nome"],"wb").write(img); ok+=1; print("OK",it["nome"],len(img))
+              else: print("::error::falhou",it["nome"])
+          if ok==0: raise SystemExit(1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/
+          git diff --cached --quiet && exit 0
+          git commit -m "imagens: gera lote (gemini, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+  medalha:
+    if: contains(github.event.head_commit.message, '[medalha]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar medalha no Gemini (3 tentativas)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, time, urllib.request, urllib.error
+          key=os.environ["GEMINI_API_KEY"].strip()
+          prompt=("Medalha redonda dourada infantil estilo cartoon 3D fofo, fita azul, "
+                  "no centro um livro de receitas aberto mostrando APENAS DESENHOS: um ovo e um bolinho. "
+                  "PROIBIDO qualquer letra, palavra ou numero na imagem (paginas do livro so com desenhos). "
+                  "Brilho suave, fundo totalmente branco liso para recorte")
+          os.makedirs("_novo", exist_ok=True)
+          body={"contents":[{"parts":[{"text":prompt}]}]}
+          modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
+          img=None
+          for tent in range(3):
+              for m in modelos:
+                  url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(m,key)
+                  req=urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type":"application/json"})
+                  try:
+                      d=json.loads(urllib.request.urlopen(req, timeout=180).read())
+                  except Exception as e:
+                      print("tentativa %d %s: %s"%(tent+1,m,str(e)[:200])); continue
+                  for c in d.get("candidates",[]) or []:
+                      for p in (c.get("content",{}) or {}).get("parts",[]) or []:
+                          inl=p.get("inlineData") or p.get("inline_data")
+                          if inl and inl.get("data"): img=base64.b64decode(inl["data"])
+                  if img: print("gerada com",m); break
+              if img: break
+              time.sleep(8)
+          if not img: raise SystemExit("::error::sem imagem apos 3 tentativas")
+          open("_novo/med_receita.png","wb").write(img)
+          print("OK ->_novo/med_receita.png (%d bytes)"%len(img))
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/med_receita.png
+          git diff --cached --quiet && exit 0
+          git commit -m "imagem: gera med_receita (gemini, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+  audio:
+    if: contains(github.event.head_commit.message, '[audio]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Instalar edge-tts
+        run: pip3 install --quiet edge-tts
+      - name: Gerar falas do _lote_falas.json (voz Antonio)
+        run: |
+          python3 - <<'PY'
+          import os, re, json, subprocess, tempfile
+          itens=json.load(open("_lote_falas.json",encoding="utf-8"))
+          os.makedirs("_audio", exist_ok=True)
+          ok=0; fail=0
+          for it in itens:
+              idn=re.sub(r'[^A-Za-z0-9_-]','_', it.get("id") or "fala")
+              out=tempfile.NamedTemporaryFile(suffix=".mp3", delete=False); out.close()
+              r=subprocess.run(["edge-tts","--voice","pt-BR-AntonioNeural","--text",it["texto"],"--write-media",out.name],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or os.path.getsize(out.name)<800:
+                  print("::error::falhou", idn, r.stderr.decode("utf-8","ignore")[:200]); fail+=1; continue
+              open("_audio/%s.mp3"%idn,"wb").write(open(out.name,"rb").read())
+              os.remove(out.name); ok+=1; print("OK", idn)
+          print("== %d ok, %d falha =="%(ok,fail))
+          if ok==0: raise SystemExit(1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _audio/
+          git diff --cached --quiet && exit 0
+          git commit -m "audio: gera vozes (male, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+  publicar:
+    if: contains(github.event.head_commit.message, '[publicar]')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+      OWNER: vidalprof
+      DEST: confeitaria-da-divisao
+      SRC: _pub_confeitaria
+    steps:
+      - uses: actions/checkout@v4
+      - name: Republicar com historico limpo
+        run: |
+          set -euo pipefail
+          test -f "$SRC/index.html" || { echo "::error::sem $SRC/index.html"; exit 1; }
+          work="$(mktemp -d)"
+          cp -r "$SRC/." "$work/"
+          : > "$work/.nojekyll"
+          cd "$work"
+          git init -q && git checkout -q -b main
+          git config user.name "Republicador"
+          git config user.email "republicador@users.noreply.github.com"
+          git add -A && git commit -qm "Republica site (historico limpo)"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" main
+          echo "push OK"
+      - name: Forcar build do Pages e esperar resultado
+        run: |
+          set +e
+          gh api -X PUT "repos/$OWNER/$DEST/pages" -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" >/dev/null 2>&1
+          gh api -X POST "repos/$OWNER/$DEST/pages/builds" >/dev/null 2>&1
+          st="desconhecido"; erro=""
+          for i in $(seq 1 14); do
+            sleep 12
+            resp=$(gh api "repos/$OWNER/$DEST/pages/builds/latest" 2>/dev/null)
+            st=$(echo "$resp" | python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('status') or '?')" 2>/dev/null)
+            erro=$(echo "$resp" | python3 -c "import sys,json;d=json.load(sys.stdin);print((d.get('error') or {}).get('message') or '')" 2>/dev/null)
+            echo "poll $i: $st $erro"
+            [ "$st" = "built" ] && break
+            [ "$st" = "errored" ] && break
+          done
+          mkdir -p _status
+          sha=$(gh api "repos/$OWNER/$DEST/commits/main" --jq '.sha[0:7]' 2>/dev/null)
+          echo "build=$st erro=${erro:-nenhum} commit=$sha em=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > _status/confeitaria.txt
+          cat _status/confeitaria.txt
+      - name: Gravar status neste repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _status/confeitaria.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "status: publicacao confeitaria (via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

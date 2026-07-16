@@ -1,0 +1,92 @@
+ if((k===37&&held===-1)||(k===39&&held===1))held=0;};
+
+/* ---------- MOTOR DE ARRASTAR (mouse+toque) — ghost global ---------- */
+var _dg={ativo:false,ghost:null,onSolta:null,origem:null},_dragOn=false;
+function _pt(ev){var t=(ev.touches&&ev.touches[0])||(ev.changedTouches&&ev.changedTouches[0])||ev;return {x:t.clientX,y:t.clientY};}
+function instalarDrag(){if(_dragOn)return;_dragOn=true;
+ document.addEventListener("mousemove",_dgMove,false);document.addEventListener("mouseup",_dgUp,false);
+ try{document.addEventListener("touchmove",_dgMove,{passive:false});}catch(e){document.addEventListener("touchmove",_dgMove,false);}
+ document.addEventListener("touchend",_dgUp,false);}
+function arrastavel(el,onSolta){el.__os=onSolta;el.onmousedown=function(ev){_dgS(ev,el);};el.ontouchstart=function(ev){_dgS(ev,el);};}
+function _dgS(ev,el){if(ev.preventDefault)ev.preventDefault();if(ev.stopPropagation)ev.stopPropagation();
+ var p=_pt(ev);_dg.ativo=true;_dg.onSolta=el.__os;_dg.origem=el;
+ var g=el.cloneNode(true);g.className=el.className+" ghostBrig";g.style.left=p.x+"px";g.style.top=p.y+"px";
+ document.body.appendChild(g);_dg.ghost=g;el.style.visibility="hidden";}
+function _dgMove(ev){if(!_dg.ativo)return;if(ev.preventDefault)ev.preventDefault();var p=_pt(ev);
+ if(_dg.ghost){_dg.ghost.style.left=p.x+"px";_dg.ghost.style.top=p.y+"px";}
+ _limpaHover();var z=_alvo(p.x,p.y);if(z&&z.className.indexOf("hover")<0)z.className+=" hover";}
+function _dgUp(ev){if(!_dg.ativo)return;var p=_pt(ev);var z=_alvo(p.x,p.y);
+ if(_dg.ghost&&_dg.ghost.parentNode)_dg.ghost.parentNode.removeChild(_dg.ghost);
+ if(_dg.origem)_dg.origem.style.visibility="";_limpaHover();
+ var on=_dg.onSolta,og=_dg.origem;_dg.ativo=false;_dg.ghost=null;_dg.origem=null;
+ if(z&&on)on(z.getAttribute("data-drop"),og);}
+function _alvo(x,y){var e=document.elementFromPoint(x,y);while(e&&!(e.getAttribute&&e.getAttribute("data-drop")))e=e.parentNode;return (e&&e.getAttribute)?e:null;}
+function _limpaHover(){var hs=document.getElementsByClassName("hover"),i;for(i=hs.length-1;i>=0;i--)hs[i].className=hs[i].className.replace(/\s*hover/g,"");}
+
+/* ---------- missão: repartir os brigadeiros (DIVISÃO) ---------- */
+var TOT=12,GR=3,QCERTO=TOT/GR;
+function brigHTML(cls){return IMG.brigadeiro?'<img class="brig img '+cls+'" src="'+IMG.brigadeiro+'">':'<span class="brig '+cls+'"></span>';}
+function pertoDaPadaria(){return Math.abs(pos-PADARIA_X)<120;}
+function ajudar(){
+ if(missaoFeita)return;instalarDrag();
+ $("bAjuda").style.display="none";
+ $("mFala").innerHTML=(IMG.donabela?'<img src="'+IMG.donabela+'">':'')+'Que bom que voc&ecirc; veio! Chegaram <b>'+TOT+' brigadeiros</b> e eu tenho <b>'+GR+' pratos</b>. Reparta <b>igualzinho</b>, o mesmo tanto em cada prato!';
+ var h='',i;for(i=0;i<TOT;i++)h+=brigHTML("d");
+ $("mDoces").innerHTML=h;
+ h='';for(i=0;i<GR;i++)h+='<div class="pz" data-drop="z'+i+'" id="pz'+i+'"><div class="area"><div class="doces" id="dz'+i+'"></div></div><div class="num"><span id="nz'+i+'">0</span></div></div>';
+ $("mPratos").innerHTML=h;
+ $("mDica").innerHTML="";$("mBtn").innerHTML="";$("mFim").style.display="none";$("mFim").innerHTML="";
+ var ds=$("mDoces").getElementsByClassName("brig");for(i=0;i<ds.length;i++)arrastavel(ds[i],soltarBrig);
+ recont();
+ $("missao").style.display="block";somPlim();
+}
+function soltarBrig(dropId,og){
+ if(dropId==="banco"){$("mDoces").appendChild(og);}
+ else{var dz=$("dz"+parseInt(dropId.substring(1),10));if(dz){dz.appendChild(og);beep(650,780,.08,.08,"sine");}}
+ recont();
+}
+function recont(){
+ var nb=$("mDoces").getElementsByClassName("brig").length,i;
+ $("mDoces").setAttribute("data-drop","banco");
+ for(i=0;i<GR;i++){var n=$("dz"+i).getElementsByClassName("brig").length;$("nz"+i).innerHTML=n;}
+ $("mInfo").innerHTML=nb>0?("Brigadeiros na bandeja: "+nb):"Bandeja vazia! Toque em Conferir.";
+ $("mBtn").innerHTML=(nb===0)?'<button id="bConf">Conferir &#10004;</button>':'';
+ if($("bConf")){$("bConf").onclick=conferir;$("bConf").ontouchstart=function(e){if(e.preventDefault)e.preventDefault();conferir();};}
+}
+function conferir(){
+ var ok=true,i;for(i=0;i<GR;i++)if($("dz"+i).getElementsByClassName("brig").length!==QCERTO)ok=false;
+ if(ok)missaoOk();
+ else{$("mDica").innerHTML="&#128161; Cada prato precisa ter a MESMA quantidade. A conta certa: "+TOT+" &divide; "+GR+" = "+QCERTO+".";beep(200,150,.15,.1,"square");}
+}
+function missaoOk(){
+ missaoFeita=true;try{localStorage.setItem("mv_mundo","1");}catch(e){}
+ $("mBtn").innerHTML="";$("mDica").innerHTML="";
+ var f=$("mFim");f.style.display="block";
+ f.innerHTML='<div class="ok">&#11088; Isso! Voc&ecirc; repartiu igualzinho: <b>'+QCERTO+'</b> em cada prato!<br>Repartir '+TOT+' em '+GR+' partes iguais &eacute; '+TOT+' &divide; '+GR+' = <b>'+QCERTO+'</b>.</div><button id="bVolta">Voltar para a rua &#9654;</button>';
+ var i;for(i=0;i<GR;i++)(function(n){setTimeout(function(){voaMoeda();},n*260);})(i);
+ somMoeda();
+ $("bVolta").onclick=fecharMissao;$("bVolta").ontouchstart=function(e){if(e.preventDefault)e.preventDefault();fecharMissao();};
+}
+function voaMoeda(){
+ var m=document.createElement("div");m.className="moedaVoa";
+ m.style.left=(VW*.5)+"px";m.style.bottom=(VH*.5)+"px";document.body.appendChild(m);
+ setTimeout(function(){m.style.left="26px";m.style.bottom=(VH-30)+"px";m.style.opacity="0";},40);
+ setTimeout(function(){if(m.parentNode)m.parentNode.removeChild(m);moedas++;$("nMoedas").innerHTML=moedas;somMoeda();},860);
+}
+function fecharMissao(){
+ $("missao").style.display="none";
+ porBandeirinhas();
+ $("balao").innerHTML="Obrigada! A confeitaria ficou uma festa! &#10084;";
+}
+$("bAjuda").onclick=ajudar;
+$("bAjuda").ontouchstart=function(e){if(e.preventDefault)e.preventDefault();ajudar();};
+
+/* ---------- passarinho ---------- */
+var passX=-80,passVai=1.6;
+function tickPassaro(){passX+=passVai;
+ if(passX>VW+90)passX=-90;
+ $("passaro").style.left=passX+"px";
+ $("passaro").style.top=(VH*.14+Math.sin(passX/40)*12)+"px";}
+
+/* ---------- laço principal ---------- */
+var tNuvem=0;

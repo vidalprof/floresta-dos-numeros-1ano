@@ -1,0 +1,40 @@
+name: Listar arquivos da raiz de outro repo
+
+# Lista o conteudo da raiz de um repositorio de destino (usando PAGES_TOKEN)
+# para diagnosticar 404 do Pages (ex.: falta index.html na raiz, ou os
+# arquivos subiram dentro de uma subpasta).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de destino (ex: silabastonicas4-)"
+        required: true
+        type: string
+
+jobs:
+  listar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Listar raiz e procurar index.html
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          set -uo pipefail
+          echo "=== BRANCH PADRAO ==="
+          DEF=$(gh api "repos/$OWNER/$DEST" --jq '.default_branch' 2>&1) || true
+          echo "default_branch=$DEF"
+          echo ""
+          echo "=== ARQUIVOS NA RAIZ (branch: $DEF) ==="
+          gh api "repos/$OWNER/$DEST/contents/" \
+            --jq '.[] | .type + "  " + .name' 2>&1 | head -60 || true
+          echo ""
+          echo "=== TEM index.html NA RAIZ? ==="
+          gh api "repos/$OWNER/$DEST/contents/index.html" --jq '"SIM (" + (.size|tostring) + " bytes)"' 2>&1 | head -1 || true
+          echo ""
+          echo "=== CONFIG DO PAGES ==="
+          gh api "repos/$OWNER/$DEST/pages" \
+            --jq '"source=" + ((.source.branch // "?") + ":" + (.source.path // "?")) + "  status=" + (.status // "?")' 2>&1 | head -1 || true
+          echo "=== FIM ==="
