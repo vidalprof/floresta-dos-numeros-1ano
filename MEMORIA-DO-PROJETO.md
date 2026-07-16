@@ -311,6 +311,14 @@ NÃO é contradição — são DUAS CAMADAS:
    (NÃO a busca de código, que não vê a branch) + **acreditar no Marcos**. NUNCA
    declarar "perdido" de uma cópia local. E ao salvar: **confirmar o push no GitHub**
    (ex.: ler o arquivo pela API), não confiar no "push OK" local.
+5. **TRAVA BLINDADA (jul/2026):** o `sync-remoto.sh` antigo DESISTIA na 1ª falha
+   de fetch e imprimia o mesmo `✅ conferido` — parecendo tudo em dia quando NÃO
+   estava (foi assim que abri numa cópia 30+ commits velha e "não achei" o
+   `eduverse/`). Agora o hook tem **RETRY (3x)** no fetch e, se não conseguir
+   confirmar o GitHub, imprime um **aviso ALTO** (`⚠️ NÃO consegui conferir`),
+   NUNCA o `✅`. Regra pra mim: se vir esse aviso no início da sessão, rodar
+   `git fetch origin <branch>` + `git merge --ff-only` ANTES de agir/declarar
+   qualquer coisa "perdida".
 
 ## 🎭 Ideias do Marcos para PERSONAGENS VIVOS (incorporar no EducaVerso)
 Pedidos do professor para os personagens ficarem "de videogame" — anotar para o
