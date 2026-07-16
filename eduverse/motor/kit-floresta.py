@@ -323,11 +323,14 @@ function desZzz(t,mx,my){cx.save();cx.textAlign="left";cx.lineJoin="round";
  cx.restore();cx.globalAlpha=1;}
 // CARTELA DE POSES (Byte vivo): cada pose tem escala propria p/ o personagem NAO mudar de tamanho
 var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"byte_lado",f:1.12},
+ frente_anda:{im:"byte_frente_anda",f:1.14},costas_anda:{im:"byte_costas_anda",f:1.19}, // f calibrado p/ a CABECA ficar do mesmo tamanho do frame parado (pernas em passo alongam o sprite)
  senta:{im:"byte_senta",f:0.95},deita:{im:"byte_deita",f:0.62},fala:{im:"byte_fala",f:0.98},feliz:{im:"byte_feliz",f:1.06}};
 function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
  if(fim||aulaComemora) return "feliz";
  if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
-  if(ay>ax) return byte.mvy<0?"costas":"frente";   // sobe=costas / desce=frente
+  if(ay>ax){var pas=(Math.floor(byte.passo*1.6)%2===0); // caminhada: alterna frame parado<->passo
+   if(byte.mvy<0) return pas?"costas":"costas_anda";    // sobe=costas
+   return pas?"frente":"frente_anda";}                  // desce=frente
   return "lado";}                                   // esquerda/direita
  if(balaoT>0&&!balaoFimTxt&&!balaoAlvo) return "fala";
  if(byte.idle>13) return "deita";
@@ -335,10 +338,15 @@ function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda
  return "frente";}
 function desByte(t){var x=byte.x,y=byte.y;
  var nome=poseByte(),P=POSE[nome]||POSE.frente;
- if(!IMG[P.im]){P=POSE.frente;nome=(nome==="costas"||nome==="lado")?nome:"frente";} // sem sprite da pose -> usa frente
+ if(!IMG[P.im]){nome=(nome==="frente_anda")?"frente":(nome==="costas_anda")?"costas":nome; // sem frame de passo -> pose estatica da mesma direcao
+  P=POSE[nome]||POSE.frente;
+  if(!IMG[P.im]){P=POSE.frente;nome=(nome==="costas"||nome==="lado")?nome:"frente";}} // sem sprite da pose -> usa frente
  var im=IMG[P.im]||IMG.byte,h=64*P.f;
- var andando=byte.mov&&(nome==="frente"||nome==="costas"||nome==="lado");
+ var vert=byte.mov&&(nome==="frente"||nome==="costas"||nome==="frente_anda"||nome==="costas_anda");
+ var andando=vert||(byte.mov&&nome==="lado");
  var bob=andando?Math.abs(Math.sin(byte.passo*.9))*6:0;
+ var temPasso=(nome==="costas"||nome==="costas_anda")?!!IMG[POSE.costas_anda.im]:!!IMG[POSE.frente_anda.im];
+ if(vert&&temPasso)bob*=0.5; // frente/costas com 2 frames: o passo visual vem do sprite, bob so leve
  var deitado=(nome==="deita");
  var rp=(!byte.mov&&!deitado&&nome!=="senta")?Math.sin(byte.resp)*.03:0; // respira parado em pe
  var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;             // boca/squash ao falar
