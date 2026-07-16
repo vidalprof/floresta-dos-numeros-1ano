@@ -75,6 +75,39 @@ jobs:
           echo "=== Arquivos baixados ==="
           ls -la _recuperado/fetched/ || true
 
+      - name: Baixar arquivos-fonte (py/md/json/js/html/css/yml/txt)
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          SRC: ${{ inputs.repo_name }}
+        run: |
+          set -uo pipefail
+          mkdir -p _recuperado/src
+          echo "=== ARQUIVOS-FONTE na raiz de $OWNER/$SRC ==="
+          gh api "repos/$OWNER/$SRC/contents/" \
+            --jq '.[] | select(.type=="file") | select(.name|test("(?i)\\.(py|md|json|js|mjs|html|css|ya?ml|txt)$")) | .path' 2>/dev/null | while read -r p; do
+              [ -z "$p" ] && continue
+              out="_recuperado/src/$(basename "$p")"
+              echo "baixando fonte: $p -> $out"
+              gh api "repos/$OWNER/$SRC/contents/$p" -H "Accept: application/vnd.github.raw" > "$out" 2>/dev/null || echo "  (falhou $p)"
+            done
+          echo "=== tambem subpastas de codigo comuns (motor/builders/eduverse/_novo/docs) ==="
+          for d in motor builders eduverse _novo docs scripts src; do
+            if gh api "repos/$OWNER/$SRC/contents/$d" >/dev/null 2>&1; then
+              mkdir -p "_recuperado/src/$d"
+              gh api "repos/$OWNER/$SRC/contents/$d" \
+                --jq '.[] | select(.type=="file") | .path' 2>/dev/null | while read -r p; do
+                  [ -z "$p" ] && continue
+                  case "$p" in *.png|*.jpg|*.jpeg|*.webp) continue;; esac
+                  out="_recuperado/src/$d/$(basename "$p")"
+                  echo "baixando: $p -> $out"
+                  gh api "repos/$OWNER/$SRC/contents/$p" -H "Accept: application/vnd.github.raw" > "$out" 2>/dev/null || echo "  (falhou $p)"
+                done
+            fi
+          done
+          echo "=== fontes baixadas ==="
+          ls -laR _recuperado/src/ 2>/dev/null | head -80 || true
+
       - name: Salvar copia neste repositorio
         run: |
           set -euo pipefail
@@ -84,11 +117,11 @@ jobs:
           if git diff --cached --quiet; then
             echo "Nenhuma mudanca (arquivos identicos aos que ja estavam salvos)."
           else
-            git commit -m "Recupera de ${{ inputs.repo_name }} (index.html + imagens)"
+            git commit -m "Recupera de ${{ inputs.repo_name }} (index.html + imagens + fontes)"
             git push
           fi
           {
             echo "## Recuperado de ${{ inputs.repo_name }}"
             echo ""
-            echo "index.html + imagens (se houver) salvos em \`_recuperado/\` e \`_recuperado/fetched/\`."
+            echo "index.html + imagens + arquivos-fonte salvos em \`_recuperado/\`, \`_recuperado/fetched/\` e \`_recuperado/src/\`."
           } >> "$GITHUB_STEP_SUMMARY"
