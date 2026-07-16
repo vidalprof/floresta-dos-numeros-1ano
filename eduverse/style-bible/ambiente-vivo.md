@@ -36,6 +36,12 @@
     y-sort com sombra direcional. Default `[]` (mundo sem npcs fica igual).
 
 ## 🔨 FILA (código, sem asset novo)
+- [ ] **NPCs que TRABALHAM (rotina de ação) — pedido do Marcos:** evoluir o NPC p/ `acao:"lenhador"`
+      (e outras: pescar, varrer, martelar). Ex.: LENHADOR cortando lenha = animação de machado (ergue
+      → desce → **lasca a lenha**) + **som do machado partindo a madeira** (Web Audio: baque seco +
+      estalo) sincronizado com a batida + **respiração** visível (peito sobe/desce) entre golpes +
+      micro-movimentos suaves. "Parecer bem real" p/ chamar a atenção da criança; e **interage com o
+      Byte** (para, olha, fala) quando ele chega perto. Data-driven, reusa a lib breathe/sway.
 - [ ] **Boca ao falar** — o Byte já troca p/ pose `fala` no typewriter; afinar squash/ritmo.
 - [ ] **Barulho das folhas** — camada já existe; subir mais forte na rajada.
 - [ ] **Porta que range e bate** — prop `porta` (rangido pitch-bend + batida grave). Precisa
