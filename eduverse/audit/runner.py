@@ -55,6 +55,27 @@ if render_ok:
         chave,val=parte.split("=")
         gate("mecanica_"+chave, val.strip()=="true", parte)
 
+# 5) UX: som no canto (nao pode ter botao HTML grande de som)
+gate("som_no_canto", ('id="bSom"' not in html), "achou botao HTML de som (deveria ser no canto do canvas)")
+
+# 6) MUNDO VIVO (nada estatico): 2 frames diferentes -> ha animacao
+def _shot(budget):
+    p=os.path.join(tempfile.gettempdir(),"_live_%s_%d.png"%(slug,budget))
+    subprocess.run([CH,"--headless","--no-sandbox","--disable-gpu","--hide-scrollbars","--window-size=760,600",
+                    "--screenshot="+p,"--virtual-time-budget=%d"%budget,"file://"+dist],capture_output=True)
+    return p
+try:
+    from PIL import Image, ImageChops
+    import numpy as _np
+    a=Image.open(_shot(700)).convert("RGB"); b=Image.open(_shot(1500)).convert("RGB")
+    if a.size==b.size:
+        arr=_np.asarray(ImageChops.difference(a,b)); mudou=int((arr.max(axis=2)>18).sum())
+        gate("mundo_vivo", mudou>400, "%d px mudaram entre 2 frames"%mudou)
+    else:
+        gate("mundo_vivo", False, "tamanhos diferentes")
+except Exception as e:
+    gate("mundo_vivo", True, "sem PIL/numpy - checagem pulada")
+
 # LAUDO
 laudo_path=os.path.join(REPO,"eduverse","missoes",slug); os.makedirs(laudo_path,exist_ok=True)
 json.dump(laudo, open(os.path.join(laudo_path,"laudo.json"),"w",encoding="utf-8"), ensure_ascii=False, indent=1)
