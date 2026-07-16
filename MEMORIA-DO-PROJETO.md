@@ -109,6 +109,9 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
   no NOSSO estilo **pintado por IA premium, MUITO mais bonito** (nada de visual de blocos). O
   estudante digita **NOME + TURMA** (e dados) → as informações dele são **puxadas** (histórico,
   progresso, personagem) → o mundo vira DELE (card do "mundo do aluno" com nome/turma/progresso).
+  - **MARCA "EducaVerso":** a tela é BRANDED EducaVerso — **logo/título lindo e identidade visual
+    própria** (nome + tema + a "cara" do EducaVerso), personalizada. É a porta de entrada com
+    personalidade, não genérica. O roteirista + especialista em temática ajudam a definir essa identidade.
 - **Interação pelo NOME:** o jogo/Byte/NPCs chamam o aluno pelo nome (voz + balão).
 - **Progresso SALVO:** cada missão/atividade concluída fica registrada (retoma de onde parou).
 - **AVALIAÇÃO DESCRITIVA contínua:** o sistema descreve o que o aluno demonstrou (por habilidade
