@@ -441,6 +441,24 @@ NÃO é contradição — são DUAS CAMADAS:
    `git fetch origin <branch>` + `git merge --ff-only` ANTES de agir/declarar
    qualquer coisa "perdida".
 
+## 🧍‍♂️ MOTOR DE PERSONAGEM VIVO — UNIVERSAL (pedido firme do Marcos, jul/2026)
+> "Se der pra ter o andar normal e suave, construa esse MOTOR e depois aplique em TODOS os personagens,
+> como se estivessem vivos: respiração, movimento normal de pernas/braços, sentar, deitar, etc. E o
+> personagem NÃO precisa ser sempre o robô — podemos gerar um NOVO por atividade, SE tivermos o motor pronto."
+- **PROVA DE QUE DÁ:** o Byte já anda suave com 2 quadros de perna alternando (byte_frente_anda/_anda2,
+  byte_costas_anda/_anda2), + respiração/blink/sway/gesto + sentar/deitar/falar/feliz. Deu certo SEM tremor.
+- **AÇÃO:** GENERALIZAR essa animação (hoje amarrada ao `byte`/objeto `POSE`) num SISTEMA reutilizável que
+  anima QUALQUER personagem a partir da sua CARTELA de poses (idle=respira+pisca+balança, andar=2 quadros de
+  perna onde houver sprite senão só deslizar suave, sentar, deitar, falar, feliz, gesto). Data-driven,
+  default-seguro. APLICAR a TODOS (Byte + NPCs — hoje NPC só respira/balança). Assim cada atividade escolhe/
+  gera seu próprio mascote (a cartela de poses vem do pipeline de imagem, como já foi feito pro Byte pirata).
+- **REGRA (Marcos):** SUAVIDADE acima de tudo. Se a perna alternando ficar dura num personagem, cair pro
+  modo só-suave (respira/desliza/gesto) sem perna. Nunca preferir "com perna" se ficar pior.
+- **OVO QUE CRESCE → MASCOTE (ideia do Marcos, manter):** um mascote pode NASCER de um ovo que cresce/choca
+  e evolui (uma progressão de sprites: ovo→racha→filhote→mascote). É só mais um personagem no sistema, com
+  uma cartela que muda por estágio. Lúdico e dá vínculo (o mascote "do aluno").
+- **É o "motor pronto" que destrava TUDO:** personagem por atividade, mascote do aluno, o Byte pirata, etc.
+
 ## 🎭 Ideias do Marcos para PERSONAGENS VIVOS (incorporar no EducaVerso)
 Pedidos do professor para os personagens ficarem "de videogame" — anotar para o
 documento-mestre (`EDUCAVERSO.md`, seção Personagens Vivos) e para implementar:
