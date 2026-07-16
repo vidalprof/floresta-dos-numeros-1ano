@@ -81,3 +81,18 @@ Só publica **depois** das três.
 
 > Como usar: rodar o Portão 1 e 2 em cada entrega; registrar aqui (ou no commit) o que passou e
 > o que ficou pendente; só levar ao Marcos o que passou nos dois. O Portão 3 é dele.
+
+## 🌟 PADRÃO MARAVILHOSO (definição de "pronto" — cobrança do Marcos, 2026-07-16)
+Toda atividade só é "maravilhosa" (e EduVerse de verdade) se:
+- **TUDO temático e combinando** — chão, objetos, personagens e **o Byte VESTIDO do tema**
+  (costume por mundo: pirata=chapéu/casaco/tapa-olho; viking=capacete…), gerado editando a
+  **imagem-âncora do Byte** (mesmo personagem, só a fantasia). Nenhuma peça "de outro jogo".
+- **TUDO animado** — respira, anda, mexe a boca ao falar, pisca; mundo vivo (vento, folhas,
+  bichos, luz, clima). Nada estático.
+- **TUDO com som** — ambiente em camadas + efeitos + **voz gerada**. O mundo soa vivo.
+- **Espírito EduVerse** — mundo vivo, aprender sem perceber, **nunca prova** (Portão 0).
+> **Quem cobra:** o **auditor** pega o que é estrutural/automatizável (botão de som no canto,
+> nada estático detectável, peso, offline, mecânica); o **Diretor de Arte + Portão 3 (Marcos)**
+> julgam o gosto/tema/"maravilhoso". **Cada erro que escapar vira um teste novo do auditor.**
+> LIÇÃO: o auditor só pega o que TESTA, e a fábrica só reproduz o que está no MOTOR — por isso
+> os padrões moram no **motor** (conserta 1x → vale pra todas) e viram **checagem** do auditor.

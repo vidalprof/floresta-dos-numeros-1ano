@@ -69,9 +69,6 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
    <button class="dR" id="dR">&#9654;</button>
    <button class="dD" id="dD">&#9660;</button>
  </div>
- <div id="painel">
-   <button class="bt vz" id="bSom" onclick="toggleSom()">&#128266; Som e Voz</button>
- </div>
 </div><script>
 var cv=document.getElementById("tela"),cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
@@ -145,9 +142,13 @@ function pararVoz(){try{if(curAudio){curAudio.onended=null;curAudio.pause();}}ca
 var balaoTxt=null,balaoT=0;
 function balao(t,id,pitch){balaoTxt=t;balaoT=5.5;playFala(id,t,pitch);}
 function unlock(){initAudio();if(!window._u&&window.speechSynthesis){window._u=1;try{speechSynthesis.speak(new SpeechSynthesisUtterance(" "));}catch(e){}}}
-function toggleSom(){unlock();som=!som;var b=document.getElementById("bSom");if(ambMaster)ambMaster.gain.value=som?0.85:0;
- if(som){b.innerHTML="&#128266; Som ligado";if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
- else{b.innerHTML="&#128263; Mudo";pararVoz();}}
+function toggleSom(){unlock();som=!som;if(ambMaster)ambMaster.gain.value=som?0.85:0;
+ if(som){if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
+ else{pararVoz();}}
+cv.addEventListener("mousedown",function(e){cliqueCv(e.clientX,e.clientY);});
+cv.addEventListener("touchstart",function(e){if(e.touches[0]){cliqueCv(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
+function cliqueCv(cxp,cyp){var r=cv.getBoundingClientRect();var mx=(cxp-r.left)*(VW/r.width),my=(cyp-r.top)*(VH/r.height);if(mx>VW-46&&my<30){toggleSom();}}
+function desBotaoSom(){var bx=VW-26,by=13;cx.save();cx.fillStyle="rgba(255,255,255,.9)";cx.beginPath();cx.arc(bx,by,12,0,Math.PI*2);cx.fill();cx.fillStyle="#17324a";cx.beginPath();cx.moveTo(bx-6,by-3);cx.lineTo(bx-2,by-3);cx.lineTo(bx+2,by-7);cx.lineTo(bx+2,by+7);cx.lineTo(bx-2,by+3);cx.lineTo(bx-6,by+3);cx.closePath();cx.fill();if(som){cx.strokeStyle="#17324a";cx.lineWidth=1.6;cx.beginPath();cx.arc(bx+2,by,4,-0.7,0.7);cx.stroke();cx.beginPath();cx.arc(bx+2,by,7,-0.7,0.7);cx.stroke();}else{cx.strokeStyle="#c0392b";cx.lineWidth=2;cx.beginPath();cx.moveTo(bx+4,by-4);cx.lineTo(bx+9,by+4);cx.moveTo(bx+9,by-4);cx.lineTo(bx+4,by+4);cx.stroke();}cx.restore();}
 
 /* ---------- ENTRADA (teclado + D-pad segurar) ---------- */
 var keys={},dp={U:false,D:false,L:false,R:false};
@@ -315,6 +316,7 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  // ---- HUD ----
  cx.fillStyle="rgba(8,16,30,.55)";cx.fillRect(0,0,VW,26);cx.fillStyle="#ffe38a";cx.font="bold 13px Verdana";cx.textAlign="center";
  cx.fillText(hasKey?"Leve a chave dourada até o labirinto de pedra 🔑":"Passeie pela floresta e pegue a chave dourada 🔑",VW/2,17);
+ desBotaoSom();
  // balao acima do Byte
  balaoDes(byte.x-cam.x, byte.y-cam.y-70);
  if(fim&&fimT>1.2){cx.fillStyle="rgba(6,10,22,"+Math.min(.55,(fimT-1.2)*.6)+")";cx.fillRect(0,0,VW,VH);
