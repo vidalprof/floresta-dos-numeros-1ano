@@ -370,6 +370,18 @@ aprende + roteirista + diretor de arte + arquiteto de dados) monta história e o
   de aprender (alívio no meio, ex. após P3 e P5). HONESTO: memória/sombras já existem no catálogo; colorir e
   ligar-pontos-até-30 podem precisar ser construídos no motor — escolher os que melhor servem número+pirata.
   Construção do v2 (arte + vozes + alívios + auditar) após a Fase 1 (motor de personagem vivo).
+- **APOIO AO ERRO POR CONTAGEM ACESA — FEATURE PREMIUM OBRIGATÓRIA (Marcos lembrou; CONFERIDO: hoje NÃO está
+  no motor da aula, só há dica gentil):** quando o aluno erra numa tarefa de QUANTIDADE, o mascote fala "Não
+  foi dessa vez! Vamos contar juntos, bem devagar." e **ACENDE cada objeto UM A UM, EM SINCRONIA COM A VOZ**
+  (a luz do objeto k acende junto com a voz dizendo o número k) — só glow (`filter:drop-shadow`, SEM
+  transform:scale). A FALA comanda a luz (encadear pelo callback do `falar`, não 2 relógios separados — ver
+  MANUAL-MESTRE seção 6). No fim: "São N ao todo! Agora toque no número N." É PADRÃO das atividades premium.
+  CONSTRUIR isso no motor/nas atividades de contagem (aula E popups premium de identificar quantidade). É
+  requisito de entrega, não opcional.
+- **CURADORIA = CURRÍCULO + EDUCAÇÃO (reforço firme do Marcos):** a escolha das mecânicas/atividades NÃO é
+  por "ser divertida" — é ancorada no CURRÍCULO (BNCC/Blumenau) e na PEDAGOGIA. O especialista de
+  interatividades cura junto com o pedagogo; toda mecânica escolhida serve um objetivo de aprendizagem real
+  e a faixa etária. Diversão é o veículo, o aprendizado (verificado) é o destino.
 
 ## 🧭 ARQUITETURA (a reconciliação): mundo-mapa + atividades-peça
 NÃO é contradição — são DUAS CAMADAS:
