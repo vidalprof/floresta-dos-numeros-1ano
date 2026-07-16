@@ -51,6 +51,11 @@
       ao falar/latir. Sprite é imagem estática → fazer pelo **caminho documentado** (`EDUCAVERSO.md`
       §Personagens Vivos): desenhar olhos+boca POR CÓDIGO por cima do sprite (custo ~zero, sincroniza
       com a fala) ou cartela de poses por IA. Vale p/ Byte, NPCs e animais.
+- [ ] **CICLO NOITE → CABANA → DORMIR → CONTINUA (pedido do Marcos):** quando **anoitece** (ciclo
+      dia/noite, já pronto), o NPC **chama o Byte pra cabana** → conversinha + **um pedaço de história**
+      → o Byte **dorme** (reusa a pose deita + Zzz + roncar, já pronta; lareira acesa) → **amanhece** →
+      sai e continua a aventura. Amarra: dia/noite (✅) + entrar na cabana (em projeto) + dormir (✅).
+      É o respiro/checkpoint natural da aula (e ponto de SAVE). Já previsto na "Grande Aventura" (MEMORIA).
 - [ ] **Boca ao falar** — o Byte já troca p/ pose `fala` no typewriter; afinar squash/ritmo.
 - [ ] **Barulho das folhas** — camada já existe; subir mais forte na rajada.
 - [ ] **Porta que range e bate** — prop `porta` (rangido pitch-bend + batida grave). Precisa
