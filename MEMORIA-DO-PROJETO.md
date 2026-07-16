@@ -302,6 +302,30 @@ O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho)
   guiar personagem por caminho com placas (demo Jardim/Placas). FALTA costurar num mapa contínuo
   + o labirinto + a cena de dormir + mais personagens/animações/sons.
 
+## 🚦 DECISÃO DE ROTA (Marcos, jul/2026) — "começar pelo mundo vivo + paradas + popups; o plano ousado depois"
+Reconciliação madura do Marcos (decisão FIRME de por onde começar), depois de sentir que fazer TUDO
+imersivo dentro do mundo estava difícil demais para uma tacada só:
+- **COMEÇAR pelo MUNDO VIVO** com tudo que ele já pediu (floresta viva, caminho, dia/noite, clima, NPCs,
+  som). As **PARADAS** do mundo são temáticas: na floresta = **cabanas com FUMAÇA lindas** em que dá pra
+  **ENTRAR no interior aconchegante cheio de efeitos** (o padrão da Taberna, trazido pro motor de produção);
+  em outro mundo = outras paradas temáticas, e assim por diante.
+- **As ATIVIDADES entram como POPUP no CENTRO da tela** — as atividades **premium que já conhecemos**
+  (contar/ordenar/arrastar/memória/etc., reusadas do catálogo). Pragmático: entrega já, sem travar.
+- **O PLANO OUSADO (aprender 100% DENTRO do mundo, interagindo) fica pra DEPOIS** — "mais pra frente a
+  gente volta". NÃO é descartado; é adiado de propósito para não bloquear o lançamento. (O meio-termo já
+  guarda alma: entrar na cabana e interagir no interior é imersivo; só a tarefa pedagógica é popup por ora.)
+- **CAMADA DO ESTUDANTE junto (inegociável nesta rota):** um **SITE pra ENTRAR no mundo** (login simples),
+  **SALVAR os dados do estudante** (progresso, onde parou) e a **AVALIAÇÃO do aprendizado** dele. Isso exige
+  **BACKEND** (Firebase free — login por código de turma + nome; ver seção "CAMADA DO ESTUDANTE"). É o único
+  pedaço pesado e novo, e depende de um SETUP do Marcos (criar projeto Firebase + dar a chave como secret).
+- **Fácil x difícil (honesto):** fácil/reusa = mundo vivo, cabana+fumaça+interior, popups de atividade
+  premium. Difícil/novo = a camada do estudante (backend/save/avaliação).
+- **Ordem de construção proposta (MVP fatia vertical, pra NÃO espalhar):** (1) trazer "entrar na cabana +
+  interior vivo" pro motor de produção; (2) uma parada abre um POPUP com uma atividade premium; (3) concluir
+  a atividade = parada "resolvida" + avança no caminho; (4) tela inicial/login + SAVE local; (5) backend
+  Firebase (progresso + avaliação + painel do professor). Provar a fatia com 1 mundo (floresta) + 2 paradas
+  antes de escalar.
+
 ## 🧭 ARQUITETURA (a reconciliação): mundo-mapa + atividades-peça
 NÃO é contradição — são DUAS CAMADAS:
 - **Camada 1 — O MUNDO / MAPA com BAIRROS** (o hub "Ilhas do Saber", só que mais "mundo"): dá a
