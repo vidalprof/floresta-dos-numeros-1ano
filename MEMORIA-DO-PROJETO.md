@@ -178,6 +178,17 @@ NÃO é contradição — são DUAS CAMADAS:
    (sincronizar + reler os manuais). **"Não achei" ≠ "não existe".** Nunca insistir.
 3. **Anotar aqui** toda capacidade, secret ou decisão nova — para a próxima
    sessão (que sou eu, sem memória) já nascer sabendo.
+4. **LIÇÃO PAGA CARA (jul/2026):** o ambiente reiniciou e me jogou numa cópia local
+   ANTIGA (commit velho). Eu concluí que o `eduverse/` inteiro (fábrica, auditores,
+   as 6 poses do Byte, a fogueira, os jogos APROVADOS) tinha se PERDIDO — e fiz o
+   Marcos passar por uma caça enorme. **Estava tudo no GitHub o tempo todo.** Dois
+   enganos meus: (a) confiei na pasta local sem `git fetch`; (b) a **busca de código
+   do GitHub NÃO indexa branch que não é a `main`** — o `eduverse/` vive na branch de
+   trabalho, então ela "não achou" e eu acreditei nela. **REGRA:** parece faltando?
+   → `git fetch origin <branch>` + `git ls-files <caminho>` + `git log -- <caminho>`
+   (NÃO a busca de código, que não vê a branch) + **acreditar no Marcos**. NUNCA
+   declarar "perdido" de uma cópia local. E ao salvar: **confirmar o push no GitHub**
+   (ex.: ler o arquivo pela API), não confiar no "push OK" local.
 
 ## 🎭 Ideias do Marcos para PERSONAGENS VIVOS (incorporar no EducaVerso)
 Pedidos do professor para os personagens ficarem "de videogame" — anotar para o
