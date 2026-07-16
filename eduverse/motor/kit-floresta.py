@@ -134,21 +134,44 @@ function _vpW(){return Math.round((window.visualViewport?window.visualViewport.w
 }catch(e){}})();
 var _frameEl=document.getElementById("frame"),_wrapEl=document.getElementById("wrap");
 var _h1El=document.querySelector("h1"),_subEls=document.querySelectorAll(".sub");
-/* calcula a resolucao INTERNA do canvas (cv.width/cv.height) p/ casar com a proporcao do espaco
-   disponivel de verdade -- assim o CSS (max-width/max-height:100%) escala o canvas SEM sobrar
-   letterbox (o mundo preenche a tela toda, largura E altura), sem esticar de forma feia. */
+/* VW/VH e cx sao declarados AQUI (antes de recalcLayout) para que o layout consiga REATRIBUI-los.
+   Antes ficavam la embaixo (~linha 164), DEPOIS da 1a chamada de recalcLayout -> naquele momento
+   VW/VH nem existiam quando o layout tentava ajusta-los (bug: canvas travado em 720 + escala
+   fracionaria ~0.5x = shimmer/tremor ao andar; area jogavel sempre do "mesmo tamanho"). */
+var cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
+/* No modo APP_CHEIO (mobile/tablet) a resolucao INTERNA do canvas passa a ser 1:1 com os PIXELS
+   REAIS disponiveis do viewport (cv.width=availW, cv.height=availH) -- some a reescala fracionaria
+   de um mundo de 720px que causava o TREMOR ao andar, e a area jogavel passa a cobrir a tela toda.
+   VW/VH sao REATRIBUIDOS (nao "var") a cada layout; a camera e os patterns sao recalculados.
+   Em desktop (nao APP_CHEIO) NADA muda: a moldura 720x500 continua igual. */
+function _recriaPatterns(){try{ if(!cx||typeof IMG==="undefined"||!IMG)return; // trocar cv.width/height RESETA o contexto 2D -> patterns invalidam
+  patG=IMG.grama?cx.createPattern(IMG.grama,"repeat"):null;
+  patC=IMG.caminho?cx.createPattern(IMG.caminho,"repeat"):null;
+  patM=IMG.muro?cx.createPattern(IMG.muro,"repeat"):null;
+}catch(e){}}
+var _lastAW=-1,_lastAH=-1,_rzTimer=null;
 function recalcLayout(){try{
  var vw=_vpW(),vh=_vpH();
  if(APP_CHEIO){
   if(_frameEl){_frameEl.style.width=vw+"px";_frameEl.style.height=vh+"px";}
   if(_wrapEl){_wrapEl.style.width=vw+"px";_wrapEl.style.height=vh+"px";}
-  var availW=Math.max(240,vw-4),availH=Math.max(320,vh-4);
-  var novaAltura=Math.round(cv.width*(availH/availW));
-  cv.height=Math.max(420,Math.min(1600,novaAltura));
-  if(typeof VH!=="undefined")VH=cv.height;
+  var availW=Math.max(240,vw),availH=Math.max(320,vh);
+  // 1x (SEM devicePixelRatio): mantem a escala CSS ~1.0 (crisp, sem letterbox) e casa com o padrao
+  // de compatibilidade do projeto. (Retina em 2x seria nitido tambem, mas 1x e o seguro.)
+  var cw=Math.round(availW),ch=Math.round(availH);
+  // so re-seta o canvas se o tamanho MUDOU DE VERDADE (>2px): o mobile dispara resize em rajada
+  // quando a barra de endereco anima; re-resetar o canvas a toa PIORA o tremor.
+  if(Math.abs(cw-_lastAW)<=2 && Math.abs(ch-_lastAH)<=2)return;
+  _lastAW=cw;_lastAH=ch;
+  cv.width=cw;cv.height=ch;
+  VW=cv.width;VH=cv.height;              // GLOBAIS reatribuidas (atribuicao simples, NAO var)
+  _recriaPatterns();                     // recria grama/caminho/muro (o contexto resetou ao mudar cv.width/height)
+  try{var _c=cellCam();cam.x=_c[0];cam.y=_c[1];}catch(e){} // recentra a camera p/ nao "pular"
  }
 }catch(e){}}
-recalcLayout();
+// debounce: so recalcula ~170ms apos o ULTIMO evento (mobile dispara resize em rajada na barra de endereco)
+function agendaLayout(){if(_rzTimer)clearTimeout(_rzTimer);_rzTimer=setTimeout(function(){_rzTimer=null;recalcLayout();},170);}
+recalcLayout(); // 1a chamada IMEDIATA: dimensiona o canvas ANTES das imagens carregarem/iniciar()
 if(APP_CHEIO){
  // titulo/subtitulo somem sozinhos depois de alguns segundos (viram overlay minimalista no topo
  // enquanto isso): a instrucao inicial ja e falada/mostrada no balao RPG dentro do proprio jogo
@@ -158,10 +181,10 @@ if(APP_CHEIO){
   for(var i=0;i<_subEls.length;i++)_subEls[i].className+=" oculto";
  }catch(e){}},4200);
 }
-window.addEventListener("resize",recalcLayout);
-window.addEventListener("orientationchange",function(){setTimeout(recalcLayout,60);});
-if(window.visualViewport)window.visualViewport.addEventListener("resize",recalcLayout);
-var cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
+window.addEventListener("resize",agendaLayout);
+window.addEventListener("orientationchange",function(){setTimeout(agendaLayout,60);});
+if(window.visualViewport)window.visualViewport.addEventListener("resize",agendaLayout);
+/* (cx/VW/VH agora sao declarados mais acima, ANTES de recalcLayout -- ver comentario la em cima) */
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
 var HIST=(typeof MUNDO!=="undefined"&&MUNDO.historia)?MUNDO.historia:{}; // historia data-driven (default {} = floresta identica)
 var IMG={},carreg=0,NN=0;for(var kk in SRC)NN++;
@@ -955,8 +978,10 @@ function desNPC(n,t){var im=IMG[n.sprite];if(!im)return;            // sem sprit
  var andando=n.mvx!==0;
  // micro-movimento parado (respira + balanca no vento), com fallback deterministico
  var br=andando?0:((typeof breathe==="function")?breathe(t,seed):Math.sin(t*0.0028+seed));
- var sw=andando?0:Math.sin(t*0.0016+seed)*(0.6+gust);
- var bob=andando?Math.abs(Math.sin(n.passo*0.9))*4:0;             // pulinho ao andar
+ // ANDANDO: em vez de PULAR (subir/descer), o NPC DESLIZA com um leve balanco lateral (sway) +
+ // inclinacao sutil -> movimento natural de caminhada, nao saltitante.
+ var sw=andando?Math.sin(n.passo*0.9)*1.1:Math.sin(t*0.0016+seed)*(0.6+gust);
+ var bob=andando?Math.abs(Math.sin(n.passo*0.9))*1:0;             // pulinho quase imperceptivel (era *4 = o gato "pulava")
  var h=42*n.esc;
  sombra(n.x,n.y+4,15*n.esc,5*n.esc);
  cx.save();cx.translate(n.x+sw,n.y+4-bob);cx.rotate(sw*0.02);
