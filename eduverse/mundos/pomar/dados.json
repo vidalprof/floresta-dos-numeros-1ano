@@ -1,0 +1,52 @@
+{
+  "slug": "pomar",
+  "tema": {
+    "part": "folha",
+    "ceu0": "rgba(255,236,170,.10)",
+    "ceu1": "rgba(30,20,60,.12)",
+    "passaros": true,
+    "borboletas": true,
+    "titulo": "O Pomar do Byte",
+    "emoji": "&#127822;"
+  },
+  "assets": {
+    "grama": "grama", "caminho": "caminho", "arvore": "arvore", "byte": "byte",
+    "flores": "flores", "muro": "muro", "cabana": "cabana",
+    "passaro": "passarinho", "borboleta": "borboleta", "coelho": "coelho", "gato": "gato"
+  },
+  "mundo": {
+    "WW": 1500, "WH": 1050, "start": [250, 860], "chave": [560, 470],
+    "arco": [1150, 340], "tr": 16,
+    "poeira": true,
+    "dialogo": {"cps": 26},
+    "path": [[250,860],[380,740],[300,600],[510,510],[690,560],[840,470],[1010,450],[1150,400]],
+    "trees": [[120,520],[150,780],[470,880],[640,300],[430,360],[760,700],[560,690],[900,540],[1050,760],[1230,520],[1180,900],[330,470],[720,210],[980,180],[1300,300],[210,300],[880,860],[1080,420],[640,930],[400,640]],
+    "flores": [[420,800],[300,690],[560,560],[700,470],[860,520],[1000,430],[1120,330],[240,820],[640,640],[900,700]],
+    "props": [
+      {"tipo":"fogueira","x":200,"y":760,"r":26},
+      {"tipo":"cabana","x":1090,"y":600,"h":118,"cx":-32,"cy":104,"r":40},
+      {"tipo":"lampiao","x":1162,"y":626,"h":60,"r":8}
+    ],
+    "npcs": [
+      {"sprite":"coelho","x":410,"y":792,"nome":"Tico","fala":"O frio tá chegando! Me ajuda o Byte a colher e contar as frutas do pomar? Toca nas frutinhas!","escala":0.95}
+    ],
+    "aula": {
+      "id": "col1ano",
+      "fim": "Que colheita! Você contou de 1 até 30 sozinho! O Tico vai ter comida o inverno todo. Até a próxima aventura!",
+      "rounds": [
+        {"tipo":"contar",        "n":3,            "cesta":{"x":560,"y":470}},
+        {"tipo":"contar",        "n":5,            "cesta":{"x":900,"y":520}},
+        {"tipo":"ordenar",       "n":5,            "cesta":{"x":700,"y":640}},
+        {"tipo":"contar",        "n":10,           "cesta":{"x":1040,"y":450}},
+        {"tipo":"trazer_exato",  "alvo":7, "n":10, "pedido":"O Tico", "cesta":{"x":640,"y":560}},
+        {"tipo":"agrupar",       "n":20,           "cesta":{"x":560,"y":560}},
+        {"tipo":"agrupar",       "n":30,           "cesta":{"x":900,"y":520}}
+      ]
+    }
+  },
+  "falas": [],
+  "audit": {
+    "chegar": [],
+    "colisao": [[160, 520, -40, 0]]
+  }
+}

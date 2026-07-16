@@ -149,6 +149,17 @@ var npcs=[];(function(){var L=(typeof MUNDO!=="undefined"&&MUNDO.npcs)?MUNDO.npc
    rota:d.rota||null,ri:0,paus:0,dir:1,mvx:0,passo:0,
    olha:0,acen:0,cd:0});}})();
 
+
+/* ===== ESTADO: MOTOR DE RODADAS (data-driven; DEFAULT AUSENTE = floresta intacta) ===== */
+/* Colocar junto do bloco de estado data-driven (logo após a montagem de `npcs`, ~linha 150). */
+var AULA=(typeof MUNDO!=="undefined"&&MUNDO.aula&&MUNDO.aula.rounds&&MUNDO.aula.rounds.length)?MUNDO.aula:null;
+var MODO_AULA=!!AULA;                 // false => nada roda; motor chave->arco IDÊNTICO
+var rIdx=-1,rRound=null,rTipo="",rN=0,rAlvo=0,rCesta=null;
+var rColhidas=0,rNaCesta=0,rExtra=0,rProx=1,rGrupos=0;   // contadores por tipo
+var rItens=[],rFly=[],rBadges=[];     // frutas no mundo / frutas voando p/ cesta / badges de número
+var rEstado="rodada",rTransT=0,rDicaT=5;                 // "rodada"|"transicao"; timers
+var aulaFim=false,aulaFimT=0,aulaComemora=false;         // aulaComemora => pose "feliz" do Byte
+
 /* ---------- AUDIO (ambiente rico em camadas) ---------- */
 var AC=null,ventoG=null,ambMaster=null,som=false,gust=0.5,birdTimer=2.2,coruja=9;
 var noite=0; // ciclo dia/noite: 0=dia, 1=noite profunda (computado no loop)
@@ -208,7 +219,7 @@ function balao(t,id,pitch){balaoNPC("Byte",t,id,pitch);}
 function balaoFecha(){balaoT=0;balaoFull="";balaoFimTxt=false;balaoAlvo=null;}
 function unlock(){initAudio();if(!window._u&&window.speechSynthesis){window._u=1;try{speechSynthesis.speak(new SpeechSynthesisUtterance(" "));}catch(e){}}}
 function toggleSom(){unlock();som=!som;if(ambMaster)ambMaster.gain.value=som?0.85:0;
- if(som){if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
+ if(som){if(MODO_AULA){rodadaFala(true);}else if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
  else{pararVoz();}}
 cv.addEventListener("mousedown",function(e){cliqueCv(e.clientX,e.clientY);});
 cv.addEventListener("touchstart",function(e){if(e.touches[0]){cliqueCv(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
@@ -250,7 +261,7 @@ function iniciar(){patG=IMG.grama?cx.createPattern(IMG.grama,"repeat"):null;
  patC=IMG.caminho?cx.createPattern(IMG.caminho,"repeat"):null;
  var p=cellCam();cam.x=p[0];cam.y=p[1];
  if(IMG.borboleta)for(var i=0;i<3;i++)borbs.push({x:FLORES[i*3][0]+40,y:FLORES[i*3][1]-30,ang:Math.random()*6.28,ph:Math.random()*6.28,t:Math.random()*6.28});
- balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");
+ if(MODO_AULA){aulaInit();}else{balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
  requestAnimationFrame(frame);}
 var patG=null,patC=null;
 function cellCam(){return [Math.max(0,Math.min(WW-VW,byte.x-VW/2)), Math.max(0,Math.min(WH-VH,byte.y-VH/2))];}
@@ -307,7 +318,7 @@ function desZzz(t,mx,my){cx.save();cx.textAlign="left";cx.lineJoin="round";
 var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"byte_lado",f:1.12},
  senta:{im:"byte_senta",f:0.95},deita:{im:"byte_deita",f:0.62},fala:{im:"byte_fala",f:0.98},feliz:{im:"byte_feliz",f:1.06}};
 function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
- if(fim) return "feliz";
+ if(fim||aulaComemora) return "feliz";
  if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
   if(ay>ax) return byte.mvy<0?"costas":"frente";   // sobe=costas / desce=frente
   return "lado";}                                   // esquerda/direita
@@ -399,6 +410,236 @@ function desLampiao(p,t){var x=p.x,y=p.y,H=p.h||62;var lx=x,ly=y-H; // ly = cent
 function desProp(p,t){if(p.tipo==="fogueira")desFogueira(p,t);
  else if(p.tipo==="lampiao")desLampiao(p,t);
  else if(p.tipo==="cabana"&&IMG.cabana){sombra(p.x,p.y+4,44,11);imgH(IMG.cabana,p.x,p.y,p.h||110);}}
+
+/* ===== FUNCOES: MOTOR DE RODADAS (aula) ===== */
+/* =====================================================================
+   MOTOR DE RODADAS DE COLHEITA — EducaVerso "A Floresta do Byte"
+   Reusa: byte, sombra(), balaoNPC/balao, playFala/FALAS, draws[], bloqueado,
+   estrelas, bip/somVitoria, roundR. Sempre restaura globalAlpha.
+   Ruído determinístico: LCG semeado por rodada (posições/wobble não piscam).
+   ES5 puro. DEFAULT: sem MUNDO.aula => MODO_AULA=false => nada aqui roda.
+   ===================================================================== */
+var PAL=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+ "onze","doze","treze","catorze","quinze","dezesseis","dezessete","dezoito","dezenove","vinte",
+ "vinte e um","vinte e dois","vinte e três","vinte e quatro","vinte e cinco","vinte e seis",
+ "vinte e sete","vinte e oito","vinte e nove","trinta"];
+function palN(k){return (k>=0&&k<=30)?PAL[k]:(""+k);}
+/* PRNG determinístico (LCG). Semeado por rodada => mesmo mundo toda vez, sem piscar. */
+function _rng(seed){var s=(seed|0)||1;return function(){s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff;};}
+var _CORF=["#e23b3b","#e07a1f","#8e44ad","#c0399b","#2e8b57","#d4a017","#3b7fe2","#e0526b"];
+function _corFruta(i,it){return (it&&it.cor)?it.cor:_CORF[i%_CORF.length];}
+function _pertoArvore(x,y){var i,dx,dy;
+ for(i=0;i<TREES.length;i++){dx=x-TREES[i][0];dy=y-TREES[i][1];if(dx*dx+dy*dy<70*70)return true;}
+ for(i=0;i<PROPS.length;i++){dx=x-PROPS[i].x;dy=y-PROPS[i].y;if(dx*dx+dy*dy<70*70)return true;}
+ return false;}
+/* gera itens quando a rodada não traz `itens`: espalha longe de árvores, determinístico. */
+function _geraItens(R,idx){
+ var rnd=_rng((idx+1)*7919),out=[],alvo=R.alvo||0,n=R.n||0,i,qtd,bundles=0,loose=0;
+ if(R.tipo==="agrupar"){bundles=Math.floor(n/10);loose=n%10;qtd=bundles+loose;}
+ else if(R.tipo==="trazer_exato"){qtd=R.n||(alvo+2);}   // sempre > alvo -> "demais" é possível
+ else{qtd=n;}
+ for(i=0;i<qtd;i++){var x=0,y=0,ok=false,tr=0;
+  while(!ok&&tr++<40){x=140+rnd()*(WW-280);y=170+rnd()*(WH-320);ok=!_pertoArvore(x,y);}
+  var vale=1,nn=i+1;
+  if(R.tipo==="agrupar"){if(i<bundles){vale=10;nn=10;}else{vale=1;nn=1;}}
+  out.push({x:x,y:y,n:nn,vale:vale,dez:(vale===10)});}
+ if(R.tipo==="ordenar"){ // posição != ordem: embaralha quais lugares recebem 1..n
+  var ord=[],k;for(k=0;k<out.length;k++)ord.push(k+1);
+  for(k=out.length-1;k>0;k--){var j=Math.floor(rnd()*(k+1)),tmp=ord[k];ord[k]=ord[j];ord[j]=tmp;}
+  for(k=0;k<out.length;k++)out[k].n=ord[k];}
+ return out;}
+/* save/retomar por rodada (professor pode pausar; save retoma no início da rodada) */
+function _salvaProg(idx){try{if(AULA&&AULA.id)localStorage.setItem("eduaula_"+AULA.id,""+idx);}catch(e){}}
+function _leProg(){try{if(AULA&&AULA.id){var v=localStorage.getItem("eduaula_"+AULA.id);
+ if(v!=null){var n=parseInt(v,10);if(n>=0&&n<AULA.rounds.length)return n;}}}catch(e){}return 0;}
+
+function aulaInit(){ if(!MODO_AULA)return;
+ if(AULA.byte){byte.x=AULA.byte.x;byte.y=AULA.byte.y;var c=cellCam();cam.x=c[0];cam.y=c[1];}
+ rodadaCarrega(_leProg()); }
+
+function rodadaCarrega(idx){
+ rIdx=idx;rRound=AULA.rounds[idx];rTipo=rRound.tipo;rN=rRound.n||0;rAlvo=rRound.alvo||0;
+ rCesta=rRound.cesta||{x:Math.max(160,Math.min(WW-160,byte.x+160)),y:byte.y};
+ rColhidas=0;rNaCesta=0;rExtra=0;rProx=1;rGrupos=0;
+ rItens=[];rFly=[];rBadges=[];rEstado="rodada";rTransT=0;rDicaT=5;aulaComemora=false;
+ var itens=rRound.itens||_geraItens(rRound,idx),i;
+ for(i=0;i<itens.length;i++){var it=itens[i];
+  rItens.push({id:i,n:(it.n!=null?it.n:i+1),x:it.x,y:it.y,
+   vale:(it.vale||(it.dez?10:1)),got:false,over:false,blinkT:0,
+   seed:(it.x*0.7+it.y*0.31),cor:_corFruta(i,it)});}
+ _salvaProg(idx);rodadaAnuncia(); }
+
+function rodadaAnuncia(){ var msg="";
+ if(rTipo==="contar") msg="Vamos colher "+rN+" frutinhas! Conta comigo a cada uma.";
+ else if(rTipo==="ordenar") msg="Colhe na ordem! Começa do um. Qual vem primeiro?";
+ else if(rTipo==="trazer_exato") msg=(rRound.pedido||"O amiguinho")+" precisa de exatamente "+rAlvo+" na cesta. Vamos ajudar!";
+ else if(rTipo==="agrupar") msg="Agora contamos de dez em dez! Pega as sacolas de dez.";
+ balaoNPC("Byte",msg,"aula_intro_"+rTipo,1.12); }
+function rodadaFala(forcar){ if(rEstado==="rodada"){ if(forcar)rodadaAnuncia(); else byteDica(); } }
+
+/* Byte PERGUNTA (nunca entrega a resposta) */
+function byteDica(){ if(rEstado!=="rodada")return; var q="";
+ if(rTipo==="contar") q="Quantas já colhemos? Vamos ver!";
+ else if(rTipo==="ordenar"){ q="Qual número vem primeiro agora? Procura o "+rProx+"!"; _piscaProx(); }
+ else if(rTipo==="trazer_exato") q="Quantas faltam para chegar em "+rAlvo+"?";
+ else if(rTipo==="agrupar") q="Quantos grupos de dez já temos?";
+ balaoNPC("Byte",q,"aula_dica_"+rTipo,1.12); }
+function _piscaProx(){for(var i=0;i<rItens.length;i++)if(!rItens[i].got&&rItens[i].n===rProx)rItens[i].blinkT=1.6;}
+
+/* tentativa de colher — chamada por proximidade no update E pelo auditor via _qaColher */
+function tentaColher(it){ if(it.got&&!it.over)return;
+ if(it.over){ // fruta que sobrou boiando na cesta: a criança DEVOLVE (conserta o "demais")
+  it.over=false;it.got=false;rExtra=Math.max(0,rExtra-1);
+  var rnd=_rng((Math.floor(it.seed)|0)+rIdx*13),x,y,ok=false,tr=0;
+  while(!ok&&tr++<40){x=140+rnd()*(WW-280);y=170+rnd()*(WH-320);
+   ok=!_pertoArvore(x,y)&&(Math.abs(x-rCesta.x)>120||Math.abs(y-rCesta.y)>120);}
+  it.x=x;it.y=y;somColher();
+  balaoNPC(rRound.pedido||"Byte","Isso! Agora são "+rNaCesta+"."+(rNaCesta<rAlvo?" Ainda faltam.":""),"aula_ok",1.1);
+  return; }
+ if(rTipo==="ordenar"&&it.n!==rProx){ _erroOrdem(); return; }   // ordem errada = consequência, NÃO colhe
+ _colhe(it); }
+function _erroOrdem(){ _piscaProx(); somErroGentil();
+ balaoNPC("Byte","Ops! Esse não. Qual vem primeiro? Procura o "+rProx+"!","aula_ordem",1.14); } // sem X, não trava
+
+function _colhe(it){ it.got=true; var extra=false,badge;
+ if(rTipo==="ordenar"){ rProx++;rColhidas++;badge=it.n; }
+ else if(rTipo==="agrupar"){ rColhidas+=it.vale;if(it.vale===10)rGrupos++;badge=rColhidas; }
+ else if(rTipo==="trazer_exato"){ if(rNaCesta<rAlvo){rNaCesta++;badge=rNaCesta;}else{rExtra++;extra=true;badge="+";} }
+ else{ rColhidas++;badge=rColhidas; } // contar
+ rFly.push({x0:it.x,y0:it.y,p:0,cor:it.cor,vale:it.vale,badge:badge,extra:extra,srcId:it.id});
+ somColher();
+ for(var s=0;s<8;s++)estrelas.push({x:it.x,y:it.y-6,vx:Math.random()*70-35,vy:-(30+Math.random()*60),a:1,r:2+Math.random()*3});
+ _falaConta(it,extra); _checaCompleta(); }
+function _falaConta(it,extra){
+ if(rTipo==="ordenar"){ playFala("n"+it.n,"Isso! O "+palN(it.n)+"!",1.16); }
+ else if(rTipo==="agrupar"){ if(it.vale===10)somGrupo(); playFala("n"+rColhidas,palN(rColhidas)+"!",1.14); }
+ else if(rTipo==="trazer_exato"){ if(extra)balaoNPC("Byte","Opa! Já temos "+rAlvo+". Essa sobrou — deixa na cesta pra tirar.","aula_demais",1.14);
+   else playFala("n"+rNaCesta,palN(rNaCesta)+"!",1.16); }
+ else{ playFala("n"+rColhidas,palN(rColhidas)+"!",1.16); } } // contar
+
+/* trazer_exato: encostar na cesta = LEVAR/ENTREGAR (ação espacial, não botão) */
+function _entrega(){ if(rEstado!=="rodada"||rTipo!=="trazer_exato")return;
+ if(rExtra>0){ if(rDicaT>3){rDicaT=3;balaoNPC(rRound.pedido||"Byte","Tem "+rExtra+" a mais na cesta. Pega de volta, por favor!","aula_demais",1.12);} return; }
+ if(rNaCesta<rAlvo){ if(rDicaT>3){rDicaT=3;balaoNPC(rRound.pedido||"Byte","Ainda faltam "+(rAlvo-rNaCesta)+". Traz mais!","aula_falta",1.12);} return; }
+ if(rNaCesta===rAlvo) rodadaCompleta(); }
+
+function _checaCompleta(){ if(rEstado!=="rodada")return; var done=false;
+ if(rTipo==="contar") done=(rColhidas>=rN);
+ else if(rTipo==="ordenar") done=(rProx>rN);
+ else if(rTipo==="agrupar") done=(rColhidas>=rN);
+ // trazer_exato só conclui via _entrega
+ if(done) rodadaCompleta(); }
+function rodadaCompleta(){ rEstado="transicao";rTransT=0;aulaComemora=true; if(som)somVitoria();
+ var total=(rTipo==="ordenar")?rN:(rTipo==="trazer_exato")?rAlvo:rColhidas,s;
+ for(s=0;s<20;s++)estrelas.push({x:rCesta.x,y:rCesta.y-10,vx:Math.random()*120-60,vy:-(40+Math.random()*80),a:1,r:3+Math.random()*4});
+ balaoNPC("Byte","Conseguimos! Colhemos "+total+"! "+palN(total)+"! Muito bem!","aula_ok_"+rIdx,1.16);
+ _salvaProg(rIdx+1); }
+function aulaAvanca(){
+ if(rIdx+1<AULA.rounds.length){ rodadaCarrega(rIdx+1); }
+ else{ aulaFim=true;aulaFimT=0;aulaComemora=true; if(som)somVitoria();
+  balaoNPC("Byte",AULA.fim||"Você contou tudo sozinho! Que colheita linda. Até a próxima!","aula_fim",1.14); } }
+
+/* animação voar->cesta + badges (nada alocado por frame além do pool) */
+function _flyUpdate(dt){ for(var i=rFly.length-1;i>=0;i--){var f=rFly[i];f.p+=dt/0.5;
+  if(f.p>=1){ rBadges.push({x:rCesta.x,y:rCesta.y-34,txt:(""+f.badge),t:0,cor:f.cor});
+   if(f.extra){ for(var k=0;k<rItens.length;k++)if(rItens[k].id===f.srcId){
+     rItens[k].over=true;rItens[k].got=false;rItens[k].x=rCesta.x+(Math.random()*30-15);rItens[k].y=rCesta.y-26;break;} }
+   rFly.splice(i,1);} } }
+function _badgeUpdate(dt){for(var i=rBadges.length-1;i>=0;i--){var b=rBadges[i];b.t+=dt;b.y-=18*dt;if(b.t>1.1)rBadges.splice(i,1);}}
+
+/* update por frame (chamado no loop logo após updateNPCs) */
+function rodadaUpdate(dt,t){ if(!MODO_AULA)return;
+ if(aulaFim){ aulaFimT+=dt;_flyUpdate(dt);_badgeUpdate(dt);return; }
+ if(rEstado==="transicao"){ rTransT+=dt;_flyUpdate(dt);_badgeUpdate(dt);
+   if(rTransT>2.6){ aulaComemora=false; aulaAvanca(); } return; }
+ rDicaT-=dt; if(rDicaT<=0){ rDicaT=9+Math.random()*5; byteDica(); }   // Byte pergunta de tempos em tempos
+ for(var i=0;i<rItens.length;i++){var it=rItens[i]; if(it.blinkT>0)it.blinkT-=dt;
+   if(it.got&&!it.over)continue;
+   var dx=byte.x-it.x,dy=byte.y-it.y; if(dx*dx+dy*dy<42*42) tentaColher(it); }
+ if(rTipo==="trazer_exato"){var ex=byte.x-rCesta.x,ey=byte.y-rCesta.y; if(ex*ex+ey*ey<58*58)_entrega();}
+ _flyUpdate(dt);_badgeUpdate(dt); }
+
+/* ---------- DESENHO (tudo por código; restaura globalAlpha) ---------- */
+function drawNum(x,y,size,txt,cor){cx.save();cx.font="bold "+size+"px Verdana";cx.textAlign="center";cx.textBaseline="middle";
+ cx.lineWidth=Math.max(3,size*0.18);cx.lineJoin="round";cx.strokeStyle="rgba(15,25,45,.9)";cx.strokeText(txt,x,y);
+ cx.fillStyle=cor||"#fff";cx.fillText(txt,x,y);cx.restore();cx.textBaseline="alphabetic";cx.globalAlpha=1;}
+function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
+ var wob=Math.sin(t*0.004+o.seed)*3,trem=o.blinkT>0?Math.sin(t*0.045)*4:0;
+ var alvoNext=(rTipo==="ordenar"&&o.n===rProx);
+ sombra(x,y+14,o.vale===10?20:15,6);
+ if(o.vale===10){ // SACOLA DE DEZ
+  cx.save();cx.translate(x+trem,y-10+wob);cx.fillStyle="#7a5230";roundR(-18,-14,36,30,7);cx.fill();
+  cx.fillStyle="#8f6238";cx.fillRect(-18,-16,36,6);cx.restore();drawNum(x+trem,y-9+wob,20,"10","#fff");
+ } else { // FRUTA: círculo colorido + folha + cabinho
+  cx.save();cx.translate(x+trem,0);
+  cx.beginPath();cx.arc(0,y-8+wob,15,0,Math.PI*2);cx.fillStyle=o.cor;cx.fill();
+  cx.beginPath();cx.arc(-5,y-12+wob,5,0,Math.PI*2);cx.fillStyle="rgba(255,255,255,.35)";cx.fill();
+  cx.fillStyle="#3a7d34";cx.beginPath();cx.ellipse(4,y-22+wob,7,4,-0.6,0,Math.PI*2);cx.fill();
+  cx.strokeStyle="#5a3a1e";cx.lineWidth=2;cx.beginPath();cx.moveTo(0,y-22+wob);cx.lineTo(2,y-27+wob);cx.stroke();
+  cx.restore();
+  if(rTipo==="ordenar") drawNum(x+trem,y-8+wob,18,""+o.n,"#fff"); } // ordenar mostra o numeral
+ if(alvoNext||o.blinkT>0){ var pa=0.25+0.25*Math.sin(t*0.012);
+  cx.save();cx.globalCompositeOperation="lighter";
+  var g=cx.createRadialGradient(x,y-8,4,x,y-8,34);g.addColorStop(0,"rgba(255,240,150,"+pa+")");g.addColorStop(1,"rgba(255,240,150,0)");
+  cx.fillStyle=g;cx.beginPath();cx.arc(x,y-8,34,0,Math.PI*2);cx.fill();cx.restore();cx.globalAlpha=1; }
+ if(o.over){ cx.save();cx.globalAlpha=0.6+0.4*Math.sin(t*0.02);cx.fillStyle="#ffcf4a";cx.font="bold 16px Verdana";cx.textAlign="center";
+  cx.fillText("↑",x,y-34+wob);cx.restore();cx.globalAlpha=1; } }
+function desCesta(t){ if(!rCesta)return; var x=rCesta.x,y=rCesta.y,i;
+ sombra(x,y+8,34,10);
+ cx.save();cx.fillStyle="#a9762f";roundR(x-30,y-16,60,30,8);cx.fill();
+ cx.strokeStyle="rgba(80,50,20,.6)";cx.lineWidth=2;
+ for(i=-24;i<=24;i+=8){cx.beginPath();cx.moveTo(x+i,y-16);cx.lineTo(x+i,y+14);cx.stroke();}
+ cx.beginPath();cx.moveTo(x-30,y-2);cx.lineTo(x+30,y-2);cx.stroke();
+ cx.fillStyle="#8a5f24";cx.fillRect(x-32,y-18,64,5);cx.restore();
+ if(rTipo==="agrupar"){ for(i=0;i<rGrupos&&i<3;i++){cx.fillStyle="#7a5230";roundR(x-20+i*14,y-30,16,14,4);cx.fill();drawNum(x-12+i*14,y-23,10,"10","#fff");} }
+ else if(rTipo==="trazer_exato"){ cx.save();cx.fillStyle="rgba(20,30,50,.85)";roundR(x-26,y-46,52,20,6);cx.fill();
+   for(i=0;i<rAlvo&&i<8;i++){cx.fillStyle=(i<rNaCesta)?"#7be07b":"rgba(255,255,255,.35)";cx.beginPath();cx.arc(x-20+i*6,y-36,2.4,0,Math.PI*2);cx.fill();}cx.restore(); }
+ else{ var pilha=Math.min((rTipo==="ordenar"?rColhidas:rColhidas),6);
+   for(i=0;i<pilha;i++){cx.fillStyle=_CORF[i%_CORF.length];cx.beginPath();cx.arc(x-16+i*6,y-6-((i%2)*5),5,0,Math.PI*2);cx.fill();} }
+ cx.globalAlpha=1; }
+function desFly(){ for(var i=0;i<rFly.length;i++){var f=rFly[i];
+  var px=f.x0+(rCesta.x-f.x0)*f.p, py=f.y0+(rCesta.y-f.y0)*f.p-Math.sin(f.p*Math.PI)*70;
+  if(f.vale===10){cx.fillStyle="#7a5230";roundR(px-9,py-8,18,16,4);cx.fill();}
+  else{cx.beginPath();cx.arc(px,py-4,9,0,Math.PI*2);cx.fillStyle=f.cor;cx.fill();} } cx.globalAlpha=1; }
+function desBadges(){ for(var i=0;i<rBadges.length;i++){var b=rBadges[i];
+  cx.save();cx.globalAlpha=Math.max(0,1-b.t/1.1);drawNum(b.x,b.y,20,b.txt,"#ffe38a");cx.restore();} cx.globalAlpha=1; }
+/* HUD contador (TELA) — desenhado no lugar do texto da chave */
+function desHUDrodada(){ if(!MODO_AULA)return; var cur=0,alvo=0,lab="";
+ if(rTipo==="contar"){cur=rColhidas;alvo=rN;lab="colhidas";}
+ else if(rTipo==="ordenar"){cur=rProx-1;alvo=rN;lab="em ordem";}
+ else if(rTipo==="agrupar"){cur=rColhidas;alvo=rN;lab="de 10 em 10";}
+ else if(rTipo==="trazer_exato"){cur=rNaCesta;alvo=rAlvo;lab="na cesta";}
+ cx.save();cx.textAlign="center";
+ cx.fillStyle="#ffe38a";cx.font="bold 14px Verdana";cx.fillText("🧺 "+cur+" / "+alvo,VW/2,17);
+ cx.fillStyle="rgba(255,255,255,.5)";cx.font="10px Verdana";
+ cx.fillText("Rodada "+(rIdx+1)+" de "+AULA.rounds.length+" · "+lab,VW/2,VH-8);
+ cx.restore();cx.globalAlpha=1; }
+/* overlay de comemoração/transição e fim da aula (TELA) */
+function aulaOverlay(t){ if(!MODO_AULA)return;
+ if(rEstado==="transicao"){ var a=Math.min(.5,rTransT*0.5);cx.fillStyle="rgba(6,12,26,"+a+")";cx.fillRect(0,0,VW,VH);
+  var total=(rTipo==="ordenar")?rN:(rTipo==="trazer_exato")?rAlvo:rColhidas;
+  var pop=1+Math.sin(Math.min(1,rTransT*3)*Math.PI/2)*0.2;
+  cx.save();cx.translate(VW/2,VH/2-6);cx.scale(pop,pop);drawNum(0,0,64,""+total,"#ffe38a");cx.restore();
+  cx.fillStyle="#eaf2ff";cx.font="bold 15px Verdana";cx.textAlign="center";cx.fillText("✨ "+palN(total)+"! ✨",VW/2,VH/2+42); }
+ if(aulaFim){ var af=Math.min(.62,aulaFimT*0.5);cx.fillStyle="rgba(6,10,22,"+af+")";cx.fillRect(0,0,VW,VH);
+  cx.fillStyle="#ffe38a";cx.font="bold 24px Verdana";cx.textAlign="center";cx.fillText("🌟 Colheita Completa! 🌟",VW/2,VH/2-6);
+  cx.fillStyle="#eaf2ff";cx.font="13px Verdana";cx.fillText("Você contou tudo sozinho!",VW/2,VH/2+22); }
+ cx.globalAlpha=1; }
+
+/* sons novos (mesmo estilo bip do motor; silenciosos se som off) */
+function somColher(){bip(660,.06,"sine",.12,0);bip(990,.08,"sine",.10,.05);}
+function somErroGentil(){bip(440,.10,"sine",.10,0);bip(330,.14,"sine",.09,.09);} // suave/descendente, NÃO é buzzer
+function somGrupo(){bip(523,.10,"sine",.12,0);bip(784,.12,"sine",.12,.1);}
+
+/* ---------- QA / AUDITORIA ---------- */
+window._qaAula=function(){return {modo:MODO_AULA,round:rIdx,tipo:rTipo,estado:rEstado,
+ n:rN,alvo:rAlvo,colhidas:rColhidas,prox:rProx,naCesta:rNaCesta,extra:rExtra,grupos:rGrupos,
+ aulaFim:aulaFim,total:(AULA?AULA.rounds.length:0),
+ itens:rItens.map(function(o){return {id:o.id,n:o.n,vale:o.vale,got:o.got,over:o.over,blink:o.blinkT>0};})};};
+window._qaColher=function(id){for(var i=0;i<rItens.length;i++)if(rItens[i].id===id){tentaColher(rItens[i]);break;}return window._qaAula();};
+window._qaProx=function(){for(var i=0;i<rItens.length;i++)if(!rItens[i].got&&rItens[i].n===rProx)return rItens[i].id;return -1;};
+window._qaEntrega=function(){_entrega();return window._qaAula();};
+window._qaTransFim=function(){if(rEstado==="transicao")rTransT=99;return window._qaAula();}; // força fim da transição p/ testar avanço
 
 /* ===== FUNCOES: subsistemas de mundo-vivo (mundo-vivo v2) ===== */
 // ================= POEIRINHA AO ANDAR (reutilizavel) =================
@@ -611,14 +852,16 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  // ---- camera segue ----
  var cc=cellCam();cam.x+=(cc[0]-cam.x)*Math.min(1,dt*6);cam.y+=(cc[1]-cam.y)*Math.min(1,dt*6);
  // ---- pega a chave ----
- if(!chave.got){var dx=byte.x-chave.x,dy=byte.y-chave.y;if(dx*dx+dy*dy<40*40){chave.got=true;hasKey=true;somChave();
+ if(!MODO_AULA&&!chave.got){var dx=byte.x-chave.x,dy=byte.y-chave.y;if(dx*dx+dy*dy<40*40){chave.got=true;hasKey=true;somChave();
    for(var i=0;i<18;i++)estrelas.push({x:chave.x,y:chave.y-6,vx:Math.random()*80-40,vy:-(40+Math.random()*70),a:1,r:3+Math.random()*4});
    balao("Peguei a chave dourada! Agora vamos procurar o labirinto de pedra.","s1_chave");}}
  // ---- chega no arco (com a chave) ----
- if(hasKey&&!fim){var ax=byte.x-arco.x,ay=byte.y-(arco.y-16);if(ax*ax+ay*ay<80*80){fim=true;fimT=0;somVitoria();
+ if(!MODO_AULA&&hasKey&&!fim){var ax=byte.x-arco.x,ay=byte.y-(arco.y-16);if(ax*ax+ay*ay<80*80){fim=true;fimT=0;somVitoria();
    balao("Ali está o labirinto de pedra! É onde o Nimbo prendeu os amiguinhos. Na próxima aventura a gente entra para salvá-los.","s1_labirinto");}}
  if(fim)fimT+=dt;
  updateNPCs(dt,t); // IA dos NPCs: rotina/patrulha + interacao com o Byte
+
+ rodadaUpdate(dt,t); // MOTOR DE RODADAS de colheita (no-op se sem MUNDO.aula): detecta colheita por proximidade, conta, ordena, entrega, agrupa, transição/comemoração e avanço entre rodadas.
  // ---- efeitos: folhas/petalas, passaros, borboletas, pollen ----
  if(leaves.length<(CLIMA==="neve"?72:40) && (Math.random()<0.06+gust*0.06+(CLIMA==="neve"?0.14*CLIMAF:0))){var neve=(TEMA.part==="neve"||CLIMA==="neve");var tipo=Math.random();
   var col=neve?(tipo<.5?"#ffffff":"#dbeafe"):(tipo<.4?"#7fae3a":tipo<.7?"#d98a2b":(tipo<.85?"#f2a6c0":"#e7d24a"));
@@ -667,13 +910,20 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  // lista y-sort: arvores + chave + byte + arco
  var draws=[];
  for(i=0;i<TREES.length;i++)draws.push({y:TREES[i][1],f:(function(o){return function(){desArvore(o,t);};})(TREES[i])});
- if(!chave.got)draws.push({y:chave.y,f:function(){desChave(t);}});
- draws.push({y:arco.y,f:function(){desArco(t);}});
+ if(!MODO_AULA&&!chave.got)draws.push({y:chave.y,f:function(){desChave(t);}});
+ if(!MODO_AULA)draws.push({y:arco.y,f:function(){desArco(t);}});
  draws.push({y:byte.y,f:function(){desByte(t);}});
+
+ if(MODO_AULA){ // frutas + cesta entram no y-sort (o Byte passa na frente/atrás corretamente)
+  for(var _ai=0;_ai<rItens.length;_ai++){var _it=rItens[_ai]; if(_it.got&&!_it.over)continue;
+   draws.push({y:_it.y,f:(function(o){return function(){desFruta(o,t);};})(_it)});}
+  if(rCesta)draws.push({y:rCesta.y,f:function(){desCesta(t);}}); }
  for(i=0;i<PROPS.length;i++)draws.push({y:PROPS[i].y,f:(function(p){return function(){desProp(p,t);};})(PROPS[i])});
  for(i=0;i<npcs.length;i++)draws.push({y:npcs[i].y,f:(function(n){return function(){desNPC(n,t);};})(npcs[i])}); // NPCs no y-sort
  draws.sort(function(a,b){return a.y-b.y;});
  for(i=0;i<draws.length;i++)draws[i].f();
+
+ if(MODO_AULA){ desFly(); desBadges(); } // frutas voando p/ a cesta + badges de número (mundo, por cima do y-sort)
  // passaros (por cima)
  for(i=0;i<birds.length;i++){var bd2=birds[i],by=bd2.y,wing=Math.sin(t*.02+bd2.ph)*6;
   if(IMG.passaro){cx.save();cx.translate(bd2.x,by);cx.scale(-0.5,0.5);cx.globalAlpha=.95;imgH(IMG.passaro,0,10,34);cx.restore();}
@@ -719,8 +969,10 @@ var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColo
  for(i=0;i<3;i++){cx.save();cx.translate(140+i*220,0);cx.rotate(0.32);cx.fillRect(-30,-40,60,VH*1.6);cx.restore();}cx.restore();cx.globalAlpha=1;}
  // ---- HUD ----
  cx.fillStyle="rgba(8,16,30,.55)";cx.fillRect(0,0,VW,26);cx.fillStyle="#ffe38a";cx.font="bold 13px Verdana";cx.textAlign="center";
- cx.fillText(hasKey?"Leve a chave dourada até o labirinto de pedra 🔑":"Passeie pela floresta e pegue a chave dourada 🔑",VW/2,17);
+ if(MODO_AULA){desHUDrodada();}else{cx.fillText(hasKey?"Leve a chave dourada até o labirinto de pedra 🔑":"Passeie pela floresta e pegue a chave dourada 🔑",VW/2,17);}
  desBotaoSom();
+
+ if(MODO_AULA) aulaOverlay(t); // comemoração de fim de rodada + tela de fim de aula (TELA; o balão do Byte fica por cima)
  // balao acima do Byte
  var _spk=balaoAlvo||byte;balaoDes(_spk.x-cam.x, _spk.y-cam.y);   // caixa acima de QUEM fala (Byte ou NPC)
  if(fim&&fimT>1.2){cx.fillStyle="rgba(6,10,22,"+Math.min(.55,(fimT-1.2)*.6)+")";cx.fillRect(0,0,VW,VH);
