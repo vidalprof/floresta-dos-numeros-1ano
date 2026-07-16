@@ -295,7 +295,28 @@ function desFogueira(p,t){var x=p.x,y=p.y;
  for(i=0;i<3;i++){var ph3=t*0.04+i*1.5;var fx3=x-6+i*6+Math.sin(ph3)*3;
   lingua(fx3,y,(11+Math.sin(ph3*1.7)*4)*fl,3.6,"rgba(255,248,215,0.92)");}       // nucleo branco-quente
  cx.restore();}
+function desLampiao(p,t){var x=p.x,y=p.y,H=p.h||62;var lx=x,ly=y-H; // ly = centro da lanterna
+ var fl=0.8+0.12*Math.sin(t*0.03)+0.08*Math.sin(t*0.071); // tremular da chama
+ sombra(x,y+3,10,4);
+ // halo de luz quente oscilante
+ cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(lx,ly,3,lx,ly,62*fl);
+ g.addColorStop(0,"rgba(255,205,110,"+(0.42*fl)+")");g.addColorStop(.5,"rgba(255,150,60,"+(0.12*fl)+")");g.addColorStop(1,"rgba(255,150,60,0)");
+ cx.fillStyle=g;cx.beginPath();cx.arc(lx,ly,62*fl,0,Math.PI*2);cx.fill();cx.restore();
+ // poste + gancho
+ cx.save();cx.strokeStyle="#3a2f26";cx.lineCap="round";cx.lineWidth=5;cx.beginPath();cx.moveTo(x,y);cx.lineTo(x,ly+9);cx.stroke();
+ cx.lineWidth=3;cx.beginPath();cx.moveTo(x,ly-2);cx.lineTo(x,ly-9);cx.stroke();cx.restore();
+ // lanterna (metal + vidro)
+ cx.save();cx.fillStyle="#2b2420";
+ cx.beginPath();cx.moveTo(lx-10,ly-5);cx.lineTo(lx+10,ly-5);cx.lineTo(lx+7,ly-10);cx.lineTo(lx-7,ly-10);cx.closePath();cx.fill(); // teto
+ cx.fillStyle="rgba(70,45,22,.85)";cx.fillRect(lx-8,ly-5,16,17);                                                   // vidro
+ cx.strokeStyle="#2b2420";cx.lineWidth=2.5;cx.strokeRect(lx-8,ly-5,16,17);
+ cx.fillStyle="#2b2420";cx.fillRect(lx-9,ly+11,18,3);cx.restore();                                                 // base
+ // chama dentro do vidro
+ cx.save();cx.globalCompositeOperation="lighter";
+ lingua(lx,ly+9,(11+Math.sin(t*0.03)*3)*fl,3.2,"rgba(255,150,50,0.8)");
+ lingua(lx,ly+8,(7+Math.sin(t*0.05)*2)*fl,2,"rgba(255,238,190,0.95)");cx.restore();}
 function desProp(p,t){if(p.tipo==="fogueira")desFogueira(p,t);
+ else if(p.tipo==="lampiao")desLampiao(p,t);
  else if(p.tipo==="cabana"&&IMG.cabana){sombra(p.x,p.y+4,44,11);imgH(IMG.cabana,p.x,p.y,p.h||110);}}
 
 /* ---------- LOOP ---------- */
