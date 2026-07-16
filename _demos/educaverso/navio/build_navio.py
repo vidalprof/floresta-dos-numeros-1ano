@@ -32,7 +32,6 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  <p class="sub subTouch">mesmo motor da floresta &#183; use o D-pad p/ o Byte andar no conv&#233;s</p>
  <div id="frame"><canvas id="tela" width="720" height="480"></canvas></div>
  <div id="dpad"><button class="dU" id="dU">&#9650;</button><button class="dL" id="dL">&#9664;</button><button class="dR" id="dR">&#9654;</button><button class="dD" id="dD">&#9660;</button></div>
- <button class="bt" id="bSom" onclick="toggleSom()">&#128266; Som</button>
 </div><script>
 var cv=document.getElementById("tela"),cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__,IMG={},carreg=0,NN=0;for(var kk in SRC)NN++;
@@ -62,8 +61,14 @@ function initA(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudi
 function gaivota(){if(!AC||!som)return;var o=AC.createOscillator(),g=AC.createGain();var t=AC.currentTime;o.type="sine";o.frequency.setValueAtTime(1400,t);o.frequency.linearRampToValueAtTime(1900,t+.12);o.frequency.linearRampToValueAtTime(1500,t+.24);g.gain.setValueAtTime(.05,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+.3);}
 function falar(txt){if(!som||!window.speechSynthesis)return;try{speechSynthesis.cancel();}catch(e){}var u=new SpeechSynthesisUtterance(txt);u.lang="pt-BR";u.pitch=1.1;try{speechSynthesis.speak(u);}catch(e){}}
 function unlock(){initA();}
-function toggleSom(){initA();som=!som;if(marG)marG.gain.value=som?0.5:0;var b=document.getElementById("bSom");
- if(som){b.innerHTML="&#128266; Som ligado";falar("Arr! Bem-vindo ao meu navio, marujo!");}else{b.innerHTML="&#128263; Mudo";}}
+function toggleSom(){initA();som=!som;if(marG)marG.gain.value=som?0.5:0;if(som)falar("Arr! Bem-vindo ao meu navio, marujo!");}
+cv.addEventListener("mousedown",function(e){cliqueCv(e.clientX,e.clientY);});
+cv.addEventListener("touchstart",function(e){if(e.touches[0]){cliqueCv(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
+function cliqueCv(cxp,cyp){var r=cv.getBoundingClientRect();var mx=(cxp-r.left)*(VW/r.width),my=(cyp-r.top)*(VH/r.height);if(mx>VW-46&&my<30){toggleSom();}}
+function desBotaoSom(){var bx=VW-26,by=13;cx.save();cx.fillStyle="rgba(255,255,255,.9)";cx.beginPath();cx.arc(bx,by,12,0,Math.PI*2);cx.fill();cx.fillStyle="#17324a";
+ cx.beginPath();cx.moveTo(bx-6,by-3);cx.lineTo(bx-2,by-3);cx.lineTo(bx+2,by-7);cx.lineTo(bx+2,by+7);cx.lineTo(bx-2,by+3);cx.lineTo(bx-6,by+3);cx.closePath();cx.fill();
+ if(som){cx.strokeStyle="#17324a";cx.lineWidth=1.6;cx.beginPath();cx.arc(bx+2,by,4,-0.7,0.7);cx.stroke();cx.beginPath();cx.arc(bx+2,by,7,-0.7,0.7);cx.stroke();}
+ else{cx.strokeStyle="#c0392b";cx.lineWidth=2;cx.beginPath();cx.moveTo(bx+4,by-4);cx.lineTo(bx+9,by+4);cx.moveTo(bx+9,by-4);cx.lineTo(bx+4,by+4);cx.stroke();}cx.restore();}
 
 /* forma do casco (bico à direita) */
 function casco(ins){var L=70+ins,R=VW-40-ins,T=95+ins,B=VH-40-ins,bico=R+58-ins*0.6,my=(T+B)/2,r=34;
@@ -71,7 +76,7 @@ function casco(ins){var L=70+ins,R=VW-40-ins,T=95+ins,B=VH-40-ins,bico=R+58-ins*
  cx.quadraticCurveTo(L-14+ins*0.6,my,L+r,T);cx.closePath();}
 // COLISAO: o Byte só anda DENTRO do casco (isPointInPath) e não atravessa os objetos
 function onDeck(x,y){casco(30);return cx.isPointInPath(x,y);}
-function inProp(x,y){var a=x-180,b=y-214;if(a*a+b*b<40*40)return true;var c=x-520,d=y-372;if(c*c+d*d<38*38)return true;return false;}
+function inProp(x,y){var a=x-180,b=y-214;if(a*a+b*b<40*40)return true;var c=x-490,d=y-330;if(c*c+d*d<38*38)return true;return false;}
 function podeAndar(x,y){return onDeck(x,y)&&!inProp(x,y);}
 function sombra(x,y,rx,ry){cx.save();cx.fillStyle="rgba(6,20,30,.30)";cx.beginPath();cx.ellipse(x,y,rx,ry,0,0,Math.PI*2);cx.fill();cx.restore();}
 function imgH(im,x,yb,h){var w=im.width*h/im.height;cx.drawImage(im,x-w/2,yb-h,w,h);}
@@ -112,8 +117,8 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  casco(15);cx.lineWidth=2;cx.strokeStyle="rgba(255,240,210,.18)";cx.stroke();
  // props + byte (y-sort)
  var itens=[];
- if(IMG.barril)itens.push({y:214,f:function(){sombra(180,214,32,10);imgH(IMG.barril,180,214,84);}});
- if(IMG.bau)itens.push({y:372,f:function(){sombra(520,372,34,10);imgH(IMG.bau,520,372,66);}});
+ if(IMG.barril)itens.push({y:214,f:function(){sombra(180,218,38,13);imgH(IMG.barril,180,214,84);}});
+ if(IMG.bau)itens.push({y:330,f:function(){sombra(490,333,44,14);imgH(IMG.bau,490,332,62);}});
  itens.push({y:byte.y,f:function(){var bobb=byte.mov?Math.abs(Math.sin(byte.passo*.9))*5:0,rp=byte.mov?0:Math.sin(byte.resp)*.03;
    sombra(byte.x,byte.y+2,20,7);cx.save();cx.translate(byte.x,byte.y-bobb);cx.scale(byte.dir*(1+rp),1-rp*.5);imgH(IMG.byte,0,0,82);cx.restore();}});
  itens.sort(function(a,b){return a.y-b.y;});for(i=0;i<itens.length;i++)itens[i].f();
@@ -125,6 +130,7 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  cx.save();cx.globalCompositeOperation="lighter";cx.globalAlpha=.05;cx.fillStyle="#fff6c0";cx.beginPath();cx.ellipse(VW*0.72,80,180,60,0,0,Math.PI*2);cx.fill();cx.restore();
  // HUD + balão
  cx.fillStyle="rgba(6,16,28,.5)";cx.fillRect(0,0,VW,26);cx.fillStyle="#ffe38a";cx.font="bold 13px Verdana";cx.textAlign="center";cx.fillText("O mesmo Byte, agora navegando - ande pelo convés",VW/2,17);
+ desBotaoSom();
  balao("Arr! Este é o meu navio. Ande por aqui, marujo!",VW/2,VH-34);
  gtimer-=dt;if(gtimer<=0){gtimer=3+Math.random()*3;gaivota();}
  requestAnimationFrame(frame);
