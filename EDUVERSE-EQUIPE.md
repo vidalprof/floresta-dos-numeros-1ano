@@ -6,6 +6,20 @@
 > `EDUVERSE-PIPELINE.md` (como construir) e `EDUCAVERSO-QA.md` (auditorias).
 > Pode ser executado por MIM como uma equipe de agentes (um por papel), em sequência.
 
+## 🌟 PADRÃO DO ESTÚDIO EducaVerso (pedido do Marcos — maestria + fora da caixa)
+Isto é um **ESTÚDIO PROFISSIONAL** especializado em montar mundos/fases/atividades. **Cada especialista
+é um MESTRE na sua área** — muitos anos de experiência, atualizado nas **melhores práticas do momento**,
+exerce a função com **maestria**. Ao convocar cada agente, eu o prompto com essa senioridade e mandato:
+- **Nível:** **PhD / doutorado na sua área + sênior/lead**, ANOS de experiência, **MUITO atualizado** nas
+  práticas de ponta — **TODOS os profissionais**, sem exceção (não genérico). Cada um pensa como quem já
+  publicou pesquisa E entregou dezenas de jogos infantis premiados. Convoco cada agente com essa senioridade.
+- **Atualizado:** conhece as práticas atuais de game feel, arte 2D pintada, UX infantil, pedagogia ativa, áudio.
+- **Fora da caixa + INOVADOR:** a meta é atividade **revolucionária, que os estudantes AMEM** — nada de
+  "quiz ilustrado". Surpreende, encanta, dá vontade de jogar de novo. Mundo vivo, história boa, descoberta.
+- **Dono da qualidade:** cada um guarda o seu PORTÃO e **não deixa passar o medíocre** — o Marcos só vê o pronto.
+- **Pensa em TUDO da cena** (a partir do roteiro): proporção, contexto, efeitos, personagens, sons, coerência
+  (ver `EDUCAVERSO-CHECKLIST-DE-CENA.md`, a "definição de pronto" que o Portão de Coerência exige).
+
 ## Os especialistas (papel · o que entrega · portão que ele guarda)
 1. **Pedagogo / Curriculista** — recebe o objetivo (BNCC / currículo de Blumenau /
    Computação) e o transforma num **PROBLEMA DO MUNDO** seguindo o arco (nunca uma
@@ -63,6 +77,20 @@ especialista + auditoria), não no seu colo. Você só vê o que já passou.
 - A parte **técnica** dessa fábrica (estrutura do repositório, modelo de dados das missões,
   motor de tiles/animações, "audit runner") está sendo desenhada pelos engenheiros de
   software e de games e entra no **plano-mestre** (`EDUVERSE-PLANO.md`, em montagem).
+
+## ➕ Papéis reforçados no estúdio (jul/2026 — lições da 1ª aula)
+- **Especialista em Temática** — escolhe/afina o **TEMA e o cenário** por faixa etária (o mesmo tema fica
+  lúdico p/ os pequenos e investigativo p/ os maiores). Garante que o tema encante e faça sentido.
+- **Diretor de Arte (reforçado)** — **PROPORÇÃO coerente com o Byte** (objetos claramente menores; alvo
+  fácil via brilho + toque, não aumentando o objeto), **props só com CONTEXTO**, **tudo pintado por IA**,
+  colocação com lógica (fruta na árvore, não flutuando). *Portão de Arte* audita isso.
+- **Portão de Coerência** — roda o **`EDUCAVERSO-CHECKLIST-DE-CENA.md`** inteiro (proporção, contexto,
+  efeitos, personagens, sons, voz, pedagogia, reuso). **Reprova o que faltar → volta ao especialista certo.**
+- **Especialista em Prompt do Gemini (economia)** — prompts que gastam o **mínimo** sendo **precisos**
+  (Gemini é pago; cache por hash). Playbook de prompts econômicos na biblioteca.
+- **Montador automático (A-FAZER — a peça que fecha a fábrica):** transforma o `conteudo.json` dos
+  especialistas em `dados.json` sozinho (hoje é a única colagem manual). Quando existir, o professor passa
+  **tema + turma** e sai a atividade pronta, sem mão humana na montagem.
 
 ## 🔎 O AUDITOR É UM PAINEL (uma dimensão cada) — pedido do Marcos (2026-07-16)
 Não é UM auditor monolítico: são **vários auditores**, um por dimensão, rodados pelo
