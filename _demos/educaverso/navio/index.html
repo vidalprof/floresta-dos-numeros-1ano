@@ -54,6 +54,10 @@ function toggleSom(){initA();som=!som;if(marG)marG.gain.value=som?0.5:0;var b=do
 function casco(ins){var L=70+ins,R=VW-40-ins,T=95+ins,B=VH-40-ins,bico=R+58-ins*0.6,my=(T+B)/2,r=34;
  cx.beginPath();cx.moveTo(L+r,T);cx.lineTo(R,T);cx.quadraticCurveTo(bico,my,R,B);cx.lineTo(L+r,B);
  cx.quadraticCurveTo(L-14+ins*0.6,my,L+r,T);cx.closePath();}
+// COLISAO: o Byte só anda DENTRO do casco (isPointInPath) e não atravessa os objetos
+function onDeck(x,y){casco(30);return cx.isPointInPath(x,y);}
+function inProp(x,y){var a=x-180,b=y-214;if(a*a+b*b<40*40)return true;var c=x-520,d=y-372;if(c*c+d*d<38*38)return true;return false;}
+function podeAndar(x,y){return onDeck(x,y)&&!inProp(x,y);}
 function sombra(x,y,rx,ry){cx.save();cx.fillStyle="rgba(6,20,30,.30)";cx.beginPath();cx.ellipse(x,y,rx,ry,0,0,Math.PI*2);cx.fill();cx.restore();}
 function imgH(im,x,yb,h){var w=im.width*h/im.height;cx.drawImage(im,x-w/2,yb-h,w,h);}
 // pontos ao longo do casco p/ nascer espuma (agua batendo)
@@ -69,8 +73,9 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  if(keys["ArrowUp"]||keys["w"]||keys["W"]||dp.U)vy-=1;
  if(keys["ArrowDown"]||keys["s"]||keys["S"]||dp.D)vy+=1;
  byte.mov=(vx||vy)?true:false;
- if(byte.mov){var L=Math.sqrt(vx*vx+vy*vy);vx/=L;vy/=L;var sp=118;
-  byte.x=Math.max(DL,Math.min(DR,byte.x+vx*sp*dt));byte.y=Math.max(DT,Math.min(DB,byte.y+vy*sp*dt));
+ if(byte.mov){var L=Math.sqrt(vx*vx+vy*vy);vx/=L;vy/=L;var sp=115;
+  var nx=byte.x+vx*sp*dt; if(podeAndar(nx,byte.y))byte.x=nx;      // desliza no eixo X
+  var ny=byte.y+vy*sp*dt; if(podeAndar(byte.x,ny))byte.y=ny;      // desliza no eixo Y
   if(vx<-.2)byte.dir=-1;else if(vx>.2)byte.dir=1;byte.passo+=dt*10;}
  // ---- mar: deriva bem suave (swell) ----
  if(patMar){cx.save();var ox=Math.sin(t*.00018)*20-((t*0.008)%512),oy=Math.cos(t*.00022)*12;cx.translate(ox,oy);cx.fillStyle=patMar;cx.fillRect(-ox-4,-oy-4,VW+560,VH+560);cx.restore();}else{cx.fillStyle="#2f79a8";cx.fillRect(0,0,VW,VH);}
