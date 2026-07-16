@@ -358,7 +358,18 @@ aprende + roteirista + diretor de arte + arquiteto de dados) monta história e o
   popup — casa com a "camada de jornada" e o modelo novo.)
 - **REGRA DE ANIMAÇÃO (Marcos):** tudo SUAVE — respiração, gestos, deslizar. Se perna alternando ficar dura,
   fazer SEM perna, só suave. Suavidade acima de perna.
-- Blueprint em `eduverse/NAVIO-PIRATA-BLUEPRINT.md` (a equipe escreve). Construção após o blueprint.
+- Blueprint em `eduverse/NAVIO-PIRATA-BLUEPRINT.md` (a equipe escreveu). **DECISÃO: fazer o v2** (tudo NOVO e
+  BONITO — gerar toda a arte pirata temática + efeitos + vozes), não o v1 de reuso.
+- **FASES DE ALÍVIO intercaladas (pedido do Marcos) — TEMÁTICAS + ligadas ao conteúdo:** além das 7 paradas
+  pedagógicas, intercalar jogos de alívio (colorir, MEMÓRIA, jogo de SOMBRAS, LIGAR PONTOS, e outros do
+  catálogo) — escolher alguns e fazer MAIS paradas. TUDO com a cara do tema (pirata) E do conteúdo (números
+  até 30). Escolhas que ENCAIXAM em número+pirata: **LIGAR PONTOS 1→30** (desenha um navio/mapa do tesouro =
+  ensina a ordem dos números até 30, perfeito no tema); **MEMÓRIA** (parear numeral↔quantidade de moedas, ou
+  itens piratas); **JOGO DE SOMBRAS** (casar objeto pirata com sua silhueta: barril, canhão, papagaio);
+  **COLORIR por número** (colorir cena pirata por número = reconhecer o numeral). Intercalar entre as paradas
+  de aprender (alívio no meio, ex. após P3 e P5). HONESTO: memória/sombras já existem no catálogo; colorir e
+  ligar-pontos-até-30 podem precisar ser construídos no motor — escolher os que melhor servem número+pirata.
+  Construção do v2 (arte + vozes + alívios + auditar) após a Fase 1 (motor de personagem vivo).
 
 ## 🧭 ARQUITETURA (a reconciliação): mundo-mapa + atividades-peça
 NÃO é contradição — são DUAS CAMADAS:
