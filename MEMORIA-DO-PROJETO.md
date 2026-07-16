@@ -149,6 +149,16 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
 - **3 PILARES inegociáveis (Marcos):** (1) 2D tile + **arte IA premium** = qualidade "quase real" que
   **prende o aluno**; (2) **adequação TOTAL por turma/idade** (tema, mecânica, falas, missão, voz);
   (3) **rápido, funcional, sustentável e vivo** (experiência maravilhosa, leve p/ escola).
+- **DIREÇÃO DE ARTE na linha (lição paga — pedido do Marcos "não deveria ficar corrigindo se temos os
+  profissionais"):** as correções da 1ª aula (fogueira sem contexto, fruta feia/grande, "quadrado")
+  vieram do **Montador manual SEM Diretor de Arte**, não dos especialistas (o roteiro/pedagogia passou
+  no Portão 0 de primeira). CONSERTO: **Diretor de Arte + Portão de Arte** entram na equipe/linha. Regras
+  cravadas: (1) **PROPORÇÃO coerente com o Byte** (~64px) — a maçã (e objetos) tem que ser CLARAMENTE
+  menor que o Byte; alvo fácil p/ 6 anos via **brilho + raio de toque invisível**, não aumentando o
+  objeto; (2) **PROPS/objetos só com CONTEXTO** (maçãs PENDURADAS nas árvores + algumas caídas, não
+  flutuando; fogueira só como cena de NOITE c/ aldeões); (3) **tudo pintado por IA**, nada geométrico
+  code-drawn à mostra; (4) coerência com o style-bible. O mundo tem que chegar DIRIGIDO (o Marcos não
+  corrige arte). E o **Montador automático** (conteudo.json→dados.json) ainda é a-fazer (hoje manual).
 - **VOZ (decisão firme do Marcos — corrige o estudo da equipe):** NADA de voz do navegador
   (speechSynthesis). A narração é **SEMPRE gerada via API (edge-tts — Antonio/Francisca…) e volta como
   MP3 embutido** (base64). Voz natural, padrão premium. Peso: `otimizar-audio.yml` + cache por hash.

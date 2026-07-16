@@ -62,6 +62,10 @@
       do prop na cena (casa com porta / navio).
 - [ ] **Som das tábuas ao andar** — passo "toc" de madeira sobre convés/tábuas (piso `tabuas`).
 
+- [ ] **Props com CONTEXTO (regra do Marcos):** prop só entra se fizer sentido na cena. Ex.: a
+      **fogueira** não fica solta de dia — vira uma **cena de NOITE: aldeões/NPCs ao redor da
+      fogueira conversando** (penumbra + luz quente + micro-movimentos). Liga com o ciclo dia/noite.
+
 ## 🌊 PRECISA DE MUNDO COM ÁGUA (tema navio/lago/praia)
 - [ ] **Ondas na água** (tile de água viva — trazer do protótipo do navio pro motor).
 - [ ] **Peixes pulando** (partícula-peixe que salta + splash + som).

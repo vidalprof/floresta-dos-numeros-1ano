@@ -570,13 +570,14 @@ function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
  if(o.vale===10){ // SACOLA DE DEZ
   cx.save();cx.translate(x+trem,y-10+wob);cx.fillStyle="#7a5230";roundR(-18,-14,36,30,7);cx.fill();
   cx.fillStyle="#8f6238";cx.fillRect(-18,-16,36,6);cx.restore();drawNum(x+trem,y-9+wob,20,"10","#fff");
- } else { // FRUTA: círculo colorido + folha + cabinho
-  cx.save();cx.translate(x+trem,0);
-  cx.beginPath();cx.arc(0,y-8+wob,15,0,Math.PI*2);cx.fillStyle=o.cor;cx.fill();
-  cx.beginPath();cx.arc(-5,y-12+wob,5,0,Math.PI*2);cx.fillStyle="rgba(255,255,255,.35)";cx.fill();
-  cx.fillStyle="#3a7d34";cx.beginPath();cx.ellipse(4,y-22+wob,7,4,-0.6,0,Math.PI*2);cx.fill();
-  cx.strokeStyle="#5a3a1e";cx.lineWidth=2;cx.beginPath();cx.moveTo(0,y-22+wob);cx.lineTo(2,y-27+wob);cx.stroke();
-  cx.restore();
+ } else { // FRUTA: maçã PINTADA (IA) se houver; senão círculo desenhado (fallback leve)
+  if(IMG.fruta){ imgH(IMG.fruta,x+trem,y+9+wob,44); }
+  else { cx.save();cx.translate(x+trem,0);
+   cx.beginPath();cx.arc(0,y-8+wob,15,0,Math.PI*2);cx.fillStyle=o.cor;cx.fill();
+   cx.beginPath();cx.arc(-5,y-12+wob,5,0,Math.PI*2);cx.fillStyle="rgba(255,255,255,.35)";cx.fill();
+   cx.fillStyle="#3a7d34";cx.beginPath();cx.ellipse(4,y-22+wob,7,4,-0.6,0,Math.PI*2);cx.fill();
+   cx.strokeStyle="#5a3a1e";cx.lineWidth=2;cx.beginPath();cx.moveTo(0,y-22+wob);cx.lineTo(2,y-27+wob);cx.stroke();
+   cx.restore(); }
   if(rTipo==="ordenar") drawNum(x+trem,y-8+wob,18,""+o.n,"#fff"); } // ordenar mostra o numeral
  if(alvoNext||o.blinkT>0){ var pa=0.25+0.25*Math.sin(t*0.012);
   cx.save();cx.globalCompositeOperation="lighter";
