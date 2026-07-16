@@ -241,6 +241,19 @@ Marcos nem o Claude posicionando coisa a coisa.
   a cena inteira de uma vez = beleza do navio + quase nada a posicionar = mais auto).
 
 ## 🗺️ A GRANDE AVENTURA — estrutura do mundo (visão do Marcos)
+> **REAFIRMADO pelo Marcos (jul/2026), versão cristalina:** cada MUNDO é uma
+> JORNADA contínua guiada por HISTÓRIA, não atividades soltas. O LOOP é:
+> **faz a tarefa que a atividade pede → GANHA a recompensa (ex.: a CHAVE) → a
+> chave ABRE algo (ex.: a caverna/cabana) pra DORMIR e INTERAGIR → AMANHECE →
+> segue o CAMINHO até a próxima tarefa → nova recompensa → ...** por ~**10 fases**
+> nesse mundo, até **cumprir um objetivo** — sempre a história costurando tudo.
+> As "atividades" (contar, subtrair, memória, arrastar...) são as TAREFAS de cada
+> parada; a recompensa+interação+dia/noite são o TECIDO entre elas. É a camada de
+> JORNADA por cima das estações. O motor JÁ tem os ingredientes (dia/noite, chave,
+> entrar em cabana/taberna com interior+lampião, NPCs vivos) — falta STITCHAR num
+> caminho contínuo de ~10 fases com recompensa/gate por fase. Cada mundo do banco
+> de temas nasce como uma dessas jornadas.
+
 O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
 - **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
   JAULA → SALVAR o amiguinho preso (animação: chave destranca, som, o amigo agradece) → seguir em
