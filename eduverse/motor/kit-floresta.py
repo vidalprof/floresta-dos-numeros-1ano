@@ -328,7 +328,7 @@ var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"b
 function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
  if(fim||aulaComemora) return "feliz";
  if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
-  if(ay>ax){var pas=(Math.floor(byte.passo*1.6)%2===0); // caminhada: alterna frame parado<->passo
+  if(ay>ax){var pas=(Math.floor(byte.passo/1.2)%2===0); // caminhada: alterna frame parado<->passo, em sincronia com somPasso (1 troca por passo sonoro)
    if(byte.mvy<0) return pas?"costas":"costas_anda";    // sobe=costas
    return pas?"frente":"frente_anda";}                  // desce=frente
   return "lado";}                                   // esquerda/direita
