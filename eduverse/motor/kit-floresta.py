@@ -207,6 +207,13 @@ function desChave(t){if(chave.got)return;var x=chave.x,y=chave.y-8-Math.sin(t*.0
  g.addColorStop(0,"rgba(255,225,120,"+(0.5+0.2*Math.sin(t*.006))+")");g.addColorStop(1,"rgba(255,225,120,0)");
  cx.fillStyle=g;cx.beginPath();cx.arc(x,y,34,0,Math.PI*2);cx.fill();cx.restore();
  sombra(chave.x,chave.y+8,14,5);imgH(IMG.chave,x,y+18,40);}
+// "Zzz" do sono subindo da boca (3 letras que sobem, crescem e somem em loop)
+function desZzz(t,mx,my){cx.save();cx.textAlign="left";cx.lineJoin="round";
+ cx.fillStyle="rgba(255,255,255,.95)";cx.strokeStyle="rgba(60,90,130,.75)";cx.lineWidth=2;
+ for(var i=0;i<3;i++){var ph=((t*0.00045)+i*0.34)%1;var zx=mx+ph*20+i*3;var zy=my-ph*42;var sz=Math.round(10+i*3+ph*7);
+  cx.globalAlpha=Math.max(0,0.95*(1-ph*0.85));cx.font="bold "+sz+"px Verdana";
+  cx.strokeText("Z",zx,zy);cx.fillText("Z",zx,zy);}
+ cx.restore();cx.globalAlpha=1;}
 // CARTELA DE POSES (Byte vivo): cada pose tem escala propria p/ o personagem NAO mudar de tamanho
 var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"byte_lado",f:1.12},
  senta:{im:"byte_senta",f:0.95},deita:{im:"byte_deita",f:0.62},fala:{im:"byte_fala",f:0.98},feliz:{im:"byte_feliz",f:1.06}};
@@ -229,8 +236,13 @@ function desByte(t){var x=byte.x,y=byte.y;
  var rp=(!byte.mov&&!deitado&&nome!=="senta")?Math.sin(byte.resp)*.03:0; // respira parado em pe
  var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;             // boca/squash ao falar
  var flip=byte.dir;
- sombra(x,y+8,deitado?32:18,deitado?7:6);
- cx.save();cx.translate(x,y+8-bob);cx.scale(flip*(1+rp),(1-rp*.6)*(1-talk));imgH(im,0,0,h);cx.restore();
+ var ron=deitado?Math.sin(t*0.0026):0;               // respiracao lenta do sono (roncar)
+ var sx=deitado?(1+ron*0.035):(1+rp);                // infla/desincha o corpo
+ var sy=deitado?(1+ron*0.02):((1-rp*.6)*(1-talk));
+ var rot=deitado?ron*0.02:0;                          // leve balanco de roncar
+ sombra(x,y+8,deitado?(32+ron*2):18,deitado?7:6);
+ cx.save();cx.translate(x,y+8-bob);cx.rotate(rot);cx.scale(flip*sx,sy);imgH(im,0,0,h);cx.restore();
+ if(deitado)desZzz(t,x-h*0.30,y+8-h*0.75);           // Zzz saindo da boca (acima da carinha)
  if(hasKey&&IMG.chave){var kw=IMG.chave.width*18/IMG.chave.height;cx.drawImage(IMG.chave,x+11,y-52,kw,18);}}
 function desArco(t){var x=arco.x,y=arco.y; // arco de pedra = entrada do labirinto
  sombra(x,y+8,120,20);

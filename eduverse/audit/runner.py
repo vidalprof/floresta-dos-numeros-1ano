@@ -58,21 +58,29 @@ if render_ok:
 # 5) UX: som no canto (nao pode ter botao HTML grande de som)
 gate("som_no_canto", ('id="bSom"' not in html), "achou botao HTML de som (deveria ser no canto do canvas)")
 
-# 6) MUNDO VIVO (nada estatico): 2 frames diferentes -> ha animacao
+# 6) MUNDO VIVO (nada estatico): 2 frames espacados -> ha animacao.
+#    Fotografa o CANVAS em tamanho cheio (a area viva ocupa a foto toda) e compara frames
+#    distantes no tempo (animacoes lentas se acumulam). Robusto: vivo ~14000px, parado ~0.
+_livecss=('<style>#wrap{display:block!important;padding:0!important;}h1,.sub,#painel,#dpad{display:none!important;}'
+          '#frame{padding:0!important;border-radius:0!important;box-shadow:none!important;}'
+          'canvas{max-width:none!important;max-height:none!important;width:720px!important;height:500px!important;border-radius:0!important;}</style>')
+_liveharn=os.path.join(tempfile.gettempdir(),"_liveharn_%s.html"%slug)
+open(_liveharn,"w",encoding="utf-8").write(html.replace("</head>",_livecss+"</head>"))
 def _shot(budget):
     p=os.path.join(tempfile.gettempdir(),"_live_%s_%d.png"%(slug,budget))
-    subprocess.run([CH,"--headless","--no-sandbox","--disable-gpu","--hide-scrollbars","--window-size=760,600",
-                    "--screenshot="+p,"--virtual-time-budget=%d"%budget,"file://"+dist],capture_output=True)
+    subprocess.run([CH,"--headless","--no-sandbox","--disable-gpu","--hide-scrollbars","--window-size=720,500",
+                    "--screenshot="+p,"--virtual-time-budget=%d"%budget,"file://"+_liveharn],capture_output=True)
     return p
 try:
     from PIL import Image, ImageChops
     import numpy as _np
-    a=Image.open(_shot(700)).convert("RGB"); b=Image.open(_shot(1500)).convert("RGB")
-    if a.size==b.size:
-        arr=_np.asarray(ImageChops.difference(a,b)); mudou=int((arr.max(axis=2)>18).sum())
-        gate("mundo_vivo", mudou>400, "%d px mudaram entre 2 frames"%mudou)
-    else:
-        gate("mundo_vivo", False, "tamanhos diferentes")
+    frames=[Image.open(_shot(b)).convert("RGB") for b in (1500,2700,3900)]  # 3 momentos
+    difs=[]
+    for i in range(len(frames)-1):
+        if frames[i].size==frames[i+1].size:
+            arr=_np.asarray(ImageChops.difference(frames[i],frames[i+1])); difs.append(int((arr.max(axis=2)>18).sum()))
+    melhor=max(difs) if difs else 0   # basta UM par diferir p/ provar animacao (anti-intermitencia)
+    gate("mundo_vivo", melhor>3000, "so %d px mudaram no melhor par (mundo quase parado)"%melhor)
 except Exception as e:
     gate("mundo_vivo", True, "sem PIL/numpy - checagem pulada")
 
