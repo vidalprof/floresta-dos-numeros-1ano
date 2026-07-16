@@ -48,11 +48,12 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
 <title>EducaVerso - __TITULO__</title>
 <style>
  html,body{margin:0;min-height:100%;background:#0a1120;color:#eaf2ff;font-family:Verdana,Geneva,sans-serif;text-align:center;overflow-x:hidden;}
- #wrap{min-height:100vh;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0;}
+ #wrap{min-height:100vh;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:4px 0;}
  h1{font-size:15px;margin:4px 0 0;letter-spacing:.3px;width:100%;}
  .sub{font-size:11px;color:#9fb6df;margin:0 auto 4px;width:100%;max-width:94vw;box-sizing:border-box;padding:0 8px;line-height:1.35;}
- #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:99vw;box-sizing:border-box;}
- canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:86vh;width:auto;height:auto;cursor:pointer;}
+ @media (max-width:600px){ h1{font-size:12px;margin:2px 0 0;} .sub{font-size:9px;margin:0 auto 2px;line-height:1.2;} }
+ #frame{padding:4px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:99vw;box-sizing:border-box;}
+ canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:92vh;width:auto;height:auto;cursor:pointer;}
  /* BOTAO DE TELA CHEIA: flutua no canto sup. dir. (fora do canvas); so aparece se a API existir (senao display:none, nao quebra em navegador antigo) */
  #btn-tela-cheia{position:fixed;top:6px;right:6px;z-index:60;width:40px;height:40px;border-radius:10px;border:2px solid rgba(120,150,210,.7);background:rgba(12,24,48,.9);color:#eaf2ff;font-size:19px;line-height:1;cursor:pointer;-webkit-user-select:none;user-select:none;}
  #btn-tela-cheia:hover{background:rgba(18,36,70,.96);border-color:#ffe27a;}
@@ -82,14 +83,17 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  </div>
 </div><script>
 var cv=document.getElementById("tela");
-/* tela estreita (celular em pe): viewport mais ALTA p/ aproveitar a tela (area de jogo maior) */
-(function(){try{var w=window.innerWidth||720;if(w<600){cv.height=860;}}catch(e){}})();
-/* ---------- TELA CHEIA (botao no HTML): so ativa por GESTO; some se a API nao existir ---------- */
+var IS_TOUCH=(("ontouchstart" in window)||(navigator.maxTouchPoints>0)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches)||(location.search.indexOf("dpad=1")>=0));
+if(IS_TOUCH){try{document.body.classList.add("touch");}catch(e){}}
+/* ---------- TELA CHEIA (botao no HTML): so ativa por GESTO; some se a API nao existir ----------
+   (fica ANTES do calculo de altura do canvas abaixo: o botao muda o padding-top do #wrap, entao
+   precisamos que essa classe ja esteja aplicada antes de medir o espaco disponivel de verdade) */
 function telaCheiaSuportada(){var el=document.documentElement;return !!(el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen);}
 function estaEmTelaCheia(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
+function _semQuebrar(p){ if(p&&p.catch)p.catch(function(){/* pedido negado (ex.: sem gesto/permissao) -- ignora, nao trava nada */});}
 function alternarTelaCheia(){var el=document.documentElement;try{
-  if(!estaEmTelaCheia()){ if(el.requestFullscreen){el.requestFullscreen();}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen();}else if(el.mozRequestFullScreen){el.mozRequestFullScreen();}else if(el.msRequestFullscreen){el.msRequestFullscreen();} }
-  else{ if(document.exitFullscreen){document.exitFullscreen();}else if(document.webkitExitFullscreen){document.webkitExitFullscreen();}else if(document.mozCancelFullScreen){document.mozCancelFullScreen();}else if(document.msExitFullscreen){document.msExitFullscreen();} }
+  if(!estaEmTelaCheia()){ if(el.requestFullscreen){_semQuebrar(el.requestFullscreen());}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen();}else if(el.mozRequestFullScreen){el.mozRequestFullScreen();}else if(el.msRequestFullscreen){el.msRequestFullscreen();} }
+  else{ if(document.exitFullscreen){_semQuebrar(document.exitFullscreen());}else if(document.webkitExitFullscreen){document.webkitExitFullscreen();}else if(document.mozCancelFullScreen){document.mozCancelFullScreen();}else if(document.msExitFullscreen){document.msExitFullscreen();} }
  }catch(e){/* navegador antigo/bloqueado: ignora sem quebrar */}}
 function atualizarIconeTelaCheia(){var cheia=estaEmTelaCheia();var b=document.getElementById("btn-tela-cheia");
  if(b){b.innerHTML=cheia?"✕":"⛶";b.title=cheia?"Sair da tela cheia":"Tela cheia";}}
@@ -97,13 +101,34 @@ function atualizarIconeTelaCheia(){var cheia=estaEmTelaCheia();var b=document.ge
  if(btf&&telaCheiaSuportada()){btf.style.display="block";if(document.body){document.body.className+=" tem-botao-tc";}
   var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"],k;
   for(k=0;k<evs.length;k++){document.addEventListener(evs[k],atualizarIconeTelaCheia);}}}catch(e){}})();
+/* tela estreita (celular em pe): calcula a altura do CANVAS p/ ocupar o espaco vertical de VERDADE.
+   Em vez de chutar um numero fixo (que estoura em tela curta tipo iPhone SE e sobra em tela alta),
+   MEDE o que sobra depois do titulo/subtitulo/D-pad/botao de tela cheia (classes "touch" e
+   "tem-botao-tc" acima ja aplicadas, entao o layout medido aqui e o layout FINAL) e deriva a
+   resolucao do canvas p/ preencher esse espaco. O CSS (max-width:100%/max-height:92vh) e uma rede
+   de seguranca: mesmo se a estimativa nao for perfeita, nunca estoura a tela. */
+(function(){try{
+ var w=window.innerWidth||720;
+ if(w<600){
+  var h1=document.querySelector("h1"),subs=document.querySelectorAll(".sub"),dpad=document.getElementById("dpad"),frame=document.getElementById("frame"),wrap=document.getElementById("wrap");
+  var hh1=h1?h1.getBoundingClientRect().height:16,hsub=0,i;
+  for(i=0;i<subs.length;i++){if(getComputedStyle(subs[i]).display!=="none")hsub=Math.max(hsub,subs[i].getBoundingClientRect().height);}
+  var hdpad=(dpad&&getComputedStyle(dpad).display!=="none")?(dpad.getBoundingClientRect().height+10):0;
+  var padTop=wrap?parseFloat(getComputedStyle(wrap).paddingTop)||0:4,padBot=wrap?parseFloat(getComputedStyle(wrap).paddingBottom)||0:4;
+  var reservado=hh1+hsub+hdpad+padTop+padBot+18;                   // titulo+subtitulo+dpad+padding real do #wrap (ja com tela-cheia) + folga
+  var availH=Math.max(320,(window.innerHeight||860)-reservado);
+  var availW=Math.max(240,(frame?frame.clientWidth:w)-8);
+  var novaAltura=Math.round(cv.width*(availH/availW));
+  cv.height=Math.max(700,Math.min(1300,novaAltura));
+ }
+}catch(e){}})();
 var cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
 var HIST=(typeof MUNDO!=="undefined"&&MUNDO.historia)?MUNDO.historia:{}; // historia data-driven (default {} = floresta identica)
 var IMG={},carreg=0,NN=0;for(var kk in SRC)NN++;
 for(var k in SRC){(function(key){var im=new Image();im.onload=function(){IMG[key]=im;if(++carreg===NN)iniciar();};im.onerror=function(){if(++carreg===NN)iniciar();};im.src=SRC[key];})(k);}
-var IS_TOUCH=(("ontouchstart" in window)||(navigator.maxTouchPoints>0)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches)||(location.search.indexOf("dpad=1")>=0));
-if(IS_TOUCH){try{document.body.classList.add("touch");}catch(e){}}
+/* IS_TOUCH + classe "touch" ja aplicados mais acima (antes do calculo de cv.height, que precisa
+   saber se o D-pad vai aparecer para medir o espaco certo). */
 
 /* ---------- MUNDO ---------- */
 var WW=1500,WH=1050;
@@ -482,11 +507,11 @@ function _geraItens(R,idx){
  var trs=[];for(i=0;i<TREES.length;i++){var ddx=TREES[i][0]-cbx,ddy=TREES[i][1]-cby;trs.push({x:TREES[i][0],y:TREES[i][1],d:ddx*ddx+ddy*ddy});}
  trs.sort(function(a,b){return a.d-b.d;});
  // ESPALHAR (Problema C): usa MAIS árvores — idealmente 1 fruta por árvore — e garante
- // que duas frutas nunca fiquem a menos de ~90px (âncora de coleta), evitando aglomerado.
+ // que duas frutas nunca fiquem a menos de ~140px (âncora de coleta), evitando aglomerado.
  var nTree=Math.max(2,Math.min(trs.length,qtd));                 // tantas árvores quanto frutas (1 por árvore quando dá)
  var used=[];for(i=0;i<trs.length;i++)used.push(0);              // offsets de copa já usados por árvore
  var offs=[0,-22,22,-11,11];                                     // offsets de copa (|ox|<=26, dentro da copa real)
- var MIND=90,placed=[];                                          // nenhuma fruta a <90px de outra
+ var MIND=140,placed=[];                                         // nenhuma fruta a <140px de outra (mundo maior, menos amontoado)
  for(i=0;i<qtd;i++){
   var vale=1,nn=i+1,forcaChao=false;
   if(R.tipo==="agrupar"&&i<bundles){ vale=10;nn=10;forcaChao=true; } // sacola-de-10 no PÉ da árvore
@@ -636,7 +661,7 @@ function drawNum(x,y,size,txt,cor){cx.save();cx.font="bold "+size+"px Verdana";c
  cx.lineWidth=Math.max(3,size*0.18);cx.lineJoin="round";cx.strokeStyle="rgba(15,25,45,.9)";cx.strokeText(txt,x,y);
  cx.fillStyle=cor||"#fff";cx.fillText(txt,x,y);cx.restore();cx.textBaseline="alphabetic";cx.globalAlpha=1;}
 function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
- var wob=Math.sin(t*0.004+o.seed)*3,trem=o.blinkT>0?Math.sin(t*0.045)*4:0;
+ var wob=(!o.chao)?Math.sin(t*0.004+o.seed)*3:0,trem=o.blinkT>0?Math.sin(t*0.045)*4:0;
  var alvoNext=(rTipo==="ordenar"&&o.n===rProx);
  if(o.chao)sombra(x,y+14,o.vale===10?20:15,6); // só a maçã CAÍDA leva sombra de chão
  if(!o.chao&&o.vale!==10){ // fruta PENDURADA: haste ligando à copa + sombra pendurada (fruta ancorada, não flutua)
@@ -910,6 +935,9 @@ function desNPC(n,t){var im=IMG[n.sprite];if(!im)return;            // sem sprit
 /* ---------- LOOP ---------- */
 var ult=null;
 function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/1000));ult=ts;var t=ts;
+ try{ // BLINDAGEM: um erro de desenho/estado (ex.: durante a transicao de tela cheia) NUNCA pode
+      // quebrar o loop pra sempre -- sem isto, uma excecao aqui interrompe o requestAnimationFrame
+      // e o jogo "trava" (nada mais se move), porque o proximo agendamento nunca acontece.
  if(!patM&&IMG.muro)patM=cx.createPattern(IMG.muro,"repeat");
  byte.resp+=dt*3;
  // ---- caixa de dialogo RPG: typewriter (revela letra a letra) + setinha piscando ----
@@ -1078,7 +1106,8 @@ var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColo
   cx.fillStyle="#ffe38a";cx.font="bold 22px Verdana";cx.textAlign="center";cx.fillText(HIST.fimTitulo||"✨ Fim da Etapa 1 ✨",VW/2,VH/2-10);
   cx.fillStyle="#eaf2ff";cx.font="13px Verdana";cx.fillText(HIST.ganchoProx||"Na próxima: entrar no labirinto e empurrar as pedras-seta!",VW/2,VH/2+18);}
  climaFlash(); // FLASH do raio por CIMA de tudo (ultimo desenho do frame)
- requestAnimationFrame(frame);
+ }catch(e){try{if(window.console&&console.error)console.error("frame() erro (ignorado, loop continua):",e);}catch(e2){}}
+ requestAnimationFrame(frame); // SEMPRE reagenda, mesmo se algo acima lancou excecao
 }
 // cor da placa de nome: Byte tem a sua; cada NPC ganha uma cor ESTAVEL pelo nome
 function corPlaca(nome){ if(nome==="Byte")return "#3ec6a6";
