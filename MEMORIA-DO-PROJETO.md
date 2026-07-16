@@ -104,8 +104,11 @@ Gerar atividades AUTOMATICAMENTE, alinhadas ao currículo escolhido, e inserir n
 
 ## 🎒 CAMADA DO ESTUDANTE + AVALIAÇÃO DESCRITIVA (pedido do Marcos, jul/2026) — "tudo que nossa ideia tinha"
 O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCIÁVEIS):
-- **Tela inicial MARAVILHOSA:** o estudante entra, digita **NOME + TURMA** (e dados), e as
-  informações dele são **puxadas** (histórico, progresso, personagem) → o mundo vira DELE.
+- **Tela inicial MARAVILHOSA — MODELO do Minecraft (NÃO o tema):** estrutura tipo "seus mundos"
+  do Minecraft (você vê o SEU mundo salvo, entra e continua de onde parou, ou cria/entra), porém
+  no NOSSO estilo **pintado por IA premium, MUITO mais bonito** (nada de visual de blocos). O
+  estudante digita **NOME + TURMA** (e dados) → as informações dele são **puxadas** (histórico,
+  progresso, personagem) → o mundo vira DELE (card do "mundo do aluno" com nome/turma/progresso).
 - **Interação pelo NOME:** o jogo/Byte/NPCs chamam o aluno pelo nome (voz + balão).
 - **Progresso SALVO:** cada missão/atividade concluída fica registrada (retoma de onde parou).
 - **AVALIAÇÃO DESCRITIVA contínua:** o sistema descreve o que o aluno demonstrou (por habilidade
