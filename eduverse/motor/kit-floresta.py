@@ -104,6 +104,7 @@ var luzChao=[];for(var i=0;i<3;i++)luzChao.push({y:120+i*320,ph:i*2.1,sp:14+i*4}
 
 /* ---------- AUDIO (ambiente rico em camadas) ---------- */
 var AC=null,ventoG=null,ambMaster=null,som=false,gust=0.5,birdTimer=2.2,coruja=9;
+var noite=0; // ciclo dia/noite: 0=dia, 1=noite profunda (computado no loop)
 function initAudio(){if(AC)return;try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){return;}
  ambMaster=AC.createGain();ambMaster.gain.value=0;ambMaster.connect(AC.destination);
  var n=Math.floor(AC.sampleRate*2),buf=AC.createBuffer(1,n,AC.sampleRate),d=buf.getChannelData(0);
@@ -279,9 +280,10 @@ function desFogueira(p,t){var x=p.x,y=p.y;
  var fl=0.78+0.14*Math.sin(t*0.022)+0.09*Math.sin(t*0.058)+0.05*Math.sin(t*0.15); // tremular
  sombra(x,y+6,30,9);
  // luz quente no chao/ar (oscilante, forte)
- cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(x,y-16,6,x,y-16,104*fl);
- g.addColorStop(0,"rgba(255,196,100,"+(0.52*fl)+")");g.addColorStop(.42,"rgba(255,132,46,"+(0.15*fl)+")");g.addColorStop(1,"rgba(255,120,40,0)");
- cx.fillStyle=g;cx.beginPath();cx.arc(x,y-16,104*fl,0,Math.PI*2);cx.fill();cx.restore();
+ var gm=1+noite*1.9,gr=104*fl*(1+noite*0.45);
+ cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(x,y-16,6,x,y-16,gr);
+ g.addColorStop(0,"rgba(255,196,100,"+Math.min(0.95,0.52*fl*gm)+")");g.addColorStop(.42,"rgba(255,132,46,"+Math.min(0.6,0.15*fl*gm)+")");g.addColorStop(1,"rgba(255,120,40,0)");
+ cx.fillStyle=g;cx.beginPath();cx.arc(x,y-16,gr,0,Math.PI*2);cx.fill();cx.restore();
  // lenha (toras cruzadas, com topo iluminado)
  cx.save();cx.lineCap="round";
  cx.strokeStyle="#5a3a22";cx.lineWidth=10;cx.beginPath();cx.moveTo(x-24,y+5);cx.lineTo(x+24,y-5);cx.moveTo(x-24,y-5);cx.lineTo(x+24,y+5);cx.stroke();
@@ -299,9 +301,10 @@ function desLampiao(p,t){var x=p.x,y=p.y,H=p.h||62;var lx=x,ly=y-H; // ly = cent
  var fl=0.8+0.12*Math.sin(t*0.03)+0.08*Math.sin(t*0.071); // tremular da chama
  sombra(x,y+3,10,4);
  // halo de luz quente oscilante
- cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(lx,ly,3,lx,ly,62*fl);
- g.addColorStop(0,"rgba(255,205,110,"+(0.42*fl)+")");g.addColorStop(.5,"rgba(255,150,60,"+(0.12*fl)+")");g.addColorStop(1,"rgba(255,150,60,0)");
- cx.fillStyle=g;cx.beginPath();cx.arc(lx,ly,62*fl,0,Math.PI*2);cx.fill();cx.restore();
+ var gm=1+noite*2.1,gr=62*fl*(1+noite*0.55);
+ cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(lx,ly,3,lx,ly,gr);
+ g.addColorStop(0,"rgba(255,205,110,"+Math.min(0.92,0.42*fl*gm)+")");g.addColorStop(.5,"rgba(255,150,60,"+Math.min(0.5,0.12*fl*gm)+")");g.addColorStop(1,"rgba(255,150,60,0)");
+ cx.fillStyle=g;cx.beginPath();cx.arc(lx,ly,gr,0,Math.PI*2);cx.fill();cx.restore();
  // poste + gancho
  cx.save();cx.strokeStyle="#3a2f26";cx.lineCap="round";cx.lineWidth=5;cx.beginPath();cx.moveTo(x,y);cx.lineTo(x,ly+9);cx.stroke();
  cx.lineWidth=3;cx.beginPath();cx.moveTo(x,ly-2);cx.lineTo(x,ly-9);cx.stroke();cx.restore();
@@ -326,6 +329,7 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  byte.resp+=dt*3;if(balaoT>0)balaoT-=dt;
  // vento em rajadas + agenda de sons ambientes
  gust=0.45+0.35*Math.sin(t*.0004)+0.30*Math.max(0,Math.sin(t*.00013+1.2));
+ var _sol=Math.cos(t*0.00005);noite=Math.max(0,Math.min(1,(0.35-_sol)/0.7)); // ciclo dia/noite (~125s, comeca de DIA)
  if(ventoG&&som)ventoG.gain.value=0.028+0.05*gust;
  birdTimer-=dt;if(birdTimer<=0){birdTimer=3.2+Math.random()*4.2;if(TEMA.passaros)somCanto();}
  coruja-=dt;if(coruja<=0){coruja=16+Math.random()*16;somCoruja();}
@@ -418,12 +422,19 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
   var px=pp.x+Math.sin(t*.0006+pp.f)*24,py=pp.y+Math.cos(t*.0007+pp.f)*18;var aa=.10+.18*Math.sin(t*.002+pp.f*2);
   cx.fillStyle="rgba(255,245,180,"+Math.max(0,aa)+")";cx.beginPath();cx.arc(px,py,pp.r,0,Math.PI*2);cx.fill();}cx.restore();
  cx.restore();
- // ---- clima/luz (tela) ----
+ // ---- clima/luz (tela) + CICLO DIA/NOITE ----
  var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColorStop(1,TEMA.ceu1);cx.fillStyle=lg;cx.fillRect(0,0,VW,VH);
- var vg=cx.createRadialGradient(VW/2,VH*.44,VH*.42,VW/2,VH*.5,VH*.95);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(6,10,25,.4)");cx.fillStyle=vg;cx.fillRect(0,0,VW,VH);
- // raios de luz diagonais suaves
- cx.save();cx.globalCompositeOperation="lighter";cx.globalAlpha=.05;cx.fillStyle="#fff3c0";
- for(i=0;i<3;i++){cx.save();cx.translate(140+i*220,0);cx.rotate(0.32);cx.fillRect(-30,-40,60,VH*1.6);cx.restore();}cx.restore();cx.globalAlpha=1;
+ // escurece a cena a noite (azul profundo)
+ if(noite>0.01){cx.fillStyle="rgba(12,18,45,"+(noite*0.58)+")";cx.fillRect(0,0,VW,VH);}
+ // estrelas + lua quando anoitece
+ if(noite>0.12){cx.save();
+  cx.fillStyle="#ffffff";for(var si=0;si<14;si++){var sx=(si*151)%VW,sy=(si*97)%130+8;cx.globalAlpha=noite*(0.35+0.4*Math.sin(t*0.003+si*1.3));cx.fillRect(sx,sy,1.7,1.7);}
+  var mx=VW*0.82,my=50;cx.globalAlpha=noite;cx.globalCompositeOperation="lighter";var mg=cx.createRadialGradient(mx,my,4,mx,my,36);mg.addColorStop(0,"rgba(220,230,255,.85)");mg.addColorStop(1,"rgba(180,200,255,0)");cx.fillStyle=mg;cx.beginPath();cx.arc(mx,my,36,0,Math.PI*2);cx.fill();
+  cx.globalCompositeOperation="source-over";cx.fillStyle="#eef3ff";cx.beginPath();cx.arc(mx,my,13,0,Math.PI*2);cx.fill();cx.restore();cx.globalAlpha=1;}
+ var vg=cx.createRadialGradient(VW/2,VH*.44,VH*.42,VW/2,VH*.5,VH*.95);vg.addColorStop(0,"rgba(0,0,0,0)");vg.addColorStop(1,"rgba(6,10,25,"+(0.4+noite*0.32)+")");cx.fillStyle=vg;cx.fillRect(0,0,VW,VH);
+ // raios de sol diagonais (somem a noite)
+ if(noite<0.92){cx.save();cx.globalCompositeOperation="lighter";cx.globalAlpha=.05*(1-noite);cx.fillStyle="#fff3c0";
+ for(i=0;i<3;i++){cx.save();cx.translate(140+i*220,0);cx.rotate(0.32);cx.fillRect(-30,-40,60,VH*1.6);cx.restore();}cx.restore();cx.globalAlpha=1;}
  // ---- HUD ----
  cx.fillStyle="rgba(8,16,30,.55)";cx.fillRect(0,0,VW,26);cx.fillStyle="#ffe38a";cx.font="bold 13px Verdana";cx.textAlign="center";
  cx.fillText(hasKey?"Leve a chave dourada até o labirinto de pedra 🔑":"Passeie pela floresta e pegue a chave dourada 🔑",VW/2,17);
