@@ -42,6 +42,13 @@
       estalo) sincronizado com a batida + **respiração** visível (peito sobe/desce) entre golpes +
       micro-movimentos suaves. "Parecer bem real" p/ chamar a atenção da criança; e **interage com o
       Byte** (para, olha, fala) quando ele chega perto. Data-driven, reusa a lib breathe/sway.
+- [ ] **ANIMAIS COM VIDA (comportamento próprio) — pedido do Marcos:** animais como NPCs com AÇÃO:
+      **cachorro correndo com poeirinha nas patas + latido** (Web Audio), **coelho pulando** (arco de
+      salto + squash/stretch), pássaros, gato. Parecerem VIVOS. Reusa a poeira e a lib de micro-mov.
+- [ ] **ROSTO VIVO (olhinhos e boca mexendo) — pedido do Marcos:** os olhos **piscam** e a **boca mexe**
+      ao falar/latir. Sprite é imagem estática → fazer pelo **caminho documentado** (`EDUCAVERSO.md`
+      §Personagens Vivos): desenhar olhos+boca POR CÓDIGO por cima do sprite (custo ~zero, sincroniza
+      com a fala) ou cartela de poses por IA. Vale p/ Byte, NPCs e animais.
 - [ ] **Boca ao falar** — o Byte já troca p/ pose `fala` no typewriter; afinar squash/ritmo.
 - [ ] **Barulho das folhas** — camada já existe; subir mais forte na rajada.
 - [ ] **Porta que range e bate** — prop `porta` (rangido pitch-bend + batida grave). Precisa
