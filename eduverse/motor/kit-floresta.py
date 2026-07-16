@@ -51,8 +51,13 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  #wrap{min-height:100vh;width:100%;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:8px 0;}
  h1{font-size:15px;margin:4px 0 0;letter-spacing:.3px;width:100%;}
  .sub{font-size:11px;color:#9fb6df;margin:0 auto 4px;width:100%;max-width:94vw;box-sizing:border-box;padding:0 8px;line-height:1.35;}
- #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:96vw;box-sizing:border-box;}
- canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:74vh;width:auto;height:auto;cursor:pointer;}
+ #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:99vw;box-sizing:border-box;}
+ canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:86vh;width:auto;height:auto;cursor:pointer;}
+ /* BOTAO DE TELA CHEIA: flutua no canto sup. dir. (fora do canvas); so aparece se a API existir (senao display:none, nao quebra em navegador antigo) */
+ #btn-tela-cheia{position:fixed;top:6px;right:6px;z-index:60;width:40px;height:40px;border-radius:10px;border:2px solid rgba(120,150,210,.7);background:rgba(12,24,48,.9);color:#eaf2ff;font-size:19px;line-height:1;cursor:pointer;-webkit-user-select:none;user-select:none;}
+ #btn-tela-cheia:hover{background:rgba(18,36,70,.96);border-color:#ffe27a;}
+ body.tem-botao-tc #wrap{padding-top:44px;}
+ @media (min-width:700px){ body.tem-botao-tc #wrap{padding-top:14px;} }
  #painel{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;padding:0 6px;}
  .bt{font-family:inherit;font-weight:bold;border:0;border-radius:14px;cursor:pointer;padding:9px 16px;font-size:15px;color:#0a1120;-webkit-transition:transform .05s;transition:transform .05s;}
  .bt.vz{background:linear-gradient(#ffe08a,#f5b73f);box-shadow:0 3px 0 #b07d1e;}
@@ -62,7 +67,9 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  #dpad button:active{transform:translateY(2px);box-shadow:0 1px 0 #7f93b3;}
  .dU{grid-column:2;grid-row:1;} .dL{grid-column:1;grid-row:2;} .dR{grid-column:3;grid-row:2;} .dD{grid-column:2;grid-row:3;}
  body.touch .subPC{display:none;} body.touch .subTouch{display:block;} body.touch #dpad{display:grid;}
-</style></head><body><div id="wrap">
+</style></head><body>
+ <button id="btn-tela-cheia" onclick="alternarTelaCheia()" title="Tela cheia" style="display:none">&#9974;</button>
+ <div id="wrap">
  <h1>__EMOJI__ __TITULO__</h1>
  <p class="sub subPC">__SUB_PC__</p>
  <p class="sub subTouch">__SUB_TOUCH__</p>
@@ -76,7 +83,20 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
 </div><script>
 var cv=document.getElementById("tela");
 /* tela estreita (celular em pe): viewport mais ALTA p/ aproveitar a tela (area de jogo maior) */
-(function(){try{var w=window.innerWidth||720;if(w<600){cv.height=760;}}catch(e){}})();
+(function(){try{var w=window.innerWidth||720;if(w<600){cv.height=860;}}catch(e){}})();
+/* ---------- TELA CHEIA (botao no HTML): so ativa por GESTO; some se a API nao existir ---------- */
+function telaCheiaSuportada(){var el=document.documentElement;return !!(el.requestFullscreen||el.webkitRequestFullscreen||el.mozRequestFullScreen||el.msRequestFullscreen);}
+function estaEmTelaCheia(){return !!(document.fullscreenElement||document.webkitFullscreenElement||document.mozFullScreenElement||document.msFullscreenElement);}
+function alternarTelaCheia(){var el=document.documentElement;try{
+  if(!estaEmTelaCheia()){ if(el.requestFullscreen){el.requestFullscreen();}else if(el.webkitRequestFullscreen){el.webkitRequestFullscreen();}else if(el.mozRequestFullScreen){el.mozRequestFullScreen();}else if(el.msRequestFullscreen){el.msRequestFullscreen();} }
+  else{ if(document.exitFullscreen){document.exitFullscreen();}else if(document.webkitExitFullscreen){document.webkitExitFullscreen();}else if(document.mozCancelFullScreen){document.mozCancelFullScreen();}else if(document.msExitFullscreen){document.msExitFullscreen();} }
+ }catch(e){/* navegador antigo/bloqueado: ignora sem quebrar */}}
+function atualizarIconeTelaCheia(){var cheia=estaEmTelaCheia();var b=document.getElementById("btn-tela-cheia");
+ if(b){b.innerHTML=cheia?"✕":"⛶";b.title=cheia?"Sair da tela cheia":"Tela cheia";}}
+(function(){try{var btf=document.getElementById("btn-tela-cheia");
+ if(btf&&telaCheiaSuportada()){btf.style.display="block";if(document.body){document.body.className+=" tem-botao-tc";}
+  var evs=["fullscreenchange","webkitfullscreenchange","mozfullscreenchange","MSFullscreenChange"],k;
+  for(k=0;k<evs.length;k++){document.addEventListener(evs[k],atualizarIconeTelaCheia);}}}catch(e){}})();
 var cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
 var HIST=(typeof MUNDO!=="undefined"&&MUNDO.historia)?MUNDO.historia:{}; // historia data-driven (default {} = floresta identica)
@@ -164,7 +184,7 @@ var OBJETIVO=(HIST.objetivo)?HIST.objetivo:(MODO_AULA?"colher":"chave"); // inte
 var rIdx=-1,rRound=null,rTipo="",rN=0,rAlvo=0,rCesta=null;
 var rColhidas=0,rNaCesta=0,rExtra=0,rProx=1,rGrupos=0;   // contadores por tipo
 var rItens=[],rFly=[],rBadges=[];     // frutas no mundo / frutas voando p/ cesta / badges de número
-var rEstado="rodada",rTransT=0,rDicaT=5;                 // "rodada"|"transicao"; timers
+var rEstado="rodada",rTransT=0,rDicaT=5,rColhCD=0;       // "rodada"|"transicao"; timers (rColhCD=cooldown de coleta: conta 1 a 1)
 var aulaFim=false,aulaFimT=0,aulaComemora=false;         // aulaComemora => pose "feliz" do Byte
 
 /* ---------- AUDIO (ambiente rico em camadas) ---------- */
@@ -217,10 +237,10 @@ function playFala(id,texto,pitch){if(!som)return;
 function pararVoz(){try{if(curAudio){curAudio.onended=null;curAudio.pause();}}catch(e){}curAudio=null;tocando=false;fila=null;try{if(window.speechSynthesis)speechSynthesis.cancel();}catch(e){}}
 /* ---------- CAIXA DE DIALOGO RPG (placa de nome + typewriter + setinha) ---------- */
 var balaoT=0;                 // >0 = caixa aberta (tambem liga a pose "fala")
-var balaoNome="Byte",balaoFull="",balaoN=0,balaoFimTxt=false,balaoBlink=0,balaoAppear=0;
+var balaoNome="Byte",balaoFull="",balaoN=0,balaoFimTxt=false,balaoBlink=0,balaoAppear=0,balaoVida=0; // balaoVida: tempo p/ o balao sumir sozinho depois de lido
 var balaoCPS=(typeof MUNDO!=="undefined"&&MUNDO.dialogo&&MUNDO.dialogo.cps)?MUNDO.dialogo.cps:34; // letras/s (default seguro)
 // balaoNPC: quem chama diz o NOME de quem fala; a fila de voz (playFala) NAO muda -> audio toca junto
-function balaoNPC(nome,t,id,pitch,alvo){balaoNome=nome||"Byte";balaoFull=t||"";balaoN=0;balaoFimTxt=(balaoFull.length===0);balaoBlink=0;balaoAppear=0;balaoT=1;balaoAlvo=alvo||null;playFala(id,t,pitch);}
+function balaoNPC(nome,t,id,pitch,alvo){balaoNome=nome||"Byte";balaoFull=t||"";balaoN=0;balaoFimTxt=(balaoFull.length===0);balaoBlink=0;balaoAppear=0;balaoVida=3.2;balaoT=1;balaoAlvo=alvo||null;playFala(id,t,pitch);}
 // assinatura ANTIGA intacta: quem ja chamava balao() nao muda -> nome vira "Byte"
 function balao(t,id,pitch){balaoNPC("Byte",t,id,pitch);}
 function balaoFecha(){balaoT=0;balaoFull="";balaoFimTxt=false;balaoAlvo=null;}
@@ -233,7 +253,7 @@ cv.addEventListener("touchstart",function(e){if(e.touches[0]){cliqueCv(e.touches
 function cliqueCv(cxp,cyp){var r=cv.getBoundingClientRect();var mx=(cxp-r.left)*(VW/r.width),my=(cyp-r.top)*(VH/r.height);
  if(mx>VW-46&&my<30){toggleSom();return;}                 // botao de som (canto sup. dir) tem prioridade
  if(balaoT>0&&balaoFull){                                 // caixa aberta: o toque avanca a fala
-  if(!balaoFimTxt){balaoN=balaoFull.length;balaoFimTxt=true;} // 1o toque: completa o texto na hora
+  if(!balaoFimTxt){balaoN=balaoFull.length;balaoFimTxt=true;balaoVida=3.2;} // 1o toque: completa o texto na hora (e arma o auto-fade)
   else{balaoFecha();}                                     // 2o toque (texto ja completo): fecha
   return;}
 }
@@ -328,9 +348,9 @@ var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"b
 function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
  if(fim||aulaComemora) return "feliz";
  if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
-  if(ay>ax){var pas=(Math.floor(byte.passo/1.2)%2===0); // caminhada: alterna frame parado<->passo, em sincronia com somPasso (1 troca por passo sonoro)
-   if(byte.mvy<0) return pas?"costas":"costas_anda";    // sobe=costas
-   return pas?"frente":"frente_anda";}                  // desce=frente
+  if(ay>ax){                                        // caminhada frente/costas: SEMPRE o frame de passo (sem pop parado<->passo)
+   if(byte.mvy<0) return "costas_anda";             // sobe=costas
+   return "frente_anda";}                           // desce=frente
   return "lado";}                                   // esquerda/direita
  if(balaoT>0&&!balaoFimTxt&&!balaoAlvo) return "fala";
  if(byte.idle>13) return "deita";
@@ -342,15 +362,16 @@ function desByte(t){var x=byte.x,y=byte.y;
   P=POSE[nome]||POSE.frente;
   if(!IMG[P.im]){P=POSE.frente;nome=(nome==="costas"||nome==="lado")?nome:"frente";}} // sem sprite da pose -> usa frente
  var im=IMG[P.im]||IMG.byte,h=64*P.f;
- var vert=byte.mov&&(nome==="frente"||nome==="costas"||nome==="frente_anda"||nome==="costas_anda");
+ var vertAnda=(nome==="frente_anda"||nome==="costas_anda");            // caminhada frente/costas com sprite de passo
+ var vert=byte.mov&&(nome==="frente"||nome==="costas"||vertAnda);
  var andando=vert||(byte.mov&&nome==="lado");
  var bob=andando?Math.abs(Math.sin(byte.passo*.9))*6:0;
- var temPasso=(nome==="costas"||nome==="costas_anda")?!!IMG[POSE.costas_anda.im]:!!IMG[POSE.frente_anda.im];
- if(vert&&temPasso)bob*=0.5; // frente/costas com 2 frames: o passo visual vem do sprite, bob so leve
+ if(vertAnda)bob=Math.min(bob,1.5);   // frente/costas: SEM pulo — o movimento vem da passada (espelho) + deslocamento real, nao de subir/descer
  var deitado=(nome==="deita");
  var rp=(!byte.mov&&!deitado&&nome!=="senta")?Math.sin(byte.resp)*.03:0; // respira parado em pe
  var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;             // boca/squash ao falar
  var flip=byte.dir;
+ if(vertAnda){var passada=(Math.floor(byte.passo/0.6)%2===0)?1:-1;flip=passada;} // passada = espelha o sprite a cada passo (esq-dir-esq = caminhada, nao pulo)
  var ron=deitado?Math.sin(t*0.0026):0;               // respiracao lenta do sono (roncar)
  var sx=deitado?(1+ron*0.035):(1+rp);                // infla/desincha o corpo
  var sy=deitado?(1+ron*0.02):((1-rp*.6)*(1-talk));
@@ -460,18 +481,28 @@ function _geraItens(R,idx){
  var cbx=(R.cesta?R.cesta.x:byte.x), cby=(R.cesta?R.cesta.y:byte.y);
  var trs=[];for(i=0;i<TREES.length;i++){var ddx=TREES[i][0]-cbx,ddy=TREES[i][1]-cby;trs.push({x:TREES[i][0],y:TREES[i][1],d:ddx*ddx+ddy*ddy});}
  trs.sort(function(a,b){return a.d-b.d;});
- var nTree=Math.max(2,Math.min(trs.length,Math.ceil(qtd/2)+1)); // usa um punhado das árvores mais perto
- var used=[];for(i=0;i<nTree;i++)used.push(0);                    // frutas já penduradas por árvore
- var offs=[-24,4,24,-12,16];                                     // offsets de copa (|ox|<=26, dentro da copa real)
- for(i=0;i<qtd;i++){var T=trs[i%nTree],tx=T.x,ty=T.y;
-  var vale=1,nn=i+1,chao,x,y,sy,pendurada;
-  if(R.tipo==="agrupar"&&i<bundles){ vale=10;nn=10;pendurada=false; } // sacola-de-10 no PÉ da árvore
-  else if(R.tipo==="agrupar"){ vale=1;nn=1;pendurada=(rnd()<0.7); }
-  else{ pendurada=(rnd()<0.7); }
-  if(pendurada){ var ox=offs[used[i%nTree]%offs.length];used[i%nTree]++;
-   x=tx+ox; y=ty-72-Math.floor(rnd()*26); sy=ty+2; chao=false; }        // ANCORADA na copa real (árvore=120px; copa ~ty-115..ty-45)
-  else{ var ox2=(rnd()<0.5?-1:1)*(30+Math.floor(rnd()*16));               // ±30..45 no pé
-   x=tx+ox2; y=ty+10; sy=y; chao=true; }
+ // ESPALHAR (Problema C): usa MAIS árvores — idealmente 1 fruta por árvore — e garante
+ // que duas frutas nunca fiquem a menos de ~90px (âncora de coleta), evitando aglomerado.
+ var nTree=Math.max(2,Math.min(trs.length,qtd));                 // tantas árvores quanto frutas (1 por árvore quando dá)
+ var used=[];for(i=0;i<trs.length;i++)used.push(0);              // offsets de copa já usados por árvore
+ var offs=[0,-22,22,-11,11];                                     // offsets de copa (|ox|<=26, dentro da copa real)
+ var MIND=90,placed=[];                                          // nenhuma fruta a <90px de outra
+ for(i=0;i<qtd;i++){
+  var vale=1,nn=i+1,forcaChao=false;
+  if(R.tipo==="agrupar"&&i<bundles){ vale=10;nn=10;forcaChao=true; } // sacola-de-10 no PÉ da árvore
+  var x,y,sy,chao,ax_,ay_,ti,tries=0,ok=false,pendurada;
+  do{ ti=(i+tries)%nTree; var T=trs[ti],tx=T.x,ty=T.y;
+   pendurada=forcaChao?false:(rnd()<0.7);
+   if(pendurada){ var ox=offs[used[ti]%offs.length];
+    x=tx+ox; y=ty-72-Math.floor(rnd()*26); sy=ty+2; chao=false; }        // ANCORADA na copa real (coleta mede pela base ty+2)
+   else{ var ox2=(rnd()<0.5?-1:1)*(30+Math.floor(rnd()*16));               // ±30..45 no pé
+    x=tx+ox2; y=ty+10; sy=y; chao=true; }
+   ax_=x; ay_=(chao?y:sy);                                        // âncora de COLETA (base do tronco p/ pendurada)
+   ok=true; for(var pj=0;pj<placed.length;pj++){var ddx=ax_-placed[pj][0],ddy=ay_-placed[pj][1];if(ddx*ddx+ddy*ddy<MIND*MIND){ok=false;break;}}
+   tries++;
+  }while(!ok&&tries<nTree*3);
+  if(!chao)used[ti]++;                                            // consumiu um offset de copa dessa árvore
+  placed.push([ax_,ay_]);
   out.push({x:x,y:y,sy:sy,n:nn,vale:vale,dez:(vale===10),chao:chao});}
  if(R.tipo==="ordenar"){ // posição != ordem: embaralha quais lugares recebem 1..n
   var ord=[],k;for(k=0;k<out.length;k++)ord.push(k+1);
@@ -491,7 +522,7 @@ function rodadaCarrega(idx){
  rIdx=idx;rRound=AULA.rounds[idx];rTipo=rRound.tipo;rN=rRound.n||0;rAlvo=rRound.alvo||0;
  rCesta=rRound.cesta||{x:Math.max(160,Math.min(WW-160,byte.x+160)),y:byte.y};
  rColhidas=0;rNaCesta=0;rExtra=0;rProx=1;rGrupos=0;
- rItens=[];rFly=[];rBadges=[];rEstado="rodada";rTransT=0;rDicaT=5;aulaComemora=false;
+ rItens=[];rFly=[];rBadges=[];rEstado="rodada";rTransT=0;rDicaT=12;rColhCD=0;aulaComemora=false;
  var itens=rRound.itens||_geraItens(rRound,idx),i;
  for(i=0;i<itens.length;i++){var it=itens[i];
   rItens.push({id:i,n:(it.n!=null?it.n:i+1),x:it.x,y:it.y,
@@ -529,7 +560,7 @@ function tentaColher(it){ if(it.got&&!it.over)return;
   var rnd=_rng((Math.floor(it.seed)|0)+rIdx*13),x,y,ok=false,tr=0;
   while(!ok&&tr++<40){x=140+rnd()*(WW-280);y=170+rnd()*(WH-320);
    ok=!_pertoArvore(x,y)&&(Math.abs(x-rCesta.x)>120||Math.abs(y-rCesta.y)>120);}
-  it.x=x;it.y=y;it.sy=y;it.chao=true;somColher();  // volta ao chão -> sy/chao coerentes p/ coleta e sombra
+  it.x=x;it.y=y;it.sy=y;it.chao=true;rColhCD=0.45;somColher();  // volta ao chão -> sy/chao coerentes; cooldown evita devolver varias de vez
   balaoNPC(rRound.pedido||"Byte","Isso! Agora são "+rNaCesta+"."+(rNaCesta<rAlvo?" Ainda faltam.":""),"aula_ok",1.1);
   return; }
  if(rTipo==="ordenar"&&it.n!==rProx){ _erroOrdem(); return; }   // ordem errada = consequência, NÃO colhe
@@ -537,7 +568,7 @@ function tentaColher(it){ if(it.got&&!it.over)return;
 function _erroOrdem(){ _piscaProx(); somErroGentil();
  balaoNPC("Byte","Ops! Esse não. Qual vem primeiro? Procura o "+rProx+"!","aula_ordem",1.14); } // sem X, não trava
 
-function _colhe(it){ it.got=true; var extra=false,badge;
+function _colhe(it){ it.got=true; rColhCD=0.45; var extra=false,badge; // arma o cooldown: proxima coleta so daqui ~0.45s (conta pausado)
  if(rTipo==="ordenar"){ rProx++;rColhidas++;badge=it.n; }
  else if(rTipo==="agrupar"){ rColhidas+=it.vale;if(it.vale===10)rGrupos++;badge=rColhidas; }
  else if(rTipo==="trazer_exato"){ if(rNaCesta<rAlvo){rNaCesta++;badge=rNaCesta;}else{rExtra++;extra=true;badge="+";} }
@@ -588,9 +619,11 @@ function rodadaUpdate(dt,t){ if(!MODO_AULA)return;
  if(aulaFim){ aulaFimT+=dt;_flyUpdate(dt);_badgeUpdate(dt);return; }
  if(rEstado==="transicao"){ rTransT+=dt;_flyUpdate(dt);_badgeUpdate(dt);
    if(rTransT>2.6){ aulaComemora=false; aulaAvanca(); } return; }
- rDicaT-=dt; if(rDicaT<=0){ rDicaT=9+Math.random()*5; byteDica(); }   // Byte pergunta de tempos em tempos
+ rDicaT-=dt; if(rDicaT<=0){ rDicaT=20+Math.random()*8; if(balaoT<=0)byteDica(); }   // Byte pergunta ESPORADICAMENTE, e so se o balao estiver FECHADO (nao empilha)
+ if(rColhCD>0)rColhCD-=dt;                                        // cooldown de coleta (conta 1 a 1, sem pular)
  for(var i=0;i<rItens.length;i++){var it=rItens[i]; if(it.blinkT>0)it.blinkT-=dt;
    if(it.got&&!it.over)continue;
+   if(rColhCD>0)continue;                                        // em cooldown: NAO colhe outra fruta agora (fala "um... dois..." pausado)
    // maçã PENDURADA: mede a distância contra a ÂNCORA DE CHÃO (base do tronco = it.sy),
    // não contra it.y (que fica na copa) -> a criança colhe encostando o Byte no PÉ da árvore.
    var ay=(it.chao?it.y:(it.sy!=null?it.sy:it.y));
@@ -880,8 +913,12 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  if(!patM&&IMG.muro)patM=cx.createPattern(IMG.muro,"repeat");
  byte.resp+=dt*3;
  // ---- caixa de dialogo RPG: typewriter (revela letra a letra) + setinha piscando ----
- if(balaoT>0&&balaoFull){ if(balaoAppear<1)balaoAppear=Math.min(1,balaoAppear+dt/0.16);
-  if(!balaoFimTxt){balaoN+=balaoCPS*dt;if(balaoN>=balaoFull.length){balaoN=balaoFull.length;balaoFimTxt=true;}}
+ if(balaoT>0&&balaoFull){
+  if(!balaoFimTxt){ if(balaoAppear<1)balaoAppear=Math.min(1,balaoAppear+dt/0.16); // fade-in enquanto digita
+   balaoN+=balaoCPS*dt;if(balaoN>=balaoFull.length){balaoN=balaoFull.length;balaoFimTxt=true;balaoVida=3.2;} } // terminou -> arma auto-fade (~3.2s)
+  else{ balaoVida-=dt;                              // AUTO-FADE: depois de lido, some sozinho (a crianca ainda pode tocar p/ fechar antes)
+   if(balaoVida>0.5){ if(balaoAppear<1)balaoAppear=Math.min(1,balaoAppear+dt/0.16); }
+   else{ balaoAppear=Math.max(0,balaoVida/0.5); if(balaoVida<=0)balaoFecha(); } } // ultimos 0.5s = fade suave (transform/alpha)
   balaoBlink+=dt; }
  // vento em rajadas + agenda de sons ambientes
  gust=0.45+0.35*Math.sin(t*.0004)+0.30*Math.max(0,Math.sin(t*.00013+1.2));

@@ -1,342 +1,342 @@
 {
-  "slug": "cesta-do-tico",
-  "tema": {
-    "part": "folha",
-    "ceu0": "rgba(255,236,170,.10)",
-    "ceu1": "rgba(30,20,60,.12)",
-    "passaros": true,
-    "borboletas": true,
-    "titulo": "A Cestinha do Tico",
-    "emoji": "&#128048;"
-  },
-  "assets": {
-    "grama": "grama",
-    "caminho": "caminho",
-    "arvore": "arvore",
-    "byte": "byte",
-    "flores": "flores",
-    "muro": "muro",
-    "cabana": "cabana",
-    "passaro": "passarinho",
-    "borboleta": "borboleta",
-    "coelho": "coelho",
-    "fruta": "fruta",
-    "cesta": "cesta"
-  },
-  "mundo": {
-    "WW": 1500,
-    "WH": 1050,
-    "start": [
-      250,
-      860
-    ],
-    "tr": 16,
-    "historia": {
-      "objetivo": "colher",
-      "sub_pc": "use as SETAS do teclado p/ o Byte andar &#183; colhe as frutinhas e, se passar do numero, TIRA da cesta as que sobraram!",
-      "sub_touch": "use o D-pad p/ o Byte andar &#183; colhe as frutinhas e, se passar do numero, TIRA da cesta as que sobraram!"
-    },
-    "poeira": true,
-    "dialogo": {
-      "cps": 26
-    },
-    "path": [
-      [
-        250,
-        860
-      ],
-      [
-        380,
-        740
-      ],
-      [
-        300,
-        600
-      ],
-      [
-        510,
-        520
-      ],
-      [
-        700,
-        560
-      ],
-      [
-        860,
-        520
-      ],
-      [
-        1010,
-        520
-      ],
-      [
-        1120,
-        600
-      ]
-    ],
-    "trees": [
-      [
-        120,
-        520
-      ],
-      [
-        210,
-        300
-      ],
-      [
-        330,
-        470
-      ],
-      [
-        430,
-        360
-      ],
-      [
-        150,
-        780
-      ],
-      [
-        470,
-        880
-      ],
-      [
-        560,
-        690
-      ],
-      [
-        640,
-        300
-      ],
-      [
-        430,
-        640
-      ],
-      [
-        760,
-        700
-      ],
-      [
-        900,
-        540
-      ],
-      [
-        720,
-        210
-      ],
-      [
-        980,
-        180
-      ],
-      [
-        1050,
-        760
-      ],
-      [
-        1080,
-        420
-      ],
-      [
-        1230,
-        520
-      ],
-      [
-        1180,
-        900
-      ],
-      [
-        1300,
-        300
-      ],
-      [
-        880,
-        860
-      ],
-      [
-        640,
-        930
-      ]
-    ],
-    "flores": [
-      [
-        420,
-        800
-      ],
-      [
-        300,
-        690
-      ],
-      [
-        560,
-        560
-      ],
-      [
-        700,
-        470
-      ],
-      [
-        860,
-        520
-      ],
-      [
-        1000,
-        430
-      ],
-      [
-        1120,
-        330
-      ],
-      [
-        240,
-        820
-      ],
-      [
-        640,
-        640
-      ],
-      [
-        900,
-        700
-      ]
-    ],
-    "props": [
-      {
-        "tipo": "cabana",
-        "x": 1090,
-        "y": 600,
-        "h": 210,
-        "cx": -56,
-        "cy": 186,
-        "r": 64
-      },
-      {
-        "tipo": "lampiao",
-        "x": 1162,
-        "y": 626,
-        "h": 60,
-        "r": 8
-      }
-    ],
-    "npcs": [
-      {
-        "sprite": "coelho",
-        "x": 410,
-        "y": 792,
-        "nome": "Tico",
-        "escala": 0.95,
-        "falas": [
-          {
-            "texto": "Oi, Byte! Minha cestinha e pequena e so cabe pouquinhas frutas. Me ajuda a colher e a TIRAR as que sobram?",
-            "id": "tico0"
-          },
-          {
-            "texto": "Cada vez que a gente passa do numero certo, e so tirar da cesta as frutinhas a mais. Conta quantas sobraram!",
-            "id": "tico1"
-          },
-          {
-            "texto": "Subtrair e assim: eu tinha um monte, tirei algumas, e vejo quantas ficaram na cestinha.",
-            "id": "tico2"
-          },
-          {
-            "texto": "Voce e demais, Byte! Com voce eu sempre sei quantas frutinhas tirar pra ficar certinho.",
-            "id": "tico3"
-          }
-        ]
-      }
-    ],
-    "aula": {
-      "id": "sub1ano",
-      "fim": "Que capricho, Byte! Voce colheu certinho e tirou todas as que sobravam. Agora o Tico sabe subtrair ate dez. Ate a proxima colheita!",
-      "rounds": [
-        {
-          "tipo": "trazer_exato",
-          "alvo": 3,
-          "n": 5,
-          "pedido": "O Tico",
-          "cesta": {
-            "x": 430,
-            "y": 780
-          }
-        },
-        {
-          "tipo": "trazer_exato",
-          "alvo": 5,
-          "n": 8,
-          "pedido": "O Tico",
-          "cesta": {
-            "x": 760,
-            "y": 560
-          }
-        },
-        {
-          "tipo": "trazer_exato",
-          "alvo": 4,
-          "n": 7,
-          "pedido": "O Tico",
-          "cesta": {
-            "x": 560,
-            "y": 620
-          }
-        },
-        {
-          "tipo": "trazer_exato",
-          "alvo": 6,
-          "n": 9,
-          "pedido": "O Tico",
-          "cesta": {
-            "x": 1000,
-            "y": 520
-          }
-        },
-        {
-          "tipo": "trazer_exato",
-          "alvo": 8,
-          "n": 10,
-          "pedido": "O Tico",
-          "cesta": {
-            "x": 900,
-            "y": 760
-          }
-        }
-      ]
-    }
-  },
-  "falas": [
-    "n0",
-    "n1",
-    "n2",
-    "n3",
-    "n4",
-    "n5",
-    "n6",
-    "n7",
-    "n8",
-    "n9",
-    "n10",
-    "aula_intro_trazer_exato",
-    "aula_dica_trazer_exato",
-    "aula_demais",
-    "aula_falta",
-    "aula_ok",
-    "aula_ok_0",
-    "aula_ok_1",
-    "aula_ok_2",
-    "aula_ok_3",
-    "aula_ok_4",
-    "aula_fim",
-    "tico0",
-    "tico1",
-    "tico2",
-    "tico3"
+ "slug": "cesta-do-tico",
+ "tema": {
+  "part": "folha",
+  "ceu0": "rgba(255,236,170,.10)",
+  "ceu1": "rgba(30,20,60,.12)",
+  "passaros": true,
+  "borboletas": true,
+  "titulo": "A Cestinha do Tico",
+  "emoji": "&#128048;"
+ },
+ "assets": {
+  "grama": "grama",
+  "caminho": "caminho",
+  "arvore": "arvore",
+  "byte": "byte",
+  "flores": "flores",
+  "muro": "muro",
+  "cabana": "cabana",
+  "passaro": "passarinho",
+  "borboleta": "borboleta",
+  "coelho": "coelho",
+  "fruta": "fruta",
+  "cesta": "cesta"
+ },
+ "mundo": {
+  "WW": 1500,
+  "WH": 1050,
+  "start": [
+   250,
+   860
   ],
-  "audit": {
-    "chegar": [],
-    "colisao": [
-      [
-        160,
-        520,
-        -40,
-        0
-      ]
+  "tr": 16,
+  "historia": {
+   "objetivo": "colher",
+   "sub_pc": "use as SETAS do teclado p/ o Byte andar &#183; colhe as frutinhas e, se passar do numero, TIRA da cesta as que sobraram!",
+   "sub_touch": "use o D-pad p/ o Byte andar &#183; colhe as frutinhas e, se passar do numero, TIRA da cesta as que sobraram!"
+  },
+  "poeira": true,
+  "dialogo": {
+   "cps": 26
+  },
+  "path": [
+   [
+    250,
+    860
+   ],
+   [
+    380,
+    740
+   ],
+   [
+    300,
+    600
+   ],
+   [
+    510,
+    520
+   ],
+   [
+    700,
+    560
+   ],
+   [
+    860,
+    520
+   ],
+   [
+    1010,
+    520
+   ],
+   [
+    1120,
+    600
+   ]
+  ],
+  "trees": [
+   [
+    1305,
+    548
+   ],
+   [
+    417,
+    427
+   ],
+   [
+    1215,
+    378
+   ],
+   [
+    995,
+    406
+   ],
+   [
+    613,
+    762
+   ],
+   [
+    396,
+    882
+   ],
+   [
+    804,
+    718
+   ],
+   [
+    1088,
+    833
+   ],
+   [
+    242,
+    293
+   ],
+   [
+    223,
+    522
+   ],
+   [
+    651,
+    250
+   ],
+   [
+    1055,
+    249
+   ],
+   [
+    1252,
+    810
+   ],
+   [
+    477,
+    270
+   ],
+   [
+    1316,
+    245
+   ],
+   [
+    867,
+    863
+   ],
+   [
+    249,
+    699
+   ],
+   [
+    879,
+    290
+   ],
+   [
+    810,
+    450
+   ],
+   [
+    649,
+    423
+   ]
+  ],
+  "flores": [
+   [
+    420,
+    800
+   ],
+   [
+    300,
+    690
+   ],
+   [
+    560,
+    560
+   ],
+   [
+    700,
+    470
+   ],
+   [
+    860,
+    520
+   ],
+   [
+    1000,
+    430
+   ],
+   [
+    1120,
+    330
+   ],
+   [
+    240,
+    820
+   ],
+   [
+    640,
+    640
+   ],
+   [
+    900,
+    700
+   ]
+  ],
+  "props": [
+   {
+    "tipo": "cabana",
+    "x": 1090,
+    "y": 600,
+    "h": 210,
+    "cx": -56,
+    "cy": 186,
+    "r": 64
+   },
+   {
+    "tipo": "lampiao",
+    "x": 1162,
+    "y": 626,
+    "h": 60,
+    "r": 8
+   }
+  ],
+  "npcs": [
+   {
+    "sprite": "coelho",
+    "x": 410,
+    "y": 792,
+    "nome": "Tico",
+    "escala": 0.95,
+    "falas": [
+     {
+      "texto": "Oi, Byte! Minha cestinha e pequena e so cabe pouquinhas frutas. Me ajuda a colher e a TIRAR as que sobram?",
+      "id": "tico0"
+     },
+     {
+      "texto": "Cada vez que a gente passa do numero certo, e so tirar da cesta as frutinhas a mais. Conta quantas sobraram!",
+      "id": "tico1"
+     },
+     {
+      "texto": "Subtrair e assim: eu tinha um monte, tirei algumas, e vejo quantas ficaram na cestinha.",
+      "id": "tico2"
+     },
+     {
+      "texto": "Voce e demais, Byte! Com voce eu sempre sei quantas frutinhas tirar pra ficar certinho.",
+      "id": "tico3"
+     }
     ]
+   }
+  ],
+  "aula": {
+   "id": "sub1ano",
+   "fim": "Que capricho, Byte! Voce colheu certinho e tirou todas as que sobravam. Agora o Tico sabe subtrair ate dez. Ate a proxima colheita!",
+   "rounds": [
+    {
+     "tipo": "trazer_exato",
+     "alvo": 3,
+     "n": 5,
+     "pedido": "O Tico",
+     "cesta": {
+      "x": 430,
+      "y": 780
+     }
+    },
+    {
+     "tipo": "trazer_exato",
+     "alvo": 5,
+     "n": 8,
+     "pedido": "O Tico",
+     "cesta": {
+      "x": 760,
+      "y": 560
+     }
+    },
+    {
+     "tipo": "trazer_exato",
+     "alvo": 4,
+     "n": 7,
+     "pedido": "O Tico",
+     "cesta": {
+      "x": 560,
+      "y": 620
+     }
+    },
+    {
+     "tipo": "trazer_exato",
+     "alvo": 6,
+     "n": 9,
+     "pedido": "O Tico",
+     "cesta": {
+      "x": 1000,
+      "y": 520
+     }
+    },
+    {
+     "tipo": "trazer_exato",
+     "alvo": 8,
+     "n": 10,
+     "pedido": "O Tico",
+     "cesta": {
+      "x": 900,
+      "y": 760
+     }
+    }
+   ]
   }
+ },
+ "falas": [
+  "n0",
+  "n1",
+  "n2",
+  "n3",
+  "n4",
+  "n5",
+  "n6",
+  "n7",
+  "n8",
+  "n9",
+  "n10",
+  "aula_intro_trazer_exato",
+  "aula_dica_trazer_exato",
+  "aula_demais",
+  "aula_falta",
+  "aula_ok",
+  "aula_ok_0",
+  "aula_ok_1",
+  "aula_ok_2",
+  "aula_ok_3",
+  "aula_ok_4",
+  "aula_fim",
+  "tico0",
+  "tico1",
+  "tico2",
+  "tico3"
+ ],
+ "audit": {
+  "chegar": [],
+  "colisao": [
+   [
+    160,
+    520,
+    -40,
+    0
+   ]
+  ]
+ }
 }

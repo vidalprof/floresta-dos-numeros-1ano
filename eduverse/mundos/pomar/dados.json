@@ -1,369 +1,369 @@
 {
-  "slug": "pomar",
-  "tema": {
-    "part": "folha",
-    "ceu0": "rgba(255,236,170,.10)",
-    "ceu1": "rgba(30,20,60,.12)",
-    "passaros": true,
-    "borboletas": true,
-    "titulo": "O Pomar do Byte",
-    "emoji": "&#127822;"
-  },
-  "assets": {
-    "grama": "grama",
-    "caminho": "caminho",
-    "arvore": "arvore",
-    "byte": "byte",
-    "flores": "flores",
-    "muro": "muro",
-    "cabana": "cabana",
-    "passaro": "passarinho",
-    "borboleta": "borboleta",
-    "coelho": "coelho",
-    "gato": "gato",
-    "fruta": "fruta",
-    "cesta": "cesta",
-    "sacola10": "sacola10"
-  },
-  "mundo": {
-    "WW": 1500,
-    "WH": 1050,
-    "start": [
-      250,
-      860
-    ],
-    "tr": 16,
-    "historia": {
-      "objetivo": "colher",
-      "sub_pc": "use as SETAS do teclado p/ o Byte andar &#183; toca nas frutinhas e ajuda o Tico a colher e contar!",
-      "sub_touch": "use o D-pad p/ o Byte andar &#183; toca nas frutinhas e ajuda o Tico a colher e contar!"
-    },
-    "poeira": true,
-    "dialogo": {
-      "cps": 26
-    },
-    "path": [
-      [
-        250,
-        860
-      ],
-      [
-        380,
-        740
-      ],
-      [
-        300,
-        600
-      ],
-      [
-        510,
-        510
-      ],
-      [
-        690,
-        560
-      ],
-      [
-        840,
-        470
-      ],
-      [
-        1010,
-        450
-      ],
-      [
-        1150,
-        400
-      ]
-    ],
-    "trees": [
-      [
-        120,
-        520
-      ],
-      [
-        150,
-        780
-      ],
-      [
-        470,
-        880
-      ],
-      [
-        640,
-        300
-      ],
-      [
-        430,
-        360
-      ],
-      [
-        760,
-        700
-      ],
-      [
-        560,
-        690
-      ],
-      [
-        900,
-        540
-      ],
-      [
-        1050,
-        760
-      ],
-      [
-        1230,
-        520
-      ],
-      [
-        1180,
-        900
-      ],
-      [
-        330,
-        470
-      ],
-      [
-        720,
-        210
-      ],
-      [
-        980,
-        180
-      ],
-      [
-        1300,
-        300
-      ],
-      [
-        210,
-        300
-      ],
-      [
-        880,
-        860
-      ],
-      [
-        1080,
-        420
-      ],
-      [
-        640,
-        930
-      ],
-      [
-        400,
-        640
-      ]
-    ],
-    "flores": [
-      [
-        420,
-        800
-      ],
-      [
-        300,
-        690
-      ],
-      [
-        560,
-        560
-      ],
-      [
-        700,
-        470
-      ],
-      [
-        860,
-        520
-      ],
-      [
-        1000,
-        430
-      ],
-      [
-        1120,
-        330
-      ],
-      [
-        240,
-        820
-      ],
-      [
-        640,
-        640
-      ],
-      [
-        900,
-        700
-      ]
-    ],
-    "props": [
-      {
-        "tipo": "cabana",
-        "x": 1090,
-        "y": 600,
-        "h": 210,
-        "cx": -56,
-        "cy": 186,
-        "r": 64
-      },
-      {
-        "tipo": "lampiao",
-        "x": 1162,
-        "y": 626,
-        "h": 60,
-        "r": 8
-      }
-    ],
-    "npcs": [
-      {
-        "sprite": "coelho",
-        "x": 410,
-        "y": 792,
-        "nome": "Tico",
-        "escala": 0.95,
-        "falas": [
-          {
-            "texto": "O frio tá chegando! Me ajuda o Byte a colher e contar as frutas do pomar? Toca nas frutinhas!",
-            "id": "npc0"
-          },
-          "Brrr! Minhas orelhas já sentem o ventinho gelado. Quanto mais frutinhas, mais quentinho fica o inverno!",
-          "Essas frutinhas são as mais doces do pomar! Vamos contar cada uma que a gente colher?",
-          "Obrigado por ajudar, Byte! Com você contando, a colheita fica muito mais divertida!"
-        ]
-      }
-    ],
-    "aula": {
-      "id": "col1ano",
-      "fim": "Que colheita! Você contou de 1 até 30 sozinho! O Tico vai ter comida o inverno todo. Até a próxima aventura!",
-      "rounds": [
-        {
-          "tipo": "contar",
-          "n": 3,
-          "cesta": {
-            "x": 520,
-            "y": 780
-          }
-        },
-        {
-          "tipo": "contar",
-          "n": 5,
-          "cesta": {
-            "x": 900,
-            "y": 520
-          }
-        },
-        {
-          "tipo": "ordenar",
-          "n": 5,
-          "cesta": {
-            "x": 700,
-            "y": 640
-          }
-        },
-        {
-          "tipo": "contar",
-          "n": 10,
-          "cesta": {
-            "x": 1040,
-            "y": 450
-          }
-        },
-        {
-          "tipo": "trazer_exato",
-          "alvo": 7,
-          "n": 10,
-          "pedido": "O Tico",
-          "cesta": {
-            "x": 720,
-            "y": 640
-          }
-        },
-        {
-          "tipo": "agrupar",
-          "n": 20,
-          "cesta": {
-            "x": 560,
-            "y": 620
-          }
-        },
-        {
-          "tipo": "agrupar",
-          "n": 30,
-          "cesta": {
-            "x": 920,
-            "y": 800
-          }
-        }
-      ]
-    }
-  },
-  "falas": [
-    "n0",
-    "n1",
-    "n2",
-    "n3",
-    "n4",
-    "n5",
-    "n6",
-    "n7",
-    "n8",
-    "n9",
-    "n10",
-    "n11",
-    "n12",
-    "n13",
-    "n14",
-    "n15",
-    "n16",
-    "n17",
-    "n18",
-    "n19",
-    "n20",
-    "n21",
-    "n22",
-    "n23",
-    "n24",
-    "n25",
-    "n26",
-    "n27",
-    "n28",
-    "n29",
-    "n30",
-    "aula_intro_contar",
-    "aula_intro_ordenar",
-    "aula_intro_trazer_exato",
-    "aula_intro_agrupar",
-    "aula_dica_contar",
-    "aula_dica_ordenar",
-    "aula_dica_trazer_exato",
-    "aula_dica_agrupar",
-    "aula_ordem",
-    "aula_demais",
-    "aula_falta",
-    "aula_ok",
-    "aula_ok_0",
-    "aula_ok_1",
-    "aula_ok_2",
-    "aula_ok_3",
-    "aula_ok_4",
-    "aula_ok_5",
-    "aula_ok_6",
-    "aula_fim",
-    "npc0"
+ "slug": "pomar",
+ "tema": {
+  "part": "folha",
+  "ceu0": "rgba(255,236,170,.10)",
+  "ceu1": "rgba(30,20,60,.12)",
+  "passaros": true,
+  "borboletas": true,
+  "titulo": "O Pomar do Byte",
+  "emoji": "&#127822;"
+ },
+ "assets": {
+  "grama": "grama",
+  "caminho": "caminho",
+  "arvore": "arvore",
+  "byte": "byte",
+  "flores": "flores",
+  "muro": "muro",
+  "cabana": "cabana",
+  "passaro": "passarinho",
+  "borboleta": "borboleta",
+  "coelho": "coelho",
+  "gato": "gato",
+  "fruta": "fruta",
+  "cesta": "cesta",
+  "sacola10": "sacola10"
+ },
+ "mundo": {
+  "WW": 1500,
+  "WH": 1050,
+  "start": [
+   250,
+   860
   ],
-  "audit": {
-    "chegar": [],
-    "colisao": [
-      [
-        160,
-        520,
-        -40,
-        0
-      ]
+  "tr": 16,
+  "historia": {
+   "objetivo": "colher",
+   "sub_pc": "use as SETAS do teclado p/ o Byte andar &#183; toca nas frutinhas e ajuda o Tico a colher e contar!",
+   "sub_touch": "use o D-pad p/ o Byte andar &#183; toca nas frutinhas e ajuda o Tico a colher e contar!"
+  },
+  "poeira": true,
+  "dialogo": {
+   "cps": 26
+  },
+  "path": [
+   [
+    250,
+    860
+   ],
+   [
+    380,
+    740
+   ],
+   [
+    300,
+    600
+   ],
+   [
+    510,
+    510
+   ],
+   [
+    690,
+    560
+   ],
+   [
+    840,
+    470
+   ],
+   [
+    1010,
+    450
+   ],
+   [
+    1150,
+    400
+   ]
+  ],
+  "trees": [
+   [
+    1303,
+    587
+   ],
+   [
+    250,
+    238
+   ],
+   [
+    257,
+    685
+   ],
+   [
+    802,
+    901
+   ],
+   [
+    683,
+    238
+   ],
+   [
+    1258,
+    324
+   ],
+   [
+    458,
+    698
+   ],
+   [
+    1283,
+    757
+   ],
+   [
+    803,
+    728
+   ],
+   [
+    218,
+    409
+   ],
+   [
+    464,
+    400
+   ],
+   [
+    431,
+    245
+   ],
+   [
+    449,
+    885
+   ],
+   [
+    645,
+    758
+   ],
+   [
+    1087,
+    863
+   ],
+   [
+    679,
+    476
+   ],
+   [
+    888,
+    234
+   ],
+   [
+    1026,
+    325
+   ],
+   [
+    817,
+    397
+   ],
+   [
+    1237,
+    925
+   ]
+  ],
+  "flores": [
+   [
+    420,
+    800
+   ],
+   [
+    300,
+    690
+   ],
+   [
+    560,
+    560
+   ],
+   [
+    700,
+    470
+   ],
+   [
+    860,
+    520
+   ],
+   [
+    1000,
+    430
+   ],
+   [
+    1120,
+    330
+   ],
+   [
+    240,
+    820
+   ],
+   [
+    640,
+    640
+   ],
+   [
+    900,
+    700
+   ]
+  ],
+  "props": [
+   {
+    "tipo": "cabana",
+    "x": 1090,
+    "y": 600,
+    "h": 210,
+    "cx": -56,
+    "cy": 186,
+    "r": 64
+   },
+   {
+    "tipo": "lampiao",
+    "x": 1162,
+    "y": 626,
+    "h": 60,
+    "r": 8
+   }
+  ],
+  "npcs": [
+   {
+    "sprite": "coelho",
+    "x": 410,
+    "y": 792,
+    "nome": "Tico",
+    "escala": 0.95,
+    "falas": [
+     {
+      "texto": "O frio tá chegando! Me ajuda o Byte a colher e contar as frutas do pomar? Toca nas frutinhas!",
+      "id": "npc0"
+     },
+     "Brrr! Minhas orelhas já sentem o ventinho gelado. Quanto mais frutinhas, mais quentinho fica o inverno!",
+     "Essas frutinhas são as mais doces do pomar! Vamos contar cada uma que a gente colher?",
+     "Obrigado por ajudar, Byte! Com você contando, a colheita fica muito mais divertida!"
     ]
+   }
+  ],
+  "aula": {
+   "id": "col1ano",
+   "fim": "Que colheita! Você contou de 1 até 30 sozinho! O Tico vai ter comida o inverno todo. Até a próxima aventura!",
+   "rounds": [
+    {
+     "tipo": "contar",
+     "n": 3,
+     "cesta": {
+      "x": 520,
+      "y": 780
+     }
+    },
+    {
+     "tipo": "contar",
+     "n": 5,
+     "cesta": {
+      "x": 900,
+      "y": 520
+     }
+    },
+    {
+     "tipo": "ordenar",
+     "n": 5,
+     "cesta": {
+      "x": 700,
+      "y": 640
+     }
+    },
+    {
+     "tipo": "contar",
+     "n": 10,
+     "cesta": {
+      "x": 1040,
+      "y": 450
+     }
+    },
+    {
+     "tipo": "trazer_exato",
+     "alvo": 7,
+     "n": 10,
+     "pedido": "O Tico",
+     "cesta": {
+      "x": 720,
+      "y": 640
+     }
+    },
+    {
+     "tipo": "agrupar",
+     "n": 20,
+     "cesta": {
+      "x": 560,
+      "y": 620
+     }
+    },
+    {
+     "tipo": "agrupar",
+     "n": 30,
+     "cesta": {
+      "x": 920,
+      "y": 800
+     }
+    }
+   ]
   }
+ },
+ "falas": [
+  "n0",
+  "n1",
+  "n2",
+  "n3",
+  "n4",
+  "n5",
+  "n6",
+  "n7",
+  "n8",
+  "n9",
+  "n10",
+  "n11",
+  "n12",
+  "n13",
+  "n14",
+  "n15",
+  "n16",
+  "n17",
+  "n18",
+  "n19",
+  "n20",
+  "n21",
+  "n22",
+  "n23",
+  "n24",
+  "n25",
+  "n26",
+  "n27",
+  "n28",
+  "n29",
+  "n30",
+  "aula_intro_contar",
+  "aula_intro_ordenar",
+  "aula_intro_trazer_exato",
+  "aula_intro_agrupar",
+  "aula_dica_contar",
+  "aula_dica_ordenar",
+  "aula_dica_trazer_exato",
+  "aula_dica_agrupar",
+  "aula_ordem",
+  "aula_demais",
+  "aula_falta",
+  "aula_ok",
+  "aula_ok_0",
+  "aula_ok_1",
+  "aula_ok_2",
+  "aula_ok_3",
+  "aula_ok_4",
+  "aula_ok_5",
+  "aula_ok_6",
+  "aula_fim",
+  "npc0"
+ ],
+ "audit": {
+  "chegar": [],
+  "colisao": [
+   [
+    160,
+    520,
+    -40,
+    0
+   ]
+  ]
+ }
 }
