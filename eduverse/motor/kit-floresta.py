@@ -64,8 +64,8 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  body.touch .subPC{display:none;} body.touch .subTouch{display:block;} body.touch #dpad{display:grid;}
 </style></head><body><div id="wrap">
  <h1>__EMOJI__ __TITULO__</h1>
- <p class="sub subPC">use as SETAS do teclado p/ o Byte andar &#183; pegue a chave dourada &#128273; &#183; leve-a at&#233; o labirinto</p>
- <p class="sub subTouch">use o D-pad p/ o Byte andar &#183; pegue a chave dourada &#128273; &#183; leve-a at&#233; o labirinto</p>
+ <p class="sub subPC">__SUB_PC__</p>
+ <p class="sub subTouch">__SUB_TOUCH__</p>
  <div id="frame"><canvas id="tela" width="720" height="500"></canvas></div>
  <div id="dpad">
    <button class="dU" id="dU">&#9650;</button>
@@ -76,6 +76,7 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
 </div><script>
 var cv=document.getElementById("tela"),cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
+var HIST=(typeof MUNDO!=="undefined"&&MUNDO.historia)?MUNDO.historia:{}; // historia data-driven (default {} = floresta identica)
 var IMG={},carreg=0,NN=0;for(var kk in SRC)NN++;
 for(var k in SRC){(function(key){var im=new Image();im.onload=function(){IMG[key]=im;if(++carreg===NN)iniciar();};im.onerror=function(){if(++carreg===NN)iniciar();};im.src=SRC[key];})(k);}
 var IS_TOUCH=(("ontouchstart" in window)||(navigator.maxTouchPoints>0)||(window.matchMedia&&window.matchMedia("(pointer:coarse)").matches)||(location.search.indexOf("dpad=1")>=0));
@@ -147,7 +148,7 @@ var nuvSombra=[],nuvCeu=[];
 var npcs=[];(function(){var L=(typeof MUNDO!=="undefined"&&MUNDO.npcs)?MUNDO.npcs:[];
  for(var i=0;i<L.length;i++){var d=L[i];
   npcs.push({sprite:d.sprite,x:d.x,y:d.y,ox:d.x,oy:d.y,
-   esc:d.escala||1,vel:d.vel||30,nome:d.nome||"",fala:d.fala||"",
+   esc:d.escala||1,vel:d.vel||30,nome:d.nome||"",fala:d.fala||"",falas:d.falas||null,fi:0,
    rota:d.rota||null,ri:0,paus:0,dir:1,mvx:0,passo:0,
    olha:0,acen:0,cd:0});}})();
 
@@ -156,6 +157,7 @@ var npcs=[];(function(){var L=(typeof MUNDO!=="undefined"&&MUNDO.npcs)?MUNDO.npc
 /* Colocar junto do bloco de estado data-driven (logo após a montagem de `npcs`, ~linha 150). */
 var AULA=(typeof MUNDO!=="undefined"&&MUNDO.aula&&MUNDO.aula.rounds&&MUNDO.aula.rounds.length)?MUNDO.aula:null;
 var MODO_AULA=!!AULA;                 // false => nada roda; motor chave->arco IDÊNTICO
+var OBJETIVO=(HIST.objetivo)?HIST.objetivo:(MODO_AULA?"colher":"chave"); // interruptor da mecanica da chave
 var rIdx=-1,rRound=null,rTipo="",rN=0,rAlvo=0,rCesta=null;
 var rColhidas=0,rNaCesta=0,rExtra=0,rProx=1,rGrupos=0;   // contadores por tipo
 var rItens=[],rFly=[],rBadges=[];     // frutas no mundo / frutas voando p/ cesta / badges de número
@@ -221,7 +223,7 @@ function balao(t,id,pitch){balaoNPC("Byte",t,id,pitch);}
 function balaoFecha(){balaoT=0;balaoFull="";balaoFimTxt=false;balaoAlvo=null;}
 function unlock(){initAudio();if(!window._u&&window.speechSynthesis){window._u=1;try{speechSynthesis.speak(new SpeechSynthesisUtterance(" "));}catch(e){}}}
 function toggleSom(){unlock();som=!som;if(ambMaster)ambMaster.gain.value=som?0.85:0;
- if(som){if(MODO_AULA){rodadaFala(true);}else if(!hasKey)balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
+ if(som){if(MODO_AULA){rodadaFala(true);}else if(!hasKey)balao((HIST.intro&&HIST.intro.txt)||"Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.",(HIST.intro&&HIST.intro.id)||"s1_intro");}
  else{pararVoz();}}
 cv.addEventListener("mousedown",function(e){cliqueCv(e.clientX,e.clientY);});
 cv.addEventListener("touchstart",function(e){if(e.touches[0]){cliqueCv(e.touches[0].clientX,e.touches[0].clientY);}},{passive:false});
@@ -263,7 +265,7 @@ function iniciar(){patG=IMG.grama?cx.createPattern(IMG.grama,"repeat"):null;
  patC=IMG.caminho?cx.createPattern(IMG.caminho,"repeat"):null;
  var p=cellCam();cam.x=p[0];cam.y=p[1];
  if(IMG.borboleta)for(var i=0;i<3;i++)borbs.push({x:FLORES[i*3][0]+40,y:FLORES[i*3][1]-30,ang:Math.random()*6.28,ph:Math.random()*6.28,t:Math.random()*6.28});
- if(MODO_AULA){aulaInit();}else{balao("Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.","s1_intro");}
+ if(MODO_AULA){aulaInit();}else{balao((HIST.intro&&HIST.intro.txt)||"Vamos passear pela floresta! Use as setas para o Byte andar e pegar a chave dourada.",(HIST.intro&&HIST.intro.id)||"s1_intro");}
  requestAnimationFrame(frame);}
 var patG=null,patC=null;
 function cellCam(){return [Math.max(0,Math.min(WW-VW,byte.x-VW/2)), Math.max(0,Math.min(WH-VH,byte.y-VH/2))];}
@@ -487,20 +489,25 @@ function rodadaCarrega(idx){
    seed:(it.x*0.7+it.y*0.31),cor:_corFruta(i,it)});}
  _salvaProg(idx);rodadaAnuncia(); }
 
-function rodadaAnuncia(){ var msg="";
- if(rTipo==="contar") msg="Vamos colher "+rN+" frutinhas! Conta comigo a cada uma.";
+function rodadaAnuncia(){ var AT=(AULA&&AULA.textos)?AULA.textos:{},msg="";
+ if(AT.anuncio&&AT.anuncio[rTipo]) msg=_txtRodada(AT.anuncio[rTipo]);
+ else if(rTipo==="contar") msg="Vamos colher "+rN+" frutinhas! Conta comigo a cada uma.";
  else if(rTipo==="ordenar") msg="Colhe na ordem! Começa do um. Qual vem primeiro?";
  else if(rTipo==="trazer_exato") msg=(rRound.pedido||"O amiguinho")+" precisa de exatamente "+rAlvo+" na cesta. Vamos ajudar!";
  else if(rTipo==="agrupar") msg="Agora contamos de dez em dez! Pega as sacolas de dez.";
  balaoNPC("Byte",msg,"aula_intro_"+rTipo,1.12); }
+// substituicao simples de variaveis nos textos de aula vindos dos DADOS
+function _txtRodada(s){return String(s).replace("{n}",rN).replace("{alvo}",rAlvo).replace("{prox}",rProx).replace("{pedido}",(rRound&&rRound.pedido)||"O amiguinho");}
 function rodadaFala(forcar){ if(rEstado==="rodada"){ if(forcar)rodadaAnuncia(); else byteDica(); } }
 
 /* Byte PERGUNTA (nunca entrega a resposta) */
-function byteDica(){ if(rEstado!=="rodada")return; var q="";
- if(rTipo==="contar") q="Quantas já colhemos? Vamos ver!";
- else if(rTipo==="ordenar"){ q="Qual número vem primeiro agora? Procura o "+rProx+"!"; _piscaProx(); }
+function byteDica(){ if(rEstado!=="rodada")return; var AT=(AULA&&AULA.textos)?AULA.textos:{},q="";
+ if(AT.dica&&AT.dica[rTipo]) q=_txtRodada(AT.dica[rTipo]);
+ else if(rTipo==="contar") q="Quantas já colhemos? Vamos ver!";
+ else if(rTipo==="ordenar") q="Qual número vem primeiro agora? Procura o "+rProx+"!";
  else if(rTipo==="trazer_exato") q="Quantas faltam para chegar em "+rAlvo+"?";
  else if(rTipo==="agrupar") q="Quantos grupos de dez já temos?";
+ if(rTipo==="ordenar")_piscaProx();
  balaoNPC("Byte",q,"aula_dica_"+rTipo,1.12); }
 function _piscaProx(){for(var i=0;i<rItens.length;i++)if(!rItens[i].got&&rItens[i].n===rProx)rItens[i].blinkT=1.6;}
 
@@ -809,9 +816,13 @@ function updateNPCs(dt,t){
   if(perto){                                                       // INTERACAO: encara o Byte
    n.olha=Math.min(1,n.olha+dt*4);
    if(dbx<-4)n.dir=-1;else if(dbx>4)n.dir=1;                       // olha na direcao dele
-   if(n.fala&&n.cd<=0){n.cd=8;n.acen=1.0;                          // fala 1x, reacena so apos 8s
-    if(typeof balaoNPC==="function")balaoNPC(n.nome,n.fala,"npc"+i,null,n);
-    else balao(n.nome?n.nome+": "+n.fala:n.fala,"npc"+i);}         // fallback: balao atual
+   if((n.fala||(n.falas&&n.falas.length))&&n.cd<=0){n.cd=8;n.acen=1.0; // fala 1x, reacena so apos 8s
+    var nf=n.fala,nid="npc"+i;                                     // padrao: fala unica (como hoje)
+    if(n.falas&&n.falas.length){n.fi=(n.fi||0);var fo=n.falas[n.fi%n.falas.length];n.fi++;
+     if(typeof fo==="string"){nf=fo;nid=null;}                     // string simples -> TTS
+     else{nf=fo.texto||"";nid=fo.id||null;}}                       // objeto {texto,id}
+    if(typeof balaoNPC==="function")balaoNPC(n.nome,nf,nid,null,n);
+    else balao(n.nome?n.nome+": "+nf:nf,nid);}                     // fallback: balao atual
   } else { n.olha=Math.max(0,n.olha-dt*2); }
   if(n.acen>0)n.acen-=dt;
   // ROTINA: patrulha a rota devagar; congela enquanto encara o Byte
@@ -884,12 +895,12 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  // ---- camera segue ----
  var cc=cellCam();cam.x+=(cc[0]-cam.x)*Math.min(1,dt*6);cam.y+=(cc[1]-cam.y)*Math.min(1,dt*6);
  // ---- pega a chave ----
- if(!MODO_AULA&&!chave.got){var dx=byte.x-chave.x,dy=byte.y-chave.y;if(dx*dx+dy*dy<40*40){chave.got=true;hasKey=true;somChave();
+ if(OBJETIVO==="chave"&&!chave.got){var dx=byte.x-chave.x,dy=byte.y-chave.y;if(dx*dx+dy*dy<40*40){chave.got=true;hasKey=true;somChave();
    for(var i=0;i<18;i++)estrelas.push({x:chave.x,y:chave.y-6,vx:Math.random()*80-40,vy:-(40+Math.random()*70),a:1,r:3+Math.random()*4});
-   balao("Peguei a chave dourada! Agora vamos procurar o labirinto de pedra.","s1_chave");}}
+   balao((HIST.chaveFala&&HIST.chaveFala.txt)||"Peguei a chave dourada! Agora vamos procurar o labirinto de pedra.",(HIST.chaveFala&&HIST.chaveFala.id)||"s1_chave");}}
  // ---- chega no arco (com a chave) ----
- if(!MODO_AULA&&hasKey&&!fim){var ax=byte.x-arco.x,ay=byte.y-(arco.y-16);if(ax*ax+ay*ay<80*80){fim=true;fimT=0;somVitoria();
-   balao("Ali está o labirinto de pedra! É onde o Nimbo prendeu os amiguinhos. Na próxima aventura a gente entra para salvá-los.","s1_labirinto");}}
+ if(OBJETIVO==="chave"&&hasKey&&!fim){var ax=byte.x-arco.x,ay=byte.y-(arco.y-16);if(ax*ax+ay*ay<80*80){fim=true;fimT=0;somVitoria();
+   balao((HIST.arcoFala&&HIST.arcoFala.txt)||"Ali está o labirinto de pedra! É onde o Nimbo prendeu os amiguinhos. Na próxima aventura a gente entra para salvá-los.",(HIST.arcoFala&&HIST.arcoFala.id)||"s1_labirinto");}}
  if(fim)fimT+=dt;
  updateNPCs(dt,t); // IA dos NPCs: rotina/patrulha + interacao com o Byte
 
@@ -942,8 +953,8 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
  // lista y-sort: arvores + chave + byte + arco
  var draws=[];
  for(i=0;i<TREES.length;i++)draws.push({y:TREES[i][1],f:(function(o){return function(){desArvore(o,t);};})(TREES[i])});
- if(!MODO_AULA&&!chave.got)draws.push({y:chave.y,f:function(){desChave(t);}});
- if(!MODO_AULA)draws.push({y:arco.y,f:function(){desArco(t);}});
+ if(OBJETIVO==="chave"&&!chave.got)draws.push({y:chave.y,f:function(){desChave(t);}});
+ if(OBJETIVO==="chave")draws.push({y:arco.y,f:function(){desArco(t);}});
  draws.push({y:byte.y,f:function(){desByte(t);}});
 
  if(MODO_AULA){ // frutas + cesta entram no y-sort (o Byte passa na frente/atrás corretamente)
@@ -1002,15 +1013,15 @@ var lg=cx.createLinearGradient(0,0,0,VH);lg.addColorStop(0,TEMA.ceu0);lg.addColo
  for(i=0;i<3;i++){cx.save();cx.translate(140+i*220,0);cx.rotate(0.32);cx.fillRect(-30,-40,60,VH*1.6);cx.restore();}cx.restore();cx.globalAlpha=1;}
  // ---- HUD ----
  cx.fillStyle="rgba(8,16,30,.55)";cx.fillRect(0,0,VW,26);cx.fillStyle="#ffe38a";cx.font="bold 13px Verdana";cx.textAlign="center";
- if(MODO_AULA){desHUDrodada();}else{cx.fillText(hasKey?"Leve a chave dourada até o labirinto de pedra 🔑":"Passeie pela floresta e pegue a chave dourada 🔑",VW/2,17);}
+ if(OBJETIVO==="chave"){cx.fillText(hasKey?(HIST.hud_com||"Leve a chave dourada até o labirinto de pedra 🔑"):(HIST.hud||"Passeie pela floresta e pegue a chave dourada 🔑"),VW/2,17);}else if(MODO_AULA){desHUDrodada();}
  desBotaoSom();
 
  if(MODO_AULA) aulaOverlay(t); // comemoração de fim de rodada + tela de fim de aula (TELA; o balão do Byte fica por cima)
  // balao acima do Byte
  var _spk=balaoAlvo||byte;balaoDes(_spk.x-cam.x, _spk.y-cam.y);   // caixa acima de QUEM fala (Byte ou NPC)
  if(fim&&fimT>1.2){cx.fillStyle="rgba(6,10,22,"+Math.min(.55,(fimT-1.2)*.6)+")";cx.fillRect(0,0,VW,VH);
-  cx.fillStyle="#ffe38a";cx.font="bold 22px Verdana";cx.textAlign="center";cx.fillText("✨ Fim da Etapa 1 ✨",VW/2,VH/2-10);
-  cx.fillStyle="#eaf2ff";cx.font="13px Verdana";cx.fillText("Na próxima: entrar no labirinto e empurrar as pedras-seta!",VW/2,VH/2+18);}
+  cx.fillStyle="#ffe38a";cx.font="bold 22px Verdana";cx.textAlign="center";cx.fillText(HIST.fimTitulo||"✨ Fim da Etapa 1 ✨",VW/2,VH/2-10);
+  cx.fillStyle="#eaf2ff";cx.font="13px Verdana";cx.fillText(HIST.ganchoProx||"Na próxima: entrar no labirinto e empurrar as pedras-seta!",VW/2,VH/2+18);}
  climaFlash(); // FLASH do raio por CIMA de tudo (ultimo desenho do frame)
  requestAnimationFrame(frame);
 }
@@ -1075,6 +1086,9 @@ window._qaState=function(){return {hasKey:hasKey,fim:fim,bx:Math.round(byte.x),b
 </script></body></html>"""
 HTML=HTML.replace("__SRC_JSON__",SRC_JSON).replace("__FALAS_JSON__",FALAS_JSON).replace("__THEME_JS__",THEMEJS)
 HTML=HTML.replace("__TITULO__",CFG["titulo"]).replace("__EMOJI__",CFG["emoji"])
+# standalone: subtitulos da floresta (o montador injeta __SUB_PC__/__SUB_TOUCH__ dos dados)
+HTML=HTML.replace("__SUB_PC__","use as SETAS do teclado p/ o Byte andar &#183; pegue a chave dourada &#128273; &#183; leve-a at&#233; o labirinto")
+HTML=HTML.replace("__SUB_TOUCH__","use o D-pad p/ o Byte andar &#183; pegue a chave dourada &#128273; &#183; leve-a at&#233; o labirinto")
 out=os.path.join(S,"byte-%s.html"%TEMA)
 open(out,"w",encoding="utf-8").write(HTML)
 print("OK ->",out,"(",round(len(HTML)/1024),"KB ) TEMA:",TEMA,"imgs:",sorted(SRCJS.keys()),"falas:",sorted(FAL.keys()))

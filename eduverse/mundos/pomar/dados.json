@@ -16,8 +16,12 @@
     "fruta": "fruta", "cesta": "cesta", "sacola10": "sacola10"
   },
   "mundo": {
-    "WW": 1500, "WH": 1050, "start": [250, 860], "chave": [560, 470],
-    "arco": [1150, 340], "tr": 16,
+    "WW": 1500, "WH": 1050, "start": [250, 860], "tr": 16,
+    "historia": {
+      "objetivo": "colher",
+      "sub_pc": "use as SETAS do teclado p/ o Byte andar &#183; toca nas frutinhas e ajuda o Tico a colher e contar!",
+      "sub_touch": "use o D-pad p/ o Byte andar &#183; toca nas frutinhas e ajuda o Tico a colher e contar!"
+    },
     "poeira": true,
     "dialogo": {"cps": 26},
     "path": [[250,860],[380,740],[300,600],[510,510],[690,560],[840,470],[1010,450],[1150,400]],
@@ -28,7 +32,13 @@
       {"tipo":"lampiao","x":1162,"y":626,"h":60,"r":8}
     ],
     "npcs": [
-      {"sprite":"coelho","x":410,"y":792,"nome":"Tico","fala":"O frio tá chegando! Me ajuda o Byte a colher e contar as frutas do pomar? Toca nas frutinhas!","escala":0.95}
+      {"sprite":"coelho","x":410,"y":792,"nome":"Tico","escala":0.95,
+       "falas":[
+         {"texto":"O frio tá chegando! Me ajuda o Byte a colher e contar as frutas do pomar? Toca nas frutinhas!","id":"npc0"},
+         "Brrr! Minhas orelhas já sentem o ventinho gelado. Quanto mais frutinhas, mais quentinho fica o inverno!",
+         "Essas frutinhas são as mais doces do pomar! Vamos contar cada uma que a gente colher?",
+         "Obrigado por ajudar, Byte! Com você contando, a colheita fica muito mais divertida!"
+       ]}
     ],
     "aula": {
       "id": "col1ano",

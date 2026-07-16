@@ -24,8 +24,9 @@ tpl=tpl.replace('var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;'
 tpl=tpl.replace('var WW=1500,WH=1050;','var WW=MUNDO.WW,WH=MUNDO.WH;')
 tpl=tpl.replace('var byte={x:250,y:860,dir:1,resp:0,passo:0,mov:false,r:18};',
                 'var byte={x:MUNDO.start[0],y:MUNDO.start[1],dir:1,resp:0,passo:0,mov:false,r:18};')
-tpl=tpl.replace('var chave={x:560,y:470,got:false,bob:0};','var chave={x:MUNDO.chave[0],y:MUNDO.chave[1],got:false,bob:0};')
-tpl=tpl.replace('var arco={x:1150,y:340};','var arco={x:MUNDO.arco[0],y:MUNDO.arco[1]};')
+# chave/arco OPCIONAIS: mundo sem a mecanica da chave nao pode quebrar (guarda no JS gerado)
+tpl=tpl.replace('var chave={x:560,y:470,got:false,bob:0};','var _chv=(MUNDO.chave||[0,0]);var chave={x:_chv[0],y:_chv[1],got:false,bob:0};')
+tpl=tpl.replace('var arco={x:1150,y:340};','var _arc=(MUNDO.arco||[0,0]);var arco={x:_arc[0],y:_arc[1]};')
 tpl=tpl.replace('var PATH=[[250,860],[380,740],[300,600],[510,510],[690,560],[840,470],[1010,450],[1150,400]];','var PATH=MUNDO.path;')
 tpl=re.sub(r'var TREES=\[\[120,520\].*?\[400,640\]\];','var TREES=MUNDO.trees;',tpl,flags=re.S)
 tpl=tpl.replace('var TR=16; // raio tronco','var TR=MUNDO.tr;')
@@ -56,9 +57,17 @@ THEMEJS=json.dumps({"part":tema["part"],"ceu0":tema["ceu0"],"ceu1":tema["ceu1"],
 html=tpl.replace("__SRC_JSON__",json.dumps(SRCJS)).replace("__FALAS_JSON__",json.dumps(FAL))
 html=html.replace("__THEME_JS__",THEMEJS).replace("__MUNDO_JS__",json.dumps(mundo))
 html=html.replace("__TITULO__",tema["titulo"]).replace("__EMOJI__",tema["emoji"])
+# ---- SUBTITULOS (historia mora em dados["mundo"]["historia"]; fallback = textos da floresta) ----
+hist=mundo.get("historia",{}) if isinstance(mundo.get("historia",{}),dict) else {}
+SUB_PC_PADRAO="use as SETAS do teclado p/ o Byte andar &#183; pegue a chave dourada &#128273; &#183; leve-a at&#233; o labirinto"
+SUB_TOUCH_PADRAO="use o D-pad p/ o Byte andar &#183; pegue a chave dourada &#128273; &#183; leve-a at&#233; o labirinto"
+html=html.replace("__SUB_PC__",hist.get("sub_pc",SUB_PC_PADRAO))
+html=html.replace("__SUB_TOUCH__",hist.get("sub_touch",SUB_TOUCH_PADRAO))
 
+# ---- SANIDADE FORTE: nenhum placeholder pode sobrar em lugar NENHUM do HTML ----
+_sobras=re.findall(r'__[A-Z_]+__',html)
+if _sobras:
+    sys.exit("ERRO: placeholder nao substituido: "+", ".join(sorted(set(_sobras))))
 outdir=os.path.join(REPO,"eduverse","dist",slug); os.makedirs(outdir,exist_ok=True)
 out=os.path.join(outdir,"index.html"); open(out,"w",encoding="utf-8").write(html)
-if "__" in html.split("<script>")[1][:400]:  # sanidade: sobrou placeholder?
-    print("!! ATENCAO: placeholder nao substituido")
 print("OK ->",out,"(",round(len(html)/1024),"KB ) assets:",sorted(SRCJS.keys()),"falas:",sorted(FAL.keys()))
