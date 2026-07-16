@@ -690,9 +690,9 @@ function corPlaca(nome){ if(nome==="Byte")return "#3ec6a6";
  var HS=["#e08a3c","#5aa0e0","#c56ad0","#7bb84a","#e0693c","#4ab0c0"];return HS[h%HS.length]; }
 // caixa de dialogo RPG. (ancX,feetY) = base do personagem na TELA
 function balaoDes(ancX,feetY){ if(!(balaoT>0&&balaoFull))return;
- var PAD=12,LH=18,MAXW=340,GAP=14,TOPO=30,fundo="rgba(18,26,48,.9)"; // TOPO=abaixo da HUD (26px)
+ var PAD=8,LH=15,MAXW=238,GAP=9,TOPO=30,fundo="rgba(18,26,48,.92)"; // TOPO=abaixo da HUD (26px)
  // 1) quebra o TEXTO COMPLETO (box FIXO: nao pula enquanto digita)
- cx.font="bold 14px Verdana";var words=balaoFull.split(" "),linhas=[],cur="";
+ cx.font="bold 12px Verdana";var words=balaoFull.split(" "),linhas=[],cur="";
  for(var i=0;i<words.length;i++){var tt=cur?cur+" "+words[i]:words[i];
   if(cx.measureText(tt).width>MAXW&&cur){linhas.push(cur);cur=words[i];}else cur=tt;}
  if(cur)linhas.push(cur);
@@ -700,16 +700,16 @@ function balaoDes(ancX,feetY){ if(!(balaoT>0&&balaoFull))return;
  var bw=0;for(i=0;i<linhas.length;i++)bw=Math.max(bw,cx.measureText(linhas[i]).width);
  bw=Math.min(bw+PAD*2,VW-16);var bh=linhas.length*LH+PAD*2;
  // 3) ACIMA da cabeca; se nao couber (perto do topo), CAI abaixo do personagem
- var headY=feetY-64,acima=(headY-GAP-bh)>=TOPO;
+ var headY=feetY-50,acima=(headY-GAP-bh)>=TOPO;
  var ly=acima?(headY-GAP-bh):Math.min(feetY+GAP,VH-bh-8);
  var lx=Math.max(8,Math.min(VW-bw-8,ancX-bw/2));
  var tx=Math.max(lx+20,Math.min(lx+bw-20,ancX)); // cauda presa na caixa
  // 4) aparece com leve fade+subida
  var ap=balaoAppear;cx.save();cx.globalAlpha=ap;cx.translate(0,acima?(1-ap)*6:-(1-ap)*6);
  // 5) corpo: fundo translucido + BORDA DUPLA arredondada
- roundR(lx,ly,bw,bh,12);cx.fillStyle=fundo;cx.fill();
+ roundR(lx,ly,bw,bh,8);cx.fillStyle=fundo;cx.fill();
  cx.lineWidth=2.5;cx.strokeStyle="rgba(196,214,250,.92)";cx.stroke();
- roundR(lx+4,ly+4,bw-8,bh-8,9);cx.lineWidth=1.3;cx.strokeStyle="rgba(120,150,210,.55)";cx.stroke();
+ roundR(lx+3,ly+3,bw-6,bh-6,6);cx.lineWidth=1;cx.strokeStyle="rgba(120,150,210,.5)";cx.stroke();
  // 6) cauda POR CIMA (cobre a costura) apontando pro personagem
  cx.fillStyle=fundo;cx.beginPath();
  if(acima){cx.moveTo(tx-9,ly+bh-2);cx.lineTo(tx+9,ly+bh-2);cx.lineTo(tx,ly+bh+12);}
@@ -722,19 +722,19 @@ function balaoDes(ancX,feetY){ if(!(balaoT>0&&balaoFull))return;
  // 7) TEXTO letra a letra (substring sobre linhas FIXAS -> nao treme)
  var vis=Math.floor(balaoN),used=0;cx.textAlign="left";cx.fillStyle="#f2f6ff";
  for(i=0;i<linhas.length;i++){var ln=linhas[i];
-  if(used<vis)cx.fillText(ln.substr(0,Math.min(ln.length,vis-used)),lx+PAD,ly+PAD+13+i*LH);
+  if(used<vis)cx.fillText(ln.substr(0,Math.min(ln.length,vis-used)),lx+PAD,ly+PAD+11+i*LH);
   used+=ln.length+1;}
  // 8) SETINHA piscando quando terminou (deterministica: sin de acumulador de tempo)
  if(balaoFimTxt){var pb=0.3+0.7*(0.5+0.5*Math.sin(balaoBlink*6));
-  cx.globalAlpha=ap*pb;cx.fillStyle="#ffe38a";cx.textAlign="center";cx.font="bold 13px Verdana";
-  cx.fillText("▼",lx+bw-14,ly+bh-6);cx.globalAlpha=ap;}
+  cx.globalAlpha=ap*pb;cx.fillStyle="#ffe38a";cx.textAlign="center";cx.font="bold 10px Verdana";
+  cx.fillText("▼",lx+bw-10,ly+bh-5);cx.globalAlpha=ap;}
  // 9) PLACA com o NOME (topo-esq, colorida, encaixada na borda de cima)
- cx.font="bold 12px Verdana";cx.textAlign="left";var nm=balaoNome,nw=cx.measureText(nm).width;
- var pw=nw+16,ph=19,plx=lx+12,ply=ly-ph+6;
- roundR(plx,ply,pw,ph,7);cx.fillStyle=corPlaca(nm);cx.fill();
+ cx.font="bold 10px Verdana";cx.textAlign="left";var nm=balaoNome,nw=cx.measureText(nm).width;
+ var pw=nw+12,ph=15,plx=lx+9,ply=ly-ph+5;
+ roundR(plx,ply,pw,ph,5);cx.fillStyle=corPlaca(nm);cx.fill();
  cx.lineWidth=1.5;cx.strokeStyle="rgba(0,0,0,.28)";cx.stroke();
- cx.fillStyle="rgba(255,255,255,.28)";cx.fillRect(plx+4,ply+3,pw-8,2);
- cx.fillStyle="#10202e";cx.fillText(nm,plx+8,ply+13);
+ cx.fillStyle="rgba(255,255,255,.28)";cx.fillRect(plx+3,ply+2,pw-6,2);
+ cx.fillStyle="#10202e";cx.fillText(nm,plx+6,ply+11);
  cx.restore();cx.globalAlpha=1; }
 function roundR(x,y,w,h,r){cx.beginPath();cx.moveTo(x+r,y);cx.lineTo(x+w-r,y);cx.quadraticCurveTo(x+w,y,x+w,y+r);cx.lineTo(x+w,y+h-r);cx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);cx.lineTo(x+r,y+h);cx.quadraticCurveTo(x,y+h,x,y+h-r);cx.lineTo(x,y+r);cx.quadraticCurveTo(x,y,x+r,y);cx.closePath();}
 if(window.speechSynthesis)speechSynthesis.onvoiceschanged=function(){};
