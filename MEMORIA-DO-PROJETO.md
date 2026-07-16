@@ -331,6 +331,25 @@ imersivo dentro do mundo estava difícil demais para uma tacada só:
   Firebase (progresso + avaliação + painel do professor). Provar a fatia com 1 mundo (floresta) + 2 paradas
   antes de escalar.
 
+## 🏴‍☠️ 1ª ATIVIDADE DO MODELO NOVO — NAVIO PIRATA (Marcos, jul/2026) — em produção
+Números até 30, 1º ano, CONCRETA (estilo Floresta dos Números), tema NAVIO PIRATA em alto-mar, Byte PIRATA
+(reusa byte_pirata.png), paradas temáticas, muita animação+som. Equipe (pedagogo verifica o que o aluno
+aprende + roteirista + diretor de arte + arquiteto de dados) monta história e o dados.json.
+- **GERAR o que faltar de arte, bem bonito, no padrão da demo do NAVIO** (`_demos/educaverso/navio` — convés
+  pintado + mar, que o Marcos amou). Reusar: byte_pirata, mar, barril, baú/baú-tesouro, convés. Faltando
+  (gerar via workflow): poses do Byte pirata (ou solução SUAVE sem perna), objetos de contagem temáticos
+  (moedas, laranjas, bombas...), partes do navio, NPCs (papagaio/lobo-do-mar).
+- **LAYOUT — 2 opções (Marcos):** (A) o próprio NAVIO com as paradas = partes do navio (convés, cesto da
+  gávea, canhões, porão, velas, leme...). (B) SE o navio não comportar bem as paradas → uma ILHA no meio do
+  mar com várias paradas, e o NAVIO sendo a ÚLTIMA parada. Escolher o que fluir melhor no motor.
+- **DINÂMICA das paradas (Marcos):** com POPUP — o aluno chega numa parada, **ajuda ALGUÉM do mundo**
+  (um NPC) resolvendo a atividade; essa pessoa **dá uma RECOMPENSA**; o aluno **conserta/destrava algo** e
+  **avança** pra próxima parada. (É o loop tarefa→ajuda alguém→recompensa→avança, com a atividade premium no
+  popup — casa com a "camada de jornada" e o modelo novo.)
+- **REGRA DE ANIMAÇÃO (Marcos):** tudo SUAVE — respiração, gestos, deslizar. Se perna alternando ficar dura,
+  fazer SEM perna, só suave. Suavidade acima de perna.
+- Blueprint em `eduverse/NAVIO-PIRATA-BLUEPRINT.md` (a equipe escreve). Construção após o blueprint.
+
 ## 🧭 ARQUITETURA (a reconciliação): mundo-mapa + atividades-peça
 NÃO é contradição — são DUAS CAMADAS:
 - **Camada 1 — O MUNDO / MAPA com BAIRROS** (o hub "Ilhas do Saber", só que mais "mundo"): dá a
