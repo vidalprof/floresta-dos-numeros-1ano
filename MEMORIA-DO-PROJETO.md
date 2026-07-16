@@ -441,6 +441,23 @@ NÃO é contradição — são DUAS CAMADAS:
    `git fetch origin <branch>` + `git merge --ff-only` ANTES de agir/declarar
    qualquer coisa "perdida".
 
+## 🎙️ ELENCO DE VOZES — TODAS geradas por API (decisão firme do Marcos, jul/2026)
+Todas as falas do mundo são GERADAS por API (edge-tts), embutidas em MP3 (base64). Nada de voz do navegador.
+Casting pedido pelo Marcos:
+- **NOSSO PERSONAGEM (protagonista, ex.: Byte) = ANTONIO** (masculina, edge-tts pt-BR).
+- **NPCs MENINOS = OUTRA voz MASCULINA** (diferente do protagonista).
+- **NPCs MENINAS = voz FEMININA.**
+- **HONESTIDADE TÉCNICA (edge-tts):** o pt-BR do edge-tts tem POUCAS vozes nativas — masculina = **Antonio**;
+  femininas = **Francisca** e **Thalita** (2 opções, ótimo p/ separar meninas). NÃO há uma 2ª masculina
+  nativa confiável em pt-BR (a "Donato/male2" FALHOU no passado — lição paga). SOLUÇÃO p/ a 2ª voz masculina:
+  (a) **pitch/rate shift no Antonio** (a função `pitch_shift` já existe no `gerar-audio.yml`, só ligar no
+  `gerar()`) — grave p/ lobo-do-mar, agudo p/ menino; OU (b) voz **pt-PT masculina** (Duarte) se o sotaque
+  de Portugal for aceitável (testar 1 fala antes). Preferir (a) pra manter sotaque BR.
+- **Elenco por personagem** (registrar no dados.json de cada atividade): cada NPC declara sua voz (id +
+  pitch/rate). O montador/gerador de áudio usa isso. Ex. navio: Byte pirata=Antonio; papagaio=Antonio agudo;
+  lobo-do-mar=Antonio grave; NPC menina=Francisca; 2ª menina=Thalita.
+- Testar 1 fala de cada voz antes de gerar o lote (nunca confirmar sem ouvir).
+
 ## 🧍‍♂️ MOTOR DE PERSONAGEM VIVO — UNIVERSAL (pedido firme do Marcos, jul/2026)
 > "Se der pra ter o andar normal e suave, construa esse MOTOR e depois aplique em TODOS os personagens,
 > como se estivessem vivos: respiração, movimento normal de pernas/braços, sentar, deitar, etc. E o
