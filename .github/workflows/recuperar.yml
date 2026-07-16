@@ -50,11 +50,23 @@ jobs:
             echo ""
           done
           echo "=================================================="
-          echo "C) REPOS com nome de educa/eduverse/fabrica/mundo/vivo/memoria/backup/byte"
+          echo "D) GISTS (notas/memoria entre sessoes): id | desc | arquivos"
           echo "=================================================="
-          gh api "user/repos?per_page=100&affiliation=owner" --paginate \
-            --jq '.[] | .name' 2>&1 | grep -iE "educa|eduverse|fabrica|mundo|vivo|memoria|backup|byte|motor" | sort -u || true
-          echo "=== FIM DA DESCOBERTA ==="
+          gh api "gists?per_page=100" --paginate \
+            --jq '.[] | .id + " | " + (.description // "(sem desc)") + " | " + ([.files[].filename] | join(", "))' 2>&1 | head -150 || true
+          echo ""
+          echo "=================================================="
+          echo "E) NOMES DE ARQUIVO em TODOS os repos (memoria/eduverse/trava/mundo-vivo/fabrica/kit/pose/fogueira/filosofia/manual)"
+          echo "=================================================="
+          gh api "user/repos?per_page=100&affiliation=owner" --paginate --jq '.[].name' 2>/dev/null | while read -r R; do
+            [ -z "$R" ] && continue
+            DEF=$(gh api "repos/vidalprof/$R" --jq '.default_branch' 2>/dev/null) || continue
+            [ -z "$DEF" ] && continue
+            gh api "repos/vidalprof/$R/git/trees/$DEF?recursive=1" --jq '.tree[].path' 2>/dev/null \
+              | grep -iE "memoria|eduverse|educaverso|trava|mundo.?vivo|fabrica|kit.?floresta|montar|runner|poseByte|byte_costas|fogueira|filosofia|pipeline|equipe|especialista|auditor|manual" \
+              | while read -r P; do echo "$R :: $P"; done
+          done
+          echo "=== FIM DA DESCOBERTA (gists + nomes de arquivo) ==="
 
       - name: Buscar index.html do repositorio de origem
         env:
