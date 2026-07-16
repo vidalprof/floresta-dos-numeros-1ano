@@ -1,0 +1,105 @@
+{
+ "slug": "navio-pirata",
+ "tema": {
+  "part": "folha",
+  "ceu0": "rgba(120,200,255,.12)",
+  "ceu1": "rgba(10,30,80,.16)",
+  "passaros": true,
+  "borboletas": false,
+  "titulo": "O Navio do Byte Pirata",
+  "emoji": "&#9875;"
+ },
+ "assets": {
+  "grama": "conves",
+  "caminho": "caminho",
+  "arvore": "barril",
+  "byte": "byte_pirata",
+  "muro": "mar",
+  "cabana": "cabana",
+  "passaro": "passarinho",
+  "gato": "gato",
+  "papagaio": "passarinho",
+  "fruta": "fruta",
+  "cesta": "bau",
+  "sacola10": "sacola10"
+ },
+ "mundo": {
+  "WW": 1900,
+  "WH": 1330,
+  "start": [317, 1089],
+  "tr": 16,
+  "historia": {
+   "objetivo": "colher",
+   "sub_pc": "use as SETAS do teclado p/ o Byte Pirata andar pelo conv&#233;s &#183; toca nas laranjas e ajuda a encher os ba&#250;s, contando cada uma!",
+   "sub_touch": "use o D-pad p/ o Byte Pirata andar pelo conv&#233;s &#183; toca nas laranjas e ajuda a encher os ba&#250;s, contando cada uma!"
+  },
+  "poeira": true,
+  "dialogo": { "cps": 26 },
+  "path": [
+   [317, 1089], [481, 937], [380, 760], [646, 646],
+   [874, 709], [1064, 595], [1279, 570], [1457, 507]
+  ],
+  "trees": [
+   [1184, 196], [572, 404], [1609, 261], [819, 201], [155, 379],
+   [1202, 742], [1718, 523], [1466, 936], [1011, 1192], [559, 1153],
+   [385, 568], [1772, 842], [1046, 889]
+  ],
+  "flores": [],
+  "props": [
+   { "tipo": "cabana", "x": 1381, "y": 760, "h": 210, "cx": -56, "cy": 186, "r": 64 },
+   { "tipo": "lampiao", "x": 1472, "y": 793, "h": 60, "r": 8 }
+  ],
+  "npcs": [
+   {
+    "sprite": "gato",
+    "x": 519, "y": 1003,
+    "nome": "Bigode",
+    "escala": 0.95,
+    "vel": 26,
+    "rota": [ [519, 1003], [640, 960], [700, 1080], [519, 1003] ],
+    "falas": [
+     { "texto": "Miau! O escorbuto ronda o mar. Ajuda o Byte a colher as laranjas e contar cada uma pra encher os ba&#250;s?", "id": "npc0" },
+     "Ronrom... eu sou o gato de bordo. Laranja fresca deixa a tripula&#231;&#227;o forte pra travessia!",
+     "Psst, Byte! N&#227;o deixa nenhuma laranja rolar pelo conv&#233;s sem contar, viu?",
+     "Miau miau! Quando o ba&#250; encher, ganho um cochilo no sol. Vamos contar mais uma?"
+    ]
+   },
+   {
+    "sprite": "papagaio",
+    "x": 1230, "y": 700,
+    "nome": "Louro",
+    "escala": 0.95,
+    "falas": [
+     "Cr&#225;! Cr&#225;! Laranja &#224; vista! A melhor carga do por&#227;o &#233; essa aqui!",
+     "Um, dois, tr&#234;s... contar &#233; f&#225;cil, marujo! Vai enchendo o ba&#250; devagar!",
+     "Cr&#225;! Dez laranjas viram um saco &#8212; e um saco &#233; uma DEZENA cheia!",
+     "Bom trabalho, Byte Pirata! Com voc&#234; contando, ningu&#233;m fica doente no mar!"
+    ]
+   }
+  ],
+  "aula": {
+   "id": "col1ano_navio",
+   "fim": "Que travessia! Voc&#234; contou de 1 at&#233; 30 sozinho e encheu os ba&#250;s de laranjas &#8212; a tripula&#231;&#227;o n&#227;o vai adoecer no mar! Rumo &#224; pr&#243;xima ilha, marujo!",
+   "rounds": [
+    { "tipo": "contar", "n": 3, "cesta": { "x": 659, "y": 988 } },
+    { "tipo": "contar", "n": 5, "cesta": { "x": 1140, "y": 659 } },
+    { "tipo": "ordenar", "n": 5, "cesta": { "x": 887, "y": 811 } },
+    { "tipo": "contar", "n": 10, "cesta": { "x": 1317, "y": 570 } },
+    { "tipo": "trazer_exato", "alvo": 7, "n": 10, "pedido": "O Louro", "cesta": { "x": 912, "y": 811 } },
+    { "tipo": "agrupar", "n": 20, "cesta": { "x": 709, "y": 785 } },
+    { "tipo": "agrupar", "n": 30, "cesta": { "x": 1165, "y": 1013 } }
+   ]
+  }
+ },
+ "falas": [
+  "n0","n1","n2","n3","n4","n5","n6","n7","n8","n9","n10",
+  "n11","n12","n13","n14","n15","n16","n17","n18","n19","n20",
+  "n21","n22","n23","n24","n25","n26","n27","n28","n29","n30",
+  "aula_intro_contar","aula_intro_ordenar","aula_intro_trazer_exato","aula_intro_agrupar",
+  "aula_dica_contar","aula_dica_ordenar","aula_dica_trazer_exato","aula_dica_agrupar",
+  "aula_ordem","aula_demais","aula_falta","aula_ok",
+  "aula_ok_0","aula_ok_1","aula_ok_2","aula_ok_3","aula_ok_4","aula_ok_5","aula_ok_6",
+  "aula_fim","npc0"
+ ],
+ "audit": { "chegar": [], "colisao": [] }
+}
