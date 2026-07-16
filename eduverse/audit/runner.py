@@ -6,7 +6,11 @@ import subprocess, os, re, sys, json, tempfile
 HERE=os.path.dirname(os.path.abspath(__file__))
 REPO=os.path.abspath(os.path.join(HERE,"..",".."))
 CH="/opt/pw-browsers/chromium-1194/chrome-linux/chrome"
-slug=sys.argv[1] if len(sys.argv)>1 else "floresta"
+sys.path.insert(0,HERE)
+import portao_coerencia, portao_arte, portao_variedade
+AVISA=("--avisa" in sys.argv)                       # gates novos so reportam (nao derrubam exit)
+_args=[a for a in sys.argv[1:] if not a.startswith("--")]
+slug=_args[0] if _args else "floresta"
 dados=json.load(open(os.path.join(REPO,"eduverse","mundos",slug,"dados.json"),encoding="utf-8"))
 dist=os.path.join(REPO,"eduverse","dist",slug,"index.html")
 

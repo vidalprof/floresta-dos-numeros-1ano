@@ -475,3 +475,10 @@ Firebase; compat. Win7/Chrome antigo, 1024×768. **Objetivo:** nova atividade = 
 reutilizáveis, não do zero (é isso que deixa a criação FÁCIL). Futuro: editor arrastar-e-soltar.
 FALTA construir o KIT base (estilo travado → tiles + Byte animado + objetos) e passar a montar as
 atividades a partir dele.
+
+## 💰 REGRA DE OPERAÇÃO — modelo adequado por tarefa (economia, jul/2026)
+Ao convocar subagentes/equipes: tarefa MECÂNICA (builds, greps, screenshots,
+conferir laudo) = **Haiku**; codificação padrão (portão, dados.json) = **Sonnet**;
+arquitetura/síntese/auditoria adversarial = **Opus/Fable**. Regular também o
+esforço de raciocínio por agente (baixo no mecânico, alto só em verificação/chefia).
+O modelo da SESSÃO principal só o Marcos troca (/model).

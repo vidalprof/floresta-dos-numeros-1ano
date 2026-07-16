@@ -454,14 +454,14 @@ function _geraItens(R,idx){
  trs.sort(function(a,b){return a.d-b.d;});
  var nTree=Math.max(2,Math.min(trs.length,Math.ceil(qtd/2)+1)); // usa um punhado das árvores mais perto
  var used=[];for(i=0;i<nTree;i++)used.push(0);                    // frutas já penduradas por árvore
- var offs=[-28,6,30,-10,22];                                     // offsets de copa (não sobrepõem)
+ var offs=[-24,4,24,-12,16];                                     // offsets de copa (|ox|<=26, dentro da copa real)
  for(i=0;i<qtd;i++){var T=trs[i%nTree],tx=T.x,ty=T.y;
   var vale=1,nn=i+1,chao,x,y,sy,pendurada;
   if(R.tipo==="agrupar"&&i<bundles){ vale=10;nn=10;pendurada=false; } // sacola-de-10 no PÉ da árvore
   else if(R.tipo==="agrupar"){ vale=1;nn=1;pendurada=(rnd()<0.7); }
   else{ pendurada=(rnd()<0.7); }
   if(pendurada){ var ox=offs[used[i%nTree]%offs.length];used[i%nTree]++;
-   x=tx+ox; y=ty-58-Math.floor(rnd()*20); sy=ty+2; chao=false; }        // dentro da copa (ty-58..-78)
+   x=tx+ox; y=ty-72-Math.floor(rnd()*26); sy=ty+2; chao=false; }        // ANCORADA na copa real (árvore=120px; copa ~ty-115..ty-45)
   else{ var ox2=(rnd()<0.5?-1:1)*(30+Math.floor(rnd()*16));               // ±30..45 no pé
    x=tx+ox2; y=ty+10; sy=y; chao=true; }
   out.push({x:x,y:y,sy:sy,n:nn,vale:vale,dez:(vale===10),chao:chao});}
@@ -597,7 +597,14 @@ function drawNum(x,y,size,txt,cor){cx.save();cx.font="bold "+size+"px Verdana";c
 function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
  var wob=Math.sin(t*0.004+o.seed)*3,trem=o.blinkT>0?Math.sin(t*0.045)*4:0;
  var alvoNext=(rTipo==="ordenar"&&o.n===rProx);
- if(o.chao)sombra(x,y+14,o.vale===10?20:15,6); // só a maçã CAÍDA leva sombra de chão; pendurada não
+ if(o.chao)sombra(x,y+14,o.vale===10?20:15,6); // só a maçã CAÍDA leva sombra de chão
+ if(!o.chao&&o.vale!==10){ // fruta PENDURADA: haste ligando à copa + sombra pendurada (fruta ancorada, não flutua)
+  // haste: galho curto marrom (~2px, 10px, leve curva) do topo da fruta p/ cima
+  cx.save();cx.strokeStyle="#5a3a1e";cx.lineWidth=2;cx.beginPath();
+  cx.moveTo(x+trem,y-20+wob);cx.quadraticCurveTo(x+trem+3,y-26+wob,x+trem+1,y-30+wob);cx.stroke();cx.restore();
+  // sombra pendurada: elipse BEM suave dentro da copa, sob a fruta
+  cx.save();cx.globalAlpha=0.10;cx.fillStyle="#1c3a12";cx.beginPath();
+  cx.ellipse(x,y+9+wob,12,5,0,0,Math.PI*2);cx.fill();cx.restore();cx.globalAlpha=1; }
  if(o.vale===10){ // SACOLA DE DEZ
   if(IMG.sacola10){ imgH(IMG.sacola10,x+trem,y+wob,30); }
   else { cx.save();cx.translate(x+trem,y-10+wob);cx.fillStyle="#7a5230";roundR(-18,-14,36,30,7);cx.fill();
@@ -612,7 +619,7 @@ function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
    cx.restore(); }
   if(rTipo==="ordenar") drawNum(x+trem,y-8+wob,18,""+o.n,"#fff"); } // ordenar mostra o numeral
  if(o.vale!==10){ // BRILHO de maçã madura SEMPRE-LIGADO: halo quente suave pulsando (sinaliza "colhe aqui")
-  var ph=0.12+0.05*Math.sin(t*0.006+o.seed);
+  var ph=0.07+0.04*Math.sin(t*0.006+o.seed);
   cx.save();cx.globalCompositeOperation="lighter";
   var gh=cx.createRadialGradient(x,y-8,3,x,y-8,30);gh.addColorStop(0,"rgba(255,240,150,"+ph+")");gh.addColorStop(1,"rgba(255,240,150,0)");
   cx.fillStyle=gh;cx.beginPath();cx.arc(x,y-8,30,0,Math.PI*2);cx.fill();cx.restore();cx.globalAlpha=1; }
