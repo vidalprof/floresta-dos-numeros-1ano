@@ -95,6 +95,10 @@ var TR=16; // raio tronco
 // flores decorativas
 var FLORES=[[420,800],[300,690],[560,560],[700,470],[860,520],[1000,430],[1120,330],[240,820],[640,640],[900,700]];
 var leaves=[],birds=[],pollen=[],estrelas=[],borbs=[];
+// PROPS VIVOS (data-driven): fogueira/lareira/lampiao/chamine etc. cada um anima+soa sozinho
+var PROPS=(typeof MUNDO!=="undefined"&&MUNDO.props)?MUNDO.props:[];
+var fumos=[],faiscas=[],fogoTimer=0.5;
+var temFogo=false;for(var _pi=0;_pi<PROPS.length;_pi++){var _tp=PROPS[_pi].tipo;if(_tp==="fogueira"||_tp==="lareira"||_tp==="lampiao")temFogo=true;}
 for(var i=0;i<30;i++)pollen.push({x:Math.random()*WW,y:Math.random()*WH,f:i,r:1+Math.random()*1.6});
 var luzChao=[];for(var i=0;i<3;i++)luzChao.push({y:120+i*320,ph:i*2.1,sp:14+i*4});
 
@@ -114,7 +118,12 @@ function initAudio(){if(AC)return;try{AC=new (window.AudioContext||window.webkit
  // 3) grilinhos (agudo, pulsante)
  var s3=AC.createBufferSource();s3.buffer=buf;s3.loop=true;var f3=AC.createBiquadFilter();f3.type="bandpass";f3.frequency.value=5600;f3.Q.value=9;
  var cg=AC.createGain();cg.gain.value=0.003;var clfo=AC.createOscillator();clfo.type="triangle";clfo.frequency.value=6.5;var clg=AC.createGain();clg.gain.value=0.006;clfo.connect(clg);clg.connect(cg.gain);
- s3.connect(f3);f3.connect(cg);cg.connect(ambMaster);s3.start();clfo.start();}
+ s3.connect(f3);f3.connect(cg);cg.connect(ambMaster);s3.start();clfo.start();
+ // 4) FOGO crepitando (so quando ha fogueira/lareira/lampiao): ruido grave com tremular irregular
+ if(temFogo){var s4=AC.createBufferSource();s4.buffer=buf;s4.loop=true;var f4=AC.createBiquadFilter();f4.type="lowpass";f4.frequency.value=820;
+  var fgn=AC.createGain();fgn.gain.value=0.02;var flfo=AC.createOscillator();flfo.type="triangle";flfo.frequency.value=7.3;var flg=AC.createGain();flg.gain.value=0.018;flfo.connect(flg);flg.connect(fgn.gain);
+  s4.connect(f4);f4.connect(fgn);fgn.connect(ambMaster);s4.start();flfo.start();}}
+function somEstalo(){if(!AC||!som||!temFogo)return;bip(180+Math.random()*260,.045,"square",.02,0);} // estalo do fogo
 function bip(fr,dur,tp,vol,del){if(!AC||!som)return;var o=AC.createOscillator(),g=AC.createGain();o.type=tp||"sine";o.frequency.value=fr;
  var t=AC.currentTime+(del||0);g.gain.setValueAtTime(vol||.14,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+dur);}
 function somPasso(){bip(150,.05,"square",.03);}
@@ -172,6 +181,7 @@ function inputVec(){var vx=0,vy=0;
 function bloqueado(nx,ny){
  if(nx<24||ny<40||nx>WW-24||ny>WH-24)return true;
  for(var i=0;i<TREES.length;i++){var dx=nx-TREES[i][0],dy=ny-(TREES[i][1]-6);if(dx*dx+dy*dy<(TR+byte.r)*(TR+byte.r))return true;}
+ for(var j=0;j<PROPS.length;j++){var pr=PROPS[j];if(pr.r){var px=nx-pr.x,py=ny-pr.y;if(px*px+py*py<(pr.r+byte.r)*(pr.r+byte.r))return true;}}
  return false;}
 
 /* ---------- INICIO ---------- */
@@ -260,10 +270,37 @@ function desArco(t){var x=arco.x,y=arco.y; // arco de pedra = entrada do labirin
  cx.save();cx.globalCompositeOperation="lighter";var pg=cx.createRadialGradient(x,y-58,6,x,y-58,66);
  pg.addColorStop(0,"rgba(120,180,255,"+(0.12+0.07*Math.sin(t*.004))+")");pg.addColorStop(1,"rgba(120,180,255,0)");cx.fillStyle=pg;cx.fillRect(x-74,y-116,148,116);cx.restore();}
 var patM=null;
+/* ---------- PROPS VIVOS (fogo/fumaca reutilizaveis) ---------- */
+function emiteFumaca(x,y,forca){if(fumos.length>80)return;fumos.push({x:x+(Math.random()-.5)*8,y:y,vy:-(16+Math.random()*12),vx:(Math.random()-.5)*7,r:6+Math.random()*5,a:0.62*forca,gro:9+Math.random()*10});}
+function lingua(fx,base,hh,w,cor){cx.fillStyle=cor;cx.beginPath();cx.moveTo(fx-w,base);
+ cx.quadraticCurveTo(fx-w*0.7,base-hh*0.55,fx,base-hh);cx.quadraticCurveTo(fx+w*0.7,base-hh*0.55,fx+w,base);
+ cx.quadraticCurveTo(fx,base+2,fx-w,base);cx.closePath();cx.fill();}
+function desFogueira(p,t){var x=p.x,y=p.y;
+ var fl=0.78+0.14*Math.sin(t*0.022)+0.09*Math.sin(t*0.058)+0.05*Math.sin(t*0.15); // tremular
+ sombra(x,y+6,30,9);
+ // luz quente no chao/ar (oscilante, forte)
+ cx.save();cx.globalCompositeOperation="lighter";var g=cx.createRadialGradient(x,y-16,6,x,y-16,104*fl);
+ g.addColorStop(0,"rgba(255,196,100,"+(0.52*fl)+")");g.addColorStop(.42,"rgba(255,132,46,"+(0.15*fl)+")");g.addColorStop(1,"rgba(255,120,40,0)");
+ cx.fillStyle=g;cx.beginPath();cx.arc(x,y-16,104*fl,0,Math.PI*2);cx.fill();cx.restore();
+ // lenha (toras cruzadas, com topo iluminado)
+ cx.save();cx.lineCap="round";
+ cx.strokeStyle="#5a3a22";cx.lineWidth=10;cx.beginPath();cx.moveTo(x-24,y+5);cx.lineTo(x+24,y-5);cx.moveTo(x-24,y-5);cx.lineTo(x+24,y+5);cx.stroke();
+ cx.strokeStyle="rgba(255,150,60,.5)";cx.lineWidth=3;cx.beginPath();cx.moveTo(x-22,y+2);cx.lineTo(x+22,y-2);cx.stroke();cx.restore();
+ // CHAMAS: camadas laranja(alta) -> amarelo(media) -> nucleo branco-quente(baixo)
+ cx.save();cx.globalCompositeOperation="lighter";
+ for(var i=0;i<6;i++){var ph=t*0.022+i*1.05;var sw=Math.sin(ph)*5;var fx=x-16+i*6.4+sw;var f2=0.7+0.3*Math.sin(ph*1.4);
+  lingua(fx,y+1,(30+Math.sin(ph*1.3)*10)*fl*f2,6.5,"rgba(255,120,36,0.72)");}   // laranja alta
+ for(i=0;i<5;i++){var ph2=t*0.028+i*1.2;var sw2=Math.sin(ph2)*4;var fx2=x-12+i*6+sw2;
+  lingua(fx2,y+1,(20+Math.sin(ph2*1.5)*7)*fl,5,"rgba(255,196,70,0.8)");}         // amarelo media
+ for(i=0;i<3;i++){var ph3=t*0.04+i*1.5;var fx3=x-6+i*6+Math.sin(ph3)*3;
+  lingua(fx3,y,(11+Math.sin(ph3*1.7)*4)*fl,3.6,"rgba(255,248,215,0.92)");}       // nucleo branco-quente
+ cx.restore();}
+function desProp(p,t){if(p.tipo==="fogueira")desFogueira(p,t);
+ else if(p.tipo==="cabana"&&IMG.cabana){sombra(p.x,p.y+4,44,11);imgH(IMG.cabana,p.x,p.y,p.h||110);}}
 
 /* ---------- LOOP ---------- */
 var ult=null;
-function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=ts;var t=ts;
+function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/1000));ult=ts;var t=ts;
  if(!patM&&IMG.muro)patM=cx.createPattern(IMG.muro,"repeat");
  byte.resp+=dt*3;if(balaoT>0)balaoT-=dt;
  // vento em rajadas + agenda de sons ambientes
@@ -301,6 +338,14 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  if(TEMA.passaros && birds.length<2 && Math.sin(t*.013+2)>0.999){birds.push({x:cam.x-40,y:cam.y+40+Math.random()*120,vx:60+Math.random()*40,ph:Math.random()*6.28,chirp:0});}
  for(i=birds.length-1;i>=0;i--){var bd=birds[i];bd.x+=bd.vx*dt;bd.y+=Math.sin(t*.005+bd.ph)*10*dt;bd.chirp-=dt;if(bd.chirp<=0){somPio();bd.chirp=1.2+Math.random();}if(bd.x>cam.x+VW+60)birds.splice(i,1);}
  for(i=estrelas.length-1;i>=0;i--){var s=estrelas[i];s.x+=s.vx*dt;s.y+=s.vy*dt;s.vy+=120*dt;s.a-=dt*.5;if(s.a<=0)estrelas.splice(i,1);}
+ // ---- PROPS VIVOS: emite fumaca/faiscas + som de crepitar ----
+ for(i=0;i<PROPS.length;i++){var pr=PROPS[i];
+  if(pr.tipo==="fogueira"){if(Math.random()<0.55)emiteFumaca(pr.x,pr.y-16,0.7);
+   if(Math.random()<0.35)faiscas.push({x:pr.x+(Math.random()-.5)*12,y:pr.y-8,vx:(Math.random()-.5)*34,vy:-(28+Math.random()*46),a:1,r:1+Math.random()*1.6});}
+  else if(pr.tipo==="cabana"){if(Math.random()<0.22)emiteFumaca(pr.x+(pr.cx||24),pr.y-(pr.cy||96),0.55);}}
+ if(temFogo){fogoTimer-=dt;if(fogoTimer<=0){fogoTimer=0.25+Math.random()*0.7;somEstalo();}}
+ for(i=fumos.length-1;i>=0;i--){var fm=fumos[i];fm.y+=fm.vy*dt;fm.x+=(fm.vx+Math.sin(t*.001+fm.y)*7)*dt;fm.r+=fm.gro*dt;fm.a-=dt*0.12;if(fm.a<=0||fm.r>48)fumos.splice(i,1);}
+ for(i=faiscas.length-1;i>=0;i--){var fs=faiscas[i];fs.x+=fs.vx*dt;fs.y+=fs.vy*dt;fs.vy+=42*dt;fs.a-=dt*1.1;if(fs.a<=0)faiscas.splice(i,1);}
 
  // ======== RENDER ========
  cx.save();cx.translate(-cam.x,-cam.y);
@@ -321,6 +366,7 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  if(!chave.got)draws.push({y:chave.y,f:function(){desChave(t);}});
  draws.push({y:arco.y,f:function(){desArco(t);}});
  draws.push({y:byte.y,f:function(){desByte(t);}});
+ for(i=0;i<PROPS.length;i++)draws.push({y:PROPS[i].y,f:(function(p){return function(){desProp(p,t);};})(PROPS[i])});
  draws.sort(function(a,b){return a.y-b.y;});
  for(i=0;i<draws.length;i++)draws[i].f();
  // passaros (por cima)
@@ -332,6 +378,15 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
   var w=IMG.borboleta.width*26/IMG.borboleta.height;
   cx.save();cx.translate(bo.x,bo.y-Math.sin(t*.004+bo.ph)*4);cx.scale((0.45+0.55*flap)*(Math.cos(bo.ang)<0?-1:1),0.72+0.28*flap);
   cx.drawImage(IMG.borboleta,-w/2,-13,w,26);cx.restore();}
+ // fumaca dos props (sobe por cima das arvores)
+ for(i=0;i<fumos.length;i++){var fu=fumos[i];if(fu.r<=1)continue;cx.save();
+  var fg2=cx.createRadialGradient(fu.x,fu.y,1,fu.x,fu.y,fu.r);
+  fg2.addColorStop(0,"rgba(120,120,128,"+Math.max(0,fu.a)+")");fg2.addColorStop(.6,"rgba(150,150,158,"+Math.max(0,fu.a*0.6)+")");fg2.addColorStop(1,"rgba(160,160,168,0)");
+  cx.fillStyle=fg2;cx.beginPath();cx.arc(fu.x,fu.y,fu.r,0,Math.PI*2);cx.fill();cx.restore();}
+ cx.globalAlpha=1;
+ // faiscas (brasas subindo)
+ cx.save();cx.globalCompositeOperation="lighter";for(i=0;i<faiscas.length;i++){var fa=faiscas[i];
+  cx.fillStyle="rgba(255,"+(150+Math.floor(Math.random()*60))+",60,"+Math.max(0,fa.a)+")";cx.beginPath();cx.arc(fa.x,fa.y,fa.r,0,Math.PI*2);cx.fill();}cx.restore();cx.globalAlpha=1;
  // folhas
  for(i=0;i<leaves.length;i++){var lf2=leaves[i];cx.save();cx.translate(lf2.x,lf2.y);cx.rotate(lf2.rot);cx.globalAlpha=lf2.a;cx.fillStyle=lf2.c;
   cx.beginPath();if(lf2.neve){cx.arc(0,0,lf2.s*.8,0,Math.PI*2);}else{cx.ellipse(0,0,lf2.s*.5,lf2.s,0,0,Math.PI*2);}cx.fill();cx.restore();cx.globalAlpha=1;}

@@ -53,6 +53,21 @@ personagem → mesma "cara", trocando a pose: sentado, deitado, andando, falando
 - **Regra dura:** se uma tela fica **parada e muda**, NÃO está pronta (o auditor de Arte reprova
   "mundo_vivo"; o de Som exige ambiente sonoro).
 
+### Biblioteca de PROPS VIVOS (data-driven — padrao no motor, automatico em todo mundo)
+Cada efeito ambiente e um **prop reutilizavel**: a atividade so DECLARA em `dados.json`
+(`"mundo":{"props":[{"tipo":"fogueira","x":200,"y":760,"r":26}]}`) e o motor **anima + soa +
+colide** sozinho (nada copiado por atividade — conserta 1x, vale pra todas). y-sort correto.
+- **fogueira / lareira** ✅ (PRONTO): fogo em camadas (laranja→amarelo→nucleo branco-quente)
+  tremulando, **luz quente oscilante**, **fumaca subindo**, **faiscas**, **crepitar** (som) +
+  **colisao** (o Byte nao entra no fogo). `r` = raio de colisao.
+- **chamine** (fumaca da casa): mesmo emissor de fumaca, num ponto da casa/cabana. (emissor pronto)
+- **lampiao** 🔜: chama pequena + halo de luz oscilante + zumbido baixo (mesmo motor de fogo/luz).
+- **porta** 🔜: abre/fecha com **ranger** (som) ao passar perto.
+- **janela** 🔜: cortina balancando com o **vento**, luz que vaza.
+> Cada prop novo entra AQUI e no `desProp()` do motor (um `tipo`), com um teste no auditor.
+> O `dt` do loop e travado em ≥0 (protege particulas/relogio); `mundo_vivo` fotografa o canvas
+> cheio e compara 3 frames (anti-intermitencia).
+
 ## Personalização — o mascote fala o NOME do estudante (quando ligarmos nome + salvar)
 - O mascote/Byte **sempre fala e se refere ao NOME do estudante** ("Muito bem, João!") — na
   narração e nos diálogos. Entra com o **login simples (código de turma + nome) + salvar
