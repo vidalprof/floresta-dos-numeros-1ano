@@ -387,17 +387,32 @@ function _pertoArvore(x,y){var i,dx,dy;
  for(i=0;i<TREES.length;i++){dx=x-TREES[i][0];dy=y-TREES[i][1];if(dx*dx+dy*dy<70*70)return true;}
  for(i=0;i<PROPS.length;i++){dx=x-PROPS[i].x;dy=y-PROPS[i].y;if(dx*dx+dy*dy<70*70)return true;}
  return false;}
-/* gera itens quando a rodada não traz `itens`: espalha longe de árvores, determinístico. */
+/* gera itens quando a rodada não traz `itens`: ANCORA nas árvores perto da cesta.
+   ~70% PENDURADAS na copa (sy=base da árvore -> desenha na frente da folhagem e a
+   coleta mede pela base do tronco) e ~30% CAÍDAS no pé (chao -> leva sombra).
+   Nenhum item a mais de ~120px de uma árvore. Determinístico (LCG por rodada). */
 function _geraItens(R,idx){
  var rnd=_rng((idx+1)*7919),out=[],alvo=R.alvo||0,n=R.n||0,i,qtd,bundles=0,loose=0;
  if(R.tipo==="agrupar"){bundles=Math.floor(n/10);loose=n%10;qtd=bundles+loose;}
  else if(R.tipo==="trazer_exato"){qtd=R.n||(alvo+2);}   // sempre > alvo -> "demais" é possível
  else{qtd=n;}
- for(i=0;i<qtd;i++){var x=0,y=0,ok=false,tr=0;
-  while(!ok&&tr++<40){x=140+rnd()*(WW-280);y=170+rnd()*(WH-320);ok=!_pertoArvore(x,y);}
-  var vale=1,nn=i+1;
-  if(R.tipo==="agrupar"){if(i<bundles){vale=10;nn=10;}else{vale=1;nn=1;}}
-  out.push({x:x,y:y,n:nn,vale:vale,dez:(vale===10)});}
+ // árvores ordenadas pela proximidade da cesta da rodada (colher perto -> caminho curto)
+ var cbx=(R.cesta?R.cesta.x:byte.x), cby=(R.cesta?R.cesta.y:byte.y);
+ var trs=[];for(i=0;i<TREES.length;i++){var ddx=TREES[i][0]-cbx,ddy=TREES[i][1]-cby;trs.push({x:TREES[i][0],y:TREES[i][1],d:ddx*ddx+ddy*ddy});}
+ trs.sort(function(a,b){return a.d-b.d;});
+ var nTree=Math.max(2,Math.min(trs.length,Math.ceil(qtd/2)+1)); // usa um punhado das árvores mais perto
+ var used=[];for(i=0;i<nTree;i++)used.push(0);                    // frutas já penduradas por árvore
+ var offs=[-28,6,30,-10,22];                                     // offsets de copa (não sobrepõem)
+ for(i=0;i<qtd;i++){var T=trs[i%nTree],tx=T.x,ty=T.y;
+  var vale=1,nn=i+1,chao,x,y,sy,pendurada;
+  if(R.tipo==="agrupar"&&i<bundles){ vale=10;nn=10;pendurada=false; } // sacola-de-10 no PÉ da árvore
+  else if(R.tipo==="agrupar"){ vale=1;nn=1;pendurada=(rnd()<0.7); }
+  else{ pendurada=(rnd()<0.7); }
+  if(pendurada){ var ox=offs[used[i%nTree]%offs.length];used[i%nTree]++;
+   x=tx+ox; y=ty-58-Math.floor(rnd()*20); sy=ty+2; chao=false; }        // dentro da copa (ty-58..-78)
+  else{ var ox2=(rnd()<0.5?-1:1)*(30+Math.floor(rnd()*16));               // ±30..45 no pé
+   x=tx+ox2; y=ty+10; sy=y; chao=true; }
+  out.push({x:x,y:y,sy:sy,n:nn,vale:vale,dez:(vale===10),chao:chao});}
  if(R.tipo==="ordenar"){ // posição != ordem: embaralha quais lugares recebem 1..n
   var ord=[],k;for(k=0;k<out.length;k++)ord.push(k+1);
   for(k=out.length-1;k>0;k--){var j=Math.floor(rnd()*(k+1)),tmp=ord[k];ord[k]=ord[j];ord[j]=tmp;}
@@ -420,6 +435,7 @@ function rodadaCarrega(idx){
  var itens=rRound.itens||_geraItens(rRound,idx),i;
  for(i=0;i<itens.length;i++){var it=itens[i];
   rItens.push({id:i,n:(it.n!=null?it.n:i+1),x:it.x,y:it.y,
+   sy:(it.sy!=null?it.sy:it.y),chao:!!it.chao,
    vale:(it.vale||(it.dez?10:1)),got:false,over:false,blinkT:0,
    seed:(it.x*0.7+it.y*0.31),cor:_corFruta(i,it)});}
  _salvaProg(idx);rodadaAnuncia(); }
@@ -448,7 +464,7 @@ function tentaColher(it){ if(it.got&&!it.over)return;
   var rnd=_rng((Math.floor(it.seed)|0)+rIdx*13),x,y,ok=false,tr=0;
   while(!ok&&tr++<40){x=140+rnd()*(WW-280);y=170+rnd()*(WH-320);
    ok=!_pertoArvore(x,y)&&(Math.abs(x-rCesta.x)>120||Math.abs(y-rCesta.y)>120);}
-  it.x=x;it.y=y;somColher();
+  it.x=x;it.y=y;it.sy=y;it.chao=true;somColher();  // volta ao chão -> sy/chao coerentes p/ coleta e sombra
   balaoNPC(rRound.pedido||"Byte","Isso! Agora são "+rNaCesta+"."+(rNaCesta<rAlvo?" Ainda faltam.":""),"aula_ok",1.1);
   return; }
  if(rTipo==="ordenar"&&it.n!==rProx){ _erroOrdem(); return; }   // ordem errada = consequência, NÃO colhe
@@ -510,7 +526,10 @@ function rodadaUpdate(dt,t){ if(!MODO_AULA)return;
  rDicaT-=dt; if(rDicaT<=0){ rDicaT=9+Math.random()*5; byteDica(); }   // Byte pergunta de tempos em tempos
  for(var i=0;i<rItens.length;i++){var it=rItens[i]; if(it.blinkT>0)it.blinkT-=dt;
    if(it.got&&!it.over)continue;
-   var dx=byte.x-it.x,dy=byte.y-it.y; if(dx*dx+dy*dy<42*42) tentaColher(it); }
+   // maçã PENDURADA: mede a distância contra a ÂNCORA DE CHÃO (base do tronco = it.sy),
+   // não contra it.y (que fica na copa) -> a criança colhe encostando o Byte no PÉ da árvore.
+   var ay=(it.chao?it.y:(it.sy!=null?it.sy:it.y));
+   var dx=byte.x-it.x,dy=byte.y-ay; if(dx*dx+dy*dy<54*54) tentaColher(it); }
  if(rTipo==="trazer_exato"){var ex=byte.x-rCesta.x,ey=byte.y-rCesta.y; if(ex*ex+ey*ey<58*58)_entrega();}
  _flyUpdate(dt);_badgeUpdate(dt); }
 
@@ -521,18 +540,25 @@ function drawNum(x,y,size,txt,cor){cx.save();cx.font="bold "+size+"px Verdana";c
 function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
  var wob=Math.sin(t*0.004+o.seed)*3,trem=o.blinkT>0?Math.sin(t*0.045)*4:0;
  var alvoNext=(rTipo==="ordenar"&&o.n===rProx);
- sombra(x,y+14,o.vale===10?20:15,6);
+ if(o.chao)sombra(x,y+14,o.vale===10?20:15,6); // só a maçã CAÍDA leva sombra de chão; pendurada não
  if(o.vale===10){ // SACOLA DE DEZ
-  cx.save();cx.translate(x+trem,y-10+wob);cx.fillStyle="#7a5230";roundR(-18,-14,36,30,7);cx.fill();
-  cx.fillStyle="#8f6238";cx.fillRect(-18,-16,36,6);cx.restore();drawNum(x+trem,y-9+wob,20,"10","#fff");
- } else { // FRUTA: círculo colorido + folha + cabinho
-  cx.save();cx.translate(x+trem,0);
-  cx.beginPath();cx.arc(0,y-8+wob,15,0,Math.PI*2);cx.fillStyle=o.cor;cx.fill();
-  cx.beginPath();cx.arc(-5,y-12+wob,5,0,Math.PI*2);cx.fillStyle="rgba(255,255,255,.35)";cx.fill();
-  cx.fillStyle="#3a7d34";cx.beginPath();cx.ellipse(4,y-22+wob,7,4,-0.6,0,Math.PI*2);cx.fill();
-  cx.strokeStyle="#5a3a1e";cx.lineWidth=2;cx.beginPath();cx.moveTo(0,y-22+wob);cx.lineTo(2,y-27+wob);cx.stroke();
-  cx.restore();
+  if(IMG.sacola10){ imgH(IMG.sacola10,x+trem,y+wob,30); }
+  else { cx.save();cx.translate(x+trem,y-10+wob);cx.fillStyle="#7a5230";roundR(-18,-14,36,30,7);cx.fill();
+   cx.fillStyle="#8f6238";cx.fillRect(-18,-16,36,6);cx.restore();drawNum(x+trem,y-9+wob,20,"10","#fff"); }
+ } else { // FRUTA: maçã PINTADA (IA) se houver; senão círculo desenhado (fallback leve)
+  if(IMG.fruta){ imgH(IMG.fruta,x+trem,y+3+wob,24); }
+  else { cx.save();cx.translate(x+trem,0);
+   cx.beginPath();cx.arc(0,y-8+wob,15,0,Math.PI*2);cx.fillStyle=o.cor;cx.fill();
+   cx.beginPath();cx.arc(-5,y-12+wob,5,0,Math.PI*2);cx.fillStyle="rgba(255,255,255,.35)";cx.fill();
+   cx.fillStyle="#3a7d34";cx.beginPath();cx.ellipse(4,y-22+wob,7,4,-0.6,0,Math.PI*2);cx.fill();
+   cx.strokeStyle="#5a3a1e";cx.lineWidth=2;cx.beginPath();cx.moveTo(0,y-22+wob);cx.lineTo(2,y-27+wob);cx.stroke();
+   cx.restore(); }
   if(rTipo==="ordenar") drawNum(x+trem,y-8+wob,18,""+o.n,"#fff"); } // ordenar mostra o numeral
+ if(o.vale!==10){ // BRILHO de maçã madura SEMPRE-LIGADO: halo quente suave pulsando (sinaliza "colhe aqui")
+  var ph=0.12+0.05*Math.sin(t*0.006+o.seed);
+  cx.save();cx.globalCompositeOperation="lighter";
+  var gh=cx.createRadialGradient(x,y-8,3,x,y-8,30);gh.addColorStop(0,"rgba(255,240,150,"+ph+")");gh.addColorStop(1,"rgba(255,240,150,0)");
+  cx.fillStyle=gh;cx.beginPath();cx.arc(x,y-8,30,0,Math.PI*2);cx.fill();cx.restore();cx.globalAlpha=1; }
  if(alvoNext||o.blinkT>0){ var pa=0.25+0.25*Math.sin(t*0.012);
   cx.save();cx.globalCompositeOperation="lighter";
   var g=cx.createRadialGradient(x,y-8,4,x,y-8,34);g.addColorStop(0,"rgba(255,240,150,"+pa+")");g.addColorStop(1,"rgba(255,240,150,0)");
@@ -541,21 +567,25 @@ function desFruta(o,t){ if(o.got&&!o.over)return; var x=o.x,y=o.y;
   cx.fillText("↑",x,y-34+wob);cx.restore();cx.globalAlpha=1; } }
 function desCesta(t){ if(!rCesta)return; var x=rCesta.x,y=rCesta.y,i;
  sombra(x,y+8,34,10);
- cx.save();cx.fillStyle="#a9762f";roundR(x-30,y-16,60,30,8);cx.fill();
- cx.strokeStyle="rgba(80,50,20,.6)";cx.lineWidth=2;
- for(i=-24;i<=24;i+=8){cx.beginPath();cx.moveTo(x+i,y-16);cx.lineTo(x+i,y+14);cx.stroke();}
- cx.beginPath();cx.moveTo(x-30,y-2);cx.lineTo(x+30,y-2);cx.stroke();
- cx.fillStyle="#8a5f24";cx.fillRect(x-32,y-18,64,5);cx.restore();
- if(rTipo==="agrupar"){ for(i=0;i<rGrupos&&i<3;i++){cx.fillStyle="#7a5230";roundR(x-20+i*14,y-30,16,14,4);cx.fill();drawNum(x-12+i*14,y-23,10,"10","#fff");} }
- else if(rTipo==="trazer_exato"){ cx.save();cx.fillStyle="rgba(20,30,50,.85)";roundR(x-26,y-46,52,20,6);cx.fill();
+ if(IMG.cesta){ imgH(IMG.cesta,x,y+14,40); }                        // CESTA pintada (IA)
+ else { cx.save();cx.fillStyle="#a9762f";roundR(x-30,y-16,60,30,8);cx.fill();   // fallback code-drawn
+  cx.strokeStyle="rgba(80,50,20,.6)";cx.lineWidth=2;
+  for(i=-24;i<=24;i+=8){cx.beginPath();cx.moveTo(x+i,y-16);cx.lineTo(x+i,y+14);cx.stroke();}
+  cx.beginPath();cx.moveTo(x-30,y-2);cx.lineTo(x+30,y-2);cx.stroke();
+  cx.fillStyle="#8a5f24";cx.fillRect(x-32,y-18,64,5);cx.restore(); }
+ if(rTipo==="agrupar"){ for(i=0;i<rGrupos&&i<3;i++){ if(IMG.sacola10){ imgH(IMG.sacola10,x-12+i*14,y-16,18); } // sacolas-de-10 pintadas na cesta
+   else { cx.fillStyle="#7a5230";roundR(x-20+i*14,y-30,16,14,4);cx.fill();drawNum(x-12+i*14,y-23,10,"10","#fff"); } } }
+ else if(rTipo==="trazer_exato"){ cx.save();cx.fillStyle="rgba(20,30,50,.85)";roundR(x-26,y-46,52,20,6);cx.fill(); // HUD/indicador (mantido: leitura de "faltam")
    for(i=0;i<rAlvo&&i<8;i++){cx.fillStyle=(i<rNaCesta)?"#7be07b":"rgba(255,255,255,.35)";cx.beginPath();cx.arc(x-20+i*6,y-36,2.4,0,Math.PI*2);cx.fill();}cx.restore(); }
  else{ var pilha=Math.min((rTipo==="ordenar"?rColhidas:rColhidas),6);
-   for(i=0;i<pilha;i++){cx.fillStyle=_CORF[i%_CORF.length];cx.beginPath();cx.arc(x-16+i*6,y-6-((i%2)*5),5,0,Math.PI*2);cx.fill();} }
+   for(i=0;i<pilha;i++){ var mfx=x-16+i*6, mfy=y-1-((i%2)*5);                    // monte na cesta = mini-maçãs pintadas
+    if(IMG.fruta){ imgH(IMG.fruta,mfx,mfy,14); }
+    else { cx.fillStyle=_CORF[i%_CORF.length];cx.beginPath();cx.arc(mfx,mfy-5,5,0,Math.PI*2);cx.fill(); } } }
  cx.globalAlpha=1; }
 function desFly(){ for(var i=0;i<rFly.length;i++){var f=rFly[i];
   var px=f.x0+(rCesta.x-f.x0)*f.p, py=f.y0+(rCesta.y-f.y0)*f.p-Math.sin(f.p*Math.PI)*70;
-  if(f.vale===10){cx.fillStyle="#7a5230";roundR(px-9,py-8,18,16,4);cx.fill();}
-  else{cx.beginPath();cx.arc(px,py-4,9,0,Math.PI*2);cx.fillStyle=f.cor;cx.fill();} } cx.globalAlpha=1; }
+  if(f.vale===10){ if(IMG.sacola10){ imgH(IMG.sacola10,px,py+10,22); } else {cx.fillStyle="#7a5230";roundR(px-9,py-8,18,16,4);cx.fill();} }
+  else{ if(IMG.fruta){ imgH(IMG.fruta,px,py+10,20); } else {cx.beginPath();cx.arc(px,py-4,9,0,Math.PI*2);cx.fillStyle=f.cor;cx.fill();} } } cx.globalAlpha=1; }
 function desBadges(){ for(var i=0;i<rBadges.length;i++){var b=rBadges[i];
   cx.save();cx.globalAlpha=Math.max(0,1-b.t/1.1);drawNum(b.x,b.y,20,b.txt,"#ffe38a");cx.restore();} cx.globalAlpha=1; }
 /* HUD contador (TELA) — desenhado no lugar do texto da chave */
@@ -871,7 +901,8 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.max(0,Math.min(.05,(ts-ult)/
 
  if(MODO_AULA){ // frutas + cesta entram no y-sort (o Byte passa na frente/atrás corretamente)
   for(var _ai=0;_ai<rItens.length;_ai++){var _it=rItens[_ai]; if(_it.got&&!_it.over)continue;
-   draws.push({y:_it.y,f:(function(o){return function(){desFruta(o,t);};})(_it)});}
+   // chave de profundidade = sy (base da árvore p/ pendurada) -> fruta na copa desenha NA FRENTE da própria árvore
+   draws.push({y:(_it.sy!=null?_it.sy:_it.y),f:(function(o){return function(){desFruta(o,t);};})(_it)});}
   if(rCesta)draws.push({y:rCesta.y,f:function(){desCesta(t);}}); }
  for(i=0;i<PROPS.length;i++)draws.push({y:PROPS[i].y,f:(function(p){return function(){desProp(p,t);};})(PROPS[i])});
  for(i=0;i<npcs.length;i++)draws.push({y:npcs[i].y,f:(function(n){return function(){desNPC(n,t);};})(npcs[i])}); // NPCs no y-sort
