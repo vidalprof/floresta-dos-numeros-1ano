@@ -1,0 +1,42 @@
+name: Achar EducaVerso / mundo-vivo (lista repos + busca codigo)
+
+# Descoberta: usa o PAGES_TOKEN (acesso a todos os repos do usuario) para
+# (1) listar TODOS os repositorios de vidalprof (nome | atualizado | privado | descricao)
+# e (2) buscar por marcas do EducaVerso/mundo-vivo em TODO o codigo do usuario.
+# So LEITURA (nao escreve em lugar nenhum). Objetivo: achar onde ficou o backup.
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  achar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Listar todos os repos e buscar marcas do EducaVerso
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+        run: |
+          set -uo pipefail
+          echo "=================================================="
+          echo "1) TODOS OS REPOS DE vidalprof (mais recentes primeiro)"
+          echo "   formato: ATUALIZADO | privado? | NOME | descricao"
+          echo "=================================================="
+          gh api "user/repos?per_page=100&sort=pushed&affiliation=owner" --paginate \
+            --jq '.[] | (.pushed_at) + " | priv=" + (.private|tostring) + " | " + .name + " | " + (.description // "")' 2>&1 | head -300 || true
+          echo ""
+          echo "=================================================="
+          echo "2) BUSCA DE CODIGO por marcas do EducaVerso/mundo-vivo"
+          echo "=================================================="
+          for TERMO in "eduverse" "educaverso" "kit-floresta" "desFogueira" "MASCOTE_POSES" "mundo+vivo" "poseByte"; do
+            echo "--- termo: $TERMO ---"
+            gh api "search/code?q=$TERMO+user:vidalprof&per_page=30" \
+              --jq '.items[] | .repository.full_name + "  ::  " + .path' 2>&1 | sort -u | head -40 || true
+            echo ""
+          done
+          echo ""
+          echo "=================================================="
+          echo "3) REPOS cujo NOME lembra fabrica/educa/mundo/vivo/memoria/backup"
+          echo "=================================================="
+          gh api "user/repos?per_page=100&affiliation=owner" --paginate \
+            --jq '.[] | .name' 2>&1 | grep -iE "educa|eduverse|fabrica|mundo|vivo|memoria|backup|floresta|byte" | sort -u || true
+          echo "=== FIM ==="
