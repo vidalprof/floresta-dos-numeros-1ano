@@ -37,6 +37,13 @@ for key,idn in assets.items():
     p=os.path.join(PROC,idn+".png")
     if os.path.exists(p): SRCJS[key]="data:image/png;base64,"+b64(p)
     else: print("!! falta asset:",idn)
+# ---- CARTELA DE POSES DO BYTE (personagem vivo): auto-incluida em TODO mundo que usa o byte.
+#      Segue o id do byte do mundo (ex.: byte_pirata_costas), com chave estavel byte_<pose>. ----
+if "byte" in assets:
+    for pose in ["costas","lado","senta","deita","fala","feliz"]:
+        pp=os.path.join(PROC,assets["byte"]+"_"+pose+".png")
+        if os.path.exists(pp): SRCJS["byte_"+pose]="data:image/png;base64,"+b64(pp)
+        else: print("(sem pose)",assets["byte"]+"_"+pose)
 # ---- FALAS (voz gerada) ----
 FAL={}
 for idn in dados.get("falas",[]):

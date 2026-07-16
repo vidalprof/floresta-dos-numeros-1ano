@@ -81,6 +81,7 @@ if(IS_TOUCH){try{document.body.classList.add("touch");}catch(e){}}
 var WW=1500,WH=1050;
 var cam={x:0,y:0};
 var byte={x:250,y:860,dir:1,resp:0,passo:0,mov:false,r:18};
+byte.mvx=0;byte.mvy=1;byte.idle=0;  // vetor de movimento + tempo parado (poses vivas)
 var hasKey=false, fase="andar", fim=false, fimT=0;
 var chave={x:560,y:470,got:false,bob:0};
 var arco={x:1150,y:340};
@@ -206,10 +207,31 @@ function desChave(t){if(chave.got)return;var x=chave.x,y=chave.y-8-Math.sin(t*.0
  g.addColorStop(0,"rgba(255,225,120,"+(0.5+0.2*Math.sin(t*.006))+")");g.addColorStop(1,"rgba(255,225,120,0)");
  cx.fillStyle=g;cx.beginPath();cx.arc(x,y,34,0,Math.PI*2);cx.fill();cx.restore();
  sombra(chave.x,chave.y+8,14,5);imgH(IMG.chave,x,y+18,40);}
-function desByte(t){var x=byte.x,y=byte.y,h=64,bob=byte.mov?Math.abs(Math.sin(byte.passo*.9))*6:0;
- var rp=byte.mov?0:Math.sin(byte.resp)*.03;sombra(x,y+8,18,6);
- cx.save();cx.translate(x,y+8-bob);cx.scale(byte.dir*(1+rp),1-rp*.6);imgH(IMG.byte,0,0,h);cx.restore();
- if(hasKey){var kw=IMG.chave.width*18/IMG.chave.height;cx.drawImage(IMG.chave,x+11,y-52,kw,18);}}
+// CARTELA DE POSES (Byte vivo): cada pose tem escala propria p/ o personagem NAO mudar de tamanho
+var POSE={frente:{im:"byte",f:1.00},costas:{im:"byte_costas",f:1.00},lado:{im:"byte_lado",f:1.12},
+ senta:{im:"byte_senta",f:0.95},deita:{im:"byte_deita",f:0.62},fala:{im:"byte_fala",f:0.98},feliz:{im:"byte_feliz",f:1.06}};
+function poseByte(){ // decide a pose atual pela acao (prioridade: comemora>anda>fala>descanso>parado)
+ if(fim) return "feliz";
+ if(byte.mov){var ax=Math.abs(byte.mvx),ay=Math.abs(byte.mvy);
+  if(ay>ax) return byte.mvy<0?"costas":"frente";   // sobe=costas / desce=frente
+  return "lado";}                                   // esquerda/direita
+ if(balaoT>0) return "fala";
+ if(byte.idle>13) return "deita";
+ if(byte.idle>6)  return "senta";
+ return "frente";}
+function desByte(t){var x=byte.x,y=byte.y;
+ var nome=poseByte(),P=POSE[nome]||POSE.frente;
+ if(!IMG[P.im]){P=POSE.frente;nome=(nome==="costas"||nome==="lado")?nome:"frente";} // sem sprite da pose -> usa frente
+ var im=IMG[P.im]||IMG.byte,h=64*P.f;
+ var andando=byte.mov&&(nome==="frente"||nome==="costas"||nome==="lado");
+ var bob=andando?Math.abs(Math.sin(byte.passo*.9))*6:0;
+ var deitado=(nome==="deita");
+ var rp=(!byte.mov&&!deitado&&nome!=="senta")?Math.sin(byte.resp)*.03:0; // respira parado em pe
+ var talk=(nome==="fala")?(0.5+0.5*Math.sin(t*0.02))*0.05:0;             // boca/squash ao falar
+ var flip=byte.dir;
+ sombra(x,y+8,deitado?32:18,deitado?7:6);
+ cx.save();cx.translate(x,y+8-bob);cx.scale(flip*(1+rp),(1-rp*.6)*(1-talk));imgH(im,0,0,h);cx.restore();
+ if(hasKey&&IMG.chave){var kw=IMG.chave.width*18/IMG.chave.height;cx.drawImage(IMG.chave,x+11,y-52,kw,18);}}
 function desArco(t){var x=arco.x,y=arco.y; // arco de pedra = entrada do labirinto
  sombra(x,y+8,120,20);
  function bloco(bx,by,bw,bh){cx.fillStyle=patM||"#6a6a72";cx.fillRect(bx,by,bw,bh);
@@ -239,12 +261,13 @@ function frame(ts){if(ult===null)ult=ts;var dt=Math.min(.05,(ts-ult)/1000);ult=t
  coruja-=dt;if(coruja<=0){coruja=16+Math.random()*16;somCoruja();}
  // ---- movimento ----
  if(!fim){var v=inputVec(),vx=v[0],vy=v[1];byte.mov=(vx||vy)?true:false;
-  if(byte.mov){var L=Math.sqrt(vx*vx+vy*vy);vx/=L;vy/=L;var sp=140;
+  if(byte.mov){var L=Math.sqrt(vx*vx+vy*vy);vx/=L;vy/=L;byte.mvx=vx;byte.mvy=vy;var sp=140;
    var nx=byte.x+vx*sp*dt,ny=byte.y+vy*sp*dt;
    if(!bloqueado(nx,byte.y))byte.x=nx; if(!bloqueado(byte.x,ny))byte.y=ny;
    if(vx<-0.2)byte.dir=-1;else if(vx>0.2)byte.dir=1;
    byte.passo+=dt*11;if((byte.passo%1.2)<dt*11)somPasso();}
- }
+ } else { byte.mov=false; }
+ byte.idle = byte.mov ? 0 : byte.idle+dt;  // acumula tempo parado -> senta/deita
  // ---- camera segue ----
  var cc=cellCam();cam.x+=(cc[0]-cam.x)*Math.min(1,dt*6);cam.y+=(cc[1]-cam.y)*Math.min(1,dt*6);
  // ---- pega a chave ----
