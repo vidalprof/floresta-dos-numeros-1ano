@@ -52,7 +52,7 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
  h1{font-size:15px;margin:4px 0 0;letter-spacing:.3px;width:100%;}
  .sub{font-size:11px;color:#9fb6df;margin:0 auto 4px;width:100%;max-width:94vw;box-sizing:border-box;padding:0 8px;line-height:1.35;}
  #frame{padding:7px;border-radius:14px;background:#060b16;box-shadow:0 10px 30px rgba(0,0,0,.6),inset 0 0 0 2px #23407a;max-width:96vw;box-sizing:border-box;}
- canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:56vh;width:auto;height:auto;cursor:pointer;}
+ canvas{display:block;border-radius:10px;background:#3f7a34;max-width:100%;max-height:74vh;width:auto;height:auto;cursor:pointer;}
  #painel{display:flex;width:100%;box-sizing:border-box;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:6px;padding:0 6px;}
  .bt{font-family:inherit;font-weight:bold;border:0;border-radius:14px;cursor:pointer;padding:9px 16px;font-size:15px;color:#0a1120;-webkit-transition:transform .05s;transition:transform .05s;}
  .bt.vz{background:linear-gradient(#ffe08a,#f5b73f);box-shadow:0 3px 0 #b07d1e;}
@@ -74,7 +74,10 @@ HTML=r"""<!doctype html><html lang="pt-br"><head><meta charset="utf-8">
    <button class="dD" id="dD">&#9660;</button>
  </div>
 </div><script>
-var cv=document.getElementById("tela"),cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
+var cv=document.getElementById("tela");
+/* tela estreita (celular em pe): viewport mais ALTA p/ aproveitar a tela (area de jogo maior) */
+(function(){try{var w=window.innerWidth||720;if(w<600){cv.height=760;}}catch(e){}})();
+var cx=cv.getContext("2d"),VW=cv.width,VH=cv.height;
 var SRC=__SRC_JSON__, FALAS=__FALAS_JSON__, TEMA=__THEME_JS__;
 var HIST=(typeof MUNDO!=="undefined"&&MUNDO.historia)?MUNDO.historia:{}; // historia data-driven (default {} = floresta identica)
 var IMG={},carreg=0,NN=0;for(var kk in SRC)NN++;
