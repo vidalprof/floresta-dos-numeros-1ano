@@ -29,6 +29,33 @@ jobs:
       - name: Checkout deste repositorio
         uses: actions/checkout@v4
 
+      - name: DESCOBRIR onde estao a fabrica/auditores/poses (lista repos + busca codigo)
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+        run: |
+          set -uo pipefail
+          echo "=================================================="
+          echo "A) TODOS OS REPOS de vidalprof (recentes primeiro): ATUALIZADO | priv | NOME | descricao"
+          echo "=================================================="
+          gh api "user/repos?per_page=100&sort=pushed&affiliation=owner" --paginate \
+            --jq '.[] | (.pushed_at) + " | priv=" + (.private|tostring) + " | " + .name + " | " + (.description // "")' 2>&1 | head -300 || true
+          echo ""
+          echo "=================================================="
+          echo "B) BUSCA DE CODIGO por marcas da fabrica/motor/poses/auditor"
+          echo "=================================================="
+          for TERMO in "kit-floresta" "montar.py" "runner.py" "poseByte" "desFogueira" "byte_costas" "EducaVerso" "MUNDO_JS" "mundo_vivo" "MASCOTE_POSES"; do
+            echo "--- termo: $TERMO ---"
+            gh api "search/code?q=$TERMO+user:vidalprof&per_page=30" \
+              --jq '.items[] | .repository.full_name + "  ::  " + .path' 2>&1 | sort -u | head -40 || true
+            echo ""
+          done
+          echo "=================================================="
+          echo "C) REPOS com nome de educa/eduverse/fabrica/mundo/vivo/memoria/backup/byte"
+          echo "=================================================="
+          gh api "user/repos?per_page=100&affiliation=owner" --paginate \
+            --jq '.[] | .name' 2>&1 | grep -iE "educa|eduverse|fabrica|mundo|vivo|memoria|backup|byte|motor" | sort -u || true
+          echo "=== FIM DA DESCOBERTA ==="
+
       - name: Buscar index.html do repositorio de origem
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
