@@ -214,6 +214,32 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
 - Meta do Marcos: "usar o Claude como uma EQUIPE que entrega produto espetacular
   pronto" — cada especialista faz sua parte e SAI PRONTO (sem o Marcos corrigir arte).
 
+## 🤖 DECISÃO FIRME — TUDO AUTOMÁTICO, NADA À MÃO (Marcos, jul/2026)
+O Marcos quer a fábrica **100% automática**: ele digita o pedido (ex.: "adição, 1º
+ano") e a linha PRODUZ tudo — quem "faz à mão" é a fábrica (workflows), nunca o
+Marcos nem o Claude posicionando coisa a coisa.
+- **NÃO usar editor MANUAL como etapa obrigatória** (ex.: Tiled/LDtk para desenhar
+  mapa à mão = descartado; a IA GERA o layout e os PORTÕES auto-corrigem/refazem).
+- **Pilha grátis por API/workflow:** imagem = Pollinations (sem chave) + Gemini
+  (free tier); voz = edge-tts; sons = Web Audio + Freesound CC0; conteúdo/mundo/
+  história/dados.json = a IA; qualidade = os 4 portões (reprovam e mandam refazer);
+  publicação = workflows da Fábrica. Nada disso exige o Marcos.
+- **Movimento "vivo" do personagem, automático:** (1) gerar CICLO de frames de
+  caminhada pela IA de imagem (já provado na FASE E — 2 frames do Gemini, sem
+  desenhar à mão); (2) piloto do **Meta "Animated Drawings"** (grátis, open source,
+  roda em workflow: 1 imagem → esqueleto auto → anima). DragonBones/Spine são
+  editores MANUAIS (rigging à mão) — NÃO têm API automática; só valem se o Marcos
+  aceitar riggar o personagem UMA vez e reusar em todos os mundos ("à mão 1x,
+  automático pra sempre") — hoje ele quer nada à mão, então ficam de fora por ora.
+- **Único passo humano que sobra:** o "OK" final do Marcos (aprovar), e mesmo esse
+  é opcional. "Automático" = quando não fica bom, a LINHA detecta e refaz sozinha,
+  sem chamar o Marcos (auto-corrigível, não mágico/perfeito de primeira).
+- **Referência estética travada:** a cena do INTERIOR da Taberna (luz de lampião,
+  aconchego) = o padrão de beleza; "só faltou ser MAIS VIVA" (chama tremulando,
+  poeira no facho de luz, NPCs respirando/gesticulando, gato que anda, lareira). O
+  motor já tem os ingredientes — é ligar na cena. Somado à CENA-PINTURA (a IA pinta
+  a cena inteira de uma vez = beleza do navio + quase nada a posicionar = mais auto).
+
 ## 🗺️ A GRANDE AVENTURA — estrutura do mundo (visão do Marcos)
 O EducaVerso pode ser uma AVENTURA grande e contínua (uma floresta com caminho), não fases soltas:
 - **Loop:** explorar a floresta → interagir → achar a CHAVE → atravessar um LABIRINTO → abrir a
