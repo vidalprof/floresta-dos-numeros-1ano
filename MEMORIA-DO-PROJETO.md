@@ -149,6 +149,15 @@ O mundo tem que ser DO ALUNO e acompanhá-lo o ano inteiro. Requisitos (INEGOCI�
 - **3 PILARES inegociáveis (Marcos):** (1) 2D tile + **arte IA premium** = qualidade "quase real" que
   **prende o aluno**; (2) **adequação TOTAL por turma/idade** (tema, mecânica, falas, missão, voz);
   (3) **rápido, funcional, sustentável e vivo** (experiência maravilhosa, leve p/ escola).
+- **VOZ (decisão firme do Marcos — corrige o estudo da equipe):** NADA de voz do navegador
+  (speechSynthesis). A narração é **SEMPRE gerada via API (edge-tts — Antonio/Francisca…) e volta como
+  MP3 embutido** (base64). Voz natural, padrão premium. Peso: `otimizar-audio.yml` + cache por hash.
+  Voz própria por personagem. (O `EDUCAVERSO-PLANO-FABRICA.md` supõe voz runtime p/ economia — ISTO
+  sobrepõe: sempre gerada, ainda grátis via edge-tts.) Ver `EDUCAVERSO-SUSTENTABILIDADE.md`.
+- **SUSTENTABILIDADE (produção + dados) documentada:** `EDUCAVERSO-SUSTENTABILIDADE.md` — produção
+  ~grátis (Pollinations + edge-tts + Actions público + Pages; Gemini só na fantasia do Byte, cacheado);
+  dados mínimos (~2 KB/aluno + rollup anual + só 1º nome) no Firebase free, com **backend PLUGÁVEL**
+  (interface `salvar/carregar` — trocável sem mexer no jogo).
 - **ARQUITETURA DA FÁBRICA (estudo da equipe):** ver **`EDUCAVERSO-PLANO-FABRICA.md`** — recomendação
   **HÍBRIDA**: uma ESPINHA (linha em fases: briefing→mecânica→roteiro→arte→voz→montador→auditor→3
   portões→publicação) + FÁBRICAS-SIDECAR (os workflows do GitHub, como funções puras cacheadas por

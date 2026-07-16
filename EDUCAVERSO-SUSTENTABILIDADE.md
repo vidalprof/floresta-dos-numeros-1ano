@@ -13,10 +13,14 @@
 |---|---|---|
 | Arte (tiles/cenários) | **Pollinations (flux)** — padrão | **grátis** |
 | Arte (fantasia do Byte, edição da âncora) | **Gemini** só onde precisa editar a âncora, com **prompt econômico** (especialista de prompt) | pago, raro, **cacheado** |
-| Voz (maioria das falas) | **Web Speech (speechSynthesis)** no navegador | **grátis** |
-| Voz (falas fixas de qualidade) | **edge-tts** (workflow) | **grátis** |
+| Voz (TODAS as falas) | **SEMPRE gerada via API (edge-tts — Antonio/Francisca/Donato…)**, embutida como **MP3 base64**. Voz natural. **NUNCA a voz robótica do navegador (speechSynthesis).** | **grátis** |
 | Geração/compute | **GitHub Actions em repo PÚBLICO** | **grátis** |
 | Hospedagem dos jogos | **GitHub Pages** (estático, HTML autossuficiente) | **grátis** |
+
+> **Voz (decisão firme do Marcos):** a narração é SEMPRE MP3 gerado por API (edge-tts), voz natural
+> tipo **Antonio** — nunca a voz do navegador. Peso controlado: `otimizar-audio.yml` (mono 22 kHz,
+> 24 kbps → poucos KB por fala) + **cache por hash** (mesmo texto+voz = não regera). Voz PRÓPRIA por
+> personagem (Byte, NPCs) via vozes diferentes do edge-tts.
 
 **Os 3 multiplicadores que seguram o custo lá na frente:**
 1. **Biblioteca LEGO (reuso):** uma peça gerada 1x serve N mundos. Mundo novo reaproveita ~90% dos
