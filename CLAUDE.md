@@ -27,6 +27,19 @@ Leia tudo antes de agir e responda sempre em **português**.
 > estiver atrás, `git merge --ff-only origin/<branch>`. **Se o Marcos disser
 > "isso a gente já fez", acredite e VERIFIQUE a fundo — nunca insista no contrário.**
 >
+> **🔑 SENHA DO MARCOS (se eu parecer perdido/esquecido — ele paga caro por isso):**
+> se ele disser **"RELEIA A MEMÓRIA"** (ou "você esqueceu", "isso a gente já fez",
+> "lembra do EducaVerso"), eu PARO tudo IMEDIATAMENTE e, ANTES de responder qualquer
+> coisa: (1) `git fetch origin <branch>` + `git merge --ff-only`; (2) releio
+> `MEMORIA-DO-PROJETO.md` inteiro + `EDUCAVERSO.md` + `eduverse/style-bible/ambiente-vivo.md`
+> + os `EDUVERSE-*.md` + `EDUCAVERSO-PLANO-FABRICA.md`. Nunca discutir nem "achar que já
+> sei" — sincronizar e reler PRIMEIRO. Essa é a cura garantida do esquecimento.
+>
+> **EQUIPE/PORTÕES da fábrica (sempre passam antes de chegar ao Marcos):** Pedagogo/Curriculista,
+> Roteirista, Game Designer, Engenheiro, **Diretor de Arte** (proporção coerente com o Byte, props
+> com contexto, tudo pintado por IA) + os PORTÕES: Portão 0 (filosofia), 1 (funciona), **Arte**
+> (proporção/contexto/coerência), 2/3 (professor). Ver `EDUVERSE-EQUIPE.md` + `EDUCAVERSO-QA.md`.
+>
 > **A GERAÇÃO DE IMAGEM E ÁUDIO É REAL e roda por WORKFLOW do GitHub** (Actions,
 > internet liberada, com os secrets) — **não** pelo chat (o chat tem a rede
 > travada; testar API direto daqui dá 403, e isso é normal, não é "quebrado"):
