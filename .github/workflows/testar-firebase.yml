@@ -1,0 +1,80 @@
+name: Testar Firebase (prova de conexao RTDB)
+
+# PROVA de que a camada de dados conecta ponta a ponta:
+# 1) login ANONIMO (identitytoolkit) -> idToken
+# 2) GRAVA um aluno de teste no Realtime Database (com o token -> passa nas regras)
+# 3) LE de volta -> confirma
+# apiKey do Firebase Web e PUBLICO por design (passado por input, nao commitado).
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_key:
+        description: "apiKey do Firebase Web (publico por design)"
+        required: true
+        type: string
+      database_url:
+        description: "URL do Realtime Database"
+        required: false
+        default: "https://educaverso-73b1a-default-rtdb.firebaseio.com"
+        type: string
+
+jobs:
+  testar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login anonimo + gravar + ler (RTDB)
+        env:
+          API_KEY: ${{ inputs.api_key }}
+          DB_URL: ${{ inputs.database_url }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.error, datetime
+          key=os.environ.get("API_KEY","").strip()
+          db=os.environ.get("DB_URL","").strip().rstrip("/")
+          if not key: raise SystemExit("::error::api_key vazio")
+          if not db: raise SystemExit("::error::database_url vazio")
+
+          def post(url, obj):
+              data=json.dumps(obj).encode("utf-8")
+              req=urllib.request.Request(url, data=data, headers={"Content-Type":"application/json"}, method="POST")
+              with urllib.request.urlopen(req, timeout=30) as r: return json.loads(r.read().decode("utf-8"))
+
+          def put(url, obj):
+              data=json.dumps(obj).encode("utf-8")
+              req=urllib.request.Request(url, data=data, headers={"Content-Type":"application/json"}, method="PUT")
+              with urllib.request.urlopen(req, timeout=30) as r: return r.read().decode("utf-8")
+
+          def get(url):
+              with urllib.request.urlopen(url, timeout=30) as r: return r.read().decode("utf-8")
+
+          # 1) LOGIN ANONIMO (o que o jogo faz no navegador)
+          print(">> Passo 1: login anonimo...")
+          try:
+              auth=post("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s"%key, {"returnSecureToken":True})
+          except urllib.error.HTTPError as e:
+              raise SystemExit("::error::Login anonimo falhou (HTTP %s): %s -- verifique se 'Anonimo' esta ATIVO no Authentication"%(e.code, e.read().decode('utf-8','ignore')[:300]))
+          idtoken=auth.get("idToken"); uid=auth.get("localId")
+          if not idtoken: raise SystemExit("::error::sem idToken na resposta: %s"%json.dumps(auth)[:200])
+          print("   OK - login anonimo, uid:", uid)
+
+          # 2) GRAVAR um aluno de teste (com o token -> passa nas regras auth != null)
+          print(">> Passo 2: gravar aluno de teste no Realtime Database...")
+          rec={"nome":"Aluno Teste","turma":"DEMO","atualizado_em":datetime.datetime.utcnow().isoformat()+"Z",
+               "dados":{"progresso":{"navio-pirata":{"parada":3,"moedas":18}},"pontuacao":30}}
+          url_w="%s/turmas/DEMO/alunos/aluno_teste.json?auth=%s"%(db, idtoken)
+          try:
+              put(url_w, rec)
+          except urllib.error.HTTPError as e:
+              raise SystemExit("::error::Gravacao NEGADA (HTTP %s): %s -- verifique as REGRAS do RTDB"%(e.code, e.read().decode('utf-8','ignore')[:300]))
+          print("   OK - gravou.")
+
+          # 3) LER de volta
+          print(">> Passo 3: ler de volta...")
+          url_r="%s/turmas/DEMO/alunos/aluno_teste.json?auth=%s"%(db, idtoken)
+          lido=get(url_r)
+          print("   OK - leu de volta:")
+          print(json.dumps(json.loads(lido), ensure_ascii=False, indent=2))
+          print("")
+          print("===== RESULTADO: FIREBASE CONECTADO E FUNCIONANDO (login+grava+le) =====")
+          PY
