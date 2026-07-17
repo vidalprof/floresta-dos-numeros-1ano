@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>EduMundo — Painel do Professor</title>
+<style>
+/* ---- Reset leve + compatibilidade Win7/Chrome antigo (sem grid/var/clamp) ---- */
+* { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; }
+html,body { height:100%; }
+body{
+  font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  color:#eaf0ff; background:#0e1430;
+  background:-webkit-linear-gradient(top,#141b3d,#0b1026);
+  background:linear-gradient(180deg,#141b3d,#0b1026);
+  -webkit-text-size-adjust:100%;
+}
+.wrap{ max-width:900px; margin:0 auto; padding:18px 14px 60px; }
+h1{ font-size:22px; font-weight:800; letter-spacing:.3px; }
+h1 .b{ color:#ffd25a; }
+.sub{ color:#9fb0da; font-size:13px; margin-top:3px; }
+.card{
+  background:#182046; border:1px solid #2b356b; border-radius:14px;
+  padding:16px; margin-top:16px;
+  -webkit-box-shadow:0 6px 18px rgba(0,0,0,.28); box-shadow:0 6px 18px rgba(0,0,0,.28);
+}
+.card h2{ font-size:16px; margin-bottom:10px; color:#ffe08a; }
+label{ display:block; font-size:12px; color:#9fb0da; margin:8px 0 4px; }
+input[type=text],input[type=password]{
+  width:100%; padding:11px 12px; font-size:15px; color:#0e1430;
+  background:#f2f5ff; border:2px solid #cdd6f5; border-radius:10px; outline:none;
+}
+input:focus{ border-color:#7c8cff; }
+.btn{
+  display:inline-block; cursor:pointer; border:0; border-radius:10px;
+  font-size:15px; font-weight:700; color:#12183a; background:#ffd25a;
+  padding:11px 18px; margin-top:10px;
+}
+.btn:active{ -webkit-transform:translateY(1px); transform:translateY(1px); }
+.btn.sec{ background:#2b356b; color:#eaf0ff; }
+.btn.mini{ padding:7px 11px; font-size:13px; margin-top:0; }
+.btn.danger{ background:#c0455a; color:#fff; }
+.row{ font-size:14px; }
+.muted{ color:#8394c2; font-size:12px; }
+.hidden{ display:none !important; }
+.turma-item{ border:1px solid #2b356b; border-radius:12px; padding:12px; margin-top:10px; background:#141b3d; }
+.turma-head{ display:-webkit-box; display:flex; -webkit-box-align:center; align-items:center; -webkit-box-pack:justify; justify-content:space-between; }
+.turma-head .nm{ font-size:16px; font-weight:700; }
+.chip{ display:inline-block; background:#232c5c; color:#cfd8ff; border-radius:999px; padding:3px 10px; font-size:12px; margin-left:6px; }
+.aluno{ display:-webkit-box; display:flex; -webkit-box-align:center; align-items:center; padding:8px 6px; border-top:1px solid #232c5c; }
+.aluno .av{ font-size:22px; width:34px; text-align:center; }
+.aluno .an{ -webkit-box-flex:1; flex:1; font-size:15px; }
+.aluno .pg{ font-size:12px; color:#8ee6a6; margin-right:8px; }
+.linkbox{ display:-webkit-box; display:flex; margin-top:8px; }
+.linkbox input{ -webkit-box-flex:1; flex:1; font-size:12px; }
+.avpick{ margin-top:4px; }
+.avpick span{ display:inline-block; cursor:pointer; font-size:22px; padding:4px 6px; border-radius:8px; }
+.avpick span.on{ background:#3a469c; }
+.toast{ position:fixed; left:50%; bottom:22px; -webkit-transform:translateX(-50%); transform:translateX(-50%);
+  background:#0b1026; border:1px solid #3a469c; color:#eaf0ff; padding:10px 16px; border-radius:10px;
+  font-size:14px; z-index:50; max-width:90%; }
+.foot{ text-align:center; color:#6d7cad; font-size:11px; margin-top:22px; line-height:1.5; }
+.status{ font-size:12px; color:#9fb0da; margin-top:6px; }
+.status.ok{ color:#8ee6a6; } .status.err{ color:#ff9aa8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Edu<span class="b">Mundo</span> — Painel do Professor</h1>
+  <div class="sub">Cadastre as turmas e os alunos. Depois é só entregar o link da turma pras crianças jogarem.</div>
+
+  <!-- LOGIN (senha do professor) -->
+  <div id="telaLogin" class="card">
+    <h2>🔒 Entrar</h2>
+    <label for="pw">Senha do professor</label>
+    <input id="pw" type="password" placeholder="digite a senha" autocomplete="current-password">
+    <div><button class="btn" id="btnEntrar">Entrar</button></div>
+    <div id="loginMsg" class="status"></div>
+    <div class="muted" style="margin-top:10px">Esta tela é só do professor — as crianças não usam este endereço.</div>
+  </div>
+
+  <!-- PAINEL -->
+  <div id="telaPainel" class="hidden">
+    <!-- criar turma -->
+    <div class="card">
+      <h2>➕ Nova turma</h2>
+      <label for="ntNome">Nome da turma (ex.: 1º ano A)</label>
+      <input id="ntNome" type="text" placeholder="1º ano A">
+      <div><button class="btn" id="btnCriarTurma">Criar turma</button></div>
+      <div id="turmaMsg" class="status"></div>
+    </div>
+
+    <!-- lista de turmas -->
+    <div class="card">
+      <h2>📚 Minhas turmas</h2>
+      <div id="listaTurmas"><div class="muted">Carregando…</div></div>
+    </div>
+
+    <div style="text-align:center"><button class="btn sec mini" id="btnSair" style="margin-top:16px">Sair</button></div>
+  </div>
+
+  <div class="foot">
+    EduMundo • projeto educaverso-73b1a • os dados salvam no Firebase.<br>
+    Segurança de piloto: dado não sensível (só o 1º nome + progresso). Sem senha para a criança.
+  </div>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script>
+/* =========================================================================
+ * PAINEL DO PROFESSOR — EduMundo
+ * - Gate por senha (piloto: verificação no cliente; o site é separado e as
+ *   crianças não conhecem o endereço). Honestidade: não é blindagem de banco.
+ * - Firebase RTDB via REST (XMLHttpRequest, ES5 -> roda em navegador antigo).
+ * - Login ANÔNIMO para satisfazer as regras (auth != null) ao gravar.
+ * - Modelo: /turmas/<turmaId> = { nome, criada_em, alunos:{ <id>:{nome,avatar,dados,atualizado_em} } }
+ * =======================================================================*/
+(function(){
+  "use strict";
+
+  var CFG = {
+    apiKey: "AIzaSyA0mIDCLpGtbNPF4Tz6flKGTEmNOr4QMYg",           /* público por design */
+    databaseURL: "https://educaverso-73b1a-default-rtdb.firebaseio.com",
+    baseAluno: "https://vidalprof.github.io/educamundo/"          /* link que a criança abre */
+  };
+  /* Senha do professor: para não ficar em texto puro, guardamos uma soma simples.
+     "vidal2026" -> troque abaixo se quiser outra (rode _hash("nova") no console). */
+  var SENHA_HASH = 1214589694;   /* _hash("vidal2026") — troque rodando _hash("nova") no console (F12) */
+
+  function _hash(s){ s=String(s); var h=0,i; for(i=0;i<s.length;i++){ h=((h<<5)-h)+s.charCodeAt(i); h=h & 0x7fffffff; } return h; }
+  var $ = function(id){ return document.getElementById(id); };
+  var _tid=null;
+  function toast(msg){ var t=$("toast"); t.textContent=msg; t.className="toast"; if(_tid)clearTimeout(_tid); _tid=setTimeout(function(){ t.className="toast hidden"; },2600); }
+  function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+  function sanId(s){ return String(s==null?"":s).toLowerCase().replace(/[.#$\[\]\/]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,40) || "x"; }
+
+  /* ---- REST helpers ---- */
+  function xhr(method,url,body,ok,err){
+    try{
+      var x=new XMLHttpRequest(); x.open(method,url,true); x.timeout=12000;
+      x.onreadystatechange=function(){ if(x.readyState===4){
+        if(x.status>=200&&x.status<300){ ok&&ok(x.responseText); }
+        else{ err&&err("HTTP "+x.status+": "+String(x.responseText||"").slice(0,180)); } } };
+      x.ontimeout=function(){ err&&err("tempo esgotado (rede)"); };
+      x.onerror=function(){ err&&err("erro de rede"); };
+      if(body!=null){ x.setRequestHeader("Content-Type","application/json"); x.send(body); } else { x.send(); }
+    }catch(e){ err&&err(String(e)); }
+  }
+  var TOKEN=null;
+  function anonLogin(ok,err){
+    if(TOKEN){ ok(TOKEN); return; }
+    xhr("POST","https://identitytoolkit.googleapis.com/v1/accounts:signUp?key="+CFG.apiKey,
+      JSON.stringify({returnSecureToken:true}),
+      function(txt){ try{ TOKEN=JSON.parse(txt).idToken; ok(TOKEN); }catch(e){ err("resposta inválida do login"); } },
+      function(e){ err("login anônimo falhou: "+e); });
+  }
+  function dbURL(path){ return CFG.databaseURL+"/"+path+".json"+(TOKEN?("?auth="+TOKEN):""); }
+  function dbGet(path,ok,err){ anonLogin(function(){ xhr("GET",dbURL(path),null,function(t){ var d=null; try{ d=(t&&t!=="null")?JSON.parse(t):null; }catch(e){} ok(d); },err); },err); }
+  function dbPut(path,obj,ok,err){ anonLogin(function(){ xhr("PUT",dbURL(path),JSON.stringify(obj),function(){ ok&&ok(); },err); },err); }
+  function dbDel(path,ok,err){ anonLogin(function(){ xhr("DELETE",dbURL(path),null,function(){ ok&&ok(); },err); },err); }
+
+  /* ---- LOGIN ---- */
+  function tentarEntrar(){
+    var pw=$("pw").value;
+    if(_hash(pw)===SENHA_HASH){
+      try{ sessionStorage.setItem("prof_ok","1"); }catch(e){}
+      abrirPainel();
+    } else {
+      var m=$("loginMsg"); m.className="status err"; m.textContent="Senha incorreta. Tente de novo.";
+    }
+  }
+  function abrirPainel(){
+    $("telaLogin").className="card hidden";
+    $("telaPainel").className="";
+    carregarTurmas();
+  }
+
+  /* ---- TURMAS ---- */
+  function criarTurma(){
+    var nome=($("ntNome").value||"").trim();
+    var m=$("turmaMsg");
+    if(!nome){ m.className="status err"; m.textContent="Escreva o nome da turma."; return; }
+    var id=sanId(nome), m2=m;
+    m.className="status"; m.textContent="Salvando…";
+    dbGet("turmas/"+id, function(existe){
+      if(existe){ m2.className="status err"; m2.textContent="Já existe uma turma com esse nome."; return; }
+      dbPut("turmas/"+id, {nome:nome, criada_em:(new Date()).toISOString()},
+        function(){ $("ntNome").value=""; m2.className="status ok"; m2.textContent="Turma criada! ✔"; carregarTurmas(); },
+        function(e){ m2.className="status err"; m2.textContent="Falhou: "+e; });
+    }, function(e){ m2.className="status err"; m2.textContent="Falhou ao checar: "+e; });
+  }
+
+  function carregarTurmas(){
+    var box=$("listaTurmas"); box.innerHTML='<div class="muted">Carregando…</div>';
+    dbGet("turmas", function(turmas){
+      if(!turmas){ box.innerHTML='<div class="muted">Nenhuma turma ainda. Crie a primeira acima. ☝️</div>'; return; }
+      var ids=[]; for(var k in turmas){ if(turmas.hasOwnProperty(k)) ids.push(k); }
+      ids.sort(function(a,b){ return (turmas[a].nome||a)<(turmas[b].nome||b)?-1:1; });
+      var html="", i;
+      for(i=0;i<ids.length;i++){ html+=turmaHTML(ids[i], turmas[ids[i]]); }
+      box.innerHTML=html;
+      for(i=0;i<ids.length;i++){ montarAvpick(ids[i]); }   /* monta os seletores de avatar após o innerHTML */
+    }, function(e){ box.innerHTML='<div class="status err">Não consegui carregar: '+esc(e)+'</div>'; });
+  }
+
+  function progressoTexto(al){
+    try{
+      var d=al.dados||{}; var pts=(d.pontuacao!=null)?d.pontuacao:null;
+      var prog=d.progresso||{}; var nomes=[]; for(var k in prog){ if(prog.hasOwnProperty(k)) nomes.push(k); }
+      if(pts==null && !nomes.length) return "";
+      var t=""; if(nomes.length) t+="🎮 "+nomes.length+(nomes.length>1?" jogos":" jogo");
+      if(pts!=null) t+=(t?" • ":"")+"⭐ "+pts;
+      return t;
+    }catch(e){ return ""; }
+  }
+
+  function turmaHTML(id, t){
+    var alunos=t.alunos||{}, ids=[], k;
+    for(k in alunos){ if(alunos.hasOwnProperty(k)) ids.push(k); }
+    ids.sort(function(a,b){ return (alunos[a].nome||a)<(alunos[b].nome||b)?-1:1; });
+    var link=CFG.baseAluno+"?t="+encodeURIComponent(id);
+    var h='<div class="turma-item" data-t="'+esc(id)+'">';
+    h+='<div class="turma-head"><div class="nm">'+esc(t.nome||id)+'<span class="chip">'+ids.length+' aluno'+(ids.length===1?"":"s")+'</span></div>';
+    h+='<button class="btn danger mini" data-del-turma="'+esc(id)+'">apagar turma</button></div>';
+    /* link da turma */
+    h+='<div class="muted" style="margin-top:8px">Link pra abrir nos PCs da turma:</div>';
+    h+='<div class="linkbox"><input type="text" readonly value="'+esc(link)+'" id="lk-'+esc(id)+'"><button class="btn sec mini" data-copy="'+esc(id)+'" style="margin-left:6px">copiar</button></div>';
+    /* alunos */
+    var i;
+    for(i=0;i<ids.length;i++){ var a=alunos[ids[i]]; var pg=progressoTexto(a);
+      h+='<div class="aluno"><div class="av">'+esc(a.avatar||"🙂")+'</div><div class="an">'+esc(a.nome||ids[i])+'</div>';
+      if(pg) h+='<div class="pg">'+esc(pg)+'</div>';
+      h+='<button class="btn danger mini" data-del-aluno="'+esc(id)+'|'+esc(ids[i])+'">x</button></div>';
+    }
+    /* adicionar aluno */
+    h+='<div style="margin-top:10px"><label>Adicionar aluno</label>';
+    h+='<input type="text" placeholder="nome do aluno" id="na-'+esc(id)+'">';
+    h+='<div class="avpick" id="ap-'+esc(id)+'"></div>';
+    h+='<button class="btn mini" data-add-aluno="'+esc(id)+'" style="margin-top:8px">adicionar</button></div>';
+    h+='</div>';
+    return h;
+  }
+
+  var AVATARES=["🦊","🐢","🦉","🐙","🐬","🦜","🐝","🐞","🦋","🐠","🐧","🐥","🦁","🐯","🐨","🐰","🦄","🐳","⭐","🚀","🍎","🌈","🐲","🐸"];
+  function montarAvpick(id){
+    var box=$("ap-"+id); if(!box) return; var h="", i;
+    for(i=0;i<AVATARES.length;i++){ h+='<span data-av="'+AVATARES[i]+'"'+(i===0?' class="on"':'')+'>'+AVATARES[i]+'</span>'; }
+    box.innerHTML=h; box.setAttribute("data-sel",AVATARES[0]);
+  }
+
+  function addAluno(turmaId){
+    var inp=$("na-"+turmaId); if(!inp) return;
+    var nome=(inp.value||"").trim();
+    if(!nome){ toast("Escreva o nome do aluno."); return; }
+    var box=$("ap-"+turmaId); var av=(box&&box.getAttribute("data-sel"))||"🙂";
+    var aid=sanId(nome);
+    dbPut("turmas/"+turmaId+"/alunos/"+aid, {nome:nome, avatar:av, atualizado_em:(new Date()).toISOString()},
+      function(){ toast("Aluno adicionado ✔"); carregarTurmas(); },
+      function(e){ toast("Falhou: "+e); });
+  }
+
+  /* ---- eventos (delegação, ES5) ---- */
+  document.addEventListener("click", function(ev){
+    var el=ev.target; if(!el) return;
+    if(el.getAttribute && el.getAttribute("data-copy")){
+      var id=el.getAttribute("data-copy"); var f=$("lk-"+id);
+      if(f){ f.focus(); f.select(); try{ document.execCommand("copy"); toast("Link copiado! 📋"); }catch(e){ toast("Selecione e copie o link."); } }
+      return;
+    }
+    if(el.getAttribute && el.getAttribute("data-add-aluno")){ addAluno(el.getAttribute("data-add-aluno")); return; }
+    if(el.getAttribute && el.getAttribute("data-del-aluno")){
+      var p=el.getAttribute("data-del-aluno").split("|");
+      if(confirm("Remover este aluno?")){ dbDel("turmas/"+p[0]+"/alunos/"+p[1], function(){ toast("Removido."); carregarTurmas(); }, function(e){ toast("Falhou: "+e); }); }
+      return;
+    }
+    if(el.getAttribute && el.getAttribute("data-del-turma")){
+      var tid=el.getAttribute("data-del-turma");
+      if(confirm("Apagar a turma inteira (e todos os alunos dela)?")){ dbDel("turmas/"+tid, function(){ toast("Turma apagada."); carregarTurmas(); }, function(e){ toast("Falhou: "+e); }); }
+      return;
+    }
+    if(el.getAttribute && el.getAttribute("data-av")){
+      var wrap=el.parentNode; var kids=wrap.getElementsByTagName("span"), i;
+      for(i=0;i<kids.length;i++){ kids[i].className=""; }
+      el.className="on"; wrap.setAttribute("data-sel", el.getAttribute("data-av"));
+      return;
+    }
+  });
+  $("btnEntrar").onclick=tentarEntrar;
+  $("pw").addEventListener("keydown",function(e){ if(e.keyCode===13) tentarEntrar(); });
+  $("btnCriarTurma").onclick=criarTurma;
+  $("ntNome").addEventListener("keydown",function(e){ if(e.keyCode===13) criarTurma(); });
+  $("btnSair").onclick=function(){ try{ sessionStorage.removeItem("prof_ok"); }catch(e){} location.reload(); };
+
+  /* re-entrada na mesma sessão do navegador não pede senha de novo */
+  try{ if(sessionStorage.getItem("prof_ok")==="1") abrirPainel(); }catch(e){}
+})();
+</script>
+</body>
+</html>

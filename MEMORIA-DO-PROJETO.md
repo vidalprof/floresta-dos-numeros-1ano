@@ -688,3 +688,26 @@ conferir laudo) = **Haiku**; codificação padrão (portão, dados.json) = **Son
 arquitetura/síntese/auditoria adversarial = **Opus/Fable**. Regular também o
 esforço de raciocínio por agente (baixo no mecânico, alto só em verificação/chefia).
 O modelo da SESSÃO principal só o Marcos troca (/model).
+
+## 🌐 EDUMUNDO (tela do aluno) + PAINEL DO PROFESSOR — decisões travadas (Marcos, 2026-07-17)
+DEPOIS que o teste de Firebase passou (login anônimo + gravar + ler no RTDB do projeto
+`educaverso-73b1a`, run 29548937470 SUCCESS), o Marcos definiu como aluno e professor entram:
+
+- **DOIS SITES/REPOS SEPARADOS.** (1) **EduMundo** (aluno, público e bonito, é "a tela do
+  EducaMundo/EducaVerso inicial"); (2) **Painel do professor** (repo próprio, com **SENHA**,
+  **invisível para os alunos**). Nunca juntar os dois no mesmo endereço.
+- **Professor cadastra TURMAS + ALUNOS no painel** (só nome + avatar emoji; sem digitar senha
+  para a criança). O painel também **mostra o progresso** (lê `/turmas/<turma>/alunos` = a função
+  `listarTurma` já existente).
+- **Login do aluno = ZERO digitação.** Professor abre o EduMundo nos PCs do lab já apontado pra
+  turma pelo **link** (`educamundo/?t=<turmaId>`). A criança vê os cards **nome+avatar** da turma
+  dela e **TOCA no seu**. Por baixo: login **anônimo silencioso** no Firebase; progresso salva em
+  `/turmas/<turmaId>/alunos/<alunoId>`. Senha visual de 2 figurinhas fica OPCIONAL (ligar depois só
+  se precisar; começar sem, pra não travar o piloto).
+- **Acesso do professor = senha** (piloto: gate no cliente + site separado que a criança não conhece).
+  Honestidade: é segurança de piloto (dado não sensível: 1º nome + progresso). Nível 2 (cada aluno só
+  mexe no próprio; professor dono) fica pra produção.
+- **Modelo de dados:** `/turmas/<turmaId>` = { nome, alunos:{ <alunoId>:{ nome, avatar, dados, atualizado_em } } }.
+- **Arquivos no repo-fábrica:** `_educamundo/index.html` (aluno) e `_painel-prof/index.html` (professor).
+  Publicar cada um no seu repo via Fábrica/atualizar. Regras do RTDB atualizadas em
+  `eduverse/lib/REGRAS-FIREBASE.txt` (agora cobrem o metadado da turma + listar turmas no painel).

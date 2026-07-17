@@ -7,21 +7,22 @@ APERTE as regras. O apiKey do Firebase Web e publico por design; sao as
 REGRAS abaixo que de fato protegem os dados.
 
 ONDE COLAR:
-1. https://console.firebase.google.com/project/_/database  (escolha o projeto)
-2. Realtime Database -> aba "Regras" (Rules)
-3. Apague o que estiver la e cole o bloco abaixo -> "Publicar".
+1. https://console.firebase.google.com/project/educaverso-73b1a/database/educaverso-73b1a-default-rtdb/rules
+2. Apague o que estiver la e cole o bloco abaixo -> "Publicar".
 
-REGRAS (nivel 1 — fecha a internet aberta, exige login):
+REGRAS (nivel 1 — fecha a internet aberta, exige login; cobre TURMA + ALUNOS):
 --------------------------------------------------------------------------
 {
   "rules": {
     "turmas": {
+      ".read": "auth != null",
       "$turma": {
+        ".write": "auth != null",
+        "nome": { ".validate": "newData.isString() && newData.val().length <= 60" },
         "alunos": {
-          ".read": "auth != null",
           "$aluno": {
-            ".write": "auth != null",
-            ".validate": "newData.hasChildren(['nome'])"
+            ".validate": "newData.hasChildren(['nome'])",
+            "nome": { ".validate": "newData.isString() && newData.val().length <= 60" }
           }
         }
       }
@@ -30,14 +31,28 @@ REGRAS (nivel 1 — fecha a internet aberta, exige login):
 }
 --------------------------------------------------------------------------
 
-PRE-REQUISITO: ativar Authentication -> metodo "Anonimo" (Console -> Build ->
-Authentication -> Sign-in method -> Anonimo -> Ativar). Assim o jogo faz um
-login anonimo silencioso e o "auth != null" das regras passa a valer.
+O QUE MUDOU (em relacao a versao anterior): agora o PAINEL DO PROFESSOR
+consegue (a) LISTAR as turmas (".read" em /turmas) e (b) criar/renomear a
+turma (gravar /turmas/$turma/nome). Antes so cobria /turmas/$turma/alunos, e
+por isso criar turma dava "permissao negada".
 
-HONESTIDADE: este e o nivel 1 (fecha o acesso ao publico geral; exige que o
-visitante tenha um login anonimo do proprio app). Ainda permite que um usuario
-logado leia/escreva qualquer registro — aceitavel para um piloto com dados nao
-sensiveis (primeiro nome + progresso). NIVEL 2 (mais estrito: cada aluno so
-mexe no proprio registro; professor autenticado le a turma) exige um esquema
-de identidade (ex.: custom token com papel professor/aluno) — fazemos quando
-for pra producao com muitos alunos.
+PRE-REQUISITO: ativar Authentication -> metodo "Anonimo" (Console -> Build ->
+Authentication -> Sign-in method -> Anonimo -> Ativar). Assim o EduMundo (aluno)
+e o painel fazem um login anonimo silencioso e o "auth != null" das regras
+passa a valer. (JA FEITO — o teste de conexao passou em 2026-07-17.)
+
+HONESTIDADE (nivel 1 = piloto): fecha o acesso ao publico geral (exige um login
+anonimo do proprio app), mas qualquer usuario logado ainda pode ler/escrever
+qualquer turma/aluno. Aceitavel para um PILOTO com dado nao sensivel (primeiro
+nome + progresso + avatar). NIVEL 2 (cada aluno so mexe no proprio; professor
+dono da turma) exige um esquema de identidade (custom token com papel
+professor/aluno) — fazemos quando for pra producao com muitos alunos.
+
+MODELO DE DADOS:
+/turmas/<turmaId> = {
+  nome: "1o ano A",
+  criada_em: "...",
+  alunos: {
+    <alunoId>: { nome, avatar, dados:{ pontuacao, progresso:{...} }, atualizado_em, ultimo_acesso }
+  }
+}
