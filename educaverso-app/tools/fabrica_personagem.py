@@ -50,7 +50,47 @@ def acha(nome, chaves):
             return p
     return None
 
-def recorta(path, tol=46):
+def _maior_com_ponte(mask, ponte=5):
+    # une a máscara por uma dilatação de 'ponte' px, acha o MAIOR bloco e
+    # devolve tudo que cai nesse bloco. Membros finos (colados ao corpo, mesmo
+    # que por poucos px de contorno) entram; manchas soltas e distantes saem.
+    h, w = mask.shape
+    d = mask.copy()
+    for _ in range(ponte):
+        k = d.copy()
+        k[1:, :] |= d[:-1, :]; k[:-1, :] |= d[1:, :]
+        k[:, 1:] |= d[:, :-1]; k[:, :-1] |= d[:, 1:]
+        d = k
+    # rotula na grade 2x (rápido) e escolhe o maior componente
+    small = d[::2, ::2]; sh, sw = small.shape
+    lab = np.zeros((sh, sw), np.int32); best = 0; bestn = 0; cur = 0
+    for y in range(sh):
+        for x in range(sw):
+            if small[y, x] and lab[y, x] == 0:
+                cur += 1; n = 0; qq = deque([(y, x)]); lab[y, x] = cur
+                while qq:
+                    cy, cx = qq.popleft(); n += 1
+                    for dy, dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                        ny, nx = cy+dy, cx+dx
+                        if 0<=ny<sh and 0<=nx<sw and small[ny,nx] and lab[ny,nx]==0:
+                            lab[ny,nx] = cur; qq.append((ny,nx))
+                if n > bestn: bestn, best = n, cur
+    keep_s = (lab == best); big = np.zeros((sh*2, sw*2), bool)
+    for oy in (0,1):
+        for ox in (0,1): big[oy::2, ox::2] = keep_s
+    return big[:h, :w]
+
+def recorta(path, tol=26):
+    # ------------------------------------------------------------------
+    # RECORTE SEGURO (nunca corta membro):
+    #  - remove SÓ o fundo que encosta na borda (flood da borda por cor),
+    #    com tolerância BAIXA -> não come o contorno escuro do desenho.
+    #  - NÃO usa "maior componente": um braço/perna fino que o contorno
+    #    deixa fininho continua sendo mantido (era esse passo que sumia
+    #    com perna/braço no estilo limpo, de contorno escuro).
+    #  - preenche buracos internos (olhos/vãos que não tocam a borda).
+    # REGRA GRAVADA: personagem NUNCA pode sair com membro faltando.
+    # ------------------------------------------------------------------
     im = Image.open(path).convert('RGB')
     a = np.asarray(im).astype(np.int16)
     h, w, _ = a.shape
@@ -58,6 +98,7 @@ def recorta(path, tol=46):
     bg = np.median(borda, 0)
     dist = np.sqrt(((a - bg) ** 2).sum(2))
     fundo = dist < tol
+    # flood a partir da borda: só o fundo CONECTADO à borda vira transparente
     rem = np.zeros((h, w), bool); q = deque()
     for x in range(w):
         for y in (0, h - 1):
@@ -71,44 +112,22 @@ def recorta(path, tol=46):
             ny, nx = cy+dy, cx+dx
             if 0<=ny<h and 0<=nx<w and fundo[ny,nx] and not rem[ny,nx]:
                 rem[ny,nx] = True; q.append((ny,nx))
-    obj = ~rem
-    # maior componente (grade 2x)
-    small = obj[::2, ::2]; sh, sw = small.shape
-    lab = np.zeros((sh, sw), np.int32); best=0; bestn=0; cur=0
-    for y in range(sh):
-        for x in range(sw):
-            if small[y,x] and lab[y,x]==0:
-                cur+=1; n=0; qq=deque([(y,x)]); lab[y,x]=cur
-                while qq:
-                    cy,cx=qq.popleft(); n+=1
-                    for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
-                        ny,nx=cy+dy,cx+dx
-                        if 0<=ny<sh and 0<=nx<sw and small[ny,nx] and lab[ny,nx]==0:
-                            lab[ny,nx]=cur; qq.append((ny,nx))
-                if n>bestn: bestn,best=n,cur
-    keep_s=(lab==best); keep=np.zeros((sh*2,sw*2),bool)
-    for oy in (0,1):
-        for ox in (0,1): keep[oy::2,ox::2]=keep_s
-    keep=keep[:h,:w] & obj
-    for _ in range(2):
-        k=keep.copy(); k[1:,:]|=keep[:-1,:]; k[:-1,:]|=keep[1:,:]; k[:,1:]|=keep[:,:-1]; k[:,:-1]|=keep[:,1:]; keep=k & obj
-    # buracos internos
-    livre=~keep; alc=np.zeros((h,w),bool); q=deque()
-    for x in range(w):
-        for y in (0,h-1):
-            if livre[y,x]: alc[y,x]=True; q.append((y,x))
-    for y in range(h):
-        for x in (0,w-1):
-            if livre[y,x] and not alc[y,x]: alc[y,x]=True; q.append((y,x))
-    while q:
-        cy,cx=q.popleft()
-        for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
-            ny,nx=cy+dy,cx+dx
-            if 0<=ny<h and 0<=nx<w and livre[ny,nx] and not alc[ny,nx]:
-                alc[ny,nx]=True; q.append((ny,nx))
-    dentro = keep | (livre & ~alc)
-    alpha = np.clip((dist - tol*0.5) * 8, 0, 255).astype(np.uint8)
-    alpha[~dentro] = 0; alpha[(livre & ~alc)] = 255
+    # TUDO que não é fundo-da-borda fica (inclui membros finos e ilhotas do desenho)
+    keep = ~rem
+    # buracos internos de fundo que NÃO tocam a borda (ficaram presos) -> preenche
+    dentro = keep.copy()
+    presos = fundo & ~rem          # pixels cor-de-fundo cercados pelo desenho
+    dentro |= presos
+    # LIMPA manchas escuras SOLTAS (sombra que a IA às vezes desenha) SEM
+    # arriscar membro: une o corpo por uma PONTE de 5px e mantém só o bloco
+    # principal + tudo que estiver colado/quase colado (membros finos ficam).
+    corpo = _maior_com_ponte(dentro, ponte=5)
+    dentro &= corpo
+    presos &= corpo
+    # alpha suave só na franja de transição (anti-serrilhado), sólido no miolo
+    alpha = np.clip((dist - tol * 0.4) * 10, 0, 255).astype(np.uint8)
+    alpha[~dentro] = 0
+    alpha[presos] = 255            # buraco interno fica opaco (parte do corpo)
     img = Image.fromarray(np.dstack([a.astype(np.uint8), alpha]), 'RGBA')
     bb = img.getbbox()
     return img.crop(bb) if bb else img

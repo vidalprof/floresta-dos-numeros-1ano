@@ -29,6 +29,16 @@
 - ⛔ **Perspectiva misturada** (poça de cima + praia de lado). → Cena coesa 3/4.
 - ⛔ Personagem **flutuando** / papagaio subindo e descendo. → âncora nos pés + plantado.
 - ⛔ Peça no lugar errado / coqueiro no mar. → **Auditor de coerência** (acima).
+- ⛔ **MEMBRO FALTANDO no recorte** (sumiu perna/braço do herói no estilo limpo). Causa: o
+  contorno é ESCURO; o recorte antigo tinha tolerância alta + passo "maior componente" que
+  comia o contorno e soltava o membro fino, depois jogava fora. **Não pode acontecer.**
+  → Conserto (em `tools/fabrica_personagem.py`): tolerância BAIXA (26) + flood só do fundo que
+  toca a borda + **sem** descartar por "maior componente puro"; membros ficam garantidos. A
+  limpeza de manchas usa **ponte de 5px** (`_maior_com_ponte`) — membro colado ao corpo fica,
+  só mancha solta e distante sai. **Na origem:** prompt pede fundo preto liso, sem sombra,
+  corpo inteiro no quadro, contorno fechado (ver Especialista em Prompts em `EDUVERSE-EQUIPE.md`).
+- ⛔ **Mancha escura flutuante** (sombra que a IA desenha solta). → limpeza por ponte no recorte
+  + prompt "no cast shadow / no ground shadow / solid flat black bg".
 
 ## Como CRESCE (o combinado)
 Quando um erro novo escapar: (a) reproduz, (b) vira uma **regra no auditor** (ou

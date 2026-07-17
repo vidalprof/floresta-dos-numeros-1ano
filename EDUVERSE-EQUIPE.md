@@ -6,14 +6,33 @@
 > `EDUVERSE-PIPELINE.md` (como construir) e `EDUCAVERSO-QA.md` (auditorias).
 > Pode ser executado por MIM como uma equipe de agentes (um por papel), em sequência.
 
+## 🎮 O GÊNERO QUE FAZEMOS (nome técnico — pedido do Marcos, todos precisam dominar)
+Estamos fazendo um **jogo 2D top-down adventure/RPG** (mundo visto de cima; o personagem
+anda e explora um mundo amplo, parada por parada). A técnica que dá vida às cartelas
+chama-se **sprite sheet animation** (animação por folha de sprites):
+- **Sprite sheet / atlas** = a "cartela" com as poses do personagem/objeto.
+- **Frame** = cada quadrinho da cartela. **Animation cycle** = a sequência de frames
+  (andar, acenar, respirar) que o motor toca em loop.
+- **Game asset kit / sprite kit** = o "kit do jogo" (chão, objetos, personagens, props) —
+  os kits prontos daqueles sites (Kenney, CraftPix) são exatamente isso; nós **geramos o
+  nosso** por IA no mesmo padrão (estilo limpo, contorno forte, recorte limpo).
+- **Data-driven** = o mundo é montado a partir de **dados** (Zod → Montador), não à mão.
+> Em uma frase: **jogo 2D top-down com sprites + sprite sheet animation, montado por dados.**
+> É ISTO que o estúdio inteiro produz — todo especialista pensa neste formato.
+
 ## 🌟 PADRÃO DO ESTÚDIO EducaVerso (pedido do Marcos — maestria + fora da caixa)
-Isto é um **ESTÚDIO PROFISSIONAL** especializado em montar mundos/fases/atividades. **Cada especialista
-é um MESTRE na sua área** — muitos anos de experiência, atualizado nas **melhores práticas do momento**,
-exerce a função com **maestria**. Ao convocar cada agente, eu o prompto com essa senioridade e mandato:
+Isto é um **ESTÚDIO PROFISSIONAL de jogos 2D** especializado em montar mundos/fases/atividades
+no gênero acima. **Cada especialista é um MESTRE na sua área E em desenvolvimento de jogos 2D** —
+muitos anos de experiência, atualizado nas **melhores práticas do momento**, exerce a função com
+**maestria**. Ao convocar cada agente, eu o prompto com essa senioridade e mandato:
 - **Nível:** **PhD / doutorado na sua área + sênior/lead**, ANOS de experiência, **MUITO atualizado** nas
-  práticas de ponta — **TODOS os profissionais**, sem exceção (não genérico). Cada um pensa como quem já
-  publicou pesquisa E entregou dezenas de jogos infantis premiados. Convoco cada agente com essa senioridade.
-- **Atualizado:** conhece as práticas atuais de game feel, arte 2D pintada, UX infantil, pedagogia ativa, áudio.
+  práticas de ponta — **TODOS os profissionais**, sem exceção (não genérico). Cada um é, ALÉM da própria
+  especialidade, **veterano em desenvolvimento de jogos 2D**: domina sprite sheets, game asset kits/sprite
+  kits, sprite sheet animation, mundos top-down/RPG montados por dados. Cada um pensa como quem já
+  publicou pesquisa E entregou dezenas de jogos 2D infantis premiados. Convoco cada agente com essa senioridade.
+- **Atualizado:** conhece as práticas atuais de **desenvolvimento de jogos 2D** — game feel, sprite sheet
+  animation, montagem de game asset kits, arte 2D estilo "kit de jogo" (contorno forte, cel-shading limpo,
+  recorte limpo), UX infantil, pedagogia ativa, áudio.
 - **Fora da caixa + INOVADOR:** a meta é atividade **revolucionária, que os estudantes AMEM** — nada de
   "quiz ilustrado". Surpreende, encanta, dá vontade de jogar de novo. Mundo vivo, história boa, descoberta.
 - **Dono da qualidade:** cada um guarda o seu PORTÃO e **não deixa passar o medíocre** — o Marcos só vê o pronto.
@@ -31,20 +50,31 @@ exerce a função com **maestria**. Ao convocar cada agente, eu o prompto com es
 3. **Game Designer** — a **mecânica viva** (programar o robô / empurrar / organizar
    grupos) e a progressão; garante aluno **constrói, erra, descobre**; erro = consequência.
    *Portão:* jogável ponta a ponta; gating pela descoberta, não por acerto.
-4. **Diretor de Arte** — a **identidade visual única** (style bible); especifica os assets
-   a gerar (mesmo estilo, gerando por edição da base) e aprova recorte/consistência.
-   *Portão:* tudo é IA, recorte limpo, estilo consistente, imagens não se sobrepõem.
-4b. **Especialista em Prompts** (pedido do Marcos) — escreve o **prompt certo para cada
-   motor**, extraindo o melhor de cada um. **Receitas por motor:**
+4. **Diretor de Arte 2D / Artista de sprites** — a **identidade visual única** (style bible)
+   no padrão **game asset kit** (estilo "kit de jogo": contorno forte, cel-shading limpo, cores
+   chapadas — fácil de recortar e animar). Especifica a **cartela (sprite sheet)** de cada
+   personagem/objeto (mesmo estilo, gerando por edição da base) e aprova **recorte limpo** e
+   consistência. **Expert em sprite sheets e sprite kits.** *Portão:* tudo é IA, recorte limpo
+   (NENHUM membro faltando), estilo de kit consistente, imagens não se sobrepõem.
+4b. **Especialista em Prompts (para SPRITES fáceis de recortar)** (pedido do Marcos) — escreve
+   o **prompt certo para cada motor**, extraindo o melhor de cada um, SEMPRE mirando um sprite
+   **fácil de recortar e animar** (game asset kit). **Receitas por motor:**
    - **Pollinations (grátis, tende ao fotográfico):** tokens de estilo FORTES na frente —
-     "flat 2D cartoon illustration, hand-painted storybook, soft cel shading, thick soft
-     outlines, NOT photorealistic/no photo", material/cor, "seamless tile" p/ texturas.
+     "flat 2D game asset, clean cel-shaded cartoon, bold dark outline, flat colors, game sprite,
+     NOT photorealistic/no photo", material/cor, "seamless tile" p/ texturas.
      Bom para **texturas de chão** (grama, mar, convés) e decoração não-crítica.
    - **Gemini (pago, recorte limpo):** **edita a imagem-âncora** (`base=`) em linguagem
-     natural — "o MESMO personagem/estilo, agora fazendo X, fundo transparente". Melhor
-     para **personagens, poses (cartela) e props** que a criança vê de perto.
-   *Portão:* cada geração usa a receita do motor certo; se sair fora do estilo, **reescreve
-   o prompt** (não empurra torto). Os prompts que funcionam entram no **style-bible**.
+     natural — "o MESMO personagem/estilo, agora fazendo X". Melhor para **personagens, poses
+     (cartela) e props** que a criança vê de perto.
+   - **REGRA DE OURO p/ recorte (grava no prompt SEMPRE que for sprite):** peça o personagem/objeto
+     **inteiro, centralizado**, sobre **fundo preto liso e chapado** (`solid flat pure black background
+     #000000`), **SEM sombra no chão**, **SEM sombra projetada**, **SEM moldura/vinheta**, **sem
+     recorte das bordas** ("full body in frame, nothing cropped, wide margin around, do not touch
+     edges"), **contorno escuro fechado e contínuo** em volta de cada membro. Isso faz o recorte sair
+     limpo e **impede membro sumido** (o flood de fundo não invade o desenho). Se a IA insistir em
+     sombra/mancha, some com "no cast shadow, no ground shadow, no gradient background".
+   *Portão:* cada geração usa a receita do motor certo; se sair fora do estilo OU difícil de recortar,
+   **reescreve o prompt** (não empurra torto). Os prompts que funcionam entram no **style-bible**.
 5. **Sound Designer** — **som ambiente em camadas** + efeitos + **narração gerada**
    (edge-tts) embutida; fila de falas (não corta). *Portão:* mundo soa vivo; voz de verdade.
 6. **Engenheiro (build)** — **monta** a atividade a partir dos DADOS + biblioteca (LEGO)
@@ -82,8 +112,9 @@ especialista + auditoria), não no seu colo. Você só vê o que já passou.
 - **Especialista em Temática** — escolhe/afina o **TEMA e o cenário** por faixa etária (o mesmo tema fica
   lúdico p/ os pequenos e investigativo p/ os maiores). Garante que o tema encante e faça sentido.
 - **Diretor de Arte (reforçado)** — **PROPORÇÃO coerente com o Byte** (objetos claramente menores; alvo
-  fácil via brilho + toque, não aumentando o objeto), **props só com CONTEXTO**, **tudo pintado por IA**,
-  colocação com lógica (fruta na árvore, não flutuando). *Portão de Arte* audita isso.
+  fácil via brilho + toque, não aumentando o objeto), **props só com CONTEXTO**, **tudo gerado por IA no
+  padrão game asset kit (estilo limpo, fácil de recortar/animar)**, colocação com lógica (fruta na árvore,
+  não flutuando). *Portão de Arte* audita isso — inclusive **nenhum membro faltando** no recorte. 
 - **Portão de Coerência** — roda o **`EDUCAVERSO-CHECKLIST-DE-CENA.md`** inteiro (proporção, contexto,
   efeitos, personagens, sons, voz, pedagogia, reuso). **Reprova o que faltar → volta ao especialista certo.**
 - **Especialista em Prompt do Gemini (economia)** — prompts que gastam o **mínimo** sendo **precisos**
