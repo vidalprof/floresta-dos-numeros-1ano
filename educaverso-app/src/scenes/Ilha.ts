@@ -11,14 +11,15 @@ import Phaser from 'phaser'
 import { FALAS, IDS_FALAS } from '../falas'
 
 const VW = 1024, VH = 768
+const WORLD_W = 1720, WORLD_H = 768        // mundo EXPLORÁVEL (câmera segue o Verso)
 const QA = new URLSearchParams(location.search).get('qa')
 
-// área onde o Verso anda (a areia — parte de baixo/direita da pintura)
-const WALK = { x0: 70, y0: 470, x1: 958, y1: 726 }
+// área onde o Verso anda (a areia)
+const WALK = { x0: 70, y0: 486, x1: WORLD_W - 60, y1: 730 }
 
 // a POÇA (tide pool de IA) e a grade lógica DENTRO dela (mecânica algoritmo)
-const POOL = { x: 712, y: 566, w: 404, h: 270 }
-const G = { cols: 4, rows: 3, cell: 60, x0: 560, y0: 452 }   // grade dentro da poça
+const POOL = { x: 1370, y: 566, w: 430, h: 280 }
+const G = { cols: 4, rows: 3, cell: 62, x0: 1214, y0: 452 }   // grade dentro da poça
 const PEDRAS = [[0, 2], [1, 2], [1, 1], [2, 1], [3, 1], [3, 0], [0, 0]]
 const CHEGADA = { c: 3, r: 0 }          // pedra do baú
 const CHICO_INI = { c: -1, r: 2 }       // Chico na areia, à esquerda da poça
@@ -73,9 +74,9 @@ export class Ilha extends Phaser.Scene {
     for (const id of IDS_FALAS) this.audioOk[id] = this.cache.audio.exists(id)
     this.reservas()
 
-    // FUNDO de IA cobrindo a tela (nada desenhado à mão)
+    // FUNDO de IA cobrindo o mundo (nada desenhado à mão)
     const bg = this.add.image(0, 0, 'fundo').setOrigin(0, 0).setDepth(0)
-    bg.setDisplaySize(VW, VH)
+    bg.setDisplaySize(WORLD_W, WORLD_H)
 
     // física: mundo = a areia caminhável
     this.physics.world.setBounds(WALK.x0, WALK.y0, WALK.x1 - WALK.x0, WALK.y1 - WALK.y0)
@@ -87,6 +88,10 @@ export class Ilha extends Phaser.Scene {
     this.vidaAmbiente()
     this.ligarHUD()
 
+    // câmera EXPLORÁVEL: segue o Verso pelo mundo (não mostra tudo de uma vez)
+    this.cameras.main.setBounds(0, 0, WORLD_W, WORLD_H)
+    this.cameras.main.startFollow(this.player, true, 0.1, 0.1)
+
     this.cursors = this.input.keyboard!.createCursorKeys()
     this.teclas = this.input.keyboard!.addKeys('W,A,S,D,E,SPACE')
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
@@ -97,7 +102,7 @@ export class Ilha extends Phaser.Scene {
     if (QA) {
       this.estado = 'explora'
       el('telaIntro')?.classList.add('hidden')
-      if (QA === 'missao') { this.player.setPosition(300, 640); this.iniciarMontagem(true) }
+      if (QA === 'missao') { this.player.setPosition(1040, 640); this.iniciarMontagem(true) }
     }
   }
 
@@ -174,9 +179,9 @@ export class Ilha extends Phaser.Scene {
     const gb = this.add.image(bx, by - 16, 'glowFrio').setBlendMode(Phaser.BlendModes.ADD).setDepth(by + 41)
     this.tweens.add({ targets: gb, alpha: { from: 0.3, to: 0.85 }, scale: { from: 0.8, to: 1.25 }, duration: 1100, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
 
-    // palmeiras (decoração viva) — nos cantos da areia, longe do caminho
-    const p1 = this.colocar('palmeira', 930, 486, 300)
-    const p2 = this.colocar('palmeira', 140, 470, 250, true)
+    // palmeiras (decoração viva) — espalhadas pela praia
+    const p1 = this.colocar('palmeira', 1660, 486, 300)
+    const p2 = this.colocar('palmeira', 300, 476, 260, true)
     for (let i = 0; i < 2; i++) {
       const alvo = i ? p2 : p1
       this.tweens.add({ targets: alvo, angle: { from: -1.4, to: 1.4 }, duration: 3000 + i * 500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
@@ -184,12 +189,12 @@ export class Ilha extends Phaser.Scene {
     }
 
     // tocha viva (luz pulsando) — acampamento na praia
-    this.colocar('tocha', 360, 556, 120)
-    const gl = this.add.image(360, 470, 'glow').setBlendMode(Phaser.BlendModes.ADD).setDepth(600)
+    this.colocar('tocha', 880, 566, 120)
+    const gl = this.add.image(880, 480, 'glow').setBlendMode(Phaser.BlendModes.ADD).setDepth(600)
     this.tweens.add({ targets: gl, alpha: { from: 0.55, to: 1 }, scale: { from: 0.85, to: 1.12 }, duration: 240, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
 
-    // rochas decorativas (com colisão)
-    const r1 = this.colocar('rocha', 600, 720, 66)
+    // rocha decorativa (com colisão)
+    const r1 = this.colocar('rocha', 700, 716, 66)
     this.bloco(r1.x, r1.y - 12, 70, 24)
   }
 
@@ -199,8 +204,8 @@ export class Ilha extends Phaser.Scene {
 
   criarPersonagens () {
     // Verso (a criança) — sprite de IA + FÍSICA (colisão perfeita)
-    this.sombraP = this.add.image(200, 654, 'sombra').setDepth(1)
-    this.player = this.physics.add.image(200, 650, 'verso').setOrigin(0.5, 1)
+    this.sombraP = this.add.image(620, 654, 'sombra').setDepth(1)
+    this.player = this.physics.add.image(620, 650, 'verso').setOrigin(0.5, 1)
     this.player.setScale(84 / this.player.height)
     const pb = this.player.body as Phaser.Physics.Arcade.Body
     pb.setSize(46, 26); pb.setOffset((this.player.width - 46) / 2, this.player.height - 26)
@@ -214,13 +219,13 @@ export class Ilha extends Phaser.Scene {
     this.poeira.setDepth(640)
 
     // Louro POUSADO numa rocha (não flutua) — mexe a cabeça e dá "crá"
-    const rL = this.colocar('rocha', 470, 616, 74)
+    const rL = this.colocar('rocha', 1040, 616, 74)
     this.bloco(rL.x, rL.y - 14, 78, 26)
-    this.add.image(470, 588, 'sombra').setDepth(rL.depth + 1).setScale(0.6)
-    this.louro = this.colocar('louro', 470, 568, 64, true)
+    this.add.image(1040, 588, 'sombra').setDepth(rL.depth + 1).setScale(0.6)
+    this.louro = this.colocar('louro', 1040, 568, 64, true)
     this.louro.setOrigin(0.5, 1).setDepth(rL.depth + 2)
     this.vidaLouro()
-    this.hintLouro = this.add.text(470, 492, '!', { fontFamily: 'Arial Black, Arial', fontSize: '30px', color: '#ffd25a', stroke: '#3a2a00', strokeThickness: 5 }).setOrigin(0.5).setDepth(9500)
+    this.hintLouro = this.add.text(1040, 492, '!', { fontFamily: 'Arial Black, Arial', fontSize: '30px', color: '#ffd25a', stroke: '#3a2a00', strokeThickness: 5 }).setOrigin(0.5).setDepth(9500)
     this.tweens.add({ targets: this.hintLouro, y: '-=10', duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
 
     // Chico (caranguejo) na areia, à esquerda da poça
@@ -228,6 +233,19 @@ export class Ilha extends Phaser.Scene {
     this.chico = this.add.image(this.cx(CHICO_INI.c), this.cy(CHICO_INI.r) + 8, 'chico').setOrigin(0.5, 1)
     this.chico.setScale(46 / this.chico.height).setDepth(this.chico.y)
     this.tweens.add({ targets: this.chico, angle: { from: -4, to: 4 }, duration: 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
+  }
+
+  // enquadra a ENSEADA (Chico + pedras + baú): a criança VÊ o caminho todo
+  focarEnseada () {
+    const cam = this.cameras.main
+    cam.stopFollow()
+    cam.pan(1330, 520, 650, 'Sine.easeInOut')
+    cam.zoomTo(0.86, 650, 'Sine.easeInOut')
+  }
+  voltarCamera () {
+    const cam = this.cameras.main
+    cam.zoomTo(1, 450, 'Sine.easeInOut')
+    this.time.delayedCall(120, () => cam.startFollow(this.player, true, 0.1, 0.1))
   }
 
   vidaLouro () {
@@ -353,7 +371,7 @@ export class Ilha extends Phaser.Scene {
     document.querySelectorAll('.seta').forEach((b: any) => { b.onclick = () => { if (this.estado === 'montar' && this.passos.length < MAX_PASSOS) { this.som('tap'); this.passos.push(b.dataset.dir); this.desenhar() } } })
     const bJ = el('btnJogar'); if (bJ) bJ.onclick = () => this.executar()
     const bL = el('btnLimpar'); if (bL) bL.onclick = () => { if (this.estado === 'montar') { this.passos = []; this.desenhar() } }
-    const bD = el('btnDeNovo'); if (bD) bD.onclick = () => { el('telaWin')?.classList.add('hidden'); this.estado = 'explora' }
+    const bD = el('btnDeNovo'); if (bD) bD.onclick = () => { el('telaWin')?.classList.add('hidden'); this.estado = 'explora'; this.voltarCamera() }
   }
   desenhar () {
     const box = el('passos'); if (!box) return
@@ -361,6 +379,8 @@ export class Ilha extends Phaser.Scene {
   }
   iniciarMontagem (silencioso = false) {
     this.estado = 'montar'
+    this.pararPlayer()
+    this.focarEnseada()          // mostra o caminho TODO (Chico -> pedras -> baú)
     if (!this.aval.inicio) this.aval.inicio = Date.now()
     el('hud')?.classList.remove('hidden')
     const d = el('dica'); if (d) d.innerHTML = 'Monte os passos do <b>Chico</b> 🦀 até o baú — cuidado com a água!'
