@@ -20,5 +20,6 @@ new Phaser.Game({
   },
   fps: { target: 30, forceSetTimeOut: true },
   render: { antialias: false, roundPixels: true, powerPreference: 'low-power' },
+  physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
   scene: [Ilha]
 })

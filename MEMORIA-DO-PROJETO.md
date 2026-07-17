@@ -1045,3 +1045,19 @@ melhor das duas ideias". Feito, com a sessão no modelo mais forte (Fable).
 - **QA visual automatizado no CI:** o `app-build.yml` agora tira screenshots
   headless (`?qa=inicio` / `?qa=missao`) e commita em `_qa/` — o Portão 1
   ganhou olhos dentro do próprio build.
+
+### [2026-07-17] REGRA DE OURO do Marcos (não pode quebrar): NADA À MÃO, TUDO PROFISSIONAL
+No app Plano A (mundo vivo, educaverso-app), tudo o que a criança VÊ é feito por
+tecnologia profissional — NUNCA desenhado por código à mão:
+- **Cenário/fundo, água, personagens, objetos = imagem de IA** (Pollinations/Gemini),
+  recortadas e otimizadas. Proibido "pintar por canvas" o que é ARTE que a criança vê.
+- **Vida/animação = sistemas do motor Phaser** (partículas, tweens, luzes) — não
+  partícula/efeito feito na unha.
+- **Colisão = física do Phaser (Arcade Physics)** — não colisão manual por clamp.
+- **Texto nítido** = `setResolution` (motor), não aceitar borrado.
+- Exceção tolerada: primitivas de efeito do motor (sombra suave, brilho, pontinho de
+  partícula) e um RESERVA invisível (só se um asset 404, pra nunca dar tela quebrada).
+- **Pesquisar sempre o mais moderno/grátis que caiba no PC da escola** (FX-4300/3,5GB/
+  Chrome109). Ex.: animação de personagem viva = runtimes esqueléticos (DragonBones grátis,
+  Spine, Creature/CreaturePack p/ Phaser) — porém exigem RIG uma vez num editor (passo
+  humano); não há botão mágico "1 imagem -> anda em 4 direções" grátis e automático.
