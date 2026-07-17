@@ -34,6 +34,31 @@
 > **O molde premium 1-HTML continua valendo só pro modelo LEVE antigo (atividades/hub).**
 > O EducaVerso novo é multi-arquivo por repo.
 
+## 🧊 DECISÃO DO MARCOS (2026-07): EducaVerso em 3D VOXEL (estilo Minecraft), com three.js
+> Depois de testar tudo, o Marcos escolheu **3D voxel (blocos, tipo Minecraft) com three.js** —
+> ele **rejeitou o desenhado-por-código 2D** ("ficou amador") e quis o mundo **explorável 3D**.
+> - **RODOU no PC dele: 26–29 FPS** (jogável; 30 é o alvo do gênero). O 3D voxel é **viável na escola**.
+> - **Otimização obrigatória** (pro FX-4300 aguentar): face-culling + **1 mesh** (BufferGeometry) por
+>   grupo estático, **luz assada nas cores** (sem shadow map, sem luz dinâmica), resolução interna baixa
+>   (`RQ`), **AUTO-QUALIDADE** (mede FPS; se <24, baixa `RQ` sozinho). Ilha da parada 1 = **~4 mil tri, ~55 draws**.
+> - **Sem sombra/luz DINÂMICA** (cara demais p/ o PC fraco) — sombra é uma **manchinha** no chão + AO assada.
+> - **Câmera orbita** (arrastar mouse gira) + **andar relativo à câmera** (WASD). Teclado+mouse é normal no 3D.
+> - **Ganho enorme:** voxel **MATA o bug de arte** (recorte/membro faltando/inconsistência não existem — é bloco).
+>   Objeto novo = uns cubos coloridos no código. Cenário novo = trocar DADOS (terreno + objetos a contar + falas).
+> - **Onde está:** `_voxel/index.html` (three.js em `_voxel/three.module.min.js`), publicado por Fábrica/atualizar
+>   no repo **`ilha-voxel-teste`** → https://vidalprof.github.io/ilha-voxel-teste/ . Roteiro pirata:
+>   "Ilha das Trinta Moedas" (5 paradas 6→12→18→24→30). **Parada 1 (cocos) JÁ jogável** (contar tocando/andando).
+> - **LEGAL:** NUNCA usar marca/logo/boneco LEGO (é cópia). Voxel/cubo é genérico e legal com o NOSSO Verso.
+
+## 🔎 DISCIPLINA DE QA (o Marcos cobrou: "essas coisas não podem acontecer")
+> Eu estava **usando o Marcos como QA** (mostrava tosco, ele achava o defeito). ERRADO — custa o tempo dele.
+> **Antes de mostrar QUALQUER coisa visual, EU renderizo (headless + Playwright) e AUDITO** contra a lista:
+> **(1) PROPORÇÃO** (personagem × cenário × objetos — o Verso é pequeno perto das árvores; papagaio ~1/3 do Verso);
+> **(2) RECONHECÍVEL** (cada coisa parece o que é — coco redondo, não quadrado); **(3) nada FLUTUANDO** sem explicação;
+> **(4) INTERAÇÃO** (o que é clicável é fácil de clicar/alcançar); **(5) CÂMERA** ok; **(6) FPS/leveza**.
+> Bug de imagem (recorte/membro) **não é isso** — isso é **design/gosto**, e **nenhum motor decide** (nem Unity):
+> é trabalho do DESIGNER (eu) + esta checklist. Cada tropeço novo → vira item da lista. **Só mostro o que passou no meu crivo.**
+
 ## ✅ O que EU consigo fazer (capacidades REAIS — não esquecer)
 - **Criar e editar** as atividades (HTML/JS/CSS), cada uma em 1 arquivo único.
 - **Publicar no ar:** commit/push + ligar o GitHub Pages (Fábrica de Sites).
