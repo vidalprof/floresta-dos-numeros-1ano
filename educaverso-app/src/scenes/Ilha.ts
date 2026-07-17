@@ -21,10 +21,12 @@ const WORLD_W = 2400, WORLD_H = 768
 // faixa onde dá para andar (areia seca)
 const WALK = { x0: 60, x1: 2340, y0: 480, y1: 668 }
 
-// a poça da maré (onde mora a mecânica): grade de células.
-// FICÇÃO: é uma enseada ligada ao mar — o norte (r<0) e o fundo (c>=cols) são
-// água funda; o sul e o lado da praia (c<0, r>=rows) são areia.
-const POCA = { x0: 1790, y0: 420, cols: 5, rows: 3, cell: 70 }
+// a ENSEADA (onde mora a mecânica): o mar entra na praia formando uma baía
+// rasa com pedras — a grade de células vive DENTRO dela.
+// FICÇÃO: o norte (r<0) e o fundo (c>=cols) são água funda; o lado da praia
+// (c<0) e o sul (r>=rows) são areia.
+const POCA = { x0: 1780, y0: 450, cols: 5, rows: 3, cell: 64 }
+const ENSEADA = { c: 1940, e0: 1700, e1: 2180, borda: 110, prof: 210 }
 // pedras seguras (c,r) — o caminho + uma pedra "isca"
 const PEDRAS = [[0, 2], [1, 2], [2, 2], [2, 1], [3, 1], [4, 1], [4, 0], [1, 0]]
 const CHEGADA = { c: 4, r: 0 }          // a pedra do baú
@@ -114,7 +116,7 @@ export class Ilha extends Phaser.Scene {
       this.estado = 'explora'
       const tI = el('telaIntro'); if (tI) tI.classList.add('hidden')
       if (QA === 'missao') {
-        this.player.setPosition(1620, 600)
+        this.player.setPosition(1350, 600)
         this.iniciarMontagem(true)
       }
     }
@@ -147,10 +149,13 @@ export class Ilha extends Phaser.Scene {
     g.fillStyle = 'rgba(210,205,170,.5)'
     g.beginPath(); g.arc(688, 102, 6, 0, 7); g.fill()
     g.beginPath(); g.arc(712, 120, 4, 0, 7); g.fill()
-    // ilha distante (silhueta)
-    g.fillStyle = '#0a1830'
-    g.beginPath(); g.moveTo(1500, 300)
-    g.quadraticCurveTo(1600, 250, 1720, 298); g.quadraticCurveTo(1760, 306, 1500, 306); g.fill()
+    // ilha distante no horizonte (silhueta baixa e suave, com uma palmeirinha)
+    g.globalAlpha = 0.55; g.fillStyle = '#0b1c34'
+    g.beginPath(); g.moveTo(300, 314)
+    g.quadraticCurveTo(400, 286, 520, 312); g.lineTo(520, 316); g.lineTo(300, 316); g.fill()
+    g.strokeStyle = '#0b1c34'; g.lineWidth = 3
+    g.beginPath(); g.moveTo(430, 300); g.quadraticCurveTo(438, 288, 442, 292); g.stroke()
+    g.globalAlpha = 1
 
     // mar
     const mar = g.createLinearGradient(0, 300, 0, 452)
@@ -170,49 +175,62 @@ export class Ilha extends Phaser.Scene {
       g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 22, y - 3, x + 46, y); g.stroke()
     }
 
-    // linha da praia orgânica (senos) + areia molhada + areia seca
-    const costaY = (x: number) => 452 + Math.sin(x / 210) * 12 + Math.sin(x / 57) * 5
-    g.fillStyle = '#7a6a52'   // areia molhada
-    g.beginPath(); g.moveTo(0, 430)
-    for (let x = 0; x <= WORLD_W; x += 16) g.lineTo(x, costaY(x) - 14)
-    g.lineTo(WORLD_W, 500); g.lineTo(0, 500); g.fill()
+    // ÁGUA como corpo único: preenche do alto até a linha da costa — assim a
+    // ENSEADA (o mergulho do mar na praia) é o MESMO mar, não um retângulo solto.
+    const corpoAgua = g.createLinearGradient(0, 300, 0, 700)
+    corpoAgua.addColorStop(0, '#17507f'); corpoAgua.addColorStop(0.45, '#123a66')
+    corpoAgua.addColorStop(0.7, '#0f3357'); corpoAgua.addColorStop(1, '#0a2942')
+    g.fillStyle = corpoAgua
+    g.beginPath(); g.moveTo(0, 300)
+    for (let x = 0; x <= WORLD_W; x += 12) g.lineTo(x, this.costa(x))
+    g.lineTo(WORLD_W, 300); g.closePath(); g.fill()
+    // fundo mais escuro no miolo da enseada (dá profundidade)
+    const fundo = g.createRadialGradient(ENSEADA.c, 560, 20, ENSEADA.c, 560, 210)
+    fundo.addColorStop(0, 'rgba(6,22,40,.55)'); fundo.addColorStop(1, 'rgba(6,22,40,0)')
+    g.fillStyle = fundo; g.beginPath(); g.arc(ENSEADA.c, 560, 210, 0, 7); g.fill()
+
+    // areia (abaixo da linha da costa)
     const areia = g.createLinearGradient(0, 440, 0, WORLD_H)
     areia.addColorStop(0, '#c9b184'); areia.addColorStop(0.5, '#bfa478'); areia.addColorStop(1, '#a98f66')
     g.fillStyle = areia
-    g.beginPath(); g.moveTo(0, 470)
-    for (let x = 0; x <= WORLD_W; x += 16) g.lineTo(x, costaY(x))
-    g.lineTo(WORLD_W, WORLD_H); g.lineTo(0, WORLD_H); g.fill()
+    g.beginPath(); g.moveTo(0, WORLD_H)
+    for (let x = 0; x <= WORLD_W; x += 12) g.lineTo(x, this.costa(x))
+    g.lineTo(WORLD_W, WORLD_H); g.closePath(); g.fill()
+    // faixa de areia molhada logo abaixo da linha d'água
+    g.save()
+    g.beginPath(); g.moveTo(0, WORLD_H)
+    for (let x = 0; x <= WORLD_W; x += 12) g.lineTo(x, this.costa(x))
+    g.lineTo(WORLD_W, WORLD_H); g.closePath(); g.clip()
+    g.strokeStyle = 'rgba(120,102,78,.5)'; g.lineWidth = 18
+    g.beginPath(); g.moveTo(0, this.costa(0) + 9)
+    for (let x = 0; x <= WORLD_W; x += 12) g.lineTo(x, this.costa(x) + 9)
+    g.stroke(); g.restore()
     // espuma na costa
-    g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 3
-    g.beginPath(); g.moveTo(0, costaY(0))
-    for (let x = 0; x <= WORLD_W; x += 16) g.lineTo(x, costaY(x))
+    g.strokeStyle = 'rgba(255,255,255,.4)'; g.lineWidth = 3
+    g.beginPath(); g.moveTo(0, this.costa(0))
+    for (let x = 0; x <= WORLD_W; x += 12) g.lineTo(x, this.costa(x))
     g.stroke()
-    // textura da areia (pontinhos) + conchinhas
+    // brilho da lua na água (riscos claros perto da linha)
+    g.strokeStyle = 'rgba(255,238,176,.10)'; g.lineWidth = 2
+    for (let i = 0; i < 40; i++) {
+      const x = Math.random() * WORLD_W, y = 320 + Math.random() * 120
+      g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 20, y - 3, x + 42, y); g.stroke()
+    }
+
+    // textura da areia (pontinhos) + conchinhas — só onde há areia
     for (let i = 0; i < 700; i++) {
-      const x = Math.random() * WORLD_W, y = 480 + Math.random() * (WORLD_H - 490)
+      const x = Math.random() * WORLD_W, y = 470 + Math.random() * (WORLD_H - 480)
+      if (y < this.costa(x)) continue
       g.globalAlpha = 0.10 + Math.random() * 0.12
       g.fillStyle = Math.random() < 0.5 ? '#8a7355' : '#e8d9b8'
       g.fillRect(x, y, 2, 2)
     }
     g.globalAlpha = 1
     for (let i = 0; i < 14; i++) {
-      const x = Math.random() * WORLD_W, y = 500 + Math.random() * 200
+      const x = Math.random() * WORLD_W, y = 520 + Math.random() * 180
+      if (y < this.costa(x) + 20) continue
       g.fillStyle = 'rgba(240,230,210,.5)'
       g.beginPath(); g.arc(x, y, 3, 3.1, 6.2); g.fill()
-    }
-
-    // a POÇA da maré (água funda onde mora a missão)
-    const px = POCA.x0, py = POCA.y0, pw = POCA.cols * POCA.cell, ph = POCA.rows * POCA.cell
-    g.fillStyle = 'rgba(90,75,55,.55)'
-    this.rr(g, px - 16, py - 14, pw + 32, ph + 28, 34); g.fill()
-    const agua = g.createLinearGradient(0, py, 0, py + ph)
-    agua.addColorStop(0, '#0f3c5e'); agua.addColorStop(1, '#0a2a46')
-    g.fillStyle = agua
-    this.rr(g, px - 6, py - 6, pw + 12, ph + 12, 26); g.fill()
-    g.strokeStyle = 'rgba(180,220,255,.18)'; g.lineWidth = 2
-    for (let i = 0; i < 12; i++) {
-      const x = px + Math.random() * pw, y = py + Math.random() * ph
-      g.beginPath(); g.moveTo(x, y); g.quadraticCurveTo(x + 14, y - 2, x + 30, y); g.stroke()
     }
     t.refresh()
 
@@ -249,6 +267,14 @@ export class Ilha extends Phaser.Scene {
     gm.strokeStyle = 'rgba(140,220,255,.5)'; gm.lineWidth = 3
     this.rr(gm, 6, 6, 68, 68, 16); gm.stroke()
     mk.refresh()
+  }
+
+  // a linha da costa: senos suaves + a ENSEADA (o mar mergulha na praia)
+  costa (x: number) {
+    let t = Math.min((x - ENSEADA.e0) / ENSEADA.borda, (ENSEADA.e1 - x) / ENSEADA.borda)
+    t = Math.max(0, Math.min(1, t))
+    const s = t * t * (3 - 2 * t)
+    return 452 + Math.sin(x / 210) * 12 + Math.sin(x / 57) * 5 + ENSEADA.prof * s
   }
 
   rr (g: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, r: number) {
@@ -510,11 +536,13 @@ export class Ilha extends Phaser.Scene {
     this.player = this.add.image(180, 596, 'verso').setOrigin(0.5, 1)
     this.player.setScale(72 / this.player.height)
 
-    // Louro no alto de uma rocha perto da poça (contexto: vigia o baú)
-    this.add.image(1610, 596, 'sombra').setDepth(1).setScale(0.8)
-    this.louro = this.colocar('louro', 1612, 566, 60, true)
+    // Louro numa rocha na praia, à ESQUERDA da enseada (contexto: vigia o baú)
+    const rL = this.colocar('rocha', 1500, 592, 70)
+    this.add.image(1500, 566, 'sombra').setDepth(rL.depth + 1).setScale(0.6)
+    this.louro = this.colocar('louro', 1500, 548, 58, true)
+    this.louro.setDepth(rL.depth + 2)
     this.tweens.add({ targets: this.louro, y: '-=5', duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
-    this.hintLouro = this.add.text(1612, 480, '!', {
+    this.hintLouro = this.add.text(1500, 470, '!', {
       fontFamily: 'Arial Black, Arial', fontSize: '30px', color: '#ffd25a', stroke: '#3a2a00', strokeThickness: 5
     }).setOrigin(0.5).setDepth(9500)
     this.tweens.add({ targets: this.hintLouro, y: '-=10', duration: 520, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
@@ -911,13 +939,12 @@ export class Ilha extends Phaser.Scene {
     const n = Math.hypot(dx, dy); dx /= n; dy /= n
     let nx = Phaser.Math.Clamp(this.player.x + dx * v, WALK.x0, WALK.x1)
     let ny = Phaser.Math.Clamp(this.player.y + dy * v, WALK.y0, WALK.y1)
-    // a poça bloqueia o Verso (só o Chico atravessa — pelas pedras!)
-    const px0 = POCA.x0 - 26, px1 = POCA.x0 + POCA.cols * POCA.cell + 26
-    const py0 = POCA.y0 - 20, py1 = POCA.y0 + POCA.rows * POCA.cell + 20
-    if (nx > px0 && nx < px1 && ny > py0 && ny < py1) {
-      // desliza no eixo que não invade
-      if (!(this.player.x > px0 && this.player.x < px1)) nx = this.player.x
-      else if (!(this.player.y > py0 && this.player.y < py1)) ny = this.player.y
+    // a ÁGUA bloqueia o Verso (os pés não podem passar da linha da costa):
+    // só o Chico atravessa a enseada, pelas pedras! desliza no eixo livre.
+    const margem = 10
+    if (ny < this.costa(nx) + margem) {
+      if (this.player.y >= this.costa(nx) + margem) ny = this.player.y          // trava só o vertical
+      else if (this.player.y >= this.costa(this.player.x) + margem) { nx = this.player.x } // trava horizontal
       else { nx = this.player.x; ny = this.player.y }
     }
     if (dx < 0) this.player.setFlipX(true); else if (dx > 0) this.player.setFlipX(false)
