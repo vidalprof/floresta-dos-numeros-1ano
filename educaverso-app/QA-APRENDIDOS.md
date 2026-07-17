@@ -39,6 +39,14 @@
   corpo inteiro no quadro, contorno fechado (ver Especialista em Prompts em `EDUVERSE-EQUIPE.md`).
 - ⛔ **Mancha escura flutuante** (sombra que a IA desenha solta). → limpeza por ponte no recorte
   + prompt "no cast shadow / no ground shadow / solid flat black bg".
+- ⛔ **COLISÃO não funcionava** (herói atravessava os objetos). Causa: o corpo físico estava
+  preso ao sprite MUITO redimensionado (escala ~0.4 + squash/stretch por quadro) → `setSize/offset`
+  em px de textura ficava do tamanho/lugar errado. → Conserto: **corpo físico DEDICADO** (retângulo
+  fixo de 40×26 px do mundo) que o sprite só SEGUE; objetos usam corpo estático com `updateFromGameObject()`.
+  → Trava: **teste automático de colisão** (`tools/qa-colisao.mjs`, Playwright) empurra o herói contra
+  a pedra e confirma que TRAVA (x<690). Rodar a cada mudança de física.
+- ⛔ **Tela não preenchia / arte serrilhada ao ampliar.** → `Scale.ENVELOP` (preenche) + `antialias:true`
+  (arte de cartoon suave, não pixel-art).
 
 ## Como CRESCE (o combinado)
 Quando um erro novo escapar: (a) reproduz, (b) vira uma **regra no auditor** (ou

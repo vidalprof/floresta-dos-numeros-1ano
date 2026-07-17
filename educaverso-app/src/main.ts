@@ -37,3 +37,6 @@ if (usarMontador) {
     jogo.scene.add('Mundo', Mundo, true, { aventura })
   })
 }
+
+// expõe o jogo p/ o QA automático (teste de colisão via Playwright). Inofensivo.
+;(window as any).jogo = jogo

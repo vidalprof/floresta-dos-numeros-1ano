@@ -21,6 +21,7 @@ function el (id: string) { return document.getElementById(id) }
 export class Mundo extends Phaser.Scene {
   av!: TAventura
   heroi!: Personagem
+  corpo!: Phaser.GameObjects.Rectangle   // corpo físico dedicado (não depende da escala do sprite)
   npcs: Personagem[] = []
   obst!: Phaser.Physics.Arcade.StaticGroup
   cursors!: Phaser.Types.Input.Keyboard.CursorKeys
@@ -92,12 +93,15 @@ export class Mundo extends Phaser.Scene {
       this.tweens.add({ targets: m, alpha: { from: 0.25, to: 0.7 }, scale: { from: 0.7, to: 1.3 }, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
     }
 
-    // HERÓI (o aluno) — animado + física
+    // HERÓI (o aluno) — animado. O CORPO físico é um retângulo DEDICADO de
+    // tamanho fixo em px do mundo (não depende da escala do sprite nem do
+    // squash/stretch), então a colisão bate certinho. O sprite só SEGUE o corpo.
     this.heroi = new Personagem(this, av.heroi, av.inicio.x, av.inicio.y, 96)
-    this.physics.add.existing(this.heroi.sprite)
-    const b = this.heroi.sprite.body as Phaser.Physics.Arcade.Body
-    b.setSize(46, 24); b.setOffset((this.heroi.sprite.width - 46) / 2, this.heroi.sprite.height - 24); b.collideWorldBounds = true
-    this.physics.add.collider(this.heroi.sprite, this.obst)
+    this.corpo = this.add.rectangle(av.inicio.x, av.inicio.y, 40, 26).setVisible(false)
+    this.physics.add.existing(this.corpo)
+    const b = this.corpo.body as Phaser.Physics.Arcade.Body
+    b.setCollideWorldBounds(true)
+    this.physics.add.collider(this.corpo, this.obst)
     this.poeira = this.add.particles(0, 0, 'puff', { lifespan: 420, speed: { min: 4, max: 16 }, angle: { min: 200, max: 340 }, scale: { start: 0.5, end: 1.3 }, alpha: { start: 0.5, end: 0 }, emitting: false }).setDepth(640)
 
     // vaga-lumes pelo mundo (vida ambiente)
@@ -144,7 +148,13 @@ export class Mundo extends Phaser.Scene {
     else if (o.vida === 'flutua_suave') this.tweens.add({ targets: im, y: o.y - 6, duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
     else if (o.vida === 'brilha') { const g = this.add.image(o.x, o.y - o.alt * 0.4, 'glow').setBlendMode(Phaser.BlendModes.ADD).setDepth(im.depth + 1); this.tweens.add({ targets: g, alpha: { from: 0.4, to: 0.9 }, scale: { from: 0.85, to: 1.15 }, duration: 900, yoyo: true, repeat: -1 }) }
     else if (o.vida === 'tremula') { const g = this.add.image(o.x, o.y - o.alt * 0.7, 'glow').setBlendMode(Phaser.BlendModes.ADD).setDepth(im.depth + 1); this.tweens.add({ targets: g, alpha: { from: 0.55, to: 1 }, scale: { from: 0.85, to: 1.12 }, duration: 240, yoyo: true, repeat: -1 }) }
-    if (o.colide) { const bl = this.add.rectangle(o.x, o.y - o.alt * 0.1, o.alt * 0.35, 18).setVisible(false); this.physics.add.existing(bl, true); this.obst.add(bl) }
+    if (o.colide) {
+      const w = Math.max(26, o.alt * 0.32), h = 22
+      const bl = this.add.rectangle(o.x, o.y - h / 2, w, h).setVisible(false)
+      this.physics.add.existing(bl, true)                         // corpo ESTÁTICO
+      ;(bl.body as Phaser.Physics.Arcade.StaticBody).updateFromGameObject()  // sincroniza posição/tamanho
+      this.obst.add(bl)
+    }
   }
 
   // ---- efeitos base (primitivas do motor) ----
@@ -191,7 +201,7 @@ export class Mundo extends Phaser.Scene {
 
   update (_t: number, dtMs: number) {
     const dt = Math.min(0.05, dtMs / 1000)
-    const b = this.heroi.sprite.body as Phaser.Physics.Arcade.Body
+    const b = this.corpo.body as Phaser.Physics.Arcade.Body
     let andando = false
     if (this.estado === 'explora') {
       const v = 200; let dx = 0, dy = 0; const k = this.cursors, t = this.teclas
@@ -200,9 +210,11 @@ export class Mundo extends Phaser.Scene {
       if (k.up.isDown || t.W.isDown) dy -= 1
       if (k.down.isDown || t.S.isDown) dy += 1
       if (dx || dy) this.alvo = null
-      if (!dx && !dy && this.alvo) { const ax = this.alvo.x - this.heroi.x, ay = this.alvo.y - this.heroi.y, d = Math.hypot(ax, ay); if (d < 10) this.alvo = null; else { dx = ax / d; dy = ay / d } }
+      if (!dx && !dy && this.alvo) { const ax = this.alvo.x - this.corpo.x, ay = this.alvo.y - this.corpo.y, d = Math.hypot(ax, ay); if (d < 10) this.alvo = null; else { dx = ax / d; dy = ay / d } }
       if (dx || dy) { const n = Math.hypot(dx, dy); dx /= n; dy /= n; b.setVelocity(dx * v, dy * v); andando = true; if (Math.abs(dx) > Math.abs(dy)) this.heroi.setDir(dx < 0 ? 'esq' : 'dir'); else this.heroi.setDir(dy < 0 ? 'cima' : 'baixo') } else b.setVelocity(0, 0)
     } else b.setVelocity(0, 0)
+    // o sprite do herói SEGUE o corpo físico (colisão certinha, visual solto)
+    this.heroi.setPos(this.corpo.x, this.corpo.y)
     this.heroi.andar(andando); this.heroi.update(dt)
     if (andando && this.poeira) this.poeira.emitParticleAt(this.heroi.x, this.heroi.y, 1)
 
