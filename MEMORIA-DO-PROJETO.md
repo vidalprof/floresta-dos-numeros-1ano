@@ -783,3 +783,59 @@ rodou OK (run 29576419440): semeou /catalogo/mundos/ilha-pirata (fogueira=jogave
 FASE SEGUINTE = LAPIDAR (Marcos: "depois verificamos e lapidamos"): estagios do mascote (fofo->descolado),
 animacao viva do Verso (respira/pisca/pula), a Ilha completa (7 paradas com jogo/historia/vozes),
 ajustar coordenadas das paradas na arte da ilha.
+
+## 🌎🌎 VISÃO-MESTRA DEFINITIVA — EDUCAVERSO / EDUVERSE PROFESSOR AI (Marcos, 2026-07-17)
+O "REAL MOTIVO" do projeto (Marcos revelou colando 2 prompts-mestres inteiros):
+**PROBLEMA REAL:** o **Currículo de Computação** está entrando nas escolas. O professor de
+Informática Pedagógica vira **Professor de Computação** com currículo próprio -> tem que produzir
+planejamento, sequência didática, plano de aula, atividades plugadas E desplugadas, avaliação,
+relatórios e documentação pra coordenação. Carga de trabalho INSUSTENTÁVEL. **Educaverso nasce pra
+resolver isso.**
+**MISSÃO:** transformar AUTOMATICAMENTE cada objetivo OFICIAL do currículo numa experiência completa
+de aprendizagem, e gerar SOZINHO toda a documentação pedagógica (nos modelos oficiais da Secretaria).
+O professor gasta tempo com os ALUNOS, não com papel.
+**DUAS VISÕES (regra de ouro):** o PROFESSOR vê planejamento/objetivos/conceitos/avaliação/relatórios;
+o ALUNO vê uma AVENTURA (cidade, missão, personagens, mistérios). Nunca documento escolar pro aluno.
+**CURRÍCULO INVISÍVEL (princípio absoluto):** o aluno NUNCA sente que estuda. Nada de "Atividade 3 /
+Exercício 5 / prova / questionário". Ele explora, constrói, investiga, resolve problemas do mundo.
+O conceito é vivido, nunca anunciado. Ex.: prof="algoritmos simples"; aluno="o robô perdeu a rota e
+precisa entregar remédios antes do pôr do sol". Aprende sem perceber.
+**O MUNDO É O PROFESSOR:** o ambiente ensina; moradores perguntam; problemas surgem naturais; solução
+vem da exploração. O professor vira MEDIADOR.
+**UM ÚNICO MUNDO PERSISTENTE (não coleção de jogos):** o aluno volta SEMPRE ao mesmo lugar; tudo salvo;
+NPCs lembram; construções permanecem. **A cidade cresce com o aluno** — cada objetivo aprendido muda o
+mundo dele (casas, árvores, robôs, bairros); cada aluno tem uma cidade ÚNICA. **Jornada de 9 anos**
+(1º ao 9º ano) no mesmo mundo, que envelhece junto.
+**MUNDO VIVO:** NPCs andam/conversam/dormem/trabalham; animais com comportamento; clima, dia/noite,
+chuva, vento, partículas, som. Meta máxima do projeto: o aluno AMAR VOLTAR -> "Professor, hoje tem
+Educaverso?".
+**AVALIAÇÃO INVISÍVEL:** o jogo OBSERVA (tempo, tentativas, persistência, estratégias, decisões, pedidos
+de ajuda, erros/acertos, autonomia) -> gera avaliação diagnóstica+formativa + evidências, SEM prova.
+**SEQUÊNCIA = 55min = 1 objetivo = 1 aula:** 5 intro narrativa / 35 missão / 10 desafio final / 5 síntese+
+registro+avaliação. Nunca aventura longa.
+**MECÂNICAS REUTILIZÁVEIS (não criar do zero):** programar robôs, construir pontes, automatizar fazenda,
+organizar biblioteca, logística, cidade inteligente, semáforos, lab de dados, reciclagem... cada mecânica
+atende DEZENAS de objetivos só trocando contexto/narrativa. Regiões: cidade, lab, oficina, biblioteca,
+museu, porto, fazenda, floresta, mina, usina...
+**MOTOR PEDAGÓGICO (por objetivo -> "Pacote Pedagógico" automático):** objetivo oficial + conceitos +
+conteúdos + conhecimentos prévios + sequência + plano de aula + planejamento + metodologia + recursos +
+avaliação + rubricas + missão digital + versão DESPLUGADA (mesmos objetivos, p/ sem internet) + relatório
+individual + relatório da turma + diário do professor + registro coordenação + recuperação.
+**BRAIN/ASSET STUDIO:** cérebro decide região/mecânica/missão/NPCs; biblioteca permanente que só cresce,
+nunca duplica; personagens modulares (paper-doll) mesmo estilo; map builder automático.
+**TECH:** HTML5/CSS/JS, Firebase, IA p/ narrativa+diálogo+DOCUMENTAÇÃO, modular, Win7/Chrome/Firefox,
+1024x768, leve, online com export offline. (Obs: prompts citam Phaser; nós decidimos Canvas 2D por peso.)
+
+### HONESTIDADE — onde estamos vs. essa visão (Claude, 2026-07-17)
+O que existe hoje = INFRAESTRUTURA (login por toque, ovo/mascote Verso, mapa de mundos/paradas, Firebase
+salvando progresso, painel do professor) + UMA atividade de MATEMÁTICA (números até 30, pirata) que é
+"mais do mesmo" (exercício gamificado). A ALMA da visão (currículo INVISÍVEL de COMPUTAÇÃO, mundo-professor,
+cidade persistente que cresce 9 anos, avaliação invisível -> documentação automática) ainda está À FRENTE.
+As pernas difíceis JÁ PROVADAS: IA gera conteúdo (Gemini) e dados (Firebase) — são exatamente os motores
+que essa visão precisa p/ auto-documentação e avaliação invisível. Caminho realista = 1 FATIA VERTICAL
+honesta num objetivo de COMPUTAÇÃO (ex.: algoritmos/sequência) que prove a filosofia ponta a ponta:
+problema do mundo -> aluno resolve vivendo -> avaliação invisível -> Pacote Pedagógico gerado pro professor.
+NÃO prometer a plataforma inteira de uma vez (é roadmap de anos); provar a filosofia numa fatia real primeiro.
+
+### DECISÃO DE CENA (Marcos, 2026-07-17): paradas numa ILHA no meio do oceano; a ÚLTIMA fase é um NAVIO
+(como o que ficou bonito). O convés repetido/câmera 3/4 dava "paredes/imagens coladas" -> ilha resolve.
