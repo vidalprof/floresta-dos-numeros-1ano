@@ -11,6 +11,29 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 
+## 🌐 DECISÃO DO MARCOS (2026-07): TRABALHAMOS SÓ ONLINE — esquecer "offline"
+> O Marcos deixou claro (mais de uma vez): **a escola é ONLINE, sempre há internet.**
+> **"Offline" NÃO é requisito.** Eu não devo mais usar "tem que rodar offline / HTML
+> único offline" como argumento ou trava — isso já atrapalhou a conversa. O que
+> **CONTINUA valendo** como restrição real é: **PC fraco da escola** (AMD FX-4300,
+> 3,5 GB RAM, Win7, Chrome 109 / Firefox 106) → **leve e compatível**; e **custo baixo**.
+>
+> **Reflexo em Unity/motores pesados:** ser online **não** libera Unity. Os bloqueios
+> reais que ficam são: (1) eu **não opero o editor do Unity** (é programa de tela, com
+> licença; eu sou headless/linha de comando); (2) **Unity WebGL é pesado** (RAM/download)
+> pro PC fraco da escola. O Monkey Mart roda por ser **WebGL/HTML5 muito otimizado** —
+> mesma família do nosso Phaser. Logo, a qualidade "espetacular" vem de **arte + animação
+> + game feel**, não do motor. Caminho certo = **Phaser + kit de sprites bem-feito**.
+
+## 📦 DECISÃO DO MARCOS (2026-07): NÃO precisa ser HTML único — repo por aventura
+> Também **não é requisito** espremer tudo num HTML só. Podemos ter **1 repositório por
+> aventura**, com **pastas** (código, `assets/`, `dados/`, `audio/`). Isso é justamente a
+> arquitetura PROFISSIONAL que já adotamos no **`educaverso-app`** (Phaser + TypeScript +
+> **Vite** + build por **GitHub Actions** → publica no repo próprio). Ou seja: relaxar o
+> "HTML único" **facilita** (multi-arquivo, atlas de sprites, code-split), não atrapalha.
+> **O molde premium 1-HTML continua valendo só pro modelo LEVE antigo (atividades/hub).**
+> O EducaVerso novo é multi-arquivo por repo.
+
 ## ✅ O que EU consigo fazer (capacidades REAIS — não esquecer)
 - **Criar e editar** as atividades (HTML/JS/CSS), cada uma em 1 arquivo único.
 - **Publicar no ar:** commit/push + ligar o GitHub Pages (Fábrica de Sites).
