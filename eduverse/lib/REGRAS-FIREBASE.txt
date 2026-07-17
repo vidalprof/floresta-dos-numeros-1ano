@@ -1,0 +1,43 @@
+REGRAS DE SEGURANCA — Firebase Realtime Database (projeto educaverso-73b1a)
+==========================================================================
+
+POR QUE: um banco novo vem em "modo de teste" = QUALQUER pessoa na internet
+pode ler e escrever tudo (por ~30 dias). Antes de entrar dado real de aluno,
+APERTE as regras. O apiKey do Firebase Web e publico por design; sao as
+REGRAS abaixo que de fato protegem os dados.
+
+ONDE COLAR:
+1. https://console.firebase.google.com/project/_/database  (escolha o projeto)
+2. Realtime Database -> aba "Regras" (Rules)
+3. Apague o que estiver la e cole o bloco abaixo -> "Publicar".
+
+REGRAS (nivel 1 — fecha a internet aberta, exige login):
+--------------------------------------------------------------------------
+{
+  "rules": {
+    "turmas": {
+      "$turma": {
+        "alunos": {
+          ".read": "auth != null",
+          "$aluno": {
+            ".write": "auth != null",
+            ".validate": "newData.hasChildren(['nome'])"
+          }
+        }
+      }
+    }
+  }
+}
+--------------------------------------------------------------------------
+
+PRE-REQUISITO: ativar Authentication -> metodo "Anonimo" (Console -> Build ->
+Authentication -> Sign-in method -> Anonimo -> Ativar). Assim o jogo faz um
+login anonimo silencioso e o "auth != null" das regras passa a valer.
+
+HONESTIDADE: este e o nivel 1 (fecha o acesso ao publico geral; exige que o
+visitante tenha um login anonimo do proprio app). Ainda permite que um usuario
+logado leia/escreva qualquer registro — aceitavel para um piloto com dados nao
+sensiveis (primeiro nome + progresso). NIVEL 2 (mais estrito: cada aluno so
+mexe no proprio registro; professor autenticado le a turma) exige um esquema
+de identidade (ex.: custom token com papel professor/aluno) — fazemos quando
+for pra producao com muitos alunos.
