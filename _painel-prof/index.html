@@ -97,6 +97,21 @@ input:focus{ border-color:#7c8cff; }
       <div id="listaTurmas"><div class="muted">Carregando…</div></div>
     </div>
 
+    <!-- catálogo de mundos -->
+    <div class="card">
+      <h2>🌍 Mundos (catálogo do EducaVerso)</h2>
+      <div class="muted" style="margin-bottom:8px">O que aparece pros alunos. Cada parada aponta pro link do jogo (a atividade mora no repositório dela).</div>
+      <label for="nmNome">Novo mundo — nome</label>
+      <input id="nmNome" type="text" placeholder="Ilha do Tesouro">
+      <div style="display:-webkit-box;display:flex;margin-top:6px">
+        <input id="nmEmoji" type="text" placeholder="emoji 🏴‍☠️" style="width:120px;margin-right:8px">
+        <input id="nmCor" type="text" placeholder="cor #1f8a70" value="#1f8a70">
+      </div>
+      <div><button class="btn" id="btnCriarMundo">Criar mundo</button></div>
+      <div id="mundoMsg" class="status"></div>
+      <div id="listaMundos" style="margin-top:12px"><div class="muted">Carregando…</div></div>
+    </div>
+
     <div style="text-align:center"><button class="btn sec mini" id="btnSair" style="margin-top:16px">Sair</button></div>
   </div>
 
@@ -175,6 +190,80 @@ input:focus{ border-color:#7c8cff; }
     $("telaLogin").className="card hidden";
     $("telaPainel").className="";
     carregarTurmas();
+    carregarMundos();
+  }
+
+  /* ---- CATÁLOGO DE MUNDOS ---- */
+  function nChaves(o){ var n=0,k; for(k in o){ if(o.hasOwnProperty(k)) n++; } return n; }
+  function criarMundo(){
+    var nome=($("nmNome").value||"").trim(), emoji=($("nmEmoji").value||"").trim()||"🗺️", cor=($("nmCor").value||"").trim()||"#2a7bbf";
+    var m=$("mundoMsg");
+    if(!nome){ m.className="status err"; m.textContent="Escreva o nome do mundo."; return; }
+    var id=sanId(nome);
+    m.className="status"; m.textContent="Salvando…";
+    dbGet("catalogo/mundos", function(mundos){
+      if(mundos && mundos[id]){ m.className="status err"; m.textContent="Já existe um mundo com esse nome."; return; }
+      var ordem=nChaves(mundos||{})+1;
+      dbPut("catalogo/mundos/"+id, {nome:nome, emoji:emoji, cor:cor, ordem:ordem, criado_em:(new Date()).toISOString()},
+        function(){ $("nmNome").value=""; $("nmEmoji").value=""; m.className="status ok"; m.textContent="Mundo criado! ✔"; carregarMundos(); },
+        function(e){ m.className="status err"; m.textContent="Falhou: "+e; });
+    }, function(e){ m.className="status err"; m.textContent="Falhou ao checar: "+e; });
+  }
+
+  function carregarMundos(){
+    var box=$("listaMundos"); box.innerHTML='<div class="muted">Carregando…</div>';
+    dbGet("catalogo/mundos", function(mundos){
+      if(!mundos){ box.innerHTML='<div class="muted">Nenhum mundo ainda. Crie o primeiro acima. ☝️</div>'; return; }
+      var ids=[]; for(var k in mundos){ if(mundos.hasOwnProperty(k)) ids.push(k); }
+      ids.sort(function(a,b){ return ((mundos[a].ordem||0)-(mundos[b].ordem||0)); });
+      var html="", i; for(i=0;i<ids.length;i++){ html+=mundoHTML(ids[i], mundos[ids[i]]); }
+      box.innerHTML=html;
+    }, function(e){ box.innerHTML='<div class="status err">Não consegui carregar: '+esc(e)+'</div>'; });
+  }
+
+  function mundoHTML(id, mu){
+    var paradas=mu.paradas||{}, pids=[], k;
+    for(k in paradas){ if(paradas.hasOwnProperty(k)) pids.push(k); }
+    pids.sort(function(a,b){ return ((paradas[a].ordem||0)-(paradas[b].ordem||0)); });
+    var h='<div class="turma-item" data-m="'+esc(id)+'">';
+    h+='<div class="turma-head"><div class="nm">'+esc(mu.emoji||"🗺️")+' '+esc(mu.nome||id)+'<span class="chip">'+pids.length+' parada'+(pids.length===1?"":"s")+'</span></div>';
+    h+='<button class="btn danger mini" data-del-mundo="'+esc(id)+'">apagar mundo</button></div>';
+    var i,p;
+    for(i=0;i<pids.length;i++){ p=paradas[pids[i]];
+      var estado=(p.soon||!p.link)?'<span class="pg" style="color:#ffcf6a">em breve</span>':'<span class="pg">✔ com jogo</span>';
+      h+='<div class="aluno"><div class="av">'+esc(p.mascote||"⭐")+'</div><div class="an">'+esc(p.titulo||pids[i])+'<div class="muted" style="font-size:11px">'+esc(p.link||"(sem link ainda)")+'</div></div>';
+      h+=estado+'<button class="btn danger mini" data-del-parada="'+esc(id)+'|'+esc(pids[i])+'">x</button></div>';
+    }
+    /* adicionar parada */
+    h+='<div style="margin-top:10px"><label>Adicionar parada</label>';
+    h+='<input type="text" placeholder="título (ex.: A Fogueira)" id="pt-'+esc(id)+'">';
+    h+='<div style="display:-webkit-box;display:flex;margin-top:6px">';
+    h+='<input type="text" placeholder="emoji 🔥" id="pm-'+esc(id)+'" style="width:90px;margin-right:6px">';
+    h+='<input type="text" placeholder="link do jogo (https://...)" id="pl-'+esc(id)+'"></div>';
+    h+='<div style="display:-webkit-box;display:flex;margin-top:6px;-webkit-box-align:center;align-items:center">';
+    h+='<input type="text" placeholder="x %" id="px-'+esc(id)+'" style="width:70px;margin-right:6px">';
+    h+='<input type="text" placeholder="y %" id="py-'+esc(id)+'" style="width:70px;margin-right:10px">';
+    h+='<label style="margin:0;font-size:12px"><input type="checkbox" id="ps-'+esc(id)+'"> em breve (sem jogo)</label></div>';
+    h+='<button class="btn mini" data-add-parada="'+esc(id)+'" style="margin-top:8px">adicionar parada</button></div>';
+    h+='</div>';
+    return h;
+  }
+
+  function addParada(mundoId){
+    var tit=($("pt-"+mundoId).value||"").trim();
+    if(!tit){ toast("Escreva o título da parada."); return; }
+    var mas=($("pm-"+mundoId).value||"").trim()||"⭐";
+    var link=($("pl-"+mundoId).value||"").trim();
+    var x=parseInt(($("px-"+mundoId).value||"50"),10); if(isNaN(x))x=50;
+    var y=parseInt(($("py-"+mundoId).value||"50"),10); if(isNaN(y))y=50;
+    var soon=$("ps-"+mundoId).checked || !link;
+    var pid=sanId(tit);
+    dbGet("catalogo/mundos/"+mundoId+"/paradas", function(ps){
+      var ordem=nChaves(ps||{})+1;
+      dbPut("catalogo/mundos/"+mundoId+"/paradas/"+pid, {titulo:tit, mascote:mas, link:link, x:x, y:y, soon:soon, ordem:ordem},
+        function(){ toast("Parada adicionada ✔"); carregarMundos(); },
+        function(e){ toast("Falhou: "+e); });
+    }, function(e){ toast("Falhou: "+e); });
   }
 
   /* ---- TURMAS ---- */
@@ -286,11 +375,23 @@ input:focus{ border-color:#7c8cff; }
       el.className="on"; wrap.setAttribute("data-sel", el.getAttribute("data-av"));
       return;
     }
+    if(el.getAttribute && el.getAttribute("data-add-parada")){ addParada(el.getAttribute("data-add-parada")); return; }
+    if(el.getAttribute && el.getAttribute("data-del-parada")){
+      var pp=el.getAttribute("data-del-parada").split("|");
+      if(confirm("Remover esta parada?")){ dbDel("catalogo/mundos/"+pp[0]+"/paradas/"+pp[1], function(){ toast("Removida."); carregarMundos(); }, function(e){ toast("Falhou: "+e); }); }
+      return;
+    }
+    if(el.getAttribute && el.getAttribute("data-del-mundo")){
+      var mid=el.getAttribute("data-del-mundo");
+      if(confirm("Apagar o mundo inteiro (e todas as paradas)?")){ dbDel("catalogo/mundos/"+mid, function(){ toast("Mundo apagado."); carregarMundos(); }, function(e){ toast("Falhou: "+e); }); }
+      return;
+    }
   });
   $("btnEntrar").onclick=tentarEntrar;
   $("pw").addEventListener("keydown",function(e){ if(e.keyCode===13) tentarEntrar(); });
   $("btnCriarTurma").onclick=criarTurma;
   $("ntNome").addEventListener("keydown",function(e){ if(e.keyCode===13) criarTurma(); });
+  $("btnCriarMundo").onclick=criarMundo;
   $("btnSair").onclick=function(){ try{ sessionStorage.removeItem("prof_ok"); }catch(e){} location.reload(); };
 
   /* re-entrada na mesma sessão do navegador não pede senha de novo */

@@ -26,15 +26,21 @@ REGRAS (nivel 1 — fecha a internet aberta, exige login; cobre TURMA + ALUNOS):
           }
         }
       }
+    },
+    "catalogo": {
+      ".read": "auth != null",
+      ".write": "auth != null"
     }
   }
 }
 --------------------------------------------------------------------------
 
-O QUE MUDOU (em relacao a versao anterior): agora o PAINEL DO PROFESSOR
-consegue (a) LISTAR as turmas (".read" em /turmas) e (b) criar/renomear a
-turma (gravar /turmas/$turma/nome). Antes so cobria /turmas/$turma/alunos, e
-por isso criar turma dava "permissao negada".
+O QUE MUDOU (em relacao a versao anterior): agora as regras cobrem TAMBEM o
+/catalogo (mundos + paradas): o EduMundo/EducaVerso (aluno) LE o catalogo e o
+PAINEL (admin) GRAVA mundos/paradas. Sem esta secao, criar mundo/parada dava
+"permission denied" e a tela do aluno mostrava "mundos sendo preparados".
+Antes ja tinhamos: PAINEL lista turmas (".read" em /turmas) e cria/renomeia a
+turma (grava /turmas/$turma/nome).
 
 PRE-REQUISITO: ativar Authentication -> metodo "Anonimo" (Console -> Build ->
 Authentication -> Sign-in method -> Anonimo -> Ativar). Assim o EduMundo (aluno)
