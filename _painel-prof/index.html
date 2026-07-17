@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex,nofollow">
-<title>EduMundo — Painel do Professor</title>
+<title>EducaVerso — Painel do Professor</title>
 <style>
 /* ---- Reset leve + compatibilidade Win7/Chrome antigo (sem grid/var/clamp) ---- */
 * { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; }
@@ -67,7 +67,7 @@ input:focus{ border-color:#7c8cff; }
 </head>
 <body>
 <div class="wrap">
-  <h1>Edu<span class="b">Mundo</span> — Painel do Professor</h1>
+  <h1>Educa<span class="b">Verso</span> — Painel do Professor</h1>
   <div class="sub">Cadastre as turmas e os alunos. Depois é só entregar o link da turma pras crianças jogarem.</div>
 
   <!-- LOGIN (senha do professor) -->
@@ -101,7 +101,7 @@ input:focus{ border-color:#7c8cff; }
   </div>
 
   <div class="foot">
-    EduMundo • projeto educaverso-73b1a • os dados salvam no Firebase.<br>
+    EducaVerso • projeto educaverso-73b1a • os dados salvam no Firebase.<br>
     Segurança de piloto: dado não sensível (só o 1º nome + progresso). Sem senha para a criança.
   </div>
 </div>
@@ -110,7 +110,7 @@ input:focus{ border-color:#7c8cff; }
 
 <script>
 /* =========================================================================
- * PAINEL DO PROFESSOR — EduMundo
+ * PAINEL DO PROFESSOR — EducaVerso
  * - Gate por senha (piloto: verificação no cliente; o site é separado e as
  *   crianças não conhecem o endereço). Honestidade: não é blindagem de banco.
  * - Firebase RTDB via REST (XMLHttpRequest, ES5 -> roda em navegador antigo).
@@ -123,7 +123,7 @@ input:focus{ border-color:#7c8cff; }
   var CFG = {
     apiKey: "AIzaSyA0mIDCLpGtbNPF4Tz6flKGTEmNOr4QMYg",           /* público por design */
     databaseURL: "https://educaverso-73b1a-default-rtdb.firebaseio.com",
-    baseAluno: "https://vidalprof.github.io/educamundo/"          /* link que a criança abre */
+    baseAluno: "https://vidalprof.github.io/educaverso/"          /* link que a criança abre */
   };
   /* Senha do professor: para não ficar em texto puro, guardamos uma soma simples.
      "vidal2026" -> troque abaixo se quiser outra (rode _hash("nova") no console). */

@@ -729,3 +729,16 @@ mascote + trilha), toca a parada -> abre o jogo (link próprio; portal leve).
 Ao commitar o EduMundo dinâmico, o git local estava em 3dc86eb (base VELHO, "behind 847").
 Cura aplicada: salvar os arquivos bons em /tmp, `git reset --hard origin/<branch>`, reaplicar
 por cima, commitar. SEMPRE conferir `git status -sb` (procurar "behind N") ANTES de commitar.
+
+## 🥚 EDUCAVERSO (nome correto) + ENTRADA COM OVO→MASCOTE (Marcos, 2026-07-17)
+Marcos corrigiu: o nome é **EducaVerso** (eu tinha escorregado pra "EduMundo"). E a
+entrada tem que ser a ideia inicial: aluno toca o nome -> (1ª vez) um **OVO choca** e
+ele **escolhe o MASCOTE** dele -> **cai DIRETO no mundo vivo** (mapa de paradas), sem
+menuzinho. O **mascote é o personagem** que anda no mapa (o token) e **cresce o ano
+todo** (guarda quantas paradas fez; nivel=1+floor(paradas/3)). "Outros mundos" fica num
+botão de canto. Pasta renomeada `_educamundo`->`_educaverso`; repo de destino = `educaverso`
+(link `https://vidalprof.github.io/educaverso/`). Painel atualizado pra gerar esse link.
+- **Mascote (dados):** `/turmas/<t>/alunos/<a>/dados/mascote` = { tipo, nivel, paradas, nascido_em }.
+- **HONESTO:** mascote é EMOJI por enquanto (🐣🐉🦊...); a versão desenhada que cresce de
+  verdade (arte por estágio) vem depois, via asset studio. Marcos é o professor E o admin
+  (um usuário só). Enquanto a fábrica não é perfeita, a "equipe que conserta" sou eu (Claude).
