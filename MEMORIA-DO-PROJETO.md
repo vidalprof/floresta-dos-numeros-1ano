@@ -920,3 +920,16 @@ Marcos escolheu o PLANO A (stack pesado do doc de arquitetura). Pediu: "não del
 - PRÓXIMAS ETAPAS (ordem do doc): Etapa 2 mecânica "ordenar comandos" (com avaliação) -> Etapa 3 mundo
   vivo (NPCs/rotinas/clima) -> Etapa 4 painel React -> Etapa 5 IA estruturada (JSON Schema/Zod) ->
   Etapa 6 Builder -> Etapa 7 avaliação -> Etapa 8 documentação -> Etapa 9 expansão.
+
+## 📌 PENDÊNCIA (Marcos, 2026-07-17): DOCUMENTO ÚNICO com TODA a sequência
+Quando o Marcos DER O SINAL (não antes): reformular TUDO (as visões-mestras, a arquitetura, as
+decisões, as etapas) num **documento só**, organizado, com **toda a sequência** de desenvolvimento
+do Educaverso. É consolidação — esperar o "agora pode" do Marcos.
+
+## 🧩 ETAPA 2 iniciada — mecânica "ordenar comandos" no app Phaser (2026-07-17)
+Marcos deu "pode fazer". Construindo no educaverso-app (Plano A): a mecânica REUTILIZÁVEL
+"ordenar comandos" (algoritmo) numa cena única bonita (praia noturna). Criança monta os passos ->
+Verso anda de célula em célula até o baú, desviando das poças -> conceito "ALGORITMO" no fim ->
+avaliação invisível começa a registrar (tentativas/tempo/acerto em localStorage; Firebase depois).
+Mira Chrome 109 (moderno). Config da mecânica separada (reutilizável p/ virar missão no mundo OU
+atividade avulsa premium).
