@@ -422,6 +422,7 @@ function estrela(x,y,r,a){cx.save();cx.globalAlpha=Math.max(0,a);cx.fillStyle="#
  cx.closePath();cx.fill();cx.restore();cx.shadowBlur=0;}
 function imgH(im,x,yBase,h){var w=im.width*h/im.height;cx.drawImage(im,x-w/2,yBase-h,w,h);}
 function desCaminho(t){ // trilha de terra gasta que FUNDE na grama (borda dissolvida + tufos de grama)
+ if(!PATH||PATH.length<2)return; // sem trilha (ex.: navio -> path vazio): nao desenha caminho de terra no conves
  cx.save();cx.lineJoin="round";cx.lineCap="round";var col=patC||"rgba(150,112,72,1)";
  function traca(w,a){cx.globalAlpha=a;cx.strokeStyle=col;cx.lineWidth=w;cx.beginPath();cx.moveTo(PATH[0][0],PATH[0][1]);
   for(var i=1;i<PATH.length;i++)cx.lineTo(PATH[i][0],PATH[i][1]);cx.stroke();}
@@ -632,7 +633,12 @@ function desLampiao(p,t){var x=p.x,y=p.y,H=p.h||62;var lx=x,ly=y-H; // ly = cent
  lingua(lx,ly+8,(7+Math.sin(t*0.05)*2)*fl,2,"rgba(255,238,190,0.95)");cx.restore();}
 function desProp(p,t){if(p.tipo==="fogueira")desFogueira(p,t);
  else if(p.tipo==="lampiao")desLampiao(p,t);
- else if(p.tipo==="cabana"&&IMG.cabana){sombra(p.x,p.y+4,44,11);imgH(IMG.cabana,p.x,p.y,p.h||110);}}
+ else if(p.tipo==="cabana"&&IMG.cabana){sombra(p.x,p.y+4,44,11);imgH(IMG.cabana,p.x,p.y,p.h||110);}
+ // PROP-IMAGEM GENERICO (default-safe): qualquer prop cujo tipo tenha imagem (ex.: mastro do navio)
+ // desenha IMG[tipo] na altura p.h, com sombra de contato e um balanco suave (pivo na base = conves).
+ else if(IMG[p.tipo]){var _sw=Math.sin(t*.0014+p.x*.03)*(0.01+gust*0.02);var _hh=p.h||120;
+  sombra(p.x,p.y+4,Math.max(14,_hh*0.13),9);
+  cx.save();cx.translate(p.x,p.y);cx.rotate(_sw);imgH(IMG[p.tipo],0,0,_hh);cx.restore();}}
 
 /* ===== FUNCOES: MOTOR DE RODADAS (aula) ===== */
 /* =====================================================================
@@ -670,6 +676,7 @@ function _geraItens(R,idx){
  trs.sort(function(a,b){return a.d-b.d;});
  // ESPALHAR (Problema C): usa MAIS árvores — idealmente 1 fruta por árvore — e garante
  // que duas frutas nunca fiquem a menos de ~140px (âncora de coleta), evitando aglomerado.
+ var _ancoraChao=(typeof MUNDO!=="undefined"&&MUNDO.ancora_chao); // navio: item assenta no conves (nao "pendura" em copa)
  var nTree=Math.max(2,Math.min(trs.length,qtd));                 // tantas árvores quanto frutas (1 por árvore quando dá)
  var used=[];for(i=0;i<trs.length;i++)used.push(0);              // offsets de copa já usados por árvore
  var offs=[0,-22,22,-11,11];                                     // offsets de copa (|ox|<=26, dentro da copa real)
@@ -679,7 +686,7 @@ function _geraItens(R,idx){
   if(R.tipo==="agrupar"&&i<bundles){ vale=10;nn=10;forcaChao=true; } // sacola-de-10 no PÉ da árvore
   var x,y,sy,chao,ax_,ay_,ti,tries=0,ok=false,pendurada;
   do{ ti=(i+tries)%nTree; var T=trs[ti],tx=T.x,ty=T.y;
-   pendurada=forcaChao?false:(rnd()<0.7);
+   pendurada=(forcaChao||_ancoraChao)?false:(rnd()<0.7);
    if(pendurada){ var ox=offs[used[ti]%offs.length];
     x=tx+ox; y=ty-72-Math.floor(rnd()*26); sy=ty+2; chao=false; }        // ANCORADA na copa real (coleta mede pela base ty+2)
    else{ var ox2=(rnd()<0.5?-1:1)*(30+Math.floor(rnd()*16));               // ±30..45 no pé
