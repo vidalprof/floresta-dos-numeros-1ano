@@ -18,7 +18,10 @@ export const Objeto = z.object({
   vida: Vida.default('nada'),
   colide: z.boolean().default(false),
   flip: z.boolean().default(false),
-  profundidade: z.number().optional()
+  profundidade: z.number().optional(),
+  // COERÊNCIA: onde esta peça PODE ficar (o auditor confere).
+  // 'terra' = coqueiro/pedra (NUNCA no mar); 'agua' = poça/barco; 'qualquer' = livre.
+  terreno: z.enum(['terra', 'agua', 'qualquer']).default('terra')
 })
 
 // um personagem no mundo (usa a cartela de poses -> animado)
@@ -66,7 +69,10 @@ export const Mundo = z.object({
   altura: z.number().default(1600),
   chao: z.string(),                  // asset do chão (grande/tileável)
   hora: z.enum(['dia', 'tarde', 'noite']).default('noite'),
-  ambiente_sons: z.array(z.string()).default([])   // ex.: ['mar','grilos']
+  ambiente_sons: z.array(z.string()).default([]),  // ex.: ['mar','grilos']
+  // COERÊNCIA: retângulos de ÁGUA (mar/rio). O auditor usa pra pegar
+  // "coqueiro dentro do mar" (peça de terra numa zona de água).
+  zonas_agua: z.array(z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number() })).default([])
 })
 
 // a AVENTURA completa

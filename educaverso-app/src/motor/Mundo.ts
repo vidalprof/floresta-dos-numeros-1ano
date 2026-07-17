@@ -10,6 +10,7 @@
 // ============================================================================
 import Phaser from 'phaser'
 import { Personagem } from './Personagem'
+import { auditar } from './auditor'
 import type { TAventura, TObjeto } from './aventura'
 
 const VW = 1024, VH = 768
@@ -111,6 +112,20 @@ export class Mundo extends Phaser.Scene {
     const bO = el('btnOuvir'); if (bO) bO.onclick = () => { /* repete última fala se houver */ }
     el('telaIntro')?.classList.add('hidden')
     el('hud')?.classList.add('hidden')
+
+    // 🤖 AUDITOR AUTOMÁTICO — pega peça fora do lugar, coqueiro no mar, etc.
+    const assets = new Set<string>(this.textures.getTextureKeys())
+    const audios = new Set<string>(Object.keys(this.audioOk).filter(k => this.audioOk[k]))
+    const probs = auditar(this.av, { assets, audios })
+    if (probs.length) {
+      const grave = probs.some(x => x.grave)
+      const d = document.createElement('div')
+      d.id = 'auditoria'
+      d.style.cssText = 'position:fixed;left:0;bottom:0;right:0;z-index:99998;max-height:45%;overflow:auto;background:' + (grave ? '#8a1c1c' : '#8a6a1c') + ';color:#fff;font:600 13px system-ui;padding:8px 12px;'
+      d.textContent = '🤖 AUDITOR (' + probs.length + '): ' + probs.map(x => (x.grave ? '⛔ ' : '⚠️ ') + x.msg).join('   •   ')
+      document.body.appendChild(d)
+      console.warn('AUDITOR', probs)
+    }
   }
 
   colocaObjeto (o: TObjeto) {

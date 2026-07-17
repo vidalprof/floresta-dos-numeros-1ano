@@ -40,6 +40,21 @@
       border-radius: 999px; width: 92px; height: 92px; line-height: 92px; font-size: 40px; box-shadow: 0 6px 16px rgba(0,0,0,.35), inset 0 2px 6px rgba(255,255,255,.6); }
     .hidden { display: none !important; }
   </style>
+  <script>
+    // 🐞 TRAVA CAÇA-BUG: qualquer erro de JS pinta uma FAIXA VERMELHA na tela.
+    // Assim o QA por screenshot PEGA o erro na hora (foi o que faltou antes).
+    (function () {
+      function mostra (msg) {
+        var d = document.getElementById('erroJS') || document.createElement('div');
+        d.id = 'erroJS';
+        d.style.cssText = 'position:fixed;left:0;top:0;right:0;z-index:99999;background:#c81e1e;color:#fff;font:700 14px system-ui;padding:10px 14px;white-space:pre-wrap;';
+        d.textContent = '⛔ ERRO JS (o jogo travou): ' + msg;
+        if (!d.parentNode) document.body.appendChild(d);
+      }
+      window.addEventListener('error', function (e) { mostra((e.message || '') + ' @ ' + (e.filename || '') + ':' + (e.lineno || '')); });
+      window.addEventListener('unhandledrejection', function (e) { mostra('promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
+    })();
+  </script>
 </head>
 <body>
   <div id="game"></div>

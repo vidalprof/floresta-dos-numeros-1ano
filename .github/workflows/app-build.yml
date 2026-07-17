@@ -44,12 +44,15 @@ jobs:
             --virtual-time-budget=10000 --screenshot="$GITHUB_WORKSPACE/qa-inicio.png" "http://127.0.0.1:8099/?qa=inicio" || true
           google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1024,768 --hide-scrollbars \
             --virtual-time-budget=12000 --screenshot="$GITHUB_WORKSPACE/qa-missao.png" "http://127.0.0.1:8099/?qa=missao" || true
+          google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1024,768 --hide-scrollbars \
+            --virtual-time-budget=12000 --screenshot="$GITHUB_WORKSPACE/qa-montador.png" "http://127.0.0.1:8099/?montador=1" || true
 
       - name: Commit dos screenshots de QA (p/ auditoria)
         run: |
           mkdir -p _qa
           cp qa-inicio.png _qa/app-qa-inicio.png 2>/dev/null || true
           cp qa-missao.png _qa/app-qa-missao.png 2>/dev/null || true
+          cp qa-montador.png _qa/app-qa-montador.png 2>/dev/null || true
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add _qa/ || true
