@@ -1061,3 +1061,28 @@ tecnologia profissional — NUNCA desenhado por código à mão:
   Chrome109). Ex.: animação de personagem viva = runtimes esqueléticos (DragonBones grátis,
   Spine, Creature/CreaturePack p/ Phaser) — porém exigem RIG uma vez num editor (passo
   humano); não há botão mágico "1 imagem -> anda em 4 direções" grátis e automático.
+
+### [2026-07-17] CAIXA DE FERRAMENTAS + pipeline de PERSONAGEM ANIMADO (automático, eu controlo)
+O Marcos pediu: só ferramentas que EU controlo e gero TUDO automático (sem site/upload manual).
+
+**Caixa de ferramentas (tudo grátis/viável no PC FX-4300/3,5GB/Chrome109, eu opero por workflow):**
+- Motor: **Phaser 3** (render/física/animação). NÃO trocar — Phaser não é o problema.
+- Arte cenário/objetos: **Pollinations/Flux** (grátis).
+- Arte consistente / poses / recorte: **Gemini image** (centavos) editando a ÂNCORA — funciona headless via `gerar-imagens.yml` (input `base`).
+- Voz: **edge-tts Antonio** (grátis). Som: Web Audio + CC0 (Kenney/Freesound).
+- Mapas: Tiled. Dados validados: Zod/JSON-Schema. Save: Firebase. Build/deploy: Actions+Pages.
+  Testes/QA: Vitest+Playwright (já uso screenshots no CI). Offline: Vite PWA. Painel: React.
+- **Sites de sprite (AutoSprite/Spritesheets.ai): NÃO uso** — GUI, sem API grátis que eu dirija.
+
+**PIPELINE DE PERSONAGEM ANIMADO (PROVADO que funciona — "cartela de poses como a gente fazia"):**
+1. Âncora do personagem (ex.: `_novo/ilha_verso_azul.png`).
+2. `gerar-imagens.yml` modelo=gemini, base=âncora, prompt "Keep the EXACT same character... redraw in POSE X, isolated on solid pure black background". Gemini MANTÉM o personagem (testado: verso_passo_a/b/c, verso_feliz).
+3. Recorte automático (Pillow: fundo preto->transparente, maior componente, buracos, autocrop) + NORMALIZAR base dos pés + mesmo tamanho de canvas por quadro.
+4. Phaser: sprite com animação (idle sutil; walk = alterna quadros de passo; feliz na vitória).
+   -> personagem VIVO de verdade, automático, sem site.
+
+**ERROS a não repetir (feedback do Marcos):**
+- NUNCA esticar arte (fundo esticado = distorcido = "horrível"). Usar aspecto NATIVO.
+- NÃO misturar perspectivas (poça vista de CIMA + praia vista de LADO = parece colado).
+  Cena coerente: ou tudo top-down (estilo JRPG, sprites de frente) OU tudo de lado. Decidir e manter.
+- Personagem = cartela de poses animada (NÃO 1 imagem estática com "esticadinho").
