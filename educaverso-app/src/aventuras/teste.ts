@@ -21,6 +21,8 @@ export const AVENTURA_TESTE: TAventura = {
         { asset: 'tocha', x: 560, y: 560, alt: 120, vida: 'tremula', colide: false, flip: false },
         { asset: 'rocha', x: 700, y: 700, alt: 70, vida: 'nada', colide: true, flip: false }
       ],
+      // prova a mecânica "contar" plugada no gancho (conta as tochas)
+      mecanica: { id: 'contar', params: { quantidade: 5, item: 'tocha', max: 30 } },
       personagens: [], falas: []
     },
     {

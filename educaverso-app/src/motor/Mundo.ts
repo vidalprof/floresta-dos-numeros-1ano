@@ -11,6 +11,7 @@
 import Phaser from 'phaser'
 import { Personagem } from './Personagem'
 import { auditar } from './auditor'
+import { abrir as abrirMecanica, temMecanica } from './mecanicas'
 import type { TAventura, TObjeto } from './aventura'
 
 const VW = 1024, VH = 768
@@ -126,6 +127,13 @@ export class Mundo extends Phaser.Scene {
       document.body.appendChild(d)
       console.warn('AUDITOR', probs)
     }
+
+    // QA (?mec=1): abre a mecânica da 1ª parada que tiver — headless não anda,
+    // então o screenshot precisa que a gente dispare a mecânica pra provar.
+    if (new URLSearchParams(location.search).has('mec')) {
+      const alvo = av.paradas.find(p => p.mecanica && temMecanica(p.mecanica.id))
+      if (alvo) this.time.delayedCall(400, () => this.abreMecanica(alvo.id))
+    }
   }
 
   colocaObjeto (o: TObjeto) {
@@ -213,14 +221,24 @@ export class Mundo extends Phaser.Scene {
     }
   }
 
-  // GANCHO das mecânicas (catálogo). Por ora abre a mecânica da parada.
-  // (as mecânicas concretas — contar, ordenar_comandos — plugam aqui)
+  // GANCHO das mecânicas (catálogo). Instancia a mecânica da parada a partir
+  // dos DADOS (id + params). A mesma máquina serve qualquer mecânica registrada.
   abreMecanica (paradaId: string) {
     const p = this.av.paradas.find(x => x.id === paradaId)
-    if (!p || !p.mecanica) { this.estado = 'explora'; return }
+    if (!p || !p.mecanica || !temMecanica(p.mecanica.id)) {
+      if (p && p.mecanica && !temMecanica(p.mecanica.id)) console.warn('mecânica não registrada:', p.mecanica.id)
+      this.estado = 'explora'; return
+    }
     this.paradaAtiva = paradaId
-    // TODO: instanciar a mecânica p.mecanica.id com p.mecanica.params.
-    // Placeholder seguro: volta a explorar (o mundo/paradas já montam dos dados).
-    this.estado = 'explora'
+    this.estado = 'mecanica'                       // congela a exploração enquanto joga
+    abrirMecanica(p.mecanica.id, {
+      scene: this,
+      params: p.mecanica.params,
+      paradaId,
+      cor: p.cor,
+      falar: (id, aoFim) => this.falar(id, aoFim),
+      temAudio: (id) => !!this.audioOk[id],
+      aoConcluir: () => { this.paradaAtiva = null; this.estado = 'explora' }
+    })
   }
 }
