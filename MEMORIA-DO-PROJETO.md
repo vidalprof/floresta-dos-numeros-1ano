@@ -933,3 +933,29 @@ Verso anda de célula em célula até o baú, desviando das poças -> conceito "
 avaliação invisível começa a registrar (tentativas/tempo/acerto em localStorage; Firebase depois).
 Mira Chrome 109 (moderno). Config da mecânica separada (reutilizável p/ virar missão no mundo OU
 atividade avulsa premium).
+
+---
+
+## [2026-07-17] Configuração REAL dos PCs da escola (alvo de hardware confirmado)
+
+O Marcos enviou a tela de sistema de um PC da escola. **É este o hardware que
+tem que rodar liso** (não é hipótese, é o alvo real):
+
+- **CPU:** AMD FX-4300 Quad-Core 3,8 GHz (2012, arquitetura Bulldozer/Piledriver — fraco por núcleo)
+- **RAM:** **3583 MB (~3,5 GB)** ← o gargalo mais sério
+- **SO:** Windows 7 64 Bits
+- **Navegador:** Chrome 109 (o último que roda no Win7)
+
+### O que isso confirma / exige (regras de projeto)
+- **RAM baixa (3,5 GB) é o limite crítico.** Win7 + Chrome já comem boa parte.
+  → Texturas PEQUENAS e desenhadas 1x só (canvas via `textures.createCanvas`),
+    nada de spritesheets gigantes, nada de segurar muitos assets na memória.
+  → Uma cena por vez; liberar o que não está em uso.
+- **CPU fraca por núcleo** → manter `fps.target: 30`, `antialias:false`,
+  `powerPreference:'low-power'`, `roundPixels:true`, poucas tweens simultâneas.
+- **Scale FIT 1024×768** continua certo (resolução baixa = menos pixels a
+  desenhar = menos GPU/RAM).
+- Chrome 109 é moderno (ES2022/WebGL2) → pode usar ferramenta moderna SEM
+  gambiarra; o problema nunca foi o padrão da linguagem, é o PESO em RAM/CPU.
+- **Teste de aceitação:** toda etapa nova tem que ser testada NO PC do Chrome
+  109 (o do Marcos) antes de considerar pronta.

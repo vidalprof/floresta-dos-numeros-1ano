@@ -5,13 +5,73 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>EducaVerso — App (Plano A)</title>
   <style>
-    html, body { margin: 0; height: 100%; background: #0b1226; overflow: hidden; }
-    #game { width: 100vw; height: 100vh; }
-    #game canvas { display: block; }
+    * { -webkit-box-sizing: border-box; box-sizing: border-box; }
+    html, body { margin: 0; height: 100%; background: #060c18; overflow: hidden; font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif; }
+    #game { position: absolute; inset: 0; }
+    #game canvas { display: block; margin: 0 auto; }
+
+    /* HUD (controles) sobre o canvas */
+    #hud { position: fixed; left: 0; right: 0; bottom: 0; z-index: 10; text-align: center;
+      background: linear-gradient(180deg, rgba(10,20,40,0) 0%, rgba(10,20,40,.72) 40%); padding: 8px 6px 12px; color: #fff; }
+    #dica { font-size: 15px; color: #cfe0ff; min-height: 20px; margin-bottom: 6px; text-shadow: 0 1px 3px #000; }
+    #passos { min-height: 44px; max-width: 640px; margin: 0 auto 8px; background: rgba(8,16,32,.6); border: 2px dashed #2c3f6d; border-radius: 12px;
+      padding: 6px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; }
+    #passos .vazio { color: #8ea1cf; font-size: 13px; padding: 8px; }
+    .chip { width: 34px; height: 34px; margin: 3px; background: #ffd25a; color: #12183a; border-radius: 8px; font-size: 20px; font-weight: 900; line-height: 34px; }
+    .btns { display: flex; justify-content: center; flex-wrap: wrap; }
+    .seta { width: 52px; height: 52px; margin: 4px; font-size: 25px; font-weight: 900; color: #12183a; background: #eaf1ff; border: 0; border-radius: 13px; cursor: pointer; box-shadow: 0 4px 0 #9fb0da; }
+    .seta:active { transform: translateY(3px); box-shadow: 0 1px 0 #9fb0da; }
+    .acao { cursor: pointer; border: 0; border-radius: 13px; font-size: 16px; font-weight: 800; padding: 12px 18px; margin: 5px; }
+    .jogar { background: #57e08a; color: #0b2350; box-shadow: 0 4px 0 #2e9c5b; }
+    .limpar { background: #2c3f6d; color: #eaf1ff; }
+    .ouvir { background: #ffcf5a; color: #3a2a00; }
+    .acao:active { transform: translateY(2px); }
+
+    .overlay { position: fixed; inset: 0; z-index: 20; background: rgba(4,10,22,.82); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 18px; }
+    .balao { background: #fff; color: #123a7a; border-radius: 20px; padding: 20px 22px; max-width: 460px; text-align: center; box-shadow: 0 12px 30px rgba(0,0,0,.5); }
+    .balao .em { font-size: 50px; } .balao h2 { font-size: 22px; margin: 8px 0; } .balao p { font-size: 16px; line-height: 1.5; color: #3a4d78; }
+    .balao .concl { color: #c06a1a; font-weight: 800; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
   <div id="game"></div>
+
+  <div id="hud">
+    <div id="dica">Monte os passos e toque em <b>Jogar</b>. 🧭</div>
+    <div id="passos"><span class="vazio">seus passos aparecem aqui…</span></div>
+    <div class="btns">
+      <button class="seta" data-dir="cima">↑</button>
+      <button class="seta" data-dir="baixo">↓</button>
+      <button class="seta" data-dir="esq">←</button>
+      <button class="seta" data-dir="dir">→</button>
+    </div>
+    <div class="btns">
+      <button class="acao jogar" id="btnJogar">▶ Jogar</button>
+      <button class="acao limpar" id="btnLimpar">↺ Limpar</button>
+      <button class="acao ouvir" id="btnOuvir">🔊 Ouvir</button>
+    </div>
+  </div>
+
+  <div class="overlay" id="telaIntro">
+    <div class="balao">
+      <div class="em">🦜</div>
+      <h2>Louro precisa de ajuda!</h2>
+      <p>"Crá! O <b>baú do tesouro</b> ficou lá na ponta da praia e o seu amiguinho não sabe o caminho. Monta os <b>passos</b> pra ele chegar — cuidado com as <b>poças d'água</b>!"</p>
+      <button class="acao jogar" id="btnComecar" style="margin-top:10px">Vamos! 🧭</button>
+    </div>
+  </div>
+
+  <div class="overlay hidden" id="telaWin">
+    <div class="balao">
+      <div class="em">🏆</div>
+      <h2>Chegou no baú!</h2>
+      <p>Você guiou seu amigo até o tesouro com os passos certos.</p>
+      <p class="concl">Isso que você fez tem um nome: chama-se <b>ALGORITMO</b>! 🎉</p>
+      <button class="acao jogar" id="btnDeNovo" style="margin-top:10px">Jogar de novo 🔁</button>
+    </div>
+  </div>
+
   <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
