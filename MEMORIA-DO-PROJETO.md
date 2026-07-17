@@ -1027,3 +1027,21 @@ melhor das duas ideias". Feito, com a sessão no modelo mais forte (Fable).
   continua padrão); alvo real de máquina; reforço da voz Antonio.
 - Próximo build: **Etapa 3 — mundo vivo explorável no estúdio, já com a voz
   do Antonio desde o nascimento** (escolha explícita do Marcos).
+
+### [2026-07-17] Lições da fábrica de assets (Etapa 3)
+- **Voz "Donato" (pt-BR-DonatoNeural) QUEBROU no edge-tts** (todas as falas
+  falharam; o Antonio, no mesmo minuto, funcionou). A voz parece ter saído do
+  catálogo da Microsoft. → Personagens usam **Antonio** até validar outra voz;
+  testar 1 fala antes de mandar lote com voz nova. Amostra Gemini TTS também
+  falhou (cota/modelo) — tentar de novo depois, sem bloquear produção.
+- **Pollinations à noite adora pintar uma LUA solta** no quadro do asset →
+  o recorte local (Pillow) guarda SÓ o maior objeto conexo + preenche buracos
+  internos (sombras escuras viravam furos) + apaga a faixa do céu se precisar.
+  Script: scratchpad/recortar_ilha.py (recriar se preciso: limiar ~14-34,
+  maior componente, dilata 2px, alpha gradual anti-franja, autocrop, resize).
+- **"Baú fechado" veio aberto** na 1ª geração → prompt teve que gritar
+  ("lid COMPLETELY CLOSED, sealed, no opening"). Portão de Arte pegou. Sempre
+  OLHAR cada imagem antes de integrar.
+- **QA visual automatizado no CI:** o `app-build.yml` agora tira screenshots
+  headless (`?qa=inicio` / `?qa=missao`) e commita em `_qa/` — o Portão 1
+  ganhou olhos dentro do próprio build.
