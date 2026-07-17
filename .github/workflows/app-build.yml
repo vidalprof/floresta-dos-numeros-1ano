@@ -1,0 +1,66 @@
+name: Build EducaVerso App (Plano A)
+
+# Constroi o projeto PROFISSIONAL (Phaser+TS+Vite) que vive em educaverso-app/
+# e publica o resultado (dist) num repositorio SEPARADO 'educaverso-app'.
+# NAO mexe no modelo leve atual (EducaVerso/atividades continuam intactos).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repo de destino do app"
+        required: false
+        default: "educaverso-app"
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar e construir (Vite)
+        working-directory: educaverso-app
+        run: |
+          npm install
+          npm run build
+          echo "== conteudo de dist =="
+          ls -la dist
+
+      - name: Publicar dist no repo separado + ligar Pages
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          NAME: ${{ inputs.repo_name }}
+        run: |
+          set -euo pipefail
+          gh repo create "$OWNER/$NAME" --public \
+            --description "EducaVerso App (Plano A: Phaser+TS+Vite) - build automatico" \
+            || echo "repo ja existe; vou apenas atualizar."
+          work="$(mktemp -d)"
+          cp -r educaverso-app/dist/. "$work/"
+          : > "$work/.nojekyll"
+          cd "$work"
+          git init -q
+          git checkout -q -b main
+          git add -A
+          git -c user.name="EducaVerso Build" -c user.email="build@users.noreply.github.com" \
+              commit -qm "build do app (Plano A)"
+          git push -q --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$NAME.git" main
+          gh api -X POST "repos/$OWNER/$NAME/pages" -f "source[branch]=main" -f "source[path]=/" \
+            || gh api -X PUT "repos/$OWNER/$NAME/pages" -f "source[branch]=main" -f "source[path]=/" \
+            || echo "Pages talvez ja estivesse ligado."
+          URL="https://$OWNER.github.io/$NAME/"
+          {
+            echo "## App (Plano A) publicado"
+            echo ""
+            echo "**Link:** $URL"
+            echo "_1a vez pode levar 1-2 min._"
+          } >> "$GITHUB_STEP_SUMMARY"
