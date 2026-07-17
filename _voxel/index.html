@@ -37,7 +37,7 @@
 <div id="vit"><div class="card"><div class="num" id="vnum">6</div><h2 id="vtit">São 6 cocos!</h2><p id="vsub">Isso é CONTAR. 🎉</p></div></div>
 <script type="module">
 import * as THREE from 'three';
-let W=innerWidth,H=innerHeight;
+let W=innerWidth,H=innerHeight,RQ=0.62;   // RQ = resolução interna (auto-qualidade)
 const scene=new THREE.Scene();
 scene.background=new THREE.Color('#a9dcf0');
 scene.fog=new THREE.Fog('#a9dcf0',34,80);
@@ -45,8 +45,9 @@ const camera=new THREE.PerspectiveCamera(46,W/H,0.1,200);
 const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power'});
 renderer.setPixelRatio(1);
 function resize(){W=innerWidth;H=innerHeight;camera.aspect=W/H;camera.updateProjectionMatrix();
-  renderer.domElement.style.width=W+'px';renderer.domElement.style.height=H+'px';renderer.setSize(Math.round(W*0.62),Math.round(H*0.62),false);}
+  renderer.domElement.style.width=W+'px';renderer.domElement.style.height=H+'px';renderer.setSize(Math.round(W*RQ),Math.round(H*RQ),false);}
 document.body.appendChild(renderer.domElement);resize();addEventListener('resize',resize);
+let camAngle=0.75,camDist=24,camH=16;   // câmera orbita o Verso (arrastar o mouse gira)
 
 const C={grass:0x6fbf49,grass2:0x63b043,sand:0xe6d08a,sand2:0xdcc47e,dirt:0xa9784b,wood:0x8a5a2a,leaf:0x3e9d54,leaf2:0x369049,
   gold:0xf2c14e,dark:0x22303a,blue:0x62c8e6,blue2:0x4aa6cc,red:0xc9382f,coco:0x7a4a2a,coco2:0x5f3a20,parrot:0x2ec27e,beak:0xf2a626};
@@ -137,14 +138,18 @@ function buildByte(){const g=new THREE.Group();
   return {group:g,wingL,wingR};}
 const B=buildByte();const byte=B.group;byte.scale.set(0.72,0.72,0.72);byte.position.set(1.05,2.3,0.1);verso.add(byte);
 
-// COCOS clicáveis (6) — coco pequeno visível + área de clique GRANDE invisível
+// COCOS — coquinho REDONDO (bola de blocos) com 3 furinhos + área de clique grande
 const cocos=[],hitTargets=[];
-const cocoGeo=mesh([{x:0,y:0,z:0,col:C.coco},{x:0,y:1,z:0,col:C.coco2}]);
+const cm=new Map();const cput=(x,y,z,c)=>cm.set(x+'|'+y+'|'+z,{x,y,z,col:c});
+for(let x=0;x<5;x++)for(let y=0;y<5;y++)for(let z=0;z<5;z++){const dx=x-2,dy=y-2,dz=z-2;
+  if(dx*dx+dy*dy+dz*dz<=4.4)cput(x,y,z,dy<-0.6?C.coco2:C.coco);}          // bola arredondada
+[[1,3],[3,3],[2,1]].forEach(([x,y])=>{for(let z=4;z>=2;z--){if(cm.has(x+'|'+y+'|'+z)){cput(x,y,z,0x241610);break;}}}); // 3 furinhos
+const cocoGeo=mesh([...cm.values()]);cocoGeo.translate(-2.5,-2.5,-2.5);
 const hitMat=new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false});
 const cocoPos=[[cx-5,cz-1],[cx-3,cz+3],[cx+2,cz-3],[cx+4,cz+1],[cx-1,cz-4],[cx+3,cz+4]];
-cocoPos.forEach(([px,pz],i)=>{const m=new THREE.Mesh(cocoGeo.clone(),MAT);m.scale.set(0.55,0.55,0.55);m.position.set(px,3.15,pz);
+cocoPos.forEach(([px,pz],i)=>{const m=new THREE.Mesh(cocoGeo.clone(),MAT);m.scale.set(0.3,0.3,0.3);m.position.set(px,3.55,pz);
   m.userData.counted=false;scene.add(m);cocos.push(m);
-  const hb=new THREE.Mesh(new THREE.SphereGeometry(1.5,8,6),hitMat);hb.position.set(px,3.7,pz);hb.userData.idx=i;scene.add(hb);hitTargets.push(hb);});
+  const hb=new THREE.Mesh(new THREE.SphereGeometry(1.6,8,6),hitMat);hb.position.set(px,3.7,pz);hb.userData.idx=i;scene.add(hb);hitTargets.push(hb);});
 
 // gaivotas
 const gulls=new THREE.InstancedMesh(new THREE.BoxGeometry(0.5,0.25,0.5),new THREE.MeshBasicMaterial({color:0xf6f6f6}),3);scene.add(gulls);
@@ -161,18 +166,18 @@ function fanfarra(){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>bip(f,0.3,'
 // ---------- CONTAGEM ----------
 let contados=0;const contEl=document.getElementById('cont'),falaEl=document.getElementById('fala');
 const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
-function clique(cxp,cyp){
-  initA();
-  ndc.x=(cxp/W)*2-1;ndc.y=-(cyp/H)*2+1;ray.setFromCamera(ndc,camera);
-  const hit=ray.intersectObjects(hitTargets,false);
-  if(hit.length){const m=cocos[hit[0].object.userData.idx];if(m.userData.counted)return;m.userData.counted=true;m.userData.pop=1;
-    contados++;contEl.textContent='🥥 cocos: '+contados+' / 6';
-    bip(PENT[Math.min(contados-1,PENT.length-1)],0.18,'triangle',0.28);
-    if(furos[contados-1])furos[contados-1].visible=false;
-    if(contados>=6)vitoria();
-  }
-}
-renderer.domElement.addEventListener('pointerdown',e=>clique(e.clientX,e.clientY));
+function contarCoco(idx){const m=cocos[idx];if(m.userData.counted)return;m.userData.counted=true;m.userData.pop=1;
+  contados++;contEl.textContent='🥥 cocos: '+contados+' / 6';
+  bip(PENT[Math.min(contados-1,PENT.length-1)],0.18,'triangle',0.28);
+  if(furos[contados-1])furos[contados-1].visible=false;
+  if(contados>=6)vitoria();}
+function clique(cxp,cyp){initA();ndc.x=(cxp/W)*2-1;ndc.y=-(cyp/H)*2+1;ray.setFromCamera(ndc,camera);
+  const hit=ray.intersectObjects(hitTargets,false);if(hit.length)contarCoco(hit[0].object.userData.idx);}
+// arrastar = girar câmera; clique curto = contar coco
+let dragging=false,lastX=0,movedPx=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;movedPx=0;});
+addEventListener('pointermove',e=>{if(!dragging)return;const dxp=e.clientX-lastX;lastX=e.clientX;movedPx+=Math.abs(dxp);camAngle-=dxp*0.008;});
+addEventListener('pointerup',e=>{if(dragging&&movedPx<7)clique(e.clientX,e.clientY);dragging=false;});
 function vitoria(){
   falaEl.innerHTML="Seis cocos redondinhos! Deu e sobrou pros furos, arrá! O barquinho agradece com um 'gluglu' feliz! 🛶";
   fanfarra();
@@ -181,7 +186,7 @@ function vitoria(){
 }
 
 // ---------- input mov ----------
-const keys={};addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;initA();});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 const jm={up:'arrowup',down:'arrowdown',left:'arrowleft',right:'arrowright'};
 document.querySelectorAll('#joy button').forEach(b=>{const k=jm[b.dataset.k];
   const on=e=>{e.preventDefault();keys[k]=true;},off=e=>{e.preventDefault();keys[k]=false;};
@@ -189,8 +194,14 @@ document.querySelectorAll('#joy button').forEach(b=>{const k=jm[b.dataset.k];
 
 const mtx=new THREE.Matrix4();let t=0,frames=0,acc=0,last=performance.now();const fpsEl=document.getElementById('fps');
 function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+=dt;
-  let dx=0,dz=0;if(keys['arrowup']||keys['w'])dz-=1;if(keys['arrowdown']||keys['s'])dz+=1;if(keys['arrowleft']||keys['a'])dx-=1;if(keys['arrowright']||keys['d'])dx+=1;
+  // andar RELATIVO À CÂMERA (W = pra onde a câmera olha)
+  const cs=Math.sin(camAngle),cc=Math.cos(camAngle);let dx=0,dz=0;
+  if(keys['arrowup']||keys['w']){dx-=cs;dz-=cc;}
+  if(keys['arrowdown']||keys['s']){dx+=cs;dz+=cc;}
+  if(keys['arrowleft']||keys['a']){dx-=cc;dz+=cs;}
+  if(keys['arrowright']||keys['d']){dx+=cc;dz-=cs;}
   const moving=dx||dz;if(moving){const n=Math.hypot(dx,dz);dx/=n;dz/=n;const sp=5*dt;const nx=vpos.x+dx*sp,nz=vpos.z+dz*sp;if(Math.hypot(nx-cx,nz-cz)<R-1.4){vpos.x=nx;vpos.z=nz;}}
+  for(let i=0;i<cocos.length;i++){if(!cocos[i].userData.counted&&Math.hypot(cocos[i].position.x-vpos.x,cocos[i].position.z-vpos.z)<1.5)contarCoco(i);}   // pega andando por cima
   verso.position.set(vpos.x,3+(moving?Math.abs(Math.sin(t*9))*0.14:Math.sin(t*2.5)*0.04),vpos.z);
   if(moving){verso.rotation.y=Math.atan2(dx,dz);const ph=t*9;
     V.legL.rotation.x=Math.sin(ph)*0.6;V.legR.rotation.x=-Math.sin(ph)*0.6;
@@ -199,12 +210,14 @@ function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+
   byte.rotation.z=Math.sin(t*3)*0.06;B.wingL.rotation.z=0.15+Math.sin(t*7)*0.12;B.wingR.rotation.z=-0.15-Math.sin(t*7)*0.12;
   vshadow.position.set(vpos.x,3.02,vpos.z);
   if(window.__cam){camera.position.set(vpos.x+window.__cam[0],window.__cam[1],vpos.z+window.__cam[2]);camera.lookAt(vpos.x,window.__cam[3],vpos.z);}
-  else{camera.position.set(vpos.x+18,17,vpos.z+19);camera.lookAt(vpos.x,2.5,vpos.z);}
+  else{camera.position.set(vpos.x+Math.sin(camAngle)*camDist,camH,vpos.z+Math.cos(camAngle)*camDist);camera.lookAt(vpos.x,2.5,vpos.z);}
   water.position.y=1.7+Math.sin(t*1.5)*0.04;
   for(const m of cocos){if(m.userData.pop>0){m.userData.pop-=dt*2;m.position.y=3.1+Math.sin((1-m.userData.pop)*Math.PI)*1.2;m.rotation.y+=dt*8;if(m.userData.pop<=0){m.visible=false;}}}
   for(let i=0;i<3;i++){mtx.makeTranslation(cx+Math.cos(t*0.3+i)*11,9+Math.sin(t*2+i)*0.4,cz+Math.sin(t*0.3+i)*11);gulls.setMatrixAt(i,mtx);}gulls.instanceMatrix.needsUpdate=true;
   renderer.render(scene,camera);
-  frames++;acc+=now-last;last=now;if(acc>=500){fpsEl.textContent='FPS: '+Math.round(frames*1000/acc)+' · '+renderer.info.render.triangles+' tri';frames=0;acc=0;}
+  frames++;acc+=now-last;last=now;
+  if(acc>=500){const fps=Math.round(frames*1000/acc);fpsEl.textContent='FPS: '+fps+' · '+renderer.info.render.triangles+' tri';frames=0;acc=0;window.__fps=fps;
+    if(fps<24&&RQ>0.45){RQ=Math.max(0.45,RQ-0.08);resize();}}   // AUTO-QUALIDADE: PC fraco -> baixa a resolução sozinho
   window.__stats={calls:renderer.info.render.calls,tris:renderer.info.render.triangles};
   requestAnimationFrame(loop);
 }
