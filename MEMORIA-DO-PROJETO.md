@@ -900,3 +900,23 @@ AVALIAÇÃO (Claude, honesto):
   Um professor sozinho não toca React+TS+Phaser+Node+CI E dá aula — e o Marcos quer MENOS trabalho.
 - O protótipo atual (praia viva + missão "ordenar passos" + narração + som, Canvas ultraleve) já aplica
   boa parte do doc: mecânica reutilizável configurável, vida procedural, avaliação embutível, offline.
+
+## 🏗️ PLANO A INICIADO (stack profissional, À PARTE) — Etapa 1 no ar (2026-07-17)
+Marcos escolheu o PLANO A (stack pesado do doc de arquitetura). Pediu: "não delete nada, faça
+à parte, deixe o modelo leve como está pra acessar quando quiser". Feito:
+- **educaverso-app/** (no repo, branch de trabalho): projeto **Phaser 3.80 + TypeScript + Vite**.
+  src/main.ts = Etapa 1 (Núcleo técnico): personagem anda no mapa, câmera segue, colisão com água,
+  passarinho de vida. tsconfig strict=false (afrouxado pro 1º build), vite base './' + target es2017
+  (compat. navegador antigo atualizado).
+- **.github/workflows/app-build.yml** (na main = dispatchável): npm install + vite build -> publica o
+  dist num repo SEPARADO **educaverso-app** via PAGES_TOKEN + liga Pages. NÃO toca no modelo leve.
+- **BUILD PASSOU DE PRIMEIRA** (run 29581472602 SUCCESS): prova que o stack profissional inteiro
+  (npm/Vite/Phaser/deploy) é construível e publicável DAQUI, de graça, via GitHub Actions.
+- Link do app: **https://vidalprof.github.io/educaverso-app/** (Pages leva 1-2 min na 1ª vez).
+- HONESTO: NÃO consegui screenshotar o app no ar (o Chromium do sandbox não alcança sites externos
+  pelo proxy — ERR_TUNNEL). Build+deploy confirmados pelo status do workflow; a validação visual é o
+  Marcos abrir no navegador dele.
+- Modelo leve INTACTO no ar: educaverso, painel-prof, navio-pirata, ilha-dos-passos, atividades.
+- PRÓXIMAS ETAPAS (ordem do doc): Etapa 2 mecânica "ordenar comandos" (com avaliação) -> Etapa 3 mundo
+  vivo (NPCs/rotinas/clima) -> Etapa 4 painel React -> Etapa 5 IA estruturada (JSON Schema/Zod) ->
+  Etapa 6 Builder -> Etapa 7 avaliação -> Etapa 8 documentação -> Etapa 9 expansão.
