@@ -37,7 +37,13 @@ jobs:
           modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
           ok=0
           for it in itens:
-              body={"contents":[{"parts":[{"text":it["prompt"]}]}]}
+              # base opcional por item: EDITA a imagem-ancora (mantem o personagem/estilo)
+              parts=[{"text":it["prompt"]}]
+              b=(it.get("base") or "").strip()
+              if b and os.path.exists(b):
+                  parts.append({"inline_data":{"mime_type":"image/png","data":base64.b64encode(open(b,"rb").read()).decode()}})
+                  print("editando base:", b, "->", it["nome"])
+              body={"contents":[{"parts":parts}]}
               img=None
               for tent in range(3):
                   for m in modelos:
