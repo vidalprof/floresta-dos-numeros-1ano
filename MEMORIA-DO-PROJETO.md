@@ -839,3 +839,35 @@ NÃO prometer a plataforma inteira de uma vez (é roadmap de anos); provar a fil
 
 ### DECISÃO DE CENA (Marcos, 2026-07-17): paradas numa ILHA no meio do oceano; a ÚLTIMA fase é um NAVIO
 (como o que ficou bonito). O convés repetido/câmera 3/4 dava "paredes/imagens coladas" -> ilha resolve.
+
+## 🎨🌱 SPEC DEFINITIVA DO MUNDO VIVO — "EDUCAVERSO EXPERIENCE ENGINE" (Marcos, 2026-07-17)
+Marcos quer o MUNDO VIVO (é o diferencial da ideia) e perguntou "tem como ser mais fácil e bonito
+igual?". Colou a spec-mestra do mundo vivo. RESPOSTA: SIM — a própria spec é a receita. Princípios:
+- **MÉTRICA DE SUCESSO:** criança perguntar "Professor, hoje tem Educaverso?". Beleza NÃO vem de
+  gráfico caro — vem de **CONSISTÊNCIA** (tudo do mesmo "estúdio") + vida + som + rotina + eventos.
+- **REGRA DE OURO ANTI-BUG (bate com nossos erros):**
+  (a) **NUNCA gerar mapa/cena inteira com IA** (gera inconsistência) — foi o erro do tile "conves"
+      cheio de viga (parede repetida / "imagens coladas").
+  (b) IA gera **só RECURSOS individuais** (árvore, casa, robô, item), salvos numa **BIBLIOTECA
+      PERMANENTE** que só cresce e nunca duplica. Antes de criar: "já existe? reutiliza".
+  (c) O **BUILDER** monta a cena AUTOMÁTICO a partir da biblioteca (chão simples + assets colocados
+      por cima). Chão simples/seamless = tiling invisível; a riqueza vem dos ASSETS variados colocados,
+      não de um tile detalhado repetido.
+- **VIDA PROCEDURAL (não animar mil coisas à mão):** REGRAS simples geram milhares de comportamentos —
+  árvore balança, água mexe, fumaça sobe, borboleta voa, pássaro muda direção, cão passeia, gato dorme
+  ao sol, robô trabalha, morador tem rotina. + **EVENTOS ALEATÓRIOS** (carteiro, balão, chuva, feira,
+  navio atracando) só pra surpreender.
+- **MUNDO COM MEMÓRIA + CIDADE EVOLUTIVA:** plantou árvore fica; ponte fica; morador lembra. Cada aluno
+  começa com um terreno e a cidade cresce a cada objetivo — cada aluno tem cidade ÚNICA. Jogo não acaba;
+  cada aula = novo capítulo (o que mudou? quem chegou? quem precisa de ajuda?).
+- **MÓDULOS:** Asset Factory (só recursos reutilizáveis, ex. 200 árvores), Diretor de Arte IA (decide
+  paleta/luz/hora/clima/qtd NPCs/som — mantém coerência), Builder automático, Educaverso Director AI
+  (pergunta sempre "como deixar mais vivo?" respeitando performance).
+- **PERFORMANCE:** Win7/Chrome/Firefox, 1024x768, pouca memória, animações leves, REUSO máximo.
+- **RECONCILIAÇÃO com o que o Claude tinha sugerido:** eu tinha proposto "imagem única coesa por cena";
+  a spec do Marcos é MELHOR pro objetivo vivo/evolutivo/consistente -> **chão simples + biblioteca de
+  assets colocados + vida procedural**. O "flat ground" que comecei encaixa nisso (chão simples). Fim
+  do tile busy e do mapa-IA. Obs: spec cita Phaser; princípios valem em Canvas 2D (nosso, mais leve).
+- **ESCOPO HONESTO:** isso é um SISTEMA (biblioteca + builder + vida procedural + memória + cidade),
+  build grande — a FUNDAÇÃO certa do mundo vivo, não remendo. Caminho: 1 CENA-PROVA (chão simples +
+  poucos assets coerentes + vida procedural: pássaro/fumaça/personagem respirando) SEM bug, e crescer.
