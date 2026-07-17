@@ -13,6 +13,7 @@
     background:rgba(255,255,255,.97);color:#173a52;font:600 18px system-ui;padding:14px 18px;border-radius:16px;
     border:3px solid #2f7d9c;box-shadow:0 8px 20px rgba(0,0,0,.25);text-align:center}
   #balao b.byte{color:#1f9d6b}
+  #fps,#cont,#balao{pointer-events:none}   /* deixa o clique passar pros cocos */
   #joy{position:fixed;right:14px;bottom:14px;z-index:9;display:grid;grid-template-columns:repeat(3,52px);grid-template-rows:repeat(3,52px);gap:5px;opacity:.92}
   #joy button{border:0;border-radius:12px;background:rgba(20,40,60,.55);color:#fff;font:800 20px system-ui;user-select:none;-webkit-user-select:none;touch-action:none}
   #joy button:active{background:rgba(20,40,60,.85)}
@@ -91,14 +92,24 @@ function buildVerso(){const g=new THREE.Group();const legH=0.9,armH=0.85;
   const legGeo=shadedBox(0.5,legH,0.55,C.blue2);legGeo.translate(0,-legH/2,0);
   const legL=new THREE.Mesh(legGeo,MAT);legL.position.set(-0.42,legH,0);const legR=legL.clone();legR.position.x=0.42;g.add(legL,legR);
   const body=part(1.5,1.2,1.1,C.blue);body.position.y=legH+0.6;g.add(body);
-  const belly=part(1.0,0.7,0.15,0x9fe6f5);belly.position.set(0,legH+0.5,0.56);g.add(belly);
+  // CASACO de pirata (cobre o tronco) + botões de ouro
+  const coat=part(1.6,1.02,1.2,0x7a2732);coat.position.y=legH+0.52;g.add(coat);
+  for(const by of [legH+0.3,legH+0.68]){const btn=part(0.15,0.15,0.08,C.gold);btn.position.set(0,by,0.63);g.add(btn);}
+  // CINTO + fivela
+  const belt=part(1.63,0.26,1.22,0x3a2614);belt.position.y=legH+0.05;g.add(belt);
+  const buckle=part(0.34,0.24,0.1,C.gold);buckle.position.set(0,legH+0.05,0.64);g.add(buckle);
   const armGeo=shadedBox(0.42,armH,0.42,C.blue2);armGeo.translate(0,-armH/2,0);
   const armL=new THREE.Mesh(armGeo,MAT);armL.position.set(-0.86,legH+1.0,0);const armR=armL.clone();armR.position.x=0.86;g.add(armL,armR);
   const head=part(1.5,1.35,1.35,C.blue);head.position.y=legH+1.2+0.68;g.add(head);const hy=head.position.y;
   const earL=part(0.4,0.6,0.35,C.blue);earL.position.set(-0.55,hy+0.85,0);const earR=earL.clone();earR.position.x=0.55;g.add(earL,earR);
-  const eyeL=part(0.26,0.42,0.12,C.dark);eyeL.position.set(-0.35,hy+0.02,0.69);const eyeR=eyeL.clone();eyeR.position.x=0.35;g.add(eyeL,eyeR);
-  const shL=part(0.1,0.13,0.03,0xffffff);shL.position.set(-0.4,hy+0.14,0.76);const shR=shL.clone();shR.position.x=0.3;g.add(shL,shR);
-  const mouth=part(0.42,0.1,0.1,C.dark);mouth.position.set(0,hy-0.38,0.69);g.add(mouth);
+  // olho ESQUERDO normal
+  const eyeL=part(0.26,0.42,0.12,C.dark);eyeL.position.set(-0.35,hy+0.02,0.69);g.add(eyeL);
+  const shL=part(0.1,0.13,0.03,0xffffff);shL.position.set(-0.4,hy+0.14,0.76);g.add(shL);
+  // CAOLHO: tapa-olho preto no direito + faixa atravessada
+  const patch=part(0.48,0.56,0.14,0x0e0e12);patch.position.set(0.35,hy+0.02,0.69);g.add(patch);
+  const strap=part(1.6,0.11,0.11,0x0e0e12);strap.position.set(0,hy+0.3,0.66);strap.rotation.z=0.32;g.add(strap);
+  const mouth=part(0.42,0.1,0.1,C.dark);mouth.position.set(0,hy-0.4,0.69);g.add(mouth);
+  // BANDANA vermelha
   const band=part(1.56,0.42,1.42,C.red);band.position.set(0,hy+0.5,0);g.add(band);
   const knot=part(0.32,0.32,0.32,C.red);knot.position.set(0.82,hy+0.5,-0.25);g.add(knot);
   return {group:g,legL,legR,armL,armR,body,head};}
@@ -109,18 +120,31 @@ const vpos={x:cx,z:cz};verso.position.set(vpos.x,3,vpos.z);scene.add(verso);
 const vshadow=new THREE.Mesh(new THREE.CircleGeometry(1.0,18),new THREE.MeshBasicMaterial({color:0x123a18,transparent:true,opacity:0.26}));
 vshadow.rotation.x=-Math.PI/2;vshadow.position.set(vpos.x,3.02,vpos.z);scene.add(vshadow);
 
-// BYTE papagaio (voxel) no ombro/perto
-const bm=[];const bput=(x,y,z,c)=>bm.push({x,y,z,col:c});
-for(let y=0;y<2;y++){bput(0,y,0,C.parrot);bput(0,y,1,C.parrot);}
-bput(0,2,0,C.parrot);bput(0,2,1,C.beak);bput(0,3,0,0xf6c945); // topete
-const byte=new THREE.Mesh(mesh(bm),MAT);byte.geometry.translate(-0.5,0,-0.5);byte.scale.set(0.6,0.6,0.6);scene.add(byte);
+// BYTE — papagaio-capitão de verdade (pequeno, no ombro do Verso)
+function buildByte(){const g=new THREE.Group();
+  const body=part(0.75,0.9,0.6,0x2ec27e);body.position.y=0.5;g.add(body);
+  const head=part(0.62,0.56,0.56,0x37d68a);head.position.set(0,1.12,0.06);g.add(head);
+  const beak=part(0.3,0.26,0.32,0xf2a626);beak.position.set(0,1.02,0.44);g.add(beak);
+  const hook=part(0.26,0.2,0.2,0xd97e18);hook.position.set(0,0.88,0.48);g.add(hook);
+  const eye=part(0.12,0.15,0.06,0x111111);eye.position.set(0.17,1.2,0.34);g.add(eye);
+  const wingL=part(0.2,0.66,0.5,0x2478c8);wingL.position.set(-0.43,0.55,0);g.add(wingL);
+  const wingR=part(0.2,0.66,0.5,0x2478c8);wingR.position.set(0.43,0.55,0);g.add(wingR);
+  const tail1=part(0.5,0.2,0.5,0xc9382f);tail1.position.set(0,0.25,-0.5);g.add(tail1);
+  const tail2=part(0.42,0.16,0.42,0xf2c14e);tail2.position.set(0,0.08,-0.82);g.add(tail2);
+  const feet=part(0.42,0.13,0.32,0xe59a30);feet.position.set(0,0.0,0.06);g.add(feet);
+  const hat=part(0.72,0.2,0.62,0x1a2a4a);hat.position.set(0,1.5,0);g.add(hat);
+  const hatband=part(0.78,0.1,0.68,0xf2c14e);hatband.position.set(0,1.4,0);g.add(hatband);
+  return {group:g,wingL,wingR};}
+const B=buildByte();const byte=B.group;byte.scale.set(0.72,0.72,0.72);byte.position.set(1.05,2.3,0.1);verso.add(byte);
 
-// COCOS clicáveis (6) — cada um mesh próprio p/ raycast
-const cocos=[];
+// COCOS clicáveis (6) — coco pequeno visível + área de clique GRANDE invisível
+const cocos=[],hitTargets=[];
 const cocoGeo=mesh([{x:0,y:0,z:0,col:C.coco},{x:0,y:1,z:0,col:C.coco2}]);
+const hitMat=new THREE.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false});
 const cocoPos=[[cx-5,cz-1],[cx-3,cz+3],[cx+2,cz-3],[cx+4,cz+1],[cx-1,cz-4],[cx+3,cz+4]];
-for(const[px,pz]of cocoPos){const m=new THREE.Mesh(cocoGeo.clone(),MAT);m.scale.set(0.42,0.42,0.42);m.position.set(px,3.1,pz);
-  m.userData.counted=false;scene.add(m);cocos.push(m);}
+cocoPos.forEach(([px,pz],i)=>{const m=new THREE.Mesh(cocoGeo.clone(),MAT);m.scale.set(0.55,0.55,0.55);m.position.set(px,3.15,pz);
+  m.userData.counted=false;scene.add(m);cocos.push(m);
+  const hb=new THREE.Mesh(new THREE.SphereGeometry(1.5,8,6),hitMat);hb.position.set(px,3.7,pz);hb.userData.idx=i;scene.add(hb);hitTargets.push(hb);});
 
 // gaivotas
 const gulls=new THREE.InstancedMesh(new THREE.BoxGeometry(0.5,0.25,0.5),new THREE.MeshBasicMaterial({color:0xf6f6f6}),3);scene.add(gulls);
@@ -140,8 +164,8 @@ const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
 function clique(cxp,cyp){
   initA();
   ndc.x=(cxp/W)*2-1;ndc.y=-(cyp/H)*2+1;ray.setFromCamera(ndc,camera);
-  const hit=ray.intersectObjects(cocos,false);
-  if(hit.length){const m=hit[0].object;if(m.userData.counted)return;m.userData.counted=true;m.userData.pop=1;
+  const hit=ray.intersectObjects(hitTargets,false);
+  if(hit.length){const m=cocos[hit[0].object.userData.idx];if(m.userData.counted)return;m.userData.counted=true;m.userData.pop=1;
     contados++;contEl.textContent='🥥 cocos: '+contados+' / 6';
     bip(PENT[Math.min(contados-1,PENT.length-1)],0.18,'triangle',0.28);
     if(furos[contados-1])furos[contados-1].visible=false;
@@ -172,9 +196,10 @@ function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+
     V.legL.rotation.x=Math.sin(ph)*0.6;V.legR.rotation.x=-Math.sin(ph)*0.6;
     V.armL.rotation.x=-Math.sin(ph)*0.5;V.armR.rotation.x=Math.sin(ph)*0.5;V.body.scale.y=1;}
   else{V.legL.rotation.x*=0.8;V.legR.rotation.x*=0.8;V.armL.rotation.x*=0.8;V.armR.rotation.x*=0.8;V.body.scale.y=1+Math.sin(t*2.5)*0.03;}
-  byte.position.set(vpos.x+1.4,5.2+Math.sin(t*3)*0.06,vpos.z-0.4);
+  byte.rotation.z=Math.sin(t*3)*0.06;B.wingL.rotation.z=0.15+Math.sin(t*7)*0.12;B.wingR.rotation.z=-0.15-Math.sin(t*7)*0.12;
   vshadow.position.set(vpos.x,3.02,vpos.z);
-  camera.position.set(vpos.x+18,17,vpos.z+19);camera.lookAt(vpos.x,2.5,vpos.z);
+  if(window.__cam){camera.position.set(vpos.x+window.__cam[0],window.__cam[1],vpos.z+window.__cam[2]);camera.lookAt(vpos.x,window.__cam[3],vpos.z);}
+  else{camera.position.set(vpos.x+18,17,vpos.z+19);camera.lookAt(vpos.x,2.5,vpos.z);}
   water.position.y=1.7+Math.sin(t*1.5)*0.04;
   for(const m of cocos){if(m.userData.pop>0){m.userData.pop-=dt*2;m.position.y=3.1+Math.sin((1-m.userData.pop)*Math.PI)*1.2;m.rotation.y+=dt*8;if(m.userData.pop<=0){m.visible=false;}}}
   for(let i=0;i<3;i++){mtx.makeTranslation(cx+Math.cos(t*0.3+i)*11,9+Math.sin(t*2+i)*0.4,cz+Math.sin(t*0.3+i)*11);gulls.setMatrixAt(i,mtx);}gulls.instanceMatrix.needsUpdate=true;
