@@ -959,3 +959,14 @@ tem que rodar liso** (não é hipótese, é o alvo real):
   gambiarra; o problema nunca foi o padrão da linguagem, é o PESO em RAM/CPU.
 - **Teste de aceitação:** toda etapa nova tem que ser testada NO PC do Chrome
   109 (o do Marcos) antes de considerar pronta.
+
+### [2026-07-17] Navegadores REAIS da escola (alvo de build definitivo)
+O Marcos confirmou os dois navegadores usados nos PCs da escola:
+- **Chrome 109.0.5414.120** (o último do Win7)
+- **Firefox 106.0.5 64 bits** ← ATENÇÃO: é MAIS ANTIGO que o 115.
+
+→ No `educaverso-app/vite.config.ts` o alvo do build tem que ser
+  **`target: ['chrome109', 'firefox106']`** (NÃO firefox115 — o 106 é anterior;
+  usar 115 faz o Vite gerar sintaxe que o Firefox 106 não entende).
+Ambos suportam ES2022, então o `tsconfig target ES2022` continua ok.
+Teste de aceitação de toda etapa: rodar nesses DOIS navegadores da escola.
