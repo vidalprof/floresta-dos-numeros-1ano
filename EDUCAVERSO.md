@@ -8,6 +8,58 @@
 
 ---
 
+## 🛠️ ATUALIZAÇÃO 2026-07-17 — Plano A: o Estúdio Profissional (ferramentas modernas)
+
+> **Decisão do Marcos:** adotar um **estúdio profissional** de ferramentas
+> modernas — porque elas **facilitam a vida, são funcionais, gratuitas e evitam
+> aquele monte de erro** que a gente pegava fazendo tudo "na unha" num HTML só.
+> **Nada do modelo leve foi apagado** — o Plano A vive **À PARTE**, para a gente
+> acessar quando quiser; os dois patrimônios continuam intactos.
+
+**A pilha (stack) do Plano A — tudo grátis e open-source:**
+- **Phaser 3** (3.80.x) — motor de jogo 2D (WebGL2/Canvas), física, câmera, tweens.
+- **TypeScript** — pega erro ANTES de rodar (o "monte de erro" some no build).
+- **Vite** — empacota/otimiza; `target: ['chrome109','firefox106']` (os navegadores REAIS da escola).
+- **Node 20** — só na hora do build (no workflow), nunca no PC da escola.
+- **Futuro (quando fizer sentido):** React (painel do professor), Tiled (mapas),
+  Zod/JSON-Schema (validar os dados que a IA gera), Vitest/Playwright (testes),
+  ESLint (padrão de código), PWA (funcionar offline no laboratório).
+
+**Onde mora e como publica:**
+- Código-fonte: pasta **`educaverso-app/`** (Phaser+TS+Vite) neste repositório.
+- Build/deploy: workflow **`.github/workflows/app-build.yml`** (`workflow_dispatch`)
+  → `npm install && npm run build` → publica o `dist/` num **repo separado
+  `educaverso-app`** via `PAGES_TOKEN`. No ar em **https://vidalprof.github.io/educaverso-app/**.
+- **Não mexe** no modelo leve (`_educaverso/`, `_site/`, atividades premium): continuam vivos.
+
+**Alvo de hardware (PC real da escola — testar SEMPRE nele):**
+- AMD FX-4300 · **3,5 GB RAM** · Windows 7 64 bits · **Chrome 109** e **Firefox 106**.
+- Modo ultraleve obrigatório: `Scale.FIT 1024×768`, `fps.target: 30`, `antialias:false`,
+  `roundPixels:true`, `powerPreference:'low-power'`, texturas pequenas desenhadas 1x.
+  A RAM baixa (3,5 GB) é o gargalo → nada de spritesheet gigante; liberar o que não usa.
+
+**Por que isso serve TANTO ao mundo vivo quanto às atividades premium:**
+o mesmo estúdio produz a experiência revolucionária (mundo vivo explorável 2D) e,
+quando o Marcos quiser, as atividades premium avulsas — a **mecânica é peça
+reutilizável** (ver "ordenar comandos" = algoritmo), montada uma vez e encaixada
+onde precisar (dentro do mundo OU como atividade solta).
+
+### 🔊 REGRA DE OURO reafirmada (voz) — vale também no Plano A
+**TODA voz é gerada por API (edge-tts, voz "Antonio" = `pt-BR-AntonioNeural`),
+embutida como MP3 e tocada com `<audio>`. NUNCA a voz do navegador
+(`speechSynthesis`/Web Speech).** É decisão firme do Marcos (ver
+`EDUCAVERSO-SUSTENTABILIDADE.md` e `EDUCAVERSO-CHECKLIST-DE-CENA.md`). A voz é
+gerada pelo workflow **`gerar-audio.yml`** (grátis, natural, sempre igual em
+qualquer PC). *Pendência técnica registrada:* a Etapa 2 do app usou Web Speech
+por engano → **refatorar para tocar os MP3 do Antonio.**
+
+### 🧭 NORTE reafirmado — é MUNDO VIVO explorável 2D
+O diferencial é a criança **andar pelo mundo vivo** e encontrar os problemas no
+contexto (currículo invisível: o conceito vem por último). A "tela de puzzle"
+isolada **não** é o objetivo — a mecânica acontece **dentro** do mundo vivo.
+
+---
+
 ## A tese
 
 **Um motor único + arte gerada por IA + dados = mundos infinitos, leves,

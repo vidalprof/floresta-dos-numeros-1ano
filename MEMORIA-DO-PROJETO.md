@@ -970,3 +970,31 @@ O Marcos confirmou os dois navegadores usados nos PCs da escola:
   usar 115 faz o Vite gerar sintaxe que o Firefox 106 não entende).
 Ambos suportam ES2022, então o `tsconfig target ES2022` continua ok.
 Teste de aceitação de toda etapa: rodar nesses DOIS navegadores da escola.
+
+---
+
+## [2026-07-17] DUAS REGRAS DE OURO reafirmadas pelo Marcos (Etapa 2 → correção de rumo)
+
+O Marcos testou a Etapa 2 ("Ajude o Louro"): **rodou**, mas ele lembrou de dois
+pontos que são LEI do projeto e eu não podia ter deixado passar:
+
+### REGRA 1 — VOZ: SEMPRE por API (voz "Antonio"), NUNCA pelo navegador
+- **PROIBIDO** usar `Web Speech API` (`speechSynthesis` / `SpeechSynthesisUtterance`)
+  do navegador. Nada de `fala()` que usa o sintetizador do Chrome.
+- A voz TEM que ser **gerada por API** (Edge TTS, voz **pt-BR "Antonio"** =
+  `pt-BR-AntonioNeural`) por **WORKFLOW do GitHub** (`gerar-audio.yml`), que
+  produz **arquivos de áudio** (mp3/ogg). O app só **toca o arquivo pronto**.
+- Motivo: a voz do navegador é robótica, muda de PC pra PC, às vezes nem existe;
+  a voz por API é sempre a mesma, natural e coerente com o EduVerso. Todo asset
+  que a criança ouve é gerado (mesmo princípio de "todo asset visto é IA").
+- **Aplicar em TUDO** (app Plano A, atividades, hub). Refatorar a Etapa 2 pra
+  tirar o Web Speech e tocar os áudios do Antonio.
+
+### REGRA 2 — O norte é o MUNDO VIVO EXPLORÁVEL 2D (ensinar diferente)
+- A Etapa 2 é uma boa MECÂNICA (ordenar comandos), mas ela virou uma "tela de
+  puzzle" isolada. **Não é isso** o diferencial. O diferencial é o **mundo vivo
+  2D explorável**: a criança ANDA pelo mundo, encontra os problemas no contexto,
+  e a mecânica aparece DENTRO do mundo (não como uma telinha à parte).
+- A mecânica continua sendo peça reutilizável — mas o invólucro é o mundo vivo.
+- Próximo passo real = **Etapa 3**: mundo explorável (andar livre, NPCs, o
+  problema no lugar), com a mecânica de algoritmo acontecendo lá dentro.
