@@ -23,7 +23,11 @@ BR="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 # --- busca o estado do GitHub com RETRY (não desistir na 1ª falha) ---------
 FETCH_OK=0
 for tentativa in 1 2 3; do
-  if git fetch origin "$BR" --quiet 2>/dev/null || git fetch origin --quiet 2>/dev/null; then
+  # --force é ESSENCIAL: se o container voltar com origin/<BR> apontando pra uma
+  # base VELHA (rebobinada), só o --force atualiza o ref pro tip REAL do GitHub.
+  # Sem isso, um 'reset --hard origin/<BR>' cai na base velha e apaga eduverse/MEMORIA
+  # (lição paga várias vezes, jul/2026).
+  if git fetch --force origin "$BR" --quiet 2>/dev/null || git fetch --force origin --quiet 2>/dev/null; then
     FETCH_OK=1
     break
   fi

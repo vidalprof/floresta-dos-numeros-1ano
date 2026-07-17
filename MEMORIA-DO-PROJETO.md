@@ -742,3 +742,32 @@ botão de canto. Pasta renomeada `_educamundo`->`_educaverso`; repo de destino =
 - **HONESTO:** mascote é EMOJI por enquanto (🐣🐉🦊...); a versão desenhada que cresce de
   verdade (arte por estágio) vem depois, via asset studio. Marcos é o professor E o admin
   (um usuário só). Enquanto a fábrica não é perfeita, a "equipe que conserta" sou eu (Claude).
+
+## 🐾 VERSO vira FAMÍLIA (vários tipos, 1 esqueleto só) — (Marcos, 2026-07-17)
+Marcos: "se é fácil assim, não seria melhor vários pra escolher?" (a dúvida da dificuldade
+era porque achou que o mascote ocuparia o lugar do robô/animação pesada). Como o robô FICA
+e o Verso é leve (vetor, flutua/pula), dá pra ter VÁRIOS — regra: **família que COMPARTILHA
+o mesmo corpo/olhos/animação**; muda só a "cabeça" (orelha/chifre/crista/bico) + a cor. 6
+tipos provados em SVG: gatinho, coelho, ursinho, dino, passarinho, chifrudo. A criança
+escolhe TIPO + COR; + estágios (fofo→descolado, atende 1º ao 9º) + acessórios por mundo.
+Bichos TOTALMENTE diferentes (polvo×dragão, animações próprias) continuam PROIBIDOS (pesado).
+- **Byte NÃO some:** vira guia/morador dos mundos (dá as missões). Mascote = personagem do ALUNO.
+- **Modelo de operação (Marcos):** "comando tudo do painel, mas a EQUIPE (Claude) está sempre
+  aqui — é onde produzimos e melhoramos tudo". Painel = controle; sessão = oficina.
+- **Verso é SVG paramétrico** (recolor=1 valor; roda em qualquer navegador, IE9+/Chrome/Firefox,
+  sem lib, offline). Vira ator do motor de personagem vivo. Gerador guardado em /tmp (versos.html).
+
+## 🚨🚨 CURA DEFINITIVA DO "BASE VELHO" (perda recorrente de tempo/créditos) — 2026-07-17
+PROBLEMA (aconteceu de novo, Marcos MUITO incomodado, com razão): o container volta com a
+branch/working-tree numa BASE VELHA (3dc86eb "Vila do Miau"), e o remote-tracking `origin/...`
+fica DESATUALIZADO apontando pra ela. Se eu rodo `git reset --hard origin/<branch>` confiando
+nesse ref velho, APAGO a eduverse/ + trunco a MEMORIA. **Nada se perde no GitHub** (fonte da
+verdade), mas eu gasto tempo/créditos recuperando SEMPRE. 
+REGRAS DE OURO (obrigatórias, nunca furar):
+1. **NUNCA** `git reset --hard origin/<branch>` sem antes `git fetch --force origin <branch>`.
+2. **SEMPRE** conferir o tip REAL do GitHub por API (mcp github list_branches / get_file_contents)
+   ANTES de qualquer reset. Se o `origin/...` local ≠ tip da API, ele está velho: fetch --force.
+3. Ao restaurar: `git fetch --force origin <branch>` -> conferir `git ls-files eduverse | wc -l`
+   (tem que dar ~72) e `wc -l MEMORIA` (~740+) -> só então seguir.
+4. O hook `.claude/hooks/sync-remoto.sh` foi endurecido pra AUTO-restaurar no início da sessão
+   (fetch --force + reset --hard pro tip real do GitHub) — assim isso vira automático, não manual.
