@@ -871,3 +871,32 @@ igual?". Colou a spec-mestra do mundo vivo. RESPOSTA: SIM — a própria spec é
 - **ESCOPO HONESTO:** isso é um SISTEMA (biblioteca + builder + vida procedural + memória + cidade),
   build grande — a FUNDAÇÃO certa do mundo vivo, não remendo. Caminho: 1 CENA-PROVA (chão simples +
   poucos assets coerentes + vida procedural: pássaro/fumaça/personagem respirando) SEM bug, e crescer.
+
+## 🏛️ ARQUITETURA TÉCNICA (a "outra IA" mandou) — avaliação honesta (2026-07-17)
+Marcos colou um doc GRANDE de arquitetura feito por outra IA. REGRA-MÃE dele: **a IA gera DADOS
+estruturados; o Educaverso EXECUTA código/mapas/mecânicas/componentes JÁ TESTADOS.** IA nunca escreve
+um jogo inteiro do zero por objetivo. STACK proposto: React+TS (painel), Node+TS (Orquestrador),
+IA c/ saída estruturada (JSON Schema/Zod + validação/rejeição), Educaverso Builder (templates+regras+
+mecânicas), **Phaser** (motor), **Tiled** (mapas JSON), Firebase (auth/db/storage/hosting), Vitest+
+Playwright+ESLint+CI (testes). Mecânicas reutilizáveis CONFIGURÁVEIS (ex. "ordenar_comandos" vira robô/
+carteiro/receita só trocando contexto). Biblioteca de assets c/ metadados + Guia de Arte. Vida procedural
+por comportamento. Eventos aleatórios. Som em camadas. Avaliação invisível -> docs automáticos. Modos
+completo/econômico/ULTRALEVE (Canvas quando preciso). Offline/cache, missão gerada ANTES da aula (não
+chamar IA durante). Validador técnico + pedagógico antes de publicar. Prévia do professor. 9 etapas de
+desenvolvimento. Regra de ouro: IA sugere -> validador confere -> builder monta -> testes -> professor
+revisa -> publica.
+
+AVALIAÇÃO (Claude, honesto):
+- **CONVERGE com tudo que a gente decidiu** (dados-não-código, reuso, biblioteca, vida procedural,
+  consistência de arte, avaliação invisível, não-IA-na-aula, offline, docs automáticos). As visões batem
+  = ótimo sinal.
+- **A DIFERENÇA REAL é o STACK:** React+TS+Phaser+Tiled+Node+Vite+CI = **produto de software profissional**
+  (meses, equipe, backend, build, hospedagem). É o jeito certo PRA UM PRODUTO que escala p/ muitas escolas
+  e 9 anos. Mas é MUITO mais pesado que o nosso atual (HTML único no GitHub Pages, sem build, Canvas leve).
+- **Tensão técnica:** Phaser+TS+build briga um pouco com "HTML único offline p/ Win7 sem instalar" (nosso).
+  Phaser roda no navegador, mas some a simplicidade do arquivo único.
+- **RECOMENDAÇÃO:** usar esse doc como **MAPA DO DESTINO**; adotar os PRINCÍPIOS AGORA no jeito leve (que
+  já faz muito disso); migrar pro stack pesado só quando/se virar produto de verdade (com tempo/equipe).
+  Um professor sozinho não toca React+TS+Phaser+Node+CI E dá aula — e o Marcos quer MENOS trabalho.
+- O protótipo atual (praia viva + missão "ordenar passos" + narração + som, Canvas ultraleve) já aplica
+  boa parte do doc: mecânica reutilizável configurável, vida procedural, avaliação embutível, offline.
