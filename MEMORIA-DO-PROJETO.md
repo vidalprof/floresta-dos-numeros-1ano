@@ -389,6 +389,15 @@ aprende + roteirista + diretor de arte + arquiteto de dados) monta história e o
   interatividades cura junto com o pedagogo; toda mecânica escolhida serve um objetivo de aprendizagem real
   e a faixa etária. Diversão é o veículo, o aprendizado (verificado) é o destino.
 
+## 🎮 PAPEL NOVO NA EQUIPE — GAME/LEVEL DESIGNER 2D (lição paga, jul/2026)
+O convés-de-cima ficou apertado/incoerente (mastro virou "navio dentro do navio") porque faltava na equipe
+um **GAME/LEVEL DESIGNER 2D** — o papel que pensa LAYOUT, PERSPECTIVA (a câmera 3/4 combina com o cenário?),
+level design (o mundo é gostoso de explorar/jogar?) ANTES de construir. Tínhamos engenheiro/arte/roteiro/
+pedagogia, mas esse olhar faltou. **AÇÃO: incluir o Game/Level Designer 2D na equipe/linha** — ele valida
+layout+perspectiva+ritmo de exploração de cada mundo no PROJETO, evitando refazer depois. (Iterar é normal em
+jogo — mas esse papel corta os erros grosseiros de layout de cara.) Junto com o Diretor de Arte e o Portão de
+Coerência. E a linha modular (dados-driven) é o que torna a correção BARATA quando ela acontece.
+
 ## 🧱 ARQUITETURA MODULAR (direção do Marcos, jul/2026) — "um motor por coisa"
 O Marcos propôs "fazer um motor pra cada coisa pra modularizar/automatizar" — incluindo o "aprender diferente"
 como um motor À PARTE. INSTINTO CERTO (bate com os "12 módulos" da outra IA: Core/Render/World/NPC/Mission/
