@@ -20,9 +20,12 @@ const jogo = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   backgroundColor: '#060c18',
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
+  // ENVELOP = PREENCHE a tela (sem tarjas pretas); recorta um pouco nas beiradas
+  // em vez de deixar barras. A base 1024x768 continua (coords fixas seguem valendo).
+  // antialias:true = arte de cartoon SUAVE fica nítida ao ampliar (não serrilhada).
+  scale: { mode: Phaser.Scale.ENVELOP, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
   fps: { target: 30, forceSetTimeOut: true },
-  render: { antialias: false, roundPixels: true, powerPreference: 'low-power' },
+  render: { antialias: true, roundPixels: false, powerPreference: 'low-power' },
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
   scene: usarMontador ? [] : [Ilha]
 })
