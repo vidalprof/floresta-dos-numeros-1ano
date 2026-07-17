@@ -383,6 +383,25 @@ aprende + roteirista + diretor de arte + arquiteto de dados) monta história e o
   interatividades cura junto com o pedagogo; toda mecânica escolhida serve um objetivo de aprendizagem real
   e a faixa etária. Diversão é o veículo, o aprendizado (verificado) é o destino.
 
+## 🧱 ARQUITETURA MODULAR (direção do Marcos, jul/2026) — "um motor por coisa"
+O Marcos propôs "fazer um motor pra cada coisa pra modularizar/automatizar" — incluindo o "aprender diferente"
+como um motor À PARTE. INSTINTO CERTO (bate com os "12 módulos" da outra IA: Core/Render/World/NPC/Mission/
+Dialogue/Inventory/Animation/Sound/Classroom/AI). AJUSTE IMPORTANTE: NÃO são motores DUPLICADOS separados (isso
+reescreveria mundo/personagem/som toda vez) — são **MÓDULOS que se COMPÕEM** (peças de LEGO), cada um faz UMA
+coisa e reusa os outros:
+- **Módulo MUNDO** (cenário vivo), **Módulo PERSONAGEM** (o "ator vivo" universal — JÁ extraído ✅),
+  **Módulo SOM/VOZ**, **Módulo ATIVIDADE** (plugável).
+- **A ATIVIDADE é um MÓDULO PLUGÁVEL:** hoje = tipo "popup premium" + tipo "aula in-world" (rounds). O
+  **"APRENDER DIFERENTE" (aluno cria/coliga/resolve o problema do mundo pra avançar) = um MÓDULO NOVO de
+  atividade** ("construção/resolver-no-mundo") que pluga no MESMO mundo + MESMO personagem, SEM mexer no popup.
+  Pode ser desenvolvido e testado SOZINHO e depois encaixado em qualquer mundo. É o jeito limpo de entregar a
+  ideia ousada no futuro sem refazer o mundo.
+- **HONESTO:** o motor hoje (`kit-floresta.py`) é meio MONOLÍTICO (mundo+personagem+aula juntos). Modularizar é
+  investimento PROGRESSIVO; o sistema de personagem vivo foi o 1º pedaço tirado pra fora. Refatorar em módulos
+  limpos conforme fizer a 2ª/3ª atividade — NÃO parar a entrega atual pra refatorar tudo de uma vez.
+- **Regra:** o "aprender diferente" NÃO precisa de um motor duplicado — precisa de um MÓDULO de atividade novo
+  sobre o mundo+personagem existentes. Quando chegar a hora, nasce como o módulo dele.
+
 ## 🧭 ARQUITETURA (a reconciliação): mundo-mapa + atividades-peça
 NÃO é contradição — são DUAS CAMADAS:
 - **Camada 1 — O MUNDO / MAPA com BAIRROS** (o hub "Ilhas do Saber", só que mais "mundo"): dá a
