@@ -998,3 +998,32 @@ pontos que são LEI do projeto e eu não podia ter deixado passar:
 - A mecânica continua sendo peça reutilizável — mas o invólucro é o mundo vivo.
 - Próximo passo real = **Etapa 3**: mundo explorável (andar livre, NPCs, o
   problema no lugar), com a mecânica de algoritmo acontecendo lá dentro.
+
+---
+
+## [2026-07-17] NASCEU O `EDUCAVERSO-UNIFICADO.md` — o documento ÚNICO (fonte da verdade)
+
+O Marcos pediu: "reúna-se com os profissionais e redija um documento único do
+educaverso com tudo de novo, agora podemos utilizar tecnologia moderna, una o
+melhor das duas ideias". Feito, com a sessão no modelo mais forte (Fable).
+
+- **`EDUCAVERSO-UNIFICADO.md`** (raiz) = FONTE ÚNICA DA VERDADE. Em conflito
+  entre documentos, ELE manda. Os antigos (EDUCAVERSO.md, EDUVERSE-*, eduverse/)
+  ficam como referência/memória — NADA foi apagado (decisão do Marcos).
+- Conteúdo: propósito real (2027, coordenadora, 55 min) · Lei pedagógica
+  (Portão 0 verbatim) · Mundo vivo + Verso + avaliação invisível · Currículo
+  de Computação (eixos PC/MD/CD, objetivo→missão) · Estúdio profissional
+  (Phaser+TS+Vite; IA gera DADOS validados, motor executa) · hardware real
+  (FX-4300/3,5GB/Win7/Chrome109/Firefox106) · Arte & Som (voz Antonio LEI;
+  revogada a ressalva speechSynthesis do PLANO-FABRICA) · Equipe + Portões ·
+  Sustentabilidade · Estado honesto · ROADMAP ÚNICO (9 etapas; Etapa 3 =
+  mundo vivo explorável = PRÓXIMA, decisão do Marcos) · Regras permanentes.
+- **DECISÃO (pergunta do Marcos): não escrevemos mais motor próprio.** O motor
+  é o Phaser; os artesanais (kit-floresta.py, build_premium.py, build_taberna.py)
+  estão APOSENTADOS para desenvolvimento novo (ficam como referência e servindo
+  o modelo leve publicado). Levamos deles o aprendizado + o contrato de dados.
+- **`MANUAL-MESTRE.md` atualizado** (seção datada no topo): aponta o doc único;
+  estúdio moderno disponível p/ premium SÓ se o Marcos pedir (molde clássico
+  continua padrão); alvo real de máquina; reforço da voz Antonio.
+- Próximo build: **Etapa 3 — mundo vivo explorável no estúdio, já com a voz
+  do Antonio desde o nascimento** (escolha explícita do Marcos).

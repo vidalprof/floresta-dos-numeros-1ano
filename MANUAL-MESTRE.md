@@ -5,6 +5,29 @@
 ## Em conflito de FORMATO/dinâmica, o ATIVIDADE-PREMIUM.md manda; aqui estão as regras técnicas e pedagógicas completas.
 
 ================================================================
+## ⭐ ATUALIZAÇÃO 2026-07-17 — EducaVerso unificado + Estúdio moderno (ler antes)
+================================================================
+- **Fonte única da verdade do projeto EducaVerso:** `EDUCAVERSO-UNIFICADO.md`
+  (na raiz). Em conflito entre documentos, ELE manda. Este manual continua
+  sendo o rito das **atividades premium** (que segue INTACTO).
+- **Estúdio moderno disponível (opcional para premium):** existe agora o
+  estúdio profissional **Phaser 3 + TypeScript + Vite** (pasta
+  `educaverso-app/`, build pelo workflow `app-build.yml`). O molde premium
+  clássico (1 HTML autossuficiente, base Circo do Teo) **continua sendo o
+  padrão** das atividades premium; usar o estúdio para uma premium **só se o
+  Marcos pedir**. Motores artesanais próprios estão aposentados para
+  desenvolvimento novo (ver `EDUCAVERSO-UNIFICADO.md` §4.2).
+- **Alvo REAL de máquina/navegador (confirmado pelo Marcos):** PCs da escola =
+  AMD FX-4300 · **3,5 GB RAM** · Windows 7 · **Chrome 109** e **Firefox 106**.
+  "Navegador antigo" nas regras deste manual = ESSE patamar. RAM baixa é o
+  gargalo: imagens otimizadas, poucas animações simultâneas.
+- **🔊 VOZ (regra de ouro, já era lei — reforço):** TODA narração/fala é
+  **MP3 gerado por API (edge-tts, voz "Antonio" = `pt-BR-AntonioNeural`)** via
+  `gerar-audio.yml` + `otimizar-audio.yml`, embutido em base64 e tocado com
+  `<audio>`. **NUNCA usar a voz do navegador (`speechSynthesis`/Web Speech)**
+  em NENHUMA atividade. QA confere cobertura: toda fala usada tem o seu MP3.
+
+================================================================
 ## REGRA DE CONDUTA — NÃO INVENTAR NADA (leia antes de tudo)
 ================================================================
 - **NADA pode ser inventado.** Não criar botão novo, animação diferente, disposição própria, fase, mecânica, texto de fluxo ou "melhoria" criativa que não esteja neste manual ou no ATIVIDADE-PREMIUM.md. O modelo é fixo.
