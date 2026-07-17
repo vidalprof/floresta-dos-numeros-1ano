@@ -152,7 +152,7 @@ export class Ilha extends Phaser.Scene {
     this.physics.add.existing(this.verso.sprite)
     const b = this.verso.sprite.body as Phaser.Physics.Arcade.Body
     b.setSize(46, 24); b.setOffset((this.verso.sprite.width - 46) / 2, this.verso.sprite.height - 24)
-    ;(this.verso.sprite as any).setCollideWorldBounds(true)
+    b.collideWorldBounds = true
     this.physics.add.collider(this.verso.sprite, this.obst)
     this.poeira = this.add.particles(0, 0, 'puff', { lifespan: 420, speed: { min: 4, max: 16 }, angle: { min: 200, max: 340 }, scale: { start: 0.5, end: 1.3 }, alpha: { start: 0.5, end: 0 }, emitting: false }).setDepth(640)
   }
