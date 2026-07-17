@@ -1,0 +1,76 @@
+name: Semear Catalogo (mundos + paradas no Firebase)
+
+# Grava o CATALOGO que o EduMundo lê (/catalogo/mundos). A "Fabrica" fará isso
+# ao publicar cada atividade; por ora semeia o mundo Ilha Pirata (7 paradas).
+# apiKey do Firebase Web e PUBLICO por design (passado por input, nao commitado).
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_key:
+        description: "apiKey do Firebase Web (publico por design)"
+        required: true
+        type: string
+      database_url:
+        description: "URL do Realtime Database"
+        required: false
+        default: "https://educaverso-73b1a-default-rtdb.firebaseio.com"
+        type: string
+      base_atividades:
+        description: "URL base dos jogos (deixe vazio p/ 'em breve')"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  semear:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login anonimo + gravar catalogo
+        env:
+          API_KEY: ${{ inputs.api_key }}
+          DB_URL: ${{ inputs.database_url }}
+          BASE: ${{ inputs.base_atividades }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.error
+          key=os.environ.get("API_KEY","").strip()
+          db=os.environ.get("DB_URL","").strip().rstrip("/")
+          base=os.environ.get("BASE","").strip().rstrip("/")
+          if not key: raise SystemExit("::error::api_key vazio")
+
+          def post(url,obj):
+              d=json.dumps(obj).encode(); req=urllib.request.Request(url,data=d,headers={"Content-Type":"application/json"},method="POST")
+              with urllib.request.urlopen(req,timeout=30) as r: return json.loads(r.read().decode())
+          def put(url,obj):
+              d=json.dumps(obj).encode(); req=urllib.request.Request(url,data=d,headers={"Content-Type":"application/json"},method="PUT")
+              with urllib.request.urlopen(req,timeout=30) as r: return r.read().decode()
+
+          print(">> login anonimo...")
+          auth=post("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s"%key,{"returnSecureToken":True})
+          tok=auth["idToken"]; print("   ok")
+
+          # link do jogo da ilha (se base vazio -> 'em breve' com soon=true e link vazio)
+          link = (base+"/navio-pirata/") if base else ""
+          soon = (link=="")
+
+          mundo = {
+            "nome":"Ilha do Tesouro","emoji":"🏴‍☠️","tema":"pirata","cor":"#1f8a70","ordem":1,
+            "paradas":{
+              "fogueira":  {"titulo":"A Fogueira","mascote":"🔥","ordem":1,"x":18,"y":72,"link":link,"soon":soon},
+              "poco":      {"titulo":"O Poço","mascote":"🪣","ordem":2,"x":34,"y":50,"link":link,"soon":soon},
+              "palmeiral": {"titulo":"O Palmeiral","mascote":"🌴","ordem":3,"x":50,"y":68,"link":link,"soon":soon},
+              "gruta":     {"titulo":"A Gruta","mascote":"🦇","ordem":4,"x":62,"y":40,"link":link,"soon":soon},
+              "praia":     {"titulo":"Praia do X","mascote":"❌","ordem":5,"x":44,"y":26,"link":link,"soon":soon},
+              "barracao":  {"titulo":"O Barracão","mascote":"🛖","ordem":6,"x":74,"y":62,"link":link,"soon":soon},
+              "cais":      {"titulo":"O Navio","mascote":"⛵","ordem":7,"x":86,"y":34,"link":link,"soon":soon}
+            }
+          }
+
+          print(">> gravando /catalogo/mundos/ilha-pirata ...")
+          put("%s/catalogo/mundos/ilha-pirata.json?auth=%s"%(db,tok), mundo)
+          print("   ok - catalogo semeado.")
+          print("")
+          print("===== CATALOGO NO AR: EduMundo já mostra a Ilha do Tesouro =====")
+          print("(paradas em modo 'em breve'"+ (" — passe base_atividades pra ligar os links)" if soon else ")"))
+          PY

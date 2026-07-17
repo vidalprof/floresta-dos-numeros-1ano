@@ -711,3 +711,21 @@ DEPOIS que o teste de Firebase passou (login anônimo + gravar + ler no RTDB do 
 - **Arquivos no repo-fábrica:** `_educamundo/index.html` (aluno) e `_painel-prof/index.html` (professor).
   Publicar cada um no seu repo via Fábrica/atualizar. Regras do RTDB atualizadas em
   `eduverse/lib/REGRAS-FIREBASE.txt` (agora cobrem o metadado da turma + listar turmas no painel).
+
+## 🗺️ EDUMUNDO = MUNDOS VIVOS COM PARADAS, CATÁLOGO DINÂMICO (Marcos, 2026-07-17)
+Pergunta do Marcos: "as atividades no EduMundo são injetadas?" -> estavam FIXAS no
+código (array JOGOS). Decisão: **NÃO ficam no código**. O EduMundo lê o CATÁLOGO do
+Firebase (biblioteca que cresce; a Fábrica/painel adiciona, a tela mostra sozinha).
+E o aluno vê **MUNDOS VIVOS COM PARADAS** (não lista plana): toca o nome -> vê os
+MUNDOS (cards) -> entra num mundo -> MAPA temático com as PARADAS (medalhão do
+mascote + trilha), toca a parada -> abre o jogo (link próprio; portal leve).
+- **Modelo de dados (Firebase):** `/catalogo/mundos/<mundoId>` =
+  { nome, emoji, tema, cor, ordem, paradas:{ <pid>:{ titulo, mascote, link, ordem, x, y, soon } } }
+- **Progresso:** `/turmas/<t>/alunos/<a>/dados/progresso/<mundoId>/paradas` (paradas visitadas).
+- **Semear catálogo:** workflow `semear-catalogo.yml` grava o mundo Ilha do Tesouro + 7 paradas.
+  EduMundo tem fallback amigável + cache offline se o catálogo estiver vazio/offline.
+
+## ⚠️ REINCIDÊNCIA: cópia local voltou pro base velho (2026-07-17)
+Ao commitar o EduMundo dinâmico, o git local estava em 3dc86eb (base VELHO, "behind 847").
+Cura aplicada: salvar os arquivos bons em /tmp, `git reset --hard origin/<branch>`, reaplicar
+por cima, commitar. SEMPRE conferir `git status -sb` (procurar "behind N") ANTES de commitar.

@@ -14,20 +14,16 @@ body{
   background:linear-gradient(180deg,#0b2350 0%,#123a7a 55%,#1f6fb0 100%);
   -webkit-text-size-adjust:100%; -webkit-tap-highlight-color:transparent;
 }
-/* estrelas (leves, sem imagem) */
 .ceu{ position:fixed; left:0; top:0; right:0; height:60%; z-index:0; overflow:hidden; pointer-events:none; }
 .star{ position:absolute; width:3px; height:3px; background:#fff; border-radius:50%; opacity:.8;
   -webkit-animation:tw 3s infinite ease-in-out; animation:tw 3s infinite ease-in-out; }
 @-webkit-keyframes tw{ 0%,100%{opacity:.25;} 50%{opacity:.9;} }
 @keyframes tw{ 0%,100%{opacity:.25;} 50%{opacity:.9;} }
-/* mar/ondas no rodapé */
 .mar{ position:fixed; left:0; right:0; bottom:0; height:120px; z-index:0; pointer-events:none;
   background:-webkit-linear-gradient(top,rgba(31,111,176,0),#1a5fa0);
   background:linear-gradient(180deg,rgba(31,111,176,0),#1a5fa0); }
+.tela{ position:relative; z-index:2; min-height:100%; max-width:980px; margin:0 auto; padding:22px 16px 40px; }
 
-.tela{ position:relative; z-index:2; min-height:100%; max-width:960px; margin:0 auto; padding:22px 16px 40px; }
-
-/* ---- capa ---- */
 .capa{ text-align:center; padding-top:6vh; }
 .logo{ font-size:52px; font-weight:900; letter-spacing:1px; line-height:1;
   text-shadow:0 3px 0 #06122e, 0 0 26px rgba(120,190,255,.6); }
@@ -39,40 +35,66 @@ body{
 .turmaNome{ display:inline-block; margin-top:8px; background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.3);
   padding:6px 16px; border-radius:999px; font-size:15px; }
 
-/* ---- cards de alunos ---- */
 .grid{ margin-top:22px; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap;
   -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; }
 .aluno{ width:140px; margin:9px; background:#fff; color:#123a7a; border-radius:18px; cursor:pointer;
   padding:16px 8px 14px; text-align:center; border:0;
   -webkit-box-shadow:0 8px 0 #0b2c63, 0 12px 22px rgba(0,0,0,.28); box-shadow:0 8px 0 #0b2c63, 0 12px 22px rgba(0,0,0,.28);
   -webkit-transition:-webkit-transform .12s; transition:transform .12s; }
-.aluno:active{ -webkit-transform:translateY(5px); transform:translateY(5px);
-  -webkit-box-shadow:0 3px 0 #0b2c63, 0 6px 12px rgba(0,0,0,.3); box-shadow:0 3px 0 #0b2c63, 0 6px 12px rgba(0,0,0,.3); }
+.aluno:active{ -webkit-transform:translateY(5px); transform:translateY(5px); }
 .aluno .av{ font-size:52px; line-height:1; }
 .aluno .nm{ margin-top:8px; font-size:18px; font-weight:800; }
-.aluno .st{ font-size:11px; color:#6b86b8; margin-top:3px; min-height:14px; }
 
 .aviso{ max-width:520px; margin:26px auto 0; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.28);
   border-radius:16px; padding:18px; text-align:center; font-size:15px; line-height:1.5; }
 .aviso b{ color:#ffd25a; }
 .spin{ text-align:center; margin-top:30px; font-size:16px; color:#cfe4ff; }
 
-/* ---- mundo (depois de entrar) ---- */
-.oi{ text-align:center; padding-top:4vh; }
+/* ---- HOME (mundos) ---- */
+.oi{ text-align:center; padding-top:3vh; }
 .oi .big{ font-size:30px; font-weight:900; }
 .oi .big .av{ font-size:40px; }
-.mundoGrid{ margin-top:26px; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap;
+.mundoGrid{ margin-top:24px; display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap;
   -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; }
-.jogo{ width:240px; margin:10px; background:#fff; color:#123a7a; border-radius:20px; text-decoration:none; color:#123a7a;
-  padding:18px; text-align:center; -webkit-box-shadow:0 10px 24px rgba(0,0,0,.3); box-shadow:0 10px 24px rgba(0,0,0,.3);
-  display:block; }
-.jogo.soon{ opacity:.6; }
-.jogo .em{ font-size:48px; } .jogo .tt{ font-size:19px; font-weight:800; margin-top:8px; }
-.jogo .ds{ font-size:13px; color:#5b77ab; margin-top:4px; }
+.mundo{ width:250px; margin:12px; border-radius:22px; cursor:pointer; border:0; color:#fff; overflow:hidden;
+  -webkit-box-shadow:0 12px 26px rgba(0,0,0,.32); box-shadow:0 12px 26px rgba(0,0,0,.32);
+  -webkit-transition:-webkit-transform .12s; transition:transform .12s; text-align:center; }
+.mundo:active{ -webkit-transform:translateY(4px); transform:translateY(4px); }
+.mundo .cap{ padding:26px 10px 14px; }
+.mundo .em{ font-size:60px; line-height:1; }
+.mundo .tt{ font-size:22px; font-weight:900; margin-top:8px; text-shadow:0 2px 4px rgba(0,0,0,.35); }
+.mundo .bar{ background:rgba(0,0,0,.22); font-size:13px; padding:8px; }
 .sair{ display:inline-block; margin-top:22px; cursor:pointer; background:rgba(255,255,255,.16);
   border:1px solid rgba(255,255,255,.3); color:#fff; padding:9px 20px; border-radius:999px; font-size:14px; }
+
+/* ---- MAPA (paradas) ---- */
+.mapaTopo{ display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-align:center; align-items:center; margin-bottom:12px; }
+.voltar{ cursor:pointer; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3); color:#fff;
+  padding:8px 14px; border-radius:999px; font-size:14px; }
+.mapaTit{ -webkit-box-flex:1; flex:1; text-align:center; font-size:22px; font-weight:900; }
+.mapa{ position:relative; width:100%; height:0; padding-bottom:62%; border-radius:22px; overflow:hidden;
+  border:3px solid rgba(255,255,255,.25); -webkit-box-shadow:0 14px 30px rgba(0,0,0,.35); box-shadow:0 14px 30px rgba(0,0,0,.35); }
+.mapa .terreno{ position:absolute; left:0; top:0; right:0; bottom:0; }
+.mapa svg{ position:absolute; left:0; top:0; width:100%; height:100%; }
+.parada{ position:absolute; -webkit-transform:translate(-50%,-50%); transform:translate(-50%,-50%); cursor:pointer; text-align:center; }
+.parada .med{ width:66px; height:66px; border-radius:50%; background:#fff; margin:0 auto;
+  display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-align:center; align-items:center; -webkit-box-pack:center; justify-content:center;
+  font-size:36px; border:4px solid #ffd25a; -webkit-box-shadow:0 6px 14px rgba(0,0,0,.4); box-shadow:0 6px 14px rgba(0,0,0,.4); }
+.parada.feita .med{ border-color:#57e08a; }
+.parada.soon .med{ -webkit-filter:grayscale(.7); filter:grayscale(.7); opacity:.75; }
+.parada .lb{ margin-top:5px; font-size:13px; font-weight:700; color:#fff; text-shadow:0 2px 4px rgba(0,0,0,.7);
+  background:rgba(0,0,0,.3); display:inline-block; padding:2px 8px; border-radius:999px; max-width:120px; }
+.parada .ck{ position:absolute; right:-6px; top:-6px; background:#57e08a; color:#0b2350; width:24px; height:24px; border-radius:50%;
+  font-size:15px; font-weight:900; line-height:24px; }
+.parada .soonb{ position:absolute; left:50%; top:-14px; -webkit-transform:translateX(-50%); transform:translateX(-50%);
+  background:#ffd25a; color:#12183a; font-size:10px; font-weight:800; padding:2px 7px; border-radius:999px; white-space:nowrap; }
+.token{ position:absolute; -webkit-transform:translate(-50%,-115%); transform:translate(-50%,-115%); font-size:40px; z-index:5;
+  -webkit-transition:left .6s ease,top .6s ease; transition:left .6s ease,top .6s ease; pointer-events:none;
+  -webkit-filter:drop-shadow(0 4px 3px rgba(0,0,0,.5)); filter:drop-shadow(0 4px 3px rgba(0,0,0,.5)); }
+.dica{ text-align:center; margin-top:12px; font-size:14px; color:#cfe4ff; }
+
 .hidden{ display:none !important; }
-.rodape{ text-align:center; margin-top:30px; font-size:11px; color:rgba(255,255,255,.5); }
+.rodape{ text-align:center; margin-top:26px; font-size:11px; color:rgba(255,255,255,.5); }
 </style>
 </head>
 <body>
@@ -80,7 +102,7 @@ body{
 <div class="mar"></div>
 
 <div class="tela">
-  <!-- CAPA + escolha de aluno -->
+  <!-- CAPA + roster -->
   <div id="telaCapa">
     <div class="capa">
       <div class="logo">Edu<span class="m">Mundo</span></div>
@@ -93,14 +115,26 @@ body{
     <div id="aviso" class="aviso hidden"></div>
   </div>
 
-  <!-- MUNDO (depois de escolher o nome) -->
-  <div id="telaMundo" class="hidden">
+  <!-- HOME: mundos -->
+  <div id="telaHome" class="hidden">
     <div class="oi">
       <div class="big"><span id="oiAv" class="av">🙂</span> Oi, <span id="oiNome">amigo</span>!</div>
-      <div class="tag" style="color:#cfe4ff;margin-top:6px">Escolha uma aventura:</div>
+      <div class="tag" style="color:#cfe4ff;margin-top:6px">Escolha um mundo pra explorar:</div>
       <div class="mundoGrid" id="mundoGrid"></div>
+      <div id="homeVazio" class="aviso hidden"></div>
       <div><span class="sair" id="btnSair">← trocar de aluno</span></div>
     </div>
+  </div>
+
+  <!-- MAPA: paradas -->
+  <div id="telaMapa" class="hidden">
+    <div class="mapaTopo">
+      <span class="voltar" id="btnVoltar">← mundos</span>
+      <div class="mapaTit" id="mapaTit">Mundo</div>
+      <span style="width:70px"></span>
+    </div>
+    <div class="mapa" id="mapa"><div class="terreno" id="terreno"></div></div>
+    <div class="dica">Toque numa parada pra começar. ⭐</div>
   </div>
 
   <div class="rodape">EduMundo • os seus jogos ficam salvos ☁️</div>
@@ -108,29 +142,33 @@ body{
 
 <script>
 /* =========================================================================
- * EDUMUNDO — tela do aluno
- * - Lê a turma de ?t=<turmaId> (o professor abre o link nos PCs).
- * - Mostra os alunos da turma (nome + avatar) -> a criança TOCA no seu.
- * - Login ANÔNIMO silencioso no Firebase; a sessão guarda quem é o aluno.
- * - O progresso salva em /turmas/<turmaId>/alunos/<alunoId>/dados.
- * - Offline-first: se a turma já foi vista, mostra do cache mesmo sem internet.
+ * EDUMUNDO — tela do aluno (mundos vivos com paradas, catalogo dinamico)
+ * - Lê a turma de ?t=<turmaId>; a criança TOCA seu nome+avatar.
+ * - Login ANÔNIMO silencioso no Firebase.
+ * - Lê o CATALOGO de /catalogo/mundos (nao fica no codigo).
+ * - Home = cards de MUNDOS; entrar num mundo = MAPA com PARADAS (medalhoes +
+ *   trilha + token do avatar). Toca a parada -> abre o link do jogo.
+ * - Offline-first: cacheia turma e catalogo no localStorage.
  * =======================================================================*/
 (function(){
   "use strict";
   var CFG = {
-    apiKey: "AIzaSyA0mIDCLpGtbNPF4Tz6flKGTEmNOr4QMYg",           /* público por design */
+    apiKey: "AIzaSyA0mIDCLpGtbNPF4Tz6flKGTEmNOr4QMYg",
     databaseURL: "https://educaverso-73b1a-default-rtdb.firebaseio.com"
   };
-  /* Catálogo de jogos do mundo (portal leve: cada jogo mora no seu link). */
-  var JOGOS = [
-    { id:"navio-pirata", em:"🏴‍☠️", tt:"A Ilha do Tesouro", ds:"Números até 30", link:"", soon:true }
-  ];
 
   var $=function(id){ return document.getElementById(id); };
   function esc(s){ return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
   function qs(k){ var m=new RegExp("[?&]"+k+"=([^&]*)").exec(location.search); return m?decodeURIComponent(m[1].replace(/\+/g," ")):null; }
   function lsGet(k){ try{ var v=localStorage.getItem(k); return v?JSON.parse(v):null; }catch(e){ return null; } }
   function lsSet(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); }catch(e){} }
+  function chaves(o){ var a=[],k; for(k in o){ if(o.hasOwnProperty(k)) a.push(k); } return a; }
+  function porOrdem(o){ o=o||{}; var a=chaves(o); a.sort(function(x,y){
+      var ox=(o[x]&&o[x].ordem)||0, oy=(o[y]&&o[y].ordem)||0;
+      if(ox!==oy) return ox-oy;
+      var nx=(o[x]&&(o[x].nome||o[x].titulo))||x, ny=(o[y]&&(o[y].nome||o[y].titulo))||y;
+      return nx<ny?-1:(nx>ny?1:0);
+    }); return a; }
 
   /* estrelas */
   (function(){ var c=$("ceu"),h="",i,x,y,d; for(i=0;i<40;i++){ x=Math.floor(Math.random()*100); y=Math.floor(Math.random()*100); d=(Math.random()*3).toFixed(1);
@@ -154,7 +192,7 @@ body{
   function dbPut(path,obj,ok,err){ anonLogin(function(){ xhr("PUT",dbURL(path),JSON.stringify(obj),function(){ ok&&ok(); },err); },err); }
 
   /* ---- estado ---- */
-  var TURMA=qs("t"); var alunosCache=null;
+  var TURMA=qs("t"), ALUNO=null, CATALOGO=null;
 
   function boot(){
     if(!TURMA){
@@ -162,70 +200,142 @@ body{
       $("aviso").innerHTML="Peça pro <b>professor</b> abrir o link da sua turma. 😊<br><span style='font-size:12px;color:#cfe4ff'>(o endereço termina com <b>?t=sua-turma</b>)</span>";
       return;
     }
-    /* já escolheu um aluno nesta sessão? entra direto no mundo */
     var sess=lsGet("edumundo_sess_"+TURMA);
-    if(sess && sess.alunoId){ entrarMundo(sess.alunoId, sess.nome, sess.avatar); return; }
+    if(sess && sess.alunoId){ ALUNO=sess; irHome(); return; }
     $("spin").className="spin";
     dbGet("turmas/"+encodeURIComponent(TURMA), function(turma){
       $("spin").className="spin hidden";
       if(!turma){ mostrarCache("Não achei essa turma. Confira o link com o professor."); return; }
       if(turma.nome){ $("turmaNome").className="turmaNome"; $("turmaNome").textContent="Turma: "+turma.nome; }
       var alunos=turma.alunos||{};
-      lsSet("edumundo_alunos_"+TURMA, alunos);   /* cache offline */
+      lsSet("edumundo_alunos_"+TURMA, alunos);
       renderAlunos(alunos);
     }, function(){ $("spin").className="spin hidden"; mostrarCache("Sem internet agora — mostrando a turma salva."); });
   }
-
   function mostrarCache(msg){
     var alunos=lsGet("edumundo_alunos_"+TURMA);
     if(alunos){ renderAlunos(alunos); if(msg){ $("aviso").className="aviso"; $("aviso").innerHTML=esc(msg); } }
     else { $("aviso").className="aviso"; $("aviso").innerHTML=esc(msg||"Não consegui carregar a turma."); }
   }
-
   function renderAlunos(alunos){
-    var ids=[],k; for(k in alunos){ if(alunos.hasOwnProperty(k)) ids.push(k); }
+    var ids=chaves(alunos);
     if(!ids.length){ $("aviso").className="aviso"; $("aviso").innerHTML="Esta turma ainda não tem alunos.<br><span style='font-size:12px'>O professor cadastra no painel.</span>"; return; }
     ids.sort(function(a,b){ return (alunos[a].nome||a)<(alunos[b].nome||b)?-1:1; });
     var h="",i,a;
     for(i=0;i<ids.length;i++){ a=alunos[ids[i]];
       h+='<button class="aluno" data-id="'+esc(ids[i])+'" data-nm="'+esc(a.nome||ids[i])+'" data-av="'+esc(a.avatar||"🙂")+'">';
-      h+='<div class="av">'+esc(a.avatar||"🙂")+'</div><div class="nm">'+esc(a.nome||ids[i])+'</div>';
-      h+='<div class="st"></div></button>';
+      h+='<div class="av">'+esc(a.avatar||"🙂")+'</div><div class="nm">'+esc(a.nome||ids[i])+'</div></button>';
     }
     $("grid").innerHTML=h;
   }
 
-  function entrarMundo(alunoId, nome, avatar){
-    lsSet("edumundo_sess_"+TURMA, {alunoId:alunoId, nome:nome, avatar:avatar});
-    $("oiNome").textContent=nome; $("oiAv").textContent=avatar||"🙂";
-    /* registra que entrou (best-effort, não trava se offline) */
+  function escolherAluno(alunoId, nome, avatar){
+    ALUNO={ alunoId:alunoId, nome:nome, avatar:avatar };
+    lsSet("edumundo_sess_"+TURMA, ALUNO);
+    /* marca acesso (best-effort) */
     dbGet("turmas/"+encodeURIComponent(TURMA)+"/alunos/"+encodeURIComponent(alunoId), function(reg){
       reg=reg||{nome:nome,avatar:avatar}; reg.ultimo_acesso=(new Date()).toISOString();
       dbPut("turmas/"+encodeURIComponent(TURMA)+"/alunos/"+encodeURIComponent(alunoId), reg);
     });
-    montarMundo();
-    $("telaCapa").className="hidden"; $("telaMundo").className="";
-    window.scrollTo(0,0);
+    irHome();
   }
 
-  function montarMundo(){
-    var h="",i,j;
-    for(i=0;i<JOGOS.length;i++){ j=JOGOS[i];
-      if(j.soon || !j.link){
-        h+='<div class="jogo soon"><div class="em">'+j.em+'</div><div class="tt">'+esc(j.tt)+'</div><div class="ds">'+esc(j.ds)+' • em breve</div></div>';
-      } else {
-        h+='<a class="jogo" href="'+esc(j.link)+'"><div class="em">'+j.em+'</div><div class="tt">'+esc(j.tt)+'</div><div class="ds">'+esc(j.ds)+'</div></a>';
-      }
+  /* ---- HOME: mundos (catalogo dinamico) ---- */
+  function irHome(){
+    $("telaCapa").className="hidden"; $("telaMapa").className="hidden"; $("telaHome").className="";
+    $("oiNome").textContent=ALUNO.nome; $("oiAv").textContent=ALUNO.avatar||"🙂";
+    window.scrollTo(0,0);
+    var cache=lsGet("edumundo_catalogo");
+    if(cache){ CATALOGO=cache; renderMundos(); }
+    else { $("mundoGrid").innerHTML='<div class="spin">Carregando os mundos…</div>'; }
+    dbGet("catalogo/mundos", function(mundos){
+      CATALOGO=mundos||{}; lsSet("edumundo_catalogo", CATALOGO); renderMundos();
+    }, function(){ if(!cache){ CATALOGO={}; renderMundos(); } });
+  }
+  function renderMundos(){
+    var ids=porOrdem(CATALOGO||{});
+    if(!ids.length){ $("mundoGrid").innerHTML=""; $("homeVazio").className="aviso";
+      $("homeVazio").innerHTML="Os mundos estão sendo preparados… 🛠️<br><span style='font-size:12px'>Peça pro professor publicar as atividades.</span>"; return; }
+    $("homeVazio").className="aviso hidden";
+    var h="",i,m;
+    for(i=0;i<ids.length;i++){ m=CATALOGO[ids[i]]; var np=chaves(m.paradas||{}).length; var cor=m.cor||"#2a7bbf";
+      h+='<button class="mundo" data-mundo="'+esc(ids[i])+'" style="background:'+esc(cor)+';background:-webkit-linear-gradient(top,'+esc(cor)+',#0b2350);background:linear-gradient(180deg,'+esc(cor)+',#0b2350)">';
+      h+='<div class="cap"><div class="em">'+esc(m.emoji||"🗺️")+'</div><div class="tt">'+esc(m.nome||ids[i])+'</div></div>';
+      h+='<div class="bar">'+np+' parada'+(np===1?"":"s")+' • toque pra explorar</div></button>';
     }
     $("mundoGrid").innerHTML=h;
   }
 
+  /* ---- MAPA: paradas ---- */
+  var mundoAtual=null;
+  function progKey(mid){ return "edumundo_prog_"+TURMA+"_"+ALUNO.alunoId+"_"+mid; }
+  function getFeitas(mid){ var p=lsGet(progKey(mid)); return (p&&p.paradas)?p.paradas:{}; }
+  function marcarFeita(mid,pid){
+    var p=lsGet(progKey(mid))||{paradas:{}}; p.paradas[pid]=true; lsSet(progKey(mid),p);
+    /* espelha na nuvem (best-effort) */
+    dbPut("turmas/"+encodeURIComponent(TURMA)+"/alunos/"+encodeURIComponent(ALUNO.alunoId)+"/dados/progresso/"+encodeURIComponent(mid)+"/paradas/"+encodeURIComponent(pid), true);
+  }
+
+  function abrirMundo(mid){
+    mundoAtual=mid; var m=CATALOGO[mid]; if(!m) return;
+    $("telaHome").className="hidden"; $("telaMapa").className=""; window.scrollTo(0,0);
+    $("mapaTit").textContent=(m.emoji?m.emoji+" ":"")+(m.nome||mid);
+    var cor=m.cor||"#2a7bbf";
+    var ter=$("terreno");
+    ter.style.background="-webkit-linear-gradient(top,"+cor+",#0b3a63)";
+    ter.style.background="linear-gradient(180deg,"+cor+" 0%,#0e4e86 60%,#1f6fb0 100%)";
+    desenharMapa(m, mid);
+  }
+
+  function desenharMapa(m, mid){
+    var pids=porOrdem(m.paradas||{});
+    var feitas=getFeitas(mid);
+    /* trilha SVG ligando as paradas na ordem */
+    var pts=""; var i,p;
+    for(i=0;i<pids.length;i++){ p=m.paradas[pids[i]]; pts+=(p.x||50)+","+(p.y||50)+" "; }
+    var svg='<svg viewBox="0 0 100 100" preserveAspectRatio="none">'+
+            '<polyline points="'+pts+'" fill="none" stroke="rgba(255,255,255,.55)" stroke-width="1.1" stroke-dasharray="2.4,2.2" stroke-linecap="round"/></svg>';
+    /* medalhoes */
+    var html=svg, ultimaFeitaIdx=-1;
+    for(i=0;i<pids.length;i++){ p=m.paradas[pids[i]]; var fez=!!feitas[pids[i]]; if(fez) ultimaFeitaIdx=i;
+      var cls="parada"+(fez?" feita":"")+(p.soon||!p.link?" soon":"");
+      html+='<div class="'+cls+'" data-parada="'+esc(pids[i])+'" style="left:'+(p.x||50)+'%;top:'+(p.y||50)+'%">';
+      html+='<div class="med">'+esc(p.mascote||"⭐")+(fez?'<span class="ck">✓</span>':'')+((p.soon||!p.link)?'<span class="soonb">em breve</span>':'')+'</div>';
+      html+='<div class="lb">'+esc(p.titulo||"Parada")+'</div></div>';
+    }
+    /* token do avatar na parada atual (a proxima nao feita, ou a 1a) */
+    var idxToken=0; for(i=0;i<pids.length;i++){ if(!feitas[pids[i]]){ idxToken=i; break; } if(i===pids.length-1) idxToken=i; }
+    if(pids.length){ var pt=m.paradas[pids[idxToken]];
+      html+='<div class="token" id="token" style="left:'+(pt.x||50)+'%;top:'+(pt.y||50)+'%">'+esc(ALUNO.avatar||"🙂")+'</div>'; }
+    $("mapa").innerHTML='<div class="terreno" id="terreno2"></div>'+html;
+    /* re-aplica o fundo (o innerHTML apagou o terreno) */
+    var ter=$("terreno2"); var cor=m.cor||"#2a7bbf";
+    ter.style.background="linear-gradient(180deg,"+cor+" 0%,#0e4e86 60%,#1f6fb0 100%)";
+  }
+
+  function tocarParada(pid){
+    var m=CATALOGO[mundoAtual]; if(!m||!m.paradas||!m.paradas[pid]) return;
+    var p=m.paradas[pid];
+    /* anda o token ate a parada */
+    var tk=$("token"); if(tk){ tk.style.left=(p.x||50)+"%"; tk.style.top=(p.y||50)+"%"; }
+    if(p.soon || !p.link){
+      setTimeout(function(){ alert("A parada \""+(p.titulo||"")+"\" está sendo preparada. Em breve! 🛠️"); }, 300);
+      return;
+    }
+    marcarFeita(mundoAtual, pid);
+    setTimeout(function(){ window.location.href=p.link; }, 550);
+  }
+
   /* eventos */
   document.addEventListener("click", function(ev){
-    var el=ev.target; while(el && el!==document && !(el.className&&/\baluno\b/.test(el.className)&&el.getAttribute&&el.getAttribute("data-id"))){ el=el.parentNode; }
-    if(el && el.getAttribute && el.getAttribute("data-id")){ entrarMundo(el.getAttribute("data-id"), el.getAttribute("data-nm"), el.getAttribute("data-av")); }
+    var el=ev.target, n;
+    n=subir(el,"data-id"); if(n){ escolherAluno(n.getAttribute("data-id"), n.getAttribute("data-nm"), n.getAttribute("data-av")); return; }
+    n=subir(el,"data-mundo"); if(n){ abrirMundo(n.getAttribute("data-mundo")); return; }
+    n=subir(el,"data-parada"); if(n){ tocarParada(n.getAttribute("data-parada")); return; }
   });
+  function subir(el,attr){ while(el && el!==document){ if(el.getAttribute && el.getAttribute(attr)!=null && el.getAttribute(attr)!=="") return el; el=el.parentNode; } return null; }
   $("btnSair").onclick=function(){ try{ localStorage.removeItem("edumundo_sess_"+TURMA); }catch(e){} location.reload(); };
+  $("btnVoltar").onclick=function(){ irHome(); };
 
   boot();
 })();
