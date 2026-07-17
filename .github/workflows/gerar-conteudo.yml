@@ -1,0 +1,133 @@
+name: Gerar Conteudo (prova de API de LLM)
+
+# PROVA DE CONCEITO da leg "IA gera o conteudo" do EduVerse Studio.
+# Recebe o "formulario do professor" e chama a API de TEXTO do Gemini
+# (GEMINI_API_KEY, secret) para gerar uma MISSAO educativa em JSON,
+# ancorada na BNCC. Salva em _gerado/conteudo.json e commita.
+# Isso demonstra que a geracao de conteudo pode ser automatizada por API
+# (o "Gerar aventura" da visao), sem ninguem escrever a mao.
+
+on:
+  workflow_dispatch:
+    inputs:
+      ano:
+        description: "Ano escolar (ex: 1o ano)"
+        required: true
+        default: "1o ano"
+        type: string
+      disciplina:
+        description: "Disciplina"
+        required: true
+        default: "Matematica"
+        type: string
+      bncc:
+        description: "Objetivo BNCC (ex: EF01MA01)"
+        required: false
+        default: "EF01MA01"
+        type: string
+      tema:
+        description: "Tema/ambiente (ex: espacial, pirata, floresta)"
+        required: true
+        default: "espacial"
+        type: string
+      n_desafios:
+        description: "Quantidade de desafios"
+        required: false
+        default: "5"
+        type: string
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Gerar conteudo via Gemini (API de texto)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          ANO: ${{ inputs.ano }}
+          DISCIPLINA: ${{ inputs.disciplina }}
+          BNCC: ${{ inputs.bncc }}
+          TEMA: ${{ inputs.tema }}
+          N: ${{ inputs.n_desafios }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.error
+          key=os.environ.get("GEMINI_API_KEY","").strip()
+          if not key: raise SystemExit("::error::GEMINI_API_KEY vazio (configure o secret)")
+          ano=os.environ.get("ANO","1o ano"); disc=os.environ.get("DISCIPLINA","Matematica")
+          bncc=os.environ.get("BNCC","EF01MA01"); tema=os.environ.get("TEMA","espacial")
+          try: n=int(os.environ.get("N","5"))
+          except: n=5
+
+          prompt=(
+            "Voce e um roteirista + pedagogo de jogos educativos para escola publica brasileira. "
+            "Gere uma MISSAO de jogo educativo, em PORTUGUES do Brasil, adequada a: "
+            "ANO=%s, DISCIPLINA=%s, OBJETIVO BNCC=%s, TEMA/AMBIENTE=%s. "
+            "Filosofia: o aluno NAO responde perguntas em tela; ele vive uma aventura e aprende resolvendo "
+            "problemas do mundo (nunca parece prova). O personagem PERGUNTA, nunca entrega a resposta. "
+            "Calibrado para a faixa etaria (se 1o ano: nao-leitor, tarefas curtas, muita recompensa). "
+            "Responda APENAS um JSON valido (sem texto fora do JSON, sem markdown) com as chaves: "
+            "titulo (string), premissa (string: o problema do mundo que precisa da crianca), "
+            "objetivo_aprendizagem (string: o que a crianca aprende, ancorado na BNCC %s), "
+            "personagens (array de {nome, papel, fala_exemplo}), "
+            "desafios (array com %d itens, cada um {titulo, cenario, o_que_a_crianca_faz, habilidade}), "
+            "final (string: desfecho que fecha a historia). "
+            % (ano, disc, bncc, tema, bncc, n)
+          )
+
+          body=json.dumps({
+            "contents":[{"parts":[{"text":prompt}]}],
+            "generationConfig":{"temperature":0.8,"maxOutputTokens":2048}
+          }).encode("utf-8")
+
+          texto=None; usou=None; erros=[]
+          for model in ["gemini-2.5-flash","gemini-2.0-flash","gemini-1.5-flash","gemini-flash-latest"]:
+              url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(model,key)
+              req=urllib.request.Request(url, data=body, headers={"Content-Type":"application/json"})
+              try:
+                  with urllib.request.urlopen(req, timeout=120) as r:
+                      d=json.loads(r.read().decode("utf-8"))
+                  cand=(d.get("candidates") or [{}])[0]
+                  parts=(cand.get("content") or {}).get("parts") or []
+                  texto="".join(p.get("text","") for p in parts).strip()
+                  if texto:
+                      usou=model; print("Conteudo gerado com o modelo:", model); break
+                  erros.append("%s: resposta sem texto"%model)
+              except urllib.error.HTTPError as e:
+                  erros.append("%s: HTTP %s %s"%(model, e.code, e.read().decode("utf-8","ignore")[:200]))
+              except Exception as e:
+                  erros.append("%s: %s"%(model, str(e)[:200]))
+
+          if not texto:
+              raise SystemExit("::error::Gemini nao retornou conteudo. Tentativas: "+" | ".join(erros))
+
+          # tira cerca de markdown se vier
+          t=texto.strip()
+          if t.startswith("```"):
+              t=t.split("```",2)
+              t=t[1] if len(t)>1 else texto
+              if t.lstrip().lower().startswith("json"): t=t.lstrip()[4:]
+          t=t.strip()
+          os.makedirs("_gerado", exist_ok=True)
+          # tenta validar como JSON; se falhar, salva o texto cru p/ inspecao honesta
+          saida={"_meta":{"ano":ano,"disciplina":disc,"bncc":bncc,"tema":tema,"n_desafios":n,"modelo":usou}}
+          try:
+              saida["conteudo"]=json.loads(t)
+              print("JSON valido gerado pela API.")
+          except Exception as e:
+              saida["conteudo_texto_cru"]=texto
+              saida["_aviso"]="A API respondeu, mas nao veio JSON perfeito (%s) - salvei o texto cru."%str(e)[:120]
+              print("Aviso:", saida["_aviso"])
+          open("_gerado/conteudo.json","w",encoding="utf-8").write(json.dumps(saida, ensure_ascii=False, indent=2))
+          print("=== PREVIA ==="); print(json.dumps(saida, ensure_ascii=False, indent=2)[:1800])
+          PY
+
+      - name: Commit do conteudo gerado
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "github-actions"
+          git add _gerado/conteudo.json
+          git commit -m "[conteudo] gera missao via API de texto do Gemini (prova de conceito)" || echo "nada novo"
+          git push || echo "push falhou"
