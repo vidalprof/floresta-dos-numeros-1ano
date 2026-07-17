@@ -349,9 +349,15 @@ aprende + roteirista + diretor de arte + arquiteto de dados) monta história e o
   pintado + mar, que o Marcos amou). Reusar: byte_pirata, mar, barril, baú/baú-tesouro, convés. Faltando
   (gerar via workflow): poses do Byte pirata (ou solução SUAVE sem perna), objetos de contagem temáticos
   (moedas, laranjas, bombas...), partes do navio, NPCs (papagaio/lobo-do-mar).
-- **LAYOUT — 2 opções (Marcos):** (A) o próprio NAVIO com as paradas = partes do navio (convés, cesto da
-  gávea, canhões, porão, velas, leme...). (B) SE o navio não comportar bem as paradas → uma ILHA no meio do
-  mar com várias paradas, e o NAVIO sendo a ÚLTIMA parada. Escolher o que fluir melhor no motor.
+- **LAYOUT — DECISÃO (Marcos, jul/2026): usar a ILHA, não o convés.** Tentamos primeiro (A) o NAVIO como mundo
+  (convés visto de cima), mas ficou APERTADO e a perspectiva 3/4 (mesma da floresta) BRIGA com um convés chapado
+  (o mastro virou "navio dentro do navio"). DECISÃO = (B): o mundo é uma **ILHA no meio do mar** (praia/areia,
+  palmeiras, caminho, paradas espalhadas — igual à floresta, que combina com a câmera 3/4), e o **NAVIO é a
+  ÚLTIMA parada/destino** (explora a ilha preparando tudo → no fim embarca/zarpa pra Ilha do Tesouro). A câmera
+  NÃO muda (3/4 já é ótima); só o CENÁRIO vira ILHA (encaixa nela). Os engenheiros propuseram as 2 opções e
+  recomendaram a (A) só por ser + rápida (reuso 100%); ao VER, a (B) é mais bonita = iteração normal, não erro.
+  RECONSTRUIR o navio-pirata como ILHA: praia (areia/mar/palmeiras), paradas como pontos da ilha, o navio como
+  cena final. Reusa a força do motor de mundo aberto (floresta/pomar).
 - **DINÂMICA das paradas (Marcos):** com POPUP — o aluno chega numa parada, **ajuda ALGUÉM do mundo**
   (um NPC) resolvendo a atividade; essa pessoa **dá uma RECOMPENSA**; o aluno **conserta/destrava algo** e
   **avança** pra próxima parada. (É o loop tarefa→ajuda alguém→recompensa→avança, com a atividade premium no
