@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Ilha Pirata Voxel — TESTE (leve)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#a9dcf0;font-family:system-ui,Arial;touch-action:none}
+  #fps{position:fixed;left:10px;top:10px;z-index:9;background:rgba(10,25,40,.72);color:#8ef2b0;
+    font:800 16px monospace;padding:8px 12px;border-radius:10px}
+  #ajuda{position:fixed;left:0;right:0;bottom:12px;z-index:9;text-align:center;color:#0e2a3a;
+    font:700 15px system-ui;text-shadow:0 1px 2px rgba(255,255,255,.6)}
+  #joy{position:fixed;right:16px;bottom:16px;z-index:9;display:grid;grid-template-columns:repeat(3,54px);
+    grid-template-rows:repeat(3,54px);gap:5px;opacity:.9}
+  #joy button{border:0;border-radius:12px;background:rgba(20,40,60,.55);color:#fff;font:800 22px system-ui;
+    -webkit-user-select:none;user-select:none;touch-action:none}
+  #joy button:active{background:rgba(20,40,60,.85)}
+  .sp{visibility:hidden}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+</head><body>
+<div id="fps">FPS: --</div>
+<div id="ajuda">Use as <b>setas</b> ou <b>W A S D</b> (ou os botões) para o Verso andar pela ilha</div>
+<div id="joy">
+  <span class="sp"></span><button data-k="up">▲</button><span class="sp"></span>
+  <button data-k="left">◀</button><span class="sp"></span><button data-k="right">▶</button>
+  <span class="sp"></span><button data-k="down">▼</button><span class="sp"></span>
+</div>
+<script type="module">
+import * as THREE from 'three';
+const W=window.innerWidth,H=window.innerHeight;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#a9dcf0');
+scene.fog=new THREE.Fog('#a9dcf0',30,70);
+const camera=new THREE.PerspectiveCamera(46,W/H,0.1,200);
+const renderer=new THREE.WebGLRenderer({antialias:false,powerPreference:'low-power'});
+renderer.setPixelRatio(1);
+function resize(){const w=window.innerWidth,h=window.innerHeight;camera.aspect=w/h;camera.updateProjectionMatrix();
+  renderer.domElement.style.width=w+'px';renderer.domElement.style.height=h+'px';
+  renderer.setSize(Math.round(w*0.75),Math.round(h*0.75),false);}
+document.body.appendChild(renderer.domElement); resize(); addEventListener('resize',resize);
+
+const C={grass:0x6fbf49,grass2:0x63b043,sand:0xe6d08a,sand2:0xdcc47e,dirt:0xa9784b,
+  wood:0x8a5a2a,leaf:0x3e9d54,leaf2:0x369049,gold:0xf2c14e,dark:0x22303a,blue:0x62c8e6,blue2:0x4aa6cc,red:0xc9382f};
+const FACES=[
+ {n:[0,1,0], c:[[0,1,0],[0,1,1],[1,1,1],[1,1,0]], s:1.00},
+ {n:[0,-1,0],c:[[0,0,1],[0,0,0],[1,0,0],[1,0,1]], s:0.45},
+ {n:[1,0,0], c:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]], s:0.72},
+ {n:[-1,0,0],c:[[0,0,1],[0,1,1],[0,1,0],[0,0,0]], s:0.66},
+ {n:[0,0,1], c:[[1,0,1],[1,1,1],[0,1,1],[0,0,1]], s:0.85},
+ {n:[0,0,-1],c:[[0,0,0],[0,1,0],[1,1,0],[1,0,0]], s:0.58},
+];
+function mesh(blocks){
+  const set=new Set(blocks.map(b=>b.x+','+b.y+','+b.z));
+  const pos=[],col=[],idx=[];let v=0;const cc=new THREE.Color();
+  for(const b of blocks){for(const f of FACES){
+    if(set.has((b.x+f.n[0])+','+(b.y+f.n[1])+','+(b.z+f.n[2])))continue;
+    for(const c of f.c){pos.push(b.x+c[0],b.y+c[1],b.z+c[2]);cc.setHex(b.col);col.push(cc.r*f.s,cc.g*f.s,cc.b*f.s);}
+    idx.push(v,v+1,v+2,v,v+2,v+3);v+=4;}}
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  g.setIndex(idx);g.computeBoundingSphere();return g;
+}
+const MAT=new THREE.MeshBasicMaterial({vertexColors:true});
+
+const N=24,R=9.5,cx=(N/2)|0,cz=(N/2)|0,world=[];
+function h_at(x,z){const d=Math.hypot(x-cx,z-cz);if(d<R-2.5)return 3;if(d<R-0.6)return 2;if(d<R)return 1;return 0;}
+for(let x=0;x<N;x++)for(let z=0;z<N;z++){const h=h_at(x,z);if(!h)continue;
+  for(let y=0;y<h;y++){let col;if(y===h-1)col=h>=3?((x+z)%2?C.grass:C.grass2):((x+z)%2?C.sand:C.sand2);else col=(h>=3&&y>=1)?C.dirt:C.sand;
+    world.push({x,y,z,col});}}
+function palm(px,pz){for(let y=3;y<6;y++)world.push({x:px,y,z:pz,col:C.wood});
+  const ty=6;for(const[dx,dz]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]])world.push({x:px+dx,y:ty,z:pz+dz,col:(dx+dz)%2?C.leaf:C.leaf2});
+  world.push({x:px,y:ty+1,z:pz,col:C.leaf});}
+palm(cx-5,cz-4);palm(cx+5,cz+5);palm(cx-6,cz+5);palm(cx+5,cz-5);
+for(const[dx,dz]of[[0,0],[1,0]]){world.push({x:cx+4+dx,y:3,z:cz-5+dz,col:C.wood});world.push({x:cx+4+dx,y:4,z:cz-5+dz,col:C.gold});}
+scene.add(new THREE.Mesh(mesh(world),MAT));
+
+// água
+const water=new THREE.Mesh(new THREE.PlaneGeometry(90,90),new THREE.MeshBasicMaterial({color:0x2e86c8,transparent:true,opacity:0.72}));
+water.rotation.x=-Math.PI/2;water.position.set(cx,1.7,cz);scene.add(water);
+
+// VERSO (mesh próprio, anda)
+const vm=new Map(),put=(x,y,z,c)=>vm.set(x+'|'+y+'|'+z,{x,y,z,col:c});
+put(0,0,0,C.blue2);put(2,0,0,C.blue2);
+for(let x=0;x<3;x++)for(let y=1;y<5;y++)for(let z=0;z<2;z++)put(x,y,z,C.blue);
+put(0,5,0,C.blue);put(2,5,0,C.blue);
+put(0,3,1,C.dark);put(2,3,1,C.dark);
+put(0,4,1,C.red);put(1,4,1,C.red);put(2,4,1,C.red);
+const verso=new THREE.Mesh(mesh([...vm.values()]),MAT);
+verso.geometry.translate(-1.5,0,-1); // centro na base
+const vpos={x:cx,z:cz}; verso.position.set(vpos.x,3,vpos.z); scene.add(verso);
+
+// gaivotas
+const gulls=new THREE.InstancedMesh(new THREE.BoxGeometry(0.5,0.25,0.5),new THREE.MeshBasicMaterial({color:0xf6f6f6}),4);
+scene.add(gulls);
+
+// input
+const keys={};
+addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;});
+addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false;});
+const map={up:'arrowup',down:'arrowdown',left:'arrowleft',right:'arrowright'};
+document.querySelectorAll('#joy button').forEach(b=>{const k=map[b.dataset.k];
+  const on=e=>{e.preventDefault();keys[k]=true;},off=e=>{e.preventDefault();keys[k]=false;};
+  b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointerleave',off);});
+
+const mtx=new THREE.Matrix4();
+let t=0,frames=0,acc=0,last=performance.now();
+const fpsEl=document.getElementById('fps');
+function loop(){
+  const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+=dt;
+  // andar
+  let dx=0,dz=0;
+  if(keys['arrowup']||keys['w'])dz-=1; if(keys['arrowdown']||keys['s'])dz+=1;
+  if(keys['arrowleft']||keys['a'])dx-=1; if(keys['arrowright']||keys['d'])dx+=1;
+  let moving=dx||dz;
+  if(moving){const n=Math.hypot(dx,dz);dx/=n;dz/=n;const sp=5*dt;
+    let nx=vpos.x+dx*sp,nz=vpos.z+dz*sp;
+    if(Math.hypot(nx-cx,nz-cz)<R-1.3){vpos.x=nx;vpos.z=nz;}}
+  verso.position.set(vpos.x,3+(moving?Math.abs(Math.sin(t*10))*0.25:Math.sin(t*3)*0.05),vpos.z);
+  // câmera segue
+  camera.position.set(vpos.x+13,13,vpos.z+14);
+  camera.lookAt(vpos.x,3.5,vpos.z);
+  water.position.y=1.7+Math.sin(t*1.5)*0.04;
+  for(let i=0;i<4;i++){mtx.makeTranslation(cx+Math.cos(t*0.3+i)*10,9+Math.sin(t*2+i)*0.4,cz+Math.sin(t*0.3+i)*10);gulls.setMatrixAt(i,mtx);}
+  gulls.instanceMatrix.needsUpdate=true;
+  renderer.render(scene,camera);
+  frames++;acc+=now-last;last=now;
+  if(acc>=500){const fps=Math.round(frames*1000/acc);fpsEl.textContent='FPS: '+fps+'  ·  '+renderer.info.render.triangles+' tri';frames=0;acc=0;window.__fps=fps;}
+  window.__stats={calls:renderer.info.render.calls,tris:renderer.info.render.triangles};
+  requestAnimationFrame(loop);
+}
+loop();
+window.__ready=true;
+</script>
+</body></html>
