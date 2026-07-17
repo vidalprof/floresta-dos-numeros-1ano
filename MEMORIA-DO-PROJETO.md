@@ -771,3 +771,15 @@ REGRAS DE OURO (obrigatórias, nunca furar):
    (tem que dar ~72) e `wc -l MEMORIA` (~740+) -> só então seguir.
 4. O hook `.claude/hooks/sync-remoto.sh` foi endurecido pra AUTO-restaurar no início da sessão
    (fetch --force + reset --hard pro tip real do GitHub) — assim isso vira automático, não manual.
+
+## 🚀 PUBLICADO PRA TESTE (Marcos: "faça tudo, deixe pronto") — 2026-07-17
+Tudo no ar via Fábrica (dispatch com ref=claude branch, source_dir por site):
+- educaverso  -> https://vidalprof.github.io/educaverso/  (aluno; Verso integrado)
+- painel-prof -> https://vidalprof.github.io/painel-prof/  (senha vidal2026; cria turmas/alunos + mundos/paradas)
+- navio-pirata-> https://vidalprof.github.io/navio-pirata/  (atividade de numeros; 1a parada da Ilha)
+Regras do Firebase republicadas pelo Marcos (agora cobrem /catalogo). semear-catalogo.yml (na main)
+rodou OK (run 29576419440): semeou /catalogo/mundos/ilha-pirata (fogueira=jogavel, resto "em breve")
++ criou turma-mestra /turmas/teste (Ana/Bento/Clara). LINK DE TESTE: educaverso/?t=teste.
+FASE SEGUINTE = LAPIDAR (Marcos: "depois verificamos e lapidamos"): estagios do mascote (fofo->descolado),
+animacao viva do Verso (respira/pisca/pula), a Ilha completa (7 paradas com jogo/historia/vozes),
+ajustar coordenadas das paradas na arte da ilha.
