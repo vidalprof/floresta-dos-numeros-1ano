@@ -134,6 +134,10 @@ class Mundo extends Phaser.Scene {
     this.dir = 'down'; this._passoT = 0; this._forc = null;
     this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys('W,A,S,D');
+    // NÃO roubar as teclas do campo de NOME (Phaser dá preventDefault em W/A/S/D/setas
+    // e algumas letras não digitavam). O jogo ainda LÊ as teclas; só não bloqueia o DOM.
+    this.input.keyboard.clearCaptures();
+    this.input.keyboard.disableGlobalCapture();
 
     this.physics.world.setBounds(0, 0, WW, WH);
     this.cameras.main.setBounds(0, 0, WW, WH).setZoom(ZOOM).startFollow(this.hero, true, 0.12, 0.12);
