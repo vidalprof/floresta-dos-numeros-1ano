@@ -162,29 +162,66 @@ const TEMA={
  conves:{t1:0x8a5a2a,t2:0x7c4d22,s1:0x6b4020,s2:0x5f3a1a,bg:0x8fb8d8,fog:[36,84]},
  camara:{t1:0x5a4a3a,t2:0x50412f,s1:0x6a5230,s2:0x5f4a2a,bg:0x140f0a,fog:[14,46]}};
 function h_at(x,z){const d=Math.hypot(x-cx,z-cz);if(d<R-2.5)return 3;if(d<R-0.6)return 2;if(d<R)return 1;return 0;}
-function terreno(tm){const w=[];for(let x=0;x<N;x++)for(let z=0;z<N;z++){const h=h_at(x,z);if(!h)continue;
-  for(let y=0;y<h;y++){let c;if(y===h-1)c=h>=3?((x+z)%2?tm.t1:tm.t2):((x+z)%2?tm.s1:tm.s2);else c=(h>=3&&y>=1)?0x5a4028:tm.s2;w.push({x,y,z,col:c});}}
+function esc(hex,f){const c=new THREE.Color(hex);return new THREE.Color(c.r*f,c.g*f,c.b*f).getHex();}
+let waterM=null,foamM=null;
+function terreno(tm){const w=[];const dentro=(tm===TEMA.gruta||tm===TEMA.camara);
+  for(let x=0;x<N;x++)for(let z=0;z<N;z++){const h=h_at(x,z);if(!h)continue;
+    for(let y=0;y<h;y++){let c;
+      if(y===h-1){c=h>=3?((x+z)%2?tm.t1:tm.t2):((x+z)%2?tm.s1:tm.s2);
+        const rr=(x*73+z*31)%97;if(rr<9)c=esc(c,0.86);else if(rr>91)c=esc(c,1.08);}   // VARIAÇÃO no chão (mancha natural)
+      else c=(h>=3&&y>=1)?0x5a4028:tm.s2;w.push({x,y,z,col:c});}}
+  // tufinhos de grama / pedrinhas (decoração que NÃO parece item contável)
+  if(!dentro){for(let k=0;k<10;k++){const a=k*1.7,r=3+(k*37%50)/50*(R-5);const tx=Math.round(cx+Math.cos(a)*r),tz=Math.round(cz+Math.sin(a)*r);
+    if(h_at(tx,tz)===3)w.push({x:tx,y:3,z:tz,col:esc(tm.t1,0.75)});}}
   mundoG.add(new THREE.Mesh(mesh(w),MAT));
-  // água
-  const water=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshBasicMaterial({color:0x3a93cf}));
-  water.rotation.x=-Math.PI/2;water.position.set(cx,1.7,cz);mundoG.add(water);}
+  // água + ESPUMA de onda pulsando na beira
+  waterM=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshBasicMaterial({color:dentro?0x14202e:0x3a93cf}));
+  waterM.rotation.x=-Math.PI/2;waterM.position.set(cx,1.7,cz);mundoG.add(waterM);
+  if(!dentro){const fg=new THREE.BoxGeometry(1,0.16,1);const fmat=new THREE.MeshBasicMaterial({color:0xdff3ff,transparent:true,opacity:0.45});
+    const fm=new THREE.InstancedMesh(fg,fmat,140);let fi=0;const m4=new THREE.Matrix4();
+    for(let x=0;x<N;x++)for(let z=0;z<N;z++){const d=Math.hypot(x-cx,z-cz);if(d>R-0.9&&d<R+0.6&&fi<140){m4.makeTranslation(x,1.78,z);fm.setMatrixAt(fi++,m4);}}
+    fm.count=fi;mundoG.add(fm);foamM=fm;}else foamM=null;}
+let colisores=[];   // {x,z,r} — o Verso NÃO atravessa (bug que o Marcos pegou: passava pelo baú)
 function palmeira(px,pz){const w=[];for(let y=3;y<6;y++)w.push({x:px,y,z:pz,col:0x8a5a2a});
   for(const[dx,dz]of[[0,0],[1,0],[-1,0],[0,1],[0,-1],[1,1],[-1,-1],[1,-1],[-1,1]])w.push({x:px+dx,y:6,z:pz+dz,col:(dx+dz)%2?0x3e9d54:0x369049});
-  w.push({x:px,y:7,z:pz,col:0x3e9d54});const m=new THREE.Mesh(mesh(w),MAT);mundoG.add(m);}
-function bloco(w,h,d,hex,x,y,z){const me=part(w,h,d,hex);me.position.set(x,y,z);mundoG.add(me);return me;}
+  w.push({x:px,y:7,z:pz,col:0x3e9d54});const m=new THREE.Mesh(mesh(w),MAT);mundoG.add(m);
+  colisores.push({x:px+0.5,z:pz+0.5,r:1.0});}
+function bloco(w,h,d,hex,x,y,z,solido){const me=part(w,h,d,hex);me.position.set(x,y,z);mundoG.add(me);
+  if(solido)colisores.push({x:x,z:z,r:Math.max(w,d)*0.55+0.35});
+  return me;}
+// ---- props CAPRICHADOS (baú parece baú, barco parece barco — pedido do Marcos) ----
+function colocaBau(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:3+y,z:pz+z,col:c});
+  for(let x=0;x<5;x++)for(let y=0;y<2;y++)for(let z=0;z<3;z++)P(x,y,z,(x===1||x===3)?0x3a2614:0x6a3d25); // corpo + cintas escuras
+  for(let x=0;x<5;x++)for(let z=0;z<3;z++)P(x,2,z,(x===1||x===3)?0x4a2e18:0x7a4527);                     // tampa (base)
+  for(let x=1;x<4;x++)for(let z=0;z<3;z++)P(x,3,z,0x7a4527);                                             // tampa (curva)
+  P(2,1,3,0xf2c14e);P(2,2,3,0xd9a21e);                                                                    // cadeado de ouro
+  P(0,0,3,0xb08a4a);P(4,0,3,0xb08a4a);                                                                    // ferragens
+  mundoG.add(new THREE.Mesh(mesh(w),MAT));colisores.push({x:px+2.5,z:pz+1.5,r:2.6});}
+function colocaBarco(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:2+y,z:pz+z,col:c});
+  for(let x=0;x<6;x++)for(let z=0;z<3;z++)P(x,0,z,0x5f3a22);                                             // fundo do casco
+  for(let x=0;x<6;x++)for(const z of[0,2])P(x,1,z,0x6a3d25);                                             // laterais
+  for(const x of[0,5])P(x,1,1,0x6a3d25);                                                                  // popa/proa fecham
+  P(-1,1,1,0x7a4527);P(6,1,1,0x7a4527);                                                                   // bicos
+  for(let z=0;z<3;z++)P(2,1,z,0x8a5230);                                                                  // banquinho
+  for(const x of[0,2,4])P(x,2,-0.0,0);                                                                    // (nada)
+  mundoG.add(new THREE.Mesh(mesh(w.filter(b=>b.col)),MAT));colisores.push({x:px+3,z:pz+1.5,r:3.0});}
+function colocaFarol(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:2+y,z:pz+z,col:c});
+  for(let y=0;y<7;y++)for(let x=0;x<2;x++)for(let z=0;z<2;z++)P(x,y,z,(y%2)?0xf3ede0:0xc9382f);           // torre listrada
+  P(0,0,2,0x4a2e18);P(1,0,2,0x4a2e18);                                                                    // porta
+  P(0,3,2,0x1a2a3a);P(1,3,2,0x1a2a3a);                                                                    // janela
+  for(let x=-0.0;x<2;x++)for(let z=0;z<2;z++)P(x,7,z,0xffe08a);                                           // luz
+  for(let x=0;x<2;x++)for(let z=0;z<2;z++)P(x,8,z,0xc9382f);                                              // teto
+  mundoG.add(new THREE.Mesh(mesh(w),MAT));colisores.push({x:px+1,z:pz+1,r:1.9});}
 function props(idx){
-  if(idx===0){palmeira(cx-6,cz-5);palmeira(cx+6,cz+6);palmeira(cx-6,cz+6);
-    bloco(4,1.4,2,0x6a3d25,cx,2.4,cz+9);bloco(4,0.6,2.2,0x8a5230,cx,3.2,cz+9);}                 // barquinho
-  else if(idx===1){palmeira(cx-7,cz+6);
-    for(let y=2;y<9;y++)bloco(1.6,1,1.6,y%2?0xf3ede0:0xc9382f,cx+7,y+0.5,cz-6);                  // farol listrado
-    bloco(2.2,1,2.2,0xffe08a,cx+7,9.5,cz-6);}                                                     // luz do farol
-  else if(idx===2){for(const[sx,sz]of[[cx-5,cz-4],[cx+5,cz+4],[cx,cz-6],[cx+6,cz-3]]){          // estalactites
+  if(idx===0){palmeira(cx-6,cz-5);palmeira(cx+6,cz+6);palmeira(cx-6,cz+6);colocaBarco(cx-3,cz+8);}
+  else if(idx===1){palmeira(cx-7,cz+6);colocaFarol(cx+6,cz-7);}
+  else if(idx===2){for(const[sx,sz]of[[cx-5,cz-4],[cx+5,cz+4],[cx,cz-6],[cx+6,cz-3]]){                   // estalactites (teto)
       for(let y=0;y<3;y++)bloco(1.4-y*0.3,1,1.4-y*0.3,0x6b6f78,sx,10-y,sz);}}
-  else if(idx===3){for(let y=3;y<9;y++)bloco(0.7,1,0.7,0x5a3a22,cx,y+0.5,cz-6);                  // mastro
-    bloco(0.6,4,4,0xf3ede0,cx-2.5,7,cz-6);                                                        // vela
-    for(let z=-8;z<=8;z+=2)bloco(0.5,1.2,0.5,0x6a4a2a,cx-9,3.6,cz+z);}                            // amurada
-  else if(idx===4){bloco(3,1.4,2,0x6a3d25,cx,3.4,cz-5);bloco(3,0.7,2.2,0xf2c14e,cx,4.3,cz-5);    // baú
-    for(const[sx,sz]of[[cx-6,cz+4],[cx+6,cz+4]]){bloco(0.4,3,0.4,0x5a3d22,sx,4.5,sz);bloco(0.7,0.7,0.7,0xf7dd55,sx,6.2,sz);}}// tochas
+  else if(idx===3){for(let y=3;y<9;y++)bloco(0.7,1,0.7,0x5a3a22,cx,y+0.5,cz-6,y===3);                    // mastro (sólido)
+    bloco(0.6,4,4,0xf3ede0,cx-2.5,7,cz-6);                                                                // vela
+    for(let z=-8;z<=8;z+=2)bloco(0.5,1.2,0.5,0x6a4a2a,cx-9,3.6,cz+z,true);}                               // amurada (sólida)
+  else if(idx===4){colocaBau(cx-2,cz-7);
+    for(const[sx,sz]of[[cx-5,cz-6],[cx+5,cz-6],[cx,cz+6]]){bloco(0.4,3,0.4,0x5a3d22,sx,4.5,sz,true);bloco(0.7,0.7,0.7,0xf7dd55,sx,6.2,sz);}}// tochas ILUMINAM o baú
 }
 
 // ---------- estado / paradas ----------
@@ -215,7 +252,8 @@ const vpos={x:cx,z:cz};
 
 function limparMundo(){
   for(const c of mundoG.children.slice()){mundoG.remove(c);if(c.geometry&&c.geometry.dispose)c.geometry.dispose();}
-  objetos=[];hits=[];}
+  objetos=[];hits=[];colisores=[];}
+function livre(nx,nz){for(const c of colisores){if(Math.hypot(nx-c.x,nz-c.z)<c.r+0.55)return false;}return true;}
 function espalhar(n){const pts=[];for(let i=0;i<n;i++){const a=i*2.399963;
   let r=(R-2.2)*Math.sqrt((i+0.6)/n);r=Math.max(2.6,r);   // nunca nasce colado no Verso (senão conta sozinho ao abrir)
   pts.push([cx+Math.cos(a)*r,cz+Math.sin(a)*r]);}return pts;}
@@ -232,10 +270,47 @@ function montarParada(i){
   contEl.textContent=od.ic+' 0/'+P.n;
   falaEl.innerHTML=P.abre;
   el('balao').style.display='';
+  falarByte('vx_p'+(i+1)+'_abre');                      // o Byte NARRA o problema (Antonio)
+  ambientePorTema();                                    // mar/vento fora; rumor grave na gruta/câmara
 }
 
 // ---------- som ----------
-let AC=null,mg=null;function initA(){if(AC)return;try{AC=new(window.AudioContext||window.webkitAudioContext)();mg=AC.createGain();mg.gain.value=0.5;mg.connect(AC.destination);}catch(e){}}
+let AC=null,mg=null;function initA(){if(AC)return;try{AC=new(window.AudioContext||window.webkitAudioContext)();mg=AC.createGain();mg.gain.value=0.5;mg.connect(AC.destination);iniciarAmbiente();}catch(e){}}
+
+// VOZ do Antonio (arquivos gerados por workflow — nunca a voz do navegador)
+let vozNum=null,vozFala=null;
+function voz(id){try{const a=new Audio('audio/'+id+'.mp3');a.volume=0.95;return a;}catch(e){return null;}}
+function falarNum(n){try{if(vozNum){vozNum.pause();}vozNum=voz('vx_n'+n);if(vozNum)vozNum.play().catch(()=>{});}catch(e){}}
+function falarByte(id){try{if(vozFala){vozFala.pause();}vozFala=voz(id);if(vozFala)vozFala.play().catch(()=>{});}catch(e){}}
+
+// AMBIENTE sintetizado (Web Audio, sem arquivo): mar + vento + gaivotas / gruta
+let amb=null;
+function iniciarAmbiente(){if(amb||!AC)return;amb={};
+  const buf=AC.createBuffer(1,AC.sampleRate*2,AC.sampleRate);const d=buf.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  function ruido(freq,q,vol,lfoHz,lfoAmp){const s=AC.createBufferSource();s.buffer=buf;s.loop=true;
+    const f=AC.createBiquadFilter();f.type='bandpass';f.frequency.value=freq;f.Q.value=q;
+    const g=AC.createGain();g.gain.value=vol;
+    const lfo=AC.createOscillator();lfo.frequency.value=lfoHz;const lg=AC.createGain();lg.gain.value=lfoAmp;
+    lfo.connect(lg);lg.connect(g.gain);s.connect(f);f.connect(g);g.connect(mg);s.start();lfo.start();
+    return {g,alvo:vol};}
+  amb.mar=ruido(520,0.8,0.05,0.09,0.03);      // vaivém do mar
+  amb.espuma=ruido(2200,1.2,0.016,0.13,0.01); // espuma
+  amb.vento=ruido(480,6,0.02,0.05,0.014);     // vento que sopra e cala
+  amb.grave=ruido(90,2,0.0,0.1,0.004);        // rumor grave (gruta/câmara)
+  // gaivotas de vez em quando (glissando descendente)
+  amb.gaivotaTimer=setInterval(()=>{if(!amb.gaivotasOn)return;if(Math.random()<0.5)return;
+    for(let k=0;k<1+(Math.random()*2|0);k++){setTimeout(()=>{if(!AC)return;
+      const o=AC.createOscillator(),g=AC.createGain();o.type='triangle';
+      const t=AC.currentTime;o.frequency.setValueAtTime(1150,t);o.frequency.exponentialRampToValueAtTime(680,t+0.16);
+      g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(0.04,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.22);
+      o.connect(g);g.connect(mg);o.start(t);o.stop(t+0.25);},k*260);}},9000);
+  ambientePorTema();}
+function ambientePorTema(){if(!amb)return;const tema=PARADAS[paradaIdx].tema;
+  const dentro=(tema==='gruta'||tema==='camara');
+  const alvo={mar:dentro?0.008:0.05,espuma:dentro?0:0.016,vento:dentro?0.006:0.02,grave:dentro?0.02:0.0};
+  for(const k of['mar','espuma','vento','grave'])amb[k].g.gain.setTargetAtTime(alvo[k],AC.currentTime,1.2);
+  amb.gaivotasOn=!dentro;}
 const PENT=[523,587,659,784,880,1047,1175,1319,1397,1568];
 function bip(f,d,ty,v){if(!AC)return;const o=AC.createOscillator(),g=AC.createGain();o.type=ty||'triangle';o.frequency.value=f;
   const t=AC.currentTime;g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v||0.25,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.2));
@@ -249,12 +324,16 @@ function salvar(){try{if(window.EduSave){const prog={nome:nome,turma:turma,parad
     EduSave.salvar(turma,nome,base,function(){});});}}catch(e){}}
 function contarObj(idx){if(travado)return;const m=objetos[idx];if(!m||m.userData.done)return;m.userData.done=true;m.userData.pop=1;
   contados++;contEl.textContent=OBJ[PARADAS[paradaIdx].item].ic+' '+contados+'/'+alvo;
-  bip(PENT[Math.min(contados-1,PENT.length-1)],0.18,'triangle',0.28);
+  bip(PENT[Math.min(contados-1,PENT.length-1)],0.14,'triangle',0.2);
+  falarNum(contados);                                   // a criança OUVE o número (Antonio), pausado
   if(contados>=alvo)vitoria();}
 function vitoria(){travado=true;const P=PARADAS[paradaIdx];falaEl.innerHTML=P.acerto;fanfarra();salvar();
-  const v=el('vit');el('vnum').textContent=alvo;el('vtit').textContent='São '+alvo+' '+P.nome.replace('A ','').replace('O ','')+'!';
+  setTimeout(()=>falarByte('vx_p'+(paradaIdx+1)+'_ok'),650);   // deixa o número soar antes do Byte comemorar
+  const v=el('vit');el('vnum').textContent=alvo;
   el('vtit').textContent='São '+alvo+'!';el('vsub').textContent=P.acerto;v.classList.remove('hidden');
-  setTimeout(()=>{v.classList.add('hidden');if(paradaIdx>=PARADAS.length-1){el('fim').classList.remove('hidden');}else{montarParada(paradaIdx+1);}},3600);}
+  setTimeout(()=>{v.classList.add('hidden');
+    if(paradaIdx>=PARADAS.length-1){el('fim').classList.remove('hidden');falarByte('vx_fim');}
+    else{montarParada(paradaIdx+1);}},4400);}
 
 // ---------- input ----------
 const keys={};addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;initA();});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
@@ -286,13 +365,20 @@ function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+
   const cs=Math.sin(camAngle),cc=Math.cos(camAngle);let dx=0,dz=0;
   if(keys['arrowup']||keys['w']){dx-=cs;dz-=cc;}if(keys['arrowdown']||keys['s']){dx+=cs;dz+=cc;}
   if(keys['arrowleft']||keys['a']){dx-=cc;dz+=cs;}if(keys['arrowright']||keys['d']){dx+=cc;dz-=cs;}
-  const moving=dx||dz;if(moving&&!travado){const n=Math.hypot(dx,dz);dx/=n;dz/=n;const sp=6*dt;const nx=vpos.x+dx*sp,nz=vpos.z+dz*sp;if(Math.hypot(nx-cx,nz-cz)<R-1.4){vpos.x=nx;vpos.z=nz;}}
+  const moving=dx||dz;if(moving&&!travado){const n=Math.hypot(dx,dz);dx/=n;dz/=n;const sp=6*dt;
+    const nx=vpos.x+dx*sp,nz=vpos.z+dz*sp;
+    // colisão com props + borda da ilha; se bater, tenta DESLIZAR num eixo só
+    if(Math.hypot(nx-cx,nz-cz)<R-1.4&&livre(nx,nz)){vpos.x=nx;vpos.z=nz;}
+    else if(Math.hypot(nx-cx,vpos.z-cz)<R-1.4&&livre(nx,vpos.z)){vpos.x=nx;}
+    else if(Math.hypot(vpos.x-cx,nz-cz)<R-1.4&&livre(vpos.x,nz)){vpos.z=nz;}}
   for(let i=0;i<objetos.length;i++){if(!objetos[i].userData.done&&Math.hypot(objetos[i].position.x-vpos.x,objetos[i].position.z-vpos.z)<1.6)contarObj(i);}
   verso.position.set(vpos.x,3+(moving?Math.abs(Math.sin(t*9))*0.14:Math.sin(t*2.5)*0.04),vpos.z);
   if(moving){verso.rotation.y=Math.atan2(dx,dz);const ph=t*9;V.legL.rotation.x=Math.sin(ph)*0.6;V.legR.rotation.x=-Math.sin(ph)*0.6;V.armL.rotation.x=-Math.sin(ph)*0.5;V.armR.rotation.x=Math.sin(ph)*0.5;}
   else{V.legL.rotation.x*=0.8;V.legR.rotation.x*=0.8;V.armL.rotation.x*=0.8;V.armR.rotation.x*=0.8;}
   byte.rotation.z=Math.sin(t*3)*0.06;B.wingL.rotation.z=0.15+Math.sin(t*7)*0.12;B.wingR.rotation.z=-0.15-Math.sin(t*7)*0.12;
   vshadow.position.set(vpos.x,3.02,vpos.z);
+  if(waterM)waterM.position.y=1.7+Math.sin(t*1.4)*0.05;                       // mar respira
+  if(foamM)foamM.material.opacity=0.3+0.2*Math.sin(t*1.4+1.2);               // espuma pulsa com a onda
   for(const m of objetos){if(m.userData.pop>0){m.userData.pop-=dt*2;m.rotation.y+=dt*8;m.position.y=(OBJ[PARADAS[paradaIdx].item].y)+Math.sin((1-m.userData.pop)*Math.PI)*1.1;if(m.userData.pop<=0)m.visible=false;}}
   camera.position.set(vpos.x+cs*camDist,camH,vpos.z+cc*camDist);camera.lookAt(vpos.x,2.5,vpos.z);
   renderer.render(scene,camera);
