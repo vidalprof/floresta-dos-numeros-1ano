@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Teste 2D lindo — conte os cocos</title>
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;font-family:system-ui,Arial;
+    background:radial-gradient(circle at 50% 30%,#8fd4ef,#4fb0dd)}
+  #palco{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #ilha{position:relative;width:min(94vw,94vh);height:min(94vw,94vh);
+    background:url(img/cena.png) center/contain no-repeat}
+  #ilha img{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 6px rgba(0,40,60,.28))}
+  .coco{cursor:pointer;pointer-events:auto!important;transition:transform .28s ease,opacity .28s ease;animation:bob 2.6s ease-in-out infinite}
+  .coco:active{transform:scale(.9)}
+  .coco.pego{transform:scale(1.7) translateY(-30px);opacity:0}
+  @keyframes bob{0%,100%{margin-top:0}50%{margin-top:-7px}}
+  #byte{width:15%;left:43%;top:31%}
+  #barco{width:20%;left:14%;top:72%;animation:barco 3.4s ease-in-out infinite}
+  @keyframes barco{0%,100%{transform:rotate(-2deg) translateY(0)}50%{transform:rotate(2deg) translateY(-4px)}}
+  #hud{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9;
+    background:rgba(120,72,20,.94);color:#ffe9b0;font:800 20px system-ui;padding:8px 18px;border-radius:14px;border:2px solid #ffd27a}
+  #num{position:fixed;left:50%;top:34%;transform:translate(-50%,-50%);z-index:10;pointer-events:none;
+    font:900 130px system-ui;color:#ffd24a;-webkit-text-stroke:5px #a85f0f;opacity:0;text-shadow:0 8px 22px rgba(0,0,0,.4)}
+  #num.go{animation:pop 1s ease-out}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}25%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-64%) scale(1)}}
+  #balao{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:9;max-width:min(420px,88vw);
+    background:rgba(255,255,255,.96);color:#173a52;font:600 15px system-ui;padding:11px 16px;border-radius:15px;
+    border:2px solid #2f9d6b;box-shadow:0 6px 18px rgba(0,0,0,.22);text-align:center}
+  #balao b{color:#1f9d6b}
+  .conf{position:fixed;width:12px;height:12px;border-radius:3px;z-index:11;pointer-events:none}
+</style>
+</head><body>
+<div id="hud">🥥 <span id="c">0</span>/6</div>
+<div id="num"></div>
+<div id="palco"><div id="ilha">
+  <img id="barco" src="img/barco.png" alt="barco">
+  <img id="byte" src="img/byte.png" alt="Byte">
+</div></div>
+<div id="balao"><b>Byte 🦜:</b> <span id="fala">Ôa, grumete! O coqueiro deixou cair uns cocos… toca em cada um pra contar!</span></div>
+<script>
+  var ilha=document.getElementById('ilha');
+  // 6 cocos posicionados na grama (em % da ilha) — dado, não código
+  var POS=[[36,44],[58,42],[30,57],[67,56],[43,64],[57,66]];
+  var total=POS.length,contados=0;
+  var cEl=document.getElementById('c'),numEl=document.getElementById('num'),falaEl=document.getElementById('fala');
+  POS.forEach(function(p,i){
+    var im=document.createElement('img');im.src='img/coco.png';im.className='coco';
+    im.style.width='9%';im.style.left=p[0]+'%';im.style.top=p[1]+'%';
+    im.style.animationDelay=(i*0.3)+'s';
+    im.addEventListener('click',function(){pega(im);});
+    ilha.appendChild(im);
+  });
+  function pega(im){
+    if(im.dataset.done)return;im.dataset.done='1';
+    contados++;cEl.textContent=contados;
+    mostraNum(contados);confete(im);
+    im.classList.add('pego');setTimeout(function(){im.style.display='none';},300);
+    if(contados>=total){falaEl.innerHTML='<b>Seis cocos!</b> Contamos todos, arrá! 🎉';}
+  }
+  function mostraNum(n){numEl.textContent=n;numEl.classList.remove('go');void numEl.offsetWidth;numEl.classList.add('go');}
+  function confete(im){
+    var r=im.getBoundingClientRect();var cx=r.left+r.width/2,cy=r.top+r.height/2;
+    var cores=['#ffd24a','#59c6e0','#e25a4a','#8ed36b','#f2a626'];
+    for(var i=0;i<12;i++){(function(i){
+      var d=document.createElement('div');d.className='conf';d.style.background=cores[i%5];
+      d.style.left=cx+'px';d.style.top=cy+'px';document.body.appendChild(d);
+      var ang=(i/12)*6.28,dist=60+Math.random()*70,dx=Math.cos(ang)*dist,dy=Math.sin(ang)*dist-40;
+      d.animate([{transform:'translate(0,0) rotate(0)',opacity:1},
+                 {transform:'translate('+dx+'px,'+(dy+120)+'px) rotate(360deg)',opacity:0}],
+                {duration:800+Math.random()*300,easing:'cubic-bezier(.2,.6,.3,1)'});
+      setTimeout(function(){d.remove();},1100);
+    })(i);}
+  }
+  // QA hook
+  window.__pega=function(i){var c=document.querySelectorAll('.coco')[i];if(c)pega(c);};
+  window.__cont=function(){return contados;};
+</script>
+</body></html>
