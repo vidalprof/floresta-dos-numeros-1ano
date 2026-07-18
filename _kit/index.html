@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Kit sprite + Phaser (fisica nativa)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#4fb0dd;-webkit-tap-highlight-color:transparent}
+  canvas{display:block;margin:auto}
+</style>
+<script src="phaser.min.js"></script>
+</head><body>
+<script>
+// Diretrizes do Diretor Tecnico: FISICA NATIVA (Arcade: body/collider/overlap),
+// FSM (Idle/Walk), LERP na velocidade, sprite sheet, WebGL com fallback Canvas.
+const FW = 200, FH = 240;   // tamanho do quadro do sprite (bate com montar_sheet.py)
+const MUNDO_W = 900, MUNDO_H = 640;
+
+class Ilha extends Phaser.Scene {
+  preload() {
+    this.load.image('cena', 'img/cena.png');
+    this.load.image('coco', 'img/coco.png');
+    this.load.spritesheet('byte', 'img/byte_sheet.png', { frameWidth: FW, frameHeight: FH });
+  }
+  create() {
+    // fundo (ilha)
+    this.add.image(MUNDO_W / 2, MUNDO_H / 2, 'cena').setDisplaySize(MUNDO_H, MUNDO_H);
+
+    // FSM: animacoes Idle / Walk (sprite sheet + FPS)
+    this.anims.create({ key: 'idle', frames: [{ key: 'byte', frame: 0 }], frameRate: 1 });
+    this.anims.create({ key: 'walk', frames: this.anims.generateFrameNumbers('byte', { frames: [1, 2] }), frameRate: 7, repeat: -1 });
+
+    // PLAYER com corpo de FISICA NATIVA (Arcade) — nao colisao na mao
+    this.player = this.physics.add.sprite(MUNDO_W / 2, MUNDO_H / 2 + 40, 'byte', 0).setScale(0.42);
+    this.player.body.setSize(78, 54).setOffset(61, 176);   // colisor nos PES
+    this.player.setCollideWorldBounds(true);
+    this.player.setDepth(5);
+
+    // OBSTACULOS (StaticBody) — camada do cenario; player colide (nao atravessa)
+    this.paredes = this.physics.add.staticGroup();
+    this._obstaculo(300, 250, 70, 70);
+    this._obstaculo(600, 430, 80, 60);
+    this.physics.add.collider(this.player, this.paredes);   // COLISAO NATIVA
+
+    // ITENS (cocos) — camada de itens; overlap (pega ao encostar) NATIVO
+    this.cocos = this.physics.add.group();
+    [[250, 400], [640, 250], [420, 180], [520, 470], [360, 500]].forEach(p => {
+      const c = this.cocos.create(p[0], p[1], 'coco').setScale(0.5).setDepth(3);
+      c.body.setImmovable(true); c.body.setCircle(60, 5, 5);
+    });
+    this.contados = 0;
+    this.physics.add.overlap(this.player, this.cocos, (pl, co) => {
+      co.destroy(); this.contados++; this.hud.setText('🥥 ' + this.contados + '/5');
+      this.tweens.add({ targets: this.player, scale: 0.48, duration: 90, yoyo: true });   // reacao (juice)
+    }, null, this);
+
+    // CAMERA segue o player (exploracao)
+    this.cameras.main.setBounds(0, 0, MUNDO_W, MUNDO_H);
+    this.physics.world.setBounds(0, 0, MUNDO_W, MUNDO_H);
+    this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
+
+    // HUD
+    this.hud = this.add.text(12, 10, '🥥 0/5', { fontFamily: 'system-ui', fontSize: '24px', color: '#ffe9b0', backgroundColor: '#78481ee0', padding: { x: 12, y: 7 } }).setScrollFactor(0).setDepth(20);
+    this.fps = this.add.text(12, 52, '', { fontFamily: 'monospace', fontSize: '13px', color: '#0a2a10' }).setScrollFactor(0).setDepth(20);
+
+    // INPUT: setas + WASD + toque-pra-andar
+    this.cursors = this.input.keyboard.createCursorKeys();
+    this.wasd = this.input.keyboard.addKeys('W,A,S,D');
+    this.alvo = null;
+    this.input.on('pointerdown', p => { this.alvo = new Phaser.Math.Vector2(p.worldX, p.worldY); });
+
+    // QA hooks
+    window.__cont = () => this.contados;
+    window.__andar = (x, y) => { this.alvo = new Phaser.Math.Vector2(x, y); };
+    window.__ready = true;
+  }
+  _obstaculo(x, y, w, h) {
+    const r = this.add.rectangle(x, y, w, h, 0x7a4a28).setStrokeStyle(3, 0x5a3418).setDepth(2);
+    this.paredes.add(r); r.body.setSize(w, h);
+  }
+  update() {
+    const SP = 175;
+    let vx = 0, vy = 0;
+    if (this.cursors.left.isDown || this.wasd.A.isDown) vx = -1;
+    if (this.cursors.right.isDown || this.wasd.D.isDown) vx = 1;
+    if (this.cursors.up.isDown || this.wasd.W.isDown) vy = -1;
+    if (this.cursors.down.isDown || this.wasd.S.isDown) vy = 1;
+    if (vx || vy) this.alvo = null;
+    if (!vx && !vy && this.alvo) {
+      const d = this.alvo.clone().subtract(this.player.body.center);
+      if (d.length() < 8) this.alvo = null; else { d.normalize(); vx = d.x; vy = d.y; }
+    }
+    const v = new Phaser.Math.Vector2(vx, vy);
+    if (v.length() > 0) v.normalize();
+    // LERP na velocidade (transicao suave, nao abrupta) — diretriz
+    this.player.body.velocity.x = Phaser.Math.Linear(this.player.body.velocity.x, v.x * SP, 0.22);
+    this.player.body.velocity.y = Phaser.Math.Linear(this.player.body.velocity.y, v.y * SP, 0.22);
+    // FSM Idle/Walk
+    const andando = this.player.body.velocity.length() > 12;
+    this.player.anims.play(andando ? 'walk' : 'idle', true);
+    if (vx < -0.1) this.player.setFlipX(true); else if (vx > 0.1) this.player.setFlipX(false);
+    if (this.fps) this.fps.setText('FPS: ' + Math.round(this.game.loop.actualFps));
+  }
+}
+
+new Phaser.Game({
+  type: Phaser.AUTO,                 // WebGL com fallback Canvas (salva PC velho)
+  width: 900, height: 600,
+  backgroundColor: '#4fb0dd',
+  physics: { default: 'arcade', arcade: { debug: false } },
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  scene: Ilha
+});
+</script>
+</body></html>
