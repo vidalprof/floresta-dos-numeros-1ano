@@ -2,21 +2,52 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Mundo animado (sprites reais) — demo</title>
+<title>A Horta dos Números — contar até 30</title>
 <style>
-  html,body{margin:0;height:100%;overflow:hidden;background:#3f6a34;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;height:100%;overflow:hidden;background:#3f6a34;-webkit-tap-highlight-color:transparent;font-family:system-ui,Arial,sans-serif}
   #jogo{position:fixed;inset:0;width:100vw;height:100vh}
   #jogo canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
   .hud{position:fixed;z-index:10;font:600 13px system-ui}
   #somdica{left:50%;top:12px;transform:translateX(-50%);background:rgba(23,58,82,.92);color:#fff;padding:7px 14px;border-radius:10px;pointer-events:none}
-  #dica{left:50%;bottom:10px;transform:translateX(-50%);background:rgba(255,255,255,.9);color:#173a52;padding:6px 12px;border-radius:10px;pointer-events:none;max-width:92vw;text-align:center}
   #btfs{right:12px;top:12px;background:rgba(23,58,82,.92);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
+  /* tela do NOME */
+  #nomebox{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#2b5a86,#173a52)}
+  #nomecard{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;width:86%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+  #nomecard h1{margin:.2em 0 .1em;color:#173a52;font-size:22px}
+  #nomecard p{margin:.2em 0 1em;color:#3a5a72;font-size:14px}
+  #nomein{width:100%;box-sizing:border-box;font-size:20px;padding:12px 14px;border:2px solid #bcd;border-radius:12px;text-align:center;color:#173a52}
+  #nomebt{margin-top:14px;width:100%;font-size:18px;font-weight:700;color:#fff;background:#2e9b57;border:0;padding:13px;border-radius:12px;cursor:pointer}
+  #nomebt:active{transform:translateY(1px)}
 </style>
 <script src="phaser.min.js"></script>
 </head><body>
-<div id="somdica" class="hud">🔊 Toque na tela (ou aperte uma tecla) para ligar o som</div>
+<div id="somdica" class="hud">🔊 Toque na tela para ligar o som</div>
 <button id="btfs" class="hud" onclick="window.__fs&&window.__fs()">⛶ Tela cheia</button>
-<div id="dica" class="hud">Setas ou WASD — explore o mundo · sprites reais · árvores com colisão · vento · sons</div>
 <div id="jogo"></div>
+
+<div id="nomebox">
+  <div id="nomecard">
+    <div style="font-size:40px">🦜🌱</div>
+    <h1>A Horta dos Números</h1>
+    <p>O Byte precisa de ajuda pra plantar a horta! Como você se chama?</p>
+    <input id="nomein" maxlength="16" placeholder="seu nome" autocomplete="off">
+    <button id="nomebt">Começar 🌟</button>
+  </div>
+</div>
+
 <script src="game.js"></script>
+<script>
+  (function(){
+    var inp=document.getElementById('nomein'), bt=document.getElementById('nomebt');
+    function comecar(){
+      var n=(inp.value||'').trim(); if(!n) n='amiguinho';
+      window.__nome=n;
+      document.getElementById('nomebox').style.display='none';
+      if(window.__iniciarAtividade) window.__iniciarAtividade();
+    }
+    bt.addEventListener('click',comecar);
+    inp.addEventListener('keydown',function(e){ if(e.key==='Enter') comecar(); });
+    setTimeout(function(){ try{inp.focus();}catch(e){} }, 300);
+  })();
+</script>
 </body></html>
