@@ -14,8 +14,9 @@ os.makedirs(os.path.join(RAIZ, 'assets', 'audio'), exist_ok=True)
 
 # pacotes top-down pixel art (chao, arvores, agua, personagens, casas, plantacoes)
 PAGINAS = [
-    'https://kenney.nl/assets/roguelike-rpg-pack',   # tilesheet RPG + personagens + itens
-    'https://kenney.nl/assets/tiny-town',            # casinhas/fazenda pixel top-down
+    'https://kenney.nl/assets/roguelike-characters',  # PERSONAGENS top-down (frames de caminhada)
+    'https://kenney.nl/assets/roguelike-rpg-pack',    # tilesheet RPG + itens
+    'https://kenney.nl/assets/tiny-town',             # casinhas/fazenda pixel top-down
 ]
 UA = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'}
 
