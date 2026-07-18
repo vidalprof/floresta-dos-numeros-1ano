@@ -5,6 +5,8 @@ name: PyGame -> Web (pygbag) e publicar
 # Serve pro Marcos TESTAR peso/carregamento do PyGame no navegador (PC da escola + celular).
 
 on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
   workflow_dispatch:
     inputs:
       repo_name:
@@ -13,8 +15,13 @@ on:
         default: "pygame-teste"
         type: string
 
+env:
+  NAME_DEFAULT: pygame-teste
+
 jobs:
   build-publish:
+    # so roda por push quando o commit tiver [pygame] (ou manualmente)
+    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[pygame]') }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -39,7 +46,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
           OWNER: vidalprof
-          NAME: ${{ inputs.repo_name }}
+          NAME: ${{ inputs.repo_name || 'pygame-teste' }}
         run: |
           set -euo pipefail
           SRC="_pygame/build/web"
