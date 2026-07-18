@@ -275,7 +275,7 @@ const PARADAS=[
 let paradaIdx=0,contados=0,alvo=6,tentativas=0,t0parada=0,travado=true,balaoTimer=null;
 let objetos=[],hits=[];
 const turma=new URLSearchParams(location.search).get('turma')||'teste';
-let nome='grumete',saudacao='';
+let nome='grumete',saudacao='',saudacaoAudio='';
 const el=id=>document.getElementById(id);
 const parEl=el('par'),contEl=el('cont'),falaEl=el('fala');
 const vpos={x:cx,z:cz};
@@ -301,7 +301,9 @@ function montarParada(i){
   falaEl.innerHTML=(saudacao?'<b>'+saudacao+'</b><br>':'')+P.abre;saudacao='';   // Byte cumprimenta pelo nome / bem-vindo de volta
   el('balao').style.display='';
   clearTimeout(balaoTimer);balaoTimer=setTimeout(()=>{el('balao').style.display='none';},8000);  // some sozinho (não atrapalha no celular)
-  falarByte('vx_p'+(i+1)+'_abre');                      // o Byte NARRA o problema (Antonio)
+  if(saudacaoAudio){const g=voz(saudacaoAudio);saudacaoAudio='';                 // saudação TOCA (Antonio), depois vem o problema
+    if(g){g.onended=()=>falarByte('vx_p'+(i+1)+'_abre');g.play().catch(()=>falarByte('vx_p'+(i+1)+'_abre'));}else falarByte('vx_p'+(i+1)+'_abre');}
+  else falarByte('vx_p'+(i+1)+'_abre');                 // o Byte NARRA o problema (Antonio)
   ambientePorTema();                                    // mar/vento fora; rumor grave na gruta/câmara
 }
 
@@ -413,7 +415,7 @@ addEventListener('pointerup',e=>{if(dragging&&movedPx<8)clique(e.clientX,e.clien
 
 // telas
 el('btComecar').onclick=()=>{initA();nome=(el('nome').value||'grumete').slice(0,16);
-  function iniciar(volta,start){saudacao=volta?('Bem-vindo de volta, '+nome+'! A ilha lembrou de você. 🏴‍☠️'):('Ôa, '+nome+'! Bem-vindo à ilha, grumete!');el('start').classList.add('hidden');montarParada(start);}
+  function iniciar(volta,start){saudacao=volta?('Bem-vindo de volta, '+nome+'! A ilha lembrou de você. 🏴‍☠️'):('Ôa, '+nome+'! Bem-vindo à ilha, grumete!');saudacaoAudio=volta?'vx_voltou':'vx_ola';el('start').classList.add('hidden');montarParada(start);}
   if(window.EduSave){EduSave.carregar(turma,nome,function(e,ant){var f=(ant&&ant.paradas)?Object.keys(ant.paradas).length:0;iniciar(f>0,f>=PARADAS.length?0:f);});}
   else iniciar(false,0);};   // "o mundo lembra de mim": retoma na primeira parada nao concluida
 el('btDeNovo').onclick=()=>{el('fim').classList.add('hidden');montarParada(0);};
