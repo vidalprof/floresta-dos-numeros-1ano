@@ -50,7 +50,7 @@
   <p>Ajude o Verso a devolver o tesouro que o mar espalhou pela ilha — contando de <b>6</b> até <b>30</b>!</p>
   <input id="nome" maxlength="16" placeholder="seu nome de grumete" />
   <button id="btComecar">Zarpar! ⚓</button></div></div>
-<div class="tela hidden" id="vit"><div class="card"><p id="vnum">6</p><h2 id="vtit"></h2><p id="vsub"></p></div></div>
+<div class="tela hidden" id="vit"><div class="card"><p id="vnum">6</p><h2 id="vtit"></h2><p id="vsub"></p><p id="vcomp" style="margin-top:10px;padding-top:10px;border-top:2px dashed #e0d3b0;color:#5a4a2a"></p></div></div>
 <div class="tela hidden" id="fim"><div class="card"><div class="em">🏆</div>
   <h1>Você contou até 30!</h1>
   <p id="fimsub">De 6 cocos a 30 moedas de ouro — você <b>CONTOU</b> o tempo todo, capitão!</p>
@@ -253,19 +253,24 @@ function props(idx){sig=null;gaivotasVoo.length=0;
 const PARADAS=[
  {nome:'A Praia dos Cocos',item:'coco',n:6,tema:'praia',
   abre:'Arrá, grumete! O barquinho tá vazando e o Pinça quer cocos pra tapar os furos… quantos cocos o coqueiro deixou cair? <b>Toca em cada um</b> (ou anda por cima) pra contar!',
-  acerto:'Seis cocos redondinhos! Deu e sobrou pros furos, arrá! O barquinho agradece com um "gluglu" feliz!'},
+  acerto:'Seis cocos redondinhos! Deu e sobrou pros furos, arrá! O barquinho agradece com um "gluglu" feliz!',
+  comp:'O barco tinha <b>5 furos</b> e você juntou <b>6 cocos</b> — <b>sobrou 1</b>! Tem <b>mais</b> coco que furo. 👍'},
  {nome:'A Enseada das Gaivotas',item:'gaivota',n:12,tema:'enseada',
   abre:'O faroleiro só acende quando o bando inteiro pousa no varal… quantas gaivotas já chegaram? Toca em cada uma pra chamar!',
-  acerto:'Doze gaivotas em fila! O farol acendeu num "PLIM" e a ilha brilha no escuro!'},
+  acerto:'Doze gaivotas em fila! O farol acendeu num "PLIM" e a ilha brilha no escuro!',
+  comp:'O bando é de <b>12</b> e chegaram <b>12</b> — a <b>mesma</b> quantidade! Por isso o farol acendeu. ✨'},
  {nome:'A Gruta das Tochas',item:'tocha',n:18,tema:'gruta',
   abre:'Uh, que escuridão! A ponte só nasce com o túnel iluminado… quantas tochas já estão acesas nessa parede? Toca em cada chama!',
-  acerto:'Dezoito tochas em brasa! A ponte de corda surgiu do escuro pra gente atravessar. Corajoso!'},
+  acerto:'Dezoito tochas em brasa! A ponte de corda surgiu do escuro pra gente atravessar. Corajoso!',
+  comp:'O túnel tem <b>18 tochas</b> e você acendeu <b>18</b> — <b>igualzinho</b>! Nem faltou, nem sobrou. 🌉'},
  {nome:'O Convés dos Barris',item:'barril',n:24,tema:'conves',
   abre:'O capitão jura que o mar levou barris… será? Toca em cada barril do convés e mostra a conta certinha pra ele!',
-  acerto:'Vinte e quatro barris, todos a bordo! O capitão soltou um "AHÁ, honesto esse grumete!" e destrancou o baú!'},
+  acerto:'Vinte e quatro barris, todos a bordo! O capitão soltou um "AHÁ, honesto esse grumete!" e destrancou o baú!',
+  comp:'O capitão achava que <b>sumiram</b> barris — mas você contou <b>24</b>, todos lá! <b>Nem mais, nem menos</b>. 🔑'},
  {nome:'A Câmara das Moedas',item:'moeda',n:30,tema:'camara',
   abre:'Chegamos ao coração da ilha! O baú só fecha com o tesouro inteiro… quantas moedas o mar espalhou por esse chão? Toca em cada uma pra devolver!',
-  acerto:'TRINTA moedas de ouro reunidas! A tampa desceu com um "CLÁ-BUM" e o tesouro voltou pro lugar, capitão Verso!'}];
+  acerto:'TRINTA moedas de ouro reunidas! A tampa desceu com um "CLÁ-BUM" e o tesouro voltou pro lugar, capitão Verso!',
+  comp:'O tesouro é de <b>30 moedas</b> e você devolveu <b>30</b> — <b>completo</b>! O baú fechou. 🏆'}];
 
 let paradaIdx=0,contados=0,alvo=6,tentativas=0,t0parada=0,travado=true,balaoTimer=null;
 let objetos=[],hits=[];
@@ -380,7 +385,7 @@ function vitoria(){travado=true;const P=PARADAS[paradaIdx];clearTimeout(balaoTim
   reagir();fanfarra();salvar();                                  // o MUNDO REAGE — e a criança VÊ acontecer (o card só vem depois)
   setTimeout(()=>falarByte('vx_p'+(paradaIdx+1)+'_ok'),700);
   setTimeout(()=>{                                               // ~3s pra ver o farol acender / a ponte surgir…
-    const v=el('vit');el('vnum').textContent=alvo;el('vtit').textContent='São '+alvo+'!';el('vsub').textContent=P.acerto;v.classList.remove('hidden');
+    const v=el('vit');el('vnum').textContent=alvo;el('vtit').textContent='São '+alvo+'!';el('vsub').textContent=P.acerto;el('vcomp').innerHTML=P.comp||'';v.classList.remove('hidden');  // COMPARAR (faltou/sobrou/mesma — EF01MA03)
     setTimeout(()=>{v.classList.add('hidden');el('balao').style.display='none';
       if(paradaIdx>=PARADAS.length-1){el('fim').classList.remove('hidden');falarByte('vx_fim');}else{montarParada(paradaIdx+1);}},3200);
   },3000);}
