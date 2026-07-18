@@ -74,9 +74,10 @@ def acha(nome, base, prefere, evitar=()):
 def main():
     # MENINO de roupa simples: TODAS as camadas do MESMO repo (jrconway3) = alinham.
     acha('lpc_body', 'body', ('light', 'male'), evitar=('skeleton', 'zombie', 'orc', 'wolf', 'child', 'female'))
-    acha('lpc_legs', 'legs', ('pants', 'male', 'teal', 'brown', 'blue'), evitar=('loincloth', 'skirt', 'robe', 'female'))
-    acha('lpc_torso', 'torso', ('longsleeve', 'shortsleeve', 'shirt', 'male', 'white', 'brown', 'green'), evitar=('sleeveless', 'tank', 'plate', 'chain', 'leather', 'female', 'dress'))
-    acha('lpc_hair', 'hair', ('plain', 'parted', 'short', 'male', 'brown'), evitar=('afro', 'long', 'wavy', 'curly', 'princess', 'ponytail', 'bangslong', 'female'))
+    # COR primeiro (senao a busca casa o nome da PASTA "plain" e pega cor aleatoria).
+    acha('lpc_legs', 'legs', ('brown', 'teal', 'blue', 'tan', 'pants', 'male'), evitar=('loincloth', 'skirt', 'robe', 'female'))
+    acha('lpc_torso', 'torso', ('brown', 'white', 'green', 'tan', 'longsleeve', 'shortsleeve', 'shirt', 'male'), evitar=('sleeveless', 'tank', 'plate', 'chain', 'leather', 'female', 'dress'))
+    acha('lpc_hair', 'hair', ('brown', 'black', 'blonde', 'plain', 'parted', 'short', 'male'), evitar=('afro', 'long', 'wavy', 'curly', 'princess', 'ponytail', 'bangslong', 'purple', 'pink', 'green', 'blue', 'female'))
 
     # COMPOE o heroi — SO camadas do tamanho ALVO (mesma versao); descarta o resto.
     def carrega(n):
