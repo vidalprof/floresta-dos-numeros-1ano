@@ -275,7 +275,7 @@ const PARADAS=[
 let paradaIdx=0,contados=0,alvo=6,tentativas=0,t0parada=0,travado=true,balaoTimer=null;
 let objetos=[],hits=[];
 const turma=new URLSearchParams(location.search).get('turma')||'teste';
-let nome='grumete';
+let nome='grumete',saudacao='';
 const el=id=>document.getElementById(id);
 const parEl=el('par'),contEl=el('cont'),falaEl=el('fala');
 const vpos={x:cx,z:cz};
@@ -298,7 +298,7 @@ function montarParada(i){
   vpos.x=cx;vpos.z=cz;verso.position.set(cx,3,cz);
   parEl.textContent='Parada '+(i+1)+'/5';
   contEl.textContent=od.ic+' 0/'+P.n;
-  falaEl.innerHTML=P.abre;
+  falaEl.innerHTML=(saudacao?'<b>'+saudacao+'</b><br>':'')+P.abre;saudacao='';   // Byte cumprimenta pelo nome / bem-vindo de volta
   el('balao').style.display='';
   clearTimeout(balaoTimer);balaoTimer=setTimeout(()=>{el('balao').style.display='none';},8000);  // some sozinho (não atrapalha no celular)
   falarByte('vx_p'+(i+1)+'_abre');                      // o Byte NARRA o problema (Antonio)
@@ -412,7 +412,10 @@ addEventListener('pointermove',e=>{if(!dragging)return;const dxp=e.clientX-lastX
 addEventListener('pointerup',e=>{if(dragging&&movedPx<8)clique(e.clientX,e.clientY);dragging=false;});
 
 // telas
-el('btComecar').onclick=()=>{initA();nome=(el('nome').value||'grumete').slice(0,16);el('start').classList.add('hidden');montarParada(0);};
+el('btComecar').onclick=()=>{initA();nome=(el('nome').value||'grumete').slice(0,16);
+  function iniciar(volta,start){saudacao=volta?('Bem-vindo de volta, '+nome+'! A ilha lembrou de você. 🏴‍☠️'):('Ôa, '+nome+'! Bem-vindo à ilha, grumete!');el('start').classList.add('hidden');montarParada(start);}
+  if(window.EduSave){EduSave.carregar(turma,nome,function(e,ant){var f=(ant&&ant.paradas)?Object.keys(ant.paradas).length:0;iniciar(f>0,f>=PARADAS.length?0:f);});}
+  else iniciar(false,0);};   // "o mundo lembra de mim": retoma na primeira parada nao concluida
 el('btDeNovo').onclick=()=>{el('fim').classList.add('hidden');montarParada(0);};
 
 // ---------- loop ----------
