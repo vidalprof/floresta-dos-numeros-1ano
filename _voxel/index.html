@@ -283,7 +283,7 @@ function gaivotasAmbiente(){for(let i=0;i<3;i++){const m=new THREE.Mesh(OBJ.gaiv
   m.userData={r:8+i*2,ph:i*2.1,vy:9+i*1.5,sp:0.35+i*0.06};mundoG.add(m);gaivotasVoo.push(m);}}
 function props(idx){sig=null;gaivotasVoo.length=0;barco1=null;pinca=null;
   if(idx===0){sol(true);palmeira(cx-6,cz-5);palmeira(cx+6,cz+6);palmeira(cx-6,cz+6);
-    barco1=colocaBarcoFurado(cx-4,cz+9);pinca=colocaPinca(cx+2,cz+7);ilhaDistante(cx-4,cz+42);gaivotasAmbiente();   // barco e Pinça SEPARADOS (não viram um blob só)
+    barco1=colocaBarcoFurado(cx-4,cz+9);pinca=colocaPinca(cx+2,cz+7);gaivotasAmbiente();   // barco e Pinça SEPARADOS (ilha 2 no horizonte fica p/ depois — estava virando "paredão verde")
     sig=null;}                                                                                            // fase 1: a reação é o barco consertando + a travessia (custom)
   else if(idx===1){sol(true);palmeira(cx-7,cz+6);colocaFarol(cx+6,cz-7);gaivotasAmbiente();
     sig={tipo:'farol',x:cx+7,y:11,z:cz-6,cor:0xfff3a0};}                                                  // FAROL ACENDE
@@ -499,12 +499,12 @@ el('btDeNovo').onclick=()=>{el('fim').classList.add('hidden');montarParada(0);};
 const mtx=new THREE.Matrix4();let t=0,frames=0,acc=0,last=performance.now();const fpsEl=el('fps');
 function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+=dt;
   if(cutscene){cutscene.t+=dt;const c=cutscene,b=c.boat,pr=Math.min(1,c.t/c.dur);   // ⛵ NAVEGANDO até a próxima ilha (sem "cortar" a cena)
-    b.position.z=c.vz+pr*34;b.position.y=barco1.baseY+Math.sin(t*2)*0.12;b.rotation.z=Math.sin(t*1.5)*0.05;
+    b.position.z=c.vz+pr*pr*46;b.position.y=barco1.baseY+Math.sin(t*2)*0.12;b.rotation.z=Math.sin(t*1.5)*0.05;   // acelera (pr²) → sai logo pro mar aberto, deixa a ilha pra trás
     verso.rotation.y=0;verso.position.set(b.position.x,b.position.y+1.5,b.position.z);vshadow.position.set(b.position.x,3.02,b.position.z);
     if(waterM)waterM.position.y=1.7+Math.sin(t*1.4)*0.05;
     for(let i=fx.length-1;i>=0;i--){const c2=fx[i],u=c2.userData;c2.position.x+=u.vx*dt;c2.position.z+=u.vz*dt;c2.position.y+=u.vy*dt;u.vy-=13*dt;u.life-=dt;if(u.life<=0){scene.remove(c2);c2.geometry.dispose();fx.splice(i,1);}}
-    camera.position.set(b.position.x,7.5,b.position.z-14);camera.lookAt(b.position.x,3,b.position.z+8);
-    el('fade').style.opacity=pr>0.68?String(Math.min(1,(pr-0.68)/0.32)):'0';
+    camera.position.set(b.position.x,6.5,b.position.z-11);camera.lookAt(b.position.x,3,b.position.z+10);   // baixa e olhando pro mar aberto (à frente)
+    el('fade').style.opacity=pr>0.58?String(Math.min(1,(pr-0.58)/0.42)):'0';
     if(c.t>=c.dur){cutscene=null;montarParada(1);setTimeout(()=>{el('fade').style.opacity='0';},120);}
     renderer.render(scene,camera);frames++;acc+=now-last;last=now;if(acc>=500){frames=0;acc=0;}requestAnimationFrame(loop);return;}
   const cs=Math.sin(camAngle),cc=Math.cos(camAngle);let dx=0,dz=0;
