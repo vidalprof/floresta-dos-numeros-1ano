@@ -16,6 +16,9 @@
   #joy button{border:0;border-radius:12px;background:rgba(20,40,60,.55);color:#fff;font:800 20px system-ui;user-select:none;-webkit-user-select:none;touch-action:none}
   #joy button:active{background:rgba(20,40,60,.85)}
   .sp{visibility:hidden}
+  #num{position:fixed;left:50%;top:36%;transform:translate(-50%,-50%);z-index:10;pointer-events:none;font:900 130px system-ui;color:#ffd24a;-webkit-text-stroke:5px #a85f0f;opacity:0;text-shadow:0 8px 24px rgba(0,0,0,.45)}
+  @keyframes pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}22%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}70%{opacity:1;transform:translate(-50%,-50%) scale(1)}100%{opacity:0;transform:translate(-50%,-62%) scale(1)}}
+  #num.go{animation:pop 1s ease-out}
   .tela{position:fixed;inset:0;z-index:14;display:flex;flex-direction:column;align-items:center;justify-content:center;
     background:linear-gradient(160deg,#12324a,#0a1f30);color:#fff;text-align:center;padding:20px}
   .tela.hidden{display:none}
@@ -35,6 +38,7 @@
 </head><body>
 <div id="fps">FPS: --</div>
 <div id="hud"><span id="par">Parada 1/5</span><span id="cont">🥥 0/6</span></div>
+<div id="num"></div>
 <div id="balao"><b class="byte">Byte 🦜:</b> <span id="fala"></span></div>
 <div id="joy">
   <span class="sp"></span><button data-k="up">▲</button><span class="sp"></span>
@@ -170,10 +174,7 @@ function terreno(tm){const w=[];const dentro=(tm===TEMA.gruta||tm===TEMA.camara)
       if(y===h-1){c=h>=3?((x+z)%2?tm.t1:tm.t2):((x+z)%2?tm.s1:tm.s2);
         const rr=(x*73+z*31)%97;if(rr<9)c=esc(c,0.86);else if(rr>91)c=esc(c,1.08);}   // VARIAÇÃO no chão (mancha natural)
       else c=(h>=3&&y>=1)?0x5a4028:tm.s2;w.push({x,y,z,col:c});}}
-  // tufinhos de grama / pedrinhas (decoração que NÃO parece item contável)
-  if(!dentro){for(let k=0;k<10;k++){const a=k*1.7,r=3+(k*37%50)/50*(R-5);const tx=Math.round(cx+Math.cos(a)*r),tz=Math.round(cz+Math.sin(a)*r);
-    if(h_at(tx,tz)===3)w.push({x:tx,y:3,z:tz,col:esc(tm.t1,0.75)});}}
-  mundoG.add(new THREE.Mesh(mesh(w),MAT));
+  mundoG.add(new THREE.Mesh(mesh(w),MAT));   // (sem cubos soltos — só a variação de cor do chão)
   // água + ESPUMA de onda pulsando na beira
   waterM=new THREE.Mesh(new THREE.PlaneGeometry(110,110),new THREE.MeshBasicMaterial({color:dentro?0x14202e:0x3a93cf}));
   waterM.rotation.x=-Math.PI/2;waterM.position.set(cx,1.7,cz);mundoG.add(waterM);
@@ -189,22 +190,22 @@ function palmeira(px,pz){const w=[];for(let y=3;y<6;y++)w.push({x:px,y,z:pz,col:
 function bloco(w,h,d,hex,x,y,z,solido){const me=part(w,h,d,hex);me.position.set(x,y,z);mundoG.add(me);
   if(solido)colisores.push({x:x,z:z,r:Math.max(w,d)*0.55+0.35});
   return me;}
-// ---- props CAPRICHADOS (baú parece baú, barco parece barco — pedido do Marcos) ----
-function colocaBau(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:3+y,z:pz+z,col:c});
-  for(let x=0;x<5;x++)for(let y=0;y<2;y++)for(let z=0;z<3;z++)P(x,y,z,(x===1||x===3)?0x3a2614:0x6a3d25); // corpo + cintas escuras
-  for(let x=0;x<5;x++)for(let z=0;z<3;z++)P(x,2,z,(x===1||x===3)?0x4a2e18:0x7a4527);                     // tampa (base)
-  for(let x=1;x<4;x++)for(let z=0;z<3;z++)P(x,3,z,0x7a4527);                                             // tampa (curva)
-  P(2,1,3,0xf2c14e);P(2,2,3,0xd9a21e);                                                                    // cadeado de ouro
-  P(0,0,3,0xb08a4a);P(4,0,3,0xb08a4a);                                                                    // ferragens
-  mundoG.add(new THREE.Mesh(mesh(w),MAT));colisores.push({x:px+2.5,z:pz+1.5,r:2.6});}
-function colocaBarco(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:2+y,z:pz+z,col:c});
-  for(let x=0;x<6;x++)for(let z=0;z<3;z++)P(x,0,z,0x5f3a22);                                             // fundo do casco
-  for(let x=0;x<6;x++)for(const z of[0,2])P(x,1,z,0x6a3d25);                                             // laterais
-  for(const x of[0,5])P(x,1,1,0x6a3d25);                                                                  // popa/proa fecham
-  P(-1,1,1,0x7a4527);P(6,1,1,0x7a4527);                                                                   // bicos
-  for(let z=0;z<3;z++)P(2,1,z,0x8a5230);                                                                  // banquinho
-  for(const x of[0,2,4])P(x,2,-0.0,0);                                                                    // (nada)
-  mundoG.add(new THREE.Mesh(mesh(w.filter(b=>b.col)),MAT));colisores.push({x:px+3,z:pz+1.5,r:3.0});}
+// ---- props CAPRICHADOS e PROPORCIONAIS (baú menor — pedido do Marcos) ----
+function colocaBau(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x,y,z,col:c});
+  for(let x=0;x<5;x++)for(let y=0;y<2;y++)for(let z=0;z<3;z++)P(x,y,z,(x===1||x===3)?0x3a2614:0x6a3d25); // corpo + cintas
+  for(let x=0;x<5;x++)for(let z=0;z<3;z++)P(x,2,z,(x===1||x===3)?0x4a2e18:0x7a4527);                     // tampa base
+  for(let x=1;x<4;x++)for(let z=0;z<3;z++)P(x,3,z,0x7a4527);                                             // tampa curva
+  P(2,1,3,0xf2c14e);P(2,2,3,0xd9a21e);P(0,0,3,0xb08a4a);P(4,0,3,0xb08a4a);                               // cadeado + ferragens
+  const g=mesh(w);g.translate(-2.5,0,-1.5);const me=new THREE.Mesh(g,MAT);const S=0.52;                  // PROPORCIONAL
+  me.scale.setScalar(S);me.position.set(px,3,pz);me.userData.baseY=3;mundoG.add(me);
+  colisores.push({x:px,z:pz,r:2.5*S+0.4});return me;}
+function colocaBarco(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x,y,z,col:c});
+  for(let x=0;x<6;x++)for(let z=0;z<3;z++)P(x,0,z,0x5f3a22);                                             // fundo
+  for(let x=0;x<6;x++)for(const z of[0,2])P(x,1,z,0x6a3d25);for(const x of[0,5])P(x,1,1,0x6a3d25);       // laterais
+  P(-1,1,1,0x7a4527);P(6,1,1,0x7a4527);for(let z=0;z<3;z++)P(2,1,z,0x8a5230);                            // bicos + banco
+  const g=mesh(w);g.translate(-2.5,0,-1);const me=new THREE.Mesh(g,MAT);const S=0.7;
+  me.scale.setScalar(S);me.position.set(px,2,pz);me.userData.baseY=2;mundoG.add(me);
+  colisores.push({x:px,z:pz,r:2.5*S+0.4});return me;}
 function colocaFarol(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:2+y,z:pz+z,col:c});
   for(let y=0;y<7;y++)for(let x=0;x<2;x++)for(let z=0;z<2;z++)P(x,y,z,(y%2)?0xf3ede0:0xc9382f);           // torre listrada
   P(0,0,2,0x4a2e18);P(1,0,2,0x4a2e18);                                                                    // porta
@@ -212,16 +213,28 @@ function colocaFarol(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x:px+x,y:2+y,z
   for(let x=-0.0;x<2;x++)for(let z=0;z<2;z++)P(x,7,z,0xffe08a);                                           // luz
   for(let x=0;x<2;x++)for(let z=0;z<2;z++)P(x,8,z,0xc9382f);                                              // teto
   mundoG.add(new THREE.Mesh(mesh(w),MAT));colisores.push({x:px+1,z:pz+1,r:1.9});}
-function props(idx){
-  if(idx===0){palmeira(cx-6,cz-5);palmeira(cx+6,cz+6);palmeira(cx-6,cz+6);colocaBarco(cx-3,cz+8);}
-  else if(idx===1){palmeira(cx-7,cz+6);colocaFarol(cx+6,cz-7);}
+function sol(dia){ // sol (dia) na fase aberta — "quando for conveniente" (roteiro escolhe o clima)
+  const s=new THREE.Mesh(new THREE.SphereGeometry(2.4,12,12),new THREE.MeshBasicMaterial({color:dia?0xfff2b0:0xdfe8ff}));
+  s.position.set(cx+16,20,cz-14);mundoG.add(s);
+  const gl=new THREE.Mesh(new THREE.SphereGeometry(4.5,12,12),new THREE.MeshBasicMaterial({color:dia?0xfff2b0:0xcdd8f0,transparent:true,opacity:0.25}));
+  gl.position.copy(s.position);mundoG.add(gl);}
+function gaivotasAmbiente(){for(let i=0;i<3;i++){const m=new THREE.Mesh(OBJ.gaivota.g.clone(),MAT);m.scale.setScalar(0.3);
+  m.userData={r:8+i*2,ph:i*2.1,vy:9+i*1.5,sp:0.35+i*0.06};mundoG.add(m);gaivotasVoo.push(m);}}
+function props(idx){sig=null;gaivotasVoo.length=0;
+  if(idx===0){sol(true);palmeira(cx-6,cz-5);palmeira(cx+6,cz+6);palmeira(cx-6,cz+6);const barco=colocaBarco(cx-3,cz+8);gaivotasAmbiente();
+    sig={tipo:'hop',mesh:barco,x:cx-3,y:5,z:cz+8,cor:0xdff3ff};}                                          // barco conserta (pula + espuma)
+  else if(idx===1){sol(true);palmeira(cx-7,cz+6);colocaFarol(cx+6,cz-7);gaivotasAmbiente();
+    sig={tipo:'farol',x:cx+7,y:11,z:cz-6,cor:0xfff3a0};}                                                  // FAROL ACENDE
   else if(idx===2){for(const[sx,sz]of[[cx-5,cz-4],[cx+5,cz+4],[cx,cz-6],[cx+6,cz-3]]){                   // estalactites (teto)
-      for(let y=0;y<3;y++)bloco(1.4-y*0.3,1,1.4-y*0.3,0x6b6f78,sx,10-y,sz);}}
-  else if(idx===3){for(let y=3;y<9;y++)bloco(0.7,1,0.7,0x5a3a22,cx,y+0.5,cz-6,y===3);                    // mastro (sólido)
-    bloco(0.6,4,4,0xf3ede0,cx-2.5,7,cz-6);                                                                // vela
-    for(let z=-8;z<=8;z+=2)bloco(0.5,1.2,0.5,0x6a4a2a,cx-9,3.6,cz+z,true);}                               // amurada (sólida)
-  else if(idx===4){colocaBau(cx-2,cz-7);
-    for(const[sx,sz]of[[cx-5,cz-6],[cx+5,cz-6],[cx,cz+6]]){bloco(0.4,3,0.4,0x5a3d22,sx,4.5,sz,true);bloco(0.7,0.7,0.7,0xf7dd55,sx,6.2,sz);}}// tochas ILUMINAM o baú
+      for(let y=0;y<3;y++)bloco(1.4-y*0.3,1,1.4-y*0.3,0x6b6f78,sx,10-y,sz);}
+    sig={tipo:'ponte',x:cx,y:3.5,z:cz+7,cor:0xffe08a};}                                                   // PONTE surge
+  else if(idx===3){sol(true);for(let y=3;y<9;y++)bloco(0.7,1,0.7,0x5a3a22,cx,y+0.5,cz-6,y===3);           // mastro
+    bloco(0.6,4,4,0xf3ede0,cx-2.5,7,cz-6);gaivotasAmbiente();
+    for(let z=-8;z<=8;z+=2)bloco(0.5,1.2,0.5,0x6a4a2a,cx-9,3.6,cz+z,true);
+    sig={tipo:'chave',x:cx,y:6,z:cz,cor:0xf2c14e};}                                                       // CHAVE aparece (o capitão solta)
+  else if(idx===4){const bau=colocaBau(cx-2,cz-7);
+    for(const[sx,sz]of[[cx-5,cz-6],[cx+5,cz-6],[cx,cz+6]]){bloco(0.4,3,0.4,0x5a3d22,sx,4.5,sz,true);bloco(0.7,0.7,0.7,0xf7dd55,sx,6.2,sz);}
+    sig={tipo:'hop',mesh:bau,x:cx-2,y:5,z:cz-7,cor:0xf2c14e};}                                            // BAÚ reage (pula + ouro)
 }
 
 // ---------- estado / paradas ----------
@@ -263,7 +276,7 @@ function montarParada(i){
   scene.background=new THREE.Color(tm.bg);scene.fog=new THREE.Fog(tm.bg,tm.fog[0],tm.fog[1]);
   limparMundo();terreno(tm);props(i);
   const hr=P.n>=20?0.95:P.n>=12?1.2:1.5;   // raio de clique menor quando há MUITOS objetos (senão um rouba o clique do vizinho)
-  for(const[px,pz]of espalhar(P.n)){const m=new THREE.Mesh(od.g.clone(),MAT);m.scale.setScalar(od.sc);m.position.set(px,od.y,pz);m.userData={done:false,pop:0};mundoG.add(m);objetos.push(m);
+  for(const[px,pz]of espalhar(P.n)){const m=new THREE.Mesh(od.g.clone(),MAT);m.scale.setScalar(od.sc);m.position.set(px,od.y,pz);m.userData={done:false,pop:0,by:od.y,ph:Math.random()*6.28};mundoG.add(m);objetos.push(m);
     const hb=new THREE.Mesh(new THREE.SphereGeometry(hr,8,6),hitMat);hb.position.set(px,od.y+0.2,pz);hb.userData.idx=objetos.length-1;mundoG.add(hb);hits.push(hb);}
   vpos.x=cx;vpos.z=cz;verso.position.set(cx,3,cz);
   parEl.textContent='Parada '+(i+1)+'/5';
@@ -278,10 +291,16 @@ function montarParada(i){
 let AC=null,mg=null;function initA(){if(AC)return;try{AC=new(window.AudioContext||window.webkitAudioContext)();mg=AC.createGain();mg.gain.value=0.5;mg.connect(AC.destination);iniciarAmbiente();}catch(e){}}
 
 // VOZ do Antonio (arquivos gerados por workflow — nunca a voz do navegador)
-let vozNum=null,vozFala=null;
+let vozFala=null;
 function voz(id){try{const a=new Audio('audio/'+id+'.mp3');a.volume=0.95;return a;}catch(e){return null;}}
-function falarNum(n){try{if(vozNum){vozNum.pause();}vozNum=voz('vx_n'+n);if(vozNum)vozNum.play().catch(()=>{});}catch(e){}}
+// FILA de números: um não corta o outro (a criança escuta "um... dois... três" inteiro)
+let filaNum=[],tocandoNum=false;
+function falarNum(n){filaNum.push(n);if(filaNum.length>4)filaNum=filaNum.slice(-2);if(!tocandoNum)proxNum();}
+function proxNum(){if(!filaNum.length){tocandoNum=false;return;}tocandoNum=true;const a=voz('vx_n'+filaNum.shift());
+  if(!a){tocandoNum=false;return;}a.onended=()=>proxNum();a.play().then(()=>{}).catch(()=>proxNum());}
 function falarByte(id){try{if(vozFala){vozFala.pause();}vozFala=voz(id);if(vozFala)vozFala.play().catch(()=>{});}catch(e){}}
+// NUMERAL grande na tela (a criança associa quantidade ↔ número)
+function mostraNumeral(n){const e=el('num');e.textContent=n;e.classList.remove('go');void e.offsetWidth;e.classList.add('go');}
 
 // AMBIENTE sintetizado (Web Audio, sem arquivo): mar + vento + gaivotas / gruta
 let amb=null;
@@ -294,8 +313,8 @@ function iniciarAmbiente(){if(amb||!AC)return;amb={};
     const lfo=AC.createOscillator();lfo.frequency.value=lfoHz;const lg=AC.createGain();lg.gain.value=lfoAmp;
     lfo.connect(lg);lg.connect(g.gain);s.connect(f);f.connect(g);g.connect(mg);s.start();lfo.start();
     return {g,alvo:vol};}
-  amb.mar=ruido(520,0.8,0.05,0.09,0.03);      // vaivém do mar
-  amb.espuma=ruido(2200,1.2,0.016,0.13,0.01); // espuma
+  amb.mar=ruido(520,0.8,0.075,0.09,0.055);     // vaivém do mar (batendo e voltando — mais audível)
+  amb.espuma=ruido(2400,1.4,0.026,0.13,0.016); // espuma quebrando
   amb.vento=ruido(480,6,0.02,0.05,0.014);     // vento que sopra e cala
   amb.grave=ruido(90,2,0.0,0.1,0.004);        // rumor grave (gruta/câmara)
   // gaivotas de vez em quando (glissando descendente)
@@ -308,7 +327,7 @@ function iniciarAmbiente(){if(amb||!AC)return;amb={};
   ambientePorTema();}
 function ambientePorTema(){if(!amb)return;const tema=PARADAS[paradaIdx].tema;
   const dentro=(tema==='gruta'||tema==='camara');
-  const alvo={mar:dentro?0.008:0.05,espuma:dentro?0:0.016,vento:dentro?0.006:0.02,grave:dentro?0.02:0.0};
+  const alvo={mar:dentro?0.01:0.075,espuma:dentro?0:0.026,vento:dentro?0.008:0.022,grave:dentro?0.024:0.0};
   for(const k of['mar','espuma','vento','grave'])amb[k].g.gain.setTargetAtTime(alvo[k],AC.currentTime,1.2);
   amb.gaivotasOn=!dentro;}
 const PENT=[523,587,659,784,880,1047,1175,1319,1397,1568];
@@ -316,6 +335,21 @@ function bip(f,d,ty,v){if(!AC)return;const o=AC.createOscillator(),g=AC.createGa
   const t=AC.currentTime;g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v||0.25,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+(d||0.2));
   o.connect(g);g.connect(mg);o.start(t);o.stop(t+(d||0.2)+0.02);}
 function fanfarra(){[523,659,784,1047].forEach((f,k)=>setTimeout(()=>bip(f,0.3,'triangle',0.28),k*120));}
+function trovao(){if(!AC)return;const src=AC.createBufferSource();const buf=AC.createBuffer(1,AC.sampleRate,AC.sampleRate);const d=buf.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2);src.buffer=buf;const f=AC.createBiquadFilter();f.type='lowpass';f.frequency.value=300;const g=AC.createGain();g.gain.value=0.5;src.connect(f);f.connect(g);g.connect(mg);src.start();}
+
+// ---------- FESTA + o MUNDO REAGE ao concluir ----------
+let sig=null;const fx=[];const efeitos=[];const gaivotasVoo=[];
+function festaFX(x,y,z,cor){for(let i=0;i<24;i++){const c=part(0.3,0.3,0.3,cor);c.position.set(x,y,z);
+  const a=Math.random()*6.283,sp=2+Math.random()*3.5;c.userData={vx:Math.cos(a)*sp,vy:4+Math.random()*3.5,vz:Math.sin(a)*sp,life:1.4};
+  scene.add(c);fx.push(c);}}
+function reagir(){if(!sig)return;festaFX(sig.x,sig.y,sig.z,sig.cor||0xf2c14e);
+  if(sig.mesh)sig.mesh.userData.hop=1.2;
+  if(sig.tipo==='farol'){const gl=new THREE.Mesh(new THREE.SphereGeometry(2.6,10,10),new THREE.MeshBasicMaterial({color:0xfff3a0,transparent:true,opacity:0.55}));
+    gl.position.set(sig.x,sig.y,sig.z);gl.userData.glow=1;mundoG.add(gl);efeitos.push(gl);
+    scene.background.lerp(new THREE.Color(0x3a5170),0.45);}                              // a ilha clareia (o farol acendeu!)
+  if(sig.tipo==='ponte'){for(let i=0;i<7;i++){const pb=part(1.5,0.45,1.5,i%2?0x8a5a2a:0x7c4d22);pb.position.set(cx-3+i,2.5,cz+7);pb.scale.set(0.01,1,0.01);pb.userData.grow=-i*0.09;efeitos.push(pb);mundoG.add(pb);}}
+  if(sig.tipo==='chave'){const k=new THREE.Group();const kk=part(0.5,0.5,1.8,0xf2c14e);k.add(kk);const kh=part(1.0,1.0,0.4,0xf2c14e);kh.position.z=-1.1;k.add(kh);const kt=part(0.25,0.7,0.25,0xd9a21e);kt.position.set(0,-0.4,0.9);k.add(kt);
+    k.position.set(sig.x,sig.y,sig.z);k.userData.floatB=1;efeitos.push(k);mundoG.add(k);}}
 
 // ---------- contagem ----------
 function salvar(){try{if(window.EduSave){const prog={nome:nome,turma:turma,paradas:{},ultimo:Date.now()};
@@ -325,9 +359,10 @@ function salvar(){try{if(window.EduSave){const prog={nome:nome,turma:turma,parad
 function contarObj(idx){if(travado)return;const m=objetos[idx];if(!m||m.userData.done)return;m.userData.done=true;m.userData.pop=1;
   contados++;contEl.textContent=OBJ[PARADAS[paradaIdx].item].ic+' '+contados+'/'+alvo;
   bip(PENT[Math.min(contados-1,PENT.length-1)],0.14,'triangle',0.2);
-  falarNum(contados);                                   // a criança OUVE o número (Antonio), pausado
+  mostraNumeral(contados);                              // o NÚMERO aparece grande (associa quantidade ↔ numeral)
+  falarNum(contados);                                   // e a criança OUVE (Antonio), sem cortar o anterior
   if(contados>=alvo)vitoria();}
-function vitoria(){travado=true;const P=PARADAS[paradaIdx];falaEl.innerHTML=P.acerto;fanfarra();salvar();
+function vitoria(){travado=true;const P=PARADAS[paradaIdx];falaEl.innerHTML=P.acerto;fanfarra();reagir();salvar();  // O MUNDO REAGE (o que o Byte prometeu ACONTECE)
   setTimeout(()=>falarByte('vx_p'+(paradaIdx+1)+'_ok'),650);   // deixa o número soar antes do Byte comemorar
   const v=el('vit');el('vnum').textContent=alvo;
   el('vtit').textContent='São '+alvo+'!';el('vsub').textContent=P.acerto;v.classList.remove('hidden');
@@ -379,7 +414,19 @@ function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+
   vshadow.position.set(vpos.x,3.02,vpos.z);
   if(waterM)waterM.position.y=1.7+Math.sin(t*1.4)*0.05;                       // mar respira
   if(foamM)foamM.material.opacity=0.3+0.2*Math.sin(t*1.4+1.2);               // espuma pulsa com a onda
-  for(const m of objetos){if(m.userData.pop>0){m.userData.pop-=dt*2;m.rotation.y+=dt*8;m.position.y=(OBJ[PARADAS[paradaIdx].item].y)+Math.sin((1-m.userData.pop)*Math.PI)*1.1;if(m.userData.pop<=0)m.visible=false;}}
+  for(const m of objetos){if(m.userData.pop>0){m.userData.pop-=dt*2;m.rotation.y+=dt*8;m.position.y=m.userData.by+Math.sin((1-m.userData.pop)*Math.PI)*1.1;if(m.userData.pop<=0)m.visible=false;}
+    else if(!m.userData.done){m.position.y=m.userData.by+Math.sin(t*2+m.userData.ph)*0.07;}}   // RESPIRO (mundo vivo)
+  // gaivotas voando (ambiente) + de vez em quando cantam (o synth já dispara)
+  for(const g of gaivotasVoo){g.userData.ph+=dt*g.userData.sp;g.position.set(cx+Math.cos(g.userData.ph)*g.userData.r,g.userData.vy+Math.sin(t*2+g.userData.r)*0.5,cz+Math.sin(g.userData.ph)*g.userData.r);g.rotation.y=-g.userData.ph;}
+  // FESTA (partículas) ao concluir
+  for(let i=fx.length-1;i>=0;i--){const c=fx[i];const u=c.userData;c.position.x+=u.vx*dt;c.position.z+=u.vz*dt;c.position.y+=u.vy*dt;u.vy-=13*dt;c.rotation.x+=dt*7;u.life-=dt;
+    if(u.life<=0){scene.remove(c);c.geometry.dispose();fx.splice(i,1);}}
+  // o MUNDO reagindo: hop dos props, glow do farol, ponte crescendo, chave flutuando
+  if(sig&&sig.mesh&&sig.mesh.userData.hop>0){sig.mesh.userData.hop-=dt;sig.mesh.position.y=(sig.mesh.userData.baseY||3)+Math.abs(Math.sin(t*8))*0.5*Math.max(0,sig.mesh.userData.hop);}
+  for(const e of efeitos){const u=e.userData;
+    if(u.glow!==undefined){e.material.opacity=0.35+0.25*Math.sin(t*4);e.scale.setScalar(1+0.08*Math.sin(t*4));}
+    if(u.grow!==undefined){u.grow+=dt*2.2;const s=Math.min(1,Math.max(0.01,u.grow));e.scale.set(s,1,s);}
+    if(u.floatB!==undefined){e.rotation.y+=dt*2;e.position.y=sig.y+Math.sin(t*3)*0.25;}}
   camera.position.set(vpos.x+cs*camDist,camH,vpos.z+cc*camDist);camera.lookAt(vpos.x,2.5,vpos.z);
   renderer.render(scene,camera);
   frames++;acc+=now-last;last=now;
