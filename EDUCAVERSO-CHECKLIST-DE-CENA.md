@@ -47,3 +47,32 @@
 **Como usar:** o roteirista preenche §1 no breakdown; Diretor de Arte cobre §2; Engenheiro cobre §3–4; Portão 0
 cobre §5; todos respeitam §6. O **Portão de Coerência** roda esta lista inteira e **reprova** o que faltar —
 volta pro profissional certo, **nunca pro colo do Marcos.**
+
+---
+
+## ✅ DEFINIÇÃO DE PRONTO PEDAGÓGICA — o roteirista/pedagogo JÁ inclui; o AUDITOR verifica ANTES do Marcos
+> Nasceu de uma bronca JUSTA do Marcos (2026-07): *"isso eu nem deveria falar — o roteirista já
+> deveria colocar, ou outro especialista já deveria auditar."* Ele tem razão: essas coisas **não
+> podem chegar nele**. Toda atividade de **contagem/número** só está PRONTA quando passa nesta lista.
+> Cada item que escapar e o Marcos pegar → **vira item permanente aqui** (a lista só cresce).
+
+1. **NÚMERO VISÍVEL** — a cada contagem, o **numeral aparece grande** na tela (a criança associa
+   quantidade ↔ número). Não basta o contador no canto.
+2. **CONTAGEM AUDÍVEL E NÃO INTERROMPIDA** — voz do **Antonio**, pausada; **um número não corta o
+   outro** (fila de áudio). A criança precisa OUVIR "um… dois… três" inteiro.
+3. **O MUNDO REAGE** — o que o guia **PROMETE** ao concluir **ACONTECE de verdade e visível**
+   (farol acende com brilho, ponte surge, baú reage, festa de partículas). **NUNCA só texto.**
+4. **AMBIENTE VIVO** — **som** (mar batendo e voltando, gaivotas cantando, vento) **+ movimento**
+   (objetos respiram, gaivotas voam, água ondula). Clima disponível *quando couber* (o roteiro
+   escolhe): **sol, chuva, dia/noite, trovoada**.
+5. **PROPORÇÃO** — herói, objetos e props em escala coerente (herói pequeno perto das árvores; baú
+   não gigante). *(Ver a regra de proporção no topo deste doc.)*
+6. **RECONHECÍVEL** — cada coisa **parece o que é** (coco redondo com os 3 olhinhos; baú com
+   cadeado). **Nada de "quadrado solto"** sem função na cena.
+7. **CLIQUE / ALCANCE** — o que é interativo é **fácil de tocar** (área de clique generosa) e
+   **alcançável** andando; o contado não bloqueia o vizinho.
+8. **LEVE** — roda **≥30 fps** no PC da escola (FX-4300); **auto-qualidade** baixa a resolução
+   sozinha se cair.
+
+**Ritual do AUDITOR:** roda esta lista por **render headless + E2E** (jogar a atividade inteira)
+ANTES de qualquer coisa chegar ao Marcos. Só sobe o que passou nos 8 itens.
