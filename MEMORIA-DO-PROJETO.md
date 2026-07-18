@@ -1134,3 +1134,27 @@ O Marcos pediu: só ferramentas que EU controlo e gero TUDO automático (sem sit
 - NÃO misturar perspectivas (poça vista de CIMA + praia vista de LADO = parece colado).
   Cena coerente: ou tudo top-down (estilo JRPG, sprites de frente) OU tudo de lado. Decidir e manter.
 - Personagem = cartela de poses animada (NÃO 1 imagem estática com "esticadinho").
+
+---
+
+## Nome do aluno vem do CADASTRO no Firebase (decisão registrada — 2026-07-18)
+
+O Marcos lembrou: **na atividade de verdade, o nome do aluno vai estar no Firebase,
+nos cadastros da turma.** Isso já está montado:
+- Modelo: `/turmas/<turma>/alunos/<aluno> = { nome, progresso, ... }` (`eduverse/lib/eduverse-save.js`).
+- `_painel-prof/` já lista os alunos da turma (`EduSave.listarTurma`).
+
+**Consequência boa para a VOZ do Byte falar o nome:**
+- Como os nomes da turma são **conhecidos de antemão** (estão no cadastro), dá pra
+  **gerar o áudio EXATO de cada aluno matriculado** (mesmo nome raro), rodando o
+  workflow `[audio]` uma vez com a lista da turma → **100% de cobertura**.
+- O **banco de 124 nomes comuns** (já gerado, voz Antonio, em `_voxel/audio/nome_<slug>.mp3`)
+  continua como **rede de segurança** (nome digitado na hora / turma sem cadastro / visitante).
+- Voz SEMPRE por API (edge-tts Antonio), NUNCA voz do navegador.
+
+**LGPD (criança):** cadastro guarda o MÍNIMO — primeiro nome + código/apelido +
+pontuação/progresso. Nunca dado pessoal completo.
+
+**PENDENTE (decidir DEPOIS — o Marcos disse "depois pensamos nisso"):** como o aluno
+se identifica pra entrar — (a) escolher o nome na lista da turma, (b) digitar um
+código/matrícula, ou (c) continuar digitando o nome. Não decidir sozinho.
