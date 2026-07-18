@@ -141,6 +141,28 @@
 > - **BALÃO não trava o boneco:** fala é **automática** (auto-avança por tempo), a criança anda o
 >   tempo todo; toque = andar (não avança fala). Frutas/animais com **sombra** (não flutuam).
 
+## 🪙 2ª ATIVIDADE COMPLETA (Kenney) — "O TESOURO DOS DOIS MONTES" (juntar/somar, 2026-07)
+> Pasta `_kenney/` → publicada em **https://vidalprof.github.io/kenney-vivo/** (via `fabrica.yml`,
+> `source_dir=_kenney`). Mesma mecânica pedagógica da Horta (JUNTAR duas quantidades = SOMAR),
+> mas com o **kit Kenney (CC0, ZERO atribuição)** e **narração de voz completa**.
+> - **Herói** (ruivo, Kenney roguelike 0,9) + **guia Tomás** (aldeão 0,7 — NÃO cavaleiro; o Marcos
+>   flagrou que o guia "coruja" parecia cavaleiro). Ambos ganham **vida por código** (respira/pula/
+>   squash/sombra) — motor de vida universal, personagem de imagem única.
+> - **Itens = barrinhas ÚNICAS de ouro/prata** (recortadas 1-a-1 do sheet de pilha do Kenney;
+>   o Marcos: "não são moedas, são barras de ouro" + "separe pra ser barrinha única" → item CONTÁVEL).
+> - **⭐ NARRAÇÃO POR VOZ (Antonio/edge-tts) — pedido do Marcos "tudo narrado, inclusive o contar":**
+>   - Helper **`Voz`** no `game.js` (HTML5 `Audio`, mp3 em `_kenney/audio/`): `um/cadeia/stop`.
+>     Degrada gracioso (se o mp3 falha, `onerror`→segue; nunca trava).
+>   - Falas geradas em lote pelo **`gerar-audio.yml` (modelo=male → `pt-BR-AntonioNeural`)** via
+>     `_lote_falas.json`; ids: `kn1..kn20` (contagem), `k_abre1/k_abre2` (saudação em 2 p/ balão
+>     pequeno), `k_pede0..3`, `k_soma0..3`, `k_mais`, `k_venceu`, `k_licao`, `k_pergunta`.
+>   - **Balão sincronizado com a voz:** `dialogo(pgs,onDone,audios)` — a **voz manda no ritmo**
+>     (avança quando a narração acaba), com **fallback** longo caso a criança corte a voz (já foi
+>     juntando). Token de página (`_pgTok`) invalida callback velho — sem avanço duplo.
+>   - **Contar APARECENDO o número:** a cada barra pega, toca `kn<n>` (Antonio fala "um","dois"...)
+>     junto com o `numerao` (número grandão). Saudação personalizada pelo **nome** (banco de 124).
+> - **Rodadas fixas** `[[3,2],[5,4],[7,6],[9,8]]` (por isso deu p/ gravar as falas exatas por rodada).
+
 ## 🔎 DISCIPLINA DE QA (o Marcos cobrou: "essas coisas não podem acontecer")
 > Eu estava **usando o Marcos como QA** (mostrava tosco, ele achava o defeito). ERRADO — custa o tempo dele.
 > **Antes de mostrar QUALQUER coisa visual, EU renderizo (headless + Playwright) e AUDITO** contra a lista:
