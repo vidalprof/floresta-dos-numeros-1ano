@@ -209,9 +209,14 @@ Rituais transformam "abrir um site" em "cerimônia da turma". Baratos, curtos, m
 Todas ES5, sem asset pesado novo, reusando sprites/partículas/Web Audio/clima que já
 existem. Deleite é o que faz a criança **contar pro colega** — marketing orgânico.
 
-1. **O NPC lembra o nome dela.** No balão de fala aparece o primeiro nome ("Oi, Ana!")
-   — texto é grátis; o áudio genérico ("Oi, amiguinho!") cobre a voz. Sensação enorme,
-   custo quase zero. [PÓS-SAVE]
+1. **O NPC lembra o nome dela — E FALA O NOME EM VOZ ALTA.** ✅ **FEITO (upgrade jul/2026)**
+   No balão o primeiro nome aparece no texto E o personagem **fala o nome de verdade**
+   na voz do Antonio (não mais só genérico): banco de **124 nomes gravados** (edge-tts,
+   `eduverse/vozes/nomes/`) + helper reutilizável `eduverse/lib/voz-nome.js`. Nome fora
+   do banco cai no texto + saudação genérica. Voz SEMPRE por API, **nunca a do navegador**.
+   Melhor ainda: com o cadastro no Firebase dá pra gerar o áudio EXATO de cada aluno da
+   turma (100% de cobertura). Sensação enorme, custo quase zero. Referência: `_voxel`.
+   **→ Padrão obrigatório em todo projeto** (ver `EDUCAVERSO-CHECKLIST-DE-CENA.md`). [FEITO/reutilizável]
 2. **Arco-íris surpresa.** Raramente, depois da chuva do motor, um arco-íris (gradiente
    CSS + um PNG) cruza o céu e solta a **figurinha rara "Arco-íris"**. [JÁ DÁ]
 3. **Docinho imita o clima.** Chovendo, ele abre uma guarda-chuvinha; no frio/neve, põe

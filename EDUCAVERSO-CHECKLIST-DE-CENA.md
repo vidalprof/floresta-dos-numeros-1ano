@@ -86,3 +86,29 @@ ANTES de qualquer coisa chegar ao Marcos. Só sobe o que passou nos 8 itens.
   então o **volume de bugs só cai** com o tempo (o mesmo erro não volta duas vezes).
 - **Cobre TUDO** (pedagógico, arte, técnico, som, UX), rodando a Definição de Pronto acima antes de
   qualquer coisa chegar ao Marcos. Regra de ouro: **o Marcos não é o QA.**
+
+---
+
+## 🧲 GANCHOS DE ENGAJAMENTO — PADRÃO OBRIGATÓRIO EM TODO PROJETO
+*(o Marcos: "todos os projetos devem ter essas melhorias para ficarem bem atrativos para os estudantes" — jul/2026)*
+
+Não é enfeite: é o que faz o estudante **querer voltar**. Base neurocientífica em
+`_plano/plano_engajamento.md` (curiosidade, pertencimento, orgulho — **nunca medo/dark pattern**).
+**Toda atividade nova E as existentes** (voxel, 2D/Phaser, premium, hub) devem ter, no mínimo:
+
+1. **O personagem FALA o nome do aluno.** ✅ reutilizável já pronto: banco de 124 vozes
+   (`eduverse/vozes/nomes/`, voz Antonio) + helper `eduverse/lib/voz-nome.js` + `eduverse/vozes/LEIA-ME.md`.
+   Voz SEMPRE por API (edge-tts), **NUNCA a do navegador**. Nome no banco → fala o nome + saudação
+   **sem apelido**; fora do banco → texto + saudação genérica. (Com cadastro no Firebase, gerar a voz
+   exata da turma = 100% de cobertura.)
+2. **"O mundo me lembra" (persistência).** Ao voltar, o mundo **retoma onde parou** e cumprimenta com
+   "bem-vindo de volta" (save Firebase, offline-first, `eduverse-save.js`). Nunca recomeça do zero,
+   nunca pune quem faltou.
+3. **Progresso visível + coleção.** Mostrar o quanto já avançou (mapa/paradas) e **colecionar**
+   conquistas (medalhas/figurinhas) — progresso pessoal e da turma, **nunca ranking**.
+4. **Novidade a cada volta.** Sempre ≥1 mudança boa visível (clima, delta) — "o mundo continuou vivo".
+5. **Autonomia.** Um toque de personalização (nome de grumete, escolha do personagem/cor) = apego.
+
+**Portão de QA (o Auditor checa antes do Marcos):** a atividade tem o gancho #1 funcionando
+(voz do nome via API, testada em render headless) e #2 (retoma/saudação de volta)? Se não, **não sobe**.
+Aplicar aos projetos já existentes é tarefa contínua — registrar o que já recebeu no `MEMORIA-DO-PROJETO.md`.

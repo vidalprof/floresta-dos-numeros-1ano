@@ -1158,3 +1158,49 @@ pontuação/progresso. Nunca dado pessoal completo.
 **PENDENTE (decidir DEPOIS — o Marcos disse "depois pensamos nisso"):** como o aluno
 se identifica pra entrar — (a) escolher o nome na lista da turma, (b) digitar um
 código/matrícula, ou (c) continuar digitando o nome. Não decidir sozinho.
+
+---
+
+## 🔊 O Byte FALA o nome do aluno — GANCHO PRONTO e REUTILIZÁVEL (2026-07-18)
+
+Feito e **no ar** na aventura voxel (`_voxel` → `ilha-voxel-teste`). É o gancho de
+engajamento #1 do `_plano/plano_engajamento.md` ("o NPC lembra o nome") **elevado**:
+antes o nome só aparecia no texto; agora o personagem **fala o nome de verdade**.
+
+**Como funciona:**
+- **Banco de 124 nomes** comuns de criança, gravados na **voz do Antonio**
+  (`pt-BR-AntonioNeural`, edge-tts, via workflow `[audio]`). ~9 KB cada.
+- **Mestre canônico:** `eduverse/vozes/nomes/` (+ lista `eduverse/vozes/nomes-banco.json`).
+  Em uso no jogo: `_voxel/audio/nome_<slug>.mp3`.
+- **Helper plug-and-play:** `eduverse/lib/voz-nome.js` (`window.VozNome`: `idDe(nome)`,
+  `slug()`, `cadeia([...], aoFim)`). Manual: `eduverse/vozes/LEIA-ME.md`.
+- **slug** = 1º nome, `NFD` sem acento, minúsculo, só `a-z0-9` (igual ao que o workflow
+  gera). Ex.: "Cauã" → `nome_caua`.
+- **Cadeia de voz sem cortar:** `nome → saudação → problema`. Nome no banco → saudação
+  **sem apelido** (`vx_ola_nome`/`vx_voltou_nome`); nome fora do banco → saudação
+  **genérica** com "grumete" (`vx_ola`/`vx_voltou`). Senão vira "Marina!… Ôa, grumete!"
+  (soa como 2 pessoas) — foi feedback do Marcos, corrigido.
+- **Voz SEMPRE por API. NUNCA a do navegador** (`SpeechSynthesis` proibida).
+
+**BUG achado e consertado na raiz (auditoria antes do Marcos):** a saudação tocava
+**2×** e na 2ª caía no genérico. Causa: em falha de rede (Firebase bloqueado), o
+navegador dispara `onreadystatechange` (status 0) **E** `onerror` → o callback do
+`EduSave` rodava 2× → `montarParada` montava 2×. Conserto: **trava anti-duplo no `_xhr`**
+(`pronto=true` na 1ª; vale p/ `_voxel/eduverse-save.js` E `eduverse/lib/eduverse-save.js`)
++ **start idempotente** no jogo (`comecou`). QA render (Playwright headless) confirmou:
+Marina/Cauã → `nome_x`+`vx_ola_nome` (1×); nome fora do banco → `vx_ola` (1×).
+
+**Expandir o banco:** nomes em `_lote_falas.json` (`{id:"nome_<slug>",texto:"<Nome>!"}`)
+→ commit `[audio]` → `cp _audio/nome_*.mp3` pro mestre e pro projeto → atualizar o set
+em `voz-nome.js` + `nomes-banco.json`. **Melhor:** gerar a voz EXATA da turma pelo
+cadastro do Firebase (100% de cobertura).
+
+## 🧲 PADRÃO: todo projeto deve ter os ganchos de engajamento (decisão do Marcos, 2026-07-18)
+"Todos os projetos devem ter essas melhorias para ficarem bem atrativos para os
+estudantes." Virou **padrão obrigatório** no `EDUCAVERSO-CHECKLIST-DE-CENA.md`
+(seção "Ganchos de Engajamento"): (1) falar o nome, (2) o mundo lembra/retoma,
+(3) progresso visível + coleção, (4) novidade a cada volta, (5) autonomia. O Auditor
+barra o que não tiver ≥ #1 e #2. **Status de adoção:**
+- ✅ `_voxel` (Ilha das Trinta Moedas): #1 e #2 prontos.
+- ⬜ `educaverso-app` (2D/Phaser), atividades **premium** e hub **Ilhas do Saber**:
+  PENDENTE aplicar (helper `voz-nome.js` já pronto pra plugar). Registrar aqui conforme adotar.
