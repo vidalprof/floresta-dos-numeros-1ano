@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Personagem animado (4 direções) — demo</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#4a7a3a;-webkit-tap-highlight-color:transparent}
+  #jogo canvas{display:block;margin:auto;image-rendering:pixelated}
+  #dica{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:9;background:rgba(255,255,255,.9);color:#173a52;font:600 13px system-ui;padding:6px 12px;border-radius:10px;pointer-events:none}
+</style>
+<script src="phaser.min.js"></script>
+</head><body>
+<div id="dica">Use as setas ou WASD — o personagem anda nas 4 direções (mexe as pernas!)</div>
+<div id="jogo"></div>
+<script src="game.js"></script>
+</body></html>
