@@ -1,0 +1,82 @@
+name: PyGame -> Web (pygbag) e publicar
+
+# Empacota o jogo PyGame (_pygame/main.py) para a WEB com o pygbag (WebAssembly)
+# e publica o resultado (HTML) num repositorio, ligando o GitHub Pages.
+# Serve pro Marcos TESTAR peso/carregamento do PyGame no navegador (PC da escola + celular).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de destino (ex: pygame-teste)"
+        required: false
+        default: "pygame-teste"
+        type: string
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar pygbag
+        run: pip install --quiet pygbag
+
+      - name: Empacotar PyGame -> Web (pygbag)
+        run: |
+          set -e
+          python -m pygbag --build _pygame/main.py
+          echo "== conteudo do build/web =="
+          ls -la _pygame/build/web || (echo "::error::pygbag nao gerou build/web"; exit 1)
+
+      - name: Publicar o HTML e ligar Pages
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          NAME: ${{ inputs.repo_name }}
+        run: |
+          set -euo pipefail
+          SRC="_pygame/build/web"
+          if [ ! -f "$SRC/index.html" ]; then
+            echo "::error::Nao encontrei $SRC/index.html (pygbag falhou?)."
+            exit 1
+          fi
+
+          gh repo create "$OWNER/$NAME" --public \
+            --description "Teste PyGame na web (pygbag)" \
+            || echo "Repositorio ja existe; vou apenas atualizar."
+
+          work="$(mktemp -d)"
+          cp -r "$SRC/." "$work/"
+          : > "$work/.nojekyll"
+
+          cd "$work"
+          git init -q
+          git checkout -q -b main
+          git add -A
+          git -c user.name="PyGame Build" \
+              -c user.email="pygame@users.noreply.github.com" \
+              commit -qm "Publica teste PyGame (pygbag) na web"
+          git push -q --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$NAME.git" main
+
+          gh api -X POST "repos/$OWNER/$NAME/pages" \
+            -f "source[branch]=main" -f "source[path]=/" \
+            || gh api -X PUT "repos/$OWNER/$NAME/pages" \
+                 -f "source[branch]=main" -f "source[path]=/" \
+            || echo "Pages talvez ja estivesse ligado."
+
+          URL="https://$OWNER.github.io/$NAME/"
+          {
+            echo "## Teste PyGame publicado"
+            echo ""
+            echo "**Link:** $URL"
+            echo ""
+            echo "_1a vez pode levar 1-2 min. O PyGame carrega um runtime Python (WASM) antes de abrir._"
+          } >> "$GITHUB_STEP_SUMMARY"
