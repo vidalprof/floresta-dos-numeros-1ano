@@ -1,0 +1,58 @@
+name: Godot Web Export (prova)
+
+# PROVA: o workflow instala o Godot (imagem godot-ci, internet liberada no Actions),
+# exporta o projeto _godot para HTML5 e commita o build em _godot/build/web.
+# Depois o Claude puxa, mede o peso e testa se roda (render headless). workflow_dispatch.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3.0
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Git safe dir
+        run: git config --global --add safe.directory '*'
+
+      - name: Instalar export templates (da imagem)
+        run: |
+          mkdir -p ~/.local/share/godot/export_templates
+          cp -r /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/ 2>/dev/null || true
+          echo "templates:"; ls -la ~/.local/share/godot/export_templates/ || true
+
+      - name: Exportar Web (HTML5)
+        run: |
+          cd _godot
+          # importa recursos primeiro (evita 'export sem import')
+          godot --headless --import 2>&1 | tail -20 || true
+          mkdir -p build/web
+          echo "=== EXPORTANDO ==="
+          godot --headless --verbose --export-release "Web" build/web/index.html 2>&1 | tail -80
+          echo "=== SAIDA ==="
+          ls -la build/web || echo "SEM SAIDA"
+
+      - name: Medir PESO do build
+        run: |
+          echo "=== TAMANHO DE CADA ARQUIVO ==="
+          du -h _godot/build/web/* 2>/dev/null | sort -h || true
+          echo "=== TOTAL ==="
+          du -sh _godot/build/web 2>/dev/null || echo "sem build"
+
+      - name: Commit do build
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _godot/build/web 2>/dev/null || true
+          if git diff --cached --quiet; then echo "nada a commitar (export falhou?)"; exit 0; fi
+          git commit -m "godot: export web (prova, via workflow)"
+          for k in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
