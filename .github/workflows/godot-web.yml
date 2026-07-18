@@ -16,7 +16,7 @@ jobs:
     if: contains(github.event.head_commit.message, '[godot]')
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.3.0
+      image: barichello/godot-ci:4.2.2
     steps:
       - uses: actions/checkout@v4
 
