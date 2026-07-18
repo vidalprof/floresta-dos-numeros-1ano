@@ -1350,3 +1350,28 @@ pronto. **Provamos que É POSSÍVEL:**
 escola**. **Phaser 3** entrega as MESMAS diretrizes profissionais (física nativa Arcade,
 FSM, sprite sheet, LERP, WebGL) **~30x mais leve** e eu construo/publico 100% headless.
 Recomendação: seguir com Phaser. (Arquivos Godot ficam no repo como prova; não usar em prod.)
+
+---
+
+## ✅ KIT SPRITE COMPLETO + PHASER (física nativa) FUNCIONANDO — pelo GitHub (2026-07-18)
+
+O Marcos queria "kit sprite completo e lindo", acesso pelo GitHub, jogo profissional sem
+bug. ENTREGUE e provado:
+- **Kit do Byte gerado pelo Gemini/GitHub** editando a âncora `byte2d` p/ manter o MESMO
+  personagem: `byte_walk_a` (pé esq. à frente) + `byte_walk_b` (pé dir.). Consistentes.
+- **Folha de sprite alinhada** (`_kit/montar_sheet.py`): recorta o fundo (imagem INTEIRA,
+  sem cortar membro), normaliza os 3 quadros no MESMO tamanho com os PÉS na mesma linha
+  (BASE_Y) → `_kit/img/byte_sheet.png` (3×200×240). É o alinhamento que tira o "travado".
+- **Motor Phaser** (`_kit/index.html`, usa `_lib_jogo/phaser.min.js`): **física NATIVA
+  Arcade** (`physics.add.sprite`/`body`, `collider` com obstáculos StaticBody = não
+  atravessa, `overlap` pega coco), **FSM Idle/Walk** (spritesheet + frameRate 7), **LERP**
+  na velocidade, **câmera segue** (exploração), **Phaser.AUTO** (WebGL+fallback Canvas).
+- **Auditor (render E2E headless):** o Byte ANDOU, colidiu com obstáculo, coletou 2 cocos,
+  **FPS ~59, sem erro de JS.** Leve (~1 MB Phaser + assets).
+- **Publicado** pela Fábrica em `byte-explora`.
+
+**LIÇÃO CHAVE (fim do círculo):** o bug de animação nunca foi do Phaser — era sprite
+INCOMPLETO/recortado em membro + colisão na mão. Com **kit completo (frames inteiros
+alinhados) + física nativa Arcade + Auditor**, ficou lindo, fluido, sem bug e leve. Godot
+provou funcionar mas pesa 35 MB (inviável). **Phaser + kit completo + IA = o caminho.**
+`byte_walk_*` reaproveitáveis; dá pra gerar mais poses (correr, pegar, comemorar) do mesmo jeito.
