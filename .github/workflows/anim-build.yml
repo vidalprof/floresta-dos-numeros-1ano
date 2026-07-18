@@ -1,0 +1,33 @@
+name: Anim - baixar personagem animado (LPC/CC0)
+
+on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    if: contains(github.event.head_commit.message, '[anim]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Baixar personagem animado
+        run: |
+          python3 _anim/fetch_char.py 2>&1 | tail -40
+          echo "=== arquivos ==="; ls -la _anim/assets/images
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _anim/assets
+          if git diff --cached --quiet; then echo "::error::nada baixado"; exit 1; fi
+          git commit -m "anim: personagem animado (LPC/CC0) baixado"
+          for k in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
