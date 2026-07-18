@@ -85,7 +85,7 @@ class Mundo extends Phaser.Scene {
       ['tree', 140, 180], ['tree', 420, 150], ['pine', 700, 130], ['tree', 980, 200],
       ['pine', 1120, 320], ['tree', 1080, 560], ['tree', 300, 430], ['pine', 120, 560],
       ['tree', 500, 780], ['pine', 820, 820], ['tree', 1160, 800], ['tree', 940, 380],
-      ['pine', 640, 560], ['tree', 380, 900],
+      ['pine', 1000, 650], ['tree', 380, 900],
     ];
     arvores.forEach(([tipo, x, y], i) => {
       const a = this.add.image(x, y, tipo).setOrigin(0.5, 1).setDepth(y);
