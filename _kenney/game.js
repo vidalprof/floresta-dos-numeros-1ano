@@ -7,7 +7,7 @@
 // as de PRATA (anda por cima), conta, e descobre o total (soma). Balão branco
 // desenhado por código (sem emoji), fala AUTOMÁTICA (não trava). Toque pra andar.
 // ============================================================================
-const WW = 1200, WH = 900, ZOOM = 2.0, S = 3.4, ST = 6.4, SB = 3.2, SM = 2.8, SG = 3.2;
+const WW = 1200, WH = 900, ZOOM = 2.0, S = 3.4, ST = 6.4, SB = 3.2, SM = 3.6, SG = 3.2;
 const RODADAS = [[3, 2], [5, 4], [7, 6], [9, 8]];          // [ouro, prata]
 const CA = { x: 420, y: 330 }, CB = { x: 860, y: 640 };
 
@@ -32,12 +32,33 @@ function somCerto() { [523, 659, 784].forEach((f, i) => setTimeout(() => tom(f, 
 function somFanfarra() { [523, 659, 784, 1046, 784, 1046].forEach((f, i) => setTimeout(() => tom(f, 0.3, 'triangle', 0.1), i * 140)); }
 function rajada() { if (!_wg || !AC) return; const t = AC.currentTime; _wg.gain.cancelScheduledValues(t); _wg.gain.setValueAtTime(_wg.gain.value, t); _wg.gain.linearRampToValueAtTime(0.1, t + 0.8); _wg.gain.linearRampToValueAtTime(0.045, t + 2.6); }
 
+// ---------- VOZ (narração REAL gravada — Antonio/edge-tts, mp3 em audio/) ----------
+// NUNCA voz do navegador (robótica/proibida). mp3 gravado toca por cima do jogo.
+const Voz = (function () {
+  const base = 'audio/'; let atual = null;
+  function stop() { if (atual) { try { atual.pause(); } catch (e) { } atual = null; } }
+  function um(id, cb) {
+    if (!id) { if (cb) cb(); return; }
+    let a; try { a = new Audio(base + id + '.mp3'); a.volume = 1; } catch (e) { if (cb) cb(); return; }
+    atual = a;
+    const fim = () => { if (atual === a) atual = null; if (cb) { const c = cb; cb = null; c(); } };
+    a.onended = fim; a.onerror = fim; a.play().catch(fim);
+  }
+  function cadeia(ids, cb) { const f = (ids || []).filter(Boolean); (function nx(k) { if (k >= f.length) { if (cb) cb(); return; } um(f[k], () => nx(k + 1)); })(0); }
+  // slug do 1º nome (igual ao workflow) p/ achar o mp3 do nome do aluno
+  function slug(s) { return (s || '').trim().split(/\s+/)[0].normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, ''); }
+  return { stop, um, cadeia, slug };
+})();
+// nomes com voz gravada (banco Antonio) — greeting personalizado quando existe
+const NOMES_VOZ = new Set(['agatha','alexandre','alice','amanda','ana','analu','analuz','anthony','antonella','antonio','arthur','aurora','ayla','beatriz','benicio','benjamin','bento','bernardo','bianca','bruna','bruno','bryan','caio','caleb','camila','carolina','catarina','caua','cecile','cecilia','clara','daniel','danilo','davi','diego','duda','eduardo','elisa','eloa','emanuel','emanuelly','emilly','enzo','erick','ester','esther','felipe','fernanda','fernando','gabriel','gabriela','gael','giovanna','guilherme','gustavo','heitor','helena','heloisa','henrique','ian','igor','isaac','isabela','isadora','joao','jose','julia','juliana','kaique','lara','larissa','laura','leo','leticia','levi','live','livia','liz','lorena','lorenzo','luan','lucas','luiza','maite','malu','manuela','marcos','maria','mariana','marina','matheus','melissa','miguel','milena','murilo','nathan','nicolas','nicole','noah','olivia','otavio','pedro','pietra','pietro','rael','rafael','rafaela','ravi','rebeca','rodrigo','ryan','samuel','sarah','sofia','sophia','stella','theo','thiago','valentina','vicente','vitor','vitoria','yasmin','yuri']);
+function idNome(nome) { const s = Voz.slug(nome); return NOMES_VOZ.has(s) ? 'nome_' + s : ''; }
+
 // ============================== UI (sem zoom) ==============================
 class UI extends Phaser.Scene {
   constructor() { super({ key: 'UI' }); }
-  preload() { this.load.image('ouroHUD', 'assets/ouro.png'); }
+  preload() { this.load.image('cogHUD', 'assets/ourobar.png'); }
   create() {
-    this.hud = this.add.text(16, 14, 'Moedas: 0', { fontFamily: 'system-ui', fontSize: '24px', color: '#fff', stroke: '#173a52', strokeThickness: 6 }).setDepth(9000);
+    this.hud = this.add.text(16, 14, 'Barras: 0', { fontFamily: 'system-ui', fontSize: '24px', color: '#fff', stroke: '#173a52', strokeThickness: 6 }).setDepth(9000);
     this.scale.on('resize', () => { if (this.med) this.med.setPosition(this.scale.width / 2, this.scale.height / 2); });
   }
   setHUD(t) { this.hud.setText(t); }
@@ -53,7 +74,7 @@ class UI extends Phaser.Scene {
   medalha(onRestart) {
     const m = this.add.container(this.scale.width / 2, this.scale.height / 2).setDepth(9900);
     const bg = this.add.rectangle(0, 0, 340, 200, 0x11314a, 0.96).setStrokeStyle(4, 0xffd76a);
-    const coin = this.add.image(0, -44, 'ouroHUD').setScale(6);
+    const coin = this.add.image(0, -44, 'cogHUD').setScale(6);
     const t1 = this.add.text(0, 34, 'CAÇADOR(A) DE TESOURO', { fontFamily: 'system-ui', fontSize: '19px', color: '#ffd76a', fontStyle: 'bold' }).setOrigin(0.5);
     const t2 = this.add.text(0, 64, 'Toque para brincar de novo', { fontFamily: 'system-ui', fontSize: '13px', color: '#cfe' }).setOrigin(0.5);
     m.add([bg, coin, t1, t2]); m.setScale(0.2); this.med = m;
@@ -67,7 +88,7 @@ class UI extends Phaser.Scene {
 class Mundo extends Phaser.Scene {
   constructor() { super({ key: 'Mundo' }); }
   preload() {
-    ['grass', 'char', 'tree', 'pine', 'bush', 'ouro', 'prata', 'guia'].forEach(k => this.load.image(k, 'assets/' + k + '.png'));
+    ['grass', 'char', 'tree', 'pine', 'bush', 'ourobar', 'pratabar', 'guia'].forEach(k => this.load.image(k, 'assets/' + k + '.png'));
   }
   create() {
     this.total = 0; this.ativo = false; this._venceu = false; this.dlgAberto = false;
@@ -114,14 +135,26 @@ class Mundo extends Phaser.Scene {
     if (window.__nome) this.time.delayedCall(60, () => this.iniciar());
   }
 
-  // ---- BALÃO automático (não trava) ----
-  dialogo(pgs, onDone) { this.dlgAberto = true; this._pgs = pgs.slice(); this._pg = 0; this._onDone = onDone || null; this.balG.setVisible(true); this.balT.setVisible(true); this.mostra(); }
+  // ---- BALÃO automático + NARRAÇÃO (voz Antonio) sincronizada; não trava ----
+  // pgs = ['texto',...]; audios = [[id,...],...] (voz de cada página; opcional)
+  dialogo(pgs, onDone, audios) { this.dlgAberto = true; this._pgs = pgs.slice(); this._audios = audios || null; this._pg = 0; this._pgTok = (this._pgTok || 0) + 1; this._onDone = onDone || null; this.balG.setVisible(true); this.balT.setVisible(true); this.mostra(); }
   mostra() {
+    const tok = ++this._pgTok;
     const full = this._pgs[this._pg]; this._full = full; this._n = 0; this.balT.setText('');
-    if (this._typer) this._typer.remove(); if (this._auto) this._auto.remove();
-    this._typer = this.time.addEvent({ delay: 26, loop: true, callback: () => { this._n++; this.balT.setText(full.slice(0, this._n)); if (this._n % 2 === 0) tom(430, 0.03, 'square', 0.02); if (this._n >= full.length) { this._typer.remove(); this._auto = this.time.delayedCall(800 + full.length * 26, () => this.avanca()); } } });
+    if (this._typer) this._typer.remove(); if (this._auto) { this._auto.remove(); this._auto = null; } if (this._fb) { this._fb.remove(); this._fb = null; }
+    // efeito de digitação (visual)
+    this._typer = this.time.addEvent({ delay: 26, loop: true, callback: () => { this._n++; this.balT.setText(full.slice(0, this._n)); if (this._n % 2 === 0) tom(430, 0.03, 'square', 0.02); if (this._n >= full.length) this._typer.remove(); } });
+    const adv = () => { if (tok !== this._pgTok) return; this.avanca(); };
+    const ids = this._audios ? this._audios[this._pg] : null;
+    if (ids && ids.length) {
+      // voz manda no ritmo: avança quando a narração termina; fallback longo cobre o caso de a voz ser cortada (ex.: criança já foi juntando)
+      Voz.stop(); Voz.cadeia(ids, () => { if (tok !== this._pgTok) return; this._auto = this.time.delayedCall(320, adv); });
+      this._fb = this.time.delayedCall(Math.max(3500, 350 + full.length * 100), adv);
+    } else {
+      this._auto = this.time.delayedCall(800 + full.length * 26, adv);
+    }
   }
-  avanca() { if (this._auto) { this._auto.remove(); this._auto = null; } this._pg++; if (this._pg < this._pgs.length) this.mostra(); else { this.balG.setVisible(false); this.balT.setVisible(false); this.dlgAberto = false; const cb = this._onDone; this._onDone = null; if (cb) cb(); } }
+  avanca() { if (this._auto) { this._auto.remove(); this._auto = null; } if (this._fb) { this._fb.remove(); this._fb = null; } this._pg++; if (this._pg < this._pgs.length) this.mostra(); else { this.balG.setVisible(false); this.balT.setVisible(false); this.dlgAberto = false; Voz.stop(); const cb = this._onDone; this._onDone = null; if (cb) cb(); } }
   desenhaBalao() {
     if (!this.dlgAberto) return; const pad = 9, tw = Math.max(28, this.balT.width), th = Math.max(14, this.balT.height);
     const w = tw + pad * 2, h = th + pad * 2, cx = this.guia.x, base = this.guia.y - this.guia.displayHeight - 2, rx = cx - w / 2, ry = base - h;
@@ -134,20 +167,24 @@ class Mundo extends Phaser.Scene {
   iniciar() {
     if (this._ini) return; this._ini = true; initSom(); this._on2 = true;
     const dc = document.getElementById('somdica'); if (dc) dc.style.display = 'none';
-    this.nome = (window.__nome || 'amiguinho'); this.ativo = true; this.iniciarRodada();
+    this.nome = (window.__nome || 'amiguinho'); this._idNome = idNome(this.nome); this.ativo = true; this.iniciarRodada();
   }
   iniciarRodada() {
-    const [a, b] = RODADAS[this.rodada]; this.aR = a; this.bR = b; this.alvo = a + b; this.coletadas = 0;
+    const r = this.rodada, [a, b] = RODADAS[r]; this.aR = a; this.bR = b; this.alvo = a + b; this.coletadas = 0;
     this.moedas.forEach(m => { if (m._sh) m._sh.destroy(); m.destroy(); }); this.moedas = [];
-    this.poe('ouro', a, CA); this.poe('prata', b, CB);
+    this.poe('ourobar', a, CA); this.poe('pratabar', b, CB);
     const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
-    const fala = (this.rodada === 0)
-      ? ['Ola, ' + N + '! Eu sou o Vovo Coruja.', 'Ande por cima das moedas pra juntar!', 'Junte as ' + a + ' de OURO com as ' + b + ' de PRATA. Quantas dao ao todo?']
-      : ['Junte as ' + a + ' de ouro com as ' + b + ' de prata!', 'Quantas dao ao todo?'];
-    this.dialogo(fala);
+    const pede = 'Junte as ' + a + ' barras de ouro com as ' + b + ' de prata. Quantas dao ao todo?';
+    if (r === 0) {
+      this.dialogo(
+        ['Ola, ' + N + '! Eu sou o Tomas.', 'Achei um tesouro espalhado em dois montes! Ande por cima das barrinhas pra pegar.', pede],
+        null, [[this._idNome, 'k_abre1'], ['k_abre2'], ['k_pede0']]);
+    } else {
+      this.dialogo([pede], null, [['k_pede' + r]]);
+    }
   }
   poe(tipo, n, centro) {
-    const PR = 3, ESP = 56;
+    const PR = 3, ESP = 76;   // BEM espaçado (criança anda até cada um pra contar)
     for (let i = 0; i < n; i++) {
       const col = i % PR, lin = Math.floor(i / PR);
       const x = centro.x + (col - (PR - 1) / 2) * ESP + Phaser.Math.Between(-4, 4);
@@ -160,21 +197,25 @@ class Mundo extends Phaser.Scene {
   }
   coletar(m) {
     if (m._coletada) return; m._coletada = true; this.coletadas++; this.total++;
-    somMoeda(); this.ui.numerao(this.coletadas); this.ui.setHUD('Moedas: ' + this.total);
+    somMoeda(); this.ui.numerao(this.coletadas); this.ui.setHUD('Barras: ' + this.total);
+    // NARRA a contagem: a criança ouve o número (Antonio) enquanto ele aparece grandão
+    if (this.coletadas <= 20) { Voz.stop(); Voz.um('kn' + this.coletadas); }
     this.faisca(m.x, m.y - 10);
     this.tweens.add({ targets: m, y: m.y - 46, scale: 0.1, alpha: 0, duration: 360, ease: 'Back.easeIn', onComplete: () => m.destroy() });
     if (this.coletadas >= this.alvo) this.rodadaDone();
   }
   faisca(x, y) { for (let i = 0; i < 6; i++) { const a = (i / 6) * Math.PI * 2; const s = this.add.rectangle(x, y, 4, 4, 0xfff2a0).setDepth(9000).setAngle(45); this.tweens.add({ targets: s, x: x + Math.cos(a) * 30, y: y + Math.sin(a) * 26, alpha: 0, scale: 0.2, duration: 520, onComplete: () => s.destroy() }); } }
   rodadaDone() {
-    somCerto(); const a = this.aR, b = this.bR, s = a + b; this.rodada++;
-    if (this.rodada >= RODADAS.length) this.dialogo([a + ' e ' + b + ', juntando, dao ' + s + '!'], () => this.vencer());
-    else this.dialogo([a + ' e ' + b + '... juntando dao ' + s + '!', 'Vamos ao proximo monte de moedas!'], () => this.iniciarRodada());
+    somCerto(); const a = this.aR, b = this.bR, s = a + b, rf = this.rodada; this.rodada++;
+    if (this.rodada >= RODADAS.length) this.dialogo([a + ' e ' + b + ', juntando, dao ' + s + '!'], () => this.vencer(), [['k_soma' + rf]]);
+    else this.dialogo([a + ' e ' + b + ', juntando, dao ' + s + '!', 'Vamos achar mais tesouro!'], () => this.iniciarRodada(), [['k_soma' + rf], ['k_mais']]);
   }
   vencer() {
     if (this._venceu) return; this._venceu = true; this.ativo = false; somFanfarra(); this.ui.confete();
-    const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
-    this.time.delayedCall(600, () => this.dialogo(['Voce conseguiu, ' + N + '! Que tesouro!', 'Toda vez a gente JUNTOU dois montes...', 'Juntar dois grupos e o mesmo que SOMAR!', 'O que voce mais gostou hoje?'], () => this.ui.medalha(() => { this._ini = false; this.scene.restart(); })));
+    this.time.delayedCall(600, () => this.dialogo(
+      ['Voce conseguiu! Que tesouro!', 'Toda vez a gente juntou dois montes. Juntar dois grupos e o mesmo que SOMAR!', 'O que voce mais gostou hoje?'],
+      () => this.ui.medalha(() => { this._ini = false; this.scene.restart(); }),
+      [['k_venceu'], ['k_licao'], ['k_pergunta']]));
   }
 
   vida(img, bx, by, andando, time, face, base) {
