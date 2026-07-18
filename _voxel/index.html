@@ -291,7 +291,7 @@ function props(idx){sig=null;gaivotasVoo.length=0;barco1=null;pinca=null;
 // ---------- estado / paradas ----------
 const PARADAS=[
  {nome:'A Praia dos Cocos',item:'coco',n:6,tema:'praia',
-  abre:'Arrá, grumete! O barquinho tá vazando e o Pinça quer cocos pra tapar os furos… quantos cocos o coqueiro deixou cair? <b>Toca em cada um</b> (ou anda por cima) pra contar!',
+  abre:'Arrá! Olha o barquinho — tá vazando e o Pinça quer cocos pra tapar os furos… quantos cocos o coqueiro deixou cair? <b>Toca em cada um</b> (ou anda por cima) pra contar!',
   acerto:'Seis cocos redondinhos! Deu e sobrou pros furos, arrá! O barquinho agradece com um "gluglu" feliz!',
   comp:'O barco tinha <b>5 furos</b> e você juntou <b>6 cocos</b> — <b>sobrou 1</b>! Tem <b>mais</b> coco que furo. 👍'},
  {nome:'A Enseada das Gaivotas',item:'gaivota',n:12,tema:'enseada',
@@ -359,7 +359,7 @@ const NOMES_VOZ=new Set(['miguel','arthur','gael','heitor','theo','davi','bernar
 // slug do PRIMEIRO nome, igual ao que o workflow gera (NFD, sem acento, minúsculo, só alfanumérico)
 function slugNome(s){return (s||'').trim().split(/\s+/)[0].normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]/g,'');}
 // toca uma CADEIA de falas em ordem (nome -> saudação -> problema), sem cortar
-function vozCadeia(ids,aoFim){const f=ids.filter(Boolean);(function nxt(k){if(k>=f.length){if(aoFim)aoFim();return;}const g=voz(f[k]);if(!g){nxt(k+1);return;}g.onended=()=>nxt(k+1);g.onerror=()=>nxt(k+1);g.play().catch(()=>nxt(k+1));})(0);}
+function vozCadeia(ids,aoFim){const f=ids.filter(Boolean);(function nxt(k){if(k>=f.length){if(aoFim)aoFim();return;}const g=voz(f[k]);if(!g){nxt(k+1);return;}g.onended=()=>setTimeout(()=>nxt(k+1),200);g.onerror=()=>nxt(k+1);g.play().catch(()=>nxt(k+1));})(0);}   // 200ms de "respirada" entre nome→saudação→problema (não corta)
 // FILA de números: um não corta o outro (a criança escuta "um... dois... três" inteiro)
 let filaNum=[],tocandoNum=false;
 function falarNum(n){filaNum.push(n);if(filaNum.length>4)filaNum=filaNum.slice(-2);if(!tocandoNum)proxNum();}
