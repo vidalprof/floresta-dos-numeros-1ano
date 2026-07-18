@@ -116,8 +116,9 @@ class Mundo extends Phaser.Scene {
 
     this.bichos = [];
     [['🐰', 1080, 250], ['🐿️', 700, 880], ['🐦', 1120, 700]].forEach(([e, x, y]) => {
-      const b = this.add.text(x, y, e, { fontSize: '30px' }).setOrigin(0.5).setDepth(y);
-      this.tweens.add({ targets: b, y: y - 6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+      this.add.ellipse(x, y, 26, 9, 0x000000, 0.22).setDepth(y - 1);           // sombra (não flutua)
+      const b = this.add.text(x, y, e, { fontSize: '30px' }).setOrigin(0.5, 1).setDepth(y);
+      this.tweens.add({ targets: b, y: y - 3, duration: 850, yoyo: true, repeat: -1, ease: 'Sine.inOut' });   // balanço leve
       this.bichos.push(b);
     });
 
@@ -169,14 +170,20 @@ class Mundo extends Phaser.Scene {
   mostra() {
     const full = this._pgs[this._pg]; this._full = full; this._n = 0; this._typing = true;
     this.balaoT.setText(''); this.balaoSeta.setVisible(false);
-    if (this._typer) this._typer.remove();
+    if (this._typer) this._typer.remove(); if (this._auto) this._auto.remove();
     this._typer = this.time.addEvent({ delay: 26, loop: true, callback: () => {
       this._n++; this.balaoT.setText(full.slice(0, this._n));
       if (this._n % 2 === 0) tom(430, 0.03, 'square', 0.02);
-      if (this._n >= full.length) { this._typing = false; this.balaoSeta.setVisible(true); this._typer.remove(); }
+      if (this._n >= full.length) {
+        this._typing = false; this.balaoSeta.setVisible(true); this._typer.remove();
+        // AUTO-avança (não trava o boneco — a criança anda o tempo todo)
+        const espera = 800 + full.length * 26;
+        this._auto = this.time.delayedCall(espera, () => this.avanca());
+      }
     } });
   }
   avanca() {
+    if (this._auto) { this._auto.remove(); this._auto = null; }
     if (this._typing) { this._typing = false; this._typer.remove(); this.balaoT.setText(this._full); this.balaoSeta.setVisible(true); return; }
     this._pg++;
     if (this._pg < this._pgs.length) { this.mostra(); }
@@ -201,12 +208,8 @@ class Mundo extends Phaser.Scene {
     this.nome = (window.__nome || 'amiguinho');
     const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
     this.falaNome();
-    this.dialogo([
-      'Oi, ' + N + '! Eu sou o Byte.',
-      'Os bichinhos estao com fome! As frutas estao em dois grupos.',
-      'Toque no chao pra andar. Passe por cima das frutas pra recolher.',
-      'Vamos JUNTAR as vermelhas com as verdes e ver quantas dao!'
-    ], () => { this.ativo = true; this.iniciarRodada(); });
+    this.ativo = true;   // já pode andar e recolher enquanto o Byte fala (não trava)
+    this.iniciarRodada();
   }
   falaNome(depois) {
     try { if (window.VozNome) { const id = window.VozNome.idDe(this.nome); if (id) { window.VozNome.cadeia(['audio/' + id], depois); return; } } } catch (e) { }
@@ -217,23 +220,27 @@ class Mundo extends Phaser.Scene {
   iniciarRodada() {
     const [a, b] = RODADAS[this.rodada];
     this.aRod = a; this.bRod = b; this.alvo = a + b; this.coletadas = 0;
-    this.frutas.forEach(f => f.destroy()); this.frutas = [];
+    this.frutas.forEach(f => { if (f._sh) f._sh.destroy(); f.destroy(); }); this.frutas = [];
     this.poeFrutas('🍎', a, CLUSTER_A); this.poeFrutas('🍏', b, CLUSTER_B);
     const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
-    this.dialogo(['Junte as ' + a + ' vermelhas com as ' + b + ' verdes, ' + N + '!', 'Quantas frutas dao AO TODO?']);
+    const fala = (this.rodada === 0)
+      ? ['Oi, ' + N + '! Os bichinhos estao com fome!', 'Ande por cima das frutas pra recolher.', 'Junte as ' + a + ' vermelhas com as ' + b + ' verdes. Quantas dao ao todo?']
+      : ['Junte as ' + a + ' vermelhas com as ' + b + ' verdes!', 'Quantas dao ao todo?'];
+    this.dialogo(fala);
   }
   poeFrutas(emoji, n, centro) {
     for (let i = 0; i < n; i++) {
       const col = i % 4, lin = Math.floor(i / 4);
       const x = centro.x + (col - 1.5) * 30 + Phaser.Math.Between(-5, 5);
       const y = centro.y + (lin - (Math.floor((n - 1) / 4)) / 2) * 30 + Phaser.Math.Between(-5, 5);
-      const fr = this.add.text(x, y, emoji, { fontSize: '24px' }).setOrigin(0.5).setDepth(y);
-      this.tweens.add({ targets: fr, y: y - 4, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: i * 60 });
-      fr._coletada = false; this.frutas.push(fr);
+      const sh = this.add.ellipse(x, y, 18, 6, 0x000000, 0.2).setDepth(y - 1);   // sombra
+      const fr = this.add.text(x, y, emoji, { fontSize: '24px' }).setOrigin(0.5, 1).setDepth(y);
+      this.tweens.add({ targets: fr, y: y - 3, duration: 650, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: i * 60 });
+      fr._coletada = false; fr._sh = sh; this.frutas.push(fr);
     }
   }
   aoTocar(pointer) {
-    if (this.dlgAberto) { this.avanca(); return; }
+    // toque = ANDAR (o balão é automático e não trava o boneco)
     if (!this.ativo || this._venceu) return;
     const wp = pointer ? this.cameras.main.getWorldPoint(pointer.x, pointer.y) : { x: this.hero.x, y: this.hero.y };
     this.destino = { x: Phaser.Math.Clamp(wp.x, 10, WW - 10), y: Phaser.Math.Clamp(wp.y, 10, WH - 10) };
@@ -243,7 +250,9 @@ class Mundo extends Phaser.Scene {
     if (f._coletada) return; f._coletada = true;
     this.coletadas++; this.total++;
     somColeta(); this.ui.numerao(this.coletadas); this.ui.setHUD('🧺 ' + this.total + ' na cesta');
-    this.tweens.add({ targets: f, y: f.y - 34, scale: 0.2, alpha: 0, duration: 340, ease: 'Back.easeIn', onComplete: () => f.destroy() });
+    if (f._sh) { this.tweens.add({ targets: f._sh, alpha: 0, duration: 200, onComplete: () => f._sh.destroy() }); }
+    // "voa pra cesta" (sobe e vai pro canto de cima) ao pegar
+    this.tweens.add({ targets: f, y: f.y - 46, x: f.x - 26, scale: 0.15, alpha: 0, duration: 380, ease: 'Back.easeIn', onComplete: () => f.destroy() });
     if (this.coletadas >= this.alvo) this.rodadaDone();
   }
   rodadaDone() {
@@ -279,7 +288,7 @@ class Mundo extends Phaser.Scene {
   }
 
   update(time) {
-    const livre = this.ativo && !this.dlgAberto && !this._venceu;
+    const livre = this.ativo && !this._venceu;   // fala NÃO trava o boneco (balão é automático)
     let vx = 0, vy = 0;
     if (livre) {
       let kx = 0, ky = 0;
@@ -308,8 +317,8 @@ class Mundo extends Phaser.Scene {
     this.byte.setPosition(Phaser.Math.Linear(this.byte.x, tx, 0.1), this._by + Math.sin(time / 320) * 3);
     if (this.dlgAberto) this.desenhaBalao();
 
-    // RECOLHE frutas ao passar por cima
-    if (this.ativo && !this.dlgAberto && !this._venceu) {
+    // RECOLHE frutas ao passar por cima (funciona mesmo com o balão aberto)
+    if (this.ativo && !this._venceu) {
       for (const f of this.frutas) {
         if (!f._coletada && Math.abs(this.hero.x - f.x) < 26 && Math.abs(this.hero.y - f.y) < 30) this.coletar(f);
       }
