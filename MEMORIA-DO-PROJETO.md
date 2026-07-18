@@ -1204,3 +1204,33 @@ barra o que não tiver ≥ #1 e #2. **Status de adoção:**
 - ✅ `_voxel` (Ilha das Trinta Moedas): #1 e #2 prontos.
 - ⬜ `educaverso-app` (2D/Phaser), atividades **premium** e hub **Ilhas do Saber**:
   PENDENTE aplicar (helper `voz-nome.js` já pronto pra plugar). Registrar aqui conforme adotar.
+
+---
+
+## 🚢 VISÃO DO MARCOS: mundos CONECTADOS por travessia (não "corta" pra próxima fase) — 2026-07-18
+
+Ideia do Marcos (direção de design pra TODAS as aventuras, não só a voxel):
+- **Continuidade física entre fases:** em vez de terminar uma fase e a cena "cortar"
+  pra outra, a criança **VIAJA** — vai de **barco** (ou **ponte**) até a próxima ilha.
+- **A matemática CONSERTA o mundo (o problema vem primeiro, filosofia EduVerse):** ex.
+  fase 1 — o navio está parado, ancorado, **afundando pelos furos**. A criança conta os
+  **cocos** e, **a cada coco contado, um furo é tapado** → o barco conserta na frente dela.
+  Só com o barco consertado dá pra **zarpar pra próxima ilha**.
+- **Item + NPC (o loop):** resolver o problema dá um **item**; **outro personagem** (o
+  Pinça / o que conserta o barco) **recebe o item e conserta o barco**. Aí libera a viagem.
+- **As ilhas já estão no mundo, VISÍVEIS (no horizonte):** a criança VÊ pra onde vai e
+  **conquista o caminho** resolvendo problemas/coletando — é o "mistério visível-mas-
+  trancado" (`_plano/plano_engajamento.md` §2.5, "a ponte que abre o bairro"). Bate 100%
+  com a nossa bíblia de design.
+- **Por que diferencia:** a maioria dos jogos "educativos" é *pergunta → próxima tela*.
+  Aqui é *problema do mundo → a conta CONSERTA o mundo → você VIAJA → a história continua*
+  = vira "novela que eu acompanho", não prova. É o EduVerse puro ("aprende porque o
+  MUNDO PRECISA").
+
+**Honestidade técnica (pra não prometer o impossível no PC da escola):** mundo aberto
+100% contínuo (andar sem cortes entre todas as ilhas) é pesado. O mesmo SENTIMENTO se
+entrega leve com: (a) a contagem consertando o barco furo-a-furo; (b) uma **transição de
+navegação curta** (o barco desliza pela água até a ilha seguinte, que já estava no
+horizonte); (c) o NPC recebendo o item e consertando. Prototipar fase 1→2 primeiro, ver,
+iterar, depois espalhar pras 5. **Vira padrão dos mundos EduVerse** (registrar no checklist
+quando o protótipo aprovar).
