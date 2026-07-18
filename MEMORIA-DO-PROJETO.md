@@ -87,6 +87,40 @@
 > **PRÓXIMO:** (1) cabelo/roupa no herói; (2) camada pedagógica — plantar no canteiro **acertando contas**
 > (contar até 30) + o mundo **falar o nome** da criança (banco de vozes já existe, ver seção de vozes).
 
+## 🌱 1ª ATIVIDADE COMPLETA no motor Phaser+LPC — "A HORTA DOS NÚMEROS" (2026-07)
+> Primeira atividade EduVerse fechada no motor novo (Phaser + kit CC0), passando o FLUXO
+> oficial (Pedagogo→Roteirista→…→Portões). No ar: **`horta-dos-numeros`** →
+> https://vidalprof.github.io/horta-dos-numeros/ (publicado por `fabrica.yml`, `source_dir=_anim`).
+> - **Conteúdo:** contar até 30 (BNCC 1º ano: contagem + agrupamento de 6 em 6). Doc em
+>   `_anim/PLANO-PEDAGOGICO.md`.
+> - **Portão 0 (LIÇÃO PAGA):** minha 1ª versão tinha **"baú trancado que abre em 30"** —
+>   isso é o **exemplo INCORRETO** da FILOSOFIA (prova disfarçada). Redesenhei: **problema do
+>   mundo primeiro** (bichos com fome, horta vazia) → criança **planta e conta** → Byte
+>   **pergunta padrões** (nunca dá resposta) → conceito ("de 6 em 6") **por ÚLTIMO** + reflexão
+>   → recompensa = **ter AJUDADO** (horta viva + bichos comem + medalha "Amigo da Horta"),
+>   **nunca** número-que-destranca. **Regra reforçada: nada de baú/porta que abre por acertar.**
+> - **Personagem:** usar **personagem COMPLETO do kit** (princesa LPC, 9col×4lin walkcycle:
+>   IDLE {up:0,left:9,down:18,right:27}; andar up1-8/left10-17/down19-26/right28-35) em vez de
+>   compor camadas (a loteria body+torso+hair deu **rosto sumido**, ver lição abaixo).
+> - **LIÇÃO PAGA (rosto sumido):** compus corpo do sheet LPC **expandido (46 lin, 832×2944)**
+>   com roupa/cabelo do **clássico (21 lin, 832×1344)** → linhas não batem → cabeça no lugar
+>   errado. **Regra: TODAS as camadas da MESMA versão/repo** (usei jrconway3 p/ tudo). Melhor
+>   ainda: personagem completo pronto (sem compor).
+> - **LIÇÃO PAGA (UI + zoom):** `Text` com `scrollFactor(0)` numa câmera com **zoom** DESALINHA
+>   (texto sai fora da caixa). Solução: **cena de UI SEPARADA** (`scene:[Mundo,UI]` + **`this.scene.launch('UI')`**
+>   — o array NÃO auto-inicia a 2ª cena!). A UI usa coords de tela, sem zoom. Diálogo/HUD/número/
+>   medalha/confete moram na cena UI; mundo/herói/plantio na cena Mundo.
+> - **LIÇÃO PAGA (emoji em Text):** emoji no MEIO de texto do Phaser bagunça a medição/quebra —
+>   manter emoji só em elementos soltos (HUD/plaquinha), texto de fala sem emoji no meio.
+> - **Ganchos de engajamento aplicados (1 sessão):** nome falado (Antonio, `voz-nome.js` + banco
+>   124 mp3 em `_anim/audio/`), número grande + som + planta crescendo, progresso visível,
+>   confete + estrela cadente, Byte que pergunta. Sem cronômetro/punição (`_plano/plano_engajamento.md`).
+> - **PENDENTE:** narração falada do Byte + números na voz do Antonio (workflow `[audio]`);
+>   decisão final de estilo (LPC × chibi fofo — o Marcos vai comparar); ideias grandes (turma/
+>   Docinho/álbum/save) DEPOIS que ele aprovar esta.
+> - **DIREITOS:** LPC = **CC-BY-SA/GPL** (exige CRÉDITO — ver `_anim/CREDITOS.md`), NÃO é CC0;
+>   Ninja Adventure = CC0. (Corrigido: eu chamava tudo de "CC0" por engano.)
+
 ## 🔎 DISCIPLINA DE QA (o Marcos cobrou: "essas coisas não podem acontecer")
 > Eu estava **usando o Marcos como QA** (mostrava tosco, ele achava o defeito). ERRADO — custa o tempo dele.
 > **Antes de mostrar QUALQUER coisa visual, EU renderizo (headless + Playwright) e AUDITO** contra a lista:
