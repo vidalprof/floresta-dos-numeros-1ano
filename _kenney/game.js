@@ -113,9 +113,10 @@ class Mundo extends Phaser.Scene {
     this.sombra = this.add.ellipse(WW / 2, WH / 2, 32, 12, 0x000000, 0.25);
     this.vis = this.add.image(WW / 2, WH / 2, 'char').setOrigin(0.5, 1);
 
-    // GUIA (personagem que fala) + sua sombra
-    this.gsom = this.add.ellipse(700, 440, 26, 10, 0x000000, 0.22);
-    this.guia = this.add.image(700, 440, 'guia').setOrigin(0.5, 1); this._gy = 440;
+    // GUIA (personagem que fala) — fica PARADO neste ponto fixo (não segue a criança)
+    this._gx0 = 720; this._gy0 = 430;
+    this.gsom = this.add.ellipse(this._gx0, this._gy0, 26, 10, 0x000000, 0.22);
+    this.guia = this.add.image(this._gx0, this._gy0, 'guia').setOrigin(0.5, 1);
 
     // BALÃO branco (desenhado por código, sem emoji)
     this.balG = this.add.graphics().setDepth(9498).setVisible(false);
@@ -244,12 +245,10 @@ class Mundo extends Phaser.Scene {
     this.vida(this.vis, bx, by, andando, time, this.face, S);
     this.sombra.setPosition(bx, by + 1).setDepth(by - 1).setScale(andando ? 0.9 : 1, 1);
 
-    // guia acompanha
-    const tx = this.corpo.x + 60, ty = this.corpo.y + 6;
-    this._gy = Phaser.Math.Linear(this._gy, ty, 0.08);
-    const gx = Phaser.Math.Linear(this.guia.x, tx, 0.08);
-    this.vida(this.guia, gx, this._gy, false, time * 0.7, 1, SG);
-    this.gsom.setPosition(gx, this._gy + 1).setDepth(this._gy - 1);
+    // guia PARADO no lugar (não segue mais): só respira e olha na direção da criança
+    const gface = (this.corpo.x < this._gx0) ? -1 : 1;
+    this.vida(this.guia, this._gx0, this._gy0, false, time * 0.7, gface, SG);
+    this.gsom.setPosition(this._gx0, this._gy0 + 1).setDepth(this._gy0 - 1);
     if (this.dlgAberto) this.desenhaBalao();
 
     // JUNTAR: recolhe moeda ao passar por cima
