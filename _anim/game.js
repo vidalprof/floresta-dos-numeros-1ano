@@ -1,19 +1,18 @@
 'use strict';
 // ============================================================================
-// A HORTA DOS NÚMEROS — contar até 30 (1º ano). Segue EDUVERSE-FILOSOFIA:
-// o MUNDO precisa (bichos com fome, horta vazia) -> a criança PLANTA e conta ->
-// descobre o padrão (de 6 em 6) -> conceito por ÚLTIMO -> reflexão.
-// O BYTE é um PAPAGAIO que acompanha a criança e PERGUNTA (não responde); a fala
-// sai num BALÃO BRANCO ARREDONDADO (quadrinho) com rabinho apontando pra ele.
-// Nome falado (voz Antonio). Sem prova/tranca, sem cronômetro, sem punição.
-// Sprites REAIS (LPC/CC0 — ver CREDITOS.md). Cena MUNDO (jogo) + cena UI (HUD/
-// número/medalha, sem zoom). Phaser CANVAS (leve p/ PC antigo).
+// A FLORESTA DOS BICHOS — JUNTAR quantidades (1º ano). REAPROVEITA o mundo/menino/
+// Byte/bichos da Horta; muda só a DINÂMICA: em vez de plantar, a criança JUNTA
+// dois grupos de frutas (vermelhas + verdes) andando por cima e recolhendo, e
+// descobre quantas dão AO TODO (adição por reunião). Segue EDUVERSE-FILOSOFIA:
+// mundo precisa (bichos com fome) -> age (junta/conta) -> conceito (SOMAR) por
+// ÚLTIMO -> reflexão. Byte PERGUNTA. Nome falado (Antonio). Sem prova/tranca,
+// sem cronômetro. 100% jogável no TOQUE (celular). Sprites LPC (CC0 — CREDITOS.md).
 // ============================================================================
 const F = 64, HERO_SC = 1.0, WW = 1280, WH = 960, ZOOM = 1.6;
-// Menino LPC UNIVERSAL (13 col, 832x1344): andar linhas 8-11, col0=parado.
 const IDLE = { up: 104, left: 117, down: 130, right: 143 };
-const ALVO_PLOT = 6, META = 30;
-const PLOTS = [[640, 470], [330, 300], [1010, 300], [980, 760], [430, 810]];  // 5 x 6 = 30
+// cada rodada JUNTA dois grupos [vermelhas, verdes]. Números ajustáveis ao alvo.
+const RODADAS = [[3, 2], [5, 4], [7, 6], [9, 8]];   // somas 5, 9, 13, 17
+const CLUSTER_A = { x: 430, y: 340 }, CLUSTER_B = { x: 880, y: 660 };
 
 // ---------- SOM (Web Audio, começa no 1º gesto) ----------------------------
 let AC = null, MASTER = null, _windGain = null, _somOn = false;
@@ -41,7 +40,7 @@ function tom(freq, dur, tipo, vol, slideTo) {
   g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
   o.connect(g); g.connect(MASTER); o.start(t); o.stop(t + dur + 0.02);
 }
-function somPop() { tom(520, 0.16, 'triangle', 0.1, 900); }
+function somColeta() { tom(600, 0.14, 'triangle', 0.09, 1000); }
 function somPasso() { tom(150, 0.1, 'triangle', 0.05, 70); }
 function somPassaro() { if (Math.random() < 0.7) { tom(2200, 0.1, 'sine', 0.07, 3000); setTimeout(() => tom(2600, 0.09, 'sine', 0.06, 3200), 130); } }
 function somCerto() { [523, 659, 784].forEach((f, i) => setTimeout(() => tom(f, 0.22, 'triangle', 0.09), i * 90)); }
@@ -52,11 +51,11 @@ function rajadaSom() {
   _windGain.gain.linearRampToValueAtTime(0.1, t + 0.8); _windGain.gain.linearRampToValueAtTime(0.045, t + 2.6);
 }
 
-// ============================== CENA DE UI (sem zoom) — só HUD/número/medalha =
+// ============================== CENA DE UI (sem zoom) =======================
 class UI extends Phaser.Scene {
   constructor() { super({ key: 'UI' }); }
   create() {
-    this.hud = this.add.text(16, 14, '🌱 0 plantadas', { fontFamily: 'system-ui', fontSize: '24px', color: '#fff', stroke: '#173a52', strokeThickness: 6 }).setDepth(9000);
+    this.hud = this.add.text(16, 14, '🧺 0 na cesta', { fontFamily: 'system-ui', fontSize: '24px', color: '#fff', stroke: '#173a52', strokeThickness: 6 }).setDepth(9000);
     this.scale.on('resize', () => { if (this.hudMedalha) this.hudMedalha.setPosition(this.scale.width / 2, this.scale.height / 2); });
   }
   setHUD(t) { this.hud.setText(t); }
@@ -64,7 +63,7 @@ class UI extends Phaser.Scene {
     const t = this.add.text(this.scale.width / 2, this.scale.height * 0.2, String(n), { fontFamily: 'system-ui', fontSize: '90px', color: '#fff359', stroke: '#173a52', strokeThickness: 10, fontStyle: 'bold' })
       .setOrigin(0.5).setDepth(9600).setScale(0.4);
     this.tweens.add({ targets: t, scale: 1.15, duration: 180, ease: 'Back.easeOut' });
-    this.tweens.add({ targets: t, alpha: 0, y: '-=34', delay: 480, duration: 420, onComplete: () => t.destroy() });
+    this.tweens.add({ targets: t, alpha: 0, y: '-=34', delay: 460, duration: 420, onComplete: () => t.destroy() });
   }
   confete() {
     const cores = [0xff5a5a, 0xffd76a, 0x5ad1ff, 0x8aff7a, 0xff8ad1];
@@ -75,9 +74,9 @@ class UI extends Phaser.Scene {
   }
   medalha(onRestart) {
     const m = this.add.container(this.scale.width / 2, this.scale.height / 2).setDepth(9900);
-    const bg = this.add.rectangle(0, 0, 320, 190, 0x11314a, 0.96).setStrokeStyle(4, 0xffd76a);
+    const bg = this.add.rectangle(0, 0, 330, 190, 0x11314a, 0.96).setStrokeStyle(4, 0xffd76a);
     const med = this.add.text(0, -38, '🏅', { fontSize: '66px' }).setOrigin(0.5);
-    const t1 = this.add.text(0, 36, 'AMIGO(A) DA HORTA', { fontFamily: 'system-ui', fontSize: '21px', color: '#ffd76a', fontStyle: 'bold' }).setOrigin(0.5);
+    const t1 = this.add.text(0, 36, 'AMIGO(A) DOS BICHOS', { fontFamily: 'system-ui', fontSize: '20px', color: '#ffd76a', fontStyle: 'bold' }).setOrigin(0.5);
     const t2 = this.add.text(0, 66, 'Toque para brincar de novo', { fontFamily: 'system-ui', fontSize: '13px', color: '#cfe' }).setOrigin(0.5);
     m.add([bg, med, t1, t2]); m.setScale(0.2); this.hudMedalha = m;
     this.tweens.add({ targets: m, scale: 1, duration: 500, ease: 'Back.easeOut' });
@@ -97,18 +96,18 @@ class Mundo extends Phaser.Scene {
     this.load.spritesheet('hero', 'assets/hero.png', { frameWidth: F, frameHeight: F });
   }
   create() {
-    this.total = 0; this.ativo = false; this.plotAtivo = null; this._venceu = false; this.dlgAberto = false;
+    this.total = 0; this.ativo = false; this._venceu = false; this.dlgAberto = false;
+    this.rodada = 0; this.frutas = []; this.coletadas = 0; this.alvo = 0;
     if (!this.scene.isActive('UI')) this.scene.launch('UI');
     this.ui = this.scene.get('UI');
 
     this.add.tileSprite(0, 0, WW, WH, 'grass').setOrigin(0).setDepth(-100);
-    this.plots = PLOTS.map(([x, y]) => { this.add.tileSprite(x, y, 100, 100, 'dirt').setDepth(-90); return { x, y, count: 0, done: false, cel: 0 }; });
 
     this.blocos = this.physics.add.staticGroup();
     const solido = (x, y, w, h) => { const z = this.add.zone(x, y, w, h); this.physics.add.existing(z, true); this.blocos.add(z); };
     const lago = this.add.image(190, 720, 'pond').setDepth(720); solido(lago.x, lago.y + 6, 70, 48);
 
-    const arvores = [['tree', 140, 180], ['pine', 700, 130], ['tree', 1150, 200], ['pine', 1180, 470], ['tree', 120, 470], ['pine', 640, 900], ['tree', 1180, 860], ['tree', 250, 900], ['pine', 820, 560], ['tree', 470, 600]];
+    const arvores = [['tree', 140, 180], ['pine', 700, 130], ['tree', 1150, 200], ['pine', 1180, 470], ['tree', 120, 470], ['pine', 640, 900], ['tree', 1180, 860], ['tree', 250, 900], ['pine', 1040, 560], ['tree', 300, 620]];
     arvores.forEach(([tipo, x, y], i) => {
       const a = this.add.image(x, y, tipo).setOrigin(0.5, 1).setDepth(y);
       this.tweens.add({ targets: a, angle: { from: -1.6, to: 1.6 }, duration: 2000 + (i % 5) * 220, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: (i % 7) * 250 });
@@ -116,7 +115,7 @@ class Mundo extends Phaser.Scene {
     });
 
     this.bichos = [];
-    [['🐰', 900, 200], ['🐿️', 760, 640], ['🐦', 520, 380]].forEach(([e, x, y]) => {
+    [['🐰', 1080, 250], ['🐿️', 700, 880], ['🐦', 1120, 700]].forEach(([e, x, y]) => {
       const b = this.add.text(x, y, e, { fontSize: '30px' }).setOrigin(0.5).setDepth(y);
       this.tweens.add({ targets: b, y: y - 6, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
       this.bichos.push(b);
@@ -135,23 +134,16 @@ class Mundo extends Phaser.Scene {
     this.dir = 'down'; this._passoT = 0; this._forc = null;
     this.cursors = this.input.keyboard.createCursorKeys();
     this.wasd = this.input.keyboard.addKeys('W,A,S,D');
-    // NÃO roubar as teclas do campo de NOME (Phaser dá preventDefault em W/A/S/D/setas
-    // e algumas letras não digitavam). O jogo ainda LÊ as teclas; só não bloqueia o DOM.
-    this.input.keyboard.clearCaptures();
-    this.input.keyboard.disableGlobalCapture();
+    this.input.keyboard.clearCaptures(); this.input.keyboard.disableGlobalCapture();
 
     this.physics.world.setBounds(0, 0, WW, WH);
     this.cameras.main.setBounds(0, 0, WW, WH).setZoom(ZOOM).startFollow(this.hero, true, 0.12, 0.12);
 
-    // ---- BYTE (papagaio companheiro) + BALÃO branco arredondado ----
-    this.byte = this.add.text(700, 440, '🦜', { fontSize: '30px' }).setOrigin(0.5).setDepth(9497);
-    this._by = 440;
+    // Byte (papagaio) + balão branco
+    this.byte = this.add.text(700, 440, '🦜', { fontSize: '30px' }).setOrigin(0.5).setDepth(9497); this._by = 440;
     this.balaoG = this.add.graphics().setDepth(9498).setVisible(false);
     this.balaoT = this.add.text(0, 0, '', { fontFamily: 'system-ui', fontSize: '13px', color: '#16324a', lineSpacing: 2, wordWrap: { width: 150 } }).setOrigin(0, 0).setDepth(9499).setVisible(false);
     this.balaoSeta = this.add.text(0, 0, '▼', { fontSize: '13px', color: '#2e9b57' }).setOrigin(0.5).setDepth(9499).setVisible(false);
-
-    this.marcador = this.add.text(0, 0, '👇', { fontSize: '30px' }).setOrigin(0.5).setDepth(9000).setVisible(false);
-    this.tweens.add({ targets: this.marcador, y: '-=8', duration: 500, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
     this.time.addEvent({ delay: 5000, loop: true, callback: rajadaSom });
     this.time.addEvent({ delay: 4200, loop: true, callback: () => { if (this._somOn2) somPassaro(); } });
@@ -169,12 +161,10 @@ class Mundo extends Phaser.Scene {
     if (window.__nome) this.time.delayedCall(60, () => this.iniciar());
   }
 
-  // ---------------- BALÃO DE FALA (branco, arredondado, sai do Byte) --------
+  // ---------------- BALÃO ----------------
   dialogo(paginas, onDone) {
-    this.dlgAberto = true; this.marcador.setVisible(false);
-    this._pgs = paginas.slice(); this._pg = 0; this._onDone = onDone || null;
-    this.balaoG.setVisible(true); this.balaoT.setVisible(true);
-    this.mostra();
+    this.dlgAberto = true; this._pgs = paginas.slice(); this._pg = 0; this._onDone = onDone || null;
+    this.balaoG.setVisible(true); this.balaoT.setVisible(true); this.mostra();
   }
   mostra() {
     const full = this._pgs[this._pg]; this._full = full; this._n = 0; this._typing = true;
@@ -190,23 +180,17 @@ class Mundo extends Phaser.Scene {
     if (this._typing) { this._typing = false; this._typer.remove(); this.balaoT.setText(this._full); this.balaoSeta.setVisible(true); return; }
     this._pg++;
     if (this._pg < this._pgs.length) { this.mostra(); }
-    else {
-      this.balaoG.setVisible(false); this.balaoT.setVisible(false); this.balaoSeta.setVisible(false);
-      this.dlgAberto = false; const cb = this._onDone; this._onDone = null; if (cb) cb();
-    }
+    else { this.balaoG.setVisible(false); this.balaoT.setVisible(false); this.balaoSeta.setVisible(false); this.dlgAberto = false; const cb = this._onDone; this._onDone = null; if (cb) cb(); }
   }
   desenhaBalao() {
     if (!this.dlgAberto) return;
     const pad = 9, tw = Math.max(28, this.balaoT.width), th = Math.max(14, this.balaoT.height);
-    const w = tw + pad * 2, h = th + pad * 2;
-    const cx = this.byte.x, base = this.byte.y - 26;      // balão acima do Byte
-    const rx = cx - w / 2, ry = base - h;
+    const w = tw + pad * 2, h = th + pad * 2, cx = this.byte.x, base = this.byte.y - 26, rx = cx - w / 2, ry = base - h;
     this.balaoG.clear();
     this.balaoG.fillStyle(0xffffff, 0.98); this.balaoG.lineStyle(2, 0x2e9b57, 1);
     this.balaoG.fillRoundedRect(rx, ry, w, h, 9); this.balaoG.strokeRoundedRect(rx, ry, w, h, 9);
-    this.balaoG.fillStyle(0xffffff, 0.98); this.balaoG.fillTriangle(cx - 7, ry + h - 1, cx + 7, ry + h - 1, cx, base + 6);   // rabinho
-    this.balaoT.setPosition(rx + pad, ry + pad);
-    this.balaoSeta.setPosition(rx + w - 10, ry + h - 8);
+    this.balaoG.fillStyle(0xffffff, 0.98); this.balaoG.fillTriangle(cx - 7, ry + h - 1, cx + 7, ry + h - 1, cx, base + 6);
+    this.balaoT.setPosition(rx + pad, ry + pad); this.balaoSeta.setPosition(rx + w - 10, ry + h - 8);
   }
 
   // ---------------- INÍCIO ----------------
@@ -219,49 +203,59 @@ class Mundo extends Phaser.Scene {
     this.falaNome();
     this.dialogo([
       'Oi, ' + N + '! Eu sou o Byte.',
-      'Os bichinhos estao com fome e a horta esta vazia.',
-      'Toque no chao pra andar ate a terra. Depois toque na terra pra plantar!'
-    ], () => { this.ativo = true; });
+      'Os bichinhos estao com fome! As frutas estao em dois grupos.',
+      'Toque no chao pra andar. Passe por cima das frutas pra recolher.',
+      'Vamos JUNTAR as vermelhas com as verdes e ver quantas dao!'
+    ], () => { this.ativo = true; this.iniciarRodada(); });
   }
   falaNome(depois) {
     try { if (window.VozNome) { const id = window.VozNome.idDe(this.nome); if (id) { window.VozNome.cadeia(['audio/' + id], depois); return; } } } catch (e) { }
     if (depois) depois();
   }
 
+  // ---------------- RODADAS (juntar dois grupos) ----------------
+  iniciarRodada() {
+    const [a, b] = RODADAS[this.rodada];
+    this.aRod = a; this.bRod = b; this.alvo = a + b; this.coletadas = 0;
+    this.frutas.forEach(f => f.destroy()); this.frutas = [];
+    this.poeFrutas('🍎', a, CLUSTER_A); this.poeFrutas('🍏', b, CLUSTER_B);
+    const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
+    this.dialogo(['Junte as ' + a + ' vermelhas com as ' + b + ' verdes, ' + N + '!', 'Quantas frutas dao AO TODO?']);
+  }
+  poeFrutas(emoji, n, centro) {
+    for (let i = 0; i < n; i++) {
+      const col = i % 4, lin = Math.floor(i / 4);
+      const x = centro.x + (col - 1.5) * 30 + Phaser.Math.Between(-5, 5);
+      const y = centro.y + (lin - (Math.floor((n - 1) / 4)) / 2) * 30 + Phaser.Math.Between(-5, 5);
+      const fr = this.add.text(x, y, emoji, { fontSize: '24px' }).setOrigin(0.5).setDepth(y);
+      this.tweens.add({ targets: fr, y: y - 4, duration: 600, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: i * 60 });
+      fr._coletada = false; this.frutas.push(fr);
+    }
+  }
   aoTocar(pointer) {
     if (this.dlgAberto) { this.avanca(); return; }
     if (!this.ativo || this._venceu) return;
     const wp = pointer ? this.cameras.main.getWorldPoint(pointer.x, pointer.y) : { x: this.hero.x, y: this.hero.y };
-    // tocou na terra onde a heroína ESTÁ (canteiro ativo) -> planta
-    if (this.plotAtivo && !this.plotAtivo.done && Math.abs(wp.x - this.plotAtivo.x) < 60 && Math.abs(wp.y - this.plotAtivo.y) < 60) {
-      this.destino = null; this.plantar(this.plotAtivo); return;
-    }
-    // senão -> anda até onde tocou (mobile: sem teclado)
     this.destino = { x: Phaser.Math.Clamp(wp.x, 10, WW - 10), y: Phaser.Math.Clamp(wp.y, 10, WH - 10) };
     this._destT = this.time.now;
   }
-  plantar(plot) {
-    if (plot.count >= ALVO_PLOT) return;
-    const cols = [-30, 0, 30], rows = [-18, 18], c = plot.cel;
-    const cx = plot.x + cols[c % 3], cy = plot.y + rows[Math.floor(c / 3)];
-    plot.cel++; plot.count++; this.total++;
-    const planta = this.add.image(cx, cy, 'tree').setOrigin(0.5, 1).setScale(0.02).setDepth(cy);
-    this.tweens.add({ targets: planta, scale: 0.26, duration: 380, ease: 'Back.easeOut' });
-    somPop(); this.ui.numerao(this.total); this.ui.setHUD('🌱 ' + this.total + ' plantadas');
-    if (plot.count >= ALVO_PLOT) { plot.done = true; this.marcador.setVisible(false); this.plotDone(); }
+  coletar(f) {
+    if (f._coletada) return; f._coletada = true;
+    this.coletadas++; this.total++;
+    somColeta(); this.ui.numerao(this.coletadas); this.ui.setHUD('🧺 ' + this.total + ' na cesta');
+    this.tweens.add({ targets: f, y: f.y - 34, scale: 0.2, alpha: 0, duration: 340, ease: 'Back.easeIn', onComplete: () => f.destroy() });
+    if (this.coletadas >= this.alvo) this.rodadaDone();
   }
-  plotDone() {
+  rodadaDone() {
     somCerto(); this.falaNome();
-    const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
-    this.plots.forEach(p => { if (p.done) this.brilho(p.x, p.y); });
-    if (this.total >= META) { this.vencer(); return; }
-    const feitos = this.plots.filter(p => p.done).length;
-    let fala;
-    if (feitos === 1) fala = ['Boa, ' + N + '! Quantas voce plantou aqui?', 'Vamos ao proximo canteiro!'];
-    else if (feitos === 2) fala = ['Os canteiros tem a MESMA quantidade!', 'Tem um jeito mais rapido de contar?'];
-    else if (feitos === 3) fala = ['Achou um padrao? Seis, doze, dezoito...', 'Vamos plantar mais!'];
-    else fala = ['Falta pouco, ' + N + '!', 'Quantas vao ter no total?'];
-    this.dialogo(fala);
+    const a = this.aRod, b = this.bRod, s = a + b;
+    this.brilho(this.hero.x, this.hero.y);
+    this.rodada++;
+    if (this.rodada >= RODADAS.length) {
+      this.dialogo([a + ' e ' + b + ', juntando, dao ' + s + '!'], () => this.vencer());
+    } else {
+      this.dialogo([a + ' e ' + b + '... juntando dao ' + s + '!', 'Vamos pro proximo grupo de frutas!'], () => this.iniciarRodada());
+    }
   }
   brilho(x, y) {
     for (let i = 0; i < 8; i++) {
@@ -272,18 +266,14 @@ class Mundo extends Phaser.Scene {
   vencer() {
     if (this._venceu) return; this._venceu = true; this.ativo = false;
     somFanfarra();
-    this.bichos.forEach((b, i) => {
-      const alvo = this.plots[i % this.plots.length];
-      this.tweens.add({ targets: b, x: alvo.x + (i % 2 ? 30 : -30), y: alvo.y, duration: 1200, ease: 'Sine.inOut', delay: i * 250, onComplete: () => this.tweens.add({ targets: b, y: '-=10', duration: 300, yoyo: true, repeat: -1 }) });
-    });
+    this.bichos.forEach((b, i) => { this.tweens.add({ targets: b, x: this.hero.x + (i % 2 ? 40 : -40), y: this.hero.y + 20, duration: 1200, ease: 'Sine.inOut', delay: i * 250, onComplete: () => this.tweens.add({ targets: b, y: '-=10', duration: 300, yoyo: true, repeat: -1 }) }); });
     this.ui.confete();
     const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
     this.falaNome();
     this.time.delayedCall(700, () => this.dialogo([
-      'Voce conseguiu, ' + N + '! A horta esta viva!',
-      'Olha os bichinhos vindo comer!',
-      'Eram 5 canteiros de 6: seis, doze, dezoito, vinte e quatro, trinta!',
-      'Da pra contar de 6 em 6, bem mais rapido!',
+      'Voce conseguiu, ' + N + '! Os bichinhos vao comer!',
+      'Cada vez a gente JUNTOU dois grupos de frutas...',
+      'Juntar dois grupos e o mesmo que SOMAR! Voce somou de verdade!',
       'O que voce mais gostou hoje?'
     ], () => this.ui.medalha(() => { this._iniciado = false; this.scene.restart(); })));
   }
@@ -292,7 +282,6 @@ class Mundo extends Phaser.Scene {
     const livre = this.ativo && !this.dlgAberto && !this._venceu;
     let vx = 0, vy = 0;
     if (livre) {
-      // TECLADO (PC) tem prioridade e cancela o "toque pra andar"
       let kx = 0, ky = 0;
       if (this.cursors.left.isDown || this.wasd.A.isDown || this._forc === 'left') kx = -1;
       else if (this.cursors.right.isDown || this.wasd.D.isDown || this._forc === 'right') kx = 1;
@@ -300,36 +289,31 @@ class Mundo extends Phaser.Scene {
       else if (this.cursors.down.isDown || this.wasd.S.isDown || this._forc === 'down') ky = 1;
       if (kx || ky) { this.destino = null; vx = kx; vy = ky; }
       else if (this.destino) {
-        // TOQUE (celular): caminha até o ponto tocado
         const dx = this.destino.x - this.hero.x, dy = this.destino.y - this.hero.y, d = Math.hypot(dx, dy);
-        if (d < 8 || this.time.now - this._destT > 4000) { this.destino = null; }
-        else { vx = dx / d; vy = dy / d; }
+        if (d < 8 || time - this._destT > 4000) { this.destino = null; } else { vx = dx / d; vy = dy / d; }
       }
     } else { this.destino = null; }
     this.hero.body.setVelocity(vx * 150, vy * 150);
     const andando = vx !== 0 || vy !== 0;
-    if (andando) {
-      if (Math.abs(vx) >= Math.abs(vy)) { this.dir = vx < 0 ? 'left' : 'right'; }
-      else { this.dir = vy < 0 ? 'up' : 'down'; }
-      this.hero.anims.play(this.dir, true);
-    } else { this.hero.anims.stop(); this.hero.setFrame(IDLE[this.dir]); }
+    if (andando) { this.dir = (Math.abs(vx) >= Math.abs(vy)) ? (vx < 0 ? 'left' : 'right') : (vy < 0 ? 'up' : 'down'); this.hero.anims.play(this.dir, true); }
+    else { this.hero.anims.stop(); this.hero.setFrame(IDLE[this.dir]); }
 
     this.hero.setDepth(this.hero.y);
     this.sombra.setPosition(this.hero.x, this.hero.y + 24).setDepth(this.hero.y - 1);
     if (andando && time - this._passoT > 300) { somPasso(); this._passoT = time; }
 
-    // Byte acompanha a criança (voa ao lado, flutuando)
+    // Byte acompanha
     const tx = this.hero.x + 52, ty = this.hero.y - 30;
     this._by = Phaser.Math.Linear(this._by, ty, 0.1);
     this.byte.setPosition(Phaser.Math.Linear(this.byte.x, tx, 0.1), this._by + Math.sin(time / 320) * 3);
     if (this.dlgAberto) this.desenhaBalao();
 
-    this.plotAtivo = null;
-    if (this.ativo && !this._venceu) {
-      for (const p of this.plots) { if (!p.done && Math.abs(this.hero.x - p.x) < 56 && Math.abs(this.hero.y - p.y) < 56) { this.plotAtivo = p; break; } }
+    // RECOLHE frutas ao passar por cima
+    if (this.ativo && !this.dlgAberto && !this._venceu) {
+      for (const f of this.frutas) {
+        if (!f._coletada && Math.abs(this.hero.x - f.x) < 26 && Math.abs(this.hero.y - f.y) < 30) this.coletar(f);
+      }
     }
-    if (this.plotAtivo && !this.dlgAberto) this.marcador.setPosition(this.plotAtivo.x, this.plotAtivo.y - 60).setVisible(true);
-    else if (!this.plotAtivo) this.marcador.setVisible(false);
   }
 }
 
