@@ -2,19 +2,32 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Kenney + Motor de Vida — demo</title>
+<title>O Tesouro dos Dois Montes — juntar quantidades (Kenney)</title>
 <style>
   html,body{margin:0;height:100%;overflow:hidden;background:#4a7a3a;-webkit-tap-highlight-color:transparent;font-family:system-ui,Arial}
   #jogo{position:fixed;inset:0;width:100vw;height:100vh}
   #jogo canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
   .hud{position:fixed;z-index:10;font:600 13px system-ui}
-  #dica{left:50%;bottom:10px;transform:translateX(-50%);background:rgba(255,255,255,.9);color:#173a52;padding:6px 12px;border-radius:10px;pointer-events:none;max-width:92vw;text-align:center}
+  #somdica{left:50%;top:12px;transform:translateX(-50%);background:rgba(23,58,82,.92);color:#fff;padding:7px 14px;border-radius:10px;pointer-events:none}
   #btfs{right:12px;top:12px;background:rgba(23,58,82,.92);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
+  #nomebox{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#3a6a2b,#1e4a12)}
+  #nomecard{background:#fff;border-radius:18px;padding:26px 22px;max-width:340px;width:86%;text-align:center;box-shadow:0 12px 40px rgba(0,0,0,.35)}
+  #nomecard h1{margin:.2em 0 .1em;color:#173a52;font-size:22px}
+  #nomecard p{margin:.2em 0 1em;color:#3a5a72;font-size:14px}
+  #nomein{width:100%;box-sizing:border-box;font-size:20px;padding:12px 14px;border:2px solid #bcd;border-radius:12px;text-align:center;color:#173a52}
+  #nomebt{margin-top:14px;width:100%;font-size:18px;font-weight:700;color:#fff;background:#c8912e;border:0;padding:13px;border-radius:12px;cursor:pointer}
 </style>
 <script src="phaser.min.js"></script>
 </head><body>
+<div id="somdica" class="hud">Toque na tela para ligar o som</div>
 <button id="btfs" class="hud" onclick="window.__fs&&window.__fs()">⛶ Tela cheia</button>
-<div id="dica" class="hud">Toque no chão pra andar — personagem Kenney com MOTOR DE VIDA (respira, pula, vira)</div>
 <div id="jogo"></div>
+<div id="nomebox"><div id="nomecard">
+  <h1>O Tesouro dos Dois Montes</h1>
+  <p>Ajude o Vovô Coruja a juntar as moedas! Como você se chama?</p>
+  <input id="nomein" maxlength="16" placeholder="seu nome" autocomplete="off">
+  <button id="nomebt">Começar</button>
+</div></div>
 <script src="game.js"></script>
+<script>(function(){var i=document.getElementById('nomein'),b=document.getElementById('nomebt');function go(){var n=(i.value||'').trim();if(!n)n='amiguinho';window.__nome=n;document.getElementById('nomebox').style.display='none';if(window.__iniciarAtividade)window.__iniciarAtividade();}b.addEventListener('click',go);i.addEventListener('keydown',function(e){if(e.key==='Enter')go();});setTimeout(function(){try{i.focus();}catch(e){}},300);})();</script>
 </body></html>
