@@ -131,6 +131,7 @@ class Mundo extends Phaser.Scene {
     window.__scene = this;
     window.__mover = (dir) => { this._forc = dir; };
     window.__parar = () => { this._forc = null; };
+    window.__fs = () => { if (this.scale.isFullscreen) this.scale.stopFullscreen(); else this.scale.startFullscreen(); };
   }
 
   update(time) {
@@ -157,7 +158,9 @@ class Mundo extends Phaser.Scene {
 }
 
 new Phaser.Game({
-  type: Phaser.CANVAS, parent: 'jogo', width: 640, height: 480, pixelArt: true,
-  backgroundColor: '#4a7a3a', physics: { default: 'arcade', arcade: {} },
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }, scene: Mundo
+  type: Phaser.CANVAS, pixelArt: true, roundPixels: true, backgroundColor: '#3f6a34',
+  physics: { default: 'arcade', arcade: {} },
+  // RESIZE = preenche a janela inteira; pixelArt mantem NITIDO (nearest-neighbor).
+  scale: { mode: Phaser.Scale.RESIZE, parent: 'jogo', width: '100%', height: '100%' },
+  scene: Mundo
 });

@@ -1,50 +1,105 @@
 #!/usr/bin/env python3
-# Busca um PERSONAGEM ANIMADO (andar 4 direcoes) de fontes CC0/livres, via GitHub Actions.
-# Tenta varias fontes e RELATA qual funcionou (adaptativo). Salva em _anim/assets/images.
-import os, io, sys, zipfile, urllib.request
+# ============================================================================
+# PERSONAGEM LPC universal (13 col, 832x1344) — baixa CORPO + ROUPA + CABELO e
+# COMPOE o heroi (assets/hero.png). Roda no GitHub Actions (internet liberada).
+# Regra do Marcos: nada "no olho" — o CABELO é DESCOBERTO pela API do GitHub
+# (acha o caminho real do arquivo), nunca chutado. Se o cabelo falhar, o heroi
+# sai sem cabelo (nao quebra), e o log diz exatamente o que aconteceu.
+# ============================================================================
+import os, sys, json, urllib.request
+from PIL import Image
 
 RAIZ = os.path.dirname(os.path.abspath(__file__))
 IMG = os.path.join(RAIZ, 'assets', 'images')
 os.makedirs(IMG, exist_ok=True)
 UA = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'}
+REPO = 'sanderfrenken/Universal-LPC-Spritesheet-Character-Generator'
+RAW = 'https://raw.githubusercontent.com/%s/master/spritesheets/' % REPO
+API = 'https://api.github.com/repos/%s/contents/spritesheets/' % REPO
 
 def http(u, t=120):
     return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=t).read()
 
-# 1) LPC "universal" body (andar 4 direcoes garantido) — repositorios conhecidos
-LPC = [
-    'https://raw.githubusercontent.com/sanderfrenken/Universal-LPC-Spritesheet-Character-Generator/master/spritesheets/body/bodies/male/universal.png',
-    'https://raw.githubusercontent.com/LiberatedPixelCup/Universal-LPC-Spritesheet-Character-Generator/master/spritesheets/body/bodies/male/universal.png',
-    'https://raw.githubusercontent.com/sanderfrenken/Universal-LPC-Spritesheet-Character-Generator/master/spritesheets/body/male/light.png',
-    'https://raw.githubusercontent.com/jrconway3/Universal-LPC-spritesheet/master/body/male/light.png',
-]
-# roupa/cabelo LPC (opcional, deixa o personagem vestido)
-LPC_EXTRA = [
-    ('lpc_torso', ['https://raw.githubusercontent.com/sanderfrenken/Universal-LPC-Spritesheet-Character-Generator/master/spritesheets/torso/clothes/longsleeve/longsleeve/male/white.png']),
-    ('lpc_hair', ['https://raw.githubusercontent.com/sanderfrenken/Universal-LPC-Spritesheet-Character-Generator/master/spritesheets/hair/plain/adult/male/black.png']),
-]
-
-def baixa_primeiro(nome, urls):
+def baixa(nome, urls):
     for u in urls:
         try:
             d = http(u)
             if len(d) > 500:
                 open(os.path.join(IMG, nome + '.png'), 'wb').write(d)
-                print('OK %s <- %s (%d bytes)' % (nome, u, len(d))); return True
+                print('OK %s <- %s (%d bytes)' % (nome, u.split('/spritesheets/')[-1], len(d))); return True
         except Exception as e:
-            print('  falhou', u.split('/master/')[-1] if '/master/' in u else u, str(e)[:90])
+            print('  falhou', u.split('/spritesheets/')[-1], str(e)[:80])
     return False
 
+def api(path):
+    return json.loads(http(API + path))
+
+def descobre_png(path, prefere=('black', 'brown', 'male'), prof=0):
+    """DFS na API ate achar um .png; prefere caminhos com 'male'/cor. Sem chute."""
+    if prof > 5:
+        return None
+    try:
+        itens = api(path)
+    except Exception as e:
+        print('  API falhou em', path, str(e)[:60]); return None
+    pngs = [i for i in itens if i.get('type') == 'file' and i['name'].endswith('.png')]
+    if pngs:
+        for k in prefere:
+            for p in pngs:
+                if k in p['path'].lower():
+                    return p['download_url']
+        return pngs[0]['download_url']
+    dirs = [i for i in itens if i.get('type') == 'dir']
+    dirs.sort(key=lambda d: 0 if any(k in d['name'].lower() for k in ('plain', 'male', 'adult', 'black')) else 1)
+    for d in dirs:
+        u = descobre_png(d['path'], prefere, prof + 1)
+        if u:
+            return u
+    return None
+
 def main():
-    ok = 0
-    if baixa_primeiro('lpc_body', LPC): ok += 1
-    for nome, urls in LPC_EXTRA:
-        if baixa_primeiro(nome, urls): ok += 1
-    arquivos = sorted(os.listdir(IMG))
-    open(os.path.join(RAIZ, 'assets', 'manifest.txt'), 'w').write('\n'.join(arquivos))
-    print('== baixados: %d | arquivos: %s ==' % (ok, arquivos))
-    if ok == 0:
-        print('::error::nenhum personagem baixado'); sys.exit(1)
+    # 1) CORPO (masculino, universal) — URLs conhecidas boas
+    baixa('lpc_body', [
+        RAW + 'body/bodies/male/universal.png',
+        RAW + 'body/bodies/male/light.png',
+    ])
+    # 2) ROUPA (camisa longa branca)
+    baixa('lpc_torso', [
+        RAW + 'torso/clothes/longsleeve/longsleeve/male/white.png',
+        RAW + 'torso/clothes/longsleeve/male/white.png',
+    ])
+    # 2b) CALCA (pra nao ficar de pernas de fora)
+    baixa('lpc_legs', [
+        RAW + 'legs/pants/male/blue.png',
+        RAW + 'legs/pants/pants/male/blue.png',
+    ])
+    # 3) CABELO — DESCOBERTO pela API (nada chutado)
+    print('== descobrindo o caminho do CABELO pela API ==')
+    hair_url = None
+    for base in ['hair/plain', 'hair/messy1', 'hair']:
+        hair_url = descobre_png(base)
+        if hair_url:
+            print('  cabelo achado:', hair_url.split('/master/')[-1]); break
+    if hair_url:
+        baixa('lpc_hair', [hair_url])
+
+    # 4) COMPOE o heroi: corpo -> calca -> roupa -> cabelo
+    def carrega(n):
+        p = os.path.join(IMG, n + '.png')
+        return Image.open(p).convert('RGBA') if os.path.exists(p) else None
+    corpo = carrega('lpc_body')
+    if not corpo:
+        print('::error::sem corpo, nao da pra compor'); sys.exit(1)
+    heroi = corpo.copy()
+    for camada in ['lpc_legs', 'lpc_torso', 'lpc_hair']:
+        c = carrega(camada)
+        if c and c.size == heroi.size:
+            heroi.alpha_composite(c); print('  + camada', camada)
+        elif c:
+            print('  ! %s tem tamanho %s != %s, pulei' % (camada, c.size, heroi.size))
+    saida = os.path.join(RAIZ, 'assets', 'hero.png')
+    heroi.save(saida)
+    print('== hero.png composto:', heroi.size, ('COM cabelo' if carrega('lpc_hair') else 'SEM cabelo'), '==')
 
 if __name__ == '__main__':
     main()

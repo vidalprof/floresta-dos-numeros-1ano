@@ -16,10 +16,12 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Baixar personagem animado
+      - name: Instalar Pillow
+        run: pip install --quiet Pillow
+      - name: Baixar personagem animado + compor cabelo
         run: |
-          python3 _anim/fetch_char.py 2>&1 | tail -40
-          echo "=== arquivos ==="; ls -la _anim/assets/images
+          python3 _anim/fetch_char.py 2>&1 | tail -50
+          echo "=== arquivos ==="; ls -la _anim/assets/images; ls -la _anim/assets/hero.png
       - name: Commit
         run: |
           git config user.name "github-actions[bot]"
