@@ -100,6 +100,7 @@ class Ilha extends Phaser.Scene {
 
     window.__cont=()=>this.contados; window.__ready=true;
     window.__andar=(x,y)=>{ this.alvo=new Phaser.Math.Vector2(x,y); };
+    window.__win=()=>{ this.contados=this.total; this.hud.setText('🥥 '+this.total+'/'+this.total); this.vitoria(); };
   }
   pega(pl,co){
     if(co.getData('pego')) return; co.setData('pego',1);
@@ -120,7 +121,8 @@ class Ilha extends Phaser.Scene {
     this.add.text(cx,cy-16,'Você conseguiu! 🏆',{fontFamily:'system-ui',fontSize:'30px',color:'#ffe9b0',fontStyle:'bold'}).setOrigin(0.5).setScrollFactor(0).setDepth(31);
     this.add.text(cx,cy+26,'Pegou todos os '+this.total+' cocos!',{fontFamily:'system-ui',fontSize:'18px',color:'#dff'}).setOrigin(0.5).setScrollFactor(0).setDepth(31);
     for(let i=0;i<3;i++) this.time.delayedCall(i*260,()=>{ const px=cx+Phaser.Math.Between(-180,180);
-      this.add.particles(px,cy-90,'spark',{speedY:{min:180,max:340},speedX:{min:-80,max:80},scale:{start:1.2,end:0},lifespan:1100,quantity:22,tint:[0xffd24a,0x59c6e0,0xe25a4a,0x8ed36b]}).explode(22,px,cy-90).setScrollFactor(0).setDepth(29); });
+      const em=this.add.particles(px,cy-90,'spark',{speedY:{min:180,max:340},speedX:{min:-80,max:80},scale:{start:1.2,end:0},lifespan:1100,quantity:22,tint:[0xffd24a,0x59c6e0,0xe25a4a,0x8ed36b]});
+      em.setScrollFactor(0).setDepth(29); em.explode(22,px,cy-90); });
     this.player.anims.play('feliz',true);
     this.tweens.add({targets:this.player,y:this.player.y-24,duration:260,yoyo:true,repeat:5,ease:'Sine.inOut'});
   }
