@@ -37,33 +37,34 @@ def baixa(nome, urls):
 def api(path):
     return json.loads(http(API + path))
 
-def descobre_png(path, prefere=('black', 'brown', 'male'), prof=0):
-    """DFS na API ate achar um .png; prefere caminhos com 'male'/cor. Sem chute."""
+def descobre_png(path, prefere=('black', 'brown', 'male'), evitar=(), prof=0):
+    """DFS na API ate achar um .png; prefere 'male'/cor e EVITA roupa esquisita. Sem chute."""
     if prof > 5:
         return None
     try:
         itens = api(path)
     except Exception as e:
         print('  API falhou em', path, str(e)[:60]); return None
-    pngs = [i for i in itens if i.get('type') == 'file' and i['name'].endswith('.png')]
+    def ok(p): return not any(e in p.lower() for e in evitar)
+    pngs = [i for i in itens if i.get('type') == 'file' and i['name'].endswith('.png') and ok(i['path'])]
     if pngs:
         for k in prefere:
             for p in pngs:
                 if k in p['path'].lower():
                     return p['download_url']
         return pngs[0]['download_url']
-    dirs = [i for i in itens if i.get('type') == 'dir']
-    dirs.sort(key=lambda d: 0 if any(k in d['name'].lower() for k in ('plain', 'male', 'adult', 'black')) else 1)
+    dirs = [i for i in itens if i.get('type') == 'dir' and ok(i['name'])]
+    dirs.sort(key=lambda d: 0 if any(k in d['name'].lower() for k in prefere) else 1)
     for d in dirs:
-        u = descobre_png(d['path'], prefere, prof + 1)
+        u = descobre_png(d['path'], prefere, evitar, prof + 1)
         if u:
             return u
     return None
 
-def acha(nome, base, prefere):
+def acha(nome, base, prefere, evitar=()):
     """descobre 1 camada pela API (nada chutado) e baixa; tudo do MESMO repo/versao."""
     print('== descobrindo %s em %s ==' % (nome, base))
-    url = descobre_png(base, prefere)
+    url = descobre_png(base, prefere, evitar)
     if url:
         print('  achado:', url.split('/master/')[-1])
         baixa(nome, [url])
@@ -71,11 +72,11 @@ def acha(nome, base, prefere):
         print('  ! nao achei', nome)
 
 def main():
-    # TODAS as camadas do MESMO repo (jrconway3) = mesma versao = alinham.
-    acha('lpc_body', 'body', ('male', 'light'))
-    acha('lpc_legs', 'legs', ('male', 'pants', 'white'))
-    acha('lpc_torso', 'torso', ('male', 'longsleeve', 'shirt', 'white'))
-    acha('lpc_hair', 'hair', ('male', 'plain', 'brown'))
+    # MENINO de roupa simples: TODAS as camadas do MESMO repo (jrconway3) = alinham.
+    acha('lpc_body', 'body', ('light', 'male'), evitar=('skeleton', 'zombie', 'orc', 'wolf', 'child', 'female'))
+    acha('lpc_legs', 'legs', ('pants', 'male', 'teal', 'brown', 'blue'), evitar=('loincloth', 'skirt', 'robe', 'female'))
+    acha('lpc_torso', 'torso', ('longsleeve', 'shortsleeve', 'shirt', 'male', 'white', 'brown', 'green'), evitar=('sleeveless', 'tank', 'plate', 'chain', 'leather', 'female', 'dress'))
+    acha('lpc_hair', 'hair', ('plain', 'parted', 'short', 'male', 'brown'), evitar=('afro', 'long', 'wavy', 'curly', 'princess', 'ponytail', 'bangslong', 'female'))
 
     # COMPOE o heroi — SO camadas do tamanho ALVO (mesma versao); descarta o resto.
     def carrega(n):
