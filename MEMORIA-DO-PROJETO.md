@@ -1302,3 +1302,26 @@ coco (fofo e claro), Byte passarinho pirata. Reaproveitáveis.
 **PRÓXIMO PASSO combinado a decidir:** transformar o teste na 1ª atividade real ("Números
 até 30" completa nesse formato, com nome falado + mundo que lembra), OU o Marcos joga e dá
 o veredito antes. NÃO espalhar sem ele aprovar o feeling.
+
+---
+
+## 🎮 ENGINE OFICIAL DOS JOGOS EXPLORATÓRIOS: Phaser 3 (decisão do Marcos, 2026-07-18)
+
+O Marcos assumiu o papel de Diretor Técnico e definiu diretrizes profissionais (física
+NATIVA da engine — nada de colisão na mão; FSM de animação; sprite sheet + FPS; LERP;
+camadas/máscaras de colisão; WebGL/HTML5). Testamos as ferramentas:
+- **Godot/Unity: INVIÁVEL no meu ambiente** — não instalados e o **proxy bloqueia o
+  download (403)**. Godot só rodaria na máquina do Marcos, e o **export WebGL do Godot 4
+  é pesado demais pro PC velho da escola (FX-4300)**. Descartado.
+- **Phaser 3: ESCOLHIDO.** Engine 2D profissional, HTML5/WebGL nativo, LEVE, e eu
+  **construo 100% headless e publico**. Atende TODAS as diretrizes: Arcade Physics
+  (`body`+`collider`+collision groups = camadas/máscaras; velocidade zera no impacto),
+  FSM de animação, sprite sheet, LERP, WebGL com fallback Canvas.
+- **Obtido pelo GitHub/npm** (o proxy libera o npm; CDNs jsdelivr/unpkg dão 403):
+  `npm pack phaser@3.80.1` → extraí `dist/phaser.min.js` → **vendorizado em
+  `_lib_jogo/phaser.min.js`** (offline, igual ao `three.module.min.js`).
+
+**PIPELINE (tudo no GitHub, igual ao Gemini):** arte → workflow `[imagens]` (Gemini) →
+jogo Phaser em 1 HTML com `phaser.min.js` embutido → commit → Fábrica/republicar (Pages)
+→ Auditor (render+E2E headless) antes de subir. **COMPROMISSO: parar de pular de estilo;
+Phaser exploratório é O caminho, com física nativa (mata os bugs de colisão na mão).**
