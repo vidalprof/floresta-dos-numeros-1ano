@@ -131,6 +131,15 @@
 >   caminha até lá; toca na terra onde ELA está → planta). Teclado (PC) tem prioridade e cancela
 >   o destino. **Regra de ouro: TODA atividade tem que ser jogável 100% no TOQUE** (celular/tablet
 >   da escola), teclado é extra. Testar sempre em viewport de celular (`isMobile+hasTouch`).
+> - **⚠️ REGRA DE OURO — NADA DE EMOJI no que a criança VÊ (Marcos, PCs antigos da escola):**
+>   emoji **NÃO renderiza** em navegador/PC antigo (fica quadrado/buraco) → quebra a atividade nas
+>   máquinas da escola (FX-4300, 2012). **TUDO que a criança vê = SPRITE real** (personagem, Byte,
+>   animais, frutas, cesta, medalha). **Efeitos** (brilho, setinha do balão, marcador) = **forma
+>   desenhada no código** (graphics: círculo/triângulo/estrela) — isso aparece em qualquer
+>   navegador. **NUNCA** usar emoji como asset de jogo. (No celular do Marcos o emoji aparece e
+>   engana; nos PCs da escola, não.) Kenney/LPC dão animais/frutas/itens em sprite CC0 — usar eles.
+> - **BALÃO não trava o boneco:** fala é **automática** (auto-avança por tempo), a criança anda o
+>   tempo todo; toque = andar (não avança fala). Frutas/animais com **sombra** (não flutuam).
 
 ## 🔎 DISCIPLINA DE QA (o Marcos cobrou: "essas coisas não podem acontecer")
 > Eu estava **usando o Marcos como QA** (mostrava tosco, ele achava o defeito). ERRADO — custa o tempo dele.
