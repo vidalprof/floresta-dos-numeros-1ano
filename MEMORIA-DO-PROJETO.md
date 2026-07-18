@@ -120,6 +120,17 @@
 >   Docinho/álbum/save) DEPOIS que ele aprovar esta.
 > - **DIREITOS:** LPC = **CC-BY-SA/GPL** (exige CRÉDITO — ver `_anim/CREDITOS.md`), NÃO é CC0;
 >   Ninja Adventure = CC0. (Corrigido: eu chamava tudo de "CC0" por engano.)
+> - **LIÇÃO PAGA (campo de NOME + Phaser):** o Phaser dá `preventDefault` nas teclas do jogo
+>   (W/A/S/D e setas) → **essas letras não digitavam** no `<input>` do nome (Ana, Sara, Davi,
+>   Wesley perdiam letras). Conserto: **`this.input.keyboard.clearCaptures()` + `disableGlobalCapture()`**
+>   (o jogo ainda LÊ as teclas p/ mover; só não bloqueia o DOM). Regra: em atividade com campo
+>   de texto + Phaser, SEMPRE desligar a captura de teclado.
+> - **LIÇÃO PAGA (CELULAR — o Marcos testa no celular!):** só WASD/setas movia → **sem teclado no
+>   celular, a criança não anda** = jogo intestável no celular. Conserto: **TOQUE PRA ANDAR**
+>   (tap-to-move: toca no chão → `destino` = ponto do mundo (`camera.getWorldPoint`) → herói
+>   caminha até lá; toca na terra onde ELA está → planta). Teclado (PC) tem prioridade e cancela
+>   o destino. **Regra de ouro: TODA atividade tem que ser jogável 100% no TOQUE** (celular/tablet
+>   da escola), teclado é extra. Testar sempre em viewport de celular (`isMobile+hasTouch`).
 
 ## 🔎 DISCIPLINA DE QA (o Marcos cobrou: "essas coisas não podem acontecer")
 > Eu estava **usando o Marcos como QA** (mostrava tosco, ele achava o defeito). ERRADO — custa o tempo dele.
