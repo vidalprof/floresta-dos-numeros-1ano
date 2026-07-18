@@ -229,10 +229,11 @@ class Mundo extends Phaser.Scene {
     this.dialogo(fala);
   }
   poeFrutas(emoji, n, centro) {
+    const PR = 3, ESP = 54;   // 3 por linha, BEM separadas (a criança anda até cada uma p/ contar)
     for (let i = 0; i < n; i++) {
-      const col = i % 4, lin = Math.floor(i / 4);
-      const x = centro.x + (col - 1.5) * 30 + Phaser.Math.Between(-5, 5);
-      const y = centro.y + (lin - (Math.floor((n - 1) / 4)) / 2) * 30 + Phaser.Math.Between(-5, 5);
+      const col = i % PR, lin = Math.floor(i / PR);
+      const x = centro.x + (col - (PR - 1) / 2) * ESP + Phaser.Math.Between(-4, 4);
+      const y = centro.y + (lin - Math.floor((n - 1) / PR) / 2) * ESP + Phaser.Math.Between(-4, 4);
       const sh = this.add.ellipse(x, y, 18, 6, 0x000000, 0.2).setDepth(y - 1);   // sombra
       const fr = this.add.text(x, y, emoji, { fontSize: '24px' }).setOrigin(0.5, 1).setDepth(y);
       this.tweens.add({ targets: fr, y: y - 3, duration: 650, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: i * 60 });
