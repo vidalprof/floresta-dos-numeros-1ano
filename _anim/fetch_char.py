@@ -91,12 +91,14 @@ def main():
     if not corpo:
         print('::error::sem corpo, nao da pra compor'); sys.exit(1)
     heroi = corpo.copy()
+    # As camadas LPC alinham no topo-esquerda (mesmas animacoes na mesma ordem).
+    # Camada menor cobre so as 1as linhas (onde esta o ANDAR) — encaixa no (0,0).
     for camada in ['lpc_legs', 'lpc_torso', 'lpc_hair']:
         c = carrega(camada)
-        if c and c.size == heroi.size:
-            heroi.alpha_composite(c); print('  + camada', camada)
+        if c and c.size[0] == heroi.size[0]:
+            heroi.alpha_composite(c, (0, 0)); print('  + camada %s %s' % (camada, c.size))
         elif c:
-            print('  ! %s tem tamanho %s != %s, pulei' % (camada, c.size, heroi.size))
+            print('  ! %s largura %s != %s, pulei' % (camada, c.size[0], heroi.size[0]))
     saida = os.path.join(RAIZ, 'assets', 'hero.png')
     heroi.save(saida)
     print('== hero.png composto:', heroi.size, ('COM cabelo' if carrega('lpc_hair') else 'SEM cabelo'), '==')
