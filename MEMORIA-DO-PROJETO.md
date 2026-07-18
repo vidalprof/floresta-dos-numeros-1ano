@@ -1234,3 +1234,34 @@ navegação curta** (o barco desliza pela água até a ilha seguinte, que já es
 horizonte); (c) o NPC recebendo o item e consertando. Prototipar fase 1→2 primeiro, ver,
 iterar, depois espalhar pras 5. **Vira padrão dos mundos EduVerse** (registrar no checklist
 quando o protótipo aprovar).
+
+---
+
+## 🚢 Travessia fase 1→2 — PROTÓTIPO construído + iteração de arte (2026-07-18, cont.)
+
+O Marcos aprovou "fazer a travessia ficar boa de verdade". Estado atual (no ar em
+`ilha-voxel-teste`):
+- **A contagem CONSERTA o barco:** cada coco contado **voa em arco até o barco e tapa
+  um furo** (`cocoVoaProBarco`→`tapaFuro`); o barco **sobe e se desendireita** furo a
+  furo. 5 furos, 6 cocos → sobra 1 (bate com a comparação EF01MA03). A criança VÊ a
+  conta consertar (era o principal: antes o conserto ficava no canto, invisível).
+- **Câmera vai ao barco no fim** (`olhandoBarco`, ângulo médio/de cima) pra ver o
+  conserto + o **Pinça** (caranguejo) comemorando de perto.
+- **Barco com mastro/vela/bandeira** (parece barco); **Pinça separado do barco** (não
+  vira "blob"), pequeno e limpo.
+- **Navegação limpa:** o Verso embarca e o barco **acelera pro mar aberto** (`pr²`),
+  deixando a ilha de casa pra trás (fim do "paredão verde"), fade → chega na Parada 2.
+
+**Feedback do Marcos (registrado p/ não repetir):**
+- Áudio do nome vinha **cortado** → 200ms de "respirada" entre nome→saudação→problema.
+- **"Grumete" repetia** (saudação com nome + fala do problema abrindo com "grumete") →
+  fala do problema da fase 1 regravada SEM "grumete".
+- "Não vi o barco na fase" → cocos voadores + câmera no fim resolvem.
+- "Visual/dinâmica não muito legal" → dinâmica melhorou muito; **arte voxel de perto é
+  o ponto fraco** (crab/barco "quadradões" no close). LIÇÃO: de longe o voxel engana
+  bem, de perto aparece o blocado → preferir enquadramento médio/de cima; o Marcos é o
+  diretor de arte, iterar arte às cegas por screenshot é lento.
+
+**PENDENTE:** (a) ilha 2 visível no horizonte (removida — renderizava como "paredão");
+(b) refino de arte do Pinça e do barco com o olho do Marcos; (c) espalhar a travessia
+pras fases 2→5 SÓ depois do Marcos aprovar o feeling da 1→2.
