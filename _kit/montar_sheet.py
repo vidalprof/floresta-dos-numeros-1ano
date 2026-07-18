@@ -42,7 +42,8 @@ def quadro(path):
     return canvas
 
 def main():
-    fontes = [('_novo/byte2d.png'), ('_novo/byte_walk_a.png'), ('_novo/byte_walk_b.png')]
+    # quadros: 0=parado 1=passo_a 2=passo_b 3=feliz(comemora)
+    fontes = ['_novo/byte2d.png', '_novo/byte_walk_a.png', '_novo/byte_walk_b.png', '_novo/byte_feliz.png']
     quadros = [quadro(os.path.join(RAIZ, f)) for f in fontes]
     sheet = Image.new('RGBA', (FW * len(quadros), FH), (0, 0, 0, 0))
     for i, q in enumerate(quadros):

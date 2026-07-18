@@ -2,113 +2,151 @@
 <html lang="pt-BR"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Kit sprite + Phaser (fisica nativa)</title>
+<title>Ilha do Byte — jogo 2D (Phaser, física nativa)</title>
 <style>
   html,body{margin:0;height:100%;overflow:hidden;background:#4fb0dd;-webkit-tap-highlight-color:transparent}
   canvas{display:block;margin:auto}
+  #dica{position:fixed;left:50%;bottom:12px;transform:translateX(-50%);z-index:9;background:rgba(255,255,255,.9);
+    color:#173a52;font:600 13px system-ui;padding:7px 13px;border-radius:12px;pointer-events:none}
 </style>
 <script src="phaser.min.js"></script>
 </head><body>
+<div id="dica">Toque na ilha (ou setas/WASD) pra o Byte ANDAR • pegue todos os cocos 🥥</div>
 <script>
-// Diretrizes do Diretor Tecnico: FISICA NATIVA (Arcade: body/collider/overlap),
-// FSM (Idle/Walk), LERP na velocidade, sprite sheet, WebGL com fallback Canvas.
-const FW = 200, FH = 240;   // tamanho do quadro do sprite (bate com montar_sheet.py)
-const MUNDO_W = 900, MUNDO_H = 640;
+// ===== Diretrizes: física NATIVA Arcade (body/collider/overlap), FSM (Idle/Walk/Feliz),
+// LERP, sprite sheet, WebGL+fallback Canvas, MÚSICA + SOM, muita VIDA, tela de vitória.
+const FW=200, FH=240, MW=900, MH=640;
+
+// ---------- ÁUDIO (Web Audio: música + efeitos, sem depender de arquivo) ----------
+let AC=null, master=null, musicaOn=false, mi=0, bi=0, musTimer=null;
+const PENTA=[523.25,587.33,659.25,783.99,880.00,783.99,659.25,587.33];
+const BASS=[130.81,130.81,196.00,164.81];
+function initA(){ if(AC) return; try{ AC=new (window.AudioContext||window.webkitAudioContext)();
+  master=AC.createGain(); master.gain.value=0.0001; master.connect(AC.destination);
+  if(AC.state==='suspended') AC.resume(); startMusica(); }catch(e){} }
+function nota(freq,dur,vol,type,dest){ if(!AC) return; const o=AC.createOscillator(),g=AC.createGain();
+  o.type=type||'sine'; o.frequency.value=freq; const t=AC.currentTime;
+  g.gain.setValueAtTime(0.0001,t); g.gain.linearRampToValueAtTime(vol,t+0.012);
+  g.gain.exponentialRampToValueAtTime(0.0008,t+dur); o.connect(g); g.connect(dest||master);
+  o.start(t); o.stop(t+dur+0.02); }
+function startMusica(){ if(musicaOn||!AC) return; musicaOn=true;
+  master.gain.exponentialRampToValueAtTime(0.9,AC.currentTime+1.2);
+  musTimer=setInterval(function(){ if(!musicaOn) return;
+    nota(PENTA[mi%PENTA.length],0.34,0.06,'triangle');
+    if(mi%4===0) nota(BASS[bi++%BASS.length],0.85,0.09,'sine');
+    mi++; }, 250); }
+function somColeta(){ [660,880,1046].forEach((f,i)=>setTimeout(()=>nota(f,0.16,0.10,'square'),i*55)); }
+function somPasso(){ nota(150,0.06,0.05,'sine'); }
+function somVitoria(){ [523,659,784,1046,1318].forEach((f,i)=>setTimeout(()=>nota(f,0.30,0.12,'triangle'),i*120)); }
 
 class Ilha extends Phaser.Scene {
-  preload() {
-    this.load.image('cena', 'img/cena.png');
-    this.load.image('coco', 'img/coco.png');
-    this.load.spritesheet('byte', 'img/byte_sheet.png', { frameWidth: FW, frameHeight: FH });
+  preload(){
+    this.load.image('cena','img/cena.png');
+    this.load.image('coco','img/coco.png');
+    this.load.image('pedra','img/pedra.png');
+    this.load.spritesheet('byte','img/byte_sheet.png',{frameWidth:FW,frameHeight:FH});
   }
-  create() {
-    // fundo (ilha)
-    this.add.image(MUNDO_W / 2, MUNDO_H / 2, 'cena').setDisplaySize(MUNDO_H, MUNDO_H);
+  create(){
+    this.add.image(MW/2,MH/2,'cena').setDisplaySize(MH,MH);
+    // textura de partícula (confete/brilho)
+    const g=this.add.graphics(); g.fillStyle(0xffffff,1); g.fillRect(0,0,12,12); g.generateTexture('spark',12,12); g.destroy();
 
-    // FSM: animacoes Idle / Walk (sprite sheet + FPS)
-    this.anims.create({ key: 'idle', frames: [{ key: 'byte', frame: 0 }], frameRate: 1 });
-    this.anims.create({ key: 'walk', frames: this.anims.generateFrameNumbers('byte', { frames: [1, 2] }), frameRate: 7, repeat: -1 });
+    // FSM anims
+    this.anims.create({key:'idle',frames:[{key:'byte',frame:0}],frameRate:1});
+    this.anims.create({key:'walk',frames:this.anims.generateFrameNumbers('byte',{frames:[1,2]}),frameRate:7,repeat:-1});
+    this.anims.create({key:'feliz',frames:[{key:'byte',frame:3}],frameRate:1});
 
-    // PLAYER com corpo de FISICA NATIVA (Arcade) — nao colisao na mao
-    this.player = this.physics.add.sprite(MUNDO_W / 2, MUNDO_H / 2 + 40, 'byte', 0).setScale(0.42);
-    this.player.body.setSize(78, 54).setOffset(61, 176);   // colisor nos PES
-    this.player.setCollideWorldBounds(true);
-    this.player.setDepth(5);
+    // PLAYER (física nativa)
+    this.player=this.physics.add.sprite(MW/2,MH/2+30,'byte',0).setScale(0.42);
+    this.player.body.setSize(78,54).setOffset(61,176);
+    this.player.setCollideWorldBounds(true).setDepth(6);
 
-    // OBSTACULOS (StaticBody) — camada do cenario; player colide (nao atravessa)
-    this.paredes = this.physics.add.staticGroup();
-    this._obstaculo(300, 250, 70, 70);
-    this._obstaculo(600, 430, 80, 60);
-    this.physics.add.collider(this.player, this.paredes);   // COLISAO NATIVA
-
-    // ITENS (cocos) — camada de itens; overlap (pega ao encostar) NATIVO
-    this.cocos = this.physics.add.group();
-    [[250, 400], [640, 250], [420, 180], [520, 470], [360, 500]].forEach(p => {
-      const c = this.cocos.create(p[0], p[1], 'coco').setScale(0.5).setDepth(3);
-      c.body.setImmovable(true); c.body.setCircle(60, 5, 5);
+    // OBSTÁCULOS (pedras) — colisão nativa, não atravessa
+    this.pedras=this.physics.add.staticGroup();
+    [[300,250,0.5],[610,420,0.58],[470,540,0.44]].forEach(p=>{
+      const r=this.pedras.create(p[0],p[1],'pedra').setScale(p[2]).setDepth(4);
+      r.body.setSize(r.displayWidth*0.8,r.displayHeight*0.55).setOffset(r.displayWidth*0.1,r.displayHeight*0.42);
+      r.refreshBody();
     });
-    this.contados = 0;
-    this.physics.add.overlap(this.player, this.cocos, (pl, co) => {
-      co.destroy(); this.contados++; this.hud.setText('🥥 ' + this.contados + '/5');
-      this.tweens.add({ targets: this.player, scale: 0.48, duration: 90, yoyo: true });   // reacao (juice)
-    }, null, this);
+    this.physics.add.collider(this.player,this.pedras);
 
-    // CAMERA segue o player (exploracao)
-    this.cameras.main.setBounds(0, 0, MUNDO_W, MUNDO_H);
-    this.physics.world.setBounds(0, 0, MUNDO_W, MUNDO_H);
-    this.cameras.main.startFollow(this.player, true, 0.12, 0.12);
+    // COCOS (overlap nativo)
+    this.cocos=this.physics.add.group();
+    [[250,400],[650,250],[420,180],[560,470],[350,520],[700,380],[200,300],[520,320]].forEach(p=>{
+      const c=this.cocos.create(p[0],p[1],'coco').setScale(0.5).setDepth(3); c.body.setImmovable(true); c.body.setCircle(58,6,6);
+      this.tweens.add({targets:c,y:c.y-6,duration:1300,yoyo:true,repeat:-1,ease:'Sine.inOut',delay:Math.random()*800});
+    });
+    this.total=this.cocos.getChildren().length; this.contados=0; this.venceu=false;
+    this.physics.add.overlap(this.player,this.cocos,this.pega,null,this);
+
+    // brilhos ambiente (vida)
+    this.add.particles(0,0,'spark',{x:{min:120,max:MW-120},y:{min:120,max:MH-120},lifespan:2600,
+      scale:{start:0.5,end:0},alpha:{start:0.7,end:0},tint:0xffef99,frequency:520,quantity:1,blendMode:'ADD'}).setDepth(2);
+
+    // câmera segue (exploração)
+    this.cameras.main.setBounds(0,0,MW,MH); this.physics.world.setBounds(0,0,MW,MH);
+    this.cameras.main.startFollow(this.player,true,0.12,0.12);
 
     // HUD
-    this.hud = this.add.text(12, 10, '🥥 0/5', { fontFamily: 'system-ui', fontSize: '24px', color: '#ffe9b0', backgroundColor: '#78481ee0', padding: { x: 12, y: 7 } }).setScrollFactor(0).setDepth(20);
-    this.fps = this.add.text(12, 52, '', { fontFamily: 'monospace', fontSize: '13px', color: '#0a2a10' }).setScrollFactor(0).setDepth(20);
+    this.hud=this.add.text(12,10,'🥥 0/'+this.total,{fontFamily:'system-ui',fontSize:'24px',color:'#ffe9b0',backgroundColor:'#78481ee6',padding:{x:12,y:7}}).setScrollFactor(0).setDepth(20);
+    this.fps=this.add.text(12,52,'',{fontFamily:'monospace',fontSize:'12px',color:'#0a2a10'}).setScrollFactor(0).setDepth(20);
 
-    // INPUT: setas + WASD + toque-pra-andar
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.wasd = this.input.keyboard.addKeys('W,A,S,D');
-    this.alvo = null;
-    this.input.on('pointerdown', p => { this.alvo = new Phaser.Math.Vector2(p.worldX, p.worldY); });
+    // INPUT (+ inicia áudio no 1º gesto)
+    this.cursors=this.input.keyboard.createCursorKeys();
+    this.wasd=this.input.keyboard.addKeys('W,A,S,D');
+    this.alvo=null; this.passoT=0; this.comemUntil=0;
+    this.input.on('pointerdown',p=>{ initA(); this.alvo=new Phaser.Math.Vector2(p.worldX,p.worldY); });
+    this.input.keyboard.on('keydown',()=>initA());
 
-    // QA hooks
-    window.__cont = () => this.contados;
-    window.__andar = (x, y) => { this.alvo = new Phaser.Math.Vector2(x, y); };
-    window.__ready = true;
+    window.__cont=()=>this.contados; window.__ready=true;
+    window.__andar=(x,y)=>{ this.alvo=new Phaser.Math.Vector2(x,y); };
   }
-  _obstaculo(x, y, w, h) {
-    const r = this.add.rectangle(x, y, w, h, 0x7a4a28).setStrokeStyle(3, 0x5a3418).setDepth(2);
-    this.paredes.add(r); r.body.setSize(w, h);
+  pega(pl,co){
+    if(co.getData('pego')) return; co.setData('pego',1);
+    const x=co.x,y=co.y; co.destroy(); this.contados++;
+    this.hud.setText('🥥 '+this.contados+'/'+this.total);
+    somColeta(); this.comemUntil=this.time.now+420;
+    // número flutuante
+    const t=this.add.text(x,y-10,'+1',{fontFamily:'system-ui',fontSize:'30px',color:'#fff',stroke:'#d98b1e',strokeThickness:4}).setOrigin(0.5).setDepth(15);
+    this.tweens.add({targets:t,y:y-70,alpha:0,duration:850,ease:'Cubic.out',onComplete:()=>t.destroy()});
+    // confete
+    this.add.particles(x,y,'spark',{speed:{min:120,max:300},angle:{min:0,max:360},scale:{start:1,end:0},lifespan:750,quantity:14,tint:[0xffd24a,0x59c6e0,0xe25a4a,0x8ed36b,0xf2a626]}).explode(14,x,y);
+    if(this.contados>=this.total) this.vitoria();
   }
-  update() {
-    const SP = 175;
-    let vx = 0, vy = 0;
-    if (this.cursors.left.isDown || this.wasd.A.isDown) vx = -1;
-    if (this.cursors.right.isDown || this.wasd.D.isDown) vx = 1;
-    if (this.cursors.up.isDown || this.wasd.W.isDown) vy = -1;
-    if (this.cursors.down.isDown || this.wasd.S.isDown) vy = 1;
-    if (vx || vy) this.alvo = null;
-    if (!vx && !vy && this.alvo) {
-      const d = this.alvo.clone().subtract(this.player.body.center);
-      if (d.length() < 8) this.alvo = null; else { d.normalize(); vx = d.x; vy = d.y; }
-    }
-    const v = new Phaser.Math.Vector2(vx, vy);
-    if (v.length() > 0) v.normalize();
-    // LERP na velocidade (transicao suave, nao abrupta) — diretriz
-    this.player.body.velocity.x = Phaser.Math.Linear(this.player.body.velocity.x, v.x * SP, 0.22);
-    this.player.body.velocity.y = Phaser.Math.Linear(this.player.body.velocity.y, v.y * SP, 0.22);
-    // FSM Idle/Walk
-    const andando = this.player.body.velocity.length() > 12;
-    this.player.anims.play(andando ? 'walk' : 'idle', true);
-    if (vx < -0.1) this.player.setFlipX(true); else if (vx > 0.1) this.player.setFlipX(false);
-    if (this.fps) this.fps.setText('FPS: ' + Math.round(this.game.loop.actualFps));
+  vitoria(){
+    if(this.venceu) return; this.venceu=true; somVitoria();
+    const cx=this.cameras.main.midPoint.x, cy=this.cameras.main.midPoint.y;
+    const bg=this.add.rectangle(cx,cy,420,150,0x123a5a,0.92).setStrokeStyle(4,0xffd25a).setScrollFactor(0).setDepth(30);
+    this.add.text(cx,cy-16,'Você conseguiu! 🏆',{fontFamily:'system-ui',fontSize:'30px',color:'#ffe9b0',fontStyle:'bold'}).setOrigin(0.5).setScrollFactor(0).setDepth(31);
+    this.add.text(cx,cy+26,'Pegou todos os '+this.total+' cocos!',{fontFamily:'system-ui',fontSize:'18px',color:'#dff'}).setOrigin(0.5).setScrollFactor(0).setDepth(31);
+    for(let i=0;i<3;i++) this.time.delayedCall(i*260,()=>{ const px=cx+Phaser.Math.Between(-180,180);
+      this.add.particles(px,cy-90,'spark',{speedY:{min:180,max:340},speedX:{min:-80,max:80},scale:{start:1.2,end:0},lifespan:1100,quantity:22,tint:[0xffd24a,0x59c6e0,0xe25a4a,0x8ed36b]}).explode(22,px,cy-90).setScrollFactor(0).setDepth(29); });
+    this.player.anims.play('feliz',true);
+    this.tweens.add({targets:this.player,y:this.player.y-24,duration:260,yoyo:true,repeat:5,ease:'Sine.inOut'});
+  }
+  update(){
+    const SP=180; let vx=0,vy=0;
+    if(this.cursors.left.isDown||this.wasd.A.isDown)vx=-1;
+    if(this.cursors.right.isDown||this.wasd.D.isDown)vx=1;
+    if(this.cursors.up.isDown||this.wasd.W.isDown)vy=-1;
+    if(this.cursors.down.isDown||this.wasd.S.isDown)vy=1;
+    if(vx||vy)this.alvo=null;
+    if(!this.venceu && !vx && !vy && this.alvo){ const d=this.alvo.clone().subtract(this.player.body.center);
+      if(d.length()<8)this.alvo=null; else{ d.normalize(); vx=d.x; vy=d.y; } }
+    if(this.venceu){ vx=0; vy=0; }
+    const v=new Phaser.Math.Vector2(vx,vy); if(v.length()>0)v.normalize();
+    this.player.body.velocity.x=Phaser.Math.Linear(this.player.body.velocity.x,v.x*SP,0.22);
+    this.player.body.velocity.y=Phaser.Math.Linear(this.player.body.velocity.y,v.y*SP,0.22);
+    const andando=this.player.body.velocity.length()>14;
+    if(this.time.now<this.comemUntil){ this.player.anims.play('feliz',true); }
+    else if(!this.venceu){ this.player.anims.play(andando?'walk':'idle',true); }
+    if(vx<-0.1)this.player.setFlipX(true); else if(vx>0.1)this.player.setFlipX(false);
+    if(andando && this.time.now>this.passoT){ somPasso(); this.passoT=this.time.now+300; }
+    if(this.fps)this.fps.setText('FPS: '+Math.round(this.game.loop.actualFps));
   }
 }
-
-new Phaser.Game({
-  type: Phaser.AUTO,                 // WebGL com fallback Canvas (salva PC velho)
-  width: 900, height: 600,
-  backgroundColor: '#4fb0dd',
-  physics: { default: 'arcade', arcade: { debug: false } },
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  scene: Ilha
-});
+new Phaser.Game({ type:Phaser.AUTO, width:900, height:600, backgroundColor:'#4fb0dd',
+  physics:{default:'arcade',arcade:{debug:false}},
+  scale:{mode:Phaser.Scale.FIT,autoCenter:Phaser.Scale.CENTER_BOTH}, scene:Ilha });
 </script>
 </body></html>
