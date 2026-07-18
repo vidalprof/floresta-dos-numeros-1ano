@@ -13,9 +13,12 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 IMG = os.path.join(RAIZ, 'assets', 'images')
 os.makedirs(IMG, exist_ok=True)
 UA = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36'}
-REPO = 'sanderfrenken/Universal-LPC-Spritesheet-Character-Generator'
-RAW = 'https://raw.githubusercontent.com/%s/master/spritesheets/' % REPO
-API = 'https://api.github.com/repos/%s/contents/spritesheets/' % REPO
+# Kit CLASSICO estavel (jrconway3): TODAS as camadas na MESMA versao (21 linhas,
+# 832x1344) -> alinham perfeito -> rosto no lugar. (Misturar versoes = rosto sumido.)
+REPO = 'jrconway3/Universal-LPC-spritesheet'
+RAW = 'https://raw.githubusercontent.com/%s/master/' % REPO
+API = 'https://api.github.com/repos/%s/contents/' % REPO
+ALVO = (832, 1344)  # so compoe camadas deste tamanho (mesma versao)
 
 def http(u, t=120):
     return urllib.request.urlopen(urllib.request.Request(u, headers=UA), timeout=t).read()
@@ -57,51 +60,42 @@ def descobre_png(path, prefere=('black', 'brown', 'male'), prof=0):
             return u
     return None
 
-def main():
-    # 1) CORPO (masculino, universal) — URLs conhecidas boas
-    baixa('lpc_body', [
-        RAW + 'body/bodies/male/universal.png',
-        RAW + 'body/bodies/male/light.png',
-    ])
-    # 2) ROUPA (camisa longa branca)
-    baixa('lpc_torso', [
-        RAW + 'torso/clothes/longsleeve/longsleeve/male/white.png',
-        RAW + 'torso/clothes/longsleeve/male/white.png',
-    ])
-    # 2b) CALCA (pra nao ficar de pernas de fora)
-    baixa('lpc_legs', [
-        RAW + 'legs/pants/male/blue.png',
-        RAW + 'legs/pants/pants/male/blue.png',
-    ])
-    # 3) CABELO — DESCOBERTO pela API (nada chutado)
-    print('== descobrindo o caminho do CABELO pela API ==')
-    hair_url = None
-    for base in ['hair/plain', 'hair/messy1', 'hair']:
-        hair_url = descobre_png(base)
-        if hair_url:
-            print('  cabelo achado:', hair_url.split('/master/')[-1]); break
-    if hair_url:
-        baixa('lpc_hair', [hair_url])
+def acha(nome, base, prefere):
+    """descobre 1 camada pela API (nada chutado) e baixa; tudo do MESMO repo/versao."""
+    print('== descobrindo %s em %s ==' % (nome, base))
+    url = descobre_png(base, prefere)
+    if url:
+        print('  achado:', url.split('/master/')[-1])
+        baixa(nome, [url])
+    else:
+        print('  ! nao achei', nome)
 
-    # 4) COMPOE o heroi: corpo -> calca -> roupa -> cabelo
+def main():
+    # TODAS as camadas do MESMO repo (jrconway3) = mesma versao = alinham.
+    acha('lpc_body', 'body', ('male', 'light'))
+    acha('lpc_legs', 'legs', ('male', 'pants', 'white'))
+    acha('lpc_torso', 'torso', ('male', 'longsleeve', 'shirt', 'white'))
+    acha('lpc_hair', 'hair', ('male', 'plain', 'brown'))
+
+    # COMPOE o heroi — SO camadas do tamanho ALVO (mesma versao); descarta o resto.
     def carrega(n):
         p = os.path.join(IMG, n + '.png')
         return Image.open(p).convert('RGBA') if os.path.exists(p) else None
     corpo = carrega('lpc_body')
     if not corpo:
-        print('::error::sem corpo, nao da pra compor'); sys.exit(1)
+        print('::error:: corpo ausente'); sys.exit(1)
+    alvo = corpo.size  # o CORPO define o tamanho; so compoe camadas iguais
+    print('== corpo %s (esperado 832x1344 = classico) ==' % (alvo,))
     heroi = corpo.copy()
-    # As camadas LPC alinham no topo-esquerda (mesmas animacoes na mesma ordem).
-    # Camada menor cobre so as 1as linhas (onde esta o ANDAR) — encaixa no (0,0).
     for camada in ['lpc_legs', 'lpc_torso', 'lpc_hair']:
         c = carrega(camada)
-        if c and c.size[0] == heroi.size[0]:
-            heroi.alpha_composite(c, (0, 0)); print('  + camada %s %s' % (camada, c.size))
+        if c and c.size == alvo:
+            heroi.alpha_composite(c, (0, 0)); print('  + camada %s' % camada)
         elif c:
-            print('  ! %s largura %s != %s, pulei' % (camada, c.size[0], heroi.size[0]))
+            print('  ! %s tem %s != %s, DESCARTEI (versao diferente)' % (camada, c.size, alvo))
     saida = os.path.join(RAIZ, 'assets', 'hero.png')
     heroi.save(saida)
-    print('== hero.png composto:', heroi.size, ('COM cabelo' if carrega('lpc_hair') else 'SEM cabelo'), '==')
+    print('== hero.png composto:', heroi.size, '==')
 
 if __name__ == '__main__':
     main()
