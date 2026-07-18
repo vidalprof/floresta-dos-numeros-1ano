@@ -1325,3 +1325,28 @@ camadas/máscaras de colisão; WebGL/HTML5). Testamos as ferramentas:
 jogo Phaser em 1 HTML com `phaser.min.js` embutido → commit → Fábrica/republicar (Pages)
 → Auditor (render+E2E headless) antes de subir. **COMPROMISSO: parar de pular de estilo;
 Phaser exploratório é O caminho, com física nativa (mata os bugs de colisão na mão).**
+
+---
+
+## 🧪 PROVA GODOT PELO GITHUB (2026-07-18): FUNCIONA, mas PESA 35 MB (inviável p/ escola)
+
+O Marcos queria uma ferramenta profissional onde eu construo e o GitHub exporta o jogo
+pronto. **Provamos que É POSSÍVEL:**
+- Escrevi um projeto Godot mínimo (`_godot/`: `CharacterBody2D`+`move_and_slide` = física
+  NATIVA, `StaticBody2D` colisores) + workflow `.github/workflows/godot-web.yml` (dispara
+  por push `[godot]`; imagem `barichello/godot-ci:4.2.2`; internet liberada no Actions —
+  ao contrário do meu chat, que leva 403). Exportou HTML5 e commitou em `_godot/build/web`.
+- **RODOU** (render headless: física nativa ok, FPS 60). Pipeline ponta a ponta funciona.
+
+**MAS o veredito (número na mão):**
+- **35 MB** o build — `index.wasm` sozinho **34 MB** (é o motor Godot inteiro; só um
+  quadrado se mexendo, sem arte). Levou ~16s pra carregar no render de software.
+- Comparação: **Phaser inteiro = 1,2 MB (~30x mais leve)**; atividade 2D nossa = centenas
+  de KB. O FX-4300 da escola + internet compartilhada **não aguenta 35 MB por atividade**.
+- Godot 3 seria ~10-15 MB e brotli reduz a transferência, mas o wasm ainda descompacta p/
+  ~34 MB e compila — pesado em CPU velha. Continua um exagero.
+
+**CONCLUSÃO:** Godot-pelo-GitHub é real e legal, mas **pesado demais pra realidade da
+escola**. **Phaser 3** entrega as MESMAS diretrizes profissionais (física nativa Arcade,
+FSM, sprite sheet, LERP, WebGL) **~30x mais leve** e eu construo/publico 100% headless.
+Recomendação: seguir com Phaser. (Arquivos Godot ficam no repo como prova; não usar em prod.)
