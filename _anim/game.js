@@ -10,7 +10,8 @@
 // número/medalha, sem zoom). Phaser CANVAS (leve p/ PC antigo).
 // ============================================================================
 const F = 64, HERO_SC = 1.0, WW = 1280, WH = 960, ZOOM = 1.6;
-const IDLE = { up: 0, left: 9, down: 18, right: 27 };
+// Menino LPC UNIVERSAL (13 col, 832x1344): andar linhas 8-11, col0=parado.
+const IDLE = { up: 104, left: 117, down: 130, right: 143 };
 const ALVO_PLOT = 6, META = 30;
 const PLOTS = [[640, 470], [330, 300], [1010, 300], [980, 760], [430, 810]];  // 5 x 6 = 30
 
@@ -121,10 +122,10 @@ class Mundo extends Phaser.Scene {
       this.bichos.push(b);
     });
 
-    this.anims.create({ key: 'up', frames: this.anims.generateFrameNumbers('hero', { start: 1, end: 8 }), frameRate: 10, repeat: -1 });
-    this.anims.create({ key: 'left', frames: this.anims.generateFrameNumbers('hero', { start: 10, end: 17 }), frameRate: 10, repeat: -1 });
-    this.anims.create({ key: 'down', frames: this.anims.generateFrameNumbers('hero', { start: 19, end: 26 }), frameRate: 10, repeat: -1 });
-    this.anims.create({ key: 'right', frames: this.anims.generateFrameNumbers('hero', { start: 28, end: 35 }), frameRate: 10, repeat: -1 });
+    this.anims.create({ key: 'up', frames: this.anims.generateFrameNumbers('hero', { start: 105, end: 112 }), frameRate: 10, repeat: -1 });
+    this.anims.create({ key: 'left', frames: this.anims.generateFrameNumbers('hero', { start: 118, end: 125 }), frameRate: 10, repeat: -1 });
+    this.anims.create({ key: 'down', frames: this.anims.generateFrameNumbers('hero', { start: 131, end: 138 }), frameRate: 10, repeat: -1 });
+    this.anims.create({ key: 'right', frames: this.anims.generateFrameNumbers('hero', { start: 144, end: 151 }), frameRate: 10, repeat: -1 });
 
     this.sombra = this.add.ellipse(640, 480, 30, 12, 0x000000, 0.22);
     this.hero = this.physics.add.sprite(640, 480, 'hero', IDLE.down).setScale(HERO_SC);
