@@ -222,8 +222,12 @@ function colocaBarco(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x,y,z,col:c});
   colisores.push({x:px,z:pz,r:2.5*S+0.4});return me;}
 // ---- FASE 1 (travessia): barco FURADO que a contagem conserta ----
 function colocaBarcoFurado(px,pz){const me=colocaBarco(px,pz);          // reusa o casco
+  me.scale.setScalar(1.0);                                             // MAIOR (mais visível — a criança precisa ver consertar)
   me.userData.baseY=me.position.y;                                     // nível "consertado" (flutuando)
   me.position.y-=0.9;me.rotation.z=0.14;                               // começa AFUNDANDO (baixo + tombado)
+  const mast=part(0.2,4.2,0.2,0x6a4a2a);mast.position.set(0.6,2.6,0);me.add(mast);          // mastro
+  const sail=part(0.14,2.4,2.0,0xf3ede0);sail.position.set(0.75,2.9,0);me.add(sail);        // vela
+  const flag=part(0.5,0.34,0.06,0xc9382f);flag.position.set(0.6,4.9,0.3);me.add(flag);      // bandeirinha
   const furos=[];const N=5;                                            // 5 furos (a fala diz 5 furos, 6 cocos → sobra 1)
   for(let i=0;i<N;i++){const fx=-1.4+i*0.7;
     const f=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,0.22),new THREE.MeshBasicMaterial({color:0x140b06}));
@@ -238,17 +242,24 @@ function tapaFuro(k){if(!barco1)return;const f=barco1.furos[k-1];if(!f)return;
   splash(b.position.x,2.0,b.position.z+0.9);}
 function splash(x,y,z){for(let i=0;i<8;i++){const c=part(0.18,0.18,0.18,0xdff3ff);c.position.set(x,y,z);
   const a=i/8*6.28;c.userData={vx:Math.cos(a)*2.2,vz:Math.sin(a)*2.2,vy:3.2+i*0.15,life:0.7};fx.push(c);scene.add(c);}}
-function gCaranguejo(){const m=[];const P=(x,y,z,c)=>m.push({x,y,z,col:c});
-  for(let x=0;x<4;x++)for(let z=0;z<3;z++){P(x,0,z,0xc23b28);P(x,1,z,0xe0553a);}   // corpo
-  P(0,2,0,0x111111);P(3,2,0,0x111111);                                             // olhinhos
-  const g=mesh(m);g.translate(-1.5,0,-1);return g;}
+// o coco CONTADO voa (em arco) até o furo e o tapa — a criança VÊ a conta consertar o barco
+function cocoVoaProBarco(from,k){if(!barco1)return;const f=barco1.furos[k-1];if(!f)return;
+  const to=f.getWorldPosition(new THREE.Vector3());
+  const c=new THREE.Mesh(OBJ.coco.g.clone(),MAT);c.scale.setScalar(0.15);c.position.copy(from);mundoG.add(c);
+  voadores.push({mesh:c,t:0,dur:0.55,from:from.clone(),to:to,k:k});}
+function gCaranguejo(){const m=new Map();const P=(x,y,z,c)=>m.set(x+'|'+y+'|'+z,{x,y,z,col:c});
+  for(let x=0;x<6;x++)for(let z=0;z<4;z++){const dx=x-2.5,dz=z-1.5;if(dx*dx*0.5+dz*dz<6){P(x,0,z,0xc23b28);P(x,1,z,0xe0553a);}}  // carapaça arredondada
+  P(1,2,3,0xffffff);P(4,2,3,0xffffff);P(1,2,4,0x1a1a1a);P(4,2,4,0x1a1a1a);   // 2 olhinhos na frente (branco+pupila)
+  P(2,2,4,0x7a1e12);P(3,2,4,0x7a1e12);                                       // boca/sorriso
+  for(let x=1;x<5;x++)P(x,-1,-1,0xb0331f);for(let x=1;x<5;x++)P(x,-1,4,0xb0331f); // patinhas
+  const g=mesh([...m.values()]);g.translate(-2.5,0.5,-1.5);return g;}
 function colocaPinca(px,pz){const g=new THREE.Group();
   g.add(new THREE.Mesh(gCaranguejo(),MAT));
-  const cl=part(0.9,0.5,0.55,0xe0553a);cl.position.set(-2.0,1.0,0.4);g.add(cl);    // garra esq
-  const cr=part(0.9,0.5,0.55,0xe0553a);cr.position.set(2.0,1.0,0.4);g.add(cr);     // garra dir
-  g.scale.setScalar(0.5);g.position.set(px,3,pz);g.rotation.y=-0.4;mundoG.add(g);
-  colisores.push({x:px,z:pz,r:0.9});
-  return {group:g,cl:cl,cr:cr,wave:0};}
+  const cl=part(1.1,0.7,0.8,0xe0553a);cl.position.set(-2.1,0.5,1.0);g.add(cl);const clt=part(0.5,0.9,0.5,0xe0553a);clt.position.set(-2.4,1.1,1.0);g.add(clt); // garra esq (pinça pra cima)
+  const cr=part(1.1,0.7,0.8,0xe0553a);cr.position.set(2.1,0.5,1.0);g.add(cr);const crt=part(0.5,0.9,0.5,0xe0553a);crt.position.set(2.4,1.1,1.0);g.add(crt);  // garra dir
+  g.scale.setScalar(0.6);g.position.set(px,3,pz);g.rotation.y=0.15;mundoG.add(g);   // pequeno e fofo (não domina a cena)
+  colisores.push({x:px,z:pz,r:1.0});g.userData.baseY=3;
+  return {group:g,cl:clt,cr:crt,wave:0};}   // anima as PONTAS das garras (clt/crt)
 function ilhaDistante(px,pz){const w=[];const P=(x,y,z,c)=>w.push({x,y,z,col:c});
   for(let x=0;x<12;x++)for(let z=0;z<12;z++){const dx=x-5.5,dz=z-5.5;if(dx*dx+dz*dz<30)P(x,0,z,(x+z)%2?0x6fbf49:0x5aa53f);}
   const g=new THREE.Mesh(mesh(w),MAT);g.scale.setScalar(1.4);g.position.set(px-8,1.9,pz);mundoG.add(g);
@@ -272,7 +283,7 @@ function gaivotasAmbiente(){for(let i=0;i<3;i++){const m=new THREE.Mesh(OBJ.gaiv
   m.userData={r:8+i*2,ph:i*2.1,vy:9+i*1.5,sp:0.35+i*0.06};mundoG.add(m);gaivotasVoo.push(m);}}
 function props(idx){sig=null;gaivotasVoo.length=0;barco1=null;pinca=null;
   if(idx===0){sol(true);palmeira(cx-6,cz-5);palmeira(cx+6,cz+6);palmeira(cx-6,cz+6);
-    barco1=colocaBarcoFurado(cx-3,cz+8);pinca=colocaPinca(cx-1,cz+8);ilhaDistante(cx-3,cz+40);gaivotasAmbiente();
+    barco1=colocaBarcoFurado(cx-4,cz+9);pinca=colocaPinca(cx+2,cz+7);ilhaDistante(cx-4,cz+42);gaivotasAmbiente();   // barco e Pinça SEPARADOS (não viram um blob só)
     sig=null;}                                                                                            // fase 1: a reação é o barco consertando + a travessia (custom)
   else if(idx===1){sol(true);palmeira(cx-7,cz+6);colocaFarol(cx+6,cz-7);gaivotasAmbiente();
     sig={tipo:'farol',x:cx+7,y:11,z:cz-6,cor:0xfff3a0};}                                                  // FAROL ACENDE
@@ -313,7 +324,7 @@ const PARADAS=[
 
 let paradaIdx=0,contados=0,alvo=6,tentativas=0,t0parada=0,travado=true,balaoTimer=null;
 let objetos=[],hits=[];
-let barco1=null,pinca=null,cutscene=null;   // travessia fase 1->2: barco furado, o Pinça (caranguejo) e a cena de navegar
+let barco1=null,pinca=null,cutscene=null,olhandoBarco=null;const voadores=[];   // travessia fase 1->2: barco furado, o Pinça, cocos que VOAM pro barco e a cena de navegar
 const turma=new URLSearchParams(location.search).get('turma')||'teste';
 let nome='grumete',saudacao='',saudacaoAudio='',nomeAudio='';
 const el=id=>document.getElementById(id);
@@ -328,7 +339,7 @@ function espalhar(n){const pts=[];for(let i=0;i<n;i++){const a=i*2.399963;
   let r=(R-2.2)*Math.sqrt((i+0.6)/n);r=Math.max(2.6,r);   // nunca nasce colado no Verso (senão conta sozinho ao abrir)
   pts.push([cx+Math.cos(a)*r,cz+Math.sin(a)*r]);}return pts;}
 function montarParada(i){
-  paradaIdx=i;const P=PARADAS[i];const tm=TEMA[P.tema];const od=OBJ[P.item];
+  paradaIdx=i;const P=PARADAS[i];const tm=TEMA[P.tema];const od=OBJ[P.item];olhandoBarco=null;voadores.length=0;   // reseta câmera-foco e cocos voando ao trocar de ilha
   alvo=P.n;contados=0;tentativas=0;travado=false;t0parada=Date.now();
   scene.background=new THREE.Color(tm.bg);scene.fog=new THREE.Fog(tm.bg,tm.fog[0],tm.fog[1]);
   limparMundo();terreno(tm);props(i);
@@ -425,7 +436,7 @@ function salvar(){try{if(window.EduSave){const prog={nome:nome,turma:turma,parad
     EduSave.salvar(turma,nome,base,function(){});});}}catch(e){}}
 function contarObj(idx){if(travado)return;const m=objetos[idx];if(!m||m.userData.done)return;m.userData.done=true;m.userData.pop=1;
   contados++;contEl.textContent=OBJ[PARADAS[paradaIdx].item].ic+' '+contados+'/'+alvo;
-  if(paradaIdx===0&&barco1&&contados<=5)tapaFuro(contados);   // cada coco TAPA um furo → o barco conserta na frente da criança
+  if(paradaIdx===0&&barco1&&contados<=5){m.userData.pop=0;m.visible=false;cocoVoaProBarco(m.position.clone(),contados);}   // o coco VOA pro barco e tapa o furo (ela vê a conta consertar); o 6º sobra
   if(contados===1){clearTimeout(balaoTimer);el('balao').style.display='none';}   // começou a contar → balão sai da frente
   bip(PENT[Math.min(contados-1,PENT.length-1)],0.14,'triangle',0.2);
   mostraNumeral(contados);                              // o NÚMERO aparece grande (associa quantidade ↔ numeral)
@@ -437,11 +448,11 @@ function iniciarTravessia(){if(!barco1){montarParada(1);return;}   // FASE 1: o 
   falaEl.innerHTML='<b class="byte"></b>Barco consertado! Bora pra próxima ilha, '+ (nome==='grumete'?'grumete':nome) +'! ⛵';el('balao').style.display='';}
 function vitoria(){travado=true;const P=PARADAS[paradaIdx];clearTimeout(balaoTimer);falaEl.innerHTML=P.acerto;el('balao').style.display='';
   fanfarra();salvar();
-  if(paradaIdx===0){                                             // ⛵ TRAVESSIA: barco consertado → Pinça comemora → navega até a ilha 2
-    festaFX(barco1.mesh.position.x,4,barco1.mesh.position.z,0xdff3ff);if(pinca)pinca.wave=1.8;
-    setTimeout(()=>falarByte('vx_p1_ok'),700);
-    setTimeout(()=>mostraCard(P),2200);                          // COMPARAR (faltou/sobrou — EF01MA03): 5 furos, 6 cocos, sobrou 1
-    setTimeout(()=>{el('vit').classList.add('hidden');iniciarTravessia();},5200);   // guarda o card ~3s, depois ZARPA
+  if(paradaIdx===0){                                             // ⛵ TRAVESSIA: câmera VAI ao barco → Pinça comemora → navega até a ilha 2
+    olhandoBarco=barco1.mesh;                                     // a câmera vai até o barco (a criança VÊ o conserto de perto)
+    setTimeout(()=>{festaFX(barco1.mesh.position.x,4,barco1.mesh.position.z,0xdff3ff);if(pinca)pinca.wave=2.2;falarByte('vx_p1_ok');},900);   // deixa a câmera chegar, aí comemora
+    setTimeout(()=>mostraCard(P),2600);                          // COMPARAR (faltou/sobrou — EF01MA03): 5 furos, 6 cocos, sobrou 1
+    setTimeout(()=>{el('vit').classList.add('hidden');iniciarTravessia();},5600);   // guarda o card ~3s, depois ZARPA
     return;}
   reagir();                                                      // demais fases: o mundo reage e a criança VÊ (card depois)
   setTimeout(()=>falarByte('vx_p'+(paradaIdx+1)+'_ok'),700);
@@ -526,10 +537,13 @@ function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+
     if(u.glow!==undefined){e.material.opacity=0.35+0.25*Math.sin(t*4);e.scale.setScalar(1+0.08*Math.sin(t*4));}
     if(u.grow!==undefined){u.grow+=dt*2.2;const s=Math.min(1,Math.max(0.01,u.grow));e.scale.set(s,1,s);}
     if(u.floatB!==undefined){e.rotation.y+=dt*2;e.position.y=sig.y+Math.sin(t*3)*0.25;}}
-  if(pinca&&pinca.wave>0){pinca.wave-=dt;const a=Math.sin(t*18)*0.5*Math.max(0,pinca.wave);pinca.cl.rotation.z=a;pinca.cr.rotation.z=-a;}   // o Pinça acena as garras
+  if(pinca&&pinca.wave>0){pinca.wave-=dt;const w=Math.max(0,Math.min(1,pinca.wave));const a=Math.sin(t*18)*0.6*w;pinca.cl.rotation.z=a;pinca.cr.rotation.z=-a;pinca.group.position.y=(pinca.group.userData.baseY||3)+Math.abs(Math.sin(t*10))*0.5*w;}   // o Pinça acena as garras e PULA de alegria
   if(barco1){for(const f of barco1.furos){if(f.userData.pop>0){f.userData.pop-=dt*2.2;f.scale.setScalar(1+Math.max(0,f.userData.pop)*0.5);}}}   // "toc" ao tapar cada furo
-  const hd=Math.cos(camElev)*camDist,vy=Math.sin(camElev)*camDist;   // distância horizontal + altura pela inclinação
-  camera.position.set(vpos.x+cs*hd,2.5+vy,vpos.z+cc*hd);camera.lookAt(vpos.x,2.5,vpos.z);
+  for(let i=voadores.length-1;i>=0;i--){const o=voadores[i];o.t+=dt;const p=Math.min(1,o.t/o.dur);   // o coco voa em ARCO até o furo
+    o.mesh.position.lerpVectors(o.from,o.to,p);o.mesh.position.y+=Math.sin(p*Math.PI)*2.4;o.mesh.rotation.y+=dt*12;o.mesh.rotation.x+=dt*8;
+    if(p>=1){mundoG.remove(o.mesh);o.mesh.geometry.dispose();voadores.splice(i,1);tapaFuro(o.k);}}   // chegou → tapa o furo
+  if(olhandoBarco){const b=olhandoBarco;camera.position.lerp(new THREE.Vector3(b.position.x+1,13,b.position.z-16),0.06);camera.lookAt(b.position.x+1,2.5,b.position.z-0.5);}   // câmera em ângulo MÉDIO/de cima no barco+Pinça (esconde o blocado, mostra o conserto)
+  else{const hd=Math.cos(camElev)*camDist,vy=Math.sin(camElev)*camDist;camera.position.set(vpos.x+cs*hd,2.5+vy,vpos.z+cc*hd);camera.lookAt(vpos.x,2.5,vpos.z);}
   renderer.render(scene,camera);
   frames++;acc+=now-last;last=now;
   if(acc>=500){const fps=Math.round(frames*1000/acc);fpsEl.textContent='FPS: '+fps+' · '+renderer.info.render.triangles+' tri';frames=0;acc=0;window.__fps=fps;
