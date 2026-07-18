@@ -1,0 +1,42 @@
+name: Ninja - baixar kit CHIBI/fofo (Ninja Adventure, CC0)
+
+on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    if: contains(github.event.head_commit.message, '[ninja]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Clonar Ninja Adventure (CC0) e trazer sprites
+        run: |
+          set -e
+          git clone --depth 1 https://github.com/pixel-boy/NinjaAdventure /tmp/ninja
+          mkdir -p _ninja/assets
+          for d in character environment map destroyable particle; do
+            if [ -d "/tmp/ninja/content/$d" ]; then
+              mkdir -p "_ninja/assets/$d"
+              # copia so PNGs, preservando a sub-estrutura
+              (cd "/tmp/ninja/content/$d" && find . -name '*.png' -exec cp --parents {} "$GITHUB_WORKSPACE/_ninja/assets/$d/" \;)
+            fi
+          done
+          echo "=== manifesto ==="
+          (cd _ninja/assets && find . -name '*.png' | sort | head -400) | tee _ninja/manifest-ninja.txt | tail -60
+          echo "total PNG: $(find _ninja/assets -name '*.png' | wc -l)"
+          echo "tamanho: $(du -sh _ninja/assets | cut -f1)"
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _ninja
+          if git diff --cached --quiet; then echo "::error::nada baixado"; exit 1; fi
+          git commit -m "ninja: kit chibi/fofo (Ninja Adventure, CC0) baixado [skip]"
+          for k in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
