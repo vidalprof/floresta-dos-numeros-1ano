@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Kenney + Motor de Vida — demo</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:#4a7a3a;-webkit-tap-highlight-color:transparent;font-family:system-ui,Arial}
+  #jogo{position:fixed;inset:0;width:100vw;height:100vh}
+  #jogo canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges}
+  .hud{position:fixed;z-index:10;font:600 13px system-ui}
+  #dica{left:50%;bottom:10px;transform:translateX(-50%);background:rgba(255,255,255,.9);color:#173a52;padding:6px 12px;border-radius:10px;pointer-events:none;max-width:92vw;text-align:center}
+  #btfs{right:12px;top:12px;background:rgba(23,58,82,.92);color:#fff;border:0;padding:8px 12px;border-radius:10px;cursor:pointer}
+</style>
+<script src="phaser.min.js"></script>
+</head><body>
+<button id="btfs" class="hud" onclick="window.__fs&&window.__fs()">⛶ Tela cheia</button>
+<div id="dica" class="hud">Toque no chão pra andar — personagem Kenney com MOTOR DE VIDA (respira, pula, vira)</div>
+<div id="jogo"></div>
+<script src="game.js"></script>
+</body></html>
