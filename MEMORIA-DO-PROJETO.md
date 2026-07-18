@@ -50,6 +50,43 @@
 >   "Ilha das Trinta Moedas" (5 paradas 6→12→18→24→30). **Parada 1 (cocos) JÁ jogável** (contar tocando/andando).
 > - **LEGAL:** NUNCA usar marca/logo/boneco LEGO (é cópia). Voxel/cubo é genérico e legal com o NOSSO Verso.
 
+## 🕹️ DECISÃO DO MARCOS (2026-07): motor 2D top-down PROFISSIONAL = **Phaser 3 + KIT PRONTO (sprites reais)**
+> Depois de testar 3D voxel e 2D desenhado-por-código, o Marcos foi claro em vários pontos-chave:
+> - **"NÃO quero NADA desenhado por código"** (as árvores/sol/nuvem que eu desenhava com graphics ficaram
+>   amadoras). **TUDO tem que ser SPRITE de verdade** — como o boneco. Regra firme.
+> - **Kits PRONTOS (baixados) são o melhor caminho**, iguais ao personagem, e a gente **anima** eles. O
+>   **Gemini/ChatGPT NÃO montam a cartela completa** de sprites (bug de coerência + grade desalinhada):
+>   servem pra **1 imagem solta** (prop/fundo único, até com recorte transparente), **não** pro kit animado.
+> - **"Um game usa ~300 imagens"** = na prática **1–3 cartelas** (sprite sheet/atlas: 1 PNG com centenas de
+>   quadros). Baixar a cartela pronta é muito mais fácil/seguro que gerar. O **mundo vivo** (vento, sombra,
+>   sons) é **código/animação** (de graça) — isso ele aprova; o que ele rejeita é **arte desenhada por código**.
+>
+> **MOTOR ESCOLHIDO: Phaser 3 (CANVAS + Arcade Physics)** — 1 MB (`phaser.min.js` vendorizado, offline),
+> leve pro FX-4300 (vs Godot HTML5 = 35 MB, REJEITADO). Colisão nativa, animação por sprite sheet, câmera
+> que segue (explorar), y-sort (profundidade), tween (vento). Renderer CANVAS + `pixelArt:true`.
+>
+> **PIPELINE DE ARTE (via GitHub Actions — internet liberada, igual gerar-imagens):**
+> - **Personagem animado:** kit **LPC** (Liberated Pixel Cup, CC0). Baixado em `_anim/fetch_char.py`
+>   (body + torso do `sanderfrenken/Universal-LPC-...`, compostos em `_anim/assets/hero.png`, 832x1344,
+>   13 colunas × 64px). Andar 4 direções: IDLE {up:104,left:117,down:130,right:143}; walk up 105-112,
+>   left 118-125, down 131-138, right 144-151. **PENDÊNCIA:** herói ainda **careca** (camada de cabelo
+>   falhou no download) — encaixar `hair` do kit.
+> - **Mundo (chão/árvores/água):** kit **LPC Base Assets (Sharm, CC0)** — `_anim/fetch_world.py` +
+>   workflow **`mundo-build.yml`** (dispara por commit com **`[world]`**), raspa a página do OpenGameArt
+>   e baixa 78 PNGs pra `_anim/assets/mundo/`. Daí eu **RECORTO** (Pillow) os sprites reais pra
+>   `_anim/assets/mundo/cut/`: grama sólida (grass linha 5), terra (dirt), lago pronto (bloco 3x3 do
+>   tileset de água), **árvore redonda** (copa treetop cols0-2/rows0-2 **+ tronco col 1** — a col 2 é
+>   vazia!), pinheiro, sombra. Recortar pixel real do tileset **NÃO** é "desenhar por código" (é como
+>   todo jogo usa tileset) — isso o Marcos aceita; desenhar formas com graphics, **não**.
+>
+> **DEMO no ar:** repo **`personagem-anima`** → https://vidalprof.github.io/personagem-anima/ (publicado
+> por `fabrica.yml`, `source_dir=_anim`, `ref` = branch de trabalho). Estado atual (2026-07): mundo com
+> sprites reais (grama/árvores/lago/canteiro de terra), **colisão** no tronco (testada por medição: herói
+> trava na base), y-sort (copa passa na frente da cabeça), câmera que segue, vento (sway) + sons (Web
+> Audio: vento/passarinho/passos). **Aprovado pelo Marcos:** personagem, movimento, vento, passarinho.
+> **PRÓXIMO:** (1) cabelo/roupa no herói; (2) camada pedagógica — plantar no canteiro **acertando contas**
+> (contar até 30) + o mundo **falar o nome** da criança (banco de vozes já existe, ver seção de vozes).
+
 ## 🔎 DISCIPLINA DE QA (o Marcos cobrou: "essas coisas não podem acontecer")
 > Eu estava **usando o Marcos como QA** (mostrava tosco, ele achava o defeito). ERRADO — custa o tempo dele.
 > **Antes de mostrar QUALQUER coisa visual, EU renderizo (headless + Playwright) e AUDITO** contra a lista:
