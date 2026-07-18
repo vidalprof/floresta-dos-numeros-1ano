@@ -76,3 +76,13 @@ volta pro profissional certo, **nunca pro colo do Marcos.**
 
 **Ritual do AUDITOR:** roda esta lista por **render headless + E2E** (jogar a atividade inteira)
 ANTES de qualquer coisa chegar ao Marcos. Só sobe o que passou nos 8 itens.
+
+### 🕵️ O AUDITOR — especialista NESTE tipo de jogo, e que APRENDE sozinho
+- É **experiente em jogo voxel 3D exploratório de contagem** (não genérico): conhece os erros típicos
+  do gênero (clique roubado em campo denso, objeto atravessável, item que não parece o que é, câmera,
+  FPS, som que não toca sem gesto, balão que atrapalha no celular…).
+- **APRENDE automaticamente:** cada bug que aparece **vira um teste permanente** — E2E (jogar a
+  atividade inteira por Playwright) + render headless dos momentos-chave. Esses testes rodam **sempre**,
+  então o **volume de bugs só cai** com o tempo (o mesmo erro não volta duas vezes).
+- **Cobre TUDO** (pedagógico, arte, técnico, som, UX), rodando a Definição de Pronto acima antes de
+  qualquer coisa chegar ao Marcos. Regra de ouro: **o Marcos não é o QA.**

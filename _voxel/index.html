@@ -65,7 +65,7 @@ renderer.setPixelRatio(1);
 function resize(){W=innerWidth;H=innerHeight;camera.aspect=W/H;camera.updateProjectionMatrix();
   renderer.domElement.style.width=W+'px';renderer.domElement.style.height=H+'px';renderer.setSize(Math.round(W*RQ),Math.round(H*RQ),false);}
 document.body.appendChild(renderer.domElement);resize();addEventListener('resize',resize);
-let camAngle=0.75;const camDist=24,camH=16;
+let camAngle=0.75,camElev=0.62;const camDist=26;   // camElev = ângulo vertical (arrastar ↑↓: de cima até quase de lado)
 scene.add(new THREE.AmbientLight(0xffffff,1));   // (só p/ caso; usamos MeshBasic)
 
 // ---------- helpers de voxel ----------
@@ -267,7 +267,7 @@ const PARADAS=[
   abre:'Chegamos ao coração da ilha! O baú só fecha com o tesouro inteiro… quantas moedas o mar espalhou por esse chão? Toca em cada uma pra devolver!',
   acerto:'TRINTA moedas de ouro reunidas! A tampa desceu com um "CLÁ-BUM" e o tesouro voltou pro lugar, capitão Verso!'}];
 
-let paradaIdx=0,contados=0,alvo=6,tentativas=0,t0parada=0,travado=true;
+let paradaIdx=0,contados=0,alvo=6,tentativas=0,t0parada=0,travado=true,balaoTimer=null;
 let objetos=[],hits=[];
 const turma=new URLSearchParams(location.search).get('turma')||'teste';
 let nome='grumete';
@@ -295,6 +295,7 @@ function montarParada(i){
   contEl.textContent=od.ic+' 0/'+P.n;
   falaEl.innerHTML=P.abre;
   el('balao').style.display='';
+  clearTimeout(balaoTimer);balaoTimer=setTimeout(()=>{el('balao').style.display='none';},8000);  // some sozinho (não atrapalha no celular)
   falarByte('vx_p'+(i+1)+'_abre');                      // o Byte NARRA o problema (Antonio)
   ambientePorTema();                                    // mar/vento fora; rumor grave na gruta/câmara
 }
@@ -370,6 +371,7 @@ function salvar(){try{if(window.EduSave){const prog={nome:nome,turma:turma,parad
     EduSave.salvar(turma,nome,base,function(){});});}}catch(e){}}
 function contarObj(idx){if(travado)return;const m=objetos[idx];if(!m||m.userData.done)return;m.userData.done=true;m.userData.pop=1;
   contados++;contEl.textContent=OBJ[PARADAS[paradaIdx].item].ic+' '+contados+'/'+alvo;
+  if(contados===1){clearTimeout(balaoTimer);el('balao').style.display='none';}   // começou a contar → balão sai da frente
   bip(PENT[Math.min(contados-1,PENT.length-1)],0.14,'triangle',0.2);
   mostraNumeral(contados);                              // o NÚMERO aparece grande (associa quantidade ↔ numeral)
   falarNum(contados);                                   // e a criança OUVE (Antonio), sem cortar o anterior
@@ -397,10 +399,11 @@ function clique(cxp,cyp){initA();ndc.x=(cxp/W)*2-1;ndc.y=-(cyp/H)*2+1;ray.setFro
     for(const it of h){const c=it.object.position;const v=c.clone().sub(p1);const t=v.dot(dir);const perp=v.sub(dir.clone().multiplyScalar(t)).length();
       if(perp<bd){bd=perp;best=it.object;}}
     contarObj(best.userData.idx);}}
-let dragging=false,lastX=0,movedPx=0;
-renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;movedPx=0;});
-addEventListener('pointermove',e=>{if(!dragging)return;const dxp=e.clientX-lastX;lastX=e.clientX;movedPx+=Math.abs(dxp);camAngle-=dxp*0.008;});
-addEventListener('pointerup',e=>{if(dragging&&movedPx<7)clique(e.clientX,e.clientY);dragging=false;});
+let dragging=false,lastX=0,lastY=0,movedPx=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;lastY=e.clientY;movedPx=0;});
+addEventListener('pointermove',e=>{if(!dragging)return;const dxp=e.clientX-lastX,dyp=e.clientY-lastY;lastX=e.clientX;lastY=e.clientY;movedPx+=Math.abs(dxp)+Math.abs(dyp);
+  camAngle-=dxp*0.008;camElev=Math.min(1.45,Math.max(0.32,camElev+dyp*0.006));});   // horizontal gira; vertical olha de cima/de lado (qualquer ângulo)
+addEventListener('pointerup',e=>{if(dragging&&movedPx<8)clique(e.clientX,e.clientY);dragging=false;});
 
 // telas
 el('btComecar').onclick=()=>{initA();nome=(el('nome').value||'grumete').slice(0,16);el('start').classList.add('hidden');montarParada(0);};
@@ -439,7 +442,8 @@ function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+
     if(u.glow!==undefined){e.material.opacity=0.35+0.25*Math.sin(t*4);e.scale.setScalar(1+0.08*Math.sin(t*4));}
     if(u.grow!==undefined){u.grow+=dt*2.2;const s=Math.min(1,Math.max(0.01,u.grow));e.scale.set(s,1,s);}
     if(u.floatB!==undefined){e.rotation.y+=dt*2;e.position.y=sig.y+Math.sin(t*3)*0.25;}}
-  camera.position.set(vpos.x+cs*camDist,camH,vpos.z+cc*camDist);camera.lookAt(vpos.x,2.5,vpos.z);
+  const hd=Math.cos(camElev)*camDist,vy=Math.sin(camElev)*camDist;   // distância horizontal + altura pela inclinação
+  camera.position.set(vpos.x+cs*hd,2.5+vy,vpos.z+cc*hd);camera.lookAt(vpos.x,2.5,vpos.z);
   renderer.render(scene,camera);
   frames++;acc+=now-last;last=now;
   if(acc>=500){const fps=Math.round(frames*1000/acc);fpsEl.textContent='FPS: '+fps+' · '+renderer.info.render.triangles+' tri';frames=0;acc=0;window.__fps=fps;
