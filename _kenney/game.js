@@ -9,7 +9,7 @@
 // ============================================================================
 const WW = 1200, WH = 900, ZOOM = 2.0, S = 3.4, ST = 6.4, SB = 3.2, SM = 3.6, SG = 3.2;
 const RODADAS = [[3, 2], [5, 4], [7, 6], [9, 8]];          // [ouro, prata]
-const CA = { x: 420, y: 330 }, CB = { x: 860, y: 640 };
+const CA = { x: 280, y: 270 }, CB = { x: 960, y: 660 };   // montes LONGE do herói (canto sup-esq / inf-dir)
 
 // ---------- SOM ----------
 let AC = null, MASTER = null, _wg = null, _on = false;
@@ -100,13 +100,15 @@ class Mundo extends Phaser.Scene {
     this.blocos = this.physics.add.staticGroup();
     const solido = (x, y, w, h) => { const z = this.add.zone(x, y, w, h); this.physics.add.existing(z, true); this.blocos.add(z); };
 
-    const arv = [['tree', 160, 210], ['pine', 500, 150], ['tree', 1040, 240], ['pine', 1120, 520], ['tree', 110, 560], ['tree', 700, 560], ['pine', 320, 760], ['tree', 1080, 800], ['tree', 640, 860]];
-    arv.forEach(([t, x, y], i) => { this.add.ellipse(x, y, 46, 14, 0x000000, 0.2).setDepth(y - 1); const a = this.add.image(x, y, t).setOrigin(0.5, 1).setScale(ST).setDepth(y); this.tweens.add({ targets: a, angle: { from: -1.8, to: 1.8 }, duration: 2000 + (i % 5) * 240, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: (i % 6) * 260 }); solido(x, y - 8, 22, 14); });
-    const arb = [[280, 460], [620, 300], [900, 380], [200, 720], [520, 720], [980, 700], [420, 560]];
-    arb.forEach(([x, y], i) => { this.add.ellipse(x, y, 24, 8, 0x000000, 0.18).setDepth(y - 1); const b = this.add.image(x, y, 'bush').setOrigin(0.5, 1).setScale(SB).setDepth(y); this.tweens.add({ targets: b, angle: { from: -3, to: 3 }, duration: 1500 + (i % 4) * 200, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: (i % 5) * 180 }); solido(x, y - 5, 18, 10); });
+    // árvores/pinheiros — colisor GRANDE (cobre o tronco + parte da copa; antes era só 22×14 no tronco
+    // e a criança "atravessava" a copa = parecia sem colisão). Copa ~102×96 (escala 6.4).
+    const arv = [['tree', 110, 150], ['pine', 600, 140], ['tree', 1080, 200], ['pine', 1130, 640], ['tree', 120, 620], ['tree', 600, 830], ['tree', 1090, 810], ['pine', 330, 720]];
+    arv.forEach(([t, x, y], i) => { this.add.ellipse(x, y, 46, 14, 0x000000, 0.2).setDepth(y - 1); const a = this.add.image(x, y, t).setOrigin(0.5, 1).setScale(ST).setDepth(y); this.tweens.add({ targets: a, angle: { from: -1.8, to: 1.8 }, duration: 2000 + (i % 5) * 240, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: (i % 6) * 260 }); const w = (t === 'pine') ? 42 : 52; solido(x, y - 20, w, 42); });
+    const arb = [[430, 560], [770, 300], [900, 520], [200, 470], [500, 250], [1030, 340], [720, 700]];
+    arb.forEach(([x, y], i) => { this.add.ellipse(x, y, 24, 8, 0x000000, 0.18).setDepth(y - 1); const b = this.add.image(x, y, 'bush').setOrigin(0.5, 1).setScale(SB).setDepth(y); this.tweens.add({ targets: b, angle: { from: -3, to: 3 }, duration: 1500 + (i % 4) * 200, yoyo: true, repeat: -1, ease: 'Sine.inOut', delay: (i % 5) * 180 }); solido(x, y - 13, 40, 24); });
 
     // corpo físico + visual (vida) do herói
-    this.corpo = this.physics.add.image(WW / 2, WH / 2, 'char').setVisible(false); this.corpo.body.setSize(12, 6); this.corpo.setCollideWorldBounds(true);
+    this.corpo = this.physics.add.image(WW / 2, WH / 2, 'char').setVisible(false); this.corpo.body.setSize(16, 12); this.corpo.body.setOffset(0, 3); this.corpo.setCollideWorldBounds(true);
     this.physics.add.collider(this.corpo, this.blocos);
     this.sombra = this.add.ellipse(WW / 2, WH / 2, 32, 12, 0x000000, 0.25);
     this.vis = this.add.image(WW / 2, WH / 2, 'char').setOrigin(0.5, 1);
