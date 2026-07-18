@@ -1265,3 +1265,40 @@ O Marcos aprovou "fazer a travessia ficar boa de verdade". Estado atual (no ar e
 **PENDENTE:** (a) ilha 2 visível no horizonte (removida — renderizava como "paredão");
 (b) refino de arte do Pinça e do barco com o olho do Marcos; (c) espalhar a travessia
 pras fases 2→5 SÓ depois do Marcos aprovar o feeling da 1→2.
+
+---
+
+## 🎨 VIRADA DE FORMATO: 2D ILUSTRADO (IA) + imagem/CSS = lindo, reconhecível, leve e SEM bug (2026-07-18)
+
+Depois de muita conversa com o Marcos (voxel quadradão → 3D fofo → e a dor real: "criar o
+mundo, código coerente, sem bug; e 2D/3D deram bug"), chegamos à **fundação**:
+
+**FORMATO OFICIAL das atividades EduVerse (recomendado):**
+- **Arte:** a **IA DESENHA** tudo (cena, objetos, personagem) — via workflow `[imagens]`
+  (Gemini). Fica lindo e **reconhecível** ("o barco parece barco" porque é desenho, não
+  cubo que eu monto). Provado: `_novo/cena2d_ilha`, `barco2d`, `coco_claro`, `byte2d`.
+- **Montagem:** **1 HTML + IMAGEM + CSS** (DOM). **Sem three.js, sem física, sem Phaser,
+  sem build.** A tecnologia mais à prova de bug que existe. Roda em qualquer PC da escola.
+- **Recorte:** só **imagem INTEIRA** (fundo branco→transparente, flood da borda). **NUNCA
+  cortar personagem em membros pra animar** (foi a fonte nº1 dos bugs — braço sumindo).
+- **VIDA/animação:** vem de **CSS/JS** (bob, sway, squash, "respira", Byte pula/reage,
+  confete, +1, brilhos flutuando). Fácil e **não buga** (ao contrário do sprite rigado).
+  Responde o medo do Marcos: **2D ilustrado NÃO é parado.**
+- **Dado, não código:** posições/quantidade/tema/objetivo BNCC = **dado**. Atividade nova
+  = trocar o dado. **Um motor, currículo infinito, controlado pelo Marcos.**
+
+**Provas no ar:** `ilha-2d-lindo` (2D ilustrado vivo) — o Marcos aprovou o visual; pediu
+objetos mais reconhecíveis (feito: coco fibroso com folhinha) e temeu "sem vida" (feito:
+tudo animado por CSS). Também existe `ilha-3d-fofo` (3D arredondado) como alternativa,
+mas o 2D ilustrado ganhou em beleza+reconhecimento+baixo-bug.
+
+**Por que isso mata os bugs:** motor simples (imagem+CSS) + arte inteira (sem recorte de
+membro) + dado (não código) + Auditor (render/E2E). Bug some porque as partes frágeis
+(física, recorte de pose, framework com build) **saíram**.
+
+**Assets 2D já prontos** (em `_novo/`, recortados em `_2d/img/`): cena da ilha, barco,
+coco (fofo e claro), Byte passarinho pirata. Reaproveitáveis.
+
+**PRÓXIMO PASSO combinado a decidir:** transformar o teste na 1ª atividade real ("Números
+até 30" completa nesse formato, com nome falado + mundo que lembra), OU o Marcos joga e dá
+o veredito antes. NÃO espalhar sem ele aprovar o feeling.
