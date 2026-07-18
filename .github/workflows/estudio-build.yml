@@ -1,0 +1,37 @@
+name: Estudio - baixar kit profissional (Kenney)
+
+# Roda no Actions (internet liberada) o build_assets.py: baixa o kit CC0 consistente,
+# organiza em _esporte/assets/images e escreve o manifest. Dispara por push com [estudio].
+
+on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
+
+permissions:
+  contents: write
+
+jobs:
+  assets:
+    if: contains(github.event.head_commit.message, '[estudio]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Baixar e organizar o kit profissional (Kenney CC0)
+        run: |
+          python3 _esporte/build_assets.py 2>&1 | tail -80
+          echo "=== IMAGENS ==="; ls -la _esporte/assets/images | head -40
+          echo "=== quantos PNG ==="; ls _esporte/assets/images | wc -l
+      - name: Commit dos assets
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _esporte/assets
+          if git diff --cached --quiet; then echo "::error::nada baixado"; exit 1; fi
+          git commit -m "estudio: kit Kenney CC0 baixado (assets/images + manifest)"
+          for k in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
