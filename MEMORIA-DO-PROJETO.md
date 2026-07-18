@@ -141,6 +141,29 @@
 > - **BALÃO não trava o boneco:** fala é **automática** (auto-avança por tempo), a criança anda o
 >   tempo todo; toque = andar (não avança fala). Frutas/animais com **sombra** (não flutuam).
 
+## 🧭 FORMATO NOVO — APP-TRILHA "A VILA QUE ACORDA" (Duolingo-com-alma, pré→9º, 2026-07)
+> Pasta `_trilha/` → publicada em **https://vidalprof.github.io/vila-que-acorda/** (via `fabrica.yml`/
+> `atualizar.yml`, `source_dir=_trilha`). Pedido do Marcos: um **app moderno tipo Duolingo** (trilha de
+> paradas, mascote, salvar progresso) mas **anti-prova** — a criança **FAZ**, não responde. O **casco**
+> serve do pré ao 9º; muda só o conteúdo/dificuldade de cada parada.
+> - **Trilha** = mapa de paradas (nó atual pulsa, próximos com cadeado) subindo até a **vila**; cada
+>   parada concluída **acende uma casinha** (o mundo floresce) + abre a próxima. Salva em localStorage.
+> - **Parada "A horta pede"** (juntar/somar): toca na macieira → maçã cai na cesta (conta com a voz do
+>   Antonio + número grandão) → **JUNTAR** as duas cestas → conta o total → coelho comemora → "juntar
+>   é somar" (conceito por ÚLTIMO). Erro não pune. Ganchos: chegada/uau, emoção, agência, feedback na
+>   hora, pico-fim, posse.
+> - **⚠️ LIÇÃO PAGA CARA (visual amador) — o Marcos reprovou na hora:** a 1ª versão usei **arte
+>   desenhada por CÓDIGO (SVG/vetor)** pra mostrar o formato rápido → ele achou **fraco/amador** ("perto
+>   do que vínhamos fazendo"). **NUNCA fazer isso pro que a criança vê.** A regra (style-bible) é: arte
+>   **PINTADA PREMIUM por IA**. Consertado: gerei tudo no **Gemini** (`_gerar_imagens.json` + commit
+>   `[imagens]` → `finalizar.yml`) — Byte, cenário-trilha, cenário-pomar, maçã, cesta, coelho, casinha —
+>   com **1 brief coeso de Diretor de Arte** (mesmo estilo/luz), recortei com transparência limpa
+>   (`_ferramentas/cortar_sprites.py`-style: flood-fill de borda + anti-franja 2px + autocrop) e
+>   recompus o app com **SVG `<image>` + `preserveAspectRatio="slice"`** (enche a tela no celular E no
+>   PC; props ficam colados no fundo pintado). **Bug SVG que mordeu:** animação CSS (`transform`) ANULA
+>   o atributo `transform` do mesmo elemento → animar num `<g>` INTERNO sem transform-attr (ou usar
+>   `<image>`, cujo x/y não conflita com a CSS transform).
+
 ## 🪙 2ª ATIVIDADE COMPLETA (Kenney) — "O TESOURO DOS DOIS MONTES" (juntar/somar, 2026-07)
 > Pasta `_kenney/` → publicada em **https://vidalprof.github.io/kenney-vivo/** (via `fabrica.yml`,
 > `source_dir=_kenney`). Mesma mecânica pedagógica da Horta (JUNTAR duas quantidades = SOMAR),
