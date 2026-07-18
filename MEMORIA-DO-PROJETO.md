@@ -148,6 +148,13 @@
 > - **Herói** (ruivo, Kenney roguelike 0,9) + **guia Tomás** (aldeão 0,7 — NÃO cavaleiro; o Marcos
 >   flagrou que o guia "coruja" parecia cavaleiro). Ambos ganham **vida por código** (respira/pula/
 >   squash/sombra) — motor de vida universal, personagem de imagem única.
+> - **GUIA FICA PARADO (decisão do Marcos):** o Tomás **não segue** a criança — fica num ponto fixo
+>   (`_gx0/_gy0`), respira no lugar e **vira o rosto** na direção dela. Motivo: como TUDO é narrado
+>   por VOZ, o balão não precisa acompanhar; seguir ficava estranho (ele não tem colisão → "flutuava"
+>   por cima das árvores). Regra geral: **guia que fala = NPC parado**, a menos que o Marcos peça seguir.
+> - **COLISÃO (lição paga):** colisor tem que cobrir o **volume visível** (tronco + parte da copa,
+>   ~52/42×42), não só o tronco (22×14) — senão a criança "atravessa" a copa e parece SEM colisão.
+>   E **itens nascem LONGE do herói** (cantos opostos, ~370-420px) pra a criança EXPLORAR.
 > - **Itens = barrinhas ÚNICAS de ouro/prata** (recortadas 1-a-1 do sheet de pilha do Kenney;
 >   o Marcos: "não são moedas, são barras de ouro" + "separe pra ser barrinha única" → item CONTÁVEL).
 > - **⭐ NARRAÇÃO POR VOZ (Antonio/edge-tts) — pedido do Marcos "tudo narrado, inclusive o contar":**
