@@ -421,9 +421,11 @@ addEventListener('pointermove',e=>{if(!dragging)return;const dxp=e.clientX-lastX
 addEventListener('pointerup',e=>{if(dragging&&movedPx<8)clique(e.clientX,e.clientY);dragging=false;});
 
 // telas
+let comecou=false;
 el('btComecar').onclick=()=>{initA();nome=(el('nome').value||'grumete').slice(0,16);
   const sl=slugNome(nome);nomeAudio=NOMES_VOZ.has(sl)?('nome_'+sl):'';   // o Byte FALA o nome (se estiver no banco); senão só no texto
-  function iniciar(volta,start){const tn=!!nomeAudio;   // tn = o Byte vai FALAR o nome? então a saudação NÃO repete "grumete/marujo"
+  function iniciar(volta,start){if(comecou)return;comecou=true;   // blindagem: monta a cena UMA vez só (callback pode disparar 2x)
+    const tn=!!nomeAudio;   // tn = o Byte vai FALAR o nome? então a saudação NÃO repete "grumete/marujo"
     saudacao=volta?('Bem-vindo de volta, '+nome+'! A ilha lembrou de você. 🏴‍☠️'):('Ôa, '+nome+'! Bem-vindo à ilha! 🏴‍☠️');
     saudacaoAudio=volta?(tn?'vx_voltou_nome':'vx_voltou'):(tn?'vx_ola_nome':'vx_ola');
     el('start').classList.add('hidden');montarParada(start);}

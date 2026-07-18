@@ -40,21 +40,26 @@
   }
 
   function _xhr(method, url, body, onok, onerr) {
+    // trava anti-duplo: numa falha de rede o navegador dispara onreadystatechange
+    // (status 0) E onerror -> o callback rodava 2x (montava a cena 2x, perdia o nome).
+    var pronto = false;
+    function _ok(t) { if (pronto) return; pronto = true; onok && onok(t); }
+    function _err(e) { if (pronto) return; pronto = true; onerr && onerr(e); }
     try {
       var x = new XMLHttpRequest();
       x.open(method, url, true);
       x.timeout = 8000;
       x.onreadystatechange = function () {
         if (x.readyState === 4) {
-          if (x.status >= 200 && x.status < 300) { onok && onok(x.responseText); }
-          else { onerr && onerr("HTTP " + x.status + ": " + (x.responseText || "").slice(0, 160)); }
+          if (x.status >= 200 && x.status < 300) { _ok(x.responseText); }
+          else { _err("HTTP " + x.status + ": " + (x.responseText || "").slice(0, 160)); }
         }
       };
-      x.ontimeout = function () { onerr && onerr("timeout"); };
-      x.onerror = function () { onerr && onerr("erro de rede"); };
+      x.ontimeout = function () { _err("timeout"); };
+      x.onerror = function () { _err("erro de rede"); };
       if (body != null) { x.setRequestHeader("Content-Type", "application/json"); x.send(body); }
       else { x.send(); }
-    } catch (e) { onerr && onerr(String(e)); }
+    } catch (e) { _err(String(e)); }
   }
 
   var EduSave = {
