@@ -156,7 +156,8 @@ class Mundo extends Phaser.Scene {
     this.time.addEvent({ delay: 4200, loop: true, callback: () => { if (this._somOn2) somPassaro(); } });
 
     const liga = () => { initSom(); this._somOn2 = true; const dica = document.getElementById('somdica'); if (dica) dica.style.display = 'none'; };
-    this.input.on('pointerdown', () => { liga(); this.aoTocar(); });
+    this.destino = null;
+    this.input.on('pointerdown', (pointer) => { liga(); this.aoTocar(pointer); });
     this.input.keyboard.on('keydown', liga);
 
     window.__ready = true; window.__scene = this;
@@ -218,7 +219,7 @@ class Mundo extends Phaser.Scene {
     this.dialogo([
       'Oi, ' + N + '! Eu sou o Byte.',
       'Os bichinhos estao com fome e a horta esta vazia.',
-      'Me ajuda a plantar? Ande ate a terra e toque pra plantar!'
+      'Toque no chao pra andar ate a terra. Depois toque na terra pra plantar!'
     ], () => { this.ativo = true; });
   }
   falaNome(depois) {
@@ -226,10 +227,17 @@ class Mundo extends Phaser.Scene {
     if (depois) depois();
   }
 
-  aoTocar() {
+  aoTocar(pointer) {
     if (this.dlgAberto) { this.avanca(); return; }
     if (!this.ativo || this._venceu) return;
-    if (this.plotAtivo && !this.plotAtivo.done) this.plantar(this.plotAtivo);
+    const wp = pointer ? this.cameras.main.getWorldPoint(pointer.x, pointer.y) : { x: this.hero.x, y: this.hero.y };
+    // tocou na terra onde a heroína ESTÁ (canteiro ativo) -> planta
+    if (this.plotAtivo && !this.plotAtivo.done && Math.abs(wp.x - this.plotAtivo.x) < 60 && Math.abs(wp.y - this.plotAtivo.y) < 60) {
+      this.destino = null; this.plantar(this.plotAtivo); return;
+    }
+    // senão -> anda até onde tocou (mobile: sem teclado)
+    this.destino = { x: Phaser.Math.Clamp(wp.x, 10, WW - 10), y: Phaser.Math.Clamp(wp.y, 10, WH - 10) };
+    this._destT = this.time.now;
   }
   plantar(plot) {
     if (plot.count >= ALVO_PLOT) return;
@@ -283,18 +291,27 @@ class Mundo extends Phaser.Scene {
     const livre = this.ativo && !this.dlgAberto && !this._venceu;
     let vx = 0, vy = 0;
     if (livre) {
-      if (this.cursors.left.isDown || this.wasd.A.isDown || this._forc === 'left') vx = -1;
-      else if (this.cursors.right.isDown || this.wasd.D.isDown || this._forc === 'right') vx = 1;
-      else if (this.cursors.up.isDown || this.wasd.W.isDown || this._forc === 'up') vy = -1;
-      else if (this.cursors.down.isDown || this.wasd.S.isDown || this._forc === 'down') vy = 1;
-    }
+      // TECLADO (PC) tem prioridade e cancela o "toque pra andar"
+      let kx = 0, ky = 0;
+      if (this.cursors.left.isDown || this.wasd.A.isDown || this._forc === 'left') kx = -1;
+      else if (this.cursors.right.isDown || this.wasd.D.isDown || this._forc === 'right') kx = 1;
+      if (this.cursors.up.isDown || this.wasd.W.isDown || this._forc === 'up') ky = -1;
+      else if (this.cursors.down.isDown || this.wasd.S.isDown || this._forc === 'down') ky = 1;
+      if (kx || ky) { this.destino = null; vx = kx; vy = ky; }
+      else if (this.destino) {
+        // TOQUE (celular): caminha até o ponto tocado
+        const dx = this.destino.x - this.hero.x, dy = this.destino.y - this.hero.y, d = Math.hypot(dx, dy);
+        if (d < 8 || this.time.now - this._destT > 4000) { this.destino = null; }
+        else { vx = dx / d; vy = dy / d; }
+      }
+    } else { this.destino = null; }
     this.hero.body.setVelocity(vx * 150, vy * 150);
     const andando = vx !== 0 || vy !== 0;
-    if (vx < 0) { this.hero.anims.play('left', true); this.dir = 'left'; }
-    else if (vx > 0) { this.hero.anims.play('right', true); this.dir = 'right'; }
-    else if (vy < 0) { this.hero.anims.play('up', true); this.dir = 'up'; }
-    else if (vy > 0) { this.hero.anims.play('down', true); this.dir = 'down'; }
-    else { this.hero.anims.stop(); this.hero.setFrame(IDLE[this.dir]); }
+    if (andando) {
+      if (Math.abs(vx) >= Math.abs(vy)) { this.dir = vx < 0 ? 'left' : 'right'; }
+      else { this.dir = vy < 0 ? 'up' : 'down'; }
+      this.hero.anims.play(this.dir, true);
+    } else { this.hero.anims.stop(); this.hero.setFrame(IDLE[this.dir]); }
 
     this.hero.setDepth(this.hero.y);
     this.sombra.setPosition(this.hero.x, this.hero.y + 24).setDepth(this.hero.y - 1);
