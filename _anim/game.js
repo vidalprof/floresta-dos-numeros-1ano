@@ -2,11 +2,12 @@
 // ============================================================================
 // A HORTA DOS NÚMEROS — contar até 30 (1º ano). Segue EDUVERSE-FILOSOFIA:
 // o MUNDO precisa (bichos com fome, horta vazia) -> a criança PLANTA e conta ->
-// descobre o padrão (de 6 em 6) -> conceito nomeado por ÚLTIMO -> reflexão.
-// Byte PERGUNTA (não responde). Nome falado (voz Antonio). Sem prova/tranca,
-// sem cronômetro, sem punição. Sprites REAIS (LPC/CC0 — ver CREDITOS.md).
-// Arquitetura: cena MUNDO (jogo, com zoom) + cena UI (diálogo/HUD, SEM zoom —
-// Text+zoom do Phaser desalinha; UI própria resolve). Phaser CANVAS (leve).
+// descobre o padrão (de 6 em 6) -> conceito por ÚLTIMO -> reflexão.
+// O BYTE é um PAPAGAIO que acompanha a criança e PERGUNTA (não responde); a fala
+// sai num BALÃO BRANCO ARREDONDADO (quadrinho) com rabinho apontando pra ele.
+// Nome falado (voz Antonio). Sem prova/tranca, sem cronômetro, sem punição.
+// Sprites REAIS (LPC/CC0 — ver CREDITOS.md). Cena MUNDO (jogo) + cena UI (HUD/
+// número/medalha, sem zoom). Phaser CANVAS (leve p/ PC antigo).
 // ============================================================================
 const F = 64, HERO_SC = 1.0, WW = 1280, WH = 960, ZOOM = 1.6;
 const IDLE = { up: 0, left: 9, down: 18, right: 27 };
@@ -50,57 +51,14 @@ function rajadaSom() {
   _windGain.gain.linearRampToValueAtTime(0.1, t + 0.8); _windGain.gain.linearRampToValueAtTime(0.045, t + 2.6);
 }
 
-// ============================== CENA DE UI (sem zoom) ========================
+// ============================== CENA DE UI (sem zoom) — só HUD/número/medalha =
 class UI extends Phaser.Scene {
   constructor() { super({ key: 'UI' }); }
   create() {
-    const D = 9000;
-    this.hud = this.add.text(16, 14, '🌱 0 plantadas', { fontFamily: 'system-ui', fontSize: '24px', color: '#fff', stroke: '#173a52', strokeThickness: 6 }).setDepth(D);
-    // diálogo (elementos soltos, coords de TELA)
-    this.dbg = this.add.rectangle(0, 0, 10, 10, 0x11314a, 0.96).setOrigin(0, 0).setStrokeStyle(3, 0xffd76a).setDepth(D + 10).setVisible(false);
-    this.dplate = this.add.rectangle(0, 0, 120, 30, 0xffd76a).setOrigin(0, 0).setDepth(D + 11).setVisible(false);
-    this.dpnome = this.add.text(0, 0, '🦜 Byte', { fontFamily: 'system-ui', fontSize: '16px', color: '#11314a', fontStyle: 'bold' }).setOrigin(0, 0).setDepth(D + 12).setVisible(false);
-    this.dtxt = this.add.text(0, 0, '', { fontFamily: 'system-ui', fontSize: '20px', color: '#fff', lineSpacing: 4 }).setOrigin(0, 0).setDepth(D + 12).setVisible(false);
-    this.dseta = this.add.text(0, 0, '▼', { fontSize: '20px', color: '#ffd76a' }).setOrigin(0.5).setDepth(D + 12).setVisible(false);
-    this.tweens.add({ targets: this.dseta, y: '+=4', duration: 500, yoyo: true, repeat: -1 });
-    this.dEls = [this.dbg, this.dplate, this.dpnome, this.dtxt, this.dseta];
-    this.dlgAberto = false;
-    this.posiciona();
-    this.scale.on('resize', () => this.posiciona());
-    this.input.on('pointerdown', () => { if (this.dlgAberto) this.avanca(); });
-  }
-  posiciona() {
-    const sw = this.scale.width, sh = this.scale.height;
-    const W = Math.min(560, sw - 32), H = 118, bx = (sw - W) / 2, by = sh - H - 16;
-    this._W = W; this._H = H; this._bx = bx; this._by = by;
-    this.dbg.setPosition(bx, by).setSize(W, H);
-    this.dplate.setPosition(bx + 16, by - 15);
-    this.dpnome.setPosition(bx + 28, by - 13);
-    this.dtxt.setPosition(bx + 20, by + 18).setWordWrapWidth(W - 40);
-    this.dseta.setPosition(bx + W - 24, by + H - 22);
-    if (this.hudMedalha) this.reposMedalha();
+    this.hud = this.add.text(16, 14, '🌱 0 plantadas', { fontFamily: 'system-ui', fontSize: '24px', color: '#fff', stroke: '#173a52', strokeThickness: 6 }).setDepth(9000);
+    this.scale.on('resize', () => { if (this.hudMedalha) this.hudMedalha.setPosition(this.scale.width / 2, this.scale.height / 2); });
   }
   setHUD(t) { this.hud.setText(t); }
-  dialogo(paginas, onDone) {
-    this.dlgAberto = true; this._pgs = paginas.slice(); this._pg = 0; this._onDone = onDone || null;
-    this.posiciona(); this.dEls.forEach(e => e.setVisible(true)); this.mostra();
-  }
-  mostra() {
-    const full = this._pgs[this._pg]; this._full = full; this._n = 0; this._typing = true;
-    this.dtxt.setText(''); this.dseta.setAlpha(0);
-    if (this._typer) this._typer.remove();
-    this._typer = this.time.addEvent({ delay: 26, loop: true, callback: () => {
-      this._n++; this.dtxt.setText(full.slice(0, this._n));
-      if (this._n % 2 === 0) tom(420, 0.03, 'square', 0.02);
-      if (this._n >= full.length) { this._typing = false; this.dseta.setAlpha(1); this._typer.remove(); }
-    } });
-  }
-  avanca() {
-    if (this._typing) { this._typing = false; this._typer.remove(); this.dtxt.setText(this._full); this.dseta.setAlpha(1); return; }
-    this._pg++;
-    if (this._pg < this._pgs.length) { this.mostra(); }
-    else { this.dEls.forEach(e => e.setVisible(false)); this.dlgAberto = false; const cb = this._onDone; this._onDone = null; if (cb) cb(); }
-  }
   numerao(n) {
     const t = this.add.text(this.scale.width / 2, this.scale.height * 0.2, String(n), { fontFamily: 'system-ui', fontSize: '90px', color: '#fff359', stroke: '#173a52', strokeThickness: 10, fontStyle: 'bold' })
       .setOrigin(0.5).setDepth(9600).setScale(0.4);
@@ -120,8 +78,7 @@ class UI extends Phaser.Scene {
     const med = this.add.text(0, -38, '🏅', { fontSize: '66px' }).setOrigin(0.5);
     const t1 = this.add.text(0, 36, 'AMIGO(A) DA HORTA', { fontFamily: 'system-ui', fontSize: '21px', color: '#ffd76a', fontStyle: 'bold' }).setOrigin(0.5);
     const t2 = this.add.text(0, 66, 'Toque para brincar de novo', { fontFamily: 'system-ui', fontSize: '13px', color: '#cfe' }).setOrigin(0.5);
-    m.add([bg, med, t1, t2]); m.setScale(0.2);
-    this.hudMedalha = m; this.reposMedalha = () => m.setPosition(this.scale.width / 2, this.scale.height / 2);
+    m.add([bg, med, t1, t2]); m.setScale(0.2); this.hudMedalha = m;
     this.tweens.add({ targets: m, scale: 1, duration: 500, ease: 'Back.easeOut' });
     this.tweens.add({ targets: med, angle: { from: -8, to: 8 }, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
     this.time.delayedCall(900, () => this.input.once('pointerdown', () => { m.destroy(); this.hudMedalha = null; if (onRestart) onRestart(); }));
@@ -139,8 +96,8 @@ class Mundo extends Phaser.Scene {
     this.load.spritesheet('hero', 'assets/hero.png', { frameWidth: F, frameHeight: F });
   }
   create() {
-    this.total = 0; this.ativo = false; this.plotAtivo = null; this._venceu = false;
-    if (!this.scene.isActive('UI')) this.scene.launch('UI');   // inicia a cena de UI (por cima)
+    this.total = 0; this.ativo = false; this.plotAtivo = null; this._venceu = false; this.dlgAberto = false;
+    if (!this.scene.isActive('UI')) this.scene.launch('UI');
     this.ui = this.scene.get('UI');
 
     this.add.tileSprite(0, 0, WW, WH, 'grass').setOrigin(0).setDepth(-100);
@@ -157,7 +114,6 @@ class Mundo extends Phaser.Scene {
       solido(x, y - 7, tipo === 'pine' ? 16 : 22, 14);
     });
 
-    // bichinhos com fome (o MUNDO precisa) — no fim vêm comer
     this.bichos = [];
     [['🐰', 900, 200], ['🐿️', 760, 640], ['🐦', 520, 380]].forEach(([e, x, y]) => {
       const b = this.add.text(x, y, e, { fontSize: '30px' }).setOrigin(0.5).setDepth(y);
@@ -182,6 +138,13 @@ class Mundo extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, WW, WH);
     this.cameras.main.setBounds(0, 0, WW, WH).setZoom(ZOOM).startFollow(this.hero, true, 0.12, 0.12);
 
+    // ---- BYTE (papagaio companheiro) + BALÃO branco arredondado ----
+    this.byte = this.add.text(700, 440, '🦜', { fontSize: '30px' }).setOrigin(0.5).setDepth(9497);
+    this._by = 440;
+    this.balaoG = this.add.graphics().setDepth(9498).setVisible(false);
+    this.balaoT = this.add.text(0, 0, '', { fontFamily: 'system-ui', fontSize: '13px', color: '#16324a', lineSpacing: 2, wordWrap: { width: 150 } }).setOrigin(0, 0).setDepth(9499).setVisible(false);
+    this.balaoSeta = this.add.text(0, 0, '▼', { fontSize: '13px', color: '#2e9b57' }).setOrigin(0.5).setDepth(9499).setVisible(false);
+
     this.marcador = this.add.text(0, 0, '👇', { fontSize: '30px' }).setOrigin(0.5).setDepth(9000).setVisible(false);
     this.tweens.add({ targets: this.marcador, y: '-=8', duration: 500, yoyo: true, repeat: -1, ease: 'Sine.inOut' });
 
@@ -200,6 +163,47 @@ class Mundo extends Phaser.Scene {
     if (window.__nome) this.time.delayedCall(60, () => this.iniciar());
   }
 
+  // ---------------- BALÃO DE FALA (branco, arredondado, sai do Byte) --------
+  dialogo(paginas, onDone) {
+    this.dlgAberto = true; this.marcador.setVisible(false);
+    this._pgs = paginas.slice(); this._pg = 0; this._onDone = onDone || null;
+    this.balaoG.setVisible(true); this.balaoT.setVisible(true);
+    this.mostra();
+  }
+  mostra() {
+    const full = this._pgs[this._pg]; this._full = full; this._n = 0; this._typing = true;
+    this.balaoT.setText(''); this.balaoSeta.setVisible(false);
+    if (this._typer) this._typer.remove();
+    this._typer = this.time.addEvent({ delay: 26, loop: true, callback: () => {
+      this._n++; this.balaoT.setText(full.slice(0, this._n));
+      if (this._n % 2 === 0) tom(430, 0.03, 'square', 0.02);
+      if (this._n >= full.length) { this._typing = false; this.balaoSeta.setVisible(true); this._typer.remove(); }
+    } });
+  }
+  avanca() {
+    if (this._typing) { this._typing = false; this._typer.remove(); this.balaoT.setText(this._full); this.balaoSeta.setVisible(true); return; }
+    this._pg++;
+    if (this._pg < this._pgs.length) { this.mostra(); }
+    else {
+      this.balaoG.setVisible(false); this.balaoT.setVisible(false); this.balaoSeta.setVisible(false);
+      this.dlgAberto = false; const cb = this._onDone; this._onDone = null; if (cb) cb();
+    }
+  }
+  desenhaBalao() {
+    if (!this.dlgAberto) return;
+    const pad = 9, tw = Math.max(28, this.balaoT.width), th = Math.max(14, this.balaoT.height);
+    const w = tw + pad * 2, h = th + pad * 2;
+    const cx = this.byte.x, base = this.byte.y - 26;      // balão acima do Byte
+    const rx = cx - w / 2, ry = base - h;
+    this.balaoG.clear();
+    this.balaoG.fillStyle(0xffffff, 0.98); this.balaoG.lineStyle(2, 0x2e9b57, 1);
+    this.balaoG.fillRoundedRect(rx, ry, w, h, 9); this.balaoG.strokeRoundedRect(rx, ry, w, h, 9);
+    this.balaoG.fillStyle(0xffffff, 0.98); this.balaoG.fillTriangle(cx - 7, ry + h - 1, cx + 7, ry + h - 1, cx, base + 6);   // rabinho
+    this.balaoT.setPosition(rx + pad, ry + pad);
+    this.balaoSeta.setPosition(rx + w - 10, ry + h - 8);
+  }
+
+  // ---------------- INÍCIO ----------------
   iniciar() {
     if (this._iniciado) return; this._iniciado = true;
     initSom(); this._somOn2 = true;
@@ -207,11 +211,10 @@ class Mundo extends Phaser.Scene {
     this.nome = (window.__nome || 'amiguinho');
     const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
     this.falaNome();
-    this.ui.dialogo([
-      'Oi, ' + N + '! Eu sou o Byte, o papagaio.',
-      'Os bichinhos da floresta estao com fome... e a nossa horta esta vazia.',
-      'Voce me ajuda a plantar comida pra eles? Ande ate a TERRA marrom e toque pra plantar.',
-      'Vamos ver quantas sementinhas cabem em cada canteiro!'
+    this.dialogo([
+      'Oi, ' + N + '! Eu sou o Byte.',
+      'Os bichinhos estao com fome e a horta esta vazia.',
+      'Me ajuda a plantar? Ande ate a terra e toque pra plantar!'
     ], () => { this.ativo = true; });
   }
   falaNome(depois) {
@@ -220,7 +223,8 @@ class Mundo extends Phaser.Scene {
   }
 
   aoTocar() {
-    if (this.ui.dlgAberto || !this.ativo || this._venceu) return;
+    if (this.dlgAberto) { this.avanca(); return; }
+    if (!this.ativo || this._venceu) return;
     if (this.plotAtivo && !this.plotAtivo.done) this.plantar(this.plotAtivo);
   }
   plantar(plot) {
@@ -240,11 +244,11 @@ class Mundo extends Phaser.Scene {
     if (this.total >= META) { this.vencer(); return; }
     const feitos = this.plots.filter(p => p.done).length;
     let fala;
-    if (feitos === 1) fala = ['Boa, ' + N + '! Quantas voce plantou nesse canteiro?', 'Vamos plantar o proximo. Sera que cabe a mesma quantidade?'];
-    else if (feitos === 2) fala = ['Olha so... os canteiros tem a MESMA quantidade!', 'Tem um jeito mais rapido de contar do que de um em um?'];
-    else if (feitos === 3) fala = ['Voce percebeu um padrao? Seis... doze... dezoito...', 'Vamos plantar mais pros bichinhos!'];
-    else fala = ['Falta pouco pra horta ficar pronta, ' + N + '!', 'Quantas sementes sera que vao ter no total?'];
-    this.ui.dialogo(fala);
+    if (feitos === 1) fala = ['Boa, ' + N + '! Quantas voce plantou aqui?', 'Vamos ao proximo canteiro!'];
+    else if (feitos === 2) fala = ['Os canteiros tem a MESMA quantidade!', 'Tem um jeito mais rapido de contar?'];
+    else if (feitos === 3) fala = ['Achou um padrao? Seis, doze, dezoito...', 'Vamos plantar mais!'];
+    else fala = ['Falta pouco, ' + N + '!', 'Quantas vao ter no total?'];
+    this.dialogo(fala);
   }
   brilho(x, y) {
     for (let i = 0; i < 8; i++) {
@@ -262,17 +266,17 @@ class Mundo extends Phaser.Scene {
     this.ui.confete();
     const N = this.nome.charAt(0).toUpperCase() + this.nome.slice(1);
     this.falaNome();
-    this.time.delayedCall(700, () => this.ui.dialogo([
-      'Voce conseguiu, ' + N + '! A horta esta VIVA!',
-      'Olha os bichinhos vindo comer o que VOCE plantou!',
-      'E olha que legal: eram 5 canteiros de 6. Seis, doze, dezoito, vinte e quatro, trinta!',
-      'Voce descobriu que da pra contar de 6 em 6, bem mais rapido!',
-      'O que voce mais gostou de fazer hoje?'
+    this.time.delayedCall(700, () => this.dialogo([
+      'Voce conseguiu, ' + N + '! A horta esta viva!',
+      'Olha os bichinhos vindo comer!',
+      'Eram 5 canteiros de 6: seis, doze, dezoito, vinte e quatro, trinta!',
+      'Da pra contar de 6 em 6, bem mais rapido!',
+      'O que voce mais gostou hoje?'
     ], () => this.ui.medalha(() => { this._iniciado = false; this.scene.restart(); })));
   }
 
   update(time) {
-    const livre = this.ativo && !this.ui.dlgAberto && !this._venceu;
+    const livre = this.ativo && !this.dlgAberto && !this._venceu;
     let vx = 0, vy = 0;
     if (livre) {
       if (this.cursors.left.isDown || this.wasd.A.isDown || this._forc === 'left') vx = -1;
@@ -292,11 +296,17 @@ class Mundo extends Phaser.Scene {
     this.sombra.setPosition(this.hero.x, this.hero.y + 24).setDepth(this.hero.y - 1);
     if (andando && time - this._passoT > 300) { somPasso(); this._passoT = time; }
 
+    // Byte acompanha a criança (voa ao lado, flutuando)
+    const tx = this.hero.x + 52, ty = this.hero.y - 30;
+    this._by = Phaser.Math.Linear(this._by, ty, 0.1);
+    this.byte.setPosition(Phaser.Math.Linear(this.byte.x, tx, 0.1), this._by + Math.sin(time / 320) * 3);
+    if (this.dlgAberto) this.desenhaBalao();
+
     this.plotAtivo = null;
     if (this.ativo && !this._venceu) {
       for (const p of this.plots) { if (!p.done && Math.abs(this.hero.x - p.x) < 56 && Math.abs(this.hero.y - p.y) < 56) { this.plotAtivo = p; break; } }
     }
-    if (this.plotAtivo && !this.ui.dlgAberto) this.marcador.setPosition(this.plotAtivo.x, this.plotAtivo.y - 60).setVisible(true);
+    if (this.plotAtivo && !this.dlgAberto) this.marcador.setPosition(this.plotAtivo.x, this.plotAtivo.y - 60).setVisible(true);
     else if (!this.plotAtivo) this.marcador.setVisible(false);
   }
 }
