@@ -166,6 +166,23 @@
 > educaverso-app/public, montar aventuras/floresta.ts com a ponte, rodar tools/qa-mundo.mjs,
 > publicar via fabrica.yml (repo mundo-floresta).
 
+## 🌲 ENTREGA: "A FLORESTA DO BYTE" — o estilo CERTO + gramática da PONTE (2026-07-19)
+> **Link: https://vidalprof.github.io/mundo-floresta/** (repo `mundo-floresta`, fabrica.yml
+> `source_dir=educaverso-app/dist`; padrão do app — `?pomar` abre o mundo prancha antigo).
+> **Estilo floresta entregue** (o que o Marcos pediu): chão de grama contínua (torus-blend
+> anti-emenda) + árvores/pinheiros/pedras COM COLISÃO que a criança anda entre, rio animado,
+> câmera explorando mundo 2080×1440. **Gramática provada de ponta a ponta pelo robô-QA**
+> (`tools/qa-floresta.mjs` == APROVADO ==): problema exposto (PONTE QUEBRADA) → resolve
+> (3 tábuas, contagem kn narrada) → ITEM na MOCHILA (HUD, persistido) → ENTREGA ao mestre
+> CASTOR → **o mundo MUDA** (ponte troca de textura, bloqueio do rio sai) → atravessa →
+> CLAREIRA SECRETA (festa) → tudo salvo (o mundo lembra). Contrato: `quer_item/ao_receber/
+> muda_objeto/remove_bloqueio/bloqueios/chao_textura/agua/recompensa_item` em aventura.ts.
+> **Kit floresta premium** (12 assets Gemini, cápsula coesa) + 8 falas Antonio (f_*) + de-white
+> nas bases. **Polimentos registrados:** emendas da grama ainda levemente visíveis (melhorar
+> textura), pontas brancas da ponte, poses costas/passo do Byte, castor só 1 pose.
+> **PRÓXIMO PASSO OFICIAL (ordem do Marcos):** a máquina está pronta — agora o fluxo
+> TEMA+ANO → Pedagogo → Roteirista → aula 55min → gerar mundo/arte → auditoria → entrega.
+
 ## 🏭 ENTREGA: FÁBRICA DE MUNDOS v1 + "O POMAR DO BYTE" (2026-07-19)
 > **O MUNDO EXPLORÁVEL saiu** — no motor oficial (educaverso-app, Phaser+TS strict) e pelos portões.
 > **Link: https://vidalprof.github.io/mundo-pomar/** (repo `mundo-pomar`; publica via `fabrica.yml`
