@@ -109,6 +109,45 @@ console.log('== ORDENAR: "ordem crescente" — fora de ordem = erro real ==')
   await page.close()
 }
 
+console.log('== HISTÓRIA (selecionar): "Causas da Revolução Francesa" (8º ano) ==')
+{
+  const { page } = await gera('8º ano', 'Causas da Revolução Francesa')
+  const esp = await page.evaluate(() => window.__fabricaEspinha)
+  ok(esp.mecanica === 'selecionar' && esp.kc === 'revolucao-francesa-causas', `pedagogo: kc=${esp.kc}`)
+  const its = await posicoes(page)
+  ok(its.some(i => i.rotulo === 'Iluminismo' && i.ok) && its.some(i => i.rotulo === 'Guerra Fria' && !i.ok), 'itens são de HISTÓRIA (Iluminismo=causa; Guerra Fria=outra época)')
+  for (const it of its.filter(i => i.ok)) await irPara(page, it.x, it.y)
+  ok(await page.evaluate(() => window.__grid.coletadosOk) === 3, 'separou as 3 causas verdadeiras')
+  ok(await vencer(page), 'venceu a fase de HISTÓRIA (mesmo motor, disciplina nova)')
+  await page.close()
+}
+
+console.log('== HISTÓRIA (ordenar): "Linha do tempo da Revolução Francesa" ==')
+{
+  const { page } = await gera('8º ano', 'Linha do tempo da Revolução Francesa')
+  const esp = await page.evaluate(() => window.__fabricaEspinha)
+  ok(esp.mecanica === 'ordenar' && esp.kc === 'revolucao-francesa-tempo', `pedagogo: mecânica=ordenar, kc=${esp.kc}`)
+  const its = await posicoes(page)
+  const porOrdem = [...its].sort((a, b) => (a.ordem ?? 0) - (b.ordem ?? 0))
+  ok(porOrdem.map(i => i.rotulo).join('>') === 'Bastilha>Direitos>República>Napoleão', `cronologia correta (${porOrdem.map(i => i.rotulo).join(' > ')})`)
+  for (const it of porOrdem) await irPara(page, it.x, it.y)
+  ok(await page.evaluate(() => window.__grid.proxOrdem) === 5, 'montou a linha do tempo completa')
+  ok(await vencer(page), 'venceu ordenando os EVENTOS históricos')
+  await page.close()
+}
+
+console.log('== CONTEÚDO DESCONHECIDO: IA indisponível aqui -> FALLBACK nunca quebra ==')
+{
+  const { page, errosJs } = await gera('7º ano', 'Fotossíntese nas plantas')
+  // (no container a rede é bloqueada: a IA falha rápido e o banco genérico assume)
+  const esp = await page.evaluate(() => window.__fabricaEspinha)
+  ok(esp.mecanica === 'selecionar', 'ainda gera uma fase jogável (fallback)')
+  ok(await page.evaluate(() => window.__fabricaViaIA) === false, 'marcou que NÃO veio da IA (honestidade do sistema)')
+  ok(await page.evaluate(() => window.__grid && window.__grid.sys.isActive()), 'a fase abriu normalmente — o professor nunca fica sem atividade')
+  ok(errosJs.length === 0, `zero erros de JS no fallback (${errosJs.length})`)
+  await page.close()
+}
+
 await browser.close()
 console.log(falhas.length ? '\n== REPROVADO: ' + falhas.length + ' ==' : '\n== APROVADO ==')
 process.exit(falhas.length ? 1 : 0)

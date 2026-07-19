@@ -18,6 +18,8 @@
 import { z } from 'zod'
 import type { PedidoAtividade } from './tipos'
 import { DIFICULDADES } from './tipos'
+// import ESTÁTICO (dinâmico geraria chunk separado e quebraria o publish de 1 arquivo)
+import { iaSelecionar, iaOrdenar } from './ia-conteudo'
 
 export const DINAMICAS = ['resolver', 'criar', 'investigar', 'coletar', 'narrar', 'simular'] as const
 export const MECANICAS = ['contar', 'somar', 'selecionar', 'ordenar'] as const
@@ -78,29 +80,32 @@ function escolherMecanica (pedido: PedidoAtividade): Mecanica {
 // GERADORES DE CONTEÚDO (v1 por banco/regra — é AQUI que a IA entra depois, gerando
 // itens+regra para QUALQUER conteúdo do professor, sem tocar no motor)
 // ---------------------------------------------------------------------------
-interface Conteudo { kc: string, regra: string, certos: string[], errados: string[] }
+export interface Conteudo { kc: string, regra: string, certos: string[], errados: string[], reconhecido: boolean }
 
-function gerarConteudoSelecionar (objetivo: string): Conteudo {
+export function gerarConteudoSelecionar (objetivo: string): Conteudo {
   const s = objetivo.toLowerCase()
   if (/m[úu]ltipl/.test(s)) {
     const n = Math.max(2, parseInt((s.match(/m[úu]ltiplos? de (\d+)/) || [])[1] || '3') || 3)
-    return { kc: `multiplos-${n}`, regra: `os múltiplos de ${n}`, certos: [String(n * 2), String(n * 4), String(n * 5)], errados: [String(n * 2 + 1), String(n * 3 + 1), String(n * 4 + 1)] }
+    return { kc: `multiplos-${n}`, regra: `os múltiplos de ${n}`, certos: [String(n * 2), String(n * 4), String(n * 5)], errados: [String(n * 2 + 1), String(n * 3 + 1), String(n * 4 + 1)], reconhecido: true }
   }
-  if (/fra[çc]|equivalent/.test(s)) return { kc: 'fracoes-equivalentes', regra: 'as frações equivalentes a 1/2', certos: ['2/4', '3/6', '4/8'], errados: ['2/3', '3/4', '5/8'] }
-  if (/substantiv/.test(s)) return { kc: 'substantivos', regra: 'os substantivos', certos: ['casa', 'rio', 'flor'], errados: ['correr', 'bonito', 'ontem'] }
-  if (/adjetiv/.test(s)) return { kc: 'adjetivos', regra: 'os adjetivos', certos: ['alto', 'veloz', 'doce'], errados: ['pular', 'mesa', 'hoje'] }
-  if (/primo/.test(s)) return { kc: 'numeros-primos', regra: 'os números primos', certos: ['2', '5', '7'], errados: ['4', '6', '9'] }
-  if (/[íi]mpar/.test(s)) return { kc: 'numeros-impares', regra: 'os números ímpares', certos: ['3', '7', '11'], errados: ['4', '8', '12'] }
-  return { kc: 'numeros-pares', regra: 'os números pares', certos: ['2', '6', '10'], errados: ['3', '7', '11'] }
+  if (/fra[çc]|equivalent/.test(s)) return { kc: 'fracoes-equivalentes', regra: 'as frações equivalentes a 1/2', certos: ['2/4', '3/6', '4/8'], errados: ['2/3', '3/4', '5/8'], reconhecido: true }
+  if (/substantiv/.test(s)) return { kc: 'substantivos', regra: 'os substantivos', certos: ['casa', 'rio', 'flor'], errados: ['correr', 'bonito', 'ontem'], reconhecido: true }
+  if (/adjetiv/.test(s)) return { kc: 'adjetivos', regra: 'os adjetivos', certos: ['alto', 'veloz', 'doce'], errados: ['pular', 'mesa', 'hoje'], reconhecido: true }
+  if (/primo/.test(s)) return { kc: 'numeros-primos', regra: 'os números primos', certos: ['2', '5', '7'], errados: ['4', '6', '9'], reconhecido: true }
+  if (/[íi]mpar/.test(s)) return { kc: 'numeros-impares', regra: 'os números ímpares', certos: ['3', '7', '11'], errados: ['4', '8', '12'], reconhecido: true }
+  // HISTÓRIA (banco curado — a IA cobre o resto dos conteúdos)
+  if (/revolu[çc][ãa]o francesa/.test(s)) return { kc: 'revolucao-francesa-causas', regra: 'as CAUSAS da Revolução Francesa', certos: ['Fome e crise', 'Impostos altos', 'Iluminismo'], errados: ['Guerra Fria', 'Chegada de Cabral', 'Roma Antiga'], reconhecido: true }
+  return { kc: 'numeros-pares', regra: 'os números pares', certos: ['2', '6', '10'], errados: ['3', '7', '11'], reconhecido: false }
 }
 
-interface ConteudoOrdem { kc: string, regra: string, sequencia: string[] }
+export interface ConteudoOrdem { kc: string, regra: string, sequencia: string[], reconhecido: boolean }
 
-function gerarConteudoOrdenar (objetivo: string): ConteudoOrdem {
+export function gerarConteudoOrdenar (objetivo: string): ConteudoOrdem {
   const s = objetivo.toLowerCase()
-  if (/decrescente/.test(s)) return { kc: 'ordem-decrescente', regra: 'em ordem DECRESCENTE (do maior ao menor)', sequencia: ['25', '16', '9', '4'] }
-  if (/fra[çc]/.test(s)) return { kc: 'ordem-fracoes', regra: 'da menor para a maior fração', sequencia: ['1/8', '1/4', '1/2', '3/4'] }
-  return { kc: 'ordem-crescente', regra: 'em ordem CRESCENTE (do menor ao maior)', sequencia: ['4', '9', '16', '25'] }
+  if (/revolu[çc][ãa]o francesa/.test(s)) return { kc: 'revolucao-francesa-tempo', regra: 'na ordem em que aconteceram (linha do tempo da Revolução Francesa)', sequencia: ['Bastilha', 'Direitos', 'República', 'Napoleão'], reconhecido: true }
+  if (/decrescente/.test(s)) return { kc: 'ordem-decrescente', regra: 'em ordem DECRESCENTE (do maior ao menor)', sequencia: ['25', '16', '9', '4'], reconhecido: true }
+  if (/fra[çc]/.test(s)) return { kc: 'ordem-fracoes', regra: 'da menor para a maior fração', sequencia: ['1/8', '1/4', '1/2', '3/4'], reconhecido: true }
+  return { kc: 'ordem-crescente', regra: 'em ordem CRESCENTE (do menor ao maior)', sequencia: ['4', '9', '16', '25'], reconhecido: false }
 }
 
 // embaralha determinístico (o QA reproduz): permutação fixa por tamanho
@@ -123,6 +128,30 @@ export function planejarPedagogia (pedido: PedidoAtividade): Espinha {
   if (mecanica === 'selecionar') return planejarSelecionar(pedido)
   if (mecanica === 'ordenar') return planejarOrdenar(pedido)
   return planejarContar(pedido)
+}
+
+// Versão com IA: se o BANCO reconhece o conteúdo, usa o banco (instantâneo e exato).
+// Se NÃO reconhece (ex.: "Fotossíntese"), pede à IA os itens NO CONTRATO; se a IA
+// falhar/timeout, cai no banco genérico — o professor NUNCA fica sem atividade.
+export async function planejarPedagogiaIA (pedido: PedidoAtividade): Promise<{ espinha: Espinha, viaIA: boolean }> {
+  const mecanica = escolherMecanica(pedido)
+  if (mecanica === 'selecionar') {
+    const banco = gerarConteudoSelecionar(pedido.objetivo)
+    if (!banco.reconhecido) {
+      const ia = await iaSelecionar(pedido.ano, pedido.disciplina, pedido.objetivo)
+      if (ia) return { espinha: planejarSelecionar(pedido, ia), viaIA: true }
+    }
+    return { espinha: planejarSelecionar(pedido, banco), viaIA: false }
+  }
+  if (mecanica === 'ordenar') {
+    const banco = gerarConteudoOrdenar(pedido.objetivo)
+    if (!banco.reconhecido) {
+      const ia = await iaOrdenar(pedido.ano, pedido.disciplina, pedido.objetivo)
+      if (ia) return { espinha: planejarOrdenar(pedido, ia), viaIA: true }
+    }
+    return { espinha: planejarOrdenar(pedido, banco), viaIA: false }
+  }
+  return { espinha: planejarPedagogia(pedido), viaIA: false }
 }
 
 function planejarContar (pedido: PedidoAtividade): Espinha {
@@ -156,8 +185,9 @@ function planejarSomar (pedido: PedidoAtividade): Espinha {
 }
 
 // SELECIONAR sob a REGRA do conteúdo — um motor, infinitos conteúdos.
-function planejarSelecionar (pedido: PedidoAtividade): Espinha {
-  const c = gerarConteudoSelecionar(pedido.objetivo)
+// `conteudo` externo (vindo da IA) substitui o banco quando fornecido.
+function planejarSelecionar (pedido: PedidoAtividade, conteudo?: Conteudo): Espinha {
+  const c = conteudo ?? gerarConteudoSelecionar(pedido.objetivo)
   return Espinha.parse({
     ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,
     dinamica: 'resolver', mecanica: 'selecionar', kc: c.kc, alvo: ALVO[pedido.dificuldade],
@@ -173,8 +203,8 @@ function planejarSelecionar (pedido: PedidoAtividade): Espinha {
 }
 
 // ORDENAR — coletar na SEQUÊNCIA certa (fora de ordem = erro real).
-function planejarOrdenar (pedido: PedidoAtividade): Espinha {
-  const c = gerarConteudoOrdenar(pedido.objetivo)
+function planejarOrdenar (pedido: PedidoAtividade, conteudo?: ConteudoOrdem): Espinha {
+  const c = conteudo ?? gerarConteudoOrdenar(pedido.objetivo)
   const itens: Item[] = c.sequencia.map((r, i) => ({ rotulo: r, ok: true, ordem: i + 1 }))
   return Espinha.parse({
     ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,

@@ -7,7 +7,7 @@
 import Phaser from 'phaser'
 import { FaseGrid } from '../rpg/FaseGrid'
 import { PedidoAtividade, DISCIPLINAS, DIFICULDADES } from './tipos'
-import { planejarPedagogia } from './pedagogo'
+import { planejarPedagogiaIA } from './pedagogo'
 import { escreverRoteiro } from './roteiro'
 import { carrega } from './motor-adaptativo'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
@@ -44,7 +44,8 @@ export function montarFabrica (game: Phaser.Game): void {
   document.body.appendChild(host)
   const val = (id: string): string => (document.getElementById(id) as HTMLInputElement).value
 
-  ;(document.getElementById('fgerar') as HTMLButtonElement).onclick = () => {
+  const btn = document.getElementById('fgerar') as HTMLButtonElement
+  btn.onclick = async () => {
     const erro = document.getElementById('ferro')!
     erro.textContent = ''
     const bruto = {
@@ -53,13 +54,15 @@ export function montarFabrica (game: Phaser.Game): void {
     }
     const parsed = PedidoAtividade.safeParse(bruto)
     if (!parsed.success) { erro.textContent = '⚠️ ' + parsed.error.issues.map(i => i.message).join('; '); return }
-    // 1º) o PEDAGOGO planeja a APRENDIZAGEM (progressão, dinâmica, alvo, como medir).
-    // 1.5) ADAPTA AO RITMO: ajusta o alvo pelo domínio já registrado (DDA/ZDP) ANTES da história,
-    //      pra fala e mapa baterem. 2º) o ROTEIRISTA veste em cima. (ordem que o Marcos exige)
-    let roteiro, espinha, alvo: number, alvoSoma: number | undefined
+    // 1º) o PEDAGOGO planeja a APRENDIZAGEM (banco instantâneo; conteúdo desconhecido -> IA
+    //     com prazo e fallback — nunca trava). 1.5) ADAPTA AO RITMO (DDA/ZDP) ANTES da
+    //     história, pra fala e mapa baterem. 2º) o ROTEIRISTA veste em cima.
+    btn.disabled = true; const btnTxt = btn.textContent; btn.textContent = '⏳ Gerando a aventura…'
+    let roteiro, espinha, alvo: number, alvoSoma: number | undefined, viaIA = false
     try {
-      espinha = planejarPedagogia(parsed.data)
-      const kc = espinha.mecanica                       // o domínio é POR mecânica/KC
+      const plan = await planejarPedagogiaIA(parsed.data)
+      espinha = plan.espinha; viaIA = plan.viaIA
+      const kc = espinha.kc                             // o domínio é POR CONTEÚDO
       alvo = espinha.alvo; alvoSoma = espinha.alvoSoma
       const pk = carrega('local')[kc]?.pKnown
       if (pk !== undefined) {
@@ -77,8 +80,9 @@ export function montarFabrica (game: Phaser.Game): void {
         // difíceis conforme o domínio — próximo passo do gerador de conteúdo)
       }
       roteiro = escreverRoteiro(parsed.data, { alvo, alvoSoma, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
-    } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
+    } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return } finally { btn.disabled = false; btn.textContent = btnTxt }
     ;(window as any).__fabricaEspinha = espinha
+    ;(window as any).__fabricaViaIA = viaIA
     ;(window as any).__fabricaAlvo = espinha.mecanica === 'somar' ? alvoSoma : alvo   // QA lê
 
     // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
