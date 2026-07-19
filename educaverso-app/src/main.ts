@@ -16,23 +16,39 @@ import { validarAventura } from './motor/aventura'
 import { AVENTURA_POMAR } from './aventuras/pomar'
 import { AVENTURA_FLORESTA } from './aventuras/floresta'
 import { AVENTURA_TESTE } from './aventuras/teste'
+import { VilaViva } from './rpg/VilaViva'
 
 const q = new URLSearchParams(location.search)
 const usarIlha = q.has('ilha')
+// RPG (plataforma nova, identidade Ninja Adventure): ?rpg na URL OU flag
+// window.__BOOT='rpg' injetada no index.html do repo publicado do demo.
+const usarRpg = q.has('rpg') || (window as any).__BOOT === 'rpg'
 
 const jogo = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: '#060c18',
+  backgroundColor: usarRpg ? '#1c2b1e' : '#060c18',
   // ENVELOP = PREENCHE a tela (sem tarjas pretas); recorta um pouco nas beiradas.
   scale: { mode: Phaser.Scale.ENVELOP, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
   fps: { target: 30, forceSetTimeOut: true },
-  render: { antialias: true, roundPixels: false, powerPreference: 'low-power' },
+  // pixel art 16px: nearest + roundPixels (nitido); mundos ilustrados: antialias.
+  render: usarRpg
+    ? { antialias: false, pixelArt: true, roundPixels: true, powerPreference: 'low-power' }
+    : { antialias: true, roundPixels: false, powerPreference: 'low-power' },
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
-  scene: usarIlha ? [Ilha] : []
+  scene: usarIlha ? [Ilha] : (usarRpg ? [VilaViva] : [])
 })
 
-if (!usarIlha) {
+if (usarRpg) {
+  // o RPG não usa a UI legada da Ilha (capa/botões/véu) — esconde tudo
+  for (const id of ['telaIntro', 'telaWin', 'btnOuvir', 'hud']) {
+    const el = document.getElementById(id)
+    if (el) el.style.display = 'none'
+  }
+  document.body.style.background = '#1c2b1e'
+}
+
+if (!usarIlha && !usarRpg) {
   // Zod valida os dados ANTES de montar (dado torto não monta).
   const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : AVENTURA_FLORESTA))
   jogo.events.once('ready', () => {
