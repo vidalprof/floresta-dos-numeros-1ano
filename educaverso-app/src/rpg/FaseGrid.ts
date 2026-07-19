@@ -35,7 +35,7 @@ export class FaseGrid extends Phaser.Scene {
 
   private mapaKey = 'mapa_grid'
   private melAlvo = MEL_ALVO
-  private plano?: { problema?: string, entrega?: string, vitoria?: string, emoji?: string }
+  private plano?: { abertura?: string, problema?: string, juntouTudo?: string, entrega?: string, vitoria?: string, emoji?: string, nome?: string }
   private kitId = 'vilarejo'
   private kit!: KitVisual
 
@@ -168,7 +168,12 @@ export class FaseGrid extends Phaser.Scene {
 
     // HUD + balão (HTML = sempre nítido) + missão inicial
     this.montaHud()
-    this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', this.plano?.problema ?? `O fazendeiro precisa de ${this.melAlvo} potes de MEL para a festa! Você me ajuda a juntar?`)
+    // ENCENA a abertura da história (narração do mundo) e depois o PEDIDO (o personagem
+    // pergunta — Portão 0). Sem roteiro, cai no texto padrão.
+    const emoji = this.plano?.emoji ?? '🧑‍🌾'
+    const pedido = this.plano?.problema ?? `O fazendeiro precisa de ${this.melAlvo} potes de MEL para a festa! Você me ajuda a juntar?`
+    if (this.plano?.abertura) { this.mostraBalao('📖', this.plano.abertura); this.time.delayedCall(3600, () => this.mostraBalao(emoji, pedido)) }
+    else this.mostraBalao(emoji, pedido)
 
     // controles: setas + WASD + toque; e destrava do áudio no 1º gesto
     this.wasd = this.input.keyboard?.addKeys('W,A,S,D') as any
@@ -186,7 +191,7 @@ export class FaseGrid extends Phaser.Scene {
   private aoEntrarTile (tx: number, ty: number): void {
     // pega mel
     const i = this.melSprites.findIndex(m => m.x === tx && m.y === ty)
-    if (i >= 0) { const m = this.melSprites[i]; m.sp.destroy(); this.melSprites.splice(i, 1); this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= this.melAlvo) this.mostraBalao('🍯', `Você juntou os ${this.melAlvo}! Leve ao fazendeiro.`) }
+    if (i >= 0) { const m = this.melSprites[i]; m.sp.destroy(); this.melSprites.splice(i, 1); this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= this.melAlvo) this.mostraBalao(this.plano?.emoji ?? '🍯', this.plano?.juntouTudo ?? `Você juntou os ${this.melAlvo}! Leve ao fazendeiro.`) }
     // entrar na casa: câmera FIXA e centralizada na sala (sala pequena = 1 tela)
     if (this.local === 'fase' && tx === this.P('portaX') && ty === this.P('portaY') && !this.trocando) return this.transita(() => { this.local = 'casa'; this.gridEngine.setPosition('heroi', { x: this.P('intEntraX'), y: this.P('intEntraY') }); this.camInterior() })
     // sair da casa: câmera volta a seguir o herói no EXTERNO
@@ -266,10 +271,12 @@ export class FaseGrid extends Phaser.Scene {
     this.hud.setText(this.entregou ? 'Siga para a saída à direita →' : `Mel: ${this.mel}/${this.melAlvo}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
   }
 
+  private balaoTimer?: Phaser.Time.TimerEvent
   private mostraBalao (emoji: string, txt: string): void {
     this.balao.innerHTML = `<span style="font-size:26px">${emoji}</span><br>${txt}`
     this.balao.style.display = 'block'
-    this.time.delayedCall(4200, () => { this.balao.style.display = 'none' })
+    this.balaoTimer?.remove()                       // cancela o esconder anterior (senão um balão some cedo)
+    this.balaoTimer = this.time.delayedCall(4200, () => { this.balao.style.display = 'none' })
   }
 
   private tom (freq: number, dur: number, tipo: OscillatorType, vol: number): void {

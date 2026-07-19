@@ -6,7 +6,8 @@
 // ============================================================================
 import Phaser from 'phaser'
 import { FaseGrid } from '../rpg/FaseGrid'
-import { PedidoAtividade, planejar, DISCIPLINAS, DIFICULDADES } from './tipos'
+import { PedidoAtividade, DISCIPLINAS, DIFICULDADES } from './tipos'
+import { escreverRoteiro } from './roteiro'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
 import { montarMapaFase } from './mapaFase'
 
@@ -49,12 +50,13 @@ export function montarFabrica (game: Phaser.Game): void {
     }
     const parsed = PedidoAtividade.safeParse(bruto)
     if (!parsed.success) { erro.textContent = '⚠️ ' + parsed.error.issues.map(i => i.message).join('; '); return }
-    let plano
-    try { plano = planejar(parsed.data) } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
+    // O ROTEIRISTA monta a história inteira (validada, Portão 0)
+    let roteiro
+    try { roteiro = escreverRoteiro(parsed.data) } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
 
-    // monta o mapa NA HORA e injeta no cache do Phaser
-    const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || KIT_PADRAO
-    const mapa = montarMapaFase({ melAlvo: plano.melAlvo, kitId })
+    // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
+    const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || roteiro.kitId || KIT_PADRAO
+    const mapa = montarMapaFase({ melAlvo: roteiro.alvo, kitId })
     const key = 'mapa_fabrica'
     if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
     game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)
@@ -62,9 +64,12 @@ export function montarFabrica (game: Phaser.Game): void {
     if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
     game.scene.add('FaseGrid', FaseGrid, true, {
       mapaKey: key, kitId,
-      plano: { problema: plano.problema, entrega: plano.entrega, vitoria: plano.vitoria, emoji: plano.emoji }
+      plano: {
+        abertura: roteiro.falas.abertura, problema: roteiro.falas.pedido, juntouTudo: roteiro.falas.juntouTudo,
+        entrega: roteiro.falas.entrega, vitoria: roteiro.falas.vitoria, emoji: roteiro.personagem.emoji, nome: roteiro.personagem.nome
+      }
     })
-    ;(window as any).__fabricaPlano = plano   // QA lê o que foi gerado
+    ;(window as any).__fabricaRoteiro = roteiro   // QA lê a história gerada
   }
 
   ;(window as any).__fabrica = { gerar: () => (document.getElementById('fgerar') as HTMLButtonElement).click(), set: (id: string, v: string) => { (document.getElementById(id) as HTMLInputElement).value = v } }
