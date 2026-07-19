@@ -1,0 +1,53 @@
+name: Baixar musica livre (CC) para os mundos
+
+# Baixa trilhas de musica livre (Kevin MacLeod/incompetech, CC-BY — credito no
+# CREDITOS-MUSICA.md) e comprime p/ jogo. Roda nos Actions (internet liberada).
+# Dispara por commit com [musica] na mensagem (padrao finalizar.yml).
+
+on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
+
+jobs:
+  baixar:
+    if: contains(github.event.head_commit.message, '[musica]')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Baixar e comprimir
+        run: |
+          set -e
+          mkdir -p _mundos/musica
+          baixa () { # nome url
+            echo "== $1"
+            curl -fsSL --retry 3 -o /tmp/m.mp3 "$2" || { echo "falhou $1"; return 0; }
+            tam=$(stat -c%s /tmp/m.mp3); echo "  bruto: $tam bytes"
+            if [ "$tam" -lt 200000 ]; then echo "  pequeno demais, descarto"; return 0; fi
+            ffmpeg -y -loglevel error -i /tmp/m.mp3 -ac 2 -ar 44100 -b:a 112k "_mundos/musica/$1.mp3"
+            echo "  ok -> _mundos/musica/$1.mp3 ($(stat -c%s _mundos/musica/$1.mp3) bytes)"
+          }
+          # Kevin MacLeod (incompetech.com) — CC-BY 4.0
+          baixa mus_carefree   "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Carefree.mp3"
+          baixa mus_wallpaper  "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Wallpaper.mp3"
+          baixa mus_porch      "https://incompetech.com/music/royalty-free/mp3-royaltyfree/Porch%20Swing%20Days%20-%20faster.mp3"
+          ls -la _mundos/musica/ || true
+          cat > _mundos/musica/CREDITOS-MUSICA.md <<'EOF'
+          # Créditos de música
+          Trilhas: "Carefree", "Wallpaper", "Porch Swing Days" — Kevin MacLeod (incompetech.com)
+          Licença: Creative Commons: By Attribution 4.0 — https://creativecommons.org/licenses/by/4.0/
+          EOF
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _mundos/musica/ || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "musica: baixa trilhas CC-BY (Kevin MacLeod) p/ os mundos"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
