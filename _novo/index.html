@@ -55,8 +55,16 @@
       window.addEventListener('unhandledrejection', function (e) { mostra('promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
     })();
   </script>
-  <script>window.__BOOT="rpg"</script>
-  <script type="module" crossorigin src="./assets/index-CJ-FpxvP.js"></script>
+  <script>window.__BOOT="rpg";
+window.addEventListener("error",function(e){
+ var d=document.getElementById("erroBox");
+ if(!d){d=document.createElement("pre");d.id="erroBox";
+  d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;background:#5b1111;color:#fff;padding:10px;z-index:99999;font-size:12px;white-space:pre-wrap;border-radius:10px;font-family:monospace";
+  document.body.appendChild(d);}
+ d.textContent="Ops, deu erro neste aparelho - manda um print desta caixa:\n"+(e.message||e.type||"?")+"\n"+(e.filename||"")+" linha "+(e.lineno||"?");});
+</script>
+<style>#telaIntro,#telaWin,#btnOuvir,#hud{display:none!important}html,body{background:#1c2b1e!important}</style>
+  <script type="module" crossorigin src="./assets/index-OE5eTrjC.js"></script>
 </head>
 <body>
   <div id="game"></div>
