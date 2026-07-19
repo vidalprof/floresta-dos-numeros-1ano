@@ -1615,3 +1615,41 @@ INCOMPLETO/recortado em membro + colisão na mão. Com **kit completo (frames in
 alinhados) + física nativa Arcade + Auditor**, ficou lindo, fluido, sem bug e leve. Godot
 provou funcionar mas pesa 35 MB (inviável). **Phaser + kit completo + IA = o caminho.**
 `byte_walk_*` reaproveitáveis; dá pra gerar mais poses (correr, pegar, comemorar) do mesmo jeito.
+
+---
+
+## 🏛️ PLATAFORMA "RPG Educativo IA" — o Canva dos RPGs (arquitetura + 1º tijolo) — jul/2026
+
+**O Marcos pediu uma PLATAFORMA** (não um jogo): professor informa `ano · disciplina ·
+objetivo · tema · tempo · dificuldade`, clica **GERAR** e recebe um RPG top-down educativo
+completo, jogável, offline no PC velho. Sem programar/editar JSON/desenhar. Ver o documento
+**`ARQUITETURA-PLATAFORMA-RPG.md`** (a lei da plataforma, escrita ANTES do código a pedido dele).
+
+**3 DECISÕES que o Marcos fechou:**
+1. **Asset Pack = Kenney (CC0)** — identidade visual única; IA NÃO desenha, só escolhe peças.
+2. **LLM desde já** — reconciliação honesta: LLM roda na **hora que o professor GERA** (ele tem
+   internet ao preparar); o **jogo gerado é estático** e o aluno joga **offline**. LLM no authoring,
+   não no play → não quebra o custo-zero na sala.
+3. **Ir direto ao gerador** — alerta técnico registrado: o gerador precisa renderizar, então
+   "motor-plataforma + tilemap + Kenney" não some — vira **infra do gerador** (F1 funde em F2).
+
+**1º TIJOLO CONSTRUÍDO E PROVADO — o cérebro do gerador (o que faz disto "o Canva"):**
+- `educaverso-app/src/gerador/tipos.ts` — `BriefingProfessor`, `PlanoMissao`, `MecanicaPedagogica`.
+- `educaverso-app/src/gerador/catalogo-pedagogico.ts` — mapeia **objetivo → conceito → mecânica
+  jogável → params**. Escala por dificuldade E idade (pré/1º ano seguram o teto). Determinístico
+  (mesmo briefing = mesma missão) e reproduzível por tema.
+- **🔒 TRAVA DO PORTÃO 0 (a mais importante):** `src/motor/mecanicas/registro-ids.ts` é a "lista da
+  verdade" (leve, zero Phaser) das mecânicas jogáveis. O gerador SÓ emite missão cujo `id` existe lá
+  → **estruturalmente incapaz de gerar quiz**. Qualificação é pelo CONCEITO (gatilhos no objetivo),
+  nunca por idade/disciplina soltas (senão matemática "casaria" com história só pelo ano — bug pego
+  no QA e corrigido). Objetivo sem mecânica jogável → **0 missões** (avisa honesto, não inventa quiz).
+- **ROBÔ-QA:** `educaverso-app/tools/qa-gerador.mjs` (bundla o TS com esbuild, roda em node) — 10/10
+  APROVADO: reconhece contagem, escala dificuldade/idade, determinístico, reproduzível, trava do
+  Portão 0 segura, tempo→nº de missões. `tsc --noEmit` = 0 erros (strict).
+- **Estado runtime:** só a mecânica `contar` existe jogável → o catálogo pedagógico hoje cobre
+  contagem (pré–3º ano). Crescer = escrever a mecânica runtime + 1 entrada pedagógica + 1 id no registro.
+
+**PRÓXIMOS PASSOS da plataforma:** (a) trazer o Kenney CC0 pro repo; (b) tilemap Tiled com vagas
+nomeadas + motor renderizando nele; (c) gerador de mapa (posiciona NPC/itens nas vagas a partir do
+PlanoMissao); (d) gerador de diálogo (LLM no authoring); (e) formulário do professor → AdventureSpec;
+(f) mais mecânicas jogáveis (juntar/somar, repartir/fração) pra ampliar a cobertura.
