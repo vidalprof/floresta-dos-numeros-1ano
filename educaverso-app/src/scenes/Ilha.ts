@@ -222,7 +222,7 @@ export class Ilha extends Phaser.Scene {
   iniciarMontagem (silencioso = false) {
     this.estado = 'montar'; this.pararVerso()
     if (!this.aval.inicio) this.aval.inicio = Date.now()
-    el('hud')?.classList.remove('hidden'); const d = el('dica'); if (d) d.innerHTML = 'Monte os passos do <b>Chico</b> 🦀 até o baú — cuidado com a água!'
+    el('hud')?.classList.remove('hidden'); const d = el('dica'); if (d) d.innerHTML = 'Monte os passos do <b>Chico</b> até o baú — cuidado com a água!'
     this.desenhar(); this.hintLouro.setVisible(false)
     if (!silencioso) for (const p of PEDRAS) { const m = this.add.image(this.cx(p[0]), this.cy(p[1]), 'marca').setDepth(8000).setAlpha(0); this.tweens.add({ targets: m, alpha: { from: 0, to: 0.7 }, duration: 500, yoyo: true, repeat: 1, onComplete: () => m.destroy() }) }
   }

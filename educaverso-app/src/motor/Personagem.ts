@@ -43,9 +43,20 @@ export class Personagem {
   static POSES = ['parado', 'piscar', 'passo_a', 'passo_b', 'passo_c', 'costas', 'costas_passo',
     'lado', 'lado_passo', 'sentar', 'deitar', 'acenar', 'feliz', 'triste']
 
-  // carrega todas as poses de um personagem (chamar no preload da cena)
+  // carrega as poses de um personagem (chamar no preload da cena).
+  // Lê o manifest.json da pasta e carrega SÓ as poses que existem (zero 404);
+  // sem manifest, cai no conjunto completo (comportamento antigo).
   static preload (scene: Phaser.Scene, nome: string) {
-    for (const p of Personagem.POSES) scene.load.image(nome + '_' + p, 'personagens/' + nome + '/' + p + '.png')
+    const mk = nome + '_manifest'
+    if (scene.cache.json.exists(mk)) { Personagem.carregaPoses(scene, nome); return }
+    scene.load.json(mk, 'personagens/' + nome + '/manifest.json')
+    scene.load.once('filecomplete-json-' + mk, () => Personagem.carregaPoses(scene, nome))
+    scene.load.once('loaderror', (f: any) => { if (f && f.key === mk) { for (const p of Personagem.POSES) scene.load.image(nome + '_' + p, 'personagens/' + nome + '/' + p + '.png') } })
+  }
+  static carregaPoses (scene: Phaser.Scene, nome: string) {
+    const m = scene.cache.json.get(nome + '_manifest')
+    const poses = m && m.poses ? Object.keys(m.poses) : Personagem.POSES
+    for (const p of poses) if (!scene.textures.exists(nome + '_' + p)) scene.load.image(nome + '_' + p, 'personagens/' + nome + '/' + (m && m.poses && m.poses[p] ? m.poses[p] : p + '.png'))
   }
 
   tex (p: string) {

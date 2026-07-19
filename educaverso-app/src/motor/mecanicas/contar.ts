@@ -93,7 +93,7 @@ export const Contar: Mecanica = {
           desenha(0xbdf0c8)
           const fim = () => { s.tweens.add({ targets: lay.getChildren(), alpha: 0, duration: 320, onComplete: () => { lay.destroy(true) } }); ctx.aoConcluir(true) }
           if (p.elogio_fala && ctx.temAudio(p.elogio_fala)) ctx.falar(p.elogio_fala, fim)
-          else { dica.setText('Isso! São ' + alvo + '. 🎉'); s.time.delayedCall(1100, fim) }
+          else { dica.setText('Isso! São ' + alvo + '.'); s.time.delayedCall(1100, fim) }
         } else {
           desenha(0xffd6d6)
           dica.setText('Quase! Vamos contar de novo, um por um…')

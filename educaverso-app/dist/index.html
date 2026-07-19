@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8"><link rel="icon" href="data:,">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>EducaVerso — Ilha do Tesouro</title>
   <style>
@@ -48,19 +48,19 @@
         var d = document.getElementById('erroJS') || document.createElement('div');
         d.id = 'erroJS';
         d.style.cssText = 'position:fixed;left:0;top:0;right:0;z-index:99999;background:#c81e1e;color:#fff;font:700 14px system-ui;padding:10px 14px;white-space:pre-wrap;';
-        d.textContent = '⛔ ERRO JS (o jogo travou): ' + msg;
+        d.textContent = ' ERRO JS (o jogo travou): ' + msg;
         if (!d.parentNode) document.body.appendChild(d);
       }
       window.addEventListener('error', function (e) { mostra((e.message || '') + ' @ ' + (e.filename || '') + ':' + (e.lineno || '')); });
       window.addEventListener('unhandledrejection', function (e) { mostra('promise: ' + (e.reason && e.reason.message ? e.reason.message : e.reason)); });
     })();
   </script>
-  <script type="module" crossorigin src="./assets/index-BQzLolOx.js"></script>
+  <script type="module" crossorigin src="./assets/index-B-jA__0G.js"></script>
 </head>
 <body>
   <div id="game"></div>
 
-  <button id="btnOuvir">🔊 Ouvir</button>
+  <button id="btnOuvir">Ouvir</button>
 
   <div id="hud" class="hidden">
     <div id="dica"></div>
@@ -77,7 +77,7 @@
 
   <div class="overlay" id="telaIntro">
     <div class="balaoDom">
-      <div class="em">🏝️</div>
+      <div class="em"></div>
       <h2>Ilha do Tesouro</h2>
       <p>Uma ilha à noite, iluminada pela lua e por tochas. Explore, converse e
          ajude quem precisar de você!</p>
@@ -91,8 +91,8 @@
       <h2>Você criou um ALGORITMO!</h2>
       <p>Uma sequência de passos, na ordem certa, que resolveu um problema de
          verdade — o Chico chegou ao baú por sua causa.</p>
-      <p class="concl">Quem monta os passos certinhos… programa! 🦀✨</p>
-      <button class="acao jogar" id="btnDeNovo" style="margin-top:10px">Continuar explorando 🏝️</button>
+      <p class="concl">Quem monta os passos certinhos… programa! </p>
+      <button class="acao jogar" id="btnDeNovo" style="margin-top:10px">Continuar explorando </button>
     </div>
   </div>
 
