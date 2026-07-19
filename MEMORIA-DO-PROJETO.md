@@ -1682,3 +1682,20 @@ PlanoMissao); (d) gerador de diálogo (LLM no authoring); (e) formulário do pro
 - Publicação: pacote mínimo dist (index+assets+rpg, 1,7MB) testado pelo robô ANTES; `_novo` na
   MAIN via worktree (fluxo oficial fábrica) + `fabrica.yml` (repo_name=vila-viva) + `deploy-pages.yml`.
 - QA `tools/qa-vila.mjs`: 12/12 (anda 4 direções com anim certa, casa bloqueia, 4 NPCs, zero 404).
+
+### 📱 Vila Viva v2/v3 — lições do celular do Marcos (jul/2026)
+- **v2 (blindagem celular):** no iPhone do Marcos o módulo JS morreu ANTES de esconder a capa
+  legada → ele viu "Ilha do Tesouro" com botão morto. Cura tripla no index publicado:
+  (1) CSS `display:none!important` na UI legada (independe de JS); (2) vite target
+  +`safari13` (transpila `?.` — iPhone antigo abre); (3) caixa vermelha `erroBox` no
+  `window.error` (o print do Marcos passa a contar o erro exato). **Regra: TODO index
+  publicado de app leva essa blindagem.**
+- **Robô-iPhone:** `tools/qa-vila-iphone.mjs` (Playwright device iPhone 12, toque real).
+  ⚠️ Alarme falso aprendido: com câmera CLAMPADA na borda do mapa, o herói NÃO fica no centro
+  da tela — tocar "no centro" = tocar no herói = não anda. Robô agora toca LONGE do herói.
+- **v3 (feedback do Marcos por link):** "passa direto pelos personagens?" → NPCs ganharam
+  CORPO (collider imóvel; herói esbarra e para) e VIRAM O ROSTO para o herói ao chegar perto
+  (frame da coluna da direção). Dog continua atravessável de propósito. QA 15/15.
+- **Fluxo de publicação da vila:** pacote mínimo dist → blindar index → QA desktop+iphone →
+  `_novo` na MAIN (worktree) → `atualizar.yml` (repo_name=vila-viva) → conferir push no log
+  (`main -> main`) → link com `?v=N` novo (cache do celular é teimoso).
