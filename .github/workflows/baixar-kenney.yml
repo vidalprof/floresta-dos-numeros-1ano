@@ -16,9 +16,15 @@ on:
         required: true
         default: "tiny-town tiny-dungeon"
         type: string
+  # Plano B (a branch de trabalho nao e a default -> dispatch da 404): aciona por
+  # PUSH com o marcador [kenney] na mensagem do commit. O commit que o proprio job
+  # faz NAO leva o marcador -> sem loop.
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy" ]
 
 jobs:
   baixar:
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[kenney]')
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -28,7 +34,7 @@ jobs:
 
       - name: Baixar packs Kenney
         env:
-          SLUGS: ${{ inputs.slugs }}
+          SLUGS: ${{ inputs.slugs || 'tiny-town tiny-dungeon' }}
         run: |
           set -e
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
