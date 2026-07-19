@@ -57,6 +57,25 @@ export class VilaViva extends Phaser.Scene {
   private dir = 'baixo'
   local: 'vila' | 'casa' = 'vila'                 // zona atual (QA lê)
   private trocando = false
+  vistaTudo = false                               // modo "ver o cenário todo"
+
+  // alterna câmera: seguir o herói (zoom 3) <-> ver o cenário inteiro (zoom 2)
+  alternaVista (): void {
+    const cam = this.cameras.main
+    this.vistaTudo = !this.vistaTudo
+    if (this.vistaTudo && this.local === 'vila') {
+      cam.stopFollow()
+      cam.removeBounds()                           // senão o clamp prega o mapa no topo
+      cam.setZoom(2)                               // 512x320 cabe inteiro em 1024 (faixas em cima/embaixo)
+      cam.centerOn(MAPA_W * T / 2, MAPA_H * T / 2)
+    } else {
+      this.vistaTudo = false
+      cam.setZoom(3)
+      if (this.local === 'vila') cam.setBounds(0, 0, MAPA_W * T, MAPA_H * T)
+      cam.startFollow(this.heroi.sp, true, 0.12, 0.12)
+      cam.centerOn(this.heroi.sp.x, this.heroi.sp.y)
+    }
+  }
 
   preload (): void {
     const b = import.meta.env.BASE_URL + 'rpg/'
@@ -213,6 +232,10 @@ export class VilaViva extends Phaser.Scene {
       this.cameras.main.fadeOut(240, 14, 12, 18)
       this.cameras.main.once('camerafadeoutcomplete', () => {
         this.local = dest
+        // trocar de zona SEMPRE volta pra visão normal (senão fica preso no zoom longe)
+        this.vistaTudo = false
+        this.cameras.main.setZoom(3)
+        this.cameras.main.startFollow(this.heroi.sp, true, 0.12, 0.12)
         if (dest === 'casa') {
           // nasce ACIMA do tapete de saída (senão a zona de saída dispara na hora)
           this.heroi.sp.setPosition(TAPETE_SAIDA.x, TAPETE_SAIDA.y - 26)
@@ -247,6 +270,10 @@ export class VilaViva extends Phaser.Scene {
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.alvo = new Phaser.Math.Vector2(p.worldX, p.worldY)
     })
+
+    // ---- UI (tela cheia + ver tudo) numa cena própria, sem zoom ----
+    this.registry.set('vila', this)
+    this.scene.launch('UIVila')
 
     // ---- ganchos do robô-QA ----
     ;(window as any).__vila = this

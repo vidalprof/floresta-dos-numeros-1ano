@@ -17,6 +17,7 @@ import { AVENTURA_POMAR } from './aventuras/pomar'
 import { AVENTURA_FLORESTA } from './aventuras/floresta'
 import { AVENTURA_TESTE } from './aventuras/teste'
 import { VilaViva } from './rpg/VilaViva'
+import { UIVila } from './rpg/UIVila'
 
 const q = new URLSearchParams(location.search)
 const usarIlha = q.has('ilha')
@@ -46,7 +47,7 @@ const jogo = new Phaser.Game({
     ? { antialias: false, pixelArt: true, roundPixels: true, powerPreference: 'low-power' }
     : { antialias: true, roundPixels: false, powerPreference: 'low-power' },
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
-  scene: usarIlha ? [Ilha] : (usarRpg ? [VilaViva] : [])
+  scene: usarIlha ? [Ilha] : (usarRpg ? [VilaViva, UIVila] : [])
 })
 
 if (!usarIlha && !usarRpg) {

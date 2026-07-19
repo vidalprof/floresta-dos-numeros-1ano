@@ -81,6 +81,20 @@ const npcState = await page.evaluate(() => {
 ok(npcState.dist > 7, `fazendeiro BLOQUEIA (dist ${npcState.dist.toFixed(1)}px, não sobrepôs)`)
 ok(npcState.frame === npcState.esperado, `fazendeiro OLHOU pro herói (frame ${npcState.frame}, esperado ${npcState.esperado})`)
 
+console.log('== BOTÃO "VER TUDO" (cenário inteiro na tela) ==')
+const heroiAntes = await page.evaluate(() => ({ x: (window).__vila.heroi.sp.x, y: (window).__vila.heroi.sp.y }))
+await page.mouse.click(980, 112)                              // lupa (UI fixa)
+await page.waitForTimeout(500)
+const vista = await page.evaluate(() => ({ zoom: (window).__vila.cameras.main.zoom, modo: (window).__vila.vistaTudo }))
+ok(vista.zoom === 2 && vista.modo === true, `VER TUDO liga (zoom ${vista.zoom})`)
+const heroiDepois = await page.evaluate(() => ({ x: (window).__vila.heroi.sp.x, y: (window).__vila.heroi.sp.y }))
+ok(Math.abs(heroiDepois.x - heroiAntes.x) + Math.abs(heroiDepois.y - heroiAntes.y) < 4, 'clicar no botão NÃO move o herói')
+await page.screenshot({ path: OUT + '/qa_v_vertudo.png' })
+await page.mouse.click(980, 112)
+await page.waitForTimeout(500)
+const volta = await page.evaluate(() => (window).__vila.cameras.main.zoom)
+ok(volta === 3, `VER TUDO desliga (zoom ${volta})`)
+
 console.log('== ENTRA NA CASINHA (porta -> fade -> interior) ==')
 await page.evaluate(() => (window).__tp(90, 110))
 await page.evaluate(() => (window).__anda(90, 78))            // anda até a porta
