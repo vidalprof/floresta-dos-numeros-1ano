@@ -9,10 +9,16 @@
 
 ## 👥 A EQUIPE (cada um com sua tarefa) — em ordem
 
-**1. 🎓 PEDAGOGO / CURRICULISTA**
-- Confere o **currículo (BNCC / Blumenau)** do ano exato.
-- Define a **progressão de aprendizagem**: quais conceitos, em que ordem, cabendo em 55 min.
+**1. 🎓 ESPECIALISTA BNCC / PEDAGOGO-CURRICULISTA**
+- Domina **BNCC + currículo de Blumenau**, didática e **progressão** — confere o ano exato.
+- Define a **progressão de aprendizagem** (conceitos, ordem, cabendo em 55 min) e **verifica se
+  está ADEQUADO** à faixa (nem fácil demais, nem além do ano).
 - Saída: a "espinha" pedagógica (ex.: contagem até 10 → adição simples → problema com adição).
+
+**1b. 🧑‍🔬 ESPECIALISTA DA DISCIPLINA (ANOS FINAIS, 6º–9º)**
+- Quando a atividade é dos anos finais, entra também um **especialista específico da disciplina**
+  em questão (Matemática, Ciências, História, Português…) que faz a MESMA verificação com a
+  profundidade do conteúdo daquele ano — garante rigor e correção conceitual.
 
 **2. ✍️ ROTEIRISTA**
 - Transforma o objetivo numa **HISTÓRIA** com arco (problema → jornada → clímax → resolução).
@@ -42,6 +48,9 @@
 - **👁️ Auditor Visual/Design (por idade):** joga, tira fotos, e um game designer infantil revisa —
   bugs visuais + se está encantador e adequado à faixa etária.
 - **🎨 Portão de Arte:** proporção, contexto, coerência (nada cortado, nada fora da moldura).
+- **⏱️ Auditor de DURAÇÃO:** JOGA a atividade **atuando como uma criança daquela idade** (ritmo de
+  leitura, exploração e erro reais da faixa) e **mede o tempo**. A atividade tem que durar **no
+  mínimo 45 minutos** (alvo 55). Curta demais → REPROVA e a esteira acrescenta conteúdo/fases.
 - **✅ Portão do Professor (Marcos):** olhos humanos no final. A palavra dele é lei.
 
 ## 🔁 AUTOAPRENDIZADO
