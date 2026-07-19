@@ -36,7 +36,17 @@ export class FaseGrid extends Phaser.Scene {
   private balao!: HTMLDivElement
   private audioOk = false
 
+  private mapaKey = 'mapa_grid'
+  private melAlvo = MEL_ALVO
+  private plano?: { problema?: string, entrega?: string, vitoria?: string, emoji?: string }
+
   constructor () { super('FaseGrid') }
+
+  // recebe um mapa gerado na hora (Fábrica) + os textos do plano; senão usa o padrão
+  init (data?: { mapaKey?: string, plano?: FaseGrid['plano'] }): void {
+    if (data?.mapaKey) this.mapaKey = data.mapaKey
+    if (data?.plano) this.plano = data.plano
+  }
 
   preload (): void {
     const b = import.meta.env.BASE_URL + 'rpg/'
@@ -49,7 +59,8 @@ export class FaseGrid extends Phaser.Scene {
     this.load.image('pedras2', b + 'pedras.png')
     this.load.image('piso', b + 'piso.png')
     this.load.spritesheet('bau', b + 'bau.png', { frameWidth: 16, frameHeight: 14 })
-    this.load.tilemapTiledJSON('mapa_grid', b + 'mapa_grid.json')
+    // só carrega o arquivo padrão; um mapa gerado pela Fábrica já vem no cache (init)
+    if (this.mapaKey === 'mapa_grid' && !this.cache.tilemap.has('mapa_grid')) this.load.tilemapTiledJSON('mapa_grid', b + 'mapa_grid.json')
     this.load.audio('musica', b + 'musica.ogg')
   }
 
@@ -66,7 +77,7 @@ export class FaseGrid extends Phaser.Scene {
     const tex = this.textures.get('mundo')
     for (const [n, [x, y, w, h]] of Object.entries(PROPS)) if (!tex.has(n)) tex.add(n, 0, x, y, w, h)
 
-    this.map = this.make.tilemap({ key: 'mapa_grid' })
+    this.map = this.make.tilemap({ key: this.mapaKey })
     this.map.addTilesetImage('chao', 'chao')
     this.map.addTilesetImage('paredes', 'paredes')
     const cChao = this.map.createLayer('chao', ['chao', 'paredes'], 0, 0)!.setDepth(0)
@@ -79,6 +90,7 @@ export class FaseGrid extends Phaser.Scene {
     const gp = (n: string): any => { const p = (this.map.properties as Array<{ name: string, value: string }>).find(q => q.name === n); return p ? JSON.parse(p.value) : null }
     const melExt: number[][] = gp('melExternos') || []
     const melInt: number[] = gp('melInterno') || []
+    this.melAlvo = melExt.length + (melInt.length ? 1 : 0) || MEL_ALVO   // alvo = quantos itens o mapa tem
     const arvores: number[][] = gp('arvores') || []
     const inter = gp('interior') || { x0: 21, y0: 1, w: 9, h: 7 }
 
@@ -147,7 +159,7 @@ export class FaseGrid extends Phaser.Scene {
 
     // HUD + balão (HTML = sempre nítido) + missão inicial
     this.montaHud()
-    this.mostraBalao('🧑‍🌾', 'O fazendeiro precisa de 5 potes de MEL para a festa! Você me ajuda a juntar?')
+    this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', this.plano?.problema ?? `O fazendeiro precisa de ${this.melAlvo} potes de MEL para a festa! Você me ajuda a juntar?`)
 
     // controles: setas + WASD + toque; e destrava do áudio no 1º gesto
     this.wasd = this.input.keyboard?.addKeys('W,A,S,D') as any
@@ -165,13 +177,13 @@ export class FaseGrid extends Phaser.Scene {
   private aoEntrarTile (tx: number, ty: number): void {
     // pega mel
     const i = this.melSprites.findIndex(m => m.x === tx && m.y === ty)
-    if (i >= 0) { const m = this.melSprites[i]; m.sp.destroy(); this.melSprites.splice(i, 1); this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= MEL_ALVO) this.mostraBalao('🍯', 'Você juntou os 5 potes! Leve ao fazendeiro.') }
+    if (i >= 0) { const m = this.melSprites[i]; m.sp.destroy(); this.melSprites.splice(i, 1); this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= this.melAlvo) this.mostraBalao('🍯', `Você juntou os ${this.melAlvo}! Leve ao fazendeiro.`) }
     // entrar na casa: câmera FIXA e centralizada na sala (sala pequena = 1 tela)
     if (this.local === 'fase' && tx === this.P('portaX') && ty === this.P('portaY') && !this.trocando) return this.transita(() => { this.local = 'casa'; this.gridEngine.setPosition('heroi', { x: this.P('intEntraX'), y: this.P('intEntraY') }); this.camInterior() })
     // sair da casa: câmera volta a seguir o herói no EXTERNO
     if (this.local === 'casa' && tx === this.P('intSaiX') && ty === this.P('intSaiY') && !this.trocando) return this.transita(() => { this.local = 'fase'; this.gridEngine.setPosition('heroi', { x: this.P('portaX'), y: this.P('portaY') + 1 }); this.camExterno() })
     // entrega ao fazendeiro (encostar) quando tem os 5
-    if (!this.entregou && this.mel >= MEL_ALVO && this.local === 'fase') {
+    if (!this.entregou && this.mel >= this.melAlvo && this.local === 'fase') {
       const d = Math.abs(tx - this.P('fazX')) + Math.abs(ty - this.P('fazY'))
       if (d <= 1) this.entrega()
     }
@@ -185,7 +197,7 @@ export class FaseGrid extends Phaser.Scene {
     this.colisao.removeTileAt(this.P('pedrasX'), this.P('pedrasY'))
     if (this.pedrasSp) { this.tweens.add({ targets: this.pedrasSp, scale: 0, alpha: 0, duration: 500, onComplete: () => this.pedrasSp?.destroy() }); this.cameras.main.shake(220, 0.006) }
     this.tom(160, 0.3, 'sawtooth', 0.16)
-    this.mostraBalao('🎉', 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!')
+    this.mostraBalao('🎉', this.plano?.entrega ?? 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!')
     this.atualizaHud()
   }
 
@@ -194,8 +206,8 @@ export class FaseGrid extends Phaser.Scene {
     this.concluida = true
     this.cameras.main.flash(400, 255, 255, 200)
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
-    this.mostraBalao('🌟', 'Fase 1 concluída! (a próxima aventura entra aqui)')
-    this.hud.setText('Fase 1 concluída! 🌟')
+    this.mostraBalao('🌟', this.plano?.vitoria ?? 'Fase 1 concluída! (a próxima aventura entra aqui)')
+    this.hud.setText('Missão concluída! 🌟')
   }
 
   private camInterior (): void {
@@ -239,8 +251,8 @@ export class FaseGrid extends Phaser.Scene {
 
   private atualizaHud (): void {
     if (this.concluida) return
-    const falta = Math.max(0, MEL_ALVO - this.mel)
-    this.hud.setText(this.entregou ? 'Siga para a saída à direita →' : `Mel: ${this.mel}/${MEL_ALVO}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
+    const falta = Math.max(0, this.melAlvo - this.mel)
+    this.hud.setText(this.entregou ? 'Siga para a saída à direita →' : `Mel: ${this.mel}/${this.melAlvo}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
   }
 
   private mostraBalao (emoji: string, txt: string): void {
