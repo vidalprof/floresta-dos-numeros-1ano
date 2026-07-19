@@ -141,6 +141,31 @@
 > - **BALÃO não trava o boneco:** fala é **automática** (auto-avança por tempo), a criança anda o
 >   tempo todo; toque = andar (não avança fala). Frutas/animais com **sombra** (não flutuam).
 
+## ⭐ CORREÇÃO DE RUMO DO MARCOS (2026-07-19, LER ANTES DE MEXER NA FÁBRICA)
+> **1) ESTILO DO MUNDO = "o da FLORESTA", NÃO a prancha do Pomar.** O Marcos quer o mundo
+> **montado de sprites espalhados** (chão de textura contínua + árvores/pedras/rio/ponte como
+> peças com colisão, a criança anda ENTRE elas, top-down estilo videogame — como floresta-do-byte
+> e os jogos LPC/Kenney) — a prancha-quadro do Pomar NÃO é o estilo desejado p/ exteriores.
+> **Síntese profissional registrada:** exteriores = mundo composto (chao_textura + props);
+> pranchas pintadas ficam PERFEITAS para INTERIORES (a cabana provou). O Pomar fica no ar como
+> prova, mas o padrão da fábrica é o estilo floresta.
+> **2) GRAMÁTICA DE JOGO (a pedida do Marcos, ex. da PONTE):** problema EXPOSTO no mundo (ponte
+> quebrada bloqueia a passagem) → criança resolve um problema → **ganha um ITEM** (mochila) →
+> **ENTREGA a um personagem** (mestre Castor) → **o MUNDO MUDA** (ponte consertada, colisão sai)
+> → passa adiante (nova área). Aluno protagonista; aprende sem perceber. Isso virou o contrato
+> `quer_item/ao_receber/muda_objeto/remove_bloqueio` no motor.
+> **3) FLUXO DE PRODUÇÃO OFICIAL (como o Marcos pede um mundo):** ele passa **TEMA + ANO** →
+> PEDAGOGO (currículo BNCC/Blumenau) define o objetivo da AULA DE 55 MIN → com o ROTEIRISTA
+> monta história+dinâmica → Game Designer mapeia nas mecânicas do motor → gera-se o mundo +
+> imagens conforme o desenho deles → AUDITORIA (robô-QA + portões + arte) → entrega ao Marcos.
+> Só criar atividade curricular DEPOIS da máquina pronta (ordem dele).
+> **4) SE A SESSÃO CAIR/CRÉDITOS ACABAREM:** tudo está commitado na branch
+> claude/github-pages-deploy-wbb7dy. Estado atual: kit floresta + falas da ponte GERANDO por
+> workflow (commit "gera kit floresta [imagens] [audio]"); motor ganhando chao_textura/rio/
+> bloqueios/mochila/entrega. Próximo passo se retomar: `git pull`, integrar kit em
+> educaverso-app/public, montar aventuras/floresta.ts com a ponte, rodar tools/qa-mundo.mjs,
+> publicar via fabrica.yml (repo mundo-floresta).
+
 ## 🏭 ENTREGA: FÁBRICA DE MUNDOS v1 + "O POMAR DO BYTE" (2026-07-19)
 > **O MUNDO EXPLORÁVEL saiu** — no motor oficial (educaverso-app, Phaser+TS strict) e pelos portões.
 > **Link: https://vidalprof.github.io/mundo-pomar/** (repo `mundo-pomar`; publica via `fabrica.yml`
