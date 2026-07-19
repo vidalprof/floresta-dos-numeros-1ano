@@ -1,0 +1,77 @@
+name: Baixar assets Kenney (CC0)
+
+# Baixa packs do Kenney (kenney.nl, CC0/dominio publico) nos servidores do
+# GitHub (internet liberada) e commita SO os PNGs em content/assets/kenney/<slug>/
+# na branch. Descobre a URL do .zip sozinho (le a pagina do asset) p/ nao depender
+# de link chumbado. Vetor/fonte/exemplos sao descartados (repo leve p/ o PC velho).
+#
+# Uso: workflow_dispatch, input `slugs` = nomes dos packs separados por espaco
+#   (ex.: "tiny-town tiny-dungeon"). Cada slug e o final da URL kenney.nl/assets/<slug>.
+
+on:
+  workflow_dispatch:
+    inputs:
+      slugs:
+        description: "Packs Kenney (slug da URL), separados por espaco"
+        required: true
+        default: "tiny-town tiny-dungeon"
+        type: string
+
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Baixar packs Kenney
+        env:
+          SLUGS: ${{ inputs.slugs }}
+        run: |
+          set -e
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
+          for slug in $SLUGS; do
+            slug="$(echo "$slug" | tr -cd 'a-z0-9-')"
+            [ -z "$slug" ] && continue
+            echo "=================================================="
+            echo "### PACK: $slug"
+            pag="https://kenney.nl/assets/$slug"
+            echo "1) lendo pagina $pag"
+            html="$(curl -fsSL -A "$UA" --max-time 120 "$pag")" || { echo "FALHOU ao ler a pagina"; continue; }
+            # extrai o 1o link .zip (absoluto ou relativo)
+            zip="$(printf '%s' "$html" | grep -oE 'https?://[^"'"'"' ]+\.zip|/[^"'"'"' ]+\.zip' | head -1)"
+            if [ -z "$zip" ]; then echo "NAO achei .zip na pagina de $slug"; continue; fi
+            case "$zip" in /*) zip="https://kenney.nl$zip";; esac
+            echo "2) zip encontrado: $zip"
+            curl -fsSL -A "$UA" --max-time 300 "$zip" -o /tmp/pack.zip || { echo "FALHOU download"; continue; }
+            echo "   tamanho:"; ls -la /tmp/pack.zip
+            dest="content/assets/kenney/$slug"
+            rm -rf "$dest"; mkdir -p "$dest"
+            mkdir -p /tmp/unz && rm -rf /tmp/unz/* && unzip -qq /tmp/pack.zip -d /tmp/unz || { echo "FALHOU unzip"; continue; }
+            # copia SO os PNGs (preserva a arvore relativa), descarta vetor/fonte/exemplos pesados
+            ( cd /tmp/unz && find . -type f -iname '*.png' -print0 | while IFS= read -r -d '' f; do
+                rel="${f#./}"; mkdir -p "$OLDPWD/$dest/$(dirname "$rel")"; cp "$f" "$OLDPWD/$dest/$rel"
+              done )
+            # guarda a licenca se existir
+            ( cd /tmp/unz && find . -type f -iname 'license*' -print0 | head -c 100000 | while IFS= read -r -d '' f; do
+                cp "$f" "$OLDPWD/$dest/LICENSE.txt"; break; done ) || true
+            echo "3) PNGs salvos em $dest:"; find "$dest" -type f -iname '*.png' | wc -l
+            find "$dest" -type d | sed 's,^,   ,' | head -30
+          done
+          echo "=================================================="
+          echo "### TOTAL de PNGs por pack:"
+          for d in content/assets/kenney/*/; do echo "$d -> $(find "$d" -iname '*.png' | wc -l) png"; done 2>/dev/null || true
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add content/assets/kenney/ || true
+          if git diff --cached --quiet; then echo "sem mudancas (nada baixado?)"; exit 0; fi
+          git commit -m "assets: baixa packs Kenney CC0 (${{ inputs.slugs }})"
+          for k in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
