@@ -88,14 +88,15 @@ export class FaseGrid extends Phaser.Scene {
     const pisoW = (inter.w - 2) * T, pisoH = (inter.h - 2) * T
     this.add.tileSprite(pisoX, pisoY, pisoW, pisoH, 'piso').setOrigin(0).setDepth(1)
 
-    // casa (externa) desenhada por cima do bloco de colisão
-    const casaX = this.P('casaX'), casaY = this.P('casaY')
-    this.add.image(casaX * T + T * 1.5, (casaY + 2) * T, 'mundo', 'casa_a').setOrigin(0.5, 1).setDepth((casaY + 2) * T)
-    // árvores
-    for (const [ax, ay] of arvores) this.add.image(ax * T + T / 2, (ay + 1) * T + 6, 'mundo', 'arvore').setOrigin(0.5, 1).setDepth((ay + 1) * T + 6)
-    // móveis do interior
-    this.add.image((inter.x0 + 2) * T, (inter.y0 + 2) * T, 'mundo', 'estante').setOrigin(0.5, 1).setDepth((inter.y0 + 2) * T)
-    this.add.image((inter.x0 + inter.w - 3) * T, (inter.y0 + 2) * T, 'bau', 0).setOrigin(0.5, 1).setDepth((inter.y0 + 2) * T)
+    // ENFEITES: o motor SÓ RENDERIZA o que o mapa manda (camada 'decor'). Nada de
+    // posicionar arte no código — cada objeto traz a figura, a textura e a posição.
+    void arvores
+    const decor = this.map.getObjectLayer('decor')
+    for (const o of (decor?.objects ?? [])) {
+      const tex = (o.properties as Array<{ name: string, value: string }> | undefined)?.find(p => p.name === 'tex')?.value ?? 'mundo'
+      const frame: string | number = tex === 'mundo' ? (o.name as string) : 0
+      this.add.image(o.x!, o.y!, tex, frame).setOrigin(0.5, 1).setDepth(o.y!)
+    }
 
     // PEDRAS que fecham a saída (some na entrega)
     const px = this.P('pedrasX'), py = this.P('pedrasY')

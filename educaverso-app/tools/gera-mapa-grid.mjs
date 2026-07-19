@@ -69,11 +69,23 @@ const collideIds = [PAR.TL, PAR.T, PAR.TR, PAR.L, PAR.R, PAR.BL, PAR.B, PAR.BR, 
 const tilesProp = [...new Set(collideIds)].sort((a, b) => a - b).map(id => ({ id, properties: [{ name: 'ge_collide', type: 'bool', value: true }] }))
 const layer = (name, data, visible = true) => ({ name, type: 'tilelayer', width: W, height: H, x: 0, y: 0, opacity: 1, visible, data })
 
+// --- DECOR: enfeites como OBJETOS no mapa (posição é DADO; o código só renderiza) ---
+// cada objeto: name = recorte a desenhar; props tex (textura) e org (origem y).
+// x,y em pixels (âncora base). O motor desenha origin(0.5,1), depth = y.
+let _oid = 1
+const obj = (frame, tex, xpx, ypx) => ({ id: _oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }] })
+const decor = []
+decor.push(obj('casa_a', 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T))
+for (const [ax, ay] of arvores) decor.push(obj('arvore', 'mundo', (ax + 0.5) * T, (ay + 1) * T + 6))
+decor.push(obj('estante', 'mundo', (IX0 + 2) * T, (IY0 + 2) * T))
+decor.push(obj('bau', 'bau', (IX0 + IW - 3) * T, (IY0 + 2) * T))
+const objLayer = (name, objects) => ({ name, type: 'objectgroup', objects, opacity: 1, visible: true, x: 0, y: 0, draworder: 'topdown' })
+
 const P = (n, v) => ({ name: n, type: 'int', value: v })
 const mapa = {
   compressionlevel: -1, infinite: false, orientation: 'orthogonal', renderorder: 'right-down',
   tiledversion: '1.10.2', type: 'map', version: '1.10', width: W, height: H, tilewidth: T, tileheight: T,
-  layers: [layer('chao', chao), layer('muros', muros), layer('colisao', colis, false)],
+  layers: [layer('chao', chao), layer('muros', muros), layer('colisao', colis, false), objLayer('decor', decor)],
   tilesets: [
     { firstgid: CHAO_FG, name: 'chao', image: 'chao.png', imagewidth: 352, imageheight: 416, tilewidth: T, tileheight: T, columns: 22, tilecount: 22 * 26, margin: 0, spacing: 0 },
     { firstgid: PAR_FG, name: 'paredes', image: 'paredes.png', imagewidth: 160, imageheight: 176, tilewidth: T, tileheight: T, columns: 10, tilecount: 110, margin: 0, spacing: 0, tiles: tilesProp }
