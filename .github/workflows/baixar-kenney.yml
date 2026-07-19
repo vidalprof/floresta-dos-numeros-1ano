@@ -34,9 +34,15 @@ jobs:
 
       - name: Baixar packs Kenney
         env:
-          SLUGS: ${{ inputs.slugs || 'tiny-town tiny-dungeon' }}
+          SLUGS_IN: ${{ inputs.slugs }}
         run: |
           set -e
+          # slugs: input do dispatch -> senao arquivo _kenney_slugs.txt (trilha push)
+          # -> senao o default. Assim a trilha por [kenney] escolhe o pack via arquivo.
+          SLUGS="$SLUGS_IN"
+          [ -z "$SLUGS" ] && [ -f _kenney_slugs.txt ] && SLUGS="$(tr '\n' ' ' < _kenney_slugs.txt)"
+          [ -z "$SLUGS" ] && SLUGS="tiny-town tiny-dungeon"
+          echo "SLUGS = $SLUGS"
           UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36"
           for slug in $SLUGS; do
             slug="$(echo "$slug" | tr -cd 'a-z0-9-')"
