@@ -32,6 +32,7 @@ export class FaseUm extends Phaser.Scene {
   entregou = false                    // entregou ao fazendeiro? (QA lê)
   local: 'fase' | 'casa' = 'fase'     // dentro de casa? (QA lê)
   private trocando = false
+  private concluida = false            // já venceu? (evita re-disparar a vitória a cada frame)
   private hud!: Phaser.GameObjects.Text
   private balaoDom!: HTMLDivElement          // balão em HTML = sempre NÍTIDO (resolução real)
   private balaoAlvo: Phaser.GameObjects.Sprite | null = null
@@ -98,8 +99,13 @@ export class FaseUm extends Phaser.Scene {
     bloco(W - 8, (saiY - 1) * T / 2, 16, (saiY - 1) * T)
     bloco(W - 8, ((saiY + 1) * T + H) / 2, 16, H - (saiY + 1) * T)
 
-    // --- cenário (casa + árvores) ---
-    põe('casa_a', 4 * T, 4 * T, 26)
+    // --- cenário: CASA com colisão do CORPO inteiro (menos a porta) ---
+    // casa_a (64x48, origem 0.5,1) em (64,64) -> ocupa x 32..96, y 16..64.
+    // paredes sólidas dos DOIS lados + topo; a PORTA (bottom-center) fica aberta p/ entrar.
+    põe('casa_a', 4 * T, 4 * T, 0)                 // sem colisão automática
+    bloco(45, 46, 24, 34)                          // parede ESQUERDA (x 33..57)
+    bloco(83, 46, 24, 34)                          // parede DIREITA  (x 71..95)
+    bloco(64, 30, 64, 22)                          // topo da casa (x 32..96, y 19..41)
     for (const [ax, ay] of [[2, 9], [17, 3], [16, 9], [11, 10]]) põe('arvore', ax * T, ay * T, 12)
     põe('toco', 6 * T, 8 * T, 10); põe('carroca', 13 * T, 3 * T, 12)
 
@@ -141,7 +147,7 @@ export class FaseUm extends Phaser.Scene {
     this.pedras = this.add.image(W - 22, abreCy, 'pedras2').setOrigin(0.5, 0.5).setDisplaySize(44, 42).setDepth(19500)
     this.pedrasBloco = bloco(W - 8, abreCy, 16, 36)               // colisão cobre a abertura inteira
     const zSaida = zona(W - 6, abreCy, 12, 34); (zSaida.body as Phaser.Physics.Arcade.StaticBody).enable = false
-    this.physics.add.overlap(this.heroi.sp, zSaida, () => { if (this.entregou && !this.trocando) this.vitoria() })
+    this.physics.add.overlap(this.heroi.sp, zSaida, () => { if (this.entregou && !this.trocando && !this.concluida) this.vitoria() })
     this.zSaida = zSaida
 
     // --- entrega ao fazendeiro ---
@@ -272,11 +278,15 @@ export class FaseUm extends Phaser.Scene {
   }
 
   private vitoria (): void {
-    this.trocando = true
+    if (this.concluida) return                     // dispara UMA vez só
+    this.concluida = true
     this.hud.setText('Fase 1 concluída! 🌟  (a próxima fase entra aqui)')
     this.cameras.main.flash(400, 255, 255, 200)
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
-    this.heroi.sp.setVelocity(0, 0); this.alvo = null
+    // congela só durante a celebração; DEPOIS libera pra criança continuar explorando
+    // (voltar pra casa, andar pelo mundo). NÃO travar pra sempre — bug do Marcos.
+    this.trocando = true; this.heroi.sp.setVelocity(0, 0); this.alvo = null
+    this.time.delayedCall(700, () => { this.trocando = false })
   }
 
   private montaInterior (solidos: Phaser.Physics.Arcade.StaticGroup): void {

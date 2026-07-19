@@ -46,6 +46,15 @@ const vazando = await page.evaluate(() => {
 })
 ok(vazando.length === 0, 'nenhum sprite vaza da moldura' + (vazando.length ? ': ' + vazando.slice(0, 4).join(', ') : ''))
 
+console.log('== COLISÃO: o herói NÃO atravessa a casa (bug do Marcos) ==')
+// põe o herói à ESQUERDA da casa e manda andar pra DIREITA atravessando o corpo dela.
+// A parede tem que barrar: ele não pode terminar do outro lado (x > 96).
+await page.evaluate(() => (window).__tp1(20, 40))          // esquerda da casa, na altura do corpo
+await page.evaluate(() => (window).__anda1(120, 40))       // tenta atravessar pra direita
+await page.waitForTimeout(1400)
+const xDepois = await page.evaluate(() => (window).__fase1.heroi.sp.x)
+ok(xDepois < 60, `a casa BARRA o herói (parou em x=${Math.round(xDepois)}, não atravessou)`)
+
 console.log('== RESOLVE: junta 4 na fase + 1 DENTRO da casa (contar 5) ==')
 const potesFase = await page.evaluate(() => (window).__fase1.children.list.filter(o => o.texture && o.texture.key === 'mel' && o.x < (window).__fase1.faseW).map(o => ({ x: o.x, y: o.y })))
 ok(potesFase.length === 4, `4 potes na fase (${potesFase.length})`)
@@ -96,8 +105,16 @@ await page.screenshot({ path: OUT + '/qa_f1r_aberto.png' })
 console.log('== VITÓRIA: atravessa a saída aberta ==')
 await page.evaluate(() => { const f = (window).__fase1; (window).__tp1(f.faseW - 40, f.faseH / 2) })
 await page.evaluate(() => { const f = (window).__fase1; (window).__anda1(f.faseW - 4, f.faseH / 2) })
-await esp(() => (window).__fase1.trocando)
-ok(await page.evaluate(() => (window).__fase1.trocando), 'passou pela saída = fase concluída')
+await esp(() => (window).__fase1.concluida)
+ok(await page.evaluate(() => (window).__fase1.concluida), 'passou pela saída = fase concluída')
+
+// 🔴 BUG REAL do Marcos: "apos terminar a atividade e voltar eu nao consigo mais entrar no interior".
+// A vitória NÃO pode travar pra sempre: passada a celebração, o herói volta a andar e a ENTRAR na casa.
+await page.waitForTimeout(900)
+ok(await page.evaluate(() => (window).__fase1.trocando) === false, 'depois da vitória NÃO fica travado (trocando=false)')
+await page.evaluate(() => (window).__tp1(4 * 16, 4 * 16 + 26)); await page.evaluate(() => (window).__anda1(4 * 16, 4 * 16 + 2))
+await esp(() => (window).__fase1.local === 'casa', 4000)
+ok(await page.evaluate(() => (window).__fase1.local) === 'casa', 'RE-ENTRA na casa depois de concluir a fase')
 
 console.log('== ERROS ==')
 const er = erros.filter(e => !/favicon/.test(e))
