@@ -48,7 +48,10 @@ jobs:
             echo "=================================================="
             if echo "$slug" | grep -q '^https\?://'; then
               # URL DIRETA de um .zip (ex.: archive de repo GitHub CC0) — sem pagina
-              nome="$(basename "$slug" .zip | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9-')"
+              # nome do destino = nome do REPO (github.com/<dono>/<repo>/archive/...),
+              # senao basename do zip (evita colisao quando ha varios HEAD.zip)
+              nome="$(echo "$slug" | sed -n 's,.*github.com/[^/]*/\([^/]*\)/archive/.*,\1,p' | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9-')"
+              [ -z "$nome" ] && nome="$(basename "$slug" .zip | tr 'A-Z' 'a-z' | tr -cd 'a-z0-9-')"
               [ -z "$nome" ] && nome="pack"
               echo "### PACK (url direta): $nome"
               zip="$slug"
