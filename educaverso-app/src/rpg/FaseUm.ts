@@ -33,7 +33,9 @@ export class FaseUm extends Phaser.Scene {
   local: 'fase' | 'casa' = 'fase'     // dentro de casa? (QA lê)
   private trocando = false
   private hud!: Phaser.GameObjects.Text
-  private balao!: Phaser.GameObjects.Text
+  private balaoDom!: HTMLDivElement          // balão em HTML = sempre NÍTIDO (resolução real)
+  private balaoAlvo: Phaser.GameObjects.Sprite | null = null
+  private balaoAte = 0
   private pedras?: Phaser.GameObjects.Image
   private pedrasBloco?: Phaser.GameObjects.Rectangle
   private musica?: Phaser.Sound.BaseSound
@@ -101,9 +103,17 @@ export class FaseUm extends Phaser.Scene {
     for (const [ax, ay] of [[2, 9], [17, 3], [16, 9], [11, 10]]) põe('arvore', ax * T, ay * T, 12)
     põe('toco', 6 * T, 8 * T, 10); põe('carroca', 13 * T, 3 * T, 12)
 
-    // --- HUD + balão (setResolution = renderiza o texto em 3x -> NÍTIDO no zoom 3) ---
+    // --- HUD (Phaser, nítido com setResolution) ---
     this.hud = this.add.text(10, 8, '', { fontFamily: 'sans-serif', fontSize: '13px', color: '#fff', backgroundColor: '#000a', padding: { x: 7, y: 4 } }).setScrollFactor(0).setResolution(3).setDepth(20000)
-    this.balao = this.add.text(0, 0, '', { fontFamily: 'sans-serif', fontSize: '9px', color: '#2a1a10', backgroundColor: '#fff', padding: { x: 6, y: 4 }, align: 'center', wordWrap: { width: 120 } }).setOrigin(0.5, 1).setResolution(3).setDepth(19000).setVisible(false)
+    // --- BALÃO em HTML (por cima do canvas) = texto SEMPRE nítido, em qualquer tela ---
+    this.balaoDom = document.createElement('div')
+    this.balaoDom.style.cssText = 'position:fixed;transform:translate(-50%,-100%);max-width:180px;padding:6px 10px;' +
+      'background:#fff;color:#241a12;border-radius:10px;border:2px solid #b98b5e;font-family:system-ui,sans-serif;' +
+      'font-size:15px;font-weight:600;line-height:1.25;text-align:center;pointer-events:none;z-index:9998;display:none;' +
+      'box-shadow:0 3px 0 rgba(0,0,0,.25);'
+    document.body.appendChild(this.balaoDom)
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.balaoDom?.remove())
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.balaoDom?.remove())
 
     // --- personagens ---
     const cria = (chave: string, x: number, y: number): Andante => {
@@ -119,18 +129,18 @@ export class FaseUm extends Phaser.Scene {
     this.physics.add.collider(this.heroi.sp, this.fazendeiro.sp)
 
     // --- os 5 potes de mel (o desafio: juntar/contar) ---
-    for (const [mx, my] of [[3, 7], [8, 8], [12, 7], [15, 6], [10, 4]]) {
+    for (const [mx, my] of [[3, 7], [8, 8], [12, 7], [15, 6]]) {   // 4 na fase; o 5o fica DENTRO da casa
       const im = this.add.image(mx * T + 8, my * T + 8, 'mel').setDepth(my * T + 8)
       this.tweens.add({ targets: im, y: im.y - 2, duration: 700, yoyo: true, repeat: -1 })  // flutua
       const z = zona(mx * T + 8, my * T + 8, 14, 14)
       this.physics.add.overlap(this.heroi.sp, z, () => this.pegaMel(im, z))
     }
 
-    // --- barreira de pedras na saída (o mundo muda ao entregar) ---
-    // DENTRO da moldura (right edge <= W): tamanho e posição pra tampar a saída sem vazar
-    this.pedras = this.add.image(W - 26, saiY * T + 8, 'pedras2').setOrigin(0.5, 0.5).setDisplaySize(38, 34).setDepth(19500)
-    this.pedrasBloco = bloco(W - 8, saiY * T + 8, 16, 32)
-    const zSaida = zona(W - 6, saiY * T + 8, 12, 28); (zSaida.body as Phaser.Physics.Arcade.StaticBody).enable = false
+    // --- barreira de pedras: TAPA EXATAMENTE a abertura (2 tiles: y = saiY-1..saiY) ---
+    const abreCy = saiY * T                                        // centro vertical da abertura
+    this.pedras = this.add.image(W - 22, abreCy, 'pedras2').setOrigin(0.5, 0.5).setDisplaySize(44, 42).setDepth(19500)
+    this.pedrasBloco = bloco(W - 8, abreCy, 16, 36)               // colisão cobre a abertura inteira
+    const zSaida = zona(W - 6, abreCy, 12, 34); (zSaida.body as Phaser.Physics.Arcade.StaticBody).enable = false
     this.physics.add.overlap(this.heroi.sp, zSaida, () => { if (this.entregou && !this.trocando) this.vitoria() })
     this.zSaida = zSaida
 
@@ -141,8 +151,13 @@ export class FaseUm extends Phaser.Scene {
 
     // --- INTERIOR da casa (entrável) ---
     this.montaInterior(solidos)
-    const zPorta = zona(4 * T + 8, 4 * T + 4, 12, 8)
+    const zPorta = zona(4 * T, 4 * T + 2, 14, 12)   // EXATO na porta da casa (bottom-center)
     this.physics.add.overlap(this.heroi.sp, zPorta, () => { if (this.local === 'fase') this.entra() })
+    // o 5º pote de mel fica DENTRO da casa (dá motivo pra explorar o interior!)
+    const melCasa = this.add.image(this.salaX + 68, this.salaY + 52, 'mel').setDepth(250)   // depth positivo (interior em Y negativo)
+    this.tweens.add({ targets: melCasa, y: melCasa.y - 2, duration: 700, yoyo: true, repeat: -1 })
+    const zMelCasa = zona(this.salaX + 68, this.salaY + 52, 14, 14)
+    this.physics.add.overlap(this.heroi.sp, zMelCasa, () => this.pegaMel(melCasa, zMelCasa))
 
     // --- câmera: mostra a TELA INTEIRA emoldurada (fundo escuro = a moldura) ---
     this.faseW = W; this.faseH = H
@@ -190,8 +205,23 @@ export class FaseUm extends Phaser.Scene {
   }
 
   private fala (quem: Phaser.GameObjects.Sprite, txt: string): void {
-    this.balao.setText(txt).setPosition(quem.x, quem.y - 20).setVisible(true)
-    this.time.delayedCall(3600, () => this.balao.setVisible(false))
+    this.balaoAlvo = quem
+    this.balaoDom.textContent = txt
+    this.balaoDom.style.display = 'block'
+    this.balaoAte = this.time.now + 3800
+    this.posicionaBalao()
+  }
+
+  // posiciona o balão HTML EXATAMENTE sobre a cabeça do personagem (world -> tela CSS)
+  private posicionaBalao (): void {
+    if (this.balaoDom.style.display === 'none' || !this.balaoAlvo) return
+    const cam = this.cameras.main
+    const sx = (this.balaoAlvo.x - cam.worldView.x) * cam.zoom
+    const sy = (this.balaoAlvo.y - 14 - cam.worldView.y) * cam.zoom
+    const cb = this.scale.canvasBounds
+    const gw = this.scale.gameSize.width, gh = this.scale.gameSize.height
+    this.balaoDom.style.left = (cb.left + (sx / gw) * cb.width) + 'px'
+    this.balaoDom.style.top = (cb.top + (sy / gh) * cb.height) + 'px'
   }
 
   private pegaMel (im: Phaser.GameObjects.Image, z: Phaser.GameObjects.Rectangle): void {
@@ -210,11 +240,30 @@ export class FaseUm extends Phaser.Scene {
     this.entregou = true
     ;(this.zEntrega.body as Phaser.Physics.Arcade.StaticBody).enable = false
     this.fala(this.fazendeiro.sp, 'Obrigado! Agora o caminho está livre. Vá em frente!')
-    // o MUNDO MUDA: as pedras somem e a saída abre
+    // o MUNDO MUDA: as pedras EXPLODEM em cacos e somem aos poucos
     if (this.pedrasBloco) { (this.pedrasBloco.body as Phaser.Physics.Arcade.StaticBody).enable = false; this.pedrasBloco.destroy() }
-    if (this.pedras) this.tweens.add({ targets: this.pedras, alpha: 0, duration: 400, onComplete: () => this.pedras?.destroy() })
-    this.tom(150, 0.35, 'sawtooth', 0.16); this.time.delayedCall(120, () => this.tom(110, 0.4, 'sawtooth', 0.14))  // pedras rolando
     ;(this.zSaida.body as Phaser.Physics.Arcade.StaticBody).enable = true
+    if (this.pedras) this.explodePedras(this.pedras.x, this.pedras.y)
+  }
+
+  // 💥 pedras explodindo: cacos voam (pra DENTRO do quadro, não vazam) + tremida + ronco
+  private explodePedras (px: number, py: number): void {
+    const cores = [0x8a5a3a, 0xa06b45, 0x6f4630]
+    for (let i = 0; i < 16; i++) {
+      const s = Phaser.Math.Between(3, 7)
+      const caco = this.add.rectangle(px + Phaser.Math.Between(-8, 8), py + Phaser.Math.Between(-16, 16), s, s, cores[i % 3]).setDepth(19600)
+      const ang = Phaser.Math.FloatBetween(Math.PI * 0.55, Math.PI * 1.45)   // pra ESQUERDA/cima (dentro do quadro)
+      const dist = Phaser.Math.Between(18, 46)
+      this.tweens.add({
+        targets: caco, x: px + Math.cos(ang) * dist, y: py + Math.sin(ang) * dist + Phaser.Math.Between(6, 22),
+        alpha: 0, angle: Phaser.Math.Between(-200, 200), scale: 0.3,
+        duration: Phaser.Math.Between(380, 720), ease: 'Quad.easeOut', onComplete: () => caco.destroy()
+      })
+    }
+    // a pedra some encolhendo (não só fade) — parece que desmoronou
+    if (this.pedras) this.tweens.add({ targets: this.pedras, scale: 0, alpha: 0, angle: 20, duration: 320, onComplete: () => this.pedras?.destroy() })
+    this.cameras.main.shake(260, 0.007)
+    this.tom(150, 0.32, 'sawtooth', 0.17); this.time.delayedCall(90, () => this.tom(100, 0.42, 'sawtooth', 0.15))
   }
 
   private vitoria (): void {
@@ -251,29 +300,36 @@ export class FaseUm extends Phaser.Scene {
   }
   private saidaCasa = { x: 0, y: 0 }
 
-  private entra (): void {
+  // transições À PROVA DE FALHA: baseadas em TEMPO (não no evento da câmera, que
+  // não dispara em alguns aparelhos e deixava o jogo travado). trocando SEMPRE
+  // volta a false — a criança nunca fica presa.
+  private transita (aplica: () => void): void {
     if (this.trocando) return
     this.trocando = true; this.alvo = null; this.heroi.sp.setVelocity(0, 0)
-    this.cameras.main.fadeOut(220, 14, 12, 18)
-    this.cameras.main.once('camerafadeoutcomplete', () => {
+    this.balaoDom.style.display = 'none'; this.balaoAlvo = null
+    this.cameras.main.fadeOut(200, 14, 12, 18)
+    this.time.delayedCall(210, () => {
+      aplica()
+      this.cameras.main.fadeIn(200, 14, 12, 18)
+    })
+    this.time.delayedCall(560, () => { this.trocando = false })   // destrava GARANTIDO
+  }
+
+  private entra (): void {
+    this.transita(() => {
       this.local = 'casa'
-      this.heroi.sp.setPosition(this.saidaCasa.x, this.saidaCasa.y - 26)
-      this.cameras.main.setZoom(4).setBounds(this.salaX - 40, this.salaY - 30, 9 * T + 80, 7 * T + 60).startFollow(this.heroi.sp, true, 0.15, 0.15).centerOn(this.heroi.sp.x, this.heroi.sp.y)
-      this.cameras.main.fadeIn(220, 14, 12, 18)
-      this.time.delayedCall(380, () => { this.trocando = false })
+      this.heroi.sp.setPosition(this.saidaCasa.x, this.saidaCasa.y - 34)
+      this.cameras.main.setZoom(4).setBounds(this.salaX - 40, this.salaY - 30, 9 * T + 80, 7 * T + 60)
+      this.cameras.main.startFollow(this.heroi.sp, true, 0.16, 0.16).centerOn(this.heroi.sp.x, this.heroi.sp.y)
     })
   }
 
   private saiCasa (): void {
-    if (this.trocando) return
-    this.trocando = true; this.alvo = null; this.heroi.sp.setVelocity(0, 0)
-    this.cameras.main.fadeOut(220, 14, 12, 18)
-    this.cameras.main.once('camerafadeoutcomplete', () => {
+    this.transita(() => {
       this.local = 'fase'
-      this.heroi.sp.setPosition(4 * T + 8, 4 * T + 22)
-      this.cameras.main.stopFollow(); this.cameras.main.setZoom(3).setBounds(0, 0, this.faseW, this.faseH).centerOn(this.faseW / 2, this.faseH / 2)
-      this.cameras.main.fadeIn(220, 14, 12, 18)
-      this.time.delayedCall(380, () => { this.trocando = false })
+      this.heroi.sp.setPosition(4 * T, 4 * T + 26)                 // em frente à porta da casa
+      this.cameras.main.stopFollow()
+      this.cameras.main.setZoom(3).setBounds(0, 0, this.faseW, this.faseH).centerOn(this.faseW / 2, this.faseH / 2)
     })
   }
 
@@ -297,6 +353,8 @@ export class FaseUm extends Phaser.Scene {
     if (Math.abs(vx) + Math.abs(vy) > 4) { this.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? 'dir' : 'esq') : (vy > 0 ? 'baixo' : 'cima'); h.sp.play('heroi-anda-' + this.dir, true) }
     else if (h.sp.anims.isPlaying) { h.sp.stop(); h.sp.setFrame(({ baixo: 0, cima: 1, esq: 2, dir: 3 } as Record<string, number>)[this.dir]) }
     h.sp.setDepth(h.sp.y); h.sombra.setPosition(h.sp.x + 1, h.sp.y + 7).setDepth(h.sp.y - 0.5)
+    // balão HTML: acompanha o personagem e some no tempo
+    if (this.balaoDom.style.display !== 'none') { this.posicionaBalao(); if (this.time.now > this.balaoAte) { this.balaoDom.style.display = 'none'; this.balaoAlvo = null } }
     this.fazendeiro.sombra.setPosition(this.fazendeiro.sp.x + 1, this.fazendeiro.sp.y + 7).setDepth(this.fazendeiro.sp.y - 0.5)
     this.fazendeiro.sp.setDepth(this.fazendeiro.sp.y)
   }
