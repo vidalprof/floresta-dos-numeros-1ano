@@ -25,6 +25,27 @@ const semMiss = await page.evaluate(() => (window).__fase1.children.list.filter(
 ok(semMiss === 0, `zero textura faltando (${semMiss})`)
 await page.screenshot({ path: OUT + '/qa_f1r.png' })
 
+console.log('== MOLDURA: nenhum sprite pode VAZAR pra fora do quadro da fase ==')
+const vazando = await page.evaluate(() => {
+  const f = (window).__fase1, W = f.faseW, H = f.faseH, tol = 2
+  const fora = []
+  for (const o of f.children.list) {
+    if (!o.getBounds || o.scrollFactorX === 0) continue          // ignora HUD (fixo na tela)
+    // só o que a CRIANÇA VÊ: sprite/imagem com textura real (não retângulo de colisão)
+    const key = o.texture && o.texture.key
+    if (!key || key.startsWith('__')) continue                   // pula __BASE/__WHITE (colisão invisível)
+    if (o.visible === false || o.alpha === 0) continue
+    const b = o.getBounds()
+    const cx = b.centerX, cy = b.centerY
+    if (cx < 0 || cx > W || cy < 0 || cy > H) continue            // objeto de outra zona (interior)
+    if (b.left < -tol || b.top < -tol || b.right > W + tol || b.bottom > H + tol) {
+      fora.push(key + ' r=' + Math.round(b.right) + '/' + W)
+    }
+  }
+  return fora
+})
+ok(vazando.length === 0, 'nenhum sprite vaza da moldura' + (vazando.length ? ': ' + vazando.slice(0, 4).join(', ') : ''))
+
 console.log('== RESOLVE: junta os 5 potes de mel (contar) ==')
 const potes = await page.evaluate(() => (window).__fase1.children.list.filter(o => o.texture && o.texture.key === 'mel').map(o => ({ x: o.x, y: o.y })))
 ok(potes.length === 5, `5 potes de mel na fase (${potes.length})`)

@@ -127,7 +127,8 @@ export class FaseUm extends Phaser.Scene {
     }
 
     // --- barreira de pedras na saída (o mundo muda ao entregar) ---
-    this.pedras = this.add.image(W - 10, saiY * T + 8, 'pedras2').setOrigin(0.5, 0.5).setDepth(19500)
+    // DENTRO da moldura (right edge <= W): tamanho e posição pra tampar a saída sem vazar
+    this.pedras = this.add.image(W - 26, saiY * T + 8, 'pedras2').setOrigin(0.5, 0.5).setDisplaySize(38, 34).setDepth(19500)
     this.pedrasBloco = bloco(W - 8, saiY * T + 8, 16, 32)
     const zSaida = zona(W - 6, saiY * T + 8, 12, 28); (zSaida.body as Phaser.Physics.Arcade.StaticBody).enable = false
     this.physics.add.overlap(this.heroi.sp, zSaida, () => { if (this.entregou && !this.trocando) this.vitoria() })
