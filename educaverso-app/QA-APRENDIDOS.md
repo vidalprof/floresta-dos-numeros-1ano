@@ -129,3 +129,17 @@ Tudo opaco — camada única. Moldura de floresta: grama 245 + blob verde + árv
   (que ficam na versão itch do pack). AudioContext destrava no 1º gesto (junto com a música).
 - 🔤 BALÃO/HUD nítidos em zoom 3: `setResolution(3)` renderiza o texto em 3x → sem borrão.
   (fonte menor compensa: balão 9px, hud 13px). Confirmar no screenshot.
+
+## 👁️ AUDITOR VISUAL/DESIGN (game designer infantil) — 1ª rodada (jul/2026)
+Rodou nas 5 telas-chave da Fase 1 (capturar-fase.mjs). PEGOU o que o robô-lógica NÃO vê:
+- 🔴 grama vazando FORA da moldura à direita (a passagem de saída escapa do quadro) — o robô-lógica
+  de moldura passou pq só checa sprites com textura, NÃO a camada de tilemap/o chão que aparece
+  pela abertura. LIÇÃO: a moldura tem que CLIPAR a cena (câmera com bounds = frame) ou a saída
+  vira um tile de caminho, não grama crua.
+- 🔴 interior pequeno flutuando no preto (não preenche como o exterior) — rever zoom/enquadramento.
+- 🟠 balão sem RABICHO (aponta pra quem fala) — parece overlay de navegador, quebra a estética pixel.
+- 🟠 HUD "Mel x/5" pouco visível — o feedback de CONTAGEM (o coração pedagógico) precisa ganhar vida
+  (número grande subindo + potinhos acendendo).
+- melhorias POR IDADE (pré=contador visual+voz; 1-2=número grande+som ascendente; 3-5=micro-desafio
+  "quantos faltam?"; 6-9=narrativa com stakes+matemática como obstáculo+estética menos "fofa").
+NOVA REGRA CONFIRMADA: o auditor visual é a rede pros bugs que o headless não pega. Roda a cada fase.
