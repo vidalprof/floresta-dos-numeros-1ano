@@ -64,6 +64,19 @@ await page.waitForTimeout(700)
 await page.screenshot({ path: OUT + '/qa_v_npc.png' })
 ok(true, 'herói ao lado do fazendeiro (screenshot)')
 
+console.log('== GENTE TEM CORPO (não atravessa) e OLHA pra você ==')
+await page.evaluate(() => (window).__tp(232, 190))              // abaixo do fazendeiro (232,150)
+await page.evaluate(() => (window).__anda(232, 120))            // tenta atravessá-lo
+await page.waitForTimeout(2500)
+const npcState = await page.evaluate(() => {
+  const v = (window).__vila
+  const faz = v.npcs[0].sp
+  const h = v.heroi.sp
+  return { dist: Math.hypot(h.x - faz.x, h.y - faz.y), frame: faz.frame.name }
+})
+ok(npcState.dist > 8, `fazendeiro BLOQUEIA (dist ${npcState.dist.toFixed(0)}px, não sobrepôs)`)
+ok(String(npcState.frame) === '0', `fazendeiro OLHOU pra baixo, onde está o herói (frame ${npcState.frame})`)
+
 console.log('== ERROS ==')
 const errosReais = erros.filter(e => !/favicon/.test(e))
 ok(errosReais.length === 0, 'zero erros/404 (' + errosReais.length + ')')

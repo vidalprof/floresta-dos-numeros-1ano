@@ -121,7 +121,12 @@ export class VilaViva extends Phaser.Scene {
     this.npcs.push(dog)
 
     this.physics.add.collider(this.heroi.sp, solidos)
-    for (const n of this.npcs) this.physics.add.collider(n.sp, solidos)
+    for (const n of this.npcs) {
+      this.physics.add.collider(n.sp, solidos)
+      // gente tem corpo: nao se atravessa (imovel = o heroi nao sai empurrando)
+      if (n.chave !== 'dog') (n.sp.body as Phaser.Physics.Arcade.Body).setImmovable(true)
+      this.physics.add.collider(this.heroi.sp, n.sp)
+    }
 
     // NPCs respiram (bob sutil) e dão um pulinho quando o herói chega perto
     for (const n of this.npcs) {
@@ -184,6 +189,17 @@ export class VilaViva extends Phaser.Scene {
       a.sombra.setPosition(a.sp.x + 1, a.sp.y + 7)
       a.sp.setDepth(a.sp.y)
       a.sombra.setDepth(a.sp.y - 0.5)
+    }
+
+    // gente de verdade OLHA pra você quando você chega perto
+    for (const n of this.npcs) {
+      if (n.chave === 'dog') continue
+      const d = Phaser.Math.Distance.Between(h.sp.x, h.sp.y, n.sp.x, n.sp.y)
+      if (d < 26 && !n.sp.anims.isPlaying) {
+        const dx = h.sp.x - n.sp.x, dy = h.sp.y - n.sp.y
+        const col = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 3 : 2) : (dy > 0 ? 0 : 1)
+        n.sp.setFrame(col)
+      }
     }
   }
 }
