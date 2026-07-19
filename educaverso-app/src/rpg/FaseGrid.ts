@@ -82,8 +82,11 @@ export class FaseGrid extends Phaser.Scene {
     const arvores: number[][] = gp('arvores') || []
     const inter = gp('interior') || { x0: 21, y0: 1, w: 9, h: 7 }
 
-    // piso do interior (por cima do chão base)
-    for (let y = inter.y0 + 1; y < inter.y0 + inter.h - 1; y++) for (let x = inter.x0 + 1; x < inter.x0 + inter.w - 1; x++) this.add.image(x * T, y * T, 'piso').setOrigin(0).setDepth(1)
+    // piso do interior: um AZULEJO (tileSprite) que preenche EXATO o retângulo da sala.
+    // (piso.png é 48x48; desenhar 1 por tile de 16 vazava a parede — bug que o Marcos viu.)
+    const pisoX = (inter.x0 + 1) * T, pisoY = (inter.y0 + 1) * T
+    const pisoW = (inter.w - 2) * T, pisoH = (inter.h - 2) * T
+    this.add.tileSprite(pisoX, pisoY, pisoW, pisoH, 'piso').setOrigin(0).setDepth(1)
 
     // casa (externa) desenhada por cima do bloco de colisão
     const casaX = this.P('casaX'), casaY = this.P('casaY')
