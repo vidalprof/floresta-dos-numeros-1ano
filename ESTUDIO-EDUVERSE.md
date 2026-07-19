@@ -28,9 +28,15 @@ primeiro, conceito por último, conhecimento é ferramenta nunca tranca, o Byte
 
 > Hoje a nossa melhor entrega tem só o **nível 1** (arte parada). O estúdio existe pra subir de forma **confiável** os níveis 2, 3 e 4.
 
-## 3. ⚠️ DECISÃO #1 — o MOTOR oficial do mundo vivo (trava tudo)
+## 3. ⚠️ DECISÃO #1 — o MOTOR oficial do mundo vivo (✅ RESOLVIDA: **Phaser 3 + TS**)
 
-Existem **dois estúdios** no repositório:
+> **Decisão do Marcos (jul/2026): o motor único do mundo vivo é o Phaser 3 + TypeScript + Vite.**
+> O cérebro da fábrica (contrato `dados.json`, biblioteca LEGO, catálogo de mecânicas, portões do
+> auditor, os 5 mundos como CONTEÚDO) é agnóstico de motor e será **transportado** pro Phaser.
+> O motor ES5 `kit-floresta` **se aposenta** para mundo-vivo novo (vira referência/conteúdo portável).
+> O molde premium single-HTML "Circo do Teo" segue para atividades **estruturadas/não-exploráveis**.
+
+Contexto da decisão (havia dois estúdios):
 
 | | **Phaser 3 + TS + Vite** (`educaverso-app/`) | **ES5 `kit-floresta.py`** (`eduverse/`) |
 |---|---|---|

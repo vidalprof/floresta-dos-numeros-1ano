@@ -141,6 +141,27 @@
 > - **BALÃO não trava o boneco:** fala é **automática** (auto-avança por tempo), a criança anda o
 >   tempo todo; toque = andar (não avança fala). Frutas/animais com **sombra** (não flutuam).
 
+## 🎬 ESTÚDIO EDUVERSE — plano do "2D incrível" + DECISÃO do motor (2026-07)
+> Plano completo escrito em **`ESTUDIO-EDUVERSE.md`** (montado após 4 subagentes lerem TODA a base
+> documental). Ideia = mundo 2D vivo/persistente/explorável (não quiz); "2D incrível" vem de **4
+> níveis**: (1) arte pintada premium ✅, (2) vida do personagem (respira/pisca/anda/**fala com a
+> boca**/comemora), (3) mundo vivo (luz/vento/partículas/dia-noite/som), (4) suculência + **contagem
+> que ACENDE** com a voz. Hoje só temos o nível 1.
+> - **⭐ DECISÃO #1 DO MARCOS (jul/2026): motor único do mundo vivo = PHASER 3 + TypeScript + Vite**
+>   (estúdio `educaverso-app/`, WebGL, roda ~59fps no Chrome 109 da escola). O **cérebro da fábrica**
+>   (contrato `dados.json`, biblioteca LEGO, catálogo de mecânicas, robô-auditor, os 5 mundos como
+>   CONTEÚDO) é agnóstico de motor → **transportar** pro Phaser. O motor ES5 `eduverse/kit-floresta.py`
+>   **se aposenta** p/ mundo-vivo novo (vira referência). Molde premium single-HTML "Circo do Teo" segue
+>   só p/ atividades **estruturadas/não-exploráveis**.
+> - **Stack selecionado:** Phaser+TS (motor) · Gemini+Pollinations (arte) · edge-tts Antonio (voz) ·
+>   `dados.json` validado por schema (cenas) · biblioteca LEGO + props vivos data-driven · Firebase
+>   (save/avaliação invisível) · GitHub Actions (fábrica) · robô-auditor + 4 portões. Tudo grátis (Gemini
+>   centavos com cache por hash).
+> - **Roadmap:** Fase 0 decisão ✅ → Fase 1 fundação (motor genérico + schema + biblioteca + pipeline +
+>   auditor + save) → **Fase 2 a "camada incrível"** (poses+lip-sync+piscar+emoções + módulo mundo-vivo +
+>   contagem-acesa → 1 cena de referência) → Fase 3 1ª atividade testada com crianças → Fase 4 escala
+>   (jornada 55min, Computação "programe o robô", avaliação→documentos).
+
 ## 🧭 FORMATO NOVO — APP-TRILHA "A VILA QUE ACORDA" (Duolingo-com-alma, pré→9º, 2026-07)
 > Pasta `_trilha/` → publicada em **https://vidalprof.github.io/vila-que-acorda/** (via `fabrica.yml`/
 > `atualizar.yml`, `source_dir=_trilha`). Pedido do Marcos: um **app moderno tipo Duolingo** (trilha de
