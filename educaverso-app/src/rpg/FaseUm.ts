@@ -304,13 +304,15 @@ export class FaseUm extends Phaser.Scene {
     tile(0, th - 1, PAR.BL, 9000); tile(tw - 1, th - 1, PAR.BR, 9000)
     for (let ix = 1; ix < tw - 1; ix++) { if (ix === cx) continue; tile(ix, th - 1, ix === cx - 1 ? PAR.BdL : ix === cx + 1 ? PAR.BdR : PAR.B, 9000) }
     const b = (x: number, y: number, w: number, h: number) => { const r = this.add.rectangle(x, y, w, h); this.physics.add.existing(r, true); solidos.add(r) }
-    b(sx + tw * T / 2, sy + 8, tw * T, 16); b(sx + 4, sy + th * T / 2, 8, th * T); b(sx + tw * T - 4, sy + th * T / 2, 8, th * T)
+    // paredes = TIJOLO INTEIRO (16px). Antes só bloqueava a metade de FORA (8px) e o herói
+    // entrava na parede ("passa da linha"). Agora a face interna barra os pés no lugar certo.
+    b(sx + tw * T / 2, sy + 8, tw * T, 16); b(sx + 8, sy + th * T / 2, 16, th * T); b(sx + tw * T - 8, sy + th * T / 2, 16, th * T)
     b(sx + (cx * T) / 2, sy + (th - 1) * T + 8, cx * T, 16); const wD = (tw - cx - 1) * T; b(sx + (cx + 1) * T + wD / 2, sy + (th - 1) * T + 8, wD, 16)
     b(sx + cx * T + 8, sy + (th + 1) * T + 8, 32, 16)
     this.add.image(sx + 68, sy + 70, 'mundo', 'tapete').setDepth(0.6)
     this.add.image(sx + 34, sy + 46, 'mundo', 'estante').setOrigin(0.5, 1).setDepth(dep(sy + 46)); b(sx + 34, sy + 42, 22, 8)
     this.add.image(sx + 100, sy + 40, 'bau', 0).setOrigin(0.5, 1).setDepth(dep(sy + 40)); b(sx + 100, sy + 36, 14, 8)
-    this.add.image(sx + 118, sy + 44, 'jar', 0).setOrigin(0.5, 1).setDepth(dep(sy + 44))
+    this.add.image(sx + 118, sy + 44, 'jar', 0).setOrigin(0.5, 1).setDepth(dep(sy + 44)); b(sx + 118, sy + 40, 12, 8)
     this.saidaCasa = { x: sx + cx * T + 8, y: sy + (th - 1) * T + 8 }
   }
   private saidaCasa = { x: 0, y: 0 }

@@ -87,6 +87,23 @@ ok(await page.evaluate(() => (window).__fase1.mel) === 5, 'pegou o 5º mel na ca
 // destrava GARANTIDO: trocando volta a false mesmo sem o evento de câmera
 await page.waitForTimeout(700)
 ok(await page.evaluate(() => (window).__fase1.trocando) === false, 'trocando SEMPRE destrava (nunca fica preso)')
+
+// 🔴 BUGS do Marcos no INTERIOR: (1) atravessa a PAREDE; (2) atravessa o POTINHO ao lado do baú.
+const sx = await page.evaluate(() => (window).__fase1.salaX)
+const sy = await page.evaluate(() => (window).__fase1.salaY)
+// (1) do centro da sala, empurra forte contra a parede ESQUERDA -> não pode vazar pra fora
+await page.evaluate(([x, y]) => (window).__tp1(x, y), [sx + 64, sy + 50])
+await page.evaluate(([x, y]) => (window).__anda1(x, y), [sx - 60, sy + 50])
+await page.waitForTimeout(1200)
+const xParede = await page.evaluate(() => (window).__fase1.heroi.sp.x)
+ok(xParede > sx + 8, `a PAREDE do interior barra o herói (parou em x=${Math.round(xParede - sx)} do canto, não vazou)`)
+// (2) empurra contra o POTINHO (jar) ao lado do baú -> tem que barrar (antes passava direto)
+await page.evaluate(([x, y]) => (window).__tp1(x, y), [sx + 118, sy + 64])
+await page.evaluate(([x, y]) => (window).__anda1(x, y), [sx + 118, sy + 6])
+await page.waitForTimeout(1100)
+const yJar = await page.evaluate(() => (window).__fase1.heroi.sp.y)
+ok(yJar > sy + 38, `o POTINHO ao lado do baú BARRA o herói (parou em y=${Math.round(yJar - sy)} do topo)`)
+
 // sai da casa pra entregar
 await page.evaluate(() => { const f = (window).__fase1; (window).__anda1(f.saidaCasa.x, f.saidaCasa.y + 20) })
 await esp(() => (window).__fase1.local === 'fase')
