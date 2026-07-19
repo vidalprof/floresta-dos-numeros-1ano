@@ -12,7 +12,6 @@
 // ============================================================================
 import { z } from 'zod'
 import type { PedidoAtividade } from './tipos'
-import { DIFICULDADES } from './tipos'
 
 export const Roteiro = z.object({
   titulo: z.string().min(2),
@@ -47,13 +46,13 @@ const chaveTema = (t: string): string => {
   if (s.includes('mar') || s.includes('praia') || s.includes('oceano')) return 'mar'
   return 'fazenda'
 }
-const ALVO: Record<typeof DIFICULDADES[number], number> = { facil: 3, medio: 5, dificil: 7 }
-
-// ROTEIRISTA v1 (por regra). Objetivo -> história jogável, com o conceito DENTRO da ação
-// (juntar/contar), nunca uma prova. O problema vem primeiro; o Byte pergunta.
-export function escreverRoteiro (pedido: PedidoAtividade): Roteiro {
+// ROTEIRISTA v1 (por regra). Escreve a história EM CIMA da ESPINHA que o pedagogo entregou —
+// não decide alvo nem dinâmica (isso é do pedagogo); só VESTE de mundo/personagem, com o
+// conceito DENTRO da ação e o problema primeiro (Portão 0). `espinha` é opcional só p/ retro-
+// compatibilidade; a Fábrica sempre passa a espinha do pedagogo.
+export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, necessidadeMundo?: string }): Roteiro {
   const c = ELENCO[chaveTema(pedido.tema)]
-  const alvo = ALVO[pedido.dificuldade]
+  const alvo = espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade]
   const r: Roteiro = {
     titulo: `${c.nome} e ${c.item}`,
     sinopse: `${c.nome}, ${c.papel} ${c.onde}, tem um problema — e só a criança pode ajudar juntando ${alvo} ${c.item}.`,

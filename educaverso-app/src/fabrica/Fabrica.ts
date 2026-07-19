@@ -7,6 +7,7 @@
 import Phaser from 'phaser'
 import { FaseGrid } from '../rpg/FaseGrid'
 import { PedidoAtividade, DISCIPLINAS, DIFICULDADES } from './tipos'
+import { planejarPedagogia } from './pedagogo'
 import { escreverRoteiro } from './roteiro'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
 import { montarMapaFase } from './mapaFase'
@@ -50,9 +51,14 @@ export function montarFabrica (game: Phaser.Game): void {
     }
     const parsed = PedidoAtividade.safeParse(bruto)
     if (!parsed.success) { erro.textContent = '⚠️ ' + parsed.error.issues.map(i => i.message).join('; '); return }
-    // O ROTEIRISTA monta a história inteira (validada, Portão 0)
-    let roteiro
-    try { roteiro = escreverRoteiro(parsed.data) } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
+    // 1º) o PEDAGOGO planeja a APRENDIZAGEM (progressão, dinâmica, alvo, como medir).
+    // 2º) o ROTEIRISTA veste de história EM CIMA dessa espinha. (a ordem que o Marcos exige)
+    let roteiro, espinha
+    try {
+      espinha = planejarPedagogia(parsed.data)
+      roteiro = escreverRoteiro(parsed.data, espinha)
+    } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
+    ;(window as any).__fabricaEspinha = espinha   // QA lê a espinha pedagógica
 
     // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
     const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || roteiro.kitId || KIT_PADRAO
