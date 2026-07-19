@@ -74,8 +74,8 @@ jobs:
             echo "   tamanho:"; ls -la /tmp/pack.zip
             rm -rf "$dest"; mkdir -p "$dest"
             mkdir -p /tmp/unz && rm -rf /tmp/unz/* && unzip -qq /tmp/pack.zip -d /tmp/unz || { echo "FALHOU unzip"; continue; }
-            # copia SO os PNGs (preserva a arvore relativa), descarta vetor/fonte/exemplos pesados
-            ( cd /tmp/unz && find . -type f -iname '*.png' -print0 | while IFS= read -r -d '' f; do
+            # copia PNGs + AUDIO (ogg/wav) — preserva a arvore; descarta vetor/fonte pesados
+            ( cd /tmp/unz && find . -type f \( -iname '*.png' -o -iname '*.ogg' -o -iname '*.wav' \) -print0 | while IFS= read -r -d '' f; do
                 rel="${f#./}"; mkdir -p "$OLDPWD/$dest/$(dirname "$rel")"; cp "$f" "$OLDPWD/$dest/$rel"
               done )
             # guarda a licenca se existir
