@@ -1699,3 +1699,15 @@ PlanoMissao); (d) gerador de diálogo (LLM no authoring); (e) formulário do pro
 - **Fluxo de publicação da vila:** pacote mínimo dist → blindar index → QA desktop+iphone →
   `_novo` na MAIN (worktree) → `atualizar.yml` (repo_name=vila-viva) → conferir push no log
   (`main -> main`) → link com `?v=N` novo (cache do celular é teimoso).
+
+### 🧭 Direções do Marcos (vila-viva, jul/2026) — valem p/ a plataforma
+- **"Montar o jogo todo primeiro, a pedagogia entra depois em cima" — CONFIRMADO como caminho.**
+  O motor/mundo não sabe o que é escola; a missão pedagógica PLUGA no mundo pronto (Portão 0:
+  vira problema do mundo, nunca prova). Ordem de produção: mundo gostoso → missão encaixada.
+- **Interior COMBINA com o tema** (fazenda=rústico; nada de casa moderna em vila de aldeões) —
+  MAS **"mesmo pack = tudo ok, não precisa forçar"**: coerência é a regra, perfeccionismo não.
+  Piso do interior trocado p/ palha rústica (tileset_interior_floor y~200) — reversível em 1 arquivo.
+- **Câmera:** botão VER TUDO (lupa, zoom 2 mostra o cenário inteiro — resolve "casinha cortada
+  no canto") + botão TELA CHEIA (cantoneiras). Cena UIVila separada (sem zoom), ícones pixel sem
+  texto, stopPropagation (clicar no botão não anda). Troca de zona SEMPRE restaura a visão normal.
+- vila-viva v5 no ar (?v=5). QA 21/21 + iPhone 3/3 antes de publicar, sempre.
