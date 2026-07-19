@@ -26,7 +26,12 @@ export class FaseGrid extends Phaser.Scene {
   private trocando = false                  // (QA lê) trava breve nas transições
   concluida = false                         // (QA lê)
   private prop: Record<string, number> = {}
-  private melSprites: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image }> = []
+  private melSprites: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image, v?: number, txt?: Phaser.GameObjects.Text }> = []
+  mecanica: 'contar' | 'somar' = 'contar'   // (QA lê)
+  alvoSoma = 0                              // somar: a soma exata pedida (QA lê)
+  soma = 0                                  // somar: soma atual (QA lê)
+  erros = 0                                 // somar: quantas vezes passou do alvo (QA lê)
+  private melValores: number[][] = []
   private pedrasSp?: Phaser.GameObjects.Image
   private limExterno: number[] = [0, 0, 320, 256]
   private limInterior: number[] = [336, 16, 144, 112]
@@ -124,14 +129,15 @@ export class FaseGrid extends Phaser.Scene {
     const px = this.P('pedrasX'), py = this.P('pedrasY')
     this.pedrasSp = this.add.image(px * T + T / 2, py * T + T / 2, 'pedras2').setDisplaySize(20, 18).setDepth(py * T + 20)
 
-    // MEL (4 externos + 1 no interior)
-    const addMel = (tx: number, ty: number): void => {
-      const sp = this.add.image(tx * T + T / 2, ty * T + T / 2, 'mel').setDepth(ty * T + 8)
-      this.tweens.add({ targets: sp, y: sp.y - 3, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
-      this.melSprites.push({ x: tx, y: ty, sp })
-    }
-    for (const [mx, my] of melExt) addMel(mx, my)
-    if (melInt.length) addMel(melInt[0], melInt[1])
+    // MECÂNICA da fase (vem do MAPA = dado): contar (iniciais) | somar (resolver, 3º-9º)
+    this.mecanica = (gp('mecanica') as 'contar' | 'somar') || 'contar'
+    this.alvoSoma = this.P('alvoSoma', 0)
+    this.melValores = (gp('melValores') as number[][]) || []
+
+    // MEL: contar = potes simples; somar = FICHAS com VALOR visível (a criança planeja a soma)
+    for (const [mx, my] of melExt) this.addMel(mx, my)
+    if (melInt.length) this.addMel(melInt[0], melInt[1])
+    if (this.mecanica === 'somar') for (const [mx, my, v] of this.melValores) this.addMel(mx, my, v)
 
     // HERÓI + FAZENDEIRO (personagens do grid-engine)
     const sombra = this.add.image(0, 0, 'sombra').setAlpha(0.5).setDepth(1)
@@ -189,21 +195,62 @@ export class FaseGrid extends Phaser.Scene {
     ;(window as any).__gMoving = () => this.gridEngine.isMoving('heroi')
   }
 
+  // um pote/ficha no chão; no somar, com o VALOR visível (rótulo nítido acima do item)
+  private addMel (tx: number, ty: number, v?: number): void {
+    const sp = this.add.image(tx * T + T / 2, ty * T + T / 2, 'mel').setDepth(ty * T + 8)
+    this.tweens.add({ targets: sp, y: sp.y - 3, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    let txt: Phaser.GameObjects.Text | undefined
+    if (v !== undefined) {
+      txt = this.add.text(tx * T + T / 2, ty * T - 3, String(v), { fontFamily: 'Arial', fontSize: '9px', color: '#ffffff', stroke: '#1c1206', strokeThickness: 3, resolution: 6 } as any).setOrigin(0.5, 1).setDepth(ty * T + 9)
+    }
+    this.melSprites.push({ x: tx, y: ty, sp, v, txt })
+  }
+
+  // a meta da fase foi cumprida? (contar: juntou todos | somar: fechou a soma EXATA)
+  private metaOk (): boolean { return this.mecanica === 'somar' ? this.soma === this.alvoSoma : this.mel >= this.melAlvo }
+
   private aoEntrarTile (tx: number, ty: number): void {
-    // pega mel
+    // pega mel/ficha
     const i = this.melSprites.findIndex(m => m.x === tx && m.y === ty)
-    if (i >= 0) { const m = this.melSprites[i]; m.sp.destroy(); this.melSprites.splice(i, 1); this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= this.melAlvo) this.mostraBalao(this.plano?.emoji ?? '🍯', this.plano?.juntouTudo ?? `Você juntou os ${this.melAlvo}! Leve ao fazendeiro.`) }
+    if (i >= 0) {
+      const m = this.melSprites[i]
+      m.sp.destroy(); m.txt?.destroy(); this.melSprites.splice(i, 1)
+      if (this.mecanica === 'somar') this.pegaFicha(m.v ?? 0)
+      else { this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= this.melAlvo) this.mostraBalao(this.plano?.emoji ?? '🍯', this.plano?.juntouTudo ?? `Você juntou os ${this.melAlvo}! Leve ao fazendeiro.`) }
+    }
     // entrar na casa: câmera FIXA e centralizada na sala (sala pequena = 1 tela)
     if (this.local === 'fase' && tx === this.P('portaX') && ty === this.P('portaY') && !this.trocando) return this.transita(() => { this.local = 'casa'; this.gridEngine.setPosition('heroi', { x: this.P('intEntraX'), y: this.P('intEntraY') }); this.camInterior() })
     // sair da casa: câmera volta a seguir o herói no EXTERNO
     if (this.local === 'casa' && tx === this.P('intSaiX') && ty === this.P('intSaiY') && !this.trocando) return this.transita(() => { this.local = 'fase'; this.gridEngine.setPosition('heroi', { x: this.P('portaX'), y: this.P('portaY') + 1 }); this.camExterno() })
-    // entrega ao fazendeiro (encostar) quando tem os 5
-    if (!this.entregou && this.mel >= this.melAlvo && this.local === 'fase') {
+    // entrega ao fazendeiro (encostar) quando a meta está cumprida
+    if (!this.entregou && this.metaOk() && this.local === 'fase') {
       const d = Math.abs(tx - this.P('fazX')) + Math.abs(ty - this.P('fazY'))
       if (d <= 1) this.entrega()
     }
     // vitória: pisou na saída já aberta
     if (this.entregou && !this.concluida && tx === this.P('pedrasX') && ty === this.P('pedrasY')) this.vitoria()
+  }
+
+  // SOMAR: pegou uma ficha de valor v. Fechou exato = clímax; PASSOU = ERRO REAL
+  // (falha produtiva: registra no domínio, o mentor PERGUNTA, e as fichas voltam).
+  private pegaFicha (v: number): void {
+    this.soma += v
+    this.tom(420 + this.soma * 24, 0.12, 'square', 0.15)
+    if (this.soma === this.alvoSoma) {
+      this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', this.plano?.juntouTudo ?? `Exatamente ${this.alvoSoma}! Fechou a conta — leve pra mim!`)
+    } else if (this.soma > this.alvoSoma) {
+      this.erros++
+      try { salva('local', registra(carrega('local'), 'somar', false, Date.now())) } catch { /* sem storage */ }
+      const estourou = this.soma
+      this.cameras.main.shake(200, 0.006); this.tom(150, 0.3, 'sawtooth', 0.16)
+      this.mostraBalao('🤔', `Passou! Deu ${estourou}, e eu preciso de ${this.alvoSoma}. Quanto passou? Quais fichas fecham a conta certinha?`)
+      this.soma = 0
+      // as fichas VOLTAM (errar = tentar de novo sem punição — nunca "game over")
+      for (const m of this.melSprites) { m.sp.destroy(); m.txt?.destroy() }
+      this.melSprites = []
+      for (const [mx, my, val] of this.melValores) this.addMel(mx, my, val)
+    }
+    this.atualizaHud()
   }
 
   private entrega (): void {
@@ -219,9 +266,9 @@ export class FaseGrid extends Phaser.Scene {
   private vitoria (): void {
     if (this.concluida) return
     this.concluida = true
-    // MEDE + ADAPTA: registra o domínio do KC (concluiu contando certo = sinal positivo).
-    // (v1: concluir é sinal fraco; o "check de transferência" com erro possível vem depois.)
-    try { const kc = 'contar'; const p = carrega('local'); salva('local', registra(p, kc, true, Date.now())) } catch { /* sem storage: segue */ }
+    // MEDE + ADAPTA: registra o domínio do KC da mecânica jogada. No somar os ERROS já
+    // entraram um a um (cada estouro = observação negativa); concluir = observação positiva.
+    try { salva('local', registra(carrega('local'), this.mecanica, true, Date.now())) } catch { /* sem storage: segue */ }
     this.cameras.main.flash(400, 255, 255, 200)
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
     this.mostraBalao('🌟', this.plano?.vitoria ?? 'Fase 1 concluída! (a próxima aventura entra aqui)')
@@ -271,8 +318,14 @@ export class FaseGrid extends Phaser.Scene {
 
   private atualizaHud (): void {
     if (this.concluida) return
+    if (this.entregou) { this.hud.setText('Siga para a saída à direita →'); return }
+    if (this.mecanica === 'somar') {
+      const falta = this.alvoSoma - this.soma
+      this.hud.setText(`Soma: ${this.soma} de ${this.alvoSoma}` + (falta > 0 ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
+      return
+    }
     const falta = Math.max(0, this.melAlvo - this.mel)
-    this.hud.setText(this.entregou ? 'Siga para a saída à direita →' : `Mel: ${this.mel}/${this.melAlvo}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
+    this.hud.setText(`Mel: ${this.mel}/${this.melAlvo}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
   }
 
   private balaoTimer?: Phaser.Time.TimerEvent

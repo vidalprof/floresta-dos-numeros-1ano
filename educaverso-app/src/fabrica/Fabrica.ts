@@ -13,7 +13,8 @@ import { carrega } from './motor-adaptativo'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
 import { montarMapaFase } from './mapaFase'
 
-const ANOS = ['Pré', '1º ano', '2º ano', '3º ano', '4º ano', '5º ano']
+// do PRÉ ao 9º (a exigência do Marcos): a MECÂNICA muda com o ano — o pedagogo decide
+const ANOS = ['Pré', '1º ano', '2º ano', '3º ano', '4º ano', '5º ano', '6º ano', '7º ano', '8º ano', '9º ano']
 const TEMAS = ['fazenda', 'floresta', 'espaço', 'mar']
 
 export function montarFabrica (game: Phaser.Game): void {
@@ -55,20 +56,32 @@ export function montarFabrica (game: Phaser.Game): void {
     // 1º) o PEDAGOGO planeja a APRENDIZAGEM (progressão, dinâmica, alvo, como medir).
     // 1.5) ADAPTA AO RITMO: ajusta o alvo pelo domínio já registrado (DDA/ZDP) ANTES da história,
     //      pra fala e mapa baterem. 2º) o ROTEIRISTA veste em cima. (ordem que o Marcos exige)
-    const kc = 'contar'
-    let roteiro, espinha, alvo
+    let roteiro, espinha, alvo: number, alvoSoma: number | undefined
     try {
       espinha = planejarPedagogia(parsed.data)
-      alvo = espinha.alvo
+      const kc = espinha.mecanica                       // o domínio é POR mecânica/KC
+      alvo = espinha.alvo; alvoSoma = espinha.alvoSoma
       const pk = carrega('local')[kc]?.pKnown
-      if (pk !== undefined) { if (pk >= 0.8) alvo = Math.min(9, alvo + 1); else if (pk < 0.4) alvo = Math.max(2, alvo - 1) }
-      roteiro = escreverRoteiro(parsed.data, { alvo, necessidadeMundo: espinha.necessidadeMundo })
+      if (pk !== undefined) {
+        if (espinha.mecanica === 'somar') {
+          // somar: sobe/desce de TIER (8 -> 12 -> 18) conforme o domínio
+          const tiers = [8, 12, 18]
+          let i = Math.max(0, tiers.indexOf(alvoSoma ?? 12))
+          if (pk >= 0.8) i = Math.min(tiers.length - 1, i + 1)
+          else if (pk < 0.4) i = Math.max(0, i - 1)
+          alvoSoma = tiers[i]
+        } else {
+          if (pk >= 0.8) alvo = Math.min(9, alvo + 1); else if (pk < 0.4) alvo = Math.max(2, alvo - 1)
+        }
+      }
+      roteiro = escreverRoteiro(parsed.data, { alvo, alvoSoma, mecanica: espinha.mecanica, necessidadeMundo: espinha.necessidadeMundo })
     } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
-    ;(window as any).__fabricaEspinha = espinha; (window as any).__fabricaAlvo = alvo   // QA lê
+    ;(window as any).__fabricaEspinha = espinha
+    ;(window as any).__fabricaAlvo = espinha.mecanica === 'somar' ? alvoSoma : alvo   // QA lê
 
     // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
     const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || roteiro.kitId || KIT_PADRAO
-    const mapa = montarMapaFase({ melAlvo: alvo, kitId })
+    const mapa = montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma })
     const key = 'mapa_fabrica'
     if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
     game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)

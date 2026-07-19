@@ -18,8 +18,8 @@ export const Roteiro = z.object({
   sinopse: z.string().min(5),
   personagem: z.object({ nome: z.string().min(2), emoji: z.string().min(1) }),
   kitId: z.string().min(2),                 // tema visual
-  mecanica: z.literal('contar'),
-  alvo: z.number().int().min(2).max(9),
+  mecanica: z.enum(['contar', 'somar']),
+  alvo: z.number().int().min(2).max(20),    // contar: qtde | somar: a soma exata
   item: z.string().min(2),                  // "potes de mel", "cristais"...
   falas: z.object({
     abertura: z.string().min(5),            // narração do mundo (quem, onde)
@@ -50,24 +50,36 @@ const chaveTema = (t: string): string => {
 // não decide alvo nem dinâmica (isso é do pedagogo); só VESTE de mundo/personagem, com o
 // conceito DENTRO da ação e o problema primeiro (Portão 0). `espinha` é opcional só p/ retro-
 // compatibilidade; a Fábrica sempre passa a espinha do pedagogo.
-export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, necessidadeMundo?: string }): Roteiro {
+export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, alvoSoma?: number, mecanica?: 'contar' | 'somar', necessidadeMundo?: string }): Roteiro {
   const c = ELENCO[chaveTema(pedido.tema)]
-  const alvo = espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade]
+  const mecanica = espinha?.mecanica ?? 'contar'
+  const somar = mecanica === 'somar'
+  const alvo = somar ? (espinha?.alvoSoma ?? 12) : (espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade])
   const r: Roteiro = {
-    titulo: `${c.nome} e ${c.item}`,
-    sinopse: `${c.nome}, ${c.papel} ${c.onde}, tem um problema — e só a criança pode ajudar juntando ${alvo} ${c.item}.`,
+    titulo: somar ? `${c.nome} e a conta exata` : `${c.nome} e ${c.item}`,
+    sinopse: somar
+      ? `${c.nome}, ${c.papel} ${c.onde}, precisa de ${c.item} que somem exatamente ${alvo} — só planejando a combinação certa dá.`
+      : `${c.nome}, ${c.papel} ${c.onde}, tem um problema — e só a criança pode ajudar juntando ${alvo} ${c.item}.`,
     personagem: { nome: c.nome, emoji: c.emoji },
     kitId: c.kitId,
-    mecanica: 'contar',
+    mecanica,
     alvo,
     item: c.item,
-    falas: {
-      abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, corre até você, aflito.`,
-      pedido: `Oi! Preciso de ${alvo} ${c.item} para a festa e não dou conta sozinho. Você conta e junta comigo?`,
-      juntouTudo: `Isso! ${alvo} ${c.item}! Você contou tudo certinho. Leva pra mim, corre!`,
-      entrega: `Muito obrigado! Olha — o caminho que estava fechado se abriu pra você. Vai lá!`,
-      vitoria: `Você salvou a festa de ${c.nome}! E tem uma nova aventura te esperando adiante…`
-    }
+    falas: somar
+      ? {
+          abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, olha para umas fichas numeradas, confuso.`,
+          pedido: `Cada ficha carrega um número. Preciso que a soma feche EXATAMENTE em ${alvo} — nem mais, nem menos. Quais você escolhe pra fechar essa conta comigo?`,
+          juntouTudo: `Exatamente ${alvo}! Você fechou a conta certinha. Traz aqui, rápido!`,
+          entrega: `Conta fechada, problema resolvido! Olha — o caminho que estava trancado se abriu. Vai!`,
+          vitoria: `Você resolveu o problema de ${c.nome} planejando a soma exata! Uma nova missão te espera adiante…`
+        }
+      : {
+          abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, corre até você, aflito.`,
+          pedido: `Oi! Preciso de ${alvo} ${c.item} para a festa e não dou conta sozinho. Você conta e junta comigo?`,
+          juntouTudo: `Isso! ${alvo} ${c.item}! Você contou tudo certinho. Leva pra mim, corre!`,
+          entrega: `Muito obrigado! Olha — o caminho que estava fechado se abriu pra você. Vai lá!`,
+          vitoria: `Você salvou a festa de ${c.nome}! E tem uma nova aventura te esperando adiante…`
+        }
   }
   return Roteiro.parse(r)          // valida (inclui a trava do Portão 0)
 }

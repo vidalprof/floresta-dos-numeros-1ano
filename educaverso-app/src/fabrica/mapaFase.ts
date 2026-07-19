@@ -9,8 +9,18 @@
 import { getKit } from './kits'
 
 export interface PlanoMapa {
-  melAlvo: number          // quantos itens juntar no total (inclui 1 dentro da casa)
+  melAlvo: number          // contar: quantos itens juntar (inclui 1 dentro da casa)
   kitId?: string           // tema visual (kit); default = Vilarejo
+  mecanica?: 'contar' | 'somar'
+  alvoSoma?: number        // somar: a soma exata (8 | 12 | 18)
+}
+
+// somar: fichas por tier — 3 valores que FECHAM a soma + 2 distratores (que estouram).
+// Determinístico (QA reproduz); várias combinações podem fechar, e isso é pedagógico.
+const FICHAS_SOMA: Record<number, { sol: number[], dis: number[] }> = {
+  8: { sol: [1, 3, 4], dis: [6, 5] },
+  12: { sol: [3, 4, 5], dis: [7, 6] },
+  18: { sol: [4, 6, 8], dis: [9, 7] }
 }
 
 const T = 16
@@ -78,9 +88,20 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const candidatos: number[][] = [[6, 6], [13, 5], [8, 10], [14, 12], [12, 8], [5, 12], [16, 11], [7, 4]]
   const ocupado = (x: number, y: number): boolean =>
     colis[y * W + x] !== 0 || (x === fazendeiro.x && y === fazendeiro.y) || (x === porta.x && y === porta.y)
+  const somar = plano.mecanica === 'somar'
+  const alvoSoma = somar ? (FICHAS_SOMA[plano.alvoSoma ?? 12] ? (plano.alvoSoma ?? 12) : 12) : 0
   const melExternos: number[][] = []
-  for (const c of candidatos) { if (melExternos.length >= melAlvo - 1) break; if (!ocupado(c[0], c[1])) melExternos.push(c) }
-  const melInterno = [saiSalaX, IY0 + 2]
+  const melValores: number[][] = []            // somar: [x, y, valor]
+  if (somar) {
+    // 5 fichas: intercala solução e distrator em posições livres (determinístico p/ o QA)
+    const f = FICHAS_SOMA[alvoSoma]
+    const valores = [f.sol[0], f.dis[0], f.sol[1], f.dis[1], f.sol[2]]
+    const livres = candidatos.filter(c => !ocupado(c[0], c[1]))
+    for (let i = 0; i < valores.length && i < livres.length; i++) melValores.push([livres[i][0], livres[i][1], valores[i]])
+  } else {
+    for (const c of candidatos) { if (melExternos.length >= melAlvo - 1) break; if (!ocupado(c[0], c[1])) melExternos.push(c) }
+  }
+  const melInterno = somar ? [] : [saiSalaX, IY0 + 2]
 
   // DECOR (enfeites como objetos — o motor só renderiza o que o mapa manda)
   let oid = 1
@@ -113,6 +134,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
       Pi('intEntraX', interiorEntra.x), Pi('intEntraY', interiorEntra.y),
       Pi('intSaiX', interiorSai.x), Pi('intSaiY', interiorSai.y),
       Ps('melExternos', melExternos), Ps('melInterno', melInterno),
+      Ps('mecanica', somar ? 'somar' : 'contar'), Pi('alvoSoma', alvoSoma), Ps('melValores', melValores),
       Ps('arvores', arvores), Ps('interior', { x0: IX0, y0: IY0, w: IW, h: IH })
     ]
   }
