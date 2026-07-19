@@ -70,6 +70,40 @@ await page.evaluate(() => (window).__tpA(43 * 16, 41 * 16))
 await page.waitForTimeout(800)
 await page.screenshot({ path: OUT + '/qa_a_centro.png' })
 
+console.log('== ENTRA NA CASA DO AUTOR (porta -> interior) ==')
+await page.evaluate(() => (window).__tpA(29 * 16 + 8, 44 * 16 + 8))     // em frente à porta
+await page.evaluate(() => (window).__andaA(29 * 16 + 8, 43 * 16))       // sobe até a soleira
+await page.waitForFunction(() => (window).__mundoA.local === 'casa', { timeout: 12000 }).catch(() => {})
+const dentro = await page.evaluate(() => (window).__mundoA.local)
+ok(dentro === 'casa', `ENTROU no interior da casa (${dentro})`)
+await page.waitForTimeout(800)
+const semMiss = await page.evaluate(() => (window).__mundoA.children.list
+  .filter(o => o.texture && (o.texture.key === '__MISSING' || o.texture.key === '__DEFAULT')).length)
+ok(semMiss === 0, `interior sem textura faltando (${semMiss})`)
+// REGRA: os móveis do interior TÊM que estar VISÍVEIS (não afundados sob o piso).
+// Bug pego: sala em Y negativo -> depth=Y do mundo = negativo -> móvel some.
+const moveis = await page.evaluate(() => (window).__mundoA.children.list
+  .filter(o => o.frame && o.frame.texture && o.frame.texture.key === 'mundo' && o.frame.name !== 'tapete')
+  .map(o => ({ nome: o.frame.name, depth: o.depth })))
+ok(moveis.length >= 2 && moveis.every(m => m.depth > 0),
+  `móveis do interior VISÍVEIS (depth>0): ${moveis.map(m => m.nome + '=' + m.depth).join(', ')}`)
+await page.screenshot({ path: OUT + '/qa_a_interior.png' })
+await page.evaluate(() => (window).__andaA((window).__mundoA.heroi.sp.x, (window).__mundoA.heroi.sp.y + 40))
+await page.waitForFunction(() => (window).__mundoA.local === 'mundo', { timeout: 12000 }).catch(() => {})
+const voltou = await page.evaluate(() => (window).__mundoA.local)
+ok(voltou === 'mundo', `SAIU de volta pro mundo (${voltou})`)
+
+console.log('== CÂMERA presa ao terreno (herói nunca some na borda de baixo) ==')
+// leva o herói pro CANTO inferior JOGÁVEL (dentro do terreno) e confere que a
+// câmera o mantém na tela (era o bug: ele sumia embaixo)
+await page.evaluate(() => { const t = (window).__mundoA.terreno; (window).__tpA(t.x + t.w / 2, t.y + t.h - 24) })
+await page.waitForTimeout(1800)                                          // câmera (follow suave) assenta
+const dentroT = await page.evaluate(() => {
+  const v = (window).__mundoA, h = v.heroi.sp, cam = v.cameras.main
+  return h.x >= cam.worldView.x && h.x <= cam.worldView.right && h.y >= cam.worldView.y && h.y <= cam.worldView.bottom
+})
+ok(dentroT, 'herói visível no canto inferior do terreno (câmera segura)')
+
 console.log('== ERROS ==')
 const er = erros.filter(e => !/favicon/.test(e))
 ok(er.length === 0, `zero erros/404 (${er.length})`)

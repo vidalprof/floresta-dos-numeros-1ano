@@ -86,3 +86,17 @@ Tudo opaco — camada única. Moldura de floresta: grama 245 + blob verde + árv
   B=43 BR=44, entorno=50 (parede escura). A PORTA é um VÃO no muro de baixo. Câmera do
   interior: zoom 4 + bounds colados (sala enche a tela; nunca "mar preto").
 - backgroundColor do jogo TEM que casar com a moldura escura (#0e0c12) — verde vazava no vão.
+
+## Lições v8/v9 — Mundo do Autor (mapa oficial no motor)
+- LER O AUTOR > montar à mão: o mapa da vila veio do `map_village.tscn` (Godot) do próprio
+  pixel-boy, decodificado tile a tile p/ `mapa_autor.json` (4 camadas: chão, paredes, base
+  ABAIXO do herói, topo/copas POR CIMA). Fórmula PackedInt32Array em referencia/COMO-LER.md.
+- CÂMERA presa ao TERRENO jogável (bbox de chão>=0), não ao grid inteiro — senão o herói
+  "some" na borda andando pro vazio. TESTE: teleporta pro canto inferior do terreno e confere
+  que h fica dentro de cam.worldView.
+- Mundo grande que ROLA usa ENVELOP (preenche a tela, sem tarja preta); tela FIXA pequena usa FIT.
+- 🔴 DEPTH = Y DO MUNDO QUEBRA quando o objeto está em Y NEGATIVO (sala interior montada ao
+  norte do mapa, y=-260): depth negativo joga o móvel PARA BAIXO do piso (some). Usar depth
+  RELATIVO (100 + Ylocal). TESTE NOVO: móveis do interior têm depth>0 (senão afundam).
+- Entrada de casa no mundo do autor: o tile da porta (base do prédio) COLIDE; a soleira andável
+  é o tile de baixo. Gatilho de entrada vai no tile ANDÁVEL, não no desenho da porta.

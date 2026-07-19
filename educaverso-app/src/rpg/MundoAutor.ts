@@ -26,8 +26,61 @@ export class MundoAutor extends Phaser.Scene {
   private curs?: Phaser.Types.Input.Keyboard.CursorKeys
   private wasd?: Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>
   M!: MapaAutor
+  local: 'mundo' | 'casa' = 'mundo'
+  private trocando = false
+  terreno!: { x: number, y: number, w: number, h: number }
 
   constructor () { super({ key: 'MundoAutor' }) }
+
+  // monta uma sala INTERIOR (moldura wall_simple do autor + piso + móveis + porta no
+  // muro de baixo). Mesma técnica validada na Vila Viva. Devolve nada; cria os corpos.
+  montaSala (s: { x: number, y: number, tw: number, th: number }, solidos: Phaser.Physics.Arcade.StaticGroup): void {
+    const PAR = { TL: 0, T: 3, TR: 4, L: 10, R: 14, BL: 40, BdL: 41, BdR: 42, B: 43, BR: 44, ESC: 50 }
+    const cx = s.tw >> 1
+    const bloco = (x: number, y: number, w: number, h: number): void => {
+      const r = this.add.rectangle(x, y, w, h); this.physics.add.existing(r, true); solidos.add(r)
+    }
+    const tile = (ix: number, iy: number, fr: number, depth: number): void => {
+      this.add.image(s.x + ix * T + 8, s.y + iy * T + 8, 'paredes', fr).setDepth(depth)
+    }
+    this.add.rectangle(s.x + s.tw * T / 2, s.y + s.th * T / 2, s.tw * T + 192, s.th * T + 192, 0x0e0c12).setDepth(-2)
+    for (let iy = -3; iy < s.th + 3; iy++) for (let ix = -3; ix < s.tw + 3; ix++) {
+      if (!(ix >= 0 && ix < s.tw && iy >= 0 && iy < s.th)) tile(ix, iy, PAR.ESC, 0.4)
+    }
+    for (let px = s.x + T; px < s.x + (s.tw - 1) * T; px += 48) {
+      for (let py = s.y + T; py < s.y + (s.th - 1) * T; py += 48) this.add.image(px, py, 'piso').setOrigin(0).setDepth(-1)
+    }
+    this.add.image(s.x + cx * T, s.y + (s.th - 2) * T, 'piso').setOrigin(0).setDepth(-1).setCrop(0, 0, 16, 32)
+    tile(0, 0, PAR.TL, 0.45); tile(s.tw - 1, 0, PAR.TR, 0.45)
+    for (let ix = 1; ix < s.tw - 1; ix++) tile(ix, 0, PAR.T, 0.45)
+    for (let iy = 1; iy < s.th - 1; iy++) { tile(0, iy, PAR.L, 0.45); tile(s.tw - 1, iy, PAR.R, 0.45) }
+    tile(0, s.th - 1, PAR.BL, 9000); tile(s.tw - 1, s.th - 1, PAR.BR, 9000)
+    for (let ix = 1; ix < s.tw - 1; ix++) {
+      if (ix === cx) continue
+      tile(ix, s.th - 1, ix === cx - 1 ? PAR.BdL : (ix === cx + 1 ? PAR.BdR : PAR.B), 9000)
+    }
+    bloco(s.x + s.tw * T / 2, s.y + 8, s.tw * T, 16)
+    bloco(s.x + 4, s.y + s.th * T / 2, 8, s.th * T)
+    bloco(s.x + s.tw * T - 4, s.y + s.th * T / 2, 8, s.th * T)
+    bloco(s.x + (cx * T) / 2, s.y + (s.th - 1) * T + 8, cx * T, 16)
+    const wDir = (s.tw - cx - 1) * T
+    bloco(s.x + (cx + 1) * T + wDir / 2, s.y + (s.th - 1) * T + 8, wDir, 16)
+    bloco(s.x + cx * T + 8, s.y + (s.th + 1) * T + 8, 32, 16)
+    // móveis (aconchego + colisão) — encostados na parede.
+    // PROFUNDIDADE RELATIVA À SALA (dep = 100 + Y local): a sala fica em Y NEGATIVO
+    // (fora do mapa), então usar o Y do mundo daria profundidade negativa = móvel
+    // sumido embaixo do piso. dep sempre positivo, entre piso(-1) e parede-baixo(9000).
+    const dep = (y: number): number => 100 + (y - s.y)
+    this.add.image(s.x + 80, s.y + 84, 'mundo', 'tapete').setDepth(0.6)
+    const põe = (nome: string, x: number, y: number): void => {
+      this.add.image(x, y, 'mundo', nome).setOrigin(0.5, 1).setDepth(dep(y))
+      const r = this.add.rectangle(x, y - 5, 24, 10); this.physics.add.existing(r, true); solidos.add(r)
+    }
+    põe('estante', s.x + 36, s.y + 48); põe('prateleira', s.x + 76, s.y + 47)
+    this.add.image(s.x + 122, s.y + 44, 'bau', 0).setOrigin(0.5, 1).setDepth(dep(s.y + 44))
+    bloco(s.x + 122, s.y + 40, 14, 8)
+    this.add.image(s.x + 140, s.y + 46, 'jar', 0).setOrigin(0.5, 1).setDepth(dep(s.y + 46))
+  }
 
   preload (): void {
     const b = import.meta.env.BASE_URL + 'rpg/'
@@ -39,11 +92,22 @@ export class MundoAutor extends Phaser.Scene {
     this.load.spritesheet('paredes', b + 'paredes.png', { frameWidth: T, frameHeight: T })
     this.load.spritesheet('aldeia', b + 'aldeia.png', { frameWidth: T, frameHeight: T })
     this.load.image('sombra', b + 'sombra.png')
+    this.load.image('piso', b + 'piso.png')
+    this.load.image('mundo', b + 'mundo.png')
+    this.load.spritesheet('bau', b + 'bau.png', { frameWidth: 16, frameHeight: 14 })
+    this.load.spritesheet('jar', b + 'jar.png', { frameWidth: 16, frameHeight: 16 })
     this.load.json('mapa_autor', b + 'mapa_autor.json')
   }
 
   create (): void {
     const M = this.M = this.cache.json.get('mapa_autor') as MapaAutor
+
+    // frames nomeados dos móveis (recortes AUDITADOS do tileset grande)
+    const tex = this.textures.get('mundo')
+    const FR: Record<string, [number, number, number, number]> = {
+      estante: [160, 592, 33, 32], prateleira: [206, 592, 31, 31], tapete: [112, 592, 48, 48]
+    }
+    for (const [nome, [x, y, w, h]] of Object.entries(FR)) tex.add(nome, 0, x, y, w, h)
 
     // ---- as 4 camadas do autor (ordem profissional) ----
     const faz = (dados: number[][], tex: string, depth: number): Phaser.Tilemaps.TilemapLayer => {
@@ -126,8 +190,55 @@ export class MundoAutor extends Phaser.Scene {
       }
     })
 
+    // ---- limites do TERRENO jogável (não o grid inteiro — senão a câmera mostra
+    // o vazio e o herói "some" na borda). Bounding box de onde há chão. ----
+    let bx0 = M.w, bx1 = 0, by0 = M.h, by1 = 0
+    for (let y = 0; y < M.h; y++) for (let x = 0; x < M.w; x++) {
+      if (M.chao[y][x] < 0) continue
+      if (x < bx0) bx0 = x; if (x > bx1) bx1 = x
+      if (y < by0) by0 = y; if (y > by1) by1 = y
+    }
+    const TB = { x: bx0 * T, y: by0 * T, w: (bx1 - bx0 + 1) * T, h: (by1 - by0 + 1) * T }
+    this.terreno = TB
+
+    // ---- INTERIOR (casa do meio do autor — porta em ~tile 29,42) ----
+    const SALA = { x: 200, y: -260, tw: 10, th: 8 }                 // fora do terreno, ao norte
+    const PORTA = { x: 29 * T + 8, y: 43 * T + 2 }                  // soleira ANDÁVEL (tile 42 colide)
+    const solidosSala = this.physics.add.staticGroup()
+    this.montaSala(SALA, solidosSala)
+    const vaoSala = { x: SALA.x + (SALA.tw >> 1) * T + 8, y: SALA.y + (SALA.th - 1) * T + 8 }
+
+    const irPara = (dest: 'mundo' | 'casa'): void => {
+      if (this.trocando) return
+      this.trocando = true
+      this.alvo = null; this.heroi.sp.setVelocity(0, 0)
+      this.cameras.main.fadeOut(220, 14, 12, 18)
+      this.cameras.main.once('camerafadeoutcomplete', () => {
+        this.local = dest
+        if (dest === 'casa') {
+          this.heroi.sp.setPosition(vaoSala.x, vaoSala.y - 28)
+          this.cameras.main.setZoom(4)
+          this.cameras.main.setBounds(SALA.x - 48, SALA.y - 32, SALA.tw * T + 96, SALA.th * T + 64)
+        } else {
+          this.heroi.sp.setPosition(PORTA.x, PORTA.y + 16)
+          this.cameras.main.setZoom(3)
+          this.cameras.main.setBounds(TB.x, TB.y, TB.w, TB.h)
+        }
+        this.cameras.main.startFollow(this.heroi.sp, true, 0.12, 0.12)
+        this.cameras.main.centerOn(this.heroi.sp.x, this.heroi.sp.y)
+        this.cameras.main.fadeIn(220, 14, 12, 18)
+        this.time.delayedCall(380, () => { this.trocando = false })
+      })
+    }
+    const zEntra = this.add.zone(PORTA.x, PORTA.y, 12, 8); this.physics.add.existing(zEntra, true)
+    this.physics.add.overlap(this.heroi.sp, zEntra, () => { if (this.local === 'mundo') irPara('casa') })
+    const zSai = this.add.zone(vaoSala.x, vaoSala.y - 2, 16, 12); this.physics.add.existing(zSai, true)
+    this.physics.add.overlap(this.heroi.sp, zSai, () => { if (this.local === 'casa') irPara('mundo') })
+    for (const a of [this.heroi, ...this.npcs]) this.physics.add.collider(a.sp, solidosSala)
+    ;(window as any).__irPara = irPara
+
     // ---- câmera ----
-    this.cameras.main.setBounds(0, 0, M.w * T, M.h * T)
+    this.cameras.main.setBounds(TB.x, TB.y, TB.w, TB.h)
     this.cameras.main.setZoom(3).startFollow(this.heroi.sp, true, 0.12, 0.12)
 
     // ---- controles: toque + teclado ----

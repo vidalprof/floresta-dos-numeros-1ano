@@ -43,7 +43,7 @@ const jogo = new Phaser.Game({
   backgroundColor: (usarRpg || usarAutor) ? '#0e0c12' : '#060c18',
   // RPG usa FIT (o QUADRO INTEIRO do jogo aparece, com faixas se sobrar tela —
   // pedido do Marcos: nada de cortar os cantos). Mundos ilustrados seguem ENVELOP.
-  scale: { mode: (usarRpg || usarAutor) ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
+  scale: { mode: usarAutor ? Phaser.Scale.ENVELOP : (usarRpg ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP), autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
   fps: { target: 30, forceSetTimeOut: true },
   // pixel art 16px: nearest + roundPixels (nitido); mundos ilustrados: antialias.
   render: (usarRpg || usarAutor)
