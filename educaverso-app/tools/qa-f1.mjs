@@ -61,6 +61,15 @@ await page.evaluate(() => (window).__tp1(4 * 16, 4 * 16 + 26)); await page.evalu
 await esp(() => (window).__fase1.local === 'casa')
 ok(await page.evaluate(() => (window).__fase1.local) === 'casa', 'entrou na casa (exato na porta)')
 await esp(() => !(window).__fase1.trocando, 3000)
+// 🔴 BUG REAL do Marcos: herói INVISÍVEL na casa (depth negativo = afunda no piso).
+// Regra nova: dentro da casa o herói tem depth POSITIVO e está DENTRO da tela.
+const heroiVisivel = await page.evaluate(() => {
+  const f = (window).__fase1, h = f.heroi.sp, cam = f.cameras.main
+  const noView = h.x >= cam.worldView.x && h.x <= cam.worldView.right && h.y >= cam.worldView.y && h.y <= cam.worldView.bottom
+  return { depth: h.depth, visivel: h.visible, alpha: h.alpha, noView }
+})
+ok(heroiVisivel.depth > 0 && heroiVisivel.visivel && heroiVisivel.alpha > 0.5 && heroiVisivel.noView,
+  `herói VISÍVEL na casa (depth ${Math.round(heroiVisivel.depth)}>0, na tela ${heroiVisivel.noView})`)
 const melCasa = await page.evaluate(() => (window).__fase1.children.list.filter(o => o.texture && o.texture.key === 'mel' && o.x > 300).map(o => ({ x: o.x, y: o.y }))[0])
 ok(!!melCasa, 'há 1 pote DENTRO da casa')
 await page.evaluate(([x, y]) => (window).__tp1(x, y + 12), [melCasa.x, melCasa.y]); await page.evaluate(([x, y]) => (window).__anda1(x, y), [melCasa.x, melCasa.y])

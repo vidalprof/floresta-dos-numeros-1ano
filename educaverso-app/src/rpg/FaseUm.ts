@@ -162,6 +162,11 @@ export class FaseUm extends Phaser.Scene {
     // --- câmera: mostra a TELA INTEIRA emoldurada (fundo escuro = a moldura) ---
     this.faseW = W; this.faseH = H
     this.cameras.main.setBounds(0, 0, W, H).setZoom(3).centerOn(W / 2, H / 2)
+    // MATTE (moldura preta em cima da tela): cobre TUDO fora do quadro da fase —
+    // garante que NADA vaze visualmente (grama/interior/o que for), hoje e sempre.
+    for (const [mx, my, mw, mh] of [[512, 44, 1200, 100], [512, 724, 1200, 100], [14, 384, 40, 800], [1010, 384, 40, 800]] as const) {
+      this.add.rectangle(mx, my, mw, mh, 0x0e0c12).setScrollFactor(0).setDepth(30000)
+    }
 
     // --- música (começa no 1º gesto — política do navegador) ---
     this.musica = this.sound.add('musica', { loop: true, volume: 0.45 })
@@ -352,7 +357,10 @@ export class FaseUm extends Phaser.Scene {
     const vx = (h.sp.body as Phaser.Physics.Arcade.Body).velocity.x, vy = (h.sp.body as Phaser.Physics.Arcade.Body).velocity.y
     if (Math.abs(vx) + Math.abs(vy) > 4) { this.dir = Math.abs(vx) > Math.abs(vy) ? (vx > 0 ? 'dir' : 'esq') : (vy > 0 ? 'baixo' : 'cima'); h.sp.play('heroi-anda-' + this.dir, true) }
     else if (h.sp.anims.isPlaying) { h.sp.stop(); h.sp.setFrame(({ baixo: 0, cima: 1, esq: 2, dir: 3 } as Record<string, number>)[this.dir]) }
-    h.sp.setDepth(h.sp.y); h.sombra.setPosition(h.sp.x + 1, h.sp.y + 7).setDepth(h.sp.y - 0.5)
+    // PROFUNDIDADE zone-aware: dentro da casa (Y NEGATIVO) usar depth relativo à sala
+    // (senão depth negativo joga o herói PARA BAIXO do piso = INVISÍVEL). Bug real do Marcos.
+    const dz = this.local === 'casa' ? (100 + (h.sp.y - this.salaY)) : h.sp.y
+    h.sp.setDepth(dz); h.sombra.setPosition(h.sp.x + 1, h.sp.y + 7).setDepth(dz - 0.5)
     // balão HTML: acompanha o personagem e some no tempo
     if (this.balaoDom.style.display !== 'none') { this.posicionaBalao(); if (this.time.now > this.balaoAte) { this.balaoDom.style.display = 'none'; this.balaoAlvo = null } }
     this.fazendeiro.sombra.setPosition(this.fazendeiro.sp.x + 1, this.fazendeiro.sp.y + 7).setDepth(this.fazendeiro.sp.y - 0.5)
