@@ -1668,3 +1668,17 @@ PlanoMissao); (d) gerador de diálogo (LLM no authoring); (e) formulário do pro
 - Licenças: Ninja Adventure é CC0 (uso comercial, sem atribuição, pode viver em repo público).
   Filtro pra QUALQUER pack novo: a licença tem que permitir REDISTRIBUIR os arquivos em repo
   público (CC0/CC-BY sim; "licença própria itch" quase sempre NÃO).
+
+### 🏘️ VILA VIVA publicada — 1ª prova PÚBLICA do motor RPG (jul/2026)
+- **Link:** https://vidalprof.github.io/vila-viva/ (repo `vila-viva`, criado pela fábrica;
+  Pages confirmado `built`, erro=nenhum). Lição: o Marcos vê as entregas por LINK publicado —
+  todo marco relevante deve virar link, não imagem no chat.
+- Conteúdo: cena `VilaViva` (educaverso-app/src/rpg/VilaViva.ts) — tilemap Phaser real
+  (grama G(3,4)+blob 3x3 do tileset_floor NA), props recortados por segmentação com colisão
+  pelos pés, herói (char 25) tap-to-move com caminhada 4 direções frame a frame, NPCs neutros
+  (fazendeiro 5, menina 17, avô 9) + dog passeando, sombras, depth por Y, zoom 3 pixelArt.
+- Boot: `?rpg` na URL do app OU `window.__BOOT='rpg'` injetado no index publicado. UI legada
+  da Ilha é escondida no boot RPG (bug pego pelo MEU olho no screenshot do QA — o robô não vê capa).
+- Publicação: pacote mínimo dist (index+assets+rpg, 1,7MB) testado pelo robô ANTES; `_novo` na
+  MAIN via worktree (fluxo oficial fábrica) + `fabrica.yml` (repo_name=vila-viva) + `deploy-pages.yml`.
+- QA `tools/qa-vila.mjs`: 12/12 (anda 4 direções com anim certa, casa bloqueia, 4 NPCs, zero 404).
