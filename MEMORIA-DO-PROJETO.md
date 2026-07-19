@@ -161,6 +161,16 @@
 >   auditor + save) → **Fase 2 a "camada incrível"** (poses+lip-sync+piscar+emoções + módulo mundo-vivo +
 >   contagem-acesa → 1 cena de referência) → Fase 3 1ª atividade testada com crianças → Fase 4 escala
 >   (jornada 55min, Computação "programe o robô", avaliação→documentos).
+> - **⭐ DECISÃO DO MARCOS (jul/2026): estúdio 100% GRÁTIS** (avaliou upgrades pagos — ElevenLabs/LoRA/
+>   Suno/packs — e escolheu ficar no gratuito). Substitutos oficiais: **voz** = elenco edge-tts multi-voz
+>   pt-BR (Antonio/Francisca/Thalita) + direção de atuação por prosódia (rate/pitch/volume por fala) +
+>   pitch-shift ffmpeg p/ bichos/robô; **estilo** = cápsula de estilo fixa + edição por âncora (Gemini
+>   centavos = "~de graça" pelo modelo híbrido já aprovado; zero absoluto = Pollinations c/ ressalva de
+>   nitidez); **música** = bibliotecas CC0 (Kenney Audio/FreePD/OpenGameArt/Pixabay) baixadas por
+>   workflow, loop curado por mundo, ffmpeg — TRILHA MUSICAL entra já na fatia vertical; **packs pagos**
+>   = dispensados (nossa arte IA é mais coerente). Alvo do produto reafirmado: **MUNDO EXPLORÁVEL**
+>   (floresta/cabana/barco era só exemplo; tema livre — 1º mundo = POMAR por máximo reuso). Se um dia
+>   pagar ElevenLabs: trocar voz = só regenerar MP3s (mesmos ids, zero retrabalho de código).
 
 ## 🧭 FORMATO NOVO — APP-TRILHA "A VILA QUE ACORDA" (Duolingo-com-alma, pré→9º, 2026-07)
 > Pasta `_trilha/` → publicada em **https://vidalprof.github.io/vila-que-acorda/** (via `fabrica.yml`/
