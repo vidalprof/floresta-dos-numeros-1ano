@@ -8,6 +8,7 @@ import Phaser from 'phaser'
 import { FaseGrid } from '../rpg/FaseGrid'
 import { PedidoAtividade, planejar, DISCIPLINAS, DIFICULDADES } from './tipos'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
+import { montarMapaFase } from './mapaFase'
 
 const ANOS = ['Pré', '1º ano', '2º ano', '3º ano', '4º ano', '5º ano']
 const TEMAS = ['fazenda', 'floresta', 'espaço', 'mar']
@@ -53,19 +54,17 @@ export function montarFabrica (game: Phaser.Game): void {
 
     // monta o mapa NA HORA e injeta no cache do Phaser
     const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || KIT_PADRAO
-    import('./mapaFase').then(({ montarMapaFase }) => {
-      const mapa = montarMapaFase({ melAlvo: plano.melAlvo, kitId })
-      const key = 'mapa_fabrica'
-      if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
-      game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)
-      host.style.display = 'none'
-      if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
-      game.scene.add('FaseGrid', FaseGrid, true, {
-        mapaKey: key, kitId,
-        plano: { problema: plano.problema, entrega: plano.entrega, vitoria: plano.vitoria, emoji: plano.emoji }
-      })
-      ;(window as any).__fabricaPlano = plano   // QA lê o que foi gerado
+    const mapa = montarMapaFase({ melAlvo: plano.melAlvo, kitId })
+    const key = 'mapa_fabrica'
+    if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
+    game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)
+    host.style.display = 'none'
+    if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
+    game.scene.add('FaseGrid', FaseGrid, true, {
+      mapaKey: key, kitId,
+      plano: { problema: plano.problema, entrega: plano.entrega, vitoria: plano.vitoria, emoji: plano.emoji }
     })
+    ;(window as any).__fabricaPlano = plano   // QA lê o que foi gerado
   }
 
   ;(window as any).__fabrica = { gerar: () => (document.getElementById('fgerar') as HTMLButtonElement).click(), set: (id: string, v: string) => { (document.getElementById(id) as HTMLInputElement).value = v } }

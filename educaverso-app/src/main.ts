@@ -23,6 +23,7 @@ import { FasesDemo } from './rpg/FasesDemo'
 import { FaseUm } from './rpg/FaseUm'
 import { FaseGrid } from './rpg/FaseGrid'
 import { GridEngine } from 'grid-engine'
+import { montarFabrica } from './fabrica/Fabrica'
 
 const q = new URLSearchParams(location.search)
 const usarIlha = q.has('ilha')
@@ -66,7 +67,7 @@ const jogo = new Phaser.Game({
 
 if (usarFabrica) {
   // FÁBRICA: o professor preenche o formulário e a fase nasce na hora (sem cena inicial).
-  jogo.events.once('ready', () => { import('./fabrica/Fabrica').then(({ montarFabrica }) => montarFabrica(jogo)) })
+  jogo.events.once('ready', () => montarFabrica(jogo))
 } else if (!usarIlha && !usarRpg && !usarAutor && !usarFases && !usarF1 && !usarGrid) {
   // Zod valida os dados ANTES de montar (dado torto não monta).
   const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : AVENTURA_FLORESTA))
