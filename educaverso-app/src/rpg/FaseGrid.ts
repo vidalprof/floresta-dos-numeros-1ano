@@ -9,6 +9,7 @@
 import Phaser from 'phaser'
 import { GridEngine } from 'grid-engine'
 import { getKit, type KitVisual } from '../fabrica/kits'
+import { carrega, salva, registra } from '../fabrica/motor-adaptativo'
 
 const T = 16
 const MEL_ALVO = 5
@@ -218,6 +219,9 @@ export class FaseGrid extends Phaser.Scene {
   private vitoria (): void {
     if (this.concluida) return
     this.concluida = true
+    // MEDE + ADAPTA: registra o domínio do KC (concluiu contando certo = sinal positivo).
+    // (v1: concluir é sinal fraco; o "check de transferência" com erro possível vem depois.)
+    try { const kc = 'contar'; const p = carrega('local'); salva('local', registra(p, kc, true, Date.now())) } catch { /* sem storage: segue */ }
     this.cameras.main.flash(400, 255, 255, 200)
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
     this.mostraBalao('🌟', this.plano?.vitoria ?? 'Fase 1 concluída! (a próxima aventura entra aqui)')
