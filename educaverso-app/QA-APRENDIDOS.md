@@ -100,3 +100,18 @@ Tudo opaco — camada única. Moldura de floresta: grama 245 + blob verde + árv
   RELATIVO (100 + Ylocal). TESTE NOVO: móveis do interior têm depth>0 (senão afundam).
 - Entrada de casa no mundo do autor: o tile da porta (base do prédio) COLIDE; a soleira andável
   é o tile de baixo. Gatilho de entrada vai no tile ANDÁVEL, não no desenho da porta.
+
+## Auditores automáticos (pedidos pelo Marcos jul/2026) — o que É e o que NÃO É confiável
+- ✅ **MOLDURA (confiável)**: nenhum sprite VISÍVEL pode vazar do quadro da fase
+  (getBounds fora de [0,W]x[0,H]). Pegou a pedra vazando SOZINHO. Regra permanente no qa-f1.
+  Filtro: pular texturas '__' (retângulos de colisão invisíveis) e HUD (scrollFactor 0).
+- ✅ **DINÂMICA JOGÁVEL (o MAIS importante, confiável)**: o robô JOGA a fase até o fim como
+  aluno (junta 5 mel → entrega → mundo muda → vitória). Se o aluno NÃO conseguisse concluir
+  por bug, o robô REPROVA e nada chega à criança. É o detector nº1 de "travou, não dá pra fazer".
+- ⚠️ **RECORTE INCOMPLETO/CORTADO (NÃO confiável por pixel)**: quando o vizinho está COLADO no
+  tileset (sem vão transparente), nenhum heurístico de pixel distingue "recorte certo ao lado do
+  vizinho" de "recorte que pegou o vizinho" — todos dão opaco dos dois lados. Testado: sliver-com-vão,
+  contar-componentes, continua-fora → todos com falso-positivo OU falso-negativo. `auditor-recortes.mjs`
+  fica ADVISORY (lista suspeitos p/ eu olhar, não trava). A rede confiável p/ corte é o SCREENSHOT
+  (Portão de Arte: olhos meus + do Marcos). Honestidade registrada: não prometer auto-detecção de corte.
+- Cada bug novo continua virando teste permanente (aprendizado automático da qualidade).
