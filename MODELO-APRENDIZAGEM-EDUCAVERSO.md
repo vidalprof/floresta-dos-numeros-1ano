@@ -1,4 +1,4 @@
-# 🎓 MODELO DE APRENDIZAGEM DO EDUVERSE — a fundação científica (documento-mestre)
+# 🎓 MODELO DE APRENDIZAGEM DO EDUCAVERSO — a fundação científica (documento-mestre)
 
 > Pedido do Marcos: uma ferramenta que a criança AME e queira voltar, que faça a APRENDIZAGEM
 > SUBIR de verdade, e que SE ADAPTE ao ritmo de cada criança — inovadora e fundamentada na

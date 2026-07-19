@@ -9,7 +9,7 @@
 ## O problema (honesto)
 As atividades premium existentes (ex.: "O Grande Circo do Teo") e o **EducaVerso** usam o modelo
 antigo: quiz, completar, arrasta-e-solta, ligar colunas. A ciência da aprendizagem (ver
-`MODELO-APRENDIZAGEM-EDUVERSE.md`) mostra que esse formato é o **fraco** — a "prova disfarçada" /
+`MODELO-APRENDIZAGEM-EDUCAVERSO.md`) mostra que esse formato é o **fraco** — a "prova disfarçada" /
 "brócolis com chocolate": engaja, mas o ganho de aprendizado é modesto. Elas **contradizem** a
 filosofia nova (problema primeiro, aprender fazendo, o mundo precisa da criança, o Byte pergunta).
 
