@@ -6,21 +6,25 @@
 // Toda a colisão vem do tile (ge_collide) e as paredes são auto-desenhadas (moldura).
 // ============================================================================
 
+import { getKit } from './kits'
+
 export interface PlanoMapa {
   melAlvo: number          // quantos itens juntar no total (inclui 1 dentro da casa)
-  tituloProp?: string      // (reservado p/ variações de cenário futuras)
+  kitId?: string           // tema visual (kit); default = Vilarejo
 }
 
 const T = 16
 const CHAO_FG = 1
 const PAR_FG = 1001
-const GRAMA = CHAO_FG + 245
-const PAR = { TL: 0, T: 3, TR: 4, L: 10, R: 14, BL: 40, B: 43, BR: 44, SOLIDO: 43 }
 const pg = (id: number): number => PAR_FG + id
 
 type Grid = number[]
 
 export function montarMapaFase (plano: PlanoMapa): object {
+  const kit = getKit(plano.kitId)
+  const GRAMA = CHAO_FG + kit.chao.grama
+  const PISO_INT = CHAO_FG + kit.chao.pisoInterno
+  const PAR = { TL: kit.paredes.TL, T: kit.paredes.T, TR: kit.paredes.TR, L: kit.paredes.L, R: kit.paredes.R, BL: kit.paredes.BL, B: kit.paredes.B, BR: kit.paredes.BR, SOLIDO: kit.paredes.solido }
   const W = 56, H = 16
   const OX0 = 0, OX1 = 19, OY0 = 0, OY1 = H - 1
   const IX0 = 45, IY0 = 1, IW = 9, IH = 7
@@ -64,7 +68,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
 
   // interior (sala) — chão + auto-parede com saída no meio de baixo
   const saiSalaX = IX0 + ((IW - 1) >> 1)
-  for (let y = IY0; y < IY0 + IH; y++) for (let x = IX0; x < IX0 + IW; x++) put(chao, x, y, GRAMA + 1)
+  for (let y = IY0; y < IY0 + IH; y++) for (let x = IX0; x < IX0 + IW; x++) put(chao, x, y, PISO_INT)
   moldura(IX0, IY0, IW, IH, (x, y) => y === IY0 + IH - 1 && x === saiSalaX)
   const interiorEntra = { x: saiSalaX, y: IY0 + IH - 2 }
   const interiorSai = { x: saiSalaX, y: IY0 + IH - 1 }
@@ -98,8 +102,8 @@ export function montarMapaFase (plano: PlanoMapa): object {
     tiledversion: '1.10.2', type: 'map', version: '1.10', width: W, height: H, tilewidth: T, tileheight: T,
     layers: [layer('chao', chao), layer('muros', muros), layer('colisao', colis, false), objLayer('decor', decor)],
     tilesets: [
-      { firstgid: CHAO_FG, name: 'chao', image: 'chao.png', imagewidth: 352, imageheight: 416, tilewidth: T, tileheight: T, columns: 22, tilecount: 22 * 26, margin: 0, spacing: 0 },
-      { firstgid: PAR_FG, name: 'paredes', image: 'paredes.png', imagewidth: 160, imageheight: 176, tilewidth: T, tileheight: T, columns: 10, tilecount: 110, margin: 0, spacing: 0, tiles: tilesProp }
+      { firstgid: CHAO_FG, name: 'chao', image: kit.imagens.chao, imagewidth: kit.chao.imagewidth, imageheight: kit.chao.imageheight, tilewidth: T, tileheight: T, columns: kit.chao.cols, tilecount: kit.chao.tilecount, margin: 0, spacing: 0 },
+      { firstgid: PAR_FG, name: 'paredes', image: kit.imagens.paredes, imagewidth: kit.paredes.imagewidth, imageheight: kit.paredes.imageheight, tilewidth: T, tileheight: T, columns: kit.paredes.cols, tilecount: kit.paredes.tilecount, margin: 0, spacing: 0, tiles: tilesProp }
     ],
     properties: [
       Pi('heroiX', 10), Pi('heroiY', 12),

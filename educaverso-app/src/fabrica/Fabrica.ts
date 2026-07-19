@@ -7,6 +7,7 @@
 import Phaser from 'phaser'
 import { FaseGrid } from '../rpg/FaseGrid'
 import { PedidoAtividade, planejar, DISCIPLINAS, DIFICULDADES } from './tipos'
+import { kitsDisponiveis, KIT_PADRAO } from './kits'
 
 const ANOS = ['Pré', '1º ano', '2º ano', '3º ano', '4º ano', '5º ano']
 const TEMAS = ['fazenda', 'floresta', 'espaço', 'mar']
@@ -25,6 +26,7 @@ export function montarFabrica (game: Phaser.Game): void {
         <label>Disciplina<br><select id="f_disc" style="width:100%">${opt(DISCIPLINAS)}</select></label>
         <label>Objetivo de aprendizagem (BNCC)<br><input id="f_obj" value="Contar quantidades até 10" style="width:100%"></label>
         <label>Tema do cenário<br><select id="f_tema" style="width:100%">${opt(TEMAS)}</select></label>
+        <label>Visual (kit de arte)<br><select id="f_kit" style="width:100%">${kitsDisponiveis().map(k => `<option value="${k.id}">${k.nome}</option>`).join('')}</select></label>
         <div style="display:flex;gap:10px">
           <label style="flex:1">Tempo (min)<br><input id="f_tempo" type="number" value="55" min="5" max="90" style="width:100%"></label>
           <label style="flex:1">Dificuldade<br><select id="f_dif" style="width:100%">${opt(DIFICULDADES)}</select></label>
@@ -50,15 +52,16 @@ export function montarFabrica (game: Phaser.Game): void {
     try { plano = planejar(parsed.data) } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
 
     // monta o mapa NA HORA e injeta no cache do Phaser
+    const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || KIT_PADRAO
     import('./mapaFase').then(({ montarMapaFase }) => {
-      const mapa = montarMapaFase({ melAlvo: plano.melAlvo })
+      const mapa = montarMapaFase({ melAlvo: plano.melAlvo, kitId })
       const key = 'mapa_fabrica'
       if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
       game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)
       host.style.display = 'none'
       if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
       game.scene.add('FaseGrid', FaseGrid, true, {
-        mapaKey: key,
+        mapaKey: key, kitId,
         plano: { problema: plano.problema, entrega: plano.entrega, vitoria: plano.vitoria, emoji: plano.emoji }
       })
       ;(window as any).__fabricaPlano = plano   // QA lê o que foi gerado

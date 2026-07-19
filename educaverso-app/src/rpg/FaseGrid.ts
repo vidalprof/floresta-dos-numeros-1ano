@@ -8,13 +8,10 @@
 // ============================================================================
 import Phaser from 'phaser'
 import { GridEngine } from 'grid-engine'
+import { getKit, type KitVisual } from '../fabrica/kits'
 
 const T = 16
 const MEL_ALVO = 5
-// recortes de props no tileset grande (mundo.png) — auditados
-const PROPS: Record<string, [number, number, number, number]> = {
-  casa_a: [0, 0, 64, 48], arvore: [0, 160, 32, 32], estante: [160, 592, 33, 32], tapete: [112, 592, 48, 48]
-}
 
 export class FaseGrid extends Phaser.Scene {
   private gridEngine!: GridEngine
@@ -39,26 +36,38 @@ export class FaseGrid extends Phaser.Scene {
   private mapaKey = 'mapa_grid'
   private melAlvo = MEL_ALVO
   private plano?: { problema?: string, entrega?: string, vitoria?: string, emoji?: string }
+  private kitId = 'vilarejo'
+  private kit!: KitVisual
 
   constructor () { super('FaseGrid') }
 
-  // recebe um mapa gerado na hora (Fábrica) + os textos do plano; senão usa o padrão
-  init (data?: { mapaKey?: string, plano?: FaseGrid['plano'] }): void {
+  // recebe um mapa gerado na hora (Fábrica) + os textos do plano + o KIT visual; senão padrão
+  init (data?: { mapaKey?: string, plano?: FaseGrid['plano'], kitId?: string }): void {
     if (data?.mapaKey) this.mapaKey = data.mapaKey
     if (data?.plano) this.plano = data.plano
+    if (data?.kitId) this.kitId = data.kitId
   }
 
   preload (): void {
     const b = import.meta.env.BASE_URL + 'rpg/'
-    for (const ch of ['heroi', 'fazendeiro']) this.load.spritesheet(ch, b + ch + '.png', { frameWidth: T, frameHeight: T })
-    this.load.spritesheet('chao', b + 'chao.png', { frameWidth: T, frameHeight: T })
-    this.load.spritesheet('paredes', b + 'paredes.png', { frameWidth: T, frameHeight: T })
-    this.load.image('mundo', b + 'mundo.png')
-    this.load.image('sombra', b + 'sombra.png')
-    this.load.image('mel', b + 'mel.png')
-    this.load.image('pedras2', b + 'pedras.png')
-    this.load.image('piso', b + 'piso.png')
-    this.load.spritesheet('bau', b + 'bau.png', { frameWidth: 16, frameHeight: 14 })
+    this.kit = getKit(this.kitId)
+    const im = this.kit.imagens
+    // ao TROCAR de kit numa mesma sessão, descarta as texturas do kit anterior
+    const anterior = this.game.registry.get('kitCarregado') as string | undefined
+    if (anterior && anterior !== this.kit.id) {
+      for (const k of ['chao', 'paredes', 'mundo', 'sombra', 'mel', 'pedras2', 'piso', 'heroi', 'fazendeiro', 'bau']) if (this.textures.exists(k)) this.textures.remove(k)
+    }
+    this.game.registry.set('kitCarregado', this.kit.id)
+    this.load.spritesheet('heroi', b + im.heroi, { frameWidth: T, frameHeight: T })
+    this.load.spritesheet('fazendeiro', b + im.fazendeiro, { frameWidth: T, frameHeight: T })
+    this.load.spritesheet('chao', b + im.chao, { frameWidth: T, frameHeight: T })
+    this.load.spritesheet('paredes', b + im.paredes, { frameWidth: T, frameHeight: T })
+    this.load.image('mundo', b + im.mundo)
+    this.load.image('sombra', b + im.sombra)
+    this.load.image('mel', b + im.mel)
+    this.load.image('pedras2', b + im.pedras)
+    this.load.image('piso', b + im.piso)
+    this.load.spritesheet('bau', b + im.bau, { frameWidth: this.kit.bauFrame[0], frameHeight: this.kit.bauFrame[1] })
     // só carrega o arquivo padrão; um mapa gerado pela Fábrica já vem no cache (init)
     if (this.mapaKey === 'mapa_grid' && !this.cache.tilemap.has('mapa_grid')) this.load.tilemapTiledJSON('mapa_grid', b + 'mapa_grid.json')
     this.load.audio('musica', b + 'musica.ogg')
@@ -75,7 +84,7 @@ export class FaseGrid extends Phaser.Scene {
 
   private montar (): void {
     const tex = this.textures.get('mundo')
-    for (const [n, [x, y, w, h]] of Object.entries(PROPS)) if (!tex.has(n)) tex.add(n, 0, x, y, w, h)
+    for (const [n, [x, y, w, h]] of Object.entries(this.kit.props)) if (!tex.has(n)) tex.add(n, 0, x, y, w, h)
 
     this.map = this.make.tilemap({ key: this.mapaKey })
     this.map.addTilesetImage('chao', 'chao')
@@ -233,11 +242,13 @@ export class FaseGrid extends Phaser.Scene {
 
   // -------- animação / hud / balão / som --------
   private criaAnimacoes (): void {
-    const mk = (key: string, col: number): void => { if (!this.anims.exists(key)) this.anims.create({ key, frames: [0, 1, 2].map(r => ({ key: 'heroi', frame: r * 4 + col })), frameRate: 6, repeat: -1 }) }
-    mk('down', 0); mk('up', 1); mk('left', 2); mk('right', 3)
+    const cols = this.kit.personagem.cols, d = this.kit.personagem.dir
+    // recria (o kit pode mudar as colunas de direção) — remove o anterior antes
+    const mk = (key: string, col: number): void => { if (this.anims.exists(key)) this.anims.remove(key); this.anims.create({ key, frames: [0, 1, 2].map(r => ({ key: 'heroi', frame: r * cols + col })), frameRate: 6, repeat: -1 }) }
+    mk('down', d.down); mk('up', d.up); mk('left', d.left); mk('right', d.right)
   }
 
-  private paradoFrame (dir: string): number { return dir === 'up' ? 1 : dir === 'left' ? 2 : dir === 'right' ? 3 : 0 }
+  private paradoFrame (dir: string): number { const d = this.kit.personagem.dir; return dir === 'up' ? d.up : dir === 'left' ? d.left : dir === 'right' ? d.right : d.down }
 
   private montaHud (): void {
     this.hud = this.add.text(this.scale.width / 2, this.scale.height - 26, '', { fontFamily: 'Arial', fontSize: '20px', color: '#fff', backgroundColor: '#0009', padding: { x: 10, y: 5 } }).setOrigin(0.5).setScrollFactor(0).setDepth(30000)
