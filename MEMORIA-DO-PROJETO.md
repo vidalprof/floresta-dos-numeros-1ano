@@ -11,6 +11,77 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 
+## ⚖️ AS LEIS FIXAS DO EDUCAVERSO + COMO A FÁBRICA FUNCIONA DE VERDADE (Marcos aprovou, 2026-07-19)
+> **LER SEMPRE antes de criar QUALQUER atividade. O Marcos cravou isto nesta sessão.**
+>
+> **A) A FÁBRICA É AQUI, COMIGO — não é app nem site que gera sozinho.**
+> O Marcos me dá **TEMA + TURMA** na conversa e **EU** produzo a atividade. O formulário
+> "clica GERAR" (`Fabrica.ts`) e a IA-no-navegador (Pollinations, `ia-conteudo.ts`) **NÃO**
+> são o caminho de produção — aquilo gera conteúdo raso ("mais do mesmo"). O **especialista de
+> verdade sou eu**, aqui, com toda a nossa pesquisa na mão. **Gerar ≠ jogar:** gerar é nosso,
+> na conversa; o app/site é só onde o **aluno joga** o resultado pronto (o link).
+>
+> **B) O ESPECIALISTA VESTE 3 CHAPÉUS numa pessoa só** (é a soma que faz a diferença):
+> **(1) professor PhD da disciplina** que o Marcos passa (sabe como o humano aprende ESTE
+> conteúdo, onde trava, o erro clássico); **(2) cientista da aprendizagem/neurociência** (projeta
+> pela nossa pesquisa, não por achismo); **(3) desenvolvedor de RPG 2D** (sabe o que dá pra
+> PROGRAMAR, então desenha o JOGO, não descreve um vídeo). O 3º chapéu é o que faz eu saber **o
+> que programar pra criança aprender de forma eficaz — onde ela NÃO é mera espectadora**.
+>
+> **C) MOTORES SÃO REUTILIZÁVEIS — NÃO é um motor por tema** (isso seria inviável; o Marcos
+> perguntou e esta é a resposta). Um jeito de aprender se repete em dezenas de conteúdos. A gente
+> constrói um **catálogo pequeno (~6–10 motores profundos)** que cobre a maior parte da BNCC;
+> cada tema novo é uma **CONFIGURAÇÃO** de motores que já existem (+ história + arte). Custo **na
+> frente e amortizado**. Motores fundos ≠ mecânicas de quiz: são **verbos de construção**
+> (repartir, equilibrar, montar, reparar, regular um medidor, ligar causa→efeito, decidir com
+> consequência, simular). **1º motor profundo a construir: "REPARTIR JUSTO"** (cortar em partes
+> iguais + medir na reta + sobrepor) → serve **frações, decimais, %, razão/proporção, divisão,
+> comparação**. Outro motor citado: **"acúmulo → limiar → consequência"** (a "Máquina da Revolta"
+> da Revolução Francesa; serve multicausalidade: causas de revolução, fatores de ecossistema, etc.).
+>
+> **D) FORMATO DE SAÍDA obrigatório do especialista — a FICHA DE 5 CAMPOS por fase** (é o que
+> impede a aula virar textão+clique): **🎯 Objetivo** (o micro-conceito) · **🕹️ VERBO** (o que a
+> criança FAZ com as mãos: cortar, repartir, montar, medir…) · **🧩 MOTOR** (o que o motor mostra
+> e guarda) · **⚙️ REGRA** (o que o código calcula pra decidir certo/errado — estado do mundo, não
+> gabarito A/B/C/D) · **🌍 CONSEQUÊNCIA** (o que a criança VÊ acontecer). + 1 linha "o que o
+> engenheiro precisa construir de novo". **Se um passo não vira sistema jogável, é texto =
+> espectador → reprova.** Proibido: pop-up de pergunta, "arraste a resposta certa", caça-palavras,
+> NPC que dá a resposta.
+>
+> **E) AS LEIS FIXAS (todo tema passa por elas; entram como Portão 0 no QA):**
+> 1. **VERIFICADO SEMPRE** — 2 níveis: (i) **portões de QA** antes de chegar na criança (Portão 0
+>    filosofia, 1 funciona, Arte, aprovação do professor); (ii) **o motor adaptativo MEDE cada
+>    criança ao vivo** (BKT por conteúdo: particionou sem chutar? acertou a transferência?).
+>    Honestidade: a prova **final** é o dado da **sala real** — nunca afirmar "aprendeu" sem isso.
+> 2. **CONCRETO SEMPRE** — a criança **manipula coisa real primeiro** (corta o pão, reparte,
+>    sobrepõe, mede). Nunca começa pelo símbolo. O nome/fórmula chega **por último** (Bruner:
+>    concreto → pictórico → abstrato; nunca inverter).
+> 3. **VIVENCIADO SEMPRE** — aprende-se **fazendo/vivendo**: Dewey (aprender fazendo), Piaget
+>    (constrói agindo sobre o mundo), Bruner (ação→imagem→símbolo), Vygotsky (atividade + mentor
+>    que pergunta + ZDP), Papert (aprende construindo), Lave & Wenger (conhecimento vive na
+>    situação) + neurociência da **cognição corporificada** (o corpo agindo fixa melhor).
+> 4. **A CRIANÇA PRODUZ/CRIA — não reconhece.** Ela constrói/monta/repara/decide/explica.
+>    "Escolher a alternativa correta" = **prova disfarçada** = reprovado.
+> 5. **O MUNDO JULGA por consequência física** — errou, a família reclama / a ponte não fecha /
+>    a máquina trava. Nunca um gabarito escondido, nunca X vermelho.
+> 6. **NA MEDIDA DA ZDP — progressivo, adequado, didático, NÃO difícil demais.** Todo aluno tem
+>    que **entender e conseguir resolver**; um degrau por vez; o mentor **pergunta** pra puxar o
+>    próximo passo; errar **devolve a peça sem punição**. Profundo **não** é o mesmo que difícil —
+>    a profundidade está em **construir** a ideia, não em complicar.
+> 7. **FIXAÇÃO exige REVISÃO ESPAÇADA** — uma sessão de 55 min **constrói mas não fixa**. Sem
+>    **missões de retorno** dias depois (nosso motor Leitner), boa parte evapora (Bjork). Não
+>    afirmar "aprende efetivamente" sem prever a revisão espaçada.
+>
+> **F) EXEMPLO TRABALHADO (referência de como fica) — FRAÇÕES, 5º ano, "A Festa da Vila".**
+> 6 fases rodando 100% no motor **"Repartir Justo"** (padeiro reparte comida numa vila que
+> precisa dela). BNCC do 5º: **EF05MA03** (fração como divisão + frações **maiores que 1** + reta
+> numérica), **EF05MA04** (equivalência), **EF05MA05** (comparar/ordenar). Peso nos **saltos do
+> 5º ano** (fração=divisão, 5/4 = "1 e 1/4"), não em metades que já trazem. **4 ajustes
+> obrigatórios** (senão aprende ERRADO): (a) **travar o inteiro** — comparar só barras do mesmo
+> tamanho; (b) **trampolim** 2÷4=1/2 antes do 3÷4; (c) mostrar 5/4 como **"1 e 1/4" E "5 quartos"**;
+> (d) **revisão espaçada** depois. Veredito do especialista: adequada e ensina o conceito de
+> verdade **com esses 4 ajustes**. A sequência escrita completa está no transcript desta sessão.
+
 ## 🌐 DECISÃO DO MARCOS (2026-07): TRABALHAMOS SÓ ONLINE — esquecer "offline"
 > O Marcos deixou claro (mais de uma vez): **a escola é ONLINE, sempre há internet.**
 > **"Offline" NÃO é requisito.** Eu não devo mais usar "tem que rodar offline / HTML

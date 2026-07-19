@@ -88,3 +88,40 @@ salvei uma floresta / descobri uma solução." E **só depois** perceber:
 > **Parte 3 — Pipeline de construção:** COMO construir (mundo→vida→personagens→objetos→
 > problema→exploração→necessidade→conceito→reflexão) e a biblioteca reutilizável de
 > **tiles + personagens + animações (LEGO digital)** estão em **`EDUVERSE-PIPELINE.md`**.
+
+---
+
+## ⚖️ REFORÇO 2026-07-19 — AS LEIS FIXAS (o Marcos cravou; valem em TODA atividade)
+
+Estas leis complementam o checklist acima e entram no Portão 0 do QA. Nenhuma atividade
+nasce sem passar por elas. (A arquitetura — Fábrica-é-aqui-com-o-Claude, especialista de 3
+chapéus, motores reutilizáveis, ficha de 5 campos — está no `MEMORIA-DO-PROJETO.md`.)
+
+1. **VERIFICADO SEMPRE.** Nada de "entregar e ver depois". Duas travas: (a) os **portões de
+   QA** antes de chegar na criança; (b) o **motor adaptativo mede cada criança ao vivo** (ela
+   resolveu sem chutar? acertou a transferência?). A prova **final** é o **dado da sala real** —
+   nunca afirmar "aprendeu" sem ele.
+2. **CONCRETO SEMPRE.** A criança **manipula coisa de verdade primeiro** (corta, reparte,
+   monta, mede). Nunca começa pelo símbolo. O nome/fórmula chega **por último** — concreto →
+   figura → abstrato (Bruner), sem inverter.
+3. **VIVENCIADO SEMPRE.** Aprende-se **fazendo/vivendo** — é o que dizem os maiores: **Dewey**
+   (aprender fazendo), **Piaget** (constrói agindo sobre o mundo), **Bruner** (ação→imagem→
+   símbolo), **Vygotsky** (atividade + mentor que pergunta + ZDP), **Papert** (aprende
+   construindo), **Lave & Wenger** (o conhecimento vive na situação) + **neurociência da
+   cognição corporificada** (o corpo agindo fixa melhor). A criança **vive o problema antes de
+   ter o conceito**.
+4. **A CRIANÇA PRODUZ/CRIA — não reconhece.** Constrói, monta, repara, decide, explica.
+   "Escolher a alternativa certa" continua sendo **prova disfarçada** → reprovado.
+5. **O MUNDO JULGA por consequência física** — errou, a família reclama / a ponte não fecha /
+   a máquina trava. Nunca gabarito escondido, nunca X vermelho.
+6. **NA MEDIDA DA ZDP — progressivo, adequado, didático, NÃO difícil demais.** Todo aluno tem
+   que **entender e conseguir resolver**: um degrau por vez, o mentor **pergunta**, errar
+   **devolve a peça sem punição**. **Profundo não é difícil** — a profundidade está em
+   *construir* a ideia, não em complicar.
+7. **FIXAÇÃO exige REVISÃO ESPAÇADA.** 55 min **constroem, mas não fixam.** Sem **missões de
+   retorno** dias depois (Leitner), boa parte evapora (Bjork). Não prometer "aprende de verdade"
+   sem prever a revisão espaçada.
+
+> **Uma frase pra não esquecer o norte:** *o RPG 2D é a FERRAMENTA; aprender de verdade é o FIM.
+> Cada verbo que a criança executa no jogo nasce de uma teoria da nossa pesquisa. Se um elemento
+> do jogo não serve ao aprender, ele sai.*
