@@ -26,12 +26,18 @@ export class FaseGrid extends Phaser.Scene {
   private trocando = false                  // (QA lê) trava breve nas transições
   concluida = false                         // (QA lê)
   private prop: Record<string, number> = {}
-  private melSprites: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image, v?: number, txt?: Phaser.GameObjects.Text }> = []
-  mecanica: 'contar' | 'somar' = 'contar'   // (QA lê)
+  private melSprites: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image, v?: number, idx?: number, txt?: Phaser.GameObjects.Text }> = []
+  mecanica: 'contar' | 'somar' | 'selecionar' | 'ordenar' = 'contar'   // (QA lê)
   alvoSoma = 0                              // somar: a soma exata pedida (QA lê)
   soma = 0                                  // somar: soma atual (QA lê)
-  erros = 0                                 // somar: quantas vezes passou do alvo (QA lê)
+  erros = 0                                 // erros REAIS da criança (estouro/regra/ordem) (QA lê)
+  kcId = 'contar'                           // domínio é por CONTEÚDO (QA lê)
+  coletadosOk = 0                           // selecionar: certos já coletados (QA lê)
+  totalOk = 0                               // selecionar: total de certos (QA lê)
+  proxOrdem = 1                             // ordenar: próxima posição da sequência (QA lê)
+  itens: Array<{ rotulo: string, ok: boolean, ordem?: number }> = []   // (QA lê)
   private melValores: number[][] = []
+  private melItensPos: number[][] = []
   private pedrasSp?: Phaser.GameObjects.Image
   private limExterno: number[] = [0, 0, 320, 256]
   private limInterior: number[] = [336, 16, 144, 112]
@@ -41,7 +47,7 @@ export class FaseGrid extends Phaser.Scene {
 
   private mapaKey = 'mapa_grid'
   private melAlvo = MEL_ALVO
-  private plano?: { abertura?: string, problema?: string, juntouTudo?: string, entrega?: string, vitoria?: string, emoji?: string, nome?: string }
+  private plano?: { abertura?: string, problema?: string, juntouTudo?: string, entrega?: string, vitoria?: string, emoji?: string, nome?: string, regra?: string }
   private kitId = 'vilarejo'
   private kit!: KitVisual
 
@@ -129,15 +135,21 @@ export class FaseGrid extends Phaser.Scene {
     const px = this.P('pedrasX'), py = this.P('pedrasY')
     this.pedrasSp = this.add.image(px * T + T / 2, py * T + T / 2, 'pedras2').setDisplaySize(20, 18).setDepth(py * T + 20)
 
-    // MECÂNICA da fase (vem do MAPA = dado): contar (iniciais) | somar (resolver, 3º-9º)
-    this.mecanica = (gp('mecanica') as 'contar' | 'somar') || 'contar'
+    // MECÂNICA da fase (vem do MAPA = dado): contar | somar | selecionar | ordenar
+    this.mecanica = (gp('mecanica') as FaseGrid['mecanica']) || 'contar'
+    this.kcId = (gp('kc') as string) || this.mecanica
     this.alvoSoma = this.P('alvoSoma', 0)
     this.melValores = (gp('melValores') as number[][]) || []
+    this.itens = (gp('itens') as FaseGrid['itens']) || []
+    this.melItensPos = (gp('melItens') as number[][]) || []
+    this.totalOk = this.itens.filter(i => i.ok).length
 
-    // MEL: contar = potes simples; somar = FICHAS com VALOR visível (a criança planeja a soma)
+    // ITENS no mundo: contar = potes simples; somar = fichas com VALOR; selecionar/ordenar =
+    // itens com RÓTULO do conteúdo (a criança testa cada um contra a regra)
     for (const [mx, my] of melExt) this.addMel(mx, my)
     if (melInt.length) this.addMel(melInt[0], melInt[1])
     if (this.mecanica === 'somar') for (const [mx, my, v] of this.melValores) this.addMel(mx, my, v)
+    if (this.mecanica === 'selecionar' || this.mecanica === 'ordenar') for (const [mx, my, idx] of this.melItensPos) this.addMelItem(mx, my, idx)
 
     // HERÓI + FAZENDEIRO (personagens do grid-engine)
     const sombra = this.add.image(0, 0, 'sombra').setAlpha(0.5).setDepth(1)
@@ -206,16 +218,32 @@ export class FaseGrid extends Phaser.Scene {
     this.melSprites.push({ x: tx, y: ty, sp, v, txt })
   }
 
-  // a meta da fase foi cumprida? (contar: juntou todos | somar: fechou a soma EXATA)
-  private metaOk (): boolean { return this.mecanica === 'somar' ? this.soma === this.alvoSoma : this.mel >= this.melAlvo }
+  // item com RÓTULO do conteúdo (selecionar/ordenar)
+  private addMelItem (tx: number, ty: number, idx: number): void {
+    const it = this.itens[idx]; if (!it) return
+    const sp = this.add.image(tx * T + T / 2, ty * T + T / 2, 'mel').setDepth(ty * T + 8)
+    this.tweens.add({ targets: sp, y: sp.y - 3, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+    const txt = this.add.text(tx * T + T / 2, ty * T - 3, it.rotulo, { fontFamily: 'Arial', fontSize: '9px', color: '#ffffff', stroke: '#1c1206', strokeThickness: 3, resolution: 6 } as any).setOrigin(0.5, 1).setDepth(ty * T + 9)
+    this.melSprites.push({ x: tx, y: ty, sp, idx, txt })
+  }
+
+  // a meta da fase foi cumprida?
+  private metaOk (): boolean {
+    if (this.mecanica === 'somar') return this.soma === this.alvoSoma
+    if (this.mecanica === 'selecionar') return this.totalOk > 0 && this.coletadosOk === this.totalOk
+    if (this.mecanica === 'ordenar') return this.itens.length > 0 && this.proxOrdem > this.itens.length
+    return this.mel >= this.melAlvo
+  }
 
   private aoEntrarTile (tx: number, ty: number): void {
-    // pega mel/ficha
+    // pega mel/ficha/item
     const i = this.melSprites.findIndex(m => m.x === tx && m.y === ty)
     if (i >= 0) {
       const m = this.melSprites[i]
       m.sp.destroy(); m.txt?.destroy(); this.melSprites.splice(i, 1)
       if (this.mecanica === 'somar') this.pegaFicha(m.v ?? 0)
+      else if (this.mecanica === 'selecionar') this.pegaItemRegra(m)
+      else if (this.mecanica === 'ordenar') this.pegaItemOrdem(m)
       else { this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= this.melAlvo) this.mostraBalao(this.plano?.emoji ?? '🍯', this.plano?.juntouTudo ?? `Você juntou os ${this.melAlvo}! Leve ao fazendeiro.`) }
     }
     // entrar na casa: câmera FIXA e centralizada na sala (sala pequena = 1 tela)
@@ -239,16 +267,49 @@ export class FaseGrid extends Phaser.Scene {
     if (this.soma === this.alvoSoma) {
       this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', this.plano?.juntouTudo ?? `Exatamente ${this.alvoSoma}! Fechou a conta — leve pra mim!`)
     } else if (this.soma > this.alvoSoma) {
-      this.erros++
-      try { salva('local', registra(carrega('local'), 'somar', false, Date.now())) } catch { /* sem storage */ }
       const estourou = this.soma
-      this.cameras.main.shake(200, 0.006); this.tom(150, 0.3, 'sawtooth', 0.16)
-      this.mostraBalao('🤔', `Passou! Deu ${estourou}, e eu preciso de ${this.alvoSoma}. Quanto passou? Quais fichas fecham a conta certinha?`)
+      this.erroReal(`Passou! Deu ${estourou}, e eu preciso de ${this.alvoSoma}. Quanto passou? Quais fichas fecham a conta certinha?`)
       this.soma = 0
       // as fichas VOLTAM (errar = tentar de novo sem punição — nunca "game over")
       for (const m of this.melSprites) { m.sp.destroy(); m.txt?.destroy() }
       this.melSprites = []
       for (const [mx, my, val] of this.melValores) this.addMel(mx, my, val)
+    }
+    this.atualizaHud()
+  }
+
+  // ERRO REAL (falha produtiva): registra no domínio, o mentor PERGUNTA — nunca pune.
+  private erroReal (pergunta: string): void {
+    this.erros++
+    try { salva('local', registra(carrega('local'), this.kcId, false, Date.now())) } catch { /* sem storage */ }
+    this.cameras.main.shake(200, 0.006); this.tom(150, 0.3, 'sawtooth', 0.16)
+    this.mostraBalao('🤔', pergunta)
+  }
+
+  // SELECIONAR: só entra quem obedece a REGRA do conteúdo. Errado = erro real + o item volta.
+  private pegaItemRegra (m: { x: number, y: number, idx?: number }): void {
+    const it = this.itens[m.idx ?? -1]; if (!it) return
+    if (it.ok) {
+      this.coletadosOk++
+      this.tom(500 + this.coletadosOk * 70, 0.12, 'square', 0.15)
+      if (this.metaOk()) this.mostraBalao(this.plano?.emoji ?? '🧺', this.plano?.juntouTudo ?? 'Separou exatamente os certos! Traz aqui!')
+    } else {
+      this.erroReal(`"${it.rotulo}"? Hmm… será que entra mesmo em ${this.plano?.regra ?? 'nossa regra'}? Pensa e tenta de novo!`)
+      this.time.delayedCall(900, () => { if (!this.concluida) this.addMelItem(m.x, m.y, m.idx ?? 0) })   // o item VOLTA
+    }
+    this.atualizaHud()
+  }
+
+  // ORDENAR: só entra o PRÓXIMO da sequência. Fora de ordem = erro real + o item volta.
+  private pegaItemOrdem (m: { x: number, y: number, idx?: number }): void {
+    const it = this.itens[m.idx ?? -1]; if (!it) return
+    if (it.ordem === this.proxOrdem) {
+      this.proxOrdem++
+      this.tom(440 + this.proxOrdem * 80, 0.12, 'square', 0.15)
+      if (this.metaOk()) this.mostraBalao(this.plano?.emoji ?? '📏', this.plano?.juntouTudo ?? 'Sequência perfeita! Traz aqui!')
+    } else {
+      this.erroReal(`"${it.rotulo}" agora? Olha a regra: ${this.plano?.regra ?? 'a ordem certa'}. O que vem ANTES dele?`)
+      this.time.delayedCall(900, () => { if (!this.concluida) this.addMelItem(m.x, m.y, m.idx ?? 0) })   // o item VOLTA
     }
     this.atualizaHud()
   }
@@ -266,9 +327,9 @@ export class FaseGrid extends Phaser.Scene {
   private vitoria (): void {
     if (this.concluida) return
     this.concluida = true
-    // MEDE + ADAPTA: registra o domínio do KC da mecânica jogada. No somar os ERROS já
-    // entraram um a um (cada estouro = observação negativa); concluir = observação positiva.
-    try { salva('local', registra(carrega('local'), this.mecanica, true, Date.now())) } catch { /* sem storage: segue */ }
+    // MEDE + ADAPTA: registra o domínio do KC do CONTEÚDO jogado. Os ERROS já entraram um a
+    // um (estouro/regra/ordem = observação negativa); concluir = observação positiva.
+    try { salva('local', registra(carrega('local'), this.kcId, true, Date.now())) } catch { /* sem storage: segue */ }
     this.cameras.main.flash(400, 255, 255, 200)
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
     this.mostraBalao('🌟', this.plano?.vitoria ?? 'Fase 1 concluída! (a próxima aventura entra aqui)')
@@ -322,6 +383,14 @@ export class FaseGrid extends Phaser.Scene {
     if (this.mecanica === 'somar') {
       const falta = this.alvoSoma - this.soma
       this.hud.setText(`Soma: ${this.soma} de ${this.alvoSoma}` + (falta > 0 ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
+      return
+    }
+    if (this.mecanica === 'selecionar') {
+      this.hud.setText(`Certos: ${this.coletadosOk} de ${this.totalOk}` + (this.metaOk() ? '  — leve ao fazendeiro!' : ''))
+      return
+    }
+    if (this.mecanica === 'ordenar') {
+      this.hud.setText(`Na ordem: ${this.proxOrdem - 1} de ${this.itens.length}` + (this.metaOk() ? '  — leve ao fazendeiro!' : ''))
       return
     }
     const falta = Math.max(0, this.melAlvo - this.mel)

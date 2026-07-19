@@ -18,8 +18,8 @@ export const Roteiro = z.object({
   sinopse: z.string().min(5),
   personagem: z.object({ nome: z.string().min(2), emoji: z.string().min(1) }),
   kitId: z.string().min(2),                 // tema visual
-  mecanica: z.enum(['contar', 'somar']),
-  alvo: z.number().int().min(2).max(20),    // contar: qtde | somar: a soma exata
+  mecanica: z.enum(['contar', 'somar', 'selecionar', 'ordenar']),
+  alvo: z.number().int().min(2).max(20),    // contar: qtde | somar: a soma exata | outras: reserva
   item: z.string().min(2),                  // "potes de mel", "cristais"...
   falas: z.object({
     abertura: z.string().min(5),            // narração do mundo (quem, onde)
@@ -50,36 +50,57 @@ const chaveTema = (t: string): string => {
 // não decide alvo nem dinâmica (isso é do pedagogo); só VESTE de mundo/personagem, com o
 // conceito DENTRO da ação e o problema primeiro (Portão 0). `espinha` é opcional só p/ retro-
 // compatibilidade; a Fábrica sempre passa a espinha do pedagogo.
-export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, alvoSoma?: number, mecanica?: 'contar' | 'somar', necessidadeMundo?: string }): Roteiro {
+export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, alvoSoma?: number, mecanica?: 'contar' | 'somar' | 'selecionar' | 'ordenar', regra?: string, necessidadeMundo?: string }): Roteiro {
   const c = ELENCO[chaveTema(pedido.tema)]
   const mecanica = espinha?.mecanica ?? 'contar'
-  const somar = mecanica === 'somar'
-  const alvo = somar ? (espinha?.alvoSoma ?? 12) : (espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade])
+  const regra = espinha?.regra ?? 'a regra'
+  const alvo = mecanica === 'somar' ? (espinha?.alvoSoma ?? 12) : (espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade])
+
+  // as falas por mecânica — o pedido SEMPRE termina perguntando (Portão 0)
+  const FALAS: Record<string, Roteiro['falas']> = {
+    contar: {
+      abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, corre até você, aflito.`,
+      pedido: `Oi! Preciso de ${alvo} ${c.item} para a festa e não dou conta sozinho. Você conta e junta comigo?`,
+      juntouTudo: `Isso! ${alvo} ${c.item}! Você contou tudo certinho. Leva pra mim, corre!`,
+      entrega: `Muito obrigado! Olha — o caminho que estava fechado se abriu pra você. Vai lá!`,
+      vitoria: `Você salvou a festa de ${c.nome}! E tem uma nova aventura te esperando adiante…`
+    },
+    somar: {
+      abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, olha para umas fichas numeradas, confuso.`,
+      pedido: `Cada ficha carrega um número. Preciso que a soma feche EXATAMENTE em ${alvo} — nem mais, nem menos. Quais você escolhe pra fechar essa conta comigo?`,
+      juntouTudo: `Exatamente ${alvo}! Você fechou a conta certinha. Traz aqui, rápido!`,
+      entrega: `Conta fechada, problema resolvido! Olha — o caminho que estava trancado se abriu. Vai!`,
+      vitoria: `Você resolveu o problema de ${c.nome} planejando a soma exata! Uma nova missão te espera adiante…`
+    },
+    selecionar: {
+      abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, olha para itens espalhados, sem saber quais servem.`,
+      pedido: `Preciso separar SÓ ${regra} — um errado no meio estraga tudo! Quais deles você escolhe pra mim?`,
+      juntouTudo: `É isso! Você separou exatamente os que obedecem a regra. Traz aqui!`,
+      entrega: `Separação perfeita, problema resolvido! O caminho que estava trancado se abriu. Vai!`,
+      vitoria: `Você resolveu o problema de ${c.nome} dominando a regra de verdade! Uma nova missão te espera…`
+    },
+    ordenar: {
+      abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, olha para peças fora do lugar, aflito.`,
+      pedido: `Preciso das peças ${regra} — uma fora do lugar e desmorona tudo! Qual você pega primeiro?`,
+      juntouTudo: `Sequência perfeita! Cada peça no seu lugar. Traz aqui!`,
+      entrega: `Tudo em ordem, problema resolvido! O caminho que estava trancado se abriu. Vai!`,
+      vitoria: `Você resolveu o problema de ${c.nome} montando a sequência exata! Uma nova missão te espera…`
+    }
+  }
+
+  const TITULO: Record<string, string> = {
+    contar: `${c.nome} e ${c.item}`, somar: `${c.nome} e a conta exata`,
+    selecionar: `${c.nome} e a regra dos itens`, ordenar: `${c.nome} e a sequência perdida`
+  }
   const r: Roteiro = {
-    titulo: somar ? `${c.nome} e a conta exata` : `${c.nome} e ${c.item}`,
-    sinopse: somar
-      ? `${c.nome}, ${c.papel} ${c.onde}, precisa de ${c.item} que somem exatamente ${alvo} — só planejando a combinação certa dá.`
-      : `${c.nome}, ${c.papel} ${c.onde}, tem um problema — e só a criança pode ajudar juntando ${alvo} ${c.item}.`,
+    titulo: TITULO[mecanica],
+    sinopse: `${c.nome}, ${c.papel} ${c.onde}, tem um problema que só se resolve com o conteúdo — e só a criança pode ajudar.`,
     personagem: { nome: c.nome, emoji: c.emoji },
     kitId: c.kitId,
     mecanica,
     alvo,
     item: c.item,
-    falas: somar
-      ? {
-          abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, olha para umas fichas numeradas, confuso.`,
-          pedido: `Cada ficha carrega um número. Preciso que a soma feche EXATAMENTE em ${alvo} — nem mais, nem menos. Quais você escolhe pra fechar essa conta comigo?`,
-          juntouTudo: `Exatamente ${alvo}! Você fechou a conta certinha. Traz aqui, rápido!`,
-          entrega: `Conta fechada, problema resolvido! Olha — o caminho que estava trancado se abriu. Vai!`,
-          vitoria: `Você resolveu o problema de ${c.nome} planejando a soma exata! Uma nova missão te espera adiante…`
-        }
-      : {
-          abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, corre até você, aflito.`,
-          pedido: `Oi! Preciso de ${alvo} ${c.item} para a festa e não dou conta sozinho. Você conta e junta comigo?`,
-          juntouTudo: `Isso! ${alvo} ${c.item}! Você contou tudo certinho. Leva pra mim, corre!`,
-          entrega: `Muito obrigado! Olha — o caminho que estava fechado se abriu pra você. Vai lá!`,
-          vitoria: `Você salvou a festa de ${c.nome}! E tem uma nova aventura te esperando adiante…`
-        }
+    falas: FALAS[mecanica]
   }
   return Roteiro.parse(r)          // valida (inclui a trava do Portão 0)
 }

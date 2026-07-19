@@ -11,8 +11,10 @@ import { getKit } from './kits'
 export interface PlanoMapa {
   melAlvo: number          // contar: quantos itens juntar (inclui 1 dentro da casa)
   kitId?: string           // tema visual (kit); default = Vilarejo
-  mecanica?: 'contar' | 'somar'
+  mecanica?: 'contar' | 'somar' | 'selecionar' | 'ordenar'
   alvoSoma?: number        // somar: a soma exata (8 | 12 | 18)
+  kc?: string              // o componente de conhecimento (domínio POR conteúdo)
+  itens?: Array<{ rotulo: string, ok: boolean, ordem?: number }>   // selecionar/ordenar
 }
 
 // somar: fichas por tier — 3 valores que FECHAM a soma + 2 distratores (que estouram).
@@ -88,20 +90,27 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const candidatos: number[][] = [[6, 6], [13, 5], [8, 10], [14, 12], [12, 8], [5, 12], [16, 11], [7, 4]]
   const ocupado = (x: number, y: number): boolean =>
     colis[y * W + x] !== 0 || (x === fazendeiro.x && y === fazendeiro.y) || (x === porta.x && y === porta.y)
-  const somar = plano.mecanica === 'somar'
+  const mecanica = plano.mecanica ?? 'contar'
+  const somar = mecanica === 'somar'
+  const comItens = mecanica === 'selecionar' || mecanica === 'ordenar'
   const alvoSoma = somar ? (FICHAS_SOMA[plano.alvoSoma ?? 12] ? (plano.alvoSoma ?? 12) : 12) : 0
+  const livres = candidatos.filter(c => !ocupado(c[0], c[1]))
   const melExternos: number[][] = []
   const melValores: number[][] = []            // somar: [x, y, valor]
+  const melItens: number[][] = []              // selecionar/ordenar: [x, y, índice do item]
   if (somar) {
     // 5 fichas: intercala solução e distrator em posições livres (determinístico p/ o QA)
     const f = FICHAS_SOMA[alvoSoma]
     const valores = [f.sol[0], f.dis[0], f.sol[1], f.dis[1], f.sol[2]]
-    const livres = candidatos.filter(c => !ocupado(c[0], c[1]))
     for (let i = 0; i < valores.length && i < livres.length; i++) melValores.push([livres[i][0], livres[i][1], valores[i]])
+  } else if (comItens) {
+    // um item rotulado do CONTEÚDO em cada posição livre (a ordem dos itens já vem embaralhada)
+    const itens = plano.itens ?? []
+    for (let i = 0; i < itens.length && i < livres.length; i++) melItens.push([livres[i][0], livres[i][1], i])
   } else {
-    for (const c of candidatos) { if (melExternos.length >= melAlvo - 1) break; if (!ocupado(c[0], c[1])) melExternos.push(c) }
+    for (const c of livres) { if (melExternos.length >= melAlvo - 1) break; melExternos.push(c) }
   }
-  const melInterno = somar ? [] : [saiSalaX, IY0 + 2]
+  const melInterno = (somar || comItens) ? [] : [saiSalaX, IY0 + 2]
 
   // DECOR (enfeites como objetos — o motor só renderiza o que o mapa manda)
   let oid = 1
@@ -134,7 +143,8 @@ export function montarMapaFase (plano: PlanoMapa): object {
       Pi('intEntraX', interiorEntra.x), Pi('intEntraY', interiorEntra.y),
       Pi('intSaiX', interiorSai.x), Pi('intSaiY', interiorSai.y),
       Ps('melExternos', melExternos), Ps('melInterno', melInterno),
-      Ps('mecanica', somar ? 'somar' : 'contar'), Pi('alvoSoma', alvoSoma), Ps('melValores', melValores),
+      Ps('mecanica', mecanica), Pi('alvoSoma', alvoSoma), Ps('melValores', melValores),
+      Ps('kc', plano.kc ?? mecanica), Ps('itens', plano.itens ?? []), Ps('melItens', melItens),
       Ps('arvores', arvores), Ps('interior', { x0: IX0, y0: IY0, w: IW, h: IH })
     ]
   }

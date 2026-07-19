@@ -89,7 +89,7 @@ console.log('== ADAPTA por tier: domínio alto no somar -> próxima fase pede 18
   await page.goto(URL, { waitUntil: 'load' })
   await page.waitForFunction(() => !!window.__fabrica, { timeout: 30000 })
   await page.evaluate((c) => localStorage.setItem(c, JSON.stringify({ somar: { pKnown: 0.9, caixa: 1, proximaRevisao: 0, tentativas: 3, acertos: 3 } })), CHAVE)
-  await page.evaluate(() => { window.__fabrica.set('f_ano', '6º ano'); window.__fabrica.set('f_dif', 'medio'); window.__fabrica.gerar() })
+  await page.evaluate(() => { window.__fabrica.set('f_ano', '6º ano'); window.__fabrica.set('f_dif', 'medio'); window.__fabrica.set('f_obj', 'Resolver problemas de adição'); window.__fabrica.gerar() })
   await page.waitForFunction(() => typeof window.__fabricaAlvo === 'number', { timeout: 15000 })
   ok(await page.evaluate(() => window.__fabricaAlvo) === 18, 'domínio alto (0.9) subiu o tier: 12 -> 18')
   await page.close()

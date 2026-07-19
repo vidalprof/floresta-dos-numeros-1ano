@@ -70,18 +70,20 @@ export function montarFabrica (game: Phaser.Game): void {
           if (pk >= 0.8) i = Math.min(tiers.length - 1, i + 1)
           else if (pk < 0.4) i = Math.max(0, i - 1)
           alvoSoma = tiers[i]
-        } else {
+        } else if (espinha.mecanica === 'contar') {
           if (pk >= 0.8) alvo = Math.min(9, alvo + 1); else if (pk < 0.4) alvo = Math.max(2, alvo - 1)
         }
+        // selecionar/ordenar: o próprio conteúdo define o desafio (a IA gera itens mais
+        // difíceis conforme o domínio — próximo passo do gerador de conteúdo)
       }
-      roteiro = escreverRoteiro(parsed.data, { alvo, alvoSoma, mecanica: espinha.mecanica, necessidadeMundo: espinha.necessidadeMundo })
+      roteiro = escreverRoteiro(parsed.data, { alvo, alvoSoma, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
     } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return }
     ;(window as any).__fabricaEspinha = espinha
     ;(window as any).__fabricaAlvo = espinha.mecanica === 'somar' ? alvoSoma : alvo   // QA lê
 
     // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
     const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || roteiro.kitId || KIT_PADRAO
-    const mapa = montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma })
+    const mapa = montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens })
     const key = 'mapa_fabrica'
     if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
     game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)
@@ -91,7 +93,8 @@ export function montarFabrica (game: Phaser.Game): void {
       mapaKey: key, kitId,
       plano: {
         abertura: roteiro.falas.abertura, problema: roteiro.falas.pedido, juntouTudo: roteiro.falas.juntouTudo,
-        entrega: roteiro.falas.entrega, vitoria: roteiro.falas.vitoria, emoji: roteiro.personagem.emoji, nome: roteiro.personagem.nome
+        entrega: roteiro.falas.entrega, vitoria: roteiro.falas.vitoria, emoji: roteiro.personagem.emoji,
+        nome: roteiro.personagem.nome, regra: espinha.regra
       }
     })
     ;(window as any).__fabricaRoteiro = roteiro   // QA lê a história gerada

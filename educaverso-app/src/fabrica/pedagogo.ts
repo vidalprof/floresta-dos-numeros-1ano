@@ -1,99 +1,150 @@
 // ============================================================================
 // O PEDAGOGO — planeja a APRENDIZAGEM ANTES do roteirista (a ordem que o Marcos exige).
-// Dado (ano, disciplina, objetivo BNCC), entrega a "ESPINHA DE APRENDIZAGEM": a
-// progressão (sub-passos concreto→pictórico→abstrato), a DINÂMICA de fundo (resolver/
-// criar/investigar/coletar/narrar/simular — NUNCA quiz raso), a mecânica concreta, o
-// alvo (dificuldade), a NECESSIDADE DO MUNDO (por que a criança é preciso) e COMO MEDIR
-// (transferência — problema novo). O roteirista depois só VESTE de história.
-// Base: MODELO-APRENDIZAGEM-EDUCAVERSO.md (Vygotsky/ZDP, CPA/Bruner, LM-GM, learning
-// trajectories, integração intrínseca). v1 por regra; a IA entra trocando só esta função.
+// Dado (ano, disciplina, objetivo/CONTEÚDO), entrega a "ESPINHA DE APRENDIZAGEM": a
+// progressão CPA, a DINÂMICA de fundo (resolver/ordenar/coletar — NUNCA quiz raso), o
+// CONTEÚDO jogável (itens + regra), a necessidade do mundo e COMO MEDIR (erros reais +
+// transferência). O roteirista depois só VESTE de história.
+//
+// ARQUITETURA (pedido do Marcos: "o conteúdo varia; nem tudo é soma"): as mecânicas são
+// MOTORES GENÉRICOS parametrizados por CONTEÚDO —
+//   contar      -> quantidade exata (Pré–2º)
+//   somar       -> combinação que fecha a soma exata (operações)
+//   selecionar  -> só os itens que obedecem a REGRA do conteúdo (múltiplos, frações
+//                  equivalentes, substantivos, primos… UM motor, infinitos conteúdos)
+//   ordenar     -> coletar na SEQUÊNCIA certa (crescente, etapas, linha do tempo)
+// v1 gera o conteúdo por regra (banco); a IA entra trocando SÓ gerarConteudo*, sem tocar
+// no motor. Base: MODELO-APRENDIZAGEM-EDUCAVERSO.md (ZDP, CPA, LM-GM, integração intrínseca).
 // ============================================================================
 import { z } from 'zod'
 import type { PedidoAtividade } from './tipos'
 import { DIFICULDADES } from './tipos'
 
 export const DINAMICAS = ['resolver', 'criar', 'investigar', 'coletar', 'narrar', 'simular'] as const
+export const MECANICAS = ['contar', 'somar', 'selecionar', 'ordenar'] as const
+export type Mecanica = typeof MECANICAS[number]
 
 // um sub-passo da progressão, marcado no eixo CPA (concreto→pictórico→abstrato)
 export const Passo = z.object({
-  kc: z.string().min(2),                       // componente de conhecimento (o "nó")
+  kc: z.string().min(2),
   cpa: z.enum(['concreto', 'pictorico', 'abstrato']),
   descricao: z.string().min(3)
 })
+
+// um item jogável do CONTEÚDO (rótulo visível; ok = obedece a regra; ordem p/ sequência)
+export const Item = z.object({
+  rotulo: z.string().min(1),
+  ok: z.boolean(),
+  ordem: z.number().int().optional()
+})
+export type Item = z.infer<typeof Item>
 
 export const Espinha = z.object({
   ano: z.string().min(1),
   disciplina: z.string().min(2),
   objetivo: z.string().min(3),
-  dinamica: z.enum(DINAMICAS),                 // a dinâmica de FUNDO (não é quiz)
-  mecanica: z.enum(['contar', 'somar']),       // contar (iniciais) | somar/resolver (3º em diante)
-  alvo: z.number().int().min(2).max(9),         // contar: quantos juntar (ZDP)
-  alvoSoma: z.number().int().min(6).max(20).optional(),   // somar: a soma exata pedida
-  progressao: z.array(Passo).min(1),           // sub-passos ordenados (learning trajectory)
-  necessidadeMundo: z.string().min(5),         // por que o mundo PRECISA da criança
-  medir: z.string().min(5)                      // como saber que aprendeu (transferência)
+  dinamica: z.enum(DINAMICAS),
+  mecanica: z.enum(MECANICAS),
+  kc: z.string().min(2),                        // domínio é POR CONTEÚDO (ex.: "multiplos-3")
+  alvo: z.number().int().min(2).max(9),          // contar: quantos juntar
+  alvoSoma: z.number().int().min(6).max(20).optional(),   // somar: a soma exata
+  regra: z.string().optional(),                 // selecionar/ordenar: a regra do conteúdo (texto)
+  itens: z.array(Item).min(2).optional(),       // selecionar/ordenar: os itens rotulados
+  progressao: z.array(Passo).min(1),
+  necessidadeMundo: z.string().min(5),
+  medir: z.string().min(5)
 })
 export type Espinha = z.infer<typeof Espinha>
 
 const ALVO: Record<typeof DIFICULDADES[number], number> = { facil: 3, medio: 5, dificil: 7 }
-// somar: a soma exata cresce com a dificuldade (as fichas do mapa acompanham cada tier)
 export const TIERS_SOMA = [8, 12, 18] as const
 const ALVO_SOMA: Record<typeof DIFICULDADES[number], number> = { facil: 8, medio: 12, dificil: 18 }
 
-// Escolhe a MECÂNICA pelo objetivo + ano (a regra do Marcos: a dinâmica muda por ano/
-// disciplina; quiz nunca é opção). Pré–2º: contar (concreto). 3º em diante — e sempre que o
-// objetivo fala de soma/operação — RESOLVER problema (somar exato).
-function escolherMecanica (pedido: PedidoAtividade): 'contar' | 'somar' {
+// ---------------------------------------------------------------------------
+// ESCOLHA da mecânica: primeiro pelo CONTEÚDO (o verbo/assunto do objetivo), depois
+// pelo ano. Quiz nunca é opção.
+// ---------------------------------------------------------------------------
+function escolherMecanica (pedido: PedidoAtividade): Mecanica {
+  const s = pedido.objetivo.toLowerCase()
   const anoNum = parseInt(pedido.ano) || 0                       // "Pré" -> 0, "6º ano" -> 6
-  const pedeOperacao = /som|adi[çc]|opera|c[aá]lcul|multipl/i.test(pedido.objetivo)
-  return (anoNum >= 3 || pedeOperacao) ? 'somar' : 'contar'
+  if (/orden|sequ[eê]n|crescente|decrescente|linha do tempo|etapa/.test(s)) return 'ordenar'
+  if (/m[úu]ltipl|fra[çc]|equivalent|substantiv|adjetiv|primo|par(es)?\b|classific|identifi|selecion|separ/.test(s)) return 'selecionar'
+  if (/som(a|ar)|adi[çc]|opera[çc]|c[aá]lcul/.test(s)) return 'somar'
+  if (anoNum >= 6) return 'selecionar'          // anos finais: resolver pela REGRA do conteúdo
+  if (anoNum >= 3) return 'somar'
+  return 'contar'
 }
 
-// Escolhe a DINÂMICA pelo objetivo (não pela mecânica). v1: só temos "contar" jogável, então
-// a dinâmica é "coletar/organizar com propósito" (itens = ferramentas-signo de Vygotsky).
-// A estrutura já está pronta para, quando houver mais mecânicas, mapear objetivo→dinâmica.
-function escolherDinamica (_pedido: PedidoAtividade): typeof DINAMICAS[number] {
-  return 'coletar'
+// ---------------------------------------------------------------------------
+// GERADORES DE CONTEÚDO (v1 por banco/regra — é AQUI que a IA entra depois, gerando
+// itens+regra para QUALQUER conteúdo do professor, sem tocar no motor)
+// ---------------------------------------------------------------------------
+interface Conteudo { kc: string, regra: string, certos: string[], errados: string[] }
+
+function gerarConteudoSelecionar (objetivo: string): Conteudo {
+  const s = objetivo.toLowerCase()
+  if (/m[úu]ltipl/.test(s)) {
+    const n = Math.max(2, parseInt((s.match(/m[úu]ltiplos? de (\d+)/) || [])[1] || '3') || 3)
+    return { kc: `multiplos-${n}`, regra: `os múltiplos de ${n}`, certos: [String(n * 2), String(n * 4), String(n * 5)], errados: [String(n * 2 + 1), String(n * 3 + 1), String(n * 4 + 1)] }
+  }
+  if (/fra[çc]|equivalent/.test(s)) return { kc: 'fracoes-equivalentes', regra: 'as frações equivalentes a 1/2', certos: ['2/4', '3/6', '4/8'], errados: ['2/3', '3/4', '5/8'] }
+  if (/substantiv/.test(s)) return { kc: 'substantivos', regra: 'os substantivos', certos: ['casa', 'rio', 'flor'], errados: ['correr', 'bonito', 'ontem'] }
+  if (/adjetiv/.test(s)) return { kc: 'adjetivos', regra: 'os adjetivos', certos: ['alto', 'veloz', 'doce'], errados: ['pular', 'mesa', 'hoje'] }
+  if (/primo/.test(s)) return { kc: 'numeros-primos', regra: 'os números primos', certos: ['2', '5', '7'], errados: ['4', '6', '9'] }
+  if (/[íi]mpar/.test(s)) return { kc: 'numeros-impares', regra: 'os números ímpares', certos: ['3', '7', '11'], errados: ['4', '8', '12'] }
+  return { kc: 'numeros-pares', regra: 'os números pares', certos: ['2', '6', '10'], errados: ['3', '7', '11'] }
 }
 
-// PEDAGOGO v1 (por regra). Monta a espinha para o objetivo de CONTAGEM/quantidade.
+interface ConteudoOrdem { kc: string, regra: string, sequencia: string[] }
+
+function gerarConteudoOrdenar (objetivo: string): ConteudoOrdem {
+  const s = objetivo.toLowerCase()
+  if (/decrescente/.test(s)) return { kc: 'ordem-decrescente', regra: 'em ordem DECRESCENTE (do maior ao menor)', sequencia: ['25', '16', '9', '4'] }
+  if (/fra[çc]/.test(s)) return { kc: 'ordem-fracoes', regra: 'da menor para a maior fração', sequencia: ['1/8', '1/4', '1/2', '3/4'] }
+  return { kc: 'ordem-crescente', regra: 'em ordem CRESCENTE (do menor ao maior)', sequencia: ['4', '9', '16', '25'] }
+}
+
+// embaralha determinístico (o QA reproduz): permutação fixa por tamanho
+const PERM: Record<number, number[]> = { 4: [2, 0, 3, 1], 6: [3, 0, 4, 1, 5, 2] }
+function intercala (certos: string[], errados: string[]): Item[] {
+  const base: Item[] = [
+    ...certos.map(r => ({ rotulo: r, ok: true })),
+    ...errados.map(r => ({ rotulo: r, ok: false }))
+  ]
+  const p = PERM[base.length] ?? base.map((_, i) => i)
+  return p.map(i => base[i])
+}
+
+// ---------------------------------------------------------------------------
+// O PEDAGOGO
+// ---------------------------------------------------------------------------
 export function planejarPedagogia (pedido: PedidoAtividade): Espinha {
   const mecanica = escolherMecanica(pedido)
   if (mecanica === 'somar') return planejarSomar(pedido)
-  const alvo = ALVO[pedido.dificuldade]
-  const dinamica = escolherDinamica(pedido)
-  // progressão CPA da contagem (o "pedagogo" quebra o objetivo em sub-passos ordenados)
-  const progressao = [
-    { kc: 'correspondência 1-a-1', cpa: 'concreto' as const, descricao: `juntar ${alvo} objetos, um a um, tocando cada um` },
-    { kc: 'cardinalidade', cpa: 'pictorico' as const, descricao: `saber que o último contado diz QUANTOS há (${alvo})` },
-    { kc: 'reconhecer a quantidade', cpa: 'abstrato' as const, descricao: `associar a coleção ao número ${alvo}` }
-  ]
-  const espinha: Espinha = {
-    ano: pedido.ano,
-    disciplina: pedido.disciplina,
-    objetivo: pedido.objetivo,
-    dinamica,
-    mecanica: 'contar',
-    alvo,
-    progressao,
-    necessidadeMundo: `alguém no mundo precisa de exatamente ${alvo} de algo para resolver um problema real — e só contando/juntando certo isso se resolve`,
-    medir: `dar à criança uma coleção NOVA e ver se ela conta e diz corretamente quantos há (transferência), não só repetir a fase`
-  }
-  return Espinha.parse(espinha)                 // valida: dado torto não monta
+  if (mecanica === 'selecionar') return planejarSelecionar(pedido)
+  if (mecanica === 'ordenar') return planejarOrdenar(pedido)
+  return planejarContar(pedido)
 }
 
-// Espinha da mecânica SOMAR (resolver problema — anos 3º a 9º): a criança PLANEJA quais
-// itens (com valores) fecham a soma exata; passar do alvo é ERRO REAL (mede aprendizado).
+function planejarContar (pedido: PedidoAtividade): Espinha {
+  const alvo = ALVO[pedido.dificuldade]
+  return Espinha.parse({
+    ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,
+    dinamica: 'coletar', mecanica: 'contar', kc: 'contar', alvo,
+    progressao: [
+      { kc: 'correspondência 1-a-1', cpa: 'concreto', descricao: `juntar ${alvo} objetos, um a um, tocando cada um` },
+      { kc: 'cardinalidade', cpa: 'pictorico', descricao: `saber que o último contado diz QUANTOS há (${alvo})` },
+      { kc: 'reconhecer a quantidade', cpa: 'abstrato', descricao: `associar a coleção ao número ${alvo}` }
+    ],
+    necessidadeMundo: `alguém no mundo precisa de exatamente ${alvo} de algo para resolver um problema real — e só contando/juntando certo isso se resolve`,
+    medir: 'dar à criança uma coleção NOVA e ver se ela conta e diz corretamente quantos há (transferência), não só repetir a fase'
+  })
+}
+
 function planejarSomar (pedido: PedidoAtividade): Espinha {
   const alvoSoma = ALVO_SOMA[pedido.dificuldade]
-  const espinha: Espinha = {
-    ano: pedido.ano,
-    disciplina: pedido.disciplina,
-    objetivo: pedido.objetivo,
-    dinamica: 'resolver',
-    mecanica: 'somar',
-    alvo: ALVO[pedido.dificuldade],              // reserva (não usado pelo somar)
-    alvoSoma,
+  return Espinha.parse({
+    ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,
+    dinamica: 'resolver', mecanica: 'somar', kc: 'somar', alvo: ALVO[pedido.dificuldade], alvoSoma,
     progressao: [
       { kc: 'valor das partes', cpa: 'concreto', descricao: 'cada item carrega um NÚMERO — pegar é somar de verdade' },
       { kc: 'soma parcial', cpa: 'pictorico', descricao: `acompanhar quanto já juntou rumo a ${alvoSoma} (quanto falta?)` },
@@ -101,6 +152,40 @@ function planejarSomar (pedido: PedidoAtividade): Espinha {
     ],
     necessidadeMundo: `alguém precisa de itens que juntos somem EXATAMENTE ${alvoSoma} — passou ou faltou, o problema não se resolve; só a combinação certa salva`,
     medir: 'observar os ERROS reais (passar do alvo) e se a criança fecha a soma com valores NOVOS na fase seguinte (transferência)'
-  }
-  return Espinha.parse(espinha)
+  })
+}
+
+// SELECIONAR sob a REGRA do conteúdo — um motor, infinitos conteúdos.
+function planejarSelecionar (pedido: PedidoAtividade): Espinha {
+  const c = gerarConteudoSelecionar(pedido.objetivo)
+  return Espinha.parse({
+    ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,
+    dinamica: 'resolver', mecanica: 'selecionar', kc: c.kc, alvo: ALVO[pedido.dificuldade],
+    regra: c.regra, itens: intercala(c.certos, c.errados),
+    progressao: [
+      { kc: 'ler cada item', cpa: 'concreto', descricao: 'cada item do mundo carrega um rótulo do conteúdo' },
+      { kc: 'testar contra a regra', cpa: 'pictorico', descricao: `perguntar de cada um: entra em "${c.regra}"?` },
+      { kc: 'justificar a escolha', cpa: 'abstrato', descricao: 'saber POR QUE entra (ou não) — o mentor pergunta' }
+    ],
+    necessidadeMundo: `alguém precisa separar SÓ ${c.regra} — um item errado no meio estraga tudo; só quem domina a regra resolve`,
+    medir: 'os ERROS reais (pegar item fora da regra) + separar itens NOVOS da mesma regra na fase seguinte (transferência)'
+  })
+}
+
+// ORDENAR — coletar na SEQUÊNCIA certa (fora de ordem = erro real).
+function planejarOrdenar (pedido: PedidoAtividade): Espinha {
+  const c = gerarConteudoOrdenar(pedido.objetivo)
+  const itens: Item[] = c.sequencia.map((r, i) => ({ rotulo: r, ok: true, ordem: i + 1 }))
+  return Espinha.parse({
+    ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,
+    dinamica: 'resolver', mecanica: 'ordenar', kc: c.kc, alvo: ALVO[pedido.dificuldade],
+    regra: c.regra, itens,
+    progressao: [
+      { kc: 'comparar itens', cpa: 'concreto', descricao: 'olhar dois itens e decidir qual vem antes' },
+      { kc: 'construir a sequência', cpa: 'pictorico', descricao: `montar a fila ${c.regra}, um passo por vez` },
+      { kc: 'antecipar o próximo', cpa: 'abstrato', descricao: 'saber o que vem a seguir SEM testar um por um' }
+    ],
+    necessidadeMundo: `alguém precisa das peças ${c.regra} — uma fora do lugar e tudo desmorona; só a sequência exata funciona`,
+    medir: 'os ERROS reais (pegar fora da ordem) + ordenar uma sequência NOVA na fase seguinte (transferência)'
+  })
 }
