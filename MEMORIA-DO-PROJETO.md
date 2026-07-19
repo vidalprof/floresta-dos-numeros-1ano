@@ -1711,3 +1711,12 @@ PlanoMissao); (d) gerador de diálogo (LLM no authoring); (e) formulário do pro
   no canto") + botão TELA CHEIA (cantoneiras). Cena UIVila separada (sem zoom), ícones pixel sem
   texto, stopPropagation (clicar no botão não anda). Troca de zona SEMPRE restaura a visão normal.
 - vila-viva v5 no ar (?v=5). QA 21/21 + iPhone 3/3 antes de publicar, sempre.
+
+### 🌟 VISÃO COMPLETA reafirmada pelo Marcos (jul/2026) — o produto final
+Jogo TODO explorável primeiro → camada pedagógica vira AVENTURA (enredo/história completos,
+ganchos neurocientíficos p/ o estudante AMAR) → 55 minutos, narrado, didático, progressivo →
+progresso salvo no FIREBASE ("o mundo é DELE" — o aluno volta e o mundo lembra) → isso gera
+AVALIAÇÃO DESCRITIVA (registro por missão) que pode virar NOTA se o professor quiser →
+aventuras em SEQUÊNCIAS DIDÁTICAS (encadeadas) → tudo preparado e AUDITADO por equipe de
+agentes, cada um com sua tarefa (pedagogo/roteirista/game designer/engenheiro/diretor de arte
++ robô-QA + Portão de Arte). Padrão de qualidade: "referência em criação de jogos do tipo".
