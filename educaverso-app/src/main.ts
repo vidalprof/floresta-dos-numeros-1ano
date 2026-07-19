@@ -24,6 +24,16 @@ const usarIlha = q.has('ilha')
 // window.__BOOT='rpg' injetada no index.html do repo publicado do demo.
 const usarRpg = q.has('rpg') || (window as any).__BOOT === 'rpg'
 
+// esconde a UI legada ANTES de criar o jogo (se o Phaser falhar no aparelho,
+// a capa antiga nao pode ficar orfa na tela com botao morto)
+if (usarRpg) {
+  for (const id of ['telaIntro', 'telaWin', 'btnOuvir', 'hud']) {
+    const el = document.getElementById(id)
+    if (el) el.style.display = 'none'
+  }
+  document.body.style.background = '#1c2b1e'
+}
+
 const jogo = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
@@ -38,15 +48,6 @@ const jogo = new Phaser.Game({
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
   scene: usarIlha ? [Ilha] : (usarRpg ? [VilaViva] : [])
 })
-
-if (usarRpg) {
-  // o RPG não usa a UI legada da Ilha (capa/botões/véu) — esconde tudo
-  for (const id of ['telaIntro', 'telaWin', 'btnOuvir', 'hud']) {
-    const el = document.getElementById(id)
-    if (el) el.style.display = 'none'
-  }
-  document.body.style.background = '#1c2b1e'
-}
 
 if (!usarIlha && !usarRpg) {
   // Zod valida os dados ANTES de montar (dado torto não monta).

@@ -11,6 +11,7 @@ export default defineConfig({
     //     tem que ser 106, senao o Vite gera sintaxe que o 106 nao entende.
     // Ambos sao modernos o bastante (ES2022) p/ usar recursos atuais SEM
     // gambiarra e ainda rodar no PC velho.
-    target: ['chrome109', 'firefox106']
+    // + safari13: transpila '?.'/'??' fora (iPhone mais velho do Marcos abre tambem)
+    target: ['chrome109', 'firefox106', 'safari13']
   }
 })
