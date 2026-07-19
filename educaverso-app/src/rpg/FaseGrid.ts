@@ -1,34 +1,56 @@
 // ============================================================================
-// FASE-COBAIA — o NOVO jeito (Tiled + grid-engine).
-// Prova a virada que o Marcos aprovou: o mapa é um DADO (mapa_grid.json feito no
-// formato Tiled), a colisão vem marcada no tile (ge_collide) e o grid-engine cuida
-// do movimento em grade e das colisões. NADA de retângulo de colisão na mão —
-// é isso que corta a categoria de bug (parede/afundar/objeto sem colisão).
+// FASE 1 — o NOVO jeito (Tiled + grid-engine). Mesma história do jogo:
+// o fazendeiro precisa de 5 potes de mel -> a criança JUNTA (conta) -> entrega ->
+// o mundo MUDA (as pedras da saída somem) -> atravessa = vitória. Tem a CASA com
+// interior (o 5º pote), árvores, música e som. TUDO com colisão vinda do MAPA
+// (ge_collide) — nenhum retângulo de colisão escrito à mão.
 // Boot: ?fgrid  ou  window.__BOOT='fgrid'.
 // ============================================================================
 import Phaser from 'phaser'
 import { GridEngine } from 'grid-engine'
 
 const T = 16
+const MEL_ALVO = 5
+// recortes de props no tileset grande (mundo.png) — auditados
+const PROPS: Record<string, [number, number, number, number]> = {
+  casa_a: [0, 0, 64, 48], arvore: [0, 160, 32, 32], estante: [160, 592, 33, 32], tapete: [112, 592, 48, 48]
+}
 
 export class FaseGrid extends Phaser.Scene {
   private gridEngine!: GridEngine
   private heroi!: Phaser.GameObjects.Sprite
+  private map!: Phaser.Tilemaps.Tilemap
+  private colisao!: Phaser.Tilemaps.TilemapLayer
   private wasd?: Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>
-  local: 'fase' | 'casa' = 'fase'          // (QA lê) — por ora só a fase; casa é o próximo passo
-  private casa = { x: 3, y: 3 }
-  private saidaY = 7
+  mel = 0                                   // (QA lê)
+  entregou = false                          // (QA lê)
+  local: 'fase' | 'casa' = 'fase'           // (QA lê)
+  private trocando = false                  // (QA lê) trava breve nas transições
+  concluida = false                         // (QA lê)
+  private prop: Record<string, number> = {}
+  private melSprites: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image }> = []
+  private pedrasSp?: Phaser.GameObjects.Image
+  private limExterno: number[] = [0, 0, 320, 256]
+  private limInterior: number[] = [336, 16, 144, 112]
+  private hud!: Phaser.GameObjects.Text
+  private balao!: HTMLDivElement
+  private audioOk = false
 
   constructor () { super('FaseGrid') }
 
   preload (): void {
     const b = import.meta.env.BASE_URL + 'rpg/'
-    this.load.spritesheet('heroi', b + 'heroi.png', { frameWidth: T, frameHeight: T })
+    for (const ch of ['heroi', 'fazendeiro']) this.load.spritesheet(ch, b + ch + '.png', { frameWidth: T, frameHeight: T })
     this.load.spritesheet('chao', b + 'chao.png', { frameWidth: T, frameHeight: T })
     this.load.spritesheet('paredes', b + 'paredes.png', { frameWidth: T, frameHeight: T })
-    this.load.image('sombra', b + 'sombra.png')
     this.load.image('mundo', b + 'mundo.png')
+    this.load.image('sombra', b + 'sombra.png')
+    this.load.image('mel', b + 'mel.png')
+    this.load.image('pedras2', b + 'pedras.png')
+    this.load.image('piso', b + 'piso.png')
+    this.load.spritesheet('bau', b + 'bau.png', { frameWidth: 16, frameHeight: 14 })
     this.load.tilemapTiledJSON('mapa_grid', b + 'mapa_grid.json')
+    this.load.audio('musica', b + 'musica.ogg')
   }
 
   create (): void {
@@ -38,99 +60,204 @@ export class FaseGrid extends Phaser.Scene {
     }
   }
 
+  private P (n: string, d = 0): number { return this.prop[n] ?? d }
+
   private montar (): void {
-    // registra o recorte da casa na textura 'mundo' (igual a fase antiga faz)
-    this.textures.get('mundo').add('casa_a', 0, 0, 0, 64, 48)
+    const tex = this.textures.get('mundo')
+    for (const [n, [x, y, w, h]] of Object.entries(PROPS)) if (!tex.has(n)) tex.add(n, 0, x, y, w, h)
 
-    const map = this.make.tilemap({ key: 'mapa_grid' })
-    map.addTilesetImage('chao', 'chao')
-    map.addTilesetImage('paredes', 'paredes')
-    // as duas camadas usam tiles dos dois tilesets — passa os dois
-    const cChao = map.createLayer('chao', ['chao', 'paredes'], 0, 0)!
-    const cMuros = map.createLayer('muros', ['chao', 'paredes'], 0, 0)!
-    cChao.setDepth(0)
-    cMuros.setDepth(5)
+    this.map = this.make.tilemap({ key: 'mapa_grid' })
+    this.map.addTilesetImage('chao', 'chao')
+    this.map.addTilesetImage('paredes', 'paredes')
+    const cChao = this.map.createLayer('chao', ['chao', 'paredes'], 0, 0)!.setDepth(0)
+    this.map.createLayer('muros', ['chao', 'paredes'], 0, 0)!.setDepth(5)
+    this.colisao = this.map.createLayer('colisao', ['chao', 'paredes'], 0, 0)!.setVisible(false)
+    void cChao
 
-    // propriedades do mapa (posição inicial, casa, saída) — vêm do DADO, não do código
-    const prop = (n: string, d: number): number => {
-      const p = (map.properties as Array<{ name: string, value: number }>).find(q => q.name === n)
-      return p ? p.value : d
+    // propriedades do mapa (tudo é DADO)
+    for (const p of (this.map.properties as Array<{ name: string, value: number }>)) this.prop[p.name] = p.value
+    const gp = (n: string): any => { const p = (this.map.properties as Array<{ name: string, value: string }>).find(q => q.name === n); return p ? JSON.parse(p.value) : null }
+    const melExt: number[][] = gp('melExternos') || []
+    const melInt: number[] = gp('melInterno') || []
+    const arvores: number[][] = gp('arvores') || []
+    const inter = gp('interior') || { x0: 21, y0: 1, w: 9, h: 7 }
+
+    // piso do interior (por cima do chão base)
+    for (let y = inter.y0 + 1; y < inter.y0 + inter.h - 1; y++) for (let x = inter.x0 + 1; x < inter.x0 + inter.w - 1; x++) this.add.image(x * T, y * T, 'piso').setOrigin(0).setDepth(1)
+
+    // casa (externa) desenhada por cima do bloco de colisão
+    const casaX = this.P('casaX'), casaY = this.P('casaY')
+    this.add.image(casaX * T + T * 1.5, (casaY + 2) * T, 'mundo', 'casa_a').setOrigin(0.5, 1).setDepth((casaY + 2) * T)
+    // árvores
+    for (const [ax, ay] of arvores) this.add.image(ax * T + T / 2, (ay + 1) * T + 6, 'mundo', 'arvore').setOrigin(0.5, 1).setDepth((ay + 1) * T + 6)
+    // móveis do interior
+    this.add.image((inter.x0 + 2) * T, (inter.y0 + 2) * T, 'mundo', 'estante').setOrigin(0.5, 1).setDepth((inter.y0 + 2) * T)
+    this.add.image((inter.x0 + inter.w - 3) * T, (inter.y0 + 2) * T, 'bau', 0).setOrigin(0.5, 1).setDepth((inter.y0 + 2) * T)
+
+    // PEDRAS que fecham a saída (some na entrega)
+    const px = this.P('pedrasX'), py = this.P('pedrasY')
+    this.pedrasSp = this.add.image(px * T + T / 2, py * T + T / 2, 'pedras2').setDisplaySize(20, 18).setDepth(py * T + 20)
+
+    // MEL (4 externos + 1 no interior)
+    const addMel = (tx: number, ty: number): void => {
+      const sp = this.add.image(tx * T + T / 2, ty * T + T / 2, 'mel').setDepth(ty * T + 8)
+      this.tweens.add({ targets: sp, y: sp.y - 3, duration: 700, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+      this.melSprites.push({ x: tx, y: ty, sp })
     }
-    const hx = prop('heroiX', 10), hy = prop('heroiY', 10)
-    this.casa = { x: prop('casaX', 3), y: prop('casaY', 3) }
-    this.saidaY = prop('saidaY', 7)
+    for (const [mx, my] of melExt) addMel(mx, my)
+    if (melInt.length) addMel(melInt[0], melInt[1])
 
-    // CASA: a imagem é desenhada por cima do bloco de colisão (que já está no mapa).
-    // porta = tile do meio de baixo do bloco (casaX+1, casaY+1) fica sem colisão no mapa.
-    this.add.image(this.casa.x * T + T * 1.5, (this.casa.y + 2) * T, 'mundo', 'casa_a')
-      .setOrigin(0.5, 1).setDepth((this.casa.y + 2) * T)
-
-    // herói (sprite 16x16, 4 colunas = direções, 7 linhas = quadros de animação)
-    const sombra = this.add.image(0, 0, 'sombra').setAlpha(0.55).setDepth(1)
+    // HERÓI + FAZENDEIRO (personagens do grid-engine)
+    const sombra = this.add.image(0, 0, 'sombra').setAlpha(0.5).setDepth(1)
     this.heroi = this.add.sprite(0, 0, 'heroi', 0)
+    const faz = this.add.sprite(0, 0, 'fazendeiro', 0)
     this.criaAnimacoes()
 
-    this.gridEngine.create(map, {
-      characters: [{ id: 'heroi', sprite: this.heroi, startPosition: { x: hx, y: hy }, speed: 4 }]
+    this.gridEngine.create(this.map, {
+      characters: [
+        { id: 'heroi', sprite: this.heroi, startPosition: { x: this.P('heroiX'), y: this.P('heroiY') }, speed: 4, collides: { collisionGroups: ['x'] } },
+        { id: 'faz', sprite: faz, startPosition: { x: this.P('fazX'), y: this.P('fazY') }, collides: { collisionGroups: ['x'] } }
+      ]
     })
-    // sombra segue o herói
-    this.events.on('update', () => { sombra.setPosition(this.heroi.x + 1, this.heroi.y + 6); this.heroi.setDepth(this.heroi.y) })
+    faz.setDepth(1)  // atualizado no update p/ ordenar por y
+    this.events.on('update', () => {
+      sombra.setPosition(this.heroi.x + 1, this.heroi.y + 6)
+      this.heroi.setDepth(this.heroi.y + 8); faz.setDepth(faz.y + 8)
+    })
 
-    // câmera segue e dá zoom (cabe na tela, estilo clássico)
+    // câmera segue o herói, zoom clássico. LIMITES por ambiente = emoldura cada área
+    // (externo OU interior), nunca mostra os dois juntos com o vão preto no meio.
+    const inter2 = gp('interior') || { x0: 21, y0: 1, w: 9, h: 7 }
+    this.limExterno = [0, 0, 20 * T, 16 * T]
+    this.limInterior = [inter2.x0 * T, inter2.y0 * T, inter2.w * T, inter2.h * T]
     const cam = this.cameras.main
-    cam.setBounds(0, 0, map.widthInPixels, map.heightInPixels)
-    cam.startFollow(this.heroi, true)
-    cam.setZoom(3)
-    cam.roundPixels = true
+    cam.setBounds(...(this.limExterno as [number, number, number, number]))
+    cam.startFollow(this.heroi, true); cam.setZoom(3); cam.roundPixels = true
 
-    // animação de andar (grid-engine emite os eventos; a gente toca a anim certa)
-    this.gridEngine.movementStarted().subscribe(({ direction }) => this.heroi.anims.play(direction, true))
-    this.gridEngine.movementStopped().subscribe(({ direction }) => { this.heroi.anims.stop(); this.heroi.setFrame(this.paradoFrame(direction)) })
-    this.gridEngine.directionChanged().subscribe(({ direction }) => this.heroi.setFrame(this.paradoFrame(direction)))
+    // animação de andar
+    this.gridEngine.movementStarted().subscribe(({ charId, direction }) => { if (charId === 'heroi') this.heroi.anims.play(direction, true) })
+    this.gridEngine.movementStopped().subscribe(({ charId, direction }) => { if (charId === 'heroi') { this.heroi.anims.stop(); this.heroi.setFrame(this.paradoFrame(direction)) } })
+    this.gridEngine.directionChanged().subscribe(({ charId, direction }) => { if (charId === 'heroi') this.heroi.setFrame(this.paradoFrame(direction)) })
+    // a cada tile que o herói ENTRA, checa gatilhos (pega mel, porta, entrega, saída)
+    this.gridEngine.positionChangeFinished().subscribe(({ charId, enterTile }) => { if (charId === 'heroi') this.aoEntrarTile(enterTile.x, enterTile.y) })
 
-    // controles: setas + WASD (o jogo tem que andar no teclado — pedido do Marcos)
+    // HUD + balão (HTML = sempre nítido) + missão inicial
+    this.montaHud()
+    this.mostraBalao('🧑‍🌾', 'O fazendeiro precisa de 5 potes de MEL para a festa! Você me ajuda a juntar?')
+
+    // controles: setas + WASD + toque; e destrava do áudio no 1º gesto
     this.wasd = this.input.keyboard?.addKeys('W,A,S,D') as any
-
-    // porta da casa: ao pisar no tile logo ABAIXO da porta, "entra" (por ora só marca)
-    // toque/clique: anda na direção do ponto (mobile)
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => this.andaPara(p.worldX, p.worldY))
+    const destrava = (): void => { if (this.audioOk) return; this.audioOk = true; try { const m = this.sound.add('musica', { loop: true, volume: 0.4 }); m.play() } catch { /* ok */ } }
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { destrava(); const wx = p.worldX, wy = p.worldY; this.gridEngine.moveTo('heroi', { x: Math.floor(wx / T), y: Math.floor(wy / T) }) })
+    this.input.keyboard?.on('keydown', destrava)
 
     // QA hooks (o robô dirige o jogo de verdade)
     ;(window as any).__grid = this
     ;(window as any).__gTile = () => this.gridEngine.getPosition('heroi')
-    ;(window as any).__gMove = (dir: string) => this.gridEngine.move('heroi', dir as any)
-    ;(window as any).__gAnda = (x: number, y: number) => this.andaTile(x, y)
+    ;(window as any).__gAnda = (x: number, y: number) => this.gridEngine.moveTo('heroi', { x, y })
     ;(window as any).__gMoving = () => this.gridEngine.isMoving('heroi')
   }
 
-  private criaAnimacoes (): void {
-    const mk = (key: string, col: number) => {
-      if (this.anims.exists(key)) return
-      this.anims.create({ key, frames: [0, 1, 2].map(r => ({ key: 'heroi', frame: r * 4 + col })), frameRate: 6, repeat: -1 })
+  private aoEntrarTile (tx: number, ty: number): void {
+    // pega mel
+    const i = this.melSprites.findIndex(m => m.x === tx && m.y === ty)
+    if (i >= 0) { const m = this.melSprites[i]; m.sp.destroy(); this.melSprites.splice(i, 1); this.mel++; this.tom(520 + this.mel * 60, 0.12, 'square', 0.15); this.atualizaHud(); if (this.mel >= MEL_ALVO) this.mostraBalao('🍯', 'Você juntou os 5 potes! Leve ao fazendeiro.') }
+    // entrar na casa: câmera FIXA e centralizada na sala (sala pequena = 1 tela)
+    if (this.local === 'fase' && tx === this.P('portaX') && ty === this.P('portaY') && !this.trocando) return this.transita(() => { this.local = 'casa'; this.gridEngine.setPosition('heroi', { x: this.P('intEntraX'), y: this.P('intEntraY') }); this.camInterior() })
+    // sair da casa: câmera volta a seguir o herói no EXTERNO
+    if (this.local === 'casa' && tx === this.P('intSaiX') && ty === this.P('intSaiY') && !this.trocando) return this.transita(() => { this.local = 'fase'; this.gridEngine.setPosition('heroi', { x: this.P('portaX'), y: this.P('portaY') + 1 }); this.camExterno() })
+    // entrega ao fazendeiro (encostar) quando tem os 5
+    if (!this.entregou && this.mel >= MEL_ALVO && this.local === 'fase') {
+      const d = Math.abs(tx - this.P('fazX')) + Math.abs(ty - this.P('fazY'))
+      if (d <= 1) this.entrega()
     }
-    // colunas: 0=baixo/frente, 1=cima/costas, 2=esquerda, 3=direita
+    // vitória: pisou na saída já aberta
+    if (this.entregou && !this.concluida && tx === this.P('pedrasX') && ty === this.P('pedrasY')) this.vitoria()
+  }
+
+  private entrega (): void {
+    this.entregou = true
+    // o MUNDO MUDA: as pedras somem (colisão + sprite) e a saída abre
+    this.colisao.removeTileAt(this.P('pedrasX'), this.P('pedrasY'))
+    if (this.pedrasSp) { this.tweens.add({ targets: this.pedrasSp, scale: 0, alpha: 0, duration: 500, onComplete: () => this.pedrasSp?.destroy() }); this.cameras.main.shake(220, 0.006) }
+    this.tom(160, 0.3, 'sawtooth', 0.16)
+    this.mostraBalao('🎉', 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!')
+    this.atualizaHud()
+  }
+
+  private vitoria (): void {
+    if (this.concluida) return
+    this.concluida = true
+    this.cameras.main.flash(400, 255, 255, 200)
+    ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
+    this.mostraBalao('🌟', 'Fase 1 concluída! (a próxima aventura entra aqui)')
+    this.hud.setText('Fase 1 concluída! 🌟')
+  }
+
+  private camInterior (): void {
+    const cam = this.cameras.main
+    cam.stopFollow()
+    cam.removeBounds()   // sem limite = centraliza EXATO na salinha (não gruda na borda do mapa)
+    cam.centerOn(this.limInterior[0] + this.limInterior[2] / 2, this.limInterior[1] + this.limInterior[3] / 2)
+  }
+
+  private camExterno (): void {
+    const cam = this.cameras.main
+    cam.setBounds(...(this.limExterno as [number, number, number, number]))
+    cam.startFollow(this.heroi, true)
+  }
+
+  private transita (aplica: () => void): void {
+    if (this.trocando) return
+    this.trocando = true
+    this.cameras.main.fadeOut(200)
+    this.time.delayedCall(210, () => { aplica(); this.cameras.main.fadeIn(200) })
+    this.time.delayedCall(560, () => { this.trocando = false })
+  }
+
+  // -------- animação / hud / balão / som --------
+  private criaAnimacoes (): void {
+    const mk = (key: string, col: number): void => { if (!this.anims.exists(key)) this.anims.create({ key, frames: [0, 1, 2].map(r => ({ key: 'heroi', frame: r * 4 + col })), frameRate: 6, repeat: -1 }) }
     mk('down', 0); mk('up', 1); mk('left', 2); mk('right', 3)
   }
 
-  private paradoFrame (dir: string): number {
-    const col = dir === 'up' ? 1 : dir === 'left' ? 2 : dir === 'right' ? 3 : 0
-    return col
+  private paradoFrame (dir: string): number { return dir === 'up' ? 1 : dir === 'left' ? 2 : dir === 'right' ? 3 : 0 }
+
+  private montaHud (): void {
+    this.hud = this.add.text(this.scale.width / 2, this.scale.height - 26, '', { fontFamily: 'Arial', fontSize: '20px', color: '#fff', backgroundColor: '#0009', padding: { x: 10, y: 5 } }).setOrigin(0.5).setScrollFactor(0).setDepth(30000)
+    this.balao = document.createElement('div')
+    this.balao.style.cssText = 'position:fixed;left:50%;top:14%;transform:translateX(-50%);max-width:80%;background:#fff;color:#123a7a;border-radius:16px;padding:12px 16px;font:600 15px system-ui;text-align:center;box-shadow:0 4px 14px #0007;z-index:9998;display:none;'
+    document.body.appendChild(this.balao)
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.balao?.remove())
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.balao?.remove())
+    this.atualizaHud()
   }
 
-  private andaPara (wx: number, wy: number): void {
-    const tx = Math.floor(wx / T), ty = Math.floor(wy / T)
-    this.andaTile(tx, ty)
+  private atualizaHud (): void {
+    if (this.concluida) return
+    const falta = Math.max(0, MEL_ALVO - this.mel)
+    this.hud.setText(this.entregou ? 'Siga para a saída à direita →' : `Mel: ${this.mel}/${MEL_ALVO}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
   }
 
-  // caminha até um tile alvo (grid-engine acha o caminho e desvia das paredes)
-  private andaTile (tx: number, ty: number): void {
-    this.gridEngine.moveTo('heroi', { x: tx, y: ty })
+  private mostraBalao (emoji: string, txt: string): void {
+    this.balao.innerHTML = `<span style="font-size:26px">${emoji}</span><br>${txt}`
+    this.balao.style.display = 'block'
+    this.time.delayedCall(4200, () => { this.balao.style.display = 'none' })
+  }
+
+  private tom (freq: number, dur: number, tipo: OscillatorType, vol: number): void {
+    try {
+      const ctx = (this.sound as any).context as AudioContext; if (!ctx) return
+      const o = ctx.createOscillator(), g = ctx.createGain()
+      o.type = tipo; o.frequency.value = freq; g.gain.value = vol
+      o.connect(g); g.connect(ctx.destination); o.start()
+      g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + dur); o.stop(ctx.currentTime + dur)
+    } catch { /* silencioso */ }
   }
 
   update (): void {
-    if (this.gridEngine.isMoving('heroi')) return
-    const k = this.input.keyboard?.createCursorKeys()
-    const w = this.wasd
+    if (this.trocando || this.concluida || this.gridEngine.isMoving('heroi')) return
+    const k = this.input.keyboard?.createCursorKeys(); const w = this.wasd
     if (k?.left.isDown || w?.A.isDown) this.gridEngine.move('heroi', 'left' as any)
     else if (k?.right.isDown || w?.D.isDown) this.gridEngine.move('heroi', 'right' as any)
     else if (k?.up.isDown || w?.W.isDown) this.gridEngine.move('heroi', 'up' as any)
