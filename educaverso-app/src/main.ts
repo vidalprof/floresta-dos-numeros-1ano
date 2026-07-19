@@ -20,6 +20,7 @@ import { VilaViva } from './rpg/VilaViva'
 import { UIVila } from './rpg/UIVila'
 import { MundoAutor } from './rpg/MundoAutor'
 import { FasesDemo } from './rpg/FasesDemo'
+import { FaseUm } from './rpg/FaseUm'
 
 const q = new URLSearchParams(location.search)
 const usarIlha = q.has('ilha')
@@ -28,10 +29,11 @@ const usarIlha = q.has('ilha')
 const usarRpg = q.has('rpg') || (window as any).__BOOT === 'rpg'
 const usarAutor = q.has('autor') || (window as any).__BOOT === 'autor'
 const usarFases = q.has('fases') || (window as any).__BOOT === 'fases'
+const usarF1 = q.has('f1') || (window as any).__BOOT === 'f1'
 
 // esconde a UI legada ANTES de criar o jogo (se o Phaser falhar no aparelho,
 // a capa antiga nao pode ficar orfa na tela com botao morto)
-if (usarRpg || usarAutor || usarFases) {
+if (usarRpg || usarAutor || usarFases || usarF1) {
   for (const id of ['telaIntro', 'telaWin', 'btnOuvir', 'hud']) {
     const el = document.getElementById(id)
     if (el) el.style.display = 'none'
@@ -42,20 +44,20 @@ if (usarRpg || usarAutor || usarFases) {
 const jogo = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: (usarRpg || usarAutor || usarFases) ? '#0e0c12' : '#060c18',
+  backgroundColor: (usarRpg || usarAutor || usarFases || usarF1) ? '#0e0c12' : '#060c18',
   // RPG usa FIT (o QUADRO INTEIRO do jogo aparece, com faixas se sobrar tela —
   // pedido do Marcos: nada de cortar os cantos). Mundos ilustrados seguem ENVELOP.
-  scale: { mode: usarAutor ? Phaser.Scale.ENVELOP : ((usarRpg || usarFases) ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP), autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
+  scale: { mode: usarAutor ? Phaser.Scale.ENVELOP : ((usarRpg || usarFases || usarF1) ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP), autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
   fps: { target: 30, forceSetTimeOut: true },
   // pixel art 16px: nearest + roundPixels (nitido); mundos ilustrados: antialias.
-  render: (usarRpg || usarAutor || usarFases)
+  render: (usarRpg || usarAutor || usarFases || usarF1)
     ? { antialias: false, pixelArt: true, roundPixels: true, powerPreference: 'low-power' }
     : { antialias: true, roundPixels: false, powerPreference: 'low-power' },
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
-  scene: usarIlha ? [Ilha] : (usarFases ? [FasesDemo] : (usarAutor ? [MundoAutor] : (usarRpg ? [VilaViva, UIVila] : [])))
+  scene: usarIlha ? [Ilha] : (usarF1 ? [FaseUm] : (usarFases ? [FasesDemo] : (usarAutor ? [MundoAutor] : (usarRpg ? [VilaViva, UIVila] : []))))
 })
 
-if (!usarIlha && !usarRpg && !usarAutor && !usarFases) {
+if (!usarIlha && !usarRpg && !usarAutor && !usarFases && !usarF1) {
   // Zod valida os dados ANTES de montar (dado torto não monta).
   const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : AVENTURA_FLORESTA))
   jogo.events.once('ready', () => {
