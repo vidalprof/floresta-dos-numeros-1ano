@@ -84,6 +84,19 @@ ok(await page.evaluate(() => (window).__fase1.local) === 'casa', 'entrou na casa
 await page.waitForTimeout(700)
 await page.screenshot({ path: OUT + '/qa_f1r_casa.png' })
 
+console.log('== NÃO TRAVA no interior: o TOQUE move o herói dentro da casa ==')
+const antesC = await page.evaluate(() => ({ x: (window).__fase1.heroi.sp.x, y: (window).__fase1.heroi.sp.y }))
+// simula um toque via o mesmo caminho do input (anda p/ um ponto dentro da sala)
+await page.evaluate(() => { const f = (window).__fase1; (window).__anda1(f.heroi.sp.x - 24, f.heroi.sp.y) })
+await page.waitForTimeout(900)
+const depoisC = await page.evaluate(() => ({ x: (window).__fase1.heroi.sp.x, y: (window).__fase1.heroi.sp.y }))
+ok(Math.abs(depoisC.x - antesC.x) + Math.abs(depoisC.y - antesC.y) > 6, 'herói SE MOVE dentro da casa (não trava)')
+
+console.log('== SAI da casa (a criança NUNCA fica presa dentro) ==')
+await page.evaluate(() => { const f = (window).__fase1; (window).__anda1(f.saidaCasa.x, f.saidaCasa.y + 20) })
+await esp(() => (window).__fase1.local === 'fase', 10000)
+ok(await page.evaluate(() => (window).__fase1.local) === 'fase', 'conseguiu SAIR da casa de volta pra fase')
+
 console.log('== ERROS ==')
 const er = erros.filter(e => !/favicon/.test(e))
 ok(er.length === 0, `zero erros/404 (${er.length})`)

@@ -115,3 +115,17 @@ Tudo opaco — camada única. Moldura de floresta: grama 245 + blob verde + árv
   fica ADVISORY (lista suspeitos p/ eu olhar, não trava). A rede confiável p/ corte é o SCREENSHOT
   (Portão de Arte: olhos meus + do Marcos). Honestidade registrada: não prometer auto-detecção de corte.
 - Cada bug novo continua virando teste permanente (aprendizado automático da qualidade).
+
+## Lições Fase 1 v13 (bugs do Marcos → testes permanentes)
+- 🔴 TRAVOU NO INTERIOR (celular E pc): o handler de toque tinha `if(local==='fase')` →
+  dentro da casa o toque/clique NÃO movia. No celular (só toque) = preso. Certo: mover em
+  QUALQUER zona (guardar só por `trocando`). TESTE NOVO: herói SE MOVE dentro da casa + SAI
+  da casa (nunca fica preso). Regra: toda zona nova onde o herói entra tem que ter teste de
+  "move dentro" e "consegue sair".
+- ⏱️ FALSO ALARME de QA: tocar DURANTE o fade de transição (trocando=true) é ignorado (correto)
+  → o teste achou que travou. Testes de toque pós-transição têm que esperar `!trocando`.
+- 🔊 SOM procedural (Web Audio oscillator) p/ feedback: 'plim' que SOBE a cada item coletado
+  (reforça a contagem!), rumble grave nas pedras, arpejo na vitória. Placeholder até SFX reais
+  (que ficam na versão itch do pack). AudioContext destrava no 1º gesto (junto com a música).
+- 🔤 BALÃO/HUD nítidos em zoom 3: `setResolution(3)` renderiza o texto em 3x → sem borrão.
+  (fonte menor compensa: balão 9px, hud 13px). Confirmar no screenshot.

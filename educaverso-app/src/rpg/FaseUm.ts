@@ -101,9 +101,9 @@ export class FaseUm extends Phaser.Scene {
     for (const [ax, ay] of [[2, 9], [17, 3], [16, 9], [11, 10]]) põe('arvore', ax * T, ay * T, 12)
     põe('toco', 6 * T, 8 * T, 10); põe('carroca', 13 * T, 3 * T, 12)
 
-    // --- HUD + balão ---
-    this.hud = this.add.text(10, 8, '', { fontFamily: 'sans-serif', fontSize: '14px', color: '#fff', backgroundColor: '#0009', padding: { x: 7, y: 4 } }).setScrollFactor(0).setDepth(20000)
-    this.balao = this.add.text(0, 0, '', { fontFamily: 'sans-serif', fontSize: '11px', color: '#2a1a10', backgroundColor: '#fff', padding: { x: 6, y: 4 }, align: 'center', wordWrap: { width: 150 } }).setOrigin(0.5, 1).setDepth(19000).setVisible(false)
+    // --- HUD + balão (setResolution = renderiza o texto em 3x -> NÍTIDO no zoom 3) ---
+    this.hud = this.add.text(10, 8, '', { fontFamily: 'sans-serif', fontSize: '13px', color: '#fff', backgroundColor: '#000a', padding: { x: 7, y: 4 } }).setScrollFactor(0).setResolution(3).setDepth(20000)
+    this.balao = this.add.text(0, 0, '', { fontFamily: 'sans-serif', fontSize: '9px', color: '#2a1a10', backgroundColor: '#fff', padding: { x: 6, y: 4 }, align: 'center', wordWrap: { width: 120 } }).setOrigin(0.5, 1).setResolution(3).setDepth(19000).setVisible(false)
 
     // --- personagens ---
     const cria = (chave: string, x: number, y: number): Andante => {
@@ -151,7 +151,9 @@ export class FaseUm extends Phaser.Scene {
     // --- música (começa no 1º gesto — política do navegador) ---
     this.musica = this.sound.add('musica', { loop: true, volume: 0.45 })
     const destrava = () => { if (this.musica && !this.musica.isPlaying) this.musica.play() }
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { destrava(); if (this.local === 'fase') this.alvo = new Phaser.Math.Vector2(p.worldX, p.worldY) })
+    // BUG corrigido: o toque move o herói em QUALQUER zona (na fase E dentro da casa).
+    // Antes só valia na fase -> no celular o herói ficava preso no interior ("travou").
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { destrava(); if (!this.trocando) this.alvo = new Phaser.Math.Vector2(p.worldX, p.worldY) })
     if (this.input.keyboard) {
       this.curs = this.input.keyboard.createCursorKeys()
       this.wasd = this.input.keyboard.addKeys('W,A,S,D') as Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>
@@ -174,6 +176,19 @@ export class FaseUm extends Phaser.Scene {
     this.hud.setText('🍯 Mel: ' + this.mel + '/' + MEL_ALVO)
   }
 
+  // som procedural (Web Audio) — feedback imediato. Placeholder até virem os SFX
+  // reais do pack (que ficam na versão itch). Leve, funciona no PC velho.
+  private tom (freq: number, dur: number, tipo: OscillatorType = 'sine', vol = 0.18): void {
+    const ctx = (this.sound as unknown as { context?: AudioContext }).context
+    if (!ctx || ctx.state !== 'running') return
+    const o = ctx.createOscillator(), g = ctx.createGain()
+    o.type = tipo; o.frequency.value = freq
+    o.connect(g); g.connect(ctx.destination)
+    const t = ctx.currentTime
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur)
+    o.start(t); o.stop(t + dur)
+  }
+
   private fala (quem: Phaser.GameObjects.Sprite, txt: string): void {
     this.balao.setText(txt).setPosition(quem.x, quem.y - 20).setVisible(true)
     this.time.delayedCall(3600, () => this.balao.setVisible(false))
@@ -182,6 +197,7 @@ export class FaseUm extends Phaser.Scene {
   private pegaMel (im: Phaser.GameObjects.Image, z: Phaser.GameObjects.Rectangle): void {
     im.destroy(); (z.body as Phaser.Physics.Arcade.StaticBody).enable = false; z.destroy()
     this.mel++
+    this.tom(560 + this.mel * 90, 0.13, 'triangle', 0.2)   // 'plim' que sobe a cada pote
     this.atualizaHud()
     if (this.mel >= MEL_ALVO) {
       (this.zEntrega.body as Phaser.Physics.Arcade.StaticBody).enable = true
@@ -197,6 +213,7 @@ export class FaseUm extends Phaser.Scene {
     // o MUNDO MUDA: as pedras somem e a saída abre
     if (this.pedrasBloco) { (this.pedrasBloco.body as Phaser.Physics.Arcade.StaticBody).enable = false; this.pedrasBloco.destroy() }
     if (this.pedras) this.tweens.add({ targets: this.pedras, alpha: 0, duration: 400, onComplete: () => this.pedras?.destroy() })
+    this.tom(150, 0.35, 'sawtooth', 0.16); this.time.delayedCall(120, () => this.tom(110, 0.4, 'sawtooth', 0.14))  // pedras rolando
     ;(this.zSaida.body as Phaser.Physics.Arcade.StaticBody).enable = true
   }
 
@@ -204,6 +221,7 @@ export class FaseUm extends Phaser.Scene {
     this.trocando = true
     this.hud.setText('Fase 1 concluída! 🌟  (a próxima fase entra aqui)')
     this.cameras.main.flash(400, 255, 255, 200)
+    ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
     this.heroi.sp.setVelocity(0, 0); this.alvo = null
   }
 
@@ -263,7 +281,8 @@ export class FaseUm extends Phaser.Scene {
     const h = this.heroi, VEL = 70
     // dentro de casa: detecta a saída pela porta
     if (this.local === 'casa' && !this.trocando) {
-      if (Phaser.Math.Distance.Between(h.sp.x, h.sp.y, this.saidaCasa.x, this.saidaCasa.y + 8) < 10) this.saiCasa()
+      // saída FÁCIL: basta andar até a porta (perto do x dela e na parte de baixo)
+      if (Math.abs(h.sp.x - this.saidaCasa.x) < 14 && h.sp.y >= this.saidaCasa.y - 4) this.saiCasa()
     }
     let kx = 0, ky = 0
     if (this.curs?.left.isDown || this.wasd?.A.isDown) kx -= 1
