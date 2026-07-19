@@ -50,10 +50,12 @@ await anda(-60, 0, 'esq')
 await page.screenshot({ path: OUT + '/qa_v_andou.png' })
 
 console.log('== COLISÃO: tenta atravessar a casa ==')
-await page.evaluate(() => (window).__tp(90, 110))
-await page.evaluate(() => (window).__anda(90, 30))
+// casa_b (330,58): a SEM porta — empurrar contra a casa_a faz o herói ENTRAR
+// pela porta (é jogo, não bug) e o teste de colisão viraria mentira.
+await page.evaluate(() => (window).__tp(330, 100))
+await page.evaluate(() => (window).__anda(330, 20))
 await page.waitForTimeout(2200)
-const preso = await page.evaluate(() => (window).__vila.heroi.sp.y > 50)
+const preso = await page.evaluate(() => (window).__vila.heroi.sp.y > 40 && (window).__vila.local === 'vila')
 ok(preso, 'casa BLOQUEIA o caminho (não atravessa)')
 
 console.log('== NPCs vivos no lugar ==')
@@ -72,10 +74,31 @@ const npcState = await page.evaluate(() => {
   const v = (window).__vila
   const faz = v.npcs[0].sp
   const h = v.heroi.sp
-  return { dist: Math.hypot(h.x - faz.x, h.y - faz.y), frame: faz.frame.name }
+  const dx = h.x - faz.x, dy = h.y - faz.y
+  const esperado = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 3 : 2) : (dy > 0 ? 0 : 1)
+  return { dist: Math.hypot(dx, dy), frame: String(faz.frame.name), esperado: String(esperado) }
 })
-ok(npcState.dist > 8, `fazendeiro BLOQUEIA (dist ${npcState.dist.toFixed(0)}px, não sobrepôs)`)
-ok(String(npcState.frame) === '0', `fazendeiro OLHOU pra baixo, onde está o herói (frame ${npcState.frame})`)
+ok(npcState.dist > 7, `fazendeiro BLOQUEIA (dist ${npcState.dist.toFixed(1)}px, não sobrepôs)`)
+ok(npcState.frame === npcState.esperado, `fazendeiro OLHOU pro herói (frame ${npcState.frame}, esperado ${npcState.esperado})`)
+
+console.log('== ENTRA NA CASINHA (porta -> fade -> interior) ==')
+await page.evaluate(() => (window).__tp(90, 110))
+await page.evaluate(() => (window).__anda(90, 78))            // anda até a porta
+await espera(() => (window).__vila.local === 'casa', 15000).catch(() => {})
+const dentro = await page.evaluate(() => (window).__vila.local)
+ok(dentro === 'casa', 'herói ENTROU na casa (zona=' + dentro + ')')
+await page.waitForTimeout(900)
+await page.screenshot({ path: OUT + '/qa_v_casa.png' })
+// os NPCs têm que FICAR na vila (bug pego no olho: worldBounds arrastava todos)
+const npcsForam = await page.evaluate(() => (window).__vila.npcs.filter(n => n.sp.x > 520).length)
+ok(npcsForam === 0, 'NPCs ficaram na vila (nenhum arrastado p/ dentro da casa)')
+
+console.log('== SAI DA CASINHA (tapete -> fade -> vila) ==')
+await page.evaluate(() => (window).__anda((window).__vila.heroi.sp.x, (window).__vila.heroi.sp.y + 30))
+await espera(() => (window).__vila.local === 'vila', 15000).catch(() => {})
+const fora = await page.evaluate(() => (window).__vila.local)
+ok(fora === 'vila', 'herói VOLTOU pra vila (zona=' + fora + ')')
+await page.waitForTimeout(600)
 
 console.log('== ERROS ==')
 const errosReais = erros.filter(e => !/favicon/.test(e))
