@@ -51,8 +51,10 @@ for (let y = IY0; y < IY0 + IH; y++) for (let x = IX0; x < IX0 + IW; x++) {
   const borda = (x === IX0 || x === IX0 + IW - 1 || y === IY0 || y === IY0 + IH - 1)
     const saidaSala = (y === IY0 + IH - 1 && x === IX0 + ((IW - 1) >> 1))
   if (borda && !saidaSala) {
-    // parede da sala (visível) + colisão
-    put(muros, x, y, pg(x === IX0 && y === IY0 ? PAR.TL : x === IX0 + IW - 1 && y === IY0 ? PAR.TR : x === IX0 && y === IY0 + IH - 1 ? PAR.BL : x === IX0 + IW - 1 && y === IY0 + IH - 1 ? PAR.BR : (y === IY0 || y === IY0 + IH - 1) ? PAR.T : PAR.L))
+    // parede da sala (visível) + colisão — cada lado com o desenho CERTO
+    const eL = x === IX0, eR = x === IX0 + IW - 1, eT = y === IY0, eB = y === IY0 + IH - 1
+    const fr = eT && eL ? PAR.TL : eT && eR ? PAR.TR : eB && eL ? PAR.BL : eB && eR ? PAR.BR : eT ? PAR.T : eB ? PAR.B : eL ? PAR.L : PAR.R
+    put(muros, x, y, pg(fr))
     put(colis, x, y, COL)
   } else {
     // piso do chão da sala (inclui o vão da porta/saída — chão livre, SEM parede)
