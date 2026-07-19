@@ -141,6 +141,30 @@
 > - **BALÃO não trava o boneco:** fala é **automática** (auto-avança por tempo), a criança anda o
 >   tempo todo; toque = andar (não avança fala). Frutas/animais com **sombra** (não flutuam).
 
+## 🏭 ENTREGA: FÁBRICA DE MUNDOS v1 + "O POMAR DO BYTE" (2026-07-19)
+> **O MUNDO EXPLORÁVEL saiu** — no motor oficial (educaverso-app, Phaser+TS strict) e pelos portões.
+> **Link: https://vidalprof.github.io/mundo-pomar/** (repo `mundo-pomar`; publica via `fabrica.yml`
+> com `source_dir=educaverso-app/dist`; rebuild = `npm run build` + QA + fabrica de novo).
+> - **Motor v2 (`src/motor/Mundo.ts`)**: grafo de ZONAS (prancha pintada 1440² > tela, câmera explora),
+>   PORTAIS com fade (interior de cabana!), **MISSÃO DENTRO DO MUNDO** (colher SEM enunciado numérico;
+>   contagem narrada kn1..N; conceito por último), vida ambiente (sol/pólen/lareira/música CC-BY 62s
+>   cortada por frames), **memória** (localStorage: o mundo lembra), tap-to-move com solta-quina,
+>   balão responsivo. Contrato v2 em `aventura.ts` (Zod; grafo validado). Auditor v2 por zona.
+> - **1º mundo `src/aventuras/pomar.ts`** (BNCC EF01MA01/02): Pomar (coelho + colher 5 maçãs → cesta
+>   ENCHE e fica) → Colina (casa) → **Cabana interior** (lareira acesa) → Lago (barquinho flutuando).
+>   Arte premium Gemini coesa (z_pomar/z_colina/z_cabana/z_lago + barco recortado).
+> - **Robô-QA oficial `tools/qa-mundo.mjs`** (Playwright real): boot + missão completa + grafo inteiro
+>   + zero console errors → **== APROVADO ==**. Bugs pegos pelo robô e consertados: cesta sem preload,
+>   auditor cruzando zonas, spawn checado contra zona errada, texto do balão estourando (setResolution),
+>   404 de poses (→ **manifest.json de poses** no Personagem), favicon.
+> - **AUDITORIA 10 agentes (fable-5) SUSTENTOU o plano** (ideia 8/10; notas 5-7 nas execuções, tudo
+>   com conserto mapeado). Incorporado: mundo>tela, missão sem "traga N", construir NO motor TS (não
+>   3º fork), emojis visíveis removidos, TS strict ligado (0 erros), tap-solta-quina. **Pendências
+>   priorizadas da auditoria:** poses costas/passo do Byte (cartela completa), posse/canto da criança,
+>   ritual de retorno semanal, cantos-brinquedo, colisores invisíveis p/ árvores da prancha, gate de
+>   toque mobile no CI, teste no PC REAL da escola e com CRIANÇAS (férias → na volta às aulas).
+> - **Músicas**: `musica-cc0.yml` baixou Kevin MacLeod (CC-BY, créditos em `_mundos/musica/`).
+
 ## 🎬 ESTÚDIO EDUVERSE — plano do "2D incrível" + DECISÃO do motor (2026-07)
 > Plano completo escrito em **`ESTUDIO-EDUVERSE.md`** (montado após 4 subagentes lerem TODA a base
 > documental). Ideia = mundo 2D vivo/persistente/explorável (não quiz); "2D incrível" vem de **4
