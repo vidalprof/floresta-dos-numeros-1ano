@@ -1653,3 +1653,18 @@ completo, jogável, offline no PC velho. Sem programar/editar JSON/desenhar. Ver
 nomeadas + motor renderizando nele; (c) gerador de mapa (posiciona NPC/itens nas vagas a partir do
 PlanoMissao); (d) gerador de diálogo (LLM no authoring); (e) formulário do professor → AdventureSpec;
 (f) mais mecânicas jogáveis (juntar/somar, repartir/fração) pra ampliar a cobertura.
+
+### 🎨 DECISÃO DE ARTE do Marcos (plataforma RPG) — jul/2026
+- **Identidade visual = estilo "Ninja Adventure"** (pixel-boy, CC0 verdadeiro) — aprovado pelo
+  Marcos vendo o GIF de prova (caminhada 4 direções frame a frame, tileset com borda orgânica).
+- **⚠️ REGRA DO PORTÃO DE ARTE: SEM TEMA NINJA nos jogos das crianças** — nada de samurai/
+  espada/arma. Usar o **elenco NEUTRO** do pack completo (aldeões, crianças, velhinhos, monges,
+  animais). Os guerreiros do subconjunto (ninja_blue, samurai_*) NÃO entram em jogo de criança.
+- **Kenney = reserva/complemento** ("qualquer coisa, Kenney") — packs tiny-town/tiny-dungeon/
+  roguelike-characters continuam no repo como fallback.
+- Assets em `content/assets/ninja-adventure/` (subconjunto do repo Godot; pack completo via
+  espelhos GitHub CC0 — superpowers-asset-packs e learnGodotArabic). Workflow `baixar-kenney.yml`
+  aceita slug kenney OU URL direta de zip (nome do destino = nome do repo da URL).
+- Licenças: Ninja Adventure é CC0 (uso comercial, sem atribuição, pode viver em repo público).
+  Filtro pra QUALQUER pack novo: a licença tem que permitir REDISTRIBUIR os arquivos em repo
+  público (CC0/CC-BY sim; "licença própria itch" quase sempre NÃO).
