@@ -1720,3 +1720,15 @@ AVALIAÇÃO DESCRITIVA (registro por missão) que pode virar NOTA se o professor
 aventuras em SEQUÊNCIAS DIDÁTICAS (encadeadas) → tudo preparado e AUDITADO por equipe de
 agentes, cada um com sua tarefa (pedagogo/roteirista/game designer/engenheiro/diretor de arte
 + robô-QA + Portão de Arte). Padrão de qualidade: "referência em criação de jogos do tipo".
+
+### 🎯 ESCLARECIMENTO DEFINITIVO do Marcos (jul/2026) — o que é "enquadrado"
+NÃO é fase de teste fake. É: **o MUNDO REAL do jogo** (mapas do autor, personagens,
+história, MÚSICA, SONS, animações, INTERIORES — tudo como no jogo de verdade) mostrado em
+**telas EMOLDURADAS** (screen-by-screen, estilo Zelda clássico) pra a criança **explorar aos
+poucos**. A moldura é só a JANELA; o conteúdo é o jogo completo do autor. Depois a pedagogia
+entra por cima virando aventura.
+- Base = MundoAutor (mapa real 86x82 já decodificado). Apresentar em REGIÕES emolduradas com
+  transição (câmera trava numa tela; ao chegar na borda/saída, fade pra tela vizinha).
+- FALTA trazer do pack (tudo CC0): 10 músicas (audio/music/*.ogg) + 40 SFX + animações de
+  ambiente (água animada tileset_animated, vento) + interiores reais + NPCs com diálogo (faceset).
+- FasesDemo foi só a PROVA do mecanismo (aprovada). O de verdade é o mundo do autor emoldurado.
