@@ -26,12 +26,21 @@ const COL = pg(PAR.SOLIDO)                        // tile-marcador de colisão (
 // --- CHÃO externo: grama em toda a área externa ---
 for (let y = OY0; y <= OY1; y++) for (let x = OX0; x <= OX1; x++) put(chao, x, y, GRAMA)
 
-// --- MUROS externos (visível): borda + saída à direita (linha 7 aberta) ---
-for (let x = OX0; x <= OX1; x++) { put(muros, x, OY0, x === OX0 ? pg(PAR.TL) : x === OX1 ? pg(PAR.TR) : pg(PAR.T)); put(muros, x, OY1, x === OX0 ? pg(PAR.BL) : x === OX1 ? pg(PAR.BR) : pg(PAR.B)) }
-for (let y = OY0 + 1; y < OY1; y++) { put(muros, OX0, y, pg(PAR.L)); if (y !== SAI_Y) put(muros, OX1, y, pg(PAR.R)) }
-// colisão da borda (a mesma da parede visível)
-for (let x = OX0; x <= OX1; x++) { put(colis, x, OY0, COL); put(colis, x, OY1, COL) }
-for (let y = OY0 + 1; y < OY1; y++) { put(colis, OX0, y, COL); if (y !== SAI_Y) put(colis, OX1, y, COL) }
+// === AUTO-PAREDE (Terrain/Wang na prática): UMA função desenha a moldura correta de
+// QUALQUER retângulo, escolhendo canto/lado sozinha + colisão. Antes havia 2 cópias na
+// mão (com desenhos diferentes) — a fonte do bug "parede direita ≠ esquerda". Agora é 1 só.
+const moldura = (x0, y0, w, h, isGap) => {
+  for (let iy = 0; iy < h; iy++) for (let ix = 0; ix < w; ix++) {
+    const x = x0 + ix, y = y0 + iy
+    const eL = ix === 0, eR = ix === w - 1, eT = iy === 0, eB = iy === h - 1
+    if (!(eL || eR || eT || eB)) continue                 // só a borda
+    if (isGap && isGap(x, y)) continue                    // vão (porta/saída) fica aberto
+    const fr = eT && eL ? PAR.TL : eT && eR ? PAR.TR : eB && eL ? PAR.BL : eB && eR ? PAR.BR : eT ? PAR.T : eB ? PAR.B : eL ? PAR.L : PAR.R
+    put(muros, x, y, pg(fr)); put(colis, x, y, COL)
+  }
+}
+// moldura EXTERNA (saída aberta na linha 7 do muro direito)
+moldura(OX0, OY0, OX1 - OX0 + 1, OY1 - OY0 + 1, (x, y) => x === OX1 && y === SAI_Y)
 
 // --- CASA externa: bloco de colisão 3x2 em (3,3); porta = meio de baixo aberto ---
 const casa = { x: 3, y: 3 }
@@ -46,21 +55,10 @@ for (const [x, y] of arvores) put(colis, x, y, COL)
 const pedras = { x: OX1, y: SAI_Y }
 put(colis, pedras.x, pedras.y, COL)
 
-// --- INTERIOR (sala): piso + paredes (visível) + colisão; sala emoldurada ---
-for (let y = IY0; y < IY0 + IH; y++) for (let x = IX0; x < IX0 + IW; x++) {
-  const borda = (x === IX0 || x === IX0 + IW - 1 || y === IY0 || y === IY0 + IH - 1)
-    const saidaSala = (y === IY0 + IH - 1 && x === IX0 + ((IW - 1) >> 1))
-  if (borda && !saidaSala) {
-    // parede da sala (visível) + colisão — cada lado com o desenho CERTO
-    const eL = x === IX0, eR = x === IX0 + IW - 1, eT = y === IY0, eB = y === IY0 + IH - 1
-    const fr = eT && eL ? PAR.TL : eT && eR ? PAR.TR : eB && eL ? PAR.BL : eB && eR ? PAR.BR : eT ? PAR.T : eB ? PAR.B : eL ? PAR.L : PAR.R
-    put(muros, x, y, pg(fr))
-    put(colis, x, y, COL)
-  } else {
-    // piso do chão da sala (inclui o vão da porta/saída — chão livre, SEM parede)
-    put(chao, x, y, GRAMA + 1)
-  }
-}
+// --- INTERIOR (sala): piso em tudo + a MESMA função de moldura (auto-parede) ---
+const saiSalaX = IX0 + ((IW - 1) >> 1)
+for (let y = IY0; y < IY0 + IH; y++) for (let x = IX0; x < IX0 + IW; x++) put(chao, x, y, GRAMA + 1)  // chão em toda a sala
+moldura(IX0, IY0, IW, IH, (x, y) => y === IY0 + IH - 1 && x === saiSalaX)                              // saída no meio de baixo
 const interiorEntra = { x: IX0 + ((IW - 1) >> 1), y: IY0 + IH - 2 }   // onde o herói aparece ao entrar
 const interiorSai = { x: IX0 + ((IW - 1) >> 1), y: IY0 + IH - 1 }     // tile de saída (volta pra porta)
 
