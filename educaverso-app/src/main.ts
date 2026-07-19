@@ -18,16 +18,18 @@ import { AVENTURA_FLORESTA } from './aventuras/floresta'
 import { AVENTURA_TESTE } from './aventuras/teste'
 import { VilaViva } from './rpg/VilaViva'
 import { UIVila } from './rpg/UIVila'
+import { MundoAutor } from './rpg/MundoAutor'
 
 const q = new URLSearchParams(location.search)
 const usarIlha = q.has('ilha')
 // RPG (plataforma nova, identidade Ninja Adventure): ?rpg na URL OU flag
 // window.__BOOT='rpg' injetada no index.html do repo publicado do demo.
 const usarRpg = q.has('rpg') || (window as any).__BOOT === 'rpg'
+const usarAutor = q.has('autor') || (window as any).__BOOT === 'autor'
 
 // esconde a UI legada ANTES de criar o jogo (se o Phaser falhar no aparelho,
 // a capa antiga nao pode ficar orfa na tela com botao morto)
-if (usarRpg) {
+if (usarRpg || usarAutor) {
   for (const id of ['telaIntro', 'telaWin', 'btnOuvir', 'hud']) {
     const el = document.getElementById(id)
     if (el) el.style.display = 'none'
@@ -38,20 +40,20 @@ if (usarRpg) {
 const jogo = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: usarRpg ? '#0e0c12' : '#060c18',
+  backgroundColor: (usarRpg || usarAutor) ? '#0e0c12' : '#060c18',
   // RPG usa FIT (o QUADRO INTEIRO do jogo aparece, com faixas se sobrar tela —
   // pedido do Marcos: nada de cortar os cantos). Mundos ilustrados seguem ENVELOP.
-  scale: { mode: usarRpg ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
+  scale: { mode: (usarRpg || usarAutor) ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
   fps: { target: 30, forceSetTimeOut: true },
   // pixel art 16px: nearest + roundPixels (nitido); mundos ilustrados: antialias.
-  render: usarRpg
+  render: (usarRpg || usarAutor)
     ? { antialias: false, pixelArt: true, roundPixels: true, powerPreference: 'low-power' }
     : { antialias: true, roundPixels: false, powerPreference: 'low-power' },
   physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
-  scene: usarIlha ? [Ilha] : (usarRpg ? [VilaViva, UIVila] : [])
+  scene: usarIlha ? [Ilha] : (usarAutor ? [MundoAutor] : (usarRpg ? [VilaViva, UIVila] : []))
 })
 
-if (!usarIlha && !usarRpg) {
+if (!usarIlha && !usarRpg && !usarAutor) {
   // Zod valida os dados ANTES de montar (dado torto não monta).
   const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : AVENTURA_FLORESTA))
   jogo.events.once('ready', () => {
