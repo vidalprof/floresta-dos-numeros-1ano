@@ -1,8 +1,8 @@
 // Aventura de TESTE — prova que o MONTADOR lê dados e arma o mundo (v2: zonas).
 // Usa assets que já existem no app (kit antigo). Abre com ?teste.
-import type { TAventura } from '../motor/aventura'
+import type { TAventuraIn } from '../motor/aventura'
 
-export const AVENTURA_TESTE: TAventura = {
+export const AVENTURA_TESTE: TAventuraIn = {
   id: 'teste_montador',
   titulo: 'Teste do Montador',
   tema: 'ilha',

@@ -6,11 +6,11 @@
 // o conceito "contar" é nomeado POR ÚLTIMO). O mundo LEMBRA da criança.
 // Objetivo (invisível): contagem 1 a 5 — BNCC EF01MA01/EF01MA02.
 // ============================================================================
-import type { TAventura } from '../motor/aventura'
+import type { TAventuraIn } from '../motor/aventura'
 
 const BYTE = { quem: 'Byte', cor: '#2a9fb3' }
 
-export const AVENTURA_POMAR: TAventura = {
+export const AVENTURA_POMAR: TAventuraIn = {
   id: 'pomar_v1',
   titulo: 'O Pomar do Byte',
   tema: 'pomar',

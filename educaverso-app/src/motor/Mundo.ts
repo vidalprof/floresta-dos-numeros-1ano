@@ -48,6 +48,13 @@ export class Mundo extends Phaser.Scene {
   numerao!: Phaser.GameObjects.Text
   portalCd = 0
   musicaSom: Phaser.Sound.BaseSound | null = null
+  // gramática problema->item->entrega->mundo muda
+  objPorId: { [id: string]: { img: Phaser.GameObjects.Image, alt: number } } = {}
+  bloqPorId: { [id: string]: Phaser.GameObjects.Rectangle } = {}
+  mochila: { asset: string, nome: string } | null = null
+  hudItem: Phaser.GameObjects.Image | null = null
+  hudItemTxt: Phaser.GameObjects.Text | null = null
+  entregou: { [n: string]: boolean } = {}
 
   constructor () { super('Mundo') }
 
@@ -60,6 +67,7 @@ export class Mundo extends Phaser.Scene {
     this.npcs = []; this.npcPorNome = {}; this.itens = []; this.colhidas = 0
     this.falas = {}; this.audioOk = {}; this.falado = {}; this.alvo = null
     this.estado = 'explora'; this.paradaAtiva = null; this.musicaSom = null
+    this.objPorId = {}; this.bloqPorId = {}; this.hudItem = null; this.hudItemTxt = null; this.entregou = {}
   }
   spawnPt!: { x: number, y: number }
 
@@ -70,10 +78,14 @@ export class Mundo extends Phaser.Scene {
 
   preload () {
     const z = this.zona
-    this.load.image('prancha_' + z.id, 'img/' + z.prancha)
+    if (z.prancha) this.load.image('prancha_' + z.id, 'img/' + z.prancha)
+    if (z.chao_textura && !this.textures.exists(z.chao_textura)) this.load.image(z.chao_textura, 'img/' + z.chao_textura + '.png')
+    if (z.agua_textura && !this.textures.exists(z.agua_textura)) this.load.image(z.agua_textura, 'img/' + z.agua_textura + '.png')
     const objs = new Set<string>()
     for (const p of z.paradas) for (const o of p.objetos) objs.add(o.asset)
-    if (z.missao) { objs.add(z.missao.asset); objs.add('cesta') }
+    if (z.missao) { objs.add(z.missao.asset); if (z.missao.cesta) objs.add('cesta'); if (z.missao.recompensa_item) objs.add(z.missao.recompensa_item.asset) }
+    const memPre = this.mem(); if (memPre.mochila) objs.add(memPre.mochila.asset)
+    for (const p of z.paradas) for (const pr of p.personagens) { if (pr.quer_item) objs.add(pr.quer_item); if (pr.ao_receber?.muda_objeto) objs.add(pr.ao_receber.muda_objeto.asset) }
     for (const a of objs) if (!this.textures.exists(a)) this.load.image(a, 'img/' + a + '.png')
     // personagens
     Personagem.preload(this, this.av.heroi)
@@ -93,14 +105,34 @@ export class Mundo extends Phaser.Scene {
     const z = this.zona
     for (const id of Object.keys(this.falas)) this.audioOk[id] = this.cache.audio.exists(id)
 
-    // PRANCHA pintada — o mundo é MAIOR que a tela (câmera explora)
-    if (this.textures.exists('prancha_' + z.id)) {
+    // CHÃO — estilo FLORESTA (textura contínua; a criança anda entre as peças)
+    // ou estilo PRANCHA (pintura única; ideal p/ interiores como a cabana)
+    if (z.chao_textura && this.textures.exists(z.chao_textura)) {
+      this.add.tileSprite(0, 0, z.largura, z.altura, z.chao_textura).setOrigin(0, 0).setDepth(0).setTileScale(0.5)
+    } else if (z.prancha && this.textures.exists('prancha_' + z.id)) {
       this.add.image(0, 0, 'prancha_' + z.id).setOrigin(0, 0).setDisplaySize(z.largura, z.altura).setDepth(0)
     } else { this.add.rectangle(z.largura / 2, z.altura / 2, z.largura, z.altura, 0x3f6f4a).setDepth(0) }
+    // ÁGUA (rio/lago): faixas de textura com brilho suave
+    if (z.agua_textura && this.textures.exists(z.agua_textura)) {
+      for (const a of z.agua) {
+        const w = this.add.tileSprite(a.x, a.y, a.w, a.h, z.agua_textura).setOrigin(0, 0).setDepth(2).setTileScale(0.5)
+        this.tweens.add({ targets: w, tilePositionY: 40, duration: 4000, repeat: -1 })
+      }
+    }
 
     // faixa ANDÁVEL: da linha do horizonte pra baixo (não anda no céu/copa)
     this.physics.world.setBounds(56, z.chao_min_y, z.largura - 112, z.altura - z.chao_min_y - 44)
     this.obst = this.physics.add.staticGroup()
+    // BLOQUEIOS invisíveis (rio, barranco) — os consertados na memória NÃO voltam
+    const cons = (this.mem().consertos || {})[z.id] || {}
+    for (const bq of z.bloqueios) {
+      if (cons.bloqueios && cons.bloqueios.indexOf(bq.id) >= 0) continue
+      const r = this.add.rectangle(bq.x + bq.w / 2, bq.y + bq.h / 2, bq.w, bq.h).setVisible(false)
+      this.physics.add.existing(r, true)
+      ;(r.body as Phaser.Physics.Arcade.StaticBody).updateFromGameObject()
+      this.obst.add(r); this.bloqPorId[bq.id] = r
+    }
+    this.mochila = this.mem().mochila || null
 
     for (const p of z.paradas) {
       for (const o of p.objetos) this.colocaObjeto(o)
@@ -108,6 +140,7 @@ export class Mundo extends Phaser.Scene {
         const np = new Personagem(this, pr.nome, pr.x, pr.y, pr.alt)
         ;(np as any)._falaChegar = pr.fala_ao_chegar
         ;(np as any)._parada = p.id
+        ;(np as any)._ref = pr
         this.npcs.push(np); this.npcPorNome[pr.nome] = np
       }
       if (p.marcador) {
@@ -188,17 +221,20 @@ export class Mundo extends Phaser.Scene {
       }
     }
 
-    // chegada: falas da 1ª visita (o mundo dá boas-vindas UMA vez)
+    this.desenhaMochila()
+
+    // chegada: falas da 1ª visita (o mundo dá boas-vindas UMA vez) + festa
     const m = this.mem(); m.visitadas = m.visitadas || {}
     if (!m.visitadas[z.id] && z.chegada.length) {
       m.visitadas[z.id] = true; this.memSalva(m)
-      this.time.delayedCall(500, () => this.dialogo(z.chegada))
+      this.time.delayedCall(500, () => this.dialogo(z.chegada, () => { if (z.festa_na_chegada) { this.confete(); this.heroi.feliz(3) } }))
     } else if (!m.visitadas[z.id]) { m.visitadas[z.id] = true; this.memSalva(m) }
 
     // ganchos de QA (o robô dirige o mundo de verdade)
     ;(window as any).__mundo = this
     ;(window as any).__irZona = (id: string) => this.transitar({ x: 0, y: 0, raio: 0, para: id, spawn: this.av.inicio, rotulo: '' })
     ;(window as any).__colher1 = () => { const i = this.itens.find(it => it.visible && !(it as any)._colhida); if (i) this.colher(i) }
+    ;(window as any).__tp = (x: number, y: number) => { this.corpo.setPosition(x, y); (this.corpo.body as Phaser.Physics.Arcade.Body).reset(x, y) }
     if (new URLSearchParams(location.search).has('mec')) {
       const alvoP = z.paradas.find(p => p.mecanica && temMecanica(p.mecanica.id))
       if (alvoP) this.time.delayedCall(400, () => this.abreMecanica(alvoP.id))
@@ -209,12 +245,12 @@ export class Mundo extends Phaser.Scene {
   armaMissao () {
     const mi = this.zona.missao!
     if (this.missaoFeita()) {
-      this.cestaCheia(mi)
+      if (mi.cesta) this.cestaCheia(mi as { cesta: { x: number, y: number }, asset: string })
       const np = mi.npc ? this.npcPorNome[mi.npc] : null
       if (np) { np.feliz(2.5); (np as any)._falaChegar = mi.fala_revisita }
       return
     }
-    this.add.image(mi.cesta.x, mi.cesta.y, 'cesta').setOrigin(0.5, 1).setScale(120 / this.textures.get('cesta').getSourceImage().height).setDepth(mi.cesta.y)
+    if (mi.cesta) this.add.image(mi.cesta.x, mi.cesta.y, 'cesta').setOrigin(0.5, 1).setScale(120 / this.textures.get('cesta').getSourceImage().height).setDepth(mi.cesta.y)
     for (const it of mi.itens) {
       const im = this.add.image(it.x, it.y, mi.asset).setOrigin(0.5, 1)
       im.setScale(mi.alt / im.height).setDepth(it.y)
@@ -242,13 +278,18 @@ export class Mundo extends Phaser.Scene {
     this.numerao.setText(String(n)).setAlpha(1).setScale(0.4)
     this.tweens.add({ targets: this.numerao, scale: 1.1, duration: 180, ease: 'Back.easeOut' })
     this.tweens.add({ targets: this.numerao, alpha: 0, delay: 560, duration: 380 })
-    // o item VOA pra cesta (o mundo reage) e fica LÁ (consequência visível)
+    // o item VOA pra cesta (o mundo reage) — ou some com brilho (vai pra mochila)
     const tw = (im as any)._tw as Phaser.Tweens.Tween | undefined; if (tw) tw.remove()
-    const mx = mi.cesta.x + (n % 3 - 1) * 26, my = mi.cesta.y - 52 - Math.floor((n - 1) / 3) * 18
-    this.tweens.add({
-      targets: im, x: mx, y: my, scale: 34 / this.textures.get(mi.asset).getSourceImage().height, duration: 520, ease: 'Cubic.easeInOut',
-      onComplete: () => { im.setDepth(mi.cesta.y + 1) }
-    })
+    if (mi.cesta) {
+      const ces = mi.cesta
+      const mx = ces.x + (n % 3 - 1) * 26, my = ces.y - 52 - Math.floor((n - 1) / 3) * 18
+      this.tweens.add({
+        targets: im, x: mx, y: my, scale: 34 / this.textures.get(mi.asset).getSourceImage().height, duration: 520, ease: 'Cubic.easeInOut',
+        onComplete: () => { im.setDepth(ces.y + 1) }
+      })
+    } else {
+      this.tweens.add({ targets: im, y: im.y - 60, alpha: 0, scale: 0.2, duration: 480, ease: 'Cubic.easeIn', onComplete: () => im.destroy() })
+    }
     const np = mi.npc ? this.npcPorNome[mi.npc] : null
     if (np) np.feliz(0.9)
     if (this.colhidas >= mi.itens.length) this.time.delayedCall(750, () => this.missaoCompleta())
@@ -260,8 +301,55 @@ export class Mundo extends Phaser.Scene {
     if (np) { np.feliz(60); (np as any)._falaChegar = mi.fala_revisita }
     this.heroi.feliz(3)
     this.confete()
-    if (mi.ao_completar.length) this.dialogo(mi.ao_completar)
+    const depois = () => { if (mi.recompensa_item) this.pegaItem(mi.recompensa_item) }
+    if (mi.ao_completar.length) this.dialogo(mi.ao_completar, depois); else depois()
   }
+  // ---------- MOCHILA (o item conquistado viaja com a criança) ----------
+  pegaItem (item: { asset: string, nome: string }) {
+    this.mochila = item
+    const m = this.mem(); m.mochila = item; this.memSalva(m)
+    this.desenhaMochila(true)
+  }
+  desenhaMochila (pulo = false) {
+    if (this.hudItem) { this.hudItem.destroy(); this.hudItem = null }
+    if (this.hudItemTxt) { this.hudItemTxt.destroy(); this.hudItemTxt = null }
+    if (!this.mochila || !this.textures.exists(this.mochila.asset)) return
+    this.hudItem = this.add.image(74, VH - 74, this.mochila.asset).setScrollFactor(0).setDepth(99300)
+    this.hudItem.setScale(84 / this.hudItem.height)
+    this.hudItemTxt = this.add.text(74, VH - 22, this.mochila.nome, { fontFamily: 'Arial Black, Arial', fontSize: '15px', color: '#ffffff', stroke: '#1c2b46', strokeThickness: 5 }).setOrigin(0.5).setScrollFactor(0).setDepth(99300)
+    if (pulo) { this.hudItem.setScale(this.hudItem.scale * 0.2); this.tweens.add({ targets: this.hudItem, scale: 84 / this.textures.get(this.mochila.asset).getSourceImage().height, duration: 420, ease: 'Back.easeOut' }) }
+  }
+  // ENTREGA: a criança chega ao personagem COM o item -> ele age e o MUNDO MUDA
+  entregar (np: Personagem, pr: { quer_item?: string, ao_receber?: { falas: string[], muda_objeto?: { id: string, asset: string }, remove_bloqueio?: string } }) {
+    if (!pr.ao_receber) return
+    this.entregou[np.nome] = true
+    this.mochila = null
+    const m = this.mem(); m.mochila = null
+    m.consertos = m.consertos || {}; const cz = m.consertos[this.zona.id] = m.consertos[this.zona.id] || {}
+    if (pr.ao_receber.muda_objeto) { cz.objetos = cz.objetos || {}; cz.objetos[pr.ao_receber.muda_objeto.id] = pr.ao_receber.muda_objeto.asset }
+    if (pr.ao_receber.remove_bloqueio) { cz.bloqueios = cz.bloqueios || []; if (cz.bloqueios.indexOf(pr.ao_receber.remove_bloqueio) < 0) cz.bloqueios.push(pr.ao_receber.remove_bloqueio) }
+    this.memSalva(m)
+    this.desenhaMochila()
+    np.feliz(3)
+    this.dialogo(pr.ao_receber.falas, () => {
+      // o MUNDO MUDA na frente da criança (a consequência visível)
+      if (pr.ao_receber!.muda_objeto) {
+        const alvoObj = this.objPorId[pr.ao_receber!.muda_objeto.id]
+        if (alvoObj) {
+          this.brilho.setPosition(alvoObj.img.x, alvoObj.img.y - alvoObj.alt / 2).setAlpha(0.95).setScale(1.4)
+          this.tweens.add({ targets: this.brilho, alpha: 0, scale: 2.2, duration: 700, ease: 'Cubic.easeOut' })
+          alvoObj.img.setTexture(pr.ao_receber!.muda_objeto.asset)
+          alvoObj.img.setScale(alvoObj.alt / alvoObj.img.height)
+        }
+      }
+      if (pr.ao_receber!.remove_bloqueio) {
+        const r = this.bloqPorId[pr.ao_receber!.remove_bloqueio]
+        if (r) { this.obst.remove(r); r.destroy() }
+      }
+      this.heroi.feliz(2.5)
+    })
+  }
+
   confete () {
     // efeito leve (formas por código são permitidas como EFEITO pela style-bible)
     const cores = [0xffd45a, 0xff5a5a, 0x5ad1ff, 0x8aff7a, 0xff8ad1]
@@ -283,9 +371,12 @@ export class Mundo extends Phaser.Scene {
   }
 
   colocaObjeto (o: TObjeto) {
-    if (!this.textures.exists(o.asset)) return
-    const im = this.add.image(o.x, o.y, o.asset).setOrigin(0.5, 1)
+    const cons = (this.mem().consertos || {})[this.zona.id] || {}
+    const asset = (o.id && cons.objetos && cons.objetos[o.id]) ? cons.objetos[o.id] : o.asset
+    if (!this.textures.exists(asset)) return
+    const im = this.add.image(o.x, o.y, asset).setOrigin(0.5, 1)
     im.setScale(o.alt / im.height).setFlipX(o.flip).setDepth(o.profundidade ?? o.y)
+    if (o.id) this.objPorId[o.id] = { img: im, alt: o.alt }
     if (o.vida === 'balanca') this.tweens.add({ targets: im, angle: { from: -1.6, to: 1.6 }, duration: 2800 + Math.random() * 800, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
     else if (o.vida === 'flutua_suave') this.tweens.add({ targets: im, y: o.y - 6, duration: 1500, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
     else if (o.vida === 'brilha') { const g = this.add.image(o.x, o.y - o.alt * 0.4, 'glow').setBlendMode(Phaser.BlendModes.ADD).setDepth(im.depth + 1); this.tweens.add({ targets: g, alpha: { from: 0.4, to: 0.9 }, scale: { from: 0.85, to: 1.15 }, duration: 900, yoyo: true, repeat: -1 }) }
@@ -380,7 +471,14 @@ export class Mundo extends Phaser.Scene {
       np.update(dt)
       if (this.estado === 'explora') {
         const pid = (np as any)._parada as string
+        const pref = (np as any)._ref as { quer_item?: string, ao_receber?: any } | undefined
         const dist = Phaser.Math.Distance.Between(this.heroi.x, this.heroi.y, np.x, np.y)
+        // ENTREGA (problema->item->entrega->mundo muda) tem prioridade
+        if (dist < 150 && pref && pref.quer_item && this.mochila && this.mochila.asset === pref.quer_item && !this.entregou[np.nome]) {
+          this.alvo = null; b.setVelocity(0, 0)
+          this.entregar(np, pref)
+          continue
+        }
         if (dist < 150 && !this.falado[pid]) {
           this.falado[pid] = true; this.alvo = null; b.setVelocity(0, 0)
           const falasIds = (np as any)._falaChegar as string[]

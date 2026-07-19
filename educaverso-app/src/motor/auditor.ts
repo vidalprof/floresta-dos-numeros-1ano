@@ -51,7 +51,7 @@ export function auditar (av: TAventura, opts: { assets: Set<string>, audios?: Se
       if (A.size && (!opts.zonaAtual || opts.zonaAtual === z.id)) { if (!A.has(mi.asset)) p.push({ grave: true, msg: `[${z.id}] missão usa asset "${mi.asset}" que NÃO existe.` }); if (!A.has('cesta')) p.push({ grave: true, msg: `[${z.id}] missão colher exige o asset "cesta" no kit.` }) }
       for (const it of mi.itens) {
         if (!andavel(it.y)) p.push({ grave: true, msg: `[${z.id}] item da missão fora da faixa andável (y=${it.y}).` })
-        if (Math.hypot(it.x - mi.cesta.x, it.y - mi.cesta.y) < 90) p.push({ grave: false, msg: `[${z.id}] item da missão em cima da cesta.` })
+        if (mi.cesta && Math.hypot(it.x - mi.cesta.x, it.y - mi.cesta.y) < 90) p.push({ grave: false, msg: `[${z.id}] item da missão em cima da cesta.` })
       }
       if (opts.audios) for (const id of mi.ao_completar) if (!opts.audios.has(id)) p.push({ grave: false, msg: `[${z.id}] fala de conclusão "${id}" SEM áudio.` })
     }

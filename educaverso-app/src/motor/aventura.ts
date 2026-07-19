@@ -16,6 +16,7 @@ export const Vida = z.enum(['nada', 'balanca', 'brilha', 'tremula', 'gira', 'flu
 
 // um objeto colocado no mundo (arte de IA do kit)
 export const Objeto = z.object({
+  id: z.string().optional(),           // p/ o mundo MUDAR (ex.: 'ponte')
   asset: z.string(),                 // chave do kit (ex.: 'casa', 'barco')
   x: z.number(), y: z.number(),
   alt: z.number().default(120),      // altura em px (dimensiona pela ALTURA)
@@ -32,7 +33,14 @@ export const PersonagemRef = z.object({
   x: z.number(), y: z.number(),
   alt: z.number().default(90),
   npc: z.boolean().default(true),
-  fala_ao_chegar: z.array(z.string()).default([])
+  fala_ao_chegar: z.array(z.string()).default([]),
+  // ENTREGA: se a criança chegar COM o item que ele quer, ele age e o MUNDO MUDA
+  quer_item: z.string().optional(),          // asset do item (ex.: 'tabuas')
+  ao_receber: z.object({
+    falas: z.array(z.string()).default([]),
+    muda_objeto: z.object({ id: z.string(), asset: z.string() }).optional(),
+    remove_bloqueio: z.string().optional()
+  }).optional()
 })
 
 // uma fala (o áudio MP3 da voz por API é 'audio/<id>.mp3')
@@ -74,11 +82,12 @@ export const MissaoColher = z.object({
   asset: z.string(),                             // ex.: 'maca'
   alt: z.number().default(52),
   itens: z.array(z.object({ x: z.number(), y: z.number() })).min(1),
-  cesta: z.object({ x: z.number(), y: z.number() }),
+  cesta: z.object({ x: z.number(), y: z.number() }).optional(),  // sem cesta -> mochila
   voz_prefixo: z.string().default('kn'),         // kn1, kn2... (contagem falada)
   npc: z.string().optional(),                    // quem comemora (ex.: 'coelho')
   ao_completar: z.array(z.string()).default([]), // falas: consequência -> descoberta -> conceito -> reflexão
-  fala_revisita: z.array(z.string()).default([]) // ao voltar com a missão feita (o mundo LEMBRA)
+  fala_revisita: z.array(z.string()).default([]), // ao voltar com a missão feita (o mundo LEMBRA)
+  recompensa_item: z.object({ asset: z.string(), nome: z.string() }).optional()  // vai pra MOCHILA
 })
 
 // efeitos de vida ambiente da zona (tudo leve; orçamento do PC fraco)
@@ -89,10 +98,20 @@ export const Efeitos = z.object({
 })
 
 // uma ZONA explorável (prancha pintada + paradas + portais + missão)
+export const Bloqueio = z.object({ id: z.string(), x: z.number(), y: z.number(), w: z.number(), h: z.number() })
+
 export const Zona = z.object({
   id: z.string(),
   nome: z.string(),
-  prancha: z.string(),               // arquivo em img/ (ex.: 'z_pomar.jpg')
+  // ESTILO FLORESTA (padrão da fábrica): chao_textura repete no mundo inteiro e
+  // as peças (árvores/rio/ponte) são sprites com colisão — a criança anda ENTRE elas.
+  // ESTILO PRANCHA (para INTERIORES): prancha pintada única (a cabana).
+  prancha: z.string().default(''),       // arquivo em img/ (ex.: 'z_cabana.jpg')
+  chao_textura: z.string().default(''),  // asset de textura contínua (ex.: 'grama')
+  agua_textura: z.string().default(''),  // asset da água (ex.: 'rio')
+  agua: z.array(z.object({ x: z.number(), y: z.number(), w: z.number(), h: z.number() })).default([]),
+  bloqueios: z.array(Bloqueio).default([]),   // colisores invisíveis (rio, barranco)
+  festa_na_chegada: z.boolean().default(false),
   largura: z.number().default(1440), // tamanho do MUNDO (maior que a tela!)
   altura: z.number().default(1440),
   chao_min_y: z.number().default(700),   // faixa andável começa aqui (horizonte)
@@ -119,6 +138,7 @@ export const Aventura = z.object({
 })
 
 export type TAventura = z.infer<typeof Aventura>
+export type TAventuraIn = z.input<typeof Aventura>   // p/ AUTORAR dados (defaults opcionais)
 export type TZona = z.infer<typeof Zona>
 export type TParada = z.infer<typeof Parada>
 export type TObjeto = z.infer<typeof Objeto>

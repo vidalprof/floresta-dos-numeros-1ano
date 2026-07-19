@@ -5,7 +5,8 @@
 //
 // Cenas:
 //  - Mundo (PADRÃO): o MONTADOR v2 — lê uma AVENTURA (grafo de zonas) e arma
-//    o mundo explorável. Padrão: "O Pomar do Byte". ?teste = aventura de teste.
+//    o mundo explorável. Padrão: "A Floresta do Byte" (estilo composto — o que
+//    o Marcos pediu). ?pomar = mundo Pomar (estilo prancha). ?teste = teste.
 //  - Ilha (?ilha): a cena artesanal antiga (referência histórica).
 // ============================================================================
 import Phaser from 'phaser'
@@ -13,6 +14,7 @@ import { Ilha } from './scenes/Ilha'
 import { Mundo } from './motor/Mundo'
 import { validarAventura } from './motor/aventura'
 import { AVENTURA_POMAR } from './aventuras/pomar'
+import { AVENTURA_FLORESTA } from './aventuras/floresta'
 import { AVENTURA_TESTE } from './aventuras/teste'
 
 const q = new URLSearchParams(location.search)
@@ -32,7 +34,7 @@ const jogo = new Phaser.Game({
 
 if (!usarIlha) {
   // Zod valida os dados ANTES de montar (dado torto não monta).
-  const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : AVENTURA_POMAR)
+  const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : AVENTURA_FLORESTA))
   jogo.events.once('ready', () => {
     jogo.scene.add('Mundo', Mundo, true, { aventura })
   })
