@@ -70,3 +70,19 @@ não volta duas vezes.
    `local`+`salaAtual` explicitamente.
 7. **FIT vs ENVELOP**: ENVELOP corta borda (a "casinha cortada" do Marcos). RPG usa FIT
    (quadro inteiro + faixas). No celular em pé o quadro fica menor — deitar resolve.
+
+## Receita da AREIA do autor (auditor jul/2026 — casada BYTE A BYTE com o mockup)
+chao.png (22 col; global=lin*22+col): campo=110 (liso 255,173,93); decor campo=111-114
+(esparsas 1/8-1/12); miolo claro caminho/praça=23; decor claro=88,89; BLOB claro 3x3=
+[[0,1,2],[22,23,24],[44,45,46]] (escala: cantos+bordas repetidas+miolo 23); trilha fina
+V=3/25(repete)/47, H=66/67(repete)/68, pingo=69. NÃO usar cols 11-21 (bloco rosado).
+Tudo opaco — camada única. Moldura de floresta: grama 245 + blob verde + árvores em cacho.
+
+## Lições v7 (cada uma virou conferência obrigatória)
+- Recorte contaminado pelo VIZINHO = "peça cortada" na tela (pedras com fatia de pedra
+  alheia; prateleira com lasca da estante). REGRA: todo recorte novo é ampliado 8x e
+  conferido ANTES de entrar; se o vizinho encosta, limpar os pixels intrusos (transparência).
+- SALA DO AUTOR (wall_simple, 10 col): TL=0 T=3 TR=4 L=10 R=14 BL=40 tampas-porta=41/42
+  B=43 BR=44, entorno=50 (parede escura). A PORTA é um VÃO no muro de baixo. Câmera do
+  interior: zoom 4 + bounds colados (sala enche a tela; nunca "mar preto").
+- backgroundColor do jogo TEM que casar com a moldura escura (#0e0c12) — verde vazava no vão.

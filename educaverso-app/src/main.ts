@@ -32,13 +32,13 @@ if (usarRpg) {
     const el = document.getElementById(id)
     if (el) el.style.display = 'none'
   }
-  document.body.style.background = '#1c2b1e'
+  document.body.style.background = '#0e0c12'
 }
 
 const jogo = new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
-  backgroundColor: usarRpg ? '#1c2b1e' : '#060c18',
+  backgroundColor: usarRpg ? '#0e0c12' : '#060c18',
   // RPG usa FIT (o QUADRO INTEIRO do jogo aparece, com faixas se sobrar tela —
   // pedido do Marcos: nada de cortar os cantos). Mundos ilustrados seguem ENVELOP.
   scale: { mode: usarRpg ? Phaser.Scale.FIT : Phaser.Scale.ENVELOP, autoCenter: Phaser.Scale.CENTER_BOTH, width: 1024, height: 768 },
