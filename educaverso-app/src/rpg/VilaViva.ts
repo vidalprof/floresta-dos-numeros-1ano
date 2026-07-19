@@ -32,17 +32,11 @@ const PROPS: Record<string, [number, number, number, number]> = {
   carroca: [82, 131, 27, 27],
   feira:   [116, 130, 27, 28],
   // móveis do interior (régua na faixa y=584..640 do tileset)
-  estante:   [160, 590, 37, 34],
-  prateleira: [200, 590, 37, 33],
+  estante:   [160, 592, 37, 32],
+  prateleira: [200, 592, 37, 31],
   tapete:    [112, 592, 48, 48],
   planta:    [0, 600, 15, 24]
 }
-
-// ---- zona INTERIOR (a casinha por dentro) — fica fora do mapa da vila,
-// LONGE o bastante p/ a câmera (visão de ~341px) nunca alcançar a vila ----
-const CASA = { x: 704, y: 48, w: 160, h: 128 }
-const PORTA_VILA = { x: 90, y: 76 }                 // porta da casa_a na vila
-const TAPETE_SAIDA = { x: CASA.x + 80, y: CASA.y + 118 }
 
 interface Andante {
   sp: Phaser.Physics.Arcade.Sprite
@@ -58,6 +52,9 @@ export class VilaViva extends Phaser.Scene {
   local: 'vila' | 'casa' = 'vila'                 // zona atual (QA lê)
   private trocando = false
   vistaTudo = false                               // modo "ver o cenário todo"
+  salaAtual = 0                                   // qual interior (indice)
+  private curs?: Phaser.Types.Input.Keyboard.CursorKeys
+  private wasd?: Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>
 
   // alterna câmera: seguir o herói (zoom 3) <-> ver o cenário inteiro (zoom 2)
   alternaVista (): void {
@@ -86,7 +83,8 @@ export class VilaViva extends Phaser.Scene {
     this.load.spritesheet('chao', b + 'chao.png', { frameWidth: T, frameHeight: T })
     this.load.image('mundo', b + 'mundo.png')
     this.load.image('sombra', b + 'sombra.png')
-    this.load.image('piso', b + 'piso.png')          // parquê do interior (NA)
+    this.load.image('piso', b + 'piso.png')          // palha rústica (sala 1)
+    this.load.image('piso2', b + 'piso2.png')        // pedra (sala 2 — depósito)
     this.load.spritesheet('bau', b + 'bau.png', { frameWidth: 16, frameHeight: 14 })
     this.load.spritesheet('jar', b + 'jar.png', { frameWidth: 16, frameHeight: 16 })
   }
@@ -110,13 +108,21 @@ export class VilaViva extends Phaser.Scene {
     const põe = (nome: string, x: number, y: number, pes = 10): Phaser.GameObjects.Image => {
       const im = this.add.image(x, y, 'mundo', nome).setOrigin(0.5, 1)
       im.setDepth(y)
-      const w = im.width * 0.8
-      const corpo = this.add.rectangle(x, y - pes / 2, w, pes)
-      this.physics.add.existing(corpo, true)
-      solidos.add(corpo)
+      if (pes > 0) {
+        const w = im.width * 0.8
+        const corpo = this.add.rectangle(x, y - pes / 2, w, pes)
+        this.physics.add.existing(corpo, true)
+        solidos.add(corpo)
+      }
       return im
     }
-    põe('casa_a', 90, 70, 26); põe('casa_b', 330, 58, 26)
+    const bloco = (x: number, y: number, w: number, h: number): void => {
+      const r = this.add.rectangle(x, y, w, h); this.physics.add.existing(r, true); solidos.add(r)
+    }
+    põe('casa_a', 90, 70, 0); põe('casa_b', 330, 58, 0)
+    // VÃO da porta ("igual no jogo"): casa sólida dos lados; a soleira é passagem
+    bloco(71, 57, 26, 26); bloco(109, 57, 26, 26); bloco(90, 52, 12, 8)      // casa_a
+    bloco(314, 45, 20, 26); bloco(346, 45, 20, 26); bloco(330, 40, 12, 8)    // casa_b
     põe('varal', 395, 52, 8)
     põe('torii', 256, 318, 8)                       // portal de entrada da vila (sul)
     põe('cerca', 40, 300, 8); põe('cerca', 470, 300, 8)
@@ -165,10 +171,6 @@ export class VilaViva extends Phaser.Scene {
       this.physics.add.collider(this.heroi.sp, n.sp)
     }
 
-    // NPCs respiram (bob sutil) e dão um pulinho quando o herói chega perto
-    for (const n of this.npcs) {
-      this.tweens.add({ targets: n.sp, scaleY: 1.03, duration: 900 + Math.random() * 400, yoyo: true, repeat: -1 })
-    }
     // dog passeia sozinho
     this.time.addEvent({
       delay: 2600,
@@ -190,75 +192,105 @@ export class VilaViva extends Phaser.Scene {
       const r = this.add.rectangle(wx, wy, ww, wh); this.physics.add.existing(r, true); solidos.add(r)
     }
 
-    // ---- INTERIOR da casinha (zona 2, montada fora do mapa da vila) ----
-    this.add.rectangle(CASA.x + CASA.w / 2, CASA.y + CASA.h / 2, CASA.w + 192, CASA.h + 192, 0x0e0c12).setDepth(-2)
-    for (let ix = CASA.x; ix < CASA.x + CASA.w; ix += 48) {
-      for (let iy = CASA.y + 8; iy < CASA.y + CASA.h - 8; iy += 48) {
-        this.add.image(ix, iy, 'piso').setOrigin(0).setDepth(-1)
+    // ---- INTERIORES (grafo de zonas GENERALIZADO: toda casinha tem porta -> sala) ----
+    // Regra do Marcos: entrar SÓ pisando na SOLEIRA ("igual no jogo") — a casa tem
+    // um VÃO na porta; o gatilho fica DENTRO do vão. Passar na frente não dispara.
+    interface CfgSala { porta: { x: number, y: number }, sala: { x: number, y: number, w: number, h: number }, piso: string }
+    const INTERIORES: CfgSala[] = [
+      { porta: { x: 90, y: 62 }, sala: { x: 704, y: 48, w: 160, h: 128 }, piso: 'piso' },
+      { porta: { x: 330, y: 50 }, sala: { x: 704, y: 288, w: 144, h: 112 }, piso: 'piso2' }
+    ]
+    const saidaDe = (s: CfgSala['sala']) => ({ x: s.x + s.w / 2, y: s.y + s.h - 10 })
+
+    const montaSala = (cfg: CfgSala): void => {
+      const s = cfg.sala
+      this.add.rectangle(s.x + s.w / 2, s.y + s.h / 2, s.w + 192, s.h + 192, 0x0e0c12).setDepth(-2)
+      for (let ix = s.x; ix < s.x + s.w; ix += 48) {
+        for (let iy = s.y + 8; iy < s.y + s.h - 8; iy += 48) {
+          this.add.image(ix, iy, cfg.piso).setOrigin(0).setDepth(-1)
+        }
       }
+      // moldura escura larga (recorta piso vazado)
+      const mold = this.add.graphics().setDepth(0.5)
+      mold.fillStyle(0x0e0c12)
+      mold.fillRect(s.x - 96, s.y - 96, s.w + 192, 104)
+      mold.fillRect(s.x - 96, s.y + s.h - 8, s.w + 192, 104)
+      mold.fillRect(s.x - 96, s.y - 96, 104, s.h + 192)
+      mold.fillRect(s.x + s.w - 8, s.y - 96, 104, s.h + 192)
+      // paredes invisíveis
+      bloco(s.x + s.w / 2, s.y + 12, s.w, 24)
+      bloco(s.x + s.w / 2, s.y + s.h - 2, s.w, 12)
+      bloco(s.x + 4, s.y + s.h / 2, 8, s.h)
+      bloco(s.x + s.w - 4, s.y + s.h / 2, 8, s.h)
+      // tapete de saída (visível)
+      const sd = saidaDe(s)
+      this.add.image(sd.x, sd.y, 'mundo', 'tapete').setDisplaySize(24, 12).setDepth(0.6)
     }
-    // recorta o piso que vazou da sala (moldura escura LARGA por cima)
-    const mold = this.add.graphics().setDepth(0.5)
-    mold.fillStyle(0x0e0c12)
-    mold.fillRect(CASA.x - 96, CASA.y - 96, CASA.w + 192, 104)                 // topo
-    mold.fillRect(CASA.x - 96, CASA.y + CASA.h - 8, CASA.w + 192, 104)         // base
-    mold.fillRect(CASA.x - 96, CASA.y - 96, 104, CASA.h + 192)                 // esq
-    mold.fillRect(CASA.x + CASA.w - 8, CASA.y - 96, 104, CASA.h + 192)         // dir
-    // móveis (aconchego + colisão) — o tapete é só chão (sem corpo)
-    this.add.image(CASA.x + 80, CASA.y + 62, 'mundo', 'tapete').setDepth(0.6)
-    põe('estante', CASA.x + 34, CASA.y + 44, 12)
-    põe('prateleira', CASA.x + 74, CASA.y + 43, 12)
-    põe('planta', CASA.x + 18, CASA.y + 116, 8)
-    const bau = this.add.image(CASA.x + 122, CASA.y + 36, 'bau', 0).setOrigin(0.5, 1).setDepth(CASA.y + 36)
-    const cb = this.add.rectangle(CASA.x + 122, CASA.y + 32, 14, 8); this.physics.add.existing(cb, true); solidos.add(cb)
-    this.add.image(CASA.x + 142, CASA.y + 40, 'jar', 0).setOrigin(0.5, 1).setDepth(CASA.y + 40)
-    void bau
-    // paredes invisíveis da sala
-    for (const [wx, wy, ww, wh] of [
-      [CASA.x + CASA.w / 2, CASA.y + 12, CASA.w, 24],                    // topo (parede alta)
-      [CASA.x + CASA.w / 2, CASA.y + CASA.h - 2, CASA.w, 12],           // base
-      [CASA.x + 4, CASA.y + CASA.h / 2, 8, CASA.h],                      // esq
-      [CASA.x + CASA.w - 4, CASA.y + CASA.h / 2, 8, CASA.h]              // dir
-    ] as const) {
-      const r = this.add.rectangle(wx, wy, ww, wh); this.physics.add.existing(r, true); solidos.add(r)
+    for (const cfg of INTERIORES) montaSala(cfg)
+
+    // decoração SALA 1 — casinha aconchegante (tapete LIVRE, sem enfiar sob a estante)
+    {
+      const s = INTERIORES[0].sala
+      this.add.image(s.x + 80, s.y + 74, 'mundo', 'tapete').setDepth(0.6)
+      põe('estante', s.x + 34, s.y + 44, 12)
+      põe('prateleira', s.x + 74, s.y + 43, 12)
+      põe('planta', s.x + 18, s.y + 116, 8)
+      this.add.image(s.x + 122, s.y + 36, 'bau', 0).setOrigin(0.5, 1).setDepth(s.y + 36)
+      bloco(s.x + 122, s.y + 32, 14, 8)
+      this.add.image(s.x + 142, s.y + 40, 'jar', 0).setOrigin(0.5, 1).setDepth(s.y + 40)
+    }
+    // decoração SALA 2 — depósito rústico da fazenda (pedra + prateleira + jarros)
+    {
+      const s = INTERIORES[1].sala
+      põe('prateleira', s.x + 36, s.y + 42, 12)
+      this.add.image(s.x + 96, s.y + 40, 'jar', 0).setOrigin(0.5, 1).setDepth(s.y + 40)
+      this.add.image(s.x + 112, s.y + 42, 'jar', 0).setOrigin(0.5, 1).setDepth(s.y + 42)
+      bloco(s.x + 104, s.y + 37, 28, 8)
+      põe('toco', s.x + 118, s.y + 92, 10)
+      põe('planta', s.x + 20, s.y + 96, 8)
     }
 
-    // ---- PORTAS (entrar/sair com fade — o grafo de zonas do motor) ----
-    const vaiPara = (dest: 'vila' | 'casa') => {
+    // ---- PORTAS (fade — o grafo de zonas do motor) ----
+    this.salaAtual = 0
+    const vaiPara = (dest: number | 'vila') => {
       if (this.trocando) return
       this.trocando = true
       this.alvo = null
       this.heroi.sp.setVelocity(0, 0)
       this.cameras.main.fadeOut(240, 14, 12, 18)
       this.cameras.main.once('camerafadeoutcomplete', () => {
-        this.local = dest
         // trocar de zona SEMPRE volta pra visão normal (senão fica preso no zoom longe)
         this.vistaTudo = false
         this.cameras.main.setZoom(3)
         this.cameras.main.startFollow(this.heroi.sp, true, 0.12, 0.12)
-        if (dest === 'casa') {
-          // nasce ACIMA do tapete de saída (senão a zona de saída dispara na hora)
-          this.heroi.sp.setPosition(TAPETE_SAIDA.x, TAPETE_SAIDA.y - 26)
-          this.cameras.main.removeBounds()          // sala centrada na tela
-        } else {
-          this.heroi.sp.setPosition(PORTA_VILA.x, PORTA_VILA.y + 14)
+        if (dest === 'vila') {
+          this.local = 'vila'
+          const p = INTERIORES[this.salaAtual].porta
+          this.heroi.sp.setPosition(p.x, p.y + 18)          // nasce em frente à casa
           this.cameras.main.setBounds(0, 0, MAPA_W * T, MAPA_H * T)
+        } else {
+          this.local = 'casa'
+          this.salaAtual = dest
+          const sd = saidaDe(INTERIORES[dest].sala)
+          this.heroi.sp.setPosition(sd.x, sd.y - 26)        // acima do tapete (não redispara)
+          this.cameras.main.removeBounds()                  // sala centrada na tela
         }
-        this.cameras.main.centerOn(this.heroi.sp.x, this.heroi.sp.y)  // corta direto (sem panorâmica no escuro)
+        this.cameras.main.centerOn(this.heroi.sp.x, this.heroi.sp.y)  // corta direto
         this.cameras.main.fadeIn(240, 14, 12, 18)
         this.time.delayedCall(400, () => { this.trocando = false })
       })
     }
-    const portaCasa = this.add.zone(PORTA_VILA.x, PORTA_VILA.y, 18, 10)
-    this.physics.add.existing(portaCasa, true)
-    this.physics.add.overlap(this.heroi.sp, portaCasa, () => { if (this.local === 'vila') vaiPara('casa') })
-    // tapete de saída (visível: o próprio tapete pequeno na base da sala)
-    this.add.image(TAPETE_SAIDA.x, TAPETE_SAIDA.y, 'mundo', 'tapete').setDisplaySize(24, 12).setDepth(0.6)
-    // zona ANTES da parede de baixo (o herói para na parede; a zona tem que
-    // alcançar os pés dele ali — atrás da parede nunca sobrepõe)
-    const portaSaida = this.add.zone(TAPETE_SAIDA.x, TAPETE_SAIDA.y - 2, 24, 12)
-    this.physics.add.existing(portaSaida, true)
-    this.physics.add.overlap(this.heroi.sp, portaSaida, () => { if (this.local === 'casa') vaiPara('vila') })
+    INTERIORES.forEach((cfg, i) => {
+      // gatilho DENTRO do vão da porta (só dispara pisando na soleira)
+      const z = this.add.zone(cfg.porta.x, cfg.porta.y, 10, 6)
+      this.physics.add.existing(z, true)
+      this.physics.add.overlap(this.heroi.sp, z, () => { if (this.local === 'vila') vaiPara(i) })
+      // saída: zona sobre o tapete, ANTES da parede de baixo
+      const sd = saidaDe(cfg.sala)
+      const zs = this.add.zone(sd.x, sd.y - 2, 24, 12)
+      this.physics.add.existing(zs, true)
+      this.physics.add.overlap(this.heroi.sp, zs, () => { if (this.local === 'casa' && this.salaAtual === i) vaiPara('vila') })
+    })
     ;(window as any).__vaiPara = vaiPara
 
     // ---- câmera (zoom 3 = pixel gigante e nítido no celular e no PC velho) ----
@@ -270,6 +302,11 @@ export class VilaViva extends Phaser.Scene {
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
       this.alvo = new Phaser.Math.Vector2(p.worldX, p.worldY)
     })
+    // ---- controle: TECLADO (PC da escola) — setas e WASD ----
+    if (this.input.keyboard) {
+      this.curs = this.input.keyboard.createCursorKeys()
+      this.wasd = this.input.keyboard.addKeys('W,A,S,D') as Record<'W' | 'A' | 'S' | 'D', Phaser.Input.Keyboard.Key>
+    }
 
     // ---- UI (tela cheia + ver tudo) numa cena própria, sem zoom ----
     this.registry.set('vila', this)
@@ -284,15 +321,27 @@ export class VilaViva extends Phaser.Scene {
   update (): void {
     const h = this.heroi
     const VEL = 70
-    if (this.alvo) {
+    // TECLADO tem prioridade (segurou a tecla = anda; cancela o alvo do toque)
+    let kx = 0, ky = 0
+    if (this.curs?.left.isDown || this.wasd?.A.isDown) kx -= 1
+    if (this.curs?.right.isDown || this.wasd?.D.isDown) kx += 1
+    if (this.curs?.up.isDown || this.wasd?.W.isDown) ky -= 1
+    if (this.curs?.down.isDown || this.wasd?.S.isDown) ky += 1
+    if (kx !== 0 || ky !== 0) {
+      this.alvo = null
+      const n = Math.hypot(kx, ky)                 // diagonal não anda mais rápido
+      h.sp.setVelocity(kx / n * VEL, ky / n * VEL)
+    } else if (this.alvo) {
       const d = Phaser.Math.Distance.Between(h.sp.x, h.sp.y, this.alvo.x, this.alvo.y)
       if (d < 4) {
         this.alvo = null
+        h.sp.setVelocity(0, 0)
       } else {
         this.physics.moveTo(h.sp, this.alvo.x, this.alvo.y, VEL)
       }
+    } else {
+      h.sp.setVelocity(0, 0)
     }
-    if (!this.alvo) h.sp.setVelocity(0, 0)
 
     const vx = (h.sp.body as Phaser.Physics.Arcade.Body).velocity.x
     const vy = (h.sp.body as Phaser.Physics.Arcade.Body).velocity.y

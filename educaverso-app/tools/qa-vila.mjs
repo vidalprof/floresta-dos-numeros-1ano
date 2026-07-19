@@ -52,8 +52,8 @@ await page.screenshot({ path: OUT + '/qa_v_andou.png' })
 console.log('== COLISÃO: tenta atravessar a casa ==')
 // casa_b (330,58): a SEM porta — empurrar contra a casa_a faz o herói ENTRAR
 // pela porta (é jogo, não bug) e o teste de colisão viraria mentira.
-await page.evaluate(() => (window).__tp(330, 100))
-await page.evaluate(() => (window).__anda(330, 20))
+await page.evaluate(() => (window).__tp(314, 100))
+await page.evaluate(() => (window).__anda(314, 20))
 await page.waitForTimeout(2200)
 const preso = await page.evaluate(() => (window).__vila.heroi.sp.y > 40 && (window).__vila.local === 'vila')
 ok(preso, 'casa BLOQUEIA o caminho (não atravessa)')
@@ -81,6 +81,25 @@ const npcState = await page.evaluate(() => {
 ok(npcState.dist > 7, `fazendeiro BLOQUEIA (dist ${npcState.dist.toFixed(1)}px, não sobrepôs)`)
 ok(npcState.frame === npcState.esperado, `fazendeiro OLHOU pro herói (frame ${npcState.frame}, esperado ${npcState.esperado})`)
 
+console.log('== TECLADO (PC da escola): setas e WASD ==')
+await page.evaluate(() => (window).__tp(256, 200))
+const tecla = async (key, nome, eixo, sinal) => {
+  const antes = await page.evaluate(() => ({ x: (window).__vila.heroi.sp.x, y: (window).__vila.heroi.sp.y }))
+  await page.keyboard.down(key)
+  await page.waitForTimeout(500)
+  const anim = await page.evaluate(() => { const s = (window).__vila.heroi.sp; return s.anims.currentAnim ? s.anims.currentAnim.key : '' })
+  await page.keyboard.up(key)
+  await page.waitForTimeout(250)
+  const depois = await page.evaluate(() => ({ x: (window).__vila.heroi.sp.x, y: (window).__vila.heroi.sp.y }))
+  const delta = eixo === 'x' ? depois.x - antes.x : depois.y - antes.y
+  ok(delta * sinal > 10, `tecla ${nome} move (${delta.toFixed(0)}px)`)
+  ok(anim.startsWith('heroi-anda-'), `tecla ${nome} anima (${anim})`)
+}
+await tecla('ArrowRight', 'SETA-direita', 'x', 1)
+await tecla('ArrowLeft', 'SETA-esquerda', 'x', -1)
+await tecla('KeyS', 'S(baixo)', 'y', 1)
+await tecla('KeyW', 'W(cima)', 'y', -1)
+
 console.log('== BOTÃO "VER TUDO" (cenário inteiro na tela) ==')
 const heroiAntes = await page.evaluate(() => ({ x: (window).__vila.heroi.sp.x, y: (window).__vila.heroi.sp.y }))
 await page.mouse.click(980, 112)                              // lupa (UI fixa)
@@ -97,7 +116,7 @@ ok(volta === 3, `VER TUDO desliga (zoom ${volta})`)
 
 console.log('== ENTRA NA CASINHA (porta -> fade -> interior) ==')
 await page.evaluate(() => (window).__tp(90, 110))
-await page.evaluate(() => (window).__anda(90, 78))            // anda até a porta
+await page.evaluate(() => (window).__anda(90, 56))            // pisa na SOLEIRA (vão da porta)
 await espera(() => (window).__vila.local === 'casa', 15000).catch(() => {})
 const dentro = await page.evaluate(() => (window).__vila.local)
 ok(dentro === 'casa', 'herói ENTROU na casa (zona=' + dentro + ')')
@@ -113,6 +132,31 @@ await espera(() => (window).__vila.local === 'vila', 15000).catch(() => {})
 const fora = await page.evaluate(() => (window).__vila.local)
 ok(fora === 'vila', 'herói VOLTOU pra vila (zona=' + fora + ')')
 await page.waitForTimeout(600)
+
+console.log('== PASSAR NA FRENTE DA PORTA NÃO ENTRA (regra do Marcos) ==')
+await page.evaluate(() => (window).__tp(50, 84))
+await page.evaluate(() => (window).__anda(150, 84))           // cruza na frente da casa_a
+await page.waitForTimeout(1800)
+const passou = await page.evaluate(() => (window).__vila.local)
+ok(passou === 'vila', 'cruzou na frente da porta e NÃO entrou (zona=' + passou + ')')
+
+console.log('== SEGUNDA CASINHA (depósito de pedra) ==')
+await page.evaluate(() => (window).__tp(330, 86))
+await page.evaluate(() => (window).__anda(330, 44))           // soleira da casa_b
+await espera(() => (window).__vila.local === 'casa' && (window).__vila.salaAtual === 1, 15000).catch(() => {})
+const s2 = await page.evaluate(() => ({ l: (window).__vila.local, s: (window).__vila.salaAtual }))
+ok(s2.l === 'casa' && s2.s === 1, `entrou na SALA 2 (${s2.l}/${s2.s})`)
+await page.waitForTimeout(700)
+await page.screenshot({ path: OUT + '/qa_v_casa2.png' })
+await page.evaluate(() => (window).__anda((window).__vila.heroi.sp.x, (window).__vila.heroi.sp.y + 40))
+await espera(() => (window).__vila.local === 'vila', 15000).catch(() => {})
+const v2 = await page.evaluate(() => (window).__vila.local)
+ok(v2 === 'vila', 'saiu da sala 2 de volta pra vila (' + v2 + ')')
+
+console.log('== TEXTURA FALTANDO (lição: piso2 esquecido no preload) ==')
+const faltando = await page.evaluate(() => (window).__vila.children.list
+  .filter(o => o.texture && (o.texture.key === '__MISSING' || o.texture.key === '__DEFAULT')).length)
+ok(faltando === 0, `zero objetos com textura faltando (${faltando})`)
 
 console.log('== ERROS ==')
 const errosReais = erros.filter(e => !/favicon/.test(e))

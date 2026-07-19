@@ -52,3 +52,21 @@
 Quando um erro novo escapar: (a) reproduz, (b) vira uma **regra no auditor** (ou
 uma checagem no build), (c) anota aqui. O auditor **só cresce** — o mesmo erro
 não volta duas vezes.
+
+## Lições da Vila Viva (jul/2026) — cada bug do Marcos virou TESTE permanente
+1. **Textura faltando não é 404**: esquecer `load.image('piso2')` não dá erro de rede —
+   o Phaser desenha quadrado verde `__MISSING`. REGRA no robô: varrer `children.list`
+   por textura `__MISSING`/`__DEFAULT` → tem que ser 0. (Bug real: piso2 da sala 2.)
+2. **Pixel art treme com tween de ESCALA** (0,48px de meio-pixel em zoom 3). "Respiração"
+   por scaleY foi REMOVIDA; vida = olhar pro herói + dog andando. Nunca animar escala
+   fracionária em sprite 16px.
+3. **Porta "igual no jogo" = VÃO físico + gatilho DENTRO**: casa com colisor maciço +
+   zona na frente dispara "de passagem" (reclamação real). Certo: blocos laterais +
+   fundo do vão + zona na soleira. TESTE: cruzar na frente da porta NÃO pode entrar.
+4. **Teste de colisão nunca empurra contra porta** (o herói ENTRA e o assert mente).
+5. **Recorte de tileset com sobra do vizinho** (2px) aparece como "recortes de outra
+   imagem" em cima do móvel — recortes sempre conferidos AMPLIADOS antes de entrar.
+6. **`__tp` (teleporte de QA) não muda `local`** — testes que trocam de zona validam
+   `local`+`salaAtual` explicitamente.
+7. **FIT vs ENVELOP**: ENVELOP corta borda (a "casinha cortada" do Marcos). RPG usa FIT
+   (quadro inteiro + faixas). No celular em pé o quadro fica menor — deitar resolve.
