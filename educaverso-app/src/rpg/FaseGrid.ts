@@ -115,7 +115,7 @@ export class FaseGrid extends Phaser.Scene {
     this.load.spritesheet('bau', b + im.bau, { frameWidth: this.kit.bauFrame[0], frameHeight: this.kit.bauFrame[1] })
     // PROPS DE CENÁRIO já LIMPOS (Diretor de Arte: extraídos do atlas sem franja/vizinho,
     // por tools/limpa-props.py) — cada um é um PNG próprio, some o "halo de foto colada"
-    for (const n of ['arvore', 'pinheiro', 'carvalho', 'cerejeira', 'pedra_g', 'pedra_p', 'toco', 'cogumelo', 'flor', 'margarida', 'arbusto', 'pinheiro_neve', 'bola_neve', 'carroca']) {
+    for (const n of ['arvore', 'pinheiro', 'cerejeira', 'arvore_outono', 'pedra_g', 'pedra_p', 'toco', 'cogumelo', 'flor', 'margarida', 'arbusto', 'pinheiro_neve', 'bola_neve', 'carroca']) {
       if (!this.textures.exists('cen_' + n)) this.load.image('cen_' + n, b + 'cen/' + n + '.png')
     }
     // só carrega o arquivo padrão; um mapa gerado pela Fábrica já vem no cache (init)

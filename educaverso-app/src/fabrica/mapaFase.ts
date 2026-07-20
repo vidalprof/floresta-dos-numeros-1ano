@@ -86,7 +86,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
   // TAMANHO — árvore grande (copa ~3 tiles) afasta 2; prop miúdo afasta 1. Assim
   // árvore↔árvore≥4, árvore↔miúdo≥3, miúdo↔miúdo≥2: nada se encosta, mas os detalhes de
   // chão cabem perto. Ambas AUTOMÁTICAS (nenhum cenário, nem futuro, erra).
-  const GRANDE = new Set(['pinheiro', 'cerejeira', 'carvalho', 'arvore', 'pinheiro_neve', 'pedra_g'])
+  const GRANDE = new Set(['pinheiro', 'cerejeira', 'arvore', 'arvore_outono', 'pinheiro_neve', 'pedra_g'])
   const raio = (p: string): number => GRANDE.has(p) ? 2 : 1
   const postos: Array<{ tx: number, ty: number, prop: string }> = []
   const scatter: Array<{ prop: string, tint?: number, tx: number, ty: number }> = []

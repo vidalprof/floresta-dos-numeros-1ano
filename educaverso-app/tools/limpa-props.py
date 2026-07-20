@@ -76,7 +76,7 @@ for n,b in PROPS.items():
 # verdade (HSV) fica rosa, ao contrário do setTint multiplicativo que só embaça. Mantém
 # a sombra/forma do arbusto (que já é limpo e bonito como a fase 1) e o tronco marrom.
 import colorsys
-def recolore(entrada, saida, hue_alvo, sat=0.55):
+def recolore(entrada, saida, hue_alvo, sat=0.55, vmul=1.0):
     c = Image.open(entrada).convert('RGBA'); px = c.load(); w,h = c.size
     for y in range(h):
         for x in range(w):
@@ -84,8 +84,12 @@ def recolore(entrada, saida, hue_alvo, sat=0.55):
             if a < 40: continue
             hh,ss,vv = colorsys.rgb_to_hsv(r/255,g/255,bl/255)
             if 0.20 < hh < 0.47 and ss > 0.15:            # só a COPA verde (tronco marrom fica)
-                nr,ng,nb = colorsys.hsv_to_rgb(hue_alvo, min(1,ss*0.9+sat*0.3), vv)
+                nr,ng,nb = colorsys.hsv_to_rgb(hue_alvo, min(1,ss*0.9+sat*0.3), min(1,vv*vmul))
                 px[x,y] = (int(nr*255),int(ng*255),int(nb*255),a)
     c.save(saida)
     return c.size
-print('cerejeira(rosa)', recolore('public/rpg/cen/arvore.png','public/rpg/cen/cerejeira.png', 0.92))
+# ÁRVORES = o arbusto redondo LIMPO recolorido (nada de pinheiro do atlas denso, que sai
+# cortado). Cada bioma ganha um TOM próprio, mas SEMPRE inteiro e sem corte:
+print('cerejeira(rosa)  ', recolore('public/rpg/cen/arvore.png','public/rpg/cen/cerejeira.png', 0.92, 0.60))
+print('pinheiro(mata)   ', recolore('public/rpg/cen/arvore.png','public/rpg/cen/pinheiro.png', 0.40, 0.55, 0.66))
+print('arvore_outono    ', recolore('public/rpg/cen/arvore.png','public/rpg/cen/arvore_outono.png', 0.07, 0.65))

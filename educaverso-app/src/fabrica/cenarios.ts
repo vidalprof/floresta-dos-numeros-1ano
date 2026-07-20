@@ -74,7 +74,7 @@ const MONTANHA: CenarioDef = {
   id: 'montanha', nome: 'O Alto da Montanha', ambiente: 'folhas', estrutura: 'casa_a',
   scatter: [
     { prop: 'pedra_g', tx: 3, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 5 }, { prop: 'pedra_g', tx: 15, ty: 11 },
-    { prop: 'pinheiro', tx: 8, ty: 10 }, { prop: 'toco', tx: 11, ty: 4 }, { prop: 'arbusto', tx: 13, ty: 8 }
+    { prop: 'arvore_outono', tx: 8, ty: 10 }, { prop: 'toco', tx: 11, ty: 4 }, { prop: 'arvore_outono', tx: 13, ty: 8 }
   ]
 }
 
