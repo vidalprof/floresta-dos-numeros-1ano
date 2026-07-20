@@ -1,7 +1,10 @@
-var CACHE="fabrica-estrelas-v1";
+/* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
+   Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
+var CACHE="fabrica-estrelas-v3";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/ceu_noite.jpg","./img/fagulha.png","./img/fagulha_fala.png","./img/fagulha_pisca.png",
- "./img/fagulha_acena.png","./img/fabrica_estrelas.png","./img/estrela_grande.png",
+ "./img/fagulha_acena.png","./img/fagulha_comemora.png","./img/fagulha_pensa.png",
+ "./img/fabrica_estrelas.png","./img/estrela_grande.png",
  "./audio/abertura.mp3","./audio/tela_inicial.mp3","./icon-192.png","./icon-512.png"];
 self.addEventListener("install",function(e){
   self.skipWaiting();
@@ -11,7 +14,24 @@ self.addEventListener("activate",function(e){
   e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE)return caches.delete(k);}));}));
   self.clients.claim();
 });
+function guardar(req,resp){
+  try{ if(resp&&resp.status===200&&resp.type==="basic"){ var cp=resp.clone(); caches.open(CACHE).then(function(c){c.put(req,cp);}); } }catch(x){}
+  return resp;
+}
 self.addEventListener("fetch",function(e){
   if(e.request.method!=="GET")return;
-  e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request).catch(function(){return caches.match("./index.html");});}));
+  var req=e.request, aceita=req.headers.get("accept")||"";
+  var ehPagina=(req.mode==="navigate")||aceita.indexOf("text/html")>=0;
+  if(ehPagina){
+    // HTML: rede primeiro (versão sempre fresca), cai pro cache se offline
+    e.respondWith(fetch(req).then(function(r){return guardar(req,r);}).catch(function(){
+      return caches.match(req).then(function(c){return c||caches.match("./index.html");});
+    }));
+  } else {
+    // Imagens/áudio/etc: cache primeiro (rápido), mas atualiza em segundo plano
+    e.respondWith(caches.match(req).then(function(c){
+      var rede=fetch(req).then(function(r){return guardar(req,r);}).catch(function(){return c;});
+      return c||rede;
+    }));
+  }
 });
