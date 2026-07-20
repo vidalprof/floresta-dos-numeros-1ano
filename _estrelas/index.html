@@ -196,6 +196,27 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .sbtn:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #c8871a}
 .sval{display:inline-block;width:42px;font-size:26px;font-weight:900;color:#ffe08a;vertical-align:middle}
 
+/* ---------- PARADA 3 — Dois jeitos (comutatividade) ---------- */
+.p3 .p3wrap{position:absolute;left:0;right:0;top:24%;bottom:24%;z-index:2;text-align:center;
+  -webkit-transition:opacity .45s ease,-webkit-transform .45s ease;transition:opacity .45s ease,transform .45s ease}
+.p3 .p3wrap.vira{opacity:.15;-webkit-transform:rotate(90deg) scale(.7);transform:rotate(90deg) scale(.7)}
+.p3 .expr{font-size:30px;font-weight:900;color:#ffe08a;margin-bottom:12px;text-shadow:0 0 16px rgba(255,200,80,.6)}
+.p3 .expr span{color:#fff}
+.gradeM{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.gradeM .fila{white-space:nowrap;line-height:0;opacity:.5;-webkit-transition:opacity .25s ease;transition:opacity .25s ease}
+.gradeM .fila.acesa{opacity:1}
+.gradeM .fila.acesa .gestr{-webkit-filter:drop-shadow(0 0 9px rgba(255,220,120,.95));filter:drop-shadow(0 0 9px rgba(255,220,120,.95))}
+
+/* ---------- PARADA 4 — O Céu Grande (×10) ---------- */
+.p4 .p4sky{position:absolute;left:0;right:0;top:24%;bottom:30%;z-index:2;text-align:center;padding:0 8px;overflow:hidden}
+.cluster{display:inline-block;vertical-align:middle;width:74px;margin:5px;padding:4px;border-radius:12px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,215,110,.35);line-height:0;
+  -webkit-animation:estrPop .38s ease;animation:estrPop .38s ease}
+.cluster .cestr{width:12px;height:auto;margin:1px;
+  -webkit-filter:drop-shadow(0 0 5px rgba(255,220,120,.85));filter:drop-shadow(0 0 5px rgba(255,220,120,.85))}
+.p4 .p4expr{position:absolute;left:0;right:0;bottom:16%;z-index:4;text-align:center}
+
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
@@ -566,8 +587,111 @@ function sucessoP2(){
   salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,tempo_s:tempo,acertou:true,semErro:(P2.ajustes<=5)});
 }
 function telaMusica(){ proxima(2); }
-function telaParada3(){ proxima(3); }
-function telaParada4(){ proxima(4); }
+/* ===== PARADA 3 — Dois jeitos, mesmo céu (comutatividade) ===== */
+function gradeStars(fil,col,cls){
+  var g=el("div",cls||"gradeM"),i,j;
+  for(i=0;i<fil;i++){ var f=el("div","fila"); for(j=0;j<col;j++){ var im=el("img","gestr"); im.src="img/estrela_grande.png"; f.appendChild(im); } g.appendChild(f); }
+  return g;
+}
+function contaFileiras(grade,expr,passo,vezes,cb){
+  var k=0;
+  var iv=setInterval(function(){
+    var filas=grade.getElementsByClassName("fila");
+    if(filas[k]) filas[k].className="fila acesa";
+    k++; expr.innerHTML=passo*k;
+    if(k>=vezes){ clearInterval(iv); setTimeout(cb,500); }
+  },300);
+}
+var P3;
+function telaParada3(){
+  limpa();
+  P3={concluida:false,t0:(new Date()).getTime()};
+  var t=el("div","tela parada p3");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
+  t.appendChild(el("div","balao","A Fagulha arrumou <b>3 fileiras de 4</b> estrelas. Toque em <b>Contar</b> e veja quantas acendem!"));
+  var wrap=el("div","p3wrap"); wrap.id="p3wrap";
+  var expr=el("div","expr"); expr.innerHTML="3 &#215; 4 = <span id='p3cont'>?</span>"; wrap.appendChild(expr);
+  var g=gradeStars(3,4,"gradeM"); g.id="p3grade"; wrap.appendChild(g);
+  t.appendChild(wrap);
+  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Contar"); b.id="p3btn";
+  b.onclick=function(){ p3contar1(); }; bar.appendChild(b); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function p3contar1(){
+  var b=document.getElementById("p3btn"); if(b)b.disabled=true;
+  var g=document.getElementById("p3grade"), c=document.getElementById("p3cont");
+  contaFileiras(g,c,4,3,function(){
+    var b2=document.getElementById("p3btn"); if(b2){ b2.disabled=false; b2.innerHTML="Vire de lado &#8635;"; b2.onclick=function(){ p3vira(); }; }
+  });
+}
+function p3vira(){
+  var b=document.getElementById("p3btn"); if(b)b.disabled=true;
+  var wrap=document.getElementById("p3wrap"); if(wrap){ wrap.className="p3wrap vira"; }
+  setTimeout(function(){
+    var wrap2=document.getElementById("p3wrap"); if(!wrap2)return;
+    wrap2.innerHTML="";
+    var expr=el("div","expr"); expr.innerHTML="4 &#215; 3 = <span id='p3cont'>?</span>"; wrap2.appendChild(expr);
+    var g=gradeStars(4,3,"gradeM"); g.id="p3grade"; wrap2.appendChild(g);
+    wrap2.className="p3wrap";
+    var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="Agora são <b>4 fileiras de 3</b>. Conte outra vez… quantas acendem?";
+    var b2=document.getElementById("p3btn"); if(b2){ b2.disabled=false; b2.innerHTML="Contar de novo"; b2.onclick=function(){ p3contar2(); }; }
+  },520);
+}
+function p3contar2(){
+  var b=document.getElementById("p3btn"); if(b)b.disabled=true;
+  var g=document.getElementById("p3grade"), c=document.getElementById("p3cont");
+  contaFileiras(g,c,3,4,function(){ sucessoP3(); });
+}
+function sucessoP3(){
+  P3.concluida=true; fagComemora();
+  var tela=document.getElementsByClassName("tela p3")[0]; if(!tela)return;
+  estouraEstrelas(tela,12);
+  var w=document.getElementById("p3wrap"); if(w)w.style.opacity="0";
+  var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
+  var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
+  revela(tela,"3 &#215; 4 = 4 &#215; 3","= 12","Você virou a constelação de lado e deu o <b>mesmo</b> tanto! 3&#215;4 e 4&#215;3 são iguais — isso vale sempre.");
+  botaoProxima(tela,3);
+  var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
+  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true});
+}
+/* ===== PARADA 4 — O Céu Grande (×10 como atalho) ===== */
+var P4;
+function telaParada4(){
+  limpa();
+  P4={caixas:0,alvo:5,toques:0,concluida:false,t0:(new Date()).getTime()};
+  var t=el("div","tela parada p4");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
+  t.appendChild(el("div","balao","O céu precisa de <b>muitas</b> estrelas, e rápido! Cada <b>caixa mágica</b> solta <b>10 de uma vez</b>. Encha o céu com <b>50</b>!"));
+  var sky=el("div","p4sky"); sky.id="p4sky"; t.appendChild(sky);
+  var expr=el("div","expr p4expr"); expr.id="p4expr"; expr.innerHTML="0 &#215; 10 = 0"; t.appendChild(expr);
+  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Soltar 10 estrelas"); b.id="p4btn";
+  b.onclick=function(){ p4solta(); }; bar.appendChild(b); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function p4solta(){
+  if(P4.concluida||P4.caixas>=P4.alvo)return;
+  P4.caixas++; P4.toques++;
+  var sky=document.getElementById("p4sky");
+  if(sky){ var cl=el("div","cluster"),k; for(k=0;k<10;k++){ var im=el("img","cestr"); im.src="img/estrela_grande.png"; cl.appendChild(im); } sky.appendChild(cl); }
+  var tot=P4.caixas*10;
+  var e=document.getElementById("p4expr"); if(e)e.innerHTML=P4.caixas+" &#215; 10 = "+tot;
+  if(P4.caixas>=P4.alvo){ var b=document.getElementById("p4btn"); if(b)b.disabled=true; setTimeout(sucessoP4,550); }
+}
+function sucessoP4(){
+  P4.concluida=true; fagComemora();
+  var tela=document.getElementsByClassName("tela p4")[0]; if(!tela)return;
+  estouraEstrelas(tela,16);
+  var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
+  var sky=document.getElementById("p4sky"); if(sky)sky.style.opacity="0";
+  var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
+  var e=document.getElementById("p4expr"); if(e)e.style.display="none";
+  revela(tela,"10 + 10 + 10 + 10 + 10","5 &#215; 10 = 50","O <b>dez</b> é um atalho poderoso! Com caixas de 10 o céu enche voando. Some 10 em 10: 10, 20, 30, 40, 50.");
+  botaoProxima(tela,4);
+  var tempo=Math.round(((new Date()).getTime()-P4.t0)/1000);
+  salvaEvid({parada:"p4",habilidade:"EF03MA07",conceito:"x10 (atalho)",toques:P4.toques,tempo_s:tempo,acertou:true,semErro:(P4.toques===P4.alvo)});
+}
 function telaMemoria(){ proxima(5); }
 function telaParada5(){ proxima(6); }
 function telaDecore(){ proxima(7); }
