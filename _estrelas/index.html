@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>A Fábrica de Estrelas — 3º ano</title>
+<style>
+/* ===== FATIA DE TESTE — A Fábrica de Estrelas (motion comic) =====
+   Compat: sem grid/gap/var(--)/clamp; anima só transform/opacity; pares -webkit-. */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden;background:#0b0d2a;font-family:'Segoe UI',system-ui,Arial,sans-serif;color:#fff}
+#app{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden}
+.tela{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:1}
+
+/* céu de fundo (parallax) */
+.ceu{position:absolute;top:-4%;left:-4%;width:108%;height:108%;
+  background:#12163a center/cover no-repeat;
+  background-image:url('img/ceu_noite.jpg');
+  -webkit-animation:derivaCeu 60s ease-in-out infinite alternate;animation:derivaCeu 60s ease-in-out infinite alternate}
+@-webkit-keyframes derivaCeu{from{-webkit-transform:translate3d(0,0,0) scale(1.02)}to{-webkit-transform:translate3d(-2.5%,-1.5%,0) scale(1.06)}}
+@keyframes derivaCeu{from{transform:translate3d(0,0,0) scale(1.02)}to{transform:translate3d(-2.5%,-1.5%,0) scale(1.06)}}
+
+/* estrelinhas que piscam (camada de partículas) */
+.estrelas{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
+.pt{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;opacity:.25;
+  box-shadow:0 0 6px 1px rgba(255,255,255,.8);
+  -webkit-animation:cintila 4s ease-in-out infinite;animation:cintila 4s ease-in-out infinite}
+@-webkit-keyframes cintila{0%,100%{opacity:.15;-webkit-transform:scale(.7)}50%{opacity:.95;-webkit-transform:scale(1.1)}}
+@keyframes cintila{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.95;transform:scale(1.1)}}
+
+/* Fagulha viva (empilhamento base + boca + olhos) */
+.fag{position:absolute;width:26vh;max-width:210px}
+.fag .lay{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
+.fag .fala,.fag .pisca{opacity:0}
+.fagwrap{-webkit-transform-origin:50% 100%;transform-origin:50% 100%;
+  -webkit-animation:respira 4.2s ease-in-out infinite;animation:respira 4.2s ease-in-out infinite}
+@-webkit-keyframes respira{0%,100%{-webkit-transform:translateY(0) scale(1,1)}50%{-webkit-transform:translateY(-1.4%) scale(1.015,.985)}}
+@keyframes respira{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-1.4%) scale(1.015,.985)}}
+.bob{-webkit-animation:bob 3s ease-in-out infinite;animation:bob 3s ease-in-out infinite}
+@-webkit-keyframes bob{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-6px)}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+.fabrica{position:absolute;width:44vh;max-width:360px;height:auto;
+  -webkit-filter:drop-shadow(0 6px 18px rgba(0,0,0,.35));filter:drop-shadow(0 6px 18px rgba(0,0,0,.35))}
+
+/* ---------- CAPA (medalhão) ---------- */
+.capa{text-align:center}
+.capa .centro{position:absolute;top:50%;left:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);width:92%;max-width:520px}
+.medalhao{width:64vw;max-width:280px;height:64vw;max-height:280px;margin:0 auto;border-radius:50%;
+  overflow:hidden;border:7px solid #ffd75e;position:relative;
+  box-shadow:0 12px 30px rgba(0,0,0,.5), inset 0 0 22px rgba(0,0,0,.35);
+  -webkit-animation:flutua 4.5s ease-in-out infinite;animation:flutua 4.5s ease-in-out infinite}
+.medalhao .mceu{position:absolute;top:-10%;left:-10%;width:120%;height:120%;background:url('img/ceu_noite.jpg') center/cover}
+.medalhao .mfab{position:absolute;bottom:2%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);width:66%}
+@-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-9px)}}
+@keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+h1.titulo{font-size:30px;margin:16px 0 2px;color:#ffe08a;text-shadow:0 2px 0 #7a5200,0 0 18px rgba(255,200,80,.5);letter-spacing:.5px}
+.sub{font-size:15px;color:#cdd3ff;margin-bottom:14px;opacity:.95}
+.capa .fagacena{position:absolute;bottom:1vh;right:3vw;width:24vh;max-width:170px}
+.capa .fagacena img{width:100%;height:auto;display:block}
+
+/* botão */
+.btn{display:inline-block;border:0;cursor:pointer;font-family:inherit;font-weight:800;color:#5a3b00;
+  background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);
+  padding:15px 30px;font-size:20px;border-radius:30px;box-shadow:0 5px 0 #c8871a,0 8px 18px rgba(0,0,0,.4)}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 2px 0 #c8871a}
+.pulsa{-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.05)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+
+/* ---------- ABERTURA (cutscene) ---------- */
+.palco{position:absolute;top:0;left:0;right:0;bottom:0;
+  -webkit-animation:pushin 14s ease-out both;animation:pushin 14s ease-out both}
+@-webkit-keyframes pushin{from{-webkit-transform:scale(1)}to{-webkit-transform:scale(1.1)}}
+@keyframes pushin{from{transform:scale(1)}to{transform:scale(1.1)}}
+.abertura .fabrica{left:50%;bottom:20%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  -webkit-animation:sobeFab 1.2s ease-out both;animation:sobeFab 1.2s ease-out both}
+@-webkit-keyframes sobeFab{from{opacity:0;-webkit-transform:translate(-50%,26px) scale(.9)}to{opacity:1;-webkit-transform:translate(-50%,0) scale(1)}}
+@keyframes sobeFab{from{opacity:0;transform:translate(-50%,26px) scale(.9)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
+.abertura .fag{left:8%;bottom:8%;
+  -webkit-animation:entraFag .8s .5s cubic-bezier(.2,.7,.2,1) both;animation:entraFag .8s .5s cubic-bezier(.2,.7,.2,1) both}
+@-webkit-keyframes entraFag{0%{opacity:0;-webkit-transform:translateX(-46px) scale(.94)}70%{opacity:1;-webkit-transform:translateX(6px) scale(1.02)}100%{opacity:1;-webkit-transform:translateX(0) scale(1)}}
+@keyframes entraFag{0%{opacity:0;transform:translateX(-46px) scale(.94)}70%{opacity:1;transform:translateX(6px) scale(1.02)}100%{opacity:1;transform:translateX(0) scale(1)}}
+.legenda{position:absolute;left:50%;bottom:5%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  width:90%;max-width:640px;text-align:center;font-size:19px;line-height:1.4;color:#fff;
+  text-shadow:0 2px 6px rgba(0,0,0,.9);min-height:3em}
+.pular{position:absolute;top:12px;right:12px;font-size:13px;color:#dfe3ff;background:rgba(0,0,0,.35);
+  border:0;border-radius:16px;padding:7px 14px;cursor:pointer}
+
+/* ---------- MAPA vivo ---------- */
+.mapa .topo{position:absolute;top:0;left:0;right:0;padding:12px 14px;text-align:center;
+  background:-webkit-linear-gradient(top,rgba(6,8,30,.8),rgba(6,8,30,0));background:linear-gradient(to bottom,rgba(6,8,30,.8),rgba(6,8,30,0));z-index:5}
+.mapa .topo b{color:#ffe08a;font-size:17px}
+.no{position:absolute;width:12vh;max-width:96px}
+.no img{width:100%;height:auto;display:block;-webkit-filter:drop-shadow(0 0 10px rgba(255,220,120,.7));filter:drop-shadow(0 0 10px rgba(255,220,120,.7))}
+.no.futuro img{-webkit-filter:grayscale(1) brightness(.5);filter:grayscale(1) brightness(.5);opacity:.6}
+.no.atual{-webkit-animation:farol 1.2s ease-in-out infinite;animation:farol 1.2s ease-in-out infinite}
+@-webkit-keyframes farol{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.12)}}
+@keyframes farol{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+.mapa .fag{right:6%;bottom:9%}
+.dica{position:absolute;left:50%;bottom:3%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  font-size:15px;font-style:italic;color:#ffe9a8;text-shadow:0 0 10px rgba(255,200,80,.5);
+  -webkit-animation:respiraDica 2.6s ease-in-out infinite;animation:respiraDica 2.6s ease-in-out infinite;text-align:center;width:90%}
+@-webkit-keyframes respiraDica{0%,100%{opacity:.6}50%{opacity:1}}
+@keyframes respiraDica{0%,100%{opacity:.6}50%{opacity:1}}
+
+@media (prefers-reduced-motion: reduce){
+  *{-webkit-animation-duration:.001ms!important;animation-duration:.001ms!important;
+    -webkit-animation-iteration-count:1!important;animation-iteration-count:1!important}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<audio id="narr" preload="auto" crossorigin="anonymous"></audio>
+<script>
+(function(){
+"use strict";
+var app=document.getElementById("app");
+var narr=document.getElementById("narr");
+var AC=null, analiser=null, dados=null, fonteLigada=false, rafId=0;
+var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---- ÁUDIO: destrava no 1º gesto + liga o analisador p/ lip-sync ---- */
+function garanteAudio(){
+  if(!AC){
+    try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ AC=null; }
+  }
+  if(AC && AC.state==="suspended"){ AC.resume(); }
+  if(AC && !fonteLigada){
+    try{
+      var src=AC.createMediaElementSource(narr);
+      analiser=AC.createAnalyser(); analiser.fftSize=512; analiser.smoothingTimeConstant=.6;
+      dados=new Uint8Array(analiser.fftSize);
+      src.connect(analiser); analiser.connect(AC.destination);
+      fonteLigada=true;
+    }catch(e){ fonteLigada=false; }
+  }
+}
+document.addEventListener("pointerdown",function(){ garanteAudio(); },{passive:true});
+
+/* ---- FALAR: toca _audio/<id>.mp3 (voz do Antônio) e chama cb no fim ---- */
+var falandoCb=null;
+function falar(id, cb){
+  falandoCb=cb||null;
+  try{
+    narr.pause(); narr.currentTime=0; narr.src="audio/"+id+".mp3";
+    var p=narr.play();
+    if(p && p["catch"]){ p["catch"](function(){ fimFala(); }); }
+  }catch(e){ fimFala(); }
+}
+function fimFala(){ var c=falandoCb; falandoCb=null; if(c){ c(); } }
+narr.addEventListener("ended", fimFala);
+
+/* ---- LIP-SYNC + PISCAR (um loop rAF só) ---- */
+var fagAtual=null;   // {corpo,fala,pisca} elementos, ou null
+var bocaSuave=0;
+function loop(){
+  if(fagAtual){
+    var alvo=0;
+    if(analiser && !narr.paused && !narr.ended){
+      analiser.getByteTimeDomainData(dados);
+      var soma=0,i,v;
+      for(i=0;i<dados.length;i++){ v=(dados[i]-128)/128; soma+=v*v; }
+      var rms=Math.sqrt(soma/dados.length);
+      alvo = rms<0.02 ? 0 : Math.min(1, rms*3.2);
+    }
+    bocaSuave += (alvo-bocaSuave)*0.35;
+    if(fagAtual.fala){ fagAtual.fala.style.opacity = bocaSuave.toFixed(3); }
+  }
+  rafId=requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+
+var piscaTimer=0;
+function agendaPisca(){
+  if(reduz) return;
+  piscaTimer=setTimeout(function(){
+    if(fagAtual && fagAtual.pisca){
+      fagAtual.pisca.style.opacity="1";
+      setTimeout(function(){ if(fagAtual&&fagAtual.pisca) fagAtual.pisca.style.opacity="0"; },130);
+      if(Math.random()<0.16){ // piscada dupla ocasional
+        setTimeout(function(){ if(fagAtual&&fagAtual.pisca){fagAtual.pisca.style.opacity="1";
+          setTimeout(function(){ if(fagAtual&&fagAtual.pisca) fagAtual.pisca.style.opacity="0"; },120);} },300);
+      }
+    }
+    agendaPisca();
+  }, 3500 + Math.random()*4000);
+}
+agendaPisca();
+
+/* ---- helpers de construção ---- */
+function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+function fagViva(){ // devolve o wrapper e registra fagAtual
+  var wrap=el("div","fagwrap");
+  var fag=el("div","fag");
+  var corpo=el("img","lay corpo"); corpo.src="img/fagulha.png"; corpo.alt="Fagulha";
+  var fala=el("img","lay fala"); fala.src="img/fagulha_fala.png"; fala.alt="";
+  var pisca=el("img","lay pisca"); pisca.src="img/fagulha_pisca.png"; pisca.alt="";
+  fag.appendChild(corpo); fag.appendChild(fala); fag.appendChild(pisca);
+  wrap.appendChild(fag);
+  fagAtual={corpo:corpo,fala:fala,pisca:pisca};
+  return wrap;
+}
+function campoEstrelas(qtd){
+  var c=el("div","estrelas"); var i;
+  for(i=0;i<qtd;i++){
+    var p=el("div","pt");
+    p.style.left=(Math.random()*100).toFixed(2)+"%";
+    p.style.top=(Math.random()*72).toFixed(2)+"%";
+    var d=(2.5+Math.random()*4).toFixed(2);
+    p.style.webkitAnimationDuration=d+"s"; p.style.animationDuration=d+"s";
+    p.style.webkitAnimationDelay=(-Math.random()*4).toFixed(2)+"s"; p.style.animationDelay=(-Math.random()*4).toFixed(2)+"s";
+    var s=(2+Math.random()*3).toFixed(1); p.style.width=s+"px"; p.style.height=s+"px";
+    c.appendChild(p);
+  }
+  return c;
+}
+
+/* ================= TELAS ================= */
+function limpa(){ fagAtual=null; app.innerHTML=""; }
+
+function telaCapa(){
+  limpa();
+  var t=el("div","tela capa");
+  t.appendChild(el("div","ceu"));
+  t.appendChild(campoEstrelas(40));
+  var centro=el("div","centro");
+  var med=el("div","medalhao");
+  med.appendChild(el("div","mceu"));
+  var mf=el("img","mfab"); mf.src="img/fabrica_estrelas.png"; med.appendChild(mf);
+  centro.appendChild(med);
+  centro.appendChild(el("h1","titulo","A Fábrica de Estrelas"));
+  centro.appendChild(el("div","sub","Multiplicação &#183; 3º ano"));
+  var b=el("button","btn pulsa","Começar a aventura");
+  b.onclick=function(){ garanteAudio(); telaAbertura(); };
+  centro.appendChild(b);
+  t.appendChild(centro);
+  var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Fagulha acenando"; fa.appendChild(fai);
+  t.appendChild(fa);
+  app.appendChild(t);
+}
+
+function telaAbertura(){
+  limpa();
+  var t=el("div","tela abertura");
+  var palco=el("div","palco");
+  palco.appendChild(el("div","ceu"));
+  palco.appendChild(campoEstrelas(46));
+  var fab=el("img","fabrica"); fab.src="img/fabrica_estrelas.png"; palco.appendChild(fab);
+  palco.appendChild(fagViva());
+  t.appendChild(palco);
+  var leg=el("div","legenda",""); t.appendChild(leg);
+  var pular=el("button","pular","pular &#9654;"); pular.onclick=function(){ narr.pause(); fimFala(); }; t.appendChild(pular);
+  app.appendChild(t);
+
+  var texto="Oi! Que bom que você chegou! Aqui é a Fábrica de Estrelas, e eu sou a Fagulha. Olha só o céu: está todo escuro e vazio. Será que você vem comigo encher esse céu de estrelas? Vem, vai ser incrível!";
+  garanteAudio();
+  falar("abertura", function(){ telaMapa(); });
+  legendaSync(leg, texto);
+}
+
+/* legenda em typewriter guiada pelo currentTime da narração */
+function legendaSync(leg, texto){
+  var total=texto.length, i=0;
+  function tick(){
+    if(!narr || narr.ended){ leg.innerHTML=texto; return; }
+    var dur=narr.duration||9;
+    var frac=Math.min(1, (narr.currentTime||0)/ (dur*0.96));
+    var n=Math.floor(frac*total);
+    if(n>i){ i=n; leg.innerHTML=texto.substring(0,i); }
+    if(i<total && !narr.paused){ requestAnimationFrame(tick); }
+    else if(narr.paused && !narr.ended){ /* espera */ setTimeout(tick,120); }
+    else { leg.innerHTML=texto; }
+  }
+  requestAnimationFrame(tick);
+}
+
+function telaMapa(){
+  limpa();
+  var t=el("div","tela mapa");
+  t.appendChild(el("div","ceu"));
+  t.appendChild(campoEstrelas(54));
+  var topo=el("div","topo","<b>A jornada da Fagulha</b> &#183; encha o céu de estrelas!");
+  t.appendChild(topo);
+  // fábrica ao fundo
+  var fab=el("img","fabrica"); fab.src="img/fabrica_estrelas.png";
+  fab.style.left="50%"; fab.style.top="16%"; fab.style.webkitTransform="translateX(-50%)"; fab.style.transform="translateX(-50%)";
+  fab.style.width="30vh"; fab.style.maxWidth="230px";
+  t.appendChild(fab);
+  // nós da trilha (estrelas): 1 atual + 2 futuras
+  var pos=[[22,58,"atual"],[50,70,"futuro"],[76,56,"futuro"]];
+  var k;
+  for(k=0;k<pos.length;k++){
+    var no=el("div","no "+pos[k][2]);
+    no.style.left=pos[k][0]+"%"; no.style.top=pos[k][1]+"%";
+    var im=el("img"); im.src="img/estrela_grande.png"; no.appendChild(im);
+    t.appendChild(no);
+  }
+  // Fagulha viva no canto
+  t.appendChild(fagViva());
+  t.appendChild(el("div","dica","Toque na estrela que está brilhando para começar a primeira parada."));
+  app.appendChild(t);
+  garanteAudio();
+}
+
+/* start */
+telaCapa();
+})();
+</script>
+</body>
+</html>
