@@ -153,7 +153,7 @@ export function montarFabrica (game: Phaser.Game): void {
     // MISSÃO DE REVISÃO (Leitner): se o retorno espaçado deste conteúdo venceu, avisa
     try { if (kcsParaRevisar(carrega('local'), Date.now()).includes(espinha.kc)) planoBase.abertura = '🔁 Missão de revisão — bora relembrar! ' + (planoBase.abertura ?? '') } catch { /* segue */ }
     const missoes: Array<{ mapa: object, plano: any }> = [
-      { mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas }), plano: planoBase }
+      { mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas, cenario: 'fazenda' }), plano: planoBase }
     ]
     if (espinha.mecanica === 'agrupar') {
       // M2: MESMA lei, desafio maior (tier acima do gerado)
@@ -162,11 +162,11 @@ export function montarFabrica (game: Phaser.Game): void {
         const rot2 = escreverRoteiro(parsed.data, { alvo, alvoSoma, agTotal: t2, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
         const p2 = planoDe(rot2) as any
         p2.abertura = 'A notícia se espalhou — a encomenda CRESCEU!'
-        missoes.push({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: espinha.kc, agTotal: t2, agCaixas: espinha.agCaixas }), plano: p2 })
+        missoes.push({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: espinha.kc, agTotal: t2, agCaixas: espinha.agCaixas, cenario: 'floresta' }), plano: p2 })
       }
       // M3: a MESMA lei ao contrário = DIVISÃO como partilha (12 ÷ 3), kc próprio (BNCC EF03MA08)
       missoes.push({
-        mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: 'particao-igual', agTotal: 12, agCaixas: 3, agTodas: true }),
+        mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: 'particao-igual', agTotal: 12, agCaixas: 3, agTodas: true, cenario: 'rio' }),
         plano: {
           abertura: 'A fama chegou longe: agora são 3 compradores de uma vez, cada um com a própria caixa!',
           problema: 'São 3 caixas — uma para CADA comprador — e ninguém aceita menos que o outro. Como repartir os 12 potes para ficar justo?',

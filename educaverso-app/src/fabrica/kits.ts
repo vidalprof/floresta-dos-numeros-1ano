@@ -33,7 +33,14 @@ export const KIT_VILAREJO: KitVisual = {
   imagens: { chao: 'chao.png', paredes: 'paredes.png', mundo: 'mundo.png', piso: 'piso.png', heroi: 'heroi.png', fazendeiro: 'fazendeiro.png', sombra: 'sombra.png', mel: 'mel.png', pedras: 'pedras.png', bau: 'bau.png' },
   chao: { cols: 22, imagewidth: 352, imageheight: 416, tilecount: 22 * 26, grama: 245, pisoInterno: 246 },
   paredes: { cols: 10, imagewidth: 160, imageheight: 176, tilecount: 110, TL: 0, T: 3, TR: 4, L: 10, R: 14, BL: 40, B: 43, BR: 44, solido: 43 },
-  props: { casa_a: [0, 0, 64, 48], arvore: [0, 160, 32, 32], estante: [160, 592, 33, 32], tapete: [112, 592, 48, 48], carroca: [82, 130, 28, 28] },
+  props: {
+    casa_a: [0, 0, 64, 48], arvore: [0, 160, 32, 32], estante: [160, 592, 33, 32], tapete: [112, 592, 48, 48], carroca: [82, 130, 28, 28],
+    // props de CENÁRIO (biomas) — coordenadas catalogadas do atlas Ninja Adventure CC0
+    pinheiro: [140, 146, 45, 46], carvalho: [176, 131, 35, 44], cerejeira: [97, 240, 52, 48],
+    pedra_g: [190, 166, 42, 27], pedra_p: [269, 142, 21, 20], toco: [97, 292, 30, 26],
+    agua: [312, 128, 16, 16], flor: [304, 464, 16, 16], margarida: [222, 146, 20, 15],
+    arbusto: [0, 336, 17, 18], cogumelo: [14, 338, 18, 15], pinheiro_neve: [48, 337, 46, 46], bola_neve: [109, 384, 20, 17]
+  },
   personagem: { cols: 4, dir: { down: 0, up: 1, left: 2, right: 3 } },
   bauFrame: [16, 14]
 }

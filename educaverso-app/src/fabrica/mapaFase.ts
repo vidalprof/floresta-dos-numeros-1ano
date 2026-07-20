@@ -156,6 +156,15 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const decor: object[] = [obj(cen.estrutura, 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
   for (const s of cen.scatter) decor.push(obj(s.prop, 'mundo', (s.tx + 0.5) * T, (s.ty + 1) * T + 6))
   decor.push(obj('carroca', 'mundo', (carroca.x + 0.5) * T, (carroca.y + 1) * T))
+  // LAGUINHO opcional do cenário: tiles de água rente ao chão (depth 1) + colisão
+  // (a criança contorna; o espalhador de itens já desvia de célula com colisão)
+  if (cen.agua) {
+    for (let yy = cen.agua.y0; yy < cen.agua.y0 + cen.agua.h; yy++) {
+      for (let xx = cen.agua.x0; xx < cen.agua.x0 + cen.agua.w; xx++) {
+        decor.push(obj('agua', 'mundo', (xx + 0.5) * T, (yy + 1) * T, 1)); put(colis, xx, yy, COL)
+      }
+    }
+  }
   // CASA MOBILIADA (pedido do Marcos): tapete no meio (passável), estante encostada
   // na parede com 2 potes em cima, baú no canto — e os móveis SÓLIDOS (colisão),
   // pra criança não atravessar a mobília
