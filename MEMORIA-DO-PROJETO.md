@@ -157,8 +157,14 @@
 > é o EXEMPLAR nº 1 dessa fábrica.
 > **FASES DO CAMINHO (estamos saindo da 1 p/ a 2):**
 > 1 ✅ FUNDAÇÃO: motor data-driven (5 leis), Portão 0, BKT/ZDP, avaliação, QA, 1 exemplar no ar.
-> 2 ⏳ PROVAR A TROCA: 1 jogo completo NOVO (tema+pack+história+sons) à mão + BIBLIOTECA
->   (atividade gerada persiste com link próprio — hoje evapora ao fechar o navegador!).
+> 2 ⏳ TERMINAR O EXEMPLAR Nº 1 (decisão do Marcos: melhor que começar tema novo) —
+>   vila-tabuada vira o PADRÃO-OURO completo: (1) voz Edge por workflow nas falas;
+>   (2) SEQUÊNCIA (vitória → próxima missão: tier 18, divisão como partilha);
+>   (3) tutorial integrado; (4) missões de retorno Leitner; (5) menina.png escolhível +
+>   potes em linhas×colunas na carroça (array BNCC); (6) BIBLIOTECA (link persistente
+>   por variação — hoje a fase gerada evapora); (7) portão do professor (prévia+aprovar);
+>   (8) lista da turma p/ identificação em 1 toque; (9) card no hub Ilhas do Saber;
+>   (10) Marcos: 2 cliques do console (FIREBASE-EDUCAVERSO.md). Só DEPOIS vem o 2º tema.
 > 3 AUTOMATIZAR: roteirista-LLM, fábrica de kits (Kenney/IA por workflow), mapa variado,
 >   voz Edge por workflow → tema+ano no formulário = jogo em minutos.
 > 4 PROFUNDIDADE: sequência de missões (aula 55min), missões de retorno Leitner, leis novas.
