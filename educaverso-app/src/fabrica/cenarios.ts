@@ -35,39 +35,41 @@ const FAZENDA: CenarioDef = {
   ]
 }
 
+// POSIÇÕES SEGURAS (longe da casa x2-6/y2-5, do fazendeiro 9,6, da carroça 11,6, da
+// pilha 17,13, das vagas y13, do herói 10,12 e da saída 19,7), bem ESPAÇADAS entre si
+// (props grandes têm ~3 tiles; distância ≥3 evita sobreposição). Props grandes vão nas
+// bordas; miúdos (flor/cogumelo/toco) em pontos abertos do meio.
 const FLORESTA: CenarioDef = {
   id: 'floresta', nome: 'A Trilha da Floresta', ambiente: 'vagalumes', estrutura: 'casa_a',
   scatter: [
-    { prop: 'pinheiro', tx: 2, ty: 4 }, { prop: 'pinheiro', tx: 16, ty: 3 }, { prop: 'pinheiro', tx: 15, ty: 10 },
-    { prop: 'pinheiro', tx: 3, ty: 11 }, { prop: 'carvalho', tx: 7, ty: 3 }, { prop: 'cogumelo', tx: 5, ty: 8 },
-    { prop: 'cogumelo', tx: 13, ty: 11 }, { prop: 'toco', tx: 6, ty: 12 }, { prop: 'arbusto', tx: 14, ty: 7 }
+    { prop: 'pinheiro', tx: 1, ty: 8 }, { prop: 'pinheiro', tx: 16, ty: 4 }, { prop: 'pinheiro', tx: 15, ty: 11 },
+    { prop: 'toco', tx: 5, ty: 9 }, { prop: 'cogumelo', tx: 13, ty: 9 }, { prop: 'arbusto', tx: 17, ty: 8 }, { prop: 'cogumelo', tx: 7, ty: 11 }
   ]
 }
 
 const POMAR: CenarioDef = {
   id: 'pomar', nome: 'O Pomar das Cerejeiras', ambiente: 'petalas', estrutura: 'casa_a',
   scatter: [
-    { prop: 'cerejeira', tx: 2, ty: 4 }, { prop: 'cerejeira', tx: 16, ty: 3 }, { prop: 'cerejeira', tx: 15, ty: 10 },
-    { prop: 'cerejeira', tx: 3, ty: 11 }, { prop: 'flor', tx: 6, ty: 8 }, { prop: 'margarida', tx: 13, ty: 7 }, { prop: 'flor', tx: 9, ty: 4 }
+    { prop: 'cerejeira', tx: 1, ty: 8 }, { prop: 'cerejeira', tx: 16, ty: 4 }, { prop: 'cerejeira', tx: 15, ty: 11 },
+    { prop: 'flor', tx: 6, ty: 9 }, { prop: 'margarida', tx: 13, ty: 9 }, { prop: 'flor', tx: 17, ty: 8 }
   ]
 }
 
-// (a água com MARGEM/autotile fica pra um passo futuro; um retângulo azul chapado
-// dava cara de "colado" — melhor sem do que mal-feito. Rio = pedras + verde da margem.)
+// (a água com MARGEM/autotile fica pra um passo futuro; um retângulo azul chapado dava
+// cara de "colado" — melhor sem do que mal-feito. Rio = pedras + verde da margem.)
 const RIO: CenarioDef = {
   id: 'rio', nome: 'O Mercado da Beira do Rio', ambiente: '', estrutura: 'casa_a',
   scatter: [
-    { prop: 'pedra_g', tx: 3, ty: 4 }, { prop: 'pedra_p', tx: 16, ty: 3 }, { prop: 'pedra_p', tx: 13, ty: 10 },
-    { prop: 'pedra_g', tx: 15, ty: 9 }, { prop: 'arbusto', tx: 2, ty: 11 }, { prop: 'arbusto', tx: 6, ty: 12 },
-    { prop: 'margarida', tx: 8, ty: 4 }, { prop: 'flor', tx: 13, ty: 6 }
+    { prop: 'pedra_g', tx: 1, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 4 }, { prop: 'pedra_g', tx: 15, ty: 11 },
+    { prop: 'arbusto', tx: 13, ty: 9 }, { prop: 'arbusto', tx: 5, ty: 9 }, { prop: 'flor', tx: 17, ty: 8 }, { prop: 'margarida', tx: 7, ty: 11 }
   ]
 }
 
 const MONTANHA: CenarioDef = {
   id: 'montanha', nome: 'O Alto da Montanha', ambiente: 'folhas', estrutura: 'casa_a',
   scatter: [
-    { prop: 'pedra_g', tx: 2, ty: 4 }, { prop: 'pedra_g', tx: 16, ty: 9 }, { prop: 'pedra_p', tx: 15, ty: 3 },
-    { prop: 'pedra_p', tx: 4, ty: 11 }, { prop: 'pinheiro', tx: 7, ty: 3 }, { prop: 'pinheiro', tx: 14, ty: 11 }, { prop: 'toco', tx: 6, ty: 8 }
+    { prop: 'pedra_g', tx: 1, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 4 }, { prop: 'pinheiro', tx: 15, ty: 11 },
+    { prop: 'toco', tx: 5, ty: 9 }, { prop: 'pedra_p', tx: 13, ty: 9 }, { prop: 'pinheiro', tx: 17, ty: 7 }
   ]
 }
 
