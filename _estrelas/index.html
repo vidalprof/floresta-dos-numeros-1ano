@@ -147,8 +147,8 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .mapa .walker .fag{position:relative;width:13vh;max-width:78px}
 
 /* ---------- PARADA (criar/resolver: grupos iguais) ---------- */
-.parada .fagfala{position:absolute;bottom:0;right:2px;width:22vh;max-width:120px;z-index:3}
-.parada .fagfala .fag{position:relative;width:100%;max-width:none}
+.fagfala{position:absolute;bottom:0;right:2px;width:22vh;max-width:120px;z-index:3}
+.fagfala .fag{position:relative;width:100%;max-width:none}
 .balao{position:absolute;top:10px;left:10px;right:10px;max-width:560px;margin:0 auto;
   background:rgba(20,24,60,.93);border:2px solid #ffd75e;border-radius:16px;padding:11px 13px;
   font-size:15px;line-height:1.35;color:#fff;z-index:4;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
@@ -216,6 +216,33 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .cluster .cestr{width:12px;height:auto;margin:1px;
   -webkit-filter:drop-shadow(0 0 5px rgba(255,220,120,.85));filter:drop-shadow(0 0 5px rgba(255,220,120,.85))}
 .p4 .p4expr{position:absolute;left:0;right:0;bottom:16%;z-index:4;text-align:center}
+
+/* ---------- ALÍVIO 1 — Música das Estrelas ---------- */
+.musica .sinos{position:absolute;left:0;right:0;top:32%;z-index:3;text-align:center;padding:0 6px;white-space:nowrap}
+.sino{display:inline-block;vertical-align:middle;margin:0 1.6%;cursor:pointer;
+  -webkit-transition:-webkit-transform .12s ease;transition:transform .12s ease}
+.sino.toca{-webkit-transform:translateY(-14px) scale(1.14);transform:translateY(-14px) scale(1.14)}
+.sino .grupinho{width:10vw;max-width:40px;line-height:0}
+.sino .sestr{display:block;width:100%;height:auto;margin:3px 0;-webkit-filter:drop-shadow(0 0 7px rgba(255,220,120,.85));filter:drop-shadow(0 0 7px rgba(255,220,120,.85))}
+.sino.toca .sestr{-webkit-filter:drop-shadow(0 0 14px rgba(255,240,170,1));filter:drop-shadow(0 0 14px rgba(255,240,170,1))}
+
+/* ---------- ALÍVIO 2 — Monte a Constelação (memória) ---------- */
+.memoria .memgrid{position:absolute;left:0;right:0;top:24%;bottom:22%;z-index:3;text-align:center;padding:0 8px;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.mcard{position:relative;width:21%;max-width:96px;height:20vh;max-height:120px;margin:2%;cursor:pointer;border-radius:14px;
+  background:rgba(20,24,60,.55);border:2px solid rgba(255,215,110,.4)}
+.mcard .dorso,.mcard .face{position:absolute;top:0;left:0;right:0;bottom:0;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  -webkit-transition:opacity .2s ease;transition:opacity .2s ease}
+.mcard .dorso{opacity:1} .mcard .dorso img{width:52%;opacity:.85}
+.mcard .face{opacity:0;padding:6px}
+.mcard.aberta .dorso{opacity:0} .mcard.aberta .face{opacity:1}
+.mcard.par{border-color:#8effa6;background:rgba(60,120,80,.35)}
+.mcard.par .dorso{opacity:0} .mcard.par .face{opacity:1}
+.mcard .memnum{font-size:32px;font-weight:900;color:#ffe08a;text-shadow:0 0 14px rgba(255,200,80,.6)}
+.gradeMini .fila{white-space:nowrap;line-height:0;opacity:1}
+.gradeMini .gestr{width:11px;max-width:11px;margin:1px;-webkit-filter:drop-shadow(0 0 4px rgba(255,220,120,.8));filter:drop-shadow(0 0 4px rgba(255,220,120,.8))}
 
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
@@ -586,7 +613,64 @@ function sucessoP2(){
   var tempo=Math.round(((new Date()).getTime()-P2.t0)/1000);
   salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,tempo_s:tempo,acertou:true,semErro:(P2.ajustes<=5)});
 }
-function telaMusica(){ proxima(2); }
+/* ===== ALÍVIO 1 — Música das Estrelas (sonificação; grupos iguais por baixo) ===== */
+var audioCtx=null;
+function tocaNota(freq){
+  try{
+    if(!audioCtx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC)return; audioCtx=new AC(); }
+    if(audioCtx.state==="suspended"){ audioCtx.resume(); }
+    var o=audioCtx.createOscillator(), g=audioCtx.createGain(), t0=audioCtx.currentTime;
+    o.type="triangle"; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.linearRampToValueAtTime(0.28,t0+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0008,t0+0.55);
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t0); o.stop(t0+0.6);
+  }catch(e){}
+}
+var MUS;
+function telaMusica(){
+  limpa();
+  MUS={tocados:{},qtd:0};
+  var notas=[262,294,330,392,440,523];
+  var t=el("div","tela musica");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(34));
+  t.appendChild(el("div","balao","<b>A Música das Estrelas!</b> Toque nos sininhos e ouça o céu cantar. Cada grupo de estrelas toca a sua nota."));
+  var fileira=el("div","sinos"); var i;
+  for(i=0;i<notas.length;i++){
+    (function(idx,freq){
+      var sino=el("div","sino"); var g=el("div","grupinho"),k;
+      g.style.webkitFilter="hue-rotate("+(idx*52)+"deg)"; g.style.filter="hue-rotate("+(idx*52)+"deg)";
+      for(k=0;k<3;k++){ var im=el("img","sestr"); im.src="img/estrela_grande.png"; g.appendChild(im); }
+      sino.appendChild(g);
+      sino.onclick=function(){
+        tocaNota(freq);
+        sino.className="sino toca";
+        setTimeout(function(){ sino.className="sino"; },260);
+        if(!MUS.tocados[idx]){ MUS.tocados[idx]=1; MUS.qtd++; if(MUS.qtd===notas.length){ musTodos(); } }
+      };
+      fileira.appendChild(sino);
+    })(i,notas[i]);
+  }
+  t.appendChild(fileira);
+  var bar=el("div","p1barra");
+  var ouvir=el("button","btn2","Ouvir a Fagulha tocar"); ouvir.onclick=function(){ musMelodia(notas); };
+  var ok=el("button","btn pulsa","Pronto, seguir"); ok.style.marginLeft="8px"; ok.onclick=function(){ proxima(2); };
+  bar.appendChild(ouvir); bar.appendChild(ok); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function musMelodia(notas){
+  var seq=[0,1,2,3,4,5,4,2,0], i=0;
+  function passo(){ if(i>=seq.length)return; var s=document.getElementsByClassName("sino")[seq[i]];
+    if(s){ s.className="sino toca"; (function(el2){ setTimeout(function(){ el2.className="sino"; },200); })(s); }
+    tocaNota(notas[seq[i]]); i++; setTimeout(passo,230); }
+  passo();
+}
+function musTodos(){
+  var d=document.getElementsByClassName("balao")[0];
+  if(d)d.innerHTML="<b>Que música linda!</b> Você tocou todos os grupos. Quando quiser, siga a jornada.";
+}
 /* ===== PARADA 3 — Dois jeitos, mesmo céu (comutatividade) ===== */
 function gradeStars(fil,col,cls){
   var g=el("div",cls||"gradeM"),i,j;
@@ -692,7 +776,71 @@ function sucessoP4(){
   var tempo=Math.round(((new Date()).getTime()-P4.t0)/1000);
   salvaEvid({parada:"p4",habilidade:"EF03MA07",conceito:"x10 (atalho)",toques:P4.toques,tempo_s:tempo,acertou:true,semErro:(P4.toques===P4.alvo)});
 }
-function telaMemoria(){ proxima(5); }
+/* ===== ALÍVIO 2 — Monte a Constelação (memória: grupo ↔ total) ===== */
+var MEM;
+function telaMemoria(){
+  limpa();
+  var pares=[{g:[2,4],n:8},{g:[3,4],n:12},{g:[5,2],n:10},{g:[4,5],n:20}];
+  var cartas=[],i;
+  for(i=0;i<pares.length;i++){ cartas.push({par:i,tipo:"g",fil:pares[i].g[0],col:pares[i].g[1]}); cartas.push({par:i,tipo:"n",n:pares[i].n}); }
+  for(i=cartas.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var tmp=cartas[i]; cartas[i]=cartas[j]; cartas[j]=tmp; }
+  MEM={cartas:cartas,abertas:[],feitos:0,total:pares.length,trava:false};
+  var t=el("div","tela memoria");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  t.appendChild(el("div","balao","<b>Monte a Constelação!</b> Ligue cada <b>grupo</b> de estrelas ao seu <b>total</b>. Vire duas cartas e ache os pares."));
+  var grid=el("div","memgrid");
+  for(i=0;i<cartas.length;i++){
+    (function(idx){
+      var c=cartas[idx];
+      var card=el("div","mcard"); card.id="mc"+idx;
+      var dorso=el("div","dorso"); var di=el("img"); di.src="img/estrela_grande.png"; dorso.appendChild(di);
+      var face=el("div","face");
+      if(c.tipo==="g"){ face.appendChild(gradeStars(c.fil,c.col,"gradeMini")); }
+      else { face.appendChild(el("div","memnum",""+c.n)); }
+      card.appendChild(dorso); card.appendChild(face);
+      card.onclick=function(){ viraCarta(idx); };
+      grid.appendChild(card);
+    })(i);
+  }
+  t.appendChild(grid);
+  var bar=el("div","p1barra"); var ok=el("button","btn2","Pular"); ok.onclick=function(){ proxima(5); }; bar.appendChild(ok); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function viraCarta(idx){
+  if(MEM.trava)return;
+  var card=document.getElementById("mc"+idx); if(!card)return;
+  if(card.className.indexOf("aberta")>=0||card.className.indexOf("par")>=0)return;
+  card.className="mcard aberta";
+  MEM.abertas.push(idx);
+  if(MEM.abertas.length===2){
+    MEM.trava=true;
+    var a=MEM.abertas[0], b=MEM.abertas[1];
+    if(MEM.cartas[a].par===MEM.cartas[b].par){
+      setTimeout(function(){
+        var ca=document.getElementById("mc"+a), cb=document.getElementById("mc"+b);
+        if(ca)ca.className="mcard par"; if(cb)cb.className="mcard par";
+        MEM.feitos++; MEM.abertas=[]; MEM.trava=false;
+        tocaNota(392);
+        if(MEM.feitos>=MEM.total){ memFim(); }
+      },420);
+    } else {
+      setTimeout(function(){
+        var ca=document.getElementById("mc"+a), cb=document.getElementById("mc"+b);
+        if(ca)ca.className="mcard"; if(cb)cb.className="mcard";
+        MEM.abertas=[]; MEM.trava=false;
+      },820);
+    }
+  }
+}
+function memFim(){
+  var d=document.getElementsByClassName("balao")[0];
+  if(d)d.innerHTML="<b>Você ligou todos os grupos ao total!</b> Cada grupo igual vira uma multiplicação. Siga a jornada!";
+  var bar=document.getElementsByClassName("p1barra")[0];
+  if(bar){ bar.innerHTML=""; var nx=el("button","btn pulsa","Próxima parada"); nx.onclick=function(){ proxima(5); }; bar.appendChild(nx); }
+  var tela=document.getElementsByClassName("tela memoria")[0]; if(tela) estouraEstrelas(tela,10);
+  fagComemora();
+}
 function telaParada5(){ proxima(6); }
 function telaDecore(){ proxima(7); }
 function telaFinal(){ limpa(); var t=el("div","tela mapa"); t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(60)); t.appendChild(el("div","topo","<b>Você encheu o céu!</b>")); app.appendChild(t); }
