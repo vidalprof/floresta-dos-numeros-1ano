@@ -112,4 +112,15 @@ export function montarFabrica (game: Phaser.Game): void {
   }
 
   ;(window as any).__fabrica = { gerar: () => (document.getElementById('fgerar') as HTMLButtonElement).click(), set: (id: string, v: string) => { (document.getElementById(id) as HTMLInputElement).value = v } }
+
+  // LINK DIRETO DO JOGO (?tabuada / __BOOT='tabuada'): a criança nem vê o formulário —
+  // a Fábrica preenche e gera sozinha a fase da tabuada (mecânica criativa agrupar).
+  const boot = (window as any).__BOOT
+  if (boot === 'tabuada' || new URLSearchParams(location.search).has('tabuada')) {
+    host.style.display = 'none'
+    ;(window as any).__fabrica.set('f_ano', '3º ano')
+    ;(window as any).__fabrica.set('f_obj', 'Tabuada: multiplicar com grupos iguais')
+    ;(window as any).__fabrica.set('f_dif', 'medio')
+    btn.click()
+  }
 }

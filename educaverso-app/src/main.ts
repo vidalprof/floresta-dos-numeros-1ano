@@ -35,7 +35,8 @@ const usarAutor = q.has('autor') || (window as any).__BOOT === 'autor'
 const usarFases = q.has('fases') || (window as any).__BOOT === 'fases'
 const usarF1 = q.has('f1') || (window as any).__BOOT === 'f1'
 const usarGrid = q.has('fgrid') || (window as any).__BOOT === 'fgrid'
-const usarFabrica = q.has('fabrica') || (window as any).__BOOT === 'fabrica'
+// 'tabuada' = LINK DIRETO DO JOGO: a Fábrica gera a fase sozinha (sem formulário)
+const usarFabrica = q.has('fabrica') || (window as any).__BOOT === 'fabrica' || q.has('tabuada') || (window as any).__BOOT === 'tabuada'
 
 // esconde a UI legada ANTES de criar o jogo (se o Phaser falhar no aparelho,
 // a capa antiga nao pode ficar orfa na tela com botao morto)
