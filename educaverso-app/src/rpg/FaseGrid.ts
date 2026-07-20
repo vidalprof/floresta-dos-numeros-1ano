@@ -376,9 +376,57 @@ export class FaseGrid extends Phaser.Scene {
     this.erroReal('Opa! Na hora de carregar, uma caixa tombou… Por que será que ELA tombou e as outras não?')
   }
 
+  // CONSEQUÊNCIA VISÍVEL (pedido do Marcos): a caixa TOMBA de verdade (deita) e os
+  // potes ESCORREGAM pra fora; depois de a criança VER o estrago, tudo volta ao
+  // lugar sozinho — o trabalho dela nunca se perde, só a LIÇÃO fica
   private tombaCaixa (v: FaseGrid['agVagas'][number], forca: number): void {
-    const alvos = [v.img, ...v.potes].filter(Boolean)
-    this.tweens.add({ targets: alvos, angle: { from: -5 * forca, to: 16 * forca }, duration: 130, yoyo: true, repeat: 3, ease: 'Sine.inOut' })
+    const box = v.img
+    if (!box) return
+    const orig = v.potes.map(p => ({ p, x: p.x, y: p.y, a: p.angle }))
+    const bx = { x: box.x, a: box.angle }
+    this.tweens.add({ targets: box, angle: 74 * forca, x: box.x + 4, duration: 300, ease: 'Quad.in' })
+    v.potes.forEach((p, i) => this.tweens.add({ targets: p, x: p.x + 9 + i * 5, y: v.y * T + T / 2 + 3, angle: 90, duration: 420, ease: 'Bounce.out', delay: 150 + i * 60 }))
+    this.tom(170, 0.28, 'sawtooth', 0.15)
+    this.time.delayedCall(2300, () => {
+      if (!box.scene) return
+      this.tweens.add({ targets: box, angle: bx.a, x: bx.x, duration: 240 })
+      for (const o of orig) this.tweens.add({ targets: o.p, x: o.x, y: o.y, angle: o.a, duration: 240 })
+    })
+  }
+
+  // CONSOLIDAÇÃO (pedido do Marcos): antes de aprovar, o fazendeiro CONFERE caixa
+  // por caixa contando JUNTO com a criança (4… 8… 12) — a lição é dita com todas as
+  // letras no final, não só descoberta (institucionalização do saber)
+  private agConferindo = false
+  private agConfere (): void {
+    if (this.agConferindo || this.entregou) return
+    this.agConferindo = true
+    const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
+    const k = usadas[0]?.count ?? 0
+    this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', 'Deixa eu conferir! Vamos contar juntos, caixa por caixa…', 8000)
+    usadas.forEach((v, i) => {
+      this.time.delayedCall(700 + i * 800, () => {
+        for (const a of [v.img, ...v.potes].filter(Boolean) as Phaser.GameObjects.Image[]) this.tweens.add({ targets: a, scale: a.scale * 1.25, duration: 150, yoyo: true })
+        this.tom(500 + i * 100, 0.15, 'triangle', 0.2)
+        const t = this.add.text(v.x * T + T / 2, v.y * T - 12, String(k * (i + 1)), { fontFamily: 'Arial', fontSize: '11px', color: '#ffffff', stroke: '#7a4a12', strokeThickness: 3, resolution: 6 } as any).setOrigin(0.5, 1).setDepth(30000)
+        this.tweens.add({ targets: t, y: t.y - 7, alpha: { from: 1, to: 0 }, delay: 1000, duration: 450, onComplete: () => t.destroy() })
+      })
+    })
+    this.time.delayedCall(700 + usadas.length * 800 + 300, () => { this.agConferindo = false; this.entrega(); this.agCarrega() })
+  }
+
+  // o FINAL da história acontece na frente da criança: a carga aprovada é CARREGADA
+  // na carroça (causa e efeito completos — arrumou certo, a carroça leva)
+  private agCarrega (): void {
+    const cx = this.P('carrocaX', 0), cy = this.P('carrocaY', 0)
+    if (!cx) return
+    const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
+    usadas.forEach((v, i) => {
+      for (const a of [v.img, ...v.potes].filter(Boolean) as Phaser.GameObjects.Image[]) {
+        this.time.delayedCall(300 + i * 260, () => a.setDepth(cy * T + 30 + i))
+        this.tweens.add({ targets: a, x: cx * T + T / 2 + (i - usadas.length / 2) * 3, y: cy * T + 2 - i * 3 + (a === v.img ? 0 : -5), scale: a.scale * 0.8, duration: 700, delay: 300 + i * 260, ease: 'Quad.inOut' })
+      }
+    })
   }
 
   private aoEntrarTile (tx: number, ty: number): void {
@@ -404,10 +452,11 @@ export class FaseGrid extends Phaser.Scene {
     if (this.local === 'fase' && tx === this.P('portaX') && ty === this.P('portaY') && !this.trocando) return this.transita(() => { this.local = 'casa'; this.gridEngine.setPosition('heroi', { x: this.P('intEntraX'), y: this.P('intEntraY') }); this.camInterior() })
     // sair da casa: câmera volta a seguir o herói no EXTERNO
     if (this.local === 'casa' && tx === this.P('intSaiX') && ty === this.P('intSaiY') && !this.trocando) return this.transita(() => { this.local = 'fase'; this.gridEngine.setPosition('heroi', { x: this.P('portaX'), y: this.P('portaY') + 1 }); this.camExterno() })
-    // entrega ao fazendeiro (encostar) quando a meta está cumprida
+    // entrega ao fazendeiro (encostar) quando a meta está cumprida; no agrupar,
+    // primeiro vem a CONFERÊNCIA contada (consolidação), depois a entrega
     if (!this.entregou && this.metaOk() && this.local === 'fase') {
       const d = Math.abs(tx - this.P('fazX')) + Math.abs(ty - this.P('fazY'))
-      if (d <= 1) this.entrega()
+      if (d <= 1) { if (this.mecanica === 'agrupar') this.agConfere(); else this.entrega() }
     }
     // vitória: pisou na saída já aberta
     if (this.entregou && !this.concluida && tx === this.P('pedrasX') && ty === this.P('pedrasY')) this.vitoria()
@@ -476,9 +525,10 @@ export class FaseGrid extends Phaser.Scene {
     this.tom(160, 0.3, 'sawtooth', 0.16)
     let msg = this.plano?.entrega ?? 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!'
     if (this.mecanica === 'agrupar') {
-      // o CONCEITO por ÚLTIMO, nascido da arrumação DELA (n grupos de k -> n×k)
+      // o CONCEITO por ÚLTIMO, nascido da arrumação DELA — e agora DITO com todas
+      // as letras (consolidação): grupos iguais têm nome, é MULTIPLICAR
       const u = this.agVagas.filter(v => v.tem && v.count > 0)
-      if (u.length) msg = `Você fez ${u.length} grupos de ${u[0].count}… isso tem nome: ${u.length}×${u[0].count}=${this.agTotal}! ` + msg
+      if (u.length) msg = `Deu certinho: ${u.length} caixas com ${u[0].count} potes cada. Fazer grupos IGUAIS tem nome — é MULTIPLICAR: ${u.length}×${u[0].count}=${this.agTotal}! ` + msg
     }
     this.mostraBalao('🎉', msg)
     this.atualizaHud()

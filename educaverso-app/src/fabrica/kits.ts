@@ -33,7 +33,7 @@ export const KIT_VILAREJO: KitVisual = {
   imagens: { chao: 'chao.png', paredes: 'paredes.png', mundo: 'mundo.png', piso: 'piso.png', heroi: 'heroi.png', fazendeiro: 'fazendeiro.png', sombra: 'sombra.png', mel: 'mel.png', pedras: 'pedras.png', bau: 'bau.png' },
   chao: { cols: 22, imagewidth: 352, imageheight: 416, tilecount: 22 * 26, grama: 245, pisoInterno: 246 },
   paredes: { cols: 10, imagewidth: 160, imageheight: 176, tilecount: 110, TL: 0, T: 3, TR: 4, L: 10, R: 14, BL: 40, B: 43, BR: 44, solido: 43 },
-  props: { casa_a: [0, 0, 64, 48], arvore: [0, 160, 32, 32], estante: [160, 592, 33, 32], tapete: [112, 592, 48, 48] },
+  props: { casa_a: [0, 0, 64, 48], arvore: [0, 160, 32, 32], estante: [160, 592, 33, 32], tapete: [112, 592, 48, 48], carroca: [82, 130, 28, 28] },
   personagem: { cols: 4, dir: { down: 0, up: 1, left: 2, right: 3 } },
   bauFrame: [16, 14]
 }

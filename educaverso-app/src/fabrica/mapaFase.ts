@@ -81,6 +81,10 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const pedras = { x: OX1, y: SAI_Y }
   put(colis, pedras.x, pedras.y, COL)
 
+  // CARROÇA ao lado do fazendeiro (a história fica VISÍVEL: é nela que a carga vai)
+  const carroca = { x: 11, y: 6 }
+  put(colis, carroca.x, carroca.y, COL)
+
   // interior (sala) — chão + auto-parede com saída no meio de baixo
   const saiSalaX = IX0 + ((IW - 1) >> 1)
   for (let y = IY0; y < IY0 + IH; y++) for (let x = IX0; x < IX0 + IW; x++) put(chao, x, y, PISO_INT)
@@ -147,6 +151,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const obj = (frame: string, tex: string, xpx: number, ypx: number, depth?: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }, ...(depth !== undefined ? [{ name: 'depth', type: 'int', value: depth }] : [])] })
   const decor: object[] = [obj('casa_a', 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
   for (const [ax, ay] of arvores) decor.push(obj('arvore', 'mundo', (ax + 0.5) * T, (ay + 1) * T + 6))
+  decor.push(obj('carroca', 'mundo', (carroca.x + 0.5) * T, (carroca.y + 1) * T))
   // CASA MOBILIADA (pedido do Marcos): tapete no meio (passável), estante encostada
   // na parede com 2 potes em cima, baú no canto — e os móveis SÓLIDOS (colisão),
   // pra criança não atravessar a mobília
@@ -176,6 +181,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
       Pi('heroiX', 10), Pi('heroiY', 12),
       Pi('casaX', casa.x), Pi('casaY', casa.y), Pi('portaX', porta.x), Pi('portaY', porta.y),
       Pi('fazX', fazendeiro.x), Pi('fazY', fazendeiro.y),
+      Pi('carrocaX', carroca.x), Pi('carrocaY', carroca.y),
       Pi('pedrasX', pedras.x), Pi('pedrasY', pedras.y), Pi('saidaY', SAI_Y),
       Pi('intEntraX', interiorEntra.x), Pi('intEntraY', interiorEntra.y),
       Pi('intSaiX', interiorSai.x), Pi('intSaiY', interiorSai.y),
