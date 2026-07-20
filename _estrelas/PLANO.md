@@ -108,8 +108,14 @@ a Fagulha PERGUNTA, não responde).
 
 ## STATUS
 - [x] Objetivo, tema, mascote, arco de paradas, medição (este plano)
-- [ ] Pesquisa de animação (cutscene + vivo) — em andamento
-- [ ] Arte em camadas/partes (workflow) + voz do Antônio (workflow)
-- [ ] Fatia de teste (aprovar estilo)
-- [ ] Paradas 1..5 + som + medição
-- [ ] Auditoria + prévia + aprovação + publicação
+- [x] Pesquisa de animação (cutscene + vivo) — 12 docs de pesquisa
+- [x] Arte da Fagulha (poses: feliz/acena/pensa/fala/pisca/comemora), fábrica, estrela, céu (workflow)
+- [x] Voz do Antônio na ABERTURA (workflow) — falta narração POR PARADA
+- [x] Fatia de teste (capa + abertura viva + mapa vivo com trilha/Fagulha caminhante)
+- [x] **Paradas 1..5 (criar/resolver) + 2 alívios (Música, Memória) + deleite (Decore) + medição→PARECER**
+- [x] Final animado (cutscene do céu aceso) + diploma + parecer por indicadores
+- [x] QA técnico: node --check + render de cada tela + click-through sem erro + compat (sem grid/gap/var/clamp)
+- [ ] **Narração do Antônio POR PARADA** (Fagulha fala em cada parada — próximo passo)
+- [ ] Tela de NOME (personaliza o parecer) — próximo passo
+- [ ] Portões pedagógicos (Portão 0 filosofia / Arte) + aprovação do Marcos no PC/celular real
+- [ ] Card no hub "Ilhas do Saber" (3º ano)
