@@ -253,6 +253,41 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .optbtn:disabled{opacity:.5}
 .p5 .p5dica{margin-top:9px;font-size:13px;color:#ffe9a8;font-style:italic;min-height:1.2em;padding:0 12px}
 
+/* ---------- DELEITE — Decore o Seu Céu ---------- */
+.decore .decoceu{position:absolute;left:0;right:0;top:22%;bottom:24%;z-index:3;cursor:crosshair}
+.decostar{position:absolute;height:auto;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);-webkit-animation:estrPop .35s ease;animation:estrPop .35s ease}
+.decore .paleta{position:absolute;left:0;right:0;bottom:14%;z-index:4;text-align:center}
+.pcor{border:0;background:transparent;cursor:pointer;width:52px;height:52px;padding:4px;margin:0 5px;border-radius:12px}
+.pcor img{width:100%;height:auto;display:block}
+.pcor.sel{background:rgba(255,255,255,.16);box-shadow:0 0 0 2px #ffd75e inset}
+
+/* ---------- FINAL (cutscene) ---------- */
+.fim{text-align:center}
+.fim .fabviva.destino{position:absolute;left:50%;top:4%;width:24vh;max-width:158px;z-index:3;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
+.fim .fimfag{position:absolute;left:50%;bottom:20%;width:30vh;max-width:196px;z-index:5;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
+.fim .fimfag .fag{position:relative;width:100%;max-width:none}
+.fim .fimtit{position:absolute;left:0;right:0;top:30%;z-index:6;padding:0 18px;font-size:26px;font-weight:900;color:#ffe08a;
+  text-shadow:0 2px 0 #7a5200,0 0 20px rgba(255,200,80,.6);-webkit-animation:revIn .6s ease both;animation:revIn .6s ease both}
+.fim .fimsub{position:absolute;left:0;right:0;top:40%;z-index:6;padding:0 24px;font-size:16px;color:#e9ecff;
+  -webkit-animation:revIn .6s .3s ease both;animation:revIn .6s .3s ease both}
+@media (min-width:480px){ .fim .fimtit{font-size:32px} }
+
+/* ---------- PARECER (diploma + professor) ---------- */
+.parecer{overflow-y:auto;-webkit-overflow-scrolling:touch}
+.parecer .diploma{position:relative;margin:8% auto 12px;max-width:400px;width:88%;z-index:4;text-align:center;
+  background:-webkit-linear-gradient(top,rgba(30,26,66,.95),rgba(20,18,50,.95));background:linear-gradient(to bottom,rgba(30,26,66,.95),rgba(20,18,50,.95));
+  border:3px solid #ffd75e;border-radius:20px;padding:18px 16px 16px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.parecer .selo{width:64px;height:64px;margin:0 auto 6px;border-radius:50%;background:url('img/estrela_grande.png') center/78% no-repeat,radial-gradient(circle,#ffe08a,#f0a92e);
+  box-shadow:0 0 18px rgba(255,200,80,.7)}
+.parecer .dtit{font-size:24px;color:#ffe08a;text-shadow:0 0 14px rgba(255,200,80,.5);margin-bottom:6px}
+.parecer .dsub{font-size:14px;color:#e9ecff;line-height:1.4}
+.parecer .destrelas{margin-top:8px;color:#ffe08a;font-size:22px;letter-spacing:3px}
+.parecer .profcard{position:relative;margin:0 auto 70px;max-width:400px;width:88%;z-index:4;
+  background:rgba(12,16,40,.9);border:1px solid rgba(255,215,110,.4);border-radius:16px;padding:14px 15px;
+  font-size:13.5px;line-height:1.5;color:#dfe3ff}
+.parecer .profcard b{color:#ffe08a}
+.parecer .pobs{display:block;margin-top:8px;font-size:11.5px;color:#9aa3c8;font-style:italic}
+
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
@@ -937,8 +972,95 @@ function sucessoP5(){
   var tempo=Math.round(((new Date()).getTime()-P5.t0)/1000);
   salvaEvid({parada:"p5",habilidade:"EF03MA07",conceito:"autoria + protégé",criou:[P5.fil,P5.col],real:P5.real,corrigiu:P5.protegeErrou,tentativas:P5.tent,acertou:true,semErro:(P5.tent===1)});
 }
-function telaDecore(){ proxima(7); }
-function telaFinal(){ limpa(); var t=el("div","tela mapa"); t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(60)); t.appendChild(el("div","topo","<b>Você encheu o céu!</b>")); app.appendChild(t); }
+/* ===== DELEITE — Decore o Seu Céu (criação livre) ===== */
+var DECO;
+function telaDecore(){
+  limpa();
+  DECO={hue:0,n:0};
+  var t=el("div","tela decore");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  t.appendChild(el("div","balao","<b>Este céu é seu!</b> Toque onde quiser e enfeite do seu jeito — aqui não tem certo nem errado."));
+  var sky=el("div","decoceu"); sky.id="decoceu";
+  sky.onclick=function(ev){ decoPoe(ev,sky); };
+  t.appendChild(sky);
+  var pal=el("div","paleta"); var cores=[0,140,210,300]; var i;
+  for(i=0;i<cores.length;i++){ (function(h,idx){
+    var c=el("button","pcor"+(idx===0?" sel":"")); c.style.webkitFilter="hue-rotate("+h+"deg)"; c.style.filter="hue-rotate("+h+"deg)";
+    var im=el("img"); im.src="img/estrela_grande.png"; c.appendChild(im);
+    c.onclick=function(){ DECO.hue=h; var ps=document.getElementsByClassName("pcor"),z; for(z=0;z<ps.length;z++)ps[z].className="pcor"; c.className="pcor sel"; };
+    pal.appendChild(c);
+  })(cores[i],i); }
+  t.appendChild(pal);
+  var bar=el("div","p1barra"); var ok=el("button","btn pulsa","Pronto, terminei!"); ok.onclick=function(){ proxima(7); }; bar.appendChild(ok); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function decoPoe(ev,sky){
+  if(DECO.n>=70)return;
+  var r=sky.getBoundingClientRect();
+  var x=((ev.clientX-r.left)/r.width)*100, y=((ev.clientY-r.top)/r.height)*100;
+  if(x<0||x>100||y<0||y>100)return;
+  var s=el("img","decostar"); s.src="img/estrela_grande.png";
+  var tam=(16+Math.random()*22).toFixed(0);
+  s.style.width=tam+"px"; s.style.left=x+"%"; s.style.top=y+"%";
+  s.style.webkitFilter="hue-rotate("+DECO.hue+"deg) drop-shadow(0 0 7px rgba(255,220,120,.9))";
+  s.style.filter="hue-rotate("+DECO.hue+"deg) drop-shadow(0 0 7px rgba(255,220,120,.9))";
+  sky.appendChild(s); DECO.n++;
+  tocaNota(330+DECO.hue*0.6);
+}
+/* ===== FINAL (cutscene) + PARECER ===== */
+function telaFinal(){
+  limpa();
+  var t=el("div","tela fim");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(90));
+  var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="8%"; t.appendChild(fv);
+  var fag=el("div","fimfag"); fag.appendChild(fagViva()); t.appendChild(fag);
+  fagComemora();
+  var tit=el("div","fimtit","Você encheu o céu de estrelas!"); t.appendChild(tit);
+  var sub=el("div","fimsub","A Fábrica de Estrelas está brilhando por sua causa."); t.appendChild(sub);
+  var bar=el("div","p1barra"); bar.style.bottom="8%";
+  var b=el("button","btn pulsa","Ver como você foi"); b.onclick=function(){ telaParecer(); }; bar.appendChild(b); t.appendChild(bar);
+  app.appendChild(t);
+  var i; for(i=0;i<3;i++){ (function(d){ setTimeout(function(){ estouraEstrelas(t,16); },d); })(i*600);
+  }
+}
+function lerEvid(){ try{ return JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); }catch(e){ return []; } }
+function parecerDados(){
+  var ev=lerEvid(), map={}, i;
+  for(i=0;i<ev.length;i++){ if(ev[i].parada) map[ev[i].parada]=ev[i]; }
+  var paradas=["p1","p2","p3","p4","p5"], fez=0, fluente=0, k;
+  for(k=0;k<paradas.length;k++){ var e=map[paradas[k]]; if(e&&e.acertou){ fez++; if(e.semErro) fluente++; } }
+  var nivel = fluente>=5?"Avançado":(fluente>=3?"Adequado":"Em desenvolvimento");
+  return {map:map,fez:fez,fluente:fluente,total:paradas.length,nivel:nivel};
+}
+function telaParecer(){
+  limpa();
+  var d=parecerDados();
+  var t=el("div","tela parecer");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  var card=el("div","diploma");
+  card.appendChild(el("div","selo",""));
+  card.appendChild(el("h2","dtit","Mestre das Estrelas"));
+  card.appendChild(el("div","dsub","Você acendeu o céu inteiro! Agora você sabe que multiplicar é juntar grupos iguais — e ainda ensinou a Fagulha."));
+  card.appendChild(el("div","destrelas","&#9733; &#9733; &#9733; &#9733; &#9733;"));
+  t.appendChild(card);
+  var prof=el("div","profcard");
+  var txt="<b>Para o professor</b> &#183; EF03MA07 (multiplicação)<br>";
+  txt+="O estudante concluiu <b>"+d.fez+" de "+d.total+"</b> paradas de aprendizado. ";
+  if(d.map.p1) txt+="Compreende a multiplicação como <b>grupos iguais</b>. ";
+  if(d.map.p2) txt+="Reconhece a <b>disposição retangular (array)</b> como linhas × colunas, ligada à adição de parcelas iguais. ";
+  if(d.map.p3) txt+="Percebeu a <b>comutatividade</b> (3×4 = 4×3). ";
+  if(d.map.p4) txt+="Usou o <b>×10</b> como atalho. ";
+  if(d.map.p5){ txt+="<b>Criou e resolveu</b> a própria constelação"; if(d.map.p5.corrigiu) txt+=" e <b>corrigiu</b> a mascote (efeito protégé)"; txt+="."; }
+  txt+="<br>Fluência: <b>"+d.fluente+" de "+d.total+"</b> paradas sem tropeços. Nível sugerido: <b>"+d.nivel+"</b>.";
+  txt+="<br><span class='pobs'>Parecer inicial, honesto e por indicadores. Registro local nesta sessão.</span>";
+  prof.innerHTML=txt;
+  t.appendChild(prof);
+  var bar=el("div","p1barra"); bar.style.bottom="4%";
+  var again=el("button","btn2","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; try{ localStorage.removeItem("estrelas_evid"); }catch(e){} telaCapa(); };
+  bar.appendChild(again); t.appendChild(bar);
+  app.appendChild(t);
+}
 
 telaCapa();
 })();
