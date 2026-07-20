@@ -148,6 +148,30 @@
 > a dinâmica. Próximos passos se aprovar: voz + kit galinheiro (variação da mesma lei)
 > + missões de retorno (Leitner) + 2ª LEI (equilíbrio/apoio — a ponte que aguenta).
 
+## 🌙 SAGA DA PUBLICAÇÃO (madrugada 2026-07-20) — lições PAGAS de deploy
+> A fase da tabuada demorou HORAS pra ir ao ar. Causas REAIS (2, sobrepostas) e curas:
+> 1. **Incidente do GitHub** (~00:38–03:40 UTC): API 503 até de dentro das Actions; builds
+>    legados do Pages presos em "building"/"startup_failure" (em repo NOVO). Nada nosso.
+>    Diagnóstico definitivo = **`checar-pages.yml`** (na main): consulta config/último build/
+>    último commit/runs do repo DESTINO + curl do site, e **COMMITA o resultado em
+>    `_diag/pages-<repo>.txt`** — leitura via git, imune a API instável. USAR SEMPRE que
+>    "link não abre".
+> 2. **⚠️ LIÇÃO PAGA (a pior): o `PAGES_TOKEN` NÃO tem escopo `workflow`** → push que
+>    contenha QUALQUER arquivo `.github/workflows/` no repo destino é **REJEITADO inteiro**
+>    ("refusing to allow a PAT to create or update workflow"). Meu "plano B" (embutir
+>    auto-deploy no destino) quebrou TODAS as publicações por 1h até eu ler o log certo.
+>    **REGRA: publicador NUNCA inclui workflow no destino.** Pages LEGADO (source=main)
+>    funciona bem; o `app-build.yml` agora também FORÇA um build (`POST pages/builds`)
+>    após o push (não espera evento, que atrasa em incidente).
+> 3. Repo criado na hora do incidente (`vila-tabuada`) nasceu com builds startup_failure;
+>    depois da recuperação + republicação, montou normal. Repos velhos seguiram servindo.
+> **Links NO AR (04:10 UTC, build success + HTTP 200):**
+> - **https://vidalprof.github.io/vila-tabuada/** — LINK DIRETO do jogo da tabuada
+>   (boot injetado `window.__BOOT='tabuada'`: a Fábrica gera a fase sozinha, sem formulário).
+> - **https://vidalprof.github.io/educaverso-app/** — idem (repo de teste, mesmo boot).
+> - **https://vidalprof.github.io/fabrica-aventuras/** — a Fábrica com a mecânica agrupar
+>   (digite "Tabuada" no objetivo → GERAR). `vila-viva` intocada.
+
 ## 🌐 DECISÃO DO MARCOS (2026-07): TRABALHAMOS SÓ ONLINE — esquecer "offline"
 > O Marcos deixou claro (mais de uma vez): **a escola é ONLINE, sempre há internet.**
 > **"Offline" NÃO é requisito.** Eu não devo mais usar "tem que rodar offline / HTML
