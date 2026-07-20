@@ -15,6 +15,14 @@ import { getAluno, gravarEvidencia } from '../fabrica/evidencias'
 const T = 16
 const MEL_ALVO = 5
 
+// hash estável de uma fala → nome do arquivo MP3 (djb2 em base36). O MESMO cálculo
+// roda no gerador de áudio (tools/falas-adventure.mjs) pra os nomes baterem.
+function vozHash (s: string): string {
+  let h = 5381
+  for (let i = 0; i < s.length; i++) h = (((h << 5) + h) + s.charCodeAt(i)) >>> 0
+  return h.toString(36)
+}
+
 export class FaseGrid extends Phaser.Scene {
   private gridEngine!: GridEngine
   private heroi!: Phaser.GameObjects.Sprite
@@ -159,8 +167,9 @@ export class FaseGrid extends Phaser.Scene {
       const props = o.properties as Array<{ name: string, value: string | number }> | undefined
       const tex = (props?.find(p => p.name === 'tex')?.value as string) ?? 'mundo'
       const depth = props?.find(p => p.name === 'depth')?.value as number | undefined
+      const tint = props?.find(p => p.name === 'tint')?.value as number | undefined
       // 'cen' = prop de cenário LIMPO (PNG próprio, key cen_<nome>); senão atlas/textura
-      if (tex === 'cen') { this.add.image(o.x!, o.y!, 'cen_' + (o.name as string)).setOrigin(0.5, 1).setDepth(depth ?? o.y!); continue }
+      if (tex === 'cen') { const im = this.add.image(o.x!, o.y!, 'cen_' + (o.name as string)).setOrigin(0.5, 1).setDepth(depth ?? o.y!); if (tint !== undefined) im.setTint(tint); continue }
       const frame: string | number = tex === 'mundo' ? (o.name as string) : 0
       this.add.image(o.x!, o.y!, tex, frame).setOrigin(0.5, 1).setDepth(depth ?? o.y!)
     }
@@ -686,24 +695,29 @@ export class FaseGrid extends Phaser.Scene {
     this.btnVoz.onclick = () => {
       this.vozLigada = !this.vozLigada
       this.btnVoz!.textContent = this.vozLigada ? '🔊' : '🔇'
-      try { localStorage.setItem('educ_voz', this.vozLigada ? '1' : '0'); if (!this.vozLigada) speechSynthesis.cancel() } catch { /* ok */ }
+      try { localStorage.setItem('educ_voz', this.vozLigada ? '1' : '0'); if (!this.vozLigada) this.vozAtual?.pause() } catch { /* ok */ }
     }
     document.body.appendChild(this.btnVoz)
-    const limpa = (): void => { this.balao?.remove(); this.btnAjuda?.remove(); this.btnVoz?.remove(); this.btnProx?.remove(); try { speechSynthesis.cancel() } catch { /* ok */ } }
+    const limpa = (): void => { this.balao?.remove(); this.btnAjuda?.remove(); this.btnVoz?.remove(); this.btnProx?.remove(); try { this.vozAtual?.pause() } catch { /* ok */ } }
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, limpa)
     this.events.once(Phaser.Scenes.Events.DESTROY, limpa)
     this.atualizaHud()
   }
 
-  // fala o texto do balão (Web Speech, grátis, pt-BR) — desligável no 🔇
+  // NARRAÇÃO POR VOZ DO ANTONIO (edge-tts → MP3). DECISÃO FIRME do Marcos: NADA de
+  // speechSynthesis (voz do navegador). Cada fala tem um MP3 pré-gerado pelo workflow
+  // gerar-audio.yml em public/rpg/voz/<hash>.mp3; se existir, toca; senão segue no texto.
+  private vozAtual?: HTMLAudioElement
   private falar (txt: string): void {
     if (!this.vozLigada || (navigator as any).webdriver) return
     try {
-      speechSynthesis.cancel()
-      const u = new SpeechSynthesisUtterance(txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())
-      u.lang = 'pt-BR'; u.rate = 0.96; u.pitch = 1.05
-      speechSynthesis.speak(u)
-    } catch { /* sem voz: segue no texto */ }
+      this.vozAtual?.pause()
+      const limpo = txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim()
+      const a = new Audio(import.meta.env.BASE_URL + 'rpg/voz/' + vozHash(limpo) + '.mp3')
+      a.volume = 0.95
+      void a.play().catch(() => { /* sem MP3 (ainda não gerado) ou sem gesto: silencioso */ })
+      this.vozAtual = a
+    } catch { /* segue no texto */ }
   }
 
   // AJUDA sob demanda: repete o PROBLEMA e diz COMO agir AGORA (por mecânica e estado)

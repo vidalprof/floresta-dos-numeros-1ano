@@ -168,10 +168,10 @@ export function montarMapaFase (plano: PlanoMapa): object {
   // DECOR (enfeites como objetos — o motor só renderiza o que o mapa manda).
   // "depth" opcional: força a profundidade (tapete rente ao chão, pote sobre a estante).
   let oid = 1
-  const obj = (frame: string, tex: string, xpx: number, ypx: number, depth?: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }, ...(depth !== undefined ? [{ name: 'depth', type: 'int', value: depth }] : [])] })
+  const obj = (frame: string, tex: string, xpx: number, ypx: number, depth?: number, tint?: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }, ...(depth !== undefined ? [{ name: 'depth', type: 'int', value: depth }] : []), ...(tint !== undefined ? [{ name: 'tint', type: 'int', value: tint }] : [])] })
   const decor: object[] = [obj(cen.estrutura, 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
   // props de cenário = sprites LIMPOS (tex 'cen'): sem franja, montam certinho no chão
-  for (const s of cen.scatter) decor.push(obj(s.prop, 'cen', (s.tx + 0.5) * T, (s.ty + 1) * T + 6))
+  for (const s of cen.scatter) decor.push(obj(s.prop, 'cen', (s.tx + 0.5) * T, (s.ty + 1) * T + 6, undefined, s.tint))
   decor.push(obj('carroca', 'cen', (carroca.x + 0.5) * T, (carroca.y + 1) * T))
   // LAGUINHO opcional do cenário: tiles de água rente ao chão (depth 1) + colisão
   // (a criança contorna; o espalhador de itens já desvia de célula com colisão)

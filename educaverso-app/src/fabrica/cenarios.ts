@@ -16,7 +16,7 @@
 
 export type Ambiente = '' | 'vagalumes' | 'petalas' | 'folhas' | 'neve'
 
-export interface Espalhado { prop: string, tx: number, ty: number }
+export interface Espalhado { prop: string, tx: number, ty: number, tint?: number }
 
 export interface CenarioDef {
   id: string
@@ -47,6 +47,8 @@ const FLORESTA: CenarioDef = {
   ]
 }
 
+// cerejeira = o arbusto redondo LIMPO tingido de ROSA (flor) — limpo e automático pelo
+// motor; a "cerejeira" do atlas denso lia como "3 árvores mal recortadas".
 const POMAR: CenarioDef = {
   id: 'pomar', nome: 'O Pomar das Cerejeiras', ambiente: 'petalas', estrutura: 'casa_a',
   scatter: [

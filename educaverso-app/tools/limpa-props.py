@@ -71,3 +71,21 @@ def limpa(nome, box, keep_blob=True):
     return c.size
 for n,b in PROPS.items():
     print(n, limpa(n,b))
+
+# CEREJEIRA = o arbusto redondo LIMPO RECOLORIDO de verde->rosa (flor). Recolorir de
+# verdade (HSV) fica rosa, ao contrário do setTint multiplicativo que só embaça. Mantém
+# a sombra/forma do arbusto (que já é limpo e bonito como a fase 1) e o tronco marrom.
+import colorsys
+def recolore(entrada, saida, hue_alvo, sat=0.55):
+    c = Image.open(entrada).convert('RGBA'); px = c.load(); w,h = c.size
+    for y in range(h):
+        for x in range(w):
+            r,g,bl,a = px[x,y]
+            if a < 40: continue
+            hh,ss,vv = colorsys.rgb_to_hsv(r/255,g/255,bl/255)
+            if 0.20 < hh < 0.47 and ss > 0.15:            # só a COPA verde (tronco marrom fica)
+                nr,ng,nb = colorsys.hsv_to_rgb(hue_alvo, min(1,ss*0.9+sat*0.3), vv)
+                px[x,y] = (int(nr*255),int(ng*255),int(nb*255),a)
+    c.save(saida)
+    return c.size
+print('cerejeira(rosa)', recolore('public/rpg/cen/arvore.png','public/rpg/cen/cerejeira.png', 0.92))
