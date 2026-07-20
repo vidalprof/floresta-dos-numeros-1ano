@@ -188,6 +188,20 @@
 > **Honestidade registrada:** leis NOVAS (jogabilidade inédita) sempre precisam de
 > engenharia; a fábrica automatiza COMBINAR leis prontas + tema + arte + som + conteúdo.
 
+## ⚠️ LIÇÃO PAGA — ÁRVORES do atlas Ninja NÃO servem recortadas (2026-07-20 noite)
+> O Marcos mandou zoom: os "pinheiros" recortados do `mundo.png` saíam CORTADOS (topo/base)
+> e com DOIS troncos — porque naquela parte do atlas a árvore é um BLOCO DE FLORESTA DENSA
+> (feito pra ladrilhar, vários troncos juntos). Recortar UM sempre dá colcha cortada.
+> **REGRA:** as ÚNICAS árvores limpas do pack são o **arbusto redondo** [0,160,32,32] e
+> afins (props com margem transparente). Árvore de verdade = **arbusto redondo recolorido**
+> (`limpa-props.py recolore()` HSV): verde-claro (fazenda), verde-mata (floresta),
+> rosa (cerejeira/pomar), laranja (arvore_outono/montanha). Inteiras, sem corte, mesmo pack.
+> NÃO recortar pinheiro/carvalho/cerejeira do atlas denso. Se quiser SHAPE de pinheiro de
+> verdade → gerar por IA (`gerar-imagens.yml`), não recortar do atlas.
+> **2 TRAVAS AUTOMÁTICAS no gerador (mapaFase):** (1) clamp na zona segura x[3..16]y[4..12]
+> = nenhum prop na borda/moldura; (2) distância mínima ciente do tamanho = nenhum prop
+> colado. Nenhum cenário, nem futuro, dá árvore na borda ou uma sobre a outra.
+
 ## 🔧 CORREÇÕES do Marcos (senha "lembra?", 2026-07-20 noite) — voz + sprites
 > Marcos pegou 2 erros meus e mandou usar as FERRAMENTAS certas, não a mão:
 > - **VOZ: eu tinha posto speechSynthesis (PROIBIDO).** Removido. Agora narração = MP3 do
