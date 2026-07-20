@@ -153,7 +153,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* ---------- PARADA (criar/resolver: grupos iguais) ---------- */
 .fagfala{position:absolute;bottom:0;right:2px;width:112px;z-index:3}
 .fagfala .fag{position:relative;width:100%;max-width:none}
-.balao{position:absolute;top:10px;left:10px;right:10px;max-width:560px;margin:0 auto;
+.balao{position:absolute;top:26px;left:10px;right:10px;max-width:560px;margin:0 auto;
   background:rgba(20,24,60,.93);border:2px solid #ffd75e;border-radius:16px;padding:11px 13px;
   font-size:15px;line-height:1.35;color:#fff;z-index:4;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .caixas{position:absolute;left:0;right:0;top:32%;text-align:center;z-index:2;padding:0 6px}
@@ -315,6 +315,31 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .parecer .destrelas .on{color:#ffe08a}
 .parecer .destrelas .off{color:rgba(255,255,255,.25)}
 
+/* pulo da Fagulha ao comemorar (mola/overshoot) */
+.fag.pulo{-webkit-animation:puloFag .6s cubic-bezier(.34,1.56,.64,1);animation:puloFag .6s cubic-bezier(.34,1.56,.64,1)}
+@-webkit-keyframes puloFag{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-18px)}70%{-webkit-transform:translateY(3px)}100%{-webkit-transform:translateY(0)}}
+@keyframes puloFag{0%{transform:translateY(0)}40%{transform:translateY(-18px)}70%{transform:translateY(3px)}100%{transform:translateY(0)}}
+
+/* barra de progresso no topo das paradas (ritmo de lição) */
+.barratopo{position:absolute;top:7px;left:10px;right:10px;height:12px;border-radius:8px;z-index:8;overflow:hidden;
+  background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.22)}
+.barratopo i{display:block;height:100%;border-radius:8px;
+  background:-webkit-linear-gradient(left,#ffe27a,#ffb020);background:linear-gradient(to right,#ffe27a,#ffb020)}
+
+/* nó ATUAL: anel-farol + bolha COMEÇAR (assinatura da trilha) */
+.mapa .nowrap.atual-wrap .farol{position:absolute;left:50%;top:50%;width:100%;height:100%;border-radius:50%;z-index:-1;
+  border:3px solid rgba(255,255,255,.9);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  -webkit-animation:farolPulse 1.7s ease-out infinite;animation:farolPulse 1.7s ease-out infinite}
+@-webkit-keyframes farolPulse{0%{-webkit-transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{-webkit-transform:translate(-50%,-50%) scale(1.9);opacity:0}}
+@keyframes farolPulse{0%{transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
+.mapa .rotulo{position:absolute;left:50%;top:112%;margin-top:0;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  white-space:nowrap;font-size:12px;font-weight:900;color:#2b2f4a;background:#fff;padding:7px 15px;border-radius:16px;
+  box-shadow:0 4px 0 rgba(0,0,0,.22);-webkit-animation:comBounce 1s ease-in-out infinite;animation:comBounce 1s ease-in-out infinite}
+.mapa .rotulo:before{content:"";position:absolute;bottom:100%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  border:7px solid transparent;border-bottom-color:#fff}
+@-webkit-keyframes comBounce{0%,100%{-webkit-transform:translateX(-50%) translateY(0)}50%{-webkit-transform:translateX(-50%) translateY(-5px)}}
+@keyframes comBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}
+
 /* ---------- HUD estilo app (estrelas · progresso · ofensiva) ---------- */
 .hud{position:absolute;top:8px;left:8px;right:8px;z-index:7;
   display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
@@ -464,7 +489,13 @@ function fagViva(extraCls){
   return fag;
 }
 function fagPose(nome){ if(fagAtual&&fagAtual.base){ if(fagAtual.fala)fagAtual.fala.style.opacity="0"; if(fagAtual.pisca)fagAtual.pisca.style.opacity="0"; fagAtual.base.src="img/"+nome+".png"; } }
-function fagComemora(){ fagPose("fagulha_comemora"); }
+function fagComemora(){
+  fagPose("fagulha_comemora");
+  if(typeof somResolve==="function") somResolve();
+  if(fagAtual&&fagAtual.el){ var c="fag"+(fagAtual.extra||""); fagAtual.el.className=c+" pulo";
+    (function(elx){ setTimeout(function(){ if(elx)elx.className=c; },700); })(fagAtual.el); }
+}
+function fagPensa(){ if(!fagAtual||!fagAtual.base)return; fagPose("fagulha_pensa"); setTimeout(function(){ if(fagAtual&&fagAtual.base) fagPose("fagulha"); },1000); }
 
 /* ---- helpers de celebração (compartilhados pelas paradas) ---- */
 function estouraEstrelas(tela,n){
@@ -598,6 +629,10 @@ function avanca(){
   if(progresso<STOPS.length) progresso++;
   if(progresso>=STOPS.length){ telaFinal(); } else { telaMapa(); }
 }
+function barraProg(){
+  var b=el("div","barratopo"), n=STOPS.length, p=Math.round(progresso/n*100);
+  b.innerHTML="<i style='width:"+p+"%'></i>"; return b;
+}
 
 /* MAPA VIVO ROLANTE (câmera segue a Fagulha subindo a trilha; cabe QUALQUER nº de paradas) */
 function nodeX(i){ return 50 + (i%2===0? -16 : 16); }
@@ -619,10 +654,10 @@ function telaMapa(){
   strip.appendChild(svg);
   for(i=0;i<n;i++){
     var estado=(i<progresso)?"feito":(i===progresso?"atual":"futuro");
-    var w=el("div","nowrap "+STOPS[i].tipo); w.style.left=nodeX(i)+"%"; w.style.top=ytop(i)+"px";
+    var w=el("div","nowrap "+STOPS[i].tipo+(estado==="atual"?" atual-wrap":"")); w.style.left=nodeX(i)+"%"; w.style.top=ytop(i)+"px";
     var no=el("div","no "+estado);
     var im=el("img"); im.src="img/estrela_grande.png"; no.appendChild(im);
-    if(estado==="atual"){ (function(k){ no.onclick=function(){ STOPS[k].fn(); }; })(i);
+    if(estado==="atual"){ no.appendChild(el("div","farol")); (function(k){ no.onclick=function(){ STOPS[k].fn(); }; })(i);
       w.appendChild(el("div","rotulo",STOPS[i].titulo)); }
     w.appendChild(no); strip.appendChild(w);
   }
@@ -651,6 +686,7 @@ function telaParada1(){
   limpa();
   P1={n:3,m:4,cx:[0,0,0],toques:0,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(26));
   t.appendChild(el("div","balao","Pra acender esta parte do céu, encha <b>3 caixas</b> com <b>4 estrelas</b> em cada! Toque na caixa pra pôr uma estrela (e na estrela pra tirar)."));
   var wrap=el("div","caixas"); var i;
@@ -667,7 +703,7 @@ function telaParada1(){
 function fazCaixa(i){
   var c=el("div","caixa"); c.id="cx"+i;
   c.appendChild(el("div","estrs")); c.appendChild(el("div","cnt","0"));
-  c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; pintaCaixas(); } };
+  c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; somPop(P1.cx[i]); pintaCaixas(); } };
   return c;
 }
 function fazEstrInterna(i){
@@ -721,6 +757,7 @@ function telaParada2(){
   limpa();
   P2={fil:2,col:2,alvoF:4,alvoC:5,concluida:false,ajustes:0,t0:(new Date()).getTime()};
   var t=el("div","tela parada p2");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
   t.appendChild(el("div","balao","<b>A constelação do Peixe</b> pede <b>4 fileiras</b> com <b>5 estrelas</b> em cada. Monte a grade!"));
   var g=el("div","grade"); g.id="grade"; t.appendChild(g);
@@ -790,6 +827,24 @@ function tocaNota(freq){
     o.start(t0); o.stop(t0+0.6);
   }catch(e){}
 }
+/* ---- sons DIEGÉTICOS (o mundo reage: a estrela canta ao acender) ---- */
+function somTom(freq,dur,vol,tipo,dl){
+  try{
+    if(!audioCtx){ var AC=window.AudioContext||window.webkitAudioContext; if(!AC)return; audioCtx=new AC(); }
+    if(audioCtx.state==="suspended"){ audioCtx.resume(); }
+    var o=audioCtx.createOscillator(), g=audioCtx.createGain(), t0=audioCtx.currentTime+(dl||0);
+    o.type=tipo||"triangle"; o.frequency.value=freq;
+    g.gain.setValueAtTime(0.0001,t0);
+    g.gain.linearRampToValueAtTime(vol||0.22,t0+0.015);
+    g.gain.exponentialRampToValueAtTime(0.0006,t0+(dur||0.4));
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start(t0); o.stop(t0+(dur||0.4)+0.02);
+  }catch(e){}
+}
+function somAcerto(){ somTom(660,0.18,0.2,"triangle",0); somTom(988,0.32,0.2,"triangle",0.08); }   // estrela acende
+function somErro(){ somTom(196,0.28,0.16,"sine",0); }                                              // gentil, nunca punir
+function somResolve(){ somTom(523,0.5,0.16,"triangle",0); somTom(659,0.5,0.16,"triangle",0.02); somTom(784,0.6,0.16,"triangle",0.04); } // acorde que resolve
+function somPop(i){ somTom(520+((i||0)%6)*70,0.12,0.14,"triangle",0); }                            // pop suave ao colocar estrela
 var MUS;
 function telaMusica(){
   limpa();
@@ -853,6 +908,7 @@ function telaParada3(){
   limpa();
   P3={concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada p3");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
   t.appendChild(el("div","balao","A Fagulha arrumou <b>3 fileiras de 4</b> estrelas. Toque em <b>Contar</b> e veja quantas acendem!"));
   var wrap=el("div","p3wrap"); wrap.id="p3wrap";
@@ -908,6 +964,7 @@ function telaParada4(){
   limpa();
   P4={caixas:0,alvo:5,toques:0,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada p4");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
   t.appendChild(el("div","balao","O céu precisa de <b>muitas</b> estrelas, e rápido! Cada <b>caixa mágica</b> solta <b>10 de uma vez</b>. Encha o céu com <b>50</b>!"));
   var sky=el("div","p4sky"); sky.id="p4sky"; t.appendChild(sky);
@@ -1011,6 +1068,7 @@ function telaParada5(){
   limpa();
   P5={fil:3,col:3,fase:"build",claim:0,real:0,tent:0,protegeErrou:false,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada p5 p2");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(26));
   t.appendChild(el("div","balao","<b>Agora o mestre é você!</b> Monte a SUA constelação: escolha as fileiras e quantas estrelas em cada."));
   var g=el("div","grade"); g.id="p5grade"; t.appendChild(g);
@@ -1100,8 +1158,8 @@ function opcoesRow(arr,corretaVal,host,onCerto,dicaErr,est){
     var b=el("button","optbtn",o.txt);
     b.onclick=function(){
       if(est.trava)return;
-      if(o.val===corretaVal){ est.trava=true; onCerto(); }
-      else { est.tent++; b.className="optbtn erra"; (function(bb){ setTimeout(function(){ bb.className="optbtn"; },480); })(b);
+      if(o.val===corretaVal){ est.trava=true; somAcerto(); onCerto(); }
+      else { est.tent++; somErro(); fagPensa(); b.className="optbtn erra"; (function(bb){ setTimeout(function(){ bb.className="optbtn"; },480); })(b);
         var d=host.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=dicaErr; }
     };
     row.appendChild(b);
@@ -1116,6 +1174,7 @@ function telaSoma(){
   limpa();
   SOMA={tent:0,trava:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada perg soma");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
   t.appendChild(el("div","balao","A Fagulha juntou grupos <b>iguais</b>: 3, e 3, e 3, e mais 3. Somar o <b>mesmo</b> número toda vez tem um atalho. <b>Que conta é essa?</b>"));
   var meio=el("div","pmeio");
@@ -1148,6 +1207,7 @@ function telaProblema(){
   limpa();
   PROB={tent:0,trava:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada perg problema");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(22));
   t.appendChild(el("div","balao","<b>Problema da Fábrica:</b> a fábrica tem <b>5 prateleiras</b> e em cada uma cabem <b>4 estrelas</b>. Quantas estrelas a fábrica faz?"));
   var meio=el("div","pmeio"); meio.appendChild(gradeStars(5,4,"gradeM")); t.appendChild(meio);
@@ -1190,6 +1250,7 @@ function telaDesafio(){
      {q:"6 &#215; 10",r:"60",op:[{txt:"60",val:"60"},{txt:"16",val:"16"},{txt:"70",val:"70"},{txt:"600",val:"600"}]}
     ]};
   var t=el("div","tela parada perg desafio");
+  t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(22));
   t.appendChild(el("div","balao",""));
   var meio=el("div","pmeio"); meio.appendChild(el("div","expr grande","")); t.appendChild(meio);
@@ -1211,7 +1272,7 @@ function desafioRender(){
       if(acertou){ DES.acertos++; b.className="optbtn certo"; }
       else { b.className="optbtn erra";
         var bs=row.getElementsByTagName("button"),z; for(z=0;z<bs.length;z++){ if(it.op[z].val===it.r) bs[z].className="optbtn certo"; } }
-      tocaNota(acertou?520:300);
+      if(acertou){ somAcerto(); } else { somErro(); fagPensa(); }
       setTimeout(function(){ DES.i++; if(DES.i>=DES.total){ sucessoDesafio(); } else { desafioRender(); } }, acertou?680:1150);
     };
     row.appendChild(b);
