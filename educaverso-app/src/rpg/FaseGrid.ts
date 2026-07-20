@@ -105,6 +105,11 @@ export class FaseGrid extends Phaser.Scene {
     this.load.image('pedras2', b + im.pedras)
     this.load.image('piso', b + im.piso)
     this.load.spritesheet('bau', b + im.bau, { frameWidth: this.kit.bauFrame[0], frameHeight: this.kit.bauFrame[1] })
+    // PROPS DE CENÁRIO já LIMPOS (Diretor de Arte: extraídos do atlas sem franja/vizinho,
+    // por tools/limpa-props.py) — cada um é um PNG próprio, some o "halo de foto colada"
+    for (const n of ['arvore', 'pinheiro', 'carvalho', 'cerejeira', 'pedra_g', 'pedra_p', 'toco', 'cogumelo', 'flor', 'margarida', 'arbusto', 'pinheiro_neve', 'bola_neve', 'carroca']) {
+      if (!this.textures.exists('cen_' + n)) this.load.image('cen_' + n, b + 'cen/' + n + '.png')
+    }
     // só carrega o arquivo padrão; um mapa gerado pela Fábrica já vem no cache (init)
     if (this.mapaKey === 'mapa_grid' && !this.cache.tilemap.has('mapa_grid')) this.load.tilemapTiledJSON('mapa_grid', b + 'mapa_grid.json')
     this.load.audio('musica', b + 'musica.ogg')
@@ -154,6 +159,8 @@ export class FaseGrid extends Phaser.Scene {
       const props = o.properties as Array<{ name: string, value: string | number }> | undefined
       const tex = (props?.find(p => p.name === 'tex')?.value as string) ?? 'mundo'
       const depth = props?.find(p => p.name === 'depth')?.value as number | undefined
+      // 'cen' = prop de cenário LIMPO (PNG próprio, key cen_<nome>); senão atlas/textura
+      if (tex === 'cen') { this.add.image(o.x!, o.y!, 'cen_' + (o.name as string)).setOrigin(0.5, 1).setDepth(depth ?? o.y!); continue }
       const frame: string | number = tex === 'mundo' ? (o.name as string) : 0
       this.add.image(o.x!, o.y!, tex, frame).setOrigin(0.5, 1).setDepth(depth ?? o.y!)
     }

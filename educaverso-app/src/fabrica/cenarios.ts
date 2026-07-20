@@ -36,7 +36,7 @@ const FAZENDA: CenarioDef = {
 }
 
 const FLORESTA: CenarioDef = {
-  id: 'floresta', nome: 'A Trilha da Floresta', ambiente: 'vagalumes', estrutura: 'carvalho',
+  id: 'floresta', nome: 'A Trilha da Floresta', ambiente: 'vagalumes', estrutura: 'casa_a',
   scatter: [
     { prop: 'pinheiro', tx: 2, ty: 4 }, { prop: 'pinheiro', tx: 16, ty: 3 }, { prop: 'pinheiro', tx: 15, ty: 10 },
     { prop: 'pinheiro', tx: 3, ty: 11 }, { prop: 'carvalho', tx: 7, ty: 3 }, { prop: 'cogumelo', tx: 5, ty: 8 },
@@ -52,12 +52,14 @@ const POMAR: CenarioDef = {
   ]
 }
 
+// (a água com MARGEM/autotile fica pra um passo futuro; um retângulo azul chapado
+// dava cara de "colado" — melhor sem do que mal-feito. Rio = pedras + verde da margem.)
 const RIO: CenarioDef = {
   id: 'rio', nome: 'O Mercado da Beira do Rio', ambiente: '', estrutura: 'casa_a',
-  agua: { x0: 14, y0: 2, w: 4, h: 3 },
   scatter: [
-    { prop: 'pedra_g', tx: 4, ty: 8 }, { prop: 'pedra_p', tx: 13, ty: 10 }, { prop: 'pedra_p', tx: 12, ty: 6 },
-    { prop: 'arbusto', tx: 2, ty: 4 }, { prop: 'arbusto', tx: 6, ty: 11 }, { prop: 'margarida', tx: 8, ty: 4 }
+    { prop: 'pedra_g', tx: 3, ty: 4 }, { prop: 'pedra_p', tx: 16, ty: 3 }, { prop: 'pedra_p', tx: 13, ty: 10 },
+    { prop: 'pedra_g', tx: 15, ty: 9 }, { prop: 'arbusto', tx: 2, ty: 11 }, { prop: 'arbusto', tx: 6, ty: 12 },
+    { prop: 'margarida', tx: 8, ty: 4 }, { prop: 'flor', tx: 13, ty: 6 }
   ]
 }
 
