@@ -46,6 +46,7 @@ export class FaseGrid extends Phaser.Scene {
   agSoltos: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image }> = []       // (QA lê .length)
   agPilha = { x: 0, y: 0 }
   agPilhaN = 0                              // (QA lê)
+  agTodas = false                           // (QA lê) DIVISÃO: todas as caixas recebem
   agMao: 'caixa' | 'pote' | null = null     // (QA lê) o que está na mão
   private agMaoSp?: Phaser.GameObjects.Image
   private agPilhaImgs: Phaser.GameObjects.Image[] = []
@@ -67,7 +68,8 @@ export class FaseGrid extends Phaser.Scene {
 
   private mapaKey = 'mapa_grid'
   private melAlvo = MEL_ALVO
-  private plano?: { abertura?: string, problema?: string, juntouTudo?: string, entrega?: string, vitoria?: string, emoji?: string, nome?: string, regra?: string }
+  private plano?: { abertura?: string, problema?: string, juntouTudo?: string, entrega?: string, vitoria?: string, emoji?: string, nome?: string, regra?: string, temProxima?: boolean, tutorial?: boolean }
+  private btnProx?: HTMLButtonElement
   private kitId = 'vilarejo'
   private kit!: KitVisual
 
@@ -84,13 +86,16 @@ export class FaseGrid extends Phaser.Scene {
     const b = import.meta.env.BASE_URL + 'rpg/'
     this.kit = getKit(this.kitId)
     const im = this.kit.imagens
-    // ao TROCAR de kit numa mesma sessão, descarta as texturas do kit anterior
+    // AVATAR escolhido pela criança (SDT: autonomia) — menina.png tem o MESMO layout
+    const avatar = getAluno()?.avatar === 'menina' ? 'menina.png' : im.heroi
+    // ao TROCAR de kit OU de avatar numa mesma sessão, descarta as texturas antigas
     const anterior = this.game.registry.get('kitCarregado') as string | undefined
-    if (anterior && anterior !== this.kit.id) {
+    const marca = this.kit.id + '|' + avatar
+    if (anterior && anterior !== marca) {
       for (const k of ['chao', 'paredes', 'mundo', 'sombra', 'mel', 'pedras2', 'piso', 'heroi', 'fazendeiro', 'bau']) if (this.textures.exists(k)) this.textures.remove(k)
     }
-    this.game.registry.set('kitCarregado', this.kit.id)
-    this.load.spritesheet('heroi', b + im.heroi, { frameWidth: T, frameHeight: T })
+    this.game.registry.set('kitCarregado', marca)
+    this.load.spritesheet('heroi', b + avatar, { frameWidth: T, frameHeight: T })
     this.load.spritesheet('fazendeiro', b + im.fazendeiro, { frameWidth: T, frameHeight: T })
     this.load.spritesheet('chao', b + im.chao, { frameWidth: T, frameHeight: T })
     this.load.spritesheet('paredes', b + im.paredes, { frameWidth: T, frameHeight: T })
@@ -216,6 +221,8 @@ export class FaseGrid extends Phaser.Scene {
     const pedido = this.plano?.problema ?? `O fazendeiro precisa de ${this.melAlvo} potes de MEL para a festa! Você me ajuda a juntar?`
     if (this.plano?.abertura) { this.mostraBalao('📖', this.plano.abertura); this.time.delayedCall(3600, () => this.mostraBalao(emoji, pedido)) }
     else this.mostraBalao(emoji, pedido)
+    // TUTORIAL INTEGRADO (1ª missão fácil): o mentor mostra o passo a passo sozinho
+    if (this.plano?.tutorial) this.time.delayedCall(8000, () => { if (!this.concluida && this.erros === 0) this.mostraAjuda() })
 
     // controles: setas + WASD + toque; e destrava do áudio no 1º gesto
     this.wasd = this.input.keyboard?.addKeys('W,A,S,D') as any
@@ -259,8 +266,10 @@ export class FaseGrid extends Phaser.Scene {
     if (this.mecanica === 'ordenar') return this.itens.length > 0 && this.proxOrdem > this.itens.length
     if (this.mecanica === 'agrupar') {
       // A LEI (sem gabarito): tudo repartido, ≥2 caixas usadas, TODAS com o mesmo tanto.
+      // Na DIVISÃO (partilha), a lei aperta: TODAS as caixas disponíveis têm que receber.
       const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
-      return this.agSoltos.length === 0 && !this.agMao && usadas.length >= 2 && usadas.every(v => v.count === usadas[0].count)
+      const qtdOk = this.agTodas ? usadas.length === this.agCaixas : usadas.length >= 2
+      return this.agSoltos.length === 0 && !this.agMao && qtdOk && usadas.every(v => v.count === usadas[0].count)
     }
     return this.mel >= this.melAlvo
   }
@@ -269,6 +278,7 @@ export class FaseGrid extends Phaser.Scene {
   private armaAgrupar (gp: (n: string) => any): void {
     this.agTotal = this.P('agTotal', 12)
     this.agCaixas = this.P('agCaixas', 6)
+    this.agTodas = this.P('agTodas', 0) === 1
     const vagas: number[][] = gp('agVagas') || []
     const pilha: number[] = gp('agPilha') || [17, 13]
     this.agPilha = { x: pilha[0], y: pilha[1] }
@@ -375,6 +385,13 @@ export class FaseGrid extends Phaser.Scene {
     // ANDAIME GRADUAL (pedido do Marcos): no 1º erro o mentor só PERGUNTA (reflexão);
     // do 2º em diante ele ENSINA O GESTO do conserto (tirar da cheia, pôr na magra)
     const repetiu = this.erros >= 1
+    // DIVISÃO (partilha): caixa disponível SEM receber = tem comprador de mãos vazias
+    if (this.agTodas && this.agSoltos.length === 0 && !this.agMao && usadas.length < this.agCaixas) {
+      this.erroReal(repetiu
+        ? `Ainda tem caixa vazia! São ${this.agCaixas} caixas — pegue potes de uma caixa CHEIA (pare nela de mãos vazias) e leve para a que falta.`
+        : `Opa: são ${this.agCaixas} compradores e cada um quer a SUA caixa! Alguém ficou sem nada… Como repartir para TODOS?`)
+      return
+    }
     if (usadas.length < 2) {
       if (usadas[0]) this.tombaCaixa(usadas[0], 0.6)
       this.erroReal(repetiu
@@ -432,17 +449,24 @@ export class FaseGrid extends Phaser.Scene {
     this.time.delayedCall(700 + usadas.length * 800 + 300, () => { this.agConferindo = false; this.entrega(); this.agCarrega() })
   }
 
-  // o FINAL da história acontece na frente da criança: a carga aprovada é CARREGADA
-  // na carroça (causa e efeito completos — arrumou certo, a carroça leva)
+  // o FINAL da história acontece na frente da criança: a carga aprovada é CARREGADA na
+  // carroça em DISPOSIÇÃO RETANGULAR (BNCC: linhas × colunas — cada caixa vira uma
+  // coluna com seus potes empilhados; o "array" da multiplicação, visível)
   private agCarrega (): void {
     const cx = this.P('carrocaX', 0), cy = this.P('carrocaY', 0)
     if (!cx) return
     const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
+    const n = usadas.length
     usadas.forEach((v, i) => {
-      for (const a of [v.img, ...v.potes].filter(Boolean) as Phaser.GameObjects.Image[]) {
-        this.time.delayedCall(300 + i * 260, () => a.setDepth(cy * T + 30 + i))
-        this.tweens.add({ targets: a, x: cx * T + T / 2 + (i - usadas.length / 2) * 3, y: cy * T + 2 - i * 3 + (a === v.img ? 0 : -5), scale: a.scale * 0.8, duration: 700, delay: 300 + i * 260, ease: 'Quad.inOut' })
+      const colX = cx * T + T / 2 + (i - (n - 1) / 2) * 7
+      if (v.img) {
+        this.time.delayedCall(300 + i * 260, () => v.img!.setDepth(cy * T + 30 + i))
+        this.tweens.add({ targets: v.img, x: colX, y: cy * T + 2, scale: v.img.scale * 0.75, duration: 700, delay: 300 + i * 260, ease: 'Quad.inOut' })
       }
+      v.potes.forEach((p, j) => {
+        this.time.delayedCall(300 + i * 260 + j * 60, () => p.setDepth(cy * T + 40 + i * 10 + j))
+        this.tweens.add({ targets: p, x: colX, y: cy * T - 5 - j * 5, scale: p.scale * 0.85, duration: 700, delay: 300 + i * 260 + j * 60, ease: 'Quad.inOut' })
+      })
     })
   }
 
@@ -544,10 +568,11 @@ export class FaseGrid extends Phaser.Scene {
     this.tom(160, 0.3, 'sawtooth', 0.16)
     let msg = this.plano?.entrega ?? 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!'
     if (this.mecanica === 'agrupar') {
-      // o CONCEITO por ÚLTIMO, nascido da arrumação DELA — e agora DITO com todas
-      // as letras (consolidação): grupos iguais têm nome, é MULTIPLICAR
+      // o CONCEITO por ÚLTIMO, nascido da arrumação DELA — e agora DITO com todas as
+      // letras (consolidação): grupos iguais = MULTIPLICAR; partilha igual = DIVIDIR
       const u = this.agVagas.filter(v => v.tem && v.count > 0)
-      if (u.length) msg = `Deu certinho: ${u.length} caixas com ${u[0].count} potes cada. Fazer grupos IGUAIS tem nome — é MULTIPLICAR: ${u.length}×${u[0].count}=${this.agTotal}! ` + msg
+      if (u.length && this.agTodas) msg = `Deu certinho: ${this.agTotal} potes repartidos em ${u.length} caixas — ${u[0].count} para cada! Repartir IGUAL tem nome — é DIVIDIR: ${this.agTotal}÷${u.length}=${u[0].count}! ` + msg
+      else if (u.length) msg = `Deu certinho: ${u.length} caixas com ${u[0].count} potes cada. Fazer grupos IGUAIS tem nome — é MULTIPLICAR: ${u.length}×${u[0].count}=${this.agTotal}! ` + msg
     }
     this.mostraBalao('🎉', msg)
     this.atualizaHud()
@@ -582,6 +607,16 @@ export class FaseGrid extends Phaser.Scene {
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
     this.mostraBalao('🌟', this.plano?.vitoria ?? 'Fase 1 concluída! (a próxima aventura entra aqui)')
     this.hud.setText('Missão concluída! 🌟')
+    // SEQUÊNCIA: venceu -> o jogo CONTINUA (a Fábrica arma a próxima missão do arco)
+    if (this.plano?.temProxima && (window as any).__fabricaProxima) {
+      this.btnProx = document.createElement('button')
+      this.btnProx.textContent = '▶ Próxima missão!'
+      this.btnProx.style.cssText = 'position:fixed;left:50%;bottom:12%;transform:translateX(-50%);padding:14px 26px;font:800 19px system-ui;border:0;border-radius:14px;background:#57e08a;color:#0b2350;cursor:pointer;box-shadow:0 5px 0 #2e9c5b;z-index:9999;'
+      this.btnProx.onclick = () => { this.btnProx?.remove(); (window as any).__fabricaProxima() }
+      // aparece depois de a fala da vitória assentar (não tapa a festa)
+      const b = this.btnProx
+      this.time.delayedCall(2600, () => { if (!b.isConnected) document.body.appendChild(b) })
+    }
   }
 
   private camInterior (): void {
@@ -639,7 +674,7 @@ export class FaseGrid extends Phaser.Scene {
       try { localStorage.setItem('educ_voz', this.vozLigada ? '1' : '0'); if (!this.vozLigada) speechSynthesis.cancel() } catch { /* ok */ }
     }
     document.body.appendChild(this.btnVoz)
-    const limpa = (): void => { this.balao?.remove(); this.btnAjuda?.remove(); this.btnVoz?.remove(); try { speechSynthesis.cancel() } catch { /* ok */ } }
+    const limpa = (): void => { this.balao?.remove(); this.btnAjuda?.remove(); this.btnVoz?.remove(); this.btnProx?.remove(); try { speechSynthesis.cancel() } catch { /* ok */ } }
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, limpa)
     this.events.once(Phaser.Scenes.Events.DESTROY, limpa)
     this.atualizaHud()
@@ -669,7 +704,9 @@ export class FaseGrid extends Phaser.Scene {
       const desigual = this.agSoltos.length === 0 && !this.agMao && usadas.length >= 2 && !usadas.every(v => v.count === usadas[0].count)
       como = desigual
         ? `Tem caixa com MAIS potes que as outras (olhe os números embaixo: ${usadas.map(v => v.count).join(' | ')}). Pare de MÃOS VAZIAS na caixa mais cheia para TIRAR um pote, e leve ele até uma caixa com menos. Iguais? Vem falar comigo!`
-        : `1) Pare na PILHA de caixas para pegar uma. 2) Pare numa marquinha branca para pousar a caixa. 3) Pegue um pote e pare numa caixa para guardar. Reparta TODOS os potes igualzinho (use 2 caixas ou mais!). 4) No fim, venha falar comigo.`
+        : (this.agTodas
+            ? `São ${this.agCaixas} caixas e TODAS têm que receber o MESMO tanto. 1) Pare na PILHA para pegar caixa. 2) Pouse uma em cada marquinha. 3) Reparta os potes igualzinho entre TODAS. 4) No fim, venha falar comigo.`
+            : `1) Pare na PILHA de caixas para pegar uma. 2) Pare numa marquinha branca para pousar a caixa. 3) Pegue um pote e pare numa caixa para guardar. Reparta TODOS os potes igualzinho (use 2 caixas ou mais!). 4) No fim, venha falar comigo.`)
     } else if (this.mecanica === 'somar') {
       como = `Pegue fichas que somem exatamente ${this.alvoSoma}. Você está com ${this.soma}. Se passar, as fichas voltam — tente outra combinação.`
     } else if (this.mecanica === 'selecionar') {

@@ -17,6 +17,7 @@ export interface PlanoMapa {
   itens?: Array<{ rotulo: string, ok: boolean, ordem?: number }>   // selecionar/ordenar
   agTotal?: number         // agrupar: total de itens a repartir (8 | 12 | 18)
   agCaixas?: number        // agrupar: máximo de caixas disponíveis (vagas)
+  agTodas?: boolean        // DIVISÃO como partilha: TODAS as caixas têm que receber (12÷3)
 }
 
 // somar: fichas por tier — 3 valores que FECHAM a soma + 2 distratores (que estouram).
@@ -188,7 +189,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
       Ps('melExternos', melExternos), Ps('melInterno', melInterno),
       Ps('mecanica', mecanica), Pi('alvoSoma', alvoSoma), Ps('melValores', melValores),
       Ps('kc', plano.kc ?? mecanica), Ps('itens', plano.itens ?? []), Ps('melItens', melItens),
-      Pi('agTotal', agTotal), Pi('agCaixas', agCaixas),
+      Pi('agTotal', agTotal), Pi('agCaixas', agCaixas), Pi('agTodas', agrupar && plano.agTodas ? 1 : 0),
       Ps('agItens', agItens), Ps('agVagas', agVagas), Ps('agPilha', agPilha),
       Ps('arvores', arvores), Ps('interior', { x0: IX0, y0: IY0, w: IW, h: IH })
     ]

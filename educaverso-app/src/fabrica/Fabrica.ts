@@ -9,7 +9,7 @@ import { FaseGrid } from '../rpg/FaseGrid'
 import { PedidoAtividade, DISCIPLINAS, DIFICULDADES } from './tipos'
 import { planejarPedagogiaIA } from './pedagogo'
 import { escreverRoteiro } from './roteiro'
-import { carrega } from './motor-adaptativo'
+import { carrega, kcsParaRevisar } from './motor-adaptativo'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
 import { montarMapaFase } from './mapaFase'
 import { getAluno, setAluno, sincronizarFila } from './evidencias'
@@ -31,16 +31,28 @@ function garantirIdentidade (): Promise<void> {
         <select id="id_turma" style="width:100%;padding:12px;border-radius:10px;border:0;font-size:16px;margin:6px 0">
           <option value="">Sua turma…</option>${TURMAS.map(t => `<option>${t}</option>`).join('')}
         </select>
+        <div style="display:flex;gap:10px;justify-content:center;margin:6px 0">
+          <button id="id_av1" data-av="heroi" style="flex:1;padding:10px;font-size:26px;border-radius:10px;border:3px solid #57e08a;background:#0e1a38;cursor:pointer">👦</button>
+          <button id="id_av2" data-av="menina" style="flex:1;padding:10px;font-size:26px;border-radius:10px;border:3px solid transparent;background:#0e1a38;cursor:pointer">👧</button>
+        </div>
         <button id="id_ok" style="width:100%;padding:13px;font-size:17px;font-weight:800;border:0;border-radius:10px;background:#57e08a;color:#0b2350;cursor:pointer;margin-top:6px">▶ Começar!</button>
         <button id="id_pular" style="width:100%;padding:8px;border:0;border-radius:8px;background:transparent;color:#8fa3cf;cursor:pointer;font-size:13px;margin-top:6px">Jogar sem registrar</button>
       </div>`
     document.body.appendChild(m)
     const fim = (): void => { m.remove(); resolve() }
+    let avatar: 'heroi' | 'menina' = 'heroi'
+    for (const id of ['id_av1', 'id_av2']) {
+      ;(m.querySelector('#' + id) as HTMLButtonElement).onclick = (e) => {
+        avatar = ((e.currentTarget as HTMLElement).dataset.av as 'heroi' | 'menina')
+        ;(m.querySelector('#id_av1') as HTMLElement).style.borderColor = avatar === 'heroi' ? '#57e08a' : 'transparent'
+        ;(m.querySelector('#id_av2') as HTMLElement).style.borderColor = avatar === 'menina' ? '#57e08a' : 'transparent'
+      }
+    }
     ;(m.querySelector('#id_ok') as HTMLButtonElement).onclick = () => {
       const nome = (m.querySelector('#id_nome') as HTMLInputElement).value.trim()
       const turma = (m.querySelector('#id_turma') as HTMLSelectElement).value
       if (!nome || !turma) { (m.querySelector('#id_nome') as HTMLInputElement).placeholder = 'Preencha o nome e a turma!'; return }
-      setAluno({ nome, turma }); fim()
+      setAluno({ nome, turma, avatar }); fim()
     }
     ;(m.querySelector('#id_pular') as HTMLButtonElement).onclick = fim
   })
@@ -130,33 +142,105 @@ export function montarFabrica (game: Phaser.Game): void {
 
     // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
     const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || roteiro.kitId || KIT_PADRAO
-    const mapa = montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas })
-    const key = 'mapa_fabrica'
-    if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
-    game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)
-    host.style.display = 'none'
-    if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
-    game.scene.add('FaseGrid', FaseGrid, true, {
-      mapaKey: key, kitId,
-      plano: {
-        abertura: roteiro.falas.abertura, problema: roteiro.falas.pedido, juntouTudo: roteiro.falas.juntouTudo,
-        entrega: roteiro.falas.entrega, vitoria: roteiro.falas.vitoria, emoji: roteiro.personagem.emoji,
-        nome: roteiro.personagem.nome, regra: espinha.regra
-      }
+    const planoDe = (r: typeof roteiro): Record<string, unknown> => ({
+      abertura: r.falas.abertura, problema: r.falas.pedido, juntouTudo: r.falas.juntouTudo,
+      entrega: r.falas.entrega, vitoria: r.falas.vitoria, emoji: r.personagem.emoji,
+      nome: r.personagem.nome, regra: espinha.regra
     })
+    // ---- ARCO DE MISSÕES (a aula continua depois da vitória) ----
+    const planoBase = planoDe(roteiro) as any
+    planoBase.tutorial = parsed.data.dificuldade === 'facil'   // 1ª missão fácil = mentor guia sozinho
+    // MISSÃO DE REVISÃO (Leitner): se o retorno espaçado deste conteúdo venceu, avisa
+    try { if (kcsParaRevisar(carrega('local'), Date.now()).includes(espinha.kc)) planoBase.abertura = '🔁 Missão de revisão — bora relembrar! ' + (planoBase.abertura ?? '') } catch { /* segue */ }
+    const missoes: Array<{ mapa: object, plano: any }> = [
+      { mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas }), plano: planoBase }
+    ]
+    if (espinha.mecanica === 'agrupar') {
+      // M2: MESMA lei, desafio maior (tier acima do gerado)
+      const t2 = (agTotal ?? 12) >= 18 ? 18 : ((agTotal ?? 12) >= 12 ? 18 : 12)
+      if (t2 !== (agTotal ?? 12)) {
+        const rot2 = escreverRoteiro(parsed.data, { alvo, alvoSoma, agTotal: t2, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
+        const p2 = planoDe(rot2) as any
+        p2.abertura = 'A notícia se espalhou — a encomenda CRESCEU!'
+        missoes.push({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: espinha.kc, agTotal: t2, agCaixas: espinha.agCaixas }), plano: p2 })
+      }
+      // M3: a MESMA lei ao contrário = DIVISÃO como partilha (12 ÷ 3), kc próprio (BNCC EF03MA08)
+      missoes.push({
+        mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: 'particao-igual', agTotal: 12, agCaixas: 3, agTodas: true }),
+        plano: {
+          abertura: 'A fama chegou longe: agora são 3 compradores de uma vez, cada um com a própria caixa!',
+          problema: 'São 3 caixas — uma para CADA comprador — e ninguém aceita menos que o outro. Como repartir os 12 potes para ficar justo?',
+          juntouTudo: 'Tudo repartido! Vem conferir comigo.',
+          entrega: 'Contas justas, fregueses felizes!',
+          vitoria: 'Aula completa: você MULTIPLICOU e DIVIDIU! 🌟',
+          emoji: roteiro.personagem.emoji, nome: roteiro.personagem.nome,
+          regra: 'repartir igualmente entre TODOS'
+        }
+      })
+    }
+    let mi = 0
+    const montaMissao = (i: number): void => {
+      const key = 'mapa_fabrica'
+      if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
+      game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: missoes[i].mapa } as any)
+      host.style.display = 'none'
+      if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
+      game.scene.add('FaseGrid', FaseGrid, true, { mapaKey: key, kitId, plano: { ...missoes[i].plano, temProxima: i < missoes.length - 1 } })
+    }
+    ;(window as any).__fabricaProxima = () => { if (mi < missoes.length - 1) { mi++; montaMissao(mi) } }
+    ;(window as any).__fabricaMissao = () => mi   // QA lê
+    montaMissao(0)
     ;(window as any).__fabricaRoteiro = roteiro   // QA lê a história gerada
+    mostraBarraProf()
   }
 
   ;(window as any).__fabrica = { gerar: () => (document.getElementById('fgerar') as HTMLButtonElement).click(), set: (id: string, v: string) => { (document.getElementById(id) as HTMLInputElement).value = v } }
 
-  // LINK DIRETO DO JOGO (?tabuada / __BOOT='tabuada'): a criança nem vê o formulário —
-  // a Fábrica preenche e gera sozinha a fase da tabuada (mecânica criativa agrupar).
+  // ---- BIBLIOTECA-LINK + PORTÃO DO PROFESSOR ----
+  // A "receita" da atividade cabe na URL (?ativ=...): o link é PERMANENTE e remonta a
+  // atividade na hora, em qualquer máquina. A barra só aparece no fluxo do FORMULÁRIO
+  // (professor); pelo link direto a criança não vê nada disso.
+  const q0 = new URLSearchParams(location.search)
+  const bootDireto = q0.has('tabuada') || q0.has('ativ') || (window as any).__BOOT === 'tabuada'
+  const enc = (o: unknown): string => btoa(unescape(encodeURIComponent(JSON.stringify(o))))
+  const dec = (s: string): any => JSON.parse(decodeURIComponent(escape(atob(s))))
+  function mostraBarraProf (): void {
+    if (bootDireto || (navigator as any).webdriver) return
+    document.getElementById('fbarra')?.remove()
+    const receita = { ano: val('f_ano'), obj: val('f_obj'), disc: val('f_disc'), tema: val('f_tema'), dif: val('f_dif'), kit: val('f_kit') }
+    const link = `${location.origin}${location.pathname}?ativ=${enc(receita)}`
+    const bar = document.createElement('div')
+    bar.id = 'fbarra'
+    bar.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:9997;background:#16244acc;color:#eaf1ff;border-radius:12px;padding:8px 10px;font:13px system-ui;display:flex;gap:8px;align-items:center;backdrop-filter:blur(3px)'
+    bar.innerHTML = `👨‍🏫 <b>Prévia do professor</b>
+      <button id="fb_copiar" style="padding:6px 10px;border:0;border-radius:8px;background:#57e08a;color:#0b2350;font-weight:700;cursor:pointer">🔗 Copiar link da atividade</button>
+      <button id="fb_x" aria-label="fechar" style="padding:6px 8px;border:0;border-radius:8px;background:#26355c;color:#cdd9f5;cursor:pointer">✕</button>`
+    document.body.appendChild(bar)
+    ;(bar.querySelector('#fb_copiar') as HTMLButtonElement).onclick = function () {
+      void navigator.clipboard.writeText(link).then(() => { (this as HTMLButtonElement).textContent = '✅ Link copiado!' })
+    }
+    ;(bar.querySelector('#fb_x') as HTMLButtonElement).onclick = () => bar.remove()
+  }
+
+  // BOOTS DIRETOS: ?tabuada (atalho fixo) e ?ativ=<receita> (biblioteca-link)
   const boot = (window as any).__BOOT
-  if (boot === 'tabuada' || new URLSearchParams(location.search).has('tabuada')) {
+  if (boot === 'tabuada' || q0.has('tabuada')) {
     host.style.display = 'none'
     ;(window as any).__fabrica.set('f_ano', '3º ano')
     ;(window as any).__fabrica.set('f_obj', 'Tabuada: multiplicar com grupos iguais')
     ;(window as any).__fabrica.set('f_dif', 'medio')
     btn.click()
+  } else if (q0.has('ativ')) {
+    host.style.display = 'none'
+    try {
+      const r = dec(q0.get('ativ')!)
+      if (r.ano) (window as any).__fabrica.set('f_ano', r.ano)
+      if (r.obj) (window as any).__fabrica.set('f_obj', r.obj)
+      if (r.disc) (window as any).__fabrica.set('f_disc', r.disc)
+      if (r.tema) (window as any).__fabrica.set('f_tema', r.tema)
+      if (r.dif) (window as any).__fabrica.set('f_dif', r.dif)
+      if (r.kit) (window as any).__fabrica.set('f_kit', r.kit)
+      btn.click()
+    } catch { host.style.display = ''; (document.getElementById('ferro')!).textContent = '⚠️ Link de atividade inválido — confira se copiou inteiro.' }
   }
 }

@@ -12,7 +12,7 @@ const API_KEY = 'AIzaSyCWX-lK7pr6yW_E5jDvDhVewe20lB3E6Ks'
 const DB = 'https://atividades-educativas-16860-default-rtdb.firebaseio.com'
 export const RAIZ = '/educaverso/vidal-ramos/evidencias'
 
-export interface Aluno { nome: string, turma: string }
+export interface Aluno { nome: string, turma: string, avatar?: 'heroi' | 'menina' }
 export interface Evidencia {
   nome: string, turma: string
   kc: string, atividade: string, mecanica: string
