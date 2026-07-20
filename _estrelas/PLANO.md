@@ -22,7 +22,15 @@ acendem, a constelação brilha — nunca popup "Acertou!") → concretude que d
 num array → 3×4=12) → a Fagulha **NOMEIA no fim** ("3 caixas de 4 é 4+4+4, e a gente escreve 3×4=12";
 a Fagulha PERGUNTA, não responde).
 
-## ARCO DE PARADAS (cada uma um canto da fábrica/céu; ~50 min)
+## ARCO DE PARADAS (cada uma um canto da fábrica/céu; ALÍVIO on-mission entre as de aprendizado)
+> Aprovado pelo Marcos (2026-07). Alívio de preferência **on-mission** (variedade + criação), com o
+> quebra-cabeça clássico só como tempero temático e curto — nunca recheio. Alvo ~55 min; o
+> `qa-duracao.mjs` confirma no fim (não chutar).
+
+**Ordem:** Abertura animada → P1 → P2 → *Música das Estrelas* → P3 → P4 → *Monte a Constelação* → P5 →
+*Decore o seu céu* → Final animado.
+
+**Paradas de APRENDIZADO (contam nota):**
 1. **As Caixas de Estrelas — grupos iguais (×2, ×3).** A criança arrasta estrelas p/ encher N caixas
    com M cada ("3 caixas, 4 estrelas em cada"); ao ficarem iguais, as caixas sobem e acendem um pedaço
    do céu. Mede: montou iguais? contou 1-a-1 ou de M em M (skip-count)?
@@ -37,7 +45,16 @@ a Fagulha PERGUNTA, não responde).
    (escolhe fileiras × colunas / grupos) e desafia a Fagulha, que "lê" o array e diz a multiplicação —
    e às vezes **erra de propósito** (efeito protégé), pra criança consertar. Mede: o desafio criado é
    bem-formado (proxy de domínio)? corrigiu a Fagulha?
-- Em toda parada, **1 item-símbolo no fim** (sem os apoios) p/ medir **transferência**.
+- Em cada parada de aprendizado, **1 item-símbolo no fim** (sem os apoios) p/ medir **transferência**.
+
+**Paradas de ALÍVIO / DELEITE (NÃO contam nota — pacing e amor):**
+- **Música das Estrelas** (alívio ON-TEMA, entre P2 e P3): cada grupo de estrelas toca uma nota
+  (sonificação — pitch sobe por grupo); parece brincadeira/toy, alivia a atenção, e ainda é "grupos
+  iguais" por baixo. É o alívio preferido (variedade sem sair da missão).
+- **Monte a Constelação** (alívio TEMÁTICO curto, entre P4 e P5): quebra-cabeça da figura de estrelas.
+  Alternativa: memória "grupo ↔ total" (3 grupos de 4 ↔ 12), que reforça a multiplicação de leve.
+- **Decore o seu céu** (DELEITE final, antes do final animado): criação livre (pintar/enfeitar o céu) —
+  autoria pura, sem certo/errado.
 
 ## ABERTURA E FINAL ANIMADOS (o "impressiona a criança")
 - **Abertura (cutscene):** a noite cai (parallax do céu escurecendo), a fábrica acende as luzes, a
