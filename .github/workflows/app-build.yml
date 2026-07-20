@@ -90,6 +90,37 @@ jobs:
             sed -i "s|<head>|<head><script>window.__BOOT='$BOOT'</script>|" "$work/index.html"
             grep -q "__BOOT" "$work/index.html" || { echo "::error::falha ao injetar o boot"; exit 1; }
           fi
+          # AUTO-DEPLOY por Actions no repo destino (build_type=workflow) — a fila
+          # LEGADA do Pages engasga/trava (build "building" preso, 2026-07-20); o
+          # deploy por Actions e o mesmo mecanismo do pages.yml daqui, confiavel.
+          mkdir -p "$work/.github/workflows"
+          cat > "$work/.github/workflows/pages.yml" <<'YAML'
+          name: Deploy Pages
+          on:
+            push:
+              branches: [main]
+            workflow_dispatch:
+          permissions:
+            contents: read
+            pages: write
+            id-token: write
+          concurrency:
+            group: pages
+            cancel-in-progress: true
+          jobs:
+            deploy:
+              runs-on: ubuntu-latest
+              environment:
+                name: github-pages
+              steps:
+                - uses: actions/checkout@v4
+                - uses: actions/configure-pages@v4
+                - uses: actions/upload-pages-artifact@v3
+                  with:
+                    path: .
+                - uses: actions/deploy-pages@v4
+          YAML
+          sed -i 's/^          //' "$work/.github/workflows/pages.yml"
           cd "$work"
           git init -q
           git checkout -q -b main
@@ -98,8 +129,8 @@ jobs:
               commit -qm "build do app (Plano A)"
           git push -q --force \
             "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$NAME.git" main
-          gh api -X POST "repos/$OWNER/$NAME/pages" -f "source[branch]=main" -f "source[path]=/" \
-            || gh api -X PUT "repos/$OWNER/$NAME/pages" -f "source[branch]=main" -f "source[path]=/" \
+          gh api -X POST "repos/$OWNER/$NAME/pages" -f "build_type=workflow" \
+            || gh api -X PUT "repos/$OWNER/$NAME/pages" -f "build_type=workflow" \
             || echo "Pages talvez ja estivesse ligado."
           URL="https://$OWNER.github.io/$NAME/"
           {
