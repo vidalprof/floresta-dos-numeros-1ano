@@ -82,7 +82,29 @@
 > (d) **revisão espaçada** depois. Veredito do especialista: adequada e ensina o conceito de
 > verdade **com esses 4 ajustes**. A sequência escrita completa está no transcript desta sessão.
 
-## 🍎 ENTREGA: 1ª DINÂMICA CRIATIVA NO JOGO 2D — "O POMAR DOS GRUPOS" (2026-07-20)
+## 🚨 QUAL É "O JOGO 2D" DO MARCOS (correção 2026-07-20 — ele usou a senha "você esqueceu")
+> **"O nosso jogo 2D RPG" = o RPG PIXEL estilo Kenney/Ninja Adventure** — a cena
+> **`FaseGrid`** (educaverso-app, grid-engine + Tiled, kit "vilarejo"): herói 16px na
+> vila, fazendeiro, casa com interior, potes de mel, **PEDRAS que fecham a saída e
+> SOMEM na entrega** ("a pedra libera o caminho no final"). É o que a **Fábrica**
+> (`?fabrica`) gera; publicado como `vila-viva` / `fabrica-aventuras`.
+> **NÃO confundir** com a "Floresta do Byte" (motor `Mundo`/aventura.ts, arte pintada,
+> Byte robô + Castor) — ela existe, mas quando o Marcos diz "nosso jogo 2D", é o PIXEL.
+> Eu errei isso 1x (construí o agrupar no motor errado) e ele pagou tempo/crédito.
+> **Dinâmica nova nasce na `FaseGrid` + Fábrica.** (O agrupar foi PORTADO pra lá —
+> ver entrega abaixo; commit "FaseGrid (RPG pixel): mecanica AGRUPAR".)
+>
+> **✅ ENTREGA no jogo CERTO (2026-07-20):** mecânica **`agrupar`** na FaseGrid+Fábrica
+> (pedagogo escolhe p/ tabuada/multiplicação; dinâmica CRIAR; tiers 8/12/18 por BKT).
+> A criança pega caixas na pilha (decide QUANTAS), reparte os potes pelo mundo, o
+> FAZENDEIRO testa: desigual → a caixa diferente TOMBA + pergunta + BKT; igual →
+> conceito POR ÚLTIMO da arrumação DELA ("3×4=12") → PEDRAS somem → vitória.
+> 2×6/3×4/4×3/6×2 todas vencem. Ações de pilha/vaga só quando PARA no tile (imune ao
+> ciclo pega-devolve). QA `tools/qa-agrupar.mjs` == APROVADO == 19/19.
+> Teste: **https://vidalprof.github.io/educaverso-app/?fabrica** (objetivo com
+> "tabuada/multiplicação" → sai a fase agrupar). Publica por `app-build.yml` (ref=branch).
+
+## 🍎 ENTREGA (no motor ERRADO — ver correção acima): "O POMAR DOS GRUPOS" (2026-07-20)
 > **Contexto (a dor do Marcos, 2026-07-19/20):** ele reprovou TUDO que eu fiz FORA do
 > jogo 2D (protótipos HTML soltos = "premium com popup", "não foi mundo vivo", "não
 > adianta"). **O jogo 2D dele = o motor `Mundo` (educaverso-app, cena do montador v2)
