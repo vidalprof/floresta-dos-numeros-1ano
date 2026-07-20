@@ -80,6 +80,9 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const cen = getCenario(plano.cenario)
   const arvores = cen.scatter.map(s => [s.tx, s.ty])
   for (const [x, y] of arvores) put(colis, x, y, COL)   // colisão na base de cada prop
+  // colisão da ÁGUA aplicada AQUI (antes de espalhar itens!) — senão um pote nasceria
+  // em cima da futura água e ficaria preso (bug que o auditor de duração pegou)
+  if (cen.agua) for (let ay = cen.agua.y0; ay < cen.agua.y0 + cen.agua.h; ay++) for (let ax = cen.agua.x0; ax < cen.agua.x0 + cen.agua.w; ax++) put(colis, ax, ay, COL)
 
   // pedras que fecham a saída
   const pedras = { x: OX1, y: SAI_Y }
@@ -134,8 +137,21 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const agPilha = [17, 13]
   if (agrupar) {
     for (let i = 0; i < agCaixas; i++) agVagas.push([3 + i * 2, 13])
+    // ALCANÇÁVEL A PÉ (BFS do herói sobre células livres) — garante que TODO item
+    // pode ser pego e nenhum fica preso atrás de água/pedra/árvore em qualquer cenário
+    const reach = new Set<number>()
+    { const fila = [[10, 12]]; reach.add(12 * W + 10)
+      while (fila.length) { const [cx, cy] = fila.shift()!
+        for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const nx = cx + dx, ny = cy + dy
+          if (nx < OX0 || nx > OX1 || ny < OY0 || ny > OY1) continue
+          const k = ny * W + nx
+          if (reach.has(k) || colis[k] !== 0) continue
+          reach.add(k); fila.push([nx, ny])
+        } } }
     const evitar = (x: number, y: number): boolean =>
-      ocupado(x, y) || (Math.abs(y - 13) < 2 && x <= 4 + agCaixas * 2) ||           // fileira de vagas
+      ocupado(x, y) || !reach.has(y * W + x) ||                                      // só onde a criança ALCANÇA
+      (Math.abs(y - 13) < 2 && x <= 4 + agCaixas * 2) ||                             // fileira de vagas
       (x === agPilha[0] && y === agPilha[1]) || (x === 10 && y === 12) ||            // pilha + spawn do herói
       (Math.abs(x - fazendeiro.x) + Math.abs(y - fazendeiro.y) <= 2)                 // longe do fazendeiro (o TESTE é lá)
     // varredura determinística por linhas (espalha pelo campo, longe das vagas)
@@ -159,9 +175,10 @@ export function montarMapaFase (plano: PlanoMapa): object {
   // LAGUINHO opcional do cenário: tiles de água rente ao chão (depth 1) + colisão
   // (a criança contorna; o espalhador de itens já desvia de célula com colisão)
   if (cen.agua) {
+    // só o VISUAL da água aqui (a colisão já foi aplicada lá em cima, antes dos itens)
     for (let yy = cen.agua.y0; yy < cen.agua.y0 + cen.agua.h; yy++) {
       for (let xx = cen.agua.x0; xx < cen.agua.x0 + cen.agua.w; xx++) {
-        decor.push(obj('agua', 'mundo', (xx + 0.5) * T, (yy + 1) * T, 1)); put(colis, xx, yy, COL)
+        decor.push(obj('agua', 'mundo', (xx + 0.5) * T, (yy + 1) * T, 1))
       }
     }
   }

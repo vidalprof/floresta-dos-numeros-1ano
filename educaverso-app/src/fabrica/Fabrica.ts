@@ -152,31 +152,40 @@ export function montarFabrica (game: Phaser.Game): void {
     planoBase.tutorial = parsed.data.dificuldade === 'facil'   // 1ª missão fácil = mentor guia sozinho
     // MISSÃO DE REVISÃO (Leitner): se o retorno espaçado deste conteúdo venceu, avisa
     try { if (kcsParaRevisar(carrega('local'), Date.now()).includes(espinha.kc)) planoBase.abertura = '🔁 Missão de revisão — bora relembrar! ' + (planoBase.abertura ?? '') } catch { /* segue */ }
-    const missoes: Array<{ mapa: object, plano: any }> = [
-      { mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas, cenario: 'fazenda' }), plano: planoBase }
-    ]
-    if (espinha.mecanica === 'agrupar') {
-      // M2: MESMA lei, desafio maior (tier acima do gerado)
-      const t2 = (agTotal ?? 12) >= 18 ? 18 : ((agTotal ?? 12) >= 12 ? 18 : 12)
-      if (t2 !== (agTotal ?? 12)) {
-        const rot2 = escreverRoteiro(parsed.data, { alvo, alvoSoma, agTotal: t2, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
-        const p2 = planoDe(rot2) as any
-        p2.abertura = 'A notícia se espalhou — a encomenda CRESCEU!'
-        missoes.push({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: espinha.kc, agTotal: t2, agCaixas: espinha.agCaixas, cenario: 'floresta' }), plano: p2 })
-      }
-      // M3: a MESMA lei ao contrário = DIVISÃO como partilha (12 ÷ 3), kc próprio (BNCC EF03MA08)
-      missoes.push({
-        mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: 'particao-igual', agTotal: 12, agCaixas: 3, agTodas: true, cenario: 'rio' }),
-        plano: {
-          abertura: 'A fama chegou longe: agora são 3 compradores de uma vez, cada um com a própria caixa!',
-          problema: 'São 3 caixas — uma para CADA comprador — e ninguém aceita menos que o outro. Como repartir os 12 potes para ficar justo?',
-          juntouTudo: 'Tudo repartido! Vem conferir comigo.',
-          entrega: 'Contas justas, fregueses felizes!',
-          vitoria: 'Aula completa: você MULTIPLICOU e DIVIDIU! 🌟',
-          emoji: roteiro.personagem.emoji, nome: roteiro.personagem.nome,
-          regra: 'repartir igualmente entre TODOS'
-        }
-      })
+    // ARCO da aventura (aula ~50 min segmentada — pesquisa: 3+ fases curtas + variação
+    // de cenário + os "4 passos" + Dienes). Multiplicar (fazenda→floresta) sobe 12→18;
+    // depois DIVIDIR como partilha em 3 lugares (rio ÷3, pomar ÷3 maior, montanha ÷4).
+    // Cada parada = cenário novo (não enjoa) + um passo real da matemática (não é pote
+    // repetido). O auditor de duração e o QA leem este arco automaticamente.
+    const mult = (cenario: string, total: number, local: string, abertura: string): { mapa: object, plano: any, local: string } =>
+      ({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: espinha.kc, agTotal: total, agCaixas: espinha.agCaixas, cenario }), plano: { ...planoBase, abertura }, local })
+    const div = (cenario: string, total: number, caixas: number, local: string, t: any): { mapa: object, plano: any, local: string } =>
+      ({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: 'particao-igual', agTotal: total, agCaixas: caixas, agTodas: true, cenario }), plano: { ...t, emoji: roteiro.personagem.emoji, nome: roteiro.personagem.nome, regra: 'repartir igualmente entre TODOS' }, local })
+
+    const missoes: Array<{ mapa: object, plano: any, local: string }> = []
+    if (espinha.mecanica !== 'agrupar') {
+      missoes.push({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas, cenario: 'fazenda' }), plano: planoBase, local: 'a Fazenda do Tião' })
+    } else {
+      missoes.push({ mapa: montarMapaFase({ melAlvo: alvo, kitId, mecanica: 'agrupar', kc: espinha.kc, agTotal: 12, agCaixas: espinha.agCaixas, cenario: 'fazenda' }), plano: planoBase, local: 'a Fazenda do Tião' })
+      missoes.push(mult('floresta', 18, 'a Trilha da Floresta 🌲', 'A notícia se espalhou — a encomenda CRESCEU! Agora são mais potes pra arrumar.'))
+      missoes.push(div('rio', 12, 3, 'o Mercado da Beira do Rio 🌊', {
+        abertura: 'A carroça chegou ao rio: 3 fregueses esperam, cada um com a SUA caixa!',
+        problema: 'São 3 caixas — uma pra CADA freguês — e ninguém aceita menos que o outro. Como repartir os 12 potes pra ficar justo?',
+        juntouTudo: 'Tudo repartido! Vem conferir comigo.', entrega: 'Contas justas, fregueses felizes!',
+        vitoria: 'Você DIVIDIU: 12÷3! Bora pro pomar! 🌟'
+      }))
+      missoes.push(div('pomar', 18, 3, 'o Pomar das Cerejeiras 🌸', {
+        abertura: 'No pomar a colheita rendeu 18 potes — e de novo são 3 cestas iguais!',
+        problema: '18 potes, 3 cestas, tudo igual. Quantos vão em CADA cesta?',
+        juntouTudo: 'Repartido! Confere comigo.', entrega: 'Cada cesta com o seu tanto certinho!',
+        vitoria: '18÷3=6! Você mandou muito bem! 🌟'
+      }))
+      missoes.push(div('montanha', 12, 4, 'o Alto da Montanha ⛰️', {
+        abertura: 'No alto da montanha, 4 amigos dividem a ÚLTIMA carga da aventura!',
+        problema: 'Agora são 4 caixas iguais pra 12 potes. Quantos em cada uma?',
+        juntouTudo: 'Tudo certo! Vem ver.', entrega: 'Divisão perfeita — todo mundo com o mesmo tanto!',
+        vitoria: 'AULA COMPLETA! Você multiplicou E dividiu de vários jeitos! 🏆'
+      }))
     }
     let mi = 0
     const montaMissao = (i: number): void => {
@@ -187,7 +196,21 @@ export function montarFabrica (game: Phaser.Game): void {
       if (game.scene.getScene('FaseGrid')) game.scene.remove('FaseGrid')
       game.scene.add('FaseGrid', FaseGrid, true, { mapaKey: key, kitId, plano: { ...missoes[i].plano, temProxima: i < missoes.length - 1 } })
     }
-    ;(window as any).__fabricaProxima = () => { if (mi < missoes.length - 1) { mi++; montaMissao(mi) } }
+    // CELEBRAÇÃO de transição (pesquisa: a passagem de fase VIRA recompensa — a criança
+    // sente a "jornada"). Estrela + fanfarra + "Rumo a <lugar>" por ~2,6s, aí monta.
+    const celebra = (local: string, cb: () => void): void => {
+      if ((navigator as any).webdriver) { cb(); return }   // QA não espera a festa
+      const ov = document.createElement('div')
+      ov.style.cssText = 'position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(circle,#123a7a 0%,#0a1226 80%);color:#fff;font-family:system-ui,Arial,sans-serif;animation:apf .3s'
+      ov.innerHTML = `<div style="font-size:70px;animation:pf 1.2s ease-in-out infinite">🌟</div>
+        <div style="font-size:26px;font-weight:800;margin:6px">Muito bem!</div>
+        <div style="font-size:17px;color:#bcd0ff">Rumo a ${local}…</div>`
+      const st = document.createElement('style'); st.textContent = '@keyframes pf{0%,100%{transform:scale(1)}50%{transform:scale(1.25)}}@keyframes apf{from{opacity:0}to{opacity:1}}'
+      ov.appendChild(st); document.body.appendChild(ov)
+      try { const A = new AudioContext(); [523, 659, 784, 1047].forEach((f, i) => { const o = A.createOscillator(), g = A.createGain(); o.type = 'triangle'; o.frequency.value = f; g.gain.value = 0.14; o.connect(g); g.connect(A.destination); o.start(A.currentTime + i * 0.12); g.gain.exponentialRampToValueAtTime(0.0001, A.currentTime + i * 0.12 + 0.3); o.stop(A.currentTime + i * 0.12 + 0.3) }) } catch { /* ok */ }
+      setTimeout(() => { ov.remove(); cb() }, 2600)
+    }
+    ;(window as any).__fabricaProxima = () => { if (mi < missoes.length - 1) { mi++; celebra(missoes[mi].local, () => montaMissao(mi)) } }
     ;(window as any).__fabricaMissao = () => mi   // QA lê
     montaMissao(0)
     ;(window as any).__fabricaRoteiro = roteiro   // QA lê a história gerada
