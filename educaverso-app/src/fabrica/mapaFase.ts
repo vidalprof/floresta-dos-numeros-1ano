@@ -7,6 +7,7 @@
 // ============================================================================
 
 import { getKit } from './kits'
+import { getCenario } from './cenarios'
 
 export interface PlanoMapa {
   melAlvo: number          // contar: quantos itens juntar (inclui 1 dentro da casa)
@@ -18,6 +19,7 @@ export interface PlanoMapa {
   agTotal?: number         // agrupar: total de itens a repartir (8 | 12 | 18)
   agCaixas?: number        // agrupar: máximo de caixas disponíveis (vagas)
   agTodas?: boolean        // DIVISÃO como partilha: TODAS as caixas têm que receber (12÷3)
+  cenario?: string         // o LUGAR desta fase (fazenda|floresta|cidade…) — muda a decoração/clima
 }
 
 // somar: fichas por tier — 3 valores que FECHAM a soma + 2 distratores (que estouram).
@@ -74,9 +76,10 @@ export function montarMapaFase (plano: PlanoMapa): object {
   for (let dy = 0; dy < 2; dy++) for (let dx = -1; dx < 4; dx++) put(colis, casa.x + dx, casa.y + dy, COL)
   const porta = { x: casa.x + 1, y: casa.y + 2 }
 
-  // árvores (colisão na base)
-  const arvores = [[2, 9], [16, 3], [15, 9], [11, 11], [6, 12]]
-  for (const [x, y] of arvores) put(colis, x, y, COL)
+  // CENÁRIO desta fase: decide os props espalhados, a estrutura e o clima (ambiente)
+  const cen = getCenario(plano.cenario)
+  const arvores = cen.scatter.map(s => [s.tx, s.ty])
+  for (const [x, y] of arvores) put(colis, x, y, COL)   // colisão na base de cada prop
 
   // pedras que fecham a saída
   const pedras = { x: OX1, y: SAI_Y }
@@ -150,8 +153,8 @@ export function montarMapaFase (plano: PlanoMapa): object {
   // "depth" opcional: força a profundidade (tapete rente ao chão, pote sobre a estante).
   let oid = 1
   const obj = (frame: string, tex: string, xpx: number, ypx: number, depth?: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }, ...(depth !== undefined ? [{ name: 'depth', type: 'int', value: depth }] : [])] })
-  const decor: object[] = [obj('casa_a', 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
-  for (const [ax, ay] of arvores) decor.push(obj('arvore', 'mundo', (ax + 0.5) * T, (ay + 1) * T + 6))
+  const decor: object[] = [obj(cen.estrutura, 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
+  for (const s of cen.scatter) decor.push(obj(s.prop, 'mundo', (s.tx + 0.5) * T, (s.ty + 1) * T + 6))
   decor.push(obj('carroca', 'mundo', (carroca.x + 0.5) * T, (carroca.y + 1) * T))
   // CASA MOBILIADA (pedido do Marcos): tapete no meio (passável), estante encostada
   // na parede com 2 potes em cima, baú no canto — e os móveis SÓLIDOS (colisão),
@@ -191,7 +194,8 @@ export function montarMapaFase (plano: PlanoMapa): object {
       Ps('kc', plano.kc ?? mecanica), Ps('itens', plano.itens ?? []), Ps('melItens', melItens),
       Pi('agTotal', agTotal), Pi('agCaixas', agCaixas), Pi('agTodas', agrupar && plano.agTodas ? 1 : 0),
       Ps('agItens', agItens), Ps('agVagas', agVagas), Ps('agPilha', agPilha),
-      Ps('arvores', arvores), Ps('interior', { x0: IX0, y0: IY0, w: IW, h: IH })
+      Ps('arvores', arvores), Ps('interior', { x0: IX0, y0: IY0, w: IW, h: IH }),
+      Ps('ambiente', cen.ambiente), Ps('cenario', cen.id)
     ]
   }
 }

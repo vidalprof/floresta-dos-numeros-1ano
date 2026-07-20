@@ -208,7 +208,10 @@ export class FaseGrid extends Phaser.Scene {
     this.limInterior = [inter2.x0 * T, inter2.y0 * T, inter2.w * T, inter2.h * T]
     const cam = this.cameras.main
     cam.setBounds(...(this.limExterno as [number, number, number, number]))
-    cam.startFollow(this.heroi, true); cam.setZoom(3); cam.roundPixels = true
+    // câmera SUAVE (Keren "Scroll Back"): segue com lerp baixo + deadzone central —
+    // não treme a cada passo, revela o caminho à frente sem enjoo
+    cam.startFollow(this.heroi, true, 0.12, 0.12); cam.setZoom(3); cam.roundPixels = true
+    cam.setDeadzone(40, 34)
 
     // animação de andar
     this.gridEngine.movementStarted().subscribe(({ charId, direction }) => { if (charId === 'heroi') this.heroi.anims.play(direction, true) })
@@ -328,7 +331,7 @@ export class FaseGrid extends Phaser.Scene {
       if (i >= 0) {
         const s = this.agSoltos.splice(i, 1)[0]
         s.sp.destroy()
-        this.pegaNaMao('pote'); this.tom(620, 0.1, 'square', 0.14); this.atualizaHud()
+        this.pegaNaMao('pote'); this.tom(620, 0.1, 'square', 0.14); this.juice(this.agMaoSp); this.atualizaHud()
         return
       }
     }
@@ -365,6 +368,7 @@ export class FaseGrid extends Phaser.Scene {
       const p = this.add.image(v.x * T + T / 2 + ((v.count % 3) - 1) * 4, v.y * T - 2 - Math.floor((v.count - 1) / 3) * 4, 'mel').setDisplaySize(8, 8).setDepth(v.y * T + 7 + v.count)
       v.potes.push(p)
       this.tom(480 + v.count * 60, 0.11, 'square', 0.15)
+      this.juice(p); this.juice(v.img)   // "juice": o pote e a caixa dão um puxão (Swink/Vlambeer)
     } else if (!this.agMao && v.tem && v.count > 0) {
       // tira 1 de volta (reequilibrar SEM punição)
       const p = v.potes.pop()!; p.destroy(); v.count--
@@ -785,7 +789,17 @@ export class FaseGrid extends Phaser.Scene {
     }
   }
 
+  // "JUICE" (Swink/Vlambeer): squash&stretch + flash branco curto no SUCESSO — muito
+  // feedback de saída p/ pouco input; premia o acerto, nunca pune o erro. Custo ~zero.
+  private juice (sp?: Phaser.GameObjects.Image, flash = true): void {
+    if (!sp || !sp.scene) return
+    const sx = sp.scaleX, sy = sp.scaleY
+    this.tweens.add({ targets: sp, scaleX: sx * 1.32, scaleY: sy * 0.78, duration: 90, yoyo: true, ease: 'Back.easeOut', onComplete: () => { if (sp.scene) sp.setScale(sx, sy) } })
+    if (flash) { try { sp.setTintFill(0xffffff); this.time.delayedCall(70, () => { if (sp.scene) sp.clearTint() }) } catch { /* ok */ } }
+  }
+
   private tom (freq: number, dur: number, tipo: OscillatorType, vol: number): void {
+    freq *= 1 + (Math.random() * 0.06 - 0.03)   // leve variação de pitch (mata a fadiga do "mesmo bip")
     try {
       const ctx = (this.sound as any).context as AudioContext; if (!ctx) return
       const o = ctx.createOscillator(), g = ctx.createGain()
