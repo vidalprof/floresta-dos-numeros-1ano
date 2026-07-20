@@ -188,6 +188,18 @@
 > **Honestidade registrada:** leis NOVAS (jogabilidade inédita) sempre precisam de
 > engenharia; a fábrica automatiza COMBINAR leis prontas + tema + arte + som + conteúdo.
 
+## 🎮 FLUXO OFICIAL (decisão do Marcos 2026-07-20): JOGO PRIMEIRO, PEDAGOGIA DEPOIS
+> Causa de TANTOS erros de cenário: eu improvisava a montagem do jogo. Agora há fluxo:
+> **`FLUXO-MONTAR-JOGO-2D.md`** — (1) escolher 1 PACK completo/coeso/livre e usar SÓ ele
+> (Ninja-full em `content/assets/ninja-adventure-full/` OU Kenney Tiny Town — NUNCA
+> misturar); (2) montar o JOGO FUNCIONAL como o AUTOR manda (MAPA composto de verdade —
+> tree-line/casa/caminho autotile, NÃO prop solto em grama; personagem VIVO 4 direções +
+> som + animação — já funciona no motor); Portão 1 = robô joga e aprova; (3) SÓ ENTÃO a
+> camada pedagógica por cima (aluno só avança de fase ao alcançar o objetivo; conceito
+> por último; voz Antonio; avaliação stealth). Personagem 4-direções ANIMADO já é
+> nativo (fichas 64×112, FaseGrid anima). Packs completos temos: ninja-adventure-full
+> (24+ personagens animados, tilesets, monstros, FX) e kenney/tiny-town (Sample lindo).
+
 ## ⚠️ LIÇÃO PAGA — ÁRVORES do atlas Ninja NÃO servem recortadas (2026-07-20 noite)
 > O Marcos mandou zoom: os "pinheiros" recortados do `mundo.png` saíam CORTADOS (topo/base)
 > e com DOIS troncos — porque naquela parte do atlas a árvore é um BLOCO DE FLORESTA DENSA
