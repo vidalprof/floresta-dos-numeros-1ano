@@ -133,9 +133,10 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @-webkit-keyframes respiraDica{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes respiraDica{0%,100%{opacity:.55}50%{opacity:1}}
 
+/* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
+   a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
-  .fagbob,.fagwrap,.pulsa,.medalhao,.puff,.pt,.ceu,.no.atual,.dica,.fabviva .glow,.medalhao .mglow{
-    -webkit-animation:none!important;animation:none!important}
+  .ceu,.palco,.abertura .fabviva,.abertura .fag{-webkit-animation:none!important;animation:none!important}
 }
 </style>
 </head>
@@ -163,7 +164,6 @@ function falar(id, cb){
 function fimFala(){ paraBoca(); var c=falandoCb; falandoCb=null; if(c){ c(); } }
 narr.addEventListener("ended", fimFala);
 function iniciaBoca(){
-  if(reduz) return;
   if(falaTimer) clearInterval(falaTimer);
   bocaAlvo=0.6;
   falaTimer=setInterval(function(){
@@ -186,7 +186,6 @@ requestAnimationFrame(loop);
 
 /* piscar + fidget */
 function agendaPisca(){
-  if(reduz) return;
   setTimeout(function(){
     if(fagAtual && fagAtual.pisca){
       fagAtual.pisca.style.opacity="1";
@@ -199,7 +198,6 @@ function agendaPisca(){
 }
 agendaPisca();
 function agendaFidget(){
-  if(reduz) return;
   setTimeout(function(){
     if(fagAtual && fagAtual.el){ fagAtual.el.className="fag fidget"+(fagAtual.extra||"");
       setTimeout(function(){ if(fagAtual&&fagAtual.el) fagAtual.el.className="fag"+(fagAtual.extra||""); },650); }
