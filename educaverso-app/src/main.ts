@@ -15,6 +15,7 @@ import { Mundo } from './motor/Mundo'
 import { validarAventura } from './motor/aventura'
 import { AVENTURA_POMAR } from './aventuras/pomar'
 import { AVENTURA_FLORESTA } from './aventuras/floresta'
+import { AVENTURA_GRUPOS } from './aventuras/grupos'
 import { AVENTURA_TESTE } from './aventuras/teste'
 import { VilaViva } from './rpg/VilaViva'
 import { UIVila } from './rpg/UIVila'
@@ -70,7 +71,9 @@ if (usarFabrica) {
   jogo.events.once('ready', () => montarFabrica(jogo))
 } else if (!usarIlha && !usarRpg && !usarAutor && !usarFases && !usarF1 && !usarGrid) {
   // Zod valida os dados ANTES de montar (dado torto não monta).
-  const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : AVENTURA_FLORESTA))
+  // ?grupos (ou a flag __AVENTURA no index publicado) = "O Pomar dos Grupos"
+  const usarGrupos = q.has('grupos') || (window as any).__AVENTURA === 'grupos'
+  const aventura = validarAventura(q.has('teste') ? AVENTURA_TESTE : (q.has('pomar') ? AVENTURA_POMAR : (usarGrupos ? AVENTURA_GRUPOS : AVENTURA_FLORESTA)))
   jogo.events.once('ready', () => {
     jogo.scene.add('Mundo', Mundo, true, { aventura })
   })

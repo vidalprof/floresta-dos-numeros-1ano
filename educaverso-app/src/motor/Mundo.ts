@@ -12,7 +12,14 @@ import Phaser from 'phaser'
 import { Personagem } from './Personagem'
 import { auditar } from './auditor'
 import { abrir as abrirMecanica, temMecanica } from './mecanicas'
+import { carrega, salva, registra } from '../fabrica/motor-adaptativo'
 import type { TAventura, TZona, TObjeto, TPortal } from './aventura'
+
+// a missão 'agrupar' tipada (ramo do união discriminada)
+type TMissaoAgrupar = Extract<NonNullable<TZona['missao']>, { tipo: 'agrupar' }>
+type TMissaoColher = Extract<NonNullable<TZona['missao']>, { tipo: 'colher' }>
+// uma caixa/grupo no mundo (vaga + cesta pousada + o tanto que ela tem)
+interface VagaCaixa { x: number, y: number, img: Phaser.GameObjects.Image | null, count: number, frutas: Phaser.GameObjects.Image[], marca?: Phaser.GameObjects.Image, livre?: boolean }
 
 const VW = 1024, VH = 768
 const QA = new URLSearchParams(location.search).get('qa')
@@ -55,6 +62,16 @@ export class Mundo extends Phaser.Scene {
   hudItem: Phaser.GameObjects.Image | null = null
   hudItemTxt: Phaser.GameObjects.Text | null = null
   entregou: { [n: string]: boolean } = {}
+  // missão "agrupar" (lei dos GRUPOS IGUAIS — a criança CRIA a arrumação)
+  vagasC: VagaCaixa[] = []
+  soltasAg: Phaser.GameObjects.Image[] = []
+  carregando: { tipo: 'maca' | 'cesta', img: Phaser.GameObjects.Image } | null = null
+  tiraDe: VagaCaixa | null = null      // tocou numa cesta = quer mexer NELA
+  pilhaN = 0
+  pilhaImgs: Phaser.GameObjects.Image[] = []
+  pilhaLivre = true          // a pilha age 1x por visita (sair e voltar = agir de novo)
+  pegaCd = 0
+  testeCd = 0
 
   constructor () { super('Mundo') }
 
@@ -68,6 +85,8 @@ export class Mundo extends Phaser.Scene {
     this.falas = {}; this.audioOk = {}; this.falado = {}; this.alvo = null
     this.estado = 'explora'; this.paradaAtiva = null; this.musicaSom = null
     this.objPorId = {}; this.bloqPorId = {}; this.hudItem = null; this.hudItemTxt = null; this.entregou = {}
+    this.vagasC = []; this.soltasAg = []; this.carregando = null; this.tiraDe = null
+    this.pilhaN = 0; this.pilhaImgs = []; this.pilhaLivre = true; this.pegaCd = 0; this.testeCd = 0
   }
   spawnPt!: { x: number, y: number }
 
@@ -83,7 +102,10 @@ export class Mundo extends Phaser.Scene {
     if (z.agua_textura && !this.textures.exists(z.agua_textura)) this.load.image(z.agua_textura, 'img/' + z.agua_textura + '.png')
     const objs = new Set<string>()
     for (const p of z.paradas) for (const o of p.objetos) objs.add(o.asset)
-    if (z.missao) { objs.add(z.missao.asset); if (z.missao.cesta) objs.add('cesta'); if (z.missao.recompensa_item) objs.add(z.missao.recompensa_item.asset) }
+    if (z.missao) {
+      objs.add(z.missao.asset)
+      if (z.missao.tipo === 'colher') { if (z.missao.cesta) objs.add('cesta'); if (z.missao.recompensa_item) objs.add(z.missao.recompensa_item.asset) } else objs.add(z.missao.caixa)
+    }
     const memPre = this.mem(); if (memPre.mochila) objs.add(memPre.mochila.asset)
     for (const p of z.paradas) for (const pr of p.personagens) { if (pr.quer_item) objs.add(pr.quer_item); if (pr.ao_receber?.muda_objeto) objs.add(pr.ao_receber.muda_objeto.asset) }
     for (const a of objs) if (!this.textures.exists(a)) this.load.image(a, 'img/' + a + '.png')
@@ -235,15 +257,23 @@ export class Mundo extends Phaser.Scene {
     ;(window as any).__irZona = (id: string) => this.transitar({ x: 0, y: 0, raio: 0, para: id, spawn: this.av.inicio, rotulo: '' })
     ;(window as any).__colher1 = () => { const i = this.itens.find(it => it.visible && !(it as any)._colhida); if (i) this.colher(i) }
     ;(window as any).__tp = (x: number, y: number) => { this.corpo.setPosition(x, y); (this.corpo.body as Phaser.Physics.Arcade.Body).reset(x, y) }
+    // QA da missão agrupar: o robô LÊ o estado e TOCA numa cesta como a criança tocaria
+    ;(window as any).__agrupar = () => ({
+      soltas: this.soltasAg.length, pilha: this.pilhaN, mao: this.carregando?.tipo ?? null,
+      cestas: this.vagasC.map(v => ({ tem: !!v.img, n: v.count })), feita: this.missaoFeita(), estado: this.estado
+    })
+    ;(window as any).__tocaCesta = (i: number) => { const v = this.vagasC[i]; if (v?.img && !this.missaoFeita()) this.tiraDe = v }
     if (new URLSearchParams(location.search).has('mec')) {
       const alvoP = z.paradas.find(p => p.mecanica && temMecanica(p.mecanica.id))
       if (alvoP) this.time.delayedCall(400, () => this.abreMecanica(alvoP.id))
     }
   }
 
-  // ---------- missão "colher" ----------
+  // ---------- missão "colher" / "agrupar" ----------
   armaMissao () {
-    const mi = this.zona.missao!
+    const m0 = this.zona.missao!
+    if (m0.tipo === 'agrupar') { this.armaAgrupar(); return }
+    const mi = m0 as TMissaoColher
     if (this.missaoFeita()) {
       if (mi.cesta) this.cestaCheia(mi as { cesta: { x: number, y: number }, asset: string })
       const np = mi.npc ? this.npcPorNome[mi.npc] : null
@@ -258,6 +288,218 @@ export class Mundo extends Phaser.Scene {
       this.itens.push(im)
     }
   }
+
+  // ---------- missão "agrupar" (a LEI dos grupos iguais; sem gabarito) ----------
+  armaAgrupar () {
+    const mi = this.zona.missao as TMissaoAgrupar
+    const np = mi.npc ? this.npcPorNome[mi.npc] : null
+    if (this.missaoFeita()) { if (np) { np.feliz(2.5); (np as any)._falaChegar = mi.fala_revisita } return }
+    // vagas: marcas discretas no chão (onde uma cesta PODE ser pousada)
+    for (const v of mi.vagas) {
+      const marca = this.add.image(v.x, v.y - 10, 'glowFrio').setAlpha(0.3).setScale(0.8).setDepth(3)
+      this.vagasC.push({ x: v.x, y: v.y, img: null, count: 0, frutas: [], marca })
+    }
+    // pilha de cestas (passar por cima de mãos vazias = pegar uma)
+    this.pilhaN = mi.vagas.length
+    const hCaixa = this.textures.get(mi.caixa).getSourceImage().height
+    for (let i = 0; i < Math.min(3, this.pilhaN); i++) {
+      this.pilhaImgs.push(this.add.image(mi.pilha.x, mi.pilha.y - i * 24, mi.caixa).setOrigin(0.5, 1).setScale(mi.caixa_alt / hCaixa).setDepth(mi.pilha.y + i))
+    }
+    const g = this.add.image(mi.pilha.x, mi.pilha.y - 70, 'glowFrio').setBlendMode(Phaser.BlendModes.ADD).setDepth(9000)
+    this.tweens.add({ targets: g, alpha: { from: 0.25, to: 0.7 }, scale: { from: 0.7, to: 1.2 }, duration: 1200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
+    // a fartura espalhada (o que precisa ser arrumado)
+    for (const it of mi.itens) {
+      const im = this.add.image(it.x, it.y, mi.asset).setOrigin(0.5, 1)
+      im.setScale(mi.alt / im.height).setDepth(it.y)
+      ;(im as any)._tw = this.tweens.add({ targets: im, y: it.y - 5, duration: 700 + Math.random() * 200, yoyo: true, repeat: -1, ease: 'Sine.easeInOut' })
+      this.soltasAg.push(im)
+    }
+  }
+
+  // a criança AGE no mundo (andar = pegar/pousar/repartir); tocar numa cesta = mexer nela
+  agirAgrupar (t: number) {
+    const mi = this.zona.missao as TMissaoAgrupar
+    const hx = this.heroi.x, hy = this.heroi.y
+    const perto = (x: number, y: number, r: number) => Math.abs(hx - x) < r && Math.abs(hy - y) < r + 10
+    const hFruta = this.textures.get(mi.asset).getSourceImage().height
+    const naMao = (im: Phaser.GameObjects.Image) => {
+      im.setDepth(99190)
+      this.tweens.add({ targets: im, x: hx, y: hy - 116, scale: (mi.alt * 0.8) / hFruta, duration: 240, ease: 'Cubic.easeOut' })
+    }
+    // cada cesta age 1x POR VISITA (sair do raio = libera; senão tira-deposita em ciclo)
+    for (const v of this.vagasC) if (!perto(v.x, v.y, 58)) v.livre = true
+    // 0) a criança TOCOU numa cesta pousada (quer mexer nela) e chegou lá
+    if (this.tiraDe && this.tiraDe.img && perto(this.tiraDe.x, this.tiraDe.y, 62) && !this.carregando && t > this.pegaCd) {
+      const v = this.tiraDe; this.tiraDe = null; v.livre = false
+      if (v.count > 0) {                       // tira UMA de volta (reequilibrar sem punição)
+        const im = v.frutas.pop()!; v.count--
+        naMao(im); this.carregando = { tipo: 'maca', img: im }
+      } else {                                 // cesta vazia: pega a cesta de volta
+        v.img!.destroy(); v.img = null; v.marca?.setAlpha(0.3)
+        const img = this.add.image(hx, hy - 120, mi.caixa).setOrigin(0.5, 1)
+        img.setScale((mi.caixa_alt * 0.62) / img.height).setDepth(99190)
+        this.carregando = { tipo: 'cesta', img }
+      }
+      this.pegaCd = t + 500
+      return
+    }
+    // 1) pegar CESTA na pilha (mãos vazias) — ou DEVOLVER a cesta que carrega.
+    //    A pilha age 1x POR VISITA (senão pega-devolve em ciclo parado em cima dela).
+    const noPilha = perto(mi.pilha.x, mi.pilha.y - 16, 56)
+    if (!noPilha) this.pilhaLivre = true
+    if (noPilha && this.pilhaLivre && t > this.pegaCd) {
+      const hCaixa = this.textures.get(mi.caixa).getSourceImage().height
+      if (!this.carregando && this.pilhaN > 0) {
+        this.pilhaLivre = false
+        this.pilhaN--
+        if (this.pilhaImgs.length > Math.min(3, this.pilhaN)) this.pilhaImgs.pop()?.destroy()
+        const img = this.add.image(hx, hy - 120, mi.caixa).setOrigin(0.5, 1)
+        img.setScale((mi.caixa_alt * 0.62) / img.height).setDepth(99190)
+        this.carregando = { tipo: 'cesta', img }
+        this.pegaCd = t + 500
+        return
+      }
+      if (this.carregando?.tipo === 'cesta') {   // devolve à pilha (mudou de ideia)
+        this.pilhaLivre = false
+        this.carregando.img.destroy(); this.carregando = null
+        this.pilhaN++
+        if (this.pilhaImgs.length < Math.min(3, this.pilhaN)) this.pilhaImgs.push(this.add.image(mi.pilha.x, mi.pilha.y - this.pilhaImgs.length * 24, mi.caixa).setOrigin(0.5, 1).setScale(mi.caixa_alt / hCaixa).setDepth(mi.pilha.y + this.pilhaImgs.length))
+        this.pegaCd = t + 500
+        return
+      }
+    }
+    // 2) pousar a cesta numa VAGA livre
+    if (this.carregando?.tipo === 'cesta' && t > this.pegaCd) {
+      for (const v of this.vagasC) {
+        if (v.img || !perto(v.x, v.y, 58)) continue
+        this.carregando.img.destroy(); this.carregando = null
+        v.img = this.add.image(v.x, v.y, mi.caixa).setOrigin(0.5, 1).setScale(mi.caixa_alt / this.textures.get(mi.caixa).getSourceImage().height).setDepth(v.y)
+        v.img.setInteractive({ useHandCursor: true })
+        v.img.on('pointerdown', () => { if (!this.missaoFeita()) this.tiraDe = v })
+        v.marca?.setAlpha(0.1)
+        this.pegaCd = t + 550
+        return
+      }
+    }
+    // 3) pegar um item solto (mãos vazias)
+    if (!this.carregando && t > this.pegaCd) {
+      for (let i = 0; i < this.soltasAg.length; i++) {
+        const im = this.soltasAg[i]
+        if (!perto(im.x, im.y - 14, 48)) continue
+        this.soltasAg.splice(i, 1)
+        const tw = (im as any)._tw as Phaser.Tweens.Tween | undefined; if (tw) tw.remove()
+        naMao(im)
+        this.carregando = { tipo: 'maca', img: im }
+        this.pegaCd = t + 440
+        return
+      }
+    }
+    // 4) com item na mão, chegar numa cesta = DEPOSITA (a contagem DO GRUPO, falada)
+    if (this.carregando?.tipo === 'maca' && t > this.pegaCd) {
+      for (const v of this.vagasC) {
+        if (!v.img || v.livre === false || !perto(v.x, v.y, 58)) continue
+        v.livre = false
+        const im = this.carregando.img; this.carregando = null
+        v.count++
+        const n = v.count
+        const mx = v.x + (n % 3 - 1) * 22, my = v.y - 40 - Math.floor((n - 1) / 3) * 15
+        this.tweens.add({ targets: im, x: mx, y: my, scale: 30 / hFruta, duration: 300, ease: 'Cubic.easeInOut', onComplete: () => im.setDepth(v.y + 1 + n) })
+        v.frutas.push(im)
+        // a contagem ACESA: ela VÊ e OUVE o tamanho DESTE grupo crescer
+        this.brilho.setPosition(v.x, v.y - 44).setAlpha(0.85).setScale(0.8)
+        this.tweens.add({ targets: this.brilho, alpha: 0, scale: 1.5, duration: 520, ease: 'Cubic.easeOut' })
+        if (!QA && this.cache.audio.exists(mi.voz_prefixo + n)) { try { this.sound.play(mi.voz_prefixo + n) } catch (e) {} }
+        this.numerao.setText(String(n)).setAlpha(1).setScale(0.4)
+        this.tweens.add({ targets: this.numerao, scale: 1, duration: 160, ease: 'Back.easeOut' })
+        this.tweens.add({ targets: this.numerao, alpha: 0, delay: 520, duration: 320 })
+        this.pegaCd = t + 480
+        return
+      }
+    }
+    // 5) chegar ao personagem do TESTE = o mundo julga a arrumação DELA
+    //    (só depois de ela COMEÇAR a arrumar — o Castor não cobra antes da ação)
+    const mexeu = this.vagasC.some(v => v.img !== null) || !!this.carregando || this.soltasAg.length < mi.itens.length
+    const np = mi.npc ? this.npcPorNome[mi.npc] : null
+    if (np && mexeu && t > this.testeCd && this.falado[(np as any)._parada] && Phaser.Math.Distance.Between(hx, hy, np.x, np.y) < 150) {
+      this.testeCd = t + 3200
+      this.testarAgrupar(np)
+    }
+  }
+
+  // A LEI (o juiz é o MUNDO, não um gabarito): todo grupo com o MESMO tanto?
+  testarAgrupar (np: Personagem) {
+    const mi = this.zona.missao as TMissaoAgrupar
+    const usadas = this.vagasC.filter(v => v.img && v.count > 0)
+    // sobrou item solto (ou na mão): o mundo aponta, sem punir
+    if (this.soltasAg.length > 0 || this.carregando) { this.dialogo(mi.ao_sobrar); return }
+    // tudo num grupo só: consequência (pesado demais) + pergunta
+    if (usadas.length < 2) {
+      if (usadas[0]) this.tomba(usadas[0], 0.6)
+      this.registraKc(mi.kc, false)
+      this.dialogo(mi.ao_uma_caixa)
+      return
+    }
+    const counts = usadas.map(v => v.count)
+    const iguais = counts.every(c => c === counts[0])
+    if (!iguais) {
+      // a(s) cesta(s) DIFERENTE(s) tombam — a consequência mostra ONDE, o mentor pergunta
+      const freq: { [n: number]: number } = {}
+      for (const c of counts) freq[c] = (freq[c] || 0) + 1
+      let moda = counts[0], best = 0
+      for (const k of Object.keys(freq)) if (freq[+k] > best) { best = freq[+k]; moda = +k }
+      for (const v of usadas) if (v.count !== moda) this.tomba(v, 1)
+      this.registraKc(mi.kc, false)
+      this.dialogo(mi.ao_desigual)
+      return
+    }
+    // VENCEU — com a arrumação DELA (n grupos de k; 2×6, 3×4... todas valem)
+    const n = usadas.length, k = counts[0]
+    this.registraKc(mi.kc, true)
+    const m = this.mem(); m.missoes = m.missoes || {}; m.missoes[this.zona.id] = true; this.memSalva(m)
+    np.feliz(60); (np as any)._falaChegar = mi.fala_revisita
+    this.heroi.feliz(3)
+    this.confete()
+    const cid = mi.conceito_prefixo + n + 'x' + k          // o NOME nasce da arrumação dela
+    const seq = [...mi.ao_completar, ...(this.falas[cid] ? [cid] : [])]
+    this.dialogo(seq, () => {
+      // o MUNDO MUDA na frente dela: a pedra sai e o caminho abre
+      if (mi.some_objeto) {
+        const o = this.objPorId[mi.some_objeto]
+        if (o) {
+          this.brilho.setPosition(o.img.x, o.img.y - o.alt / 2).setAlpha(0.95).setScale(1.5)
+          this.tweens.add({ targets: this.brilho, alpha: 0, scale: 2.3, duration: 700, ease: 'Cubic.easeOut' })
+          this.tweens.add({ targets: o.img, x: o.img.x + 90, angle: 40, alpha: 0, scale: o.img.scale * 0.5, duration: 800, ease: 'Cubic.easeIn', onComplete: () => o.img.destroy() })
+        }
+        const m2 = this.mem(); m2.consertos = m2.consertos || {}
+        const cz = m2.consertos[this.zona.id] = m2.consertos[this.zona.id] || {}
+        cz.some = cz.some || []; if (cz.some.indexOf(mi.some_objeto) < 0) cz.some.push(mi.some_objeto)
+        this.memSalva(m2)
+      }
+      if (mi.remove_bloqueio) {
+        const r = this.bloqPorId[mi.remove_bloqueio]
+        if (r) { this.obst.remove(r); r.destroy() }
+        const m3 = this.mem(); m3.consertos = m3.consertos || {}
+        const cz = m3.consertos[this.zona.id] = m3.consertos[this.zona.id] || {}
+        cz.bloqueios = cz.bloqueios || []; if (cz.bloqueios.indexOf(mi.remove_bloqueio) < 0) cz.bloqueios.push(mi.remove_bloqueio)
+        this.memSalva(m3)
+      }
+      this.heroi.feliz(2.5)
+    })
+  }
+
+  // consequência física: a cesta (e as frutas dela) tombam de leve — sem X vermelho
+  tomba (v: VagaCaixa, forca: number) {
+    if (!v.img) return
+    const alvos = [v.img, ...v.frutas]
+    this.tweens.add({ targets: alvos, angle: { from: -4 * forca, to: 14 * forca }, duration: 130, yoyo: true, repeat: 3, ease: 'Sine.easeInOut' })
+    this.brilho.setPosition(v.x, v.y - 40).setAlpha(0.7).setScale(1.1)
+    this.tweens.add({ targets: this.brilho, alpha: 0, scale: 1.8, duration: 600 })
+  }
+
+  // mede sem provar: cada teste vira observação no domínio (BKT local)
+  registraKc (kc: string, ok: boolean) {
+    try { salva('local', registra(carrega('local'), kc, ok, Date.now())) } catch (e) { /* sem storage: segue */ }
+  }
   cestaCheia (mi: { cesta: { x: number, y: number }, asset: string }) {
     this.add.image(mi.cesta.x, mi.cesta.y, 'cesta').setOrigin(0.5, 1).setScale(120 / this.textures.get('cesta').getSourceImage().height).setDepth(mi.cesta.y)
     for (let i = 0; i < 5; i++) {
@@ -266,7 +508,7 @@ export class Mundo extends Phaser.Scene {
     }
   }
   colher (im: Phaser.GameObjects.Image) {
-    const mi = this.zona.missao!
+    const mi = this.zona.missao as TMissaoColher
     if ((im as any)._colhida) return
     ;(im as any)._colhida = true
     this.colhidas++
@@ -295,7 +537,7 @@ export class Mundo extends Phaser.Scene {
     if (this.colhidas >= mi.itens.length) this.time.delayedCall(750, () => this.missaoCompleta())
   }
   missaoCompleta () {
-    const mi = this.zona.missao!
+    const mi = this.zona.missao as TMissaoColher
     const m = this.mem(); m.missoes = m.missoes || {}; m.missoes[this.zona.id] = true; this.memSalva(m)
     const np = mi.npc ? this.npcPorNome[mi.npc] : null
     if (np) { np.feliz(60); (np as any)._falaChegar = mi.fala_revisita }
@@ -372,6 +614,7 @@ export class Mundo extends Phaser.Scene {
 
   colocaObjeto (o: TObjeto) {
     const cons = (this.mem().consertos || {})[this.zona.id] || {}
+    if (o.id && cons.some && cons.some.indexOf(o.id) >= 0) return   // objeto que SAIU não volta (a pedra)
     const asset = (o.id && cons.objetos && cons.objetos[o.id]) ? cons.objetos[o.id] : o.asset
     if (!this.textures.exists(asset)) return
     const im = this.add.image(o.x, o.y, asset).setOrigin(0.5, 1)
@@ -431,7 +674,7 @@ export class Mundo extends Phaser.Scene {
     if (this.typeTimer) this.typeTimer.remove()
     let i = 0; this.typeTimer = this.time.addEvent({ delay: 26, loop: true, callback: () => { i++; this.balaoTxt.setText(f.texto.slice(0, i)); if (i >= f.texto.length) this.typeTimer!.remove() } })
     const fim = () => aoFim && this.time.delayedCall(400, aoFim)
-    if (!QA && this.audioOk[id]) { const s = this.sound.add(id); s.once('complete', () => { this.sound.removeByKey(id); fim() }); s.play() } else this.time.delayedCall(1200 + f.texto.length * 42, fim)
+    if (!QA && this.audioOk[id]) { const s = this.sound.add(id); s.once('complete', () => { this.sound.removeByKey(id); fim() }); s.play() } else this.time.delayedCall(QA ? 220 : 1200 + f.texto.length * 42, fim)
   }
   dialogo (ids: string[], aoFim?: () => void) {
     this.estado = 'dialogo'
@@ -488,12 +731,15 @@ export class Mundo extends Phaser.Scene {
       }
     }
 
-    // MISSÃO: colher ao passar por cima (o mundo reage; sem botão, sem painel)
-    if (this.estado === 'explora' && this.zona.missao) {
+    // MISSÃO: agir ao passar por cima (o mundo reage; sem botão, sem painel)
+    if (this.estado === 'explora' && this.zona.missao?.tipo === 'colher') {
       for (const im of this.itens) {
         if (!(im as any)._colhida && Math.abs(this.heroi.x - im.x) < 44 && Math.abs(this.heroi.y - im.y) < 50) this.colher(im)
       }
     }
+    if (this.estado === 'explora' && this.zona.missao?.tipo === 'agrupar' && !this.missaoFeita()) this.agirAgrupar(_t)
+    // o que está na MÃO acompanha a criança (cesta/maçã sobre a cabeça)
+    if (this.carregando) this.carregando.img.setPosition(this.corpo.x, this.corpo.y - 116)
 
     // PORTAIS: chegou perto -> troca de zona (com fade)
     if (this.estado === 'explora' && _t > this.portalCd) {

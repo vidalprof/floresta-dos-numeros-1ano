@@ -45,13 +45,26 @@ export function auditar (av: TAventura, opts: { assets: Set<string>, audios?: Se
       if (dest && (pt.spawn.y < dest.chao_min_y || pt.spawn.y > dest.altura - 44)) p.push({ grave: true, msg: `[${z.id}] spawn do portal p/ "${pt.para}" cai fora da faixa andável de lá.` })
     }
 
-    // missão colher: itens alcançáveis, sem colidir com a cesta
+    // missão (colher/agrupar): itens alcançáveis + peças da missão presentes
     if (z.missao) {
       const mi = z.missao
-      if (A.size && (!opts.zonaAtual || opts.zonaAtual === z.id)) { if (!A.has(mi.asset)) p.push({ grave: true, msg: `[${z.id}] missão usa asset "${mi.asset}" que NÃO existe.` }); if (!A.has('cesta')) p.push({ grave: true, msg: `[${z.id}] missão colher exige o asset "cesta" no kit.` }) }
+      if (A.size && (!opts.zonaAtual || opts.zonaAtual === z.id) && !A.has(mi.asset)) p.push({ grave: true, msg: `[${z.id}] missão usa asset "${mi.asset}" que NÃO existe.` })
       for (const it of mi.itens) {
         if (!andavel(it.y)) p.push({ grave: true, msg: `[${z.id}] item da missão fora da faixa andável (y=${it.y}).` })
-        if (mi.cesta && Math.hypot(it.x - mi.cesta.x, it.y - mi.cesta.y) < 90) p.push({ grave: false, msg: `[${z.id}] item da missão em cima da cesta.` })
+      }
+      if (mi.tipo === 'colher') {
+        if (A.size && (!opts.zonaAtual || opts.zonaAtual === z.id) && !A.has('cesta')) p.push({ grave: true, msg: `[${z.id}] missão colher exige o asset "cesta" no kit.` })
+        if (mi.cesta) for (const it of mi.itens) if (Math.hypot(it.x - mi.cesta.x, it.y - mi.cesta.y) < 90) { p.push({ grave: false, msg: `[${z.id}] item da missão em cima da cesta.` }); break }
+      } else {
+        // agrupar: a caixa existe; pilha e vagas na faixa andável (a criança alcança)
+        if (A.size && (!opts.zonaAtual || opts.zonaAtual === z.id) && !A.has(mi.caixa)) p.push({ grave: true, msg: `[${z.id}] missão agrupar usa caixa "${mi.caixa}" que NÃO existe.` })
+        if (!andavel(mi.pilha.y)) p.push({ grave: true, msg: `[${z.id}] pilha de caixas fora da faixa andável (y=${mi.pilha.y}).` })
+        for (const v of mi.vagas) if (!andavel(v.y)) p.push({ grave: true, msg: `[${z.id}] vaga de caixa fora da faixa andável (y=${v.y}).` })
+        // a LEI precisa ser vencível: nº de itens tem que dividir em ≥2 grupos iguais
+        const N = mi.itens.length
+        let divisivel = false
+        for (let g = 2; g <= mi.vagas.length; g++) if (N % g === 0) { divisivel = true; break }
+        if (!divisivel) p.push({ grave: true, msg: `[${z.id}] agrupar IMPOSSÍVEL: ${N} itens não dividem em 2..${mi.vagas.length} grupos iguais.` })
       }
       if (opts.audios) for (const id of mi.ao_completar) if (!opts.audios.has(id)) p.push({ grave: false, msg: `[${z.id}] fala de conclusão "${id}" SEM áudio.` })
     }

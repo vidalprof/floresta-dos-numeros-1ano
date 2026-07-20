@@ -90,6 +90,36 @@ export const MissaoColher = z.object({
   recompensa_item: z.object({ asset: z.string(), nome: z.string() }).optional()  // vai pra MOCHILA
 })
 
+// MISSÃO "AGRUPAR" — a 1ª dinâmica CRIATIVA (lei dos GRUPOS IGUAIS, ex.: tabuada).
+// A criança CRIA a arrumação: pega cestas na pilha, decide QUANTAS usa, e reparte
+// os itens. NÃO há gabarito guardado — há a LEI: o mundo testa se todo grupo tem o
+// MESMO tanto (2×6, 3×4, 4×3... TODAS as arrumações iguais vencem). Desigual = a
+// cesta diferente TOMBA (consequência mostra ONDE, sem X vermelho, sem punição).
+// O conceito (a multiplicação DELA) é nomeado POR ÚLTIMO: fala `c_<n>x<k>`.
+export const MissaoAgrupar = z.object({
+  tipo: z.literal('agrupar'),
+  asset: z.string(),                             // o item a repartir (ex.: 'maca')
+  alt: z.number().default(46),
+  kc: z.string().default('grupos-iguais'),       // domínio medido (motor adaptativo)
+  itens: z.array(z.object({ x: z.number(), y: z.number() })).min(2),
+  caixa: z.string().default('cesta'),            // o "grupo" físico
+  caixa_alt: z.number().default(104),
+  pilha: z.object({ x: z.number(), y: z.number() }),   // onde pega as cestas
+  vagas: z.array(z.object({ x: z.number(), y: z.number() })).min(2),  // onde pousa
+  npc: z.string().optional(),                    // quem TESTA a carga (ex.: 'castor')
+  voz_prefixo: z.string().default('kn'),         // contagem falada DO GRUPO
+  ao_sobrar: z.array(z.string()).default([]),    // ainda tem item solto no mundo
+  ao_uma_caixa: z.array(z.string()).default([]), // tudo num grupo só (pesado demais)
+  ao_desigual: z.array(z.string()).default([]),  // pergunta socrática (nunca a resposta)
+  ao_completar: z.array(z.string()).default([]), // consequência primeiro...
+  conceito_prefixo: z.string().default('c_'),    // ...e o NOME por último: c_3x4
+  fala_revisita: z.array(z.string()).default([]),
+  some_objeto: z.string().optional(),            // a PEDRA que sai do caminho
+  remove_bloqueio: z.string().optional()
+})
+
+export const Missao = z.discriminatedUnion('tipo', [MissaoColher, MissaoAgrupar])
+
 // efeitos de vida ambiente da zona (tudo leve; orçamento do PC fraco)
 export const Efeitos = z.object({
   sol: z.object({ x: z.number(), y: z.number() }).optional(),  // brilho que respira
@@ -117,7 +147,7 @@ export const Zona = z.object({
   chao_min_y: z.number().default(700),   // faixa andável começa aqui (horizonte)
   paradas: z.array(Parada).default([]),
   portais: z.array(Portal).default([]),
-  missao: MissaoColher.optional(),
+  missao: Missao.optional(),
   efeitos: Efeitos.default({ polen: false }),
   musica: z.string().default(''),        // arquivo em audio/ (ex.: 'mus_carefree')
   chegada: z.array(z.string()).default([]),  // falas na 1ª visita
