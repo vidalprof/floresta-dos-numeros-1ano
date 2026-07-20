@@ -158,6 +158,10 @@ export class FaseGrid extends Phaser.Scene {
       this.add.image(o.x!, o.y!, tex, frame).setOrigin(0.5, 1).setDepth(depth ?? o.y!)
     }
 
+    // AMBIENTE VIVO (pedido do Marcos: cada cenário tem clima próprio p/ não enjoar) —
+    // partículas leves em tela (scrollFactor 0), custo baixo p/ o PC da escola
+    this.montaAmbiente((gp('ambiente') as string) || '')
+
     // PEDRAS que fecham a saída (some na entrega)
     const px = this.P('pedrasX'), py = this.P('pedrasY')
     this.pedrasSp = this.add.image(px * T + T / 2, py * T + T / 2, 'pedras2').setDisplaySize(20, 18).setDepth(py * T + 20)
@@ -752,6 +756,33 @@ export class FaseGrid extends Phaser.Scene {
     this.falar(txt)
     this.balaoTimer?.remove()                       // cancela o esconder anterior (senão um balão some cedo)
     this.balaoTimer = this.time.delayedCall(ms, () => { this.balao.style.display = 'none' })
+  }
+
+  // clima de cada cenário: vaga-lumes (floresta), pétalas (pomar), folhas (outono),
+  // neve. Tudo em tela (scrollFactor 0), poucas partículas — leve no PC fraco.
+  private montaAmbiente (tipo: string): void {
+    if (!tipo) return
+    const W = this.scale.width, H = this.scale.height
+    const cor = tipo === 'vagalumes' ? 0xfff2a0 : tipo === 'petalas' ? 0xffc0d8 : tipo === 'folhas' ? 0xe8a84c : tipo === 'neve' ? 0xffffff : 0xffffff
+    const n = tipo === 'vagalumes' ? 16 : 22
+    for (let i = 0; i < n; i++) {
+      const r = tipo === 'vagalumes' ? 2 + Math.random() * 2 : 2 + Math.random() * 2.5
+      const p = this.add.circle(Math.random() * W, Math.random() * H, r, cor, 0.9).setScrollFactor(0).setDepth(29000).setBlendMode(tipo === 'vagalumes' ? Phaser.BlendModes.ADD : Phaser.BlendModes.NORMAL)
+      if (tipo === 'vagalumes') {
+        // pisca e vagueia devagar
+        this.tweens.add({ targets: p, alpha: { from: 0.15, to: 1 }, duration: 900 + Math.random() * 1400, yoyo: true, repeat: -1, delay: Math.random() * 1500 })
+        this.tweens.add({ targets: p, x: p.x + (Math.random() * 80 - 40), y: p.y + (Math.random() * 60 - 30), duration: 4000 + Math.random() * 3000, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+      } else {
+        // cai balançando (pétala/folha/neve) e recicla no topo
+        p.y = Math.random() * H - H
+        const cair = (): void => {
+          p.y = -8; p.x = Math.random() * W
+          this.tweens.add({ targets: p, y: H + 8, duration: 6000 + Math.random() * 5000, ease: 'Linear', onComplete: cair })
+          this.tweens.add({ targets: p, x: p.x + (Math.random() * 70 - 35), duration: 2200, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+        }
+        cair()
+      }
+    }
   }
 
   private tom (freq: number, dur: number, tipo: OscillatorType, vol: number): void {
