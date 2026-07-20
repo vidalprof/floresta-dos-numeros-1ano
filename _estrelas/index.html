@@ -180,6 +180,22 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @-webkit-keyframes bfly{0%{opacity:1;-webkit-transform:translateY(0) scale(.4) rotate(0)}100%{opacity:0;-webkit-transform:translateY(-46px) scale(1.35) rotate(140deg)}}
 @keyframes bfly{0%{opacity:1;transform:translateY(0) scale(.4) rotate(0)}100%{opacity:0;transform:translateY(-46px) scale(1.35) rotate(140deg)}}
 
+/* ---------- PARADA 2 — A Constelação (array com steppers) ---------- */
+.p2 .grade{position:absolute;left:0;right:0;top:25%;bottom:33%;z-index:2;text-align:center;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.p2 .fila{white-space:nowrap;line-height:0}
+.gestr{width:30px;max-width:8.5vw;height:auto;margin:3px;-webkit-animation:estrPop .3s ease;animation:estrPop .3s ease}
+.grade.acesa .gestr{-webkit-filter:drop-shadow(0 0 9px rgba(255,220,120,.95));filter:drop-shadow(0 0 9px rgba(255,220,120,.95))}
+.steppers{position:absolute;left:0;right:0;bottom:15%;z-index:4;text-align:center}
+.stepper{display:inline-block;vertical-align:middle;margin:0 9px;text-align:center}
+.strot{font-size:13px;color:#cdd3ff;margin-bottom:5px;font-weight:700}
+.srow{white-space:nowrap}
+.sbtn{border:0;cursor:pointer;font-family:inherit;font-weight:900;color:#5a3b00;width:42px;height:42px;font-size:23px;border-radius:12px;vertical-align:middle;
+  background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);box-shadow:0 3px 0 #c8871a}
+.sbtn:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #c8871a}
+.sval{display:inline-block;width:42px;font-size:26px;font-weight:900;color:#ffe08a;vertical-align:middle}
+
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
@@ -263,9 +279,38 @@ function fagViva(extraCls){
   var pisca=el("img","lay pisca"); pisca.src="img/fagulha_pisca.png"; pisca.alt="";
   corpo.appendChild(base); corpo.appendChild(fala); corpo.appendChild(pisca);
   wrap.appendChild(corpo); bob.appendChild(wrap); fag.appendChild(bob);
-  fagAtual={el:fag,extra:(extraCls||""),fala:fala,pisca:pisca};
+  fagAtual={el:fag,extra:(extraCls||""),base:base,fala:fala,pisca:pisca};
   return fag;
 }
+function fagPose(nome){ if(fagAtual&&fagAtual.base){ if(fagAtual.fala)fagAtual.fala.style.opacity="0"; if(fagAtual.pisca)fagAtual.pisca.style.opacity="0"; fagAtual.base.src="img/"+nome+".png"; } }
+function fagComemora(){ fagPose("fagulha_comemora"); }
+
+/* ---- helpers de celebração (compartilhados pelas paradas) ---- */
+function estouraEstrelas(tela,n){
+  var burst=el("div","burst"),i;
+  for(i=0;i<n;i++){ var b=el("img","bstar"); b.src="img/estrela_grande.png";
+    var ang=(i/n)*2*Math.PI, dx=Math.cos(ang)*44, dy=Math.sin(ang)*30;
+    b.style.left=(50+dx)+"%"; b.style.top=(40+dy)+"%";
+    var dur=(0.8+Math.random()*0.5).toFixed(2);
+    b.style.webkitAnimation="bfly "+dur+"s ease-out both"; b.style.animation="bfly "+dur+"s ease-out both";
+    burst.appendChild(b);
+  }
+  tela.appendChild(burst);
+  setTimeout(function(){ if(burst.parentNode)burst.parentNode.removeChild(burst); },1700);
+}
+function revela(tela,r1,r2,r3){
+  var rev=el("div","revela");
+  rev.innerHTML="<div class='r1'>"+r1+"</div><div class='r2'>"+r2+"</div><div class='r3'>"+r3+"</div>";
+  tela.appendChild(rev); return rev;
+}
+function botaoProxima(tela,idx,rot){
+  setTimeout(function(){
+    var pb=el("div","p1barra"); pb.style.bottom="6%";
+    var nx=el("button","btn pulsa",rot||"Próxima parada"); nx.onclick=function(){ proxima(idx); };
+    pb.appendChild(nx); tela.appendChild(pb);
+  },1500);
+}
+function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){} }
 function fabViva(){
   var f=el("div","fabviva");
   f.appendChild(el("div","glow"));
@@ -448,38 +493,78 @@ function verificaP1(){
 }
 function sucessoP1(){
   P1.concluida=true;
-  if(fagAtual){ if(fagAtual.fala)fagAtual.fala.style.opacity="0"; if(fagAtual.pisca)fagAtual.pisca.style.opacity="0";
-    if(fagAtual.corpo)fagAtual.corpo.src="img/fagulha_comemora.png"; }
+  fagComemora();
   var tela=document.getElementsByClassName("tela parada")[0]; if(!tela)return;
-  var burst=el("div","burst"); var i;
-  for(i=0;i<12;i++){
-    var b=el("img","bstar"); b.src="img/estrela_grande.png";
-    var ang=(i/12)*2*Math.PI, dx=Math.cos(ang)*44, dy=Math.sin(ang)*30;
-    b.style.left=(50+dx)+"%"; b.style.top=(40+dy)+"%";
-    var dur=(0.8+Math.random()*0.5).toFixed(2);
-    b.style.webkitAnimation="bfly "+dur+"s ease-out both"; b.style.animation="bfly "+dur+"s ease-out both";
-    burst.appendChild(b);
-  }
-  tela.appendChild(burst);
-  setTimeout(function(){ if(burst.parentNode)burst.parentNode.removeChild(burst); },1700);
+  estouraEstrelas(tela,12);
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var cxs=tela.getElementsByClassName("caixas")[0]; if(cxs)cxs.style.opacity="0";
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
-  var rev=el("div","revela");
-  rev.innerHTML="<div class='r1'>4 + 4 + 4</div><div class='r2'>3 &#215; 4 = 12</div><div class='r3'>Isso é <b>multiplicar</b>! 3 grupos de 4 dão 12 estrelas. Você acendeu o céu!</div>";
-  tela.appendChild(rev);
-  setTimeout(function(){
-    var pb2=el("div","p1barra"); pb2.style.bottom="7%";
-    var nx=el("button","btn pulsa","Próxima parada"); nx.onclick=function(){ proxima(0); };
-    pb2.appendChild(nx); tela.appendChild(pb2);
-  },1500);
+  revela(tela,"4 + 4 + 4","3 &#215; 4 = 12","Isso é <b>multiplicar</b>! 3 grupos de 4 dão 12 estrelas. Você acendeu o céu!");
+  botaoProxima(tela,0);
   var tempo=Math.round(((new Date()).getTime()-P1.t0)/1000);
-  var ev={habilidade:"EF03MA07",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)};
-  try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){}
+  salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)});
 }
 
 /* ==== PARADAS/TELAS seguintes (preenchidas em blocos) ==== */
-function telaParada2(){ proxima(1); }
+/* ===== PARADA 2 — A Constelação (disposição retangular: fileiras × colunas) ===== */
+var P2;
+function telaParada2(){
+  limpa();
+  P2={fil:2,col:2,alvoF:4,alvoC:5,concluida:false,ajustes:0,t0:(new Date()).getTime()};
+  var t=el("div","tela parada p2");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
+  t.appendChild(el("div","balao","<b>A constelação do Peixe</b> pede <b>4 fileiras</b> com <b>5 estrelas</b> em cada. Monte a grade!"));
+  var g=el("div","grade"); g.id="grade"; t.appendChild(g);
+  var ctr=el("div","steppers");
+  ctr.appendChild(stepper("Fileiras","fil"));
+  ctr.appendChild(stepper("Em cada","col"));
+  t.appendChild(ctr);
+  var bar=el("div","p1barra"); bar.appendChild(el("div","p1dica p2dica","")); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  pintaGrade();
+}
+function stepper(rot,chave){
+  var s=el("div","stepper"); s.appendChild(el("div","strot",rot));
+  var row=el("div","srow");
+  var menos=el("button","sbtn","&#8722;"); menos.onclick=function(){ if(P2.concluida)return; if(P2[chave]>1){P2[chave]--;P2.ajustes++;pintaGrade();} };
+  var val=el("div","sval"); val.id="sv_"+chave; val.innerHTML=P2[chave];
+  var mais=el("button","sbtn","+"); mais.onclick=function(){ if(P2.concluida)return; if(P2[chave]<6){P2[chave]++;P2.ajustes++;pintaGrade();} };
+  row.appendChild(menos); row.appendChild(val); row.appendChild(mais);
+  s.appendChild(row); return s;
+}
+function pintaGrade(){
+  var g=document.getElementById("grade"); if(!g)return; g.className="grade"; g.innerHTML="";
+  var i,j;
+  for(i=0;i<P2.fil;i++){ var fila=el("div","fila");
+    for(j=0;j<P2.col;j++){ var im=el("img","gestr"); im.src="img/estrela_grande.png"; fila.appendChild(im); }
+    g.appendChild(fila); }
+  var a=document.getElementById("sv_fil"), b=document.getElementById("sv_col");
+  if(a)a.innerHTML=P2.fil; if(b)b.innerHTML=P2.col;
+  verificaP2();
+}
+function verificaP2(){
+  if(P2.concluida)return;
+  var d=document.getElementsByClassName("p2dica")[0];
+  if(P2.fil===P2.alvoF && P2.col===P2.alvoC){ sucessoP2(); return; }
+  if(d){
+    if(P2.fil*P2.col===P2.alvoF*P2.alvoC){ d.innerHTML="Deu 20! Mas a constelação tem a forma de 4 fileiras de 5."; }
+    else if(P2.fil>P2.alvoF||P2.col>P2.alvoC){ d.innerHTML="Passou! Veja: 4 fileiras, 5 estrelas em cada."; }
+    else { d.innerHTML=""; }
+  }
+}
+function sucessoP2(){
+  P2.concluida=true; fagComemora();
+  var tela=document.getElementsByClassName("tela p2")[0]; if(!tela)return;
+  var g=document.getElementById("grade"); if(g)g.className="grade acesa";
+  estouraEstrelas(tela,14);
+  var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
+  var st=tela.getElementsByClassName("steppers")[0]; if(st)st.style.opacity="0";
+  revela(tela,"5 + 5 + 5 + 5","4 &#215; 5 = 20","Uma constelação! <b>4 fileiras de 5</b> é 4 &#215; 5 = 20. Cada fileira repete o mesmo tanto — por isso multiplica!");
+  botaoProxima(tela,1);
+  var tempo=Math.round(((new Date()).getTime()-P2.t0)/1000);
+  salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,tempo_s:tempo,acertou:true,semErro:(P2.ajustes<=5)});
+}
 function telaMusica(){ proxima(2); }
 function telaParada3(){ proxima(3); }
 function telaParada4(){ proxima(4); }
