@@ -10,6 +10,7 @@ import Phaser from 'phaser'
 import { GridEngine } from 'grid-engine'
 import { getKit, type KitVisual } from '../fabrica/kits'
 import { carrega, salva, registra } from '../fabrica/motor-adaptativo'
+import { getAluno, gravarEvidencia } from '../fabrica/evidencias'
 
 const T = 16
 const MEL_ALVO = 5
@@ -55,7 +56,14 @@ export class FaseGrid extends Phaser.Scene {
   private hud!: Phaser.GameObjects.Text
   private balao!: HTMLDivElement
   private btnAjuda?: HTMLButtonElement
+  private btnVoz?: HTMLButtonElement
   private audioOk = false
+  // telemetria da missão (vira EVIDÊNCIA na vitória)
+  nivelAjuda: 0 | 1 | 2 = 0                 // (QA lê) 0=sem; 1=pergunta/botão; 2=gesto ensinado
+  ajudaCliques = 0                          // (QA lê)
+  private inicioMs = 0
+  private ultimaAcao = 0                    // p/ dica por INATIVIDADE (help avoidance)
+  private vozLigada = true
 
   private mapaKey = 'mapa_grid'
   private melAlvo = MEL_ALVO
@@ -198,7 +206,7 @@ export class FaseGrid extends Phaser.Scene {
     this.gridEngine.movementStopped().subscribe(({ charId, direction }) => { if (charId === 'heroi') { this.heroi.anims.stop(); this.heroi.setFrame(this.paradoFrame(direction)) } })
     this.gridEngine.directionChanged().subscribe(({ charId, direction }) => { if (charId === 'heroi') this.heroi.setFrame(this.paradoFrame(direction)) })
     // a cada tile que o herói ENTRA, checa gatilhos (pega mel, porta, entrega, saída)
-    this.gridEngine.positionChangeFinished().subscribe(({ charId, enterTile }) => { if (charId === 'heroi') this.aoEntrarTile(enterTile.x, enterTile.y) })
+    this.gridEngine.positionChangeFinished().subscribe(({ charId, enterTile }) => { if (charId === 'heroi') { this.ultimaAcao = this.time.now; this.aoEntrarTile(enterTile.x, enterTile.y) } })
 
     // HUD + balão (HTML = sempre nítido) + missão inicial
     this.montaHud()
@@ -212,8 +220,10 @@ export class FaseGrid extends Phaser.Scene {
     // controles: setas + WASD + toque; e destrava do áudio no 1º gesto
     this.wasd = this.input.keyboard?.addKeys('W,A,S,D') as any
     const destrava = (): void => { if (this.audioOk) return; this.audioOk = true; try { const m = this.sound.add('musica', { loop: true, volume: 0.4 }); m.play() } catch { /* ok */ } }
-    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { destrava(); const wx = p.worldX, wy = p.worldY; this.gridEngine.moveTo('heroi', { x: Math.floor(wx / T), y: Math.floor(wy / T) }) })
-    this.input.keyboard?.on('keydown', destrava)
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => { destrava(); this.ultimaAcao = this.time.now; const wx = p.worldX, wy = p.worldY; this.gridEngine.moveTo('heroi', { x: Math.floor(wx / T), y: Math.floor(wy / T) }) })
+    this.input.keyboard?.on('keydown', () => { destrava(); this.ultimaAcao = this.time.now })
+    this.inicioMs = Date.now()
+    this.ultimaAcao = this.time.now
 
     // QA hooks (o robô dirige o jogo de verdade)
     ;(window as any).__grid = this
@@ -489,8 +499,10 @@ export class FaseGrid extends Phaser.Scene {
   }
 
   // ERRO REAL (falha produtiva): registra no domínio, o mentor PERGUNTA — nunca pune.
+  // Telemetria: 1º erro = viu a pergunta (nível 1); 2º+ = recebeu o gesto (nível 2).
   private erroReal (pergunta: string): void {
     this.erros++
+    this.nivelAjuda = Math.max(this.nivelAjuda, this.erros >= 2 ? 2 : 1) as FaseGrid['nivelAjuda']
     try { salva('local', registra(carrega('local'), this.kcId, false, Date.now())) } catch { /* sem storage */ }
     this.cameras.main.shake(200, 0.006); this.tom(150, 0.3, 'sawtooth', 0.16)
     this.mostraBalao('🤔', pergunta)
@@ -547,6 +559,25 @@ export class FaseGrid extends Phaser.Scene {
     // MEDE + ADAPTA: registra o domínio do KC do CONTEÚDO jogado. Os ERROS já entraram um a
     // um (estouro/regra/ordem = observação negativa); concluir = observação positiva.
     try { salva('local', registra(carrega('local'), this.kcId, true, Date.now())) } catch { /* sem storage: segue */ }
+    // EVIDÊNCIA (stealth assessment): a missão inteira vira UM registro por habilidade
+    // no Firebase (ou fila local) — o insumo do parecer descritivo do professor
+    try {
+      const aluno = getAluno()
+      if (aluno) {
+        const u = this.agVagas.filter(v => v.tem && v.count > 0)
+        void gravarEvidencia({
+          nome: aluno.nome, turma: aluno.turma, kc: this.kcId,
+          atividade: this.plano?.nome ?? 'fase', mecanica: this.mecanica,
+          estrategia: this.mecanica === 'agrupar' && u.length ? `${u.length}×${u[0].count}` : undefined,
+          alvo: this.mecanica === 'agrupar' ? this.agTotal : (this.mecanica === 'somar' ? this.alvoSoma : this.melAlvo),
+          tentativas: this.erros + 1, erros: this.erros,
+          nivelAjuda: this.nivelAjuda, ajudaCliques: this.ajudaCliques,
+          duracaoSeg: Math.round((Date.now() - this.inicioMs) / 1000),
+          pKnown: Math.round(((carrega('local')[this.kcId]?.pKnown) ?? 0) * 100) / 100,
+          quando: new Date().toISOString()
+        })
+      }
+    } catch { /* evidência nunca pode travar a festa */ }
     this.cameras.main.flash(400, 255, 255, 200)
     ;[523, 659, 784, 1047].forEach((f, i) => this.time.delayedCall(i * 110, () => this.tom(f, 0.16, 'triangle', 0.2)))
     this.mostraBalao('🌟', this.plano?.vitoria ?? 'Fase 1 concluída! (a próxima aventura entra aqui)')
@@ -594,15 +625,40 @@ export class FaseGrid extends Phaser.Scene {
     this.btnAjuda.textContent = '❓'
     this.btnAjuda.setAttribute('aria-label', 'Ajuda: rever a missão')
     this.btnAjuda.style.cssText = 'position:fixed;right:12px;top:12px;width:48px;height:48px;border:0;border-radius:50%;background:#fff;font-size:24px;line-height:1;box-shadow:0 3px 10px #0006;cursor:pointer;z-index:9998;'
-    this.btnAjuda.onclick = () => this.mostraAjuda()
+    this.btnAjuda.onclick = () => this.mostraAjuda(true)
     document.body.appendChild(this.btnAjuda)
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { this.balao?.remove(); this.btnAjuda?.remove() })
-    this.events.once(Phaser.Scenes.Events.DESTROY, () => { this.balao?.remove(); this.btnAjuda?.remove() })
+    // BOTÃO DE VOZ (Sesame/NN-g: criança de 6-9 não lê — o balão FALA; aqui liga/desliga)
+    try { this.vozLigada = localStorage.getItem('educ_voz') !== '0' } catch { /* padrão ligado */ }
+    this.btnVoz = document.createElement('button')
+    this.btnVoz.textContent = this.vozLigada ? '🔊' : '🔇'
+    this.btnVoz.setAttribute('aria-label', 'Ligar/desligar a voz')
+    this.btnVoz.style.cssText = 'position:fixed;right:12px;top:68px;width:48px;height:48px;border:0;border-radius:50%;background:#fff;font-size:22px;line-height:1;box-shadow:0 3px 10px #0006;cursor:pointer;z-index:9998;'
+    this.btnVoz.onclick = () => {
+      this.vozLigada = !this.vozLigada
+      this.btnVoz!.textContent = this.vozLigada ? '🔊' : '🔇'
+      try { localStorage.setItem('educ_voz', this.vozLigada ? '1' : '0'); if (!this.vozLigada) speechSynthesis.cancel() } catch { /* ok */ }
+    }
+    document.body.appendChild(this.btnVoz)
+    const limpa = (): void => { this.balao?.remove(); this.btnAjuda?.remove(); this.btnVoz?.remove(); try { speechSynthesis.cancel() } catch { /* ok */ } }
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, limpa)
+    this.events.once(Phaser.Scenes.Events.DESTROY, limpa)
     this.atualizaHud()
   }
 
+  // fala o texto do balão (Web Speech, grátis, pt-BR) — desligável no 🔇
+  private falar (txt: string): void {
+    if (!this.vozLigada || (navigator as any).webdriver) return
+    try {
+      speechSynthesis.cancel()
+      const u = new SpeechSynthesisUtterance(txt.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim())
+      u.lang = 'pt-BR'; u.rate = 0.96; u.pitch = 1.05
+      speechSynthesis.speak(u)
+    } catch { /* sem voz: segue no texto */ }
+  }
+
   // AJUDA sob demanda: repete o PROBLEMA e diz COMO agir AGORA (por mecânica e estado)
-  mostraAjuda (): void {
+  mostraAjuda (pedidaPelaCrianca = false): void {
+    if (pedidaPelaCrianca) { this.ajudaCliques++; this.nivelAjuda = Math.max(this.nivelAjuda, 1) as FaseGrid['nivelAjuda'] }
     const emoji = this.plano?.emoji ?? '🧑‍🌾'
     if (this.concluida) { this.mostraBalao('🌟', this.plano?.vitoria ?? 'Missão concluída!', 6000); return }
     if (this.entregou) { this.mostraBalao(emoji, 'Missão cumprida! Agora siga pela saída à DIREITA, onde as pedras sumiram.', 7000); return }
@@ -656,6 +712,7 @@ export class FaseGrid extends Phaser.Scene {
   private mostraBalao (emoji: string, txt: string, ms = 4200): void {
     this.balao.innerHTML = `<span style="font-size:26px">${emoji}</span><br>${txt}`
     this.balao.style.display = 'block'
+    this.falar(txt)
     this.balaoTimer?.remove()                       // cancela o esconder anterior (senão um balão some cedo)
     this.balaoTimer = this.time.delayedCall(ms, () => { this.balao.style.display = 'none' })
   }
@@ -673,6 +730,12 @@ export class FaseGrid extends Phaser.Scene {
   update (): void {
     // o que está na MÃO acompanha a criança (pote/caixa sobre a cabeça)
     if (this.agMaoSp) this.agMaoSp.setPosition(this.heroi.x, this.heroi.y - 12).setDepth(this.heroi.depth + 1)
+    // DICA POR INATIVIDADE (help avoidance — quem mais precisa não clica no ❓):
+    // criança parada ~25s sem concluir -> o mentor se oferece sozinho
+    if (!this.concluida && !this.trocando && !this.agConferindo && this.ultimaAcao > 0 && this.time.now - this.ultimaAcao > 25000 && !(navigator as any).webdriver) {
+      this.ultimaAcao = this.time.now
+      this.mostraAjuda()
+    }
     if (this.trocando || this.concluida || this.gridEngine.isMoving('heroi')) return
     const k = this.input.keyboard?.createCursorKeys(); const w = this.wasd
     if (k?.left.isDown || w?.A.isDown) this.gridEngine.move('heroi', 'left' as any)

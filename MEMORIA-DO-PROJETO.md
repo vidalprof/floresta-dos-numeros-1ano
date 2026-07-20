@@ -148,6 +148,28 @@
 > a dinâmica. Próximos passos se aprovar: voz + kit galinheiro (variação da mesma lei)
 > + missões de retorno (Leitner) + 2ª LEI (equilíbrio/apoio — a ponte que aguenta).
 
+## 📋 CAMADA PROVA construída (2026-07-20) — evidências + painel + parecer que vira NOTA
+> Pedido do Marcos: avaliação DESCRITIVA no Firebase, "da atividade ou do que eu quiser",
+> transformável em nota. Pesquisa profunda em `PESQUISA-AJUDA-E-AVALIACAO-2026-07.md`
+> (help-seeking/CMU, stealth assessment/Shute, LDB art.24-V, rubricas BNCC). Construído:
+> - **`evidencias.ts`:** identidade leve (nome+turma, modal "Quem vai jogar?", 1ª vez;
+>   "Jogar sem registrar" existe; QA/webdriver nunca vê). Cada vitória grava EVIDÊNCIA
+>   {kc, mecânica, estratégia (ex. "3×4"!), erros, nivelAjuda 0/1/2, cliques ❓, duração,
+>   pKnown} → Firebase `/educaverso/vidal-ramos/evidencias/<turma>/<aluno>` via LOGIN
+>   ANÔNIMO; sem rede → fila local que sobe no próximo boot; espelho local sempre.
+> - **RUBRICA auditável:** sem ajuda+sem erro=Consolidado; após pergunta/❓=Em
+>   desenvolvimento; precisou do gesto=Iniciando. Nota sugerida por TABELA FIXA
+>   (8,5-10 / 6,0-8,4 / <6,0 — professor ajusta). O ANDAIME GRADUAL é a régua!
+> - **PAINEL DO PROFESSOR (`?painel`):** login = conta da AGENDA (matrícula/senha);
+>   leitura só admin (regra usa /agenda/vidal-ramos/admins). Por turma/aluno: missões,
+>   nível, PARECER DESCRITIVO rascunho (cita evidências reais, editável, botão copiar).
+>   Modo "só desta máquina" sem login. Ex.: vila-tabuada/?painel.
+> - **⚠️ FALTAM 2 PASSOS DO MARCOS no console (sem eles = só modo local):** ativar
+>   Anonymous auth + colar a regra `educaverso` — receita EXATA em `FIREBASE-EDUCAVERSO.md`.
+> - **Voz nos balões** (Web Speech pt-BR, botão 🔊/🔇, padrão ligado; QA não fala) e
+>   **dica por INATIVIDADE** (~25s parado → mentor se oferece; cura o help avoidance).
+> - Clicar no ❓ conta como ajuda nível 1 (anti-inflação da rubrica).
+
 ## 🎓 UPGRADE PEDAGÓGICO da fase agrupar (2026-07-20, pedido do Marcos após jogar)
 > O Marcos testou e apontou 2 faltas REAIS: (1) a consequência do erro era fraca
 > ("balança + texto" = popup disfarçado); (2) faltava EXPLICAR a lição no final

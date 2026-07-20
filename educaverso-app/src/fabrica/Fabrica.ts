@@ -12,6 +12,39 @@ import { escreverRoteiro } from './roteiro'
 import { carrega } from './motor-adaptativo'
 import { kitsDisponiveis, KIT_PADRAO } from './kits'
 import { montarMapaFase } from './mapaFase'
+import { getAluno, setAluno, sincronizarFila } from './evidencias'
+
+// IDENTIFICAÇÃO LEVE (laboratório compartilhado): nome + turma no 1º acesso — é o
+// que liga a jogada à avaliação descritiva do professor. "Jogar sem registrar"
+// existe (demo/visita); robô de QA (webdriver) nunca vê esta tela.
+const TURMAS = ['1º ano', '2º ano', '3º ano', '4º ano', '5º ano', '6º ano', '7º ano', '8º ano', '9º ano']
+function garantirIdentidade (): Promise<void> {
+  if ((navigator as any).webdriver || getAluno()) return Promise.resolve()
+  return new Promise(resolve => {
+    const m = document.createElement('div')
+    m.style.cssText = 'position:fixed;inset:0;z-index:70;background:#0b1226ee;display:flex;align-items:center;justify-content:center;font-family:system-ui,Arial,sans-serif'
+    m.innerHTML = `
+      <div style="background:#16244a;color:#eaf1ff;border-radius:16px;padding:22px;max-width:340px;width:92%;text-align:center">
+        <div style="font-size:38px">🧑‍🚀</div>
+        <h2 style="margin:.3em 0;font-size:20px">Quem vai jogar?</h2>
+        <input id="id_nome" placeholder="Seu primeiro nome" style="width:100%;padding:12px;border-radius:10px;border:0;font-size:16px;margin:6px 0">
+        <select id="id_turma" style="width:100%;padding:12px;border-radius:10px;border:0;font-size:16px;margin:6px 0">
+          <option value="">Sua turma…</option>${TURMAS.map(t => `<option>${t}</option>`).join('')}
+        </select>
+        <button id="id_ok" style="width:100%;padding:13px;font-size:17px;font-weight:800;border:0;border-radius:10px;background:#57e08a;color:#0b2350;cursor:pointer;margin-top:6px">▶ Começar!</button>
+        <button id="id_pular" style="width:100%;padding:8px;border:0;border-radius:8px;background:transparent;color:#8fa3cf;cursor:pointer;font-size:13px;margin-top:6px">Jogar sem registrar</button>
+      </div>`
+    document.body.appendChild(m)
+    const fim = (): void => { m.remove(); resolve() }
+    ;(m.querySelector('#id_ok') as HTMLButtonElement).onclick = () => {
+      const nome = (m.querySelector('#id_nome') as HTMLInputElement).value.trim()
+      const turma = (m.querySelector('#id_turma') as HTMLSelectElement).value
+      if (!nome || !turma) { (m.querySelector('#id_nome') as HTMLInputElement).placeholder = 'Preencha o nome e a turma!'; return }
+      setAluno({ nome, turma }); fim()
+    }
+    ;(m.querySelector('#id_pular') as HTMLButtonElement).onclick = fim
+  })
+}
 
 // do PRÉ ao 9º (a exigência do Marcos): a MECÂNICA muda com o ano — o pedagogo decide
 const ANOS = ['Pré', '1º ano', '2º ano', '3º ano', '4º ano', '5º ano', '6º ano', '7º ano', '8º ano', '9º ano']
@@ -44,10 +77,13 @@ export function montarFabrica (game: Phaser.Game): void {
   document.body.appendChild(host)
   const val = (id: string): string => (document.getElementById(id) as HTMLInputElement).value
 
+  void sincronizarFila()   // evidências represadas (sem internet na hora) sobem no boot
+
   const btn = document.getElementById('fgerar') as HTMLButtonElement
   btn.onclick = async () => {
     const erro = document.getElementById('ferro')!
     erro.textContent = ''
+    await garantirIdentidade()
     const bruto = {
       ano: val('f_ano'), disciplina: val('f_disc'), objetivo: val('f_obj'),
       tema: val('f_tema'), tempoMin: Number(val('f_tempo')), dificuldade: val('f_dif')

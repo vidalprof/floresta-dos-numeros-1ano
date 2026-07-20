@@ -27,6 +27,18 @@ import { GridEngine } from 'grid-engine'
 import { montarFabrica } from './fabrica/Fabrica'
 
 const q = new URLSearchParams(location.search)
+
+// PAINEL DO PROFESSOR (?painel / __BOOT='painel'): página própria, sem Phaser
+const soPainel = q.has('painel') || (window as any).__BOOT === 'painel'
+if (soPainel) {
+  for (const id of ['telaIntro', 'telaWin', 'btnOuvir', 'hud']) {
+    const el = document.getElementById(id)
+    if (el) el.style.display = 'none'
+  }
+  document.body.style.background = '#0e1524'
+  void import('./painel/painel').then(m => m.montarPainel())
+}
+
 const usarIlha = q.has('ilha')
 // RPG (plataforma nova, identidade Ninja Adventure): ?rpg na URL OU flag
 // window.__BOOT='rpg' injetada no index.html do repo publicado do demo.
@@ -49,7 +61,7 @@ if (usarPix) {
   document.body.style.background = '#0e0c12'
 }
 
-const jogo = new Phaser.Game({
+const jogo = soPainel ? null : new Phaser.Game({
   type: Phaser.AUTO,
   parent: 'game',
   backgroundColor: usarPix ? '#0e0c12' : '#060c18',
@@ -67,7 +79,9 @@ const jogo = new Phaser.Game({
   scene: usarIlha ? [Ilha] : (usarGrid ? [FaseGrid] : (usarF1 ? [FaseUm] : (usarFases ? [FasesDemo] : (usarAutor ? [MundoAutor] : (usarRpg ? [VilaViva, UIVila] : [])))))
 })
 
-if (usarFabrica) {
+if (!jogo) {
+  // painel: nada de jogo
+} else if (usarFabrica) {
   // FÁBRICA: o professor preenche o formulário e a fase nasce na hora (sem cena inicial).
   jogo.events.once('ready', () => montarFabrica(jogo))
 } else if (!usarIlha && !usarRpg && !usarAutor && !usarFases && !usarF1 && !usarGrid) {
