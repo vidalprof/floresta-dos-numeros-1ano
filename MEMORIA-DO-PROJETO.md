@@ -148,6 +148,27 @@
 > a dinâmica. Próximos passos se aprovar: voz + kit galinheiro (variação da mesma lei)
 > + missões de retorno (Leitner) + 2ª LEI (equilíbrio/apoio — a ponte que aguenta).
 
+## 🎓 UPGRADE PEDAGÓGICO da fase agrupar (2026-07-20, pedido do Marcos após jogar)
+> O Marcos testou e apontou 2 faltas REAIS: (1) a consequência do erro era fraca
+> ("balança + texto" = popup disfarçado); (2) faltava EXPLICAR a lição no final
+> (institucionalização, Brousseau). Consertado no motor (FaseGrid + mapaFase):
+> - **Consequência VISÍVEL:** a caixa desigual TOMBA deitada (~74°) e os potes
+>   ESCORREGAM pra fora (bounce + som grave); ~2,3s depois tudo volta sozinho
+>   (trabalho não se perde). `tombaCaixa()`.
+> - **CARROÇA no mundo:** prop `carroca: [82,130,28,28]` do atlas Ninja Adventure
+>   (kits.ts), parada ao lado do fazendeiro (tile 11,6 + colisão). Na vitória as
+>   caixas aprovadas são CARREGADAS nela (`agCarrega()`) — causa e efeito completos.
+> - **CONSOLIDAÇÃO (a lição é DITA):** antes de aprovar, `agConfere()` conta caixa
+>   por caixa com números flutuando (4… 8… 12) e a entrega nomeia com todas as
+>   letras: "grupos IGUAIS tem nome — é MULTIPLICAR: 3×4=12". Descoberta PRIMEIRO,
+>   explicação DEPOIS — Portão 0 intacto.
+> - **Botão ❓ de ajuda** (canto sup. dir.): reconta o problema + "como fazer AGORA"
+>   por mecânica/estado (`mostraAjuda()`). Casa mobiliada (tapete/estante+potes/baú)
+>   com colisão; colisão da casa cobre o sprite inteiro. Decor aceita prop `depth`.
+> - QA: qa-agrupar 19/19 + qa-fgrid APROVADOS (a conferência leva ~3,4s antes de
+>   `entregou` — o QA espera até 6s, folga ok). Publicado em vila-tabuada +
+>   fabrica-aventuras (12:3x UTC).
+
 ## 🌙 SAGA DA PUBLICAÇÃO (madrugada 2026-07-20) — lições PAGAS de deploy
 > A fase da tabuada demorou HORAS pra ir ao ar. Causas REAIS (2, sobrepostas) e curas:
 > 1. **Incidente do GitHub** (~00:38–03:40 UTC): API 503 até de dentro das Actions; builds
