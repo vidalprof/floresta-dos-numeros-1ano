@@ -82,6 +82,50 @@
 > (d) **revisão espaçada** depois. Veredito do especialista: adequada e ensina o conceito de
 > verdade **com esses 4 ajustes**. A sequência escrita completa está no transcript desta sessão.
 
+## 🍎 ENTREGA: 1ª DINÂMICA CRIATIVA NO JOGO 2D — "O POMAR DOS GRUPOS" (2026-07-20)
+> **Contexto (a dor do Marcos, 2026-07-19/20):** ele reprovou TUDO que eu fiz FORA do
+> jogo 2D (protótipos HTML soltos = "premium com popup", "não foi mundo vivo", "não
+> adianta"). **O jogo 2D dele = o motor `Mundo` (educaverso-app, cena do montador v2)
+> com a gramática "a pedra libera o caminho no final"** (quer_item→ao_receber→
+> remove_bloqueio, aventura da ponte/floresta). REGRA DEFINITIVA: **dinâmica nova
+> nasce DENTRO do motor `Mundo`, nunca em tela/página à parte.**
+>
+> **O insight que destravou ("como se programa criatividade"):** NÃO se guarda
+> respostas — **programa-se a LEI do mundo** (mini-simulação) e o mundo aplica a lei
+> sobre QUALQUER coisa que a criança construir. Quiz = comparar com gabarito (1 jeito
+> de vencer). Lei = calcular consequência (MUITOS jeitos de vencer). Catálogo de
+> ~6-10 LEIS reutilizáveis cobre a BNCC (lei da igualdade de grupos, do equilíbrio/
+> apoio, do acúmulo-com-limiar…). **Conteúdo entra assim:** pedagogo traduz conteúdo
+> → ideia-mãe → LEI + configuração + história (ex.: tabuada = grupos iguais).
+>
+> **O que foi construído (commit "motor Mundo: missao AGRUPAR..."):**
+> - **`MissaoAgrupar`** no contrato (união discriminada c/ `colher`); auditor com
+>   regras novas (inclui "a LEI precisa ser vencível": N divisível em 2..vagas grupos).
+> - **Motor:** a criança ANDA no mundo, pega cestas na pilha (decide QUANTAS), reparte
+>   as 12 maçãs; tocar numa cesta pousada = tirar de volta (reequilibrar sem punição).
+>   Desigual no teste do Castor = a cesta DIFERENTE tomba + pergunta socrática + BKT
+>   registra (kc `grupos-iguais`). Igual = conceito nomeado POR ÚLTIMO da arrumação
+>   DELA (fala `c_3x4` etc.) → pedrona rola pra fora → bloqueio sai → portal → FEIRA
+>   (festa). 2×6/3×4/4×3/6×2 TODAS vencem (sem gabarito = criatividade real).
+> - **Aventura como DADOS:** `src/aventuras/grupos.ts` (tabuada 3º ano, EF03MA07),
+>   boot `?grupos` (ou `window.__AVENTURA='grupos'`). 100% sprites que JÁ tínhamos
+>   (maçã/cesta/castor/rocha). Kits novos (galinha etc.) = baixar por workflow depois.
+> - **QA robô** `tools/qa-grupos.mjs` == APROVADO == (joga de verdade: erra 5/4/3 →
+>   tomba+BKT; reequilibra; vence 3×4; pedra sai; atravessa; 2×6 também vence).
+> - **Publicação:** `app-build.yml` (repo_name=educaverso-app, ref=branch) builda na
+>   Action e força-push 1 commit limpo (histórico nunca incha; NÃO commitar dist).
+>   Link de teste: **https://vidalprof.github.io/educaverso-app/?grupos**
+>
+> **⚠️ LIÇÃO DE ENGENHARIA (mordeu 2× no MESMO dia):** ação por PROXIMIDADE sem trava
+> de revisita = **ciclo infinito parado no lugar** (pega-devolve na pilha; tira-deposita
+> na cesta). **Cura padrão:** o ponto de ação age **1x POR VISITA** — sair do raio
+> rearma (`pilhaLivre` / `v.livre`). Vale para TODA interação por proximidade futura.
+>
+> **Falas ainda SEM áudio** (avisos do auditor, esperado): gerar MP3s por
+> `gerar-audio.yml` (Antonio p/ Byte; Castor = Antonio grave) quando o Marcos aprovar
+> a dinâmica. Próximos passos se aprovar: voz + kit galinheiro (variação da mesma lei)
+> + missões de retorno (Leitner) + 2ª LEI (equilíbrio/apoio — a ponte que aguenta).
+
 ## 🌐 DECISÃO DO MARCOS (2026-07): TRABALHAMOS SÓ ONLINE — esquecer "offline"
 > O Marcos deixou claro (mais de uma vez): **a escola é ONLINE, sempre há internet.**
 > **"Offline" NÃO é requisito.** Eu não devo mais usar "tem que rodar offline / HTML
