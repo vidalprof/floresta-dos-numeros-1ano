@@ -244,6 +244,15 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .gradeMini .fila{white-space:nowrap;line-height:0;opacity:1}
 .gradeMini .gestr{width:11px;max-width:11px;margin:1px;-webkit-filter:drop-shadow(0 0 4px rgba(255,220,120,.8));filter:drop-shadow(0 0 4px rgba(255,220,120,.8))}
 
+/* ---------- PARADA 5 — A Sua Constelação (opções de total) ---------- */
+.p5 .opts{position:absolute;left:0;right:0;bottom:11%;z-index:4;text-align:center}
+.optrow{white-space:nowrap}
+.optbtn{border:0;cursor:pointer;font-family:inherit;font-weight:900;color:#20264a;width:68px;height:58px;font-size:27px;border-radius:16px;margin:0 8px;
+  background:-webkit-linear-gradient(top,#eaf0ff,#c9d3ff);background:linear-gradient(to bottom,#eaf0ff,#c9d3ff);box-shadow:0 4px 0 #97a3d8}
+.optbtn:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 2px 0 #97a3d8}
+.optbtn:disabled{opacity:.5}
+.p5 .p5dica{margin-top:9px;font-size:13px;color:#ffe9a8;font-style:italic;min-height:1.2em;padding:0 12px}
+
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
@@ -841,7 +850,93 @@ function memFim(){
   var tela=document.getElementsByClassName("tela memoria")[0]; if(tela) estouraEstrelas(tela,10);
   fagComemora();
 }
-function telaParada5(){ proxima(6); }
+/* ===== PARADA 5 — A Sua Constelação (autoria + efeito protégé) ===== */
+var P5;
+function telaParada5(){
+  limpa();
+  P5={fil:3,col:3,fase:"build",claim:0,real:0,tent:0,protegeErrou:false,concluida:false,t0:(new Date()).getTime()};
+  var t=el("div","tela parada p5 p2");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(26));
+  t.appendChild(el("div","balao","<b>Agora o mestre é você!</b> Monte a SUA constelação: escolha as fileiras e quantas estrelas em cada."));
+  var g=el("div","grade"); g.id="p5grade"; t.appendChild(g);
+  var ctr=el("div","steppers");
+  ctr.appendChild(p5stepper("Fileiras","fil"));
+  ctr.appendChild(p5stepper("Em cada","col"));
+  t.appendChild(ctr);
+  var opts=el("div","opts"); opts.id="p5opts"; t.appendChild(opts);
+  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Pronto, é essa!"); b.id="p5btn"; b.onclick=function(){ p5pronto(); }; bar.appendChild(b); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  p5pinta();
+}
+function p5stepper(rot,chave){
+  var s=el("div","stepper"); s.appendChild(el("div","strot",rot));
+  var row=el("div","srow");
+  var menos=el("button","sbtn","&#8722;"); menos.onclick=function(){ if(P5.fase!=="build")return; if(P5[chave]>2){P5[chave]--;p5pinta();} };
+  var val=el("div","sval"); val.id="p5sv_"+chave; val.innerHTML=P5[chave];
+  var mais=el("button","sbtn","+"); mais.onclick=function(){ if(P5.fase!=="build")return; if(P5[chave]<5){P5[chave]++;p5pinta();} };
+  row.appendChild(menos); row.appendChild(val); row.appendChild(mais);
+  s.appendChild(row); return s;
+}
+function p5pinta(){
+  var g=document.getElementById("p5grade"); if(!g)return; g.className="grade"; g.innerHTML=""; var i,j;
+  for(i=0;i<P5.fil;i++){ var f=el("div","fila"); for(j=0;j<P5.col;j++){ var im=el("img","gestr"); im.src="img/estrela_grande.png"; f.appendChild(im); } g.appendChild(f); }
+  var a=document.getElementById("p5sv_fil"),b=document.getElementById("p5sv_col"); if(a)a.innerHTML=P5.fil; if(b)b.innerHTML=P5.col;
+}
+function p5pronto(){
+  P5.fase="judge"; P5.real=P5.fil*P5.col;
+  var claim=P5.real;
+  if(Math.random()<0.5){
+    var cand=[P5.real+1,P5.real-1,P5.real+P5.col,P5.real-P5.col];
+    var pick=cand[Math.floor(Math.random()*cand.length)];
+    if(pick<=0||pick===P5.real)pick=P5.real+1;
+    claim=pick; P5.protegeErrou=true;
+  }
+  P5.claim=claim;
+  var st=document.getElementsByClassName("steppers")[0]; if(st)st.style.display="none";
+  var bar=document.getElementsByClassName("p1barra")[0]; if(bar)bar.style.display="none";
+  var bal=document.getElementsByClassName("balao")[0];
+  if(bal)bal.innerHTML="A Fagulha olha e diz: <b>“Acho que "+P5.fil+" fileiras de "+P5.col+" dá "+claim+"…”</b> Confere pra ela: <b>quanto dá de verdade?</b>";
+  fagPose("fagulha_pensa");
+  var reais={}; var lista=[P5.real]; reais[P5.real]=1;
+  var extra=[claim,P5.real+1,P5.real-1,P5.real+P5.col];
+  var i;
+  for(i=0;i<extra.length && lista.length<3;i++){ var v=extra[i]; if(v>0 && !reais[v]){ reais[v]=1; lista.push(v); } }
+  while(lista.length<3){ var v2=P5.real+lista.length; if(!reais[v2]){reais[v2]=1;lista.push(v2);} }
+  for(i=lista.length-1;i>0;i--){ var j2=Math.floor(Math.random()*(i+1)); var tmp=lista[i]; lista[i]=lista[j2]; lista[j2]=tmp; }
+  var oc=document.getElementById("p5opts"); if(oc){ oc.innerHTML=""; var row=el("div","optrow");
+    for(i=0;i<lista.length;i++){ (function(val){ var bt=el("button","optbtn",""+val); bt.onclick=function(){ p5responde(val); }; row.appendChild(bt); })(lista[i]); }
+    oc.appendChild(row);
+    oc.appendChild(el("div","p1dica p5dica","")); }
+}
+function p5responde(val){
+  if(P5.concluida||P5.fase!=="judge")return; P5.tent++;
+  if(val===P5.real){ sucessoP5(); return; }
+  var d=document.getElementsByClassName("p5dica")[0];
+  var oc=document.getElementById("p5opts"); var btns=oc?oc.getElementsByTagName("button"):[];
+  var k; for(k=0;k<btns.length;k++){ btns[k].disabled=true; }
+  var g=document.getElementById("p5grade");
+  if(d)d.innerHTML="Vamos contar as fileiras juntas…";
+  var passoTxt=el("span"); if(d){ d.innerHTML="Contando: "; d.appendChild(passoTxt); }
+  contaFileiras(g,passoTxt,P5.col,P5.fil,function(){
+    if(d)d.innerHTML="São "+P5.fil+" fileiras de "+P5.col+" = <b>"+P5.real+"</b>. Toque no número certo!";
+    var kk; for(kk=0;kk<btns.length;kk++){ btns[kk].disabled=false; }
+    var g2=document.getElementById("p5grade"); if(g2){ var fs=g2.getElementsByClassName("fila"),z; for(z=0;z<fs.length;z++)fs[z].className="fila"; }
+  });
+}
+function sucessoP5(){
+  P5.concluida=true; fagComemora();
+  var tela=document.getElementsByClassName("tela p5")[0]; if(!tela)return;
+  estouraEstrelas(tela,16);
+  var g=document.getElementById("p5grade"); if(g)g.className="grade acesa";
+  var oc=document.getElementById("p5opts"); if(oc)oc.style.display="none";
+  var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
+  var extra=P5.protegeErrou?("Você ainda me corrigiu — eu tinha dito "+P5.claim+"! "):"";
+  revela(tela,P5.fil+" fileiras de "+P5.col,P5.fil+" &#215; "+P5.col+" = "+P5.real,extra+"Você <b>criou e resolveu</b> a sua própria constelação. Você é o mestre das estrelas!");
+  botaoProxima(tela,6,"Última parada");
+  var tempo=Math.round(((new Date()).getTime()-P5.t0)/1000);
+  salvaEvid({parada:"p5",habilidade:"EF03MA07",conceito:"autoria + protégé",criou:[P5.fil,P5.col],real:P5.real,corrigiu:P5.protegeErrou,tentativas:P5.tent,acertou:true,semErro:(P5.tent===1)});
+}
 function telaDecore(){ proxima(7); }
 function telaFinal(){ limpa(); var t=el("div","tela mapa"); t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(60)); t.appendChild(el("div","topo","<b>Você encheu o céu!</b>")); app.appendChild(t); }
 
