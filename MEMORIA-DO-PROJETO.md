@@ -148,6 +148,24 @@
 > a dinâmica. Próximos passos se aprovar: voz + kit galinheiro (variação da mesma lei)
 > + missões de retorno (Leitner) + 2ª LEI (equilíbrio/apoio — a ponte que aguenta).
 
+## ⭐ NORTE OFICIAL (decisão do Marcos, 2026-07-20): A FÁBRICA DE JOGOS 2D
+> **A visão:** o Marcos passa TEMA + ANO → os "profissionais" da fábrica (pedagogo,
+> game designer, roteirista, diretor de arte, engenheiro, QA) entregam um JOGO 2D
+> COMPLETO temático: leis do mundo certas p/ o objetivo, roteiro/história, pack visual,
+> sons/animações, voz — seguindo a pesquisa (leis do mundo, não popup) e com
+> aprendizagem efetiva MEDIDA (evidências→parecer→nota). O jogo 2D testado (vila-tabuada)
+> é o EXEMPLAR nº 1 dessa fábrica.
+> **FASES DO CAMINHO (estamos saindo da 1 p/ a 2):**
+> 1 ✅ FUNDAÇÃO: motor data-driven (5 leis), Portão 0, BKT/ZDP, avaliação, QA, 1 exemplar no ar.
+> 2 ⏳ PROVAR A TROCA: 1 jogo completo NOVO (tema+pack+história+sons) à mão + BIBLIOTECA
+>   (atividade gerada persiste com link próprio — hoje evapora ao fechar o navegador!).
+> 3 AUTOMATIZAR: roteirista-LLM, fábrica de kits (Kenney/IA por workflow), mapa variado,
+>   voz Edge por workflow → tema+ano no formulário = jogo em minutos.
+> 4 PROFUNDIDADE: sequência de missões (aula 55min), missões de retorno Leitner, leis novas.
+> 5 ESCALA: biblioteca da escola, hub, outros professores, validação com turmas reais.
+> **Honestidade registrada:** leis NOVAS (jogabilidade inédita) sempre precisam de
+> engenharia; a fábrica automatiza COMBINAR leis prontas + tema + arte + som + conteúdo.
+
 ## 📋 CAMADA PROVA construída (2026-07-20) — evidências + painel + parecer que vira NOTA
 > Pedido do Marcos: avaliação DESCRITIVA no Firebase, "da atividade ou do que eu quiser",
 > transformável em nota. Pesquisa profunda em `PESQUISA-AJUDA-E-AVALIACAO-2026-07.md`
