@@ -12,6 +12,11 @@ on:
         required: false
         default: "educaverso-app"
         type: string
+      boot:
+        description: "Flag de boot injetada no index (ex.: fabrica -> abre a Fabrica direto)"
+        required: false
+        default: ""
+        type: string
 
 jobs:
   build:
@@ -71,6 +76,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
           OWNER: vidalprof
           NAME: ${{ inputs.repo_name }}
+          BOOT: ${{ inputs.boot }}
         run: |
           set -euo pipefail
           gh repo create "$OWNER/$NAME" --public \
@@ -79,6 +85,11 @@ jobs:
           work="$(mktemp -d)"
           cp -r educaverso-app/dist/. "$work/"
           : > "$work/.nojekyll"
+          # flag de boot (ex.: 'fabrica'): o link do repo abre direto nessa tela
+          if [ -n "$BOOT" ]; then
+            sed -i "s|<head>|<head><script>window.__BOOT='$BOOT'</script>|" "$work/index.html"
+            grep -q "__BOOT" "$work/index.html" || { echo "::error::falha ao injetar o boot"; exit 1; }
+          fi
           cd "$work"
           git init -q
           git checkout -q -b main
