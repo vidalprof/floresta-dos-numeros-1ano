@@ -38,6 +38,9 @@ jobs:
             echo "-- ultimo build --"
             gh api "repos/$OWNER/$DEST/pages/builds/latest" \
               --jq '"status=" + (.status // "?") + " erro=" + ((.error.message) // "nenhum") + " commit=" + ((.commit // "?")[0:7]) + " em=" + (.created_at // "?")'
+            echo "-- ultimo commit na main do destino --"
+            gh api "repos/$OWNER/$DEST/commits/main" \
+              --jq '.sha[0:7] + " " + .commit.author.date + " " + (.commit.message | split("\n")[0])'
             echo "-- runs de Actions no repo destino --"
             gh api "repos/$OWNER/$DEST/actions/runs?per_page=3" \
               --jq '.workflow_runs[] | .name + " | " + .status + "/" + (.conclusion // "?") + " | " + .created_at'
