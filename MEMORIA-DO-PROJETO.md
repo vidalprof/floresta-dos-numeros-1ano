@@ -188,6 +188,32 @@
 > **Honestidade registrada:** leis NOVAS (jogabilidade inédita) sempre precisam de
 > engenharia; a fábrica automatiza COMBINAR leis prontas + tema + arte + som + conteúdo.
 
+## 🎬 AVENTURA DE 5 PARADAS + PESQUISA DE JOGO 2D (2026-07-20 noite) — "não enjoar" + 55min
+> Marcos (senha "lembra?"): cada FASE tem que ser um CENÁRIO DIFERENTE do pack (não a
+> mesma tela), a aula dura ~55 min e há um PROFISSIONAL que joga como criança e mede o
+> tempo. Pesquisei fundo (2 relatórios: game feel/level design + aventura multifase;
+> gravados em PESQUISA-JOGO-2D-E-AVENTURA-55MIN-2026-07.md) e construí:
+> - **CENÁRIOS por fase** (`cenarios.ts`): 5 lugares do mesmo pack Ninja Adventure —
+>   Fazenda → Floresta (pinheiros+vaga-lumes) → Rio (laguinho+pedras) → Pomar
+>   (cerejeiras+pétalas) → Montanha (pedras+folhas). Props catalogados no kit
+>   (pinheiro/carvalho/cerejeira/pedra_g/pedra_p/toco/agua/flor/cogumelo…). O motor só
+>   troca decoração+clima; jogabilidade intacta. É a "múltipla incorporação" de Dienes.
+> - **AMBIENTE VIVO** (`montaAmbiente`): vaga-lumes/pétalas/folhas/neve — partículas
+>   leves em tela (scrollFactor 0), lidas da prop `ambiente` do mapa.
+> - **ARCO data-driven de 5 missões** (Fabrica): 2× multiplicar (12→18) + 3× DIVIDIR
+>   (rio 12÷3, pomar 18÷3, montanha 12÷4). Cada parada = cenário novo + passo REAL de
+>   matemática (não pote repetido). Botão "Próxima missão" + CELEBRAÇÃO de transição
+>   (estrela+fanfarra "Rumo a <lugar>") = a passagem VIRA recompensa (jornada).
+> - **GAME FEEL** (Swink/Vlambeer): squash&stretch+flash no sucesso (`juice()`), câmera
+>   suave deadzone+lerp (Keren), pitch variável no som. Juice premia acerto, nunca pune.
+> - **BFS de ALCANÇABILIDADE** no espalhador de itens (mapaFase): nenhum pote nasce
+>   preso atrás de água/pedra — bug REAL que o auditor de duração pegou no cenário do rio.
+> - **⏱️ AUDITOR DE DURAÇÃO** (`qa-duracao.mjs`): "joga como criança 7-9" e MODELA o
+>   tempo pelo conteúdo real (constantes de ritmo da pesquisa, honestas, à vista).
+>   Resultado: **~49 min, APROVADO (≥45)**. QA `qa-sequencia.mjs` APROVADO ponta a ponta.
+> - Pequeno polimento pendente: ~1px de frincha em alguns recortes de pedra/cerejeira
+>   (bleed do atlas; negligenciável, dá pra apertar depois).
+
 ## 📋 CAMADA PROVA construída (2026-07-20) — evidências + painel + parecer que vira NOTA
 > Pedido do Marcos: avaliação DESCRITIVA no Firebase, "da atividade ou do que eu quiser",
 > transformável em nota. Pesquisa profunda em `PESQUISA-AJUDA-E-AVALIACAO-2026-07.md`
