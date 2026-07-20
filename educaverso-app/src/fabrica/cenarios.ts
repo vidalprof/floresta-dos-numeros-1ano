@@ -39,11 +39,14 @@ const FAZENDA: CenarioDef = {
 // pilha 17,13, das vagas y13, do herói 10,12 e da saída 19,7), bem ESPAÇADAS entre si
 // (props grandes têm ~3 tiles; distância ≥3 evita sobreposição). Props grandes vão nas
 // bordas; miúdos (flor/cogumelo/toco) em pontos abertos do meio.
+// Todos DENTRO da zona segura x[3..16] y[4..12] (a trava do gerador garante, mas já
+// venho posicionado): longe da casa (x3-6/y4-5), do fazendeiro/carroça (x8-12/y5-7),
+// do herói (x9-11/y11-12) e da borda; bem espaçados.
 const FLORESTA: CenarioDef = {
   id: 'floresta', nome: 'A Trilha da Floresta', ambiente: 'vagalumes', estrutura: 'casa_a',
   scatter: [
-    { prop: 'pinheiro', tx: 1, ty: 8 }, { prop: 'pinheiro', tx: 16, ty: 4 }, { prop: 'pinheiro', tx: 15, ty: 11 },
-    { prop: 'toco', tx: 5, ty: 9 }, { prop: 'cogumelo', tx: 13, ty: 9 }, { prop: 'arbusto', tx: 17, ty: 8 }, { prop: 'cogumelo', tx: 7, ty: 11 }
+    { prop: 'pinheiro', tx: 3, ty: 8 }, { prop: 'pinheiro', tx: 16, ty: 5 }, { prop: 'pinheiro', tx: 15, ty: 11 },
+    { prop: 'toco', tx: 8, ty: 9 }, { prop: 'cogumelo', tx: 11, ty: 10 }, { prop: 'arbusto', tx: 13, ty: 4 }
   ]
 }
 
@@ -52,8 +55,8 @@ const FLORESTA: CenarioDef = {
 const POMAR: CenarioDef = {
   id: 'pomar', nome: 'O Pomar das Cerejeiras', ambiente: 'petalas', estrutura: 'casa_a',
   scatter: [
-    { prop: 'cerejeira', tx: 1, ty: 8 }, { prop: 'cerejeira', tx: 16, ty: 4 }, { prop: 'cerejeira', tx: 15, ty: 11 },
-    { prop: 'flor', tx: 6, ty: 9 }, { prop: 'margarida', tx: 13, ty: 9 }, { prop: 'flor', tx: 17, ty: 8 }
+    { prop: 'cerejeira', tx: 3, ty: 8 }, { prop: 'cerejeira', tx: 16, ty: 5 }, { prop: 'cerejeira', tx: 15, ty: 11 },
+    { prop: 'flor', tx: 8, ty: 9 }, { prop: 'margarida', tx: 11, ty: 10 }, { prop: 'flor', tx: 13, ty: 4 }
   ]
 }
 
@@ -62,16 +65,16 @@ const POMAR: CenarioDef = {
 const RIO: CenarioDef = {
   id: 'rio', nome: 'O Mercado da Beira do Rio', ambiente: '', estrutura: 'casa_a',
   scatter: [
-    { prop: 'pedra_g', tx: 1, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 4 }, { prop: 'pedra_g', tx: 15, ty: 11 },
-    { prop: 'arbusto', tx: 13, ty: 9 }, { prop: 'arbusto', tx: 5, ty: 9 }, { prop: 'flor', tx: 17, ty: 8 }, { prop: 'margarida', tx: 7, ty: 11 }
+    { prop: 'pedra_g', tx: 3, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 5 }, { prop: 'pedra_g', tx: 15, ty: 11 },
+    { prop: 'pedra_p', tx: 11, ty: 10 }, { prop: 'arbusto', tx: 8, ty: 9 }, { prop: 'flor', tx: 13, ty: 4 }
   ]
 }
 
 const MONTANHA: CenarioDef = {
   id: 'montanha', nome: 'O Alto da Montanha', ambiente: 'folhas', estrutura: 'casa_a',
   scatter: [
-    { prop: 'pedra_g', tx: 1, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 4 }, { prop: 'pinheiro', tx: 15, ty: 11 },
-    { prop: 'toco', tx: 5, ty: 9 }, { prop: 'pedra_p', tx: 13, ty: 9 }, { prop: 'pinheiro', tx: 17, ty: 7 }
+    { prop: 'pedra_g', tx: 3, ty: 8 }, { prop: 'pedra_p', tx: 16, ty: 5 }, { prop: 'pedra_g', tx: 15, ty: 11 },
+    { prop: 'pinheiro', tx: 8, ty: 10 }, { prop: 'toco', tx: 11, ty: 4 }, { prop: 'arbusto', tx: 13, ty: 8 }
   ]
 }
 

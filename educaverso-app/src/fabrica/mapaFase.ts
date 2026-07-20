@@ -76,9 +76,27 @@ export function montarMapaFase (plano: PlanoMapa): object {
   for (let dy = 0; dy < 2; dy++) for (let dx = -1; dx < 4; dx++) put(colis, casa.x + dx, casa.y + dy, COL)
   const porta = { x: casa.x + 1, y: casa.y + 2 }
 
-  // CENÁRIO desta fase: decide os props espalhados, a estrutura e o clima (ambiente)
+  // CENÁRIO desta fase: decide os props espalhados, a estrutura e o clima (ambiente).
+  // TRAVA AUTOMÁTICA (pedido do Marcos): nenhum prop pode nascer na borda/moldura da
+  // fase (props grandes têm ~3 tiles). Clampa toda posição na ZONA SEGURA — assim
+  // nenhum cenário, nem futuro, deixa árvore/pedra "em cima da virada do jogo".
+  const CLX0 = 3, CLX1 = 16, CLY0 = 4, CLY1 = 12
   const cen = getCenario(plano.cenario)
-  const arvores = cen.scatter.map(s => [s.tx, s.ty])
+  // TRAVA 1 (borda): clampa na zona segura. TRAVA 2 (colado): distância mínima CIENTE DO
+  // TAMANHO — árvore grande (copa ~3 tiles) afasta 2; prop miúdo afasta 1. Assim
+  // árvore↔árvore≥4, árvore↔miúdo≥3, miúdo↔miúdo≥2: nada se encosta, mas os detalhes de
+  // chão cabem perto. Ambas AUTOMÁTICAS (nenhum cenário, nem futuro, erra).
+  const GRANDE = new Set(['pinheiro', 'cerejeira', 'carvalho', 'arvore', 'pinheiro_neve', 'pedra_g'])
+  const raio = (p: string): number => GRANDE.has(p) ? 2 : 1
+  const postos: Array<{ tx: number, ty: number, prop: string }> = []
+  const scatter: Array<{ prop: string, tint?: number, tx: number, ty: number }> = []
+  for (const s of cen.scatter) {
+    const tx = Math.max(CLX0, Math.min(CLX1, s.tx)), ty = Math.max(CLY0, Math.min(CLY1, s.ty))
+    if (postos.every(q => Math.max(Math.abs(q.tx - tx), Math.abs(q.ty - ty)) >= raio(q.prop) + raio(s.prop))) {
+      postos.push({ tx, ty, prop: s.prop }); scatter.push({ prop: s.prop, tint: s.tint, tx, ty })
+    }
+  }
+  const arvores = scatter.map(s => [s.tx, s.ty])
   for (const [x, y] of arvores) put(colis, x, y, COL)   // colisão na base de cada prop
   // colisão da ÁGUA aplicada AQUI (antes de espalhar itens!) — senão um pote nasceria
   // em cima da futura água e ficaria preso (bug que o auditor de duração pegou)
@@ -171,7 +189,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const obj = (frame: string, tex: string, xpx: number, ypx: number, depth?: number, tint?: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }, ...(depth !== undefined ? [{ name: 'depth', type: 'int', value: depth }] : []), ...(tint !== undefined ? [{ name: 'tint', type: 'int', value: tint }] : [])] })
   const decor: object[] = [obj(cen.estrutura, 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
   // props de cenário = sprites LIMPOS (tex 'cen'): sem franja, montam certinho no chão
-  for (const s of cen.scatter) decor.push(obj(s.prop, 'cen', (s.tx + 0.5) * T, (s.ty + 1) * T + 6, undefined, s.tint))
+  for (const s of scatter) decor.push(obj(s.prop, 'cen', (s.tx + 0.5) * T, (s.ty + 1) * T + 6, undefined, s.tint))
   decor.push(obj('carroca', 'cen', (carroca.x + 0.5) * T, (carroca.y + 1) * T))
   // LAGUINHO opcional do cenário: tiles de água rente ao chão (depth 1) + colisão
   // (a criança contorna; o espalhador de itens já desvia de célula com colisão)
