@@ -38,6 +38,9 @@ jobs:
             echo "-- ultimo build --"
             gh api "repos/$OWNER/$DEST/pages/builds/latest" \
               --jq '"status=" + (.status // "?") + " erro=" + ((.error.message) // "nenhum") + " commit=" + ((.commit // "?")[0:7]) + " em=" + (.created_at // "?")'
+            echo "-- runs de Actions no repo destino --"
+            gh api "repos/$OWNER/$DEST/actions/runs?per_page=3" \
+              --jq '.workflow_runs[] | .name + " | " + .status + "/" + (.conclusion // "?") + " | " + .created_at'
             echo "-- site responde? --"
             curl -s -o /dev/null -w "HTTP %{http_code}\n" "https://$OWNER.github.io/$DEST/"
           } > "$out" 2>&1
