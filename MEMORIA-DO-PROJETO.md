@@ -188,6 +188,20 @@
 > **Honestidade registrada:** leis NOVAS (jogabilidade inédita) sempre precisam de
 > engenharia; a fábrica automatiza COMBINAR leis prontas + tema + arte + som + conteúdo.
 
+## 🔧 CORREÇÕES do Marcos (senha "lembra?", 2026-07-20 noite) — voz + sprites
+> Marcos pegou 2 erros meus e mandou usar as FERRAMENTAS certas, não a mão:
+> - **VOZ: eu tinha posto speechSynthesis (PROIBIDO).** Removido. Agora narração = MP3 do
+>   ANTONIO (edge-tts `pt-BR-AntonioNeural`, `gerar-audio.yml modelo=male`). 14 falas fixas
+>   geradas (lote via `tools/falas-adventure.mjs`, id = `vozHash` djb2 base36 = nome do MP3),
+>   copiadas p/ `public/rpg/voz/<hash>.mp3`; `FaseGrid.falar()` toca o MP3 por hash da fala.
+>   Falas dinâmicas seguem em texto por ora. Botão 🔊/🔇 controla.
+> - **SPRITES "halo/3 árvores/sobre a casa":** (a) a "cerejeira" do atlas Ninja era tile de
+>   floresta DENSA (lê como 3 árvores) → troquei pelo arbusto redondo LIMPO **recolorido
+>   verde→rosa** (HSV, em `limpa-props.py`) = cerejeira em flor, 1 árvore, forma da fase 1;
+>   (b) reposicionei TODO scatter em zonas livres (nada sobre casa/carroça/fazendeiro,
+>   espaçamento ≥3); (c) dropei o carvalho (limpeza cortou o tronco). Pinheiros/pedras OK.
+>   Honestidade: árvores realmente sob medida = gerar por IA (`gerar-imagens.yml`) se pedir.
+
 ## 🎬 AVENTURA DE 5 PARADAS + PESQUISA DE JOGO 2D (2026-07-20 noite) — "não enjoar" + 55min
 > Marcos (senha "lembra?"): cada FASE tem que ser um CENÁRIO DIFERENTE do pack (não a
 > mesma tela), a aula dura ~55 min e há um PROFISSIONAL que joga como criança e mede o
