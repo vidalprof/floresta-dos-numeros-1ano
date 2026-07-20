@@ -67,9 +67,10 @@ export function montarMapaFase (plano: PlanoMapa): object {
   }
   moldura(OX0, OY0, OX1 - OX0 + 1, OY1 - OY0 + 1, (x, y) => x === OX1 && y === SAI_Y)
 
-  // casa + porta
+  // casa + porta — a colisão cobre o SPRITE inteiro (64px = 4 tiles + beirais),
+  // não só o miolo 3x2: antes dava pra atravessar as laterais do telhado
   const casa = { x: 3, y: 3 }
-  for (let dy = 0; dy < 2; dy++) for (let dx = 0; dx < 3; dx++) put(colis, casa.x + dx, casa.y + dy, COL)
+  for (let dy = 0; dy < 2; dy++) for (let dx = -1; dx < 4; dx++) put(colis, casa.x + dx, casa.y + dy, COL)
   const porta = { x: casa.x + 1, y: casa.y + 2 }
 
   // árvores (colisão na base)
@@ -140,13 +141,21 @@ export function montarMapaFase (plano: PlanoMapa): object {
     }
   }
 
-  // DECOR (enfeites como objetos — o motor só renderiza o que o mapa manda)
+  // DECOR (enfeites como objetos — o motor só renderiza o que o mapa manda).
+  // "depth" opcional: força a profundidade (tapete rente ao chão, pote sobre a estante).
   let oid = 1
-  const obj = (frame: string, tex: string, xpx: number, ypx: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }] })
+  const obj = (frame: string, tex: string, xpx: number, ypx: number, depth?: number): object => ({ id: oid++, name: frame, type: 'decor', x: xpx, y: ypx, width: 0, height: 0, point: true, visible: true, rotation: 0, properties: [{ name: 'tex', type: 'string', value: tex }, ...(depth !== undefined ? [{ name: 'depth', type: 'int', value: depth }] : [])] })
   const decor: object[] = [obj('casa_a', 'mundo', (casa.x + 1.5) * T, (casa.y + 2) * T)]
   for (const [ax, ay] of arvores) decor.push(obj('arvore', 'mundo', (ax + 0.5) * T, (ay + 1) * T + 6))
+  // CASA MOBILIADA (pedido do Marcos): tapete no meio (passável), estante encostada
+  // na parede com 2 potes em cima, baú no canto — e os móveis SÓLIDOS (colisão),
+  // pra criança não atravessar a mobília
+  decor.push(obj('tapete', 'mundo', (IX0 + 4.5) * T, (IY0 + 5) * T, 2))
   decor.push(obj('estante', 'mundo', (IX0 + 2) * T, (IY0 + 2) * T))
-  decor.push(obj('bau', 'bau', (IX0 + IW - 3) * T, (IY0 + 2) * T))
+  decor.push(obj('mel', 'mel', (IX0 + 1.6) * T, (IY0 + 1.65) * T, (IY0 + 2) * T + 2))
+  decor.push(obj('mel', 'mel', (IX0 + 2.4) * T, (IY0 + 1.65) * T, (IY0 + 2) * T + 2))
+  decor.push(obj('bau', 'bau', (IX0 + IW - 2.5) * T, (IY0 + 2) * T))
+  for (const [fx, fy] of [[IX0 + 1, IY0 + 1], [IX0 + 2, IY0 + 1], [IX0 + IW - 3, IY0 + 1]]) put(colis, fx, fy, COL)
 
   const collideIds = [PAR.TL, PAR.T, PAR.TR, PAR.L, PAR.R, PAR.BL, PAR.B, PAR.BR, PAR.SOLIDO]
   const tilesProp = [...new Set(collideIds)].sort((a, b) => a - b).map(id => ({ id, properties: [{ name: 'ge_collide', type: 'bool', value: true }] }))

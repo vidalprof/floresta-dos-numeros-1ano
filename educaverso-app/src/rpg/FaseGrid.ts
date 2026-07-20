@@ -54,6 +54,7 @@ export class FaseGrid extends Phaser.Scene {
   private limInterior: number[] = [336, 16, 144, 112]
   private hud!: Phaser.GameObjects.Text
   private balao!: HTMLDivElement
+  private btnAjuda?: HTMLButtonElement
   private audioOk = false
 
   private mapaKey = 'mapa_grid'
@@ -137,9 +138,11 @@ export class FaseGrid extends Phaser.Scene {
     void arvores
     const decor = this.map.getObjectLayer('decor')
     for (const o of (decor?.objects ?? [])) {
-      const tex = (o.properties as Array<{ name: string, value: string }> | undefined)?.find(p => p.name === 'tex')?.value ?? 'mundo'
+      const props = o.properties as Array<{ name: string, value: string | number }> | undefined
+      const tex = (props?.find(p => p.name === 'tex')?.value as string) ?? 'mundo'
+      const depth = props?.find(p => p.name === 'depth')?.value as number | undefined
       const frame: string | number = tex === 'mundo' ? (o.name as string) : 0
-      this.add.image(o.x!, o.y!, tex, frame).setOrigin(0.5, 1).setDepth(o.y!)
+      this.add.image(o.x!, o.y!, tex, frame).setOrigin(0.5, 1).setDepth(depth ?? o.y!)
     }
 
     // PEDRAS que fecham a saída (some na entrega)
@@ -529,9 +532,37 @@ export class FaseGrid extends Phaser.Scene {
     this.balao = document.createElement('div')
     this.balao.style.cssText = 'position:fixed;left:50%;top:14%;transform:translateX(-50%);max-width:80%;background:#fff;color:#123a7a;border-radius:16px;padding:12px 16px;font:600 15px system-ui;text-align:center;box-shadow:0 4px 14px #0007;z-index:9998;display:none;'
     document.body.appendChild(this.balao)
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.balao?.remove())
-    this.events.once(Phaser.Scenes.Events.DESTROY, () => this.balao?.remove())
+    // BOTÃO DE AJUDA (pedido do Marcos): a criança revê a missão a QUALQUER momento
+    this.btnAjuda = document.createElement('button')
+    this.btnAjuda.textContent = '❓'
+    this.btnAjuda.setAttribute('aria-label', 'Ajuda: rever a missão')
+    this.btnAjuda.style.cssText = 'position:fixed;right:12px;top:12px;width:48px;height:48px;border:0;border-radius:50%;background:#fff;font-size:24px;line-height:1;box-shadow:0 3px 10px #0006;cursor:pointer;z-index:9998;'
+    this.btnAjuda.onclick = () => this.mostraAjuda()
+    document.body.appendChild(this.btnAjuda)
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => { this.balao?.remove(); this.btnAjuda?.remove() })
+    this.events.once(Phaser.Scenes.Events.DESTROY, () => { this.balao?.remove(); this.btnAjuda?.remove() })
     this.atualizaHud()
+  }
+
+  // AJUDA sob demanda: repete o PROBLEMA e diz COMO agir AGORA (por mecânica e estado)
+  mostraAjuda (): void {
+    const emoji = this.plano?.emoji ?? '🧑‍🌾'
+    if (this.concluida) { this.mostraBalao('🌟', this.plano?.vitoria ?? 'Missão concluída!', 6000); return }
+    if (this.entregou) { this.mostraBalao(emoji, 'Missão cumprida! Agora siga pela saída à DIREITA, onde as pedras sumiram.', 7000); return }
+    const problema = this.plano?.problema ?? `O fazendeiro precisa de ${this.melAlvo} potes de MEL! Você ajuda?`
+    let como = ''
+    if (this.mecanica === 'agrupar') {
+      como = `1) Pare na PILHA de caixas para pegar uma. 2) Pare numa marquinha branca para pousar a caixa. 3) Pegue um pote e pare numa caixa para guardar. Reparta TODOS os potes igualzinho (use 2 caixas ou mais!). 4) No fim, venha falar comigo.`
+    } else if (this.mecanica === 'somar') {
+      como = `Pegue fichas que somem exatamente ${this.alvoSoma}. Você está com ${this.soma}. Se passar, as fichas voltam — tente outra combinação.`
+    } else if (this.mecanica === 'selecionar') {
+      como = `Pegue SÓ o que obedece a regra${this.plano?.regra ? ' (' + this.plano.regra + ')' : ''}. Já pegou ${this.coletadosOk} de ${this.totalOk}.`
+    } else if (this.mecanica === 'ordenar') {
+      como = `Pegue os itens NA ORDEM certa${this.plano?.regra ? ' (' + this.plano.regra + ')' : ''}. Agora vem o ${this.proxOrdem}º.`
+    } else {
+      como = `Ande até cada pote para pegar (já tem ${this.mel} de ${this.melAlvo} — espia dentro da casinha também!). Depois traga pra mim.`
+    }
+    this.mostraBalao(emoji, `${problema}<br><b>Como fazer:</b> ${como}`, 9000)
   }
 
   private atualizaHud (): void {
@@ -561,11 +592,11 @@ export class FaseGrid extends Phaser.Scene {
   }
 
   private balaoTimer?: Phaser.Time.TimerEvent
-  private mostraBalao (emoji: string, txt: string): void {
+  private mostraBalao (emoji: string, txt: string, ms = 4200): void {
     this.balao.innerHTML = `<span style="font-size:26px">${emoji}</span><br>${txt}`
     this.balao.style.display = 'block'
     this.balaoTimer?.remove()                       // cancela o esconder anterior (senão um balão some cedo)
-    this.balaoTimer = this.time.delayedCall(4200, () => { this.balao.style.display = 'none' })
+    this.balaoTimer = this.time.delayedCall(ms, () => { this.balao.style.display = 'none' })
   }
 
   private tom (freq: number, dur: number, tipo: OscillatorType, vol: number): void {
