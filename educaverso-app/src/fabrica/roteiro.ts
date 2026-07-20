@@ -18,8 +18,8 @@ export const Roteiro = z.object({
   sinopse: z.string().min(5),
   personagem: z.object({ nome: z.string().min(2), emoji: z.string().min(1) }),
   kitId: z.string().min(2),                 // tema visual
-  mecanica: z.enum(['contar', 'somar', 'selecionar', 'ordenar']),
-  alvo: z.number().int().min(2).max(20),    // contar: qtde | somar: a soma exata | outras: reserva
+  mecanica: z.enum(['contar', 'somar', 'selecionar', 'ordenar', 'agrupar']),
+  alvo: z.number().int().min(2).max(20),    // contar: qtde | somar: a soma | agrupar: o total | outras: reserva
   item: z.string().min(2),                  // "potes de mel", "cristais"...
   falas: z.object({
     abertura: z.string().min(5),            // narração do mundo (quem, onde)
@@ -50,11 +50,11 @@ const chaveTema = (t: string): string => {
 // não decide alvo nem dinâmica (isso é do pedagogo); só VESTE de mundo/personagem, com o
 // conceito DENTRO da ação e o problema primeiro (Portão 0). `espinha` é opcional só p/ retro-
 // compatibilidade; a Fábrica sempre passa a espinha do pedagogo.
-export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, alvoSoma?: number, mecanica?: 'contar' | 'somar' | 'selecionar' | 'ordenar', regra?: string, necessidadeMundo?: string }): Roteiro {
+export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: number, alvoSoma?: number, agTotal?: number, mecanica?: 'contar' | 'somar' | 'selecionar' | 'ordenar' | 'agrupar', regra?: string, necessidadeMundo?: string }): Roteiro {
   const c = ELENCO[chaveTema(pedido.tema)]
   const mecanica = espinha?.mecanica ?? 'contar'
   const regra = espinha?.regra ?? 'a regra'
-  const alvo = mecanica === 'somar' ? (espinha?.alvoSoma ?? 12) : (espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade])
+  const alvo = mecanica === 'somar' ? (espinha?.alvoSoma ?? 12) : (mecanica === 'agrupar' ? (espinha?.agTotal ?? 12) : (espinha?.alvo ?? { facil: 3, medio: 5, dificil: 7 }[pedido.dificuldade]))
 
   // as falas por mecânica — o pedido SEMPRE termina perguntando (Portão 0)
   const FALAS: Record<string, Roteiro['falas']> = {
@@ -85,12 +85,21 @@ export function escreverRoteiro (pedido: PedidoAtividade, espinha?: { alvo: numb
       juntouTudo: `Sequência perfeita! Cada peça no seu lugar. Traz aqui!`,
       entrega: `Tudo em ordem, problema resolvido! O caminho que estava trancado se abriu. Vai!`,
       vitoria: `Você resolveu o problema de ${c.nome} montando a sequência exata! Uma nova missão te espera…`
+    },
+    // AGRUPAR (criativa): o mundo pede grupos IGUAIS — a criança decide COMO (sem gabarito)
+    agrupar: {
+      abertura: `Você chega ${c.onde}. ${c.nome}, ${c.papel}, olha para ${c.item} espalhados e umas caixas vazias, aflito.`,
+      pedido: `A feira é hoje! Preciso levar ${c.item} arrumados em caixas — e a carroça só viaja se TODAS as caixas tiverem o MESMO tanto. Como você arrumaria pra ficar igualzinho?`,
+      juntouTudo: `Olha só… caixas igualzinhas! Me mostra essa arrumação!`,
+      entrega: `Carga firme, carroça pronta! O caminho que estava fechado se abriu. Vai!`,
+      vitoria: `Você criou uma arrumação de grupos IGUAIS — do seu jeito! Uma nova aventura te espera…`
     }
   }
 
   const TITULO: Record<string, string> = {
     contar: `${c.nome} e ${c.item}`, somar: `${c.nome} e a conta exata`,
-    selecionar: `${c.nome} e a regra dos itens`, ordenar: `${c.nome} e a sequência perdida`
+    selecionar: `${c.nome} e a regra dos itens`, ordenar: `${c.nome} e a sequência perdida`,
+    agrupar: `${c.nome} e as caixas iguais`
   }
   const r: Roteiro = {
     titulo: TITULO[mecanica],

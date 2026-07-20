@@ -27,7 +27,7 @@ export class FaseGrid extends Phaser.Scene {
   concluida = false                         // (QA lê)
   private prop: Record<string, number> = {}
   private melSprites: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image, v?: number, idx?: number, txt?: Phaser.GameObjects.Text }> = []
-  mecanica: 'contar' | 'somar' | 'selecionar' | 'ordenar' = 'contar'   // (QA lê)
+  mecanica: 'contar' | 'somar' | 'selecionar' | 'ordenar' | 'agrupar' = 'contar'   // (QA lê)
   alvoSoma = 0                              // somar: a soma exata pedida (QA lê)
   soma = 0                                  // somar: soma atual (QA lê)
   erros = 0                                 // erros REAIS da criança (estouro/regra/ordem) (QA lê)
@@ -38,6 +38,17 @@ export class FaseGrid extends Phaser.Scene {
   itens: Array<{ rotulo: string, ok: boolean, ordem?: number }> = []   // (QA lê)
   private melValores: number[][] = []
   private melItensPos: number[][] = []
+  // AGRUPAR (lei dos GRUPOS IGUAIS — a criança CRIA a arrumação; sem gabarito)
+  agTotal = 0                               // (QA lê) total de itens a repartir
+  agCaixas = 0                              // (QA lê) máximo de caixas
+  agVagas: Array<{ x: number, y: number, tem: boolean, count: number, img?: Phaser.GameObjects.Image, potes: Phaser.GameObjects.Image[] }> = []   // (QA lê)
+  agSoltos: Array<{ x: number, y: number, sp: Phaser.GameObjects.Image }> = []       // (QA lê .length)
+  agPilha = { x: 0, y: 0 }
+  agPilhaN = 0                              // (QA lê)
+  agMao: 'caixa' | 'pote' | null = null     // (QA lê) o que está na mão
+  private agMaoSp?: Phaser.GameObjects.Image
+  private agPilhaImgs: Phaser.GameObjects.Image[] = []
+  private agTesteCd = 0
   private pedrasSp?: Phaser.GameObjects.Image
   private limExterno: number[] = [0, 0, 320, 256]
   private limInterior: number[] = [336, 16, 144, 112]
@@ -150,6 +161,7 @@ export class FaseGrid extends Phaser.Scene {
     if (melInt.length) this.addMel(melInt[0], melInt[1])
     if (this.mecanica === 'somar') for (const [mx, my, v] of this.melValores) this.addMel(mx, my, v)
     if (this.mecanica === 'selecionar' || this.mecanica === 'ordenar') for (const [mx, my, idx] of this.melItensPos) this.addMelItem(mx, my, idx)
+    if (this.mecanica === 'agrupar') this.armaAgrupar(gp)
 
     // HERÓI + FAZENDEIRO (personagens do grid-engine)
     const sombra = this.add.image(0, 0, 'sombra').setAlpha(0.5).setDepth(1)
@@ -232,10 +244,149 @@ export class FaseGrid extends Phaser.Scene {
     if (this.mecanica === 'somar') return this.soma === this.alvoSoma
     if (this.mecanica === 'selecionar') return this.totalOk > 0 && this.coletadosOk === this.totalOk
     if (this.mecanica === 'ordenar') return this.itens.length > 0 && this.proxOrdem > this.itens.length
+    if (this.mecanica === 'agrupar') {
+      // A LEI (sem gabarito): tudo repartido, ≥2 caixas usadas, TODAS com o mesmo tanto.
+      const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
+      return this.agSoltos.length === 0 && !this.agMao && usadas.length >= 2 && usadas.every(v => v.count === usadas[0].count)
+    }
     return this.mel >= this.melAlvo
   }
 
+  // ---------- AGRUPAR: a criança CRIA a arrumação (grupos iguais) ----------
+  private armaAgrupar (gp: (n: string) => any): void {
+    this.agTotal = this.P('agTotal', 12)
+    this.agCaixas = this.P('agCaixas', 6)
+    const vagas: number[][] = gp('agVagas') || []
+    const pilha: number[] = gp('agPilha') || [17, 13]
+    this.agPilha = { x: pilha[0], y: pilha[1] }
+    this.agPilhaN = this.agCaixas
+    // marcas das vagas (forma por código = EFEITO, permitido) + pilha de caixas
+    const marcas = this.add.graphics().setDepth(2)
+    marcas.lineStyle(1, 0xffffff, 0.35)
+    for (const [vx, vy] of vagas) {
+      marcas.strokeRoundedRect(vx * T + 2, vy * T + 2, T - 4, T - 4, 3)
+      this.agVagas.push({ x: vx, y: vy, tem: false, count: 0, potes: [] })
+    }
+    this.desenhaPilha()
+    for (const [ix, iy] of (gp('agItens') || []) as number[][]) {
+      const sp = this.add.image(ix * T + T / 2, iy * T + T / 2, 'mel').setDepth(iy * T + 8)
+      this.tweens.add({ targets: sp, y: sp.y - 3, duration: 700 + Math.random() * 150, yoyo: true, repeat: -1, ease: 'Sine.inOut' })
+      this.agSoltos.push({ x: ix, y: iy, sp })
+    }
+  }
+
+  private desenhaPilha (): void {
+    for (const s of this.agPilhaImgs) s.destroy()
+    this.agPilhaImgs = []
+    for (let i = 0; i < Math.min(3, this.agPilhaN); i++) {
+      this.agPilhaImgs.push(this.add.image(this.agPilha.x * T + T / 2, this.agPilha.y * T + T / 2 - i * 5, 'bau', 0).setDisplaySize(16, 13).setDepth(this.agPilha.y * T + 8 + i))
+    }
+  }
+
+  private pegaNaMao (tipo: 'caixa' | 'pote'): void {
+    this.agMao = tipo
+    this.agMaoSp?.destroy()
+    this.agMaoSp = tipo === 'pote'
+      ? this.add.image(this.heroi.x, this.heroi.y - 12, 'mel').setDisplaySize(10, 10)
+      : this.add.image(this.heroi.x, this.heroi.y - 12, 'bau', 0).setDisplaySize(12, 10)
+  }
+
+  private soltaMao (): void { this.agMao = null; this.agMaoSp?.destroy(); this.agMaoSp = undefined }
+
+  // interações do agrupar no tile em que a criança ENTROU
+  private agTile (tx: number, ty: number): void {
+    // pote solto: pega ao passar por cima (mãos vazias) — como o mel de sempre
+    if (!this.agMao) {
+      const i = this.agSoltos.findIndex(s => s.x === tx && s.y === ty)
+      if (i >= 0) {
+        const s = this.agSoltos.splice(i, 1)[0]
+        s.sp.destroy()
+        this.pegaNaMao('pote'); this.tom(620, 0.1, 'square', 0.14); this.atualizaHud()
+        return
+      }
+    }
+    // pilha e vaga: só agem quando a criança PARA no tile (decisão, não atropelo —
+    // andar POR CIMA de uma caixa a caminho de outra não deposita sem querer)
+    const naPilha = tx === this.agPilha.x && ty === this.agPilha.y
+    const vaga = this.agVagas.find(v => v.x === tx && v.y === ty)
+    if (!naPilha && !vaga) return
+    this.time.delayedCall(40, () => {
+      if (this.concluida || this.gridEngine.isMoving('heroi')) return
+      const pos = this.gridEngine.getPosition('heroi')
+      if (pos.x !== tx || pos.y !== ty) return
+      if (naPilha) this.agPilhaAcao()
+      else if (vaga) this.agVagaAcao(vaga)
+    })
+  }
+
+  private agPilhaAcao (): void {
+    if (!this.agMao && this.agPilhaN > 0) { this.agPilhaN--; this.desenhaPilha(); this.pegaNaMao('caixa'); this.tom(500, 0.1, 'square', 0.14) } else if (this.agMao === 'caixa') { this.soltaMao(); this.agPilhaN++; this.desenhaPilha(); this.tom(380, 0.1, 'square', 0.12) }
+    this.atualizaHud()
+  }
+
+  private agVagaAcao (v: FaseGrid['agVagas'][number]): void {
+    if (this.agMao === 'caixa' && !v.tem) {
+      // pousa a caixa na vaga
+      this.soltaMao()
+      v.tem = true
+      v.img = this.add.image(v.x * T + T / 2, v.y * T + T / 2, 'bau', 0).setDisplaySize(16, 13).setDepth(v.y * T + 6)
+      this.tom(520, 0.1, 'square', 0.14)
+    } else if (this.agMao === 'pote' && v.tem) {
+      // deposita 1 pote NESTE grupo (a contagem DO GRUPO sobe — ela vê o grupo crescer)
+      this.soltaMao()
+      v.count++
+      const p = this.add.image(v.x * T + T / 2 + ((v.count % 3) - 1) * 4, v.y * T - 2 - Math.floor((v.count - 1) / 3) * 4, 'mel').setDisplaySize(8, 8).setDepth(v.y * T + 7 + v.count)
+      v.potes.push(p)
+      this.tom(480 + v.count * 60, 0.11, 'square', 0.15)
+    } else if (!this.agMao && v.tem && v.count > 0) {
+      // tira 1 de volta (reequilibrar SEM punição)
+      const p = v.potes.pop()!; p.destroy(); v.count--
+      this.pegaNaMao('pote'); this.tom(430, 0.1, 'square', 0.12)
+    } else if (!this.agMao && v.tem && v.count === 0) {
+      // caixa vazia: pega a caixa de volta
+      v.tem = false; v.img?.destroy(); v.img = undefined
+      this.pegaNaMao('caixa')
+    }
+    this.atualizaHud()
+  }
+
+  // o TESTE do fazendeiro quando a arrumação ainda NÃO cumpre a lei (consequência + pergunta)
+  private agTesta (): void {
+    const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
+    const mexeu = this.agVagas.some(v => v.tem) || this.agMao !== null || this.agSoltos.length < this.agTotal
+    if (!mexeu) return
+    if (this.agSoltos.length > 0 || this.agMao) {
+      this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', 'Ainda tem potes soltos pelo campo! Nenhum pode ficar pra trás.')
+      return
+    }
+    if (usadas.length < 2) {
+      if (usadas[0]) this.tombaCaixa(usadas[0], 0.6)
+      this.erroReal('Tudo numa caixa só? Ficou pesada demais — nem consigo levantar! Será que dá pra repartir em mais caixas?')
+      return
+    }
+    // desigual: a(s) caixa(s) DIFERENTE(s) tombam — a consequência mostra ONDE
+    const freq: Record<number, number> = {}
+    for (const v of usadas) freq[v.count] = (freq[v.count] || 0) + 1
+    let moda = usadas[0].count, best = 0
+    for (const k of Object.keys(freq)) if (freq[+k] > best) { best = freq[+k]; moda = +k }
+    for (const v of usadas) if (v.count !== moda) this.tombaCaixa(v, 1)
+    this.erroReal('Opa! Na hora de carregar, uma caixa tombou… Por que será que ELA tombou e as outras não?')
+  }
+
+  private tombaCaixa (v: FaseGrid['agVagas'][number], forca: number): void {
+    const alvos = [v.img, ...v.potes].filter(Boolean)
+    this.tweens.add({ targets: alvos, angle: { from: -5 * forca, to: 16 * forca }, duration: 130, yoyo: true, repeat: 3, ease: 'Sine.inOut' })
+  }
+
   private aoEntrarTile (tx: number, ty: number): void {
+    // AGRUPAR: pegar/pousar/repartir por tile (a lei julga no fazendeiro)
+    if (this.mecanica === 'agrupar' && !this.concluida) {
+      this.agTile(tx, ty)
+      if (!this.entregou && this.local === 'fase' && !this.metaOk()) {
+        const d = Math.abs(tx - this.P('fazX')) + Math.abs(ty - this.P('fazY'))
+        if (d <= 1 && this.time.now > this.agTesteCd) { this.agTesteCd = this.time.now + 3000; this.agTesta() }
+      }
+    }
     // pega mel/ficha/item
     const i = this.melSprites.findIndex(m => m.x === tx && m.y === ty)
     if (i >= 0) {
@@ -320,7 +471,13 @@ export class FaseGrid extends Phaser.Scene {
     this.colisao.removeTileAt(this.P('pedrasX'), this.P('pedrasY'))
     if (this.pedrasSp) { this.tweens.add({ targets: this.pedrasSp, scale: 0, alpha: 0, duration: 500, onComplete: () => this.pedrasSp?.destroy() }); this.cameras.main.shake(220, 0.006) }
     this.tom(160, 0.3, 'sawtooth', 0.16)
-    this.mostraBalao('🎉', this.plano?.entrega ?? 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!')
+    let msg = this.plano?.entrega ?? 'Obrigado! A festa está salva. O caminho à direita se abriu — siga!'
+    if (this.mecanica === 'agrupar') {
+      // o CONCEITO por ÚLTIMO, nascido da arrumação DELA (n grupos de k -> n×k)
+      const u = this.agVagas.filter(v => v.tem && v.count > 0)
+      if (u.length) msg = `Você fez ${u.length} grupos de ${u[0].count}… isso tem nome: ${u.length}×${u[0].count}=${this.agTotal}! ` + msg
+    }
+    this.mostraBalao('🎉', msg)
     this.atualizaHud()
   }
 
@@ -393,6 +550,12 @@ export class FaseGrid extends Phaser.Scene {
       this.hud.setText(`Na ordem: ${this.proxOrdem - 1} de ${this.itens.length}` + (this.metaOk() ? '  — leve ao fazendeiro!' : ''))
       return
     }
+    if (this.mecanica === 'agrupar') {
+      const u = this.agVagas.filter(v => v.tem)
+      const contas = u.map(v => v.count).join(' | ')
+      this.hud.setText((u.length ? `Caixas: ${contas}` : 'Pegue caixas na pilha e reparta os potes') + (this.metaOk() ? '  — mostre ao fazendeiro!' : ''))
+      return
+    }
     const falta = Math.max(0, this.melAlvo - this.mel)
     this.hud.setText(`Mel: ${this.mel}/${this.melAlvo}` + (falta ? `  (faltam ${falta})` : '  — leve ao fazendeiro!'))
   }
@@ -416,6 +579,8 @@ export class FaseGrid extends Phaser.Scene {
   }
 
   update (): void {
+    // o que está na MÃO acompanha a criança (pote/caixa sobre a cabeça)
+    if (this.agMaoSp) this.agMaoSp.setPosition(this.heroi.x, this.heroi.y - 12).setDepth(this.heroi.depth + 1)
     if (this.trocando || this.concluida || this.gridEngine.isMoving('heroi')) return
     const k = this.input.keyboard?.createCursorKeys(); const w = this.wasd
     if (k?.left.isDown || w?.A.isDown) this.gridEngine.move('heroi', 'left' as any)

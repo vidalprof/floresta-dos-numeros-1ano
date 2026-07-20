@@ -22,7 +22,9 @@ import { DIFICULDADES } from './tipos'
 import { iaSelecionar, iaOrdenar } from './ia-conteudo'
 
 export const DINAMICAS = ['resolver', 'criar', 'investigar', 'coletar', 'narrar', 'simular'] as const
-export const MECANICAS = ['contar', 'somar', 'selecionar', 'ordenar'] as const
+// agrupar = a 1ª mecânica CRIATIVA (lei dos GRUPOS IGUAIS): a criança CRIA a arrumação
+// (decide QUANTAS caixas usa e como reparte) — sem gabarito, várias arrumações vencem.
+export const MECANICAS = ['contar', 'somar', 'selecionar', 'ordenar', 'agrupar'] as const
 export type Mecanica = typeof MECANICAS[number]
 
 // um sub-passo da progressão, marcado no eixo CPA (concreto→pictórico→abstrato)
@@ -51,6 +53,8 @@ export const Espinha = z.object({
   alvoSoma: z.number().int().min(6).max(20).optional(),   // somar: a soma exata
   regra: z.string().optional(),                 // selecionar/ordenar: a regra do conteúdo (texto)
   itens: z.array(Item).min(2).optional(),       // selecionar/ordenar: os itens rotulados
+  agTotal: z.number().int().min(4).max(24).optional(),   // agrupar: total de itens a repartir
+  agCaixas: z.number().int().min(2).max(8).optional(),   // agrupar: máximo de caixas disponíveis
   progressao: z.array(Passo).min(1),
   necessidadeMundo: z.string().min(5),
   medir: z.string().min(5)
@@ -68,6 +72,8 @@ const ALVO_SOMA: Record<typeof DIFICULDADES[number], number> = { facil: 8, medio
 function escolherMecanica (pedido: PedidoAtividade): Mecanica {
   const s = pedido.objetivo.toLowerCase()
   const anoNum = parseInt(pedido.ano) || 0                       // "Pré" -> 0, "6º ano" -> 6
+  // tabuada/multiplicação = GRUPOS IGUAIS (a ideia-mãe) -> a mecânica CRIATIVA agrupar
+  if (/tabuada|multiplica|vezes\b|grupos? igua|dobro|triplo/.test(s)) return 'agrupar'
   if (/orden|sequ[eê]n|crescente|decrescente|linha do tempo|etapa/.test(s)) return 'ordenar'
   if (/m[úu]ltipl|fra[çc]|equivalent|substantiv|adjetiv|primo|par(es)?\b|classific|identifi|selecion|separ/.test(s)) return 'selecionar'
   if (/som(a|ar)|adi[çc]|opera[çc]|c[aá]lcul/.test(s)) return 'somar'
@@ -124,6 +130,7 @@ function intercala (certos: string[], errados: string[]): Item[] {
 // ---------------------------------------------------------------------------
 export function planejarPedagogia (pedido: PedidoAtividade): Espinha {
   const mecanica = escolherMecanica(pedido)
+  if (mecanica === 'agrupar') return planejarAgrupar(pedido)
   if (mecanica === 'somar') return planejarSomar(pedido)
   if (mecanica === 'selecionar') return planejarSelecionar(pedido)
   if (mecanica === 'ordenar') return planejarOrdenar(pedido)
@@ -152,6 +159,29 @@ export async function planejarPedagogiaIA (pedido: PedidoAtividade): Promise<{ e
     return { espinha: planejarOrdenar(pedido, banco), viaIA: false }
   }
   return { espinha: planejarPedagogia(pedido), viaIA: false }
+}
+
+// AGRUPAR — a mecânica CRIATIVA (tabuada = GRUPOS IGUAIS). Sem gabarito: a LEI do mundo
+// julga QUALQUER arrumação (todas as caixas com o mesmo tanto). 2×6, 3×4, 4×3, 6×2… vencem.
+const ALVO_AGRUPAR: Record<typeof DIFICULDADES[number], { total: number, caixas: number }> = {
+  facil: { total: 8, caixas: 4 }, medio: { total: 12, caixas: 6 }, dificil: { total: 18, caixas: 6 }
+}
+export const TIERS_AGRUPAR = [8, 12, 18] as const
+function planejarAgrupar (pedido: PedidoAtividade): Espinha {
+  const a = ALVO_AGRUPAR[pedido.dificuldade]
+  return Espinha.parse({
+    ano: pedido.ano, disciplina: pedido.disciplina, objetivo: pedido.objetivo,
+    dinamica: 'criar', mecanica: 'agrupar', kc: 'grupos-iguais',
+    alvo: ALVO[pedido.dificuldade], agTotal: a.total, agCaixas: a.caixas,
+    regra: 'todas as caixas com o MESMO tanto',
+    progressao: [
+      { kc: 'repartir concreto', cpa: 'concreto', descricao: `distribuir ${a.total} itens em caixas, um a um, com as mãos` },
+      { kc: 'grupos iguais', cpa: 'pictorico', descricao: 'VER que grupos iguais são justos — e que a caixa diferente tomba' },
+      { kc: 'nomear a multiplicação', cpa: 'abstrato', descricao: 'só no FIM: "n grupos de k" tem nome — n×k (a arrumação DELA)' }
+    ],
+    necessidadeMundo: `a carga só viaja se TODAS as caixas tiverem o mesmo tanto — desigual, a caixa tomba; a criança CRIA a arrumação (não há resposta única)`,
+    medir: 'os testes reais (desigual = observação negativa; igual = positiva) + vencer com OUTRA arrumação depois (transferência: qualquer divisor serve)'
+  })
 }
 
 function planejarContar (pedido: PedidoAtividade): Espinha {

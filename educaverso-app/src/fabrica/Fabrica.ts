@@ -58,12 +58,12 @@ export function montarFabrica (game: Phaser.Game): void {
     //     com prazo e fallback — nunca trava). 1.5) ADAPTA AO RITMO (DDA/ZDP) ANTES da
     //     história, pra fala e mapa baterem. 2º) o ROTEIRISTA veste em cima.
     btn.disabled = true; const btnTxt = btn.textContent; btn.textContent = '⏳ Gerando a aventura…'
-    let roteiro, espinha, alvo: number, alvoSoma: number | undefined, viaIA = false
+    let roteiro, espinha, alvo: number, alvoSoma: number | undefined, agTotal: number | undefined, viaIA = false
     try {
       const plan = await planejarPedagogiaIA(parsed.data)
       espinha = plan.espinha; viaIA = plan.viaIA
       const kc = espinha.kc                             // o domínio é POR CONTEÚDO
-      alvo = espinha.alvo; alvoSoma = espinha.alvoSoma
+      alvo = espinha.alvo; alvoSoma = espinha.alvoSoma; agTotal = espinha.agTotal
       const pk = carrega('local')[kc]?.pKnown
       if (pk !== undefined) {
         if (espinha.mecanica === 'somar') {
@@ -73,21 +73,28 @@ export function montarFabrica (game: Phaser.Game): void {
           if (pk >= 0.8) i = Math.min(tiers.length - 1, i + 1)
           else if (pk < 0.4) i = Math.max(0, i - 1)
           alvoSoma = tiers[i]
+        } else if (espinha.mecanica === 'agrupar') {
+          // agrupar: sobe/desce o TOTAL (8 -> 12 -> 18) conforme o domínio
+          const tiers = [8, 12, 18]
+          let i = Math.max(0, tiers.indexOf(agTotal ?? 12))
+          if (pk >= 0.8) i = Math.min(tiers.length - 1, i + 1)
+          else if (pk < 0.4) i = Math.max(0, i - 1)
+          agTotal = tiers[i]
         } else if (espinha.mecanica === 'contar') {
           if (pk >= 0.8) alvo = Math.min(9, alvo + 1); else if (pk < 0.4) alvo = Math.max(2, alvo - 1)
         }
         // selecionar/ordenar: o próprio conteúdo define o desafio (a IA gera itens mais
         // difíceis conforme o domínio — próximo passo do gerador de conteúdo)
       }
-      roteiro = escreverRoteiro(parsed.data, { alvo, alvoSoma, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
+      roteiro = escreverRoteiro(parsed.data, { alvo, alvoSoma, agTotal, mecanica: espinha.mecanica, regra: espinha.regra, necessidadeMundo: espinha.necessidadeMundo })
     } catch (e) { erro.textContent = '⚠️ ' + String((e as Error).message); return } finally { btn.disabled = false; btn.textContent = btnTxt }
     ;(window as any).__fabricaEspinha = espinha
     ;(window as any).__fabricaViaIA = viaIA
-    ;(window as any).__fabricaAlvo = espinha.mecanica === 'somar' ? alvoSoma : alvo   // QA lê
+    ;(window as any).__fabricaAlvo = espinha.mecanica === 'somar' ? alvoSoma : (espinha.mecanica === 'agrupar' ? agTotal : alvo)   // QA lê
 
     // o kit visual: o que o professor escolheu (senão o sugerido pelo roteiro)
     const kitId = (document.getElementById('f_kit') as HTMLSelectElement)?.value || roteiro.kitId || KIT_PADRAO
-    const mapa = montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens })
+    const mapa = montarMapaFase({ melAlvo: alvo, kitId, mecanica: espinha.mecanica, alvoSoma, kc: espinha.kc, itens: espinha.itens, agTotal, agCaixas: espinha.agCaixas })
     const key = 'mapa_fabrica'
     if (game.cache.tilemap.has(key)) game.cache.tilemap.remove(key)
     game.cache.tilemap.add(key, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: mapa } as any)

@@ -11,10 +11,12 @@ import { getKit } from './kits'
 export interface PlanoMapa {
   melAlvo: number          // contar: quantos itens juntar (inclui 1 dentro da casa)
   kitId?: string           // tema visual (kit); default = Vilarejo
-  mecanica?: 'contar' | 'somar' | 'selecionar' | 'ordenar'
+  mecanica?: 'contar' | 'somar' | 'selecionar' | 'ordenar' | 'agrupar'
   alvoSoma?: number        // somar: a soma exata (8 | 12 | 18)
   kc?: string              // o componente de conhecimento (domínio POR conteúdo)
   itens?: Array<{ rotulo: string, ok: boolean, ordem?: number }>   // selecionar/ordenar
+  agTotal?: number         // agrupar: total de itens a repartir (8 | 12 | 18)
+  agCaixas?: number        // agrupar: máximo de caixas disponíveis (vagas)
 }
 
 // somar: fichas por tier — 3 valores que FECHAM a soma + 2 distratores (que estouram).
@@ -93,6 +95,7 @@ export function montarMapaFase (plano: PlanoMapa): object {
   const mecanica = plano.mecanica ?? 'contar'
   const somar = mecanica === 'somar'
   const comItens = mecanica === 'selecionar' || mecanica === 'ordenar'
+  const agrupar = mecanica === 'agrupar'
   const alvoSoma = somar ? (FICHAS_SOMA[plano.alvoSoma ?? 12] ? (plano.alvoSoma ?? 12) : 12) : 0
   const livres = candidatos.filter(c => !ocupado(c[0], c[1]))
   const melExternos: number[][] = []
@@ -107,10 +110,35 @@ export function montarMapaFase (plano: PlanoMapa): object {
     // um item rotulado do CONTEÚDO em cada posição livre (a ordem dos itens já vem embaralhada)
     const itens = plano.itens ?? []
     for (let i = 0; i < itens.length && i < livres.length; i++) melItens.push([livres[i][0], livres[i][1], i])
-  } else {
+  } else if (!agrupar) {
     for (const c of livres) { if (melExternos.length >= melAlvo - 1) break; melExternos.push(c) }
   }
-  const melInterno = (somar || comItens) ? [] : [saiSalaX, IY0 + 2]
+  const melInterno = (somar || comItens || agrupar) ? [] : [saiSalaX, IY0 + 2]
+
+  // AGRUPAR: N itens espalhados + fileira de VAGAS de caixa + PILHA de caixas.
+  // Determinístico (o QA reproduz). As vagas ficam na faixa de baixo, espaçadas de 2
+  // (andar entre elas sem "entrar" numa vaga sem querer); a pilha ao lado.
+  const agTotal = agrupar ? (plano.agTotal ?? 12) : 0
+  const agCaixas = agrupar ? Math.max(2, Math.min(6, plano.agCaixas ?? 6)) : 0
+  const agItens: number[][] = []
+  const agVagas: number[][] = []
+  const agPilha = [17, 13]
+  if (agrupar) {
+    for (let i = 0; i < agCaixas; i++) agVagas.push([3 + i * 2, 13])
+    const evitar = (x: number, y: number): boolean =>
+      ocupado(x, y) || (Math.abs(y - 13) < 2 && x <= 4 + agCaixas * 2) ||           // fileira de vagas
+      (x === agPilha[0] && y === agPilha[1]) || (x === 10 && y === 12) ||            // pilha + spawn do herói
+      (Math.abs(x - fazendeiro.x) + Math.abs(y - fazendeiro.y) <= 2)                 // longe do fazendeiro (o TESTE é lá)
+    // varredura determinística por linhas (espalha pelo campo, longe das vagas)
+    fora: for (let y = 2; y <= 11; y++) {
+      for (let x = 2; x <= 18; x += 2) {
+        const xx = (y % 2 === 0) ? x : x + 1                                        // ziguezague
+        if (xx > 18 || evitar(xx, y)) continue
+        agItens.push([xx, y])
+        if (agItens.length >= agTotal) break fora
+      }
+    }
+  }
 
   // DECOR (enfeites como objetos — o motor só renderiza o que o mapa manda)
   let oid = 1
@@ -145,6 +173,8 @@ export function montarMapaFase (plano: PlanoMapa): object {
       Ps('melExternos', melExternos), Ps('melInterno', melInterno),
       Ps('mecanica', mecanica), Pi('alvoSoma', alvoSoma), Ps('melValores', melValores),
       Ps('kc', plano.kc ?? mecanica), Ps('itens', plano.itens ?? []), Ps('melItens', melItens),
+      Pi('agTotal', agTotal), Pi('agCaixas', agCaixas),
+      Ps('agItens', agItens), Ps('agVagas', agVagas), Ps('agPilha', agPilha),
       Ps('arvores', arvores), Ps('interior', { x0: IX0, y0: IY0, w: IW, h: IH })
     ]
   }
