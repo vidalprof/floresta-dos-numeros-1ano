@@ -90,39 +90,10 @@ jobs:
             sed -i "s|<head>|<head><script>window.__BOOT='$BOOT'</script>|" "$work/index.html"
             grep -q "__BOOT" "$work/index.html" || { echo "::error::falha ao injetar o boot"; exit 1; }
           fi
-          # AUTO-DEPLOY por Actions no repo destino (build_type=workflow) — a fila
-          # LEGADA do Pages engasga/trava (build "building" preso, 2026-07-20); o
-          # deploy por Actions e o mesmo mecanismo do pages.yml daqui, confiavel.
-          mkdir -p "$work/.github/workflows"
-          cat > "$work/.github/workflows/pages.yml" <<'YAML'
-          name: Deploy Pages
-          on:
-            push:
-              branches: [main]
-            workflow_dispatch:
-          permissions:
-            contents: read
-            pages: write
-            id-token: write
-          concurrency:
-            group: pages
-            cancel-in-progress: true
-          jobs:
-            deploy:
-              runs-on: ubuntu-latest
-              environment:
-                name: github-pages
-              steps:
-                - uses: actions/checkout@v4
-                - uses: actions/configure-pages@v4
-                  with:
-                    enablement: true
-                - uses: actions/upload-pages-artifact@v3
-                  with:
-                    path: .
-                - uses: actions/deploy-pages@v4
-          YAML
-          sed -i 's/^          //' "$work/.github/workflows/pages.yml"
+          # ⚠️ LIÇÃO PAGA (2026-07-20): NUNCA incluir arquivo .github/workflows/ no
+          # publish — o PAGES_TOKEN não tem o escopo "workflow" e o GitHub REJEITA
+          # o push inteiro ("refusing to allow a PAT to create workflow"). O deploy
+          # fica no Pages LEGADO (source main), que funciona.
           cd "$work"
           git init -q
           git checkout -q -b main
@@ -131,9 +102,11 @@ jobs:
               commit -qm "build do app (Plano A)"
           git push -q --force \
             "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$NAME.git" main
-          gh api -X POST "repos/$OWNER/$NAME/pages" -f "build_type=workflow" \
-            || gh api -X PUT "repos/$OWNER/$NAME/pages" -f "build_type=workflow" \
+          gh api -X POST "repos/$OWNER/$NAME/pages" -f "source[branch]=main" -f "source[path]=/" \
+            || gh api -X PUT "repos/$OWNER/$NAME/pages" -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" \
             || echo "Pages talvez ja estivesse ligado."
+          # forca um build novo (nao esperar o evento de push, que ja atrasou em incidente)
+          gh api -X POST "repos/$OWNER/$NAME/pages/builds" || true
           URL="https://$OWNER.github.io/$NAME/"
           {
             echo "## App (Plano A) publicado"
