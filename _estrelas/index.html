@@ -133,6 +133,40 @@ h1.titulo{font-size:22px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @-webkit-keyframes respiraDica{0%,100%{opacity:.55}50%{opacity:1}}
 @keyframes respiraDica{0%,100%{opacity:.55}50%{opacity:1}}
 
+/* ---------- PARADA (criar/resolver: grupos iguais) ---------- */
+.parada .fagfala{position:absolute;bottom:0;right:2px;width:22vh;max-width:120px;z-index:3}
+.parada .fagfala .fag{position:relative;width:100%;max-width:none}
+.balao{position:absolute;top:10px;left:10px;right:10px;max-width:560px;margin:0 auto;
+  background:rgba(20,24,60,.93);border:2px solid #ffd75e;border-radius:16px;padding:11px 13px;
+  font-size:15px;line-height:1.35;color:#fff;z-index:4;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.caixas{position:absolute;left:0;right:0;top:32%;text-align:center;z-index:2;padding:0 6px}
+.caixa{display:inline-block;vertical-align:top;width:28%;max-width:150px;margin:0 1.5%;min-height:118px;
+  border:3px dashed #ffd75e;border-radius:16px;background:rgba(255,255,255,.07);padding:8px 5px 28px;position:relative;cursor:pointer}
+.caixa:active{-webkit-transform:scale(.97);transform:scale(.97)}
+.caixa .estrs{min-height:74px;line-height:1}
+.caixa .estr{width:25px;height:auto;margin:2px;cursor:pointer;
+  -webkit-animation:estrPop .32s ease;animation:estrPop .32s ease}
+@-webkit-keyframes estrPop{0%{-webkit-transform:scale(.3)}70%{-webkit-transform:scale(1.18)}100%{-webkit-transform:scale(1)}}
+@keyframes estrPop{0%{transform:scale(.3)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
+.caixa .cnt{position:absolute;bottom:5px;left:0;right:0;font-weight:800;color:#ffe08a;font-size:17px}
+.p1barra{position:absolute;left:0;right:0;bottom:3%;text-align:center;z-index:4}
+.p1dica{font-size:13px;color:#ffe9a8;font-style:italic;margin-bottom:8px;min-height:1.2em}
+.btn2{border:0;cursor:pointer;font-family:inherit;font-weight:700;color:#20264a;background:#e7ebff;
+  padding:9px 18px;font-size:15px;border-radius:20px;box-shadow:0 3px 0 #9aa3d6}
+.btn2:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #9aa3d6}
+.revela{position:absolute;left:0;right:0;top:26%;text-align:center;z-index:6;padding:0 14px}
+.revela .r1{font-size:24px;color:#fff;font-weight:800;margin-bottom:6px;
+  -webkit-animation:revIn .5s ease both;animation:revIn .5s ease both}
+.revela .r2{font-size:36px;color:#ffe08a;font-weight:900;text-shadow:0 0 22px rgba(255,200,80,.8);margin-bottom:12px;
+  -webkit-animation:revIn .5s .25s ease both;animation:revIn .5s .25s ease both}
+.revela .r3{font-size:16px;color:#e9ecff;-webkit-animation:revIn .5s .5s ease both;animation:revIn .5s .5s ease both}
+@-webkit-keyframes revIn{0%{opacity:0;-webkit-transform:scale(.6)}100%{opacity:1;-webkit-transform:scale(1)}}
+@keyframes revIn{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:scale(1)}}
+.burst{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:5;overflow:hidden}
+.bstar{position:absolute;width:34px;opacity:1}
+@-webkit-keyframes bfly{0%{opacity:1;-webkit-transform:translateY(0) scale(.4) rotate(0)}100%{opacity:0;-webkit-transform:translateY(-46px) scale(1.35) rotate(140deg)}}
+@keyframes bfly{0%{opacity:1;transform:translateY(0) scale(.4) rotate(0)}100%{opacity:0;transform:translateY(-46px) scale(1.35) rotate(140deg)}}
+
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
@@ -308,11 +342,99 @@ function telaMapa(){
   var pos=[[22,58,"atual"],[50,70,"futuro"],[76,56,"futuro"]]; var k;
   for(k=0;k<pos.length;k++){
     var no=el("div","no "+pos[k][2]); no.style.left=pos[k][0]+"%"; no.style.top=pos[k][1]+"%";
-    var im=el("img"); im.src="img/estrela_grande.png"; no.appendChild(im); t.appendChild(no);
+    var im=el("img"); im.src="img/estrela_grande.png"; no.appendChild(im);
+    if(pos[k][2]==="atual"){ no.onclick=function(){ telaParada1(); }; }
+    t.appendChild(no);
   }
   t.appendChild(fagViva());
   t.appendChild(el("div","dica","Toque na estrela que está brilhando para começar a primeira parada."));
   app.appendChild(t);
+}
+
+/* ============ PARADA 1 — As Caixas de Estrelas (grupos iguais → multiplicação) ============ */
+var P1;
+function telaParada1(){
+  limpa();
+  P1={n:3,m:4,cx:[0,0,0],toques:0,concluida:false,t0:(new Date()).getTime()};
+  var t=el("div","tela parada");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(26));
+  t.appendChild(el("div","balao","Pra acender esta parte do céu, encha <b>3 caixas</b> com <b>4 estrelas</b> em cada! Toque na caixa pra pôr uma estrela (e na estrela pra tirar)."));
+  var wrap=el("div","caixas"); var i;
+  for(i=0;i<P1.n;i++){ wrap.appendChild(fazCaixa(i)); }
+  t.appendChild(wrap);
+  var barra=el("div","p1barra");
+  barra.appendChild(el("div","p1dica",""));
+  var b=el("button","btn2","Recomeçar"); b.onclick=function(){ if(P1.concluida)return; P1.cx=[0,0,0]; pintaCaixas(); }; barra.appendChild(b);
+  t.appendChild(barra);
+  var fw=el("div","fagfala"); fw.appendChild(fagViva()); t.appendChild(fw);
+  app.appendChild(t);
+  pintaCaixas();
+}
+function fazCaixa(i){
+  var c=el("div","caixa"); c.id="cx"+i;
+  c.appendChild(el("div","estrs")); c.appendChild(el("div","cnt","0"));
+  c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; pintaCaixas(); } };
+  return c;
+}
+function fazEstrInterna(i){
+  var s=el("img","estr"); s.src="img/estrela_grande.png";
+  s.onclick=function(ev){ ev.stopPropagation(); if(P1.concluida)return; if(P1.cx[i]>0){ P1.cx[i]--; pintaCaixas(); } };
+  return s;
+}
+function pintaCaixas(){
+  var i,j;
+  for(i=0;i<P1.n;i++){
+    var c=document.getElementById("cx"+i); if(!c)continue;
+    var h=c.getElementsByClassName("estrs")[0]; h.innerHTML="";
+    for(j=0;j<P1.cx[i];j++){ h.appendChild(fazEstrInterna(i)); }
+    c.getElementsByClassName("cnt")[0].innerHTML=P1.cx[i];
+  }
+  verificaP1();
+}
+function verificaP1(){
+  if(P1.concluida)return;
+  var i, ok=true;
+  for(i=0;i<P1.n;i++){ if(P1.cx[i]!==P1.m){ ok=false; } }
+  var dica=document.getElementsByClassName("p1dica")[0];
+  if(ok){ sucessoP1(); return; }
+  if(dica){
+    var todas=(P1.cx[0]>0&&P1.cx[1]>0&&P1.cx[2]>0);
+    var iguais=(P1.cx[0]===P1.cx[1]&&P1.cx[1]===P1.cx[2]);
+    if(iguais && P1.cx[0]>0 && P1.cx[0]!==P1.m){ dica.innerHTML="Grupos iguais! Mas a fábrica pediu 4 em cada."; }
+    else if(todas && !iguais){ dica.innerHTML="Quase! As 3 caixas precisam ter a MESMA quantidade."; }
+    else { dica.innerHTML=""; }
+  }
+}
+function sucessoP1(){
+  P1.concluida=true;
+  if(fagAtual){ if(fagAtual.fala)fagAtual.fala.style.opacity="0"; if(fagAtual.pisca)fagAtual.pisca.style.opacity="0";
+    if(fagAtual.corpo)fagAtual.corpo.src="img/fagulha_comemora.png"; }
+  var tela=document.getElementsByClassName("tela parada")[0]; if(!tela)return;
+  var burst=el("div","burst"); var i;
+  for(i=0;i<12;i++){
+    var b=el("img","bstar"); b.src="img/estrela_grande.png";
+    var ang=(i/12)*2*Math.PI, dx=Math.cos(ang)*44, dy=Math.sin(ang)*30;
+    b.style.left=(50+dx)+"%"; b.style.top=(40+dy)+"%";
+    var dur=(0.8+Math.random()*0.5).toFixed(2);
+    b.style.webkitAnimation="bfly "+dur+"s ease-out both"; b.style.animation="bfly "+dur+"s ease-out both";
+    burst.appendChild(b);
+  }
+  tela.appendChild(burst);
+  setTimeout(function(){ if(burst.parentNode)burst.parentNode.removeChild(burst); },1700);
+  var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
+  var cxs=tela.getElementsByClassName("caixas")[0]; if(cxs)cxs.style.opacity="0";
+  var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
+  var rev=el("div","revela");
+  rev.innerHTML="<div class='r1'>4 + 4 + 4</div><div class='r2'>3 &#215; 4 = 12</div><div class='r3'>Isso é <b>multiplicar</b>! 3 grupos de 4 dão 12 estrelas. Você acendeu o céu!</div>";
+  tela.appendChild(rev);
+  setTimeout(function(){
+    var pb2=el("div","p1barra"); pb2.style.bottom="7%";
+    var nx=el("button","btn pulsa","Próxima parada"); nx.onclick=function(){ telaMapa(); };
+    pb2.appendChild(nx); tela.appendChild(pb2);
+  },1500);
+  var tempo=Math.round(((new Date()).getTime()-P1.t0)/1000);
+  var ev={habilidade:"EF03MA07",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)};
+  try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){}
 }
 
 telaCapa();
