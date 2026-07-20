@@ -1,0 +1,52 @@
+name: Checar Pages (grava resultado na branch)
+
+# Consulta o estado do Pages de um repo de destino e COMMITA a resposta em
+# _diag/pages-<repo>.txt nesta branch — canal de leitura via git, imune à
+# instabilidade da API de logs (lição de 2026-07-20: logs 503 em série).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de destino (ex: vila-tabuada)"
+        required: true
+        type: string
+
+jobs:
+  checar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Consultar Pages e gravar resultado
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          set +e
+          mkdir -p _diag
+          out="_diag/pages-$DEST.txt"
+          {
+            echo "== checagem $(date -u +%FT%TZ) =="
+            echo "-- config --"
+            gh api "repos/$OWNER/$DEST/pages" \
+              --jq '"status=" + (.status // "null") + " build_type=" + (.build_type // "?") + " source=" + (.source.branch // "?") + " url=" + (.html_url // "?")'
+            echo "-- ultimo build --"
+            gh api "repos/$OWNER/$DEST/pages/builds/latest" \
+              --jq '"status=" + (.status // "?") + " erro=" + ((.error.message) // "nenhum") + " commit=" + ((.commit // "?")[0:7]) + " em=" + (.created_at // "?")'
+            echo "-- site responde? --"
+            curl -s -o /dev/null -w "HTTP %{http_code}\n" "https://$OWNER.github.io/$DEST/"
+          } > "$out" 2>&1
+          cat "$out"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$out"
+          git commit -m "diag: pages de $DEST"
+          for k in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
