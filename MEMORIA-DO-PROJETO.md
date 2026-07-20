@@ -157,7 +157,23 @@
 > é o EXEMPLAR nº 1 dessa fábrica.
 > **FASES DO CAMINHO (estamos saindo da 1 p/ a 2):**
 > 1 ✅ FUNDAÇÃO: motor data-driven (5 leis), Portão 0, BKT/ZDP, avaliação, QA, 1 exemplar no ar.
-> 2 ⏳ TERMINAR O EXEMPLAR Nº 1 (decisão do Marcos: melhor que começar tema novo) —
+> 2 ✅→⏳ TERMINAR O EXEMPLAR Nº 1 — GRANDE PARTE ENTREGUE (2026-07-20 tarde):
+>   ✅ (2) SEQUÊNCIA/aula completa: tabuada 12 → 18 → **DIVISÃO como partilha 12÷3**
+>     (lei `agTodas`: TODAS as caixas recebem; kc separado `particao-igual` EF03MA08;
+>     2×6 é RECUSADO na divisão; conceito "÷" nomeado por último; botão "Próxima
+>     missão"; QA novo `qa-sequencia.mjs` APROVADO de ponta a ponta);
+>   ✅ (4) missão de revisão Leitner (abertura "🔁" quando o kc venceu);
+>   ✅ (3) tutorial integrado (dif. fácil: mentor mostra o passo a passo sozinho);
+>   ✅ (5) avatar MENINA escolhível no modal (menina.png, mesmo layout) + potes em
+>     LINHAS×COLUNAS na carroça (disposição retangular da BNCC);
+>   ✅ (6) BIBLIOTECA-LINK: a receita vive na URL `?ativ=<base64>` — link permanente
+>     que remonta a atividade em qualquer máquina; (7) barra "Prévia do professor"
+>     (copiar link) só no fluxo do formulário;
+>   ✅ (9) card "Vila da Tabuada" no topo do 3º ano do hub Ilhas do Saber;
+>   ⏳ AINDA FALTAM: (1) voz Edge por workflow (Web Speech segue como voz),
+>     (8) lista da turma p/ 1 toque (esperando os nomes do Marcos),
+>     (10) os 2 cliques do console (Marcos — FIREBASE-EDUCAVERSO.md).
+> (era o plano:) TERMINAR O EXEMPLAR Nº 1 (decisão do Marcos: melhor que começar tema novo) —
 >   vila-tabuada vira o PADRÃO-OURO completo: (1) voz Edge por workflow nas falas;
 >   (2) SEQUÊNCIA (vitória → próxima missão: tier 18, divisão como partilha);
 >   (3) tutorial integrado; (4) missões de retorno Leitner; (5) menina.png escolhível +
