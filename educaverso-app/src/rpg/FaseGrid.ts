@@ -362,9 +362,14 @@ export class FaseGrid extends Phaser.Scene {
       this.mostraBalao(this.plano?.emoji ?? '🧑‍🌾', 'Ainda tem potes soltos pelo campo! Nenhum pode ficar pra trás.')
       return
     }
+    // ANDAIME GRADUAL (pedido do Marcos): no 1º erro o mentor só PERGUNTA (reflexão);
+    // do 2º em diante ele ENSINA O GESTO do conserto (tirar da cheia, pôr na magra)
+    const repetiu = this.erros >= 1
     if (usadas.length < 2) {
       if (usadas[0]) this.tombaCaixa(usadas[0], 0.6)
-      this.erroReal('Tudo numa caixa só? Ficou pesada demais — nem consigo levantar! Será que dá pra repartir em mais caixas?')
+      this.erroReal(repetiu
+        ? 'Pesada demais de novo! Tenta assim: pare de MÃOS VAZIAS nesta caixa para TIRAR um pote, pegue outra caixa na pilha e reparta.'
+        : 'Tudo numa caixa só? Ficou pesada demais — nem consigo levantar! Será que dá pra repartir em mais caixas?')
       return
     }
     // desigual: a(s) caixa(s) DIFERENTE(s) tombam — a consequência mostra ONDE
@@ -373,7 +378,9 @@ export class FaseGrid extends Phaser.Scene {
     let moda = usadas[0].count, best = 0
     for (const k of Object.keys(freq)) if (freq[+k] > best) { best = freq[+k]; moda = +k }
     for (const v of usadas) if (v.count !== moda) this.tombaCaixa(v, 1)
-    this.erroReal('Opa! Na hora de carregar, uma caixa tombou… Por que será que ELA tombou e as outras não?')
+    this.erroReal(repetiu
+      ? 'Tombou de novo! Tenta assim: pare de MÃOS VAZIAS na caixa mais CHEIA para tirar um pote, e leve ele até uma caixa com MENOS. Quando todas tiverem o mesmo tanto, me chama!'
+      : 'Opa! Na hora de carregar, uma caixa tombou… Por que será que ELA tombou e as outras não?')
   }
 
   // CONSEQUÊNCIA VISÍVEL (pedido do Marcos): a caixa TOMBA de verdade (deita) e os
@@ -602,7 +609,11 @@ export class FaseGrid extends Phaser.Scene {
     const problema = this.plano?.problema ?? `O fazendeiro precisa de ${this.melAlvo} potes de MEL! Você ajuda?`
     let como = ''
     if (this.mecanica === 'agrupar') {
-      como = `1) Pare na PILHA de caixas para pegar uma. 2) Pare numa marquinha branca para pousar a caixa. 3) Pegue um pote e pare numa caixa para guardar. Reparta TODOS os potes igualzinho (use 2 caixas ou mais!). 4) No fim, venha falar comigo.`
+      const usadas = this.agVagas.filter(v => v.tem && v.count > 0)
+      const desigual = this.agSoltos.length === 0 && !this.agMao && usadas.length >= 2 && !usadas.every(v => v.count === usadas[0].count)
+      como = desigual
+        ? `Tem caixa com MAIS potes que as outras (olhe os números embaixo: ${usadas.map(v => v.count).join(' | ')}). Pare de MÃOS VAZIAS na caixa mais cheia para TIRAR um pote, e leve ele até uma caixa com menos. Iguais? Vem falar comigo!`
+        : `1) Pare na PILHA de caixas para pegar uma. 2) Pare numa marquinha branca para pousar a caixa. 3) Pegue um pote e pare numa caixa para guardar. Reparta TODOS os potes igualzinho (use 2 caixas ou mais!). 4) No fim, venha falar comigo.`
     } else if (this.mecanica === 'somar') {
       como = `Pegue fichas que somem exatamente ${this.alvoSoma}. Você está com ${this.soma}. Se passar, as fichas voltam — tente outra combinação.`
     } else if (this.mecanica === 'selecionar') {
