@@ -328,7 +328,16 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 <script>
 (function(){
 "use strict";
-if("serviceWorker" in navigator){ window.addEventListener("load",function(){ navigator.serviceWorker.register("sw.js").catch(function(){}); }); }
+if("serviceWorker" in navigator){
+  var _tinhaCtrl=!!navigator.serviceWorker.controller, _recarregou=false;
+  navigator.serviceWorker.addEventListener("controllerchange",function(){
+    if(_recarregou)return; _recarregou=true;
+    if(_tinhaCtrl) location.reload();   // versão nova assumiu -> recarrega 1x (só em ATUALIZAÇÃO)
+  });
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("sw.js").then(function(reg){ try{ reg.update(); }catch(e){} }).catch(function(){});
+  });
+}
 
 /* ---- PALCO: escala o canvas fixo (400x780) pra caber em QUALQUER tela ---- */
 var BASE_W=400, BASE_H=780;
@@ -547,7 +556,7 @@ function avanca(){
 function nodeX(i){ return 50 + (i%2===0? -16 : 16); }
 function telaMapa(){
   limpa();
-  var n=STOPS.length, STEP=112, BOTPAD=92, TOPPAD=178, VIS=780;
+  var n=STOPS.length, STEP=112, BOTPAD=92, TOPPAD=214, VIS=780;
   var stripH=BOTPAD+(n-1)*STEP+TOPPAD;
   function ytop(i){ return stripH-(BOTPAD+i*STEP); }
   function camY(idx){ var off=ytop(idx)-VIS*0.58; return Math.max(0,Math.min(stripH-VIS,off)); }
