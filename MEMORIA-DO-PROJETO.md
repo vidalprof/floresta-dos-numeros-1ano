@@ -211,8 +211,16 @@
 > - **⏱️ AUDITOR DE DURAÇÃO** (`qa-duracao.mjs`): "joga como criança 7-9" e MODELA o
 >   tempo pelo conteúdo real (constantes de ritmo da pesquisa, honestas, à vista).
 >   Resultado: **~49 min, APROVADO (≥45)**. QA `qa-sequencia.mjs` APROVADO ponta a ponta.
-> - Pequeno polimento pendente: ~1px de frincha em alguns recortes de pedra/cerejeira
->   (bleed do atlas; negligenciável, dá pra apertar depois).
+> - **PROPS LIMPOS (conserto do "halo de foto colada", 2026-07-20):** o Marcos viu que
+>   cerejeira/pinheiro/pedra vinham com fragmento da árvore vizinha + tile de terra colado
+>   (naquela parte do atlas os objetos se encostam). Ferramenta do Diretor de Arte
+>   **`tools/limpa-props.py`**: recorta cada prop, floodfill dos 4 CANTOS (remove vizinho
+>   e PARA no contorno preto do sprite; trava: se a região >40% é o objeto, não apaga) +
+>   maior blob + autocrop → PNG individual em `public/rpg/cen/<nome>.png`. O motor carrega
+>   `cen_<nome>` (não mais sub-recorte do atlas). Água do rio REMOVIDA (retângulo azul
+>   chapado = pior "colado"; água com margem/autotile fica pra depois). Resultado: os 5
+>   cenários montam LIMPOS como a fase 1. QA gameplay + duração APROVADOS; ambos no ar
+>   (vila-tabuada 16:51, fabrica-aventuras 16:58).
 
 ## 📋 CAMADA PROVA construída (2026-07-20) — evidências + painel + parecer que vira NOTA
 > Pedido do Marcos: avaliação DESCRITIVA no Firebase, "da atividade ou do que eu quiser",
