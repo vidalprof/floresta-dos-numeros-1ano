@@ -24,6 +24,13 @@ html,body{height:100%;height:100vh;height:100dvh;width:100%;overflow:hidden;posi
   -webkit-transform-origin:50% 50%;transform-origin:50% 50%;
   -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
 #app{position:absolute;top:0;left:0;width:100%;height:100%;overflow:hidden;border-radius:2px}
+/* FUNDO edge-to-edge: o espaço cobre a TELA INTEIRA (mata o letterbox vazio) */
+#fundo{position:fixed;top:0;left:0;right:0;bottom:0;z-index:-1;overflow:hidden;
+  background:#080b22;background:-webkit-radial-gradient(50% 20%,#242b60,#0b0e2c 60%,#070917);background:radial-gradient(ellipse at 50% 20%,#242b60,#0b0e2c 60%,#070917)}
+#fundo .neb{position:absolute;top:-5%;left:-5%;right:-5%;bottom:-5%;background:center/cover no-repeat url('img/ceu_noite.jpg');opacity:.42;
+  -webkit-animation:derivaCeu 80s ease-in-out infinite alternate;animation:derivaCeu 80s ease-in-out infinite alternate}
+.tela .ceu{display:none}
+.mapa.constel{background:transparent}
 .tela{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:1}
 img{-webkit-user-drag:none;user-drag:none}
 
@@ -466,6 +473,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 </style>
 </head>
 <body>
+<div id="fundo"><div class="neb"></div></div>
 <div id="stage"><div id="app"></div></div>
 <audio id="narr" preload="auto"></audio>
 <script>
