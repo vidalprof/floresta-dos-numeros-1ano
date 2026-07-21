@@ -164,7 +164,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .caixa:active{-webkit-transform:scale(.96);transform:scale(.96)}
 .caixa .cratimg{width:100%;height:auto;display:block;
   -webkit-filter:drop-shadow(0 5px 8px rgba(0,0,0,.45));filter:drop-shadow(0 5px 8px rgba(0,0,0,.45))}
-.caixa .estrs{position:absolute;top:24%;left:13%;right:13%;height:34%;text-align:center;line-height:.9;z-index:2}
+.caixa .estrs{position:absolute;top:26%;left:15%;right:15%;height:30%;text-align:center;line-height:.85;z-index:2;overflow:hidden}
 .caixa .estr{width:15px;height:auto;margin:1px;cursor:pointer;
   -webkit-filter:drop-shadow(0 0 4px rgba(255,220,120,.9));filter:drop-shadow(0 0 4px rgba(255,220,120,.9));
   -webkit-animation:estrPop .32s ease;animation:estrPop .32s ease}
@@ -320,6 +320,38 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .parecer .destrelas{font-size:26px;letter-spacing:4px}
 .parecer .destrelas .on{color:#ffe08a}
 .parecer .destrelas .off{color:rgba(255,255,255,.25)}
+
+/* ===== MAPA claro estilo app (estrutura Duolingo, arte NOSSA) ===== */
+.mapa.claro{background:#eef2fa}
+.mapa.claro .no{position:relative;width:74px;height:74px}
+.mapa.claro .no .disco{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;
+  background:#ffc23c;box-shadow:0 7px 0 #d98e12,0 11px 16px rgba(30,40,80,.18)}
+.mapa.claro .no.atual .disco{background:#ffd149;box-shadow:0 7px 0 #e39a12,0 11px 18px rgba(30,40,80,.24)}
+.mapa.claro .no.futuro .disco{background:#d6dcea;box-shadow:0 6px 0 #b8c0d3,0 8px 12px rgba(30,40,80,.1)}
+.mapa.claro .nowrap.alivio .no:not(.futuro) .disco{background:#22b0f4;box-shadow:0 7px 0 #1385c2,0 11px 16px rgba(30,40,80,.18)}
+.mapa.claro .nowrap.deleite .no:not(.futuro) .disco{background:#d264cf;box-shadow:0 7px 0 #a23aa3,0 11px 16px rgba(30,40,80,.18)}
+.mapa.claro .no .nicon{position:absolute;left:50%;top:43%;width:48%;height:auto;
+  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  -webkit-filter:brightness(0) invert(1);filter:brightness(0) invert(1)}
+.mapa.claro .no.futuro .nicon{opacity:.8}
+.mapa.claro .no.atual{-webkit-animation:farol 1.3s ease-in-out infinite;animation:farol 1.3s ease-in-out infinite}
+.mapa.claro .atual-wrap .farol{position:absolute;left:50%;top:50%;width:100%;height:100%;border-radius:50%;z-index:-1;
+  border:4px solid rgba(255,180,40,.55);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  -webkit-animation:farolPulse 1.7s ease-out infinite;animation:farolPulse 1.7s ease-out infinite}
+.mapa.claro .rotulo{position:absolute;left:50%;top:120%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  white-space:nowrap;font-size:13px;font-weight:900;letter-spacing:.6px;color:#e0930c;background:#fff;padding:8px 20px;border-radius:16px;
+  border:2px solid #efe1c2;box-shadow:0 4px 0 #e7dcc2;-webkit-animation:comBounce 1s ease-in-out infinite;animation:comBounce 1s ease-in-out infinite}
+.mapa.claro .rotulo:before{content:"";position:absolute;bottom:100%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);border:7px solid transparent;border-bottom-color:#fff}
+.hud.claro{background:#fff;box-shadow:0 2px 10px rgba(30,40,80,.14);border-bottom-left-radius:0;border-bottom-right-radius:0;padding:9px 14px 10px}
+.hud.claro .hpar{background:transparent;padding:3px 8px}
+.hud.claro .hpar b{color:#4b4b57;font-size:17px}
+.hico.coroa{width:20px;height:15px;background:#ffc23c;
+  -webkit-clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%);clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%)}
+.mapa.claro .unidade{position:absolute;top:60px;left:12px;right:12px;z-index:6;text-align:left;
+  background:-webkit-linear-gradient(top,#ffcb4c,#ffb324);background:linear-gradient(to bottom,#ffcb4c,#ffb324);
+  color:#5a3b00;padding:10px 16px;border-radius:16px;box-shadow:0 4px 0 #d98e12}
+.mapa.claro .usec{font-size:11px;font-weight:800;letter-spacing:.9px;opacity:.85}
+.mapa.claro .utit{font-size:17px;font-weight:900;line-height:1.1;margin-top:1px}
 
 /* pulo da Fagulha ao comemorar (mola/overshoot) */
 .fag.pulo{-webkit-animation:puloFag .6s cubic-bezier(.34,1.56,.64,1);animation:puloFag .6s cubic-bezier(.34,1.56,.64,1)}
@@ -571,7 +603,8 @@ function telaCheia(){
 }
 
 /* ================= TELAS ================= */
-function limpa(){ fagAtual=null; app.innerHTML=""; }
+function tema(claro){ document.body.style.background = claro ? "#eef2fa" : ""; }
+function limpa(){ fagAtual=null; app.innerHTML=""; tema(false); }
 
 function telaCapa(){
   limpa();
@@ -648,48 +681,49 @@ function barraProg(){
 /* MAPA VIVO ROLANTE (câmera segue a Fagulha subindo a trilha; cabe QUALQUER nº de paradas) */
 function nodeX(i){ return 50 + (i%2===0? -16 : 16); }
 function telaMapa(){
-  limpa();
-  var n=STOPS.length, STEP=112, BOTPAD=92, TOPPAD=214, VIS=780;
+  limpa(); tema(true);
+  var n=STOPS.length, STEP=120, BOTPAD=100, TOPPAD=232, VIS=780;
   var stripH=BOTPAD+(n-1)*STEP+TOPPAD;
   function ytop(i){ return stripH-(BOTPAD+i*STEP); }
-  function camY(idx){ var off=ytop(idx)-VIS*0.58; return Math.max(0,Math.min(stripH-VIS,off)); }
-  var t=el("div","tela mapa");
-  t.appendChild(el("div","ceu"));
+  function camY(idx){ var off=ytop(idx)-VIS*0.56; return Math.max(0,Math.min(stripH-VIS,off)); }
+  var t=el("div","tela mapa claro");
   var strip=el("div","trilhaScroll"); strip.style.height=stripH+"px";
-  strip.appendChild(campoEstrelas(46));
-  var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="18px"; strip.appendChild(fv);
+  var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="26px"; strip.appendChild(fv);
   var i, pts="";
   for(i=0;i<n;i++){ pts+=(nodeX(i)/100*400).toFixed(0)+","+ytop(i).toFixed(0)+" "; }
   var svg=el("div","trilha"); svg.style.height=stripH+"px";
-  svg.innerHTML="<svg viewBox='0 0 400 "+stripH+"' preserveAspectRatio='none' width='400' height='"+stripH+"'><polyline points='"+pts+"' fill='none' stroke='rgba(255,220,130,.34)' stroke-width='3' stroke-dasharray='7 9' stroke-linecap='round'/></svg>";
+  svg.innerHTML="<svg viewBox='0 0 400 "+stripH+"' preserveAspectRatio='none' width='400' height='"+stripH+"'><polyline points='"+pts+"' fill='none' stroke='rgba(120,132,168,.30)' stroke-width='7' stroke-dasharray='1 20' stroke-linecap='round'/></svg>";
   strip.appendChild(svg);
   for(i=0;i<n;i++){
     var estado=(i<progresso)?"feito":(i===progresso?"atual":"futuro");
     var w=el("div","nowrap "+STOPS[i].tipo+(estado==="atual"?" atual-wrap":"")); w.style.left=nodeX(i)+"%"; w.style.top=ytop(i)+"px";
     var no=el("div","no "+estado);
-    var im=el("img"); im.src="img/estrela_grande.png"; no.appendChild(im);
-    if(estado==="atual"){ no.appendChild(el("div","farol")); (function(k){ no.onclick=function(){ STOPS[k].fn(); }; })(i);
-      w.appendChild(el("div","rotulo",STOPS[i].titulo)); }
+    var disco=el("div","disco");
+    var ic=el("img","nicon"); ic.src="img/estrela_grande.png"; disco.appendChild(ic);
+    if(estado==="atual"){ disco.appendChild(el("div","farol")); }
+    no.appendChild(disco);
+    if(estado==="atual"){ (function(k){ no.onclick=function(){ STOPS[k].fn(); }; })(i);
+      w.appendChild(el("div","rotulo","COMEÇAR")); }
     w.appendChild(no); strip.appendChild(w);
   }
-  var walker=el("div","walker"); walker.style.left=nodeX(fagPos)+"%"; walker.style.top=ytop(fagPos)+"px";
+  var walker=el("div","walker"); walker.style.left=(nodeX(fagPos)+23)+"%"; walker.style.top=ytop(fagPos)+"px";
   walker.appendChild(fagViva()); strip.appendChild(walker);
   var offDe=camY(fagPos); strip.style.webkitTransform="translateY("+(-offDe)+"px)"; strip.style.transform="translateY("+(-offDe)+"px)";
   t.appendChild(strip);
   var atual=Math.min(progresso,n-1), offPara=camY(atual);
   setTimeout(function(){
     strip.style.webkitTransform="translateY("+(-offPara)+"px)"; strip.style.transform="translateY("+(-offPara)+"px)";
-    walker.style.left=nodeX(atual)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
+    walker.style.left=(nodeX(atual)+23)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
   },430);
-  var cur=Math.min(progresso+1,n), pctp=Math.round(progresso/n*100);
-  var hud=el("div","hud");
-  hud.innerHTML="<div class='hpar'><span class='hico star'></span><b>"+sessao.estrelas+"</b></div>"+
-    "<div class='hprog'><div class='hbar'><i style='width:"+pctp+"%'></i></div><span class='hlab'>parada "+cur+" de "+n+"</span></div>"+
-    "<div class='hpar'><span class='hico flama'></span><b>"+sessao.ofensiva+"</b></div>";
+  var hud=el("div","hud claro");
+  hud.innerHTML="<div class='hpar'><span class='hico flama'></span><b>"+sessao.ofensiva+"</b></div>"+
+    "<div class='hpar'><span class='hico star'></span><b>"+sessao.estrelas+"</b></div>"+
+    "<div class='hpar'><span class='hico coroa'></span><b>"+progresso+"</b></div>";
   t.appendChild(hud);
-  var uni = progresso<=3 ? "UNIDADE 1 · Grupos e Constelações" : (progresso<=7 ? "UNIDADE 2 · Somar, ×10 e Problemas" : "UNIDADE 3 · Você é o Mestre");
-  t.appendChild(el("div","unidade",uni));
-  t.appendChild(el("div","dica","Toque na estrela que está brilhando."));
+  var uni = progresso<=3 ? "Grupos e Constelações" : (progresso<=7 ? "Somar, ×10 e Problemas" : "Você é o Mestre");
+  var unum = progresso<=3 ? 1 : (progresso<=7 ? 2 : 3);
+  var ub=el("div","unidade"); ub.innerHTML="<div class='usec'>SEÇÃO 1 · UNIDADE "+unum+"</div><div class='utit'>"+uni+"</div>";
+  t.appendChild(ub);
   app.appendChild(t);
 }
 
