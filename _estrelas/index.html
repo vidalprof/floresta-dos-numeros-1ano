@@ -408,19 +408,29 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .ajudabtn:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
 
 /* card de AUTOEXPLICAÇÃO (a Fagulha pergunta "por quê?") */
-.autoexp{position:absolute;left:12px;right:12px;top:20%;z-index:8;background:rgba(15,20,48,.97);border:1px solid rgba(255,225,150,.45);
-  border-radius:20px;padding:15px 16px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.55);
+/* REFLEXÃO = conversa com a Fagulha (balão dela, não questionário) */
+.autoexp{position:absolute;left:12px;right:12px;top:19%;z-index:8;text-align:center;
+  background:rgba(22,28,64,.96);border:1.5px solid rgba(255,225,150,.55);border-radius:22px;padding:14px 15px 15px;
+  box-shadow:0 14px 34px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.08);
   -webkit-animation:aeIn .35s ease both;animation:aeIn .35s ease both}
+.autoexp:after{content:"";position:absolute;top:100%;right:16%;border:12px solid transparent;border-top-color:rgba(22,28,64,.96)}  /* rabinho: o balão é DELA */
 @-webkit-keyframes aeIn{0%{-webkit-transform:translateY(24px) scale(.96)}100%{-webkit-transform:translateY(0) scale(1)}}
 @keyframes aeIn{0%{transform:translateY(24px) scale(.96)}100%{transform:translateY(0) scale(1)}}
-.autoexp .aeperg{font-size:15px;color:#ffe6a3;font-weight:800;line-height:1.32;margin-bottom:6px}
-.autoexp .aeperg b{color:#fff}
-.aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#20264a;
-  background:#eef1ff;padding:12px 12px;border-radius:14px;box-shadow:0 3px 0 #c4cbe8;line-height:1.2}
-.aebtn.escolhida{background:#dfe6ff;box-shadow:0 2px 0 #b9c4ee;-webkit-transform:translateY(1px);transform:translateY(1px)}
+.autoexp .aetit{font-size:11px;font-weight:800;letter-spacing:1.5px;color:#c9b98a;margin-bottom:5px}
+.autoexp .aeperg{font-size:16px;color:#fff;font-weight:800;line-height:1.32;margin-bottom:8px}
+.autoexp .aeperg b{color:#ffe08a}
+.aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#eef1ff;text-align:left;position:relative;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.22);padding:12px 12px 12px 38px;border-radius:16px;line-height:1.25}
+.aebtn:before{content:"\2605";position:absolute;left:13px;top:50%;margin-top:-11px;font-size:15px;color:rgba(255,224,138,.55)}  /* estrelinha-marcador */
+.aebtn:active{-webkit-transform:scale(.98);transform:scale(.98)}
+.aebtn.escolhida{background:rgba(255,255,255,.16);border-color:rgba(255,255,255,.4)}
+.aebtn.brilha{background:rgba(255,210,90,.2);border-color:#ffd75e;color:#ffe9ad;
+  box-shadow:0 0 16px rgba(255,210,110,.45),inset 0 0 10px rgba(255,210,110,.12)}
+.aebtn.brilha:before{color:#ffd75e;text-shadow:0 0 8px rgba(255,215,110,.9)}
 /* "Praticar de novo" (secundário) abaixo do botão principal */
-.repbtn{display:block;margin:9px auto 0;background:rgba(255,255,255,.14);color:#e9ecff;border:1px solid rgba(255,255,255,.3);
-  box-shadow:none;font-size:14px;padding:9px 18px}
+.btnprox{font-size:16px;padding:12px 20px}   /* mais estreito: não encosta no alto-falante nem na Fagulha */
+.repbtn{display:block;margin:6px auto 0;background:transparent;border:0;box-shadow:none;color:#cdd3ff;
+  font-size:13px;text-decoration:underline;padding:5px;cursor:pointer;font-family:inherit;font-weight:700}
 
 /* nó ATUAL: anel-farol pulsante — a versão dourada da constelação está em .mapa.constel .atual-wrap .farol */
 @-webkit-keyframes farolPulse{0%{-webkit-transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{-webkit-transform:translate(-50%,-50%) scale(1.9);opacity:0}}
@@ -521,6 +531,28 @@ function atualizaOfensiva(){
   }catch(e){ sessao.ofensiva=1; }
 }
 atualizaOfensiva();
+
+/* ---- MOTOR DE DOMÍNIO v1 (pesquisa: recuperação + espaçamento = o efeito mais forte) ----
+   Cada habilidade (KC) tem uma caixinha Leitner: acertou sem erro sobe (revisão mais longe),
+   errou volta pra caixa 1 (revisão amanhã). Ao voltar com revisões vencidas, o app oferece
+   o AQUECIMENTO (3 perguntas rápidas com feedback). Tudo vira evidência pro professor. */
+var KC_INFO={p1:"grupos iguais",p2:"array (fileiras x colunas)",p3:"comutatividade",soma:"soma que vira vezes",p4:"x10 (atalho)",prob:"problema em contexto"};
+function dominioLe(){ try{ return JSON.parse(localStorage.getItem("estrelas_dominio")||"{}"); }catch(e){ return {}; } }
+function dominioSalva(d){ try{ localStorage.setItem("estrelas_dominio",JSON.stringify(d)); }catch(e){} }
+function registraDominio(kc, forte){
+  if(!KC_INFO[kc])return;
+  var d=dominioLe(), r=d[kc]||{box:0};
+  r.box = forte ? Math.min((r.box||0)+1,4) : 1;
+  r.due = (new Date()).getTime() + ([1,3,7,15][r.box-1]||1)*86400000;
+  r.quando = (new Date()).toISOString();
+  d[kc]=r; dominioSalva(d);
+}
+function kcsVencidos(){
+  var d=dominioLe(), agora=(new Date()).getTime(), v=[], k;
+  for(k in d){ if(d[k]&&d[k].due&&d[k].due<=agora) v.push(k); }
+  return v;
+}
+function embaralha(a){ var b=a.slice(),i,j,tt; for(i=b.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); tt=b[i];b[i]=b[j];b[j]=tt; } return b; }
 var app=document.getElementById("app");
 var narr=document.getElementById("narr");
 /* botão "Ouvir de novo" — vive no #stage (acompanha o palco), some por padrão */
@@ -559,11 +591,18 @@ function iniciaBoca(){
   }, 95);
 }
 function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
-/* toca uma fala e SÓ ENTÃO segue (no fim do áudio) — com rede de segurança
-   (se o áudio faltar/travar, segue mesmo assim depois de maxMs; nunca prende o fluxo) */
+/* toca uma fala e SÓ ENTÃO segue (no fim do áudio) — com rede de segurança:
+   se o áudio ESTÁ tocando, o vigia ESPERA ele acabar (nunca corta a narração);
+   se o áudio faltou/nunca começou, segue depois de maxMs (nunca prende o fluxo) */
 function depoisDaFala(id, maxMs, cb){
   var feito=false; function go(){ if(feito)return; feito=true; cb(); }
-  falar(id, go); setTimeout(go, maxMs||9000);
+  falar(id, go);
+  function vigia(){
+    if(feito) return;
+    if(!narr.paused && !narr.ended && narr.currentTime>0){ setTimeout(vigia, 700); }  // ainda falando: espera
+    else go();                                                                        // não tocou/já parou: segue
+  }
+  setTimeout(vigia, maxMs||9000);
 }
 
 /* ---- LOOP único (só boca) ---- */
@@ -572,6 +611,13 @@ function loop(){
   if(fagAtual && fagAtual.fala){
     bocaSuave += (bocaAlvo-bocaSuave)*0.4;
     fagAtual.fala.style.opacity=bocaSuave.toFixed(3);
+    // corpo VIVO enquanto fala: quica e inclina de leve no ritmo da voz (só transform, PC fraco ok)
+    if(fagAtual.corpo){
+      var tf = bocaSuave>0.04
+        ? "scale("+(1+0.03*bocaSuave).toFixed(4)+") rotate("+(bocaSuave*2.2).toFixed(2)+"deg)"
+        : "";
+      fagAtual.corpo.style.webkitTransform=tf; fagAtual.corpo.style.transform=tf;
+    }
   }
   requestAnimationFrame(loop);
 }
@@ -609,7 +655,7 @@ function fagViva(extraCls){
   var pisca=el("img","lay pisca"); pisca.src="img/fagulha_pisca.png"; pisca.alt="";
   corpo.appendChild(base); corpo.appendChild(fala); corpo.appendChild(pisca);
   wrap.appendChild(corpo); bob.appendChild(wrap); fag.appendChild(bob);
-  fagAtual={el:fag,extra:(extraCls||""),base:base,fala:fala,pisca:pisca};
+  fagAtual={el:fag,extra:(extraCls||""),base:base,fala:fala,pisca:pisca,corpo:corpo};
   return fag;
 }
 function fagPose(nome){ if(fagAtual&&fagAtual.base){ if(fagAtual.fala)fagAtual.fala.style.opacity="0"; if(fagAtual.pisca)fagAtual.pisca.style.opacity="0"; fagAtual.base.src="img/"+nome+".png"; } }
@@ -641,18 +687,18 @@ function revela(tela,r1,r2,r3){
 }
 function botaoProxima(tela,rot,dl){
   setTimeout(function(){
-    var pb=el("div","p1barra"); pb.style.bottom="3.5%";
+    var pb=el("div","p1barra"); pb.style.bottom="1.8%";
     if(sessao.ultimo>0){
-      var linha=el("div","premiolinha");
+      var linha=el("div","premiolinha"); linha.style.marginBottom="6px";
       var pr=el("span","premio"); pr.innerHTML="<span class='hico star'></span> +<b id='prcount'>0</b> estrelas";
       linha.appendChild(pr); pb.appendChild(linha);
       (function(alvo){ var c=0; var iv=setInterval(function(){ c++; var e=document.getElementById("prcount"); if(e)e.innerHTML=c; if(c>=alvo)clearInterval(iv); },150); })(sessao.ultimo);
       sessao.ultimo=0;
     }
-    var nx=el("button","btn pulsa",rot||"Próxima parada"); nx.onclick=function(){ avanca(); };
+    var nx=el("button","btn pulsa btnprox",rot||"Próxima parada"); nx.onclick=function(){ avanca(); };
     pb.appendChild(nx);
     // autonomia (SDT): "praticar de novo" refaz esta mesma parada, no ritmo da criança
-    var rep=el("button","btn2 repbtn","Praticar de novo"); rep.onclick=function(){ var f=(STOPS[progresso]&&STOPS[progresso].fn); if(f){ f(); } };
+    var rep=el("button","repbtn","Praticar de novo"); rep.onclick=function(){ var f=(STOPS[progresso]&&STOPS[progresso].fn); if(f){ f(); } };
     pb.appendChild(rep);
     tela.appendChild(pb);
   }, (dl==null?1500:dl));
@@ -679,15 +725,23 @@ function autoexplica(tela, cfg, cb){
   var k, esconder=["caixas","pmeio","somaMeio","grade","steppers","p3wrap","p4sky"];  // limpa o meio; a revela (conceito) fica de referência
   for(k=0;k<esconder.length;k++){ var e0=tela.getElementsByClassName(esconder[k])[0]; if(e0)e0.style.display="none"; }
   var box=el("div","autoexp");
-  box.innerHTML="<div class='aeperg'>"+cfg.pergunta+"</div>";
-  var respondido=false, i;
+  box.innerHTML="<div class='aetit'>A FAGULHA QUER SABER&hellip;</div><div class='aeperg'>"+cfg.pergunta+"</div>";
+  var respondido=false, i, botoes=[];
   for(i=0;i<cfg.opcoes.length;i++){ (function(o){
-    var b=el("button","aebtn",o.txt);
+    var b=el("button","aebtn",o.txt); b._ok=!!o.ok; botoes.push(b);
     b.onclick=function(){
       if(respondido)return; respondido=true;
-      b.className="aebtn escolhida";   // Portão 0: sem verde/amarelo — nada de "certo/errado" na tela
       salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
-      depoisDaFala(o.ok?"refl_ok":"refl_hmm", 6000, function(){ if(cb)cb(); });   // a razão é gravada p/ o professor; a criança nunca vê nota
+      if(o.ok){
+        // feedback específico e caloroso (pesquisa: feedback é o maior fator) — dourado, nunca X
+        b.className="aebtn brilha"; somAcerto(); estouraEstrelas(tela,8);
+        depoisDaFala("refl_ok", 7000, function(){ if(cb)cb(); });
+      } else {
+        b.className="aebtn escolhida";
+        // a Fagulha repensa junto e a ideia-chave ACENDE devagarinho (feedback corretivo gentil)
+        setTimeout(function(){ var j; for(j=0;j<botoes.length;j++){ if(botoes[j]._ok) botoes[j].className="aebtn brilha"; } somTom(660,0.25,0.1,"triangle",0); },900);
+        depoisDaFala("refl_hmm", 8000, function(){ if(cb)cb(); });
+      }
     };
     box.appendChild(b);
   })(cfg.opcoes[i]); }
@@ -695,7 +749,11 @@ function autoexplica(tela, cfg, cb){
   if(cfg.falaQ) falar(cfg.falaQ);
   return box;
 }
-function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){} }
+function salvaEvid(ev){
+  try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){}
+  // parada de aprendizagem concluída -> atualiza a caixinha de domínio (agenda a revisão espaçada)
+  if(ev && ev.acertou && !ev.tipo && KC_INFO[ev.parada]){ registraDominio(ev.parada, !!ev.semErro); }
+}
 function fabViva(){
   var f=el("div","fabviva");
   f.appendChild(el("div","glow"));
@@ -729,6 +787,58 @@ function telaCheia(){
 function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
 function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} mostraOuvir(false); fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
 
+/* ===== AQUECIMENTO (missões de retorno — recuperação espaçada com feedback) ===== */
+var AQUEC_BANK={
+ p1:{q:"A fábrica encheu <b>2 caixas</b> com <b>5 estrelas</b> em cada. Quantas estrelas?",fil:2,col:5,op:["10","7","25","12"],r:"10",exp:"2 grupos de 5: <b>5, 10</b>!"},
+ p2:{q:"Uma constelação tem <b>3 fileiras de 4</b>. Quantas estrelas?",fil:3,col:4,op:["12","7","9","16"],r:"12",exp:"3 fileiras de 4: <b>4, 8, 12</b>!"},
+ p3:{q:"<b>4 &#215; 3</b> dá o mesmo que&hellip;",op:["3 &#215; 4","4 + 3","3 + 3","4 &#215; 4"],r:"3 &#215; 4",exp:"Virar de lado <b>não muda</b> o total!"},
+ soma:{q:"<b>5 + 5 + 5</b> vira que conta de vezes?",op:["3 &#215; 5","5 &#215; 5","3 + 5","5 &#215; 2"],r:"3 &#215; 5",exp:"O 5 aparece <b>3 vezes</b>."},
+ p4:{q:"<b>3 caixas mágicas</b> de 10 estrelas. Quantas?",op:["30","13","20","40"],r:"30",exp:"<b>10, 20, 30</b>!"},
+ prob:{q:"<b>4 prateleiras</b> com <b>5 estrelas</b> em cada. Quantas?",fil:4,col:5,op:["20","9","25","16"],r:"20",exp:"4 grupos de 5: <b>5, 10, 15, 20</b>!"}
+};
+var AQ;
+function telaAquecimento(){
+  var vencidos=kcsVencidos();
+  if(!vencidos.length){ telaCapa(); return; }
+  var d=dominioLe();
+  vencidos.sort(function(a,b){ return ((d[a]&&d[a].box)||0)-((d[b]&&d[b].box)||0); });  // os mais fracos primeiro
+  AQ={fila:vencidos.slice(0,3), i:0};
+  falar("aquec");
+  aquecItem();
+}
+function aquecItem(){
+  limpa();
+  var kc=AQ.fila[AQ.i], it=AQUEC_BANK[kc]; if(!it){ aquecFim(); return; }
+  var est={tent:0,trava:false};
+  var t=el("div","tela parada perg aquec");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(22));
+  t.appendChild(el("div","balao","<b>Aquecimento "+(AQ.i+1)+" de "+AQ.fila.length+":</b> "+it.q));
+  var meio=el("div","pmeio"); if(it.fil) meio.appendChild(gradeStars(it.fil,it.col,"gradeM")); t.appendChild(meio);
+  var opts=el("div","opts");
+  var arr=embaralha(it.op).map ? embaralha(it.op).map(function(x){return {txt:x,val:x};}) : [];
+  opts.appendChild(opcoesRow(arr,it.r,t,function(){
+    registraDominio(kc, est.tent===0);
+    salvaEvid({parada:kc,tipo:"revisao",habilidade:"EF03MA07",tent:est.tent,acertou:true});
+    var d2=t.getElementsByClassName("pdica")[0]; if(d2)d2.innerHTML=it.exp;
+    somResolve();
+    setTimeout(function(){ AQ.i++; if(AQ.i<AQ.fila.length){ aquecItem(); } else { aquecFim(); } },1500);
+  }, it.exp, est));
+  opts.appendChild(el("div","pdica",""));
+  t.appendChild(opts);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function aquecFim(){
+  limpa();
+  var t=el("div","tela parada");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(34));
+  t.appendChild(el("div","balao","<b>Estrelas reacesas!</b> Suas descobertas continuam brilhando. Agora sim, bora pra aventura!"));
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  fagComemora(); estouraEstrelas(t,14);
+  depoisDaFala("aquec_fim", 8000, function(){ telaCapa(); });
+}
+
 function telaCapa(){
   limpa();
   var t=el("div","tela capa");
@@ -744,6 +854,13 @@ function telaCapa(){
   var b=el("button","btn pulsa","Começar a aventura");
   b.onclick=function(){ telaCheia(); telaAbertura(); };
   c.appendChild(b);
+  // revisão espaçada vencida? oferece reacender (retorno pedagógico, sem cobrança)
+  if(kcsVencidos().length){
+    var ba=el("button","btn2 aquecbtn","Reacender minhas estrelas");
+    ba.style.marginTop="12px";
+    ba.onclick=function(){ telaCheia(); telaAquecimento(); };
+    c.appendChild(ba);
+  }
   t.appendChild(c);
   var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Fagulha"; fa.appendChild(fai);
   t.appendChild(fa);
@@ -833,14 +950,14 @@ function telaMapa(){
       w.appendChild(el("div","rotulo","COMEÇAR")); }
     w.appendChild(no); strip.appendChild(w);
   }
-  var walker=el("div","walker"); walker.style.left=(nodeX(fagPos)+23)+"%"; walker.style.top=ytop(fagPos)+"px";
+  var walker=el("div","walker"); walker.style.left=(nodeX(fagPos)+12)+"%"; walker.style.top=ytop(fagPos)+"px";
   walker.appendChild(fagViva()); strip.appendChild(walker);
   var offDe=camY(fagPos); strip.style.webkitTransform="translateY("+(-offDe)+"px)"; strip.style.transform="translateY("+(-offDe)+"px)";
   t.appendChild(strip);
   var atual=Math.min(progresso,n-1), offPara=camY(atual);
   setTimeout(function(){
     strip.style.webkitTransform="translateY("+(-offPara)+"px)"; strip.style.transform="translateY("+(-offPara)+"px)";
-    walker.style.left=(nodeX(atual)+23)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
+    walker.style.left=(nodeX(atual)+12)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
   },430);
   var hud=el("div","hud glass");
   hud.innerHTML="<div class='hpar'><span class='hico flama'></span><b>"+sessao.ofensiva+"</b></div>"+
@@ -1174,7 +1291,7 @@ function sucessoP3(){
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"3 &#215; 4 = 4 &#215; 3","= 12","Você virou a constelação de lado e deu o <b>mesmo</b> tanto! 3&#215;4 e 4&#215;3 são iguais — isso vale sempre.");
   var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
-  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true});
+  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true,semErro:true});
   premiar(3);
   setTimeout(function(){
     depoisDaFala("e_p3", 9000, function(){
@@ -1642,6 +1759,7 @@ function salvaParecerProf(d){
   if(m.desafio) ind.push("transferência sem apoios "+(m.desafio.acertos||0)+"/"+(m.desafio.total||3));
   var parecer={ atividade:"A Fábrica de Estrelas", habilidade:"EF03MA07",
     porcentagem:d.pct, nivel:d.nivel, paradas_feitas:d.cont, total_paradas:d.total, fluencia:d.fluente,
+    dominio:dominioLe(),   // caixinhas Leitner por habilidade (box + próxima revisão) — visão de retenção
     indicadores:ind,
     texto:"O estudante compreende a multiplicação como grupos iguais e disposição retangular (array). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Nível sugerido: "+d.nivel+".",
     quando:(new Date()).toISOString() };
