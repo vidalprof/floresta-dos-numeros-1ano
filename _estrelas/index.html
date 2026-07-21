@@ -670,17 +670,17 @@ function legendaSync(leg, texto){
 
 /* ================= PROGRESSÃO / MAPA VIVO ================= */
 var STOPS=[
-  {id:"p1",tipo:"aprend",titulo:"As Caixas de Estrelas",fn:function(){telaParada1();}},
-  {id:"p2",tipo:"aprend",titulo:"A Constelação",fn:function(){telaParada2();}},
-  {id:"r1",tipo:"alivio",titulo:"Música das Estrelas",fn:function(){telaMusica();}},
-  {id:"p3",tipo:"aprend",titulo:"Dois Jeitos, Mesmo Céu",fn:function(){telaParada3();}},
-  {id:"soma",tipo:"aprend",titulo:"Soma que Vira Vezes",fn:function(){telaSoma();}},
-  {id:"p4",tipo:"aprend",titulo:"O Céu Grande",fn:function(){telaParada4();}},
-  {id:"r2",tipo:"alivio",titulo:"Monte a Constelação",fn:function(){telaMemoria();}},
-  {id:"prob",tipo:"aprend",titulo:"O Problema da Fábrica",fn:function(){telaProblema();}},
-  {id:"p5",tipo:"aprend",titulo:"A Sua Constelação",fn:function(){telaParada5();}},
-  {id:"desafio",tipo:"aprend",titulo:"O Desafio das Estrelas",fn:function(){telaDesafio();}},
-  {id:"d",tipo:"deleite",titulo:"Decore o Seu Céu",fn:function(){telaDecore();}}
+  {id:"p1",tipo:"aprend",titulo:"As Caixas de Estrelas",fn:function(){telaParada1(); falar("p1");}},
+  {id:"p2",tipo:"aprend",titulo:"A Constelação",fn:function(){telaParada2(); falar("p2");}},
+  {id:"r1",tipo:"alivio",titulo:"Música das Estrelas",fn:function(){telaMusica(); falar("r1");}},
+  {id:"p3",tipo:"aprend",titulo:"Dois Jeitos, Mesmo Céu",fn:function(){telaParada3(); falar("p3");}},
+  {id:"soma",tipo:"aprend",titulo:"Soma que Vira Vezes",fn:function(){telaSoma(); falar("soma");}},
+  {id:"p4",tipo:"aprend",titulo:"O Céu Grande",fn:function(){telaParada4(); falar("p4");}},
+  {id:"r2",tipo:"alivio",titulo:"Monte a Constelação",fn:function(){telaMemoria(); falar("r2");}},
+  {id:"prob",tipo:"aprend",titulo:"O Problema da Fábrica",fn:function(){telaProblema(); falar("prob");}},
+  {id:"p5",tipo:"aprend",titulo:"A Sua Constelação",fn:function(){telaParada5(); falar("p5");}},
+  {id:"desafio",tipo:"aprend",titulo:"O Desafio das Estrelas",fn:function(){telaDesafio(); falar("desafio");}},
+  {id:"d",tipo:"deleite",titulo:"Decore o Seu Céu",fn:function(){telaDecore(); falar("decore");}}
 ];
 var progresso=0, fagPos=0;
 
@@ -1410,6 +1410,7 @@ function telaFinal(){
   var bar=el("div","p1barra"); bar.style.bottom="8%";
   var b=el("button","btn pulsa","Ver como você foi"); b.onclick=function(){ telaRelatorio(); }; bar.appendChild(b); t.appendChild(bar);
   app.appendChild(t);
+  falar("final");
   var i; for(i=0;i<3;i++){ (function(d){ setTimeout(function(){ estouraEstrelas(t,16); },d); })(i*600);
   }
 }
