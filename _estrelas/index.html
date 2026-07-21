@@ -77,6 +77,10 @@ img{-webkit-user-drag:none;user-drag:none}
 .corpo-fag .base{position:relative}
 .corpo-fag .fala,.corpo-fag .pisca{opacity:0}
 .fag.fidget .corpo-fag{-webkit-animation:fidget .6s ease;animation:fidget .6s ease}
+/* FALANDO: o corpo acompanha a voz (baloiço no ritmo de fala + leve pulinho) — "parece falando" */
+.fag.falando .corpo-fag{-webkit-animation:falaViva .46s ease-in-out infinite;animation:falaViva .46s ease-in-out infinite}
+@-webkit-keyframes falaViva{0%,100%{-webkit-transform:rotate(-1.6deg) translateY(0) scale(1)}50%{-webkit-transform:rotate(1.8deg) translateY(-3px) scale(1.015)}}
+@keyframes falaViva{0%,100%{transform:rotate(-1.6deg) translateY(0) scale(1)}50%{transform:rotate(1.8deg) translateY(-3px) scale(1.015)}}
 @-webkit-keyframes fidget{0%{-webkit-transform:scale(1) rotate(0)}30%{-webkit-transform:scale(1.06) rotate(4deg)}60%{-webkit-transform:scale(1.01) rotate(-3deg)}100%{-webkit-transform:scale(1) rotate(0)}}
 @keyframes fidget{0%{transform:scale(1) rotate(0)}30%{transform:scale(1.06) rotate(4deg)}60%{transform:scale(1.01) rotate(-3deg)}100%{transform:scale(1) rotate(0)}}
 
@@ -159,9 +163,13 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .mapa .nowrap.deleite .no:not(.futuro) img{-webkit-filter:hue-rotate(-45deg) drop-shadow(0 0 10px rgba(255,150,210,.8));filter:hue-rotate(-45deg) drop-shadow(0 0 10px rgba(255,150,210,.8))}
 .mapa .rotulo{position:absolute;left:50%;top:100%;margin-top:2px;-webkit-transform:translateX(-50%);transform:translateX(-50%);
   white-space:nowrap;font-size:12px;font-weight:800;color:#fff;background:rgba(10,14,40,.72);padding:3px 9px;border-radius:11px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
-.mapa .walker{position:absolute;z-index:6;-webkit-transform:translate(-50%,-92%);transform:translate(-50%,-92%);
-  -webkit-transition:left 1.1s ease,top 1.1s ease;transition:left 1.1s ease,top 1.1s ease}
+.mapa .walker{position:absolute;z-index:6;margin-left:50px;-webkit-transform:translate(-50%,-92%);transform:translate(-50%,-92%);
+  -webkit-transition:left 1.4s ease-in-out,top 1.4s ease-in-out;transition:left 1.4s ease-in-out,top 1.4s ease-in-out}
 .mapa .walker .fag{position:relative;width:76px}
+/* ANDANDO na trilha: passinhos (pulinhos curtos) enquanto desliza até a parada */
+.mapa .walker.anda .fagwrap{-webkit-animation:passinho .32s ease-in-out infinite;animation:passinho .32s ease-in-out infinite}
+@-webkit-keyframes passinho{0%,100%{-webkit-transform:translateY(0) rotate(-2.5deg)}50%{-webkit-transform:translateY(-9px) rotate(2.5deg)}}
+@keyframes passinho{0%,100%{transform:translateY(0) rotate(-2.5deg)}50%{transform:translateY(-9px) rotate(2.5deg)}}
 
 /* ---------- PARADA (criar/resolver: grupos iguais) ---------- */
 .fagfala{position:absolute;bottom:0;right:2px;width:112px;z-index:3}
@@ -185,7 +193,14 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .caixa .cnt{position:absolute;bottom:0;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
   min-width:24px;background:#ffd75e;color:#5a3b00;font-weight:900;font-size:15px;border-radius:12px;padding:1px 9px;box-shadow:0 2px 0 #c8871a}
 .p1barra{position:absolute;left:0;right:0;bottom:3%;text-align:center;z-index:4}
-.p1dica{font-size:13px;color:#ffe9a8;font-style:italic;margin-bottom:8px;min-height:1.2em}
+/* DICA/EXPLICAÇÃO = bolha própria ACIMA dos botões (z-index alto): nunca fica escondida
+   atrás do alto-falante/botão Dica. Some sozinha quando não há texto (:empty). */
+.p1dica,.pdica{position:absolute;left:14px;right:14px;bottom:100%;margin-bottom:10px;z-index:11;
+  font-size:14px;color:#ffe9a8;font-style:italic;line-height:1.35;text-align:center;
+  background:rgba(15,20,48,.94);border:1px solid rgba(255,225,150,.45);border-radius:14px;padding:10px 13px;
+  box-shadow:0 8px 22px rgba(0,0,0,.5);
+  -webkit-animation:aeIn .3s ease both;animation:aeIn .3s ease both}
+.p1dica:empty,.pdica:empty{display:none}
 .btn2{border:0;cursor:pointer;font-family:inherit;font-weight:700;color:#20264a;background:#e7ebff;
   padding:9px 18px;font-size:15px;border-radius:20px;box-shadow:0 3px 0 #9aa3d6}
 .btn2:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #9aa3d6}
@@ -275,7 +290,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   background:#fff;box-shadow:0 4px 0 #c4cbe8,0 7px 14px rgba(0,0,0,.22)}
 .optbtn:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c4cbe8}
 .optbtn:disabled{opacity:.5}
-.p5 .p5dica{margin-top:9px;font-size:13px;color:#ffe9a8;font-style:italic;min-height:1.2em;padding:0 12px}
+/* .p5dica herda a bolha de .p1dica (acima dos botões) */
 
 /* ---------- DELEITE — Decore o Seu Céu ---------- */
 .decore .decoceu{position:absolute;left:0;right:0;top:22%;bottom:24%;z-index:3;cursor:crosshair}
@@ -316,7 +331,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .perg .opts{position:absolute;left:0;right:0;bottom:13%;z-index:4;text-align:center}
 .perg .fagfala{width:84px;right:0}   /* menor nas telas de escolha: não encosta na fileira de botões */
 .perg .pperg{font-size:15px;color:#e9ecff;font-weight:700;margin-bottom:10px}
-.perg .pdica{margin-top:10px;font-size:13px;color:#ffe9a8;font-style:italic;min-height:1.2em;padding:0 12px}
+/* .pdica herda a bolha de .p1dica (acima dos botões) */
 .perg .expr{font-size:30px;font-weight:900;color:#ffe08a;text-shadow:0 0 16px rgba(255,200,80,.6)}
 .perg .expr.grande{font-size:44px}
 .perg .gradeM .fila{opacity:.92}
@@ -407,10 +422,32 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .ajudabtn.usado{opacity:.5}
 .ajudabtn:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
 
-/* card de AUTOEXPLICAÇÃO (a Fagulha pergunta "por quê?") */
+/* card de AUTOEXPLICAÇÃO (a Fagulha pergunta "por quê?") — CONVERSA, não questionário:
+   a Fagulha aparece pensando no card e a criança TOCA NO DESENHO que mostra o porquê. */
 .autoexp{position:absolute;left:12px;right:12px;top:20%;z-index:8;background:rgba(15,20,48,.97);border:1px solid rgba(255,225,150,.45);
-  border-radius:20px;padding:15px 16px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.55);
+  border-radius:20px;padding:24px 16px 15px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.55);
   -webkit-animation:aeIn .35s ease both;animation:aeIn .35s ease both}
+.autoexp .aefagmini{position:absolute;top:-42px;left:8px;width:58px;height:auto;
+  -webkit-filter:drop-shadow(0 5px 12px rgba(0,0,0,.55));filter:drop-shadow(0 5px 12px rgba(0,0,0,.55));
+  -webkit-animation:flutua 3.8s ease-in-out infinite;animation:flutua 3.8s ease-in-out infinite}
+.autoexp .aesub{font-size:12.5px;color:#cdd3ff;margin-bottom:4px}
+.aetiles{margin-top:9px}
+.aetile{display:inline-block;vertical-align:top;width:30%;margin:4px 1.4% 0;border:1px solid rgba(255,255,255,.16);border-radius:16px;
+  background:rgba(255,255,255,.05);padding:10px 5px 9px;cursor:pointer;font-family:inherit;color:#e9ecff;
+  -webkit-transition:-webkit-transform .18s ease;transition:transform .18s ease}
+.aetile:active{-webkit-transform:scale(.95);transform:scale(.95)}
+.aetile .aevis{min-height:52px;margin-bottom:7px}
+.aetile .aecap{font-size:12.5px;font-weight:800;line-height:1.2}
+.aetile .aecap b{color:#ffe08a}
+.aetile.escolhida{background:rgba(150,175,255,.14);border-color:rgba(175,195,255,.8);
+  box-shadow:0 0 16px rgba(150,180,255,.5);-webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.aefila{line-height:0;white-space:nowrap}
+.aefila .aestr{width:9px;height:auto;margin:1px;-webkit-filter:drop-shadow(0 0 3px rgba(255,220,120,.8));filter:drop-shadow(0 0 3px rgba(255,220,120,.8))}
+.aegrupo{display:inline-block;vertical-align:middle;margin:2px;padding:3px 4px;border-radius:8px;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,215,110,.35);line-height:0;max-width:64px;white-space:normal}
+.aegrupo .aestr{width:9px;height:auto;margin:1px}
+.aeigual{font-size:16px;font-weight:900;color:#ffe08a;vertical-align:middle;margin:0 4px}
+.aestrG{width:28px;height:auto;-webkit-filter:drop-shadow(0 0 6px rgba(255,220,120,.9));filter:drop-shadow(0 0 6px rgba(255,220,120,.9))}
 @-webkit-keyframes aeIn{0%{-webkit-transform:translateY(24px) scale(.96)}100%{-webkit-transform:translateY(0) scale(1)}}
 @keyframes aeIn{0%{transform:translateY(24px) scale(.96)}100%{transform:translateY(0) scale(1)}}
 .autoexp .aeperg{font-size:15px;color:#ffe6a3;font-weight:800;line-height:1.32;margin-bottom:6px}
@@ -550,20 +587,28 @@ function falar(id, cb){
 }
 function fimFala(){ paraBoca(); ouvirBtn.className=""; var c=falandoCb; falandoCb=null; if(c){ c(); } }
 narr.addEventListener("ended", fimFala);
+function corpoFala(on){ if(fagAtual&&fagAtual.el&&fagAtual.el.classList){ if(on){fagAtual.el.classList.add("falando");} else {fagAtual.el.classList.remove("falando");} } }
 function iniciaBoca(){
   if(falaTimer) clearInterval(falaTimer);
-  bocaAlvo=0.6;
+  bocaAlvo=0.7; corpoFala(true);
   falaTimer=setInterval(function(){
-    if(narr.paused||narr.ended){ bocaAlvo=0; }
-    else { bocaAlvo = 0.15 + Math.random()*0.8; }
+    if(narr.paused||narr.ended){ bocaAlvo=0; corpoFala(false); }
+    else { bocaAlvo = 0.25 + Math.random()*0.75; corpoFala(true); }   // boca mais visível + corpo acompanhando
   }, 95);
 }
-function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
-/* toca uma fala e SÓ ENTÃO segue (no fim do áudio) — com rede de segurança
-   (se o áudio faltar/travar, segue mesmo assim depois de maxMs; nunca prende o fluxo) */
+function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; corpoFala(false); }
+/* toca uma fala e SÓ ENTÃO segue (no fim do áudio) — com rede de segurança.
+   IMPORTANTE (bug pago): o prazo maxMs NÃO pode atropelar uma narração que ainda
+   está tocando (a tela seguinte chegava antes da voz acabar). Regra: o prazo só
+   dispara se o áudio NÃO estiver tocando (faltou/travou); tocando = espera o fim. */
 function depoisDaFala(id, maxMs, cb){
   var feito=false; function go(){ if(feito)return; feito=true; cb(); }
-  falar(id, go); setTimeout(go, maxMs||9000);
+  falar(id, go);
+  setTimeout(function espera(){
+    if(feito) return;
+    if(!narr.paused && !narr.ended && narr.currentTime>0){ setTimeout(espera,350); }  // ainda falando: deixa terminar
+    else { go(); }                                                                     // áudio não tocou/já parou: segue
+  }, maxMs||9000);
 }
 
 /* ---- LOOP único (só boca) ---- */
@@ -592,7 +637,8 @@ function agendaPisca(){
 agendaPisca();
 function agendaFidget(){
   setTimeout(function(){
-    if(fagAtual && fagAtual.el){ fagAtual.el.className="fag fidget"+(fagAtual.extra||"");
+    if(fagAtual && fagAtual.el && bocaAlvo===0){   // não interrompe a animação de fala
+      fagAtual.el.className="fag fidget"+(fagAtual.extra||"");
       setTimeout(function(){ if(fagAtual&&fagAtual.el) fagAtual.el.className="fag"+(fagAtual.extra||""); },650); }
     agendaFidget();
   }, 6000+Math.random()*6000);
@@ -673,24 +719,40 @@ function ajudaBtn(tela, niveis, mostraTxt){
   tela.appendChild(btn);
   return btn;
 }
-/* AUTOEXPLICAÇÃO: a Fagulha PERGUNTA "por que deu certo?"; a criança escolhe a razão.
-   Registra a razão como evidência p/ o professor; qualquer escolha recebe resposta gentil. */
+/* visuais da autoexplicação: a criança APONTA O DESENHO que mostra o porquê
+   (menos leitura, mais mundo — nada de questionário de texto) */
+function visFilas(arr){ var w=el("div","aevis"),i,k; for(i=0;i<arr.length;i++){ var f=el("div","aefila"); for(k=0;k<arr[i];k++){ var im=el("img","aestr"); im.src="img/estrela_grande.png"; f.appendChild(im); } w.appendChild(f); } return w; }
+function visGrupos(arr){ var w=el("div","aevis"),i,k; for(i=0;i<arr.length;i++){ var g=el("div","aegrupo"); for(k=0;k<arr[i];k++){ var im=el("img","aestr"); im.src="img/estrela_grande.png"; g.appendChild(im); } w.appendChild(g); } return w; }
+function visIgual(a,b){ var w=el("div","aevis"); w.appendChild(visMiniGrade(a[0],a[1])); w.appendChild(el("span","aeigual","=")); w.appendChild(visMiniGrade(b[0],b[1])); return w; }
+function visMiniGrade(fil,col){ var g=el("span"),i; g.style.display="inline-block"; g.style.verticalAlign="middle"; for(i=0;i<fil;i++){ var f=el("div","aefila"),k; for(k=0;k<col;k++){ var im=el("img","aestr"); im.src="img/estrela_grande.png"; f.appendChild(im); } g.appendChild(f); } return g; }
+function visEstrelona(){ var w=el("div","aevis"); var im=el("img","aestrG"); im.src="img/estrela_grande.png"; w.appendChild(im); return w; }
+/* AUTOEXPLICAÇÃO: a Fagulha PERGUNTA "por que deu certo?"; a criança MOSTRA a razão
+   tocando no desenho. Registra a razão como evidência p/ o professor; a tela nunca
+   mostra certo/errado (Portão 0); qualquer escolha recebe resposta gentil. */
 function autoexplica(tela, cfg, cb){
   var k, esconder=["caixas","pmeio","somaMeio","grade","steppers","p3wrap","p4sky"];  // limpa o meio; a revela (conceito) fica de referência
   for(k=0;k<esconder.length;k++){ var e0=tela.getElementsByClassName(esconder[k])[0]; if(e0)e0.style.display="none"; }
   var box=el("div","autoexp");
-  box.innerHTML="<div class='aeperg'>"+cfg.pergunta+"</div>";
-  var respondido=false, i;
+  var mini=el("img","aefagmini"); mini.src="img/fagulha_pensa.png"; mini.alt=""; box.appendChild(mini);
+  box.appendChild(el("div","aeperg",cfg.pergunta));
+  var temVis=false, i;
+  for(i=0;i<cfg.opcoes.length;i++){ if(cfg.opcoes[i].vis) temVis=true; }
+  if(temVis) box.appendChild(el("div","aesub","Toque no desenho que mostra o porquê:"));
+  var respondido=false;
+  var row=el("div","aetiles");
   for(i=0;i<cfg.opcoes.length;i++){ (function(o){
-    var b=el("button","aebtn",o.txt);
+    var b;
+    if(o.vis){ b=el("button","aetile"); b.appendChild(o.vis()); b.appendChild(el("div","aecap",o.txt)); }
+    else { b=el("button","aebtn",o.txt); }
     b.onclick=function(){
       if(respondido)return; respondido=true;
-      b.className="aebtn escolhida";   // Portão 0: sem verde/amarelo — nada de "certo/errado" na tela
+      b.className=(o.vis?"aetile":"aebtn")+" escolhida";   // estado NEUTRO: sem verde/vermelho na tela
       salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
       depoisDaFala(o.ok?"refl_ok":"refl_hmm", 6000, function(){ if(cb)cb(); });   // a razão é gravada p/ o professor; a criança nunca vê nota
     };
-    box.appendChild(b);
+    if(o.vis){ row.appendChild(b); } else { box.appendChild(b); }
   })(cfg.opcoes[i]); }
+  if(row.childNodes.length) box.appendChild(row);
   tela.appendChild(box);
   if(cfg.falaQ) falar(cfg.falaQ);
   return box;
@@ -833,14 +895,17 @@ function telaMapa(){
       w.appendChild(el("div","rotulo","COMEÇAR")); }
     w.appendChild(no); strip.appendChild(w);
   }
-  var walker=el("div","walker"); walker.style.left=(nodeX(fagPos)+23)+"%"; walker.style.top=ytop(fagPos)+"px";
+  /* Fagulha caminha na TRILHA e para AO LADO da parada atual (margin-left:50px = coladinha no nó) */
+  var walker=el("div","walker"); walker.style.left=nodeX(fagPos)+"%"; walker.style.top=ytop(fagPos)+"px";
   walker.appendChild(fagViva()); strip.appendChild(walker);
   var offDe=camY(fagPos); strip.style.webkitTransform="translateY("+(-offDe)+"px)"; strip.style.transform="translateY("+(-offDe)+"px)";
   t.appendChild(strip);
-  var atual=Math.min(progresso,n-1), offPara=camY(atual);
+  var atual=Math.min(progresso,n-1), offPara=camY(atual), andou=(atual!==fagPos);
   setTimeout(function(){
     strip.style.webkitTransform="translateY("+(-offPara)+"px)"; strip.style.transform="translateY("+(-offPara)+"px)";
-    walker.style.left=(nodeX(atual)+23)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
+    if(andou){ walker.className="walker anda"; }
+    walker.style.left=nodeX(atual)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
+    if(andou){ setTimeout(function(){ walker.className="walker"; },1500); }
   },430);
   var hud=el("div","hud glass");
   hud.innerHTML="<div class='hpar'><span class='hico flama'></span><b>"+sessao.ofensiva+"</b></div>"+
@@ -935,7 +1000,11 @@ function sucessoP1(){
       autoexplica(tela, {
         falaQ:"se_p1_q",
         pergunta:"Por que encher caixas <b>iguais</b> virou uma conta de <b>vezes</b>?",
-        opcoes:[{txt:"Porque os grupos são todos <b>iguais</b>",ok:true},{txt:"Porque contei uma por uma",ok:false},{txt:"Porque eu adivinhei",ok:false}],
+        opcoes:[
+          {vis:function(){return visGrupos([4,4,4]);},txt:"As caixas ficaram <b>iguais</b>",ok:true},
+          {vis:function(){return visGrupos([2,4,1]);},txt:"As caixas ficaram diferentes",ok:false},
+          {vis:function(){return visFilas([5,4,3]);},txt:"Foi um montão sem caixas",ok:false}
+        ],
         idEvid:"p1"
       }, function(){ botaoProxima(tela,null,200); });
     });
@@ -1013,7 +1082,11 @@ function sucessoP2(){
       autoexplica(tela, {
         falaQ:"se_p2_q",
         pergunta:"Por que <b>4 fileiras de 5</b> é o mesmo que <b>4 &#215; 5</b>?",
-        opcoes:[{txt:"Porque <b>cada fileira</b> tem o mesmo tanto",ok:true},{txt:"Porque contei uma por uma",ok:false},{txt:"Porque sim",ok:false}],
+        opcoes:[
+          {vis:function(){return visFilas([5,5,5,5]);},txt:"Cada fileira tem o <b>mesmo</b> tanto",ok:true},
+          {vis:function(){return visFilas([5,2,4]);},txt:"Fileiras todas diferentes",ok:false},
+          {vis:function(){return visEstrelona();},txt:"As estrelas são grandes",ok:false}
+        ],
         idEvid:"p2"
       }, function(){ botaoProxima(tela,null,200); });
     });
@@ -1181,7 +1254,11 @@ function sucessoP3(){
       autoexplica(tela, {
         falaQ:"se_p3_q",
         pergunta:"Por que <b>virar de lado</b> deu o <b>mesmo</b> tanto de estrelas?",
-        opcoes:[{txt:"Porque são as <b>mesmas</b> estrelas, só de outro jeito",ok:true},{txt:"Porque a Fagulha trocou o número",ok:false},{txt:"Porque sim",ok:false}],
+        opcoes:[
+          {vis:function(){return visIgual([3,4],[4,3]);},txt:"As <b>mesmas</b> estrelas, viradas",ok:true},
+          {vis:function(){return visFilas([4,4,4,4]);},txt:"Apareceram estrelas novas",ok:false},
+          {vis:function(){return visFilas([3,3]);},txt:"Sumiram estrelas",ok:false}
+        ],
         idEvid:"p3"
       }, function(){ botaoProxima(tela,null,200); });
     });
@@ -1229,7 +1306,11 @@ function sucessoP4(){
       autoexplica(tela, {
         falaQ:"se_p4_q",
         pergunta:"Por que juntar de <b>10 em 10</b> enche o céu tão <b>rápido</b>?",
-        opcoes:[{txt:"Porque <b>cada caixa</b> já traz 10 de uma vez",ok:true},{txt:"Porque as estrelas são grandes",ok:false},{txt:"Porque sim",ok:false}],
+        opcoes:[
+          {vis:function(){return visGrupos([10]);},txt:"Cada caixa traz <b>10</b> de uma vez",ok:true},
+          {vis:function(){return visGrupos([1,1,1]);},txt:"Vem uma estrela de cada vez",ok:false},
+          {vis:function(){return visEstrelona();},txt:"As estrelas são grandes",ok:false}
+        ],
         idEvid:"p4"
       }, function(){ botaoProxima(tela,null,200); });
     });
@@ -1448,7 +1529,11 @@ function sucessoSoma(){
       autoexplica(tela, {
         falaQ:"se_soma_q",
         pergunta:"Por que <b>3+3+3+3</b> é o mesmo que <b>4 &#215; 3</b>?",
-        opcoes:[{txt:"Porque o <b>3</b> se repete <b>4 vezes</b>",ok:true},{txt:"Porque 3 mais 4 dá 7",ok:false},{txt:"Porque sim",ok:false}],
+        opcoes:[
+          {vis:function(){return visGrupos([3,3,3,3]);},txt:"O <b>3</b> se repete <b>4 vezes</b>",ok:true},
+          {vis:function(){return visGrupos([3,4]);},txt:"É só um 3 e um 4",ok:false},
+          {vis:function(){return visGrupos([7]);},txt:"Virou um 7 sozinho",ok:false}
+        ],
         idEvid:"soma"
       }, function(){ botaoProxima(tela,null,200); });
     });
@@ -1501,7 +1586,11 @@ function sucessoProblema(){
       autoexplica(tela, {
         falaQ:"se_prob_q",
         pergunta:"Por que esse problema era uma conta de <b>vezes</b>?",
-        opcoes:[{txt:"Porque tinha <b>grupos iguais</b> (prateleiras iguais)",ok:true},{txt:"Porque tinha muitas estrelas",ok:false},{txt:"Porque sim",ok:false}],
+        opcoes:[
+          {vis:function(){return visFilas([4,4,4,4,4]);},txt:"Prateleiras <b>iguais</b>, de 4 em 4",ok:true},
+          {vis:function(){return visFilas([4,2,5]);},txt:"Prateleiras todas diferentes",ok:false},
+          {vis:function(){return visEstrelona();},txt:"Estrelas grandes demais",ok:false}
+        ],
         idEvid:"prob"
       }, function(){ botaoProxima(tela,null,200); });
     });

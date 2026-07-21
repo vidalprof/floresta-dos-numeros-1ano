@@ -134,6 +134,24 @@ mostrava **gabarito** (verde "certo" / "quase") e era **"escolher a alternativa 
   **monta a conta / arrasta os grupos / constrói o array** e o total nasce do que ela fez (o mundo confere,
   sem X). É redesenho de mecânica (maior), a fazer com QA.
 
+## 🔧 RODADA DE POLIMENTO (feedback do Marcos jogando, 2026-07-21)
+Quatro consertos aplicados e publicados (sw v14):
+1. **Dica nunca mais escondida:** `.p1dica/.pdica` viraram BOLHA própria acima da fileira de
+   botões (z-index 11, some quando vazia via `:empty`) — antes o texto ficava atrás do
+   alto-falante/botão Dica.
+2. **Fagulha "parece falando":** classe `.fag.falando` (baloiço no ritmo da fala, boca mais
+   visível `bocaAlvo 0.25–1.0`); fidget não interrompe a fala. No MAPA a Fagulha agora anda com
+   **passinhos** (`.walker.anda`) e para **AO LADO** do nó atual (margin-left 50px; antes ficava
+   a +23% da tela = longe).
+3. **BUG timing (lição):** `depoisDaFala` disparava o callback no prazo fixo (9s) MESMO com o
+   áudio ainda tocando → a tela da pergunta chegava antes da narração acabar. Regra nova: o
+   prazo só vale se o áudio NÃO está tocando; tocando = espera o `ended` de verdade.
+4. **Autoexplicação SEM cara de questionário:** a criança agora **toca no DESENHO** que mostra
+   o porquê (cartões visuais compostos das estrelas/grupos; mini-Fagulha pensando pousada no
+   card; escolha = brilho azul NEUTRO). Portão 0 intacto (nada de certo/errado na tela; razão
+   gravada p/ o professor). Continua sendo *seleção* — a produção plena (criança MONTA a razão)
+   fica p/ o stage 2 (quiz→produção), já registrado acima.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
