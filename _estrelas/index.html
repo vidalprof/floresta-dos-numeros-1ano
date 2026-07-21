@@ -861,6 +861,7 @@ function sucessoP1(){
   var tempo=Math.round(((new Date()).getTime()-P1.t0)/1000);
   salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)});
   premiar(P1.toques===P1.n*P1.m?3:2);
+  setTimeout(function(){ falar("e_p1"); },800);
 }
 
 /* ==== PARADAS/TELAS seguintes (preenchidas em blocos) ==== */
@@ -924,6 +925,7 @@ function sucessoP2(){
   var tempo=Math.round(((new Date()).getTime()-P2.t0)/1000);
   salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,tempo_s:tempo,acertou:true,semErro:(P2.ajustes<=5)});
   premiar(P2.ajustes<=5?3:2);
+  setTimeout(function(){ falar("e_p2"); },800);
 }
 /* ===== ALÍVIO 1 — Música das Estrelas (sonificação; grupos iguais por baixo) ===== */
 var audioCtx=null;
@@ -1070,6 +1072,7 @@ function sucessoP3(){
   var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
   salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true});
   premiar(3);
+  setTimeout(function(){ falar("e_p3"); },800);
 }
 /* ===== PARADA 4 — O Céu Grande (×10 como atalho) ===== */
 var P4;
@@ -1109,6 +1112,7 @@ function sucessoP4(){
   var tempo=Math.round(((new Date()).getTime()-P4.t0)/1000);
   salvaEvid({parada:"p4",habilidade:"EF03MA07",conceito:"x10 (atalho)",toques:P4.toques,tempo_s:tempo,acertou:true,semErro:(P4.toques===P4.alvo)});
   premiar(P4.toques===P4.alvo?3:2);
+  setTimeout(function(){ falar("e_p4"); },800);
 }
 /* ===== ALÍVIO 2 — Monte a Constelação (memória: grupo ↔ total) ===== */
 var MEM;
@@ -1263,6 +1267,7 @@ function sucessoP5(){
   var tempo=Math.round(((new Date()).getTime()-P5.t0)/1000);
   salvaEvid({parada:"p5",habilidade:"EF03MA07",conceito:"autoria + protégé",criou:[P5.fil,P5.col],real:P5.real,corrigiu:P5.protegeErrou,tentativas:P5.tent,acertou:true,semErro:(P5.tent===1)});
   premiar(P5.tent===1?3:2);
+  setTimeout(function(){ falar("e_p5"); },800);
 }
 /* ===== helper de múltipla escolha (paradas de pergunta) ===== */
 function opcoesRow(arr,corretaVal,host,onCerto,dicaErr,est){
@@ -1312,6 +1317,7 @@ function sucessoSoma(){
   botaoProxima(tela);
   salvaEvid({parada:"soma",habilidade:"EF03MA07",conceito:"adição de parcelas iguais",tent:SOMA.tent,acertou:true,semErro:(SOMA.tent===0)});
   premiar(SOMA.tent===0?3:2);
+  setTimeout(function(){ falar("e_soma"); },800);
 }
 
 /* ===== PARADA — O Problema da Fábrica (resolver problema em contexto) ===== */
@@ -1350,6 +1356,7 @@ function sucessoProblema(){
   botaoProxima(tela);
   salvaEvid({parada:"prob",habilidade:"EF03MA07",conceito:"resolver problema em contexto",tent:PROB.tent,acertou:true,semErro:(PROB.tent===0)});
   premiar(PROB.tent===0?3:2);
+  setTimeout(function(){ falar("e_prob"); },800);
 }
 
 /* ===== PARADA — O Desafio das Estrelas (transferência, sem apoios) ===== */
@@ -1403,6 +1410,7 @@ function sucessoDesafio(){
   botaoProxima(tela,"Ir para o final");
   salvaEvid({parada:"desafio",habilidade:"EF03MA07",conceito:"transferência (sem apoios)",acertos:DES.acertos,total:DES.total,acertou:true,semErro:(DES.acertos===DES.total)});
   premiar(Math.max(1,DES.acertos));
+  setTimeout(function(){ falar("e_desafio"); },800);
 }
 
 /* ===== DELEITE — Decore o Seu Céu (criação livre) ===== */
