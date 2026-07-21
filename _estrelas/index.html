@@ -43,12 +43,10 @@ img{-webkit-user-drag:none;user-drag:none}
 
 /* estrelinhas piscando */
 .estrelas{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
-.pt{position:absolute;border-radius:50%;background:#fff;opacity:.6;
-  box-shadow:0 0 7px 2px rgba(255,255,255,.95),0 0 15px 4px rgba(170,200,255,.55);
-  -webkit-animation:cintila 4s ease-in-out infinite;animation:cintila 4s ease-in-out infinite}
-.pt.ouro{box-shadow:0 0 7px 2px rgba(255,240,190,.98),0 0 16px 5px rgba(255,205,110,.6)}
-@-webkit-keyframes cintila{0%,100%{opacity:.4;-webkit-transform:scale(.7)}50%{opacity:1;-webkit-transform:scale(1.25)}}
-@keyframes cintila{0%,100%{opacity:.4;transform:scale(.7)}50%{opacity:1;transform:scale(1.25)}}
+.pt{position:absolute;border-radius:50%;background:#fff;opacity:.2;box-shadow:0 0 5px 1px rgba(255,255,255,.55);
+  -webkit-animation:cintila 4.5s ease-in-out infinite;animation:cintila 4.5s ease-in-out infinite}
+@-webkit-keyframes cintila{0%,100%{opacity:.09;-webkit-transform:scale(.6)}50%{opacity:.75;-webkit-transform:scale(1.1)}}
+@keyframes cintila{0%,100%{opacity:.09;transform:scale(.6)}50%{opacity:.75;transform:scale(1.1)}}
 
 /* ---- FÁBRICA VIVA (glow + fumaças de estrela) ---- */
 .fabviva{position:absolute}
@@ -149,6 +147,11 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .mapa .trilhaScroll{position:absolute;top:0;left:0;width:100%;z-index:1;
   -webkit-transition:-webkit-transform 1.1s ease;transition:transform 1.1s ease}
 .mapa .trilha{position:absolute;top:0;left:0;width:100%;z-index:2;pointer-events:none}
+/* tracejadinho de pontos (trilha das fases futuras): brilho SUAVE que pulsa devagar */
+.trilhaPontos{-webkit-filter:drop-shadow(0 0 3px rgba(190,205,255,.85));filter:drop-shadow(0 0 3px rgba(190,205,255,.85));
+  -webkit-animation:pontosBrilho 3.4s ease-in-out infinite;animation:pontosBrilho 3.4s ease-in-out infinite}
+@-webkit-keyframes pontosBrilho{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes pontosBrilho{0%,100%{opacity:.5}50%{opacity:1}}
 .mapa .nowrap{position:absolute;z-index:4;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
 .mapa .no{position:relative;width:72px}
 .mapa .no.feito img{-webkit-filter:drop-shadow(0 0 12px rgba(255,220,120,.95));filter:drop-shadow(0 0 12px rgba(255,220,120,.95))}
@@ -636,7 +639,7 @@ function fabViva(){
 function campoEstrelas(qtd,espalha){
   var c=el("div","estrelas"); var i, alt=(espalha||70);
   for(i=0;i<qtd;i++){
-    var p=el("div",(i%4===0)?"pt ouro":"pt");
+    var p=el("div","pt");
     p.style.left=(Math.random()*100).toFixed(2)+"%"; p.style.top=(Math.random()*alt).toFixed(2)+"%";
     var d=(2.6+Math.random()*4).toFixed(2); p.style.webkitAnimationDuration=d+"s"; p.style.animationDuration=d+"s";
     var de=(-Math.random()*4).toFixed(2); p.style.webkitAnimationDelay=de+"s"; p.style.animationDelay=de+"s";
@@ -745,7 +748,7 @@ function telaMapa(){
     if(i<=progresso) pfeito+=pt; if(i>=progresso) pfut+=pt; }
   var svg=el("div","trilha"); svg.style.height=stripH+"px";
   svg.innerHTML="<svg viewBox='0 0 "+W+" "+stripH+"' preserveAspectRatio='none' width='100%' height='"+stripH+"'>"+
-    "<polyline points='"+pfut+"' fill='none' stroke='rgba(150,165,210,.28)' stroke-width='2' stroke-dasharray='1 14' stroke-linecap='round'/>"+
+    "<polyline class='trilhaPontos' points='"+pfut+"' fill='none' stroke='rgba(200,214,255,.5)' stroke-width='2.3' stroke-dasharray='1 14' stroke-linecap='round'/>"+
     "<polyline points='"+pfeito+"' fill='none' stroke='rgba(255,205,110,.22)' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/>"+
     "<polyline points='"+pfeito+"' fill='none' stroke='rgba(255,230,160,.9)' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>";
   strip.appendChild(svg);
@@ -1525,9 +1528,6 @@ function telaRelatorio(){
   app.appendChild(t);
   fagComemora();
 }
-
-/* campo de estrelas cintilando no FUNDO (tela inteira, atrás de tudo) */
-(function(){ var fu=document.getElementById("fundo"); if(fu){ fu.appendChild(campoEstrelas(64,100)); } })();
 
 telaCapa();
 })();
