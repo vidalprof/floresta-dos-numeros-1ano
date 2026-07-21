@@ -417,8 +417,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .autoexp .aeperg b{color:#fff}
 .aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#20264a;
   background:#eef1ff;padding:12px 12px;border-radius:14px;box-shadow:0 3px 0 #c4cbe8;line-height:1.2}
-.aebtn.certo{background:-webkit-linear-gradient(top,#c6f6c6,#8fe08f);background:linear-gradient(to bottom,#c6f6c6,#8fe08f)}
-.aebtn.quase{background:-webkit-linear-gradient(top,#ffe6a6,#ffd36a);background:linear-gradient(to bottom,#ffe6a6,#ffd36a)}
+.aebtn.escolhida{background:#dfe6ff;box-shadow:0 2px 0 #b9c4ee;-webkit-transform:translateY(1px);transform:translateY(1px)}
 /* "Praticar de novo" (secundário) abaixo do botão principal */
 .repbtn{display:block;margin:9px auto 0;background:rgba(255,255,255,.14);color:#e9ecff;border:1px solid rgba(255,255,255,.3);
   box-shadow:none;font-size:14px;padding:9px 18px}
@@ -686,9 +685,9 @@ function autoexplica(tela, cfg, cb){
     var b=el("button","aebtn",o.txt);
     b.onclick=function(){
       if(respondido)return; respondido=true;
-      b.className="aebtn "+(o.ok?"certo":"quase");
+      b.className="aebtn escolhida";   // Portão 0: sem verde/amarelo — nada de "certo/errado" na tela
       salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
-      depoisDaFala(o.ok?"se_ok":"se_quase", 6000, function(){ if(cb)cb(); });
+      depoisDaFala(o.ok?"refl_ok":"refl_hmm", 6000, function(){ if(cb)cb(); });   // a razão é gravada p/ o professor; a criança nunca vê nota
     };
     box.appendChild(b);
   })(cfg.opcoes[i]); }
@@ -874,8 +873,8 @@ function telaParada1(){
   t.appendChild(barra);
   ajudaBtn(t, [
     {fala:"aj_p1_1", txt:"Quantas estrelas a fábrica pediu em <b>cada</b> caixa?"},
-    {fala:"aj_p1_2", txt:"São <b>4</b> em cada. Tenta encher uma caixa com quatro."},
-    {fala:"aj_p1_3", txt:"Olha: 1, 2, 3, 4. Agora faça igual nas outras.", acao:function(){ if(!P1.concluida){ P1.cx[0]=4; pintaCaixas(); } }}
+    {fala:"aj_p1_2", txt:"Repara: cada caixa pede o <b>mesmo</b> tanto. Quantas em cada?"},
+    {fala:"aj_p1_3", txt:"Enchi <b>uma</b> caixa pra mostrar — agora faça igual nas outras!", acao:function(){ if(!P1.concluida){ P1.cx[0]=4; pintaCaixas(); } }}
   ], function(txt){ var d=t.getElementsByClassName("p1dica")[0]; if(d)d.innerHTML=txt; });
   var fw=el("div","fagfala"); fw.appendChild(fagViva()); t.appendChild(fw);
   app.appendChild(t);
@@ -961,8 +960,8 @@ function telaParada2(){
   var bar=el("div","p1barra"); bar.appendChild(el("div","p1dica p2dica","")); t.appendChild(bar);
   ajudaBtn(t, [
     {fala:"aj_p2_1", txt:"Quantas <b>fileiras</b>? E quantas em <b>cada</b>?"},
-    {fala:"aj_p2_2", txt:"<b>4 fileiras</b>, com <b>5</b> em cada."},
-    {fala:"aj_p2_3", txt:"Coloquei 4 fileiras — agora ajuste quantas em cada.", acao:function(){ if(!P2.concluida){ P2.fil=P2.alvoF; P2.ajustes++; pintaGrade(); } }}
+    {fala:"aj_p2_2", txt:"Uma constelação tem fileiras <b>iguais</b>. Quantas fileiras? E quantas em cada?"},
+    {fala:"aj_p2_3", txt:"Coloquei as fileiras — agora descubra quantas em <b>cada</b>!", acao:function(){ if(!P2.concluida){ P2.fil=P2.alvoF; P2.ajustes++; pintaGrade(); } }}
   ], function(txt){ var d=t.getElementsByClassName("p2dica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
