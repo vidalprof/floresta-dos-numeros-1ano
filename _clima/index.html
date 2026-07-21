@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Planeta Vivo — Climas do Mundo (6º ano)</title>
-<meta name="theme-color" content="#12163a">
+<meta name="theme-color" content="#0c1638">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -72,7 +72,7 @@ img{-webkit-user-drag:none;user-drag:none}
 @keyframes sobePuff{0%{opacity:0;transform:translateY(6%) scale(.4)}18%{opacity:.9}100%{opacity:0;transform:translateY(-115%) scale(1.5)}}
 
 /* ---- FAGULHA VIVA (balança + flutua + respira + reaçõezinhas) ---- */
-.fag{position:absolute;width:200px}
+.fag{position:absolute;width:185px}
 .fagbob{-webkit-animation:bobSway 4.7s ease-in-out infinite;animation:bobSway 4.7s ease-in-out infinite}
 @-webkit-keyframes bobSway{0%,100%{-webkit-transform:translateY(0) rotate(-1.6deg)}50%{-webkit-transform:translateY(-7px) rotate(1.6deg)}}
 @keyframes bobSway{0%,100%{transform:translateY(0) rotate(-1.6deg)}50%{transform:translateY(-7px) rotate(1.6deg)}}
@@ -109,7 +109,9 @@ img{-webkit-user-drag:none;user-drag:none}
   overflow:hidden;border:7px solid #ffd75e;position:relative;
   box-shadow:0 12px 30px rgba(0,0,0,.5), inset 0 0 22px rgba(0,0,0,.35);
   -webkit-animation:flutua 4.5s ease-in-out infinite;animation:flutua 4.5s ease-in-out infinite}
-.medalhao .mceu{position:absolute;top:-10%;left:-10%;width:120%;height:120%;background:url('img/ceu_noite.jpg') center/cover}
+.medalhao .mceu{position:absolute;top:-10%;left:-10%;width:120%;height:120%;
+  background:#0a1330;background:-webkit-radial-gradient(30% 26%, circle, #1b2b63 0%, #0c1638 55%, #060b22 100%);
+  background:radial-gradient(circle at 30% 26%, #1b2b63 0%, #0c1638 55%, #060b22 100%)}
 .medalhao .mfab{position:absolute;bottom:2%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);width:66%}
 .medalhao .mglow{position:absolute;left:20%;top:22%;width:60%;height:60%;border-radius:50%;
   background:radial-gradient(circle, rgba(255,205,110,.5), rgba(255,205,110,0) 60%);
@@ -125,7 +127,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .pulsa{-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite}
 @-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.05)}}
 @keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
-.capa .fagacena{position:absolute;bottom:8px;right:0;width:130px}
+.capa .fagacena{position:absolute;bottom:6px;right:4px;width:106px}
 .capa .fagacena img{width:100%;height:auto;display:block}
 
 /* ---------- ABERTURA ---------- */
@@ -179,14 +181,14 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   white-space:nowrap;font-size:12px;font-weight:800;color:#fff;background:rgba(10,14,40,.72);padding:3px 9px;border-radius:11px;text-shadow:0 1px 3px rgba(0,0,0,.8)}
 .mapa .walker{position:absolute;z-index:6;margin-left:50px;-webkit-transform:translate(-50%,-92%);transform:translate(-50%,-92%);
   -webkit-transition:left 1.4s ease-in-out,top 1.4s ease-in-out;transition:left 1.4s ease-in-out,top 1.4s ease-in-out}
-.mapa .walker .fag{position:relative;width:76px}
+.mapa .walker .fag{position:relative;width:72px}
 /* ANDANDO na trilha: passinhos (pulinhos curtos) enquanto desliza até a parada */
 .mapa .walker.anda .fagwrap{-webkit-animation:passinho .32s ease-in-out infinite;animation:passinho .32s ease-in-out infinite}
 @-webkit-keyframes passinho{0%,100%{-webkit-transform:translateY(0) rotate(-2.5deg)}50%{-webkit-transform:translateY(-9px) rotate(2.5deg)}}
 @keyframes passinho{0%,100%{transform:translateY(0) rotate(-2.5deg)}50%{transform:translateY(-9px) rotate(2.5deg)}}
 
 /* ---------- PARADA (criar/resolver: grupos iguais) ---------- */
-.fagfala{position:absolute;bottom:0;right:2px;width:112px;z-index:3}
+.fagfala{position:absolute;bottom:0;right:2px;width:100px;z-index:3;pointer-events:none}
 .fagfala .fag{position:relative;width:100%;max-width:none}
 .balao{position:absolute;top:26px;left:12px;right:12px;max-width:560px;margin:0 auto;
   background:rgba(24,28,58,.94);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:13px 16px;
@@ -352,7 +354,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* ---------- PARADAS DE PERGUNTA (Soma / Problema / Desafio) ---------- */
 .perg .pmeio{position:absolute;left:0;right:0;top:28%;text-align:center;z-index:2;padding:0 10px}
 .perg .opts{position:absolute;left:0;right:0;bottom:13%;z-index:4;text-align:center}
-.perg .fagfala{width:84px;right:0}   /* menor nas telas de escolha: não encosta na fileira de botões */
+.perg .fagfala{width:82px;right:0}   /* menor nas telas de escolha: não encosta na fileira de botões */
 .perg .pperg{font-size:15px;color:#e9ecff;font-weight:700;margin-bottom:10px}
 /* .pdica herda a bolha de .p1dica (acima dos botões) */
 .perg .expr{font-size:30px;font-weight:900;color:#ffe08a;text-shadow:0 0 16px rgba(255,200,80,.6)}
@@ -667,7 +669,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @keyframes sobe{from{transform:translateY(0);opacity:.5}to{transform:translateY(-260px);opacity:0}}
 @-webkit-keyframes flutuaP{0%,100%{-webkit-transform:translateY(0);opacity:.4}50%{-webkit-transform:translateY(-16px);opacity:1}}
 @keyframes flutuaP{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-16px);opacity:1}}
-.parada .fagfala,.clima .fagfala{width:132px}   /* Nara com mais presença (6º ano) */
+.parada .fagfala,.clima .fagfala{width:84px}   /* Nara companheira no canto (transparente); pequena p/ nunca cobrir controles */
 
 /* ===== CLIMA: medidores, biomas, zonas, semana ===== */
 .stepper.med{margin:0 6px}
@@ -1647,7 +1649,7 @@ function bioma(temp,chuva){
   return chuva===0?"tundra":"taiga";
 }
 function bioTile(slug,cls){
-  var w=el("div","biotile "+(cls||"")); var im=el("img"); im.src="img/bio_"+slug+".png"; im.alt=""; w.appendChild(im);
+  var w=el("div","biotile "+(cls||"")); var im=el("img"); im.src="img/bio_"+slug+".jpg"; im.alt=""; w.appendChild(im);
   if(!reduz) w.appendChild(bioVida(slug));                 // micro-vida (chuva/neve/calor/luz)
   w.appendChild(el("div","shine"));                        // brilho deslizante
   w.appendChild(el("div","bionome",BIONOME[slug]||""));
@@ -1695,7 +1697,7 @@ function telaZonas(){
     wrap.appendChild(faixa);
   })(i); }
   t.appendChild(wrap);
-  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Confirmar o planeta!"); b.onclick=function(){ zonConfere(); };
+  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Confirmar!"); b.onclick=function(){ zonConfere(); };
   bar.appendChild(b); bar.appendChild(el("div","pdica","")); t.appendChild(bar);
   ajudaBtn(t,[
     {txt:"No <b>Equador</b> o Sol bate direto: é o mais <b>quente</b>."},
@@ -2111,7 +2113,7 @@ function pinPoe(ev,canvas){
   if(PIN.n>=40)return;
   var r=canvas.getBoundingClientRect(), x=((ev.clientX-r.left)/r.width)*100, y=((ev.clientY-r.top)/r.height)*100;
   if(x<0||x>100||y<0||y>100)return;
-  var im=el("img","pintado"); im.src="img/bio_"+PIN.slug+".png";
+  var im=el("img","pintado"); im.src="img/bio_"+PIN.slug+".jpg";
   im.style.left=x+"%"; im.style.top=y+"%"; canvas.appendChild(im); PIN.n++;
   tocaNota(300+PIN.n*10);
 }
