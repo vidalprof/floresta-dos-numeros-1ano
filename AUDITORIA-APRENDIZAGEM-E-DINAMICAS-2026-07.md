@@ -238,6 +238,28 @@ em P1/P2 na própria jornada (variação, não só prática); (b) parada nova "C
 - **Tela do aluno com turma cheia = 2 passos SEM digitação**: toca na TURMA -> toca no NOME
   (+ "Meu nome não está aqui" como plano B). Excluir estudante já existe p/ testes.
 
+## 🔬 UNIFICAÇÃO DAS 2 SESSÕES + VEREDITO DE PESQUISA SOBRE FEEDBACK (2026-07-21, sw v20)
+Duas sessões trabalharam em paralelo (o Marcos escreveu nas duas por engano). Uni tudo numa
+versão só, SEM perder nada:
+- **Vira-Tapete (P3) portado:** a criança GIRA o array com o próprio dedo (arrasta ≥50° e
+  encaixa nos 90°) — cognição incorporada/embodied (Dienes, gesto = argumento da comutatividade).
+  Rede de segurança: 14s sem conseguir -> volta o botão. Evidência registra se girou com o dedo.
+- **Galeria "Minhas constelações" (P5) portada + adaptada por ALUNO** (kAluno): a constelação
+  criada FICA salva (construcionismo, Papert), aparece na capa com orgulho. P5 ganhou
+  autoexplicação (fechou a última lacuna do increment A).
+- **VEREDITO DE PESQUISA — a divergência das 2 sessões sobre feedback, resolvida:**
+  Uma sessão fez a reflexão NEUTRA (sem certo/errado); a outra com feedback visível. A pesquisa
+  atual reconcilia e decide: **feedback é dos maiores fatores** (Hattie & Timperley 2007, d≈0,7),
+  MAS só quando é de TAREFA, não de PESSOA (Kluger & DeNisi 1996: feedback ao "eu" PIORA, 1/3 deu
+  negativo). Descoberta sem guia não funciona p/ novato=criança (Kirschner, Sweller & Clark 2006).
+  Neurociência: confirmar o acerto gera o sinal de dopamina (erro de predição) que FIXA o
+  raciocínio; resultado neutro dá sinal fraco. **Aplicado:** a reflexão agora tem feedback VISÍVEL
+  sobre a IDEIA (confirma o motivo certo em dourado; se erra, ACENDE a ideia certa + "Era esta:",
+  nunca X/vermelho/"errou"); a medição (razaoOk) continua ESCONDIDA -> professor (stealth,
+  Shute). Isto honra a LEI (nada de julgamento/prova) E a ciência (feedback formativo de tarefa).
+- Falas reaproveitadas (refl_ok/refl_hmm) — sem gerar áudio novo (economia). 6 falas da outra
+  sessão trazidas (p3_gira, galeria_ok, se_p5_q, nome_q, dica_oferta, pratica_sug).
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva

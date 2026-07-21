@@ -252,8 +252,16 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 
 /* ---------- PARADA 3 — Dois jeitos (comutatividade) ---------- */
 .p3 .p3wrap{position:absolute;left:0;right:0;top:24%;bottom:24%;z-index:2;text-align:center;
+  -webkit-transform-origin:50% 28%;transform-origin:50% 28%;
   -webkit-transition:opacity .45s ease,-webkit-transform .45s ease;transition:opacity .45s ease,transform .45s ease}
 .p3 .p3wrap.vira{opacity:.15;-webkit-transform:rotate(90deg) scale(.7);transform:rotate(90deg) scale(.7)}
+/* VIRA-TAPETE: a criança gira com o PRÓPRIO dedo (o gesto é o argumento da comutatividade) */
+.p3 .p3wrap.giravel{cursor:-webkit-grab;cursor:grab;
+  -webkit-animation:conviteGira 2.4s ease-in-out infinite;animation:conviteGira 2.4s ease-in-out infinite}
+.p3 .p3wrap.giravel.pegando{-webkit-animation:none;animation:none;-webkit-transition:none;transition:none;
+  cursor:-webkit-grabbing;cursor:grabbing}
+@-webkit-keyframes conviteGira{0%,100%{-webkit-transform:rotate(0)}30%{-webkit-transform:rotate(2.5deg)}60%{-webkit-transform:rotate(-2.5deg)}}
+@keyframes conviteGira{0%,100%{transform:rotate(0)}30%{transform:rotate(2.5deg)}60%{transform:rotate(-2.5deg)}}
 .p3 .expr{font-size:30px;font-weight:900;color:#ffe08a;margin-bottom:12px;text-shadow:0 0 16px rgba(255,200,80,.6)}
 .p3 .expr span{color:#fff}
 .gradeM{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
@@ -464,6 +472,13 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .aetile .aecap b{color:#ffe08a}
 .aetile.escolhida{background:rgba(150,175,255,.14);border-color:rgba(175,195,255,.8);
   box-shadow:0 0 16px rgba(150,180,255,.5);-webkit-transform:translateY(-3px);transform:translateY(-3px)}
+/* IDEIA CERTA acende em DOURADO (feedback de tarefa, alegre — nunca vermelho/"errado") */
+.aetile.certo,.aebtn.certo{background:rgba(255,214,90,.18);border-color:#ffd75e;
+  box-shadow:0 0 20px rgba(255,210,110,.7);-webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.aefb{margin-top:11px;min-height:1.1em;font-size:13.5px;line-height:1.35;font-weight:700}
+.aefb.bom{color:#ffe6a3}
+.aefb.ver{color:#e9ecff}
+.aefb b{color:#ffe08a}
 .aefila{line-height:0;white-space:nowrap}
 .aefila .aestr{width:9px;height:auto;margin:1px;-webkit-filter:drop-shadow(0 0 3px rgba(255,220,120,.8));filter:drop-shadow(0 0 3px rgba(255,220,120,.8))}
 .aegrupo{display:inline-block;vertical-align:middle;margin:2px;padding:3px 4px;border-radius:8px;background:rgba(255,255,255,.07);
@@ -577,6 +592,22 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   .hbar{border:1px solid #888!important;background:#eee!important}
   .hbar i{background:#888!important}
 }
+
+/* ---------- GALERIA "Minhas constelações" (autoria persistente) ---------- */
+.galeria .gtit{position:absolute;top:14px;left:12px;right:12px;text-align:center;z-index:5;
+  font-size:20px;font-weight:900;color:#ffe08a;text-shadow:0 0 12px rgba(255,200,80,.4)}
+.galeria .gscroll{position:absolute;top:54px;bottom:80px;left:10px;right:10px;z-index:5;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.galitem{background:rgba(12,16,40,.92);border:1px solid rgba(255,215,110,.35);border-radius:14px;
+  padding:11px 13px;margin-bottom:9px;text-align:left;font-size:13px;line-height:1.45;color:#dfe3ff;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.galitem .minigrade{-webkit-box-flex:0;-webkit-flex:none;flex:none;margin-right:12px;line-height:0;
+  background:rgba(255,255,255,.05);border-radius:10px;padding:7px}
+.galitem .minigrade img{width:11px;height:auto;margin:1px;
+  -webkit-filter:drop-shadow(0 0 3px rgba(255,220,120,.8));filter:drop-shadow(0 0 3px rgba(255,220,120,.8))}
+.galitem .gtxt b{color:#ffe08a}
+.galitem .gtxt .pi2{color:#9aa3c8;font-size:11.5px}
+.galbtn{display:block;margin:10px auto 0;background:rgba(255,255,255,.12);border:1px solid rgba(255,225,150,.45);
+  color:#ffe6a3;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;border-radius:18px;padding:10px 18px}
 
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
@@ -868,26 +899,78 @@ function autoexplica(tela, cfg, cb){
   var temVis=false, i;
   for(i=0;i<cfg.opcoes.length;i++){ if(cfg.opcoes[i].vis) temVis=true; }
   if(temVis) box.appendChild(el("div","aesub","Toque no desenho que mostra o porquê:"));
-  var respondido=false;
-  var row=el("div","aetiles");
-  for(i=0;i<cfg.opcoes.length;i++){ (function(o){
+  var respondido=false, btnCerto=null, idxCerto=-1, txtCerto="";
+  for(i=0;i<cfg.opcoes.length;i++){ if(cfg.opcoes[i].ok){ idxCerto=i; txtCerto=(""+cfg.opcoes[i].txt).replace(/<[^>]+>/g,""); } }
+  var fb=el("div","aefb");   // linha de feedback SOBRE A IDEIA (task-level; nunca sobre a criança)
+  var row=el("div","aetiles"), tiles=[];
+  for(i=0;i<cfg.opcoes.length;i++){ (function(o,idx){
     var b;
     if(o.vis){ b=el("button","aetile"); b.appendChild(o.vis()); b.appendChild(el("div","aecap",o.txt)); }
     else { b=el("button","aebtn",o.txt); }
+    tiles[idx]=b;
     b.onclick=function(){
       if(respondido)return; respondido=true;
-      b.className=(o.vis?"aetile":"aebtn")+" escolhida";   // estado NEUTRO: sem verde/vermelho na tela
-      salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
-      depoisDaFala(o.ok?"refl_ok":"refl_hmm", 6000, function(){ if(cb)cb(); });   // a razão é gravada p/ o professor; a criança nunca vê nota
+      /* FEEDBACK SOBRE A IDEIA (pesquisa: Hattie/Kluger&DeNisi = feedback de TAREFA ajuda muito;
+         de PESSOA atrapalha). Confirma o motivo certo; se erra, MOSTRA a ideia certa — sem nota, sem X. */
+      var base=(o.vis?"aetile":"aebtn");
+      if(o.ok){
+        b.className=base+" certo";
+        fb.className="aefb bom"; fb.innerHTML="Isso mesmo! <b>"+txtCerto+"</b>.";
+      } else {
+        b.className=base+" escolhida";                                  // a escolha NÃO fica vermelha (sem julgamento)
+        if(tiles[idxCerto]) tiles[idxCerto].className=(cfg.opcoes[idxCerto].vis?"aetile":"aebtn")+" certo";   // a IDEIA certa acende
+        fb.className="aefb ver"; fb.innerHTML="Era esta: <b>"+txtCerto+"</b>.";
+      }
+      salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});  // medição escondida -> professor
+      depoisDaFala(o.ok?"refl_ok":"refl_hmm", 6000, function(){ if(cb)cb(); });
     };
     if(o.vis){ row.appendChild(b); } else { box.appendChild(b); }
-  })(cfg.opcoes[i]); }
+  })(cfg.opcoes[i], i); }
   if(row.childNodes.length) box.appendChild(row);
+  box.appendChild(fb);
   tela.appendChild(box);
   if(cfg.falaQ) falar(cfg.falaQ);
   return box;
 }
 function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem(kAluno("estrelas_evid"))||"[]"); f.push(ev); localStorage.setItem(kAluno("estrelas_evid"),JSON.stringify(f)); }catch(e){} }
+
+/* ===== GALERIA "Minhas constelações" (construcionismo Papert: o artefato criado FICA
+   e dá orgulho — autoria persistente por ALUNO). ===== */
+function galeriaLe(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_galeria"))||"[]"); }catch(e){ return []; } }
+function salvaGaleria(fil,col,real,corrigiu){
+  try{
+    var g=galeriaLe(), a=alunoAtual(), nome=a?a.nome:"";
+    g.push({nome:nome,fil:fil,col:col,real:real,corrigiu:!!corrigiu,quando:(new Date()).toISOString()});
+    if(g.length>30) g=g.slice(g.length-30);
+    localStorage.setItem(kAluno("estrelas_galeria"),JSON.stringify(g));
+  }catch(e){}
+}
+function telaGaleria(){
+  limpa();
+  var t=el("div","tela galeria");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
+  t.appendChild(el("div","gtit","Minhas constelações"));
+  var sc=el("div","gscroll");
+  var g=galeriaLe(), i;
+  if(!g.length){ sc.appendChild(el("div","galitem","Ainda não tem constelação guardada. Crie a sua na parada “A Sua Constelação”!")); }
+  for(i=g.length-1;i>=0;i--){ (function(c){
+    var it=el("div","galitem");
+    var mg=el("div","minigrade"), r, s;
+    for(r=0;r<Math.min(c.fil,6);r++){ var fila=el("div"); fila.style.lineHeight="0";
+      for(s=0;s<Math.min(c.col,6);s++){ var im=el("img"); im.src="img/estrela_grande.png"; im.alt=""; fila.appendChild(im); }
+      mg.appendChild(fila); }
+    it.appendChild(mg);
+    var dt=""; try{ var d0=new Date(c.quando); dt=("0"+d0.getDate()).slice(-2)+"/"+("0"+(d0.getMonth()+1)).slice(-2); }catch(e){}
+    it.appendChild(el("div","gtxt","<b>"+c.fil+" &#215; "+c.col+" = "+c.real+"</b>"+
+      "<div class='pi2'>"+dt+(c.corrigiu?" &#183; corrigiu a Fagulha!":"")+"</div>"));
+    sc.appendChild(it);
+  })(g[i]); }
+  t.appendChild(sc);
+  var bar=el("div","p1barra"); bar.style.bottom="5%";
+  var bv=el("button","btn2","Voltar"); bv.onclick=function(){ telaCapa(); };
+  bar.appendChild(bv); t.appendChild(bar);
+  app.appendChild(t);
+}
 
 /* ================= IDENTIDADE DO ALUNO (padrão EducaVerso) =================
    - Registro COMPARTILHADO entre todas as atividades do mesmo aparelho (localStorage do
@@ -1062,6 +1145,12 @@ function telaCapa(){
   var b=el("button","btn pulsa","Começar a aventura");
   b.onclick=function(){ telaCheia(); telaQuem(); };
   c.appendChild(b);
+  // autoria persistente: o que a criança criou fica e pode ser revisitado com orgulho
+  if(galeriaLe().length){
+    var bg=el("button","galbtn","Minhas constelações");
+    bg.onclick=function(){ telaGaleria(); };
+    c.appendChild(bg);
+  }
   t.appendChild(c);
   var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Fagulha"; fa.appendChild(fai);
   t.appendChild(fa);
@@ -1709,7 +1798,7 @@ function contaFileiras(grade,expr,passo,vezes,cb){
 var P3;
 function telaParada3(){
   limpa();
-  P3={concluida:false,t0:(new Date()).getTime()};
+  P3={concluida:false,girou:false,gesto:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada p3");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
@@ -1726,22 +1815,58 @@ function telaParada3(){
 function p3contar1(){
   var b=document.getElementById("p3btn"); if(b)b.disabled=true;
   var g=document.getElementById("p3grade"), c=document.getElementById("p3cont");
-  contaFileiras(g,c,4,3,function(){
-    var b2=document.getElementById("p3btn"); if(b2){ b2.disabled=false; b2.innerHTML="Vire de lado &#8635;"; b2.onclick=function(){ p3vira(); }; }
-  });
+  contaFileiras(g,c,4,3,function(){ p3preparaGiro(); });
 }
-function p3vira(){
-  var b=document.getElementById("p3btn"); if(b)b.disabled=true;
-  var wrap=document.getElementById("p3wrap"); if(wrap){ wrap.className="p3wrap vira"; }
+/* VIRA-TAPETE (cognição incorporada — Dienes/embodied): a criança SEGURA e ARRASTA a
+   constelação; é o GESTO DELA que prova que virar não muda o total (não um botão). */
+function p3preparaGiro(){
+  var b=document.getElementById("p3btn"); if(b)b.style.display="none";
+  var bal=document.getElementsByClassName("balao")[0];
+  if(bal)bal.innerHTML="Agora é <b>você</b> quem vira! <b>Segura e arrasta</b> a constelação pro lado.";
+  falar("p3_gira");
+  var wrap=document.getElementById("p3wrap"); if(!wrap)return;
+  wrap.className="p3wrap giravel";
+  var ativo=false, x0=0, ang=0;
+  function px(ev){ return (ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX; }
+  function baixa(ev){ if(P3.girou)return; ativo=true; x0=px(ev); ang=0; wrap.className="p3wrap giravel pegando"; if(ev.cancelable)ev.preventDefault(); }
+  function move(ev){ if(!ativo||P3.girou)return;
+    ang=Math.max(-100,Math.min(100,(px(ev)-x0)*0.45));
+    var tf="rotate("+ang.toFixed(1)+"deg) scale("+(1-Math.abs(ang)/900).toFixed(3)+")";
+    wrap.style.webkitTransform=tf; wrap.style.transform=tf;
+    if(ev.cancelable)ev.preventDefault(); }
+  function solta(){ if(!ativo||P3.girou)return; ativo=false;
+    wrap.className="p3wrap giravel";
+    if(Math.abs(ang)>=50){
+      P3.girou=true; P3.gesto=true;
+      var tf="rotate("+(ang>0?90:-90)+"deg) scale(.9)";
+      wrap.style.webkitTransform=tf; wrap.style.transform=tf;
+      somResolve();
+      setTimeout(p3girou,480);
+    } else {
+      wrap.style.webkitTransform="rotate(0deg)"; wrap.style.transform="rotate(0deg)";
+    } }
+  wrap.addEventListener("touchstart",baixa,{passive:false});
+  wrap.addEventListener("touchmove",move,{passive:false});
+  wrap.addEventListener("touchend",solta,false);
+  wrap.addEventListener("mousedown",baixa,false);
+  document.addEventListener("mousemove",move,false);
+  document.addEventListener("mouseup",solta,false);
+  // rede de segurança: se em 14s não conseguir arrastar, o botão de virar volta (nunca trava)
   setTimeout(function(){
-    var wrap2=document.getElementById("p3wrap"); if(!wrap2)return;
-    wrap2.innerHTML="";
-    var expr=el("div","expr"); expr.innerHTML="4 &#215; 3 = <span id='p3cont'>?</span>"; wrap2.appendChild(expr);
-    var g=gradeStars(4,3,"gradeM"); g.id="p3grade"; wrap2.appendChild(g);
-    wrap2.className="p3wrap";
-    var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="Agora são <b>4 fileiras de 3</b>. Conte outra vez… quantas acendem?";
-    var b2=document.getElementById("p3btn"); if(b2){ b2.disabled=false; b2.innerHTML="Contar de novo"; b2.onclick=function(){ p3contar2(); }; }
-  },520);
+    if(!P3.girou){ var b2=document.getElementById("p3btn");
+      if(b2){ b2.style.display=""; b2.disabled=false; b2.innerHTML="Virar de lado &#8635;";
+        b2.onclick=function(){ if(!P3.girou){ P3.girou=true; p3girou(); } }; } }
+  },14000);
+}
+function p3girou(){
+  var wrap=document.getElementById("p3wrap"); if(!wrap)return;
+  wrap.className="p3wrap";
+  wrap.style.webkitTransform=""; wrap.style.transform="";
+  wrap.innerHTML="";
+  var expr=el("div","expr"); expr.innerHTML="4 &#215; 3 = <span id='p3cont'>?</span>"; wrap.appendChild(expr);
+  var g=gradeStars(4,3,"gradeM"); g.id="p3grade"; wrap.appendChild(g);
+  var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="<b>Você virou!</b> Agora são <b>4 fileiras de 3</b>. Conte outra vez… quantas acendem?";
+  var b=document.getElementById("p3btn"); if(b){ b.style.display=""; b.disabled=false; b.innerHTML="Contar de novo"; b.onclick=function(){ p3contar2(); }; }
 }
 function p3contar2(){
   var b=document.getElementById("p3btn"); if(b)b.disabled=true;
@@ -1757,7 +1882,7 @@ function sucessoP3(){
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"3 &#215; 4 = 4 &#215; 3","= 12","Você virou a constelação de lado e deu o <b>mesmo</b> tanto! 3&#215;4 e 4&#215;3 são iguais — isso vale sempre.");
   var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
-  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",pratica:PRATICA,tempo_s:tempo,acertou:true});
+  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",gesto:(P3.gesto?"girou com o dedo":"usou o botão"),pratica:PRATICA,tempo_s:tempo,acertou:true});
   premiar(3);
   motorParada("p3",2);   // parada guiada (sem erro possível): evidência média
   setTimeout(function(){
@@ -1982,13 +2107,29 @@ function sucessoP5(){
   var oc=document.getElementById("p5opts"); if(oc)oc.style.display="none";
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var extra=P5.protegeErrou?("Você ainda me corrigiu — eu tinha dito "+P5.claim+"! "):"";
-  revela(tela,P5.fil+" fileiras de "+P5.col,P5.fil+" &#215; "+P5.col+" = "+P5.real,extra+"Você <b>criou e resolveu</b> a sua própria constelação. Você é o mestre das estrelas!");
-  botaoProxima(tela,"Última parada");
+  revela(tela,P5.fil+" fileiras de "+P5.col,P5.fil+" &#215; "+P5.col+" = "+P5.real,extra+"Você <b>criou e resolveu</b> a sua própria constelação. Guardei na sua <b>galeria</b>!");
   var tempo=Math.round(((new Date()).getTime()-P5.t0)/1000);
   salvaEvid({parada:"p5",habilidade:"EF03MA07",conceito:"autoria + protégé",criou:[P5.fil,P5.col],real:P5.real,corrigiu:P5.protegeErrou,tentativas:P5.tent,acertou:true,semErro:(P5.tent===1)});
+  salvaGaleria(P5.fil,P5.col,P5.real,P5.protegeErrou);   // autoria persistente: a criação FICA
   premiar(P5.tent===1?3:2);
   motorParada("p5",(P5.tent===1?3:2));
-  setTimeout(function(){ falar("e_p5"); },800);
+  // cadeia falada: explicação -> "guardei na galeria" -> reflexão -> botões (nunca corta narração)
+  setTimeout(function(){
+    depoisDaFala("e_p5", 9000, function(){
+      depoisDaFala("galeria_ok", 7000, function(){
+        autoexplica(tela, {
+          falaQ:"se_p5_q",
+          pergunta:"Como você teve <b>certeza</b> do tanto de estrelas da SUA constelação?",
+          opcoes:[
+            {vis:function(){return visFilas(repete(P5.col,P5.fil));},txt:"Multipliquei: "+P5.fil+" fileiras de "+P5.col,ok:true},
+            {vis:function(){return visEstrelona();},txt:"Chutei um número",ok:false},
+            {vis:function(){return visGrupos([P5.col]);},txt:"Só olhei, sem contar",ok:false}
+          ],
+          idEvid:"p5"
+        }, function(){ botaoProxima(tela,"Última parada",200); });
+      });
+    });
+  },800);
 }
 /* ===== helper de múltipla escolha (paradas de pergunta) ===== */
 function opcoesRow(arr,corretaVal,host,onCerto,dicaErr,est){
