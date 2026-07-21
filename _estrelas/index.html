@@ -539,6 +539,10 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .qturma.sel{background:#ffd75e;color:#5a3b00;border-color:#ffd75e}
 .qmini{display:block;margin:12px auto 0;background:transparent;border:0;color:#9aa3c8;font-size:12px;
   text-decoration:underline;cursor:pointer;font-family:inherit}
+/* excluir estudante (painel do professor): discreto, vermelho suave, confirma em 2 toques */
+.qdanger{display:block;margin:14px auto 0;max-width:94%;background:rgba(120,30,40,.5);border:1px solid rgba(255,120,130,.55);
+  color:#ffc9ce;font-family:inherit;font-weight:800;font-size:13px;line-height:1.3;padding:10px 16px;border-radius:14px;cursor:pointer}
+.qdanger:active{-webkit-transform:scale(.97);transform:scale(.97)}
 
 /* IMPRESSÃO do painel do professor: preto no branco, só os cartões */
 @media print{
@@ -2284,6 +2288,22 @@ function consolidada(alunoId){
     "Nível geral: <b>"+nivel+"</b>. Nota sugerida (tabela fixa — o professor ajusta): <b>"+nota+"</b>.";
   return {html:txt,pct:pct,nivel:nivel,nota:nota,n:n};
 }
+/* EXCLUIR estudante (p/ testes do professor/da esposa): apaga registro, avaliações
+   compartilhadas e TODO o caminho daquele aluno neste aparelho (motor/evidências/retenção) */
+function excluiAluno(id){
+  var a=alunosLe(),resto=[],i;
+  for(i=0;i<a.length;i++){ if(a[i].id!==id) resto.push(a[i]); }
+  alunosGrava(resto);
+  try{
+    var g=JSON.parse(localStorage.getItem("edu_pareceres")||"[]"),g2=[];
+    for(i=0;i<g.length;i++){ if(g[i].alunoId!==id) g2.push(g[i]); }
+    localStorage.setItem("edu_pareceres",JSON.stringify(g2));
+    var bases=["estrelas_motor","estrelas_evid","estrelas_retencao","estrelas_aq_dia","estrelas_parecer_prof"];
+    for(i=0;i<bases.length;i++){ localStorage.removeItem(bases[i]+"_"+id); }
+    if(localStorage.getItem("edu_atual")===id) localStorage.removeItem("edu_atual");
+  }catch(e){}
+  painelSel=""; telaPainel();
+}
 function telaPainel(){
   limpa();
   var t=el("div","tela parecer painel");
@@ -2339,7 +2359,21 @@ function telaPainel(){
   t.appendChild(c5);
   var bar=el("div","p1barra"); bar.style.position="relative"; bar.style.margin="6px 0 30px";
   if(con){ var bi=el("button","btn","Imprimir avaliação"); bi.onclick=function(){ try{ window.print(); }catch(e){} }; bar.appendChild(bi); }
-  var b=el("button","btn2","Voltar para a atividade"); b.style.marginLeft="8px"; b.onclick=function(){ telaCapa(); }; bar.appendChild(b); t.appendChild(bar);
+  var b=el("button","btn2","Voltar para a atividade"); b.style.marginLeft="8px"; b.onclick=function(){ telaCapa(); }; bar.appendChild(b);
+  /* excluir o estudante selecionado (2 toques: primeiro arma, segundo exclui) */
+  if(painelSel && painelSel!=="anon"){
+    var nomeSel="",iN; for(iN=0;iN<al.length;iN++){ if(al[iN].id===painelSel) nomeSel=al[iN].nome; }
+    if(nomeSel){
+      var armado=false;
+      var bx=el("button","qdanger","Excluir "+nomeSel+" deste aparelho (p/ testes)");
+      bx.onclick=function(){
+        if(!armado){ armado=true; bx.innerHTML="Tem certeza? Apaga o caminho e as avaliações de <b>"+nomeSel+"</b>. Toque de novo para EXCLUIR."; return; }
+        excluiAluno(painelSel);
+      };
+      bar.appendChild(bx);
+    }
+  }
+  t.appendChild(bar);
   app.appendChild(t);
 }
 
