@@ -980,6 +980,10 @@ function telaGaleria(){
      "Você é ...?" antes de criar duplicata. Reconciliação fina fica pro painel/Firebase.
    - TODO dado do jogo (motor/evidências/retenção) é gravado POR ALUNO (kAluno). */
 var ATIVIDADE_ID="fabrica-de-estrelas", ATIVIDADE_NOME="A Fábrica de Estrelas";
+/* IDENTIDADE (nome/turma/registro) fica DORMENTE por enquanto: hoje a atividade é só LINK
+   pra jogar/testar. Liga (IDENTIDADE_ATIVA=true) só quando entrar no portal EducaVerso
+   "na devida forma". Todo o sistema abaixo continua pronto — só não aparece pro jogador. */
+var IDENTIDADE_ATIVA=false;
 var TURMAS=["3º ano A","3º ano B","3º ano C","3º ano D"];   // Marcos ajusta a lista real das turmas aqui
 var painelSel="";                                 // painel do professor pode olhar outro aluno
 /* LISTA OFICIAL DA SECRETARIA — o Marcos envia e a gente cola AQUI (nome por turma).
@@ -1143,7 +1147,10 @@ function telaCapa(){
   c.appendChild(el("h1","titulo","A Fábrica de Estrelas"));
   c.appendChild(el("div","sub","Multiplicação &#183; 3º ano"));
   var b=el("button","btn pulsa","Começar a aventura");
-  b.onclick=function(){ telaCheia(); telaQuem(); };
+  b.onclick=function(){ telaCheia();
+    if(IDENTIDADE_ATIVA){ telaQuem(); }                                  // portal: pergunta quem é
+    else { try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); }   // link de teste: cai direto na aventura
+  };
   c.appendChild(b);
   // autoria persistente: o que a criança criou fica e pode ser revisitado com orgulho
   if(galeriaLe().length){
