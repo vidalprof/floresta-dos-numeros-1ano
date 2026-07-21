@@ -1,6 +1,6 @@
 /* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
    Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
-var CACHE="fabrica-estrelas-v11";
+var CACHE="fabrica-estrelas-v12";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/ceu_noite.jpg","./img/fagulha.png","./img/fagulha_fala.png","./img/fagulha_pisca.png",
  "./img/fagulha_acena.png","./img/fagulha_comemora.png","./img/fagulha_pensa.png",
@@ -9,6 +9,8 @@ var ATIVOS=["./","./index.html","./manifest.json",
  "./audio/conta_uma.mp3","./audio/conta_duas.mp3","./audio/conta_tres.mp3","./audio/conta_quatro_cheia.mp3","./audio/ouvir_de_novo.mp3",
  "./audio/aj_p1_1.mp3","./audio/aj_p1_2.mp3","./audio/aj_p1_3.mp3","./audio/aj_soma_1.mp3","./audio/aj_soma_2.mp3","./audio/aj_soma_3.mp3",
  "./audio/se_p1_q.mp3","./audio/se_soma_q.mp3","./audio/se_ok.mp3","./audio/se_quase.mp3","./audio/segue_pratica.mp3",
+ "./audio/aj_p2_1.mp3","./audio/aj_p2_2.mp3","./audio/aj_p2_3.mp3","./audio/aj_prob_1.mp3","./audio/aj_prob_2.mp3","./audio/aj_prob_3.mp3",
+ "./audio/se_p2_q.mp3","./audio/se_p3_q.mp3","./audio/se_p4_q.mp3","./audio/se_prob_q.mp3",
  "./icon-192.png","./icon-512.png"];
 self.addEventListener("install",function(e){
   self.skipWaiting();
