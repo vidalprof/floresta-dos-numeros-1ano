@@ -177,6 +177,35 @@ O "grande salto" do Pilar B foi construído DENTRO do HTML (ES5, PC fraco ok), p
   os 2 cliques do console do Marcos (FIREBASE-EDUCAVERSO.md).
 - QA: node --check + telas renderizadas headless (aquecimento/variação/gating/painel) == OK ==.
 
+## 🎬 POLIMENTO PROFISSIONAL (pesquisa aplicada, 2026-07-21 — pedido "quero molde profissional")
+Destilei as 5 pesquisas (ANIMACAO-APP-PROFISSIONAL, MASCOTE-E-MAPA-VIVOS, SOM-E-GAMEFEEL,
+VISUAL-PROFISSIONAL-RESPONSIVO, ANIMACAO-CUTSCENE) num checklist de 20 técnicas e apliquei as de
+maior impacto/menor custo (sw v16). **Isto vira o PADRÃO das próximas atividades premium:**
+- **Bug de camada consertado:** prêmio "+N estrelas" e botões ficavam ATRÁS do cartão-explicação
+  (`.revela` z6 × `.p1barra` z4). Agora `.p1barra` z7 e `.revela` bottom 24% — nada some ao clicar
+  (era isso que o Marcos via "escondido atrás do aviso"; acontecia em qualquer tela, pior no celular).
+- **Mascote profissional:** (1) corpo que fala DIRIGIDO pela amplitude da boca no rAF (gesto grande
+  na fala animada, assenta no silêncio); (2) crossfade de poses (nada de troca seca de PNG);
+  (3) pulo com ANTECIPAÇÃO+squash&stretch de volume constante; (4) sombra no chão que respira;
+  (5) ciclos bob/respira dessincronizados (delays negativos aleatórios — nunca vira robô);
+  (6) rastro de faíscas ao andar no mapa.
+- **Game feel:** HIT-STOP de 70ms no acerto (peso) + tremida com micro-rotação (0,2° — translação
+  pura parece bug) + som de acerto com pitch VARIÁVEL e brilho extra ocasional (recompensa nunca
+  idêntica). Transição de ENTRADA em toda tela (telaIn .45s, translateY+scale — sem swap seco).
+- Tudo `transform/opacity` (PC fraco), tudo respeita `prefers-reduced-motion`.
+- **Checklist completo das 20 técnicas** (com o que ainda não entrou: offset-path na trilha, câmera
+  exp-lerp, visemas pré-computados, View Transitions, qualidade adaptativa por FPS, confete canvas)
+  ficou registrado na resposta do agente — itens de custo médio p/ próximas rodadas.
+
+## ⏱️ AUDITORIA DE DURAÇÃO (55 min) — honesta, modelada por parada (2026-07-21)
+Jornada base (criança média do 3º ano, com narrações e autoexplicações):
+abertura+capa ~1,5 · P1 ~3,5 · P2 ~4 · música ~2 · P3 ~2,5 · soma ~2,5 · ×10 ~2 · memória ~3 ·
+problema ~3 · P5 ~4 · desafio ~2 · decore ~3 · final+relatório ~2 ⇒ **~35–40 min**.
+Com o MOTOR (gating sugerindo prática ~2×2,5min + variações): **~42–50 min**.
+**Veredito: ainda NÃO garante 55 min para criança rápida.** Para fechar: (a) 2ª rodada embutida
+em P1/P2 na própria jornada (variação, não só prática); (b) parada nova "Conserta a Constelação"
+(fator que falta, dinâmica #13 do leque); (c) música vira "repita a melodia". Decisão do Marcos.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva

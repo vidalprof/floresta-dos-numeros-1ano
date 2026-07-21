@@ -31,7 +31,15 @@ html,body{height:100%;height:100vh;height:100dvh;width:100%;overflow:hidden;posi
   -webkit-animation:derivaCeu 80s ease-in-out infinite alternate;animation:derivaCeu 80s ease-in-out infinite alternate}
 .tela .ceu{display:none}
 .mapa.constel{background:transparent}
-.tela{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:1}
+.tela{position:absolute;top:0;left:0;right:0;bottom:0;overflow:hidden;opacity:1;
+  -webkit-animation:telaIn .45s cubic-bezier(.2,.7,.3,1) both;animation:telaIn .45s cubic-bezier(.2,.7,.3,1) both}
+@-webkit-keyframes telaIn{from{opacity:0;-webkit-transform:translateY(14px) scale(.985)}to{opacity:1;-webkit-transform:none}}
+@keyframes telaIn{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+/* HIT-STOP (~70ms de pausa no impacto = peso) e TREMIDA com micro-rotação (game feel) */
+#app.hitstop *{-webkit-animation-play-state:paused!important;animation-play-state:paused!important}
+#app.tremida{-webkit-animation:tremida .32s ease;animation:tremida .32s ease}
+@-webkit-keyframes tremida{0%,100%{-webkit-transform:none}25%{-webkit-transform:translate(2px,-1px) rotate(.25deg)}50%{-webkit-transform:translate(-2px,1px) rotate(-.2deg)}75%{-webkit-transform:translate(1px,1px) rotate(.15deg)}}
+@keyframes tremida{0%,100%{transform:none}25%{transform:translate(2px,-1px) rotate(.25deg)}50%{transform:translate(-2px,1px) rotate(-.2deg)}75%{transform:translate(1px,1px) rotate(.15deg)}}
 img{-webkit-user-drag:none;user-drag:none}
 
 /* céu de fundo (parallax) */
@@ -76,11 +84,17 @@ img{-webkit-user-drag:none;user-drag:none}
 .corpo-fag .lay{position:absolute;top:0;left:0;width:100%;height:auto;display:block}
 .corpo-fag .base{position:relative}
 .corpo-fag .fala,.corpo-fag .pisca{opacity:0}
+/* camada de POSE (crossfade suave entre poses, em vez de troca seca de imagem) */
+.corpo-fag .pose{opacity:0;-webkit-transition:opacity .16s ease;transition:opacity .16s ease}
+/* sombra no chão: gruda a Fagulha no cenário (respira no mesmo ritmo do bob) */
+.fagsombra{position:absolute;left:18%;bottom:-3%;width:64%;height:9%;border-radius:50%;
+  background:radial-gradient(ellipse, rgba(0,0,20,.42), rgba(0,0,20,0) 70%);
+  -webkit-animation:sombraResp 4.7s ease-in-out infinite;animation:sombraResp 4.7s ease-in-out infinite}
+@-webkit-keyframes sombraResp{0%,100%{-webkit-transform:scale(1);opacity:.8}50%{-webkit-transform:scale(.86);opacity:.55}}
+@keyframes sombraResp{0%,100%{transform:scale(1);opacity:.8}50%{transform:scale(.86);opacity:.55}}
 .fag.fidget .corpo-fag{-webkit-animation:fidget .6s ease;animation:fidget .6s ease}
-/* FALANDO: o corpo acompanha a voz (baloiço no ritmo de fala + leve pulinho) — "parece falando" */
-.fag.falando .corpo-fag{-webkit-animation:falaViva .46s ease-in-out infinite;animation:falaViva .46s ease-in-out infinite}
-@-webkit-keyframes falaViva{0%,100%{-webkit-transform:rotate(-1.6deg) translateY(0) scale(1)}50%{-webkit-transform:rotate(1.8deg) translateY(-3px) scale(1.015)}}
-@keyframes falaViva{0%,100%{transform:rotate(-1.6deg) translateY(0) scale(1)}50%{transform:rotate(1.8deg) translateY(-3px) scale(1.015)}}
+/* FALANDO: o corpo acompanha a VOZ de verdade — o baloiço é dirigido pela amplitude da boca
+   no loop rAF (ver loop()): amplitude alta = gesto maior; silêncio = corpo assenta sozinho. */
 @-webkit-keyframes fidget{0%{-webkit-transform:scale(1) rotate(0)}30%{-webkit-transform:scale(1.06) rotate(4deg)}60%{-webkit-transform:scale(1.01) rotate(-3deg)}100%{-webkit-transform:scale(1) rotate(0)}}
 @keyframes fidget{0%{transform:scale(1) rotate(0)}30%{transform:scale(1.06) rotate(4deg)}60%{transform:scale(1.01) rotate(-3deg)}100%{transform:scale(1) rotate(0)}}
 
@@ -192,7 +206,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @keyframes estrPop{0%{transform:scale(.3)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
 .caixa .cnt{position:absolute;bottom:0;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
   min-width:24px;background:#ffd75e;color:#5a3b00;font-weight:900;font-size:15px;border-radius:12px;padding:1px 9px;box-shadow:0 2px 0 #c8871a}
-.p1barra{position:absolute;left:0;right:0;bottom:3%;text-align:center;z-index:4}
+.p1barra{position:absolute;left:0;right:0;bottom:3%;text-align:center;z-index:7}   /* acima da revela: prêmio/botões nunca somem atrás do cartão */
 /* DICA/EXPLICAÇÃO = bolha própria ACIMA dos botões (z-index alto): nunca fica escondida
    atrás do alto-falante/botão Dica. Some sozinha quando não há texto (:empty). */
 .p1dica,.pdica{position:absolute;left:14px;right:14px;bottom:100%;margin-bottom:10px;z-index:11;
@@ -204,8 +218,9 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .btn2{border:0;cursor:pointer;font-family:inherit;font-weight:700;color:#20264a;background:#e7ebff;
   padding:9px 18px;font-size:15px;border-radius:20px;box-shadow:0 3px 0 #9aa3d6}
 .btn2:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #9aa3d6}
-/* EXPLICAÇÃO = cartão de vidro EMBAIXO (nunca sobre a atividade) */
-.revela{position:absolute;left:10px;right:10px;bottom:17%;z-index:6;text-align:center;padding:13px 16px 15px;
+/* EXPLICAÇÃO = cartão de vidro EMBAIXO (nunca sobre a atividade).
+   bottom:24% deixa faixa livre pros botões + linha "+N estrelas" (que ficavam ESCONDIDOS atrás). */
+.revela{position:absolute;left:10px;right:10px;bottom:24%;z-index:6;text-align:center;padding:13px 16px 15px;
   background:rgba(16,22,54,.9);border:1px solid rgba(255,225,150,.42);border-radius:20px;
   box-shadow:0 14px 36px rgba(0,0,0,.55);
   -webkit-animation:sobeSheet .5s cubic-bezier(.2,.9,.25,1) both;animation:sobeSheet .5s cubic-bezier(.2,.9,.25,1) both}
@@ -394,10 +409,17 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .hico.coroa{width:20px;height:15px;background:#ffc23c;
   -webkit-clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%);clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%)}
 
-/* pulo da Fagulha ao comemorar (mola/overshoot) */
-.fag.pulo{-webkit-animation:puloFag .6s cubic-bezier(.34,1.56,.64,1);animation:puloFag .6s cubic-bezier(.34,1.56,.64,1)}
-@-webkit-keyframes puloFag{0%{-webkit-transform:translateY(0)}40%{-webkit-transform:translateY(-18px)}70%{-webkit-transform:translateY(3px)}100%{-webkit-transform:translateY(0)}}
-@keyframes puloFag{0%{transform:translateY(0)}40%{transform:translateY(-18px)}70%{transform:translateY(3px)}100%{transform:translateY(0)}}
+/* pulo da Fagulha ao comemorar — 12 princípios: ANTECIPAÇÃO (agacha) -> STRETCH no ar ->
+   SQUASH na aterrissagem -> assenta (volume constante: X cresce quando Y encolhe) */
+.fag.pulo{-webkit-animation:puloFag .7s cubic-bezier(.34,1.56,.64,1);animation:puloFag .7s cubic-bezier(.34,1.56,.64,1)}
+@-webkit-keyframes puloFag{0%{-webkit-transform:translateY(0) scale(1,1)}18%{-webkit-transform:translateY(3px) scale(1.07,.9)}48%{-webkit-transform:translateY(-20px) scale(.94,1.08)}72%{-webkit-transform:translateY(2px) scale(1.06,.93)}100%{-webkit-transform:translateY(0) scale(1,1)}}
+@keyframes puloFag{0%{transform:translateY(0) scale(1,1)}18%{transform:translateY(3px) scale(1.07,.9)}48%{transform:translateY(-20px) scale(.94,1.08)}72%{transform:translateY(2px) scale(1.06,.93)}100%{transform:translateY(0) scale(1,1)}}
+/* rastro de faíscas quando a Fagulha anda no mapa */
+.fagrastro{position:absolute;width:12px;height:auto;z-index:5;pointer-events:none;
+  -webkit-filter:drop-shadow(0 0 5px rgba(255,225,140,.9));filter:drop-shadow(0 0 5px rgba(255,225,140,.9));
+  -webkit-animation:rastroSome .7s ease-out both;animation:rastroSome .7s ease-out both}
+@-webkit-keyframes rastroSome{from{opacity:.95;-webkit-transform:scale(1)}to{opacity:0;-webkit-transform:translateY(10px) scale(.3)}}
+@keyframes rastroSome{from{opacity:.95;transform:scale(1)}to{opacity:0;transform:translateY(10px) scale(.3)}}
 
 /* barra de progresso no topo das paradas (ritmo de lição) */
 .barratopo{position:absolute;top:7px;left:10px;right:10px;height:12px;border-radius:8px;z-index:8;overflow:hidden;
@@ -501,7 +523,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
-  .ceu,.palco,.abertura .fabviva,.abertura .fag{-webkit-animation:none!important;animation:none!important}
+  .ceu,.palco,.abertura .fabviva,.abertura .fag,.tela,#app.tremida{-webkit-animation:none!important;animation:none!important}
 }
 </style>
 </head>
@@ -592,16 +614,15 @@ function falar(id, cb){
 }
 function fimFala(){ paraBoca(); ouvirBtn.className=""; var c=falandoCb; falandoCb=null; if(c){ c(); } }
 narr.addEventListener("ended", fimFala);
-function corpoFala(on){ if(fagAtual&&fagAtual.el&&fagAtual.el.classList){ if(on){fagAtual.el.classList.add("falando");} else {fagAtual.el.classList.remove("falando");} } }
 function iniciaBoca(){
   if(falaTimer) clearInterval(falaTimer);
-  bocaAlvo=0.7; corpoFala(true);
+  bocaAlvo=0.7;
   falaTimer=setInterval(function(){
-    if(narr.paused||narr.ended){ bocaAlvo=0; corpoFala(false); }
-    else { bocaAlvo = 0.25 + Math.random()*0.75; corpoFala(true); }   // boca mais visível + corpo acompanhando
+    if(narr.paused||narr.ended){ bocaAlvo=0; }
+    else { bocaAlvo = 0.25 + Math.random()*0.75; }   // boca bem visível; o corpo segue no loop()
   }, 95);
 }
-function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; corpoFala(false); }
+function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
 /* toca uma fala e SÓ ENTÃO segue (no fim do áudio) — com rede de segurança.
    IMPORTANTE (bug pago): o prazo maxMs NÃO pode atropelar uma narração que ainda
    está tocando (a tela seguinte chegava antes da voz acabar). Regra: o prazo só
@@ -616,12 +637,23 @@ function depoisDaFala(id, maxMs, cb){
   }, maxMs||9000);
 }
 
-/* ---- LOOP único (só boca) ---- */
+/* ---- LOOP único (boca + corpo que fala) ----
+   O corpo baloiça DIRIGIDO pela amplitude da boca (bocaSuave): fala animada = gesto
+   grande; fala mansa = gesto leve; silêncio = assenta. 1 elemento, só transform. */
 var fagAtual=null;
 function loop(){
   if(fagAtual && fagAtual.fala){
     bocaSuave += (bocaAlvo-bocaSuave)*0.4;
     fagAtual.fala.style.opacity=bocaSuave.toFixed(3);
+    if(fagAtual.corpo && !reduz){
+      if(bocaSuave>0.03){
+        var tt=(new Date()).getTime()/95;
+        var tr="rotate("+(Math.sin(tt)*2.1*bocaSuave).toFixed(2)+"deg) translateY("+(-3.2*bocaSuave).toFixed(2)+"px)";
+        fagAtual.corpo.style.webkitTransform=tr; fagAtual.corpo.style.transform=tr;
+      } else if(fagAtual.corpo.style.transform){
+        fagAtual.corpo.style.webkitTransform=""; fagAtual.corpo.style.transform="";
+      }
+    }
   }
   requestAnimationFrame(loop);
 }
@@ -654,21 +686,42 @@ agendaFidget();
 function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
 function fagViva(extraCls){
   var fag=el("div","fag"+(extraCls||""));
+  fag.appendChild(el("div","fagsombra"));                       // sombra no chão: gruda no cenário
   var bob=el("div","fagbob"); var wrap=el("div","fagwrap"); var corpo=el("div","corpo-fag");
+  // dessincroniza os ciclos (bob × respiração começam em fases diferentes = nunca vira robô)
+  var d1=(-Math.random()*4.7).toFixed(2)+"s", d2=(-Math.random()*4.2).toFixed(2)+"s";
+  bob.style.webkitAnimationDelay=d1; bob.style.animationDelay=d1;
+  wrap.style.webkitAnimationDelay=d2; wrap.style.animationDelay=d2;
   var base=el("img","lay base"); base.src="img/fagulha.png"; base.alt="Fagulha";
+  var pose=el("img","lay pose"); pose.src="img/fagulha.png"; pose.alt="";
   var fala=el("img","lay fala"); fala.src="img/fagulha_fala.png"; fala.alt="";
   var pisca=el("img","lay pisca"); pisca.src="img/fagulha_pisca.png"; pisca.alt="";
-  corpo.appendChild(base); corpo.appendChild(fala); corpo.appendChild(pisca);
+  corpo.appendChild(base); corpo.appendChild(pose); corpo.appendChild(fala); corpo.appendChild(pisca);
   wrap.appendChild(corpo); bob.appendChild(wrap); fag.appendChild(bob);
-  fagAtual={el:fag,extra:(extraCls||""),base:base,fala:fala,pisca:pisca};
+  fagAtual={el:fag,extra:(extraCls||""),base:base,pose:pose,fala:fala,pisca:pisca,corpo:corpo};
   return fag;
 }
-function fagPose(nome){ if(fagAtual&&fagAtual.base){ if(fagAtual.fala)fagAtual.fala.style.opacity="0"; if(fagAtual.pisca)fagAtual.pisca.style.opacity="0"; fagAtual.base.src="img/"+nome+".png"; } }
+/* troca de pose com CROSSFADE (a nova entra em fade por cima; nada de "pulo seco" de imagem) */
+function fagPose(nome){
+  if(!fagAtual||!fagAtual.base)return;
+  if(fagAtual.fala)fagAtual.fala.style.opacity="0";
+  if(fagAtual.pisca)fagAtual.pisca.style.opacity="0";
+  var alvo="img/"+nome+".png";
+  if(fagAtual.pose){
+    (function(f){ f.pose.src=alvo; f.pose.style.opacity="1";
+      setTimeout(function(){ if(f.base){ f.base.src=alvo; } if(f.pose){ f.pose.style.opacity="0"; } },180);
+    })(fagAtual);
+  } else { fagAtual.base.src=alvo; }
+}
+/* hit-stop (~70ms de pausa = peso) + tremida com micro-rotação nos momentos grandes */
+function hitStop(){ try{ app.classList.add("hitstop"); setTimeout(function(){ app.classList.remove("hitstop"); },70); }catch(e){} }
+function treme(){ if(reduz)return; try{ app.classList.add("tremida"); setTimeout(function(){ app.classList.remove("tremida"); },340); }catch(e){} }
 function fagComemora(){
   fagPose("fagulha_comemora");
   if(typeof somResolve==="function") somResolve();
+  hitStop(); setTimeout(treme,80);
   if(fagAtual&&fagAtual.el){ var c="fag"+(fagAtual.extra||""); fagAtual.el.className=c+" pulo";
-    (function(elx){ setTimeout(function(){ if(elx)elx.className=c; },700); })(fagAtual.el); }
+    (function(elx){ setTimeout(function(){ if(elx)elx.className=c; },750); })(fagAtual.el); }
 }
 function fagPensa(){ if(!fagAtual||!fagAtual.base)return; fagPose("fagulha_pensa"); setTimeout(function(){ if(fagAtual&&fagAtual.base) fagPose("fagulha"); },1000); }
 
@@ -1062,9 +1115,22 @@ function telaMapa(){
   var atual=Math.min(progresso,n-1), offPara=camY(atual), andou=(atual!==fagPos);
   setTimeout(function(){
     strip.style.webkitTransform="translateY("+(-offPara)+"px)"; strip.style.transform="translateY("+(-offPara)+"px)";
-    if(andou){ walker.className="walker anda"; }
+    if(andou){
+      walker.className="walker anda";
+      // rastro de faíscas enquanto anda (posição REAL no meio da transição, via getComputedStyle)
+      var rastro = reduz ? 0 : setInterval(function(){
+        try{
+          var cs=window.getComputedStyle(walker);
+          var s=el("img","fagrastro"); s.src="img/estrela_grande.png";
+          s.style.left=cs.left; s.style.top=cs.top;
+          s.style.marginLeft=(30+Math.random()*30)+"px"; s.style.marginTop=(-24-Math.random()*34)+"px";
+          strip.appendChild(s);
+          setTimeout(function(){ if(s.parentNode)s.parentNode.removeChild(s); },800);
+        }catch(e){}
+      },150);
+      setTimeout(function(){ if(rastro)clearInterval(rastro); walker.className="walker"; },1500);
+    }
     walker.style.left=nodeX(atual)+"%"; walker.style.top=ytop(atual)+"px"; fagPos=atual;
-    if(andou){ setTimeout(function(){ walker.className="walker"; },1500); }
   },430);
   var hud=el("div","hud glass");
   hud.innerHTML="<div class='hpar'><span class='hico flama'></span><b>"+sessao.ofensiva+"</b></div>"+
@@ -1295,7 +1361,11 @@ function somTom(freq,dur,vol,tipo,dl){
     o.start(t0); o.stop(t0+(dur||0.4)+0.02);
   }catch(e){}
 }
-function somAcerto(){ somTom(660,0.18,0.2,"triangle",0); somTom(988,0.32,0.2,"triangle",0.08); }   // estrela acende
+function somAcerto(){   // estrela acende — pitch VARIA a cada vez (recompensa nunca idêntica); às vezes um brilho extra
+  var f=0.94+Math.random()*0.12;
+  somTom(660*f,0.18,0.2,"triangle",0); somTom(988*f,0.32,0.2,"triangle",0.08);
+  if(Math.random()<0.22){ somTom(1319*f,0.4,0.11,"triangle",0.16); }
+}
 function somErro(){ somTom(196,0.28,0.16,"sine",0); }                                              // gentil, nunca punir
 function somResolve(){ somTom(523,0.5,0.16,"triangle",0); somTom(659,0.5,0.16,"triangle",0.02); somTom(784,0.6,0.16,"triangle",0.04); } // acorde que resolve
 function somPop(i){ somTom(520+((i||0)%6)*70,0.12,0.14,"triangle",0); }                            // pop suave ao colocar estrela
