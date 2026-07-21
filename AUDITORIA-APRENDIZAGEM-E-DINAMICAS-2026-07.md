@@ -118,8 +118,19 @@ P3 e ×10 só autoexplicação — são toques guiados sem "erro"; **Desafio fic
   `AQUEC_BANK`); domínio entra no **parecer do professor**. Consertos de UX juntos: botões não cobrem mais a
   explicação; pergunta espera a narração acabar (vigia); Fagulha anda e para ao lado da estrela (+12%);
   corpo dela quica no ritmo da voz.
-- **PRÓXIMO no roadmap:** adaptação de dificuldade (Elo/BKT-lite) + mastery gating + parecer no Firebase
-  (painel do professor por KC) + medir transferência/retenção entre dias.
+- ✅ **ADAPTAÇÃO v1 + PAINEL ENTREGUES (2026-07):** `forca` 0-100 por KC (Elo-lite, ±15/-10) em
+  `estrelas_dominio`; **Desafio adaptativo por degraus** (`DES_BANK` 3 bancos; começa no degrau da força,
+  sobe/desce por item; `trilha` na evidência); **dica se oferece** ao tropeçar (`ofereceDica`: 2 erros no
+  quiz, patinada em P1/P2 — pulsa + `dica_oferta`); **"Praticar de novo" destacado + voz** (`pratica_sug`)
+  quando lutou (flag `lutou` no `botaoProxima`). **Tela do NOME** (opcional, narrada `nome_q`, sanitizada) →
+  parecer com nome; **Área do professor** na capa (link discreto): pareceres deste PC com domínio por
+  caixinha, Copiar relatório (clipboard+fallback), Apagar registros.
+- **PRÓXIMO no roadmap:** **parecer no Firebase** (sincronizar `estrelas_parecer_prof` → RTDB p/ painel por
+  turma). ATENÇÃO: exige decisões que só o Marcos pode tomar no console (dados de CRIANÇA nunca podem ficar
+  legíveis publicamente): criar caminho novo (ex. `/estrelas`), habilitar Auth anônimo p/ escrita
+  (`auth != null`) e leitura só p/ admin (reusar `/agenda/vidal-ramos/admins/<uid>` via `root.child(...)`),
+  regras semeadas ANTES (ordem sagrada) e teste em PC real (Firebase é bloqueado no container). Fazer JUNTO
+  com o Marcos, nunca às cegas. Além disso: mastery gating pleno + medir transferência/retenção entre dias.
 
 ## 🚨 CORREÇÃO DA CORREÇÃO (2026-07, depois) — A RÉGUA CERTA DAS PREMIUM
 O Marcos esclareceu: a Fábrica de Estrelas segue a **pesquisa de aprendizagem efetiva das PREMIUM**
