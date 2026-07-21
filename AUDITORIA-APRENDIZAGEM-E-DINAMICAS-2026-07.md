@@ -226,6 +226,18 @@ em P1/P2 na própria jornada (variação, não só prática); (b) parada nova "C
   digitação (a decidir com o Marcos; lista da turma semeada elimina digitação de vez).
 - Pendências novas: narração da tela de nome; ferramenta juntar/renomear no painel; Firebase.
 
+## 🔐 PAINEL SÓ DO PROFESSOR + LISTA DA SECRETARIA (2026-07-21, sw v19)
+- **Senha do professor no ?painel**: 1º acesso cria 4 números (digitados 2x, ficam em
+  `edu_painel_pin` no aparelho); depois pede sempre. O estudante NÃO entra. (Honestidade: é
+  proteção local contra criança curiosa, não criptografia — o online de verdade vem c/ Firebase.)
+- **Painel com visual PROFISSIONAL**: tema claro tipo documento (papel branco, cabeçalho azul-
+  escuro, barras azuis), sem clima de jogo — era o "ficou estranho" do Marcos.
+- **DECISÃO do Marcos: lista oficial da secretaria.** Ele envia os nomes por turma; a gente cola
+  em `LISTA_ALUNOS` (topo do JS) e `semeiaLista()` semeia o registro sem duplicar (chave
+  turma+nome normalizado). Virada de ano = trocar a lista. Turmas até **3º ano D** (`TURMAS`).
+- **Tela do aluno com turma cheia = 2 passos SEM digitação**: toca na TURMA -> toca no NOME
+  (+ "Meu nome não está aqui" como plano B). Excluir estudante já existe p/ testes.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva

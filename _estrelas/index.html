@@ -544,6 +544,24 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   color:#ffc9ce;font-family:inherit;font-weight:800;font-size:13px;line-height:1.3;padding:10px 16px;border-radius:14px;cursor:pointer}
 .qdanger:active{-webkit-transform:scale(.97);transform:scale(.97)}
 
+/* ---------- PAINEL DO PROFESSOR: visual PROFISSIONAL (papel claro, sem clima de jogo) ---------- */
+.tela.painel{background:#eef1f7;-webkit-animation:none;animation:none}
+.painel .profcard{background:#fff;border:1px solid #dbe0ee;color:#333a52;box-shadow:0 2px 8px rgba(30,40,90,.08);font-size:13.5px}
+.painel .profcard b{color:#1d2340}
+.painel .pobs{color:#7a8199}
+.painel .hbar{background:#e7eaf4;border:1px solid #d5daea}
+.painel .hbar i{background:-webkit-linear-gradient(left,#5b78e0,#3b57c4);background:linear-gradient(to right,#5b78e0,#3b57c4)}
+.painel .qturma{background:#f0f3fb;border:1px solid #ccd4ea;color:#333a52}
+.painel .qturma.sel{background:#3b57c4;border-color:#3b57c4;color:#fff}
+.painel .profcard.cabec{background:#232b52;background:-webkit-linear-gradient(top,#242c56,#1a2040);background:linear-gradient(to bottom,#242c56,#1a2040);color:#dfe3f5;border:0}
+.painel .profcard.cabec b{color:#ffe08a}
+.painel .profcard.cabec .pobs{color:#aeb6d8}
+.painel .qdanger{background:#fdeeee;border:1px solid #e8b8bc;color:#a33}
+.pinbox{max-width:340px;text-align:center}
+.qtit2{font-size:19px;font-weight:900;color:#1d2340;margin-bottom:4px}
+.pobs2{font-size:12.5px;color:#7a8199;margin:6px 0;min-height:1em}
+.qin.pin{width:60%;letter-spacing:10px;font-size:24px;border-color:#3b57c4;color:#1d2340}
+
 /* IMPRESSÃO do painel do professor: preto no branco, só os cartões */
 @media print{
   html,body{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important}
@@ -879,8 +897,29 @@ function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem(kAluno("estre
      "Você é ...?" antes de criar duplicata. Reconciliação fina fica pro painel/Firebase.
    - TODO dado do jogo (motor/evidências/retenção) é gravado POR ALUNO (kAluno). */
 var ATIVIDADE_ID="fabrica-de-estrelas", ATIVIDADE_NOME="A Fábrica de Estrelas";
-var TURMAS=["3º ano A","3º ano B","3º ano C"];   // Marcos ajusta a lista real das turmas aqui
+var TURMAS=["3º ano A","3º ano B","3º ano C","3º ano D"];   // Marcos ajusta a lista real das turmas aqui
 var painelSel="";                                 // painel do professor pode olhar outro aluno
+/* LISTA OFICIAL DA SECRETARIA — o Marcos envia e a gente cola AQUI (nome por turma).
+   Ao abrir o app, semeia o registro local SEM duplicar (chave turma+nome normalizado).
+   Virada de ano = trocar esta lista (alunos novos entram, turmas se atualizam).
+   Ex.: {"3º ano A":["Sofia","Davi Lucas"], "3º ano B":["Helena"]} */
+var LISTA_ALUNOS={};
+function semeiaLista(){
+  try{
+    var t,i,a=alunosLe(),mapa={},mudou=false;
+    for(i=0;i<a.length;i++){ mapa[a[i].turma+"|"+normNome(a[i].nome)]=1; }
+    for(t in LISTA_ALUNOS){
+      var arr=LISTA_ALUNOS[t]||[];
+      for(i=0;i<arr.length;i++){
+        var ch=t+"|"+normNome(arr[i]);
+        if(!mapa[ch]){ mapa[ch]=1; mudou=true;
+          a.push({id:"a"+(new Date()).getTime().toString(36)+Math.floor(Math.random()*1e6).toString(36),
+                  nome:bonito(arr[i]),turma:t,criado:diaStr(hojeMs()),oficial:true}); }
+      }
+    }
+    if(mudou) alunosGrava(a);
+  }catch(e){}
+}
 function alunosLe(){ try{ return JSON.parse(localStorage.getItem("edu_alunos")||"[]"); }catch(e){ return []; } }
 function alunosGrava(a){ try{ localStorage.setItem("edu_alunos",JSON.stringify(a)); }catch(e){} }
 function alunoAtual(){ try{ var id=localStorage.getItem("edu_atual"); if(!id)return null; var a=alunosLe(),i; for(i=0;i<a.length;i++){ if(a[i].id===id)return a[i]; } }catch(e){} return null; }
@@ -1039,7 +1078,9 @@ function telaQuem(){
   var card=el("div","qcard");
   card.appendChild(el("div","qtit","Quem vai jogar?"));
   var alunos=alunosLe();
-  if(alunos.length){
+  if(alunos.length>12){
+    quemTurmas(card,alunos);            // turma cheia (lista da secretaria): 1º a turma, depois o nome
+  } else if(alunos.length){
     card.appendChild(el("div","qsub","Toque no seu nome:"));
     var lista=el("div","qlista"),i;
     for(i=0;i<alunos.length;i++){ (function(a){
@@ -1065,14 +1106,47 @@ function quemMini(){
   anom.onclick=function(){ try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); };
   return anom;
 }
-function quemForm(card){
+/* turma cheia: passo 1 = toca na TURMA; passo 2 = toca no NOME (ninguém digita nada) */
+function quemTurmas(card,alunos){
   card.innerHTML="";
   card.appendChild(el("div","qtit","Quem vai jogar?"));
   card.appendChild(el("div","qsub","Toque na sua turma:"));
-  var sel={turma:""};
+  var vistas={},ordem=[],i;
+  for(i=0;i<alunos.length;i++){ if(!vistas[alunos[i].turma]){ vistas[alunos[i].turma]=1; ordem.push(alunos[i].turma); } }
+  ordem.sort();
+  for(i=0;i<ordem.length;i++){ (function(tm){
+    var b=el("button","qturma",tm);
+    b.onclick=function(){ quemLista(card,tm); };
+    card.appendChild(b);
+  })(ordem[i]); }
+  card.appendChild(quemMini());
+}
+function quemLista(card,turma){
+  card.innerHTML="";
+  card.appendChild(el("div","qtit",turma));
+  card.appendChild(el("div","qsub","Toque no seu nome:"));
+  var lista=el("div","qlista"), alunos=alunosLe(), i;
+  for(i=0;i<alunos.length;i++){ if(alunos[i].turma!==turma) continue; (function(a){
+    var b=el("button","qaluno",a.nome);
+    b.onclick=function(){ escolheAluno(a.id); };
+    lista.appendChild(b);
+  })(alunos[i]); }
+  card.appendChild(lista);
+  var novo=el("button","btn2","Meu nome não está aqui"); novo.style.marginTop="12px";
+  novo.onclick=function(){ quemForm(card,turma); };
+  card.appendChild(novo);
+  var volta=el("button","qmini","Voltar às turmas");
+  volta.onclick=function(){ quemTurmas(card,alunosLe()); };
+  card.appendChild(volta);
+}
+function quemForm(card,turmaPre){
+  card.innerHTML="";
+  card.appendChild(el("div","qtit","Quem vai jogar?"));
+  card.appendChild(el("div","qsub","Toque na sua turma:"));
+  var sel={turma:(turmaPre||"")};
   var tr=el("div"),i;
   for(i=0;i<TURMAS.length;i++){ (function(tm){
-    var b=el("button","qturma",tm);
+    var b=el("button","qturma"+(sel.turma===tm?" sel":""),tm);
     b.onclick=function(){ sel.turma=tm; var bs=tr.getElementsByTagName("button"),z; for(z=0;z<bs.length;z++)bs[z].className="qturma"; b.className="qturma sel"; };
     tr.appendChild(b);
   })(TURMAS[i]); }
@@ -2304,13 +2378,46 @@ function excluiAluno(id){
   }catch(e){}
   painelSel=""; telaPainel();
 }
-function telaPainel(){
+/* SENHA DO PROFESSOR: o painel é SÓ do Marcos — o estudante não entra.
+   1º acesso cria a senha (4 números, digitada 2x); depois pede sempre. Vale por sessão. */
+var painelOk=false;
+function telaPainelPin(){
   limpa();
   var t=el("div","tela parecer painel");
-  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  var card=el("div","profcard pinbox"); card.style.marginTop="18%";
+  var tem=""; try{ tem=localStorage.getItem("edu_painel_pin")||""; }catch(e){}
+  card.appendChild(el("div","qtit2", tem?"Painel do professor":"Crie a senha do painel"));
+  card.appendChild(el("div","pobs2", tem?"Digite a sua senha de professor.":"4 números que só você sabe — o estudante não entra aqui."));
+  var inp=document.createElement("input"); inp.className="qin pin"; inp.type="password"; inp.maxLength=4;
+  inp.setAttribute("inputmode","numeric"); inp.setAttribute("autocomplete","off");
+  card.appendChild(inp);
+  var msg=el("div","pobs2",""); card.appendChild(msg);
+  var esperando="";
+  var b=el("button","btn", tem?"Entrar":"Salvar");
+  b.onclick=function(){
+    var v=(inp.value||"").replace(/\D/g,"");
+    if(v.length<4){ msg.innerHTML="Digite 4 números."; return; }
+    if(tem){
+      if(v===tem){ painelOk=true; telaPainel(); } else { msg.innerHTML="Senha errada."; inp.value=""; }
+      return;
+    }
+    if(!esperando){ esperando=v; inp.value=""; msg.innerHTML="Digite de novo para confirmar."; b.innerHTML="Confirmar"; return; }
+    if(v===esperando){ try{ localStorage.setItem("edu_painel_pin",v); }catch(e){} painelOk=true; telaPainel(); }
+    else { esperando=""; inp.value=""; msg.innerHTML="Não bateu — comece de novo."; b.innerHTML="Salvar"; }
+  };
+  card.appendChild(b);
+  var volta=el("button","qmini","Voltar para a atividade"); volta.onclick=function(){ telaCapa(); };
+  card.appendChild(volta);
+  t.appendChild(card);
+  app.appendChild(t);
+}
+function telaPainel(){
+  if(!painelOk){ telaPainelPin(); return; }
+  limpa();
+  var t=el("div","tela parecer painel");
   /* seletor de estudante (registro compartilhado deste aparelho) */
-  var sel=el("div","profcard"); sel.style.marginTop="5%";
-  sel.innerHTML="<b>Painel do professor</b><br><span class='pobs'>Toque num estudante para ver o caminho e gerar a avaliação:</span><br>";
+  var sel=el("div","profcard cabec"); sel.style.marginTop="4%";
+  sel.innerHTML="<b>Painel do professor — "+ATIVIDADE_NOME+"</b><br><span class='pobs'>Toque num estudante para ver o caminho e gerar a avaliação:</span><br>";
   var al=alunosLe(),iA;
   for(iA=0;iA<al.length;iA++){ (function(a2){
     var b=el("button","qturma"+(painelSel===a2.id?" sel":""),a2.nome+" &#183; "+a2.turma);
@@ -2323,7 +2430,7 @@ function telaPainel(){
   t.appendChild(sel);
   var m=motorLe(), ret=lerRet();
   var c1=el("div","profcard");
-  var h="<b>Painel do professor — A Fábrica de Estrelas</b><br>Habilidade EF03MA07 &#183; domínio estimado por conceito (motor BKT-lite):<br>";
+  var h="<b>Domínio por conceito</b> &#183; habilidade EF03MA07 (motor adaptativo):<br>";
   var k, tem=false;
   for(k in KCS){
     if(!m[k])continue; tem=true;
@@ -2377,6 +2484,7 @@ function telaPainel(){
   app.appendChild(t);
 }
 
+semeiaLista();
 if(window.location.search.indexOf("painel")>=0){ telaPainel(); } else { telaCapa(); }
 })();
 </script>
