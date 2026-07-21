@@ -184,14 +184,16 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .btn2{border:0;cursor:pointer;font-family:inherit;font-weight:700;color:#20264a;background:#e7ebff;
   padding:9px 18px;font-size:15px;border-radius:20px;box-shadow:0 3px 0 #9aa3d6}
 .btn2:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #9aa3d6}
-.revela{position:absolute;left:0;right:0;top:26%;text-align:center;z-index:6;padding:0 14px}
-.revela .r1{font-size:24px;color:#fff;font-weight:800;margin-bottom:6px;
-  -webkit-animation:revIn .5s ease both;animation:revIn .5s ease both}
-.revela .r2{font-size:36px;color:#ffe08a;font-weight:900;text-shadow:0 0 22px rgba(255,200,80,.8);margin-bottom:12px;
-  -webkit-animation:revIn .5s .25s ease both;animation:revIn .5s .25s ease both}
-.revela .r3{font-size:16px;color:#e9ecff;-webkit-animation:revIn .5s .5s ease both;animation:revIn .5s .5s ease both}
-@-webkit-keyframes revIn{0%{opacity:0;-webkit-transform:scale(.6)}100%{opacity:1;-webkit-transform:scale(1)}}
-@keyframes revIn{0%{opacity:0;transform:scale(.6)}100%{opacity:1;transform:scale(1)}}
+/* EXPLICAÇÃO = cartão de vidro EMBAIXO (nunca sobre a atividade) */
+.revela{position:absolute;left:10px;right:10px;bottom:17%;z-index:6;text-align:center;padding:13px 16px 15px;
+  background:rgba(16,22,54,.9);border:1px solid rgba(255,225,150,.42);border-radius:20px;
+  box-shadow:0 14px 36px rgba(0,0,0,.55);
+  -webkit-animation:sobeSheet .5s cubic-bezier(.2,.9,.25,1) both;animation:sobeSheet .5s cubic-bezier(.2,.9,.25,1) both}
+@-webkit-keyframes sobeSheet{0%{opacity:0;-webkit-transform:translateY(34px)}100%{opacity:1;-webkit-transform:translateY(0)}}
+@keyframes sobeSheet{0%{opacity:0;transform:translateY(34px)}100%{opacity:1;transform:translateY(0)}}
+.revela .r1{font-size:19px;color:#fff;font-weight:800;margin-bottom:3px}
+.revela .r2{font-size:31px;color:#ffe08a;font-weight:900;text-shadow:0 0 18px rgba(255,200,80,.7);margin-bottom:8px}
+.revela .r3{font-size:14px;color:#e9ecff;line-height:1.35}
 .burst{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none;z-index:5;overflow:hidden}
 .bstar{position:absolute;width:34px;opacity:1}
 @-webkit-keyframes bfly{0%{opacity:1;-webkit-transform:translateY(0) scale(.4) rotate(0)}100%{opacity:0;-webkit-transform:translateY(-46px) scale(1.35) rotate(140deg)}}
@@ -627,7 +629,7 @@ function revela(tela,r1,r2,r3){
 }
 function botaoProxima(tela,rot){
   setTimeout(function(){
-    var pb=el("div","p1barra"); pb.style.bottom="6%";
+    var pb=el("div","p1barra"); pb.style.bottom="3.5%";
     if(sessao.ultimo>0){
       var linha=el("div","premiolinha");
       var pr=el("span","premio"); pr.innerHTML="<span class='hico star'></span> +<b id='prcount'>0</b> estrelas";
@@ -861,7 +863,7 @@ function sucessoP1(){
   var tela=document.getElementsByClassName("tela parada")[0]; if(!tela)return;
   estouraEstrelas(tela,12);
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
-  var cxs=tela.getElementsByClassName("caixas")[0]; if(cxs)cxs.style.opacity="0";
+  var cxs=tela.getElementsByClassName("caixas")[0]; if(cxs)cxs.style.top="20%";
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"4 + 4 + 4","3 &#215; 4 = 12","Isso é <b>multiplicar</b>! 3 grupos de 4 dão 12 estrelas. Você acendeu o céu!");
   botaoProxima(tela);
