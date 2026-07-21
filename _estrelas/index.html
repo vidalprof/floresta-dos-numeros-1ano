@@ -341,8 +341,8 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
   -webkit-filter:drop-shadow(0 0 9px rgba(255,210,120,.9));filter:drop-shadow(0 0 9px rgba(255,210,120,.9));
   -webkit-animation:estrTwk 3.6s ease-in-out infinite;animation:estrTwk 3.6s ease-in-out infinite}
-@-webkit-keyframes estrTwk{0%,100%{-webkit-transform:translate(-50%,-50%) scale(1)}50%{-webkit-transform:translate(-50%,-50%) scale(1.08)}}
-@keyframes estrTwk{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.08)}}
+@-webkit-keyframes estrTwk{0%,100%{-webkit-transform:translate(-50%,-50%) scale(1)}50%{-webkit-transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes estrTwk{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.12)}}
 .mapa.constel .no.futuro .estrn{-webkit-filter:grayscale(1) brightness(.55);filter:grayscale(1) brightness(.55);opacity:.5}
 .mapa.constel .no.atual{-webkit-animation:farol 1.3s ease-in-out infinite;animation:farol 1.3s ease-in-out infinite}
 .mapa.constel .no.atual .estrn{width:118%;-webkit-filter:drop-shadow(0 0 18px rgba(255,236,175,1));filter:drop-shadow(0 0 18px rgba(255,236,175,1))}
@@ -753,7 +753,7 @@ function telaMapa(){
     var estado=(i<progresso)?"feito":(i===progresso?"atual":"futuro");
     var w=el("div","nowrap "+STOPS[i].tipo+(estado==="atual"?" atual-wrap":"")); w.style.left=nodeX(i)+"%"; w.style.top=ytop(i)+"px";
     var no=el("div","no "+estado);
-    var im=el("img","estrn"); im.src="img/estrela_grande.png"; im.style.webkitAnimationDelay=(i*0.5)+"s"; im.style.animationDelay=(i*0.5)+"s"; no.appendChild(im);
+    var im=el("img","estrn"); im.src="img/estrela_no.png"; im.style.webkitAnimationDelay=(i*0.5)+"s"; im.style.animationDelay=(i*0.5)+"s"; no.appendChild(im);
     if(estado==="atual"){ no.appendChild(el("div","farol")); (function(k){ no.onclick=function(){ somEntra(); STOPS[k].fn(); }; })(i);
       w.appendChild(el("div","rotulo","COMEÇAR")); }
     w.appendChild(no); strip.appendChild(w);
