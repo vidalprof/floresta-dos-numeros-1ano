@@ -1,6 +1,6 @@
 /* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
    Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
-var CACHE="fabrica-estrelas-v14";
+var CACHE="fabrica-estrelas-v15";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/ceu_noite.jpg","./img/fagulha.png","./img/fagulha_fala.png","./img/fagulha_pisca.png",
  "./img/fagulha_acena.png","./img/fagulha_comemora.png","./img/fagulha_pensa.png",

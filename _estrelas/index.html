@@ -337,6 +337,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .perg .gradeM .fila{opacity:.92}
 .perg .gradeM .gestr{width:22px}
 .somaMeio{margin-bottom:14px}
+.aqgrade{margin-top:12px;min-height:10px}
 .grupo3{display:inline-block;vertical-align:middle;padding:5px;border-radius:10px;background:rgba(255,255,255,.06);line-height:0}
 .grupo3 .gestr{width:17px;margin:1px}
 .mais{font-size:22px;font-weight:900;color:#ffe08a;margin:0 3px;vertical-align:middle}
@@ -570,7 +571,11 @@ ouvirBtn.onclick=function(){ ouvirDeNovo(); };
 function mostraOuvir(on){ ouvirBtn.style.display = on ? "inline-block" : "none"; }
 function ouvirDeNovo(){ if(falaAtual){ falar(falaAtual); } }
 /* conta JUNTO com a criança as estrelas que entram na caixa (Parada 1) */
-function contaEstrela(k){ var m={1:"conta_uma",2:"conta_duas",3:"conta_tres",4:"conta_quatro_cheia"}; if(m[k]) falar(m[k]); }
+function contaEstrela(k){
+  var nomes=["uma","duas","tres","quatro","cinco"]; if(k<1||k>nomes.length)return;
+  var cheia=(typeof P1!=="undefined" && P1 && k===P1.m);   // a última da caixa comemora: "Caixa cheia!"
+  falar("conta_"+nomes[k-1]+(cheia?"_cheia":""));
+}
 var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---- FALAR: toca a voz do Antônio (MP3 direto, robusto no celular) ---- */
@@ -695,22 +700,26 @@ function botaoProxima(tela,rot,dl){
       (function(alvo){ var c=0; var iv=setInterval(function(){ c++; var e=document.getElementById("prcount"); if(e)e.innerHTML=c; if(c>=alvo)clearInterval(iv); },150); })(sessao.ultimo);
       sessao.ultimo=0;
     }
-    var nx=el("button","btn pulsa",rot||"Próxima parada"); nx.onclick=function(){ avanca(); };
-    pb.appendChild(nx);
-    // autonomia (SDT): "praticar de novo" refaz esta mesma parada, no ritmo da criança
-    var rep=el("button","btn2 repbtn","Praticar de novo"); rep.onclick=function(){ var f=(STOPS[progresso]&&STOPS[progresso].fn); if(f){ f(); } };
-    pb.appendChild(rep);
+    /* MASTERY GATING GENTIL (ZDP): se o domínio ainda está baixo, o convite é PRATICAR
+       com números novos (botão principal + a Fagulha convida) — mas seguir NUNCA é bloqueado. */
+    var temVar=(STOPS[progresso] && VARS[STOPS[progresso].id]);
+    var sugere=(!PRATICA && temVar && mgKc===(STOPS[progresso]&&STOPS[progresso].id) && mgP>0 && mgP<0.65);
+    var nx=el("button", sugere?"btn2 repbtn":"btn pulsa", rot|| (sugere?"Seguir mesmo assim":"Próxima parada")); nx.onclick=function(){ avanca(); };
+    var rep=el("button", sugere?"btn pulsa":"btn2 repbtn", temVar?"Praticar com estrelas novas":"Praticar de novo");
+    rep.onclick=function(){ praticarDeNovo(); };
+    if(sugere){ pb.appendChild(rep); pb.appendChild(nx); falar("mg_pratica"); }
+    else { pb.appendChild(nx); pb.appendChild(rep); }
     tela.appendChild(pb);
   }, (dl==null?1500:dl));
 }
 /* DICA GRADUADA (sob demanda, 3 níveis): pergunta -> aponta -> exemplo. Nunca dá a resposta de graça. */
 function ajudaBtn(tela, niveis, mostraTxt){
-  var nivel=0;
+  var nivel=0; dicasParada=0;   // o motor conta as dicas pedidas nesta parada (evidência invisível)
   var btn=el("button","ajudabtn"); btn.setAttribute("aria-label","Pedir uma dica"); btn.title="Dica";
   btn.innerHTML="<span class='lamp'></span>Dica";
   btn.onclick=function(){
     if(nivel>=niveis.length) return;
-    var n=niveis[nivel]; nivel++;
+    var n=niveis[nivel]; nivel++; dicasParada++;
     if(mostraTxt && n.txt) mostraTxt(n.txt);
     if(n.fala) falar(n.fala);
     if(n.acao){ try{ n.acao(); }catch(e){} }
@@ -758,6 +767,70 @@ function autoexplica(tela, cfg, cb){
   return box;
 }
 function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){} }
+
+/* ================= MOTOR DE DOMÍNIO (BKT-lite por conceito + revisão espaçada Leitner) =================
+   - Cada conceito (KC) tem um domínio estimado p (0..1), atualizado a cada vitória
+     conforme a FORÇA da evidência (de primeira e sem dica = forte).
+   - Cada KC tem uma caixa Leitner: revisar em 1/3/7/14 dias. Acertou na revisão -> sobe
+     de caixa; errou -> volta pra caixa 1 (revisa amanhã). É o motivo de volta PEDAGÓGICO.
+   - Tudo invisível pra criança (Lei #1: medir sem rótulo); o professor vê no ?painel. */
+var KCS={p1:"Grupos iguais",p2:"Constelação (fileiras × colunas)",p3:"Dois jeitos (3×4 = 4×3)",
+  soma:"Soma que vira vezes",p4:"O atalho do ×10",prob:"Problema em contexto",
+  p5:"Criar a própria constelação",desafio:"De cabeça (sem apoios)"};
+var LEITNER=[1,3,7,14];                      // dias até a próxima revisão, por caixa
+var PRATICA=false, mgKc="", mgP=0, dicasParada=0;
+function hojeMs(){ return (new Date()).getTime(); }
+function diaStr(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function motorLe(){ try{ return JSON.parse(localStorage.getItem("estrelas_motor")||"{}"); }catch(e){ return {}; } }
+function motorGrava(m){ try{ localStorage.setItem("estrelas_motor",JSON.stringify(m)); }catch(e){} }
+function motorKc(m,kc){ if(!m[kc]) m[kc]={p:0.25,box:0,next:0,varIdx:0,hist:[]}; return m[kc]; }
+/* vitória numa parada: atualiza o domínio (forca 3=de primeira/sem dica, 2=média, 1=com muita ajuda) */
+function motorParada(kc,forca){
+  var m=motorLe(), e=motorKc(m,kc);
+  var ganho=(forca>=3?0.45:(forca===2?0.3:0.15));
+  e.p=e.p+(1-e.p)*ganho;
+  if(forca<=1) e.p=Math.min(e.p,0.55);       // com muita ajuda ainda não é domínio
+  if(!e.box){ e.box=1; e.next=hojeMs()+LEITNER[0]*86400000; }   // 1ª vitória agenda revisão amanhã
+  e.hist.push({t:hojeMs(),tipo:"parada",forca:forca});
+  if(e.hist.length>40)e.hist=e.hist.slice(e.hist.length-40);
+  motorGrava(m); mgKc=kc; mgP=e.p; return e.p;
+}
+/* item de revisão espaçada (Aquecimento): reagenda a caixa e mede RETENÇÃO */
+function motorRevisao(kc,acertou){
+  var m=motorLe(), e=motorKc(m,kc);
+  if(acertou){ e.p=e.p+(1-e.p)*0.25; e.box=Math.min(e.box+1,LEITNER.length); }
+  else { e.p=e.p*0.7; e.box=1; }
+  e.next=hojeMs()+LEITNER[e.box-1]*86400000;
+  e.hist.push({t:hojeMs(),tipo:"revisao",ok:!!acertou});
+  if(e.hist.length>40)e.hist=e.hist.slice(e.hist.length-40);
+  motorGrava(m);
+}
+function kcsVencidos(){ var m=motorLe(),out=[],k; for(k in m){ if(m[k]&&m[k].box>0 && m[k].next<=hojeMs()) out.push(k); } return out; }
+/* retenção medida (separada das evidências da sessão: sobrevive ao "Jogar de novo") */
+function salvaRet(r){ try{ var f=JSON.parse(localStorage.getItem("estrelas_retencao")||"[]"); f.push(r); if(f.length>100)f=f.slice(f.length-100); localStorage.setItem("estrelas_retencao",JSON.stringify(f)); }catch(e){} }
+function lerRet(){ try{ return JSON.parse(localStorage.getItem("estrelas_retencao")||"[]"); }catch(e){ return []; } }
+/* força da evidência da parada que acabou (usa erros + dicas pedidas) */
+function forcaDe(semErro){ return (semErro&&dicasParada===0)?3:((dicasParada>=3)?1:2); }
+function embaralha(a){ var i,j,t; for(i=a.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function repete(v,n){ var a=[],i; for(i=0;i<n;i++)a.push(v); return a; }
+function somaRep(m,n){ return repete(m,n).join(" + "); }
+
+/* VARIAÇÕES por parada ("praticar de novo" = números NOVOS, não repetição decorada) */
+var VARS={
+  p1:[{n:3,m:4,fala:"p1"},{n:4,m:3,fala:"p1_v2"},{n:2,m:5,fala:"p1_v3"}],
+  p2:[{f:4,c:5,nome:"do Peixe",fala:"p2"},{f:5,c:3,nome:"da Coruja",fala:"p2_v2"},{f:3,c:6,nome:"do Dragão",fala:"p2_v3"}],
+  soma:[{k:4,m:3,fala:"soma"},{k:5,m:2,fala:"soma_v2"},{k:3,m:5,fala:"soma_v3"}],
+  p4:[{alvo:5,fala:"p4"},{alvo:3,fala:"p4_v2"},{alvo:4,fala:"p4_v3"}],
+  prob:[{pr:5,em:4,fala:"prob"},{pr:3,em:5,fala:"prob_v2"},{pr:4,em:2,fala:"prob_v3"}]
+};
+function varDe(id){ var m=motorLe(); var i=(motorKc(m,id).varIdx||0)%VARS[id].length; return VARS[id][i]; }
+function ehOriginal(id){ var m=motorLe(); return ((motorKc(m,id).varIdx||0)%VARS[id].length)===0; }
+function praticarDeNovo(){
+  var s=STOPS[progresso]; if(!s)return;
+  PRATICA=true;
+  if(VARS[s.id]){ var m=motorLe(), e=motorKc(m,s.id); e.varIdx=((e.varIdx||0)+1)%VARS[s.id].length; motorGrava(m); }
+  s.fn();
+}
 function fabViva(){
   var f=el("div","fabviva");
   f.appendChild(el("div","glow"));
@@ -789,7 +862,7 @@ function telaCheia(){
 
 /* ================= TELAS ================= */
 function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
-function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} mostraOuvir(false); fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
+function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} mostraOuvir(false); fagAtual=null; dicasParada=0; app.innerHTML=""; tema(false); stageFull(false); }
 
 function telaCapa(){
   limpa();
@@ -824,8 +897,93 @@ function telaAbertura(){
   var pular=el("button","pular","pular &#9654;"); pular.onclick=function(){ try{narr.pause();}catch(e){} fimFala(); }; t.appendChild(pular);
   app.appendChild(t);
   var texto="Oi! Que bom que você chegou! Aqui é a Fábrica de Estrelas, e eu sou a Fagulha. Olha só o céu: está todo escuro e vazio. Será que você vem comigo encher esse céu de estrelas? Vem, vai ser incrível!";
-  falar("abertura", function(){ telaMapa(); });
+  falar("abertura", function(){ var due=aquecimentoDevido(); if(due){ telaAquecimento(due); } else { telaMapa(); } });
   legendaSync(leg, texto);
+}
+
+/* ============ AQUECIMENTO — revisão espaçada (Leitner) na VOLTA ============
+   Se a criança volta noutro dia com conceitos "vencidos", a Fagulha convida a
+   REACENDER as estrelas: 3 itens rápidos de recuperação (retrieval). Errou?
+   O mundo MOSTRA os grupos e conta junto — e a criança tenta de novo, sem punição.
+   Cada item mede RETENÇÃO de verdade (dias depois) e reagenda a caixa Leitner. */
+function aquecimentoDevido(){
+  var due=kcsVencidos(); if(!due.length) return null;
+  var ult=""; try{ ult=localStorage.getItem("estrelas_aq_dia")||""; }catch(e){}
+  if(ult===diaStr(hojeMs())) return null;   // no máximo 1 aquecimento por dia
+  return due;
+}
+var AQ;
+function telaAquecimento(due){
+  limpa();
+  var base={p1:[3,4],p2:[4,5],p3:[4,3],soma:[4,3],p4:[3,10],prob:[5,4],p5:[3,3],desafio:[6,10]};
+  var itens=[],i;
+  for(i=0;i<3;i++){
+    var kc=due[i%due.length], ab=base[kc]||[3,4];
+    var a=ab[0]+((i>=due.length)?(i%2?1:-1):0); if(a<2)a=2; if(a>6&&ab[1]!==10)a=6;
+    itens.push({kc:kc,a:a,b:ab[1],ok:true});
+  }
+  AQ={i:0,itens:itens,trava:false};
+  var t=el("div","tela parada perg aquece");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(34));
+  t.appendChild(el("div","balao",""));
+  var meio=el("div","pmeio");
+  meio.appendChild(el("div","expr grande"," "));
+  var gr=el("div","aqgrade"); gr.id="aqgrade"; meio.appendChild(gr);
+  t.appendChild(meio);
+  var opts=el("div","opts"); opts.id="aqopts"; t.appendChild(opts);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  falar("aq_intro");
+  aqRender();
+}
+function aqRender(){
+  var it=AQ.itens[AQ.i]; AQ.trava=false;
+  var bal=document.getElementsByClassName("balao")[0];
+  if(bal)bal.innerHTML="<b>Reacenda as estrelas!</b> Faísca <b>"+(AQ.i+1)+" de 3</b>: quanto dá?";
+  var expr=document.getElementsByClassName("expr")[0]; if(expr)expr.innerHTML=it.a+" &#215; "+it.b+" = ?";
+  var gr=document.getElementById("aqgrade"); if(gr)gr.innerHTML="";
+  var tot=it.a*it.b;
+  var vals=[tot,it.a+it.b,tot+it.b,(it.b===10?tot+10:it.b*it.b)],vistos={},op=[],z;
+  for(z=0;z<vals.length;z++){ var vv=vals[z]; while(vv<=0||vistos[vv])vv++; vistos[vv]=1; op.push({v:vv,certo:(z===0)}); }
+  embaralha(op);
+  var opts=document.getElementById("aqopts"); if(!opts)return; opts.innerHTML="";
+  var row=el("div","optrow");
+  for(z=0;z<op.length;z++){ (function(o){
+    var b=el("button","optbtn",""+o.v);
+    b.onclick=function(){
+      if(AQ.trava)return;
+      if(o.certo){ AQ.trava=true; somAcerto(); aqAcertou(); }
+      else {
+        somErro(); fagPensa();
+        if(AQ.itens[AQ.i].ok){ AQ.itens[AQ.i].ok=false; }   // 1º toque errado = a retenção falhou (medição invisível)
+        b.className="optbtn erra"; (function(bb){ setTimeout(function(){ bb.className="optbtn"; },480); })(b);
+        // o MUNDO mostra: a grade aparece e a criança conta de b em b (feedback específico, sem X)
+        var it2=AQ.itens[AQ.i], gr2=document.getElementById("aqgrade");
+        if(gr2 && !gr2.childNodes.length){ gr2.appendChild(gradeStars(it2.a,it2.b,"gradeM")); }
+        var salto=[],s; for(s=1;s<=it2.a;s++)salto.push(s*it2.b);
+        var d=document.getElementsByClassName("pdica")[0]; if(d)d.innerHTML="São "+it2.a+" grupos de "+it2.b+". Conte de "+it2.b+" em "+it2.b+": "+salto.join(", ")+".";
+        falar("aq_conta");
+      }
+    };
+    row.appendChild(b);
+  })(op[z]); }
+  opts.appendChild(row);
+  opts.appendChild(el("div","pdica",""));
+}
+function aqAcertou(){
+  var it=AQ.itens[AQ.i];
+  motorRevisao(it.kc, it.ok);
+  salvaRet({kc:it.kc,conta:it.a+"x"+it.b,ok:it.ok,quando:diaStr(hojeMs())});
+  fagComemora();
+  AQ.i++;
+  if(AQ.i>=AQ.itens.length){
+    try{ localStorage.setItem("estrelas_aq_dia",diaStr(hojeMs())); }catch(e){}
+    var tela=document.getElementsByClassName("tela aquece")[0]; if(tela)estouraEstrelas(tela,14);
+    premiar(2); sessao.ultimo=0;   // estrelinhas pela volta (sem tela de prêmio: segue direto)
+    depoisDaFala("aq_fim", 8000, function(){ telaMapa(); });
+  } else {
+    setTimeout(aqRender,650);
+  }
 }
 function legendaSync(leg, texto){
   var total=texto.length, i=0;
@@ -840,14 +998,14 @@ function legendaSync(leg, texto){
 
 /* ================= PROGRESSÃO / MAPA VIVO ================= */
 var STOPS=[
-  {id:"p1",tipo:"aprend",titulo:"As Caixas de Estrelas",fn:function(){telaParada1(); falar("p1");}},
-  {id:"p2",tipo:"aprend",titulo:"A Constelação",fn:function(){telaParada2(); falar("p2");}},
+  {id:"p1",tipo:"aprend",titulo:"As Caixas de Estrelas",fn:function(){telaParada1();}},
+  {id:"p2",tipo:"aprend",titulo:"A Constelação",fn:function(){telaParada2();}},
   {id:"r1",tipo:"alivio",titulo:"Música das Estrelas",fn:function(){telaMusica(); falar("r1");}},
   {id:"p3",tipo:"aprend",titulo:"Dois Jeitos, Mesmo Céu",fn:function(){telaParada3(); falar("p3");}},
-  {id:"soma",tipo:"aprend",titulo:"Soma que Vira Vezes",fn:function(){telaSoma(); falar("soma");}},
-  {id:"p4",tipo:"aprend",titulo:"O Céu Grande",fn:function(){telaParada4(); falar("p4");}},
+  {id:"soma",tipo:"aprend",titulo:"Soma que Vira Vezes",fn:function(){telaSoma();}},
+  {id:"p4",tipo:"aprend",titulo:"O Céu Grande",fn:function(){telaParada4();}},
   {id:"r2",tipo:"alivio",titulo:"Monte a Constelação",fn:function(){telaMemoria(); falar("r2");}},
-  {id:"prob",tipo:"aprend",titulo:"O Problema da Fábrica",fn:function(){telaProblema(); falar("prob");}},
+  {id:"prob",tipo:"aprend",titulo:"O Problema da Fábrica",fn:function(){telaProblema();}},
   {id:"p5",tipo:"aprend",titulo:"A Sua Constelação",fn:function(){telaParada5(); falar("p5");}},
   {id:"desafio",tipo:"aprend",titulo:"O Desafio das Estrelas",fn:function(){telaDesafio(); falar("desafio");}},
   {id:"d",tipo:"deleite",titulo:"Decore o Seu Céu",fn:function(){telaDecore(); falar("decore");}}
@@ -855,6 +1013,7 @@ var STOPS=[
 var progresso=0, fagPos=0;
 
 function avanca(){
+  PRATICA=false;
   if(progresso<STOPS.length) progresso++;
   if(progresso>=STOPS.length){ telaFinal(); } else { telaMapa(); }
 }
@@ -866,7 +1025,7 @@ function barraProg(){
 /* MAPA VIVO ROLANTE (câmera segue a Fagulha subindo a trilha; cabe QUALQUER nº de paradas) */
 function nodeX(i){ return 50 + (i%2===0? -16 : 16); }
 function telaMapa(){
-  limpa(); stageFull(true);
+  limpa(); stageFull(true); PRATICA=false;
   var n=STOPS.length, STEP=120, BOTPAD=100, TOPPAD=236;
   var VIS=Math.max(480, window.innerHeight||780), W=Math.max(300, window.innerWidth||400);
   var stripH=BOTPAD+(n-1)*STEP+TOPPAD;
@@ -924,29 +1083,32 @@ function telaMapa(){
 var P1;
 function telaParada1(){
   limpa();
-  P1={n:3,m:4,cx:[0,0,0],toques:0,concluida:false,t0:(new Date()).getTime()};
+  var v=varDe("p1");
+  P1={n:v.n,m:v.m,cx:repete(0,v.n),toques:0,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(26));
-  t.appendChild(el("div","balao","Pra acender esta parte do céu, encha <b>3 caixas</b> com <b>4 estrelas</b> em cada! Toque na caixa pra pôr uma estrela (e na estrela pra tirar)."));
+  t.appendChild(el("div","balao","Pra acender esta parte do céu, encha <b>"+v.n+" caixas</b> com <b>"+v.m+" estrelas</b> em cada! Toque na caixa pra pôr uma estrela (e na estrela pra tirar)."));
   var wrap=el("div","caixas"); var i;
   for(i=0;i<P1.n;i++){ wrap.appendChild(fazCaixa(i)); }
   t.appendChild(wrap);
   var barra=el("div","p1barra");
   barra.appendChild(el("div","p1dica",""));
-  var b=el("button","btn2","Recomeçar"); b.onclick=function(){ if(P1.concluida)return; P1.cx=[0,0,0]; pintaCaixas(); }; barra.appendChild(b);
+  var b=el("button","btn2","Recomeçar"); b.onclick=function(){ if(P1.concluida)return; P1.cx=repete(0,P1.n); pintaCaixas(); }; barra.appendChild(b);
   t.appendChild(barra);
   ajudaBtn(t, [
     {fala:"aj_p1_1", txt:"Quantas estrelas a fábrica pediu em <b>cada</b> caixa?"},
     {fala:"aj_p1_2", txt:"Repara: cada caixa pede o <b>mesmo</b> tanto. Quantas em cada?"},
-    {fala:"aj_p1_3", txt:"Enchi <b>uma</b> caixa pra mostrar — agora faça igual nas outras!", acao:function(){ if(!P1.concluida){ P1.cx[0]=4; pintaCaixas(); } }}
+    {fala:"aj_p1_3", txt:"Enchi <b>uma</b> caixa pra mostrar — agora faça igual nas outras!", acao:function(){ if(!P1.concluida){ P1.cx[0]=P1.m; pintaCaixas(); } }}
   ], function(txt){ var d=t.getElementsByClassName("p1dica")[0]; if(d)d.innerHTML=txt; });
   var fw=el("div","fagfala"); fw.appendChild(fagViva()); t.appendChild(fw);
   app.appendChild(t);
   pintaCaixas();
+  falar(v.fala);
 }
 function fazCaixa(i){
   var c=el("div","caixa"); c.id="cx"+i;
+  c.style.width=(P1.n>=4?"21%":(P1.n===2?"40%":"31%"));   // caixas se ajustam à variação (2, 3 ou 4 caixas)
   var cr=el("img","cratimg"); cr.src="img/caixa_estrelas.png"; cr.alt="Caixa de estrelas"; c.appendChild(cr);
   c.appendChild(el("div","estrs")); c.appendChild(el("div","cnt","0"));
   c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; somPop(P1.cx[i]); contaEstrela(P1.cx[i]); pintaCaixas(); } };
@@ -969,15 +1131,17 @@ function pintaCaixas(){
 }
 function verificaP1(){
   if(P1.concluida)return;
-  var i, ok=true;
-  for(i=0;i<P1.n;i++){ if(P1.cx[i]!==P1.m){ ok=false; } }
+  var i, ok=true, todas=true, iguais=true;
+  for(i=0;i<P1.n;i++){
+    if(P1.cx[i]!==P1.m){ ok=false; }
+    if(P1.cx[i]<=0){ todas=false; }
+    if(P1.cx[i]!==P1.cx[0]){ iguais=false; }
+  }
   var dica=document.getElementsByClassName("p1dica")[0];
   if(ok){ sucessoP1(); return; }
   if(dica){
-    var todas=(P1.cx[0]>0&&P1.cx[1]>0&&P1.cx[2]>0);
-    var iguais=(P1.cx[0]===P1.cx[1]&&P1.cx[1]===P1.cx[2]);
-    if(iguais && P1.cx[0]>0 && P1.cx[0]!==P1.m){ dica.innerHTML="Grupos iguais! Mas a fábrica pediu 4 em cada."; }
-    else if(todas && !iguais){ dica.innerHTML="Quase! As 3 caixas precisam ter a MESMA quantidade."; }
+    if(iguais && P1.cx[0]>0 && P1.cx[0]!==P1.m){ dica.innerHTML="Grupos iguais! Mas a fábrica pediu "+P1.m+" em cada."; }
+    else if(todas && !iguais){ dica.innerHTML="Quase! As "+P1.n+" caixas precisam ter a MESMA quantidade."; }
     else { dica.innerHTML=""; }
   }
 }
@@ -989,21 +1153,25 @@ function sucessoP1(){
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var cxs=tela.getElementsByClassName("caixas")[0]; if(cxs)cxs.style.top="20%";
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
-  revela(tela,"4 + 4 + 4","3 &#215; 4 = 12","Isso é <b>multiplicar</b>! 3 grupos de 4 dão 12 estrelas. Você acendeu o céu!");
+  var tot=P1.n*P1.m;
+  revela(tela,somaRep(P1.m,P1.n),P1.n+" &#215; "+P1.m+" = "+tot,"Isso é <b>multiplicar</b>! "+P1.n+" grupos de "+P1.m+" dão "+tot+" estrelas. Você acendeu o céu!");
   var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   var tempo=Math.round(((new Date()).getTime()-P1.t0)/1000);
-  salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)});
-  premiar(P1.toques===P1.n*P1.m?3:2);
+  var semErro=(P1.toques===tot);
+  salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,dicas:dicasParada,pratica:PRATICA,tempo_s:tempo,acertou:true,semErro:semErro});
+  premiar(semErro?3:2);
+  motorParada("p1",forcaDe(semErro));
   // contagem termina -> explicação -> a Fagulha pergunta "por quê?" -> botões (áudio encadeado, sem sobrepor)
   setTimeout(function(){
-    depoisDaFala("e_p1", 9000, function(){
+    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }   // treino: explicação curta, sem repetir a pergunta
+    depoisDaFala(ehOriginal("p1")?"e_p1":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p1_q",
         pergunta:"Por que encher caixas <b>iguais</b> virou uma conta de <b>vezes</b>?",
         opcoes:[
-          {vis:function(){return visGrupos([4,4,4]);},txt:"As caixas ficaram <b>iguais</b>",ok:true},
-          {vis:function(){return visGrupos([2,4,1]);},txt:"As caixas ficaram diferentes",ok:false},
-          {vis:function(){return visFilas([5,4,3]);},txt:"Foi um montão sem caixas",ok:false}
+          {vis:function(){return visGrupos(repete(P1.m,P1.n));},txt:"As caixas ficaram <b>iguais</b>",ok:true},
+          {vis:function(){return visGrupos([Math.max(1,P1.m-2),P1.m,P1.m+1].slice(0,Math.max(2,P1.n)));},txt:"As caixas ficaram diferentes",ok:false},
+          {vis:function(){return visFilas([P1.m+1,P1.m,Math.max(1,P1.m-1)]);},txt:"Foi um montão sem caixas",ok:false}
         ],
         idEvid:"p1"
       }, function(){ botaoProxima(tela,null,200); });
@@ -1016,11 +1184,12 @@ function sucessoP1(){
 var P2;
 function telaParada2(){
   limpa();
-  P2={fil:2,col:2,alvoF:4,alvoC:5,concluida:false,ajustes:0,t0:(new Date()).getTime()};
+  var v=varDe("p2");
+  P2={fil:2,col:2,alvoF:v.f,alvoC:v.c,nome:v.nome,concluida:false,ajustes:0,t0:(new Date()).getTime()};
   var t=el("div","tela parada p2");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
-  t.appendChild(el("div","balao","<b>A constelação do Peixe</b> pede <b>4 fileiras</b> com <b>5 estrelas</b> em cada. Monte a grade!"));
+  t.appendChild(el("div","balao","<b>A constelação "+v.nome+"</b> pede <b>"+v.f+" fileiras</b> com <b>"+v.c+" estrelas</b> em cada. Monte a grade!"));
   var g=el("div","grade"); g.id="grade"; t.appendChild(g);
   var ctr=el("div","steppers");
   ctr.appendChild(stepper("Fileiras","fil"));
@@ -1035,6 +1204,7 @@ function telaParada2(){
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   pintaGrade();
+  falar(v.fala);
 }
 function stepper(rot,chave){
   var s=el("div","stepper"); s.appendChild(el("div","strot",rot));
@@ -1060,8 +1230,8 @@ function verificaP2(){
   var d=document.getElementsByClassName("p2dica")[0];
   if(P2.fil===P2.alvoF && P2.col===P2.alvoC){ sucessoP2(); return; }
   if(d){
-    if(P2.fil*P2.col===P2.alvoF*P2.alvoC){ d.innerHTML="Deu 20! Mas a constelação tem a forma de 4 fileiras de 5."; }
-    else if(P2.fil>P2.alvoF||P2.col>P2.alvoC){ d.innerHTML="Passou! Veja: 4 fileiras, 5 estrelas em cada."; }
+    if(P2.fil*P2.col===P2.alvoF*P2.alvoC){ d.innerHTML="Deu "+(P2.alvoF*P2.alvoC)+"! Mas a constelação tem a forma de "+P2.alvoF+" fileiras de "+P2.alvoC+"."; }
+    else if(P2.fil>P2.alvoF||P2.col>P2.alvoC){ d.innerHTML="Passou! Veja: "+P2.alvoF+" fileiras, "+P2.alvoC+" estrelas em cada."; }
     else { d.innerHTML=""; }
   }
 }
@@ -1072,19 +1242,23 @@ function sucessoP2(){
   estouraEstrelas(tela,14);
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var st=tela.getElementsByClassName("steppers")[0]; if(st)st.style.opacity="0";
-  revela(tela,"5 + 5 + 5 + 5","4 &#215; 5 = 20","Uma constelação! <b>4 fileiras de 5</b> é 4 &#215; 5 = 20. Cada fileira repete o mesmo tanto — por isso multiplica!");
+  var tot=P2.alvoF*P2.alvoC;
+  revela(tela,somaRep(P2.alvoC,P2.alvoF),P2.alvoF+" &#215; "+P2.alvoC+" = "+tot,"Uma constelação! <b>"+P2.alvoF+" fileiras de "+P2.alvoC+"</b> é "+P2.alvoF+" &#215; "+P2.alvoC+" = "+tot+". Cada fileira repete o mesmo tanto — por isso multiplica!");
   var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   var tempo=Math.round(((new Date()).getTime()-P2.t0)/1000);
-  salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,tempo_s:tempo,acertou:true,semErro:(P2.ajustes<=5)});
-  premiar(P2.ajustes<=5?3:2);
+  var semErro=(P2.ajustes<=5);
+  salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,dicas:dicasParada,pratica:PRATICA,tempo_s:tempo,acertou:true,semErro:semErro});
+  premiar(semErro?3:2);
+  motorParada("p2",forcaDe(semErro));
   setTimeout(function(){
-    depoisDaFala("e_p2", 9000, function(){
+    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    depoisDaFala(ehOriginal("p2")?"e_p2":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p2_q",
-        pergunta:"Por que <b>4 fileiras de 5</b> é o mesmo que <b>4 &#215; 5</b>?",
+        pergunta:"Por que <b>"+P2.alvoF+" fileiras de "+P2.alvoC+"</b> é o mesmo que <b>"+P2.alvoF+" &#215; "+P2.alvoC+"</b>?",
         opcoes:[
-          {vis:function(){return visFilas([5,5,5,5]);},txt:"Cada fileira tem o <b>mesmo</b> tanto",ok:true},
-          {vis:function(){return visFilas([5,2,4]);},txt:"Fileiras todas diferentes",ok:false},
+          {vis:function(){return visFilas(repete(P2.alvoC,P2.alvoF));},txt:"Cada fileira tem o <b>mesmo</b> tanto",ok:true},
+          {vis:function(){return visFilas([P2.alvoC,Math.max(1,P2.alvoC-3),P2.alvoC-1]);},txt:"Fileiras todas diferentes",ok:false},
           {vis:function(){return visEstrelona();},txt:"As estrelas são grandes",ok:false}
         ],
         idEvid:"p2"
@@ -1247,9 +1421,11 @@ function sucessoP3(){
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"3 &#215; 4 = 4 &#215; 3","= 12","Você virou a constelação de lado e deu o <b>mesmo</b> tanto! 3&#215;4 e 4&#215;3 são iguais — isso vale sempre.");
   var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
-  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true});
+  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",pratica:PRATICA,tempo_s:tempo,acertou:true});
   premiar(3);
+  motorParada("p3",2);   // parada guiada (sem erro possível): evidência média
   setTimeout(function(){
+    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
     depoisDaFala("e_p3", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p3_q",
@@ -1268,17 +1444,19 @@ function sucessoP3(){
 var P4;
 function telaParada4(){
   limpa();
-  P4={caixas:0,alvo:5,toques:0,concluida:false,t0:(new Date()).getTime()};
+  var v=varDe("p4");
+  P4={caixas:0,alvo:v.alvo,toques:0,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada p4");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
-  t.appendChild(el("div","balao","O céu precisa de <b>muitas</b> estrelas, e rápido! Cada <b>caixa mágica</b> solta <b>10 de uma vez</b>. Encha o céu com <b>50</b>!"));
+  t.appendChild(el("div","balao","O céu precisa de <b>muitas</b> estrelas, e rápido! Cada <b>caixa mágica</b> solta <b>10 de uma vez</b>. Encha o céu com <b>"+(v.alvo*10)+"</b>!"));
   var sky=el("div","p4sky"); sky.id="p4sky"; t.appendChild(sky);
   var expr=el("div","expr p4expr"); expr.id="p4expr"; expr.innerHTML="0 &#215; 10 = 0"; t.appendChild(expr);
   var bar=el("div","p1barra"); var b=el("button","btn pulsa","Soltar 10 estrelas"); b.id="p4btn";
   b.onclick=function(){ p4solta(); }; bar.appendChild(b); t.appendChild(bar);
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
+  falar(v.fala);
 }
 function p4solta(){
   if(P4.concluida||P4.caixas>=P4.alvo)return;
@@ -1297,12 +1475,16 @@ function sucessoP4(){
   var sky=document.getElementById("p4sky"); if(sky)sky.style.opacity="0";
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   var e=document.getElementById("p4expr"); if(e)e.style.display="none";
-  revela(tela,"10 + 10 + 10 + 10 + 10","5 &#215; 10 = 50","O <b>dez</b> é um atalho poderoso! Com caixas de 10 o céu enche voando. Some 10 em 10: 10, 20, 30, 40, 50.");
+  var dez=[],dz; for(dz=1;dz<=P4.alvo;dz++)dez.push(dz*10);
+  revela(tela,somaRep(10,P4.alvo),P4.alvo+" &#215; 10 = "+(P4.alvo*10),"O <b>dez</b> é um atalho poderoso! Com caixas de 10 o céu enche voando. Some 10 em 10: "+dez.join(", ")+".");
   var tempo=Math.round(((new Date()).getTime()-P4.t0)/1000);
-  salvaEvid({parada:"p4",habilidade:"EF03MA07",conceito:"x10 (atalho)",toques:P4.toques,tempo_s:tempo,acertou:true,semErro:(P4.toques===P4.alvo)});
-  premiar(P4.toques===P4.alvo?3:2);
+  var semErro=(P4.toques===P4.alvo);
+  salvaEvid({parada:"p4",habilidade:"EF03MA07",conceito:"x10 (atalho)",toques:P4.toques,dicas:dicasParada,pratica:PRATICA,tempo_s:tempo,acertou:true,semErro:semErro});
+  premiar(semErro?3:2);
+  motorParada("p4",forcaDe(semErro));
   setTimeout(function(){
-    depoisDaFala("e_p4", 9000, function(){
+    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    depoisDaFala(ehOriginal("p4")?"e_p4":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p4_q",
         pergunta:"Por que juntar de <b>10 em 10</b> enche o céu tão <b>rápido</b>?",
@@ -1469,6 +1651,7 @@ function sucessoP5(){
   var tempo=Math.round(((new Date()).getTime()-P5.t0)/1000);
   salvaEvid({parada:"p5",habilidade:"EF03MA07",conceito:"autoria + protégé",criou:[P5.fil,P5.col],real:P5.real,corrigiu:P5.protegeErrou,tentativas:P5.tent,acertou:true,semErro:(P5.tent===1)});
   premiar(P5.tent===1?3:2);
+  motorParada("p5",(P5.tent===1?3:2));
   setTimeout(function(){ falar("e_p5"); },800);
 }
 /* ===== helper de múltipla escolha (paradas de pergunta) ===== */
@@ -1492,27 +1675,31 @@ function grupoStars(m){ var g=el("div","grupo3"),k; for(k=0;k<m;k++){ var im=el(
 var SOMA;
 function telaSoma(){
   limpa();
-  SOMA={tent:0,trava:false,t0:(new Date()).getTime()};
+  var v=varDe("soma");
+  SOMA={k:v.k,m:v.m,tent:0,trava:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada perg soma");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
-  t.appendChild(el("div","balao","A Fagulha juntou grupos <b>iguais</b>: 3, e 3, e 3, e mais 3. Somar o <b>mesmo</b> número toda vez tem um atalho. <b>Que conta é essa?</b>"));
+  t.appendChild(el("div","balao","A Fagulha juntou grupos <b>iguais</b> de <b>"+v.m+"</b>. Somar o <b>mesmo</b> número toda vez tem um atalho. <b>Que conta é essa?</b>"));
   var meio=el("div","pmeio");
   var gr=el("div","somaMeio"),i;
-  for(i=0;i<4;i++){ if(i>0) gr.appendChild(el("span","mais","+")); gr.appendChild(grupoStars(3)); }
-  meio.appendChild(gr); meio.appendChild(el("div","expr","3 + 3 + 3 + 3"));
+  for(i=0;i<v.k;i++){ if(i>0) gr.appendChild(el("span","mais","+")); gr.appendChild(grupoStars(v.m)); }
+  meio.appendChild(gr); meio.appendChild(el("div","expr",somaRep(v.m,v.k)));
   t.appendChild(meio);
   var opts=el("div","opts");
-  opts.appendChild(opcoesRow([{txt:"4 &#215; 3",val:"ok"},{txt:"4 + 3",val:"a"},{txt:"3 &#215; 3",val:"b"},{txt:"4 &#215; 4",val:"c"}],"ok",t,function(){ sucessoSoma(); },"Conte quantas <b>vezes</b> o 3 aparece: são 4 grupos de 3.",SOMA));
+  var op=[{txt:v.k+" &#215; "+v.m,val:"ok"},{txt:v.k+" + "+v.m,val:"a"},{txt:v.m+" &#215; "+v.m,val:"b"},{txt:v.k+" &#215; "+v.k,val:"c"}];
+  opts.appendChild(opcoesRow(embaralha(op),"ok",t,function(){ sucessoSoma(); },"Conte quantas <b>vezes</b> o "+v.m+" aparece: são "+v.k+" grupos de "+v.m+".",SOMA));
   opts.appendChild(el("div","pdica",""));
   t.appendChild(opts);
+  var orig=(v.fala==="soma");   // as falas das dicas citam os números originais; nas variações a dica é só texto
   ajudaBtn(t, [
-    {fala:"aj_soma_1", txt:"Conte quantas <b>vezes</b> o 3 aparece."},
-    {fala:"aj_soma_2", txt:"São <b>4 grupos de 3</b> — quatro vezes o três."},
-    {fala:"aj_soma_3", txt:"“quatro vezes o três” usa o sinal de <b>vezes</b> (&#215;), não o de mais."}
+    {fala:(orig?"aj_soma_1":null), txt:"Conte quantas <b>vezes</b> o "+v.m+" aparece."},
+    {fala:(orig?"aj_soma_2":null), txt:"São <b>"+v.k+" grupos de "+v.m+"</b> — "+v.k+" vezes o "+v.m+"."},
+    {fala:(orig?"aj_soma_3":null), txt:"“"+v.k+" vezes o "+v.m+"” usa o sinal de <b>vezes</b> (&#215;), não o de mais."}
   ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
+  falar(v.fala);
 }
 function sucessoSoma(){
   var tela=document.getElementsByClassName("tela soma")[0]; if(!tela)return;
@@ -1520,19 +1707,23 @@ function sucessoSoma(){
   var mm=tela.getElementsByClassName("pmeio")[0]; if(mm)mm.style.opacity="0";
   var oo=tela.getElementsByClassName("opts")[0]; if(oo)oo.style.display="none";
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
-  revela(tela,"3 + 3 + 3 + 3","4 &#215; 3 = 12","Somar o mesmo número vira <b>multiplicação</b>! 4 vezes o 3 é 4 &#215; 3.");
+  var k=SOMA.k,m=SOMA.m;
+  revela(tela,somaRep(m,k),k+" &#215; "+m+" = "+(k*m),"Somar o mesmo número vira <b>multiplicação</b>! "+k+" vezes o "+m+" é "+k+" &#215; "+m+".");
   var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
-  salvaEvid({parada:"soma",habilidade:"EF03MA07",conceito:"adição de parcelas iguais",tent:SOMA.tent,acertou:true,semErro:(SOMA.tent===0)});
-  premiar(SOMA.tent===0?3:2);
+  var semErro=(SOMA.tent===0);
+  salvaEvid({parada:"soma",habilidade:"EF03MA07",conceito:"adição de parcelas iguais",tent:SOMA.tent,dicas:dicasParada,pratica:PRATICA,acertou:true,semErro:semErro});
+  premiar(semErro?3:2);
+  motorParada("soma",forcaDe(semErro));
   setTimeout(function(){
-    depoisDaFala("e_soma", 9000, function(){
+    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    depoisDaFala(ehOriginal("soma")?"e_soma":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_soma_q",
-        pergunta:"Por que <b>3+3+3+3</b> é o mesmo que <b>4 &#215; 3</b>?",
+        pergunta:"Por que <b>"+somaRep(m,k)+"</b> é o mesmo que <b>"+k+" &#215; "+m+"</b>?",
         opcoes:[
-          {vis:function(){return visGrupos([3,3,3,3]);},txt:"O <b>3</b> se repete <b>4 vezes</b>",ok:true},
-          {vis:function(){return visGrupos([3,4]);},txt:"É só um 3 e um 4",ok:false},
-          {vis:function(){return visGrupos([7]);},txt:"Virou um 7 sozinho",ok:false}
+          {vis:function(){return visGrupos(repete(m,k));},txt:"O <b>"+m+"</b> se repete <b>"+k+" vezes</b>",ok:true},
+          {vis:function(){return visGrupos([m,k]);},txt:"É só um "+m+" e um "+k,ok:false},
+          {vis:function(){return visGrupos([m+k]);},txt:"Virou um "+(m+k)+" sozinho",ok:false}
         ],
         idEvid:"soma"
       }, function(){ botaoProxima(tela,null,200); });
@@ -1544,32 +1735,40 @@ function sucessoSoma(){
 var PROB;
 function telaProblema(){
   limpa();
-  PROB={tent:0,trava:false,t0:(new Date()).getTime()};
+  var v=varDe("prob");
+  PROB={pr:v.pr,em:v.em,tent:0,trava:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada perg problema");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(22));
-  t.appendChild(el("div","balao","<b>Problema da Fábrica:</b> a fábrica tem <b>5 prateleiras</b> e em cada uma cabem <b>4 estrelas</b>. Quantas estrelas a fábrica faz?"));
-  var meio=el("div","pmeio"); meio.appendChild(gradeStars(5,4,"gradeM")); t.appendChild(meio);
+  t.appendChild(el("div","balao","<b>Problema da Fábrica:</b> a fábrica tem <b>"+v.pr+" prateleiras</b> e em cada uma cabem <b>"+v.em+" estrelas</b>. Quantas estrelas a fábrica faz?"));
+  var meio=el("div","pmeio"); meio.appendChild(gradeStars(v.pr,v.em,"gradeM")); t.appendChild(meio);
   var opts=el("div","opts"); opts.id="probopts";
   opts.appendChild(el("div","pperg","Qual conta resolve o problema?"));
-  opts.appendChild(opcoesRow([{txt:"5 &#215; 4",val:"ok"},{txt:"5 + 4",val:"a"},{txt:"4 + 4",val:"b"},{txt:"4 &#215; 4",val:"c"}],"ok",t,function(){ probPasso2(); },"Pense: são 5 grupos (prateleiras) de 4. Isso é multiplicar.",PROB));
+  var op=[{txt:v.pr+" &#215; "+v.em,val:"ok"},{txt:v.pr+" + "+v.em,val:"a"},{txt:v.em+" + "+v.em,val:"b"},{txt:v.em+" &#215; "+v.em,val:"c"}];
+  opts.appendChild(opcoesRow(embaralha(op),"ok",t,function(){ probPasso2(); },"Pense: são "+v.pr+" grupos (prateleiras) de "+v.em+". Isso é multiplicar.",PROB));
   opts.appendChild(el("div","pdica",""));
   t.appendChild(opts);
+  var orig=(v.fala==="prob");
   ajudaBtn(t, [
-    {fala:"aj_prob_1", txt:"Quantas <b>prateleiras</b>? E quantas em <b>cada</b>?"},
-    {fala:"aj_prob_2", txt:"<b>5 grupos de 4</b> — grupos iguais viram vezes."},
-    {fala:"aj_prob_3", txt:"“5 grupos de 4” usa o sinal de <b>vezes</b> (&#215;), não o de mais."}
+    {fala:(orig?"aj_prob_1":null), txt:"Quantas <b>prateleiras</b>? E quantas em <b>cada</b>?"},
+    {fala:(orig?"aj_prob_2":null), txt:"<b>"+v.pr+" grupos de "+v.em+"</b> — grupos iguais viram vezes."},
+    {fala:(orig?"aj_prob_3":null), txt:"“"+v.pr+" grupos de "+v.em+"” usa o sinal de <b>vezes</b> (&#215;), não o de mais."}
   ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
+  falar(v.fala);
 }
 function probPasso2(){
   PROB.trava=false;
-  var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="Isso! A conta é <b>5 &#215; 4</b>. Agora resolve: <b>quanto dá 5 &#215; 4?</b>";
+  var pr=PROB.pr,em=PROB.em,tot=pr*em;
+  var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="Isso! A conta é <b>"+pr+" &#215; "+em+"</b>. Agora resolve: <b>quanto dá "+pr+" &#215; "+em+"?</b>";
   var t=document.getElementsByClassName("tela problema")[0];
   var opts=document.getElementById("probopts"); if(!opts)return; opts.innerHTML="";
-  opts.appendChild(el("div","pperg","Quanto dá 5 &#215; 4?"));
-  opts.appendChild(opcoesRow([{txt:"20",val:"ok"},{txt:"9",val:"a"},{txt:"24",val:"b"},{txt:"16",val:"c"}],"ok",t,function(){ sucessoProblema(); },"Some de 4 em 4: 4, 8, 12, 16, 20.",PROB));
+  opts.appendChild(el("div","pperg","Quanto dá "+pr+" &#215; "+em+"?"));
+  var salto=[],s2; for(s2=1;s2<=pr;s2++)salto.push(s2*em);
+  var vals=[tot,pr+em,tot+em,em*em],vistos={},op=[],z2;
+  for(z2=0;z2<vals.length;z2++){ var vv=vals[z2]; while(vistos[vv])vv++; vistos[vv]=1; op.push({txt:""+vv,val:(z2===0?"ok":"x"+z2)}); }
+  opts.appendChild(opcoesRow(embaralha(op),"ok",t,function(){ sucessoProblema(); },"Some de "+em+" em "+em+": "+salto.join(", ")+".",PROB));
   opts.appendChild(el("div","pdica",""));
 }
 function sucessoProblema(){
@@ -1577,18 +1776,22 @@ function sucessoProblema(){
   fagComemora(); estouraEstrelas(tela,14);
   var oo=document.getElementById("probopts"); if(oo)oo.style.display="none";
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
-  revela(tela,"5 prateleiras de 4","5 &#215; 4 = 20 estrelas","Você <b>leu e resolveu</b> o problema — igual gente grande! Isso é usar a multiplicação no mundo real.");
+  var pr=PROB.pr,em=PROB.em;
+  revela(tela,pr+" prateleiras de "+em,pr+" &#215; "+em+" = "+(pr*em)+" estrelas","Você <b>leu e resolveu</b> o problema — igual gente grande! Isso é usar a multiplicação no mundo real.");
   var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
-  salvaEvid({parada:"prob",habilidade:"EF03MA07",conceito:"resolver problema em contexto",tent:PROB.tent,acertou:true,semErro:(PROB.tent===0)});
-  premiar(PROB.tent===0?3:2);
+  var semErro=(PROB.tent===0);
+  salvaEvid({parada:"prob",habilidade:"EF03MA07",conceito:"resolver problema em contexto",tent:PROB.tent,dicas:dicasParada,pratica:PRATICA,acertou:true,semErro:semErro});
+  premiar(semErro?3:2);
+  motorParada("prob",forcaDe(semErro));
   setTimeout(function(){
-    depoisDaFala("e_prob", 9000, function(){
+    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    depoisDaFala(ehOriginal("prob")?"e_prob":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_prob_q",
         pergunta:"Por que esse problema era uma conta de <b>vezes</b>?",
         opcoes:[
-          {vis:function(){return visFilas([4,4,4,4,4]);},txt:"Prateleiras <b>iguais</b>, de 4 em 4",ok:true},
-          {vis:function(){return visFilas([4,2,5]);},txt:"Prateleiras todas diferentes",ok:false},
+          {vis:function(){return visFilas(repete(em,pr));},txt:"Prateleiras <b>iguais</b>, de "+em+" em "+em,ok:true},
+          {vis:function(){return visFilas([em,Math.max(1,em-2),em+1]);},txt:"Prateleiras todas diferentes",ok:false},
           {vis:function(){return visEstrelona();},txt:"Estrelas grandes demais",ok:false}
         ],
         idEvid:"prob"
@@ -1599,14 +1802,26 @@ function sucessoProblema(){
 
 /* ===== PARADA — O Desafio das Estrelas (transferência, sem apoios) ===== */
 var DES;
+var DESPOOL=[
+  {q:"3 &#215; 5",r:"15",err:["10","20","8"]},
+  {q:"4 &#215; 4",r:"16",err:["12","20","8"]},
+  {q:"6 &#215; 10",r:"60",err:["16","70","600"]},
+  {q:"2 &#215; 7",r:"14",err:["9","12","16"]},
+  {q:"5 &#215; 5",r:"25",err:["20","30","10"]},
+  {q:"4 &#215; 10",r:"40",err:["14","30","44"]},
+  {q:"3 &#215; 3",r:"9",err:["6","12","33"]},
+  {q:"2 &#215; 9",r:"18",err:["11","16","20"]}
+];
 function telaDesafio(){
   limpa();
-  DES={i:0,acertos:0,total:3,trava:false,t0:(new Date()).getTime(),
-    itens:[
-     {q:"3 &#215; 5",r:"15",op:[{txt:"15",val:"15"},{txt:"10",val:"10"},{txt:"20",val:"20"},{txt:"8",val:"8"}]},
-     {q:"4 &#215; 4",r:"16",op:[{txt:"16",val:"16"},{txt:"12",val:"12"},{txt:"20",val:"20"},{txt:"8",val:"8"}]},
-     {q:"6 &#215; 10",r:"60",op:[{txt:"60",val:"60"},{txt:"16",val:"16"},{txt:"70",val:"70"},{txt:"600",val:"600"}]}
-    ]};
+  // sorteia 3 itens do pool (cada jornada/treino sai diferente = recuperação de verdade)
+  var pool=embaralha(DESPOOL.slice(0)).slice(0,3), itens=[], i2, j2;
+  for(i2=0;i2<pool.length;i2++){
+    var it2=pool[i2], op=[{txt:it2.r,val:it2.r}];
+    for(j2=0;j2<it2.err.length;j2++){ op.push({txt:it2.err[j2],val:it2.err[j2]}); }
+    itens.push({q:it2.q,r:it2.r,op:embaralha(op)});
+  }
+  DES={i:0,acertos:0,total:3,trava:false,t0:(new Date()).getTime(),itens:itens};
   var t=el("div","tela parada perg desafio");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(22));
@@ -1646,8 +1861,9 @@ function sucessoDesafio(){
   var msg = DES.acertos===DES.total ? "Você guardou as estrelas na cabeça — memória de mestre!" : (DES.acertos>=2?"Muito bem! Você já leva quase tudo na cabeça.":"Bom começo! Com mais aventuras isso fica fácil.");
   revela(tela,"Desafio das Estrelas",DES.acertos+" de "+DES.total+" direto!",msg);
   botaoProxima(tela,"Ir para o final");
-  salvaEvid({parada:"desafio",habilidade:"EF03MA07",conceito:"transferência (sem apoios)",acertos:DES.acertos,total:DES.total,acertou:true,semErro:(DES.acertos===DES.total)});
+  salvaEvid({parada:"desafio",habilidade:"EF03MA07",conceito:"transferência (sem apoios)",acertos:DES.acertos,total:DES.total,pratica:PRATICA,acertou:true,semErro:(DES.acertos===DES.total)});
   premiar(Math.max(1,DES.acertos));
+  motorParada("desafio",(DES.acertos===DES.total?3:(DES.acertos>=2?2:1)));
   setTimeout(function(){ falar("e_desafio"); },800);
 }
 
@@ -1729,10 +1945,18 @@ function salvaParecerProf(d){
   if(m.prob) ind.push("resolve problema em contexto");
   if(m.p5) ind.push("autoria da própria constelação"+(m.p5.corrigiu?" (corrigiu a mascote)":""));
   if(m.desafio) ind.push("transferência sem apoios "+(m.desafio.acertos||0)+"/"+(m.desafio.total||3));
+  /* motor: domínio médio por conceito + retenção medida em dias seguintes */
+  var mm=motorLe(), somaP=0, nKc=0, kk;
+  for(kk in mm){ if(mm[kk]&&typeof mm[kk].p==="number"){ somaP+=mm[kk].p; nKc++; } }
+  var dominio=nKc?Math.round(somaP/nKc*100):0;
+  var ret=lerRet(), rok=0, rz;
+  for(rz=0;rz<ret.length;rz++){ if(ret[rz].ok)rok++; }
+  var txtRet=ret.length? (" Retenção em revisões espaçadas (dias depois): "+rok+" de "+ret.length+" itens reacendidos de primeira.") : " Retenção espaçada: ainda sem revisões (agendadas pelo motor para os próximos dias).";
   var parecer={ atividade:"A Fábrica de Estrelas", habilidade:"EF03MA07",
     porcentagem:d.pct, nivel:d.nivel, paradas_feitas:d.cont, total_paradas:d.total, fluencia:d.fluente,
+    dominio_medio:dominio, retencao:[rok,ret.length],
     indicadores:ind,
-    texto:"O estudante compreende a multiplicação como grupos iguais e disposição retangular (array). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Nível sugerido: "+d.nivel+".",
+    texto:"O estudante compreende a multiplicação como grupos iguais e disposição retangular (array). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Domínio médio estimado pelo motor: "+dominio+"%."+txtRet+" Nível sugerido: "+d.nivel+".",
     quando:(new Date()).toISOString() };
   try{ var f=JSON.parse(localStorage.getItem("estrelas_parecer_prof")||"[]"); f.push(parecer); if(f.length>50)f=f.slice(f.length-50); localStorage.setItem("estrelas_parecer_prof",JSON.stringify(f)); }catch(e){}
   return parecer;
@@ -1763,7 +1987,43 @@ function telaRelatorio(){
   fagComemora();
 }
 
-telaCapa();
+/* ============ PAINEL DO PROFESSOR (?painel) — leitura local, invisível pra criança ============ */
+function telaPainel(){
+  limpa();
+  var t=el("div","tela parecer painel");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  var m=motorLe(), ret=lerRet();
+  var c1=el("div","profcard"); c1.style.marginTop="6%";
+  var h="<b>Painel do professor — A Fábrica de Estrelas</b><br>Habilidade EF03MA07 &#183; domínio estimado por conceito (motor BKT-lite):<br>";
+  var k, tem=false;
+  for(k in KCS){
+    if(!m[k])continue; tem=true;
+    var p=Math.round((m[k].p||0)*100);
+    var prox=m[k].next?("revisar "+(new Date(m[k].next)).getDate()+"/"+((new Date(m[k].next)).getMonth()+1)):"";
+    h+="<div style='margin-top:7px'>"+KCS[k]+" — <b>"+p+"%</b> <span style='color:#9aa3c8;font-size:11px'>caixa "+(m[k].box||0)+(prox?" &#183; "+prox:"")+"</span>"+
+       "<div class='hbar' style='margin-top:3px'><i style='width:"+p+"%'></i></div></div>";
+  }
+  if(!tem) h+="<span class='pobs'>Ainda sem dados — a criança precisa jogar primeiro.</span>";
+  c1.innerHTML=h; t.appendChild(c1);
+  var c2=el("div","profcard");
+  var h2="<b>Retenção medida (revisões espaçadas)</b><br>";
+  if(ret.length){ var i2; for(i2=Math.max(0,ret.length-10);i2<ret.length;i2++){ var r=ret[i2];
+      h2+="<div style='margin-top:4px'>"+r.quando+" &#183; "+(KCS[r.kc]||r.kc)+" &#183; "+r.conta+" — "+(r.ok?"reacendeu de primeira":"precisou contar de novo")+"</div>"; } }
+  else h2+="<span class='pobs'>Nenhuma revisão feita ainda. O motor agenda 1/3/7/14 dias após cada conquista.</span>";
+  c2.innerHTML=h2; t.appendChild(c2);
+  var c3=el("div","profcard");
+  var h3="<b>Pareceres salvos</b><br>", ps=[];
+  try{ ps=JSON.parse(localStorage.getItem("estrelas_parecer_prof")||"[]"); }catch(e){}
+  if(ps.length){ var i3; for(i3=Math.max(0,ps.length-3);i3<ps.length;i3++){ h3+="<div style='margin-top:7px'>"+ps[i3].texto+"</div>"; } }
+  else h3+="<span class='pobs'>Nenhum parecer ainda (fecha um ao terminar a aventura).</span>";
+  h3+="<span class='pobs'>Dados deste aparelho (localStorage). O painel ONLINE (Firebase, toda a turma) entra quando os 2 cliques do console forem feitos — receita em FIREBASE-EDUCAVERSO.md.</span>";
+  c3.innerHTML=h3; t.appendChild(c3);
+  var bar=el("div","p1barra"); bar.style.position="relative"; bar.style.margin="6px 0 30px";
+  var b=el("button","btn2","Voltar para a atividade"); b.onclick=function(){ telaCapa(); }; bar.appendChild(b); t.appendChild(bar);
+  app.appendChild(t);
+}
+
+if(window.location.search.indexOf("painel")>=0){ telaPainel(); } else { telaCapa(); }
 })();
 </script>
 </body>

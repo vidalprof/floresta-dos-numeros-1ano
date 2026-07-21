@@ -152,6 +152,31 @@ Quatro consertos aplicados e publicados (sw v14):
    gravada p/ o professor). Continua sendo *seleção* — a produção plena (criança MONTA a razão)
    fica p/ o stage 2 (quiz→produção), já registrado acima.
 
+## 🚀 O MOTOR ENTROU (frente 2 do roadmap — 2026-07-21, aprovado pelo Marcos)
+O "grande salto" do Pilar B foi construído DENTRO do HTML (ES5, PC fraco ok), publicado com sw v15:
+- **BKT-lite por conceito** (`estrelas_motor` no localStorage): pKnown por KC (p1/p2/p3/soma/p4/prob/p5/
+  desafio), atualizado pela FORÇA da evidência (de primeira e sem dica = forte; dica nível 3 = fraca e
+  trava p ≤ 0,55). Dicas contadas por parada (`dicasParada`), gravadas na evidência.
+- **Variações por parada** (`VARS`): P1/P2/Soma/Prob/P4 têm 3 versões com números diferentes;
+  "Praticar com estrelas novas" roda a PRÓXIMA variação (não repete decorado). Nas variações, a
+  explicação longa vira `e_var` (genérica) e a autoexplicação não se repete no treino (PRATICA=true).
+  Enunciados narrados: p1_v2/v3, p2_v2/v3, soma_v2/v3, prob_v2/v3, p4_v2/v3 (Antonio, gerar-audio.yml).
+  Desafio sorteia 3 itens de um pool de 8 (`DESPOOL`) — cada rodada sai diferente. Opções de quiz agora
+  EMBARALHAM (antes a certa era sempre a 1ª!).
+- **Mastery gating GENTIL (ZDP/Bloom):** se pKnown<0,65 ao vencer, o botão principal vira "Praticar com
+  estrelas novas" + a Fagulha convida (mg_pratica); "Seguir mesmo assim" continua disponível (nunca
+  bloqueia). Se domina, segue normal.
+- **Leitner/revisão espaçada:** caixas 1/3/7/14 dias por KC. Na VOLTA noutro dia com KC vencido →
+  **Aquecimento** (máx 1/dia): 3 "faíscas" de recuperação; errou → o mundo MOSTRA a grade + conta de
+  b em b (feedback específico, sem X) e tenta de novo; 1º toque errado = retenção falhou (invisível).
+  Grava em `estrelas_retencao` (sobrevive ao "Jogar de novo") e reagenda a caixa.
+- **Retenção/transferência medidas:** desafio sem apoios (já havia) + retenção dias depois (aquecimento).
+  O parecer agora traz domínio médio do motor + "X de Y itens reacendidos de primeira".
+- **Painel do professor:** **`?painel`** na URL → barras de domínio por conceito, agenda de revisões,
+  histórico de retenção e últimos pareceres. LOCAL (deste aparelho); o online (Firebase/turma) espera
+  os 2 cliques do console do Marcos (FIREBASE-EDUCAVERSO.md).
+- QA: node --check + telas renderizadas headless (aquecimento/variação/gating/painel) == OK ==.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
