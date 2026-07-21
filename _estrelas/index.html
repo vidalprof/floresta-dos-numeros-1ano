@@ -386,6 +386,15 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .barratopo i{display:block;height:100%;border-radius:8px;
   background:-webkit-linear-gradient(left,#ffe27a,#ffb020);background:linear-gradient(to right,#ffe27a,#ffb020)}
 
+/* botão "Ouvir de novo" — alto-falante que repete o enunciado (essencial p/ quem não lê) */
+#ouvirbtn{position:absolute;left:10px;bottom:3%;z-index:9;width:46px;height:46px;border-radius:50%;border:0;cursor:pointer;padding:0;
+  background:rgba(20,26,60,.88);border:1px solid rgba(255,225,150,.55);box-shadow:0 4px 14px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1)}
+#ouvirbtn .spk{position:absolute;left:50%;top:50%;width:20px;height:18px;margin:-9px 0 0 -11px;background:#ffe6a3;
+  -webkit-clip-path:polygon(0 32%,42% 32%,100% 0,100% 100%,42% 68%,0 68%);clip-path:polygon(0 32%,42% 32%,100% 0,100% 100%,42% 68%,0 68%)}
+#ouvirbtn .spk:after{content:"";position:absolute;left:118%;top:50%;width:7px;height:7px;margin-top:-3.5px;border:2px solid #ffe6a3;border-left:0;border-top:0;border-radius:0 8px 8px 0;opacity:.9}
+#ouvirbtn.tocando{-webkit-animation:pulsa 1s ease-in-out infinite;animation:pulsa 1s ease-in-out infinite}
+#ouvirbtn:active{-webkit-transform:scale(.94);transform:scale(.94)}
+
 /* nó ATUAL: anel-farol pulsante — a versão dourada da constelação está em .mapa.constel .atual-wrap .farol */
 @-webkit-keyframes farolPulse{0%{-webkit-transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{-webkit-transform:translate(-50%,-50%) scale(1.9);opacity:0}}
 @keyframes farolPulse{0%{transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
@@ -487,19 +496,32 @@ function atualizaOfensiva(){
 atualizaOfensiva();
 var app=document.getElementById("app");
 var narr=document.getElementById("narr");
+/* botão "Ouvir de novo" — vive no #stage (acompanha o palco), some por padrão */
+var ouvirBtn=document.createElement("button");
+ouvirBtn.id="ouvirbtn"; ouvirBtn.setAttribute("aria-label","Ouvir o enunciado de novo"); ouvirBtn.title="Ouvir de novo";
+ouvirBtn.innerHTML="<span class='spk'></span>";
+ouvirBtn.style.display="none";
+ouvirBtn.onclick=function(){ ouvirDeNovo(); };
+(function(){ var st=document.getElementById("stage"); if(st) st.appendChild(ouvirBtn); })();
+function mostraOuvir(on){ ouvirBtn.style.display = on ? "inline-block" : "none"; }
+function ouvirDeNovo(){ if(falaAtual){ falar(falaAtual); } }
+/* conta JUNTO com a criança as estrelas que entram na caixa (Parada 1) */
+function contaEstrela(k){ var m={1:"conta_uma",2:"conta_duas",3:"conta_tres",4:"conta_quatro_cheia"}; if(m[k]) falar(m[k]); }
 var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 /* ---- FALAR: toca a voz do Antônio (MP3 direto, robusto no celular) ---- */
-var falandoCb=null, bocaAlvo=0, bocaSuave=0, falaTimer=0;
+var falandoCb=null, bocaAlvo=0, bocaSuave=0, falaTimer=0, falaAtual="";
 function falar(id, cb){
   falandoCb=cb||null;
+  if(id && id.indexOf("conta_")!==0){ falaAtual=id; mostraOuvir(true); }   // guarda p/ "Ouvir de novo" (contagem não vira alvo)
+  ouvirBtn.className="tocando";
   try{ narr.pause(); narr.currentTime=0; }catch(e){}
   narr.src="audio/"+id+".mp3";
   var p=narr.play();
   if(p && p["catch"]){ p["catch"](function(){ /* sem áudio: segue mesmo assim */ }); }
   iniciaBoca();
 }
-function fimFala(){ paraBoca(); var c=falandoCb; falandoCb=null; if(c){ c(); } }
+function fimFala(){ paraBoca(); ouvirBtn.className=""; var c=falandoCb; falandoCb=null; if(c){ c(); } }
 narr.addEventListener("ended", fimFala);
 function iniciaBoca(){
   if(falaTimer) clearInterval(falaTimer);
@@ -630,7 +652,7 @@ function telaCheia(){
 
 /* ================= TELAS ================= */
 function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
-function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
+function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} mostraOuvir(false); fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
 
 function telaCapa(){
   limpa();
@@ -782,7 +804,7 @@ function fazCaixa(i){
   var c=el("div","caixa"); c.id="cx"+i;
   var cr=el("img","cratimg"); cr.src="img/caixa_estrelas.png"; cr.alt="Caixa de estrelas"; c.appendChild(cr);
   c.appendChild(el("div","estrs")); c.appendChild(el("div","cnt","0"));
-  c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; somPop(P1.cx[i]); pintaCaixas(); } };
+  c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; somPop(P1.cx[i]); contaEstrela(P1.cx[i]); pintaCaixas(); } };
   return c;
 }
 function fazEstrInterna(i){
@@ -827,7 +849,7 @@ function sucessoP1(){
   var tempo=Math.round(((new Date()).getTime()-P1.t0)/1000);
   salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)});
   premiar(P1.toques===P1.n*P1.m?3:2);
-  setTimeout(function(){ falar("e_p1"); },800);
+  setTimeout(function(){ falar("e_p1"); },1400);   // deixa a contagem "Quatro! Caixa cheia!" terminar antes da explicação
 }
 
 /* ==== PARADAS/TELAS seguintes (preenchidas em blocos) ==== */
