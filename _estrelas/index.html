@@ -222,8 +222,16 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 
 /* ---------- PARADA 3 — Dois jeitos (comutatividade) ---------- */
 .p3 .p3wrap{position:absolute;left:0;right:0;top:24%;bottom:24%;z-index:2;text-align:center;
+  -webkit-transform-origin:50% 28%;transform-origin:50% 28%;   /* gira no centro da GRADE (não da faixa) */
   -webkit-transition:opacity .45s ease,-webkit-transform .45s ease;transition:opacity .45s ease,transform .45s ease}
 .p3 .p3wrap.vira{opacity:.15;-webkit-transform:rotate(90deg) scale(.7);transform:rotate(90deg) scale(.7)}
+/* VIRA-TAPETE: a criança gira com o PRÓPRIO dedo (o gesto é o argumento da comutatividade) */
+.p3 .p3wrap.giravel{cursor:-webkit-grab;cursor:grab;
+  -webkit-animation:conviteGira 2.4s ease-in-out infinite;animation:conviteGira 2.4s ease-in-out infinite}
+.p3 .p3wrap.giravel.pegando{-webkit-animation:none;animation:none;-webkit-transition:none;transition:none;
+  cursor:-webkit-grabbing;cursor:grabbing}
+@-webkit-keyframes conviteGira{0%,100%{-webkit-transform:rotate(0)}30%{-webkit-transform:rotate(2.5deg)}60%{-webkit-transform:rotate(-2.5deg)}}
+@keyframes conviteGira{0%,100%{transform:rotate(0)}30%{transform:rotate(2.5deg)}60%{transform:rotate(-2.5deg)}}
 .p3 .expr{font-size:30px;font-weight:900;color:#ffe08a;margin-bottom:12px;text-shadow:0 0 16px rgba(255,200,80,.6)}
 .p3 .expr span{color:#fff}
 .gradeM{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
@@ -1412,7 +1420,7 @@ function contaFileiras(grade,expr,passo,vezes,cb){
 var P3;
 function telaParada3(){
   limpa();
-  P3={concluida:false,t0:(new Date()).getTime()};
+  P3={concluida:false,girou:false,gesto:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada p3");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
@@ -1429,22 +1437,58 @@ function telaParada3(){
 function p3contar1(){
   var b=document.getElementById("p3btn"); if(b)b.disabled=true;
   var g=document.getElementById("p3grade"), c=document.getElementById("p3cont");
-  contaFileiras(g,c,4,3,function(){
-    var b2=document.getElementById("p3btn"); if(b2){ b2.disabled=false; b2.innerHTML="Vire de lado &#8635;"; b2.onclick=function(){ p3vira(); }; }
-  });
+  contaFileiras(g,c,4,3,function(){ p3preparaGiro(); });
 }
-function p3vira(){
-  var b=document.getElementById("p3btn"); if(b)b.disabled=true;
-  var wrap=document.getElementById("p3wrap"); if(wrap){ wrap.className="p3wrap vira"; }
+/* VIRA-TAPETE: a criança SEGURA e ARRASTA — o array segue o dedo e encaixa nos 90 graus.
+   (cognição incorporada: é o gesto DELA que prova que virar não muda o total) */
+function p3preparaGiro(){
+  var b=document.getElementById("p3btn"); if(b)b.style.display="none";
+  var bal=document.getElementsByClassName("balao")[0];
+  if(bal)bal.innerHTML="Agora é <b>você</b> quem vira! <b>Segura e arrasta</b> a constelação pro lado.";
+  falar("p3_gira");
+  var wrap=document.getElementById("p3wrap"); if(!wrap)return;
+  wrap.className="p3wrap giravel";
+  var ativo=false, x0=0, ang=0;
+  function px(ev){ return (ev.touches&&ev.touches[0])?ev.touches[0].clientX:ev.clientX; }
+  function baixa(ev){ if(P3.girou)return; ativo=true; x0=px(ev); ang=0; wrap.className="p3wrap giravel pegando"; if(ev.cancelable)ev.preventDefault(); }
+  function move(ev){ if(!ativo||P3.girou)return;
+    ang=Math.max(-100,Math.min(100,(px(ev)-x0)*0.45));
+    var tf="rotate("+ang.toFixed(1)+"deg) scale("+(1-Math.abs(ang)/900).toFixed(3)+")";
+    wrap.style.webkitTransform=tf; wrap.style.transform=tf;
+    if(ev.cancelable)ev.preventDefault(); }
+  function solta(){ if(!ativo||P3.girou)return; ativo=false;
+    wrap.className="p3wrap giravel";   // religa a transição suave
+    if(Math.abs(ang)>=50){
+      P3.girou=true; P3.gesto=true;
+      var tf="rotate("+(ang>0?90:-90)+"deg) scale(.9)";
+      wrap.style.webkitTransform=tf; wrap.style.transform=tf;
+      somResolve();
+      setTimeout(p3girou,480);
+    } else {
+      wrap.style.webkitTransform="rotate(0deg)"; wrap.style.transform="rotate(0deg)";
+    } }
+  wrap.addEventListener("touchstart",baixa,{passive:false});
+  wrap.addEventListener("touchmove",move,{passive:false});
+  wrap.addEventListener("touchend",solta,false);
+  wrap.addEventListener("mousedown",baixa,false);
+  document.addEventListener("mousemove",move,false);
+  document.addEventListener("mouseup",solta,false);
+  // rede de segurança: se em 14s a criança não conseguir arrastar, o botão de virar volta
   setTimeout(function(){
-    var wrap2=document.getElementById("p3wrap"); if(!wrap2)return;
-    wrap2.innerHTML="";
-    var expr=el("div","expr"); expr.innerHTML="4 &#215; 3 = <span id='p3cont'>?</span>"; wrap2.appendChild(expr);
-    var g=gradeStars(4,3,"gradeM"); g.id="p3grade"; wrap2.appendChild(g);
-    wrap2.className="p3wrap";
-    var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="Agora são <b>4 fileiras de 3</b>. Conte outra vez… quantas acendem?";
-    var b2=document.getElementById("p3btn"); if(b2){ b2.disabled=false; b2.innerHTML="Contar de novo"; b2.onclick=function(){ p3contar2(); }; }
-  },520);
+    if(!P3.girou){ var b2=document.getElementById("p3btn");
+      if(b2){ b2.style.display=""; b2.disabled=false; b2.innerHTML="Virar de lado &#8635;";
+        b2.onclick=function(){ if(!P3.girou){ P3.girou=true; p3girou(); } }; } }
+  },14000);
+}
+function p3girou(){
+  var wrap=document.getElementById("p3wrap"); if(!wrap)return;
+  wrap.className="p3wrap";
+  wrap.style.webkitTransform=""; wrap.style.transform="";
+  wrap.innerHTML="";
+  var expr=el("div","expr"); expr.innerHTML="4 &#215; 3 = <span id='p3cont'>?</span>"; wrap.appendChild(expr);
+  var g=gradeStars(4,3,"gradeM"); g.id="p3grade"; wrap.appendChild(g);
+  var bal=document.getElementsByClassName("balao")[0]; if(bal)bal.innerHTML="<b>Você virou!</b> Agora são <b>4 fileiras de 3</b>. Conte outra vez… quantas acendem?";
+  var b=document.getElementById("p3btn"); if(b){ b.style.display=""; b.disabled=false; b.innerHTML="Contar de novo"; b.onclick=function(){ p3contar2(); }; }
 }
 function p3contar2(){
   var b=document.getElementById("p3btn"); if(b)b.disabled=true;
@@ -1460,7 +1504,7 @@ function sucessoP3(){
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"3 &#215; 4 = 4 &#215; 3","= 12","Você virou a constelação de lado e deu o <b>mesmo</b> tanto! 3&#215;4 e 4&#215;3 são iguais — isso vale sempre.");
   var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
-  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true,semErro:true});
+  salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",gesto:(P3.gesto?"girou com o dedo":"usou o botão"),tempo_s:tempo,acertou:true,semErro:true});
   premiar(3);
   setTimeout(function(){
     depoisDaFala("e_p3", 9000, function(){

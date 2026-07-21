@@ -1,6 +1,6 @@
 /* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
    Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
-var CACHE="fabrica-estrelas-v16";
+var CACHE="fabrica-estrelas-v17";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/ceu_noite.jpg","./img/fagulha.png","./img/fagulha_fala.png","./img/fagulha_pisca.png",
  "./img/fagulha_acena.png","./img/fagulha_comemora.png","./img/fagulha_pensa.png",
@@ -11,7 +11,7 @@ var ATIVOS=["./","./index.html","./manifest.json",
  "./audio/se_p1_q.mp3","./audio/se_soma_q.mp3","./audio/se_ok.mp3","./audio/se_quase.mp3","./audio/segue_pratica.mp3",
  "./audio/aj_p2_1.mp3","./audio/aj_p2_2.mp3","./audio/aj_p2_3.mp3","./audio/aj_prob_1.mp3","./audio/aj_prob_2.mp3","./audio/aj_prob_3.mp3",
  "./audio/se_p2_q.mp3","./audio/se_p3_q.mp3","./audio/se_p4_q.mp3","./audio/se_prob_q.mp3",
- "./audio/refl_ok.mp3","./audio/refl_hmm.mp3","./audio/aquec.mp3","./audio/aquec_fim.mp3","./audio/nome_q.mp3","./audio/dica_oferta.mp3","./audio/pratica_sug.mp3","./audio/se_p5_q.mp3","./audio/galeria_ok.mp3",
+ "./audio/refl_ok.mp3","./audio/refl_hmm.mp3","./audio/aquec.mp3","./audio/aquec_fim.mp3","./audio/nome_q.mp3","./audio/dica_oferta.mp3","./audio/pratica_sug.mp3","./audio/se_p5_q.mp3","./audio/galeria_ok.mp3","./audio/p3_gira.mp3",
  "./icon-192.png","./icon-512.png"];
 self.addEventListener("install",function(e){
   self.skipWaiting();
