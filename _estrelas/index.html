@@ -43,10 +43,12 @@ img{-webkit-user-drag:none;user-drag:none}
 
 /* estrelinhas piscando */
 .estrelas{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
-.pt{position:absolute;border-radius:50%;background:#fff;opacity:.25;box-shadow:0 0 6px 1px rgba(255,255,255,.8);
+.pt{position:absolute;border-radius:50%;background:#fff;opacity:.6;
+  box-shadow:0 0 7px 2px rgba(255,255,255,.95),0 0 15px 4px rgba(170,200,255,.55);
   -webkit-animation:cintila 4s ease-in-out infinite;animation:cintila 4s ease-in-out infinite}
-@-webkit-keyframes cintila{0%,100%{opacity:.12;-webkit-transform:scale(.6)}50%{opacity:.95;-webkit-transform:scale(1.15)}}
-@keyframes cintila{0%,100%{opacity:.12;transform:scale(.6)}50%{opacity:.95;transform:scale(1.15)}}
+.pt.ouro{box-shadow:0 0 7px 2px rgba(255,240,190,.98),0 0 16px 5px rgba(255,205,110,.6)}
+@-webkit-keyframes cintila{0%,100%{opacity:.4;-webkit-transform:scale(.7)}50%{opacity:1;-webkit-transform:scale(1.25)}}
+@keyframes cintila{0%,100%{opacity:.4;transform:scale(.7)}50%{opacity:1;transform:scale(1.25)}}
 
 /* ---- FÁBRICA VIVA (glow + fumaças de estrela) ---- */
 .fabviva{position:absolute}
@@ -309,6 +311,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* ---------- PARADAS DE PERGUNTA (Soma / Problema / Desafio) ---------- */
 .perg .pmeio{position:absolute;left:0;right:0;top:28%;text-align:center;z-index:2;padding:0 10px}
 .perg .opts{position:absolute;left:0;right:0;bottom:13%;z-index:4;text-align:center}
+.perg .fagfala{width:84px;right:0}   /* menor nas telas de escolha: não encosta na fileira de botões */
 .perg .pperg{font-size:15px;color:#e9ecff;font-weight:700;margin-bottom:10px}
 .perg .pdica{margin-top:10px;font-size:13px;color:#ffe9a8;font-style:italic;min-height:1.2em;padding:0 12px}
 .perg .expr{font-size:30px;font-weight:900;color:#ffe08a;text-shadow:0 0 16px rgba(255,200,80,.6)}
@@ -368,52 +371,9 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .mapa.constel .ubook{position:relative;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.1);border:1px solid rgba(255,225,150,.3);-webkit-box-flex:0;-webkit-flex:none;flex:none}
 .mapa.constel .ubook:before{content:"";position:absolute;left:9px;right:9px;top:10px;height:2.5px;border-radius:2px;background:#ffe6a3;box-shadow:0 5px 0 #ffe6a3,0 10px 0 #ffe6a3}
 
-/* ===== MAPA claro estilo app (estrutura Duolingo, arte NOSSA) ===== */
-.mapa.claro{background:#eef2fa}
-.mapa.claro .ceuclaro{position:absolute;top:0;left:0;right:0;bottom:0;z-index:0;overflow:hidden;pointer-events:none}
-.nuvem{position:absolute;
-  background:radial-gradient(closest-side,rgba(255,255,255,.96),rgba(255,255,255,.55) 55%,rgba(255,255,255,0));
-  -webkit-animation:drift 22s ease-in-out infinite alternate;animation:drift 22s ease-in-out infinite alternate}
-@-webkit-keyframes drift{from{-webkit-transform:translateX(-40px)}to{-webkit-transform:translateX(40px)}}
-@keyframes drift{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
-.mapa.claro .nowrap:not(.atual-wrap) .disco{-webkit-animation:discBob 3.4s ease-in-out infinite;animation:discBob 3.4s ease-in-out infinite}
-@-webkit-keyframes discBob{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-4px)}}
-@keyframes discBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
-.mapa.claro .no{position:relative;width:74px;height:74px}
-.mapa.claro .no .disco{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;
-  background:#ffc23c;box-shadow:0 7px 0 #d98e12,0 11px 16px rgba(30,40,80,.18)}
-.mapa.claro .no.atual .disco{background:#ffd149;box-shadow:0 7px 0 #e39a12,0 11px 18px rgba(30,40,80,.24)}
-.mapa.claro .no.futuro .disco{background:#d6dcea;box-shadow:0 6px 0 #b8c0d3,0 8px 12px rgba(30,40,80,.1)}
-.mapa.claro .nowrap.alivio .no:not(.futuro) .disco{background:#22b0f4;box-shadow:0 7px 0 #1385c2,0 11px 16px rgba(30,40,80,.18)}
-.mapa.claro .nowrap.deleite .no:not(.futuro) .disco{background:#d264cf;box-shadow:0 7px 0 #a23aa3,0 11px 16px rgba(30,40,80,.18)}
-.mapa.claro .no .nicon{position:absolute;left:50%;top:43%;width:48%;height:auto;
-  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
-  -webkit-filter:brightness(0) invert(1);filter:brightness(0) invert(1)}
-.mapa.claro .no.futuro .nicon{opacity:.8}
-.mapa.claro .no.atual{-webkit-animation:farol 1.3s ease-in-out infinite;animation:farol 1.3s ease-in-out infinite}
-.mapa.claro .atual-wrap .farol{position:absolute;left:50%;top:50%;width:100%;height:100%;border-radius:50%;z-index:-1;
-  border:4px solid rgba(255,180,40,.55);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
-  -webkit-animation:farolPulse 1.7s ease-out infinite;animation:farolPulse 1.7s ease-out infinite}
-.mapa.claro .rotulo{position:absolute;left:50%;top:120%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
-  white-space:nowrap;font-size:13px;font-weight:900;letter-spacing:.6px;color:#e0930c;background:#fff;padding:8px 20px;border-radius:16px;
-  border:2px solid #efe1c2;box-shadow:0 4px 0 #e7dcc2;-webkit-animation:comBounce 1s ease-in-out infinite;animation:comBounce 1s ease-in-out infinite}
-.mapa.claro .rotulo:before{content:"";position:absolute;bottom:100%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);border:7px solid transparent;border-bottom-color:#fff}
-.hud.claro{background:#fff;box-shadow:0 2px 10px rgba(30,40,80,.12);border-bottom-left-radius:0;border-bottom-right-radius:0;
-  padding:9px 14px 10px;padding-top:calc(9px + env(safe-area-inset-top,0px))}
-.hud.claro .hpar{background:transparent;padding:3px 8px}
-.hud.claro .hpar b{color:#4b4b57;font-size:17px}
+/* (mapa-claro removido: era o modelo antigo, não usado — só a constelação roda) */
 .hico.coroa{width:20px;height:15px;background:#ffc23c;
   -webkit-clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%);clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%)}
-.mapa.claro .unidade{position:absolute;top:58px;left:12px;right:12px;z-index:6;
-  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;
-  background:-webkit-linear-gradient(top,#ffd257,#ffb52a);background:linear-gradient(to bottom,#ffd257,#ffb52a);
-  color:#5a3b00;padding:11px 16px;border-radius:18px;box-shadow:0 5px 0 #d98e12,0 8px 16px rgba(210,140,20,.28)}
-.mapa.claro .utxt{text-align:left}
-.mapa.claro .usec{font-size:11px;font-weight:800;letter-spacing:1px;opacity:.8}
-.mapa.claro .utit{font-size:17px;font-weight:900;line-height:1.1;margin-top:2px;color:#4a2f00}
-.mapa.claro .ubook{position:relative;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.35);-webkit-box-flex:0;-webkit-flex:none;flex:none}
-.mapa.claro .ubook:before{content:"";position:absolute;left:9px;right:9px;top:10px;height:2.5px;border-radius:2px;background:#5a3b00;
-  box-shadow:0 5px 0 #5a3b00,0 10px 0 #5a3b00}
 
 /* pulo da Fagulha ao comemorar (mola/overshoot) */
 .fag.pulo{-webkit-animation:puloFag .6s cubic-bezier(.34,1.56,.64,1);animation:puloFag .6s cubic-bezier(.34,1.56,.64,1)}
@@ -426,10 +386,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .barratopo i{display:block;height:100%;border-radius:8px;
   background:-webkit-linear-gradient(left,#ffe27a,#ffb020);background:linear-gradient(to right,#ffe27a,#ffb020)}
 
-/* nó ATUAL: anel-farol + bolha COMEÇAR (assinatura da trilha) */
-.mapa .nowrap.atual-wrap .farol{position:absolute;left:50%;top:50%;width:100%;height:100%;border-radius:50%;z-index:-1;
-  border:3px solid rgba(255,255,255,.9);-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
-  -webkit-animation:farolPulse 1.7s ease-out infinite;animation:farolPulse 1.7s ease-out infinite}
+/* nó ATUAL: anel-farol pulsante — a versão dourada da constelação está em .mapa.constel .atual-wrap .farol */
 @-webkit-keyframes farolPulse{0%{-webkit-transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{-webkit-transform:translate(-50%,-50%) scale(1.9);opacity:0}}
 @keyframes farolPulse{0%{transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
 .mapa .rotulo{position:absolute;left:50%;top:112%;margin-top:0;-webkit-transform:translateX(-50%);transform:translateX(-50%);
@@ -654,11 +611,11 @@ function fabViva(){
   }
   return f;
 }
-function campoEstrelas(qtd){
-  var c=el("div","estrelas"); var i;
+function campoEstrelas(qtd,espalha){
+  var c=el("div","estrelas"); var i, alt=(espalha||70);
   for(i=0;i<qtd;i++){
-    var p=el("div","pt");
-    p.style.left=(Math.random()*100).toFixed(2)+"%"; p.style.top=(Math.random()*70).toFixed(2)+"%";
+    var p=el("div",(i%4===0)?"pt ouro":"pt");
+    p.style.left=(Math.random()*100).toFixed(2)+"%"; p.style.top=(Math.random()*alt).toFixed(2)+"%";
     var d=(2.6+Math.random()*4).toFixed(2); p.style.webkitAnimationDuration=d+"s"; p.style.animationDuration=d+"s";
     var de=(-Math.random()*4).toFixed(2); p.style.webkitAnimationDelay=de+"s"; p.style.animationDelay=de+"s";
     var s=(2+Math.random()*3).toFixed(1); p.style.width=s+"px"; p.style.height=s+"px";
@@ -673,7 +630,7 @@ function telaCheia(){
 
 /* ================= TELAS ================= */
 function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
-function limpa(){ fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
+function limpa(){ if(typeof musTimer!=="undefined"&&musTimer){clearTimeout(musTimer);musTimer=0;} fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
 
 function telaCapa(){
   limpa();
@@ -775,7 +732,7 @@ function telaMapa(){
     var w=el("div","nowrap "+STOPS[i].tipo+(estado==="atual"?" atual-wrap":"")); w.style.left=nodeX(i)+"%"; w.style.top=ytop(i)+"px";
     var no=el("div","no "+estado);
     var im=el("img","estrn"); im.src="img/estrela_grande.png"; im.style.webkitAnimationDelay=(i*0.5)+"s"; im.style.animationDelay=(i*0.5)+"s"; no.appendChild(im);
-    if(estado==="atual"){ no.appendChild(el("div","farol")); (function(k){ no.onclick=function(){ STOPS[k].fn(); }; })(i);
+    if(estado==="atual"){ no.appendChild(el("div","farol")); (function(k){ no.onclick=function(){ somEntra(); STOPS[k].fn(); }; })(i);
       w.appendChild(el("div","rotulo","COMEÇAR")); }
     w.appendChild(no); strip.appendChild(w);
   }
@@ -969,6 +926,18 @@ function somAcerto(){ somTom(660,0.18,0.2,"triangle",0); somTom(988,0.32,0.2,"tr
 function somErro(){ somTom(196,0.28,0.16,"sine",0); }                                              // gentil, nunca punir
 function somResolve(){ somTom(523,0.5,0.16,"triangle",0); somTom(659,0.5,0.16,"triangle",0.02); somTom(784,0.6,0.16,"triangle",0.04); } // acorde que resolve
 function somPop(i){ somTom(520+((i||0)%6)*70,0.12,0.14,"triangle",0); }                            // pop suave ao colocar estrela
+function somClick(){ somTom(880,0.05,0.05,"sine",0); }                                              // toque suave (feedback tátil)
+function somEntra(){ somTom(523,0.14,0.09,"triangle",0); somTom(784,0.16,0.08,"triangle",0.07); somTom(1046,0.22,0.07,"triangle",0.15); } // brilho ao entrar numa parada
+/* toque suave em botões e nós do mapa (também destrava o áudio no 1º gesto) */
+function _clsStr(n){ return (n && typeof n.className==="string") ? n.className : ""; }
+document.addEventListener("pointerdown",function(ev){
+  var n=ev.target, hop=0;
+  while(n && n.nodeType===1 && hop<4){
+    var c=_clsStr(n);
+    if(n.tagName==="BUTTON" || /(^|\s)pcor(\s|$)/.test(c) || (/(^|\s)no(\s|$)/.test(c)&&/(^|\s)atual(\s|$)/.test(c))){ somClick(); return; }
+    n=n.parentNode; hop++;
+  }
+},true);
 var MUS;
 function telaMusica(){
   limpa();
@@ -1001,11 +970,12 @@ function telaMusica(){
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
 }
+var musTimer=0;
 function musMelodia(notas){
   var seq=[0,1,2,3,4,5,4,2,0], i=0;
   function passo(){ if(i>=seq.length)return; var s=document.getElementsByClassName("sino")[seq[i]];
     if(s){ s.className="sino toca"; (function(el2){ setTimeout(function(){ el2.className="sino"; },200); })(s); }
-    tocaNota(notas[seq[i]]); i++; setTimeout(passo,230); }
+    tocaNota(notas[seq[i]]); i++; musTimer=setTimeout(passo,230); }
   passo();
 }
 function musTodos(){
@@ -1505,7 +1475,7 @@ function salvaParecerProf(d){
     indicadores:ind,
     texto:"O estudante compreende a multiplicação como grupos iguais e disposição retangular (array). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Nível sugerido: "+d.nivel+".",
     quando:(new Date()).toISOString() };
-  try{ var f=JSON.parse(localStorage.getItem("estrelas_parecer_prof")||"[]"); f.push(parecer); localStorage.setItem("estrelas_parecer_prof",JSON.stringify(f)); }catch(e){}
+  try{ var f=JSON.parse(localStorage.getItem("estrelas_parecer_prof")||"[]"); f.push(parecer); if(f.length>50)f=f.slice(f.length-50); localStorage.setItem("estrelas_parecer_prof",JSON.stringify(f)); }catch(e){}
   return parecer;
 }
 /* TELA DO ALUNO: só o relatório com a % de acerto + medalha (nada de parecer). */
@@ -1527,12 +1497,15 @@ function telaRelatorio(){
   card.appendChild(el("div","dsub",frase));
   t.appendChild(card);
   var bar=el("div","p1barra"); bar.style.bottom="6%";
-  var again=el("button","btn pulsa","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; try{ localStorage.removeItem("estrelas_evid"); }catch(e){} telaCapa(); };
+  var again=el("button","btn pulsa","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; sessao.estrelas=0; sessao.ultimo=0; try{ localStorage.removeItem("estrelas_evid"); }catch(e){} telaCapa(); };
   bar.appendChild(again); t.appendChild(bar);
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   fagComemora();
 }
+
+/* campo de estrelas cintilando no FUNDO (tela inteira, atrás de tudo) */
+(function(){ var fu=document.getElementById("fundo"); if(fu){ fu.appendChild(campoEstrelas(64,100)); } })();
 
 telaCapa();
 })();
