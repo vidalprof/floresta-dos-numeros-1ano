@@ -520,6 +520,42 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .premio b{color:#ffe08a;font-size:18px}
 .premio .hico.star{width:18px;height:18px;margin-right:2px}
 
+/* ---------- QUEM VAI JOGAR? (identidade leve, sem senha) ---------- */
+.quem .qcard{position:absolute;left:14px;right:14px;top:9%;z-index:5;background:rgba(15,20,48,.96);
+  border:1px solid rgba(255,225,150,.5);border-radius:22px;padding:18px 14px;text-align:center;
+  box-shadow:0 16px 40px rgba(0,0,0,.55)}
+.qtit{font-size:22px;font-weight:900;color:#ffe08a;margin-bottom:4px;text-shadow:0 0 14px rgba(255,200,80,.4)}
+.qsub{font-size:13px;color:#cdd3ff;margin:6px 0 10px;min-height:1em}
+.qlista{max-height:290px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.qaluno{display:inline-block;margin:5px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);
+  color:#fff;font-family:inherit;font-weight:800;font-size:16px;padding:11px 18px;border-radius:16px;cursor:pointer}
+.qaluno small{display:block;font-size:10.5px;color:#9aa3c8;font-weight:700}
+.qaluno:active{-webkit-transform:scale(.95);transform:scale(.95)}
+.qin{display:block;width:92%;margin:12px auto 4px;border:2px solid rgba(255,225,150,.6);background:#fff;color:#20264a;
+  font-family:inherit;font-weight:800;font-size:19px;text-align:center;padding:12px;border-radius:14px;
+  -webkit-user-select:text;user-select:text}
+.qturma{display:inline-block;margin:4px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);
+  color:#e9ecff;font-family:inherit;font-weight:800;font-size:14px;padding:10px 16px;border-radius:14px;cursor:pointer}
+.qturma.sel{background:#ffd75e;color:#5a3b00;border-color:#ffd75e}
+.qmini{display:block;margin:12px auto 0;background:transparent;border:0;color:#9aa3c8;font-size:12px;
+  text-decoration:underline;cursor:pointer;font-family:inherit}
+
+/* IMPRESSÃO do painel do professor: preto no branco, só os cartões */
+@media print{
+  html,body{position:static!important;height:auto!important;overflow:visible!important;background:#fff!important}
+  #fundo,.ceu,.estrelas,#ouvirbtn,button,.fagfala,.dica{display:none!important}
+  #stage{position:static!important;top:auto!important;left:auto!important;width:auto!important;height:auto!important;
+    -webkit-transform:none!important;transform:none!important}
+  #app{position:static!important;overflow:visible!important}
+  .tela{position:static!important;overflow:visible!important;-webkit-animation:none!important;animation:none!important}
+  .parecer .profcard{background:#fff!important;color:#000!important;border:1px solid #888!important;box-shadow:none!important;
+    max-width:100%!important;margin:0 0 14px!important;font-size:12.5pt!important;line-height:1.5!important}
+  .parecer .profcard b{color:#000!important}
+  .parecer .pobs{color:#444!important}
+  .hbar{border:1px solid #888!important;background:#eee!important}
+  .hbar i{background:#888!important}
+}
+
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
 @media (prefers-reduced-motion: reduce){
@@ -604,6 +640,7 @@ var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: red
 var falandoCb=null, bocaAlvo=0, bocaSuave=0, falaTimer=0, falaAtual="";
 function falar(id, cb){
   falandoCb=cb||null;
+  if(anaOk && audioCtx && audioCtx.state==="suspended"){ try{ audioCtx.resume(); }catch(eR){} }   // narração roteada pelo analisador: contexto precisa estar acordado
   if(id && id.indexOf("conta_")!==0){ falaAtual=id; mostraOuvir(true); }   // guarda p/ "Ouvir de novo" (contagem não vira alvo)
   ouvirBtn.className="tocando";
   try{ narr.pause(); narr.currentTime=0; }catch(e){}
@@ -619,7 +656,7 @@ function iniciaBoca(){
   bocaAlvo=0.7;
   falaTimer=setInterval(function(){
     if(narr.paused||narr.ended){ bocaAlvo=0; }
-    else { bocaAlvo = 0.25 + Math.random()*0.75; }   // boca bem visível; o corpo segue no loop()
+    else if(!anaOk){ bocaAlvo = 0.25 + Math.random()*0.75; }   // sem analisador: modo sorteado; com ele, o loop() segue a voz
   }, 95);
 }
 function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
@@ -642,6 +679,15 @@ function depoisDaFala(id, maxMs, cb){
    grande; fala mansa = gesto leve; silêncio = assenta. 1 elemento, só transform. */
 var fagAtual=null;
 function loop(){
+  /* boca guiada pela VOZ (RMS do analisador); sem analisador, vale o sorteio do iniciaBoca */
+  if(anaOk && !narr.paused && !narr.ended){
+    try{
+      anaNode.getByteTimeDomainData(anaBuf);
+      var iA,sA=0,vA; for(iA=0;iA<anaBuf.length;iA+=4){ vA=(anaBuf[iA]-128)/128; sA+=vA*vA; }
+      var rms=Math.sqrt(sA/(anaBuf.length/4));
+      bocaAlvo=(rms<0.012)?0:Math.min(1,0.18+rms*6);
+    }catch(eA){}
+  }
   if(fagAtual && fagAtual.fala){
     bocaSuave += (bocaAlvo-bocaSuave)*0.4;
     fagAtual.fala.style.opacity=bocaSuave.toFixed(3);
@@ -819,7 +865,48 @@ function autoexplica(tela, cfg, cb){
   if(cfg.falaQ) falar(cfg.falaQ);
   return box;
 }
-function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){} }
+function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem(kAluno("estrelas_evid"))||"[]"); f.push(ev); localStorage.setItem(kAluno("estrelas_evid"),JSON.stringify(f)); }catch(e){} }
+
+/* ================= IDENTIDADE DO ALUNO (padrão EducaVerso) =================
+   - Registro COMPARTILHADO entre todas as atividades do mesmo aparelho (localStorage do
+     domínio vidalprof.github.io): `edu_alunos` (lista) + `edu_atual` (quem está jogando).
+   - Pesquisa aplicada: criança pequena não digita bem -> 1º acesso digita 1 vez; depois
+     é só TOCAR no próprio nome. Nome parecido na mesma turma (Levenshtein<=2) pergunta
+     "Você é ...?" antes de criar duplicata. Reconciliação fina fica pro painel/Firebase.
+   - TODO dado do jogo (motor/evidências/retenção) é gravado POR ALUNO (kAluno). */
+var ATIVIDADE_ID="fabrica-de-estrelas", ATIVIDADE_NOME="A Fábrica de Estrelas";
+var TURMAS=["3º ano A","3º ano B","3º ano C"];   // Marcos ajusta a lista real das turmas aqui
+var painelSel="";                                 // painel do professor pode olhar outro aluno
+function alunosLe(){ try{ return JSON.parse(localStorage.getItem("edu_alunos")||"[]"); }catch(e){ return []; } }
+function alunosGrava(a){ try{ localStorage.setItem("edu_alunos",JSON.stringify(a)); }catch(e){} }
+function alunoAtual(){ try{ var id=localStorage.getItem("edu_atual"); if(!id)return null; var a=alunosLe(),i; for(i=0;i<a.length;i++){ if(a[i].id===id)return a[i]; } }catch(e){} return null; }
+function kAluno(base){ var a=alunoAtual(); var id=painelSel||(a?a.id:"anon"); return base+"_"+id; }
+function normNome(s){
+  s=(""+s).replace(/^\s+|\s+$/g,"").replace(/\s+/g," ").toLowerCase();
+  try{ s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,""); }catch(e){}
+  return s;
+}
+function bonito(s){ s=(""+s).replace(/^\s+|\s+$/g,"").replace(/\s+/g," "); return s? s.charAt(0).toUpperCase()+s.slice(1) : s; }
+function levenshtein(a,b){
+  var m=a.length,n=b.length,i,j,prev,tmp;
+  if(!m)return n; if(!n)return m;
+  var v=[]; for(j=0;j<=n;j++)v[j]=j;
+  for(i=1;i<=m;i++){ prev=v[0]; v[0]=i;
+    for(j=1;j<=n;j++){ tmp=v[j];
+      v[j]=Math.min(v[j]+1, v[j-1]+1, prev+(a.charAt(i-1)===b.charAt(j-1)?0:1));
+      prev=tmp; } }
+  return v[n];
+}
+function parecidos(nome,turma){
+  var alvo=normNome(nome), out=[], a=alunosLe(), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].turma!==turma) continue;
+    var n=normNome(a[i].nome);
+    if(n===alvo){ out.unshift(a[i]); continue; }
+    if(Math.max(n.length,alvo.length)>=4 && levenshtein(n,alvo)<=2) out.push(a[i]);
+  }
+  return out;
+}
 
 /* ================= MOTOR DE DOMÍNIO (BKT-lite por conceito + revisão espaçada Leitner) =================
    - Cada conceito (KC) tem um domínio estimado p (0..1), atualizado a cada vitória
@@ -834,8 +921,8 @@ var LEITNER=[1,3,7,14];                      // dias até a próxima revisão, p
 var PRATICA=false, mgKc="", mgP=0, dicasParada=0;
 function hojeMs(){ return (new Date()).getTime(); }
 function diaStr(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
-function motorLe(){ try{ return JSON.parse(localStorage.getItem("estrelas_motor")||"{}"); }catch(e){ return {}; } }
-function motorGrava(m){ try{ localStorage.setItem("estrelas_motor",JSON.stringify(m)); }catch(e){} }
+function motorLe(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_motor"))||"{}"); }catch(e){ return {}; } }
+function motorGrava(m){ try{ localStorage.setItem(kAluno("estrelas_motor"),JSON.stringify(m)); }catch(e){} }
 function motorKc(m,kc){ if(!m[kc]) m[kc]={p:0.25,box:0,next:0,varIdx:0,hist:[]}; return m[kc]; }
 /* vitória numa parada: atualiza o domínio (forca 3=de primeira/sem dica, 2=média, 1=com muita ajuda) */
 function motorParada(kc,forca){
@@ -860,8 +947,8 @@ function motorRevisao(kc,acertou){
 }
 function kcsVencidos(){ var m=motorLe(),out=[],k; for(k in m){ if(m[k]&&m[k].box>0 && m[k].next<=hojeMs()) out.push(k); } return out; }
 /* retenção medida (separada das evidências da sessão: sobrevive ao "Jogar de novo") */
-function salvaRet(r){ try{ var f=JSON.parse(localStorage.getItem("estrelas_retencao")||"[]"); f.push(r); if(f.length>100)f=f.slice(f.length-100); localStorage.setItem("estrelas_retencao",JSON.stringify(f)); }catch(e){} }
-function lerRet(){ try{ return JSON.parse(localStorage.getItem("estrelas_retencao")||"[]"); }catch(e){ return []; } }
+function salvaRet(r){ try{ var f=JSON.parse(localStorage.getItem(kAluno("estrelas_retencao"))||"[]"); f.push(r); if(f.length>100)f=f.slice(f.length-100); localStorage.setItem(kAluno("estrelas_retencao"),JSON.stringify(f)); }catch(e){} }
+function lerRet(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_retencao"))||"[]"); }catch(e){ return []; } }
 /* força da evidência da parada que acabou (usa erros + dicas pedidas) */
 function forcaDe(semErro){ return (semErro&&dicasParada===0)?3:((dicasParada>=3)?1:2); }
 function embaralha(a){ var i,j,t; for(i=a.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); t=a[i];a[i]=a[j];a[j]=t; } return a; }
@@ -930,13 +1017,96 @@ function telaCapa(){
   c.appendChild(el("h1","titulo","A Fábrica de Estrelas"));
   c.appendChild(el("div","sub","Multiplicação &#183; 3º ano"));
   var b=el("button","btn pulsa","Começar a aventura");
-  b.onclick=function(){ telaCheia(); telaAbertura(); };
+  b.onclick=function(){ telaCheia(); telaQuem(); };
   c.appendChild(b);
   t.appendChild(c);
   var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Fagulha"; fa.appendChild(fai);
   t.appendChild(fa);
   app.appendChild(t);
 }
+
+/* ===== "QUEM VAI JOGAR?" — 1º acesso digita o nome UMA vez; depois é só tocar no nome ===== */
+function telaQuem(){
+  if(navigator.webdriver){ try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); return; }   // robôs de QA não registram
+  var atual=alunoAtual();
+  limpa();
+  var t=el("div","tela quem");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  var card=el("div","qcard");
+  card.appendChild(el("div","qtit","Quem vai jogar?"));
+  var alunos=alunosLe();
+  if(alunos.length){
+    card.appendChild(el("div","qsub","Toque no seu nome:"));
+    var lista=el("div","qlista"),i;
+    for(i=0;i<alunos.length;i++){ (function(a){
+      var b=el("button","qaluno",a.nome+"<small>"+a.turma+"</small>");
+      if(atual&&atual.id===a.id){ b.style.borderColor="#ffd75e"; b.style.background="rgba(255,215,94,.18)"; }
+      b.onclick=function(){ escolheAluno(a.id); };
+      lista.appendChild(b);
+    })(alunos[i]); }
+    card.appendChild(lista);
+    var novo=el("button","btn2","Sou novo aqui"); novo.style.marginTop="12px";
+    novo.onclick=function(){ quemForm(card); };
+    card.appendChild(novo);
+    card.appendChild(quemMini());
+  } else {
+    quemForm(card);
+  }
+  t.appendChild(card);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+}
+function quemMini(){
+  var anom=el("button","qmini","Jogar sem registrar");
+  anom.onclick=function(){ try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); };
+  return anom;
+}
+function quemForm(card){
+  card.innerHTML="";
+  card.appendChild(el("div","qtit","Quem vai jogar?"));
+  card.appendChild(el("div","qsub","Toque na sua turma:"));
+  var sel={turma:""};
+  var tr=el("div"),i;
+  for(i=0;i<TURMAS.length;i++){ (function(tm){
+    var b=el("button","qturma",tm);
+    b.onclick=function(){ sel.turma=tm; var bs=tr.getElementsByTagName("button"),z; for(z=0;z<bs.length;z++)bs[z].className="qturma"; b.className="qturma sel"; };
+    tr.appendChild(b);
+  })(TURMAS[i]); }
+  card.appendChild(tr);
+  var inp=document.createElement("input"); inp.className="qin"; inp.type="text"; inp.maxLength=24;
+  inp.placeholder="Escreva o seu nome"; inp.setAttribute("autocomplete","off"); inp.setAttribute("autocapitalize","words");
+  card.appendChild(inp);
+  var dica=el("div","qsub","");
+  card.appendChild(dica);
+  var ok=el("button","btn pulsa","Pronto!");
+  ok.onclick=function(){
+    var nome=bonito(inp.value||"");
+    if(nome.length<2){ dica.innerHTML="Escreva o seu nome primeiro."; return; }
+    if(!sel.turma){ dica.innerHTML="Toque na sua turma."; return; }
+    var iguais=parecidos(nome,sel.turma);
+    if(iguais.length && normNome(iguais[0].nome)===normNome(nome)){ escolheAluno(iguais[0].id); return; }   // mesmo nome = mesma criança (não duplica)
+    if(iguais.length){ quemConfirma(card,nome,sel.turma,iguais[0]); return; }                               // parecido = pergunta antes de duplicar
+    criaAluno(nome,sel.turma);
+  };
+  card.appendChild(ok);
+  card.appendChild(quemMini());
+}
+function quemConfirma(card,nome,turma,igual){
+  card.innerHTML="";
+  card.appendChild(el("div","qtit","Você é "+igual.nome+"?"));
+  card.appendChild(el("div","qsub","Já tem um nome parecido na turma "+turma+"."));
+  var sim=el("button","btn pulsa","Sou eu!"); sim.onclick=function(){ escolheAluno(igual.id); };
+  card.appendChild(sim);
+  var nao=el("button","btn2","Não, eu sou "+nome); nao.style.marginTop="10px"; nao.style.display="inline-block"; nao.style.marginLeft="8px";
+  nao.onclick=function(){ criaAluno(nome,turma); };
+  card.appendChild(nao);
+}
+function criaAluno(nome,turma){
+  var a=alunosLe();
+  var novo={id:"a"+(new Date()).getTime().toString(36)+Math.floor(Math.random()*1e4).toString(36),nome:nome,turma:turma,criado:diaStr(hojeMs())};
+  a.push(novo); alunosGrava(a); escolheAluno(novo.id);
+}
+function escolheAluno(id){ try{ localStorage.setItem("edu_atual",id); }catch(e){} telaAbertura(); }
 
 function telaAbertura(){
   limpa();
@@ -961,7 +1131,7 @@ function telaAbertura(){
    Cada item mede RETENÇÃO de verdade (dias depois) e reagenda a caixa Leitner. */
 function aquecimentoDevido(){
   var due=kcsVencidos(); if(!due.length) return null;
-  var ult=""; try{ ult=localStorage.getItem("estrelas_aq_dia")||""; }catch(e){}
+  var ult=""; try{ ult=localStorage.getItem(kAluno("estrelas_aq_dia"))||""; }catch(e){}
   if(ult===diaStr(hojeMs())) return null;   // no máximo 1 aquecimento por dia
   return due;
 }
@@ -1030,7 +1200,7 @@ function aqAcertou(){
   fagComemora();
   AQ.i++;
   if(AQ.i>=AQ.itens.length){
-    try{ localStorage.setItem("estrelas_aq_dia",diaStr(hojeMs())); }catch(e){}
+    try{ localStorage.setItem(kAluno("estrelas_aq_dia"),diaStr(hojeMs())); }catch(e){}
     var tela=document.getElementsByClassName("tela aquece")[0]; if(tela)estouraEstrelas(tela,14);
     premiar(2); sessao.ultimo=0;   // estrelinhas pela volta (sem tela de prêmio: segue direto)
     depoisDaFala("aq_fim", 8000, function(){ telaMapa(); });
@@ -1371,9 +1541,27 @@ function somResolve(){ somTom(523,0.5,0.16,"triangle",0); somTom(659,0.5,0.16,"t
 function somPop(i){ somTom(520+((i||0)%6)*70,0.12,0.14,"triangle",0); }                            // pop suave ao colocar estrela
 function somClick(){ somTom(880,0.05,0.05,"sine",0); }                                              // toque suave (feedback tátil)
 function somEntra(){ somTom(523,0.14,0.09,"triangle",0); somTom(784,0.16,0.08,"triangle",0.07); somTom(1046,0.22,0.07,"triangle",0.15); } // brilho ao entrar numa parada
+/* LIP-SYNC DE VERDADE: um analisador lê a amplitude da narração (MP3 da mesma origem)
+   e a boca/gesto seguem a VOZ, sílaba a sílaba. Liga no 1º gesto (regra de autoplay).
+   Se o navegador não deixar, cai no modo antigo (boca animada por sorteio) sem quebrar. */
+var anaNode=null, anaBuf=null, anaOk=false, anaTent=false;
+function ligaAnalisador(){
+  if(anaOk||anaTent)return; anaTent=true;
+  try{
+    var AC=window.AudioContext||window.webkitAudioContext; if(!AC)return;
+    if(!audioCtx) audioCtx=new AC();
+    if(audioCtx.state==="suspended"){ audioCtx.resume(); }
+    var src=audioCtx.createMediaElementSource(narr);
+    anaNode=audioCtx.createAnalyser(); anaNode.fftSize=512;
+    src.connect(anaNode); anaNode.connect(audioCtx.destination);
+    anaBuf=new Uint8Array(anaNode.fftSize);
+    anaOk=true;
+  }catch(e){ anaNode=null; }
+}
 /* toque suave em botões e nós do mapa (também destrava o áudio no 1º gesto) */
 function _clsStr(n){ return (n && typeof n.className==="string") ? n.className : ""; }
 document.addEventListener("pointerdown",function(ev){
+  ligaAnalisador();
   var n=ev.target, hop=0;
   while(n && n.nodeType===1 && hop<4){
     var c=_clsStr(n);
@@ -1990,7 +2178,7 @@ function telaFinal(){
   var i; for(i=0;i<3;i++){ (function(d){ setTimeout(function(){ estouraEstrelas(t,16); },d); })(i*600);
   }
 }
-function lerEvid(){ try{ return JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); }catch(e){ return []; } }
+function lerEvid(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_evid"))||"[]"); }catch(e){ return []; } }
 function pontuacao(){
   var ev=lerEvid(), map={}, i;
   for(i=0;i<ev.length;i++){ if(ev[i].parada) map[ev[i].parada]=ev[i]; }
@@ -2028,7 +2216,13 @@ function salvaParecerProf(d){
     indicadores:ind,
     texto:"O estudante compreende a multiplicação como grupos iguais e disposição retangular (array). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Domínio médio estimado pelo motor: "+dominio+"%."+txtRet+" Nível sugerido: "+d.nivel+".",
     quando:(new Date()).toISOString() };
-  try{ var f=JSON.parse(localStorage.getItem("estrelas_parecer_prof")||"[]"); f.push(parecer); if(f.length>50)f=f.slice(f.length-50); localStorage.setItem("estrelas_parecer_prof",JSON.stringify(f)); }catch(e){}
+  /* identidade + registro COMPARTILHADO (edu_pareceres): é daqui que sai a avaliação
+     consolidada de TODAS as atividades do estudante (padrão p/ as próximas atividades) */
+  var alu=alunoAtual();
+  parecer.aluno=alu?alu.nome:"(sem registro)"; parecer.turma=alu?alu.turma:""; parecer.alunoId=alu?alu.id:"anon"; parecer.slug=ATIVIDADE_ID;
+  parecer.texto="Estudante: "+parecer.aluno+(parecer.turma?" ("+parecer.turma+")":"")+". "+parecer.texto;
+  try{ var g=JSON.parse(localStorage.getItem("edu_pareceres")||"[]"); g.push(parecer); if(g.length>200)g=g.slice(g.length-200); localStorage.setItem("edu_pareceres",JSON.stringify(g)); }catch(e){}
+  try{ var f=JSON.parse(localStorage.getItem(kAluno("estrelas_parecer_prof"))||"[]"); f.push(parecer); if(f.length>50)f=f.slice(f.length-50); localStorage.setItem(kAluno("estrelas_parecer_prof"),JSON.stringify(f)); }catch(e){}
   return parecer;
 }
 /* TELA DO ALUNO: só o relatório com a % de acerto + medalha (nada de parecer). */
@@ -2050,7 +2244,7 @@ function telaRelatorio(){
   card.appendChild(el("div","dsub",frase));
   t.appendChild(card);
   var bar=el("div","p1barra"); bar.style.bottom="6%";
-  var again=el("button","btn pulsa","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; sessao.estrelas=0; sessao.ultimo=0; try{ localStorage.removeItem("estrelas_evid"); }catch(e){} telaCapa(); };
+  var again=el("button","btn pulsa","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; sessao.estrelas=0; sessao.ultimo=0; try{ localStorage.removeItem(kAluno("estrelas_evid")); }catch(e){} telaCapa(); };
   bar.appendChild(again); t.appendChild(bar);
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
@@ -2058,12 +2252,57 @@ function telaRelatorio(){
 }
 
 /* ============ PAINEL DO PROFESSOR (?painel) — leitura local, invisível pra criança ============ */
+function pareceresDe(alunoId){
+  var g=[],out=[],i; try{ g=JSON.parse(localStorage.getItem("edu_pareceres")||"[]"); }catch(e){}
+  for(i=0;i<g.length;i++){ if(g[i].alunoId===alunoId) out.push(g[i]); }
+  return out;
+}
+/* AVALIAÇÃO CONSOLIDADA: junta o parecer mais recente de CADA atividade do estudante,
+   gera texto descritivo único + nota sugerida (tabela fixa; o professor ajusta). */
+function consolidada(alunoId){
+  var meus=pareceresDe(alunoId); if(!meus.length) return null;
+  var por={},i; for(i=0;i<meus.length;i++){ por[meus[i].slug||meus[i].atividade]=meus[i]; }
+  var lista=[],somaP=0,somaD=0,n=0,rok=0,rtot=0,inds={},k,j;
+  for(k in por){ var p=por[k];
+    lista.push(p.atividade+" — "+p.porcentagem+"% ("+(""+p.quando).substring(0,10)+")");
+    somaP+=p.porcentagem; somaD+=(p.dominio_medio!=null?p.dominio_medio:p.porcentagem); n++;
+    if(p.retencao){ rok+=p.retencao[0]; rtot+=p.retencao[1]; }
+    for(j=0;j<(p.indicadores||[]).length;j++){ inds[p.indicadores[j]]=1; }
+  }
+  var pct=Math.round(somaP/n), dom=Math.round(somaD/n);
+  var nivel=pct>=85?"Avançado":(pct>=60?"Adequado":"Em desenvolvimento");
+  var nota=pct>=85?"9,0 a 10":(pct>=60?"7,0 a 8,4":"5,0 a 6,9");
+  var indArr=[],ki; for(ki in inds)indArr.push(ki);
+  var a=null,al=alunosLe(); for(i=0;i<al.length;i++){ if(al[i].id===alunoId)a=al[i]; }
+  var txt="<b>AVALIAÇÃO DESCRITIVA CONSOLIDADA</b><br>"+
+    "Estudante: <b>"+(a?a.nome:"(sem registro)")+"</b>"+(a?" — Turma "+a.turma:"")+" — "+diaStr(hojeMs())+"<br><br>"+
+    "Atividades realizadas ("+n+"): "+lista.join("; ")+".<br><br>"+
+    "O estudante demonstra, pelas evidências registradas nas atividades, compreensão dos conceitos trabalhados. "+
+    "Acerto médio nas atividades: <b>"+pct+"%</b>. Domínio médio estimado pelos motores adaptativos: <b>"+dom+"%</b>. "+
+    (rtot? "Retenção em revisões espaçadas: <b>"+rok+" de "+rtot+"</b> itens lembrados em dias seguintes. ":"")+
+    "<br><br>Indicadores observados: "+indArr.join("; ")+".<br><br>"+
+    "Nível geral: <b>"+nivel+"</b>. Nota sugerida (tabela fixa — o professor ajusta): <b>"+nota+"</b>.";
+  return {html:txt,pct:pct,nivel:nivel,nota:nota,n:n};
+}
 function telaPainel(){
   limpa();
   var t=el("div","tela parecer painel");
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(30));
+  /* seletor de estudante (registro compartilhado deste aparelho) */
+  var sel=el("div","profcard"); sel.style.marginTop="5%";
+  sel.innerHTML="<b>Painel do professor</b><br><span class='pobs'>Toque num estudante para ver o caminho e gerar a avaliação:</span><br>";
+  var al=alunosLe(),iA;
+  for(iA=0;iA<al.length;iA++){ (function(a2){
+    var b=el("button","qturma"+(painelSel===a2.id?" sel":""),a2.nome+" &#183; "+a2.turma);
+    b.onclick=function(){ painelSel=a2.id; telaPainel(); };
+    sel.appendChild(b);
+  })(al[iA]); }
+  var ban=el("button","qturma"+(painelSel==="anon"?" sel":""),"(sem registro)");
+  ban.onclick=function(){ painelSel="anon"; telaPainel(); };
+  sel.appendChild(ban);
+  t.appendChild(sel);
   var m=motorLe(), ret=lerRet();
-  var c1=el("div","profcard"); c1.style.marginTop="6%";
+  var c1=el("div","profcard");
   var h="<b>Painel do professor — A Fábrica de Estrelas</b><br>Habilidade EF03MA07 &#183; domínio estimado por conceito (motor BKT-lite):<br>";
   var k, tem=false;
   for(k in KCS){
@@ -2081,15 +2320,26 @@ function telaPainel(){
       h2+="<div style='margin-top:4px'>"+r.quando+" &#183; "+(KCS[r.kc]||r.kc)+" &#183; "+r.conta+" — "+(r.ok?"reacendeu de primeira":"precisou contar de novo")+"</div>"; } }
   else h2+="<span class='pobs'>Nenhuma revisão feita ainda. O motor agenda 1/3/7/14 dias após cada conquista.</span>";
   c2.innerHTML=h2; t.appendChild(c2);
+  /* pareceres POR ATIVIDADE do estudante escolhido (registro compartilhado edu_pareceres) */
+  var pid=painelSel||(alunoAtual()?alunoAtual().id:"anon");
+  var meus=pareceresDe(pid);
   var c3=el("div","profcard");
-  var h3="<b>Pareceres salvos</b><br>", ps=[];
-  try{ ps=JSON.parse(localStorage.getItem("estrelas_parecer_prof")||"[]"); }catch(e){}
-  if(ps.length){ var i3; for(i3=Math.max(0,ps.length-3);i3<ps.length;i3++){ h3+="<div style='margin-top:7px'>"+ps[i3].texto+"</div>"; } }
-  else h3+="<span class='pobs'>Nenhum parecer ainda (fecha um ao terminar a aventura).</span>";
-  h3+="<span class='pobs'>Dados deste aparelho (localStorage). O painel ONLINE (Firebase, toda a turma) entra quando os 2 cliques do console forem feitos — receita em FIREBASE-EDUCAVERSO.md.</span>";
+  var h3="<b>Avaliações descritivas por atividade</b><br>";
+  if(meus.length){ var i3; for(i3=Math.max(0,meus.length-4);i3<meus.length;i3++){ h3+="<div style='margin-top:8px'>"+meus[i3].texto+"</div>"; } }
+  else h3+="<span class='pobs'>Nenhum parecer deste estudante ainda (fecha um ao terminar a aventura).</span>";
   c3.innerHTML=h3; t.appendChild(c3);
+  /* AVALIAÇÃO CONSOLIDADA (todas as atividades) + IMPRIMIR */
+  var c4=el("div","profcard"); c4.id="cardconsol";
+  var con=consolidada(pid);
+  if(con){ c4.innerHTML=con.html; }
+  else { c4.innerHTML="<b>Avaliação consolidada</b><br><span class='pobs'>Aparece aqui quando o estudante tiver ao menos 1 atividade concluída.</span>"; }
+  t.appendChild(c4);
+  var c5=el("div","profcard");
+  c5.innerHTML="<span class='pobs'>Dados deste aparelho (localStorage compartilhado entre as atividades do site). O painel ONLINE (Firebase, toda a turma em qualquer aparelho) entra quando os 2 cliques do console forem feitos — receita em FIREBASE-EDUCAVERSO.md.</span>";
+  t.appendChild(c5);
   var bar=el("div","p1barra"); bar.style.position="relative"; bar.style.margin="6px 0 30px";
-  var b=el("button","btn2","Voltar para a atividade"); b.onclick=function(){ telaCapa(); }; bar.appendChild(b); t.appendChild(bar);
+  if(con){ var bi=el("button","btn","Imprimir avaliação"); bi.onclick=function(){ try{ window.print(); }catch(e){} }; bar.appendChild(bi); }
+  var b=el("button","btn2","Voltar para a atividade"); b.style.marginLeft="8px"; b.onclick=function(){ telaCapa(); }; bar.appendChild(b); t.appendChild(bar);
   app.appendChild(t);
 }
 

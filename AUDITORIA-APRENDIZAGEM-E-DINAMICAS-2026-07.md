@@ -206,6 +206,26 @@ Com o MOTOR (gating sugerindo prática ~2×2,5min + variações): **~42–50 min
 em P1/P2 na própria jornada (variação, não só prática); (b) parada nova "Conserta a Constelação"
 (fator que falta, dinâmica #13 do leque); (c) música vira "repita a melodia". Decisão do Marcos.
 
+## 👤 IDENTIDADE + AVALIAÇÃO CONSOLIDADA + LIP-SYNC (2026-07-21, sw v17)
+- **Lip-sync REAL:** AnalyserNode lê a amplitude do MP3 da narração (mesma origem, sem CORS) →
+  boca e gesto seguem a VOZ sílaba a sílaba; liga no 1º gesto; fallback = modo sorteado antigo.
+- **Tela "Quem vai jogar?"** (padrão EducaVerso): 1º acesso digita o nome 1 vez + turma por
+  BOTÕES; depois é só TOCAR no nome (pesquisa K-2: roster-tap). Anti-duplicata: normalização +
+  Levenshtein ≤2 na turma → "Você é a Sofia?" antes de criar. `edu_alunos`/`edu_atual`
+  compartilhados entre TODAS as atividades do domínio (localStorage de vidalprof.github.io).
+  QA/webdriver joga anônimo. `TURMAS` no topo do JS (Marcos ajusta a lista real).
+- **Dados POR ALUNO:** motor/evidências/retenção/aq_dia agora usam `kAluno()` — cada criança
+  tem seu caminho no mesmo aparelho.
+- **Avaliação descritiva consolidada:** cada atividade grava parecer em `edu_pareceres`
+  (alunoId/turma/slug — padrão p/ TODAS as futuras); painel `?painel`: toca no estudante →
+  pareceres por atividade → CONSOLIDADA (junta o mais recente de cada atividade: médias,
+  domínio, retenção, indicadores, nível, NOTA sugerida por tabela fixa) → **Imprimir**
+  (@media print preto-no-branco, só os cartões).
+- **Plano do portal:** `EDUCAVERSO-PORTAL-SEQUENCIAS.md` — sequências didáticas por turma,
+  progresso do aluno lendo `edu_pareceres`, cadastro automático c/ 6 camadas anti-erro de
+  digitação (a decidir com o Marcos; lista da turma semeada elimina digitação de vez).
+- Pendências novas: narração da tela de nome; ferramenta juntar/renomear no painel; Firebase.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
