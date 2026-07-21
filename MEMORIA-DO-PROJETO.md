@@ -11,6 +11,18 @@
 > VELHA (já enganou antes — ver "lição paga" no MANUAL-MESTRE.md). O trabalho
 > vive nos COMMITS do GitHub, nunca só na pasta local.
 
+>> ## 🏗️ MOLDE OFICIAL DE ATIVIDADE PREMIUM (Marcos pediu 2026-07-21) — LER ANTES DE CRIAR
+>> **Para montar QUALQUER atividade premium melhorada, siga o `MOLDE-ATIVIDADE-PREMIUM.md`** —
+>> a receita fixa e profissional: BNCC → projeto pela pesquisa → LEI do mundo + história + mascote
+>> → PLANO + aprovação do Marcos → arte/voz por workflow → **CLONAR o motor** (`_estrelas/index.html`)
+>> e trocar tema/mascote/conteúdo/faixa → paradas de PRODUÇÃO → QA 3 níveis → aventura de ~55 min →
+>> publicar no repo próprio + card no portal (`_portal`). A **Fábrica de Estrelas** é o EXEMPLAR-MODELO;
+>> o motor (BKT/Leitner/autoexplicação/stealth/identidade/painel/lip-sync/animação) já vem pronto e
+>> NÃO se reconstrói. Leis fixas (Portão 0): produção-não-reconhecimento, concreto→símbolo, problema
+>> primeiro, o mundo reage por consequência, medição invisível, ZDP, revisão espaçada. Diferencial da
+>> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
+>> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
+
 ## ⚖️ AS LEIS FIXAS DO EDUCAVERSO + COMO A FÁBRICA FUNCIONA DE VERDADE (Marcos aprovou, 2026-07-19)
 > **LER SEMPRE antes de criar QUALQUER atividade. O Marcos cravou isto nesta sessão.**
 >
