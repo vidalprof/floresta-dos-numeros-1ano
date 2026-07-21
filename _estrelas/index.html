@@ -677,7 +677,7 @@ function ajudaBtn(tela, niveis, mostraTxt){
 /* AUTOEXPLICAÇÃO: a Fagulha PERGUNTA "por que deu certo?"; a criança escolhe a razão.
    Registra a razão como evidência p/ o professor; qualquer escolha recebe resposta gentil. */
 function autoexplica(tela, cfg, cb){
-  var k, esconder=["caixas","pmeio","somaMeio"];  // limpa o meio; a revela (conceito) fica de referência
+  var k, esconder=["caixas","pmeio","somaMeio","grade","steppers","p3wrap","p4sky"];  // limpa o meio; a revela (conceito) fica de referência
   for(k=0;k<esconder.length;k++){ var e0=tela.getElementsByClassName(esconder[k])[0]; if(e0)e0.style.display="none"; }
   var box=el("div","autoexp");
   box.innerHTML="<div class='aeperg'>"+cfg.pergunta+"</div>";
@@ -959,6 +959,11 @@ function telaParada2(){
   ctr.appendChild(stepper("Em cada","col"));
   t.appendChild(ctr);
   var bar=el("div","p1barra"); bar.appendChild(el("div","p1dica p2dica","")); t.appendChild(bar);
+  ajudaBtn(t, [
+    {fala:"aj_p2_1", txt:"Quantas <b>fileiras</b>? E quantas em <b>cada</b>?"},
+    {fala:"aj_p2_2", txt:"<b>4 fileiras</b>, com <b>5</b> em cada."},
+    {fala:"aj_p2_3", txt:"Coloquei 4 fileiras — agora ajuste quantas em cada.", acao:function(){ if(!P2.concluida){ P2.fil=P2.alvoF; P2.ajustes++; pintaGrade(); } }}
+  ], function(txt){ var d=t.getElementsByClassName("p2dica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   pintaGrade();
@@ -1000,11 +1005,20 @@ function sucessoP2(){
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var st=tela.getElementsByClassName("steppers")[0]; if(st)st.style.opacity="0";
   revela(tela,"5 + 5 + 5 + 5","4 &#215; 5 = 20","Uma constelação! <b>4 fileiras de 5</b> é 4 &#215; 5 = 20. Cada fileira repete o mesmo tanto — por isso multiplica!");
-  botaoProxima(tela);
+  var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   var tempo=Math.round(((new Date()).getTime()-P2.t0)/1000);
   salvaEvid({parada:"p2",habilidade:"EF03MA07",conceito:"array (linhas x colunas)",ajustes:P2.ajustes,tempo_s:tempo,acertou:true,semErro:(P2.ajustes<=5)});
   premiar(P2.ajustes<=5?3:2);
-  setTimeout(function(){ falar("e_p2"); },800);
+  setTimeout(function(){
+    depoisDaFala("e_p2", 9000, function(){
+      autoexplica(tela, {
+        falaQ:"se_p2_q",
+        pergunta:"Por que <b>4 fileiras de 5</b> é o mesmo que <b>4 &#215; 5</b>?",
+        opcoes:[{txt:"Porque <b>cada fileira</b> tem o mesmo tanto",ok:true},{txt:"Porque contei uma por uma",ok:false},{txt:"Porque sim",ok:false}],
+        idEvid:"p2"
+      }, function(){ botaoProxima(tela,null,200); });
+    });
+  },800);
 }
 /* ===== ALÍVIO 1 — Música das Estrelas (sonificação; grupos iguais por baixo) ===== */
 var audioCtx=null;
@@ -1160,11 +1174,19 @@ function sucessoP3(){
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"3 &#215; 4 = 4 &#215; 3","= 12","Você virou a constelação de lado e deu o <b>mesmo</b> tanto! 3&#215;4 e 4&#215;3 são iguais — isso vale sempre.");
-  botaoProxima(tela);
   var tempo=Math.round(((new Date()).getTime()-P3.t0)/1000);
   salvaEvid({parada:"p3",habilidade:"EF03MA07",conceito:"comutatividade",tempo_s:tempo,acertou:true});
   premiar(3);
-  setTimeout(function(){ falar("e_p3"); },800);
+  setTimeout(function(){
+    depoisDaFala("e_p3", 9000, function(){
+      autoexplica(tela, {
+        falaQ:"se_p3_q",
+        pergunta:"Por que <b>virar de lado</b> deu o <b>mesmo</b> tanto de estrelas?",
+        opcoes:[{txt:"Porque são as <b>mesmas</b> estrelas, só de outro jeito",ok:true},{txt:"Porque a Fagulha trocou o número",ok:false},{txt:"Porque sim",ok:false}],
+        idEvid:"p3"
+      }, function(){ botaoProxima(tela,null,200); });
+    });
+  },800);
 }
 /* ===== PARADA 4 — O Céu Grande (×10 como atalho) ===== */
 var P4;
@@ -1200,11 +1222,19 @@ function sucessoP4(){
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   var e=document.getElementById("p4expr"); if(e)e.style.display="none";
   revela(tela,"10 + 10 + 10 + 10 + 10","5 &#215; 10 = 50","O <b>dez</b> é um atalho poderoso! Com caixas de 10 o céu enche voando. Some 10 em 10: 10, 20, 30, 40, 50.");
-  botaoProxima(tela);
   var tempo=Math.round(((new Date()).getTime()-P4.t0)/1000);
   salvaEvid({parada:"p4",habilidade:"EF03MA07",conceito:"x10 (atalho)",toques:P4.toques,tempo_s:tempo,acertou:true,semErro:(P4.toques===P4.alvo)});
   premiar(P4.toques===P4.alvo?3:2);
-  setTimeout(function(){ falar("e_p4"); },800);
+  setTimeout(function(){
+    depoisDaFala("e_p4", 9000, function(){
+      autoexplica(tela, {
+        falaQ:"se_p4_q",
+        pergunta:"Por que juntar de <b>10 em 10</b> enche o céu tão <b>rápido</b>?",
+        opcoes:[{txt:"Porque <b>cada caixa</b> já traz 10 de uma vez",ok:true},{txt:"Porque as estrelas são grandes",ok:false},{txt:"Porque sim",ok:false}],
+        idEvid:"p4"
+      }, function(){ botaoProxima(tela,null,200); });
+    });
+  },800);
 }
 /* ===== ALÍVIO 2 — Monte a Constelação (memória: grupo ↔ total) ===== */
 var MEM;
@@ -1441,6 +1471,11 @@ function telaProblema(){
   opts.appendChild(opcoesRow([{txt:"5 &#215; 4",val:"ok"},{txt:"5 + 4",val:"a"},{txt:"4 + 4",val:"b"},{txt:"4 &#215; 4",val:"c"}],"ok",t,function(){ probPasso2(); },"Pense: são 5 grupos (prateleiras) de 4. Isso é multiplicar.",PROB));
   opts.appendChild(el("div","pdica",""));
   t.appendChild(opts);
+  ajudaBtn(t, [
+    {fala:"aj_prob_1", txt:"Quantas <b>prateleiras</b>? E quantas em <b>cada</b>?"},
+    {fala:"aj_prob_2", txt:"<b>5 grupos de 4</b> — grupos iguais viram vezes."},
+    {fala:"aj_prob_3", txt:"“5 grupos de 4” usa o sinal de <b>vezes</b> (&#215;), não o de mais."}
+  ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
 }
@@ -1459,10 +1494,19 @@ function sucessoProblema(){
   var oo=document.getElementById("probopts"); if(oo)oo.style.display="none";
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   revela(tela,"5 prateleiras de 4","5 &#215; 4 = 20 estrelas","Você <b>leu e resolveu</b> o problema — igual gente grande! Isso é usar a multiplicação no mundo real.");
-  botaoProxima(tela);
+  var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   salvaEvid({parada:"prob",habilidade:"EF03MA07",conceito:"resolver problema em contexto",tent:PROB.tent,acertou:true,semErro:(PROB.tent===0)});
   premiar(PROB.tent===0?3:2);
-  setTimeout(function(){ falar("e_prob"); },800);
+  setTimeout(function(){
+    depoisDaFala("e_prob", 9000, function(){
+      autoexplica(tela, {
+        falaQ:"se_prob_q",
+        pergunta:"Por que esse problema era uma conta de <b>vezes</b>?",
+        opcoes:[{txt:"Porque tinha <b>grupos iguais</b> (prateleiras iguais)",ok:true},{txt:"Porque tinha muitas estrelas",ok:false},{txt:"Porque sim",ok:false}],
+        idEvid:"prob"
+      }, function(){ botaoProxima(tela,null,200); });
+    });
+  },800);
 }
 
 /* ===== PARADA — O Desafio das Estrelas (transferência, sem apoios) ===== */
