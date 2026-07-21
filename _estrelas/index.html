@@ -144,9 +144,9 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @keyframes respiraDica{0%,100%{opacity:.55}50%{opacity:1}}
 .mapa .fabviva.destino{position:absolute;left:50%;top:6%;width:130px;z-index:3;
   -webkit-transform:translateX(-50%);transform:translateX(-50%)}
-.mapa .trilhaScroll{position:absolute;top:0;left:0;width:400px;z-index:1;
+.mapa .trilhaScroll{position:absolute;top:0;left:0;width:100%;z-index:1;
   -webkit-transition:-webkit-transform 1.1s ease;transition:transform 1.1s ease}
-.mapa .trilha{position:absolute;top:0;left:0;width:400px;z-index:2;pointer-events:none}
+.mapa .trilha{position:absolute;top:0;left:0;width:100%;z-index:2;pointer-events:none}
 .mapa .nowrap{position:absolute;z-index:4;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
 .mapa .no{position:relative;width:72px}
 .mapa .no.feito img{-webkit-filter:drop-shadow(0 0 12px rgba(255,220,120,.95));filter:drop-shadow(0 0 12px rgba(255,220,120,.95))}
@@ -491,12 +491,18 @@ if("serviceWorker" in navigator){
 }
 
 /* ---- PALCO: escala o canvas fixo (400x780) pra caber em QUALQUER tela ---- */
-var BASE_W=400, BASE_H=780;
+var BASE_W=400, BASE_H=780, palcoFull=false;
 function ajustaPalco(){
-  var pal=document.getElementById("stage"); if(!pal)return;
+  var pal=document.getElementById("stage"); if(!pal||palcoFull)return;
   var s=Math.min(window.innerWidth/BASE_W, window.innerHeight/BASE_H);
   pal.style.webkitTransform="translate(-50%,-50%) scale("+s+")";
   pal.style.transform="translate(-50%,-50%) scale("+s+")";
+}
+/* MAPA usa a tela INTEIRA (trilha que rola); paradas ficam no palco fixo (encaixe garantido) */
+function stageFull(on){
+  var st=document.getElementById("stage"); if(!st)return; palcoFull=!!on;
+  if(on){ st.style.top="0"; st.style.left="0"; st.style.width="100%"; st.style.height="100%"; st.style.webkitTransform="none"; st.style.transform="none"; }
+  else { st.style.top="50%"; st.style.left="50%"; st.style.width=BASE_W+"px"; st.style.height=BASE_H+"px"; ajustaPalco(); }
 }
 window.addEventListener("resize",ajustaPalco);
 window.addEventListener("orientationchange",function(){ setTimeout(ajustaPalco,120); });
@@ -665,7 +671,7 @@ function telaCheia(){
 
 /* ================= TELAS ================= */
 function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
-function limpa(){ fagAtual=null; app.innerHTML=""; tema(false); }
+function limpa(){ fagAtual=null; app.innerHTML=""; tema(false); stageFull(false); }
 
 function telaCapa(){
   limpa();
@@ -742,8 +748,9 @@ function barraProg(){
 /* MAPA VIVO ROLANTE (câmera segue a Fagulha subindo a trilha; cabe QUALQUER nº de paradas) */
 function nodeX(i){ return 50 + (i%2===0? -16 : 16); }
 function telaMapa(){
-  limpa();
-  var n=STOPS.length, STEP=120, BOTPAD=100, TOPPAD=236, VIS=780;
+  limpa(); stageFull(true);
+  var n=STOPS.length, STEP=120, BOTPAD=100, TOPPAD=236;
+  var VIS=Math.max(480, window.innerHeight||780), W=Math.max(300, window.innerWidth||400);
   var stripH=BOTPAD+(n-1)*STEP+TOPPAD;
   function ytop(i){ return stripH-(BOTPAD+i*STEP); }
   function camY(idx){ var off=ytop(idx)-VIS*0.56; return Math.max(0,Math.min(stripH-VIS,off)); }
@@ -753,10 +760,10 @@ function telaMapa(){
   strip.appendChild(campoEstrelas(42));
   var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="26px"; strip.appendChild(fv);
   var i, pfeito="", pfut="";
-  for(i=0;i<n;i++){ var pt=(nodeX(i)/100*400).toFixed(0)+","+ytop(i).toFixed(0)+" ";
+  for(i=0;i<n;i++){ var pt=(nodeX(i)/100*W).toFixed(0)+","+ytop(i).toFixed(0)+" ";
     if(i<=progresso) pfeito+=pt; if(i>=progresso) pfut+=pt; }
   var svg=el("div","trilha"); svg.style.height=stripH+"px";
-  svg.innerHTML="<svg viewBox='0 0 400 "+stripH+"' preserveAspectRatio='none' width='400' height='"+stripH+"'>"+
+  svg.innerHTML="<svg viewBox='0 0 "+W+" "+stripH+"' preserveAspectRatio='none' width='100%' height='"+stripH+"'>"+
     "<polyline points='"+pfut+"' fill='none' stroke='rgba(150,165,210,.28)' stroke-width='2' stroke-dasharray='1 14' stroke-linecap='round'/>"+
     "<polyline points='"+pfeito+"' fill='none' stroke='rgba(255,205,110,.22)' stroke-width='9' stroke-linecap='round' stroke-linejoin='round'/>"+
     "<polyline points='"+pfeito+"' fill='none' stroke='rgba(255,230,160,.9)' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/></svg>";
