@@ -460,6 +460,19 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .prof .pbar{position:absolute;left:0;right:0;bottom:14px;text-align:center;z-index:6}
 .prof .pbar .btn2{margin:0 3px;font-size:12.5px;padding:10px 10px}
 
+/* GALERIA "Minhas constelações" (autoria persistente — o que a criança criou fica) */
+.galitem{background:rgba(12,16,40,.92);border:1px solid rgba(255,215,110,.35);border-radius:14px;
+  padding:11px 13px;margin-bottom:9px;text-align:left;font-size:13px;line-height:1.45;color:#dfe3ff;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.galitem .minigrade{-webkit-box-flex:0;-webkit-flex:none;flex:none;margin-right:12px;line-height:0;
+  background:rgba(255,255,255,.05);border-radius:10px;padding:7px}
+.galitem .minigrade img{width:11px;height:auto;margin:1px;
+  -webkit-filter:drop-shadow(0 0 3px rgba(255,220,120,.8));filter:drop-shadow(0 0 3px rgba(255,220,120,.8))}
+.galitem .gtxt b{color:#ffe08a}
+.galitem .gtxt .pi2{color:#9aa3c8;font-size:11.5px}
+.galbtn{display:block;margin:10px auto 0;background:rgba(255,255,255,.12);border:1px solid rgba(255,225,150,.45);
+  color:#ffe6a3;font-size:13.5px;font-weight:800;font-family:inherit;cursor:pointer;border-radius:18px;padding:10px 18px}
+
 /* nó ATUAL: anel-farol pulsante — a versão dourada da constelação está em .mapa.constel .atual-wrap .farol */
 @-webkit-keyframes farolPulse{0%{-webkit-transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{-webkit-transform:translate(-50%,-50%) scale(1.9);opacity:0}}
 @keyframes farolPulse{0%{transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
@@ -905,6 +918,12 @@ function telaCapa(){
     ba.onclick=function(){ telaCheia(); telaAquecimento(); };
     c.appendChild(ba);
   }
+  // autoria persistente: o que a criança criou fica e pode ser revisitado com orgulho
+  if(galeriaLe().length){
+    var bg=el("button","galbtn","Minhas constelações");
+    bg.onclick=function(){ telaGaleria(); };
+    c.appendChild(bg);
+  }
   t.appendChild(c);
   var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Fagulha"; fa.appendChild(fai);
   t.appendChild(fa);
@@ -952,6 +971,43 @@ function telaProfessor(){
   var bv=el("button","btn2","Voltar"); bv.onclick=function(){ telaCapa(); };
   bar.appendChild(bv);
   t.appendChild(bar);
+  app.appendChild(t);
+}
+
+/* ===== GALERIA "Minhas constelações" (construcionismo: o artefato criado FICA e dá orgulho) ===== */
+function galeriaLe(){ try{ return JSON.parse(localStorage.getItem("estrelas_galeria")||"[]"); }catch(e){ return []; } }
+function salvaGaleria(fil,col,real,corrigiu){
+  try{
+    var g=galeriaLe(), nome=""; try{ nome=localStorage.getItem("estrelas_nome")||""; }catch(e){}
+    g.push({nome:nome,fil:fil,col:col,real:real,corrigiu:!!corrigiu,quando:(new Date()).toISOString()});
+    if(g.length>30) g=g.slice(g.length-30);
+    localStorage.setItem("estrelas_galeria",JSON.stringify(g));
+  }catch(e){}
+}
+function telaGaleria(){
+  limpa();
+  var t=el("div","tela prof galeria");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
+  t.appendChild(el("div","ptit","Minhas constelações"));
+  var sc=el("div","scroll");
+  var g=galeriaLe(), i;
+  if(!g.length){ sc.appendChild(el("div","profitem","Ainda não tem constelação guardada. Crie a sua na parada “A Sua Constelação”!")); }
+  for(i=g.length-1;i>=0;i--){ (function(c){
+    var it=el("div","galitem");
+    var mg=el("div","minigrade"), r, s;
+    for(r=0;r<Math.min(c.fil,6);r++){ var fila=el("div"); fila.style.lineHeight="0";
+      for(s=0;s<Math.min(c.col,6);s++){ var im=el("img"); im.src="img/estrela_grande.png"; im.alt=""; fila.appendChild(im); }
+      mg.appendChild(fila); }
+    it.appendChild(mg);
+    var dt=""; try{ var d0=new Date(c.quando); dt=("0"+d0.getDate()).slice(-2)+"/"+("0"+(d0.getMonth()+1)).slice(-2); }catch(e){}
+    it.appendChild(el("div","gtxt","<b>"+c.fil+" &#215; "+c.col+" = "+c.real+"</b>"+
+      "<div class='pi2'>"+(c.nome?escT(c.nome)+" &#183; ":"")+dt+(c.corrigiu?" &#183; corrigiu a Fagulha!":"")+"</div>"));
+    sc.appendChild(it);
+  })(g[i]); }
+  t.appendChild(sc);
+  var bar=el("div","pbar");
+  var bv=el("button","btn2","Voltar"); bv.onclick=function(){ telaCapa(); };
+  bar.appendChild(bv); t.appendChild(bar);
   app.appendChild(t);
 }
 
@@ -1613,12 +1669,26 @@ function sucessoP5(){
   var oc=document.getElementById("p5opts"); if(oc)oc.style.display="none";
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var extra=P5.protegeErrou?("Você ainda me corrigiu — eu tinha dito "+P5.claim+"! "):"";
-  revela(tela,P5.fil+" fileiras de "+P5.col,P5.fil+" &#215; "+P5.col+" = "+P5.real,extra+"Você <b>criou e resolveu</b> a sua própria constelação. Você é o mestre das estrelas!");
-  botaoProxima(tela,"Última parada");
+  revela(tela,P5.fil+" fileiras de "+P5.col,P5.fil+" &#215; "+P5.col+" = "+P5.real,extra+"Você <b>criou e resolveu</b> a sua própria constelação. Guardei na sua <b>galeria</b>!");
   var tempo=Math.round(((new Date()).getTime()-P5.t0)/1000);
   salvaEvid({parada:"p5",habilidade:"EF03MA07",conceito:"autoria + protégé",criou:[P5.fil,P5.col],real:P5.real,corrigiu:P5.protegeErrou,tentativas:P5.tent,acertou:true,semErro:(P5.tent===1)});
+  salvaGaleria(P5.fil,P5.col,P5.real,P5.protegeErrou);   // autoria persistente: a criação FICA
   premiar(P5.tent===1?3:2);
-  setTimeout(function(){ falar("e_p5"); },800);
+  // cadeia falada: explicação -> "guardei na galeria" -> reflexão -> botões (nunca corta narração)
+  setTimeout(function(){
+    depoisDaFala("e_p5", 9000, function(){
+      depoisDaFala("galeria_ok", 7000, function(){
+        autoexplica(tela, {
+          falaQ:"se_p5_q",
+          pergunta:"Como você teve <b>certeza</b> do tanto de estrelas da SUA constelação?",
+          opcoes:[{txt:"Multipliquei: "+P5.fil+" fileiras de "+P5.col+" é "+P5.fil+" &#215; "+P5.col,ok:true},
+                  {txt:"Chutei um número",ok:false},
+                  {txt:"Só olhei, sem contar",ok:false}],
+          idEvid:"p5"
+        }, function(){ botaoProxima(tela,"Última parada",200,(P5.tent>1)); });
+      });
+    });
+  },800);
 }
 /* ===== helper de múltipla escolha (paradas de pergunta) ===== */
 function opcoesRow(arr,corretaVal,host,onCerto,dicaErr,est){
