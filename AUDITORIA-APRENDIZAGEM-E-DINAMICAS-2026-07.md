@@ -110,8 +110,10 @@ P3 e ×10 só autoexplicação — são toques guiados sem "erro"; **Desafio fic
   certo?"; a criança escolhe a razão; registra `tipo:"autoexplicacao"` na evidência do professor. Áudio
   encadeado com `depoisDaFala(id,maxMs,cb)` (segue no fim da fala OU num prazo de segurança — nunca trava).
 - ✅ **"Praticar de novo"** — `botaoProxima(tela,rot,dl)` agora tem o botão secundário que refaz a mesma parada.
-- **FALTA só P5 (autoria)** — mecânica diferente (a criança cria); avaliar se a autoexplicação encaixa lá.
-  As demais paradas de aprendizagem já têm o framework. (Alívios Música/Memória e o Deleite não precisam.)
+- ✅ **P5 FECHADA (2026-07):** autoria PERSISTENTE — a constelação criada é salva (`estrelas_galeria`,
+  cap 30) e vive na galeria **"Minhas constelações"** na capa (mini-grades + nome/data/"corrigiu a
+  Fagulha!"); a P5 fecha com `galeria_ok` + reflexão `se_p5_q` (pergunta dinâmica com os números DELA).
+  TODAS as paradas de aprendizagem têm o framework agora. (Alívios e Deleite não precisam.)
 - ✅ **MOTOR v1 ENTREGUE (2026-07):** caixinha **Leitner por KC** (1/3/7/15 dias, `estrelas_dominio`),
   atualizada em toda parada concluída (hook no `salvaEvid`); **Aquecimento** ao voltar com revisão vencida
   (botão "Reacender minhas estrelas" na capa → 3 perguntas de recuperação com visual+feedback, banco
