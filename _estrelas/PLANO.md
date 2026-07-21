@@ -1,5 +1,15 @@
 # A Fábrica de Estrelas — PLANO (3º ano · EF03MA07 · premium NOVA GERAÇÃO)
 
+> ⭐ **STATUS OFICIAL (Marcos, 2026-07-21): ESTA É A ATIVIDADE-MODELO (padrão-ouro do 3º ano).**
+> As PRÓXIMAS atividades CLONAM o motor + a estrutura desta (adaptação BKT, revisão espaçada
+> Leitner/Aquecimento, autoexplicação com FEEDBACK sobre a ideia, produção-não-reconhecimento,
+> medição stealth→professor, identidade/figurinha-PIN, painel, avaliação consolidada, lip-sync,
+> animação profissional) e **trocam só: TEMA + MASCOTE + CONTEÚDO + adequação à FAIXA/disciplina**
+> que o Marcos informar. Engenharia pesada = feita 1x AQUI; atividade nova = configuração.
+> Por isso esta tem que ficar impecável — inclusive o **stage 2** (os quizzes Soma/Problema/Desafio
+> virarem PRODUÇÃO, a criança MONTA a conta em vez de escolher alternativa). Marcos APROVOU atacar
+> o stage 2 assim que a pesquisa profunda (em andamento) voltar.
+
 > Primeira atividade no molde da `PLANTA-ATIVIDADE-PREMIUM-NOVA-GERACAO.md` (herda a casca do
 > `ATIVIDADE-PREMIUM.md`, troca o miolo p/ criar/resolver). Mais animada e mais viva que o premium de
 > hoje (abertura/final animados, mascote e mapa vivos). Voz do Antônio (MP3). Sem emoji na tela.
