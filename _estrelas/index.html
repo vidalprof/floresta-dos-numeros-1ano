@@ -157,15 +157,18 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   background:rgba(20,24,60,.93);border:2px solid #ffd75e;border-radius:16px;padding:11px 13px;
   font-size:15px;line-height:1.35;color:#fff;z-index:4;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 .caixas{position:absolute;left:0;right:0;top:32%;text-align:center;z-index:2;padding:0 6px}
-.caixa{display:inline-block;vertical-align:top;width:28%;max-width:150px;margin:0 1.5%;min-height:118px;
-  border:3px dashed #ffd75e;border-radius:16px;background:rgba(255,255,255,.07);padding:8px 5px 28px;position:relative;cursor:pointer}
-.caixa:active{-webkit-transform:scale(.97);transform:scale(.97)}
-.caixa .estrs{min-height:74px;line-height:1}
-.caixa .estr{width:25px;height:auto;margin:2px;cursor:pointer;
+.caixa{display:inline-block;vertical-align:top;width:31%;max-width:132px;margin:0 1%;position:relative;cursor:pointer;padding-bottom:16px}
+.caixa:active{-webkit-transform:scale(.96);transform:scale(.96)}
+.caixa .cratimg{width:100%;height:auto;display:block;
+  -webkit-filter:drop-shadow(0 5px 8px rgba(0,0,0,.45));filter:drop-shadow(0 5px 8px rgba(0,0,0,.45))}
+.caixa .estrs{position:absolute;top:24%;left:13%;right:13%;height:34%;text-align:center;line-height:.9;z-index:2}
+.caixa .estr{width:15px;height:auto;margin:1px;cursor:pointer;
+  -webkit-filter:drop-shadow(0 0 4px rgba(255,220,120,.9));filter:drop-shadow(0 0 4px rgba(255,220,120,.9));
   -webkit-animation:estrPop .32s ease;animation:estrPop .32s ease}
 @-webkit-keyframes estrPop{0%{-webkit-transform:scale(.3)}70%{-webkit-transform:scale(1.18)}100%{-webkit-transform:scale(1)}}
 @keyframes estrPop{0%{transform:scale(.3)}70%{transform:scale(1.18)}100%{transform:scale(1)}}
-.caixa .cnt{position:absolute;bottom:5px;left:0;right:0;font-weight:800;color:#ffe08a;font-size:17px}
+.caixa .cnt{position:absolute;bottom:0;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
+  min-width:24px;background:#ffd75e;color:#5a3b00;font-weight:900;font-size:15px;border-radius:12px;padding:1px 9px;box-shadow:0 2px 0 #c8871a}
 .p1barra{position:absolute;left:0;right:0;bottom:3%;text-align:center;z-index:4}
 .p1dica{font-size:13px;color:#ffe9a8;font-style:italic;margin-bottom:8px;min-height:1.2em}
 .btn2{border:0;cursor:pointer;font-family:inherit;font-weight:700;color:#20264a;background:#e7ebff;
@@ -702,6 +705,7 @@ function telaParada1(){
 }
 function fazCaixa(i){
   var c=el("div","caixa"); c.id="cx"+i;
+  var cr=el("img","cratimg"); cr.src="img/caixa_estrelas.png"; cr.alt="Caixa de estrelas"; c.appendChild(cr);
   c.appendChild(el("div","estrs")); c.appendChild(el("div","cnt","0"));
   c.onclick=function(){ if(P1.concluida)return; if(P1.cx[i]<9){ P1.cx[i]++; P1.toques++; somPop(P1.cx[i]); pintaCaixas(); } };
   return c;
