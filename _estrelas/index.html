@@ -17,7 +17,8 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{height:100%;height:100vh;height:100dvh;width:100%;overflow:hidden;position:fixed;top:0;left:0;
   background:#241a52;background:-webkit-linear-gradient(top,#181a44,#3a2b63);background:linear-gradient(to bottom,#181a44,#3a2b63);
-  font-family:'Segoe UI',system-ui,Arial,sans-serif;color:#fff}
+  font-family:ui-rounded,"SF Pro Rounded","Hiragino Maru Gothic ProN","Segoe UI Variable","Segoe UI",system-ui,Arial,sans-serif;color:#fff;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 /* PALCO que se encaixa sozinho: canvas fixo 400x780 escalado p/ caber em QUALQUER tela (nunca corta). */
 #stage{position:absolute;top:50%;left:50%;width:400px;height:780px;
   -webkit-transform-origin:50% 50%;transform-origin:50% 50%;
@@ -153,9 +154,11 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* ---------- PARADA (criar/resolver: grupos iguais) ---------- */
 .fagfala{position:absolute;bottom:0;right:2px;width:112px;z-index:3}
 .fagfala .fag{position:relative;width:100%;max-width:none}
-.balao{position:absolute;top:26px;left:10px;right:10px;max-width:560px;margin:0 auto;
-  background:rgba(20,24,60,.93);border:2px solid #ffd75e;border-radius:16px;padding:11px 13px;
-  font-size:15px;line-height:1.35;color:#fff;z-index:4;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.balao{position:absolute;top:26px;left:12px;right:12px;max-width:560px;margin:0 auto;
+  background:rgba(24,28,58,.94);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:13px 16px;
+  font-size:15.5px;line-height:1.4;color:#eef1ff;font-weight:600;z-index:4;text-align:center;
+  box-shadow:0 10px 26px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.06)}
+.balao b{color:#ffe08a}
 .caixas{position:absolute;left:0;right:0;top:32%;text-align:center;z-index:2;padding:0 6px}
 .caixa{display:inline-block;vertical-align:top;width:31%;max-width:132px;margin:0 1%;position:relative;cursor:pointer;padding-bottom:16px}
 .caixa:active{-webkit-transform:scale(.96);transform:scale(.96)}

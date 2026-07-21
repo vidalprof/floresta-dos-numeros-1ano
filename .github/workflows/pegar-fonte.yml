@@ -1,0 +1,28 @@
+name: Pegar fonte (Fredoka woff2)
+on:
+  workflow_dispatch:
+jobs:
+  fonte:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Baixar Fredoka (OFL, woff2)
+        run: |
+          set -e
+          mkdir -p _estrelas/fonts
+          base="https://cdn.jsdelivr.net/npm/@fontsource/fredoka@5/files"
+          for w in 400 500 600 700; do
+            echo "baixando peso $w"
+            curl -fsSL "$base/fredoka-latin-$w-normal.woff2" -o "_estrelas/fonts/fredoka-$w.woff2"
+          done
+          ls -la _estrelas/fonts
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _estrelas/fonts
+          git commit -m "fonte: Fredoka (woff2) embutida para o app" || { echo "nada a commitar"; exit 0; }
+          git push
