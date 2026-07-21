@@ -1,12 +1,14 @@
 /* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
    Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
-var CACHE="fabrica-estrelas-v10";
+var CACHE="fabrica-estrelas-v11";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/ceu_noite.jpg","./img/fagulha.png","./img/fagulha_fala.png","./img/fagulha_pisca.png",
  "./img/fagulha_acena.png","./img/fagulha_comemora.png","./img/fagulha_pensa.png",
  "./img/fabrica_estrelas.png","./img/estrela_grande.png","./img/estrela_no.png","./img/caixa_estrelas.png",
  "./audio/abertura.mp3","./audio/tela_inicial.mp3","./audio/p1.mp3","./audio/p2.mp3","./audio/r1.mp3","./audio/p3.mp3","./audio/soma.mp3","./audio/p4.mp3","./audio/r2.mp3","./audio/prob.mp3","./audio/p5.mp3","./audio/desafio.mp3","./audio/decore.mp3","./audio/final.mp3","./audio/e_p1.mp3","./audio/e_p2.mp3","./audio/e_p3.mp3","./audio/e_soma.mp3","./audio/e_p4.mp3","./audio/e_prob.mp3","./audio/e_p5.mp3","./audio/e_desafio.mp3",
  "./audio/conta_uma.mp3","./audio/conta_duas.mp3","./audio/conta_tres.mp3","./audio/conta_quatro_cheia.mp3","./audio/ouvir_de_novo.mp3",
+ "./audio/aj_p1_1.mp3","./audio/aj_p1_2.mp3","./audio/aj_p1_3.mp3","./audio/aj_soma_1.mp3","./audio/aj_soma_2.mp3","./audio/aj_soma_3.mp3",
+ "./audio/se_p1_q.mp3","./audio/se_soma_q.mp3","./audio/se_ok.mp3","./audio/se_quase.mp3","./audio/segue_pratica.mp3",
  "./icon-192.png","./icon-512.png"];
 self.addEventListener("install",function(e){
   self.skipWaiting();

@@ -408,9 +408,11 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .ajudabtn:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
 
 /* card de AUTOEXPLICAÇÃO (a Fagulha pergunta "por quê?") */
-.autoexp{position:absolute;left:12px;right:12px;top:20%;z-index:8;background:rgba(16,22,54,.95);border:1px solid rgba(255,225,150,.45);
+.autoexp{position:absolute;left:12px;right:12px;top:20%;z-index:8;background:rgba(15,20,48,.97);border:1px solid rgba(255,225,150,.45);
   border-radius:20px;padding:15px 16px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.55);
-  -webkit-animation:sobeSheet .4s ease both;animation:sobeSheet .4s ease both}
+  -webkit-animation:aeIn .35s ease both;animation:aeIn .35s ease both}
+@-webkit-keyframes aeIn{0%{-webkit-transform:translateY(24px) scale(.96)}100%{-webkit-transform:translateY(0) scale(1)}}
+@keyframes aeIn{0%{transform:translateY(24px) scale(.96)}100%{transform:translateY(0) scale(1)}}
 .autoexp .aeperg{font-size:15px;color:#ffe6a3;font-weight:800;line-height:1.32;margin-bottom:6px}
 .autoexp .aeperg b{color:#fff}
 .aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#20264a;
