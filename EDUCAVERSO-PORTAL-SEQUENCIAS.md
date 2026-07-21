@@ -1,5 +1,15 @@
 # EducaVerso PORTAL — sequências didáticas por turma + progresso do aluno (plano 2026-07-21)
 
+## ⚠️⚠️ VIRADA DE RUMO (Marcos, 2026-07-21 noite) — LER PRIMEIRO
+**O modelo NOVO NÃO é mais o site com HUB + MUNDOS VIVOS + OVO/MASCOTE-token** (aquele
+descrito nas seções antigas abaixo, decisão de 17/07). Marcos decidiu: as atividades são
+**APPS PREMIUM** (padrão Fábrica de Estrelas + melhorias + pesquisa), cada uma no seu link,
+e o **PORTAL é algo NOVO e DIFERENCIADO** cuja função é **organizar as atividades nas TURMAS
+certas** — o aluno entra na turma dele e joga as atividades dela; o professor organiza e
+acompanha. Nada de decoração de mundos/mascote-token. As seções antigas (2, 2b, EduMundo,
+ovo→mascote) ficam só como HISTÓRICO — não são mais o plano. O formato exato do portal novo
+está sendo desenhado com o Marcos + a pesquisa profunda em andamento.
+
 > Pedido do Marcos: o site EducaVerso profissional no MESMO molde do app das atividades;
 > as atividades entram em SEQUÊNCIAS DIDÁTICAS por turma; o aluno entra, realiza e tem o
 > seu progresso; o cadastro é AUTOMÁTICO quando o aluno digita nome+turma (sem o professor
