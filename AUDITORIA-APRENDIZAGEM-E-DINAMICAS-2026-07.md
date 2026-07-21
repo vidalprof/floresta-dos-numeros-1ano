@@ -260,6 +260,18 @@ versão só, SEM perder nada:
 - Falas reaproveitadas (refl_ok/refl_hmm) — sem gerar áudio novo (economia). 6 falas da outra
   sessão trazidas (p3_gira, galeria_ok, se_p5_q, nome_q, dica_oferta, pratica_sug).
 
+## ✅ STAGE 2 ENTREGUE (2026-07-21 noite) — quizzes viraram PRODUÇÃO (sw v22)
+Fechada a maior lacuna pedagógica: as 3 paradas de "escolher a alternativa" viraram a criança
+CONSTRUINDO (a jogada É a evidência — stealth/ECD confirmado na pesquisa):
+- **Soma:** monta `grupos × em cada` com steppers, lendo os grupos concretos (produz a estrutura
+  da multiplicação a partir da soma repetida). Feedback específico, sem X.
+- **Problema:** CONSTRÓI as prateleiras (lê o enunciado, escolhe os nºs); o total EMERGE contando
+  a construção dela (não é dado nem escolhido) — de em em, prateleira por prateleira.
+- **Desafio (transferência):** TECLADO de estrelas — a criança DIGITA o número (recall+produção,
+  sem alternativa pra chutar). Erro = consequência gentil (mostra os grupos, conta junto, tenta de
+  novo); acerto de 1ª = fluente (a medida honesta). Pool de 8, sorteia 3.
+Motor/evidências/autoexplicação/variações intactos. QA: node --check + render das 3 telas OK.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
