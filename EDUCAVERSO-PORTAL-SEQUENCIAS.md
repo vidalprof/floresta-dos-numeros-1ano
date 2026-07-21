@@ -17,7 +17,23 @@
   "Você é a Sofia? [Sou eu] [Não]" antes de criar registro novo.
 - Cada atividade grava dados POR ALUNO (`kAluno()`): motor BKT, evidências, retenção.
 
-## 2. O PORTAL (evolução do hub, no molde premium)
+## 2. O PORTAL = o SITE EDUCAVERSO (CORREÇÃO do Marcos: NÃO é o hub Ilhas do Saber!)
+O modelo novo já tem os DOIS sites próprios (decisão de 2026-07-17, na memória):
+- **EducaVerso** (`vidalprof.github.io/educaverso/`) = o site do ALUNO: link da turma
+  (`?t=<turmaId>`), toca no card nome+avatar (zero digitação), ovo→mascote Verso,
+  MUNDOS VIVOS com paradas lidas do CATÁLOGO no Firebase (/catalogo/mundos). As
+  SEQUÊNCIAS DIDÁTICAS = os mundos/paradas; atividade nova entra pelo catálogo (link
+  próprio, portal leve), progresso em /turmas/<t>/alunos/<a>.
+- **painel-prof** (`vidalprof.github.io/painel-prof/`) = site SEPARADO do professor,
+  com senha, invisível pro aluno: cadastra turmas+alunos (lista da secretaria!),
+  acompanha progresso; deve ganhar as avaliações consolidadas/impressão + a
+  ferramenta VER/RESETAR a figurinha-secreta/PIN de cada aluno (decisão 2026-07-21:
+  aluno esqueceu -> professor vê ou reseta no painel).
+- O hub Ilhas do Saber fica pro acervo ANTIGO; nada do modelo novo entra lá.
+- O que a Fábrica de Estrelas ganhou hoje (edu_* local, ?painel) vira o modo
+  OFFLINE/fallback por aparelho; a fonte da verdade do modelo novo é o Firebase.
+
+## 2b. (texto anterior, mantido como referência do molde visual)
 - **Home**: céu/identidade visual do molde (motion, mascote, som), mapa de TURMAS.
 - **Turma** → **SEQUÊNCIA DIDÁTICA**: trilha ordenada de atividades (como o mapa de
   paradas da Fábrica de Estrelas, mas cada nó = uma ATIVIDADE completa, com link).
