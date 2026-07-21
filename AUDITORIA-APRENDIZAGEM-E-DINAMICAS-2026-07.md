@@ -115,6 +115,25 @@ P3 e ×10 só autoexplicação — são toques guiados sem "erro"; **Desafio fic
 - **PRÓXIMO no roadmap:** motor de domínio LEVE (Elo/BKT-lite por KC) + mastery gating + Leitner (revisão
   espaçada) + parecer no Firebase — o "grande salto" do Pilar B.
 
+## ⚖️ CORREÇÃO DE PORTÃO 0 (lição — "o aprender de verdade da pesquisa", 2026-07)
+O Marcos pegou (com razão) que a 1ª versão da **autoexplicação** violava a LEI (`EDUVERSE-FILOSOFIA.md`):
+mostrava **gabarito** (verde "certo" / "quase") e era **"escolher a alternativa certa"** → isso é
+**prova disfarçada** (checklist #8 "sem certo/errado"; Lei fixa #4 "produz, não reconhece = reprovado";
+#6 "reflexão SEM tom de correção"). As dicas nível 2/3 **entregavam a resposta** (o Byte deve **perguntar**, #7).
+**Conserto aplicado (a regra que fica):**
+- **Medir é INVISÍVEL pra criança** (Lei #1: motor mede ao vivo, **sem rótulo**). A razão da autoexplicação
+  é **gravada pro professor** (`razaoOk`), mas a tela **nunca** mostra certo/errado. Escolha → estado
+  **neutro** (`.aebtn.escolhida`, sem verde/amarelo) → a Fagulha **acolhe** (`refl_ok`) ou **torna a se
+  perguntar junto** (`refl_hmm`, sem "quase"/X). Vira **conversa/descoberta**, não teste.
+- **Dica = o Byte PERGUNTA / o mundo MOSTRA**, nunca "a resposta". Último nível = "mostro **um**, você faz o
+  resto" (a criança ainda **produz**). Reformulado em P1 e P2.
+- **PRINCÍPIO GERAL (vale p/ toda atividade nova):** nada de gabarito/X na tela; correção vem por
+  **consequência no mundo** (Lei #5); a criança **produz**, não escolhe alternativa; medição por baixo.
+- **FALTA (stage 2 — o alinhamento pleno):** as paradas de **quiz de conta** (Soma / Problema / Desafio)
+  ainda são "escolher a alternativa certa" (recognição). "Aprender de verdade" pede **produção** — a criança
+  **monta a conta / arrasta os grupos / constrói o array** e o total nasce do que ela fez (o mundo confere,
+  sem X). É redesenho de mecânica (maior), a fazer com QA.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
