@@ -112,10 +112,30 @@ P3 e ×10 só autoexplicação — são toques guiados sem "erro"; **Desafio fic
 - ✅ **"Praticar de novo"** — `botaoProxima(tela,rot,dl)` agora tem o botão secundário que refaz a mesma parada.
 - **FALTA só P5 (autoria)** — mecânica diferente (a criança cria); avaliar se a autoexplicação encaixa lá.
   As demais paradas de aprendizagem já têm o framework. (Alívios Música/Memória e o Deleite não precisam.)
-- **PRÓXIMO no roadmap:** motor de domínio LEVE (Elo/BKT-lite por KC) + mastery gating + Leitner (revisão
-  espaçada) + parecer no Firebase — o "grande salto" do Pilar B.
+- ✅ **MOTOR v1 ENTREGUE (2026-07):** caixinha **Leitner por KC** (1/3/7/15 dias, `estrelas_dominio`),
+  atualizada em toda parada concluída (hook no `salvaEvid`); **Aquecimento** ao voltar com revisão vencida
+  (botão "Reacender minhas estrelas" na capa → 3 perguntas de recuperação com visual+feedback, banco
+  `AQUEC_BANK`); domínio entra no **parecer do professor**. Consertos de UX juntos: botões não cobrem mais a
+  explicação; pergunta espera a narração acabar (vigia); Fagulha anda e para ao lado da estrela (+12%);
+  corpo dela quica no ritmo da voz.
+- **PRÓXIMO no roadmap:** adaptação de dificuldade (Elo/BKT-lite) + mastery gating + parecer no Firebase
+  (painel do professor por KC) + medir transferência/retenção entre dias.
 
-## ⚖️ CORREÇÃO DE PORTÃO 0 (lição — "o aprender de verdade da pesquisa", 2026-07)
+## 🚨 CORREÇÃO DA CORREÇÃO (2026-07, depois) — A RÉGUA CERTA DAS PREMIUM
+O Marcos esclareceu: a Fábrica de Estrelas segue a **pesquisa de aprendizagem efetiva das PREMIUM**
+(`PESQUISA-FORMATOS-APRENDIZAGEM-REAL-2026-07.md`), **NÃO** a LEI do EduVerse-RPG. A seção abaixo
+("Correção de Portão 0") foi um **erro de régua meu**: apliquei a doutrina do EduVerse (sem feedback
+visível, "produzir não reconhecer") numa atividade premium. **Na régua premium:**
+- **Feedback é o MAIOR fator** (recuperação com feedback g≈0,50-0,61; Mayer "feedback indispensável";
+  Clark: valor agregado = feedback+andaime+personalização). Pergunta com opções + feedback = **ótimo**.
+- **Autoexplicação com opções** é recomendada explicitamente pela pesquisa premium.
+- O "nunca prova disfarçada" nas premium se resolve por **stealth assessment** (a MEDIÇÃO fica
+  escondida, vai pro professor) — **não** escondendo o feedback da criança.
+**Estado final aplicado:** reflexão = conversa da Fagulha (balão, fichas-estrela, bonita) COM feedback
+caloroso (dourado no acerto; ideia-chave acende gentilmente na escolha rasa; sem X vermelho) + medição
+invisível. Regra pra sempre: **premium = pesquisa premium; EduVerse-RPG = LEI do EduVerse. Nunca cruzar.**
+
+## ⚖️ CORREÇÃO DE PORTÃO 0 (lição — SUPERADA, ver acima; mantida só como histórico)
 O Marcos pegou (com razão) que a 1ª versão da **autoexplicação** violava a LEI (`EDUVERSE-FILOSOFIA.md`):
 mostrava **gabarito** (verde "certo" / "quase") e era **"escolher a alternativa certa"** → isso é
 **prova disfarçada** (checklist #8 "sem certo/errado"; Lei fixa #4 "produz, não reconhece = reprovado";
