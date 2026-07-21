@@ -15,6 +15,25 @@ está sendo desenhado com o Marcos + a pesquisa profunda em andamento.
 > seu progresso; o cadastro é AUTOMÁTICO quando o aluno digita nome+turma (sem o professor
 > cadastrar). Problema a resolver junto com ele: nome/turma digitados errados.
 
+## 0. DECISÃO-CHAVE (Marcos, 2026-07-21 noite): IDENTIDADE É O ALICERCE DA MEDIÇÃO
+Marcos cravou: **link anônimo NÃO serve p/ valer** — sem o aluno amarrado ao nome certo, a
+medição de aprendizagem e o registro no banco não têm valor. Logo, a pergunta NÃO é "portal
+sim/não" e sim **"onde o aluno se identifica"**. Como todas as atividades moram no mesmo
+domínio, **1 identificação vale p/ todas** (herdam via edu_atual / Firebase). O mínimo real =
+uma **PORTA DE ENTRADA DE IDENTIDADE** (é a semente do portal, enxuta).
+
+**Para medir de verdade, 3 obrigatórios (com ou sem portal bonito):**
+1. **Lista da secretaria por turma** → aluno TOCA no nome (zero digitação = zero erro de grafia).
+2. **Trava de pessoa certa = FIGURINHA/PIN SECRETO** (Marcos ESCOLHEU isto p/ valer):
+   anos iniciais = figurinha secreta (desenho, sem leitura); anos finais = PIN de 4 números.
+   1ª vez cria; depois só ELE entra no próprio nome. Professor VÊ/RESETA no painel se esquecer.
+3. **Firebase ligado** (2 cliques do console) → grava no banco, junta a turma, cruza aparelhos.
+
+**Estado atual:** identidade DORMENTE (IDENTIDADE_ATIVA=false) = bom só p/ Marcos TESTAR por
+link anônimo. Vira real quando: Marcos manda a LISTA + faz os 2 cliques do Firebase → eu ligo
+a porta de entrada (turma → nome → figurinha/PIN) + gravação no banco. NÃO construir antes
+desses 2 insumos (evita retrabalho/credito à toa; a pesquisa profunda pode afinar o desenho).
+
 ## 1. A base JÁ EXISTE (implantada hoje na Fábrica de Estrelas — é o PADRÃO)
 - **Identidade compartilhada `edu_*`** no localStorage do domínio `vidalprof.github.io`:
   como TODAS as atividades moram no mesmo domínio, elas **compartilham** o mesmo
