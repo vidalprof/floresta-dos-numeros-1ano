@@ -80,6 +80,28 @@ Alvo **55 min**; a criança rápida não pode "furar" em 35 → prever variaçã
 **Ganchos de retorno éticos:** revisão espaçada como motivo de volta (não FOMO); streak gentil;
 progresso visível; autoria persistente (galeria). O "prato" é a dinâmica; a medalha é o sal.
 
+## 4½. PADRÃO DE QUALIDADE — "MODERNO É VIVO" (lei do Marcos, 2026-07-21) ⭐ OBRIGATÓRIO
+A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de Estrelas: tudo RESPIRA.
+- **Mascote VIVO:** respira, pisca (com piscada dupla ocasional), fidget, **lip-sync na voz**, poses
+  com crossfade, entrada animada, sombra no chão, presença de bom tamanho na tela (não recorte
+  minúsculo no canto). Guia que PERGUNTA. Voz coerente com o personagem (Nara=menina → voz feminina).
+- **FUNDO e cena VIVOS:** nunca gradiente morto. Camadas animadas (partículas, aurora/nuvens à
+  deriva, parallax leve, brilho que pulsa) — só transform/opacity, PC fraco.
+- **OBJETOS da cena VIVOS:** os elementos que a criança vê reagir têm micro-vida (respiram, brilham,
+  partículas próprias — chuva na floresta, neve na tundra, tremor de calor no deserto).
+- **GAME FEEL:** hit-stop, tremida com micro-rotação, som variável, transição de entrada em toda tela.
+- **ARTE premium coerente** (Portão Arte): personagem e cena no MESMO estilo; nada de recorte chapado
+  sobre branco dentro do jogo (o branco é só p/ gerar o asset; na cena ele vive sobre o mundo).
+- **Régua:** se ao lado da Fábrica de Estrelas a atividade parecer mais pobre/parada → REPROVA.
+
+## 4¾. PEDAGOGO ESCOLHE AS MECÂNICAS + MUITAS PARA 55 MIN (lei do Marcos)
+- O **pedagogo** (chapéu 1+2) escolhe, do `CATALOGO-DINAMICAS-INTERATIVAS.md`, as mecânicas que
+  MELHOR ensinam AQUELE conteúdo/habilidade (não repetir a mesma o tempo todo — 1 verbo da mão
+  diferente por parada). Não é "adaptar a Fábrica de Estrelas": é ATINGIR O PADRÃO com o tema e as
+  mecânicas certas da disciplina.
+- **Usar o MÁXIMO de mecânicas de aprendizado real que caibam em ~55 min** (intercalação, ver
+  pesquisa) — a aventura tem ~10-12 paradas, cada uma uma mecânica de PRODUÇÃO com evidência.
+
 ## 5. O QUE O MOTOR JÁ ENTREGA (herdado da Fábrica de Estrelas — NÃO reconstruir)
 - **Adaptação ao ritmo** (BKT-lite por KC) + **mastery gating gentil** (recomenda praticar, nunca bloqueia).
 - **Variações** por parada (números/casos novos) — "praticar de novo" ≠ decoreba.
