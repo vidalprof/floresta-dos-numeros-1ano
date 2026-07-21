@@ -631,6 +631,44 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 
 /* "reduzir movimento" desliga só os movimentos GRANDES (parallax/câmera/entradas);
    a vida gentil (respirar, piscar, brilho, estrelas) fica sempre ligada. */
+/* ===== VIDA VISUAL (moderno é vivo): aurora, biomas com micro-vida ===== */
+.aurora{position:absolute;border-radius:50%;filter:blur(46px);-webkit-filter:blur(46px);opacity:.28;pointer-events:none}
+.aurora.a1{left:-20%;top:-10%;width:80%;height:60%;background:radial-gradient(circle,#2ea6ff,rgba(46,166,255,0) 70%);
+  -webkit-animation:auroraA 26s ease-in-out infinite alternate;animation:auroraA 26s ease-in-out infinite alternate}
+.aurora.a2{right:-25%;bottom:-15%;width:90%;height:65%;background:radial-gradient(circle,#38d9b0,rgba(56,217,176,0) 70%);
+  -webkit-animation:auroraB 32s ease-in-out infinite alternate;animation:auroraB 32s ease-in-out infinite alternate}
+@-webkit-keyframes auroraA{from{-webkit-transform:translate3d(0,0,0) scale(1)}to{-webkit-transform:translate3d(14%,10%,0) scale(1.25)}}
+@keyframes auroraA{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(14%,10%,0) scale(1.25)}}
+@-webkit-keyframes auroraB{from{-webkit-transform:translate3d(0,0,0) scale(1.1)}to{-webkit-transform:translate3d(-12%,-8%,0) scale(.9)}}
+@keyframes auroraB{from{transform:translate3d(0,0,0) scale(1.1)}to{transform:translate3d(-12%,-8%,0) scale(.9)}}
+/* biomas VIVOS: respiram + brilho deslizante + camada de partículas */
+.biotile{-webkit-animation:estrPop .35s ease, bioResp 6s ease-in-out infinite;animation:estrPop .35s ease, bioResp 6s ease-in-out infinite}
+@-webkit-keyframes bioResp{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.012)}}
+@keyframes bioResp{0%,100%{transform:scale(1)}50%{transform:scale(1.012)}}
+.biotile .shine{position:absolute;top:0;left:-60%;width:40%;height:100%;z-index:2;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.22),rgba(255,255,255,0));
+  background:linear-gradient(to right,rgba(255,255,255,0),rgba(255,255,255,.22),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);-webkit-animation:shineSweep 4.5s ease-in-out infinite;animation:shineSweep 4.5s ease-in-out infinite}
+@-webkit-keyframes shineSweep{0%,60%{left:-60%}100%{left:130%}}
+@keyframes shineSweep{0%,60%{left:-60%}100%{left:130%}}
+.biovida{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;pointer-events:none;overflow:hidden}
+.biovida .pcl{position:absolute;top:-10%}
+.pcl.neve{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.9);
+  -webkit-animation:cai linear infinite;animation:cai linear infinite}
+.pcl.chuva{width:2px;height:14px;background:rgba(200,230,255,.75);
+  -webkit-animation:cai linear infinite;animation:cai linear infinite}
+.pcl.calor{width:10px;height:10px;border-radius:50%;background:rgba(255,220,150,.35);bottom:-10%;top:auto;
+  -webkit-animation:sobe linear infinite;animation:sobe linear infinite}
+.pcl.luz{width:5px;height:5px;border-radius:50%;background:rgba(255,255,200,.8);box-shadow:0 0 6px rgba(255,255,180,.9);
+  -webkit-animation:flutuaP ease-in-out infinite;animation:flutuaP ease-in-out infinite}
+@-webkit-keyframes cai{from{-webkit-transform:translateY(0)}to{-webkit-transform:translateY(320px)}}
+@keyframes cai{from{transform:translateY(0)}to{transform:translateY(320px)}}
+@-webkit-keyframes sobe{from{-webkit-transform:translateY(0);opacity:.5}to{-webkit-transform:translateY(-260px);opacity:0}}
+@keyframes sobe{from{transform:translateY(0);opacity:.5}to{transform:translateY(-260px);opacity:0}}
+@-webkit-keyframes flutuaP{0%,100%{-webkit-transform:translateY(0);opacity:.4}50%{-webkit-transform:translateY(-16px);opacity:1}}
+@keyframes flutuaP{0%,100%{transform:translateY(0);opacity:.4}50%{transform:translateY(-16px);opacity:1}}
+.parada .fagfala,.clima .fagfala{width:132px}   /* Nara com mais presença (6º ano) */
+
 /* ===== CLIMA: medidores, biomas, zonas, semana ===== */
 .stepper.med{margin:0 6px}
 .sval.medlab{width:auto;min-width:78px;font-size:16px;padding:0 6px}
@@ -668,7 +706,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 </style>
 </head>
 <body>
-<div id="fundo"><div class="neb"></div></div>
+<div id="fundo"><div class="neb"></div><div class="aurora a1"></div><div class="aurora a2"></div></div>
 <div id="stage"><div id="app"></div></div>
 <audio id="narr" preload="auto"></audio>
 <script>
@@ -1608,7 +1646,27 @@ function bioma(temp,chuva){
   if(temp===1) return chuva===0?"savana":"pradaria";
   return chuva===0?"tundra":"taiga";
 }
-function bioTile(slug,cls){ var w=el("div","biotile "+(cls||"")); var im=el("img"); im.src="img/bio_"+slug+".png"; im.alt=""; w.appendChild(im); w.appendChild(el("div","bionome",BIONOME[slug]||"")); return w; }
+function bioTile(slug,cls){
+  var w=el("div","biotile "+(cls||"")); var im=el("img"); im.src="img/bio_"+slug+".png"; im.alt=""; w.appendChild(im);
+  if(!reduz) w.appendChild(bioVida(slug));                 // micro-vida (chuva/neve/calor/luz)
+  w.appendChild(el("div","shine"));                        // brilho deslizante
+  w.appendChild(el("div","bionome",BIONOME[slug]||""));
+  return w;
+}
+function bioVida(slug){
+  var tipo = (slug==="floresta")?"chuva":(slug==="tundra"||slug==="taiga")?"neve":(slug==="deserto")?"calor":"luz";
+  var v=el("div","biovida"), n=(tipo==="luz")?6:9, i;
+  for(i=0;i<n;i++){ var p=el("div","pcl "+tipo);
+    p.style.left=(Math.random()*94+2)+"%";
+    var dur=(tipo==="calor"?3.5:tipo==="luz"?4:2+Math.random()*1.5).toFixed(2);
+    var del=(-Math.random()*dur).toFixed(2);
+    p.style.webkitAnimationDuration=dur+"s"; p.style.animationDuration=dur+"s";
+    p.style.webkitAnimationDelay=del+"s"; p.style.animationDelay=del+"s";
+    if(tipo==="luz"){ p.style.top=(Math.random()*80+5)+"%"; }
+    v.appendChild(p);
+  }
+  return v;
+}
 function medidor(obj,chave,rot,labels,onCh){
   var s=el("div","stepper med"); s.appendChild(el("div","strot",rot));
   var row=el("div","srow");
