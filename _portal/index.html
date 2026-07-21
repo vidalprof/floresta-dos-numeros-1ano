@@ -96,15 +96,20 @@ h2.tit{font-size:21px;font-weight:900;color:#fff;text-align:center;margin-bottom
 .plist .prow{padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.08)}
 .plist .prow b{color:#ffe08a}
 .plist .prow small{color:#9aa3c8}
+/* gerir turmas/alunos */
+.lab{font-size:13px;font-weight:800;color:#ffe08a;margin:16px 0 4px;text-align:left}
+.hint{font-size:12px;color:#9aa3c8;margin-bottom:6px;text-align:left}
+.hint b{color:#c3c9ee}
+.minput{display:block;width:100%;margin:4px 0;padding:11px;border-radius:12px;border:1px solid rgba(255,225,150,.4);background:#fff;color:#20264a;font-family:inherit;font-size:15px;-webkit-user-select:text;user-select:text}
+.toast{background:rgba(60,120,80,.4);border:1px solid rgba(140,255,170,.4);color:#8effa6;font-size:13px;padding:9px;border-radius:10px;margin-top:10px;text-align:center;font-weight:700}
 </style>
 </head>
 <body>
 <div id="stars"></div>
 <div id="wrap">
-  <div class="topo"><div class="logo">EducaVerso</div><div class="escola">E.B.M. VIDAL RAMOS</div></div>
+  <div class="topo"><div class="logo" id="logo">EducaVerso</div><div class="escola">E.B.M. VIDAL RAMOS</div></div>
   <div id="app"></div>
 </div>
-<button class="proflink" id="proflink">Professor</button>
 <script>
 (function(){
 "use strict";
@@ -339,8 +344,14 @@ function telaAtividades(a){
   })(lista[i],i); }
 }
 
-/* ================== PROFESSOR (senha; progresso da turma) ================== */
-document.getElementById("proflink").onclick=function(){ telaProfPin(); };
+/* ================== PROFESSOR (gesto secreto + senha) ==================
+   Invisível pro aluno: toque 5x no título "EducaVerso" (em até ~2s entre toques) -> senha. */
+(function(){
+  var tapN=0,tapT=0, lg=document.getElementById("logo");
+  if(!lg)return;
+  lg.style.cursor="default";
+  lg.onclick=function(){ var now=(new Date()).getTime(); if(now-tapT>1500)tapN=0; tapT=now; tapN++; if(tapN>=5){ tapN=0; telaProfPin(); } };
+})();
 function telaProfPin(){
   limpa();
   var c=card();
@@ -375,26 +386,119 @@ function telaProf(){
   limpa();
   var c=card();
   var v=el("button","voltar","sair"); v.onclick=function(){ telaCapa(); }; c.appendChild(v);
+  c.appendChild(el("h2","tit","Área do professor"));
+  c.appendChild(el("div","sub","Só você entra aqui (gesto secreto + senha). O estudante não vê esta área."));
+  var g=el("div","grid");
+  var b1=el("button","btn pulsa","Testar atividades"); b1.onclick=function(){ telaTeste(); }; g.appendChild(b1);
+  c.appendChild(g);
+  var g2=el("div","grid"); g2.style.marginTop="8px";
+  var b2=el("button","btn2","Turmas e alunos"); b2.style.margin="4px"; b2.onclick=function(){ telaGerir(); }; g2.appendChild(b2);
+  var b3=el("button","btn2","Progresso"); b3.style.margin="4px"; b3.onclick=function(){ telaProgresso(); }; g2.appendChild(b3);
+  c.appendChild(g2);
+}
+/* MODO TESTE: abre qualquer atividade SEM cadastrar aluno (dados sob "Modo teste", apagáveis) */
+function ensureTester(){ var a=alunosLe(),i; for(i=0;i<a.length;i++){ if(a[i].id==="tester")return; } a.push({id:"tester",nome:"Modo teste",turma:"(teste)",teste:true}); alunosGrava(a); }
+function catalogoTodo(){ var vistas={},lista=[],t,arr,i; for(t in ATIVIDADES){ arr=ATIVIDADES[t]||[]; for(i=0;i<arr.length;i++){ if(!vistas[arr[i].slug]){ vistas[arr[i].slug]=1; lista.push(arr[i]); } } } return lista; }
+function telaTeste(){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaProf(); }; c.appendChild(v);
+  c.appendChild(el("h2","tit","Testar atividades"));
+  c.appendChild(el("div","sub","Abre em modo teste (sem cadastrar ninguém). Perfeito p/ você e sua esposa avaliarem."));
+  var lista=catalogoTodo(),i;
+  if(!lista.length){ c.appendChild(el("div","vazio","Nenhuma atividade no catálogo ainda.")); return; }
+  for(i=0;i<lista.length;i++){ (function(at){
+    var link=el("a","ativ"); link.href="javascript:void(0)";
+    var barra=el("div","barra"); barra.style.background=at.cor||"#ffce4a"; link.appendChild(barra);
+    link.appendChild(el("div","at",at.titulo)); link.appendChild(el("div","ad",at.desc||""));
+    link.appendChild(el("div","go","TESTAR"));
+    link.onclick=function(){ ensureTester(); setAtual("tester"); window.location.href=at.link; };
+    app.appendChild(link);
+  })(lista[i]); }
+  var painel=el("button","mini","Abrir avaliação completa (?painel da atividade)"); painel.style.marginTop="14px";
+  painel.onclick=function(){ var l=catalogoTodo(); if(l.length) window.location.href=l[0].link+"?painel"; };
+  app.appendChild(painel);
+}
+/* GERIR turmas e alunos: manual + importar arquivo/colar */
+function inputTxt(ph){ var i=document.createElement("input"); i.type="text"; i.className="minput"; i.maxLength=40; i.placeholder=ph||""; i.setAttribute("autocomplete","off"); return i; }
+function toast(host,msg){ var old=host.getElementsByClassName("toast")[0]; if(old)old.parentNode.removeChild(old); var d=el("div","toast",msg); host.appendChild(d); }
+function turmasExtra(){ try{ return JSON.parse(LS().getItem("edu_turmas")||"[]"); }catch(e){ return []; } }
+function turmasTodas(){ var all=TURMAS.slice(0),ex=turmasExtra(),i; for(i=0;i<ex.length;i++){ if(all.indexOf(ex[i])<0) all.push(ex[i]); } return all; }
+function telaGerir(){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaProf(); }; c.appendChild(v);
+  c.appendChild(el("h2","tit","Turmas e alunos"));
+  c.appendChild(el("div","sub","Cadastre manualmente ou importe a lista da secretaria."));
+  c.appendChild(el("div","lab","Adicionar aluno"));
+  var selT=document.createElement("select"); selT.className="minput"; var all=turmasTodas(),i;
+  for(i=0;i<all.length;i++){ var o=document.createElement("option"); o.value=all[i]; o.text=all[i]; selT.appendChild(o); }
+  c.appendChild(selT);
+  var inN=inputTxt("Nome do aluno"); c.appendChild(inN);
+  var addA=el("button","btn2","Adicionar aluno"); addA.style.marginTop="6px";
+  addA.onclick=function(){ var nome=bonito(inN.value||""); if(nome.length<2){ toast(c,"Escreva o nome."); return; }
+    var a=alunosLe(),z,dup=false; for(z=0;z<a.length;z++){ if(a[z].turma===selT.value && normNome(a[z].nome)===normNome(nome)) dup=true; }
+    if(!dup){ a.push({id:novoId(),nome:nome,turma:selT.value,criado:diaStr(hojeMs())}); alunosGrava(a); }
+    inN.value=""; toast(c,dup?"Esse aluno já existe.":"Aluno adicionado!"); };
+  c.appendChild(addA);
+  c.appendChild(el("div","lab","Nova turma (se não estiver na lista)"));
+  var inT=inputTxt("Ex.: 3º ano E"); c.appendChild(inT);
+  var addT=el("button","btn2","Adicionar turma"); addT.style.marginTop="6px";
+  addT.onclick=function(){ var tm=(inT.value||"").replace(/^\s+|\s+$/g,""); if(tm.length<2){ toast(c,"Escreva a turma."); return; }
+    var ex=turmasExtra(); if(ex.indexOf(tm)<0)ex.push(tm); try{ LS().setItem("edu_turmas",JSON.stringify(ex)); }catch(e){} inT.value=""; telaGerir(); };
+  c.appendChild(addT);
+  c.appendChild(el("div","lab","Importar lista (arquivo ou colar)"));
+  c.appendChild(el("div","hint","Uma linha por turma: <b>3º ano A: Alice, Arthur, Bento</b> — ou CSV <b>turma,nome</b> por linha."));
+  var file=document.createElement("input"); file.type="file"; file.accept=".csv,.txt"; file.className="minput";
+  file.onchange=function(){ var f=file.files&&file.files[0]; if(!f)return; var rd=new FileReader(); rd.onload=function(){ toast(c,parseLista(rd.result)+" aluno(s) importado(s)!"); }; rd.readAsText(f); };
+  c.appendChild(file);
+  var ta=document.createElement("textarea"); ta.className="minput"; ta.rows=4; ta.placeholder="Ou cole a lista aqui…"; ta.style.resize="vertical"; ta.setAttribute("autocomplete","off");
+  c.appendChild(ta);
+  var imp=el("button","btn2","Importar do texto colado"); imp.style.marginTop="6px";
+  imp.onclick=function(){ var n=parseLista(ta.value||""); ta.value=""; toast(c,n+" aluno(s) importado(s)!"); };
+  c.appendChild(imp);
+}
+function parseLista(text){
+  var linhas=(""+text).split(/\r?\n/), i, add=0, a=alunosLe(), mapa={}, z;
+  for(z=0;z<a.length;z++) mapa[a[z].turma+"|"+normNome(a[z].nome)]=1;
+  var temColon=/:/.test(text), cur="";
+  function addAluno(turma,nome){ turma=(""+turma).replace(/^\s+|\s+$/g,""); nome=bonito(nome); if(nome.length<2||turma.length<1)return; var ch=turma+"|"+normNome(nome); if(mapa[ch])return; mapa[ch]=1; a.push({id:novoId(),nome:nome,turma:turma,criado:diaStr(hojeMs()),oficial:true}); add++; }
+  for(i=0;i<linhas.length;i++){ var ln=linhas[i].replace(/^\s+|\s+$/g,""); if(!ln)continue;
+    if(temColon){
+      if(ln.indexOf(":")>=0){ var pc=ln.split(":"); cur=pc[0].replace(/^\s+|\s+$/g,""); var nn=pc.slice(1).join(":").split(","),y; for(y=0;y<nn.length;y++) addAluno(cur,nn[y]); }
+      else { var nn2=ln.split(","),y2; for(y2=0;y2<nn2.length;y2++) addAluno(cur,nn2[y2]); }
+    } else { var cols=ln.split(","); if(cols.length>=2) addAluno(cols[0],cols[1]); }
+  }
+  if(add) alunosGrava(a);
+  return add;
+}
+function telaProgresso(){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaProf(); }; c.appendChild(v);
   c.appendChild(el("h2","tit","Progresso das turmas"));
-  c.appendChild(el("div","sub","Dados deste aparelho. O painel único da turma (Firebase) entra depois."));
-  var a=alunosLe();
+  c.appendChild(el("div","sub","Dados deste aparelho. O painel único (Firebase) entra depois."));
+  var a=alunosLe().filter(function(x){ return !x.teste; });
   if(!a.length){ c.appendChild(el("div","vazio","Nenhum aluno registrado ainda.")); return; }
   a.sort(function(x,y){ return (x.turma+x.nome)<(y.turma+y.nome)?-1:1; });
   var box=el("div","plist"),i;
   for(i=0;i<a.length;i++){ var p=pareceresDe(a[i].id);
     var seg=a[i].segredo?(a[i].segredo.tipo==="pin"?"PIN":"figura"):"—";
     var row=el("div","prow","<b>"+a[i].nome+"</b> <small>&#183; "+a[i].turma+" &#183; "+p.length+" atividade(s) &#183; trava: "+seg+"</small>");
-    (function(al){ var reset=el("button","mini","resetar trava de "+al.nome); reset.style.margin="4px 0 0";
-      reset.onclick=function(){ if(reset.innerHTML.indexOf("Confirmar")<0){ reset.innerHTML="Confirmar reset da trava"; return; }
-        var l=alunosLe(),z; for(z=0;z<l.length;z++){ if(l[z].id===al.id){ delete l[z].segredo; } } alunosGrava(l); telaProf(); };
+    (function(al){
+      var reset=el("button","mini","resetar trava de "+al.nome); reset.style.margin="4px 8px 0 0"; reset.style.display="inline-block";
+      reset.onclick=function(){ if(reset.innerHTML.indexOf("Confirmar")<0){ reset.innerHTML="Confirmar reset"; return; } var l=alunosLe(),z; for(z=0;z<l.length;z++){ if(l[z].id===al.id) delete l[z].segredo; } alunosGrava(l); telaProgresso(); };
       row.appendChild(reset);
+      var exc=el("button","mini","excluir"); exc.style.display="inline-block"; exc.style.margin="4px 0 0";
+      exc.onclick=function(){ if(exc.innerHTML.indexOf("Confirmar")<0){ exc.innerHTML="Confirmar exclusão"; return; }
+        var l=alunosLe(),z,resto=[]; for(z=0;z<l.length;z++){ if(l[z].id!==al.id) resto.push(l[z]); } alunosGrava(resto);
+        try{ var g=JSON.parse(LS().getItem("edu_pareceres")||"[]"),g2=[],w; for(w=0;w<g.length;w++){ if(g[w].alunoId!==al.id) g2.push(g[w]); } LS().setItem("edu_pareceres",JSON.stringify(g2)); }catch(e){}
+        telaProgresso(); };
+      row.appendChild(exc);
     })(a[i]);
     box.appendChild(row);
   }
   c.appendChild(box);
-  var fab=el("button","mini","Abrir avaliação completa (Fábrica de Estrelas)"); fab.style.marginTop="14px";
-  fab.onclick=function(){ window.location.href="https://vidalprof.github.io/fabrica-de-estrelas/?painel"; };
-  c.appendChild(fab);
 }
 
 /* ================== BOOT ================== */
