@@ -18,10 +18,13 @@
 A criança REGULA os fatores e VÊ o bioma nascer/morrer (floresta cresce, savana seca, deserto
 racha, tundra congela). Muitos jeitos de acertar (é lei, não quiz). Conceito nomeado por ÚLTIMO.
 
-## MASCOTE (provisório — Marcos confirma)
-**"Órbita"** — uma pequena **sonda/satélite explorador** com uma lente-olho, que sobrevoa o
-Planeta, ESCANEIA e PERGUNTA (nunca dá a resposta). Sóbrio/tecnológico (combina com 6º ano).
-Poses p/ animar: neutro, escaneando, pensando, comemorando, apontando. Voz = Antônio (MP3).
+## MASCOTE (Marcos escolheu: HUMANO — jovem explorador/a, 2026-07-21)
+**"Nara"** — uma **jovem exploradora do clima / cartógrafa** (guia do estudante; nome provisório,
+o Marcos pode rebatizar). Estilo semi-realista jovem, roupa de expedição (colete, mapa, bússola),
+simpática e competente — SÓBRIA, sem fofura infantil (adequada ao 6º ano). PERGUNTA, nunca dá a
+resposta. Gerada em PARTES p/ animar: corpo, cabeça, olhos abertos/fechados, boca (lip-sync),
+braço que aponta. Poses: neutra, observando/escaneando com a luneta, pensando, comemorando.
+Voz = Antônio (MP3). (O antigo conceito de sonda "Órbita" foi descartado.)
 
 ## HISTÓRIA (fantasia intrínseca — a história FAZ a geografia)
 **"Missão Planeta Vivo".** Uma tempestade solar embaralhou o **Atlas Climático** do planeta: os
