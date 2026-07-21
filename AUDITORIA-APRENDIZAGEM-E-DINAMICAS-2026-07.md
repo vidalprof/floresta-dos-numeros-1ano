@@ -99,6 +99,21 @@ Rotação boa: **arrastar → traçar → regular → tocar**. (Todas viáveis e
 4. **Contínuo:** intercalar as novas dinâmicas (leque acima), 1 verbo diferente por parada; medir
    **transferência + retenção espaçada** (a régua de sucesso), não estrelas/tempo.
 
+## STATUS — o que JÁ entrou (incremento A, 2026-07)
+Ligado e publicado em `fabrica-de-estrelas` (framework REUTILIZÁVEL, hoje em **P1** e **Soma**):
+- ✅ **Contagem falada JUNTO** na Parada 1 (voz do Antônio, "uma… duas… três… Quatro! Caixa cheia!").
+- ✅ **Botão "Ouvir de novo"** (alto-falante) em toda parada — repete o enunciado; pulsa enquanto fala.
+- ✅ **Dica graduada (3 níveis, sob demanda)** — `ajudaBtn(tela, niveis, mostraTxt)`: pergunta → aponta →
+  exemplo. Cada nível narrado. Nível 3 nunca entrega a resposta de graça (na P1, preenche 1 caixa de exemplo).
+- ✅ **Autoexplicação** — `autoexplica(tela, cfg, cb)`: depois do acerto, a Fagulha PERGUNTA "por que deu
+  certo?"; a criança escolhe a razão; registra `tipo:"autoexplicacao"` na evidência do professor. Áudio
+  encadeado com `depoisDaFala(id,maxMs,cb)` (segue no fim da fala OU num prazo de segurança — nunca trava).
+- ✅ **"Praticar de novo"** — `botaoProxima(tela,rot,dl)` agora tem o botão secundário que refaz a mesma parada.
+- **FALTA espalhar** (mesmo framework) nas outras paradas: Prob, Desafio, P2, P4, P5. É só chamar `ajudaBtn` +
+  `autoexplica` com o conteúdo de cada uma (e gerar as vozes `aj_*`/`se_*` correspondentes).
+- **PRÓXIMO no roadmap:** motor de domínio LEVE (Elo/BKT-lite por KC) + mastery gating + Leitner (revisão
+  espaçada) + parecer no Firebase — o "grande salto" do Pilar B.
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
