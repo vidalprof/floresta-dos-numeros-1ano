@@ -45,6 +45,21 @@ Camadas de defesa (na ordem):
   anônimo (mesmo modelo do evidencias.ts do vila-tabuada) → turma inteira em qualquer
   aparelho, painel único do professor, avaliação consolidada imprimível de todos.
 
+## 3½. ADEQUAÇÃO POR IDADE (correção do Marcos: é do PRÉ ao 9º ANO — 2026-07-21)
+O sistema atende as 3 faixas do hub (Tesouro=pré/1º/2º · Exploradores=3º/4º/5º ·
+Aventureiros=6º–9º). O molde ganha um **perfil de idade** por atividade:
+- **IDENTIFICAÇÃO:** pré–2º = lista narrada (mascote fala) + FIGURINHA secreta com
+  desenhos (padrão pré-K, zero leitura; professora ajuda no pré) · 3º–5º = lista +
+  figurinha secreta · 6º–9º = **PIN de 4 dígitos** criado pelo aluno (figurinha
+  infantiliza adolescente), visual sóbrio.
+- **CASCA por faixa:** Tesouro = tudo narrado, botões por ícone, alvos enormes, sem
+  streak/nota visível · Exploradores = formato atual (Fábrica de Estrelas) ·
+  Aventureiros = menos fofura, mais desafio/agência, gamificação sóbria, texto ok.
+- **AVALIAÇÃO:** parecer descritivo puro nos anos iniciais; nos finais a nota entra
+  naturalmente (LDB/rubricas).
+- **O que NÃO muda:** registro de alunos (aceita qualquer turma), motor adaptativo
+  (BKT/Leitner), evidências→parecer→consolidada — a base é a mesma do pré ao 9º.
+
 ## 4. FASES DE ENTREGA (proposta)
 1. ✅ (hoje) Padrão de identidade + parecer consolidado + impressão na Fábrica de Estrelas.
 2. Portal v1: home + turmas + 1 sequência do 3º ano (Fábrica de Estrelas + Vila da
