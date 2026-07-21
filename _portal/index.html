@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover, user-scalable=no">
+<title>EducaVerso — Portal</title>
+<meta name="theme-color" content="#12163a">
+<style>
+/* ===== EducaVerso — PORTAL (premium, limpo e profissional; compat PC fraco) =====
+   Sem grid/gap/var()/clamp; anima só transform/opacity; pares -webkit-. */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{height:100%;width:100%;overflow-x:hidden;
+  background:#0b0e2c;background:-webkit-radial-gradient(50% 16%,#242b60,#0b0e2c 60%,#070917);background:radial-gradient(ellipse at 50% 16%,#242b60,#0b0e2c 60%,#070917);
+  font-family:ui-rounded,"Segoe UI",system-ui,Arial,sans-serif;color:#eef1ff;-webkit-font-smoothing:antialiased}
+#stars{position:fixed;top:0;left:0;right:0;bottom:0;z-index:0;pointer-events:none;overflow:hidden}
+.st{position:absolute;border-radius:50%;background:#fff;opacity:.2;
+  -webkit-animation:tw 4.5s ease-in-out infinite;animation:tw 4.5s ease-in-out infinite}
+@-webkit-keyframes tw{0%,100%{opacity:.1;-webkit-transform:scale(.6)}50%{opacity:.7;-webkit-transform:scale(1.1)}}
+@keyframes tw{0%,100%{opacity:.1;transform:scale(.6)}50%{opacity:.7;transform:scale(1.1)}}
+#wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:22px 16px 60px;min-height:100%}
+.topo{text-align:center;padding:14px 0 6px}
+.logo{font-size:30px;font-weight:900;color:#ffe08a;letter-spacing:.5px;text-shadow:0 2px 0 #7a5200,0 0 20px rgba(255,200,80,.4)}
+.escola{font-size:13px;color:#c3c9ee;margin-top:2px;letter-spacing:1px}
+.card{background:rgba(20,26,58,.72);border:1px solid rgba(255,255,255,.12);border-radius:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);padding:18px 16px;margin:14px auto;max-width:560px;
+  -webkit-animation:up .4s ease both;animation:up .4s ease both}
+@-webkit-keyframes up{from{opacity:0;-webkit-transform:translateY(14px)}to{opacity:1;-webkit-transform:none}}
+@keyframes up{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+h2.tit{font-size:21px;font-weight:900;color:#fff;text-align:center;margin-bottom:4px}
+.sub{font-size:13.5px;color:#c3c9ee;text-align:center;margin-bottom:12px}
+.grid{text-align:center}
+.chip{display:inline-block;vertical-align:top;margin:6px;border:1px solid rgba(255,225,150,.4);
+  background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-weight:800;font-size:16px;
+  padding:14px 20px;border-radius:16px;cursor:pointer;min-width:96px;-webkit-transition:-webkit-transform .15s;transition:transform .15s}
+.chip:active{-webkit-transform:scale(.95);transform:scale(.95)}
+.chip small{display:block;font-size:11px;color:#9aa3c8;font-weight:700;margin-top:2px}
+.btn{display:inline-block;border:0;cursor:pointer;font-family:inherit;font-weight:900;color:#5a3b00;
+  background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);
+  padding:14px 30px;font-size:18px;border-radius:28px;box-shadow:0 5px 0 #c8871a,0 8px 18px rgba(0,0,0,.4);margin-top:6px}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 2px 0 #c8871a}
+.btn2{background:rgba(255,255,255,.12);color:#e9ecff;border:1px solid rgba(255,255,255,.28);box-shadow:none;font-size:15px;padding:11px 20px}
+.pulsa{-webkit-animation:pu 1.3s ease-in-out infinite;animation:pu 1.3s ease-in-out infinite}
+@-webkit-keyframes pu{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.05)}}
+@keyframes pu{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+.mini{display:block;margin:14px auto 0;background:transparent;border:0;color:#9aa3c8;font-size:12.5px;text-decoration:underline;cursor:pointer;font-family:inherit}
+.voltar{background:transparent;border:0;color:#c3c9ee;font-size:14px;cursor:pointer;font-family:inherit;padding:6px 2px;margin-bottom:4px}
+.voltar:before{content:"‹ ";font-size:18px}
+/* nomes (roster) */
+.roster{max-height:340px;overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:center}
+.aluno{display:inline-block;margin:5px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);
+  color:#fff;font-family:inherit;font-weight:800;font-size:16px;padding:12px 18px;border-radius:15px;cursor:pointer}
+.aluno:active{-webkit-transform:scale(.95);transform:scale(.95)}
+/* figurinha secreta */
+.figs{text-align:center;margin-top:6px}
+.fig{display:inline-block;width:78px;height:78px;margin:8px;border-radius:18px;border:2px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);cursor:pointer;position:relative;vertical-align:middle}
+.fig:active{-webkit-transform:scale(.93);transform:scale(.93)}
+.fig.sel{border-color:#ffe08a;box-shadow:0 0 18px rgba(255,200,80,.6)}
+.fig .sh{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px}
+.sh.circulo{border-radius:50%}
+.sh.quadrado{border-radius:8px}
+.sh.triangulo{-webkit-clip-path:polygon(50% 0,100% 100%,0 100%);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.sh.losango{-webkit-clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%);clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)}
+.sh.estrela{-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)}
+.sh.hexagono{-webkit-clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%)}
+.sh.coracao{-webkit-clip-path:polygon(50% 100%,15% 60%,5% 35%,20% 15%,50% 30%,80% 15%,95% 35%,85% 60%);clip-path:polygon(50% 100%,15% 60%,5% 35%,20% 15%,50% 30%,80% 15%,95% 35%,85% 60%)}
+.sh.mais{-webkit-clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%);clip-path:polygon(35% 0,65% 0,65% 35%,100% 35%,100% 65%,65% 65%,65% 100%,35% 100%,35% 65%,0 65%,0 35%,35% 35%)}
+/* PIN */
+.ndisp{font-size:38px;font-weight:900;color:#ffe08a;min-height:46px;letter-spacing:6px;text-align:center}
+.nrow{text-align:center;white-space:nowrap}
+.nkey{border:0;cursor:pointer;font-family:inherit;font-weight:900;color:#2b2f5a;width:58px;height:52px;font-size:24px;border-radius:14px;margin:4px;
+  background:#fff;box-shadow:0 4px 0 #c4cbe8}
+.nkey:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c4cbe8}
+.nkey.acao{background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);color:#5a3b00;font-size:17px}
+.msg{font-size:13px;color:#ffd0d0;text-align:center;min-height:1.1em;margin-top:8px}
+/* atividades (cards premium, organizados por turma) */
+.ativ{display:block;text-align:left;text-decoration:none;color:inherit;position:relative;overflow:hidden;
+  background:-webkit-linear-gradient(top,rgba(36,44,86,.95),rgba(24,30,62,.95));background:linear-gradient(to bottom,rgba(36,44,86,.95),rgba(24,30,62,.95));
+  border:1px solid rgba(255,225,150,.3);border-radius:18px;padding:16px 16px 16px 18px;margin:10px auto;max-width:560px;cursor:pointer;
+  -webkit-transition:-webkit-transform .15s;transition:transform .15s}
+.ativ:active{-webkit-transform:scale(.98);transform:scale(.98)}
+.ativ .barra{position:absolute;left:0;top:0;bottom:0;width:6px}
+.ativ .at{font-size:18px;font-weight:900;color:#fff}
+.ativ .ad{font-size:13px;color:#c3c9ee;margin-top:3px;line-height:1.35}
+.ativ .go{position:absolute;right:14px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);
+  font-size:13px;font-weight:900;color:#5a3b00;background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);
+  padding:9px 15px;border-radius:16px;box-shadow:0 3px 0 #c8871a}
+.ativ .selo{position:absolute;right:14px;top:12px;font-size:11px;font-weight:800;color:#8effa6;background:rgba(60,120,80,.35);border:1px solid rgba(140,255,170,.4);padding:3px 8px;border-radius:10px}
+.vazio{text-align:center;color:#9aa3c8;font-size:14px;padding:22px 10px;font-style:italic}
+.quem{text-align:center;font-size:13px;color:#c3c9ee;margin:2px 0 8px}
+.quem b{color:#ffe08a}
+/* professor */
+.proflink{position:fixed;right:12px;bottom:12px;z-index:3;background:rgba(20,26,58,.85);border:1px solid rgba(255,255,255,.2);
+  color:#c3c9ee;font-size:12px;font-family:inherit;padding:8px 13px;border-radius:16px;cursor:pointer}
+.plist{text-align:left;font-size:14px}
+.plist .prow{padding:9px 4px;border-bottom:1px solid rgba(255,255,255,.08)}
+.plist .prow b{color:#ffe08a}
+.plist .prow small{color:#9aa3c8}
+</style>
+</head>
+<body>
+<div id="stars"></div>
+<div id="wrap">
+  <div class="topo"><div class="logo">EducaVerso</div><div class="escola">E.B.M. VIDAL RAMOS</div></div>
+  <div id="app"></div>
+</div>
+<button class="proflink" id="proflink">Professor</button>
+<script>
+(function(){
+"use strict";
+
+/* ================== CONFIGURAÇÃO (o Marcos ajusta aqui) ================== */
+/* Turmas do pré ao 9º. O portal usa a faixa p/ decidir a trava: figura (até 5º) ou PIN (6º-9º). */
+var TURMAS=["Pré A","Pré B","1º ano A","1º ano B","2º ano A","2º ano B",
+  "3º ano A","3º ano B","3º ano C","3º ano D","4º ano A","4º ano B","5º ano A","5º ano B",
+  "6º ano A","6º ano B","7º ano A","7º ano B","8º ano A","8º ano B","9º ano A","9º ano B"];
+
+/* LISTA OFICIAL DA SECRETARIA (nomes por turma). Vazia por enquanto — o Marcos envia e a
+   gente cola aqui; o portal semeia sem duplicar. Virada de ano = trocar esta lista. */
+var LISTA_ALUNOS={
+  /* exemplo: "3º ano A":["Alice","Arthur","Bento","Sofia"] */
+};
+
+/* CATÁLOGO: quais atividades aparecem em cada turma (na ordem = sequência didática).
+   link = o app premium no seu próprio repo (portal leve: só aponta o link). */
+var ATIVIDADES={
+  "3º ano A":[
+    {titulo:"A Fábrica de Estrelas",desc:"Multiplicação: grupos, arrays, ×10 e problemas.",cor:"#ffce4a",slug:"fabrica-de-estrelas",link:"https://vidalprof.github.io/fabrica-de-estrelas/"}
+  ],
+  "3º ano B":[
+    {titulo:"A Fábrica de Estrelas",desc:"Multiplicação: grupos, arrays, ×10 e problemas.",cor:"#ffce4a",slug:"fabrica-de-estrelas",link:"https://vidalprof.github.io/fabrica-de-estrelas/"}
+  ],
+  "3º ano C":[
+    {titulo:"A Fábrica de Estrelas",desc:"Multiplicação: grupos, arrays, ×10 e problemas.",cor:"#ffce4a",slug:"fabrica-de-estrelas",link:"https://vidalprof.github.io/fabrica-de-estrelas/"}
+  ],
+  "3º ano D":[
+    {titulo:"A Fábrica de Estrelas",desc:"Multiplicação: grupos, arrays, ×10 e problemas.",cor:"#ffce4a",slug:"fabrica-de-estrelas",link:"https://vidalprof.github.io/fabrica-de-estrelas/"}
+  ]
+};
+
+var FIGS=[
+  {sh:"estrela",cor:"#ffd75e",nome:"estrela"},{sh:"circulo",cor:"#5ec8ff",nome:"bola"},
+  {sh:"coracao",cor:"#ff7ba0",nome:"coração"},{sh:"triangulo",cor:"#8effa6",nome:"triângulo"},
+  {sh:"quadrado",cor:"#c9a3ff",nome:"quadrado"},{sh:"losango",cor:"#ffa25e",nome:"losango"},
+  {sh:"hexagono",cor:"#5effe0",nome:"favo"},{sh:"mais",cor:"#ff5e5e",nome:"cruz"}
+];
+
+/* ================== IDENTIDADE COMPARTILHADA (mesmo esquema da atividade) ================== */
+function LS(){ return window.localStorage; }
+function alunosLe(){ try{ return JSON.parse(LS().getItem("edu_alunos")||"[]"); }catch(e){ return []; } }
+function alunosGrava(a){ try{ LS().setItem("edu_alunos",JSON.stringify(a)); }catch(e){} }
+function setAtual(id){ try{ LS().setItem("edu_atual",id); }catch(e){} }
+function getAtual(){ try{ var id=LS().getItem("edu_atual"); if(!id)return null; var a=alunosLe(),i; for(i=0;i<a.length;i++){ if(a[i].id===id)return a[i]; } }catch(e){} return null; }
+function hojeMs(){ return (new Date()).getTime(); }
+function diaStr(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
+function normNome(s){ s=(""+s).replace(/^\s+|\s+$/g,"").replace(/\s+/g," ").toLowerCase(); try{ s=s.normalize("NFD").replace(/[\u0300-\u036f]/g,""); }catch(e){} return s; }
+function bonito(s){ s=(""+s).replace(/^\s+|\s+$/g,"").replace(/\s+/g," "); return s? s.charAt(0).toUpperCase()+s.slice(1):s; }
+function novoId(){ return "a"+hojeMs().toString(36)+Math.floor(Math.random()*1e6).toString(36); }
+function faixaPin(turma){ return /^[6789]/.test((""+turma).replace(/\D/g,"").charAt(0)) || /^(6|7|8|9)/.test(turma); }
+function semeiaLista(){
+  try{ var t,i,a=alunosLe(),mapa={},mud=false;
+    for(i=0;i<a.length;i++) mapa[a[i].turma+"|"+normNome(a[i].nome)]=1;
+    for(t in LISTA_ALUNOS){ var arr=LISTA_ALUNOS[t]||[];
+      for(i=0;i<arr.length;i++){ var ch=t+"|"+normNome(arr[i]);
+        if(!mapa[ch]){ mapa[ch]=1; mud=true; a.push({id:novoId(),nome:bonito(arr[i]),turma:t,criado:diaStr(hojeMs()),oficial:true}); } } }
+    if(mud) alunosGrava(a);
+  }catch(e){}
+}
+function pareceresDe(id){ var g=[],out=[],i; try{ g=JSON.parse(LS().getItem("edu_pareceres")||"[]"); }catch(e){} for(i=0;i<g.length;i++){ if(g[i].alunoId===id) out.push(g[i]); } return out; }
+function fezSlug(id,slug){ var p=pareceresDe(id),i; for(i=0;i<p.length;i++){ if(p[i].slug===slug) return true; } return false; }
+
+/* ================== HELPERS DE TELA ================== */
+var app=document.getElementById("app");
+function el(tag,cls,html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+function limpa(){ app.innerHTML=""; }
+function card(){ var c=el("div","card"); app.appendChild(c); return c; }
+(function estrelas(){ var box=document.getElementById("stars"),i; for(i=0;i<46;i++){ var s=el("div","st");
+  s.style.left=(Math.random()*100)+"%"; s.style.top=(Math.random()*100)+"%"; var d=(2+Math.random()*3).toFixed(1);
+  s.style.width=d+"px"; s.style.height=d+"px"; s.style.webkitAnimationDelay=(-Math.random()*4)+"s"; s.style.animationDelay=(-Math.random()*4)+"s"; box.appendChild(s); } })();
+function figShape(f,big){ var d=el("div","fig"); var sh=el("div","sh "+f.sh); sh.style.background=f.cor; d.appendChild(sh); if(big){ d.style.width="92px"; d.style.height="92px"; } return d; }
+
+var ESTADO={turma:"",aluno:null};
+
+/* ================== TELAS ================== */
+function telaCapa(){
+  limpa();
+  var c=card();
+  c.appendChild(el("h2","tit","Bem-vindo à sua turma!"));
+  c.appendChild(el("div","sub","Toque para entrar e ver as suas atividades."));
+  var g=el("div","grid");
+  var b=el("button","btn pulsa","Entrar"); b.onclick=function(){ telaTurmas(); };
+  g.appendChild(b); c.appendChild(g);
+}
+function telaTurmas(){
+  limpa();
+  var c=card();
+  c.appendChild(el("h2","tit","Qual é a sua turma?"));
+  c.appendChild(el("div","sub","Toque na sua turma."));
+  var g=el("div","grid"),i;
+  for(i=0;i<TURMAS.length;i++){ (function(tm){
+    var b=el("button","chip",tm); b.onclick=function(){ ESTADO.turma=tm; telaNomes(tm); };
+    g.appendChild(b);
+  })(TURMAS[i]); }
+  c.appendChild(g);
+}
+function telaNomes(turma){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","turmas"); v.onclick=function(){ telaTurmas(); }; c.appendChild(v);
+  c.appendChild(el("h2","tit",turma));
+  var lista=alunosLe().filter(function(a){ return a.turma===turma; });
+  lista.sort(function(a,b){ return normNome(a.nome)<normNome(b.nome)?-1:1; });
+  if(!lista.length){
+    c.appendChild(el("div","vazio","Ainda não há nomes nesta turma. O professor vai cadastrar a lista da secretaria."));
+    var nb=el("button","btn2","Não estou na lista"); nb.onclick=function(){ telaNovo(turma); }; c.appendChild(nb);
+    return;
+  }
+  c.appendChild(el("div","sub","Toque no seu nome."));
+  var r=el("div","roster"),i;
+  for(i=0;i<lista.length;i++){ (function(a){
+    var b=el("button","aluno",a.nome); b.onclick=function(){ ESTADO.aluno=a; telaSegredo(a,false); };
+    r.appendChild(b);
+  })(lista[i]); }
+  c.appendChild(r);
+  var nb=el("button","mini","Meu nome não está aqui"); nb.onclick=function(){ telaNovo(turma); }; c.appendChild(nb);
+}
+function telaNovo(turma){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaNomes(turma); }; c.appendChild(v);
+  c.appendChild(el("h2","tit","Novo aluno — "+turma));
+  c.appendChild(el("div","sub","Escreva o seu nome (só a 1ª vez)."));
+  var inp=document.createElement("input"); inp.type="text"; inp.maxLength=24; inp.setAttribute("autocomplete","off");
+  inp.style.cssText="display:block;width:88%;margin:8px auto;padding:12px;border-radius:12px;border:2px solid rgba(255,225,150,.6);background:#fff;color:#20264a;font-family:inherit;font-weight:800;font-size:18px;text-align:center;-webkit-user-select:text;user-select:text";
+  c.appendChild(inp);
+  var msg=el("div","msg",""); c.appendChild(msg);
+  var g=el("div","grid");
+  var ok=el("button","btn pulsa","Pronto");
+  ok.onclick=function(){
+    var nome=bonito(inp.value||""); if(nome.length<2){ msg.innerHTML="Escreva o seu nome."; return; }
+    // anti-duplicata simples
+    var a=alunosLe(),i; for(i=0;i<a.length;i++){ if(a[i].turma===turma && normNome(a[i].nome)===normNome(nome)){ ESTADO.aluno=a[i]; telaSegredo(a[i],false); return; } }
+    var novo={id:novoId(),nome:nome,turma:turma,criado:diaStr(hojeMs())}; a.push(novo); alunosGrava(a);
+    ESTADO.aluno=novo; telaSegredo(novo,false);
+  };
+  g.appendChild(ok); c.appendChild(g);
+}
+/* SEGREDO: figura (até 5º) ou PIN (6º-9º). 1ª vez cria; depois confere. */
+function telaSegredo(a,forcarCriar){
+  var pin=faixaPin(a.turma);
+  var tem=a.segredo;
+  if(pin) telaPin(a, !tem||forcarCriar);
+  else telaFig(a, !tem||forcarCriar);
+}
+function salvaSegredo(a,seg){
+  a.segredo=seg; var lista=alunosLe(),i; for(i=0;i<lista.length;i++){ if(lista[i].id===a.id){ lista[i].segredo=seg; } } alunosGrava(lista);
+}
+function telaFig(a,criar){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaNomes(a.turma); }; c.appendChild(v);
+  c.appendChild(el("div","quem","Oi, <b>"+a.nome+"</b>!"));
+  c.appendChild(el("h2","tit",criar?"Escolha a sua figura secreta":"Qual é a sua figura secreta?"));
+  c.appendChild(el("div","sub",criar?"Guarde bem! Você vai tocar nela toda vez que entrar. Não conte pros colegas.":"Toque na figura que só você sabe."));
+  var ordem=FIGS.map(function(f,i){ return i; });
+  if(!criar){ for(var z=ordem.length-1;z>0;z--){ var j=Math.floor(Math.random()*(z+1)); var t=ordem[z]; ordem[z]=ordem[j]; ordem[j]=t; } }
+  var g=el("div","figs"),i,erros=0;
+  var msg=el("div","msg","");
+  for(i=0;i<ordem.length;i++){ (function(idx){
+    var f=FIGS[idx], d=figShape(f);
+    d.onclick=function(){
+      if(criar){ salvaSegredo(a,{tipo:"fig",val:idx}); entrar(a); }
+      else {
+        if(a.segredo && a.segredo.val===idx){ entrar(a); }
+        else { erros++; d.style.opacity=".3";
+          if(erros>=2){ msg.innerHTML="Peça ajuda ao professor."; }
+          else msg.innerHTML="Não é essa… tente lembrar."; }
+      }
+    };
+    g.appendChild(d);
+  })(ordem[i]); }
+  c.appendChild(g); c.appendChild(msg);
+}
+function telaPin(a,criar){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaNomes(a.turma); }; c.appendChild(v);
+  c.appendChild(el("div","quem","Olá, <b>"+a.nome+"</b>"));
+  c.appendChild(el("h2","tit",criar?"Crie a sua senha secreta":"Digite a sua senha"));
+  c.appendChild(el("div","sub",criar?"4 números que só você sabe.":"4 números."));
+  var disp=el("div","ndisp"); disp.innerHTML="&nbsp;"; c.appendChild(disp);
+  var msg=el("div","msg",""); c.appendChild(msg);
+  var estado={buf:"",esperando:"",erros:0};
+  function mostra(){ disp.innerHTML=estado.buf.length?estado.buf.replace(/./g,"•"):"&nbsp;"; }
+  var linhas=[["1","2","3"],["4","5","6"],["7","8","9"],["apaga","0","ok"]],r,cc;
+  for(r=0;r<linhas.length;r++){ var row=el("div","nrow");
+    for(cc=0;cc<linhas[r].length;cc++){ (function(k){
+      var b;
+      if(k==="ok"){ b=el("button","nkey acao","OK"); b.onclick=function(){ conf(); }; }
+      else if(k==="apaga"){ b=el("button","nkey acao","&#9003;"); b.onclick=function(){ estado.buf=estado.buf.slice(0,-1); mostra(); }; }
+      else { b=el("button","nkey",k); b.onclick=function(){ if(estado.buf.length<4){ estado.buf+=k; mostra(); } }; }
+      row.appendChild(b);
+    })(linhas[r][cc]); }
+    c.appendChild(row);
+  }
+  function conf(){
+    if(estado.buf.length<4){ msg.innerHTML="Digite 4 números."; return; }
+    if(criar){
+      if(!estado.esperando){ estado.esperando=estado.buf; estado.buf=""; mostra(); msg.style.color="#c3c9ee"; msg.innerHTML="Digite de novo para confirmar."; return; }
+      if(estado.buf===estado.esperando){ salvaSegredo(a,{tipo:"pin",val:estado.buf}); entrar(a); }
+      else { estado.esperando=""; estado.buf=""; mostra(); msg.style.color="#ffd0d0"; msg.innerHTML="Não bateu — comece de novo."; }
+    } else {
+      if(a.segredo && a.segredo.val===estado.buf){ entrar(a); }
+      else { estado.erros++; estado.buf=""; mostra(); msg.innerHTML=estado.erros>=2?"Peça ajuda ao professor.":"Senha errada."; }
+    }
+  }
+}
+function entrar(a){ setAtual(a.id); ESTADO.aluno=a; telaAtividades(a); }
+
+function telaAtividades(a){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","sair"); v.onclick=function(){ setAtual(""); telaTurmas(); }; c.appendChild(v);
+  c.appendChild(el("div","quem","Olá, <b>"+a.nome+"</b> &#183; "+a.turma));
+  c.appendChild(el("h2","tit","Suas atividades"));
+  var lista=ATIVIDADES[a.turma]||[];
+  if(!lista.length){ c.appendChild(el("div","vazio","As atividades desta turma aparecem aqui assim que o professor publicá-las.")); return; }
+  c.appendChild(el("div","sub","Toque numa atividade para começar."));
+  var i;
+  for(i=0;i<lista.length;i++){ (function(at,ord){
+    var link=el("a","ativ"); link.href="javascript:void(0)";
+    var barra=el("div","barra"); barra.style.background=at.cor||"#ffce4a"; link.appendChild(barra);
+    link.appendChild(el("div","at",(ord+1)+". "+at.titulo));
+    link.appendChild(el("div","ad",at.desc||""));
+    if(fezSlug(a.id,at.slug)) link.appendChild(el("div","selo","✔ feita"));
+    else link.appendChild(el("div","go","JOGAR"));
+    link.onclick=function(){ setAtual(a.id); /* garante identidade */ window.location.href=at.link; };
+    app.appendChild(link);
+  })(lista[i],i); }
+}
+
+/* ================== PROFESSOR (senha; progresso da turma) ================== */
+document.getElementById("proflink").onclick=function(){ telaProfPin(); };
+function telaProfPin(){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","voltar"); v.onclick=function(){ telaCapa(); }; c.appendChild(v);
+  var tem=""; try{ tem=LS().getItem("edu_painel_pin")||""; }catch(e){}
+  c.appendChild(el("h2","tit",tem?"Painel do professor":"Crie a senha do professor"));
+  c.appendChild(el("div","sub",tem?"Digite a sua senha.":"4 números — o aluno não entra aqui."));
+  var disp=el("div","ndisp"); disp.innerHTML="&nbsp;"; c.appendChild(disp);
+  var msg=el("div","msg",""); c.appendChild(msg);
+  var st={buf:"",esp:""};
+  function mostra(){ disp.innerHTML=st.buf.length?st.buf.replace(/./g,"•"):"&nbsp;"; }
+  var linhas=[["1","2","3"],["4","5","6"],["7","8","9"],["apaga","0","ok"]],r,cc;
+  for(r=0;r<linhas.length;r++){ var row=el("div","nrow");
+    for(cc=0;cc<linhas[r].length;cc++){ (function(k){
+      var b;
+      if(k==="ok") b=el("button","nkey acao","OK"),b.onclick=function(){ conf(); };
+      else if(k==="apaga") b=el("button","nkey acao","&#9003;"),b.onclick=function(){ st.buf=st.buf.slice(0,-1); mostra(); };
+      else b=el("button","nkey",k),b.onclick=function(){ if(st.buf.length<4){ st.buf+=k; mostra(); } };
+      row.appendChild(b);
+    })(linhas[r][cc]); }
+    c.appendChild(row);
+  }
+  function conf(){
+    if(st.buf.length<4){ msg.innerHTML="Digite 4 números."; return; }
+    if(tem){ if(st.buf===tem) telaProf(); else { st.buf=""; mostra(); msg.innerHTML="Senha errada."; } return; }
+    if(!st.esp){ st.esp=st.buf; st.buf=""; mostra(); msg.style.color="#c3c9ee"; msg.innerHTML="Digite de novo."; return; }
+    if(st.buf===st.esp){ try{ LS().setItem("edu_painel_pin",st.buf); }catch(e){} telaProf(); }
+    else { st.esp=""; st.buf=""; mostra(); msg.style.color="#ffd0d0"; msg.innerHTML="Não bateu."; }
+  }
+}
+function telaProf(){
+  limpa();
+  var c=card();
+  var v=el("button","voltar","sair"); v.onclick=function(){ telaCapa(); }; c.appendChild(v);
+  c.appendChild(el("h2","tit","Progresso das turmas"));
+  c.appendChild(el("div","sub","Dados deste aparelho. O painel único da turma (Firebase) entra depois."));
+  var a=alunosLe();
+  if(!a.length){ c.appendChild(el("div","vazio","Nenhum aluno registrado ainda.")); return; }
+  a.sort(function(x,y){ return (x.turma+x.nome)<(y.turma+y.nome)?-1:1; });
+  var box=el("div","plist"),i;
+  for(i=0;i<a.length;i++){ var p=pareceresDe(a[i].id);
+    var seg=a[i].segredo?(a[i].segredo.tipo==="pin"?"PIN":"figura"):"—";
+    var row=el("div","prow","<b>"+a[i].nome+"</b> <small>&#183; "+a[i].turma+" &#183; "+p.length+" atividade(s) &#183; trava: "+seg+"</small>");
+    (function(al){ var reset=el("button","mini","resetar trava de "+al.nome); reset.style.margin="4px 0 0";
+      reset.onclick=function(){ if(reset.innerHTML.indexOf("Confirmar")<0){ reset.innerHTML="Confirmar reset da trava"; return; }
+        var l=alunosLe(),z; for(z=0;z<l.length;z++){ if(l[z].id===al.id){ delete l[z].segredo; } } alunosGrava(l); telaProf(); };
+      row.appendChild(reset);
+    })(a[i]);
+    box.appendChild(row);
+  }
+  c.appendChild(box);
+  var fab=el("button","mini","Abrir avaliação completa (Fábrica de Estrelas)"); fab.style.marginTop="14px";
+  fab.onclick=function(){ window.location.href="https://vidalprof.github.io/fabrica-de-estrelas/?painel"; };
+  c.appendChild(fab);
+}
+
+/* ================== BOOT ================== */
+semeiaLista();
+(function(){
+  var qs=window.location.search, m=qs.match(/[?&]t=([^&]+)/);
+  if(m){ var td=decodeURIComponent(m[1]); var achou=""; var i; for(i=0;i<TURMAS.length;i++){ if(normNome(TURMAS[i])===normNome(td)||TURMAS[i]===td) achou=TURMAS[i]; }
+    if(achou){ ESTADO.turma=achou; telaNomes(achou); return; } }
+  telaCapa();
+})();
+})();
+</script>
+</body>
+</html>

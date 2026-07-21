@@ -1168,8 +1168,9 @@ function telaCapa(){
   c.appendChild(el("div","sub","Multiplicação &#183; 3º ano"));
   var b=el("button","btn pulsa","Começar a aventura");
   b.onclick=function(){ telaCheia();
-    if(IDENTIDADE_ATIVA){ telaQuem(); }                                  // portal: pergunta quem é
-    else { try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); }   // link de teste: cai direto na aventura
+    if(alunoAtual()){ telaAbertura(); }                                  // veio do PORTAL já identificado -> herda o aluno
+    else if(IDENTIDADE_ATIVA){ telaQuem(); }                             // atividade solta com identidade ligada: pergunta quem é
+    else { try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); }   // link de teste solto: cai direto na aventura
   };
   c.appendChild(b);
   // autoria persistente: o que a criança criou fica e pode ser revisitado com orgulho
