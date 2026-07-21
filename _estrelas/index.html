@@ -323,6 +323,15 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 
 /* ===== MAPA claro estilo app (estrutura Duolingo, arte NOSSA) ===== */
 .mapa.claro{background:#eef2fa}
+.mapa.claro .ceuclaro{position:absolute;top:0;left:0;right:0;bottom:0;z-index:0;overflow:hidden;pointer-events:none}
+.nuvem{position:absolute;
+  background:radial-gradient(closest-side,rgba(255,255,255,.96),rgba(255,255,255,.55) 55%,rgba(255,255,255,0));
+  -webkit-animation:drift 22s ease-in-out infinite alternate;animation:drift 22s ease-in-out infinite alternate}
+@-webkit-keyframes drift{from{-webkit-transform:translateX(-40px)}to{-webkit-transform:translateX(40px)}}
+@keyframes drift{from{transform:translateX(-40px)}to{transform:translateX(40px)}}
+.mapa.claro .nowrap:not(.atual-wrap) .disco{-webkit-animation:discBob 3.4s ease-in-out infinite;animation:discBob 3.4s ease-in-out infinite}
+@-webkit-keyframes discBob{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-4px)}}
+@keyframes discBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
 .mapa.claro .no{position:relative;width:74px;height:74px}
 .mapa.claro .no .disco{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:50%;
   background:#ffc23c;box-shadow:0 7px 0 #d98e12,0 11px 16px rgba(30,40,80,.18)}
@@ -342,16 +351,22 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   white-space:nowrap;font-size:13px;font-weight:900;letter-spacing:.6px;color:#e0930c;background:#fff;padding:8px 20px;border-radius:16px;
   border:2px solid #efe1c2;box-shadow:0 4px 0 #e7dcc2;-webkit-animation:comBounce 1s ease-in-out infinite;animation:comBounce 1s ease-in-out infinite}
 .mapa.claro .rotulo:before{content:"";position:absolute;bottom:100%;left:50%;-webkit-transform:translateX(-50%);transform:translateX(-50%);border:7px solid transparent;border-bottom-color:#fff}
-.hud.claro{background:#fff;box-shadow:0 2px 10px rgba(30,40,80,.14);border-bottom-left-radius:0;border-bottom-right-radius:0;padding:9px 14px 10px}
+.hud.claro{background:#fff;box-shadow:0 2px 10px rgba(30,40,80,.12);border-bottom-left-radius:0;border-bottom-right-radius:0;
+  padding:9px 14px 10px;padding-top:calc(9px + env(safe-area-inset-top,0px))}
 .hud.claro .hpar{background:transparent;padding:3px 8px}
 .hud.claro .hpar b{color:#4b4b57;font-size:17px}
 .hico.coroa{width:20px;height:15px;background:#ffc23c;
   -webkit-clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%);clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%)}
-.mapa.claro .unidade{position:absolute;top:60px;left:12px;right:12px;z-index:6;text-align:left;
-  background:-webkit-linear-gradient(top,#ffcb4c,#ffb324);background:linear-gradient(to bottom,#ffcb4c,#ffb324);
-  color:#5a3b00;padding:10px 16px;border-radius:16px;box-shadow:0 4px 0 #d98e12}
-.mapa.claro .usec{font-size:11px;font-weight:800;letter-spacing:.9px;opacity:.85}
-.mapa.claro .utit{font-size:17px;font-weight:900;line-height:1.1;margin-top:1px}
+.mapa.claro .unidade{position:absolute;top:58px;left:12px;right:12px;z-index:6;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;
+  background:-webkit-linear-gradient(top,#ffd257,#ffb52a);background:linear-gradient(to bottom,#ffd257,#ffb52a);
+  color:#5a3b00;padding:11px 16px;border-radius:18px;box-shadow:0 5px 0 #d98e12,0 8px 16px rgba(210,140,20,.28)}
+.mapa.claro .utxt{text-align:left}
+.mapa.claro .usec{font-size:11px;font-weight:800;letter-spacing:1px;opacity:.8}
+.mapa.claro .utit{font-size:17px;font-weight:900;line-height:1.1;margin-top:2px;color:#4a2f00}
+.mapa.claro .ubook{position:relative;width:34px;height:34px;border-radius:11px;background:rgba(255,255,255,.35);-webkit-box-flex:0;-webkit-flex:none;flex:none}
+.mapa.claro .ubook:before{content:"";position:absolute;left:9px;right:9px;top:10px;height:2.5px;border-radius:2px;background:#5a3b00;
+  box-shadow:0 5px 0 #5a3b00,0 10px 0 #5a3b00}
 
 /* pulo da Fagulha ao comemorar (mola/overshoot) */
 .fag.pulo{-webkit-animation:puloFag .6s cubic-bezier(.34,1.56,.64,1);animation:puloFag .6s cubic-bezier(.34,1.56,.64,1)}
@@ -603,7 +618,7 @@ function telaCheia(){
 }
 
 /* ================= TELAS ================= */
-function tema(claro){ document.body.style.background = claro ? "#eef2fa" : ""; }
+function tema(claro){ document.body.style.background = claro ? "linear-gradient(to bottom,#d7e3f8,#eef2fa 60%,#dfe8f7)" : ""; }
 function limpa(){ fagAtual=null; app.innerHTML=""; tema(false); }
 
 function telaCapa(){
@@ -687,6 +702,12 @@ function telaMapa(){
   function ytop(i){ return stripH-(BOTPAD+i*STEP); }
   function camY(idx){ var off=ytop(idx)-VIS*0.56; return Math.max(0,Math.min(stripH-VIS,off)); }
   var t=el("div","tela mapa claro");
+  var ceuc=el("div","ceuclaro");
+  var cfg=[[8,16,160,72,20],[60,40,130,60,26],[26,64,180,82,32],[68,78,120,56,24]], cn;
+  for(cn=0;cn<cfg.length;cn++){ var nv=el("div","nuvem"); nv.style.left=cfg[cn][0]+"%"; nv.style.top=cfg[cn][1]+"%";
+    nv.style.width=cfg[cn][2]+"px"; nv.style.height=cfg[cn][3]+"px";
+    nv.style.webkitAnimationDuration=cfg[cn][4]+"s"; nv.style.animationDuration=cfg[cn][4]+"s"; ceuc.appendChild(nv); }
+  t.appendChild(ceuc);
   var strip=el("div","trilhaScroll"); strip.style.height=stripH+"px";
   var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="26px"; strip.appendChild(fv);
   var i, pts="";
@@ -698,7 +719,7 @@ function telaMapa(){
     var estado=(i<progresso)?"feito":(i===progresso?"atual":"futuro");
     var w=el("div","nowrap "+STOPS[i].tipo+(estado==="atual"?" atual-wrap":"")); w.style.left=nodeX(i)+"%"; w.style.top=ytop(i)+"px";
     var no=el("div","no "+estado);
-    var disco=el("div","disco");
+    var disco=el("div","disco"); disco.style.webkitAnimationDelay=(i*0.4)+"s"; disco.style.animationDelay=(i*0.4)+"s";
     var ic=el("img","nicon"); ic.src="img/estrela_grande.png"; disco.appendChild(ic);
     if(estado==="atual"){ disco.appendChild(el("div","farol")); }
     no.appendChild(disco);
@@ -722,7 +743,7 @@ function telaMapa(){
   t.appendChild(hud);
   var uni = progresso<=3 ? "Grupos e Constelações" : (progresso<=7 ? "Somar, ×10 e Problemas" : "Você é o Mestre");
   var unum = progresso<=3 ? 1 : (progresso<=7 ? 2 : 3);
-  var ub=el("div","unidade"); ub.innerHTML="<div class='usec'>SEÇÃO 1 · UNIDADE "+unum+"</div><div class='utit'>"+uni+"</div>";
+  var ub=el("div","unidade"); ub.innerHTML="<div class='utxt'><div class='usec'>SEÇÃO 1 · UNIDADE "+unum+"</div><div class='utit'>"+uni+"</div></div><div class='ubook'></div>";
   t.appendChild(ub);
   app.appendChild(t);
 }
