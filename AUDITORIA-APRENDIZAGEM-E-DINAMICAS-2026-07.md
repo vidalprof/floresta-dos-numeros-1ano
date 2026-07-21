@@ -167,6 +167,19 @@ mostrava **gabarito** (verde "certo" / "quase") e era **"escolher a alternativa 
   **monta a conta / arrasta os grupos / constrói o array** e o total nasce do que ela fez (o mundo confere,
   sem X). É redesenho de mecânica (maior), a fazer com QA.
 
+## ✅ VIRA-TAPETE ENTREGUE (2026-07) + lição de operação
+- **P3 agora é gesto da criança:** depois de contar 3×4, ela SEGURA E ARRASTA a constelação (touch+mouse);
+  o array segue o dedo e ENCAIXA nos 90° (limiar 50°); convite falado `p3_gira` + grade balançando;
+  `transform-origin` no centro da grade (giro no próprio eixo); fallback: botão "Virar de lado" volta em 14s
+  se o arrasto não sair. Evidência registra `gesto` ("girou com o dedo"/"usou o botão"). Base: cognição
+  incorporada — o gesto DELA é o argumento da comutatividade.
+- **⚠️ LIÇÃO DE OPERAÇÃO (2 sessões abertas):** o ambiente reiniciou e PERDEU edições não commitadas (tive
+  que refazer o Vira-Tapete). Regra: **commitar CEDO e sempre** (edição grande = commit imediato), e evitar
+  duas sessões simultâneas no mesmo branch.
+- **Fila do item 2 (variedade de gestos):** falta **Pulos do Canguru** (reta numérica, saltar de 4 em 4) e
+  **Fábrica de Cartazes** (criar problema p/ colega, cai na galeria). Depois: item 3 (surpresa/exagero),
+  item 4 (narrar itens do Aquecimento), itens 5-6 (QA completo + miudezas).
+
 ## FONTES (rodada 2026-07)
 CPA/Bruner (EdShed; ERIC EJ1265106) · Spacing+Retrieval em matemática (Educ. Psych. Review 2025,
 link.springer.com/article/10.1007/s10648-025-10035-1) · Retrieval practice (Third Space) · Falha produtiva
