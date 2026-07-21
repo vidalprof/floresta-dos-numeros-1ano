@@ -398,6 +398,29 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 #ouvirbtn.tocando{-webkit-animation:pulsa 1s ease-in-out infinite;animation:pulsa 1s ease-in-out infinite}
 #ouvirbtn:active{-webkit-transform:scale(.94);transform:scale(.94)}
 
+/* botão DICA (ajuda graduada, sob demanda) — canto inferior esquerdo, ao lado do alto-falante */
+.ajudabtn{position:absolute;left:64px;bottom:3%;z-index:9;border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:13px;color:#5a3b00;
+  background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);
+  padding:9px 14px 9px 30px;border-radius:20px;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+.ajudabtn .lamp{position:absolute;left:12px;top:50%;width:11px;height:11px;margin-top:-8px;border-radius:50% 50% 45% 45%;background:#fff7d4;box-shadow:0 0 6px 1px rgba(255,240,180,.95)}
+.ajudabtn .lamp:after{content:"";position:absolute;left:3px;top:11px;width:5px;height:3px;background:#7a5200;border-radius:0 0 2px 2px}
+.ajudabtn.usado{opacity:.5}
+.ajudabtn:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
+
+/* card de AUTOEXPLICAÇÃO (a Fagulha pergunta "por quê?") */
+.autoexp{position:absolute;left:12px;right:12px;top:20%;z-index:8;background:rgba(16,22,54,.95);border:1px solid rgba(255,225,150,.45);
+  border-radius:20px;padding:15px 16px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.55);
+  -webkit-animation:sobeSheet .4s ease both;animation:sobeSheet .4s ease both}
+.autoexp .aeperg{font-size:15px;color:#ffe6a3;font-weight:800;line-height:1.32;margin-bottom:6px}
+.autoexp .aeperg b{color:#fff}
+.aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#20264a;
+  background:#eef1ff;padding:12px 12px;border-radius:14px;box-shadow:0 3px 0 #c4cbe8;line-height:1.2}
+.aebtn.certo{background:-webkit-linear-gradient(top,#c6f6c6,#8fe08f);background:linear-gradient(to bottom,#c6f6c6,#8fe08f)}
+.aebtn.quase{background:-webkit-linear-gradient(top,#ffe6a6,#ffd36a);background:linear-gradient(to bottom,#ffe6a6,#ffd36a)}
+/* "Praticar de novo" (secundário) abaixo do botão principal */
+.repbtn{display:block;margin:9px auto 0;background:rgba(255,255,255,.14);color:#e9ecff;border:1px solid rgba(255,255,255,.3);
+  box-shadow:none;font-size:14px;padding:9px 18px}
+
 /* nó ATUAL: anel-farol pulsante — a versão dourada da constelação está em .mapa.constel .atual-wrap .farol */
 @-webkit-keyframes farolPulse{0%{-webkit-transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{-webkit-transform:translate(-50%,-50%) scale(1.9);opacity:0}}
 @keyframes farolPulse{0%{transform:translate(-50%,-50%) scale(.85);opacity:.85}100%{transform:translate(-50%,-50%) scale(1.9);opacity:0}}
@@ -535,6 +558,12 @@ function iniciaBoca(){
   }, 95);
 }
 function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
+/* toca uma fala e SÓ ENTÃO segue (no fim do áudio) — com rede de segurança
+   (se o áudio faltar/travar, segue mesmo assim depois de maxMs; nunca prende o fluxo) */
+function depoisDaFala(id, maxMs, cb){
+  var feito=false; function go(){ if(feito)return; feito=true; cb(); }
+  falar(id, go); setTimeout(go, maxMs||9000);
+}
 
 /* ---- LOOP único (só boca) ---- */
 var fagAtual=null;
@@ -609,7 +638,7 @@ function revela(tela,r1,r2,r3){
   rev.innerHTML="<div class='r1'>"+r1+"</div><div class='r2'>"+r2+"</div><div class='r3'>"+r3+"</div>";
   tela.appendChild(rev); return rev;
 }
-function botaoProxima(tela,rot){
+function botaoProxima(tela,rot,dl){
   setTimeout(function(){
     var pb=el("div","p1barra"); pb.style.bottom="3.5%";
     if(sessao.ultimo>0){
@@ -620,8 +649,50 @@ function botaoProxima(tela,rot){
       sessao.ultimo=0;
     }
     var nx=el("button","btn pulsa",rot||"Próxima parada"); nx.onclick=function(){ avanca(); };
-    pb.appendChild(nx); tela.appendChild(pb);
-  },1500);
+    pb.appendChild(nx);
+    // autonomia (SDT): "praticar de novo" refaz esta mesma parada, no ritmo da criança
+    var rep=el("button","btn2 repbtn","Praticar de novo"); rep.onclick=function(){ var f=(STOPS[progresso]&&STOPS[progresso].fn); if(f){ f(); } };
+    pb.appendChild(rep);
+    tela.appendChild(pb);
+  }, (dl==null?1500:dl));
+}
+/* DICA GRADUADA (sob demanda, 3 níveis): pergunta -> aponta -> exemplo. Nunca dá a resposta de graça. */
+function ajudaBtn(tela, niveis, mostraTxt){
+  var nivel=0;
+  var btn=el("button","ajudabtn"); btn.setAttribute("aria-label","Pedir uma dica"); btn.title="Dica";
+  btn.innerHTML="<span class='lamp'></span>Dica";
+  btn.onclick=function(){
+    if(nivel>=niveis.length) return;
+    var n=niveis[nivel]; nivel++;
+    if(mostraTxt && n.txt) mostraTxt(n.txt);
+    if(n.fala) falar(n.fala);
+    if(n.acao){ try{ n.acao(); }catch(e){} }
+    if(nivel>=niveis.length) btn.className="ajudabtn usado";
+  };
+  tela.appendChild(btn);
+  return btn;
+}
+/* AUTOEXPLICAÇÃO: a Fagulha PERGUNTA "por que deu certo?"; a criança escolhe a razão.
+   Registra a razão como evidência p/ o professor; qualquer escolha recebe resposta gentil. */
+function autoexplica(tela, cfg, cb){
+  var k, esconder=["caixas","pmeio","somaMeio"];  // limpa o meio; a revela (conceito) fica de referência
+  for(k=0;k<esconder.length;k++){ var e0=tela.getElementsByClassName(esconder[k])[0]; if(e0)e0.style.display="none"; }
+  var box=el("div","autoexp");
+  box.innerHTML="<div class='aeperg'>"+cfg.pergunta+"</div>";
+  var respondido=false, i;
+  for(i=0;i<cfg.opcoes.length;i++){ (function(o){
+    var b=el("button","aebtn",o.txt);
+    b.onclick=function(){
+      if(respondido)return; respondido=true;
+      b.className="aebtn "+(o.ok?"certo":"quase");
+      salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
+      depoisDaFala(o.ok?"se_ok":"se_quase", 6000, function(){ if(cb)cb(); });
+    };
+    box.appendChild(b);
+  })(cfg.opcoes[i]); }
+  tela.appendChild(box);
+  if(cfg.falaQ) falar(cfg.falaQ);
+  return box;
 }
 function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem("estrelas_evid")||"[]"); f.push(ev); localStorage.setItem("estrelas_evid",JSON.stringify(f)); }catch(e){} }
 function fabViva(){
@@ -799,6 +870,11 @@ function telaParada1(){
   barra.appendChild(el("div","p1dica",""));
   var b=el("button","btn2","Recomeçar"); b.onclick=function(){ if(P1.concluida)return; P1.cx=[0,0,0]; pintaCaixas(); }; barra.appendChild(b);
   t.appendChild(barra);
+  ajudaBtn(t, [
+    {fala:"aj_p1_1", txt:"Quantas estrelas a fábrica pediu em <b>cada</b> caixa?"},
+    {fala:"aj_p1_2", txt:"São <b>4</b> em cada. Tenta encher uma caixa com quatro."},
+    {fala:"aj_p1_3", txt:"Olha: 1, 2, 3, 4. Agora faça igual nas outras.", acao:function(){ if(!P1.concluida){ P1.cx[0]=4; pintaCaixas(); } }}
+  ], function(txt){ var d=t.getElementsByClassName("p1dica")[0]; if(d)d.innerHTML=txt; });
   var fw=el("div","fagfala"); fw.appendChild(fagViva()); t.appendChild(fw);
   app.appendChild(t);
   pintaCaixas();
@@ -848,11 +924,21 @@ function sucessoP1(){
   var cxs=tela.getElementsByClassName("caixas")[0]; if(cxs)cxs.style.top="20%";
   var pb=tela.getElementsByClassName("p1barra")[0]; if(pb)pb.style.display="none";
   revela(tela,"4 + 4 + 4","3 &#215; 4 = 12","Isso é <b>multiplicar</b>! 3 grupos de 4 dão 12 estrelas. Você acendeu o céu!");
-  botaoProxima(tela);
+  var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   var tempo=Math.round(((new Date()).getTime()-P1.t0)/1000);
   salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,tempo_s:tempo,acertou:true,semErro:(P1.toques===P1.n*P1.m)});
   premiar(P1.toques===P1.n*P1.m?3:2);
-  setTimeout(function(){ falar("e_p1"); },1400);   // deixa a contagem "Quatro! Caixa cheia!" terminar antes da explicação
+  // contagem termina -> explicação -> a Fagulha pergunta "por quê?" -> botões (áudio encadeado, sem sobrepor)
+  setTimeout(function(){
+    depoisDaFala("e_p1", 9000, function(){
+      autoexplica(tela, {
+        falaQ:"se_p1_q",
+        pergunta:"Por que encher caixas <b>iguais</b> virou uma conta de <b>vezes</b>?",
+        opcoes:[{txt:"Porque os grupos são todos <b>iguais</b>",ok:true},{txt:"Porque contei uma por uma",ok:false},{txt:"Porque eu adivinhei",ok:false}],
+        idEvid:"p1"
+      }, function(){ botaoProxima(tela,null,200); });
+    });
+  },1400);
 }
 
 /* ==== PARADAS/TELAS seguintes (preenchidas em blocos) ==== */
@@ -1308,6 +1394,11 @@ function telaSoma(){
   opts.appendChild(opcoesRow([{txt:"4 &#215; 3",val:"ok"},{txt:"4 + 3",val:"a"},{txt:"3 &#215; 3",val:"b"},{txt:"4 &#215; 4",val:"c"}],"ok",t,function(){ sucessoSoma(); },"Conte quantas <b>vezes</b> o 3 aparece: são 4 grupos de 3.",SOMA));
   opts.appendChild(el("div","pdica",""));
   t.appendChild(opts);
+  ajudaBtn(t, [
+    {fala:"aj_soma_1", txt:"Conte quantas <b>vezes</b> o 3 aparece."},
+    {fala:"aj_soma_2", txt:"São <b>4 grupos de 3</b> — quatro vezes o três."},
+    {fala:"aj_soma_3", txt:"“quatro vezes o três” usa o sinal de <b>vezes</b> (&#215;), não o de mais."}
+  ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
 }
@@ -1318,10 +1409,19 @@ function sucessoSoma(){
   var oo=tela.getElementsByClassName("opts")[0]; if(oo)oo.style.display="none";
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   revela(tela,"3 + 3 + 3 + 3","4 &#215; 3 = 12","Somar o mesmo número vira <b>multiplicação</b>! 4 vezes o 3 é 4 &#215; 3.");
-  botaoProxima(tela);
+  var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   salvaEvid({parada:"soma",habilidade:"EF03MA07",conceito:"adição de parcelas iguais",tent:SOMA.tent,acertou:true,semErro:(SOMA.tent===0)});
   premiar(SOMA.tent===0?3:2);
-  setTimeout(function(){ falar("e_soma"); },800);
+  setTimeout(function(){
+    depoisDaFala("e_soma", 9000, function(){
+      autoexplica(tela, {
+        falaQ:"se_soma_q",
+        pergunta:"Por que <b>3+3+3+3</b> é o mesmo que <b>4 &#215; 3</b>?",
+        opcoes:[{txt:"Porque o <b>3</b> se repete <b>4 vezes</b>",ok:true},{txt:"Porque 3 mais 4 dá 7",ok:false},{txt:"Porque sim",ok:false}],
+        idEvid:"soma"
+      }, function(){ botaoProxima(tela,null,200); });
+    });
+  },800);
 }
 
 /* ===== PARADA — O Problema da Fábrica (resolver problema em contexto) ===== */
