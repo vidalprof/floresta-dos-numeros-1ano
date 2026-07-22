@@ -41,6 +41,13 @@
 >>   branco/preto); (b) **lip-flap NÍTIDO** (boca aberta/fechada com histerese — acaba o "fantasma" de boca
 >>   meio-aberta que parecia bug); (c) **`fala`/`pisca` = base + só a boca/olhos** (senão o corpo treme ao
 >>   falar); (d) **TODA pose de gesto volta à neutra** (comemora/aponta) — senão narra "com o braço no ar".
+>> - **LIP-SYNC POR VISEMAS — IMPLEMENTADO (2026-07-22):** a Nara agora fala com **4 bocas** (fechada/
+>>   meio/aberta/'O') sincronizadas pela timeline do **Rhubarb** (`gerar-audio.yml` com `visemas=sim`
+>>   → `_clima/visemas.json`; app faz `fetch` e troca a boca no tempo). Fallback p/ flap RMS. É o
+>>   **padrão-ouro reutilizável** — ver `MOLDE-ATIVIDADE-PREMIUM.md §4½` item 7.
+>> - **Progresso do Planeta Vivo (arco):** já no novo padrão jogo/simulação — Parada 1 (latitude),
+>>   LEI clima→bioma, Altitude, **Climograma**. Faltam: mapa em camadas, chuva orográfica, cutscene,
+>>   geo-mistério; subir Tempo×Clima/Autoria/Desafio; QA final + auditoria ~55 min.
 >> - **Duas pesquisas profundas rodando (2026-07-22):** (1) mecânicas interativas de GEOGRAFIA p/ 6º ano;
 >>   (2) ARSENAL TÉCNICO (animação/lip-sync 2D, simulação leve, imagens IA consistentes, voz, desempenho).
 >>   Quando chegarem → alimentar `CATALOGO-DINAMICAS-INTERATIVAS.md` e virar plano de mecânicas por beat.

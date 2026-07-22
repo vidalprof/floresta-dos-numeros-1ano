@@ -122,6 +122,16 @@ A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de E
    Regra: (a) toda pose de gesto tem **timer de retorno** à `base` (~1,4s), como o `pensa` já faz; e
    (b) **ao COMEÇAR a narrar** (`falar()`), se estiver num gesto, volta à `base` ANTES de falar — a
    narração nunca começa com a mão levantada. Item fixo do QA do mascote.
+7. **LIP-SYNC POR VISEMAS (padrão-ouro, JÁ IMPLEMENTADO na Nara — usar nas próximas):** em vez de 2
+   estados (aberto/fechado por RMS), usar **4–6 formas de boca** que formam as sílabas. Pipeline
+   (tudo no BUILD): **(a)** gerar as bocas por IA editando a base (`_gerar_imagens.json`: "muda SÓ a
+   boca" — meio-aberta, bem aberta, 'O'…) e compor **só a elipse da boca** na base (como item 3);
+   **(b)** no `gerar-audio.yml` passar **`visemas=sim`** (ou `so_visemas=sim` p/ áudio já existente) →
+   ele roda o **Rhubarb** (`-r phonetic` = funciona em PT: mp3→ffmpeg wav→rhubarb→JSON) e commita
+   `<pasta>/visemas.json` (tempo→letra A..X); **(c)** o app faz `fetch("visemas.json")`, mapeia
+   letra→boca (A/X=fechada, B/C/H=meio, D/G=aberta, E/F='O') e **troca a imagem da boca** no
+   `narr.currentTime` — leve, offline, sem lib. **Fallback**: se não houver timeline p/ a fala, cai no
+   flap nítido por RMS (nunca fica mudo/travado). Novos ids de fala → rodar `visemas=sim` p/ recalcular.
 
 ## 4⅗. ATRATIVO = JOGO, NÃO FORMULÁRIO (lei do Marcos, 2026-07-22) ⭐ OBRIGATÓRIO
 O que ensina certo mas parece **formulário** (medidores +/−, lista de linhas, "escolha o rótulo") **não
