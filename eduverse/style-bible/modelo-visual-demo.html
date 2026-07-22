@@ -1,0 +1,117 @@
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Modelo Visual EduVerse</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{font-family:"Segoe UI Rounded","SF Pro Rounded",Nunito,"Baloo 2",system-ui,Arial,sans-serif;
+  color:#20264a;background:-webkit-linear-gradient(top,#bfe3ff,#e9f5ff 55%,#fff3e0);background:linear-gradient(to bottom,#bfe3ff,#e9f5ff 55%,#fff3e0);
+  min-height:100%;padding:20px 16px 34px;overflow-x:hidden}
+.wrap{max-width:460px;margin:0 auto}
+.h{font-size:13px;font-weight:800;letter-spacing:.6px;color:#5566aa;text-transform:uppercase;margin:22px 4px 10px}
+.h:first-child{margin-top:4px}
+/* CARTÃO fofo: cantos bem arredondados + 1 sombra suave */
+.card{background:#fff;border-radius:22px;padding:18px 18px;margin-bottom:14px;
+  -webkit-box-shadow:0 10px 24px rgba(40,60,120,.16);box-shadow:0 10px 24px rgba(40,60,120,.16)}
+.card.hero{background:-webkit-linear-gradient(top,#ffffff,#f3f8ff);background:linear-gradient(to bottom,#fff,#f3f8ff);text-align:center;padding:22px 18px 24px}
+.mascote{width:112px;height:112px;margin:0 auto 6px;display:block;-webkit-animation:flut 3.2s ease-in-out infinite;animation:flut 3.2s ease-in-out infinite}
+@-webkit-keyframes flut{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-7px)}}
+@keyframes flut{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.tit{font-size:27px;font-weight:900;margin:4px 0 2px;color:#22305e}
+.sub{font-size:14px;color:#6a76a6;margin-bottom:16px}
+/* BOTÃO pílula com relevo + saltinho ao tocar */
+.btn{display:inline-block;border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:18px;color:#fff;
+  padding:15px 30px;border-radius:999px;background:-webkit-linear-gradient(top,#4fc06a,#2ea24f);background:linear-gradient(to bottom,#4fc06a,#2ea24f);
+  -webkit-box-shadow:0 6px 0 #1f7d3b,0 12px 18px rgba(30,120,60,.3);box-shadow:0 6px 0 #1f7d3b,0 12px 18px rgba(30,120,60,.3);
+  -webkit-transition:-webkit-transform .12s,-webkit-box-shadow .12s;transition:transform .12s,box-shadow .12s;
+  -webkit-animation:pulsa 1.8s ease-in-out infinite;animation:pulsa 1.8s ease-in-out infinite}
+.btn:active{-webkit-transform:translateY(4px) scale(.98);transform:translateY(4px) scale(.98);
+  -webkit-box-shadow:0 2px 0 #1f7d3b,0 5px 10px rgba(30,120,60,.3);box-shadow:0 2px 0 #1f7d3b,0 5px 10px rgba(30,120,60,.3)}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.04)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
+.btn.azul{background:-webkit-linear-gradient(top,#54a8ff,#2f86ea);background:linear-gradient(to bottom,#54a8ff,#2f86ea);-webkit-box-shadow:0 6px 0 #1e63b8,0 12px 18px rgba(40,110,220,.3);box-shadow:0 6px 0 #1e63b8,0 12px 18px rgba(40,110,220,.3);-webkit-animation:none;animation:none}
+.btn.azul:active{-webkit-box-shadow:0 2px 0 #1e63b8;box-shadow:0 2px 0 #1e63b8}
+/* CHIPS de mundo/disciplina (cor por área) */
+.chips{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:10px}
+.chip{-webkit-box-flex:1;-webkit-flex:1 1 40%;flex:1 1 40%;min-width:130px;border-radius:18px;padding:14px 14px;color:#fff;font-weight:800;font-size:15px;
+  -webkit-box-shadow:0 6px 14px rgba(0,0,0,.14);box-shadow:0 6px 14px rgba(0,0,0,.14);display:-webkit-box;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;gap:10px}
+.chip .b{width:34px;height:34px;border-radius:12px;background:rgba(255,255,255,.28);display:inline-block;-webkit-flex:0 0 auto;flex:0 0 auto}
+.c1{background:-webkit-linear-gradient(top,#3fbf6a,#2ea24f);background:linear-gradient(to bottom,#3fbf6a,#2ea24f)}
+.c2{background:-webkit-linear-gradient(top,#54a8ff,#2f86ea);background:linear-gradient(to bottom,#54a8ff,#2f86ea)}
+.c3{background:-webkit-linear-gradient(top,#ffcf3f,#f5a623);background:linear-gradient(to bottom,#ffcf3f,#f5a623);color:#5a3b00}
+.c4{background:-webkit-linear-gradient(top,#ff7a6b,#ef5a4a);background:linear-gradient(to bottom,#ff7a6b,#ef5a4a)}
+.c5{background:-webkit-linear-gradient(top,#a98bff,#8a6bff);background:linear-gradient(to bottom,#a98bff,#8a6bff)}
+/* PALETA */
+.pal{display:-webkit-box;display:-webkit-flex;display:flex;gap:8px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.sw{width:60px;text-align:center;font-size:9px;color:#556;font-weight:700}
+.sw i{display:block;height:44px;border-radius:12px;margin-bottom:3px;-webkit-box-shadow:inset 0 -3px 6px rgba(0,0,0,.12);box-shadow:inset 0 -3px 6px rgba(0,0,0,.12)}
+.note{font-size:12.5px;color:#66729e;line-height:1.5;padding:2px 4px}
+.badge{display:inline-block;background:#ffd75e;color:#3a2c00;font-weight:800;font-size:11px;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+</style></head>
+<body><div class="wrap">
+
+<div class="h">Modelo visual &#8212; jeito &#8220;fofo arredondado&#8221;</div>
+<div class="card hero">
+  <span class="badge">Toque nos bot&#245;es &#8212; eles saltam</span>
+  <canvas id="masc" class="mascote" width="224" height="224"></canvas>
+  <div class="tit">Planeta Vivo</div>
+  <div class="sub">Uma aventura de verdade &#183; 6&#186; ano</div>
+  <button class="btn">Come&#231;ar a aventura</button>
+</div>
+
+<div class="h">Cores por mundo / disciplina</div>
+<div class="card">
+  <div class="chips">
+    <div class="chip c1"><span class="b"></span> Geografia</div>
+    <div class="chip c2"><span class="b"></span> Matem&#225;tica</div>
+    <div class="chip c3"><span class="b"></span> Ci&#234;ncias</div>
+    <div class="chip c4"><span class="b"></span> L&#237;ngua</div>
+  </div>
+</div>
+
+<div class="h">Cart&#245;es &amp; bot&#245;es</div>
+<div class="card">
+  <div class="note" style="margin-bottom:12px">Cantos <b>bem redondos</b> (raio 22px), <b>1 sombra suave</b>, bot&#227;o em <b>p&#237;lula</b> com rel&#234;vo (sombra embaixo = &#8220;apert&#225;vel&#8221;). Ao tocar: <b>afunda + saltinho</b>.</div>
+  <button class="btn azul">Pr&#243;xima parada</button>
+</div>
+
+<div class="h">Paleta base (hex)</div>
+<div class="card">
+  <div class="pal">
+    <div class="sw"><i style="background:#3fbf6a"></i>#3fbf6a</div>
+    <div class="sw"><i style="background:#3aa0ff"></i>#3aa0ff</div>
+    <div class="sw"><i style="background:#ffcf3f"></i>#ffcf3f</div>
+    <div class="sw"><i style="background:#ff7a6b"></i>#ff7a6b</div>
+    <div class="sw"><i style="background:#8a6bff"></i>#8a6bff</div>
+    <div class="sw"><i style="background:#141a2e"></i>#141a2e</div>
+    <div class="sw"><i style="background:#fff7ec;box-shadow:inset 0 0 0 1px #e2e6f0"></i>#fff7ec</div>
+  </div>
+</div>
+
+</div>
+<script>
+/* mascote fofo desenhado (baby schema: cabe&#231;a grande, olhos grandes) &#8212; s&#243; pra demo do estilo */
+(function(){var c=document.getElementById("masc");if(!c)return;var x=c.getContext("2d");var W=224,H=224,t=0;
+function blob(cx,cy,r){x.beginPath();x.arc(cx,cy,r,0,7);x.fill();}
+function draw(){t++;x.clearRect(0,0,W,H);
+  // corpo estrela arredondada
+  var g=x.createRadialGradient(W/2-20,H/2-30,10,W/2,H/2,120);g.addColorStop(0,"#ffe98a");g.addColorStop(1,"#ffb52e");
+  x.fillStyle=g;
+  x.save();x.translate(W/2,H/2+6);
+  x.beginPath();var i,pts=5,R=86,r=46;
+  for(i=0;i<pts*2;i++){var ang=(i/(pts*2))*Math.PI*2 - Math.PI/2;var rad=(i%2?r:R);var px=Math.cos(ang)*rad,py=Math.sin(ang)*rad;
+    // cantos arredondados via quadratic
+    if(i===0)x.moveTo(px,py);else x.lineTo(px,py);}
+  x.closePath();x.fill();
+  x.restore();
+  // bochechas
+  x.fillStyle="rgba(255,120,140,.5)";blob(W/2-30,H/2+18,12);blob(W/2+30,H/2+18,12);
+  // olhos grandes
+  x.fillStyle="#3a2a10";blob(W/2-24,H/2-6,14);blob(W/2+24,H/2-6,14);
+  x.fillStyle="#fff";blob(W/2-19,H/2-11,5);blob(W/2+29,H/2-11,5);
+  // sorriso
+  x.strokeStyle="#3a2a10";x.lineWidth=5;x.lineCap="round";x.beginPath();x.arc(W/2,H/2+6,20,0.15*Math.PI,0.85*Math.PI);x.stroke();
+  requestAnimationFrame(draw);}
+draw();})();
+</script>
+</body></html>
