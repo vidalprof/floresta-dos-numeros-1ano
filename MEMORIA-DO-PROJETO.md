@@ -39,6 +39,21 @@
 >> - **Republicar/atualizar:** `atualizar.yml` (repo_name=jardim-do-broto, source_dir=_jardim, ref=branch).
 >> - **Pendente/futuro:** entrar no portal (`_portal`/hub) como card; QA 3 níveis formal; voz/narração;
 >>   possível 5ª dinâmica (mistério "por que a planta murchou?"). É experimento de VISUAL novo (2º ano).
+>> - **⭐ VISUAL HÍBRIDO (Marcos 2026-07-22: "parece feito à mão, quadrado" → refeito):** a 1ª versão era
+>>   toda Canvas desenhado à mão (chapado). O Marcos reprovou. Refiz no **HÍBRIDO** (respeitando a LEI
+>>   "todo asset que a criança vê é IA"): **fundo, mascote (Broto), 5 estágios de crescimento e os itens
+>>   viraram ILUSTRAÇÕES REAIS geradas no Gemini** (lote `_gerar_imagens.json` + commit `[imagens]` →
+>>   `finalizar.yml`), com **animação suave por cima** (bob do mascote, cross-fade dos estágios, faíscas/
+>>   gotas em Canvas, pólen/borboletas). Ficou nível storybook/Duolingo. **É ESTE o padrão visual daqui
+>>   pra frente** (não desenhar à mão no Canvas o que a criança vê).
+>>   - **Receita reutilizável do híbrido (guardar!):** (1) escrever prompts "soft 3D cartoon, fundo branco
+>>     liso #FFFFFF p/ recorte, NO text/letters/numbers" no `_gerar_imagens.json`; (2) commit `[imagens]`
+>>     → puxar de `_novo/`; (3) **recorte branco→transparente** com Pillow **floodfill a partir dos cantos
+>>     de cima** (preserva branco interno dos olhos E a faixa de terra do `jd_partes`), autocrop nos avulsos,
+>>     MANTER quadro quadrado nos estágios/partes (registro consistente p/ cross-fade e p/ as zonas de toque
+>>     em %), fundo salvo como JPG; (4) imagens em `_jardim/img/` (arquivos, ~1,4MB total, sw-cacheia) —
+>>     **não** base64 (evita HTML gigante). Render/QA com **Playwright** (chromium `/opt/pw-browsers/
+>>     chromium-1194/chrome-linux/chrome`, `click{force:true}` p/ furar animação `beat`).
 >>
 >> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
 >> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
