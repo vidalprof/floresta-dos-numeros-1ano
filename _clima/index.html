@@ -690,7 +690,23 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* ===== CLIMA: medidores, biomas, zonas, semana ===== */
 .stepper.med{margin:0 6px}
 .sval.medlab{width:auto;min-width:78px;font-size:16px;padding:0 6px}
-.simmeio{position:absolute;left:0;right:0;top:24%;text-align:center;z-index:2;padding:0 8px}
+.simmeio{position:absolute;left:0;right:0;top:22%;text-align:center;z-index:2;padding:0 8px}
+.simmeio .biotile{width:206px}
+/* LEI clima→bioma: controles VISUAIS grandes (não medidor +/−) — tocar a temperatura/chuva e o bioma nasce */
+.climctrls{position:absolute;left:10px;right:10px;bottom:7%;z-index:4}
+.climrow{margin:9px 0}
+.climtag{font-weight:800;color:#e9ecff;font-size:13.5px;margin:0 0 5px 4px;text-align:left;text-shadow:0 1px 4px rgba(0,0,0,.7)}
+.climseg{display:-webkit-box;display:-webkit-flex;display:flex;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.18)}
+.climcell{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;padding:15px 4px;min-height:26px;cursor:pointer;color:#fff;font-weight:800;font-size:15px;text-shadow:0 1px 4px rgba(0,0,0,.85);position:relative}
+.climcell:active{-webkit-transform:scale(.97);transform:scale(.97)}
+.climseg .climcell+.climcell{border-left:1px solid rgba(255,255,255,.16)}
+.tcell0{background:-webkit-linear-gradient(top,#7fb8ff,#4f86d8);background:linear-gradient(to bottom,#7fb8ff,#4f86d8)}
+.tcell1{background:-webkit-linear-gradient(top,#5ec88a,#3f9d68);background:linear-gradient(to bottom,#5ec88a,#3f9d68)}
+.tcell2{background:-webkit-linear-gradient(top,#ffb03a,#ff6a3a);background:linear-gradient(to bottom,#ffb03a,#ff6a3a)}
+.ccell0{background:-webkit-linear-gradient(top,#e0c48a,#c49f5e);background:linear-gradient(to bottom,#e0c48a,#c49f5e)}
+.ccell1{background:-webkit-linear-gradient(top,#6bcac0,#3f9d94);background:linear-gradient(to bottom,#6bcac0,#3f9d94)}
+.ccell2{background:-webkit-linear-gradient(top,#6aa8ff,#3f7fd8);background:linear-gradient(to bottom,#6aa8ff,#3f7fd8)}
+.climcell.on{-webkit-box-shadow:inset 0 0 0 3px #ffe27a,0 0 14px rgba(255,220,120,.6);box-shadow:inset 0 0 0 3px #ffe27a,0 0 14px rgba(255,220,120,.6);z-index:2}
 .biotile{display:inline-block;vertical-align:top;margin:6px;border-radius:16px;overflow:hidden;position:relative;
   border:2px solid rgba(255,225,150,.5);box-shadow:0 8px 22px rgba(0,0,0,.45);width:210px;max-width:80%;
   -webkit-animation:estrPop .35s ease;animation:estrPop .35s ease}
@@ -1978,28 +1994,61 @@ function telaLei(){
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(18));
   t.appendChild(el("div","balao",""));
   var meio=el("div","simmeio"); meio.id="leibio"; t.appendChild(meio);
-  var build=el("div","builder");
-  var ctr=el("div","steppers");
-  ctr.appendChild(medidor(LEI,"temp","Temperatura",TLAB,leiPinta));
-  ctr.appendChild(medidor(LEI,"chuva","Chuva",CLAB,leiPinta));
-  build.appendChild(ctr);
-  var b=el("button","btn pulsa","Dar vida à região!"); b.onclick=function(){ leiConfere(); };
-  build.appendChild(b); build.appendChild(el("div","pdica","")); t.appendChild(build);
+  var ctrls=el("div","climctrls builder");
+  ctrls.appendChild(leiRow("Temperatura","t",TLAB,"temp"));
+  ctrls.appendChild(leiRow("Chuva","c",CLAB,"chuva"));
+  ctrls.appendChild(el("div","pdica"));
+  t.appendChild(ctrls);
   ajudaBtn(t,[
     {txt:"Essa região é <b>quente</b> ou <b>fria</b>? Chove muito ou pouco?"},
-    {txt:"Floresta tropical = <b>quente + muita chuva</b>. Deserto = quente + seco. Taiga = frio."},
-    {txt:"Mexa os dois medidores até o bioma que aparece ser o <b>pedido</b>."}
+    {txt:"Floresta = <b>quente + muita chuva</b>. Deserto = quente + seco. Taiga = frio.",fala:"aj_p2_2"},
+    {txt:"Toque na temperatura e na chuva até o bioma que aparece ser o <b>pedido</b>.",fala:"aj_p2_3"}
   ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   leiEnunciado(); leiPinta(); falar("p3");
+}
+/* uma "régua" visual de 3 células grandes (tocar; sem +/−) */
+function leiRow(tag,pref,labels,key){
+  var row=el("div","climrow");
+  row.appendChild(el("div","climtag",tag));
+  var seg=el("div","climseg"),k;
+  for(k=0;k<labels.length;k++){ (function(v){
+    var c=el("div","climcell "+pref+"cell"+v, labels[v]); c.id="cell_"+key+"_"+v;
+    c.onclick=function(){ leiSet(key,v); };
+    seg.appendChild(c);
+  })(k); }
+  row.appendChild(seg); return row;
+}
+function leiSet(key,v){
+  if(LEI.concluida)return;
+  LEI[key]=v; if(typeof somClick==="function") somClick();
+  leiPinta(); leiAuto();
+}
+/* o mundo REAGE ao vivo: mudou o clima → o bioma nasce na hora (modelo bioma(temp,chuva)) */
+function leiAuto(){
+  if(LEI.concluida)return;
+  var slug=bioma(LEI.temp,LEI.chuva), alvo=LEI.alvos[LEI.i];
+  if(slug!==alvo) return;
+  if(typeof somAcerto==="function") somAcerto(); if(typeof hitStop==="function") hitStop();
+  var tela=document.getElementsByClassName("lei")[0]; if(tela) estouraEstrelas(tela,7);
+  LEI.i++;
+  if(LEI.i>=LEI.alvos.length){ setTimeout(leiSucesso,600); return; }
+  fagComemora();
+  var d=document.getElementsByClassName("pdica")[0]; if(d)d.innerHTML="<b>Região viva!</b> Vamos à próxima…";
+  LEI.temp=1; LEI.chuva=1;
+  setTimeout(function(){ leiEnunciado(); leiPinta(); var d2=document.getElementsByClassName("pdica")[0]; if(d2)d2.innerHTML=""; },1100);
 }
 function leiEnunciado(){
   var alvo=LEI.alvos[LEI.i], bal=document.getElementsByClassName("balao")[0];
   if(bal)bal.innerHTML="A tempestade apagou esta região. Ela precisa virar <b>"+BIONOME[alvo]+"</b>. Ajuste o <b>clima</b> para o bioma nascer!";
 }
 function leiPinta(){
-  medSet("temp",TLAB,LEI.temp); medSet("chuva",CLAB,LEI.chuva);
+  // marca a célula ativa em cada régua
+  var grp=[["temp",TLAB.length],["chuva",CLAB.length]],i,j;
+  for(i=0;i<grp.length;i++){ for(j=0;j<grp[i][1];j++){ var c=document.getElementById("cell_"+grp[i][0]+"_"+j);
+    if(c){ c.className=c.className.replace(/\s*on\b/,""); if(LEI[grp[i][0]]===j) c.className+=" on"; } } }
+  // o bioma NASCE ao vivo (pop) conforme o clima
   var slug=bioma(LEI.temp,LEI.chuva), box=document.getElementById("leibio");
   if(box){ box.innerHTML=""; box.appendChild(bioTile(slug)); }
 }
