@@ -1,67 +1,68 @@
 # 🛠️ PESQUISA — Arsenal técnico para elevar as atividades (web leve, offline, PC fraco) — 2026-07-22
 
-> Pesquisa profunda (deep-research). **Nota honesta:** a **síntese final não fechou** (bateu limite
-> de sessão, reseta ~4h UTC) — este doc é a **consolidação das 18 afirmações verificadas** (voto 3-0)
-> que voltaram. As frentes de **consistência de personagem por IA** e **ruído procedural/upscaling**
-> ficaram sem afirmação verificada nesta rodada → **re-rodar a síntese depois do reset** para completar.
-> Todas as recomendações respeitam o stack: 1 HTML autossuficiente, ES5, offline/PWA, sem CDN, custo ~zero.
+> Pesquisa profunda (deep-research, **síntese COMPLETA** na 2ª rodada). Todas as recomendações
+> respeitam o stack: 1 HTML autossuficiente, ES5, offline/PWA, sem CDN em runtime, Chrome ~109, custo ~zero.
+> **Princípio-mestre:** mover o trabalho CARO para o **BUILD (GitHub Actions)** e deixar o navegador só
+> **REPRODUZIR dados prontos** (MP3 + JSON). Complementa `PESQUISA-GEOGRAFIA-MECANICAS-6ANO-2026-07.md`.
 
 ## ✅ ADOTAR JÁ
 
-### 1. Lip-sync por VISEMAS pré-computados (o salto de "parecer real") ⭐
-- **Rhubarb Lip Sync** analisa o mp3 e gera o **tempo das formas de boca** (6 básicas Ⓐ–Ⓕ + 3 extras),
-  **offline por linha de comando** → dá para rodar **no GitHub Actions** junto com o `gerar-audio.yml`
-  e **embutir a "partitura" da boca** no HTML. No navegador é só trocar a boca no tempo certo — **leve,
-  sem depender de análise em tempo real**. (github.com/DanielSWolf/rhubarb-lip-sync)
-- **Ganho concreto:** hoje a Nara tem 2 estados (aberta/fechada) por RMS; com **6 visemas** a boca
-  "forma" as sílabas → **muito mais real** (o que o Marcos pede). Custa: gerar **6 imagens de boca**
-  (mesma técnica base + elipse por viseme) + o passo do Rhubarb no workflow.
-- **Alternativa em tempo real:** `lipsync-engine` (~15KB, **zero dependência**, Chrome 66+ cobre o 109,
-  saída **paramétrica** open/width/round). Cabe inline. Ressalva: exige **AudioWorklet** (ok no Chrome
-  da escola; Safari só 14.1+). Preferir o **pré-computado** (mais previsível em PC fraco).
+### 1. Lip-sync 2D por VISEMAS pré-computados (o salto do "falar de verdade") ⭐
+- **Rhubarb Lip Sync** (CLI offline, roda no Actions) analisa o áudio e gera a **timeline das bocas**
+  (6 básicas A–F + G/H/X opcionais = 6–9 visemas). Usa reconhecedor **FONÉTICO independente de idioma**
+  → **funciona em português** (o modo que "entende inglês" NÃO serve; o fonético sim). Saída **JSON**
+  (tempo→boca) que **embutimos no HTML**; no navegador é só trocar a imagem da boca por transform/opacity,
+  **zero dependência em runtime**. (github.com/DanielSWolf/rhubarb-lip-sync)
+- **Pipeline (nota de engenharia):** edge-tts entrega **MP3**, mas o Rhubarb só aceita **WAV/OGG** → o
+  workflow precisa **converter com ffmpeg** antes do lip-sync.
+- **Ganho:** boca que **forma as sílabas** sincronizada com a narração — muito além dos 2 estados de hoje.
+  Custo: gerar **6 imagens de boca** (base + elipse por viseme) + o passo Rhubarb no workflow.
 
-### 2. UX de toque para crianças (regras firmes)
-- **Alvos ≥ 2 cm × 2 cm** (4× o do adulto) — motor fino é imaturo. (NN/g)
-- **Arrastar é DIFÍCIL para os pequenos; tocar alvo grande e deslizar é fácil para todos** → **preferir
-  TOCAR/DESLIZAR a ARRASTAR**, sobretudo pré–5º. (NN/g) *(Impacto no plano de geografia: onde eu propus
-  "arrastar", oferecer variante de **tocar** para as turmas menores; no 6º ano arrastar ok com alvo grande.)*
-- **TIDRC** = 57 recomendações de UI de toque por faixa (cognitivo/físico/socioemocional) — usar como
-  checklist de acessibilidade por idade. (ResearchGate 333624343)
+### 2. Voz por edge-tts no build (já usamos; explorar mais)
+- Vozes neurais Microsoft **grátis, sem chave**, 322 vozes/74 idiomas; **`--rate/--volume/--pitch`**
+  mudam a prosódia → **vozes por idade/personagem** do mesmo motor. `--write-subtitles` dá **SRT com
+  tempo por palavra** (útil para alinhar boca). Ressalva honesta: é acesso **não-oficial** (pode ser
+  bloqueado um dia) e roda **no build** (online), nunca em runtime — como já fazemos. (rany2/edge-tts)
 
-### 3. Animação leve com "juice"
-- **Squash & stretch preservando massa/volume** dá "punch" à animação — só com `transform`, cabe no
-  nosso limite. (12 Principles for Game Animation) *(Já usamos em parte; padronizar.)*
+### 3. Game feel pelos 12 princípios (transform/opacity, leve)
+- **Squash & stretch** (comprime no impacto, alonga no movimento) dá "realidade física"; **antecipação
+  "comprimida"** (frame de agachamento no início do pulo **enquanto** o personagem já sai do chão) parece
+  antecipada mas continua **instantânea/responsiva** — ideal para jogo (antecipação clássica atrasaria o
+  input). Tudo com transform/opacity. (gamedeveloper.com — 12 Principles for Game Animation)
 
-### 4. Desempenho em PC fraco (regra de ouro)
-- **Parse/execução de JS é 2–5× mais lento** em aparelho fraco; bundles grandes custam caro (ex.: 1,3 MB
-  → 1,29 s só de parse num aparelho antigo). → **manter o HTML/JS enxuto**, sem framework, é o certo. (fasterize)
-- **Canvas 2D** ganha em operações de pixel/memória; **WebGL** só compensa em carga gráfica pesada →
-  para nossas partículas/simulações 2D, **Canvas 2D basta**; WebGL é exagero. (semisignal 2D vs WebGL)
+### 4. UX de toque para crianças (TIDRC, ACM IDC 2019)
+- **Fonte mínima ~14 pt**; **alvos grandes** com **ÁREA ATIVA AMPLIADA** (aceitar toque um pouco fora da
+  borda). Reforça: **tocar/deslizar > arrastar** nas turmas pequenas. (ResearchGate 333624343)
 
-### 5. Voz e revisão espaçada (confirmam o que já fazemos)
-- **edge-tts**: voz neural **grátis, sem chave**, via Actions — é o que já usamos; e **`--write-subtitles`
-  gera legenda com tempo** (SRT) junto do mp3 **num comando** → tempo utilizável para guiar a boca. (rany2/edge-tts)
-- **Repetição espaçada com agenda ótima** (experimento Duolingo/MEMORIZE) memoriza melhor que heurística
-  → valida nosso **Leitner** (e sugere afinar a agenda). (PMC6410796)
+### 5. Desempenho por "adaptive loading"
+- Enviar um **baseline leve** e **LIGAR efeitos caros só quando o hardware aguenta**, lendo
+  **`navigator.deviceMemory` e `navigator.hardwareConcurrency`** (ambos no Chrome 109, sem rede). →
+  partículas/animações extras só em quem aguenta; PC fraco recebe a versão enxuta. (addyosmani.com/blog/adaptive-loading)
+
+### 6. Repetição espaçada no CLIENTE (sem servidor)
+- **MEMORIZE** (agenda ótima de revisão) — alunos que seguiram retiveram melhor (dados Duolingo,
+  experimento natural). Valida e sugere afinar nosso **Leitner**. (PMC6410796)
 
 ## 🧪 TESTAR
-- **`lipsync-engine` em tempo real** vs. **Rhubarb pré-computado**: qual dá a boca mais natural na Nara
-  em PC fraco (medir fps). Aposto no pré-computado, mas vale comparar.
-- **Ruído procedural (Perlin/simplex) em Canvas** para cenas "vivas" (nuvens/água) — barato se em
-  resolução baixa; **testar custo** em PC fraco (a evidência não fechou nesta rodada).
-- **Consistência de personagem por IA** entre cenas (seed fixa, img2img/edição a partir da base, folha de
-  poses) — nossa técnica atual (editar a base no Gemini + recorte local) funciona; **testar** seed/img2img
-  para reduzir variação (foi o que nos custou o "corpo tremendo").
+- **`lipsync-engine`** (runtime, ~15KB, zero-dep, Web Audio/AudioWorklet, visemas em tempo real **sem**
+  forced alignment): pode dispensar o passo de build, MAS as métricas são **auto-declaradas** e exige
+  **AudioWorklet** → **testar fps real em Chrome 109/PC fraco** antes de adotar. Aposto no **Rhubarb
+  pré-computado** como caminho confiável. (github.com/Amoner/lipsync-engine)
+- **Variante "Select" da repetição espaçada** — validada em **RCT real** de larga escala (superou
+  baselines). Considerar ao afinar o motor. (npj Science of Learning 2021, PMC8421401)
 
-## ⛔ EVITAR (hype/pesado demais para o nosso alvo)
-- **Frameworks SPA / libs grandes / 3D pesado (WebGL para tudo)** — custo de parse/execução mata o PC
-  fraco; nosso 1 HTML enxuto é a escolha certa. (fasterize; 2D vs WebGL)
-- **Dependência de CDN/nuvem em runtime** — quebra o offline; tudo tem que ser **inline**.
-- **Arrastar/pinça/rotação como interação principal nas turmas pequenas** — difícil para o motor fino
-  delas; preferir tocar/deslizar. (NN/g; TIDRC)
-- **Lip-sync por análise pesada em tempo real** quando dá para **pré-computar** no workflow.
+## ⛔ EVITAR
+- **Frameworks SPA, 3D/WebGL pesado, libs grandes, dependências online/CDN em runtime, IA cara** — custo
+  de parse/execução e de rede mata o PC fraco/offline. Nosso 1 HTML enxuto é a escolha certa.
+- **Não afirmar como "comprovado"** o que a verificação DERRUBOU: **secondary motion fluído** (follow-through
+  de cabelo/tecido) e a **fórmula linear fechada do MEMORIZE**. Usar squash/stretch + antecipação comprimida,
+  não prometer secondary motion.
 
-## Lacunas (re-rodar após reset das 4h UTC)
-Síntese final e as frentes de **consistência de personagem** e **procedural/upscaling** ficaram
-incompletas por limite de sessão. Re-rodar para fechar. O que já está aqui é suficiente para o plano
-técnico do próximo passo (lip-sync por visemas + UX de toque + Canvas 2D para simulação).
+## Lacunas — precisam de pesquisa DEDICADA (não saíram nem na 2ª rodada)
+1. **Consistência de personagem entre cenas com IA grátis/barata** (seed/referência/img2img/LoRA leve,
+   recorte transparente confiável, folhas de sprite) — foi o que nos custou o "corpo tremendo" da Nara.
+2. **Renderização/simulação**: receita de quando trocar CSS→SVG→Canvas 2D→WebGL, e **partículas/autômatos/
+   ruído procedural (Perlin/simplex) a 60 fps em Chrome 109 de PC fraco**.
+3. **Medição stealth/adaptatividade leve** além da repetição espaçada (que sinais no localStorage; fechar
+   o loop sem inflar o HTML).
+→ Rodar uma pesquisa focada só nesses 3 pontos quando for mexer em arte-consistente e em simulações Canvas.
