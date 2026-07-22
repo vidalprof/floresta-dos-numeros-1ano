@@ -619,3 +619,118 @@ geografia, história, língua, arte/música, ed. física, andaimes). Cada mecân
 - **ANDAIME — autoexplicação induzida (g≈0,55; 64 estudos, ~6000 participantes)** — Bisra et al. (2018), *Inducing Self-Explanation: A Meta-Analysis*, *Educational Psychology Review* — https://link.springer.com/article/10.1007/s10648-018-9434-x
 
 **Ressalvas honestas registradas** (não prometer além da evidência): app incorporado NÃO supera desplugado só por ser digital (Ninaus 2023); recuperação/produtive failure **fraco fora de STEM e em problema de enunciado**; linha do tempo, role-play, card sort e construção de gráfico têm apoio **teórico/estudo único**, não meta-análise → marcados **[CONSENSO/PROMISSOR]**; maestria adaptativa é correlacional (confundida com dose) — não afirmar causa. Descoberta só ensina **guiada + com feedback + pedindo a explicação**. **Da AMPLIAÇÃO 2:** balança (M3) e corpo humano (S5) apoiam-se em estudo único/material didático → **[PROMISSOR]**; conectivos (LP3) têm evidência **mista** e podem prejudicar leitor avançado (efeito reverso da coesão, McNamara); ritmo (AM1) **não transferiu** para alfabetização em ECR → vale pela música/padrão, sem prometer leitura; TGfU (EF1) tem ES grande mas **qualidade de evidência baixa** (GRADE); estrutura textual (LP2) pode **não se manter no pós-teste tardio** (exige revisão espaçada); toda simulação (S1/S2/S4, geometria M5) só rende **com inquérito GUIADO**. Nenhum número foi inventado — cada efeito citado tem a fonte acima.
+
+---
+
+# 🔎 AMPLIAÇÃO 3 — Novas famílias: MISTÉRIO/INVESTIGAÇÃO + problema, sistemas e crítica (2026-07)
+
+> Pedido do Marcos: "aumentar o leque" — mecânicas de **mistério/investigação/problema**
+> e outras famílias novas. Escrito a partir do consolidado da pesquisa (guided discovery,
+> inquiry, CVS, CER, PBL). Cada uma cabe no motor leve (1 HTML/Canvas/ES5, toque/arrasta).
+> **Regra de ouro que atravessa tudo: descoberta GUIADA, não solta** (Alfieri et al. 2011 —
+> descoberta pura PERDE para instrução guiada; a versão andaimada VENCE).
+
+## FAMÍLIA L — MISTÉRIO / INVESTIGAÇÃO (o aluno vira detetive-cientista)  🆕 NOVA ⭐
+O coração do "aprender resolvendo um caso": coletar pistas → levantar hipótese → TESTAR → concluir.
+
+### L1. O Caso a Resolver (detetive)  🆕
+- **Faz:** recebe um mistério ("por que o rio secou?", "quem comeu a plantação?"); *toca/arrasta* para
+  **coletar pistas** pelo cenário; monta a **hipótese** (escolhe/arrasta causa→efeito); **testa** (a
+  simulação mostra se bate); dá o **veredito** com a evidência que usou.
+- **Conceito/disciplinas:** raciocínio causal, método científico, leitura de evidência. **Ciências,
+  Geografia, História** (fontes), **Língua** (inferência).
+- **Princípio/evidência:** **inquiry GUIADA** (meta-análise Furtak et al. 2012: inquiry com apoio do
+  professor/andaime dá d≈0,50; a versão "solta" é fraca) + descoberta guiada (Alfieri 2011). **[FORTE,
+  quando andaimado]** · **[EVITAR: mistério "aberto demais" sem pista/meta = frustra e não ensina]**.
+- **Faixa:** 3º–9º (pré–2º: "ache o que está errado na figura" com 3 pistas).
+
+### L2. Geo-Mistério — "Onde no mundo é isto?"  🆕
+- **Faz:** deduz o LUGAR (ou o bioma/clima/país) juntando pistas (foto, clima, animais, comida, relevo);
+  cada pista revelada aproxima; erra→ganha mais pista, não punição.
+- **Conceito/disciplinas:** síntese de fatores geográficos, dedução. **Geografia** (forte), **Ciências,
+  História, Cultura.**
+- **Princípio/evidência:** dedução por múltiplas representações ligadas (bate com o que a pesquisa de
+  simulações mostrou); é inquiry aplicada. **[CONSENSO/PROMISSOR]**.
+- **Faixa:** 4º–9º.
+
+### L3. Afirmação–Evidência–Raciocínio (argumentar com prova)  🆕
+- **Faz:** dada uma pergunta, a criança *escolhe/arrasta* a **afirmação**, depois a **evidência** que a
+  sustenta, depois o **raciocínio** que liga as duas (o "porquê"). O mascote questiona se falta prova.
+- **Conceito/disciplinas:** argumentação científica, justificar. **Ciências** (CER — McNeill & Krajcik),
+  **Língua** (texto argumentativo), **História.**
+- **Princípio/evidência:** o "framework CER" é padrão-ouro de argumentação escolar; separar afirmação de
+  evidência é o que faz pensar como cientista. **[FORTE-mod]**.
+- **Faixa:** 4º–9º.
+
+## FAMÍLIA M — EXPERIMENTAR / TESTAR HIPÓTESE (controlar variáveis)  🆕 NOVA ⭐
+### M1. Desenhe o experimento justo (uma variável por vez)  🆕
+- **Faz:** monta um teste mudando **só uma coisa** por vez (ex.: mesma planta, muda só a água) e vê o
+  resultado; se muda duas, o mascote avisa "assim não dá pra saber quem causou".
+- **Conceito/disciplinas:** estratégia de controle de variáveis (CVS), justiça do teste, causa. **Ciências**
+  (forte), transferível a **Matemática/Geografia.**
+- **Princípio/evidência:** **CVS é ENSINÁVEL e TRANSFERE** (Chen & Klahr 1999 — clássico; crianças aprendem
+  a isolar variável e aplicam em contexto novo). **[FORTE]**.
+- **Faixa:** 3º–9º.
+
+### M2. Prever → Testar → Revisar (ciclo)  🆕
+- **Faz:** prevê o resultado, roda a simulação, e se errou **revisa a própria ideia** (não só "tente de
+  novo"): o que eu pensava × o que vi.
+- **Princípio/evidência:** é o POE turbinado + mudança conceitual; a REVISÃO explícita do modelo mental é o
+  que consolida. **[FORTE]** (bate com nossas pesquisas anteriores). **Faixa:** 3º–9º.
+
+## FAMÍLIA N — ESCAPE ROOM / ENIGMA ENCADEADO  🆕 NOVA
+- **Faz:** uma cadeia de enigmas onde **só o conteúdo abre a próxima sala** (a soma certa revela o código;
+  o bioma certo destrava a porta). Narrativa de fuga/missão.
+- **Conceito/disciplinas:** qualquer — o conteúdo É a chave. Transversal.
+- **Princípio/evidência:** engajamento alto e integra bem QUANDO o conteúdo é a chave (integração
+  intrínseca); **[PROMISSOR]** — estudos recentes mostram motivação; ganho de aprendizado menos consolidado.
+  **[EVITAR: enigma decorativo em que o conteúdo é só pretexto = "brócolis com chocolate"; e excesso de
+  carga cognitiva].**
+- **Faixa:** 4º–9º.
+
+## FAMÍLIA O — SISTEMAS / EQUILÍBRIO / GESTÃO (pensamento sistêmico)  🆕 NOVA ⭐
+- **Faz:** equilibra um sistema vivo (ecossistema: predador×presa×planta; cidade: água/energia/lixo;
+  fazenda) *puxando poucos controles* e vendo os **loops de feedback** — mexe num, o resto reage.
+- **Conceito/disciplinas:** pensamento sistêmico, causa-efeito em cadeia, sustentabilidade, trade-offs.
+  **Ciências** (ecologia), **Geografia** (cidade/ambiente), **Matemática** (proporção/variação).
+- **Princípio/evidência:** microworlds/simulação de sistemas ensinam relações que texto não mostra; casa
+  com o E (medidor) mas com **múltiplas variáveis ligadas**. **[MODERADA/PROMISSOR]** (poderoso, mas exige
+  andaime forte p/ não virar "mexer à toa"). **Faixa:** 5º–9º.
+
+## FAMÍLIA P — DECISÃO COM CONSEQUÊNCIA / DILEMA / RPG leve  🆕 NOVA
+- **Faz:** faz escolhas ("e se você fosse o prefeito/o explorador/um personagem histórico?") e o **mundo
+  muda** conforme decide; vê a consequência e pode repensar.
+- **Conceito/disciplinas:** causa-consequência, cidadania, ética, empatia histórica, tomada de decisão.
+  **História, Geografia, Ciências** (impacto ambiental), **Língua** (narrativa ramificada).
+- **Princípio/evidência:** agência + consequência visível ancora causa-efeito e transferência; role-play
+  aumenta engajamento e perspectiva. **[MODERADA]** (cuidado: a escolha tem de ligar ao CONTEÚDO, não ser
+  enfeite). **Faixa:** 4º–9º.
+
+## FAMÍLIA Q — AVALIAR / CONSERTAR O ERRO (crítica construtiva)  🆕 NOVA ⭐
+- **Faz:** recebe uma solução JÁ FEITA (com um erro plantado) e precisa **achar e consertar** — "conserte a
+  conta", "corrija o climograma", "o que está errado no experimento do colega?".
+- **Conceito/disciplinas:** avaliação, metacognição, detectar concepção errada. **Todas.**
+- **Princípio/evidência:** estudar/consertar exemplos ERRADOS ("erroneous examples") gera aprendizado forte
+  (a criança precisa entender o certo p/ achar o erro); primo do **efeito protégé** (ensinar/corrigir o
+  mascote, que já usamos). **[FORTE-mod]**. **Faixa:** 3º–9º.
+
+## FAMÍLIA R — PAREAR / MEMÓRIA com propósito  🆕 (usar com parcimônia)
+- **Faz:** liga pares que **têm relação conceitual** (palavra↔imagem, causa↔efeito, fração↔desenho), não só
+  igual↔igual.
+- **Princípio/evidência:** pareamento associativo ajuda vocabulário/fatos; vira raso se for só "vira 2
+  cartas iguais". **[FRACO se decorativo / MODERADO se par conceitual]**. **Faixa:** pré–6º.
+
+## TOP da AMPLIAÇÃO 3 (maior aprendizado real × cabe no motor leve)
+1. **L1 Caso a resolver / L2 Geo-mistério** — o "mistério" que o Marcos quer, com inquiry GUIADA. ⭐
+2. **M1 Controle de variáveis (CVS)** — evidência FORTE e transfere (Chen & Klahr). ⭐
+3. **Q Conserte o erro** — aprendizado forte + casa com "ensinar o mascote". ⭐
+4. **L3 Afirmação-Evidência-Raciocínio** — pensar como cientista (CER).
+5. **O Sistemas/equilíbrio** — poderoso p/ 6º–9º (com andaime).
+- **Regra atravessadora:** toda mecânica nova nasce **GUIADA** (pista, meta, feedback), com **medição
+  escondida** (a trajetória é a evidência) e o mundo **reagindo** — nunca "descoberta solta".
+- **Evitar:** mistério/escape aberto demais ou com conteúdo de enfeite; matching decorativo; sistema sem andaime.
+
+> **Fontes-chave (consolidadas; versão com citações verificadas disponível se quiser a pesquisa profunda):**
+> Alfieri et al. 2011 (descoberta guiada > pura); Furtak et al. 2012 (meta-análise de inquiry);
+> Chen & Klahr 1999 (CVS ensinável e transfere); McNeill & Krajcik (CER); meta-análises de PBL (Gijbels et al.);
+> erroneous examples (Große & Renkl; Booth et al.); escape rooms educativas (evidência emergente de engajamento).
