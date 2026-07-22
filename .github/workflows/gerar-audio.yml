@@ -49,6 +49,16 @@ on:
         required: false
         default: "_audio"
         type: string
+      visemas:
+        description: "Tambem calcular a timeline de bocas (Rhubarb) -> <outdir>/../visemas.json"
+        required: false
+        default: "nao"
+        type: string
+      so_visemas:
+        description: "SO calcular visemas (pula a geracao de audio) - use sim quando o audio ja existe"
+        required: false
+        default: "nao"
+        type: string
 
 jobs:
   gerar:
@@ -66,6 +76,7 @@ jobs:
         run: pip3 install --quiet edge-tts || pip install --quiet edge-tts
 
       - name: Gerar audio
+        if: ${{ inputs.so_visemas != 'sim' }}
         env:
           TEXTO: ${{ inputs.texto }}
           NOME: ${{ inputs.nome }}
@@ -205,6 +216,7 @@ jobs:
           PY
 
       - name: Commit do audio
+        if: ${{ inputs.so_visemas != 'sim' }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -212,6 +224,57 @@ jobs:
           if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
           git commit -m "audio: gera vozes (${{ inputs.modelo }}) -> ${{ inputs.outdir }}"
           for k in 1 2 3 4 5 6 7 8; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+      - name: Baixar Rhubarb (visemas)
+        if: ${{ inputs.visemas == 'sim' || inputs.so_visemas == 'sim' }}
+        run: |
+          set -e
+          sudo apt-get install -y -qq unzip >/dev/null 2>&1 || true
+          VER="1.13.0"
+          curl -sSL "https://github.com/DanielSWolf/rhubarb-lip-sync/releases/download/v${VER}/Rhubarb-Lip-Sync-${VER}-Linux.zip" -o rhubarb.zip
+          unzip -q rhubarb.zip
+          mv "Rhubarb-Lip-Sync-${VER}-Linux" rhubarb_dir
+          chmod +x rhubarb_dir/rhubarb
+
+      - name: Gerar visemas (Rhubarb, phonetic = PT)
+        if: ${{ inputs.visemas == 'sim' || inputs.so_visemas == 'sim' }}
+        env:
+          OUTDIR: ${{ inputs.outdir }}
+        run: |
+          python3 - <<'PY'
+          import os, json, glob, subprocess
+          ad=(os.environ.get("OUTDIR","_audio").strip() or "_audio").strip("/")
+          out=os.path.dirname(ad.rstrip("/")); out=(out+"/visemas.json") if out else "visemas.json"
+          res={}; ok=0; fail=0
+          for mp3 in sorted(glob.glob(ad+"/*.mp3")):
+              idn=os.path.splitext(os.path.basename(mp3))[0]
+              wav="/tmp/%s.wav"%idn; j="/tmp/%s.json"%idn
+              subprocess.run(["ffmpeg","-y","-i",mp3,"-ar","16000","-ac","1",wav],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+              r=subprocess.run(["rhubarb_dir/rhubarb","-r","phonetic","-f","json","-o",j,wav],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+              if r.returncode!=0 or not os.path.exists(j):
+                  print("::warning::rhubarb falhou em %s: %s"%(idn, r.stderr.decode('utf-8','ignore')[:160])); fail+=1; continue
+              d=json.load(open(j)); res[idn]=[[round(c["start"],2), c["value"]] for c in d.get("mouthCues",[])]; ok+=1
+              print("OK %s (%d)"%(idn,len(res[idn])))
+          json.dump(res, open(out,"w"), separators=(",",":"))
+          print("== visemas: %d ok, %d falha -> %s =="%(ok,fail,out))
+          if ok==0: raise SystemExit(1)
+          PY
+
+      - name: Commit dos visemas
+        if: ${{ inputs.visemas == 'sim' || inputs.so_visemas == 'sim' }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          OUT="$(dirname "${{ inputs.outdir }}")/visemas.json"
+          git add "$OUT" || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "visemas: timeline de bocas (Rhubarb, phonetic) p/ lip-sync"
+          for k in 1 2 3 4 5 6; do
             git pull --rebase origin "${GITHUB_REF_NAME}" || true
             git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
           done
