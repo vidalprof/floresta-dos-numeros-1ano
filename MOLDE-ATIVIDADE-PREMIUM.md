@@ -219,6 +219,13 @@ Ser **didático e progressivo** é exigido pelas leis; **aula/vídeo/texto OBRIG
 - **Firebase** (2 cliques do Marcos, `FIREBASE-EDUCAVERSO.md`) = registro pra valer (turma inteira, qualquer aparelho).
 
 ## 9. CHECKLIST FINAL (o teste de fogo — reprova se algum falhar)
+
+> **⭐ A PROVA DOS 6 (critério do Marcos, 2026-07-22) — toda atividade tem que dar SIM nos seis:**
+> **(1) o aluno AMA** (atrativa, jogo) · **(2) CONSEGUE FAZER** (jogável, sem travar, alvo grande) ·
+> **(3) APRENDE DE VERDADE** (ativa/real, produção, não decoreba) · **(4) MENSURADA** (medida por baixo →
+> parecer/nota) · **(5) INSTRUTIVA** (explica a matéria ensinando, sem lousa) · **(6) ENTENDE** (compreensão
+> real, não só acertar). É o mix certo: **leque de mecânicas variadas + motor medido + simulação real**.
+
 - [ ] Toda parada é PRODUÇÃO (a criança constrói; nada de escolher alternativa).
 - [ ] **JOGO, não formulário:** manipulação direta no mundo + reação visual/recompensa a cada ação;
       nenhuma tela parece questionário/planilha (§4⅗).
