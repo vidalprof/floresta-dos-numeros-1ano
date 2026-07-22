@@ -94,6 +94,26 @@ A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de E
   sobre branco dentro do jogo (o branco é só p/ gerar o asset; na cena ele vive sobre o mundo).
 - **Régua:** se ao lado da Fábrica de Estrelas a atividade parecer mais pobre/parada → REPROVA.
 
+**RECEITA TÉCNICA DO MASCOTE VIVO (aprendida na Nara/Planeta Vivo — 2026-07, seguir à risca):**
+1. **Recorte transparente OBRIGATÓRIO.** O Gemini entrega o mascote/globo/ícones com fundo sólido
+   (branco/preto). Isso vira um **quadradão amador** sobre o cenário. Recortar de graça no container
+   com Pillow: **flood-fill a partir da BORDA** (só o fundo conectado à borda vira alfa 0 — preserva
+   brancos internos, ex. dentes/olhos), feather ~1px, autocrop. Cena de bioma é FOTO opaca → deixar
+   como está (vira JPG); só personagem/props/ícones/medalha/globo são recortados.
+2. **Poses em CANVAS ÚNICO, pés alinhados.** Todas as poses (base/fala/pisca/pensa/comemora/aponta)
+   no MESMO tamanho de tela, figura **centrada em x e apoiada no mesmo chão** (bottom-align). Senão a
+   troca de pose "pula". base/fala/pisca partilham o MESMO bbox (recorte em grupo).
+3. **fala/pisca = base + SÓ a boca/olhos (o pulo do gato do lip-sync).** O motor faz crossfade da
+   imagem `fala` inteira sobre a `base`; se o Gemini mudou o CORPO todo entre as imagens (é o padrão:
+   ~14% dos pixels diferem), o corpo inteiro **treme** ao falar. Conserto: montar `nara_fala` =
+   **cópia da base com só uma ELIPSE da boca vinda da imagem de boca aberta** (idem `nara_pisca` = base
+   + elipse dos olhos fechados). Detectar a face (a pele infla com o colete/mãos → conferir com
+   crosshair num render antes de salvar) e compor a elipse com feather. Alvo: diferença **<1%,
+   localizada na boca/olhos** (a Fábrica de Estrelas fica ~2,6%). Aí a boca abre com a voz, limpo.
+4. **Analisador liga no 1º gesto** (`createMediaElementSource(narr)` → analyser → destino) e o `loop()`
+   dirige a opacidade da `fala` pela RMS da voz. Sem áudio de verdade não há lip-sync — **gerar a
+   narração é pré-requisito** (mudo = "mascote morto").
+
 ## 4¾. PEDAGOGO ESCOLHE AS MECÂNICAS + MUITAS PARA 55 MIN (lei do Marcos)
 - O **pedagogo** (chapéu 1+2) escolhe, do `CATALOGO-DINAMICAS-INTERATIVAS.md`, as mecânicas que
   MELHOR ensinam AQUELE conteúdo/habilidade (não repetir a mesma o tempo todo — 1 verbo da mão
@@ -125,8 +145,13 @@ A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de E
 ## 7. ASSETS & VOZ (pipeline — TUDO por workflow, nunca pelo chat)
 - Imagem: `_gerar_imagens.json` + push `[imagens]` (Gemini, lote) ou `gerar-imagens.yml` (pollinations grátis
   p/ cenas; gemini p/ recorte). Mascote/props: fundo branco, contorno fechado, em camadas p/ animar.
-- Voz: `gerar-audio.yml modelo=male` (Antônio). Contagens/dicas/aquecimento/autoexplicação por parada.
-- Otimizar (autocrop/resize/optimize) antes de embutir; testar render headless.
+- Voz: `gerar-audio.yml` — **`modelo=female` (Francisca) p/ mascote menina** (Nara), `male` (Antônio)
+  p/ menino. Passar **`outdir=<pasta>/audio`** (ex. `_clima/audio`) p/ o mp3 cair DENTRO da atividade —
+  senão vai pro `_audio/` comum e os ids (p1..p5,r1,r2,final) **colidem com os da Fábrica de Estrelas**.
+  Lote inline OU `_lote_falas.json`. Uma fala por id chamado por `falar()/depoisDaFala()` no HTML.
+- Otimizar antes de publicar: **cenas fotográficas (biomas) → JPG ~720px** (12 MB → 0,5 MB, PC fraco);
+  mascote/props/ícones → PNG transparente enxuto. Gerar **ícones PWA reais** + `manifest`/`theme` da
+  atividade (não deixar restos do clone). Testar render headless (capa + parada + a cabeça do mascote).
 
 ## 8. PUBLICAÇÃO & PORTAL
 - Cada atividade no **seu repo** (`fabrica.yml` cria; `atualizar.yml` espelha). Portal LEVE só linka.
