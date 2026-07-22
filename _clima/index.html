@@ -1048,6 +1048,8 @@ function fagComemora(){
   hitStop(); setTimeout(treme,80);
   if(fagAtual&&fagAtual.el){ var c="fag"+(fagAtual.extra||""); fagAtual.el.className=c+" pulo";
     (function(elx){ setTimeout(function(){ if(elx)elx.className=c; },750); })(fagAtual.el); }
+  // volta o braço ao normal depois da comemoração (senão ela seguia FALANDO com o braço levantado — o bug do Marcos)
+  setTimeout(function(){ if(fagAtual&&fagAtual.base) fagPose("nara"); },1400);
 }
 function fagPensa(){ if(!fagAtual||!fagAtual.base)return; fagPose("nara_pensa"); setTimeout(function(){ if(fagAtual&&fagAtual.base) fagPose("nara"); },1000); }
 
