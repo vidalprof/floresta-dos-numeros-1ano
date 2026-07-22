@@ -102,6 +102,12 @@
 >>   CHECKLIST premium de 12 itens no doc. Também: **Cinema da jogada + Ensinar o mascote portados p/ a Fábrica
 >>   de Estrelas** (sw v24) e Planeta Vivo (sw v11). Regra nova p/ o molde: recompensa só surpresa; feedback
 >>   sempre EXPLICATIVO; todo premium tende a um 'chefe' de transferência.
+>>   **PRÉ/PÓS — GANHO REAL (Planeta Vivo sw v12):** o diferencial 'profissional' da pesquisa. NÃO é prova
+>>   disfarçada: reaproveita o POE — palpite inicial (`previsao.previu_certo`, marquei o certo com `ok:true`
+>>   nos 3 preverGate) × compreensão do fim (`autoexplicacao`/`ensina_mascote`.razaoOk). `salvaParecerProf`
+>>   computa por conceito: previu ERRADO→entendeu = APRENDEU; previu certo→certo = já sabia; senão = ainda
+>>   construindo. Campo `parecer.ganho` + texto 'GANHO...' que o professor vê no ?painel, ESCONDIDO do aluno.
+>>   Regra p/ molde: todo premium mede GANHO (pré×pós), não só acerto final. Falta: portar POE+ganho ao estrelas.
 >>   **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
 >>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
 >>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
