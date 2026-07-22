@@ -848,6 +848,9 @@ var reduz = window.matchMedia && window.matchMedia("(prefers-reduced-motion: red
 var falandoCb=null, bocaAlvo=0, bocaSuave=0, falaTimer=0, falaAtual="";
 function falar(id, cb){
   falandoCb=cb||null;
+  // se ela acabou de comemorar/apontar, VOLTA à pose neutra antes de narrar — a narração
+  // nunca começa com o braço levantado (bug que o Marcos viu: fala com a mão no ar).
+  if(fagAtual&&fagAtual.base&&/nara_(comemora|aponta|acena)\.png/.test(fagAtual.base.src||"")){ fagPose("nara"); }
   if(anaOk && audioCtx && audioCtx.state==="suspended"){ try{ audioCtx.resume(); }catch(eR){} }   // narração roteada pelo analisador: contexto precisa estar acordado
   if(id && id.indexOf("conta_")!==0){ falaAtual=id; mostraOuvir(true); }   // guarda p/ "Ouvir de novo" (contagem não vira alvo)
   ouvirBtn.className="tocando";
