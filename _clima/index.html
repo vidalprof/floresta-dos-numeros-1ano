@@ -732,6 +732,29 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .saibabtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#dfe6ff;font-family:inherit;font-weight:700;font-size:13px;padding:7px 15px;border-radius:20px;cursor:pointer}
 .saibabtn.aberto{background:rgba(255,220,140,.18);border-color:rgba(255,220,140,.5);color:#ffe6a3}
 .saibacard{margin:9px auto 0;max-width:520px;background:rgba(10,16,40,.92);border:1px solid rgba(255,220,140,.35);border-radius:14px;padding:12px 14px;font-size:13.5px;color:#eef1ff;line-height:1.42;text-align:left}
+/* PARADA 1 ATRATIVA — faixas do planeta que a criança TOCA e reagem (calor/frio), acendem ao acertar */
+.faixaviva{position:relative;height:58px;margin:10px 0;border-radius:14px;overflow:hidden;cursor:pointer;
+  border:1px solid rgba(255,255,255,.16);background:#232840;
+  -webkit-transition:-webkit-box-shadow .25s;transition:box-shadow .25s}
+.faixaviva:active{-webkit-transform:scale(.985);transform:scale(.985)}
+.faixaviva .fvfill{position:absolute;top:0;left:0;right:0;bottom:0;z-index:1;-webkit-transition:opacity .3s;transition:opacity .3s}
+.faixaviva.t0 .fvfill{background:-webkit-linear-gradient(left,#6aa8ff,#cfe6ff);background:linear-gradient(to right,#6aa8ff,#cfe6ff)}
+.faixaviva.t1 .fvfill{background:-webkit-linear-gradient(left,#4fb87f,#a6e2ad);background:linear-gradient(to right,#4fb87f,#a6e2ad)}
+.faixaviva.t2 .fvfill{background:-webkit-linear-gradient(left,#ffab34,#ff5e35);background:linear-gradient(to right,#ffab34,#ff5e35)}
+.faixaviva .fvglass{position:absolute;top:0;left:0;right:0;height:46%;z-index:2;pointer-events:none;
+  background:-webkit-linear-gradient(top,rgba(255,255,255,.22),rgba(255,255,255,0));background:linear-gradient(to bottom,rgba(255,255,255,.22),rgba(255,255,255,0))}
+.faixaviva .fvrot{position:absolute;left:14px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);z-index:4;font-weight:800;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.9);font-size:15px}
+.faixaviva .fvtemp{position:absolute;right:16px;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);z-index:4;font-weight:800;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.9);font-size:14px}
+.faixaviva .fvcheck{position:absolute;right:92px;top:50%;-webkit-transform:translateY(-50%) scale(0);transform:translateY(-50%) scale(0);z-index:4;width:22px;height:22px;line-height:22px;text-align:center;border-radius:50%;background:#ffe27a;color:#5a3b00;font-weight:900;-webkit-transition:-webkit-transform .22s;transition:transform .22s}
+.faixaviva.ok .fvcheck{-webkit-transform:translateY(-50%) scale(1);transform:translateY(-50%) scale(1)}
+.faixaviva.ok{-webkit-box-shadow:0 0 18px rgba(255,220,120,.7);box-shadow:0 0 18px rgba(255,220,120,.7);border-color:rgba(255,220,120,.6)}
+.fvpart{position:absolute;top:0;bottom:0;left:0;right:0;z-index:3;pointer-events:none;overflow:hidden}
+.fvflk{position:absolute;top:0;width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.92)}
+.fvhot{position:absolute;bottom:0;width:4px;height:15px;border-radius:3px;background:-webkit-linear-gradient(top,rgba(255,210,140,0),rgba(255,150,60,.7));background:linear-gradient(to top,rgba(255,150,60,.75),rgba(255,210,140,0))}
+@-webkit-keyframes fvcai{0%{-webkit-transform:translateY(-8px);opacity:.9}100%{-webkit-transform:translateY(60px);opacity:0}}
+@keyframes fvcai{0%{transform:translateY(-8px);opacity:.9}100%{transform:translateY(60px);opacity:0}}
+@-webkit-keyframes fvsobe{0%{-webkit-transform:translateY(16px);opacity:0}50%{opacity:.9}100%{-webkit-transform:translateY(-16px);opacity:0}}
+@keyframes fvsobe{0%{transform:translateY(16px);opacity:0}50%{opacity:.9}100%{transform:translateY(-16px);opacity:0}}
 .semana{position:absolute;left:0;right:0;top:26%;text-align:center;z-index:2;white-space:nowrap;padding:0 6px}
 .dia{display:inline-block;vertical-align:middle;width:13%;max-width:64px;margin:1%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 2px}
 .dia img{width:100%;height:auto;display:block}
@@ -1767,46 +1790,73 @@ function zonSaibaMais(){
   b.onclick=function(){ var vis=(card.style.display!=="none"); card.style.display=vis?"none":"block"; b.className="saibabtn"+(vis?"":" aberto"); };
   w.appendChild(b); w.appendChild(card); return w;
 }
-/* PASSO 2 — a escada, com Equador já marcado (exemplo) e ✓ na hora em cada faixa. */
+/* PASSO 2 ATRATIVO — o planeta está apagado; a criança TOCA cada faixa e ela reage
+   (esquenta com miragem/brilho, congela com neve), ACENDE ao acertar. Sem medidor/formulário. */
 function zonPasso2(){
   limpa();
   var t=el("div","tela parada clima zonas");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(20));
-  t.appendChild(el("div","balao","A Nara já marcou o <b>Equador</b> (quente). Agora faça a <b>escada</b> até o <b>Polo</b>: quanto mais longe do Equador, mais <b>frio</b>."));
+  t.appendChild(el("div","balao","O planeta está <b>apagado</b>! <b>Toque</b> em cada faixa até dar o clima certo &mdash; ela <b>acende</b> quando acerta. Do <b>Equador</b> (quente) ao <b>Polo</b> (frio). A Nara já acendeu o Equador."));
   var wrap=el("div","zonaswrap"),i;
   for(i=0;i<4;i++){ (function(k){
-    var faixa=el("div","zfaixa"); faixa.id="zf"+k;
-    var head=el("div","zhead"); head.appendChild(el("div","zrot",ZON.rot[k])); head.appendChild(el("div","zcheck",""));
-    faixa.appendChild(head);
-    faixa.appendChild(medidor({get v(){return ZON.v[k];},set v(x){ZON.v[k]=x;}}, "v", "", TLAB, function(){ ZON.tocou=true; zonPinta(); zonAuto(); }));
-    wrap.appendChild(faixa);
+    var fv=el("div","faixaviva"); fv.id="fv"+k;
+    fv.appendChild(el("div","fvfill")); fv.appendChild(el("div","fvglass"));
+    fv.appendChild(el("div","fvrot",ZON.rot[k]));
+    fv.appendChild(el("div","fvcheck","&#10003;"));
+    fv.appendChild(el("div","fvtemp",""));
+    fv.onclick=function(){ zonTap(k); };
+    wrap.appendChild(fv);
   })(i); }
   t.appendChild(wrap);
-  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Confirmar!"); b.onclick=function(){ zonConfere(); };
-  bar.appendChild(b); bar.appendChild(el("div","pdica","")); t.appendChild(bar);
   ajudaBtn(t,[
-    {txt:"O <b>Trópico</b> fica pertinho do Equador: também é <b>quente</b>."},
-    {txt:"A <b>Zona temperada</b> fica no meio: <b>amena</b> (nem quente, nem fria)."},
-    {txt:"O <b>Polo</b> é o mais <b>frio</b> &mdash; o Sol bate bem de lado."}
-  ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
+    {txt:"O <b>Trópico</b> fica pertinho do Equador: também é <b>quente</b>.",fala:"aj_p1_1"},
+    {txt:"A <b>Zona temperada</b> fica no meio: <b>amena</b>.",fala:"aj_p1_2"},
+    {txt:"O <b>Polo</b> é o mais <b>frio</b> — toque até ficar Frio.",fala:"aj_p1_3"}
+  ], function(txt){ var bl=t.getElementsByClassName("balao")[0]; if(bl)bl.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   zonPinta();
 }
-function zonPinta(){
-  var i,cor=["#5ec8ff","#9ff0c0","#ffd75e"];
-  for(i=0;i<4;i++){ var f=document.getElementById("zf"+i);
-    if(f){ f.style.borderLeft="7px solid "+cor[ZON.v[i]];
-      var ck=f.getElementsByClassName("zcheck")[0];
-      if(ck){ var okz=(ZON.v[i]===ZON.alvo[i]); ck.innerHTML=okz?"&#10003;":""; ck.className="zcheck"+(okz?" ok":""); } } }
-  var labs=document.getElementsByClassName("medlab"),z; for(z=0;z<labs.length;z++){ labs[z].innerHTML=TLAB[ZON.v[z]]; }
+function zonTap(k){
+  if(ZON.concluida)return;
+  ZON.v[k]=(ZON.v[k]+1)%3; ZON.tocou=true;
+  if(typeof somClick==="function") somClick();
+  var acertouAgora=zonPintaFaixa(k);
+  if(acertouAgora){ if(typeof somAcerto==="function")somAcerto(); if(typeof hitStop==="function")hitStop();
+    var fv=document.getElementById("fv"+k); if(fv){ fv.className+=" pulo"; (function(e){ setTimeout(function(){ if(e)e.className=e.className.replace(" pulo",""); },420); })(fv); } }
+  zonAuto();
 }
-/* ✓ na hora: quando a escada inteira bate, sucesso sozinho (o mundo reage, sem "Confirmar" obrigatório) */
+function zonPinta(){ var k; for(k=0;k<4;k++) zonPintaFaixa(k); }
+function zonPintaFaixa(k){
+  var fv=document.getElementById("fv"+k); if(!fv)return false;
+  var eraOk=/(^|\s)ok(\s|$)/.test(fv.className);
+  var ok=(ZON.v[k]===ZON.alvo[k]);
+  fv.className="faixaviva t"+ZON.v[k]+(ok?" ok":"");
+  var tp=fv.getElementsByClassName("fvtemp")[0]; if(tp)tp.innerHTML=TLAB[ZON.v[k]];
+  zonParticulas(fv,ZON.v[k]);
+  return ok && !eraOk;
+}
+function zonParticulas(fv,tmp){
+  var old=fv.getElementsByClassName("fvpart"); while(old.length){ old[0].parentNode.removeChild(old[0]); }
+  if(reduz || tmp===1) return;   // Ameno = sem partícula
+  var box=el("div","fvpart"),i,n=(tmp===0?7:6);
+  for(i=0;i<n;i++){
+    var p=el("div", tmp===0?"fvflk":"fvhot");
+    p.style.left=(6+(i*13)%86)+"%";
+    var dur=(1.5+(i%4)*0.4).toFixed(2)+"s", del=(-(i*0.33)).toFixed(2)+"s";
+    var an=(tmp===0?"fvcai":"fvsobe");
+    p.style.webkitAnimation=an+" "+dur+" linear infinite"; p.style.animation=an+" "+dur+" linear infinite";
+    p.style.webkitAnimationDelay=del; p.style.animationDelay=del;
+    box.appendChild(p);
+  }
+  fv.appendChild(box);
+}
+/* quando as 4 faixas acendem, o planeta revive sozinho (o mundo reage, sem "Confirmar") */
 function zonAuto(){
   if(ZON.concluida)return;
   var i; for(i=0;i<4;i++){ if(ZON.v[i]!==ZON.alvo[i]) return; }
-  somAcerto(); zonSucesso();
+  if(typeof somAcerto==="function")somAcerto(); zonSucesso();
 }
 function zonConfere(){
   if(ZON.concluida)return;
