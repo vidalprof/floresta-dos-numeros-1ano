@@ -350,6 +350,15 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   text-shadow:0 2px 0 #7a5200,0 0 20px rgba(255,200,80,.6);-webkit-animation:revIn .6s ease both;animation:revIn .6s ease both}
 .fim .fimsub{position:absolute;left:0;right:0;top:40%;z-index:6;padding:0 24px;font-size:16px;color:#e9ecff;
   -webkit-animation:revIn .6s .3s ease both;animation:revIn .6s .3s ease both}
+/* CINEMA DA JOGADA — cartão do recap + legenda */
+.legenda.fimleg{bottom:12%;font-size:16px}
+.fim.cinema .cinecard{position:absolute;left:14px;right:14px;top:24%;z-index:6;padding:18px 18px;border-radius:16px;
+  background:rgba(15,20,48,.92);border:1px solid rgba(255,225,150,.4);text-align:center;
+  font-size:18px;line-height:1.4;color:#fff;font-weight:700;-webkit-box-shadow:0 10px 30px rgba(0,0,0,.4);box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.fim.cinema .cinecard b{color:#ffe08a}
+.fim.cinema .cinecard.entra{-webkit-animation:cineIn .45s ease both;animation:cineIn .45s ease both}
+@-webkit-keyframes cineIn{from{opacity:0;-webkit-transform:translateY(14px) scale(.97)}to{opacity:1;-webkit-transform:none}}
+@keyframes cineIn{from{opacity:0;transform:translateY(14px) scale(.97)}to{opacity:1;transform:none}}
 
 /* ---------- PARECER (diploma + professor) ---------- */
 .parecer{overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -534,6 +543,10 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 /* POE — portão "Prever" (etiqueta do palpite) */
 .prevbox .prevtag{display:inline-block;background:#ffd75e;color:#3a2c00;font-weight:800;font-size:12px;
   padding:3px 12px;border-radius:12px;margin-bottom:8px;letter-spacing:.3px}
+/* MODO ENSINAR A NARA (efeito protégé) — selo + destaque */
+.ensinabox .aeteach{display:inline-block;background:#8ad0ff;color:#08324e;font-weight:800;font-size:12px;
+  padding:3px 12px;border-radius:12px;margin-bottom:7px}
+.ensinabox{border-color:rgba(140,208,255,.55)}
 /* REFUTAÇÃO: mito (riscado, apagado) vs verdade (aceso) */
 .refutacard{margin:10px auto 0;max-width:560px;text-align:left;background:rgba(15,20,48,.5);
   border:1px solid rgba(255,225,150,.3);border-radius:14px;padding:10px 13px;line-height:1.34}
@@ -1212,8 +1225,11 @@ function visEstrelona(){ var w=el("div","aevis"); var im=el("img","aestrG"); im.
 function autoexplica(tela, cfg, cb){
   var k, esconder=["caixas","pmeio","somaMeio","grade","steppers","builder","probbuild","npad","p3wrap","p4sky"];  // limpa o meio; a revela (conceito) fica de referência
   for(k=0;k<esconder.length;k++){ var e0=tela.getElementsByClassName(esconder[k])[0]; if(e0)e0.style.display="none"; }
-  var box=el("div","autoexp");
+  var box=el("div","autoexp"+(cfg.ensinar?" ensinabox":""));
   var mini=el("img","aefagmini"); mini.src="img/nara_pensa.png"; mini.alt=""; box.appendChild(mini);
+  /* MODO "ENSINAR A NARA" (efeito protégé: a criança aprende MAIS ensinando).
+     A Nara diz a ideia errada e pede ajuda; corrigir a mascote É a atividade. */
+  if(cfg.ensinar) box.appendChild(el("div","aeteach","A Nara ficou confusa &#8212; me ajuda a acertar?"));
   box.appendChild(el("div","aeperg",cfg.pergunta));
   var temVis=false, i;
   for(i=0;i<cfg.opcoes.length;i++){ if(cfg.opcoes[i].vis) temVis=true; }
@@ -1234,14 +1250,14 @@ function autoexplica(tela, cfg, cb){
       var base=(o.vis?"aetile":"aebtn");
       if(o.ok){
         b.className=base+" certo";
-        fb.className="aefb bom"; fb.innerHTML="Isso mesmo! <b>"+txtCerto+"</b>.";
+        fb.className="aefb bom"; fb.innerHTML=(cfg.ensinar?"Você ensinou a Nara! <b>":"Isso mesmo! <b>")+txtCerto+"</b>.";
       } else {
         b.className=base+" escolhida";                                  // a escolha NÃO fica vermelha (sem julgamento)
         if(tiles[idxCerto]) tiles[idxCerto].className=(cfg.opcoes[idxCerto].vis?"aetile":"aebtn")+" certo";   // a IDEIA certa acende
         fb.className="aefb ver"; fb.innerHTML="Era esta: <b>"+txtCerto+"</b>.";
       }
-      salvaEvid({parada:cfg.idEvid,tipo:"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});  // medição escondida -> professor
-      depoisDaFala(o.ok?"refl_ok":"refl_hmm", 6000, function(){ if(cb)cb(); });
+      salvaEvid({parada:cfg.idEvid,tipo:cfg.ensinar?"ensina_mascote":"autoexplicacao",razaoOk:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});  // medição escondida -> professor
+      depoisDaFala(o.ok?(cfg.ensinar?"ens_obrigada":"refl_ok"):"refl_hmm", 6000, function(){ if(cb)cb(); });
     };
     if(o.vis){ row.appendChild(b); } else { box.appendChild(b); }
   })(cfg.opcoes[i], i); }
@@ -2422,8 +2438,9 @@ function fatSucesso(){
   premiar(semErro?3:2); motorParada("p4",forcaDe(semErro));
   setTimeout(function(){
     depoisDaFala("e_p4",9000,function(){
-      autoexplica(tela,{ falaQ:"se_p4_q", pergunta:"Por que pode <b>nevar no Equador</b>?",
-        opcoes:[{txt:"Porque no alto da <b>montanha</b> faz frio",ok:true},{txt:"Porque o Equador é frio",ok:false},{txt:"Por acaso",ok:false}], idEvid:"p4"
+      autoexplica(tela,{ ensinar:true, falaQ:"ens_p4",
+        pergunta:"A Nara acha que neva no alto porque l&#225; &#233; <b>mais perto do Sol</b>. Qual &#233; o certo?",
+        opcoes:[{txt:"No alto o <b>ar &#233; rarefeito</b> e esfria",ok:true},{txt:"Sim, &#233; mais perto do Sol",ok:false},{txt:"O Equador &#233; frio",ok:false}], idEvid:"p4"
       }, function(){ botaoProxima(tela,null,200); });
     });
   },800);
@@ -2700,11 +2717,45 @@ function telaFinal(){
   var tit=el("div","fimtit","Você reconstruiu o Planeta Vivo!"); t.appendChild(tit);
   var sub=el("div","fimsub","O mundo inteiro voltou a viver por sua causa."); t.appendChild(sub);
   var bar=el("div","p1barra"); bar.style.bottom="8%";
-  var b=el("button","btn pulsa","Ver como você foi"); b.onclick=function(){ telaRelatorio(); }; bar.appendChild(b); t.appendChild(bar);
+  var b=el("button","btn pulsa","Ver a sua jornada &#127916;"); b.onclick=function(){ telaCinema(telaRelatorio); }; bar.appendChild(b); t.appendChild(bar);
   app.appendChild(t);
   falar("final");
   var i; for(i=0;i<3;i++){ (function(d){ setTimeout(function(){ estouraEstrelas(t,16); },d); })(i*600);
   }
+}
+/* ===== "CINEMA DA JOGADA" — recap PERSONALIZADO da jornada (ideia inovadora):
+   a Nara narra o que ESTE aluno fez, puxando dos eventos medidos. Torna a medição
+   VISÍVEL e emocionante + reforça a memória (a criança RELEMBRA a própria jornada
+   = recuperação/generative recall). Robusto: avança sem áudio (depoisDaFala). ===== */
+function telaCinema(cb){
+  limpa();
+  var map=pontuacao().map, alu=alunoAtual(), nome=(alu&&alu.nome)?(""+alu.nome).split(" ")[0]:"";
+  var beats=[{fala:"cine_intro",txt:(nome?"Olha só, "+nome+": ":"Olha só: ")+"tudo o que você fez hoje! Vem ver a sua jornada."}];
+  if(map.p1) beats.push({fala:"cine_p1",txt:"Você acendeu as <b>zonas</b> do planeta: no Equador o Sol bate reto e faz calor; nos polos, bate de lado e faz frio."});
+  if(map.p3) beats.push({fala:"cine_p3",txt:"Você virou o <b>clima em bioma</b>! Com sol e chuva, fez a floresta, o deserto e a taiga nascerem."});
+  if(map.p4) beats.push({fala:"cine_p4",txt:"E descobriu um segredo: no <b>alto da montanha</b> faz frio e até neva, mesmo no Equador!"});
+  if(map.clg) beats.push({fala:"cine_clg",txt:"Ainda <b>montou e leu climogramas</b> — e o gráfico virou um lugar de verdade."});
+  beats.push({fala:"cine_fim",txt:(nome?nome+", tudo":"Tudo")+" isso foi <b>você</b> que fez. Você é um verdadeiro <b>cartógrafo do Planeta Vivo</b>!"});
+  var t=el("div","tela fim cinema");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(60));
+  var card=el("div","cinecard"); t.appendChild(card);
+  var leg=el("div","legenda fimleg"); t.appendChild(leg);
+  var fag=el("div","fimfag"); fag.appendChild(fagViva()); t.appendChild(fag);
+  var vivo=true;
+  var pular=el("button","pular","pular &#9654;"); pular.onclick=function(){ if(!vivo)return; vivo=false; try{narr.pause();}catch(e){} paraBoca&&paraBoca(); cb&&cb(); }; t.appendChild(pular);
+  app.appendChild(t);
+  var i=0;
+  function passo(){
+    if(!vivo)return;
+    if(i>=beats.length){ vivo=false; cb&&cb(); return; }
+    var b=beats[i]; i++;
+    card.className="cinecard"; void card.offsetWidth; card.className="cinecard entra";
+    card.innerHTML=b.txt;
+    leg.innerHTML=""; legendaSync(leg,(""+b.txt).replace(/<[^>]+>/g,""));
+    if(i===beats.length) estouraEstrelas(t,14);
+    depoisDaFala(b.fala, 6500, passo);
+  }
+  passo();
 }
 function lerEvid(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_evid"))||"[]"); }catch(e){ return []; } }
 function pontuacao(){
@@ -2736,11 +2787,11 @@ function salvaParecerProf(d){
   var ret=lerRet(), rok=0, rz;
   for(rz=0;rz<ret.length;rz++){ if(ret[rz].ok)rok++; }
   var txtRet=ret.length? (" Retenção em revisões espaçadas (dias depois): "+rok+" de "+ret.length+" itens reacendidos de primeira.") : " Retenção espaçada: ainda sem revisões (agendadas pelo motor para os próximos dias).";
-  var parecer={ atividade:"Planeta Vivo", habilidade:"EF03MA07",
+  var parecer={ atividade:"Planeta Vivo", habilidade:"EF06GE05/EF06GE03",
     porcentagem:d.pct, nivel:d.nivel, paradas_feitas:d.cont, total_paradas:d.total, fluencia:d.fluente,
     dominio_medio:dominio, retencao:[rok,ret.length],
     indicadores:ind,
-    texto:"O estudante compreende a multiplicação como grupos iguais e disposição retangular (array). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Domínio médio estimado pelo motor: "+dominio+"%."+txtRet+" Nível sugerido: "+d.nivel+".",
+    texto:"O estudante compreende que o CLIMA (temperatura + chuva) define o BIOMA e reconhece os fatores que o alteram (latitude, altitude, maritimidade). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Domínio médio estimado pelo motor: "+dominio+"%."+txtRet+" Nível sugerido: "+d.nivel+".",
     quando:(new Date()).toISOString() };
   /* identidade + registro COMPARTILHADO (edu_pareceres): é daqui que sai a avaliação
      consolidada de TODAS as atividades do estudante (padrão p/ as próximas atividades) */
