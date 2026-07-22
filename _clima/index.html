@@ -852,6 +852,12 @@ function atualizaOfensiva(){
 atualizaOfensiva();
 var app=document.getElementById("app");
 var narr=document.getElementById("narr");
+/* ===== LIP-SYNC POR VISEMAS (timeline do Rhubarb, calculada no workflow) ===== */
+var VIS_IMG={A:"img/nara.png",X:"img/nara.png",B:"img/nara_v_meio.png",C:"img/nara_v_meio.png",H:"img/nara_v_meio.png",D:"img/nara_fala.png",G:"img/nara_fala.png",E:"img/nara_v_o.png",F:"img/nara_v_o.png"};
+var VIS_OPEN={A:0,X:0,B:0.4,C:0.45,H:0.35,D:1,G:0.6,E:0.5,F:0.55};
+var VISEMAS={}, visCues=null, visIdx=0;
+(function(){ var seen={},k; for(k in VIS_IMG){ if(!seen[VIS_IMG[k]]){ seen[VIS_IMG[k]]=1; try{ var im=new Image(); im.src=VIS_IMG[k]; }catch(e){} } } })();
+try{ if(window.fetch) fetch("visemas.json",{cache:"force-cache"}).then(function(r){return r.ok?r.json():null;}).then(function(j){ if(j) VISEMAS=j; }).catch(function(){}); }catch(e){}
 /* botão "Ouvir de novo" — vive no #stage (acompanha o palco), some por padrão */
 var ouvirBtn=document.createElement("button");
 ouvirBtn.id="ouvirbtn"; ouvirBtn.setAttribute("aria-label","Ouvir o enunciado de novo"); ouvirBtn.title="Ouvir de novo";
@@ -876,6 +882,8 @@ function falar(id, cb){
   // se ela acabou de comemorar/apontar, VOLTA à pose neutra antes de narrar — a narração
   // nunca começa com o braço levantado (bug que o Marcos viu: fala com a mão no ar).
   if(fagAtual&&fagAtual.base&&/nara_(comemora|aponta|acena)\.png/.test(fagAtual.base.src||"")){ fagPose("nara"); }
+  visCues=(VISEMAS&&VISEMAS[id])?VISEMAS[id]:null; visIdx=0;   // se há timeline p/ esta fala, usa visemas; senão, RMS
+  if(fagAtual) fagAtual._vsrc=null;
   if(anaOk && audioCtx && audioCtx.state==="suspended"){ try{ audioCtx.resume(); }catch(eR){} }   // narração roteada pelo analisador: contexto precisa estar acordado
   if(id && id.indexOf("conta_")!==0){ falaAtual=id; mostraOuvir(true); }   // guarda p/ "Ouvir de novo" (contagem não vira alvo)
   ouvirBtn.className="tocando";
@@ -885,7 +893,7 @@ function falar(id, cb){
   if(p && p["catch"]){ p["catch"](function(){ /* sem áudio: segue mesmo assim */ }); }
   iniciaBoca();
 }
-function fimFala(){ paraBoca(); ouvirBtn.className=""; var c=falandoCb; falandoCb=null; if(c){ c(); } }
+function fimFala(){ paraBoca(); if(visCues&&fagAtual&&fagAtual.base){ fagAtual.base.src="img/nara.png"; fagAtual._vsrc="img/nara.png"; } visCues=null; ouvirBtn.className=""; var c=falandoCb; falandoCb=null; if(c){ c(); } }
 narr.addEventListener("ended", fimFala);
 function iniciaBoca(){
   if(falaTimer) clearInterval(falaTimer);
@@ -991,13 +999,24 @@ function loop(){
       bocaAlvo=(rms<0.012)?0:Math.min(1,0.18+rms*6);
     }catch(eA){}
   }
-  if(fagAtual && fagAtual.fala){
-    bocaSuave += (bocaAlvo-bocaSuave)*0.45;   // suaviza só p/ o gesto do corpo
-    /* LIP-FLAP NÍTIDO (2D de verdade): a boca fica ABERTA ou FECHADA, nunca num
-       "fantasma" translúcido no meio. Histerese (abre>0.30, fecha<0.14) = não tremula. */
-    var aberta = (fagAtual._boca===1) ? (bocaAlvo>0.14) : (bocaAlvo>0.30);
-    fagAtual._boca = aberta?1:0;
-    fagAtual.fala.style.opacity = aberta ? "1" : "0";
+  if(fagAtual && fagAtual.base){
+    var alvoBoca=bocaAlvo;
+    if(visCues && !narr.paused && !narr.ended){
+      /* VISEMAS: troca a imagem da boca no tempo exato da narração (Rhubarb) */
+      var tv=narr.currentTime;
+      while(visIdx+1<visCues.length && visCues[visIdx+1][0]<=tv) visIdx++;
+      while(visIdx>0 && visCues[visIdx][0]>tv) visIdx--;
+      var letra=visCues[visIdx][1], vsrc=VIS_IMG[letra]||"img/nara.png";
+      if(fagAtual._vsrc!==vsrc){ fagAtual.base.src=vsrc; fagAtual._vsrc=vsrc; }
+      if(fagAtual.fala) fagAtual.fala.style.opacity="0";
+      alvoBoca=(VIS_OPEN[letra]!=null?VIS_OPEN[letra]:0);
+    } else if(fagAtual.fala){
+      /* FALLBACK (sem timeline p/ esta fala): flap NÍTIDO por RMS (aberto/fechado, histerese) */
+      var aberta = (fagAtual._boca===1) ? (bocaAlvo>0.14) : (bocaAlvo>0.30);
+      fagAtual._boca = aberta?1:0;
+      fagAtual.fala.style.opacity = aberta ? "1" : "0";
+    }
+    bocaSuave += (alvoBoca-bocaSuave)*0.45;   // suaviza só p/ o gesto do corpo
     if(fagAtual.corpo && !reduz){
       if(bocaSuave>0.04){
         var tt=(new Date()).getTime();
