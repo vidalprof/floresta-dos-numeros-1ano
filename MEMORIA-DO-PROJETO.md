@@ -23,6 +23,23 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 🌱 NOVA ATIVIDADE — "O Jardim do Broto" (2º ano, Ciências — as plantas) — 2026-07-22
+>> Feita a pedido do Marcos ("crie uma nova atividade para o 2 ano nesse modelo... muitas dinâmicas
+>> interativas variadas, me surpreenda, app inovador, visual diferente do que vimos"). **Visual NOVO**
+>> (dia claro de jardim: Canvas com sol+raios, nuvens, morros, flores, borboletas), **mascote NOVO = o
+>> Broto** (broto de plantinha fofo, desenhado no Canvas). **4 dinâmicas variadas:** (1) **Plantar**
+>> = simulação (toca Sol/Água → a planta cresce em estágios); (2) **Ordenar** = sequência do crescimento
+>> (semente→broto→planta→flor→fruto); (3) **Do que precisa** = classificar (com pegadinhas: refri/celular/
+>> meia = "não precisa"); (4) **Partes da planta** = tocar a parte pedida (raiz/caule/folha/flor). Fonte
+>> Fredoka embutida, som Web Audio, confete. **Sem emoji** visível (verificado). BNCC 2º ano: seres vivos/
+>> plantas e suas partes; do que a planta precisa para viver.
+>> - **Arquivos:** `_jardim/index.html` (1 HTML autossuficiente) + `_jardim/manifest.json`.
+>> - **Repo publicado:** `jardim-do-broto` → **https://vidalprof.github.io/jardim-do-broto/**
+>>   (criado pela Fábrica `fabrica.yml`, source_dir=_jardim, em 2026-07-22).
+>> - **Republicar/atualizar:** `atualizar.yml` (repo_name=jardim-do-broto, source_dir=_jardim, ref=branch).
+>> - **Pendente/futuro:** entrar no portal (`_portal`/hub) como card; QA 3 níveis formal; voz/narração;
+>>   possível 5ª dinâmica (mistério "por que a planta murchou?"). É experimento de VISUAL novo (2º ano).
+>>
 >> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
 >> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
 >> - **JOGO, não formulário (§4⅗):** o que ensina certo mas parece medidor/lista/questionário NÃO prende.
