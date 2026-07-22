@@ -707,6 +707,15 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .ccell1{background:-webkit-linear-gradient(top,#6bcac0,#3f9d94);background:linear-gradient(to bottom,#6bcac0,#3f9d94)}
 .ccell2{background:-webkit-linear-gradient(top,#6aa8ff,#3f7fd8);background:linear-gradient(to bottom,#6aa8ff,#3f7fd8)}
 .climcell.on{-webkit-box-shadow:inset 0 0 0 3px #ffe27a,0 0 14px rgba(255,220,120,.6);box-shadow:inset 0 0 0 3px #ffe27a,0 0 14px rgba(255,220,120,.6);z-index:2}
+/* ALTITUDE — a criança ESCALA a montanha (topo=neve/frio, base=quente); o bioma reage */
+.montanha{display:inline-block;width:190px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.18);text-align:center;vertical-align:middle}
+.altcell{padding:15px 6px;min-height:22px;cursor:pointer;color:#fff;font-weight:800;font-size:14px;text-shadow:0 1px 4px rgba(0,0,0,.85);position:relative}
+.altcell:active{-webkit-transform:scale(.98);transform:scale(.98)}
+.altcell+.altcell{border-top:1px solid rgba(255,255,255,.16)}
+.acell2{background:-webkit-linear-gradient(top,#eef5ff,#bcd6f5);background:linear-gradient(to bottom,#eef5ff,#bcd6f5);color:#2a3550;text-shadow:none}
+.acell1{background:-webkit-linear-gradient(top,#7db98a,#4f9068);background:linear-gradient(to bottom,#7db98a,#4f9068)}
+.acell0{background:-webkit-linear-gradient(top,#ffc078,#ff8a4a);background:linear-gradient(to bottom,#ffc078,#ff8a4a)}
+.altcell.on{-webkit-box-shadow:inset 0 0 0 3px #ffe27a;box-shadow:inset 0 0 0 3px #ffe27a;z-index:2}
 .biotile{display:inline-block;vertical-align:top;margin:6px;border-radius:16px;overflow:hidden;position:relative;
   border:2px solid rgba(255,225,150,.5);box-shadow:0 8px 22px rgba(0,0,0,.45);width:210px;max-width:80%;
   -webkit-animation:estrPop .35s ease;animation:estrPop .35s ease}
@@ -2099,20 +2108,36 @@ function telaFatores(){
   t.appendChild(el("div","balao","Esta região fica <b>bem no Equador</b> (quente!), mas os moradores dizem que faz <b>frio e neva</b>. Como? Ajuste a <b>altitude</b> e descubra!"));
   var meio=el("div","simmeio"); meio.id="fatbio"; t.appendChild(meio);
   var build=el("div","builder");
-  var ctr=el("div","steppers"); ctr.appendChild(medidor(FAT,"alt","Altitude",ALAB,fatPinta));
-  build.appendChild(ctr);
-  var b=el("button","btn pulsa","É isso!"); b.onclick=function(){ fatConfere(); };
-  build.appendChild(b); build.appendChild(el("div","pdica","")); t.appendChild(build);
+  var m=el("div","montanha"); var order=[2,1,0],i;   // topo (Montanha alta) em cima, base embaixo
+  for(i=0;i<order.length;i++){ (function(v){
+    var c=el("div","altcell acell"+v, ALAB[v]); c.id="alt_"+v;
+    c.onclick=function(){ fatSet(v); }; m.appendChild(c);
+  })(order[i]); }
+  build.appendChild(m); build.appendChild(el("div","pdica","")); t.appendChild(build);
   ajudaBtn(t,[
     {txt:"Quanto mais <b>alto</b> (montanha), mais <b>frio</b> — mesmo no Equador."},
-    {txt:"Suba a altitude até o alto da <b>montanha</b> e veja o bioma esfriar."}
+    {txt:"<b>Suba</b> até o alto da montanha e veja o bioma <b>esfriar e nevar</b>."}
   ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   fatPinta(); falar("p4");
 }
+function fatSet(v){
+  if(FAT.concluida)return;
+  FAT.alt=v; if(typeof somClick==="function") somClick();
+  fatPinta(); fatAuto();
+}
+/* sobe a montanha → o bioma esfria; ao chegar ao FRIO no topo, "descobre" a lei do relevo */
+function fatAuto(){
+  if(FAT.concluida)return;
+  if(Math.max(0,2-FAT.alt)!==0) return;
+  if(typeof somAcerto==="function") somAcerto(); if(typeof hitStop==="function") hitStop();
+  var tela=document.getElementsByClassName("fatores")[0]; if(tela) estouraEstrelas(tela,8);
+  fatSucesso();
+}
 function fatPinta(){
-  medSet("alt",ALAB,FAT.alt);
+  var v; for(v=0;v<ALAB.length;v++){ var c=document.getElementById("alt_"+v);
+    if(c){ c.className=c.className.replace(/\s*on\b/,""); if(FAT.alt===v) c.className+=" on"; } }
   var temp=Math.max(0,2-FAT.alt); // Equador quente(2) esfria com a altitude
   var slug=bioma(temp,1), box=document.getElementById("fatbio");
   if(box){ box.innerHTML=""; box.appendChild(bioTile(slug)); }
