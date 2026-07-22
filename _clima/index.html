@@ -753,6 +753,11 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .clgbar{position:absolute;left:0;right:0;bottom:0;border-radius:7px 7px 0 0;height:0;
   background:-webkit-linear-gradient(top,#8fc2ff,#3f7fd8);background:linear-gradient(to bottom,#8fc2ff,#3f7fd8);-webkit-transition:height .18s ease;transition:height .18s ease}
 .clgcol.ok{-webkit-box-shadow:inset 0 0 0 2px #ffe27a;box-shadow:inset 0 0 0 2px #ffe27a}
+.clgcol.ok .clgcue{background:rgba(70,58,0,.92);color:#ffe89a}
+/* PISTA do tempo (fica LEGÍVEL por cima da barra: chip com fundo próprio + z-index) */
+.clgcue{position:absolute;left:2px;right:2px;top:3px;z-index:3;text-align:center;font-size:9px;font-weight:800;
+  color:#eaf1ff;line-height:1.05;background:rgba(12,18,44,.9);border-radius:7px;padding:3px 1px}
+.clgcue img{display:block;width:13px;height:13px;margin:0 1px 1px;display:inline-block;vertical-align:middle}
 .clglab{position:absolute;left:-4px;right:-4px;bottom:-22px;text-align:center;color:#dfe6ff;font-size:11px;font-weight:700}
 .biotile{display:inline-block;vertical-align:top;margin:6px;border-radius:16px;overflow:hidden;position:relative;
   border:2px solid rgba(255,225,150,.5);box-shadow:0 8px 22px rgba(0,0,0,.45);width:210px;max-width:80%;
@@ -2341,10 +2346,13 @@ function fatSucesso(){
 var CLG;
 function telaClimograma(){
   limpa();
+  // 3 níveis claros: 0=seco · 1=chuva · 2=muita chuva. Cada estação tem uma PISTA do tempo,
+  // então TODA barra é dedutível (a criança LÊ o tempo e monta o gráfico — nada de adivinhar).
   CLG={rain:[1,1,1,1],i:0,tent:0,concluida:false,t0:(new Date()).getTime(),
     rondas:[
-      {nome:"Floresta Tropical",bio:"floresta",alvo:[3,3,3,3],dica:"chove MUITO o ano inteiro"},
-      {nome:"Savana",bio:"savana",alvo:[3,2,0,1],dica:"chove no verão e fica SECO no inverno"}
+      {nome:"Floresta Tropical",bio:"floresta",alvo:[2,2,2,2],dica:"chove o ano inteiro"},
+      {nome:"Savana",bio:"savana",alvo:[2,1,0,1],dica:"chuva no verão, seca no inverno"},
+      {nome:"Deserto",bio:"deserto",alvo:[0,0,0,0],dica:"quase não chove nunca"}
     ]};
   var t=el("div","tela parada clima climograma");
   t.appendChild(barraProg());
@@ -2356,6 +2364,7 @@ function telaClimograma(){
   var cols=el("div","clgcols"); var labs=["Verão","Outono","Inverno","Primav."],i;
   for(i=0;i<4;i++){ (function(k){
     var col=el("div","clgcol"); col.id="clg"+k;
+    var cue=el("div","clgcue"); cue.id="clgcue"+k; col.appendChild(cue);   // PISTA do tempo daquela estação
     var bar=el("div","clgbar"); bar.id="clgbar"+k; col.appendChild(bar);
     col.appendChild(el("div","clglab",labs[k]));
     col.onclick=function(){ clgTap(k); };
@@ -2363,18 +2372,25 @@ function telaClimograma(){
   })(i); }
   wrap.appendChild(cols); t.appendChild(wrap);
   ajudaBtn(t,[
-    {txt:"Toque em cada estação para <b>levantar</b> a barra de chuva."},
-    {txt:"Siga a dica: mais chuva = barra mais <b>alta</b>; seca = barra baixa."}
+    {txt:"Cada estação tem uma <b>pista</b> em cima: seco, chuva ou muita chuva."},
+    {txt:"Toque na coluna para <b>levantar</b> a barra até bater com a pista. Seco = barra no chão; muita chuva = barra cheia."}
   ], function(txt){ var b=t.getElementsByClassName("balao")[0]; if(b)b.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
   clgEnun(); clgPinta(); falar("clg");
 }
+function clgCueHTML(level){
+  if(level<=0) return "<img src='img/ic_sol.png' alt=''>seco";
+  if(level===1) return "<img src='img/ic_chuva.png' alt=''>chuva";
+  return "<img src='img/ic_chuva.png' alt=''><img src='img/ic_chuva.png' alt=''>muita chuva";
+}
+function clgCues(){ var r=CLG.rondas[CLG.i],k; for(k=0;k<4;k++){ var c=document.getElementById("clgcue"+k); if(c) c.innerHTML=clgCueHTML(r.alvo[k]); } }
 function clgEnun(){ var r=CLG.rondas[CLG.i], b=document.getElementsByClassName("balao")[0];
-  if(b)b.innerHTML="Monte o <b>climograma</b> desta região: aqui <b>"+r.dica+"</b>. Levante a <b>chuva</b> de cada estação."; }
-function clgTap(k){ if(CLG.concluida)return; CLG.rain[k]=(CLG.rain[k]+1)%4; if(typeof somClick==="function")somClick(); clgPinta(); clgAuto(); }
+  if(b)b.innerHTML="Monte o <b>climograma</b> da <b>"+r.nome+"</b>: aqui "+r.dica+". <b>Leia a pista</b> de cada esta&#231;&#227;o e levante a <b>chuva</b> at&#233; bater.";
+  clgCues(); }
+function clgTap(k){ if(CLG.concluida)return; CLG.rain[k]=(CLG.rain[k]+1)%3; if(typeof somClick==="function")somClick(); clgPinta(); clgAuto(); }
 function clgPinta(){ var r=CLG.rondas[CLG.i],k;
-  for(k=0;k<4;k++){ var bar=document.getElementById("clgbar"+k); if(bar)bar.style.height=(CLG.rain[k]/3*100).toFixed(0)+"%";
+  for(k=0;k<4;k++){ var bar=document.getElementById("clgbar"+k); if(bar)bar.style.height=(CLG.rain[k]/2*100).toFixed(0)+"%";
     var col=document.getElementById("clg"+k); if(col)col.className="clgcol"+(CLG.rain[k]===r.alvo[k]?" ok":""); } }
 function clgAuto(){ if(CLG.concluida)return; var r=CLG.rondas[CLG.i],k;
   for(k=0;k<4;k++){ if(CLG.rain[k]!==r.alvo[k]) return; }
