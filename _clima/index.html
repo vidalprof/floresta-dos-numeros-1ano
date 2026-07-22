@@ -964,12 +964,17 @@ function loop(){
     }catch(eA){}
   }
   if(fagAtual && fagAtual.fala){
-    bocaSuave += (bocaAlvo-bocaSuave)*0.4;
-    fagAtual.fala.style.opacity=bocaSuave.toFixed(3);
+    bocaSuave += (bocaAlvo-bocaSuave)*0.45;   // suaviza só p/ o gesto do corpo
+    /* LIP-FLAP NÍTIDO (2D de verdade): a boca fica ABERTA ou FECHADA, nunca num
+       "fantasma" translúcido no meio. Histerese (abre>0.30, fecha<0.14) = não tremula. */
+    var aberta = (fagAtual._boca===1) ? (bocaAlvo>0.14) : (bocaAlvo>0.30);
+    fagAtual._boca = aberta?1:0;
+    fagAtual.fala.style.opacity = aberta ? "1" : "0";
     if(fagAtual.corpo && !reduz){
-      if(bocaSuave>0.03){
-        var tt=(new Date()).getTime()/95;
-        var tr="rotate("+(Math.sin(tt)*2.1*bocaSuave).toFixed(2)+"deg) translateY("+(-3.2*bocaSuave).toFixed(2)+"px)";
+      if(bocaSuave>0.04){
+        var tt=(new Date()).getTime();
+        // baloiço macio + leve elevação no ritmo da fala (viva, sem tremer)
+        var tr="translateY("+(-2.6*bocaSuave).toFixed(2)+"px) rotate("+(Math.sin(tt/520)*1.5*bocaSuave).toFixed(2)+"deg)";
         fagAtual.corpo.style.webkitTransform=tr; fagAtual.corpo.style.transform=tr;
       } else if(fagAtual.corpo.style.transform){
         fagAtual.corpo.style.webkitTransform=""; fagAtual.corpo.style.transform="";
