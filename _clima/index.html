@@ -2105,8 +2105,30 @@ function leiCena(){
   if(chuva>=1) leiChuva(ctx,W,gY,chuva,LEI);
   if(temp===0) leiNeve(ctx,W,gY,LEI);
   if(temp>=2 && chuva===0) leiCalor(ctx,W,gY,LEI);
+  leiRotulos(ctx,W,H,gY,sx,sy,sr,temp,chuva,slug);          // mecanismo à vista: causa (Sol/Nuvem) -> clima em palavras -> bioma
   if(LEI.flash>0.05){ ctx.fillStyle="rgba(255,255,255,"+(LEI.flash*0.15).toFixed(2)+")"; ctx.fillRect(0,0,W,H); }
   LEI.raf=requestAnimationFrame(leiCena);
+}
+/* RÓTULOS DE CAUSA + LEITOR "clima -> bioma" (representações ligadas; o modelo
+   fica visível em PALAVRAS, não só na cena). Pesquisa: realismo FUNCIONAL +
+   múltiplas representações ligadas ajudam o entendimento (F1/F4). */
+var TEMPPAL=["frio","ameno","quente"], CHUVAPAL=["seco","com chuva","muita chuva"];
+function leiTxt(ctx,txt,x,y,cor,tam,centro){
+  ctx.font="bold "+(tam||11)+"px system-ui,Arial,sans-serif";
+  ctx.textAlign=centro?"center":"left"; ctx.textBaseline="middle";
+  ctx.lineWidth=3; ctx.strokeStyle="rgba(20,26,45,.85)"; ctx.strokeText(txt,x,y);
+  ctx.fillStyle=cor; ctx.fillText(txt,x,y);
+}
+function leiRotulos(ctx,W,H,gY,sx,sy,sr,temp,chuva,slug){
+  leiTxt(ctx,"Sol",sx,sy+sr+11,"#ffe9a6",11,true);           // etiqueta a causa "calor"
+  leiTxt(ctx,"+ "+TEMPPAL[temp],sx,sy+sr+23,"#fff2c8",10,true);
+  var cx=W*0.74;
+  leiTxt(ctx,"Nuvem",cx,H*0.2+30,"#dfeaff",11,true);         // etiqueta a causa "chuva"
+  leiTxt(ctx,CHUVAPAL[chuva],cx,H*0.2+42,"#eaf2ff",10,true);
+  // leitor inferior: a CADEIA CAUSAL em palavras, ligada à cena
+  ctx.fillStyle="rgba(15,20,38,.62)"; ctx.fillRect(0,H-19,W,19);
+  leiTxt(ctx,TEMPPAL[temp]+" + "+CHUVAPAL[chuva]+"  →  "+(BIONOME[slug]||slug),W/2,H-9,"#ffffff",11,true);
+  ctx.textAlign="left";
 }
 function leiNuvem(ctx,cx,cy,chuva,tk){
   var tone= chuva>=2?205: chuva===1?228:250;
