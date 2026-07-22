@@ -76,5 +76,27 @@ arredondada + 1 sombra roda liso em PC fraco). Regra de ouro: **tudo transform/o
 5. **UI diegética** (botão vira placa de madeira / cristal que brilha) — parte do mundo.
 6. **"Marca" do mascote**: um gesto/som que ele SEMPRE faz (como a coruja do Duolingo).
 
-> **Próximo passo:** aplicar este modelo (botões-pílula, relevo, saltinho, cores por mundo)
-> nas telas reais (capa, mapa, botões) — 1 tela de cada vez, com prévia ao Marcos.
+## ✅ CONFIRMADO + REFINADO PELA PESQUISA (107 agentes, 2026-07 — fonte: design system Duolingo, WCAG, baby schema)
+A pesquisa profunda **validou** este modelo e trouxe refinamentos de fonte primária:
+1. **LINGUAGEM DE 3 FORMAS (adotar já):** todo o visual fofo nasce de **3 primitivas** — **retângulo
+   arredondado** (a mais usada), **círculo** e **triângulo arredondado** — **toda borda arredondada**
+   (forma pontuda = "off-brand"). O interesse vem do **RITMO**: variar formas de pesos diferentes, com o
+   **mínimo** de formas. Traduz direto p/ SVG (`rect rx`, `circle`, `path`) e `border-radius` em tudo.
+2. **TOKENS DE COR NOMEADOS (adotar já):** usar **variáveis CSS** com nome semântico (Chrome 109 suporta),
+   não hex cru espalhado. Ex.: `--marca`, `--acao`, `--superficie-mascote`, `--texto`. **Texto = quase-preto
+   `#3a3f52`/`#4B4B4B`, NUNCA preto puro** (suaviza o contraste — jeito Duolingo "Eel").
+3. **MASCOTE FOFO POR CIÊNCIA:** exagerar o **baby schema** (cabeça grande, **olhos grandes e fundos**,
+   bochechas redondas, corpo arredondado) dispara o "cuidado" inato. **Estudo confirmou que prompt "cute"
+   na IA prioriza olhos grandes + corpo redondo** → nossa geração de mascote por workflow está no caminho.
+4. **ANIMAÇÃO (regra de ouro p/ PC fraco):** animar **SÓ transform e opacity** (compostos na GPU, sem
+   reflow/repaint) + **requestAnimationFrame** (nunca setInterval). Já fazemos — manter como LEI.
+5. **ALVOS DE TOQUE:** mínimo **24×24px** (WCAG 2.2), e p/ criança **≥30px** (conteúdo) / **≥44–48px**
+   (ícones de borda). Conferir em toda tela.
+6. **⚠️ MASCOTE FOFO SIM, ONIPRESENTE NÃO (limite honesto):** a fofura eleva o **prazer**, mas **não há
+   ganho de aprendizado provado** — e mascote **intrusivo/chato REDUZ o prazer**. Regra: aparecer nos
+   momentos certos (celebração, dúvida, onboarding), **sem interromper/invadir** a tarefa.
+
+> Doc completo da pesquisa: `PESQUISA-DESIGN-VISUAL-2026-07.md`.
+
+> **Próximo passo:** aplicar este modelo (botões-pílula, relevo, saltinho, cores por mundo, tokens de cor,
+> texto quase-preto) nas telas reais (capa ✅, mapa, botões) — 1 tela de cada vez, com prévia ao Marcos.
