@@ -716,6 +716,17 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .acell1{background:-webkit-linear-gradient(top,#7db98a,#4f9068);background:linear-gradient(to bottom,#7db98a,#4f9068)}
 .acell0{background:-webkit-linear-gradient(top,#ffc078,#ff8a4a);background:linear-gradient(to bottom,#ffc078,#ff8a4a)}
 .altcell.on{-webkit-box-shadow:inset 0 0 0 3px #ffe27a;box-shadow:inset 0 0 0 3px #ffe27a;z-index:2}
+/* CLIMOGRAMA — a criança CONSTRÓI o gráfico (levanta as barras de chuva; temperatura dada) */
+.clgwrap{position:absolute;left:14px;right:14px;top:27%;bottom:22%;z-index:3;background:rgba(12,18,44,.5);border:1px solid rgba(255,255,255,.14);border-radius:14px;-webkit-transition:opacity .4s;transition:opacity .4s}
+.clgtempo{position:absolute;left:12px;right:12px;top:18%;border-top:3px dashed #ff8a5a;z-index:4}
+.clgtempo .lab{position:absolute;right:0;top:-17px;color:#ff9a6a;font-size:11px;font-weight:800}
+.clgeixo{position:absolute;left:6px;top:8px;bottom:30px;width:16px;z-index:4;color:#9fb0e0;font-size:10px;font-weight:800}
+.clgcols{position:absolute;left:26px;right:10px;bottom:28px;top:12px;display:-webkit-box;display:-webkit-flex;display:flex}
+.clgcol{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 4px;position:relative;cursor:pointer;border-radius:8px 8px 0 0;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08)}
+.clgbar{position:absolute;left:0;right:0;bottom:0;border-radius:7px 7px 0 0;height:0;
+  background:-webkit-linear-gradient(top,#8fc2ff,#3f7fd8);background:linear-gradient(to bottom,#8fc2ff,#3f7fd8);-webkit-transition:height .18s ease;transition:height .18s ease}
+.clgcol.ok{-webkit-box-shadow:inset 0 0 0 2px #ffe27a;box-shadow:inset 0 0 0 2px #ffe27a}
+.clglab{position:absolute;left:-4px;right:-4px;bottom:-22px;text-align:center;color:#dfe6ff;font-size:11px;font-weight:700}
 .biotile{display:inline-block;vertical-align:top;margin:6px;border-radius:16px;overflow:hidden;position:relative;
   border:2px solid rgba(255,225,150,.5);box-shadow:0 8px 22px rgba(0,0,0,.45);width:210px;max-width:80%;
   -webkit-animation:estrPop .35s ease;animation:estrPop .35s ease}
@@ -1674,6 +1685,7 @@ var STOPS=[
   {id:"r1",tipo:"alivio",titulo:"Sons do Planeta",fn:function(){telaSons(); falar("r1");}},
   {id:"p3",tipo:"aprend",titulo:"A Lei do Clima",fn:function(){telaLei();}},
   {id:"p4",tipo:"aprend",titulo:"Quebra a Regra",fn:function(){telaFatores();}},
+  {id:"clg",tipo:"aprend",titulo:"O Climograma",fn:function(){telaClimograma();}},
   {id:"r2",tipo:"alivio",titulo:"Liga o Bioma",fn:function(){telaLiga(); falar("r2");}},
   {id:"p5",tipo:"aprend",titulo:"O Seu Continente",fn:function(){telaAutoria();}},
   {id:"desafio",tipo:"aprend",titulo:"Cartógrafo Mestre",fn:function(){telaDesafioC();}},
@@ -2190,6 +2202,68 @@ function fatSucesso(){
 }
 
 /* ===== ALÍVIO 2 — Liga o Bioma (clima ↔ bioma) ===== */
+/* ===== PARADA — CONSTRUIR O CLIMOGRAMA (o aluno MONTA o gráfico; evidência forte) EF06GE05 ===== */
+var CLG;
+function telaClimograma(){
+  limpa();
+  CLG={rain:[1,1,1,1],i:0,tent:0,concluida:false,t0:(new Date()).getTime(),
+    rondas:[
+      {nome:"Floresta Tropical",alvo:[3,3,3,3],dica:"chove MUITO o ano inteiro"},
+      {nome:"Savana",alvo:[3,2,0,1],dica:"chove no verão e fica SECO no inverno"}
+    ]};
+  var t=el("div","tela parada clima climograma");
+  t.appendChild(barraProg());
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(16));
+  t.appendChild(el("div","balao",""));
+  var wrap=el("div","clgwrap");
+  var tp=el("div","clgtempo"); tp.appendChild(el("div","lab","temperatura: quente")); wrap.appendChild(tp);
+  wrap.appendChild(el("div","clgeixo","chuva"));
+  var cols=el("div","clgcols"); var labs=["Verão","Outono","Inverno","Primav."],i;
+  for(i=0;i<4;i++){ (function(k){
+    var col=el("div","clgcol"); col.id="clg"+k;
+    var bar=el("div","clgbar"); bar.id="clgbar"+k; col.appendChild(bar);
+    col.appendChild(el("div","clglab",labs[k]));
+    col.onclick=function(){ clgTap(k); };
+    cols.appendChild(col);
+  })(i); }
+  wrap.appendChild(cols); t.appendChild(wrap);
+  ajudaBtn(t,[
+    {txt:"Toque em cada estação para <b>levantar</b> a barra de chuva."},
+    {txt:"Siga a dica: mais chuva = barra mais <b>alta</b>; seca = barra baixa."}
+  ], function(txt){ var b=t.getElementsByClassName("balao")[0]; if(b)b.innerHTML=txt; });
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  clgEnun(); clgPinta();
+}
+function clgEnun(){ var r=CLG.rondas[CLG.i], b=document.getElementsByClassName("balao")[0];
+  if(b)b.innerHTML="Monte o <b>climograma</b> desta região: aqui <b>"+r.dica+"</b>. Levante a <b>chuva</b> de cada estação."; }
+function clgTap(k){ if(CLG.concluida)return; CLG.rain[k]=(CLG.rain[k]+1)%4; if(typeof somClick==="function")somClick(); clgPinta(); clgAuto(); }
+function clgPinta(){ var r=CLG.rondas[CLG.i],k;
+  for(k=0;k<4;k++){ var bar=document.getElementById("clgbar"+k); if(bar)bar.style.height=(CLG.rain[k]/3*100).toFixed(0)+"%";
+    var col=document.getElementById("clg"+k); if(col)col.className="clgcol"+(CLG.rain[k]===r.alvo[k]?" ok":""); } }
+function clgAuto(){ if(CLG.concluida)return; var r=CLG.rondas[CLG.i],k;
+  for(k=0;k<4;k++){ if(CLG.rain[k]!==r.alvo[k]) return; }
+  if(typeof somAcerto==="function")somAcerto(); if(typeof hitStop==="function")hitStop();
+  var tela=document.getElementsByClassName("climograma")[0]; if(tela)estouraEstrelas(tela,7);
+  CLG.i++;
+  if(CLG.i>=CLG.rondas.length){ clgSucesso(); return; }
+  fagComemora(); CLG.rain=[1,1,1,1];
+  setTimeout(function(){ clgEnun(); clgPinta(); },1100);
+}
+function clgSucesso(){
+  CLG.concluida=true; fagComemora();
+  var tela=document.getElementsByClassName("climograma")[0]; if(!tela)return;
+  estouraEstrelas(tela,12);
+  var wrap=tela.getElementsByClassName("clgwrap")[0]; if(wrap)wrap.style.opacity="0";
+  var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
+  revela(tela,"o gráfico conta o clima","Você leu o climograma!","As <b>barras</b> mostram a chuva de cada estação. O <b>padrão</b> das barras revela o clima — e o clima decide o bioma.");
+  var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
+  var tempo=Math.round(((new Date()).getTime()-CLG.t0)/1000), semErro=(CLG.tent===0);
+  salvaEvid({parada:"clg",habilidade:"EF06GE05",conceito:"construir e ler climograma",tent:CLG.tent,dicas:dicasParada,tempo_s:tempo,acertou:true,semErro:semErro});
+  premiar(semErro?3:2); motorParada("clg",forcaDe(semErro));
+  setTimeout(function(){ botaoProxima(tela,null,300); },800);
+}
+
 function telaLiga(){
   limpa();
   var t=el("div","tela clima liga");
