@@ -134,12 +134,17 @@ img{-webkit-user-drag:none;user-drag:none}
 .atmo{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;pointer-events:none;
   -webkit-box-shadow:inset 0 0 20px rgba(130,190,255,.65);box-shadow:inset 0 0 20px rgba(130,190,255,.65);
   -webkit-animation:pulsaGlow 3.8s ease-in-out infinite;animation:pulsaGlow 3.8s ease-in-out infinite}
-h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text-shadow:0 2px 0 #7a5200,0 0 18px rgba(255,200,80,.5)}
-.sub{font-size:14px;color:#cdd3ff;margin-bottom:14px}
+/* MODELO VISUAL: cartão fosco arredondado (vidro) sobre o céu noturno */
+.capa .capacard{margin:16px auto 0;max-width:340px;width:92%;padding:18px 20px 20px;border-radius:24px;
+  background:rgba(22,28,58,.62);border:1px solid rgba(255,255,255,.16);
+  -webkit-box-shadow:0 14px 34px rgba(0,0,0,.42);box-shadow:0 14px 34px rgba(0,0,0,.42)}
+h1.titulo{font-size:27px;line-height:1.12;margin:2px 4px 2px;color:#ffe08a;text-shadow:0 2px 0 #7a5200,0 0 18px rgba(255,200,80,.5)}
+.sub{font-size:14px;color:#cdd3ff;margin-bottom:16px}
+/* BOTÃO-PÍLULA com relevo "apertável" (afunda + salta) */
 .btn{display:inline-block;border:0;cursor:pointer;font-family:inherit;font-weight:800;color:#5a3b00;max-width:94%;
   background:-webkit-linear-gradient(top,#ffe27a,#ffc23c);background:linear-gradient(to bottom,#ffe27a,#ffc23c);
-  padding:14px 26px;font-size:18px;border-radius:30px;box-shadow:0 5px 0 #c8871a,0 8px 18px rgba(0,0,0,.4)}
-.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 2px 0 #c8871a}
+  padding:15px 30px;font-size:18px;border-radius:999px;box-shadow:0 6px 0 #c8871a,0 12px 20px rgba(0,0,0,.42)}
+.btn:active{-webkit-transform:translateY(4px) scale(.98);transform:translateY(4px) scale(.98);box-shadow:0 2px 0 #c8871a,0 5px 10px rgba(0,0,0,.42)}
 .pulsa{-webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite}
 @-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.05)}}
 @keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
@@ -1520,21 +1525,24 @@ function telaCapa(){
   med.appendChild(el("div","terrashade"));
   med.appendChild(el("div","atmo"));
   c.appendChild(med);
-  c.appendChild(el("h1","titulo","Planeta Vivo"));
-  c.appendChild(el("div","sub","Climas do Mundo &#183; 6º ano"));
+  // MODELO VISUAL "fofo arredondado": título+sub+botão dentro de um cartão redondo (vidro fosco)
+  var card=el("div","capacard");
+  card.appendChild(el("h1","titulo","Planeta Vivo"));
+  card.appendChild(el("div","sub","Climas do Mundo &#183; 6º ano"));
   var b=el("button","btn pulsa","Começar a aventura");
   b.onclick=function(){ telaCheia();
     if(alunoAtual()){ telaAbertura(); }                                  // veio do PORTAL já identificado -> herda o aluno
     else if(IDENTIDADE_ATIVA){ telaQuem(); }                             // atividade solta com identidade ligada: pergunta quem é
     else { try{ localStorage.setItem("edu_atual","anon"); }catch(e){} telaAbertura(); }   // link de teste solto: cai direto na aventura
   };
-  c.appendChild(b);
+  card.appendChild(b);
   // autoria persistente: o que a criança criou fica e pode ser revisitado com orgulho
   if(galeriaLe().length){
     var bg=el("button","galbtn","Minhas constelações");
     bg.onclick=function(){ telaGaleria(); };
-    c.appendChild(bg);
+    card.appendChild(bg);
   }
+  c.appendChild(card);
   t.appendChild(c);
   var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/nara_acena.png"; fai.alt="Nara"; fa.appendChild(fai);
   t.appendChild(fa);
