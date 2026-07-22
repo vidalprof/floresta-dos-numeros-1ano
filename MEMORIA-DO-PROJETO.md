@@ -57,9 +57,18 @@
 >>   p/ 11–12 anos; (4) andaime IMPLÍCITO (a meta vira o controle, feedback imediato — jeito PhET);
 >>   (5) indagação guiada leve POE (prever→observar→explicar), não demonstração passiva; (6) REFUTAR a
 >>   concepção errada (nomear o erro → mostrar o certo). Já entrou no molde. **1º passo aplicado:** LEI
->>   clima→bioma agora mostra o MECANISMO em palavras (rótulos Sol/Nuvem + leitor "clima → bioma"). Faltam:
->>   POE-gate (prever antes de agir), refutação da latitude/altitude, corte transversal da montanha,
->>   climograma ligado à cena. **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
+>>   clima→bioma agora mostra o MECANISMO em palavras (rótulos Sol/Nuvem + leitor "clima → bioma").
+>>   **APLICADO POR INTEIRO (2026-07-22, sw v8, no ar):** (1) **POE — portão "Prever"** reutilizável
+>>   (`preverGate`) antes de cada simulação (latitude/clima/altitude), 1x/parada (flag `PREV`), narração
+>>   feminina nova (`prev_p1/prev_p3/prev_p4`); o "Explicar" é o `autoexplica` do fim. (2) **Refutação**
+>>   (`refutaCard`: "Muita gente pensa… / Na verdade…") na revelação da latitude e altitude — **DENTRO** da
+>>   caixa `.revela` (é `position:absolute`; card em fluxo normal sobe pro topo e sobrepõe o balão — LIÇÃO
+>>   paga). (3) **Climograma → bioma** (`clgMostraBioma`): o gráfico montado revela o LUGAR (imagem do
+>>   bioma). (4) **BUG REAL PEGO:** `FAT` (altitude) nunca declarado com `var` → em `"use strict"`
+>>   `telaFatores()` lançava "FAT is not defined" e a altitude QUEBRAVA (tela branca). Fix: `var FAT;`.
+>>   Planeta Vivo é novo, ainda sem QA em PC real — por isso não fora pego. Lição: declarar `var` p/ o
+>>   estado de CADA tela (ZON/LEI/CLG tinham; FAT faltava). Falta ainda: corte transversal da montanha.
+>>   **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
 >>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
 >>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
 >> - **Áudio:** `gerar-audio.yml` ganhou input **`outdir`** (mp3 direto na pasta da atividade, sem colidir
