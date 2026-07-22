@@ -2119,6 +2119,7 @@ function telaLei(){
   var cv=el("canvas"); cv.id="leicanvas"; cv.width=300; cv.height=200; cena.appendChild(cv);
   cena.onclick=function(ev){ leiClique(ev,cv); };
   t.appendChild(cena);
+  LEI._cena=cena;   // p/ casar a resolução do canvas ao tamanho REAL (sem esticar/borrar)
   t.appendChild(el("div","leihint","Toque no <b>Sol</b> (calor) e na <b>Nuvem</b> (chuva) e veja a terra reagir"));
   ajudaBtn(t,[
     {txt:"Toque no <b>Sol</b> para esquentar; toque na <b>Nuvem</b> para chover."},
@@ -2157,34 +2158,78 @@ function leiAuto(){
 /* ===== CENA ANIMADA (Canvas) — o clima acontece; a terra reage ao vivo ===== */
 function leiCena(){
   var cv=document.getElementById("leicanvas"); if(!cv){ return; }
-  var ctx=cv.getContext("2d"), W=cv.width, H=cv.height; LEI.tk++;
-  var temp=LEI.temp, chuva=LEI.chuva, slug=bioma(temp,chuva), gY=Math.round(H*0.66);
-  var vegAlvo=(slug==="floresta")?1:(slug==="savana"?0.55:(slug==="pradaria"?0.5:(slug==="taiga"?0.55:(slug==="tundra"?0.18:0.06))));
+  // casa a resolução do canvas ao tamanho REAL do container (nitidez, sem esticar)
+  if(!LEI._sized && LEI._cena && LEI._cena.clientWidth){
+    var cw=LEI._cena.clientWidth, chh=LEI._cena.clientHeight;
+    cv.width=Math.min(520,Math.round(cw*1.35)); cv.height=Math.min(560,Math.round(chh*1.35)); LEI._sized=true;
+  }
+  var ctx=cv.getContext("2d"), W=cv.width, H=cv.height, t=(++LEI.tk);
+  var temp=LEI.temp, chuva=LEI.chuva, slug=bioma(temp,chuva), gY=Math.round(H*0.64);
+  var vegAlvo=(slug==="floresta")?1:(slug==="savana"?0.62:(slug==="pradaria"?0.56:(slug==="taiga"?0.62:(slug==="tundra"?0.22:0.06))));
   LEI.veg+=(vegAlvo-LEI.veg)*0.05;
   LEI.snow+=(((temp===0)?1:0)-LEI.snow)*0.04;
   if(LEI.flash>0) LEI.flash*=0.9;
+  // CÉU (3 tons; horizonte esquenta quando quente)
   var sky=ctx.createLinearGradient(0,0,0,gY);
-  sky.addColorStop(0, temp>=2?"#6f9fd8":(temp===1?"#8fb7e0":"#a9cdf0"));
-  sky.addColorStop(1, temp>=2?"#ffd9a0":(temp===1?"#d7ead0":"#dff0ff"));
+  if(temp>=2){ sky.addColorStop(0,"#4f86cc"); sky.addColorStop(.6,"#9cc1e4"); sky.addColorStop(1,"#ffe1a6"); }
+  else if(temp===1){ sky.addColorStop(0,"#74a2d6"); sky.addColorStop(.6,"#a6c8e6"); sky.addColorStop(1,"#e7efe0"); }
+  else { sky.addColorStop(0,"#89b0da"); sky.addColorStop(.6,"#bcd6ef"); sky.addColorStop(1,"#eaf4ff"); }
   ctx.fillStyle=sky; ctx.fillRect(0,0,W,gY+1);
-  var sx=W*0.22, sy=H*0.24, sr=10+temp*4, pulse=1+0.06*Math.sin(LEI.tk/16);
-  var sg=ctx.createRadialGradient(sx,sy,2,sx,sy,sr*2.8*pulse);
-  sg.addColorStop(0,"rgba(255,240,170,.95)"); sg.addColorStop(1,"rgba(255,200,80,0)");
-  ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(sx,sy,sr*2.8*pulse,0,7); ctx.fill();
-  ctx.fillStyle= temp>=2?"#ffcf2e":"#ffdd6a"; ctx.beginPath(); ctx.arc(sx,sy,sr,0,7); ctx.fill();
-  ctx.strokeStyle="rgba(255,255,255,"+(0.35+0.25*Math.sin(LEI.tk/12)).toFixed(2)+")"; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.arc(sx,sy,sr+7,0,7); ctx.stroke();
-  leiNuvem(ctx,W*0.74,H*0.2,chuva,LEI.tk);
-  var gcol=(slug==="deserto")?"#e6c88a":(temp===0?"#b8cfe0":(slug==="savana"?"#c7ad63":(slug==="tundra"?"#9bb0a2":"#5f9a4e")));
-  ctx.fillStyle=gcol; ctx.fillRect(0,gY,W,H-gY);
-  if(LEI.snow>0.04){ ctx.fillStyle="rgba(238,246,255,"+(LEI.snow*0.9).toFixed(2)+")"; ctx.fillRect(0,gY,W,H-gY); ctx.fillRect(0,gY-2,W,4); }
-  leiPlantas(ctx,W,gY,slug,LEI.veg);
+  leiNuvemFundo(ctx,W,gY,t);                                   // nuvens de fundo à deriva (vida)
+  var sx=W*0.20, sy=H*0.20, sr=W*0.045+temp*W*0.02, pulse=1+0.06*Math.sin(t/16);
+  leiSol(ctx,sx,sy,sr,temp,t,pulse);                           // sol com glow + raios girando
+  leiNuvem(ctx,W*0.76,H*0.17,chuva,t);                         // a "causa" chuva
+  leiMorros(ctx,W,gY,slug,temp);                               // morros de fundo (profundidade)
+  var gc=leiChaoCor(slug,temp);                                // chão em gradiente
+  var gr=ctx.createLinearGradient(0,gY,0,H); gr.addColorStop(0,gc[0]); gr.addColorStop(1,gc[1]);
+  ctx.fillStyle=gr; ctx.fillRect(0,gY,W,H-gY);
+  ctx.fillStyle="rgba(255,255,255,.14)"; ctx.fillRect(0,gY,W,2);
+  if(LEI.snow>0.04){ ctx.fillStyle="rgba(242,248,255,"+(LEI.snow*0.85).toFixed(2)+")"; ctx.fillRect(0,gY,W,H-gY); }
+  leiPlantas(ctx,W,gY,slug,LEI.veg,t);
   if(chuva>=1) leiChuva(ctx,W,gY,chuva,LEI);
   if(temp===0) leiNeve(ctx,W,gY,LEI);
   if(temp>=2 && chuva===0) leiCalor(ctx,W,gY,LEI);
-  leiRotulos(ctx,W,H,gY,sx,sy,sr,temp,chuva,slug);          // mecanismo à vista: causa (Sol/Nuvem) -> clima em palavras -> bioma
+  leiRotulos(ctx,W,H,gY,sx,sy,sr,temp,chuva,slug);            // mecanismo à vista (Sol/Nuvem -> clima em palavras -> bioma)
   if(LEI.flash>0.05){ ctx.fillStyle="rgba(255,255,255,"+(LEI.flash*0.15).toFixed(2)+")"; ctx.fillRect(0,0,W,H); }
   LEI.raf=requestAnimationFrame(leiCena);
+}
+/* ---- helpers de arte da cena (Canvas 2D leve) ---- */
+function rr(ctx,x,y,w,h,r){ ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); ctx.fill(); }
+function leiSol(ctx,sx,sy,sr,temp,t,pulse){
+  ctx.save(); ctx.translate(sx,sy); ctx.rotate(t/140);
+  ctx.strokeStyle="rgba(255,226,140,"+(temp>=2?0.6:0.42)+")"; ctx.lineWidth=Math.max(1.5,sr*0.09); var i;
+  for(i=0;i<10;i++){ var a=i/10*6.283, r0=sr*1.55, r1=sr*(2.15+0.16*Math.sin(t/10+i));
+    ctx.beginPath(); ctx.moveTo(Math.cos(a)*r0,Math.sin(a)*r0); ctx.lineTo(Math.cos(a)*r1,Math.sin(a)*r1); ctx.stroke(); }
+  ctx.restore();
+  var sg=ctx.createRadialGradient(sx,sy,2,sx,sy,sr*3*pulse);
+  sg.addColorStop(0,"rgba(255,246,196,.95)"); sg.addColorStop(.5,"rgba(255,216,120,.45)"); sg.addColorStop(1,"rgba(255,200,80,0)");
+  ctx.fillStyle=sg; ctx.beginPath(); ctx.arc(sx,sy,sr*3*pulse,0,7); ctx.fill();
+  var core=ctx.createRadialGradient(sx-sr*0.3,sy-sr*0.3,1,sx,sy,sr);
+  core.addColorStop(0,"#fff7cf"); core.addColorStop(1, temp>=2?"#ffc31e":"#ffd64c");
+  ctx.fillStyle=core; ctx.beginPath(); ctx.arc(sx,sy,sr,0,7); ctx.fill();
+}
+function leiNuvemFundo(ctx,W,gY,t){
+  var cl=[[0.15,0.14,0.052,0.05],[0.55,0.10,0.04,0.04],[0.86,0.18,0.06,0.03]]; var i;
+  ctx.fillStyle="rgba(255,255,255,.55)";
+  for(i=0;i<cl.length;i++){ var c=cl[i], r=c[2]*W, span=W+120, x=((c[0]*W + t*c[3]) % span); if(x<0)x+=span; x-=60; var y=gY*c[1];
+    ctx.beginPath(); ctx.arc(x-r,y,r*0.8,0,7); ctx.arc(x,y-r*0.45,r,0,7); ctx.arc(x+r,y,r*0.8,0,7); ctx.arc(x,y+r*0.3,r*0.7,0,7); ctx.fill(); }
+}
+function leiMorros(ctx,W,gY,slug,temp){
+  var far=(temp===0)?"#a9bccd":(slug==="deserto"?"#dcc089":(slug==="savana"?"#bb9d58":"#74a06f"));
+  var near=(temp===0)?"#93aabf":(slug==="deserto"?"#cbab72":(slug==="savana"?"#a68a41":"#527f4d"));
+  ctx.fillStyle=far; ctx.beginPath(); ctx.moveTo(0,gY);
+  ctx.quadraticCurveTo(W*0.25,gY-gY*0.11,W*0.5,gY-gY*0.05); ctx.quadraticCurveTo(W*0.78,gY-gY*0.13,W,gY-gY*0.04);
+  ctx.lineTo(W,gY); ctx.closePath(); ctx.fill();
+  ctx.fillStyle=near; ctx.beginPath(); ctx.moveTo(0,gY);
+  ctx.quadraticCurveTo(W*0.3,gY-gY*0.06,W*0.55,gY-gY*0.02); ctx.quadraticCurveTo(W*0.8,gY-gY*0.08,W,gY-gY*0.01);
+  ctx.lineTo(W,gY); ctx.closePath(); ctx.fill();
+}
+function leiChaoCor(slug,temp){
+  if(slug==="deserto") return ["#eed49b","#d8b675"];
+  if(temp===0) return ["#d2e2ef","#b4c9dd"];
+  if(slug==="savana") return ["#cfb46c","#a68d43"];
+  if(slug==="tundra") return ["#b0bdb0","#8fa08f"];
+  return ["#6cab5c","#3d7c3a"];
 }
 /* RÓTULOS DE CAUSA + LEITOR "clima -> bioma" (representações ligadas; o modelo
    fica visível em PALAVRAS, não só na cena). Pesquisa: realismo FUNCIONAL +
@@ -2208,40 +2253,83 @@ function leiRotulos(ctx,W,H,gY,sx,sy,sr,temp,chuva,slug){
   ctx.textAlign="left";
 }
 function leiNuvem(ctx,cx,cy,chuva,tk){
-  var tone= chuva>=2?205: chuva===1?228:250;
-  ctx.fillStyle="rgb("+tone+","+tone+","+Math.min(255,tone+3)+")";
-  var r=12;
-  ctx.beginPath(); ctx.arc(cx-13,cy,r,0,7); ctx.arc(cx,cy-5,r+3,0,7); ctx.arc(cx+13,cy,r,0,7); ctx.arc(cx,cy+4,r,0,7); ctx.fill();
-  ctx.strokeStyle="rgba(255,255,255,"+(0.3+0.25*Math.sin(tk/12)).toFixed(2)+")"; ctx.lineWidth=2;
-  ctx.beginPath(); ctx.arc(cx,cy,r+16,0,7); ctx.stroke();
+  var tone= chuva>=2?196: chuva===1?224:248, r=cx*0 + 0; r=Math.max(13, (ctx.canvas.width)*0.05);
+  var drift=Math.sin(tk/70)*r*0.25; cx+=drift;
+  ctx.fillStyle="rgba(40,55,80,.10)"; ctx.beginPath(); ctx.ellipse(cx,cy+r*0.7,r*1.8,r*0.5,0,0,7); ctx.fill();  // sombra suave
+  ctx.fillStyle="rgb("+tone+","+tone+","+Math.min(255,tone+6)+")";
+  ctx.beginPath();
+  ctx.arc(cx-r*1.1,cy+r*0.15,r*0.85,0,7); ctx.arc(cx-r*0.35,cy-r*0.45,r*1.05,0,7);
+  ctx.arc(cx+r*0.6,cy-r*0.2,r*0.95,0,7); ctx.arc(cx+r*1.2,cy+r*0.2,r*0.7,0,7);
+  ctx.arc(cx,cy+r*0.35,r*0.9,0,7); ctx.fill();
+  ctx.fillStyle="rgba(255,255,255,.35)"; ctx.beginPath(); ctx.arc(cx-r*0.35,cy-r*0.55,r*0.5,0,7); ctx.fill();  // brilho de cima
 }
-function leiPlantas(ctx,W,gY,slug,veg){
-  var n=7,i;
+/* PLANTAS ricas por bioma, com balanço leve (t). Tudo Canvas 2D, poucos traços. */
+function leiPlantas(ctx,W,gY,slug,veg,t){
+  var n=Math.max(5,Math.min(8,Math.round(W/72))),i;
   for(i=0;i<n;i++){
-    var x=Math.round((i+0.5)/n*W), h=veg*36*(0.7+((i*37)%10)/14);
-    if(slug==="deserto"){ if(veg>0.02){ ctx.fillStyle="#3f8f57"; ctx.fillRect(x-3,gY-h*0.9,6,h*0.9); ctx.fillRect(x-9,gY-h*0.6,4,h*0.35); ctx.fillRect(x+5,gY-h*0.7,4,h*0.4);} continue; }
-    if(slug==="tundra"){ if(veg>0.02){ ctx.fillStyle="#6f7f66"; ctx.fillRect(x-4,gY-h*0.5,8,h*0.5);} continue; }
-    if(slug==="taiga"){ ctx.fillStyle="#2f6b43"; ctx.beginPath(); ctx.moveTo(x,gY-h*1.4-4); ctx.lineTo(x-8,gY); ctx.lineTo(x+8,gY); ctx.closePath(); ctx.fill(); continue; }
-    ctx.strokeStyle="#3f9d4f"; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x,gY); ctx.lineTo(x,gY-h); ctx.stroke();
-    if(slug==="floresta" && i%2===0){ ctx.fillStyle="#7a4a24"; ctx.fillRect(x-2,gY-h,4,h*0.5); ctx.fillStyle="#2f7d3e"; ctx.beginPath(); ctx.arc(x,gY-h-6,7*veg+3,0,7); ctx.fill(); }
+    var x=Math.round((i+0.5)/n*W), seed=((i*37)%10)/10, base=veg*(gY*0.30)*(0.75+seed*0.5);
+    var sway=Math.sin(t/24+i*1.3)*3*veg;
+    if(veg<0.04 && slug!=="taiga") continue;
+    if(slug==="deserto"){ leiCacto(ctx,x,gY,Math.max(14,base)); continue; }
+    if(slug==="tundra"){ ctx.fillStyle="#6f7f66"; leiMoita(ctx,x,gY,base*0.7); continue; }
+    if(slug==="taiga"){ leiPinheiro(ctx,x,gY,base*1.25+gY*0.04,LEI.snow); continue; }
+    if(slug==="savana"||slug==="pradaria"){ leiCapim(ctx,x,gY,base,sway); if(slug==="savana"&&i===n-2) leiAcacia(ctx,x,gY,base*1.7,sway); continue; }
+    leiArvore(ctx,x,gY,base*1.25,sway);   // floresta
   }
 }
+function leiArvore(ctx,x,gY,h,sway){
+  var tw=Math.max(3,h*0.12);
+  ctx.fillStyle="#6b4423"; ctx.fillRect(x-tw/2,gY-h*0.5,tw,h*0.5);
+  var cx=x+sway, cy=gY-h*0.6, r=h*0.36;
+  ctx.fillStyle="#2c7539"; ctx.beginPath(); ctx.arc(cx-r*0.6,cy,r*0.75,0,7); ctx.arc(cx+r*0.6,cy,r*0.75,0,7); ctx.arc(cx,cy-r*0.55,r*0.9,0,7); ctx.fill();
+  ctx.fillStyle="#41a04f"; ctx.beginPath(); ctx.arc(cx-r*0.3,cy-r*0.25,r*0.55,0,7); ctx.arc(cx+r*0.35,cy-r*0.1,r*0.5,0,7); ctx.fill();
+  ctx.fillStyle="rgba(255,255,255,.14)"; ctx.beginPath(); ctx.arc(cx-r*0.45,cy-r*0.55,r*0.3,0,7); ctx.fill();
+}
+function leiPinheiro(ctx,x,gY,h,snow){
+  ctx.fillStyle="#5a3d22"; ctx.fillRect(x-Math.max(2,h*0.03),gY-h*0.12,Math.max(4,h*0.06),h*0.12);
+  var k; for(k=0;k<3;k++){ var ty=gY-h*0.12-(k*h*0.27), tw=h*0.32*(1-k*0.2);
+    ctx.fillStyle=k===0?"#256437":(k===1?"#2d7541":"#35854a");
+    ctx.beginPath(); ctx.moveTo(x,ty-h*0.36); ctx.lineTo(x-tw,ty); ctx.lineTo(x+tw,ty); ctx.closePath(); ctx.fill();
+    if(snow>0.2){ ctx.fillStyle="rgba(255,255,255,"+(snow*0.85).toFixed(2)+")"; ctx.beginPath(); ctx.moveTo(x,ty-h*0.36); ctx.lineTo(x-tw*0.42,ty-h*0.13); ctx.lineTo(x+tw*0.42,ty-h*0.13); ctx.closePath(); ctx.fill(); }
+  }
+}
+function leiCacto(ctx,x,gY,h){
+  ctx.fillStyle="#3f8f57"; var w=Math.max(6,h*0.24);
+  rr(ctx,x-w/2,gY-h,w,h,w/2);
+  rr(ctx,x-w*1.25,gY-h*0.62,w*0.6,h*0.28,w*0.3); rr(ctx,x-w*1.25,gY-h*0.62,w*0.6,h*0.5,w*0.3);
+  rr(ctx,x+w*0.65,gY-h*0.72,w*0.6,h*0.32,w*0.3); rr(ctx,x+w*1.05,gY-h*0.72,w*0.6,h*0.55,w*0.3);
+  ctx.fillStyle="rgba(255,255,255,.12)"; rr(ctx,x-w*0.28,gY-h*0.92,w*0.2,h*0.7,w*0.1);
+}
+function leiCapim(ctx,x,gY,h,sway){
+  ctx.strokeStyle="#7f9538"; ctx.lineWidth=Math.max(1.5,h*0.05); var b;
+  for(b=-2;b<=2;b++){ ctx.beginPath(); ctx.moveTo(x+b*4,gY); ctx.quadraticCurveTo(x+b*4+sway,gY-h*0.6,x+b*4+sway*1.7,gY-h); ctx.stroke(); }
+}
+function leiAcacia(ctx,x,gY,h,sway){
+  ctx.strokeStyle="#6b4a2a"; ctx.lineWidth=Math.max(2,h*0.07); ctx.beginPath(); ctx.moveTo(x,gY); ctx.lineTo(x+sway,gY-h*0.72); ctx.stroke();
+  ctx.fillStyle="#5f8a3c"; ctx.beginPath(); ctx.ellipse(x+sway,gY-h*0.8,h*0.5,h*0.19,0,0,7); ctx.fill();
+  ctx.fillStyle="#6fa047"; ctx.beginPath(); ctx.ellipse(x+sway-h*0.12,gY-h*0.86,h*0.28,h*0.11,0,0,7); ctx.fill();
+}
+function leiMoita(ctx,x,gY,h){
+  ctx.beginPath(); ctx.arc(x-h*0.4,gY-h*0.3,h*0.42,0,7); ctx.arc(x+h*0.4,gY-h*0.3,h*0.42,0,7); ctx.arc(x,gY-h*0.55,h*0.5,0,7); ctx.fill();
+}
 function leiChuva(ctx,W,gY,chuva,L){
-  if(!L.rain.length){ var k; for(k=0;k<30;k++) L.rain.push({x:Math.random()*W,y:Math.random()*gY}); }
-  var n=chuva>=2?26:12; ctx.strokeStyle="rgba(150,190,240,.7)"; ctx.lineWidth=1.5; var i;
-  for(i=0;i<n;i++){ var p=L.rain[i]; p.y+=6+chuva*2; p.x-=1; if(p.y>gY){ p.y=-4; p.x=Math.random()*W; }
-    ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-2,p.y+7); ctx.stroke(); }
+  var alvo=chuva>=2?Math.round(W*0.14):Math.round(W*0.06);
+  if(L.rain.length<alvo){ while(L.rain.length<alvo) L.rain.push({x:Math.random()*W,y:Math.random()*gY}); }
+  ctx.strokeStyle="rgba(150,190,240,.72)"; ctx.lineWidth=Math.max(1.2,W*0.004); var i,n=Math.min(alvo,L.rain.length);
+  for(i=0;i<n;i++){ var p=L.rain[i]; p.y+=(9+chuva*3)*(W/380); p.x-=1.4; if(p.y>gY){ p.y=-6; p.x=Math.random()*W;
+      ctx.strokeStyle="rgba(180,210,245,.5)"; ctx.beginPath(); ctx.arc(p._sx||p.x,gY-2,3,3.6,6.0); ctx.stroke(); ctx.strokeStyle="rgba(150,190,240,.72)"; }  // respingo no chão
+    ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x-3,p.y+11); ctx.stroke(); }
 }
 function leiNeve(ctx,W,gY,L){
-  if(!L.flk.length){ var k; for(k=0;k<26;k++) L.flk.push({x:Math.random()*W,y:Math.random()*gY,s:1+Math.random()*2}); }
-  ctx.fillStyle="rgba(255,255,255,.9)"; var i;
-  for(i=0;i<L.flk.length;i++){ var p=L.flk[i]; p.y+=0.7+p.s*0.4; p.x+=Math.sin((L.tk+i*20)/40)*0.4; if(p.y>gY){ p.y=-3; p.x=Math.random()*W; }
-    ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,7); ctx.fill(); }
+  var alvo=Math.round(W*0.09);
+  if(L.flk.length<alvo){ while(L.flk.length<alvo) L.flk.push({x:Math.random()*W,y:Math.random()*gY,s:1+Math.random()*2.4}); }
+  var i; for(i=0;i<L.flk.length;i++){ var p=L.flk[i]; p.y+=(0.8+p.s*0.4)*(W/380); p.x+=Math.sin((L.tk+i*20)/40)*0.5; if(p.y>gY){ p.y=-3; p.x=Math.random()*W; }
+    ctx.fillStyle="rgba(255,255,255,"+(0.65+p.s*0.12).toFixed(2)+")"; ctx.beginPath(); ctx.arc(p.x,p.y,p.s,0,7); ctx.fill(); }
 }
 function leiCalor(ctx,W,gY,L){
-  ctx.strokeStyle="rgba(255,210,150,.35)"; ctx.lineWidth=2; var i;
-  for(i=0;i<5;i++){ var x=W*(0.15+i*0.17); ctx.beginPath(); ctx.moveTo(x,gY-2);
-    ctx.quadraticCurveTo(x+Math.sin((L.tk+i*30)/18)*5, gY-14, x, gY-26); ctx.stroke(); }
+  ctx.strokeStyle="rgba(255,205,140,.32)"; ctx.lineWidth=Math.max(2,W*0.006); var i,n=7;
+  for(i=0;i<n;i++){ var x=W*(0.1+i*0.12); ctx.beginPath(); ctx.moveTo(x,gY-2);
+    ctx.quadraticCurveTo(x+Math.sin((L.tk+i*30)/16)*7,gY-gY*0.05,x,gY-gY*0.10); ctx.stroke(); }
 }
 function leiSucesso(){
   LEI.concluida=true; if(LEI.raf) cancelAnimationFrame(LEI.raf);
