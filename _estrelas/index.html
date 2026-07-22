@@ -142,6 +142,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 @keyframes entraFag{0%{opacity:0;transform:translateX(-46px)}70%{opacity:1;transform:translateX(6px)}100%{opacity:1;transform:translateX(0)}}
 .legenda{position:absolute;left:50%;bottom:5%;-webkit-transform:translateX(-50%);transform:translateX(-50%);
   width:92%;max-width:640px;text-align:center;font-size:18px;line-height:1.4;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.95);min-height:3.2em}
+.legenda.fimleg{bottom:14%;font-size:16px}
 .pular{position:absolute;top:12px;right:12px;font-size:13px;color:#dfe3ff;background:rgba(0,0,0,.4);border:0;border-radius:16px;padding:8px 15px;cursor:pointer}
 
 /* ---------- MAPA ---------- */
@@ -874,6 +875,10 @@ function botaoProxima(tela,rot,dl){
     }
     /* MASTERY GATING GENTIL (ZDP): se o domínio ainda está baixo, o convite é PRATICAR
        com números novos (botão principal + a Fagulha convida) — mas seguir NUNCA é bloqueado. */
+    if(maisItens()){
+      var cont=el("button","btn pulsa","Continuar &#10024;"); cont.onclick=function(){ proxItem(); };
+      pb.appendChild(cont); tela.appendChild(pb); return;
+    }
     var temVar=(STOPS[progresso] && VARS[STOPS[progresso].id]);
     var sugere=(!PRATICA && temVar && mgKc===(STOPS[progresso]&&STOPS[progresso].id) && mgP>0 && mgP<0.65);
     var nx=el("button", sugere?"btn2 repbtn":"btn pulsa", rot|| (sugere?"Seguir mesmo assim":"Próxima parada")); nx.onclick=function(){ avanca(); };
@@ -1069,6 +1074,7 @@ var KCS={p1:"Grupos iguais",p2:"Constelação (fileiras × colunas)",p3:"Dois je
   p5:"Criar a própria constelação",desafio:"De cabeça (sem apoios)"};
 var LEITNER=[1,3,7,14];                      // dias até a próxima revisão, por caixa
 var PRATICA=false, mgKc="", mgP=0, dicasParada=0;
+var ITEM_ALVO=3, itemIdx=0, REPETE_ITEM=false;   // ESCADA CURADA: 3 itens por parada de aprendizado (VARS em ordem; nao e sorteio)
 function hojeMs(){ return (new Date()).getTime(); }
 function diaStr(t){ var d=new Date(t); return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate(); }
 function motorLe(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_motor"))||"{}"); }catch(e){ return {}; } }
@@ -1113,8 +1119,10 @@ var VARS={
   p4:[{alvo:5,fala:"p4"},{alvo:3,fala:"p4_v2"},{alvo:4,fala:"p4_v3"}],
   prob:[{pr:5,em:4,fala:"prob"},{pr:3,em:5,fala:"prob_v2"},{pr:4,em:2,fala:"prob_v3"}]
 };
-function varDe(id){ var m=motorLe(); var i=(motorKc(m,id).varIdx||0)%VARS[id].length; return VARS[id][i]; }
-function ehOriginal(id){ var m=motorLe(); return ((motorKc(m,id).varIdx||0)%VARS[id].length)===0; }
+function varDe(id){ if(!VARS[id])return null; if(PRATICA){ var m=motorLe(); return VARS[id][(motorKc(m,id).varIdx||0)%VARS[id].length]; } return VARS[id][itemIdx%VARS[id].length]; }
+function ehOriginal(id){ if(PRATICA){ var m=motorLe(); return ((motorKc(m,id).varIdx||0)%VARS[id].length)===0; } return itemIdx===0; }
+function maisItens(){ var s=STOPS[progresso]; return !!(s && s.tipo==="aprend" && VARS[s.id] && !PRATICA && (itemIdx < Math.min(ITEM_ALVO,VARS[s.id].length)-1)); }
+function proxItem(){ itemIdx++; REPETE_ITEM=true; var s=STOPS[progresso]; if(s) s.fn(); }
 function praticarDeNovo(){
   var s=STOPS[progresso]; if(!s)return;
   PRATICA=true;
@@ -1431,7 +1439,7 @@ var STOPS=[
 var progresso=0, fagPos=0;
 
 function avanca(){
-  PRATICA=false;
+  PRATICA=false; REPETE_ITEM=false; itemIdx=0;
   if(progresso<STOPS.length) progresso++;
   if(progresso>=STOPS.length){ telaFinal(); } else { telaMapa(); }
 }
@@ -1594,7 +1602,7 @@ function sucessoP1(){
   motorParada("p1",forcaDe(semErro));
   // contagem termina -> explicação -> a Fagulha pergunta "por quê?" -> botões (áudio encadeado, sem sobrepor)
   setTimeout(function(){
-    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }   // treino: explicação curta, sem repetir a pergunta
+    if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }   // treino: explicação curta, sem repetir a pergunta
     depoisDaFala(ehOriginal("p1")?"e_p1":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p1_q",
@@ -1682,7 +1690,7 @@ function sucessoP2(){
   premiar(semErro?3:2);
   motorParada("p2",forcaDe(semErro));
   setTimeout(function(){
-    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
     depoisDaFala(ehOriginal("p2")?"e_p2":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p2_q",
@@ -1914,7 +1922,7 @@ function sucessoP3(){
   premiar(3);
   motorParada("p3",2);   // parada guiada (sem erro possível): evidência média
   setTimeout(function(){
-    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
     depoisDaFala("e_p3", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p3_q",
@@ -1972,7 +1980,7 @@ function sucessoP4(){
   premiar(semErro?3:2);
   motorParada("p4",forcaDe(semErro));
   setTimeout(function(){
-    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
     depoisDaFala(ehOriginal("p4")?"e_p4":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_p4_q",
@@ -2243,7 +2251,7 @@ function sucessoSoma(){
   premiar(semErro?3:2);
   motorParada("soma",forcaDe(semErro));
   setTimeout(function(){
-    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
     depoisDaFala(ehOriginal("soma")?"e_soma":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_soma_q",
@@ -2346,7 +2354,7 @@ function sucessoProblema(){
   premiar(semErro?3:2);
   motorParada("prob",forcaDe(semErro));
   setTimeout(function(){
-    if(PRATICA){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
+    if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }
     depoisDaFala(ehOriginal("prob")?"e_prob":"e_var", 9000, function(){
       autoexplica(tela, {
         falaQ:"se_prob_q",
@@ -2477,20 +2485,59 @@ function decoPoe(ev,sky){
   tocaNota(330+DECO.hue*0.6);
 }
 /* ===== FINAL (cutscene) + PARECER ===== */
+/* ===== FINAL DA HISTÓRIA (epílogo encenado em 3 beats) =====
+   A missão da abertura ("o céu está escuro e vazio, vem encher de estrelas?")
+   se RESOLVE aqui: o céu enche em ondas, a Fagulha fecha o arco dela (não dava
+   conta sozinha; agradece), e há uma despedida. Robusto: avança mesmo sem áudio
+   (depoisDaFala tem prazo), com legenda sincronizada e botão "pular". */
 function telaFinal(){
   limpa();
   var t=el("div","tela fim");
-  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(90));
-  var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="8%"; t.appendChild(fv);
+  t.appendChild(el("div","ceu"));
+  t.appendChild(campoEstrelas(24,95));                 // começa com poucas estrelas (o céu ainda vai encher)
+  var fv=fabViva(); fv.className="fabviva destino"; fv.style.top="6%"; t.appendChild(fv);
   var fag=el("div","fimfag"); fag.appendChild(fagViva()); t.appendChild(fag);
-  fagComemora();
   var tit=el("div","fimtit","Você encheu o céu de estrelas!"); t.appendChild(tit);
-  var sub=el("div","fimsub","A Fábrica de Estrelas está brilhando por sua causa."); t.appendChild(sub);
-  var bar=el("div","p1barra"); bar.style.bottom="8%";
-  var b=el("button","btn pulsa","Ver como você foi"); b.onclick=function(){ telaRelatorio(); }; bar.appendChild(b); t.appendChild(bar);
+  var sub=el("div","fimsub",""); t.appendChild(sub);
+  var leg=el("div","legenda fimleg",""); t.appendChild(leg);
+  var bar=el("div","p1barra"); bar.style.bottom="6%"; t.appendChild(bar);
+  var pular=el("button","pular","pular &#9654;");
+  var vivo=true;
+  function sair(){ if(!vivo)return; vivo=false; try{narr.pause();}catch(e){} paraBoca(); telaRelatorio(); }
+  pular.onclick=sair; t.appendChild(pular);
   app.appendChild(t);
-  falar("final");
-  var i; for(i=0;i<3;i++){ (function(d){ setTimeout(function(){ estouraEstrelas(t,16); },d); })(i*600);
+
+  var alu=alunoAtual(); var nome=(alu&&alu.nome)?(""+alu.nome).split(" ")[0]:"";
+  /* enche o céu em ondas (o trabalho da criança "acendendo" o céu) */
+  function onda(qtd,quando){ setTimeout(function(){ if(!vivo)return; t.appendChild(campoEstrelas(qtd,95)); },quando); }
+  onda(22,700); onda(24,1800); onda(26,3000);
+
+  /* BEAT 1 — a missão se cumpre */
+  var T1="Olha o céu agora! Estava todo escuro e vazio... e você foi enchendo de estrelas, grupo por grupo. A Fábrica de Estrelas voltou a brilhar — e foi você que fez isso!";
+  legendaSync(leg,T1);
+  depoisDaFala("final", 13000, beat2);
+
+  function beat2(){
+    if(!vivo)return;
+    fagComemora(); estouraEstrelas(t,18);
+    sub.innerHTML="A Fábrica de Estrelas está brilhando por sua causa.";
+    var T2="Sabe... eu sozinha não dava conta. Eu precisava de alguém que soubesse juntar as estrelas em grupos iguais, contar de vezes e não desistir. Esse alguém é você.";
+    leg.innerHTML=""; legendaSync(leg,T2);
+    depoisDaFala("final2", 13000, beat3);
+  }
+  function beat3(){
+    if(!vivo)return;
+    tit.innerHTML = nome ? ("Parabéns, "+nome+"!") : "Parabéns!";
+    sub.innerHTML="Agora você faz parte da Fábrica de Estrelas.";
+    var i; for(i=0;i<3;i++){ (function(d){ setTimeout(function(){ if(vivo)estouraEstrelas(t,16); },d); })(i*600); }
+    var T3="Sempre que você olhar o céu de noite, lembra: tem estrelas ali que existem por sua causa. Obrigada por essa aventura. Até a próxima!";
+    leg.innerHTML=""; legendaSync(leg,T3);
+    depoisDaFala("final3", 14000, mostraBtn);
+  }
+  function mostraBtn(){
+    if(!vivo)return;
+    var b=el("button","btn pulsa","Ver como você foi"); b.onclick=function(){ if(!vivo)return; vivo=false; telaRelatorio(); };
+    bar.appendChild(b);
   }
 }
 function lerEvid(){ try{ return JSON.parse(localStorage.getItem(kAluno("estrelas_evid"))||"[]"); }catch(e){ return []; } }
