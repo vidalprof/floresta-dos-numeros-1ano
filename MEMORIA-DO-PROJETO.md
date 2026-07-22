@@ -51,6 +51,17 @@
 >> - **Duas pesquisas profundas rodando (2026-07-22):** (1) mecânicas interativas de GEOGRAFIA p/ 6º ano;
 >>   (2) ARSENAL TÉCNICO (animação/lip-sync 2D, simulação leve, imagens IA consistentes, voz, desempenho).
 >>   Quando chegarem → alimentar `CATALOGO-DINAMICAS-INTERATIVAS.md` e virar plano de mecânicas por beat.
+>> - **PESQUISA "SIMULAÇÕES QUE ENSINAM" — CHEGOU (2026-07-22):** salva em
+>>   `PESQUISA-SIMULACOES-EFICAZES-2026-07.md` (103 agentes, 23/25 claims). 6 achados: (1) realismo
+>>   FUNCIONAL (carrega o mecanismo) > decorativo; (2) podar enfeite sedutor; (3) NÃO abstrair demais
+>>   p/ 11–12 anos; (4) andaime IMPLÍCITO (a meta vira o controle, feedback imediato — jeito PhET);
+>>   (5) indagação guiada leve POE (prever→observar→explicar), não demonstração passiva; (6) REFUTAR a
+>>   concepção errada (nomear o erro → mostrar o certo). Já entrou no molde. **1º passo aplicado:** LEI
+>>   clima→bioma agora mostra o MECANISMO em palavras (rótulos Sol/Nuvem + leitor "clima → bioma"). Faltam:
+>>   POE-gate (prever antes de agir), refutação da latitude/altitude, corte transversal da montanha,
+>>   climograma ligado à cena. **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
+>>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
+>>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
 >> - **Áudio:** `gerar-audio.yml` ganhou input **`outdir`** (mp3 direto na pasta da atividade, sem colidir
 >>   ids com o `_audio/` do estrelas); voz **feminina (Francisca)** p/ mascote menina.
 >> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
