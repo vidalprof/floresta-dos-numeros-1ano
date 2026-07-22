@@ -691,6 +691,31 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
   margin:8px 0;padding:8px 10px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
 .zfaixa .zrot{font-weight:800;color:#e9ecff;font-size:15px}
 .zfaixa .stepper{margin:0}
+.zhead{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.zcheck{display:inline-block;margin-left:8px;width:20px;height:20px;line-height:20px;text-align:center;border-radius:50%;font-weight:900;font-size:13px;color:transparent}
+.zcheck.ok{background:#37d67a;color:#08351d;-webkit-animation:estrPop .3s ease;animation:estrPop .3s ease}
+/* BEAT CONCRETO da parada 1 (Sol direto x de lado) */
+.beatpar{position:absolute;left:10px;right:10px;top:25%;z-index:3;text-align:center;white-space:normal}
+.beat{display:inline-block;vertical-align:top;width:43%;margin:0 2%;background:rgba(12,18,44,.5);border:1px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 6px 14px;position:relative;min-height:196px}
+.beatq{-webkit-box-shadow:inset 0 -46px 40px -30px rgba(255,150,60,.55);box-shadow:inset 0 -46px 40px -30px rgba(255,150,60,.55)}
+.beatf{-webkit-box-shadow:inset 0 -46px 40px -30px rgba(120,180,255,.55);box-shadow:inset 0 -46px 40px -30px rgba(120,180,255,.55)}
+.beattit{font-weight:800;color:#ffe08a;font-size:15px;margin-bottom:8px}
+.beatsun{width:38px;height:38px;border-radius:50%;margin:0 auto;background:radial-gradient(circle,#fff3b0,#ffb020);-webkit-box-shadow:0 0 18px rgba(255,190,60,.8);box-shadow:0 0 18px rgba(255,190,60,.8);-webkit-animation:pulsaGlow 2.4s ease-in-out infinite;animation:pulsaGlow 2.4s ease-in-out infinite}
+.beatrays{position:relative;height:66px;margin-top:2px}
+.beatrays .raio{position:absolute;top:0;left:50%;width:3px;height:62px;background:-webkit-linear-gradient(top,rgba(255,225,130,.95),rgba(255,225,130,.12));background:linear-gradient(to bottom,rgba(255,225,130,.95),rgba(255,225,130,.12))}
+.beatrays.reto .raio:nth-child(1){margin-left:-22px}
+.beatrays.reto .raio:nth-child(3){margin-left:22px}
+.beatrays.lado .raio{-webkit-transform-origin:top center;transform-origin:top center;-webkit-transform:rotate(40deg);transform:rotate(40deg)}
+.beatrays.lado .raio:nth-child(1){margin-left:-30px}
+.beatrays.lado .raio:nth-child(3){margin-left:16px}
+.beatchao{height:11px;border-radius:6px;margin:0 12px}
+.beatq .beatchao{background:-webkit-linear-gradient(left,#ffcf7a,#ff8a4a);background:linear-gradient(to right,#ffcf7a,#ff8a4a)}
+.beatf .beatchao{background:-webkit-linear-gradient(left,#cfe4ff,#6aa8ff);background:linear-gradient(to right,#cfe4ff,#6aa8ff)}
+.beattxt{font-size:12.5px;color:#eef1ff;margin-top:9px;line-height:1.32}
+.saibawrap{position:absolute;left:10px;right:10px;top:60%;z-index:6;text-align:center}
+.saibabtn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:#dfe6ff;font-family:inherit;font-weight:700;font-size:13px;padding:7px 15px;border-radius:20px;cursor:pointer}
+.saibabtn.aberto{background:rgba(255,220,140,.18);border-color:rgba(255,220,140,.5);color:#ffe6a3}
+.saibacard{margin:9px auto 0;max-width:520px;background:rgba(10,16,40,.92);border:1px solid rgba(255,220,140,.35);border-radius:14px;padding:12px 14px;font-size:13.5px;color:#eef1ff;line-height:1.42;text-align:left}
 .semana{position:absolute;left:0;right:0;top:26%;text-align:center;z-index:2;white-space:nowrap;padding:0 6px}
 .dia{display:inline-block;vertical-align:middle;width:13%;max-width:64px;margin:1%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:12px;padding:6px 2px}
 .dia img{width:100%;height:auto;display:block}
@@ -1684,36 +1709,85 @@ function medSet(chave,labels,v){ var e=document.getElementById("med_"+chave); if
 var ZON;
 function telaZonas(){
   limpa();
-  ZON={v:[1,1,1,1],alvo:[2,2,1,0],rot:["Equador","Trópico","Zona temperada","Polo"],tent:0,concluida:false,t0:(new Date()).getTime()};
+  // ANDAIME: Equador já vem QUENTE (exemplo trabalhado da Nara). A criança completa a escada até o Polo.
+  ZON={v:[2,1,1,1],alvo:[2,2,1,0],rot:["Equador","Trópico","Zona temperada","Polo"],tent:0,concluida:false,t0:(new Date()).getTime()};
+  zonCena();
+}
+/* BEAT CONCRETO (embasamento que SEGUE as leis: descoberta, não aula) —
+   Sol DIRETO no Equador (concentrado=quente) x DE LADO no Polo (espalhado=frio). */
+function zonCena(){
+  limpa();
+  var t=el("div","tela parada clima zonas cena");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(16));
+  t.appendChild(el("div","balao","Antes de marcar, veja o <b>Sol</b> chegando na Terra."));
+  var par=el("div","beatpar");
+  par.appendChild(zonPanel("No Equador","reto","Raios <b>concentrados</b><br>&rarr; <b>quente</b>",true));
+  par.appendChild(zonPanel("No Polo","lado","Raios <b>espalhados</b><br>&rarr; <b>frio</b>",false));
+  t.appendChild(par);
+  t.appendChild(zonSaibaMais());
+  var bar=el("div","p1barra"); var b=el("button","btn pulsa","Entendi &mdash; vamos marcar!"); b.onclick=function(){ zonPasso2(); };
+  bar.appendChild(b); t.appendChild(bar);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  falar("p1");
+}
+function zonPanel(tit,tipo,txt,quente){
+  var p=el("div","beat "+(quente?"beatq":"beatf"));
+  p.appendChild(el("div","beattit",tit));
+  p.appendChild(el("div","beatsun"));
+  var rays=el("div","beatrays "+tipo),i; for(i=0;i<3;i++){ rays.appendChild(el("div","raio")); }
+  p.appendChild(rays); p.appendChild(el("div","beatchao")); p.appendChild(el("div","beattxt",txt));
+  return p;
+}
+/* apoio OPCIONAL (o professor pediu "Saiba mais" sem virar aula obrigatória) */
+function zonSaibaMais(){
+  var w=el("div","saibawrap");
+  var b=el("button","saibabtn","Saiba mais (é só se quiser)");
+  var card=el("div","saibacard"); card.style.display="none";
+  card.innerHTML="A Terra é <b>redonda</b>. No meio (Equador) os raios do Sol chegam <b>de frente</b>, concentrados num pedaço pequeno &mdash; esquenta muito. Nas pontas (polos) chegam <b>inclinados</b> e se espalham num pedaço grande &mdash; esquenta pouco. Por isso a temperatura vai caindo do Equador até os polos.";
+  b.onclick=function(){ var vis=(card.style.display!=="none"); card.style.display=vis?"none":"block"; b.className="saibabtn"+(vis?"":" aberto"); };
+  w.appendChild(b); w.appendChild(card); return w;
+}
+/* PASSO 2 — a escada, com Equador já marcado (exemplo) e ✓ na hora em cada faixa. */
+function zonPasso2(){
+  limpa();
   var t=el("div","tela parada clima zonas");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(20));
-  t.appendChild(el("div","balao","O Sol bate mais <b>direto no Equador</b> e mais <b>de lado nos polos</b>. Ajuste a <b>temperatura</b> de cada faixa do planeta, do Equador ao Polo!"));
-  var wrap=el("div","zonaswrap"); var i;
+  t.appendChild(el("div","balao","A Nara já marcou o <b>Equador</b> (quente). Agora faça a <b>escada</b> até o <b>Polo</b>: quanto mais longe do Equador, mais <b>frio</b>."));
+  var wrap=el("div","zonaswrap"),i;
   for(i=0;i<4;i++){ (function(k){
     var faixa=el("div","zfaixa"); faixa.id="zf"+k;
-    faixa.appendChild(el("div","zrot",ZON.rot[k]));
-    faixa.appendChild(medidor({get v(){return ZON.v[k];},set v(x){ZON.v[k]=x;}}, "v", "", TLAB, function(){ zonPinta(); }));
+    var head=el("div","zhead"); head.appendChild(el("div","zrot",ZON.rot[k])); head.appendChild(el("div","zcheck",""));
+    faixa.appendChild(head);
+    faixa.appendChild(medidor({get v(){return ZON.v[k];},set v(x){ZON.v[k]=x;}}, "v", "", TLAB, function(){ ZON.tocou=true; zonPinta(); zonAuto(); }));
     wrap.appendChild(faixa);
   })(i); }
   t.appendChild(wrap);
   var bar=el("div","p1barra"); var b=el("button","btn pulsa","Confirmar!"); b.onclick=function(){ zonConfere(); };
   bar.appendChild(b); bar.appendChild(el("div","pdica","")); t.appendChild(bar);
   ajudaBtn(t,[
-    {txt:"No <b>Equador</b> o Sol bate direto: é o mais <b>quente</b>."},
-    {txt:"Quanto mais perto do <b>Polo</b>, mais <b>frio</b> (o Sol bate de lado)."},
-    {txt:"Faça uma escada: Equador quente → Trópico quente → Temperada amena → Polo frio."}
+    {txt:"O <b>Trópico</b> fica pertinho do Equador: também é <b>quente</b>."},
+    {txt:"A <b>Zona temperada</b> fica no meio: <b>amena</b> (nem quente, nem fria)."},
+    {txt:"O <b>Polo</b> é o mais <b>frio</b> &mdash; o Sol bate bem de lado."}
   ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
-  zonPinta(); falar("p1");
+  zonPinta();
 }
 function zonPinta(){
   var i,cor=["#5ec8ff","#9ff0c0","#ffd75e"];
-  for(i=0;i<4;i++){ var f=document.getElementById("zf"+i); if(f){ f.style.borderLeft="7px solid "+cor[ZON.v[i]]; }
-    var e=document.getElementById("med_v"); }
-  // atualiza cada label (ids colidem, então redesenho manual)
+  for(i=0;i<4;i++){ var f=document.getElementById("zf"+i);
+    if(f){ f.style.borderLeft="7px solid "+cor[ZON.v[i]];
+      var ck=f.getElementsByClassName("zcheck")[0];
+      if(ck){ var okz=(ZON.v[i]===ZON.alvo[i]); ck.innerHTML=okz?"&#10003;":""; ck.className="zcheck"+(okz?" ok":""); } } }
   var labs=document.getElementsByClassName("medlab"),z; for(z=0;z<labs.length;z++){ labs[z].innerHTML=TLAB[ZON.v[z]]; }
+}
+/* ✓ na hora: quando a escada inteira bate, sucesso sozinho (o mundo reage, sem "Confirmar" obrigatório) */
+function zonAuto(){
+  if(ZON.concluida)return;
+  var i; for(i=0;i<4;i++){ if(ZON.v[i]!==ZON.alvo[i]) return; }
+  somAcerto(); zonSucesso();
 }
 function zonConfere(){
   if(ZON.concluida)return;
