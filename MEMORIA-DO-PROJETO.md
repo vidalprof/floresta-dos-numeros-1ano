@@ -23,6 +23,32 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
+>> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
+>> - **JOGO, não formulário (§4⅗):** o que ensina certo mas parece medidor/lista/questionário NÃO prende.
+>>   A criança **brinca COM o mundo** (toca/arrasta/pinta direto no planeta/mapa), com **reação visual +
+>>   recompensa** a cada ação e **missão** ("o planeta apagou — reacenda"). Fora os +/− sempre que der.
+>> - **Simulação REAL:** modelo por trás (ex.: `bioma(temp,chuva)`, ângulo do Sol→temperatura, altitude→
+>>   clima) com resposta visual IMEDIATA. Não é 3D pesado — CSS/Canvas 2D/partículas/procedural, PC fraco.
+>> - **Didática SEM aula (§4⅘):** ser progressivo = **andaime** (beat concreto → exemplo trabalhado do
+>>   mascote → ✓ na hora por item), NÃO vídeo/texto obrigatório antes de agir (isso viola as leis). A
+>>   "explicação da matéria" vem como **cutscene animada narrada / infográfico tocável / a própria
+>>   simulação** + botão **"Saiba mais" OPCIONAL**. **~10–12 beats** p/ 55 min (5 é pouco).
+>> - **Disciplina muda a mecânica (§6):** matemática = EXECUTAR (procedimento basta); geografia/ciências =
+>>   COMPREENDER (espacial/sistêmico) → exige simulação real + mecânica visual/espacial (mapa em camadas,
+>>   climograma, corte de relevo). O pedagogo escolhe pela demanda da disciplina.
+>> - **Mascote (§4½), bugs que o Marcos pegou e o conserto:** (a) **recorte transparente** (fim do quadrado
+>>   branco/preto); (b) **lip-flap NÍTIDO** (boca aberta/fechada com histerese — acaba o "fantasma" de boca
+>>   meio-aberta que parecia bug); (c) **`fala`/`pisca` = base + só a boca/olhos** (senão o corpo treme ao
+>>   falar); (d) **TODA pose de gesto volta à neutra** (comemora/aponta) — senão narra "com o braço no ar".
+>> - **Duas pesquisas profundas rodando (2026-07-22):** (1) mecânicas interativas de GEOGRAFIA p/ 6º ano;
+>>   (2) ARSENAL TÉCNICO (animação/lip-sync 2D, simulação leve, imagens IA consistentes, voz, desempenho).
+>>   Quando chegarem → alimentar `CATALOGO-DINAMICAS-INTERATIVAS.md` e virar plano de mecânicas por beat.
+>> - **Áudio:** `gerar-audio.yml` ganhou input **`outdir`** (mp3 direto na pasta da atividade, sem colidir
+>>   ids com o `_audio/` do estrelas); voz **feminina (Francisca)** p/ mascote menina.
+>> - **Capa:** nada de "medalha" com anel dourado (o Marcos achou amador) → **Terra girando** (2 cópias em
+>>   `transform` mascaradas por círculo + sombreamento de esfera + atmosfera). Biomas viram **JPG** (leve).
+
 ## ⚖️ AS LEIS FIXAS DO EDUCAVERSO + COMO A FÁBRICA FUNCIONA DE VERDADE (Marcos aprovou, 2026-07-19)
 > **LER SEMPRE antes de criar QUALQUER atividade. O Marcos cravou isto nesta sessão.**
 >

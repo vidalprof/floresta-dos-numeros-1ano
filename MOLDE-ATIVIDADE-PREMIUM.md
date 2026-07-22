@@ -113,6 +113,46 @@ A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de E
 4. **Analisador liga no 1º gesto** (`createMediaElementSource(narr)` → analyser → destino) e o `loop()`
    dirige a opacidade da `fala` pela RMS da voz. Sem áudio de verdade não há lip-sync — **gerar a
    narração é pré-requisito** (mudo = "mascote morto").
+5. **LIP-FLAP NÍTIDO (não "fantasma").** NÃO deixar a boca em opacidade contínua — a meia opacidade
+   mostra uma boca meio-aberta translúcida por cima da fechada = parece bug. A boca fica **ABERTA ou
+   FECHADA** (0/1), trocando rápido, com **histerese** (abre >0,30, fecha <0,14 da RMS) p/ não tremular.
+   Só o **gesto do corpo** (baloiço macio) usa o valor suavizado.
+6. **TODA POSE DE GESTO VOLTA À NEUTRA (bug pago — o braço levantado).** `comemora`/`aponta`/`acena`
+   levantam o braço; se não voltarem, a Nara **narra a explicação com a mão no ar** ("o tempo todo").
+   Regra: (a) toda pose de gesto tem **timer de retorno** à `base` (~1,4s), como o `pensa` já faz; e
+   (b) **ao COMEÇAR a narrar** (`falar()`), se estiver num gesto, volta à `base` ANTES de falar — a
+   narração nunca começa com a mão levantada. Item fixo do QA do mascote.
+
+## 4⅗. ATRATIVO = JOGO, NÃO FORMULÁRIO (lei do Marcos, 2026-07-22) ⭐ OBRIGATÓRIO
+O que ensina certo mas parece **formulário** (medidores +/−, lista de linhas, "escolha o rótulo") **não
+prende** o aluno — ainda mais do 6º ano pra cima. Regra: a criança **brinca COM o mundo**, não preenche.
+- **INTERAÇÃO DIRETA no objeto de estudo:** toca/arrasta/pinta **direto no planeta/mapa/cena**, não em
+  um controle abstrato ao lado. Fora os +/− sempre que der: vira **tocar a faixa que reage**, **arrastar
+  para a região**, **girar o dial e o bioma nascer**, **subir a montanha com o dedo**.
+- **REAÇÃO VISUAL + RECOMPENSA a cada ação:** mexeu → o mundo se transforma NA HORA (cor, partícula,
+  brilho, som, hit-stop). O acerto **ACENDE** a coisa (glow + ✓). O feedback É o mundo reagindo.
+- **MISSÃO com stakes:** enredo de jogo ("o planeta está apagado — reacenda cada faixa"), progresso
+  épico, desbloqueios, o mascote reagindo com emoção. A medida (evidência) continua por baixo.
+- **SIMULAÇÃO REAL, não script:** um **modelo** de verdade por trás (ex.: `bioma(temperatura, chuva)`,
+  ângulo do Sol → temperatura, altitude → clima) que responde a QUALQUER combinação — com **resposta
+  visual imediata**. "Simulação real" = modelo correto + reação visível; **NÃO** é 3D pesado: faz-se
+  com CSS/Canvas 2D/partículas/ruído procedural, leve, PC fraco. (Ver a pesquisa do arsenal técnico.)
+- **Régua:** se a tela parece um **questionário/planilha**, REPROVA — reprojetar como manipulação do mundo.
+
+## 4⅘. DIDÁTICA SEM AULA — como "explicar a matéria" sem virar lousa (lei do Marcos)
+Ser **didático e progressivo** é exigido pelas leis; **aula/vídeo/texto OBRIGATÓRIO antes de agir** as
+**viola** (conceito primeiro → a criança desliga). O embasamento certo é **descoberta + apoio atrativo**:
+- **ANDAIME (torna fácil sem entregar):** (1) **beat concreto** primeiro (a criança SENTE o fenômeno —
+  ex.: o Sol batendo direto × de lado); (2) **exemplo trabalhado** do mascote ("eu faço" — 1 item já
+  pronto); (3) a criança completa com **✓ na hora por item** (fim do "tudo certo ou nada"); (4) só então
+  o símbolo/nome (CPA).
+- **EXPLICAÇÃO como DINÂMICA atrativa** (o "vídeo bom"), nunca passiva:
+  · **mini-cutscene animada narrada** (20–30s: a cena se move enquanto o mascote explica; **termina
+    virando ação**) · **infográfico "descobrir tocando"** (toca a parte → revela o porquê) · **a própria
+    simulação explica** (mexeu → viu → entendeu).
+- **"Saiba mais" OPCIONAL:** botão que abre um texto/animação curta **só se a criança quiser** — dá o
+  embasamento sem obrigar. (Já existe na parada 1 do Planeta Vivo.)
+- **~10–12 beats para 55 min** (5 é pouco): variar o "verbo da mão" a cada um, com **revisão espaçada** no meio.
 
 ## 4¾. PEDAGOGO ESCOLHE AS MECÂNICAS + MUITAS PARA 55 MIN (lei do Marcos)
 - O **pedagogo** (chapéu 1+2) escolhe, do `CATALOGO-DINAMICAS-INTERATIVAS.md`, as mecânicas que
@@ -141,6 +181,15 @@ A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de E
   Exploradores (3º–5º) = formato da Fábrica de Estrelas · Aventureiros (6º–9º) = SÓBRIO, mais desafio/
   agência, menos fofura, texto ok, mascote mais maduro.
 - **Avaliação:** parecer descritivo nos anos iniciais; nota entra naturalmente nos finais.
+- **POR DISCIPLINA — a demanda cognitiva muda a mecânica (lei do Marcos, 2026-07-22):**
+  · **Matemática/procedimental** = o aluno **EXECUTA** um procedimento → produção passo-a-passo (montar,
+    contar, compor) já basta. · **Geografia/Ciências/Sociais** = o aluno precisa **COMPREENDER** padrões
+    espaciais e sistemas de causa-efeito, e **ler/construir representações** (mapas, gráficos, perfis) →
+    exige **SIMULAÇÃO REAL + mecânicas VISUAIS/ESPACIAIS** (mapa em camadas, construir climograma, corte
+    do relevo, girar variáveis e o resultado emergir no mapa). Formulário aqui mata a compreensão.
+  · O **pedagogo escolhe a mecânica pela demanda da disciplina**, não por moldar tudo igual. As mecânicas
+    específicas por disciplina estão no `CATALOGO-DINAMICAS-INTERATIVAS.md` (e nas pesquisas profundas de
+    2026-07: mecânicas de geografia + arsenal técnico — alimentam o catálogo quando chegam).
 
 ## 7. ASSETS & VOZ (pipeline — TUDO por workflow, nunca pelo chat)
 - Imagem: `_gerar_imagens.json` + push `[imagens]` (Gemini, lote) ou `gerar-imagens.yml` (pollinations grátis
@@ -161,10 +210,20 @@ A atividade NUNCA pode parecer amadora/parada. O padrão-ouro é a Fábrica de E
 
 ## 9. CHECKLIST FINAL (o teste de fogo — reprova se algum falhar)
 - [ ] Toda parada é PRODUÇÃO (a criança constrói; nada de escolher alternativa).
+- [ ] **JOGO, não formulário:** manipulação direta no mundo + reação visual/recompensa a cada ação;
+      nenhuma tela parece questionário/planilha (§4⅗).
+- [ ] **Simulação REAL** (modelo por trás, resposta visual imediata) onde a disciplina pede COMPREENDER
+      (geografia/ciências) — não script, não 3D pesado.
+- [ ] **Explicação como dinâmica** (cutscene animada / infográfico tocável / a simulação) + "Saiba mais"
+      OPCIONAL — nunca aula/vídeo obrigatório antes de agir (§4⅘).
 - [ ] Concreto antes do símbolo; problema antes do conceito; consequência no mundo (sem X).
+- [ ] Andaime: beat concreto → exemplo trabalhado → ✓ na hora por item (sem "tudo certo ou nada").
 - [ ] Cada parada mapeada a uma habilidade BNCC real (verificada) + item de transferência.
+- [ ] **~10–12 beats** para ~55 min, "verbo da mão" diferente a cada um + revisão espaçada no meio.
 - [ ] Motor herdado funcionando (BKT, Leitner/Aquecimento, autoexplicação, medição→parecer).
-- [ ] Mascote pergunta (não responde); voz Antônio; lip-sync; animação profissional; sem emoji visível.
-- [ ] Faixa correta (identificação/casca/avaliação); PC fraco ok; ~55 min (auditor).
+- [ ] Mascote pergunta (não responde); **voz coerente com o personagem** (menina→Francisca, menino→Antônio);
+      **lip-flap nítido** (sem "fantasma"); **toda pose de gesto volta à neutra** (sem braço no ar ao narrar);
+      recorte transparente (sem quadrado); animação profissional; sem emoji visível.
+- [ ] Faixa correta (identificação/casca/avaliação/disciplina); PC fraco ok; ~55 min (auditor).
 - [ ] Portões 0/1/Arte + prévia e aprovação do Marcos ANTES de publicar.
 - [ ] Publicado no repo próprio + card no portal na turma certa.
