@@ -1,0 +1,86 @@
+name: Gerar visemas (Rhubarb) p/ lip-sync
+
+# Calcula a TIMELINE de bocas (visemas) de cada narração com o Rhubarb Lip Sync,
+# no BUILD (Actions), e salva um JSON compacto que o app embute/lê e reproduz
+# trocando a imagem da boca no tempo certo — leve, offline, sem lib no navegador.
+#
+# Reconhecedor "phonetic" = independente de idioma (funciona em PORTUGUÊS).
+# Pipeline: mp3 -> (ffmpeg) wav 16k mono -> rhubarb -> mouthCues (A..X) -> JSON.
+
+on:
+  workflow_dispatch:
+    inputs:
+      audiodir:
+        description: "Pasta com os mp3 da narração"
+        required: false
+        default: "_clima/audio"
+        type: string
+      outfile:
+        description: "JSON de saída (timeline das bocas)"
+        required: false
+        default: "_clima/visemas.json"
+        type: string
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Instalar ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg unzip
+
+      - name: Baixar Rhubarb Lip Sync
+        run: |
+          set -e
+          VER="1.13.0"
+          URL="https://github.com/DanielSWolf/rhubarb-lip-sync/releases/download/v${VER}/Rhubarb-Lip-Sync-${VER}-Linux.zip"
+          curl -sSL "$URL" -o rhubarb.zip
+          unzip -q rhubarb.zip
+          mv "Rhubarb-Lip-Sync-${VER}-Linux" rhubarb_dir
+          chmod +x rhubarb_dir/rhubarb
+          rhubarb_dir/rhubarb --version || true
+
+      - name: Gerar visemas
+        env:
+          AUDIODIR: ${{ inputs.audiodir }}
+          OUTFILE: ${{ inputs.outfile }}
+        run: |
+          python3 - <<'PY'
+          import os, json, glob, subprocess
+          ad=os.environ["AUDIODIR"].strip("/"); out=os.environ["OUTFILE"]
+          res={}; ok=0; fail=0
+          for mp3 in sorted(glob.glob(ad+"/*.mp3")):
+              idn=os.path.splitext(os.path.basename(mp3))[0]
+              wav="/tmp/%s.wav"%idn; j="/tmp/%s.json"%idn
+              subprocess.run(["ffmpeg","-y","-i",mp3,"-ar","16000","-ac","1",wav],
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+              r=subprocess.run(["rhubarb_dir/rhubarb","-r","phonetic","-f","json","-o",j,wav],
+                               stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
+              if r.returncode!=0 or not os.path.exists(j):
+                  print("::warning::rhubarb falhou em %s: %s"%(idn, r.stderr.decode('utf-8','ignore')[:200])); fail+=1; continue
+              d=json.load(open(j))
+              cues=[[round(c["start"],2), c["value"]] for c in d.get("mouthCues",[])]
+              res[idn]=cues; ok+=1; print("OK %s (%d cues)"%(idn,len(cues)))
+          os.makedirs(os.path.dirname(out) or ".", exist_ok=True)
+          json.dump(res, open(out,"w"), separators=(",",":"))
+          print("== RESUMO: %d ok, %d falha -> %s =="%(ok,fail,out))
+          if ok==0: raise SystemExit(1)
+          PY
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ inputs.outfile }}" || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "visemas: timeline de bocas (Rhubarb, phonetic) p/ lip-sync"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
