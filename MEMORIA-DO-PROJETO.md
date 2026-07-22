@@ -68,6 +68,12 @@
 >>   `telaFatores()` lançava "FAT is not defined" e a altitude QUEBRAVA (tela branca). Fix: `var FAT;`.
 >>   Planeta Vivo é novo, ainda sem QA em PC real — por isso não fora pego. Lição: declarar `var` p/ o
 >>   estado de CADA tela (ZON/LEI/CLG tinham; FAT faltava). Falta ainda: corte transversal da montanha.
+>>   **CLIMOGRAMA REFEITO p/ ser DEDUTÍVEL (Marcos apontou: resolvia por tentativa; a Savana [3,2,0,1]
+>>   não saía da dica):** agora 3 níveis (0 seco/1 chuva/2 muita chuva) e CADA estação tem uma PISTA do
+>>   tempo (ícone+palavra) — a criança LÊ o tempo e levanta a barra até bater (traduz tempo→gráfico = a
+>>   habilidade real de climograma), sem adivinhar. + rodada DESERTO (contraste). No fim o gráfico vira o
+>>   bioma (clgMostraBioma). sw v9. Regra p/ toda simulação de "montar": o alvo tem de ser DEDUTÍVEL de
+>>   uma pista visível, nunca só do feedback verde (senão é adivinhação, não aprendizado).
 >>   **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
 >>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
 >>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
