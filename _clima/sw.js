@@ -1,6 +1,6 @@
 /* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
    Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
-var CACHE="planeta-vivo-v2";
+var CACHE="planeta-vivo-v3";
 /* Só a casca + imagens que aparecem já no começo. Biomas/áudio entram sozinhos
    pelo cache de runtime (fetch) — evita precache pesado em PC fraco. */
 var ATIVOS=["./","./index.html","./manifest.json",
