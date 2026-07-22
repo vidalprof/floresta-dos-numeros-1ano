@@ -74,6 +74,14 @@
 >>   habilidade real de climograma), sem adivinhar. + rodada DESERTO (contraste). No fim o gráfico vira o
 >>   bioma (clgMostraBioma). sw v9. Regra p/ toda simulação de "montar": o alvo tem de ser DEDUTÍVEL de
 >>   uma pista visível, nunca só do feedback verde (senão é adivinhação, não aprendizado).
+>>   **CENA da simulação clima→bioma MUITO mais viva (Marcos: 'animação meio fraca'), sw v10:** o canvas
+>>   era 300x200 ESTICADO p/ um container mais alto (distorcia+borrava) — agora casa a resolução ao tamanho
+>>   REAL (LEI._cena.clientWidth*1.35, cap 520x560). Arte reescrita em Canvas 2D leve: céu 3 tons c/ horizonte
+>>   quente, SOL com glow+raios girando, nuvens de fundo à deriva, morros (profundidade), chão em gradiente,
+>>   e FLORA por bioma (árvores de copa em camadas, cactos saguaro, pinheiros 3 tiers c/ neve, capim/acácia
+>>   com balanço). Helpers: leiSol/leiNuvemFundo/leiMorros/leiChaoCor/leiArvore/leiPinheiro/leiCacto/leiCapim/
+>>   leiAcacia/leiMoita/rr. Lição: canvas com width/height fixos DENTRO de container flex vira borrão — sempre
+>>   casar a resolução do buffer ao tamanho real (1x-1.4x) p/ nitidez.
 >>   **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
 >>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
 >>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
