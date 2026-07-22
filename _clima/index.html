@@ -531,6 +531,16 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#20264a;
   background:#eef1ff;padding:12px 12px;border-radius:14px;box-shadow:0 3px 0 #c4cbe8;line-height:1.2}
 .aebtn.escolhida{background:#dfe6ff;box-shadow:0 2px 0 #b9c4ee;-webkit-transform:translateY(1px);transform:translateY(1px)}
+/* POE — portão "Prever" (etiqueta do palpite) */
+.prevbox .prevtag{display:inline-block;background:#ffd75e;color:#3a2c00;font-weight:800;font-size:12px;
+  padding:3px 12px;border-radius:12px;margin-bottom:8px;letter-spacing:.3px}
+/* REFUTAÇÃO: mito (riscado, apagado) vs verdade (aceso) */
+.refutacard{margin:10px auto 0;max-width:560px;text-align:left;background:rgba(15,20,48,.5);
+  border:1px solid rgba(255,225,150,.3);border-radius:14px;padding:10px 13px;line-height:1.34}
+.refutacard .refmito{font-size:13px;color:#b8bfe0;margin-bottom:5px}
+.refutacard .refmito b{color:#cfd5f0}
+.refutacard .refver{font-size:13.5px;color:#eafff0;border-top:1px solid rgba(255,255,255,.14);padding-top:6px}
+.refutacard .refver b{color:#8ff0ad}
 /* "Praticar de novo" (secundário) abaixo do botão principal */
 .repbtn{display:block;margin:9px auto 0;background:rgba(255,255,255,.14);color:#e9ecff;border:1px solid rgba(255,255,255,.3);
   box-shadow:none;font-size:14px;padding:9px 18px}
@@ -1223,6 +1233,48 @@ function autoexplica(tela, cfg, cb){
   if(cfg.falaQ) falar(cfg.falaQ);
   return box;
 }
+/* ===== POE — PREVER (o "P" de prever→observar→explicar) =====
+   Pesquisa (F5): indagação guiada leve — a criança PALPITA antes de ver acontecer;
+   depois OBSERVA a simulação e EXPLICA no fim (o autoexplica já faz o "E"). O palpite
+   é só palpite: não julga certo/errado aqui (a descoberta vem da observação). Mostra
+   1x por parada (flag PREV), medido escondido p/ o professor (tipo:"previsao"). */
+var PREV={};
+function preverGate(cfg, cb){
+  limpa();
+  var t=el("div","tela parada clima prever");
+  t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(16));
+  var box=el("div","autoexp prevbox");
+  var tag=el("div","prevtag","Seu palpite"); box.appendChild(tag);
+  var mini=el("img","aefagmini"); mini.src="img/nara_pensa.png"; mini.alt=""; box.appendChild(mini);
+  box.appendChild(el("div","aeperg",cfg.pergunta));
+  box.appendChild(el("div","aesub","N&#227;o precisa acertar agora &#8212; depois a gente descobre juntos!"));
+  var fb=el("div","aefb"), respondido=false, i;
+  for(i=0;i<cfg.opcoes.length;i++){ (function(o){
+    var b=el("button","aebtn",o.txt);
+    b.onclick=function(){
+      if(respondido)return; respondido=true;
+      b.className="aebtn escolhida";
+      fb.className="aefb bom"; fb.innerHTML="Boa! Agora vamos <b>ver acontecer</b>&#8230;";
+      salvaEvid({parada:cfg.idEvid,tipo:"previsao",escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
+      try{ narr.pause(); }catch(e){} paraBoca&&paraBoca();
+      setTimeout(function(){ if(cb)cb(); }, 1400);
+    };
+    box.appendChild(b);
+  })(cfg.opcoes[i]); }
+  box.appendChild(fb);
+  t.appendChild(box);
+  var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
+  app.appendChild(t);
+  if(cfg.falaQ) falar(cfg.falaQ);
+}
+/* ===== REFUTAÇÃO de concepção errada (F6): NOMEIA o erro comum e mostra o certo.
+   Mais estável que só dar a resposta. Sem emoji (regra: criança não vê emoji). ===== */
+function refutaCard(mito, verdade){
+  var w=el("div","refutacard");
+  var m=el("div","refmito"); m.innerHTML="<b>Muita gente pensa:</b> "+mito; w.appendChild(m);
+  var v=el("div","refver"); v.innerHTML="<b>Na verdade:</b> "+verdade; w.appendChild(v);
+  return w;
+}
 function salvaEvid(ev){ try{ var f=JSON.parse(localStorage.getItem(kAluno("estrelas_evid"))||"[]"); f.push(ev); localStorage.setItem(kAluno("estrelas_evid"),JSON.stringify(f)); }catch(e){} }
 
 /* ===== GALERIA "Minhas constelações" (construcionismo Papert: o artefato criado FICA
@@ -1823,6 +1875,9 @@ function telaZonas(){
   limpa();
   // ANDAIME: Equador já vem QUENTE (exemplo trabalhado da Nara). A criança completa a escada até o Polo.
   ZON={v:[2,1,1,1],alvo:[2,2,1,0],rot:["Equador","Trópico","Zona temperada","Polo"],tent:0,concluida:false,t0:(new Date()).getTime()};
+  if(!PREV.p1){ PREV.p1=true; preverGate({idEvid:"p1",falaQ:"prev_p1",
+    pergunta:"Onde voc&#234; acha que faz <b>mais calor</b>: no meio da Terra (o Equador) ou l&#225; nas pontas (os polos)?",
+    opcoes:[{txt:"No meio &#8212; o <b>Equador</b>"},{txt:"Nas pontas &#8212; os <b>polos</b>"},{txt:"&#201; tudo igual"}]}, zonCena); return; }
   zonCena();
 }
 /* BEAT CONCRETO (embasamento que SEGUE as leis: descoberta, não aula) —
@@ -1943,7 +1998,8 @@ function zonSucesso(){
   estouraEstrelas(tela,12);
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var w=tela.getElementsByClassName("zonaswrap")[0]; if(w)w.style.opacity="0";
-  revela(tela,"Equador quente · Polos frios","A latitude manda na temperatura","Quanto mais perto do <b>Equador</b>, mais o Sol bate direto → mais <b>quente</b>. Perto dos <b>polos</b>, bate de lado → mais <b>frio</b>.");
+  var rvZ=revela(tela,"Equador quente · Polos frios","A latitude manda na temperatura","Quanto mais perto do <b>Equador</b>, mais o Sol bate direto → mais <b>quente</b>. Perto dos <b>polos</b>, bate de lado → mais <b>frio</b>.");
+  rvZ.appendChild(refutaCard("que o Equador &#233; quente porque fica <b>mais perto do Sol</b>.","o que decide &#233; o <b>&#226;ngulo</b>: no Equador os raios batem <b>retos</b> e concentram o calor; nos polos batem <b>de lado</b> e se espalham."));
   var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   var tempo=Math.round(((new Date()).getTime()-ZON.t0)/1000), semErro=(ZON.tent===0);
   salvaEvid({parada:"p1",habilidade:"EF06GE03",conceito:"latitude → temperatura",tent:ZON.tent,dicas:dicasParada,tempo_s:tempo,acertou:true,semErro:semErro});
@@ -2031,6 +2087,9 @@ function telaSons(){
 /* ===== PARADA 3 — A LEI do Clima (clima → bioma) EF06GE05 · o coração ===== */
 var LEI;
 function telaLei(){
+  if(!PREV.p3){ PREV.p3=true; preverGate({idEvid:"p3",falaQ:"prev_p3",
+    pergunta:"Se a terra ficar bem <b>quente</b> e <b>seca</b> (sem chuva), o que voc&#234; acha que vai <b>nascer</b> ali?",
+    opcoes:[{txt:"Uma <b>floresta</b> cheia de &#225;rvores"},{txt:"Um <b>deserto</b>"},{txt:"Um campo de <b>neve</b>"}]}, telaLei); return; }
   limpa();
   LEI={temp:1,chuva:1,i:0,alvos:["floresta","deserto","taiga"],tent:0,concluida:false,t0:(new Date()).getTime(),
        veg:0.3,snow:0,rain:[],flk:[],tk:0,raf:0,flash:0};
@@ -2189,6 +2248,9 @@ function leiSucesso(){
 }
 
 function telaFatores(){
+  if(!PREV.p4){ PREV.p4=true; preverGate({idEvid:"p4",falaQ:"prev_p4",
+    pergunta:"L&#225; no <b>alto</b> da montanha, bem no Equador quentinho, voc&#234; acha que vai fazer <b>calor</b> ou <b>frio</b>?",
+    opcoes:[{txt:"<b>Calor</b> &#8212; est&#225; mais perto do Sol"},{txt:"<b>Frio</b> &#8212; at&#233; pode nevar"},{txt:"Vai continuar <b>quente</b> igual"}]}, telaFatores); return; }
   limpa();
   FAT={alt:0,tent:0,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada clima fatores");
@@ -2245,7 +2307,8 @@ function fatSucesso(){
   var bl=tela.getElementsByClassName("balao")[0]; if(bl)bl.style.display="none";
   var bd=tela.getElementsByClassName("builder")[0]; if(bd)bd.style.display="none";
   var bm=document.getElementById("fatbio"); if(bm)bm.style.display="none";
-  revela(tela,"Alto = frio","A altitude quebra a regra","Não é só a latitude! Quanto mais <b>alto</b>, mais frio — por isso há <b>neve no Equador</b> no alto das montanhas. O <b>mar</b> também ameniza o clima do litoral.");
+  var rvF=revela(tela,"Alto = frio","A altitude quebra a regra","Não é só a latitude! Quanto mais <b>alto</b>, mais frio — por isso há <b>neve no Equador</b> no alto das montanhas.");
+  rvF.appendChild(refutaCard("que no alto da montanha &#233; <b>mais quente</b> por estar mais perto do Sol.","l&#225; em cima o <b>ar fica rarefeito</b> (mais fino) e segura menos calor &#8212; por isso <b>esfria</b> e pode nevar, mesmo no Equador."));
   var aj=tela.getElementsByClassName("ajudabtn")[0]; if(aj)aj.style.display="none";
   var tempo=Math.round(((new Date()).getTime()-FAT.t0)/1000), semErro=(FAT.tent===0);
   salvaEvid({parada:"p4",habilidade:"EF06GE05",conceito:"altitude/maritimidade",tent:FAT.tent,dicas:dicasParada,tempo_s:tempo,acertou:true,semErro:semErro});
@@ -2576,7 +2639,7 @@ function telaRelatorio(){
   card.appendChild(el("div","dsub",frase));
   t.appendChild(card);
   var bar=el("div","p1barra"); bar.style.bottom="6%";
-  var again=el("button","btn pulsa","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; sessao.estrelas=0; sessao.ultimo=0; try{ localStorage.removeItem(kAluno("estrelas_evid")); }catch(e){} telaCapa(); };
+  var again=el("button","btn pulsa","Jogar de novo"); again.onclick=function(){ progresso=0; fagPos=0; PREV={}; sessao.estrelas=0; sessao.ultimo=0; try{ localStorage.removeItem(kAluno("estrelas_evid")); }catch(e){} telaCapa(); };
   bar.appendChild(again); t.appendChild(bar);
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
