@@ -1,0 +1,66 @@
+name: Gerar imagens em LOTE (Pollinations gratis) por push [poli]
+
+# Le _gerar_poli.json (lista de {nome, prompt, w, h, seed, model?}) e gera cada
+# imagem no Pollinations (FLUX, GRATIS, sem chave), salvando em _novo/<nome>.png.
+# Dispara por PUSH com o marcador [poli] na mensagem do commit (sem MCP).
+# O commit do proprio job NAO leva marcador -> sem loop.
+
+on:
+  push:
+    branches: [ "claude/vc-nao-funcionando-0pya0w" ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gerar-poli
+  cancel-in-progress: false
+
+jobs:
+  poli:
+    if: contains(github.event.head_commit.message, '[poli]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gerar lote no Pollinations
+        run: |
+          python3 - <<'PY'
+          import os, re, json, time, urllib.request, urllib.parse
+          itens=json.load(open("_gerar_poli.json",encoding="utf-8"))
+          os.makedirs("_novo", exist_ok=True)
+          ok=0
+          for it in itens:
+              nome=re.sub(r'[^A-Za-z0-9_-]','_', it["nome"])
+              w=str(it.get("w",1024)); h=str(it.get("h",1024))
+              seed=str(it.get("seed", 0)); model=it.get("model","flux")
+              q=urllib.parse.quote(it["prompt"])
+              url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&seed=%s&nologo=true&model=%s"%(q,w,h,seed,model)
+              img=None
+              for tent in range(4):
+                  try:
+                      req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
+                      data=urllib.request.urlopen(req, timeout=200).read()
+                      if data and len(data)>2000 and data[:3]!=b"<!D" and b"<html" not in data[:200].lower():
+                          img=data; break
+                      print("resposta pequena/inesperada",nome,len(data) if data else 0)
+                  except Exception as e:
+                      print("erro",nome,str(e)[:150])
+                  time.sleep(8)
+              if img:
+                  open("_novo/%s.png"%nome,"wb").write(img); ok+=1; print("OK",nome,len(img))
+              else:
+                  print("::error::falhou",nome)
+          print("== %d/%d geradas =="%(ok,len(itens)))
+          if ok==0: raise SystemExit(1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/
+          git diff --cached --quiet && exit 0
+          git commit -m "imagens: lote Pollinations (via gerar-poli)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
