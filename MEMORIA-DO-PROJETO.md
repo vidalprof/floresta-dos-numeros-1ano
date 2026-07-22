@@ -75,6 +75,18 @@
 >> - **NOTA de custo:** Gemini edita base perfeito (lip-sync pixel-perfect) mas custa/tem cota; Pollinations é
 >>   grátis e "quase lá" com seed fixa. Para MASCOTE novo com lip-sync perfeito → Gemini (billing no projeto certo);
 >>   para volume/cenário/props → Pollinations resolve de graça.
+>> - **🔑 DIAGNÓSTICO DEFINITIVO do 429 do Gemini (2026-07-22):** a mensagem exata é **"Your prepayment credits
+>>   are depleted. Please go to AI Studio to manage your project and billing" (RESOURCE_EXHAUSTED)**. Ou seja:
+>>   o **billing JÁ está no projeto certo da chave** (senão diria "ative billing") — o que acaba é o **CRÉDITO
+>>   pré-pago**. Conserto = o **Marcos RECARREGA** em https://aistudio.google.com → Billing (os ~60 reais dele).
+>>   NÃO é bug nosso, NÃO é projeto errado. Só faltou saldo. (Só ~16 imagens do Jardim não gastariam 60 reais →
+>>   provável que já estava perto de zero.) **Os 3 nomes de modelo:** só `gemini-2.5-flash-image` existe; os outros
+>>   2 do fallback dão 404 (tirar do código algum dia). **~R$/imagem: centavos** (12 imgs < R$1).
+>> - **⚠️ O grátis NÃO iguala o Jardim:** Pollinations/Cloudflare/HuggingFace = todos **FLUX** (brilhoso, borda
+>>   difícil de recortar → "pedaço faltando"). O acabamento fosco/massinha lindo do Jardim é **do Gemini** e só ele
+>>   faz. O Marcos reprovou a tentativa Pollinations na Estrela; **restaurei a arte ORIGINAL** dela (backup) e a
+>>   arte nova fica pra quando o crédito Gemini voltar. (Se um dia quiser pagar OUTRA: OpenAI gpt-image / Flux
+>>   Kontext editam bem, mas é gastar noutro lugar tendo o Gemini.)
 >>
 >> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
 >> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
