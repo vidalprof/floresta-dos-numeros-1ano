@@ -55,6 +55,27 @@
 >>     **não** base64 (evita HTML gigante). Render/QA com **Playwright** (chromium `/opt/pw-browsers/
 >>     chromium-1194/chrome-linux/chrome`, `click{force:true}` p/ furar animação `beat`).
 >>
+>> ## 🆓 GERADOR DE IMAGEM GRÁTIS EM LOTE (Pollinations/FLUX) + truque do lip-sync — 2026-07-22
+>> Quando a **cota do Gemini estourar** (429 — a grátis é baixa; billing precisa estar no MESMO projeto
+>> da chave do secret `GEMINI_API_KEY`), use o **`gerar-poli.yml`** (criado 2026-07-22): lê `_gerar_poli.json`
+>> (lista de `{nome,prompt,w,h,seed,model}`) e gera TUDO no **Pollinations (FLUX, grátis, sem chave)**, commit
+>> em `_novo/`. Dispara por **push com `[poli]`** na mensagem. Qualidade rivaliza o Gemini com **super-prompt**
+>> ("3D render, soft clay plasticine, subsurface scattering, Pixar Disney style, isolated on flat pure white
+>> background, no shadow, no text"). Pollinations e HF e Cloudflare usam FLUX por baixo → "grátis bom" é parecido.
+>> - **Truque do LIP-SYNC no grátis (funciona!):** o Pollinations não EDITA base como o Gemini, MAS gerando
+>>   os quadros do mascote (base/fala/pisca/poses) com a **MESMA SEED** e mudando só a boca/olhos no prompt,
+>>   sai quase idêntico → as camadas encaixam e o lip-sync (overlay de opacidade) funciona. Recorte: matte por
+>>   luminância+saturação (tira branco/cinza-claro, preserva cor saturada) + floodfill dos cantos; para props
+>>   com sombra, **regerar com "no shadow, floating, flat pure white background"** que corta limpo. Alinhar os
+>>   quadros do mascote pela **MESMA caixa de corte fixa** (senão o lip-sync "pula").
+>> - **Fábrica de Estrelas 2026-07-22:** o Marcos pediu **arte nova** (mesmo já estando no molde). Refiz TODA a
+>>   arte no Pollinations (Fagulha 3D nova + fábrica + céu + caixa + estrelas), motor 100% intacto (narração/
+>>   medição/BKT/Leitner/lip-sync). Publicado em `fabrica-de-estrelas`. Backup da arte antiga em `/tmp` (sessão).
+>>   Pendência menor: sombrinha bege num canto da caixa do tesouro (dá pra limpar).
+>> - **NOTA de custo:** Gemini edita base perfeito (lip-sync pixel-perfect) mas custa/tem cota; Pollinations é
+>>   grátis e "quase lá" com seed fixa. Para MASCOTE novo com lip-sync perfeito → Gemini (billing no projeto certo);
+>>   para volume/cenário/props → Pollinations resolve de graça.
+>>
 >> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
 >> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
 >> - **JOGO, não formulário (§4⅗):** o que ensina certo mas parece medidor/lista/questionário NÃO prende.
