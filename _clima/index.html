@@ -118,6 +118,22 @@ img{-webkit-user-drag:none;user-drag:none}
   -webkit-animation:pulsaGlow 3.6s ease-in-out infinite;animation:pulsaGlow 3.6s ease-in-out infinite}
 @-webkit-keyframes flutua{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-9px)}}
 @keyframes flutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+/* CAPA — a Terra GIRA (2 cópias deslizando por transform = giro contínuo sem costura; o círculo mascara) */
+.planeta{width:240px;height:240px;margin:0 auto;border-radius:50%;overflow:hidden;position:relative;
+  -webkit-box-shadow:0 0 42px rgba(95,155,255,.5),0 14px 34px rgba(0,0,0,.5),inset 0 0 30px rgba(0,0,0,.45);
+  box-shadow:0 0 42px rgba(95,155,255,.5),0 14px 34px rgba(0,0,0,.5),inset 0 0 30px rgba(0,0,0,.45);
+  -webkit-animation:flutua 4.5s ease-in-out infinite;animation:flutua 4.5s ease-in-out infinite}
+.terrastrip{position:absolute;top:0;left:0;height:100%;white-space:nowrap;
+  -webkit-animation:giraterra 44s linear infinite;animation:giraterra 44s linear infinite}
+.terrastrip img{height:100%;width:auto;display:inline-block;vertical-align:top}
+@-webkit-keyframes giraterra{from{-webkit-transform:translateX(0)}to{-webkit-transform:translateX(-50%)}}
+@keyframes giraterra{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.terrashade{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;pointer-events:none;
+  background:-webkit-radial-gradient(34% 30%, rgba(255,255,255,.34), rgba(255,255,255,0) 44%);
+  background:radial-gradient(circle at 34% 30%, rgba(255,255,255,.34), rgba(255,255,255,0) 44%),radial-gradient(circle at 70% 76%, rgba(0,8,34,.62), rgba(0,8,34,0) 62%)}
+.atmo{position:absolute;top:0;left:0;right:0;bottom:0;border-radius:50%;pointer-events:none;
+  -webkit-box-shadow:inset 0 0 20px rgba(130,190,255,.65);box-shadow:inset 0 0 20px rgba(130,190,255,.65);
+  -webkit-animation:pulsaGlow 3.8s ease-in-out infinite;animation:pulsaGlow 3.8s ease-in-out infinite}
 h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text-shadow:0 2px 0 #7a5200,0 0 18px rgba(255,200,80,.5)}
 .sub{font-size:14px;color:#cdd3ff;margin-bottom:14px}
 .btn{display:inline-block;border:0;cursor:pointer;font-family:inherit;font-weight:800;color:#5a3b00;max-width:94%;
@@ -1316,10 +1332,13 @@ function telaCapa(){
   var t=el("div","tela capa");
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(38));
   var c=el("div","centro");
-  var med=el("div","medalhao");
-  med.appendChild(el("div","mceu"));
-  var mf=el("img","mfab"); mf.src="img/fabrica_estrelas.png"; med.appendChild(mf);
-  med.appendChild(el("div","mglow"));
+  var med=el("div","planeta");
+  var strip=el("div","terrastrip");
+  var e1=el("img"); e1.src="img/earthmap.jpg"; e1.alt="Planeta Terra";
+  var e2=el("img"); e2.src="img/earthmap.jpg"; e2.alt="";
+  strip.appendChild(e1); strip.appendChild(e2); med.appendChild(strip);
+  med.appendChild(el("div","terrashade"));
+  med.appendChild(el("div","atmo"));
   c.appendChild(med);
   c.appendChild(el("h1","titulo","Planeta Vivo"));
   c.appendChild(el("div","sub","Climas do Mundo &#183; 6º ano"));

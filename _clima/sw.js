@@ -1,10 +1,10 @@
 /* Service worker — REDE PRIMEIRO (nunca prende o app numa versão velha).
    Online: sempre traz a versão nova. Offline: usa a cópia guardada. */
-var CACHE="planeta-vivo-v3";
+var CACHE="planeta-vivo-v4";
 /* Só a casca + imagens que aparecem já no começo. Biomas/áudio entram sozinhos
    pelo cache de runtime (fetch) — evita precache pesado em PC fraco. */
 var ATIVOS=["./","./index.html","./manifest.json",
- "./img/globo.png","./img/fabrica_estrelas.png",
+ "./img/earthmap.jpg","./img/globo.png",
  "./img/nara.png","./img/nara_fala.png","./img/nara_pisca.png","./img/nara_aponta.png","./img/nara_acena.png",
  "./img/ic_sol.png","./img/medalha_clima.png",
  "./icon-192.png","./icon-512.png"];
