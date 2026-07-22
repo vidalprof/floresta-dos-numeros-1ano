@@ -82,6 +82,16 @@
 >>   com balanço). Helpers: leiSol/leiNuvemFundo/leiMorros/leiChaoCor/leiArvore/leiPinheiro/leiCacto/leiCapim/
 >>   leiAcacia/leiMoita/rr. Lição: canvas com width/height fixos DENTRO de container flex vira borrão — sempre
 >>   casar a resolução do buffer ao tamanho real (1x-1.4x) p/ nitidez.
+>>   **2 IDEIAS INOVADORAS aplicadas (2026-07-22, sw v11):** (a) **CINEMA DA JOGADA** (`telaCinema`) — no
+>>   fim, a Nara narra um recap PERSONALIZADO da jornada DAQUELE aluno (puxa dos eventos medidos + nome):
+>>   torna a medição visível/emocionante e reforça memória (recuperação). (b) **ENSINAR A NARA** (efeito
+>>   protégé: quem ensina aprende mais) — `autoexplica` ganhou flag `ensinar:true`: a Nara AFIRMA o erro
+>>   ('neva no alto porque é mais perto do Sol') e a criança a CORRIGE; feedback vira 'Você ensinou a Nara!'
+>>   + narração `ens_p4`/`ens_obrigada`. Aplicado na altitude (p4). Base: pesquisa de EdTech (Betty's Brain/
+>>   teachable agents). Também: corrigido o PARECER do Planeta Vivo que ainda falava em multiplicação/array
+>>   (copiado do estrelas) → agora geografia (clima→bioma; EF06GE05/03). **Nova pesquisa profunda RODANDO**
+>>   (apps educacionais: o que os faz amados+eficazes, código por dentro, medição, aventura; checklist
+>>   profissional) — quando chegar, destilar em regras do molde.
 >>   **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
 >>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
 >>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
