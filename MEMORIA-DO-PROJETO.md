@@ -92,6 +92,16 @@
 >>   (copiado do estrelas) → agora geografia (clima→bioma; EF06GE05/03). **Nova pesquisa profunda RODANDO**
 >>   (apps educacionais: o que os faz amados+eficazes, código por dentro, medição, aventura; checklist
 >>   profissional) — quando chegar, destilar em regras do molde.
+>>   **CHEGOU (2026-07-22) → `PESQUISA-APPS-EDUCACIONAIS-PROFISSIONAIS-2026-07.md` (110 agentes).** VEREDITO:
+>>   nossa direção está CORRETA. Chaves: (1) INTEGRAÇÃO INTRÍNSECA é o coração (o conceito É a mecânica de
+>>   vencer — nossas simulações já fazem); (2) gamificação (streak/badge) eleva motivação, NÃO domínio, e é
+>>   mais fraca aos 8–12 → não depender dela; (3) recompensa: só SURPRESA (prometida por algo já gostoso reduz
+>>   interesse — superjustificação, Lepper 1973); (4) o que separa os eficazes = feedback EXPLICATIVO + andaime
+>>   personalizado + medição por aluno (XPRIZE); (5) mascote NÃO ensina por si (validar, não presumir); (6)
+>>   ENSINAR o mascote (Betty's Brain/teachable agents) é ouro e leve → aprofundar via mapa causal. Há um
+>>   CHECKLIST premium de 12 itens no doc. Também: **Cinema da jogada + Ensinar o mascote portados p/ a Fábrica
+>>   de Estrelas** (sw v24) e Planeta Vivo (sw v11). Regra nova p/ o molde: recompensa só surpresa; feedback
+>>   sempre EXPLICATIVO; todo premium tende a um 'chefe' de transferência.
 >>   **Fábrica de Estrelas (2026-07-22):** ficou curta → **escada de 3 itens
 >>   curados por parada** (18 itens, era 8) + **epílogo encenado em 3 beats** (narração final/final2/final3,
 >>   voz feminina) + "curadoria não sorteio" (itemIdx, sem Math.random no conteúdo). sw v23, no ar.
