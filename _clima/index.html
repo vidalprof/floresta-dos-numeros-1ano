@@ -541,6 +541,19 @@ h1.titulo{font-size:27px;line-height:1.12;margin:14px 8px 2px;color:#ffe08a;text
 .refutacard .refmito b{color:#cfd5f0}
 .refutacard .refver{font-size:13.5px;color:#eafff0;border-top:1px solid rgba(255,255,255,.14);padding-top:6px}
 .refutacard .refver b{color:#8ff0ad}
+/* climograma -> bioma (representações ligadas): flash do lugar que o gráfico revela */
+.clgbioflash{position:absolute;left:50%;top:44%;z-index:12;width:210px;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  text-align:center;-webkit-animation:cbentra .34s ease-out both;animation:cbentra .34s ease-out both}
+.clgbioflash.sai{-webkit-animation:cbsai .3s ease-in both;animation:cbsai .3s ease-in both}
+.clgbioflash .cbtop{font-size:14px;color:#dfe6ff;font-weight:700;margin-bottom:6px;text-shadow:0 2px 6px rgba(0,0,0,.9)}
+.clgbioflash .biotile{width:200px;height:130px;margin:0 auto;border-radius:16px;overflow:hidden;position:relative;
+  -webkit-box-shadow:0 8px 26px rgba(0,0,0,.55);box-shadow:0 8px 26px rgba(0,0,0,.55)}
+.clgbioflash .biotile .bionome{display:none}
+.clgbioflash .cbnome{font-size:20px;color:#ffe08a;font-weight:900;margin-top:7px;text-shadow:0 0 16px rgba(255,200,80,.7)}
+@-webkit-keyframes cbentra{from{opacity:0;-webkit-transform:translate(-50%,-42%) scale(.85)}to{opacity:1;-webkit-transform:translate(-50%,-50%) scale(1)}}
+@keyframes cbentra{from{opacity:0;transform:translate(-50%,-42%) scale(.85)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+@-webkit-keyframes cbsai{to{opacity:0;-webkit-transform:translate(-50%,-58%) scale(.9)}}
+@keyframes cbsai{to{opacity:0;transform:translate(-50%,-58%) scale(.9)}}
 /* "Praticar de novo" (secundário) abaixo do botão principal */
 .repbtn{display:block;margin:9px auto 0;background:rgba(255,255,255,.14);color:#e9ecff;border:1px solid rgba(255,255,255,.3);
   box-shadow:none;font-size:14px;padding:9px 18px}
@@ -2247,6 +2260,7 @@ function leiSucesso(){
   },800);
 }
 
+var FAT;
 function telaFatores(){
   if(!PREV.p4){ PREV.p4=true; preverGate({idEvid:"p4",falaQ:"prev_p4",
     pergunta:"L&#225; no <b>alto</b> da montanha, bem no Equador quentinho, voc&#234; acha que vai fazer <b>calor</b> ou <b>frio</b>?",
@@ -2329,8 +2343,8 @@ function telaClimograma(){
   limpa();
   CLG={rain:[1,1,1,1],i:0,tent:0,concluida:false,t0:(new Date()).getTime(),
     rondas:[
-      {nome:"Floresta Tropical",alvo:[3,3,3,3],dica:"chove MUITO o ano inteiro"},
-      {nome:"Savana",alvo:[3,2,0,1],dica:"chove no verão e fica SECO no inverno"}
+      {nome:"Floresta Tropical",bio:"floresta",alvo:[3,3,3,3],dica:"chove MUITO o ano inteiro"},
+      {nome:"Savana",bio:"savana",alvo:[3,2,0,1],dica:"chove no verão e fica SECO no inverno"}
     ]};
   var t=el("div","tela parada clima climograma");
   t.appendChild(barraProg());
@@ -2366,10 +2380,23 @@ function clgAuto(){ if(CLG.concluida)return; var r=CLG.rondas[CLG.i],k;
   for(k=0;k<4;k++){ if(CLG.rain[k]!==r.alvo[k]) return; }
   if(typeof somAcerto==="function")somAcerto(); if(typeof hitStop==="function")hitStop();
   var tela=document.getElementsByClassName("climograma")[0]; if(tela)estouraEstrelas(tela,7);
-  CLG.i++;
-  if(CLG.i>=CLG.rondas.length){ clgSucesso(); return; }
-  fagComemora(); CLG.rain=[1,1,1,1];
-  setTimeout(function(){ clgEnun(); clgPinta(); },1100);
+  fagComemora();
+  // REPRESENTAÇÕES LIGADAS (pesquisa F4/transferência): o gráfico que a criança montou
+  // vira um LUGAR de verdade — mostra o bioma daquele padrão de chuva.
+  clgMostraBioma(r.bio, r.nome, function(){
+    CLG.i++;
+    if(CLG.i>=CLG.rondas.length){ clgSucesso(); return; }
+    CLG.rain=[1,1,1,1]; clgEnun(); clgPinta();
+  });
+}
+function clgMostraBioma(slug,nome,cb){
+  var tela=document.getElementsByClassName("climograma")[0]; if(!tela){ if(cb)cb(); return; }
+  var ov=el("div","clgbioflash");
+  ov.appendChild(el("div","cbtop","Esse climograma &#233;&#8230;"));
+  ov.appendChild(bioTile(slug));
+  ov.appendChild(el("div","cbnome",nome+"!"));
+  tela.appendChild(ov);
+  setTimeout(function(){ ov.className="clgbioflash sai"; setTimeout(function(){ if(ov.parentNode)ov.parentNode.removeChild(ov); if(cb)cb(); },320); },1600);
 }
 function clgSucesso(){
   CLG.concluida=true; fagComemora();
