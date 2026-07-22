@@ -2233,7 +2233,7 @@ function telaClimograma(){
   ], function(txt){ var b=t.getElementsByClassName("balao")[0]; if(b)b.innerHTML=txt; });
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
   app.appendChild(t);
-  clgEnun(); clgPinta();
+  clgEnun(); clgPinta(); falar("clg");
 }
 function clgEnun(){ var r=CLG.rondas[CLG.i], b=document.getElementsByClassName("balao")[0];
   if(b)b.innerHTML="Monte o <b>climograma</b> desta região: aqui <b>"+r.dica+"</b>. Levante a <b>chuva</b> de cada estação."; }
