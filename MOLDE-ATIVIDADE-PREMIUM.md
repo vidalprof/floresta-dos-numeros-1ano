@@ -28,6 +28,14 @@
 7. **NA ZDP** — progressivo, um degrau por vez, o mentor PERGUNTA (não responde); errar devolve a
    peça sem punição. Profundo ≠ difícil.
 8. **FIXAÇÃO exige REVISÃO ESPAÇADA** (Leitner) — a sessão constrói, mas só fixa com missões de retorno.
+9. **CURADORIA, NÃO SORTEIO (lei do Marcos, 2026-07-22 — ele pegou isso na Fábrica de Estrelas).** O
+   CONTEÚDO (o que se pede, a dificuldade, os alvos, os casos) é uma **PROGRESSÃO PENSADA**, escrita à
+   mão numa ordem que ensina — **nunca gerado por `Math.random()`**. Sorteio só é permitido para o
+   **cosmético** (posição de partícula, tempo de piscar, variação de som) e para **embaralhar a POSIÇÃO
+   das opções** (anti-viés, p/ a criança não decorar "é sempre o 2º botão"). **Proibido sortear a
+   substância pedagógica** (números do problema, qual bioma pedir, ordem de dificuldade) — isso deixa a
+   atividade arbitrária, inconsistente e "rasa". Ex. certo: `alvos=["floresta","deserto","taiga"]`
+   (curado); ex. errado: pegar dois números aleatórios e mandar multiplicar.
 
 ## 2. A EQUIPE (chapéus) e OS PORTÕES (sempre passam antes do Marcos)
 Uma pessoa (eu) veste os chapéus em ordem: **(1) professor PhD da disciplina** (sabe a BNCC, onde
@@ -77,6 +85,11 @@ mapeada a 1 habilidade BNCC e termina com **1 item-símbolo de transferência** 
 (a criança CRIA + efeito protégé) → **DELEITE final** (criação livre) → **Final animado** (o mundo
 curado reacende) → **parecer** (medição → nota; só o professor vê). ~10–12 paradas.
 Alvo **55 min**; a criança rápida não pode "furar" em 35 → prever variação/2ª rodada + prática.
+**FINAL DA HISTÓRIA de verdade (lei do Marcos — a Fábrica de Estrelas ficou sem isso):** a aventura
+tem que **FECHAR a narrativa** — um **epílogo animado** onde a missão se resolve, o mundo curado
+aparece por inteiro, o mascote comemora/agradece e o arco da criança conclui (emoção, não só a tela de
+nota/parecer). Tela de resultado ≠ final da história; precisa dos DOIS. **NÃO pode ser curta:** poucas
+paradas = reprova (o Marcos achou a Estrelas curta) → garantir as **~10–12 paradas** e o tempo cheio.
 **Ganchos de retorno éticos:** revisão espaçada como motivo de volta (não FOMO); streak gentil;
 progresso visível; autoria persistente (galeria). O "prato" é a dinâmica; a medalha é o sal.
 
