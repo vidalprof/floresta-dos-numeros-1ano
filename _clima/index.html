@@ -1289,7 +1289,9 @@ function preverGate(cfg, cb){
       if(respondido)return; respondido=true;
       b.className="aebtn escolhida";
       fb.className="aefb bom"; fb.innerHTML="Boa! Agora vamos <b>ver acontecer</b>&#8230;";
-      salvaEvid({parada:cfg.idEvid,tipo:"previsao",escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
+      // PRÉ/PÓS (ganho real): guarda se o PALPITE inicial já batia com a ciência,
+      // p/ comparar com a compreensão do FIM. Não julga a criança — é medida escondida.
+      salvaEvid({parada:cfg.idEvid,tipo:"previsao",previu_certo:!!o.ok,escolha:(""+o.txt).replace(/<[^>]+>/g,"")});
       try{ narr.pause(); }catch(e){} paraBoca&&paraBoca();
       setTimeout(function(){ if(cb)cb(); }, 1400);
     };
@@ -1911,7 +1913,7 @@ function telaZonas(){
   ZON={v:[2,1,1,1],alvo:[2,2,1,0],rot:["Equador","Trópico","Zona temperada","Polo"],tent:0,concluida:false,t0:(new Date()).getTime()};
   if(!PREV.p1){ PREV.p1=true; preverGate({idEvid:"p1",falaQ:"prev_p1",
     pergunta:"Onde voc&#234; acha que faz <b>mais calor</b>: no meio da Terra (o Equador) ou l&#225; nas pontas (os polos)?",
-    opcoes:[{txt:"No meio &#8212; o <b>Equador</b>"},{txt:"Nas pontas &#8212; os <b>polos</b>"},{txt:"&#201; tudo igual"}]}, zonCena); return; }
+    opcoes:[{txt:"No meio &#8212; o <b>Equador</b>",ok:true},{txt:"Nas pontas &#8212; os <b>polos</b>"},{txt:"&#201; tudo igual"}]}, zonCena); return; }
   zonCena();
 }
 /* BEAT CONCRETO (embasamento que SEGUE as leis: descoberta, não aula) —
@@ -2123,7 +2125,7 @@ var LEI;
 function telaLei(){
   if(!PREV.p3){ PREV.p3=true; preverGate({idEvid:"p3",falaQ:"prev_p3",
     pergunta:"Se a terra ficar bem <b>quente</b> e <b>seca</b> (sem chuva), o que voc&#234; acha que vai <b>nascer</b> ali?",
-    opcoes:[{txt:"Uma <b>floresta</b> cheia de &#225;rvores"},{txt:"Um <b>deserto</b>"},{txt:"Um campo de <b>neve</b>"}]}, telaLei); return; }
+    opcoes:[{txt:"Uma <b>floresta</b> cheia de &#225;rvores"},{txt:"Um <b>deserto</b>",ok:true},{txt:"Um campo de <b>neve</b>"}]}, telaLei); return; }
   limpa();
   LEI={temp:1,chuva:1,i:0,alvos:["floresta","deserto","taiga"],tent:0,concluida:false,t0:(new Date()).getTime(),
        veg:0.3,snow:0,rain:[],flk:[],tk:0,raf:0,flash:0};
@@ -2373,7 +2375,7 @@ var FAT;
 function telaFatores(){
   if(!PREV.p4){ PREV.p4=true; preverGate({idEvid:"p4",falaQ:"prev_p4",
     pergunta:"L&#225; no <b>alto</b> da montanha, bem no Equador quentinho, voc&#234; acha que vai fazer <b>calor</b> ou <b>frio</b>?",
-    opcoes:[{txt:"<b>Calor</b> &#8212; est&#225; mais perto do Sol"},{txt:"<b>Frio</b> &#8212; at&#233; pode nevar"},{txt:"Vai continuar <b>quente</b> igual"}]}, telaFatores); return; }
+    opcoes:[{txt:"<b>Calor</b> &#8212; est&#225; mais perto do Sol"},{txt:"<b>Frio</b> &#8212; at&#233; pode nevar",ok:true},{txt:"Vai continuar <b>quente</b> igual"}]}, telaFatores); return; }
   limpa();
   FAT={alt:0,tent:0,concluida:false,t0:(new Date()).getTime()};
   var t=el("div","tela parada clima fatores");
@@ -2787,11 +2789,28 @@ function salvaParecerProf(d){
   var ret=lerRet(), rok=0, rz;
   for(rz=0;rz<ret.length;rz++){ if(ret[rz].ok)rok++; }
   var txtRet=ret.length? (" Retenção em revisões espaçadas (dias depois): "+rok+" de "+ret.length+" itens reacendidos de primeira.") : " Retenção espaçada: ainda sem revisões (agendadas pelo motor para os próximos dias).";
+  /* ===== PRÉ/PÓS — GANHO REAL DE APRENDIZAGEM (o diferencial "profissional": não basta
+     o acerto final; compara o PALPITE inicial (POE) com a COMPREENSÃO do fim). Tudo já foi
+     medido escondido (previsao.previu_certo × autoexplicacao/ensina_mascote.razaoOk). ===== */
+  var ev=lerEvid(), pre={}, pos={}, ie;
+  for(ie=0;ie<ev.length;ie++){ var e2=ev[ie];
+    if(e2.tipo==="previsao" && e2.parada) pre[e2.parada]=!!e2.previu_certo;
+    if((e2.tipo==="autoexplicacao"||e2.tipo==="ensina_mascote") && e2.parada && !(e2.parada in pos)) pos[e2.parada]=!!e2.razaoOk;
+  }
+  var conceitosG=[{id:"p1",nome:"latitude→temperatura"},{id:"p3",nome:"clima→bioma"},{id:"p4",nome:"altitude"}];
+  var aprendeu=0, jaSabia=0, construindo=0, gdet=[], gi;
+  for(gi=0;gi<conceitosG.length;gi++){ var cg=conceitosG[gi];
+    if(!(cg.id in pre) || !(cg.id in pos)) continue;
+    if(pos[cg.id]){ if(pre[cg.id]){ jaSabia++; gdet.push(cg.nome+": já sabia (confirmou)"); } else { aprendeu++; gdet.push(cg.nome+": APRENDEU (previu errado → entendeu)"); } }
+    else { construindo++; gdet.push(cg.nome+": ainda construindo"); }
+  }
+  var nG=aprendeu+jaSabia+construindo;
+  var txtG = nG? (" GANHO (palpite inicial × compreensão final): aprendeu na atividade em "+aprendeu+" de "+nG+" conceitos"+(jaSabia?"; já sabia "+jaSabia:"")+(construindo?"; ainda construindo "+construindo:"")+" ["+gdet.join("; ")+"].") : "";
   var parecer={ atividade:"Planeta Vivo", habilidade:"EF06GE05/EF06GE03",
     porcentagem:d.pct, nivel:d.nivel, paradas_feitas:d.cont, total_paradas:d.total, fluencia:d.fluente,
-    dominio_medio:dominio, retencao:[rok,ret.length],
+    dominio_medio:dominio, retencao:[rok,ret.length], ganho:{aprendeu:aprendeu,jaSabia:jaSabia,construindo:construindo,de:nG,detalhe:gdet},
     indicadores:ind,
-    texto:"O estudante compreende que o CLIMA (temperatura + chuva) define o BIOMA e reconhece os fatores que o alteram (latitude, altitude, maritimidade). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Domínio médio estimado pelo motor: "+dominio+"%."+txtRet+" Nível sugerido: "+d.nivel+".",
+    texto:"O estudante compreende que o CLIMA (temperatura + chuva) define o BIOMA e reconhece os fatores que o alteram (latitude, altitude, maritimidade). Indicadores observados: "+ind.join("; ")+". Acerto na atividade: "+d.pct+"%. Domínio médio estimado pelo motor: "+dominio+"%."+txtG+txtRet+" Nível sugerido: "+d.nivel+".",
     quando:(new Date()).toISOString() };
   /* identidade + registro COMPARTILHADO (edu_pareceres): é daqui que sai a avaliação
      consolidada de TODAS as atividades do estudante (padrão p/ as próximas atividades) */
