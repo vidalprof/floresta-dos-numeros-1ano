@@ -87,6 +87,13 @@
 >>   faz. O Marcos reprovou a tentativa Pollinations na Estrela; **restaurei a arte ORIGINAL** dela (backup) e a
 >>   arte nova fica pra quando o crédito Gemini voltar. (Se um dia quiser pagar OUTRA: OpenAI gpt-image / Flux
 >>   Kontext editam bem, mas é gastar noutro lugar tendo o Gemini.)
+>> - **✅ RESOLVIDO (2026-07-23):** o Marcos gerou uma **chave nova no projeto QUE TEM crédito** e atualizou o
+>>   secret `GEMINI_API_KEY` → Gemini voltou. Refiz a **Fábrica de Estrelas TODA no Gemini** no acabamento
+>>   massinha do Jardim: Parte 1 (base Fagulha + fábrica + céu + caixa + estrelas, `_gerar_imagens.json` [imagens]),
+>>   Parte 2 (**editar a base** `_novo/fagulha.png` → fala/pisca/pensa/comemora/acena, "mude SÓ a boca/olhos" =
+>>   lip-sync pixel-perfect). Recorte só-borda (fundo branco limpo do Gemini = sem pedaço faltando). Publicado em
+>>   `fabrica-de-estrelas`. **LIÇÃO:** se der "prepayment credits depleted" e o Marcos "recarregou", quase sempre
+>>   a chave é de OUTRO projeto → o certo é **criar chave nova no projeto com crédito** e trocar o secret.
 >>
 >> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
 >> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
