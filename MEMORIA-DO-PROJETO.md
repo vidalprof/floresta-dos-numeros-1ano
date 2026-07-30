@@ -95,6 +95,24 @@
 >>   `fabrica-de-estrelas`. **LIÇÃO:** se der "prepayment credits depleted" e o Marcos "recarregou", quase sempre
 >>   a chave é de OUTRO projeto → o certo é **criar chave nova no projeto com crédito** e trocar o secret.
 >>
+>> ## 🎙️ JARDIM DO BROTO virou PREMIUM (2026-07-23) — o Marcos cobrou: "com as nossas configurações de áudio etc"
+>> O Marcos perguntou se o Jardim podia ter **nossas interatividades comuns**. Estava certo: o Jardim era só
+>> "casca bonita" (64 KB, sem voz/medição). **REGRA REAFIRMADA: toda atividade nova CLONA o motor** (MOLDE) —
+>> não basta visual. Agora o Jardim tem (83 KB + 31 MP3 + imagens = 3,4 MB):
+>> - **Narração do Broto** (31 falas, `_lote_falas.json` → `finalizar.yml [audio]`, voz **masculina** Antonio)
+>>   + **LIP-SYNC** por camadas de imagem (base/fala/pisca geradas no Gemini editando a base = alinhadas).
+>> - **REGRA DE VOZ DO MARCOS:** *mascote masculino → voz masculina; mascote feminino → voz feminina.*
+>>   "O Broto" = masculina. ⚠️ **Pendência:** "A Fagulha" tem nome feminino mas usa voz MASCULINA hoje
+>>   (inconsistente com a regra) — avisei o Marcos, ele ainda não decidiu trocar.
+>> - **Dica** (botão + fala), **Ouvir de novo**, banner, **prever-antes (POE)**, **experimento de 3 vasos**
+>>   (variável controlada: escuro / sem água / sol+água), **aquecimento** (revisão espaçada), **função das
+>>   partes** (pergunta pela FUNÇÃO, sem o nome = produção), **Ensinar o Broto** (autoexplicação),
+>>   **identidade** (nome + figurinha), **medalha**, **medição invisível + BKT-lite** e
+>>   **parecer do professor em `?painel`** (domínio por conceito, dicas, tempo, GANHO antes×depois, BNCC).
+>> - **BNCC:** EF02CI05 (água e luz) + EF02CI06 (partes e funções).
+>> - **Narração NUNCA é atropelada:** `depoisDaFala(id,maxMs,cb)` — o prazo só dispara se o áudio NÃO estiver
+>>   tocando (mesmo bug pago das Estrelas). No teste headless isso faz cliques "falharem" — é o certo, não é bug.
+>>
 >> ## 🎮 DECISÕES DO MARCOS (2026-07-22) — "atrativo, visual, simulação real, sem bug" — LER
 >> Registradas em detalhe no `MOLDE-ATIVIDADE-PREMIUM.md` (§4½, §4⅗, §4⅘, §6, §9). Resumo:
 >> - **JOGO, não formulário (§4⅗):** o que ensina certo mas parece medidor/lista/questionário NÃO prende.
