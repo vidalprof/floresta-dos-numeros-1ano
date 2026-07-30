@@ -18,19 +18,19 @@
 ## IDENTIDADE
 - **Objetivo BNCC:** EF03MA07 — resolver/elaborar problemas de multiplicação (×2,3,4,5,10) com os
   significados de **adição de parcelas iguais** e **disposição retangular (array)**.
-- **Mascote:** **Fagulha**, uma fagulinha/estrela viva que trabalha na fábrica de estrelas (provisório).
+- **Mascote:** **Brilho**, uma fagulinha/estrela viva que trabalha na fábrica de estrelas (provisório).
 - **História (fantasia INTRÍNSECA — a história FAZ a multiplicação):** a noite chegou e o céu está
   escuro e vazio. A Fábrica de Estrelas precisa **acender o céu** arrumando as estrelas em **grupos
   iguais** (caixas) e em **grades** (constelações = arrays de linhas × colunas). A criança ajuda a
-  Fagulha a encher o céu — cada parada acende uma parte do céu; no final, o céu inteiro se acende.
+  Brilho a encher o céu — cada parada acende uma parte do céu; no final, o céu inteiro se acende.
 - **Cores:** noite (azul-marinho/roxo profundo) + dourado/estrela; contraste alto (WCAG nos 2 temas).
 - **Público:** 3º ano. **Repo destino (sugestão):** `fabrica-de-estrelas` (confirmar).
 
 ## A LEI (miolo criar/resolver — teste de fogo em toda parada)
 Problema primeiro → a criança CRIA/RESOLVE (monta grupos/arrays) → o **mundo REAGE** (as estrelas
 acendem, a constelação brilha — nunca popup "Acertou!") → concretude que desvanece (estrelas → pontos
-num array → 3×4=12) → a Fagulha **NOMEIA no fim** ("3 caixas de 4 é 4+4+4, e a gente escreve 3×4=12";
-a Fagulha PERGUNTA, não responde).
+num array → 3×4=12) → o Brilho **NOMEIA no fim** ("3 caixas de 4 é 4+4+4, e a gente escreve 3×4=12";
+o Brilho PERGUNTA, não responde).
 
 ## ARCO DE PARADAS (cada uma um canto da fábrica/céu; ALÍVIO on-mission entre as de aprendizado)
 > Aprovado pelo Marcos (2026-07). Alívio de preferência **on-mission** (variedade + criação), com o
@@ -52,9 +52,9 @@ a Fagulha PERGUNTA, não responde).
 4. **O Céu Grande — ×10.** Caixas/grade de 10; o céu enche rápido (a força do ×10). Mede: usa o ×10
    como atalho?
 5. **A Sua Constelação — autoria (elaborar problema, BNCC).** A criança **cria** a própria constelação
-   (escolhe fileiras × colunas / grupos) e desafia a Fagulha, que "lê" o array e diz a multiplicação —
+   (escolhe fileiras × colunas / grupos) e desafia o Brilho, que "lê" o array e diz a multiplicação —
    e às vezes **erra de propósito** (efeito protégé), pra criança consertar. Mede: o desafio criado é
-   bem-formado (proxy de domínio)? corrigiu a Fagulha?
+   bem-formado (proxy de domínio)? corrigiu o Brilho?
 - Em cada parada de aprendizado, **1 item-símbolo no fim** (sem os apoios) p/ medir **transferência**.
 
 **Paradas de ALÍVIO / DELEITE (NÃO contam nota — pacing e amor):**
@@ -68,16 +68,16 @@ a Fagulha PERGUNTA, não responde).
 
 ## ABERTURA E FINAL ANIMADOS (o "impressiona a criança")
 - **Abertura (cutscene):** a noite cai (parallax do céu escurecendo), a fábrica acende as luzes, a
-  Fagulha aparece e conta a missão (voz do Antônio, texto sincronizado). Céu vazio esperando.
+  Brilho aparece e conta a missão (voz do Antônio, texto sincronizado). Céu vazio esperando.
 - **Final (cutscene):** ao concluir tudo, o céu INTEIRO se acende numa grande constelação, fogos de
-  estrela, a Fagulha comemora e fecha a história. (Técnica exata = pesquisa de animação em andamento;
+  estrela, o Brilho comemora e fecha a história. (Técnica exata = pesquisa de animação em andamento;
   tudo em transform/opacity, camadas de arte IA, sem vídeo pesado.)
 
 ## MASCOTE VIVO + MAPA VIVO (mais vivo que hoje)
-- **Fagulha viva:** respira, pisca, reage (pensando/comemorando) e fala com **lip-sync** na voz do
+- **Brilho viva:** respira, pisca, reage (pensando/comemorando) e fala com **lip-sync** na voz do
   Antônio. Gerada em PARTES (p/ animar) — detalhe final pela pesquisa de animação.
 - **Mapa vivo:** o "céu-mapa" com parallax, estrelas piscando/derivando, poeira estelar (partículas),
-  a Fagulha caminhando pela trilha de constelações, câmera que segue suave, próxima parada revelando
+  o Brilho caminhando pela trilha de constelações, câmera que segue suave, próxima parada revelando
   com brilho. Barato (transform/opacity, pausa fora da tela).
 
 ## SOM (Web Audio p/ feedback + Antônio MP3 p/ voz)
@@ -97,7 +97,7 @@ a Fagulha PERGUNTA, não responde).
   sugerida. Persistência local (localStorage; Firebase opcional como na Agenda).
 
 ## LISTA DE ASSETS (provisória — FINALIZAR com a pesquisa de animação, tudo gerado por IA em CAMADAS/PARTES)
-- Mascote Fagulha: em PARTES (corpo, cabeça, olhos abertos/fechados, bocas p/ lip-sync, braços) +
+- Mascote Brilho: em PARTES (corpo, cabeça, olhos abertos/fechados, bocas p/ lip-sync, braços) +
   poses (feliz, pensando, comemorando, incentivando).
 - Cena de abertura e cena final: em CAMADAS (céu ao fundo, fábrica/meio, frente).
 - Céu-mapa: camadas de parallax (céu, estrelas de fundo, trilha de constelações).
@@ -110,7 +110,7 @@ a Fagulha PERGUNTA, não responde).
 1. Esperar a pesquisa de animação (cutscene + mascote/mapa vivos) → fecha o método de layering/rig.
 2. Escrever os prompts de imagem (camadas/partes) → disparar geração em lote pelo workflow → `git pull`.
 3. Gerar a narração do Antônio (MP3) pelo workflow.
-4. Montar a **fatia de teste** primeiro (Fagulha + abertura animada + tela inicial + mapa vivo) →
+4. Montar a **fatia de teste** primeiro (Brilho + abertura animada + tela inicial + mapa vivo) →
    mostrar ao Marcos p/ aprovar o estilo (Portão do professor).
 5. Montar as 5 paradas (criar/resolver) + medição + som.
 6. Auditoria 3 níveis + checklist da planta (teste de fogo, portão pedagógico/neurociência) → prévia →
@@ -119,13 +119,13 @@ a Fagulha PERGUNTA, não responde).
 ## STATUS
 - [x] Objetivo, tema, mascote, arco de paradas, medição (este plano)
 - [x] Pesquisa de animação (cutscene + vivo) — 12 docs de pesquisa
-- [x] Arte da Fagulha (poses: feliz/acena/pensa/fala/pisca/comemora), fábrica, estrela, céu (workflow)
+- [x] Arte do Brilho (poses: feliz/acena/pensa/fala/pisca/comemora), fábrica, estrela, céu (workflow)
 - [x] Voz do Antônio na ABERTURA (workflow) — falta narração POR PARADA
-- [x] Fatia de teste (capa + abertura viva + mapa vivo com trilha/Fagulha caminhante)
+- [x] Fatia de teste (capa + abertura viva + mapa vivo com trilha/Brilho caminhante)
 - [x] **Paradas 1..5 (criar/resolver) + 2 alívios (Música, Memória) + deleite (Decore) + medição→PARECER**
 - [x] Final animado (cutscene do céu aceso) + diploma + parecer por indicadores
 - [x] QA técnico: node --check + render de cada tela + click-through sem erro + compat (sem grid/gap/var/clamp)
-- [ ] **Narração do Antônio POR PARADA** (Fagulha fala em cada parada — próximo passo)
+- [ ] **Narração do Antônio POR PARADA** (Brilho fala em cada parada — próximo passo)
 - [ ] Tela de NOME (personaliza o parecer) — próximo passo
 - [ ] Portões pedagógicos (Portão 0 filosofia / Arte) + aprovação do Marcos no PC/celular real
 - [ ] Card no hub "Ilhas do Saber" (3º ano)

@@ -73,7 +73,7 @@ img{-webkit-user-drag:none;user-drag:none}
 @-webkit-keyframes sobePuff{0%{opacity:0;-webkit-transform:translateY(6%) scale(.4)}18%{opacity:.9}100%{opacity:0;-webkit-transform:translateY(-115%) scale(1.5)}}
 @keyframes sobePuff{0%{opacity:0;transform:translateY(6%) scale(.4)}18%{opacity:.9}100%{opacity:0;transform:translateY(-115%) scale(1.5)}}
 
-/* ---- FAGULHA VIVA (balança + flutua + respira + reaçõezinhas) ---- */
+/* ---- BRILHO VIVO (balança + flutua + respira + reaçõezinhas) ---- */
 .fag{position:absolute;width:200px}
 .fagbob{-webkit-animation:bobSway 4.7s ease-in-out infinite;animation:bobSway 4.7s ease-in-out infinite}
 @-webkit-keyframes bobSway{0%,100%{-webkit-transform:translateY(0) rotate(-1.6deg)}50%{-webkit-transform:translateY(-7px) rotate(1.6deg)}}
@@ -88,7 +88,7 @@ img{-webkit-user-drag:none;user-drag:none}
 .corpo-fag .fala,.corpo-fag .pisca{opacity:0}
 /* camada de POSE (crossfade suave entre poses, em vez de troca seca de imagem) */
 .corpo-fag .pose{opacity:0;-webkit-transition:opacity .16s ease;transition:opacity .16s ease}
-/* sombra no chão: gruda a Fagulha no cenário (respira no mesmo ritmo do bob) */
+/* sombra no chão: gruda o Brilho no cenário (respira no mesmo ritmo do bob) */
 .fagsombra{position:absolute;left:18%;bottom:-3%;width:64%;height:9%;border-radius:50%;
   background:radial-gradient(ellipse, rgba(0,0,20,.42), rgba(0,0,20,0) 70%);
   -webkit-animation:sombraResp 4.7s ease-in-out infinite;animation:sombraResp 4.7s ease-in-out infinite}
@@ -445,12 +445,12 @@ h1.titulo{font-size:27px;line-height:1.12;margin:2px 4px 2px;color:#ffe08a;text-
 .hico.coroa{width:20px;height:15px;background:#ffc23c;
   -webkit-clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%);clip-path:polygon(0 100%,0 34%,25% 60%,50% 0,75% 60%,100% 34%,100% 100%)}
 
-/* pulo da Fagulha ao comemorar — 12 princípios: ANTECIPAÇÃO (agacha) -> STRETCH no ar ->
+/* pulo do Brilho ao comemorar — 12 princípios: ANTECIPAÇÃO (agacha) -> STRETCH no ar ->
    SQUASH na aterrissagem -> assenta (volume constante: X cresce quando Y encolhe) */
 .fag.pulo{-webkit-animation:puloFag .7s cubic-bezier(.34,1.56,.64,1);animation:puloFag .7s cubic-bezier(.34,1.56,.64,1)}
 @-webkit-keyframes puloFag{0%{-webkit-transform:translateY(0) scale(1,1)}18%{-webkit-transform:translateY(3px) scale(1.07,.9)}48%{-webkit-transform:translateY(-20px) scale(.94,1.08)}72%{-webkit-transform:translateY(2px) scale(1.06,.93)}100%{-webkit-transform:translateY(0) scale(1,1)}}
 @keyframes puloFag{0%{transform:translateY(0) scale(1,1)}18%{transform:translateY(3px) scale(1.07,.9)}48%{transform:translateY(-20px) scale(.94,1.08)}72%{transform:translateY(2px) scale(1.06,.93)}100%{transform:translateY(0) scale(1,1)}}
-/* rastro de faíscas quando a Fagulha anda no mapa */
+/* rastro de faíscas quando o Brilho anda no mapa */
 .fagrastro{position:absolute;width:12px;height:auto;z-index:5;pointer-events:none;
   -webkit-filter:drop-shadow(0 0 5px rgba(255,225,140,.9));filter:drop-shadow(0 0 5px rgba(255,225,140,.9));
   -webkit-animation:rastroSome .7s ease-out both;animation:rastroSome .7s ease-out both}
@@ -481,8 +481,8 @@ h1.titulo{font-size:27px;line-height:1.12;margin:2px 4px 2px;color:#ffe08a;text-
 .ajudabtn.usado{opacity:.5}
 .ajudabtn:active{-webkit-transform:translateY(1px);transform:translateY(1px)}
 
-/* card de AUTOEXPLICAÇÃO (a Fagulha pergunta "por quê?") — CONVERSA, não questionário:
-   a Fagulha aparece pensando no card e a criança TOCA NO DESENHO que mostra o porquê. */
+/* card de AUTOEXPLICAÇÃO (o Brilho pergunta "por quê?") — CONVERSA, não questionário:
+   o Brilho aparece pensando no card e a criança TOCA NO DESENHO que mostra o porquê. */
 .autoexp{position:absolute;left:12px;right:12px;top:20%;z-index:8;background:rgba(15,20,48,.97);border:1px solid rgba(255,225,150,.45);
   border-radius:20px;padding:24px 16px 15px;text-align:center;box-shadow:0 14px 34px rgba(0,0,0,.55);
   -webkit-animation:aeIn .35s ease both;animation:aeIn .35s ease both}
@@ -521,7 +521,7 @@ h1.titulo{font-size:27px;line-height:1.12;margin:2px 4px 2px;color:#ffe08a;text-
 .aebtn{display:block;width:100%;margin:8px 0 0;border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:14px;color:#20264a;
   background:#eef1ff;padding:12px 12px;border-radius:14px;box-shadow:0 3px 0 #c4cbe8;line-height:1.2}
 .aebtn.escolhida{background:#dfe6ff;box-shadow:0 2px 0 #b9c4ee;-webkit-transform:translateY(1px);transform:translateY(1px)}
-/* MODO ENSINAR A FAGULHA (efeito protégé) — selo + destaque */
+/* MODO ENSINAR O BRILHO (efeito protégé) — selo + destaque */
 .ensinabox .aeteach{display:inline-block;background:#8ad0ff;color:#08324e;font-weight:800;font-size:12px;
   padding:3px 12px;border-radius:12px;margin-bottom:7px}
 .ensinabox{border-color:rgba(140,208,255,.55)}
@@ -831,7 +831,7 @@ function fagViva(extraCls){
   var d1=(-Math.random()*4.7).toFixed(2)+"s", d2=(-Math.random()*4.2).toFixed(2)+"s";
   bob.style.webkitAnimationDelay=d1; bob.style.animationDelay=d1;
   wrap.style.webkitAnimationDelay=d2; wrap.style.animationDelay=d2;
-  var base=el("img","lay base"); base.src="img/fagulha.png"; base.alt="Fagulha";
+  var base=el("img","lay base"); base.src="img/fagulha.png"; base.alt="Brilho";
   var pose=el("img","lay pose"); pose.src="img/fagulha.png"; pose.alt="";
   var fala=el("img","lay fala"); fala.src="img/fagulha_fala.png"; fala.alt="";
   var pisca=el("img","lay pisca"); pisca.src="img/fagulha_pisca.png"; pisca.alt="";
@@ -893,7 +893,7 @@ function botaoProxima(tela,rot,dl){
       sessao.ultimo=0;
     }
     /* MASTERY GATING GENTIL (ZDP): se o domínio ainda está baixo, o convite é PRATICAR
-       com números novos (botão principal + a Fagulha convida) — mas seguir NUNCA é bloqueado. */
+       com números novos (botão principal + o Brilho convida) — mas seguir NUNCA é bloqueado. */
     if(maisItens()){
       var cont=el("button","btn pulsa","Continuar &#10024;"); cont.onclick=function(){ proxItem(); };
       pb.appendChild(cont); tela.appendChild(pb); return;
@@ -931,7 +931,7 @@ function visGrupos(arr){ var w=el("div","aevis"),i,k; for(i=0;i<arr.length;i++){
 function visIgual(a,b){ var w=el("div","aevis"); w.appendChild(visMiniGrade(a[0],a[1])); w.appendChild(el("span","aeigual","=")); w.appendChild(visMiniGrade(b[0],b[1])); return w; }
 function visMiniGrade(fil,col){ var g=el("span"),i; g.style.display="inline-block"; g.style.verticalAlign="middle"; for(i=0;i<fil;i++){ var f=el("div","aefila"),k; for(k=0;k<col;k++){ var im=el("img","aestr"); im.src="img/estrela_grande.png"; f.appendChild(im); } g.appendChild(f); } return g; }
 function visEstrelona(){ var w=el("div","aevis"); var im=el("img","aestrG"); im.src="img/estrela_grande.png"; w.appendChild(im); return w; }
-/* AUTOEXPLICAÇÃO: a Fagulha PERGUNTA "por que deu certo?"; a criança MOSTRA a razão
+/* AUTOEXPLICAÇÃO: o Brilho PERGUNTA "por que deu certo?"; a criança MOSTRA a razão
    tocando no desenho. Registra a razão como evidência p/ o professor; a tela nunca
    mostra certo/errado (Portão 0); qualquer escolha recebe resposta gentil. */
 function autoexplica(tela, cfg, cb){
@@ -939,8 +939,8 @@ function autoexplica(tela, cfg, cb){
   for(k=0;k<esconder.length;k++){ var e0=tela.getElementsByClassName(esconder[k])[0]; if(e0)e0.style.display="none"; }
   var box=el("div","autoexp"+(cfg.ensinar?" ensinabox":""));
   var mini=el("img","aefagmini"); mini.src="img/fagulha_pensa.png"; mini.alt=""; box.appendChild(mini);
-  /* MODO "ENSINAR A FAGULHA" (efeito protégé: quem ensina aprende mais). */
-  if(cfg.ensinar) box.appendChild(el("div","aeteach","A Fagulha ficou confusa &#8212; me ajuda a acertar?"));
+  /* MODO "ENSINAR O BRILHO" (efeito protégé: quem ensina aprende mais). */
+  if(cfg.ensinar) box.appendChild(el("div","aeteach","O Brilho ficou confusa &#8212; me ajuda a acertar?"));
   box.appendChild(el("div","aeperg",cfg.pergunta));
   var temVis=false, i;
   for(i=0;i<cfg.opcoes.length;i++){ if(cfg.opcoes[i].vis) temVis=true; }
@@ -961,7 +961,7 @@ function autoexplica(tela, cfg, cb){
       var base=(o.vis?"aetile":"aebtn");
       if(o.ok){
         b.className=base+" certo";
-        fb.className="aefb bom"; fb.innerHTML=(cfg.ensinar?"Você ensinou a Fagulha! <b>":"Isso mesmo! <b>")+txtCerto+"</b>.";
+        fb.className="aefb bom"; fb.innerHTML=(cfg.ensinar?"Você ensinou o Brilho! <b>":"Isso mesmo! <b>")+txtCerto+"</b>.";
       } else {
         b.className=base+" escolhida";                                  // a escolha NÃO fica vermelha (sem julgamento)
         if(tiles[idxCerto]) tiles[idxCerto].className=(cfg.opcoes[idxCerto].vis?"aetile":"aebtn")+" certo";   // a IDEIA certa acende
@@ -1008,7 +1008,7 @@ function telaGaleria(){
     it.appendChild(mg);
     var dt=""; try{ var d0=new Date(c.quando); dt=("0"+d0.getDate()).slice(-2)+"/"+("0"+(d0.getMonth()+1)).slice(-2); }catch(e){}
     it.appendChild(el("div","gtxt","<b>"+c.fil+" &#215; "+c.col+" = "+c.real+"</b>"+
-      "<div class='pi2'>"+dt+(c.corrigiu?" &#183; corrigiu a Fagulha!":"")+"</div>"));
+      "<div class='pi2'>"+dt+(c.corrigiu?" &#183; corrigiu o Brilho!":"")+"</div>"));
     sc.appendChild(it);
   })(g[i]); }
   t.appendChild(sc);
@@ -1212,7 +1212,7 @@ function telaCapa(){
   }
   c.appendChild(card);
   t.appendChild(c);
-  var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Fagulha"; fa.appendChild(fai);
+  var fa=el("div","fagacena"); var fai=el("img"); fai.src="img/fagulha_acena.png"; fai.alt="Brilho"; fa.appendChild(fai);
   t.appendChild(fa);
   app.appendChild(t);
 }
@@ -1346,13 +1346,13 @@ function telaAbertura(){
   var leg=el("div","legenda",""); t.appendChild(leg);
   var pular=el("button","pular","pular &#9654;"); pular.onclick=function(){ try{narr.pause();}catch(e){} fimFala(); }; t.appendChild(pular);
   app.appendChild(t);
-  var texto="Oi! Que bom que você chegou! Aqui é a Fábrica de Estrelas, e eu sou a Fagulha. Olha só o céu: está todo escuro e vazio. Será que você vem comigo encher esse céu de estrelas? Vem, vai ser incrível!";
+  var texto="Oi! Que bom que você chegou! Aqui é a Fábrica de Estrelas, e eu sou o Brilho. Olha só o céu: está todo escuro e vazio. Será que você vem comigo encher esse céu de estrelas? Vem, vai ser incrível!";
   falar("abertura", function(){ var due=aquecimentoDevido(); if(due){ telaAquecimento(due); } else { telaMapa(); } });
   legendaSync(leg, texto);
 }
 
 /* ============ AQUECIMENTO — revisão espaçada (Leitner) na VOLTA ============
-   Se a criança volta noutro dia com conceitos "vencidos", a Fagulha convida a
+   Se a criança volta noutro dia com conceitos "vencidos", o Brilho convida a
    REACENDER as estrelas: 3 itens rápidos de recuperação (retrieval). Errou?
    O mundo MOSTRA os grupos e conta junto — e a criança tenta de novo, sem punição.
    Cada item mede RETENÇÃO de verdade (dias depois) e reagenda a caixa Leitner. */
@@ -1472,7 +1472,7 @@ function barraProg(){
   b.innerHTML="<i style='width:"+p+"%'></i>"; return b;
 }
 
-/* MAPA VIVO ROLANTE (câmera segue a Fagulha subindo a trilha; cabe QUALQUER nº de paradas) */
+/* MAPA VIVO ROLANTE (câmera segue o Brilho subindo a trilha; cabe QUALQUER nº de paradas) */
 function nodeX(i){ return 50 + (i%2===0? -16 : 16); }
 function telaMapa(){
   limpa(); stageFull(true); PRATICA=false;
@@ -1504,7 +1504,7 @@ function telaMapa(){
       w.appendChild(el("div","rotulo","COMEÇAR")); }
     w.appendChild(no); strip.appendChild(w);
   }
-  /* Fagulha caminha na TRILHA e para AO LADO da parada atual (margin-left:50px = coladinha no nó) */
+  /* Brilho caminha na TRILHA e para AO LADO da parada atual (margin-left:50px = coladinha no nó) */
   var walker=el("div","walker"); walker.style.left=nodeX(fagPos)+"%"; walker.style.top=ytop(fagPos)+"px";
   walker.appendChild(fagViva()); strip.appendChild(walker);
   var offDe=camY(fagPos); strip.style.webkitTransform="translateY("+(-offDe)+"px)"; strip.style.transform="translateY("+(-offDe)+"px)";
@@ -1624,7 +1624,7 @@ function sucessoP1(){
   salvaEvid({parada:"p1",habilidade:"EF03MA07",conceito:"grupos iguais",toques:P1.toques,dicas:dicasParada,pratica:PRATICA,tempo_s:tempo,acertou:true,semErro:semErro});
   premiar(semErro?3:2);
   motorParada("p1",forcaDe(semErro));
-  // contagem termina -> explicação -> a Fagulha pergunta "por quê?" -> botões (áudio encadeado, sem sobrepor)
+  // contagem termina -> explicação -> o Brilho pergunta "por quê?" -> botões (áudio encadeado, sem sobrepor)
   setTimeout(function(){
     if(PRATICA||REPETE_ITEM){ depoisDaFala("e_var", 9000, function(){ botaoProxima(tela,null,200); }); return; }   // treino: explicação curta, sem repetir a pergunta
     depoisDaFala(ehOriginal("p1")?"e_p1":"e_var", 9000, function(){
@@ -1822,7 +1822,7 @@ function telaMusica(){
   }
   t.appendChild(fileira);
   var bar=el("div","p1barra");
-  var ouvir=el("button","btn2","Ouvir a Fagulha tocar"); ouvir.onclick=function(){ musMelodia(notas); };
+  var ouvir=el("button","btn2","Ouvir o Brilho tocar"); ouvir.onclick=function(){ musMelodia(notas); };
   var ok=el("button","btn pulsa","Pronto, seguir"); ok.style.marginLeft="8px"; ok.onclick=function(){ avanca(); };
   bar.appendChild(ouvir); bar.appendChild(ok); t.appendChild(bar);
   var ff=el("div","fagfala"); ff.appendChild(fagViva()); t.appendChild(ff);
@@ -1862,7 +1862,7 @@ function telaParada3(){
   var t=el("div","tela parada p3");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(28));
-  t.appendChild(el("div","balao","A Fagulha arrumou <b>3 fileiras de 4</b> estrelas. Toque em <b>Contar</b> e veja quantas acendem!"));
+  t.appendChild(el("div","balao","O Brilho arrumou <b>3 fileiras de 4</b> estrelas. Toque em <b>Contar</b> e veja quantas acendem!"));
   var wrap=el("div","p3wrap"); wrap.id="p3wrap";
   var expr=el("div","expr"); expr.innerHTML="3 &#215; 4 = <span id='p3cont'>?</span>"; wrap.appendChild(expr);
   var g=gradeStars(3,4,"gradeM"); g.id="p3grade"; wrap.appendChild(g);
@@ -1950,7 +1950,7 @@ function sucessoP3(){
     depoisDaFala("e_p3", 9000, function(){
       autoexplica(tela, {
         ensinar:true, falaQ:"ens_e_p3",
-        pergunta:"A Fagulha acha que <b>3&#215;4</b> d&#225; um tanto <b>diferente</b> de <b>4&#215;3</b>. Qual desenho mostra o certo?",
+        pergunta:"O Brilho acha que <b>3&#215;4</b> d&#225; um tanto <b>diferente</b> de <b>4&#215;3</b>. Qual desenho mostra o certo?",
         opcoes:[
           {vis:function(){return visIgual([3,4],[4,3]);},txt:"As <b>mesmas</b> estrelas, viradas",ok:true},
           {vis:function(){return visFilas([4,4,4,4]);},txt:"Apareceram estrelas novas",ok:false},
@@ -2131,7 +2131,7 @@ function p5pronto(){
   var st=document.getElementsByClassName("steppers")[0]; if(st)st.style.display="none";
   var bar=document.getElementsByClassName("p1barra")[0]; if(bar)bar.style.display="none";
   var bal=document.getElementsByClassName("balao")[0];
-  if(bal)bal.innerHTML="A Fagulha olha e diz: <b>“Acho que "+P5.fil+" fileiras de "+P5.col+" dá "+claim+"…”</b> Confere pra ela: <b>quanto dá de verdade?</b>";
+  if(bal)bal.innerHTML="O Brilho olha e diz: <b>“Acho que "+P5.fil+" fileiras de "+P5.col+" dá "+claim+"…”</b> Confere pra ela: <b>quanto dá de verdade?</b>";
   fagPose("fagulha_pensa");
   var reais={}; var lista=[P5.real]; reais[P5.real]=1;
   var extra=[claim,P5.real+1,P5.real-1,P5.real+P5.col];
@@ -2217,7 +2217,7 @@ function telaSoma(){
   var t=el("div","tela parada perg soma");
   t.appendChild(barraProg());
   t.appendChild(el("div","ceu")); t.appendChild(campoEstrelas(24));
-  t.appendChild(el("div","balao","A Fagulha juntou grupos <b>iguais</b> de <b>"+v.m+"</b>. Somar o mesmo número tem um atalho: a conta de <b>vezes</b>. <b>Monte a conta que descreve esses grupos!</b>"));
+  t.appendChild(el("div","balao","O Brilho juntou grupos <b>iguais</b> de <b>"+v.m+"</b>. Somar o mesmo número tem um atalho: a conta de <b>vezes</b>. <b>Monte a conta que descreve esses grupos!</b>"));
   var meio=el("div","pmeio");
   var gr=el("div","somaMeio"),i;
   for(i=0;i<v.k;i++){ if(i>0) gr.appendChild(el("span","mais","+")); gr.appendChild(grupoStars(v.m)); }
@@ -2236,7 +2236,7 @@ function telaSoma(){
   t.appendChild(build);
   var orig=(v.fala==="soma");   // as falas das dicas citam os números originais; nas variações a dica é só texto
   ajudaBtn(t, [
-    {fala:(orig?"aj_soma_1":null), txt:"Conte quantos <b>grupos</b> a Fagulha fez."},
+    {fala:(orig?"aj_soma_1":null), txt:"Conte quantos <b>grupos</b> o Brilho fez."},
     {fala:(orig?"aj_soma_2":null), txt:"São <b>"+v.k+" grupos</b> — e conte quantas estrelas em <b>cada</b>."},
     {fala:(orig?"aj_soma_3":null), txt:"Monte <b>"+v.k+"</b> no primeiro e <b>"+v.m+"</b> no segundo: são "+v.k+" grupos de "+v.m+"."}
   ], function(txt){ var d=t.getElementsByClassName("pdica")[0]; if(d)d.innerHTML=txt; });
@@ -2259,7 +2259,7 @@ function conferirSoma(){
   SOMA.tent++; somErro(); fagPensa();
   var d=document.getElementsByClassName("pdica")[0]; if(!d)return;
   if(SOMA.c!==SOMA.m){ d.innerHTML="Olhe <b>um</b> grupo: quantas estrelas tem em cada?"; }
-  else { d.innerHTML="Conte quantos <b>grupos</b> a Fagulha fez."; }
+  else { d.innerHTML="Conte quantos <b>grupos</b> o Brilho fez."; }
 }
 function sucessoSoma(){
   var tela=document.getElementsByClassName("tela soma")[0]; if(!tela)return;
@@ -2511,7 +2511,7 @@ function decoPoe(ev,sky){
 /* ===== FINAL (cutscene) + PARECER ===== */
 /* ===== FINAL DA HISTÓRIA (epílogo encenado em 3 beats) =====
    A missão da abertura ("o céu está escuro e vazio, vem encher de estrelas?")
-   se RESOLVE aqui: o céu enche em ondas, a Fagulha fecha o arco dela (não dava
+   se RESOLVE aqui: o céu enche em ondas, o Brilho fecha o arco dela (não dava
    conta sozinha; agradece), e há uma despedida. Robusto: avança mesmo sem áudio
    (depoisDaFala tem prazo), com legenda sincronizada e botão "pular". */
 function telaFinal(){
