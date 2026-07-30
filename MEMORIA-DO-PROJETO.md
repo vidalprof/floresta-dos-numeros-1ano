@@ -102,8 +102,13 @@
 >> - **Narração do Broto** (31 falas, `_lote_falas.json` → `finalizar.yml [audio]`, voz **masculina** Antonio)
 >>   + **LIP-SYNC** por camadas de imagem (base/fala/pisca geradas no Gemini editando a base = alinhadas).
 >> - **REGRA DE VOZ DO MARCOS:** *mascote masculino → voz masculina; mascote feminino → voz feminina.*
->>   "O Broto" = masculina. ⚠️ **Pendência:** "A Fagulha" tem nome feminino mas usa voz MASCULINA hoje
->>   (inconsistente com a regra) — avisei o Marcos, ele ainda não decidiu trocar.
+>>   "O Broto" = masculina. ✅ **RESOLVIDO (2026-07-23):** a mascote das Estrelas se chamava "A Fagulha"
+>>   (feminino) com voz masculina. O Marcos decidiu **trocar o NOME** (mais barato que regravar 85 falas):
+>>   agora é **"O BRILHO"** (masculino). Descoberta que barateou tudo: de 1046 falas do histórico, **só UMA
+>>   dizia o nome** (`abertura.mp3`) → regenerei só ela. Troca no texto feita com gramática ("a Fagulha"→
+>>   "o Brilho", "da Fagulha"→"do Brilho"); **os arquivos de imagem seguem `img/fagulha*.png`** (nomes
+>>   internos, não aparecem para a criança — não renomear à toa). Uma animação CSS virou `pontosBrilho`
+>>   (definição e uso trocados juntos, conferido).
 >> - **Dica** (botão + fala), **Ouvir de novo**, banner, **prever-antes (POE)**, **experimento de 3 vasos**
 >>   (variável controlada: escuro / sem água / sol+água), **aquecimento** (revisão espaçada), **função das
 >>   partes** (pergunta pela FUNÇÃO, sem o nome = produção), **Ensinar o Broto** (autoexplicação),
