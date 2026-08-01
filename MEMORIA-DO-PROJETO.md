@@ -171,6 +171,19 @@
 >>   - **⚠️ Armadilha do container:** `curl` para `*.github.io` dá **code 000** (rede bloqueada) — isso NÃO
 >>     quer dizer "não publicou". Quem diz a verdade é o `deploy-pages.yml` (`status=built erro=nenhum`).
 >>     Publicado em 2026-08-01 (build `built`, commit 9c8eaca).
+>> - **⭐ CRACHÁ = O PRÓPRIO BROTO (2026-08-01).** Antes a tela de identidade oferecia as figurinhas
+>>   dos **estágios da planta** (`jd_g0..jd_g4`) — errado pela regra do Marcos ("o crachá tem que ser o
+>>   MESMO mascote, só com cores e roupas/acessórios diferentes"). Agora são **6 variantes do Broto**
+>>   (`jd_cr1..jd_cr6`), geradas no Gemini **EDITANDO a imagem-âncora** (`base: _novo/jd_broto_base.png`,
+>>   que é o `jd_broto_feliz` achatado sobre branco — PNG transparente como base faz o alfa virar preto):
+>>   1 verde + chapéu de palha · 2 verde-azulado + óculos · 3 verde-limão + laço vermelho no broto ·
+>>   4 rosa + margarida na cabeça · 5 verde-escuro + bandana azul · 6 lilás + chapéu de sol laranja.
+>>   Recorte com o `cut_border()` (floodfill só das bordas), 200px de altura, ~40KB cada.
+>>   Grade **3×2** (`.figs{max-width:270px}`, `.fig{82px}`) p/ o acessório ficar legível.
+>>   **Migração no `carregaEstado`:** perfil salvo com `fig` antigo (`jd_g3`) é convertido p/ `jd_cr1` —
+>>   senão a criança que já jogou voltaria sem nenhuma figurinha marcada.
+>>   - **Observação em aberto:** o crachá escolhido só aparece NA TELA DE ESCOLHA (no Jardim e também na
+>>     Redação do Pingo). A criança escolhe e nunca mais vê. Vale mostrá-lo no fim/medalha um dia.
 >> - **⭐ VISUAL HÍBRIDO (Marcos 2026-07-22: "parece feito à mão, quadrado" → refeito):** a 1ª versão era
 >>   toda Canvas desenhado à mão (chapado). O Marcos reprovou. Refiz no **HÍBRIDO** (respeitando a LEI
 >>   "todo asset que a criança vê é IA"): **fundo, mascote (Broto), 5 estágios de crescimento e os itens
