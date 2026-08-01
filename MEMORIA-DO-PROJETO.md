@@ -23,6 +23,22 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 📚 NOVA PREMIUM: "A Banca do Pingo" — GÊNEROS TEXTUAIS, 4º ano (2026-07-23)
+>> Módulo 2 do pedido da professora (ela confirmou: **gêneros TEXTUAIS**). Publicada em **`banca-do-pingo`**
+>> → https://vidalprof.github.io/banca-do-pingo/ . Pasta `_generos/` (2,9 MB).
+>> - **REAPROVEITAMENTO (barato e coerente):** mesmo mundo (redação) e **mesmo mascote, o Pingo** — copiei
+>>   `vb_pingo*` e `vb_fundo.jpg` do `_verbos`. Só gerei 5 imagens novas (ícones de poema/conto/carta/verbete
+>>   + medalha). O **motor foi clonado do `_verbos`** cortando no marcador `/* ===== CONTEÚDO ===== */`.
+>> - **Gêneros do 4º ano em Blumenau (conferido no PDF):** notícia, reportagem, poema, quadrinha, parlenda,
+>>   trava-língua, conto (popular/de terror), carta (solicitação/reclamação), verbete de enciclopédia infantil.
+>> - **6 fases:** (1) **"sem ler, só olhando"** — a criança vê só a SILHUETA do texto (barras em CSS!) e deduz
+>>   o gênero pela FORMA (POE); (2) para que serve (função); (3) arrume a banca (mandar cada texto pra seção);
+>>   (4) aquecimento; (5) **texto trocado** — notícia escrita como conto de fadas, a criança conserta;
+>>   (6) **monte a carta** (produção: para quem → recado → despedida → assinatura); + ensinar o Pingo.
+>> - **Truque bom e barato:** a silhueta do texto é feita com **barras CSS** (`.silh .sb`), não com imagem —
+>>   ensina forma sem custo de geração. Reaproveitar em outras atividades de leitura.
+>> - QA: playthrough completo no Chromium **sem erros** já na 1ª tentativa.
+>>
 >> ## 📰 NOVA PREMIUM: "Plantão na Redação" — VERBOS, 4º ano (2026-07-23)
 >> Pedido da professora do 4º ano ("estão iniciando com os verbos"). Publicada em **`plantao-na-redacao`**
 >> → https://vidalprof.github.io/plantao-na-redacao/ . Mascote **o Pingo** (gotinha de tinta, masculino →
