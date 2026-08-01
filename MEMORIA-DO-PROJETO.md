@@ -171,6 +171,26 @@
 >>   - **⚠️ Armadilha do container:** `curl` para `*.github.io` dá **code 000** (rede bloqueada) — isso NÃO
 >>     quer dizer "não publicou". Quem diz a verdade é o `deploy-pages.yml` (`status=built erro=nenhum`).
 >>     Publicado em 2026-08-01 (build `built`, commit 9c8eaca).
+>> - **🐛 LIÇÃO PAGA — BALÃO DE DICA SOBREPONDO (Marcos reportou 2026-08-01; eu NÃO tinha visto).**
+>>   O meu auditor de sobreposição dizia `[]` e mesmo assim o Marcos via balão em cima de imagem. Ele
+>>   estava certo. Eram **DUAS** causas, e nenhuma aparecia no auditor porque ele só media o **estado
+>>   inicial** de cada tela, sem clicar em "Dica" e sem trocar de tela:
+>>   1. **Vazamento entre telas.** `mostraDica` cria o `#dicabox` em `document.body` com auto-remoção em
+>>      6,5 s, mas `limpa()` só zerava o `#app` — o balão da tela ANTERIOR continuava boiando sobre a tela
+>>      seguinte. Conserto: `tiraDica()` chamado dentro de `limpa()`.
+>>   2. **Cobria na própria tela.** O balão era `position:fixed; bottom:86px; z-index:14` → passava por
+>>      cima do que estivesse ali. Medido: **20–26 mil px²** de `.opts` cobertos nas telas de Gêneros
+>>      (360 e 412 de largura) e pior a 320 (cobria a grade do caça-palavras). Conserto **estrutural**:
+>>      a dica **não flutua mais** — entra NO FLUXO, logo depois do `.balao` da pergunta (classe `.dicain`),
+>>      empurrando o conteúdo em vez de cobrir. Some sozinha em 7 s.
+>>   - **REGRA NOVA DE QA (o auditor sozinho não basta):** testar também (a) **com a dica aberta**, (b) a
+>>     **transição** tela A→dica→tela B, e (c) a largura **320×568**, não só 360/412. Os scripts:
+>>     `/tmp/mesma.js` (dica na própria tela), `/tmp/leak.js` (vazamento entre telas), `/tmp/vis.js`
+>>     (a dica continua visível, não foi parar embaixo da dobra).
+>>   - **Ressalva honesta que sobrou:** a 320×568, na tela `gTrocado`, 3 frases longas não cabem — as
+>>     opções passam atrás da barra de baixo enquanto a tela está no topo. Verificado que **rolando 58px
+>>     nada fica coberto**. Em PC da escola e celular normal não acontece.
+>>   - **`_estrelas` NÃO tem esse bug** (não usa o padrão `dicabox`).
 >> - **⭐ CRACHÁ = O PRÓPRIO BROTO (2026-08-01).** Antes a tela de identidade oferecia as figurinhas
 >>   dos **estágios da planta** (`jd_g0..jd_g4`) — errado pela regra do Marcos ("o crachá tem que ser o
 >>   MESMO mascote, só com cores e roupas/acessórios diferentes"). Agora são **6 variantes do Broto**
