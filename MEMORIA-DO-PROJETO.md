@@ -23,6 +23,24 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 📐 AUDITORIA DE SOBREPOSIÇÃO — obrigatória em toda atividade (2026-07-23)
+>> O Marcos pediu: *"as coisas não podem se sobrepor — textos, imagens, explicação"*. Criei um **auditor
+>> automático** (`/tmp/audit2.js`, guardar a receita): abre o app, **chama cada `telaXXX()` direto pelo
+>> `window`** (as telas são funções globais, não IIFE), mede o `getBoundingClientRect()` de todos os
+>> elementos-chave e acusa **pares que se cruzam (>150px²)** e o que **corta pra fora da tela**. Rodar em
+>> **360x640 e 412x840** (o 360 é o que pega tudo). É MUITO mais rápido que navegar clicando.
+>> - **Bugs REAIS que ele achou:** (1) **Jardim: a barra de progresso invadia o balão em 12 telas**;
+>>   (2) **Gêneros: as opções ficavam por baixo da barra Ouvir/Dica** (13 mil px²) na tela "Saiu errado!".
+>> - **Conserto padrão (aplicar em toda atividade nova):** `.tela` com **padding-top ≥ 38px** (a `.prog`
+>>   ocupa ~26px) e **padding-bottom ≥ 86px** (a `.barra` fixa), `.tela{overflow-y:auto}` para conteúdo alto,
+>>   e um **`@media (max-height:720px)`** encolhendo imagem/fonte/gaps. Depois **re-rodar o auditor até dar 0**.
+>>
+>> ## 🪪 CRACHÁ = O PRÓPRIO MASCOTE (decisão do Marcos, 2026-07-23)
+>> Na tela de identidade, as figurinhas **não** devem ser objetos aleatórios: são o **mesmo mascote em
+>> versões diferentes** (cor + acessório). Fiz 6 do Pingo no Gemini editando a base (`cr_pingo1..6`:
+>> vermelho/boné, verde/óculos, roxo/gravata-borboleta, laranja/chapéu de repórter, rosa/laço, amarelo/fones).
+>> Usados nos DOIS apps do Pingo. **Pendente:** fazer o mesmo para o Broto (Jardim ainda usa estágios da planta).
+>>
 >> ## 📚 NOVA PREMIUM: "A Banca do Pingo" — GÊNEROS TEXTUAIS, 4º ano (2026-07-23)
 >> Módulo 2 do pedido da professora (ela confirmou: **gêneros TEXTUAIS**). Publicada em **`banca-do-pingo`**
 >> → https://vidalprof.github.io/banca-do-pingo/ . Pasta `_generos/` (2,9 MB).
