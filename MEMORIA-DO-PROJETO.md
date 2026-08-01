@@ -143,6 +143,34 @@
 >> - **Republicar/atualizar:** `atualizar.yml` (repo_name=jardim-do-broto, source_dir=_jardim, ref=branch).
 >> - **Pendente/futuro:** entrar no portal (`_portal`/hub) como card; QA 3 níveis formal; voz/narração;
 >>   possível 5ª dinâmica (mistério "por que a planta murchou?"). É experimento de VISUAL novo (2º ano).
+>> - **⭐ +VARIEDADE DE MECÂNICA (2026-08-01) — de ~15 min para ~45 min de aula.** O Marcos perguntou
+>>   "foram utilizadas várias interatividades? tradicionais? caça-palavras etc?" — eu CONTEI e a resposta
+>>   honesta era **não**: quase tudo era toque/múltipla escolha. Foram acrescentadas **4 mecânicas novas**,
+>>   todas pensadas para 7 anos (**sem teclado**, sem leitura longa), encaixadas no fluxo linear:
+>>   1. **Caça-palavras 6x6** (`telaCacaJd`, depois de `telaPrecisa`) — acha SOL, AGUA, TERRA, AR.
+>>      Toca na 1ª e na última letra. **A validação é POR LETRA, não por posição plantada** (lê o caminho
+>>      reto entre as duas células e compara com a lista): assim, se as letras aleatórias formarem a palavra
+>>      por acaso, a criança também acerta — e palavras que se cruzam continuam clicáveis (célula já `.ok`
+>>      NÃO bloqueia a seleção; guardo `ant` p/ devolver a cor certa se errar). Isso curou o "não achei a 4ª".
+>>   2. **Monte o nome** (`telaMontaPalavra`, entre partes e funções) — letras embaralhadas de RAIZ/CAULE/
+>>      FOLHA/FLOR + pista falada. É **produção sem teclado**: só a próxima letra certa entra no slot
+>>      (andaime forte, sem precisar de "apagar"); letra errada balança e conta erro.
+>>   3. **Memória parte × trabalho** (`telaMemoria`, antes de "Ensinar o Broto") — 8 cartas em **2 col × 4
+>>      linhas**, verso com a carinha do Broto (nada de emoji), 4 pares (RAIZ↔bebe água, CAULE↔segura em pé,
+>>      FOLHA↔toma sol, FLOR↔vira fruto).
+>>   4. **Desafio relâmpago** (`telaRelampagoJd`, antes do fim) — 45 s, "precisa / não precisa" com placar
+>>      e barra de tempo; reaproveita as imagens `jd_*` que já existiam (**nenhuma imagem nova foi precisa**).
+>>   - **Narração:** 10 falas novas do Broto (`jd_caca_*`, `jd_monta_*`, `jd_mem_*`, `jd_rel_*`), geradas pelo
+>>     `finalizar.yml` com `pt-BR-AntonioNeural` (mascote masculino = voz masculina) e copiadas p/ `_jardim/audio/`.
+>>   - **Medição:** sem conceito novo — caça e relâmpago alimentam `necessidades`, montar alimenta `partes`,
+>>     memória alimenta `funcoes` (o painel do professor continua com as 5 barras de sempre).
+>>   - **QA rodado:** `node --check` do JS extraído; **check de classe-sem-CSS** (só sobrou `base`, que é
+>>     marcador do lip-sync, sem estilo próprio — ok); **auditor de sobreposição** nas 17 telas em 360x640 e
+>>     412x840 → `[]`; e um **teste funcional Playwright** que RESOLVE as 4 mecânicas de verdade (4/4 palavras,
+>>     4 palavras montadas, 4 pares, placar do relâmpago) — não bastava a tela abrir.
+>>   - **⚠️ Armadilha do container:** `curl` para `*.github.io` dá **code 000** (rede bloqueada) — isso NÃO
+>>     quer dizer "não publicou". Quem diz a verdade é o `deploy-pages.yml` (`status=built erro=nenhum`).
+>>     Publicado em 2026-08-01 (build `built`, commit 9c8eaca).
 >> - **⭐ VISUAL HÍBRIDO (Marcos 2026-07-22: "parece feito à mão, quadrado" → refeito):** a 1ª versão era
 >>   toda Canvas desenhado à mão (chapado). O Marcos reprovou. Refiz no **HÍBRIDO** (respeitando a LEI
 >>   "todo asset que a criança vê é IA"): **fundo, mascote (Broto), 5 estágios de crescimento e os itens
