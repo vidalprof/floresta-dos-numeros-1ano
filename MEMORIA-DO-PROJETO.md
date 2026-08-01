@@ -23,6 +23,23 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 🔗 REGRA DO MARCOS: assuntos da MESMA turma = UM app, UM repo (2026-07-23)
+>> Ele perguntou (com razão): *"o certo seria as duas na mesma atividade, em um repo só, não?"* — **SIM**.
+>> Uma professora, uma turma, **um link**. Juntei Verbos + Gêneros em **`_redacao/` → "A Redação do Pingo"**
+>> com um **MENU DE MISSÕES** (ela ainda escolhe se hoje é só verbos ou só gêneros; a missão feita fica
+>> marcada "feito" em verde). **Um parecer só** (`?painel`) com os 8 conceitos das duas missões.
+>> - **No ar nos DOIS endereços** (mesmo app, pra não quebrar link já compartilhado):
+>>   https://vidalprof.github.io/plantao-na-redacao/ e https://vidalprof.github.io/banca-do-pingo/
+>> - `_verbos/` e `_generos/` viraram **fonte histórica** — o que vale agora é `_redacao/`.
+>> - **COMO JUNTAR DOIS APPS (receita que funcionou):** os dois tinham funções com o MESMO nome
+>>   (telaCapa/telaQuem/telaAquecimento/telaEnsinar/telaFim/telaPainel). Cortei cada corpo nos banners
+>>   `/* ===== CONTEÚDO ===== */` … `/* ===== PAINEL ===== */`, **renomeei com prefixo** (`vXxx`/`gXxx`),
+>>   e escrevi capa/quem/menu/painel novos. Uni `IMGS`, `DOM`, `CONC` e a chave do localStorage.
+>> - **⚠️ ARMADILHA PAGA:** ao montar o merge peguei o `<head>` do `_verbos` e **esqueci o CSS exclusivo dos
+>>   gêneros** (`.silh`, `.txcard`, `.folha`). Pior: meu teste `if ".txcard{" not in h` deu **falso positivo**
+>>   porque `.txcard` existia dentro de um `@media`. **Checar sempre por uma classe que só exista na regra
+>>   base** (usei `.silh{`). O auditor de sobreposição pegou o estrago (conteúdo estourando a tela).
+>>
 >> ## 📐 AUDITORIA DE SOBREPOSIÇÃO — obrigatória em toda atividade (2026-07-23)
 >> O Marcos pediu: *"as coisas não podem se sobrepor — textos, imagens, explicação"*. Criei um **auditor
 >> automático** (`/tmp/audit2.js`, guardar a receita): abre o app, **chama cada `telaXXX()` direto pelo
