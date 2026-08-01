@@ -23,6 +23,20 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 🛑 RUMO ATUAL (Marcos, 2026-07-23) — **EDUCAVERSO/EDUVERSE FICA DE LADO**
+>> Decisão do Marcos, literal: *"deixamos o educaverso de lado (...) o que iremos fazer é continuar
+>> nossas atividades premium com melhorias"*. Ou seja:
+>> - **PARADO (não puxar mais como projeto):** portal/plataforma EducaVerso, cadastro/turmas, sequências
+>>   didáticas do portal, fábrica de mundos/RPG, e o resto dessa linha (`EDUCAVERSO-*.md`, `EDUVERSE-*.md`,
+>>   `ARQUITETURA-PLATAFORMA-RPG.md`, `EDUCAVERSO-PLANO-FABRICA.md` etc.). Não apagar — só **não é o foco**.
+>> - **O FOCO AGORA:** as **ATIVIDADES PREMIUM** (uma por assunto/ano, 1 HTML autossuficiente) e
+>>   **MELHORIAS** nelas: visual híbrido (imagem IA + animação), voz + lip-sync, dica, medição invisível,
+>>   parecer do professor, mais fases/duração.
+>> - **⚠️ O que NÃO caiu junto:** a pedagogia continua a mesma (aprendizagem ativa, problema primeiro,
+>>   produção e não reconhecimento, medição invisível, mascote que pergunta). Isso é o miolo das premium.
+>> - **Atenção:** o `CLAUDE.md` ainda manda ler os `EDUVERSE-*.md` como "LEI". Perguntei ao Marcos se quer
+>>   que eu ajuste o CLAUDE.md para refletir este rumo — **aguardando a resposta dele**.
+
 >> ## 🌱 NOVA ATIVIDADE — "O Jardim do Broto" (2º ano, Ciências — as plantas) — 2026-07-22
 >> Feita a pedido do Marcos ("crie uma nova atividade para o 2 ano nesse modelo... muitas dinâmicas
 >> interativas variadas, me surpreenda, app inovador, visual diferente do que vimos"). **Visual NOVO**
