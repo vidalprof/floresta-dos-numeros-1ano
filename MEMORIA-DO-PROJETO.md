@@ -23,6 +23,24 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 🧩 VARIEDADE DE MECÂNICA — o Marcos cobrou (2026-07-23) e ele estava certo
+>> Ele perguntou: *"foram utilizadas várias interatividades? tradicionais? caça-palavras?"*. **CONTEI NO CÓDIGO:**
+>> a Redação tinha **26 "escolher uma opção"** contra 2 de qualquer outra coisa — ou seja **~90% múltipla
+>> escolha**. Zero: arrastar, caça-palavras, ligar colunas, digitar, cronômetro. **LIÇÃO: contar as mecânicas
+>> ANTES de entregar** (`grep` por `el("div","opt"` etc.) — muda o cenário mas a mão da criança faz sempre igual.
+>> - **4 MECÂNICAS NOVAS (levaram de ~30 para ~45 min, sem gerar imagem nenhuma — tudo HTML/CSS):**
+>>   1. **Caça-palavras dos verbos** (grade 9x9 gerada em runtime; toca 1ª e última letra). **Pegadinha nossa:**
+>>      tem SUBSTANTIVO na grade (BOLA/ESCOLA) — marcar errado ensina a diferença. Não é caça visual à toa.
+>>   2. **Escreva o verbo (TECLADO)** — sem lista pra escolher; compara com `normal()` (minúsculas + tira acento)
+>>      e aceita várias respostas. É a única PRODUÇÃO real de texto que temos.
+>>   3. **Ligar colunas** (gênero ↔ função) — toca esquerda, toca direita.
+>>   4. **Desafio relâmpago** — cronômetro de 45s + placar, "é verbo ou não é?". Virou a **Missão 3** do menu
+>>      (a professora pode usar sozinha como aquecimento de 3 min em qualquer aula).
+>> - **⚠️ NOVO CHECK DE QA (obrigatório, pegou bug de verdade):** *classe usada no JS sem CSS definido*.
+>>   Regex nas classes de `el("div","xxx")`/`className=` vs as definidas no `<style>`. Pegou `.bin/.bins/.sim/.nao`
+>>   (os botões do relâmpago tinham virado **texto solto**) — o auditor de sobreposição NÃO pega isso.
+>>   **Rodar os DOIS: sobreposição + classe-sem-CSS.**
+>>
 >> ## 🔗 REGRA DO MARCOS: assuntos da MESMA turma = UM app, UM repo (2026-07-23)
 >> Ele perguntou (com razão): *"o certo seria as duas na mesma atividade, em um repo só, não?"* — **SIM**.
 >> Uma professora, uma turma, **um link**. Juntei Verbos + Gêneros em **`_redacao/` → "A Redação do Pingo"**
