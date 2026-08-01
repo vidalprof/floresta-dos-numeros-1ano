@@ -23,6 +23,27 @@
 >> pesquisa = **Open Learner Model** (devolver ao aluno o que ele domina). Adequação por faixa (pré→9º)
 >> muda só a "casca" (identificação/estética/avaliação). Ver também `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.
 
+>> ## 📰 NOVA PREMIUM: "Plantão na Redação" — VERBOS, 4º ano (2026-07-23)
+>> Pedido da professora do 4º ano ("estão iniciando com os verbos"). Publicada em **`plantao-na-redacao`**
+>> → https://vidalprof.github.io/plantao-na-redacao/ . Mascote **o Pingo** (gotinha de tinta, masculino →
+>> voz masculina). Pasta `_verbos/` (3,7 MB: 30 MP3 + 12 imagens).
+>> - **ANCORADA NO CURRÍCULO DE BLUMENAU (baixei o PDF com `baixar-curriculo.yml`):** 4º ano, Morfologia —
+>>   *"Identificar em textos e usar na produção textual a concordância entre substantivo ou pronome pessoal e
+>>   verbo (concordância verbal)"* — **gênero do discurso: NOTÍCIA**; + *"produzir notícias (...) para o jornal
+>>   da escola"* e *"distinguir fatos de opiniões"*. Base do 3º ano: *função do verbo (agente, ação)*.
+>>   ⚠️ A tabela de Blumenau **NÃO traz os códigos EF04LP** nesse trecho → citar o texto, não inventar código.
+>> - **Por que "redação de jornal":** é o currículo que amarra verbo↔notícia. E o produto final é real:
+>>   a criança **escreve a manchete** e ela sai na primeira página (jornal da escola).
+>> - **7 fases:** (1) foto congelada + POE → a cena só ganha cor com o verbo; (2) caça à ação em 4 notícias;
+>>   (3) ficha do repórter (quem fez / o que fez); (4) aquecimento; (5) três edições (ontem/hoje/amanhã);
+>>   (6) erro de impressão = concordância verbal; (7) escreva a manchete + ensinar o Pingo.
+>> - **Motor premium clonado do Jardim** (voz+lip-sync, Ouvir de novo, Dica, medição invisível, `?painel`,
+>>   medalha, identidade). QA: playthrough completo no Chromium **sem erros**.
+>> - **GÊNEROS (2º módulo) fica pendente:** o Marcos ainda vai confirmar com a professora se "gêneros" é
+>>   **gêneros textuais** (provável, o currículo cita notícia/conto/lenda/HQ) ou gênero gramatical.
+>> - **LIÇÃO de QA (paguei tempo):** no teste headless, casar texto por *substring* clica na opção ERRADA
+>>   ("escreve" casa com "escreveu"). **Sempre casar texto EXATO primeiro** no Playwright.
+
 >> ## 🛑 RUMO ATUAL (Marcos, 2026-07-23) — **EDUCAVERSO/EDUVERSE FICA DE LADO**
 >> Decisão do Marcos, literal: *"deixamos o educaverso de lado (...) o que iremos fazer é continuar
 >> nossas atividades premium com melhorias"*. Ou seja:
