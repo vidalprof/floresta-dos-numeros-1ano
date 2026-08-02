@@ -191,6 +191,33 @@
 >>     opções passam atrás da barra de baixo enquanto a tela está no topo. Verificado que **rolando 58px
 >>     nada fica coberto**. Em PC da escola e celular normal não acontece.
 >>   - **`_estrelas` NÃO tem esse bug** (não usa o padrão `dicabox`).
+>> - **🚨 BUG GRAVE — TELA PRESA (`gLigar`), achado pelo Marcos em 2026-08-02.** Ele disse:
+>>   *"tem uma fase de embaralhar que repete, não sai disso, a mesma fase"*. Estava certíssimo.
+>>   Ao inserir a mecânica nova `gLigar` (ligar colunas) eu copiei a linha do `gFuncao` e **esqueci de
+>>   trocar o destino**: ficou `mostraBanner("Cada gênero tem a sua função!", gLigar)` — a tela chamava
+>>   **a si mesma**. Consequência real, muito pior do que "repete": **6 telas ficaram inalcançáveis**
+>>   (`gBanca`, `gAquec`, `gTrocado`, `gMonta`, `gEnsinar`, `gFim`). A criança NUNCA terminava a missão
+>>   de Gêneros, nunca ganhava a medalha, nunca marcava "feito" — e, com o menu em progressão, a
+>>   Missão 3 jamais destrancaria. Conserto: `gLigar` → **`gBanca`**, com mensagem própria.
+>>   - **Por que meu QA não pegou:** o auditor de sobreposição abre cada tela ISOLADA (`window[f]()`)
+>>     e mede o layout. Ele nunca **percorre o caminho**. Layout perfeito, fluxo quebrado.
+>>   - **FERRAMENTA NOVA — `_qa/fluxo.py` (usar SEMPRE que inserir/remover tela):**
+>>     `python3 _qa/fluxo.py _redacao/index.html telaCapa` → acusa **TELA PRESA** (volta pra si mesma)
+>>     e **TELA ÓRFÃ** (ninguém chega nela). Rodando na versão com bug ele acusa o `gLigar` + as 6 órfãs;
+>>     na corrigida diz "fluxo ok". Já passa limpo nos 3 apps. Detalhes que custaram acerto: incluir
+>>     **todas** as funções no grafo (uma tela pode ser chamada de dentro de um ajudante), ler a
+>>     **tabela de paradas** do Estrelas (`fn:function(){telaSoma();}`), e ignorar `telaPainel`/
+>>     `telaPainelPin` (abrem pelo `?painel`) e os helpers `*Base`.
+>>   - **Robô que joga sozinho (`/tmp/jogar.js`):** instrumenta as funções de tela, clica cada candidato
+>>     UMA vez por tela e espera. Confirmou `gAbertura → ... → gFim` (10 telas) e a cadeia dos Verbos.
+>>     **Lição do robô:** clicar rápido demais ATROPELA o `depoisDaFala` — cada erro dispara uma narração
+>>     nova e o banner nunca chega. Isso me deu 3 falsos alarmes (`vCaca`, `vEscreve`). Antes de gritar
+>>     "bug", esperar a narração (até 9-10 s) e conferir à mão.
+>> - **📏 CONTAGEM REAL DE FASES (2026-08-02) — Redação do Pingo = 24 telas:** Missão 1 Verbos **13**
+>>   (abertura, prever, revela, 4 notícias, caça-palavras, ficha, aquecimento, tempo, concordância,
+>>   escrever, manchete, ensinar, fim); Missão 2 Gêneros **10**; Missão 3 Relâmpago **1**.
+>>   ⚠️ Antes do conserto do `gLigar`, a Missão 2 entregava só **4** das 10 telas — a estimativa de
+>>   "20–25 min" que eu tinha dado estava errada por causa disso.
 >> - **⭐ CRACHÁ = O PRÓPRIO BROTO (2026-08-01).** Antes a tela de identidade oferecia as figurinhas
 >>   dos **estágios da planta** (`jd_g0..jd_g4`) — errado pela regra do Marcos ("o crachá tem que ser o
 >>   MESMO mascote, só com cores e roupas/acessórios diferentes"). Agora são **6 variantes do Broto**
