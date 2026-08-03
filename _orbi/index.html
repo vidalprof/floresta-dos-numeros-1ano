@@ -781,7 +781,7 @@ function telaClassifica(){
       fi++;
       if(fi>=fila.length){ fim=true;
         setTimeout(function(){ depoisDaFala("sr_class_revela",14000,function(){
-          mostraBanner("<b>Estrela</b> faz luz. <b>Planeta</b> gira em volta do Sol. <b>Sat&#233;lite</b> gira em volta de um planeta.",telaGiraTerra); }); },450);
+          mostraBanner("<b>Estrela</b> faz luz. <b>Planeta</b> gira em volta do Sol. <b>Sat&#233;lite</b> gira em volta de um planeta.",telaTerraCasa); }); },450);
       } else setTimeout(mostra,420);
     } else { err++; btn.style.opacity=".5"; sErro();
       setTimeout(function(){ btn.style.opacity=""; },450);
@@ -800,7 +800,7 @@ function telaClassifica(){
    O conceito de 3o ano que a crianca mais erra: ela acha que o Sol "apaga".
    Aqui ela GIRA a Terra com a propria mao e ve a casinha entrar na sombra.   */
 function telaGiraTerra(){
-  limpa();var t=el("div","tela");setProg(t,24);
+  limpa();var t=el("div","tela");setProg(t,28);
   var bal=el("div","balao","O Sol fica parado de um lado. <b>Gire a Terra</b> at&#233; a casinha entrar na <b>noite</b>.");
   t.appendChild(bal);
   var ang=180,missao=0,giros=0,fim=false;
@@ -847,7 +847,7 @@ function telaGiraTerra(){
 
 /* ============ P4: POR QUE EXISTE DIA E NOITE ============ */
 function telaDiaNoite(){
-  limpa();var t=el("div","tela");setProg(t,31);
+  limpa();var t=el("div","tela");setProg(t,34);
   var qi=0,err=0;
   var QS=[{p:"Ent&#227;o, <b>por que</b> fica de noite?",
            a:[["Porque a Terra <b>gira</b> e o nosso lado fica sem sol",true],
@@ -895,7 +895,7 @@ function telaDiaNoite(){
 
 /* ============ AQUECIMENTO (revisao espacada) ============ */
 function telaAquecimento(){
-  limpa();var t=el("div","tela");setProg(t,36);var c=el("div","centro");
+  limpa();var t=el("div","tela");setProg(t,39);var c=el("div","centro");
   c.appendChild(orbiEl("pq"));
   c.appendChild(el("div","selo","LEMBRANDO..."));
   c.appendChild(el("div","balao","Antes de seguir: quem faz a <b>pr&#243;pria luz</b>?"));
@@ -919,7 +919,7 @@ function telaAquecimento(){
 
 /* ============ P5: A LUA DA A VOLTA (satelite, concreto) ============ */
 function telaLuaGira(){
-  limpa();var t=el("div","tela");setProg(t,42);
+  limpa();var t=el("div","tela");setProg(t,44);
   var bal=el("div","balao","Leve a <b>Lua</b> at&#233; o pontinho que est&#225; brilhando. D&#234; a <b>volta inteira</b> na Terra.");
   t.appendChild(bal);
   var N=8,pos=0,voltas=0,fim=false;
@@ -959,7 +959,7 @@ function telaLuaGira(){
 
 /* ============ P5b: ENTAO A LUA E O QUE? ============ */
 function telaLuaQuem(){
-  limpa();var t=el("div","tela");setProg(t,46);var c=el("div","centro");
+  limpa();var t=el("div","tela");setProg(t,48);var c=el("div","centro");
   c.appendChild(orbiEl("pq"));
   c.appendChild(el("div","selo","ENT&#195;O..."));
   c.appendChild(el("div","balao","Quem gira em volta de um <b>planeta</b> ganha um nome. Qual &#233;?"));
@@ -989,7 +989,7 @@ var FASES=[{img:"sr_lua_nova",n:"LUA NOVA",d:"A gente quase n&#227;o v&#234; a L
            {img:"sr_lua",n:"LUA CHEIA",d:"A Lua aparece inteirinha, redonda."},
            {img:"sr_lua_ming",n:"QUARTO MINGUANTE",d:"S&#243; o outro lado aparece."}];
 function telaFasesExplora(){
-  limpa();var t=el("div","tela");setProg(t,51);
+  limpa();var t=el("div","tela");setProg(t,53);
   var bal=el("div","balao","O <b>Sol</b> est&#225; deste lado. Toque nas <b>quatro posi&#231;&#245;es</b> da Lua e veja o que a gente enxerga daqui da Terra.");
   t.appendChild(bal);
   var vistos={},nv=0,fim=false;
@@ -1032,7 +1032,7 @@ function telaFasesExplora(){
 
 /* ============ P6b: QUE FASE E ESSA? ============ */
 function telaFasesNome(){
-  limpa();var t=el("div","tela");setProg(t,56);
+  limpa();var t=el("div","tela");setProg(t,58);
   t.appendChild(el("div","balao","Olhe a Lua e diga <b>que fase</b> &#233; essa."));
   var fila=baguncar([0,1,2,3]),fi=0,err=0,fim=false;
   var cen=el("div","centro");
@@ -1076,7 +1076,7 @@ function telaFasesNome(){
 
 /* ============ P6c: A ORDEM DAS FASES ============ */
 function telaFasesOrdem(){
-  limpa();var t=el("div","tela");setProg(t,60);
+  limpa();var t=el("div","tela");setProg(t,62);
   t.appendChild(el("div","balao","A Lua muda sempre na <b>mesma ordem</b>. Toque da <b>nova</b> at&#233; a <b>minguante</b>."));
   var prox=0,err=0;
   var cen=el("div","centro");var wrap=el("div","cartas");
@@ -1102,7 +1102,7 @@ function telaFasesOrdem(){
 /* ============ CACA-PALAVRAS DO CEU ============ */
 /* a config fica FORA da funcao de proposito: o auditor de contraste/leiaute
    chama cada tela sem argumento, e sem isso o caca-palavras quebrava a banca. */
-var CACACEU={lista:["SOL","LUA","TERRA","ESTRELA"],N:7,prog:64,conc:"luz_propria",
+var CACACEU={lista:["SOL","LUA","TERRA","ESTRELA"],N:7,prog:66,conc:"luz_propria",
   txt:"Ache as <b>4 palavras</b> escondidas no c&#233;u do quadro.",
   intro:"sr_caca_intro",dica:"sr_caca_dica",dicaTxt:"As palavras est&#227;o deitadas ou em p&#233;.",
   revela:"sr_caca_revela",msg:"<b>Sol</b>, <b>Lua</b>, <b>Terra</b> e <b>estrela</b>: achou todas!",
@@ -1199,7 +1199,7 @@ function telaCacaBase(cfg){
    e um texto para ler: a crianca TOCA no planeta, ve a foto grande e OUVE o
    fato. So libera quando visitou os oito.                                     */
 function telaPlanetasFicha(){
-  limpa();var t=el("div","tela");setProg(t,68);
+  limpa();var t=el("div","tela");setProg(t,71);
   var bal=el("div","balao","Toque em cada planeta para <b>conhecer</b> ele. Faltam <b>8</b>.");
   t.appendChild(bal);
   var vistos={},nv=0,fim=false;
@@ -1236,7 +1236,7 @@ function telaPlanetasFicha(){
 
 /* ============ P8: A FILA DO SOL (ordem dos planetas) ============ */
 function telaOrdemPlanetas(){
-  limpa();var t=el("div","tela");setProg(t,74);
+  limpa();var t=el("div","tela");setProg(t,76);
   t.appendChild(el("div","balao","Monte a <b>fila</b>: do planeta mais <b>perto</b> do Sol at&#233; o mais <b>longe</b>."));
   var prox=0,err=0;
   var cen=el("div","centro");
@@ -1257,7 +1257,7 @@ function telaOrdemPlanetas(){
         prox++;
         if(prox>=8){ reg("planetas",err===0,err+1);
           setTimeout(function(){ depoisDaFala("sr_ord_revela",14000,function(){
-            mostraBanner("Merc&#250;rio, V&#234;nus, Terra, Marte, J&#250;piter, Saturno, Urano e Netuno.",telaQuemSouEu); }); },600); }
+            mostraBanner("Merc&#250;rio, V&#234;nus, Terra, Marte, J&#250;piter, Saturno, Urano e Netuno.",telaMontaPalavra); }); },600); }
       } else { err++; b.className="plb no"; sErro();
         setTimeout(function(){ if(b.className==="plb no") b.className="plb"; },450);
         ajudaOr(err,{dica:"O primeiro &#233; o <b>menorzinho</b>, bem grudado no Sol. A <b>Terra</b> &#233; a terceira.",
@@ -1281,7 +1281,7 @@ var PISTAS=[{p:"Eu tenho <b>an&#233;is</b> de gelo girando em volta de mim.",k:5
             {p:"Eu sou o <b>mais perto</b> do Sol e o menorzinho.",k:0},
             {p:"Eu sou o <b>mais longe</b> do Sol e o mais gelado.",k:7}];
 function telaQuemSouEu(){
-  limpa();var t=el("div","tela");setProg(t,80);
+  limpa();var t=el("div","tela");setProg(t,85);
   var qi=0,err=0,fim=false;
   var bal=el("div","balao","");
   t.appendChild(bal);
@@ -1321,7 +1321,7 @@ var TAM=[{img:"sr_lua",n:"Lua",w:44},{img:"sr_mercurio",n:"Merc&#250;rio",w:54},
          {img:"sr_terra",n:"Terra",w:68},{img:"sr_netuno",n:"Netuno",w:86},
          {img:"sr_jupiter",n:"J&#250;piter",w:106},{img:"sr_sol",n:"Sol",w:124}];
 function telaTamanhos(){
-  limpa();var t=el("div","tela");setProg(t,84);
+  limpa();var t=el("div","tela");setProg(t,89);
   t.appendChild(el("div","balao","Coloque em ordem do <b>menor</b> para o <b>maior</b>."));
   var prox=0,err=0;
   var cen=el("div","centro");var wrap=el("div","cartas");
@@ -1336,7 +1336,7 @@ function telaTamanhos(){
         var ce=centroTela(cd);faisca(ce[0],ce[1],"#8be05a",10);prox++;
         if(prox>=6){ reg("planetas",err===0,err+1);
           setTimeout(function(){ depoisDaFala("sr_tam_revela",13000,function(){
-            mostraBanner("O <b>Sol</b> &#233; gigante perto de tudo. E a nossa <b>Terra</b> &#233; pequenininha!",telaMontaPalavra); }); },500); } }
+            mostraBanner("O <b>Sol</b> &#233; gigante perto de tudo. E a nossa <b>Terra</b> &#233; pequenininha!",telaMemoria); }); },500); } }
       else { err++; cd.className="carta tam no";sErro();setTimeout(function(){cd.className="carta tam";},450);
         ajudaOr(err,{dica:"O tamanho do desenho ajuda: comece pelo <b>menorzinho</b>."}); }
     };
@@ -1356,7 +1356,7 @@ var MONTASR=[{p:"ESTRELA",d:"Corpo do c&#233;u que <b>faz a pr&#243;pria luz</b>
              {p:"SATURNO",d:"O planeta dos <b>an&#233;is</b>.",c:"planetas"},
              {p:"TERRA",d:"O planeta onde a gente <b>mora</b>.",c:"terra_planeta"}];
 function telaMontaPalavra(){
-  limpa();var t=el("div","tela");setProg(t,88);
+  limpa();var t=el("div","tela");setProg(t,81);
   var pi=0,err=0;
   var dica=el("div","balao","");t.appendChild(dica);
   var cen=el("div","centro");
@@ -1386,7 +1386,7 @@ function telaMontaPalavra(){
             pi++;
             if(pi>=MONTASR.length){
               setTimeout(function(){ depoisDaFala("sr_monta_revela",10000,function(){
-                mostraBanner("Voc&#234; escreveu as <b>cinco palavras</b> do c&#233;u!",telaTerraCasa); }); },450);
+                mostraBanner("Voc&#234; escreveu as <b>cinco palavras</b> do c&#233;u!",telaQuemSouEu); }); },450);
             } else setTimeout(pede,780);
           }
         } else { err++; b.className="tec no"; sErro();
@@ -1410,7 +1410,7 @@ var CASAT=[{img:"sr_terra",n:"&#193;gua no rio e no mar",ok:true},
            {img:"sr_marte",n:"Poeira vermelha por tudo",ok:false},
            {img:"sr_lua",n:"S&#243; crateras, sem nenhum ar",ok:false}];
 function telaTerraCasa(){
-  limpa();var t=el("div","tela");setProg(t,91);
+  limpa();var t=el("div","tela");setProg(t,22);
   t.appendChild(el("div","balao","A <b>Terra</b> tem isto? Pense na janela da sua casa."));
   var fila=baguncar(CASAT.slice(0)),fi=0,err=0,fim=false;
   var cen=el("div","centro");
@@ -1431,7 +1431,7 @@ function telaTerraCasa(){
       fi++;
       if(fi>=fila.length){ fim=true;
         setTimeout(function(){ depoisDaFala("sr_casa_revela",14000,function(){
-          mostraBanner("&#193;gua, ar e solo com vida: at&#233; agora <b>s&#243; a Terra</b> tem tudo isso.",telaMemoria); }); },500);
+          mostraBanner("&#193;gua, ar e solo com vida: at&#233; agora <b>s&#243; a Terra</b> tem tudo isso.",telaGiraTerra); }); },500);
       } else setTimeout(mostra,420);
     } else { err++; card.style.borderColor="#ff7a6b"; sErro();
       setTimeout(function(){ card.style.borderColor=""; },500);
@@ -1453,7 +1453,7 @@ var MEMSR=[{k:"sol",a:"SOL",b:"Estrela que d&#225; luz e calor"},
            {k:"jupiter",a:"J&#218;PITER",b:"O maior planeta de todos"},
            {k:"marte",a:"MARTE",b:"O planeta vermelho"}];
 function telaMemoria(){
-  limpa();var t=el("div","tela");setProg(t,94);
+  limpa();var t=el("div","tela");setProg(t,93);
   t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o corpo do c&#233;u junto com o que ele &#233;."));
   var baralho=[],i;
   for(i=0;i<MEMSR.length;i++){ baralho.push({k:MEMSR[i].k,tx:MEMSR[i].a,tipo:"n"}); baralho.push({k:MEMSR[i].k,tx:MEMSR[i].b,tipo:"f"}); }
@@ -1492,7 +1492,7 @@ function telaMemoria(){
 }
 
 /* ============ ENSINAR O ORBI (autoexplicacao) ============ */
-function telaEnsinar(){limpa();var t=el("div","tela");setProg(t,97);var c=el("div","centro");
+function telaEnsinar(){limpa();var t=el("div","tela");setProg(t,96);var c=el("div","centro");
   c.appendChild(orbiEl("pq"));
   c.appendChild(el("div","selo","ENSINE O &#211;RBI"));
   c.appendChild(el("div","balao","Me conta: <b>por que</b> a Lua brilha de noite?"));

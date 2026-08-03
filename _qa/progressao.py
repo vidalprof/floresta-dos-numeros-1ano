@@ -52,12 +52,21 @@ for nome, corpo in corpos.items():
     m = re.search(r"setProg\(\s*\w+\s*,\s*(\d+)", corpo)
     prog[nome] = int(m.group(1)) if m else None
 
-# 3) transicoes: o banner do fim de fase diz qual e a proxima
+# 3) transicoes. Duas formas de passar de fase, e as DUAS contam:
+#    - mostraBanner(mensagem, proximaTela)  -> o caminho comum
+#    - proximaTela()                        -> chamada direta (sem banner)
+#    A primeira versao deste auditor so olhava o banner e por isso NAO viu as
+#    quedas do Plantao na Redacao (56% -> 36%). Agora olha as duas.
+REINICIO = ("telaCapa", "telaMenu")   # "jogar de novo" e voltar ao menu nao contam
 ruins = []
 for nome, corpo in corpos.items():
     if prog[nome] is None:
         continue
-    for alvo in sorted(set(re.findall(r"mostraBanner\([^,]+,\s*([A-Za-z_$][\w$]*)\s*\)", corpo))):
+    alvos = set(re.findall(r"mostraBanner\([^,]+,\s*([A-Za-z_$][\w$]*)\s*\)", corpo))
+    alvos |= set(re.findall(r"(?:^|[^\w.$])([A-Za-z_$][\w$]*)\(\)\s*;", corpo))
+    for alvo in sorted(alvos):
+        if alvo == nome or alvo in REINICIO:
+            continue
         if alvo in corpos and prog[alvo] is not None and prog[alvo] < prog[nome]:
             ruins.append((nome, prog[nome], alvo, prog[alvo]))
 

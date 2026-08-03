@@ -854,7 +854,7 @@ var GAV=[
  {p:"port&#227;o",g:0},{p:"enferrujado",g:1},{p:"crian&#231;as",g:0},{p:"alegres",g:1},
  {p:"bicicleta",g:0},{p:"colorida",g:1},{p:"horta",g:0},{p:"nova",g:1}];
 function nCaixas(){
-  limpa();var t=el("div","tela");setProg(t,23);
+  limpa();var t=el("div","tela");setProg(t,18);
   var fila=baguncar(GAV.slice(0)),i2=0,err=0,fim=false,contas=[0,0];
   var c=el("div","centro");
   c.appendChild(el("div","selo","AS DUAS GAVETAS"));
@@ -877,7 +877,7 @@ function nCaixas(){
       reg("reconhecer",err===0,err+1); err=0;
       setTimeout(function(){ d.className="cx"; i2++;
         if(i2>=fila.length){ fim=true; depoisDaFala("nm_caixa_revela",9000,function(){
-          mostraBanner("<b>Substantivo</b> nomeia. <b>Adjetivo</b> descreve.",nGrupo); }); }
+          mostraBanner("<b>Substantivo</b> nomeia. <b>Adjetivo</b> descreve.",nMagica); }); }
         else mostra();
       },420);
     } else { err++; sErro(); consolo(); d.className="cx no";
@@ -900,7 +900,7 @@ function nGrupo(){
   var idx=0,err=0;
   var ordem=[0,1,3,4];
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,32+idx*4);
+    limpa();var t=el("div","tela");setProg(t,50+idx*3);
     var f=FOTOS[ordem[idx]];
     var c=el("div","centro");
     c.appendChild(el("div","selo","BANCADA DE MONTAGEM"));
@@ -941,7 +941,7 @@ function nGrupo(){
         var ce=centroTela(vagas); faisca(ce[0],ce[1],"#ffb45e",16);
         setTimeout(function(){ idx++;
           if(idx>=ordem.length){ depoisDaFala("nm_grupo_revela",9000,function(){
-            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nMagica); }); }
+            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nPlural); }); }
           else { err=0; passo(); }
         },1000);
       }
@@ -1026,7 +1026,7 @@ var PLU=[
 function nPlural(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,60+idx*3);
+    limpa();var t=el("div","tela");setProg(t,62+idx*2);
     var it=PLU[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","TUDO COMBINANDO"));
@@ -1081,7 +1081,7 @@ function nGenero(){
           reg("concordancia",err===0,err+1);
           setTimeout(function(){ idx++;
             if(idx>=GEN.length){ depoisDaFala("nm_genero_revela",9000,function(){
-              mostraBanner("O adjetivo combina com o <b>nome</b>: o molhado, a molhada.",nLigar); }); }
+              mostraBanner("O adjetivo combina com o <b>nome</b>: o molhado, a molhada.",nGrau); }); }
             else { err=0; passo(); }
           },900);
         } else { err++; b.className="pc adj no"; sErro(); consolo();
@@ -1114,7 +1114,7 @@ var MAGIA=[
 function nMagica(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,36+idx*2);
+    limpa();var t=el("div","tela");setProg(t,26+idx*3);
     var it=MAGIA[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","FILTRO M&#193;GICO"));
@@ -1164,7 +1164,7 @@ var DET=[
 function nDetetive(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,44+idx*2);
+    limpa();var t=el("div","tela");setProg(t,38+idx*3);
     var it=DET[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","DETETIVE DA REDA&#199;&#195;O"));
@@ -1179,7 +1179,7 @@ function nDetetive(){
           reg("reconhecer",err===0,err+1);
           setTimeout(function(){ idx++;
             if(idx>=DET.length){ depoisDaFala("nm_det_revela",9000,function(){
-              mostraBanner("Com bom adjetivo, quem l&#234; acha a foto <b>sem ver</b>!",nGrau); }); }
+              mostraBanner("Com bom adjetivo, quem l&#234; acha a foto <b>sem ver</b>!",nGrupo); }); }
             else { err=0; passo(); }
           },1000);
         } else { err++; d.className="gfoto no"; sErro(); consolo();
@@ -1205,7 +1205,7 @@ var GRAU=[
 function nGrau(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,48+idx*2);
+    limpa();var t=el("div","tela");setProg(t,74+idx*2);
     var it=GRAU[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","ENCOLHE E AUMENTA"));
@@ -1255,7 +1255,7 @@ var FAB=[
 function nFabrica(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,54+idx*2);
+    limpa();var t=el("div","tela");setProg(t,82+idx);
     var it=FAB[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","F&#193;BRICA DE ADJETIVOS"));
@@ -1280,7 +1280,7 @@ function nFabrica(){
           reg("morfologia",err===0,err+1);
           setTimeout(function(){ idx++;
             if(idx>=FAB.length){ depoisDaFala("nm_fabrica_revela",10000,function(){
-              mostraBanner("O <b>pedacinho no fim</b> transforma o nome em adjetivo!",nPlural); }); }
+              mostraBanner("O <b>pedacinho no fim</b> transforma o nome em adjetivo!",nLigar); }); }
             else { err=0; passo(); }
           },1500);
         } else { err++; b.className="pc adj no"; sErro();
@@ -1300,7 +1300,7 @@ function nFabrica(){
 
 /* ---------- 9) LIGAR AS COLUNAS ---------- */
 function nLigar(){
-  limpa();var t=el("div","tela");setProg(t,76);
+  limpa();var t=el("div","tela");setProg(t,86);
   var pares=[["cachorro","molhado"],["&#225;rvore","florida"],["port&#227;o","enferrujado"],
              ["crian&#231;as","alegres"],["bicicletas","coloridas"]];
   var dir=[2,4,0,3,1],selE=null,feitos=0,err=0;
@@ -1342,7 +1342,7 @@ function nLigar(){
 /* ---------- 10) CAÇA-PALAVRAS DOS ADJETIVOS ---------- */
 var CACAN=["NOVO","ALTO","LIMPO","ALEGRE","VELHO","MOLHADO"];
 function nCaca(){
-  limpa();var t=el("div","tela");setProg(t,82);
+  limpa();var t=el("div","tela");setProg(t,88);
   var N=9,g=[],i,j,k;
   for(i=0;i<N;i++){g[i]=[];for(j=0;j<N;j++)g[i][j]="";}
   var pos={},achadas={},total=0;
@@ -1426,7 +1426,7 @@ var PROVAN={
         {errado:"alegre",certo:"alegres",alt:["alegres","alegro"]},
         {errado:"velhas",certo:"velho",alt:["velho","velha"]}]};
 function nRevisor(){
-  limpa();var t=el("div","tela");setProg(t,87);
+  limpa();var t=el("div","tela");setProg(t,90);
   var feitos=0,err=0,aberto=null;
   var c=el("div","centro");
   c.appendChild(el("div","selo","REVISOR DA P&#193;GINA"));
@@ -1480,7 +1480,7 @@ var CRUZN=[
  {p:"ALEGRES", d:"Como est&#227;o as crian&#231;as que brincam?"},
  {p:"NOVA",    d:"Como &#233; a horta que acabou de nascer?"}];
 function nCruzada(){
-  limpa();var t=el("div","tela");setProg(t,91);
+  limpa();var t=el("div","tela");setProg(t,92);
   var atual=0,err=0,feitos=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","CRUZADINHA DA REDA&#199;&#195;O"));
