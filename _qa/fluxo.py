@@ -23,6 +23,9 @@ import re
 import sys
 
 
+CORPOS = {}
+
+
 def telas_e_saidas(html):
     """Devolve {nome_da_tela: set(telas para onde ela leva)}."""
     marcas = [(m.group(1), m.start()) for m in re.finditer(r"\nfunction ([A-Za-z_]\w*)\(", html)]
@@ -51,6 +54,7 @@ def telas_e_saidas(html):
         if re.search(r"\b%s\(\)" % nome, corpo) or re.search(r",\s*%s\s*\)" % nome, corpo):
             alvos.add(nome)
         saidas[nome] = alvos
+        CORPOS[nome] = corpo
     return saidas
 
 
@@ -84,12 +88,13 @@ def main():
     caminho, raizes = sys.argv[1], sys.argv[2:]
     html = io.open(caminho, encoding="utf-8").read()
     saidas = telas_e_saidas(html)
+    corpos = CORPOS
 
     problemas = []
 
     # telaPainel se redesenha de proposito (imprimir/voltar) -> nao e "presa"
     presas = sorted(n for n, al in saidas.items() if n in al and n != "telaPainel"
-                    and re.match(r"^(v[A-Z]|g[A-Z]|tela)", n))
+                    and re.search(r"\blimpa\(\)", corpos.get(n, "")))
     for n in presas:
         problemas.append("TELA PRESA: %s leva de volta para ela mesma" % n)
 
@@ -97,7 +102,11 @@ def main():
     vistas = alcancaveis(saidas, list(raizes) + sorted(extras))
     # telaPainel abre pelo ?painel; *Base sao helpers, nao telas
     ignorar = set(n for n in saidas if n.endswith("Base")) | {"telaPainel", "telaPainelPin"}  # abrem pelo ?painel, nao pelo fluxo
-    so_telas = set(n for n in saidas if re.match(r"^(v[A-Z]|g[A-Z]|tela)", n))
+    # TELA = funcao que chama limpa() (limpa a area e desenha).
+    # Detectar pelo COMPORTAMENTO e nao pelo nome: os prefixos mudam de app
+    # para app (vXxx, gXxx, nXxx, telaXxx) e um regex de nome deixa telas de
+    # fora em silencio -- foi o que aconteceu com a "Legenda do Pingo".
+    so_telas = set(n for n in saidas if re.search(r"\blimpa\(\)", corpos.get(n, "")))
     orfas = sorted(so_telas - vistas - ignorar)
     for n in orfas:
         problemas.append("TELA ORFA: ninguem chega em %s" % n)
