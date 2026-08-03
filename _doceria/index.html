@@ -339,7 +339,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .btn.peq{font-size:18.7px;padding:13px 26px;-webkit-animation:none;animation:none}
 @media (max-height:900px){.bin{width:126px;padding:13px 8px;font-size:16.5px} }
 /* ===== DOCERIA: bandejas, grupos manipulaveis, conta viva ===== */
-.bancada{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:10px;-webkit-box-pack:center;justify-content:center;margin-top:20px;max-width:360px}
+.bancada{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:10px;-webkit-box-pack:center;justify-content:center;margin:16px 0;max-width:360px}
 .bandeja{position:relative;background:-webkit-linear-gradient(top,#c69a63,#9d7340);background:linear-gradient(#c69a63,#9d7340);border:3px solid #6f4f26;border-radius:14px;padding:8px;min-width:86px;min-height:74px;cursor:pointer;-webkit-box-shadow:0 6px 14px rgba(80,50,20,.3);box-shadow:0 6px 14px rgba(80,50,20,.3)}
 .bandeja .doces{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:3px;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;min-height:56px}
 .bandeja .doces img{width:26px;height:26px;object-fit:contain;-webkit-animation:pop .3s;animation:pop .3s}
@@ -349,7 +349,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .conta{background:var(--papel);border:2px solid var(--linha);border-bottom-width:5px;border-radius:16px;padding:11px 16px;margin-top:12px;font-size:25.3px;font-weight:800;color:var(--tinta-d);letter-spacing:.5px;-webkit-box-shadow:0 6px 14px rgba(50,40,20,.24);box-shadow:0 6px 14px rgba(50,40,20,.24);-webkit-animation:pop .3s;animation:pop .3s}
 .conta small{display:block;font-size:13.8px;font-weight:600;color:#6b6555;letter-spacing:0;margin-top:3px}
 .conta b{color:var(--ok)}
-.grade2{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:5px;background:-webkit-linear-gradient(top,#c69a63,#9d7340);background:linear-gradient(#c69a63,#9d7340);border:3px solid #6f4f26;border-radius:14px;padding:9px;margin-top:20px;-webkit-box-shadow:0 6px 14px rgba(80,50,20,.3);box-shadow:0 6px 14px rgba(80,50,20,.3)}
+.grade2{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:5px;background:-webkit-linear-gradient(top,#c69a63,#9d7340);background:linear-gradient(#c69a63,#9d7340);border:3px solid #6f4f26;border-radius:14px;padding:9px;margin:16px 0;-webkit-box-shadow:0 6px 14px rgba(80,50,20,.3);box-shadow:0 6px 14px rgba(80,50,20,.3)}
 .fila{display:-webkit-box;display:-webkit-flex;display:flex;gap:5px;-webkit-box-pack:center;justify-content:center}
 .fila img{width:30px;height:30px;object-fit:contain}
 .fila.marca{background:rgba(255,255,255,.28);border-radius:8px}
@@ -367,7 +367,10 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .giro .gbt{width:46px;height:46px;border-radius:50%;background:var(--papel);border:2px solid var(--linha);border-bottom-width:4px;font-size:26.4px;font-weight:800;color:var(--tinta-d);cursor:pointer;line-height:40px;text-align:center;-webkit-box-shadow:0 4px 9px rgba(50,40,20,.2);box-shadow:0 4px 9px rgba(50,40,20,.2)}
 .giro .gval{min-width:52px;font-size:31.9px;font-weight:800;color:var(--tinta-d);text-align:center;background:var(--papel);border:2px solid var(--linha);border-radius:13px;padding:3px 8px;line-height:1.15}
 .giro .glab{font-size:13.8px;font-weight:700;color:#fff;background:rgba(58,42,24,.82);padding:4px 10px;border-radius:999px}
-.mem{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin-top:20px;max-width:340px}
+/* quadro do estoque: alvo de toque de crianca (>=40px). As regras do motor
+   vinham do caca-palavras 9x9 (celula pequena); aqui sao 36 numeros. */
+.cel{min-height:44px;height:auto;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
+.mem{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin:16px 0;max-width:340px}
 .mcard{position:relative;width:96px;height:60px;cursor:pointer}
 .mcard .mfr,.mcard .mtr{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:13px;border:2px solid var(--linha);border-bottom-width:4px;text-align:center;font-weight:800;-webkit-box-shadow:0 4px 10px rgba(50,40,20,.2);box-shadow:0 4px 10px rgba(50,40,20,.2)}
 .mcard .mfr{background:-webkit-linear-gradient(top,#c69a63,#9d7340);background:linear-gradient(#c69a63,#9d7340);border-color:#6f4f26;color:#fff6e6;font-size:28.6px;line-height:56px}
@@ -450,6 +453,72 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .giro .gbt{width:56px;height:56px;line-height:50px}
   .giro .gval{min-width:64px}
   .num{max-width:430px}
+}
+
+/* ===== JANELA BAIXA (navegador com muitas barras, monitor antigo, projetor) =====
+   ⚠️ LICAO PAGA (foto do Marcos, ago/2026): numa janela de ~360px de altura as
+   OPCOES DE RESPOSTA ficavam fora da tela — a crianca via so o enunciado e nao
+   sabia que havia o que responder. Aqui tudo encolhe para caber. Este bloco fica
+   por ULTIMO no CSS de proposito: ele tem que ganhar de todos os outros. */
+@media (max-height:600px){
+  .tela{padding:calc(28px + env(safe-area-inset-top)) 12px calc(62px + env(safe-area-inset-bottom))}
+  .cacau{width:112px;height:112px}.cacau.gg{width:150px;height:150px}.cacau.pq{width:84px;height:84px}
+  h1{font-size:26px}.sub{font-size:13.5px;padding:4px 11px;margin-bottom:6px}
+  .selo{font-size:11px;padding:4px 10px;margin-bottom:5px}
+  .balao{font-size:15px;padding:9px 13px;line-height:1.28}
+  .dicain{font-size:14px}
+  .hint{font-size:12px;margin-top:7px;padding:4px 10px}
+  .opts{margin-top:9px;gap:7px}
+  .opt{padding:8px 11px;font-size:15px;border-bottom-width:4px}
+  .bancada{margin:9px 0;gap:7px}
+  .bandeja{min-width:62px;min-height:52px;padding:5px}
+  .bandeja .doces{min-height:38px;gap:2px}
+  .bandeja .doces img{width:18px;height:18px}
+  .bandeja .cont{min-width:19px;height:19px;line-height:19px;font-size:11px;top:-7px;right:-7px}
+  .grade2{margin:9px 0;padding:6px;gap:3px}.fila{gap:3px}.fila img{width:22px;height:22px}
+  .conta{font-size:19px;padding:8px 13px;margin-top:9px}
+  .conta small{font-size:11.5px}
+  .num{margin-top:9px;gap:6px;max-width:340px}
+  .tecl{width:48px;height:42px;line-height:36px;font-size:19px;border-bottom-width:4px}
+  .pedido{font-size:14px;padding:9px 12px;margin-top:9px}
+  .parc{padding:5px 10px;font-size:16px}.sinal{font-size:16px}
+  .mais2{margin-top:9px}
+  .mem{margin:9px 0;gap:5px}
+  .mcard{width:78px;height:46px}
+  .mcard .mfr,.mcard .mtr{line-height:42px}
+  .mcard .mfr{font-size:21px}.mcard .mtr{font-size:13px}
+  .lig{padding:7px 6px;font-size:13px;min-height:34px}
+  .cols{gap:8px}
+  .cel{font-size:13px;min-height:41px}
+  .giro{margin-top:8px;gap:7px}
+  .giro .gbt{width:42px;height:42px;line-height:36px;font-size:21px}
+  .giro .gval{font-size:22px;min-width:42px;padding:1px 6px}
+  .giro .glab{font-size:11px;padding:3px 8px}
+  .btn{font-size:17px;padding:11px 20px}
+  .relcard{font-size:22px}
+  .medal{height:110px}
+  .cracha .cnome{font-size:16px}
+}
+
+/* janela MUITO baixa (~430px): ultimo aperto, so para nada ficar escondido */
+@media (max-height:430px){
+  .tela{padding:calc(24px + env(safe-area-inset-top)) 10px calc(56px + env(safe-area-inset-bottom))}
+  .selo{font-size:10px;padding:3px 9px;margin-bottom:4px}
+  .balao{font-size:14px;padding:7px 11px}
+  .opts{margin-top:7px;gap:5px}
+  .opt{padding:6px 10px;font-size:14px}
+  .bancada{margin:7px 0;gap:6px}
+  .bandeja{min-width:56px;min-height:44px;padding:4px}
+  .bandeja .doces{min-height:32px}
+  .bandeja .doces img{width:15px;height:15px}
+  .grade2{margin:7px 0}.fila img{width:18px;height:18px}
+  .conta{font-size:17px;padding:6px 11px;margin-top:7px}
+  .num{margin-top:7px;gap:5px}
+  .tecl{width:44px;height:41px;line-height:35px;font-size:17px}
+  .hint{display:none}
+  .pedido{font-size:13px;padding:7px 11px;margin-top:7px}
+  .mcard{width:70px;height:40px}.mcard .mfr,.mcard .mtr{line-height:36px}
+  .cacau{width:88px;height:88px}.cacau.gg{width:112px;height:112px}.cacau.pq{width:68px;height:68px}
 }
 </style></head>
 <body>
