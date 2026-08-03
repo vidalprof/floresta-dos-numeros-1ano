@@ -624,7 +624,7 @@ function telaOrdenar(){limpa();var t=el("div","tela");setProg(t,32);
   montaBarra("jd_p3_dica","Comece pelo que &#233; bem pequenininho e fica escondido na terra.");
   falar("jd_p3_intro");}
 /* ============ AQUECIMENTO (revisão espaçada) ============ */
-function telaAquecimento(){limpa();var t=el("div","tela");setProg(t,40);var c=el("div","centro");
+function telaAquecimento(){limpa();var t=el("div","tela");setProg(t,43);var c=el("div","centro");
   c.appendChild(brotoEl("pq"));
   c.appendChild(el("div","selo","LEMBRANDO..."));
   c.appendChild(el("div","balao","Uma planta que fica <b>no escuro</b>, sem nenhuma luz: o que acontece com ela?"));
@@ -700,7 +700,7 @@ function telaPartesBase(cfg){
   falar(cfg.intro);
 }
 function telaPartes(){
-  telaPartesBase({prog:64,conc:"partes",pisca:true,intro:"jd_p5_intro",revela:"jd_p5_revela",
+  telaPartesBase({prog:63,conc:"partes",pisca:true,intro:"jd_p5_intro",revela:"jd_p5_revela",
     dica:"jd_p5_dica",dicaTxt:"A parte que fica escondida na terra &#233; a raiz.",
     hint:"Toque na planta, na parte pedida.",
     msg:"<b>Raiz</b>, <b>caule</b>, <b>folha</b>, <b>flor</b>, <b>fruto</b> e <b>semente</b>!",
@@ -740,7 +740,7 @@ var PARTES6=[{k:"raiz",n:"RAIZ"},{k:"caule",n:"CAULE"},{k:"folha",n:"FOLHA"},
 function telaComemos(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,74+idx*1.2);
+    limpa();var t=el("div","tela");setProg(t,82+idx*0.6);
     var it=COMER[idx],err=0,fim=false;
     var cen=el("div","centro");
     cen.appendChild(el("div","selo","O QUE TEM NO PRATO"));
@@ -791,7 +791,7 @@ function ajudaJd(n,ops){
 var QUALP=[{img:"jd_cenoura",k:"raiz"},{img:"jd_alface",k:"folha"},{img:"jd_cana",k:"caule"},
            {img:"jd_brocolis",k:"flor"},{img:"jd_morango",k:"fruto"},{img:"jd_feijao",k:"semente"}];
 function telaQualParte(){
-  limpa();var t=el("div","tela");setProg(t,84);
+  limpa();var t=el("div","tela");setProg(t,90);
   var fila=baguncar(QUALP.slice(0)),idx=0,err=0;
   var cen=el("div","centro");
   cen.appendChild(el("div","selo","OLHE DE PERTO"));
@@ -890,7 +890,7 @@ var SERVE=[["RAIZ","Bebe a &#225;gua da terra"],["CAULE","Segura a planta em p&#
            ["FOLHA","Toma o sol e faz o alimento"],["FLOR","Chama a abelha e vira fruto"],
            ["FRUTO","Guarda a semente dentro"],["SEMENTE","Nasce uma planta nova"]];
 function telaServe(){
-  limpa();var t=el("div","tela");setProg(t,80);
+  limpa();var t=el("div","tela");setProg(t,73);
   var dir=[2,5,0,4,1,3],selE=null,feitos=0,err=0;
   var cen=el("div","centro");
   cen.appendChild(el("div","selo","PARA QUE SERVE"));
@@ -933,7 +933,7 @@ function telaServe(){
 }
 
 /* ============ ENSINAR O BROTO (autoexplicação) ============ */
-function telaEnsinar(){limpa();var t=el("div","tela");setProg(t,91);var c=el("div","centro");
+function telaEnsinar(){limpa();var t=el("div","tela");setProg(t,98);var c=el("div","centro");
   c.appendChild(brotoEl("pq"));
   c.appendChild(el("div","selo","ENSINE O BROTO"));
   c.appendChild(el("div","balao","Me conta: <b>por que</b> a planta precisa da luz do sol?"));
@@ -963,12 +963,12 @@ var CACAJD=["SOL","AGUA","TERRA","AR"];
 var CACAPARTES=["RAIZ","CAULE","FOLHA","FLOR","FRUTO","SEMENTE"];
 /* ⚠️ a grade tem que caber a MAIOR palavra: SEMENTE tem 7 letras e nao entra
    numa grade 6x6. Por isso o N virou config.                                */
-function telaCacaJd(){ telaCacaBase({lista:CACAJD,N:6,prog:56,conc:"necessidades",
+function telaCacaJd(){ telaCacaBase({lista:CACAJD,N:6,prog:53,conc:"necessidades",
   txt:"Ache as <b>4 palavras</b> escondidas. S&#227;o as coisas de que a planta precisa.",
   intro:"jd_caca_intro",dica:"jd_caca_dica",dicaTxt:"As palavras est&#227;o deitadas ou em p&#233;.",
   revela:"jd_caca_revela",msg:"<b>Sol</b>, <b>&#225;gua</b>, <b>terra</b> e <b>ar</b>: achou todas!",
   prox:telaRotular}); }
-function telaCacaPartes(){ telaCacaBase({lista:CACAPARTES,N:8,prog:92,conc:"partes",
+function telaCacaPartes(){ telaCacaBase({lista:CACAPARTES,N:8,prog:94,conc:"partes",
   txt:"Agora as <b>6 partes da planta</b> est&#227;o escondidas no quadro.",
   intro:"jd_cacap_intro",dica:"jd_cacap_dica",dicaTxt:"Toque na primeira e depois na &#250;ltima letra.",
   revela:"jd_cacap_revela",msg:"<b>Raiz, caule, folha, flor, fruto e semente</b>: achou as seis!",
@@ -1062,7 +1062,7 @@ var MONTAJD=[{p:"RAIZ",d:"A parte que fica <b>dentro da terra</b> e bebe a &#225
              {p:"FRUTO",d:"A parte que nasce da flor e <b>guarda a semente</b>."},
              {p:"SEMENTE",d:"A partezinha de onde <b>nasce uma planta nova</b>."}];
 function telaMontaPalavra(){
-  limpa();var t=el("div","tela");setProg(t,71);
+  limpa();var t=el("div","tela");setProg(t,68);
   var pi=0,err=0;
   var dica=el("div","balao","");t.appendChild(dica);
   var cen=el("div","centro");
@@ -1114,7 +1114,7 @@ var MEMJD=[{k:"raiz",a:"RAIZ",b:"Bebe a &#225;gua da terra"},
            {k:"fruto",a:"FRUTO",b:"Guarda a semente"},
            {k:"semente",a:"SEMENTE",b:"Nasce uma planta nova"}];
 function telaMemoria(){
-  limpa();var t=el("div","tela");setProg(t,85);
+  limpa();var t=el("div","tela");setProg(t,96);
   t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache a parte junto com o <b>trabalho</b> dela."));
   var baralho=[],i;
   for(i=0;i<MEMJD.length;i++){ baralho.push({k:MEMJD[i].k,tx:MEMJD[i].a,tipo:"n"}); baralho.push({k:MEMJD[i].k,tx:MEMJD[i].b,tipo:"f"}); }
@@ -1155,7 +1155,7 @@ function telaMemoria(){
 var RELAJD=[["jd_sol","Sol",true],["jd_agua","&#193;gua",true],["jd_terra","Terra",true],["jd_ar","Ar",true],
             ["jd_refri","Refrigerante",false],["jd_celular","Celular",false],["jd_meia","Meia",false]];
 function telaRelampagoJd(){
-  limpa();var t=el("div","tela");setProg(t,96);
+  limpa();var t=el("div","tela");setProg(t,99);
   t.appendChild(el("div","balao","R&#225;pido! A planta <b>precisa</b> disto?"));
   var LIM=45000,ini=(new Date()).getTime(),acabou=false,pts=0,fila=baguncar(RELAJD.slice(0)),fi=0;
   var cen=el("div","centro");
@@ -1263,7 +1263,7 @@ var RODA=[{img:"jd_g0",n:"SEMENTE"},{img:"jd_g1",n:"BROTO"},{img:"jd_g2",n:"PLAN
 function telaCiclo(){
   var rod=0,ordem=[3,1,4,0,2];   /* qual posicao fica vazia em cada rodada */
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,62+rod);
+    limpa();var t=el("div","tela");setProg(t,34+rod);
     var vazio=ordem[rod],err=0,fim=false;
     var cen=el("div","centro");
     cen.appendChild(el("div","selo","A RODA DA PLANTA"));
@@ -1311,7 +1311,7 @@ function telaCiclo(){
   }
   /* a pergunta que fecha a roda */
   function fecha(){
-    limpa();var t=el("div","tela");setProg(t,67);
+    limpa();var t=el("div","tela");setProg(t,40);
     var cen=el("div","centro"),err=0,fim=false;
     cen.appendChild(el("div","selo","E DEPOIS DO FRUTO?"));
     cen.appendChild(el("div","balao","A planta deu <b>fruto</b>. E dentro do fruto, o que tem?"));
