@@ -2683,3 +2683,17 @@ ordem e curiosidade**, e não como classificação (rochosos × gasosos).
 - **O jogador automático não conhecia as mecânicas novas** e ficou preso na órbita
   da Lua. Ao criar mecânica nova, **acrescentar a classe no `SEL` do
   `_qa/jogador.js`** — senão a banca reprova sem haver defeito.
+
+## 🚫 REGRA PERMANENTE: nada do antigo se apaga (Marcos, ago/2026)
+
+Palavras dele: *"não apagar nada do antigo, as atividades novas em repos novos"*.
+
+- **Atividade nova = repositório NOVO** (`fabrica.yml`). Nunca publicar por cima de
+  uma atividade existente, nem "aproveitar" o repo de outra.
+- **Nenhum repo, card ou link antigo sai do ar** — nem quando a atividade nova trata
+  do MESMO assunto e do MESMO ano. Foi exatamente o caso do Sistema Solar do 3º ano:
+  ficaram os dois no hub, *"O Observatório do Órbi"* (novo, no topo, como manda a
+  regra de ordem) e *"Aventura no Espaço — Sistema Solar"* (`Sistemasolar3ano`).
+- Remover qualquer coisa só com pedido explícito do Marcos. Na dúvida, PERGUNTAR e
+  MANTER. O `atualizar.yml` espelha o destino, então tomar cuidado para nunca apontar
+  um `source_dir` para o repo errado — isso apagaria o conteúdo de lá.

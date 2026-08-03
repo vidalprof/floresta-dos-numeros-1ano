@@ -178,6 +178,16 @@ engasga**, com qualquer volume de atividades (cada uma adiciona só o mascote
 o hub não acumula peso. NÃO criar `_site/atividades/` (era o modelo antigo,
 pesado, que fazia o build falhar com "Page build failed").
 
+### 🚫 NADA DO ANTIGO SE APAGA (regra do Marcos, ago/2026)
+Palavras dele: *"não apagar nada do antigo, as atividades novas em repos novos"*.
+Ou seja: **atividade nova SEMPRE nasce num repositório NOVO** (pela `fabrica.yml`) —
+nunca por cima de uma que já existe. E **nenhum repositório, card ou link antigo é
+removido**, mesmo quando a atividade nova cobre o mesmo assunto e o mesmo ano.
+Exemplo já acontecido: o 3º ano ficou com *"O Observatório do Órbi"* (novo, no topo)
+**e** *"Aventura no Espaço — Sistema Solar"* (`Sistemasolar3ano`, antigo) convivendo
+na mesma turma — os dois seguem no ar. Tirar card ou repo do ar só se o Marcos pedir,
+com todas as letras. Na dúvida, PERGUNTAR e manter.
+
 ### Hospedar uma atividade nova (padrão fixo — "será sempre desse jeito")
 1. A atividade já está (ou será criada) no **próprio repositório** dela.
    Se for nova, use a **Fábrica** (`fabrica.yml`) para criar o repo; se for
