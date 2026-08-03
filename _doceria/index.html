@@ -634,6 +634,40 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .lig{padding:4px 4px;font-size:11.5px;min-height:40px}
   .cacau{width:88px;height:88px}.cacau.gg{width:112px;height:112px}.cacau.pq{width:68px;height:68px}
 }
+
+/* ⚠️ ERRO PAGO (Marcos, ago/2026): a caixa de explicacao ficava COLADA na imagem
+   (0px de vao na Redacao, 9px na Legenda). Consertar bloco por bloco nao pega
+   todos — cada tela monta uma coisa diferente antes do balao. Regra unica: TODO
+   balao que vem depois de alguma coisa ganha ar. Depois do selo fica curto, que
+   ali eles sao um par. Medir com /tmp/vao.js, nao confiar no olho.            */
+.centro > .balao{margin-top:15px}
+.centro > .selo + .balao{margin-top:6px}
+.centro > .pedido{margin-top:15px}
+@media (max-height:600px){
+  .centro > .balao{margin-top:9px}
+  .centro > .pedido{margin-top:9px}
+}
+
+/* janela EXTREMA (~360px de altura, como a foto que o Marcos mandou):
+   ultimo recurso — o titulo da fase sai e a imagem encolhe, para a RESPOSTA
+   nunca ficar fora do alcance. Melhor perder o enfeite do que a resposta. */
+@media (max-height:380px){
+  .tela{padding:calc(16px + env(safe-area-inset-top)) 8px calc(50px + env(safe-area-inset-bottom))}
+  .selo{display:none}
+  .balao{font-size:13px;padding:6px 10px}
+  .centro > .balao{margin-top:9px}
+  .opts{margin-top:6px;gap:4px}
+  .opt{padding:5px 9px;font-size:13px;border-bottom-width:3px}
+  .polaroid{padding:4px 4px 14px;margin:2px 0 5px}
+  .polaroid img{width:96px;height:72px}
+  .polaroid .cap{display:none}
+  .foto{width:124px;height:94px;padding:4px}
+  .gfoto img{width:52px;height:40px}
+  .jornal{width:170px}
+  .clique,.pingo,.cacau{width:60px;height:60px}
+  .bandeja{min-width:50px;min-height:38px}
+  .bandeja .doces{min-height:28px}.bandeja .doces img{width:13px;height:13px}
+}
 </style></head>
 <body>
 <div id="bg"></div>
