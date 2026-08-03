@@ -371,12 +371,12 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
    vinham do caca-palavras 9x9 (celula pequena); aqui sao 36 numeros. */
 .cel{min-height:44px;height:auto;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
 .mem{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin:16px 0;max-width:340px}
-.mcard{position:relative;width:96px;height:60px;cursor:pointer}
+.mcard{position:relative;width:106px;height:64px;cursor:pointer}
 .mcard .mfr,.mcard .mtr{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:13px;border:2px solid var(--linha);border-bottom-width:4px;text-align:center;font-weight:800;-webkit-box-shadow:0 4px 10px rgba(50,40,20,.2);box-shadow:0 4px 10px rgba(50,40,20,.2)}
 .mcard .mfr{background:-webkit-linear-gradient(top,#c69a63,#9d7340);background:linear-gradient(#c69a63,#9d7340);border-color:#6f4f26;color:#fff6e6;font-size:28.6px;line-height:56px}
-.mcard .mtr{background:var(--papel);color:var(--tinta-d);font-size:17.6px;line-height:56px;display:none}
+.mcard .mtr{background:var(--papel);color:var(--tinta-d);font-size:15.5px;line-height:1.15;padding:0 5px;display:none;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
 .mcard.aberta .mfr{display:none}
-.mcard.aberta .mtr{display:block;-webkit-animation:pop .25s;animation:pop .25s}
+.mcard.aberta .mtr{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-animation:pop .25s;animation:pop .25s}
 .mcard.aberta.par .mtr{background:-webkit-linear-gradient(top,#6bd23f,#2f8f18);background:linear-gradient(#6bd23f,#2f8f18);border-color:#24710f;color:#fff}
 @media (max-height:720px){
   .giro{margin-top:8px}
@@ -448,7 +448,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .bancada{max-width:470px}
   .fila img{width:38px;height:38px}
   .mcard{width:122px;height:74px}
-  .mcard .mfr,.mcard .mtr{line-height:70px}
+  .mcard .mfr{line-height:70px}
   .mem{max-width:430px}
   .giro .gbt{width:56px;height:56px;line-height:50px}
   .giro .gval{min-width:64px}
@@ -598,7 +598,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .mais2{margin-top:9px}
   .mem{margin:9px 0;gap:5px}
   .mcard{width:78px;height:46px}
-  .mcard .mfr,.mcard .mtr{line-height:42px}
+  .mcard .mfr{line-height:42px}
   .mcard .mfr{font-size:21px}.mcard .mtr{font-size:13px}
   .lig{padding:5px 5px;font-size:12.5px;min-height:40px}
   .cols{gap:6px}
@@ -607,7 +607,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .giro .gbt{width:42px;height:42px;line-height:36px;font-size:21px}
   .giro .gval{font-size:22px;min-width:42px;padding:1px 6px}
   .giro .glab{font-size:11px;padding:3px 8px}
-  .btn{font-size:17px;padding:11px 20px}
+  .btn{font-size:17px;padding:11px 20px;min-height:42px}
   .relcard{font-size:22px}
   .medal{height:110px}
   .cracha .cnome{font-size:16px}
@@ -1833,7 +1833,7 @@ function dQuadro(){
   limpa();var t=el("div","tela");setProg(t,83);
   var c=el("div","centro");
   c.appendChild(el("div","selo","QUADRO DA SEMANA"));
-  var bal=el("div","balao","Cada linha vai <b>de um tanto em um tanto</b>. Complete o que falta.");c.appendChild(bal);
+  var bal=el("div","balao","Cada linha vai <b>de um tanto em um tanto</b>. Preencha o que falta.");c.appendChild(bal);
   var tab=el("div","quadro"),i,j,faltam=[],feitos=0,err=0;
   for(i=0;i<QUADRO.length;i++){
     var q=QUADRO[i],lin=el("div","qlin");

@@ -66,6 +66,10 @@ echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
 node _qa/contraste.js "$ARQ" $TELAS 2>/dev/null || FALHOU=1
 
 echo
+echo "--- 4b) NARRACAO (a voz fala direito?) -------------"
+if [ -f _lote_falas.json ]; then python3 _qa/falas.py _lote_falas.json || FALHOU=1; else echo "  (sem _lote_falas.json)"; fi
+
+echo
 echo "--- 5) LEIAUTE (cabe na tela? da para tocar?) ------"
 node _qa/leiaute.js "$ARQ" $TELAS 2>/dev/null || FALHOU=1
 

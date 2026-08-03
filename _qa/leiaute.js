@@ -56,19 +56,30 @@ const RESPOSTA='.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.btn,.pc,.peca';
         const out=[];
         const barra=document.getElementById("barra");
         const topoBarra=barra&&barra.getBoundingClientRect().height? barra.getBoundingClientRect().top : innerHeight;
+        const tela=document.querySelector(".tela");
+        /* se a tela ROLA, o que esta embaixo continua alcancavel — nao e defeito.
+           O defeito da foto do Marcos era outro: nao rolava e a resposta sumia.  */
+        const rola=tela? (tela.scrollHeight>tela.clientHeight+4) : false;
         const els=[...document.querySelectorAll("#app "+sel)].filter(e=>e.offsetParent!==null);
-        let forams=0, atras=0, pequenos=0;
+        let forams=0, atras=0, pequenos=0, grade=0;
         for(const e of els){
           const b=e.getBoundingClientRect();
           if(b.width<1||b.height<1) continue;
           if(b.left<-1||b.right>innerWidth+1) out.push("estoura na horizontal: ."+String(e.className).split(" ")[0]);
-          if(b.top>=innerHeight-2) forams++;
-          else if(b.bottom>topoBarra+2 && b.top<topoBarra) atras++;
-          if(b.height<40||b.width<40) pequenos++;
+          if(!rola){
+            if(b.top>=innerHeight-2) forams++;
+            else if(b.bottom>topoBarra+2 && b.top<topoBarra) atras++;
+          }
+          /* quadro de letras/numeros: a grade INTEIRA precisa caber na tela, entao
+             a celula nao pode ter 40px sempre. Piso menor, so para a grade.       */
+          const naGrade=e.parentNode&&String(e.parentNode.className).indexOf("grade")>=0;
+          if(naGrade){ if(b.height<30||b.width<30) grade++; }
+          else if(b.height<40||b.width<40) pequenos++;
         }
-        if(forams) out.push(forams+" resposta(s) FORA da tela (a crianca nao ve o que tocar)");
-        if(atras) out.push(atras+" resposta(s) atras da barra de baixo");
+        if(forams) out.push(forams+" resposta(s) FORA da tela SEM ROLAGEM (a crianca nao ve o que tocar)");
+        if(atras) out.push(atras+" resposta(s) presa(s) atras da barra, sem rolagem");
         if(pequenos) out.push(pequenos+" alvo(s) menor(es) que 40px");
+        if(grade) out.push(grade+" celula(s) de grade menor(es) que 30px");
         return out;
       },RESPOSTA);
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);
