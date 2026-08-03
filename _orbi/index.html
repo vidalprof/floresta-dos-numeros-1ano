@@ -354,6 +354,9 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
 .mcarta{background:-webkit-linear-gradient(top,#8a7bff,#4a3ad0);background:linear-gradient(#8a7bff,#4a3ad0);border-color:#2a1c82}
 .tbar>i{background:-webkit-linear-gradient(left,#ef5a4a,var(--dourado));background:linear-gradient(90deg,#ef5a4a,var(--dourado))}
 /* ================= FASE: APAGUE O SOL ================= */
+/* .centro nao estica os filhos: sem width:100% a fileira de cartas assumia a
+   max-width de 470px e VAZAVA para fora da tela num telefone de 412px. */
+.cartas{width:100%}
 .carta img{-webkit-transition:-webkit-filter .55s ease;transition:filter .55s ease}
 .carta.apagado img{-webkit-filter:brightness(.16) saturate(.35);filter:brightness(.16) saturate(.35)}
 /* ================= FASE: ESTRELA / PLANETA / SATELITE ================= */
@@ -394,7 +397,7 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
   border:2px solid rgba(255,255,255,.5)}
 .orb .pt.luapos img{width:100%;height:100%;object-fit:contain}
 .orb .pt.luapos.visto{border-color:#8be05a;background:rgba(139,224,90,.28)}
-.cenafase{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:4px}
+.cenafase{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:10px}
 .solfase{width:54px;height:54px;-webkit-flex:none;flex:none;object-fit:contain;
   -webkit-filter:drop-shadow(0 0 14px rgba(255,200,60,.85));filter:drop-shadow(0 0 14px rgba(255,200,60,.85))}
 /* ================= FASE: PLANETAS ================= */
@@ -765,7 +768,8 @@ function telaClassifica(){
   var bP=el("div","bin planeta2","PLANETA<small>gira em volta do Sol</small>");
   var bS=el("div","bin satelite2","SAT&#201;LITE<small>gira em volta de um planeta</small>");
   bins.appendChild(bE);bins.appendChild(bP);bins.appendChild(bS);
-  function mostra(){ var it=fila[fi];
+  function mostra(){ if(fi>=fila.length) return;   /* timer atrasado depois do fim da fila */
+    var it=fila[fi];
     im.src="img/"+it.img+".png";
     im.style.webkitAnimation="none";im.style.animation="none";void im.offsetWidth;im.style.webkitAnimation="";im.style.animation="";
     lab.innerHTML=it.n; }
@@ -862,6 +866,7 @@ function telaDiaNoite(){
   c.appendChild(orbiEl("pq")); c.appendChild(sel); c.appendChild(bal); c.appendChild(opts);
   t.appendChild(c);app.appendChild(t);
   function pede(){
+    if(qi>=QS.length) return;
     var q=QS[qi],i,resp=false;
     bal.innerHTML=q.p; opts.innerHTML="";
     for(i=0;i<q.a.length;i++){(function(txt,certo){
@@ -993,7 +998,7 @@ function telaFasesExplora(){
   cena.appendChild(imgEl("sr_sol","solfase"));
   var orb=el("div","orb peq");
   orb.appendChild(imgEl("sr_terra","cen"));
-  var prato=el("div","prato"); var pim=imgEl("sr_lua_nova"); prato.appendChild(pim);
+  var prato=el("div","prato"); var pim=imgEl("sr_lua"); prato.appendChild(pim);
   var nome=el("div","balao porque","Toque numa posi&#231;&#227;o da Lua.");
   var FDAPOS=[3,2,1,0];   /* topo=minguante, direita=cheia, baixo=crescente, esquerda=nova */
   var i;
@@ -1037,6 +1042,7 @@ function telaFasesNome(){
   cen.appendChild(box);
   t.appendChild(cen);app.appendChild(t);
   function pede(){
+    if(fi>=fila.length) return;   /* timer atrasado depois da ultima fase */
     var k=fila[fi],i;
     pim.src="img/"+FASES[k].img+".png";
     pim.style.webkitAnimation="none";pim.style.animation="none";void pim.offsetWidth;pim.style.webkitAnimation="";pim.style.animation="";
@@ -1131,6 +1137,9 @@ function telaCacaBase(cfg){
   for(i=0;i<N;i++)for(j=0;j<N;j++) if(!gr[i][j]) gr[i][j]=AL.charAt(Math.floor(Math.random()*AL.length));
   var cen=el("div","centro");
   var grade=el("div","grade"),cels=[],sel=null,trava=false;
+  /* onde cada palavra ficou — SO para o auditor jogador conseguir resolver o
+     caca-palavras (clicando ao acaso ele nunca acha). Nao aparece para ninguem. */
+  grade.setAttribute("data-qa",JSON.stringify(pos));
   for(i=0;i<N;i++){ cels[i]=[];
     for(j=0;j<N;j++){ (function(r,c){
       var cl=el("div","cel",gr[r][c]);
@@ -1301,7 +1310,7 @@ function telaQuemSouEu(){
   })(i);}
   cen.appendChild(grid);
   t.appendChild(cen);app.appendChild(t);
-  function pede(){ bal.innerHTML=PISTAS[qi].p; }
+  function pede(){ if(qi>=PISTAS.length) return; bal.innerHTML=PISTAS[qi].p; }
   pede();
   montaBarra("sr_quem_dica","A pista fala de uma coisa que d&#225; para ver na foto.");
   falar("sr_quem_intro");
@@ -1356,6 +1365,7 @@ function telaMontaPalavra(){
   cen.appendChild(el("div","hint","Toque nas letras na ordem certa."));
   t.appendChild(cen);app.appendChild(t);
   function pede(){
+    if(pi>=MONTASR.length) return;   /* timer atrasado depois da ultima palavra */
     var it=MONTASR[pi],i;
     dica.innerHTML=it.d;
     slots.innerHTML="";letras.innerHTML="";
@@ -1409,7 +1419,8 @@ function telaTerraCasa(){
   var bins=el("div","bins");
   var bS=el("div","bin sim","A Terra TEM"); var bN=el("div","bin nao","A Terra N&#195;O tem");
   bins.appendChild(bS);bins.appendChild(bN);
-  function mostra(){ var it=fila[fi];
+  function mostra(){ if(fi>=fila.length) return;   /* timer atrasado depois do fim da fila */
+    var it=fila[fi];
     im.src="img/"+it.img+".png";
     im.style.webkitAnimation="none";im.style.animation="none";void im.offsetWidth;im.style.webkitAnimation="";im.style.animation="";
     lab.innerHTML=it.n; }

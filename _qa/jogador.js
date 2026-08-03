@@ -40,6 +40,23 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    const n=await p.evaluate((sel)=>{
      const bn=document.getElementById('banner');
      if(bn&&bn.className.indexOf('show')>=0){ document.getElementById('bcta').click(); return 1; }
+     /* caca-palavras: clicando ao acaso o jogador NUNCA acha (1a e ultima letra
+        numa grade de 49 casas). A tela publica em data-qa onde cada palavra
+        ficou, so para o auditor — assim ele confere de verdade que a fase
+        termina e avanca, em vez de reprovar por burrice dele. */
+     const g=document.querySelector('.grade[data-qa]');
+     if(g&&g.offsetParent!==null){
+       const pos=JSON.parse(g.getAttribute('data-qa'));
+       const falta=[...document.querySelectorAll('.pchip')].filter(c=>c.className.indexOf('feito')<0);
+       if(falta.length){
+         const d=pos[falta[0].textContent.trim()];
+         if(d){
+           const N=Math.round(Math.sqrt(g.children.length));
+           const r2=d.h? d.r : d.r+d.n-1, c2=d.h? d.c+d.n-1 : d.c;
+           g.children[d.r*N+d.c].click(); g.children[r2*N+c2].click(); return 1;
+         }
+       }
+     }
      const els=[...document.querySelectorAll(sel)].filter(e=>{if(e.offsetParent===null)return false;const r=e.getBoundingClientRect();return r.width>0&&r.top<innerHeight&&r.bottom>0;});
      if(!els.length) return 0;
      const e=els[Math.floor(Math.random()*els.length)];
