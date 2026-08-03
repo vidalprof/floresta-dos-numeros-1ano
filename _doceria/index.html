@@ -455,6 +455,119 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .num{max-width:430px}
 }
 
+/* ===== FASES NOVAS: bagunca, reta, prateleira, caixa, girar, corte, quadro ===== */
+.bagunca{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;gap:2px;margin:14px 0;max-width:340px}
+.dsolto{cursor:pointer;-webkit-transition:opacity .18s,-webkit-transform .18s;transition:opacity .18s,transform .18s}
+.dsolto img{width:38px;height:38px;object-fit:contain;display:block}
+.dsolto.visto{opacity:.32;-webkit-transform:scale(.82);transform:scale(.82)}
+.apoio{background:rgba(255,253,244,.97);border:2px solid var(--linha);border-radius:14px;padding:9px 12px;margin-top:12px;max-width:330px;-webkit-animation:pop .3s;animation:pop .3s}
+.apoio .aptit{font-size:12.5px;font-weight:700;color:#6b6555;margin-bottom:5px;text-align:center}
+.apfila{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:3px;margin-bottom:3px}
+.apfila img{width:22px;height:22px;object-fit:contain}
+.apfila .apnum{margin-left:6px;font-size:15px;font-weight:800;color:var(--tinta-d)}
+.acesa{-webkit-animation:acende 1s ease-in-out infinite;animation:acende 1s ease-in-out infinite;
+  -webkit-box-shadow:0 0 0 3px var(--dourado),0 0 16px rgba(255,212,59,.8);box-shadow:0 0 0 3px var(--dourado),0 0 16px rgba(255,212,59,.8)}
+@-webkit-keyframes acende{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.07)}}
+@keyframes acende{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+
+/* reta numerica */
+.reta{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:end;align-items:flex-end;
+  background:rgba(255,253,244,.95);border:2px solid var(--linha);border-radius:14px;
+  padding:44px 10px 8px;margin:16px 0;width:100%;max-width:356px;min-height:96px;
+  -webkit-box-shadow:0 6px 14px rgba(50,40,20,.22);box-shadow:0 6px 14px rgba(50,40,20,.22)}
+.reta .marca{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;cursor:pointer;min-height:42px;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:end;justify-content:flex-end}
+.reta .marca i{display:block;width:2px;height:13px;background:#b8ae95;border-radius:2px}
+.reta .marca b{font-size:11.5px;font-weight:800;color:#6b6555;margin-top:2px}
+.reta .marca.caiu i{background:var(--ok);height:19px;width:3px}
+.reta .marca.caiu b{color:var(--ok);font-size:13px}
+.reta .marca.conta i{background:var(--dourado);height:17px}
+.reta .marca.no i{background:var(--erro);height:19px}
+.reta .salta{position:absolute;top:4px;width:38px;height:38px;object-fit:contain;margin-left:-19px;
+  -webkit-transition:left .42s cubic-bezier(.3,-.4,.4,1.4);transition:left .42s cubic-bezier(.3,-.4,.4,1.4)}
+
+/* prateleiras */
+.prats{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;gap:6px;margin:14px 0}
+.prat{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;gap:3px;
+  background:-webkit-linear-gradient(top,#c69a63,#9d7340);background:linear-gradient(#c69a63,#9d7340);
+  border:2px solid #6f4f26;border-bottom-width:5px;border-radius:9px;padding:4px 7px;min-height:38px;
+  -webkit-box-align:center;align-items:center;-webkit-animation:pop .25s;animation:pop .25s}
+.prat img{width:26px;height:26px;object-fit:contain}
+
+/* caixa / dinheiro */
+.sacos{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;gap:9px;margin:14px 0}
+.saco{position:relative;text-align:center}
+.saco img{width:56px;height:56px;object-fit:contain;display:block}
+.vagam{margin-top:3px;min-width:34px;height:28px;line-height:26px;border-radius:9px;background:var(--papel);
+  border:2px dashed var(--linha);font-size:15px;font-weight:800;color:#9c927c}
+.vagam.paga{border-style:solid;border-color:#24710f;background:-webkit-linear-gradient(top,#3f9a26,#287a14);
+  background:linear-gradient(#3f9a26,#287a14);color:#fff}
+.vagam.dica{border-color:var(--dourado);background:#fff6d8;color:#8a6a00}
+.moedas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;gap:11px;margin-top:12px}
+.moeda{position:relative;width:62px;height:62px;cursor:pointer;-webkit-transition:-webkit-transform .12s;transition:transform .12s}
+.moeda img{width:62px;height:62px;object-fit:contain;display:block;
+  -webkit-filter:drop-shadow(0 4px 6px rgba(60,40,10,.35));filter:drop-shadow(0 4px 6px rgba(60,40,10,.35))}
+.moeda b{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:25px;font-weight:800;color:#4a3410;
+  text-align:center;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.moeda:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.moeda.no{-webkit-animation:shk .4s;animation:shk .4s}
+
+/* girar a bandeja */
+.virabox{-webkit-transition:-webkit-transform .5s;transition:transform .5s}
+.virabox.girando{-webkit-transform:rotate(90deg) scale(.86);transform:rotate(90deg) scale(.86)}
+
+/* corte da bandeja */
+.grade2.cortavel{position:relative}
+.linhac{height:14px;margin:-2px 0;cursor:pointer;border-radius:4px;background:rgba(255,255,255,.16)}
+.linhac.conta{background:rgba(255,212,59,.55)}
+.linhac.no{background:rgba(239,90,74,.6)}
+.linhac.cortada{background:#fff;height:8px;-webkit-box-shadow:0 0 0 2px #24710f;box-shadow:0 0 0 2px #24710f}
+.fila.parteA{background:rgba(107,210,63,.34);border-radius:7px}
+.fila.parteB{background:rgba(138,107,255,.34);border-radius:7px}
+
+/* quadro da semana */
+.quadro{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;gap:5px;
+  background:rgba(255,253,244,.96);border:2px solid var(--linha);border-bottom-width:5px;border-radius:14px;padding:9px;margin:14px 0;
+  -webkit-box-shadow:0 6px 14px rgba(50,40,20,.22);box-shadow:0 6px 14px rgba(50,40,20,.22)}
+.qlin{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:4px}
+.qcab{min-width:74px;font-size:12px;font-weight:800;color:#6b4a1e;text-align:right;padding-right:4px}
+.qcel{-webkit-box-flex:1;-webkit-flex:1;flex:1;min-width:34px;height:34px;line-height:32px;text-align:center;
+  border-radius:8px;background:#f3ecda;border:1px solid #ddd3bb;font-size:15px;font-weight:800;color:var(--tinta-d)}
+.qcel.vazia{background:#fff;border:2px dashed var(--linha);color:#b3a98f}
+.qcel.vazia.conta{border-color:var(--dourado);background:#fff6d8}
+.qcel.cheia{background:-webkit-linear-gradient(top,#3f9a26,#287a14);background:linear-gradient(#3f9a26,#287a14);
+  border-color:#24710f;color:#fff;-webkit-animation:pop .25s;animation:pop .25s}
+
+@media (max-height:720px){
+  .dsolto img{width:31px;height:31px}
+  .reta{padding:38px 8px 6px;min-height:84px}
+  .reta .salta{width:32px;height:32px;margin-left:-16px}
+  .prat img{width:22px;height:22px}
+  .saco img{width:46px;height:46px}
+  .moeda,.moeda img{width:52px;height:52px}
+  .moeda b{font-size:21px;margin-top:-11px}
+  .qcel{height:31px;line-height:29px;font-size:13.5px}
+  .qcab{min-width:64px;font-size:11px}
+}
+@media (max-height:600px){
+  .bagunca{margin:9px 0}
+  .dsolto img{width:25px;height:25px}
+  .apoio{padding:6px 9px;margin-top:8px}.apfila img{width:17px;height:17px}
+  .reta{padding:32px 6px 5px;min-height:70px;margin:9px 0}
+  .reta .marca{min-height:40px}
+  .reta .salta{width:26px;height:26px;margin-left:-13px}
+  .prats{margin:9px 0;gap:4px}.prat{min-height:32px;padding:3px 5px}.prat img{width:19px;height:19px}
+  .sacos{margin:9px 0;gap:7px}.saco img{width:40px;height:40px}
+  .vagam{height:25px;line-height:23px;font-size:13px}
+  .moedas{margin-top:8px;gap:8px}.moeda,.moeda img{width:46px;height:46px}
+  .moeda b{font-size:19px;margin-top:-10px}
+  .quadro{margin:9px 0;padding:6px;gap:3px}
+  .qcel{height:30px;line-height:28px;font-size:12.5px;min-width:30px}
+  .qcab{min-width:56px;font-size:10px}
+  .linhac{height:12px}
+}
+
 /* ===== JANELA BAIXA (navegador com muitas barras, monitor antigo, projetor) =====
    ⚠️ LICAO PAGA (foto do Marcos, ago/2026): numa janela de ~360px de altura as
    OPCOES DE RESPOSTA ficavam fora da tela — a crianca via so o enunciado e nao
@@ -771,7 +884,7 @@ function dAbertura(){limpa();var t=el("div","tela");var c=el("div","centro");
   falar("dc_abertura");}
 
 /* ---------- 2) PREVER (POE) ---------- */
-function dP1prever(){limpa();var t=el("div","tela");setProg(t,5);var c=el("div","centro");
+function dP1prever(){limpa();var t=el("div","tela");setProg(t,3);var c=el("div","centro");
   c.appendChild(el("div","selo","O QUE VOC&#202; ACHA?"));
   var ban=el("div","bancada"),i;
   for(i=0;i<3;i++) ban.appendChild(bandejaEl("dc_brigadeiro",4,false));
@@ -788,7 +901,7 @@ function dP1prever(){limpa();var t=el("div","tela");setProg(t,5);var c=el("div",
       if(certo){sCerto();var ce=centroTela(o);faisca(ce[0],ce[1],"#ffb45e",14);}else sErro();
       reg("grupos",certo,certo?1:2);
       setTimeout(function(){ depoisDaFala("dc_p1_revela",10000,function(){
-        mostraBanner("Grupos <b>iguais</b> deixam a conta mais r&#225;pida!",dMonta); }); },1100);
+        mostraBanner("Grupos <b>iguais</b> deixam a conta mais r&#225;pida!",dContar); }); },1100);
     };
     op.appendChild(o);
   })(alts[i][0],alts[i][1]);}
@@ -803,7 +916,7 @@ var MONTA=[{b:3,q:4,doce:"dc_brigadeiro"},{b:4,q:3,doce:"dc_cupcake"},
 function dMonta(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,10+idx*3);
+    limpa();var t=el("div","tela");setProg(t,10+idx*2);
     var it=MONTA[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","MONTE AS BANDEJAS"));
@@ -823,7 +936,7 @@ function dMonta(){
           var ce=centroTela(ban); faisca(ce[0],ce[1],"#6bd23f",16);
           setTimeout(function(){ idx++;
             if(idx>=MONTA.length){ depoisDaFala("dc_monta_revela",9000,function(){
-              mostraBanner("Todas com a mesma quantidade: <b>grupos iguais</b>!",dSoma); }); }
+              mostraBanner("Todas com a mesma quantidade: <b>grupos iguais</b>!",dSalto); }); }
             else { err=0; passo(); }
           },1100);
         }
@@ -840,11 +953,11 @@ function dMonta(){
 }
 
 /* ---------- 4) A SOMA DE PARCELAS IGUAIS ---------- */
-var SOMA=[{b:3,q:4,doce:"dc_brigadeiro"},{b:4,q:2,doce:"dc_cupcake"},{b:3,q:5,doce:"dc_biscoito"}];
+var SOMA=[{b:3,q:4,doce:"dc_brigadeiro"},{b:4,q:2,doce:"dc_cupcake"},{b:3,q:5,doce:"dc_biscoito"},{b:2,q:6,doce:"dc_pirulito"}];
 function dSoma(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,24+idx*3);
+    limpa();var t=el("div","tela");setProg(t,35+idx*2);
     var it=SOMA[idx],posto=0,fimS=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ESCREVA A SOMA"));
@@ -891,11 +1004,11 @@ function dSoma(){
 
 /* ---------- 5) ⭐ A SOMA VIRA VEZES (a ponte) ---------- */
 var VEZES=[{b:3,q:4,doce:"dc_brigadeiro"},{b:5,q:2,doce:"dc_cupcake"},
-           {b:4,q:5,doce:"dc_biscoito"},{b:2,q:3,doce:"dc_pirulito"}];
+           {b:4,q:5,doce:"dc_biscoito"},{b:2,q:3,doce:"dc_pirulito"},{b:4,q:6,doce:"dc_brigadeiro"}];
 function dVezes(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,34+idx*3);
+    limpa();var t=el("div","tela");setProg(t,43+idx*2);
     var it=VEZES[idx],fase=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A SOMA VIRA VEZES"));
@@ -939,11 +1052,11 @@ function dVezes(){
 }
 
 /* ---------- 6) BANDEJA EM FILEIRAS (organização retangular) ---------- */
-var GRADEP=[{l:3,co:4,doce:"dc_brigadeiro"},{l:2,co:5,doce:"dc_cupcake"},{l:4,co:3,doce:"dc_biscoito"}];
+var GRADEP=[{l:3,co:4,doce:"dc_brigadeiro"},{l:2,co:5,doce:"dc_cupcake"},{l:4,co:3,doce:"dc_biscoito"},{l:5,co:4,doce:"dc_pirulito"}];
 function dGrade(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,46+idx*3);
+    limpa();var t=el("div","tela");setProg(t,53+idx*1.5);
     var it=GRADEP[idx],fase=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","BANDEJA EM FILEIRAS"));
@@ -969,7 +1082,7 @@ function dGrade(){
             var ce=centroTela(alvo); faisca(ce[0],ce[1],"#ffb45e",16);
             setTimeout(function(){ idx++;
               if(idx>=GRADEP.length){ depoisDaFala("dc_grade_revela",9000,function(){
-                mostraBanner("Fileiras <b>&#215;</b> quantos em cada fileira!",dTabu); }); }
+                mostraBanner("Fileiras <b>&#215;</b> quantos em cada fileira!",dVira); }); }
               else { err=0; passo(); }
             },1700); }
         } else { err++; b.className="tecl no"; sErro();
@@ -988,11 +1101,11 @@ function dGrade(){
 }
 
 /* ---------- 7) ENCOMENDA RÁPIDA (tabuada do 2, 3, 4 e 5) ---------- */
-var TABU=[[2,3],[2,5],[3,4],[2,7],[3,6],[4,3],[5,4],[4,5],[3,8],[5,6],[4,7],[5,8]];
+var TABU=[[2,3],[2,5],[3,4],[2,7],[3,6],[4,3],[5,4],[4,5],[3,8],[5,6],[2,9],[4,7],[3,9],[5,7],[5,8]];
 function dTabu(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,56+idx*1.2);
+    limpa();var t=el("div","tela");setProg(t,74+idx*0.6);
     var it=TABU[idx],a=it[0],b=it[1],res=a*b,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ENCOMENDA R&#193;PIDA"));
@@ -1009,7 +1122,7 @@ function dTabu(){
           var ce=centroTela(bt); faisca(ce[0],ce[1],"#ffb45e",14);
           setTimeout(function(){ idx++;
             if(idx>=TABU.length){ depoisDaFala("dc_tabu_revela",8000,function(){
-              mostraBanner("Voc&#234; j&#225; responde <b>na hora</b>!",dLigar); }); }
+              mostraBanner("Voc&#234; j&#225; responde <b>na hora</b>!",dQuadro); }); }
             else { err=0; passo(); }
           },900);
         } else { err++; bt.className="tecl no"; sErro();
@@ -1029,9 +1142,9 @@ function dTabu(){
 
 /* ---------- 8) LIGAR: a conta e o total ---------- */
 function dLigar(){
-  limpa();var t=el("div","tela");setProg(t,72);
-  var pares=[["2 &#215; 6","12"],["3 &#215; 5","15"],["4 &#215; 4","16"],["5 &#215; 7","35"],["2 &#215; 9","18"]];
-  var dir=[2,4,0,3,1],selE=null,feitos=0,err=0;
+  limpa();var t=el("div","tela");setProg(t,86);
+  var pares=[["2 &#215; 6","12"],["3 &#215; 5","15"],["4 &#215; 4","16"],["5 &#215; 7","35"],["2 &#215; 9","18"],["3 &#215; 7","21"]];
+  var dir=[2,5,4,0,3,1],selE=null,feitos=0,err=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PEDIDOS EMBARALHADOS"));
   var bal=el("div","balao","Toque na <b>conta</b> e depois no <b>total</b> dela.");c.appendChild(bal);
@@ -1070,9 +1183,9 @@ function dLigar(){
 
 /* ---------- 9) ⭐ MEMÓRIA: a soma e a multiplicação que dão no mesmo ---------- */
 var MEMP=[["2 + 2 + 2","3 &#215; 2"],["4 + 4","2 &#215; 4"],["5 + 5 + 5","3 &#215; 5"],
-          ["3 + 3 + 3 + 3","4 &#215; 3"],["2 + 2 + 2 + 2 + 2","5 &#215; 2"]];
+          ["3 + 3 + 3 + 3","4 &#215; 3"],["2 + 2 + 2 + 2 + 2","5 &#215; 2"],["6 + 6","2 &#215; 6"]];
 function dMemoria(){
-  limpa();var t=el("div","tela");setProg(t,78);
+  limpa();var t=el("div","tela");setProg(t,89);
   var cartas=[],i,feitos=0,err=0;
   for(i=0;i<MEMP.length;i++){ cartas.push({p:i,tx:MEMP[i][0]}); cartas.push({p:i,tx:MEMP[i][1]}); }
   baguncar(cartas);
@@ -1116,9 +1229,9 @@ function dMemoria(){
 }
 
 /* ---------- 10) QUADRO DO ESTOQUE: ache o total no quadro de números ---------- */
-var CACAD=[[3,4],[2,8],[5,5],[4,6],[3,7],[2,9]];
+var CACAD=[[3,4],[2,8],[5,5],[4,6],[3,7],[2,9],[4,8],[5,9]];
 function dCaca(){
-  limpa();var t=el("div","tela");setProg(t,84);
+  limpa();var t=el("div","tela");setProg(t,91);
   var alvos=[],i,j,k;
   for(i=0;i<CACAD.length;i++) alvos.push(CACAD[i][0]*CACAD[i][1]);
   var N=6,nums=[],usados={};
@@ -1171,11 +1284,15 @@ var PROBD=[
  {tx:"A festa da vov&#243; leva <b>5 saquinhos</b>, e cada saquinho tem <b>7 biscoitos</b>.",
   perg:"Quantos biscoitos a vov&#243; vai levar?", a:5,b:7, doce:"dc_biscoito"},
  {tx:"A turma do 3&#186; ano quer <b>6 pacotes</b> de pirulito, com <b>5 pirulitos</b> em cada pacote.",
-  perg:"Quantos pirulitos o Cacau embala?", a:6,b:5, doce:"dc_pirulito"}];
+  perg:"Quantos pirulitos o Cacau embala?", a:6,b:5, doce:"dc_pirulito"},
+ {tx:"O seu Jo&#227;o quer <b>2 bandejas</b> de brigadeiro para a festa, com <b>9 brigadeiros</b> em cada bandeja.",
+  perg:"Quantos brigadeiros s&#227;o?", a:2,b:9, doce:"dc_brigadeiro"},
+ {tx:"A padaria da esquina encomendou <b>5 caixas</b> de biscoito, e cada caixa leva <b>6 biscoitos</b>.",
+  perg:"Quantos biscoitos o Cacau precisa assar?", a:5,b:6, doce:"dc_biscoito"}];
 function dProblema(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,88+idx);
+    limpa();var t=el("div","tela");setProg(t,93+idx*0.5);
     var it=PROBD[idx],fase=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","FREGU&#202;S NA PORTA"));
@@ -1222,7 +1339,7 @@ function dProblema(){
 function dCria(){
   var rodada=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,93+rodada);
+    limpa();var t=el("div","tela");setProg(t,96+rodada*0.5);
     var nb=3,nd=4,doce=DOCES[rodada%DOCES.length],fechado=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","VOC&#202; &#201; O CHEFE"));
@@ -1269,7 +1386,7 @@ function dCria(){
             MED.pedidos.push(nb+" x "+nd+" = "+res); salva();
             var ce=centroTela(conta); faisca(ce[0],ce[1],"#ffb45e",18);
             setTimeout(function(){ rodada++;
-              if(rodada>=2){ depoisDaFala("dc_cria_revela",10000,function(){
+              if(rodada>=3){ depoisDaFala("dc_cria_revela",10000,function(){
                 mostraBanner("Voc&#234; n&#227;o s&#243; resolveu: voc&#234; <b>criou</b> o problema!",dRelampago); }); }
               else passo();
             },2000);
@@ -1290,13 +1407,497 @@ function dCria(){
   passo();
 }
 
+/* ================= ANDAIME: a criança NUNCA fica travada =================
+   Pedido do Marcos: "precisamos que a criança aprenda e que CONSIGA fazer".
+   Ajuda que cresce a cada erro (K1 do catálogo — worked example que desvanece):
+     1º erro  -> dica escrita
+     2º erro  -> aparece o CONCRETO na tela (os docinhos para contar)
+     3º erro  -> a resposta certa ACENDE e a criança toca (sucesso guiado)
+   Nunca "errou de novo, tente outra vez" para sempre.                        */
+function ajuda(n,ops){
+  if(n===1){ if(ops.dica) mostraDica(ops.dica); falar("dc_ajuda1"); }
+  else if(n===2){ if(ops.concreto) ops.concreto(); falar("dc_ajuda2"); }
+  else if(n>=3){ if(ops.revelar) ops.revelar(); falar("dc_ajuda3"); }
+}
+/* fileira de docinhos para CONTAR quando a criança empaca */
+function apoioConcreto(pai,doce,grupos,cada){
+  var v=document.getElementById("apoio"); if(v&&v.parentNode) v.parentNode.removeChild(v);
+  var d=el("div","apoio"); d.id="apoio";
+  d.appendChild(el("div","aptit","Conte comigo:"));
+  var i,j;
+  for(i=0;i<grupos;i++){
+    var f=el("div","apfila");
+    for(j=0;j<cada;j++){ var im=imgEl(doce); f.appendChild(im); }
+    f.appendChild(el("span","apnum",""+((i+1)*cada)));
+    d.appendChild(f);
+  }
+  pai.appendChild(d);
+  return d;
+}
+function acende(elm){ if(elm) elm.className=elm.className+" acesa"; }
+
+/* ---------- 3) ⭐ CONTAR UM POR UM (o custo de não agrupar) ----------
+   Falha produtiva (K2): a criança SENTE que contar um por um é ruim ANTES
+   de eu ensinar o atalho. Sem isso, "agrupar" é regra decorada.            */
+function dContar(){
+  limpa();var t=el("div","tela");setProg(t,6);
+  var TOT=24,contados=0,fase=0;
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","BANCADA BAGUN&#199;ADA"));
+  var bal=el("div","balao","Conte <b>um por um</b>, tocando em cada brigadeiro.");c.appendChild(bal);
+  var pl=el("div","conta","0");c.appendChild(pl);
+  var bag=el("div","bagunca"),i;
+  for(i=0;i<TOT;i++){(function(){
+    var s=el("div","dsolto");
+    s.style.marginLeft=(Math.random()*10-5)+"px";
+    s.style.marginTop=(Math.random()*8-4)+"px";
+    s.appendChild(imgEl("dc_brigadeiro"));
+    s.onclick=function(){ arma();
+      if(fase!==0||s.className.indexOf("visto")>=0) return;
+      s.className="dsolto visto"; contados++; sPop(contados); pl.innerHTML=contados;
+      if(contados>=TOT){
+        fase=1; reg("grupos",true,1);
+        depoisDaFala("dc_contar_meio",9000,arruma);
+      }
+    };
+    bag.appendChild(s);
+  })();}
+  c.appendChild(bag);
+  c.appendChild(el("div","hint","S&#227;o "+TOT+" toques. Um de cada vez."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra(null,null);
+  falar("dc_contar_intro");
+
+  /* 2ª parte: os MESMOS 24, agora em 6 bandejas de 4 */
+  function arruma(){
+    limpa();var t2=el("div","tela");setProg(t2,8);
+    var c2=el("div","centro"),k,tocadas=0;
+    c2.appendChild(el("div","selo","AGORA DO MEU JEITO"));
+    c2.appendChild(el("div","balao","Os <b>mesmos 24</b>, arrumados em bandejas de <b>4</b>. Toque em cada bandeja."));
+    var pl2=el("div","conta","0");c2.appendChild(pl2);
+    var ban=el("div","bancada");
+    for(k=0;k<6;k++){(function(){
+      var d=bandejaEl("dc_brigadeiro",4,false);
+      d.onclick=function(){ arma();
+        if(d.className.indexOf("ok")>=0) return;
+        tocadas++; d.className="bandeja ok"; sPop(tocadas);
+        pl2.innerHTML=tocadas*4;
+        if(tocadas>=6){ sCerto(); reg("grupos",true,1);
+          var ce=centroTela(pl2); faisca(ce[0],ce[1],"#6bd23f",16);
+          setTimeout(function(){ depoisDaFala("dc_contar_revela",9000,function(){
+            mostraBanner("<b>24 toques</b> contando um por um &#183; <b>6 toques</b> contando de 4 em 4!",dMonta); }); },900);
+        }
+      };
+      ban.appendChild(d);
+    })();}
+    c2.appendChild(ban);
+    c2.appendChild(el("div","hint","4, 8, 12... conte de quatro em quatro."));
+    t2.appendChild(c2);app.appendChild(t2);
+    montaBarra(null,null);
+    falar("dc_contar_arruma");
+  }
+}
+
+/* ---------- 5) ⭐ SALTOS NA FITA (reta numérica / contagem salteada) ----------
+   C3+M2 do catálogo. É a representação que faltava: multiplicar = dar saltos
+   iguais. Sustenta a criança que ainda não decorou nada.                     */
+var SALTOS=[{p:2,ate:12,doce:"dc_brigadeiro"},{p:5,ate:20,doce:"dc_cupcake"},
+            {p:3,ate:15,doce:"dc_biscoito"},{p:4,ate:20,doce:"dc_pirulito"}];
+function dSalto(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,19+idx*2);
+    var it=SALTOS[idx],pos=0,err=0,dado=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","SALTOS NA FITA"));
+    c.appendChild(el("div","balao","O Cacau salta de <b>"+it.p+" em "+it.p+"</b>. Onde ele cai agora?"));
+    var reta=el("div","reta"),marcas=[],i;
+    var boneco=el("img","salta"); boneco.src="img/dc_base.png"; boneco.alt="";
+    reta.appendChild(boneco);
+    for(i=0;i<=it.ate;i++){(function(v){
+      var m=el("div","marca");
+      m.appendChild(el("i",""));
+      if(v%it.p===0||v===0) m.appendChild(el("b","",""+v));
+      m.onclick=function(){ arma();
+        if(dado) return;
+        if(v===pos+it.p){
+          pos=v; sPop(pos/it.p); m.className="marca caiu";
+          if(m.getElementsByTagName("b").length===0) m.appendChild(el("b","",""+v));
+          poe();
+          if(pos>=it.ate){ dado=1; sCerto(); reg("soma",err===0,err+1);
+            var q=pos/it.p;
+            var cf=contaEl(q+" saltos de "+it.p+" = <b>"+pos+"</b>",q+" &#215; "+it.p+" = "+pos);
+            c.appendChild(cf);
+            var ce=centroTela(cf); faisca(ce[0],ce[1],"#ffb45e",16);
+            setTimeout(function(){ idx++;
+              if(idx>=SALTOS.length){ depoisDaFala("dc_salto_revela",9000,function(){
+                mostraBanner("Cada <b>salto igual</b> &#233; um grupo. Saltar &#233; multiplicar!",dPrateleira); }); }
+              else passo();
+            },2200);
+          }
+        } else { err++; m.className="marca no"; sErro();
+          setTimeout(function(){ if(m.className==="marca no") m.className="marca"; },420);
+          ajuda(err,{dica:"O salto tem sempre <b>"+it.p+"</b> passinhos. Conte a partir do "+pos+".",
+                     concreto:function(){ var z,ms=reta.getElementsByClassName("marca");
+                       for(z=pos+1;z<=pos+it.p&&z<=it.ate;z++) ms[z].className="marca conta"; },
+                     revelar:function(){ var ms=reta.getElementsByClassName("marca");
+                       if(ms[pos+it.p]) acende(ms[pos+it.p]); }});
+        }
+      };
+      reta.appendChild(m); marcas.push(m);
+    })(i);}
+    function poe(){ boneco.style.left=(pos/it.ate*100)+"%"; }
+    c.appendChild(reta); poe();
+    c.appendChild(el("div","hint","Toque na marca onde o salto termina."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_salto_dica","Conte quantos passinhos tem um salto.");
+    if(idx===0) falar("dc_salto_intro");
+  }
+  passo();
+}
+
+/* ---------- 6) ⭐ MONTAR A PRATELEIRA (A5: o total EMERGE do que ela montou) ----
+   A criança não escolhe o total: ela CONSTRÓI o pedido e depois conta o que fez. */
+var PRAT=[{p:4,q:5},{p:3,q:6},{p:5,q:4}];
+function dPrateleira(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,28+idx*2);
+    var it=PRAT[idx],np=1,nq=1,err=0,fase=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","MONTE A PRATELEIRA"));
+    var bal=el("div","balao","Pedido: <b>"+it.p+" prateleiras</b> com <b>"+it.q+" potes</b> em cada uma.");
+    c.appendChild(bal);
+    var g1=el("div","giro"),g2=el("div","giro");
+    var v1=el("div","gval","1"),v2=el("div","gval","1");
+    function bt(qual,mais){ var b=el("div","gbt",mais?"+":"&#8211;");
+      b.onclick=function(){ arma(); sTap(); if(fase) return;
+        if(qual===1){ np=Math.max(1,Math.min(6,np+(mais?1:-1))); v1.innerHTML=np; }
+        else { nq=Math.max(1,Math.min(8,nq+(mais?1:-1))); v2.innerHTML=nq; }
+        desenha(); confere(); };
+      return b; }
+    g1.appendChild(bt(1,false));g1.appendChild(v1);g1.appendChild(bt(1,true));
+    g1.appendChild(el("div","glab","prateleiras"));
+    g2.appendChild(bt(2,false));g2.appendChild(v2);g2.appendChild(bt(2,true));
+    g2.appendChild(el("div","glab","potes em cada"));
+    c.appendChild(g1);c.appendChild(g2);
+    var caixa=el("div","prats");c.appendChild(caixa);
+    var res=el("div","conta","");c.appendChild(res);
+    function desenha(){ caixa.innerHTML=""; var i,j;
+      for(i=0;i<np;i++){ var p=el("div","prat");
+        for(j=0;j<nq;j++) p.appendChild(imgEl("dc_pote"));
+        caixa.appendChild(p); }
+    }
+    function confere(){
+      if(np===it.p&&nq===it.q){
+        fase=1; sCerto(); reg("grupos",err===0,err+1);
+        var ce=centroTela(caixa); faisca(ce[0],ce[1],"#6bd23f",16);
+        bal.innerHTML="Montou igualzinho! Agora <b>conte</b>: quantos potes ao todo?";
+        var num=el("div","num"),op=baguncar(unicos([it.p*it.q,it.p*it.q+it.q,it.p+it.q,it.p*it.q-it.q],4)),k;
+        for(k=0;k<op.length;k++){(function(v){
+          var b=el("div","tecl",""+v);
+          b.onclick=function(){ arma();
+            if(b.className.indexOf("ok")>=0) return;
+            if(v===it.p*it.q){ b.className="tecl ok"; sCerto();
+              res.innerHTML=it.p+" &#215; "+it.q+" = <b>"+(it.p*it.q)+"</b>";
+              reg("problema",err===0,err+1);
+              setTimeout(function(){ idx++;
+                if(idx>=PRAT.length){ depoisDaFala("dc_prat_revela",9000,function(){
+                  mostraBanner("Voc&#234; <b>montou</b> e o total apareceu sozinho!",dSoma); }); }
+                else passo();
+              },1800);
+            } else { err++; b.className="tecl no"; sErro();
+              setTimeout(function(){ if(b.className==="tecl no") b.className="tecl"; },440);
+              ajuda(err,{dica:"Conte de <b>"+it.q+" em "+it.q+"</b>, uma prateleira por vez.",
+                         concreto:function(){ apoioConcreto(c,"dc_pote",it.p,it.q); },
+                         revelar:function(){ var a=num.getElementsByClassName("tecl"),z;
+                           for(z=0;z<a.length;z++) if(a[z].innerHTML==""+(it.p*it.q)) acende(a[z]); }});
+            }
+          };
+          num.appendChild(b);
+        })(op[k]);}
+        c.appendChild(num);
+      } else res.innerHTML="";
+    }
+    desenha();
+    c.appendChild(el("div","hint","Use o mais e o menos at&#233; ficar igual ao pedido."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_prat_dica","Primeiro as prateleiras, depois os potes.");
+    if(idx===0) falar("dc_prat_intro");
+  }
+  passo();
+}
+
+/* ---------- 10) ⭐ VIRAR A BANDEJA (D1: comutatividade VISTA) ----------
+   3×4 girado vira 4×3 e o total não muda. Metade da tabuada a menos.     */
+var VIRA=[{l:3,co:4,doce:"dc_brigadeiro"},{l:5,co:2,doce:"dc_cupcake"},{l:4,co:3,doce:"dc_biscoito"}];
+function dVira(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,59+idx*2);
+    var it=VIRA[idx],girou=false,err=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","GIRE A BANDEJA"));
+    var bal=el("div","balao","Esta bandeja &#233; <b>"+it.l+" &#215; "+it.co+" = "+(it.l*it.co)+"</b>. Toque em <b>girar</b> e veja o que acontece.");
+    c.appendChild(bal);
+    var cx=el("div","virabox");
+    function pinta(l,co){ cx.innerHTML=""; var g=el("div","grade2"),i,j;
+      for(i=0;i<l;i++){ var f=el("div","fila");
+        for(j=0;j<co;j++) f.appendChild(imgEl(it.doce));
+        g.appendChild(f); }
+      cx.appendChild(g);
+    }
+    pinta(it.l,it.co);
+    c.appendChild(cx);
+    var bg=el("button","btn","Girar a bandeja");bg.style.marginTop="12px";
+    bg.onclick=function(){ arma(); sTap(); if(girou) return; girou=true;
+      sMaquina();
+      cx.className="virabox girando";
+      setTimeout(function(){ pinta(it.co,it.l); cx.className="virabox"; pergunta(); },520);
+      bg.parentNode.removeChild(bg);
+    };
+    c.appendChild(bg);
+    c.appendChild(el("div","hint","Ningu&#233;m vai tirar nem colocar docinho."));
+    function pergunta(){
+      bal.innerHTML="Agora s&#227;o <b>"+it.co+" &#215; "+it.l+"</b>. Quanto d&#225;?";
+      var num=el("div","num"),op=baguncar(unicos([it.l*it.co,it.l+it.co,it.l*it.co+it.l,it.l*it.co-it.co],4)),k;
+      for(k=0;k<op.length;k++){(function(v){
+        var b=el("div","tecl",""+v);
+        b.onclick=function(){ arma();
+          if(b.className.indexOf("ok")>=0) return;
+          if(v===it.l*it.co){ b.className="tecl ok"; sCerto(); reg("vezes",err===0,err+1);
+            var cf=contaEl(it.l+" &#215; "+it.co+" = "+(it.l*it.co)+" &#160;e&#160; "+it.co+" &#215; "+it.l+" = "+(it.l*it.co),"girou e deu o mesmo!");
+            c.appendChild(cf);
+            var ce=centroTela(cf); faisca(ce[0],ce[1],"#ffb45e",18);
+            setTimeout(function(){ idx++;
+              if(idx>=VIRA.length){ depoisDaFala("dc_vira_revela",11000,function(){
+                mostraBanner("Girou e o total <b>n&#227;o muda</b>! Isso &#233; meia tabuada a menos.",dLoja); }); }
+              else passo();
+            },2400);
+          } else { err++; b.className="tecl no"; sErro();
+            setTimeout(function(){ if(b.className==="tecl no") b.className="tecl"; },440);
+            ajuda(err,{dica:"Ningu&#233;m tirou nem colocou. Ser&#225; que mudou?",
+                       concreto:function(){ apoioConcreto(c,it.doce,it.co,it.l); },
+                       revelar:function(){ var a=num.getElementsByClassName("tecl"),z;
+                         for(z=0;z<a.length;z++) if(a[z].innerHTML==""+(it.l*it.co)) acende(a[z]); }});
+          }
+        };
+        num.appendChild(b);
+      })(op[k]);}
+      c.appendChild(num);
+    }
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_vira_dica","Depois de girar, conte de novo.");
+    if(idx===0) falar("dc_vira_intro");
+  }
+  passo();
+}
+
+/* ---------- 11) ⭐ O CAIXA DA DOCERIA (A6: dinheiro, preço repetido) ----------
+   Contexto autêntico: o mesmo preço repetido uma vez por saquinho.          */
+var LOJA=[{n:3,preco:5},{n:4,preco:2},{n:3,preco:1},{n:2,preco:5}];
+function dLoja(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,64+idx*1.5);
+    var it=LOJA[idx],postas=0,err=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","O CAIXA"));
+    c.appendChild(el("div","balao","O fregu&#234;s leva <b>"+it.n+" saquinhos</b>. Cada um custa <b>"+it.preco+" real"+(it.preco>1?"is":"")+"</b>."));
+    var sacos=el("div","sacos"),i,vagas=[];
+    for(i=0;i<it.n;i++){
+      var s=el("div","saco");
+      s.appendChild(imgEl("dc_saco"));
+      var v=el("div","vagam","?"); s.appendChild(v); vagas.push(v);
+      sacos.appendChild(s);
+    }
+    c.appendChild(sacos);
+    var tot=el("div","conta","Total: <b>0</b>");c.appendChild(tot);
+    c.appendChild(el("div","balao","Ponha em cada saquinho a moeda de <b>"+it.preco+"</b>."));
+    var mo=el("div","moedas"),lista=baguncar([1,2,5]),k;
+    for(k=0;k<lista.length;k++){(function(v){
+      var m=el("div","moeda m"+v);
+      m.appendChild(imgEl("dc_moeda"+v));
+      m.appendChild(el("b","",""+v));
+      m.onclick=function(){ arma();
+        if(postas>=it.n) return;
+        if(v===it.preco){
+          vagas[postas].innerHTML=v; vagas[postas].className="vagam paga";
+          postas++; sPop(postas);
+          tot.innerHTML="Total: <b>"+(postas*it.preco)+"</b>";
+          if(postas>=it.n){ sCerto(); reg("problema",err===0,err+1);
+            var cf=contaEl(it.n+" &#215; "+it.preco+" = <b>"+(it.n*it.preco)+"</b>",it.n+" saquinhos de "+it.preco+" real"+(it.preco>1?"is":""));
+            c.appendChild(cf);
+            var ce=centroTela(cf); faisca(ce[0],ce[1],"#ffd43b",16);
+            setTimeout(function(){ idx++;
+              if(idx>=LOJA.length){ depoisDaFala("dc_loja_revela",8000,function(){
+                mostraBanner("Pre&#231;o igual repetido tamb&#233;m &#233; <b>multiplica&#231;&#227;o</b>!",dCorta); }); }
+              else passo();
+            },2000);
+          }
+        } else { err++; m.className="moeda m"+v+" no"; sErro();
+          setTimeout(function(){ m.className="moeda m"+v; },440);
+          ajuda(err,{dica:"Cada saquinho custa <b>"+it.preco+"</b>. Procure a moeda com esse n&#250;mero.",
+                     concreto:function(){ vagas[postas].innerHTML=it.preco; vagas[postas].className="vagam dica"; },
+                     revelar:function(){ var a=mo.getElementsByClassName("moeda"),z;
+                       for(z=0;z<a.length;z++) if(a[z].className.indexOf("m"+it.preco)>=0) acende(a[z]); }});
+        }
+      };
+      mo.appendChild(m);
+    })(lista[k]);}
+    c.appendChild(mo);
+    c.appendChild(el("div","hint","Uma moeda para cada saquinho."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_loja_dica","Repita o pre&#231;o uma vez para cada saquinho.");
+    if(idx===0) falar("dc_loja_intro");
+  }
+  passo();
+}
+
+/* ---------- 12) ⭐ CORTAR A BANDEJA (C2: decompor para calcular) ----------
+   6×4 é difícil? Corta em 5×4 (que ela sabe) + 1×4. Estratégia de verdade.  */
+var CORTA=[{l:6,co:4,corte:5},{l:7,co:3,corte:5},{l:6,co:5,corte:5}];
+function dCorta(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,69+idx*1.5);
+    var it=CORTA[idx],fase=0,err=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","CORTE A BANDEJA"));
+    var bal=el("div","balao","<b>"+it.l+" &#215; "+it.co+"</b> parece dif&#237;cil. Toque na <b>linha do corte</b> para partir em duas f&#225;ceis.");
+    c.appendChild(bal);
+    var g=el("div","grade2 cortavel"),i,j,filas=[];
+    for(i=0;i<it.l;i++){ var f=el("div","fila");
+      for(j=0;j<it.co;j++) f.appendChild(imgEl("dc_brigadeiro"));
+      g.appendChild(f); filas.push(f);
+      if(i<it.l-1){ (function(depois){
+        var ln=el("div","linhac");
+        ln.onclick=function(){ arma();
+          if(fase) return;
+          if(depois===it.corte){
+            fase=1; sMaquina(); ln.className="linhac cortada";
+            var z; for(z=0;z<filas.length;z++) filas[z].className="fila "+(z<it.corte?"parteA":"parteB");
+            perg();
+          } else { err++; ln.className="linhac no"; sErro();
+            setTimeout(function(){ ln.className="linhac"; },420);
+            ajuda(err,{dica:"Corte deixando <b>5 fileiras</b> de um lado &#8212; a tabuada do 5 &#233; f&#225;cil.",
+                       concreto:function(){ var z2,ls=g.getElementsByClassName("linhac");
+                         for(z2=0;z2<ls.length;z2++) ls[z2].className="linhac conta"; },
+                       revelar:function(){ var ls=g.getElementsByClassName("linhac");
+                         if(ls[it.corte-1]) acende(ls[it.corte-1]); }});
+          }
+        };
+        g.appendChild(ln);
+      })(i+1); }
+    }
+    c.appendChild(g);
+    c.appendChild(el("div","hint","A linha fica entre duas fileiras."));
+    function perg(){
+      var a=it.corte*it.co, b=(it.l-it.corte)*it.co;
+      bal.innerHTML="Agora s&#227;o duas contas f&#225;ceis. Quanto d&#225; tudo junto?";
+      var cf=contaEl(it.corte+" &#215; "+it.co+" = "+a+"&#160; + &#160;"+(it.l-it.corte)+" &#215; "+it.co+" = "+b,"agora &#233; s&#243; juntar");
+      c.appendChild(cf);
+      var num=el("div","num"),op=baguncar(unicos([a+b,a+b+it.co,a,a+b-it.co],4)),k;
+      for(k=0;k<op.length;k++){(function(v){
+        var bt=el("div","tecl",""+v);
+        bt.onclick=function(){ arma();
+          if(bt.className.indexOf("ok")>=0) return;
+          if(v===a+b){ bt.className="tecl ok"; sCerto(); reg("vezes",err===0,err+1);
+            cf.innerHTML=it.l+" &#215; "+it.co+" = "+a+" + "+b+" = <b>"+(a+b)+"</b>";
+            var ce=centroTela(cf); faisca(ce[0],ce[1],"#ffb45e",18);
+            setTimeout(function(){ idx++;
+              if(idx>=CORTA.length){ depoisDaFala("dc_corta_revela",10000,function(){
+                mostraBanner("Conta dif&#237;cil <b>partida em duas f&#225;ceis</b>!",dTabu); }); }
+              else passo();
+            },2300);
+          } else { err++; bt.className="tecl no"; sErro();
+            setTimeout(function(){ if(bt.className==="tecl no") bt.className="tecl"; },440);
+            ajuda(err,{dica:"Some as duas partes: <b>"+a+" + "+b+"</b>.",
+                       concreto:function(){ apoioConcreto(c,"dc_brigadeiro",it.l,it.co); },
+                       revelar:function(){ var q=num.getElementsByClassName("tecl"),z;
+                         for(z=0;z<q.length;z++) if(q[z].innerHTML==""+(a+b)) acende(q[z]); }});
+          }
+        };
+        num.appendChild(bt);
+      })(op[k]);}
+      c.appendChild(num);
+    }
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_corta_dica","Deixe de um lado uma parte que voc&#234; sabe de cor.");
+    if(idx===0) falar("dc_corta_intro");
+  }
+  passo();
+}
+
+/* ---------- 14) ⭐ O QUADRO DA SEMANA (F1+G2: construir a tabela / padrão) ----
+   A criança preenche a linha e VÊ que cada tabuada só vai somando o mesmo.   */
+var QUADRO=[{p:2,n:6},{p:5,n:6},{p:3,n:6},{p:4,n:6}];
+function dQuadro(){
+  limpa();var t=el("div","tela");setProg(t,83);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","QUADRO DA SEMANA"));
+  var bal=el("div","balao","Cada linha vai <b>de um tanto em um tanto</b>. Complete o que falta.");c.appendChild(bal);
+  var tab=el("div","quadro"),i,j,faltam=[],feitos=0,err=0;
+  for(i=0;i<QUADRO.length;i++){
+    var q=QUADRO[i],lin=el("div","qlin");
+    lin.appendChild(el("div","qcab","de "+q.p+" em "+q.p));
+    /* dois buracos por linha, sorteados entre a 3ª e a 6ª casa */
+    var b1=2+Math.floor(Math.random()*2), b2=4+Math.floor(Math.random()*2);
+    for(j=0;j<q.n;j++){
+      var v=(j+1)*q.p;
+      if(j===b1||j===b2){
+        var cel=el("div","qcel vazia","?");
+        cel._v=v; faltam.push(cel); lin.appendChild(cel);
+      } else lin.appendChild(el("div","qcel",""+v));
+    }
+    tab.appendChild(lin);
+  }
+  c.appendChild(tab);
+  var num=el("div","num"),vals=[],k;
+  for(k=0;k<faltam.length;k++) vals.push(faltam[k]._v);
+  vals=baguncar(unicos(vals.slice(0),0));
+  var sel=null;
+  for(k=0;k<vals.length;k++){(function(v){
+    var b=el("div","tecl",""+v);
+    b.onclick=function(){ arma();
+      if(b.className.indexOf("ok")>=0) return;
+      /* acha um buraco ainda vazio com esse valor */
+      var z,achou=null;
+      for(z=0;z<faltam.length;z++) if(faltam[z].className.indexOf("vazia")>=0&&faltam[z]._v===v){ achou=faltam[z]; break; }
+      if(achou){ achou.innerHTML=v; achou.className="qcel cheia"; b.className="tecl ok"; sPop(feitos); feitos++;
+        var ce=centroTela(achou); faisca(ce[0],ce[1],"#6bd23f",10);
+        if(feitos>=faltam.length){ sCerto(); reg("soma",err===0,err+1);
+          setTimeout(function(){ depoisDaFala("dc_quadro_revela",10000,function(){
+            mostraBanner("Cada linha &#233; uma <b>tabuada</b>: ela s&#243; vai somando o mesmo n&#250;mero!",dLigar); }); },900);
+        }
+      } else { err++; b.className="tecl no"; sErro();
+        setTimeout(function(){ if(b.className==="tecl no") b.className="tecl"; },440);
+        ajuda(err,{dica:"Veja quanto <b>aumenta</b> de uma casa para a outra.",
+                   concreto:function(){ var z2; for(z2=0;z2<faltam.length;z2++)
+                     if(faltam[z2].className.indexOf("vazia")>=0){ faltam[z2].className="qcel vazia conta"; break; } },
+                   revelar:function(){ var z3,alvo=null;
+                     for(z3=0;z3<faltam.length;z3++) if(faltam[z3].className.indexOf("vazia")>=0){ alvo=faltam[z3]; break; }
+                     if(!alvo) return;
+                     var q2=num.getElementsByClassName("tecl"),z4;
+                     for(z4=0;z4<q2.length;z4++) if(q2[z4].innerHTML==""+alvo._v&&q2[z4].className.indexOf("ok")<0) acende(q2[z4]); }});
+      }
+    };
+    num.appendChild(b);
+  })(vals[k]);}
+  c.appendChild(num);
+  c.appendChild(el("div","hint","Toque no n&#250;mero que preenche o buraco."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("dc_quadro_dica","Quanto aumenta de uma casa para a outra?");
+  falar("dc_quadro_intro");
+}
+
 /* ---------- 13) ENCOMENDA RELÂMPAGO (tempo) ---------- */
 var RELD=[["2 &#215; 4",8],["3 &#215; 3",9],["5 &#215; 2",10],["4 &#215; 5",20],["2 &#215; 7",14],
           ["3 &#215; 5",15],["4 &#215; 4",16],["5 &#215; 5",25],["2 &#215; 8",16],["3 &#215; 6",18],
           ["4 &#215; 2",8],["5 &#215; 4",20],["3 &#215; 7",21],["2 &#215; 6",12],["4 &#215; 6",24]];
 function dRelampago(){
   limpa();var t=el("div","tela");setProg(t,97);
-  var LIM=60000,ini=(new Date()).getTime(),acabou=false,pts=0,fila=baguncar(RELD.slice(0)),fi=0;
+  var LIM=75000,ini=(new Date()).getTime(),acabou=false,pts=0,fila=baguncar(RELD.slice(0)),fi=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","ENCOMENDA REL&#194;MPAGO"));
   var pl=el("div","placar","Acertos: 0");c.appendChild(pl);
