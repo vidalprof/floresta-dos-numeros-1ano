@@ -451,6 +451,19 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
   .bins.tres .bin{width:96px;font-size:13px;padding:9px 4px}.bin small{font-size:9.5px}
   .filaSol{min-height:44px}.fs img{width:28px;height:28px}.solzinho{width:32px;height:32px}
 }
+
+/* ===== escolha da figurinha e tela final ===== */
+.fig.sel{border-color:var(--dourado);background:#fff6d8}
+.centro.topo{-webkit-box-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start}
+.centro.topo .medal{width:136px;height:136px}
+.centro.topo h1{font-size:26px;padding:4px 14px;margin:4px 0 2px}
+.centro.topo .sub{font-size:12.5px;margin-bottom:6px;padding:4px 11px}
+.centro.topo .cracha{margin-top:8px;padding:7px 14px 7px 7px}
+.centro.topo .cracha .cfoto{width:48px;height:48px}
+.centro.topo .cracha .cnome{font-size:17px}
+.centro.topo .boletim{margin-top:8px;padding:9px 12px}
+.centro.topo .btntreino{margin-top:8px;padding:10px 18px;font-size:16px}
+.centro.topo .btn{margin-top:8px;padding:12px 26px;font-size:17px}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -1573,7 +1586,7 @@ function crachaEl(funcao){
   d.appendChild(tx);
   return d;
 }
-function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
+function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro topo");
   var m=imgEl("med_espaco","medal"); c.appendChild(m); segredoRelatorio(m);
   c.appendChild(el("h1","","Astr&#244;nomo Mirim!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", v":"V")+"oc&#234; leu o c&#233;u inteirinho hoje."));
