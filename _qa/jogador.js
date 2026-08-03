@@ -27,7 +27,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
  await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(id,ms,cb){setTimeout(cb,120);}; });
  await p.evaluate(()=>{ telaCapa(); });
  let visto=[], ultimo='', paradas=0;
- const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca';
+ const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel';
  for(let i=0;i<5200;i++){
    const est=await p.evaluate(()=>{
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');
