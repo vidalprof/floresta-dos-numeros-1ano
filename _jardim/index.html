@@ -648,7 +648,7 @@ function telaAquecimento(){limpa();var t=el("div","tela");setProg(t,43);var c=el
 /* ============ P4: DO QUE PRECISA ============ */
 function telaPrecisa(){limpa();var t=el("div","tela");setProg(t,48);
   t.appendChild(el("div","balao","A planta <b>precisa</b> disto? Toque em <b>Precisa</b> ou <b>N&#227;o precisa</b>."));
-  var itens=[["jd_sol","Sol",true],["jd_refri","Refrigerante",false],["jd_agua","&#193;gua",true],["jd_celular","Celular",false],["jd_terra","Terra",true],["jd_meia","Meia",false],["jd_ar","Ar",true]];
+  var itens=[["jd_sol","Sol",true],["jd_refri","Refrigerante",false],["jd_agua","&#193;gua",true],["jd_celular","Celular",false],["jd_terra","Terra",true],["jd_meia","Meia",false],["jd_ar","Ar",true],["jd_brinquedo","Carrinho",false],["jd_pedra","Pedra",false]];
   var i2=0,acertos=0;
   var cen=el("div","centro");
   var card=el("div","itemCard");var im=imgEl(itens[0][0]);var lab=el("div","lab","");
@@ -733,8 +733,15 @@ var COMER=[
  {img:"jd_feijao",  nome:"FEIJ&#195;O", parte:"semente",por:"Cada feij&#227;o &#233; uma <b>semente</b>: plantou, nasce p&#233; de feij&#227;o."},
  {img:"jd_brocolis",nome:"BR&#211;COLIS",parte:"flor", por:"Os montinhos do br&#243;colis s&#227;o <b>flores</b> fechadinhas."},
  {img:"jd_cana",    nome:"CANA",      parte:"caule",  por:"A cana &#233; o <b>caule</b> da planta, cheio de caldo doce."},
+ {img:"jd_beterraba",nome:"BETERRABA",parte:"raiz",   por:"A beterraba tamb&#233;m engorda <b>debaixo da terra</b>: raiz."},
+ {img:"jd_couve",   nome:"COUVE",     parte:"folha",  por:"Couve &#233; <b>folha</b> pura, igual &#224; alface."},
  {img:"jd_morango", nome:"MORANGO",   parte:"fruto",  por:"O morango tem sementinhas por fora: tamb&#233;m &#233; <b>fruto</b>."},
- {img:"jd_milho",   nome:"MILHO",     parte:"semente",por:"Cada gr&#227;o de milho &#233; uma <b>semente</b>."}];
+ {img:"jd_couveflor",nome:"COUVE-FLOR",parte:"flor",  por:"O nome j&#225; entrega: &#233; um buqu&#234; de <b>flores</b>."},
+ {img:"jd_milho",   nome:"MILHO",     parte:"semente",por:"Cada gr&#227;o de milho &#233; uma <b>semente</b>."},
+ {img:"jd_palmito", nome:"PALMITO",   parte:"caule",  por:"O palmito &#233; o <b>caule</b> novinho da palmeira."},
+ {img:"jd_abobora", nome:"AB&#211;BORA",parte:"fruto", por:"Abre a ab&#243;bora: tem semente dentro. Ent&#227;o &#233; <b>fruto</b>."},
+ {img:"jd_amendoim",nome:"AMENDOIM",  parte:"semente",por:"Dentro da casca est&#227;o as <b>sementes</b> do amendoim."},
+ {img:"jd_batata",  nome:"BATATA",    parte:"caule",  por:"Essa engana! A batata cresce na terra, mas &#233; <b>caule</b> gordinho, nao raiz."}];
 var PARTES6=[{k:"raiz",n:"RAIZ"},{k:"caule",n:"CAULE"},{k:"folha",n:"FOLHA"},
              {k:"flor",n:"FLOR"},{k:"fruto",n:"FRUTO"},{k:"semente",n:"SEMENTE"}];
 function telaComemos(){
@@ -789,7 +796,9 @@ function ajudaJd(n,ops){
 
 /* ============ ⭐ QUE PARTE É ESSA? (reconhecer de perto) ============ */
 var QUALP=[{img:"jd_cenoura",k:"raiz"},{img:"jd_alface",k:"folha"},{img:"jd_cana",k:"caule"},
-           {img:"jd_brocolis",k:"flor"},{img:"jd_morango",k:"fruto"},{img:"jd_feijao",k:"semente"}];
+           {img:"jd_brocolis",k:"flor"},{img:"jd_morango",k:"fruto"},{img:"jd_feijao",k:"semente"},
+           {img:"jd_beterraba",k:"raiz"},{img:"jd_couveflor",k:"flor"},{img:"jd_abobora",k:"fruto"},
+           {img:"jd_amendoim",k:"semente"}];
 function telaQualParte(){
   limpa();var t=el("div","tela");setProg(t,90);
   var fila=baguncar(QUALP.slice(0)),idx=0,err=0;
@@ -1153,11 +1162,12 @@ function telaMemoria(){
 }
 /* ============ DESAFIO RELAMPAGO (precisa / nao precisa, no tempo) ============ */
 var RELAJD=[["jd_sol","Sol",true],["jd_agua","&#193;gua",true],["jd_terra","Terra",true],["jd_ar","Ar",true],
-            ["jd_refri","Refrigerante",false],["jd_celular","Celular",false],["jd_meia","Meia",false]];
+            ["jd_refri","Refrigerante",false],["jd_celular","Celular",false],["jd_meia","Meia",false],
+            ["jd_brinquedo","Carrinho",false],["jd_pedra","Pedra",false]];
 function telaRelampagoJd(){
   limpa();var t=el("div","tela");setProg(t,99);
   t.appendChild(el("div","balao","R&#225;pido! A planta <b>precisa</b> disto?"));
-  var LIM=45000,ini=(new Date()).getTime(),acabou=false,pts=0,fila=baguncar(RELAJD.slice(0)),fi=0;
+  var LIM=70000,ini=(new Date()).getTime(),acabou=false,pts=0,fila=baguncar(RELAJD.slice(0)),fi=0;
   var cen=el("div","centro");
   var pl=el("div","placar","Acertos: 0");
   var tb=el("div","tbar");var tbi=el("i");tb.appendChild(tbi);
@@ -1350,7 +1360,7 @@ function telaPrato(){
   var noPrato=[],partes={},err=0,fim=false;
   var cen=el("div","centro");
   cen.appendChild(el("div","selo","MONTE O SEU PRATO"));
-  var bal=el("div","balao","Escolha alimentos de <b>4 partes diferentes</b> da planta.");
+  var bal=el("div","balao","Escolha alimentos de <b>5 partes diferentes</b> da planta.");
   cen.appendChild(bal);
   var prato=el("div","pratao"); cen.appendChild(prato);
   var marcas=el("div","pmarcas"); cen.appendChild(marcas);
@@ -1371,8 +1381,8 @@ function telaPrato(){
       }
       var n=0,z; for(z in partes){ if(partes.hasOwnProperty(z)) n++; }
       bal.innerHTML="J&#225; tem <b>"+n+"</b> parte"+(n===1?"":"s")+" no prato. "+
-                    (n>=4?"Prato completo!":"Falta"+((4-n)===1?"":"m")+" <b>"+(4-n)+"</b>.");
-      if(n>=4&&!fim){ fim=true; sCerto(); sFesta(); festa(); reg("partes",err===0,err+1);
+                    (n>=5?"Prato completo!":"Falta"+((5-n)===1?"":"m")+" <b>"+(5-n)+"</b>.");
+      if(n>=5&&!fim){ fim=true; sCerto(); sFesta(); festa(); reg("partes",err===0,err+1);
         setTimeout(function(){ depoisDaFala("jd_prato_revela",10000,function(){
           mostraBanner("Voc&#234; comeu a planta quase <b>inteira</b>: de raiz at&#233; semente!",telaQualParte); }); },1200);
       }
