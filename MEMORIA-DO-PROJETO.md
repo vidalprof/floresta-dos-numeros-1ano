@@ -2697,3 +2697,35 @@ Palavras dele: *"não apagar nada do antigo, as atividades novas em repos novos"
 - Remover qualquer coisa só com pedido explícito do Marcos. Na dúvida, PERGUNTAR e
   MANTER. O `atualizar.yml` espelha o destino, então tomar cuidado para nunca apontar
   um `source_dir` para o repo errado — isso apagaria o conteúdo de lá.
+
+## 🧩 LEGENDA DO CLIQUE — a fase da bancada estava intransponível (ago/2026)
+
+Relato do Marcos: *"não tem como passar a fase do oval, retângulo, losango, pois não
+arrasta no computador e nem por clique"*.
+
+**O que estava errado (duas coisas somadas):**
+1. A fase **exigia a ordem** artigo → substantivo → adjetivo e **recusava calada**
+   qualquer outra. Quem começava pelo substantivo (o mais natural: é a palavra da
+   foto) tomava "errado" sem entender e podia ficar preso a fase inteira.
+2. A peça **parece** arrastável (peça encaixando numa vaga com a mesma forma), mas
+   não existia nenhum código de arrasto. O aluno arrasta, não acontece nada, e
+   conclui que o jogo travou.
+
+**Como ficou:** cada peça procura **a vaga da forma dela, em qualquer ordem**, e a
+mesma função atende **toque E arrasto** (mouse e dedo). Soltar no vazio devolve a
+peça sem penalidade; soltar na vaga errada dá o "não" honesto.
+
+**Armadilha paga:** não dar `preventDefault` no `touchstart` — isso cancela o clique
+sintético e mata justamente a opção do toque. O toque passou a ser resolvido no
+`touchend`/`mouseup`, com um carimbo de tempo para o clique seguinte não repetir a
+jogada. Testado nos dois: PC (clique e arrasto do mouse) e tablet (toque simples).
+
+**De quebra:** o auditor de contraste (que nasceu depois desta atividade) reprovava
+**59 textos**. Toda a paleta foi escurecida o suficiente para passar o mínimo WCAG
+sem mudar a cara do jornal, e a tela final foi compactada porque o botão "Treinar o
+que faltou" nascia **atrás da barra de baixo**.
+
+**Buraco conhecido do auditor jogador:** ele ainda fica preso no **QUADRO DE LETRAS**
+(a cruzadinha), pelo mesmo motivo do caça-palavras — clicando ao acaso não dá para
+resolver. Vale aplicar ali o mesmo truque do `data-qa` já usado no Observatório do
+Órbi quando essa atividade for mexida de novo.
