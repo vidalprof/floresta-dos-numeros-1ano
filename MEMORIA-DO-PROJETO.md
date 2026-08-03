@@ -127,6 +127,55 @@
 >> - **Atenção:** o `CLAUDE.md` ainda manda ler os `EDUVERSE-*.md` como "LEI". Perguntei ao Marcos se quer
 >>   que eu ajuste o CLAUDE.md para refletir este rumo — **aguardando a resposta dele**.
 
+>> ## 🕵️ A BANCA DE AUDITORES (pedido do Marcos: "precisamos de auditores antes de entregar") — 2026-08-03
+>> **Um comando roda todos:** `bash _qa/auditar.sh _doceria/index.html` (sem lista de telas ele descobre
+>> sozinho quem chama `limpa()`). Sai 0 se a banca aprovar. Cada auditor é um profissional com UMA obsessão:
+>> 1. **Engenheiro** — `node --check` no JS extraído. O código roda?
+>> 2. **Arquiteto de fluxo** — `_qa/fluxo.py`: tela presa em si mesma / tela órfã.
+>> 3. **Designer** — `_qa/classes.py`: classe usada no JS sem regra BASE (só dentro de `@media`).
+>> 4. **Acessibilidade** — `_qa/contraste.js` ⭐ NOVO: mede o **pixel real**. Abre a tela, tira o print,
+>>    deixa TODO texto transparente, tira o print só do FUNDO e compara com a cor computada (WCAG).
+>>    Olhar o CSS engana: a regra diz `color:#fff` e parece certa, mas o pixel atrás é creme.
+>> 5. **Leiaute** — `_qa/leiaute.js` ⭐ NOVO: 6 tamanhos reais. Reprova o que estoura na horizontal, a
+>>    RESPOSTA fora da tela, a resposta atrás da barra de baixo e o alvo de toque < 40px.
+>> 6. **Jogador** — `_qa/jogador.js`: joga clicando ao acaso até a medalha.
+>> 7. **Pedagogo** — `_qa/curriculo.py` ⭐ NOVO: confere se toda conta cabe no ANO (ver abaixo).
+>> Depois da banca ainda falta o **PROFESSOR** (portão final). A banca não substitui o Marcos.
+>>
+>> ## 📏 RESPOSTA COM FONTE: até que tabuada vai o 3º ano? (pergunta do Marcos)
+>> `_curriculo/blumenau.txt`, verbatim: 3º ano = *"problemas de multiplicação **(por 2, 3, 4 e 5)**"*;
+>> 4º ano = *"(por 2, 3, 4, 5 **e 10**)"*. **O 10 só entra no ano seguinte.** Regra que o
+>> `_qa/curriculo.py` aplica: numa conta a×b do 3º ano, pelo menos UM fator entre 2 e 5 (é a tabuada que
+>> ela está aprendendo); o outro vai até 10. "3 × 8" vale; "6 × 7" não. **A Doceria: 34 contas, todas
+>> dentro, maior produto 45.** O 3º ano também pede *"dobro, metade, triplo e terça parte"* — **ainda
+>> NÃO coberto**, fica como próxima fase.
+>>
+>> ## ⚠️ ERROS PAGOS NESTA RODADA (anotar para não repetir) — 2026-08-03
+>> - **🎓 FALHA PEDAGÓGICA (a pior):** na fase do corte eu exigia UM corte específico (5 fileiras) e
+>>   chamava de ERRO qualquer outro. Mas cortar 6 em 3+3 está tão certo quanto 5+1! Eu estava ensinando
+>>   a criança a **adivinhar o que o app quer** em vez de pensar. Consertado: vale qualquer corte, o app
+>>   calcula as partes que ELA escolheu; a dica apenas SUGERE o 5. **Regra nova: antes de marcar algo como
+>>   errado, perguntar "isso está matematicamente errado ou só diferente do que eu esperava?".**
+>> - **🔒 TRAVA por valor repetido:** no Quadro da Semana o 12 aparece na tabuada do 2, do 3 e do 4. O
+>>   teclado era `unicos()` → uma só tecla "12"; ao preencher o 1º buraco ela virava `ok` e o 2º buraco
+>>   NUNCA fechava. Criança presa para sempre. Certo: a tecla só descansa quando não sobrar buraco com
+>>   aquele valor. **Achado pelo auditor-jogador.**
+>> - **👆 ALVO DE TOQUE:** as 36 células do quadro de estoque tinham 28px de altura (herdadas do
+>>   caça-palavras 9×9). Dedo de criança precisa de **40px**. O `.cel` do motor estava sendo sobrescrito
+>>   por um `@media (max-height:900px)` — **cuidado ao inserir regra: `h.index('.cel{')` achou a de dentro
+>>   de um @media, não a base.**
+>> - **📱 RESPOSTA FORA DA TELA (foto do Marcos):** numa janela de ~360px de altura as opções ficavam
+>>   abaixo da dobra — a criança via só o enunciado. Nasceram os tiers `@media (max-height:600px)` e
+>>   `(max-height:430px)`. **E o monitor 1366×768 da escola é MAIS BAIXO que um celular** (~640px de
+>>   janela útil): aumentar fonte lá faz rolar. Por isso o bloco de PC tem dois casos (alto = letra e
+>>   caixas; baixo e largo = só a letra).
+>> - **↕️ ESPAÇO NO LUGAR ERRADO:** o Marcos pediu ar entre as bandejas e o balão; eu aumentei a margem
+>>   de CIMA (entre o selo e as bandejas) e o problema continuou. **Margem em bloco visual tem que ser
+>>   nos DOIS lados** (`margin:16px 0`), senão o elemento seguinte continua colado.
+>> - **🔊 CÓPIA DEMAIS:** `cp _audio/op_*.mp3 _doceria/audio/` levou 212 vozes de OUTRAS atividades para
+>>   dentro do app (9,4 MB). Copiar só as chaves que estão no `VOZOK` daquele app.
+>> - **🎨 PLURAL:** `"real"+(preco>1?"is":"")` gera "realis". Certo: `(preco>1?"reais":"real")`.
+>>
 >> ## 🍫 NOVA ATIVIDADE — "A Doceria do Cacau" (3º ano, multiplicação por grupos) — 2026-08-03
 >> Pedido do Marcos: *"uma atividade para o 3 ano Multiplicação por soma de grupos, multiplicação de
 >> grupos, bem didática, progressiva, temática com mascote e imagens novas que dure pelo menos 45 minutos"*.
