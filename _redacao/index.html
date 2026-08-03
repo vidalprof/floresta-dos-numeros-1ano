@@ -410,6 +410,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   .bandeja{min-width:50px;min-height:38px}
   .bandeja .doces{min-height:28px}.bandeja .doces img{width:13px;height:13px}
 }
+
+
+.painel .dom{color:#1e6b10;font-weight:800}
+.painel .cons{color:#8a6a00;font-weight:800}
+.painel .ret{color:#a33020;font-weight:800}
+.painel .resumo{background:#f2f7ea;border:2px solid #cfe0b8;border-radius:12px;padding:10px 12px;margin:10px 0;font-weight:600}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -851,12 +857,13 @@ function crachaEl(funcao){
 }
 
 function vFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
-  c.appendChild(imgEl("vb_med","medal"));
+  var med=imgEl("vb_med","medal"); c.appendChild(med); segredoRelatorio(med);
   c.appendChild(el("h1","","Rep&#243;rter Mestre!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" edi&#231;&#227;o est&#225; fechada."));
   c.appendChild(crachaEl("Rep&#243;rter Mestre"));
   if(MED.manchete){ var m=el("div","balao","Sua manchete: <b>"+MED.manchete+"</b>"); m.style.marginTop="8px"; c.appendChild(m); }
   var b=el("button","btn dourado","Jogar de novo");b.style.marginTop="12px";
+
   b.onclick=function(){arma();sTap();MIS.v=1;salva();telaMenu();};c.appendChild(b);
   t.appendChild(c);app.appendChild(t);sFesta();festa();salva();
   montaBarra(null,null);
@@ -1106,11 +1113,12 @@ function gEnsinar(){limpa();var t=el("div","tela");setProg(t,97);var c=el("div",
   falar("vg_ensinar_pede");}
 /* ================= FIM ================= */
 function gFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
-  c.appendChild(imgEl("vg_med","medal"));
+  var med2=imgEl("vg_med","medal"); c.appendChild(med2); segredoRelatorio(med2);
   c.appendChild(el("h1","","Editor Mestre!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" banca est&#225; arrumada."));
   c.appendChild(crachaEl("Editor Mestre"));
   var b=el("button","btn dourado","Jogar de novo");b.style.marginTop="12px";
+
   b.onclick=function(){arma();sTap();MIS.g=1;salva();telaMenu();};c.appendChild(b);
   t.appendChild(c);app.appendChild(t);sFesta();festa();salva();
   montaBarra(null,null);
@@ -1983,6 +1991,33 @@ function telaMenu(){limpa();var t=el("div","tela");var c=el("div","centro");
   t.appendChild(c);app.appendChild(t);
   montaBarra(null,null);}
 /* ================= PAINEL (as duas missões) ================= */
+
+/* ---------- RELATORIO DO FIM (so para o professor) ----------
+   Pedido do Marcos (ago/2026): relatorio no fim da atividade, mas SEM botao e
+   SEM o painel aparecendo para os alunos. Solucao: gesto discreto — segurar a
+   MEDALHA por 2 segundos. Crianca nao descobre; o professor sabe.
+   O ?painel no endereco continua funcionando.                                */
+function segredoRelatorio(elm){
+  if(!elm) return;
+  var tmr=null;
+  function comeca(){ if(tmr) clearTimeout(tmr);
+    tmr=setTimeout(function(){ tmr=null; telaPainel(); },2000); }
+  function para(){ if(tmr){ clearTimeout(tmr); tmr=null; } }
+  elm.addEventListener("mousedown",comeca);
+  elm.addEventListener("touchstart",comeca);
+  elm.addEventListener("mouseup",para);
+  elm.addEventListener("mouseleave",para);
+  elm.addEventListener("touchend",para);
+  elm.addEventListener("touchcancel",para);
+}
+
+/* parecer em PALAVRAS, nao so porcentagem — o professor precisa registrar isso
+   no diario, e "72%" nao diz nada. (pedido do Marcos, ago/2026) */
+function parecerDe(p){
+  if(p>=0.75) return ["Dominou","dom"];
+  if(p>=0.50) return ["Est&#225; construindo","cons"];
+  return ["Precisa retomar","ret"];
+}
 function pct(x){return Math.round(x*100)+"%";}
 function telaPainel(){
   try{narr.pause();}catch(e){}
@@ -1993,9 +2028,12 @@ function telaPainel(){
   h+="<div><b>Aluno(a):</b> "+(perfil.nome||"(sem nome)")+" &#183; <b>Tempo:</b> ~"+mins+" min &#183; <b>Dicas usadas:</b> "+MED.dicas+"</div>";
   h+="<div class='bloco'><b>Miss&#245;es conclu&#237;das:</b> "+((MIS.v?"Verbos":"")+(MIS.v&&MIS.g?" e ":"")+(MIS.g?"G&#234;neros":"")||"nenhuma ainda")+"</div>";
   h+="<div class='bloco'><b>Acertos:</b> "+acc+" de "+tot+" ("+(tot?Math.round(acc*100/tot):0)+"%)</div>";
-  h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th></tr>";
-  var k;for(k in CONC){ if(CONC.hasOwnProperty(k)) h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td></tr>"; }
+  h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th><th>Parecer</th></tr>";
+  var k,ndom=0,nconc=0;
+  for(k in CONC){ if(CONC.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
+    h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
+  h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var g="não medido";
   if(MED.pre!==null&&MED.pos!==null){ g=(MED.pre===0&&MED.pos===1)?"GANHO REAL (errou no começo, explicou certo no fim)":(MED.pre===1&&MED.pos===1)?"já sabia e manteve":(MED.pos===0)?"ainda não consolidou":"-"; }
   h+="<div class='bloco'><b>Antes x depois:</b> "+g+"</div>";

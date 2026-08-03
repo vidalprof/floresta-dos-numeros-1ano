@@ -240,6 +240,12 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .zona .plaq.esq{left:auto;right:100%;top:50%;margin-right:2px;-webkit-transform:translateY(-50%);transform:translateY(-50%)}
 .zona .plaq.dir{left:100%;top:50%;margin-left:2px;-webkit-transform:translateY(-50%);transform:translateY(-50%)}
 .zona .plaq.baixo{left:50%;top:100%;margin-top:2px;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
+
+
+.painel .dom{color:#1e6b10;font-weight:800}
+.painel .cons{color:#8a6a00;font-weight:800}
+.painel .ret{color:#a33020;font-weight:800}
+.painel .resumo{background:#f2f7ea;border:2px solid #cfe0b8;border-radius:12px;padding:10px 12px;margin:10px 0;font-weight:600}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -1099,16 +1105,44 @@ function crachaEl(funcao){
 }
 
 function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
-  var m=imgEl("med_jardim","medal"); c.appendChild(m);
+  var m=imgEl("med_jardim","medal"); c.appendChild(m); segredoRelatorio(m);
   c.appendChild(el("h1","","Jardineiro Mestre!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", v":"V")+"oc&#234; cuidou da planta do come&#231;o ao fim."));
   c.appendChild(crachaEl("Jardineiro Mestre"));
   var b=el("button","btn amarelo","Jogar de novo");b.onclick=function(){arma();sTap();telaCapa();};c.appendChild(b);
+
   t.appendChild(c);app.appendChild(t);sFesta();festa();
   salvaEstado();
   montaBarra(null,null);
   falar("jd_fim");}
 /* ============ PAINEL DO PROFESSOR (?painel) ============ */
+
+/* ---------- RELATORIO DO FIM (so para o professor) ----------
+   Pedido do Marcos (ago/2026): relatorio no fim da atividade, mas SEM botao e
+   SEM o painel aparecendo para os alunos. Solucao: gesto discreto — segurar a
+   MEDALHA por 2 segundos. Crianca nao descobre; o professor sabe.
+   O ?painel no endereco continua funcionando.                                */
+function segredoRelatorio(elm){
+  if(!elm) return;
+  var tmr=null;
+  function comeca(){ if(tmr) clearTimeout(tmr);
+    tmr=setTimeout(function(){ tmr=null; telaPainel(); },2000); }
+  function para(){ if(tmr){ clearTimeout(tmr); tmr=null; } }
+  elm.addEventListener("mousedown",comeca);
+  elm.addEventListener("touchstart",comeca);
+  elm.addEventListener("mouseup",para);
+  elm.addEventListener("mouseleave",para);
+  elm.addEventListener("touchend",para);
+  elm.addEventListener("touchcancel",para);
+}
+
+/* parecer em PALAVRAS, nao so porcentagem — o professor precisa registrar isso
+   no diario, e "72%" nao diz nada. (pedido do Marcos, ago/2026) */
+function parecerDe(p){
+  if(p>=0.75) return ["Dominou","dom"];
+  if(p>=0.50) return ["Est&#225; construindo","cons"];
+  return ["Precisa retomar","ret"];
+}
 function pct(x){ return Math.round(x*100)+"%"; }
 function telaPainel(){
   try{ narr.pause(); }catch(e){}
@@ -1119,9 +1153,12 @@ function telaPainel(){
   var h="<h2>O Jardim do Broto &#8212; parecer</h2>";
   h+="<div><b>Aluno(a):</b> "+(perfil.nome||"(sem nome)")+" &#183; <b>Tempo:</b> ~"+mins+" min &#183; <b>Dicas usadas:</b> "+MED.dicas+"</div>";
   h+="<div class='bloco'><b>Acertos:</b> "+acc+" de "+tot+" ("+(tot?Math.round(acc*100/tot):0)+"%)</div>";
-  h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th></tr>";
-  var k; for(k in CONC){ if(CONC.hasOwnProperty(k)) h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td></tr>"; }
+  h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th><th>Parecer</th></tr>";
+  var k,ndom=0,nconc=0;
+  for(k in CONC){ if(CONC.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
+    h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
+  h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var ganho="não medido";
   if(MED.pre!==null&&MED.pos!==null){ ganho = (MED.pre===0&&MED.pos===1) ? "GANHO REAL (errou antes, acertou depois)" : (MED.pre===1&&MED.pos===1) ? "já sabia e manteve" : (MED.pos===0) ? "ainda não consolidou" : "-"; }
   h+="<div class='bloco'><b>Antes x depois:</b> "+ganho+"<br><small>Previs&#227;o no come&#231;o (sol+&#225;gua) comparada com a explica&#231;&#227;o no fim.</small></div>";
