@@ -712,7 +712,7 @@ function dSoma(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,24+idx*3);
-    var it=SOMA[idx],posto=0;
+    var it=SOMA[idx],posto=0,fimS=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ESCREVA A SOMA"));
     var ban=el("div","bancada"),i;
@@ -725,6 +725,7 @@ function dSoma(){
       var b=el("div","tecl",""+v);
       b.onclick=function(){ arma();
         if(b.className.indexOf("ok")>=0) return;
+        if(fimS) return;
         if(v===it.q&&posto<it.b){
           if(posto>0) linha.appendChild(el("span","sinal","+"));
           linha.appendChild(el("div","parc",""+v));
@@ -732,7 +733,7 @@ function dSoma(){
           if(posto>=it.b){
             linha.appendChild(el("span","sinal","="));
             linha.appendChild(el("div","parc",""+(it.b*it.q)));
-            sCerto(); reg("soma",err===0,err+1);
+            fimS=true; sCerto(); reg("soma",err===0,err+1);
             var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffb45e",14);
             setTimeout(function(){ idx++;
               if(idx>=SOMA.length){ depoisDaFala("dc_soma_revela",9000,function(){
@@ -775,7 +776,7 @@ function dVezes(){
     for(k=0;k<lista.length;k++){(function(v){
       var b=el("div","tecl",""+v);
       b.onclick=function(){ arma();
-        if(b.className.indexOf("ok")>=0) return;
+        if(fase>=2||b.className.indexOf("ok")>=0) return;
         var certo=(fase===0)?it.b:it.q;
         if(v===certo){
           b.className="tecl ok"; sPop(fase); fase++;
@@ -824,7 +825,7 @@ function dGrade(){
     for(k=0;k<lista.length;k++){(function(v){
       var b=el("div","tecl",""+v);
       b.onclick=function(){ arma();
-        if(b.className.indexOf("ok")>=0) return;
+        if(fase>=2||b.className.indexOf("ok")>=0) return;
         var certo=(fase===0)?it.l:it.co;
         if(v===certo){
           b.className="tecl ok"; sPop(fase); fase++;
@@ -859,7 +860,7 @@ function dTabu(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,56+idx*1.2);
-    var it=TABU[idx],a=it[0],b=it[1],res=a*b;
+    var it=TABU[idx],a=it[0],b=it[1],res=a*b,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ENCOMENDA R&#193;PIDA"));
     c.appendChild(el("div","pedido","O freguês pediu <b>"+a+"</b> bandeja"+(a===1?"":"s")+" com <b>"+b+"</b> docinhos em cada."));
@@ -870,7 +871,8 @@ function dTabu(){
     for(k=0;k<lim.length;k++){(function(v){
       var bt=el("div","tecl",""+v);
       bt.onclick=function(){ arma();
-        if(v===res){ bt.className="tecl ok"; sCerto(); reg("vezes",err===0,err+1);
+        if(fim) return;
+        if(v===res){ fim=true; bt.className="tecl ok"; sCerto(); reg("vezes",err===0,err+1);
           var ce=centroTela(bt); faisca(ce[0],ce[1],"#ffb45e",14);
           setTimeout(function(){ idx++;
             if(idx>=TABU.length){ depoisDaFala("dc_tabu_revela",8000,function(){
@@ -992,7 +994,7 @@ function dCaca(){
     if(usados[v]) continue;
     usados[v]=1; nums.push(v); }
   baguncar(nums);
-  var idx=0,err=0,achados=0;
+  var idx=0,err=0,achados=0,fimC=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","QUADRO DO ESTOQUE"));
   var bal=el("div","balao","");c.appendChild(bal);
@@ -1001,13 +1003,13 @@ function dCaca(){
     var cl=el("div","cel",""+v);
     cl.style.width="16.66%"; cl.style.fontSize="15px";
     cl.onclick=function(){ arma();
-      if(cl.className.indexOf("ok")>=0) return;
+      if(fimC||cl.className.indexOf("ok")>=0) return;
       var it=CACAD[idx],res=it[0]*it[1];
       if(v===res){ cl.className="cel ok"; sCerto(); achados++;
         reg("vezes",err===0,err+1);
         var ce=centroTela(cl); faisca(ce[0],ce[1],"#ffb45e",12);
         setTimeout(function(){ idx++;
-          if(idx>=CACAD.length){ depoisDaFala("dc_caca_revela",7000,function(){
+          if(idx>=CACAD.length){ fimC=true; depoisDaFala("dc_caca_revela",7000,function(){
             mostraBanner("Estoque conferido! Voc&#234; achou <b>todos</b> os totais!",dProblema); }); }
           else { err=0; pede(); }
         },800);
@@ -1052,7 +1054,7 @@ function dProblema(){
     for(k=0;k<op.length;k++){(function(v){
       var bt=el("div","tecl",""+v);
       bt.onclick=function(){ arma();
-        if(bt.className.indexOf("ok")>=0) return;
+        if(fase>=2||bt.className.indexOf("ok")>=0) return;
         var certo=(fase===0)?it.a:it.b;
         if(v===certo){ bt.className="tecl ok"; sPop(fase); fase++;
           if(fase===1){ alvo.innerHTML=it.a+" &#215; ___";
