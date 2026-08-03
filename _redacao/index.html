@@ -1031,7 +1031,7 @@ function gBanca(){
   var ordem=["conto","verbete","carta","noticia","poema"];
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,46+idx*5);
+    limpa();var t=el("div","tela");setProg(t,52+idx*2);
     var k=ordem[idx],err=0,resp=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ARRUME A BANCA"));
@@ -1081,7 +1081,7 @@ function gAquec(){limpa();var t=el("div","tela");setProg(t,62);var c=el("div","c
   montaBarra(null,null);
   falar("vg_aquec_intro");}
 /* ================= P4: TEXTO TROCADO ================= */
-function gTrocado(){limpa();var t=el("div","tela");setProg(t,80);var c=el("div","centro");
+function gTrocado(){limpa();var t=el("div","tela");setProg(t,86);var c=el("div","centro");
   c.appendChild(el("div","selo","SAIU ERRADO!"));
   var jo=el("div","jornal");jo.appendChild(imgEl("vb_jornal"));
   var mm=el("div","manch","Era uma vez um sino m&#225;gico que tocou sozinho...");jo.appendChild(mm);
