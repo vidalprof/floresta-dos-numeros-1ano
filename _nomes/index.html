@@ -278,7 +278,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .pc.sub{border-radius:999px;background:-webkit-linear-gradient(top,#6bd23f,#3f9a26);background:linear-gradient(#6bd23f,#3f9a26)}
 .pc.adj{border-radius:9px;background:-webkit-linear-gradient(top,#ffb45e,#ef8a1e);background:linear-gradient(#ffb45e,#ef8a1e);-webkit-clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);padding:0 19px}
 .pc.usada{opacity:.22;pointer-events:none}
-.pc.no{-webkit-animation:shk .4s;animation:shk .4s}
+.pc.no{-webkit-animation:shk .4s;animation:shk .4s}\n.pc.fantasma{position:fixed;z-index:30;pointer-events:none;opacity:.96;margin:0;\n  -webkit-transform:scale(1.06);transform:scale(1.06);\n  -webkit-box-shadow:0 12px 22px rgba(0,0,0,.45);box-shadow:0 12px 22px rgba(0,0,0,.45)}\n.vaga.mira{border-style:solid;border-color:#ffd43b;background:rgba(255,212,59,.34)}
 .legenda{display:-webkit-box;display:-webkit-flex;display:flex;gap:12px;-webkit-box-pack:center;justify-content:center;margin-top:10px;font-size:11.5px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 .legenda i{display:inline-block;width:15px;height:12px;margin-right:4px;vertical-align:-1px}
 .legenda .la{border-radius:3px;background:#2f6bd8}
@@ -512,6 +512,45 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113);
   -webkit-box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25);box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25)}
 .btntreino small{display:block;font-size:12px;font-weight:600;opacity:.92;margin-top:2px}
+
+/* ===== CONTRASTE (banca de acessibilidade, ago/2026) =====
+   O app nasceu antes do auditor de contraste. Ele mediu o PIXEL real atras de
+   cada texto e reprovou 59: branco sobre laranja/verde claro e branco com
+   sombra sobre o fundo creme. Aqui a paleta so escurece o suficiente para
+   passar o minimo WCAG (4.5:1) sem mudar a cara do jornal.                   */
+.hint,.placar{background:rgba(46,36,20,.88);padding:6px 13px;border-radius:999px;
+  max-width:340px;text-align:center;line-height:1.3;display:inline-block;text-shadow:none}
+.legenda{background:rgba(46,36,20,.88);padding:5px 12px;border-radius:999px;text-shadow:none;
+  -webkit-align-self:center;align-self:center}
+.cnum{color:#4a4230;text-shadow:none}
+.selo{background:#5b3fd0}
+.encaixe{color:#5c5544;border-color:#b8ad93}
+.pc.art,.vaga.art.cheia{background:-webkit-linear-gradient(top,#4a7fd8,#17408f);background:linear-gradient(#4a7fd8,#17408f)}
+.pc.sub,.vaga.sub.cheia{background:-webkit-linear-gradient(top,#43a01e,#1e6410);background:linear-gradient(#43a01e,#1e6410)}
+.pc.adj,.vaga.adj.cheia{color:#3d1d00}
+.legenda .la{background:#17408f}
+.legenda .ls{background:#1e6410}
+.bin.sim{background:-webkit-linear-gradient(top,#43a01e,#1e6410);background:linear-gradient(#43a01e,#1e6410)}
+.btn{background:-webkit-linear-gradient(top,#3f7ae0,#17408f);background:linear-gradient(#3f7ae0,#17408f)}
+.btntreino{background:-webkit-linear-gradient(top,#2f7f1b,#164008);background:linear-gradient(#2f7f1b,#164008);
+  max-width:330px}
+.bin.nao{background:-webkit-linear-gradient(top,#e2503f,#a32a1c);background:linear-gradient(#e2503f,#a32a1c)}
+/* a tela final ficou mais alta com o boletim e o botao de treino sumia atras
+   da barra de baixo (armadilha ja anotada no _padrao/FIM-DE-ATIVIDADE.md) */
+.tela{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
+.centro.topo{-webkit-box-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start}
+/* a tela final junta medalha + cracha + boletim + dois botoes: no telefone ela
+   passava de 1000px e o botao de treino ficava ATRAS da barra de baixo. Aqui
+   ela e compactada para caber inteira sem rolagem. */
+.centro.topo .medal{width:132px;height:132px}
+.centro.topo h1{font-size:25px;padding:4px 14px;margin:4px 0 2px}
+.centro.topo .sub{font-size:12.5px;margin-bottom:6px;padding:4px 11px}
+.centro.topo .cracha{margin-top:8px;padding:7px 14px 7px 7px}
+.centro.topo .cracha .cfoto{width:48px;height:48px}
+.centro.topo .cracha .cnome{font-size:17px}
+.centro.topo .boletim{margin-top:8px;padding:9px 12px}
+.centro.topo .btntreino{margin-top:8px;padding:10px 18px;font-size:16px}
+.centro.topo .btn{margin-top:8px;padding:12px 26px;font-size:17px}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -866,41 +905,112 @@ function nGrupo(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","BANCADA DE MONTAGEM"));
     c.appendChild(fotoEl(f.img,""));
-    c.appendChild(el("div","balao","Monte a legenda encaixando as <b>tr&#234;s pe&#231;as</b>."));
+    c.appendChild(el("div","balao","Monte a legenda: <b>arraste</b> a pe&#231;a at&#233; a vaga, ou s&#243; <b>toque</b> nela."));
     var alvo=[{cl:"art",tx:f.art},{cl:"sub",tx:f.sub},{cl:"adj",tx:f.adj}];
     var vagas=el("div","vagas"),vs=[],i;
     for(i=0;i<3;i++){ var v=el("div","vaga "+alvo[i].cl,""); vagas.appendChild(v); vs.push(v); }
     c.appendChild(vagas);
     c.appendChild(legendaFormas());
-    var passoAtual=0;
+    var cheias={},nCheias=0,fim=false;
     var pool=[{cl:"art",tx:f.art},{cl:"sub",tx:f.sub},{cl:"adj",tx:f.adj},
               {cl:"art",tx:(f.art==="o"?"a":"o")},{cl:"adj",tx:"r&#225;pido"}];
     baguncar(pool);
     var box=el("div","pcs");
+
+    /* ---- encaixe ----
+       Antes a fase exigia a ORDEM artigo, substantivo, adjetivo e recusava
+       qualquer outra sem explicar: quem come&#231;ava pelo substantivo ficava preso
+       para sempre. Agora cada pe&#231;a procura a vaga da FORMA dela, em qualquer
+       ordem, e a mesma fun&#231;&#227;o serve para o toque e para o arrasto.        */
+    function vagaLivreDe(cl){ var k; for(k=0;k<3;k++) if(alvo[k].cl===cl&&!cheias[k]) return k; return -1; }
+    function vagaSob(x,y){ var k,r;
+      for(k=0;k<3;k++){ if(cheias[k]) continue; r=vs[k].getBoundingClientRect();
+        if(x>=r.left-16&&x<=r.right+16&&y>=r.top-16&&y<=r.bottom+16) return k; }
+      return -1; }
+    function erra(b,p){ err++; b.className="pc "+p.cl+" no"; sErro();
+      setTimeout(function(){ if(b.className.indexOf("no")>=0) b.className="pc "+p.cl; },440);
+      if(err===3) consolo(); }
+    function encaixa(p,b,k){
+      if(fim||b.className.indexOf("usada")>=0) return;
+      if(k<0) k=vagaLivreDe(p.cl);
+      if(k<0||alvo[k].cl!==p.cl||alvo[k].tx!==p.tx){ erra(b,p); return; }
+      vs[k].innerHTML=p.tx; vs[k].className="vaga "+p.cl+" cheia";
+      b.className="pc "+p.cl+" usada"; cheias[k]=1; nCheias++; sPop(nCheias);
+      if(nCheias>=3){
+        fim=true; sCerto(); reg("grupo",err===0,err+1);
+        var ce=centroTela(vagas); faisca(ce[0],ce[1],"#ffb45e",16);
+        setTimeout(function(){ idx++;
+          if(idx>=ordem.length){ depoisDaFala("nm_grupo_revela",9000,function(){
+            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nMagica); }); }
+          else { err=0; passo(); }
+        },1000);
+      }
+    }
+
+    /* ---- arrastar (mouse E dedo) ----
+       Pedido do Marcos (ago/2026): "quero as duas op&#231;&#245;es funcionando". A pe&#231;a
+       PARECE que se arrasta, ent&#227;o tem que arrastar mesmo; e o toque simples
+       continua valendo para quem n&#227;o consegue arrastar.
+       Detalhe pago: NAO dar preventDefault no touchstart — isso cancelaria o
+       clique sint&#233;tico e mataria justamente a op&#231;&#227;o do toque.              */
+    function daArrasto(b,p){
+      var g=null,dx=0,dy=0,x0=0,y0=0,pegou=false,moveu=false,tratado=0;
+      function pto(e){ var s=(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||e;
+        return [s.clientX,s.clientY]; }
+      function mira(z){ var k; for(k=0;k<3;k++) if(!cheias[k]) vs[k].className="vaga "+alvo[k].cl+(k===z?" mira":""); }
+      function limpaMira(){ var k; for(k=0;k<3;k++) if(!cheias[k]) vs[k].className="vaga "+alvo[k].cl; }
+      function comeca(e){
+        if(fim||b.className.indexOf("usada")>=0) return;
+        var q=pto(e),r=b.getBoundingClientRect();
+        dx=q[0]-r.left; dy=q[1]-r.top; x0=q[0]; y0=q[1]; moveu=false; pegou=true;
+        g=b.cloneNode(true); g.className=b.className+" fantasma";
+        g.style.width=r.width+"px"; g.style.height=r.height+"px";
+        g.style.left=r.left+"px"; g.style.top=r.top+"px";
+        document.body.appendChild(g); b.style.opacity=".3";
+        if(e.type==="mousedown"){
+          document.addEventListener("mousemove",move);
+          document.addEventListener("mouseup",solta);
+          if(e.preventDefault) e.preventDefault();
+        }
+      }
+      function move(e){
+        if(!pegou) return;
+        var q=pto(e);
+        if(!moveu&&(Math.abs(q[0]-x0)>6||Math.abs(q[1]-y0)>6)) moveu=true;
+        g.style.left=(q[0]-dx)+"px"; g.style.top=(q[1]-dy)+"px";
+        mira(vagaSob(q[0],q[1]));
+        if(moveu&&e.preventDefault) e.preventDefault();
+      }
+      function solta(e){
+        if(!pegou) return; pegou=false;
+        document.removeEventListener("mousemove",move);
+        document.removeEventListener("mouseup",solta);
+        var q=pto(e);
+        if(g&&g.parentNode) g.parentNode.removeChild(g);
+        g=null; b.style.opacity=""; limpaMira();
+        tratado=(new Date()).getTime();
+        if(moveu){ var k=vagaSob(q[0],q[1]);
+          if(k>=0){ arma(); encaixa(p,b,k); }        /* soltou na vaga */
+          /* soltou no vazio: a peca so volta para o lugar, sem penalidade */
+        } else { arma(); encaixa(p,b,-1); }          /* foi um toque, nao um arrasto */
+      }
+      b.addEventListener("mousedown",comeca);
+      b.addEventListener("touchstart",comeca);
+      b.addEventListener("touchmove",move);
+      b.addEventListener("touchend",solta);
+      b.addEventListener("touchcancel",solta);
+      /* o toque ja foi resolvido no solta(); este onclick e a rede de seguranca
+         para quem chega por outro caminho (leitor de tela, clique programado). */
+      b.onclick=function(){ if((new Date()).getTime()-tratado<700) return; arma(); encaixa(p,b,-1); };
+    }
+
     for(i=0;i<pool.length;i++){(function(p){
       var b=el("div","pc "+p.cl,p.tx);
-      b.onclick=function(){ arma();
-        if(b.className.indexOf("usada")>=0) return;
-        if(p.cl===alvo[passoAtual].cl && p.tx===alvo[passoAtual].tx){
-          vs[passoAtual].innerHTML=p.tx; vs[passoAtual].className="vaga "+p.cl+" cheia";
-          b.className="pc "+p.cl+" usada"; sPop(passoAtual); passoAtual++;
-          if(passoAtual>=3){
-            sCerto(); reg("grupo",err===0,err+1);
-            var ce=centroTela(vagas); faisca(ce[0],ce[1],"#ffb45e",16);
-            setTimeout(function(){ idx++;
-              if(idx>=ordem.length){ depoisDaFala("nm_grupo_revela",9000,function(){
-                mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nMagica); }); }
-              else { err=0; passo(); }
-            },1000);
-          }
-        } else { err++; b.className="pc "+p.cl+" no"; sErro();
-          setTimeout(function(){ if(b.className.indexOf("no")>=0) b.className="pc "+p.cl; },440);
-          if(err===3) consolo(); }
-      };
+      daArrasto(b,p);
       box.appendChild(b);
     })(pool[i]);}
     c.appendChild(box);
-    c.appendChild(el("div","hint","Retangulo, depois oval, depois losango."));
+    c.appendChild(el("div","hint","Arraste a pe&#231;a at&#233; a vaga da mesma forma &#8212; ou toque nela."));
     t.appendChild(c);app.appendChild(t);
     montaBarra("nm_grupo_dica","A forma da pe&#231;a mostra a classe da palavra.");
     if(idx===0) falar("nm_grupo_intro");
@@ -1590,7 +1700,7 @@ function crachaEl(funcao){
   return d;
 }
 /* ---------- 17) FIM ---------- */
-function nFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
+function nFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro topo");
   var med=imgEl("nm_med","medal"); c.appendChild(med); segredoRelatorio(med);
   c.appendChild(el("h1","","Legendista Mestre!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" edi&#231;&#227;o de fotos est&#225; fechada."));
