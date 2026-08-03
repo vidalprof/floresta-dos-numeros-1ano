@@ -255,6 +255,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .pchip{background:rgba(255,253,244,.96);border-radius:999px;padding:6px 13px;font-size:14px;font-weight:700;color:var(--texto);-webkit-box-shadow:0 3px 8px rgba(50,40,20,.2);box-shadow:0 3px 8px rgba(50,40,20,.2)}
 .pchip.feito{background:#d8f5c6;color:#2c6b13;text-decoration:line-through}
 .lista{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin-top:10px;max-width:340px}
+.galeria{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:9px;-webkit-box-pack:center;justify-content:center;margin-top:12px;max-width:360px}
+.gfoto{background:#fffdf4;padding:6px;border:3px solid var(--linha);border-radius:12px;cursor:pointer;-webkit-box-shadow:0 6px 14px rgba(50,40,20,.26);box-shadow:0 6px 14px rgba(50,40,20,.26)}
+.gfoto img{display:block;width:96px;height:74px;object-fit:contain}
+.gfoto.ok{border-color:var(--ok);background:#eefbe6}
+.gfoto.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
+@media (max-height:620px){ .gfoto img{width:80px;height:60px} }
 /* ===== PECAS COM FORMA POR CLASSE (o coracao visual da atividade) ===== */
 .vagas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin-top:12px;min-height:52px}
 .vaga{min-width:78px;height:50px;padding:0 12px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:15.5px;font-weight:700;color:#fff;border:2px dashed rgba(255,255,255,.92);background:rgba(52,44,30,.32);text-align:center;line-height:1.05}
@@ -709,7 +715,7 @@ function nGrupo(){
             var ce=centroTela(vagas); faisca(ce[0],ce[1],"#ffb45e",16);
             setTimeout(function(){ idx++;
               if(idx>=ordem.length){ depoisDaFala("nm_grupo_revela",9000,function(){
-                mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nPlural); }); }
+                mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nMagica); }); }
               else { err=0; passo(); }
             },1000);
           }
@@ -791,7 +797,7 @@ function nGenero(){
           reg("concordancia",err===0,err+1);
           setTimeout(function(){ idx++;
             if(idx>=GEN.length){ depoisDaFala("nm_genero_revela",9000,function(){
-              mostraBanner("O adjetivo combina com o <b>nome</b>: o molhado, a molhada.",nFabrica); }); }
+              mostraBanner("O adjetivo combina com o <b>nome</b>: o molhado, a molhada.",nLigar); }); }
             else { err=0; passo(); }
           },900);
         } else { err++; b.className="pc adj no"; sErro(); consolo();
@@ -804,6 +810,155 @@ function nGenero(){
     t.appendChild(c);app.appendChild(t);
     montaBarra("nm_genero_dica","<b>O</b> pede a termina&#231;&#227;o em o. <b>A</b> pede em a.");
     if(idx===0) falar("nm_genero_intro");
+  }
+  passo();
+}
+/* ---------- ⭐ FILTRO MÁGICO: o adjetivo MUDA a foto ---------- */
+var MAGIA=[
+ {img:"nm_arvore",   ped:"Deixe a &#225;rvore <b>escura</b>, como de noite.", certo:"escura",
+  op:["escura","gigante","colorida"], f:{escura:"brightness(.42) saturate(.8)",gigante:"",colorida:"saturate(2.2)"},
+  s:{escura:1,gigante:1.35,colorida:1}},
+ {img:"nm_portao",   ped:"Deixe o port&#227;o <b>gigante</b>.", certo:"gigante",
+  op:["gigante","antigo","escuro"], f:{gigante:"",antigo:"sepia(.85)",escuro:"brightness(.42)"},
+  s:{gigante:1.4,antigo:1,escuro:1}},
+ {img:"nm_bicicletas",ped:"Deixe as bicicletas <b>antigas</b>, cor de foto velha.", certo:"antigas",
+  op:["antigas","min&#250;sculas","escuras"], f:{"antigas":"sepia(.9) contrast(.9)","min&#250;sculas":"","escuras":"brightness(.42)"},
+  s:{"antigas":1,"min&#250;sculas":0.55,"escuras":1}},
+ {img:"nm_cachorro", ped:"Deixe o cachorro <b>min&#250;sculo</b>.", certo:"min&#250;sculo",
+  op:["min&#250;sculo","colorido","escuro"], f:{"min&#250;sculo":"","colorido":"saturate(2.4)","escuro":"brightness(.42)"},
+  s:{"min&#250;sculo":0.5,"colorido":1,"escuro":1}}];
+function nMagica(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,36+idx*2);
+    var it=MAGIA[idx];
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","FILTRO M&#193;GICO"));
+    var pol=fotoEl(it.img,"");c.appendChild(pol);
+    var im=pol.getElementsByTagName("img")[0];
+    im.style.webkitTransition="all .55s ease";im.style.transition="all .55s ease";
+    c.appendChild(el("div","balao",it.ped));
+    var box=el("div","pcs"),lista=baguncar(it.op.slice(0)),i;
+    for(i=0;i<lista.length;i++){(function(tx){
+      var b=el("div","pc adj",tx);
+      b.onclick=function(){ arma();
+        /* toda palavra MOSTRA o seu efeito: a crianca ve o adjetivo agir */
+        im.style.webkitFilter=it.f[tx]||"none"; im.style.filter=it.f[tx]||"none";
+        var esc=it.s[tx]||1;
+        im.style.webkitTransform="scale("+esc+")"; im.style.transform="scale("+esc+")";
+        if(tx===it.certo){
+          sCerto(); b.className="pc adj usada";
+          var ce=centroTela(pol); faisca(ce[0],ce[1],"#ffb45e",16);
+          reg("reconhecer",err===0,err+1);
+          setTimeout(function(){ idx++;
+            if(idx>=MAGIA.length){ depoisDaFala("nm_magica_revela",11000,function(){
+              mostraBanner("O adjetivo <b>muda</b> o que a gente enxerga!",nDetetive); }); }
+            else { err=0; passo(); }
+          },1700);
+        } else { err++; sErro();
+          setTimeout(function(){ im.style.webkitFilter="none";im.style.filter="none";
+            im.style.webkitTransform="scale(1)";im.style.transform="scale(1)"; },1100);
+          if(err===2) consolo(); }
+      };
+      box.appendChild(b);
+    })(lista[i]);}
+    c.appendChild(box);
+    c.appendChild(el("div","hint","Toque e veja a foto mudar."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_magica_dica","Qual palavra deixa a foto desse jeito?");
+    if(idx===0) falar("nm_magica_intro");
+  }
+  passo();
+}
+
+/* ---------- DETETIVE: adivinhe a foto pela descrição ---------- */
+var DET=[
+ {desc:"Estou vendo uma coisa <b>alta</b> e <b>florida</b>.", certo:"nm_arvore",  op:["nm_arvore","nm_portao","nm_cachorro"]},
+ {desc:"Estou vendo uma coisa <b>molhada</b> e <b>peluda</b>.",certo:"nm_cachorro",op:["nm_horta","nm_cachorro","nm_bicicletas"]},
+ {desc:"Estou vendo umas coisas <b>coloridas</b> e <b>pequenas</b>.",certo:"nm_bicicletas",op:["nm_bicicletas","nm_arvore","nm_portao"]},
+ {desc:"Estou vendo uma coisa <b>velha</b> e <b>enferrujada</b>.",certo:"nm_portao",op:["nm_criancas","nm_horta","nm_portao"]}];
+function nDetetive(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,44+idx*2);
+    var it=DET[idx];
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","DETETIVE DA REDA&#199;&#195;O"));
+    c.appendChild(el("div","balao",it.desc+"<br>Qual foto &#233;?"));
+    var gal=el("div","galeria"),lista=baguncar(it.op.slice(0)),i;
+    for(i=0;i<lista.length;i++){(function(nome){
+      var d=el("div","gfoto");
+      d.appendChild(imgEl(nome));
+      d.onclick=function(){ arma();
+        if(nome===it.certo){ d.className="gfoto ok"; sCerto();
+          var ce=centroTela(d); faisca(ce[0],ce[1],"#6bd23f",14);
+          reg("reconhecer",err===0,err+1);
+          setTimeout(function(){ idx++;
+            if(idx>=DET.length){ depoisDaFala("nm_det_revela",9000,function(){
+              mostraBanner("Com bom adjetivo, quem l&#234; acha a foto <b>sem ver</b>!",nGrau); }); }
+            else { err=0; passo(); }
+          },1000);
+        } else { err++; d.className="gfoto no"; sErro(); consolo();
+          setTimeout(function(){ d.className="gfoto"; },600); }
+      };
+      gal.appendChild(d);
+    })(lista[i]);}
+    c.appendChild(gal);
+    c.appendChild(el("div","hint","As duas palavras eliminam as fotos erradas."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_det_dica","Repare nas palavras que dizem <b>como &#233;</b>.");
+    if(idx===0) falar("nm_det_intro");
+  }
+  passo();
+}
+
+/* ---------- MÁQUINA DE ENCOLHER E AUMENTAR (grau) ---------- */
+var GRAU=[
+ {base:"casa",  ped:"uma casa <b>pequenininha</b>",  certo:"inha", vira:"casinha",  op:["inha","&#227;o","ona"]},
+ {base:"port",  ped:"um port&#227;o <b>enorme</b>",       certo:"&#227;o",  vira:"port&#227;o",  op:["&#227;o","inho","inha"]},
+ {base:"gat",   ped:"um gato <b>pequenininho</b>",   certo:"inho", vira:"gatinho",  op:["inho","&#227;o","ona"]},
+ {base:"bocc",  ped:"uma boca <b>enorme</b>",        certo:"ona",  vira:"bocona",   op:["ona","inha","inho"]}];
+function nGrau(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,52+idx*2);
+    var it=GRAU[idx];
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","ENCOLHE E AUMENTA"));
+    c.appendChild(el("div","balao","O editor pediu "+it.ped+". Encaixe o pedacinho."));
+    var m=el("div","maquina"),es=el("div","esteira");
+    es.appendChild(el("div","fbase",it.base==="bocc"?"boc":it.base));
+    es.appendChild(el("div","mais","+"));
+    var enc=el("div","encaixe","?");es.appendChild(enc);
+    m.appendChild(es);
+    var saida=el("div","saida","");m.appendChild(saida);
+    c.appendChild(m);
+    var box=el("div","pcs"),lista=baguncar(it.op.slice(0)),i;
+    for(i=0;i<lista.length;i++){(function(sf){
+      var b=el("div","pc adj","-"+sf);
+      b.onclick=function(){ arma();
+        if(b.className.indexOf("usada")>=0) return;
+        if(sf===it.certo){
+          enc.innerHTML="-"+sf; enc.className="encaixe ok";
+          saida.innerHTML=it.vira; b.className="pc adj usada"; sCerto(); sMaquina();
+          var ce=centroTela(saida); faisca(ce[0],ce[1],"#ffb45e",14);
+          reg("morfologia",err===0,err+1);
+          setTimeout(function(){ idx++;
+            if(idx>=GRAU.length){ depoisDaFala("nm_grau_revela",10000,function(){
+              mostraBanner("O fim da palavra muda o <b>tamanho</b>: casinha, casar&#227;o!",nFabrica); }); }
+            else { err=0; passo(); }
+          },1500);
+        } else { err++; b.className="pc adj no"; sErro();
+          setTimeout(function(){ b.className="pc adj"; },440);
+          if(err===2) consolo(); }
+      };
+      box.appendChild(b);
+    })(lista[i]);}
+    c.appendChild(box);
+    c.appendChild(el("div","hint","<b>inho, inha</b> encolhem. <b>&#227;o, ona</b> aumentam."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_grau_dica","Pequeno ou grande? O fim da palavra diz.");
+    if(idx===0) falar("nm_grau_intro");
   }
   passo();
 }
@@ -841,7 +996,7 @@ function nFabrica(){
           reg("morfologia",err===0,err+1);
           setTimeout(function(){ idx++;
             if(idx>=FAB.length){ depoisDaFala("nm_fabrica_revela",10000,function(){
-              mostraBanner("O <b>pedacinho no fim</b> transforma o nome em adjetivo!",nLigar); }); }
+              mostraBanner("O <b>pedacinho no fim</b> transforma o nome em adjetivo!",nPlural); }); }
             else { err=0; passo(); }
           },1500);
         } else { err++; b.className="pc adj no"; sErro();
