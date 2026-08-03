@@ -711,6 +711,12 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .bplacar{font-size:16px;margin-top:7px}.bplacar b{font-size:22px}
   .btempo{font-size:11.5px}.bfrase{font-size:12.5px;margin-top:6px}
 }
+
+.btntreino{margin-top:10px;border:0;cursor:pointer;font-family:inherit;font-weight:800;font-size:17px;
+  color:#fff;padding:13px 22px;border-radius:999px;
+  background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113);
+  -webkit-box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25);box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25)}
+.btntreino small{display:block;font-size:12px;font-weight:600;opacity:.92;margin-top:2px}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -2285,6 +2291,12 @@ function dFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" doceria fechou com tudo pronto."));
   c.appendChild(crachaEl("Confeiteiro Chefe"));
   resumoAnimado(c);
+  if(fracos().length){
+    var bt=el("button","btntreino","Treinar o que faltou<small>s&#243; as partes que voc&#234; quer melhorar</small>");
+    bt.onclick=function(){arma();sTap();treinarFracos();};
+    c.appendChild(bt);
+  }
+
   var b=el("button","btn dourado","Jogar de novo");b.style.marginTop="12px";
 
   b.onclick=function(){arma();sTap();telaCapa();};c.appendChild(b);
@@ -2415,6 +2427,36 @@ function resumoAnimado(pai){
       try{ tom(520+v*8,0.05,"triangle",0.07); }catch(e){}
     },pa);
   }
+}
+/* fases que treinam cada objetivo */
+var TREINO={grupos:dMonta,soma:dSoma,vezes:dVezes,problema:dProblema,criar:dCria};
+function TELAFIM(){ dFim(); }
+/* ---------- TREINAR SO O QUE FALTOU ----------
+   Pergunta do Marcos (ago/2026): "se ela nao domina, ela consegue fazer so as
+   atividades que nao domina?". Da: o app ja mede cada objetivo (DOM). Aqui ele
+   monta um percurso CURTO so com as fases dos objetivos fracos e volta para a
+   medalha no fim. A crianca nao repete o que ja sabe — isso e o que mantem ela
+   na tarefa em vez de enjoar.
+   Truque para nao mexer em nenhuma fase: enquanto o treino roda, o mostraBanner
+   ignora o "proximo" original e chama a proxima fase da fila.               */
+var FILATREINO=null;
+var _bannerOriginal=mostraBanner;
+mostraBanner=function(msg,cb){ _bannerOriginal(msg, FILATREINO ? proximoTreino : cb); };
+function fracos(){
+  var k,out=[];
+  for(k in DOM){ if(DOM.hasOwnProperty(k)&&(DOM[k]||0)<0.75&&TREINO[k]) out.push(k); }
+  return out;
+}
+function proximoTreino(){
+  if(!FILATREINO||!FILATREINO.length){ FILATREINO=null; salva(); TELAFIM(); return; }
+  var f=FILATREINO.shift();
+  try{ f(); }catch(e){ proximoTreino(); }
+}
+function treinarFracos(){
+  var f=fracos(),i,fila=[];
+  for(i=0;i<f.length;i++) fila.push(TREINO[f[i]]);
+  if(!fila.length){ TELAFIM(); return; }
+  FILATREINO=fila; proximoTreino();
 }
 function pct(x){return Math.round(x*100)+"%";}
 function telaPainel(){
