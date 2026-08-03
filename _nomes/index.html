@@ -252,6 +252,8 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 @media (max-height:620px){ .zap{width:23px;height:23px;margin-left:4px}
   .zap i{left:6px;top:8px;height:7px}.zap b{left:8px;top:5px;border-top-width:6px;border-bottom-width:6px;border-right-width:6px}
   .zap s{left:16px;top:7px;width:4px;height:9px} }
+.pchip{background:rgba(255,253,244,.96);border-radius:999px;padding:6px 13px;font-size:14px;font-weight:700;color:var(--texto);-webkit-box-shadow:0 3px 8px rgba(50,40,20,.2);box-shadow:0 3px 8px rgba(50,40,20,.2)}
+.pchip.feito{background:#d8f5c6;color:#2c6b13;text-decoration:line-through}
 .lista{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin-top:10px;max-width:340px}
 /* ===== PECAS COM FORMA POR CLASSE (o coracao visual da atividade) ===== */
 .vagas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin-top:12px;min-height:52px}
@@ -283,7 +285,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* fabrica de adjetivos (morfemas) */
 .maquina{width:100%;max-width:340px;margin-top:10px;background:var(--papel);border:2px solid var(--linha);border-bottom-width:6px;border-radius:20px;padding:14px 12px;text-align:center;-webkit-box-shadow:0 8px 18px rgba(50,40,20,.24);box-shadow:0 8px 18px rgba(50,40,20,.24)}
 .esteira{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;gap:7px;-webkit-flex-wrap:wrap;flex-wrap:wrap}
-.base{background:#eaf6e2;border:2px solid var(--ok);border-radius:999px;padding:9px 15px;font-size:17px;font-weight:700;color:#2c6b13}
+.fbase{background:#eaf6e2;border:2px solid var(--ok);border-radius:999px;padding:9px 15px;font-size:17px;font-weight:700;color:#2c6b13}
 .mais{font-size:19px;font-weight:700;color:#8a8270}
 .encaixe{min-width:64px;height:42px;border:2px dashed #cfc6b0;border-radius:9px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:17px;font-weight:700;color:#8a8270}
 .encaixe.ok{border-style:solid;border-color:#ef8a1e;background:#fff1df;color:#c26a08}
@@ -292,7 +294,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   .polaroid{padding:6px 6px 20px;margin-bottom:8px} .polaroid img{width:138px;height:104px} .polaroid .cap{font-size:11px;min-height:0}
   .vaga,.pc{height:38px;font-size:13px;min-width:58px;padding:0 9px}
   .pcs,.vagas{gap:5px;margin-top:8px} .legenda{font-size:10px;gap:8px}
-  .maquina{padding:9px 8px} .base{font-size:15px;padding:7px 12px} .saida{font-size:17px} }
+  .maquina{padding:9px 8px} .fbase{font-size:15px;padding:7px 12px} .saida{font-size:17px} }
 @media (max-height:720px){
   .polaroid img{width:178px;height:132px}
   .vaga,.pc{height:44px;font-size:14.5px;min-width:68px}
@@ -821,7 +823,7 @@ function nFabrica(){
     c.appendChild(el("div","balao","Encaixe o pedacinho e veja a palavra <b>nova</b> nascer."));
     var m=el("div","maquina");
     var es=el("div","esteira");
-    es.appendChild(el("div","base",it.base));
+    es.appendChild(el("div","fbase",it.base));
     es.appendChild(el("div","mais","+"));
     var enc=el("div","encaixe","?");es.appendChild(enc);
     m.appendChild(es);
