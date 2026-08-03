@@ -127,6 +127,46 @@
 >> - **Atenção:** o `CLAUDE.md` ainda manda ler os `EDUVERSE-*.md` como "LEI". Perguntei ao Marcos se quer
 >>   que eu ajuste o CLAUDE.md para refletir este rumo — **aguardando a resposta dele**.
 
+>> ## 📸 NOVA ATIVIDADE — "A Legenda do Pingo" (4º ano, substantivo e adjetivo) — 2026-08-03
+>> Pedido do Marcos: *"uma aula sobre substantivos e adjetivos para o 4 ano... tem que durar 45 minutos"*,
+>> com **interatividades bem variadas** ("consulte nosso leque"), incluindo **caça-palavras e ligar**.
+>> Ele escolheu **app novo com link próprio** (não missão dentro da Redação do Pingo).
+>> - **Repo publicado:** `legenda-do-pingo` → **https://vidalprof.github.io/legenda-do-pingo/**
+>>   (criado pela `fabrica.yml`, source_dir=`_nomes`). Arquivos em `_nomes/`.
+>> - **⭐ O CURRÍCULO MUDOU O DESENHO (ler antes de mexer).** Em `_curriculo/blumenau.txt`, o 4º ano
+>>   **não** pede "o que é substantivo/adjetivo" (isso é ano anterior). Pede, literal:
+>>   *"Identificar em textos e usar na produção textual a concordância entre artigo, substantivo e
+>>   adjetivo (concordância no grupo nominal)"* — **Gênero do discurso: notícia**. Por isso a atividade
+>>   se passa na **mesa de fotos do jornal** (mesmo mundo do Pingo) e a criança escreve **legendas**.
+>> - **Mecânicas escolhidas NO CATÁLOGO** (`CATALOGO-DINAMICAS-INTERATIVAS.md`), não inventadas:
+>>   **H1 — montar a frase com peças de FORMA/COR por classe** (artigo=retângulo azul, substantivo=oval
+>>   verde, adjetivo=losango laranja): é a estrela, deixa a gramática VISÍVEL. Glenberg: manipular as
+>>   peças rende 1–2 DP acima de só ler. **[FORTE-mod]** · **LP1 — morfemas** (chuva+`-oso`=chuvoso),
+>>   meta-análise d≈0,33–0,59, **primeira vez que usamos** · **B1 — card sort** (2 gavetas, 12 palavras)
+>>   · **H2 — produção** (escrever a legenda) · + caça-palavras 9×9, ligar colunas, memória, cruzadinha,
+>>   lupa, plural, gênero, revisor, relâmpago. **Só 2 telas de múltipla escolha em 19.**
+>> - **Assets:** 7 imagens novas (Gemini, matte-clay) + mascote/crachás/fundo reaproveitados da Redação;
+>>   43 narrações + **60 vozes de resposta** (alto-falante em 33 de 33 elementos).
+>> - **RECEITA: CLONAR O MOTOR DA REDAÇÃO.** Recortei `_redacao/index.html` até
+>>   `/* ===== CONTEÚDO ===== */` e escrevi só o conteúdo novo. **⚠️ ARMADILHA:** três coisas moram
+>>   DEPOIS do conteúdo e ficam de fora do recorte — **o motor do alto-falante** (`VOZOK`/`chaveVoz`/
+>>   `poeZap`), a função **`crachaEl`** e o **painel**. Sem elas: alto-falante em 0 de 19 e a tela final
+>>   quebra com `crachaEl is not defined`. Puxar as três à mão depois de recortar.
+>> - **🐛 TRÊS BUGS QUE O QA PEGOU (e as ferramentas que nasceram deles):**
+>>   1. **COLISÃO DE NOME DE CLASSE:** criei `.base` (fábrica de adjetivos) e ela pintou de verde a
+>>      camada `lay base` do mascote — a capa ficou com um círculo verde atrás do Pingo. Renomeada para
+>>      `.fbase`. **Antes de criar classe, conferir se o motor já usa esse nome.**
+>>   2. **`.pchip` só existia dentro de um `@media`** → sem estilo na tela normal (a lista do caça-palavras
+>>      virou texto solto). É a MESMA armadilha do `.txcard`; o check antigo procurava no CSS inteiro e
+>>      dava **falso negativo**. → criado **`_qa/classes.py`**: apaga os blocos `@media` e só então procura
+>>      a regra BASE. Acusa "SÓ DENTRO DE @media" e "SEM CSS".
+>>   3. **`_qa/fluxo.py` reconhecia tela pelo NOME** (`v[A-Z]|g[A-Z]|tela`) e por isso enxergou **3 das 19
+>>      telas** desta atividade, calado. → agora detecta tela **pelo comportamento**: função que chama
+>>      `limpa()`. Vale para qualquer prefixo (vXxx, gXxx, nXxx, telaXxx).
+>> - **QA rodado:** `node --check`; `_qa/classes.py` e `_qa/fluxo.py` limpos nos 4 apps; auditor de
+>>   sobreposição em 320/360/412; solucionador que JOGA as 6 mecânicas centrais (todas concluem);
+>>   as 20 telas abrem sem erro de JS.
+>>
 >> ## 🌱 NOVA ATIVIDADE — "O Jardim do Broto" (2º ano, Ciências — as plantas) — 2026-07-22
 >> Feita a pedido do Marcos ("crie uma nova atividade para o 2 ano nesse modelo... muitas dinâmicas
 >> interativas variadas, me surpreenda, app inovador, visual diferente do que vimos"). **Visual NOVO**
