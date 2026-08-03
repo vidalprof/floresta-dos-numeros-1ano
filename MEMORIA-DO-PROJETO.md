@@ -2617,3 +2617,69 @@ entra por cima virando aventura.
 - FALTA trazer do pack (tudo CC0): 10 músicas (audio/music/*.ogg) + 40 SFX + animações de
   ambiente (água animada tileset_animated, vento) + interiores reais + NPCs com diálogo (faceset).
 - FasesDemo foi só a PROVA do mecanismo (aprovada). O de verdade é o mundo do autor emoldurado.
+
+## 🔭 O OBSERVATÓRIO DO ÓRBI — 3º ano, Sistema Solar (ago/2026)
+
+Pedido do Marcos: *"atividade para o terceiro ano sobre o sistema solar: vídeos,
+informações sobre os planetas, atividades com bastante imagens, nos mesmos moldes
+das últimas, bem didática, progressiva, sonora, visual, com relatório e tudo…
+novo tema, novo mascote, 45 minutos"*. Mascote **Órbi** (astronautinha de massinha),
+pasta `_orbi/`, repositório `observatorio-do-orbi`.
+
+### Decisões de arte que viraram REGRA para conteúdo de ciências
+- **Os planetas são FOTORREALISTAS** (estilo foto de telescópio/NASA: faixas de
+  Júpiter, anéis de Saturno, Marte vermelho, Terra azul com a América do Sul).
+  O **mascote e os objetos do dia a dia continuam em massinha**. Motivo pedagógico:
+  a criança tem que **reconhecer o planeta de verdade** quando vir num livro ou no
+  céu; desenhar planeta "fofinho" ensinaria a imagem errada. Mistura funciona: o
+  personagem é do mundo do jogo, o planeta é do mundo real.
+- **"Vídeos" não entram**: vídeo pesa dezenas de MB, quebra o offline e trava PC
+  fraco. O que substitui com vantagem é **animação interativa dentro do app** (a
+  criança gira a Terra e a Lua com a mão, em vez de assistir).
+
+### 🌙 FASES DA LUA NO HEMISFÉRIO SUL (erro fácil de cometer — não repetir)
+Em Blumenau o **quarto crescente aparece iluminado do lado ESQUERDO** e o
+**minguante do lado DIREITO** — ao contrário de quase toda ilustração de livro
+(que é feita para o hemisfério norte). Se a imagem sair invertida, a criança olha
+o céu e vê o oposto do que o app ensinou.
+**Como as fases foram feitas:** NÃO se pede a fase ao gerador de imagem (ele erra
+o lado e muda a bola de tamanho). Gera-se **só a lua cheia** e as outras três saem
+por código, escurecendo metade da MESMA bola (`ESC=0.15`, terminador suave). Isso
+garante de brinde o conceito: *a Lua não muda de tamanho, muda o pedaço iluminado*.
+**Na cena das fases o SOL tem que estar na tela** (à esquerda): sem ele, ligar
+posição→fase é arbitrário. Lua à esquerda (entre Terra e Sol) = **nova**; à direita
+= **cheia**; em cima e embaixo = os quartos.
+
+### 📚 Currículo de Blumenau — 3º ano, Ciências (Terra e Universo)
+Verbatim: *"Identificar o Sol como estrela, a Terra como planeta e a Lua como
+satélite"*; *"Identificar características da Terra (formato esférico, presença de
+água, solo)"*; *"A Lua e suas fases"*; *"Observar, identificar e registrar os
+períodos diários (dia e/ou noite) em que o Sol, demais estrelas, Lua e planetas
+estão visíveis no céu"*. ⚠️ **"Classificação dos planetas do Sistema Solar" e
+"descrever a composição e a estrutura do Sistema Solar / Via Láctea" aparecem em
+ANO POSTERIOR** — por isso os oito planetas entram aqui como **reconhecimento,
+ordem e curiosidade**, e não como classificação (rochosos × gasosos).
+
+### Mecânicas novas que entraram no leque (reaproveitáveis)
+- **APAGUE O SOL** — botão que apaga o Sol e a criança VÊ quem continua aceso
+  (Sol e lâmpada) e quem apaga (Lua, Terra, espelho). O espelho é a ponte concreta.
+- **GIRE A TERRA** — a criança gira a Terra de 45º em 45º e leva a casinha para a
+  sombra. Mata o "o Sol apaga de noite" sem nenhuma explicação verbal.
+- **ÓRBITA PASSO A PASSO** — leva a Lua de pontinho em pontinho até fechar a volta.
+- **FICHA DO PLANETA** — toca no planeta, vê a foto grande e OUVE o fato (é assim
+  que "informação sobre os planetas" entra sem virar texto para ler).
+- **FILA A PARTIR DO SOL** — ordenar montando uma fila que cresce ao lado do Sol.
+- **DO MENOR AO MAIOR** — as cartas têm tamanhos diferentes de propósito.
+
+### Armadilhas pagas nesta atividade
+- **Gemini devolveu Marte com fundo PRETO** (e a estrela quase invisível) enquanto
+  todos os outros vieram em branco. Sempre **olhar a folha de contato** antes de
+  recortar; refazer só os que saíram errados custa centavos.
+- **Lua cheia com tolerância 6 perdia uma "mordida" no limbo** (a borda da Lua é
+  quase branca). Para imagem clara sobre branco, **tolerância 1**.
+- **A banca reprovou por causa do caça-palavras**: `telaCacaBase(cfg)` recebia
+  config e o auditor chama toda tela **sem argumento**. Regra: tela que recebe
+  parâmetro precisa de `cfg=cfg||PADRAO`.
+- **O jogador automático não conhecia as mecânicas novas** e ficou preso na órbita
+  da Lua. Ao criar mecânica nova, **acrescentar a classe no `SEL` do
+  `_qa/jogador.js`** — senão a banca reprova sem haver defeito.

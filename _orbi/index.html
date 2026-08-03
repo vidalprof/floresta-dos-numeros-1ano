@@ -360,7 +360,7 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
 .bins.tres{-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;max-width:340px;-webkit-box-pack:center;justify-content:center}
 .bins.tres .bin{width:102px;padding:11px 5px;font-size:14px;line-height:1.15}
 .bin small{display:block;font-size:10.5px;font-weight:600;margin-top:3px;opacity:.94;line-height:1.15}
-.bin.estrela2{background:-webkit-linear-gradient(top,#f0a800,#9a6a00);background:linear-gradient(#f0a800,#9a6a00)}
+.bin.estrela2{background:-webkit-linear-gradient(top,#b06a00,#5a3400);background:linear-gradient(#b06a00,#5a3400)}
 .bin.planeta2{background:-webkit-linear-gradient(top,#2a8fc4,#14556f);background:linear-gradient(#2a8fc4,#14556f)}
 .bin.satelite2{background:-webkit-linear-gradient(top,#7d78a8,#3f3b66);background:linear-gradient(#7d78a8,#3f3b66)}
 /* ================= FASE: GIRE A TERRA ================= */
@@ -394,6 +394,9 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
   border:2px solid rgba(255,255,255,.5)}
 .orb .pt.luapos img{width:100%;height:100%;object-fit:contain}
 .orb .pt.luapos.visto{border-color:#8be05a;background:rgba(139,224,90,.28)}
+.cenafase{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:4px}
+.solfase{width:54px;height:54px;-webkit-flex:none;flex:none;object-fit:contain;
+  -webkit-filter:drop-shadow(0 0 14px rgba(255,200,60,.85));filter:drop-shadow(0 0 14px rgba(255,200,60,.85))}
 /* ================= FASE: PLANETAS ================= */
 .grid8{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;
   -webkit-box-pack:center;justify-content:center;max-width:352px;margin-top:10px}
@@ -428,6 +431,7 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
   .orb .cen{width:78px;height:78px;margin:-39px 0 0 -39px}
   .orb .mv{width:44px;height:44px;margin:-22px 0 0 -22px}
   .orb .pt.luapos{width:44px;height:44px;margin:-22px 0 0 -22px}
+  .solfase{width:46px;height:46px}
   .plb{width:70px}.plb img{width:48px;height:48px}.plb .lab{font-size:10px}
   .grid8{max-width:320px;gap:6px}
 }
@@ -438,6 +442,7 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
   .orb .cen{width:64px;height:64px;margin:-32px 0 0 -32px}
   .orb .mv{width:38px;height:38px;margin:-19px 0 0 -19px}
   .orb .pt.luapos{width:38px;height:38px;margin:-19px 0 0 -19px}
+  .solfase{width:38px;height:38px}
   .plb{width:62px;border-bottom-width:4px}.plb img{width:42px;height:42px}.plb .lab{font-size:9.5px}
   .grid8{max-width:290px;gap:5px}
   .bins.tres .bin{width:96px;font-size:13px;padding:9px 4px}.bin small{font-size:9.5px}
@@ -980,16 +985,19 @@ var FASES=[{img:"sr_lua_nova",n:"LUA NOVA",d:"A gente quase n&#227;o v&#234; a L
            {img:"sr_lua_ming",n:"QUARTO MINGUANTE",d:"S&#243; o outro lado aparece."}];
 function telaFasesExplora(){
   limpa();var t=el("div","tela");setProg(t,51);
-  var bal=el("div","balao","A Lua muda de <b>forma</b> no c&#233;u. Toque nas <b>quatro posi&#231;&#245;es</b> e veja o que a gente enxerga daqui.");
+  var bal=el("div","balao","O <b>Sol</b> est&#225; deste lado. Toque nas <b>quatro posi&#231;&#245;es</b> da Lua e veja o que a gente enxerga daqui da Terra.");
   t.appendChild(bal);
   var vistos={},nv=0,fim=false;
   var cen=el("div","centro");
+  var cena=el("div","cenafase");
+  cena.appendChild(imgEl("sr_sol","solfase"));
   var orb=el("div","orb peq");
   orb.appendChild(imgEl("sr_terra","cen"));
   var prato=el("div","prato"); var pim=imgEl("sr_lua_nova"); prato.appendChild(pim);
   var nome=el("div","balao porque","Toque numa posi&#231;&#227;o da Lua.");
+  var FDAPOS=[3,2,1,0];   /* topo=minguante, direita=cheia, baixo=crescente, esquerda=nova */
   var i;
-  for(i=0;i<4;i++){(function(k){
+  for(i=0;i<4;i++){(function(k,fk){
     var a=(k/4)*2*Math.PI-Math.PI/2;
     var p=el("div","pt luapos");
     p.style.left=(50+Math.cos(a)*44)+"%";
@@ -997,9 +1005,9 @@ function telaFasesExplora(){
     p.appendChild(imgEl("sr_lua"));
     p.onclick=function(){ arma(); sTap();
       if(fim) return;
-      pim.src="img/"+FASES[k].img+".png";
+      pim.src="img/"+FASES[fk].img+".png";
       pim.style.webkitAnimation="none";pim.style.animation="none";void pim.offsetWidth;pim.style.webkitAnimation="";pim.style.animation="";
-      nome.innerHTML="Daqui da Terra a gente v&#234; a <b>"+FASES[k].n+"</b>. "+FASES[k].d;
+      nome.innerHTML="Daqui da Terra a gente v&#234; a <b>"+FASES[fk].n+"</b>. "+FASES[fk].d;
       p.className="pt luapos visto";
       if(!vistos[k]){ vistos[k]=1; nv++; sPop(nv);
         if(nv>=4){ fim=true; sCerto(); sFesta(); festa(); reg("fases",true,1);
@@ -1008,12 +1016,12 @@ function telaFasesExplora(){
       }
     };
     orb.appendChild(p);
-  })(i);}
-  cen.appendChild(orb);
+  })(i,FDAPOS[i]);}
+  cena.appendChild(orb); cen.appendChild(cena);
   cen.appendChild(prato);
   cen.appendChild(nome);
   t.appendChild(cen);app.appendChild(t);
-  montaBarra("sr_fase_dica","Toque em cada uma das quatro luinhas em volta da Terra.");
+  montaBarra("sr_fase_dica","O Sol est&#225; do lado esquerdo. Toque nas quatro luinhas em volta da Terra.");
   falar("sr_fase_intro");
 }
 
@@ -1086,12 +1094,16 @@ function telaFasesOrdem(){
 }
 
 /* ============ CACA-PALAVRAS DO CEU ============ */
-function telaCacaCeu(){ telaCacaBase({lista:["SOL","LUA","TERRA","ESTRELA"],N:7,prog:64,conc:"luz_propria",
+/* a config fica FORA da funcao de proposito: o auditor de contraste/leiaute
+   chama cada tela sem argumento, e sem isso o caca-palavras quebrava a banca. */
+var CACACEU={lista:["SOL","LUA","TERRA","ESTRELA"],N:7,prog:64,conc:"luz_propria",
   txt:"Ache as <b>4 palavras</b> escondidas no c&#233;u do quadro.",
   intro:"sr_caca_intro",dica:"sr_caca_dica",dicaTxt:"As palavras est&#227;o deitadas ou em p&#233;.",
   revela:"sr_caca_revela",msg:"<b>Sol</b>, <b>Lua</b>, <b>Terra</b> e <b>estrela</b>: achou todas!",
-  prox:telaPlanetasFicha}); }
+  prox:null};
+function telaCacaCeu(){ CACACEU.prox=telaPlanetasFicha; telaCacaBase(CACACEU); }
 function telaCacaBase(cfg){
+  cfg=cfg||CACACEU;
   var LISTA=cfg.lista;
   limpa();var t=el("div","tela");setProg(t,cfg.prog);
   t.appendChild(el("div","balao",cfg.txt));
