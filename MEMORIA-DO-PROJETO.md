@@ -2816,3 +2816,26 @@ escolhida acendia em **verde** (cor do Jardim) num app violeta — agora acende 
 dourado; e a tela final, mais alta que a janela, deixava a última linha do boletim
 **atrás da barra de baixo** — mesma armadilha do `_padrao/FIM-DE-ATIVIDADE.md`,
 resolvida com a tela final compacta começando do topo.
+
+### 🚫 VIROU LEI: nunca copiar avatar, arte sempre nova e temática
+
+Palavras do Marcos: *"nunca copiar avatares, sempre ser temático, nunca repetir o
+avatar, sempre novo e temático"*. Está escrito em três lugares para não depender
+da minha memória:
+
+1. **`CLAUDE.md`** (lido no começo de toda sessão) — junto das outras leis de
+   atividade nova.
+2. **`_qa/arte_propria.py`** — auditor novo, **portão 3c** da banca: tira o hash de
+   cada imagem da atividade e compara com as de todas as outras. Byte a byte igual
+   = reprova. Não adianta eu "lembrar"; agora a banca barra.
+3. Aqui na memória.
+
+**Regra em uma linha: clonar o MOTOR é obrigatório, clonar a ARTE é proibido.**
+
+**Exceção honesta já registrada no auditor:** pastas que são **versões da mesma
+atividade** não contam como cópia. É o caso de `_redacao` (A Redação do Pingo),
+que nasceu da junção de `_verbos` (Plantão na Redação) e `_generos` (A Banca do
+Pingo) — o Pingo é o mascote das três, a arte é dela mesma. O auditor apontou as
+35 imagens repetidas ali logo na primeira rodada; conferi a origem antes de sair
+"consertando" e registrei a exceção com a prova. **Só entra na lista com esse
+tipo de prova; na dúvida, é cópia e reprova.**

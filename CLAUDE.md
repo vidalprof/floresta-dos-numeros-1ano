@@ -74,6 +74,20 @@ Leia tudo antes de agir e responda sempre em **português**.
 > 75% e refaz só as fases fracas. O código pronto e as armadilhas estão nesse arquivo — copiar,
 > não reescrever. Depois de colar, rodar `bash _qa/auditar.sh` (a tela final fica mais alta).
 
+> **🚫⭐ NUNCA COPIAR AVATAR DE OUTRA ATIVIDADE — ARTE SEMPRE NOVA E TEMÁTICA**
+> (decisão do Marcos, ago/2026: *"nunca copiar avatares, sempre ser temático,
+> nunca repetir o avatar, sempre novo e temático"*). Ele pegou os brotinhos verdes
+> do Jardim reaproveitados dentro do Observatório do Órbi — no meio de um céu
+> estrelado. **A tela "Quem vai jogar?" é onde a criança se coloca dentro da
+> história**, então os avatares fazem parte do tema tanto quanto o mascote:
+> exploradores espaciais no espaço, jardineiros no jardim, repórteres no jornal.
+> Vale para TODA arte, não só os avatares — clonar o MOTOR é obrigatório, clonar a
+> ARTE é proibido. Custa 6 imagens; é o preço de a atividade não parecer remendo.
+> Sempre com **tons de pele, cabelos e detalhes variados** (é escola pública, a
+> criança tem que se achar ali) e **retrato do peito para cima** (o rosto precisa
+> ser legível a 62px no crachá). O auditor **`_qa/arte_propria.py`** (portão 3c da
+> banca) reprova qualquer imagem byte a byte igual à de outra atividade.
+
 > **CRIAR ATIVIDADE PREMIUM (conteúdo + ano/disciplina):** siga o **"PROCESSO
 > OFICIAL"** no topo do `MANUAL-MESTRE.md` — ler os manuais na íntegra; primeiro
 > como PROFESSOR da disciplina (verificar BNCC do ano, planejar didática e
