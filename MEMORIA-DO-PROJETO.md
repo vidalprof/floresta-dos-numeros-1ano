@@ -2754,3 +2754,40 @@ real com os números.
 `_qa/auditar.sh` como **portão 3b**. Ele segue os `mostraBanner(msg, próximaTela)`
 e reprova qualquer transição que caia para um número menor. Sempre que inserir
 fase no meio de uma atividade, é ele que avisa.
+
+## 🎓 PROGRESSÃO DIDÁTICA — a ordem das fases estava errada em três (ago/2026)
+
+O Marcos perguntou pela **progressão didática** (eu tinha respondido sobre a barra
+de progresso; ele corrigiu: *"falo de progressão didática"*). Fui ler a sequência
+real de fases das cinco atividades e encontrei três problemas de ORDEM.
+
+### O que estava errado e como ficou
+
+**1. A Legenda do Clique montava a casa antes dos tijolos.**
+A criança montava o **grupo nominal** (artigo + substantivo + adjetivo) aos 32%,
+mas o adjetivo só era trabalhado depois — "filtro mágico" (o que o adjetivo FAZ) e
+"detetive" (usar o adjetivo) vinham aos 36% e 44%. Ela juntava uma peça que ainda
+não conhecia.
+**Nova ordem:** substantivo → separar as duas classes → o adjetivo em ação →
+usar o adjetivo → **montar o grupo** → concordância → morfologia → produção.
+
+**2. No Plantão na Redação (verbos), a criança consertava concordância antes de
+saber conjugar** — e as duas fases de TEMPO estavam separadas por uma de
+concordância no meio.
+**Nova ordem:** identificar o verbo → quem fez a ação → aquecimento → tempo →
+linha do tempo → **conjugar** → erro de concordância → revisor → produção.
+⚠️ *Correção do meu próprio diagnóstico:* eu disse ao Marcos que "a concordância
+vinha antes do sujeito". **Estava errado** — eu tinha lido os números da barra, não
+a cadeia real. O sujeito já vinha antes. Lição: **seguir a cadeia de chamadas, nunca
+inferir a ordem pelos números do setProg.**
+
+**3. No Observatório do Órbi**, "o que só a Terra tem" estava aos 91%, longe do
+bloco em que a Terra é o assunto; e havia **quatro fases seguidas de planetas** só
+de reconhecer (ficha → ordem → pista → tamanhos), justo aos 30 minutos de jogo.
+**Agora:** a Terra vem aos 22%, logo depois de classificar estrela/planeta/satélite;
+e "monte a palavra" entra no meio do bloco dos planetas, quebrando a repetição.
+
+### O auditor ficou mais esperto
+O `_qa/progressao.py` só seguia `mostraBanner(msg, próximaTela)` e por isso **não
+via** as transições por chamada direta — foi assim que as quedas do Plantão
+(56% → 36%) passaram batido na primeira rodada. Agora ele segue as duas formas.
