@@ -1760,11 +1760,11 @@ function dLoja(){
 
 /* ---------- 12) ⭐ CORTAR A BANDEJA (C2: decompor para calcular) ----------
    6×4 é difícil? Corta em 5×4 (que ela sabe) + 1×4. Estratégia de verdade.  */
-var CORTA=[{l:6,co:4,corte:5},{l:7,co:3,corte:5},{l:6,co:5,corte:5}];
+var CORTA=[{l:6,co:2},{l:6,co:4},{l:7,co:3},{l:6,co:5}];
 function dCorta(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,69+idx*1.5);
+    limpa();var t=el("div","tela");setProg(t,69+idx*1.2);
     var it=CORTA[idx],fase=0,err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","CORTE A BANDEJA"));
@@ -1778,28 +1778,21 @@ function dCorta(){
         var ln=el("div","linhac");
         ln.onclick=function(){ arma();
           if(fase) return;
-          if(depois===it.corte){
-            fase=1; sMaquina(); ln.className="linhac cortada";
-            var z; for(z=0;z<filas.length;z++) filas[z].className="fila "+(z<it.corte?"parteA":"parteB");
-            perg();
-          } else { err++; ln.className="linhac no"; sErro();
-            setTimeout(function(){ ln.className="linhac"; },420);
-            ajuda(err,{dica:"Corte deixando <b>5 fileiras</b> de um lado &#8212; a tabuada do 5 &#233; f&#225;cil.",
-                       concreto:function(){ var z2,ls=g.getElementsByClassName("linhac");
-                         for(z2=0;z2<ls.length;z2++) ls[z2].className="linhac conta"; },
-                       revelar:function(){ var ls=g.getElementsByClassName("linhac");
-                         if(ls[it.corte-1]) acende(ls[it.corte-1]); }});
-          }
+          /* QUALQUER corte serve: a conta se parte igual. Cortar 6 em 3+3
+             esta tao certo quanto 5+1. O app segue o raciocinio da crianca. */
+          fase=1; sMaquina(); ln.className="linhac cortada";
+          var z; for(z=0;z<filas.length;z++) filas[z].className="fila "+(z<depois?"parteA":"parteB");
+          perg(depois);
         };
         g.appendChild(ln);
       })(i+1); }
     }
     c.appendChild(g);
-    c.appendChild(el("div","hint","A linha fica entre duas fileiras."));
-    function perg(){
-      var a=it.corte*it.co, b=(it.l-it.corte)*it.co;
+    c.appendChild(el("div","hint","Corte onde voc&#234; quiser. Dica: deixar <b>5 fileiras</b> de um lado ajuda."));
+    function perg(onde){
+      var a=onde*it.co, b=(it.l-onde)*it.co;
       bal.innerHTML="Agora s&#227;o duas contas f&#225;ceis. Quanto d&#225; tudo junto?";
-      var cf=contaEl(it.corte+" &#215; "+it.co+" = "+a+"&#160; + &#160;"+(it.l-it.corte)+" &#215; "+it.co+" = "+b,"agora &#233; s&#243; juntar");
+      var cf=contaEl(onde+" &#215; "+it.co+" = "+a+"&#160; + &#160;"+(it.l-onde)+" &#215; "+it.co+" = "+b,"o corte foi seu &#8212; agora &#233; s&#243; juntar");
       c.appendChild(cf);
       var num=el("div","num"),op=baguncar(unicos([a+b,a+b+it.co,a,a+b-it.co],4)),k;
       for(k=0;k<op.length;k++){(function(v){
@@ -1865,10 +1858,14 @@ function dQuadro(){
     var b=el("div","tecl",""+v);
     b.onclick=function(){ arma();
       if(b.className.indexOf("ok")>=0) return;
-      /* acha um buraco ainda vazio com esse valor */
+      /* acha um buraco ainda vazio com esse valor (pode haver mais de um) */
       var z,achou=null;
       for(z=0;z<faltam.length;z++) if(faltam[z].className.indexOf("vazia")>=0&&faltam[z]._v===v){ achou=faltam[z]; break; }
-      if(achou){ achou.innerHTML=v; achou.className="qcel cheia"; b.className="tecl ok"; sPop(feitos); feitos++;
+      if(achou){ achou.innerHTML=v; achou.className="qcel cheia"; sPop(feitos); feitos++;
+        /* a tecla so descansa quando NAO sobrar buraco com este valor */
+        var sobra=false,w;
+        for(w=0;w<faltam.length;w++) if(faltam[w].className.indexOf("vazia")>=0&&faltam[w]._v===v) sobra=true;
+        if(!sobra) b.className="tecl ok";
         var ce=centroTela(achou); faisca(ce[0],ce[1],"#6bd23f",10);
         if(feitos>=faltam.length){ sCerto(); reg("soma",err===0,err+1);
           setTimeout(function(){ depoisDaFala("dc_quadro_revela",10000,function(){
