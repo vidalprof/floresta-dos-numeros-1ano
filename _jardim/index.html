@@ -289,6 +289,51 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
   background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113);
   -webkit-box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25);box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25)}
 .btntreino small{display:block;font-size:12px;font-weight:600;opacity:.92;margin-top:2px}
+
+/* a roda da planta (o ciclo) */
+.roda{position:relative;width:290px;height:290px;margin:14px 0;border-radius:50%;
+  background:rgba(255,255,255,.55);border:3px dashed #9fc47e}
+.rpos{position:absolute;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  width:66px;text-align:center}
+.rpos img{width:50px;height:50px;object-fit:contain;display:block;margin:0 auto}
+.rpos .rnome{display:block;font-size:10.5px;font-weight:800;color:#2c4a12;background:rgba(255,253,246,.95);
+  border-radius:8px;padding:1px 5px;margin-top:1px}
+.rpos.vaziopos{width:60px;height:60px;line-height:56px;border-radius:50%;background:rgba(255,253,246,.95);
+  border:3px dashed #7a5a2c;font-size:28px;font-weight:800;color:#7a5a2c;
+  -webkit-animation:beat 1.6s ease-in-out infinite;animation:beat 1.6s ease-in-out infinite}
+.rseta{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  width:78px;height:78px;border-radius:50%;border:5px solid #8be05a;border-right-color:transparent;
+  -webkit-animation:gira 5s linear infinite;animation:gira 5s linear infinite}
+@-webkit-keyframes gira{to{-webkit-transform:translate(-50%,-50%) rotate(360deg)}}
+@keyframes gira{to{transform:translate(-50%,-50%) rotate(360deg)}}
+/* monte o seu prato */
+.pratao{width:190px;height:190px;border-radius:50%;background:rgba(255,255,255,.95);
+  border:5px solid #cfe0b8;margin:12px 0;display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;gap:2px;padding:14px;
+  -webkit-box-shadow:0 8px 18px rgba(40,70,20,.28);box-shadow:0 8px 18px rgba(40,70,20,.28)}
+.pratao img{width:52px;height:52px;object-fit:contain;-webkit-animation:pop .35s;animation:pop .35s}
+.pmarcas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:5px;margin-bottom:4px;min-height:24px}
+.pmarca{background:-webkit-linear-gradient(top,#8be05a,#3f9a26);background:linear-gradient(#8be05a,#3f9a26);
+  color:#fff;font-size:11.5px;font-weight:800;padding:3px 9px;border-radius:999px;
+  -webkit-animation:pop .3s;animation:pop .3s}
+.comida{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:6px;margin-top:8px;max-width:356px}
+.alim{width:78px;background:rgba(255,253,246,.96);border:2px solid var(--linha);border-bottom-width:4px;
+  border-radius:14px;padding:5px 3px;text-align:center;cursor:pointer;min-height:42px}
+.alim img{width:44px;height:44px;object-fit:contain;display:block;margin:0 auto}
+.alim .anome{display:block;font-size:10.5px;font-weight:800;color:#4a4232}
+.alim.posto{opacity:.42;border-color:#3f9a26}
+@media (max-height:600px){
+  .roda{width:206px;height:206px;margin:9px 0}
+  .rpos{width:60px}.rpos img{width:42px;height:42px}.rpos .rnome{font-size:9px}
+  .rpos.vaziopos{width:48px;height:48px;line-height:44px;font-size:22px}
+  .rseta{width:58px;height:58px}
+  .pratao{width:146px;height:146px;padding:10px;margin:8px 0}.pratao img{width:40px;height:40px}
+  .comida{gap:4px;margin-top:6px}.alim{width:66px}.alim img{width:36px;height:36px}
+  .alim .anome{font-size:9.5px}
+}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -570,7 +615,7 @@ function telaOrdenar(){limpa();var t=el("div","tela");setProg(t,32);
         var ce=centroTela(cd);faisca(ce[0],ce[1],"#8be05a",10);prox++;
         if(prox>=ordem.length){ reg("sequencia",err===0,err+1);
           setTimeout(function(){ depoisDaFala("jd_p3_revela",8000,function(){
-            mostraBanner("Semente &#8594; broto &#8594; plantinha &#8594; flor &#8594; fruto.",telaAquecimento); }); },450); } }
+            mostraBanner("Semente &#8594; broto &#8594; plantinha &#8594; flor &#8594; fruto.",telaCiclo); }); },450); } }
       else { err++; cd.className="carta no";sErro();consolo();setTimeout(function(){cd.className="carta";},450); }
     };
     wrap.appendChild(cd);
@@ -713,7 +758,7 @@ function telaComemos(){
           cen.appendChild(el("div","balao porque",it.por));
           setTimeout(function(){ idx++;
             if(idx>=COMER.length){ depoisDaFala("jd_come_revela",12000,function(){
-              mostraBanner("No prato tem <b>raiz, folha, caule, flor, fruto e semente</b>!",telaQualParte); }); }
+              mostraBanner("No prato tem <b>raiz, folha, caule, flor, fruto e semente</b>!",telaPrato); }); }
             else passo();
           },2600);
         } else { err++; b.className="pc no"; sErro();
@@ -767,7 +812,7 @@ function telaQualParte(){
           var ce=centroTela(lupa); faisca(ce[0],ce[1],"#8be05a",14);
           setTimeout(function(){ idx++; err=0;
             if(idx>=fila.length){ depoisDaFala("jd_qual_revela",8000,function(){
-              mostraBanner("Voc&#234; reconhece as partes <b>s&#243; de olhar</b>!",telaMemoria); }); }
+              mostraBanner("Voc&#234; reconhece as partes <b>s&#243; de olhar</b>!",telaCacaPartes); }); }
             else pede();
           },1100);
         } else { err++; b.className="pc no"; sErro();
@@ -915,10 +960,24 @@ function telaEnsinar(){limpa();var t=el("div","tela");setProg(t,91);var c=el("di
 function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
 /* ============ P4b: CACA-PALAVRAS (do que a planta precisa) ============ */
 var CACAJD=["SOL","AGUA","TERRA","AR"];
-function telaCacaJd(){
-  limpa();var t=el("div","tela");setProg(t,56);
-  t.appendChild(el("div","balao","Ache as <b>4 palavras</b> escondidas. S&#227;o as coisas de que a planta precisa."));
-  var N=6,gr=[],i,j,k;
+var CACAPARTES=["RAIZ","CAULE","FOLHA","FLOR","FRUTO","SEMENTE"];
+/* ⚠️ a grade tem que caber a MAIOR palavra: SEMENTE tem 7 letras e nao entra
+   numa grade 6x6. Por isso o N virou config.                                */
+function telaCacaJd(){ telaCacaBase({lista:CACAJD,N:6,prog:56,conc:"necessidades",
+  txt:"Ache as <b>4 palavras</b> escondidas. S&#227;o as coisas de que a planta precisa.",
+  intro:"jd_caca_intro",dica:"jd_caca_dica",dicaTxt:"As palavras est&#227;o deitadas ou em p&#233;.",
+  revela:"jd_caca_revela",msg:"<b>Sol</b>, <b>&#225;gua</b>, <b>terra</b> e <b>ar</b>: achou todas!",
+  prox:telaRotular}); }
+function telaCacaPartes(){ telaCacaBase({lista:CACAPARTES,N:8,prog:92,conc:"partes",
+  txt:"Agora as <b>6 partes da planta</b> est&#227;o escondidas no quadro.",
+  intro:"jd_cacap_intro",dica:"jd_cacap_dica",dicaTxt:"Toque na primeira e depois na &#250;ltima letra.",
+  revela:"jd_cacap_revela",msg:"<b>Raiz, caule, folha, flor, fruto e semente</b>: achou as seis!",
+  prox:telaMemoria}); }
+function telaCacaBase(cfg){
+  var CACAJD=cfg.lista;
+  limpa();var t=el("div","tela");setProg(t,cfg.prog);
+  t.appendChild(el("div","balao",cfg.txt));
+  var N=cfg.N,gr=[],i,j,k;
   for(i=0;i<N;i++){gr[i]=[];for(j=0;j<N;j++)gr[i][j]="";}
   var pos={},achadas={},total=0;
   function poe(p){
@@ -945,6 +1004,7 @@ function telaCacaJd(){
   for(i=0;i<N;i++){ cels[i]=[];
     for(j=0;j<N;j++){ (function(r,c){
       var cl=el("div","cel",gr[r][c]);
+      cl.style.width=(100/N)+"%";
       cl.onclick=function(){ arma(); clica(r,c,cl); };
       grade.appendChild(cl); cels[r][c]=cl;
     })(i,j); } }
@@ -973,15 +1033,15 @@ function telaCacaJd(){
       achadas[achou]=1;
       for(k=0;k<cam.length;k++) cels[cam[k][0]][cam[k][1]].className="cel ok";
       chips[achou].className="pchip feito";
-      sCerto(); reg("necessidades",true,1);
+      sCerto(); reg(cfg.conc,true,1);
       var ce=centroTela(cels[cam[0][0]][cam[0][1]]); faisca(ce[0],ce[1],"#8be05a",14);
       var n=0,z; for(z in achadas){ if(achadas.hasOwnProperty(z)) n++; }
       if(n>=total){ trava=true;
-        setTimeout(function(){ depoisDaFala("jd_caca_revela",9000,function(){
-          mostraBanner("<b>Sol</b>, <b>&#225;gua</b>, <b>terra</b> e <b>ar</b>: achou todas!",telaRotular); }); },450); }
+        setTimeout(function(){ depoisDaFala(cfg.revela,9000,function(){
+          mostraBanner(cfg.msg,cfg.prox); }); },450); }
     } else {
       var v2=cl.className;
-      ant.el.className="cel no"; cl.className="cel no"; sErro(); reg("necessidades",false,2);
+      ant.el.className="cel no"; cl.className="cel no"; sErro(); reg(cfg.conc,false,2);
       setTimeout(function(){
         if(ant.el.className==="cel no") ant.el.className=ant.ant;
         if(cl.className==="cel no") cl.className=v2;
@@ -991,8 +1051,8 @@ function telaCacaJd(){
   cen.appendChild(grade);cen.appendChild(lista);
   cen.appendChild(el("div","hint","Toque na primeira e depois na &#250;ltima letra."));
   t.appendChild(cen);app.appendChild(t);
-  montaBarra("jd_caca_dica","As palavras est&#227;o deitadas ou em p&#233;.");
-  falar("jd_caca_intro");
+  montaBarra(cfg.dica,cfg.dicaTxt);
+  falar(cfg.intro);
 }
 /* ============ P5b: MONTE O NOME DA PARTE ============ */
 var MONTAJD=[{p:"RAIZ",d:"A parte que fica <b>dentro da terra</b> e bebe a &#225;gua."},
@@ -1193,6 +1253,139 @@ function parecerDe(p){
   if(p>=0.50) return ["Est&#225; construindo","cons"];
   return ["Precisa retomar","ret"];
 }
+/* ============ ⭐ A RODA DA PLANTA (o ciclo que nunca acaba) ============
+   Diferente do "ordenar" que ja existe: ali a crianca enfileira o crescimento
+   (linha reta). Aqui o crescimento e uma RODA com um buraco — e no fim ela
+   descobre que depois do fruto vem semente OUTRA VEZ. O ciclo fechando e o
+   conceito que a fase de ordenar nao alcanca.                                */
+var RODA=[{img:"jd_g0",n:"SEMENTE"},{img:"jd_g1",n:"BROTO"},{img:"jd_g2",n:"PLANTA"},
+          {img:"jd_g3",n:"FLOR"},{img:"jd_g4",n:"FRUTO"}];
+function telaCiclo(){
+  var rod=0,ordem=[3,1,4,0,2];   /* qual posicao fica vazia em cada rodada */
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,62+rod);
+    var vazio=ordem[rod],err=0,fim=false;
+    var cen=el("div","centro");
+    cen.appendChild(el("div","selo","A RODA DA PLANTA"));
+    var bal=el("div","balao","Que parte da roda est&#225; <b>faltando</b>?");cen.appendChild(bal);
+    var roda=el("div","roda"),i;
+    for(i=0;i<RODA.length;i++){(function(k){
+      var ang=(k/RODA.length)*2*Math.PI-Math.PI/2;
+      var d=el("div","rpos");
+      d.style.left=(50+Math.cos(ang)*39)+"%";
+      d.style.top=(50+Math.sin(ang)*39)+"%";
+      if(k===vazio){ d.className="rpos vaziopos"; d.innerHTML="?"; }
+      else { d.appendChild(imgEl(RODA[k].img)); d.appendChild(el("span","rnome",RODA[k].n)); }
+      roda.appendChild(d);
+    })(i);}
+    roda.appendChild(el("div","rseta",""));
+    cen.appendChild(roda);
+    var box=el("div","pcs"),ops=baguncar([vazio,(vazio+1)%5,(vazio+3)%5]),k2;
+    for(k2=0;k2<ops.length;k2++){(function(idx){
+      var b=el("div","pc",RODA[idx].n);
+      b.onclick=function(){ arma();
+        if(fim) return;
+        if(idx===vazio){
+          fim=true; b.className="pc usada"; sCerto(); reg("sequencia",err===0,err+1);
+          var alvo=roda.getElementsByClassName("vaziopos")[0];
+          if(alvo){ alvo.className="rpos"; alvo.innerHTML="";
+            alvo.appendChild(imgEl(RODA[idx].img)); alvo.appendChild(el("span","rnome",RODA[idx].n));
+            var ce=centroTela(alvo); faisca(ce[0],ce[1],"#8be05a",14); }
+          setTimeout(function(){ rod++;
+            if(rod>=ordem.length){ fecha(); } else passo();
+          },1500);
+        } else { err++; b.className="pc no"; sErro();
+          setTimeout(function(){ if(b.className==="pc no") b.className="pc"; },440);
+          ajudaJd(err,{dica:"Olhe o que vem <b>antes</b> e o que vem <b>depois</b> do buraco.",
+                       revelar:function(){ var z,a=box.getElementsByClassName("pc");
+                         for(z=0;z<a.length;z++) if(a[z].innerHTML===RODA[vazio].n) acendeJd(a[z]); }});
+        }
+      };
+      box.appendChild(b);
+    })(ops[k2]);}
+    cen.appendChild(box);
+    cen.appendChild(el("div","hint","A roda gira sempre na mesma ordem."));
+    t.appendChild(cen);app.appendChild(t);
+    montaBarra("jd_ciclo_dica","O que vem antes e o que vem depois?");
+    if(rod===0) falar("jd_ciclo_intro");
+  }
+  /* a pergunta que fecha a roda */
+  function fecha(){
+    limpa();var t=el("div","tela");setProg(t,67);
+    var cen=el("div","centro"),err=0,fim=false;
+    cen.appendChild(el("div","selo","E DEPOIS DO FRUTO?"));
+    cen.appendChild(el("div","balao","A planta deu <b>fruto</b>. E dentro do fruto, o que tem?"));
+    var f=el("div","prato"); f.appendChild(imgEl("jd_g4")); cen.appendChild(f);
+    var box=el("div","pcs"),ops=baguncar(["SEMENTE","RAIZ","FLOR"]),i;
+    for(i=0;i<ops.length;i++){(function(txt){
+      var b=el("div","pc",txt);
+      b.onclick=function(){ arma();
+        if(fim) return;
+        if(txt==="SEMENTE"){ fim=true; b.className="pc usada"; sCerto(); sFesta(); festa();
+          reg("sequencia",err===0,err+1);
+          setTimeout(function(){ depoisDaFala("jd_ciclo_revela",13000,function(){
+            mostraBanner("A semente vira planta, a planta vira fruto e no fruto tem <b>semente de novo</b>!",telaAquecimento); }); },900);
+        } else { err++; b.className="pc no"; sErro();
+          setTimeout(function(){ if(b.className==="pc no") b.className="pc"; },440);
+          ajudaJd(err,{dica:"Pense no tomate cortado ao meio. O que tem l&#225; dentro?",
+                       revelar:function(){ var z,a=box.getElementsByClassName("pc");
+                         for(z=0;z<a.length;z++) if(a[z].innerHTML==="SEMENTE") acendeJd(a[z]); }});
+        }
+      };
+      box.appendChild(b);
+    })(ops[i]);}
+    cen.appendChild(box);
+    t.appendChild(cen);app.appendChild(t);
+    montaBarra(null,null);
+  }
+  passo();
+}
+
+/* ============ ⭐ MONTE O SEU PRATO (aplicar: comi que partes?) ============
+   A crianca escolhe o almoco e o app vai carimbando de que parte veio cada
+   alimento. Meta: 4 partes DIFERENTES no prato. E a fase que leva o conteudo
+   para fora da tela — ela olha o prato de casa depois disso.                 */
+function telaPrato(){
+  limpa();var t=el("div","tela");setProg(t,88);
+  var noPrato=[],partes={},err=0,fim=false;
+  var cen=el("div","centro");
+  cen.appendChild(el("div","selo","MONTE O SEU PRATO"));
+  var bal=el("div","balao","Escolha alimentos de <b>4 partes diferentes</b> da planta.");
+  cen.appendChild(bal);
+  var prato=el("div","pratao"); cen.appendChild(prato);
+  var marcas=el("div","pmarcas"); cen.appendChild(marcas);
+  var box=el("div","comida"),i;
+  for(i=0;i<COMER.length;i++){(function(it){
+    var d=el("div","alim");
+    d.appendChild(imgEl(it.img));
+    d.appendChild(el("span","anome",it.nome));
+    d.onclick=function(){ arma();
+      if(fim||d.className.indexOf("posto")>=0) return;
+      d.className="alim posto"; sPop(noPrato.length);
+      prato.appendChild(imgEl(it.img));
+      noPrato.push(it);
+      if(!partes[it.parte]){
+        partes[it.parte]=1;
+        var ch=el("div","pmarca",nomeDe(it.parte)); marcas.appendChild(ch);
+        var ce=centroTela(ch); faisca(ce[0],ce[1],"#8be05a",12);
+      }
+      var n=0,z; for(z in partes){ if(partes.hasOwnProperty(z)) n++; }
+      bal.innerHTML="J&#225; tem <b>"+n+"</b> parte"+(n===1?"":"s")+" no prato. "+
+                    (n>=4?"Prato completo!":"Falta"+((4-n)===1?"":"m")+" <b>"+(4-n)+"</b>.");
+      if(n>=4&&!fim){ fim=true; sCerto(); sFesta(); festa(); reg("partes",err===0,err+1);
+        setTimeout(function(){ depoisDaFala("jd_prato_revela",10000,function(){
+          mostraBanner("Voc&#234; comeu a planta quase <b>inteira</b>: de raiz at&#233; semente!",telaQualParte); }); },1200);
+      }
+    };
+    box.appendChild(d);
+  })(COMER[i]);}
+  cen.appendChild(box);
+  cen.appendChild(el("div","hint","Toque nos alimentos para p&#244;r no prato."));
+  t.appendChild(cen);app.appendChild(t);
+  montaBarra("jd_prato_dica","Alimentos de partes diferentes.");
+  falar("jd_prato_intro");
+}
+
 /* ---------- BOLETIM ANIMADO DO FIM (para a CRIANCA ver) ----------
    Pedido do Marcos (ago/2026): "um final bem legal com animacoes mostrando o
    desempenho". Regra da casa: NUNCA e prova disfarcada — aqui nao existe nota
