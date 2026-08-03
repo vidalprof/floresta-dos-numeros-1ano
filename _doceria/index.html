@@ -473,7 +473,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 /* reta numerica */
 .reta{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:end;align-items:flex-end;
   background:rgba(255,253,244,.95);border:2px solid var(--linha);border-radius:14px;
-  padding:44px 10px 8px;margin:16px 0;width:100%;max-width:356px;min-height:96px;
+  padding:46px 24px 8px;margin:16px 0;width:100%;max-width:356px;min-height:96px;
   -webkit-box-shadow:0 6px 14px rgba(50,40,20,.22);box-shadow:0 6px 14px rgba(50,40,20,.22)}
 .reta .marca{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center;cursor:pointer;min-height:42px;
   display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
@@ -484,7 +484,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .reta .marca.caiu b{color:var(--ok);font-size:13px}
 .reta .marca.conta i{background:var(--dourado);height:17px}
 .reta .marca.no i{background:var(--erro);height:19px}
-.reta .salta{position:absolute;top:4px;width:38px;height:38px;object-fit:contain;margin-left:-19px;
+.reta .salta{position:absolute;top:4px;width:38px;height:38px;object-fit:contain;-webkit-transform:translateX(-50%);transform:translateX(-50%);
   -webkit-transition:left .42s cubic-bezier(.3,-.4,.4,1.4);transition:left .42s cubic-bezier(.3,-.4,.4,1.4)}
 
 /* prateleiras */
@@ -541,8 +541,8 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 
 @media (max-height:720px){
   .dsolto img{width:31px;height:31px}
-  .reta{padding:38px 8px 6px;min-height:84px}
-  .reta .salta{width:32px;height:32px;margin-left:-16px}
+  .reta{padding:40px 20px 6px;min-height:84px}
+  .reta .salta{width:32px;height:32px}
   .prat img{width:22px;height:22px}
   .saco img{width:46px;height:46px}
   .moeda,.moeda img{width:52px;height:52px}
@@ -554,9 +554,9 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .bagunca{margin:9px 0}
   .dsolto img{width:25px;height:25px}
   .apoio{padding:6px 9px;margin-top:8px}.apfila img{width:17px;height:17px}
-  .reta{padding:32px 6px 5px;min-height:70px;margin:9px 0}
+  .reta{padding:34px 16px 5px;min-height:70px;margin:9px 0}
   .reta .marca{min-height:40px}
-  .reta .salta{width:26px;height:26px;margin-left:-13px}
+  .reta .salta{width:26px;height:26px}
   .prats{margin:9px 0;gap:4px}.prat{min-height:32px;padding:3px 5px}.prat img{width:19px;height:19px}
   .sacos{margin:9px 0;gap:7px}.saco img{width:40px;height:40px}
   .vagam{height:25px;line-height:23px;font-size:13px}
@@ -785,7 +785,7 @@ function fraseEl(palavras,alvo,onOk,onNo){
   return f;
 }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============ */
-var VOZOK={"136ffml": 1, "1b6eyyt": 1, "1dvh8bn": 1, "1hjqnfn": 1, "1l0cu5g": 1, "1l8jg15": 1, "1m66dhy": 1, "1nx2bwh": 1, "1rzlvgh": 1, "1uae0db": 1, "1wz2wfv": 1, "1ycxjxb": 1, "37zyhu": 1, "37zyhw": 1, "37zyhx": 1, "37zyhy": 1, "37zyhz": 1, "38pdk2": 1, "38pdk4": 1, "38pdk5": 1, "38pdk6": 1, "39esma": 1, "39esmc": 1, "39esmd": 1, "39esme": 1, "3a47oj": 1, "3a47ol": 1, "3a47om": 1, "3a47oo": 1, "3hmtk": 1, "3hmtn": 1, "3hmto": 1, "3hmtq": 1, "3hmvh": 1, "4dhigy": 1, "66v50q": 1, "fzwuo3": 1, "g2bwru": 1, "k2ge83": 1, "lg1wrd": 1, "md8j4x": 1, "my3k7l": 1, "qfs2ox": 1, "wt3r5r": 1};
+var VOZOK={"136ffml": 1, "145j94z": 1, "1b6eyyt": 1, "1dh73vn": 1, "1dvh8bn": 1, "1hjqnfn": 1, "1l0cu5g": 1, "1l8jg15": 1, "1m66dhy": 1, "1nx2bwh": 1, "1rzlvgh": 1, "1t2g610": 1, "1uae0db": 1, "1wz2wfv": 1, "1x4zpl0": 1, "1ycxjxb": 1, "37zyhu": 1, "37zyhw": 1, "37zyhx": 1, "37zyhy": 1, "37zyhz": 1, "38pdk2": 1, "38pdk4": 1, "38pdk5": 1, "38pdk6": 1, "39esma": 1, "39esmc": 1, "39esmd": 1, "39esme": 1, "3a47oj": 1, "3a47ol": 1, "3a47om": 1, "3a47oo": 1, "3hmtk": 1, "3hmtn": 1, "3hmto": 1, "3hmtq": 1, "3hmug": 1, "3hmvh": 1, "4dhigy": 1, "66v50q": 1, "fzwuo3": 1, "g2bwru": 1, "i92590": 1, "k2ge83": 1, "lg1wrd": 1, "md8j4x": 1, "my3k7l": 1, "qfs2ox": 1, "wt3r5r": 1};
 var vz=document.getElementById("vz"), zapAtual=null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -1546,7 +1546,10 @@ function dSalto(){
       };
       reta.appendChild(m); marcas.push(m);
     })(i);}
-    function poe(){ boneco.style.left=(pos/it.ate*100)+"%"; }
+    /* posiciona o mascote MEDINDO a marca (a conta por % erra por causa
+       do padding e da largura de cada marca) */
+    function poe(){ var m=marcas[pos]; if(!m) return;
+      boneco.style.left=(m.offsetLeft+m.offsetWidth/2)+"px"; }
     c.appendChild(reta); poe();
     c.appendChild(el("div","hint","Toque na marca onde o salto termina."));
     t.appendChild(c);app.appendChild(t);
@@ -1703,7 +1706,7 @@ function dLoja(){
     var it=LOJA[idx],postas=0,err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O CAIXA"));
-    c.appendChild(el("div","balao","O fregu&#234;s leva <b>"+it.n+" saquinhos</b>. Cada um custa <b>"+it.preco+" real"+(it.preco>1?"is":"")+"</b>."));
+    c.appendChild(el("div","balao","O fregu&#234;s leva <b>"+it.n+" saquinhos</b>. Cada um custa <b>"+it.preco+" "+(it.preco>1?"reais":"real")+"</b>."));
     var sacos=el("div","sacos"),i,vagas=[];
     for(i=0;i<it.n;i++){
       var s=el("div","saco");
@@ -1726,7 +1729,7 @@ function dLoja(){
           postas++; sPop(postas);
           tot.innerHTML="Total: <b>"+(postas*it.preco)+"</b>";
           if(postas>=it.n){ sCerto(); reg("problema",err===0,err+1);
-            var cf=contaEl(it.n+" &#215; "+it.preco+" = <b>"+(it.n*it.preco)+"</b>",it.n+" saquinhos de "+it.preco+" real"+(it.preco>1?"is":""));
+            var cf=contaEl(it.n+" &#215; "+it.preco+" = <b>"+(it.n*it.preco)+"</b>",it.n+" saquinhos de "+it.preco+" "+(it.preco>1?"reais":"real"));
             c.appendChild(cf);
             var ce=centroTela(cf); faisca(ce[0],ce[1],"#ffd43b",16);
             setTimeout(function(){ idx++;
