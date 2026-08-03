@@ -127,6 +127,45 @@
 >> - **Atenção:** o `CLAUDE.md` ainda manda ler os `EDUVERSE-*.md` como "LEI". Perguntei ao Marcos se quer
 >>   que eu ajuste o CLAUDE.md para refletir este rumo — **aguardando a resposta dele**.
 
+>> ## 🍫 NOVA ATIVIDADE — "A Doceria do Cacau" (3º ano, multiplicação por grupos) — 2026-08-03
+>> Pedido do Marcos: *"uma atividade para o 3 ano Multiplicação por soma de grupos, multiplicação de
+>> grupos, bem didática, progressiva, temática com mascote e imagens novas que dure pelo menos 45 minutos"*.
+>> - **Repo publicado:** `doceria-do-cacau` → **https://vidalprof.github.io/doceria-do-cacau/**
+>>   (criado pela `fabrica.yml`, source_dir=`_doceria`). Fonte em `_doceria/`.
+>> - **Currículo (Blumenau, 3º ano), verbatim:** *"Resolver **e elaborar** problemas de multiplicação
+>>   (por 2, 3, 4 e 5) com a ideia de adição de parcelas iguais, utilizando ou não suporte de imagens
+>>   e/ou material manipulável"*. Três palavras mandaram no desenho: **elaborar** (por isso existe a fase
+>>   "Você é o chefe", em que a criança CRIA o pedido), **parcelas iguais** (a ponte soma→vezes é a fase
+>>   central) e **material manipulável** (a fase "Monte as bandejas" é toque de verdade, não quiz).
+>>   ⚠️ Há sobreposição parcial com a Fábrica de Estrelas (EF03MA07) — avisei o Marcos e segui.
+>> - **17 telas, progressão fechada:** prever (POE) → montar grupos (manipulável) → escrever a soma →
+>>   **a soma vira vezes** → bandeja em fileiras (organização retangular) → encomenda rápida (2,3,4,5) →
+>>   ligar colunas → memória (soma ↔ multiplicação) → quadro do estoque (achar o total) → freguês na
+>>   porta (problema escrito) → **você é o chefe (elaborar)** → relâmpago 60s → ensinar o Cacau → medalha.
+>>   **Só 2 telas de múltipla escolha em 17.**
+>> - **Mascote próprio: "o Cacau"**, um brigadeiro de massinha com chapéu de confeiteiro; fundo próprio
+>>   `dc_fundo.jpg` (doceria). Masculino de propósito (mantém a voz `pt-BR-AntonioNeural`).
+>>   8 imagens + poses (fala/pisca) + 6 crachás editando a base · 37 narrações + 44 vozes de resposta.
+>> - **🔪 ARMADILHA NOVA DO RECORTE (custou o chapéu do mascote):** o `cut_border()` rodava com
+>>   `tol=26` (aceita ≥229 como "branco"). O chapéu branco do chef tem highlight ~240 e **encostava na
+>>   borda** → o floodfill comeu o topo do chapéu. **Conserto: `tol=6`** (só ≥249). O fundo do Gemini é
+>>   253–255, então 6 basta. **Sempre amostrar o pixel do fundo E o do detalhe claro antes de escolher a
+>>   tolerância.**
+>> - **🔪 MEDALHA: floodfill de borda não alcança o buraco FECHADO** (o vão entre as duas pernas da fita
+>>   ficou branco na tela). Para a medalha usei **corte por limiar puro** (≥249 → transparente), que pega
+>>   também as regiões cercadas. Regra: mascote/poses = floodfill de borda (preserva olho e chapéu);
+>>   objeto solto com vão fechado = limiar.
+>> - **🔇 ACHADO NA LEGENDA DO CLIQUE:** os áudios `vb_acerto1..3`/`vb_erro1..2` (elogio/consolo) nunca
+>>   foram copiados para `_nomes/audio/` — `elogio()`/`consolo()` estavam MUDOS lá desde a publicação.
+>>   Copiados agora. **Checklist novo ao clonar o motor: copiar também os áudios COMPARTILHADOS, não só
+>>   os `<prefixo>_*.mp3` da atividade.**
+>> - **🧪 O auto-jogador aleatório deu falso "PRESO":** ele clicava o `#bcta` do banner ESCONDIDO (fora
+>>   da tela por `translateY(115%)`, mas `.click()` ignora hit-test) e reiniciava a fase anterior em
+>>   loop. Duas lições: (1) o auto-jogador tem que filtrar por `getBoundingClientRect()` dentro da
+>>   viewport; (2) mesmo assim pus **`.banner{pointer-events:none}`** (e `auto` no `.show`) para não
+>>   existir toque fantasma. Também: a assinatura de estado do auto-jogador precisa incluir a **barra de
+>>   progresso** — só o `.selo` repete entre rodadas da mesma fase e parece "travado".
+>>
 >> ## 📸 NOVA ATIVIDADE — "A Legenda do Pingo" (4º ano, substantivo e adjetivo) — 2026-08-03
 >> Pedido do Marcos: *"uma aula sobre substantivos e adjetivos para o 4 ano... tem que durar 45 minutos"*,
 >> com **interatividades bem variadas** ("consulte nosso leque"), incluindo **caça-palavras e ligar**.
