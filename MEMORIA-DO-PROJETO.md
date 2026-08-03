@@ -164,6 +164,30 @@
 >>      telas** desta atividade, calado. → agora detecta tela **pelo comportamento**: função que chama
 >>      `limpa()`. Vale para qualquer prefixo (vXxx, gXxx, nXxx, telaXxx).
 >> - **QA rodado:** `node --check`; `_qa/classes.py` e `_qa/fluxo.py` limpos nos 4 apps; auditor de
+>> - **⭐ MASCOTE PRÓPRIO: "o Clique" (2026-08-03).** O Marcos pediu mascote novo, com outro nome, e
+>>   **fundo próprio "que tenha a ver com o tema da aula"**. Virou **o Clique**, uma CÂMERA FOTOGRÁFICA
+>>   de massinha — o mascote passou a fazer parte do tema (a aula é sobre legenda de foto) em vez de ser
+>>   emprestado da Redação. **Escolhi MASCULINO de propósito:** pela regra de voz (mascote masculino =
+>>   voz masculina), manteve o `pt-BR-AntonioNeural` e só precisei regravar **3 falas** das 43. Se fosse
+>>   feminino, seriam as 43 numa voz nova — vale lembrar disso antes de escolher o gênero do mascote.
+>>   - **Poses pela receita da imagem-âncora:** gera `cq_base`, depois EDITA a base para `cq_fala`
+>>     (boca aberta) e `cq_pisca` (olhos fechados) + os 6 crachás. Conferido: bbox **idêntico
+>>     (90,100,331,332)** nas 3 poses → o lip-sync funciona. **Recorte MANTENDO o quadro quadrado**
+>>     (420×420); sem isso as camadas desalinham. Como a moldura tem margem, o mascote precisou de caixa
+>>     MAIOR no CSS (`.clique` 186px, `.gg` 252px) — senão ele aparece minúsculo na capa.
+>>   - **Fundo próprio:** `nm_fundo.jpg` (mesa de fotos com varal de fotos, abajur, lupa), 900×900 JPG.
+>>   - **⚠️ Gemini deu 503 (Service Unavailable)** na 1ª tentativa do mascote e o job falhou. **Não é a
+>>     nossa chave nem o prompt** — é instabilidade do Google. Conserto: repetir o lote. Vale olhar o log
+>>     antes de mexer no prompt.
+>> - **+3 FASES (2026-08-03, "aumentar o tempo"):** **Filtro mágico** — a criança toca no adjetivo e a
+>>   FOTO MUDA de verdade (CSS `filter`/`transform`: escura, gigante, antiga, minúscula). É o ponto
+>>   pedagógico mais forte: adjetivo = atributo, visto acontecendo, sem imagem nova · **Detetive** —
+>>   caminho inverso: o Clique descreve com 2 adjetivos e a criança acha a foto (compreensão) ·
+>>   **Encolhe e aumenta** — grau (casa+inha, port+ão). Total: **22 telas**, 39 de 39 respostas com
+>>   alto-falante (72 clipes).
+>> - **⚠️ ARMADILHA DO MARCADOR:** `_lote_falas.json` commitado junto de um commit com marcador
+>>   `[imagens]` **não gera áudio** — o `finalizar.yml` olha o marcador da MENSAGEM. Se as falas forem
+>>   junto, fazer um `git commit --allow-empty -m "... [audio]"` depois.
 >>   sobreposição em 320/360/412; solucionador que JOGA as 6 mecânicas centrais (todas concluem);
 >>   as 20 telas abrem sem erro de JS.
 >>
