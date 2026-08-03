@@ -2791,3 +2791,28 @@ e "monte a palavra" entra no meio do bloco dos planetas, quebrando a repetição
 O `_qa/progressao.py` só seguia `mostraBanner(msg, próximaTela)` e por isso **não
 via** as transições por chamada direta — foi assim que as quedas do Plantão
 (56% → 36%) passaram batido na primeira rodada. Agora ele segue as duas formas.
+
+## 🧑‍🚀 REGRA: cada atividade tem os SEUS avatares (Marcos, ago/2026)
+
+Ele reparou: *"no sistema solar você usou o avatar da atividade do broto para as
+crianças escolherem, deveria ser avatar novo com roupas espaciais"*. E estava
+certíssimo — eu tinha copiado os `jd_cr1..6` (os brotinhos verdes de chapéu e
+laço) para dentro do Observatório do Órbi só para economizar geração de imagem.
+No meio de um céu estrelado, seis brotos de jardim gritam que foi copiado.
+
+**Regra:** a tela "Quem vai jogar?" é a primeira coisa que a criança vê e é onde
+ela se coloca dentro da história. **Os avatares fazem parte do tema** — nunca
+reaproveitar os de outra atividade. Custa 6 imagens; vale a pena.
+
+**Os do Órbi:** seis criancinhas astronautas em massinha, retrato do peito para
+cima (o rosto tem que ser legível a 62px no crachá), capacete de vidro com aro
+prateado, e cada uma com **cor de gola e distintivo diferentes** (foguete, planeta,
+estrela, cometa, lua, planeta com anel) para dar de distinguir. Tons de pele,
+cabelos e detalhes variados de propósito — é escola pública, a criança tem que
+se achar ali.
+
+**De brinde, a prévia pegou mais duas coisas herdadas do molde:** a figurinha
+escolhida acendia em **verde** (cor do Jardim) num app violeta — agora acende em
+dourado; e a tela final, mais alta que a janela, deixava a última linha do boletim
+**atrás da barra de baixo** — mesma armadilha do `_padrao/FIM-DE-ATIVIDADE.md`,
+resolvida com a tela final compacta começando do topo.
