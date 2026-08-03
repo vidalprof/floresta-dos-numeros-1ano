@@ -127,6 +127,29 @@
 >> - **Atenção:** o `CLAUDE.md` ainda manda ler os `EDUVERSE-*.md` como "LEI". Perguntei ao Marcos se quer
 >>   que eu ajuste o CLAUDE.md para refletir este rumo — **aguardando a resposta dele**.
 
+>> ## 🏁 PADRÃO DO FIM DE ATIVIDADE — vale para TODA atividade nova — 2026-08-03
+>> Marcos: *"coloque isso para as novas que criarmos já ter essas regras"*. Código pronto e
+>> armadilhas em **`_padrao/FIM-DE-ATIVIDADE.md`** (extraído da Doceria, já rodando nas 4).
+>> Está citado no `CLAUDE.md` e virou a **FASE 0.5** do rito no `MANUAL-MESTRE.md`.
+>> **Os 4 itens obrigatórios:**
+>> 1. **Boletim animado (a criança vê)** — aparece sozinho na medalha: estrelas acendendo uma a
+>>    uma, barra crescendo por objetivo, acertos subindo contando com som, tempo e frase de
+>>    incentivo. **Sem nota, sem a palavra "errou"** (LEI: não é prova disfarçada).
+>> 2. **Relatório do professor INVISÍVEL para o aluno** — pedido literal: *"não quero botão ou o
+>>    painel do professor aparecendo para os alunos"*. Abre **segurando a medalha por 2 segundos**
+>>    (toque curto não faz nada). `?painel` continua valendo.
+>> 3. **Parecer em palavras** — "72%" não serve para o diário: **Dominou / Está construindo /
+>>    Precisa retomar** + linha de resumo dizendo o que fazer.
+>> 4. **"Treinar o que faltou"** — botão que só aparece para quem tem objetivo < 75%; monta um
+>>    percurso curto com as fases fracas e volta para a medalha. **Quem dominou tudo não vê o
+>>    botão** — é isso que evita o enjoo de repetir o que já sabe.
+>> **Truque que fez isso funcionar sem tocar em nenhuma fase:** enquanto o treino roda, o
+>> `mostraBanner` é substituído e ignora o "próximo" original, chamando a próxima fase da fila.
+>> **Armadilhas pagas:** o mapa de conceitos do painel é variável LOCAL (o boletim mostrava
+>> "grupos", "vezes" — daí nasceu o `ROTCRI` global) · a função de salvar muda de nome entre apps
+>> (`salva()` × `salvaEstado()` no Jardim) · o bloco tem que entrar DEPOIS de todas as fases
+>> existirem · atividade com 2 missões volta ao MENU, não a uma tela final.
+>>
 >> ## 🕵️ A BANCA DE AUDITORES (pedido do Marcos: "precisamos de auditores antes de entregar") — 2026-08-03
 >> **Um comando roda todos:** `bash _qa/auditar.sh _doceria/index.html` (sem lista de telas ele descobre
 >> sozinho quem chama `limpa()`). Sai 0 se a banca aprovar. Cada auditor é um profissional com UMA obsessão:

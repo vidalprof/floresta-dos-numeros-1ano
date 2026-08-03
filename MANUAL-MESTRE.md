@@ -54,6 +54,12 @@ Quando o usuário pedir uma **atividade premium** dando **CONTEÚDO + ANO/DISCIP
 > SVG); português; e "na dúvida, PERGUNTAR, não inventar". O que é SÓ do premium: o checklist de
 > recursos (`--exigir`). **Na dúvida se é premium ou outro estilo, PERGUNTAR** — não presumir molde.
 
+**FASE 0.5 — O FIM DA ATIVIDADE JÁ É PADRÃO (não improvisar).** Antes de escrever a tela final,
+abrir o **`_padrao/FIM-DE-ATIVIDADE.md`** e colar os 4 blocos prontos: boletim animado da criança,
+relatório do professor por gesto secreto (segurar a medalha 2s — **nunca** botão visível ao aluno),
+parecer em palavras e "Treinar o que faltou". Só 3 coisas mudam por atividade: `ROTCRI` (nomes em
+linguagem de criança), `TREINO` (objetivo → fase) e `TELAFIM`. Decisão do Marcos, ago/2026.
+
 **FASE 0 — Ler tudo na íntegra.** Antes de qualquer coisa, ler por completo: `ATIVIDADE-PREMIUM.md`, este `MANUAL-MESTRE.md` e o `CLAUDE.md`. Não agir de memória. NÃO INVENTAR; na dúvida, PERGUNTAR (vale o rito inteiro).
 
 **FASE 1 — Vestir o PROFESSOR da disciplina/ano (pedagógico primeiro, código depois).**

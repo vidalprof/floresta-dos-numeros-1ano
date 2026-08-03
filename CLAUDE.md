@@ -15,6 +15,14 @@ Leia tudo antes de agir e responda sempre em **português**.
 > Como eu começo cada sessão sem memória, tudo importante fica escrito ali: é a
 > cura do "esquecimento". Toda capacidade/decisão nova → anotar lá.
 >
+> **🕵️ A BANCA DE AUDITORES roda ANTES de entregar:** `bash _qa/auditar.sh <arquivo.html>`.
+> São sete: engenheiro (`node --check`), fluxo (`_qa/fluxo.py`), designer (`_qa/classes.py`),
+> acessibilidade (`_qa/contraste.js` — mede o PIXEL real do fundo, não o CSS), narração
+> (`_qa/falas.py` — palavra que a voz erra, tipo "Complete" virando "complite"), leiaute
+> (`_qa/leiaute.js` — 6 tamanhos, resposta fora da tela, alvo < 40px), jogador (`_qa/jogador.js`
+> — joga sozinho até a medalha) e pedagogo (`_qa/curriculo.py` — a conta cabe no ano?).
+> A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
+
 > **Toda atividade EducaVerso passa pelo `EDUCAVERSO-QA.md`** (3 portões: Verificar
 > → Auditar → Aprovação do professor) ANTES de chegar ao Marcos. Nada de "entregar e
 > ver depois"; nunca afirmar que funciona sem testar; todo asset visto pela criança é IA.
@@ -55,6 +63,16 @@ Leia tudo antes de agir e responda sempre em **português**.
 > Ou seja: **"o Claude gera" = o Claude ACIONA o workflow que gera** e depois dá
 > `git pull` para trazer o resultado. Fluxo completo de atividade: ver o
 > "PROCESSO OFICIAL" no topo do `MANUAL-MESTRE.md`.
+
+> **⭐ TODA ATIVIDADE NOVA NASCE COM O `_padrao/FIM-DE-ATIVIDADE.md`** (decisão do Marcos,
+> ago/2026: *"coloque isso para as novas que criarmos já ter essas regras"*). São 4 itens
+> NÃO negociáveis no fim de qualquer atividade: (1) **boletim animado** para a criança —
+> estrelas, barras e acertos contando, sem nota e sem a palavra "errou"; (2) **relatório do
+> professor invisível para o aluno**, que abre **segurando a medalha 2 segundos** (nunca botão
+> à vista); (3) **parecer em palavras** (Dominou / Está construindo / Precisa retomar) + linha
+> de resumo; (4) **"Treinar o que faltou"**, que só aparece para quem tem objetivo abaixo de
+> 75% e refaz só as fases fracas. O código pronto e as armadilhas estão nesse arquivo — copiar,
+> não reescrever. Depois de colar, rodar `bash _qa/auditar.sh` (a tela final fica mais alta).
 
 > **CRIAR ATIVIDADE PREMIUM (conteúdo + ano/disciplina):** siga o **"PROCESSO
 > OFICIAL"** no topo do `MANUAL-MESTRE.md` — ler os manuais na íntegra; primeiro
