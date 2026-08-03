@@ -47,8 +47,11 @@ def main():
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
 
-    # descarta pedacos de template ("vida'+(k<vidas?...") que nao sao classe
-    usadas = {c: v for c, v in usadas.items() if re.match(r"^[a-zA-Z][-a-zA-Z0-9_]*$", c)}
+    # descarta pedacos de template ("vida'+(k<vidas?...") que nao sao classe.
+    # Tambem descarta nome de 1-2 letras: vem de concatenacao ("moeda m"+valor
+    # -> o pedaco "m"), nunca de uma classe de verdade. Falso positivo pago.
+    usadas = {c: v for c, v in usadas.items()
+              if len(c) > 2 and re.match(r"^[a-zA-Z][-a-zA-Z0-9_]*$", c)}
 
     problemas = []
     for c in sorted(usadas):

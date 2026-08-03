@@ -1140,7 +1140,7 @@ var TABU=[[2,3],[2,5],[3,4],[2,7],[3,6],[4,3],[5,4],[4,5],[3,8],[5,6],[2,9],[4,7
 function dTabu(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,74+idx*0.6);
+    limpa();var t=el("div","tela");setProg(t,70+idx*0.5);
     var it=TABU[idx],a=it[0],b=it[1],res=a*b,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ENCOMENDA R&#193;PIDA"));
@@ -1177,7 +1177,7 @@ function dTabu(){
 
 /* ---------- 8) LIGAR: a conta e o total ---------- */
 function dLigar(){
-  limpa();var t=el("div","tela");setProg(t,86);
+  limpa();var t=el("div","tela");setProg(t,85);
   var pares=[["2 &#215; 6","12"],["3 &#215; 5","15"],["4 &#215; 4","16"],["5 &#215; 7","35"],["2 &#215; 9","18"],["3 &#215; 7","21"]];
   var dir=[2,5,4,0,3,1],selE=null,feitos=0,err=0;
   var c=el("div","centro");
@@ -1203,7 +1203,7 @@ function dLigar(){
         var cc=centroTela(d); faisca(cc[0],cc[1],"#6bd23f",10);
         if(feitos>=pares.length){ reg("vezes",err===0,err+1);
           setTimeout(function(){ depoisDaFala("dc_ligar_revela",8000,function(){
-            mostraBanner("Cada conta tem o <b>seu</b> total!",dMemoria); }); },600); }
+            mostraBanner("Cada conta tem o <b>seu</b> total!",dEmbalar); }); },600); }
       } else { err++; d.className="lig no"; sErro(); consolo();
         setTimeout(function(){ if(!d._ok) d.className="lig"; },600); }
     };
@@ -1220,7 +1220,7 @@ function dLigar(){
 var MEMP=[["2 + 2 + 2","3 &#215; 2"],["4 + 4","2 &#215; 4"],["5 + 5 + 5","3 &#215; 5"],
           ["3 + 3 + 3 + 3","4 &#215; 3"],["2 + 2 + 2 + 2 + 2","5 &#215; 2"],["6 + 6","2 &#215; 6"]];
 function dMemoria(){
-  limpa();var t=el("div","tela");setProg(t,89);
+  limpa();var t=el("div","tela");setProg(t,92);
   var cartas=[],i,feitos=0,err=0;
   for(i=0;i<MEMP.length;i++){ cartas.push({p:i,tx:MEMP[i][0]}); cartas.push({p:i,tx:MEMP[i][1]}); }
   baguncar(cartas);
@@ -1327,7 +1327,7 @@ var PROBD=[
 function dProblema(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,93+idx*0.5);
+    limpa();var t=el("div","tela");setProg(t,93+idx*0.4);
     var it=PROBD[idx],fase=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","FREGU&#202;S NA PORTA"));
@@ -1374,7 +1374,7 @@ function dProblema(){
 function dCria(){
   var rodada=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,96+rodada*0.5);
+    limpa();var t=el("div","tela");setProg(t,96+rodada*0.3);
     var nb=3,nd=4,doce=DOCES[rodada%DOCES.length],fechado=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","VOC&#202; &#201; O CHEFE"));
@@ -1422,7 +1422,7 @@ function dCria(){
             var ce=centroTela(conta); faisca(ce[0],ce[1],"#ffb45e",18);
             setTimeout(function(){ rodada++;
               if(rodada>=3){ depoisDaFala("dc_cria_revela",10000,function(){
-                mostraBanner("Voc&#234; n&#227;o s&#243; resolveu: voc&#234; <b>criou</b> o problema!",dRelampago); }); }
+                mostraBanner("Voc&#234; n&#227;o s&#243; resolveu: voc&#234; <b>criou</b> o problema!",dFesta); }); }
               else passo();
             },2000);
           } else { errC++; bt.className="tecl no"; sErro();
@@ -1864,7 +1864,7 @@ function dCorta(){
    A criança preenche a linha e VÊ que cada tabuada só vai somando o mesmo.   */
 var QUADRO=[{p:2,n:6},{p:5,n:6},{p:3,n:6},{p:4,n:6}];
 function dQuadro(){
-  limpa();var t=el("div","tela");setProg(t,83);
+  limpa();var t=el("div","tela");setProg(t,78);
   var c=el("div","centro");
   c.appendChild(el("div","selo","QUADRO DA SEMANA"));
   var bal=el("div","balao","Cada linha vai <b>de um tanto em um tanto</b>. Preencha o que falta.");c.appendChild(bal);
@@ -1903,7 +1903,7 @@ function dQuadro(){
         var ce=centroTela(achou); faisca(ce[0],ce[1],"#6bd23f",10);
         if(feitos>=faltam.length){ sCerto(); reg("soma",err===0,err+1);
           setTimeout(function(){ depoisDaFala("dc_quadro_revela",10000,function(){
-            mostraBanner("Cada linha &#233; uma <b>tabuada</b>: ela s&#243; vai somando o mesmo n&#250;mero!",dLigar); }); },900);
+            mostraBanner("Cada linha &#233; uma <b>tabuada</b>: ela s&#243; vai somando o mesmo n&#250;mero!",dDobro); }); },900);
         }
       } else { err++; b.className="tecl no"; sErro();
         setTimeout(function(){ if(b.className==="tecl no") b.className="tecl"; },440);
@@ -1926,12 +1926,203 @@ function dQuadro(){
   falar("dc_quadro_intro");
 }
 
+/* ---------- ⭐ DOBRO E TRIPLO (currículo do 3º ano — faltava) ----------
+   "Resolver e elaborar problemas envolvendo dobro, metade, triplo e terça
+   parte, com o suporte de imagens ou material manipulável" (Blumenau, 3º ano).
+   Concreta: a criança COPIA a bandeja com o dedo e vê o dobro nascer.        */
+var DOBRO=[{q:4,vezes:2,doce:"dc_brigadeiro"},{q:3,vezes:3,doce:"dc_cupcake"},
+           {q:5,vezes:2,doce:"dc_biscoito"},{q:2,vezes:3,doce:"dc_pirulito"}];
+function dDobro(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,80+idx);
+    var it=DOBRO[idx],copias=1,err=0,fim=false;
+    var nome=(it.vezes===2)?"dobro":"triplo";
+    var c=el("div","centro");
+    c.appendChild(el("div","selo",it.vezes===2?"O DOBRO":"O TRIPLO"));
+    var bal=el("div","balao","O fregu&#234;s quer o <b>"+nome+"</b> desta bandeja de <b>"+it.q+"</b>.");
+    c.appendChild(bal);
+    var ban=el("div","bancada");
+    function poe(){ ban.innerHTML=""; var i;
+      for(i=0;i<copias;i++) ban.appendChild(bandejaEl(it.doce,it.q,false)); }
+    poe(); c.appendChild(ban);
+    var cont=el("div","conta",copias+" bandeja de "+it.q);c.appendChild(cont);
+    var b=el("button","btn","Copiar a bandeja");b.style.marginTop="10px";
+    b.onclick=function(){ arma(); sTap();
+      if(fim) return;
+      if(copias>=it.vezes){ err++; sErro();
+        bal.innerHTML="Opa! O <b>"+nome+"</b> &#233; s&#243; <b>"+it.vezes+"</b> bandejas iguais.";
+        ajuda(err,{dica:"Dobro = <b>2</b> bandejas iguais. Triplo = <b>3</b>.",
+                   concreto:function(){ apoioConcreto(c,it.doce,it.vezes,it.q); }});
+        return; }
+      copias++; poe(); sPop(copias);
+      cont.innerHTML=copias+" bandejas de "+it.q;
+      if(copias===it.vezes){ fim=true; sCerto();
+        bal.innerHTML="Pronto! O <b>"+nome+"</b> de "+it.q+" &#233; quanto?";
+        b.parentNode.removeChild(b);
+        var num=el("div","num"),op=baguncar(unicos([it.q*it.vezes,it.q+it.vezes,it.q*it.vezes+it.q,Math.max(2,it.q*it.vezes-it.q)],4)),k;
+        for(k=0;k<op.length;k++){(function(v){
+          var bt=el("div","tecl",""+v);
+          bt.onclick=function(){ arma();
+            if(bt.className.indexOf("ok")>=0) return;
+            if(v===it.q*it.vezes){ bt.className="tecl ok"; sCerto(); reg("vezes",err===0,err+1);
+              cont.innerHTML=it.vezes+" &#215; "+it.q+" = <b>"+(it.q*it.vezes)+"</b>";
+              cont.appendChild(el("small","","o "+nome+" de "+it.q+" &#233; "+(it.q*it.vezes)));
+              var ce=centroTela(cont); faisca(ce[0],ce[1],"#ffb45e",16);
+              setTimeout(function(){ idx++;
+                if(idx>=DOBRO.length){ depoisDaFala("dc_dobro_revela",9000,function(){
+                  mostraBanner("<b>Dobro</b> &#233; 2 vezes. <b>Triplo</b> &#233; 3 vezes!",dLigar); }); }
+                else passo();
+              },2000);
+            } else { err++; bt.className="tecl no"; sErro();
+              setTimeout(function(){ if(bt.className==="tecl no") bt.className="tecl"; },440);
+              ajuda(err,{dica:"Conte os docinhos das <b>"+it.vezes+"</b> bandejas juntas.",
+                         concreto:function(){ apoioConcreto(c,it.doce,it.vezes,it.q); },
+                         revelar:function(){ var a=num.getElementsByClassName("tecl"),z;
+                           for(z=0;z<a.length;z++) if(a[z].innerHTML==""+(it.q*it.vezes)) acende(a[z]); }});
+            }
+          };
+          num.appendChild(bt);
+        })(op[k]);}
+        c.appendChild(num);
+      }
+    };
+    c.appendChild(b);
+    c.appendChild(el("div","hint","Toque para copiar a bandeja igualzinha."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_dobro_dica","Dobro &#233; 2 vezes; triplo &#233; 3 vezes.");
+    if(idx===0) falar("dc_dobro_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ EMBALAR DE TANTO EM TANTO (agrupar: quantos grupos dá?) ----------
+   O caminho INVERSO do resto da atividade: aqui ela sabe o total e descobre
+   quantos grupos cabem. É a ponte para a divisão, ainda dentro do concreto.   */
+var EMB=[{tot:12,cada:4,doce:"dc_brigadeiro"},{tot:10,cada:5,doce:"dc_cupcake"},
+         {tot:12,cada:3,doce:"dc_biscoito"},{tot:8,cada:2,doce:"dc_pirulito"}];
+function dEmbalar(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,87+idx);
+    var it=EMB[idx],sobram=it.tot,caixas=0,err=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","EMBALAR"));
+    var bal=el("div","balao","S&#227;o <b>"+it.tot+"</b> docinhos soltos. Cada caixa leva <b>"+it.cada+"</b>.");
+    c.appendChild(bal);
+    var solta=el("div","bagunca"),i,pecas=[];
+    for(i=0;i<it.tot;i++){ var s=el("div","dsolto"); s.appendChild(imgEl(it.doce)); solta.appendChild(s); pecas.push(s); }
+    c.appendChild(solta);
+    var caixasEl=el("div","bancada");c.appendChild(caixasEl);
+    var cx=el("div","conta","Sobraram: <b>"+sobram+"</b>");c.appendChild(cx);
+    var b=el("button","btn","Encher uma caixa");b.style.marginTop="10px";
+    b.onclick=function(){ arma(); sTap();
+      if(sobram<it.cada) return;
+      var k; for(k=0;k<it.cada;k++) pecas[it.tot-sobram+k].className="dsolto visto";
+      sobram-=it.cada; caixas++;
+      caixasEl.appendChild(bandejaEl(it.doce,it.cada,false));
+      sPop(caixas);
+      cx.innerHTML="Sobraram: <b>"+sobram+"</b>";
+      if(sobram===0){
+        sCerto(); b.parentNode.removeChild(b);
+        bal.innerHTML="Acabou! <b>Quantas caixas</b> deram?";
+        var num=el("div","num"),op=baguncar(unicos([caixas,caixas+1,Math.max(2,caixas-1),it.cada],4)),z;
+        for(z=0;z<op.length;z++){(function(v){
+          var bt=el("div","tecl",""+v);
+          bt.onclick=function(){ arma();
+            if(bt.className.indexOf("ok")>=0) return;
+            if(v===caixas){ bt.className="tecl ok"; sCerto(); reg("grupos",err===0,err+1);
+              cx.innerHTML=caixas+" &#215; "+it.cada+" = <b>"+it.tot+"</b>";
+              cx.appendChild(el("small","",caixas+" caixas de "+it.cada));
+              var ce=centroTela(cx); faisca(ce[0],ce[1],"#6bd23f",16);
+              setTimeout(function(){ idx++;
+                if(idx>=EMB.length){ depoisDaFala("dc_emb_revela",9000,function(){
+                  mostraBanner("Contando de <b>grupo em grupo</b> voc&#234; descobriu quantas caixas!",dMemoria); }); }
+                else passo();
+              },2000);
+            } else { err++; bt.className="tecl no"; sErro();
+              setTimeout(function(){ if(bt.className==="tecl no") bt.className="tecl"; },440);
+              ajuda(err,{dica:"Conte as caixas que voc&#234; encheu.",
+                         concreto:function(){ var q=caixasEl.getElementsByClassName("bandeja"),w;
+                           for(w=0;w<q.length;w++) q[w].className="bandeja ok"; },
+                         revelar:function(){ var a=num.getElementsByClassName("tecl"),w;
+                           for(w=0;w<a.length;w++) if(a[w].innerHTML==""+caixas) acende(a[w]); }});
+            }
+          };
+          num.appendChild(bt);
+        })(op[z]);}
+        c.appendChild(num);
+      }
+    };
+    c.appendChild(b);
+    c.appendChild(el("div","hint","Cada caixa puxa "+it.cada+" docinhos."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_emb_dica","Encha at&#233; n&#227;o sobrar nenhum.");
+    if(idx===0) falar("dc_emb_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ A FESTA DA ESCOLA (integradora, com MAIS DE UM jeito certo) ----
+   Fecha a atividade voltando ao concreto: total dado, ela monta como quiser.
+   Aceitar várias soluções é de propósito — mostra que há caminhos diferentes.  */
+var FESTA=[{alvo:20},{alvo:12},{alvo:18}];
+function dFesta(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,97+idx*0.5);
+    var it=FESTA[idx],nb=2,nq=2,fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","A FESTA DA ESCOLA"));
+    c.appendChild(el("div","balao","A festa precisa de <b>"+it.alvo+"</b> docinhos. Monte esse total com <b>bandejas iguais</b>."));
+    var g1=el("div","giro"),g2=el("div","giro");
+    var v1=el("div","gval","2"),v2=el("div","gval","2");
+    function bt(qual,mais){ var b=el("div","gbt",mais?"+":"&#8211;");
+      b.onclick=function(){ arma(); sTap(); if(fim) return;
+        if(qual===1){ nb=Math.max(1,Math.min(8,nb+(mais?1:-1))); v1.innerHTML=nb; }
+        else { nq=Math.max(1,Math.min(9,nq+(mais?1:-1))); v2.innerHTML=nq; }
+        desenha(); };
+      return b; }
+    g1.appendChild(bt(1,false));g1.appendChild(v1);g1.appendChild(bt(1,true));
+    g1.appendChild(el("div","glab","bandejas"));
+    g2.appendChild(bt(2,false));g2.appendChild(v2);g2.appendChild(bt(2,true));
+    g2.appendChild(el("div","glab","em cada uma"));
+    c.appendChild(g1);c.appendChild(g2);
+    var ban=el("div","bancada");c.appendChild(ban);
+    var cx=el("div","conta","");c.appendChild(cx);
+    function desenha(){
+      ban.innerHTML=""; var i;
+      for(i=0;i<nb;i++) ban.appendChild(bandejaEl("dc_brigadeiro",nq,false));
+      var tot=nb*nq;
+      cx.innerHTML=nb+" &#215; "+nq+" = <b>"+tot+"</b>";
+      if(tot===it.alvo&&!fim){
+        fim=true; sCerto(); reg("criar",true,1);
+        MED.pedidos.push("festa "+it.alvo+": "+nb+" x "+nq); salva();
+        cx.appendChild(el("small","","bateu o total da festa!"));
+        var ce=centroTela(cx); faisca(ce[0],ce[1],"#ffd43b",20);
+        setTimeout(function(){ idx++;
+          if(idx>=FESTA.length){ depoisDaFala("dc_festa_revela",10000,function(){
+            mostraBanner("Tinha <b>mais de um jeito</b> de montar o mesmo total!",dRelampago); }); }
+          else passo();
+        },2300);
+      } else if(tot>it.alvo) cx.appendChild(el("small","","passou do total"));
+      else if(tot<it.alvo) cx.appendChild(el("small","","ainda falta"));
+    }
+    desenha();
+    c.appendChild(el("div","hint","Tem mais de um jeito certo de chegar em "+it.alvo+"."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("dc_festa_dica","V&#225; mexendo nos n&#250;meros at&#233; o total bater.");
+    if(idx===0) falar("dc_festa_intro");
+  }
+  passo();
+}
+
 /* ---------- 13) ENCOMENDA RELÂMPAGO (tempo) ---------- */
 var RELD=[["2 &#215; 4",8],["3 &#215; 3",9],["5 &#215; 2",10],["4 &#215; 5",20],["2 &#215; 7",14],
           ["3 &#215; 5",15],["4 &#215; 4",16],["5 &#215; 5",25],["2 &#215; 8",16],["3 &#215; 6",18],
           ["4 &#215; 2",8],["5 &#215; 4",20],["3 &#215; 7",21],["2 &#215; 6",12],["4 &#215; 6",24]];
 function dRelampago(){
-  limpa();var t=el("div","tela");setProg(t,97);
+  limpa();var t=el("div","tela");setProg(t,98.5);
   var LIM=75000,ini=(new Date()).getTime(),acabou=false,pts=0,fila=baguncar(RELD.slice(0)),fi=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","ENCOMENDA REL&#194;MPAGO"));
