@@ -264,10 +264,6 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .cel{width:11.11%;padding-top:0;height:32px;line-height:32px;text-align:center;font-size:15px;font-weight:700;cursor:pointer;color:#5a5346;border-radius:6px}
 .cel.sel{background:var(--dourado);color:#5a4200}
 .cel.ok{background:-webkit-linear-gradient(top,#6bd23f,#2f8f18);background:linear-gradient(#6bd23f,#2f8f18);color:#fff;font-weight:800;-webkit-box-shadow:inset 0 0 0 1px #24710f;box-shadow:inset 0 0 0 1px #24710f}
-.lista{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:7px;-webkit-box-pack:center;justify-content:center;margin-top:10px;max-width:340px}
-.pchip{background:rgba(255,253,244,.96);border:2px solid var(--linha);border-radius:999px;padding:5px 13px;font-size:14px;font-weight:700;color:var(--texto);-webkit-box-shadow:0 3px 8px rgba(50,40,20,.2);box-shadow:0 3px 8px rgba(50,40,20,.2)}
-.pchip.feito{background:-webkit-linear-gradient(top,#6bd23f,#2f8f18);background:linear-gradient(#6bd23f,#2f8f18);border-color:#24710f;color:#fff;text-decoration:line-through}
-@media (max-height:720px){ .pchip{font-size:12.5px;padding:4px 10px} .lista{gap:6px;margin-top:8px} }
 
 .cel.no{background:#ffd3cd;color:#8e2418}
 .cols{display:-webkit-box;display:flex;gap:8px;width:100%;max-width:400px;margin-top:8px}
@@ -1034,7 +1030,6 @@ function vCacaPal(){limpa();var t=el("div","tela");setProg(t,94);
         if(achou&&achou.v&&!achou._ok){ achou._ok=1; achados++; sCerto();
           for(k=0;k<cam.length;k++){ cels[cam[k]].className="cel ok"; }
           var ce=centroTela(gr); faisca(ce[0],ce[1],"#6bd23f",14);
-          if(chips[achou.w]) chips[achou.w].className="pchip feito";
           cont.innerHTML="Achou <b>"+achados+"</b> de <b>"+alvos+"</b> verbos!";
           if(achados>=alvos){ reg("identificar",err===0,err+1);
             setTimeout(function(){ depoisDaFala("vb_caca_revela",9000,function(){
@@ -1049,11 +1044,6 @@ function vCacaPal(){limpa();var t=el("div","tela");setProg(t,94);
       gr.appendChild(d); cels.push(d);
   })(i,j); } }
   c.appendChild(gr);
-  /* banco de palavras: so os VERBOS (os substantivos ficam de pegadinha, sem aviso) */
-  var banco=el("div","lista"), chips={}, bi;
-  for(bi=0;bi<postas.length;bi++){ if(!postas[bi].v) continue;
-    var ch=el("div","pchip",postas[bi].w); chips[postas[bi].w]=ch; banco.appendChild(ch); }
-  c.appendChild(banco);
   c.appendChild(el("div","hint","Toque na <b>primeira</b> e depois na <b>&#250;ltima</b> letra."));
   t.appendChild(c);app.appendChild(t);
   montaBarra("vb_caca_dica","Toque na primeira letra e depois na &#250;ltima. Se for nome de coisa, n&#227;o &#233; verbo.");
