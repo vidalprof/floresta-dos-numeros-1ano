@@ -2729,3 +2729,28 @@ que faltou" nascia **atrás da barra de baixo**.
 (a cruzadinha), pelo mesmo motivo do caça-palavras — clicando ao acaso não dá para
 resolver. Vale aplicar ali o mesmo truque do `data-qa` já usado no Observatório do
 Órbi quando essa atividade for mexida de novo.
+
+## 📊 AUDITOR NOVO: PROGRESSÃO — a barra andava PARA TRÁS (ago/2026)
+
+O Marcos perguntou se as atividades estavam *"adequadas didaticamente, com
+progressão"*. Fui medir em vez de opinar, e a pergunta achou defeito real: em
+**três** delas a barra de progresso **voltava** no meio do percurso.
+
+| atividade | onde | queda |
+|---|---|---|
+| Legenda do Clique | nFabrica → nPlural | **68% → 48%** |
+| Plantão na Redação | gLigar → gBanca | 50% → 46% |
+| Plantão na Redação | gPalavra → gTrocado | 82% → 80% |
+| Doceria do Cacau | dMemoria → dCaca | 92% → 91% |
+
+**Causa (sempre a mesma):** fases novas são inseridas no meio e ninguém renumera
+o `setProg` das vizinhas. A ordem real das fases deixa de bater com o número que
+cada uma pinta na barra. **Nenhum print pega isso** — só comparando a sequência
+real com os números.
+
+**Conserto:** as cinco atividades foram renumeradas e agora nenhuma volta.
+
+**Para não acontecer de novo:** nasceu o **`_qa/progressao.py`**, já ligado no
+`_qa/auditar.sh` como **portão 3b**. Ele segue os `mostraBanner(msg, próximaTela)`
+e reprova qualquer transição que caia para um número menor. Sempre que inserir
+fase no meio de uma atividade, é ele que avisa.

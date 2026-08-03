@@ -62,6 +62,10 @@ echo "--- 3) DESIGNER (toda classe tem estilo de base?) --"
 python3 _qa/classes.py "$ARQ" || FALHOU=1
 
 echo
+echo "--- 3b) PROGRESSAO (a barra so anda para a frente?) -"
+python3 _qa/progressao.py "$ARQ" || FALHOU=1
+
+echo
 echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
 node _qa/contraste.js "$ARQ" $TELAS 2>/dev/null || FALHOU=1
 
