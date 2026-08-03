@@ -1162,7 +1162,14 @@ function dTabu(){
           },900);
         } else { err++; bt.className="tecl no"; sErro();
           setTimeout(function(){ if(bt.className==="tecl no") bt.className="tecl"; },440);
-          if(err===2) consolo(); }
+          /* esta fase e de fluencia (conta de cabeca), entao o concreto NAO fica
+             na tela desde o comeco — ele APARECE para quem precisa. Assim a fase
+             deixa de ser abstrata para a crianca que ainda nao decorou.        */
+          ajuda(err,{dica:"S&#227;o <b>"+a+"</b> bandejas de <b>"+b+"</b>. Some: "+b+" + "+b+"...",
+                     concreto:function(){ apoioConcreto(c,"dc_brigadeiro",a,b); },
+                     revelar:function(){ var z,q=num.getElementsByClassName("tecl");
+                       for(z=0;z<q.length;z++) if(q[z].innerHTML==""+res) acende(q[z]); }});
+        }
       };
       num.appendChild(bt);
     })(lim[k]);}
@@ -1204,8 +1211,16 @@ function dLigar(){
         if(feitos>=pares.length){ reg("vezes",err===0,err+1);
           setTimeout(function(){ depoisDaFala("dc_ligar_revela",8000,function(){
             mostraBanner("Cada conta tem o <b>seu</b> total!",dEmbalar); }); },600); }
-      } else { err++; d.className="lig no"; sErro(); consolo();
-        setTimeout(function(){ if(!d._ok) d.className="lig"; },600); }
+      } else { err++; d.className="lig no"; sErro();
+        setTimeout(function(){ if(!d._ok) d.className="lig"; },600);
+        /* o concreto da conta que ELA escolheu (nao do par certo): ajuda a
+           pensar, sem entregar a resposta.                                  */
+        var pp=(selE!==null?selE:k), cta=pares[pp][0].split(" &#215; ");
+        ajuda(err,{dica:"Resolva a conta primeiro: <b>"+pares[pp][0]+"</b>.",
+                   concreto:function(){ apoioConcreto(c,"dc_brigadeiro",parseInt(cta[0],10),parseInt(cta[1],10)); },
+                   revelar:function(){ var z,a2=ce2.getElementsByClassName("lig");
+                     for(z=0;z<a2.length;z++) if(!a2[z]._ok&&a2[z].innerHTML===pares[pp][1]) acende(a2[z]); }});
+      }
     };
     ce2.appendChild(d);
   })(dir[i]);}
@@ -1251,7 +1266,15 @@ function dMemoria(){
         },380);
       } else { err++; sErro();
         setTimeout(function(){ a.className="mcard"; b.className="mcard"; abertas=[]; trava=false;
-          if(err===3) consolo(); },1000);
+          /* memoria cansa: depois de 3 erros o Cacau ACENDE um par ainda fechado */
+          if(err>0&&err%3===0){ falar("dc_ajuda3");
+            var todas=g.getElementsByClassName("mcard"),z,alvo=null;
+            for(z=0;z<todas.length;z++) if(!todas[z]._ok){ alvo=todas[z]._it.p; break; }
+            for(z=0;z<todas.length;z++) if(!todas[z]._ok&&todas[z]._it.p===alvo) acende(todas[z]);
+            setTimeout(function(){ var w; for(w=0;w<todas.length;w++)
+              if(!todas[w]._ok) todas[w].className="mcard"; },2600);
+          }
+        },1000);
       }
     };
     g.appendChild(d);
@@ -1296,7 +1319,12 @@ function dCaca(){
         },800);
       } else { err++; cl.className="cel no"; sErro();
         setTimeout(function(){ if(cl.className==="cel no") cl.className="cel"; },500);
-        if(err===2) consolo(); }
+        var it2=CACAD[idx];
+        ajuda(err,{dica:"Resolva <b>"+it2[0]+" &#215; "+it2[1]+"</b> e depois procure o n&#250;mero.",
+                   concreto:function(){ apoioConcreto(c,"dc_brigadeiro",it2[0],it2[1]); },
+                   revelar:function(){ var z; for(z=0;z<cels.length;z++)
+                     if(cels[z].innerHTML==""+(it2[0]*it2[1])&&cels[z].className.indexOf("ok")<0){ acende(cels[z]); break; } }});
+      }
     };
     g.appendChild(cl); cels.push(cl);
   })(nums[i],i);}
