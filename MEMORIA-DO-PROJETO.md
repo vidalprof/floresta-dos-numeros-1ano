@@ -3190,3 +3190,51 @@ o que fica só na memória eu esqueço e o que fica só escrito eu não cumpro:
 **no ouvido** (a fase muda) ou **no tempo** (a imagem que demora). Portão que
 olha só o código não pega nenhum deles — por isso a banca precisa **medir,
 tocar, ouvir e jogar**, não só ler.
+
+## 🔑 CÓDIGO MESTRE `1275@` — o professor testa sem jogar tudo (Marcos, ago/2026)
+
+Palavras dele: *"coloque um código 1275@ para que eu possa testar as atividades
+sem precisar passar por todas. Tipo uma senha mestra"*.
+
+**Onde se digita:** no **campo do NOME**, na tela de identidade ("Quem vai
+jogar?"). Digita `1275@`, aperta o botão e abre o **MODO PROFESSOR**: a lista de
+todas as fases, cada uma num botãozinho, e um toque abre a fase direto.
+
+**Por que aí e não num botão:** a criança nunca descobre (não existe botão
+nenhum na tela), e o professor entra em dois toques. É a mesma ideia do
+relatório atrás do gesto de segurar a medalha 2 segundos.
+
+**Não mexe em nada do aluno:** não zera progresso, não grava nome, não conta
+acerto. É só um atalho para abrir a tela.
+
+**Está nas CINCO:** Órbi (21 fases), Jardim (17), Doceria (25), Legenda (20) e
+Fábrica (23).
+
+**Como a lista se monta (para repetir em atividade nova):** o instalador lê o
+próprio arquivo, pega toda função que chama `setProg()` e ordena pela
+porcentagem — que é a ordem do percurso. O rótulo vem do `selo` da tela, que é o
+título que a criança vê. Ou seja, a lista nunca fica desatualizada em relação às
+fases de verdade.
+
+---
+
+## 🐛 "A ESTEIRA QUE PULA" ESTAVA SEM AS MARCAS (Marcos, ago/2026)
+
+Palavras dele: *"falta a marca ou a linha para o estudante clicar"*. E era isso
+mesmo.
+
+**A causa:** a `.marca` do molde só aparece se tiver os **filhos** `<i>` (o
+tracinho da régua) e `<b>` (o número) — o CSS estiliza `.reta .marca i` e
+`.reta .marca b`, não a `div` sozinha. Eu tinha criado `el("div","marca",valor)`,
+com o número no innerHTML e sem filho nenhum: a criança via números soltos, sem
+tracinho, sem régua e sem alvo claro para tocar.
+
+**O conserto** (copiando o `dSalto` da Doceria, que estava certo): cada marca é
+`<i></i><b>número</b>`, a marca do zero já nasce acesa, e o **Bento pula de marca
+em marca** (`.salta`, posicionado por `offsetLeft`), que é o que faz a criança
+VER o salto em vez de só ler números.
+
+**Lição:** ao reusar uma classe do molde, olhar **o CSS dela** — se ele estiliza
+FILHOS, montar os filhos. "Tem regra base" (portão 3) não quer dizer "está com a
+cara certa"; é a segunda vez que essa mesma armadilha morde (a primeira foi a
+`.pc` sem fundo).
