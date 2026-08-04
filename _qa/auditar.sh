@@ -54,6 +54,10 @@ PY
 if node --check /tmp/_qa_js.js >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check /tmp/_qa_js.js; FALHOU=1; fi
 
 echo
+echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
+python3 _qa/funcoes.py "$ARQ" || FALHOU=1
+
+echo
 echo "--- 2) ARQUITETO DE FLUXO (da para chegar ao fim?) -"
 python3 _qa/fluxo.py "$ARQ" telaCapa || FALHOU=1
 

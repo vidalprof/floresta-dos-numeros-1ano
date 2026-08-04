@@ -1611,6 +1611,13 @@ var LEG=[
  {img:"nm_cachorro",  cha:["cachorro","cao","c&#227;o"], ajuda:"Escreva a palavra <b>cachorro</b> e duas palavras que digam como ele est&#225;."},
  {img:"nm_arvore",    cha:["arvore"],                     ajuda:"Escreva a palavra <b>&#225;rvore</b> e duas palavras que digam como ela est&#225;."},
  {img:"nm_bicicletas",cha:["bicicleta"],                  ajuda:"Escreva a palavra <b>bicicletas</b> e duas palavras que digam como elas s&#227;o."}];
+/* tira acento e arruma espacos — a crianca escreve "cão" ou "cao", "árvore" ou
+   "arvore", e as duas formas tem que valer. ⚠️ ESTAVA FALTANDO: sem esta funcao
+   o "Publicar" estourava ("normal is not defined") e NINGUEM passava desta fase. */
+function normal(s){ s=(s||"").toLowerCase().replace(/\s+/g," ").replace(/^\s|\s$/g,"");
+  var de="áàâãäéèêëíìîïóòôõöúùûüç", pa="aaaaaeeeeiiiiooooouuuuc", i, r="";
+  for(i=0;i<s.length;i++){ var k=de.indexOf(s.charAt(i)); r+= k>=0?pa.charAt(k):s.charAt(i); }
+  return r; }
 function nLegenda(){
   var idx=0,err=0;
   function passo(){
@@ -1621,6 +1628,9 @@ function nLegenda(){
     c.appendChild(fotoEl(g.img,""));
     c.appendChild(el("div","balao","Escreva a legenda desta foto usando <b>dois adjetivos</b>."));
     var inp=el("input","campo");inp.type="text";inp.placeholder="escreva aqui";inp.autocomplete="off";inp.spellcheck=false;
+    /* uma legenda que serve — SO para o auditor jogador (ele nao sabe escrever
+       sozinho). Nao aparece para ninguem e nao muda a correcao. */
+    inp.setAttribute("data-qa","a "+g.cha[0]+" bonita e alegre");
     c.appendChild(inp);
     var fb=el("div","hint","");c.appendChild(fb);
     var b=el("button","btn peq","Publicar");b.style.marginTop="12px";

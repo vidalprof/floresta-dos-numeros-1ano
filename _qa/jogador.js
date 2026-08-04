@@ -57,6 +57,17 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          }
        }
      }
+     /* producao escrita: o jogador nao sabe redigir. A tela publica em data-qa
+        uma resposta que serve, so para o auditor conferir que o botao aceita e
+        a fase avanca. */
+     const ip=document.querySelector('input[data-qa]');
+     if(ip&&ip.offsetParent!==null){
+       if(ip.value!==ip.getAttribute('data-qa')){
+         ip.value=ip.getAttribute('data-qa');
+         ip.dispatchEvent(new Event('input',{bubbles:true}));
+         return 1;
+       }
+     }
      /* monte a palavra: as letras estao embaralhadas e so valem NA ORDEM. No
         acaso o jogador nunca escreve ESTRELA. A tela publica a palavra da vez
         em data-qa, so para o auditor. */
