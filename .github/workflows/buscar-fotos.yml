@@ -46,7 +46,12 @@ jobs:
     permissions:
       contents: write
     steps:
+      # ⚠️ o repositorio ja tem muita imagem e audio: um checkout completo levava
+      # minutos so para comecar. Aqui a ferramenta so precisa da pasta de destino,
+      # entao baixa SO a ultima versao, sem historico.
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Baixar as imagens e montar o relatorio
         env:
