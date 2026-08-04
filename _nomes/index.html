@@ -581,7 +581,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .trilho{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;
   -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;width:100%}
 .tvaga{min-width:92px;height:54px;padding:0 12px;border-radius:14px;border:2px dashed #b6ab90;
-  background:rgba(255,253,244,.55);color:#b6ab90;font-size:17px;font-weight:800;
+  background:rgba(253,251,243,.94);color:#6b6252;font-size:17px;font-weight:800;
   display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:center;justify-content:center}
 .tvaga.cheia{border-style:solid;border-color:var(--ok);background:#eafce0;color:var(--texto);font-weight:700}
@@ -605,8 +605,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   -webkit-box-shadow:0 3px 8px rgba(0,0,0,.4);box-shadow:0 3px 8px rgba(0,0,0,.4)}
 .termo::-moz-range-thumb{width:44px;height:44px;border-radius:50%;background:#ffd43b;border:3px solid #fff}
 .termolab{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:justify;justify-content:space-between;
-  width:88%;max-width:320px;margin-top:5px;font-size:12.5px;font-weight:700;color:#fff;
-  text-shadow:0 1px 4px rgba(0,0,0,.6)}
+  width:88%;max-width:320px;margin-top:6px}
+.termolab span{background:rgba(24,20,10,.82);color:#fff;border-radius:999px;padding:4px 11px;
+  font-size:12.5px;font-weight:700}
 /* MANCHETE: quadro de adjetivos a vista + contador ao vivo */
 .quadroadj{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
   gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:10px;max-width:400px}
@@ -1607,8 +1608,8 @@ function nLegenda(){
    inteiro e pinta TODOS os nomes; depois todos os adjetivos. E o que mais
    parece trabalho de redacao de verdade. */
 var MARCA={
-  txt:"O|cachorro|molhado|correu|pela|horta|nova|e|derrubou|as|flores|amarelas|do|portao|velho|.",
-  sub:["cachorro","horta","flores","portao"],
+  txt:"O|cachorro|molhado|correu|pela|horta|nova|e|derrubou|as|flores|amarelas|do|port&#227;o|velho|.",
+  sub:["cachorro","horta","flores","port&#227;o"],
   adj:["molhado","nova","amarelas","velho"]
 };
 function nMarcaTexto(){
