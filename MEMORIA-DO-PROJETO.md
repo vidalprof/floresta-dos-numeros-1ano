@@ -3056,3 +3056,54 @@ passo a passo do card — que continua lá, guardado, para o dia em que ele pedi
 regra "nada do antigo se apaga" continua valendo; o card da Fábrica ficou no ar
 e eu avisei que tiro em um comando se ele quiser. Tirar coisa do ar só com
 pedido explícito.
+
+## 🔎 O OLHO DO MARCOS NA FÁBRICA: mascote, duração e variedade (ago/2026)
+
+Três perguntas dele, e o que cada uma revelou quando fui MEDIR em vez de responder
+de memória:
+
+**1) "O mascote está tremendo? Não deveria piscar?"** — Medi o `transform` a cada
+250ms: o movimento é liso (sobe 8px e volta, 2,8s) e ele **pisca 3× a cada 14s**.
+Não era bug. Mas ele estava certo no que viu: o molde inclina o mascote **±1,5°**,
+e isso passa despercebido num mascote REDONDO (Cacau, Broto, Órbi) e vira balanço
+num mascote de **corpo inteiro, mais alto que largo** como o Bento — a cabeça
+anda uns 6px. **Regra: mascote de corpo inteiro pede giro menor** (baixei para
+±0,5° só nesta atividade).
+
+**2) "21 telas não é pouco para 45 minutos?"** — Tela ≠ rodada. Contando as
+RODADAS de verdade (cada fase tem de 1 a 8 itens): **72 rodadas, ~48 min** em
+ritmo normal e ~60 min com turma mais devagar. Ficou registrado o jeito de
+estimar: somar `rodadas × segundos por rodada`, não contar telas.
+
+**3) "Tem bastante dinâmicas diferentes?"** — Aqui ele acertou em cheio e eu
+estava fraco. Contei: **o teclado numérico aparecia em 9 das 20 fases**. Clonar o
+motor traz de brinde o VÍCIO do motor. Acrescentei duas mecânicas que não
+existiam:
+- **Ligar duas colunas** (situação escrita ↔ conta) — a criança LÊ e interpreta,
+  sem digitar número nenhum;
+- **Arrastar o caixote até o caminhão** — era a única atividade recente **sem
+  nenhuma fase de arrasto**, e o manual manda usar arrasto onde a ação natural é
+  "levar um item até um lugar".
+Ficou: **13 mecânicas distintas em 22 fases**.
+
+### ⚠️ DUAS LIÇÕES PAGAS NA FASE DE ARRASTAR (valem para toda fase nova de arrasto)
+- **Evento de mouse FANTASMA mata o toque simples.** No celular o navegador
+  dispara `mousedown`/`mouseup`/`click` de compatibilidade DEPOIS do toque. O meu
+  `mouseup` fantasma rodava o `solta()` de novo e **desmarcava** a peça que a
+  criança tinha acabado de escolher — o toque nunca entregava a carga (o arrasto
+  com mouse funcionava, então passava despercebido). Guardar só o `onclick` **não
+  basta**: é preciso um `ultimoToque` e barrar TODO evento de mouse por ~800ms
+  depois de um toque. Teste obrigatório: **arrastar com mouse, tocar com o dedo e
+  clicar** — os três, sempre.
+- **A `.pc` do molde vem SEM fundo** (na atividade de origem ela ganhava cor de
+  uma classe de forma). Reaproveitada aqui, virou texto branco solto no ar: uma
+  peça que a criança deve PEGAR tem que parecer pegável. Deu 2,76:1 de contraste
+  no auditor, além de ficar feio.
+
+### 🐛 De brinde: pré-carga de imagem apontando para outra atividade
+A Fábrica **e a Doceria** pré-carregavam 16 imagens da Legenda do Clique
+(`cq_*`, `nm_*`) — 16 requisições 404 e **nenhuma** imagem própria pré-carregada.
+Veio junto no clone do motor e ninguém tinha percebido. Nos PCs fracos da escola
+isso significa cada imagem aparecendo com atraso na primeira vez. Corrigido nas
+duas. **Ao clonar um motor, o `var IMGS=[...]` é conteúdo, não motor** — trocar
+junto com o `DOM` e o `VOZOK`.
