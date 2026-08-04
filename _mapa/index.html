@@ -1325,7 +1325,7 @@ function mVoo(){
    olha UM objeto e escolhe, entre três desenhos, o que é a vista de cima.  */
 var VISTAS=[{n:"mesa",   rot:"a mesa"},
             {n:"carro",  rot:"o carro"},
-            {n:"casa",   rot:"a casa"},
+            {n:"cadeira",rot:"a cadeira"},
             {n:"piscina",rot:"a piscina"}];
 function mDeCima(){
   var fila=baguncar(VISTAS.slice(0)),idx=0,err=0;
@@ -1336,7 +1336,7 @@ function mDeCima(){
     c.appendChild(el("div","selo","DE CIMA OU DE LADO?"));
     c.appendChild(el("div","balao","O Nico est&#225; voando bem em cima <b>"+it.rot+"</b>. Qual destes desenhos &#233; o que ele <b>v&#234; l&#225; de cima</b>?"));
     var mold=el("div","moldurafoto");
-    mold.appendChild(cenaImg(it.n==="mesa"?"mp_mesa_l":("mp_"+it.n+"_l"),"fotoreal"));
+    mold.appendChild(cenaImg("mp_"+it.n+"_l","fotoreal"));
     mold.appendChild(el("div","fotocred","assim voc&#234; v&#234; do ch&#227;o"));
     c.appendChild(mold);
     /* as opções: a vista de cima certa + duas vistas de cima de OUTROS objetos */
