@@ -2839,3 +2839,81 @@ Pingo) — o Pingo é o mascote das três, a arte é dela mesma. O auditor apont
 35 imagens repetidas ali logo na primeira rodada; conferi a origem antes de sair
 "consertando" e registrei a exceção com a prova. **Só entra na lista com esse
 tipo de prova; na dúvida, é cópia e reprova.**
+
+## 🔁🔊 AQUECIMENTO na Doceria e na Legenda + ALTO-FALANTE no Órbi e no Jardim (ago/2026)
+
+Marcos: **"Pode fazer tudo"** — os dois itens que ficaram pendentes da rodada
+anterior. Feitos:
+
+### 1) Aquecimento (revisão espaçada) — agora nas quatro
+Já existia no Órbi (`telaAquecimento`) e no Jardim. Faltava na **Doceria do Cacau**
+e na **Legenda do Clique**:
+
+- **Doceria — `dAquecimento`, 48%**, entre o "vezes" e a bandeja em fileiras.
+  Volta ao conceito **mais antigo** (grupos iguais): quatro caixinhas com três
+  biscoitos, "qual soma combina?". Falas `dc_aquec_intro` / `dc_aquec_dica`.
+- **Legenda — `nAquecimento`, 60%**, entre o grupo nominal e o plural. Volta a
+  **nome × adjetivo** ("na legenda *a flor amarela*, qual palavra diz **como é**?").
+  Falas `nm_aquec_intro` / `nm_aquec_dica`.
+
+**Por que importa (e não é enfeite):** o acerto entra em `reg()` no conceito
+ANTIGO, então o painel do professor passa a medir **retenção** (lembrou depois
+de um tempão), e não só o acerto no instante em que se aprendeu. Receita fixa:
+selo "LEMBRANDO...", mascote pequeno, 3 opções, `reg()` no conceito mais velho,
+e o `setProg` escolhido no buraco entre a fase anterior e a seguinte (senão o
+auditor de progressão reprova).
+
+### 2) Alto-falante nas opções (acessibilidade) — Órbi e Jardim
+A máquina do `.zap` já rodava na Doceria e na Legenda; foi portada para o
+**Observatório do Órbi (32 vozes)** e o **Jardim do Broto (25 vozes)**. Botãozinho
+redondo ao lado de cada resposta lê **aquela** resposta — nunca as outras, senão
+vira "ouvir tudo" e a criança para de tentar ler.
+
+**Receita completa (para repetir sem redescobrir):**
+1. **Colher os textos** que a criança precisa ler. Dois jeitos somados, porque
+   nenhum sozinho basta:
+   - *runtime* (`/tmp/colher.js`, Playwright): abre cada tela e pega o
+     `textContent` dos seletores — pega textos montados por concatenação, tipo
+     `"ESTRELAfaz luz"` (rótulo + subtítulo colados);
+   - *estático* (regex nos pares `["texto", true|false]` do fonte): pega as
+     perguntas 2ª e 3ª de telas com várias rodadas, que o runtime não mostra.
+2. **Chave** = `chaveVoz` = djb2 do texto normalizado (espaços colapsados,
+   minúsculo) em base36. **Confira a conta do Python contra a do navegador** em
+   umas amostras antes de gerar 30 mp3 com nome errado.
+3. **Gerar** pelo `gerar-audio.yml` com o input **`lote`** (JSON inline) e
+   `outdir=<pasta>/audio`, `ref` = a branch. Não precisa commitar
+   `_lote_falas.json` — o input inline evita um commit só para isso.
+4. O texto **falado** pode ser mais gentil que o da tela: `"ESTRELAfaz luz"` →
+   *"Estrela. Faz luz."*; `"LUA CHEIA"` → *"Lua cheia."*. A chave é do texto da
+   TELA; a fala é livre.
+5. `ZAPSEL` por app (Órbi `.opt,.pc,.bin`; Jardim `.opt,.lig,.pc,.bin`) e CSS com
+   ícone **branco** quando o fundo é escuro (`.bin`, `.pc.usada`, `.lig.ok`).
+
+### 3) ⚠️ LIÇÃO PAGA: auditor que roda CEGO é pior que auditor que reprova
+O `auditar.sh` chama o contraste e o leiaute com `2>/dev/null`. No Jardim, o
+`telaCacaBase()` e o `telaPartesBase()` **estouravam quando chamados sem config**
+(os auditores abrem TODA tela sem argumento) — o node morria na 1ª tela, o stderr
+ia para o lixo, e o portão imprimia **nada**. Eu lia "reprovou" e olhava para o
+jogador; os dois auditores de verdade **nunca tinham rodado** naquele app.
+
+- **Regra:** toda `xxxBase(cfg)` começa com `if(!cfg){ <telaPadrão>(); return; }`.
+  (Mesma correção que o Órbi já tinha; o Jardim tinha DUAS.)
+- Quando um portão imprimir **linha nenhuma**, isso não é "passou" nem "falhou":
+  é **rodou cego**. Rodar o auditor na mão, sem `2>/dev/null`, e ler o erro.
+
+Assim que voltaram a enxergar, os dois acharam defeito real no Jardim: o placar
+"Acertos: 0" era **branco sobre foto clara (1,32:1)** — virou pílula escura; e o
+"Treinar o que faltou" dava 4,23:1 (na Doceria, 4,33:1) — verde escurecido para
+#2f7a1c→#1d4f0d nos dois.
+
+### 4) O auditor JOGADOR ficou menos burro
+Ele clicava ao acaso e empacava em fases que **um humano passa fácil**, o que
+gerava alarme falso (e alarme falso ensina a ignorar o alarme):
+- **caça-palavras** — a tela publica `data-qa` na `.grade` com onde cada palavra
+  ficou (Órbi já tinha; agora Jardim e Legenda também);
+- **monte a palavra** — as letras só valem NA ORDEM; a tela publica `data-qa` na
+  `.letras` com a palavra da vez (Órbi, Jardim e Legenda);
+- `.errow` (palavra sublinhada do "Revisor da página") entrou no `SEL`.
+
+`data-qa` **não aparece para ninguém** e não muda o jogo — é só a chave do
+auditor. Órbi, Jardim, Doceria e Legenda chegam sozinhos até a medalha.
