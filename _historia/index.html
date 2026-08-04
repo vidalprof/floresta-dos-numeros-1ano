@@ -566,7 +566,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    A carta e FLUIDA (48% da largura) em vez de ter px fixo: no celular pequeno
    ela ainda entra duas por linha, e no PC ela cresce ate 210px. No PC largo a
    caixa abre para TRES colunas, e ai o tabuleiro inteiro cabe sem rolar.     */
-@media (min-width:760px){ .mcartas{max-width:680px} }
+@media (min-width:760px){ .mcartas{max-width:680px}
+  .fichas{max-width:640px} .ficha{max-width:200px} .ficha .fimg{height:128px}
+  .trilhotempo .tvaga{min-width:124px;height:96px} .trilhotempo .tvimg{width:120px;height:88px} }
 
 /* ================= FASES NOVAS (ago/2026) ================= */
 /* MARCA-TEXTO: paragrafo de verdade, palavra a palavra, para PINTAR */
@@ -679,15 +681,15 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* --- linha do tempo --- */
 .trilhotempo{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;
   flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:12px;width:100%}
-.trilhotempo .tvaga{min-width:74px;height:60px;padding:0}
-.trilhotempo .tvimg{width:70px;height:52px;object-fit:cover;border-radius:8px}
+.trilhotempo .tvaga{min-width:104px;height:82px;padding:0}
+.trilhotempo .tvimg{width:100px;height:74px;object-fit:cover;border-radius:8px}
 .fichas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
-  gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:430px}
-.ficha{width:100px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
+  gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:430px;width:100%}
+.ficha{width:47%;max-width:196px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
   border-bottom-width:5px;border-radius:14px;padding:5px;cursor:pointer;text-align:center;
   -webkit-box-shadow:0 5px 14px rgba(30,25,10,.3);box-shadow:0 5px 14px rgba(30,25,10,.3)}
-.ficha .fimg{width:88px;height:60px;object-fit:cover;border-radius:9px;display:block;margin:0 auto}
-.ficha .flab{font-size:11.5px;font-weight:700;color:var(--texto);margin-top:3px;line-height:1.15}
+.ficha .fimg{width:100%;height:112px;object-fit:cover;border-radius:11px;display:block}
+.ficha .flab{font-size:13.5px;font-weight:700;color:var(--texto);margin-top:3px;line-height:1.15}
 .ficha.usada{opacity:.25}
 .ficha.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
 .ficha:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
@@ -1029,7 +1031,7 @@ function cenaEl(img,legenda){
 /* ---------- 1) ABERTURA ---------- */
 function hAbertura(){limpa();var t=el("div","tela");var c=el("div","centro");
   c.appendChild(jucaEl("pq"));
-  c.appendChild(el("div","balao","Eu sou o <b>Juca</b>. A minha fam&#237;lia mora nesta mata do <b>Vale do Itaja&#237;</b> h&#225; muito, muito tempo."));
+  c.appendChild(el("div","balao","Eu sou o <b>seu Juca</b>. Andei a vida inteira por este <b>Vale do Itaja&#237;</b> com a minha m&#225;quina fotogr&#225;fica, guardando o que eu via."));
   c.appendChild(cenaEl("hv_mata",""));
   var b=el("button","btn","Come&#231;ar a viagem");b.style.marginTop="14px";
   b.onclick=function(){arma();sTap();hP1prever();};
