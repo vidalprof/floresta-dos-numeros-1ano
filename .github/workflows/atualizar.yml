@@ -20,8 +20,15 @@ jobs:
   atualizar:
     runs-on: ubuntu-latest
     steps:
+      # ⚠️ SO A ULTIMA VERSAO. O historico deste repositorio ja passa de 1 GB
+      # (toda imagem e todo audio de toda atividade estao nele), e o checkout
+      # completo levava mais de dez minutos SO PARA COMECAR — duas publicacoes
+      # ao mesmo tempo e a coisa empacava. Aqui so precisamos dos arquivos de
+      # agora, entao nao ha nada a perder.
       - name: Checkout deste repositorio
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Enviar index.html para o repositorio de destino
         env:
