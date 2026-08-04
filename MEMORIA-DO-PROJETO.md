@@ -3271,3 +3271,61 @@ que têm fase de memória).
 
 **Auditor:** `_qa/leiaute.js`, **regra 6** — mede toda `.mcarta` visível nos 6
 tamanhos de tela e reprova abaixo de **130 × 88 px**. Não dá mais para esquecer.
+
+---
+
+## 🧩 A Legenda do Clique ganhou seis dinâmicas novas (ago/2026)
+
+Pedido do Marcos: *"precisamos melhorar e aumentar a dinâmicas de interatividade
+na atividade dos substantivos e adjetivos... tem muita dinâmica parecida como
+está agora, lembre-se que temos um leque bem grande de interatividade"* + *"pode
+incluir algumas atividade onde o aluno tenha que digitar"*.
+
+**O diagnóstico medido (antes de mexer):** agrupando as 19 fases pelo GESTO, e
+não pelo conteúdo, **8 delas eram o mesmo gesto** (tocar na opção/peça certa) e
+**só UMA pedia para escrever**. Cinco fases seguidas usavam a mesma `.pc` na
+mesma posição da tela.
+
+**Entraram (4 gestos que a atividade não tinha):**
+- **Marca-texto do revisor** — pinta TODOS os nomes de um parágrafo, depois
+  todos os adjetivos (gesto: marcar vários).
+- **Complete a legenda** (digitar) — a palavra vem na forma base e a criança
+  arruma o fim. A dica CRESCE: 1º o porquê, 2º a palavra quase pronta, 3º a
+  resposta.
+- **Ordene a legenda** (arrastar para sequenciar) — o arrasto que existia
+  encaixava por FORMA; aqui a ORDEM manda.
+- **Termômetro do grau** (`input type=range`) — a foto cresce e encolhe junto
+  com a palavra.
+- **Ditado do editor** (escrever ouvindo) — o Clique dita, a criança escreve,
+  pode ouvir quantas vezes quiser.
+- **Manchete do jornal** — contador ao vivo ("nome ✓ / adjetivos 1 de 2")
+  enquanto digita: andaime DURANTE, não correção no fim.
+
+**Saíram:** `nPlural`, `nGenero` (viraram o Complete), `nGrau` (virou o
+Termômetro) e `nRevisor` (virou o Marca-texto). Nenhum conteúdo da BNCC se
+perdeu. Resultado: **de 1 para 4 fases de escrever** e **de 3 para 7 gestos**.
+22 telas, ~60 min.
+
+### Dois defeitos achados de passagem (os dois estavam NO AR)
+
+**1. `\n` LITERAL dentro do CSS.** No `_nomes` havia `}\n.pc.fantasma{...}`
+escrito com barra-n de texto. Em CSS isso vira o seletor `n.pc.fantasma` (um
+elemento `<n>`), que nunca casa. Resultado: no arrasto da Bancada a cópia da
+peça **não seguia o dedo** — aparecia solta no fim da página — e a vaga não
+acendia. Só o `_nomes` tinha; conferido nos 5 apps.
+
+**2. ⭐ SERVICE WORKER: uma atividade apagava o offline das outras.** Todas as
+atividades moram no MESMO endereço (`vidalprof.github.io`), então **dividem o
+mesmo armazenamento de cache do navegador**. Dois problemas vinham daí:
+- a Legenda tinha o `sw.js` inteiro da Redação (resto de clone): cache chamado
+  `redacao-pingo-v1` e lista de pré-carga pedindo `img/vb_pingo.png`,
+  `vg_conto.png`, `vb_abertura.mp3` — arquivos que não existem nela. Nunca
+  pré-carregou nada. A Fábrica tinha o mesmo, com a lista da Doceria (9 arquivos).
+- o `activate` de toda atividade apagava **qualquer** cache com nome diferente
+  do seu. Abrir a Fábrica DELETAVA o offline do Órbi, do Jardim, da Doceria.
+
+**Conserto nas 6:** `var PREFIXO="<atividade>-"` + `CACHE=PREFIXO+"vN"`, e o
+`activate` só apaga `k.indexOf(PREFIXO)===0`. Listas refeitas.
+**Auditor:** `_qa/clone.py` item 6 — reprova nome de cache igual ao de outra
+atividade, apagador sem prefixo, e lista apontando para arquivo inexistente.
+Testado com o defeito plantado: os três casos reprovam.
