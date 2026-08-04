@@ -84,6 +84,22 @@ Leia tudo antes de agir e responda sempre em **português**.
 > 75% e refaz só as fases fracas. O código pronto e as armadilhas estão nesse arquivo — copiar,
 > não reescrever. Depois de colar, rodar `bash _qa/auditar.sh` (a tela final fica mais alta).
 
+> **⭐💾 TODA ATIVIDADE NOVA CONTINUA DE ONDE PAROU — POR 55 MINUTOS** (decisão do
+> Marcos, ago/2026: *"ter a opção de continuar de onde parou caso o aluno saia sem
+> querer, e isso durar o tempo de uma aula, 55 minutos... pode ser aplicado a toda
+> atividade nova criada"*). Na escola a criança fecha a aba sem querer, o PC trava,
+> cai a luz — e sem isso ela volta para a CAPA e perde a aula inteira de trabalho.
+> **55 min é a aula:** dentro dela quem volta é a MESMA criança; passada a aula, quem
+> senta ali é da OUTRA turma e cairia no meio da viagem de um colega — por isso o
+> convite **expira sozinho**. O código pronto, a ordem obrigatória do gancho (antes do
+> `TREINO`, senão o "Treinar o que faltou" não anota nada) e os 3 testes estão no
+> **`_padrao/RETOMAR.md`** — copiar, não reescrever. ⚠️ `localStorage` não existe em
+> `file://`: testar servindo por `http://`, senão o teste passa mentindo.
+>
+> **🔑 SENHA MESTRA `1275@`** (já registrada, ver `MANUAL-MESTRE.md` §modo professor):
+> digitar a qualquer momento abre o menu de fases para o professor testar. Não é
+> segurança (está no código-fonte) — é atalho.
+
 > **⭐🧬 CLONAR O MOTOR? LEIA O `_padrao/CLONAR-MOTOR.md` ANTES** (lição paga na
 > Fábrica do Bento, ago/2026 — foram SEIS defeitos do mesmo parentesco numa
 > rodada só). Clonar o motor é obrigatório, mas junto vêm pedaços que são

@@ -26,6 +26,49 @@ import sys
 CORPOS = {}
 
 
+def sem_comentarios(s):
+    """Troca os comentarios por espacos, mantendo o TAMANHO e os textos entre
+    aspas. Sem isto, um comentario que CITA outra tela vira caminho de verdade.
+
+    ⚠️ LICAO PAGA (ago/2026, Maquina do Tempo): eu escrevi, num comentario logo
+    abaixo do hFim, a frase "as chamadas soltas (hCaca(), mostraBanner(...,hFim))
+    pegam o envelope sozinhas" — explicando o gancho da retomada. O portao leu
+    aquilo como codigo, achou que hFim chamava hFim e reprovou a atividade
+    inteira por "TELA PRESA". Alarme falso manda consertar o que nao esta
+    quebrado, e custa tanto quanto defeito passado.
+    """
+    fora, i, n = [], 0, len(s)
+    while i < n:
+        c = s[i]
+        if c == "/" and i + 1 < n and s[i + 1] == "*":
+            j = s.find("*/", i + 2)
+            j = n if j < 0 else j + 2
+            fora.append(" " * (j - i))
+            i = j
+            continue
+        if c == "/" and i + 1 < n and s[i + 1] == "/":
+            j = s.find("\n", i)
+            j = n if j < 0 else j
+            fora.append(" " * (j - i))
+            i = j
+            continue
+        if c in "\"'":
+            j = i + 1
+            while j < n:
+                if s[j] == "\\":
+                    j += 2
+                    continue
+                if s[j] == c or s[j] == "\n":
+                    break
+                j += 1
+            fora.append(s[i:j + 1])
+            i = j + 1
+            continue
+        fora.append(c)
+        i += 1
+    return "".join(fora)
+
+
 def telas_e_saidas(html):
     """Devolve {nome_da_tela: set(telas para onde ela leva)}."""
     marcas = [(m.group(1), m.start()) for m in re.finditer(r"\nfunction ([A-Za-z_]\w*)\(", html)]
@@ -86,7 +129,7 @@ def main():
         print(__doc__)
         return 2
     caminho, raizes = sys.argv[1], sys.argv[2:]
-    html = io.open(caminho, encoding="utf-8").read()
+    html = sem_comentarios(io.open(caminho, encoding="utf-8").read())
     saidas = telas_e_saidas(html)
     corpos = CORPOS
 

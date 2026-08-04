@@ -3479,3 +3479,62 @@ atividade vira loteria.** Na Máquina do Tempo foram **70 vozes de resposta**.
 base36) sobre o texto **já sem tags e com as entidades resolvidas** — é o
 `textContent` que o app usa. Chave errada = botão que não faz nada, que é pior
 que botão nenhum.
+
+---
+
+## 💾 CONTINUAR DE ONDE PAROU (55 min) — regra permanente (ago/2026)
+
+Palavras do Marcos: *"outra coisa é ter a opção de continuar de onde parou caso
+o aluno saia sem querer, e isso durar o tempo de uma aula 55 minutos tem como?
+pode ser aplicado a toda atividade nova criada"*.
+
+**Sim, tem — e já está feito.** Estreou em *A Máquina do Tempo do Vale*. O
+código completo, com as armadilhas, está no **`_padrao/RETOMAR.md`** (copiar,
+não reescrever). Resumo do que importa lembrar:
+
+- a cada fase que abre, o app anota o **nome da fase** e a **hora** no
+  `localStorage` (junto do `MED`, do `DOM` e do crachá, que já eram salvos);
+- voltando **dentro de 55 minutos**, a capa oferece **"Continuar de onde parei"**
+  (dourado, antes do "Começar") e volta para a MESMA fase, com o mesmo crachá e
+  o mesmo domínio;
+- passados os 55 min o convite **some sozinho** — a aula seguinte é outra turma,
+  e ela não pode cair no meio da viagem de um colega;
+- "Começar do início" chama `zeraProgresso()` de verdade, senão o boletim mente.
+
+**Três armadilhas que custaram (ou custariam) caro:**
+
+1. **A ordem do gancho.** O envelope das fases tem que rodar DEPOIS das funções
+   existirem e **ANTES** do objeto `TREINO`, que guarda as funções por
+   referência. Envelope depois = o "Treinar o que faltou" chama as versões
+   antigas e não anota nada — e nada dá erro, a retomada só mente.
+2. **`carrega()` tem que restaurar o `MED` também**, senão a criança volta na
+   fase certa com o relatório do professor zerado.
+3. **`localStorage` não funciona em `file://`.** O teste tem que servir por
+   `http://` (Playwright + `page.route`). Testar em `file://` dá "passou" falso.
+
+Testado nos três casos (salva / recarrega e volta / expira em 56 min): passou.
+
+**Achado de brinde:** o `zeraProgresso()` da Máquina do Tempo ainda zerava com os
+conceitos da **Legenda do Clique** (`reconhecer/grupo/concordancia/morfologia`) —
+mais um resto de clone, do mesmo parentesco dos do `_padrao/CLONAR-MOTOR.md`.
+Quem trocasse de nome ficava com o boletim errado. Corrigido.
+
+**Senha mestra:** `1275@` — sim, está guardada (MANUAL-MESTRE.md, "MODO
+PROFESSOR"). Digitar a qualquer momento abre o menu de fases para o professor
+testar; não altera o progresso do aluno e não é segurança (está no código).
+
+## 🌱 Jardim do Broto — dois consertos pedidos pelo Marcos (ago/2026)
+
+1. **"Monte seu prato": no máximo 5.** Palavras dele: *"não permitir o aluno
+   colocar mais de 5, para a comida não ficar de fora, que fica visualmente
+   feio"*. Dava para empilhar alimento sem conta e a comida transbordava do
+   prato. Agora o prato tem **5 lugares** (`MAXPRATO`) — e como a fase pede 5
+   partes diferentes, cada lugar vale uma parte. Para não haver beco sem saída,
+   **tocar num alimento do prato tira ele de volta**, e o prato **balança**
+   avisando quando está cheio (nada de o toque sumir em silêncio). O prato
+   cresceu para 212px para os cinco caberem em 3+2 sem transbordar.
+2. **"Olhe de perto" não corta mais.** O quadro tinha `scale(1.35)` dentro de um
+   `overflow:hidden`: a imagem aparecia grande e com as **beiradas cortadas** — e
+   é justamente o FORMATO inteiro que a criança precisa ver para dizer se é
+   raiz, folha ou fruto. Agora o quadro é maior (212×176) e a imagem entra
+   inteira (`contain`), sem zoom que corte.

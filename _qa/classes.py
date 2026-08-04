@@ -23,7 +23,16 @@ import sys
 
 
 def sem_media(css):
-    """Remove os blocos @media (inclusive com regras aninhadas)."""
+    """Remove os blocos @media (inclusive com regras aninhadas).
+
+    ⚠️ Tirar os COMENTARIOS antes e obrigatorio. Ja aconteceu (ago/2026, na
+    Maquina do Tempo): um comentario de CSS terminava com a palavra "@media",
+    o regex daqui achou que aquilo era o comeco de um bloco e engoliu a regra
+    logo abaixo dele — o portao acusou ".forca sem estilo" com a regra bem ali,
+    escrita. Alarme falso custa tanto quanto defeito passado: manda consertar
+    o que nao esta quebrado.
+    """
+    css = re.sub(r"/\*.*?\*/", "", css, flags=re.S)
     return re.sub(r"@media[^{]*\{(?:[^{}]*\{[^{}]*\})*[^{}]*\}", "", css, flags=re.S)
 
 

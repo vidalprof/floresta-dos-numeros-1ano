@@ -83,6 +83,8 @@ function parseCor(s){
         const cs=getComputedStyle(e);
         if(cs.visibility==="hidden"||cs.opacity==="0") continue;
         const fs=parseFloat(cs.fontSize), fw=parseInt(cs.fontWeight)||400;
+        /* marca o elemento para reler o retangulo na hora EXATA do print */
+        e.setAttribute("data-qacon", String(out.length));
         out.push({txt:txt.substring(0,42), cls:e.className||e.tagName.toLowerCase(),
                   cor:cs.color, fs:fs, grande:(fs>=24)||(fs>=18.66&&fw>=700),
                   sombra:cs.textShadow&&cs.textShadow!=="none",
@@ -98,6 +100,31 @@ function parseCor(s){
     const fundo=path.join(tmp,tela+"-fundo.png");
     await p.screenshot({path:fundo});
 
+    /* ⚠️ LICAO PAGA (ago/2026, Maquina do Tempo): entre a MEDIDA e o PRINT a tela
+       continua se mexendo — no boletim do fim as barras crescem e as estrelas
+       acendem, e a pagina inteira desce. O retangulo media um lugar e o pixel
+       vinha de outro: o portao acusou "branco sobre branco" num botao azul que
+       estava perfeito. Agora releio os retangulos no MESMO instante do print. */
+    const agora=await p.evaluate(()=>{
+      const m={},els=document.querySelectorAll("[data-qacon]");
+      for(let i=0;i<els.length;i++){ const r=els[i].getBoundingClientRect();
+        /* a BARRA de baixo (Ouvir/Dica) e camada FIXA: quando ela passa por cima
+           de um texto, o pixel do fundo e o da barra, e o portao acusava "branco
+           sobre branco" num botao azul perfeito. Nao e defeito de contraste — a
+           tela rola e o texto sai de baixo dela. Quem cuida disso e o portao do
+           leiaute (regra 3), que sabe perdoar quando a tela rola.             */
+        const alvo=document.elementFromPoint(r.left+r.width/2, r.top+r.height/2);
+        const tapado=!!(alvo&&alvo.closest&&alvo.closest("#barra"));
+        m[els[i].getAttribute("data-qacon")]={x:Math.round(r.left),y:Math.round(r.top),
+                                              w:Math.round(r.width),h:Math.round(r.height),
+                                              tapado:tapado}; }
+      return m;
+    });
+    for(let i=0;i<itens.length;i++){ const n=agora[String(i)];
+      if(!n) continue;
+      if(n.tapado){ itens[i].pular=true; continue; }
+      if(n.w>=4&&n.h>=4){ itens[i].x=n.x; itens[i].y=n.y; itens[i].w=n.w; itens[i].h=n.h; } }
+
     /* 3) mediana do fundo em cada retangulo -> via python */
     const dados=path.join(tmp,tela+".json");
     fs.writeFileSync(dados, JSON.stringify(itens));
@@ -106,7 +133,7 @@ function parseCor(s){
 
     for(let i=0;i<itens.length;i++){
       const it=itens[i], bg=cores[i];
-      if(!bg) continue;
+      if(!bg||it.pular) continue;
       const c=parseCor(it.cor); if(!c) continue;
       const cor=sobre(c,bg);
       const r=razao(cor,bg);
