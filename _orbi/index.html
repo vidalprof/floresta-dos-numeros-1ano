@@ -353,6 +353,45 @@ h1{background:rgba(14,18,48,.84);text-shadow:0 2px 0 #05081f,0 4px 10px rgba(0,0
 .cracha .csel{color:#3a2aa8 !important}
 .mcarta{background:-webkit-linear-gradient(top,#8a7bff,#4a3ad0);background:linear-gradient(#8a7bff,#4a3ad0);border-color:#2a1c82}
 .tbar>i{background:-webkit-linear-gradient(left,#ef5a4a,var(--dourado));background:linear-gradient(90deg,#ef5a4a,var(--dourado))}
+/* ---------- ACABAMENTO DO CEU (pedido do Marcos: "ficar bem lindo") ----------
+   Tudo aqui e CSS leve, com cor solida antes de cada gradiente (PC velho ve a
+   cor e nao fica sem fundo). Nada de imagem nova alem do proprio fundo.      */
+/* 1) vinheta: escurece as bordas e o miolo -> as cartas creme saltam do ceu   */
+#bg:after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:-webkit-radial-gradient(50% 42%,ellipse farthest-side,rgba(4,6,26,0) 30%,rgba(4,6,26,.42) 72%,rgba(4,6,26,.74) 100%);
+  background:radial-gradient(ellipse farthest-side at 50% 42%,rgba(4,6,26,0) 30%,rgba(4,6,26,.42) 72%,rgba(4,6,26,.74) 100%)}
+/* 2) o Orbi ganha uma aura de luz de estrela (so na capa, onde ele e grande)  */
+.orbi.gg:before{content:"";position:absolute;left:-26%;top:-18%;width:152%;height:142%;border-radius:50%;z-index:-1;
+  background:-webkit-radial-gradient(50% 50%,circle closest-side,rgba(140,160,255,.42),rgba(140,160,255,.14) 55%,rgba(140,160,255,0) 78%);
+  background:radial-gradient(circle closest-side at 50% 50%,rgba(140,160,255,.42),rgba(140,160,255,.14) 55%,rgba(140,160,255,0) 78%);
+  -webkit-animation:aura 4.4s ease-in-out infinite;animation:aura 4.4s ease-in-out infinite}
+@-webkit-keyframes aura{0%,100%{opacity:.65;-webkit-transform:scale(1)}50%{opacity:1;-webkit-transform:scale(1.06)}}
+@keyframes aura{0%,100%{opacity:.65;transform:scale(1)}50%{opacity:1;transform:scale(1.06)}}
+/* 3) titulo: placa de noite com fio dourado, em vez de retangulo chapado      */
+h1{background:#141838;
+  background:-webkit-linear-gradient(top,rgba(38,34,96,.94),rgba(10,12,40,.94));
+  background:linear-gradient(rgba(38,34,96,.94),rgba(10,12,40,.94));
+  border:2px solid rgba(255,212,59,.55);letter-spacing:.4px;
+  -webkit-box-shadow:0 10px 26px rgba(0,0,0,.5),0 0 0 4px rgba(122,107,255,.16);
+  box-shadow:0 10px 26px rgba(0,0,0,.5),0 0 0 4px rgba(122,107,255,.16)}
+.sub{border:1px solid rgba(255,212,59,.4)}
+/* 4) cartas e opcoes acesas pela luz das estrelas (halo azulado + fio claro)  */
+.carta,.opt,.vaso{-webkit-box-shadow:0 8px 20px rgba(6,8,34,.55),inset 0 1px 0 rgba(255,255,255,.9);
+  box-shadow:0 8px 20px rgba(6,8,34,.55),inset 0 1px 0 rgba(255,255,255,.9)}
+.carta:hover,.opt:hover{-webkit-box-shadow:0 10px 24px rgba(6,8,34,.6),0 0 0 3px rgba(140,160,255,.35);
+  box-shadow:0 10px 24px rgba(6,8,34,.6),0 0 0 3px rgba(140,160,255,.35)}
+/* 5) botao com brilho deslizante de vidro (uma camada so, barata)            */
+.btn{position:relative;overflow:hidden}
+.btn:after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:38%;pointer-events:none;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.34),rgba(255,255,255,0));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.34),rgba(255,255,255,0));
+  -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+  -webkit-animation:lustro 3.6s ease-in-out infinite;animation:lustro 3.6s ease-in-out infinite}
+@-webkit-keyframes lustro{0%,62%{left:-60%}100%{left:130%}}
+@keyframes lustro{0%,62%{left:-60%}100%{left:130%}}
+/* 6) balao com fio de luz em cima, para nao parecer papel colado no ceu      */
+.balao{-webkit-box-shadow:0 10px 26px rgba(4,6,26,.55),inset 0 1px 0 rgba(255,255,255,.95);
+  box-shadow:0 10px 26px rgba(4,6,26,.55),inset 0 1px 0 rgba(255,255,255,.95)}
 /* ================= FASE: APAGUE O SOL ================= */
 /* .centro nao estica os filhos: sem width:100% a fileira de cartas assumia a
    max-width de 470px e VAZAVA para fora da tela num telefone de 412px. */
@@ -858,7 +897,11 @@ function telaLuzPropria(){
         var ce=centroTela(cd); faisca(ce[0],ce[1],"#ffd43b",14);
         if(achou>=2){ fim=true; reg("luz_propria",err===0,err+1);
           setTimeout(function(){ acende(); depoisDaFala("sr_luz_revela",15000,function(){
-            mostraBanner("O <b>Sol</b> &#233; uma <b>estrela</b>: faz a pr&#243;pria luz. A <b>Lua</b> s&#243; devolve a luz do Sol, igual ao espelho.",telaClassifica); }); },900);
+            /* a lampada TAMBEM faz a propria luz (corpo luminoso) - esta certo
+               ela ficar acesa. So que ela e luz feita por gente e precisa de
+               energia; a estrela nao. Sem essa linha a crianca pode sair daqui
+               achando que lampada e um tipo de estrela.                      */
+            mostraBanner("O <b>Sol</b> &#233; uma <b>estrela</b>: faz a pr&#243;pria luz. A <b>l&#226;mpada</b> tamb&#233;m faz a pr&#243;pria luz, mas foi a gente que inventou e ela precisa de energia. A <b>Lua</b> s&#243; devolve a luz do Sol, igual ao espelho.",telaClassifica); }); },900);
         }
       } else { err++; cd.className="carta no"; sErro();
         setTimeout(function(){ if(cd.className==="carta no") cd.className="carta apagado"; },500);
