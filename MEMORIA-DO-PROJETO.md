@@ -3550,3 +3550,89 @@ da seguinte. Trava: `if(!t.parentNode) return;` no começo do `pede()`, e
 sem teclado físico) estourava `NameError` justamente na primeira atividade que
 tinha o defeito — a lista `problemas` ainda não existia naquele ponto do
 arquivo. Portão que morre na hora de falar é pior que portão que não existe.
+
+---
+
+## 🚫 "RESTO DE CLONE NUNCA MAIS" — o dia em que virou medida (ago/2026)
+
+Ordem do Marcos: *"favor não poder mais haver resto do clone, faça com que isso
+não aconteça mais"* e *"tem que aprender com os erros automaticamente e eles não
+podem se repetir nas outras atividades"*.
+
+O que ele viu: no jogo da memória da Máquina do Tempo aparecia um **quadradinho
+vazio** em cima das cartas. O verso apontava para `img/cq_base.png` — arquivo de
+OUTRA atividade, que nunca existiu nesta pasta.
+
+**Por que nenhum portão pegou:** o `node --check` não abre imagem; o de leiaute
+mede retângulos (e o quadradinho quebrado TEM retângulo); o de contraste olha
+texto; o jogador clica e segue. O app funcionava inteiro com a figura faltando.
+
+**Os dois portões novos (é isto que impede a repetição):**
+
+1. **`_qa/imagens.js` (portão 1e)** — abre a atividade no navegador, percorre as
+   telas e a pré-carga, e reprova **qualquer `<img>` que terminou de carregar com
+   `naturalWidth === 0`**. É a conta que importa: a figura apareceu para a
+   criança ou não?
+2. **`_qa/clone.py` item 8 — PREFIXO ALHEIO.** Os itens 1–7 pegavam um TIPO de
+   resto cada um, e a cada rodada surgia um tipo novo. Este não pergunta o tipo:
+   descobre o prefixo desta atividade pelos arquivos de `img/` e `audio/`
+   (`hv_`, `jd_`, `fb_`…), descobre o das outras, e **reprova qualquer marca de
+   outra pasta** — imagem, voz, variável ou comentário.
+
+**O que o item 8 achou no primeiro minuto de vida:** `vb_acerto1` na Máquina do
+Tempo. As funções `elogio()` e `consolo()` — chamadas **18 vezes** pelo motor —
+apontavam para os MP3 da atividade dos **Verbos**, que não existem nesta pasta.
+Ou seja: **a atividade inteira estava muda justamente nos momentos de encorajar
+a criança que errou**, e nada dava erro. Geradas as cinco falas do Juca
+(`hv_acerto1/2/3`, `hv_erro1/2`).
+
+**A regra que ficou:** todo defeito que chega ao Marcos tem conserto em DUAS
+partes — arrumar o código **e** criar/estender o portão que o pega sozinho da
+próxima vez. Sem a segunda parte, o trabalho não está feito.
+
+## 🃏 O jogo da memória virou padrão da casa (ago/2026)
+
+Palavras dele: *"os jogos da memória tem que ter bastante efeitos e sons, devem
+ficar lindos, tamanho maior, claro adequando a tela, chamar atenção do
+estudante"*. O molde, já aplicado na Máquina do Tempo:
+
+- carta fluida ≥ **130×88** (na prática ficou **180×118**), medida pelo leiaute;
+- **verso de arte de IA** (couro com relógio de bolso dourado) — nunca retângulo;
+- **virada 3D de verdade** (`rotateY` + `preserve-3d` + `backface-visibility`),
+  com queda para troca-de-face (`.semgiro`) no Chrome antigo da escola;
+- **brilho dourado correndo** pelo verso, que é o que faz a mesa "chamar";
+- par que **pulsa**, acende e solta duas fagulhas; **placar "N de M pares"**;
+- **som próprio** de virar (madeira) e de formar par (arpejo), festa no fim.
+
+⚠️ Ao fazer isso, o portão do contraste reprovou 8 cartas: ele media a letra da
+FACE DA FRENTE (que existe no DOM mas está virada para trás) contra o couro do
+verso. Texto que não está à mostra não tem contraste ruim — o portão aprendeu a
+perguntar "quem recebe o dedo no centro deste texto?" antes de medir.
+
+## 🎨 Interação dinâmica usa arte de IA (regra permanente, ago/2026)
+
+*"nas interações dinâmicas sempre usar imagens geradas pela IA, como aconteceu na
+água que sobe na atividade de história, pois ficou lindo e profissional"*.
+Simulador, verso de carta, peça de arrastar, cenário que muda: a FIGURA é gerada;
+o CSS entra só no que precisa se mexer em tempo real (a água subindo, a carta
+girando). No mesmo dia ele reprovou dois desenhos de CSS — o morro de retângulo
+verde com palitinhos e o quadradinho da forca.
+
+## ⚡ A produção ficou 3x mais rápida (pedido: "otimize todo o processo")
+
+- **`fetch-depth: 1` em 24 workflows.** O histórico do repositório passa de 1 GB
+  (toda imagem e todo áudio de toda atividade estão nele) e o checkout sozinho
+  levava **12 minutos** — publicar duas atividades ao mesmo tempo empacava. Com o
+  checkout raso, a geração de áudio passou a landar em **1 minuto**. O clone do
+  destino no `atualizar.yml` também virou `--depth 1`.
+- **A banca roda em paralelo:** contraste, leiaute, jogador e imagens saem juntos
+  na frente (são eles que seguram o relógio) enquanto os portões de texto rodam.
+  **164s** no lugar de ~9 min. E saiu o `2>/dev/null`: portão que imprime nada
+  não é "passou", é "rodou cego".
+- **O portão do jogador passou a VOTAR.** Até hoje a saída dele ia para um
+  `tail -4` e o código de saída se perdia no cano: ele jogava a partida inteira e
+  o resultado era decorativo. Agora reprova se não chegar à medalha ou se houver
+  erro de JS na partida.
+- **Gemini 503 não para mais a produção:** insiste (5s/15s/40s) e, se ainda assim
+  falhar, cai no Pollinations. Só para quando é EDIÇÃO de imagem base, que o
+  Pollinations não faz.

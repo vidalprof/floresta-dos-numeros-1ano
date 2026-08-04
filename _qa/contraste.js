@@ -115,9 +115,16 @@ function parseCor(s){
            leiaute (regra 3), que sabe perdoar quando a tela rola.             */
         const alvo=document.elementFromPoint(r.left+r.width/2, r.top+r.height/2);
         const tapado=!!(alvo&&alvo.closest&&alvo.closest("#barra"));
+        /* ⚠️ TEXTO QUE NAO ESTA A MOSTRA nao tem contraste ruim: ele nao esta la.
+           Foi o caso das cartas do jogo da memoria — a FACE DA FRENTE existe no
+           DOM desde o começo, mas fica virada para tras (backface-visibility) e
+           so aparece quando a crianca vira a carta. O portao media a letra da
+           frente contra o COURO do verso e reprovava oito cartas de uma vez.
+           Teste honesto: quem recebe o dedo no centro deste texto e ele mesmo? */
+        const escondido=!(alvo&&(alvo===els[i]||els[i].contains(alvo)||alvo.contains(els[i])));
         m[els[i].getAttribute("data-qacon")]={x:Math.round(r.left),y:Math.round(r.top),
                                               w:Math.round(r.width),h:Math.round(r.height),
-                                              tapado:tapado}; }
+                                              tapado:tapado||escondido}; }
       return m;
     });
     for(let i=0;i<itens.length;i++){ const n=agora[String(i)];
