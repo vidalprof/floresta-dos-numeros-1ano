@@ -1,8 +1,8 @@
 /* Service worker — REDE PRIMEIRO no HTML (nunca prende versão velha);
    CACHE PRIMEIRO em imagens/áudio (rápido em PC fraco), atualizando em 2º plano. */
-var CACHE="orbi-observatorio-v2";
+var CACHE="orbi-observatorio-v3";
 var ATIVOS=["./","./index.html","./manifest.json",
- "./img/sr_fundo.jpg","./img/sr_orbi_feliz.png","./img/sr_orbi_fala.png","./img/sr_orbi_pisca.png",
+ "./img/sr_pr_foguete.png","./img/sr_pr_planeta.png","./img/sr_pr_estrela.png","./img/sr_pr_satelite.png","./img/sr_pr_cometa.png","./img/sr_orbi_feliz.png","./img/sr_orbi_fala.png","./img/sr_orbi_pisca.png",
  "./img/sr_orbi_pensa.png","./img/sr_orbi_festa.png","./img/med_espaco.png",
  "./img/sr_sol.png","./img/sr_terra.png","./img/sr_lua.png","./img/sr_estrela.png",
  "./img/sr_lampada.png","./img/sr_espelho.png","./img/sr_casa.png",
