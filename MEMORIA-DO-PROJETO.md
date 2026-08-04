@@ -3033,3 +3033,26 @@ só então sobe. Aquecimento (revisão espaçada) aos 33%. Termina com a crianç
 - **O `VOZOK` também veio da Doceria:** o alto-falante aparecia em respostas cuja
   voz não existia nesta pasta (botão que não faz nada é pior que botão nenhum).
   Ao clonar, **regerar o VOZOK** com os textos da atividade nova.
+
+## 🛑 ATIVIDADE NOVA NÃO VAI MAIS PARA O HUB (Marcos, ago/2026)
+
+Logo depois de eu publicar a Fábrica do Bento e já pôr o card no "Ilhas do
+Saber", o Marcos cortou: *"não precisa publicar no site de atividades as que
+cria, só publicar no repo e me mandar o link por enquanto"*.
+
+**O fluxo novo, curto:** cria → `fabrica.yml` (repo próprio) → confere o build
+(`deploy-pages.yml`, `status=built`) → **manda o link** → fim. Sem `_site/`, sem
+card, sem `img/ativ-*.png`, sem `atualizar.yml` para o `mundo-das-atividades`.
+
+**Por que isso importa (leitura minha, para não errar de novo):** ele quer ver e
+aprovar cada atividade antes de ela aparecer para as crianças no portal. Pôr o
+card sozinho é decidir por ele o que entra no ar da escola. O card é decisão
+DELE, não etapa automática do meu rito.
+
+Está escrito no `CLAUDE.md` (lido no começo de toda sessão), logo acima do
+passo a passo do card — que continua lá, guardado, para o dia em que ele pedir.
+
+**O que NÃO fazer por conta própria:** apagar os cards que já estão no hub. A
+regra "nada do antigo se apaga" continua valendo; o card da Fábrica ficou no ar
+e eu avisei que tiro em um comando se ele quiser. Tirar coisa do ar só com
+pedido explícito.

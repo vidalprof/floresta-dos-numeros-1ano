@@ -202,7 +202,21 @@ Exemplo já acontecido: o 3º ano ficou com *"O Observatório do Órbi"* (novo, 
 na mesma turma — os dois seguem no ar. Tirar card ou repo do ar só se o Marcos pedir,
 com todas as letras. Na dúvida, PERGUNTAR e manter.
 
-### Hospedar uma atividade nova (padrão fixo — "será sempre desse jeito")
+### 🛑 NÃO PÔR ATIVIDADE NOVA NO HUB (regra do Marcos, ago/2026 — vale AGORA)
+Palavras dele: *"não precisa publicar no site de atividades as que cria, só
+publicar no repo e me mandar o link por enquanto"*. Então, **atividade nova**:
+1. nasce no **repositório dela** (`fabrica.yml`) e é publicada só lá;
+2. confirmar o build (`deploy-pages.yml` → `status=built`);
+3. **devolver o LINK ao Marcos** e parar por aí.
+**NÃO** mexer no `_site/`, **NÃO** criar card, **NÃO** gerar `img/ativ-*.png`,
+**NÃO** acionar `atualizar.yml` com `repo_name=mundo-das-atividades`. Ele decide
+quando (e se) o card entra. O "por enquanto" é dele: só voltar a pôr card no hub
+quando ELE pedir, com todas as letras.
+Os cards **que já estão no hub continuam** — isto aqui não manda apagar nada
+(ver "NADA DO ANTIGO SE APAGA"). O passo a passo abaixo segue valendo para o dia
+em que ele pedir um card.
+
+### Hospedar uma atividade nova (padrão fixo — SÓ quando o Marcos pedir o card)
 1. A atividade já está (ou será criada) no **próprio repositório** dela.
    Se for nova, use a **Fábrica** (`fabrica.yml`) para criar o repo; se for
    atualizar uma existente, use `atualizar.yml` (`repo_name=<repo>`,
