@@ -10,7 +10,9 @@
      1. algo que estoura na HORIZONTAL (a tela nao rola de lado);
      2. RESPOSTA fora da area visivel (o pior: parece que acabou);
      3. resposta ESCONDIDA atras da barra de baixo (Ouvir/Dica);
-     4. alvo de toque pequeno demais (<40px) para dedo de crianca.
+     4. alvo de toque pequeno demais (<40px) para dedo de crianca;
+     5. BOTAO SOBRE BOTAO (pedido do Marcos, ago/2026): dois alvos que
+        se cobrem — a crianca mira num e o dedo aciona o outro.
    Rolagem vertical NAO e erro por si so — so e erro quando o que
    se toca fica fora.
 
@@ -32,6 +34,9 @@ const TAMANHOS=[
 ];
 /* o que a crianca precisa TOCAR para a fase andar */
 const RESPOSTA='.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.btn,.pc,.peca';
+/* tudo que a crianca pode TOCAR — inclui os botoes de apoio (dica, ouvir,
+   alto-falante) e os alvos das mecanicas. Usado so na regra 5.            */
+const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
 
 (async()=>{
   const arquivo=process.argv[2];
@@ -52,7 +57,7 @@ const RESPOSTA='.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.btn,.pc,.peca';
       },t);
       if(!ok) continue;
       await p.waitForTimeout(650);
-      const r=await p.evaluate(sel=>{
+      const r=await p.evaluate(({sel,clic})=>{
         const out=[];
         const barra=document.getElementById("barra");
         const topoBarra=barra&&barra.getBoundingClientRect().height? barra.getBoundingClientRect().top : innerHeight;
@@ -80,8 +85,43 @@ const RESPOSTA='.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.btn,.pc,.peca';
         if(atras) out.push(atras+" resposta(s) presa(s) atras da barra, sem rolagem");
         if(pequenos) out.push(pequenos+" alvo(s) menor(es) que 40px");
         if(grade) out.push(grade+" celula(s) de grade menor(es) que 30px");
+
+        /* 5. BOTAO SOBRE BOTAO. Nao adianta comparar retangulos: botao dentro de
+           caixa que ROLA tem retangulo fora da caixa mesmo estando escondido, e
+           dava alarme falso. O teste honesto e o do DEDO — quem recebe o toque no
+           centro do alvo? Se quem recebe nao e o proprio alvo (nem filho/pai
+           dele), a crianca mira num botao e aciona outro.
+           A barra de baixo (Ouvir/Dica) e camada FIXA de proposito e fica por
+           cima; quem cuida dela e a regra 3, que sabe perdoar quando a tela rola. */
+        const cl=[...document.querySelectorAll(clic)]
+          .filter(e=>e.offsetParent!==null && !e.closest("#barra"));
+        let sobre=0, exemplo="";
+        for(const A of cl){
+          const ra=A.getBoundingClientRect();
+          if(ra.width<2||ra.height<2) continue;
+          const cx=ra.left+ra.width/2, cy=ra.top+ra.height/2;
+          if(cx<0||cy<0||cx>innerWidth||cy>innerHeight) continue;   // fora da tela: regra 2/3
+          /* rolado para fora de uma caixa que rola: esta escondido, nao tapado */
+          let clipado=false;
+          for(let a=A.parentNode; a&&a.nodeType===1; a=a.parentNode){
+            const ov=getComputedStyle(a).overflowY;
+            if(ov==="auto"||ov==="scroll"||ov==="hidden"){
+              const rc=a.getBoundingClientRect();
+              if(cy<rc.top-1||cy>rc.bottom+1||cx<rc.left-1||cx>rc.right+1){ clipado=true; break; }
+            }
+          }
+          if(clipado) continue;
+          const hit=document.elementFromPoint(cx,cy);
+          if(!hit) continue;                                        // escondido/clipado
+          if(hit===A||A.contains(hit)||hit.contains(A)) continue;   // o dedo chega: ok
+          if(hit.closest&&hit.closest("#barra")) continue;          // barra fixa: regra 3
+          sobre++;
+          if(!exemplo) exemplo="."+String(A.className).split(" ")[0]
+                              +" tapado por ."+String(hit.className||hit.tagName).split(" ")[0];
+        }
+        if(sobre) out.push(sobre+" alvo(s) com BOTAO SOBRE BOTAO ("+exemplo+")");
         return out;
-      },RESPOSTA);
+      },{sel:RESPOSTA,clic:CLICAVEL});
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);
     }
     await p.close();

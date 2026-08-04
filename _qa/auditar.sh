@@ -62,6 +62,10 @@ echo "--- 1c) RESTO DE CLONE (sobrou coisa da origem?) --"
 python3 _qa/clone.py "$ARQ" || FALHOU=1
 
 echo
+echo "--- 1d) PROMESSA (a voz promete e a tela cumpre?) --"
+python3 _qa/promessa.py "$ARQ" || FALHOU=1
+
+echo
 echo "--- 2) ARQUITETO DE FLUXO (da para chegar ao fim?) -"
 python3 _qa/fluxo.py "$ARQ" telaCapa || FALHOU=1
 

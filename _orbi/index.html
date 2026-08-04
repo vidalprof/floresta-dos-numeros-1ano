@@ -714,10 +714,15 @@ function poeVozes(){
 })();
 
 /* ============ AJUDA EM 3 DEGRAUS (dica -> concreto -> revelar) ============ */
+/* ⚠️ o nivel 3 fala "deixa eu ACENDER a resposta": entao TODA fase que chama
+   ajudaOr precisa passar "revelar" — senao o Orbi promete e nao cumpre (foi o
+   defeito que o Marcos pegou na Fabrica). Nao existe "concreto" aqui: o
+   Observatorio nao tem material de contar, e o nivel 2 so manda olhar a
+   figura — por isso o gancho foi tirado. Auditor: _qa/promessa.py.          */
 function ajudaOr(n,ops){
   ops=ops||{};
   if(n===1){ if(ops.dica) mostraDica(ops.dica); falar("sr_ajuda1"); }
-  else if(n===2){ if(ops.concreto) ops.concreto(); falar("sr_ajuda2"); }
+  else if(n===2){ if(ops.dica) mostraDica(ops.dica); falar("sr_ajuda2"); }
   else if(n>=3){ if(ops.revelar) ops.revelar(); falar("sr_ajuda3"); }
 }
 function acendeOr(e){ if(e&&e.className.indexOf("acesa")<0) e.className=e.className+" acesa"; }
@@ -1101,16 +1106,18 @@ function telaLuaQuem(){
   c.appendChild(el("div","balao","Quem gira em volta de um <b>planeta</b> ganha um nome. Qual &#233;?"));
   var opts=el("div","opts");
   var alts=[["<b>Estrela</b>",false],["<b>Sat&#233;lite</b>",true],["<b>Cometa</b>",false]];
-  var i,resp=false,err=0;
+  var i,resp=false,err=0,certoEl=null;
   for(i=0;i<alts.length;i++){(function(txt,certo){
     var o=el("div","opt",txt);
+    if(certo) certoEl=o;
     o.onclick=function(){ if(resp)return; arma();
       if(certo){ resp=true; o.className="opt ok"; sCerto(); reg("lua_satelite",err===0,err+1);
         setTimeout(function(){ depoisDaFala("sr_sat_revela",11000,function(){
           mostraBanner("A <b>Lua</b> &#233; o <b>sat&#233;lite</b> da Terra.",telaFasesExplora); }); },600); }
       else { err++; o.className="opt no"; sErro(); reg("lua_satelite",false,2);
         setTimeout(function(){ o.className="opt"; },700);
-        ajudaOr(err,{dica:"A Lua n&#227;o faz luz e n&#227;o tem rabo de gelo. Ela s&#243; <b>acompanha</b> a Terra."}); }
+        ajudaOr(err,{dica:"A Lua n&#227;o faz luz e n&#227;o tem rabo de gelo. Ela s&#243; <b>acompanha</b> a Terra.",
+                     revelar:function(){ acendeOr(certoEl); }}); }
     };
     opts.appendChild(o);
   })(alts[i][0],alts[i][1]);}
@@ -1218,7 +1225,7 @@ function telaFasesOrdem(){
   var cen=el("div","centro");var wrap=el("div","cartas");
   var ordem=baguncar([0,1,2,3]),i;
   for(i=0;i<4;i++){(function(k){
-    var cd=el("div","carta");cd.appendChild(imgEl(FASES[k].img));cd.appendChild(el("div","lab",FASES[k].n));
+    var cd=el("div","carta");cd.appendChild(imgEl(FASES[k].img));cd.appendChild(el("div","lab",FASES[k].n));cd._k=k;
     cd.onclick=function(){ if(cd._done)return; arma();
       if(k===prox){ cd._done=true;cd.className="carta ok";cd.appendChild(el("div","num",(prox+1)));sPop(prox);
         var ce=centroTela(cd);faisca(ce[0],ce[1],"#8be05a",10);prox++;
@@ -1226,7 +1233,9 @@ function telaFasesOrdem(){
           setTimeout(function(){ depoisDaFala("sr_ford_revela",12000,function(){
             mostraBanner("Nova &#8594; crescente &#8594; cheia &#8594; minguante. E come&#231;a de novo!",telaCacaCeu); }); },500); } }
       else { err++; cd.className="carta no";sErro();setTimeout(function(){cd.className="carta";},450);
-        ajudaOr(err,{dica:"Comece pela que quase <b>n&#227;o aparece</b>. Depois ela vai <b>crescendo</b>."}); }
+        ajudaOr(err,{dica:"Comece pela que quase <b>n&#227;o aparece</b>. Depois ela vai <b>crescendo</b>.",
+                     revelar:function(){ var a=wrap.getElementsByClassName("carta"),z;
+                       for(z=0;z<a.length;z++) if(a[z]._k===prox) acendeOr(a[z]); }}); }
     };
     wrap.appendChild(cd);
   })(ordem[i]);}
@@ -1466,7 +1475,7 @@ function telaTamanhos(){
     var cd=el("div","carta tam");
     var im=imgEl(TAM[k].img);
     im.style.width=TAM[k].w+"px"; im.style.height=TAM[k].w+"px";
-    cd.appendChild(im);cd.appendChild(el("div","lab",TAM[k].n));
+    cd.appendChild(im);cd.appendChild(el("div","lab",TAM[k].n));cd._k=k;
     cd.onclick=function(){ if(cd._done)return; arma();
       if(k===prox){ cd._done=true;cd.className="carta tam ok";cd.appendChild(el("div","num",(prox+1)));sPop(prox);
         var ce=centroTela(cd);faisca(ce[0],ce[1],"#8be05a",10);prox++;
@@ -1474,7 +1483,9 @@ function telaTamanhos(){
           setTimeout(function(){ depoisDaFala("sr_tam_revela",13000,function(){
             mostraBanner("O <b>Sol</b> &#233; gigante perto de tudo. E a nossa <b>Terra</b> &#233; pequenininha!",telaMemoria); }); },500); } }
       else { err++; cd.className="carta tam no";sErro();setTimeout(function(){cd.className="carta tam";},450);
-        ajudaOr(err,{dica:"O tamanho do desenho ajuda: comece pelo <b>menorzinho</b>."}); }
+        ajudaOr(err,{dica:"O tamanho do desenho ajuda: comece pelo <b>menorzinho</b>.",
+                     revelar:function(){ var a=wrap.getElementsByClassName("carta"),z;
+                       for(z=0;z<a.length;z++) if(a[z]._k===prox) acendeOr(a[z]); }}); }
     };
     wrap.appendChild(cd);
   })(ordem[i]);}
@@ -1574,7 +1585,8 @@ function telaTerraCasa(){
       } else setTimeout(mostra,420);
     } else { err++; card.style.borderColor="#ff7a6b"; sErro();
       setTimeout(function(){ card.style.borderColor=""; },500);
-      ajudaOr(err,{dica:"Isso existe aqui onde <b>voc&#234;</b> mora, ou s&#243; l&#225; longe em outro planeta?"});
+      ajudaOr(err,{dica:"Isso existe aqui onde <b>voc&#234;</b> mora, ou s&#243; l&#225; longe em outro planeta?",
+                   revelar:function(){ acendeOr(it.ok?bS:bN); }});
     }
   }
   bS.onclick=function(){resp(true);}; bN.onclick=function(){resp(false);};

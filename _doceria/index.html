@@ -1561,9 +1561,14 @@ function dCria(){
      2º erro  -> aparece o CONCRETO na tela (os docinhos para contar)
      3º erro  -> a resposta certa ACENDE e a criança toca (sucesso guiado)
    Nunca "errou de novo, tente outra vez" para sempre.                        */
+/* ⚠️ "dc_ajuda2" PROMETE por os docinhos na tela. Se a fase nao passar o
+   "concreto", a voz promete e nao cumpre — entao cai na fala 1, que so manda
+   olhar a dica. (Hoje as 12 fases passam o concreto; isto e o cinto.)        */
 function ajuda(n,ops){
+  ops=ops||{};
   if(n===1){ if(ops.dica) mostraDica(ops.dica); falar("dc_ajuda1"); }
-  else if(n===2){ if(ops.concreto) ops.concreto(); falar("dc_ajuda2"); }
+  else if(n===2){ if(ops.concreto){ ops.concreto(); falar("dc_ajuda2"); }
+                  else { if(ops.dica) mostraDica(ops.dica); falar("dc_ajuda1"); } }
   else if(n>=3){ if(ops.revelar) ops.revelar(); falar("dc_ajuda3"); }
 }
 /* fileira de docinhos para CONTAR quando a criança empaca */
@@ -2064,8 +2069,12 @@ function dDobro(){
       if(fim) return;
       if(copias>=it.vezes){ err++; sErro();
         bal.innerHTML="Opa! O <b>"+nome+"</b> &#233; s&#243; <b>"+it.vezes+"</b> bandejas iguais.";
-        ajuda(err,{dica:"Dobro = <b>2</b> bandejas iguais. Triplo = <b>3</b>.",
-                   concreto:function(){ apoioConcreto(c,it.doce,it.vezes,it.q); }});
+        /* aqui NAO ha resposta para "acender" (o erro e copiar demais), entao
+           nao se chama ajuda(): a voz do nivel 3 prometeria mostrar uma resposta
+           que nao existe nesta tela. So dica + apoio concreto. (_qa/promessa.py) */
+        mostraDica("Dobro = <b>2</b> bandejas iguais. Triplo = <b>3</b>.");
+        apoioConcreto(c,it.doce,it.vezes,it.q);
+        falar("dc_ajuda1");
         return; }
       copias++; poe(); sPop(copias);
       cont.innerHTML=copias+" bandejas de "+it.q;

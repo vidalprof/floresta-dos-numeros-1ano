@@ -468,6 +468,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .apfila{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:3px;margin-bottom:3px}
 .apfila img{width:22px;height:22px;object-fit:contain}
 .apfila .apnum{margin-left:6px;font-size:15px;font-weight:800;color:var(--tinta-d)}
+.apoio .apmais{font-size:12.5px;font-weight:700;color:#6b6555;margin-top:4px;text-align:center}
 .acesa{-webkit-animation:acende 1s ease-in-out infinite;animation:acende 1s ease-in-out infinite;
   -webkit-box-shadow:0 0 0 3px var(--dourado),0 0 16px rgba(255,212,59,.8);box-shadow:0 0 0 3px var(--dourado),0 0 16px rgba(255,212,59,.8)}
 @-webkit-keyframes acende{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.07)}}
@@ -484,7 +485,8 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .reta .marca i{display:block;width:2px;height:13px;background:#b8ae95;border-radius:2px}
 .reta .marca b{font-size:11.5px;font-weight:800;color:#6b6555;margin-top:2px}
 .reta .marca.caiu i{background:var(--ok);height:19px;width:3px}
-.reta .marca.caiu b{color:var(--ok);font-size:13px}
+/* verde ESCURO so no texto: o --ok claro dava 3,3:1 sobre o creme (auditor 4) */
+.reta .marca.caiu b{color:#2b6b18;font-size:13px}
 .reta .marca.conta i{background:var(--dourado);height:17px}
 .reta .marca.no i{background:var(--erro);height:19px}
 .reta .salta{position:absolute;top:4px;width:38px;height:38px;object-fit:contain;-webkit-transform:translateX(-50%);transform:translateX(-50%);
@@ -1208,6 +1210,7 @@ function fEsteira(){
         } else { err++; b.className="tecl no"; sErro();
           setTimeout(function(){ if(b.className==="tecl no") b.className="tecl"; },440);
           ajudaFb(err,{dica:"Conte as fileiras <b>de cima para baixo</b>, depois os brinquedos de <b>uma</b> fileira.",
+                       concreto:function(){ apoioConcreto(c,it.br,it.l,it.co,6); },
                        revelar:function(){ var z,a=num.getElementsByClassName("tecl");
                          for(z=0;z<a.length;z++) if(a[z].innerHTML===""+certo) acende(a[z]); }});
         }
@@ -1581,6 +1584,7 @@ function fEsteiraMult(){
         } else { err++; m.className="marca no"; sErro();
           setTimeout(function(){ if(m.className==="marca no") m.className="marca"; },600);
           ajudaFb(err,{dica:"Some <b>"+it.p+"</b> ao &#250;ltimo n&#250;mero que acendeu.",
+                       concreto:function(){ apoioConcreto(c,"fb_bola",1,it.p,1); },
                        revelar:function(){ if(marcas[passoAt]) acende(marcas[passoAt]); }});
         }
       };
@@ -1733,6 +1737,7 @@ function fPedido(){
           } else { err++; b.className="tecl no"; sErro();
             setTimeout(function(){ if(b.className==="tecl no") b.className="tecl"; },440);
             ajudaFb(err,{dica:"Leia de novo: quantos <b>grupos</b> e quantos em <b>cada</b> grupo?",
+                         concreto:function(){ apoioConcreto(c,"fb_piao",it.a,it.b,6); },
                          revelar:function(){ var z,a=num.getElementsByClassName("tecl");
                            for(z=0;z<a.length;z++) if(a[z].innerHTML===""+cer) acende(a[z]); }});
           }
@@ -1927,6 +1932,7 @@ function fCaca(){
         setTimeout(function(){ if(cl.className==="cel no") cl.className="cel"; },500);
         var it2=CACAF[idx];
         ajudaFb(err,{dica:"Resolva <b>"+it2[0]+" &#215; "+it2[1]+"</b> e depois procure o n&#250;mero.",
+                     concreto:function(){ apoioConcreto(c,"fb_carrinho",it2[0],it2[1],9); },
                      revelar:function(){ var z; for(z=0;z<cels.length;z++)
                        if(cels[z].innerHTML==""+(it2[0]*it2[1])&&cels[z].className.indexOf("ok")<0){ acende(cels[z]); break; } }});
       }
@@ -1988,6 +1994,8 @@ function fLigar(){
         setTimeout(function(){ if(!d._ok) d.className="lig"; },600);
         var pp=(selE!==null?selE:k);
         ajudaFb(err,{dica:"Leia de novo: <b>"+pares[pp][0]+"</b>. Quantos grupos? Quantos em cada?",
+                     concreto:function(){ var ct=fatores(pares[pp][1]);
+                       if(ct) apoioConcreto(c,"fb_piao",ct[0],ct[1],6); },
                      revelar:function(){ var z,a2=ce2.getElementsByClassName("lig");
                        for(z=0;z<a2.length;z++) if(!a2[z]._ok&&a2[z].innerHTML===pares[pp][1]) acende(a2[z]); }});
       }
@@ -2043,6 +2051,8 @@ function fCarrega(){
     if(b._v!==v._v){ err++; b.className="pc no"; v.className="cam no"; sErro();
       setTimeout(function(){ if(!b._ok) b.className="pc"; if(!v._ok) v.className="cam"; },600);
       ajudaFb(err,{dica:"Resolva <b>"+b.innerHTML+"</b> e procure esse n&#250;mero no caminh&#227;o.",
+                   concreto:function(){ var ct=fatores(b.innerHTML);
+                     if(ct) apoioConcreto(c,"fb_cubo",ct[0],ct[1],6); },
                    revelar:function(){ var z; for(z=0;z<vagas.length;z++) if(!vagas[z]._ok&&vagas[z]._v===b._v) acende(vagas[z]); }});
       return; }
     b._ok=1; v._ok=1; b.className="pc usada"; v.className="cam ok";
@@ -2120,22 +2130,40 @@ function fCarrega(){
    1º erro -> dica escrita | 2º erro -> o CONCRETO na tela | 3º erro -> a
    resposta ACENDE e a criança toca (sucesso guiado). Nunca "tente de novo"
    para sempre.                                                              */
+/* ⚠️ LIÇÃO PAGA (Marcos, ago/2026 — Quadro do Estoque): a voz "fb_ajuda2" PROMETE
+   por os brinquedos na mesa para contar junto. Se a fase nao passar o "concreto",
+   o Bento promete e NAO cumpre — a crianca fica esperando os brinquedos. Entao a
+   fala so toca quando o apoio existe de verdade; sem apoio, entra a fala neutra
+   "fb_ajuda2b", que nao promete nada. Auditor: _qa/promessa.py.               */
 function ajudaFb(n,ops){
+  ops=ops||{};
   if(n===1){ if(ops.dica) mostraDica(ops.dica); falar("fb_ajuda1"); }
-  else if(n===2){ if(ops.concreto) ops.concreto(); else if(ops.dica) mostraDica(ops.dica); falar("fb_ajuda2"); }
+  else if(n===2){
+    if(ops.concreto){ ops.concreto(); falar("fb_ajuda2"); }
+    else { if(ops.dica) mostraDica(ops.dica); falar("fb_ajuda2b"); }
+  }
   else if(n>=3){ if(ops.revelar) ops.revelar(); falar("fb_ajuda3"); }
 }
-function apoioConcreto(pai,brinq,grupos,cada){
+/* le "6 x 7" (com o sinal de vezes escrito de qualquer jeito) e devolve [6,7]. */
+function fatores(txt){
+  var m=(""+txt).replace(/&#215;/g,"×").match(/(\d+)\s*×\s*(\d+)/);
+  return m?[parseInt(m[1],10),parseInt(m[2],10)]:null;
+}
+/* max = quantas fileiras cabem na tela (padrao 5). Se sobrar fileira, a caixa
+   AVISA quantas faltam — nunca mostra menos fingindo que mostrou tudo.        */
+function apoioConcreto(pai,brinq,grupos,cada,max){
   var v=document.getElementById("apoio"); if(v&&v.parentNode) v.parentNode.removeChild(v);
   var d=el("div","apoio"); d.id="apoio";
   d.appendChild(el("div","aptit","Conte comigo:"));
-  var i,j,lim=Math.min(grupos,5);
+  var i,j,lim=Math.min(grupos,max||5);
   for(i=0;i<lim;i++){
     var f=el("div","apfila");
     for(j=0;j<cada;j++){ f.appendChild(imgEl(brinq)); }
     f.appendChild(el("span","apnum",""+((i+1)*cada)));
     d.appendChild(f);
   }
+  if(grupos>lim){ var s=grupos-lim;
+    d.appendChild(el("div","apmais","e mais "+s+" fileira"+(s>1?"s":"")+" igual"+(s>1?"is":"")+" a essas")); }
   pai.appendChild(d);
   return d;
 }
