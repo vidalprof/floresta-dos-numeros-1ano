@@ -1074,7 +1074,13 @@ function fraseEl(palavras,alvo,onOk,onNo){
 }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============ */
 /* as vozes das RESPOSTAS (alto-falante em cada opcao) que existem em audio/op_<chave>.mp3 */
-var VOZOK={};
+/* as vozes das RESPOSTAS (alto-falante em cada opcao) — audio/op_<chave>.mp3.
+   ⚠️ as chaves sao base36 e podem comecar com numero: SEM ASPAS o JS nem carrega. */
+var VOZOK={"13fa1b":1,"13zhsg1":1,"151187x":1,"179h1z":1,"17e2r7c":1,"19dzacf":1,"1e8uhxx":1,"1ej0y5n":1,
+  "1ep4fkf":1,"1hfubyk":1,"1lj2qp0":1,"1m145bp":1,"1othqwk":1,"1tniq0u":1,"1tnqioc":1,"1txixyt":1,
+  "1w3w2bc":1,"1xuxsyq":1,"1xvc01o":1,"480b6q":1,"4hecx7":1,"7ynxgs":1,"bd0pj3":1,"gjpem6":1,
+  "k1nozx":1,"l1de7j":1,"sqaaps":1,"stl6tm":1,"t4cjsl":1,"u4e4ha":1,"wsiuh3":1,"wy6cf3":1,
+  "zesn38":1,"zw9bvw":1};
 var vz=document.getElementById("vz"), zapAtual=null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -1101,7 +1107,8 @@ function poeZap(elm){
      (gavetas, que tambem tem o numerinho) e flab (fichas com figura).       */
   var lab=elm.getElementsByClassName("cxt")[0]
         ||elm.getElementsByClassName("gavtit")[0]
-        ||elm.getElementsByClassName("flab")[0];
+        ||elm.getElementsByClassName("flab")[0]
+        ||elm.getElementsByClassName("ligtx")[0];
   var txt=lab?lab.textContent:elm.textContent;
   /* o texto pode TROCAR no mesmo elemento (ex.: a ficha da linha do tempo).
      por isso guardo o texto usado, nao um sim/nao. */
@@ -1125,7 +1132,7 @@ function poeZap(elm){
   };
   elm.appendChild(bt);
 }
-var ZAPSEL=".opt,.lig,.tlin,.fichaP,.cx,.peca,.pc,.relcard,.bin,.ficha,.gav";
+var ZAPSEL=".opt,.lig,.tlin,.cx,.peca,.pc,.relcard,.bin,.ficha,.gav,.mcarta";
 function poeVozes(){
   if(!app) return;
   var els=app.querySelectorAll(ZAPSEL),i;
