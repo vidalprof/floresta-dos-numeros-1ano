@@ -3107,3 +3107,48 @@ Veio junto no clone do motor e ninguém tinha percebido. Nos PCs fracos da escol
 isso significa cada imagem aparecendo com atraso na primeira vez. Corrigido nas
 duas. **Ao clonar um motor, o `var IMGS=[...]` é conteúdo, não motor** — trocar
 junto com o `DOM` e o `VOZOK`.
+
+## 😬 O MASCOTE TREMIA AO FALAR E PISCAR — e por quê (Marcos, ago/2026)
+
+Palavras dele: *"ao falar ou piscar o mascote se treme todo, não deveria"*. Na
+rodada anterior eu tinha suavizado o giro do flutuar e achado que era isso.
+**Não era.** Fui medir e o número não deixou dúvida.
+
+**A causa:** o mascote são TRÊS imagens empilhadas (parado / falando / piscando)
+e o motor faz o cruzamento delas ~60 vezes por segundo para o lip-sync. Eu gerei
+as três **do zero**, em três prompts separados — e a IA devolve **três desenhos
+diferentes**, por mais que o prompt diga "exatamente igual". Na Fábrica, a pose
+de piscar veio até com **outro tom de pele e outro cabelo**. Cruzar isso a 60fps
+não anima a boca: **morfa o boneco inteiro**.
+
+**A medida que denuncia** — quantos % dos pixels do corpo mudam entre a pose
+parada e cada outra:
+
+| atividade | falar | piscar |
+|---|---|---|
+| Legenda do Clique | 1% | 2% |
+| Jardim do Broto | 2% | 7% |
+| Doceria do Cacau | 6% | 5% |
+| Observatório do Órbi | 8% | 3% |
+| **Fábrica (errada)** | **77%** | **78%** |
+
+As outras quatro estavam boas porque nasceram de EDIÇÃO da pose parada. A Fábrica
+foi a única que eu fiz do zero — erro meu, e o Marcos viu na tela antes de
+qualquer auditor meu ver.
+
+### ⭐ REGRA NOVA (não negociável)
+**As poses de FALAR e PISCAR nunca se geram do zero.** Geram-se EDITANDO a pose
+parada, com o `gerar-imagens.yml`: `modelo=gemini` + `base=_novo/<mascote>_base.png`,
+pedindo para mudar SÓ a boca (ou só os olhos) e mais nada. Funcionou de primeira:
+caiu de **77% para 2,8%** (falar) e **4,5%** (piscar). Depois recortar as três com
+a **mesma bbox** (senão a imagem pula ao trocar de camada).
+
+### 🕵️ AUDITOR NOVO — `_qa/mascote.py` (portão **3d** da banca)
+Mede essa porcentagem e reprova acima de **15%**. Também reprova camada com
+tamanho diferente da parada. Testado: reprova a Fábrica velha e aprova as outras
+quatro — ou seja, o limiar está calibrado na realidade do projeto, não no chute.
+
+**Lição maior:** a IA não obedece "mantenha exatamente igual" quando gera do
+zero. Quando duas imagens precisam ser o MESMO desenho, o caminho é **editar**,
+nunca **regerar** — e depois **medir**, porque no print parado as três parecem
+iguais; o defeito só existe em movimento.
