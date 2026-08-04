@@ -624,6 +624,143 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   .moldura{height:150px}.palavragrau{font-size:22px}
   .tvaga{height:48px;min-width:84px}
 }
+
+/* ================= TELAS DA MÁQUINA DO TEMPO =================
+   Tudo com cor sólida antes de cada gradiente (PC velho vê a cor) e animação
+   só por transform/opacity, que não repinta a tela. */
+/* --- cena grande do Vale, em moldura de foto --- */
+.cena{width:100%;max-width:420px;margin-top:10px;border-radius:16px;overflow:hidden;
+  background:#fffdf6;border:3px solid #fffdf6;
+  -webkit-box-shadow:0 8px 22px rgba(30,25,10,.4);box-shadow:0 8px 22px rgba(30,25,10,.4)}
+.cena img{width:100%;display:block}
+.cena .cenacap{font-size:12.5px;font-weight:700;color:#6b6252;padding:5px 8px;text-align:center}
+/* --- SIMULADOR: janela do tempo --- */
+.janela{width:100%;max-width:420px;margin-top:10px;border-radius:16px;overflow:hidden;
+  background:#2b2416;border:4px solid #fffdf6;position:relative;
+  -webkit-box-shadow:0 10px 26px rgba(20,15,5,.5);box-shadow:0 10px 26px rgba(20,15,5,.5)}
+.janela .cenaimg{width:100%;display:block;-webkit-animation:apfoto .45s;animation:apfoto .45s}
+@-webkit-keyframes apfoto{from{opacity:.15}to{opacity:1}}
+@keyframes apfoto{from{opacity:.15}to{opacity:1}}
+.anotag{margin-top:8px;background:#3a2a12;color:#ffe9a3;font-size:15px;font-weight:800;
+  padding:5px 16px;border-radius:999px;border:2px solid #ffd43b}
+.balao.pequeno{font-size:14.5px;padding:9px 13px;margin-top:8px;max-width:420px}
+.simul{-webkit-appearance:none;appearance:none;width:92%;max-width:400px;height:16px;margin-top:12px;
+  border-radius:999px;background:#e6dcc6;outline:none;cursor:pointer}
+.simul::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:46px;height:46px;
+  border-radius:50%;background:#ffd43b;border:3px solid #fff;cursor:pointer;
+  -webkit-box-shadow:0 3px 8px rgba(0,0,0,.45);box-shadow:0 3px 8px rgba(0,0,0,.45)}
+.simul::-moz-range-thumb{width:46px;height:46px;border-radius:50%;background:#ffd43b;border:3px solid #fff}
+.simullab{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:justify;
+  justify-content:space-between;width:92%;max-width:400px;margin-top:6px}
+.simullab span{background:rgba(24,20,10,.82);color:#fff;border-radius:999px;padding:4px 11px;
+  font-size:12.5px;font-weight:700}
+/* --- objeto na mesa (antes/agora, mudou/continua) --- */
+.mesaobj{margin-top:10px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
+  border-radius:20px;padding:12px 16px;text-align:center;min-width:210px;
+  -webkit-animation:pop .3s;animation:pop .3s;
+  -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}
+.mesaobj .objimg{width:110px;height:110px;object-fit:contain;display:block;margin:0 auto}
+.mesaobj .objnome{font-size:17px;font-weight:800;color:var(--texto);margin-top:4px}
+/* --- as duas gavetas --- */
+.gavetas{display:-webkit-box;display:-webkit-flex;display:flex;gap:12px;margin-top:14px;
+  -webkit-box-pack:center;justify-content:center;width:100%}
+.gav{-webkit-box-flex:1;-webkit-flex:1;flex:1;max-width:180px;min-height:92px;cursor:pointer;
+  background:rgba(255,253,246,.96);border:3px solid var(--linha);border-bottom-width:6px;
+  border-radius:18px;padding:10px 6px;text-align:center;
+  -webkit-box-shadow:0 6px 16px rgba(30,25,10,.3);box-shadow:0 6px 16px rgba(30,25,10,.3)}
+.gav .gavtit{font-size:15px;font-weight:800;color:var(--texto);line-height:1.15}
+.gav .gavnum{font-size:26px;font-weight:800;color:#6b6252;margin-top:4px}
+.gav.gmud{border-color:#e0a800}
+.gav.gcont{border-color:#3f9a26}
+.gav.ok{background:#eafce0;border-color:var(--ok)}
+.gav.no{background:#ffece9;border-color:var(--erro);-webkit-animation:shk .4s;animation:shk .4s}
+.gav:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+/* --- linha do tempo --- */
+.trilhotempo{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;
+  flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:12px;width:100%}
+.trilhotempo .tvaga{min-width:74px;height:60px;padding:0}
+.trilhotempo .tvimg{width:70px;height:52px;object-fit:cover;border-radius:8px}
+.fichas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:430px}
+.ficha{width:100px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
+  border-bottom-width:5px;border-radius:14px;padding:5px;cursor:pointer;text-align:center;
+  -webkit-box-shadow:0 5px 14px rgba(30,25,10,.3);box-shadow:0 5px 14px rgba(30,25,10,.3)}
+.ficha .fimg{width:88px;height:60px;object-fit:cover;border-radius:9px;display:block;margin:0 auto}
+.ficha .flab{font-size:11.5px;font-weight:700;color:var(--texto);margin-top:3px;line-height:1.15}
+.ficha.usada{opacity:.25}
+.ficha.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
+.ficha:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+/* --- povos (ligar) --- */
+.lig.povo{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;
+  align-items:center;gap:8px;text-align:left}
+.lig .povoimg{width:44px;height:44px;object-fit:contain;-webkit-flex-shrink:0;flex-shrink:0}
+/* --- detetive do tempo --- */
+.palco{position:relative;width:100%;max-width:420px;margin-top:10px;border-radius:16px;
+  overflow:hidden;border:3px solid #fffdf6;
+  -webkit-box-shadow:0 8px 22px rgba(30,25,10,.4);box-shadow:0 8px 22px rgba(30,25,10,.4)}
+.palco .palcoimg{width:100%;display:block}
+.achado{position:absolute;width:66px;height:66px;border-radius:14px;cursor:pointer;
+  background:rgba(255,253,246,.9);border:2px solid rgba(255,255,255,.85);
+  -webkit-box-shadow:0 4px 12px rgba(0,0,0,.45);box-shadow:0 4px 12px rgba(0,0,0,.45)}
+.achado .achimg{width:100%;height:100%;object-fit:contain;padding:5px}
+.achado.a0{left:6%;bottom:8%}
+.achado.a1{right:7%;bottom:10%}
+.achado.a2{right:9%;top:9%}
+.achado.ok{border-color:var(--ok);background:#eafce0}
+.achado.no{border-color:var(--erro);-webkit-animation:shk .4s;animation:shk .4s}
+/* --- 📌 post-it de curiosidade --- */
+.postit{position:relative;width:100%;max-width:330px;margin-top:14px;cursor:pointer;
+  background:#ffe9a3;border-radius:3px;padding:9px 12px;text-align:left;
+  -webkit-transform:rotate(-1.4deg);transform:rotate(-1.4deg);
+  -webkit-box-shadow:0 6px 14px rgba(0,0,0,.35);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.postit .pttit{font-size:13.5px;font-weight:800;color:#6a4b00}
+.postit .ptcorpo{font-size:13.5px;font-weight:600;color:#4a3a10;line-height:1.35;
+  max-height:0;overflow:hidden;
+  -webkit-transition:max-height .35s ease;transition:max-height .35s ease}
+.postit.aberto{-webkit-transform:rotate(0);transform:rotate(0)}
+.postit.aberto .ptcorpo{max-height:200px;margin-top:5px}
+/* --- FORCA: quem sobe é a enchente --- */
+.reguario{position:relative;width:96px;height:110px;margin-top:10px;border-radius:10px;
+  overflow:hidden;background:#dfeef7;border:2px solid var(--linha)}
+.reguario .agua{position:absolute;left:0;right:0;bottom:0;height:8%;background:#4aa3d8;
+  -webkit-transition:height .45s ease;transition:height .45s ease}
+.reguario .casinha{position:absolute;left:50%;bottom:52%;width:34px;height:26px;margin-left:-17px;
+  background:#fffdf6;border:2px solid #8a7a55;border-radius:3px}
+.forca{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  gap:5px;-webkit-box-pack:center;justify-content:center;margin-top:12px}
+.letrafc{width:34px;height:44px;line-height:42px;text-align:center;font-size:24px;font-weight:800;
+  color:var(--texto);background:rgba(255,253,246,.96);border:2px solid var(--linha);
+  border-bottom-width:4px;border-radius:8px}
+.tecladofc{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  gap:5px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:420px}
+.teclafc{width:41px;height:44px;line-height:40px;text-align:center;font-size:19px;font-weight:800;
+  color:var(--texto);background:rgba(255,253,246,.96);border:2px solid var(--linha);
+  border-bottom-width:4px;border-radius:9px;cursor:pointer}
+.teclafc:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.teclafc.ok{background:#cdf0bd;border-color:var(--ok);color:#22540f}
+.teclafc.no{background:#e9e4d6;opacity:.45}
+/* --- SIMULADOR 2: a água sobe no Vale --- */
+.valebox{position:relative;width:100%;max-width:400px;height:190px;margin-top:10px;
+  border-radius:16px;overflow:hidden;background:#bfe0f2;border:3px solid #fffdf6;
+  -webkit-box-shadow:0 8px 22px rgba(30,25,10,.4);box-shadow:0 8px 22px rgba(30,25,10,.4)}
+.valebox .morro{position:absolute;left:0;right:0;top:14%;height:56%;background:#7a9c4a;
+  border-top-left-radius:60% 90%;border-top-right-radius:60% 90%}
+.valebox .arvores{position:absolute;left:0;right:0;top:0;height:100%}
+.valebox .arv{position:absolute;top:14%;width:12px;height:26px;background:#2f6b18;border-radius:6px 6px 3px 3px}
+.valebox .aguavale{position:absolute;left:0;right:0;bottom:0;height:16%;background:#4aa3d8;
+  -webkit-transition:height .5s ease;transition:height .5s ease}
+.valebox .cidadinha{position:absolute;left:8%;bottom:6%;width:76px;height:34px;background:#fffdf6;
+  border:2px solid #8a7a55;border-radius:4px}
+.valebox .cidadinha.molhada{background:#cfe6f3;border-color:#4aa3d8}
+/* --- a carta (textarea) --- */
+.campo.carta{min-height:86px;resize:none;line-height:1.4;padding:11px 13px;font-family:inherit}
+@media (max-height:720px){
+  .janela,.cena{max-width:340px}
+  .mesaobj .objimg{width:88px;height:88px}
+  .valebox{height:150px}
+  .achado{width:56px;height:56px}
+  .teclafc{width:38px;height:41px;line-height:37px;font-size:17px}
+}
 </style></head>
 <body>
 <div id="bg"></div>
