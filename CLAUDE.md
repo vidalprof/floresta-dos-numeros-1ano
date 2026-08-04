@@ -84,6 +84,39 @@ Leia tudo antes de agir e responda sempre em **português**.
 > 75% e refaz só as fases fracas. O código pronto e as armadilhas estão nesse arquivo — copiar,
 > não reescrever. Depois de colar, rodar `bash _qa/auditar.sh` (a tela final fica mais alta).
 
+> ## 🧠✨ O ALUNO TEM QUE QUERER MAIS (ordem do Marcos, ago/2026)
+> Palavras dele: *"essas atividades têm que ficar incríveis, usar técnicas de
+> neurociência e ensino-aprendizagem modernas e dos mais renomados pensadores em
+> educação, como foi feito nas pesquisas"*; *"o aluno tem que gostar de fazer, ficar
+> com o sentimento de QUERO MAIS, despertar curiosidade, não ser chato, cansativo"*;
+> *"sempre pesquise e se atualize para que as atividades sejam algo diferenciado, o
+> pensar fora da caixa, a ideia inovadora que tanto falo, para que eu me destaque
+> na minha área"*.
+>
+> Isto **não é enfeite: é critério de aprovação**, no mesmo nível dos 4 pilares.
+> O que já está no motor e tem que continuar em toda atividade nova:
+> - **Lacuna de curiosidade (Loewenstein):** o problema ANTES do conceito — a
+>   criança percebe que não sabe e QUER saber. É o Portão 0 da filosofia.
+> - **Prática de recuperação + revisão espaçada (Roediger, Bjork):** o Aquecimento
+>   no meio da atividade não é enchimento — é o que fixa.
+> - **"Dificuldade desejável" (Bjork):** errar e ser ajudado por andaime crescente
+>   (dica → apoio concreto → revelar) ensina mais que acertar de primeira.
+> - **Carga cognitiva (Sweller):** uma ideia por tela, nada de enunciado longo,
+>   narração junto com a figura (princípio da modalidade, Mayer).
+> - **Concreto → figural → simbólico (Bruner/CPA):** todo degrau sobe assim.
+> - **Autonomia, competência e vínculo (Deci & Ryan):** escolher o crachá, ver a
+>   barra andar, o mascote que torce. Nota nunca; parecer sempre.
+> - **Feedback imediato e específico (Hattie):** o erro responde na hora e diz o
+>   que olhar — nunca "errou".
+> - **Fecho com gancho:** a atividade termina deixando uma pergunta aberta (a
+>   exposição do museu, o post-it de curiosidade) — é o "quero mais".
+>
+> **E o pensar fora da caixa:** antes de montar o roteiro, ler o
+> `CATALOGO-DINAMICAS-INTERATIVAS.md` e PESQUISAR mecânica nova; a atividade tem
+> que ter pelo menos uma coisa que ele nunca viu (o simulador de enchente, a
+> exposição de fotos reais, a máquina do tempo). Repetir o que já foi feito é o
+> contrário do que ele pede.
+
 > ## 🚫🧬 RESTO DE CLONE: NUNCA MAIS (ordem do Marcos, ago/2026)
 > Palavras dele: *"favor não poder mais haver resto do clone, faça com que isso não
 > aconteça mais"* e *"tem que aprender com os erros automaticamente e eles não podem
