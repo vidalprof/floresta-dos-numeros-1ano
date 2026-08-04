@@ -82,10 +82,23 @@ jobs:
               print("OK -> %s (%d bytes, %s)"%(out, len(b), modelo))
 
           def pollinations():
+              # ⚠️ o Pollinations e gratis e as vezes devolve 500 do proprio
+              # servidor. Sem repetir, uma soluco dele parava a producao — foi o
+              # que aconteceu na cartografia (ago/2026). Agora insiste.
               url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true&model=flux"%(
                   urllib.parse.quote(prompt), os.environ.get("W","768"), os.environ.get("H","1024"))
-              req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
-              return urllib.request.urlopen(req, timeout=180).read()
+              ultimo=None
+              for tent,espera in enumerate([8,20,45,0]):
+                  try:
+                      req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
+                      dados=urllib.request.urlopen(req, timeout=180).read()
+                      if dados and len(dados)>4000: return dados
+                      ultimo="resposta vazia (%d bytes)"%len(dados or b"")
+                  except Exception as e:
+                      ultimo=str(e)[:150]
+                  print("pollinations (tentativa %d): %s"%(tent+1, ultimo))
+                  if espera: time.sleep(espera)
+              raise RuntimeError("Pollinations nao devolveu imagem: %s"%ultimo)
 
           def gemini():
               key=os.environ.get("GEMINI_API_KEY","").strip()
