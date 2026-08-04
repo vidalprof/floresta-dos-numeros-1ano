@@ -55,10 +55,16 @@ for m in re.finditer(r"^function\s+([A-Za-z_$][\w$]*)\s*\(", js, re.M):
 # telas de serviço não contam como fase de conteúdo
 SERVICO = ("telaCapa", "telaQuem", "telaMestre", "telaPainel", "telaFim")
 def so_narrativa(c):
-    """tela de historia: fala, mostra, e tem so o botao de seguir. Nao pede gesto,
-       entao nao entra na conta da variedade (mas continua tendo que falar)."""
-    cliques = len(re.findall(r"\.onclick\s*=", c))
-    return cliques <= 1 and not re.search(r'el\("div","(opt|tecl|pc |cx|bin|lig|cel|carta|mcarta|pal|peca)', c)
+    """tela de historia: fala, mostra, e tem SO o botao de seguir.
+       ⚠️ contar `.onclick=` nao basta: uma fase que monta 8 botoes dentro de um
+       `for` tem UMA ocorrencia de onclick no texto e parecia narrativa. A marca
+       de verdade da tela narrativa e ter o botao grande de seguir e mais nada:
+       nada de campo de escrever, nada de deslizar, nada de alvo em laco."""
+    if re.search(r'type\s*=\s*"text"|el\("textarea"|oninput|onchange|type="range"', c):
+        return False
+    if not re.search(r'el\("button","btn', c):
+        return False
+    return len(re.findall(r"\.onclick\s*=", c)) <= 1
 
 fases = [(n, c) for n, c in telas
          if not any(n.lower().startswith(s.lower()) for s in SERVICO)
