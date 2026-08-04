@@ -28,8 +28,11 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .bento.gg{width:252px;height:252px}.bento.pq{width:136px;height:136px}
 .bento .lay{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain}
 .bento .fala,.bento .pisca{opacity:0}
-@-webkit-keyframes bob{0%,100%{-webkit-transform:translateY(0) rotate(-1.5deg)}50%{-webkit-transform:translateY(-8px) rotate(1.5deg)}}
-@keyframes bob{0%,100%{transform:translateY(0) rotate(-1.5deg)}50%{transform:translateY(-8px) rotate(1.5deg)}}
+/* ⚠️ o Bento e de CORPO INTEIRO (mais alto que largo). A inclinacao de 1,5 grau
+   do molde — que passa despercebida num mascote redondo — aqui balanca a cabeca
+   uns 6px e parece TREMIDA (o Marcos viu na hora). Menos giro, mesmo flutuar. */
+@-webkit-keyframes bob{0%,100%{-webkit-transform:translateY(0) rotate(-0.5deg)}50%{-webkit-transform:translateY(-9px) rotate(0.5deg)}}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-0.5deg)}50%{transform:translateY(-9px) rotate(0.5deg)}}
 .btn{border:0;cursor:pointer;font-family:inherit;font-weight:700;font-size:20.9px;color:#fff;padding:15px 30px;border-radius:999px;
   background:-webkit-linear-gradient(top,#4f8bf0,var(--tinta));background:linear-gradient(#4f8bf0,var(--tinta));
   -webkit-box-shadow:0 6px 0 var(--tinta-d),0 12px 18px rgba(0,0,0,.28);box-shadow:0 6px 0 var(--tinta-d),0 12px 18px rgba(0,0,0,.28);
@@ -719,6 +722,17 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   background:-webkit-linear-gradient(top,#2f7a1c,#1d4f0d);background:linear-gradient(#2f7a1c,#1d4f0d);
   -webkit-box-shadow:0 5px 0 #143808,0 10px 16px rgba(0,0,0,.25);box-shadow:0 5px 0 #143808,0 10px 16px rgba(0,0,0,.25)}
 .btntreino small{display:block;font-size:12px;font-weight:600;opacity:.92;margin-top:2px}
+/* caminhoes da fase de arrastar (a unica com arrasto) */
+.cams{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;gap:8px;margin-top:12px;max-width:380px}
+.cam{position:relative;width:104px;padding:6px 4px 4px;border-radius:14px;background:rgba(255,253,244,.94);border:2px solid var(--linha);border-bottom-width:5px;cursor:pointer;text-align:center}
+.cam img{display:block;height:52px;width:auto;margin:0 auto}
+.camn{font-size:19px;font-weight:800;color:var(--tinta-d);margin-top:2px}
+.cam.mira{border-color:var(--dourado);background:#fff6d8}
+.cam.ok{border-color:#2c7318;background:-webkit-linear-gradient(top,#8be05a,#3f9a26);background:linear-gradient(#8be05a,#3f9a26)}
+.cam.ok .camn{color:#fff}
+.cam.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
+.pc.sel{border-color:var(--dourado);background:#fff6d8}
+.pc.fantasma{position:fixed;z-index:60;pointer-events:none;opacity:.92;-webkit-transform:scale(1.06);transform:scale(1.06);-webkit-box-shadow:0 10px 20px rgba(0,0,0,.35);box-shadow:0 10px 20px rgba(0,0,0,.35)}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -732,7 +746,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 <script>
 "use strict";
 /* ================= IMAGENS ================= */
-var IMGS=["cq_base","cq_fala","cq_pisca","cq_cr1","cq_cr2","cq_cr3","cq_cr4","cq_cr5","cq_cr6","nm_horta","nm_portao","nm_criancas","nm_arvore","nm_cachorro","nm_bicicletas","nm_med"];
+var IMGS=["fb_base","fb_fala","fb_pisca","fb_cr1","fb_cr2","fb_cr3","fb_cr4","fb_cr5","fb_cr6","fb_bola","fb_boneca","fb_caixa","fb_caixote","fb_carrinho","fb_cubo","fb_med","fb_mola","fb_parafuso","fb_piao","fb_roda","fb_urso"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1633,7 +1647,7 @@ function fInversa(){
           var ce=centroTela(b); faisca(ce[0],ce[1],"#ffb45e",14);
           setTimeout(function(){ idx++;
             if(idx>=INVP.length){ depoisDaFala("fb_inv_revela",11000,function(){
-              mostraBanner("Procurar <b>quantas caixas</b> &#233; dividir. Multiplicar e dividir andam juntos!",fPedido); }); }
+              mostraBanner("Procurar <b>quantas caixas</b> &#233; dividir. Multiplicar e dividir andam juntos!",fLigar); }); }
             else { err=0; passo(); }
           },1600);
         } else { err++; b.className="tecl no"; sErro();
@@ -1733,7 +1747,7 @@ function fEstimativa(){
           var ce=centroTela(o); faisca(ce[0],ce[1],"#ffb45e",14);
           setTimeout(function(){ idx++;
             if(idx>=ESTM.length){ depoisDaFala("fb_estm_revela",10000,function(){
-              mostraBanner("Arredondar d&#225; a resposta <b>na hora</b>, sem conta grande!",fCria); }); }
+              mostraBanner("Arredondar d&#225; a resposta <b>na hora</b>, sem conta grande!",fCarrega); }); }
             else { err=0; passo(); }
           },1500);
         } else { err++; o.className="opt no"; sErro(); consolo();
@@ -1905,6 +1919,159 @@ function fCaca(){
   t.appendChild(c);app.appendChild(t);
   montaBarra("fb_caca_dica","Resolva primeiro, procure depois.");
   falar("fb_caca_intro");
+}
+
+
+/* ---------- ⭐ LIGAR: a situação e a conta (leitura, não teclado) ----------
+   Aqui a criança NAO digita numero nenhum: ela LE a situacao e acha a conta que
+   conta aquela historia. Mecanica de duas colunas (toque na esquerda, depois na
+   direita), diferente de todas as outras fases.                             */
+function fLigar(){
+  limpa();var t=el("div","tela");setProg(t,74);
+  var pares=[["7 caixas com 8 bolas","7 &#215; 8"],
+             ["6 fileiras de 9 cubos","6 &#215; 9"],
+             ["4 modelos em 5 cores","4 &#215; 5"],
+             ["3 caixotes de 100","3 &#215; 100"],
+             ["cada carrinho leva 4 rodas, s&#227;o 6 carrinhos","6 &#215; 4"],
+             ["9 sacolas com 7 pi&#245;es","9 &#215; 7"]];
+  var dir=[2,5,4,0,3,1],selE=null,feitos=0,err=0;
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEDIDOS EMBARALHADOS"));
+  var bal=el("div","balao","Toque na <b>situa&#231;&#227;o</b> e depois na <b>conta</b> que conta essa hist&#243;ria.");c.appendChild(bal);
+  var cols=el("div","cols"),ce1=el("div","col"),ce2=el("div","col"),i;
+  for(i=0;i<pares.length;i++){(function(k){
+    var d=el("div","lig",pares[k][0]);
+    d.onclick=function(){ if(d._ok)return; arma(); sTap();
+      var all=ce1.getElementsByClassName("lig"),z;
+      for(z=0;z<all.length;z++) if(!all[z]._ok) all[z].className="lig";
+      selE=k; d.className="lig sel"; };
+    d._k=k; ce1.appendChild(d);
+  })(i);}
+  for(i=0;i<dir.length;i++){(function(k){
+    var d=el("div","lig",pares[k][1]);
+    d.onclick=function(){ if(d._ok)return; arma();
+      if(selE===null){ bal.innerHTML="Primeiro toque numa <b>situa&#231;&#227;o</b>, do lado de cima."; return; }
+      if(selE===k){ d._ok=1; d.className="lig ok"; feitos++; sPop(feitos);
+        var all=ce1.getElementsByClassName("lig"),z;
+        for(z=0;z<all.length;z++) if(all[z]._k===k){ all[z]._ok=1; all[z].className="lig ok"; }
+        selE=null;
+        var cc=centroTela(d); faisca(cc[0],cc[1],"#6bd23f",10);
+        if(feitos>=pares.length){ reg("criar",err===0,err+1);
+          setTimeout(function(){ depoisDaFala("fb_lig_revela",9000,function(){
+            mostraBanner("Toda situa&#231;&#227;o vira uma conta: <b>quantos grupos</b> vezes <b>quantos em cada</b>!",fPedido); }); },600); }
+      } else { err++; d.className="lig no"; sErro();
+        setTimeout(function(){ if(!d._ok) d.className="lig"; },600);
+        var pp=(selE!==null?selE:k);
+        ajudaFb(err,{dica:"Leia de novo: <b>"+pares[pp][0]+"</b>. Quantos grupos? Quantos em cada?",
+                     revelar:function(){ var z,a2=ce2.getElementsByClassName("lig");
+                       for(z=0;z<a2.length;z++) if(!a2[z]._ok&&a2[z].innerHTML===pares[pp][1]) acende(a2[z]); }});
+      }
+    };
+    ce2.appendChild(d);
+  })(dir[i]);}
+  cols.appendChild(ce1);cols.appendChild(ce2);c.appendChild(cols);
+  c.appendChild(el("div","hint","Primeiro a situa&#231;&#227;o, depois a conta."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("fb_lig_dica","Procure no texto quantos grupos e quantos vao em cada grupo.");
+  falar("fb_lig_intro");
+}
+
+/* ---------- ⭐ CARREGAR O CAMINHÃO (ARRASTAR — a única fase de arrasto) ------
+   O manual manda: onde a acao natural e "levar um item ate um lugar", a
+   mecanica e ARRASTAR. Aqui a crianca leva cada caixote ate o caminhao certo.
+   ⚠️ Lição paga na Legenda do Clique: NAO dar preventDefault no touchstart —
+   isso mata o clique sintetico e a crianca que nao consegue arrastar fica sem
+   saida. Por isso o TOQUE simples tambem resolve (leva para a 1a vaga livre). */
+var CARGA=[{c:"6 &#215; 7",v:42},{c:"9 &#215; 3",v:27},{c:"8 &#215; 8",v:64},
+           {c:"5 &#215; 9",v:45},{c:"4 &#215; 6",v:24},{c:"7 &#215; 9",v:63}];
+function fCarrega(){
+  limpa();var t=el("div","tela");setProg(t,86);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CARREGUE O CAMINH&#195;O"));
+  var bal=el("div","balao","Leve cada caixote para o caminh&#227;o do <b>total certo</b>. Arraste, ou toque no caixote e depois no caminh&#227;o.");
+  c.appendChild(bal);
+  var lista=baguncar(CARGA.slice(0)),feitos=0,err=0,sel=null;
+  var alvos=baguncar(CARGA.slice(0)),cams=el("div","cams"),i,vagas=[];
+  for(i=0;i<alvos.length;i++){(function(it){
+    var v=el("div","cam");
+    v.appendChild(imgEl("fb_caixote"));
+    v.appendChild(el("div","camn",""+it.v));
+    v._v=it.v;
+    cams.appendChild(v); vagas.push(v);
+  })(alvos[i]);}
+  var mao=el("div","pcs"),pecas=[];
+  for(i=0;i<lista.length;i++){(function(it){
+    var b=el("div","pc",it.c);
+    b._v=it.v;
+    pecas.push(b); mao.appendChild(b);
+  })(lista[i]);}
+  c.appendChild(mao); c.appendChild(cams);
+  c.appendChild(el("div","hint","S&#227;o seis caixotes e seis caminh&#245;es."));
+  t.appendChild(c);app.appendChild(t);
+
+  function entrega(b,v){
+    if(b._ok||v._ok) return;
+    if(b._v!==v._v){ err++; b.className="pc no"; v.className="cam no"; sErro();
+      setTimeout(function(){ if(!b._ok) b.className="pc"; if(!v._ok) v.className="cam"; },600);
+      ajudaFb(err,{dica:"Resolva <b>"+b.innerHTML+"</b> e procure esse n&#250;mero no caminh&#227;o.",
+                   revelar:function(){ var z; for(z=0;z<vagas.length;z++) if(!vagas[z]._ok&&vagas[z]._v===b._v) acende(vagas[z]); }});
+      return; }
+    b._ok=1; v._ok=1; b.className="pc usada"; v.className="cam ok";
+    feitos++; sPop(feitos); sCerto();
+    var cc=centroTela(v); faisca(cc[0],cc[1],"#6bd23f",12);
+    if(feitos>=lista.length){ reg("multiplos",err===0,err+1);
+      setTimeout(function(){ depoisDaFala("fb_carr_revela",9000,function(){
+        mostraBanner("Caminh&#245;es carregados! Voc&#234; resolveu <b>seis contas</b> de cabe&#231;a.",fCria); }); },600); }
+  }
+  function vagaLivrePara(b){ var z; for(z=0;z<vagas.length;z++) if(!vagas[z]._ok&&vagas[z]._v===b._v) return vagas[z]; return null; }
+
+  function daArrasto(b){
+    var g=null,dx=0,dy=0,x0=0,y0=0,pegou=false,moveu=false,tratado=0;
+    function pto(e){ var s=(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||e;
+      return [s.clientX,s.clientY]; }
+    function alvoEm(x,y){ var z; for(z=0;z<vagas.length;z++){ if(vagas[z]._ok) continue;
+      var r=vagas[z].getBoundingClientRect();
+      if(x>=r.left-8&&x<=r.right+8&&y>=r.top-8&&y<=r.bottom+8) return vagas[z]; } return null; }
+    function pega(e){ if(b._ok) return; var q=pto(e);
+      pegou=true; moveu=false; x0=q[0]; y0=q[1];
+      var r=b.getBoundingClientRect(); dx=q[0]-r.left; dy=q[1]-r.top;
+      g=b.cloneNode(true); g.className="pc fantasma";
+      g.style.width=r.width+"px"; g.style.left=(q[0]-dx)+"px"; g.style.top=(q[1]-dy)+"px";
+      document.body.appendChild(g); }
+    function move(e){ if(!pegou||!g) return; var q=pto(e);
+      if(Math.abs(q[0]-x0)>6||Math.abs(q[1]-y0)>6) moveu=true;
+      g.style.left=(q[0]-dx)+"px"; g.style.top=(q[1]-dy)+"px";
+      var z,al=alvoEm(q[0],q[1]);
+      for(z=0;z<vagas.length;z++) if(!vagas[z]._ok) vagas[z].className=(vagas[z]===al)?"cam mira":"cam";
+      if(e.preventDefault&&e.type.indexOf("touch")===0) e.preventDefault(); }
+    function solta(e){ if(!pegou) return; pegou=false;
+      var q=pto(e); if(g&&g.parentNode) g.parentNode.removeChild(g); g=null;
+      var z; for(z=0;z<vagas.length;z++) if(!vagas[z]._ok) vagas[z].className="cam";
+      var al=alvoEm(q[0],q[1]);
+      if(moveu&&al){ tratado=(new Date()).getTime(); entrega(b,al); return; }
+      if(!moveu){ tratado=(new Date()).getTime(); toque(); } }
+    function toque(){ arma();
+      if(sel===b){ sel=null; b.className="pc"; return; }
+      if(sel){ sel.className="pc"; }
+      sel=b; b.className="pc sel"; sTap(); }
+    b.addEventListener("mousedown",pega);
+    document.addEventListener("mousemove",move);
+    document.addEventListener("mouseup",solta);
+    b.addEventListener("touchstart",pega);
+    document.addEventListener("touchmove",move,{passive:false});
+    document.addEventListener("touchend",solta);
+    /* o clique so age se NAO veio de um toque/arrasto ha pouco (click fantasma) */
+    b.onclick=function(){ if((new Date()).getTime()-tratado<700) return; toque(); };
+  }
+  for(i=0;i<pecas.length;i++) daArrasto(pecas[i]);
+  for(i=0;i<vagas.length;i++){(function(v){
+    v.onclick=function(){ arma();
+      if(v._ok) return;
+      if(!sel){ bal.innerHTML="Primeiro pegue um <b>caixote</b> l&#225; de cima."; return; }
+      var b=sel; sel=null; b.className="pc"; entrega(b,v); };
+  })(vagas[i]);}
+  montaBarra("fb_carr_dica","Resolva a conta do caixote e procure esse total no caminh&#227;o.");
+  falar("fb_carr_intro");
 }
 
 /* ================= ANDAIME: a criança NUNCA fica travada =================
