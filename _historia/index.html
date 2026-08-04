@@ -526,7 +526,8 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   max-width:340px;text-align:center;line-height:1.3;display:inline-block;text-shadow:none}
 .legenda{background:rgba(46,36,20,.88);padding:5px 12px;border-radius:999px;text-shadow:none;
   -webkit-align-self:center;align-self:center}
-.cnum{color:#4a4230;text-shadow:none}
+.cnum{color:#fff;text-shadow:none;background:rgba(46,36,20,.9);border-radius:6px;
+  padding:1px 4px;width:auto;min-width:20px}
 .selo{background:#5b3fd0}
 .encaixe{color:#5c5544;border-color:#b8ad93}
 .pc.art,.vaga.art.cheia{background:-webkit-linear-gradient(top,#4a7fd8,#17408f);background:linear-gradient(#4a7fd8,#17408f)}
@@ -617,7 +618,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   -webkit-box-pack:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
 .marcador span{border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:700}
 .marcador .okm{background:#cdf0bd;color:#22540f;border:2px solid #3f9a26}
-.marcador .fal{background:rgba(255,253,244,.85);color:#6b6252;border:2px solid var(--linha)}
+.marcador .fal{background:#fffdf4;color:#5f5647;border:2px solid var(--linha)}
 @media (max-height:720px){
   .paragrafo{line-height:1.85;padding:10px 9px}
   .paragrafo .pal{font-size:15px;padding:6px 8px}
@@ -715,10 +716,10 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   -webkit-box-shadow:0 6px 14px rgba(0,0,0,.35);box-shadow:0 6px 14px rgba(0,0,0,.35)}
 .postit .pttit{font-size:13.5px;font-weight:800;color:#6a4b00}
 .postit .ptcorpo{font-size:13.5px;font-weight:600;color:#4a3a10;line-height:1.35;
-  max-height:0;overflow:hidden;
+  max-height:0;overflow:hidden;visibility:hidden;
   -webkit-transition:max-height .35s ease;transition:max-height .35s ease}
 .postit.aberto{-webkit-transform:rotate(0);transform:rotate(0)}
-.postit.aberto .ptcorpo{max-height:200px;margin-top:5px}
+.postit.aberto .ptcorpo{max-height:200px;margin-top:5px;visibility:visible}
 /* --- FORCA: quem sobe é a enchente --- */
 .reguario{position:relative;width:96px;height:110px;margin-top:10px;border-radius:10px;
   overflow:hidden;background:#dfeef7;border:2px solid var(--linha)}
@@ -1188,10 +1189,11 @@ function postIt(pai,chave){
   var it=CURIOS[chave]; if(!it) return null;
   var p=el("div","postit");
   p.appendChild(el("div","pttit","&#128204; "+it.t));
-  var corpo=el("div","ptcorpo",it.x);
+  var corpo=el("div","ptcorpo","");
   p.appendChild(corpo);
   p.onclick=function(){ arma(); sTap();
-    if(p.className.indexOf("aberto")>=0){ p.className="postit"; return; }
+    if(p.className.indexOf("aberto")>=0){ p.className="postit"; corpo.innerHTML=""; return; }
+    corpo.innerHTML=it.x;
     p.className="postit aberto";
     MED.curios=(MED.curios||0)+1; salva();
     falar("hv_cur_"+chave);
@@ -1781,7 +1783,7 @@ function hCruzada(){
   limpa();var t=el("div","tela");setProg(t,86);
   var atual=0,err=0,feitos=0;
   var c=el("div","centro");
-  c.appendChild(el("div","selo","CRUZADINHA DA REDA&#199;&#195;O"));
+  c.appendChild(el("div","selo","CRUZADINHA DO VALE"));
   var bal=el("div","balao","");c.appendChild(bal);
   var gr=el("div","cruz"),linhas=[],i,j;
   for(i=0;i<CRUZH.length;i++){(function(k){
@@ -1836,7 +1838,8 @@ var MEMH=[{k:"luz",a:"lampi&#227;o",b:"l&#226;mpada"},{k:"vai",a:"carro&#231;a",
 
 function hMemoria(){
   limpa();var t=el("div","tela");setProg(t,90);
-  t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o nome com o adjetivo dele."));
+  t.appendChild(el("div","selo","MEM&#211;RIA DO TEMPO"));
+  t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o par: a coisa de <b>antigamente</b> e a parenta dela de <b>hoje</b>."));
   var baralho=[],i;
   for(i=0;i<MEMH.length;i++){ baralho.push({k:MEMH[i].k,tx:MEMH[i].a,tipo:"n"}); baralho.push({k:MEMH[i].k,tx:MEMH[i].b,tipo:"a"}); }
   baguncar(baralho);

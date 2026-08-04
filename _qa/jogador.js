@@ -27,7 +27,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
  await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(id,ms,cb){setTimeout(cb,120);}; });
  await p.evaluate((t)=>{ (window[t]||telaCapa)(); }, process.env.INICIO||'telaCapa');
  let visto=[], ultimo='', paradas=0;
- const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel'+',.ferr,.vaso,.carta,.zona,.tec,.slot,.mcarta,.gfoto,.pal,.fichaP,.cx,.tlin,.vaga,.relcard,.alim,.rpos,.moeda'+',.pt,.plb,.fs,.errow';
+ const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel'+',.ferr,.vaso,.carta,.zona,.tec,.slot,.mcarta,.gfoto,.pal,.fichaP,.cx,.tlin,.vaga,.relcard,.alim,.rpos,.moeda'+',.pt,.plb,.fs,.errow,.gav,.ficha,.achado,.teclafc';
  for(let i=0;i<5200;i++){
    const est=await p.evaluate(()=>{
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');
@@ -73,10 +73,31 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
        const dest=[...document.querySelectorAll('.cam[data-qa]')].find(e=>e.getAttribute('data-qa')===peca.getAttribute('data-qa')&&e.className.indexOf('ok')<0);
        if(dest){ dest.click(); return 1; }
      }
+     /* DESLIZAR (simulador): o jogador nao sabe arrastar um controle. A tela
+        publica em data-qa o valor que a fase espera. Algumas fases (a janela do
+        tempo) so liberam quando a crianca VIU todas as posicoes, entao aqui ele
+        percorre uma por uma, do menor ate o alvo, disparando 'input' em cada. */
+     const rg=[...document.querySelectorAll('input[type=range][data-qa]')]
+       .find(e=>e.offsetParent!==null);
+     if(rg){
+       const alvoV=parseInt(rg.getAttribute('data-qa'),10);
+       const mn=parseInt(rg.min||'0',10), mx=parseInt(rg.max||'0',10);
+       const at=parseInt(rg.value,10);
+       if(rg._passo===undefined) rg._passo=mn;
+       if(rg._passo<=mx){
+         /* percorre TODAS as posicoes, do menor ao maior. Ir so "um passo para
+            o lado" ficava indo e voltando entre as duas ultimas e nunca via a
+            primeira — a fase exige ter visto todas. */
+         rg.value=''+rg._passo; rg._passo++;
+         rg.dispatchEvent(new Event('input',{bubbles:true}));
+         return 1;
+       }
+       if(at!==alvoV){ rg.value=''+alvoV; rg.dispatchEvent(new Event('input',{bubbles:true})); return 1; }
+     }
      /* producao escrita: o jogador nao sabe redigir. A tela publica em data-qa
         uma resposta que serve, so para o auditor conferir que o botao aceita e
         a fase avanca. */
-     const ip=document.querySelector('input[data-qa]');
+     const ip=document.querySelector('input[data-qa]:not([type=range]),textarea[data-qa]');
      if(ip&&ip.offsetParent!==null){
        if(ip.value!==ip.getAttribute('data-qa')){
          ip.value=ip.getAttribute('data-qa');
@@ -97,8 +118,34 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          if(alvo){ alvo.click(); return 1; }
        }
      }
-     const els=[...document.querySelectorAll(sel)].filter(e=>{if(e.offsetParent===null)return false;const r=e.getBoundingClientRect();return r.width>0&&r.top<innerHeight&&r.bottom>0;});
-     if(!els.length) return 0;
+     /* ⚠️ o botao do banner (#bcta) fica SEMPRE no DOM: o banner se esconde por
+        transform, nao por display, entao offsetParent nao e null. Fora do banner
+        aberto ele guarda o onclick do banner ANTERIOR — clicar nele jogava o
+        jogador de volta para a fase passada, em loop. So vale quando o banner
+        esta aberto (classe show). */
+     const els=[...document.querySelectorAll(sel)].filter(e=>{
+       if(e.offsetParent===null) return false;
+       /* campo de texto nunca faz a fase andar — e o teclado que faz. A carta do
+          Vale usava a classe .carta (a mesma das cartas do Orbi) e o jogador
+          ficava clicando no campo em vez de apertar Enviar. */
+       if(e.tagName==='TEXTAREA'||e.tagName==='INPUT') return false;
+       if(e.id==='bcta'){ const bn=document.getElementById('banner');
+         if(!bn||bn.className.indexOf('show')<0) return false; }
+       const r=e.getBoundingClientRect();
+       return r.width>0&&r.top<innerHeight&&r.bottom>0;});
+     if(!els.length){
+       /* nada clicavel NA PARTE VISIVEL — mas pode haver logo abaixo. Uma
+          crianca rolaria a tela; o jogador nao rolava, e dava "preso" numa fase
+          que funciona (a carta do Vale: o botao Enviar fica abaixo da dobra).
+          Entao rola e tenta de novo; se ja estiver no fim, volta ao topo. */
+       const tela=document.querySelector('.tela');
+       if(tela&&tela.scrollHeight>tela.clientHeight+4){
+         const fim=tela.scrollTop+tela.clientHeight>=tela.scrollHeight-6;
+         tela.scrollTop = fim ? 0 : tela.scrollTop+Math.round(tela.clientHeight*0.6);
+         return 1;
+       }
+       return 0;
+     }
      const e=els[Math.floor(Math.random()*els.length)];
      e.click(); return 1;
    },SEL);
