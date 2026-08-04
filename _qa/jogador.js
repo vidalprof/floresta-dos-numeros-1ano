@@ -64,6 +64,15 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          }
        }
      }
+     /* levar-o-item-ate-o-lugar (arrastar OU tocar): peca e destino publicam o
+        mesmo valor em data-qa. O jogador usa o caminho do TOQUE (peca, depois
+        destino), que e o que a crianca sem arrasto usa. */
+     const peca=[...document.querySelectorAll('.pc[data-qa]')].find(e=>e.offsetParent!==null&&e.className.indexOf('usada')<0);
+     if(peca){
+       if(peca.className.indexOf('sel')<0){ peca.click(); return 1; }
+       const dest=[...document.querySelectorAll('.cam[data-qa]')].find(e=>e.getAttribute('data-qa')===peca.getAttribute('data-qa')&&e.className.indexOf('ok')<0);
+       if(dest){ dest.click(); return 1; }
+     }
      /* producao escrita: o jogador nao sabe redigir. A tela publica em data-qa
         uma resposta que serve, so para o auditor conferir que o botao aceita e
         a fase avanca. */

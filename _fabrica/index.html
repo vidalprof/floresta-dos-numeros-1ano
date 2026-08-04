@@ -2002,12 +2002,16 @@ function fCarrega(){
     v.appendChild(imgEl("fb_caixote"));
     v.appendChild(el("div","camn",""+it.v));
     v._v=it.v;
+    /* o total — SO para o auditor jogador casar caixote e caminhao.
+       Nao aparece para ninguem. */
+    v.setAttribute("data-qa",""+it.v);
     cams.appendChild(v); vagas.push(v);
   })(alvos[i]);}
   var mao=el("div","pcs"),pecas=[];
   for(i=0;i<lista.length;i++){(function(it){
     var b=el("div","pc",it.c);
     b._v=it.v;
+    b.setAttribute("data-qa",""+it.v);
     pecas.push(b); mao.appendChild(b);
   })(lista[i]);}
   c.appendChild(mao); c.appendChild(cams);
