@@ -121,8 +121,20 @@ Leia tudo antes de agir e responda sempre em **português**.
 >    **aquecimento** (revisão espaçada) no meio; **nunca** é prova disfarçada.
 > 2. **BEM ILUSTRADA** — arte própria de IA em toda tela que precisa; **nunca**
 >    emoji para a criança; **nunca** arte copiada de outra atividade.
-> 3. **SONORA** — **toda tela é narrada** com voz de verdade (Edge TTS); alto-falante
->    nas respostas para quem ainda não lê; som de acerto/erro/passo.
+> 3. **SONORA** — **toda tela é narrada** com voz de verdade (Edge TTS); som de
+>    acerto/erro/passo; e **alto-falante em TODA resposta que a criança toca**
+>    (`op_<chave>.mp3` + `VOZOK`), porque no 4º ano ainda tem quem soletra: sem a
+>    voz, a criança escolhe pelo desenho e a atividade vira loteria. Regra do
+>    Marcos, ago/2026: *"o alto-falante nas respostas também, para ajudar os
+>    alunos que não sabem ler"*.
+>
+> 3b. **AS DUAS PORTAS DE ENTRADA** — toda fase com **teclado na tela** (cruzadinha,
+>    forca, monte a palavra) tem que aceitar **também o teclado de verdade**
+>    (`document.onkeydown`), e toda fase de **arrastar** tem que aceitar **também o
+>    toque simples**. Palavras dele: *"seria interessante se o aluno além de teclar
+>    no teclado virtual funcionasse se ele tocasse no teclado de verdade, as duas
+>    opções"*. No PC da escola tem teclado e a criança vai digitar; no celular, não
+>    tem. Nunca só uma porta. Medido pelo `_qa/padrao.py`.
 > 4. **LEQUE GRANDE DE INTERATIVIDADE** — contar **GESTOS, não conteúdos**. Duas fases
 >    podem ensinar coisas diferentes e ainda assim ser, para a criança, *a mesma tela
 >    pela terceira vez*. Palavras dele (ago/2026): *"dinâmicas interativas bem variadas,

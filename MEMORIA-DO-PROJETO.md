@@ -3433,3 +3433,49 @@ que a criança leva para casa; professor não tem tempo de desmentir.
    das cartas do Órbi) e ele clicava no campo em vez do botão Enviar.
 4. **Ele não ROLAVA a tela.** Dava "preso" numa fase que funciona, só porque o
    botão ficava abaixo da dobra. Uma criança rolaria; agora ele também.
+
+---
+
+## ⌨️🔊 As duas portas de entrada + o alto-falante (regras permanentes, ago/2026)
+
+Duas regras que o Marcos pediu para valer em **todas as próximas atividades**, e
+que nasceram enquanto a Máquina do Tempo era montada.
+
+### 1. Teclado na tela? Então teclado de verdade também.
+*"essa dinâmica de aceitar também o teclado seria interessante registrar para
+todas as próximas atividades"*.
+
+Toda fase que desenha letras para tocar — **cruzadinha, forca, monte a palavra** —
+tem que escutar `document.onkeydown` além do clique. No PC da escola a criança tem
+o teclado na frente e é natural que ela digite; no celular não tem teclado nenhum.
+As duas portas ficam abertas e levam ao mesmo lugar.
+
+Molde (o mesmo nas duas fases da Máquina do Tempo):
+```js
+document.onkeydown=function(ev){
+  var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+  if(!/^[A-Z]$/.test(L)) return;
+  /* acha a tecla NA TELA com essa letra e dispara o MESMO caminho do toque */
+};
+```
+⚠️ `limpa()` faz `document.onkeydown=null` — senão a fase seguinte continuaria
+escutando as teclas da anterior.
+
+É irmã da regra do arrasto (*"quero as duas opções funcionando"*): onde há
+arrastar, o **toque simples** também resolve.
+
+**Auditor:** `_qa/padrao.py`, item 4 — fase com `.tec`/`.teclafc` sem `keydown`
+reprova. Testado com o defeito plantado.
+
+### 2. Alto-falante em toda resposta.
+*"o alto-falante nas respostas também, para ajudar os alunos que não sabem ler"*.
+
+Toda resposta tocável ganha um botãozinho de voz (`op_<chave>.mp3`, chave djb2 em
+base36, registrada em `VOZOK`; o `ZAPSEL` + MutationObserver põe o botão sozinho).
+No 4º ano ainda há quem soletre: **sem a voz, a criança escolhe pelo desenho e a
+atividade vira loteria.** Na Máquina do Tempo foram **70 vozes de resposta**.
+
+⚠️ A chave tem que ser calculada com **o mesmo hash do app** (djb2 `(h<<5)+h+c`,
+base36) sobre o texto **já sem tags e com as entidades resolvidas** — é o
+`textContent` que o app usa. Chave errada = botão que não faz nada, que é pior
+que botão nenhum.
