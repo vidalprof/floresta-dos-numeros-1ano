@@ -2917,3 +2917,48 @@ gerava alarme falso (e alarme falso ensina a ignorar o alarme):
 
 `data-qa` **não aparece para ninguém** e não muda o jogo — é só a chave do
 auditor. Órbi, Jardim, Doceria e Legenda chegam sozinhos até a medalha.
+
+## 🧨 A ÚLTIMA FASE DA LEGENDA ESTAVA QUEBRADA — e nasceu o portão 1b (ago/2026)
+
+O jogador automático, depois de aprender a preencher campo de texto, chegou na
+última fase da **Legenda do Clique** ("Escreva a legenda", 96%) e devolveu isto:
+
+> `ERROS JS: ... || normal is not defined || normal is not defined || ...`
+
+**O que estava acontecendo com a criança:** ela escrevia a legenda, apertava
+**Publicar** e **não acontecia nada**. Nem erro, nem elogio, nem passagem de
+fase. `nLegenda` chamava `normal(...)` — a função que tira acento (para "cão" e
+"cao" valerem as duas) — e essa função **nunca tinha sido copiada** para o
+arquivo; ficou só na Redação do Pingo, de onde o motor foi clonado. O app
+travava ali, na fase de PRODUÇÃO, que é a mais importante de todas.
+
+**Por que ninguém pegou antes:** o `node --check` (portão 1) só vê **sintaxe** —
+e a sintaxe estava perfeita. A tela abria bonita, a foto aparecia, o campo
+aceitava texto. O defeito só existe no instante do clique. Print de tela não
+mostra; olhar o código também não, porque o nome `normal(` parece o de sempre.
+
+### 🕵️ AUDITOR NOVO — `_qa/funcoes.py` (portão **1b** da banca)
+Junta tudo que é chamado como `nome(` no JS (**depois** de tirar comentários e
+textos entre aspas — senão qualquer palavra escrita num comentário viraria
+"chamada") e compara com tudo que o arquivo declara + os globais do navegador.
+Rodando no arquivo ANTES do conserto ele aponta em uma linha:
+
+```
+   1 FUNCAO(OES) CHAMADA(S) QUE NAO EXISTEM (estoura na mao da crianca):
+    normal()   (1a chamada por volta da linha 1049 do JS)
+```
+
+**Regra:** toda vez que eu clonar um motor e trazer só "a tela que interessa",
+alguma função de apoio fica para trás. O portão 1b existe exatamente para isso.
+
+**Ele já achou defeito parado em outras atividades** (não consertado nesta
+rodada, fica anotado para a próxima): `_clima` chama `pcor()`, `gradeStars()` e
+`nara_()`; `_estrelas` chama `pcor()`. Rodar `python3 _qa/funcoes.py <arq>` nelas
+antes de qualquer aula que as use.
+
+### O jogador também aprendeu a ESCREVER
+Sem isso o portão 6 nem alcançava a fase onde estava o defeito. A tela de
+produção publica em `data-qa` do `<input>` uma legenda que serve; o jogador
+digita, dispara o evento `input` e aperta o botão. **Lição geral:** auditor que
+não alcança a última fase dá uma sensação falsa de segurança — e o defeito mais
+caro costuma estar justamente lá, onde ninguém testa com paciência.
