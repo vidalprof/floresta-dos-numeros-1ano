@@ -109,6 +109,17 @@ Leia tudo antes de agir e responda sempre em **português**.
 > `preventDefault` no `touchstart`, que mata o toque. Este defeito o Marcos
 > pegou DUAS vezes.
 
+> **🃏⭐ CARTA DE JOGO DA MEMÓRIA É SEMPRE GRANDE** (regra permanente do Marcos,
+> ago/2026: *"quando fizer jogo da memória faça cartas maiores, registre para sempre
+> fazer isso"*). A carta de memória é o alvo mais difícil de qualquer atividade: a
+> criança precisa **ver a figura**, **ler a palavra** e ainda **lembrar onde ela
+> estava**. Carta pequena mata as três coisas de uma vez. O molde certo é **carta
+> FLUIDA, não px fixo**: `.mcarta{width:48%;max-width:210px;min-height:100px}` +
+> `.mcartas{max-width:430px;width:100%}` e, no PC largo (`min-width:760px`),
+> `.mcartas{max-width:680px}` para abrir **três colunas** e o tabuleiro caber sem
+> rolar. Em tela baixa encolhe a LETRA (`font-size`), nunca a carta. Piso medido
+> pelo auditor: **130 × 88 px** (`_qa/leiaute.js`, regra 6) — abaixo disso reprova.
+
 > **🚫⭐ NUNCA COPIAR AVATAR DE OUTRA ATIVIDADE — ARTE SEMPRE NOVA E TEMÁTICA**
 > (decisão do Marcos, ago/2026: *"nunca copiar avatares, sempre ser temático,
 > nunca repetir o avatar, sempre novo e temático"*). Ele pegou os brotinhos verdes

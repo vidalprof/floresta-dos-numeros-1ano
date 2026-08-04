@@ -12,7 +12,9 @@
      3. resposta ESCONDIDA atras da barra de baixo (Ouvir/Dica);
      4. alvo de toque pequeno demais (<40px) para dedo de crianca;
      5. BOTAO SOBRE BOTAO (pedido do Marcos, ago/2026): dois alvos que
-        se cobrem — a crianca mira num e o dedo aciona o outro.
+        se cobrem — a crianca mira num e o dedo aciona o outro;
+     6. CARTA DE MEMORIA pequena (regra permanente do Marcos, ago/2026):
+        toda .mcarta tem que ter no minimo 130 x 88 px.
    Rolagem vertical NAO e erro por si so — so e erro quando o que
    se toca fica fora.
 
@@ -120,6 +122,18 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
                               +" tapado por ."+String(hit.className||hit.tagName).split(" ")[0];
         }
         if(sobre) out.push(sobre+" alvo(s) com BOTAO SOBRE BOTAO ("+exemplo+")");
+
+        /* 6. CARTA DE MEMORIA GRANDE (regra permanente do Marcos, ago/2026:
+           "quando fizer jogo da memoria faca cartas maiores"). A carta de
+           memoria e o alvo mais dificil da atividade: a crianca tem que ver a
+           figura, ler a palavra e ainda lembrar ONDE estava. Carta pequena
+           mata as tres coisas. Piso: 130 x 88.                              */
+        const mem=[...document.querySelectorAll(".mcarta")].filter(e=>e.offsetParent!==null);
+        let pequenas=0, menor="";
+        for(const m of mem){ const r=m.getBoundingClientRect();
+          if(r.width<130||r.height<88){ pequenas++;
+            if(!menor) menor=Math.round(r.width)+"x"+Math.round(r.height); } }
+        if(pequenas) out.push(pequenas+" carta(s) de memoria pequena(s) demais, menor "+menor+" (minimo 130x88)");
         return out;
       },{sel:RESPOSTA,clic:CLICAVEL});
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);

@@ -194,8 +194,8 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .tlin.ok{border-color:var(--ok);background:#eefbe6;cursor:default}
 .tlin.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
 .tnum{display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:var(--ok);color:#fff;font-size:13px;font-weight:700;text-align:center;margin-right:7px}
-.mcartas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:9px;-webkit-box-pack:center;justify-content:center;margin-top:12px;max-width:268px}
-.mcarta{width:126px;height:78px;border-radius:15px;background:-webkit-linear-gradient(top,#5d8ee6,var(--tinta));background:linear-gradient(#5d8ee6,var(--tinta));border:2px solid var(--tinta-d);cursor:pointer;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;padding:5px;font-size:12.5px;font-weight:700;color:#fff;text-align:center;line-height:1.2;-webkit-box-shadow:0 5px 12px rgba(50,40,20,.24);box-shadow:0 5px 12px rgba(50,40,20,.24)}
+.mcartas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:9px;-webkit-box-pack:center;justify-content:center;margin-top:12px;max-width:430px;width:100%}
+.mcarta{width:48%;max-width:210px;min-height:100px;border-radius:15px;background:-webkit-linear-gradient(top,#5d8ee6,var(--tinta));background:linear-gradient(#5d8ee6,var(--tinta));border:2px solid var(--tinta-d);cursor:pointer;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;padding:5px;font-size:12.5px;font-weight:700;color:#fff;text-align:center;line-height:1.2;-webkit-box-shadow:0 5px 12px rgba(50,40,20,.24);box-shadow:0 5px 12px rgba(50,40,20,.24)}
 .mcarta.vira{background:var(--papel);border-color:var(--linha);color:var(--texto)}
 .mcarta.par{background:#d8f5c6;border-color:var(--ok);color:#2c6b13}
 .mcarta.no{-webkit-animation:shk .4s;animation:shk .4s}
@@ -213,7 +213,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   .cx{min-height:64px}.cx .cxt{font-size:12px}
   .prova{font-size:14.5px;line-height:1.65}
   .tlin{font-size:13px;padding:8px 10px}
-  .mcarta{width:116px;height:68px;font-size:11.5px}
+  .mcarta{min-height:92px;font-size:13.5px}
   .tec{width:39px;height:45px;line-height:40px;font-size:21px}
   .slot{width:35px;height:42px;line-height:38px;font-size:20px}
   .peca{padding:8px 11px;font-size:15px}
@@ -744,6 +744,13 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .mestre{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;gap:6px;margin-top:10px;width:100%;max-width:400px;max-height:56vh;overflow-y:auto}
 .mbt{background:rgba(255,253,244,.97);border:2px solid var(--linha);border-bottom-width:4px;border-radius:11px;padding:7px 9px;font-size:12.6px;font-weight:700;color:var(--tinta-d);cursor:pointer;text-align:center;min-height:40px;width:114px;line-height:1.15;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
 .mbt:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+
+/* ⭐ REGRA PERMANENTE (Marcos, ago/2026): CARTA DE MEMORIA E GRANDE.
+   "quando fizer jogo da memoria faca cartas maiores, registre para sempre".
+   A carta e FLUIDA (48% da largura) em vez de ter px fixo: no celular pequeno
+   ela ainda entra duas por linha, e no PC ela cresce ate 210px. No PC largo a
+   caixa abre para TRES colunas, e ai o tabuleiro inteiro cabe sem rolar.     */
+@media (min-width:760px){ .mcartas{max-width:680px} }
 </style></head>
 <body>
 <div id="bg"></div>

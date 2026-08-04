@@ -3238,3 +3238,36 @@ VER o salto em vez de só ler números.
 FILHOS, montar os filhos. "Tem regra base" (portão 3) não quer dizer "está com a
 cara certa"; é a segunda vez que essa mesma armadilha morde (a primeira foi a
 `.pc` sem fundo).
+
+---
+
+## 🃏 Carta de jogo da memória é SEMPRE grande (regra permanente — ago/2026)
+
+Palavras do Marcos: *"lembre-se quando fizer jogo da memória faça cartas maiores,
+registre para sempre fazer isso"*.
+
+**Por que é regra e não gosto pessoal:** a carta de memória é o alvo mais difícil
+que existe numa atividade. A criança precisa (1) **ver a figura**, (2) **ler a
+palavra** e (3) **lembrar onde ela estava**. Carta pequena mata as três de uma vez
+— e no caso da leitura, quem ainda soletra simplesmente desiste.
+
+**O molde certo (carta FLUIDA, nunca px fixo):**
+
+```css
+.mcartas{...;max-width:430px;width:100%}
+.mcarta{width:48%;max-width:210px;min-height:100px;...}
+@media (max-height:720px){ .mcarta{min-height:92px;font-size:13.5px} }  /* encolhe a LETRA */
+@media (min-width:760px){ .mcartas{max-width:680px} }                   /* PC: 3 colunas */
+```
+
+**O erro que isso corrige:** o molde vinha com `width:126px;height:78px` e, na
+janela baixa, encolhia a CARTA para 116×68. Com px fixo a carta não aproveita a
+tela: num celular de 412px ela ficava com 128px de largura quando cabiam 182px.
+Medido depois da troca: **128×80 → 182×100** no celular comum (+78% de área) e
+**210×100** no PC, onde o tabuleiro inteiro passou a caber **sem rolar**.
+
+**Aplicado em:** `_orbi`, `_fabrica`, `_doceria`, `_nomes`, `_jardim` (todos os
+que têm fase de memória).
+
+**Auditor:** `_qa/leiaute.js`, **regra 6** — mede toda `.mcarta` visível nos 6
+tamanhos de tela e reprova abaixo de **130 × 88 px**. Não dá mais para esquecer.
