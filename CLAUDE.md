@@ -109,6 +109,32 @@ Leia tudo antes de agir e responda sempre em **português**.
 > `preventDefault` no `touchstart`, que mata o toque. Este defeito o Marcos
 > pegou DUAS vezes.
 
+> ## ⭐⭐ O PADRÃO DA CASA — os 4 pilares de TODA atividade (regra permanente)
+>
+> Palavras do Marcos (ago/2026): *"ela tem que ser bem didática progressiva
+> didaticamente, bem ilustrada, sonora lembra? isso deve ser guardado para todas as
+> atividades a serem produzidas"*. Estava no costume; agora está escrito **e medido**.
+>
+> 1. **DIDÁTICA E PROGRESSIVA** — o problema vem primeiro e o conceito por ÚLTIMO
+>    (Portão 0); os degraus sobem de verdade (concreto → figural → simbólico);
+>    o andaime CRESCE a cada erro (dica → apoio concreto → revelar); tem
+>    **aquecimento** (revisão espaçada) no meio; **nunca** é prova disfarçada.
+> 2. **BEM ILUSTRADA** — arte própria de IA em toda tela que precisa; **nunca**
+>    emoji para a criança; **nunca** arte copiada de outra atividade.
+> 3. **SONORA** — **toda tela é narrada** com voz de verdade (Edge TTS); alto-falante
+>    nas respostas para quem ainda não lê; som de acerto/erro/passo.
+> 4. **LEQUE GRANDE DE INTERATIVIDADE** — contar **GESTOS, não conteúdos**. Duas fases
+>    podem ensinar coisas diferentes e ainda assim ser, para a criança, *a mesma tela
+>    pela terceira vez*. Gestos disponíveis: escolher, classificar, ligar, memória,
+>    grade/caça, montar, ordenar, arrastar, **digitar**, deslizar, pintar, explorar.
+>
+> **Auditor: `_qa/padrao.py`** (portão 0b da banca) — conta o gesto de cada fase e
+> **reprova** se um só gesto passar de **40%**, se houver menos de **4 gestos**
+> diferentes, ou se alguma fase estiver **muda**. Avisa sobre fases sem ilustração.
+> *Medição de estreia:* Fábrica 84% "escolher" (16 de 19 fases) e Doceria 64% —
+> as duas de matemática, e as duas com o mesmo defeito que o Marcos pegou na
+> Legenda. **Ficam na fila para receber o mesmo tratamento.**
+
 > **🃏⭐ CARTA DE JOGO DA MEMÓRIA É SEMPRE GRANDE** (regra permanente do Marcos,
 > ago/2026: *"quando fizer jogo da memória faça cartas maiores, registre para sempre
 > fazer isso"*). A carta de memória é o alvo mais difícil de qualquer atividade: a

@@ -3329,3 +3329,42 @@ mesmo armazenamento de cache do navegador**. Dois problemas vinham daí:
 **Auditor:** `_qa/clone.py` item 6 — reprova nome de cache igual ao de outra
 atividade, apagador sem prefixo, e lista apontando para arquivo inexistente.
 Testado com o defeito plantado: os três casos reprovam.
+
+---
+
+## ⭐⭐ O PADRÃO DA CASA virou portão (ago/2026)
+
+Palavras do Marcos, já na sétima atividade: *"ela tem que ser bem didática
+progressiva didaticamente, bem ilustrada, sonora lembra? isso deve ser guardado
+para todas as atividades a serem produzidas, se isso já não estiver guardado"*.
+
+Conferi: **não estava guardado em lugar nenhum** — nem no `CLAUDE.md`, nem no
+`MANUAL-MESTRE.md`. Era costume, e costume um dia sai errado. Agora está escrito
+no `CLAUDE.md` (bloco "O PADRÃO DA CASA") **e medido** pelo `_qa/padrao.py`
+(portão 0b da banca).
+
+**Os 4 pilares:** (1) didática e progressiva — problema primeiro, conceito por
+último, andaime que cresce, aquecimento no meio, nunca prova disfarçada;
+(2) bem ilustrada — arte de IA própria, nunca emoji, nunca arte copiada;
+(3) sonora — toda tela narrada + alto-falante nas respostas; (4) leque grande de
+interatividade — **contar GESTOS, não conteúdos**.
+
+**O auditor reprova** se um gesto passar de 40% das fases, se houver menos de 4
+gestos diferentes, ou se alguma fase estiver muda. Ele ignora as telas puramente
+narrativas (só o botão de seguir) e nunca reprova pelo balde "outro", que
+significa "não classifiquei" e não "um gesto só".
+
+### Medição de estreia (o retrato honesto das 6 atividades)
+
+| Atividade | Gesto que domina | Veredito |
+|---|---|---|
+| Legenda do Clique | digitar 21% (12 gestos) | **passa** — é a que acabou de ser tratada |
+| Órbi | escolher 38% (5 gestos) | passa |
+| Jardim do Broto | escolher 33% | passa |
+| Plantão na Redação | escolher/outro 35% | passa (1 fase muda: `telaMenu`) |
+| **Doceria do Cacau** | **escolher 64%** | **reprova** |
+| **Fábrica do Bento** | **escolher 84%** (16 de 19) | **reprova** |
+
+As duas que reprovam são as de **matemática** — e é o mesmo defeito que o Marcos
+pegou na Legenda, só que pior. **Ficam na fila** para receber o mesmo tratamento
+(trocar fases de "toque na resposta" por digitar, ordenar, deslizar, pintar).
