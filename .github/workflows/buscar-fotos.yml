@@ -15,8 +15,14 @@ on:
   workflow_dispatch:
     inputs:
       paginas:
-        description: "URLs das paginas de acervo, separadas por virgula"
-        required: true
+        description: "URLs das paginas de acervo, separadas por virgula (deixe vazio se usar 'commons')"
+        required: false
+        default: ""
+        type: string
+      commons:
+        description: "Busca no Wikimedia Commons (ex: Blumenau history). Traz LICENCA e AUTOR de cada foto."
+        required: false
+        default: ""
         type: string
       destino:
         description: "Pasta onde salvar (default _novo/fotos)"
@@ -45,6 +51,7 @@ jobs:
       - name: Baixar as imagens e montar o relatorio
         env:
           PAGINAS: ${{ inputs.paginas }}
+          COMMONS: ${{ inputs.commons }}
           DEST: ${{ inputs.destino }}
           MINKB: ${{ inputs.minkb }}
           MAXN: ${{ inputs.max }}
@@ -129,6 +136,61 @@ jobs:
                       "kb": round(len(dados) / 1024)
                   })
                   print("   OK %-28s %5d KB  %s" % (nome, len(dados) // 1024, leg[:60]))
+
+          # ---- Wikimedia Commons: API propria, com licenca e autor declarados.
+          # E a fonte CERTA para reuso: cada arquivo diz em que licenca esta e
+          # quem e o autor, entao o credito na tela sai correto.
+          busca = os.environ.get("COMMONS", "").strip()
+          if busca:
+              api = "https://commons.wikimedia.org/w/api.php"
+              q = urllib.parse.urlencode({
+                  "action": "query", "format": "json", "generator": "search",
+                  "gsrsearch": busca, "gsrnamespace": "6", "gsrlimit": "50",
+                  "prop": "imageinfo", "iiprop": "url|extmetadata|size",
+                  "iiurlwidth": "1400",
+              })
+              try:
+                  d = json.loads(pega(api + "?" + q).decode("utf-8", "replace"))
+              except Exception as e:
+                  print("!! commons nao respondeu:", e)
+                  d = {}
+              paginas_api = list((d.get("query", {}).get("pages", {}) or {}).values())
+              print("=== commons: %d resultado(s) para %r" % (len(paginas_api), busca))
+              for pg in paginas_api:
+                  if baixadas >= maxn:
+                      break
+                  ii = (pg.get("imageinfo") or [{}])[0]
+                  url = ii.get("thumburl") or ii.get("url")
+                  if not url:
+                      continue
+                  meta = ii.get("extmetadata") or {}
+                  def mv(k):
+                      v = (meta.get(k) or {}).get("value", "")
+                      return re.sub(r"<[^>]+>", " ", str(v)).strip()
+                  lic = mv("LicenseShortName") or mv("License")
+                  autor = mv("Artist")
+                  data = mv("DateTimeOriginal") or mv("DateTime")
+                  titulo_f = pg.get("title", "")
+                  try:
+                      dados = pega(url)
+                  except Exception as e:
+                      print("   x", titulo_f[:70], e)
+                      continue
+                  if len(dados) < minkb * 1024:
+                      continue
+                  ext = ".jpg" if dados[:2] == b"\xff\xd8" else (".png" if dados[1:4] == b"PNG" else "")
+                  if not ext:
+                      continue
+                  nome = "c%02d_%s%s" % (baixadas + 1, hashlib.md5(url.encode()).hexdigest()[:6], ext)
+                  open(os.path.join(dest, nome), "wb").write(dados)
+                  baixadas += 1
+                  relatorio.append({
+                      "arquivo": nome, "url": url, "commons": titulo_f,
+                      "autor": autor, "data": data, "licenca": lic,
+                      "descricao": mv("ImageDescription")[:300], "kb": round(len(dados) / 1024),
+                      "pagina": "https://commons.wikimedia.org/wiki/" + urllib.parse.quote(titulo_f.replace(" ", "_")),
+                  })
+                  print("   OK %-26s %5d KB  [%s] %s" % (nome, len(dados)//1024, lic[:18], titulo_f[:52]))
 
           json.dump(relatorio, open(os.path.join(dest, "fotos.json"), "w", encoding="utf-8"),
                     ensure_ascii=False, indent=1)
