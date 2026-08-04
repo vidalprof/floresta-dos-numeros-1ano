@@ -746,10 +746,19 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .valebox .morro{position:absolute;left:0;right:0;top:14%;height:56%;background:#7a9c4a;
   border-top-left-radius:60% 90%;border-top-right-radius:60% 90%}
 .valebox .arvores{position:absolute;left:0;right:0;top:0;height:100%}
-.valebox .arv{position:absolute;top:14%;width:12px;height:26px;background:#2f6b18;border-radius:6px 6px 3px 3px}
+.valebox .arv{position:absolute;top:13%;width:14px;height:30px;background:#2f6b18;
+  border-radius:50% 50% 40% 40%}
+.valebox .arv:after{content:"";position:absolute;left:50%;bottom:-6px;margin-left:-2px;
+  width:4px;height:8px;background:#6b4a20;border-radius:2px}
+.valebox .cidadinha:before{content:"";position:absolute;left:-4px;top:-11px;width:0;height:0;
+  border-left:44px solid transparent;border-right:44px solid transparent;border-bottom:13px solid #c05a3e}
+.valebox .cidadinha:after{content:"";position:absolute;left:9px;top:9px;width:13px;height:13px;
+  background:#8ad0f0;border:1px solid #8a7a55;
+  -webkit-box-shadow:22px 0 0 #8ad0f0,22px 0 0 1px #8a7a55,44px 0 0 #8ad0f0,44px 0 0 1px #8a7a55;
+  box-shadow:22px 0 0 #8ad0f0,22px 0 0 1px #8a7a55,44px 0 0 #8ad0f0,44px 0 0 1px #8a7a55}
 .valebox .aguavale{position:absolute;left:0;right:0;bottom:0;height:16%;background:#4aa3d8;
   -webkit-transition:height .5s ease;transition:height .5s ease}
-.valebox .cidadinha{position:absolute;left:8%;bottom:6%;width:76px;height:34px;background:#fffdf6;
+.valebox .cidadinha{position:absolute;left:8%;bottom:6%;width:80px;height:36px;background:#fffdf6;
   border:2px solid #8a7a55;border-radius:4px}
 .valebox .cidadinha.molhada{background:#cfe6f3;border-color:#4aa3d8}
 /* --- a carta (textarea) --- */
@@ -774,8 +783,14 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 <script>
 "use strict";
 /* ================= IMAGENS ================= */
+/* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
+   10 MB so de cena, o que e inviavel no PC da escola. */
+var CENAS={hv_mata:1,hv_aldeia:1,hv_barco:1,hv_colonia:1,hv_roca:1,hv_cidade:1,hv_enchente:1,hv_fundo:1};
+function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
+function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
+  e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
 var IMGS=["hv_aldeia","hv_barco","hv_base","hv_canoa","hv_carroca","hv_celular","hv_cidade","hv_colonia","hv_cr1","hv_cr2","hv_cr3","hv_cr4","hv_cr5","hv_cr6","hv_cuca","hv_enchente","hv_escola","hv_fala","hv_familia","hv_ferro","hv_fundo","hv_lampada","hv_lampiao","hv_maquina","hv_mata","hv_med","hv_onibus","hv_povo_acoriano","hv_povo_africano","hv_povo_alemao","hv_povo_indigena","hv_povo_italiano","hv_rio","hv_roca","hv_tanque"];
-var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}})();
+var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
 var AC=window.AudioContext||window.webkitAudioContext, ac=AC?new AC():null;
@@ -1002,12 +1017,6 @@ function normal(s){ s=(s||"").toLowerCase().replace(/\s+/g," ").replace(/^\s|\s$
   var de="áàâãäéèêëíìîïóòôõöúùûüç", pa="aaaaaeeeeiiiiooooouuuuc", i, r="";
   for(i=0;i<s.length;i++){ var k=de.indexOf(s.charAt(i)); r+= k>=0?pa.charAt(k):s.charAt(i); }
   return r; }
-/* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
-   10 MB so de cena, o que e inviavel no PC da escola. */
-var CENAS={hv_mata:1,hv_aldeia:1,hv_barco:1,hv_colonia:1,hv_roca:1,hv_cidade:1,hv_enchente:1,hv_fundo:1};
-function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
-function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
-  e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
 /* cena grande do Vale, em moldura de foto antiga */
 function cenaEl(img,legenda){
   var d=el("div","cena");

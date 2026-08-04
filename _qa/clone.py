@@ -43,7 +43,9 @@ problemas = []
 m = re.search(r"var IMGS=\[(.*?)\];", js, re.S)
 if m and os.path.isdir(img):
     nomes = re.findall(r'"([^"]+)"', m.group(1))
-    faltam = [n for n in nomes if not os.path.exists(os.path.join(img, n + ".png"))]
+    faltam = [n for n in nomes
+              if not os.path.exists(os.path.join(img, n + ".png"))
+              and not os.path.exists(os.path.join(img, n + ".jpg"))]
     if faltam:
         problemas.append("pre-carga (var IMGS) aponta para %d imagem(ns) que NAO existem aqui: %s%s"
                          % (len(faltam), ", ".join(faltam[:5]), " ..." if len(faltam) > 5 else ""))
@@ -63,9 +65,11 @@ if m and os.path.isdir(audio):
 
 # ---- 3) fala usada sem MP3
 if os.path.isdir(audio):
-    ids = set(re.findall(r'falar\("([a-z0-9_]+)"', js))
-    ids |= set(re.findall(r'depoisDaFala\("([a-z0-9_]+)"', js))
-    ids |= set(re.findall(r'montaBarra\("([a-z0-9_]+)"', js))
+    # so conta id FIXO: falar("x") fechando logo. falar("hv_cur_"+chave) monta o
+    # nome em tempo de execucao e nao da para conferir por aqui.
+    ids = set(re.findall(r'falar\("([a-z0-9_]+)"\s*\)', js))
+    ids |= set(re.findall(r'depoisDaFala\("([a-z0-9_]+)"\s*,', js))
+    ids |= set(re.findall(r'montaBarra\("([a-z0-9_]+)"\s*,', js))
     faltam = sorted(i for i in ids if not os.path.exists(os.path.join(audio, i + ".mp3")))
     if faltam:
         problemas.append("%d fala(s) usada(s) sem MP3 (o mascote fica mudo ali): %s%s"
