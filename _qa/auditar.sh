@@ -74,6 +74,10 @@ echo "--- 3c) ARTE PROPRIA (imagem copiada de outra atividade?) -"
 python3 _qa/arte_propria.py "$ARQ" || FALHOU=1
 
 echo
+echo "--- 3d) MASCOTE (ele treme ao falar ou piscar?) ---"
+python3 _qa/mascote.py "$ARQ" || FALHOU=1
+
+echo
 echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
 node _qa/contraste.js "$ARQ" $TELAS 2>/dev/null || FALHOU=1
 
