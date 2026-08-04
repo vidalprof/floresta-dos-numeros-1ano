@@ -159,6 +159,38 @@ if os.path.exists(sw):
         else:
             print("   service worker: nome proprio e lista de arquivos batendo")
 
+
+# ---- 7) O RELATORIO DO PROFESSOR falando de OUTRA materia
+#   ⚠️ LIÇÃO PAGA (o Marcos pegou, ago/2026): a Máquina do Tempo (História) tinha
+#   o painel INTEIRO da Legenda do Clique — "Concordância nominal", "Formar
+#   adjetivo por sufixo", "Montar o grupo nominal", e o trecho do currículo de
+#   Português. O `var DOM` estava certo, as fases estavam certas, mas os rótulos
+#   do parecer eram strings soltas que ninguém trocou. O professor ia imprimir
+#   um parecer da matéria errada.
+#   Regra: os rótulos do parecer (CONCN) têm que cobrir EXATAMENTE os conceitos
+#   do DOM — nem sobrando o da origem, nem faltando o daqui.
+mdom = re.search(r"var DOM=\{(.*?)\}", js, re.S)
+mcon = re.search(r"var CONCN=\{(.*?)\};", js, re.S)
+if mdom and mcon:
+    dom2 = set(re.findall(r"([a-z_]+)\s*:", mdom.group(1)))
+    con = set(re.findall(r"([a-z_]+)\s*:", mcon.group(1)))
+    sobra = sorted(con - dom2)
+    falta = sorted(dom2 - con)
+    if sobra:
+        problemas.append("o parecer do professor (CONCN) tem rotulo de conceito que NAO existe "
+                         "nesta atividade — e da atividade de origem: %s" % ", ".join(sobra))
+    if falta:
+        problemas.append("o parecer do professor (CONCN) nao tem rotulo para: %s "
+                         "(o professor le o nome tecnico)" % ", ".join(falta))
+    if not sobra and not falta:
+        print("   parecer do professor: rotulos batendo com os conceitos daqui")
+
+# ---- 7b) campo de MED que o painel le e ninguem preenche
+for campo in sorted(set(re.findall(r"MED\.([a-z]+)(?:&&|\.length|\[)", js))):
+    if not re.search(r"MED\.%s\s*=|%s\s*:" % (campo, campo), js):
+        problemas.append("o painel le MED.%s, mas nada nesta atividade preenche esse campo "
+                         "(era da origem)" % campo)
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")
