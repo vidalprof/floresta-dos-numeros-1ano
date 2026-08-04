@@ -74,6 +74,8 @@ GESTOS = [
     ("arrastar",   r'addEventListener\("touchmove"'),
     ("pintar",     r'"pal pint|pint "|marcaTexto|"paragrafo"'),
     ("memoria",    r'"mcarta"'),
+    ("forca",      r'"forca"|"letrasfc"|"boneco"|forcaErros'),
+    ("simulador",  r'"simul"|"medidor"|regula\(|"linhatempo"'),
     ("grade",      r'el\("div","cel"'),
     ("ligar",      r'el\("div","lig"'),
     ("classificar", r'el\("div","cx"|el\("div","bin"|"gav"'),

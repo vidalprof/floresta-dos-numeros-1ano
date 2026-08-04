@@ -125,8 +125,22 @@ Leia tudo antes de agir e responda sempre em **português**.
 >    nas respostas para quem ainda não lê; som de acerto/erro/passo.
 > 4. **LEQUE GRANDE DE INTERATIVIDADE** — contar **GESTOS, não conteúdos**. Duas fases
 >    podem ensinar coisas diferentes e ainda assim ser, para a criança, *a mesma tela
->    pela terceira vez*. Gestos disponíveis: escolher, classificar, ligar, memória,
->    grade/caça, montar, ordenar, arrastar, **digitar**, deslizar, pintar, explorar.
+>    pela terceira vez*. Palavras dele (ago/2026): *"dinâmicas interativas bem variadas,
+>    completar lacunas, digitar resposta, **forca**, memória, caça-palavras, cruzadinha,
+>    quiz, **simuladores**, e todas as dinâmicas das pesquisas e nosso leque, verificando
+>    quais dinâmicas se encaixam melhor na atividade em questão... variedade de dinâmicas
+>    para o estudante não se cansar"*.
+>    - **O leque completo está no `CATALOGO-DINAMICAS-INTERATIVAS.md`** (11 famílias,
+>       das pesquisas). Ler antes de montar o roteiro de fases.
+>    - **Os clássicos que ele nomeou, e que TÊM que estar no cardápio:** quiz, completar
+>       lacuna, digitar a resposta, **forca**, memória, caça-palavras, cruzadinha,
+>       **simulador** (deslizar e o mundo reage), classificar, ligar, ordenar/linha do
+>       tempo, arrastar, pintar/marca-texto, ensinar o mascote.
+>    - **A escolha é por ENCAIXE, não por lista:** a mecânica tem que ser o gesto natural
+>       daquele conteúdo (linha do tempo em História, simulador em Ciências, forca e
+>       cruzadinha onde a PALAVRA é o conteúdo). Mecânica enfiada à força cansa igual.
+>    - **Regra prática:** nenhum gesto acima de 40% e no mínimo 4 gestos por atividade —
+>       medido pelo `_qa/padrao.py`. Numa atividade de ~20 fases, mirar **8 a 12 gestos**.
 >
 > **Auditor: `_qa/padrao.py`** (portão 0b da banca) — conta o gesto de cada fase e
 > **reprova** se um só gesto passar de **40%**, se houver menos de **4 gestos**
