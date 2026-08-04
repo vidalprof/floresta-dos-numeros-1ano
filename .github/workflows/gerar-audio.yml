@@ -66,10 +66,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      # ⚡ SO A PASTA QUE INTERESSA. O repositorio tem ~1 GB de imagem e audio de
+      # TODAS as atividades: mesmo com fetch-depth 1, baixar a arvore inteira
+      # levava minutos. Com sparse-checkout o checkout cai para segundos.
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          sparse-checkout: |
+            _lote_falas.json
 
       - name: Instalar ffmpeg (p/ voz masculina)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg

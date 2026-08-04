@@ -786,6 +786,16 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    margem), e a ÁGUA é uma camada de CSS que sobe POR CIMA dela — o que a
    imagem sozinha nunca faria. Ao lado, a RÉGUA DO NÍVEL com as marcas dos
    metros, a mesma que a cidade olha quando o rio começa a subir.            */
+/* --- LIGAR: objeto de lado <-> contorno visto de cima (fase "Ache o par") --- */
+.lig .ligimg{width:56px;height:56px;-o-object-fit:contain;object-fit:contain;display:block;margin:0 auto 3px}
+.lig .ligtx{font-size:13px;font-weight:700;color:var(--texto);text-align:center}
+.lig.alvo{background:rgba(255,253,244,.9)}
+.lig.feita{opacity:.42;border-color:var(--ok);pointer-events:none}
+/* --- as pecas da legenda e os simbolos dentro das cartas de memoria --- */
+.peca .pecaimg{width:44px;height:44px;-o-object-fit:contain;object-fit:contain;display:block}
+.tvaga .pecaimg{width:40px;height:40px;-o-object-fit:contain;object-fit:contain;display:block}
+.memimg{width:56px;height:56px;-o-object-fit:contain;object-fit:contain;display:block;margin:0 auto}
+.silh .silimg{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;display:block}
 .reguario{position:relative;width:100%;max-width:400px;height:auto;margin-top:10px;
   border-radius:16px;overflow:hidden;border:3px solid #fffdf6;background:#cfe6f5;
   -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}

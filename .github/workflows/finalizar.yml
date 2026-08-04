@@ -24,9 +24,15 @@ jobs:
     if: contains(github.event.head_commit.message, '[imagens]')
     runs-on: ubuntu-latest
     steps:
+      # ⚡ SO A PASTA QUE INTERESSA. O repositorio tem ~1 GB de imagem e audio de
+      # TODAS as atividades: mesmo com fetch-depth 1, baixar a arvore inteira
+      # levava minutos. Com sparse-checkout o checkout cai para segundos.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          sparse-checkout: |
+            _novo
+            _gerar_imagens.json
       - name: Gerar imagens do _gerar_imagens.json (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
