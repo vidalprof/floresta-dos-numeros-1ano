@@ -45,6 +45,13 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
         ficou, so para o auditor — assim ele confere de verdade que a fase
         termina e avanca, em vez de reprovar por burrice dele. */
      const g=document.querySelector('.grade[data-qa]');
+     /* quadro de numeros (ache o total): o data-qa e SO um numero — clicar ao
+        acaso numa grade de 36 quase nunca acha. */
+     if(g&&g.offsetParent!==null&&/^\d+$/.test(g.getAttribute('data-qa')||'')){
+       const alvo=g.getAttribute('data-qa');
+       const c=[...g.children].find(e=>e.textContent.trim()===alvo&&e.className.indexOf('ok')<0);
+       if(c){ c.click(); return 1; }
+     }
      if(g&&g.offsetParent!==null){
        const pos=JSON.parse(g.getAttribute('data-qa'));
        const falta=[...document.querySelectorAll('.pchip')].filter(c=>c.className.indexOf('feito')<0);

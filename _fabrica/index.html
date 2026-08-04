@@ -327,7 +327,7 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
 .lig.no{border-color:var(--erro);background:#ffece9}
 .tbar{width:250px;height:12px;background:rgba(255,255,255,.6);border-radius:99px;overflow:hidden;margin:8px 0}
 .tbar>i{display:block;height:100%;width:100%;background:-webkit-linear-gradient(left,#ef5a4a,var(--dourado));background:linear-gradient(90deg,#ef5a4a,var(--dourado))}
-.placar{font-size:16.5px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.45);margin-bottom:6px}
+.placar{font-size:16.5px;font-weight:700;color:#fff;margin-bottom:6px;display:inline-block;padding:3px 12px;border-radius:999px;background:rgba(30,27,18,.78)}
 .relcard{width:250px;min-height:92px;background:var(--papel);border:3px solid var(--linha);border-radius:20px;display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;font-size:28.6px;font-weight:700;color:var(--tinta-d);-webkit-box-shadow:0 8px 18px rgba(50,40,20,.26);box-shadow:0 8px 18px rgba(50,40,20,.26);-webkit-transition:border-color .2s;transition:border-color .2s}
 @media (max-height:900px){.cel{height:28px;line-height:28px;font-size:15.4px}.relcard{min-height:76px;font-size:24.2px}.lig{font-size:13.2px;min-height:40px} }
 
@@ -536,8 +536,10 @@ h1{font-size:34.1px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d
   border-radius:8px;background:#f3ecda;border:1px solid #ddd3bb;font-size:15px;font-weight:800;color:var(--tinta-d)}
 .qcel.vazia{background:#fff;border:2px dashed var(--linha);color:#6b6555}
 .qcel.vazia.conta{border-color:var(--dourado);background:#fff6d8}
-.qcel.cheia{background:-webkit-linear-gradient(top,#3f9a26,#287a14);background:linear-gradient(#3f9a26,#287a14);
-  border-color:#24710f;color:#fff;-webkit-animation:pop .25s;animation:pop .25s}
+.saco{position:relative;display:inline-block}
+.saco .cont{position:absolute;bottom:-6px;left:50%;margin-left:-16px;min-width:32px;height:23px;line-height:23px;border-radius:999px;background:rgba(30,27,18,.86);color:#fff;font-size:13.5px;font-weight:800;text-align:center;padding:0 5px}
+.qcel.cheia{background:-webkit-linear-gradient(top,#2f7a1c,#1d5a0b);background:linear-gradient(#2f7a1c,#1d5a0b);
+  border-color:#164607;color:#fff;-webkit-animation:pop .25s;animation:pop .25s}
 
 @media (max-height:720px){
   .dsolto img{width:31px;height:31px}
@@ -808,7 +810,7 @@ function lcf(){c2.clearRect(0,0,cc.width,cc.height);var i;for(i=cf.length-1;i>=0
 function centroTela(e){var r=e.getBoundingClientRect();return [r.left+r.width/2,r.top+r.height/2];}
 /* ================= MEDIÇÃO ================= */
 var MED={ini:(new Date()).getTime(),ev:[],dicas:0,pre:null,pos:null,pedidos:[]};
-var DOM={grupos:0.3,soma:0.3,vezes:0.3,problema:0.3,criar:0.3};
+var DOM={parcelas:0.3,retangular:0.3,proporcao:0.3,combinar:0.3,calculo:0.3,multiplos:0.3,inversa:0.3,criar:0.3};
 
 
 function reg(c,ok,t){ MED.ev.push({c:c,ok:ok?1:0,t:t||1,ms:(new Date()).getTime()-MED.ini});
@@ -869,7 +871,7 @@ function fraseEl(palavras,alvo,onOk,onNo){
   return f;
 }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============ */
-var VOZOK={"136ffml": 1, "145j94z": 1, "1b6eyyt": 1, "1dh73vn": 1, "1dvh8bn": 1, "1hjqnfn": 1, "1l0cu5g": 1, "1l8jg15": 1, "1m66dhy": 1, "1nx2bwh": 1, "1rzlvgh": 1, "1t2g610": 1, "1uae0db": 1, "1wz2wfv": 1, "1x4zpl0": 1, "1ycxjxb": 1, "37zyhu": 1, "37zyhw": 1, "37zyhx": 1, "37zyhy": 1, "37zyhz": 1, "38ld13": 1, "38pdk2": 1, "38pdk4": 1, "38pdk5": 1, "38pdk6": 1, "39esma": 1, "39esmc": 1, "39esmd": 1, "39esme": 1, "3a47oj": 1, "3a47ol": 1, "3a47om": 1, "3a47oo": 1, "3hmtk": 1, "3hmtn": 1, "3hmto": 1, "3hmtq": 1, "3hmug": 1, "3hmvh": 1, "4dhigy": 1, "66v50q": 1, "fzwuo3": 1, "g2bwru": 1, "gtc0z6": 1, "i92590": 1, "k2ge83": 1, "lg1wrd": 1, "md8j4x": 1, "my3k7l": 1, "qfs2ox": 1, "qnbz13": 1, "wt3r5r": 1};
+var VOZOK={"1e0t67n": 1, "1e0wdbw": 1, "1j4908e": 1, "1l8jg15": 1, "1w7scbv": 1, "1w7scbz": 1, "1w7scco": 1, "38pdk2": 1, "39as3b": 1, "39esmb": 1, "66v50q": 1, "hnj2nu": 1, "i5iadc": 1, "js0oa8": 1, "ohxkn": 1, "ykeyls": 1};
 var vz=document.getElementById("vz"), zapAtual=null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -1849,7 +1851,10 @@ function fCria(){
 }
 
 /* ---------- 18) QUADRO DO ESTOQUE (achar o total no quadro) ---------- */
-var CACAF=[[6,7],[8,4],[9,6],[7,8],[6,9],[8,7],[9,9],[7,6]];
+/* ⚠️ os produtos precisam ser TODOS DIFERENTES: o quadro guarda cada numero
+   uma vez so, e uma conta repetida cairia numa celula ja marcada -> a
+   crianca ficaria presa sem ter feito nada de errado. */
+var CACAF=[[6,7],[8,4],[9,6],[7,8],[6,6],[9,7],[8,8],[9,9]];
 function fCaca(){
   limpa();var t=el("div","tela");setProg(t,92);
   var alvos=[],i;
@@ -1890,7 +1895,10 @@ function fCaca(){
     g.appendChild(cl); cels.push(cl);
   })(nums[i]);}
   function pede(){ var it=CACAF[idx];
-    bal.innerHTML="Ache no quadro o total de <b>"+it[0]+" &#215; "+it[1]+"</b>."; }
+    bal.innerHTML="Ache no quadro o total de <b>"+it[0]+" &#215; "+it[1]+"</b>.";
+    /* o total da vez — SO para o auditor jogador (no acaso ele quase nunca
+       acha numa grade de 36). Nao aparece para ninguem. */
+    g.setAttribute("data-qa",""+(it[0]*it[1])); }
   pede();
   c.appendChild(g);
   c.appendChild(el("div","hint","Resolva a conta e procure o n&#250;mero."));
