@@ -1,11 +1,12 @@
 /* Service worker — rede primeiro no HTML; cache primeiro em imagem/áudio. */
-var CACHE="doceria-cacau-v1";
+var PREFIXO="doceria-cacau-";
+var CACHE=PREFIXO+"v2";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/dc_fundo.jpg","./img/dc_base.png","./img/dc_fala.png","./img/dc_pisca.png",
  "./img/dc_brigadeiro.png","./img/dc_cupcake.png","./img/dc_biscoito.png","./img/dc_pirulito.png",
  "./audio/dc_abertura.mp3"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});
-self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE)return caches.delete(k);}));}));self.clients.claim();});
+self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});
 function guardar(req,resp){try{if(resp&&resp.status===200&&resp.type==="basic"){var cp=resp.clone();caches.open(CACHE).then(function(c){c.put(req,cp);});}}catch(x){}return resp;}
 self.addEventListener("fetch",function(e){
   if(e.request.method!=="GET")return;

@@ -108,6 +108,53 @@ if temArrasto:
     else:
         print("   arrasto: guarda de evento fantasma presente")
 
+# ---- 6) SERVICE WORKER: nome de cache alheio, lista de outra atividade, e o
+# apagador que come o cache das VIZINHAS.
+#   ⚠️ LIÇÃO PAGA (ago/2026): TODAS as atividades moram no MESMO endereço
+#   (vidalprof.github.io), então elas dividem o mesmo armazenamento de cache do
+#   navegador. Duas coisas quebravam por causa disso:
+#     (a) a Legenda tinha ficado com o CACHE e a LISTA da Redação (resto de
+#         clone): nada era pré-carregado, e as duas brigavam pelo mesmo nome;
+#     (b) o activate apagava TODO cache com nome diferente do seu — ou seja,
+#         abrir uma atividade DELETAVA o modo offline de todas as outras.
+#   Conserto: prefixo próprio por atividade e apagar só as versões dela mesma.
+sw = os.path.join(pasta, "sw.js")
+if os.path.exists(sw):
+    txt = open(sw, encoding="utf-8").read()
+    def familia(t):
+        """nome do cache SEM a versao: 'legenda-clique-v2' e 'legenda-clique-' viram
+           a mesma familia, senao um so bump de versao esconderia o nome alheio."""
+        m = re.search(r'var (?:PREFIXO|CACHE)\s*=\s*"([^"]+)"', t)
+        if not m:
+            return ""
+        return re.sub(r"-?v\d+$", "", m.group(1)).rstrip("-")
+    nome = familia(txt)
+    # o nome tem que lembrar ESTA pasta, nao a de origem
+    raiz = pasta.strip("_/").split("/")[0]
+    for outra in sorted(os.listdir(".")):
+        if not outra.startswith("_") or outra.strip("_") == raiz:
+            continue
+        osw = os.path.join(outra, "sw.js")
+        if not os.path.exists(osw):
+            continue
+        outro = familia(open(osw, encoding="utf-8").read())
+        if nome and outro == nome:
+            problemas.append("o sw.js usa o MESMO nome de cache de %s (\"%s\") — as duas dividem "
+                             "o armazenamento do navegador e se atrapalham" % (outra, nome))
+    if re.search(r"k\s*!==\s*CACHE\s*\)\s*return\s+caches\.delete", txt):
+        problemas.append("o sw.js APAGA todo cache que nao seja o dele — como todas as atividades "
+                         "moram no mesmo endereco, isso derruba o modo offline das vizinhas "
+                         "(use um PREFIXO e apague so as versoes desta atividade)")
+    ma = re.search(r"var ATIVOS=\[(.*?)\];", txt, re.S)
+    if ma:
+        sumidos = [i for i in re.findall(r'"\./([^"]*)"', ma.group(1))
+                   if i and i != "index.html" and not os.path.exists(os.path.join(pasta, i))]
+        if sumidos:
+            problemas.append("o sw.js manda pre-carregar %d arquivo(s) que NAO existem nesta "
+                             "atividade (lista da origem): %s" % (len(sumidos), ", ".join(sumidos[:4])))
+        else:
+            print("   service worker: nome proprio e lista de arquivos batendo")
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")

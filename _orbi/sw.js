@@ -1,6 +1,7 @@
 /* Service worker — REDE PRIMEIRO no HTML (nunca prende versão velha);
    CACHE PRIMEIRO em imagens/áudio (rápido em PC fraco), atualizando em 2º plano. */
-var CACHE="orbi-observatorio-v3";
+var PREFIXO="orbi-observatorio-";
+var CACHE=PREFIXO+"v4";
 var ATIVOS=["./","./index.html","./manifest.json",
  "./img/sr_pr_foguete.png","./img/sr_pr_planeta.png","./img/sr_pr_estrela.png","./img/sr_pr_satelite.png","./img/sr_pr_cometa.png","./img/sr_orbi_feliz.png","./img/sr_orbi_fala.png","./img/sr_orbi_pisca.png",
  "./img/sr_orbi_pensa.png","./img/sr_orbi_festa.png","./img/med_espaco.png",
@@ -8,7 +9,7 @@ var ATIVOS=["./","./index.html","./manifest.json",
  "./img/sr_lampada.png","./img/sr_espelho.png","./img/sr_casa.png",
  "./audio/sr_abertura.mp3","./audio/sr_prever.mp3","./audio/sr_luz_intro.mp3"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});
-self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE)return caches.delete(k);}));}));self.clients.claim();});
+self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});
 function guardar(req,resp){try{if(resp&&resp.status===200&&resp.type==="basic"){var cp=resp.clone();caches.open(CACHE).then(function(c){c.put(req,cp);});}}catch(x){}return resp;}
 self.addEventListener("fetch",function(e){
   if(e.request.method!=="GET")return;
