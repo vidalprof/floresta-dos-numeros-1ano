@@ -1117,7 +1117,7 @@ function dVezes(){
             var ce=centroTela(alvo); faisca(ce[0],ce[1],"#ffb45e",16);
             setTimeout(function(){ idx++;
               if(idx>=VEZES.length){ depoisDaFala("dc_vezes_revela",9000,function(){
-                mostraBanner("A soma virou <b>multiplica&#231;&#227;o</b>: mesmo total, menos escrita!",dGrade); }); }
+                mostraBanner("A soma virou <b>multiplica&#231;&#227;o</b>: mesmo total, menos escrita!",dAquecimento); }); }
               else { err=0; passo(); }
             },1700); }
         } else { err++; b.className="tecl no"; sErro();
@@ -1137,6 +1137,37 @@ function dVezes(){
 
 /* ---------- 6) BANDEJA EM FILEIRAS (organização retangular) ---------- */
 var GRADEP=[{l:3,co:4,doce:"dc_brigadeiro"},{l:2,co:5,doce:"dc_cupcake"},{l:4,co:3,doce:"dc_biscoito"},{l:5,co:4,doce:"dc_pirulito"}];
+/* ---------- AQUECIMENTO (revisao espacada) ----------
+   Volta ao conceito MAIS ANTIGO (grupos iguais) bem depois de ele ter sido
+   ensinado. Nao e prova: e a lembranca que segura o aprendido antes de subir
+   um degrau (aqui, a bandeja em fileiras). */
+function dAquecimento(){
+  limpa();var t=el("div","tela");setProg(t,48);var c=el("div","centro");
+  c.appendChild(cacauEl("pq"));
+  c.appendChild(el("div","selo","LEMBRANDO..."));
+  var ban=el("div","bancada"),i;
+  for(i=0;i<4;i++) ban.appendChild(bandejaEl("dc_biscoito",3,false));
+  c.appendChild(ban);
+  c.appendChild(el("div","balao","Antes de seguir: estas caixinhas est&#227;o em <b>grupos iguais</b>. Qual soma combina com elas?"));
+  var op=el("div","opts col");
+  var alts=[["4 + 4 + 4",false],["3 + 3 + 3 + 3",true],["3 + 4",false]];
+  var resp=false;
+  for(i=0;i<alts.length;i++){(function(txt,certo){
+    var o=el("div","opt",txt);
+    o.onclick=function(){ if(resp)return; arma();
+      if(certo){ resp=true; o.className="opt ok"; sCerto(); elogio(); reg("grupos",true,1);
+        var ce=centroTela(o); faisca(ce[0],ce[1],"#ffb45e",14);
+        setTimeout(dGrade,1400); }
+      else { o.className="opt no"; sErro(); consolo(); reg("grupos",false,2);
+        setTimeout(function(){ o.className="opt"; },700); }
+    };
+    op.appendChild(o);
+  })(alts[i][0],alts[i][1]);}
+  c.appendChild(op);
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("dc_aquec_dica","S&#227;o <b>quatro</b> caixinhas com <b>tr&#234;s</b> em cada.");
+  falar("dc_aquec_intro");}
+
 function dGrade(){
   var idx=0,err=0;
   function passo(){

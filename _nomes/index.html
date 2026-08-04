@@ -941,7 +941,7 @@ function nGrupo(){
         var ce=centroTela(vagas); faisca(ce[0],ce[1],"#ffb45e",16);
         setTimeout(function(){ idx++;
           if(idx>=ordem.length){ depoisDaFala("nm_grupo_revela",9000,function(){
-            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nPlural); }); }
+            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nAquecimento); }); }
           else { err=0; passo(); }
         },1000);
       }
@@ -1023,6 +1023,34 @@ var PLU=[
  {img:"nm_bicicletas",pre:"As bicicletas",falta:"coloridas",iscas:["colorida","colorido"]},
  {img:"nm_criancas",  pre:"As crian&#231;as",  falta:"alegres",  iscas:["alegre","alegro"]},
  {img:"nm_arvore",    pre:"A &#225;rvore",     falta:"florida",  iscas:["floridas","florido"]}];
+/* ---------- AQUECIMENTO (revisao espacada) ----------
+   Volta ao conceito MAIS ANTIGO (reconhecer nome x adjetivo) bem depois de ele
+   ter sido ensinado, logo antes de subir o degrau da concordancia. Nao e prova:
+   e a lembranca que segura o aprendido. */
+function nAquecimento(){
+  limpa();var t=el("div","tela");setProg(t,60);var c=el("div","centro");
+  c.appendChild(cliqueEl("pq"));
+  c.appendChild(el("div","selo","LEMBRANDO..."));
+  c.appendChild(el("div","balao","Antes de seguir: na legenda <b>a flor amarela</b>, qual palavra diz <b>como &#233;</b>?"));
+  var op=el("div","opts col");
+  var alts=[["a",false],["amarela",true],["flor",false]];
+  var i,resp=false;
+  for(i=0;i<alts.length;i++){(function(txt,certo){
+    var o=el("div","opt",txt);
+    o.onclick=function(){ if(resp)return; arma();
+      if(certo){ resp=true; o.className="opt ok"; sCerto(); elogio(); reg("reconhecer",true,1);
+        var ce=centroTela(o); faisca(ce[0],ce[1],"#ffb45e",14);
+        setTimeout(nPlural,1400); }
+      else { o.className="opt no"; sErro(); consolo(); reg("reconhecer",false,2);
+        setTimeout(function(){ o.className="opt"; },700); }
+    };
+    op.appendChild(o);
+  })(alts[i][0],alts[i][1]);}
+  c.appendChild(op);
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("nm_aquec_dica","O <b>nome</b> diz o que &#233;. O <b>adjetivo</b> diz como &#233;.");
+  falar("nm_aquec_intro");}
+
 function nPlural(){
   var idx=0,err=0;
   function passo(){
@@ -1502,6 +1530,9 @@ function nCruzada(){
     bal.innerHTML="<b>"+(atual+1)+".</b> "+it.d;
     for(k=0;k<linhas.length;k++) linhas[k].el.className="clinha"+(k===atual?" ativa":"")+(k<feitos?" pronta":"");
     letras.innerHTML="";
+    /* a palavra da vez — SO para o auditor jogador conseguir montar (no acaso
+       ele nunca acerta a ordem). Nao aparece para ninguem. */
+    letras.setAttribute("data-qa",it.p);
     var passo=0,ls=baguncar(it.p.split(""));
     for(k=0;k<ls.length;k++){(function(Lt){
       var b=el("div","tec",Lt);

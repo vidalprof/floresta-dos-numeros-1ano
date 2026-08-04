@@ -57,6 +57,19 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          }
        }
      }
+     /* monte a palavra: as letras estao embaralhadas e so valem NA ORDEM. No
+        acaso o jogador nunca escreve ESTRELA. A tela publica a palavra da vez
+        em data-qa, so para o auditor. */
+     const lt=document.querySelector('.letras[data-qa]');
+     if(lt&&lt.offsetParent!==null){
+       const pal=lt.getAttribute('data-qa')||'';
+       const tec=[...lt.children];
+       const passo=tec.filter(b=>b.className.indexOf('usada')>=0).length;
+       if(passo<pal.length){
+         const alvo=tec.find(b=>b.className.indexOf('usada')<0&&b.textContent.trim()===pal.charAt(passo));
+         if(alvo){ alvo.click(); return 1; }
+       }
+     }
      const els=[...document.querySelectorAll(sel)].filter(e=>{if(e.offsetParent===null)return false;const r=e.getBoundingClientRect();return r.width>0&&r.top<innerHeight&&r.bottom>0;});
      if(!els.length) return 0;
      const e=els[Math.floor(Math.random()*els.length)];
