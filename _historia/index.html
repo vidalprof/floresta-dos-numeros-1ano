@@ -1726,6 +1726,13 @@ function hForca(){
           },3200); }
       }
     }
+    /* ⭐ TECLADO DE VERDADE também aqui (regra da casa, ago/2026): toda fase com
+       teclado virtual aceita as duas portas — o dedo na tela e a tecla do PC. */
+    document.onkeydown=function(ev){
+      var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+      if(!/^[A-Z]$/.test(L)) return;
+      if(bts[L]&&!bts[L]._usada) tentaLetra(L,bts[L]);
+    };
     for(i=0;i<ALFA.length;i++){(function(L){
       var b=el("div","teclafc",L);
       /* qual letra ainda serve — SO para o auditor jogador. */

@@ -106,6 +106,25 @@ for n, c in fases:
     if not re.search(r"imgEl\(|fotoEl\(|cenaEl\(|<img", c):
         semimg.append(n)
 
+
+# ---- 4) TECLADO VIRTUAL sem o teclado DE VERDADE
+#   Regra permanente do Marcos (ago/2026): *"essa dinâmica de aceitar também o
+#   teclado seria interessante registrar para todas as próximas atividades"*.
+#   No PC da escola a criança tem teclado na frente e é natural que ela digite;
+#   no celular, não tem. As duas portas ficam abertas e levam ao mesmo lugar —
+#   nunca só uma. Vale para cruzadinha, forca, monte a palavra e qualquer fase
+#   que desenhe letras para tocar.
+TECVIRT = r'el\("div","(?:tec|teclafc|letra|tecla)'
+semtecla = []
+for n, c in fases:
+    if re.search(TECVIRT, c) and not re.search(r"onkeydown|addEventListener\(\s*[\"']keydown", c):
+        semtecla.append(n)
+if semtecla:
+    problemas.append("%d fase(s) com teclado NA TELA que nao aceitam o teclado DE VERDADE "
+                     "(no PC da escola a crianca vai digitar): %s" % (len(semtecla), ", ".join(semtecla)))
+elif re.search(TECVIRT, js):
+    print("   teclado: as fases de digitar aceitam a tela E o teclado de verdade")
+
 print("%s -> padrao da casa: %d fase(s) com gesto (+%d tela(s) so de narrativa)"
       % (alvo, len(fases), len(narrativas)))
 if not fases:
