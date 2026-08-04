@@ -3152,3 +3152,41 @@ quatro — ou seja, o limiar está calibrado na realidade do projeto, não no ch
 zero. Quando duas imagens precisam ser o MESMO desenho, o caminho é **editar**,
 nunca **regerar** — e depois **medir**, porque no print parado as três parecem
 iguais; o defeito só existe em movimento.
+
+## 📌 A RODADA DA FÁBRICA VIROU MANUAL: `_padrao/CLONAR-MOTOR.md` (ago/2026)
+
+Marcos: **"anote tudo para não acontecer mais"**. Anotado em três camadas, porque
+o que fica só na memória eu esqueço e o que fica só escrito eu não cumpro:
+
+1. **`_padrao/CLONAR-MOTOR.md`** — o manual completo: a tabela do que é CONTEÚDO
+   e tem que trocar ao clonar, o caso do mascote com a medida de todas as
+   atividades, o guarda do evento fantasma no arrasto, e a ordem de trabalho que
+   funcionou.
+2. **`CLAUDE.md`** — o ponteiro curto, logo abaixo do `FIM-DE-ATIVIDADE.md`, com
+   as três armadilhas maiores em destaque. É o arquivo que eu leio no começo de
+   TODA sessão.
+3. **A banca** — o que dá para medir virou portão. De 7 para **12**.
+
+### Os portões novos desta rodada
+| portão | o que pega | defeito que o gerou |
+|---|---|---|
+| **1b** `funcoes.py` | função chamada que não existe | `normal()` faltando travava a última fase da Legenda |
+| **1c** `clone.py` | resto da atividade de origem | pré-carga, alto-falante, conceitos e falas apontando para outra atividade |
+| **3b** `progressao.py` | barra andando para trás | 3 atividades com a ordem trocada |
+| **3c** `arte_propria.py` | imagem copiada de outra | avatares do Jardim dentro do Órbi |
+| **3d** `mascote.py` | mascote que treme | as 3 camadas eram desenhos diferentes |
+
+### ⚠️ O que o portão 1c achou de quebra, em atividade JÁ PUBLICADA
+- **Legenda do Clique: 9 falas sem MP3** — três fases inteiras (filtro mágico,
+  detetive da redação, encolhe e aumenta) com o **mascote MUDO**: sem introdução,
+  sem dica falada, sem a revelação do conceito. Ninguém tinha visto porque a tela
+  funciona perfeitamente; só o som some. Gravadas e publicadas.
+- **Fábrica e Doceria: pré-carga apontando para as imagens da Legenda** — 16
+  requisições 404 e nenhuma imagem própria pré-carregada.
+
+**A lição que amarra tudo:** os defeitos desta rodada não davam erro. O
+`node --check` passava, o app abria, o print ficava bonito. Eles só existem
+**em movimento** (o mascote tremendo), **no dedo** (o toque que não entrega),
+**no ouvido** (a fase muda) ou **no tempo** (a imagem que demora). Portão que
+olha só o código não pega nenhum deles — por isso a banca precisa **medir,
+tocar, ouvir e jogar**, não só ler.

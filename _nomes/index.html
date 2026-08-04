@@ -953,6 +953,13 @@ function nGrupo(){
        continua valendo para quem n&#227;o consegue arrastar.
        Detalhe pago: NAO dar preventDefault no touchstart — isso cancelaria o
        clique sint&#233;tico e mataria justamente a op&#231;&#227;o do toque.              */
+    /* ⚠️ no celular o navegador dispara mousedown/mouseup DE COMPATIBILIDADE
+       depois do toque. Sem barrar, um toque que erra (a peca nao vira "usada")
+       deixa o mouse fantasma comecar um segundo arrasto e contar o erro 2x.  */
+    var ultimoToque=0;
+    function ehMouseFantasma(e){
+      return e.type.indexOf("mouse")===0 && ((new Date()).getTime()-ultimoToque)<800;
+    }
     function daArrasto(b,p){
       var g=null,dx=0,dy=0,x0=0,y0=0,pegou=false,moveu=false,tratado=0;
       function pto(e){ var s=(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||e;
@@ -960,7 +967,8 @@ function nGrupo(){
       function mira(z){ var k; for(k=0;k<3;k++) if(!cheias[k]) vs[k].className="vaga "+alvo[k].cl+(k===z?" mira":""); }
       function limpaMira(){ var k; for(k=0;k<3;k++) if(!cheias[k]) vs[k].className="vaga "+alvo[k].cl; }
       function comeca(e){
-        if(fim||b.className.indexOf("usada")>=0) return;
+        if(fim||b.className.indexOf("usada")>=0||ehMouseFantasma(e)) return;
+        if(e.type.indexOf("touch")===0) ultimoToque=(new Date()).getTime();
         var q=pto(e),r=b.getBoundingClientRect();
         dx=q[0]-r.left; dy=q[1]-r.top; x0=q[0]; y0=q[1]; moveu=false; pegou=true;
         g=b.cloneNode(true); g.className=b.className+" fantasma";

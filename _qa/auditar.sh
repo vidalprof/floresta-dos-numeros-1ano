@@ -58,6 +58,10 @@ echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
 python3 _qa/funcoes.py "$ARQ" || FALHOU=1
 
 echo
+echo "--- 1c) RESTO DE CLONE (sobrou coisa da origem?) --"
+python3 _qa/clone.py "$ARQ" || FALHOU=1
+
+echo
 echo "--- 2) ARQUITETO DE FLUXO (da para chegar ao fim?) -"
 python3 _qa/fluxo.py "$ARQ" telaCapa || FALHOU=1
 

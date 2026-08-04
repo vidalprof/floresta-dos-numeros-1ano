@@ -16,11 +16,21 @@ Leia tudo antes de agir e responda sempre em **português**.
 > cura do "esquecimento". Toda capacidade/decisão nova → anotar lá.
 >
 > **🕵️ A BANCA DE AUDITORES roda ANTES de entregar:** `bash _qa/auditar.sh <arquivo.html>`.
-> São sete: engenheiro (`node --check`), fluxo (`_qa/fluxo.py`), designer (`_qa/classes.py`),
+> São DOZE portões, cada um nascido de um defeito que chegou perto da criança:
+> engenheiro (`node --check`), **função que não existe** (`_qa/funcoes.py` — o app
+> estoura no clique e o `node --check` não vê), **resto de clone** (`_qa/clone.py` —
+> pré-carga, alto-falante, conceitos e falas apontando para a atividade de origem),
+> fluxo (`_qa/fluxo.py`), designer (`_qa/classes.py`), **progressão** (`_qa/progressao.py`
+> — a barra andava para trás), **arte própria** (`_qa/arte_propria.py` — imagem copiada
+> de outra atividade), **mascote** (`_qa/mascote.py` — ele treme ao falar/piscar),
 > acessibilidade (`_qa/contraste.js` — mede o PIXEL real do fundo, não o CSS), narração
 > (`_qa/falas.py` — palavra que a voz erra, tipo "Complete" virando "complite"), leiaute
-> (`_qa/leiaute.js` — 6 tamanhos, resposta fora da tela, alvo < 40px), jogador (`_qa/jogador.js`
-> — joga sozinho até a medalha) e pedagogo (`_qa/curriculo.py` — a conta cabe no ano?).
+> (`_qa/leiaute.js` — 6 tamanhos, resposta fora da tela, alvo < 40px) e jogador
+> (`_qa/jogador.js` — joga sozinho até a medalha). Há ainda o pedagogo
+> (`_qa/curriculo.py`), fora da banca automática.
+> **⚠️ Portão que imprime NADA não é "passou": é "rodou CEGO"** — rodar na mão, sem
+> `2>/dev/null`, e ler o erro (já aconteceu: uma `telaBase()` estourava sem config e
+> derrubava o contraste e o leiaute na primeira tela).
 > A banca não substitui o Marcos: depois dela ainda vem o portão do professor.
 
 > **Toda atividade EducaVerso passa pelo `EDUCAVERSO-QA.md`** (3 portões: Verificar
@@ -73,6 +83,31 @@ Leia tudo antes de agir e responda sempre em **português**.
 > de resumo; (4) **"Treinar o que faltou"**, que só aparece para quem tem objetivo abaixo de
 > 75% e refaz só as fases fracas. O código pronto e as armadilhas estão nesse arquivo — copiar,
 > não reescrever. Depois de colar, rodar `bash _qa/auditar.sh` (a tela final fica mais alta).
+
+> **⭐🧬 CLONAR O MOTOR? LEIA O `_padrao/CLONAR-MOTOR.md` ANTES** (lição paga na
+> Fábrica do Bento, ago/2026 — foram SEIS defeitos do mesmo parentesco numa
+> rodada só). Clonar o motor é obrigatório, mas junto vêm pedaços que são
+> **CONTEÚDO da atividade de origem** e que **não dão erro nenhum**: o app abre
+> bonito, o `node --check` passa, o print fica perfeito, e o defeito só aparece
+> com a criança na frente. Trocar SEMPRE: `var IMGS` (pré-carga), `var VOZOK`
+> (alto-falante), `var DOM` + `ROTCRI`/`TREINO`/`CONCD` (conceitos), o prefixo
+> dos áudios, o `sw.js`/`manifest.json` e as 3 camadas do mascote.
+>
+> **🎭 O MASCOTE É O PIOR DELES:** as poses de **falar** e **piscar** NUNCA se
+> geram do zero — a IA devolve três desenhos diferentes por mais que o prompt
+> diga "exatamente igual", e como o motor cruza as camadas ~60×/s para o
+> lip-sync, o boneco **inteiro treme**. Gerar só a pose parada e as outras duas
+> **EDITANDO** ela (`gerar-imagens.yml` com `modelo=gemini` + `base=...`),
+> recortando as três com a **mesma bbox**. No print parado as três parecem
+> iguais: **o defeito só existe em movimento, então tem que ser MEDIDO**
+> (`_qa/mascote.py`, portão 3d, reprova acima de 15%).
+>
+> **🖐️ FASE DE ARRASTAR:** testar SEMPRE os três caminhos separados — arrastar
+> com mouse, **tocar com o dedo** e clicar. No celular o navegador dispara
+> eventos de mouse FANTASMA depois do toque e eles desmarcam a peça; guardar só
+> o `onclick` não basta (ver o guarda `ultimoToque` no manual). E **nunca** dar
+> `preventDefault` no `touchstart`, que mata o toque. Este defeito o Marcos
+> pegou DUAS vezes.
 
 > **🚫⭐ NUNCA COPIAR AVATAR DE OUTRA ATIVIDADE — ARTE SEMPRE NOVA E TEMÁTICA**
 > (decisão do Marcos, ago/2026: *"nunca copiar avatares, sempre ser temático,
