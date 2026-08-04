@@ -59,13 +59,26 @@ jobs:
                               if inl and inl.get("data"): img=base64.b64decode(inl["data"])
                       if img: break
                   if img: break
-                  time.sleep(6)
+                  # ⚠️ LICAO PAGA (ago/2026): depois de um lote grande o Gemini
+                  # devolve 429 "Too Many Requests" — e o antigo `sleep(6)` nao
+                  # dava tempo nenhum, entao as 3 tentativas queimavam em
+                  # segundos e o lote inteiro se perdia. Limite de taxa quer
+                  # ESPERA de verdade.
+                  espera=[20,60,90][min(tent,2)]
+                  print("  ...esperando %ds antes de tentar de novo (%s)"%(espera,it["nome"]))
+                  time.sleep(espera)
               if img:
                   open("_novo/%s.png"%it["nome"],"wb").write(img); ok+=1; print("OK",it["nome"],len(img))
               else: print("::error::falhou",it["nome"])
+              # respiro entre imagens: e o que segura o 429 num lote grande
+              time.sleep(4)
+          print(">>> %d de %d imagens"%(ok,len(itens)))
           if ok==0: raise SystemExit(1)
           PY
+      # ⚡ COMMITA O QUE DEU CERTO, mesmo que alguma imagem tenha falhado.
+      #    Antes, uma imagem ruim no fim do lote jogava fora todas as boas.
       - name: Commit
+        if: always()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

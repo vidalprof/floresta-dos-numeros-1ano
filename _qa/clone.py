@@ -245,6 +245,30 @@ if meu:
     else:
         print("   prefixo: nada com a marca de outra atividade (o meu e '%s')" % meu)
 
+# ---- 9) MANIFESTO com o nome de OUTRA atividade
+#   Achado ao criar a cartografia (ago/2026): o manifest.json da Maquina do
+#   Tempo ainda dizia "A Legenda do Pingo". Ninguem ve isso na tela — mas e o
+#   nome que aparece quando a crianca INSTALA a atividade no celular, e o que
+#   o professor le na lista de apps. Resto de clone que passa despercebido
+#   justamente por morar fora do index.html.
+man = os.path.join(pasta, "manifest.json")
+if os.path.exists(man):
+    try:
+        import json as _json
+        nome_man = (_json.load(io.open(man, encoding="utf-8")).get("name") or "").strip()
+    except Exception:
+        nome_man = ""
+    mt = re.search(r"<title>(.*?)</title>", html, re.S)
+    titulo = re.sub(r"\s+", " ", (mt.group(1) if mt else "")).strip()
+    def _chave(x):
+        x = re.sub(r"&#\d+;", "", x).lower()
+        return set(w for w in re.findall(r"[a-zà-ú]{4,}", x))
+    if nome_man and titulo and not (_chave(nome_man) & _chave(titulo)):
+        problemas.append("o manifest.json chama a atividade de %r, mas o titulo aqui e %r "
+                         "(e o nome que aparece ao INSTALAR no celular)" % (nome_man, titulo))
+    elif nome_man:
+        print("   manifesto: o nome bate com o titulo da atividade")
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")
