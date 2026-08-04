@@ -515,6 +515,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   color:#fff;padding:13px 22px;border-radius:999px;
   background:-webkit-linear-gradient(top,#3f9a26,#256113);background:linear-gradient(#3f9a26,#256113);
   -webkit-box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25);box-shadow:0 5px 0 #1b4a0c,0 10px 16px rgba(0,0,0,.25)}
+.btn small{display:block;font-size:12px;font-weight:600;opacity:.92;margin-top:2px}
 .btntreino small{display:block;font-size:12px;font-weight:600;opacity:.92;margin-top:2px}
 
 /* ===== CONTRASTE (banca de acessibilidade, ago/2026) =====
@@ -722,13 +723,56 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   -webkit-transition:max-height .35s ease;transition:max-height .35s ease}
 .postit.aberto{-webkit-transform:rotate(0);transform:rotate(0)}
 .postit.aberto .ptcorpo{max-height:200px;margin-top:5px;visibility:visible}
-/* --- FORCA: quem sobe é a enchente --- */
-.reguario{position:relative;width:96px;height:110px;margin-top:10px;border-radius:10px;
-  overflow:hidden;background:#dfeef7;border:2px solid var(--linha)}
-.reguario .agua{position:absolute;left:0;right:0;bottom:0;height:8%;background:#4aa3d8;
-  -webkit-transition:height .45s ease;transition:height .45s ease}
-.reguario .casinha{position:absolute;left:50%;bottom:52%;width:34px;height:26px;margin-left:-17px;
-  background:#fffdf6;border:2px solid #8a7a55;border-radius:3px}
+/* --- FORCA: quem sobe é a ENCHENTE, na beira do rio ---------------------
+   O Marcos pediu (ago/2026): "algo mais visual e bonito que faça sentido", no
+   lugar do quadradinho. Agora e a margem do rio de verdade: o morro do outro
+   lado, a casa enxaimel na beira, e a REGUA DO NIVEL com as marcas dos metros —
+   a mesma regua que a cidade olha quando o rio comeca a subir. Cada erro faz a
+   agua cobrir mais uma marca.                                               */
+.reguario{position:relative;width:100%;max-width:400px;height:170px;margin-top:10px;
+  border-radius:16px;overflow:hidden;border:3px solid #fffdf6;background:#cfe6f5;
+  -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}
+.reguario .ceurio{position:absolute;left:0;right:0;top:0;height:56%;
+  background:-webkit-linear-gradient(top,#bcdcf2,#e6f2fb);background:linear-gradient(#bcdcf2,#e6f2fb)}
+.reguario .morrolonge{position:absolute;left:0;right:0;top:26%;height:32%;background:#7fa25c;
+  border-top-left-radius:52% 80%;border-top-right-radius:48% 80%}
+.reguario .matinha{position:absolute;top:30%;width:11px;height:20px;background:#3f7a24;border-radius:50% 50% 40% 40%}
+/* a casa ENXAIMEL na beira do rio: telhado inclinado, chamine, vigas cruzadas
+   de madeira escura, janelas e porta. E a casa que a crianca ve na cidade dela. */
+.reguario .casaench{position:absolute;left:8%;bottom:16%;width:88px;height:60px;z-index:3}
+.reguario .parede{position:absolute;left:0;right:0;bottom:0;height:42px;background:#fffdf2;
+  border:2px solid #7a6a48;border-radius:1px}
+.reguario .telha{position:absolute;left:-8px;bottom:40px;width:0;height:0;
+  border-left:52px solid transparent;border-right:52px solid transparent;border-bottom:26px solid #a8503a}
+.reguario .telha2{position:absolute;left:-8px;bottom:38px;width:104px;height:4px;background:#8a3f2c;border-radius:2px}
+.reguario .chamine{position:absolute;right:16px;bottom:58px;width:9px;height:16px;background:#8a3f2c;
+  border-radius:2px 2px 0 0}
+.reguario .viga{position:absolute;width:3px;background:#6b4a20;-webkit-transform-origin:50% 0;transform-origin:50% 0}
+.reguario .vd{height:44px;left:14px;bottom:0;-webkit-transform:rotate(26deg);transform:rotate(26deg)}
+.reguario .ve{height:44px;left:14px;bottom:0;-webkit-transform:rotate(-26deg);transform:rotate(-26deg)}
+.reguario .vd2{height:44px;right:14px;bottom:0;-webkit-transform:rotate(26deg);transform:rotate(26deg)}
+.reguario .ve2{height:44px;right:14px;bottom:0;-webkit-transform:rotate(-26deg);transform:rotate(-26deg)}
+.reguario .vh{left:2px;right:2px;bottom:20px;height:3px;width:auto;background:#6b4a20}
+.reguario .jan{position:absolute;width:15px;height:14px;background:#9fd8f2;border:2px solid #7a6a48;bottom:20px}
+.reguario .j1{left:8px} .reguario .j2{right:8px}
+.reguario .porta{position:absolute;left:50%;margin-left:-9px;bottom:0;width:18px;height:24px;
+  background:#6b4a20;border:2px solid #7a6a48;border-bottom:0;border-radius:3px 3px 0 0}
+/* um caiaque velho amarrado na margem, so para a cena ter vida */
+.reguario .canoinha{position:absolute;left:44%;bottom:13%;width:34px;height:9px;background:#7a5a2e;
+  border-radius:0 0 999px 999px;z-index:3}
+/* a regua do nivel, plantada na margem */
+.reguario .regua{position:absolute;right:12%;bottom:16%;width:20px;height:104px;background:#fffdf4;
+  border:2px solid #6b6252;border-radius:3px;z-index:3}
+.reguario .regua i{position:absolute;left:0;width:100%;height:2px;background:#6b6252}
+.reguario .regua b{position:absolute;left:24px;font-size:10.5px;font-weight:800;color:#3a3426;
+  background:rgba(255,253,244,.9);border-radius:4px;padding:0 3px;white-space:nowrap}
+.reguario .agua{position:absolute;left:0;right:0;bottom:0;height:16%;z-index:2;
+  background:-webkit-linear-gradient(top,rgba(74,163,216,.82),#2d7fb4);
+  background:linear-gradient(rgba(74,163,216,.82),#2d7fb4);
+  border-top:3px solid rgba(255,255,255,.55);
+  -webkit-transition:height .5s cubic-bezier(.3,.8,.4,1);transition:height .5s cubic-bezier(.3,.8,.4,1)}
+.reguario .aviso{position:absolute;left:0;right:0;bottom:4px;z-index:4;text-align:center;
+  font-size:12.5px;font-weight:800;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.7)}
 .forca{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
   gap:5px;-webkit-box-pack:center;justify-content:center;margin-top:12px}
 .letrafc{width:34px;height:44px;line-height:42px;text-align:center;font-size:24px;font-weight:800;
@@ -773,6 +817,33 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   .achado{width:56px;height:56px}
   .teclafc{width:38px;height:41px;line-height:37px;font-size:17px}
 }
+
+/* ================= ACERVO REAL e EXPOSIÇÃO ================= */
+.moldurafoto{width:100%;max-width:420px;margin-top:10px;background:#fffdf6;padding:8px 8px 4px;
+  border-radius:6px;border:1px solid #e0d6bd;
+  -webkit-box-shadow:0 10px 24px rgba(30,25,10,.45);box-shadow:0 10px 24px rgba(30,25,10,.45)}
+.moldurafoto .fotoreal{width:100%;display:block;border-radius:2px}
+.moldurafoto .fotocred{font-size:10.5px;line-height:1.3;color:#6b6252;margin-top:5px;text-align:center}
+/* a parede do museu */
+.parede{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  gap:10px;-webkit-box-pack:center;justify-content:center;margin-top:12px;width:100%;max-width:430px}
+.quadro{width:47%;max-width:196px;cursor:pointer;background:#fffdf6;padding:6px 6px 3px;
+  border:3px solid #8a6b3f;border-radius:3px;
+  -webkit-box-shadow:0 8px 18px rgba(20,14,4,.5);box-shadow:0 8px 18px rgba(20,14,4,.5)}
+.quadro .qimg{width:100%;height:96px;object-fit:cover;display:block}
+.quadro .qtit{font-size:11.5px;font-weight:700;color:#4a4230;margin-top:4px;text-align:center;line-height:1.2}
+.quadro:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+/* a foto aberta, em cima de tudo */
+.lupafoto{position:fixed;inset:0;z-index:40;background:rgba(16,12,4,.86);overflow-y:auto;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;padding:18px;-webkit-animation:fade .25s;animation:fade .25s}
+.lupacx{width:100%;max-width:430px;background:#fffdf6;border-radius:8px;padding:10px 12px 14px;text-align:center}
+.lupacx .lupaimg{width:100%;display:block;border-radius:3px}
+.lupacx .lupatit{font-size:17px;font-weight:800;color:#3a3426;margin-top:8px}
+.lupacx .lupaleg{font-size:14px;font-weight:600;color:#4a4230;margin-top:5px;line-height:1.35}
+.lupacx .lupacred{font-size:10.5px;color:#6b6252;margin-top:7px;line-height:1.3;border-top:1px solid #e6dcc6;padding-top:6px}
+@media (min-width:760px){ .parede{max-width:660px} .quadro{max-width:200px} .quadro .qimg{height:120px} }
+@media (max-height:720px){ .quadro .qimg{height:78px} .moldurafoto{max-width:330px} }
 </style></head>
 <body>
 <div id="bg"></div>
@@ -788,11 +859,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* ================= IMAGENS ================= */
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
-var CENAS={hv_mata:1,hv_aldeia:1,hv_barco:1,hv_colonia:1,hv_roca:1,hv_cidade:1,hv_enchente:1,hv_fundo:1};
+var CENAS={hv_mata:1,hv_aldeia:1,hv_barco:1,hv_colonia:1,hv_roca:1,hv_cidade:1,hv_enchente:1,hv_fundo:1,
+           hv_ac1:1,hv_ac2:1,hv_ac3:1,hv_ac4:1,hv_ac5:1,hv_ac6:1,hv_ac7:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["hv_aldeia","hv_barco","hv_base","hv_canoa","hv_carroca","hv_celular","hv_cidade","hv_colonia","hv_cr1","hv_cr2","hv_cr3","hv_cr4","hv_cr5","hv_cr6","hv_cuca","hv_enchente","hv_escola","hv_fala","hv_familia","hv_ferro","hv_fundo","hv_lampada","hv_lampiao","hv_maquina","hv_mata","hv_med","hv_onibus","hv_povo_acoriano","hv_povo_africano","hv_povo_alemao","hv_povo_indigena","hv_povo_italiano","hv_rio","hv_roca","hv_tanque"];
+var IMGS=["hv_aldeia","hv_barco","hv_base","hv_canoa","hv_carroca","hv_celular","hv_cidade","hv_colonia","hv_cr1","hv_cr2","hv_cr3","hv_cr4","hv_cr5","hv_cr6","hv_cuca","hv_enchente","hv_escola","hv_fala","hv_familia","hv_ferro","hv_fundo","hv_lampada","hv_lampiao","hv_maquina","hv_mata","hv_med","hv_onibus","hv_povo_acoriano","hv_povo_africano","hv_povo_alemao","hv_povo_indigena","hv_povo_italiano","hv_rio","hv_roca","hv_tanque","hv_ac1","hv_ac2","hv_ac3","hv_ac4","hv_ac5","hv_ac6","hv_ac7"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1636,9 +1708,35 @@ function hForca(){
     c.appendChild(el("div","selo","A PALAVRA DO TEMPO"));
     c.appendChild(el("div","balao",it.d));
     /* a regua do rio: cada erro sobe um degrau */
+    /* a margem do rio, desenhada: morro do outro lado, mata, casa enxaimel e a
+       REGUA DO NIVEL. Cada erro faz a agua cobrir mais uma marca.            */
     var reg2=el("div","reguario");
+    reg2.appendChild(el("div","ceurio"));
+    var morroL=el("div","morrolonge"); reg2.appendChild(morroL);
+    var z2; for(z2=0;z2<7;z2++){ var mt=el("i","matinha"); mt.style.left=(7+z2*13)+"%"; reg2.appendChild(mt); }
     var agua=el("div","agua"); reg2.appendChild(agua);
-    var casa=el("div","casinha"); reg2.appendChild(casa);
+    var casa=el("div","casaench");
+    casa.appendChild(el("div","telha"));
+    casa.appendChild(el("div","telha2"));
+    casa.appendChild(el("div","chamine"));
+    var par=el("div","parede");
+    par.appendChild(el("i","viga vd"));  par.appendChild(el("i","viga ve"));
+    par.appendChild(el("i","viga vd2")); par.appendChild(el("i","viga ve2"));
+    par.appendChild(el("i","viga vh"));
+    par.appendChild(el("div","jan j1")); par.appendChild(el("div","jan j2"));
+    par.appendChild(el("div","porta"));
+    casa.appendChild(par);
+    reg2.appendChild(casa);
+    reg2.appendChild(el("div","canoinha"));
+    var regua=el("div","regua");
+    var MARCAS=["1 m","2 m","3 m","4 m","5 m","6 m"];
+    for(z2=0;z2<MARCAS.length;z2++){
+      var tr=el("i",""); tr.style.bottom=(6+z2*16)+"px"; regua.appendChild(tr);
+      var nu=el("b","",MARCAS[z2]); nu.style.bottom=(1+z2*16)+"px"; regua.appendChild(nu);
+    }
+    reg2.appendChild(regua);
+    var aviso=el("div","aviso","o rio est&#225; calmo");
+    reg2.appendChild(aviso);
     c.appendChild(reg2);
     var linha=el("div","forca"),caixas=[],i;
     for(i=0;i<pal.length;i++){ var q=el("div","letrafc","_"); linha.appendChild(q); caixas.push(q); }
@@ -1648,7 +1746,13 @@ function hForca(){
       for(z=0;z<pal.length;z++){ if(achou[pal.charAt(z)]) caixas[z].innerHTML=pal.charAt(z);
         else tudo=false; }
       return tudo; }
-    function sobeAgua(){ agua.style.height=(8+erros*13)+"%"; }
+    var AVISOS=["o rio est&#225; calmo","o rio subiu um pouco","a &#225;gua chegou na margem",
+                "a &#225;gua entrou no quintal","a &#225;gua est&#225; na porta","a &#225;gua entrou na casa",
+                "a cidade alagou &#8212; mas a palavra a gente abre junto"];
+    function sobeAgua(){
+      agua.style.height=(16+erros*11)+"%";
+      aviso.innerHTML=AVISOS[Math.min(erros,AVISOS.length-1)];
+    }
     function tentaLetra(L,b){
       if(fim||b._usada) return;
       b._usada=1; arma();
@@ -1683,7 +1787,7 @@ function hForca(){
       tec.appendChild(b); bts[L]=b;
     })(ALFA.charAt(i));}
     c.appendChild(tec);
-    c.appendChild(el("div","hint","Cada erro faz a &#225;gua do rio subir um degrau."));
+    c.appendChild(el("div","hint","Cada erro faz a &#225;gua subir uma marca na r&#233;gua do rio."));
     if(idx===0) postIt(c,"enchente");
     sobeAgua();
     t.appendChild(c);app.appendChild(t);
@@ -1919,7 +2023,7 @@ function hEnchente(){
     if(n>=3&&!fim){ fim=true; sCerto(); reg("natureza",err===0,err+1);
       var ce=centroTela(vale); faisca(ce[0],ce[1],"#5bc8ff",14);
       setTimeout(function(){ depoisDaFala("hv_ench_revela",14000,function(){
-        mostraBanner("A mata do morro <b>segura</b> a chuva. Quando ela cai, a &#225;gua desce toda de uma vez para a cidade.",hCarta); }); },900); }
+        mostraBanner("A mata do morro <b>segura</b> a chuva. Quando ela cai, a &#225;gua desce toda de uma vez para a cidade.",hAcervo); }); },900); }
   }
   r.oninput=function(){ arma(); sTap(); pinta(); };
   r.onchange=pinta;
@@ -1982,6 +2086,144 @@ function hCarta(){
   t.appendChild(c);app.appendChild(t);
   montaBarra("hv_carta_dica","Escreva do seu jeito: quem l&#234; &#233; a sua fam&#237;lia.");
   falar("hv_carta_intro");
+}
+
+
+/* ================= O ACERVO REAL =================
+   Fotografias VERDADEIRAS de Blumenau, enviadas pelo Marcos e vindas de dois
+   acervos publicos. E a diferenca entre "alguem desenhou como era" e "isso
+   aconteceu, e aqui esta a prova".
+
+   ⚠️ CREDITO SEMPRE NA TELA. Pela Lei 9.610/98, fotografia divulgada ha mais de
+   70 anos esta em dominio publico — mas o DIREITO MORAL do autor continua: o
+   nome dele e o do acervo aparecem embaixo de toda foto, sempre.             */
+var ACERVO=[
+ {img:"hv_ac1", t:"A escola dos meninos",
+  leg:"<i>Escola do sexo masculino &#8212; Knabenschule</i>, Blumenau. Repare quanta crian&#231;a cabia numa escola s&#243;.",
+  cred:"Foto: B. Scheidemantel, por volta de 1880 &#183; Cole&#231;&#227;o Thereza Christina Maria / Funda&#231;&#227;o Biblioteca Nacional"},
+ {img:"hv_ac2", t:"A igreja evang&#233;lica",
+  leg:"<i>Igreja evang&#233;lica &#8212; Evangelische Kirche</i>, Blumenau, no alto do morro, entre palmeiras.",
+  cred:"Foto: B. Scheidemantel, por volta de 1880 &#183; Cole&#231;&#227;o Thereza Christina Maria / Funda&#231;&#227;o Biblioteca Nacional"},
+ {img:"hv_ac3", t:"O hospital",
+  leg:"O <i>hospital</i> de Blumenau, casa de madeira encaixada, atr&#225;s da cerca de treli&#231;a.",
+  cred:"Foto: B. Scheidemantel, por volta de 1880 &#183; Cole&#231;&#227;o Thereza Christina Maria / Funda&#231;&#227;o Biblioteca Nacional"},
+ {img:"hv_ac4", t:"A rua do com&#233;rcio",
+  leg:"A rua com as lojas e os sobrados. Olhe o morro logo atr&#225;s: a <b>mata</b> come&#231;ava ali, coladinha na cidade.",
+  cred:"&#193;lbum de Blumenau, in&#237;cio do s&#233;culo XX &#183; Acervo Instituto Moreira Salles"},
+ {img:"hv_ac5", t:"O trem chegou",
+  leg:"A locomotiva soltando fuma&#231;a. Antes do trem, tudo vinha pelo rio &#8212; e o terreno na frente tinha acabado de ser aberto.",
+  cred:"&#193;lbum de Blumenau, in&#237;cio do s&#233;culo XX &#183; Acervo Instituto Moreira Salles"},
+ {img:"hv_ac6", t:"A igreja no morro",
+  leg:"Uma igreja no alto, e o casario espalhado em volta dela.",
+  cred:"&#193;lbum de Blumenau, in&#237;cio do s&#233;culo XX &#183; Acervo Instituto Moreira Salles"},
+ {img:"hv_ac7", t:"A igreja de torre alta",
+  leg:"A escadaria subindo at&#233; a porta. Quem ia &#224; missa subia todos esses degraus.",
+  cred:"&#193;lbum de Blumenau, in&#237;cio do s&#233;culo XX &#183; Acervo Instituto Moreira Salles"}];
+
+/* ---------- ⭐ O QUE ESTA FOTO CONTA (fonte histórica de verdade) ----------
+   A crianca olha a FOTOGRAFIA — nao o desenho — e decide, item por item, o que
+   dali ainda existe hoje. E a habilidade EF04HI01 aplicada a um DOCUMENTO, que
+   e o que o curriculo pede quando fala em ler o passado pelas fontes.        */
+var LEFOTO=[
+ {i:4, p:[{t:"a rua no meio das casas",g:1},{t:"a mata come&#231;ando atr&#225;s do quintal",g:0},
+          {t:"as lojas da rua",g:1},{t:"o cavalo puxando carro&#231;a",g:0}]},
+ {i:0, p:[{t:"a escola",g:1},{t:"as crian&#231;as indo estudar",g:1},
+          {t:"o chap&#233;u e a roupa daquele jeito",g:0},{t:"a rua de ch&#227;o batido",g:0}]},
+ {i:4, p:[],alt:1},
+ {i:5, p:[{t:"o trem de passageiro passando na cidade",g:0},{t:"a fuma&#231;a preta da locomotiva",g:0},
+          {t:"o morro com mata",g:1},{t:"gente indo e vindo",g:1}]}];
+function hAcervo(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,95+idx);
+    /* pula o item marcado como alternativo (ficou de reserva) */
+    while(idx<LEFOTO.length&&LEFOTO[idx].alt) idx++;
+    if(idx>=LEFOTO.length){ hCarta(); return; }
+    var it=LEFOTO[idx],f=ACERVO[it.i];
+    var falta=0,z; for(z=0;z<it.p.length;z++) if(it.p[z].g) falta++;
+    var err=0,fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","A FOTO DE VERDADE"));
+    c.appendChild(el("div","balao","Esta fotografia &#233; <b>de verdade</b>, tirada aqui h&#225; mais de cem anos. Toque no que dela <b>ainda existe hoje</b>."));
+    var mold=el("div","moldurafoto");
+    mold.appendChild(cenaImg(f.img,"fotoreal"));
+    mold.appendChild(el("div","fotocred",f.cred));
+    c.appendChild(mold);
+    var cont=el("div","placar","Faltam "+falta);c.appendChild(cont);
+    var box=el("div","opts col");
+    for(z=0;z<it.p.length;z++){(function(o){
+      var b=el("div","opt",o.t);
+      b.setAttribute("data-qa",o.g?"1":"0");
+      b.onclick=function(){ arma();
+        if(fim||b.className.indexOf("ok")>=0) return;
+        if(o.g){ b.className="opt ok"; sPop(1); falta--;
+          cont.innerHTML= falta>0 ? "Faltam "+falta : "Achou todos!";
+          var ce=centroTela(b); faisca(ce[0],ce[1],"#6bd23f",8);
+          reg("permanencia",err===0,err+1);
+          if(falta<=0){ fim=true; sCerto();
+            setTimeout(function(){ idx++;
+              if(idx>=LEFOTO.length){ depoisDaFala("hv_acer_revela",12000,function(){
+                mostraBanner("Uma foto antiga &#233; um <b>documento</b>: nela d&#225; para ver o que mudou e o que ficou.",hCarta); }); }
+              else passo();
+            },1200); }
+        } else { err++; b.className="opt no"; sErro(); reg("mudanca",false,2);
+          setTimeout(function(){ if(b.className==="opt no") b.className="opt"; },600);
+          if(err===2) consolo();
+          if(err>=3) mostraDica("Pergunte: isso <b>ainda existe</b> na cidade de hoje, mesmo diferente?");
+        }
+      };
+      box.appendChild(b);
+    })(it.p[z]);}
+    c.appendChild(box);
+    if(idx===0) postIt(c,"rio");
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("hv_acer_dica","Olhe a foto com calma antes de responder.");
+    if(idx===0) falar("hv_acer_intro");
+  }
+  passo();
+}
+
+/* ---------- 🖼️ A EXPOSIÇÃO (ideia do Marcos) --------------------------------
+   Depois da medalha, a crianca vira CURADORA: entra numa parede de museu com as
+   sete fotografias de verdade, emolduradas. Toca em qualquer uma e ela abre
+   grande, com a ficha completa — o que e, de quando e, quem fotografou e de que
+   acervo veio. Nao vale nota, nao tem erro: e o premio de quem chegou ao fim.  */
+function hMuseu(){
+  limpa();var t=el("div","tela");
+  var c=el("div","centro topo");
+  c.appendChild(el("div","selo","EXPOSI&#199;&#195;O DO VALE"));
+  c.appendChild(el("div","balao","<b>"+(perfil.nome||"Voc&#234;")+"</b>, voc&#234; &#233; o <b>curador</b> desta exposi&#231;&#227;o. Toque em cada fotografia para v&#234;-la de perto."));
+  var par=el("div","parede"),i;
+  for(i=0;i<ACERVO.length;i++){(function(f){
+    var q=el("div","quadro");
+    q.appendChild(cenaImg(f.img,"qimg"));
+    q.appendChild(el("div","qtit",f.t));
+    q.onclick=function(){ arma(); sTap(); abre(f); };
+    par.appendChild(q);
+  })(ACERVO[i]);}
+  c.appendChild(par);
+  var b=el("button","btn","Voltar ao come&#231;o");b.style.marginTop="16px";
+  b.onclick=function(){ arma(); sTap(); telaCapa(); };
+  c.appendChild(b);
+  t.appendChild(c);app.appendChild(t);
+  montaBarra(null,null);
+  falar("hv_museu_intro");
+
+  function abre(f){
+    var v=document.getElementById("lupafoto"); if(v&&v.parentNode) v.parentNode.removeChild(v);
+    var d=el("div","lupafoto"); d.id="lupafoto";
+    var cx=el("div","lupacx");
+    cx.appendChild(cenaImg(f.img,"lupaimg"));
+    cx.appendChild(el("div","lupatit",f.t));
+    cx.appendChild(el("div","lupaleg",f.leg));
+    cx.appendChild(el("div","lupacred",f.cred));
+    var fe=el("button","btn peq","Fechar");fe.style.marginTop="10px";
+    fe.onclick=function(){ arma(); sTap(); if(d.parentNode) d.parentNode.removeChild(d); };
+    cx.appendChild(fe);
+    d.appendChild(cx);
+    d.onclick=function(ev){ if(ev.target===d){ if(d.parentNode) d.parentNode.removeChild(d); } };
+    document.body.appendChild(d);
+  }
 }
 
 /* ---------- 19) DESAFIO RELÂMPAGO (mudou × continua, no tempo) ---------- */
@@ -2077,7 +2319,11 @@ function hFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
     c.appendChild(bt);
   }
 
-  var b=el("button","btn dourado","Jogar de novo");b.style.marginTop="12px";
+  var bm=el("button","btn","Ver a exposi&#231;&#227;o<small>as fotos de verdade do Vale</small>");
+  bm.style.marginTop="12px";
+  bm.onclick=function(){arma();sTap();hMuseu();};c.appendChild(bm);
+
+  var b=el("button","btn dourado","Jogar de novo");b.style.marginTop="10px";
 
   b.onclick=function(){arma();sTap();telaCapa();};c.appendChild(b);
   t.appendChild(c);app.appendChild(t);sFesta();festa();salva();
