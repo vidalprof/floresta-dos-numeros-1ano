@@ -3368,3 +3368,68 @@ significa "não classifiquei" e não "um gesto só".
 As duas que reprovam são as de **matemática** — e é o mesmo defeito que o Marcos
 pegou na Legenda, só que pior. **Ficam na fila** para receber o mesmo tratamento
 (trocar fases de "toque na resposta" por digitar, ordenar, deslizar, pintar).
+
+---
+
+## 🕰️ A MÁQUINA DO TEMPO DO VALE — 4º ano, História (ago/2026)
+
+**Pedido:** professora do 4º ano, EF04HI01 — *"reconhecer a história como resultado
+da ação do ser humano no tempo e no espaço, com base na identificação de mudanças
+e permanências ao longo do tempo"*. O Marcos mandou fazer **pelo currículo de
+Blumenau**, *"bem sonora e imagens"*, *"as melhores dinâmicas interativas bem
+variadas"*, *"tem que durar uma aula inteira"*, com **post-it de curiosidades**,
+e — com todas as letras — *"pesquise a fundo, não cometa erros, não invente"*.
+
+- **Pasta:** `_historia/` · **Repo:** `maquina-do-tempo-do-vale`
+- **Mascote:** **Juca**, bugio-ruivo · prefixo `hv_` · 37 imagens · 69 narrações
+- **24 telas, ~55 min, 11 gestos diferentes** (máximo 21% num só gesto)
+
+**O currículo bateu melhor do que o esperado.** As três unidades temáticas de
+História do 4º ano de Blumenau são, ao pé da letra: *"Transformações e
+permanências nas trajetórias dos grupos humanos no Vale do Itajaí"*,
+*"Circulação de pessoas, produtos e culturas"* e *"As questões históricas
+relativas às migrações no Vale do Itajaí"* — com os objetos de conhecimento
+nomadismo/sedentarismo, *"Por que os povos migram?"*, *"os grupos indígenas, a
+presença portuguesa e a diáspora forçada dos africanos"* e *"relacionar os
+processos de ocupação do campo a intervenções na natureza, avaliando os
+resultados"*. Está tudo em `_curriculo/blumenau.txt`, a partir do byte 1322228.
+
+### Os dois carros-chefe (simuladores)
+- **A Janela do Tempo:** a criança desliza os anos e a MESMA janela do Vale vira
+  mata → aldeia Xokleng → barco de 1850 → colônia de 1875 → roça no morro →
+  cidade. O rio e as montanhas continuam em todas. A EF04HI01 acontece ali,
+  antes de qualquer explicação.
+- **A Água Sobe:** chove igual nos três casos; a criança escolhe quanta mata
+  ficou no morro e vê até onde a água chega na cidade. É o objetivo de
+  "intervenções na natureza" virando coisa que se mexe.
+
+### FORCA sem forca
+Mecânica nova (o Marcos pediu). **Não tem boneco enforcado:** quem sobe a cada
+erro é a **enchente** na régua do rio. Se a água chega ao topo, a palavra se abre
+e a criança segue — ninguém fica preso nem perde nada.
+
+### ⚠️ A PESQUISA PEGOU DOIS ERROS MEUS antes de irem para a tela
+1. Eu ia ensinar que **a maior enchente de Blumenau foi a de 1983**. **NÃO FOI.**
+   A maior medida foi **1880 (17,10 m)**; depois 1911 (16,90), 1984 (15,46) e só
+   então 1983 (15,34).
+2. A linha do tempo dizia *"1880: as primeiras casas"*. As primeiras casas são de
+   **1850**.
+Conferidos e confirmados: fundação em **2/9/1850 com 17 pessoas**; **açorianos a
+partir de 1748**; **italianos em 1875** (Rio dos Cedros, Rodeio); **Xokleng** no
+Vale, Kaingang nas terras altas, Guarani perto do litoral; **Oktoberfest em 1984**
+depois das enchentes; "Itajaí" vem do tupi e **o significado exato ainda é
+discutido** — isso virou post-it, porque história também tem pergunta em aberto.
+**Lição:** todo número e toda data que vai para a tela é PESQUISADO. Post-it é o
+que a criança leva para casa; professor não tem tempo de desmentir.
+
+### O auditor jogador aprendeu QUATRO coisas nesta atividade
+1. **Deslizar:** não sabia usar `input[type=range]`. Agora percorre todas as
+   posições do menor ao maior (ir "um passo para o lado" ficava indo e voltando
+   entre as duas últimas e nunca via a primeira).
+2. **`#bcta` fantasma:** o botão do banner fica sempre no DOM (o banner se esconde
+   por `transform`, não por `display`) e guarda o `onclick` do banner ANTERIOR —
+   clicar nele jogava o jogador de volta para a fase passada, em loop.
+3. **Campo de texto não faz fase andar:** a carta usava a classe `.carta` (a mesma
+   das cartas do Órbi) e ele clicava no campo em vez do botão Enviar.
+4. **Ele não ROLAVA a tela.** Dava "preso" numa fase que funciona, só porque o
+   botão ficava abaixo da dobra. Uma criança rolaria; agora ele também.
