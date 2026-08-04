@@ -278,7 +278,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .pc.sub{border-radius:999px;background:-webkit-linear-gradient(top,#6bd23f,#3f9a26);background:linear-gradient(#6bd23f,#3f9a26)}
 .pc.adj{border-radius:9px;background:-webkit-linear-gradient(top,#ffb45e,#ef8a1e);background:linear-gradient(#ffb45e,#ef8a1e);-webkit-clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);padding:0 19px}
 .pc.usada{opacity:.22;pointer-events:none}
-.pc.no{-webkit-animation:shk .4s;animation:shk .4s}\n.pc.fantasma{position:fixed;z-index:30;pointer-events:none;opacity:.96;margin:0;\n  -webkit-transform:scale(1.06);transform:scale(1.06);\n  -webkit-box-shadow:0 12px 22px rgba(0,0,0,.45);box-shadow:0 12px 22px rgba(0,0,0,.45)}\n.vaga.mira{border-style:solid;border-color:#ffd43b;background:rgba(255,212,59,.34)}
+.pc.no{-webkit-animation:shk .4s;animation:shk .4s}
+.pc.fantasma{position:fixed;z-index:30;pointer-events:none;opacity:.96;margin:0;
+  -webkit-transform:scale(1.06);transform:scale(1.06);
+  -webkit-box-shadow:0 12px 22px rgba(0,0,0,.45);box-shadow:0 12px 22px rgba(0,0,0,.45)}
+.vaga.mira{border-style:solid;border-color:#ffd43b;background:rgba(255,212,59,.34)}
 .legenda{display:-webkit-box;display:-webkit-flex;display:flex;gap:12px;-webkit-box-pack:center;justify-content:center;margin-top:10px;font-size:11.5px;font-weight:700;color:#fff;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 .legenda i{display:inline-block;width:15px;height:12px;margin-right:4px;vertical-align:-1px}
 .legenda .la{border-radius:3px;background:#2f6bd8}
@@ -562,6 +566,63 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    ela ainda entra duas por linha, e no PC ela cresce ate 210px. No PC largo a
    caixa abre para TRES colunas, e ai o tabuleiro inteiro cabe sem rolar.     */
 @media (min-width:760px){ .mcartas{max-width:680px} }
+
+/* ================= FASES NOVAS (ago/2026) ================= */
+/* MARCA-TEXTO: paragrafo de verdade, palavra a palavra, para PINTAR */
+.paragrafo{max-width:430px;margin-top:12px;background:rgba(255,253,244,.96);border:2px solid var(--linha);
+  border-radius:18px;padding:14px 12px;line-height:2.05;text-align:center;
+  -webkit-box-shadow:0 6px 16px rgba(30,25,10,.2);box-shadow:0 6px 16px rgba(30,25,10,.2)}
+.paragrafo .pal{display:inline-block;margin:3px 2px;padding:7px 9px;font-size:16.5px;
+  border-bottom-width:3px;-webkit-box-shadow:none;box-shadow:none}
+.paragrafo .pont{font-size:17px;font-weight:700;color:var(--texto);margin-right:2px}
+.pal.pint.sub{background:#ffe9a3;border-color:#e0a800;color:#5a4200}
+.pal.pint.adj{background:#cdf0bd;border-color:#3f9a26;color:#22540f}
+/* ORDENAR: o trilho da legenda, vaga numerada */
+.trilho{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;width:100%}
+.tvaga{min-width:92px;height:54px;padding:0 12px;border-radius:14px;border:2px dashed #b6ab90;
+  background:rgba(255,253,244,.55);color:#b6ab90;font-size:17px;font-weight:800;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center}
+.tvaga.cheia{border-style:solid;border-color:var(--ok);background:#eafce0;color:var(--texto);font-weight:700}
+.peca.fantasma{position:fixed;z-index:30;pointer-events:none;opacity:.96;margin:0;
+  -webkit-transform:scale(1.06);transform:scale(1.06);
+  -webkit-box-shadow:0 12px 22px rgba(0,0,0,.45);box-shadow:0 12px 22px rgba(0,0,0,.45)}
+/* TERMOMETRO DO GRAU: a foto muda de tamanho junto com a palavra */
+.moldura{width:100%;max-width:340px;height:190px;margin-top:10px;border-radius:18px;
+  background:rgba(255,253,244,.9);border:2px solid var(--linha);overflow:hidden;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-shadow:0 6px 16px rgba(30,25,10,.22);box-shadow:0 6px 16px rgba(30,25,10,.22)}
+.fotograu{width:100%;max-height:100%;object-fit:contain;
+  -webkit-transition:width .45s cubic-bezier(.2,.8,.3,1);transition:width .45s cubic-bezier(.2,.8,.3,1)}
+.palavragrau{margin-top:10px;font-size:26px;font-weight:800;color:#fff;
+  text-shadow:0 2px 0 #4a3a10,0 4px 12px rgba(0,0,0,.5)}
+.termo{-webkit-appearance:none;appearance:none;width:88%;max-width:320px;height:16px;margin-top:12px;
+  border-radius:999px;background:#e6dcc6;outline:none;cursor:pointer}
+.termo::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:44px;height:44px;border-radius:50%;
+  background:var(--dourado);border:3px solid #fff;cursor:pointer;
+  -webkit-box-shadow:0 3px 8px rgba(0,0,0,.4);box-shadow:0 3px 8px rgba(0,0,0,.4)}
+.termo::-moz-range-thumb{width:44px;height:44px;border-radius:50%;background:#ffd43b;border:3px solid #fff}
+.termolab{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:justify;justify-content:space-between;
+  width:88%;max-width:320px;margin-top:5px;font-size:12.5px;font-weight:700;color:#fff;
+  text-shadow:0 1px 4px rgba(0,0,0,.6)}
+/* MANCHETE: quadro de adjetivos a vista + contador ao vivo */
+.quadroadj{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:10px;max-width:400px}
+.quadroadj .adjw{background:rgba(255,253,244,.92);border:2px solid var(--linha);border-radius:999px;
+  padding:6px 13px;font-size:14.5px;font-weight:700;color:var(--texto)}
+.marcador{display:-webkit-box;display:-webkit-flex;display:flex;gap:8px;margin-top:9px;
+  -webkit-box-pack:center;justify-content:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.marcador span{border-radius:999px;padding:6px 13px;font-size:13.5px;font-weight:700}
+.marcador .okm{background:#cdf0bd;color:#22540f;border:2px solid #3f9a26}
+.marcador .fal{background:rgba(255,253,244,.85);color:#6b6252;border:2px solid var(--linha)}
+@media (max-height:720px){
+  .paragrafo{line-height:1.85;padding:10px 9px}
+  .paragrafo .pal{font-size:15px;padding:6px 8px}
+  .moldura{height:150px}.palavragrau{font-size:22px}
+  .tvaga{height:48px;min-width:84px}
+}
 </style></head>
 <body>
 <div id="bg"></div>
@@ -805,7 +866,7 @@ function nAbertura(){limpa();var t=el("div","tela");var c=el("div","centro");
   falar("nm_abertura");}
 
 /* ---------- 2) PREVER (POE) ---------- */
-function nP1prever(){limpa();var t=el("div","tela");setProg(t,5);var c=el("div","centro");
+function nP1prever(){limpa();var t=el("div","tela");setProg(t,4);var c=el("div","centro");
   c.appendChild(el("div","selo","O QUE VOC&#202; ACHA?"));
   c.appendChild(fotoEl("nm_horta",""));
   c.appendChild(el("div","balao","Qual legenda faz voc&#234; <b>enxergar</b> melhor a foto?"));
@@ -838,7 +899,7 @@ var LUPA=[
 function nLupa(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,9+idx*3);
+    limpa();var t=el("div","tela");setProg(t,8+idx*2);
     var it=LUPA[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","LUPA DO REP&#211;RTER "+(idx+1)+" DE "+LUPA.length));
@@ -865,7 +926,7 @@ var GAV=[
  {p:"port&#227;o",g:0},{p:"enferrujado",g:1},{p:"crian&#231;as",g:0},{p:"alegres",g:1},
  {p:"bicicleta",g:0},{p:"colorida",g:1},{p:"horta",g:0},{p:"nova",g:1}];
 function nCaixas(){
-  limpa();var t=el("div","tela");setProg(t,18);
+  limpa();var t=el("div","tela");setProg(t,14);
   var fila=baguncar(GAV.slice(0)),i2=0,err=0,fim=false,contas=[0,0];
   var c=el("div","centro");
   c.appendChild(el("div","selo","AS DUAS GAVETAS"));
@@ -911,7 +972,7 @@ function nGrupo(){
   var idx=0,err=0;
   var ordem=[0,1,3,4];
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,50+idx*3);
+    limpa();var t=el("div","tela");setProg(t,36+idx*2);
     var f=FOTOS[ordem[idx]];
     var c=el("div","centro");
     c.appendChild(el("div","selo","BANCADA DE MONTAGEM"));
@@ -952,7 +1013,7 @@ function nGrupo(){
         var ce=centroTela(vagas); faisca(ce[0],ce[1],"#ffb45e",16);
         setTimeout(function(){ idx++;
           if(idx>=ordem.length){ depoisDaFala("nm_grupo_revela",9000,function(){
-            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nAquecimento); }); }
+            mostraBanner("Artigo, substantivo e adjetivo formam o <b>grupo nominal</b>!",nMarcaTexto); }); }
           else { err=0; passo(); }
         },1000);
       }
@@ -1047,7 +1108,7 @@ var PLU=[
    ter sido ensinado, logo antes de subir o degrau da concordancia. Nao e prova:
    e a lembranca que segura o aprendido. */
 function nAquecimento(){
-  limpa();var t=el("div","tela");setProg(t,60);var c=el("div","centro");
+  limpa();var t=el("div","tela");setProg(t,50);var c=el("div","centro");
   c.appendChild(cliqueEl("pq"));
   c.appendChild(el("div","selo","LEMBRANDO..."));
   c.appendChild(el("div","balao","Antes de seguir: na legenda <b>a flor amarela</b>, qual palavra diz <b>como &#233;</b>?"));
@@ -1059,7 +1120,7 @@ function nAquecimento(){
     o.onclick=function(){ if(resp)return; arma();
       if(certo){ resp=true; o.className="opt ok"; sCerto(); elogio(); reg("reconhecer",true,1);
         var ce=centroTela(o); faisca(ce[0],ce[1],"#ffb45e",14);
-        setTimeout(nPlural,1400); }
+        setTimeout(nCompleta,1400); }
       else { o.className="opt no"; sErro(); consolo(); reg("reconhecer",false,2);
         setTimeout(function(){ o.className="opt"; },700); }
     };
@@ -1070,80 +1131,14 @@ function nAquecimento(){
   montaBarra("nm_aquec_dica","O <b>nome</b> diz o que &#233;. O <b>adjetivo</b> diz como &#233;.");
   falar("nm_aquec_intro");}
 
-function nPlural(){
-  var idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,62+idx*2);
-    var it=PLU[idx];
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","TUDO COMBINANDO"));
-    c.appendChild(fotoEl(it.img,""));
-    c.appendChild(el("div","balao",it.pre+" <b>______</b>"));
-    var box=el("div","pcs"),lista=baguncar([it.falta].concat(it.iscas)),i;
-    for(i=0;i<lista.length;i++){(function(tx){
-      var b=el("div","pc adj",tx);
-      b.onclick=function(){ arma();
-        if(tx===it.falta){ sCerto(); b.className="pc adj usada";
-          var ce=centroTela(b); faisca(ce[0],ce[1],"#ffb45e",12);
-          reg("concordancia",err===0,err+1);
-          setTimeout(function(){ idx++;
-            if(idx>=PLU.length){ depoisDaFala("nm_plural_revela",9000,function(){
-              mostraBanner("No plural, <b>todas</b> as palavras v&#227;o junto!",nGenero); }); }
-            else { err=0; passo(); }
-          },900);
-        } else { err++; b.className="pc adj no"; sErro(); consolo();
-          setTimeout(function(){ b.className="pc adj"; },440); }
-      };
-      box.appendChild(b);
-    })(lista[i]);}
-    c.appendChild(box);
-    c.appendChild(el("div","hint","Olhe se o nome est&#225; no plural."));
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nm_plural_dica","Nome com <b>s</b> no fim pede adjetivo com <b>s</b>.");
-    if(idx===0) falar("nm_plural_intro");
-  }
-  passo();
-}
+
 
 /* ---------- 7) CONCORDÂNCIA: MASCULINO/FEMININO ---------- */
 var GEN=[
  {img:"nm_cachorro",pre:"O cachorro",falta:"molhado",iscas:["molhada","molhados"]},
  {img:"nm_horta",   pre:"A horta",   falta:"nova",   iscas:["novo","novos"]},
  {img:"nm_portao",  pre:"O port&#227;o",  falta:"velho",  iscas:["velha","velhas"]}];
-function nGenero(){
-  var idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,68+idx*2);
-    var it=GEN[idx];
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","MENINO OU MENINA?"));
-    c.appendChild(fotoEl(it.img,""));
-    c.appendChild(el("div","balao",it.pre+" <b>______</b>"));
-    var box=el("div","pcs"),lista=baguncar([it.falta].concat(it.iscas)),i;
-    for(i=0;i<lista.length;i++){(function(tx){
-      var b=el("div","pc adj",tx);
-      b.onclick=function(){ arma();
-        if(tx===it.falta){ sCerto(); b.className="pc adj usada";
-          var ce=centroTela(b); faisca(ce[0],ce[1],"#ffb45e",12);
-          reg("concordancia",err===0,err+1);
-          setTimeout(function(){ idx++;
-            if(idx>=GEN.length){ depoisDaFala("nm_genero_revela",9000,function(){
-              mostraBanner("O adjetivo combina com o <b>nome</b>: o molhado, a molhada.",nGrau); }); }
-            else { err=0; passo(); }
-          },900);
-        } else { err++; b.className="pc adj no"; sErro(); consolo();
-          setTimeout(function(){ b.className="pc adj"; },440); }
-      };
-      box.appendChild(b);
-    })(lista[i]);}
-    c.appendChild(box);
-    c.appendChild(el("div","hint","Fale a legenda inteira baixinho."));
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nm_genero_dica","<b>O</b> pede a termina&#231;&#227;o em o. <b>A</b> pede em a.");
-    if(idx===0) falar("nm_genero_intro");
-  }
-  passo();
-}
+
 /* ---------- ⭐ FILTRO MÁGICO: o adjetivo MUDA a foto ---------- */
 var MAGIA=[
  {img:"nm_arvore",   ped:"Deixe a &#225;rvore <b>escura</b>, como de noite.", certo:"escura",
@@ -1161,7 +1156,7 @@ var MAGIA=[
 function nMagica(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,26+idx*3);
+    limpa();var t=el("div","tela");setProg(t,20+idx*2);
     var it=MAGIA[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","FILTRO M&#193;GICO"));
@@ -1211,7 +1206,7 @@ var DET=[
 function nDetetive(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,38+idx*3);
+    limpa();var t=el("div","tela");setProg(t,28+idx*2);
     var it=DET[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","DETETIVE DA REDA&#199;&#195;O"));
@@ -1249,50 +1244,7 @@ var GRAU=[
  {base:"port",  ped:"um port&#227;o <b>enorme</b>",       certo:"&#227;o",  vira:"port&#227;o",  op:["&#227;o","inho","inha"]},
  {base:"gat",   ped:"um gato <b>pequenininho</b>",   certo:"inho", vira:"gatinho",  op:["inho","&#227;o","ona"]},
  {base:"bocc",  ped:"uma boca <b>enorme</b>",        certo:"ona",  vira:"bocona",   op:["ona","inha","inho"]}];
-function nGrau(){
-  var idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,74+idx*2);
-    var it=GRAU[idx];
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","ENCOLHE E AUMENTA"));
-    c.appendChild(el("div","balao","O editor pediu "+it.ped+". Encaixe o pedacinho."));
-    var m=el("div","maquina"),es=el("div","esteira");
-    es.appendChild(el("div","fbase",it.base==="bocc"?"boc":it.base));
-    es.appendChild(el("div","mais","+"));
-    var enc=el("div","encaixe","?");es.appendChild(enc);
-    m.appendChild(es);
-    var saida=el("div","saida","");m.appendChild(saida);
-    c.appendChild(m);
-    var box=el("div","pcs"),lista=baguncar(it.op.slice(0)),i;
-    for(i=0;i<lista.length;i++){(function(sf){
-      var b=el("div","pc adj","-"+sf);
-      b.onclick=function(){ arma();
-        if(b.className.indexOf("usada")>=0) return;
-        if(sf===it.certo){
-          enc.innerHTML="-"+sf; enc.className="encaixe ok";
-          saida.innerHTML=it.vira; b.className="pc adj usada"; sCerto(); sMaquina();
-          var ce=centroTela(saida); faisca(ce[0],ce[1],"#ffb45e",14);
-          reg("morfologia",err===0,err+1);
-          setTimeout(function(){ idx++;
-            if(idx>=GRAU.length){ depoisDaFala("nm_grau_revela",10000,function(){
-              mostraBanner("O fim da palavra muda o <b>tamanho</b>: casinha, casar&#227;o!",nFabrica); }); }
-            else { err=0; passo(); }
-          },1500);
-        } else { err++; b.className="pc adj no"; sErro();
-          setTimeout(function(){ b.className="pc adj"; },440);
-          if(err===2) consolo(); }
-      };
-      box.appendChild(b);
-    })(lista[i]);}
-    c.appendChild(box);
-    c.appendChild(el("div","hint","<b>inho, inha</b> encolhem. <b>&#227;o, ona</b> aumentam."));
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nm_grau_dica","Pequeno ou grande? O fim da palavra diz.");
-    if(idx===0) falar("nm_grau_intro");
-  }
-  passo();
-}
+
 /* ---------- 8) ⭐ FÁBRICA DE ADJETIVOS (morfemas) ---------- */
 var FAB=[
  {base:"chuva",   fim:"oso", vira:"chuvoso",    op:["oso","ento","ido"]},
@@ -1302,7 +1254,7 @@ var FAB=[
 function nFabrica(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,82+idx);
+    limpa();var t=el("div","tela");setProg(t,71+idx);
     var it=FAB[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","F&#193;BRICA DE ADJETIVOS"));
@@ -1347,7 +1299,7 @@ function nFabrica(){
 
 /* ---------- 9) LIGAR AS COLUNAS ---------- */
 function nLigar(){
-  limpa();var t=el("div","tela");setProg(t,86);
+  limpa();var t=el("div","tela");setProg(t,76);
   var pares=[["cachorro","molhado"],["&#225;rvore","florida"],["port&#227;o","enferrujado"],
              ["crian&#231;as","alegres"],["bicicletas","coloridas"]];
   var dir=[2,4,0,3,1],selE=null,feitos=0,err=0;
@@ -1389,7 +1341,7 @@ function nLigar(){
 /* ---------- 10) CAÇA-PALAVRAS DOS ADJETIVOS ---------- */
 var CACAN=["NOVO","ALTO","LIMPO","ALEGRE","VELHO","MOLHADO"];
 function nCaca(){
-  limpa();var t=el("div","tela");setProg(t,88);
+  limpa();var t=el("div","tela");setProg(t,79);
   var N=9,g=[],i,j,k;
   for(i=0;i<N;i++){g[i]=[];for(j=0;j<N;j++)g[i][j]="";}
   var pos={},achadas={},total=0;
@@ -1452,7 +1404,7 @@ function nCaca(){
       var n=0,z; for(z in achadas){ if(achadas.hasOwnProperty(z)) n++; }
       if(n>=total){ trava=true;
         setTimeout(function(){ depoisDaFala("nm_caca_revela",9000,function(){
-          mostraBanner("Todas essas palavras dizem <b>como as coisas s&#227;o</b>!",nRevisor); }); },450); }
+          mostraBanner("Todas essas palavras dizem <b>como as coisas s&#227;o</b>!",nDitado); }); },450); }
     } else {
       var v2=cl.className;
       ant.el.className="cel no"; cl.className="cel no"; sErro(); reg("reconhecer",false,2);
@@ -1475,53 +1427,7 @@ var PROVAN={
  erros:[{errado:"novo",certo:"nova",alt:["nova","novas"]},
         {errado:"alegre",certo:"alegres",alt:["alegres","alegro"]},
         {errado:"velhas",certo:"velho",alt:["velho","velha"]}]};
-function nRevisor(){
-  limpa();var t=el("div","tela");setProg(t,90);
-  var feitos=0,err=0,aberto=null;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","REVISOR DA P&#193;GINA"));
-  c.appendChild(el("div","balao","Tem <b>3 palavras</b> que n&#227;o combinam. Toque e conserte."));
-  var box=el("div","prova"),i;
-  for(i=0;i<PROVAN.txt.length;i++){
-    var ped=PROVAN.txt[i];
-    if(ped.charAt(0)==="%"){
-      (function(k){
-        var w=el("span","errow",PROVAN.erros[k].errado);
-        w.onclick=function(){ arma();
-          if(w.className.indexOf("ok")>=0) return;
-          if(aberto&&aberto!==w) aberto.className="errow";
-          w.className="errow sel"; aberto=w; opcoes(k,w); };
-        box.appendChild(w);
-      })(parseInt(ped.substring(1),10));
-    } else box.appendChild(el("span","",ped));
-  }
-  c.appendChild(box);
-  var esc=el("div","pcs");c.appendChild(esc);
-  var dica=el("div","hint","Toque na palavra sublinhada.");c.appendChild(dica);
-  function opcoes(k,w){
-    esc.innerHTML="";
-    var lista=baguncar(PROVAN.erros[k].alt.slice(0)),j;
-    for(j=0;j<lista.length;j++){(function(op){
-      var b=el("div","pc adj",op);
-      b.onclick=function(){ arma();
-        if(op===PROVAN.erros[k].certo){
-          w.innerHTML=op; w.className="errow ok"; sCerto(); esc.innerHTML=""; aberto=null;
-          var ce=centroTela(w); faisca(ce[0],ce[1],"#6bd23f",12);
-          reg("concordancia",err===0,err+1); feitos++;
-          if(feitos>=PROVAN.erros.length){ setTimeout(function(){
-            depoisDaFala("nm_revisor_revela",9000,function(){
-              mostraBanner("Artigo e adjetivo sempre combinam com o <b>substantivo</b>!",nCruzada); }); },600); }
-        } else { err++; b.className="pc adj no"; sErro(); consolo();
-          setTimeout(function(){ b.className="pc adj"; },440); }
-      };
-      esc.appendChild(b);
-    })(lista[j]);}
-    dica.innerHTML="Qual forma combina com o nome?";
-  }
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nm_revisor_dica","Um ou muitos? Masculino ou feminino?");
-  falar("nm_revisor_intro");
-}
+
 
 /* ---------- 12) CRUZADINHA DOS ADJETIVOS ---------- */
 var CRUZN=[
@@ -1530,7 +1436,7 @@ var CRUZN=[
  {p:"ALEGRES", d:"Como est&#227;o as crian&#231;as que brincam?"},
  {p:"NOVA",    d:"Como &#233; a horta que acabou de nascer?"}];
 function nCruzada(){
-  limpa();var t=el("div","tela");setProg(t,92);
+  limpa();var t=el("div","tela");setProg(t,87);
   var atual=0,err=0,feitos=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","CRUZADINHA DA REDA&#199;&#195;O"));
@@ -1587,7 +1493,7 @@ function nCruzada(){
 var MEMN=[{k:"cao",a:"cachorro",b:"molhado"},{k:"arv",a:"&#225;rvore",b:"florida"},
           {k:"por",a:"port&#227;o",b:"enferrujado"},{k:"cri",a:"crian&#231;as",b:"alegres"}];
 function nMemoria(){
-  limpa();var t=el("div","tela");setProg(t,94);
+  limpa();var t=el("div","tela");setProg(t,90);
   t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o nome com o adjetivo dele."));
   var baralho=[],i;
   for(i=0;i<MEMN.length;i++){ baralho.push({k:MEMN[i].k,tx:MEMN[i].a,tipo:"n"}); baralho.push({k:MEMN[i].k,tx:MEMN[i].b,tipo:"a"}); }
@@ -1610,7 +1516,7 @@ function nMemoria(){
         var ce=centroTela(e); faisca(ce[0],ce[1],"#6bd23f",12); trava=false;
         if(pares>=MEMN.length){ trava=true;
           setTimeout(function(){ depoisDaFala("nm_mem_revela",8000,function(){
-            mostraBanner("Cada foto ganhou a palavra que <b>combina</b>!",nLegenda); }); },500); }
+            mostraBanner("Cada foto ganhou a palavra que <b>combina</b>!",nManchete); }); },500); }
       } else { err++;
         a.el.className="mcarta vira no"; e.className="mcarta vira no"; sErro();
         setTimeout(function(){ a.el.className="mcarta"; a.el.innerHTML=VERSO;
@@ -1640,7 +1546,7 @@ function normal(s){ s=(s||"").toLowerCase().replace(/\s+/g," ").replace(/^\s|\s$
 function nLegenda(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,96+idx);
+    limpa();var t=el("div","tela");setProg(t,95+idx);
     var g=LEG[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","ESCREVA A LEGENDA"));
@@ -1679,6 +1585,421 @@ function nLegenda(){
     t.appendChild(c);app.appendChild(t);
     montaBarra("nm_legenda_dica","Diga o nome e depois como &#233;.");
     if(idx===0) falar("nm_legenda_intro");
+  }
+  passo();
+}
+
+/* ================= FASES NOVAS (ago/2026) =================
+   Pedido do Marcos: "tem muita dinamica parecida como esta agora, lembre-se que
+   temos um leque bem grande de interatividade" + "pode incluir algumas atividade
+   onde o aluno tenha que digitar".
+   Medido antes de mexer: 8 das 19 fases eram o MESMO gesto (tocar na opcao/peca
+   certa) e SO UMA fase pedia para escrever. Estas seis trazem quatro gestos que
+   a atividade nao tinha: PINTAR varios, DIGITAR a lacuna, ORDENAR arrastando,
+   DESLIZAR um controle, ESCREVER OUVINDO e PRODUZIR com contador ao vivo.
+   Sairam quatro fases de peca repetida (nPlural, nGenero, nGrau, nRevisor) —
+   nada de conteudo se perdeu: a concordancia virou digitacao e ordem, o grau
+   virou o termometro, e a revisao virou o marca-texto.
+   ========================================================= */
+
+/* ---------- ⭐ NOVA: MARCA-TEXTO DO REVISOR (pintar varios) ----------
+   Gesto novo: em vez de escolher UMA resposta, a crianca varre um paragrafo
+   inteiro e pinta TODOS os nomes; depois todos os adjetivos. E o que mais
+   parece trabalho de redacao de verdade. */
+var MARCA={
+  txt:"O|cachorro|molhado|correu|pela|horta|nova|e|derrubou|as|flores|amarelas|do|portao|velho|.",
+  sub:["cachorro","horta","flores","portao"],
+  adj:["molhado","nova","amarelas","velho"]
+};
+function nMarcaTexto(){
+  var rodada=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,45+rodada*2);
+    var alvo = rodada===0 ? MARCA.sub : MARCA.adj;
+    var cor  = rodada===0 ? "sub" : "adj";
+    var falta=alvo.length,err=0,fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","MARCA-TEXTO DO REVISOR"));
+    c.appendChild(el("div","balao", rodada===0
+      ? "Pinte de <b>amarelo</b> todas as palavras que d&#227;o <b>nome</b> a uma coisa."
+      : "Agora pinte de <b>verde</b> todas as palavras que dizem <b>como</b> a coisa &#233;."));
+    var cont=el("div","placar","Faltam "+falta);c.appendChild(cont);
+    var par=el("div","paragrafo"),ps=MARCA.txt.split("|"),i;
+    for(i=0;i<ps.length;i++){(function(w){
+      if(w==="."){ par.appendChild(el("span","pont",".")); return; }
+      var p=el("span","pal",w);
+      /* qual e a resposta — SO para o auditor jogador. Nao aparece na tela. */
+      var ehAlvo=false,z;
+      for(z=0;z<alvo.length;z++) if(normal(alvo[z])===normal(w)) ehAlvo=true;
+      if(ehAlvo) p.setAttribute("data-qa","1");
+      p.onclick=function(){ arma();
+        if(fim||p.className.indexOf("pint")>=0) return;
+        if(ehAlvo){ p.className="pal pint "+cor; sPop(alvo.length-falta); falta--;
+          cont.innerHTML= falta>0 ? "Faltam "+falta : "Achou todas!";
+          var ce=centroTela(p); faisca(ce[0],ce[1],cor==="sub"?"#ffb45e":"#6bd23f",8);
+          if(falta<=0){ fim=true; sCerto(); reg("reconhecer",err===0,err+1);
+            setTimeout(function(){ rodada++;
+              if(rodada>=2){ depoisDaFala("nm_marca_revela",10000,function(){
+                mostraBanner("Num texto de verdade os dois andam juntos: o <b>nome</b> e o <b>jeito</b> dele.",nAquecimento); }); }
+              else passo();
+            },1100); }
+        } else { err++; p.className="pal no"; sErro();
+          setTimeout(function(){ if(p.className==="pal no") p.className="pal"; },520);
+          if(err===2) consolo();
+          if(err===3) mostraDica(rodada===0
+            ? "<b>Nome</b> &#233; a coisa: d&#225; para p&#244;r <b>o</b> ou <b>a</b> na frente."
+            : "<b>Adjetivo</b> responde: como &#233;? De que jeito est&#225;?");
+        }
+      };
+      par.appendChild(p);
+    })(ps[i]);}
+    c.appendChild(par);
+    c.appendChild(el("div","hint","Toque em cada palavra que servir."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_marca_dica","Leia a frase inteira antes de pintar.");
+    if(rodada===0) falar("nm_marca_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ NOVA: COMPLETE A LEGENDA (DIGITAR a lacuna) ----------
+   O degrau que faltava entre ESCOLHER a palavra pronta e ESCREVER a legenda
+   inteira: a crianca ja sabe QUAL adjetivo usar (ele aparece na forma base) e
+   so precisa arrumar o FIM dele. Erro de concordancia vira aula, nao castigo:
+   quem escreve "colorida" no plural ouve exatamente o que faltou. */
+var COMPL=[
+ {img:"nm_bicicletas",pre:"As bicicletas",base:"colorido",certo:"coloridas",
+  por:"O nome est&#225; no <b>plural</b> e &#233; <b>elas</b>: o adjetivo termina em <b>as</b>."},
+ {img:"nm_cachorro",  pre:"O cachorro",  base:"molhado", certo:"molhado",
+  por:"O nome &#233; <b>ele</b> e est&#225; sozinho: o adjetivo fica em <b>o</b>."},
+ {img:"nm_criancas",  pre:"As crian&#231;as",  base:"alegre",  certo:"alegres",
+  por:"S&#227;o <b>muitas</b>: o adjetivo tamb&#233;m ganha o <b>s</b>."},
+ {img:"nm_horta",     pre:"A horta",     base:"novo",    certo:"nova",
+  por:"O nome &#233; <b>ela</b>: o adjetivo termina em <b>a</b>."}];
+function nCompleta(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,53+idx);
+    var it=COMPL[idx];
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","COMPLETE A LEGENDA"));
+    c.appendChild(fotoEl(it.img,""));
+    c.appendChild(el("div","balao",it.pre+" <b>__________</b>"));
+    c.appendChild(el("div","hint","Use a palavra <b>"+it.base+"</b> &#8212; s&#243; arrume o fim dela."));
+    var inp=el("input","campo");inp.type="text";inp.placeholder="escreva aqui";
+    inp.autocomplete="off";inp.spellcheck=false;inp.setAttribute("data-qa",it.certo);
+    c.appendChild(inp);
+    var fb=el("div","hint","");c.appendChild(fb);
+    var b=el("button","btn peq","Conferir");b.style.marginTop="10px";
+    function tenta(){ arma();
+      var v=normal(inp.value);
+      if(v===normal(it.certo)){
+        sCerto(); sMaquina(); inp.style.borderColor="#3f9a26";
+        fb.innerHTML="Combinou!"; reg("concordancia",err===0,err+1);
+        var ce=centroTela(inp); faisca(ce[0],ce[1],"#6bd23f",14);
+        setTimeout(function(){ idx++;
+          if(idx>=COMPL.length){ depoisDaFala("nm_compl_revela",10000,function(){
+            mostraBanner("O adjetivo <b>copia</b> o nome: se ele &#233; ela, o adjetivo tamb&#233;m &#233;.",nOrdena); }); }
+          else { err=0; passo(); }
+        },1300);
+      } else { err++; sErro(); inp.style.borderColor="#ef5a4a";
+        /* dica que CRESCE: primeiro o porque, depois a palavra quase pronta */
+        if(err===1) fb.innerHTML="Quase! "+it.por;
+        else if(err===2){ consolo(); fb.innerHTML="Comece assim: <b>"+it.certo.substring(0,it.certo.length-2)+"...</b>"; }
+        else { fb.innerHTML="&#201; <b>"+it.certo+"</b>. Escreva do jeitinho e siga."; }
+        setTimeout(function(){ inp.style.borderColor=""; },900); }
+    }
+    b.onclick=tenta;
+    inp.onkeydown=function(ev){ if(ev.keyCode===13) tenta(); };
+    c.appendChild(b);
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_compl_dica","Fale a legenda inteira baixinho: o ouvido percebe.");
+    if(idx===0) falar("nm_compl_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ NOVA: ORDENE A LEGENDA (arrastar para SEQUENCIAR) ----------
+   O arrasto que ja existia so encaixava peca por FORMA. Aqui a ordem e que
+   manda: artigo, substantivo, adjetivo — a crianca ve a frase nascer na ordem.
+   ⚠️ mesmo guarda de evento fantasma da Bancada (licao paga duas vezes). */
+var ORD=[
+ {img:"nm_portao",  cer:["o","port&#227;o","enferrujado"], iscas:["r&#225;pido"]},
+ {img:"nm_arvore",  cer:["a","&#225;rvore","florida"],      iscas:["molhado"]},
+ {img:"nm_criancas",cer:["as","crian&#231;as","alegres"],    iscas:["limpa"]}];
+function nOrdena(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,58+idx*2);
+    var it=ORD[idx],fim=false,pos=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","ORDENE A LEGENDA"));
+    c.appendChild(fotoEl(it.img,""));
+    c.appendChild(el("div","balao","Ponha as palavras <b>na ordem</b> da legenda. Arraste, ou s&#243; toque."));
+    var trilho=el("div","trilho"),vs=[],i;
+    for(i=0;i<3;i++){ var v=el("div","tvaga",""+(i+1)); trilho.appendChild(v); vs.push(v); }
+    c.appendChild(trilho);
+    var box=el("div","pcs"),pool=baguncar(it.cer.concat(it.iscas).slice(0));
+
+    function poe(tx,b){
+      if(fim||b.className.indexOf("usada")>=0) return;
+      if(normal(tx)===normal(it.cer[pos])){
+        vs[pos].innerHTML=tx; vs[pos].className="tvaga cheia";
+        b.className="peca usada"; pos++; sPop(pos);
+        var ce=centroTela(vs[pos-1]); faisca(ce[0],ce[1],"#ffb45e",10);
+        if(pos>=3){ fim=true; sCerto(); reg("concordancia",err===0,err+1);
+          setTimeout(function(){ idx++;
+            if(idx>=ORD.length){ depoisDaFala("nm_ord_revela",9000,function(){
+              mostraBanner("A legenda tem uma <b>ordem</b>: primeiro quem &#233;, depois como &#233;.",nTermometro); }); }
+            else { err=0; passo(); }
+          },1100); }
+      } else { err++; b.className="peca no"; sErro();
+        setTimeout(function(){ if(b.className==="peca no") b.className="peca"; },440);
+        if(err===2) consolo();
+        if(err>=3) mostraDica("A vaga <b>"+(pos+1)+"</b> pede: "+
+          (pos===0?"o artigo (o, a, as)":(pos===1?"o <b>nome</b> da coisa":"o <b>jeito</b> dela")));
+      }
+    }
+    var ultimoToque=0;
+    function ehMouseFantasma(e){
+      return e.type.indexOf("mouse")===0 && ((new Date()).getTime()-ultimoToque)<800;
+    }
+    function daArrasto(b,tx){
+      var g=null,dx=0,dy=0,x0=0,y0=0,pegou=false,moveu=false,tratado=0;
+      function pto(e){ var s=(e.touches&&e.touches[0])||(e.changedTouches&&e.changedTouches[0])||e;
+        return [s.clientX,s.clientY]; }
+      function comeca(e){
+        if(fim||b.className.indexOf("usada")>=0||ehMouseFantasma(e)) return;
+        if(e.type.indexOf("touch")===0) ultimoToque=(new Date()).getTime();
+        var q=pto(e),r=b.getBoundingClientRect();
+        dx=q[0]-r.left; dy=q[1]-r.top; x0=q[0]; y0=q[1]; moveu=false; pegou=true;
+        g=b.cloneNode(true); g.className=b.className+" fantasma";
+        g.style.width=r.width+"px"; g.style.height=r.height+"px";
+        g.style.left=r.left+"px"; g.style.top=r.top+"px";
+        document.body.appendChild(g); b.style.opacity=".3";
+        if(e.type==="mousedown"){
+          document.addEventListener("mousemove",move);
+          document.addEventListener("mouseup",solta);
+          if(e.preventDefault) e.preventDefault();
+        }
+      }
+      function move(e){
+        if(!pegou) return;
+        var q=pto(e);
+        if(!moveu&&(Math.abs(q[0]-x0)>6||Math.abs(q[1]-y0)>6)) moveu=true;
+        g.style.left=(q[0]-dx)+"px"; g.style.top=(q[1]-dy)+"px";
+        if(moveu&&e.preventDefault) e.preventDefault();
+      }
+      function solta(e){
+        if(!pegou) return; pegou=false;
+        document.removeEventListener("mousemove",move);
+        document.removeEventListener("mouseup",solta);
+        if(g&&g.parentNode) g.parentNode.removeChild(g);
+        g=null; b.style.opacity="";
+        tratado=(new Date()).getTime();
+        arma(); poe(tx,b);
+      }
+      b.addEventListener("mousedown",comeca);
+      b.addEventListener("touchstart",comeca);
+      b.addEventListener("touchmove",move);
+      b.addEventListener("touchend",solta);
+      b.addEventListener("touchcancel",solta);
+      b.onclick=function(){ if((new Date()).getTime()-tratado<700) return; arma(); poe(tx,b); };
+    }
+    for(i=0;i<pool.length;i++){(function(tx){
+      var b=el("div","peca",tx);
+      /* qual palavra serve AGORA — SO para o auditor jogador. */
+      b.setAttribute("data-qa",normal(tx));
+      daArrasto(b,tx);
+      box.appendChild(b);
+    })(pool[i]);}
+    c.appendChild(box);
+    c.appendChild(el("div","hint","A vaga 1 &#233; a primeira palavra da legenda."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_ord_dica","Leia em voz baixa: qual palavra vem primeiro?");
+    if(idx===0) falar("nm_ord_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ NOVA: TERMÔMETRO DO GRAU (DESLIZAR e ver mudar) ----------
+   Substitui a fase de grau, que era mais uma peca para escolher. Aqui o
+   controle e continuo: a crianca desliza e a FOTO cresce ou encolhe junto com
+   a palavra. O grau deixa de ser regra decorada e vira coisa que se ve.  */
+var TERM=[
+ {img:"nm_cachorro",pal:["cachorrinho","cachorro","cachorr&#227;o"],ped:"o <b>cachorr&#227;o</b>",cer:2},
+ {img:"nm_portao",  pal:["port&#227;ozinho","port&#227;o","port&#227;ozao"],  ped:"o <b>port&#227;ozinho</b>",cer:0},
+ {img:"nm_arvore",  pal:["arvorezinha","&#225;rvore","arvorona"],  ped:"a <b>arvorezinha</b>",cer:0}];
+function nTermometro(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,64+idx*2);
+    var it=TERM[idx],fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","TERM&#212;METRO DO GRAU"));
+    c.appendChild(el("div","balao","O editor quer uma foto de "+it.ped+". <b>Deslize</b> at&#233; chegar l&#225;."));
+    var moldura=el("div","moldura");
+    var im=imgEl(it.img,"fotograu");
+    moldura.appendChild(im); c.appendChild(moldura);
+    var pal=el("div","palavragrau",it.pal[1]);c.appendChild(pal);
+    var r=document.createElement("input"); r.type="range"; r.min="0"; r.max="2"; r.step="1";
+    r.value="1"; r.className="termo"; r.setAttribute("aria-label","tamanho da palavra");
+    r.setAttribute("data-qa",""+it.cer);
+    c.appendChild(r);
+    var lab=el("div","termolab");
+    lab.innerHTML="<span>pequeno</span><span>normal</span><span>enorme</span>";
+    c.appendChild(lab);
+    var b=el("button","btn peq","Tirar a foto");b.style.marginTop="10px";
+    function pinta(){ var v=parseInt(r.value,10);
+      pal.innerHTML=it.pal[v];
+      im.style.width=(v===0?42:(v===1?100:150))+"%";
+    }
+    r.oninput=function(){ arma(); sTap(); pinta(); };
+    r.onchange=pinta;
+    pinta();
+    b.onclick=function(){ arma();
+      if(fim) return;
+      if(parseInt(r.value,10)===it.cer){
+        fim=true; sCerto(); sMaquina(); reg("morfologia",err===0,err+1);
+        var ce=centroTela(pal); faisca(ce[0],ce[1],"#ffb45e",16);
+        setTimeout(function(){ idx++;
+          if(idx>=TERM.length){ depoisDaFala("nm_termo_revela",10000,function(){
+            mostraBanner("O <b>fim</b> da palavra muda o tamanho da coisa: inho encolhe, &#227;o aumenta!",nFabrica); }); }
+          else { err=0; passo(); }
+        },1500);
+      } else { err++; sErro(); consolo();
+        mostraDica(parseInt(r.value,10)<it.cer
+          ? "Ainda est&#225; <b>pequeno</b> demais. Arraste mais para a direita."
+          : "Ficou <b>grande</b> demais. Arraste um pouco para a esquerda."); }
+    };
+    c.appendChild(b);
+    c.appendChild(el("div","hint","Veja a foto mudar junto com a palavra."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_termo_dica","<b>inho, inha</b> encolhem. <b>&#227;o, ona</b> aumentam.");
+    if(idx===0) falar("nm_termo_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ NOVA: DITADO DO EDITOR (ESCREVER OUVINDO) ----------
+   Gesto que a atividade nao tinha: a legenda chega pelo OUVIDO e sai pela mao.
+   E a fase que mais junta ortografia com o conteudo do dia. O botao de ouvir
+   fica GRANDE e pode ser apertado quantas vezes a crianca quiser — ditado aqui
+   nao e prova de memoria. */
+var DIT=[
+ {id:"nm_dit1",txt:"o cachorro molhado"},
+ {id:"nm_dit2",txt:"a horta nova"},
+ {id:"nm_dit3",txt:"as bicicletas coloridas"}];
+function nDitado(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,83+idx);
+    var it=DIT[idx];
+    var c=el("div","centro");
+    c.appendChild(cliqueEl("pq"));
+    c.appendChild(el("div","selo","DITADO DO EDITOR"));
+    c.appendChild(el("div","balao","O Clique vai <b>ditar</b> uma legenda. Ou&#231;a e escreva do jeitinho."));
+    var bo=el("button","btn","Ouvir a legenda");bo.style.marginTop="6px";
+    bo.onclick=function(){ arma(); falar(it.id); };
+    c.appendChild(bo);
+    var inp=el("input","campo");inp.type="text";inp.placeholder="escreva o que ouviu";
+    inp.autocomplete="off";inp.spellcheck=false;inp.setAttribute("data-qa",it.txt);
+    c.appendChild(inp);
+    var fb=el("div","hint","");c.appendChild(fb);
+    var b=el("button","btn peq","Conferir");b.style.marginTop="10px";
+    function tenta(){ arma();
+      var v=normal(inp.value).replace(/[.,!?]/g,"").replace(/\s+/g," ");
+      if(v===normal(it.txt)){
+        sCerto(); sMaquina(); inp.style.borderColor="#3f9a26"; fb.innerHTML="Escrito certinho!";
+        reg("producao",err===0,err+1);
+        var ce=centroTela(inp); faisca(ce[0],ce[1],"#6bd23f",14);
+        setTimeout(function(){ idx++;
+          if(idx>=DIT.length){ depoisDaFala("nm_dit_revela",9000,function(){
+            mostraBanner("Voc&#234; <b>ouviu</b> e escreveu: &#233; assim que o rep&#243;rter trabalha!",nCruzada); }); }
+          else { err=0; passo(); }
+        },1300);
+      } else { err++; sErro(); inp.style.borderColor="#ef5a4a";
+        var falta=normal(it.txt).split(" "),tem=v.split(" "),z,perdidas=[];
+        for(z=0;z<falta.length;z++){ var achou=false,y;
+          for(y=0;y<tem.length;y++) if(tem[y]===falta[z]) achou=true;
+          if(!achou) perdidas.push(falta[z]); }
+        if(err===1) fb.innerHTML="Ou&#231;a mais uma vez, com calma.";
+        else if(err===2){ consolo();
+          fb.innerHTML= perdidas.length ? "Est&#225; faltando <b>"+perdidas.length+"</b> palavra(s)." : "Confira as letras do fim."; }
+        else fb.innerHTML="A legenda &#233;: <b>"+it.txt+"</b>";
+        setTimeout(function(){ inp.style.borderColor=""; },900); }
+    }
+    b.onclick=tenta;
+    inp.onkeydown=function(ev){ if(ev.keyCode===13) tenta(); };
+    c.appendChild(b);
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_dit_dica","Pode ouvir quantas vezes quiser.");
+    setTimeout(function(){ falar(it.id); },500);
+  }
+  passo();
+}
+
+/* ---------- ⭐ NOVA: MANCHETE DO JORNAL (produzir com contador ao vivo) ------
+   Producao COM REGRA, e a regra aparece cumprindo-se na tela: o contador diz o
+   que ja tem e o que falta enquanto a crianca escreve. Nao e correcao no fim —
+   e andaime durante. O banco de adjetivos fica a vista: aqui o dificil e
+   COMBINAR, nao lembrar palavra. */
+var MANCH=[
+ {img:"nm_horta",sub:"horta",subs:["horta"],
+  banco:["nova","verde","limpa","cheirosa","bonita"]},
+ {img:"nm_criancas",sub:"crian&#231;as",subs:["criancas","criancas"],
+  banco:["alegres","r&#225;pidas","unidas","felizes","barulhentas"]}];
+function nManchete(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,92+idx);
+    var it=MANCH[idx];
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","MANCHETE DO JORNAL"));
+    c.appendChild(fotoEl(it.img,""));
+    c.appendChild(el("div","balao","Escreva a <b>manchete</b>: use a palavra <b>"+it.sub+"</b> e <b>dois</b> adjetivos do quadro."));
+    var qd=el("div","quadroadj"),z;
+    for(z=0;z<it.banco.length;z++) qd.appendChild(el("span","adjw",it.banco[z]));
+    c.appendChild(qd);
+    var inp=el("input","campo");inp.type="text";inp.placeholder="escreva a manchete";
+    inp.autocomplete="off";inp.spellcheck=false;
+    inp.setAttribute("data-qa",it.sub+" "+it.banco[0]+" e "+it.banco[1]);
+    c.appendChild(inp);
+    var marc=el("div","marcador","");c.appendChild(marc);
+    function conta(){
+      var v=normal(inp.value),temSub=false,n=0,k;
+      for(k=0;k<it.subs.length;k++) if(v.indexOf(normal(it.subs[k]))>=0) temSub=true;
+      for(k=0;k<it.banco.length;k++) if(v.indexOf(normal(it.banco[k]))>=0) n++;
+      marc.innerHTML="<span class='"+(temSub?"okm":"fal")+"'>nome "+(temSub?"&#10003;":"&#8212;")+"</span>"+
+                     "<span class='"+(n>=2?"okm":"fal")+"'>adjetivos "+Math.min(n,2)+" de 2</span>";
+      return temSub&&n>=2;
+    }
+    inp.oninput=conta; inp.onkeyup=conta; conta();
+    var b=el("button","btn peq","Publicar");b.style.marginTop="10px";
+    function tenta(){ arma();
+      if(conta()){
+        sCerto(); sMaquina(); inp.style.borderColor="#3f9a26";
+        if(!MED.legendas) MED.legendas=[];
+        MED.legendas.push(inp.value); salva();
+        reg("producao",err===0,err+1);
+        var ce=centroTela(inp); faisca(ce[0],ce[1],"#6bd23f",16);
+        setTimeout(function(){ idx++;
+          if(idx>=MANCH.length){ depoisDaFala("nm_manch_revela",10000,function(){
+            mostraBanner("Manchete boa diz <b>o qu&#234;</b> e <b>como</b> &#8212; em poucas palavras.",nLegenda); }); }
+          else { err=0; passo(); }
+        },1400);
+      } else { err++; sErro(); inp.style.borderColor="#ef5a4a";
+        if(err===2) consolo();
+        mostraDica("Olhe o contador: ele mostra o que ainda falta na sua manchete.");
+        setTimeout(function(){ inp.style.borderColor=""; },900); }
+    }
+    b.onclick=tenta;
+    inp.onkeydown=function(ev){ if(ev.keyCode===13) tenta(); };
+    c.appendChild(b);
+    c.appendChild(el("div","hint","O contador vai marcando enquanto voc&#234; escreve."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nm_manch_dica","Escolha dois adjetivos que combinem com a foto.");
+    if(idx===0) falar("nm_manch_intro");
   }
   passo();
 }
@@ -1790,7 +2111,7 @@ function nFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
    nenhum) e o professor entra em dois toques. O menu NAO zera nem grava
    progresso: e so um atalho para abrir a fase.                             */
 var CODIGO_MESTRE="1275@";
-var FASES_MESTRE=[["nP1prever","1. O QUE VOC&#202; ACHA?"],["nLupa","2. LUPA DO REP&#211;RTER"],["nCaixas","3. AS DUAS GAVETAS"],["nMagica","4. FILTRO M&#193;GICO"],["nDetetive","5. DETETIVE DA REDA&#199;&#1&#8230;"],["nGrupo","6. BANCADA DE MONTAGEM"],["nAquecimento","7. LEMBRANDO..."],["nPlural","8. TUDO COMBINANDO"],["nGenero","9. MENINO OU MENINA?"],["nGrau","10. ENCOLHE E AUMENTA"],["nFabrica","11. F&#193;BRICA DE ADJETIVOS"],["nLigar","12. LIGUE AS COLUNAS"],["nCaca","13. QUADRO DE LETRAS"],["nRevisor","14. REVISOR DA P&#193;GINA"],["nCruzada","15. CRUZADINHA DA REDA&#199;&&#8230;"],["nMemoria","16. nMemoria"],["nLegenda","17. ESCREVA A LEGENDA"],["nRelampago","18. DESAFIO REL&#194;MPAGO"],["nEnsinar","19. ENSINE O CLIQUE"],["nFim","20. nFim"]];
+var FASES_MESTRE=[["nP1prever","1. O QUE VOCÊ ACHA?"],["nLupa","2. LUPA DO REPÓRTER"],["nCaixas","3. AS DUAS GAVETAS"],["nMagica","4. FILTRO MÁGICO"],["nDetetive","5. DETETIVE DA REDAÇÃO"],["nGrupo","6. BANCADA DE MONTAGEM"],["nMarcaTexto","7. MARCA-TEXTO"],["nAquecimento","8. LEMBRANDO..."],["nCompleta","9. COMPLETE A LEGENDA"],["nOrdena","10. ORDENE A LEGENDA"],["nTermometro","11. TERMÔMETRO DO GRAU"],["nFabrica","12. FÁBRICA DE ADJETIVOS"],["nLigar","13. LIGUE AS COLUNAS"],["nCaca","14. QUADRO DE LETRAS"],["nDitado","15. DITADO DO EDITOR"],["nCruzada","16. CRUZADINHA"],["nMemoria","17. MEMÓRIA DA REDAÇÃO"],["nManchete","18. MANCHETE DO JORNAL"],["nLegenda","19. ESCREVA A LEGENDA"],["nRelampago","20. DESAFIO RELÂMPAGO"],["nEnsinar","21. ENSINE O CLIQUE"],["nFim","22. BOLETIM E MEDALHA"]];
 function telaMestre(){
   limpa();var t=el("div","tela");var c=el("div","centro");
   c.appendChild(el("div","selo","MODO PROFESSOR"));
@@ -1939,7 +2260,7 @@ function resumoAnimado(pai){
   }
 }
 /* fases que treinam cada objetivo */
-var TREINO={reconhecer:nLupa,grupo:nGrupo,concordancia:nPlural,morfologia:nGrau,producao:nLegenda};
+var TREINO={reconhecer:nLupa,grupo:nGrupo,concordancia:nCompleta,morfologia:nTermometro,producao:nLegenda};
 function TELAFIM(){ nFim(); }
 /* ---------- TREINAR SO O QUE FALTOU ----------
    Pergunta do Marcos (ago/2026): "se ela nao domina, ela consegue fazer so as
