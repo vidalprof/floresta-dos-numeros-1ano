@@ -43,8 +43,10 @@ jobs:
             exit 1
           fi
           tmp="$(mktemp -d)"
-          echo "Clonando $OWNER/$DEST ..."
-          git clone "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" "$tmp"
+          echo "Clonando $OWNER/$DEST (so a ultima versao) ..."
+          # --depth 1: o destino tambem so precisa do estado de agora. Em repo
+          # de atividade pesada (imagens + audio) isto tira minutos do relogio.
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" "$tmp"
           # Espelha exatamente a origem: limpa o conteudo antigo do destino
           # (mantendo apenas .git) para nao acumular peso de versoes passadas.
           find "$tmp" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +

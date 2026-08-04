@@ -49,6 +49,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Gerar imagem
         env:
@@ -61,7 +63,7 @@ jobs:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python3 - <<'PY'
-          import os, re, json, base64, urllib.request, urllib.parse, urllib.error
+          import os, time, re, json, base64, urllib.request, urllib.parse, urllib.error
           modelo=(os.environ.get("MODELO","pollinations").strip() or "pollinations").lower()
           if modelo in ("free","gratis","grátis","poli"): modelo="pollinations"
           prompt=os.environ["PROMPT"]
@@ -89,14 +91,30 @@ jobs:
                   parts.append({"inline_data":{"mime_type":"image/png","data":data}})
                   print("editando imagem base:", base)
               body={"contents":[{"parts":parts}]}
+              # ⚠️ LICAO PAGA (ago/2026): o Gemini devolveu 503 "high demand" e o
+              # workflow MORREU na hora — parou a producao por uma soluco de
+              # minutos do servidor. 503/429/500 sao TEMPORARIOS: agora ele
+              # insiste (5s, 15s, 40s) antes de desistir do modelo.
               for modelo_img in ["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]:
                   url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(modelo_img,key)
-                  req=urllib.request.Request(url, data=json.dumps(body).encode("utf-8"),
-                                             headers={"Content-Type":"application/json"})
-                  try:
-                      raw=urllib.request.urlopen(req, timeout=180).read()
-                  except urllib.error.HTTPError as e:
-                      print("modelo %s -> HTTP %s: %s"%(modelo_img, e.code, e.read().decode("utf-8","ignore")[:300]))
+                  raw=None
+                  for tentativa,espera in enumerate([5,15,40,0]):
+                      req=urllib.request.Request(url, data=json.dumps(body).encode("utf-8"),
+                                                 headers={"Content-Type":"application/json"})
+                      try:
+                          raw=urllib.request.urlopen(req, timeout=180).read()
+                          break
+                      except urllib.error.HTTPError as e:
+                          corpo=e.read().decode("utf-8","ignore")[:200]
+                          print("modelo %s (tentativa %d) -> HTTP %s: %s"%(modelo_img, tentativa+1, e.code, corpo))
+                          if e.code in (429,500,502,503,504) and espera:
+                              time.sleep(espera); continue
+                          break
+                      except Exception as e:
+                          print("modelo %s (tentativa %d) -> %s"%(modelo_img, tentativa+1, e))
+                          if espera: time.sleep(espera); continue
+                          break
+                  if raw is None:
                       continue
                   d=json.loads(raw)
                   for c in d.get("candidates",[]) or []:
@@ -106,10 +124,20 @@ jobs:
                               print("imagem gerada com", modelo_img)
                               return base64.b64decode(inl["data"])
                   print("modelo %s: sem imagem na resposta: %s"%(modelo_img, json.dumps(d)[:300]))
-              raise SystemExit("::error::Gemini nao retornou imagem (ver logs acima)")
+              raise RuntimeError("Gemini nao retornou imagem")
 
           if modelo=="gemini":
-              salvar(gemini())
+              try:
+                  salvar(gemini())
+              except Exception as e:
+                  # ⚡ NUNCA PARAR A PRODUCAO POR CAUSA DO GEMINI. Se ele estiver
+                  # fora do ar, a imagem sai pelo Pollinations (gratis) e o
+                  # trabalho segue; depois da para refazer so essa imagem.
+                  # Edicao de imagem base o Pollinations nao faz — ai sim para.
+                  if base and os.path.exists(base):
+                      raise SystemExit("::error::Gemini fora do ar e esta era uma EDICAO de imagem base (o Pollinations nao edita): %s"%e)
+                  print("::warning::Gemini falhou (%s). Caindo para o Pollinations (gratis)."%e)
+                  salvar(pollinations())
           else:
               salvar(pollinations())
           PY

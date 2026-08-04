@@ -1,0 +1,94 @@
+/* ============================================================
+   AUDITOR DE IMAGEM QUEBRADA — "toda figura aparece mesmo?"
+
+   Nasceu de um defeito que o Marcos pegou (ago/2026), no jogo da memória da
+   Máquina do Tempo: em cima das cartas aparecia um QUADRADINHO de imagem que
+   não veio. A causa era resto de clone — o verso da carta apontava para
+   `img/cq_base.png`, arquivo de OUTRA atividade, que nunca existiu nesta.
+
+   Por que nenhum portão pegava: o `node --check` não abre imagem; o auditor de
+   leiaute mede retângulos (e o quadradinho quebrado TEM retângulo); o de
+   contraste olha texto; e o jogador clica e segue em frente — o app funciona
+   inteiro com a figura faltando. Só o olho da criança via.
+
+   Aqui a conta é a que importa: a figura CARREGOU? Um <img> que terminou de
+   carregar com `naturalWidth === 0` é uma figura que a criança não vê.
+   Confere as figuras de CADA tela e também a lista de pré-carga (`IMGS`),
+   que é de onde saem as figuras que aparecem depois, no meio da fase.
+
+   Palavras do Marcos: *"todas as imagens devem aparecer na atividade, inclusive
+   em navegadores chrome antigo"*.
+
+   Uso: node _qa/imagens.js _historia/index.html tela1 tela2 ...
+   ============================================================ */
+const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
+const path=require('path');
+
+const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
+
+(async()=>{
+  const arquivo=process.argv[2];
+  const telas=process.argv.slice(3);
+  if(!arquivo){ console.log("uso: node _qa/imagens.js <arquivo.html> <tela...>"); process.exit(2); }
+  const b=await chromium.launch({executablePath:CROMO,args:['--no-sandbox','--disable-gpu']});
+  const p=await b.newPage({viewport:{width:412,height:820}});
+  p.on('pageerror',()=>{});
+  const url='file://'+path.resolve(arquivo);
+  const quebradas=new Map();   // src -> telas onde apareceu
+
+  function anota(src,tela){
+    const curto=String(src).split('/').slice(-1)[0];
+    if(!quebradas.has(curto)) quebradas.set(curto,new Set());
+    quebradas.get(curto).add(tela);
+  }
+
+  /* 1) a PRE-CARGA (var IMGS): sao as figuras que entram no meio da fase.
+        Elas nem chegam ao DOM na abertura, entao so este teste as alcanca. */
+  await p.goto(url);
+  await p.waitForTimeout(500);
+  const pre=await p.evaluate(async()=>{
+    if(typeof IMGS==="undefined"||typeof srcDe!=="function") return [];
+    const ruins=[];
+    await Promise.all(IMGS.map(n=>new Promise(ok=>{
+      const im=new Image();
+      im.onload=()=>ok();
+      im.onerror=()=>{ ruins.push(srcDe(n)); ok(); };
+      im.src=srcDe(n);
+      /* imagem que ja veio do cache nao dispara evento */
+      if(im.complete){ if(!im.naturalWidth) ruins.push(srcDe(n)); ok(); }
+    })));
+    return ruins;
+  });
+  for(const s of pre) anota(s,"pre-carga (IMGS)");
+
+  /* 2) tela por tela: o que esta na tela carregou? */
+  for(const t of telas){
+    await p.goto(url); await p.waitForTimeout(280);
+    const ok=await p.evaluate(t=>{
+      window.falar=function(){}; window.depoisDaFala=function(i,m,cb){setTimeout(cb,60);};
+      if(typeof window[t]!=="function") return false; window[t](); return true;
+    },t);
+    if(!ok){ console.log("  (pulei "+t+": nao e funcao)"); continue; }
+    await p.waitForTimeout(900);
+    const ruins=await p.evaluate(()=>{
+      const fora=[];
+      const ims=document.querySelectorAll("img");
+      for(let i=0;i<ims.length;i++){
+        const im=ims[i];
+        if(im.complete && im.naturalWidth===0) fora.push(im.getAttribute("src")||"(sem src)");
+      }
+      /* fundo por CSS tambem some sem avisar */
+      const todos=document.querySelectorAll("#app *");
+      return fora;
+    });
+    for(const s of ruins) anota(s,t);
+  }
+  await b.close();
+
+  console.log(arquivo+" -> imagens conferidas em "+telas.length+" tela(s) + a pre-carga");
+  if(!quebradas.size){ console.log("  imagens ok: toda figura da atividade carrega"); process.exit(0); }
+  console.log("  "+quebradas.size+" IMAGEM(NS) QUE NAO CARREGA(M) (a crianca ve um quadradinho vazio):");
+  for(const [src,onde] of quebradas)
+    console.log("   "+src+"  ->  "+[...onde].slice(0,4).join(", ")+([...onde].length>4?" ...":""));
+  process.exit(1);
+})();

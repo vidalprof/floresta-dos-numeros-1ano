@@ -44,6 +44,19 @@ echo " telas: $(echo $TELAS | wc -w)"
 echo "==================================================="
 FALHOU=0
 
+# ⚡ OS TRES PORTOES DE NAVEGADOR SAIEM NA FRENTE, EM PARALELO.
+#    Eles abrem o Chromium em 6 tamanhos x N telas e sozinhos levam quase todo
+#    o relogio da banca; os portoes de texto (python) levam segundos. Rodando
+#    junto, a banca inteira passou a caber no tempo do mais lento em vez da
+#    SOMA de todos. Cada um escreve num arquivo e vota no fim, na ordem certa.
+#    ⚠️ Nada de `2>/dev/null` aqui: portao que imprime NADA nao e "passou", e
+#    "rodou cego". O erro vai para o mesmo arquivo e aparece na tela.
+TMPQ="$(mktemp -d)"
+node _qa/contraste.js "$ARQ" $TELAS > "$TMPQ/contraste.txt" 2>&1 & PID_CON=$!
+node _qa/leiaute.js   "$ARQ" $TELAS > "$TMPQ/leiaute.txt"   2>&1 & PID_LEI=$!
+node _qa/jogador.js   "$ARQ"        > "$TMPQ/jogador.txt"   2>&1 & PID_JOG=$!
+node _qa/imagens.js   "$ARQ" $TELAS > "$TMPQ/imagens.txt"   2>&1 & PID_IMG=$!
+
 echo
 echo "--- 1) ENGENHEIRO (o codigo roda?) -----------------"
 python3 - "$ARQ" > /tmp/_qa_js.js <<'PY'
@@ -91,7 +104,13 @@ python3 _qa/mascote.py "$ARQ" || FALHOU=1
 
 echo
 echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
-node _qa/contraste.js "$ARQ" $TELAS 2>/dev/null || FALHOU=1
+wait $PID_CON || FALHOU=1
+cat "$TMPQ/contraste.txt"
+
+echo
+echo "--- 1e) IMAGEM QUEBRADA (a figura aparece mesmo?) --"
+wait $PID_IMG || FALHOU=1
+cat "$TMPQ/imagens.txt"
 
 echo
 echo "--- 4b) NARRACAO (a voz fala direito?) -------------"
@@ -99,11 +118,14 @@ if [ -f _lote_falas.json ]; then python3 _qa/falas.py _lote_falas.json || FALHOU
 
 echo
 echo "--- 5) LEIAUTE (cabe na tela? da para tocar?) ------"
-node _qa/leiaute.js "$ARQ" $TELAS 2>/dev/null || FALHOU=1
+wait $PID_LEI || FALHOU=1
+cat "$TMPQ/leiaute.txt"
 
 echo
 echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
-node _qa/jogador.js "$ARQ" 2>/dev/null | tail -4
+# este portao TAMBEM vota (ver o comentario no fim do _qa/jogador.js)
+wait $PID_JOG || FALHOU=1
+tail -6 "$TMPQ/jogador.txt"
 
 echo
 echo "==================================================="
@@ -113,4 +135,5 @@ else
   echo " BANCA REPROVOU — conserte antes de mostrar ao Marcos."
 fi
 echo "==================================================="
+rm -rf "$TMPQ"
 exit $FALHOU

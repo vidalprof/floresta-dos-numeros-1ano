@@ -153,6 +153,15 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    if(await p.evaluate(()=>!!document.querySelector('.medal'))){ visto.push(i+' >>> CHEGOU NO FIM'); break; }
  }
  console.log(visto.join('\n'));
- console.log('ERROS JS:', erros.length? erros.slice(0,8).join(' || '):'nenhum');
+ /* o barulho do file:// nao conta: service worker so existe em http(s) */
+ const reais=erros.filter(e=>!/ServiceWorker|protocol of the current origin/i.test(e));
+ console.log('ERROS JS:', reais.length? reais.slice(0,8).join(' || '):'nenhum');
+ const chegou=visto.length&&/CHEGOU NO FIM/.test(visto[visto.length-1]);
+ if(!chegou) console.log('  !! O JOGADOR NAO CHEGOU NA MEDALHA — a crianca pode empacar aqui');
+ if(reais.length) console.log('  !! '+reais.length+' ERRO(S) DE JS durante a partida');
  await b.close();
+ /* ⚠️ ate ago/2026 este portao NAO reprovava nada: a saida ia para um `tail -4`
+    e o codigo de saida se perdia no cano. Ou seja, o auditor jogava a partida
+    inteira e o resultado dele era decorativo. Agora ele vota como os outros. */
+ process.exit(chegou&&!reais.length ? 0 : 1);
 })();

@@ -25,6 +25,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Gerar imagens do _gerar_imagens.json (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -80,6 +82,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Gerar medalha no Gemini (3 tentativas)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -131,6 +135,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Instalar edge-tts
         run: pip3 install --quiet edge-tts
       - name: Gerar falas do _lote_falas.json (voz Antonio)
@@ -174,6 +180,8 @@ jobs:
       SRC: _pub_confeitaria
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Republicar com historico limpo
         run: |
           set -euo pipefail

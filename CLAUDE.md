@@ -84,6 +84,38 @@ Leia tudo antes de agir e responda sempre em **português**.
 > 75% e refaz só as fases fracas. O código pronto e as armadilhas estão nesse arquivo — copiar,
 > não reescrever. Depois de colar, rodar `bash _qa/auditar.sh` (a tela final fica mais alta).
 
+> ## 🚫🧬 RESTO DE CLONE: NUNCA MAIS (ordem do Marcos, ago/2026)
+> Palavras dele: *"favor não poder mais haver resto do clone, faça com que isso não
+> aconteça mais"* e *"tem que aprender com os erros automaticamente e eles não podem
+> se repetir nas outras atividades"*. **A regra da casa deixou de ser "tomar cuidado"
+> e passou a ser MEDIDA.** O `_qa/clone.py` tinha um item por TIPO de resto (imagem,
+> voz, conceito…) e, a cada rodada, aparecia um tipo NOVO. Agora ele tem o **item 8 —
+> PREFIXO ALHEIO**, que não pergunta o tipo: descobre o prefixo desta atividade
+> (`hv_`, `jd_`, `fb_`…) e o das outras, e **reprova qualquer coisa com a marca de
+> outra pasta**, seja imagem, voz, variável ou comentário. E o **`_qa/imagens.js`**
+> (portão 1e) abre a atividade no navegador e reprova **qualquer figura que não
+> carregue** — foi assim que o quadradinho vazio do jogo da memória apareceu.
+> **Toda vez que um defeito escapar até o Marcos, o conserto tem DUAS partes:
+> arrumar o código E criar/estender o portão que o pega sozinho da próxima vez.**
+> Sem a segunda parte, o trabalho não está feito.
+>
+> **⭐🎨 INTERAÇÃO DINÂMICA USA ARTE DE IA, NÃO DESENHO DE CSS** (regra do Marcos,
+> ago/2026: *"nas interações dinâmicas sempre usar imagens geradas pela IA, como
+> aconteceu na água que sobe na atividade de história, pois ficou lindo e
+> profissional"*). Simulador, verso de carta, peça de arrastar, cenário que muda:
+> a FIGURA é gerada (Gemini/Pollinations) e o CSS entra só no que precisa se mexer
+> em tempo real (a água subindo, a carta girando). Retângulo de CSS com palitinho
+> verde não é ilustração — o Marcos reprovou dois deles no mesmo dia.
+>
+> **⭐🃏 JOGO DA MEMÓRIA: GRANDE, BONITO, COM EFEITO E SOM** (regra do Marcos,
+> ago/2026: *"os jogos da memória tem que ter bastante efeitos e sons, devem ficar
+> lindos, tamanho maior, claro adequando a tela, chamar atenção do estudante"*).
+> O padrão da casa: carta fluida ≥ **130×88 px** (medido pelo `_qa/leiaute.js`),
+> **verso de arte de IA** (nunca retângulo liso), **virada 3D** de verdade
+> (`rotateY`, com queda para troca-de-face no Chrome antigo), **brilho correndo**
+> pelo verso para chamar, **par que pulsa** e acende, **placar de pares**, som
+> próprio de virar e de formar par, e festa no fim.
+>
 > **⭐💾 TODA ATIVIDADE NOVA CONTINUA DE ONDE PAROU — POR 55 MINUTOS** (decisão do
 > Marcos, ago/2026: *"ter a opção de continuar de onde parou caso o aluno saia sem
 > querer, e isso durar o tempo de uma aula, 55 minutos... pode ser aplicado a toda

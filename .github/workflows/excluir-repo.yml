@@ -25,6 +25,8 @@ jobs:
     steps:
       - name: Checkout deste repositorio
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
       - name: Conferir a confirmacao
         env:

@@ -191,6 +191,60 @@ for campo in sorted(set(re.findall(r"MED\.([a-z]+)(?:&&|\.length|\[)", js))):
         problemas.append("o painel le MED.%s, mas nada nesta atividade preenche esse campo "
                          "(era da origem)" % campo)
 
+# ---- 8) ⭐ PREFIXO DE OUTRA ATIVIDADE — a rede que pega o resto de clone GERAL
+#   Ordem do Marcos (ago/2026): *"favor nao poder mais haver resto do clone, faca
+#   com que isso nao aconteca mais"*. Os itens 1-7 acima pegam um TIPO de resto
+#   cada um, e a cada rodada aparecia um tipo novo (o zeraProgresso com os
+#   conceitos da Legenda; o verso da carta apontando para img/cq_base.png, de
+#   outra atividade). Este item nao pergunta "qual tipo": ele pergunta se ha
+#   qualquer coisa com a MARCA de outra atividade.
+#
+#   Como funciona: cada atividade tem o seu prefixo (hv_, jd_, fb_, dc_...),
+#   descoberto pelos nomes dos arquivos de img/ e audio/ dela. Se o HTML desta
+#   atividade cita um prefixo que e a marca de OUTRA pasta e NAO desta, e resto
+#   de clone — nao importa se e imagem, voz, variavel ou comentario.
+def prefixo_de(pasta_):
+    """o prefixo dominante dos arquivos de uma atividade (ex.: 'hv_')"""
+    from collections import Counter
+    c = Counter()
+    for sub in ("img", "audio"):
+        d = os.path.join(pasta_, sub)
+        if not os.path.isdir(d):
+            continue
+        for f in os.listdir(d):
+            m = re.match(r"([a-z]{2,6}_)", f)
+            if m:
+                c[m.group(1)] += 1
+    if not c:
+        return None
+    pref, n = c.most_common(1)[0]
+    return pref if n >= 4 else None
+
+
+meu = prefixo_de(pasta)
+if meu:
+    raiz = os.path.dirname(os.path.abspath(pasta)) or "."
+    alheios = {}
+    for outra in sorted(os.listdir(raiz)):
+        cam = os.path.join(raiz, outra)
+        if not outra.startswith("_") or not os.path.isdir(cam) or os.path.abspath(cam) == os.path.abspath(pasta):
+            continue
+        pf = prefixo_de(cam)
+        if pf and pf != meu:
+            alheios.setdefault(pf, outra)
+    achados = []
+    for pf, dona in sorted(alheios.items()):
+        # so conta se aparecer como NOME de arquivo/identificador, nao dentro de palavra
+        for m in re.finditer(r"[\"'/(]\s*(%s\w+)" % re.escape(pf), html):
+            achados.append((m.group(1), dona))
+            break
+    if achados:
+        problemas.append("%d marca(s) de OUTRA atividade no arquivo (prefixo alheio): %s"
+                         % (len(achados),
+                            ", ".join("%s (e da %s)" % (a, d) for a, d in achados[:6])))
+    else:
+        print("   prefixo: nada com a marca de outra atividade (o meu e '%s')" % meu)
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")
