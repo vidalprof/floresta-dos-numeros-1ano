@@ -506,7 +506,9 @@ function brotoEl(tam){
   return d;
 }
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
-function limpa(){ tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null; }
+function limpa(){ tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null;
+  /* solta o teclado de verdade: so a fase que o pediu escuta as teclas */
+  document.onkeydown=null; }
 function montaBarra(dicaId,dicaTxt){
   barra.innerHTML="";
   btnOuvir=el("button","mini","Ouvir de novo");
@@ -1234,6 +1236,10 @@ function telaMontaPalavra(){
   t.appendChild(cen);app.appendChild(t);
   function pede(){
     if(pi>=MONTAJD.length) return;   /* timer atrasado depois da ultima palavra */
+    /* ⚠️ e se a tela JA trocou? o timer de 780ms continua correndo depois do
+       limpa() e reinstalava o `document.onkeydown` desta fase por cima da
+       seguinte — o teclado da criança ficava preso na fase anterior.        */
+    if(!t.parentNode) return;
     var it=MONTAJD[pi],i;
     dica.innerHTML=it.d;
     slots.innerHTML="";letras.innerHTML="";
@@ -1243,9 +1249,11 @@ function telaMontaPalavra(){
     var caixas=[];
     for(i=0;i<it.p.length;i++){ var s=el("div","slot",""); slots.appendChild(s); caixas.push(s); }
     var ls=baguncar(it.p.split(""));
-    var passo=0;
+    var passo=0, bts={};
     for(i=0;i<ls.length;i++){ (function(L){
       var b=el("div","tec",L);
+      if(!bts[L]) bts[L]=[];
+      bts[L].push(b);
       b.onclick=function(){ arma();
         if(b.className.indexOf("usada")>=0) return;
         if(L===it.p.charAt(passo)){
@@ -1267,6 +1275,15 @@ function telaMontaPalavra(){
       };
       letras.appendChild(b);
     })(ls[i]); }
+    /* ⭐ AS DUAS PORTAS (regra da casa, ago/2026): quem tem teclado na frente
+       digita — no PC da escola tem; no celular, nao. As duas portas levam ao
+       mesmo lugar. A tecla acha a PRIMEIRA letra igual que ainda nao foi usada. */
+    document.onkeydown=function(ev){
+      var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+      if(!/^[A-Z]$/.test(L)) return;
+      var a=bts[L],z; if(!a) return;
+      for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0){ a[z].onclick(); return; }
+    };
   }
   pede();
   montaBarra("jd_monta_dica","Fale o nome devagar: qual letrinha vem primeiro?");

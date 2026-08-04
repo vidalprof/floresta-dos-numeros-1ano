@@ -3538,3 +3538,15 @@ testar; não altera o progresso do aluno e não é segurança (está no código)
    é justamente o FORMATO inteiro que a criança precisa ver para dizer se é
    raiz, folha ou fruto. Agora o quadro é maior (212×176) e a imagem entra
    inteira (`contain`), sem zoom que corte.
+
+**Brinde do mesmo dia (Jardim):** a fase "Monte a palavra" ganhou o **teclado de
+verdade** (regra das duas portas) e, no caminho, apareceu um vazamento antigo: o
+`setTimeout(pede,780)` da próxima palavra continuava correndo **depois** de a
+tela ter trocado e reinstalava o `document.onkeydown` da fase anterior por cima
+da seguinte. Trava: `if(!t.parentNode) return;` no começo do `pede()`, e
+`limpa()` do Jardim agora solta o teclado como o das outras.
+
+**E um portão que morria calado:** o item 4 do `_qa/padrao.py` (teclado virtual
+sem teclado físico) estourava `NameError` justamente na primeira atividade que
+tinha o defeito — a lista `problemas` ainda não existia naquele ponto do
+arquivo. Portão que morre na hora de falar é pior que portão que não existe.

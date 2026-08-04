@@ -119,10 +119,7 @@ semtecla = []
 for n, c in fases:
     if re.search(TECVIRT, c) and not re.search(r"onkeydown|addEventListener\(\s*[\"']keydown", c):
         semtecla.append(n)
-if semtecla:
-    problemas.append("%d fase(s) com teclado NA TELA que nao aceitam o teclado DE VERDADE "
-                     "(no PC da escola a crianca vai digitar): %s" % (len(semtecla), ", ".join(semtecla)))
-elif re.search(TECVIRT, js):
+if not semtecla and re.search(TECVIRT, js):
     print("   teclado: as fases de digitar aceitam a tela E o teclado de verdade")
 
 print("%s -> padrao da casa: %d fase(s) com gesto (+%d tela(s) so de narrativa)"
@@ -136,6 +133,14 @@ for g in sorted(conta, key=lambda k: -conta[k]):
     print("   %-12s %2d fase(s)  %4.1f%%" % (g, conta[g], pct))
 
 problemas = []
+# ⚠️ este aviso nasce la em cima (lista `semtecla`) mas so pode ser guardado
+#    AQUI, depois que `problemas` existe. Na estreia ele estourou um NameError
+#    na primeira atividade que tinha teclado na tela sem teclado de verdade —
+#    ou seja, o portao morria justo na hora em que tinha algo a dizer.
+if semtecla:
+    problemas.append("%d fase(s) com teclado NA TELA que nao aceitam o teclado DE VERDADE "
+                     "(no PC da escola a crianca vai digitar): %s"
+                     % (len(semtecla), ", ".join(semtecla)))
 nomeados = dict((k, v) for k, v in conta.items() if k != "outro")
 maior = max(nomeados, key=lambda k: nomeados[k]) if nomeados else "outro"
 pct = 100.0 * conta.get(maior, 0) / len(fases)
