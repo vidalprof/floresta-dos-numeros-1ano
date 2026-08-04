@@ -2962,3 +2962,74 @@ produção publica em `data-qa` do `<input>` uma legenda que serve; o jogador
 digita, dispara o evento `input` e aperta o botão. **Lição geral:** auditor que
 não alcança a última fase dá uma sensação falsa de segurança — e o defeito mais
 caro costuma estar justamente lá, onde ninguém testa com paciência.
+
+## 🧸 A FÁBRICA DE BRINQUEDOS DO BENTO — 4º ano, multiplicação (ago/2026)
+
+Pedido da **professora do 4º ano**, trazido pelo Marcos: *"multiplicação inicial…
+rever o conteúdo poderia ajudar? Aquela que fizemos para o 3º ajudaria?"*. E a
+pergunta importante que veio junto: **"vai ser no mesmo padrão das últimas?"**.
+
+**Resposta honesta que dei (vale registrar):** a **Doceria do Cacau ajuda como
+MOTOR, não como conteúdo**. O que a Doceria ensina é literalmente o 3º ano de
+Blumenau. O 4º ano pede quatro coisas que ela não tem, e é por isso que a
+atividade nova precisou existir em vez de "esticar" a antiga.
+
+- **Repo publicado:** `fabrica-do-bento` → **https://vidalprof.github.io/fabrica-do-bento/**
+  (criado pela `fabrica.yml`, source_dir=`_fabrica`). Fonte em `_fabrica/`.
+- **Mascote:** **Bento**, um bonequinho de corda de macacão jeans, o ajudante da
+  oficina. Nome escolhido de propósito longe de Teco, Teo, Nino e Pingo (que já
+  existem) para não confundir ninguém.
+
+### Currículo (Blumenau, 4º ano) — verbatim, e onde cada item virou fase
+- *"…diferentes significados da multiplicação como adição de parcelas iguais,
+  organização retangular, combinação de possibilidades e proporcionalidade…"*
+  → encher caixas / esteira em fileiras / sala de pintura / mesa das peças.
+- *"Utilizar as propriedades da multiplicação para desenvolver estratégias de
+  cálculo"* → **girar a bandeja** (comutativa VISTA, não decorada) e **separar o
+  pedido** (distributiva: 7×13 = 7×10 + 7×3).
+- *"Compreender as relações existentes entre as operações de multiplicação e
+  divisão"* → "quantas caixas?" (o total e o tamanho da caixa são dados; falta o
+  número de caixas).
+- *"…cálculo por estimativa…"* → "cabe no caminhão?" (arredonda e compara).
+- **Álgebra:** *"Identificar regularidades em sequências numéricas compostas por
+  múltiplos"* → a **esteira que pula** de N em N.
+- Ainda: **×10 e ×100** (caixas de dez, caixotes de cem), do objeto de
+  conhecimento "composição e decomposição por potências de 10".
+
+**21 fases, ~55 min.** Começa concreto no 3º ano (grupos iguais → parcelas →
+vezes) nos ~12 primeiros minutos — que é a "retomada" que a professora pediu — e
+só então sobe. Aquecimento (revisão espaçada) aos 33%. Termina com a criança
+**criando o próprio pedido** e ensinando o Bento.
+
+### Como foi feita (o rito que funcionou, para repetir)
+1. **Currículo primeiro**, lendo o `_curriculo/blumenau.txt` no bloco do 4º ano —
+   não de memória. Foi isso que mostrou que "multiplicação inicial" para o 4º ano
+   é bem mais do que a Doceria.
+2. **Clonar o MOTOR** por recorte de arquivo: cabeça (CSS+engine, linhas 1‑933 da
+   Doceria) + conteúdo NOVO + cauda (capa, painel, boletim, treino) — e renome
+   mecânico `dc_`→`fb_`, `cacauEl`→`bentoEl`. Deu certo de primeira: os 4
+   primeiros portões passaram sem nenhum ajuste.
+3. **Arte em lote no começo** (23 imagens, `_gerar_imagens.json` + `[imagens]`),
+   recorte com a rampa suave + maior blob + **bbox comum nas 3 poses do mascote**.
+4. **Voz depois** (65 falas + 16 do alto-falante), pelo input `lote` inline.
+5. **Banca inteira** e só então publicar.
+
+### ⚠️ O que a banca pegou antes de chegar na criança (o valor dela em um caso)
+- **Fase impossível de terminar:** o "quadro do estoque" tinha **produtos
+  repetidos** (42, 54 e 56 apareciam duas vezes nas contas) e o quadro guarda cada
+  número **uma vez só**. Na segunda vez que a conta caísse no mesmo total, a
+  célula já estaria marcada e o clique seria ignorado: a criança ficava presa
+  **sem ter errado nada**. É o mesmo tipo de defeito que o Marcos pegou na Legenda
+  do Clique — agora pego pelo jogador automático, em casa. **Regra nova: em
+  qualquer fase de "ache o número no quadro", conferir que todos os produtos são
+  DIFERENTES.**
+- **Três contrastes** abaixo do mínimo WCAG (contador do caixote 3,81:1; placar do
+  relâmpago 2,86:1; célula verde da tabela 4,43:1) — o placar é exatamente o mesmo
+  defeito do Jardim, herdado do molde. Vale conferir `.placar` em toda atividade
+  clonada.
+- **O `var DOM={...}` do motor veio com os conceitos da Doceria** e o boletim do
+  fim mostrava "grupos, soma, vezes" numa atividade de 4º ano. Ao clonar um motor,
+  o `DOM` inicial é tão conteúdo quanto as fases — trocar junto.
+- **O `VOZOK` também veio da Doceria:** o alto-falante aparecia em respostas cuja
+  voz não existia nesta pasta (botão que não faz nada é pior que botão nenhum).
+  Ao clonar, **regerar o VOZOK** com os textos da atividade nova.
