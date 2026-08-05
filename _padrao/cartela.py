@@ -95,17 +95,30 @@ def plano(caminho):
     edicoes = [x for x in lote if not e_cena(x) and e_edicao(x)]
     recorta = [x for x in lote if not e_cena(x) and not e_edicao(x)]
 
-    grupos, atual = [], []
+    # ⚠️ AGRUPAR POR TEMA, nao pela ordem em que eu escrevi o lote. A cartela
+    #    promete que as pecas saem IRMAS — "mesma escala, mesma luz". Juntar
+    #    numa folha so a arara, seis retratos de crianca e uma mandioca pede
+    #    justamente o contrario: a IA obedece o "mesma escala" e devolve a
+    #    mandioca do tamanho da arara. Cada folha e UMA familia de coisas.
+    #    O campo "grupo" do lote manda; sem ele, cai na ordem de escrita.
+    ordem, familias = [], {}
     for x in recorta:
-        atual.append({"nome": x["nome"], "desc": (x.get("prompt") or "").strip()})
-        if len(atual) == MAX_POR_CARTELA:
-            grupos.append(atual); atual = []
-    if atual:
-        grupos.append(atual)
+        g = x.get("grupo", "_solto")
+        if g not in familias:
+            familias[g] = []; ordem.append(g)
+        familias[g].append({"nome": x["nome"], "desc": (x.get("prompt") or "").strip()})
+
+    grupos, nomes = [], []
+    for g in ordem:
+        itens = familias[g]
+        for i in range(0, len(itens), MAX_POR_CARTELA):
+            grupos.append(itens[i:i + MAX_POR_CARTELA])
+            nomes.append(g if len(itens) <= MAX_POR_CARTELA
+                         else "%s%d" % (g, i // MAX_POR_CARTELA + 1))
 
     saida = []
     for i, g in enumerate(grupos):
-        saida.append({"nome": "cart_%d" % (i + 1),
+        saida.append({"nome": "cart_%s" % nomes[i],
                       "pecas": [it["nome"] for it in g],
                       "prompt": prompt_da_cartela(g)})
     json.dump(saida, io.open("_lote_cartelas.json", "w", encoding="utf-8"),
