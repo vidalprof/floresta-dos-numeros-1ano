@@ -710,6 +710,55 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .janela .voando img{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;display:block;
   -webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
 .janela{position:relative}
+/* --- ROSA DOS VENTOS (orientar) --- */
+.bussola{position:relative;width:250px;height:250px;margin:14px auto 6px}
+.bussola .busimg{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;display:block}
+.vento{position:absolute;width:52px;height:52px;line-height:48px;text-align:center;font-size:21px;
+  font-weight:800;color:#fff;border-radius:50%;cursor:pointer;
+  background:-webkit-linear-gradient(top,#6d9bec,#2f6bd8);background:linear-gradient(#6d9bec,#2f6bd8);
+  border:2px solid #1d4ea8;-webkit-box-shadow:0 4px 10px rgba(30,25,10,.4);box-shadow:0 4px 10px rgba(30,25,10,.4)}
+.vento.cima{left:50%;top:-6px;margin-left:-26px}
+.vento.baixo{left:50%;bottom:-6px;margin-left:-26px}
+.vento.esq{left:-6px;top:50%;margin-top:-26px}
+.vento.dir{right:-6px;top:50%;margin-top:-26px}
+.vento.ok{background:-webkit-linear-gradient(top,#8ce05a,#3f9a26);background:linear-gradient(#8ce05a,#3f9a26);border-color:#2c6b13}
+.vento.no{background:-webkit-linear-gradient(top,#f09090,#c9403a);background:linear-gradient(#f09090,#c9403a);border-color:#8f2420;-webkit-animation:shk .4s;animation:shk .4s}
+/* --- MAPA QUADRICULADO (coordenada) --- */
+.quadric{position:relative;width:100%;max-width:400px;margin-top:10px;border-radius:14px;overflow:hidden;
+  border:4px solid #fffdf6;-webkit-box-shadow:0 8px 20px rgba(30,25,10,.4);box-shadow:0 8px 20px rgba(30,25,10,.4)}
+.quadric .qdimg{width:100%;height:auto;display:block}
+.qcel{position:absolute;width:25%;height:25%;cursor:pointer;
+  border-right:2px solid rgba(255,255,255,.75);border-bottom:2px solid rgba(255,255,255,.75);
+  background:rgba(255,255,255,.06)}
+.qcel:active{background:rgba(255,212,59,.35)}
+.qcel.ok{background:rgba(107,210,63,.5);border-color:#2c6b13}
+.qcel.no{background:rgba(214,74,64,.45);-webkit-animation:shk .35s;animation:shk .35s}
+.qrot{position:absolute;left:0;top:0;bottom:0;width:20px;display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;z-index:3}
+.qrot i{-webkit-box-flex:1;-webkit-flex:1;flex:1;display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  font-size:13px;font-weight:800;color:#fff;font-style:normal;background:rgba(24,44,62,.7)}
+.qrot.col{left:0;right:0;top:0;bottom:auto;width:auto;height:20px;
+  -webkit-box-orient:horizontal;-webkit-flex-direction:row;flex-direction:row;padding-left:20px}
+/* --- PLANTA DA SALA (construir) --- */
+.achado.vazio{background:rgba(255,255,255,.35);border-style:dashed}
+.peca .pecatx{font-size:11.5px;font-weight:800;color:var(--texto);margin-top:2px;text-align:center}
+/* --- PINTAR O MAPA --- */
+.paleta{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;
+  -webkit-box-pack:center;justify-content:center;margin-top:12px}
+.tcor{min-width:96px;padding:11px 14px;border-radius:12px;font-size:13.5px;font-weight:800;color:#fff;
+  cursor:pointer;text-align:center;border:3px solid rgba(255,255,255,.85);
+  -webkit-box-shadow:0 4px 10px rgba(30,25,10,.35);box-shadow:0 4px 10px rgba(30,25,10,.35)}
+.tcor.agua{background:#2f7fc4}
+.tcor.verde{background:#3f9a26}
+.tcor.casa{background:#d2732a}
+.tcor.sel{border-color:#ffd43b;-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+.tinta{position:absolute;width:66px;height:66px;border-radius:50%;cursor:pointer;
+  border:3px dashed rgba(255,255,255,.9);background:rgba(255,255,255,.22)}
+.tinta.agua{background:rgba(47,127,196,.72);border:3px solid #2f7fc4}
+.tinta.verde{background:rgba(63,154,38,.72);border:3px solid #3f9a26}
+.tinta.casa{background:rgba(210,115,42,.72);border:3px solid #d2732a}
+.tinta.no{background:rgba(214,74,64,.5);-webkit-animation:shk .35s;animation:shk .35s}
 /* --- a moldura do VOO e da ESCALA: a cena tem que caber INTEIRA (a criança
    precisa ver a igreja, as casas, a praça e o rio ao mesmo tempo). A primeira
    figura define a altura; as outras entram por cima, no mesmo lugar.        */
@@ -941,11 +990,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
 var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
-           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1};
+           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1872,7 +1921,7 @@ function mEscala(){
     if(n>=4&&!fim){ fim=true; sCerto(); reg("escala",true,1);
       var ce=centroTela(cx); faisca(ce[0],ce[1],"#5bc8ff",16);
       setTimeout(function(){ depoisDaFala("mp_esc_revela",13000,function(){
-        mostraBanner("Quanto mais longe voc&#234; olha, <b>menos detalhe</b> cabe no mapa.",mCaca); }); },900); }
+        mostraBanner("Quanto mais longe voc&#234; olha, <b>menos detalhe</b> cabe no mapa.",mRosa); }); },900); }
   }
   r.oninput=function(){ arma(); sTap(); pinta(); };
   r.onchange=pinta;
@@ -1882,6 +1931,257 @@ function mEscala(){
   t.appendChild(c);app.appendChild(t);
   montaBarra("mp_esc_dica","Repare no que some quando voc&#234; se afasta.");
   falar("mp_esc_intro");
+}
+
+
+/* ================= ⭐ AS QUATRO DINÂMICAS NOVAS (pedido do Marcos) =========
+   Ele pediu "mais umas 3 ou 4 dinâmicas novas". Escolhi quatro que são gesto
+   NOVO para a criança E conteúdo do currículo — não enfeite:
+
+     1. ORIENTAR   — a rosa dos ventos: Norte, Sul, Leste, Oeste no mapa.
+     2. COORDENADA — o mapa ganha linhas e colunas (A1, B3): é assim que mapa
+                     de verdade diz onde as coisas estão.
+     3. CONSTRUIR  — montar a planta da sala pondo os móveis vistos de cima.
+                     É o verbo ELABORAR do objetivo, no espaço que ela conhece.
+     4. PINTAR     — colorir o mapa por tipo de lugar (água, verde, construído),
+                     que é o gesto de quem faz um mapa temático.
+
+   Todas entram DEPOIS da legenda e ANTES do fecho, para a progressão continuar
+   subindo: ler o mapa -> localizar no mapa -> FAZER o mapa.                 */
+
+/* ---------- 13) ⭐ A ROSA DOS VENTOS (orientar) ---------- */
+var VENTOS=[{p:"Para achar o <b>Norte</b> no mapa, para onde voc&#234; olha?",c:"N"},
+            {p:"E o <b>Sul</b>, fica para onde?",c:"S"},
+            {p:"O <b>Leste</b> &#233; de que lado?",c:"L"},
+            {p:"E o <b>Oeste</b>?",c:"O"}];
+var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
+function mRosa(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,84);
+    if(idx>=VENTOS.length){ depoisDaFala("mp_rosa_revela",11000,function(){
+      mostraBanner("Quase todo mapa vem com o <b>Norte para cima</b>. &#201; um combinado entre quem faz mapas.",mCoord); }); return; }
+    var it=VENTOS[idx],fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","A ROSA DOS VENTOS"));
+    c.appendChild(el("div","balao",it.p));
+    var bus=el("div","bussola");
+    bus.appendChild(cenaImg("mp_rosa","busimg"));
+    var lados=[["N","cima"],["S","baixo"],["L","dir"],["O","esq"]],z;
+    for(z=0;z<lados.length;z++){(function(k,pos){
+      var b=el("div","vento "+pos,NOMEV[k].charAt(0));
+      b.setAttribute("data-qa",k===it.c?"1":"0");
+      b.onclick=function(){ arma();
+        if(fim) return;
+        if(k===it.c){ fim=true; b.className="vento "+pos+" ok"; sCerto(); elogio();
+          reg("posicao",err===0,err+1);
+          var ce=centroTela(b); faisca(ce[0],ce[1],"#ffd43b",14);
+          setTimeout(function(){ idx++; err=0; passo(); },1000);
+        } else { err++; b.className="vento "+pos+" no"; sErro();
+          setTimeout(function(){ b.className="vento "+pos; },450);
+          if(err===2){ consolo(); mostraDica("O <b>Norte</b> &#233; a ponta vermelha, l&#225; em cima. O Sul &#233; o contr&#225;rio dele."); }
+          if(err>=3) mostraDica("&#201; o <b>"+NOMEV[it.c]+"</b>: toque na letra <b>"+it.c+"</b>.");
+        }
+      };
+      bus.appendChild(b);
+    })(lados[z][0],lados[z][1]);}
+    c.appendChild(bus);
+    c.appendChild(el("div","hint","A ponta vermelha da rosa aponta sempre para o Norte."));
+    if(idx===0) postIt(c,"norte");
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("mp_rosa_dica","Norte em cima, Sul embaixo, Leste &#224; direita, Oeste &#224; esquerda.");
+    if(idx===0) falar("mp_rosa_intro");
+  }
+  passo();
+}
+
+/* ---------- 14) ⭐ CAÇA AO TESOURO POR COORDENADA (coordenada) ----------
+   O mapa ganha linhas (A,B,C,D) e colunas (1,2,3,4). É assim que um mapa de
+   verdade diz onde as coisas estão — e é a primeira vez que a criança usa
+   duas informações ao mesmo tempo para achar um lugar.                     */
+var COORD=[{q:"a <b>igreja</b>",l:"B",n:2},
+           {q:"as <b>casas</b>",l:"C",n:2},
+           {q:"a <b>pra&#231;a</b>",l:"C",n:3},
+           {q:"o <b>rio</b>",l:"B",n:4}];
+function mCoord(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,86);
+    if(idx>=COORD.length){ depoisDaFala("mp_coord_revela",11000,function(){
+      mostraBanner("Com <b>linha e coluna</b> d&#225; para dizer onde fica qualquer lugar do mapa.",mPlanta); }); return; }
+    var it=COORD[idx],fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","ACHE PELA COORDENADA"));
+    c.appendChild(el("div","balao","Onde est&#225; "+it.q+"? Toque no quadradinho <b>"+it.l+it.n+"</b> do mapa."));
+    var qd=el("div","quadric");
+    qd.appendChild(cenaImg("mp_mapa","qdimg"));
+    var LET=["A","B","C","D"],i,j;
+    for(i=0;i<4;i++) for(j=0;j<4;j++){(function(li,co){
+      var cel=el("div","qcel");
+      cel.style.left=(co*25)+"%"; cel.style.top=(li*25)+"%";
+      cel.setAttribute("data-qa",(LET[li]===it.l&&(co+1)===it.n)?"1":"0");
+      cel.onclick=function(){ arma();
+        if(fim) return;
+        if(LET[li]===it.l&&(co+1)===it.n){
+          fim=true; cel.className="qcel ok"; sCerto(); elogio();
+          reg("posicao",err===0,err+1);
+          var ce=centroTela(cel); faisca(ce[0],ce[1],"#6bd23f",14);
+          setTimeout(function(){ idx++; err=0; passo(); },1100);
+        } else { err++; cel.className="qcel no"; sErro();
+          setTimeout(function(){ cel.className="qcel"; },420);
+          if(err===2){ consolo(); mostraDica("A <b>letra</b> diz a linha (de cima para baixo) e o <b>n&#250;mero</b> diz a coluna (da esquerda para a direita)."); }
+        }
+      };
+      qd.appendChild(cel);
+    })(i,j);}
+    var rot=el("div","qrot"),k;
+    for(k=0;k<4;k++) rot.appendChild(el("i","",LET[k]));
+    qd.appendChild(rot);
+    var rot2=el("div","qrot col");
+    for(k=1;k<=4;k++) rot2.appendChild(el("i","",""+k));
+    qd.appendChild(rot2);
+    c.appendChild(qd);
+    c.appendChild(el("div","hint","A letra &#233; a linha. O n&#250;mero &#233; a coluna."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("mp_coord_dica","Ache primeiro a linha da letra, depois ande at&#233; a coluna do n&#250;mero.");
+    if(idx===0) falar("mp_coord_intro");
+  }
+  passo();
+}
+
+/* ---------- 15) ⭐ MONTE A PLANTA DA SALA (construir) ----------
+   O verbo do objetivo é ELABORAR. Aqui a criança faz a planta do lugar que ela
+   mais conhece: a própria sala de aula. Os móveis estão VISTOS DE CIMA — é o
+   olhar do voo aplicado ao dia a dia dela.                                  */
+var MOVEIS=[{n:"lousa",   img:"mp_lousa_c",   rot:"a lousa",   x:50,y:12},
+            {n:"mesa",    img:"mp_mesa_c",    rot:"a mesa da professora", x:26,y:30},
+            {n:"armario", img:"mp_armario_c", rot:"o arm&#225;rio", x:82,y:56},
+            {n:"cadeira", img:"mp_cadeira_c", rot:"a cadeira",  x:50,y:64}];
+function mPlanta(){
+  limpa();var t=el("div","tela");setProg(t,88);
+  var postos=0,err=0,sel=null,ultimoToque=0;
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A PLANTA DA SALA"));
+  var bal=el("div","balao","Esta &#233; a sua sala <b>vista de cima</b>, ainda vazia. Ponha cada m&#243;vel no lugar dele.");
+  c.appendChild(bal);
+  var sala=el("div","janela");
+  sala.appendChild(cenaImg("mp_planta_sala","jimg"));
+  var vagas={},i;
+  for(i=0;i<MOVEIS.length;i++){(function(m){
+    var v=el("div","achado mira vazio");
+    v.style.left=m.x+"%"; v.style.top=m.y+"%";
+    v.setAttribute("data-vaga",m.n);
+    v.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); solta(m,v); };
+    vagas[m.n]=v; sala.appendChild(v);
+  })(MOVEIS[i]);}
+  c.appendChild(sala);
+  var banca=el("div","pecas"),ordem=baguncar(MOVEIS.slice(0));
+  for(i=0;i<ordem.length;i++){(function(m){
+    var b=el("div","peca");
+    b.appendChild(imgEl(m.img,"pecaimg"));
+    b.appendChild(el("div","pecatx",m.rot));
+    b.setAttribute("data-qa",m.n);
+    function marca(){ if(b.className.indexOf("usada")>=0) return;
+      var a=banca.getElementsByClassName("peca"),z;
+      for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="peca";
+      b.className="peca sel"; sel={m:m,el:b}; arma(); sTap(); }
+    b.onclick=function(){ if((new Date()).getTime()-ultimoToque<600) return; marca(); };
+    b.addEventListener("touchend",function(){ ultimoToque=(new Date()).getTime(); marca(); },false);
+    banca.appendChild(b);
+  })(ordem[i]);}
+  c.appendChild(banca);
+  function solta(m,v){
+    if(!sel) { mostraDica("Toque primeiro num <b>m&#243;vel</b> a&#237; embaixo."); return; }
+    arma();
+    if(sel.m.n===m.n){
+      v.innerHTML=""; v.appendChild(imgEl(m.img,"pecaimg"));
+      v.className="achado mira ok"; sel.el.className="peca usada"; sel=null;
+      postos++; sCerto();
+      reg("producao",err===0,err+1);
+      var ce=centroTela(v); faisca(ce[0],ce[1],"#6bd23f",12);
+      bal.innerHTML="J&#225; s&#227;o <b>"+postos+"</b> de <b>"+MOVEIS.length+"</b> m&#243;veis no lugar.";
+      if(postos>=MOVEIS.length){ sFesta(); festa();
+        setTimeout(function(){ depoisDaFala("mp_planta_revela",12000,function(){
+          mostraBanner("Isto &#233; uma <b>planta</b>: o lugar visto de cima, com cada coisa no seu lugar.",mPintar); }); },800); }
+    } else { err++; v.className="achado mira no"; sErro();
+      setTimeout(function(){ if(v.className.indexOf("ok")<0) v.className="achado mira vazio"; },500);
+      if(err===2) consolo();
+      if(err>=3) mostraDica("Olhe o <b>formato</b> do m&#243;vel visto de cima e procure o lugar do mesmo tamanho.");
+    }
+  }
+  c.appendChild(el("div","hint","Toque no m&#243;vel e depois no lugar dele na planta."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("mp_planta_dica","A lousa fica na parede da frente; o arm&#225;rio, no canto.");
+  falar("mp_planta_intro");
+}
+
+/* ---------- 16) ⭐ PINTE O MAPA (pintar) ----------
+   O gesto de quem FAZ um mapa temático: pintar por tipo de lugar. E fecha o
+   arco da legenda — cor também é símbolo, e é a primeira coisa que a criança
+   lê num mapa de verdade.                                                   */
+var PINTAS=[{q:"o <b>rio</b>",cor:"agua",x:24,y:76},
+            {q:"a <b>pra&#231;a com as &#225;rvores</b>",cor:"verde",x:51,y:52},
+            {q:"as <b>casas</b>",cor:"casa",x:52,y:28},
+            {q:"a <b>igreja</b>",cor:"casa",x:32,y:28}];
+var NOMEC={agua:"&#193;GUA",verde:"VERDE",casa:"CONSTRU&#205;DO"};
+function mPintar(){
+  limpa();var t=el("div","tela");setProg(t,90);
+  var idx=0,err=0,tinta=null;
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PINTE O MAPA"));
+  var bal=el("div","balao","");c.appendChild(bal);
+  var cena=el("div","janela");
+  cena.appendChild(cenaImg("mp_mapa","jimg"));
+  var marcas=[],i;
+  for(i=0;i<PINTAS.length;i++){(function(p,k){
+    var m=el("div","tinta mira");
+    m.style.left=p.x+"%"; m.style.top=p.y+"%";
+    m.setAttribute("data-qa","0");
+    m.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); pinta(k,p,m); };
+    marcas.push(m); cena.appendChild(m);
+  })(PINTAS[i],i);}
+  c.appendChild(cena);
+  var pal=el("div","paleta"),cores=["agua","verde","casa"];
+  var bts={};
+  for(i=0;i<cores.length;i++){(function(k){
+    var b=el("div","tcor "+k,NOMEC[k]);
+    b.onclick=function(){ arma(); sTap();
+      var z; for(z in bts) if(bts.hasOwnProperty(z)) bts[z].className="tcor "+z;
+      b.className="tcor "+k+" sel"; tinta=k; marcaQA(); };
+    bts[k]=b; pal.appendChild(b);
+  })(cores[i]);}
+  c.appendChild(pal);
+  function marcaQA(){ var z;
+    for(z=0;z<marcas.length;z++)
+      marcas[z].setAttribute("data-qa",(z===idx&&tinta===PINTAS[idx].cor)?"1":"0");
+    var k; for(k in bts) if(bts.hasOwnProperty(k))
+      bts[k].setAttribute("data-qa",(idx<PINTAS.length&&k===PINTAS[idx].cor&&tinta!==k)?"1":"0");
+  }
+  function mostra(){
+    if(idx>=PINTAS.length){ sFesta(); festa();
+      depoisDaFala("mp_pint_revela",11000,function(){
+        mostraBanner("A <b>cor</b> tamb&#233;m &#233; s&#237;mbolo: azul &#233; &#225;gua, verde &#233; mata, e o resto &#233; o que a gente construiu.",mCaca); }); return; }
+    bal.innerHTML="Escolha a cor certa e pinte "+PINTAS[idx].q+".";
+    marcaQA();
+  }
+  function pinta(k,p,m){
+    if(k!==idx) return; arma();
+    if(!tinta){ mostraDica("Escolha primeiro uma <b>cor</b> a&#237; embaixo."); return; }
+    if(tinta===p.cor){ m.className="tinta mira "+p.cor; sCerto();
+      reg("legenda",err===0,err+1);
+      var ce=centroTela(m); faisca(ce[0],ce[1],"#6bd23f",12);
+      idx++; err=0; mostra();
+    } else { err++; m.className="tinta mira no"; sErro();
+      setTimeout(function(){ m.className="tinta mira"; },450);
+      if(err===2) consolo();
+      if(err>=3) mostraDica("Pense: aquilo &#233; <b>&#225;gua</b>, &#233; <b>mata</b> ou &#233; coisa que a gente <b>construiu</b>?");
+    }
+  }
+  mostra();
+  c.appendChild(el("div","hint","Toque na cor e depois no lugar do mapa."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("mp_pint_dica","Azul para a &#225;gua, verde para a mata, laranja para o que foi constru&#237;do.");
+  falar("mp_pint_intro");
 }
 
 /* ---------- 14) CAÇA-PALAVRAS ---------- */
@@ -2265,7 +2565,7 @@ function mFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
    nenhum) e o professor entra em dois toques. O menu NAO zera nem grava
    progresso: e so um atalho para abrir a fase.                             */
 var CODIGO_MESTRE="1275@";
-var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mCaca","13. CAÇA-PALAVRAS"],["mCruzada","14. CRUZADINHA"],["mMemoria","15. MEMÓRIA"],["mDesenhe","16. O MAPA DO BAIRRO"],["mRelampago","17. RELÂMPAGO"],["mEnsinar","18. ENSINE O NICO"],["mFim","19. BOLETIM E MEDALHA"]];
+var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mRosa","13. A ROSA DOS VENTOS"],["mCoord","14. ACHE PELA COORDENADA"],["mPlanta","15. A PLANTA DA SALA"],["mPintar","16. PINTE O MAPA"],["mCaca","17. CAÇA-PALAVRAS"],["mCruzada","18. CRUZADINHA"],["mMemoria","19. MEMÓRIA"],["mDesenhe","20. O MAPA DO BAIRRO"],["mRelampago","21. RELÂMPAGO"],["mEnsinar","22. ENSINE O NICO"],["mFim","23. BOLETIM E MEDALHA"]];
 /* ⭐ O GANCHO DA RETOMADA — envelopa cada fase para ela anotar o proprio nome
    ao abrir. Fica AQUI de proposito: depois das fases existirem e ANTES do
    objeto TREINO (que guarda as funcoes por referencia; se o envelope viesse
@@ -2448,7 +2748,7 @@ function resumoAnimado(pai){
   }
 }
 /* fases que treinam cada objetivo */
-var TREINO={visao:mDeCima,dimensao:mMaquete,posicao:mOndeFica,legenda:mSimbolo,escala:mEscala,producao:mDesenhe};
+var TREINO={visao:mDeCima,dimensao:mMaquete,posicao:mRosa,legenda:mPintar,escala:mEscala,producao:mPlanta};
 function TELAFIM(){ mFim(); }
 /* ---------- TREINAR SO O QUE FALTOU ----------
    Pergunta do Marcos (ago/2026): "se ela nao domina, ela consegue fazer so as
