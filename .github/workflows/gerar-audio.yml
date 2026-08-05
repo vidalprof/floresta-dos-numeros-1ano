@@ -73,9 +73,15 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          # idem: arquivo solto precisa de cone-mode desligado
+          # idem: arquivo solto precisa de cone-mode desligado.
+          # ⚠️ A PASTA DE SAIDA TEM QUE ENTRAR AQUI. Sem ela, o `git add` recusa
+          #    os mp3 recem-nascidos ("Disable or modify the sparsity rules"),
+          #    o passo imprime "sem mudancas" e o workflow termina VERDE sem ter
+          #    guardado nada — foi assim que 15 narracoes da cartografia se
+          #    perderam (ago/2026). Sucesso mudo e o pior tipo de falha.
           sparse-checkout: |
             /_lote_falas.json
+            /${{ inputs.outdir }}/
           sparse-checkout-cone-mode: false
 
       # ⚠️ o runner do GitHub JA VEM com ffmpeg. Rodar `apt-get update` aqui era
@@ -242,8 +248,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add "${{ inputs.outdir }}" _audio/ || true
-          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          # --sparse: grava mesmo o que estiver fora das regras de sparse-checkout
+          git add --sparse "${{ inputs.outdir }}" _audio/ || true
+          if git diff --cached --quiet; then
+            # ⚠️ "sem mudancas" so e verdade se NAO tiver nascido mp3 nenhum.
+            #    Se nasceu e nada entrou no commit, isto e FALHA, nao sucesso.
+            n=$(find "${{ inputs.outdir }}" _audio -name '*.mp3' -newermt '-30 minutes' 2>/dev/null | wc -l)
+            if [ "$n" -gt 0 ]; then
+              echo "::error::$n mp3 foram gerados e NENHUM entrou no commit (regra de sparse-checkout?)."
+              exit 1
+            fi
+            echo "sem mudancas"; exit 0
+          fi
           git commit -m "audio: gera vozes (${{ inputs.modelo }}) -> ${{ inputs.outdir }}"
           for k in 1 2 3 4 5 6 7 8; do
             git pull --rebase origin "${GITHUB_REF_NAME}" || true
