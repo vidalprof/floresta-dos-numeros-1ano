@@ -3769,3 +3769,77 @@ os nomes. É onde ela mais se esconde, porque são telas que eu não reescrevo.
 acaso e, num quiz de 3 opções, às vezes gastava os 420 giros sem fechar a rodada
 — reprovando fase perfeita, ainda mais quando disputava processador com os outros
 portões. Agora, se a tela publica `data-qa="1"`, é nela que ele toca.
+
+---
+
+## ⚙️ O SUCESSO MUDO — quando o workflow fica VERDE e não entrega nada (ago/2026)
+
+Custou três execuções e quase uma hora. As 15 narrações das dinâmicas novas da
+cartografia foram geradas certinho pelo `gerar-audio.yml`, o passo imprimiu
+`sem mudancas`, o run terminou **verde** — e **nenhum mp3 entrou no repositório**.
+Foram duas armadilhas, uma dentro da outra, e as duas nasceram de otimizações
+minhas:
+
+1. **`sparse-checkout` não cobria a pasta de SAÍDA.** Eu tinha reduzido o
+   checkout para `/_lote_falas.json` (o repositório tem ~1 GB). O `git add`
+   então recusou os arquivos novos — *"Disable or modify the sparsity rules"* —
+   e o passo concluiu que não havia mudanças. **Regra: a pasta onde o workflow
+   ESCREVE tem que estar nas regras do sparse-checkout**, e o `git add` vai com
+   `--sparse`.
+2. **`git add A B` com B inexistente falha INTEIRO.** O comando era
+   `git add "$outdir" _audio/`, e `_audio/` só existe quando se usa o default.
+   Um pathspec que não casa aborta o comando e **o A também não entra**. Agora é
+   um caminho por vez, e só o que existe.
+
+**O portão que ficou:** o passo de commit não aceita mais "sem mudanças" no
+escuro. Se nasceram mp3 e nada foi para o índice, ele **falha com erro**
+explicando o motivo. Antes disso, um run verde era indistinguível de um run que
+jogou o trabalho fora — e sucesso mudo é o pior tipo de falha, porque ninguém
+vai conferir.
+
+**Também curado no mesmo dia:** o `apt-get update` para instalar ffmpeg ficou
+**25 minutos pendurado** num espelho lento e o run nem chegou a gerar voz. O
+runner do GitHub já vem com ffmpeg: agora o passo usa o que existe e só instala
+se faltar, com prazo de 4 minutos e sem derrubar o trabalho.
+
+## 🎯 ALVO DE "ACHE NA CENA" É INVISÍVEL (ago/2026)
+
+A classe `.achado` do motor é uma **placa creme** — ela existe para segurar uma
+figurinha. Reaproveitada como alvo de procura ("ache o morro com mata na foto
+aérea"), ela vira um **quadrado branco em cima da foto entregando a resposta**.
+Quem procura tem que procurar: `.achado.mira` agora é transparente, e só aparece
+quando a criança erra duas vezes (o andaime, classe `pisca`) ou quando acerta.
+A exceção é a planta da sala, onde o lugar vazio PRECISA ser visto —
+`.achado.mira.vazio` continua tracejado.
+
+## 🕵️ MECÂNICA NOVA = PORTÃO ATUALIZADO NO MESMO COMMIT (ago/2026)
+
+Duas dinâmicas novas (a rosa dos ventos e a paleta de pintar) fizeram o auditor
+**jogador** dar `PRESO` em fases que funcionavam: ele simplesmente não enxergava
+onde tocar, porque `.vento`, `.tcor` e `.tinta` não estavam na lista de alvos
+dele. O mesmo aconteceu com o auditor do **padrão da casa**, que classificou 10
+fases como "outro" — ou seja, a medição dos 40% estava cega justamente nas fases
+novas. **Toda mecânica nova entra na lista dos portões no mesmo commit em que
+nasce**; senão o portão vira enfeite: reprova o que está bom e aprova o que não
+mediu.
+
+E um terceiro: no caça-palavras, palavras que se **cruzam** deixavam as letras já
+marcadas, o jogador não clicava em nada, a tela não mudava e ele dava `PRESO`
+numa fase que a criança fecha sem esforço. Agora, quando não há o que marcar, ele
+desmarca e remarca a última letra só para a tela refazer a conferência.
+
+## 🖼️ RECORTAR ARTE DE FUNDO CREME (`_mapa/cortar_props.py`, ago/2026)
+
+Quando o Marcos gera as imagens de apoio no ChatGPT, elas vêm em **fundo creme
+uniforme com sombra** — e não em fundo preto, como as do Gemini. Limiar de brilho
+não serve (apagaria a lousa clara e o piso de madeira). O molde que funciona:
+
+1. **tirar a tarja preta** que o celular deixa em volta — ela fica nos CANTOS, e
+   é dos cantos que se amostra a cor do fundo; sem esse passo o recorte sai
+   inteiro, com fundo e tudo;
+2. alfa por **rampa** sobre a distância da cor do fundo (creme puro some, sombra
+   fica translúcida) — máscara binária devolve a sombra como mancha creme sólida;
+3. a rampa só vale **perto** do objeto; longe dele, zero;
+4. **tamanho pelo uso, não pelo original**: os móveis da planta aparecem em 44px
+   na tela — 520px de largura era doze vezes mais peso do que o PC da escola
+   precisa baixar.
