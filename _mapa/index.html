@@ -26,6 +26,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* mascote em camadas (lip-sync) */
 .clique{position:relative;width:186px;height:186px;-webkit-filter:drop-shadow(0 8px 10px rgba(0,0,0,.25));filter:drop-shadow(0 8px 10px rgba(0,0,0,.25));-webkit-animation:bob 2.8s ease-in-out infinite;animation:bob 2.8s ease-in-out infinite}
 .clique.gg{width:252px;height:252px}.clique.pq{width:136px;height:136px}
+/* ⚠️ o PINO do tabuleiro: `nicoEl("pp")` foi escrito antes de existir o tamanho
+   `pp`, entao o mascote entrou com os 186px do padrao e cobriu o tabuleiro
+   inteiro (defeito visto no print antes de publicar). Tamanho de pino agora
+   existe — e o bob some, senao o pino "flutua" fora da casa.               */
+.clique.pp{width:46px;height:46px;-webkit-animation:none;animation:none;
+  -webkit-filter:drop-shadow(0 3px 4px rgba(0,0,0,.35));filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}
 .clique .lay{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain}
 .clique .fala,.clique .pisca{opacity:0}
 @-webkit-keyframes bob{0%,100%{-webkit-transform:translateY(0) rotate(-1.5deg)}50%{-webkit-transform:translateY(-8px) rotate(1.5deg)}}
@@ -690,8 +696,8 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .centro.topo .btntreino{margin-top:8px;padding:10px 18px;font-size:16px}
 .centro.topo .btn{margin-top:8px;padding:12px 26px;font-size:17px}
 /* menu do professor (codigo mestre) — nao e tela de crianca */
-.mestre{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;gap:6px;margin-top:10px;width:100%;max-width:400px;max-height:56vh;overflow-y:auto}
-.mbt{background:rgba(255,253,244,.97);border:2px solid var(--linha);border-bottom-width:4px;border-radius:11px;padding:7px 9px;font-size:12.6px;font-weight:700;color:var(--tinta-d);cursor:pointer;text-align:center;min-height:40px;width:114px;line-height:1.15;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
+.mestre{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;gap:6px;margin-top:10px;width:100%;max-width:400px;max-height:62vh;overflow-y:auto}
+.mbt{background:#fffdf4;border:2px solid var(--linha);border-bottom-width:4px;border-radius:11px;padding:7px 9px;font-size:12.6px;font-weight:700;color:var(--tinta-d);cursor:pointer;text-align:center;min-height:40px;width:114px;line-height:1.15;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
 .mbt:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 
 /* ⭐ REGRA PERMANENTE (Marcos, ago/2026): CARTA DE MEMORIA E GRANDE.
@@ -871,7 +877,10 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   width:100%;max-width:312px;margin:10px auto 0;background:rgba(255,253,246,.55);
   border:3px dashed rgba(255,255,255,.85);border-radius:14px;padding:4px}
 .qcvaga{width:33.33%;height:66px;border:2px dashed rgba(120,100,60,.45);border-radius:8px}
-.qcpc,.qcvaga.cheia{background-image:url(img/mp_mapa.jpg);background-size:300% 200%;background-repeat:no-repeat}
+/* ⚠️ a figura do quebra-cabeca tem que ser CHEIA. Com o mapa simples, tres
+   dos seis pedacos eram creme liso e iguais entre si — a crianca nao montava,
+   adivinhava. A vista do bairro tem casa, rio, rua e mata em todo pedaco.  */
+.qcpc,.qcvaga.cheia{background-image:url(img/mp_bairro.jpg);background-size:300% 200%;background-repeat:no-repeat}
 .qcpc{width:94px;height:66px;border-radius:8px;cursor:pointer;border:2px solid #fffdf6;
   -webkit-box-shadow:0 3px 8px rgba(30,25,10,.3);box-shadow:0 3px 8px rgba(30,25,10,.3)}
 .qcpc.sel{border-color:#ffd43b;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
@@ -886,14 +895,14 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .tcel img{position:absolute;left:8%;top:8%;width:84%;height:84%;-o-object-fit:contain;object-fit:contain}
 .tnico{position:absolute;width:44px;height:44px;pointer-events:none;
   -webkit-transition:left .35s,top .35s;transition:left .35s,top .35s;z-index:3}
-.tnico img{width:100%;height:100%;-o-object-fit:contain;object-fit:contain}
+.tnico .clique{width:100%;height:100%}
 .setas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;
-  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;max-width:270px;margin-left:auto;margin-right:auto}
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;max-width:196px;margin-left:auto;margin-right:auto}
 .seta{width:62px;height:52px;line-height:48px;text-align:center;font-size:17px;font-weight:800;color:#fff;
   border-radius:12px;cursor:pointer;background:#2a6ea8;border:3px solid rgba(255,255,255,.85);
   -webkit-box-shadow:0 4px 0 #1d4e78;box-shadow:0 4px 0 #1d4e78}
 .seta:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
-.passos{margin-top:8px;font-size:14px;font-weight:800;color:#fffdf6;text-shadow:0 1px 4px rgba(0,0,0,.5)}
+.passos{margin-top:10px;position:relative;z-index:4;font-size:14px;font-weight:800;color:#fffdf6;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 .tinta.no{background:rgba(214,74,64,.5);-webkit-animation:shk .35s;animation:shk .35s}
 /* --- a moldura do VOO e da ESCALA: a cena tem que caber INTEIRA (a criança
    precisa ver a igreja, as casas, a praça e o rio ao mesmo tempo). A primeira
@@ -2820,7 +2829,7 @@ function mForca(){
     c.appendChild(el("div","selo","A PALAVRA DO MAPA"));
     c.appendChild(el("div","balao",it.d));
     var nb=el("div","nebbox");
-    nb.appendChild(cenaImg("mp_mapa","nbimg"));
+    nb.appendChild(cenaImg("mp_bairro","nbimg"));
     var neb=el("div","neb"); nb.appendChild(neb);
     var ntx=el("div","nebtx",NEBAV[0]); nb.appendChild(ntx);
     c.appendChild(nb);
@@ -2839,7 +2848,10 @@ function mForca(){
         else passo(); },ms); }
     function tentaLetra(L,b){
       if(fim||b._usada) return;
-      b._usada=1; arma();
+      /* ⚠️ letra usada sai do "serve agora" (data-qa). Sem isto o auditor
+         jogador via a mesma letra certa para sempre, tocava nela de novo e de
+         novo e dava PRESO — e o mesmo vale para a crianca que insiste. */
+      b._usada=1; b.setAttribute("data-qa","0"); arma();
       if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sCerto();
         if(revela()){ fim=true; document.onkeydown=null; elogio(); reg("legenda",erros===0,erros+1);
           var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",16);

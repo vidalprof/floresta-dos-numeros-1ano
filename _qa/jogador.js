@@ -32,7 +32,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
       paleta de pintar (.tcor/.tinta) nasceram na cartografia e o jogador
       deu "PRESO" numa fase que funcionava: ele simplesmente nao enxergava
       onde tocar. Toda dinamica nova entra nesta lista no mesmo commit. */
-   +',.vento,.tcor,.tinta';
+   +',.vento,.tcor,.tinta,.qcpc,.qcvaga,.seta';
  for(let i=0;i<5200;i++){
    const est=await p.evaluate(()=>{
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');
@@ -195,6 +195,18 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          return 1;
        }
        return 0;
+     }
+     /* quebra-cabeca: a peca publica em data-qa a POSICAO dela (li_co) e a vaga
+        publica a mesma coisa em data-vaga. E o mesmo par do "levar ate o lugar",
+        so que com classe propria — sem isto o jogador ficava tocando na peca e
+        nunca na vaga, e dava PRESO numa fase que funciona. */
+     const qp=[...document.querySelectorAll('.qcpc[data-qa]')]
+       .filter(e=>e.offsetParent!==null&&e.className.indexOf('usada')<0);
+     if(qp.length){
+       const pe=qp[0]; pe.click();
+       const dv=[...document.querySelectorAll('.qcvaga[data-vaga]')]
+         .find(e=>e.getAttribute('data-vaga')===pe.getAttribute('data-qa')&&e.className.indexOf('cheia')<0);
+       if(dv){ dv.click(); return 1; }
      }
      /* ⚠️ a tela publica em data-qa="1" a resposta que serve AGORA (so para o
         auditor). Escolher SEMPRE ao acaso deixava a partida na sorte: num quiz

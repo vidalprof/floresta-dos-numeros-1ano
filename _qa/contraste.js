@@ -79,7 +79,26 @@ function parseCor(s){
         txt=txt.replace(/\s+/g," ").trim();
         if(!txt) continue;
         const r=e.getBoundingClientRect();
-        if(r.width<4||r.height<4||r.top>820||r.bottom<0) continue;
+        /* ⚠️ so mede o que cabe INTEIRO no print. Texto cortado na borda de
+           baixo fazia o amostrador ler um pixel fora da imagem e acusar
+           contraste ridiculo num botao creme perfeito — foi o que aconteceu
+           com o menu do professor quando ele passou de 24 para 27 fases. */
+        if(r.width<4||r.height<4||r.top<0||r.bottom>820) continue;
+        /* ⚠️ e nao mede texto CORTADO por uma lista que rola. No menu do
+           professor, que passou a ter 27 fases, a ultima linha fica meio para
+           fora da caixa de rolagem — normal em qualquer lista. O amostrador
+           lia o pixel do fundo da pagina atras da parte cortada e acusava
+           "2,6:1" num botao creme perfeito. Texto que aparece pela metade nao
+           se mede: ou aparece inteiro, ou fica de fora da conta.           */
+        let cortado=false;
+        for(let pa=e.parentElement; pa && pa!==document.body; pa=pa.parentElement){
+          const ps=getComputedStyle(pa);
+          if(ps.overflowY==="auto"||ps.overflowY==="scroll"||ps.overflow==="hidden"){
+            const rp=pa.getBoundingClientRect();
+            if(r.top<rp.top-1||r.bottom>rp.bottom+1){ cortado=true; break; }
+          }
+        }
+        if(cortado) continue;
         const cs=getComputedStyle(e);
         if(cs.visibility==="hidden"||cs.opacity==="0") continue;
         const fs=parseFloat(cs.fontSize), fw=parseInt(cs.fontWeight)||400;
