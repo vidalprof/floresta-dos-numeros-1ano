@@ -76,10 +76,21 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
            const r2=d.h? d.r : d.r+d.n-1, c2=d.h? d.c+d.n-1 : d.c;
            if(prim.className.indexOf('sel')<0&&prim.className.indexOf('mark')<0) prim.click();
            if(prim.className.indexOf('sel')>=0){ g.children[r2*N+c2].click(); return 1; }
+           let tocou=false;
            for(let k=1;k<d.n;k++){
              const rr=d.h? d.r : d.r+k, cc=d.h? d.c+k : d.c;
              const cel=g.children[rr*N+cc];
-             if(cel&&cel.className.indexOf('ok')<0&&cel.className.indexOf('mark')<0) cel.click();
+             if(cel&&cel.className.indexOf('ok')<0&&cel.className.indexOf('mark')<0){ cel.click(); tocou=true; }
+           }
+           /* ⚠️ palavras que se CRUZAM: as letras desta ja podiam estar marcadas
+              por causa da palavra anterior. Ai o jogador nao clicava em nada, a
+              tela nao mudava, e ele dava "PRESO" numa fase que a crianca fecha
+              sem esforco. Nesse caso desmarca e remarca a ultima letra, so para
+              a tela refazer a conferencia. */
+           if(!tocou){
+             const rz=d.h? d.r : d.r+d.n-1, cz=d.h? d.c+d.n-1 : d.c;
+             const ult=g.children[rz*N+cz];
+             if(ult&&ult.className.indexOf('ok')<0){ ult.click(); ult.click(); }
            }
            return 1;
          }

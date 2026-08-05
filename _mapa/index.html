@@ -847,7 +847,17 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .achado.a2{right:9%;top:9%}
 /* alvo posicionado pelo CENTRO (left/top em %): sem isto o circulo nasce pelo
    canto e cai ao LADO da coisa — a crianca toca no lugar certo e leva erro. */
-.achado.mira{margin-left:-33px;margin-top:-33px}
+/* ⚠️ ALVO DE "ACHE NA CENA" E INVISIVEL. O `.achado` normal e uma placa
+   creme (ela existe para SEGURAR uma figurinha); usada como alvo de procura,
+   ela vira um quadrado branco em cima da foto — entregando de graca onde
+   esta a resposta. Quem procura tem que procurar. So aparece quando a
+   crianca erra duas vezes (classe `pisca`, o andaime) ou quando acerta. */
+.achado.mira{margin-left:-33px;margin-top:-33px;background:transparent;
+  border-color:transparent;-webkit-box-shadow:none;box-shadow:none}
+/* a planta da sala e o contrario: ali o lugar vazio PRECISA ser visto */
+.achado.mira.vazio{background:rgba(255,255,255,.35);border:2px dashed rgba(255,255,255,.92)}
+.achado.mira.pisca{border:3px solid #ffd43b;background:rgba(255,212,59,.28);
+  -webkit-animation:beat .7s infinite;animation:beat .7s infinite}
 .achado.ok{border-color:var(--ok);background:#eafce0}
 .achado.no{border-color:var(--erro);-webkit-animation:shk .4s;animation:shk .4s}
 /* --- 📌 post-it de curiosidade --- */
