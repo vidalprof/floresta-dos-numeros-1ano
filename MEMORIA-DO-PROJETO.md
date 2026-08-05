@@ -3843,3 +3843,42 @@ não serve (apagaria a lousa clara e o piso de madeira). O molde que funciona:
 4. **tamanho pelo uso, não pelo original**: os móveis da planta aparecem em 44px
    na tela — 520px de largura era doze vezes mais peso do que o PC da escola
    precisa baixar.
+
+---
+
+## 💳 O GEMINI FICOU SEM CRÉDITO (ago/2026) — e o que fazer nesse caso
+
+Descoberto ao tentar gerar a vista aérea da cartografia. A `GEMINI_API_KEY`
+responde **HTTP 429: "Your prepayment credits are depleted"** nas quatro
+tentativas do `gerar-imagens.yml` (o modelo `gemini-2.5-flash-image`; os dois
+`-preview` nem existem mais → 404). **Não é falha do workflow nem da rede: é
+saldo.** Recarrega-se em https://ai.studio/projects.
+
+**Enquanto não tiver crédito**, a ordem de preferência é:
+1. **Pollinations** (grátis) — serve para cena/fundo genérico, mas **não segura
+   o estilo de barro** da casa. Nesta tentativa devolveu um borrão verde e, antes,
+   uma foto realista de vale. Não dá para confiar nela em arte que precisa
+   combinar com o resto da atividade.
+2. **O Marcos gerar no ChatGPT** e subir em `_novo/` — foi assim que nasceram a
+   bússola, a planta da sala, a lousa e o armário, e o estilo bateu perfeito.
+3. **Reaproveitar arte da PRÓPRIA atividade** com outro propósito — legítimo (a
+   regra proíbe copiar de OUTRA atividade, não de si mesma).
+
+Foi a opção 3 que salvou a fase "O bairro lá de cima": a vista da cidade que já
+existia no degrau final da escala virou o cenário da procura, com alvos novos.
+
+## 🗺️ "É DE VERDADE" VIROU "O BAIRRO LÁ DE CIMA" (decisão do Marcos, ago/2026)
+
+Palavras dele: *"Não precisa ser real, porém com cara de mapa de vista aérea
+mesmo sendo no modelo de foto mais infantil, mas que o estudante consiga
+entender"*. A foto aérea real do centro de Blumenau (Wikimedia, CC BY-SA) é
+**densa demais para 8 anos**: telhado, sombra e toldo viram a mesma mancha
+cinza, e a fase deixa de ensinar e vira loteria. A vista **desenhada** mantém o
+salto pedagógico (sem símbolo, cheia de coisa junta) e devolve o que a foto
+tirava: **dá para reconhecer**.
+
+**Regra que fica:** o que faz a fase funcionar não é a foto ser real — é a
+criança **conseguir ler**. E se a figura deixa de ser foto de alguém, a voz e a
+tela **não podem continuar dizendo que é foto**: mudam o selo, o balão, o
+banner, as três narrações e sai o crédito. Prometer o que a tela não entrega é
+o portão da promessa.
