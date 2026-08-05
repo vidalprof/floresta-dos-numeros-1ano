@@ -49,12 +49,25 @@ def main():
     for m in re.finditer(r'el\("[a-z0-9]+","([^"]+)"', js):
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
+    # ⚠️ classe passada como ARGUMENTO de funcao (cenaImg(nome,"jimg"),
+    #    imgEl(nome,"pecaimg")). O portao so olhava el(...) e className= — e
+    #    deixou passar a .jimg sem regra: a figura do mapa vinha no tamanho
+    #    natural e a fase ficava com 1900px de altura.
+    #    (cenaEl fica de fora: o 2o argumento dela e a LEGENDA, nao a classe)
+    for m in re.finditer(r'(?:cenaImg|imgEl)\(\s*[^,()]+,\s*"([a-z][\w \-]*)"', js):
+        for c in m.group(1).split():
+            usadas.setdefault(c, 0)
     for m in re.finditer(r'className\s*=\s*"([^"]+)"', js):
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
     for m in re.finditer(r'class="([^"]+)"', js):
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
+
+    # as camadas do mascote ("lay base" / "lay fala" / "lay pisca") sao
+    # estilizadas pela classe .lay; o nome da pose e so um seletor de JS.
+    for c in ("base", "fala", "pisca"):
+        usadas.pop(c, None)
 
     # descarta pedacos de template ("vida'+(k<vidas?...") que nao sao classe.
     # Tambem descarta nome de 1-2 letras: vem de concatenacao ("moeda m"+valor

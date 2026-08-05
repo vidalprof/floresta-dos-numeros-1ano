@@ -3636,3 +3636,72 @@ verde com palitinhos e o quadradinho da forca.
 - **Gemini 503 não para mais a produção:** insiste (5s/15s/40s) e, se ainda assim
   falhar, cai no Pollinations. Só para quando é EDIÇÃO de imagem base, que o
   Pollinations não faz.
+
+---
+
+## 🗺️ O VOO DO NICO — Geografia, 3º ano (ago/2026)
+
+**Currículo de Blumenau, 3º ano**, unidade *"Formas de representação e pensamento
+espacial"*, objeto *"Representações cartográficas em Blumenau"* — os dois
+objetivos, verbatim: *"Identificar e interpretar imagens bidimensionais e
+tridimensionais em diferentes tipos de representação cartográfica"* e
+*"Reconhecer e elaborar legendas com símbolos de diversos tipos de representações
+em diferentes escalas cartográficas"*.
+
+⚠️ O Marcos pediu primeiro como **2º ano**; fui ao documento e os dois objetivos
+estão na tabela do **3º ano**. Avisei, ele confirmou 3º ano. **Sempre conferir o
+ano no `_curriculo/blumenau.txt` antes de montar** — o 2º ano tem os parentes
+mais novos (visão vertical × oblíqua, maquete, direita/esquerda).
+
+- **Pasta:** `_mapa/` · **prefixo `mp_`** · 20 fases, 24 telas, **11 gestos**
+- **Mascote: Nico, um joão-de-barro** — o bicho que constrói a própria casa e
+  que, voando, vê tudo de cima. "Visão de pássaro" virou o ponto de vista do
+  personagem, não uma figura de linguagem.
+
+**A mecânica nova: O VOO.** A criança desliza a altura e a MESMA praça (mesma
+igreja, mesmas quatro casas, mesmo rio, mesma ponte) passa de vista de lado →
+inclinada → reta de cima, que já é um mapa. **A passagem do 3D para o 2D
+acontece na mão dela** — que é exatamente o que o objetivo pede. Depois vêm o
+**roteiro com setas** (ela monta o caminho e o Nico voa), o **monte a legenda**
+(o verbo do currículo é *elaborar*, não só reconhecer) e a **escala** (sala →
+escola → bairro → cidade).
+
+### Lições desta rodada (todas viraram portão ou regra)
+
+1. **Chave base36 sem aspas derruba o JS inteiro.** `var VOZOK={13tpllt:1}` não
+   é JavaScript válido. O portão 1 pegou.
+2. **Classe passada como ARGUMENTO escapava do portão 3.** `cenaImg(n,"jimg")`
+   não era vista, e a `.jimg` ficou sem regra: a figura do mapa vinha no tamanho
+   natural (860px) e a fase do roteiro ficava com **1900px de altura** — a
+   criança não via o mapa e as setas juntos. `_qa/classes.py` agora lê
+   `cenaImg(...)`/`imgEl(...)` também.
+3. **Alvo posicionado pelo canto, não pelo centro.** `.achado` com `left/top` em
+   % nascia deslocado meia largura: a criança tocava na igreja e levava "errado".
+   Classe `.achado.mira` com margem negativa.
+4. **Coordenada chutada é erro pago.** As posições dos alvos agora são MEDIDAS na
+   arte (a igreja está a 32% × 28% do mapa), não estimadas.
+5. **O auditor jogador aprendeu três coisas:** que `.pc` nem sempre é peça de
+   arrastar (no roteiro é botão de ação, e a tela diz qual serve agora); que
+   existe o molde `.peca` → linha com `data-vaga`; e que **há DOIS moldes de
+   caça-palavras** na casa (por extremos e letra-por-letra) — ele pergunta à
+   tela em qual está antes de clicar.
+6. **Manifesto com nome alheio** (portão 9 do `clone.py`): o da Máquina do Tempo
+   ainda dizia "A Legenda do Pingo" — é o nome que apareceria ao instalar no
+   celular.
+
+### Quando o gerador de imagem cai
+
+O Gemini esgotou a cota diária no meio da produção e o Pollinations ficou horas
+devolvendo 500. O que ficou de aprendizado, já no código: os workflows **esperam
+de verdade** (20s/60s/90s), o lote **commita o que deu certo**, o Pollinations
+tenta **quatro motores** e o `gerar-imagens.yml` cai do Gemini para o
+Pollinations sozinho — menos quando é EDIÇÃO de imagem base, que só o Gemini faz.
+Nessa hora o Marcos gerou as três últimas no ChatGPT e subiu pelo GitHub.
+
+**⭐ E daí saiu uma técnica que vale para sempre:** ele mandou as duas poses do
+mascote num print só, e elas eram um render NOVO (não edição da base) — o que
+faria o boneco tremer. Solução: **construir as três camadas de UMA imagem só**.
+Da pose "piscando" (bico fechado) tirei o corpo; colei os **olhos abertos** da
+pose "falando" → nasceu o *parado*; e desse colei o **bico aberto** → nasceu o
+*falando*. Corpo pixel-idêntico nas três: tremor de **1,0% e 2,6%** (o limite é
+15%). Guardar esta receita: é mais confiável que pedir três gerações.

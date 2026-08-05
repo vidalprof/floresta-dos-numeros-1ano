@@ -699,6 +699,32 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   background:#2b2416;border:4px solid #fffdf6;position:relative;
   -webkit-box-shadow:0 10px 26px rgba(20,15,5,.5);box-shadow:0 10px 26px rgba(20,15,5,.5)}
 .janela .cenaimg{width:100%;display:block;-webkit-animation:apfoto .45s;animation:apfoto .45s}
+/* ⚠️ a figura do mapa dentro da janela: SEM esta regra ela vinha no tamanho
+   natural (860px de altura) e a fase do roteiro ficava com 1900px — a crianca
+   nao via o mapa e as setas ao mesmo tempo.                                  */
+.janela .jimg{width:100%;height:auto;display:block;-webkit-animation:apfoto .45s;animation:apfoto .45s}
+/* o Nico voando por cima do mapa, no roteiro: posicao ABSOLUTA (a .silh do
+   motor e outra coisa — barras de esqueleto — e empurrava a tela para 1900px) */
+.janela .voando{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;z-index:4;
+  -webkit-transition:left .55s ease,top .55s ease;transition:left .55s ease,top .55s ease}
+.janela .voando img{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;display:block;
+  -webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));filter:drop-shadow(0 3px 5px rgba(0,0,0,.35))}
+.janela{position:relative}
+/* --- a moldura do VOO e da ESCALA: a cena tem que caber INTEIRA (a criança
+   precisa ver a igreja, as casas, a praça e o rio ao mesmo tempo). A primeira
+   figura define a altura; as outras entram por cima, no mesmo lugar.        */
+.voobox{position:relative;width:100%;max-width:430px;margin-top:10px;border-radius:16px;
+  overflow:hidden;background:#cfe6f5;border:3px solid #fffdf6;
+  -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}
+.voobox .mfoto{width:100%;height:auto;display:block;opacity:0;
+  -webkit-transition:opacity .45s ease;transition:opacity .45s ease}
+.voobox .mfoto.prim{position:relative}
+.voobox .mfoto.sobre{position:absolute;left:0;top:0}
+.voobox .mfoto.on{opacity:1}
+.voobox .selodagua{position:absolute;left:0;right:0;bottom:6px;z-index:5;text-align:center;
+  font-size:13px;font-weight:800;color:#fff;text-shadow:0 1px 5px rgba(0,0,0,.85)}
+.voobox .selodagua b{display:inline-block;background:rgba(24,44,62,.86);border-radius:999px;
+  padding:3px 11px;font-weight:800}
 @-webkit-keyframes apfoto{from{opacity:.15}to{opacity:1}}
 @keyframes apfoto{from{opacity:.15}to{opacity:1}}
 .anotag{margin-top:8px;background:#3a2a12;color:#ffe9a3;font-size:15px;font-weight:800;
@@ -766,6 +792,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .achado.a0{left:6%;bottom:8%}
 .achado.a1{right:7%;bottom:10%}
 .achado.a2{right:9%;top:9%}
+/* alvo posicionado pelo CENTRO (left/top em %): sem isto o circulo nasce pelo
+   canto e cai ao LADO da coisa — a crianca toca no lugar certo e leva erro. */
+.achado.mira{margin-left:-33px;margin-top:-33px}
 .achado.ok{border-color:var(--ok);background:#eafce0}
 .achado.no{border-color:var(--erro);-webkit-animation:shk .4s;animation:shk .4s}
 /* --- 📌 post-it de curiosidade --- */
@@ -795,7 +824,6 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .peca .pecaimg{width:44px;height:44px;-o-object-fit:contain;object-fit:contain;display:block}
 .tvaga .pecaimg{width:40px;height:40px;-o-object-fit:contain;object-fit:contain;display:block}
 .memimg{width:56px;height:56px;-o-object-fit:contain;object-fit:contain;display:block;margin:0 auto}
-.silh .silimg{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;display:block}
 .reguario{position:relative;width:100%;max-width:400px;height:auto;margin-top:10px;
   border-radius:16px;overflow:hidden;border:3px solid #fffdf6;background:#cfe6f5;
   -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}
@@ -917,7 +945,7 @@ var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_casa_l","mp_casa_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1284,9 +1312,9 @@ function mVoo(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","O VOO DO NICO"));
   c.appendChild(el("div","balao","Segure o bot&#227;o e <b>suba com o Nico</b>. Olhe o que acontece com a mesma pra&#231;a."));
-  var cx=el("div","valebox");
+  var cx=el("div","voobox");
   var ALTS=["mp_voo_a","mp_voo_b","mp_voo_c"],fotos=[],q;
-  for(q=0;q<ALTS.length;q++){ var fo=cenaImg(ALTS[q],"mfoto"); fotos.push(fo); cx.appendChild(fo); }
+  for(q=0;q<ALTS.length;q++){ var fo=cenaImg(ALTS[q],q?"mfoto sobre":"mfoto prim"); fotos.push(fo); cx.appendChild(fo); }
   var selo=el("div","selodagua","");cx.appendChild(selo);
   c.appendChild(cx);
   var leg=el("div","balao pequeno","");c.appendChild(leg);
@@ -1302,7 +1330,7 @@ function mVoo(){
           "L&#225; de <b>cima</b> voc&#234; v&#234; tudo de uma vez, achatado. Isto j&#225; &#233; um <b>mapa</b>."];
   var SELO=["vista de lado","vista inclinada","vista de cima"];
   function pinta(){ var v=parseInt(r.value,10),i;
-    for(i=0;i<fotos.length;i++) fotos[i].className=(i===v)?"mfoto on":"mfoto";
+    for(i=0;i<fotos.length;i++) fotos[i].className=(i?"mfoto sobre":"mfoto prim")+((i===v)?" on":"");
     leg.innerHTML=TX[v]; selo.innerHTML="<b>"+SELO[v]+"</b>";
     visto[v]=1; var n=0,k; for(k in visto) if(visto.hasOwnProperty(k)) n++;
     if(n>=3&&!fim){ fim=true; sCerto(); reg("visao",true,1);
@@ -1434,8 +1462,11 @@ function mSombra(){
    "Maquetes espontâneas com símbolos dos lugares de vivência" (currículo).
    A maquete TEM altura; o mapa é a mesma coisa achatada. A criança acha no
    mapa o que está na maquete — é a ponte 3D -> 2D que o objetivo pede.     */
-var NAMAQ=[{q:"a <b>igreja</b>",x:22,y:38},{q:"a <b>ponte</b>",x:50,y:78},
-           {q:"o <b>rio</b>",x:70,y:86},{q:"a <b>pra&#231;a com as &#225;rvores</b>",x:50,y:46}];
+/* ⚠️ as posicoes sao MEDIDAS na arte do mapa (mp_mapa), nao chutadas: a igreja
+   fica a 32% da largura e 28% da altura, e por ai vai. Chutar deixa o alvo ao
+   LADO da coisa e a crianca toca no lugar certo e leva "errado".            */
+var NAMAQ=[{q:"a <b>igreja</b>",x:32,y:28},{q:"a <b>ponte</b>",x:52,y:72},
+           {q:"o <b>rio</b>",x:24,y:76},{q:"a <b>pra&#231;a com as &#225;rvores</b>",x:51,y:52}];
 function mMaquete(){
   var idx=0,err=0;
   function passo(){
@@ -1454,18 +1485,18 @@ function mMaquete(){
     c.appendChild(lado);
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_mapa","jimg"));
-    var alvo=el("div","achado");
+    var alvo=el("div","achado mira");
     alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
     alvo.setAttribute("data-qa","1");
     alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
-      if(fim) return; fim=true; arma(); alvo.className="achado ok"; sCerto();
+      if(fim) return; fim=true; arma(); alvo.className="achado mira ok"; sCerto();
       reg("dimensao",err===0,err+1);
       var ce=centroTela(alvo); faisca(ce[0],ce[1],"#6bd23f",14);
       setTimeout(function(){ idx++; err=0; passo(); },1000);
     };
     cena.appendChild(alvo);
     cena.onclick=function(){ if(fim) return; err++; sErro();
-      if(err===2){ consolo(); alvo.className="achado pisca"; setTimeout(function(){ if(!fim) alvo.className="achado"; },2200); }
+      if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
       if(err>=3) mostraDica("Olhe a maquete e o mapa <b>lado a lado</b>: o que est&#225; &#224; esquerda numa est&#225; &#224; esquerda na outra.");
     };
     c.appendChild(cena);
@@ -1535,9 +1566,9 @@ function mOndeFica(){
    "Roteiro: Escola – Casa" (currículo). A criança monta o caminho com setas e
    o Nico VOA o trajeto no mapa. Sequência = pensamento espacial em ação.   */
 var ROTAS=[
- {t:"da <b>escola</b> at&#233; a <b>ponte</b>", p:[[18,30],[18,62],[50,62],[50,80]], s:["baixo","dir","baixo"]},
- {t:"da <b>ponte</b> at&#233; a <b>pra&#231;a</b>", p:[[50,80],[50,50],[74,50]], s:["cima","dir"]},
- {t:"da <b>pra&#231;a</b> at&#233; a <b>casa da dona Ilse</b>", p:[[74,50],[74,26],[40,26]], s:["cima","esq"]}];
+ {t:"da <b>igreja</b> at&#233; a <b>ponte</b>",  p:[[32,28],[32,60],[52,60],[52,72]], s:["baixo","dir","baixo"]},
+ {t:"da <b>ponte</b> at&#233; a <b>igreja</b>",  p:[[52,72],[52,45],[32,45],[32,28]], s:["cima","esq","cima"]},
+ {t:"das <b>casas</b> at&#233; o <b>rio</b>",    p:[[52,27],[52,52],[52,76]],         s:["baixo","baixo"]}];
 var SETAS={cima:"&#8593;",baixo:"&#8595;",esq:"&#8592;",dir:"&#8594;"};
 function mRoteiro(){
   var idx=0,err=0;
@@ -1551,8 +1582,8 @@ function mRoteiro(){
     c.appendChild(el("div","balao","Monte o caminho "+it.t+". Toque nas setas <b>na ordem certa</b>."));
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_mapa","jimg"));
-    var passaro=el("div","silh");
-    passaro.appendChild(imgEl("mp_base","silimg"));
+    var passaro=el("div","voando");
+    passaro.appendChild(imgEl("mp_base"));
     passaro.style.left=it.p[0][0]+"%"; passaro.style.top=it.p[0][1]+"%";
     cena.appendChild(passaro);
     c.appendChild(cena);
@@ -1560,10 +1591,17 @@ function mRoteiro(){
     var z;
     for(z=0;z<it.s.length;z++){ var v=el("div","vaga art",""); trilho.appendChild(v); }
     c.appendChild(trilho);
-    var box=el("div","pcs"),ordem=["cima","baixo","esq","dir"];
+    var box=el("div","pcs"),ordem=["cima","baixo","esq","dir"],bts={};
+    /* marca qual seta serve AGORA — so para o auditor jogador.
+       ⚠️ comparar pelo DESENHO da seta nao funciona: o innerHTML volta do
+       navegador ja convertido ("↑"), e a marca ficava sempre em 0 — o jogador
+       automatico empacava aqui e a banca reprovava a atividade inteira.       */
+    function marcaQA(){ var k;
+      for(k in bts) if(bts.hasOwnProperty(k))
+        bts[k].setAttribute("data-qa", (!fim && passos.length<it.s.length && it.s[passos.length]===k)?"1":"0"); }
     for(z=0;z<ordem.length;z++){(function(k){
       var b=el("div","pc art",SETAS[k]);
-      b.setAttribute("data-qa", (passos.length<it.s.length && it.s[passos.length]===k)?"1":"0");
+      bts[k]=b;
       b.onclick=function(){ arma();
         if(fim) return;
         var n=passos.length;
@@ -1573,10 +1611,7 @@ function mRoteiro(){
           vs[n].innerHTML=SETAS[k]; vs[n].className="vaga art cheia";
           /* o Nico voa para o próximo ponto */
           passaro.style.left=it.p[n+1][0]+"%"; passaro.style.top=it.p[n+1][1]+"%";
-          /* atualiza a marca do auditor: qual seta serve AGORA */
-          var todas=box.getElementsByClassName("pc"),w;
-          for(w=0;w<todas.length;w++)
-            todas[w].setAttribute("data-qa", (passos.length<it.s.length && SETAS[it.s[passos.length]]===todas[w].innerHTML)?"1":"0");
+          marcaQA();
           if(passos.length>=it.s.length){ fim=true; sCerto(); elogio();
             reg("posicao",err===0,err+1);
             var ce=centroTela(passaro); faisca(ce[0],ce[1],"#ffd43b",16);
@@ -1589,6 +1624,7 @@ function mRoteiro(){
       };
       box.appendChild(b);
     })(ordem[z]);}
+    marcaQA();
     c.appendChild(box);
     if(idx===0) postIt(c,"rio");
     t.appendChild(c);app.appendChild(t);
@@ -1811,9 +1847,9 @@ function mEscala(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","PERTO E LONGE"));
   c.appendChild(el("div","balao","O Nico sobe mais ainda. Deslize e veja o <b>mesmo lugar</b> de cada vez mais longe."));
-  var cx=el("div","valebox");
+  var cx=el("div","voobox");
   var ESC=["mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade"],fotos=[],q;
-  for(q=0;q<ESC.length;q++){ var fo=cenaImg(ESC[q],"mfoto"); fotos.push(fo); cx.appendChild(fo); }
+  for(q=0;q<ESC.length;q++){ var fo=cenaImg(ESC[q],q?"mfoto sobre":"mfoto prim"); fotos.push(fo); cx.appendChild(fo); }
   var selo=el("div","selodagua","");cx.appendChild(selo);
   c.appendChild(cx);
   var leg=el("div","balao pequeno","");c.appendChild(leg);
@@ -1830,7 +1866,7 @@ function mEscala(){
           "Mais longe ainda: as ruas do <b>bairro</b> e muitas casinhas.",
           "Bem longe: a <b>cidade</b> toda. A sua casa virou um pontinho &#8212; ou nem aparece."];
   function pinta(){ var v=parseInt(r.value,10),i;
-    for(i=0;i<fotos.length;i++) fotos[i].className=(i===v)?"mfoto on":"mfoto";
+    for(i=0;i<fotos.length;i++) fotos[i].className=(i?"mfoto sobre":"mfoto prim")+((i===v)?" on":"");
     leg.innerHTML=TX[v]; selo.innerHTML="<b>"+SELO[v]+"</b>";
     visto[v]=1; var n=0,k; for(k in visto) if(visto.hasOwnProperty(k)) n++;
     if(n>=4&&!fim){ fim=true; sCerto(); reg("escala",true,1);
@@ -1854,7 +1890,7 @@ function mCaca(){
   limpa();var t=el("div","tela");setProg(t,86);
   var N=9,g=[],i,j;
   for(i=0;i<N;i++){ g[i]=[]; for(j=0;j<N;j++) g[i][j]=""; }
-  var achadas={},posicoes={};
+  var achadas={},posicoes={},onde={};
   var LET="ABCDEFGHIJLMNOPRSTUV";
   function cabe(p,li,co,dl,dc){ var k;
     for(k=0;k<p.length;k++){ var y=li+dl*k,x=co+dc*k;
@@ -1868,7 +1904,7 @@ function mCaca(){
       var li=Math.floor(Math.random()*N), co=Math.floor(Math.random()*N);
       if(cabe(p,li,co,dl,dc)){ var cel=[],k;
         for(k=0;k<p.length;k++){ g[li+dl*k][co+dc*k]=p.charAt(k); cel.push((li+dl*k)+"_"+(co+dc*k)); }
-        posicoes[p]=cel; posto=true; }
+        posicoes[p]=cel; onde[p]={r:li,c:co,n:p.length,h:hor}; posto=true; }
     }
   }
   for(i=0;i<N;i++) for(j=0;j<N;j++) if(!g[i][j]) g[i][j]=LET.charAt(Math.floor(Math.random()*LET.length));
@@ -1879,30 +1915,27 @@ function mCaca(){
   for(i=0;i<CACAM.length;i++){ var ch=el("div","pchip",CACAM[i]); chips[CACAM[i]]=ch; lista.appendChild(ch); }
   c.appendChild(lista);
   var grade=el("div","grade");
+  /* onde cada palavra ficou — SO para o auditor jogador: clicando ao acaso numa
+     grade de 81 casas ele nunca acharia, e reprovaria uma fase que funciona.
+     Nao aparece para ninguem.                                                */
+  grade.setAttribute("data-qa",JSON.stringify(onde));
   grade.style.gridTemplateColumns="repeat("+N+",1fr)";
   var cels={};
   for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
     var q=el("div","cquad",g[y][x]);
-    q.setAttribute("data-qa",""); cels[y+"_"+x]=q;
+    cels[y+"_"+x]=q;
     q.onclick=function(){ arma(); sTap();
       q.className = q.className.indexOf("mark")>=0 ? "cquad" : "cquad mark";
       confere();
     };
     grade.appendChild(q);
   })(i,j);}
-  /* marca para o auditor jogador: as celulas que ainda faltam */
-  function marcaQA(){ var p,k;
-    for(p in posicoes){ if(!posicoes.hasOwnProperty(p)||achadas[p]) continue;
-      for(k=0;k<posicoes[p].length;k++) cels[posicoes[p][k]].setAttribute("data-qa","1"); }
-  }
-  marcaQA();
   function confere(){ var p,k,todas,n=0;
     for(p in posicoes){ if(!posicoes.hasOwnProperty(p)||achadas[p]) continue;
       todas=true;
       for(k=0;k<posicoes[p].length;k++) if(cels[posicoes[p][k]].className.indexOf("mark")<0) todas=false;
       if(todas){ achadas[p]=1; chips[p].className="pchip feito"; sCerto();
-        for(k=0;k<posicoes[p].length;k++){ cels[posicoes[p][k]].className="cquad ok";
-          cels[posicoes[p][k]].setAttribute("data-qa",""); }
+        for(k=0;k<posicoes[p].length;k++) cels[posicoes[p][k]].className="cquad ok";
         var ce=centroTela(chips[p]); faisca(ce[0],ce[1],"#6bd23f",10);
         reg("producao",true,1);
       } }
@@ -2035,9 +2068,10 @@ function mMemoria(){
    "Mapa Mental" e "Representação da superfície terrestre do Bairro"
    (currículo). A criança marca no mapa do bairro onde ficam os lugares, com
    os símbolos que ela mesma aprendeu a ler.                                */
-var MARCAR=[{q:"a <b>escola</b>",s:"escola",x:30,y:34},
-            {q:"a <b>ponte</b>",s:"ponte",x:56,y:74},
-            {q:"a <b>pra&#231;a</b>",s:"praca",x:70,y:40}];
+/* idem: medido na arte do bairro (mp_esc_bairro) */
+var MARCAR=[{q:"da <b>pra&#231;a</b>",s:"praca",x:49,y:44},
+            {q:"do <b>rio</b>",s:"rio",x:82,y:50},
+            {q:"da <b>escola</b> (o pr&#233;dio maior, logo abaixo da pra&#231;a)",s:"escola",x:47,y:65}];
 function mDesenhe(){
   var idx=0,err=0;
   function passo(){
@@ -2047,23 +2081,23 @@ function mDesenhe(){
     var it=MARCAR[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA DO BAIRRO"));
-    c.appendChild(el("div","balao","Ponha o s&#237;mbolo de "+it.q+" no lugar certo do bairro."));
+    c.appendChild(el("div","balao","Ponha o s&#237;mbolo "+it.q+" no lugar certo do bairro."));
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_esc_bairro","jimg"));
-    var alvo=el("div","achado");
+    var alvo=el("div","achado mira");
     alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
     alvo.setAttribute("data-qa","1");
     alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
       if(fim) return; fim=true; arma();
       alvo.innerHTML=""; alvo.appendChild(imgEl("mp_sim_"+it.s,"memimg"));
-      alvo.className="achado ok"; sCerto(); elogio();
+      alvo.className="achado mira ok"; sCerto(); elogio();
       reg("producao",err===0,err+1);
       var ce=centroTela(alvo); faisca(ce[0],ce[1],"#ffd43b",16);
       setTimeout(function(){ idx++; err=0; passo(); },1200);
     };
     cena.appendChild(alvo);
     cena.onclick=function(){ if(fim) return; err++; sErro();
-      if(err===2){ consolo(); alvo.className="achado pisca"; setTimeout(function(){ if(!fim) alvo.className="achado"; },2200); }
+      if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
       if(err>=3) mostraDica("Procure com calma: o lugar est&#225; marcado com um c&#237;rculo claro.");
     };
     c.appendChild(cena);
@@ -2465,13 +2499,8 @@ function telaPainel(){
     h+="<tr><td>"+(CONCN[kk]||kk)+"</td><td>"+pct(DOM[kk])+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
-  if(MED.cartas&&MED.cartas.length){
-    h+="<div class='bloco'><b>Cartas escritas pelo aluno:</b><ul>";
-    for(i=0;i<MED.cartas.length;i++) h+="<li>&#8220;"+MED.cartas[i]+"&#8221;</li>";
-    h+="</ul></div>";
-  }
-  h+="<div class='bloco'><b>Curr&#237;culo (Blumenau, 4&#186; ano &#8212; Hist&#243;ria):</b> unidade <i>&#8220;Transforma&#231;&#245;es e perman&#234;ncias nas trajet&#243;rias dos grupos humanos no Vale do Itaja&#237;&#8221;</i>: <i>&#8220;Reconhecer a hist&#243;ria como resultado da a&#231;&#227;o do ser humano no tempo e no espa&#231;o, com base na identifica&#231;&#227;o de mudan&#231;as e perman&#234;ncias ao longo do tempo&#8221;</i> (EF04HI01). Tamb&#233;m: <i>&#8220;relacionar os processos de ocupa&#231;&#227;o do campo a interven&#231;&#245;es na natureza, avaliando os resultados&#8221;</i> e a unidade das <b>migra&#231;&#245;es no Vale do Itaja&#237;</b>.</div>";
-  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Ela viajou no tempo do Vale: deslizou a linha do tempo e viu a mesma paisagem mudar, separou o que mudou do que continua, p&#244;s as cenas em ordem, ligou cada povo ao que ele deixou, descobriu por que as pessoas migram, testou o que acontece com a &#225;gua quando a mata do morro cai, e escreveu uma carta contando o que mudou e o que ficou.</div>";
+  h+="<div class='bloco'><b>Curr&#237;culo (Blumenau, 3&#186; ano &#8212; Geografia):</b> unidade <i>&#8220;Formas de representa&#231;&#227;o e pensamento espacial&#8221;</i>, objeto <i>&#8220;Representa&#231;&#245;es cartogr&#225;ficas em Blumenau&#8221;</i>: <i>&#8220;Identificar e interpretar imagens bidimensionais e tridimensionais em diferentes tipos de representa&#231;&#227;o cartogr&#225;fica&#8221;</i> e <i>&#8220;Reconhecer e elaborar legendas com s&#237;mbolos de diversos tipos de representa&#231;&#245;es em diferentes escalas cartogr&#225;ficas&#8221;</i>. Conte&#250;dos da mesma linha trabalhados aqui: maquete, mapa mental, roteiro escola&#8211;casa, rela&#231;&#245;es projetivas (direita/esquerda, frente/atr&#225;s) e a representa&#231;&#227;o do bairro.</div>";
+  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Ela subiu com o Nico e viu a mesma pra&#231;a virar mapa, escolheu a vista de cima de v&#225;rios objetos, achou no mapa o que estava na maquete, disse onde cada coisa fica, montou um roteiro com setas, leu e <b>montou a legenda</b> do pr&#243;prio mapa, comparou a sala, a escola, o bairro e a cidade, e marcou no mapa do bairro onde ficam os lugares.</div>";
   h+="<p class='noprint'><button onclick='window.print()'>Imprimir</button> <button onclick='location.href=location.pathname'>Voltar ao jogo</button></p>";
   d.innerHTML=h;document.body.appendChild(d);
 }

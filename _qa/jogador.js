@@ -59,19 +59,53 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
          const d=pos[falta[0].textContent.trim()];
          if(d){
            const N=Math.round(Math.sqrt(g.children.length));
+           /* ⚠️ EXISTEM DOIS MOLDES DE CACA-PALAVRAS NA CASA, e o auditor tem
+              que servir aos dois (ago/2026):
+                (a) por EXTREMOS — toca na 1a letra, ela fica "sel", e a 2a
+                    fecha a palavra (Maquina do Tempo);
+                (b) LETRA POR LETRA — cada letra vira "mark" e a fase confere
+                    quando todas estao marcadas (cartografia).
+              Trocar um pelo outro reprova uma fase que funciona. Entao: toca na
+              primeira e PERGUNTA a tela em qual molde ela esta.              */
+           const prim=g.children[d.r*N+d.c];
            const r2=d.h? d.r : d.r+d.n-1, c2=d.h? d.c+d.n-1 : d.c;
-           g.children[d.r*N+d.c].click(); g.children[r2*N+c2].click(); return 1;
+           if(prim.className.indexOf('sel')<0&&prim.className.indexOf('mark')<0) prim.click();
+           if(prim.className.indexOf('sel')>=0){ g.children[r2*N+c2].click(); return 1; }
+           for(let k=1;k<d.n;k++){
+             const rr=d.h? d.r : d.r+k, cc=d.h? d.c+k : d.c;
+             const cel=g.children[rr*N+cc];
+             if(cel&&cel.className.indexOf('ok')<0&&cel.className.indexOf('mark')<0) cel.click();
+           }
+           return 1;
          }
        }
      }
      /* levar-o-item-ate-o-lugar (arrastar OU tocar): peca e destino publicam o
         mesmo valor em data-qa. O jogador usa o caminho do TOQUE (peca, depois
         destino), que e o que a crianca sem arrasto usa. */
-     const peca=[...document.querySelectorAll('.pc[data-qa]')].find(e=>e.offsetParent!==null&&e.className.indexOf('usada')<0);
+     /* ⚠️ LICAO PAGA (ago/2026, cartografia): nem toda .pc e peca de arrastar.
+        No roteiro de setas a .pc e um BOTAO de acao, e a tela publica em
+        data-qa="1" qual serve AGORA. O jogador pegava sempre a PRIMEIRA da
+        ordem do DOM, clicava na seta errada para sempre e dava "preso" numa
+        fase que funciona. Agora, quando ha uma marcada, e nela que ele toca. */
+     const pcs=[...document.querySelectorAll('.pc[data-qa]')]
+       .filter(e=>e.offsetParent!==null&&e.className.indexOf('usada')<0);
+     const peca=pcs.find(e=>e.getAttribute('data-qa')==='1')||pcs[0];
      if(peca){
        if(peca.className.indexOf('sel')<0){ peca.click(); return 1; }
        const dest=[...document.querySelectorAll('.cam[data-qa]')].find(e=>e.getAttribute('data-qa')===peca.getAttribute('data-qa')&&e.className.indexOf('ok')<0);
        if(dest){ dest.click(); return 1; }
+     }
+     /* a mesma ideia com .peca -> linha de destino que publica data-vaga
+        (e o molde de "monte a legenda"): toca na peca e depois na linha certa. */
+     const pcs2=[...document.querySelectorAll('.peca[data-qa]')]
+       .filter(e=>e.offsetParent!==null&&e.className.indexOf('usada')<0);
+     const pe2=pcs2.find(e=>e.getAttribute('data-qa')==='1')||pcs2[0];
+     if(pe2){
+       if(pe2.className.indexOf('sel')<0){ pe2.click(); return 1; }
+       const d2=[...document.querySelectorAll('[data-vaga]')]
+         .find(e=>e.getAttribute('data-vaga')===pe2.getAttribute('data-qa')&&e.className.indexOf('cheia')<0);
+       if(d2){ d2.click(); return 1; }
      }
      /* DESLIZAR (simulador): o jogador nao sabe arrastar um controle. A tela
         publica em data-qa o valor que a fase espera. Algumas fases (a janela do
