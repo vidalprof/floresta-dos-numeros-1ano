@@ -838,6 +838,62 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .tinta.agua{background:rgba(47,127,196,.72);border:3px solid #2f7fc4}
 .tinta.verde{background:rgba(63,154,38,.72);border:3px solid #3f9a26}
 .tinta.casa{background:rgba(210,115,42,.72);border:3px solid #d2732a}
+/* ================= FASES NOVAS (ago/2026) =================
+   Pedido do Marcos: "aumentar as fases pois nao dura 55 minutos, melhorar as
+   interatividades, aumentar o leque". Nenhuma delas precisou de arte nova: a
+   forca e texto, o quebra-cabeca recorta o PROPRIO mapa por codigo e o
+   tabuleiro usa os simbolos da legenda que ja existem.                      */
+/* --- FORCA: a neblina fecha no mapa a cada erro --- */
+.forca{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:7px;margin:12px 0 4px}
+.letrafc{width:40px;height:48px;line-height:44px;text-align:center;font-size:25px;font-weight:900;
+  color:#3a3426;background:#fffdf6;border:2px solid #d9c9a6;border-bottom:5px solid #8a7a55;
+  border-radius:7px;-webkit-box-shadow:0 3px 0 rgba(30,25,10,.18);box-shadow:0 3px 0 rgba(30,25,10,.18)}
+.tecladofc{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:6px;max-width:392px;margin:10px auto 0}
+.teclafc{width:44px;height:46px;line-height:42px;text-align:center;font-size:19px;font-weight:800;
+  color:#3a3426;background:#fffdf6;border:2px solid #c9b892;border-radius:9px;cursor:pointer;
+  -webkit-box-shadow:0 3px 0 #c9b892;box-shadow:0 3px 0 #c9b892}
+.teclafc:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.teclafc.ok{background:#cdeeb4;border-color:#5aa02c;-webkit-box-shadow:0 3px 0 #5aa02c;box-shadow:0 3px 0 #5aa02c;color:#24521a}
+.teclafc.no{background:#e6dfd2;border-color:#b6a98f;color:#9a8f79;-webkit-box-shadow:none;box-shadow:none}
+.nebbox{position:relative;width:100%;max-width:300px;margin:6px auto 0;border-radius:14px;overflow:hidden;
+  border:3px solid #fffdf6;-webkit-box-shadow:0 6px 16px rgba(30,25,10,.32);box-shadow:0 6px 16px rgba(30,25,10,.32)}
+.nebbox .nbimg{width:100%;height:auto;display:block}
+.nebbox .neb{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(226,230,236,.0);
+  -webkit-transition:background .5s;transition:background .5s}
+.nebbox .nebtx{position:absolute;left:0;right:0;bottom:0;padding:5px;text-align:center;font-size:12px;
+  font-weight:700;color:#fff;background:rgba(28,22,12,.72)}
+/* --- QUEBRA-CABECA: pedacos do proprio mapa --- */
+.qcban{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:8px;margin-top:12px}
+.qcgrade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  width:100%;max-width:312px;margin:10px auto 0;background:rgba(255,253,246,.55);
+  border:3px dashed rgba(255,255,255,.85);border-radius:14px;padding:4px}
+.qcvaga{width:33.33%;height:66px;border:2px dashed rgba(120,100,60,.45);border-radius:8px}
+.qcpc,.qcvaga.cheia{background-image:url(img/mp_mapa.jpg);background-size:300% 200%;background-repeat:no-repeat}
+.qcpc{width:94px;height:66px;border-radius:8px;cursor:pointer;border:2px solid #fffdf6;
+  -webkit-box-shadow:0 3px 8px rgba(30,25,10,.3);box-shadow:0 3px 8px rgba(30,25,10,.3)}
+.qcpc.sel{border-color:#ffd43b;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.qcpc.usada{opacity:.25;pointer-events:none}
+.qcvaga.cheia{border-style:solid;border-color:#6bd23f}
+.qcvaga.no{border-color:var(--erro);-webkit-animation:shk .35s;animation:shk .35s}
+/* --- TABULEIRO: ande at&#233; o lugar --- */
+.tabu{position:relative;width:100%;max-width:300px;margin:10px auto 0;background:rgba(255,253,246,.9);
+  border:3px solid #fffdf6;border-radius:14px;padding:4px;
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.tcel{width:20%;height:56px;border:1px solid rgba(120,100,60,.25);position:relative}
+.tcel img{position:absolute;left:8%;top:8%;width:84%;height:84%;-o-object-fit:contain;object-fit:contain}
+.tnico{position:absolute;width:44px;height:44px;pointer-events:none;
+  -webkit-transition:left .35s,top .35s;transition:left .35s,top .35s;z-index:3}
+.tnico img{width:100%;height:100%;-o-object-fit:contain;object-fit:contain}
+.setas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;max-width:270px;margin-left:auto;margin-right:auto}
+.seta{width:62px;height:52px;line-height:48px;text-align:center;font-size:17px;font-weight:800;color:#fff;
+  border-radius:12px;cursor:pointer;background:#2a6ea8;border:3px solid rgba(255,255,255,.85);
+  -webkit-box-shadow:0 4px 0 #1d4e78;box-shadow:0 4px 0 #1d4e78}
+.seta:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.passos{margin-top:8px;font-size:14px;font-weight:800;color:#fffdf6;text-shadow:0 1px 4px rgba(0,0,0,.5)}
 .tinta.no{background:rgba(214,74,64,.5);-webkit-animation:shk .35s;animation:shk .35s}
 /* --- a moldura do VOO e da ESCALA: a cena tem que caber INTEIRA (a criança
    precisa ver a igreja, as casas, a praça e o rio ao mesmo tempo). A primeira
@@ -2097,10 +2153,16 @@ function mEscala(){
    subindo: ler o mapa -> localizar no mapa -> FAZER o mapa.                 */
 
 /* ---------- 13) ⭐ A ROSA DOS VENTOS (orientar) ---------- */
+/* 7 rodadas: as quatro primeiras nomeiam os lados, as tres ultimas APLICAM
+   (o Sol, o contrario, o que fica atras). Aumentar rodada repetindo a mesma
+   pergunta cansa; aumentar aplicando ensina.                               */
 var VENTOS=[{p:"Para achar o <b>Norte</b> no mapa, para onde voc&#234; olha?",c:"N"},
             {p:"E o <b>Sul</b>, fica para onde?",c:"S"},
             {p:"O <b>Leste</b> &#233; de que lado?",c:"L"},
-            {p:"E o <b>Oeste</b>?",c:"O"}];
+            {p:"E o <b>Oeste</b>?",c:"O"},
+            {p:"O <b>Sol nasce</b> no Leste. Toque no lado onde o Sol nasce.",c:"L"},
+            {p:"O <b>Sol se p&#245;e</b> no Oeste. Toque no lado onde ele se esconde.",c:"O"},
+            {p:"Se voc&#234; olha para o Norte, o Sul fica <b>atr&#225;s</b> de voc&#234;. Toque no Sul.",c:"S"}];
 var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
 function mRosa(){
   var idx=0,err=0;
@@ -2146,10 +2208,19 @@ function mRosa(){
    O mapa ganha linhas (A,B,C,D) e colunas (1,2,3,4). É assim que um mapa de
    verdade diz onde as coisas estão — e é a primeira vez que a criança usa
    duas informações ao mesmo tempo para achar um lugar.                     */
-var COORD=[{q:"a <b>igreja</b>",l:"B",n:2},
-           {q:"as <b>casas</b>",l:"C",n:2},
-           {q:"a <b>pra&#231;a</b>",l:"C",n:3},
-           {q:"o <b>rio</b>",l:"B",n:4}];
+/* ⚠️ AS COORDENADAS ESTAVAM ERRADAS — e isso chegava na crianca como erro
+   DELA. Conferi desenhando a grade por cima da figura: "as casas" apontava
+   para C2, que e a copa da arvore; "o rio" apontava para B4, que e fundo
+   VAZIO. Quem tocasse no rio ouvia que errou. Agora cada lugar declara TODAS
+   as celulas que ele ocupa (a arvore pega duas, o rio pega a linha inteira),
+   pela mesma licao da ponte: numa figura, coisa grande nao cabe num
+   quadradinho so.                                                          */
+var COORD=[{q:"a <b>igreja</b>",cels:["B1","B2"]},
+           {q:"as <b>casas</b> de telhado vermelho",cels:["B2","B3"]},
+           {q:"a <b>copa da &#225;rvore</b> da pra&#231;a",cels:["C2","C3"]},
+           {q:"a <b>linha de baixo</b> do mapa, por onde passa o rio",cels:["D1","D2","D3","D4"],unico:1},
+           {q:"a <b>linha de cima</b> do mapa, que est&#225; vazia",cels:["A1","A2","A3","A4"],unico:1},
+           {q:"o lugar onde o <b>rio passa por baixo</b> da &#225;rvore",cels:["D2","D3"]}];
 function mCoord(){
   var idx=0,err=0;
   function passo(){
@@ -2159,17 +2230,19 @@ function mCoord(){
     var it=COORD[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ACHE PELA COORDENADA"));
-    c.appendChild(el("div","balao","Onde est&#225; "+it.q+"? Toque no quadradinho <b>"+it.l+it.n+"</b> do mapa."));
+    c.appendChild(el("div","balao","Onde est&#225; "+it.q+"? Toque no quadradinho do mapa."));
     var qd=el("div","quadric");
     qd.appendChild(cenaImg("mp_mapa","qdimg"));
     var LET=["A","B","C","D"],i,j;
     for(i=0;i<4;i++) for(j=0;j<4;j++){(function(li,co){
       var cel=el("div","qcel");
       cel.style.left=(co*25)+"%"; cel.style.top=(li*25)+"%";
-      cel.setAttribute("data-qa",(LET[li]===it.l&&(co+1)===it.n)?"1":"0");
+      var meu=LET[li]+(co+1), vale=false, vv;
+      for(vv=0;vv<it.cels.length;vv++) if(it.cels[vv]===meu) vale=true;
+      cel.setAttribute("data-qa",vale?"1":"0");
       cel.onclick=function(){ arma();
         if(fim) return;
-        if(LET[li]===it.l&&(co+1)===it.n){
+        if(vale){
           fim=true; cel.className="qcel ok"; sCerto(); elogio();
           reg("posicao",err===0,err+1);
           var ce=centroTela(cel); faisca(ce[0],ce[1],"#6bd23f",14);
@@ -2466,7 +2539,7 @@ function mCruzada(){
   function passo(){
     limpa();var t=el("div","tela");setProg(t,90+idx);
     if(idx>=CRUZM.length){ depoisDaFala("mp_cruz_revela",8000,function(){
-      mostraBanner("Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.",mMemoria); }); return; }
+      mostraBanner("Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.",mForca); }); return; }
     var it=CRUZM[idx],pos=0,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","CRUZADINHA"));
@@ -2664,7 +2737,7 @@ function mAlto(){
   function passo(){
     limpa();var t=el("div","tela");setProg(t,97);
     if(idx>=ALTO.length){ depoisDaFala("mp_alto_revela",13000,function(){
-      mostraBanner("Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.",mRelampago); }); return; }
+      mostraBanner("Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.",mQuebra); }); return; }
     var it=ALTO[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
@@ -2722,6 +2795,210 @@ function mAlto(){
     t.appendChild(c);app.appendChild(t);
     montaBarra("mp_alto_dica","Pode tocar em <b>qualquer parte</b> da coisa que eu pedi.");
     if(idx===0) falar("mp_alto_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ A PALAVRA DO MAPA (forca) ----------
+   O gesto que faltava no leque desta atividade — e o Marcos nomeou a forca com
+   todas as letras. Aqui a PALAVRA e o conteudo: sao os cinco nomes que quem le
+   mapa precisa saber. O medidor de erro e a NEBLINA fechando em cima do mapa —
+   tematico e sem boneco enforcado, que nao combina com crianca de 8 anos.   */
+var FORCAP=[{p:"BUSSOLA", d:"O aparelhinho que mostra onde fica o Norte."},
+            {p:"SIMBOLO", d:"O desenhinho que representa um lugar no mapa."},
+            {p:"PLANTA",  d:"O desenho de um lugar visto de cima, com tudo no lugar."},
+            {p:"ESCALA",  d:"Diz de que tamanho o mapa mostra o mundo."}];
+var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var NEBAV=["o c\u00e9u est\u00e1 limpo","entrou uma neblina fina","a neblina est\u00e1 subindo",
+           "o mapa come\u00e7a a sumir","quase n\u00e3o d\u00e1 para ver","o mapa sumiu na neblina"];
+function mForca(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,91+idx);
+    var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","A PALAVRA DO MAPA"));
+    c.appendChild(el("div","balao",it.d));
+    var nb=el("div","nebbox");
+    nb.appendChild(cenaImg("mp_mapa","nbimg"));
+    var neb=el("div","neb"); nb.appendChild(neb);
+    var ntx=el("div","nebtx",NEBAV[0]); nb.appendChild(ntx);
+    c.appendChild(nb);
+    var linha=el("div","forca"),caixas=[],i2;
+    for(i2=0;i2<pal.length;i2++){ var q=el("div","letrafc","_"); linha.appendChild(q); caixas.push(q); }
+    c.appendChild(linha);
+    var tec=el("div","tecladofc"),bts={};
+    function revela(){ var z,tudo=true;
+      for(z=0;z<pal.length;z++){ if(achou[pal.charAt(z)]) caixas[z].innerHTML=pal.charAt(z); else tudo=false; }
+      return tudo; }
+    function fecha(){ neb.style.background="rgba(226,230,236,"+(erros*0.17)+")";
+      ntx.innerHTML=NEBAV[Math.min(erros,NEBAV.length-1)]; }
+    function segue(ms){ setTimeout(function(){ idx++;
+        if(idx>=FORCAP.length){ depoisDaFala("mp_forca_revela",11000,function(){
+          mostraBanner("Estas s&#227;o as cinco palavras de quem <b>l&#234; e faz</b> mapas.",mMemoria); }); }
+        else passo(); },ms); }
+    function tentaLetra(L,b){
+      if(fim||b._usada) return;
+      b._usada=1; arma();
+      if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sCerto();
+        if(revela()){ fim=true; document.onkeydown=null; elogio(); reg("legenda",erros===0,erros+1);
+          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",16);
+          neb.style.background="rgba(226,230,236,0)"; ntx.innerHTML="a neblina foi embora!";
+          segue(1600); }
+      } else { erros++; b.className="teclafc no"; sErro(); fecha();
+        if(erros===2) mostraDica("Tente as <b>vogais</b> que ainda faltam.");
+        if(erros>=MAXE){ fim=true; document.onkeydown=null; consolo();
+          var z; for(z=0;z<pal.length;z++) achou[pal.charAt(z)]=1;
+          revela();
+          c.appendChild(el("div","balao pequeno","A palavra era <b>"+pal+"</b>. Olhe bem para ela &#8212; a pr&#243;xima voc&#234; pega."));
+          reg("legenda",false,MAXE); segue(3200); }
+      }
+    }
+    /* ⭐ AS DUAS PORTAS: teclado na tela E teclado de verdade (regra da casa) */
+    document.onkeydown=function(ev){
+      var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+      if(!/^[A-Z]$/.test(L)) return;
+      if(bts[L]&&!bts[L]._usada) tentaLetra(L,bts[L]);
+    };
+    for(i2=0;i2<ALFA.length;i2++){(function(L){
+      var b=el("div","teclafc",L);
+      b.setAttribute("data-qa", pal.indexOf(L)>=0?"1":"0");
+      b.onclick=function(){ tentaLetra(L,b); };
+      bts[L]=b; tec.appendChild(b);
+    })(ALFA.charAt(i2));}
+    c.appendChild(tec);
+    c.appendChild(el("div","hint","D&#225; para tocar na tela ou usar o teclado do computador."));
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("mp_forca_dica","Comece pelas vogais: A, E, I, O, U.");
+    if(idx===0) falar("mp_forca_intro");
+  }
+  passo();
+}
+
+/* ---------- ⭐ O QUEBRA-CABEÇA DO MAPA (montar por encaixe) ----------
+   O mapa e cortado em SEIS pedacos por codigo (o proprio arquivo do mapa, com
+   background-position) — zero arte nova. Montar o mapa inteiro obriga a olhar
+   COMO as partes se ligam: o rio que continua, a rua que atravessa. E o gesto
+   de encaixe, que nao existia em nenhuma outra fase.                        */
+function mQuebra(){
+  limpa();var t=el("div","tela");setProg(t,97);
+  var COLS=3,LINS=2,total=COLS*LINS,postas=0,err=0,sel=null;
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O MAPA EM PEDA&#199;OS"));
+  var bal=el("div","balao","O mapa se despeda&#231;ou! Ponha cada peda&#231;o no lugar certo.");
+  c.appendChild(bal);
+  var grade=el("div","qcgrade"),vagas=[],i,j;
+  for(i=0;i<LINS;i++) for(j=0;j<COLS;j++){(function(li,co){
+    var v=el("div","qcvaga");
+    v.setAttribute("data-vaga",li+"_"+co);
+    v.onclick=function(){ solta(li,co,v); };
+    vagas.push(v); grade.appendChild(v);
+  })(i,j);}
+  c.appendChild(grade);
+  var banca=el("div","qcban"),ordem=[],k;
+  for(k=0;k<total;k++) ordem.push(k);
+  ordem=baguncar(ordem);
+  for(k=0;k<ordem.length;k++){(function(n){
+    var li=Math.floor(n/COLS), co=n%COLS;
+    var b=el("div","qcpc");
+    b.style.backgroundPosition=(co*50)+"% "+(li*100)+"%";
+    b.setAttribute("data-qa",li+"_"+co);
+    b.onclick=function(){ if(b.className.indexOf("usada")>=0) return;
+      var a=banca.getElementsByClassName("qcpc"),z;
+      for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="qcpc";
+      b.className="qcpc sel"; sel={li:li,co:co,el:b}; arma(); sTap(); };
+    banca.appendChild(b);
+  })(ordem[k]);}
+  c.appendChild(banca);
+  function solta(li,co,v){
+    if(!sel){ mostraDica("Toque primeiro num <b>peda&#231;o</b> a&#237; embaixo."); return; }
+    arma();
+    if(sel.li===li&&sel.co===co){
+      v.className="qcvaga cheia";
+      v.style.backgroundPosition=(co*50)+"% "+(li*100)+"%";
+      sel.el.className="qcpc usada"; sel=null; postas++; sCerto();
+      reg("dimensao",err===0,err+1);
+      var ce=centroTela(v); faisca(ce[0],ce[1],"#6bd23f",12);
+      bal.innerHTML="J&#225; s&#227;o <b>"+postas+"</b> de <b>"+total+"</b> peda&#231;os no lugar.";
+      if(postas>=total){ sFesta(); festa();
+        setTimeout(function(){ depoisDaFala("mp_quebra_revela",11000,function(){
+          mostraBanner("O mapa s&#243; funciona <b>inteiro</b>: cada peda&#231;o continua no outro.",mAnde); }); },900); }
+    } else { err++; v.className="qcvaga no"; sErro();
+      setTimeout(function(){ if(v.className.indexOf("cheia")<0) v.className="qcvaga"; },420);
+      if(err===2) consolo();
+      if(err>=3) mostraDica("Olhe as <b>bordas</b>: o rio de um peda&#231;o tem que continuar no outro.");
+    }
+  }
+  c.appendChild(el("div","hint","Toque no peda&#231;o e depois no lugar dele."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("mp_quebra_dica","Comece pelos peda&#231;os que t&#234;m o rio ou a igreja.");
+  falar("mp_quebra_intro");
+}
+
+/* ---------- ⭐ ANDE AT&#201; O LUGAR (dar ordens de dire&#231;&#227;o) ----------
+   Junta o que a crianca aprendeu em duas fases: a rosa dos ventos e a
+   coordenada. Ela nao aponta o destino — ela DIZ O CAMINHO, um passo por vez,
+   e o Nico anda. E o comeco do pensamento computacional dentro da Geografia,
+   e e o gesto que faltava: dar ordem, nao escolher resposta.                */
+var ANDE=[{alvo:{l:2,c:4},sim:"mp_sim_escola",n:"a escola"},
+          {alvo:{l:0,c:1},sim:"mp_sim_igreja",n:"a igreja"},
+          {alvo:{l:4,c:2},sim:"mp_sim_ponte", n:"a ponte"}];
+function mAnde(){
+  var idx=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,98);
+    var it=ANDE[idx],N=5,pos={l:4,c:0},passos=0,fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","ANDE AT&#201; O LUGAR"));
+    c.appendChild(el("div","balao","O Nico est&#225; no canto. Diga o caminho at&#233; <b>"+it.n+"</b>, um passo por vez."));
+    var tab=el("div","tabu"),i,j,cels={};
+    for(i=0;i<N;i++) for(j=0;j<N;j++){(function(li,co){
+      var q=el("div","tcel");
+      if(li===it.alvo.l&&co===it.alvo.c) q.appendChild(imgEl(it.sim,""));
+      cels[li+"_"+co]=q; tab.appendChild(q);
+    })(i,j);}
+    var pin=el("div","tnico");
+    pin.appendChild(nicoEl("pp"));
+    tab.appendChild(pin);
+    function poe(){ pin.style.left=(4+pos.c*20)+"%"; pin.style.top=(4+pos.l*20)+"%"; }
+    c.appendChild(tab);
+    var cnt=el("div","passos","passos: 0");
+    c.appendChild(cnt);
+    var setas=el("div","setas");
+    var DIRS=[["N","Norte",-1,0],["S","Sul",1,0],["O","Oeste",0,-1],["L","Leste",0,1]];
+    function anda(dl,dc){
+      if(fim) return; arma(); sTap();
+      var nl=pos.l+dl, nc=pos.c+dc;
+      if(nl<0||nl>=N||nc<0||nc>=N){ sErro(); mostraDica("Por a&#237; o Nico sai do bairro. Tente outro lado."); return; }
+      pos.l=nl; pos.c=nc; passos++; cnt.innerHTML="passos: "+passos; poe();
+      if(pos.l===it.alvo.l&&pos.c===it.alvo.c){
+        fim=true; sCerto(); elogio(); reg("posicao",passos<=8,1);
+        var ce=centroTela(pin); faisca(ce[0],ce[1],"#ffd43b",18);
+        setTimeout(function(){ idx++;
+          if(idx>=ANDE.length){ depoisDaFala("mp_ande_revela",11000,function(){
+            mostraBanner("Dizer o caminho pelos <b>lados do mapa</b> &#233; assim que a gente explica onde fica um lugar.",mRelampago); }); }
+          else passo(); },1300);
+      }
+    }
+    for(i=0;i<DIRS.length;i++){(function(d){
+      var b=el("div","seta",d[1]);
+      /* qual seta APROXIMA do alvo — so para o auditor jogador */
+      b.setAttribute("data-qa",((d[2]<0&&it.alvo.l<pos.l)||(d[2]>0&&it.alvo.l>pos.l)||
+                                (d[3]<0&&it.alvo.c<pos.c)||(d[3]>0&&it.alvo.c>pos.c))?"1":"0");
+      b.onclick=function(){ anda(d[2],d[3]);
+        var a=setas.getElementsByClassName("seta"),z;
+        for(z=0;z<a.length;z++){ var dd=DIRS[z];
+          a[z].setAttribute("data-qa",((dd[2]<0&&it.alvo.l<pos.l)||(dd[2]>0&&it.alvo.l>pos.l)||
+                                       (dd[3]<0&&it.alvo.c<pos.c)||(dd[3]>0&&it.alvo.c>pos.c))?"1":"0"); }
+      };
+      setas.appendChild(b);
+    })(DIRS[i]);}
+    c.appendChild(setas);
+    c.appendChild(el("div","hint","Norte &#233; para cima, Sul para baixo, Leste para a direita, Oeste para a esquerda."));
+    t.appendChild(c);app.appendChild(t);
+    poe();
+    montaBarra("mp_ande_dica","Olhe onde est&#225; o Nico e onde est&#225; o lugar. Suba ou des&#231;a primeiro.");
+    if(idx===0) falar("mp_ande_intro");
   }
   passo();
 }
@@ -2883,7 +3160,7 @@ function mFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
    nenhum) e o professor entra em dois toques. O menu NAO zera nem grava
    progresso: e so um atalho para abrir a fase.                             */
 var CODIGO_MESTRE="1275@";
-var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mRosa","13. A ROSA DOS VENTOS"],["mCoord","14. ACHE PELA COORDENADA"],["mPlanta","15. A PLANTA DA SALA"],["mPintar","16. PINTE O MAPA"],["mCaca","17. CAÇA-PALAVRAS"],["mCruzada","18. CRUZADINHA"],["mMemoria","19. MEMÓRIA"],["mDesenhe","20. O MAPA DO BAIRRO"],["mAlto","21. O BAIRRO LÁ DE CIMA"],["mRelampago","22. RELÂMPAGO"],["mEnsinar","23. ENSINE O NICO"],["mFim","24. BOLETIM E MEDALHA"]];
+var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mRosa","13. A ROSA DOS VENTOS"],["mCoord","14. ACHE PELA COORDENADA"],["mPlanta","15. A PLANTA DA SALA"],["mPintar","16. PINTE O MAPA"],["mCaca","17. CAÇA-PALAVRAS"],["mCruzada","18. CRUZADINHA"],["mMemoria","19. MEMÓRIA"],["mDesenhe","20. O MAPA DO BAIRRO"],["mAlto","21. O BAIRRO LÁ DE CIMA"],["mForca","22. A PALAVRA DO MAPA"],["mQuebra","23. O MAPA EM PEDAÇOS"],["mAnde","24. ANDE ATÉ O LUGAR"],["mRelampago","25. RELÂMPAGO"],["mEnsinar","26. ENSINE O NICO"],["mFim","27. BOLETIM E MEDALHA"]];
 /* ⭐ O GANCHO DA RETOMADA — envelopa cada fase para ela anotar o proprio nome
    ao abrir. Fica AQUI de proposito: depois das fases existirem e ANTES do
    objeto TREINO (que guarda as funcoes por referencia; se o envelope viesse
