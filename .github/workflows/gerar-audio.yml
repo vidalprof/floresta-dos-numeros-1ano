@@ -248,8 +248,14 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # ⚠️ UM CAMINHO POR VEZ, e so o que existe. `git add A B` com B
+          #    inexistente falha INTEIRO ("pathspec did not match") e NAO grava
+          #    o A — era isso que fazia o passo dizer "sem mudancas" com os mp3
+          #    prontos na pasta, ja que `_audio/` so existe no default.
           # --sparse: grava mesmo o que estiver fora das regras de sparse-checkout
-          git add --sparse "${{ inputs.outdir }}" _audio/ || true
+          for d in "${{ inputs.outdir }}" _audio; do
+            [ -d "$d" ] && git add --sparse "$d"
+          done
           if git diff --cached --quiet; then
             # ⚠️ "sem mudancas" so e verdade se NAO tiver nascido mp3 nenhum.
             #    Se nasceu e nada entrou no commit, isto e FALHA, nao sucesso.
