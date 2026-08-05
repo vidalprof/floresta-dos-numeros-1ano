@@ -30,9 +30,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          # ⚠️ LICAO PAGA (ago/2026): em modo CONE (o padrao) o sparse-checkout
+          #    so entende PASTAS — o arquivo solto _gerar_imagens.json nao vinha,
+          #    e o lote inteiro falhava sem dizer por que. Com cone-mode:false os
+          #    padroes de arquivo funcionam.
           sparse-checkout: |
-            _novo
-            _gerar_imagens.json
+            /_novo/
+            /_gerar_imagens.json
+          sparse-checkout-cone-mode: false
       - name: Gerar imagens do _gerar_imagens.json (Gemini)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}

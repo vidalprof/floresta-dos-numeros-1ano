@@ -73,8 +73,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          # idem: arquivo solto precisa de cone-mode desligado
           sparse-checkout: |
-            _lote_falas.json
+            /_lote_falas.json
+          sparse-checkout-cone-mode: false
 
       - name: Instalar ffmpeg (p/ voz masculina)
         run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
