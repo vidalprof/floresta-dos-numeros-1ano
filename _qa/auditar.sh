@@ -69,6 +69,9 @@ echo
 echo "--- 0b) PADRAO DA CASA (didatica, ilustrada, sonora, variada) -"
 python3 _qa/padrao.py "$ARQ" || FALHOU=1
 
+echo "--- 0c) PERGUNTA AMBIGUA (pede 'a ponte' e tem duas?) -"
+python3 _qa/ambiguo.py "$ARQ" || FALHOU=1
+
 echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
 python3 _qa/funcoes.py "$ARQ" || FALHOU=1

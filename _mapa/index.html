@@ -1089,11 +1089,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
 var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
-           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1};
+           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_bairro:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_bairro","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -2599,16 +2599,20 @@ function mDesenhe(){
       tocado, com o nome da coisa numa plaquinha — fica bonito, fica marcado, e
       a criança vê o que já achou sem tapar a figura.                        */
 var ALTO=[
- {q:"o <b>rio</b> que corta o bairro", n:"O RIO", r:11,
-  z:[{x:50,y:8},{x:48,y:20},{x:46,y:33},{x:46,y:45},{x:46,y:57},{x:45,y:69},{x:44,y:81},{x:45,y:93}]},
- {q:"uma <b>ponte</b> em cima do rio", n:"A PONTE", r:9,
-  z:[{x:46,y:25},{x:51,y:40}]},
+ /* unico: as oito zonas sao pedacos do MESMO rio, nao oito rios */
+ {q:"o <b>rio</b> que corta o bairro", n:"O RIO", r:11, unico:1,
+  z:[{x:50,y:6},{x:48,y:18},{x:47,y:30},{x:46,y:42},{x:46,y:54},{x:45,y:66},{x:44,y:78},{x:45,y:92}]},
+ /* agora a figura tem UMA ponte so — por isso a pergunta pode voltar ao
+    definido ("a ponte"), que e o portugues natural. Enquanto havia duas, era
+    obrigatorio dizer "uma ponte" (portao _qa/ambiguo.py).                  */
+ {q:"a <b>ponte</b> em cima do rio", n:"A PONTE", r:10,
+  z:[{x:51,y:16}]},
  {q:"a <b>mata</b> em volta do bairro", n:"A MATA", r:11,
-  z:[{x:11,y:26},{x:7,y:54},{x:19,y:88},{x:80,y:14},{x:88,y:44},{x:78,y:80},{x:30,y:6}]},
+  z:[{x:5,y:36},{x:3,y:60},{x:15,y:84},{x:92,y:12},{x:88,y:45},{x:80,y:68},{x:92,y:86}]},
  {q:"uma <b>rua</b> do bairro", n:"A RUA", r:9,
-  z:[{x:18,y:62},{x:23,y:20},{x:31,y:90},{x:73,y:64}]},
- {q:"o peda&#231;o do bairro que fica do <b>outro lado do rio</b>", n:"O OUTRO LADO", r:15,
-  z:[{x:62,y:30},{x:66,y:50},{x:62,y:72}]}
+  z:[{x:20,y:55},{x:30,y:88},{x:72,y:32},{x:70,y:60},{x:52,y:90}]},
+ {q:"o peda&#231;o do bairro que fica do <b>outro lado do rio</b>", n:"O OUTRO LADO", r:15, unico:1,
+  z:[{x:63,y:22},{x:66,y:45},{x:60,y:72}]}
 ];
 function mAlto(){
   var idx=0,err=0;
@@ -2621,7 +2625,7 @@ function mAlto(){
     c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
     c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Toque em "+it.q+"."));
     var cena=el("div","janela");
-    cena.appendChild(cenaImg("mp_esc_cidade","jimg"));
+    cena.appendChild(cenaImg("mp_bairro","jimg"));
     /* alvos INVISIVEIS, um por zona — servem ao auditor jogador (data-qa) e ao
        toque exato. O toque LARGO e resolvido pelo clique da cena, abaixo.  */
     var k;

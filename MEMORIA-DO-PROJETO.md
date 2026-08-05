@@ -4056,3 +4056,44 @@ programador pôs o quadradinho.
    relação espacial: *"o pedaço do bairro que fica do OUTRO LADO do rio"*.
 4. **O achado é LUZ, não quadrado.** Anel dourado aceso no ponto tocado + uma
    plaquinha com o nome. Fica marcado sem tapar a figura.
+
+---
+
+## 🌉 "ESSES ERROS NÃO PODEM PASSAR" — o portão da pergunta ambígua (ago/2026)
+
+O Marcos, cobrando o que ficou: *"a mesma coisa a ponte, fica confuso porque tem
+DUAS pontes... não seria melhor gerarmos outra imagem, ser mais intuitivo?
+**Esses erros não podem passar**"*.
+
+Ele está certo duas vezes. Eu tinha consertado a MECÂNICA (aceitar as duas
+pontes) e deixado a **confusão** de pé: a criança lê "a ponte", vê duas, e não
+sabe qual — mesmo que as duas funcionem. Aceitar as duas resolve o meu problema
+de código, não o dela.
+
+**O defeito tem marca medível**, e é isso que virou portão. Numa fase de "ache
+na cena" o código declara quantos lugares valem. Se a pergunta está no
+**definido singular** ("a ponte", "o morro") — que quer dizer *aquela, a única*
+— e a fase declara **duas ou mais** zonas, a própria tela está confessando que
+há mais de uma na figura. Não é gosto: é contradição entre o que a voz promete
+e o que a figura mostra.
+
+**`_qa/ambiguo.py` (portão 0c da banca):**
+- definido singular + 2 ou mais zonas → **reprova**;
+- indefinido ou coletivo ("uma ponte", "alguma rua", "a mata em volta") → passa,
+  porque é assim que se pede uma coisa repetida sem confundir;
+- ⚠️ **coisa comprida ≠ coisa repetida**: o rio é UM só e as oito zonas dele são
+  pedaços do mesmo rio. Quem sabe a diferença é quem escreve a fase, então ela
+  se declara: `unico:1`. Sem o campo, o portão assume ocorrências diferentes —
+  o padrão seguro.
+
+**E o conserto de verdade foi a FIGURA, como ele disse.** O Gemini está sem
+crédito e o Pollinations não dá conta de cena com lista de itens (tentei: voltou
+uma foto de vale, sem casas nem ponte). A saída que funcionou custou zero:
+**recortar** a vista da cidade na metade de baixo. Sobrou **uma ponte só**, e de
+quebra tudo ficou maior na tela — mais intuitivo pelos dois lados. Com uma ponte
+só, a pergunta pôde voltar ao português natural: *"a ponte em cima do rio"*.
+
+**Regra que fica: figura de ensino não repete o que ela quer ensinar a achar.**
+Antes de usar uma cena numa fase de procurar, contar quantas vezes cada coisa
+pedida aparece nela. Se aparece mais de uma vez: ou muda o artigo, ou muda a
+figura — e mudar a figura é melhor.
