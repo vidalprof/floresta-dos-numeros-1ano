@@ -381,6 +381,16 @@ Exemplo já acontecido: o 3º ano ficou com *"O Observatório do Órbi"* (novo, 
 na mesma turma — os dois seguem no ar. Tirar card ou repo do ar só se o Marcos pedir,
 com todas as letras. Na dúvida, PERGUNTAR e manter.
 
+### ✅ PODE SEMPRE PUBLICAR (decisão do Marcos, ago/2026)
+Palavras dele: *"pode publicar, pode sempre publicar a menos que eu diga para
+esperar"*. Ou seja: terminou a atividade **e a banca aprovou**, publica no
+repositório dela e manda o link — sem ficar perguntando. A autorização é
+permanente e só se suspende quando ELE disser "espere" / "não publique ainda"
+(como já fez algumas vezes) — e essa suspensão vale só para aquele trabalho.
+⚠️ Isto **não** libera o hub: continua valendo a regra abaixo (atividade nova
+não entra no `_site` até ele pedir com todas as letras). E não libera pular a
+banca: publicar sem os portões continua proibido.
+
 ### 🛑 NÃO PÔR ATIVIDADE NOVA NO HUB (regra do Marcos, ago/2026 — vale AGORA)
 Palavras dele: *"não precisa publicar no site de atividades as que cria, só
 publicar no repo e me mandar o link por enquanto"*. Então, **atividade nova**:
