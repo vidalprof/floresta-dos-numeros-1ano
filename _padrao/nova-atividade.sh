@@ -59,10 +59,17 @@ s = open(p, encoding="utf-8").read()
 # 1) o prefixo, em TUDO (imagens, vozes, ids de fala)
 s = s.replace(velho, pref + "_")
 # 2) titulo e subtitulo
+# ⚠️ o titulo aparece com ACENTO e com ENTIDADE (&#225;) no mesmo arquivo — no
+#    <title>, no H1 da capa e no cabecalho do relatorio do professor. Trocar so
+#    uma das formas deixa o nome da atividade de ORIGEM na cara da crianca (foi
+#    o que o Marcos pegou na cartografia). Aqui troca as DUAS formas.
 mt = re.search(r"<title>(.*?)</title>", s, re.S)
 if mt:
     antigo = mt.group(1)
-    s = s.replace(antigo, titulo)
+    def _sem_ent(x):
+        return re.sub(r"&#(\d+);", lambda m: chr(int(m.group(1))), x)
+    for forma in (antigo, _sem_ent(antigo)):
+        if forma: s = s.replace(forma, titulo)
 if sub:
     s = re.sub(r'el\("div","sub",".*?"\)', 'el("div","sub","%s")' % sub, s, count=1)
 # 3) a chave do localStorage (duas atividades no mesmo dominio se atropelam)

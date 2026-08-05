@@ -269,6 +269,50 @@ if os.path.exists(man):
     elif nome_man:
         print("   manifesto: o nome bate com o titulo da atividade")
 
+# ---- 10) ⭐ O NOME DE OUTRA ATIVIDADE NO TEXTO
+#   Ordem do Marcos, cobrada DUAS vezes (ago/2026): o titulo da Maquina do Tempo
+#   ficou na cartografia — no <title>, no H1 DA CAPA (a crianca le!) e no
+#   cabecalho do relatorio do professor. O item 8 (prefixo) nao pega isto,
+#   porque nome de atividade nao tem prefixo; e a troca que eu fazia na mao
+#   falhava porque o mesmo texto aparece com ACENTO e com ENTIDADE (&#225;),
+#   entao um replace pegava dois lugares e deixava o terceiro.
+#   Aqui a comparacao e feita com as entidades RESOLVIDAS, e a busca cobre TODAS
+#   as atividades vizinhas.
+def _texto(x):
+    x = re.sub(r"&#(\d+);", lambda m: chr(int(m.group(1))), x or "")
+    return re.sub(r"\s+", " ", x).strip()
+
+mt = re.search(r"<title>(.*?)</title>", html, re.S)
+meu_titulo = _texto(mt.group(1)) if mt else ""
+# o HUB e a excecao legitima: o trabalho dele e justamente listar as atividades
+# pelo nome. Qualquer OUTRA pasta citando nome alheio e resto de clone.
+if os.path.basename(os.path.abspath(pasta)) in ("_site", "_educaverso"):
+    meu_titulo = ""
+    print("   nome: (hub — citar as atividades pelo nome e o trabalho dele)")
+if meu_titulo:
+    raiz2 = os.path.dirname(os.path.abspath(pasta)) or "."
+    alheios2 = []
+    for outra in sorted(os.listdir(raiz2)):
+        cam = os.path.join(raiz2, outra, "index.html")
+        if not outra.startswith("_") or not os.path.exists(cam): continue
+        if os.path.abspath(os.path.dirname(cam)) == os.path.abspath(pasta): continue
+        # ⚠️ nada de `except: continue` aqui. Na estreia este bloco usava
+        #    io.open() sem importar `io`, o NameError caia no except e a lista
+        #    de vizinhas vinha VAZIA: o portao dizia "ok" sem ter olhado nada.
+        #    Portao que engole o proprio erro e pior que portao nenhum.
+        mo = re.search(r"<title>(.*?)</title>",
+                       open(cam, encoding="utf-8", errors="replace").read(), re.S)
+        t = _texto(mo.group(1)) if mo else ""
+        if len(t) >= 12 and t != meu_titulo:
+            alheios2.append((t, outra))
+    corpo_txt = _texto(html)
+    achou2 = [(t, d) for t, d in alheios2 if t in corpo_txt]
+    if achou2:
+        problemas.append("o NOME de outra atividade aparece no texto: %s"
+                         % ", ".join('%r (e da %s)' % (t, d) for t, d in achou2[:3]))
+    else:
+        print("   nome: so o titulo desta atividade aparece no texto (%r)" % meu_titulo)
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")

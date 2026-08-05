@@ -3715,3 +3715,27 @@ Não entrou no hub — continua valendo a regra de não pôr atividade nova no
 sempre publicar a menos que eu diga para esperar"*. Terminou e a banca aprovou →
 publica e manda o link, sem perguntar. Só para quando ele disser "espere", e essa
 pausa vale só para aquele trabalho.
+
+## ⚠️ O NOME DA ATIVIDADE DE ORIGEM NA CARA DA CRIANÇA (ago/2026)
+
+O Marcos cobrou **duas vezes**, e a segunda com razão: *"o nome da atividade
+copiou de história, já avisei sobre isso e você me disse que não iria mais
+acontecer"*. Na cartografia sobraram **três** lugares dizendo "A Máquina do Tempo
+do Vale": o `<title>`, o **H1 DA CAPA** (a criança lê!) e o cabeçalho do
+relatório do professor — este ainda com "(4º ano)".
+
+**Por que escapou de tudo:** o item 8 do `clone.py` procura PREFIXO (`hv_`), e
+nome de atividade não tem prefixo. E a minha troca à mão falhou porque **o mesmo
+texto aparece com ACENTO e com ENTIDADE** (`A Máquina...` e `A M&#225;quina...`):
+o replace pegou duas ocorrências e deixou a terceira.
+
+**Portão 10 do `_qa/clone.py`:** resolve as entidades e reprova se o `<title>` de
+QUALQUER atividade vizinha aparecer no texto desta. Exceção só para o hub, cujo
+trabalho é justamente listar as atividades pelo nome. O `nova-atividade.sh`
+também passou a trocar as duas formas.
+
+**E uma lição sobre o próprio portão:** na primeira versão o bloco usava
+`io.open()` sem importar `io`; o `NameError` caía num `except: continue` e a
+lista de vizinhas vinha **vazia** — o portão dizia "ok" sem ter olhado nada.
+**Portão que engole o próprio erro é pior que portão nenhum.** Nada de
+`except: continue` em portão: se quebrou, tem que aparecer.
