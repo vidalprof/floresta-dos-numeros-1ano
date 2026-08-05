@@ -3948,3 +3948,50 @@ só se via ampliando cada figura uma a uma — agora ele grita sozinho.
 ⚠️ Isto é irmão da lição já registrada do **corpo branco sem contorno em fundo
 branco** (`ATIVIDADE-PREMIUM.md`): a diferença é que aquele **não tem conserto
 por código** (tem que regerar a cartela) e este tem.
+
+---
+
+## 🔤 O CAÇA-PALAVRAS "BUGADO": QUATRO DEFEITOS EMPILHADOS (ago/2026)
+
+O Marcos: *"o caça palavras ele bugou... tem que destacar melhor as palavras
+encontradas, de preferência cores diferentes, e ter uma comemoração e barulho
+para cada palavra"*. Fui olhar e não era um defeito: eram quatro, e o primeiro
+explica todos.
+
+1. **A TELA NÃO RESPONDIA.** O JS punha a classe `mark` ao tocar e `ok` ao
+   completar — e **nenhuma das duas tinha regra de CSS**. A criança tocava na
+   letra e não acontecia nada; a palavra achada não acendia. Um jogo que não
+   responde ao toque não está feio: está quebrado.
+2. **A GRADE TINHA UMA COLUNA A MAIS.** As palavras eram sorteadas numa grade
+   **lógica de 9×9**, mas a tela desenhava com `width:31px` numa caixa de 328px:
+   cabiam **dez** por linha. A palavra deitada ainda saía certa por sorte; a
+   palavra **em pé** (posições i, i+9, i+18) aparecia **na diagonal**, letra por
+   letra espalhada. A criança procurava uma palavra que, na tela, não existia.
+   Cura: largura em **porcentagem** (1/9), nunca em px — `flex:none` era
+   justamente o que impedia.
+3. **PALAVRA QUE CRUZA TRAVAVA A OUTRA.** Ao achar, as células trocavam de
+   `mark` para `ok`, e a conferência só olhava `mark`: a palavra que cruzasse
+   uma já achada nunca fechava. Cura: contar `mark` **ou** `ok`.
+4. **TOCAR NUMA PALAVRA ACHADA APAGAVA ELA.** O clique era um interruptor cego
+   (`tem mark ? tira : põe`). Cura: célula conquistada fica **travada**.
+
+**O que ficou (o pedido do Marcos):** uma **cor por palavra** — e o chip da
+lista usa a mesma cor (bolinha antes, chip inteiro depois), então o olho liga as
+duas sozinho; as cinco cores passam 4,5:1 com a letra branca. Ao fechar uma
+palavra: as letras acendem **uma a uma** (75 ms de intervalo), som subindo de
+cinco notas, faísca na cor da palavra em cada letra, o chip carimba, a faixa
+**"ACHOU!"** sobe e a **voz diz a palavra** (a lista também ganhou
+alto-falante — 3º ano ainda soletra). No fim, festa e confete.
+
+### 🚪 E O PORTÃO QUE DEIXOU PASSAR
+O `_qa/classes.py` existia para pegar exatamente isto — classe sem CSS — e
+olhou para o outro lado, porque só lia `className = "..."` **direto**. Aqui a
+classe vinha de um **ternário**: `q.className = tem ? "cquad" : "cquad mark"`.
+Agora ele lê a **instrução inteira até o `;`** e recolhe todo texto entre aspas,
+o que cobre ternário e concatenação (`"cquad ok "+cor`). Conferido contra o
+arquivo antigo: acusa `SEM CSS: .mark`.
+
+**A lição maior:** um portão que passa **não** é prova de que está bom — é prova
+de que aquilo que ele SABE olhar está bom. Quando um defeito escapa, a pergunta
+não é só "como conserto?", é **"qual portão devia ter pego, e por que não
+pegou?"**.

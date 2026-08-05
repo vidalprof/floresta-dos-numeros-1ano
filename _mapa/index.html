@@ -277,8 +277,65 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .clinha.ativa{background:rgba(255,212,59,.35)}
 .clinha.pronta{opacity:.75}
 .cnum{width:20px;-webkit-flex:none;flex:none;font-size:14px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);text-align:right;margin-right:3px}
-.cquad{width:31px;height:34px;-webkit-flex:none;flex:none;background:var(--papel);border:2px solid var(--linha);border-radius:7px;text-align:center;line-height:31px;font-size:18px;font-weight:700;color:var(--texto)}
+/* ⚠️ A GRADE ESTAVA COM UMA COLUNA A MAIS — e isso quebrava o jogo inteiro.
+   As palavras sao sorteadas numa grade LOGICA de 9x9, mas a tela desenhava
+   com `width:31px` dentro de uma caixa de 328px: cabiam DEZ por linha. Aí a
+   palavra deitada até saía certa por sorte, mas a palavra EM PÉ (que ocupa
+   as posicoes i, i+9, i+18) aparecia na diagonal, letra por letra espalhada —
+   a crianca procurava uma palavra que, na tela, nao existia.
+   A cura e a largura em PORCENTAGEM: 1/9 da grade, sempre 9 por linha, em
+   qualquer tela e em qualquer zoom. `flex:none` era justamente o que impedia. */
+.cquad{width:11.11%;-webkit-flex:0 0 11.11%;flex:0 0 11.11%;height:34px;background:var(--papel);border:2px solid var(--linha);border-radius:7px;text-align:center;line-height:31px;font-size:18px;font-weight:700;color:var(--texto)}
 .cquad.cheio{background:#d8f5c6;border-color:var(--ok);color:#2c6b13;-webkit-animation:pop .25s;animation:pop .25s}
+/* ⚠️ ESTAS REGRAS NAO EXISTIAM — e era ESSE o "bugou" do caca-palavras. O JS
+   punha `mark` ao tocar e `ok` ao completar a palavra, mas nenhuma das duas
+   tinha estilo: a crianca tocava na letra e a tela nao respondia NADA, e a
+   palavra achada nao acendia. Sem retorno, o jogo parece quebrado — e estava.
+   (O portao _qa/classes.py deixou passar porque a classe vinha de um ternario
+   `q.className = cond ? "cquad" : "cquad mark"`, e ele so lia atribuicao
+   direta. O portao foi corrigido junto.)                                    */
+.cquad.mark{background:#ffe9a8;border-color:#e0a800;color:#6b4b00;
+  -webkit-transform:scale(1.07);transform:scale(1.07);
+  -webkit-box-shadow:0 0 0 2px rgba(224,168,0,.35);box-shadow:0 0 0 2px rgba(224,168,0,.35)}
+.cquad.ok{color:#fff;border-color:rgba(255,255,255,.8);
+  -webkit-animation:achou .45s;animation:achou .45s}
+/* uma COR POR PALAVRA (pedido do Marcos): a crianca ve qual palavra e qual,
+   e o chip da lista usa a MESMA cor — o olho liga as duas sozinho.
+   Todas passam 4.5:1 com a letra branca (medido, o auditor de contraste
+   reprovou as versoes vivas). */
+.cquad.p1,.pchip.p1.feito{background:#2a6ea8}
+.cquad.p2,.pchip.p2.feito{background:#2e7a1c}
+.cquad.p3,.pchip.p3.feito{background:#a8531a}
+.cquad.p4,.pchip.p4.feito{background:#6b3fa0}
+.cquad.p5,.pchip.p5.feito{background:#a8306b}
+.pchip .pbola{display:inline-block;width:11px;height:11px;border-radius:50%;
+  margin-right:6px;vertical-align:-1px;-webkit-box-shadow:inset 0 -1px 2px rgba(0,0,0,.25);
+  box-shadow:inset 0 -1px 2px rgba(0,0,0,.25)}
+.pchip.p1 .pbola{background:#2a6ea8} .pchip.p2 .pbola{background:#2e7a1c}
+.pchip.p3 .pbola{background:#a8531a} .pchip.p4 .pbola{background:#6b3fa0}
+.pchip.p5 .pbola{background:#a8306b}
+.pchip.feito{color:#fff;text-decoration:none;-webkit-animation:achou .5s;animation:achou .5s}
+.pchip.feito .pbola{background:#fff}
+/* a faixa de "ACHOU!" que sobe do meio da palavra */
+.achouf{position:fixed;left:50%;top:44%;z-index:60;pointer-events:none;
+  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  padding:9px 20px;border-radius:999px;color:#fff;font-weight:800;font-size:19px;
+  -webkit-box-shadow:0 8px 20px rgba(30,25,10,.4);box-shadow:0 8px 20px rgba(30,25,10,.4);
+  -webkit-animation:sobefx 1.15s forwards;animation:sobefx 1.15s forwards}
+@-webkit-keyframes pop{0%{-webkit-transform:scale(.7)}60%{-webkit-transform:scale(1.12)}100%{-webkit-transform:scale(1)}}
+@keyframes pop{0%{transform:scale(.7)}60%{transform:scale(1.12)}100%{transform:scale(1)}}
+@-webkit-keyframes achou{0%{-webkit-transform:scale(.55) rotate(-8deg);opacity:.2}
+  55%{-webkit-transform:scale(1.22) rotate(4deg);opacity:1}100%{-webkit-transform:scale(1) rotate(0);opacity:1}}
+@keyframes achou{0%{transform:scale(.55) rotate(-8deg);opacity:.2}
+  55%{transform:scale(1.22) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@-webkit-keyframes sobefx{0%{-webkit-transform:translate(-50%,-30%) scale(.5);opacity:0}
+  25%{-webkit-transform:translate(-50%,-50%) scale(1.1);opacity:1}
+  70%{-webkit-transform:translate(-50%,-58%) scale(1);opacity:1}
+  100%{-webkit-transform:translate(-50%,-92%) scale(.95);opacity:0}}
+@keyframes sobefx{0%{transform:translate(-50%,-30%) scale(.5);opacity:0}
+  25%{transform:translate(-50%,-50%) scale(1.1);opacity:1}
+  70%{transform:translate(-50%,-58%) scale(1);opacity:1}
+  100%{transform:translate(-50%,-92%) scale(.95);opacity:0}}
 .altofalante{width:120px;height:82px;margin-top:12px;background:var(--papel);border:2px solid var(--linha);border-bottom-width:5px;border-radius:18px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;-webkit-box-shadow:0 6px 14px rgba(50,40,20,.22);box-shadow:0 6px 14px rgba(50,40,20,.22)}
 .ondas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:5px;height:44px}
 .ondas i{display:block;width:7px;height:12px;border-radius:4px;background:var(--tinta);-webkit-animation:onda 1s ease-in-out infinite;animation:onda 1s ease-in-out infinite}
@@ -290,7 +347,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 @keyframes onda{0%,100%{height:12px}50%{height:40px}}
 .vida{display:inline-block;width:14px;height:14px;border-radius:50%;background:#ef5a4a;margin-right:4px;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.35);box-shadow:0 1px 3px rgba(0,0,0,.35)}
 .vida.ida{background:rgba(255,255,255,.35)}
-@media (max-height:720px){ .cquad{width:27px;height:30px;line-height:27px;font-size:16px} .altofalante{width:104px;height:70px} }
+@media (max-height:720px){ .cquad{height:30px;line-height:27px;font-size:16px} .altofalante{width:104px;height:70px} }
 /* alto-falante discreto: le a resposta para quem ainda nao le */
 .zap{position:relative;-webkit-flex:none;flex:none;width:30px;height:30px;border-radius:50%;background:rgba(47,107,216,.09);border:0;cursor:pointer;padding:0;margin-left:8px;vertical-align:middle;display:inline-block;opacity:.55;-webkit-transition:opacity .2s;transition:opacity .2s}
 .zap:hover,.zap:active{opacity:1;background:rgba(47,107,216,.2)}
@@ -1188,7 +1245,10 @@ var VOZOK={"13fa1b":1,"13zhsg1":1,"151187x":1,"179h1z":1,"17e2r7c":1,"19dzacf":1
   "1ep4fkf":1,"1hfubyk":1,"1lj2qp0":1,"1m145bp":1,"1othqwk":1,"1tniq0u":1,"1tnqioc":1,"1txixyt":1,
   "1w3w2bc":1,"1xuxsyq":1,"1xvc01o":1,"480b6q":1,"4hecx7":1,"7ynxgs":1,"bd0pj3":1,"gjpem6":1,
   "k1nozx":1,"l1de7j":1,"sqaaps":1,"stl6tm":1,"t4cjsl":1,"u4e4ha":1,"wsiuh3":1,"wy6cf3":1,
-  "zesn38":1,"zw9bvw":1};
+  "zesn38":1,"zw9bvw":1,
+  /* as 5 palavras do caca-palavras: a lista ganhou alto-falante e a
+     comemoracao DIZ a palavra achada (crianca de 3o ano que ainda soletra) */
+  "ykmo90":1,"377h73":1,"v6xdpx":1,"1e613o7":1};
 var vz=document.getElementById("vz"), zapAtual=null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -1240,7 +1300,7 @@ function poeZap(elm){
   };
   elm.appendChild(bt);
 }
-var ZAPSEL=".opt,.lig,.tlin,.cx,.peca,.pc,.relcard,.bin,.ficha,.gav,.mcarta";
+var ZAPSEL=".opt,.lig,.tlin,.cx,.peca,.pc,.relcard,.bin,.ficha,.gav,.mcarta,.pchip";
 function poeVozes(){
   if(!app) return;
   var els=app.querySelectorAll(ZAPSEL),i;
@@ -2205,13 +2265,34 @@ function mPintar(){
   falar("mp_pint_intro");
 }
 
-/* ---------- 14) CAÇA-PALAVRAS ---------- */
+/* ---------- 14) CAÇA-PALAVRAS ----------
+   ⚠️ REESCRITA (defeito que o Marcos pegou, ago/2026): *"o caça palavras ele
+   bugou... tem que destacar melhor as palavras encontradas, de preferência
+   cores diferentes, e ter uma comemoração e barulho para cada palavra"*.
+
+   Eram TRÊS defeitos empilhados, e o primeiro explica os outros:
+
+   1. **A tela não respondia.** O JS punha a classe `mark` ao tocar e `ok` ao
+      completar — e NENHUMA DAS DUAS tinha regra de CSS. A criança tocava na
+      letra e não acontecia nada; a palavra achada não acendia. Um jogo que não
+      responde ao toque não está "feio": está quebrado.
+   2. **Palavra que cruza travava a outra.** Ao achar, as células trocavam de
+      `mark` para `ok` — e a conferência só olhava `mark`. Então a palavra que
+      cruzasse uma já achada NUNCA fechava.
+   3. **Tocar numa palavra achada apagava ela.** O clique era um interruptor
+      cego (`tem mark ? tira : põe`), então a criança encostava numa letra já
+      conquistada e via a palavra se desfazer.
+
+   Agora: cada palavra tem a SUA COR (e o chip da lista usa a mesma), a célula
+   conquistada fica TRAVADA, a conferência conta `mark` OU `ok`, e ao fechar uma
+   palavra as letras acendem UMA A UMA com som subindo, faísca na cor da
+   palavra, o chip carimba, a faixa "ACHOU!" sobe e a VOZ diz a palavra.       */
 var CACAM=["MAPA","RIO","PONTE","LEGENDA","MAQUETE"];
 function mCaca(){
   limpa();var t=el("div","tela");setProg(t,86);
   var N=9,g=[],i,j;
   for(i=0;i<N;i++){ g[i]=[]; for(j=0;j<N;j++) g[i][j]=""; }
-  var achadas={},posicoes={},onde={};
+  var achadas={},posicoes={},onde={},cor={};
   var LET="ABCDEFGHIJLMNOPRSTUV";
   function cabe(p,li,co,dl,dc){ var k;
     for(k=0;k<p.length;k++){ var y=li+dl*k,x=co+dc*k;
@@ -2220,6 +2301,7 @@ function mCaca(){
     return true; }
   for(i=0;i<CACAM.length;i++){
     var p=CACAM[i],posto=false,tent=0;
+    cor[p]="p"+(i+1);
     while(!posto&&tent<300){ tent++;
       var hor=Math.random()<0.6, dl=hor?0:1, dc=hor?1:0;
       var li=Math.floor(Math.random()*N), co=Math.floor(Math.random()*N);
@@ -2231,9 +2313,14 @@ function mCaca(){
   for(i=0;i<N;i++) for(j=0;j<N;j++) if(!g[i][j]) g[i][j]=LET.charAt(Math.floor(Math.random()*LET.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","CA&#199;A-PALAVRAS DO MAPA"));
-  c.appendChild(el("div","balao","Ache as <b>cinco palavras</b> do mundo dos mapas."));
+  var bal=el("div","balao","Ache as <b>cinco palavras</b> do mundo dos mapas. Cada uma tem a <b>sua cor</b>.");
+  c.appendChild(bal);
   var lista=el("div","lista"),chips={};
-  for(i=0;i<CACAM.length;i++){ var ch=el("div","pchip",CACAM[i]); chips[CACAM[i]]=ch; lista.appendChild(ch); }
+  for(i=0;i<CACAM.length;i++){
+    var ch=el("div","pchip "+cor[CACAM[i]]);
+    ch.innerHTML='<i class="pbola"></i>'+CACAM[i];
+    chips[CACAM[i]]=ch; lista.appendChild(ch);
+  }
   c.appendChild(lista);
   var grade=el("div","grade");
   /* onde cada palavra ficou — SO para o auditor jogador: clicando ao acaso numa
@@ -2245,27 +2332,55 @@ function mCaca(){
   for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
     var q=el("div","cquad",g[y][x]);
     cels[y+"_"+x]=q;
-    q.onclick=function(){ arma(); sTap();
+    q.onclick=function(){ arma();
+      /* letra ja conquistada NAO se desmarca: a palavra achada e da crianca */
+      if(q.className.indexOf("ok")>=0){ sTap(); return; }
       q.className = q.className.indexOf("mark")>=0 ? "cquad" : "cquad mark";
-      confere();
+      sTap(); confere();
     };
     grade.appendChild(q);
   })(i,j);}
+  /* uma celula conta para a conferencia se esta SELECIONADA (mark) ou ja
+     CONQUISTADA por outra palavra (ok) — e isso que destrava as cruzadas */
+  function pega(id){ var cl=cels[id].className;
+    return cl.indexOf("mark")>=0||cl.indexOf("ok")>=0; }
+  function sAchou(){ var n=[659,784,988,1175,1568],z;
+    for(z=0;z<n.length;z++) tom(n[z],0.26,"sine",0.16,z*0.075); }
+  function faixa(p){
+    var f=el("div","achouf",p+"!");
+    f.style.background=({p1:"#2a6ea8",p2:"#2e7a1c",p3:"#a8531a",p4:"#6b3fa0",p5:"#a8306b"})[cor[p]];
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1200);
+  }
+  function comemora(p){
+    var cels_p=posicoes[p],k,COR={p1:"#2a6ea8",p2:"#2e7a1c",p3:"#a8531a",p4:"#6b3fa0",p5:"#a8306b"}[cor[p]];
+    /* as letras acendem UMA A UMA, na ordem da palavra — o olho acompanha */
+    for(k=0;k<cels_p.length;k++){(function(q,atraso){
+      setTimeout(function(){
+        q.className="cquad ok "+cor[p];
+        var ce=centroTela(q); faisca(ce[0],ce[1],COR,7);
+      },atraso);
+    })(cels[cels_p[k]],k*75);}
+    sAchou(); faixa(p);
+    chips[p].className="pchip "+cor[p]+" feito";
+    setTimeout(function(){ var v=temVoz(p); if(v) tocaVoz(v,null); },520);
+  }
   function confere(){ var p,k,todas,n=0;
     for(p in posicoes){ if(!posicoes.hasOwnProperty(p)||achadas[p]) continue;
       todas=true;
-      for(k=0;k<posicoes[p].length;k++) if(cels[posicoes[p][k]].className.indexOf("mark")<0) todas=false;
-      if(todas){ achadas[p]=1; chips[p].className="pchip feito"; sCerto();
-        for(k=0;k<posicoes[p].length;k++) cels[posicoes[p][k]].className="cquad ok";
-        var ce=centroTela(chips[p]); faisca(ce[0],ce[1],"#6bd23f",10);
-        reg("producao",true,1);
+      for(k=0;k<posicoes[p].length;k++) if(!pega(posicoes[p][k])) todas=false;
+      if(todas){ achadas[p]=1; comemora(p); reg("producao",true,1);
+        n=0; for(k in posicoes) if(posicoes.hasOwnProperty(k)&&achadas[k]) n++;
+        bal.innerHTML="J&#225; achou <b>"+n+"</b> de <b>"+CACAM.length+"</b>!";
       } }
-    for(p in posicoes) if(posicoes.hasOwnProperty(p)&&achadas[p]) n++;
-    if(n>=CACAM.length){ setTimeout(function(){
-      depoisDaFala("mp_caca_revela",8000,function(){
-        mostraBanner("Estas s&#227;o as palavras de quem l&#234; e faz mapas.",mCruzada); }); },600); }
+    n=0; for(p in posicoes) if(posicoes.hasOwnProperty(p)&&achadas[p]) n++;
+    if(n>=CACAM.length){ setTimeout(function(){ sFesta(); festa(); },700);
+      setTimeout(function(){
+        depoisDaFala("mp_caca_revela",8000,function(){
+          mostraBanner("Estas s&#227;o as palavras de quem l&#234; e faz mapas.",mCruzada); }); },1500); }
   }
   c.appendChild(grade);
+  c.appendChild(el("div","hint","Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
   t.appendChild(c);app.appendChild(t);
   montaBarra("mp_caca_dica","As palavras est&#227;o deitadas ou em p&#233;.");
   falar("mp_caca_intro");

@@ -57,9 +57,18 @@ def main():
     for m in re.finditer(r'(?:cenaImg|imgEl)\(\s*[^,()]+,\s*"([a-z][\w \-]*)"', js):
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
-    for m in re.finditer(r'className\s*=\s*"([^"]+)"', js):
-        for c in m.group(1).split():
-            usadas.setdefault(c, 0)
+    # ⚠️ NAO BASTA `className = "..."`. A classe tambem chega por TERNARIO
+    #    (`q.className = tem ? "cquad" : "cquad mark"`) e por CONCATENACAO
+    #    (`"cquad ok "+cor`). Foi assim que `.mark` e `.ok` do caca-palavras
+    #    passaram sem CSS nenhum: a crianca tocava na letra e a tela nao
+    #    respondia NADA, e a palavra achada nao acendia. O portao existia e
+    #    olhou para o outro lado. Agora ele le a INSTRUCAO INTEIRA, ate o `;`,
+    #    e recolhe todo texto entre aspas que aparecer ali.
+    for m in re.finditer(r'className\s*=', js):
+        trecho = js[m.end():m.end() + 200].split(";")[0].split("\n")[0]
+        for lit in re.findall(r'"([^"]*)"', trecho):
+            for c in lit.split():
+                usadas.setdefault(c, 0)
     for m in re.finditer(r'class="([^"]+)"', js):
         for c in m.group(1).split():
             usadas.setdefault(c, 0)
