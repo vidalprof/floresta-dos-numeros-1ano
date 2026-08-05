@@ -92,6 +92,33 @@ medido pelo `_qa/padrao.py`.
 
 ---
 
+## 3b. CADA FASE ANCORADA NO CURRÍCULO DO 5º ANO (a prestação de contas)
+
+Não basta a atividade "ter a ver" com o ano. Cada fase responde a um objetivo
+que está escrito, com todas as letras, no currículo de Blumenau para o **5º ano**.
+
+| Fase | Objetivo do 5º ano (Blumenau) — verbatim |
+|---|---|
+| 1–3 Abertura, palpite, **o vento** | *"Comparar o uso de diferentes linguagens e **tecnologias** no processo de comunicação e avaliar os significados sociais, políticos e culturais atribuídos a elas."* (a vela e a bússola são a tecnologia que muda a história) |
+| 4 Quem já estava aqui | *"Identificar os processos de formação das culturas e dos povos, relacionando-os com o **espaço geográfico ocupado**."* + conteúdo: *"Organização social, política e religiosa dos **povos indígenas** e quilombolas de Santa Catarina e do seu município."* |
+| 5 O navio por dentro · 6 A rota | *"Identificar formas de marcação da passagem do tempo em distintas sociedades"* / *"acesso a diferentes fontes"* (o objeto como fonte histórica) |
+| 7 Veio ou foi? · 9 **As três raízes** | *"Identificar os processos de formação das culturas e dos povos"* + **"Conceito de etnia"** + *"**Trajetória (permanências e transformações) cultural** dos grupos étnico-raciais de sua região e estado de Santa Catarina."* |
+| 10–13 A palavra que ficou, cruzadinha, caça, memória | *"Inventariar os **patrimônios materiais e imateriais** da humanidade e analisar **mudanças e permanências** desses patrimônios ao longo do tempo."* (a língua é patrimônio imaterial — e é a prova viva do encontro) |
+| 14 O que a viagem custou | *"Associar a noção de cidadania com os princípios de respeito à diversidade, à pluralidade e aos **direitos humanos**"* / *"Associar o conceito de cidadania à **conquista de direitos** dos povos e das sociedades, compreendendo-o como conquista histórica."* |
+| 15 O mapa das rotas | *"…relacionando-os com o espaço geográfico ocupado"* (Geografia 5º ano: *"Conceito de território, limites, fronteiras"*) |
+| 17 Ensine o Ará · gancho | *"Comparar pontos de vista sobre temas que impactam a vida cotidiana no tempo presente"* |
+
+**O que NÃO entra, justamente por ser do 7º ano:** nomes e datas de capitães,
+Tratado de Tordesilhas decorado, lista de expedições, mercantilismo, absolutismo.
+As navegações aparecem como **o acontecimento que explica o encontro dos povos** —
+que é a pergunta do 5º ano — e não como matéria a memorizar.
+
+**Âncora catarinense obrigatória** (o currículo pede *"de sua região e estado de
+Santa Catarina"* três vezes): os povos da fase 4 são **Guarani, Kaingang e
+Xokleng**, que estão em SC **hoje**, não só no passado.
+
+---
+
 ## 4. O QUE VEM DO PADRÃO DA CASA (não negociável)
 
 - retomada de **55 min** (`_padrao/RETOMAR.md`) e senha mestra `1275@`;
