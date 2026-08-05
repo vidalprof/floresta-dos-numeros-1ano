@@ -3705,3 +3705,13 @@ Da pose "piscando" (bico fechado) tirei o corpo; colei os **olhos abertos** da
 pose "falando" → nasceu o *parado*; e desse colei o **bico aberto** → nasceu o
 *falando*. Corpo pixel-idêntico nas três: tremor de **1,0% e 2,6%** (o limite é
 15%). Guardar esta receita: é mais confiável que pedir três gerações.
+
+**Publicada em 05/08/2026:** `_mapa/` → repositório **`o-voo-do-nico`** →
+**https://vidalprof.github.io/o-voo-do-nico/** (Pages `status=built`, sem erro).
+Não entrou no hub — continua valendo a regra de não pôr atividade nova no
+`_site` até o Marcos pedir.
+
+**⭐ Autorização permanente de publicação (05/08/2026):** *"pode publicar, pode
+sempre publicar a menos que eu diga para esperar"*. Terminou e a banca aprovou →
+publica e manda o link, sem perguntar. Só para quando ele disser "espere", e essa
+pausa vale só para aquele trabalho.
