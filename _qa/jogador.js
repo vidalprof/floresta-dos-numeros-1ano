@@ -180,7 +180,14 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
        }
        return 0;
      }
-     const e=els[Math.floor(Math.random()*els.length)];
+     /* ⚠️ a tela publica em data-qa="1" a resposta que serve AGORA (so para o
+        auditor). Escolher SEMPRE ao acaso deixava a partida na sorte: num quiz
+        de 3 opcoes ele as vezes rodava os 420 giros sem fechar a rodada e
+        reprovava uma fase perfeita — ainda mais quando os outros portoes
+        estavam disputando o processador. Se ha resposta marcada, e nela que
+        ele toca; no resto continua ao acaso, que e o teste honesto.        */
+     const marcado=els.find(e=>e.getAttribute&&e.getAttribute('data-qa')==='1');
+     const e=marcado||els[Math.floor(Math.random()*els.length)];
      e.click(); return 1;
    },SEL);
    await p.waitForTimeout(230);

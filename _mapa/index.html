@@ -2237,7 +2237,7 @@ function crachaEl(funcao){
 function mFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro topo");
   var med=imgEl("mp_med","medal"); c.appendChild(med); segredoRelatorio(med);
   c.appendChild(el("h1","","Cart&#243;grafo de Blumenau!"));
-  c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" viagem no tempo est&#225; completa."));
+  c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" viagem com o Nico est&#225; completa."));
   c.appendChild(crachaEl("Cart&#243;grafo de Blumenau"));
   resumoAnimado(c);
   if(fracos().length){
@@ -2312,7 +2312,7 @@ function telaCapa(){limpa();var t=el("div","tela");var c=el("div","centro");
      aba sem querer quer isto e mais nada. Fora da janela da aula, some.     */
   if(podeRetomar()){
     var quem=perfil.nome?(", "+perfil.nome):"";
-    c.appendChild(el("div","balao pequeno","Voc&#234; parou no meio da viagem"+quem+
+    c.appendChild(el("div","balao pequeno","Voc&#234; parou no meio do voo"+quem+
       ". Quer <b>continuar de onde parou</b>?"));
     var bc=el("button","btn dourado","Continuar de onde parei");bc.style.marginTop="8px";
     bc.onclick=function(){ arma(); sTap();
@@ -2329,10 +2329,10 @@ function telaCapa(){limpa();var t=el("div","tela");var c=el("div","centro");
   t.appendChild(c);app.appendChild(t);
   montaBarra(null,null);}
 function telaQuem(){limpa();var t=el("div","tela");var c=el("div","centro");
-  c.appendChild(el("div","balao","<b>Quem</b> vai viajar no tempo hoje?"));
+  c.appendChild(el("div","balao","<b>Quem</b> vai voar com o Nico hoje?"));
   var inp=el("input","campo");inp.type="text";inp.placeholder="Escreva o seu nome";inp.maxLength=18;inp.value=perfil.nome||"";
   c.appendChild(inp);
-  c.appendChild(el("div","hint","Escolha o seu crach&#225; de explorador:"));
+  c.appendChild(el("div","hint","Escolha o seu crach&#225; de cart&#243;grafo:"));
   var figs=el("div","figs"),lista=["mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6"],i;
   for(i=0;i<lista.length;i++){(function(n){
     var f=el("div","fig"+(perfil.fig===n?" sel":""));f.appendChild(imgEl(n));

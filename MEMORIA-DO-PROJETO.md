@@ -3739,3 +3739,33 @@ também passou a trocar as duas formas.
 lista de vizinhas vinha **vazia** — o portão dizia "ok" sem ter olhado nada.
 **Portão que engole o próprio erro é pior que portão nenhum.** Nada de
 `except: continue` em portão: se quebrou, tem que aparecer.
+
+## ⚠️ E A HISTÓRIA DA OUTRA ATIVIDADE NA BOCA DO MASCOTE (ago/2026)
+
+Logo depois de eu corrigir o NOME, o Marcos perguntou: *"a atividade não copiou
+no fim a de história?"* — e tinha copiado. Duas frases, nas duas telas de maior
+peso emocional:
+
+- a **tela da medalha**: *"a viagem no tempo está completa"*;
+- a **tela de entrada**: *"Quem vai viajar no tempo hoje?"* e *"crachá de
+  explorador"*.
+
+Não é prefixo (item 8) nem título (item 10): é a **narrativa** da outra atividade
+sobrando. Viraram *"a viagem com o Nico está completa"*, *"Quem vai voar com o
+Nico hoje?"* e *"crachá de cartógrafo"*.
+
+**Portão 11 (aviso, não reprova):** lista as frases longas que existem aqui e em
+**UMA outra atividade só** — que é justamente o motor de onde clonei. Frase que
+aparece em três ou mais é mobiliário do motor ("Pode seguir para o próximo
+conteúdo", o menu do professor) e deve mesmo ser igual. Não dá para a máquina
+decidir isso sozinha; o que ela faz é **pôr a lista curta na minha frente a cada
+rodada**, e eu leio uma a uma antes de publicar.
+
+**Regra que fica:** ao clonar, reler as TRÊS telas de moldura — entrada
+("quem vai jogar"), medalha e relatório — procurando a HISTÓRIA da origem, não só
+os nomes. É onde ela mais se esconde, porque são telas que eu não reescrevo.
+
+**E o auditor jogador ficou determinístico onde dá:** ele escolhia sempre ao
+acaso e, num quiz de 3 opções, às vezes gastava os 420 giros sem fechar a rodada
+— reprovando fase perfeita, ainda mais quando disputava processador com os outros
+portões. Agora, se a tela publica `data-qa="1"`, é nela que ele toca.

@@ -313,6 +313,54 @@ if meu_titulo:
     else:
         print("   nome: so o titulo desta atividade aparece no texto (%r)" % meu_titulo)
 
+# ---- 11) FRASE QUE SO EXISTE AQUI E NO MOTOR (aviso, nao reprova)
+#   O Marcos perguntou "a atividade nao copiou no fim a de historia?" — e tinha
+#   copiado: "a viagem no tempo esta completa" (tela da medalha) e "quem vai
+#   viajar no tempo hoje?" (tela de entrada). Nao e prefixo nem titulo: e a
+#   HISTORIA da outra atividade sobrando na boca do mascote.
+#   Nao da para decidir isto sozinho — "Pode seguir para o proximo conteudo" e
+#   mobiliario do motor e DEVE ser igual em todas. O que da para fazer, e ajuda
+#   muito, e separar o joio: frase que existe aqui e em UMA outra atividade so
+#   (justamente o motor de onde clonei) merece ser lida uma a uma antes de
+#   publicar. Frase que existe em tres ou mais e mobiliario.
+def _frases(caminho):
+    try:
+        t = open(caminho, encoding="utf-8", errors="replace").read()
+    except Exception:
+        return set()
+    j = "".join(re.findall(r"<script>(.*?)</script>", t, re.S))
+    fora = set()
+    for m in re.finditer(r'"((?:[^"\\]|\\.){25,200})"', j):
+        x = re.sub(r"<[^>]+>", "", m.group(1))
+        x = re.sub(r"&#(\d+);", lambda g: chr(int(g.group(1))), x)
+        x = re.sub(r'"\s*\+.*', "", x)
+        x = re.sub(r"\s+", " ", x).strip()
+        if len(x) < 25: continue
+        if re.search(r"[{}();=]|function|http|px|rgba|webkit", x): continue
+        if not re.search(r"[a-z\u00e0-\u00fc]{4}", x): continue
+        fora.add(x)
+    return fora
+
+minhas = _frases(arq)
+if minhas:
+    raiz3 = os.path.dirname(os.path.abspath(pasta)) or "."
+    conta, dono = {}, {}
+    for outra in sorted(os.listdir(raiz3)):
+        cam = os.path.join(raiz3, outra, "index.html")
+        if not outra.startswith("_") or not os.path.exists(cam): continue
+        if os.path.abspath(os.path.dirname(cam)) == os.path.abspath(pasta): continue
+        for f in (minhas & _frases(cam)):
+            conta[f] = conta.get(f, 0) + 1
+            dono[f] = outra
+    so_do_motor = sorted(f for f in conta if conta[f] == 1)
+    if so_do_motor:
+        print("   aviso: %d frase(s) que so existem aqui e em UMA outra atividade "
+              "— leia antes de publicar:" % len(so_do_motor))
+        for f in so_do_motor[:8]:
+            print("      [%s] %s" % (dono[f], f[:96]))
+    else:
+        print("   frases: nenhuma frase exclusiva do motor sobrou")
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")
