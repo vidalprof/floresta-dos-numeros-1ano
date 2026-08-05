@@ -137,3 +137,39 @@ que fechar a fase inteira.
 4. **Voz depois**, pelo input `lote` inline do `gerar-audio.yml` (não precisa
    commitar `_lote_falas.json` só para isso).
 5. **Banca inteira**, e só então publicar.
+
+---
+
+## ⚡ NÃO CLONE À MÃO: use o `_padrao/nova-atividade.sh` (ago/2026)
+
+Ordem do Marcos: *"por que está demorando tanto a criação de uma atividade?
+Melhor otimizar a linha de produção, claro, com padrão de qualidade altíssimo"*.
+
+A demora **não estava** em escrever as fases — estava em clonar o motor à mão e
+depois caçar o que ficou da origem. Só na cartografia foram **cinco** restos de
+clone, cada um achado numa rodada diferente da banca (manifesto com o nome de
+outra atividade, relatório do professor da outra disciplina, conceitos errados
+no `zeraProgresso`, falas de elogio/consolo apontando para MP3 que não existem,
+prefixo das imagens). Cada rodada da banca custa ~4 minutos.
+
+```bash
+bash _padrao/nova-atividade.sh _pasta pref "T&#237;tulo" "Disciplina &#183; ano" "conc1,conc2,conc3"
+```
+
+Ele faz de uma vez o que eu fazia em seis etapas: troca o prefixo em TUDO,
+escreve `sw.js` e `manifest.json` próprios, põe os conceitos no `DOM`, no
+`zeraProgresso`, no `ROTCRI`, no `CONCN` e no `TREINO`, esvazia `IMGS`/`CENAS`/
+`VOZOK` (a lista da origem é resto de clone) e confere o `node --check`.
+
+**E o ritmo do trabalho mudou:**
+- `bash _qa/rapido.sh <arquivo>` — **0,4 segundo**, a cada mudança. São os
+  portões de texto (sintaxe, função inexistente, resto de clone, classe sem CSS,
+  progressão, padrão da casa, narração).
+- `bash _qa/auditar.sh <arquivo>` — ~4 minutos, **uma vez, antes de entregar**.
+  É quem abre o navegador e vê o que a criança vê.
+
+Antes eu gastava 4 minutos para descobrir um erro de uma linha.
+
+**E pare de chutar coordenada:** `python3 _qa/pontos.py <imagem>` diz onde está
+cada mancha de cor, em % da largura e da altura. Alvo chutado cai AO LADO da
+coisa, e a criança toca no lugar certo e leva "errado".
