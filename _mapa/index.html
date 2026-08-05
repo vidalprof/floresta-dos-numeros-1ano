@@ -17,7 +17,7 @@ body{font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,Arial,sans-serif;colo
 #app{position:fixed;inset:0;z-index:2}
 .tela{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;padding:calc(38px + env(safe-area-inset-top)) 14px calc(86px + env(safe-area-inset-bottom));-webkit-animation:fade .45s;animation:fade .45s}
 @-webkit-keyframes fade{from{opacity:0}to{opacity:1}}@keyframes fade{from{opacity:0}to{opacity:1}}
-.balao{max-width:440px;background:rgba(255,253,244,.96);border-radius:20px;padding:12px 16px;font-size:16.5px;font-weight:600;text-align:center;line-height:1.35;
+.balao{position:relative;max-width:440px;background:rgba(255,253,244,.96);border-radius:20px;padding:12px 16px;font-size:16.5px;font-weight:600;text-align:center;line-height:1.35;
   -webkit-box-shadow:0 6px 16px rgba(50,40,20,.24);box-shadow:0 6px 16px rgba(50,40,20,.24)}
 .balao b{color:var(--tinta-d)}
 .centro{-webkit-box-flex:1;-webkit-flex:1;flex:1;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;width:100%}
@@ -355,6 +355,25 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .zap b{position:absolute;left:11px;top:7px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid var(--tinta-d)}
 .zap s{position:absolute;left:21px;top:9px;width:6px;height:12px;border:2px solid var(--tinta-d);border-left:0;border-top-right-radius:9px;border-bottom-right-radius:9px;text-decoration:none}
 .zap.tocando{opacity:1;background:rgba(255,212,59,.5);-webkit-animation:zpul .8s ease-in-out infinite;animation:zpul .8s ease-in-out infinite}
+/* ⭐ ALTO-FALANTE NA PERGUNTA (pedido do Marcos, ago/2026: "precisa acrescentar
+   um botao de som onde sao as perguntas, para ajudar quem nao sabe ler"). No
+   3o ano ainda tem muita crianca soletrando: a narracao toca sozinha uma vez,
+   mas se ela se distrai, perdeu. O botao "Ouvir de novo" existe la embaixo, na
+   barra — longe do texto e com o NOME ESCRITO, que e justamente o que ela nao
+   le. O lugar certo e GRUDADO no enunciado, e desenhado, nao escrito.
+   ⚠️ e o balao ABRE ESPACO para ele (classe `comzap`): na primeira versao o
+   botao pousou no canto e cobriu a ultima palavra — botao de acessibilidade
+   que esconde o texto e o contrario do que ele serve (portao 8 do leiaute). */
+.balao.comzap{padding-right:56px}
+.zapb{position:absolute;right:9px;top:50%;margin-top:-19px;width:38px;height:38px;border-radius:50%;
+  background:#ffd43b;border:3px solid #fffdf6;cursor:pointer;padding:0;
+  -webkit-box-shadow:0 3px 9px rgba(60,45,15,.35);box-shadow:0 3px 9px rgba(60,45,15,.35)}
+.zapb i{position:absolute;left:11px;top:13px;width:5px;height:11px;background:#4a3a10;border-radius:1px}
+.zapb b{position:absolute;left:14px;top:9px;width:0;height:0;border-top:9px solid transparent;
+  border-bottom:9px solid transparent;border-right:9px solid #4a3a10}
+.zapb s{position:absolute;left:25px;top:12px;width:6px;height:13px;border:2px solid #4a3a10;
+  border-left:0;border-top-right-radius:9px;border-bottom-right-radius:9px;text-decoration:none}
+.zapb.tocando{background:#7bd44a;-webkit-animation:zpul .8s ease-in-out infinite;animation:zpul .8s ease-in-out infinite}
 @-webkit-keyframes zpul{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.14)}}
 @keyframes zpul{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
 .opt .zap,.lig .zap,.tlin .zap,.fichaP .zap,.peca .zap{margin-left:6px}
@@ -1322,6 +1341,32 @@ function poeZap(elm){
   elm.appendChild(bt);
 }
 var ZAPSEL=".opt,.lig,.tlin,.cx,.peca,.pc,.relcard,.bin,.ficha,.gav,.mcarta,.pchip";
+/* ⭐ o alto-falante do ENUNCIADO: repete a MESMA narracao desta tela. Vale em
+   todo balao de pergunta; os de apoio (.pequeno) ficam de fora para nao encher
+   a tela de botao.                                                          */
+function poeVozPergunta(){
+  if(!app) return;
+  var bs=app.getElementsByClassName("balao"),i;
+  for(i=0;i<bs.length;i++){
+    var b=bs[i];
+    if(b.getElementsByClassName("zapb")[0]) continue;
+    if(b.className.indexOf("pequeno")>=0) continue;
+    var bt=document.createElement("button");
+    bt.className="zapb"; bt.type="button";
+    bt.setAttribute("aria-label","Ouvir a pergunta de novo");
+    bt.appendChild(document.createElement("i"));
+    bt.appendChild(document.createElement("b"));
+    bt.appendChild(document.createElement("s"));
+    bt.onclick=function(ev){
+      if(ev&&ev.stopPropagation) ev.stopPropagation();
+      if(ev&&ev.preventDefault) ev.preventDefault();
+      arma(); if(falaAtual) falar(falaAtual);
+      return false;
+    };
+    b.appendChild(bt);
+    b.className=b.className+" comzap";
+  }
+}
 function poeVozes(){
   if(!app) return;
   var els=app.querySelectorAll(ZAPSEL),i;
@@ -1329,7 +1374,7 @@ function poeVozes(){
 }
 (function(){
   var pend=0;
-  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); },60); }
+  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta(); },60); }
   if(window.MutationObserver){
     var mo=new MutationObserver(agenda);
     mo.observe(app,{childList:true,subtree:true,characterData:true});
