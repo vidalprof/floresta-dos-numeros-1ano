@@ -103,7 +103,11 @@ for n, c in fases:
     porfase.append((n, g))
     if not re.search(r"falar\(|depoisDaFala\(", c):
         mudas.append(n)
-    if not re.search(r"imgEl\(|fotoEl\(|cenaEl\(|<img", c):
+    # ⚠️ cenaImg() e a funcao que poe as CENAS grandes (o motor novo usa ela em
+    #    quase tudo). Sem ela na lista, o portao avisava "12 fases sem
+    #    ilustracao" numa atividade inteira ilustrada — aviso falso ensina a
+    #    ignorar o portao, que e o pior que pode acontecer com um portao.
+    if not re.search(r"imgEl\(|fotoEl\(|cenaEl\(|cenaImg\(|<img", c):
         semimg.append(n)
 
 
