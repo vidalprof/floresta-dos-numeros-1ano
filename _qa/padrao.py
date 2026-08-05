@@ -78,17 +78,23 @@ GESTOS = [
     ("ordenar",    r'\bprox\b.*?ordem|ordem.*?\bprox\b'),
     ("deslizar",   r'type\s*=\s*"range"|"termo"'),
     ("arrastar",   r'addEventListener\("touchmove"'),
-    ("pintar",     r'"pal pint|pint "|marcaTexto|"paragrafo"'),
+    ("pintar",     r'"pal pint|pint "|marcaTexto|"paragrafo"|"tinta mira|"tcor '),
+    # ⚠️ montar vem ANTES de achar: a fase que monta a planta da sala tem os
+    #    dois sinais (peca + alvo na cena) e o gesto dela e MONTAR.
+    ("montar",     r'data-vaga'),
+    ("achar",      r'"achado mira"|"achado"|"mira vazio'),
+    ("orientar",   r'"bussola"|"vento "'),
+    ("coordenada", r'"quadric"|"qcel"'),
     ("memoria",    r'"mcarta"'),
     ("forca",      r'"forca"|"letrasfc"|"boneco"|forcaErros'),
     ("simulador",  r'"simul"|"medidor"|regula\(|"linhatempo"'),
-    ("grade",      r'el\("div","cel"'),
+    ("grade",      r'el\("div","cel"|"cquad"|"pchip"'),
     ("ligar",      r'el\("div","lig"'),
     ("classificar", r'el\("div","cx"|el\("div","bin"|"gav"'),
     ("montar",     r'el\("div","vaga|"tvaga"|"slot"|el\("div","tec"|"fichaP"'),
     ("virar",      r'el\("div","carta|"vira"'),
-    ("explorar",   r'"filtro"|style\.filter|"maquina"|"moldura"'),
-    ("escolher",   r'el\("div","opt"|el\("div","tecl"|el\("div","pc |"alim"|"rpos"'),
+    ("explorar",   r'"filtro"|style\.filter|"maquina"|"moldura"|"lupafoto"|"lupacx"'),
+    ("escolher",   r'el\("div","opt"|el\("div","tecl"|el\("div","pc |"alim"|"rpos"|"gfoto"'),
 ]
 
 conta, porfase, mudas, semimg = {}, [], [], []

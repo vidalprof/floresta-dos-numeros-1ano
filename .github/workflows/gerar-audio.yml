@@ -78,8 +78,21 @@ jobs:
             /_lote_falas.json
           sparse-checkout-cone-mode: false
 
-      - name: Instalar ffmpeg (p/ voz masculina)
-        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      # ⚠️ o runner do GitHub JA VEM com ffmpeg. Rodar `apt-get update` aqui era
+      #    puro risco: numa execucao (ago/2026) ele ficou 25 MINUTOS pendurado
+      #    num espelho lento e as 15 narracoes nunca sairam — o passo nem chegou
+      #    a rodar. Agora: usa o que ja existe, e so instala se faltar, com
+      #    prazo e sem derrubar o trabalho se der errado.
+      - name: Garantir ffmpeg (p/ voz masculina)
+        timeout-minutes: 4
+        continue-on-error: true
+        run: |
+          if command -v ffmpeg >/dev/null 2>&1; then
+            echo "ffmpeg ja instalado: $(ffmpeg -version | head -1)"
+          else
+            sudo apt-get update -qq -o Acquire::Retries=3
+            sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq ffmpeg
+          fi
 
       - name: Instalar edge-tts (voz natural GRATIS)
         run: pip3 install --quiet edge-tts || pip install --quiet edge-tts
