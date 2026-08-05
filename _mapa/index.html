@@ -1011,11 +1011,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
 var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
-           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_real1:1};
+           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_alto1:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_real1","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_alto1","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -2398,7 +2398,7 @@ function mDesenhe(){
   function passo(){
     limpa();var t=el("div","tela");setProg(t,96);
     if(idx>=MARCAR.length){ depoisDaFala("mp_des_revela",10000,function(){
-      mostraBanner("Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>",mReal); }); return; }
+      mostraBanner("Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>",mAlto); }); return; }
     var it=MARCAR[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA DO BAIRRO"));
@@ -2430,34 +2430,38 @@ function mDesenhe(){
 }
 
 
-/* ---------- ⭐ É DE VERDADE! (a foto aérea real de Blumenau) --------------
-   O desenho ensina; a FOTO faz virar verdade. Esta é a mesma ideia que deu
-   certo na exposição do museu da Máquina do Tempo: depois de aprender no
-   modelo limpo, a criança olha o mundo bagunçado — a cidade DELA, vista do
-   alto — e faz nela exatamente o que treinou. É a transferência acontecendo,
-   e é o que o currículo pede quando fala em "representação da superfície
-   terrestre do bairro/município de Blumenau".
+/* ---------- ⭐ O BAIRRO LÁ DE CIMA (a vista aérea, sem legenda) -----------
+   O mapa das fases anteriores é LIMPO: cada coisa virou um símbolo. Aqui a
+   criança olha o lugar do jeito que ele é — telhados, ruas, quintais, tudo
+   junto — e acha as coisas SEM legenda nenhuma. É a transferência acontecendo:
+   ela usa o que treinou no modelo simples para ler o mundo bagunçado. Mesma
+   ideia da exposição do museu na Máquina do Tempo.
 
-   ⚠️ CRÉDITO SEMPRE NA TELA. A foto é de um fotógrafo de verdade e está sob
-   licença Creative Commons: o nome dele e a licença aparecem embaixo, sempre. */
-var REAIS=[{q:"o <b>morro com mata</b>",x:17,y:13},
-           {q:"o <b>telhado grande</b> do mercado",x:44,y:33},
-           {q:"a <b>pra&#231;a com as &#225;rvores</b>",x:47,y:62},
-           {q:"a <b>torre da igreja</b>",x:60,y:72},
-           {q:"um <b>pr&#233;dio alto</b>",x:30,y:72}];
-var CREDREAL="Foto a&#233;rea de Blumenau &#183; Giovanni Silva / W. Feistler &#183; Wikimedia Commons &#183; CC BY-SA 3.0";
-function mReal(){
+   ⚠️ POR QUE NÃO É UMA FOTO DE VERDADE (decisão do Marcos, ago/2026):
+   *"Não precisa ser real, porém com cara de mapa de vista aérea mesmo sendo no
+   modelo de foto mais infantil, mas que o estudante consiga entender"*. A foto
+   aérea real do centro de Blumenau é densa demais: para um menino de 8 anos,
+   telhado, sombra e toldo viram a mesma mancha cinza, e a fase deixa de ensinar
+   e vira loteria. A vista desenhada mantém o salto (sem símbolo, cheia de
+   coisa) e devolve o que a foto tirava: dá para RECONHECER. E como não é foto
+   de ninguém, nada de crédito na tela — e a voz não promete o que não é.      */
+var ALTO=[{q:"o <b>morro com mata</b>",x:17,y:13},
+          {q:"o <b>telhado grande</b> do mercado",x:44,y:33},
+          {q:"a <b>pra&#231;a com as &#225;rvores</b>",x:47,y:62},
+          {q:"a <b>torre da igreja</b>",x:60,y:72},
+          {q:"um <b>pr&#233;dio alto</b>",x:30,y:72}];
+function mAlto(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,97);
-    if(idx>=REAIS.length){ depoisDaFala("mp_real_revela",13000,function(){
-      mostraBanner("Isto n&#227;o &#233; desenho: &#233; a <b>sua cidade</b> vista do alto. Voc&#234; j&#225; sabe ler.",mRelampago); }); return; }
-    var it=REAIS[idx],fim=false;
+    if(idx>=ALTO.length){ depoisDaFala("mp_alto_revela",13000,function(){
+      mostraBanner("Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.",mRelampago); }); return; }
+    var it=ALTO[idx],fim=false;
     var c=el("div","centro");
-    c.appendChild(el("div","selo","&#201; DE VERDADE!"));
-    c.appendChild(el("div","balao","Esta foto &#233; <b>de verdade</b>, tirada de um avi&#227;o sobre <b>Blumenau</b>. Ache "+it.q+"."));
+    c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
+    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
     var cena=el("div","janela");
-    cena.appendChild(cenaImg("mp_real1","jimg"));
+    cena.appendChild(cenaImg("mp_alto1","jimg"));
     var alvo=el("div","achado mira");
     alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
     alvo.setAttribute("data-qa","1");
@@ -2470,14 +2474,13 @@ function mReal(){
     cena.appendChild(alvo);
     cena.onclick=function(){ if(fim) return; err++; sErro();
       if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
-      if(err>=3) mostraDica("Olhe a foto com calma. Procure a <b>forma</b>, como voc&#234; fez no mapa desenhado.");
+      if(err>=3) mostraDica("Olhe com calma e procure a <b>forma</b>, como voc&#234; fez no mapa desenhado.");
     };
     c.appendChild(cena);
-    c.appendChild(el("div","fotocred",CREDREAL));
     if(idx===0) postIt(c,"rio");
     t.appendChild(c);app.appendChild(t);
-    montaBarra("mp_real_dica","O que voc&#234; aprendeu no desenho serve aqui: mata &#233; verde, rua &#233; risco, telhado &#233; mancha.");
-    if(idx===0) falar("mp_real_intro");
+    montaBarra("mp_alto_dica","O que voc&#234; aprendeu no mapa serve aqui: mata &#233; verde, rua &#233; risco, telhado &#233; mancha.");
+    if(idx===0) falar("mp_alto_intro");
   }
   passo();
 }
@@ -2639,7 +2642,7 @@ function mFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
    nenhum) e o professor entra em dois toques. O menu NAO zera nem grava
    progresso: e so um atalho para abrir a fase.                             */
 var CODIGO_MESTRE="1275@";
-var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mRosa","13. A ROSA DOS VENTOS"],["mCoord","14. ACHE PELA COORDENADA"],["mPlanta","15. A PLANTA DA SALA"],["mPintar","16. PINTE O MAPA"],["mCaca","17. CAÇA-PALAVRAS"],["mCruzada","18. CRUZADINHA"],["mMemoria","19. MEMÓRIA"],["mDesenhe","20. O MAPA DO BAIRRO"],["mReal","21. É DE VERDADE!"],["mRelampago","22. RELÂMPAGO"],["mEnsinar","23. ENSINE O NICO"],["mFim","24. BOLETIM E MEDALHA"]];
+var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mRosa","13. A ROSA DOS VENTOS"],["mCoord","14. ACHE PELA COORDENADA"],["mPlanta","15. A PLANTA DA SALA"],["mPintar","16. PINTE O MAPA"],["mCaca","17. CAÇA-PALAVRAS"],["mCruzada","18. CRUZADINHA"],["mMemoria","19. MEMÓRIA"],["mDesenhe","20. O MAPA DO BAIRRO"],["mAlto","21. O BAIRRO LÁ DE CIMA"],["mRelampago","22. RELÂMPAGO"],["mEnsinar","23. ENSINE O NICO"],["mFim","24. BOLETIM E MEDALHA"]];
 /* ⭐ O GANCHO DA RETOMADA — envelopa cada fase para ela anotar o proprio nome
    ao abrir. Fica AQUI de proposito: depois das fases existirem e ANTES do
    objeto TREINO (que guarda as funcoes por referencia; se o envelope viesse
