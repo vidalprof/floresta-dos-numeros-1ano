@@ -26,7 +26,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
  // pula narracoes: falar() vira no-op
  await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(id,ms,cb){setTimeout(cb,120);}; });
  await p.evaluate((t)=>{ (window[t]||telaCapa)(); }, process.env.INICIO||'telaCapa');
- let visto=[], ultimo='', paradas=0;
+ let visto=[]; const encaixe=[]; let ultimo='', paradas=0;
  const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel'+',.ferr,.vaso,.carta,.zona,.tec,.slot,.mcarta,.gfoto,.pal,.fichaP,.cx,.tlin,.vaga,.relcard,.alim,.rpos,.moeda'+',.pt,.plb,.fs,.errow,.gav,.ficha,.achado,.teclafc'
    /* ⚠️ mecanica nova = alvo novo AQUI. A rosa dos ventos (.vento) e a
       paleta de pintar (.tcor/.tinta) nasceram na cartografia e o jogador
@@ -207,18 +207,46 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
      e.click(); return 1;
    },SEL);
    await p.waitForTimeout(230);
+   /* ⚠️ FIGURA MAIOR QUE O LUGAR DELA — e so DEPOIS de jogar que da para ver.
+      A planta da sala so mostra os moveis quando a crianca ja os colocou; o
+      auditor de leiaute abre a fase VAZIA e aprova, e o defeito (a lousa
+      gigante em cima do desenho, foto do Marcos ago/2026) passa batido. Aqui,
+      que e o unico portao que chega ao estado final de cada fase, a conta e
+      barata: toda <img> dentro de um pai posicionado tem que caber nele.   */
+   const estouro=await p.evaluate(()=>{
+     const fora=[];
+     for(const im of document.querySelectorAll('img')){
+       if(im.offsetParent===null) continue;
+       const pai=im.parentElement; if(!pai) continue;
+       const ps=getComputedStyle(pai);
+       if(ps.position!=='absolute'&&ps.position!=='relative') continue;
+       if(ps.overflow==='hidden') continue;
+       const a=im.getBoundingClientRect(), b=pai.getBoundingClientRect();
+       if(!b.width||!b.height) continue;
+       if(a.width>b.width*1.15||a.height>b.height*1.15)
+         fora.push('.'+String(im.className||'img').split(' ')[0]+' '+Math.round(a.width)+'x'+Math.round(a.height)
+                   +' dentro de .'+String(pai.className).split(' ')[0]+' '+Math.round(b.width)+'x'+Math.round(b.height));
+     }
+     return fora;
+   });
+   for(const e of estouro) if(encaixe.indexOf(e)<0) encaixe.push(e);
    if(await p.evaluate(()=>!!document.querySelector('.medal'))){ visto.push(i+' >>> CHEGOU NO FIM'); break; }
  }
  console.log(visto.join('\n'));
  /* o barulho do file:// nao conta: service worker so existe em http(s) */
  const reais=erros.filter(e=>!/ServiceWorker|protocol of the current origin/i.test(e));
  console.log('ERROS JS:', reais.length? reais.slice(0,8).join(' || '):'nenhum');
+ if(encaixe.length){
+   console.log('  !! '+encaixe.length+' FIGURA(S) MAIOR(ES) QUE O LUGAR DELAS (so aparece com a fase jogada):');
+   for(const e of encaixe.slice(0,6)) console.log('     '+e);
+ }
  const chegou=visto.length&&/CHEGOU NO FIM/.test(visto[visto.length-1]);
+ const encaixeOk=encaixe.length===0;
  if(!chegou) console.log('  !! O JOGADOR NAO CHEGOU NA MEDALHA — a crianca pode empacar aqui');
  if(reais.length) console.log('  !! '+reais.length+' ERRO(S) DE JS durante a partida');
  await b.close();
  /* ⚠️ ate ago/2026 este portao NAO reprovava nada: a saida ia para um `tail -4`
     e o codigo de saida se perdia no cano. Ou seja, o auditor jogava a partida
     inteira e o resultado dele era decorativo. Agora ele vota como os outros. */
- process.exit(chegou&&!reais.length ? 0 : 1);
+ process.exit(chegou&&!reais.length&&encaixeOk ? 0 : 1);
 })();

@@ -3995,3 +3995,64 @@ arquivo antigo: acusa `SEM CSS: .mark`.
 de que aquilo que ele SABE olhar está bom. Quando um defeito escapa, a pergunta
 não é só "como conserto?", é **"qual portão devia ter pego, e por que não
 pegou?"**.
+
+---
+
+## 🪑 A FIGURA MAIOR QUE O LUGAR DELA (foto do Marcos, ago/2026)
+
+Ele mandou a foto da **planta da sala** montada: a lousa ocupando um quarto da
+tela, a mesa da professora como um disco gigante, o armário atravessado. *"Essa
+fase ficou estranha, não funcionou como deveria."*
+
+**A causa é sutil e vale mais que o conserto.** O móvel entrava na vaga com a
+classe `pecaimg` — que **tem** regra de CSS, mas só **debaixo de outro pai**
+(`.peca .pecaimg` e `.tvaga .pecaimg`). Dentro da vaga (`.achado`) ela ficava
+sem tamanho nenhum, e a `<img>` entrava no **tamanho natural**: 240px de lousa
+em cima de uma planta de 420px.
+
+**Por que nenhum portão viu:**
+- o de **classes** procura "classe sem CSS" — e a classe TEM regra; ele acha a
+  regra e aprova. *Classe certa no lugar errado não é classe sem CSS.*
+- o de **leiaute** abre cada fase e mede — mas a fase abre **VAZIA**: os móveis
+  só existem depois que a criança os coloca. Ele mediu um cômodo vazio e
+  aprovou, com razão.
+
+**Onde a medida foi parar:** no **jogador**, que é o único portão que chega ao
+**estado final** de cada fase. Depois de cada toque ele confere se alguma
+`<img>` está maior que o pai posicionado (15% de folga para padding e sombra) e
+reprova com nome e medida. Conferido contra o arquivo antigo:
+`.pecaimg 240x81 dentro de .achado 66x66`. A mesma regra entrou no leiaute
+(regra 7) para o caso estático.
+
+**E a vaga passou a ter o formato do móvel** (a lousa comprida e fina, a cadeira
+quadradinha), o que era o outro motivo de a sala não parecer uma sala.
+
+**Lição de método:** quando um defeito escapa, a pergunta não é só *"qual portão
+devia ter pego?"* — é *"em que MOMENTO ele existiria?"*. Defeito que só nasce
+com a fase jogada tem que ser medido por quem joga.
+
+## 🔦 ACHAR NUMA FOTO É ZONA, NÃO PONTO (ago/2026)
+
+Na mesma mensagem: *"tem que ser mais intuitivo. Você fala para achar o rio, o
+legal seria a criança clicar em QUALQUER PARTE do rio e dar certo. E não
+aparecer um quadrado branco quando acham... quando pede o quarteirão de casas
+tem muitas casas, fica confuso; o morro tem vários com árvores; a mesma coisa a
+ponte"*.
+
+As três queixas são o mesmo erro de fundo: **tratei uma foto como se fosse um
+quiz de ponto único**. Numa cena de verdade a coisa procurada é **extensa** (o
+rio atravessa a imagem inteira) ou **repetida** (há sete moitas de mata e duas
+pontes). Um alvo de 66px no meio disso não é "achar": é adivinhar onde o
+programador pôs o quadradinho.
+
+**O que passou a valer para toda fase de "ache na cena":**
+1. **O alvo é uma ZONA e são VÁRIAS** — o rio tem oito pontos ao longo do curso,
+   a mata sete moitas, a rua quatro trechos, a ponte as duas pontes.
+2. **O toque é medido por DISTÂNCIA** até a zona mais próxima, em % da figura
+   (vale igual no celular e no PC), com raio generoso. Toca em qualquer parte
+   do rio e dá certo.
+3. **Pergunta ambígua sai.** "Um quarteirão de casas" numa foto que é toda casas
+   não é pergunta. Entraram coisas inconfundíveis — e uma que ainda ensina
+   relação espacial: *"o pedaço do bairro que fica do OUTRO LADO do rio"*.
+4. **O achado é LUZ, não quadrado.** Anel dourado aceso no ponto tocado + uma
+   plaquinha com o nome. Fica marcado sem tapar a figura.

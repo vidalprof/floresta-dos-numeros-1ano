@@ -899,6 +899,27 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   background:rgba(255,253,246,.9);border:2px solid rgba(255,255,255,.85);
   -webkit-box-shadow:0 4px 12px rgba(0,0,0,.45);box-shadow:0 4px 12px rgba(0,0,0,.45)}
 .achado .achimg{width:100%;height:100%;object-fit:contain;padding:5px}
+/* ⚠️ A FIGURA TEM QUE CABER NO LUGAR DELA. A planta da sala punha o movel na
+   vaga com a classe `pecaimg`, que so tinha regra DENTRO de `.peca` e `.tvaga`
+   — dentro da vaga ela ficava sem regra nenhuma e a imagem entrava no TAMANHO
+   NATURAL: a lousa de 240px em cima de uma planta de 420px. A sala virou um
+   amontoado (foto do Marcos, ago/2026). Classe certa no lugar errado nao e
+   "classe sem CSS": o portao de classes ve a regra e aprova. Quem pega isto
+   agora e a regra 7 do _qa/leiaute.js — figura maior que o lugar dela.      */
+.achado .pecaimg{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;padding:3px;display:block}
+/* ---- a luz que marca o que a crianca ACHOU na cena (nao um quadrado) ---- */
+.luzok{position:absolute;width:78px;height:78px;margin-left:-39px;margin-top:-39px;border-radius:50%;
+  border:4px solid #ffd43b;background:rgba(255,212,59,.16);pointer-events:none;
+  -webkit-box-shadow:0 0 0 4px rgba(255,212,59,.22),0 0 18px rgba(255,212,59,.85);
+  box-shadow:0 0 0 4px rgba(255,212,59,.22),0 0 18px rgba(255,212,59,.85);
+  -webkit-animation:luzpop .5s;animation:luzpop .5s}
+.luztx{position:absolute;-webkit-transform:translate(-50%,0);transform:translate(-50%,0);
+  background:rgba(28,22,12,.86);color:#fff;font-weight:800;font-size:13px;padding:4px 11px;
+  border-radius:999px;white-space:nowrap;pointer-events:none;
+  -webkit-animation:luzpop .5s;animation:luzpop .5s}
+@-webkit-keyframes luzpop{0%{-webkit-transform:scale(.3);opacity:0}60%{-webkit-transform:scale(1.18);opacity:1}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes luzpop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+.janela.erro{-webkit-animation:shk .4s;animation:shk .4s}
 .achado.a0{left:6%;bottom:8%}
 .achado.a1{right:7%;bottom:10%}
 .achado.a2{right:9%;top:9%}
@@ -2134,10 +2155,13 @@ function mCoord(){
    O verbo do objetivo é ELABORAR. Aqui a criança faz a planta do lugar que ela
    mais conhece: a própria sala de aula. Os móveis estão VISTOS DE CIMA — é o
    olhar do voo aplicado ao dia a dia dela.                                  */
-var MOVEIS=[{n:"lousa",   img:"mp_lousa_c",   rot:"a lousa",   x:50,y:12},
-            {n:"mesa",    img:"mp_mesa_c",    rot:"a mesa da professora", x:26,y:30},
-            {n:"armario", img:"mp_armario_c", rot:"o arm&#225;rio", x:85,y:79},
-            {n:"cadeira", img:"mp_cadeira_c", rot:"a cadeira",  x:50,y:64}];
+/* w/h em PIXEL: a vaga tem o formato do movel visto de cima (a lousa e
+   comprida e fina, a cadeira e quadradinha). Sem isso todas as vagas eram
+   quadrados iguais de 66px — e a planta nao parecia uma planta.        */
+var MOVEIS=[{n:"lousa",   img:"mp_lousa_c",   rot:"a lousa",   x:50,y:14,w:104,h:26},
+            {n:"mesa",    img:"mp_mesa_c",    rot:"a mesa da professora", x:26,y:32,w:62,h:44},
+            {n:"armario", img:"mp_armario_c", rot:"o arm&#225;rio", x:84,y:76,w:64,h:36},
+            {n:"cadeira", img:"mp_cadeira_c", rot:"a cadeira",  x:50,y:62,w:40,h:40}];
 function mPlanta(){
   limpa();var t=el("div","tela");setProg(t,88);
   var postos=0,err=0,sel=null,ultimoToque=0;
@@ -2151,6 +2175,8 @@ function mPlanta(){
   for(i=0;i<MOVEIS.length;i++){(function(m){
     var v=el("div","achado mira vazio");
     v.style.left=m.x+"%"; v.style.top=m.y+"%";
+    v.style.width=m.w+"px"; v.style.height=m.h+"px";
+    v.style.marginLeft=(-m.w/2)+"px"; v.style.marginTop=(-m.h/2)+"px";
     v.setAttribute("data-vaga",m.n);
     v.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); solta(m,v); };
     vagas[m.n]=v; sala.appendChild(v);
@@ -2548,25 +2574,42 @@ function mDesenhe(){
 /* ---------- ⭐ O BAIRRO LÁ DE CIMA (a vista aérea, sem legenda) -----------
    O mapa das fases anteriores é LIMPO: cada coisa virou um símbolo. Aqui a
    criança olha o lugar do jeito que ele é — telhados, ruas, quintais, tudo
-   junto — e acha as coisas SEM legenda nenhuma. É a transferência acontecendo:
-   ela usa o que treinou no modelo simples para ler o mundo bagunçado. Mesma
-   ideia da exposição do museu na Máquina do Tempo.
+   junto — e acha as coisas SEM legenda nenhuma. É a transferência acontecendo.
 
-   ⚠️ POR QUE NÃO É UMA FOTO DE VERDADE (decisão do Marcos, ago/2026):
-   *"Não precisa ser real, porém com cara de mapa de vista aérea mesmo sendo no
-   modelo de foto mais infantil, mas que o estudante consiga entender"*. A foto
-   aérea real do centro de Blumenau é densa demais: para um menino de 8 anos,
-   telhado, sombra e toldo viram a mesma mancha cinza, e a fase deixa de ensinar
-   e vira loteria. A vista desenhada mantém o salto (sem símbolo, cheia de
-   coisa) e devolve o que a foto tirava: dá para RECONHECER. E como não é foto
-   de ninguém, nada de crédito na tela — e a voz não promete o que não é.      */
-/* ⚠️ posicoes MEDIDAS em cima da figura (desenhei os alvos por cima e conferi
-   um a um). Chutar percentual poe o alvo ao lado da coisa — ja aconteceu. */
-var ALTO=[{q:"o <b>morro com mata</b>",x:12,y:27},
-          {q:"a <b>ponte</b> sobre o rio",x:46,y:25},
-          {q:"o <b>rio</b>",x:44,y:66},
-          {q:"um <b>quarteir&#227;o de casas</b>",x:28,y:47},
-          {q:"a <b>estrada</b> que d&#225; a volta no bairro",x:18,y:62}];
+   ⚠️ REFEITA (cobrança do Marcos, ago/2026): *"tem que ser mais intuitivo. Você
+   fala para achar o rio, o legal seria a criança clicar em QUALQUER PARTE do
+   rio e dar certo. E não aparecer um quadrado branco quando acham... quando
+   pede o quarteirão de casas tem muitas casas, fica confuso; o morro tem
+   vários com árvores; a mesma coisa a ponte"*.
+
+   Ele está certo nas três coisas, e as três eram o mesmo erro de fundo: eu
+   tinha tratado uma FOTO como se fosse um quiz de ponto único.
+
+   1. **O alvo virou ZONA, e são VÁRIAS.** O rio tem oito pontos ao longo do
+      curso, a mata tem sete moitas, a rua tem quatro trechos, a ponte tem as
+      duas pontes. Vale tocar em qualquer um. E o toque é medido pela DISTÂNCIA
+      até a zona mais próxima, não por um quadradinho invisível: a criança toca
+      no rio, em qualquer lugar do rio, e dá certo.
+   2. **A pergunta mudou onde ela era ambígua.** "Um quarteirão de casas" numa
+      foto que é toda casas não é pergunta, é adivinhação. Saiu. Entraram
+      coisas que só existem uma vez ou que são inconfundíveis — o rio, a ponte,
+      a mata em volta, a rua, e o pedaço do bairro do OUTRO LADO do rio (que
+      ainda é relação espacial, do currículo).
+   3. **O achado virou LUZ, não quadrado.** Um anel dourado aceso no lugar
+      tocado, com o nome da coisa numa plaquinha — fica bonito, fica marcado, e
+      a criança vê o que já achou sem tapar a figura.                        */
+var ALTO=[
+ {q:"o <b>rio</b> que corta o bairro", n:"O RIO", r:11,
+  z:[{x:50,y:8},{x:48,y:20},{x:46,y:33},{x:46,y:45},{x:46,y:57},{x:45,y:69},{x:44,y:81},{x:45,y:93}]},
+ {q:"uma <b>ponte</b> em cima do rio", n:"A PONTE", r:9,
+  z:[{x:46,y:25},{x:51,y:40}]},
+ {q:"a <b>mata</b> em volta do bairro", n:"A MATA", r:11,
+  z:[{x:11,y:26},{x:7,y:54},{x:19,y:88},{x:80,y:14},{x:88,y:44},{x:78,y:80},{x:30,y:6}]},
+ {q:"uma <b>rua</b> do bairro", n:"A RUA", r:9,
+  z:[{x:18,y:62},{x:23,y:20},{x:31,y:90},{x:73,y:64}]},
+ {q:"o peda&#231;o do bairro que fica do <b>outro lado do rio</b>", n:"O OUTRO LADO", r:15,
+  z:[{x:62,y:30},{x:66,y:50},{x:62,y:72}]}
+];
 function mAlto(){
   var idx=0,err=0;
   function passo(){
@@ -2576,27 +2619,59 @@ function mAlto(){
     var it=ALTO[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
-    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro l&#225; de cima. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
+    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Toque em "+it.q+"."));
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_esc_cidade","jimg"));
-    var alvo=el("div","achado mira");
-    alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
-    alvo.setAttribute("data-qa","1");
-    alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
-      if(fim) return; fim=true; arma(); alvo.className="achado mira ok"; sCerto(); elogio();
-      reg("visao",err===0,err+1);
-      var ce=centroTela(alvo); faisca(ce[0],ce[1],"#ffd43b",16);
-      setTimeout(function(){ idx++; err=0; passo(); },1200);
-    };
-    cena.appendChild(alvo);
-    cena.onclick=function(){ if(fim) return; err++; sErro();
-      if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
-      if(err>=3) mostraDica("Olhe com calma e procure a <b>forma</b>, como voc&#234; fez no mapa desenhado.");
+    /* alvos INVISIVEIS, um por zona — servem ao auditor jogador (data-qa) e ao
+       toque exato. O toque LARGO e resolvido pelo clique da cena, abaixo.  */
+    var k;
+    for(k=0;k<it.z.length;k++){(function(zn){
+      var a=el("div","achado mira");
+      a.style.left=zn.x+"%"; a.style.top=zn.y+"%";
+      a.style.width=(it.r*2)+"px"; a.style.height=(it.r*2)+"px";
+      a.style.marginLeft=(-it.r)+"px"; a.style.marginTop=(-it.r)+"px";
+      a.setAttribute("data-qa","1");
+      a.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); acerta(zn.x,zn.y); };
+      cena.appendChild(a);
+    })(it.z[k]);}
+    function acerta(px,py){
+      if(fim) return; fim=true; arma();
+      var luz=el("div","luzok");
+      luz.style.left=px+"%"; luz.style.top=py+"%";
+      cena.appendChild(luz);
+      var tx=el("div","luztx",it.n);
+      tx.style.left=px+"%"; tx.style.top="calc("+py+"% + 44px)";
+      cena.appendChild(tx);
+      sCerto(); elogio(); reg("visao",err===0,err+1);
+      var ce=centroTela(luz); faisca(ce[0],ce[1],"#ffd43b",18);
+      setTimeout(function(){ idx++; err=0; passo(); },1400);
+    }
+    /* ⚠️ TOQUE LARGO: a crianca toca em QUALQUER lugar da figura e eu meco a
+       distancia ate a zona mais perto (em % da figura, para valer igual no
+       celular e no PC). Dentro do raio, vale. Isto e o "clicar em qualquer
+       parte do rio" que o Marcos pediu.                                    */
+    cena.onclick=function(ev){
+      if(fim) return;
+      var r=cena.getBoundingClientRect();
+      var cx=((ev.clientX-r.left)/r.width)*100, cy=((ev.clientY-r.top)/r.height)*100;
+      var i,melhor=1e9,zz=null;
+      for(i=0;i<it.z.length;i++){
+        var dx=cx-it.z[i].x, dy=(cy-it.z[i].y)*(r.height/r.width);
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<melhor){ melhor=d; zz=it.z[i]; }
+      }
+      if(zz&&melhor<=it.r){ acerta(zz.x,zz.y); return; }
+      err++; sErro(); cena.className="janela erro";
+      setTimeout(function(){ if(!fim) cena.className="janela"; },420);
+      if(err===2){ consolo(); mostraDica("Est&#225; quase! Olhe a <b>forma</b> e a <b>cor</b>: "+it.q+"."); }
+      if(err>=4){ var z0=it.z[0]; var d=el("div","luzok"); d.style.left=z0.x+"%"; d.style.top=z0.y+"%";
+        d.style.opacity="0.75"; cena.appendChild(d);
+        setTimeout(function(){ if(d.parentNode) d.parentNode.removeChild(d); },2400); }
     };
     c.appendChild(cena);
     if(idx===0) postIt(c,"rio");
     t.appendChild(c);app.appendChild(t);
-    montaBarra("mp_alto_dica","O que voc&#234; aprendeu no mapa serve aqui: mata &#233; verde, rua &#233; risco, telhado &#233; mancha.");
+    montaBarra("mp_alto_dica","Pode tocar em <b>qualquer parte</b> da coisa que eu pedi.");
     if(idx===0) falar("mp_alto_intro");
   }
   passo();

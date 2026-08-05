@@ -14,7 +14,9 @@
      5. BOTAO SOBRE BOTAO (pedido do Marcos, ago/2026): dois alvos que
         se cobrem — a crianca mira num e o dedo aciona o outro;
      6. CARTA DE MEMORIA pequena (regra permanente do Marcos, ago/2026):
-        toda .mcarta tem que ter no minimo 130 x 88 px.
+        toda .mcarta tem que ter no minimo 130 x 88 px;
+     7. FIGURA MAIOR QUE O LUGAR DELA (ago/2026): <img> que estoura o pai
+        posicionado — foi a lousa gigante em cima da planta da sala.
    Rolagem vertical NAO e erro por si so — so e erro quando o que
    se toca fica fora.
 
@@ -134,6 +136,31 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           if(r.width<130||r.height<88){ pequenas++;
             if(!menor) menor=Math.round(r.width)+"x"+Math.round(r.height); } }
         if(pequenas) out.push(pequenas+" carta(s) de memoria pequena(s) demais, menor "+menor+" (minimo 130x88)");
+
+        /* 7. FIGURA MAIOR QUE O LUGAR DELA (defeito que o Marcos fotografou,
+           ago/2026: a planta da sala com a lousa e a mesa GIGANTES por cima do
+           desenho). A causa nao e "classe sem CSS" — a classe TEM regra, so
+           que dentro de outro pai; no pai novo ela fica sem tamanho e a <img>
+           entra no tamanho natural. Nenhum portao via isso: o de classes acha
+           a regra e aprova, e o de leiaute so olhava a TELA, nao o encaixe.
+           Aqui: toda <img> dentro de um pai POSICIONADO (a vaga, o alvo) tem
+           que caber nele. 15% de folga por causa de padding e sombra.      */
+        const imgs=[...document.querySelectorAll("img")].filter(e=>e.offsetParent!==null);
+        let estoura=0, qual="";
+        for(const im of imgs){
+          const pai=im.parentElement; if(!pai) continue;
+          const ps=getComputedStyle(pai);
+          if(ps.position!=="absolute"&&ps.position!=="relative") continue;
+          if(ps.overflow==="hidden") continue;
+          const a=im.getBoundingClientRect(), b2=pai.getBoundingClientRect();
+          if(!b2.width||!b2.height) continue;
+          if(a.width>b2.width*1.15||a.height>b2.height*1.15){
+            estoura++;
+            if(!qual) qual="."+String(im.className||"img").split(" ")[0]+" ("+Math.round(a.width)+"x"+Math.round(a.height)
+                       +") dentro de ."+String(pai.className).split(" ")[0]+" ("+Math.round(b2.width)+"x"+Math.round(b2.height)+")";
+          }
+        }
+        if(estoura) out.push(estoura+" figura(s) MAIOR(ES) que o lugar delas: "+qual);
         return out;
       },{sel:RESPOSTA,clic:CLICAVEL});
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);
