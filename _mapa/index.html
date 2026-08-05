@@ -960,7 +960,10 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* ⚠️ o credito da foto as vezes cai EM CIMA da imagem (a foto aerea real),
    e ali o fundo e escuro: cinza sobre marrom dava 1,35:1. Faixa clara propria
    atras do texto resolve nos dois lugares. */
-.moldurafoto .fotocred{font-size:10.5px;line-height:1.3;color:#4a4437;margin-top:5px;text-align:center;
+/* ⚠️ regra BASE, nao `.moldurafoto .fotocred`: o credito da foto aerea fica
+   solto no centro da tela, sobre o fundo escuro, e a regra descendente nao
+   alcancava ele — 1,35:1, ilegivel. */
+.fotocred{font-size:10.5px;line-height:1.3;color:#4a4437;margin-top:5px;text-align:center;
   background:rgba(255,253,246,.92);border-radius:8px;padding:3px 7px}
 /* a parede do museu */
 .parede{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
