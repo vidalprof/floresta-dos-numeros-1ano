@@ -16,7 +16,9 @@
      6. CARTA DE MEMORIA pequena (regra permanente do Marcos, ago/2026):
         toda .mcarta tem que ter no minimo 130 x 88 px;
      7. FIGURA MAIOR QUE O LUGAR DELA (ago/2026): <img> que estoura o pai
-        posicionado — foi a lousa gigante em cima da planta da sala.
+        posicionado — foi a lousa gigante em cima da planta da sala;
+     8. BOTAO EM CIMA DO TEXTO (ago/2026): o alto-falante da pergunta cobrindo
+        a ultima palavra do enunciado.
    Rolagem vertical NAO e erro por si so — so e erro quando o que
    se toca fica fora.
 
@@ -161,6 +163,43 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           }
         }
         if(estoura) out.push(estoura+" figura(s) MAIOR(ES) que o lugar delas: "+qual);
+
+        /* 8. BOTAO TAPANDO O TEXTO (ago/2026). O alto-falante da pergunta, que
+           existe para ajudar quem NAO LE, pousou no canto do balao e cobriu a
+           ultima palavra: "Toque na RAI[z]", "Que parte da planta e esta[?]".
+           Botao de acessibilidade que esconde o texto e o contrario do que ele
+           serve. A regra 5 so via botao sobre BOTAO; esta ve botao sobre LETRA.
+           Mede o retangulo real das linhas de texto (Range), nao a caixa toda. */
+        const tapa=[];
+        for(const b of [...document.querySelectorAll(clic)]){
+          if(b.offsetParent===null) continue;
+          /* ⚠️ a BARRA FIXA de baixo (Ouvir/Dica) nao entra aqui: ela e camada
+             fixa de proposito, e o texto que passa por baixo dela volta a
+             aparecer com a rolagem. Quem cuida disso e a regra 3, que so
+             reclama quando NAO ha rolagem. Esta regra e para o botao que anda
+             JUNTO com o texto — como o alto-falante dentro do balao, que a
+             rolagem nunca resolve.                                          */
+          /* o BANNER de fim de fase e uma camada modal: cobrir o que esta
+             atras dele e o trabalho dele, nao um defeito. */
+          if(b.closest&&(b.closest("#barra")||b.closest("#banner"))) continue;
+          const rb=b.getBoundingClientRect(); if(rb.width<8) continue;
+          for(const cx of [...document.querySelectorAll(".balao,.hint,.selo,.pergunta,h1,h2")]){
+            if(cx.offsetParent===null||cx.contains(b)===false&&b.contains(cx)) continue;
+            for(const no of [...cx.childNodes]){
+              if(no.nodeType!==3||!String(no.nodeValue).trim()) continue;
+              const rg=document.createRange(); rg.selectNodeContents(no);
+              for(const rt of rg.getClientRects()){
+                const w=Math.min(rb.right,rt.right)-Math.max(rb.left,rt.left);
+                const h=Math.min(rb.bottom,rt.bottom)-Math.max(rb.top,rt.top);
+                if(w>0&&h>0&&w*h>120){
+                  const q="."+String(b.className).split(" ")[0]+" tapando o texto de ."+String(cx.className).split(" ")[0];
+                  if(tapa.indexOf(q)<0) tapa.push(q);
+                }
+              }
+            }
+          }
+        }
+        if(tapa.length) out.push(tapa.length+" BOTAO(OES) EM CIMA DO TEXTO: "+tapa[0]);
         return out;
       },{sel:RESPOSTA,clic:CLICAVEL});
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);
