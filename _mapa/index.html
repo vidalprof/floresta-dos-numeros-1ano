@@ -1011,11 +1011,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
 var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
-           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_alto1:1};
+           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_alto1","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -2445,11 +2445,13 @@ function mDesenhe(){
    e vira loteria. A vista desenhada mantém o salto (sem símbolo, cheia de
    coisa) e devolve o que a foto tirava: dá para RECONHECER. E como não é foto
    de ninguém, nada de crédito na tela — e a voz não promete o que não é.      */
-var ALTO=[{q:"o <b>morro com mata</b>",x:17,y:13},
-          {q:"o <b>telhado grande</b> do mercado",x:44,y:33},
-          {q:"a <b>pra&#231;a com as &#225;rvores</b>",x:47,y:62},
-          {q:"a <b>torre da igreja</b>",x:60,y:72},
-          {q:"um <b>pr&#233;dio alto</b>",x:30,y:72}];
+/* ⚠️ posicoes MEDIDAS em cima da figura (desenhei os alvos por cima e conferi
+   um a um). Chutar percentual poe o alvo ao lado da coisa — ja aconteceu. */
+var ALTO=[{q:"o <b>morro com mata</b>",x:12,y:27},
+          {q:"a <b>ponte</b> sobre o rio",x:46,y:25},
+          {q:"o <b>rio</b>",x:44,y:66},
+          {q:"um <b>quarteir&#227;o de casas</b>",x:28,y:47},
+          {q:"a <b>estrada</b> que d&#225; a volta no bairro",x:18,y:62}];
 function mAlto(){
   var idx=0,err=0;
   function passo(){
@@ -2459,9 +2461,9 @@ function mAlto(){
     var it=ALTO[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
-    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
+    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro l&#225; de cima. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
     var cena=el("div","janela");
-    cena.appendChild(cenaImg("mp_alto1","jimg"));
+    cena.appendChild(cenaImg("mp_esc_cidade","jimg"));
     var alvo=el("div","achado mira");
     alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
     alvo.setAttribute("data-qa","1");
