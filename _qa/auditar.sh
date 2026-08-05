@@ -54,7 +54,6 @@ FALHOU=0
 TMPQ="$(mktemp -d)"
 node _qa/contraste.js "$ARQ" $TELAS > "$TMPQ/contraste.txt" 2>&1 & PID_CON=$!
 node _qa/leiaute.js   "$ARQ" $TELAS > "$TMPQ/leiaute.txt"   2>&1 & PID_LEI=$!
-node _qa/jogador.js   "$ARQ"        > "$TMPQ/jogador.txt"   2>&1 & PID_JOG=$!
 node _qa/imagens.js   "$ARQ" $TELAS > "$TMPQ/imagens.txt"   2>&1 & PID_IMG=$!
 
 echo
@@ -123,8 +122,11 @@ cat "$TMPQ/leiaute.txt"
 
 echo
 echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
-# este portao TAMBEM vota (ver o comentario no fim do _qa/jogador.js)
-wait $PID_JOG || FALHOU=1
+# ⚠️ este roda SOZINHO, no fim. Ele joga a partida inteira com pausas de 230ms
+# entre os toques; disputando o processador com os outros tres navegadores, a
+# tela nao acompanhava e ele dava "preso" numa fase que funciona (ago/2026).
+# Portao que reprova por lentidao do proprio auditor e pior que portao nenhum.
+node _qa/jogador.js "$ARQ" > "$TMPQ/jogador.txt" 2>&1 || FALHOU=1
 tail -6 "$TMPQ/jogador.txt"
 
 echo
