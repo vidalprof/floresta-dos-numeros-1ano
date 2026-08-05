@@ -3925,3 +3925,26 @@ custo. Regra que depende de memória não é regra: é sorte.
   a IMPORTA. Na primeira versão a regra estava escrita nos dois arquivos e eles
   já discordaram na estreia (um contou 3 peças, o outro 2) — porque o
   classificador procurava "room" no prompt e casou com "classROOM board".
+
+---
+
+## 🕳️ FUNDO PRETO ENGOLE O QUE É ESCURO (ago/2026)
+
+Recortando a primeira cartela da Terra dos Papagaios, os avatares saíram com
+**buracos vazados no cabelo preto e no ombro**. O limiar era um só
+(`max(RGB) > 34`): ele acha o objeto, mas o cabelo preto e a sombra da roupa
+estão ABAIXO dele e viram fundo. E `binary_fill_holes` **não salva** — o buraco
+encosta na borda da figura, então não é buraco "fechado".
+
+**A cura é limiar DUPLO (histerese):** o forte (>34) diz onde o objeto está; o
+fraco (>10) só é aceito se estiver **grudado** no forte. O cabelo entra (encosta
+no rosto) e o chuvisco do JPEG no fundo, que é solto, fica de fora. Aplicado no
+`_padrao/cartela.py`, os quinze recortes saíram inteiros.
+
+**E ficou a medida junto:** depois de recortar, a ferramenta mede quanto do
+INTERIOR da peça ficou transparente e **avisa acima de 1%**. Era um defeito que
+só se via ampliando cada figura uma a uma — agora ele grita sozinho.
+
+⚠️ Isto é irmão da lição já registrada do **corpo branco sem contorno em fundo
+branco** (`ATIVIDADE-PREMIUM.md`): a diferença é que aquele **não tem conserto
+por código** (tem que regerar a cartela) e este tem.

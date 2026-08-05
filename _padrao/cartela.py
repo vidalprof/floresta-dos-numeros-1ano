@@ -149,8 +149,19 @@ def cortar(folha, nomes, dest, larg=520):
     im = Image.open(folha).convert("RGB")
     arr = np.asarray(im)
     H, W = arr.shape[:2]
-    # fundo PRETO: o objeto e tudo que tem brilho
-    mask = arr.max(axis=2) > 34
+    # ⚠️ FUNDO PRETO ENGOLE O QUE É ESCURO. Um limiar só (>34) achava o
+    #    objeto mas comia o CABELO PRETO e a sombra da roupa: os avatares da
+    #    Terra dos Papagaios saíram com buracos vazados no cabelo e no ombro,
+    #    e `fill_holes` não salva — o buraco encosta na borda da figura, então
+    #    não é buraco "fechado". A cura é limiar DUPLO (histerese): o forte
+    #    (>34) diz onde o objeto está; o fraco (>10) só é aceito se estiver
+    #    GRUDADO no forte. Assim o cabelo entra e o chuvisco do JPEG no fundo,
+    #    que é solto, fica de fora.
+    forte = arr.max(axis=2) > 34
+    fraco = arr.max(axis=2) > 10
+    lf, nf = ndimage.label(fraco)
+    vivos = set(np.unique(lf[forte])); vivos.discard(0)
+    mask = np.isin(lf, list(vivos))
     mask = ndimage.binary_closing(mask, np.ones((3, 3)), iterations=2)
     lab, n = ndimage.label(mask)
     areas = ndimage.sum(np.ones_like(lab), lab, index=range(1, n + 1))
@@ -199,6 +210,14 @@ def cortar(folha, nomes, dest, larg=520):
         cam = os.path.join(dest, nome + ".png")
         out.save(cam, optimize=True)
         feitos.append(cam)
+        # buraco vazado no meio da figura: mede o quanto do INTERIOR ficou
+        # transparente. Uma peca sadia fica perto de 0%.
+        al = np.asarray(out)[:, :, 3]
+        cheio = ndimage.binary_fill_holes(al > 40)
+        vazio = float((cheio & (al <= 40)).sum()) / max(1, cheio.sum())
+        if vazio > 0.01:
+            print(u"     !! %.1f%% do interior de %s ficou VAZADO — olhe a folha "
+                  u"de conferencia antes de embutir" % (100 * vazio, nome))
         print(u"  %-18s %dx%d  %d KB" % (nome, out.width, out.height,
                                          os.path.getsize(cam) // 1024))
 
