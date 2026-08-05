@@ -85,10 +85,15 @@ jobs:
               # ⚠️ o Pollinations e gratis e as vezes devolve 500 do proprio
               # servidor. Sem repetir, uma soluco dele parava a producao — foi o
               # que aconteceu na cartografia (ago/2026). Agora insiste.
-              url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true&model=flux"%(
+              # o Pollinations tem varios motores; quando um cai, o outro costuma
+              # atender. Tentar so o "flux" era pedir para parar a producao.
+              motores=["flux","turbo","flux-realism",""]
+              base_url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true"%(
                   urllib.parse.quote(prompt), os.environ.get("W","768"), os.environ.get("H","1024"))
               ultimo=None
               for tent,espera in enumerate([8,20,45,0]):
+                  mot=motores[min(tent,len(motores)-1)]
+                  url=base_url+("&model="+mot if mot else "")
                   try:
                       req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
                       dados=urllib.request.urlopen(req, timeout=180).read()
@@ -96,7 +101,7 @@ jobs:
                       ultimo="resposta vazia (%d bytes)"%len(dados or b"")
                   except Exception as e:
                       ultimo=str(e)[:150]
-                  print("pollinations (tentativa %d): %s"%(tent+1, ultimo))
+                  print("pollinations [%s] (tentativa %d): %s"%(mot or "padrao", tent+1, ultimo))
                   if espera: time.sleep(espera)
               raise RuntimeError("Pollinations nao devolveu imagem: %s"%ultimo)
 
