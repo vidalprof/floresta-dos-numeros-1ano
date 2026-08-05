@@ -3882,3 +3882,46 @@ criança **conseguir ler**. E se a figura deixa de ser foto de alguém, a voz e 
 tela **não podem continuar dizendo que é foto**: mudam o selo, o balão, o
 banner, as três narrações e sai o crédito. Prometer o que a tela não entrega é
 o portão da promessa.
+
+---
+
+## 💰 CARTELA: A REGRA ESTAVA ESCRITA E MESMO ASSIM SE PERDEU (ago/2026)
+
+O Marcos: *"tem como otimizar as imagens em cartela para não gastar tanto? Tem
+até isso registrado nos manuais"*. Tinha, com todas as letras, no
+`MANUAL-MESTRE` §"REGRA FIXA": *"SEMPRE tentar gerar em CARTELA... Nunca gerar
+pose por pose separada"*.
+
+**O que eu realmente fiz na cartografia** (contado, não estimado): 45 imagens.
+
+| grupo | peças | uma a uma | em cartela |
+|---|---|---|---|
+| avatares | 6 | 6 chamadas | 1 |
+| símbolos da legenda | 8 | 8 | 1 |
+| objetos de lado/de cima | 12 | 12 | 2 |
+| props (bússola, lousa, armário…) | 4 | 4 | 1 |
+| medalha, verso, recado, lupa | 5 | 5 | 1 |
+| **mascote (base + falar + piscar)** | 3 | 3 | **3 — tem que ser edição** |
+| cenas (voo, escala, fundo, mapa) | 11 | — | **Pollinations, de graça** |
+
+**~R$9,00 → ~R$1,60. 82% do dinheiro pela janela** — e o pior nem é o dinheiro:
+peça gerada sozinha sai com luz e escala próprias, então as 8 da legenda nunca
+ficam irmãs. Cartela conserta as duas coisas de uma vez.
+
+**Por que se perdeu:** porque a regra dependia de eu lembrar dela na hora certa
+— e a hora certa é lá no começo, quando estou pensando em conteúdo, não em
+custo. Regra que depende de memória não é regra: é sorte.
+
+**O que passou a existir:**
+- **`_qa/cartela.py`** (portão do custo) — roda em cima do lote ANTES de acionar
+  o workflow e **reprova** 3+ peças recortáveis indo uma a uma, imprimindo o
+  gasto dos dois jeitos. Classifica cena (grátis), edição do mascote (uma a uma
+  mesmo) e peça (cartela).
+- **`_padrao/cartela.py plano`** — agrupa em cartelas de até 8 e escreve os
+  prompts prontos (grade NxM, fundo preto liso, mesma escala e mesma luz).
+- **`_padrao/cartela.py cortar`** — recorta a folha que voltou já com os NOMES
+  certos, em ordem de leitura, e monta a **folha de conferência** em xadrez.
+- ⚠️ **um cérebro só:** a classificação mora no `_padrao/cartela.py` e o portão
+  a IMPORTA. Na primeira versão a regra estava escrita nos dois arquivos e eles
+  já discordaram na estreia (um contou 3 peças, o outro 2) — porque o
+  classificador procurava "room" no prompt e casou com "classROOM board".

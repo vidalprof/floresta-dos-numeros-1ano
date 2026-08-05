@@ -74,6 +74,20 @@ Leia tudo antes de agir e responda sempre em **português**.
 > `git pull` para trazer o resultado. Fluxo completo de atividade: ver o
 > "PROCESSO OFICIAL" no topo do `MANUAL-MESTRE.md`.
 
+> ## 💰 IMAGEM SE GERA EM CARTELA — E ISSO É MEDIDO (cobrança do Marcos, ago/2026)
+> Palavras dele: *"tem como otimizar as imagens em cartela para não gastar tanto?
+> Tem até isso registrado nos manuais"*. Tinha — e mesmo assim a cartografia saiu
+> com **45 imagens geradas uma a uma** (~R$9,00) onde ~R$1,60 bastava. **Antes de
+> acionar qualquer geração de imagem, rodar `python3 _qa/cartela.py
+> _gerar_imagens.json`** (portão do custo: reprova 3+ peças recortáveis indo uma a
+> uma e diz a economia). Para agrupar e recortar: `python3 _padrao/cartela.py plano`
+> e `python3 _padrao/cartela.py cortar <folha> nome1,nome2,... --dest <pasta>`.
+> Cartela não é só dinheiro: peça gerada junto sai **irmã** das outras (mesma luz,
+> mesma escala). Ficam fora da cartela só as camadas do mascote (`_fala`/`_pisca`,
+> que são EDIÇÃO da pose parada, senão ele treme) e as cenas largas (Pollinations,
+> de graça). ⚠️ **O Gemini está SEM CRÉDITO** (HTTP 429 "prepayment credits
+> depleted") — recarregar em https://ai.studio/projects.
+
 > **⭐ TODA ATIVIDADE NOVA NASCE COM O `_padrao/FIM-DE-ATIVIDADE.md`** (decisão do Marcos,
 > ago/2026: *"coloque isso para as novas que criarmos já ter essas regras"*). São 4 itens
 > NÃO negociáveis no fim de qualquer atividade: (1) **boletim animado** para a criança —

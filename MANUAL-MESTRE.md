@@ -456,6 +456,31 @@ Para qualidade premium, gerar os assets-chave como **imagens 3D (estilo Pixar/ú
 >    peças por cartela, `enhance=true`, `seed` fixo, ou grade explícita no prompt
 >    ("grade 2x3, cada quadro com uma pose, bem separadas, fundo branco"). Só depois de
 >    esgotar o grátis é que se cogita o Gemini pago.
+>
+> **⭐ AGORA A REGRA É MEDIDA, NÃO LEMBRADA (ago/2026).** Ela estava escrita aqui
+> desde sempre e mesmo assim se perdeu: a cartografia saiu com **45 imagens
+> geradas uma a uma** (~R$9,00) onde 5 cartelas + 3 edições do mascote (~R$1,60)
+> dariam o mesmo — e ainda com cada peça saindo de um jeito. O Marcos cobrou:
+> *"tem como otimizar as imagens em cartela para não gastar tanto? Tem até isso
+> registrado nos manuais"*. Regra que só vive na memória de quem leu o manual não
+> é regra, é sorte. Então virou ferramenta:
+>
+> - **`python3 _qa/cartela.py _gerar_imagens.json`** — o PORTÃO DO CUSTO. Roda
+>   **antes** de acionar o `gerar-imagens.yml`/`finalizar.yml` e **reprova** se há
+>   3+ peças recortáveis indo uma a uma. Diz quanto custa assim e quanto custaria
+>   em cartela.
+> - **`python3 _padrao/cartela.py plano _gerar_imagens.json`** — agrupa em cartelas
+>   de até 8 peças e escreve os prompts prontos em `_lote_cartelas.json` (grade
+>   NxM, fundo preto liso, mesma escala e mesma luz para todas).
+> - **`python3 _padrao/cartela.py cortar <folha.png> nome1,nome2,... --dest <pasta>`**
+>   — recorta a folha que voltou já com os NOMES certos, em ordem de leitura, e
+>   monta uma **folha de conferência** em xadrez para OLHAR antes de embutir.
+>   (Folha do ChatGPT costuma vir com fundo CREME, não preto: aí o recorte é o de
+>   `_mapa/cortar_props.py`, que trata a sombra e a tarja do celular.)
+>
+> **Fica de fora da cartela, sempre:** as camadas do mascote (`_fala`, `_pisca`),
+> que TÊM que ser **edição** da pose parada senão ele treme (`_qa/mascote.py`); e
+> as **cenas largas**, que não precisam de recorte e vão no Pollinations de graça.
 
 O **Claude gera imagens sozinho** via o workflow `gerar-imagens.yml` (no `main`), sem o Marcos subir nada. **Duas plataformas, estratégia de custo:**
 - 🆓 **Pollinations (Flux) — GRÁTIS, sem chave, PADRÃO.** `modelo=free`. **Excelente para CENAS/paisagens/fotos de clima/texturas/UM item sozinho.** Fundo sai **escuro-degradê** (não preto liso) → **não serve pra recorte com fundo transparente**. Fraqueza: **cartela cheia de itens EMBOLA** (não segue lista longa).
