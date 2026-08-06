@@ -153,7 +153,32 @@ ser, para a criança, *a mesma tela pela terceira vez*.
 
 ---
 
-## 3. A VOZ — as cinco regras que já custaram caro
+## 3. A VOZ — quanto narrar por ano, e as cinco regras que já custaram caro
+
+### 3-A. A DOSE MUDA COM O ANO (regra do Marcos, ago/2026)
+
+> *"a questão do áudio também: mais necessário para os pequenos; porém os maiores
+> já não gostam muito de ficar ouvindo fala toda hora — mas mesmo assim um botão
+> de som para ajudar os que não sabem ler nos anos finais"*.
+
+Ele está apontando duas coisas que parecem opostas e não são:
+
+| Ano | Quanto a voz toca SOZINHA | O botão de som |
+|---|---|---|
+| **Pré · 1º · 2º** (~5–8) | **TUDO, sempre.** Cada tela, cada dica, cada explicação toca sozinha. Nada essencial fica só escrito | em tudo: enunciado **e** cada resposta |
+| **3º · 4º · 5º** (~8–11) | os **momentos-chave**: o problema/convite, a pergunta de cada rodada, o acerto com a descoberta, a virada | enunciado **e** cada resposta |
+| **6º ao 9º** (~11–14) | **narração leve**: abertura, viradas e incentivo. Curta. **Não** tocar a cada tela — nessa idade voz demais irrita e eles desligam o som (e aí perdem até o que precisavam) | **continua em tudo, mas só quando ELE toca.** Nos anos finais ainda há criança que não lê fluente, e ela não pode ser exposta: o botão está lá, discreto, e ninguém vê quem usou |
+
+**A regra que junta as duas pontas:** *nos anos finais a voz não se impõe — ela
+fica disponível.* Tirar o botão porque "eles já leem" abandona exatamente a
+criança que mais precisa, e de um jeito que ninguém percebe. Deixar tocando
+sozinho o tempo todo faz o resto da turma desligar o som e perder o que importa.
+
+⚠️ Vale para as respostas também: `op_<chave>.mp3` em toda opção tocável, em
+todos os anos. Muda o **auto-play**, não o **acesso**.
+*(base: `NARRACAO-POR-IDADE-2026-07.md`)*
+
+### 3-B. As cinco regras que já custaram caro
 
 1. **O `falas.json` é a verdade.** Escreveu o texto ali, a voz sai (o
    `entregar.yml` grava sozinho o que falta ou mudou). Sem ele não há como
