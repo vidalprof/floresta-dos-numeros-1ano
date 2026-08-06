@@ -1548,6 +1548,12 @@ function hPovos(){
   var cols=el("div","cols"),ce1=el("div","col"),ce2=el("div","col"),i;
   for(i=0;i<POVOS.length;i++){(function(k){
     var d=el("div","lig povo");
+    /* ⚠️ os DOIS lados publicam a mesma chave (`p0`, `p1`...), e com prefixo.
+       Antes so o lado direito publicava, e o valor era o numero cru: o `data-qa
+       ="1"` do par 1 batia com a convencao "1 = a resposta que serve AGORA", e
+       o auditor jogador tocava eternamente nele. Par de ligar se declara aos
+       pares — e nunca com um valor que possa ser lido como "e esta".        */
+    d.setAttribute("data-qa","p"+k);
     d.appendChild(imgEl(POVOS[k].img,"povoimg"));
     d.appendChild(el("span","",POVOS[k].n));
     d.onclick=function(){ if(d._ok)return; arma(); sTap();
@@ -1558,7 +1564,7 @@ function hPovos(){
   })(i);}
   for(i=0;i<dir.length;i++){(function(k){
     var d=el("div","lig",POVOS[k].d);
-    d.setAttribute("data-qa",""+k);
+    d.setAttribute("data-qa","p"+k);
     d.onclick=function(){ if(d._ok)return; arma();
       if(selE===null){ mostraDica("Primeiro toque num <b>povo</b>, do lado de cima."); return; }
       if(selE===k){ d._ok=1; d.className="lig ok"; feitos++; sPop(feitos);
@@ -1750,7 +1756,11 @@ function hMarca(){
       if(ehAlvo) p.setAttribute("data-qa","1");
       p.onclick=function(){ arma();
         if(fim||p.className.indexOf("pint")>=0) return;
-        if(ehAlvo){ p.className="pal pint "+cor; sPop(alvo.length-falta); falta--;
+        /* ⚠️ a palavra pintada SAI do data-qa: a tela nao pode continuar
+           dizendo "e esta aqui" depois de ela ja estar feita (o auditor
+           jogador — e a crianca teimosa — ficam tocando na mesma). */
+        if(ehAlvo){ p.className="pal pint "+cor; p.setAttribute("data-qa","0");
+          sPop(alvo.length-falta); falta--;
           cont.innerHTML= falta>0 ? "Faltam "+falta : "Achou todas!";
           var ce=centroTela(p); faisca(ce[0],ce[1],cor==="perm"?"#6bd23f":"#ffb45e",8);
           if(falta<=0){ fim=true; sCerto(); reg(rodada===0?"permanencia":"mudanca",err===0,err+1);

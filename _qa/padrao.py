@@ -32,6 +32,18 @@ if not alvo:
 html = open(alvo, encoding="utf-8").read()
 js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
 
+# ⚠️ COMENTÁRIO NÃO É CÓDIGO. Este portão acha as fases procurando funções que
+#    chamam `limpa()` — e passou a acusar a função `falar()` como "fase muda"
+#    porque o comentário DELA explica a regra escrevendo `limpa()` no meio do
+#    texto. Um portão que lê comentário reprova quem documenta bem, que é
+#    exatamente o contrário do que a casa quer. Fora os comentários, então —
+#    preservando as quebras de linha, que o resto da análise usa.
+def _sem_comentario(t):
+    t = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), t, flags=re.S)
+    return re.sub(r"(?m)^(\s*)//.*$", r"\1", t)
+
+js = _sem_comentario(js)
+
 # ---- as telas: mesma regra do _qa/fluxo.py (funcao que chama limpa())
 def corpo_de(nome, texto, pos):
     j = texto.find("{", pos)

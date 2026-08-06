@@ -131,6 +131,20 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
        const dest=[...document.querySelectorAll('.cam[data-qa]')].find(e=>e.getAttribute('data-qa')===peca.getAttribute('data-qa')&&e.className.indexOf('ok')<0);
        if(dest){ dest.click(); return 1; }
      }
+     /* LIGAR (duas colunas): os dois lados publicam a MESMA chave em data-qa
+        (`p0`, `p1`...). Sem esta parte o jogador tocava ao acaso de um lado e do
+        outro e, no molde do 4o ano, ficava PRESO: la o lado direito publicava o
+        numero cru do par, e o `data-qa="1"` batia com a convencao "1 = serve
+        agora" — ele tocava eternamente no mesmo. Aqui ele faz o que a crianca
+        faz: escolhe um da esquerda e procura o par dele na direita. */
+     const ligs=[...document.querySelectorAll('.lig[data-qa]')]
+       .filter(e=>e.offsetParent!==null&&e.className.indexOf('feita')<0&&e.className.indexOf('ok')<0);
+     if(ligs.length>1){
+       const sel=ligs.find(e=>e.className.indexOf('sel')>=0);
+       if(!sel){ ligs[0].click(); return 1; }
+       const par=ligs.find(e=>e!==sel&&e.getAttribute('data-qa')===sel.getAttribute('data-qa'));
+       if(par){ par.click(); return 1; }
+     }
      /* a mesma ideia com .peca -> linha de destino que publica data-vaga
         (e o molde de "monte a legenda"): toca na peca e depois na linha certa. */
      const pcs2=[...document.querySelectorAll('.peca[data-qa]')]
