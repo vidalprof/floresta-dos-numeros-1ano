@@ -124,12 +124,34 @@ Não é a barra de progresso (isso é sintoma). É a escada do aprender:
 - **Concreto → figural → simbólico.** Manuseia (a maquete, o voo, o porão do
   navio) → vê a figura → só então encontra o símbolo, a letra, a palavra.
   **Medida:** o primeiro símbolo não pode aparecer antes do primeiro figural.
+- **⬇️ E o degrau tem caminho de VOLTA.** Bruner não é escada de mão única: quando
+  o símbolo emperra, a MESMA fase tem que deixar descer ao concreto (ver de novo a
+  figura, contar de novo as peças). Sem isso, quem trava no símbolo trava e pronto.
+  `→ PEDAGOGIA-APRENDIZAGEM-CONCRETA` (destilado em `_pesquisa/REGRAS-APRENDIZAGEM.md`)
 - **O andaime CRESCE a cada erro:** 1º erro = dica que faz pensar; 2º = consolo +
-  apoio concreto; 3º = revela e segue. **Nunca** a mesma dica três vezes.
+  apoio concreto; 3º = **apoio máximo — e a criança AINDA produz**. **Nunca** a
+  mesma dica três vezes.
+  - 🚫 **O 3º nível NÃO entrega a resposta do item que está sendo avaliado.**
+    Corrigido em ago/2026 depois de ler a pesquisa: quem pode clicar até sair a
+    resposta aprende ~2/3 do normal (Baker, "burlar o sistema"). O molde certo é
+    **"mostro UM, você faz o resto"** — preenche um exemplo, acende uma fileira,
+    mas a mão que responde continua sendo a dela.
+    `→ PESQUISA-AJUDA-E-AVALIACAO`
   - ⚠️ **Em fase sem "errar"** (caça-palavras, exploração, memória) o andaime
     cresce pelo **tempo parado**, não pelo erro. Empacar calado é onde a criança
     desiste, e ninguém vê. 25s → diz o que procurar; 50s → acende o começo.
-- **Aquecimento no meio** (revisão espaçada), não no fim.
+- **Aquecimento no meio — e ele NÃO é a revisão espaçada.** São duas coisas, e
+  confundi-las fez a gente achar que cumpria as duas cumprindo uma:
+  - **Aquecimento** = prática de recuperação e intercalação DENTRO da sessão. Vai
+    no meio (o portão do pedagogo mede: entre 25% e 65% do caminho).
+  - **Revisão espaçada** = caixas de **1 / 3 / 7 / 14 dias**, disparada quando a
+    criança volta **noutro dia**, no máximo 1 por dia. É o que faz o aprendido
+    FICAR — e é a única coisa que mede retenção de verdade.
+    `→ MODELO-APRENDIZAGEM-EDUCAVERSO`
+- **A régua de sucesso é TRANSFERÊNCIA + RETENÇÃO, não estrela nem tempo no app.**
+  Na prática: uma fase final **de propósito sem dica e sem apoio**, com item novo,
+  e a medição dias depois pelo Aquecimento ("X de Y reacendidos de primeira").
+  Sem isso a atividade termina no gancho e ninguém sabe se ensinou.
 - **Uma ideia por tela.** Enunciado curto, narração junto com a figura.
 - **Nunca prova disfarçada.** Nota nunca; parecer sempre.
 - **Fecho com gancho** — termina deixando pergunta aberta.
@@ -166,7 +188,7 @@ Ele está apontando duas coisas que parecem opostas e não são:
 | Ano | Quanto a voz toca SOZINHA | O botão de som |
 |---|---|---|
 | **Pré · 1º · 2º** (~5–8) | **TUDO, sempre.** Cada tela, cada dica, cada explicação toca sozinha. Nada essencial fica só escrito | em tudo: enunciado **e** cada resposta |
-| **3º · 4º · 5º** (~8–11) | os **momentos-chave**: o problema/convite, a pergunta de cada rodada, o acerto com a descoberta, a virada | enunciado **e** cada resposta |
+| **3º · 4º · 5º** (~8–11) | os **momentos-chave**: o problema/convite, a pergunta de cada rodada, o acerto com a descoberta, a virada — **e mais dois que a pesquisa marca como obrigatórios nesta faixa: CONTAR JUNTO em voz alta sempre que houver contagem ("uma… duas… três… quatro! cheia!"), e a DICA FALADA quando ela erra** | enunciado **e** cada resposta |
 | **6º ao 9º** (~11–14) | **narração leve**: abertura, viradas e incentivo. Curta. **Não** tocar a cada tela — nessa idade voz demais irrita e eles desligam o som (e aí perdem até o que precisavam) | **continua em tudo, mas só quando ELE toca.** Nos anos finais ainda há criança que não lê fluente, e ela não pode ser exposta: o botão está lá, discreto, e ninguém vê quem usou |
 
 **A regra que junta as duas pontas:** *nos anos finais a voz não se impõe — ela
@@ -262,7 +284,16 @@ todos os anos. Muda o **auto-play**, não o **acesso**.
   `setTimeout` fixo.
 
 ### Quiz / escolher
+> ⚖️ **O limite, decidido em ago/2026 depois de ler as pesquisas.** O pedagogo do
+> `PEDAGOGIA-VYGOTSKY-DINAMICAS` diz "quiz nunca é opção", e a auditoria registra
+> as 3 paradas de escolher que foram **redesenhadas para produção** — porque
+> produzir retém 30–50% mais que reconhecer. A regra honesta da casa: **quiz
+> continua valendo como gesto de VARIEDADE, mas nunca carrega a evidência
+> principal de um conceito.** Onde o conceito é medido, a criança PRODUZ
+> (contadores, construção, teclado de dígitos). Mirar ≤ 2 telas de quiz em 20.
 - Cada opção com alto-falante.
+- **Embaralhar as opções.** Defeito já pago: na Fábrica de Estrelas a certa era
+  sempre a 1ª, e a criança aprendeu a posição, não o conteúdo.
 - Distratores plausíveis, nunca absurdos.
 - A dica da barra tem que falar da **tela que está ali** ("de cima você vê o
   telhado" numa tela de mesa e carro não bate).
@@ -270,6 +301,16 @@ todos os anos. Muda o **auto-play**, não o **acesso**.
 ---
 
 ## 5. AS ARMADILHAS QUE NÃO SÃO DE NENHUMA DINÂMICA
+
+**📏 O alvo de toque: 40 px no portão, 44 px na pesquisa — e por quê.**
+O `_qa/leiaute.js` reprova abaixo de **40 px**; a pesquisa de acessibilidade pede
+**≥ 44 px** para criança que ainda não lê. São 4 px que o portão deixa passar, e
+isso está aqui escrito de propósito, para não parecer descuido: **até o 2º ano
+mirar 44 px**, porque o dedo é menor e a criança erra o alvo antes de errar a
+resposta; do 3º em diante 40 px é o piso que ainda cabe numa grade de
+caça-palavras sem quebrar a linha. Onde der para dar 44, dê.
+`→ AUDITORIA-APRENDIZAGEM-E-DINAMICAS` (destilado em `_pesquisa/REGRAS-APRENDIZAGEM.md`)
+
 
 - **Fecho de fase nunca deixa a tela vazia falando** — usar `fechaFase()`.
 - **O enunciado nunca encosta** no que vem depois (6px de folga; é regra do
