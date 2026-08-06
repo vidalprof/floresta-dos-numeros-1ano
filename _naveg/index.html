@@ -2201,6 +2201,7 @@ function mPinta(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","A L&#205;NGUA GUARDA"));
     c.appendChild(el("div","balao","Pinte de "+it.rot+" "+it.tit+"."));
+    falaDaTela("nv_pinta_q"+rodada);
     var cont=el("div","placar","Faltam "+falta);c.appendChild(cont);
     var par=el("div","paragrafo"),i;
     for(i=0;i<TXPAL.length;i++){(function(w){
@@ -2730,6 +2731,10 @@ function mEnsinar(){
       var c2=el("div","centro");
       c2.appendChild(nicoEl("gg"));
       c2.appendChild(el("div","selo","O AR&#193; ENTENDEU!"));
+      /* a frase e da CRIANCA: nao existe audio pronto para o que ela montou.
+         A voz desta tela e o nv_ensinar_revela, que fala sobre ela. A linha
+         abaixo e a marca que o _qa/vozpergunta.py le (comentario ele apaga). */
+      "sem voz: frase montada pela crianca";
       c2.appendChild(el("div","balao","<b>"+frase.join(" ")+"</b>"));
       c2.appendChild(el("div","balao pequeno","Foi voc&#234; que ensinou isso para mim. Obrigado!"));
       var b=el("button","btn dourado","Pegar a minha medalha");b.style.marginTop="14px";

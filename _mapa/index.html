@@ -681,7 +681,10 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .bin.nao{background:-webkit-linear-gradient(top,#e2503f,#a32a1c);background:linear-gradient(#e2503f,#a32a1c)}
 /* a tela final ficou mais alta com o boletim e o botao de treino sumia atras
    da barra de baixo (armadilha ja anotada no _padrao/FIM-DE-ATIVIDADE.md) */
-.tela{padding-bottom:calc(118px + env(safe-area-inset-bottom))}
+/* ⚠️ MEDIDO (ago/2026): com 118px a barra fixa ainda cobria conteudo em 16
+   fases numa tela de 360x640 — a dica, os simbolos da legenda, as teclas da
+   forca. A barra tem ~56px e fica a 10px do fim; o resto e folga para o dedo. */
+.tela{padding-bottom:calc(152px + env(safe-area-inset-bottom))}
 .centro.topo{-webkit-box-pack:start;-webkit-justify-content:flex-start;justify-content:flex-start}
 /* a tela final junta medalha + cracha + boletim + dois botoes: no telefone ela
    passava de 1000px e o botao de treino ficava ATRAS da barra de baixo. Aqui
@@ -722,6 +725,21 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* ORDENAR: o trilho da legenda, vaga numerada */
 .trilho{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;
   -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;width:100%}
+
+/* ⚠️ MONTE A LEGENDA em tela baixa: com 5 linhas de 54px mais os simbolos, a
+   fileira de pecas caia atras da barra fixa e a crianca nem via que havia peca
+   para pegar (foto do Marcos, ago/2026: "sobreposicao de enunciado e opcao de
+   respostas"). Rolar resolvia, mas ninguem rola o que nao sabe que existe.
+   Entao a fase ENCOLHE para caber: linha mais baixa, simbolo menor, folha mais
+   estreita. O alvo continua acima do piso de 40px do portao de leiaute.     */
+@media (max-height:860px){
+  .tvaga{min-width:74px;height:44px}
+  .clin{gap:6px;padding:5px 8px}
+  .folha{padding:9px 11px}
+  .clin .ctx{font-size:15px}
+  .pecas .peca{padding:6px 9px}
+  .peca .pecaimg{width:40px;height:40px}
+}
 .tvaga{min-width:92px;height:54px;padding:0 12px;border-radius:14px;border:2px dashed #b6ab90;
   background:rgba(253,251,243,.94);color:#6b6252;font-size:17px;font-weight:800;
   display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;
@@ -1669,10 +1687,12 @@ function mVoo(){
 /* ---------- 4) DE CIMA OU DE LADO? (escolher) ----------
    Concreto -> figural (Bruner/CPA): a criança já viu a praça mudar; agora
    olha UM objeto e escolhe, entre três desenhos, o que é a vista de cima.  */
-var VISTAS=[{n:"mesa",   rot:"a mesa"},
-            {n:"carro",  rot:"o carro"},
-            {n:"cadeira",rot:"a cadeira"},
-            {n:"piscina",rot:"a piscina"}];
+/* ⚠️ `de` e a forma CONTRAIDA. Montando a frase com `rot` saia "voando bem em
+   cima A MESA" e "o contorno de A MESA" — portugues errado, e a crianca le. */
+var VISTAS=[{k:0,n:"mesa",   rot:"a mesa",    de:"da mesa"},
+            {k:1,n:"carro",  rot:"o carro",   de:"do carro"},
+            {k:2,n:"cadeira",rot:"a cadeira", de:"da cadeira"},
+            {k:3,n:"piscina",rot:"a piscina", de:"da piscina"}];
 function mDeCima(){
   var fila=baguncar(VISTAS.slice(0)),idx=0,err=0;
   function passo(){
@@ -1680,7 +1700,8 @@ function mDeCima(){
     var it=fila[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","DE CIMA OU DE LADO?"));
-    c.appendChild(el("div","balao","O Nico est&#225; voando bem em cima <b>"+it.rot+"</b>. Qual destes desenhos &#233; o que ele <b>v&#234; l&#225; de cima</b>?"));
+    c.appendChild(el("div","balao","O Nico est&#225; voando bem em cima <b>"+it.de+"</b>. Qual destes desenhos &#233; o que ele <b>v&#234; l&#225; de cima</b>?"));
+    falaDaTela("mp_voo_q"+it.k);
     var mold=el("div","moldurafoto");
     mold.appendChild(cenaImg("mp_"+it.n+"_l","fotoreal"));
     mold.appendChild(el("div","fotocred","assim voc&#234; v&#234; do ch&#227;o"));
@@ -1708,7 +1729,7 @@ function mDeCima(){
         } else { err++; g.className="gfoto no"; sErro();
           setTimeout(function(){ if(g.className==="gfoto no") g.className="gfoto"; },500);
           if(err===2){ consolo(); mostraDica("Feche um olho e imagine que voc&#234; est&#225; no <b>teto</b>, olhando para baixo."); }
-          if(err>=3) mostraDica("Procure o <b>contorno</b> de "+it.rot+": s&#243; a forma, sem a frente.");
+          if(err>=3) mostraDica("Procure o <b>contorno</b> "+it.de+": s&#243; a forma, sem a frente.");
         }
       };
       box.appendChild(g);
@@ -1783,8 +1804,16 @@ function mSombra(){
 /* ⚠️ as posicoes sao MEDIDAS na arte do mapa (mp_mapa), nao chutadas: a igreja
    fica a 32% da largura e 28% da altura, e por ai vai. Chutar deixa o alvo ao
    LADO da coisa e a crianca toca no lugar certo e leva "errado".            */
-var NAMAQ=[{q:"a <b>igreja</b>",x:32,y:28},{q:"a <b>ponte</b>",x:52,y:72},
-           {q:"o <b>rio</b>",x:24,y:76},{q:"a <b>pra&#231;a com as &#225;rvores</b>",x:51,y:52}];
+/* ⚠️ REMEDIDO na arte NOVA (ago/2026). O mapa antigo NAO era o mesmo lugar da
+   maquete — e a fase inteira existe para mostrar que sao o mesmo lugar, um com
+   altura e outro achatado. Faltava ate a PONTE, que a fase pedia (cobranca do
+   Marcos). Agora o mapa e a maquete vista de cima: igreja a esquerda, praca no
+   meio, casas de telhado vermelho a direita, rio embaixo e a ponte sobre ele.
+   Cada alvo abaixo foi medido por COR na figura, nao no olho.              */
+var NAMAQ=[{q:"a <b>igreja</b>",x:26,y:23},
+           {q:"a <b>pra&#231;a com as &#225;rvores</b>",x:46,y:50},
+           {q:"a <b>ponte</b>",x:48,y:81},
+           {q:"o <b>rio</b>",x:28,y:71}];
 function mMaquete(){
   var idx=0,err=0;
   function passo(){
@@ -1794,6 +1823,10 @@ function mMaquete(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","DA MAQUETE AO MAPA"));
     c.appendChild(el("div","balao","Na maquete voc&#234; v&#234; "+it.q+". Ache <b>o mesmo lugar</b> no mapa e toque nele."));
+    /* ⚠️ a narracao tem que dizer a COISA desta rodada. Antes so tocava a
+       abertura da fase, e a palavra "ponte" nunca era falada — quem nao le
+       ficava sem saber o que procurar. */
+    falaDaTela("mp_maq_q"+idx);
     var lado=el("div","cols");
     var m1=el("div","moldurafoto");
     m1.appendChild(cenaImg("mp_maquete","fotoreal"));
@@ -1806,10 +1839,18 @@ function mMaquete(){
     alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
     alvo.setAttribute("data-qa","1");
     alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
-      if(fim) return; fim=true; arma(); alvo.className="achado mira ok"; sCerto();
+      if(fim) return; fim=true; arma(); sCerto();
+      /* ⚠️ NADA DE QUADRADO BRANCO EM CIMA DO MAPA (cobranca do Marcos, ago/2026:
+         "quando se clica na ponte aparece um quadrado branco"). O alvo some e no
+         lugar acende uma LUZ redonda com o nome da coisa — o mesmo que ja se faz
+         no "bairro la de cima". */
+      alvo.style.display="none";
+      var luz=el("div","luzok"); luz.style.left=it.x+"%"; luz.style.top=it.y+"%"; cena.appendChild(luz);
+      var tx=el("div","luztx",(it.q.replace(/<[^>]+>/g,"")).toUpperCase());
+      tx.style.left=it.x+"%"; tx.style.top="calc("+it.y+"% + 44px)"; cena.appendChild(tx);
       reg("dimensao",err===0,err+1);
-      var ce=centroTela(alvo); faisca(ce[0],ce[1],"#6bd23f",14);
-      setTimeout(function(){ idx++; err=0; passo(); },1000);
+      var ce=centroTela(luz); faisca(ce[0],ce[1],"#ffd43b",16);
+      setTimeout(function(){ idx++; err=0; passo(); },1400);
     };
     cena.appendChild(alvo);
     cena.onclick=function(){ if(fim) return; err++; sErro();
@@ -1828,9 +1869,21 @@ function mMaquete(){
 /* ---------- 7) ONDE FICA? (classificar — relações projetivas) ----------
    "Relações espaciais projetivas e a descentralização: direita e esquerda,
    frente e atrás, em cima e embaixo" (currículo, verbatim).               */
-var ONDE=[["a igreja","esq"],["as casas de telhado vermelho","dir"],
-          ["a pra&#231;a com as &#225;rvores","meio"],["a ponte","meio"],
-          ["o rio","baixo"],["a torre da igreja","esq"]];
+/* ⚠️ REFEITA (cobranca do Marcos, ago/2026): *"peca para classificar em cima,
+   no meio e embaixo, porque a direita e a esquerda ficou confuso com relacao as
+   casas"*. Ele esta certo por dois motivos:
+   1. as gavetas misturavam DOIS eixos (esquerda/direita com meio/embaixo) — nao
+      da para classificar direito quando as caixas nao sao do mesmo tipo;
+   2. nesta figura a igreja e as casas estao praticamente na MESMA altura, uma
+      ao lado da outra: "esquerda" e "direita" viram discussao, nao aprendizado.
+   O mapa (mp_mapa) se divide sozinho em tres faixas horizontais bem limpas:
+   igreja e casas EM CIMA, a praca verde NO MEIO, o rio EMBAIXO. Medido na arte.
+   ⚠️ E saiu "a ponte", que a fase pedia e que NAO EXISTE nesta figura.       */
+var ONDE=[{k:0,q:"a <b>igreja</b>",                       d:"cima"},
+          {k:1,q:"a <b>casa</b> de telhado vermelho l&#225; em cima", d:"cima"},
+          {k:2,q:"a <b>pra&#231;a</b> verde",                 d:"meio"},
+          {k:3,q:"o <b>rio</b>",                          d:"baixo"},
+          {k:4,q:"a <b>ponte</b>",                        d:"baixo"}];
 function mOndeFica(){
   limpa();var t=el("div","tela");setProg(t,42);
   var fila=baguncar(ONDE.slice(0)),i=0,err=0,contas={};
@@ -1841,7 +1894,7 @@ function mOndeFica(){
   mini.appendChild(cenaImg("mp_mapa","fotoreal"));
   c.appendChild(mini);
   var cxs=el("div","gavetas");
-  var chaves=[["esq","&#192; ESQUERDA"],["meio","NO MEIO"],["dir","&#192; DIREITA"],["baixo","EMBAIXO"]];
+  var chaves=[["cima","EM CIMA"],["meio","NO MEIO"],["baixo","EMBAIXO"]];
   var ns={};
   var z;
   for(z=0;z<chaves.length;z++){(function(k,rot){
@@ -1855,12 +1908,13 @@ function mOndeFica(){
   c.appendChild(cxs);
   function mostra(){
     if(i>=fila.length){ fechaFase("ONDE FICA NO MAPA?","No mapa d&#225; para dizer <b>onde</b> cada coisa fica &#8212; e todo mundo entende igual.","mp_onde_revela",10000,mRoteiro,42); return; }
-    bal.innerHTML="No mapa, ache <b>"+fila[i][0]+"</b>."; falaDaTela("mp_onde_q"+fila[i][1]);
-    bal.setAttribute("data-qa",fila[i][1]);
+    bal.innerHTML="No mapa, onde fica "+fila[i].q+"? Em cima, no meio ou embaixo?";
+    falaDaTela("mp_onde_q"+fila[i].k);
+    bal.setAttribute("data-qa",fila[i].d);
   }
   function resp(k,d){ arma();
     if(i>=fila.length) return;
-    if(k===fila[i][1]){ contas[k]++; ns[k].innerHTML=""+contas[k]; sPop(i); sCerto();
+    if(k===fila[i].d){ contas[k]++; ns[k].innerHTML=""+contas[k]; sPop(i); sCerto();
       reg("posicao",err===0,err+1);
       var ce=centroTela(d); faisca(ce[0],ce[1],"#6bd23f",10);
       i++; err=0; mostra();
@@ -1895,6 +1949,7 @@ function mRoteiro(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","O ROTEIRO DO NICO"));
     c.appendChild(el("div","balao","Monte o caminho "+it.t+". Toque nas setas <b>na ordem certa</b>."));
+    falaDaTela("mp_rota_q"+idx);
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_mapa","jimg"));
     var passaro=el("div","voando");
@@ -2274,12 +2329,13 @@ function mRosa(){
    as celulas que ele ocupa (a arvore pega duas, o rio pega a linha inteira),
    pela mesma licao da ponte: numa figura, coisa grande nao cabe num
    quadradinho so.                                                          */
-var COORD=[{q:"a <b>igreja</b>",cels:["B1","B2"]},
-           {q:"as <b>casas</b> de telhado vermelho",cels:["B2","B3"]},
-           {q:"a <b>copa da &#225;rvore</b> da pra&#231;a",cels:["C2","C3"]},
-           {q:"a <b>linha de baixo</b> do mapa, por onde passa o rio",cels:["D1","D2","D3","D4"],unico:1},
-           {q:"a <b>linha de cima</b> do mapa, que est&#225; vazia",cels:["A1","A2","A3","A4"],unico:1},
-           {q:"o lugar onde o <b>rio passa por baixo</b> da &#225;rvore",cels:["D2","D3"]}];
+/* ⚠️ UMA celula por item (a tela DA a coordenada e so ela vale), medida por cor
+   na arte nova: onde a coisa tem mais pixels.                              */
+var COORD=[{q:"a <b>igreja</b>",cels:["A2"]},
+           {q:"as <b>casas</b> de telhado vermelho",cels:["B4"]},
+           {q:"a <b>pra&#231;a</b> verde",cels:["C2"]},
+           {q:"a <b>ponte</b>",cels:["D2"]},
+           {q:"o <b>rio</b>",cels:["D3"]}];
 function mCoord(){
   var idx=0,err=0;
   function passo(){
@@ -2288,15 +2344,22 @@ function mCoord(){
     var it=COORD[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ACHE PELA COORDENADA"));
-    c.appendChild(el("div","balao","Onde est&#225; "+it.q+"? Toque no quadradinho do mapa."));
+    /* ⚠️ REFEITA (pedido do Marcos, ago/2026): *"na fase ache pela coordenada,
+       melhor colocar A1, D4 etc, assim fica mais facil achar pela coordenada"*.
+       Antes a tela perguntava "onde esta a igreja?" e a crianca ACHAVA A OLHO —
+       a coordenada nao era usada para nada. Agora a tela DA a coordenada e ela
+       tem que ler a letra (linha) e o numero (coluna) para chegar la, que e o
+       que a fase se propoe a ensinar. So a celula nomeada vale.             */
+    var alvo=it.cels[0];
+    c.appendChild(el("div","balao","Ache o quadradinho <b>"+alvo+"</b>. L&#225; tem "+it.q+"."));
+    falaDaTela("mp_coord_q"+idx);
     var qd=el("div","quadric");
     qd.appendChild(cenaImg("mp_mapa","qdimg"));
     var LET=["A","B","C","D"],i,j;
     for(i=0;i<4;i++) for(j=0;j<4;j++){(function(li,co){
       var cel=el("div","qcel");
       cel.style.left=(co*25)+"%"; cel.style.top=(li*25)+"%";
-      var meu=LET[li]+(co+1), vale=false, vv;
-      for(vv=0;vv<it.cels.length;vv++) if(it.cels[vv]===meu) vale=true;
+      var meu=LET[li]+(co+1), vale=(meu===alvo);
       cel.setAttribute("data-qa",vale?"1":"0");
       cel.onclick=function(){ arma();
         if(fim) return;
@@ -2307,7 +2370,7 @@ function mCoord(){
           setTimeout(function(){ idx++; err=0; passo(); },1100);
         } else { err++; cel.className="qcel no"; sErro();
           setTimeout(function(){ cel.className="qcel"; },420);
-          if(err===2){ consolo(); mostraDica("A <b>letra</b> diz a linha (de cima para baixo) e o <b>n&#250;mero</b> diz a coluna (da esquerda para a direita)."); }
+          if(err===2){ consolo(); mostraDica("Ache a linha <b>"+alvo.charAt(0)+"</b> na beirada de cima e desca; depois ande at&#233; a coluna <b>"+alvo.substring(1)+"</b>."); }
         }
       };
       qd.appendChild(cel);
@@ -2721,6 +2784,7 @@ function mDesenhe(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA DO BAIRRO"));
     c.appendChild(el("div","balao","Ponha o s&#237;mbolo "+it.q+" no lugar certo do bairro."));
+    falaDaTela("mp_des_q"+idx);
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_esc_bairro","jimg"));
     var alvo=el("div","achado mira");
@@ -2800,6 +2864,7 @@ function mAlto(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
     c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
+    falaDaTela("mp_alto_q"+idx);
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_bairro","jimg"));
     /* alvos INVISIVEIS, um por zona — servem ao auditor jogador (data-qa) e ao
@@ -3012,6 +3077,7 @@ function mAnde(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","ANDE AT&#201; O LUGAR"));
     c.appendChild(el("div","balao","O Nico est&#225; no canto. Diga o caminho at&#233; <b>"+it.n+"</b>, um passo por vez."));
+    falaDaTela("mp_ande_q"+idx);
     var tab=el("div","tabu"),i,j,cels={};
     for(i=0;i<N;i++) for(j=0;j<N;j++){(function(li,co){
       var q=el("div","tcel");

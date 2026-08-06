@@ -56,9 +56,27 @@ def main():
         return 0
 
     faltam, ok = [], 0
-    for m in re.finditer(r"\bbal\.innerHTML\s*=\s*(.{0,160})", js):
+    # ⚠️ BURACO QUE O MARCOS ACHOU (ago/2026): este portao so olhava
+    #    `bal.innerHTML=`. Mas ha fases que montam o balao DE NOVO a cada
+    #    rodada — `el("div","balao","Na maquete voce ve "+it.q+"...")` dentro
+    #    do `passo()`. Ali o texto muda igual, e a voz ficava na abertura: na
+    #    "maquete ao mapa" a palavra PONTE nunca era falada. Um portao que so
+    #    conhece UMA maneira de escrever a mesma coisa da uma falsa aprovacao,
+    #    que e pior do que nao ter portao.
+    #    Agora conta as duas formas: o balao REESCRITO e o balao CRIADO com um
+    #    pedaco variavel (`"+it.` / `"+fila[` / `"+PINTAS[`...).
+    ALVOS = [r"\bbal\.innerHTML\s*=\s*(.{0,160})",
+             r'el\("div","balao",\s*("[^"]*"\s*\+\s*\w+[^)]{0,160})']
+    for m in [mm for pad in ALVOS for mm in re.finditer(pad, js)]:
         texto = m.group(1)
         if CONTADOR.search(texto) or AVISO.search(texto):
+            continue
+        # ⚠️ texto MONTADO PELA CRIANCA (a frase que ela escreveu) nao tem como
+        #    ter audio pronto. A fase declara isso com a linha
+        #    `"sem voz: ...";` logo antes — e uma instrucao de verdade, nao um
+        #    comentario, porque comentario este portao apaga antes de olhar.
+        #    Declarar e melhor que adivinhar.
+        if "sem voz:" in js[max(0, m.start() - 400):m.start()]:
             continue
         # ⚠️ o proprio trecho capturado pode ja trazer a troca da voz (quando as
         #    duas coisas estao na MESMA linha) — senao o portao acusa a si mesmo
