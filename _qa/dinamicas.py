@@ -145,6 +145,26 @@ def main():
             ruins.append(u"escolher: as opcoes nao sao EMBARALHADAS. Na Fabrica de Estrelas a "
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
 
+    # ---------------------------------------------------- PINTAR / MARCA-TEXTO
+    # ⚠️ BURACO ACHADO PELO PROPRIO PROFISSIONAL QUE MONTOU A PECA (ago/2026):
+    #    `pintar.html` passou na bancada com "0 dinamica reconhecida" — ou seja,
+    #    passou SEM SER MEDIDO nesta parte. Portao que nao conhece a mecanica da
+    #    uma aprovacao vazia, que e pior que reprovar.
+    if re.search(r'\.pal\b|pintada|marca-texto|marcatexto', css + js):
+        usa.append("pintar/marca-texto")
+        if not re.search(r'background-size|tracocorre|transition[^;]*background', css):
+            avisos.append(u"pintar: nao achei o TRACO CORRENDO (transicao de "
+                          u"background-size). Marca que aparece de uma vez nao tem "
+                          u"a sensacao de riscar.")
+        if not re.search(r'[Ff]alta|restam|de \d+|contador|barra', js):
+            avisos.append(u"pintar: nao achei quantas FALTAM. Sem o contador a "
+                          u"crianca nao sabe quando parou de faltar.")
+        # a marca nao pode ser SO cor
+        if not re.search(r'font-weight|text-decoration|border-bottom|content\s*:', css):
+            ruins.append(u"pintar: a palavra pintada parece marcada SO PELA COR. "
+                         u"Quem nao distingue a cor nao ve o que ja marcou — "
+                         u"precisa de negrito, traco ou sinal junto.")
+
     # ---------------------------------------------------- ACHAR NA CENA
     if re.search(r'naZona\(|pzona\(|ZONAS\b', js):
         usa.append("achar na cena")
