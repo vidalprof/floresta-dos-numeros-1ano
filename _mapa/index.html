@@ -1098,13 +1098,23 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .trilhotempo{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;
   flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:12px;width:100%}
 .trilhotempo .tvaga{min-width:104px;height:82px;padding:0}
-.trilhotempo .tvimg{width:100px;height:74px;object-fit:cover;border-radius:8px}
+.trilhotempo .tvimg{width:100px;height:74px;-o-object-fit:contain;object-fit:contain;
+  border-radius:8px;background:rgba(255,253,246,.5)}
 .fichas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
   gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:430px;width:100%}
 .ficha{width:47%;max-width:196px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
   border-bottom-width:5px;border-radius:14px;padding:5px;cursor:pointer;text-align:center;
   -webkit-box-shadow:0 5px 14px rgba(30,25,10,.3);box-shadow:0 5px 14px rgba(30,25,10,.3)}
-.ficha .fimg{width:100%;height:112px;object-fit:cover;border-radius:11px;display:block}
+/* ⚠️ NADA DE `cover` NA FIGURA QUE A CRIANCA PRECISA RECONHECER (cobranca
+   do Marcos, ago/2026: *"as imagens nao podem ficar cortadas dentro dos
+   quadrados, precisam ser ajustadas"* e *"na fase o navio por dentro as
+   imagens estao cortadas nos quadrados"*). `cover` enche a caixa cortando
+   o que sobra — e o que sobrava era o topo do barril e a borda da bussola.
+   `contain` mostra a peca INTEIRA; a caixa ganha um fundo claro para a
+   sobra nao virar buraco. Medido pelo portao 5, regra 10.             */
+.ficha .fimg{width:100%;height:120px;-o-object-fit:contain;object-fit:contain;border-radius:11px;
+  display:block;background:rgba(255,253,246,.55);padding:4px;
+  -webkit-box-sizing:border-box;box-sizing:border-box}
 .ficha .flab{font-size:13.5px;font-weight:700;color:var(--texto);margin-top:3px;line-height:1.15}
 .ficha.usada{opacity:.25}
 .ficha.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
@@ -1338,7 +1348,8 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .quadro{width:47%;max-width:196px;cursor:pointer;background:#fffdf6;padding:6px 6px 3px;
   border:3px solid #8a6b3f;border-radius:3px;
   -webkit-box-shadow:0 8px 18px rgba(20,14,4,.5);box-shadow:0 8px 18px rgba(20,14,4,.5)}
-.quadro .qimg{width:100%;height:96px;object-fit:cover;display:block}
+.quadro .qimg{width:100%;height:104px;-o-object-fit:contain;object-fit:contain;display:block;
+  background:rgba(255,253,246,.5)}
 .quadro .qtit{font-size:11.5px;font-weight:700;color:#4a4230;margin-top:4px;text-align:center;line-height:1.2}
 .quadro:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 /* a foto aberta, em cima de tudo */
@@ -1478,8 +1489,29 @@ function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
 function fimFala(){ paraBoca(); if(btnOuvir) btnOuvir.className="mini"; var c=falandoCb; falandoCb=null; if(c)c(); }
 narr.addEventListener("ended",fimFala);
 narr.addEventListener("error",function(){ fimFala(); });
-function iniciaBoca(){ if(falaTimer)clearInterval(falaTimer); bocaAlvo=0.7;
-  falaTimer=setInterval(function(){ if(narr.paused||narr.ended){bocaAlvo=0;} else if(!anaOk){ bocaAlvo=0.25+Math.random()*0.75; } },95); }
+/* ⭐ A BOCA TEM QUE PARECER BOCA (cobranca do Marcos, ago/2026: *"esta esquisito
+   o movimentar da boca da arara, nao esta natural"*). Ele estava certo, e o
+   motivo era medivel:
+
+   1. **Sem o analisador, a boca era RUIDO.** `bocaAlvo=0.25+random*0.75` a cada
+      95ms = 10 saltos por segundo, sem relacao nenhuma com a voz. Mandibula
+      humana nao passa de ~5 aberturas por segundo (a silaba). Agora a queda e
+      um RITMO DE SILABA: uma onda de ~4,2 Hz que fecha de verdade entre uma
+      silaba e outra, com uma variacaozinha para nao ficar mecanica.
+   2. **Abria e fechava na mesma velocidade.** Boca de verdade ABRE rapido e
+      FECHA devagar (a mandibula cai e volta). Agora a suavizacao e assimetrica.
+   3. **Saturava.** `0.18+rms*6` grudava no 1 em qualquer voz alta: a boca ficava
+      escancarada o tempo todo. Agora o volume passa por uma curva com teto e um
+      pouco de raiz, que e como a orelha ouve.                               */
+var bocaFase=0;
+function iniciaBoca(){ if(falaTimer)clearInterval(falaTimer); bocaAlvo=0.55; bocaFase=0;
+  falaTimer=setInterval(function(){
+    if(narr.paused||narr.ended){ bocaAlvo=0; return; }
+    if(anaOk) return;                       /* o analisador manda; isto e a reserva */
+    bocaFase+=1.15+Math.random()*0.45;      /* ~3,3 silabas por segundo, como a fala */
+    var s=(Math.sin(bocaFase)+1)/2;         /* 0..1 suave, fecha entre silabas */
+    bocaAlvo=s*s*(0.55+Math.random()*0.45);
+  },60); }
 function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
 function depoisDaFala(id,maxMs,cb){
   var fired=false;
@@ -1494,10 +1526,12 @@ function loopBoca(){
     try{ anaNode.getByteTimeDomainData(anaBuf); var i,s=0;
       for(i=0;i<anaBuf.length;i+=4){ var v=(anaBuf[i]-128)/128; s+=v*v; }
       var rms=Math.sqrt(s/(anaBuf.length/4));
-      bocaAlvo=(rms<0.012)?0:Math.min(1,0.18+rms*6);
+      /* curva com teto: som alto nao escancara a boca */
+      bocaAlvo=(rms<0.014)?0:Math.min(1,0.12+Math.pow(Math.min(rms*4.2,1),0.65)*0.9);
     }catch(e){}
   }
-  bocaSuave += (bocaAlvo-bocaSuave)*0.4;
+  /* abre rapido, fecha devagar — e assim que a mandibula se mexe */
+  bocaSuave += (bocaAlvo-bocaSuave)*((bocaAlvo>bocaSuave)?0.55:0.20);
   if(nicoAtual&&nicoAtual.fala) nicoAtual.fala.style.opacity=bocaSuave.toFixed(3);
   requestAnimationFrame(loopBoca);
 }
@@ -1949,7 +1983,7 @@ function mDeCima(){
     c.appendChild(box);
     if(idx===0) postIt(c,"norte");
     t.appendChild(c);app.appendChild(t);
-    montaBarra("mp_cima_dica","De cima voc&#234; v&#234; o telhado, nunca a porta.");
+    montaBarra("mp_cima_dica","De cima voc&#234; v&#234; o que est&#225; virado para o c&#233;u: o tampo da mesa, o assento da cadeira, o teto do carro.");
     if(idx===0) introEPergunta("mp_cima_intro");
   }
   passo();
@@ -2192,7 +2226,12 @@ var ROTAS=[
       igreja (22,20) | praca (46,50) | casas (81,50) | ponte (48,80) | rio (39,79) */
  {t:"da <b>igreja</b> at&#233; a <b>ponte</b>",  p:[[22,20],[22,50],[48,50],[48,80]], s:["baixo","dir","baixo"]},
  {t:"da <b>ponte</b> at&#233; a <b>igreja</b>",  p:[[48,80],[48,50],[22,50],[22,20]], s:["cima","esq","cima"]},
- {t:"das <b>casas</b> at&#233; o <b>rio</b>",    p:[[81,50],[81,79],[39,79]],         s:["baixo","esq"]}];
+ /* ⚠️ o Marcos: *"das casas ate o rio nao ficou legal, posicione ele nas casas,
+    faca andar ate a praca de arvores e depois ate o rio"*. O caminho de dois
+    passos passava por fora de tudo; agora ele encosta na praca no meio do
+    caminho, que e o que da sentido ao roteiro. */
+ {t:"das <b>casas</b> at&#233; o <b>rio</b>, passando pela <b>pra&#231;a</b>",
+  p:[[81,50],[46,50],[46,79],[39,79]], s:["esq","baixo","esq"]}];
 var SETAS={cima:"&#8593;",baixo:"&#8595;",esq:"&#8592;",dir:"&#8594;"};
 function mRoteiro(){
   var idx=0,err=0;
@@ -3471,7 +3510,7 @@ function mQuebra(){
   }
   c.appendChild(el("div","hint","Toque no peda&#231;o e depois no lugar dele."));
   t.appendChild(c);app.appendChild(t);
-  montaBarra("mp_quebra_dica","Comece pelos peda&#231;os que t&#234;m o rio ou a igreja.");
+  montaBarra("mp_quebra_dica","Comece pelos peda&#231;os que t&#234;m o rio ou a ponte.");
   falar("mp_quebra_intro");
 }
 

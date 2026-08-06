@@ -59,8 +59,12 @@ const norm = t => (t || '').toLowerCase()
   for (const f of fases) {
     const p = await b.newPage({viewport: {width: 412, height: 820}});
     await p.goto('file://' + path.resolve(arq)); await p.waitForTimeout(250);
+    /* ⚠️ `depoisDaFala` TAMBEM narra — e por ela que passa o `introEPergunta()`,
+       que e como quase toda fase toca a abertura. Com o antigo stub vazio, o
+       portao dizia "a tela nao tem voz nenhuma" numa fase FALADA (o porao do
+       navio). Portao que acusa quem esta certo ensina a ignorar portao.    */
     await p.evaluate(() => { window.falar = function (id) { window.falaAtual = id; if (!window.__t) window.__t = id; };
-                             window.depoisDaFala = function () {}; });
+                             window.depoisDaFala = function (id) { if (!window.__t) window.__t = id; }; });
     try { await p.evaluate(n => { window[n](); }, f); } catch (e) {}
     await p.waitForTimeout(380);
     const r = await p.evaluate(() => {

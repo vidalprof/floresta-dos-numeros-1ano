@@ -800,6 +800,67 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .tinta.agua{background:rgba(47,127,196,.72);border:3px solid #2f7fc4}
 .tinta.verde{background:rgba(63,154,38,.72);border:3px solid #3f9a26}
 .tinta.casa{background:rgba(210,115,42,.72);border:3px solid #d2732a}
+
+/* ⭐ O V DE VERIFICACAO (pedido do Marcos, ago/2026: *"essas mesmas questoes e
+   consertos, V de verificacao etc, devem ser aplicadas na de historia do 5
+   ano"*, e depois *"na fase quem ja estava aqui aplique a regra do V de
+   verificacao para ficar legal"*). O circulo dourado dizia "e aqui"; o V diz
+   "voce ACERTOU" — o sinal que a crianca ja conhece do caderno.            */
+.vok{position:absolute;width:60px;height:60px;margin:-30px 0 0 -30px;border-radius:50%;
+  pointer-events:none;z-index:6;background:#3f9a26;
+  background:-webkit-radial-gradient(35% 28%,circle,#8ce05a,#3f9a26 72%);
+  background:radial-gradient(circle at 35% 28%,#8ce05a,#3f9a26 72%);
+  -webkit-box-shadow:0 0 0 5px rgba(255,255,255,.9),0 8px 18px rgba(20,40,10,.5);
+  box-shadow:0 0 0 5px rgba(255,255,255,.9),0 8px 18px rgba(20,40,10,.5);
+  -webkit-animation:vokpop .5s;animation:vokpop .5s}
+.vok i{position:absolute;left:20px;top:11px;width:14px;height:26px;display:block;
+  border:5px solid #fff;border-top:0;border-left:0;border-radius:2px;
+  -webkit-transform:rotate(42deg);transform:rotate(42deg)}
+.vok b{position:absolute;left:-14px;top:-14px;right:-14px;bottom:-14px;display:block;
+  border:3px solid rgba(140,224,90,.9);border-radius:50%;
+  -webkit-animation:vokaro .8s ease-out;animation:vokaro .8s ease-out;opacity:0}
+@-webkit-keyframes vokpop{0%{-webkit-transform:scale(.2) rotate(-30deg);opacity:0}
+  60%{-webkit-transform:scale(1.2) rotate(8deg);opacity:1}100%{-webkit-transform:scale(1) rotate(0);opacity:1}}
+@keyframes vokpop{0%{transform:scale(.2) rotate(-30deg);opacity:0}
+  60%{transform:scale(1.2) rotate(8deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@-webkit-keyframes vokaro{0%{-webkit-transform:scale(.5);opacity:.9}100%{-webkit-transform:scale(1.9);opacity:0}}
+@keyframes vokaro{0%{transform:scale(.5);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+/* ⭐ O NAVIO FAZ A ROTA NO MAPA (ideia do Marcos, ago/2026: *"na fase a rota da
+   viagem seria legal um navio bem lindo com animacao no mapa fazendo a rota a
+   cada clique que o estudante seleciona nas respostas"*). Ele tem razao: pôr a
+   viagem "na ordem" era uma lista de frases; agora a crianca VE a viagem
+   acontecer. O navio e a caravela da propria atividade (arte de IA, nao
+   desenho de CSS) e o rastro sao pingos de tinta, como num mapa antigo.   */
+.rotanav{position:absolute;width:17%;z-index:6;margin:-9% 0 0 -8.5%;
+  -webkit-transition:left 1.6s cubic-bezier(.42,0,.32,1),top 1.6s cubic-bezier(.42,0,.32,1);
+  transition:left 1.6s cubic-bezier(.42,0,.32,1),top 1.6s cubic-bezier(.42,0,.32,1)}
+.rotanav img{width:100%;height:auto;display:block;
+  -webkit-filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));filter:drop-shadow(0 4px 8px rgba(0,0,0,.45));
+  -webkit-animation:balanca 2.6s ease-in-out infinite;animation:balanca 2.6s ease-in-out infinite}
+.rotanav.oeste img{-webkit-transform:scaleX(-1);transform:scaleX(-1)}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg)}50%{-webkit-transform:rotate(3deg)}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.rotanav.oeste img{-webkit-animation:balancao 2.6s ease-in-out infinite;animation:balancao 2.6s ease-in-out infinite}
+@-webkit-keyframes balancao{0%,100%{-webkit-transform:scaleX(-1) rotate(-3deg)}50%{-webkit-transform:scaleX(-1) rotate(3deg)}}
+@keyframes balancao{0%,100%{transform:scaleX(-1) rotate(-3deg)}50%{transform:scaleX(-1) rotate(3deg)}}
+.rpt{position:absolute;width:9px;height:9px;margin:-4.5px 0 0 -4.5px;border-radius:50%;z-index:4;
+  background:rgba(255,253,246,.95);pointer-events:none;
+  -webkit-box-shadow:0 0 6px rgba(20,40,60,.55);box-shadow:0 0 6px rgba(20,40,60,.55);
+  -webkit-animation:rptpop .45s backwards;animation:rptpop .45s backwards}
+@-webkit-keyframes rptpop{0%{-webkit-transform:scale(0);opacity:0}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes rptpop{0%{transform:scale(0);opacity:0}100%{transform:scale(1);opacity:1}}
+.rotaporto{position:absolute;width:16px;height:16px;margin:-8px 0 0 -8px;border-radius:50%;z-index:5;
+  border:3px solid #ffd43b;background:rgba(255,212,59,.3);pointer-events:none}
+.rotaporto.on{border-color:#6bd23f;background:rgba(107,210,63,.55)}
+/* o mapa da bussola e mais baixo: a bussola tem que caber junto na tela */
+.janela.baixa{max-height:210px;overflow:hidden}
+.janela.baixa .jimg{width:100%;height:210px;-o-object-fit:cover;object-fit:cover;display:block}
+.bussola.peq{width:196px;height:196px;margin:10px auto 4px}
+.bussola.peq .vento{width:44px;height:44px;line-height:40px;font-size:18px}
+.bussola.peq .vento.cima,.bussola.peq .vento.baixo{margin-left:-22px}
+.bussola.peq .vento.esq,.bussola.peq .vento.dir{margin-top:-22px}
+@media (max-height:700px){ .janela.baixa,.janela.baixa .jimg{max-height:160px;height:160px}
+  .bussola.peq{width:168px;height:168px} }
 /* --- a luz que marca o que a crianca ACHOU na cena (nao um quadrado) --- */
 .luzok{position:absolute;width:78px;height:78px;margin-left:-39px;margin-top:-39px;border-radius:50%;
   border:4px solid #ffd43b;background:rgba(255,212,59,.16);pointer-events:none;
@@ -955,13 +1016,23 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .trilhotempo{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;
   flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:12px;width:100%}
 .trilhotempo .tvaga{min-width:104px;height:82px;padding:0}
-.trilhotempo .tvimg{width:100px;height:74px;object-fit:cover;border-radius:8px}
+.trilhotempo .tvimg{width:100px;height:74px;-o-object-fit:contain;object-fit:contain;
+  border-radius:8px;background:rgba(255,253,246,.5)}
 .fichas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
   gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:430px;width:100%}
 .ficha{width:47%;max-width:196px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
   border-bottom-width:5px;border-radius:14px;padding:5px;cursor:pointer;text-align:center;
   -webkit-box-shadow:0 5px 14px rgba(30,25,10,.3);box-shadow:0 5px 14px rgba(30,25,10,.3)}
-.ficha .fimg{width:100%;height:112px;object-fit:cover;border-radius:11px;display:block}
+/* ⚠️ NADA DE `cover` NA FIGURA QUE A CRIANCA PRECISA RECONHECER (cobranca
+   do Marcos, ago/2026: *"as imagens nao podem ficar cortadas dentro dos
+   quadrados, precisam ser ajustadas"* e *"na fase o navio por dentro as
+   imagens estao cortadas nos quadrados"*). `cover` enche a caixa cortando
+   o que sobra — e o que sobrava era o topo do barril e a borda da bussola.
+   `contain` mostra a peca INTEIRA; a caixa ganha um fundo claro para a
+   sobra nao virar buraco. Medido pelo portao 5, regra 10.             */
+.ficha .fimg{width:100%;height:120px;-o-object-fit:contain;object-fit:contain;border-radius:11px;
+  display:block;background:rgba(255,253,246,.55);padding:4px;
+  -webkit-box-sizing:border-box;box-sizing:border-box}
 .ficha .flab{font-size:13.5px;font-weight:700;color:var(--texto);margin-top:3px;line-height:1.15}
 .ficha.usada{opacity:.25}
 .ficha.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
@@ -1118,7 +1189,8 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .quadro{width:47%;max-width:196px;cursor:pointer;background:#fffdf6;padding:6px 6px 3px;
   border:3px solid #8a6b3f;border-radius:3px;
   -webkit-box-shadow:0 8px 18px rgba(20,14,4,.5);box-shadow:0 8px 18px rgba(20,14,4,.5)}
-.quadro .qimg{width:100%;height:96px;object-fit:cover;display:block}
+.quadro .qimg{width:100%;height:104px;-o-object-fit:contain;object-fit:contain;display:block;
+  background:rgba(255,253,246,.5)}
 .quadro .qtit{font-size:11.5px;font-weight:700;color:#4a4230;margin-top:4px;text-align:center;line-height:1.2}
 .quadro:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 /* a foto aberta, em cima de tudo */
@@ -1234,6 +1306,14 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    `falaDaTela` e como a fase diz "a voz desta tela agora e esta": narra na
    hora E passa a ser o que o alto-falante repete.                          */
 function falaDaTela(id,cb){ falaTela=id; telaNarrou=true; falar(id,cb); }
+/* o V de verificacao + a plaquinha com o nome, no lugar tocado */
+function poeVok(cena,px,py,nome){
+  var v=el("div","vok","<i></i><b></b>");
+  v.style.left=px+"%"; v.style.top=py+"%"; cena.appendChild(v);
+  if(nome){ var tx=el("div","luztx",nome);
+    tx.style.left=px+"%"; tx.style.top="calc("+py+"% + 38px)"; cena.appendChild(tx); }
+  return v;
+}
 /* ⚠️ A INTRO NAO PODE CALAR A PERGUNTA (defeito que o Marcos pegou, ago/2026:
    *"no mapa do bairro o simbolo escola nao e falado"*). Ele achou UMA fase; a
    causa era do motor e valia para 27 delas nas duas atividades.
@@ -1264,8 +1344,29 @@ function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
 function fimFala(){ paraBoca(); if(btnOuvir) btnOuvir.className="mini"; var c=falandoCb; falandoCb=null; if(c)c(); }
 narr.addEventListener("ended",fimFala);
 narr.addEventListener("error",function(){ fimFala(); });
-function iniciaBoca(){ if(falaTimer)clearInterval(falaTimer); bocaAlvo=0.7;
-  falaTimer=setInterval(function(){ if(narr.paused||narr.ended){bocaAlvo=0;} else if(!anaOk){ bocaAlvo=0.25+Math.random()*0.75; } },95); }
+/* ⭐ A BOCA TEM QUE PARECER BOCA (cobranca do Marcos, ago/2026: *"esta esquisito
+   o movimentar da boca da arara, nao esta natural"*). Ele estava certo, e o
+   motivo era medivel:
+
+   1. **Sem o analisador, a boca era RUIDO.** `bocaAlvo=0.25+random*0.75` a cada
+      95ms = 10 saltos por segundo, sem relacao nenhuma com a voz. Mandibula
+      humana nao passa de ~5 aberturas por segundo (a silaba). Agora a queda e
+      um RITMO DE SILABA: uma onda de ~4,2 Hz que fecha de verdade entre uma
+      silaba e outra, com uma variacaozinha para nao ficar mecanica.
+   2. **Abria e fechava na mesma velocidade.** Boca de verdade ABRE rapido e
+      FECHA devagar (a mandibula cai e volta). Agora a suavizacao e assimetrica.
+   3. **Saturava.** `0.18+rms*6` grudava no 1 em qualquer voz alta: a boca ficava
+      escancarada o tempo todo. Agora o volume passa por uma curva com teto e um
+      pouco de raiz, que e como a orelha ouve.                               */
+var bocaFase=0;
+function iniciaBoca(){ if(falaTimer)clearInterval(falaTimer); bocaAlvo=0.55; bocaFase=0;
+  falaTimer=setInterval(function(){
+    if(narr.paused||narr.ended){ bocaAlvo=0; return; }
+    if(anaOk) return;                       /* o analisador manda; isto e a reserva */
+    bocaFase+=1.15+Math.random()*0.45;      /* ~3,3 silabas por segundo, como a fala */
+    var s=(Math.sin(bocaFase)+1)/2;         /* 0..1 suave, fecha entre silabas */
+    bocaAlvo=s*s*(0.55+Math.random()*0.45);
+  },60); }
 function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
 function depoisDaFala(id,maxMs,cb){
   var fired=false;
@@ -1280,10 +1381,12 @@ function loopBoca(){
     try{ anaNode.getByteTimeDomainData(anaBuf); var i,s=0;
       for(i=0;i<anaBuf.length;i+=4){ var v=(anaBuf[i]-128)/128; s+=v*v; }
       var rms=Math.sqrt(s/(anaBuf.length/4));
-      bocaAlvo=(rms<0.012)?0:Math.min(1,0.18+rms*6);
+      /* curva com teto: som alto nao escancara a boca */
+      bocaAlvo=(rms<0.014)?0:Math.min(1,0.12+Math.pow(Math.min(rms*4.2,1),0.65)*0.9);
     }catch(e){}
   }
-  bocaSuave += (bocaAlvo-bocaSuave)*0.4;
+  /* abre rapido, fecha devagar — e assim que a mandibula se mexe */
+  bocaSuave += (bocaAlvo-bocaSuave)*((bocaAlvo>bocaSuave)?0.55:0.20);
   if(nicoAtual&&nicoAtual.fala) nicoAtual.fala.style.opacity=bocaSuave.toFixed(3);
   requestAnimationFrame(loopBoca);
 }
@@ -1745,8 +1848,7 @@ function mAldeia(){
     })(it.z[k]);}
     function acerta(px,py){
       if(fim) return; fim=true; arma();
-      var luz=el("div","luzok"); luz.style.left=px+"%"; luz.style.top=py+"%"; cena.appendChild(luz);
-      var tx=el("div","luztx",it.n); tx.style.left=px+"%"; tx.style.top="calc("+py+"% + 44px)"; cena.appendChild(tx);
+      var luz=poeVok(cena,px,py,it.n);
       sCerto(); elogio(); reg("povo",err===0,err+1);
       var ce=centroTela(luz); faisca(ce[0],ce[1],"#ffd43b",18);
       setTimeout(function(){ idx++; err=0; passo(); },1400);
@@ -1891,10 +1993,14 @@ function mLigar(){
    Quatro etapas na ordem. Não é decorar datas: é entender que a viagem tinha
    um CAMINHO, e que ele passava pela África antes de chegar aqui — o que
    explica a fase 14.                                                        */
-var ROTAP=[{t:"Sai de Portugal, na Europa"},
-           {t:"Desce pela costa da &#193;frica"},
-           {t:"Atravessa o oceano com o vento"},
-           {t:"Chega na terra onde o Ar&#225; mora"}];
+/* ⚠️ os pontos foram MEDIDOS no mapa `nv_atlantico.jpg` (Portugal no canto de
+   cima a direita, a costa da Africa descendo, a travessia e a chegada no
+   Brasil) — nao adivinhados: navio que ancora no meio do continente errado
+   estraga justamente a coisa que a fase ensina.                          */
+var ROTAP=[{t:"Sai de Portugal, na Europa",        x:57,y:12},
+           {t:"Desce pela costa da &#193;frica",        x:60,y:40},
+           {t:"Atravessa o oceano com o vento",    x:44,y:54},
+           {t:"Chega na terra onde o Ar&#225; mora",   x:33,y:52}];
 function mRota(){
   limpa();var t=el("div","tela");setProg(t,24);
   var passo=0,err=0;
@@ -1904,7 +2010,40 @@ function mRota(){
   c.appendChild(bal);
   var cena=el("div","janela");
   cena.appendChild(cenaImg("nv_atlantico","jimg"));
+  /* os portos da viagem, apagados, para a crianca ver que ha um caminho */
+  var portos=[],pz;
+  for(pz=0;pz<ROTAP.length;pz++){
+    var po=el("div","rotaporto");
+    po.style.left=ROTAP[pz].x+"%"; po.style.top=ROTAP[pz].y+"%";
+    portos.push(po); cena.appendChild(po);
+  }
+  var nav=el("div","rotanav");
+  nav.appendChild(imgEl("nv_vela2"));
+  nav.style.left=ROTAP[0].x+"%"; nav.style.top=ROTAP[0].y+"%";
+  cena.appendChild(nav);
   c.appendChild(cena);
+  function sOnda(){ tom(150,0.5,"sine",0.07); tom(230,0.35,"triangle",0.05,0.12); }
+  /* pingos de tinta ligando um porto ao outro, como num mapa antigo */
+  function rastro(a,b){
+    var n=9,k;
+    for(k=1;k<n;k++){(function(j){
+      var d=el("div","rpt");
+      d.style.left=(a.x+(b.x-a.x)*j/n)+"%";
+      d.style.top=(a.y+(b.y-a.y)*j/n)+"%";
+      d.style.webkitAnimationDelay=(j*0.09)+"s"; d.style.animationDelay=(j*0.09)+"s";
+      cena.appendChild(d);
+    })(k);}
+  }
+  /* o navio navega ate o porto do passo `n` */
+  function navega(n){
+    var de=ROTAP[Math.max(0,n-1)],pa=ROTAP[n];
+    if(n>0) rastro(de,pa);
+    nav.className=(pa.x<de.x)?"rotanav oeste":"rotanav";
+    nav.style.left=pa.x+"%"; nav.style.top=pa.y+"%";
+    portos[n].className="rotaporto on";
+    sOnda();
+  }
+  navega(0);
   var tri=el("div","trilho"),marcas=[],i;
   for(i=0;i<ROTAP.length;i++){ var m=el("div","tnum",""+(i+1)); marcas.push(m); tri.appendChild(m); }
   c.appendChild(tri);
@@ -1917,6 +2056,7 @@ function mRota(){
       if(b.className.indexOf("usada")>=0) return;
       if(ROTAP[passo]===o){
         b.className="opt ok usada"; marcas[passo].className="tnum on"; sCerto(); passo++;
+        if(passo<ROTAP.length) navega(passo);   /* o navio anda a cada acerto */
         var z; for(z=0;z<bts.length;z++) bts[z].setAttribute("data-qa",(passo<ROTAP.length&&ROTAP[passo]===bts[z]._o)?"1":"0");
         if(passo>=ROTAP.length){ reg("rota",err===0,err+1); sFesta(); festa();
           setTimeout(function(){ depoisDaFala("nv_rota_revela",12000,function(){
@@ -1942,14 +2082,28 @@ function mRota(){
    próprio porão (a arte é da atividade) e APLICA os lados à viagem: descer
    pela África é ir ao Sul, atravessar o oceano é ir ao Oeste, voltar é ir ao
    Leste. Não é nomear os pontos cardeais — é usá-los para navegar.          */
-var BUSSP=[{p:"A agulha da b&#250;ssola aponta sempre para o mesmo lado. Toque no <b>Norte</b>.",c:"N"},
-           {p:"Para contornar a &#193;frica, o navio <b>desce</b>. Toque no <b>Sul</b>.",c:"S"},
-           {p:"O Sol <b>nasce</b> no Leste. Toque no lado onde o Sol nasce.",c:"L"},
-           {p:"Agora o navio atravessa o oceano at&#233; a terra do Ar&#225;, para o <b>Oeste</b>.",c:"O"},
-           {p:"Cheio de coisas daqui, ele volta para a Europa. Volta para o&#8230;",c:"L"}];
+/* ⚠️ REFEITA (cobranca do Marcos, ago/2026: *"na fase 'para que lado' nao esta
+   legal, so tem a bussola e esta facil, talvez uma animacao ajude, e na ultima
+   fase fala de voltar para a Europa mas nao tem imagem ou uma coisa que fique
+   mais clara"*).
+
+   Ele acertou as duas. **Era facil** porque o proprio enunciado dizia a
+   resposta ("Toque no Norte") — a crianca nao precisava pensar em lado nenhum,
+   so achar a letra. E **"voltar para a Europa" nao mostrava nada**: era uma
+   frase solta, sem mapa, sem navio, sem de-onde-para-onde.
+
+   Agora a bussola e um INSTRUMENTO, nao um quiz: o mapa fica em cima com o
+   navio onde ele parou, o enunciado conta a situacao SEM dizer o lado, e o
+   acerto faz o navio NAVEGAR para la. A volta para a Europa deixou de ser uma
+   frase: a crianca ve o navio atravessar o oceano de volta.               */
+var BUSSP=[{p:"A agulha da b&#250;ssola aponta sempre para o mesmo lado, de dia e de noite. Para que lado ela aponta?",c:"N"},
+           {p:"O navio saiu de Portugal e precisa contornar a &#193;frica. Para que lado ele tem que descer?",c:"S",para:[60,40]},
+           {p:"O Sol nasce sempre do mesmo lado do c&#233;u. Toque no lado onde o Sol nasce.",c:"L"},
+           {p:"Agora ele atravessa o oceano at&#233; a terra do Ar&#225;. Para que lado ele vai?",c:"O",para:[35,52]},
+           {p:"Cheio de coisas daqui, ele volta para a Europa. Para que lado ele volta?",c:"L",para:[57,12]}];
 var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
 function mBussola(){
-  var idx=0,err=0;
+  var idx=0,err=0,pos=[57,12];
   function passo(){
     limpa();var t=el("div","tela");setProg(t,28);
     if(idx>=BUSSP.length){ fechaFase("PARA QUE LADO?","No meio do oceano n&#227;o h&#225; placa nenhuma. Quem dizia o caminho era a <b>b&#250;ssola</b>.","nv_bus_revela",11000,mVeioFoi,28); return; }
@@ -1957,20 +2111,45 @@ function mBussola(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","PARA QUE LADO?"));
     c.appendChild(el("div","balao",it.p)); falaDaTela("nv_bus_q"+idx);
-    var bus=el("div","bussola");
+    /* o mapa com o navio ONDE ELE PAROU: a pergunta passa a ter lugar */
+    var cena=el("div","janela baixa");
+    cena.appendChild(cenaImg("nv_atlantico","jimg"));
+    var nav=el("div","rotanav");
+    nav.appendChild(imgEl("nv_vela2"));
+    nav.style.left=pos[0]+"%"; nav.style.top=pos[1]+"%";
+    cena.appendChild(nav);
+    c.appendChild(cena);
+    function sOnda(){ tom(150,0.5,"sine",0.07); tom(230,0.35,"triangle",0.05,0.12); }
+    function navega(){
+      if(!it.para) return;
+      var de=pos.slice(0);
+      var n=9,k;
+      for(k=1;k<n;k++){(function(j){
+        var d=el("div","rpt");
+        d.style.left=(de[0]+(it.para[0]-de[0])*j/n)+"%";
+        d.style.top=(de[1]+(it.para[1]-de[1])*j/n)+"%";
+        d.style.webkitAnimationDelay=(j*0.08)+"s"; d.style.animationDelay=(j*0.08)+"s";
+        cena.appendChild(d);
+      })(k);}
+      nav.className=(it.para[0]<de[0])?"rotanav oeste":"rotanav";
+      nav.style.left=it.para[0]+"%"; nav.style.top=it.para[1]+"%";
+      pos=it.para.slice(0); sOnda();
+    }
+    var bus=el("div","bussola peq");
     bus.appendChild(imgEl("nv_bussola","busimg"));
     var lados=[["N","cima"],["S","baixo"],["L","dir"],["O","esq"]],z;
-    for(z=0;z<lados.length;z++){(function(k,pos){
-      var b=el("div","vento "+pos,k);
+    for(z=0;z<lados.length;z++){(function(k,ps){
+      var b=el("div","vento "+ps,k);
       b.setAttribute("data-qa",k===it.c?"1":"0");
       b.onclick=function(){ arma();
         if(fim) return;
-        if(k===it.c){ fim=true; b.className="vento "+pos+" ok"; sCerto(); elogio();
+        if(k===it.c){ fim=true; b.className="vento "+ps+" ok"; sCerto(); elogio();
           reg("rota",err===0,err+1);
           var ce=centroTela(b); faisca(ce[0],ce[1],"#ffd43b",14);
-          setTimeout(function(){ idx++; err=0; passo(); },1000);
-        } else { err++; b.className="vento "+pos+" no"; sErro();
-          setTimeout(function(){ b.className="vento "+pos; },450);
+          navega();
+          setTimeout(function(){ idx++; err=0; passo(); },it.para?2000:1000);
+        } else { err++; b.className="vento "+ps+" no"; sErro();
+          setTimeout(function(){ b.className="vento "+ps; },450);
           if(err===2){ consolo(); mostraDica("<b>N</b> em cima, <b>S</b> embaixo, <b>L</b> &#224; direita, <b>O</b> &#224; esquerda."); }
           if(err>=3) mostraDica("&#201; o <b>"+NOMEV[it.c]+"</b>: toque na letra <b>"+it.c+"</b>.");
         }
@@ -1980,7 +2159,7 @@ function mBussola(){
     c.appendChild(bus);
     c.appendChild(el("div","hint","N = Norte, S = Sul, L = Leste, O = Oeste."));
     t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_bus_dica","Norte em cima, Sul embaixo, Leste &#224; direita, Oeste &#224; esquerda.");
+    montaBarra("nv_bus_dica","Olhe o mapa: de onde o navio est&#225; para onde ele precisa ir.");
     if(idx===0) introEPergunta("nv_bus_intro");
   }
   passo();
@@ -2601,8 +2780,7 @@ function mMapaRotas(){
     })(it.z[k]);}
     function acerta(px,py){
       if(fim) return; fim=true; arma();
-      var luz=el("div","luzok"); luz.style.left=px+"%"; luz.style.top=py+"%"; cena.appendChild(luz);
-      var tx=el("div","luztx",it.n); tx.style.left=px+"%"; tx.style.top="calc("+py+"% + 44px)"; cena.appendChild(tx);
+      var luz=poeVok(cena,px,py,it.n);
       sCerto(); elogio(); reg("rota",err===0,err+1);
       var ce=centroTela(luz); faisca(ce[0],ce[1],"#ffd43b",18);
       setTimeout(function(){ idx++; err=0; passo(); },1400);

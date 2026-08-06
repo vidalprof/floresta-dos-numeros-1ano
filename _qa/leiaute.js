@@ -21,7 +21,9 @@
         a ultima palavra do enunciado;
      9. COISA ENCOSTANDO NO ENUNCIADO (ago/2026, cobrado DUAS vezes): o que
         vem logo abaixo do balao precisa de 6px de folga — colado, entra na
-        sombra do balao e parece um bloco so.
+        sombra do balao e parece um bloco so;
+    10. FIGURA CORTADA NA CAIXA (ago/2026): `object-fit:cover` numa peca cuja
+        proporcao nao bate com a da caixa — o topo do barril sumia.
    Rolagem vertical NAO e erro por si so — so e erro quando o que
    se toca fica fora.
 
@@ -235,6 +237,37 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           }
         }
         if(cola.length) out.push(cola.length+" COISA(S) ENCOSTANDO NO ENUNCIADO: "+cola.join(" ; "));
+
+        /* 10. FIGURA CORTADA DENTRO DO QUADRADO (ago/2026). Cobranca do Marcos:
+           *"as imagens nao podem ficar cortadas dentro dos quadrados, precisam
+           ser ajustadas"* — no porao do navio o topo do barril e a borda da
+           bussola sumiam. A culpa e do `object-fit:cover`, que enche a caixa
+           cortando o que sobra.
+
+           Nao basta procurar `cover` no CSS: numa CENA que preenche a moldura
+           (o mapa do vale, o fundo) o `cover` esta CERTO. O que decide e se a
+           figura esta sendo REALMENTE cortada — isto e, se a proporcao dela
+           bate com a da caixa. Por isso a regra MEDE, em vez de adivinhar:
+           `cover` + proporcao diferente em mais de 12% = pedaco perdido.
+
+           Cenas largas (>=300px de largura) ficam de fora: ali cortar a borda
+           e o trabalho da moldura, nao um defeito.                          */
+        const cortadas=[];
+        for(const im of [...document.querySelectorAll("img")]){
+          if(im.offsetParent===null) continue;
+          const st=getComputedStyle(im);
+          if(st.objectFit!=="cover") continue;
+          const r=im.getBoundingClientRect();
+          if(r.width<20||r.height<20||r.width>=300) continue;
+          if(!im.naturalWidth||!im.naturalHeight) continue;
+          const pn=im.naturalWidth/im.naturalHeight, pc=r.width/r.height;
+          const perda=1-Math.min(pn,pc)/Math.max(pn,pc);
+          if(perda>0.12){
+            const q="."+String(im.className||"img").split(" ")[0]+" perde "+Math.round(perda*100)+"% da figura";
+            if(cortadas.indexOf(q)<0) cortadas.push(q);
+          }
+        }
+        if(cortadas.length) out.push(cortadas.length+" FIGURA(S) CORTADA(S) NA CAIXA: "+cortadas.join(" ; "));
         return out;
       },{sel:RESPOSTA,clic:CLICAVEL});
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);

@@ -82,6 +82,8 @@ echo "--- 0g) VOZ IGUAL AO TEXTO (o audio diz o que esta escrito?) -"
 node _qa/vozigual.js "$ARQ" || FALHOU=1
 echo "--- 0h) INTRO CALANDO A PERGUNTA (a 1a rodada e falada?) -"
 python3 _qa/vozintro.py "$ARQ" || FALHOU=1
+echo "--- 0i) VOZ SEM MP3 (a fase ficou muda de vez?) -"
+python3 _qa/vozfalta.py "$ARQ" || FALHOU=1
 
 echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
