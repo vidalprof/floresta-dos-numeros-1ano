@@ -4293,3 +4293,61 @@ preciso confiar no portão. Conserto: `NAO_E_ATIVIDADE` + `e_vizinha()` no
 `_qa/clone.py`, usados nos **cinco** varrimentos (prefixo, sw.js, nome, frases,
 mascote). `_novo`, `_recuperado`, `_padrao`, `_qa` e companhia são área de
 serviço, não atividade.
+
+---
+
+## 🔊❓ "OS BOTÕES DE AJUDA DO SOM FUNCIONAM?" — a pergunta que achou dois buracos
+
+O Marcos perguntou (ago/2026), sobre a atividade do 3º ano: *"os botões de ajuda
+do som funcionam? Corrigiu o problema que estava havendo?"*. Em vez de ler o
+código e responder que sim, escrevi um teste que **clica em todos os botões de
+som, fase por fase**, e confere qual arquivo cada um manda tocar. Achou duas
+coisas que a banca inteira tinha deixado passar.
+
+**1. A Terra dos Papagaios tinha 21 fases e ZERO botão no enunciado.** O
+`poeVozPergunta()` foi escrito para o 3º ano; a atividade do 5º nasceu depois e
+nunca o recebeu. As RESPOSTAS falavam (58 vozes), a PERGUNTA não. O mesmo valia
+para a Máquina do Tempo do 4º ano. **Portão novo (`_qa/padrao.py`, item 3d):**
+tem `.balao` e não tem `poeVozPergunta()` chamada pelo observador → **reprova**.
+
+**2. E o defeito da curiosidade tinha voltado, por outra porta.** No palpite do
+3º ano, `mp_palpite_ok` toca DEPOIS que a criança responde, na MESMA tela — e
+virava "a voz da tela". O alto-falante do enunciado passava a repetir *"boa,
+guarde o seu palpite"* em vez da pergunta.
+
+**A regra estava errada de FORMA, não de conteúdo.** `ehSecundaria()` era uma
+LISTA de sufixos (`_cur_`, `_dica`, `_acerto`, `_erro`) e crescia um item por
+defeito descoberto — o mesmo vício que já tinha custado caro no `_qa/clone.py`.
+Sufixo novo, buraco novo, para sempre.
+
+**A regra nova não depende de nome de arquivo:**
+
+> **a voz da tela é a PRIMEIRA narração depois que a tela foi montada.**
+> `limpa()` zera `telaNarrou`; o primeiro `falar()` não-secundário a assume.
+> Tudo o que vier depois, na mesma tela, é reação.
+
+Isso resolve os dois lados de uma vez: pega o `_ok` (que não é o primeiro) **e**
+continua certo na tela final do "Ensine o Ará", onde a narração se chama
+`_revela` mas **é** a voz daquela tela (é a primeira depois do `limpa()`). Uma
+lista de sufixos erraria justamente essa. Aplicado nas quatro atividades.
+
+**A lição que fica:** *pergunta de conferência vale mais que leitura de código.*
+Eu tinha lido o `poeVozPergunta` no motor e concluído que estava em todas; bastou
+CLICAR para ver que numa atividade inteira não havia nenhum. E quando um portão
+começa a virar lista que cresce a cada defeito, o problema não é o item que
+falta — é a forma da regra.
+
+### Três armadilhas ao INSTALAR o alto-falante do enunciado numa atividade pronta
+1. **`.balao` precisa de `position:relative`.** O `.zapb` é absoluto e se ancora
+   no primeiro pai POSICIONADO. Sem isso ele sai do balão e vai parar **em cima
+   da figura da fase** — o `_qa/leiaute.js` acusou 6 fases no 5º ano e 6 no 4º.
+2. **Pôr o botão sem pôr o `falaTela` é entregar o defeito de bandeja.** O 4º ano
+   ainda estava com o `falaAtual` puro; o botão novo repetiria a curiosidade em
+   18 fases. Instalar os dois juntos, sempre.
+3. **`node --check` não vê variável que não existe.** Ao aplicar a regra nova no
+   2º ano, o `telaNarrou=false` entrou no `limpa()` e a DECLARAÇÃO não — a
+   sintaxe é válida e o `node --check` passou, mas a atividade estourava
+   `ReferenceError` na primeira tela, ou seja, **não abria**. Quem pegou foram os
+   portões que ABREM o app (leiaute e jogador). É a mesma lição do `_qa/funcoes.py`
+   (função que não existe), agora com variável: **portão que só lê o código não
+   substitui portão que roda o código.**

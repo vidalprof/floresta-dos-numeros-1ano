@@ -17,7 +17,10 @@ body{font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,Arial,sans-serif;colo
 #app{position:fixed;inset:0;z-index:2}
 .tela{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;padding:calc(38px + env(safe-area-inset-top)) 14px calc(86px + env(safe-area-inset-bottom));-webkit-animation:fade .45s;animation:fade .45s}
 @-webkit-keyframes fade{from{opacity:0}to{opacity:1}}@keyframes fade{from{opacity:0}to{opacity:1}}
-.balao{max-width:440px;background:rgba(255,253,244,.96);border-radius:20px;padding:12px 16px;font-size:16.5px;font-weight:600;text-align:center;line-height:1.35;
+/* ⚠️ position:relative NAO e enfeite: o alto-falante do enunciado (.zapb) e
+   absoluto e se ancora no primeiro pai POSICIONADO. Sem isto ele saia do balao
+   e ia parar em cima da figura da fase — o portao de leiaute pegou em 6 fases. */
+.balao{position:relative;max-width:440px;background:rgba(255,253,244,.96);border-radius:20px;padding:12px 16px;font-size:16.5px;font-weight:600;text-align:center;line-height:1.35;
   -webkit-box-shadow:0 6px 16px rgba(50,40,20,.24);box-shadow:0 6px 16px rgba(50,40,20,.24)}
 .balao b{color:var(--tinta-d)}
 .centro{-webkit-box-flex:1;-webkit-flex:1;flex:1;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;width:100%}
@@ -301,6 +304,18 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 @media (max-height:720px){ .cquad{width:27px;height:30px;line-height:27px;font-size:16px} .altofalante{width:104px;height:70px} }
 /* alto-falante discreto: le a resposta para quem ainda nao le */
 .zap{position:relative;-webkit-flex:none;flex:none;width:30px;height:30px;border-radius:50%;background:rgba(47,107,216,.09);border:0;cursor:pointer;padding:0;margin-left:8px;vertical-align:middle;display:inline-block;opacity:.55;-webkit-transition:opacity .2s;transition:opacity .2s}
+.balao.comzap{padding-right:56px}
+.zapb{position:absolute;right:9px;top:50%;margin-top:-19px;width:38px;height:38px;border-radius:50%;
+  background:#ffd43b;border:3px solid #fffdf6;cursor:pointer;padding:0;
+  -webkit-box-shadow:0 3px 9px rgba(60,45,15,.35);box-shadow:0 3px 9px rgba(60,45,15,.35)}
+.zapb i{position:absolute;left:11px;top:13px;width:5px;height:11px;background:#4a3a10;border-radius:1px}
+.zapb b{position:absolute;left:14px;top:9px;width:0;height:0;border-top:9px solid transparent;
+  border-bottom:9px solid transparent;border-right:9px solid #4a3a10}
+.zapb s{position:absolute;left:25px;top:12px;width:6px;height:13px;border:2px solid #4a3a10;
+  border-left:0;border-top-right-radius:9px;border-bottom-right-radius:9px;text-decoration:none}
+.zapb.tocando{background:#7bd44a;-webkit-animation:zpul .8s ease-in-out infinite;animation:zpul .8s ease-in-out infinite}
+@-webkit-keyframes zpul{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.14)}}
+@keyframes zpul{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
 .zap:hover,.zap:active{opacity:1;background:rgba(47,107,216,.2)}
 .zap i{position:absolute;left:8px;top:10px;width:5px;height:10px;background:var(--tinta-d);border-radius:1px}
 .zap b{position:absolute;left:11px;top:7px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid var(--tinta-d)}
@@ -1144,8 +1159,22 @@ function ligaAnalisador(){ if(anaOk||anaTent)return; anaTent=true;
    repetir a curiosidade. O botao "Ouvir de novo" ja tinha esse defeito ha
    tempo; o alto-falante no enunciado so tornou ele obvio.
    `falaTela` guarda a narracao QUE E DA TELA — as secundarias nao a alteram. */
+/* ⚠️ A REGRA MUDOU DE FORMA (ago/2026), e o motivo importa. Ela era uma LISTA
+   de sufixos secundarios — e crescia um item por defeito descoberto, que e
+   exatamente o vicio que ja tinha custado caro no `_qa/clone.py`. O caso que
+   escapou: no palpite, `mp_palpite_ok` toca DEPOIS que a crianca responde, na
+   MESMA tela, e virava "a voz da tela" — o alto-falante do enunciado passava a
+   repetir "boa, guarde o seu palpite" em vez da pergunta.
+   A regra nova nao depende de como o arquivo se chama: **a voz da tela e a
+   PRIMEIRA narracao depois que a tela foi montada** (`limpa()` zera o
+   `telaNarrou`). Tudo o que vier depois, na mesma tela, e reacao — o elogio, o
+   consolo, o "ok", a revelacao. E a lista de secundarias continua, so que agora
+   como segunda linha de defesa, para as fases que so narram na 1a rodada (ali a
+   1a narracao depois do `limpa()` seria justamente um elogio).            */
+var telaNarrou=false;
 function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||""); }
-function falar(id,cb){ falandoCb=cb||null; falaAtual=id; if(!ehSecundaria(id)) falaTela=id;
+function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
+  if(!ehSecundaria(id)&&!telaNarrou){ falaTela=id; telaNarrou=true; }
   if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}}
   try{ narr.pause(); narr.currentTime=0; }catch(e){}
   narr.src="audio/"+id+".mp3";
@@ -1245,7 +1274,7 @@ function nicoEl(tam){
   return d;
 }
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
-function limpa(){ tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML="";
+function limpa(){ telaNarrou=false; tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML="";
   btnOuvir=null; btnDica=null;
   /* solta o teclado de verdade: so a fase que o pediu escuta as teclas */
   document.onkeydown=null; }
@@ -1348,6 +1377,37 @@ function poeZap(elm){
   elm.appendChild(bt);
 }
 var ZAPSEL=".opt,.lig,.tlin,.cx,.peca,.pc,.relcard,.bin,.ficha,.gav,.mcarta";
+/* ⭐ ALTO-FALANTE NO ENUNCIADO — o pilar 3 do padrao da casa.
+   Ordem do Marcos (ago/2026): *"o alto-falante nas respostas tambem, para
+   ajudar os alunos que nao sabem ler"* — e antes disso, *"acrescentar um botao
+   de som onde sao as perguntas"*. As respostas ja tinham; a PERGUNTA nao. Esta
+   atividade nasceu depois do conserto no 3o ano e ficou sem ele: 21 fases, zero
+   botao no enunciado. So apareceu quando o Marcos perguntou "os botoes de ajuda
+   do som funcionam?" e eu fui CLICAR em todos, fase por fase, em vez de olhar o
+   codigo. Pergunta de conferencia vale mais que leitura de codigo.        */
+function poeVozPergunta(){
+  if(!app) return;
+  var bs=app.getElementsByClassName("balao"),i;
+  for(i=0;i<bs.length;i++){
+    var b=bs[i];
+    if(b.getElementsByClassName("zapb")[0]) continue;
+    if(b.className.indexOf("pequeno")>=0) continue;
+    var bt=document.createElement("button");
+    bt.className="zapb"; bt.type="button";
+    bt.setAttribute("aria-label","Ouvir a pergunta de novo");
+    bt.appendChild(document.createElement("i"));
+    bt.appendChild(document.createElement("b"));
+    bt.appendChild(document.createElement("s"));
+    bt.onclick=function(ev){
+      if(ev&&ev.stopPropagation) ev.stopPropagation();
+      if(ev&&ev.preventDefault) ev.preventDefault();
+      arma(); var v=falaTela||falaAtual; if(v) falar(v);
+      return false;
+    };
+    b.appendChild(bt);
+    b.className=b.className+" comzap";
+  }
+}
 function poeVozes(){
   if(!app) return;
   var els=app.querySelectorAll(ZAPSEL),i;
@@ -1355,7 +1415,7 @@ function poeVozes(){
 }
 (function(){
   var pend=0;
-  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); },60); }
+  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta(); },60); }
   if(window.MutationObserver){
     var mo=new MutationObserver(agenda);
     mo.observe(app,{childList:true,subtree:true,characterData:true});

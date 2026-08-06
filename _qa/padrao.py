@@ -141,6 +141,28 @@ if re.search(RESPOSTA, js) and re.search(r"VOZOK", js):
     else:
         print("   alto-falante: %d resposta(s) com voz propria (op_<chave>.mp3)" % quantas)
 
+# ---- 3d) ALTO-FALANTE NA PERGUNTA (o outro metade do pilar 3)
+#   O item 3c acima mede o alto-falante das RESPOSTAS. Falta a PERGUNTA — que é
+#   o primeiro pedido do Marcos: *"acrescentar um botão de som onde são as
+#   perguntas, para ajudar quem não sabe ler"*. O motor pendura esse botão
+#   sozinho, com `poeVozPergunta()` chamada pelo observador; sem ela, TODA fase
+#   fica sem o botão e nada acusa.
+#   Foi o que aconteceu com a Terra dos Papagaios: ela nasceu depois do conserto
+#   feito no 3º ano e ficou com **21 fases e zero botão no enunciado**. A banca
+#   inteira passou. Só apareceu quando o Marcos perguntou "os botões de ajuda do
+#   som funcionam?" e eu fui CLICAR em todos, fase por fase.
+sempergunta = None
+if re.search(r'el\("div","balao"', js):
+    tem_fn = "function poeVozPergunta" in js
+    chamada = re.search(r"poeVozPergunta\(\)\s*;", js.replace("function poeVozPergunta()", ""))
+    if not tem_fn or not chamada:
+        sempergunta = ("nenhuma pergunta tem alto-falante: falta %s. Quem ainda nao le "
+                       "depende desse botao para saber o que a tela esta pedindo"
+                       % ("a funcao `poeVozPergunta()`" if not tem_fn
+                          else "CHAMAR `poeVozPergunta()` no observador (a funcao existe e nunca roda)"))
+    else:
+        print("   alto-falante: a PERGUNTA tambem tem botao de voz (poeVozPergunta)")
+
 # ---- 4) TECLADO VIRTUAL sem o teclado DE VERDADE
 #   Regra permanente do Marcos (ago/2026): *"essa dinâmica de aceitar também o
 #   teclado seria interessante registrar para todas as próximas atividades"*.
@@ -173,6 +195,8 @@ problemas = []
 #    ou seja, o portao morria justo na hora em que tinha algo a dizer.
 if semzap:
     problemas.append(semzap)
+if sempergunta:
+    problemas.append(sempergunta)
 if semtecla:
     problemas.append("%d fase(s) com teclado NA TELA que nao aceitam o teclado DE VERDADE "
                      "(no PC da escola a crianca vai digitar): %s"

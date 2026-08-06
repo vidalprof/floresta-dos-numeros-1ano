@@ -1209,8 +1209,22 @@ function ligaAnalisador(){ if(anaOk||anaTent)return; anaTent=true;
    repetir a curiosidade. O botao "Ouvir de novo" ja tinha esse defeito ha
    tempo; o alto-falante no enunciado so tornou ele obvio.
    `falaTela` guarda a narracao QUE E DA TELA — as secundarias nao a alteram. */
+/* ⚠️ A REGRA MUDOU DE FORMA (ago/2026), e o motivo importa. Ela era uma LISTA
+   de sufixos secundarios — e crescia um item por defeito descoberto, que e
+   exatamente o vicio que ja tinha custado caro no `_qa/clone.py`. O caso que
+   escapou: no palpite, `mp_palpite_ok` toca DEPOIS que a crianca responde, na
+   MESMA tela, e virava "a voz da tela" — o alto-falante do enunciado passava a
+   repetir "boa, guarde o seu palpite" em vez da pergunta.
+   A regra nova nao depende de como o arquivo se chama: **a voz da tela e a
+   PRIMEIRA narracao depois que a tela foi montada** (`limpa()` zera o
+   `telaNarrou`). Tudo o que vier depois, na mesma tela, e reacao — o elogio, o
+   consolo, o "ok", a revelacao. E a lista de secundarias continua, so que agora
+   como segunda linha de defesa, para as fases que so narram na 1a rodada (ali a
+   1a narracao depois do `limpa()` seria justamente um elogio).            */
+var telaNarrou=false;
 function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||""); }
-function falar(id,cb){ falandoCb=cb||null; falaAtual=id; if(!ehSecundaria(id)) falaTela=id;
+function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
+  if(!ehSecundaria(id)&&!telaNarrou){ falaTela=id; telaNarrou=true; }
   if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}}
   try{ narr.pause(); narr.currentTime=0; }catch(e){}
   narr.src="audio/"+id+".mp3";
@@ -1310,7 +1324,7 @@ function nicoEl(tam){
   return d;
 }
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
-function limpa(){ tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML="";
+function limpa(){ telaNarrou=false; tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML="";
   btnOuvir=null; btnDica=null;
   /* solta o teclado de verdade: so a fase que o pediu escuta as teclas */
   document.onkeydown=null; }
