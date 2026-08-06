@@ -56,4 +56,22 @@ jobs:
           echo "=== FORCANDO NOVO BUILD DO PAGES ==="
           gh api -X POST "repos/$OWNER/$DEST/pages/builds" \
             --jq '"build disparado: status=" + (.status // "?")' 2>&1 | head -3
+          echo ""
+          # ⚠️ O QUE O SITE ESTA SERVINDO DE VERDADE (ago/2026). O status do
+          # build dizia "errored" e nao havia como saber, daqui do chat (a rede
+          # e travada), se a crianca estava recebendo a versao nova ou a velha.
+          # Perguntar ao proprio site e a unica resposta honesta.
+          echo "=== O SITE NO AR RESPONDE? ==="
+          URL="https://$OWNER.github.io/$DEST"
+          for f in "" "index.html" "img/mp_grade.jpg" "img/mp_pmapa.jpg" "audio/mp_coord_q5.mp3"; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" "$URL/$f?v=$RANDOM")
+            echo "  $code  $URL/$f"
+          done
+          echo "  --- a versao no ar tem as coisas novas? ---"
+          curl -s "$URL/index.html?v=$RANDOM" > /tmp/no_ar.html
+          for marca in "mp_grade" "introEPergunta" "PGRADE" "vagam" "mp_planta_papel"; do
+            n=$(grep -c "$marca" /tmp/no_ar.html)
+            echo "  $marca: $n ocorrencia(s)"
+          done
+
           echo "=== FIM ==="
