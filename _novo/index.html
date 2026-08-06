@@ -1529,12 +1529,16 @@ function mVento(){
 /* zonas MEDIDAS na figura nova, uma a uma (desenhei os alvos por cima e
    conferi). Casa e mata sao coisas REPETIDAS -> pergunta no indefinido; o
    terreiro e um so -> `unico` (portao _qa/ambiguo.py).                     */
+/* ⚠️ ZONAS REMEDIDAS na arte NOVA (grade de 10% por cima da figura). A aldeia
+   antiga era escura e vista de cima; a nova mostra, lado a lado, as tres coisas
+   que a narracao promete — "casa de palha, roca, caminho". Trocar a figura sem
+   remedir isto faria a crianca tocar certo e ouvir que errou.               */
 var ALDEIA=[{q:"uma <b>casa de palha</b> da aldeia", n:"A CASA DE PALHA", r:12,
-             z:[{x:42,y:32},{x:58,y:34},{x:30,y:52},{x:70,y:52}]},
-            {q:"a <b>mata</b> em volta da aldeia", n:"A MATA", r:12,
-             z:[{x:8,y:20},{x:90,y:22},{x:12,y:80},{x:88,y:78},{x:50,y:8}]},
-            {q:"o <b>terreiro</b>, o ch&#227;o aberto no meio", n:"O TERREIRO", r:13, unico:1,
-             z:[{x:48,y:50},{x:44,y:62}]}];
+             z:[{x:22,y:42},{x:26,y:52},{x:41,y:38},{x:44,y:48}]},
+            {q:"a <b>ro&#231;a</b>, onde eles plantavam", n:"A RO&#199;A", r:12, unico:1,
+             z:[{x:58,y:65},{x:66,y:60},{x:74,y:62},{x:82,y:66},{x:88,y:72},{x:68,y:76}]},
+            {q:"o <b>caminho</b> de terra", n:"O CAMINHO", r:11, unico:1,
+             z:[{x:44,y:60},{x:41,y:68},{x:38,y:78},{x:35,y:88}]}];
 function mAldeia(){
   var idx=0,err=0;
   function passo(){
