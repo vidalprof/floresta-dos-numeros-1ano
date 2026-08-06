@@ -2672,9 +2672,13 @@ function mMemoria(){
    (currículo). A criança marca no mapa do bairro onde ficam os lugares, com
    os símbolos que ela mesma aprendeu a ler.                                */
 /* idem: medido na arte do bairro (mp_esc_bairro) */
-var MARCAR=[{q:"da <b>pra&#231;a</b>",s:"praca",x:49,y:44},
-            {q:"do <b>rio</b>",s:"rio",x:82,y:50},
-            {q:"da <b>escola</b> (o pr&#233;dio maior, logo abaixo da pra&#231;a)",s:"escola",x:47,y:65}];
+/* ⚠️ REMEDIDO na arte NOVA da escala (a serie virou o MESMO lugar visto de
+   mais alto). No bairro novo o rio e a ponte estao a ESQUERDA e a escola, com
+   telhado vermelho e quadra, esta no MEIO — nada disso batia com os numeros
+   antigos. Cada alvo aqui foi conferido na grade por cima da figura.       */
+var MARCAR=[{q:"da <b>escola</b> (o pr&#233;dio de telhado vermelho, com a quadra)",s:"escola",x:63,y:33},
+            {q:"do <b>rio</b>",s:"rio",x:16,y:24},
+            {q:"da <b>ponte</b>",s:"ponte",x:13,y:50}];
 function mDesenhe(){
   var idx=0,err=0;
   function passo(){

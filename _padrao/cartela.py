@@ -240,6 +240,73 @@ def cortar(folha, nomes, dest, larg=520):
     return 0
 
 
+#  ⭐ CARTELA DE CENAS (ago/2026) — a exceção que virou regra
+#
+#  O cabeçalho aqui em cima dizia: "cena larga não vai em cartela, vai no
+#  Pollinations, que é de graça". Estava certo enquanto o Pollinations dava
+#  conta. Só que ele NÃO dá: pedimos barro e ele devolveu foto; pedimos uma
+#  caravela e veio desenho de aplicativo de bebê. As cenas da Terra dos
+#  Papagaios ficaram com QUATRO estilos brigando na mesma atividade.
+#
+#  Cena boa, então, é paga — e aí a cartela volta a valer, com uma diferença:
+#  cena não se recorta por silhueta, se recorta por GEOMETRIA. Duas cenas
+#  largas EMPILHADAS numa folha 1024x1024 dão 1024x512 cada uma: metade do
+#  preço e, de quebra, mais nitidez do que as nossas cenas de 820px de hoje.
+#  Quatro numa grade 2x2 dão 512x512 — que serve para figura de moldura
+#  pequena (a série da escala), onde o que importa mais é serem IRMÃS.
+#
+#  ⚠️ O QUE CONTINUA FORA: as camadas do mascote (têm que ser EDIÇÃO da pose
+#     parada, senão ele treme) e qualquer cena que precise de 1024 de LARGURA
+#     inteira (aí é uma folha só para ela).
+MOLDE_CENAS = (
+    u"ONE image divided into a clean %(l)dx%(c)d GRID of %(n)d SEPARATE "
+    u"illustrations, like a page of a picture book. Each cell is a complete "
+    u"scene that fills its own cell edge to edge, with a thin gap between "
+    u"cells. ALL %(n)d scenes share the SAME art style, the SAME lighting and "
+    u"the SAME colour palette. %(estilo)s No text, no letters, no numbers, no "
+    u"labels, no captions. The scenes, in reading order (left to right, top to "
+    u"bottom), are:\n%(itens)s")
+
+
+def prompt_cenas(itens):
+    u"""o prompt de uma cartela de CENAS (recorte por geometria)."""
+    l, c = grade(len(itens))
+    return MOLDE_CENAS % {"n": len(itens), "l": l, "c": c, "estilo": ESTILO,
+                          "itens": "\n".join(u"%d. %s" % (i + 1, t)
+                                             for i, t in enumerate(itens))}
+
+
+def cortar_grade(folha, nomes, dest, linhas, colunas, borda=0.018, larg=None):
+    u"""recorta a folha de CENAS pela grade, na ordem de leitura.
+
+    `borda` tira a moldurinha/gap que a IA deixa entre as celulas — sem isso
+    sobra um filete escuro na beirada de cada cena, e ele aparece como uma
+    listra na tela da crianca.
+    """
+    from PIL import Image
+    nomes = [n.strip() for n in nomes.split(",") if n.strip()]
+    if len(nomes) != linhas * colunas:
+        print(u"!! a grade e %dx%d (%d celulas) e voce nomeou %d — NAO vou cortar "
+              u"no escuro." % (linhas, colunas, linhas * colunas, len(nomes)))
+        return 1
+    im = Image.open(folha).convert("RGB")
+    W, H = im.size
+    cw, ch = W / float(colunas), H / float(linhas)
+    mx, my = cw * borda, ch * borda
+    if not os.path.isdir(dest):
+        os.makedirs(dest)
+    for i, nome in enumerate(nomes):
+        x, y = (i % colunas) * cw, (i // colunas) * ch
+        p = im.crop((int(x + mx), int(y + my), int(x + cw - mx), int(y + ch - my)))
+        if larg and p.width != larg:
+            p = p.resize((larg, int(p.height * larg / float(p.width))), Image.LANCZOS)
+        cam = os.path.join(dest, nome + ".jpg")
+        p.save(cam, quality=84, optimize=True, progressive=True)
+        print(u"  -> %-16s %dx%d  %d KB" % (nome, p.width, p.height,
+                                            os.path.getsize(cam) // 1024))
+    return 0
+
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print(__doc__)
@@ -251,5 +318,13 @@ if __name__ == "__main__":
         if "--dest" in sys.argv:
             dest = sys.argv[sys.argv.index("--dest") + 1]
         sys.exit(cortar(sys.argv[2], sys.argv[3], dest))
+    if sys.argv[1] == "cortar-cenas":
+        # cortar-cenas <folha> <nomes> --grade LxC [--dest pasta] [--larg N]
+        dest, g, larg = "_novo/rec", "2x1", None
+        if "--dest" in sys.argv: dest = sys.argv[sys.argv.index("--dest") + 1]
+        if "--grade" in sys.argv: g = sys.argv[sys.argv.index("--grade") + 1]
+        if "--larg" in sys.argv: larg = int(sys.argv[sys.argv.index("--larg") + 1])
+        l, c = [int(x) for x in g.lower().split("x")]
+        sys.exit(cortar_grade(sys.argv[2], sys.argv[3], dest, l, c, larg=larg))
     print(__doc__)
     sys.exit(2)

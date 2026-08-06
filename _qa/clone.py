@@ -22,6 +22,22 @@
 # ============================================================
 import os, re, sys
 
+# ⚠️ NEM TODA PASTA COM `_` E UMA ATIVIDADE. `_novo` e a area de PUBLICACAO: na
+#    hora de publicar, a atividade e COPIADA para la inteirinha — e o portao,
+#    varrendo as vizinhas, achava a copia e reprovava a atividade por ser igual
+#    a SI MESMA ("o mascote daqui se chama 'Ara', o MESMO nome do mascote de
+#    _novo"). Portao que reprova por causa da propria copia nao serve; e pior,
+#    ensina a ignorar o portao justo no passo de publicar.
+NAO_E_ATIVIDADE = ("_novo", "_recuperado", "_lote", "_cartelas", "_templates",
+                   "_padrao", "_qa", "_audio", "_imagens", "_curriculo",
+                   "_status", "_plano", "_demos", "_kit", "_lib_jogo")
+
+
+def e_vizinha(nome):
+    u"""a pasta e outra ATIVIDADE (e nao area de servico)?"""
+    return nome.startswith("_") and nome not in NAO_E_ATIVIDADE
+
+
 alvo = sys.argv[1] if len(sys.argv) > 1 else ""
 if not alvo:
     print("uso: python3 _qa/clone.py <arquivo.html|pasta>")
@@ -136,7 +152,7 @@ if os.path.exists(sw):
     # o nome tem que lembrar ESTA pasta, nao a de origem
     raiz = pasta.strip("_/").split("/")[0]
     for outra in sorted(os.listdir(".")):
-        if not outra.startswith("_") or outra.strip("_") == raiz:
+        if not e_vizinha(outra) or outra.strip("_") == raiz:
             continue
         osw = os.path.join(outra, "sw.js")
         if not os.path.exists(osw):
@@ -227,7 +243,7 @@ if meu:
     alheios = {}
     for outra in sorted(os.listdir(raiz)):
         cam = os.path.join(raiz, outra)
-        if not outra.startswith("_") or not os.path.isdir(cam) or os.path.abspath(cam) == os.path.abspath(pasta):
+        if not e_vizinha(outra) or not os.path.isdir(cam) or os.path.abspath(cam) == os.path.abspath(pasta):
             continue
         pf = prefixo_de(cam)
         if pf and pf != meu:
@@ -294,7 +310,7 @@ if meu_titulo:
     alheios2 = []
     for outra in sorted(os.listdir(raiz2)):
         cam = os.path.join(raiz2, outra, "index.html")
-        if not outra.startswith("_") or not os.path.exists(cam): continue
+        if not e_vizinha(outra) or not os.path.exists(cam): continue
         if os.path.abspath(os.path.dirname(cam)) == os.path.abspath(pasta): continue
         # ⚠️ nada de `except: continue` aqui. Na estreia este bloco usava
         #    io.open() sem importar `io`, o NameError caia no except e a lista
@@ -347,7 +363,7 @@ if minhas:
     conta, dono = {}, {}
     for outra in sorted(os.listdir(raiz3)):
         cam = os.path.join(raiz3, outra, "index.html")
-        if not outra.startswith("_") or not os.path.exists(cam): continue
+        if not e_vizinha(outra) or not os.path.exists(cam): continue
         if os.path.abspath(os.path.dirname(cam)) == os.path.abspath(pasta): continue
         for f in (minhas & _frases(cam)):
             conta[f] = conta.get(f, 0) + 1
@@ -390,7 +406,7 @@ else:
     alheios4, gemeos = [], []
     for outra in sorted(os.listdir(raiz4)):
         cam = os.path.join(raiz4, outra, "index.html")
-        if not outra.startswith("_") or not os.path.exists(cam): continue
+        if not e_vizinha(outra) or not os.path.exists(cam): continue
         if os.path.abspath(os.path.dirname(cam)) == os.path.abspath(pasta): continue
         mo = re.search(r'var\s+MASCOTE_NOME\s*=\s*"([^"]+)"',
                        open(cam, encoding="utf-8", errors="replace").read())

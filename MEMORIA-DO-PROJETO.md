@@ -4229,3 +4229,67 @@ esquecido. Duas armadilhas aprendidas ao montá-lo:
   procurar, a própria lição escrita no código ("foi assim que *com o Nico* ficou
   na tela") reprovava as quatro atividades. Portão que reprova a si mesmo não
   serve.
+
+---
+
+## 🎨💰 CARTELA DE CENAS — a exceção da regra virou regra (ago/2026)
+
+Pedido do Marcos: *"otimize em cartelas para não gastar muito como combinamos"* +
+*"melhore o que precisar nas imagens da atividade do 3º e do 5º ano"*.
+
+**O que a regra dizia até aqui:** cartela é para PEÇA recortável; **cena larga
+fica de fora**, vai no Pollinations, que é de graça. Estava certo — enquanto o
+Pollinations desse conta. Ele **não dá**: pedimos barro e veio foto; pedimos uma
+caravela e veio desenho de aplicativo de bebê. Resultado medido na folha de
+contato da Terra dos Papagaios: **quatro estilos brigando na mesma atividade**
+(objetos e avatares em 3D fofo, duas cenas em barro, uma chapada, duas
+foto-realistas escuras).
+
+**Cena boa é paga — e cena paga volta para a cartela**, com uma diferença: cena
+não se recorta por silhueta, se recorta por **geometria**. Ferramenta nova:
+`python3 _padrao/cartela.py cortar-cenas <folha> <nomes> --grade LxC`.
+
+| grade | tamanho de cada cena | para que serve |
+|---|---|---|
+| **2x1** (empilhadas) | 1024 × 512 | cena larga de fase — **mais nítida** que os 820px que usávamos |
+| **2x2** | 512 × 512 | figura de moldura pequena, onde o que importa é serem IRMÃS |
+
+**A conta desta rodada: 8 imagens em 3 chamadas (~R$0,60)** — uma a uma seriam 8
+chamadas (~R$1,60). **62% mais barato**, e as cenas de cada folha saíram irmãs
+(mesma luz, mesma paleta).
+
+### O que melhorou, e por quê
+- **5º ano** — `nv_caravela` + `nv_horizonte` numa folha; `nv_aldeia` + `nv_porao`
+  noutra. A aldeia nova mostra, lado a lado, exatamente as três coisas que a
+  narração promete: **casa de palha, roça e caminho** (a antiga era escura e
+  vista de cima, e a fase pedia "o terreiro", que nem aparecia direito).
+- **3º ano** — as quatro da escala (`mp_esc_sala/escola/bairro/cidade`) numa
+  folha 2×2 **de propósito**: o balão diz *"veja o MESMO lugar de cada vez mais
+  longe"* e, até hoje, eram quatro lugares diferentes. Agora a escola de telhado
+  vermelho aparece na sala, na escola, no bairro e na cidade — a criança segue o
+  mesmo prédio encolhendo. Isso é a fase inteira funcionando pela primeira vez.
+
+### ⚠️ TROCAR A FIGURA É REMEDIR AS ZONAS — e medir não é olhar
+Duas fases tinham coordenadas cravadas nas figuras velhas (`ALDEIA` no 5º ano,
+`MARCAR` no 3º). Trocar a arte sem remedir faria a criança **tocar certo e ouvir
+que errou** — o defeito que o Marcos já pegou uma vez na cartografia.
+
+E aqui a lição nova: **eu errei olhando**. Na primeira passada pus as zonas "no
+olho" sobre a grade e três delas caíram no mato. O que resolveu foi **medir a
+cor do pixel embaixo de cada alvo**, na figura como ela aparece na tela: rio tem
+que dar **azul**, telhado da escola tem que dar **vermelho**, roça tem que dar
+**verde**. Está em `_qa/` como receita (`scratchpad/pixel.js` → posição no
+navegador, cor no Python — `file://` suja o canvas e `getImageData` estoura).
+Alvo conferido por cor é alvo conferido; alvo conferido no olho é chute com
+grade em cima.
+
+### E o portão que reprovou a atividade por causa da própria cópia
+Na hora de publicar, a atividade é **copiada inteira para `_novo`**. O
+`_qa/clone.py` varre as pastas vizinhas procurando resto de clone — e achou a
+cópia: *"o mascote daqui se chama 'Ará', o MESMO nome do mascote de `_novo`"*,
+*"o sw.js usa o MESMO nome de cache de `_novo`"*. **Reprovou a atividade por ela
+ser igual a si mesma**, e justo no passo de publicar, que é onde eu mais
+preciso confiar no portão. Conserto: `NAO_E_ATIVIDADE` + `e_vizinha()` no
+`_qa/clone.py`, usados nos **cinco** varrimentos (prefixo, sw.js, nome, frases,
+mascote). `_novo`, `_recuperado`, `_padrao`, `_qa` e companhia são área de
+serviço, não atividade.
