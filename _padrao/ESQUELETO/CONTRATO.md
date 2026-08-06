@@ -90,3 +90,28 @@ banco ou na lista de arte, e **gera o `falas.json` a partir dos próprios textos
 - a mesma mecânica **nunca em fases vizinhas**, e a segunda vez é **um degrau
   acima** (a primeira com apoio, a segunda sem);
 - fecho com gancho.
+
+
+---
+
+## 6. LIÇÕES DAS PRIMEIRAS PEÇAS (achadas construindo, ago/2026)
+
+Cada uma destas foi descoberta por quem montou a peça, não por mim. Estão aqui
+para a próxima não repetir.
+
+- **Distratores demais ou de menos quebram o andaime.** Um quiz com 2 distratores
+  faz a criança eliminar tudo antes do 3º erro — o degrau "revelar" vira **código
+  morto**. Use 3 distratores, e tenha a rede: se as erradas acabarem antes,
+  revele na hora em vez de deixar uma tela com uma opção só.
+- **Marcar no `mousedown` quebra o mouse.** O `click` que vem logo atrás cai em
+  "já estava marcada" e desmarca — com mouse de verdade, a criança clica e nada
+  acontece. A marca é do **clique**; o arrasto só marca quando anda mesmo.
+- **O clique FANTASMA do celular desmarca a escolha.** Quem vem do dedo resolve no
+  `touchend`, e o clique sintético de trás é engolido por um guarda de tempo.
+  ⚠️ Isto **o portão não pega**: só aparece com dedo de verdade.
+- **A peça tem que terminar numa `.medal`.** Sem isso o auditor-jogador roda os
+  5200 giros (~20 min) sem reconhecer que acabou. Com ela, fecha em ~10.
+- **`preventDefault` só no `touchmove`, e só com peça na mão** — e longe do
+  `touchstart`, que é a janela que o portão inspeciona.
+- **O CSS da peça mora no PRIMEIRO `<style>`**: o `_qa/classes.py` só lê esse.
+- **Nada de emoji para a criança.** A estrela da medalha é `content:"\2605"`.

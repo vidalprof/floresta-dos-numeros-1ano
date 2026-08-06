@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — completar a lacuna</title>
+<!-- ============================================================
+     PEÇA: COMPLETAR A LACUNA (escolher o pedaço que fecha a frase)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     Armadilhas desta mecânica (_padrao/DINAMICAS.md, linhas "Completar
+     lacuna" e "Escolher / quiz"):
+       · as opções vão EMBARALHADAS (`baguncar`) — na Fábrica de Estrelas a
+         certa era sempre a 1ª e a criança aprendeu a POSIÇÃO, não o conteúdo;
+       · a lacuna se enche com a palavra escolhida: a criança LÊ a frase
+         inteira depois de acertar (é aí que a frase ensina, não no acerto);
+       · o erro não pune — `sErro()` + andaime que cresce (dica → riscar uma
+         que não serve → revelar e seguir). Nunca X nem "errou";
+       · em fase de várias rodadas o `setTimeout` continua correndo depois do
+         `limpa()`: por isso o guarda `if(!telaAtual.parentNode) return;`;
+       · `data-qa="1"` na resposta que serve AGORA, para o auditor-jogador
+         conseguir terminar a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: COMPLETAR A LACUNA ---------------- */
+/* ⚠️ os 13px de folga em cima sao obrigatorios: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.frase{margin:13px auto 12px;max-width:430px;background:rgba(255,255,255,.10);
+       border:2px solid rgba(255,255,255,.22);border-radius:16px;padding:12px 14px;
+       font-size:18px;font-weight:600;line-height:1.5;color:#f4efe6;text-align:center}
+.lac{display:inline-block;min-width:92px;background:#fff3c9;color:#3a2c07;border-radius:8px;
+     padding:1px 8px;font-weight:800;letter-spacing:1px}
+/* cheia = a lacuna fechada. Muda a BORDA e a letra, nao so a cor. */
+.lac.cheia{background:#d6f5c8;color:#1c3d0e;border-bottom:3px solid #4f9a34;letter-spacing:0}
+/* riscada = a opcao que o andaime tirou do caminho: risco (forma), nao so cor */
+.opt.fora{text-decoration:line-through;opacity:.6}
+.opt.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* COMPLETAR A LACUNA — a frase quase pronta e o pedaco que falta.
+   Conteudo curto e neutro (8 anos). Trocar `FRASES` adapta a peca:
+   ante = o que vem antes da lacuna · dep = o que vem depois ·
+   cer = o pedaco certo · out = os distratores (plausiveis, nunca bobos) ·
+   dic = a dica do 1o erro. */
+var FRASES=[
+  {ante:"O peixe vive na ",dep:".",cer:"&#225;gua",out:["areia","nuvem"],
+   dic:"Pense no lugar onde o peixe <b>nada</b>."},
+  {ante:"A abelha faz o ",dep:".",cer:"mel",out:["leite","p&#227;o"],
+   dic:"&#201; docinho e fica guardado na colmeia."},
+  {ante:"A chuva cai da ",dep:".",cer:"nuvem",out:["pedra","janela"],
+   dic:"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover."}
+];
+var rodada=0, errosSeg=0, respondida=false, telaAtual=null, barraP=null;
+var lacuna=null, botoes=[];
+
+function telaCompletar(){
+  limpa(); document.onkeydown=null;
+  errosSeg=0; respondida=false; botoes=[];
+  var f=FRASES[rodada];
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/FRASES.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","FRASE "+(rodada+1)+" DE "+FRASES.length));
+  c.appendChild(el("div","balao","Toque no peda&#231;o que <b>completa</b> a frase."));
+  var fr=el("div","frase",f.ante+'<span class="lac">?????</span>'+f.dep);
+  c.appendChild(fr);
+  lacuna=fr.querySelector(".lac");
+  var lista=baguncar([f.cer].concat(f.out)), i, b;
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++){
+    b=el("div","opt",lista[i]);
+    b.pedaco=lista[i];
+    b.certa=(lista[i]===f.cer);
+    /* data-qa: a resposta que serve AGORA. E so para o auditor-jogador
+       (_qa/jogador.js) conseguir fechar a rodada; a crianca nao ve nada. */
+    b.setAttribute("data-qa",b.certa?"1":"0");
+    b.onclick=escolheu;
+    cx.appendChild(b); botoes.push(b);
+  }
+  c.appendChild(cx);
+  c.appendChild(el("div","hint","Leia a frase inteira antes de escolher."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+function escolheu(){
+  if(respondida) return;
+  sTap();
+  if(this.certa) acertou(this); else errou(this);
+}
+/* ⚠️ o temporizador da rodada continua correndo depois que a tela sai: sem o
+   guarda `!telaAtual.parentNode` ele montaria a rodada por cima da tela
+   seguinte. Armadilha registrada no _padrao/DINAMICAS.md. */
+function acertou(b){
+  respondida=true;
+  b.className="opt ok";
+  lacuna.className="lac cheia";
+  lacuna.innerHTML=b.pedaco;
+  sCerto(); apagaDica();
+  if(barraP) barraP.style.width=Math.round((rodada+1)*100/FRASES.length)+"%";
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    proxima();
+  },1050);
+}
+function errou(b){
+  sErro(); errosSeg++;
+  b.className="opt no treme";
+  destreme(b);
+  ajuda(errosSeg);
+}
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("ok")<0&&b.className.indexOf("fora")<0) b.className="opt no";
+  },340);
+}
+/* o andaime CRESCE: dica -> tirar uma do caminho -> revelar e seguir.
+   Nunca X, nunca "errou", nunca fica travado. */
+function ajuda(n){
+  if(n===1){
+    mostraDica(FRASES[rodada].dic);
+  }else if(n===2){
+    mostraDica("Risquei uma que <b>n&#227;o serve</b>. Ficou mais f&#225;cil escolher.");
+    riscaUmaErrada();
+  }else{
+    mostraDica("Era esta! Leia a frase inteira comigo.");
+    revela();
+  }
+}
+function riscaUmaErrada(){
+  var i,b;
+  for(i=0;i<botoes.length;i++){
+    b=botoes[i];
+    if(!b.certa&&b.className.indexOf("fora")<0){ b.className="opt fora"; return; }
+  }
+}
+function revela(){
+  var i;
+  for(i=0;i<botoes.length;i++) if(botoes[i].certa){ acertou(botoes[i]); return; }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function proxima(){
+  rodada++;
+  if(rodada<FRASES.length){ telaCompletar(); return; }
+  mostraBanner("Voc&#234; fechou as tr&#234;s frases!",telaFim);
+}
+
+function telaFim(){
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; completou <b>todas</b> as frases."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; telaCompletar(); }
+telaCompletar();
+</script>
+</body></html>
