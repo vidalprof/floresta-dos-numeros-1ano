@@ -1393,7 +1393,7 @@ function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
    est&#225; sem cr&#233;dito. Com a c&#243;pia a arara n&#227;o treme: ela s&#243; n&#227;o mexe o bico.
    Assim que houver cr&#233;dito (ou o Marcos editar no ChatGPT), &#233; s&#243; trocar os
    dois arquivos — nenhuma linha de c&#243;digo muda.                            */
-var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico","nv_mapavelho","nv_mar","nv_vela0","nv_vela1","nv_vela2"];
+var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico","nv_mapavelho","nv_mar","nv_vela0","nv_vela1","nv_vela2","nv_rede","nv_berimbau","nv_dende","nv_abacaxi","nv_pipoca","nv_cafune"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -2430,12 +2430,17 @@ function mAquecimento(){
    O objetivo do 5º ano em pessoa: "conceito de etnia" e "trajetória cultural
    dos grupos étnico-raciais". A criança descobre que o que ela come, fala e
    canta veio de TRÊS lugares — e que nenhum deles é "o certo".              */
-var RAIZ=[{k:0,n:"a mandioca",d:"ind",e:"Os povos daqui plantavam mandioca muito antes de qualquer navio."},
-          {k:1,n:"o dend&#234;",d:"afr",e:"O dend&#234; veio da &#193;frica &#8212; e virou o cheiro da comida da Bahia."},
-          {k:2,n:"o trigo do p&#227;o",d:"eur",e:"O trigo veio da Europa, no por&#227;o dos navios."},
-          {k:3,n:"a rede de dormir",d:"ind",e:"A rede &#233; inven&#231;&#227;o dos povos daqui. Os europeus copiaram na hora."},
-          {k:4,n:"o berimbau",d:"afr",e:"O berimbau chegou com os africanos e virou capoeira."},
-          {k:5,n:"o cavalo",d:"eur",e:"Aqui n&#227;o havia cavalo nenhum antes dos navios."}];
+/* ⚠️ o Marcos: *"na fase de onde veio deveria ter a imagem para ilustrar"*.
+   Ele tem razao e o motivo e o mesmo do Aquecimento: a fase pede que a crianca
+   reconheca a COISA, e reconhecer sem ver e adivinhar. Tres figuras ja eram da
+   atividade (mandioca, trigo, cavalo); a rede, o berimbau e o dende sairam de
+   UMA cartela (regra do custo).                                           */
+var RAIZ=[{k:0,n:"a mandioca",im:"nv_mandioca",d:"ind",e:"Os povos daqui plantavam mandioca muito antes de qualquer navio."},
+          {k:1,n:"o dend&#234;",im:"nv_dende",d:"afr",e:"O dend&#234; veio da &#193;frica &#8212; e virou o cheiro da comida da Bahia."},
+          {k:2,n:"o trigo do p&#227;o",im:"nv_trigo",d:"eur",e:"O trigo veio da Europa, no por&#227;o dos navios."},
+          {k:3,n:"a rede de dormir",im:"nv_rede",d:"ind",e:"A rede &#233; inven&#231;&#227;o dos povos daqui. Os europeus copiaram na hora."},
+          {k:4,n:"o berimbau",im:"nv_berimbau",d:"afr",e:"O berimbau chegou com os africanos e virou capoeira."},
+          {k:5,n:"o cavalo",im:"nv_cavalo",d:"eur",e:"Aqui n&#227;o havia cavalo nenhum antes dos navios."}];
 var NOMER={ind:"DOS POVOS DAQUI",afr:"DA &#193;FRICA",eur:"DA EUROPA"};
 function mRaizes(){
   limpa();var t=el("div","tela");setProg(t,40);
@@ -2443,6 +2448,7 @@ function mRaizes(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","AS TR&#202;S RA&#205;ZES"));
   var bal=el("div","balao","");c.appendChild(bal);
+  var fig=el("div","objcena");c.appendChild(fig);   /* a coisa da rodada */
   var gav=el("div","gavetas"),GK=["ind","afr","eur"],i;
   for(i=0;i<GK.length;i++){(function(k){
     var g=el("div","gav");
@@ -2456,6 +2462,7 @@ function mRaizes(){
     if(idx>=ordem.length){ sFesta(); festa();
       fechaFase("AS TR&#202;S RA&#205;ZES","O nosso povo tem <b>tr&#234;s ra&#237;zes</b>, e todas est&#227;o no seu prato, na sua m&#250;sica e na sua fala.","nv_raizes_revela",14000,mPalavra,40); return; }
     bal.innerHTML="De onde veio <b>"+ordem[idx].n+"</b>?";
+    fig.innerHTML=""; if(ordem[idx].im) fig.appendChild(imgEl(ordem[idx].im));
     falaDaTela("nv_raiz_q"+ordem[idx].k);
     var a=gav.getElementsByClassName("gav"),z;
     for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===ordem[idx].d)?"1":"0");
@@ -2464,9 +2471,16 @@ function mRaizes(){
     if(idx>=ordem.length) return; arma();
     var it=ordem[idx];
     if(k===it.d){ g.className="gav ok"; sCerto(); elogio(); reg("povo",err===0,err+1);
-      bal.innerHTML=it.e; falaDaTela("nv_raiz_e"+it.k);
+      /* ⚠️ a explicacao NAO pode ser cortada no meio (pedido do Marcos,
+         ago/2026: *"seria melhor esperar a explicacao acabar de falar para nao
+         cortar"*). Eram 1800ms fixos para uma frase de 6 segundos: a crianca
+         ouvia metade e a tela ja tinha virado. `depoisDaFala` espera o audio
+         TERMINAR, com um teto de seguranca para o caso de o mp3 falhar.   */
+      bal.innerHTML=it.e;
+      falaTela="nv_raiz_e"+it.k; telaNarrou=true;
       var ce=centroTela(g); faisca(ce[0],ce[1],"#6bd23f",12);
-      setTimeout(function(){ g.className="gav"; idx++; err=0; mostra(); },1800);
+      depoisDaFala("nv_raiz_e"+it.k,12000,function(){
+        g.className="gav"; idx++; err=0; mostra(); });
     } else { err++; g.className="gav no"; sErro();
       setTimeout(function(){ g.className="gav"; },450);
       if(err===2) consolo();
