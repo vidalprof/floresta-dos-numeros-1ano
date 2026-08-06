@@ -1926,7 +1926,7 @@ function mPalpite(){limpa();var t=el("div","tela");setProg(t,4);var c=el("div","
    As três são ILUSTRAÇÕES DE IA do mesmo lugar (regra do Marcos: interação
    dinâmica usa arte de IA, não desenho de CSS). O conceito só é dito no fim. */
 function mVoo(){
-  limpa();var t=el("div","tela");setProg(t,10);
+  limpa();var t=el("div","tela");setProg(t,8);
   var visto={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O VOO DO NICO"));
@@ -1979,7 +1979,7 @@ var VISTAS=[{k:0,n:"mesa",   rot:"a mesa",    de:"da mesa"},
 function mDeCima(){
   var fila=baguncar(VISTAS.slice(0)),idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,18+idx*2);
+    limpa();var t=el("div","tela");setProg(t,11+Math.min(idx,3));
     var it=fila[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","DE CIMA OU DE LADO?"));
@@ -2029,7 +2029,7 @@ function mDeCima(){
 /* ---------- 5) A SOMBRA DE CIMA (ligar) ---------- */
 var LIGAS=[["mesa","a mesa"],["cadeira","a cadeira"],["arvore","a &#225;rvore"],["carro","o carro"]];
 function mSombra(){
-  limpa();var t=el("div","tela");setProg(t,26);
+  limpa();var t=el("div","tela");setProg(t,15);
   var sel=null,feitos=0,err=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","ACHE O PAR"));
@@ -2100,7 +2100,7 @@ var NAMAQ=[{q:"a <b>igreja</b>",x:26,y:23},
 function mMaquete(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,34+idx);
+    limpa();var t=el("div","tela");setProg(t,19+Math.min(idx,2));
     if(idx>=NAMAQ.length){ fechaFase("DA MAQUETE AO MAPA","A <b>maquete</b> tem altura. O <b>mapa</b> &#233; a mesma coisa, achatada no papel.","mp_maq_revela",11000,mOndeFica,34); return; }
     var it=NAMAQ[idx],fim=false;
     var c=el("div","centro");
@@ -2180,7 +2180,7 @@ var ONDE=[{k:0,q:"a <b>igreja</b>",        d:"cima",  eixo:"v"},
           {k:4,q:"a <b>igreja</b>",        d:"esq",   eixo:"h"},
           {k:5,q:"as <b>casas</b> de telhado vermelho", d:"dir", eixo:"h", pl:1}];
 function mOndeFica(){
-  limpa();var t=el("div","tela");setProg(t,42);
+  limpa();var t=el("div","tela");setProg(t,22);
   /* ⚠️ os dois eixos NAO se misturam: primeiro tudo de cima/meio/embaixo,
      depois tudo de esquerda/direita. Bagunçar a lista inteira fazia as
      gavetas trocarem de significado a cada pergunta — a crianca respondia
@@ -2273,7 +2273,7 @@ var SETAS={cima:"&#8593;",baixo:"&#8595;",esq:"&#8592;",dir:"&#8594;"};
 function mRoteiro(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,50+idx*2);
+    limpa();var t=el("div","tela");setProg(t,26+Math.min(idx,3));
     if(idx>=ROTAS.length){ fechaFase("O ROTEIRO DO NICO","Um <b>roteiro</b> &#233; isto: dizer o caminho em passos, olhando o mapa.","mp_rota_revela",11000,mAquecimento,50); return; }
     var it=ROTAS[idx],passos=[],fim=false;
     var c=el("div","centro");
@@ -2336,7 +2336,7 @@ function mRoteiro(){
 
 /* ---------- 9) AQUECIMENTO (prática de recuperação — Roediger/Bjork) ---- */
 function mAquecimento(){
-  limpa();var t=el("div","tela");setProg(t,56);
+  limpa();var t=el("div","tela");setProg(t,30);
   var perg=[["De cima, o que voc&#234; v&#234; de uma casa?",["O telhado",1],["A porta da frente",0],["A janela do lado",0]],
             ["A maquete e o mapa mostram o mesmo lugar. O que muda?",["A maquete tem <b>altura</b>; o mapa &#233; achatado",1],["O mapa &#233; maior",0],["A maquete &#233; colorida e o mapa n&#227;o",0]]];
   var i=0,err=0;
@@ -2378,7 +2378,7 @@ var SIMB=[["igreja","a igreja"],["escola","a escola"],["ponte","a ponte"],
 function mSimbolo(){
   var fila=baguncar(SIMB.slice(0)),idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,62+idx);
+    limpa();var t=el("div","tela");setProg(t,34+Math.min(idx,2));
     if(idx>=fila.length){ fechaFase("O QUE QUER DIZER?","Cada <b>s&#237;mbolo</b> guarda um lugar inteiro num desenho pequenininho.","mp_sim_revela",10000,mLegenda,62); return; }
     var it=fila[idx],fim=false;
     var c=el("div","centro");
@@ -2424,7 +2424,7 @@ function mSimbolo(){
    As duas portas: arrastar com o dedo/mouse OU tocar no símbolo e na linha.  */
 var LEGL=[["escola","ESCOLA"],["igreja","IGREJA"],["ponte","PONTE"],["praca","PRA&#199;A"],["rio","RIO"]];
 function mLegenda(){
-  limpa();var t=el("div","tela");setProg(t,70);
+  limpa();var t=el("div","tela");setProg(t,37);
   var feitos=0,err=0,sel=null,ultimoToque=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","MONTE A LEGENDA"));
@@ -2560,7 +2560,7 @@ var MUDO=[["igreja","IGREJA"],["ponte","PONTE"],["rio","RIO"]];
 function mMudo(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,76+idx);
+    limpa();var t=el("div","tela");setProg(t,41+Math.min(idx,3));
     if(idx>=MUDO.length){ fechaFase("O MAPA MUDO","Escrever o nome no mapa &#233; o que transforma o desenho em <b>informa&#231;&#227;o</b>.","mp_mudo_revela",9000,mEscala,76); return; }
     var it=MUDO[idx],fim=false;
     var c=el("div","centro");
@@ -2605,7 +2605,7 @@ function mMudo(){
    mesmo lugar aparece de mais longe a cada passo: a sala, a escola, o bairro,
    a cidade. Ela vê com os olhos que, quanto mais longe, MENOS detalhe cabe. */
 function mEscala(){
-  limpa();var t=el("div","tela");setProg(t,82);
+  limpa();var t=el("div","tela");setProg(t,45);
   var visto={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PERTO E LONGE"));
@@ -2678,7 +2678,7 @@ var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
 function mRosa(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,84);
+    limpa();var t=el("div","tela");setProg(t,48);
     if(idx>=VENTOS.length){ fechaFase("A ROSA DOS VENTOS","Quase todo mapa vem com o <b>Norte para cima</b>. &#201; um combinado entre quem faz mapas.","mp_rosa_revela",11000,mCoord,84); return; }
     var it=VENTOS[idx],fim=false;
     var c=el("div","centro");
@@ -2747,7 +2747,7 @@ var COORD=[{q:"a <b>igreja</b>",cels:["A1"]},
 function mCoord(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,86);
+    limpa();var t=el("div","tela");setProg(t,52);
     if(idx>=COORD.length){ fechaFase("ACHE PELA COORDENADA","Com <b>linha e coluna</b> d&#225; para dizer onde fica qualquer lugar do mapa.","mp_coord_revela",11000,mPlanta,86); return; }
     var it=COORD[idx],fim=false;
     var c=el("div","centro");
@@ -2810,7 +2810,7 @@ var MOVEIS=[{n:"lousa",   img:"mp_lousa_c",   rot:"a lousa",   x:50,y:14,w:104,h
             {n:"armario", img:"mp_armario_c", rot:"o arm&#225;rio", x:84,y:76,w:64,h:36},
             {n:"cadeira", img:"mp_cadeira_c", rot:"a cadeira",  x:50,y:62,w:40,h:40}];
 function mPlanta(){
-  limpa();var t=el("div","tela");setProg(t,88);
+  limpa();var t=el("div","tela");setProg(t,56);
   var postos=0,err=0,sel=null,ultimoToque=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","A PLANTA DA SALA"));
@@ -2909,7 +2909,7 @@ function pzona(px,py){
   return null;
 }
 function mPintar(){
-  limpa();var t=el("div","tela");setProg(t,90);
+  limpa();var t=el("div","tela");setProg(t,59);
   var idx=0,err=0,tinta=null;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PINTE O MAPA"));
@@ -3016,7 +3016,7 @@ function mPintar(){
    palavra, o chip carimba, a faixa "ACHOU!" sobe e a VOZ diz a palavra.       */
 var CACAM=["MAPA","RIO","PONTE","LEGENDA","MAQUETE"];
 function mCaca(){
-  limpa();var t=el("div","tela");setProg(t,86);
+  limpa();var t=el("div","tela");setProg(t,63);
   var N=9,g=[],i,j;
   for(i=0;i<N;i++){ g[i]=[]; for(j=0;j<N;j++) g[i][j]=""; }
   var achadas={},posicoes={},onde={},cor={};
@@ -3120,7 +3120,7 @@ var CRUZM=[{p:"MAPA",d:"Desenho do lugar visto de cima."},
 function mCruzada(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,90+idx);
+    limpa();var t=el("div","tela");setProg(t,67+Math.min(idx,2));
     if(idx>=CRUZM.length){ fechaFase("CRUZADINHA","Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.","mp_cruz_revela",8000,mForca,90); return; }
     var it=CRUZM[idx],pos=0,fim=false;
     var c=el("div","centro");
@@ -3173,7 +3173,7 @@ function mCruzada(){
 var MEMM=[{k:"igreja",a:"igreja"},{k:"ponte",a:"ponte"},
           {k:"escola",a:"escola"},{k:"campo",a:"campo de futebol"}];
 function mMemoria(){
-  limpa();var t=el("div","tela");setProg(t,93);
+  limpa();var t=el("div","tela");setProg(t,74);
   t.appendChild(el("div","selo","MEM&#211;RIA DOS S&#205;MBOLOS"));
   t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o par: o <b>s&#237;mbolo</b> e o <b>nome</b> do lugar."));
   var baralho=[],i;
@@ -3258,7 +3258,7 @@ var MARCAR=[{q:"da <b>escola</b> (o pr&#233;dio de telhado vermelho, com a quadr
 function mDesenhe(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,96);
+    limpa();var t=el("div","tela");setProg(t,78);
     if(idx>=MARCAR.length){ fechaFase("O MAPA DO BAIRRO","Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>","mp_des_revela",10000,mAlto,96); return; }
     var it=MARCAR[idx],fim=false;
     var c=el("div","centro");
@@ -3346,7 +3346,7 @@ var ALTO=[
 function mAlto(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,97);
+    limpa();var t=el("div","tela");setProg(t,82);
     if(idx>=ALTO.length){ fechaFase("O BAIRRO L&#193; DE CIMA","Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.","mp_alto_revela",13000,mQuebra,97); return; }
     var it=ALTO[idx],fim=false;
     var c=el("div","centro");
@@ -3413,7 +3413,7 @@ var NEBAV=["o c\u00e9u est\u00e1 limpo","entrou uma neblina fina","a neblina est
 function mForca(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,91+idx);
+    limpa();var t=el("div","tela");setProg(t,70+Math.min(idx,3));
     var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A PALAVRA DO MAPA"));
@@ -3483,7 +3483,7 @@ function mForca(){
    COMO as partes se ligam: o rio que continua, a rua que atravessa. E o gesto
    de encaixe, que nao existia em nenhuma outra fase.                        */
 function mQuebra(){
-  limpa();var t=el("div","tela");setProg(t,97);
+  limpa();var t=el("div","tela");setProg(t,85);
   var COLS=3,LINS=2,total=COLS*LINS,postas=0,err=0,sel=null;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O MAPA EM PEDA&#199;OS"));
@@ -3569,7 +3569,7 @@ var ANDE=[{alvo:{l:2,c:4},sim:"mp_sim_escola",n:"a escola"},
 function mAnde(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,98);
+    limpa();var t=el("div","tela");setProg(t,89);
     var it=ANDE[idx],N=5,pos={l:4,c:0},passos=0,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ANDE AT&#201; O LUGAR"));
@@ -3634,7 +3634,7 @@ var RELM=[["Um mapa mostra o lugar visto de <b>cima</b>.",1],
           ["Quanto mais longe, <b>mais</b> detalhe cabe no mapa.",0],
           ["O s&#237;mbolo do rio &#233; uma linha <b>azul</b>.",1]];
 function mRelampago(){
-  limpa();var t=el("div","tela");setProg(t,98);
+  limpa();var t=el("div","tela");setProg(t,93);
   var fila=baguncar(RELM.slice(0)),i=0,acertos=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","DESAFIO REL&#194;MPAGO"));
@@ -3672,7 +3672,7 @@ function mRelampago(){
 }
 
 /* ---------- 19) ENSINE O NICO (autoexplicação — efeito protégé) -------- */
-function mEnsinar(){limpa();var t=el("div","tela");setProg(t,99);var c=el("div","centro");
+function mEnsinar(){limpa();var t=el("div","tela");setProg(t,96);var c=el("div","centro");
   c.appendChild(nicoEl("pq"));
   c.appendChild(el("div","selo","ENSINE O NICO"));
   c.appendChild(el("div","balao","Me conta com as suas palavras: por que o mapa mostra o lugar <b>visto de cima</b>?"));

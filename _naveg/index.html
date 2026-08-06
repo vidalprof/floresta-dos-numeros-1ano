@@ -1892,7 +1892,7 @@ function mPalpite(){limpa();var t=el("div","tela");setProg(t,4);var c=el("div","
    A criança gira a vela e vê o barco andar ou empacar. Dez segundos e ela
    nunca mais esquece — e é o objetivo do 5º ano sobre tecnologias.          */
 function mVento(){
-  limpa();var t=el("div","tela");setProg(t,8);
+  limpa();var t=el("div","tela");setProg(t,9);
   var visto={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O SEGREDO DO VENTO"));
@@ -1975,7 +1975,7 @@ var ALDEIA=[{q:"uma <b>casa de palha</b> da aldeia", n:"A CASA DE PALHA", r:12,
 function mAldeia(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,12);
+    limpa();var t=el("div","tela");setProg(t,13);
     if(idx>=ALDEIA.length){ fechaFase("QUEM J&#193; ESTAVA AQUI","Aqui j&#225; havia <b>gente</b>: casa, ro&#231;a, caminho e l&#237;ngua. E ainda h&#225; &#8212; em Santa Catarina vivem <b>Guarani, Kaingang e Xokleng</b>.","nv_aldeia_revela",13000,mPorao,12); return; }
     var it=ALDEIA[idx],fim=false;
     var c=el("div","centro");
@@ -2038,7 +2038,7 @@ var PORAO=[{img:"nv_barril",  t:"O barril",     x:"&#193;gua e comida salgada pa
            {img:"nv_ampulheta",t:"A ampulheta", x:"A areia mede o tempo. Virar a ampulheta era tarefa de um <b>menino</b> a bordo."},
            {img:"nv_bau",     t:"O ba&#250;",       x:"Dentro dele iam panos, espelhos e facas &#8212; coisas para <b>trocar</b> em terra."}];
 function mPorao(){
-  limpa();var t=el("div","tela");setProg(t,16);
+  limpa();var t=el("div","tela");setProg(t,18);
   var vistos={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O NAVIO POR DENTRO"));
@@ -2087,7 +2087,7 @@ var LIGOBJ=[["bussola","a b&#250;ssola","Achar o <b>Norte</b> sem ver terra nenh
             ["ampulheta","a ampulheta","Marcar as <b>horas</b> com areia"],
             ["barril","o barril","Guardar a <b>&#225;gua</b> de meses no mar"]];
 function mLigar(){
-  limpa();var t=el("div","tela");setProg(t,20);
+  limpa();var t=el("div","tela");setProg(t,22);
   var sel=null,feitos=0,err=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PARA QUE SERVIA?"));
@@ -2152,7 +2152,7 @@ var ROTAP=[{t:"Sai de Portugal, na Europa",        x:57,y:12},
            {t:"Atravessa o oceano com o vento",    x:44,y:54},
            {t:"Chega na terra onde o Ar&#225; mora",   x:33,y:52}];
 function mRota(){
-  limpa();var t=el("div","tela");setProg(t,24);
+  limpa();var t=el("div","tela");setProg(t,27);
   var passo=0,err=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","A ROTA DA VIAGEM"));
@@ -2255,7 +2255,7 @@ var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
 function mBussola(){
   var idx=0,err=0,pos=[57,12];
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,28);
+    limpa();var t=el("div","tela");setProg(t,31);
     if(idx>=BUSSP.length){ fechaFase("PARA QUE LADO?","No meio do oceano n&#227;o h&#225; placa nenhuma. Quem dizia o caminho era a <b>b&#250;ssola</b>.","nv_bus_revela",11000,mVeioFoi,28); return; }
     var it=BUSSP[idx],fim=false;
     var c=el("div","centro");
@@ -2325,7 +2325,7 @@ var TROCAI=[{k:0,img:"nv_mandioca",n:"a mandioca",d:"aqui"},{k:1,img:"nv_milho",
             {k:4,img:"nv_cavalo",n:"o cavalo",d:"la"},{k:5,img:"nv_trigo",n:"o trigo",d:"la"},
             {k:6,img:"nv_cana",n:"a cana",d:"la"},{k:7,img:"nv_roda",n:"a roda",d:"la"}];
 function mVeioFoi(){
-  limpa();var t=el("div","tela");setProg(t,32);
+  limpa();var t=el("div","tela");setProg(t,36);
   var idx=0,err=0,ordem=baguncar(TROCAI.slice(0));
   var c=el("div","centro");
   c.appendChild(el("div","selo","VEIO OU J&#193; ESTAVA?"));
@@ -2394,7 +2394,7 @@ var AQUEC=[{p:"O que fez o navio conseguir <b>ir e voltar</b>?",im:"nv_vela2",
 function mAquecimento(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,36);
+    limpa();var t=el("div","tela");setProg(t,41);
     if(idx>=AQUEC.length){ fechaFase("LEMBRANDO&#8230;","Lembrar do que a gente aprendeu &#233; o que faz aquilo <b>ficar</b>.","nv_aquec_revela",9000,mRaizes,36); return; }
     var it=AQUEC[idx],err=0;
     var c=el("div","centro");
@@ -2443,7 +2443,7 @@ var RAIZ=[{k:0,n:"a mandioca",im:"nv_mandioca",d:"ind",e:"Os povos daqui plantav
           {k:5,n:"o cavalo",im:"nv_cavalo",d:"eur",e:"Aqui n&#227;o havia cavalo nenhum antes dos navios."}];
 var NOMER={ind:"DOS POVOS DAQUI",afr:"DA &#193;FRICA",eur:"DA EUROPA"};
 function mRaizes(){
-  limpa();var t=el("div","tela");setProg(t,40);
+  limpa();var t=el("div","tela");setProg(t,45);
   var idx=0,err=0,ordem=baguncar(RAIZ.slice(0));
   var c=el("div","centro");
   c.appendChild(el("div","selo","AS TR&#202;S RA&#205;ZES"));
@@ -2514,7 +2514,7 @@ var MARE=["a mar&#233; est&#225; baixa","a &#225;gua subiu um pouco","a &#225;gu
 function mPalavra(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,44+idx);
+    limpa();var t=el("div","tela");setProg(t,50+Math.min(idx,3));
     var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A PALAVRA QUE FICOU"));
@@ -2593,7 +2593,7 @@ var PINTAR=[{cor:"tupi",  rot:"<b>verde</b>", alvo:["pipoca","abacaxi","mandioca
 function mPinta(){
   var rodada=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,48+rodada);
+    limpa();var t=el("div","tela");setProg(t,54+Math.min(rodada,4));
     var it=PINTAR[rodada],falta=it.alvo.length,err=0,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A L&#205;NGUA GUARDA"));
@@ -2658,7 +2658,7 @@ var CRUZ=[{p:"CARAVELA",d:"O navio de vela triangular que atravessou o mar."},
 function mCruzada(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,52+idx);
+    limpa();var t=el("div","tela");setProg(t,59+Math.min(idx,3));
     if(idx>=CRUZ.length){ fechaFase("CRUZADINHA","Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.","nv_cruz_revela",9000,mCompleta,52); return; }
     var it=CRUZ[idx],pos=0,err=0;
     var c=el("div","centro");
@@ -2718,7 +2718,7 @@ var LACN=[{img:"nv_aldeia",  fr:"Antes de qualquer navio chegar, aqui j&#225; vi
 function mCompleta(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,57+idx);
+    limpa();var t=el("div","tela");setProg(t,63+Math.min(idx,4));
     if(idx>=LACN.length){ fechaFase("COMPLETE A HIST&#211;RIA","Voc&#234; j&#225; <b>escreve</b> as palavras da viagem, sem ningu&#233;m dar as letras.","nv_lac_revela",10000,mCaca,57); return; }
     var it=LACN[idx];
     var c=el("div","centro");
@@ -2766,7 +2766,7 @@ function mCompleta(){
    sua cor — no chip e na grade.                                             */
 var CACAM=["VELA","ROTA","TROCA","POVO","MAR"];
 function mCaca(){
-  limpa();var t=el("div","tela");setProg(t,63);
+  limpa();var t=el("div","tela");setProg(t,68);
   var N=9,g=[],i,j;
   for(i=0;i<N;i++){ g[i]=[]; for(j=0;j<N;j++) g[i][j]=""; }
   var achadas={},posicoes={},onde={},cor={};
@@ -2855,7 +2855,7 @@ function mCaca(){
 var MEMM=[{img:"nv_mandioca",a:"j&#225; estava AQUI"},{img:"nv_cacau",a:"j&#225; estava AQUI"},
           {img:"nv_cavalo",a:"veio da EUROPA"},{img:"nv_trigo",a:"veio da EUROPA"}];
 function mMemoria(){
-  limpa();var t=el("div","tela");setProg(t,68);
+  limpa();var t=el("div","tela");setProg(t,73);
   var c=el("div","centro");
   c.appendChild(el("div","selo","MEM&#211;RIA DA TRAVESSIA"));
   c.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o par: a <b>coisa</b> e <b>de onde ela veio</b>."));
@@ -2924,7 +2924,7 @@ var CUSTO=[{p:"Os africanos vieram para c&#225;&#8230;",
 function mCusto(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,73+idx);
+    limpa();var t=el("div","tela");setProg(t,77+Math.min(idx,4));
     if(idx>=CUSTO.length){ fechaFase("O QUE A VIAGEM CUSTOU","Contar a hist&#243;ria inteira &#233; um jeito de <b>respeitar</b> quem veio antes.","nv_custo_revela",15000,mMapaRotas,73); return; }
     var it=CUSTO[idx],err=0;
     var c=el("div","centro");
@@ -2967,7 +2967,7 @@ var ROTAS=[{q:"a <b>Am&#233;rica do Sul</b>, onde o Ar&#225; mora", n:"AM&#201;R
 function mMapaRotas(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,79);
+    limpa();var t=el("div","tela");setProg(t,82);
     if(idx>=ROTAS.length){ fechaFase("O MAPA DAS ROTAS","Tr&#234;s peda&#231;os de terra, um oceano no meio &#8212; e o encontro que fez o nosso povo.","nv_rotas_revela",11000,mLupa,79); return; }
     var it=ROTAS[idx],fim=false;
     var c=el("div","centro");
@@ -3040,7 +3040,7 @@ var LUPAM=[{x:16,y:24,r:58,n:"nv_lupa_d1",zx:0,zy:11,
             tit:"A terra do Ar&#225;",
             leg:"Olhe o <b>formato</b> desta terra. Quem desenhou nunca tinha visto a costa inteira: foi juntando peda&#231;os do que cada navio contava. Por isso os mapas antigos <b>mudam</b> de desenho a cada ano."}];
 function mLupa(){
-  limpa();var t=el("div","tela");setProg(t,84);
+  limpa();var t=el("div","tela");setProg(t,86);
   var vistos=0,fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O MAPA ANTIGO"));
@@ -3100,7 +3100,7 @@ var RELP=[{p:"O que atravessou o mar primeiro: a caravela ou a rede de dormir?",
 function mRelampago(){
   var idx=0,acertos=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,89);
+    limpa();var t=el("div","tela");setProg(t,91);
     if(idx>=RELP.length){ fechaFase("DESAFIO REL&#194;MPAGO","Voc&#234; acertou <b>"+acertos+" de "+RELP.length+"</b> no rel&#226;mpago!","nv_rel_revela",9000,mEnsinar,89); return; }
     var it=RELP[idx],err=0;
     var c=el("div","centro");
