@@ -1,5 +1,18 @@
 # 🧠 REGRAS DE MONTAGEM — neurociência do aprendizado, som e encantamento
 
+> ## 🛑 DUAS COISAS DESTE ARQUIVO ESTÃO VETADAS PELO MARCOS (ago/2026)
+>
+> 1. **As regras de animação** (`só transform/opacity`, `nada de loop enquanto ela
+>    pensa`, `prefers-reduced-motion`): *"as animações que a gente vem fazendo não
+>    travam em nada, nem essa do loop; vamos desconsiderar essa regra"*. Ele mediu
+>    no parque de máquinas real e viu com a criança na frente. **Não usar como
+>    critério de reprovação.**
+> 2. **Tudo que pressupõe a criança VOLTAR outro dia** (revisão espaçada, retenção
+>    medida depois): aqui é uma atividade, uma aula, uma vez.
+>
+> O resto vale — principalmente os números do som e o feedback que não pune.
+> Ver o quadro no topo de `_padrao/RECEITA.md` §1.
+
 > Destilado de `PESQUISA-APPS-AMAR-E-NEUROCIENCIA-2026-07.md`, `PRINCIPIOS-ENCANTAMENTO.md`,
 > `PESQUISA-SOM-E-GAMEFEEL-2026-07.md`, `PESQUISA-DUOLINGO-AMBIENTE-2026-07.md` e
 > `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md`.

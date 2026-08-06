@@ -138,10 +138,18 @@ tem graça. Portão nenhum substitui olhar.
 >   segunda. **O 3º erro continua revelando e seguindo.**
 > - **Portão de domínio** que segura quem não atingiu X — mesma razão.
 >
-> **Continua valendo (é acabamento, não dificuldade):** os números do som, animar
-> só `transform`/`opacity`, `prefers-reduced-motion`, nada de animação em loop
-> enquanto o enunciado espera, **embaralhar as opções**, não repetir o mesmo gesto
-> em fases vizinhas, 44px de alvo para os pequenos, contar junto em voz alta.
+> **Continua valendo (é acabamento, não dificuldade):** os números do som,
+> **embaralhar as opções**, não repetir o mesmo gesto em fases vizinhas, 44px de
+> alvo para os pequenos, contar junto em voz alta.
+>
+> **🚫 E MAIS UMA REGRA DE PESQUISA DESCARTADA — a das animações.** Palavras dele
+> (ago/2026): *"as animações que a gente vem fazendo não travam em nada, nem essa
+> do loop; acho que vamos desconsiderar essa regra"*. A literatura manda animar só
+> `transform`/`opacity` e proibir loop enquanto a criança pensa, por dois motivos:
+> travar a máquina e distrair. **O primeiro ele mediu no parque de máquinas dele,
+> em uso real: não trava.** O segundo ele viu com a criança na frente. Quem tem os
+> PCs e a turma é ele; teoria não ganha de observação. **Não reprovar animação por
+> propriedade nem por loop.**
 >
 > **E o que já está aprovado NÃO se mexe.** O Jardim do Broto está no ar, as
 > crianças estão gostando, e "melhorar" o que funciona é o jeito mais rápido de
