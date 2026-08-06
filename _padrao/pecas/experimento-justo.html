@@ -123,13 +123,20 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .medal:before{content:"\2605"}
 /* janela baixa: encolhe a letra e as plantas, nunca os botões */
 @media (max-height:520px){
-  .cab{margin:8px 0 4px}
-  .lin{margin-bottom:4px}
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .cab{margin:6px 0 3px}
+  /* ⚠️ `!important` porque a altura da planta vem por style inline (é ela que
+     ANIMA o crescimento). Sem isto o botão de comparar fica pela metade numa
+     janela de 420px de altura. */
+  .planta{height:34px !important;width:25px !important}
+  .colv b{font-size:12px}
+  .lin{margin-bottom:3px}
   .bin{min-height:41px;font-size:13px}
   .fixo{min-height:41px;font-size:13px;padding:10px 4px}
-  .msg{min-height:46px;margin-top:6px;padding:6px 9px}
+  .msg{min-height:44px;margin-top:5px;padding:6px 9px}
   .mtexto{font-size:13px}
-  .cmp{margin-top:6px}
+  .cmp{margin-top:4px}
   .balao{font-size:15px;padding:9px 14px}
   .hint{margin-top:6px}
 }
@@ -322,6 +329,10 @@ function confere(){
   justo = (d.length===1 && d[0]===alvo);
 
   if(justo){
+    /* ⚠️ dica VELHA some quando ela já fez o que a dica pedia — andaime que
+       continua mandando fazer o que já está feito confunde mais que ajuda. */
+    var dv=document.getElementById("dicaP");
+    if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
     elMsg.className="msg pode";
     elMtx.innerHTML="Agora sim: s&oacute; a <b>"+nomeDe(alvo)+"</b> est&aacute; diferente. "+
                     "D&aacute; para descobrir!";

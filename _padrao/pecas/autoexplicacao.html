@@ -310,20 +310,25 @@ function escolheuTarefa(){
   if(errosSeg===2) riscaUmaErrada();
   if(sobrouSoACerta()) revelaTarefa();
 }
-function fechaTarefa(b){
+/* ⚠️ `manter` existe por causa de um defeito achado testando o caminho do ERRO
+   (o auditor-jogador só percorre o caminho bom): na revelação do 3º erro a
+   frase que EXPLICA a revelação aparecia e sumia no mesmo instante, porque o
+   fecho apagava a dica. Quem mais precisa dela é justamente quem errou três
+   vezes — então na revelação a dica fica, e a tela seguinte espera. */
+function fechaTarefa(b,manter){
   respondida=true;
   b.className="opt esc ok";
-  sCerto(); apagaDica();
+  sCerto(); if(!manter) apagaDica();
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
     telaPorque();
-  },800);
+  },manter?1600:800);
 }
 function revelaTarefa(){
   var i;
   for(i=0;i<cartoes.length;i++) if(cartoes[i].dado&&cartoes[i].dado.c){
     mostraDica("Este é o lugar. Agora vem a parte boa: <b>o porquê</b>.");
-    fechaTarefa(cartoes[i]); return;
+    fechaTarefa(cartoes[i],true); return;
   }
 }
 
@@ -366,20 +371,20 @@ function escolheuPorque(){
   mostraDica(RODADAS[rodada].perguntas[errosSeg-1]);
   if(sobrouSoACerta()) revelaPorque();
 }
-function fechaPorque(b){
+function fechaPorque(b,manter){
   respondida=true;
   b.className="opt ok";
-  sCerto(); apagaDica();
+  sCerto(); if(!manter) apagaDica();
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
     proxima();
-  },900);
+  },manter?1700:900);
 }
 function revelaPorque(){
   var i;
   for(i=0;i<cartoes.length;i++) if(cartoes[i].dado&&cartoes[i].dado.c){
     mostraDica("Olhe esta comigo e leia devagar. <b>É essa</b> a razão.");
-    fechaPorque(cartoes[i]); return;
+    fechaPorque(cartoes[i],true); return;
   }
 }
 function proxima(){

@@ -34,6 +34,15 @@
        na peça irmã das coordenadas: a barra chegou a 175%). Tranca `travado`
        entre o acerto e a rodada seguinte.
 
+     · ⚠️ ARMADILHA NOVA, PAGA AQUI (ago/2026): `elemento.dir` É PROPRIEDADE
+       RESERVADA DO HTML (direção do texto: ltr/rtl/auto). Guardar a direção da
+       rosa dos ventos em `botao.dir = "NORTE"` parecia natural e o navegador
+       ENGOLIA o valor em silêncio — `botao.dir` voltava vazio, nenhuma resposta
+       era aceita e a peça travava de vez na 3ª rodada. Nada disso dá erro de
+       JS: o `node --check` passa, o print fica perfeito e só o auditor-jogador
+       viu ("PRESO"). Guardar SEMPRE num nome que o HTML não usa — aqui `rumo`.
+       A mesma regra vale para `id`, `title`, `lang`, `align`, `name`, `type`.
+
      · ANDAIME QUE CRESCE, a peça nunca trava: referência -> a seta daquele lado
        pisca no mapa -> a resposta certa é aceita junto com a criança.
      ============================================================ -->
@@ -203,8 +212,10 @@ var ARTE={
    "<circle cx='18' cy='13' r='5' fill='#fff3e6'/></svg>"
 };
 function urlArte(k){ return "url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(ARTE[k])+"\")"; }
-var LUGARES=[{k:"escola",n:"ESCOLA"},{k:"padaria",n:"PADARIA"},
-             {k:"parque",n:"PARQUE"},{k:"mercado",n:"MERCADO"}];
+/* o ARTIGO vai junto do nome: sem ele o enunciado sai "em que direcao fica
+   MERCADO?", que nao e portugues e trava a leitura de quem ainda soletra. */
+var LUGARES=[{k:"escola",n:"ESCOLA",art:"a"},{k:"padaria",n:"PADARIA",art:"a"},
+             {k:"parque",n:"PARQUE",art:"o"},{k:"mercado",n:"MERCADO",art:"o"}];
 
 /* ---- as 4 rodadas: primeiro o lugar pela direcao, depois a direcao pelo lugar ---- */
 var RODADAS=[
@@ -283,7 +294,7 @@ function montaMapa(){
       if(!item){ lin.appendChild(el("div","bcel","")); continue; }
       e=el("div","pt",'<div class="ptfig"></div><span class="ptn">'+item.lugar.n+"</span>");
       e.querySelector(".ptfig").style.backgroundImage=urlArte(item.lugar.k);
-      e.dir=item.dir;
+      e.rumo=item.dir;
       e.onclick=cliqueLugar;
       item.el=e;
       lin.appendChild(e);
@@ -291,21 +302,18 @@ function montaMapa(){
     g.appendChild(lin);
   }
   elMapa.appendChild(g);
-  /* a rosa dos ventos em volta: seta + nome, sempre a vista */
+  /* A ROSA DOS VENTOS em volta do mapa. Cada lado leva a SETA junto da letra —
+     assim a direcao se le pela FORMA, nao so pela palavra, e a crianca que
+     ainda soletra enxerga para onde e.                                      */
   rosas={};
-  poeRosa("NORTE","50%","3px");
-  poeRosa("SUL","50%",null);
-  poeRosa("LESTE",null,"46%");
-  poeRosa("OESTE","2px","46%");
+  poeRosa("NORTE",{left:"50%",top:"5px",marginLeft:"-15px",width:"30px"},SETA.NORTE+" N");
+  poeRosa("SUL",  {left:"50%",bottom:"5px",marginLeft:"-15px",width:"30px"},SETA.SUL+" S");
+  poeRosa("OESTE",{left:"3px",top:"50%",marginTop:"-14px",width:"26px"},SETA.OESTE+"<br>O");
+  poeRosa("LESTE",{right:"3px",top:"50%",marginTop:"-14px",width:"26px"},SETA.LESTE+"<br>L");
 }
-function poeRosa(d,esq,cima){
-  var r=el("div","rosa",SETA[d]+"<br>"+d.charAt(0));
-  if(d==="NORTE"||d==="SUL"){ r.innerHTML=(d==="NORTE"?SETA[d]+"<br>"+d.charAt(0):d.charAt(0)+"<br>"+SETA[d]); }
-  r.style.left=(esq===null)?"":esq;
-  if(d==="LESTE"){ r.style.right="3px"; r.innerHTML=SETA[d]+"<br>L"; }
-  if(d==="NORTE"||d==="SUL"){ r.style.marginLeft="-9px"; }
-  r.style.top=(cima===null)?"":cima;
-  if(d==="SUL") r.style.bottom="2px";
+function poeRosa(d,estilo,html){
+  var r=el("div","rosa",html), k;
+  for(k in estilo) if(estilo.hasOwnProperty(k)) r.style[k]=estilo[k];
   elMapa.appendChild(r);
   rosas[d]=r;
 }
@@ -330,8 +338,9 @@ function novaRodada(){
   }else{
     item=mapa[Math.floor(Math.random()*mapa.length)];
     alvoLugar=item; alvoDir=item.dir;
-    bal.innerHTML="Da <b>pra&#231;a</b>, em que dire&#231;&#227;o fica <b>"+item.lugar.n+"</b>?"+
-                  (r.ref?" Pense de que lado do mapa ela est&#225;.":"");
+    bal.innerHTML="Da <b>pra&#231;a</b>, em que dire&#231;&#227;o fica "+item.lugar.art+
+                  " <b>"+item.lugar.n+"</b>?"+
+                  (r.ref?" Pense de que lado do mapa esse lugar est&#225;.":"");
     montaBotoes();
   }
   marcaQualServe();
@@ -341,7 +350,7 @@ function montaBotoes(){
   var vs=document.getElementById("ventos"), i, b;
   for(i=0;i<DIRS.length;i++){
     b=el("button","vento",'<i class="seta">'+SETA[DIRS[i]]+"</i>"+DIRS[i]);
-    b.dir=DIRS[i];
+    b.rumo=DIRS[i];
     b.onclick=cliqueVento;
     vs.appendChild(b); botoes.push(b);
   }
@@ -353,7 +362,7 @@ function cliqueLugar(){
     mostraDica("Nesta rodada a resposta est&#225; nos bot&#245;es de <b>dire&#231;&#227;o</b>, embaixo do mapa.");
     sTap(); return;
   }
-  if(this.dir===alvoDir){
+  if(this.rumo===alvoDir){
     this.className="pt ok";
     this.appendChild(el("i","vok","&#10003;"));
     acerta();
@@ -366,7 +375,7 @@ function cliqueLugar(){
 }
 function cliqueVento(){
   if(travado) return;
-  if(this.dir===alvoDir){
+  if(this.rumo===alvoDir){
     this.className="vento ok";
     acerta();
   }else{
@@ -433,7 +442,7 @@ function revela(){
     acerta(); return;
   }
   for(i=0;i<botoes.length;i++)
-    if(botoes[i].dir===alvoDir){ botoes[i].className="vento ok"; acerta(); return; }
+    if(botoes[i].rumo===alvoDir){ botoes[i].className="vento ok"; acerta(); return; }
 }
 function apagaDica(){
   var d=document.getElementById("dicaP");
@@ -446,7 +455,7 @@ function marcaQualServe(){
   for(i=0;i<mapa.length;i++)
     if(mapa[i].el) mapa[i].el.setAttribute("data-qa",(achaLugar&&mapa[i].dir===alvoDir)?"1":"0");
   for(i=0;i<botoes.length;i++)
-    botoes[i].setAttribute("data-qa",(!achaLugar&&botoes[i].dir===alvoDir)?"1":"0");
+    botoes[i].setAttribute("data-qa",(!achaLugar&&botoes[i].rumo===alvoDir)?"1":"0");
 }
 function desmarcaTudo(){
   var i;

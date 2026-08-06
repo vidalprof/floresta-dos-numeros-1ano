@@ -336,20 +336,25 @@ function escolheuHip(){
   mostraDica(this.hip.pq+" "+(extrasAbertas<EXTRAS.length?"Achei mais uma pista para você:":"Olhe o caderno de novo."));
   if(extrasAbertas<EXTRAS.length){ extrasAbertas++; repintaQuadro(); }
 }
-function acertouHip(b){
+/* ⚠️ `manter` existe por causa de um defeito achado testando o caminho do ERRO
+   (o auditor-jogador só percorre o caminho bom): na revelação do 3º erro a
+   frase que EXPLICA a revelação aparecia e sumia no mesmo instante, porque o
+   fecho apagava a dica. Quem mais precisa da explicação é justamente quem
+   errou três vezes — então na revelação a dica fica, e o banner espera. */
+function acertouHip(b,manter){
   respondida=true;
   b.className="opt ok";
-  sCerto(); apagaDica();
+  sCerto(); if(!manter) apagaDica();
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
     mostraBanner("Boa hipótese! Agora <b>prove</b> com uma pista.",telaVeredito);
-  },700);
+  },manter?1600:700);
 }
 function revelaHip(){
   var i;
   for(i=0;i<cartoes.length;i++) if(cartoes[i].hip&&cartoes[i].hip.c){
     mostraDica("Olhe esta: as pistas apontam para <b>a falta de água</b>.");
-    acertouHip(cartoes[i]); return;
+    acertouHip(cartoes[i],true); return;
   }
 }
 

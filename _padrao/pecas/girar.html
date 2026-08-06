@@ -89,6 +89,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* a peca que marca o "topo" da figura: sem ela, girar 180 parece nao mudar */
 .blk.topo{background:#ff9a4a;box-shadow:0 3px 0 #c06a22}
 .vaz{position:absolute;border:3px dashed rgba(244,239,230,.75);border-radius:7px}
+/* ⚠️ o molde TAMBEM marca o topo (defeito visto no print, ago/2026): a ajuda
+   manda "olhe a peca laranja do molde" e o molde nao tinha nenhuma. Sem esta
+   marca a crianca ainda encaixa, mas nao tem como PLANEJAR o giro — so
+   tentar. Marcar a casa faz a peca ensinar em vez de sortear. */
+.vaz.topo{border-color:#ff9a4a;border-style:solid}
 .setas{display:block;text-align:center;margin-top:8px;line-height:0}
 .seta{display:inline-block;vertical-align:top;width:122px;height:56px;line-height:1.05;
       margin:0 5px;padding:8px 4px 0;background:#fffdf6;color:#221a12;border-radius:16px;
@@ -166,7 +171,7 @@ function fazFigura(molde,angulo){
   g.style.width=lado+"px"; g.style.height=lado+"px";
   poeAngulo(g,angulo);
   for(i=0;i<FORMA.length;i++){
-    b=el("div",molde?"vaz":("blk"+(i===TOPO?" topo":"")));
+    b=el("div",(molde?"vaz":"blk")+((i===TOPO)?" topo":""));
     b.style.width=(p-3)+"px"; b.style.height=(p-3)+"px";
     b.style.left=(FORMA[i][1]*p)+"px"; b.style.top=(FORMA[i][0]*p)+"px";
     g.appendChild(b);

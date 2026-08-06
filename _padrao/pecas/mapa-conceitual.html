@@ -78,10 +78,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ---------------- A PEÇA: MAPA CONCEITUAL ----------------
    ⚠️ margem propria de 13px: `.balao + *` tem a mesma forca que `.mapa` e perde
    por vir antes no arquivo (regra 9 do _qa/leiaute.js, cobrada duas vezes). */
-.mapa{position:relative;max-width:430px;height:220px;margin:13px auto 0;border-radius:16px;
+.mapa{position:relative;max-width:430px;height:240px;margin:13px auto 0;border-radius:16px;
       background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.20);overflow:hidden}
 .setas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
-.rots{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+/* ⚠️ o NOME da seta fica ACIMA dos conceitos (z-index maior que o `.noco`):
+   numa janela baixa os conceitos chegam perto e o rotulo sumia atras deles —
+   "dá águ[a]", "vira comi[da de]". O nome da seta e CONTEUDO, nao enfeite:
+   melhor ele passar por cima de uma caixa do que ficar pela metade. */
+.rots{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:5}
 /* o NOME da seta: HTML, nunca <text> de SVG (o auditor de contraste le `color`,
    e o SVG pinta com `fill` — ele mediria a cor errada). */
 .rot{position:absolute;background:#fffdf6;color:#221a12;font-size:12px;font-weight:800;
@@ -111,8 +115,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
        font-size:44px;line-height:92px;text-align:center;font-weight:800}
 .medal:before{content:"\2605"}
-/* tela baixa: encolhe o TABULEIRO, nunca o alvo de toque */
-@media (max-height:520px){.mapa{height:172px}}
+/* tela baixa (a janela do PC da escola): encolhe o TABULEIRO, nunca o alvo de
+   toque — e os conceitos se reacomodam sozinhos, porque a posicao deles e em
+   PORCENTAGEM e ainda leva um teto (ver `arruma`). */
+@media (max-height:560px){.mapa{height:190px}}
 </style></head>
 <body>
 <div id="app"></div>
@@ -156,10 +162,10 @@ document.addEventListener("pointerdown",function(){ac();},false);
      3. a direção importa: escreva sempre de quem AGE para quem RECEBE;
      4. `por` explica a proposição em uma frase — é o fecho de cada seta.    */
 var NOS=[
- {k:"sol",    n:"O SOL",    px:4,  py:4},
- {k:"chuva",  n:"A CHUVA",  px:60, py:4},
- {k:"planta", n:"A PLANTA", px:24, py:41},
- {k:"coelho", n:"O COELHO", px:58, py:73}
+ {k:"sol",    n:"O SOL",    px:4,  py:1},
+ {k:"chuva",  n:"A CHUVA",  px:60, py:1},
+ {k:"planta", n:"A PLANTA", px:24, py:40},
+ {k:"coelho", n:"O COELHO", px:58, py:80}
 ];
 var LIGS=[
  {a:"sol", b:"planta", r:"d&#225; energia",
@@ -244,11 +250,18 @@ function pecaMapa(){
 }
 
 function arruma(){
-  var r=mapa.getBoundingClientRect(), i, no;
+  var r=mapa.getBoundingClientRect(), i, no, h;
   for(i=0;i<NOS.length;i++){
     no=NOS[i];
+    h=no.el.offsetHeight||46;
     no.x=Math.round(r.width*no.px/100);
     no.y=Math.round(r.height*no.py/100);
+    /* ⚠️ TETO: numa janela baixa o tabuleiro encolhe e o ultimo conceito
+       escorregava para FORA (o `overflow:hidden` cortava o coelho pela
+       metade). A porcentagem sozinha nao basta — a altura do conceito nao
+       encolhe junto, porque 44px e o piso do dedo da crianca. */
+    if(no.y>r.height-h-2) no.y=Math.round(r.height-h-2);
+    if(no.y<0) no.y=0;
     poe(no);
   }
 }
@@ -439,7 +452,12 @@ function traca(a,b,viva){
   if(viva) ln.setAttribute("stroke-dasharray","8,6");
   svg.appendChild(ln);
   ponta(p1,p2,viva?"#fff3c9":"#ffd54a");
-  return {x:(p1.x+p2.x)/2, y:(p1.y+p2.y)/2};
+  /* ⚠️ O NOME NÃO FICA EM CIMA DA SETA. Na 1a montagem ele pousava no meio da
+     linha e TAPAVA a seta inteira — e a seta e metade do conteudo (ela diz o
+     SENTIDO da relacao). Agora o rotulo sai 16px na perpendicular: fica ao
+     lado da seta, e as duas coisas se leem juntas. */
+  var dx=p2.x-p1.x, dy=p2.y-p1.y, d=Math.sqrt(dx*dx+dy*dy)||1;
+  return {x:(p1.x+p2.x)/2-dy/d*16, y:(p1.y+p2.y)/2+dx/d*16};
 }
 /* a cabeca da seta e um triangulo calculado na mao: `marker-end` muda de
    comportamento entre navegadores velhos e some sem avisar. */
@@ -458,21 +476,22 @@ function redesenha(){
   if(!svg) return;
   while(svg.firstChild) svg.removeChild(svg.firstChild);
   camadaR.innerHTML="";
-  var i,L,m,r;
+  var i,L;
   for(i=0;i<LIGS.length;i++){
     L=LIGS[i];
     if(!L.feito) continue;
-    m=traca(noDe(L.a),noDe(L.b),false);
-    r=el("div","rot",L.rot);
-    r.style.left=m.x+"px"; r.style.top=m.y+"px";
-    camadaR.appendChild(r);
+    poeRotulo(traca(noDe(L.a),noDe(L.b),false),L.rot);
   }
-  if(rotulando){
-    m=traca(noDe(rotulando.a),noDe(rotulando.b),true);
-    r=el("div","rot","...?");
-    r.style.left=m.x+"px"; r.style.top=m.y+"px";
-    camadaR.appendChild(r);
-  }
+  if(rotulando) poeRotulo(traca(noDe(rotulando.a),noDe(rotulando.b),true),"...?");
+}
+/* o rotulo nao pode sair pela borda do tabuleiro (`overflow:hidden` cortaria
+   o nome da seta ao meio) — dai o teto e o piso de 46px. */
+function poeRotulo(m,txt){
+  var w=mapa.clientWidth, x=m.x, y=m.y, r=el("div","rot",txt);
+  if(x<46) x=46; if(x>w-46) x=w-46;
+  if(y<12) y=12; if(y>mapa.clientHeight-12) y=mapa.clientHeight-12;
+  r.style.left=x+"px"; r.style.top=y+"px";
+  camadaR.appendChild(r);
 }
 
 /* ---------- os ajudantes ---------- */

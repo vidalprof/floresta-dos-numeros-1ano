@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — decisão com consequência</title>
+<!-- ============================================================
+     PEÇA: DECISÃO COM CONSEQUÊNCIA (história ramificada)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O que a criança faz: em cada capítulo ela DECIDE, e o MUNDO MUDA NA TELA
+     por causa da ideia que ela aplicou — a água chega (ou não) à raiz, a palha
+     segura a umidade, o espaço deixa cada planta pegar luz. O estado é levado
+     para o capítulo seguinte: no fim, a horta é o retrato das decisões dela.
+
+     A armadilha desta mecânica, em uma linha (REGRAS-INTERATIVIDADE, linha
+     "História ramificada"):
+       "escolha sem consequência conceitual é ENFEITE".
+     Por isso aqui toda opção carrega um `efeito` que mexe no mundo (altura dos
+     brotos, umidade da terra, número de plantas) e um `txt` que diz POR QUE
+     aquilo aconteceu. Escolha que só troca o texto não entra.
+
+     As outras regras que este arquivo cumpre:
+       · a mudança é VISTA acontecendo — os brotos crescem, a palha aparece e a
+         barra de umidade anda com transição de CSS, na mesma tela da escolha;
+         se eu trocasse de tela, a criança veria só o "depois" e a consequência
+         viraria texto;
+       · NÃO EXISTE escolha punida: a decisão fraca também faz o mundo reagir e
+         a história segue — e ainda dá para "voltar e tentar outro jeito", que é
+         o que transforma consequência em aprendizado;
+       · nada essencial só na cor: a planta forte é mais ALTA, a apertada é mais
+         FINA, a murcha fica INCLINADA, e a umidade traz o número escrito;
+       · opções embaralhadas (`baguncar`) — senão a boa é sempre a 1ª;
+       · `data-qa="1"` na decisão que aplica o conceito, para o auditor-jogador
+         conseguir terminar sozinho;
+       · cada tela se vira sozinha (`garanteCap`) — os portões abrem cada tela
+         do zero, sem passar pelas anteriores;
+       · nada de emoji: a horta é desenho (CSS + SVG embutido).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: DECISÃO COM CONSEQUÊNCIA ---------------- */
+/* O MUNDO. Tudo que muda tem transição: a criança precisa VER a consequência
+   acontecer, não encontrar o resultado pronto na tela seguinte. */
+.horta{position:relative;height:132px;max-width:300px;margin:13px auto 0;border-radius:16px;
+       overflow:hidden;border:3px solid #6b4b2a;background:#8fc7e8}
+.hortafim{height:108px}
+.solh{position:absolute;right:12px;top:10px;width:26px;height:26px;border-radius:50%;background:#ffd54a}
+.terra{position:absolute;left:0;right:0;bottom:0;height:30px;background:#6b4b2a}
+.palha{position:absolute;left:0;right:0;bottom:24px;height:11px;background:#d9b45c;opacity:0;
+       -webkit-transition:opacity .6s;transition:opacity .6s}
+.palha.on{opacity:1}
+.broto{position:absolute;bottom:26px;width:26px;margin-left:-13px;height:26px;
+       -webkit-transition:height .7s,opacity .5s,-webkit-transform .5s;
+       transition:height .7s,opacity .5s,transform .5s;
+       -webkit-transform-origin:bottom center;transform-origin:bottom center}
+/* murcha = INCLINADA (forma), nunca só uma cor diferente */
+.broto.mole{-webkit-transform:rotate(10deg);transform:rotate(10deg)}
+/* apertada = FINA (forma), o que é exatamente o que a competição faz com ela */
+.broto.fino{width:15px;margin-left:-7px}
+.caule{position:absolute;left:50%;bottom:0;width:5px;margin-left:-2px;height:100%;
+       background:#5f8a3a;border-radius:3px}
+.folha{position:absolute;width:17px;height:11px;background:#7aa84a}
+.fe{right:50%;bottom:52%;margin-right:1px;border-radius:17px 0 17px 0}
+.fd{left:50%;bottom:30%;margin-left:1px;border-radius:0 17px 0 17px}
+.umid{max-width:300px;margin:7px auto 0;font-size:12px;font-weight:700;text-align:left}
+.umidb{height:11px;background:rgba(255,255,255,.18);border-radius:8px;overflow:hidden;margin-top:3px}
+.umidb i{display:block;height:100%;background:#4fa3d8;width:0;
+         -webkit-transition:width .6s;transition:width .6s}
+/* o que aconteceu POR CAUSA da decisão — entra no lugar das opções, para a
+   tela não crescer e empurrar botão para fora (regra 2 do _qa/leiaute.js) */
+.result{max-width:430px;margin:13px auto 0;background:rgba(255,255,255,.10);
+        border:2px solid rgba(255,255,255,.22);border-radius:14px;padding:10px 12px;
+        font-size:15px;line-height:1.35;color:#f4efe6;text-align:left}
+.result b{color:#ffe082}
+.centro .btn{margin-top:12px}
+.btn2{background:#cfd8e3;color:#221a12;box-shadow:0 4px 0 #97a3b0;font-size:15px;padding:11px 18px}
+.opt.fora{text-decoration:line-through;opacity:.6}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* janela baixa (projetor, PC da escola com barras): encolhe o mundo, nunca o
+   alvo de toque — o piso de 44px continua de pe. */
+@media (max-height:470px){
+  .horta{height:96px;margin-top:10px}
+  .hortafim{height:88px}
+  .medal{width:74px;height:74px;line-height:74px;font-size:16px}
+  .balao{font-size:15px;padding:9px 13px}
+  .opt{min-height:44px;padding:9px 14px;margin:6px auto;font-size:15px}
+  .result{font-size:14px;padding:8px 10px;margin-top:8px}
+  .umid{margin-top:4px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* DECISÃO COM CONSEQUÊNCIA — a horta da escola em três capítulos.
+   Para adaptar a peça, trocar CAPS: cada capítulo tem a situação e três
+   decisões; cada decisão tem `ef` (o que muda NO MUNDO) e `txt` (por que
+   mudou). Se uma decisão não mexer no mundo, ela é enfeite — não entra.   */
+
+var MUNDO={h:26, umid:30, plantas:3, palha:false, mole:false, fino:false};
+var ANTES=null;                 /* retrato do mundo antes da decisão da vez */
+var cap=0, telaAtual=null, barraP=null, decidiu=false;
+var brotos=[], palhaEl=null, umidEl=null, umidTxt=null;
+var POS=[16,32,50,68,84];       /* onde cada broto fica, em % da largura */
+
+var CAPS=[
+ {selo:"CAPÍTULO 1 — A SEDE",
+  txt:"Sol a pino e a terra seca. <b>Quando você rega?</b>",
+  op:[
+   {t:"Regar quando o sol baixar", bom:true,
+    ef:{h:34,umid:45},
+    txt:"Com o sol fraco, quase toda a água <b>desceu até a raiz</b> antes de virar vapor. Os brotos esticaram."},
+   {t:"Regar agora, com o sol a pino", bom:false,
+    ef:{h:12,umid:16},
+    txt:"O sol quente transformou <b>boa parte da água em vapor</b> antes de ela chegar à raiz. Sobrou pouca para os brotos."},
+   {t:"Deixar para regar amanhã", bom:false,
+    ef:{h:3,umid:-12,mole:true},
+    txt:"A terra passou o dia inteiro seca e as folhas ficaram <b>moles</b>. Ainda dá para cuidar delas."}
+  ]},
+ {selo:"CAPÍTULO 2 — A TERRA NUA",
+  txt:"A água some rápido da terra. <b>O que pôr em volta?</b>",
+  op:[
+   {t:"Cobrir a terra com palha seca", bom:true,
+    ef:{h:32,umid:34,palha:true,mole:false},
+    txt:"A palha faz <b>sombra na terra</b>: a água demora muito mais para evaporar. A umidade subiu e ficou."},
+   {t:"Deixar a terra nua no sol", bom:false,
+    ef:{h:10,umid:-14},
+    txt:"Sem nada por cima, o sol <b>puxou a água</b> da terra outra vez."},
+   {t:"Tapar as folhas com um plástico", bom:false,
+    ef:{h:5,umid:8,mole:true},
+    txt:"A terra segurou água, mas as folhas ficaram <b>sem luz e sem ar</b> e murcharam um pouco."}
+  ]},
+ {selo:"CAPÍTULO 3 — MUITOS BROTOS",
+  txt:"Nasceram brotos demais no mesmo buraco. <b>E agora?</b>",
+  op:[
+   {t:"Passar alguns para o espaço vazio", bom:true,
+    ef:{h:30,umid:6,plantas:5,fino:false,mole:false},
+    txt:"Com espaço, <b>cada planta pega água e luz suficientes</b>. A horta ficou maior e todas cresceram."},
+   {t:"Deixar todos apertados", bom:false,
+    ef:{h:9,umid:-8,fino:true},
+    txt:"Apertados, eles <b>disputam a mesma água e a mesma luz</b>. Os caules ficaram fininhos."},
+   {t:"Ficar só com um broto", bom:false,
+    ef:{h:28,umid:4,plantas:1},
+    txt:"Esse cresceu bem — mas a horta ficou com <b>uma planta só</b> para colher."}
+  ]}
+];
+
+function garanteCap(){ if(!CAPS[cap]) cap=0; }
+
+/* ---------------- o desenho do MUNDO ---------------- */
+function montaHorta(){
+  var h=el("div","horta"), i, b;
+  h.appendChild(el("div","solh",""));
+  h.appendChild(el("div","terra",""));
+  palhaEl=el("div","palha","");
+  h.appendChild(palhaEl);
+  brotos=[];
+  for(i=0;i<POS.length;i++){
+    b=el("div","broto",'<i class="caule"></i><b class="folha fe"></b><b class="folha fd"></b>');
+    b.style.left=POS[i]+"%";
+    h.appendChild(b); brotos.push(b);
+  }
+  return h;
+}
+function montaUmid(){
+  var u=el("div","umid","");
+  umidTxt=el("div","",""); u.appendChild(umidTxt);
+  var bar=el("div","umidb",""); umidEl=el("i",""); bar.appendChild(umidEl);
+  u.appendChild(bar);
+  return u;
+}
+/* pinta o mundo com o estado de agora. Como as regras têm transição, chamar
+   isto DEPOIS da decisão é o que faz a criança VER a consequência. */
+function aplicaMundo(){
+  var i, vivo, cl;
+  if(MUNDO.umid<0) MUNDO.umid=0;
+  if(MUNDO.umid>100) MUNDO.umid=100;
+  for(i=0;i<brotos.length;i++){
+    vivo=(i<MUNDO.plantas);
+    cl="broto";
+    if(MUNDO.mole) cl+=" mole";
+    if(MUNDO.fino) cl+=" fino";
+    brotos[i].className=cl;
+    brotos[i].style.height=(vivo?MUNDO.h:0)+"px";
+    brotos[i].style.opacity=vivo?"1":"0";
+  }
+  if(palhaEl) palhaEl.className=MUNDO.palha?"palha on":"palha";
+  if(umidEl) umidEl.style.width=MUNDO.umid+"%";
+  if(umidTxt) umidTxt.innerHTML="Água na terra: <b>"+Math.round(MUNDO.umid)+"%</b>";
+}
+
+/* ---------------- 1) A ABERTURA ---------------- */
+function telaAbertura(){
+  limpa();
+  MUNDO={h:26, umid:30, plantas:3, palha:false, mole:false, fino:false};
+  cap=0; ANTES=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,4);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A HORTA DA ESCOLA"));
+  c.appendChild(el("div","balao","A horta é sua por três dias. <b>Cada decisão muda</b> o que acontece com ela."));
+  c.appendChild(montaHorta());
+  c.appendChild(montaUmid());
+  var b=el("button","btn","Cuidar da horta");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){sTap();cap=0;telaCapitulo();};
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+  aplicaMundo();
+}
+
+/* ---------------- 2) OS CAPÍTULOS (decidir e ver o mundo mudar) ---------- */
+function telaCapitulo(){
+  limpa(); garanteCap();
+  decidiu=false;
+  var f=CAPS[cap];
+  var t=el("div","tela"); telaAtual=t; setProg(t,8+cap*30);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",f.selo));
+  c.appendChild(el("div","balao",f.txt));
+  c.appendChild(montaHorta());
+  c.appendChild(montaUmid());
+  var cx=el("div","opts"), lista=baguncar(f.op.slice(0)), i, b;
+  cx.id="opcoes";
+  for(i=0;i<lista.length;i++){
+    b=el("div","opt",lista[i].t);
+    b.dec=lista[i];
+    b.setAttribute("data-qa",lista[i].bom?"1":"0");
+    b.onclick=decide;
+    cx.appendChild(b);
+  }
+  c.appendChild(cx);
+  t.appendChild(c); app.appendChild(t);
+  aplicaMundo();
+}
+/* ⚠️ o coração da mecânica: a decisão aplica o CONCEITO no mundo e o mundo
+   responde na hora, na mesma tela. Nada de "você errou": a consequência é a
+   resposta, e ela dá para voltar e experimentar o outro caminho. */
+function decide(){
+  if(decidiu) return;
+  decidiu=true; sTap();
+  var d=this.dec, ef=d.ef, k;
+  ANTES={h:MUNDO.h,umid:MUNDO.umid,plantas:MUNDO.plantas,palha:MUNDO.palha,mole:MUNDO.mole,fino:MUNDO.fino};
+  for(k in ef){ if(ef.hasOwnProperty(k)){
+    if(k==="h"||k==="umid") MUNDO[k]=MUNDO[k]+ef[k]; else MUNDO[k]=ef[k];
+  } }
+  if(d.bom) sCerto(); else sErro();
+  aplicaMundo();
+  if(barraP) barraP.style.width=(8+cap*30+18)+"%";
+  var cx=document.getElementById("opcoes");
+  if(!cx||!cx.parentNode) return;
+  var r=el("div","result",d.txt), pai=cx.parentNode;
+  pai.replaceChild(r,cx);
+  var b=el("button","btn",(cap+1<CAPS.length)?"Continuar a história":"Ver a horta no fim");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){sTap();proximo();};
+  pai.appendChild(b);
+  if(!d.bom){
+    var v=el("button","btn btn2","Voltar e tentar outro jeito");
+    v.setAttribute("data-qa","0");
+    v.onclick=function(){sTap();desfaz();};
+    pai.appendChild(v);
+  }
+}
+/* voltar não é castigo nem "recomeçar tudo": devolve o mundo ao ponto de antes
+   da decisão e reabre o mesmo capítulo. É o que transforma consequência em
+   experimento — e a criança compara os dois caminhos. */
+function desfaz(){
+  if(ANTES){ MUNDO={h:ANTES.h,umid:ANTES.umid,plantas:ANTES.plantas,
+                    palha:ANTES.palha,mole:ANTES.mole,fino:ANTES.fino}; }
+  telaCapitulo();
+}
+function proximo(){
+  cap++;
+  if(cap<CAPS.length){ telaCapitulo(); return; }
+  mostraBanner("Três dias de decisões. Vamos ver a <b>sua</b> horta.",telaFim);
+}
+
+/* ---------------- 3) O FIM (a horta é o retrato das decisões) ------------ */
+function telaFim(){
+  limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O RETRATO DA SUA HORTA"));
+  c.appendChild(el("div","medal","HORTA"));
+  c.appendChild(el("div","balao",parecer()));
+  umidEl=null; umidTxt=null;
+  var hf=montaHorta(); hf.className="horta hortafim";
+  c.appendChild(hf);
+  /* fecho com gancho: termina deixando uma pergunta aberta */
+  c.appendChild(el("div","hint","E se chovesse a semana toda? Que decisão você mudaria?"));
+  var b=el("button","btn","Cuidar de novo");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){sTap();telaAbertura();};
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+  aplicaMundo();
+}
+/* parecer em PALAVRAS, nunca nota — e sem a palavra "errou" */
+function parecer(){
+  if(MUNDO.h>=100&&MUNDO.plantas>=5) return "Horta <b>cheia e alta</b>: água na raiz e espaço para cada planta.";
+  if(MUNDO.h>=100) return "Plantas <b>altas</b>: você cuidou bem da água da terra.";
+  if(MUNDO.h>=60) return "A horta <b>cresceu</b>. Repare no que segura a água na terra.";
+  return "A horta <b>brotou</b> e está de pé. Água que vira vapor não chega à raiz.";
+}
+telaAbertura();
+</script>
+</body></html>

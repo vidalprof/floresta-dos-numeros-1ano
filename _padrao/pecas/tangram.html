@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — tangram (encaixar as formas na silhueta)</title>
+<!-- ============================================================
+     PEÇA: TANGRAM — COMPOR UMA FIGURA COM FORMAS SOLTAS
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A MECÂNICA: a silhueta mostra os contornos tracejados; a criança leva cada
+     forma para a vaga dela. O que se aprende é composição/decomposição de
+     figuras: um foguete é um triângulo, um quadrado e dois meio-quadrados — e o
+     mesmo meio-quadrado serve nos dois lados, desde que VIRADO.
+
+     ⭐ GIRAR É BOTÃO, NÃO ARRASTO CIRCULAR (armadilha desta dinâmica):
+     dedo de criança não faz arrasto em círculo — quem tenta acaba largando a
+     peça no meio da tela. Aqui a peça vira com um BOTÃO grande ("GIRAR A PEÇA"),
+     de 90 em 90 graus, com a virada animada para ela VER o que mudou. O arrasto
+     serve só para levar de um lugar ao outro.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRÊS CAMINHOS: mouse, dedo (touch) e TOQUE SIMPLES (tocar na forma e
+         depois na vaga). Defeito pego DUAS vezes pelo Marcos;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular; ele
+         vive no `touchmove`, e só enquanto há forma na mão;
+       · guarda do MOUSE FANTASMA (`ultimoToque`, com carimbo de tempo);
+       · a marca é do CLIQUE, não do `mousedown`;
+       · ENCAIXE COM TOLERÂNCIA GENEROSA: se a forma cair perto da vaga (até
+         90px do centro dela), ela entra. Mira de precisão é para adulto com
+         mouse — a criança larga por perto;
+       · o erro DEVOLVE a forma e diz o que olhar (contorno diferente? então é
+         outra forma; contorno igual mas virado? então é GIRAR) — nunca X;
+       · NUNCA TRAVA: no 3º engano a peça gira sozinha para o ângulo certo, no
+         4º ela se encaixa;
+       · `data-qa`: a vaga publica a chave dela, e a forma publica a chave da
+         vaga que ela serve AGORA (com o ângulo em que está). Se nenhuma forma
+         serve, quem publica o `data-qa` é o botão GIRAR — é assim que o
+         auditor-jogador consegue terminar sem saber girar peça.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A BANDEJA das formas soltas.
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto a bandeja nasce COLADA no
+   enunciado (defeito que o Marcos ja cobrou duas vezes).                     */
+.bandeja{background:rgba(255,255,255,.10);border:2px dashed rgba(255,255,255,.30);
+         border-radius:16px;padding:6px 4px 2px;min-height:70px;margin:13px auto 0;max-width:430px}
+/* A FORMA SOLTA (.pc): alvo de 58px, bem acima do piso de 44 */
+.pc{display:inline-block;vertical-align:middle;position:relative;width:58px;height:58px;
+    margin:4px 3px;padding:0;border:0;border-radius:12px;background:rgba(255,255,255,.10);
+    cursor:pointer;-webkit-user-select:none;user-select:none}
+/* escolhida: nao e SO a cor — ganha anel grosso e sobe um degrau */
+.pc.sel{background:rgba(255,213,74,.30);box-shadow:0 0 0 4px #ffd54a;
+        -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+/* DEVOLVIDA: balanca e volta para a bandeja. Nunca X, nunca vermelho. */
+.pc.volta{-webkit-animation:sacode .34s linear 1;animation:sacode .34s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}
+  75%{-webkit-transform:translateX(6px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}100%{transform:translateX(0)}}
+/* a virada de 90 em 90: a crianca precisa VER a peca girando */
+.pcin{display:block;width:100%;height:100%;pointer-events:none;
+      -webkit-transition:-webkit-transform .3s;transition:transform .3s}
+.sv{display:block;width:100%;height:100%;pointer-events:none;overflow:visible}
+/* A SILHUETA e as vagas de contorno tracejado */
+.silh{position:relative;width:220px;height:160px;margin:12px auto 0;
+      background:rgba(255,255,255,.07);border-radius:16px}
+.cam{position:absolute;cursor:pointer}
+.camin{display:block;width:100%;height:100%;pointer-events:none}
+.cam.luz .camin{-webkit-animation:bate .6s linear 3;animation:bate .6s linear 3}
+@-webkit-keyframes bate{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+@keyframes bate{0%{opacity:1}50%{opacity:.35}100%{opacity:1}}
+/* a forma ja encaixada ocupa a vaga inteira */
+.pc.usada{position:absolute;left:0;top:0;width:100%;height:100%;margin:0;
+          background:transparent;box-shadow:none;cursor:default}
+/* o FANTASMA que segue o dedo/mouse durante o arrasto */
+.fant{position:fixed;z-index:60;pointer-events:none;width:58px;height:58px;
+      border-radius:12px;background:rgba(255,213,74,.30);box-shadow:0 8px 18px rgba(0,0,0,.45)}
+.gira{margin-top:10px;letter-spacing:.5px}
+.placar{margin-top:10px;font-size:17px;font-weight:700;color:#f4efe6}
+.placar b{color:#ffd54a}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (max-height:470px){.placar{font-size:15px;margin-top:6px}.gira{margin-top:6px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (um foguete de 4 formas). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco: a silhueta (VAGAS) e as formas soltas.
+   As vagas não se encostam de propósito — vaga em cima de vaga faz a criança
+   mirar numa e acionar a outra (o auditor de leiaute reprova isso).
+   ANGULO: 0, 90, 180 ou 270. `livre:1` = a forma serve virada de qualquer jeito
+   (é o caso do quadrado, que fica igual a si mesmo quando gira).             */
+var VAGAS=[
+ {k:"ponta",forma:"tri",    ang:0,          x:72, y:0,  s:76, nome:"a ponta lá em cima"},
+ {k:"corpo",forma:"quad",   ang:0, livre:1, x:68, y:76, s:84, nome:"o corpo do meio"},
+ {k:"asaE", forma:"trireto",ang:0,          x:4,  y:96, s:64, nome:"a asa da esquerda"},
+ {k:"asaD", forma:"trireto",ang:180,        x:152,y:96, s:64, nome:"a asa da direita"}
+];
+var PECAS=[
+ {id:"f1",forma:"tri",    ang:180,cor:"#ff9f43"},
+ {id:"f2",forma:"quad",   ang:0,  cor:"#4dabf7"},
+ {id:"f3",forma:"trireto",ang:90, cor:"#ffd54a"},
+ {id:"f4",forma:"trireto",ang:90, cor:"#a0e57c"}
+];
+var NOMEF={tri:"triângulo de ponta",quad:"quadrado",trireto:"meio-quadrado"};
+
+var postas=0;          /* formas ja encaixadas */
+var marcada=null;      /* a forma escolhida pelo toque simples */
+var barraP=null, elPlacar=null, elGira=null;
+var ger=0;             /* geracao da tela: mata setTimeout de tela que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a forma que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.   */
+var ultimoToque=0;
+var pegou=null, fantasma=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function sGira(){ nota(330,.07,.11,"square",0); nota(494,.08,.09,"square",.05); }
+function sEncaixa(){ nota(587.33,.13,.15,"triangle",0); nota(880,.18,.13,"triangle",.08); }
+
+/* as tres formas, todas dentro de uma caixa QUADRADA — assim girar 90 graus
+   não muda o tamanho do lugar que a forma ocupa (é o que deixa o encaixe
+   honesto e o desenho estável).                                             */
+function pontos(f){
+  if(f==="quad")    return "8,8 92,8 92,92 8,92";
+  if(f==="tri")     return "50,6 94,92 6,92";
+  return "6,50 94,8 94,92";                    /* trireto: ponta para a ESQUERDA */
+}
+function svgForma(f,cor,borda,tracejado){
+  return "<svg viewBox='0 0 100 100' preserveAspectRatio='xMidYMid meet' class='sv'>"+
+         "<polygon points='"+pontos(f)+"' fill='"+cor+"' stroke='"+borda+"' stroke-width='6'"+
+         " stroke-linejoin='round'"+(tracejado?" stroke-dasharray='11 8'":"")+"/></svg>";
+}
+function giraEl(sp,ang){
+  sp.style.webkitTransform="rotate("+ang+"deg)";
+  sp.style.transform="rotate("+ang+"deg)";
+}
+function normal(a){ return ((a%360)+360)%360; }
+/* a forma serve na vaga? mesma FORMA e mesmo ÂNGULO (o quadrado é livre) */
+function serve(o,v){ return o.forma===v.forma && (v.livre?true:normal(o.ang)===normal(v.ang)); }
+
+function pecaTangram(){
+  ger++; postas=0; marcada=null; pegou=null; arrastando=false;
+  limpa();
+  var i;
+  for(i=0;i<PECAS.length;i++){ PECAS[i].ang=PECAS[i].ang0; PECAS[i]._err=0; }
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A OFICINA DO FOGUETE"));
+  c.appendChild(el("div","balao","Monte o <b>foguete</b>: leve cada forma para o contorno tracejado dela."));
+
+  var band=el("div","bandeja");
+  var ordem=[];
+  for(i=0;i<PECAS.length;i++) ordem.push(PECAS[i]);
+  baguncar(ordem);
+  for(i=0;i<ordem.length;i++) band.appendChild(fazForma(ordem[i]));
+  c.appendChild(band);
+
+  elGira=el("button","btn gira","GIRAR A PEÇA");
+  elGira.setAttribute("data-qa","1");   /* so o auditor-jogador olha para isto */
+  elGira.onclick=function(){ girar(); };
+  c.appendChild(elGira);
+
+  var s=el("div","silh");
+  for(i=0;i<VAGAS.length;i++) s.appendChild(fazVaga(VAGAS[i]));
+  c.appendChild(s);
+
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  c.appendChild(el("div","hint","Toque na forma e depois no contorno. Também dá para arrastar. Se a forma estiver virada, use GIRAR A PEÇA."));
+  t.appendChild(c);
+  app.appendChild(t);
+  atualiza();
+  marcaQA();
+}
+
+function fazVaga(v){
+  var d=el("div","cam");
+  d._o=v;
+  v._el=d;
+  d.setAttribute("data-qa",v.k);
+  d.style.left=v.x+"px"; d.style.top=v.y+"px";
+  d.style.width=v.s+"px"; d.style.height=v.s+"px";
+  var sp=el("span","camin",svgForma(v.forma,"rgba(255,255,255,.06)","#ffd54a",1));
+  giraEl(sp,v.ang);
+  d.appendChild(sp);
+  d.onclick=function(){
+    if(cliqueDeArrasto()) return;
+    if(!marcada){ sTap(); mostraDica("Primeiro toque numa forma da bandeja. Depois toque no contorno."); return; }
+    encaixa(marcada,d);
+  };
+  return d;
+}
+
+function fazForma(o){
+  if(o.ang0===undefined) o.ang0=o.ang;
+  var p=el("div","pc");
+  p._o=o;
+  o._el=p;
+  var sp=el("span","pcin",svgForma(o.forma,o.cor,"rgba(0,0,0,.35)",0));
+  giraEl(sp,o.ang);
+  o._sp=sp;
+  p.appendChild(sp);
+  /* ⚠️ a marca e do CLIQUE, nao do mousedown: marcar no mousedown fazia o clique
+     de trás cair em "ja estava marcada" e DESMARCAR — com mouse de verdade a
+     crianca clicava e nada acontecia. */
+  p.onclick=function(){
+    if(cliqueDeArrasto()) return;          /* este clique e o rabo do arrasto */
+    if(p.className.indexOf("usada")>=0) return;
+    sTap(); seleciona(p);
+  };
+  p.onmousedown=function(ev){
+    if(souDedo()) return;                  /* mouse FANTASMA do celular: ignora */
+    comeca(p,ev.clientX,ev.clientY);
+  };
+  p.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(p,d.clientX,d.clientY);
+  },false);
+  return p;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, la embaixo, e so enquanto ha forma na mao.         */
+function comeca(p,x,y){
+  if(p.className.indexOf("usada")>=0) return;
+  pegou=p; x0=x; y0=y; arrastando=false;
+  seleciona(p);
+}
+
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant",pegou.innerHTML);
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-29)+"px";
+  fantasma.style.top=(y-29)+"px";
+}
+
+function solta(x,y){
+  if(!pegou) return;
+  var p=pegou; pegou=null;
+  if(fantasma&&fantasma.parentNode){ fantasma.parentNode.removeChild(fantasma); }
+  fantasma=null;
+  if(!arrastando) return;                  /* foi so um toque: a selecao ja valeu */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")<0) alvo=alvo.parentNode;
+  if(!(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")>=0)) alvo=vagaPerto(x,y);
+  if(alvo) encaixa(p,alvo);
+}
+
+/* ⭐ TOLERÂNCIA GENEROSA: a criança larga a forma PERTO da vaga, não em cima do
+   pixel. Até 90px do centro conta como encaixe.                             */
+function vagaPerto(x,y){
+  var a=app.getElementsByClassName("cam"), i, r, dx, dy, d, melhor=null, md=99999;
+  for(i=0;i<a.length;i++){
+    if(a[i].className.indexOf("ok")>=0) continue;
+    r=a[i].getBoundingClientRect();
+    dx=x-(r.left+r.width/2); dy=y-(r.top+r.height/2);
+    d=Math.sqrt(dx*dx+dy*dy);
+    if(d<md){ md=d; melhor=a[i]; }
+  }
+  return md<=90 ? melhor : null;
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();      /* so aqui, e so com forma na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+function seleciona(p){
+  var a=app.getElementsByClassName("pc"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
+  marcada=p;
+}
+
+/* GIRAR: de 90 em 90, com a virada animada. Se nada estiver escolhido, ele pega
+   a primeira forma que ainda falta — assim o botão nunca "não faz nada".    */
+function girar(){
+  if(!marcada||marcada.className.indexOf("usada")>=0) marcada=null;
+  if(!marcada){
+    var a=app.getElementsByClassName("pc"), i;
+    for(i=0;i<a.length;i++) if(a[i].className.indexOf("usada")<0){ seleciona(a[i]); break; }
+  }
+  if(!marcada) return;
+  var o=marcada._o;
+  o.ang=normal(o.ang+90);
+  giraEl(o._sp,o.ang);
+  sGira();
+  marcaQA();
+}
+
+/* ⭐ O CORAÇÃO DA PEÇA: o encaixe impossível DEVOLVE a forma e diz o que olhar.
+     1. contorno de outra forma -> "essa vaga é de um quadrado";
+     2. forma certa, virada errada -> "gire a peça até ficar igual ao contorno";
+     3. serve -> entra na vaga e vira parte do foguete.                       */
+function encaixa(p,vaga){
+  if(!p||!vaga) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(vaga.className.indexOf("ok")>=0){ sTap(); mostraDica("Esta vaga já está cheia. Olhe as outras."); return; }
+  var o=p._o, v=vaga._o;
+
+  if(o.forma!==v.forma){
+    devolve(p,"Esse contorno é de um <b>"+NOMEF[v.forma]+"</b>, e a sua forma é um <b>"+NOMEF[o.forma]+"</b>. Compare os bicos antes de soltar.");
+    return;
+  }
+  if(!serve(o,v)){
+    devolve(p,"A forma é a certa, mas está <b>virada</b> para outro lado. Toque em <b>GIRAR A PEÇA</b> até ela ficar igual ao contorno.");
+    return;
+  }
+
+  sEncaixa();
+  p.className="pc usada";
+  p.onclick=null; p.onmousedown=null;
+  p.removeAttribute("data-qa");
+  giraEl(o._sp,v.livre?o.ang:v.ang);
+  vaga.appendChild(p);
+  vaga.className="cam ok";
+  marcada=null;
+  postas++;
+  atualiza();
+  marcaQA();
+  if(postas>=VAGAS.length){
+    var ge=ger;
+    setTimeout(function(){
+      if(ge!==ger) return;
+      mostraBanner("O foguete ficou pronto! Você juntou <b>"+VAGAS.length+"</b> formas numa figura só.",fimDaPeca);
+    },640);
+  }
+}
+
+/* DEVOLVER, nunca punir. E o andaime CRESCE: no 3º engano a peça gira sozinha
+   para o ângulo certo; no 4º ela se encaixa. A peça nunca trava.            */
+function devolve(p,regra){
+  sErro();
+  var o=p._o;
+  o._err=(o._err||0)+1;
+  p.className="pc volta";
+  var pp=p, ge=ger;
+  setTimeout(function(){
+    if(ge!==ger) return;
+    if(pp.className.indexOf("usada")<0) pp.className="pc sel";
+  },360);
+  mostraDica("<b>Devolvi a forma.</b> "+regra);
+  var v=vagaDaForma(o);
+  if(v) v._el.className="cam luz";
+  if(o._err===3 && v && !v.livre){
+    o.ang=normal(v.ang);
+    giraEl(o._sp,o.ang);
+    sGira();
+    mostraDica("Girei a forma para você. Agora ela cabe no contorno que está piscando.");
+    marcaQA();
+  }
+  if(o._err>=4 && v){
+    mostraDica("Vou encaixar esta forma para você. Agora complete o resto.");
+    o.ang=v.livre?o.ang:normal(v.ang);
+    giraEl(o._sp,o.ang);
+    encaixa(p,v._el);
+  }
+}
+/* a vaga vazia que esta forma pode ocupar (pela FORMA, mesmo que virada) */
+function vagaDaForma(o){
+  var i;
+  for(i=0;i<VAGAS.length;i++)
+    if(VAGAS[i].forma===o.forma && VAGAS[i]._el.className.indexOf("ok")<0) return VAGAS[i];
+  return null;
+}
+
+/* ⭐ O data-qa que deixa o auditor-jogador terminar: cada forma solta publica a
+   chave da vaga que ela serve NO ÂNGULO EM QUE ESTÁ. Nenhuma serve? Então quem
+   fica com o `data-qa="1"` é o botão GIRAR, e o jogador vira a peça como a
+   criança faria.                                                             */
+function marcaQA(){
+  var a=app.getElementsByClassName("pc"), i, j, v;
+  for(i=0;i<a.length;i++){
+    if(a[i].className.indexOf("usada")>=0) continue;
+    a[i].removeAttribute("data-qa");
+    for(j=0;j<VAGAS.length;j++){
+      v=VAGAS[j];
+      if(!v._el || v._el.className.indexOf("ok")>=0) continue;
+      if(serve(a[i]._o,v)){ a[i].setAttribute("data-qa",v.k); break; }
+    }
+  }
+}
+
+function atualiza(){
+  elPlacar.innerHTML="Formas no lugar: <b>"+postas+"</b> de <b>"+VAGAS.length+"</b>";
+  if(barraP) barraP.style.width=Math.round(postas*100/VAGAS.length)+"%";
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você montou o foguete com <b>"+VAGAS.length+"</b> formas: um triângulo, um quadrado e dois meio-quadrados."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaTangram(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça TANGRAM: arrastar, tocar e GIRAR no botão — nunca arrasto em círculo."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaTangram();
+</script>
+</body></html>

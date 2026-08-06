@@ -100,7 +100,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
     box-shadow:0 4px 0 #c9bda6}
 .pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
 .pc.sel{background:#ffeeb0;box-shadow:0 4px 0 #c9a52f}
-.pc.usada{visibility:hidden;pointer-events:none}
+/* ⚠️ a ficha usada SAI do fluxo (display:none), nao fica invisivel no lugar:
+   com ficha de 132px o `visibility:hidden` deixava buracos enormes no banco e
+   a crianca via uma bagunca de espacos vazios. E, de quebra, ficha invisivel
+   continua com retangulo — o portao do leiaute a media como 'resposta' e o
+   auditor-jogador ainda a enxergava para clicar. */
+.pc.usada{display:none;pointer-events:none}
 .pc.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
 .pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
 @-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}

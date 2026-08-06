@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — mudança e permanência</title>
+<!-- ============================================================
+     PEÇA: MUDANÇA E PERMANÊNCIA (copiada do _padrao/pecas/MOLDE.html)
+
+     A mecânica: um controle deslizante de TEMPO entre duas cenas da MESMA
+     rua. A criança puxa o tempo, vê a rua se transformar e depois separa
+     o que MUDOU do que FICOU.
+
+     ⭐ A ARMADILHA PRINCIPAL, e o motivo de esta peça existir:
+     AS DUAS CENAS SAEM DO MESMO DADO. Se alguém desenha "a rua antiga" e
+     "a rua de hoje" como dois desenhos separados, aparecem diferenças que
+     NÃO estão na lista (uma janela a mais, uma nuvem que andou) — a criança
+     percebe uma dessas, responde "mudou", e o app diz que errou. Aqui existe
+     um só conjunto de dados (`BASE`) e um conjunto de MUDANÇAS aplicadas por
+     cima (`PATCH`). O gabarito não é escrito à mão: quem tem PATCH mudou,
+     quem não tem ficou. É logicamente impossível haver diferença fora da
+     lista, e o tempo do meio é a interpolação entre os dois.
+
+     As outras armadilhas (REGRAS-INTERATIVIDADE.md, linhas "Simulador /
+     deslizar" e "Arrastar-para-o-lugar"):
+       · o mundo REAGE de verdade (a casa cresce, o poste estica, a pedra
+         vira asfalto) — deslizante que não muda nada é enfeite;
+       · a classificação só abre depois de a criança ter VISTO as duas
+         pontas do tempo (andaime implícito, o jeito PhET);
+       · TRÊS CAMINHOS na hora de guardar a ficha: mouse, dedo e toque
+         simples. NUNCA `preventDefault` no `touchstart` (mata o toque no
+         celular); o guarda `ultimoToque` mata o clique FANTASMA que o
+         celular dispara depois do toque;
+       · nada essencial só na cor: cada coisa da rua tem um NÚMERO na cena
+         e o mesmo número na ficha — quem não distingue cor acha igual.
+
+     Alvo >= 44px, funciona no mudo, erro com sErro() + andaime que CRESCE,
+     `data-qa` para o auditor-jogador, nunca trava, termina numa `.medal`.
+     ES5 puro, um arquivo só (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a tela e alta (cena + tempo + fichas + caixas). Sem rolagem, num celular
+   de 320x568, o que se toca cairia abaixo da dobra e a crianca acharia que a
+   tela acabou. Aqui a tela ROLA de verdade — que e o que o dedo faz. */
+.tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* ⚠️ margem ESCRITA: `.balao + *{margin-top:13px}` vem antes e com a mesma
+   forca; um `margin:0` aqui embaixo ganharia e o ano nasceria COLADO no
+   enunciado (portao de leiaute, regra 9). */
+.ano{display:block;font-size:17px;font-weight:800;color:#ffe9a8;margin:13px 0 0;letter-spacing:.5px}
+/* A CENA. Uma so: o tempo interpola entre o dado base e o dado com as
+   mudancas por cima. Nao ha "dois desenhos" que possam discordar.        */
+.cena{position:relative;width:100%;max-width:300px;height:172px;margin:8px auto 0;
+      border-radius:14px;overflow:hidden;border:3px solid rgba(255,255,255,.30);
+      background:#8fbcd8}
+.pe{position:absolute;-webkit-transition:none;transition:none}
+.pe.acesa{-webkit-box-shadow:0 0 0 4px #ffd54a;box-shadow:0 0 0 4px #ffd54a}
+/* o NUMERO e o que liga a coisa da cena a ficha — nunca a cor */
+.num{position:absolute;left:50%;top:2px;margin-left:-11px;width:22px;height:22px;
+     border-radius:50%;background:#fffdf6;color:#221a12;font-size:13px;font-weight:800;
+     line-height:19px;text-align:center;border:2px solid #221a12}
+/* o chao muda de PEDRA para ASFALTO: textura, nao so cor */
+.chaoped{position:absolute;left:0;top:0;right:0;bottom:0;
+         background:repeating-linear-gradient(90deg,rgba(0,0,0,.22),rgba(0,0,0,.22) 3px,
+         rgba(255,255,255,.16) 3px,rgba(255,255,255,.16) 15px)}
+.chaofx{position:absolute;left:8%;right:8%;top:50%;height:5px;margin-top:-2px;opacity:0;
+        background:repeating-linear-gradient(90deg,#fff,#fff 18px,
+        rgba(255,255,255,0) 18px,rgba(255,255,255,0) 34px)}
+/* O CONTROLE DO TEMPO: 44px de altura para o dedo da crianca */
+.slider{display:block;width:92%;max-width:300px;height:44px;margin:8px auto 0;cursor:pointer}
+.regua{display:block;font-size:13px;font-weight:700;color:#f0d9a8;margin:0 auto;max-width:300px}
+.legenda{display:block;font-size:15px;font-weight:700;color:#ffe9a8;margin:8px 0 0;min-height:20px;line-height:1.25}
+.placar{display:block;font-size:15px;font-weight:800;color:#ffe9a8;margin:10px 0 0}
+/* A BANDEJA e as FICHAS (o mesmo molde da peca CLASSIFICAR) */
+.bandeja{background:rgba(255,255,255,.10);border:2px dashed rgba(255,255,255,.30);
+         border-radius:16px;padding:8px 6px 4px;margin-top:10px;min-height:64px}
+.pc{display:inline-block;vertical-align:middle;background:#fffdf6;color:#221a12;border:0;
+    border-radius:14px;padding:12px 10px;margin:5px 4px;font-size:14px;font-weight:700;
+    min-height:48px;min-width:112px;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+    -webkit-user-select:none;user-select:none}
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f;
+        -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.pc.usada{background:#d6f5c8;box-shadow:0 3px 0 #7cb464;cursor:default;opacity:.95}
+/* o FANTASMA que segue o dedo/mouse durante o arrasto */
+.fant{position:fixed;z-index:60;pointer-events:none;background:#fff3c9;color:#221a12;
+      border-radius:14px;padding:12px 10px;font-size:14px;font-weight:700;
+      box-shadow:0 8px 18px rgba(0,0,0,.45)}
+/* AS DUAS CAIXAS */
+.gavs{display:block;margin-top:12px;font-size:0}
+.cam{display:inline-block;vertical-align:top;width:48%;margin:0 1% 0 0;font-size:14px;
+     background:rgba(255,255,255,.10);border:3px solid rgba(255,255,255,.34);border-radius:18px;
+     padding:8px 6px 10px;min-height:150px;cursor:pointer}
+.cam.luz{border-color:#8fe07a;background:rgba(143,224,122,.22)}
+.cam.alvo{border-color:#ffd54a;background:rgba(255,213,74,.20)}
+.gtit{display:block;background:#3c6ee0;color:#fff;font-size:13px;font-weight:800;
+      border-radius:12px;padding:7px 6px;margin-bottom:6px;line-height:1.2}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ⭐ O DADO ÚNICO. Uma lista só descreve a rua. Cada coisa tem posição,
+   tamanho e cor — e um NÚMERO (a ordem aqui) que aparece na cena e na ficha.
+   Medidas pensadas numa caixa de 300 x 172; o chão fica em y=126.        */
+var BASE=[
+  {k:"chao",  n:"O CHÃO DA RUA",  x:0,  y:126, w:300, h:46,  cor:"#9b8f80", rad:"0"},
+  {k:"igreja",n:"A IGREJA",       x:6,  y:26,  w:42,  h:100, cor:"#e8ddc8", rad:"21px 21px 3px 3px"},
+  {k:"casas", n:"AS CASAS",       x:54, y:82,  w:78,  h:44,  cor:"#c9945c", rad:"4px"},
+  {k:"arvore",n:"A ÁRVORE",       x:140,y:58,  w:44,  h:68,  cor:"#4e8f3a", rad:"22px 22px 6px 6px"},
+  {k:"poste", n:"O POSTE",        x:198,y:86,  w:9,   h:40,  cor:"#8a6f4e", rad:"3px"},
+  {k:"placa", n:"A PLACA DA RUA", x:236,y:88,  w:42,  h:22,  cor:"#2a52b0", rad:"4px"}
+];
+/* ⭐ AS MUDANÇAS, APLICADAS POR CIMA. Quem aparece aqui MUDOU; quem não
+   aparece FICOU. O gabarito nasce daqui — nunca de uma lista escrita à mão
+   que pode discordar do desenho.                                          */
+var PATCH={
+  casas:{y:26, h:100, cor:"#8f9aa8"},
+  poste:{y:44, h:82,  cor:"#c3ccd4"},
+  chao :{cor:"#4a4a50"}
+};
+var ANOS=["1975","1988","2001","2014","hoje"];
+
+var PECAS={};       /* k -> o <div> daquela coisa na cena */
+var VISTOS={};      /* posicoes do tempo que a crianca ja viu */
+var LIBEROU=false;  /* ja abriu o caminho para separar? */
+var feitos=0;       /* fichas ja guardadas */
+var marcada=null;   /* a ficha escolhida pelo toque simples */
+var ger=0;          /* geracao da tela: mata setTimeout de tela que ja saiu */
+
+function mudouMesmo(k){ return PATCH[k]?true:false; }
+
+/* ---------- a matemática da interpolação (é ela que garante o dado único) */
+function hexN(h,i){ return parseInt(h.substr(1+i*2,2),16); }
+function dois(n){ var s=n.toString(16); return s.length<2?("0"+s):s; }
+function mistura(a,b,f){
+  var i,o="#";
+  for(i=0;i<3;i++) o+=dois(Math.round(hexN(a,i)+(hexN(b,i)-hexN(a,i))*f));
+  return o;
+}
+function estadoDe(it,f){
+  var p=PATCH[it.k]||{}, o={x:it.x,y:it.y,w:it.w,h:it.h,cor:it.cor,rad:it.rad}, campo;
+  for(campo in p){
+    if(!p.hasOwnProperty(campo)) continue;
+    if(campo==="cor") o.cor=mistura(it.cor,p.cor,f);
+    else o[campo]=it[campo]+(p[campo]-it[campo])*f;
+  }
+  return o;
+}
+
+/* ---------- a cena ---------- */
+function montaCena(){
+  var box=el("div","cena"), i, it, d;
+  PECAS={};
+  for(i=0;i<BASE.length;i++){
+    it=BASE[i];
+    d=el("div","pe");
+    if(it.k==="chao"){
+      d.appendChild(el("div","chaoped",""));
+      d.appendChild(el("div","chaofx",""));
+    }
+    d.appendChild(el("div","num",""+(i+1)));
+    PECAS[it.k]=d;
+    box.appendChild(d);
+  }
+  return box;
+}
+
+function mudaTempo(t,comGate){
+  var f=t/(ANOS.length-1), i, it, s, d, e;
+  for(i=0;i<BASE.length;i++){
+    it=BASE[i]; s=estadoDe(it,f); d=PECAS[it.k];
+    if(!d) continue;
+    d.style.left=(s.x/300*100)+"%";
+    d.style.width=(s.w/300*100)+"%";
+    d.style.top=s.y+"px";
+    d.style.height=s.h+"px";
+    d.style.background=s.cor;
+    d.style.borderRadius=s.rad;
+  }
+  if(PECAS.chao){
+    e=PECAS.chao.getElementsByClassName("chaoped")[0]; if(e) e.style.opacity=""+(1-f);
+    e=PECAS.chao.getElementsByClassName("chaofx")[0];  if(e) e.style.opacity=""+f;
+  }
+  var a=app.querySelector(".ano");
+  if(a) a.innerHTML="Ano: "+ANOS[t];
+  VISTOS[t]=1;
+  if(comGate) talvezLibera();
+}
+
+function fazSlider(comGate){
+  var sl=el("input","slider");
+  sl.type="range"; sl.min="0"; sl.max=""+(ANOS.length-1); sl.step="1"; sl.value="0";
+  sl.setAttribute("aria-label","Controle do tempo");
+  /* data-qa = a posicao que a fase espera. Existe SÓ para o auditor-jogador,
+     que nao sabe arrastar um controle: ele percorre todas as posicoes e
+     depois para nesta. A crianca nao ve diferenca nenhuma. */
+  if(comGate) sl.setAttribute("data-qa",""+(ANOS.length-1));
+  sl.oninput=function(){ mudaTempo(parseInt(sl.value,10),comGate); };
+  sl.onchange=sl.oninput;
+  return sl;
+}
+
+/* ---------------- TELA 1: PUXAR O TEMPO ---------------- */
+function pecaMudanca(){
+  VISTOS={}; LIBEROU=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A MESMA RUA, OUTRO TEMPO"));
+  c.appendChild(el("div","balao","Esta é a Rua do Mercado. Puxe o <b>controle do tempo</b> e veja a rua de 1975 virar a rua de hoje."));
+  c.appendChild(el("div","ano","Ano: "+ANOS[0]));
+  c.appendChild(montaCena());
+  c.appendChild(fazSlider(true));
+  c.appendChild(el("div","regua","1975 &#8212; hoje"));
+  c.appendChild(el("div","legenda","Cada coisa da rua tem um número."));
+  c.appendChild(el("div","hint","Leve o tempo até o fim <b>e volte</b>. Depois você separa o que mudou do que ficou."));
+  t.appendChild(c);
+  app.appendChild(t);
+  mudaTempo(0,true);
+}
+
+function talvezLibera(){
+  if(LIBEROU) return;
+  if(!VISTOS[0]||!VISTOS[ANOS.length-1]) return;
+  LIBEROU=true;
+  sCerto();
+  var p=app.querySelector(".prog i");
+  if(p) p.style.width="45%";
+  var lg=app.querySelector(".legenda");
+  if(lg) lg.innerHTML="Você viu a rua inteira, do começo ao fim.";
+  var c=app.querySelector(".centro");
+  if(!c) return;
+  var b=el("button","btn","Agora vou separar");
+  b.onclick=function(){ mudancaFichas(); };
+  c.appendChild(b);
+}
+
+/* ---------------- TELA 2: SEPARAR O QUE MUDOU DO QUE FICOU ----------------
+   O tempo continua na mão dela: para decidir "mudou ou ficou" ela precisa
+   poder conferir, e conferir É o raciocínio da mecânica.                  */
+function mudancaFichas(){
+  feitos=0; marcada=null; pegou=null; arrastando=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,50);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O QUE MUDOU? O QUE FICOU?"));
+  c.appendChild(el("div","balao","Guarde cada coisa da rua na caixa certa. Puxe o tempo sempre que quiser <b>conferir</b>."));
+  c.appendChild(el("div","ano","Ano: "+ANOS[0]));
+  c.appendChild(montaCena());
+  c.appendChild(fazSlider(false));
+  c.appendChild(el("div","regua","1975 &#8212; hoje"));
+  c.appendChild(el("div","legenda","Toque numa ficha para acender a coisa na cena."));
+
+  var band=el("div","bandeja"), ordem=[], i;
+  for(i=0;i<BASE.length;i++) ordem.push({k:BASE[i].k, n:(i+1)+" &#183; "+BASE[i].n});
+  baguncar(ordem);
+  for(i=0;i<ordem.length;i++) band.appendChild(fazFicha(ordem[i]));
+  c.appendChild(band);
+
+  var gs=el("div","gavs");
+  gs.appendChild(fazCaixa("mudou","MUDOU<br>(está diferente)"));
+  gs.appendChild(fazCaixa("ficou","FICOU<br>(está do mesmo jeito)"));
+  c.appendChild(gs);
+  c.appendChild(el("div","placar","0 de "+BASE.length+" arrumadas"));
+  c.appendChild(el("div","hint","Toque na ficha e depois na caixa. Também dá para arrastar com o dedo ou com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+  mudaTempo(0,false);
+}
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a ficha que
+   a criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos. */
+var ultimoToque=0;
+var pegou=null, fantasma=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+function fazFicha(f){
+  var p=el("div","pc",f.n);
+  /* ficha e caixa publicam a MESMA chave: é assim que o auditor-jogador
+     consegue terminar a fase (e só ele olha para isto). */
+  p.setAttribute("data-qa", mudouMesmo(f.k)?"mudou":"ficou");
+  p._k=f.k;
+  p.onclick=function(){
+    if(cliqueDeArrasto()) return;              /* este clique é o rabo do arrasto */
+    if(p.className.indexOf("usada")>=0) return;
+    sTap(); seleciona(p);
+  };
+  p.onmousedown=function(ev){
+    if(souDedo()) return;                      /* mouse FANTASMA do celular: ignora */
+    comeca(p,ev.clientX,ev.clientY);
+  };
+  p.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(p,d.clientX,d.clientY);
+  },false);
+  return p;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, lá embaixo, e só enquanto há ficha na mão.       */
+function comeca(p,x,y){
+  if(p.className.indexOf("usada")>=0) return;
+  pegou=p; x0=x; y0=y; arrastando=false;
+  seleciona(p);
+}
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant",pegou.innerHTML);
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-58)+"px";
+  fantasma.style.top=(y-24)+"px";
+}
+function solta(x,y){
+  if(!pegou) return;
+  var p=pegou; pegou=null;
+  if(fantasma&&fantasma.parentNode) fantasma.parentNode.removeChild(fantasma);
+  fantasma=null;
+  if(!arrastando) return;                      /* foi só um toque: a seleção já valeu */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")<0) alvo=alvo.parentNode;
+  if(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")>=0) guarda(p,alvo);
+}
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();          /* só aqui, e só com ficha na mão */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+function seleciona(p){
+  var a=app.getElementsByClassName("pc"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
+  marcada=p;
+  acende(p._k);
+}
+
+/* acender a coisa na cena é o que liga a PALAVRA da ficha ao DESENHO — e o
+   número repetido nos dois lados garante que não depende da cor.          */
+function acende(k){
+  var i, it, d;
+  for(i=0;i<BASE.length;i++){
+    it=BASE[i]; d=PECAS[it.k];
+    if(!d) continue;
+    d.className=(it.k===k)?"pe acesa":"pe";
+    if(it.k===k){
+      var lg=app.querySelector(".legenda");
+      if(lg) lg.innerHTML="Você está olhando: <b>"+(i+1)+" &#183; "+it.n+"</b>";
+    }
+  }
+}
+
+function fazCaixa(k,titulo){
+  var d=el("div","cam");
+  d.setAttribute("data-qa",k);
+  d.appendChild(el("div","gtit",titulo));
+  d.onclick=function(){
+    if(cliqueDeArrasto()) return;
+    if(!marcada){ sTap(); mostraDica("Primeiro toque numa ficha da bandeja. Depois toque na caixa."); return; }
+    guarda(marcada,d);
+  };
+  return d;
+}
+
+var DICAS=[
+  "Puxe o tempo de um lado para o outro olhando <b>só</b> essa coisa acesa na cena. Ela continua igual?",
+  "Compare o começo e o fim: se a altura, a forma ou o piso ficaram diferentes, é MUDOU. Se está do mesmo jeito, é FICOU.",
+  "A caixa certa está com a borda amarela: é ali que esta ficha mora."
+];
+
+function guarda(p,g){
+  if(!p||!g) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    sCerto();
+    p.className="pc usada";
+    p.onclick=null; p.onmousedown=null;
+    g.appendChild(p);
+    g.className="cam luz";
+    marcada=null;
+    feitos++;
+    var pl=app.querySelector(".placar");
+    if(pl) pl.innerHTML=feitos+" de "+BASE.length+" arrumadas";
+    var pr=app.querySelector(".prog i");
+    if(pr) pr.style.width=(50+Math.round(feitos*50/BASE.length))+"%";
+    var gg=g, ge=ger;
+    setTimeout(function(){ if(ge!==ger) return; if(gg.className.indexOf("luz")>=0) gg.className="cam"; },500);
+    if(feitos>=BASE.length){
+      setTimeout(function(){
+        if(ge!==ger) return;
+        mostraBanner("Você separou o que mudou do que ficou — na <b>mesma</b> rua!", fimDaPeca);
+      },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a ficha volta para a mão e o andaime
+     CRESCE. No 3º erro a caixa certa acende e a peça deixa seguir.        */
+  sErro();
+  p._err=(p._err||0)+1;
+  mostraDica(DICAS[Math.min(p._err,DICAS.length)-1]);
+  if(p._err>=3) revelaCaixa(p);
+}
+
+function revelaCaixa(p){
+  /* ⚠️ o `getAttribute` fica FORA da atribuicao de className de proposito: o
+     `_qa/classes.py` le a instrucao inteira depois do `className=` e recolhe
+     todo texto entre aspas — num ternario com getAttribute("data-qa") ele
+     acharia que "data-qa" e uma classe e acusaria "SEM CSS: .data-qa". */
+  var a=app.getElementsByClassName("cam"), i, k=p.getAttribute("data-qa");
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")===k) a[i].className="cam alvo";
+    else a[i].className="cam";
+  }
+}
+
+/* ---------------- FIM: A MEDALHA (e o gancho) ---------------- */
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","A rua inteira mudou — e mesmo assim a igreja, a árvore e a placa continuam ali. <b>O que será que ficou igual na sua rua desde que a sua avó era criança?</b>"));
+  var b=el("button","btn","Puxar o tempo de novo");
+  b.onclick=function(){ pecaMudanca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça MUDANÇA E PERMANÊNCIA: as duas cenas saem do mesmo dado, então não existe diferença fora da lista."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaMudanca();
+</script>
+</body></html>

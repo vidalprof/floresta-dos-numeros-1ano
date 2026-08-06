@@ -300,8 +300,12 @@ function desenhaFita(){
     elStat.innerHTML="<b>"+partes+"</b> partes, mas <b>desiguais</b>: umas com "+
                      Math.max.apply(null,tam)+" e outras com "+Math.min.apply(null,tam)+".";
   }
-  btCorta.style.visibility=(partes<Math.min(MAXP,r.un))?"visible":"hidden";
-  btJunta.style.visibility=(partes>1)?"visible":"hidden";
+  /* ⚠️ ESCONDER COM `display`, NUNCA COM `visibility`: um botao com
+     visibility:hidden continua ocupando o lugar e o auditor de leiaute (regra
+     5, "botao sobre botao") ve o dedo caindo em OUTRO elemento no centro dele
+     — alarme falso numa tela perfeita. Fora da tela ele tem que sumir mesmo. */
+  btCorta.style.display=(partes<Math.min(MAXP,r.un))?"":"none";
+  btJunta.style.display=(partes>1)?"":"none";
   /* ⭐ data-qa="1" no botão que serve AGORA — só para o auditor-jogador. */
   if(partes<r.n){ btCorta.setAttribute("data-qa","1"); btJunta.removeAttribute("data-qa"); }
   else if(partes>r.n){ btJunta.setAttribute("data-qa","1"); btCorta.removeAttribute("data-qa"); }

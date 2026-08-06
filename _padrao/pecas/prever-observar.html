@@ -81,23 +81,27 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .cesq{left:2%}
 .cdir{right:2%}
 /* --- a balança da massinha --- */
-.baviga{position:absolute;left:8%;right:8%;top:52px;height:11px;background:#c9a52f;border-radius:6px;
+.baviga{position:absolute;left:8%;right:8%;top:34px;height:10px;background:#c9a52f;border-radius:6px;
         -webkit-transform-origin:50% 50%;transform-origin:50% 50%}
 .baviga.trm{-webkit-animation:bal .9s ease-in-out 1;animation:bal .9s ease-in-out 1}
 @-webkit-keyframes bal{0%{-webkit-transform:rotate(0)}30%{-webkit-transform:rotate(3deg)}
   60%{-webkit-transform:rotate(-2deg)}100%{-webkit-transform:rotate(0)}}
 @keyframes bal{0%{transform:rotate(0)}30%{transform:rotate(3deg)}
   60%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
-.bapoio{position:absolute;left:50%;margin-left:-7px;top:58px;width:14px;height:66px;background:#7a5c33}
-.babase{position:absolute;left:28%;right:28%;top:120px;height:12px;background:#7a5c33;border-radius:6px}
-.bapan{position:absolute;top:60px;width:38%;height:11px;background:#c9bda6;border-radius:6px}
+.bapoio{position:absolute;left:50%;margin-left:-7px;top:40px;width:14px;height:86px;background:#7a5c33}
+.babase{position:absolute;left:28%;right:28%;top:126px;height:12px;background:#7a5c33;border-radius:6px}
+/* o fio que segura o prato: sem ele o prato parecia colado na viga */
+.bafio{position:absolute;top:42px;width:4px;height:58px;background:#c9bda6;border-radius:2px}
+.bfe{left:25%;margin-left:-2px}
+.bfd{right:25%;margin-right:-2px}
+.bapan{position:absolute;top:100px;width:38%;height:10px;background:#c9bda6;border-radius:6px}
 .bapl{left:6%}
 .bapd{right:6%}
-.massa{position:absolute;bottom:11px;left:50%;margin-left:-27px;width:54px;height:54px;
+.massa{position:absolute;bottom:10px;left:50%;margin-left:-24px;width:48px;height:48px;
        background:#b5651d;border-radius:50%;
        -webkit-transition:all .8s;transition:all .8s}
-.massa.chata{width:100px;height:17px;margin-left:-50px;border-radius:9px}
-.peso{position:absolute;bottom:11px;left:50%;margin-left:-25px;width:50px;height:44px;
+.massa.chata{width:98px;height:16px;margin-left:-49px;border-radius:9px}
+.peso{position:absolute;bottom:10px;left:50%;margin-left:-25px;width:50px;height:42px;
       background:#9aa0aa;border-radius:7px}
 /* --- os dois copos --- */
 .copo{position:absolute;bottom:44px;border:4px solid #cfd6e2;border-top:0;
@@ -140,8 +144,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .selo{margin-bottom:6px;padding:4px 12px;font-size:12px}
   .balao{font-size:15px;padding:9px 14px}
   .opt{min-height:44px;margin:6px auto;font-size:15px;padding:9px 12px}
-  .cena{height:150px;margin-top:9px}
-  .cenr{top:120px}
+  .cena{height:170px;margin-top:9px}
+  .cenr{top:146px}
+  .copo{bottom:40px}
+  .copoA{height:120px}
   .hint{font-size:12px;margin-top:6px}
   .cmpl{padding:8px 11px;margin-bottom:7px}
 }
@@ -294,7 +300,9 @@ function telaObservar(){
   b.id="agirB";
   b.onclick=function(){ age(f,b); };
   c.appendChild(b);
-  c.appendChild(el("div","hint","Toque no bot&#227;o e veja com os seus olhos."));
+  var h=el("div","hint","Toque no bot&#227;o e veja com os seus olhos.");
+  h.id="hintP";
+  c.appendChild(h);
   t.appendChild(c);
   app.appendChild(t);
 }
@@ -329,8 +337,14 @@ function mostraMedida(f){
   var box=el("div","medbox"), i, lado, col;
   for(lado=0;lado<2;lado++){
     col=el("div","medcol");
-    for(i=0;i<4;i++) col.appendChild(el("i","med"));
-    col.appendChild(el("b","medn", f.cena==="massa" ? "100 g" : "4 copinhos"));
+    if(f.cena==="massa"){
+      /* na balança a medida é a leitura em gramas: quadradinho azul ali seria
+         desenho sem significado, e desenho sem mecanismo atrapalha. */
+      col.appendChild(el("b","medn", lado ? "PESO: 100 g" : "MASSINHA: 100 g"));
+    }else{
+      for(i=0;i<4;i++) col.appendChild(el("i","med"));
+      col.appendChild(el("b","medn","4 copinhos"));
+    }
     box.appendChild(col);
   }
   cena.parentNode.insertBefore(box, cena.nextSibling);
@@ -343,6 +357,10 @@ function perguntaPorque(f){
   if(!c) return;
   var b=document.getElementById("agirB");
   if(b&&b.parentNode) b.parentNode.removeChild(b);
+  /* o aviso "toque no botão" não pode ficar na tela depois de o botão sair:
+     manda a criança tocar em coisa que não existe mais. */
+  var h=document.getElementById("hintP");
+  if(h) h.innerHTML="Compare com o palpite que voc&#234; deu na tela anterior.";
   c.appendChild(el("div","balao","<b>"+f.viu+"</b>"));
   var cx=el("div","opts"); cx.id="pergP";
   var lista=[{txt:f.qc,ok:1}], i;
@@ -420,6 +438,8 @@ function montaCena(f,pronta){
     pd.appendChild(el("div","peso"));
     var v=el("div","baviga"); v.id="cviga";
     cena.appendChild(v);
+    cena.appendChild(el("div","bafio bfe"));
+    cena.appendChild(el("div","bafio bfd"));
     cena.appendChild(pl); cena.appendChild(pd);
     cena.appendChild(el("div","bapoio"));
     cena.appendChild(el("div","babase"));

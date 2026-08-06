@@ -116,7 +116,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    tudo em PORCENTAGEM: assim a MESMA funcao serve a peca pequena da
    bandeja e a vaga grande da figura, sem redesenhar nada.                 */
 .fig{position:relative;display:block;width:100%;height:100%}
-.dpc{height:38px}
+/* ⚠️ a miniatura da bandeja e QUADRADA de proposito. Com ela ocupando toda a
+   largura do cartao (68x38) o sol virava um OVO e a janela um retangulo — a
+   crianca via na bandeja uma forma e na figura outra. Nenhum portao pega
+   isso: geometria certa, alvo grande, contraste ok, e o desenho errado. */
+.dpc{width:38px;height:38px;margin:0 auto}
 .dvg{height:100%}
 .pt{position:absolute}
 .ptelh{left:0;top:6%;width:100%;height:88%;background:#c0562f;
@@ -140,7 +144,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    NADA que se toca saia da area visivel. */
 @media(max-height:500px){
   .pc{width:70px;height:64px}
-  .dpc{height:34px}
+  .dpc{width:34px;height:34px}
   .hint{display:none}
 }
 </style></head>

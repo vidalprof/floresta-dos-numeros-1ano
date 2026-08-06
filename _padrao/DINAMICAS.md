@@ -92,3 +92,37 @@ fantasma**.
 **Regra da casa:** mecânica nova = **linha nova neste arquivo e regra nova no
 portão, no mesmo commit.** Sem isso, o defeito volta na próxima atividade — que é
 exatamente o que ele está cobrando.
+
+---
+
+## 🧰 AS PEÇAS PRONTAS — copie DAQUI, não da atividade
+
+A partir de ago/2026 a versão de referência de cada mecânica **não é mais a que
+está dentro de uma atividade**: é a **peça isolada**, em `_padrao/pecas/`. A
+diferença importa — dentro da atividade a mecânica vem misturada com o conteúdo
+dela (as imagens, as vozes, os conceitos), e era daí que saíam os restos de clone.
+A peça vem limpa e **já aprovada nos 8 portões da bancada**
+(`bash _qa/peca.sh <arquivo>`), incluindo o jogador automático que joga sozinho
+até a medalha.
+
+**Peças no catálogo hoje:** `achar-na-cena`, `arrastar-lugar`, `autoexplicacao`, `balanca`, `bussola`, `caca-palavras`, `caixa-dinheiro`, `classificar`, `completar`, `conserte-o-erro`, `contadores`, `coordenadas`, `criar-desafio`, `cruzadinha`, `decisao`, `digitar`, `ditado`, `ensinar-mascote`, `escolher`, `escrever-legenda`, `experimento-justo`, `filtro`, `forca`, `girar`, `grafico`, `investigar-fonte`, `ligar`, `linha-do-tempo`, `mapa-conceitual`, `memoria`, `misterio`, `montar-frase`, `morfemas`, `mudanca-permanencia`, `ordenar`, `pintar`, `prever-observar`, `quebra-cabeca`, `relampago`, `repartir`, `reta-numerica`, `saltos-na-fita`, `sete-erros`, `simetria`, `simulador`, `sombra`, `tabela`, `tangram`, `teia-alimentar`, `termometro`, `tracar-caminho`
+
+⚠️ **Cada peça tem no cabeçalho o bloco de dados a trocar.** Copiar = trocar o
+conteúdo, nunca reescrever a mecânica.
+
+### O que as peças ensinaram (e portão nenhum pegaria)
+
+- **O erro encenado não pode sumir.** No "ensinar o mascote", a cena era limpa
+  logo depois do erro: o boneco voltava para o canto e o que ela ensinou
+  desaparecia — a criança lia "continua murcha" olhando uma cena vazia, e a fase
+  virava **quiz fantasiado**. A limpeza passou para o COMEÇO da tentativa
+  seguinte, para o erro ficar de pé enquanto ela olha.
+- **Cada regra errada precisa do SEU resto.** Um monte de areia servindo para
+  "cubro com um pano" denuncia que o mundo não está reagindo de verdade.
+- **Ficha usada: `display:none`, não `visibility:hidden`.** O retângulo invisível
+  continua ocupando lugar (buraco no banco) e ainda é medido pelo portão como
+  "resposta fora da tela".
+- **Escalar a cena inteira** (`transform:scale`) em vez de reposicionar peça por
+  peça em cada `@media` — 12 regras que precisam concordar é 12 chances de errar.
+- **A tela de fim tem que mostrar o estado REAL** (inclusive "ninguém
+  respondeu"), senão ela vem vazia e nunca é medida.

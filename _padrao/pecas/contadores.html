@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — contadores (montar a quantidade)</title>
+<!-- ============================================================
+     PEÇA: CONTADORES — MONTAR A QUANTIDADE (produzir, não escolher)
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     POR QUE ELA EXISTE:
+     quase toda tela de matemática pede para a criança ESCOLHER um número entre
+     quatro. Escolher se resolve por eliminação, por chute, pelo desenho maior —
+     e a criança que ainda não conta bem passa igual. Aqui ela PRODUZ: põe uma
+     semente de cada vez e o total APARECE DE CONTAR o que ela mesma montou.
+     Não há resposta para chutar; há uma quantidade para construir.
+     (Contagem um-a-um, cardinalidade — o último número dito É quantos são.)
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · PASSO DE UM. Nada de "+5": o pulo esconde justamente a contagem.
+       · BOTÃO GRANDE (dedo de criança de 7 anos, alvo bem acima de 44px) e
+         separado do "− tirar", para o dedo não acionar o outro.
+       · O TOTAL NUNCA É DIGITADO: não há campo de texto nesta peça. O número
+         nasce da contagem, item por item.
+       · A VOZ CONTA JUNTO: cada semente que acende diz o seu número em voz alta
+         (Web Speech). E TUDO tem gêmeo visual — o número aparece escrito dentro
+         da semente que acendeu. Funciona no mudo, funciona no sem-voz.
+       · NUNCA TRAVA: os botões continuam vivos, e no 3º tropeço o andaime diz
+         quantas faltam (ou quantas sobram) e aponta o botão.
+       · ERRO NÃO PUNE: quem contou 6 quando queria 7 ouve uma PERGUNTA
+         ("falta muito?"), nunca "errou".
+       · data-qa="1" no botão que serve AGORA — só para o auditor-jogador.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* O CANTEIRO: a terra onde as sementes vão caindo. Tudo desenhado com div. */
+.canteiro{background:#4a3626;border:3px solid #6b4b2a;border-radius:16px;
+          min-height:84px;padding:8px 6px;margin:13px auto 0;max-width:430px;
+          display:-webkit-box;display:-webkit-flex;display:flex;
+          -webkit-flex-wrap:wrap;flex-wrap:wrap;
+          -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+          -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.sem{width:32px;height:32px;margin:3px;border-radius:50%;background:#e8c46a;
+     border:3px solid #b3903c;color:#3a2c07;font-size:15px;font-weight:800;line-height:26px;
+     text-align:center}
+.sem.nova{-webkit-animation:pula .32s ease-out;animation:pula .32s ease-out}
+@-webkit-keyframes pula{0%{-webkit-transform:scale(.2);opacity:.2}70%{-webkit-transform:scale(1.15)}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes pula{0%{transform:scale(.2);opacity:.2}70%{transform:scale(1.15)}100%{transform:scale(1);opacity:1}}
+/* a semente que a voz está contando AGORA: acende E mostra o número escrito
+   (no mudo, o número é quem conta). */
+.sem.acesa{background:#fff3c9;border-color:#ffd54a;
+           -webkit-box-shadow:0 0 0 4px rgba(255,213,74,.45);box-shadow:0 0 0 4px rgba(255,213,74,.45)}
+.sem.vazia{background:transparent;border:3px dashed #9c8156;color:#c9bda6}
+/* o molde do 2º degrau do andaime: um lugar para cada semente (um-a-um) */
+.molde{margin-top:8px;display:-webkit-box;display:-webkit-flex;display:flex;
+       -webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.mvaga{width:24px;height:24px;margin:2px;border-radius:50%;border:3px dashed #9c8156}
+.mvaga.cheia{background:#e8c46a;border:3px solid #b3903c}
+.molderot{font-size:13px;font-weight:700;color:#f4efe6;margin-top:6px}
+/* o mostrador: o número que ela PRODUZIU, nunca um campo para digitar */
+.linc{margin-top:12px;display:-webkit-box;display:-webkit-flex;display:flex;
+      -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+      -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.mostra{min-width:96px;margin:0 10px;background:rgba(255,255,255,.10);border-radius:14px;
+        padding:5px 8px;color:#f4efe6}
+.mostra i{display:block;font-size:11px;font-weight:800;letter-spacing:.5px;font-style:normal}
+.mostra b{display:block;font-size:26px;font-weight:800;line-height:1.1;color:#ffd54a}
+.btn.mais{background:#ffd54a;min-width:88px}
+.btn.menos{background:#e4d9c2;box-shadow:0 4px 0 #b0a68f;min-width:88px}
+/* apagado por COR, nunca por `opacity` (a letra desbota junto e o contraste cai) */
+.btn.off{background:#b8ad95;color:#2a2415;box-shadow:0 4px 0 #8e8571}
+.btn.aponta{-webkit-box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f;box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f}
+.cconta{margin-top:10px}
+.total{margin-top:9px;font-size:17px;font-weight:800;color:#f4efe6;min-height:24px}
+.total b{color:#ffd54a}
+.total.ok{display:inline-block;background:#d6f5c8;color:#1a3d10;border-radius:12px;padding:3px 12px}
+.total.ok b{color:#1a3d10}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa: encolhe a semente e a letra, NUNCA os botões */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .canteiro{min-height:70px;margin-top:8px;padding:6px 5px}
+  .sem{width:28px;height:28px;font-size:14px;line-height:22px}
+  .linc{margin-top:8px}
+  .mostra b{font-size:22px}
+  .cconta{margin-top:6px}
+  .total{margin-top:6px;font-size:15px}
+  .balao{font-size:15px;padding:9px 14px}
+  .hint{margin-top:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (7 a 8 anos, quantidades até 9). Para reusar a peça,
+   troque SÓ este bloco.
+   ⚠️ A ESCADA: a 1ª começa do zero (só pôr); a 2ª já tem parte posta (ela
+   precisa CONTINUAR a contagem, não recomeçar do um); a 3ª começa com SEMENTE
+   DEMAIS — tirar é tão parte de montar quanto pôr, e é o degrau que ninguém
+   costuma dar. */
+var CNT=[
+ {alvo:5, ini:0},
+ {alvo:8, ini:3},
+ {alvo:6, ini:9}
+];
+var NUM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+         "onze","doze"];
+var MAXSEM=12;   /* teto: acima disto o canteiro não caberia na tela */
+
+var ri=0;        /* rodada de agora */
+var qtd=0;       /* quantas sementes estão na terra */
+var err=0;       /* contagens que não bateram: é o que faz o andaime crescer */
+var molde=false; /* o apoio concreto (um lugar para cada semente) está ligado? */
+var contando=false;
+var ger=0;
+var elCant,elMostra,elTotal,btMais,btMenos,btConta,elMolde;
+
+function alvoAtual(){ return CNT[ri].alvo; }
+
+/* A VOZ QUE CONTA JUNTO. Web Speech: se o PC não tiver voz, a peça continua
+   inteira — o número aparece ESCRITO dentro da semente que acende. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function nomeNum(n){ return (n>=0&&n<NUM.length) ? NUM[n] : (""+n); }
+function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
+function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
+function sConta(){ nota(659.25,.05,.10,"triangle",0); }
+
+function pecaContadores(){
+  if(!CNT[ri]){ fimContadores(); return; }
+  var r=CNT[ri];
+  qtd=r.ini; err=0; molde=false; contando=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/CNT.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O CANTEIRO"));
+  c.appendChild(el("div","balao","Ponha <b>"+r.alvo+"</b> ("+nomeNum(r.alvo)+
+                   ") sementes na terra."));
+  elCant=el("div","canteiro","");
+  c.appendChild(elCant);
+  elMolde=el("div","molde","");
+  c.appendChild(elMolde);
+
+  var lin=el("div","linc");
+  btMenos=el("button","btn menos","&minus; tirar");
+  elMostra=el("div","mostra","<i>NA TERRA</i><b>0</b>");
+  btMais=el("button","btn mais","+ p&ocirc;r");
+  btMenos.onclick=function(){ tira(); };
+  btMais.onclick=function(){ poe(); };
+  lin.appendChild(btMenos); lin.appendChild(elMostra); lin.appendChild(btMais);
+  c.appendChild(lin);
+
+  var cc=el("div","cconta");
+  btConta=el("button","btn","Contar comigo");
+  btConta.onclick=function(){ contaComigo(); };
+  cc.appendChild(btConta);
+  c.appendChild(cc);
+
+  elTotal=el("div","total","");
+  c.appendChild(elTotal);
+  c.appendChild(el("div","hint","Canteiro "+(ri+1)+" de "+CNT.length+
+                   ". Ponha uma de cada vez e depois conte."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenha(0);
+}
+
+function desenha(novas){
+  var i,s;
+  elCant.innerHTML="";
+  for(i=0;i<qtd;i++){
+    s=el("div",(novas>0&&i>=qtd-novas)?"sem nova":"sem","");
+    elCant.appendChild(s);
+  }
+  if(qtd===0) elCant.appendChild(el("div","sem vazia",""));
+  elMostra.innerHTML="<i>NA TERRA</i><b>"+qtd+"</b>";
+  desenhaMolde();
+  atualizaBotoes();
+}
+
+/* O APOIO CONCRETO (2º degrau): um lugar para cada semente. É a correspondência
+   um-a-um — a criança vê o buraco vazio em vez de ouvir "está errado". */
+function desenhaMolde(){
+  var i,v;
+  elMolde.innerHTML="";
+  if(!molde) return;
+  for(i=0;i<alvoAtual();i++){
+    v=el("div",(i<qtd)?"mvaga cheia":"mvaga","");
+    elMolde.appendChild(v);
+  }
+  elMolde.appendChild(el("div","molderot","um lugar para cada semente"));
+}
+
+function atualizaBotoes(){
+  var a=alvoAtual();
+  btMais.removeAttribute("data-qa");
+  btMenos.removeAttribute("data-qa");
+  btConta.removeAttribute("data-qa");
+  btMenos.className=(qtd<=0)?"btn menos off":"btn menos";
+  btMais.className=(qtd>=MAXSEM)?"btn mais off":"btn mais";
+  btConta.className="btn";
+  /* data-qa="1" = "este serve AGORA": só o auditor-jogador usa. */
+  if(contando) return;
+  if(qtd<a) btMais.setAttribute("data-qa","1");
+  else if(qtd>a) btMenos.setAttribute("data-qa","1");
+  else btConta.setAttribute("data-qa","1");
+}
+
+function poe(){
+  if(contando) return;
+  if(qtd>=MAXSEM){ sTap(); return; }
+  qtd++;
+  sPoe();
+  desenha(1);
+  diz(nomeNum(qtd));            /* a voz conta junto com a semente que cai */
+  limpaTotal();
+}
+function tira(){
+  if(contando) return;
+  if(qtd<=0){ sTap(); return; }
+  qtd--;
+  sTira();
+  desenha(0);
+  diz(nomeNum(qtd));
+  limpaTotal();
+}
+function limpaTotal(){
+  elTotal.className="total";
+  elTotal.innerHTML="";
+}
+
+/* CONTAR COMIGO: acende uma semente de cada vez, diz o número em voz alta e
+   escreve o número dentro dela. O TOTAL só existe no fim — é o último número
+   dito (cardinalidade), nunca um número digitado. */
+function contaComigo(){
+  if(contando) return;
+  contando=true;
+  atualizaBotoes();
+  limpaTotal();
+  var itens=elCant.getElementsByClassName("sem"), i=0, g=ger;
+  if(qtd===0){
+    contando=false;
+    atualizaBotoes();
+    elTotal.className="total";
+    elTotal.innerHTML="A terra est&aacute; vazia: <b>zero</b>. Quantas faltam?";
+    diz("zero");
+    naoBateu();
+    return;
+  }
+  var passo=function(){
+    if(g!==ger) return;
+    if(i>=qtd){ fechaContagem(); return; }
+    itens[i].className="sem acesa";
+    itens[i].innerHTML=""+(i+1);
+    diz(nomeNum(i+1));
+    sConta();
+    i++;
+    setTimeout(passo,520);
+  };
+  passo();
+}
+
+function fechaContagem(){
+  var a=alvoAtual(), g=ger;
+  contando=false;
+  atualizaBotoes();
+  if(qtd===a){
+    elTotal.className="total ok";
+    elTotal.innerHTML="Contamos <b>"+qtd+"</b>. "+nomeNum(qtd)+" sementes!";
+    diz("Total: "+nomeNum(qtd)+". Você conseguiu!");
+    sCerto();
+    setTimeout(function(){
+      if(g!==ger) return;
+      ri++;
+      if(ri<CNT.length) pecaContadores();
+      /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
+         que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
+      else mostraBanner("<b>Voc&ecirc; contou tudo!</b><br>O total &eacute; o &uacute;ltimo n&uacute;mero da contagem.", fimContadores);
+    },1700);
+    return;
+  }
+  elTotal.className="total";
+  elTotal.innerHTML="Contamos <b>"+qtd+"</b>, e a gente queria <b>"+a+"</b>.";
+  diz("Contamos "+nomeNum(qtd)+". A gente queria "+nomeNum(a));
+  naoBateu();
+}
+
+/* O ANDAIME QUE CRESCE: pergunta -> um lugar para cada semente -> diz quantas
+   faltam e aponta o botão. Nunca a palavra "errou". */
+function naoBateu(){
+  var a=alvoAtual(), falta=a-qtd;
+  sErro();
+  err++;
+  if(err===1){
+    mostraDica("Conte de novo bem devagar, uma de cada vez. "+
+               (falta>0?"Falta muito para chegar em <b>"+a+"</b>?"
+                       :"Ser&aacute; que tem semente <b>sobrando</b>?"));
+  }else if(err===2){
+    molde=true;
+    desenhaMolde();
+    mostraDica("Olhe os lugares a&iacute; embaixo: <b>um lugar para cada semente</b>. "+
+               (falta>0?"Ainda tem lugar vazio?":"Sobrou semente fora do lugar?"));
+  }else{
+    if(falta>0){
+      mostraDica("Faltam <b>"+falta+"</b>. Toque em <b>+ p&ocirc;r</b> "+falta+
+                 (falta>1?" vezes.":" vez."));
+      btMais.className="btn mais aponta";
+    }else{
+      mostraDica("Sobra"+((-falta)>1?"m":"")+" <b>"+(-falta)+"</b>. Toque em <b>&minus; tirar</b> "+
+                 (-falta)+((-falta)>1?" vezes.":" vez."));
+      btMenos.className="btn menos aponta";
+    }
+  }
+}
+
+function fimContadores(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; montou <b>"+CNT.length+"</b> canteiros contando "+
+                   "de um em um."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaContadores(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","O total n&atilde;o se adivinha: ele &eacute; o &uacute;ltimo "+
+                   "n&uacute;mero da contagem."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaContadores();
+</script>
+</body></html>

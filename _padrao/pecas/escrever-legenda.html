@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — escrever a legenda</title>
+<!-- ============================================================
+     PEÇA: ESCREVER UM TEXTO CURTO COM APOIO (produção escrita)
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ESTA MECÂNICA ENSINA: escrever de verdade — a criança produz um texto
+     dela, não escolhe uma resposta pronta. É o único gesto do leque em que ela
+     é AUTORA. Por isso a peça termina mostrando o que ela escreveu, do jeito
+     que ela escreveu.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (todas já pagas em atividade de verdade):
+       · CAMPO DE TEXTO VAZIO É UMA BARREIRA no 3º ano. Quem ainda escreve
+         devagar olha a caixa branca e trava. Aqui existem as PEÇAS DE APOIO:
+         palavras tocáveis que ENTRAM no texto com um toque. Ela continua
+         escrevendo (pode apagar, misturar, digitar por cima) — só não parte do
+         nada.
+       · NUNCA CORRIGIR ORTOGRAFIA COM X. O app não olha se ela escreveu
+         "arvore" ou "árvore": olha só se ela contou o bastante (3 palavras).
+         `spellcheck=false` para o próprio navegador não riscar de vermelho
+         embaixo — risco vermelho é o X disfarçado.
+       · O RETORNO É DE ORGULHO: publicado, o texto DELA aparece grande, na
+         placa da foto, com o mascote lendo em voz alta o que ela escreveu.
+         Devolver o texto é o que faz a criança querer escrever de novo.
+       · NUNCA TRAVA: se o texto ficar curto, o andaime cresce (pede mais uma
+         coisa -> as peças de apoio piscam -> o mascote COMEÇA a frase por ela)
+         e, da quarta vez, publica do jeito que está. Ninguém fica preso numa
+         caixa de texto.
+       · `data-qa` no campo (uma legenda que serve, só para o auditor-jogador,
+         que não sabe redigir) — sem isso ele nunca fecha a peça.
+       · O TEXTO DELA VOLTA ESCAPADO (`escapa()`): criança escreve "<" e ">" o
+         tempo todo, e sem escapar isso some ou quebra a placa.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: ESCREVA A LEGENDA ----------------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto a foto nasce COLADA no
+   enunciado (regra 9 do _qa/leiaute.js).                                     */
+.fotobox{margin:14px auto 0;max-width:430px;width:100%;background:#fffdf6;border-radius:12px;
+         padding:6px 6px 5px;box-shadow:0 5px 14px rgba(0,0,0,.30)}
+.fotow{width:100%;height:96px;border-radius:8px;overflow:hidden;background:#bfe3f5}
+.fotow svg{width:100%;height:100%;display:block}
+/* PEÇAS DE APOIO: a palavra que entra no texto com um toque */
+.apoios{margin:10px auto 0;max-width:430px;width:100%}
+.apoio{display:inline-block;background:#fff3c9;color:#3a2c07;border:3px solid #e6cf86;
+       border-radius:14px;padding:0 12px;margin:4px 3px;min-height:46px;line-height:40px;
+       font-size:16px;font-weight:700;cursor:pointer;vertical-align:top}
+.apoio:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.apoio.usada{background:#d6f5c8;border-color:#7cb464}
+.apoio.pisca{-webkit-animation:chama .8s infinite;animation:chama .8s infinite}
+@-webkit-keyframes chama{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.85)}}
+@keyframes chama{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.85)}}
+/* O CAMPO — sem risco vermelho de corretor: o navegador nao corrige nada */
+.campo{display:block;width:100%;max-width:430px;margin:8px auto 0;height:56px;padding:9px 12px;
+       border-radius:14px;border:3px solid #c9bda6;background:#fffdf6;color:#221a12;
+       font-family:"Segoe UI",Arial,sans-serif;font-size:16px;font-weight:600;line-height:1.25;
+       resize:none;outline:none}
+.campo:focus{border-color:#3c6ee0}
+.contador{margin-top:6px;font-size:14px;font-weight:700;opacity:.9}
+.linhabt{margin-top:8px}
+/* A PLACA DA PUBLICAÇÃO — o texto DELA, grande, com orgulho */
+.placa{margin:10px auto 0;max-width:430px;width:100%;background:#fffdf6;color:#221a12;
+       border-radius:14px;border:3px solid #ffd54a;padding:12px 14px;
+       -webkit-animation:sobe .5s;animation:sobe .5s}
+.placa i{display:block;font-size:12px;font-weight:800;letter-spacing:.6px;color:#33526f;
+         font-style:normal;margin-bottom:5px}
+.suatxt{font-size:19px;font-weight:800;line-height:1.3;word-wrap:break-word}
+@-webkit-keyframes sobe{0%{opacity:0;-webkit-transform:translateY(14px)}100%{opacity:1;-webkit-transform:translateY(0)}}
+@keyframes sobe{0%{opacity:0;transform:translateY(14px)}100%{opacity:1;transform:translateY(0)}}
+.editor{width:64px;height:64px;margin:8px auto 0}
+.editor svg{width:64px;height:64px;display:block}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* tela baixa (projetor, janela curta): encolhe a FOTO e a letra, nunca o alvo */
+@media (max-height:470px){
+  .balao{font-size:15px;padding:9px 14px}
+  .fotow{height:62px}
+  .apoio{min-height:40px;line-height:34px;font-size:14px;margin:3px 2px}
+  .campo{height:46px;font-size:15px}
+  .contador{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- AS FOTOS ----
+   Desenhadas em SVG aqui dentro (a peca roda sozinha, sem arquivo externo).
+   Numa atividade de verdade entra a arte de IA no lugar do `svg`.           */
+function svgPraca(){
+  return "<svg viewBox='0 0 200 96' xmlns='http://www.w3.org/2000/svg'>"+
+   "<rect width='200' height='96' fill='#bfe3f5'/>"+
+   "<circle cx='168' cy='20' r='13' fill='#ffe08a'/>"+
+   "<rect y='68' width='200' height='28' fill='#7fc35a'/>"+
+   "<rect y='66' width='200' height='5' fill='#5fa63e'/>"+
+   "<rect x='72' y='40' width='11' height='30' fill='#7a5230'/>"+
+   "<circle cx='77' cy='34' r='21' fill='#3f8f2c'/><circle cx='58' cy='42' r='15' fill='#4ea63a'/>"+
+   "<circle cx='96' cy='42' r='15' fill='#4ea63a'/><circle cx='77' cy='47' r='14' fill='#357c25'/>"+
+   "<rect x='118' y='58' width='52' height='5' rx='2' fill='#b4794a'/>"+
+   "<rect x='118' y='50' width='52' height='5' rx='2' fill='#b4794a'/>"+
+   "<rect x='121' y='62' width='5' height='11' fill='#8a5a33'/>"+
+   "<rect x='162' y='62' width='5' height='11' fill='#8a5a33'/>"+
+   "<ellipse cx='36' cy='64' rx='7' ry='5' fill='#f0f4f7'/>"+
+   "<circle cx='30' cy='60' r='4' fill='#f0f4f7'/><circle cx='28' cy='59' r='1' fill='#333'/>"+
+   "<path d='M26 60 l-4 1 4 1z' fill='#ffb45e'/></svg>";
+}
+function svgJanela(){
+  return "<svg viewBox='0 0 200 96' xmlns='http://www.w3.org/2000/svg'>"+
+   "<rect width='200' height='96' fill='#2f3f6b'/>"+
+   "<circle cx='150' cy='26' r='11' fill='#fdf3c0'/>"+
+   "<g fill='#fff'><circle cx='40' cy='18' r='1.6'/><circle cx='70' cy='30' r='1.3'/>"+
+   "<circle cx='110' cy='16' r='1.5'/><circle cx='176' cy='52' r='1.3'/><circle cx='24' cy='44' r='1.2'/></g>"+
+   "<rect x='22' y='10' width='120' height='70' rx='4' fill='#5c7fbf' stroke='#e8dcc0' stroke-width='6'/>"+
+   "<rect x='79' y='10' width='6' height='70' fill='#e8dcc0'/>"+
+   "<rect x='22' y='42' width='120' height='6' fill='#e8dcc0'/>"+
+   "<rect x='14' y='78' width='136' height='9' rx='3' fill='#c9a97a'/>"+
+   "<ellipse cx='104' cy='72' rx='19' ry='9' fill='#e59b3f'/>"+
+   "<circle cx='120' cy='63' r='9' fill='#e59b3f'/>"+
+   "<path d='M113 56 l2 -7 5 5z' fill='#e59b3f'/><path d='M127 56 l-2 -7 -5 5z' fill='#e59b3f'/>"+
+   "<circle cx='117' cy='62' r='1.6' fill='#2b2118'/><circle cx='123' cy='62' r='1.6' fill='#2b2118'/>"+
+   "<path d='M85 70 q-12 4 -2 9' stroke='#e59b3f' stroke-width='5' fill='none' stroke-linecap='round'/></svg>";
+}
+/* o mascote-editor que devolve o texto */
+function svgEditor(){
+  return "<svg viewBox='0 0 64 64' xmlns='http://www.w3.org/2000/svg'>"+
+   "<ellipse cx='32' cy='58' rx='16' ry='4' fill='rgba(0,0,0,.28)'/>"+
+   "<ellipse cx='32' cy='38' rx='18' ry='18' fill='#8ab7e8'/>"+
+   "<ellipse cx='32' cy='42' rx='11' ry='12' fill='#dcebfb'/>"+
+   "<circle cx='25' cy='31' r='6' fill='#fff'/><circle cx='39' cy='31' r='6' fill='#fff'/>"+
+   "<circle cx='26' cy='31' r='3' fill='#22301a'/><circle cx='38' cy='31' r='3' fill='#22301a'/>"+
+   "<path d='M28 39 l4 4 4 -4z' fill='#ffb45e'/>"+
+   "<path d='M14 24 q4 -12 14 -10' stroke='#6a9ad0' stroke-width='4' fill='none' stroke-linecap='round'/>"+
+   "<path d='M50 24 q-4 -12 -14 -10' stroke='#6a9ad0' stroke-width='4' fill='none' stroke-linecap='round'/></svg>";
+}
+
+var FOTOS=[
+ {svg:svgPraca, sel:"FOTO 1 DE 2",
+  ped:"Escreva a legenda desta foto: <b>o que</b> tem e <b>como</b> &#233;.",
+  apoio:["a &#225;rvore","o banco","grande","verde","na pra&#231;a","com sombra"],
+  comeco:"A &#225;rvore da pra&#231;a &#233; ",
+  exemplo:"a arvore grande deu sombra no banco da praca"},
+ {svg:svgJanela, sel:"FOTO 2 DE 2",
+  ped:"Agora esta: conte <b>quem</b> est&#225; ali e <b>o que</b> ele faz.",
+  apoio:["o gato","na janela","laranja","olha a lua","quietinho","de noite"],
+  comeco:"O gato da janela ",
+  exemplo:"o gato laranja olha a lua na janela"}
+];
+
+var fotoAtual=0, tentativas=0, escrito="", telaE=null, campoEl=null, contEl=null, zonaEl=null, chipsEl=[];
+
+/* escapa o que a crianca escreveu antes de devolver na placa */
+function escapa(s){
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+/* conta palavras de verdade (espacos repetidos nao contam) */
+function contaPalavras(s){
+  var v=String(s).replace(/\s+/g," ").replace(/^ | $/g,"");
+  if(!v) return 0;
+  return v.split(" ").length;
+}
+function limpoDe(s){ return String(s).replace(/&nbsp;/g," ").replace(/\s+/g," ").replace(/^ | $/g,""); }
+/* tira as marcas de HTML das palavras de apoio antes de por no campo */
+function textoPuro(h){
+  var d=document.createElement("div");
+  d.innerHTML=h;
+  return d.textContent||d.innerText||"";
+}
+function sEscreve(){ nota(1046.5,.03,.07,"square",0); }
+function sPublica(){ nota(523.25,.12,.15,"triangle",0); nota(783.99,.20,.14,"triangle",.10); }
+
+function telaLegenda(){
+  limpa();
+  tentativas=0; escrito=""; chipsEl=[];
+  var f=FOTOS[fotoAtual];
+  var t=el("div","tela"); telaE=t;
+  setProg(t,Math.round(fotoAtual*100/FOTOS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",f.sel));
+  c.appendChild(el("div","balao",f.ped));
+
+  var cx=el("div","fotobox");
+  cx.appendChild(el("div","fotow",f.svg()));
+  c.appendChild(cx);
+
+  zonaEl=el("div","linhabt");
+  montaEscrita(f);
+  c.appendChild(zonaEl);
+  t.appendChild(c); app.appendChild(t);
+}
+
+/* a area de escrita: pecas de apoio + campo + publicar */
+function montaEscrita(f){
+  zonaEl.innerHTML="";
+  chipsEl=[];
+  var ap=el("div","apoios"), i;
+  for(i=0;i<f.apoio.length;i++) ap.appendChild(fazApoio(f.apoio[i]));
+  zonaEl.appendChild(ap);
+
+  campoEl=document.createElement("textarea");
+  campoEl.className="campo";
+  campoEl.setAttribute("placeholder","escreva aqui a sua legenda");
+  campoEl.setAttribute("autocomplete","off");
+  campoEl.setAttribute("autocorrect","off");
+  campoEl.spellcheck=false;          /* nada de risco vermelho: X disfarcado */
+  /* uma legenda que serve — SO para o auditor-jogador, que nao sabe redigir.
+     Nao aparece para ninguem e nao muda a correcao. */
+  campoEl.setAttribute("data-qa",f.exemplo);
+  campoEl.oninput=atualizaContador;
+  zonaEl.appendChild(campoEl);
+
+  contEl=el("div","contador","0 palavras escritas");
+  zonaEl.appendChild(contEl);
+
+  var b=el("button","btn","Publicar");
+  b.onclick=publicar;
+  zonaEl.appendChild(b);
+}
+function fazApoio(txt){
+  var d=el("div","apoio",txt);
+  d.onclick=function(){ usaApoio(d,txt); };
+  chipsEl.push(d);
+  return d;
+}
+function usaApoio(d,txt){
+  if(!campoEl) return;
+  sEscreve();
+  var v=campoEl.value;
+  if(v&&!/\s$/.test(v)) v+=" ";
+  campoEl.value=v+textoPuro(txt)+" ";
+  d.className="apoio usada";
+  atualizaContador();
+  try{ campoEl.focus(); }catch(e){}
+}
+function atualizaContador(){
+  if(!contEl||!campoEl) return;
+  var n=contaPalavras(campoEl.value);
+  contEl.innerHTML=n+(n===1?" palavra escrita":" palavras escritas");
+}
+function paraDePiscar(){
+  var i;
+  for(i=0;i<chipsEl.length;i++)
+    if(chipsEl[i].className.indexOf("pisca")>=0) chipsEl[i].className="apoio";
+}
+
+/* ---- PUBLICAR ----
+   A conferencia NUNCA e de ortografia. So pergunta se ela contou o bastante;
+   e mesmo isso deixa de valer na quarta tentativa (ninguem fica preso).    */
+function publicar(){
+  if(!campoEl) return;
+  var f=FOTOS[fotoAtual], v=limpoDe(campoEl.value);
+  tentativas++;
+  if(contaPalavras(v)>=3||tentativas>=4){
+    if(!v){ v=limpoDe(textoPuro(f.comeco))+" bonita"; }
+    escrito=v;
+    sPublica();
+    apagaDicaE();
+    mostraPlaca(v);
+    return;
+  }
+  sErro();
+  andaimeE(tentativas,f);
+}
+function andaimeE(n,f){
+  if(n===1){ mostraDica("Est&#225; come&#231;ando bem! Conte <b>mais uma coisa</b> sobre a foto."); return; }
+  if(n===2){
+    mostraDica("As palavras de apoio entram no seu texto com um toque. Elas est&#227;o <b>piscando</b>.");
+    var i;
+    for(i=0;i<chipsEl.length;i++)
+      if(chipsEl[i].className.indexOf("usada")<0) chipsEl[i].className="apoio pisca";
+    return;
+  }
+  mostraDica("Eu come&#231;o a frase e voc&#234; termina do seu jeito.");
+  if(campoEl&&!limpoDe(campoEl.value)) campoEl.value=textoPuro(f.comeco);
+  atualizaContador();
+  try{ campoEl.focus(); }catch(e){}
+}
+
+/* O RETORNO COM ORGULHO: o texto DELA, grande, na placa da foto. */
+function mostraPlaca(v){
+  paraDePiscar();
+  zonaEl.innerHTML="";
+  var p=el("div","placa","");
+  p.appendChild(el("i","","LEGENDA PUBLICADA"));
+  p.appendChild(el("div","suatxt",escapa(v)));
+  zonaEl.appendChild(p);
+  zonaEl.appendChild(el("div","editor",svgEditor()));
+  zonaEl.appendChild(el("div","hint","O editor leu a sua legenda e mandou publicar."));
+  var b=el("button","btn","Continuar");
+  b.onclick=proximaFoto;
+  zonaEl.appendChild(b);
+  campoEl=null; contEl=null;
+}
+function proximaFoto(){
+  if(!telaE||!telaE.parentNode) return;
+  fotoAtual++;
+  if(fotoAtual<FOTOS.length){ telaLegenda(); return; }
+  mostraBanner("Voc&#234; escreveu <b>duas legendas suas</b> — com as suas palavras!",telaFimLegenda);
+}
+function apagaDicaE(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+function telaFimLegenda(){
+  limpa();
+  var t=el("div","tela"); telaE=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Quem escreve a legenda &#233; quem conta a hist&#243;ria da foto. Hoje foi <b>voc&#234;</b>."));
+  var b=el("button","btn","Escrever de novo");
+  b.onclick=recomecaLegenda;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaLegenda(){ fotoAtual=0; telaLegenda(); }
+
+telaLegenda();
+</script>
+</body></html>
