@@ -1618,7 +1618,7 @@ function mAbertura(){limpa();var t=el("div","tela");var c=el("div","centro");
 /* ---------- 2) O PALPITE (pré-teste, sem nota e sem correção) ---------- */
 function mPalpite(){limpa();var t=el("div","tela");setProg(t,4);var c=el("div","centro");
   c.appendChild(el("div","selo","O QUE VOC&#202; ACHA?"));
-  c.appendChild(el("div","balao","Antes de come&#231;ar, me diz o seu palpite: <b>o que ajuda mais</b> a achar uma casa numa cidade?"));
+  c.appendChild(el("div","balao","Antes de come&#231;ar, me diga o seu palpite: <b>o que ajuda mais</b> a achar uma casa numa cidade?"));
   var alts=[["A foto tirada do ch&#227;o, de frente para as casas",0],
             ["Um desenho da cidade <b>visto de cima</b>",1],
             ["Uma lista com o nome de todas as ruas",0]];
@@ -2292,7 +2292,7 @@ function mRosa(){
     var it=VENTOS[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A ROSA DOS VENTOS"));
-    c.appendChild(el("div","balao",it.p));
+    c.appendChild(el("div","balao",it.p)); falaDaTela("mp_rosa_q"+idx);
     var bus=el("div","bussola");
     bus.appendChild(cenaImg("mp_rosa","busimg"));
     var lados=[["N","cima"],["S","baixo"],["L","dir"],["O","esq"]],z;
@@ -2667,7 +2667,7 @@ function mCruzada(){
     var it=CRUZM[idx],pos=0,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","CRUZADINHA"));
-    c.appendChild(el("div","balao",it.d));
+    c.appendChild(el("div","balao",it.d)); falaDaTela("mp_cruz_q"+idx);
     var linha=el("div","slots"),caixas=[],i;
     for(i=0;i<it.p.length;i++){ var s=el("div","slot",""); linha.appendChild(s); caixas.push(s); }
     c.appendChild(linha);
@@ -2946,7 +2946,7 @@ function mForca(){
     var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A PALAVRA DO MAPA"));
-    c.appendChild(el("div","balao",it.d));
+    c.appendChild(el("div","balao",it.d)); falaDaTela("mp_forca_q"+idx);
     var nb=el("div","nebbox");
     nb.appendChild(cenaImg("mp_bairro","nbimg"));
     var neb=el("div","neb"); nb.appendChild(neb);
@@ -3152,7 +3152,11 @@ function mRelampago(){
   function mostra(){
     if(i>=fila.length){ fechaFase("DESAFIO REL&#194;MPAGO","Voc&#234; fez <b>"+acertos+" de "+fila.length+"</b>. Vamos ao seu boletim!","mp_rel_revela",8000,mEnsinar,98); return; }
     var it=fila[i],resp=false;
-    bal.innerHTML=it[0]; falaDaTela("mp_rel_q"+i);
+    bal.innerHTML=it[0];
+    /* ⚠️ a fila e EMBARALHADA: o indice da RODADA nao e o da tabela. Sem isto a
+       voz lia a pergunta de outro item — exatamente o defeito que este portao
+       existe para pegar. */
+    falaDaTela("mp_rel_q"+RELM.indexOf(it));
     bal.setAttribute("data-qa",it[1]?"1":"0");
     box.innerHTML="";
     var pares=[["CERTO",1],["ERRADO",0]],z;
