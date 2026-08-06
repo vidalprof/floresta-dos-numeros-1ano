@@ -4591,3 +4591,30 @@ memória — e "agendar" só vale se o recado sobreviver ao reinício.
 2. **Jardim do Broto** — tirar/corrigir o áudio dos enunciados que não fala o
    mesmo que está escrito, e pôr alto-falante nas respostas (`op_<chave>.mp3`).
    Ele pediu para deixar para depois das correções do 5º ano.
+
+## 🌐 O QUE A REDE DAQUI ALCANÇA (medido, ago/2026) — e por que a voz vai pelo Actions
+
+O Marcos cobrou: *"otimize tudo para que no GitHub não fique essas filas
+demoradas e pesadas"*. A otimização que resolveria de vez seria gerar a voz
+**aqui**, sem fila nenhuma. Então eu medi, em vez de repetir o que estava escrito.
+
+- O erro do `edge-tts` daqui **não era** "rede bloqueada": era **certificado**.
+  O proxy faz MITM e o `edge-tts` usa o `certifi` embutido, ignorando
+  `SSL_CERT_FILE`. Juntando o `/root/.ccr/ca-bundle.crt` no `certifi.where()`,
+  o TLS passa. **Isso vale para qualquer biblioteca Python que use certifi.**
+- Passado o certificado, o portão respondeu **403 ao WebSocket** do
+  `speech.platform.bing.com`. Aí sim é política de rede — e não tem contorno.
+- Varredura dos hosts: `speech.platform.bing.com`, `*.pollinations.ai`,
+  `api.openai.com` → **não conectam**. `generativelanguage.googleapis.com`
+  → **404** (ou seja, ALCANÇA; só não tem rota nesse caminho). Mas a chave do
+  Gemini vive só como secret do GitHub e o Gemini está sem crédito.
+
+**Conclusão honesta:** voz e imagem continuam sendo pelo Actions. O que dá para
+otimizar é **quantas vezes se entra na fila** e **quanto se demora lá dentro** —
+foi o que o `entregar.yml` passou a fazer (uma corrida para todas as atividades;
+8 falas ao mesmo tempo, pela biblioteca, em vez de subir o processo 199 vezes).
+
+⚠️ E uma economia de contexto: **nunca** chamar `actions_list` sem um filtro que
+retorne pouco. Um `list_workflow_runs` com `per_page:1` devolveu **55 mil
+caracteres** (o objeto do repositório inteiro, duas vezes). Quando precisar do
+id da execução, deixar o resultado cair no arquivo e ler com `python3`.
