@@ -352,7 +352,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .vaga.sub{border-radius:999px}
 .vaga.adj{border-radius:9px;-webkit-clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);padding:0 18px}
 .vaga.cheia{border-style:solid;color:#fff}
-.vaga.art.cheia{background:-webkit-linear-gradient(top,#6d9bec,#2f6bd8);background:linear-gradient(#6d9bec,#2f6bd8);border-color:#1d4ea8}
+.vaga.art.cheia{background:#2a5fc8;/* ⚠️ o branco em cima do azul claro dava 4,08:1 e o portao
+     de contraste reprovou: o degrade agora comeca mais escuro. */
+  background:-webkit-linear-gradient(top,#4a7fdd,#1f4fb4);background:linear-gradient(#4a7fdd,#1f4fb4);border-color:#1d4ea8}
 .vaga.sub.cheia{background:-webkit-linear-gradient(top,#6bd23f,#3f9a26);background:linear-gradient(#6bd23f,#3f9a26);border-color:#2c6b13}
 .vaga.adj.cheia{background:-webkit-linear-gradient(top,#ffb45e,#ef8a1e);background:linear-gradient(#ffb45e,#ef8a1e);border-color:#c26a08}
 .pcs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:360px}
@@ -970,8 +972,14 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   border:3px solid #ffd43b;background:rgba(255,212,59,.3);pointer-events:none}
 .rotaporto.on{border-color:#6bd23f;background:rgba(107,210,63,.55)}
 /* o mapa da bussola e mais baixo: a bussola tem que caber junto na tela */
-.janela.baixa{max-height:210px;overflow:hidden}
-.janela.baixa .jimg{width:100%;height:210px;-o-object-fit:cover;object-fit:cover;display:block}
+/* ⚠️ a caixa tem a PROPORCAO do mapa (820x574 = 70%). Com `cover` e altura
+   fixa o mapa era cortado — e, pior, o navio (posicionado em %) passava a
+   apontar para um lugar que nao era mais aquele. O portao 5 regra 10 pegou. */
+.janela.baixa{position:relative;width:100%;max-width:330px;height:0;padding-bottom:23.1%;
+  padding-top:47%;overflow:hidden}
+.janela.baixa .jimg{position:absolute;left:0;top:0;width:100%;height:100%;display:block;
+  -o-object-fit:fill;object-fit:fill}
+@media (max-height:700px){ .janela.baixa{max-width:270px} }
 .bussola.peq{width:196px;height:196px;margin:10px auto 4px}
 .bussola.peq .vento{width:44px;height:44px;line-height:40px;font-size:18px}
 .bussola.peq .vento.cima,.bussola.peq .vento.baixo{margin-left:-22px}
@@ -1671,7 +1679,7 @@ function fraseEl(palavras,alvo,onOk,onNo){
 /* as vozes das RESPOSTAS (alto-falante em cada opcao) que existem em audio/op_<chave>.mp3 */
 /* as vozes das RESPOSTAS (alto-falante em cada opcao) — audio/op_<chave>.mp3.
    ⚠️ as chaves sao base36 e podem comecar com numero: SEM ASPAS o JS nem carrega. */
-var VOZOK={"10t7953":1,"128v0di":1,"12l2uqe":1,"14f6z38":1,"15oyqwy":1,"15z9v2l":1,"18algiw":1,"18ozlvy":1,"199oi4w":1,"1bilh74":1,"1c7wlm1":1,"1d622o6":1,"1f32a6c":1,"1lqwp0y":1,"1mnurgk":1,"1ono9k":1,"1rywvnp":1,"1s5qk8u":1,"1s8bbsf":1,"1skfvdd":1,"1tnucxy":1,"1txb8tg":1,"1wa95rf":1,"1x74brq":1,"1xni3vg":1,"1yfvjn1":1,"1yqu2ma":1,"1yxzfn6":1,"3sg0fn":1,"48mmih":1,"4ezssx":1,"5ltkak":1,"810ouv":1,"8y8ppa":1,"aguj4s":1,"ajss63":1,"asbx76":1,"au8zfr":1,"azqjvt":1,"c15ewm":1,"cayh6o":1,"kp65wt":1,"kqu8js":1,"ovqbew":1,"pvroni":1,"rz6ero":1,"s1w87r":1,"ts4yai":1,"wtq36v":1,"x2z8ls":1,"xp48z0":1,"xu8p2c":1,"xws9kd":1,"yknfo9":1,"yq72yx":1,"zi4gsy":1,"zn2z0v":1,"znlvzk":1};
+var VOZOK={"10t7953":1,"128v0di":1,"12l2uqe":1,"14f6z38":1,"15oyqwy":1,"15z9v2l":1,"18algiw":1,"fqsb1l":1,"199oi4w":1,"1bilh74":1,"1c7wlm1":1,"1d622o6":1,"1f32a6c":1,"1lqwp0y":1,"1mnurgk":1,"1ono9k":1,"1rywvnp":1,"1s5qk8u":1,"1s8bbsf":1,"1skfvdd":1,"1tnucxy":1,"1txb8tg":1,"1wa95rf":1,"1x74brq":1,"1xni3vg":1,"1yfvjn1":1,"1yqu2ma":1,"1yxzfn6":1,"3sg0fn":1,"48mmih":1,"4ezssx":1,"5ltkak":1,"810ouv":1,"8y8ppa":1,"aguj4s":1,"ajss63":1,"asbx76":1,"au8zfr":1,"azqjvt":1,"c15ewm":1,"cayh6o":1,"kp65wt":1,"kqu8js":1,"ovqbew":1,"pvroni":1,"rz6ero":1,"s1w87r":1,"ts4yai":1,"wtq36v":1,"x2z8ls":1,"xp48z0":1,"xu8p2c":1,"xws9kd":1,"yknfo9":1,"yq72yx":1,"zi4gsy":1,"zn2z0v":1,"znlvzk":1};
 var vz=document.getElementById("vz"), zapAtual=null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -2325,7 +2333,12 @@ function mVeioFoi(){
   var pal=el("div","palco");
   var fig=el("div","palcoimg"); pal.appendChild(fig);
   c.appendChild(pal);
-  var caixas=el("div","caixas"),CX=[["aqui","J&#193; ESTAVA AQUI"],["la","VEIO DE L&#193;"]],i;
+  /* ⚠️ "veio de LA" pede que a crianca saiba onde e "la" — e "la" nunca foi
+   dito. O Marcos: *"ao inves de dizer estava aqui ou veio de la, seria
+   interessante dizer VEIO DE FORA, nao?"*. "De fora" se entende sozinho, e
+   e mais verdadeiro: nem tudo veio do mesmo lugar — o trigo veio da Europa,
+   o dende veio da Africa. "De fora" cabe nos dois.                      */
+  var caixas=el("div","caixas"),CX=[["aqui","J&#193; ESTAVA AQUI"],["la","VEIO DE FORA"]],i;
   for(i=0;i<CX.length;i++){(function(k,rot){
     var cxx=el("div","cx");
     cxx.appendChild(el("div","cxt",rot));
@@ -2339,7 +2352,7 @@ function mVeioFoi(){
       fechaFase("VEIO OU J&#193; ESTAVA?","Metade do que a gente come todo dia <b>j&#225; estava aqui</b> &#8212; e foi daqui para o mundo inteiro.","nv_troca_revela",13000,mAquecimento,32); return; }
     var it=ordem[idx];
     fig.innerHTML=""; fig.appendChild(imgEl(it.img,"objimg"));
-    bal.innerHTML="E "+it.n+"? J&#225; estava aqui ou veio de l&#225;?";
+    bal.innerHTML="E "+it.n+"? J&#225; estava aqui ou veio de fora?";
     falaDaTela("nv_troca_q"+it.k);
     var a=caixas.getElementsByClassName("cx"),z;
     for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===it.d)?"1":"0");
@@ -2479,8 +2492,8 @@ function mRaizes(){
    As quatro figuras sairam numa cartela so (1 chamada paga, pecas irmas).  */
 var FORCAP=[{p:"ABACAXI", im:"nv_abacaxi", d:"Fruta de casca dura e espinhos. O nome &#233; tupi: <b>&#225;-ka-ti</b>, fruta que cheira."},
             {p:"PIPOCA",  im:"nv_pipoca",  d:"Milho que estoura no fogo. Do tupi <b>pi-poka</b>: pele que estala."},
-            {p:"DENDE",   im:"nv_dende",   d:"O &#243;leo alaranjado da comida baiana. A palavra veio da &#193;frica."},
-            {p:"CAFUNE",  im:"nv_cafune",  d:"Aquele carinho de leve na cabe&#231;a. Tamb&#233;m veio da &#193;frica."}];
+            {p:"DENDE",   im:"nv_dende",   ac:"DEND\u00ca", d:"O &#243;leo alaranjado da comida baiana. A palavra veio da &#193;frica."},
+            {p:"CAFUNE",  im:"nv_cafune",  ac:"CAFUN\u00c9", d:"Aquele carinho de leve na cabe&#231;a. Tamb&#233;m veio da &#193;frica."}];
 var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var MARE=["a mar&#233; est&#225; baixa","a &#225;gua subiu um pouco","a &#225;gua chegou na areia",
           "a &#225;gua est&#225; nos p&#233;s do Ar&#225;","a &#225;gua vai levar a palavra"];
@@ -2516,7 +2529,7 @@ function mPalavra(){
       b._usada=1; b.setAttribute("data-qa","0"); arma();
       if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sCerto();
         if(revela()){ fim=true; document.onkeydown=null; elogio(); reg("palavra",erros===0,erros+1);
-          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",16);
+          festaPalavra(linha,it.ac||it.p);
           neb.style.background="rgba(70,130,180,0)"; ntx.innerHTML="a mar&#233; baixou!";
           segue(1700); }
       } else { erros++; b.className="teclafc no"; sErro(); sobe();
@@ -3454,7 +3467,7 @@ function telaPainel(){
   h+="</table>";
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   h+="<div class='bloco'><b>Curr&#237;culo (Blumenau, 5&#186; ano &#8212; Hist&#243;ria):</b> unidade <i>&#8220;Povos e culturas: meu lugar no mundo e meu grupo social&#8221;</i>, objeto <i>&#8220;O que forma um povo&#8221;</i>: <i>&#8220;Identificar os processos de forma&#231;&#227;o das culturas e dos povos, relacionando-os com o espa&#231;o geogr&#225;fico ocupado&#8221;</i>, com o <i>&#8220;conceito de etnia&#8221;</i> e a <i>&#8220;trajet&#243;ria (perman&#234;ncias e transforma&#231;&#245;es) cultural dos grupos &#233;tnico-raciais de sua regi&#227;o e do estado de Santa Catarina&#8221;</i>; e a unidade <i>&#8220;Registros da hist&#243;ria&#8221;</i>: <i>&#8220;Inventariar os patrim&#244;nios materiais e imateriais da humanidade e analisar mudan&#231;as e perman&#234;ncias&#8221;</i> &#8212; que aqui &#233; a <b>l&#237;ngua</b>. As grandes navega&#231;&#245;es entram como o acontecimento que explica o encontro dos povos, n&#227;o como mat&#233;ria de 7&#186; ano (capit&#227;es, datas, Tordesilhas ficam de fora de prop&#243;sito).</div>";
-  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Ela descobriu, girando a vela, por que os navios passaram a <b>ir e voltar</b>; achou na cena a aldeia que <b>j&#225; estava aqui</b>; abriu o por&#227;o e ligou cada objeto ao que ele resolvia; p&#244;s a rota em ordem e usou a b&#250;ssola para dizer o lado; separou o que <b>j&#225; era daqui</b> do que <b>veio de l&#225;</b>; distribuiu as tr&#234;s ra&#237;zes do nosso povo; pintou num texto comum as palavras <b>tupi</b> e <b>africanas</b>; escreveu as palavras da viagem; encarou, no tamanho dela, o que a viagem <b>custou</b> a quem foi trazido &#224; for&#231;a; leu um mapa de 1500 com a lupa; e, no fim, <b>explicou com as pr&#243;prias palavras</b> o que forma um povo.</div>";
+  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Ela descobriu, girando a vela, por que os navios passaram a <b>ir e voltar</b>; achou na cena a aldeia que <b>j&#225; estava aqui</b>; abriu o por&#227;o e ligou cada objeto ao que ele resolvia; p&#244;s a rota em ordem e usou a b&#250;ssola para dizer o lado; separou o que <b>j&#225; era daqui</b> do que <b>veio de fora</b>; distribuiu as tr&#234;s ra&#237;zes do nosso povo; pintou num texto comum as palavras <b>tupi</b> e <b>africanas</b>; escreveu as palavras da viagem; encarou, no tamanho dela, o que a viagem <b>custou</b> a quem foi trazido &#224; for&#231;a; leu um mapa de 1500 com a lupa; e, no fim, <b>explicou com as pr&#243;prias palavras</b> o que forma um povo.</div>";
   h+="<p class='noprint'><button onclick='window.print()'>Imprimir</button> <button onclick='location.href=location.pathname'>Voltar ao jogo</button></p>";
   d.innerHTML=h;document.body.appendChild(d);
 }

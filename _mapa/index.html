@@ -430,7 +430,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .vaga.sub{border-radius:999px}
 .vaga.adj{border-radius:9px;-webkit-clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);padding:0 18px}
 .vaga.cheia{border-style:solid;color:#fff}
-.vaga.art.cheia{background:-webkit-linear-gradient(top,#6d9bec,#2f6bd8);background:linear-gradient(#6d9bec,#2f6bd8);border-color:#1d4ea8}
+.vaga.art.cheia{background:#2a5fc8;/* ⚠️ o branco em cima do azul claro dava 4,08:1 e o portao
+     de contraste reprovou: o degrade agora comeca mais escuro. */
+  background:-webkit-linear-gradient(top,#4a7fdd,#1f4fb4);background:linear-gradient(#4a7fdd,#1f4fb4);border-color:#1d4ea8}
 .vaga.sub.cheia{background:-webkit-linear-gradient(top,#6bd23f,#3f9a26);background:linear-gradient(#6bd23f,#3f9a26);border-color:#2c6b13}
 .vaga.adj.cheia{background:-webkit-linear-gradient(top,#ffb45e,#ef8a1e);background:linear-gradient(#ffb45e,#ef8a1e);border-color:#c26a08}
 .pcs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:360px}
@@ -3394,8 +3396,15 @@ function mAlto(){
    todas as letras. Aqui a PALAVRA e o conteudo: sao os cinco nomes que quem le
    mapa precisa saber. O medidor de erro e a NEBLINA fechando em cima do mapa —
    tematico e sem boneco enforcado, que nao combina com crianca de 8 anos.   */
-var FORCAP=[{p:"BUSSOLA", d:"O aparelhinho que mostra onde fica o Norte."},
-            {p:"SIMBOLO", d:"O desenhinho que representa um lugar no mapa."},
+/* ⚠️ `ac` = como a palavra se escreve DE VERDADE (cobranca do Marcos,
+   ago/2026: *"na palavra bussola esta sem acento ne? favor corrigir"*). O
+   teclado da forca nao tem tecla de acento — a crianca digita B-U-S-S-O-L-A —,
+   entao a palavra a ADIVINHAR fica sem acento. Mas na hora em que ela fecha,
+   quem aparece na faixa e a palavra CERTA: BUSSOLA vira BUSSOLA com acento.
+   Errado seria ensinar a escrita errada; errado tambem seria pedir uma tecla
+   que nao existe.                                                        */
+var FORCAP=[{p:"BUSSOLA", ac:"B\u00daSSOLA", d:"O aparelhinho que mostra onde fica o Norte."},
+            {p:"SIMBOLO", ac:"S\u00cdMBOLO", d:"O desenhinho que representa um lugar no mapa."},
             {p:"PLANTA",  d:"O desenho de um lugar visto de cima, com tudo no lugar."},
             {p:"ESCALA",  d:"Diz de que tamanho o mapa mostra o mundo."}];
 var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -3435,7 +3444,7 @@ function mForca(){
       b._usada=1; b.setAttribute("data-qa","0"); arma();
       if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sCerto();
         if(revela()){ fim=true; document.onkeydown=null; elogio(); reg("legenda",erros===0,erros+1);
-          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",16);
+          festaPalavra(linha,it.ac||it.p);
           neb.style.background="rgba(226,230,236,0)"; ntx.innerHTML="a neblina foi embora!";
           segue(1600); }
       } else { erros++; b.className="teclafc no"; sErro(); fecha();

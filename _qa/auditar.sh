@@ -84,6 +84,8 @@ echo "--- 0h) INTRO CALANDO A PERGUNTA (a 1a rodada e falada?) -"
 python3 _qa/vozintro.py "$ARQ" || FALHOU=1
 echo "--- 0i) VOZ SEM MP3 (a fase ficou muda de vez?) -"
 python3 _qa/vozfalta.py "$ARQ" || FALHOU=1
+echo "--- 0j) VOZ DA DICA (a dica fala o que esta escrito?) -"
+python3 _qa/vozdica.py "$ARQ" || FALHOU=1
 
 echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
