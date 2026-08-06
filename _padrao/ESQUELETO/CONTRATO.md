@@ -115,3 +115,12 @@ para a próxima não repetir.
   `touchstart`, que é a janela que o portão inspeciona.
 - **O CSS da peça mora no PRIMEIRO `<style>`**: o `_qa/classes.py` só lê esse.
 - **Nada de emoji para a criança.** A estrela da medalha é `content:"\2605"`.
+- **Nunca citar `limpa()` num comentário dentro de uma função.** O detector de
+  telas lê o **texto cru** do corpo — comentário não é comentário para ele. Uma
+  função de acerto virou "tela", foi chamada sozinha sem argumento e derrubou
+  três portões com `TypeError`. O comentário vai para FORA do corpo.
+- **O `MOLDE.html` sozinho NÃO passa a bancada** (o jogador dá PRESO: não há
+  `.medal`). Toda peça precisa da sua `telaFim()` com a medalha.
+- **Cuidado com nome de propriedade que colide com nome de classe.** Uma
+  propriedade `r.pal` fez o portão reconhecer a peça como marca-texto. Nome de
+  dado ≠ nome de classe.

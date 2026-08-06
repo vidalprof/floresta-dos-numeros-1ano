@@ -86,6 +86,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    (funciona no mudo e para quem nao distingue verde) */
 .cam.ok{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12;font-weight:800}
 .mom{margin-top:3px;font-size:10px;font-weight:700;color:#f4efe6;line-height:1.25}
+/* ⚠️ o "3o MOMENTO" mora num <span> PROPRIO de proposito: se ele ficasse solto
+   dentro do .mom, o retangulo do texto engoliria a etiqueta amarela de baixo e o
+   portao do contraste mediria letra clara sobre AMARELO (1,23:1) num texto que
+   esta perfeito sobre o fundo escuro. Rotulo e etiqueta = duas caixas. */
+.momt{display:block}
 .junto{display:block;font-style:normal;background:#ffd54a;color:#33280a;border-radius:8px;
        margin-top:3px;padding:2px 4px;font-size:10px;font-weight:800}
 .banco{display:block;text-align:center;margin-top:8px}
@@ -201,7 +206,7 @@ function telaLinhaDoTempo(){
   for(i=0;i<ORDEM.length;i++){
     vb=el("div","vagabox");
     cm=el("div","cam","?");
-    txt=ORDEM[i]+"&#186; MOMENTO";
+    txt='<span class="momt">'+ORDEM[i]+"&#186; MOMENTO</span>";
     if(quantosNoMomento(ORDEM[i])>1) txt+='<i class="junto">AO MESMO TEMPO</i>';
     mo=el("div","mom",txt);
     vb.appendChild(cm); vb.appendChild(mo);

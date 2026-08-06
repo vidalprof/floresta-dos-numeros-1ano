@@ -150,7 +150,12 @@ def main():
     #    `pintar.html` passou na bancada com "0 dinamica reconhecida" — ou seja,
     #    passou SEM SER MEDIDO nesta parte. Portao que nao conhece a mecanica da
     #    uma aprovacao vazia, que e pior que reprovar.
-    if re.search(r'\.pal\b|pintada|marca-texto|marcatexto', css + js):
+    # ⚠️ FALSO POSITIVO PAGO NA MESMA TARDE: a regra era `\.pal\b` em css+js, e
+    #    uma peca de DIGITAR que tinha uma propriedade de dados chamada `r.pal`
+    #    passou a ser reconhecida como marca-texto e levou avisos que nao eram
+    #    dela. Portao que acusa o inocente vale menos que portao nenhum: agora a
+    #    classe `.pal` so conta se estiver no CSS (onde classe mora de verdade).
+    if re.search(r'\.pal\b|pintada|marcatexto', css) or re.search(r'marca-texto', css + js):
         usa.append("pintar/marca-texto")
         if not re.search(r'background-size|tracocorre|transition[^;]*background', css):
             avisos.append(u"pintar: nao achei o TRACO CORRENDO (transicao de "

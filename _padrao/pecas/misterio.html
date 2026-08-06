@@ -331,7 +331,6 @@ function escolheuHip(){
   if(errosSeg>=3){ revelaHip(); return; }
   mostraDica(this.hip.pq+" "+(extrasAbertas<EXTRAS.length?"Achei mais uma pista para você:":"Olhe o caderno de novo."));
   if(extrasAbertas<EXTRAS.length){ extrasAbertas++; repintaQuadro(); }
-  this.className="opt fora";
 }
 function acertouHip(b){
   respondida=true;
