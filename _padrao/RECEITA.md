@@ -30,12 +30,66 @@
 | **6º ao 9º** | **ESPECIALISTA DA DISCIPLINA** (professor de História, de Geografia, de Ciências…) | aqui o conteúdo tem profundidade própria e erro conceitual pesa; o pedagogo continua na mesa, mas quem decide o conteúdo é a área |
 
 **E em todos os anos, sempre:**
-- **ROTEIRISTA** — cria a HISTÓRIA. A atividade não é uma lista de exercícios com
-  tema: é uma viagem com um problema no começo, viradas no meio e um gancho no
-  fim. Sem roteirista a atividade vira questionário fantasiado.
-- **GAME DESIGNER** — escolhe os gestos pelo encaixe (§2).
-- **DIRETOR DE ARTE** — proporção, contexto, coerência; tudo pintado por IA.
-- **ENGENHEIRO** — o motor, os portões.
+
+| Papel | O que ele entrega | O portão dele |
+|---|---|---|
+| **ROTEIRISTA** | a HISTÓRIA. A atividade não é lista de exercícios com tema: é uma viagem com problema no começo, viradas no meio e gancho no fim. Sem ele vira questionário fantasiado | Portão 0 (filosofia) |
+| **GAME DESIGNER** | os gestos, escolhidos pelo ENCAIXE (§2) | `_qa/padrao.py` |
+| **ESPECIALISTA EM INTERATIVIDADE** | como o toque RESPONDE: alvo grande, resposta imediata, as duas portas (dedo e teclado), o gesto que o conteúdo pede. É ele que sabe as armadilhas do §4 | `_qa/leiaute.js`, `_qa/jogador.js` |
+| **WEB DESIGNER** | hierarquia, ritmo, espaço, contraste, e que tudo isso funcione no PC velho da escola e no celular | `_qa/contraste.js`, `_qa/classes.py`, `_qa/leiaute.js` |
+| **DIRETOR DE ARTE** | proporção, contexto, coerência; tudo pintado por IA, nada copiado | `_qa/arte_propria.py`, `_qa/mascote.py` |
+| **ENGENHEIRO** | o motor e os portões | `node --check`, `_qa/funcoes.py`, `_qa/fluxo.py` |
+| **PhD EM TESTES / QUALIDADE** | a banca inteira, e — o mais importante — **a banca que APRENDE** (§0-B) | `_qa/auditar.sh` |
+
+---
+
+## 0-B. O ESPECIALISTA EM TESTES QUE **AUTO-APRENDE**
+
+> *"um especialista em testes que auto aprende"* · *"testes de qualidade PhD na área"*
+
+Esta é a regra que mais vale dinheiro do projeto inteiro, e ela é simples:
+
+> **Todo defeito que chega ao Marcos tem conserto em DUAS partes: arrumar o código
+> E criar (ou estender) o portão que pega aquilo sozinho da próxima vez.**
+> Sem a segunda parte, o trabalho NÃO está feito.
+
+É isso que faz a banca crescer sozinha. Ela não nasceu de um plano: cada portão é
+a cicatriz de um defeito que passou. **Hoje são 24**, e nenhum foi inventado —
+todos vieram de algo que a criança (ou o Marcos) viu antes de mim:
+
+| O que passou | O portão que nasceu |
+|---|---|
+| função que não existe estourava no clique | `funcoes.py` |
+| sobrou conteúdo da atividade de origem | `clone.py` |
+| a barra andava para trás | `progressao.py` |
+| imagem copiada de outra atividade | `arte_propria.py` |
+| o mascote tremia ao falar | `mascote.py` |
+| a voz errava a palavra | `falas.py` |
+| resposta fora da tela | `leiaute.js` (10 regras) |
+| a criança empacava numa fase | `jogador.js` |
+| a tela ficava vazia falando sozinha | `telavazia.py` |
+| o botão de som falava outra coisa | `vozpergunta.py`, `vozigual.js` |
+| a intro calava a pergunta (27 fases) | `vozintro.py` |
+| a fase ficou muda: o mp3 nunca foi gerado | `vozfalta.py` |
+| a dica falada ≠ dica escrita | `vozdica.py` |
+| a figura era cortada dentro do quadrado | `leiaute.js` regra 10 |
+| o enunciado encostava nas respostas | `leiaute.js` regra 9 |
+| a escada didática não subia | `pedagogo.py` |
+
+**Como o especialista de testes trabalha (o método, não a lista):**
+1. **Reproduz** o que o Marcos viu — na tela, no tamanho dele, jogando.
+2. **Mede** em vez de olhar. Cor de pixel, proporção, folga em px, trocas por
+   segundo. *"Parece certo" não é resultado.*
+3. **Pergunta: quantos mais existem?** Um defeito quase nunca é um. A escola do
+   "símbolo escola não é falado" eram 27 fases; a do enunciado encostado, todas.
+4. **Escreve o portão** que mede aquilo em TODA fase e em toda atividade futura.
+5. **Roda nas outras atividades** — o mesmo motor carrega o mesmo defeito.
+6. **Registra** na memória e na RECEITA, com a frase do Marcos entre aspas, para
+   o próximo eu saber POR QUE aquilo existe.
+
+⚠️ **Portão que imprime NADA não é "passou": é "rodou cego".**
+⚠️ **Portão que acusa quem está certo é pior que portão nenhum** — ensina a
+ignorar portão. Quando um deles der falso positivo, o conserto é NELE.
 
 **Ordem da mesa:** currículo → **pedagogo/especialista** (a escada) → **roteirista**
 (a história) → game designer (os gestos) → arte → engenheiro → banca automática →
