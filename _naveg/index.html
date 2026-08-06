@@ -762,6 +762,67 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .tinta.agua{background:rgba(47,127,196,.72);border:3px solid #2f7fc4}
 .tinta.verde{background:rgba(63,154,38,.72);border:3px solid #3f9a26}
 .tinta.casa{background:rgba(210,115,42,.72);border:3px solid #d2732a}
+/* --- a luz que marca o que a crianca ACHOU na cena (nao um quadrado) --- */
+.luzok{position:absolute;width:78px;height:78px;margin-left:-39px;margin-top:-39px;border-radius:50%;
+  border:4px solid #ffd43b;background:rgba(255,212,59,.16);pointer-events:none;
+  -webkit-box-shadow:0 0 0 4px rgba(255,212,59,.22),0 0 18px rgba(255,212,59,.85);
+  box-shadow:0 0 0 4px rgba(255,212,59,.22),0 0 18px rgba(255,212,59,.85);
+  -webkit-animation:luzpop .5s;animation:luzpop .5s}
+.luztx{position:absolute;-webkit-transform:translate(-50%,0);transform:translate(-50%,0);
+  background:rgba(28,22,12,.86);color:#fff;font-weight:800;font-size:13px;padding:4px 11px;
+  border-radius:999px;white-space:nowrap;pointer-events:none;
+  -webkit-animation:luzpop .5s;animation:luzpop .5s}
+@-webkit-keyframes luzpop{0%{-webkit-transform:scale(.3);opacity:0}60%{-webkit-transform:scale(1.18);opacity:1}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes luzpop{0%{transform:scale(.3);opacity:0}60%{transform:scale(1.18);opacity:1}100%{transform:scale(1);opacity:1}}
+.janela.erro{-webkit-animation:shk .4s;animation:shk .4s}
+/* --- caca-palavras: uma cor por palavra + comemoracao (molde da cartografia) --- */
+.cquad.mark{background:#ffe9a8;border-color:#e0a800;color:#6b4b00;
+  -webkit-transform:scale(1.07);transform:scale(1.07);
+  -webkit-box-shadow:0 0 0 2px rgba(224,168,0,.35);box-shadow:0 0 0 2px rgba(224,168,0,.35)}
+.cquad.ok{color:#fff;border-color:rgba(255,255,255,.8);
+  -webkit-animation:achou .45s;animation:achou .45s}
+.cquad.p1,.pchip.p1.feito{background:#2a6ea8}
+.cquad.p2,.pchip.p2.feito{background:#2e7a1c}
+.cquad.p3,.pchip.p3.feito{background:#a8531a}
+.cquad.p4,.pchip.p4.feito{background:#6b3fa0}
+.cquad.p5,.pchip.p5.feito{background:#a8306b}
+.pchip .pbola{display:inline-block;width:11px;height:11px;border-radius:50%;
+  margin-right:6px;vertical-align:-1px;-webkit-box-shadow:inset 0 -1px 2px rgba(0,0,0,.25);
+  box-shadow:inset 0 -1px 2px rgba(0,0,0,.25)}
+.pchip.p1 .pbola{background:#2a6ea8} .pchip.p2 .pbola{background:#2e7a1c}
+.pchip.p3 .pbola{background:#a8531a} .pchip.p4 .pbola{background:#6b3fa0}
+.pchip.p5 .pbola{background:#a8306b}
+.pchip.feito{color:#fff;text-decoration:none;-webkit-animation:achou .5s;animation:achou .5s}
+.pchip.feito .pbola{background:#fff}
+.achouf{position:fixed;left:50%;top:44%;z-index:60;pointer-events:none;
+  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  padding:9px 20px;border-radius:999px;color:#fff;font-weight:800;font-size:19px;
+  -webkit-box-shadow:0 8px 20px rgba(30,25,10,.4);box-shadow:0 8px 20px rgba(30,25,10,.4);
+  -webkit-animation:sobefx 1.15s forwards;animation:sobefx 1.15s forwards}
+@-webkit-keyframes achou{0%{-webkit-transform:scale(.55) rotate(-8deg);opacity:.2}
+  55%{-webkit-transform:scale(1.22) rotate(4deg);opacity:1}100%{-webkit-transform:scale(1) rotate(0);opacity:1}}
+@keyframes achou{0%{transform:scale(.55) rotate(-8deg);opacity:.2}
+  55%{transform:scale(1.22) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}
+@-webkit-keyframes sobefx{0%{-webkit-transform:translate(-50%,-30%) scale(.5);opacity:0}
+  25%{-webkit-transform:translate(-50%,-50%) scale(1.1);opacity:1}
+  70%{-webkit-transform:translate(-50%,-58%) scale(1);opacity:1}
+  100%{-webkit-transform:translate(-50%,-92%) scale(.95);opacity:0}}
+@keyframes sobefx{0%{transform:translate(-50%,-30%) scale(.5);opacity:0}
+  25%{transform:translate(-50%,-50%) scale(1.1);opacity:1}
+  70%{transform:translate(-50%,-58%) scale(1);opacity:1}
+  100%{transform:translate(-50%,-92%) scale(.95);opacity:0}}
+/* --- forca: a mare subindo na praia a cada erro --- */
+.nebbox{position:relative;width:100%;max-width:300px;margin:6px auto 0;border-radius:14px;overflow:hidden;
+  border:3px solid #fffdf6;-webkit-box-shadow:0 6px 16px rgba(30,25,10,.32);box-shadow:0 6px 16px rgba(30,25,10,.32)}
+.nebbox .nbimg{width:100%;height:auto;display:block}
+.nebbox .neb{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(70,130,180,0);
+  -webkit-transition:background .5s;transition:background .5s}
+.nebbox .nebtx{position:absolute;left:0;right:0;bottom:0;padding:5px;text-align:center;font-size:12px;
+  font-weight:700;color:#fff;background:rgba(28,22,12,.72)}
+/* --- ficha do porao ja vista --- */
+.ficha.vista{background:rgba(255,253,246,.62);border-color:#6bd23f}
+/* --- o "porque" da fase delicada: explicacao depois do acerto --- */
+.balao.porque{background:rgba(232,240,255,.97);font-size:14.5px;margin-top:9px;max-width:360px}
 .tinta.no{background:rgba(214,74,64,.5);-webkit-animation:shk .35s;animation:shk .35s}
 /* --- a moldura do VOO e da ESCALA: a cena tem que caber INTEIRA (a criança
    precisa ver a igreja, as casas, a praça e o rio ao mesmo tempo). A primeira
@@ -1010,11 +1071,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* ================= IMAGENS ================= */
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
-var CENAS={};
+var CENAS={nv_fundo:1,nv_horizonte:1,nv_caravela:1,nv_aldeia:1,nv_porao:1,nv_atlantico:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["nv_base","nv_fala","nv_pisca"];
+var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_med","nv_verso","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1250,60 +1311,47 @@ function poeVozes(){
   }
   agenda();
 })();
-/* ================= CONTEÚDO — GEOGRAFIA 3º ANO =================
-   "O VOO DO NICO" — Blumenau vista de cima.
+/* ================= CONTEÚDO — HISTÓRIA 5º ANO =================
+   "A TERRA DOS PAPAGAIOS" — Ará e as grandes navegações.
 
-   CURRÍCULO DE BLUMENAU, Geografia, 3º ano (verbatim do documento oficial),
-   unidade "Formas de representação e pensamento espacial", objeto de
-   conhecimento "Representações cartográficas em Blumenau":
-     "Identificar e interpretar imagens bidimensionais e tridimensionais em
-      diferentes tipos de representação cartográfica."
-     "Reconhecer e elaborar legendas com símbolos de diversos tipos de
-      representações em diferentes escalas cartográficas."
-   Conceitos/conteúdos da mesma linha: "Maquetes espontâneas com símbolos dos
-   lugares de vivência"; "Relações espaciais projetivas e a descentralização:
-   direita e esquerda, frente e atrás, em cima e embaixo"; "Mapa Mental";
-   "Roteiro: Escola – Casa"; "Representação da superfície terrestre do
-   Bairro/município de Blumenau".
+   CURRÍCULO DE BLUMENAU, História, 5º ano (verbatim), unidade "Povos e
+   culturas: meu lugar no mundo e meu grupo social", objeto "O que forma um
+   povo": "Identificar os processos de formação das culturas e dos povos,
+   relacionando-os com o espaço geográfico ocupado." Conceitos/conteúdos:
+   "Conceito de etnia"; "Trajetória (permanências e transformações) cultural
+   dos grupos étnico-raciais de sua região e estado de Santa Catarina".
+   Unidade "Registros da história", objeto "Os patrimônios materiais e
+   imateriais da humanidade": "Inventariar os patrimônios materiais e
+   imateriais da humanidade e analisar mudanças e permanências."
 
-   A IDEIA: o mascote é um PÁSSARO — um joão-de-barro, o bicho que constrói a
-   própria casa e que, voando, vê tudo de cima. "Visão de pássaro" deixa de ser
-   expressão e passa a ser o ponto de vista do personagem. E a mecânica central
-   é O VOO: a criança desliza a altura e a MESMA praça vira mapa diante dos
-   olhos dela. A passagem do 3D para o 2D acontece na mão dela — que é
-   exatamente o que o objetivo pede.
+   ⚠️ O ANO. As Grandes Navegações, como matéria, são do 7º ano. Aqui elas não
+   são a matéria: são o ACONTECIMENTO que responde à pergunta do 5º ano — o que
+   forma um povo. Por isso não há lista de capitães, datas nem Tordesilhas: há
+   quem já estava aqui, quem chegou pelo mar, quem foi trazido à força, e o que
+   de cada um ficou na comida, na palavra e no jeito. Ver _naveg/PLANO.md, que
+   amarra cada fase a um objetivo escrito do 5º ano.
 
-   O LEQUE DE GESTOS (11 em 19 fases, nenhum acima de 40%):
-     deslizar (voo, escala), escolher, ligar, achar-na-cena, classificar,
-     ordenar/montar (roteiro de setas), arrastar (legenda), digitar,
-     grade (caça-palavras e cruzadinha), memória, produzir.
-   ============================================================== */
+   A IDEIA: o mascote é uma ARARA e ela JÁ ESTAVA AQUI. Ará (arara, em tupi)
+   não guia a viagem europeia — ela viu chegar. A criança não "descobre" nada:
+   assiste ao encontro. E o título é verdade histórica: os primeiros mapas
+   europeus chamaram esta terra de Terra Papagalli, a Terra dos Papagaios,
+   porque o papagaio foi a primeira coisa que levaram daqui.                  */
+
+/* ---------- ajudantes do conteudo ---------- */
 function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
-function normal(s){ s=(s||"").toLowerCase().replace(/\s+/g," ").replace(/^\s|\s$/g,"");
-  var de="áàâãäéèêëíìîïóòôõöúùûüç", pa="aaaaaeeeeiiiiooooouuuuc", i, r="";
-  for(i=0;i<s.length;i++){ var k=de.indexOf(s.charAt(i)); r+= k>=0?pa.charAt(k):s.charAt(i); }
-  return r; }
 function cenaEl(img,legenda){
   var d=el("div","cena");
   d.appendChild(cenaImg(img));
   if(legenda) d.appendChild(el("div","cenacap",legenda));
   return d;
 }
-
-/* ---------- 📌 POST-IT DE CURIOSIDADE ------------------------------------
-   Papelzinho espetado na tela: a criança TOCA e ele abre com um fato de
-   verdade sobre Blumenau e sobre mapas. Não vale nota e não trava nada — é o
-   "quero saber mais" de quem tem curiosidade, e é o que faz a atividade
-   parecer GEOGRAFIA de verdade.
-   ⚠️ Todo fato aqui é verificável. Na dúvida, tirar.                       */
+/* as curiosidades do post-it: o "quero mais" em doses pequenas. Cada uma tem
+   voz propria (nv_cur_<chave>.mp3) porque no 5o ano ainda ha quem leia devagar. */
 var CURIOS={
- rio:{t:"Voc&#234; sabia?",x:"O rio que corta Blumenau se chama <b>Itaja&#237;-A&#231;u</b>. Em qualquer mapa da cidade ele &#233; a linha azul mais f&#225;cil de achar &#8212; por isso mapa quase sempre come&#231;a pelo rio."},
- norte:{t:"Voc&#234; sabia?",x:"Quase todo mapa &#233; desenhado com o <b>Norte para cima</b>. &#201; um combinado entre as pessoas que fazem mapas, para todo mundo ler do mesmo jeito."},
- legenda:{t:"Voc&#234; sabia?",x:"A <b>legenda</b> &#233; a parte do mapa que ensina a ler o mapa. Sem ela, os s&#237;mbolos viram s&#243; desenhinhos sem sentido."},
- pass:{t:"Voc&#234; sabia?",x:"Antes de existirem avi&#245;es e sat&#233;lites, os mapas eram desenhados <b>de cabe&#231;a</b>, por quem tinha andado pelo lugar. Por isso muitos mapas antigos t&#234;m formas tortas."},
- maquete:{t:"Voc&#234; sabia?",x:"A <b>maquete</b> &#233; um mapa que se pode pegar com a m&#227;o: ela tem <b>altura</b>. O mapa no papel &#233; a mesma coisa, s&#243; que <b>achatado</b>."},
- escala:{t:"Voc&#234; sabia?",x:"Quanto mais longe voc&#234; olha, <b>menos detalhe</b> cabe no mapa. Num mapa da cidade inteira a sua casa vira um pontinho &#8212; ou nem aparece."},
- barro:{t:"Voc&#234; sabia?",x:"O <b>jo&#227;o-de-barro</b> constr&#243;i a casa dele com barro e capim, e sempre deixa a porta <b>virada para o lado do sol</b>, longe da chuva. Ele tamb&#233;m escolhe onde construir."}
+ tupi:{t:"Voc&#234; sabia?",x:"Muita palavra que voc&#234; usa todo dia &#233; <b>tupi</b>: abacaxi, pipoca, jacar&#233;, mandioca, peruca, cutucar. E tamb&#233;m nomes de cidade &#8212; <b>Itaja&#237;</b> quer dizer rio das pedras."},
+ papagaio:{t:"Voc&#234; sabia?",x:"Nos primeiros mapas europeus deste peda&#231;o do mundo estava escrito <b>Terra Papagalli</b> &#8212; a Terra dos Papagaios. O papagaio foi a primeira coisa que levaram daqui."},
+ vela:{t:"Voc&#234; sabia?",x:"A vela triangular veio dos navegantes <b>&#225;rabes</b>. Sem ela os navios s&#243; conseguiam ir para onde o vento empurrava &#8212; e nunca voltar."},
+ rede:{t:"Voc&#234; sabia?",x:"A <b>rede de dormir</b> &#233; inven&#231;&#227;o dos povos daqui. Os europeus acharam t&#227;o boa que passaram a usar dentro dos navios."}
 };
 function postIt(pai,chave){
   var it=CURIOS[chave]; if(!it) return null;
@@ -1322,891 +1370,542 @@ function postIt(pai,chave){
   return p;
 }
 
-/* ---------- 1) ABERTURA: o problema vem PRIMEIRO ----------
-   O Nico tem um recado para entregar e só tem uma foto tirada do chão. Não dá
-   para achar a casa. A criança sente a falta ANTES de ouvir a palavra "mapa"
-   (lacuna de curiosidade — Loewenstein; Portão 0 da filosofia da casa).   */
+/* ---------- 1) ABERTURA: o problema vem PRIMEIRO ---------- */
 function mAbertura(){limpa();var t=el("div","tela");var c=el("div","centro");
   c.appendChild(nicoEl("gg"));
-  c.appendChild(el("div","selo","UM RECADO PARA ENTREGAR"));
-  c.appendChild(el("div","balao","Oi! Eu sou o <b>Nico</b>, jo&#227;o-de-barro. Preciso entregar este recado na casa da dona Ilse&#8230; mas s&#243; tenho <b>esta foto</b>, tirada l&#225; do ch&#227;o."));
-  c.appendChild(cenaEl("nv_voo_a","A foto que o Nico tem"));
-  c.appendChild(el("div","balao pequeno","D&#225; para saber por onde ir olhando s&#243; isto? Eu tamb&#233;m acho que <b>n&#227;o</b>&#8230;"));
-  var b=el("button","btn","Ajudar o Nico");b.style.marginTop="12px";
+  c.appendChild(el("div","selo","UMA COISA BRANCA NO MAR"));
+  c.appendChild(el("div","balao","Oi! Eu sou o <b>Ar&#225;</b>, uma arara. Eu moro aqui desde sempre. Hoje de manh&#227; eu vi uma coisa <b>branca e enorme</b> no mar&#8230;"));
+  c.appendChild(cenaEl("nv_horizonte","O que o Ar&#225; viu do galho mais alto"));
+  c.appendChild(el("div","balao pequeno","Ela anda <b>sem ningu&#233;m remar</b>. Eu nunca vi nada assim. Voc&#234; sabe o que &#233;?"));
+  var b=el("button","btn","Descobrir com o Ar&#225;");b.style.marginTop="12px";
   b.onclick=function(){arma();sTap();mPalpite();};
   c.appendChild(b);
   t.appendChild(c);app.appendChild(t);
   montaBarra(null,null);
-  falar("nv_abertura");}
+  falar("nv_abertura");
+}
 
-/* ---------- 2) O PALPITE (pré-teste, sem nota e sem correção) ---------- */
+/* ---------- 2) O PALPITE (aposta, sem correção) ----------
+   Lacuna de curiosidade (Loewenstein): a criança se compromete com um palpite
+   ANTES de saber. Não há certo nem errado aqui — e é justamente isso que faz
+   ela querer a resposta.                                                     */
 function mPalpite(){limpa();var t=el("div","tela");setProg(t,4);var c=el("div","centro");
   c.appendChild(el("div","selo","O QUE VOC&#202; ACHA?"));
-  c.appendChild(el("div","balao","Antes de come&#231;ar, me diz o seu palpite: <b>o que ajuda mais</b> a achar uma casa numa cidade?"));
-  var alts=[["A foto tirada do ch&#227;o, de frente para as casas",0],
-            ["Um desenho da cidade <b>visto de cima</b>",1],
-            ["Uma lista com o nome de todas as ruas",0]];
-  var box=el("div","opts col"),i,resp=false;
-  for(i=0;i<alts.length;i++){(function(a){
-    var o=el("div","opt",a[0]);
-    o.setAttribute("data-qa",a[1]?"1":"0");
-    o.onclick=function(){ if(resp)return; resp=true; arma(); sTap();
-      MED.pre=a[1]; salva();
-      o.className="opt ok";
-      setTimeout(function(){ depoisDaFala("nv_palpite_ok",7000,function(){
-        mostraBanner("Guardei o seu palpite. No fim a gente confere se voc&#234; mudou de ideia!",mVoo); }); },500);
+  c.appendChild(el("div","balao","Antes de tudo, o seu palpite: <b>o que &#233; aquilo</b> que anda no mar sem ningu&#233;m remar?"));
+  var OPS=["Um bicho muito grande do mar","Uma casa que boia","Um barco, mas de um jeito que o Ar&#225; nunca viu"];
+  var box=el("div","opts"),i;
+  for(i=0;i<OPS.length;i++){(function(txt){
+    var o=el("div","opt",txt);
+    o.setAttribute("data-qa","1");
+    o.onclick=function(){ arma(); sTap(); o.className="opt ok";
+      var a=box.getElementsByClassName("opt"),z;
+      for(z=0;z<a.length;z++) a[z].onclick=null;
+      reg("encontro",true,1);
+      setTimeout(function(){ mostraBanner("Guarde o seu palpite. No fim da viagem a gente volta aqui.",mVento); },900);
     };
     box.appendChild(o);
-  })(alts[i]);}
+  })(OPS[i]);}
   c.appendChild(box);
   c.appendChild(el("div","hint","N&#227;o tem certo nem errado agora. &#201; s&#243; o seu palpite."));
   t.appendChild(c);app.appendChild(t);
   montaBarra(null,null);
-  falar("nv_palpite");}
+  falar("nv_palpite_intro");
+}
 
-/* ---------- 3) ⭐ O VOO DO NICO (a mecânica nova da atividade) -------------
-   O objetivo do currículo é "identificar e interpretar imagens bidimensionais
-   e TRIDIMENSIONAIS". A criança não lê sobre isso: ela SOBE. Desliza a altura
-   do voo e a MESMA praça (mesma igreja, mesmas quatro casas, mesmo rio, mesma
-   ponte) passa de vista de lado -> inclinada -> reta de cima, que já é um mapa.
-   As três são ILUSTRAÇÕES DE IA do mesmo lugar (regra do Marcos: interação
-   dinâmica usa arte de IA, não desenho de CSS). O conceito só é dito no fim. */
-function mVoo(){
-  limpa();var t=el("div","tela");setProg(t,10);
+/* ---------- 3) ⭐ O VENTO E A VELA (simulador) ----------
+   A pergunta que quase nenhum livro faz: POR QUE só naquela época deu certo?
+   Não foi coragem — foi TECNOLOGIA. A vela triangular deixa o barco andar
+   ATRAVESSADO ao vento (a bolina), e é isso que permite ir e VOLTAR.
+   A criança gira a vela e vê o barco andar ou empacar. Dez segundos e ela
+   nunca mais esquece — e é o objetivo do 5º ano sobre tecnologias.          */
+function mVento(){
+  limpa();var t=el("div","tela");setProg(t,9);
   var visto={},fim=false;
   var c=el("div","centro");
-  c.appendChild(el("div","selo","O VOO DO NICO"));
-  c.appendChild(el("div","balao","Segure o bot&#227;o e <b>suba com o Nico</b>. Olhe o que acontece com a mesma pra&#231;a."));
+  c.appendChild(el("div","selo","O SEGREDO DO VENTO"));
+  c.appendChild(el("div","balao","O vento sopra sempre <b>para c&#225;</b>. Gire a <b>vela</b> e veja o que o barco faz."));
   var cx=el("div","voobox");
-  var ALTS=["nv_voo_a","nv_voo_b","nv_voo_c"],fotos=[],q;
-  for(q=0;q<ALTS.length;q++){ var fo=cenaImg(ALTS[q],q?"mfoto sobre":"mfoto prim"); fotos.push(fo); cx.appendChild(fo); }
+  cx.appendChild(cenaImg("nv_caravela","mfoto prim"));
   var selo=el("div","selodagua","");cx.appendChild(selo);
   c.appendChild(cx);
   var leg=el("div","balao pequeno","");c.appendChild(leg);
   var r=document.createElement("input"); r.type="range"; r.min="0"; r.max="2"; r.step="1";
-  r.value="0"; r.className="simul"; r.setAttribute("aria-label","altura do voo");
-  r.setAttribute("data-qa","0");
+  r.value="0"; r.className="simul"; r.setAttribute("aria-label","angulo da vela");
+  r.setAttribute("data-qa","2");
   c.appendChild(r);
   var lab=el("div","simullab");
-  lab.innerHTML="<span>no ch&#227;o</span><span>bem alto</span>";
+  lab.innerHTML="<span>vela reta</span><span>vela atravessada</span>";
   c.appendChild(lab);
-  var TX=["Do <b>ch&#227;o</b> voc&#234; v&#234; a <b>frente</b> das casas &#8212; e o que est&#225; atr&#225;s some.",
-          "Subindo um pouco, j&#225; d&#225; para ver os <b>telhados</b> e as ruas entre as casas.",
-          "L&#225; de <b>cima</b> voc&#234; v&#234; tudo de uma vez, achatado. Isto j&#225; &#233; um <b>mapa</b>."];
-  var SELO=["vista de lado","vista inclinada","vista de cima"];
-  function pinta(){ var v=parseInt(r.value,10),i;
-    for(i=0;i<fotos.length;i++) fotos[i].className=(i?"mfoto sobre":"mfoto prim")+((i===v)?" on":"");
+  var TX=["Vela <b>reta</b>: o vento bate de frente e empurra o barco <b>para tr&#225;s</b>. Assim ningu&#233;m sai do lugar.",
+          "Vela <b>meio virada</b>: o barco anda de lado, devagarinho. J&#225; &#233; alguma coisa.",
+          "Vela <b>atravessada</b>: o vento escorrega nela e empurra o barco <b>para frente</b>! Agora d&#225; para ir e para <b>voltar</b>."];
+  var SELO=["parado","devagar","navegando!"];
+  var ANG=[0,-18,-40], DX=[0,8,26];
+  var fo=cx.getElementsByClassName("mfoto")[0];
+  function pinta(){ var v=parseInt(r.value,10);
+    fo.style.webkitTransform="rotate("+ANG[v]+"deg) translateX("+DX[v]+"%)";
+    fo.style.transform="rotate("+ANG[v]+"deg) translateX("+DX[v]+"%)";
     leg.innerHTML=TX[v]; selo.innerHTML="<b>"+SELO[v]+"</b>";
     visto[v]=1; var n=0,k; for(k in visto) if(visto.hasOwnProperty(k)) n++;
-    if(n>=3&&!fim){ fim=true; sCerto(); reg("visao",true,1);
+    if(n>=3&&!fim){ fim=true; sCerto(); reg("rota",true,1);
       var ce=centroTela(cx); faisca(ce[0],ce[1],"#ffd43b",16);
-      setTimeout(function(){ depoisDaFala("nv_voo_revela",13000,function(){
-        mostraBanner("Quem olha <b>de cima</b> v&#234; o lugar inteiro de uma vez. &#201; assim que nasce um <b>mapa</b>.",mDeCima); }); },900); }
+      setTimeout(function(){ depoisDaFala("nv_vento_revela",12000,function(){
+        mostraBanner("N&#227;o foi a coragem que atravessou o mar: foi a <b>vela</b> que aprendeu a andar contra o vento.",mAldeia); }); },900);
+    }
   }
   r.oninput=function(){ arma(); sTap(); pinta(); };
-  r.onchange=pinta;
+  r.onchange=r.oninput;
   pinta();
-  c.appendChild(el("div","hint","Passe pelas tr&#234;s alturas: ch&#227;o, meio e bem alto."));
-  postIt(c,"pass");
+  c.appendChild(el("div","hint","Arraste o bot&#227;o amarelo de um lado para o outro."));
   t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_voo_dica","Repare no que some e no que aparece quando o Nico sobe.");
-  falar("nv_voo_intro");
+  montaBarra("nv_vento_dica","Experimente os TR&#202;S jeitos de p&#244;r a vela.");
+  falar("nv_vento_intro");
 }
 
-/* ---------- 4) DE CIMA OU DE LADO? (escolher) ----------
-   Concreto -> figural (Bruner/CPA): a criança já viu a praça mudar; agora
-   olha UM objeto e escolhe, entre três desenhos, o que é a vista de cima.  */
-var VISTAS=[{n:"mesa",   rot:"a mesa"},
-            {n:"carro",  rot:"o carro"},
-            {n:"cadeira",rot:"a cadeira"},
-            {n:"piscina",rot:"a piscina"}];
-function mDeCima(){
-  var fila=baguncar(VISTAS.slice(0)),idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,18+idx*2);
-    var it=fila[idx],fim=false;
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","DE CIMA OU DE LADO?"));
-    c.appendChild(el("div","balao","O Nico est&#225; voando bem em cima <b>"+it.rot+"</b>. Qual destes desenhos &#233; o que ele <b>v&#234; l&#225; de cima</b>?"));
-    var mold=el("div","moldurafoto");
-    mold.appendChild(cenaImg("nv_"+it.n+"_l","fotoreal"));
-    mold.appendChild(el("div","fotocred","assim voc&#234; v&#234; do ch&#227;o"));
-    c.appendChild(mold);
-    /* as opções: a vista de cima certa + duas vistas de cima de OUTROS objetos */
-    var outros=[],z;
-    for(z=0;z<VISTAS.length;z++) if(VISTAS[z].n!==it.n) outros.push(VISTAS[z].n);
-    baguncar(outros);
-    var ops=baguncar([[it.n,1],[outros[0],0],[outros[1],0]]);
-    var box=el("div","galeria");
-    for(z=0;z<ops.length;z++){(function(o){
-      var g=el("div","gfoto");
-      g.appendChild(cenaImg("nv_"+o[0]+"_c"));
-      g.setAttribute("data-qa",o[1]?"1":"0");
-      g.onclick=function(){ arma();
-        if(fim) return;
-        if(o[1]){ fim=true; g.className="gfoto ok"; sCerto(); elogio();
-          reg("visao",err===0,err+1);
-          var ce=centroTela(g); faisca(ce[0],ce[1],"#6bd23f",14);
-          setTimeout(function(){ idx++; err=0;
-            if(idx>=fila.length){ depoisDaFala("nv_cima_revela",10000,function(){
-              mostraBanner("De cima a gente v&#234; o <b>contorno</b> das coisas &#8212; nunca a frente delas.",mSombra); }); }
-            else passo();
-          },1100);
-        } else { err++; g.className="gfoto no"; sErro();
-          setTimeout(function(){ if(g.className==="gfoto no") g.className="gfoto"; },500);
-          if(err===2){ consolo(); mostraDica("Feche um olho e imagine que voc&#234; est&#225; no <b>teto</b>, olhando para baixo."); }
-          if(err>=3) mostraDica("Procure o <b>contorno</b> de "+it.rot+": s&#243; a forma, sem a frente.");
-        }
-      };
-      box.appendChild(g);
-    })(ops[z]);}
-    c.appendChild(box);
-    if(idx===0) postIt(c,"norte");
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_cima_dica","De cima voc&#234; v&#234; o telhado, nunca a porta.");
-    if(idx===0) falar("nv_cima_intro");
-  }
-  passo();
-}
-
-/* ---------- 5) A SOMBRA DE CIMA (ligar) ---------- */
-var LIGAS=[["mesa","a mesa"],["cadeira","a cadeira"],["arvore","a &#225;rvore"],["carro","o carro"]];
-function mSombra(){
-  limpa();var t=el("div","tela");setProg(t,26);
-  var sel=null,feitos=0,err=0;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","ACHE O PAR"));
-  c.appendChild(el("div","balao","Toque num objeto e depois no <b>desenho dele visto de cima</b>."));
-  var cols=el("div","cols");
-  var esq=el("div","col"),dir=el("div","col");
-  var alvos=baguncar(LIGAS.slice(0)),i;
-  for(i=0;i<LIGAS.length;i++){(function(p){
-    var b=el("div","lig");
-    b.appendChild(imgEl("nv_"+p[0]+"_l","ligimg"));
-    b.appendChild(el("div","ligtx",p[1]));
-    b.setAttribute("data-qa",p[0]);
-    b.onclick=function(){ arma(); sTap();
-      if(b.className.indexOf("feita")>=0) return;
-      var a=esq.getElementsByClassName("lig"),z;
-      for(z=0;z<a.length;z++) if(a[z].className.indexOf("feita")<0) a[z].className="lig";
-      b.className="lig sel"; sel=p[0];
-    };
-    esq.appendChild(b);
-  })(LIGAS[i]);}
-  for(i=0;i<alvos.length;i++){(function(p){
-    var b=el("div","lig alvo");
-    b.appendChild(imgEl("nv_"+p[0]+"_c","ligimg"));
-    b.setAttribute("data-qa",p[0]);
-    b.onclick=function(){ arma();
-      if(b.className.indexOf("feita")>=0) return;
-      if(!sel){ mostraDica("Toque primeiro num <b>objeto</b> da esquerda."); return; }
-      if(sel===p[0]){
-        var a=esq.getElementsByClassName("lig"),z;
-        for(z=0;z<a.length;z++) if(a[z].getAttribute("data-qa")===sel) a[z].className="lig feita";
-        b.className="lig alvo feita"; sCerto(); feitos++; sel=null;
-        reg("visao",err===0,err+1);
-        var ce=centroTela(b); faisca(ce[0],ce[1],"#6bd23f",12);
-        if(feitos>=LIGAS.length){ setTimeout(function(){
-          depoisDaFala("nv_sombra_revela",9000,function(){
-            mostraBanner("O mapa &#233; feito desses <b>contornos</b> vistos de cima.",mMaquete); }); },700); }
-      } else { err++; b.className="lig alvo no"; sErro();
-        setTimeout(function(){ if(b.className==="lig alvo no") b.className="lig alvo"; },500);
-        if(err===3) consolo();
-      }
-    };
-    dir.appendChild(b);
-  })(alvos[i]);}
-  cols.appendChild(esq);cols.appendChild(dir);
-  c.appendChild(cols);
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_sombra_dica","Compare o formato: redondo com redondo, comprido com comprido.");
-  falar("nv_sombra_intro");
-}
-
-/* ---------- 6) DA MAQUETE AO MAPA (achar na cena) ----------
-   "Maquetes espontâneas com símbolos dos lugares de vivência" (currículo).
-   A maquete TEM altura; o mapa é a mesma coisa achatada. A criança acha no
-   mapa o que está na maquete — é a ponte 3D -> 2D que o objetivo pede.     */
-/* ⚠️ as posicoes sao MEDIDAS na arte do mapa (nv_mapa), nao chutadas: a igreja
-   fica a 32% da largura e 28% da altura, e por ai vai. Chutar deixa o alvo ao
-   LADO da coisa e a crianca toca no lugar certo e leva "errado".            */
-var NAMAQ=[{q:"a <b>igreja</b>",x:32,y:28},{q:"a <b>ponte</b>",x:52,y:72},
-           {q:"o <b>rio</b>",x:24,y:76},{q:"a <b>pra&#231;a com as &#225;rvores</b>",x:51,y:52}];
-function mMaquete(){
+/* ---------- 4) QUEM JÁ ESTAVA AQUI (achar na cena) ----------
+   Antes de qualquer navio, aqui havia gente, casa, roça e caminho. E há HOJE:
+   em Santa Catarina vivem Guarani, Kaingang e Xokleng — o currículo pede
+   "de sua região e estado de Santa Catarina" com todas as letras.
+   ⚠️ zonas MÚLTIPLAS e pergunta no indefinido (portão _qa/ambiguo.py).      */
+var ALDEIA=[{q:"uma <b>casa de palha</b> da aldeia", n:"A CASA DE PALHA", r:12,
+             z:[{x:32,y:52},{x:52,y:48},{x:68,y:56}]},
+            {q:"a <b>mata</b> em volta da aldeia", n:"A MATA", r:12,
+             z:[{x:8,y:30},{x:88,y:28},{x:16,y:76},{x:90,y:70}]},
+            {q:"o <b>terreiro</b>, o ch&#227;o aberto no meio", n:"O TERREIRO", r:13, unico:1,
+             z:[{x:48,y:66},{x:44,y:74}]}];
+function mAldeia(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,34+idx);
-    if(idx>=NAMAQ.length){ depoisDaFala("nv_maq_revela",11000,function(){
-      mostraBanner("A <b>maquete</b> tem altura. O <b>mapa</b> &#233; a mesma coisa, achatada no papel.",mOndeFica); }); return; }
-    var it=NAMAQ[idx],fim=false;
+    limpa();var t=el("div","tela");setProg(t,14);
+    if(idx>=ALDEIA.length){ depoisDaFala("nv_aldeia_revela",13000,function(){
+      mostraBanner("Aqui j&#225; havia <b>gente</b>: casa, ro&#231;a, caminho e l&#237;ngua. E ainda h&#225; &#8212; em Santa Catarina vivem <b>Guarani, Kaingang e Xokleng</b>.",mPorao); }); return; }
+    var it=ALDEIA[idx],fim=false;
     var c=el("div","centro");
-    c.appendChild(el("div","selo","DA MAQUETE AO MAPA"));
-    c.appendChild(el("div","balao","Na maquete voc&#234; v&#234; "+it.q+". Ache <b>o mesmo lugar</b> no mapa e toque nele."));
-    var lado=el("div","cols");
-    var m1=el("div","moldurafoto");
-    m1.appendChild(cenaImg("nv_maquete","fotoreal"));
-    m1.appendChild(el("div","fotocred","a maquete (tem altura)"));
-    lado.appendChild(m1);
-    c.appendChild(lado);
+    c.appendChild(el("div","selo","QUEM J&#193; ESTAVA AQUI"));
+    c.appendChild(el("div","balao","Muito antes do navio, esta terra tinha dono. Toque em "+it.q+"."));
     var cena=el("div","janela");
-    cena.appendChild(cenaImg("nv_mapa","jimg"));
-    var alvo=el("div","achado mira");
-    alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
-    alvo.setAttribute("data-qa","1");
-    alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
-      if(fim) return; fim=true; arma(); alvo.className="achado mira ok"; sCerto();
-      reg("dimensao",err===0,err+1);
-      var ce=centroTela(alvo); faisca(ce[0],ce[1],"#6bd23f",14);
-      setTimeout(function(){ idx++; err=0; passo(); },1000);
-    };
-    cena.appendChild(alvo);
-    cena.onclick=function(){ if(fim) return; err++; sErro();
-      if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
-      if(err>=3) mostraDica("Olhe a maquete e o mapa <b>lado a lado</b>: o que est&#225; &#224; esquerda numa est&#225; &#224; esquerda na outra.");
+    cena.appendChild(cenaImg("nv_aldeia","jimg"));
+    var k;
+    for(k=0;k<it.z.length;k++){(function(zn){
+      var a=el("div","achado mira");
+      a.style.left=zn.x+"%"; a.style.top=zn.y+"%";
+      a.style.width=(it.r*2)+"px"; a.style.height=(it.r*2)+"px";
+      a.style.marginLeft=(-it.r)+"px"; a.style.marginTop=(-it.r)+"px";
+      a.setAttribute("data-qa","1");
+      a.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); acerta(zn.x,zn.y); };
+      cena.appendChild(a);
+    })(it.z[k]);}
+    function acerta(px,py){
+      if(fim) return; fim=true; arma();
+      var luz=el("div","luzok"); luz.style.left=px+"%"; luz.style.top=py+"%"; cena.appendChild(luz);
+      var tx=el("div","luztx",it.n); tx.style.left=px+"%"; tx.style.top="calc("+py+"% + 44px)"; cena.appendChild(tx);
+      sCerto(); elogio(); reg("povo",err===0,err+1);
+      var ce=centroTela(luz); faisca(ce[0],ce[1],"#ffd43b",18);
+      setTimeout(function(){ idx++; err=0; passo(); },1400);
+    }
+    cena.onclick=function(ev){
+      if(fim) return;
+      var r=cena.getBoundingClientRect();
+      var cx2=((ev.clientX-r.left)/r.width)*100, cy=((ev.clientY-r.top)/r.height)*100;
+      var i,melhor=1e9,zz=null;
+      for(i=0;i<it.z.length;i++){
+        var dx=cx2-it.z[i].x, dy=(cy-it.z[i].y)*(r.height/r.width);
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<melhor){ melhor=d; zz=it.z[i]; }
+      }
+      if(zz&&melhor<=it.r){ acerta(zz.x,zz.y); return; }
+      err++; sErro(); cena.className="janela erro";
+      setTimeout(function(){ if(!fim) cena.className="janela"; },420);
+      if(err===2){ consolo(); mostraDica("Olhe com calma: "+it.q+"."); }
     };
     c.appendChild(cena);
-    if(idx===0) postIt(c,"maquete");
+    if(idx===0) postIt(c,"tupi");
     t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_maq_dica","O mapa tem as mesmas coisas da maquete, s&#243; que vistas de cima.");
-    if(idx===0) falar("nv_maq_intro");
+    montaBarra("nv_aldeia_dica","Pode tocar em <b>qualquer parte</b> da coisa que eu pedi.");
+    if(idx===0) falar("nv_aldeia_intro");
   }
   passo();
 }
 
-/* ---------- 7) ONDE FICA? (classificar — relações projetivas) ----------
-   "Relações espaciais projetivas e a descentralização: direita e esquerda,
-   frente e atrás, em cima e embaixo" (currículo, verbatim).               */
-var ONDE=[["a igreja","esq"],["as casas de telhado vermelho","dir"],
-          ["a pra&#231;a com as &#225;rvores","meio"],["a ponte","meio"],
-          ["o rio","baixo"],["a torre da igreja","esq"]];
-function mOndeFica(){
-  limpa();var t=el("div","tela");setProg(t,42);
-  var fila=baguncar(ONDE.slice(0)),i=0,err=0,contas={};
+/* ---------- 5) ⭐ O NAVIO POR DENTRO (explorar) ----------
+   O objeto como FONTE histórica (objetivo do 5º ano). Cada coisa do porão
+   conta uma parte da viagem: quanto tempo durava, como se achava o caminho,
+   o que dava para comer no meio do oceano.                                  */
+var PORAO=[{img:"nv_barril",  t:"O barril",     x:"&#193;gua e comida salgada para <b>meses</b> de viagem. Fruta fresca acabava na primeira semana."},
+           {img:"nv_corda",   t:"A corda",      x:"Sem corda n&#227;o se levanta vela. Um navio levava <b>quil&#244;metros</b> dela."},
+           {img:"nv_bussola", t:"A b&#250;ssola",   x:"A agulha aponta sempre para o Norte &#8212; mesmo sem ver terra nenhuma."},
+           {img:"nv_astrolabio",t:"O astrol&#225;bio",x:"Mede a altura do Sol e das estrelas para saber <b>onde</b> o navio est&#225;."},
+           {img:"nv_ampulheta",t:"A ampulheta", x:"A areia mede o tempo. Virar a ampulheta era tarefa de um <b>menino</b> a bordo."},
+           {img:"nv_bau",     t:"O ba&#250;",       x:"Dentro dele iam panos, espelhos e facas &#8212; coisas para <b>trocar</b> em terra."}];
+function mPorao(){
+  limpa();var t=el("div","tela");setProg(t,20);
+  var vistos={},fim=false;
   var c=el("div","centro");
-  c.appendChild(el("div","selo","ONDE FICA NO MAPA?"));
+  c.appendChild(el("div","selo","O NAVIO POR DENTRO"));
+  var bal=el("div","balao","O Ar&#225; entrou pelo por&#227;o. Toque em cada coisa e descubra <b>para que servia</b>.");
+  c.appendChild(bal);
+  var cena=el("div","janela");
+  cena.appendChild(cenaImg("nv_porao","jimg"));
+  c.appendChild(cena);
+  var gale=el("div","figs"),i;
+  for(i=0;i<PORAO.length;i++){(function(o){
+    var f=el("div","ficha");
+    f.appendChild(imgEl(o.img,"fimg"));
+    f.appendChild(el("div","flab",o.t));
+    f.setAttribute("data-qa","1");
+    f.onclick=function(){ arma(); sTap();
+      f.className="ficha vista";
+      bal.innerHTML="<b>"+o.t+"</b> &#8212; "+o.x;
+      vistos[o.t]=1;
+      var n=0,k; for(k in vistos) if(vistos.hasOwnProperty(k)) n++;
+      if(n>=PORAO.length&&!fim){ fim=true; sCerto(); reg("encontro",true,1);
+        setTimeout(function(){ depoisDaFala("nv_porao_revela",13000,function(){
+          mostraBanner("Cada coisa do por&#227;o conta um peda&#231;o da viagem. <b>Objeto tamb&#233;m &#233; documento.</b>",mRota); }); },1200);
+      }
+    };
+    gale.appendChild(f);
+  })(PORAO[i]);}
+  c.appendChild(gale);
+  c.appendChild(el("div","hint","Toque em todas as seis coisas."));
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("nv_porao_dica","Falta alguma? As que voc&#234; j&#225; viu ficam mais claras.");
+  falar("nv_porao_intro");
+}
+
+/* ---------- 6) A ROTA (ordenar) ----------
+   Quatro etapas na ordem. Não é decorar datas: é entender que a viagem tinha
+   um CAMINHO, e que ele passava pela África antes de chegar aqui — o que
+   explica a fase 14.                                                        */
+var ROTAP=[{t:"Sai de Portugal, na Europa"},
+           {t:"Desce pela costa da &#193;frica"},
+           {t:"Atravessa o oceano com o vento"},
+           {t:"Chega na terra onde o Ar&#225; mora"}];
+function mRota(){
+  limpa();var t=el("div","tela");setProg(t,26);
+  var passo=0,err=0;
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A ROTA DA VIAGEM"));
+  var bal=el("div","balao","Ponha a viagem <b>na ordem</b>. Qual foi o primeiro passo?");
+  c.appendChild(bal);
+  var cena=el("div","janela");
+  cena.appendChild(cenaImg("nv_atlantico","jimg"));
+  c.appendChild(cena);
+  var tri=el("div","trilho"),marcas=[],i;
+  for(i=0;i<ROTAP.length;i++){ var m=el("div","tnum",""+(i+1)); marcas.push(m); tri.appendChild(m); }
+  c.appendChild(tri);
+  var box=el("div","opts"),bts=[];
+  var ordem=baguncar(ROTAP.slice(0));
+  for(i=0;i<ordem.length;i++){(function(o){
+    var b=el("div","opt",o.t);
+    b.setAttribute("data-qa", (ROTAP[passo]===o)?"1":"0");
+    b.onclick=function(){ arma();
+      if(b.className.indexOf("usada")>=0) return;
+      if(ROTAP[passo]===o){
+        b.className="opt ok usada"; marcas[passo].className="tnum on"; sCerto(); passo++;
+        var z; for(z=0;z<bts.length;z++) bts[z].setAttribute("data-qa",(passo<ROTAP.length&&ROTAP[passo]===bts[z]._o)?"1":"0");
+        if(passo>=ROTAP.length){ reg("rota",err===0,err+1); sFesta(); festa();
+          setTimeout(function(){ depoisDaFala("nv_rota_revela",12000,function(){
+            mostraBanner("O caminho passava pela <b>&#193;frica</b> antes de chegar aqui. Guarde isso &#8212; volta mais adiante.",mVeioFoi); }); },900);
+        } else { bal.innerHTML="E depois? Falta"+(ROTAP.length-passo>1?"m <b>"+(ROTAP.length-passo)+"</b> passos.":" <b>1</b> passo."); }
+      } else { err++; b.className="opt no"; sErro();
+        setTimeout(function(){ if(b.className.indexOf("usada")<0) b.className="opt"; },450);
+        if(err===2) consolo();
+        if(err>=3) mostraDica("Pense: de onde o navio <b>sai</b>? Ele n&#227;o come&#231;a no meio do mar.");
+      }
+    };
+    b._o=o; bts.push(b); box.appendChild(b);
+  })(ordem[i]);}
+  c.appendChild(box);
+  t.appendChild(c);app.appendChild(t);
+  montaBarra("nv_rota_dica","Comece pelo lugar de onde o navio SAI.");
+  falar("nv_rota_intro");
+}
+
+/* ---------- 7) VEIO OU JÁ ESTAVA? (classificar) ----------
+   O coração da troca: mandioca, milho, batata e cacau já estavam AQUI e foram
+   para o mundo; cavalo, trigo, cana e roda vieram de LÁ. Quase toda criança
+   acha que tudo veio de fora — e descobrir o contrário muda o olhar dela
+   sobre quem ela é.                                                         */
+var TROCAI=[{img:"nv_mandioca",n:"a mandioca",d:"aqui"},{img:"nv_milho",n:"o milho",d:"aqui"},
+            {img:"nv_batata",n:"a batata",d:"aqui"},{img:"nv_cacau",n:"o cacau",d:"aqui"},
+            {img:"nv_cavalo",n:"o cavalo",d:"la"},{img:"nv_trigo",n:"o trigo",d:"la"},
+            {img:"nv_cana",n:"a cana",d:"la"},{img:"nv_roda",n:"a roda",d:"la"}];
+function mVeioFoi(){
+  limpa();var t=el("div","tela");setProg(t,33);
+  var idx=0,err=0,ordem=baguncar(TROCAI.slice(0));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","VEIO OU J&#193; ESTAVA?"));
   var bal=el("div","balao","");c.appendChild(bal);
-  var mini=el("div","moldurafoto");
-  mini.appendChild(cenaImg("nv_mapa","fotoreal"));
-  c.appendChild(mini);
-  var cxs=el("div","gavetas");
-  var chaves=[["esq","&#192; ESQUERDA"],["meio","NO MEIO"],["dir","&#192; DIREITA"],["baixo","EMBAIXO"]];
-  var ns={};
-  var z;
-  for(z=0;z<chaves.length;z++){(function(k,rot){
-    var d=el("div","gav");
-    d.appendChild(el("div","gavtit",rot));
-    var n=el("div","gavnum","0"); d.appendChild(n); ns[k]=n; contas[k]=0;
-    d.setAttribute("data-qa",k);
-    d.onclick=function(){ resp(k,d); };
-    cxs.appendChild(d);
-  })(chaves[z][0],chaves[z][1]);}
-  c.appendChild(cxs);
+  var pal=el("div","palco");
+  var fig=el("div","palcoimg"); pal.appendChild(fig);
+  c.appendChild(pal);
+  var caixas=el("div","caixas"),CX=[["aqui","J&#193; ESTAVA AQUI"],["la","VEIO DE L&#193;"]],i;
+  for(i=0;i<CX.length;i++){(function(k,rot){
+    var cxx=el("div","cx");
+    cxx.appendChild(el("div","cxt",rot));
+    cxx.onclick=function(){ escolhe(k,cxx); };
+    cxx.setAttribute("data-cx",k);
+    caixas.appendChild(cxx);
+  })(CX[i][0],CX[i][1]);}
+  c.appendChild(caixas);
   function mostra(){
-    if(i>=fila.length){ depoisDaFala("nv_onde_revela",10000,function(){
-      mostraBanner("No mapa d&#225; para dizer <b>onde</b> cada coisa fica &#8212; e todo mundo entende igual.",mRoteiro); }); return; }
-    bal.innerHTML="No mapa, onde fica <b>"+fila[i][0]+"</b>?";
-    bal.setAttribute("data-qa",fila[i][1]);
+    if(idx>=ordem.length){ sFesta(); festa();
+      depoisDaFala("nv_troca_revela",13000,function(){
+        mostraBanner("Metade do que a gente come todo dia <b>j&#225; estava aqui</b> &#8212; e foi daqui para o mundo inteiro.",mAquecimento); }); return; }
+    var it=ordem[idx];
+    fig.innerHTML=""; fig.appendChild(imgEl(it.img,"objimg"));
+    bal.innerHTML="E "+it.n+"? J&#225; estava aqui ou veio de l&#225;?";
+    var a=caixas.getElementsByClassName("cx"),z;
+    for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===it.d)?"1":"0");
   }
-  function resp(k,d){ arma();
-    if(i>=fila.length) return;
-    if(k===fila[i][1]){ contas[k]++; ns[k].innerHTML=""+contas[k]; sPop(i); sCerto();
-      reg("posicao",err===0,err+1);
-      var ce=centroTela(d); faisca(ce[0],ce[1],"#6bd23f",10);
-      i++; err=0; mostra();
-    } else { err++; d.className="gav no"; sErro();
-      setTimeout(function(){ d.className="gav"; },450);
+  function escolhe(k,cxx){
+    if(idx>=ordem.length) return; arma();
+    var it=ordem[idx];
+    if(k===it.d){ cxx.className="cx ok"; sCerto(); elogio(); reg("troca",err===0,err+1);
+      var ce=centroTela(cxx); faisca(ce[0],ce[1],"#6bd23f",12);
+      setTimeout(function(){ cxx.className="cx"; idx++; err=0; mostra(); },800);
+    } else { err++; cxx.className="cx no"; sErro();
+      setTimeout(function(){ cxx.className="cx"; },450);
       if(err===2) consolo();
-      if(err>=3) mostraDica("Olhe o mapa: a <b>esquerda</b> &#233; o lado da sua m&#227;o esquerda.");
+      if(err>=3) mostraDica("Dica: <b>mandioca, milho, batata e cacau</b> s&#227;o daqui. O resto atravessou o mar.");
     }
   }
   mostra();
-  c.appendChild(el("div","hint","Toque na caixa que responde."));
-  postIt(c,"norte");
+  c.appendChild(el("div","hint","Toque na caixa certa."));
   t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_onde_dica","Ponha o dedo no meio do mapa e veja de que lado est&#225;.");
-  falar("nv_onde_intro");
+  montaBarra("nv_troca_dica","Pense se essa planta ou bicho existia aqui antes dos navios.");
+  falar("nv_troca_intro");
 }
 
-/* ---------- 8) ⭐ O ROTEIRO (montar a sequência de setas) ----------
-   "Roteiro: Escola – Casa" (currículo). A criança monta o caminho com setas e
-   o Nico VOA o trajeto no mapa. Sequência = pensamento espacial em ação.   */
-var ROTAS=[
- {t:"da <b>igreja</b> at&#233; a <b>ponte</b>",  p:[[32,28],[32,60],[52,60],[52,72]], s:["baixo","dir","baixo"]},
- {t:"da <b>ponte</b> at&#233; a <b>igreja</b>",  p:[[52,72],[52,45],[32,45],[32,28]], s:["cima","esq","cima"]},
- {t:"das <b>casas</b> at&#233; o <b>rio</b>",    p:[[52,27],[52,52],[52,76]],         s:["baixo","baixo"]}];
-var SETAS={cima:"&#8593;",baixo:"&#8595;",esq:"&#8592;",dir:"&#8594;"};
-function mRoteiro(){
-  var idx=0,err=0;
+/* ---------- 8) AQUECIMENTO (revisão espaçada) ----------
+   Prática de recuperação no MEIO da atividade, não no fim: é o que fixa
+   (Roediger; Bjork). Perguntas curtas do que ela já viu.                    */
+var AQUEC=[{p:"O que fez o navio conseguir <b>ir e voltar</b>?",o:["A vela que anda contra o vento","A coragem dos marinheiros","O tamanho do barco"],c:0,cn:"rota"},
+           {p:"Antes dos navios, esta terra&#8230;",o:["estava vazia","j&#225; tinha gente, casa e ro&#231;a","s&#243; tinha bichos"],c:1,cn:"povo"},
+           {p:"A mandioca &#233;&#8230;",o:["daqui, e foi para o mundo","de Portugal","da &#193;frica"],c:0,cn:"troca"}];
+function mAquecimento(){
+  var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,50+idx*2);
-    if(idx>=ROTAS.length){ depoisDaFala("nv_rota_revela",11000,function(){
-      mostraBanner("Um <b>roteiro</b> &#233; isto: dizer o caminho em passos, olhando o mapa.",mAquecimento); }); return; }
-    var it=ROTAS[idx],passos=[],fim=false;
+    limpa();var t=el("div","tela");setProg(t,38);
+    if(idx>=AQUEC.length){ depoisDaFala("nv_aquec_revela",9000,function(){
+      mostraBanner("Lembrar do que a gente aprendeu &#233; o que faz aquilo <b>ficar</b>.",mRaizes); }); return; }
+    var it=AQUEC[idx],err=0;
     var c=el("div","centro");
-    c.appendChild(el("div","selo","O ROTEIRO DO NICO"));
-    c.appendChild(el("div","balao","Monte o caminho "+it.t+". Toque nas setas <b>na ordem certa</b>."));
-    var cena=el("div","janela");
-    cena.appendChild(cenaImg("nv_mapa","jimg"));
-    var passaro=el("div","voando");
-    passaro.appendChild(imgEl("nv_base"));
-    passaro.style.left=it.p[0][0]+"%"; passaro.style.top=it.p[0][1]+"%";
-    cena.appendChild(passaro);
-    c.appendChild(cena);
-    var trilho=el("div","vagas");
-    var z;
-    for(z=0;z<it.s.length;z++){ var v=el("div","vaga art",""); trilho.appendChild(v); }
-    c.appendChild(trilho);
-    var box=el("div","pcs"),ordem=["cima","baixo","esq","dir"],bts={};
-    /* marca qual seta serve AGORA — so para o auditor jogador.
-       ⚠️ comparar pelo DESENHO da seta nao funciona: o innerHTML volta do
-       navegador ja convertido ("↑"), e a marca ficava sempre em 0 — o jogador
-       automatico empacava aqui e a banca reprovava a atividade inteira.       */
-    function marcaQA(){ var k;
-      for(k in bts) if(bts.hasOwnProperty(k))
-        bts[k].setAttribute("data-qa", (!fim && passos.length<it.s.length && it.s[passos.length]===k)?"1":"0"); }
-    for(z=0;z<ordem.length;z++){(function(k){
-      var b=el("div","pc art",SETAS[k]);
-      bts[k]=b;
+    c.appendChild(el("div","selo","LEMBRANDO&#8230;"));
+    c.appendChild(el("div","balao",it.p));
+    var box=el("div","opts"),i;
+    var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
+    ord=baguncar(ord);
+    for(i=0;i<ord.length;i++){(function(n){
+      var b=el("div","opt",it.o[n]);
+      b.setAttribute("data-qa",(n===it.c)?"1":"0");
       b.onclick=function(){ arma();
-        if(fim) return;
-        var n=passos.length;
-        if(it.s[n]===k){
-          passos.push(k); sPop(n);
-          var vs=trilho.getElementsByClassName("vaga");
-          vs[n].innerHTML=SETAS[k]; vs[n].className="vaga art cheia";
-          /* o Nico voa para o próximo ponto */
-          passaro.style.left=it.p[n+1][0]+"%"; passaro.style.top=it.p[n+1][1]+"%";
-          marcaQA();
-          if(passos.length>=it.s.length){ fim=true; sCerto(); elogio();
-            reg("posicao",err===0,err+1);
-            var ce=centroTela(passaro); faisca(ce[0],ce[1],"#ffd43b",16);
-            setTimeout(function(){ idx++; err=0; passo(); },1400); }
-        } else { err++; b.className="pc art no"; sErro();
-          setTimeout(function(){ b.className="pc art"; },450);
-          if(err===2) consolo();
-          if(err>=3) mostraDica("Olhe onde o Nico est&#225; e para onde ele precisa ir: para <b>cima</b>, para <b>baixo</b>, ou para os <b>lados</b>?");
+        if(n===it.c){ b.className="opt ok"; sCerto(); elogio(); reg(it.cn,err===0,err+1);
+          setTimeout(function(){ idx++; passo(); },900);
+        } else { err++; b.className="opt no"; sErro();
+          setTimeout(function(){ b.className="opt"; },450);
+          if(err>=2) consolo();
         }
       };
       box.appendChild(b);
-    })(ordem[z]);}
-    marcaQA();
+    })(ord[i]);}
     c.appendChild(box);
-    if(idx===0) postIt(c,"rio");
     t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_rota_dica","Uma seta de cada vez. Veja para onde o Nico precisa ir agora.");
-    if(idx===0) falar("nv_rota_intro");
+    montaBarra("nv_aquec_dica","Volte com calma no que o Ar&#225; te mostrou.");
+    if(idx===0) falar("nv_aquec_intro");
   }
   passo();
 }
 
-/* ---------- 9) AQUECIMENTO (prática de recuperação — Roediger/Bjork) ---- */
-function mAquecimento(){
-  limpa();var t=el("div","tela");setProg(t,56);
-  var perg=[["De cima, o que voc&#234; v&#234; de uma casa?",["O telhado",1],["A porta da frente",0],["A janela do lado",0]],
-            ["A maquete e o mapa mostram o mesmo lugar. O que muda?",["A maquete tem <b>altura</b>; o mapa &#233; achatado",1],["O mapa &#233; maior",0],["A maquete &#233; colorida e o mapa n&#227;o",0]]];
-  var i=0,err=0;
+/* ---------- 9) ⭐ AS TRÊS RAÍZES (classificar em gavetas) ----------
+   O objetivo do 5º ano em pessoa: "conceito de etnia" e "trajetória cultural
+   dos grupos étnico-raciais". A criança descobre que o que ela come, fala e
+   canta veio de TRÊS lugares — e que nenhum deles é "o certo".              */
+var RAIZ=[{n:"a mandioca",d:"ind",e:"Os povos daqui plantavam mandioca muito antes de qualquer navio."},
+          {n:"o dend&#234;",d:"afr",e:"O dend&#234; veio da &#193;frica &#8212; e virou o cheiro da comida da Bahia."},
+          {n:"o trigo do p&#227;o",d:"eur",e:"O trigo veio da Europa, no por&#227;o dos navios."},
+          {n:"a rede de dormir",d:"ind",e:"A rede &#233; inven&#231;&#227;o dos povos daqui. Os europeus copiaram na hora."},
+          {n:"o berimbau",d:"afr",e:"O berimbau chegou com os africanos e virou capoeira."},
+          {n:"o cavalo",d:"eur",e:"Aqui n&#227;o havia cavalo nenhum antes dos navios."}];
+var NOMER={ind:"DOS POVOS DAQUI",afr:"DA &#193;FRICA",eur:"DA EUROPA"};
+function mRaizes(){
+  limpa();var t=el("div","tela");setProg(t,45);
+  var idx=0,err=0,ordem=baguncar(RAIZ.slice(0));
   var c=el("div","centro");
-  c.appendChild(nicoEl("pq"));
-  c.appendChild(el("div","selo","LEMBRANDO&#8230;"));
+  c.appendChild(el("div","selo","AS TR&#202;S RA&#205;ZES"));
   var bal=el("div","balao","");c.appendChild(bal);
-  var box=el("div","opts col");c.appendChild(box);
+  var gav=el("div","gavetas"),GK=["ind","afr","eur"],i;
+  for(i=0;i<GK.length;i++){(function(k){
+    var g=el("div","gav");
+    g.appendChild(el("div","gavtit",NOMER[k]));
+    g.setAttribute("data-cx",k);
+    g.onclick=function(){ escolhe(k,g); };
+    gav.appendChild(g);
+  })(GK[i]);}
+  c.appendChild(gav);
   function mostra(){
-    if(i>=perg.length){ depoisDaFala("nv_aquec_revela",8000,function(){
-      mostraBanner("Voc&#234; lembrou! Lembrar &#233; o que faz a gente <b>aprender de verdade</b>.",mSimbolo); }); return; }
-    var p=perg[i],fim=false;
-    bal.innerHTML=p[0];
-    box.innerHTML="";
-    var alts=baguncar(p.slice(1)),z;
-    for(z=0;z<alts.length;z++){(function(a){
-      var o=el("div","opt",a[0]);
-      o.setAttribute("data-qa",a[1]?"1":"0");
-      o.onclick=function(){ arma();
-        if(fim) return;
-        if(a[1]){ fim=true; o.className="opt ok"; sCerto(); elogio();
-          reg(i===0?"visao":"dimensao",err===0,err+1);
-          setTimeout(function(){ i++; err=0; mostra(); },900);
-        } else { err++; o.className="opt no"; sErro(); consolo();
-          setTimeout(function(){ o.className="opt"; },600); }
-      };
-      box.appendChild(o);
-    })(alts[z]);}
+    if(idx>=ordem.length){ sFesta(); festa();
+      depoisDaFala("nv_raizes_revela",14000,function(){
+        mostraBanner("O nosso povo tem <b>tr&#234;s ra&#237;zes</b>, e todas est&#227;o no seu prato, na sua m&#250;sica e na sua fala.",mPalavra); }); return; }
+    bal.innerHTML="De onde veio <b>"+ordem[idx].n+"</b>?";
+    var a=gav.getElementsByClassName("gav"),z;
+    for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===ordem[idx].d)?"1":"0");
   }
-  mostra();
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_aquec_dica","Lembre do voo do Nico.");
-  falar("nv_aquec_intro");
-}
-
-/* ---------- 10) O QUE QUER DIZER? (reconhecer os símbolos) ----------
-   Primeira metade do objetivo: "RECONHECER... legendas com símbolos".     */
-var SIMB=[["igreja","a igreja"],["escola","a escola"],["ponte","a ponte"],
-          ["hospital","o hospital"],["mercado","o mercado"],["campo","o campo de futebol"]];
-function mSimbolo(){
-  var fila=baguncar(SIMB.slice(0)),idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,62+idx);
-    if(idx>=fila.length){ depoisDaFala("nv_sim_revela",10000,function(){
-      mostraBanner("Cada <b>s&#237;mbolo</b> guarda um lugar inteiro num desenho pequenininho.",mLegenda); }); return; }
-    var it=fila[idx],fim=false;
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","O QUE QUER DIZER?"));
-    c.appendChild(el("div","balao","Este s&#237;mbolo apareceu no mapa. O que ele quer dizer?"));
-    var m=el("div","moldurafoto");
-    m.appendChild(imgEl("nv_sim_"+it[0],"fotoreal"));
-    c.appendChild(m);
-    var outros=[],z;
-    for(z=0;z<SIMB.length;z++) if(SIMB[z][0]!==it[0]) outros.push(SIMB[z][1]);
-    baguncar(outros);
-    var alts=baguncar([[it[1],1],[outros[0],0],[outros[1],0]]);
-    var box=el("div","opts col");
-    for(z=0;z<alts.length;z++){(function(a){
-      var o=el("div","opt",a[0]);
-      o.setAttribute("data-qa",a[1]?"1":"0");
-      o.onclick=function(){ arma();
-        if(fim) return;
-        if(a[1]){ fim=true; o.className="opt ok"; sCerto();
-          reg("legenda",err===0,err+1);
-          var ce=centroTela(o); faisca(ce[0],ce[1],"#6bd23f",12);
-          setTimeout(function(){ idx++; err=0; passo(); },900);
-        } else { err++; o.className="opt no"; sErro();
-          setTimeout(function(){ o.className="opt"; },600);
-          if(err===2) consolo();
-          if(err>=3) mostraDica("Olhe o <b>desenho</b> do s&#237;mbolo: o que ele lembra?");
-        }
-      };
-      box.appendChild(o);
-    })(alts[z]);}
-    c.appendChild(box);
-    if(idx===0) postIt(c,"legenda");
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_sim_dica","O s&#237;mbolo parece com o lugar de verdade.");
-    if(idx===0) falar("nv_sim_intro");
-  }
-  passo();
-}
-
-/* ---------- 11) ⭐ MONTE A LEGENDA (arrastar) ----------
-   Segunda metade do objetivo — e a mais importante: "ELABORAR legendas com
-   símbolos". Aqui a criança não reconhece: ela MONTA a legenda do mapa dela.
-   As duas portas: arrastar com o dedo/mouse OU tocar no símbolo e na linha.  */
-var LEGL=[["escola","ESCOLA"],["igreja","IGREJA"],["ponte","PONTE"],["praca","PRA&#199;A"],["rio","RIO"]];
-function mLegenda(){
-  limpa();var t=el("div","tela");setProg(t,70);
-  var feitos=0,err=0,sel=null,ultimoToque=0;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","MONTE A LEGENDA"));
-  c.appendChild(el("div","balao","Esta &#233; a <b>legenda</b> do seu mapa. Ponha o s&#237;mbolo certo ao lado de cada nome."));
-  var quadro=el("div","folha");
-  var linhas={},i;
-  var ordem=baguncar(LEGL.slice(0));
-  for(i=0;i<ordem.length;i++){(function(p){
-    var ln=el("div","clin");
-    var vaga=el("div","tvaga");
-    vaga.setAttribute("data-vaga",p[0]);
-    ln.appendChild(vaga);
-    ln.appendChild(el("div","ctx",p[1]));
-    linhas[p[0]]=vaga;
-    vaga.onclick=function(){ if(sel) solta(p[0],vaga); };
-    quadro.appendChild(ln);
-  })(ordem[i]);}
-  c.appendChild(quadro);
-  var banca=el("div","pecas");
-  var pecas=baguncar(LEGL.slice(0));
-  for(i=0;i<pecas.length;i++){(function(p){
-    var b=el("div","peca");
-    b.appendChild(imgEl("nv_sim_"+p[0],"pecaimg"));
-    b.setAttribute("data-qa",p[0]);
-    b.onclick=function(){ arma();
-      if((new Date()).getTime()-ultimoToque<600) return;  /* clique fantasma do toque */
-      if(b.className.indexOf("usada")>=0) return;
-      var a=banca.getElementsByClassName("peca"),z;
-      for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="peca";
-      b.className="peca sel"; sel={k:p[0],el:b}; sTap();
-    };
-    /* toque simples no celular: marca a peça sem esperar o clique fantasma */
-    b.addEventListener("touchend",function(){ ultimoToque=(new Date()).getTime();
-      if(b.className.indexOf("usada")>=0) return;
-      var a=banca.getElementsByClassName("peca"),z;
-      for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="peca";
-      b.className="peca sel"; sel={k:p[0],el:b}; arma(); sTap();
-    },false);
-    banca.appendChild(b);
-  })(pecas[i]);}
-  c.appendChild(banca);
-  function solta(k,vaga){
-    if(!sel) return;
-    if(sel.k===k){
-      vaga.innerHTML=""; vaga.appendChild(imgEl("nv_sim_"+k,"pecaimg"));
-      vaga.className="tvaga cheia";
-      sel.el.className="peca usada"; sel=null; feitos++; sCerto();
-      reg("legenda",err===0,err+1);
-      var ce=centroTela(vaga); faisca(ce[0],ce[1],"#6bd23f",12);
-      if(feitos>=LEGL.length){ setTimeout(function(){
-        depoisDaFala("nv_leg_revela",12000,function(){
-          mostraBanner("Pronto: agora <b>qualquer pessoa</b> consegue ler o seu mapa. Isso &#233; a legenda.",mMudo); }); },800); }
-    } else { err++; vaga.className="tvaga no"; sErro();
-      setTimeout(function(){ if(vaga.className==="tvaga no") vaga.className="tvaga"; },500);
+  function escolhe(k,g){
+    if(idx>=ordem.length) return; arma();
+    var it=ordem[idx];
+    if(k===it.d){ g.className="gav ok"; sCerto(); elogio(); reg("povo",err===0,err+1);
+      bal.innerHTML=it.e;
+      var ce=centroTela(g); faisca(ce[0],ce[1],"#6bd23f",12);
+      setTimeout(function(){ g.className="gav"; idx++; err=0; mostra(); },1800);
+    } else { err++; g.className="gav no"; sErro();
+      setTimeout(function(){ g.className="gav"; },450);
       if(err===2) consolo();
-      if(err>=3) mostraDica("Leia o nome da linha e procure o s&#237;mbolo que <b>parece</b> com ele.");
+      if(err>=3) mostraDica("Pense: isso j&#225; existia aqui, veio da &#193;frica ou veio da Europa?");
     }
   }
-  c.appendChild(el("div","hint","Toque no s&#237;mbolo e depois na linha do nome."));
+  mostra();
+  c.appendChild(el("div","hint","Toque na gaveta certa."));
   t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_leg_dica","Comece pelo mais f&#225;cil: o rio.");
-  falar("nv_leg_intro");
+  montaBarra("nv_raizes_dica","Tr&#234;s povos formaram este pa&#237;s. Cada coisa veio de um deles.");
+  falar("nv_raizes_intro");
 }
 
-/* ---------- 12) O MAPA MUDO (digitar) ---------- */
-var MUDO=[["igreja","IGREJA"],["ponte","PONTE"],["rio","RIO"]];
-function mMudo(){
-  var idx=0,err=0;
+/* ---------- 10) A PALAVRA QUE FICOU (forca) ----------
+   Patrimônio IMATERIAL (objetivo do 5º ano) e a prova viva do encontro: a
+   criança fala tupi e banto todo dia sem saber. O medidor de erro é a maré
+   subindo na praia — sem boneco enforcado.                                  */
+var FORCAP=[{p:"ABACAXI", d:"Fruta de casca dura e espinhos. O nome &#233; tupi: <b>&#225;-ka-ti</b>, fruta que cheira."},
+            {p:"PIPOCA",  d:"Milho que estoura no fogo. Do tupi <b>pi-poka</b>: pele que estala."},
+            {p:"DENDE",   d:"O &#243;leo alaranjado da comida baiana. A palavra veio da &#193;frica."},
+            {p:"CAFUNE",  d:"Aquele carinho de leve na cabe&#231;a. Tamb&#233;m veio da &#193;frica."}];
+var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var MARE=["a mar&#233; est&#225; baixa","a &#225;gua subiu um pouco","a &#225;gua chegou na areia",
+          "a &#225;gua est&#225; nos p&#233;s do Ar&#225;","a &#225;gua vai levar a palavra"];
+function mPalavra(){
+  var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,76+idx);
-    if(idx>=MUDO.length){ depoisDaFala("nv_mudo_revela",9000,function(){
-      mostraBanner("Escrever o nome no mapa &#233; o que transforma o desenho em <b>informa&#231;&#227;o</b>.",mEscala); }); return; }
-    var it=MUDO[idx],fim=false;
+    limpa();var t=el("div","tela");setProg(t,52+idx);
+    var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
     var c=el("div","centro");
-    c.appendChild(el("div","selo","O MAPA MUDO"));
-    c.appendChild(el("div","balao","Este s&#237;mbolo perdeu o nome. <b>Escreva</b> o que ele quer dizer."));
-    var m=el("div","moldurafoto");
-    m.appendChild(imgEl("nv_sim_"+it[0],"fotoreal"));
-    c.appendChild(m);
-    var inp=document.createElement("input");
-    inp.type="text"; inp.className="campo"; inp.placeholder="escreva aqui";
-    inp.setAttribute("data-qa",it[1]);
-    inp.maxLength=14;
-    c.appendChild(inp);
-    var b=el("button","btn peq","Conferir");b.style.marginTop="10px";
-    function confere(){
-      if(fim) return; arma();
-      if(normal(inp.value)===normal(it[1])){ fim=true; sCerto(); elogio();
-        inp.className="campo ok";
-        reg("legenda",err===0,err+1);
-        var ce=centroTela(inp); faisca(ce[0],ce[1],"#6bd23f",12);
-        setTimeout(function(){ idx++; err=0; passo(); },1000);
-      } else { err++; inp.className="campo no"; sErro();
-        setTimeout(function(){ inp.className="campo"; },600);
-        if(err===2){ consolo(); mostraDica("Come&#231;a com <b>"+it[1].charAt(0)+"</b>."); }
-        if(err>=3) mostraDica("&#201; <b>"+it[1]+"</b>. Escreva assim mesmo.");
+    c.appendChild(el("div","selo","A PALAVRA QUE FICOU"));
+    c.appendChild(el("div","balao",it.d));
+    var nb=el("div","nebbox");
+    nb.appendChild(cenaImg("nv_horizonte","nbimg"));
+    var neb=el("div","neb"); nb.appendChild(neb);
+    var ntx=el("div","nebtx",MARE[0]); nb.appendChild(ntx);
+    c.appendChild(nb);
+    var linha=el("div","forca"),caixas=[],i2;
+    for(i2=0;i2<pal.length;i2++){ var q=el("div","letrafc","_"); linha.appendChild(q); caixas.push(q); }
+    c.appendChild(linha);
+    var tec=el("div","tecladofc"),bts={};
+    function revela(){ var z,tudo=true;
+      for(z=0;z<pal.length;z++){ if(achou[pal.charAt(z)]) caixas[z].innerHTML=pal.charAt(z); else tudo=false; }
+      return tudo; }
+    function sobe(){ neb.style.background="rgba(70,130,180,"+(erros*0.16)+")";
+      ntx.innerHTML=MARE[Math.min(erros,MARE.length-1)]; }
+    function segue(ms){ setTimeout(function(){ idx++;
+        if(idx>=FORCAP.length){ depoisDaFala("nv_palavra_revela",13000,function(){
+          mostraBanner("Voc&#234; fala <b>tupi</b> e fala <b>banto</b> todo dia sem saber. A l&#237;ngua guarda o encontro.",mCruzada); }); }
+        else passo(); },ms); }
+    function tentaLetra(L,b){
+      if(fim||b._usada) return;
+      b._usada=1; b.setAttribute("data-qa","0"); arma();
+      if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sCerto();
+        if(revela()){ fim=true; document.onkeydown=null; elogio(); reg("palavra",erros===0,erros+1);
+          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",16);
+          neb.style.background="rgba(70,130,180,0)"; ntx.innerHTML="a mar&#233; baixou!";
+          segue(1700); }
+      } else { erros++; b.className="teclafc no"; sErro(); sobe();
+        if(erros===2) mostraDica("Tente as <b>vogais</b> que ainda faltam.");
+        if(erros>=MAXE){ fim=true; document.onkeydown=null; consolo();
+          var z; for(z=0;z<pal.length;z++) achou[pal.charAt(z)]=1;
+          revela();
+          c.appendChild(el("div","balao pequeno","A palavra era <b>"+pal+"</b>. Olhe bem para ela &#8212; a pr&#243;xima voc&#234; pega."));
+          reg("palavra",false,MAXE); segue(3200); }
       }
     }
-    b.onclick=confere;
-    c.appendChild(b);
-    /* ⭐ as duas portas: o bot�o E a tecla Enter do teclado de verdade */
-    document.onkeydown=function(ev){ if((ev.keyCode||ev.which)===13) confere(); };
+    document.onkeydown=function(ev){
+      var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+      if(!/^[A-Z]$/.test(L)) return;
+      if(bts[L]&&!bts[L]._usada) tentaLetra(L,bts[L]);
+    };
+    for(i2=0;i2<ALFA.length;i2++){(function(L){
+      var b=el("div","teclafc",L);
+      b.setAttribute("data-qa", pal.indexOf(L)>=0?"1":"0");
+      b.onclick=function(){ tentaLetra(L,b); };
+      bts[L]=b; tec.appendChild(b);
+    })(ALFA.charAt(i2));}
+    c.appendChild(tec);
+    c.appendChild(el("div","hint","D&#225; para tocar na tela ou usar o teclado do computador."));
     t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_mudo_dica","Olhe bem o desenho do s&#237;mbolo.");
-    if(idx===0) falar("nv_mudo_intro");
-    try{ inp.focus(); }catch(e){}
+    montaBarra("nv_palavra_dica","Comece pelas vogais: A, E, I, O, U.");
+    if(idx===0) falar("nv_palavra_intro");
   }
   passo();
 }
 
-/* ---------- 13) ⭐ A ESCALA (deslizar) ----------
-   "...em diferentes escalas cartográficas" (currículo). A criança desliza e o
-   mesmo lugar aparece de mais longe a cada passo: a sala, a escola, o bairro,
-   a cidade. Ela vê com os olhos que, quanto mais longe, MENOS detalhe cabe. */
-function mEscala(){
-  limpa();var t=el("div","tela");setProg(t,82);
-  var visto={},fim=false;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","PERTO E LONGE"));
-  c.appendChild(el("div","balao","O Nico sobe mais ainda. Deslize e veja o <b>mesmo lugar</b> de cada vez mais longe."));
-  var cx=el("div","voobox");
-  var ESC=["nv_esc_sala","nv_esc_escola","nv_esc_bairro","nv_esc_cidade"],fotos=[],q;
-  for(q=0;q<ESC.length;q++){ var fo=cenaImg(ESC[q],q?"mfoto sobre":"mfoto prim"); fotos.push(fo); cx.appendChild(fo); }
-  var selo=el("div","selodagua","");cx.appendChild(selo);
-  c.appendChild(cx);
-  var leg=el("div","balao pequeno","");c.appendChild(leg);
-  var r=document.createElement("input"); r.type="range"; r.min="0"; r.max="3"; r.step="1";
-  r.value="0"; r.className="simul"; r.setAttribute("aria-label","de perto ou de longe");
-  r.setAttribute("data-qa","0");
-  c.appendChild(r);
-  var lab=el("div","simullab");
-  lab.innerHTML="<span>bem perto</span><span>bem longe</span>";
-  c.appendChild(lab);
-  var SELO=["a sala","a escola","o bairro","a cidade"];
-  var TX=["De t&#227;o perto d&#225; para contar as <b>carteiras</b> da sala.",
-          "Um pouco mais longe: a escola inteira, com o p&#225;tio e a quadra.",
-          "Mais longe ainda: as ruas do <b>bairro</b> e muitas casinhas.",
-          "Bem longe: a <b>cidade</b> toda. A sua casa virou um pontinho &#8212; ou nem aparece."];
-  function pinta(){ var v=parseInt(r.value,10),i;
-    for(i=0;i<fotos.length;i++) fotos[i].className=(i?"mfoto sobre":"mfoto prim")+((i===v)?" on":"");
-    leg.innerHTML=TX[v]; selo.innerHTML="<b>"+SELO[v]+"</b>";
-    visto[v]=1; var n=0,k; for(k in visto) if(visto.hasOwnProperty(k)) n++;
-    if(n>=4&&!fim){ fim=true; sCerto(); reg("escala",true,1);
-      var ce=centroTela(cx); faisca(ce[0],ce[1],"#5bc8ff",16);
-      setTimeout(function(){ depoisDaFala("nv_esc_revela",13000,function(){
-        mostraBanner("Quanto mais longe voc&#234; olha, <b>menos detalhe</b> cabe no mapa.",mRosa); }); },900); }
-  }
-  r.oninput=function(){ arma(); sTap(); pinta(); };
-  r.onchange=pinta;
-  pinta();
-  c.appendChild(el("div","hint","Passe pelos quatro: sala, escola, bairro e cidade."));
-  postIt(c,"escala");
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_esc_dica","Repare no que some quando voc&#234; se afasta.");
-  falar("nv_esc_intro");
-}
-
-
-/* ================= ⭐ AS QUATRO DINÂMICAS NOVAS (pedido do Marcos) =========
-   Ele pediu "mais umas 3 ou 4 dinâmicas novas". Escolhi quatro que são gesto
-   NOVO para a criança E conteúdo do currículo — não enfeite:
-
-     1. ORIENTAR   — a rosa dos ventos: Norte, Sul, Leste, Oeste no mapa.
-     2. COORDENADA — o mapa ganha linhas e colunas (A1, B3): é assim que mapa
-                     de verdade diz onde as coisas estão.
-     3. CONSTRUIR  — montar a planta da sala pondo os móveis vistos de cima.
-                     É o verbo ELABORAR do objetivo, no espaço que ela conhece.
-     4. PINTAR     — colorir o mapa por tipo de lugar (água, verde, construído),
-                     que é o gesto de quem faz um mapa temático.
-
-   Todas entram DEPOIS da legenda e ANTES do fecho, para a progressão continuar
-   subindo: ler o mapa -> localizar no mapa -> FAZER o mapa.                 */
-
-/* ---------- 13) ⭐ A ROSA DOS VENTOS (orientar) ---------- */
-var VENTOS=[{p:"Para achar o <b>Norte</b> no mapa, para onde voc&#234; olha?",c:"N"},
-            {p:"E o <b>Sul</b>, fica para onde?",c:"S"},
-            {p:"O <b>Leste</b> &#233; de que lado?",c:"L"},
-            {p:"E o <b>Oeste</b>?",c:"O"}];
-var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
-function mRosa(){
-  var idx=0,err=0;
+/* ---------- 11) CRUZADINHA (teclado na tela E de verdade) ---------- */
+var CRUZ=[{p:"CARAVELA",d:"O navio de vela triangular que atravessou o mar."},
+          {p:"ROTA",    d:"O caminho que o navio faz no oceano."},
+          {p:"TROCA",   d:"Dar uma coisa e receber outra."},
+          {p:"POVO",    d:"Muita gente que divide a mesma hist&#243;ria."}];
+function mCruzada(){
+  var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,84);
-    if(idx>=VENTOS.length){ depoisDaFala("nv_rosa_revela",11000,function(){
-      mostraBanner("Quase todo mapa vem com o <b>Norte para cima</b>. &#201; um combinado entre quem faz mapas.",mCoord); }); return; }
-    var it=VENTOS[idx],fim=false;
+    limpa();var t=el("div","tela");setProg(t,58+idx);
+    if(idx>=CRUZ.length){ depoisDaFala("nv_cruz_revela",9000,function(){
+      mostraBanner("Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.",mCaca); }); return; }
+    var it=CRUZ[idx],pos=0,err=0;
     var c=el("div","centro");
-    c.appendChild(el("div","selo","A ROSA DOS VENTOS"));
-    c.appendChild(el("div","balao",it.p));
-    var bus=el("div","bussola");
-    bus.appendChild(cenaImg("nv_rosa","busimg"));
-    var lados=[["N","cima"],["S","baixo"],["L","dir"],["O","esq"]],z;
-    for(z=0;z<lados.length;z++){(function(k,pos){
-      var b=el("div","vento "+pos,NOMEV[k].charAt(0));
-      b.setAttribute("data-qa",k===it.c?"1":"0");
-      b.onclick=function(){ arma();
-        if(fim) return;
-        if(k===it.c){ fim=true; b.className="vento "+pos+" ok"; sCerto(); elogio();
-          reg("posicao",err===0,err+1);
-          var ce=centroTela(b); faisca(ce[0],ce[1],"#ffd43b",14);
-          setTimeout(function(){ idx++; err=0; passo(); },1000);
-        } else { err++; b.className="vento "+pos+" no"; sErro();
-          setTimeout(function(){ b.className="vento "+pos; },450);
-          if(err===2){ consolo(); mostraDica("O <b>Norte</b> &#233; a ponta vermelha, l&#225; em cima. O Sul &#233; o contr&#225;rio dele."); }
-          if(err>=3) mostraDica("&#201; o <b>"+NOMEV[it.c]+"</b>: toque na letra <b>"+it.c+"</b>.");
-        }
-      };
-      bus.appendChild(b);
-    })(lados[z][0],lados[z][1]);}
-    c.appendChild(bus);
-    c.appendChild(el("div","hint","A ponta vermelha da rosa aponta sempre para o Norte."));
-    if(idx===0) postIt(c,"norte");
+    c.appendChild(el("div","selo","CRUZADINHA"));
+    c.appendChild(el("div","balao",it.d));
+    var linha=el("div","cruz"),lin=el("div","clinha"),caixas=[],i;
+    for(i=0;i<it.p.length;i++){ var q=el("div","clin","_"); lin.appendChild(q); caixas.push(q); }
+    linha.appendChild(lin); c.appendChild(linha);
+    var tec=el("div","letras"),bts={};
+    function poe(L){
+      if(pos>=it.p.length) return; arma();
+      if(L===it.p.charAt(pos)){ caixas[pos].innerHTML=L; caixas[pos].className="clin ok"; sCerto(); pos++;
+        var z,k; for(k in bts) if(bts.hasOwnProperty(k)) bts[k].setAttribute("data-qa",(pos<it.p.length&&k===it.p.charAt(pos))?"1":"0");
+        if(pos>=it.p.length){ document.onkeydown=null; elogio(); reg("palavra",err===0,err+1);
+          var ce=centroTela(lin); faisca(ce[0],ce[1],"#6bd23f",14);
+          setTimeout(function(){ idx++; passo(); },1100); }
+      } else { err++; sErro(); caixas[pos].className="clin no";
+        setTimeout(function(){ caixas[pos]&&(caixas[pos].className="clin"); },400);
+        if(err===2) consolo();
+        if(err>=3) mostraDica("A pr&#243;xima letra &#233; <b>"+it.p.charAt(pos)+"</b>.");
+      }
+    }
+    document.onkeydown=function(ev){
+      var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+      if(/^[A-Z]$/.test(L)) poe(L);
+    };
+    for(i=0;i<ALFA.length;i++){(function(L){
+      var b=el("div","tec",L);
+      b.setAttribute("data-qa",(L===it.p.charAt(0))?"1":"0");
+      b.onclick=function(){ poe(L); };
+      bts[L]=b; tec.appendChild(b);
+    })(ALFA.charAt(i));}
+    c.appendChild(tec);
+    c.appendChild(el("div","hint","Toque nas letras ou use o teclado do computador."));
     t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_rosa_dica","Norte em cima, Sul embaixo, Leste &#224; direita, Oeste &#224; esquerda.");
-    if(idx===0) falar("nv_rosa_intro");
+    montaBarra("nv_cruz_dica","Escreva a palavra letra por letra, na ordem.");
+    if(idx===0) falar("nv_cruz_intro");
   }
   passo();
 }
 
-/* ---------- 14) ⭐ CAÇA AO TESOURO POR COORDENADA (coordenada) ----------
-   O mapa ganha linhas (A,B,C,D) e colunas (1,2,3,4). É assim que um mapa de
-   verdade diz onde as coisas estão — e é a primeira vez que a criança usa
-   duas informações ao mesmo tempo para achar um lugar.                     */
-var COORD=[{q:"a <b>igreja</b>",l:"B",n:2},
-           {q:"as <b>casas</b>",l:"C",n:2},
-           {q:"a <b>pra&#231;a</b>",l:"C",n:3},
-           {q:"o <b>rio</b>",l:"B",n:4}];
-function mCoord(){
-  var idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,86);
-    if(idx>=COORD.length){ depoisDaFala("nv_coord_revela",11000,function(){
-      mostraBanner("Com <b>linha e coluna</b> d&#225; para dizer onde fica qualquer lugar do mapa.",mPlanta); }); return; }
-    var it=COORD[idx],fim=false;
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","ACHE PELA COORDENADA"));
-    c.appendChild(el("div","balao","Onde est&#225; "+it.q+"? Toque no quadradinho <b>"+it.l+it.n+"</b> do mapa."));
-    var qd=el("div","quadric");
-    qd.appendChild(cenaImg("nv_mapa","qdimg"));
-    var LET=["A","B","C","D"],i,j;
-    for(i=0;i<4;i++) for(j=0;j<4;j++){(function(li,co){
-      var cel=el("div","qcel");
-      cel.style.left=(co*25)+"%"; cel.style.top=(li*25)+"%";
-      cel.setAttribute("data-qa",(LET[li]===it.l&&(co+1)===it.n)?"1":"0");
-      cel.onclick=function(){ arma();
-        if(fim) return;
-        if(LET[li]===it.l&&(co+1)===it.n){
-          fim=true; cel.className="qcel ok"; sCerto(); elogio();
-          reg("posicao",err===0,err+1);
-          var ce=centroTela(cel); faisca(ce[0],ce[1],"#6bd23f",14);
-          setTimeout(function(){ idx++; err=0; passo(); },1100);
-        } else { err++; cel.className="qcel no"; sErro();
-          setTimeout(function(){ cel.className="qcel"; },420);
-          if(err===2){ consolo(); mostraDica("A <b>letra</b> diz a linha (de cima para baixo) e o <b>n&#250;mero</b> diz a coluna (da esquerda para a direita)."); }
-        }
-      };
-      qd.appendChild(cel);
-    })(i,j);}
-    var rot=el("div","qrot"),k;
-    for(k=0;k<4;k++) rot.appendChild(el("i","",LET[k]));
-    qd.appendChild(rot);
-    var rot2=el("div","qrot col");
-    for(k=1;k<=4;k++) rot2.appendChild(el("i","",""+k));
-    qd.appendChild(rot2);
-    c.appendChild(qd);
-    c.appendChild(el("div","hint","A letra &#233; a linha. O n&#250;mero &#233; a coluna."));
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_coord_dica","Ache primeiro a linha da letra, depois ande at&#233; a coluna do n&#250;mero.");
-    if(idx===0) falar("nv_coord_intro");
-  }
-  passo();
-}
-
-/* ---------- 15) ⭐ MONTE A PLANTA DA SALA (construir) ----------
-   O verbo do objetivo é ELABORAR. Aqui a criança faz a planta do lugar que ela
-   mais conhece: a própria sala de aula. Os móveis estão VISTOS DE CIMA — é o
-   olhar do voo aplicado ao dia a dia dela.                                  */
-var MOVEIS=[{n:"lousa",   img:"nv_lousa_c",   rot:"a lousa",   x:50,y:12},
-            {n:"mesa",    img:"nv_mesa_c",    rot:"a mesa da professora", x:26,y:30},
-            {n:"armario", img:"nv_armario_c", rot:"o arm&#225;rio", x:85,y:79},
-            {n:"cadeira", img:"nv_cadeira_c", rot:"a cadeira",  x:50,y:64}];
-function mPlanta(){
-  limpa();var t=el("div","tela");setProg(t,88);
-  var postos=0,err=0,sel=null,ultimoToque=0;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","A PLANTA DA SALA"));
-  var bal=el("div","balao","Esta &#233; a sua sala <b>vista de cima</b>, ainda vazia. Ponha cada m&#243;vel no lugar dele.");
-  c.appendChild(bal);
-  var sala=el("div","janela");
-  sala.appendChild(cenaImg("nv_planta_sala","jimg"));
-  var vagas={},i;
-  for(i=0;i<MOVEIS.length;i++){(function(m){
-    var v=el("div","achado mira vazio");
-    v.style.left=m.x+"%"; v.style.top=m.y+"%";
-    v.setAttribute("data-vaga",m.n);
-    v.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); solta(m,v); };
-    vagas[m.n]=v; sala.appendChild(v);
-  })(MOVEIS[i]);}
-  c.appendChild(sala);
-  var banca=el("div","pecas"),ordem=baguncar(MOVEIS.slice(0));
-  for(i=0;i<ordem.length;i++){(function(m){
-    var b=el("div","peca");
-    b.appendChild(imgEl(m.img,"pecaimg"));
-    b.appendChild(el("div","pecatx",m.rot));
-    b.setAttribute("data-qa",m.n);
-    function marca(){ if(b.className.indexOf("usada")>=0) return;
-      var a=banca.getElementsByClassName("peca"),z;
-      for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="peca";
-      b.className="peca sel"; sel={m:m,el:b}; arma(); sTap(); }
-    b.onclick=function(){ if((new Date()).getTime()-ultimoToque<600) return; marca(); };
-    b.addEventListener("touchend",function(){ ultimoToque=(new Date()).getTime(); marca(); },false);
-    banca.appendChild(b);
-  })(ordem[i]);}
-  c.appendChild(banca);
-  function solta(m,v){
-    if(!sel) { mostraDica("Toque primeiro num <b>m&#243;vel</b> a&#237; embaixo."); return; }
-    arma();
-    if(sel.m.n===m.n){
-      v.innerHTML=""; v.appendChild(imgEl(m.img,"pecaimg"));
-      v.className="achado mira ok"; sel.el.className="peca usada"; sel=null;
-      postos++; sCerto();
-      reg("producao",err===0,err+1);
-      var ce=centroTela(v); faisca(ce[0],ce[1],"#6bd23f",12);
-      bal.innerHTML="J&#225; s&#227;o <b>"+postos+"</b> de <b>"+MOVEIS.length+"</b> m&#243;veis no lugar.";
-      if(postos>=MOVEIS.length){ sFesta(); festa();
-        setTimeout(function(){ depoisDaFala("nv_planta_revela",12000,function(){
-          mostraBanner("Isto &#233; uma <b>planta</b>: o lugar visto de cima, com cada coisa no seu lugar.",mPintar); }); },800); }
-    } else { err++; v.className="achado mira no"; sErro();
-      setTimeout(function(){ if(v.className.indexOf("ok")<0) v.className="achado mira vazio"; },500);
-      if(err===2) consolo();
-      if(err>=3) mostraDica("Olhe o <b>formato</b> do m&#243;vel visto de cima e procure o lugar do mesmo tamanho.");
-    }
-  }
-  c.appendChild(el("div","hint","Toque no m&#243;vel e depois no lugar dele na planta."));
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_planta_dica","A lousa fica na parede da frente; o arm&#225;rio, no canto.");
-  falar("nv_planta_intro");
-}
-
-/* ---------- 16) ⭐ PINTE O MAPA (pintar) ----------
-   O gesto de quem FAZ um mapa temático: pintar por tipo de lugar. E fecha o
-   arco da legenda — cor também é símbolo, e é a primeira coisa que a criança
-   lê num mapa de verdade.                                                   */
-var PINTAS=[{q:"o <b>rio</b>",cor:"agua",x:24,y:76},
-            {q:"a <b>pra&#231;a com as &#225;rvores</b>",cor:"verde",x:51,y:52},
-            {q:"as <b>casas</b>",cor:"casa",x:52,y:28},
-            {q:"a <b>igreja</b>",cor:"casa",x:32,y:28}];
-var NOMEC={agua:"&#193;GUA",verde:"VERDE",casa:"CONSTRU&#205;DO"};
-function mPintar(){
-  limpa();var t=el("div","tela");setProg(t,90);
-  var idx=0,err=0,tinta=null;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","PINTE O MAPA"));
-  var bal=el("div","balao","");c.appendChild(bal);
-  var cena=el("div","janela");
-  cena.appendChild(cenaImg("nv_mapa","jimg"));
-  var marcas=[],i;
-  for(i=0;i<PINTAS.length;i++){(function(p,k){
-    var m=el("div","tinta mira");
-    m.style.left=p.x+"%"; m.style.top=p.y+"%";
-    m.setAttribute("data-qa","0");
-    m.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); pinta(k,p,m); };
-    marcas.push(m); cena.appendChild(m);
-  })(PINTAS[i],i);}
-  c.appendChild(cena);
-  var pal=el("div","paleta"),cores=["agua","verde","casa"];
-  var bts={};
-  for(i=0;i<cores.length;i++){(function(k){
-    var b=el("div","tcor "+k,NOMEC[k]);
-    b.onclick=function(){ arma(); sTap();
-      var z; for(z in bts) if(bts.hasOwnProperty(z)) bts[z].className="tcor "+z;
-      b.className="tcor "+k+" sel"; tinta=k; marcaQA(); };
-    bts[k]=b; pal.appendChild(b);
-  })(cores[i]);}
-  c.appendChild(pal);
-  function marcaQA(){ var z;
-    for(z=0;z<marcas.length;z++)
-      marcas[z].setAttribute("data-qa",(z===idx&&tinta===PINTAS[idx].cor)?"1":"0");
-    var k; for(k in bts) if(bts.hasOwnProperty(k))
-      bts[k].setAttribute("data-qa",(idx<PINTAS.length&&k===PINTAS[idx].cor&&tinta!==k)?"1":"0");
-  }
-  function mostra(){
-    if(idx>=PINTAS.length){ sFesta(); festa();
-      depoisDaFala("nv_pint_revela",11000,function(){
-        mostraBanner("A <b>cor</b> tamb&#233;m &#233; s&#237;mbolo: azul &#233; &#225;gua, verde &#233; mata, e o resto &#233; o que a gente construiu.",mCaca); }); return; }
-    bal.innerHTML="Escolha a cor certa e pinte "+PINTAS[idx].q+".";
-    marcaQA();
-  }
-  function pinta(k,p,m){
-    if(k!==idx) return; arma();
-    if(!tinta){ mostraDica("Escolha primeiro uma <b>cor</b> a&#237; embaixo."); return; }
-    if(tinta===p.cor){ m.className="tinta mira "+p.cor; sCerto();
-      reg("legenda",err===0,err+1);
-      var ce=centroTela(m); faisca(ce[0],ce[1],"#6bd23f",12);
-      idx++; err=0; mostra();
-    } else { err++; m.className="tinta mira no"; sErro();
-      setTimeout(function(){ m.className="tinta mira"; },450);
-      if(err===2) consolo();
-      if(err>=3) mostraDica("Pense: aquilo &#233; <b>&#225;gua</b>, &#233; <b>mata</b> ou &#233; coisa que a gente <b>construiu</b>?");
-    }
-  }
-  mostra();
-  c.appendChild(el("div","hint","Toque na cor e depois no lugar do mapa."));
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_pint_dica","Azul para a &#225;gua, verde para a mata, laranja para o que foi constru&#237;do.");
-  falar("nv_pint_intro");
-}
-
-/* ---------- 14) CAÇA-PALAVRAS ---------- */
-var CACAM=["MAPA","RIO","PONTE","LEGENDA","MAQUETE"];
+/* ---------- 12) CAÇA-PALAVRAS (uma cor por palavra, com festa) ----------
+   Molde consertado na cartografia (ago/2026): a grade tem que ter as MESMAS
+   colunas da grade lógica, a célula conquistada TRAVA, e cada palavra tem a
+   sua cor — no chip e na grade.                                             */
+var CACAM=["VELA","ROTA","TROCA","POVO","MAR"];
 function mCaca(){
-  limpa();var t=el("div","tela");setProg(t,86);
+  limpa();var t=el("div","tela");setProg(t,64);
   var N=9,g=[],i,j;
   for(i=0;i<N;i++){ g[i]=[]; for(j=0;j<N;j++) g[i][j]=""; }
-  var achadas={},posicoes={},onde={};
+  var achadas={},posicoes={},onde={},cor={};
   var LET="ABCDEFGHIJLMNOPRSTUV";
   function cabe(p,li,co,dl,dc){ var k;
     for(k=0;k<p.length;k++){ var y=li+dl*k,x=co+dc*k;
@@ -2215,6 +1914,7 @@ function mCaca(){
     return true; }
   for(i=0;i<CACAM.length;i++){
     var p=CACAM[i],posto=false,tent=0;
+    cor[p]="p"+(i+1);
     while(!posto&&tent<300){ tent++;
       var hor=Math.random()<0.6, dl=hor?0:1, dc=hor?1:0;
       var li=Math.floor(Math.random()*N), co=Math.floor(Math.random()*N);
@@ -2225,115 +1925,80 @@ function mCaca(){
   }
   for(i=0;i<N;i++) for(j=0;j<N;j++) if(!g[i][j]) g[i][j]=LET.charAt(Math.floor(Math.random()*LET.length));
   var c=el("div","centro");
-  c.appendChild(el("div","selo","CA&#199;A-PALAVRAS DO MAPA"));
-  c.appendChild(el("div","balao","Ache as <b>cinco palavras</b> do mundo dos mapas."));
+  c.appendChild(el("div","selo","CA&#199;A-PALAVRAS DO MAR"));
+  var bal=el("div","balao","Ache as <b>cinco palavras</b> da viagem. Cada uma tem a <b>sua cor</b>.");
+  c.appendChild(bal);
   var lista=el("div","lista"),chips={};
-  for(i=0;i<CACAM.length;i++){ var ch=el("div","pchip",CACAM[i]); chips[CACAM[i]]=ch; lista.appendChild(ch); }
+  for(i=0;i<CACAM.length;i++){
+    var ch=el("div","pchip "+cor[CACAM[i]]);
+    ch.innerHTML='<i class="pbola"></i>'+CACAM[i];
+    chips[CACAM[i]]=ch; lista.appendChild(ch);
+  }
   c.appendChild(lista);
   var grade=el("div","grade");
-  /* onde cada palavra ficou — SO para o auditor jogador: clicando ao acaso numa
-     grade de 81 casas ele nunca acharia, e reprovaria uma fase que funciona.
-     Nao aparece para ninguem.                                                */
   grade.setAttribute("data-qa",JSON.stringify(onde));
-  grade.style.gridTemplateColumns="repeat("+N+",1fr)";
   var cels={};
   for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
     var q=el("div","cquad",g[y][x]);
     cels[y+"_"+x]=q;
-    q.onclick=function(){ arma(); sTap();
+    q.onclick=function(){ arma();
+      if(q.className.indexOf("ok")>=0){ sTap(); return; }
       q.className = q.className.indexOf("mark")>=0 ? "cquad" : "cquad mark";
-      confere();
+      sTap(); confere();
     };
     grade.appendChild(q);
   })(i,j);}
+  function pega(id){ var cl=cels[id].className;
+    return cl.indexOf("mark")>=0||cl.indexOf("ok")>=0; }
+  function sAchou(){ var n=[659,784,988,1175,1568],z;
+    for(z=0;z<n.length;z++) tom(n[z],0.26,"sine",0.16,z*0.075); }
+  function faixa(p){
+    var f=el("div","achouf",p+"!");
+    f.style.background=({p1:"#2a6ea8",p2:"#2e7a1c",p3:"#a8531a",p4:"#6b3fa0",p5:"#a8306b"})[cor[p]];
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1200);
+  }
+  function comemora(p){
+    var cp=posicoes[p],k,COR={p1:"#2a6ea8",p2:"#2e7a1c",p3:"#a8531a",p4:"#6b3fa0",p5:"#a8306b"}[cor[p]];
+    for(k=0;k<cp.length;k++){(function(q,atraso){
+      setTimeout(function(){ q.className="cquad ok "+cor[p];
+        var ce=centroTela(q); faisca(ce[0],ce[1],COR,7); },atraso);
+    })(cels[cp[k]],k*75);}
+    sAchou(); faixa(p);
+    chips[p].className="pchip "+cor[p]+" feito";
+  }
   function confere(){ var p,k,todas,n=0;
     for(p in posicoes){ if(!posicoes.hasOwnProperty(p)||achadas[p]) continue;
       todas=true;
-      for(k=0;k<posicoes[p].length;k++) if(cels[posicoes[p][k]].className.indexOf("mark")<0) todas=false;
-      if(todas){ achadas[p]=1; chips[p].className="pchip feito"; sCerto();
-        for(k=0;k<posicoes[p].length;k++) cels[posicoes[p][k]].className="cquad ok";
-        var ce=centroTela(chips[p]); faisca(ce[0],ce[1],"#6bd23f",10);
-        reg("producao",true,1);
+      for(k=0;k<posicoes[p].length;k++) if(!pega(posicoes[p][k])) todas=false;
+      if(todas){ achadas[p]=1; comemora(p); reg("palavra",true,1);
+        n=0; for(k in posicoes) if(posicoes.hasOwnProperty(k)&&achadas[k]) n++;
+        bal.innerHTML="J&#225; achou <b>"+n+"</b> de <b>"+CACAM.length+"</b>!";
       } }
-    for(p in posicoes) if(posicoes.hasOwnProperty(p)&&achadas[p]) n++;
-    if(n>=CACAM.length){ setTimeout(function(){
-      depoisDaFala("nv_caca_revela",8000,function(){
-        mostraBanner("Estas s&#227;o as palavras de quem l&#234; e faz mapas.",mCruzada); }); },600); }
+    n=0; for(p in posicoes) if(posicoes.hasOwnProperty(p)&&achadas[p]) n++;
+    if(n>=CACAM.length){ setTimeout(function(){ sFesta(); festa(); },700);
+      setTimeout(function(){ depoisDaFala("nv_caca_revela",8000,function(){
+        mostraBanner("S&#227;o as palavras de quem atravessou o mar &#8212; e de quem estava aqui esperando.",mMemoria); }); },1500); }
   }
   c.appendChild(grade);
+  c.appendChild(el("div","hint","Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
   t.appendChild(c);app.appendChild(t);
   montaBarra("nv_caca_dica","As palavras est&#227;o deitadas ou em p&#233;.");
   falar("nv_caca_intro");
 }
 
-/* ---------- 15) CRUZADINHA (teclado na tela E teclado de verdade) ---------- */
-var CRUZM=[{p:"MAPA",d:"Desenho do lugar visto de cima."},
-           {p:"LEGENDA",d:"A parte do mapa que ensina a ler os s&#237;mbolos."},
-           {p:"MAQUETE",d:"O mapa que tem altura e d&#225; para pegar."}];
-function mCruzada(){
-  var idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,90+idx);
-    if(idx>=CRUZM.length){ depoisDaFala("nv_cruz_revela",8000,function(){
-      mostraBanner("Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.",mMemoria); }); return; }
-    var it=CRUZM[idx],pos=0,fim=false;
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","CRUZADINHA"));
-    c.appendChild(el("div","balao",it.d));
-    var linha=el("div","slots"),caixas=[],i;
-    for(i=0;i<it.p.length;i++){ var s=el("div","slot",""); linha.appendChild(s); caixas.push(s); }
-    c.appendChild(linha);
-    var tecs=el("div","letras"),bts={};
-    var alfa="ABCDEFGHIJLMNOPQRSTUVXZ";
-    function poe(L){
-      if(fim||pos>=it.p.length) return;
-      if(L===it.p.charAt(pos)){
-        caixas[pos].innerHTML=L; caixas[pos].className="slot cheio"; pos++; sPop(pos);
-        marcaQA();
-        if(pos>=it.p.length){ fim=true; sCerto(); elogio();
-          reg("producao",err===0,err+1);
-          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",14);
-          setTimeout(function(){ idx++; err=0; passo(); },1200); }
-      } else { err++; sErro();
-        if(bts[L]){ bts[L].className="tec no"; setTimeout(function(){ if(bts[L]) bts[L].className="tec"; },420); }
-        if(err===2) consolo();
-        if(err>=3) mostraDica("A pr&#243;xima letra &#233; <b>"+it.p.charAt(pos)+"</b>.");
-      }
-    }
-    function marcaQA(){ var k;
-      for(k in bts) if(bts.hasOwnProperty(k)) bts[k].setAttribute("data-qa", (!fim&&pos<it.p.length&&k===it.p.charAt(pos))?"1":"0"); }
-    for(i=0;i<alfa.length;i++){(function(L){
-      var b=el("div","tec",L);
-      b.onclick=function(){ arma(); poe(L); };
-      tecs.appendChild(b); bts[L]=b;
-    })(alfa.charAt(i));}
-    marcaQA();
-    c.appendChild(tecs);
-    /* ⭐ AS DUAS PORTAS: teclado na tela E teclado de verdade */
-    document.onkeydown=function(ev){
-      var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
-      if(!/^[A-Z]$/.test(L)) return;
-      arma(); poe(L);
-    };
-    c.appendChild(el("div","hint","Toque nas letras ou use o teclado do computador."));
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_cruz_dica","Pense na palavra e v&#225; letra por letra.");
-    if(idx===0) falar("nv_cruz_intro");
-  }
-  passo();
-}
-
-/* ---------- 16) MEMÓRIA (símbolo ↔ lugar) — no padrão novo da casa ----- */
-var MEMM=[{k:"igreja",a:"igreja"},{k:"ponte",a:"ponte"},
-          {k:"escola",a:"escola"},{k:"campo",a:"campo de futebol"}];
+/* ---------- 13) MEMÓRIA: a coisa e de onde ela veio ---------- */
+var MEMM=[{img:"nv_mandioca",a:"j&#225; estava AQUI"},{img:"nv_cacau",a:"j&#225; estava AQUI"},
+          {img:"nv_cavalo",a:"veio da EUROPA"},{img:"nv_trigo",a:"veio da EUROPA"}];
 function mMemoria(){
-  limpa();var t=el("div","tela");setProg(t,93);
-  t.appendChild(el("div","selo","MEM&#211;RIA DOS S&#205;MBOLOS"));
-  t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o par: o <b>s&#237;mbolo</b> e o <b>nome</b> do lugar."));
+  limpa();var t=el("div","tela");setProg(t,72);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MEM&#211;RIA DA TRAVESSIA"));
+  c.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o par: a <b>coisa</b> e <b>de onde ela veio</b>."));
   var baralho=[],i;
-  for(i=0;i<MEMM.length;i++){ baralho.push({k:MEMM[i].k,tipo:"s"}); baralho.push({k:MEMM[i].k,tipo:"n",tx:MEMM[i].a}); }
+  for(i=0;i<MEMM.length;i++){ baralho.push({k:i,tipo:"s",img:MEMM[i].img}); baralho.push({k:i,tipo:"n",tx:MEMM[i].a}); }
   baguncar(baralho);
-  var c=el("div","centro"),box=el("div","mcartas");
+  var box=el("div","mcartas");
   if(!("perspective" in document.body.style) && !("webkitPerspective" in document.body.style))
     box.className="mcartas semgiro";
   var aberta=null,trava=false,pares=0,err=0;
@@ -2344,7 +2009,7 @@ function mMemoria(){
     var e=el("div","mcarta");
     var fv=el("div","fa fv"); fv.appendChild(imgEl("nv_verso")); e.appendChild(fv);
     var ff=el("div","fa ff");
-    if(cc.tipo==="s") ff.appendChild(imgEl("nv_sim_"+cc.k,"memimg"));
+    if(cc.tipo==="s") ff.appendChild(imgEl(cc.img,"memimg"));
     else ff.innerHTML=cc.tx;
     e.appendChild(ff);
     e.setAttribute("data-qa",cc.k+cc.tipo);
@@ -2358,13 +2023,12 @@ function mMemoria(){
       if(a.c.k===cc.k&&a.c.tipo!==cc.tipo){
         a.el.className="mcarta par"; e.className="mcarta par"; sPar(); pares++;
         plac.innerHTML="<b>"+pares+" de "+MEMM.length+" pares</b>";
-        reg("legenda",err===0,err+1);
+        reg("troca",err===0,err+1);
         var ce=centroTela(e); faisca(ce[0],ce[1],"#ffd43b",18);
-        var ca=centroTela(a.el); faisca(ca[0],ca[1],"#6bd23f",14);
         trava=false;
         if(pares>=MEMM.length){ trava=true; sFesta(); festa();
           setTimeout(function(){ depoisDaFala("nv_mem_revela",8000,function(){
-            mostraBanner("S&#237;mbolo e nome andam sempre juntos &#8212; e quem junta os dois &#233; a <b>legenda</b>.",mDesenhe); }); },700); }
+            mostraBanner("Cada coisa dessas atravessou o mar num sentido &#8212; e mudou a mesa dos dois lados.",mCusto); }); },700); }
       } else { err++;
         a.el.className="mcarta vira no"; e.className="mcarta vira no"; sErro();
         if(err===3) consolo();
@@ -2372,230 +2036,237 @@ function mMemoria(){
     };
     box.appendChild(e);
   })(baralho[i]);}
-  c.appendChild(box);
-  c.appendChild(plac);
-  c.appendChild(el("div","hint","S&#227;o "+MEMM.length+" pares. Vire duas e veja se combinam."));
+  c.appendChild(plac); c.appendChild(box);
   t.appendChild(c);app.appendChild(t);
-  montaBarra(null,null);
+  montaBarra("nv_mem_dica","Guarde na cabe&#231;a onde cada carta est&#225;.");
   falar("nv_mem_intro");
 }
 
-/* ---------- 17) DESENHE O SEU BAIRRO (produzir — mapa mental) ----------
-   "Mapa Mental" e "Representação da superfície terrestre do Bairro"
-   (currículo). A criança marca no mapa do bairro onde ficam os lugares, com
-   os símbolos que ela mesma aprendeu a ler.                                */
-/* idem: medido na arte do bairro (nv_esc_bairro) */
-var MARCAR=[{q:"da <b>pra&#231;a</b>",s:"praca",x:49,y:44},
-            {q:"do <b>rio</b>",s:"rio",x:82,y:50},
-            {q:"da <b>escola</b> (o pr&#233;dio maior, logo abaixo da pra&#231;a)",s:"escola",x:47,y:65}];
-function mDesenhe(){
-  var idx=0,err=0;
+/* ---------- 14) ⭐ O QUE A VIAGEM CUSTOU ----------
+   ⚠️ A FASE MAIS DELICADA, e ela NÃO pode faltar. Não dá para contar a
+   formação do povo brasileiro escondendo que milhões de africanos foram
+   TRAZIDOS À FORÇA. No tamanho de 10 anos: sem violência gráfica, sem
+   eufemismo ("vieram trabalhar"), e amarrada ao objetivo do 5º ano sobre
+   cidadania como CONQUISTA histórica.                                       */
+var CUSTO=[{p:"Os africanos vieram para c&#225;&#8230;",
+            o:["porque quiseram procurar uma vida melhor","<b>trazidos &#224; for&#231;a</b>, presos em navios","para visitar e voltar"],c:1,
+            e:"Eles foram <b>capturados</b> e trazidos presos, para trabalhar sem receber nada. Isso tem nome: escravid&#227;o."},
+           {p:"E os povos que j&#225; viviam aqui?",
+            o:["ficaram do mesmo jeito","perderam terra e muitos morreram de doen&#231;a e de guerra","foram embora sozinhos"],c:1,
+            e:"Muitos perderam a terra e a vida. E mesmo assim <b>resistiram</b>: h&#225; povos ind&#237;genas aqui at&#233; hoje."},
+           {p:"A escravid&#227;o acabou porque&#8230;",
+            o:["um rei decidiu sozinho, num dia","muita gente <b>lutou</b> por isso durante muito tempo","ela nunca existiu de verdade"],c:1,
+            e:"Quem lutou primeiro foram os pr&#243;prios negros escravizados, nos quilombos. Direito n&#227;o &#233; presente: &#233; <b>conquista</b>."}];
+function mCusto(){
+  var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,96);
-    if(idx>=MARCAR.length){ depoisDaFala("nv_des_revela",10000,function(){
-      mostraBanner("Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>",mAlto); }); return; }
-    var it=MARCAR[idx],fim=false;
+    limpa();var t=el("div","tela");setProg(t,80+idx);
+    if(idx>=CUSTO.length){ depoisDaFala("nv_custo_revela",15000,function(){
+      mostraBanner("Contar a hist&#243;ria inteira &#233; um jeito de <b>respeitar</b> quem veio antes.",mMapaRotas); }); return; }
+    var it=CUSTO[idx],err=0;
     var c=el("div","centro");
-    c.appendChild(el("div","selo","O MAPA DO BAIRRO"));
-    c.appendChild(el("div","balao","Ponha o s&#237;mbolo "+it.q+" no lugar certo do bairro."));
-    var cena=el("div","janela");
-    cena.appendChild(cenaImg("nv_esc_bairro","jimg"));
-    var alvo=el("div","achado mira");
-    alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
-    alvo.setAttribute("data-qa","1");
-    alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
-      if(fim) return; fim=true; arma();
-      alvo.innerHTML=""; alvo.appendChild(imgEl("nv_sim_"+it.s,"memimg"));
-      alvo.className="achado mira ok"; sCerto(); elogio();
-      reg("producao",err===0,err+1);
-      var ce=centroTela(alvo); faisca(ce[0],ce[1],"#ffd43b",16);
-      setTimeout(function(){ idx++; err=0; passo(); },1200);
-    };
-    cena.appendChild(alvo);
-    cena.onclick=function(){ if(fim) return; err++; sErro();
-      if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
-      if(err>=3) mostraDica("Procure com calma: o lugar est&#225; marcado com um c&#237;rculo claro.");
-    };
-    c.appendChild(cena);
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_des_dica","Olhe o desenho do bairro visto de cima.");
-    if(idx===0) falar("nv_des_intro");
-  }
-  passo();
-}
-
-
-/* ---------- ⭐ O BAIRRO LÁ DE CIMA (a vista aérea, sem legenda) -----------
-   O mapa das fases anteriores é LIMPO: cada coisa virou um símbolo. Aqui a
-   criança olha o lugar do jeito que ele é — telhados, ruas, quintais, tudo
-   junto — e acha as coisas SEM legenda nenhuma. É a transferência acontecendo:
-   ela usa o que treinou no modelo simples para ler o mundo bagunçado. Mesma
-   ideia da exposição do museu na Máquina do Tempo.
-
-   ⚠️ POR QUE NÃO É UMA FOTO DE VERDADE (decisão do Marcos, ago/2026):
-   *"Não precisa ser real, porém com cara de mapa de vista aérea mesmo sendo no
-   modelo de foto mais infantil, mas que o estudante consiga entender"*. A foto
-   aérea real do centro de Blumenau é densa demais: para um menino de 8 anos,
-   telhado, sombra e toldo viram a mesma mancha cinza, e a fase deixa de ensinar
-   e vira loteria. A vista desenhada mantém o salto (sem símbolo, cheia de
-   coisa) e devolve o que a foto tirava: dá para RECONHECER. E como não é foto
-   de ninguém, nada de crédito na tela — e a voz não promete o que não é.      */
-/* ⚠️ posicoes MEDIDAS em cima da figura (desenhei os alvos por cima e conferi
-   um a um). Chutar percentual poe o alvo ao lado da coisa — ja aconteceu. */
-var ALTO=[{q:"o <b>morro com mata</b>",x:12,y:27},
-          {q:"a <b>ponte</b> sobre o rio",x:46,y:25},
-          {q:"o <b>rio</b>",x:44,y:66},
-          {q:"um <b>quarteir&#227;o de casas</b>",x:28,y:47},
-          {q:"a <b>estrada</b> que d&#225; a volta no bairro",x:18,y:62}];
-function mAlto(){
-  var idx=0,err=0;
-  function passo(){
-    limpa();var t=el("div","tela");setProg(t,97);
-    if(idx>=ALTO.length){ depoisDaFala("nv_alto_revela",13000,function(){
-      mostraBanner("Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.",mRelampago); }); return; }
-    var it=ALTO[idx],fim=false;
-    var c=el("div","centro");
-    c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
-    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro l&#225; de cima. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
-    var cena=el("div","janela");
-    cena.appendChild(cenaImg("nv_esc_cidade","jimg"));
-    var alvo=el("div","achado mira");
-    alvo.style.left=it.x+"%"; alvo.style.top=it.y+"%";
-    alvo.setAttribute("data-qa","1");
-    alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
-      if(fim) return; fim=true; arma(); alvo.className="achado mira ok"; sCerto(); elogio();
-      reg("visao",err===0,err+1);
-      var ce=centroTela(alvo); faisca(ce[0],ce[1],"#ffd43b",16);
-      setTimeout(function(){ idx++; err=0; passo(); },1200);
-    };
-    cena.appendChild(alvo);
-    cena.onclick=function(){ if(fim) return; err++; sErro();
-      if(err===2){ consolo(); alvo.className="achado mira pisca"; setTimeout(function(){ if(!fim) alvo.className="achado mira"; },2200); }
-      if(err>=3) mostraDica("Olhe com calma e procure a <b>forma</b>, como voc&#234; fez no mapa desenhado.");
-    };
-    c.appendChild(cena);
-    if(idx===0) postIt(c,"rio");
-    t.appendChild(c);app.appendChild(t);
-    montaBarra("nv_alto_dica","O que voc&#234; aprendeu no mapa serve aqui: mata &#233; verde, rua &#233; risco, telhado &#233; mancha.");
-    if(idx===0) falar("nv_alto_intro");
-  }
-  passo();
-}
-
-/* ---------- 18) DESAFIO RELÂMPAGO ---------- */
-var RELM=[["Um mapa mostra o lugar visto de <b>cima</b>.",1],
-          ["Na maquete d&#225; para ver a <b>altura</b> das coisas.",1],
-          ["A legenda serve para <b>enfeitar</b> o mapa.",0],
-          ["Quanto mais longe, <b>mais</b> detalhe cabe no mapa.",0],
-          ["O s&#237;mbolo do rio &#233; uma linha <b>azul</b>.",1]];
-function mRelampago(){
-  limpa();var t=el("div","tela");setProg(t,98);
-  var fila=baguncar(RELM.slice(0)),i=0,acertos=0;
-  var c=el("div","centro");
-  c.appendChild(el("div","selo","DESAFIO REL&#194;MPAGO"));
-  var bal=el("div","balao","");c.appendChild(bal);
-  var box=el("div","opts");c.appendChild(box);
-  var plac=el("div","placar","0 de "+fila.length);c.appendChild(plac);
-  function mostra(){
-    if(i>=fila.length){ depoisDaFala("nv_rel_revela",8000,function(){
-      mostraBanner("Voc&#234; fez <b>"+acertos+" de "+fila.length+"</b>. Vamos ao seu boletim!",mEnsinar); }); return; }
-    var it=fila[i],resp=false;
-    bal.innerHTML=it[0];
-    bal.setAttribute("data-qa",it[1]?"1":"0");
-    box.innerHTML="";
-    var pares=[["CERTO",1],["ERRADO",0]],z;
-    for(z=0;z<pares.length;z++){(function(rot,val){
-      var o=el("div","opt",rot);
-      o.setAttribute("data-qa",(val===it[1])?"1":"0");
-      o.onclick=function(){ arma();
-        if(resp) return; resp=true;
-        if(val===it[1]){ o.className="opt ok"; sCerto(); acertos++; reg("visao",true,1); }
-        else { o.className="opt no"; sErro(); reg("visao",false,2); }
-        plac.innerHTML=acertos+" de "+fila.length;
-        setTimeout(function(){ i++; mostra(); },800);
+    c.appendChild(el("div","selo","O QUE A VIAGEM CUSTOU"));
+    c.appendChild(el("div","balao",it.p));
+    var box=el("div","opts"),i;
+    var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
+    ord=baguncar(ord);
+    for(i=0;i<ord.length;i++){(function(n){
+      var b=el("div","opt",it.o[n]);
+      b.setAttribute("data-qa",(n===it.c)?"1":"0");
+      b.onclick=function(){ arma();
+        if(n===it.c){ b.className="opt ok"; sCerto(); reg("povo",err===0,err+1);
+          var ex=el("div","balao porque",it.e); c.appendChild(ex);
+          setTimeout(function(){ idx++; passo(); },5200);
+        } else { err++; b.className="opt no"; sErro();
+          setTimeout(function(){ b.className="opt"; },450);
+          if(err>=2){ consolo(); mostraDica("Esta parte &#233; dura, mas &#233; verdade. Leia com calma."); }
+        }
       };
-      box.appendChild(o);
-    })(pares[z][0],pares[z][1]);}
+      box.appendChild(b);
+    })(ord[i]);}
+    c.appendChild(box);
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nv_custo_dica","N&#227;o tem jeito bonito de contar isto. Tem o jeito <b>verdadeiro</b>.");
+    if(idx===0) falar("nv_custo_intro");
   }
-  mostra();
-  t.appendChild(c);app.appendChild(t);
-  montaBarra(null,null);
-  falar("nv_rel_intro");
+  passo();
 }
 
-/* ---------- 19) ENSINE O NICO (autoexplicação — efeito protégé) -------- */
-function mEnsinar(){limpa();var t=el("div","tela");setProg(t,99);var c=el("div","centro");
-  c.appendChild(nicoEl("pq"));
-  c.appendChild(el("div","selo","ENSINE O NICO"));
-  c.appendChild(el("div","balao","Me conta com as suas palavras: por que o mapa mostra o lugar <b>visto de cima</b>?"));
-  var op=el("div","opts col");
-  var alts=[["Porque de cima d&#225; para ver o lugar <b>inteiro</b> de uma vez",true],
-            ["Porque de cima fica mais bonito",false],
-            ["Porque o papel &#233; branco",false]];
-  var i,resp=false;
-  for(i=0;i<alts.length;i++){(function(txt,certo){
-    var o=el("div","opt",txt);
-    o.setAttribute("data-qa",certo?"1":"0");
-    o.onclick=function(){ if(resp)return; arma();
-      MED.pos=certo?1:0; salva();
-      if(certo){ resp=true; o.className="opt ok"; sCerto(); elogio();
-        var ce=centroTela(o); faisca(ce[0],ce[1],"#ffb45e",16);
-        setTimeout(function(){ depoisDaFala("nv_ens_revela",10000,mFim); },900); }
-      else { o.className="opt no"; sErro(); consolo();
-        setTimeout(function(){ o.className="opt"; },700); }
+/* ---------- 15) O MAPA DAS ROTAS (achar na cena) ---------- */
+var ROTAS=[{q:"a <b>Am&#233;rica do Sul</b>, onde o Ar&#225; mora", n:"AM&#201;RICA DO SUL", r:14, unico:1,
+            z:[{x:22,y:46},{x:26,y:60},{x:18,y:34}]},
+           {q:"a <b>&#193;frica</b>, do outro lado do oceano", n:"&#193;FRICA", r:14, unico:1,
+            z:[{x:72,y:52},{x:76,y:38},{x:70,y:66}]},
+           {q:"o <b>oceano</b> que fica no meio", n:"O OCEANO ATL&#194;NTICO", r:12, unico:1,
+            z:[{x:48,y:30},{x:48,y:48},{x:48,y:66},{x:48,y:80}]}];
+function mMapaRotas(){
+  var idx=0,err=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,88);
+    if(idx>=ROTAS.length){ depoisDaFala("nv_rotas_revela",11000,function(){
+      mostraBanner("Tr&#234;s peda&#231;os de terra, um oceano no meio &#8212; e o encontro que fez o nosso povo.",mRelampago); }); return; }
+    var it=ROTAS[idx],fim=false;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","O MAPA DAS ROTAS"));
+    c.appendChild(el("div","balao","Este &#233; o mapa da viagem. Toque em "+it.q+"."));
+    var cena=el("div","janela");
+    cena.appendChild(cenaImg("nv_atlantico","jimg"));
+    var k;
+    for(k=0;k<it.z.length;k++){(function(zn){
+      var a=el("div","achado mira");
+      a.style.left=zn.x+"%"; a.style.top=zn.y+"%";
+      a.style.width=(it.r*2)+"px"; a.style.height=(it.r*2)+"px";
+      a.style.marginLeft=(-it.r)+"px"; a.style.marginTop=(-it.r)+"px";
+      a.setAttribute("data-qa","1");
+      a.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); acerta(zn.x,zn.y); };
+      cena.appendChild(a);
+    })(it.z[k]);}
+    function acerta(px,py){
+      if(fim) return; fim=true; arma();
+      var luz=el("div","luzok"); luz.style.left=px+"%"; luz.style.top=py+"%"; cena.appendChild(luz);
+      var tx=el("div","luztx",it.n); tx.style.left=px+"%"; tx.style.top="calc("+py+"% + 44px)"; cena.appendChild(tx);
+      sCerto(); elogio(); reg("rota",err===0,err+1);
+      var ce=centroTela(luz); faisca(ce[0],ce[1],"#ffd43b",18);
+      setTimeout(function(){ idx++; err=0; passo(); },1400);
+    }
+    cena.onclick=function(ev){
+      if(fim) return;
+      var r=cena.getBoundingClientRect();
+      var cx2=((ev.clientX-r.left)/r.width)*100, cy=((ev.clientY-r.top)/r.height)*100;
+      var i,melhor=1e9,zz=null;
+      for(i=0;i<it.z.length;i++){
+        var dx=cx2-it.z[i].x, dy=(cy-it.z[i].y)*(r.height/r.width);
+        var d=Math.sqrt(dx*dx+dy*dy);
+        if(d<melhor){ melhor=d; zz=it.z[i]; }
+      }
+      if(zz&&melhor<=it.r){ acerta(zz.x,zz.y); return; }
+      err++; sErro(); cena.className="janela erro";
+      setTimeout(function(){ if(!fim) cena.className="janela"; },420);
+      if(err===2){ consolo(); mostraDica("A Am&#233;rica do Sul fica &#224; <b>esquerda</b>; a &#193;frica, &#224; <b>direita</b>."); }
     };
-    op.appendChild(o);
-  })(alts[i][0],alts[i][1]);}
-  c.appendChild(op);
-  t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_ens_dica","Lembre do voo: o que o Nico via l&#225; de cima?");
-  falar("nv_ens_intro");}
+    c.appendChild(cena);
+    if(idx===0) postIt(c,"papagaio");
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nv_rotas_dica","Pode tocar em qualquer parte do lugar que eu pedi.");
+    if(idx===0) falar("nv_rotas_intro");
+  }
+  passo();
+}
 
-/* ---------- 🗺️ A EXPOSIÇÃO DOS MAPAS (o gancho do fim) -------------------
-   Depois da medalha, a criança vira cartógrafa: entra numa parede com os
-   quatro mapas (sala, escola, bairro, cidade) e pode olhar cada um de perto.
-   Não vale nota. É o "quero mais" — e deixa a pergunta aberta: e a NOSSA
-   escola, como será que fica vista de cima?                                */
+/* ---------- 16) DESAFIO RELÂMPAGO ---------- */
+var RELP=[{p:"O que atravessou o mar primeiro: a caravela ou a rede de dormir?",o:["a caravela","a rede"],c:0,cn:"rota"},
+          {p:"Quem j&#225; morava aqui quando os navios chegaram?",o:["ningu&#233;m","povos ind&#237;genas"],c:1,cn:"povo"},
+          {p:"A palavra PIPOCA veio&#8230;",o:["do tupi, daqui","do portugu&#234;s de Portugal"],c:0,cn:"palavra"},
+          {p:"Os africanos vieram&#8230;",o:["por vontade pr&#243;pria","trazidos &#224; for&#231;a"],c:1,cn:"povo"},
+          {p:"O cacau &#233;&#8230;",o:["daqui","da Europa"],c:0,cn:"troca"}];
+function mRelampago(){
+  var idx=0,acertos=0;
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,94);
+    if(idx>=RELP.length){ depoisDaFala("nv_rel_revela",9000,function(){
+      mostraBanner("Voc&#234; acertou <b>"+acertos+" de "+RELP.length+"</b> no rel&#226;mpago!",mEnsinar); }); return; }
+    var it=RELP[idx],err=0;
+    var c=el("div","centro");
+    c.appendChild(el("div","selo","DESAFIO REL&#194;MPAGO"));
+    c.appendChild(el("div","balao",it.p));
+    var box=el("div","opts"),i;
+    var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
+    ord=baguncar(ord);
+    for(i=0;i<ord.length;i++){(function(n){
+      var b=el("div","opt",it.o[n]);
+      b.setAttribute("data-qa",(n===it.c)?"1":"0");
+      b.onclick=function(){ arma();
+        if(n===it.c){ b.className="opt ok"; sCerto(); if(err===0) acertos++;
+          reg(it.cn,err===0,err+1);
+          setTimeout(function(){ idx++; passo(); },700);
+        } else { err++; b.className="opt no"; sErro();
+          setTimeout(function(){ b.className="opt"; },420);
+        }
+      };
+      box.appendChild(b);
+    })(ord[i]);}
+    c.appendChild(box);
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nv_rel_dica","R&#225;pido, mas sem pressa de errar.");
+    if(idx===0) falar("nv_rel_intro");
+  }
+  passo();
+}
+
+/* ---------- 17) ENSINE O ARÁ (produzir) ----------
+   Autoexplicação (Chi): quem explica com as próprias palavras entende melhor
+   do que quem só responde. Não é prova — é a criança escolhendo as peças da
+   frase e vendo o Ará entender.                                             */
+var ENSF=[{t:"O nosso povo nasceu do <b>encontro</b> de&#8230;",
+           o:["tr&#234;s povos: os daqui, os africanos e os europeus","um povo s&#243;","dois reis"],c:0},
+          {t:"Do que os povos daqui deixaram, eu como&#8230;",
+           o:["mandioca, milho e cacau","trigo e cevada","nada"],c:0},
+          {t:"E a nossa l&#237;ngua guarda&#8230;",
+           o:["palavras tupi e africanas at&#233; hoje","s&#243; palavras de Portugal","nenhuma palavra antiga"],c:0}];
+function mEnsinar(){
+  var idx=0,frase=[];
+  function passo(){
+    limpa();var t=el("div","tela");setProg(t,99);
+    if(idx>=ENSF.length){
+      var c2=el("div","centro");
+      c2.appendChild(nicoEl("gg"));
+      c2.appendChild(el("div","selo","O AR&#193; ENTENDEU!"));
+      c2.appendChild(el("div","balao","<b>"+frase.join(" ")+"</b>"));
+      c2.appendChild(el("div","balao pequeno","Foi voc&#234; que ensinou isso para mim. Obrigado!"));
+      var b=el("button","btn dourado","Pegar a minha medalha");b.style.marginTop="14px";
+      b.onclick=function(){ arma(); sTap(); mFim(); };
+      c2.appendChild(b);
+      t.appendChild(c2);app.appendChild(t);
+      montaBarra(null,null);
+      falar("nv_ensinar_revela");
+      return;
+    }
+    var it=ENSF[idx],err=0;
+    var c=el("div","centro");
+    c.appendChild(nicoEl(""));
+    c.appendChild(el("div","selo","ENSINE O AR&#193;"));
+    c.appendChild(el("div","balao",it.t));
+    var box=el("div","opts"),i;
+    for(i=0;i<it.o.length;i++){(function(n){
+      var b=el("div","opt",it.o[n]);
+      b.setAttribute("data-qa",(n===it.c)?"1":"0");
+      b.onclick=function(){ arma();
+        if(n===it.c){ b.className="opt ok"; sCerto(); elogio(); reg("povo",err===0,err+1);
+          frase.push(it.o[n].replace(/<[^>]+>/g,""));
+          setTimeout(function(){ idx++; passo(); },900);
+        } else { err++; b.className="opt no"; sErro();
+          setTimeout(function(){ b.className="opt"; },450);
+          if(err>=2) consolo();
+        }
+      };
+      box.appendChild(b);
+    })(i);}
+    c.appendChild(box);
+    t.appendChild(c);app.appendChild(t);
+    montaBarra("nv_ensinar_dica","Escolha o peda&#231;o que deixa a frase verdadeira.");
+    if(idx===0) falar("nv_ensinar_intro");
+  }
+  passo();
+}
+
+/* ---------- + O GANCHO: A TERRA DOS PAPAGAIOS ----------
+   O fecho com pergunta aberta (o "quero mais"). E é verdade histórica: os
+   primeiros mapas europeus escreveram Terra Papagalli sobre este pedaço do
+   mundo, porque o papagaio foi a primeira coisa que levaram daqui.          */
 function mExpo(){
   limpa();var t=el("div","tela");
   var c=el("div","centro topo");
-  c.appendChild(el("div","selo","A SALA DOS MAPAS"));
-  c.appendChild(el("div","balao","<b>"+(perfil.nome||"Voc&#234;")+"</b>, agora voc&#234; l&#234; mapas. Toque em cada um para ver de perto."));
-  var QUADROS=[{img:"nv_esc_sala",t:"Uma sala de aula",leg:"De t&#227;o perto d&#225; para contar as carteiras."},
-               {img:"nv_esc_escola",t:"Uma escola inteira",leg:"O p&#225;tio, a quadra e o telhado da escola."},
-               {img:"nv_esc_bairro",t:"Um bairro",leg:"As ruas, as casas e o rio de um lado."},
-               {img:"nv_esc_cidade",t:"A cidade no vale",leg:"O rio atravessando tudo, com as pontes."}];
-  var par=el("div","parede"),i;
-  for(i=0;i<QUADROS.length;i++){(function(f){
-    var q=el("div","quadro");
-    q.appendChild(cenaImg(f.img,"qimg"));
-    q.appendChild(el("div","qtit",f.t));
-    q.onclick=function(){ arma(); sTap(); abre(f); };
-    par.appendChild(q);
-  })(QUADROS[i]);}
-  c.appendChild(par);
-  c.appendChild(el("div","balao pequeno","E a <b>nossa escola</b>? Como ser&#225; que ela fica vista de cima?"));
+  c.appendChild(el("div","selo","A TERRA DOS PAPAGAIOS"));
+  c.appendChild(el("div","balao","<b>"+(perfil.nome||"Voc&#234;")+"</b>, falta eu te contar uma coisa."));
+  c.appendChild(nicoEl("gg"));
+  c.appendChild(el("div","balao","Nos primeiros mapas que fizeram deste lugar, os europeus n&#227;o escreveram Brasil. Escreveram <b>Terra dos Papagaios</b> &#8212; porque a primeira coisa que levaram daqui foi um <b>papagaio</b>."));
+  c.appendChild(el("div","balao pequeno","Um parente meu foi parar do outro lado do mar antes de qualquer pessoa daqui. E agora eu fico pensando: <b>o que ser&#225; que ele contou por l&#225;?</b>"));
   var b=el("button","btn","Voltar ao come&#231;o");b.style.marginTop="14px";
   b.onclick=function(){ arma(); sTap(); telaCapa(); };
   c.appendChild(b);
   t.appendChild(c);app.appendChild(t);
   montaBarra(null,null);
   falar("nv_expo_intro");
-
-  function abre(f){
-    var v=document.getElementById("lupafoto"); if(v&&v.parentNode) v.parentNode.removeChild(v);
-    var d=el("div","lupafoto"); d.id="lupafoto";
-    var cx=el("div","lupacx");
-    cx.appendChild(cenaImg(f.img,"lupaimg"));
-    cx.appendChild(el("div","lupatit",f.t));
-    cx.appendChild(el("div","lupaleg",f.leg));
-    var fe=el("button","btn peq","Fechar");fe.style.marginTop="10px";
-    fe.onclick=function(){ arma(); sTap(); if(d.parentNode) d.parentNode.removeChild(d); };
-    cx.appendChild(fe);
-    d.appendChild(cx);
-    d.onclick=function(ev){ if(ev.target===d){ if(d.parentNode) d.parentNode.removeChild(d); } };
-    document.body.appendChild(d);
-  }
 }
 
 function crachaEl(funcao){
@@ -2639,7 +2310,7 @@ function mFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","ce
    nenhum) e o professor entra em dois toques. O menu NAO zera nem grava
    progresso: e so um atalho para abrir a fase.                             */
 var CODIGO_MESTRE="1275@";
-var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVoo","2. O VOO DO NICO"],["mDeCima","3. DE CIMA OU DE LADO?"],["mSombra","4. ACHE O PAR"],["mMaquete","5. DA MAQUETE AO MAPA"],["mOndeFica","6. ONDE FICA NO MAPA?"],["mRoteiro","7. O ROTEIRO"],["mAquecimento","8. LEMBRANDO..."],["mSimbolo","9. O QUE QUER DIZER?"],["mLegenda","10. MONTE A LEGENDA"],["mMudo","11. O MAPA MUDO"],["mEscala","12. PERTO E LONGE"],["mRosa","13. A ROSA DOS VENTOS"],["mCoord","14. ACHE PELA COORDENADA"],["mPlanta","15. A PLANTA DA SALA"],["mPintar","16. PINTE O MAPA"],["mCaca","17. CAÇA-PALAVRAS"],["mCruzada","18. CRUZADINHA"],["mMemoria","19. MEMÓRIA"],["mDesenhe","20. O MAPA DO BAIRRO"],["mAlto","21. O BAIRRO LÁ DE CIMA"],["mRelampago","22. RELÂMPAGO"],["mEnsinar","23. ENSINE O NICO"],["mFim","24. BOLETIM E MEDALHA"]];
+var FASES_MESTRE=[["mPalpite","1. O QUE VOCÊ ACHA?"],["mVento","2. O SEGREDO DO VENTO"],["mAldeia","3. QUEM JÁ ESTAVA AQUI"],["mPorao","4. O NAVIO POR DENTRO"],["mRota","5. A ROTA DA VIAGEM"],["mVeioFoi","6. VEIO OU JÁ ESTAVA?"],["mAquecimento","7. LEMBRANDO..."],["mRaizes","8. AS TRÊS RAÍZES"],["mPalavra","9. A PALAVRA QUE FICOU"],["mCruzada","10. CRUZADINHA"],["mCaca","11. CAÇA-PALAVRAS"],["mMemoria","12. MEMÓRIA DA TRAVESSIA"],["mCusto","13. O QUE A VIAGEM CUSTOU"],["mMapaRotas","14. O MAPA DAS ROTAS"],["mRelampago","15. RELÂMPAGO"],["mEnsinar","16. ENSINE O ARÁ"],["mFim","17. BOLETIM E MEDALHA"]];
 /* ⭐ O GANCHO DA RETOMADA — envelopa cada fase para ela anotar o proprio nome
    ao abrir. Fica AQUI de proposito: depois das fases existirem e ANTES do
    objeto TREINO (que guarda as funcoes por referencia; se o envelope viesse
@@ -2822,7 +2493,7 @@ function resumoAnimado(pai){
   }
 }
 /* fases que treinam cada objetivo */
-var TREINO={encontro:mAbertura,rota:mAbertura,troca:mAbertura,palavra:mAbertura,povo:mAbertura};
+var TREINO={encontro:mVento,rota:mRota,troca:mVeioFoi,palavra:mPalavra,povo:mRaizes};
 function TELAFIM(){ mFim(); }
 /* ---------- TREINAR SO O QUE FALTOU ----------
    Pergunta do Marcos (ago/2026): "se ela nao domina, ela consegue fazer so as
