@@ -15,6 +15,38 @@
 
 ---
 
+## 0-A. QUEM SENTA NA MESA ANTES DE MONTAR (regra do Marcos — ele já tinha dito)
+
+> *"vários profissionais, auditores etc antes de entregar: roteirista, pedagogo,
+> especialistas da área"* · *"quando for atividade até o quinto ano tem que ser um
+> especialista PEDAGOGO; quando for do 6º ao 9º, um especialista da DISCIPLINA"* ·
+> *"um roteirista que cria a história"*.
+
+**A composição do painel muda com o ano — e isso não é detalhe:**
+
+| Ano | Quem manda no conteúdo | Por quê |
+|---|---|---|
+| **Pré ao 5º** | **PEDAGOGO** (alfabetização, matemática inicial, ZDP) | nessa idade o COMO ensinar decide mais que o conteúdo: concreto antes do símbolo, andaime, uma ideia por tela, tudo narrado |
+| **6º ao 9º** | **ESPECIALISTA DA DISCIPLINA** (professor de História, de Geografia, de Ciências…) | aqui o conteúdo tem profundidade própria e erro conceitual pesa; o pedagogo continua na mesa, mas quem decide o conteúdo é a área |
+
+**E em todos os anos, sempre:**
+- **ROTEIRISTA** — cria a HISTÓRIA. A atividade não é uma lista de exercícios com
+  tema: é uma viagem com um problema no começo, viradas no meio e um gancho no
+  fim. Sem roteirista a atividade vira questionário fantasiado.
+- **GAME DESIGNER** — escolhe os gestos pelo encaixe (§2).
+- **DIRETOR DE ARTE** — proporção, contexto, coerência; tudo pintado por IA.
+- **ENGENHEIRO** — o motor, os portões.
+
+**Ordem da mesa:** currículo → **pedagogo/especialista** (a escada) → **roteirista**
+(a história) → game designer (os gestos) → arte → engenheiro → banca automática →
+**Marcos (portão final)**.
+
+⚠️ O portão `_qa/pedagogo.py` mede a parte mensurável da escada. Ele **não**
+substitui a mesa: não sabe se o conteúdo está certo para o ano nem se a história
+tem graça. Portão nenhum substitui olhar.
+
+---
+
 ## 0. A ORDEM DE MONTAR (nunca outra)
 
 1. **Currículo**: BNCC do ano + a âncora de Blumenau. O verbo do objetivo manda.

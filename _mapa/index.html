@@ -261,6 +261,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   font-size:14px;font-weight:800;
   -webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
 .mcarta.vira{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mcarta.lembra{-webkit-box-shadow:0 0 0 4px #ffd43b,0 8px 18px rgba(30,25,10,.45);box-shadow:0 0 0 4px #ffd43b,0 8px 18px rgba(30,25,10,.45)}
 .mcarta.par{-webkit-transform:rotateY(180deg);transform:rotateY(180deg);
   -webkit-animation:pulsac .7s ease-out 2;animation:pulsac .7s ease-out 2}
 .mcarta.par .ff{background:#e4fbd3;border-color:var(--ok);color:#245c0f;
@@ -3254,7 +3255,19 @@ function mMemoria(){
             mostraBanner("S&#237;mbolo e nome andam sempre juntos &#8212; e quem junta os dois &#233; a <b>legenda</b>.",mDesenhe); }); },700); }
       } else { err++;
         a.el.className="mcarta vira no"; e.className="mcarta vira no"; sErro();
+        a.el._vista=1; e._vista=1;
         if(err===3) consolo();
+        /* ⚠️ ANDAIME QUE CRESCE, tambem aqui (portao do pedagogo, ago/2026).
+           Depois de 5 tentativas a memoria ja cansou: as cartas que ela JA
+           VIROU dao um brilho de meio segundo. Ajuda a LEMBRAR, que e o que a
+           fase treina — nao entrega o par de bandeja.                      */
+        if(err===5){ mostraDica("Olhe com calma: as cartas que voc&#234; <b>j&#225; virou</b> v&#227;o brilhar.");
+          var vv=box.getElementsByClassName("mcarta"),vz;
+          for(vz=0;vz<vv.length;vz++) if(vv[vz]._vista&&vv[vz].className.indexOf("par")<0){
+            (function(cc){ cc.className=cc.className+" lembra";
+              setTimeout(function(){ cc.className=cc.className.replace(" lembra",""); },900); })(vv[vz]);
+          }
+        }
         setTimeout(function(){ a.el.className="mcarta"; e.className="mcarta"; trava=false; },1000); }
     };
     box.appendChild(e);
@@ -3611,7 +3624,7 @@ function mAnde(){
   var idx=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,89);
-    var it=ANDE[idx],N=5,pos={l:4,c:0},passos=0,fim=false;
+    var it=ANDE[idx],N=5,pos={l:4,c:0},passos=0,fim=false,errA=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ANDE AT&#201; O LUGAR"));
     c.appendChild(el("div","balao","O Nico est&#225; no canto. Diga o caminho at&#233; <b>"+it.n+"</b>, um passo por vez."));
@@ -3634,7 +3647,13 @@ function mAnde(){
     function anda(dl,dc){
       if(fim) return; arma(); sTap();
       var nl=pos.l+dl, nc=pos.c+dc;
-      if(nl<0||nl>=N||nc<0||nc>=N){ sErro(); mostraDica("Por a&#237; o Nico sai do bairro. Tente outro lado."); return; }
+      if(nl<0||nl>=N||nc<0||nc>=N){ sErro(); errA++;
+        /* ⚠️ ANDAIME QUE CRESCE (portao do pedagogo): a 1a vez avisa, a 2a
+           consola e diz por onde comecar, a 3a mostra a primeira seta.  */
+        if(errA===1) mostraDica("Por a&#237; o Nico sai do bairro. Tente outro lado.");
+        else if(errA===2){ consolo(); mostraDica("Olhe onde o Nico est&#225; e onde est&#225; o lugar: primeiro <b>suba ou des&#231;a</b>, depois ande para o lado."); }
+        else mostraDica("Comece indo para <b>"+(it.alvo.l<pos.l?"cima":(it.alvo.l>pos.l?"baixo":(it.alvo.c<pos.c?"a esquerda":"a direita")))+"</b>.");
+        return; }
       pos.l=nl; pos.c=nc; passos++; cnt.innerHTML="passos: "+passos; poe();
       if(pos.l===it.alvo.l&&pos.c===it.alvo.c){
         fim=true; sCerto(); elogio(); reg("posicao",passos<=8,1);

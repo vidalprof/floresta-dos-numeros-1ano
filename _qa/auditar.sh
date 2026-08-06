@@ -66,6 +66,8 @@ PY
 if node --check /tmp/_qa_js.js >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check /tmp/_qa_js.js; FALHOU=1; fi
 
 echo
+echo "--- 0a) PEDAGOGO (a escada didatica sobe de verdade?) -"
+python3 _qa/pedagogo.py "$ARQ" || FALHOU=1
 echo "--- 0b) PADRAO DA CASA (didatica, ilustrada, sonora, variada) -"
 python3 _qa/padrao.py "$ARQ" || FALHOU=1
 
