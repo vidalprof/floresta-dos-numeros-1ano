@@ -1930,7 +1930,7 @@ function mBussola(){
     var it=BUSSP[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","PARA QUE LADO?"));
-    c.appendChild(el("div","balao",it.p));
+    c.appendChild(el("div","balao",it.p)); falaDaTela("nv_bus_q"+idx);
     var bus=el("div","bussola");
     bus.appendChild(imgEl("nv_bussola","busimg"));
     var lados=[["N","cima"],["S","baixo"],["L","dir"],["O","esq"]],z;
@@ -2030,7 +2030,7 @@ function mAquecimento(){
     var it=AQUEC[idx],err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","LEMBRANDO&#8230;"));
-    c.appendChild(el("div","balao",it.p));
+    c.appendChild(el("div","balao",it.p)); falaDaTela("nv_aquec_q"+idx);
     var box=el("div","opts"),i;
     var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
     ord=baguncar(ord);
@@ -2127,7 +2127,7 @@ function mPalavra(){
     var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A PALAVRA QUE FICOU"));
-    c.appendChild(el("div","balao",it.d));
+    c.appendChild(el("div","balao",it.d)); falaDaTela("nv_palavra_q"+idx);
     var nb=el("div","nebbox");
     nb.appendChild(cenaImg("nv_horizonte","nbimg"));
     var neb=el("div","neb"); nb.appendChild(neb);
@@ -2258,7 +2258,7 @@ function mCruzada(){
     var it=CRUZ[idx],pos=0,err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","CRUZADINHA"));
-    c.appendChild(el("div","balao",it.d));
+    c.appendChild(el("div","balao",it.d)); falaDaTela("nv_cruz_q"+idx);
     var linha=el("div","cruz"),lin=el("div","clinha"),caixas=[],i;
     for(i=0;i<it.p.length;i++){ var q=el("div","clin","_"); lin.appendChild(q); caixas.push(q); }
     linha.appendChild(lin); c.appendChild(linha);
@@ -2319,7 +2319,7 @@ function mCompleta(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","COMPLETE A HIST&#211;RIA"));
     c.appendChild(cenaEl(it.img,""));
-    c.appendChild(el("div","balao",it.fr));
+    c.appendChild(el("div","balao",it.fr)); falaDaTela("nv_lac_q"+idx);
     var inp=el("input","campo");inp.type="text";inp.placeholder="escreva aqui";
     inp.autocomplete="off";inp.spellcheck=false;inp.setAttribute("data-qa",it.cer);
     c.appendChild(inp);
@@ -2516,7 +2516,7 @@ function mCusto(){
     var it=CUSTO[idx],err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O QUE A VIAGEM CUSTOU"));
-    c.appendChild(el("div","balao",it.p));
+    c.appendChild(el("div","balao",it.p)); falaDaTela("nv_custo_q"+idx);
     var box=el("div","opts"),i;
     var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
     ord=baguncar(ord);
@@ -2693,7 +2693,7 @@ function mRelampago(){
     var it=RELP[idx],err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","DESAFIO REL&#194;MPAGO"));
-    c.appendChild(el("div","balao",it.p));
+    c.appendChild(el("div","balao",it.p)); falaDaTela("nv_rel_q"+idx);
     var box=el("div","opts"),i;
     var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
     ord=baguncar(ord);
@@ -2754,7 +2754,7 @@ function mEnsinar(){
     var c=el("div","centro");
     c.appendChild(nicoEl(""));
     c.appendChild(el("div","selo","ENSINE O AR&#193;"));
-    c.appendChild(el("div","balao",it.t));
+    c.appendChild(el("div","balao",it.t)); falaDaTela("nv_ensinar_q"+idx);
     var box=el("div","opts"),i;
     for(i=0;i<it.o.length;i++){(function(n){
       var b=el("div","opt",it.o[n]);
