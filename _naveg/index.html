@@ -1491,12 +1491,15 @@ function mVento(){
    em Santa Catarina vivem Guarani, Kaingang e Xokleng — o currículo pede
    "de sua região e estado de Santa Catarina" com todas as letras.
    ⚠️ zonas MÚLTIPLAS e pergunta no indefinido (portão _qa/ambiguo.py).      */
+/* zonas MEDIDAS na figura nova, uma a uma (desenhei os alvos por cima e
+   conferi). Casa e mata sao coisas REPETIDAS -> pergunta no indefinido; o
+   terreiro e um so -> `unico` (portao _qa/ambiguo.py).                     */
 var ALDEIA=[{q:"uma <b>casa de palha</b> da aldeia", n:"A CASA DE PALHA", r:12,
-             z:[{x:32,y:52},{x:52,y:48},{x:68,y:56}]},
+             z:[{x:42,y:32},{x:58,y:34},{x:30,y:52},{x:70,y:52}]},
             {q:"a <b>mata</b> em volta da aldeia", n:"A MATA", r:12,
-             z:[{x:8,y:30},{x:88,y:28},{x:16,y:76},{x:90,y:70}]},
+             z:[{x:8,y:20},{x:90,y:22},{x:12,y:80},{x:88,y:78},{x:50,y:8}]},
             {q:"o <b>terreiro</b>, o ch&#227;o aberto no meio", n:"O TERREIRO", r:13, unico:1,
-             z:[{x:48,y:66},{x:44,y:74}]}];
+             z:[{x:48,y:50},{x:44,y:62}]}];
 function mAldeia(){
   var idx=0,err=0;
   function passo(){
@@ -2119,12 +2122,14 @@ function mCusto(){
 }
 
 /* ---------- 15) O MAPA DAS ROTAS (achar na cena) ---------- */
-var ROTAS=[{q:"a <b>Am&#233;rica do Sul</b>, onde o Ar&#225; mora", n:"AM&#201;RICA DO SUL", r:14, unico:1,
-            z:[{x:22,y:46},{x:26,y:60},{x:18,y:34}]},
-           {q:"a <b>&#193;frica</b>, do outro lado do oceano", n:"&#193;FRICA", r:14, unico:1,
-            z:[{x:72,y:52},{x:76,y:38},{x:70,y:66}]},
-           {q:"o <b>oceano</b> que fica no meio", n:"O OCEANO ATL&#194;NTICO", r:12, unico:1,
-            z:[{x:48,y:30},{x:48,y:48},{x:48,y:66},{x:48,y:80}]}];
+/* zonas MEDIDAS em cima da figura nova (desenhei os alvos por cima e conferi
+   um a um). Cada continente e UMA coisa so, por isso `unico`.              */
+var ROTAS=[{q:"a <b>Am&#233;rica do Sul</b>, onde o Ar&#225; mora", n:"AM&#201;RICA DO SUL", r:13, unico:1,
+            z:[{x:30,y:50},{x:28,y:64},{x:32,y:78},{x:26,y:88}]},
+           {q:"a <b>&#193;frica</b>, do outro lado do oceano", n:"&#193;FRICA", r:13, unico:1,
+            z:[{x:68,y:40},{x:72,y:55},{x:66,y:70},{x:78,y:30}]},
+           {q:"o <b>oceano</b> que fica no meio dos dois", n:"O OCEANO ATL&#194;NTICO", r:12, unico:1,
+            z:[{x:48,y:25},{x:48,y:42},{x:48,y:58},{x:48,y:74},{x:48,y:88}]}];
 function mMapaRotas(){
   var idx=0,err=0;
   function passo(){
