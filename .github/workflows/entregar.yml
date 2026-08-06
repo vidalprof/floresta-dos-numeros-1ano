@@ -180,4 +180,21 @@ jobs:
             echo ""
             echo "Link: $URL/"
           } >> "$GITHUB_STEP_SUMMARY"
+          # ⚡ E O RECADO DE VOLTA, BARATO. Ler o estado pela API custava 400 KB
+          #    de JSON por consulta (o objeto do repositorio inteiro, duas vezes)
+          #    e enchia a conversa. Agora a execucao deixa um arquivinho de 200
+          #    bytes no repo: um `git fetch` e a resposta esta na mao.
+          mkdir -p _status
+          printf '{"pasta":"%s","destino":"%s","noar":%s,"index":"%s","quando":"%s"}\n' \
+            "$PASTA" "$DEST" "$ok" "$marca" "$(date -u +%%Y-%%m-%%dT%%H:%%M:%%SZ)" \
+            > "_status/entrega-$DEST.json"
           exit 0
+
+      - name: Deixar o recado no repo
+        if: ${{ inputs.so_voz != 'sim' }}
+        run: |
+          git config user.name "Entregador"
+          git config user.email "entregador@users.noreply.github.com"
+          git add -A _status || true
+          if git diff --cached --quiet; then echo "sem recado novo";
+          else git commit -m "entrega: ${{ inputs.repo_name }}"; git push; fi

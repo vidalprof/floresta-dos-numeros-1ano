@@ -1560,3 +1560,46 @@ disser "isso a gente já fez", **ACREDITAR e verificar a fundo** (sincronizar +
 reler os manuais) ANTES de concluir — nunca insistir no contrário. Regra-mãe:
 **"não achei X" ≠ "X não existe"** — primeiro pergunte "estou vendo o repositório
 COMPLETO e ATUAL?".
+
+---
+
+## ⚡ COMO ENTREGAR UMA ATIVIDADE — o caminho curto (ago/2026)
+
+Cobrança do Marcos: *"otimize todos esses processos, precisamos ser mais ágeis e
+rápidos, organizados"*. O gargalo **não** é o trabalho: é **quantas vezes a gente
+entra na fila do GitHub**. Uma entrega custava 4 a 6 execuções (uma por lote de
+voz, uma por imagem, uma para publicar, uma para conferir) e cada uma entra no
+FIM da fila. Numa tarde de fila cheia isso deu **mais de uma hora de espera para
+40 segundos de trabalho**.
+
+### O caminho novo: UMA execução
+
+```
+actions_run_trigger  entregar.yml   pasta=_mapa  repo_name=o-voo-do-nico
+```
+
+Ela faz, sozinha e em sequência:
+1. **grava a voz que falta.** Lê `<pasta>/falas.json` e compara com o que já
+   existe em `<pasta>/audio/`, usando um **carimbo** (`audio/_carimbo.json`) que
+   guarda o sha1 do TEXTO que gerou cada mp3. Falta o arquivo → grava. O texto
+   mudou → regrava. **O `falas.json` passou a ser a verdade**: se está escrito
+   ali, a voz sai. Acabou o "esqueci de gerar a voz da cruzadinha" (que deixou
+   uma fase muda por semanas).
+2. **publica** no repositório de destino (espelha, com `.nojekyll`);
+3. **força o build** do Pages e **pergunta ao próprio site**, com paciência (10
+   tentativas de 20s), se o `index.html` servido é **byte a byte** o que subiu;
+4. **deixa o recado** em `_status/entrega-<repo>.json` — 200 bytes.
+
+### E como eu leio o resultado sem estourar a conversa
+
+`git fetch origin <branch> && cat _status/entrega-<repo>.json`
+
+⚠️ **Nunca** usar `actions_list`/`get_workflow_run` para acompanhar: cada consulta
+devolve **~400 KB** de JSON (o objeto do repositório inteiro, duas vezes) e enche
+o contexto do chat. Se precisar mesmo, `per_page:1` e parsear com `python3`.
+
+### O que continua valendo
+- `gerar-imagens.yml` (cartela paga no Gemini) segue separado — imagem não sai de
+  um `falas.json` e precisa de olho humano antes de entrar.
+- `republicar-limpo.yml` só quando o build do Pages emperrar de verdade.
+- A **banca roda aqui**, antes de disparar qualquer coisa: `bash _qa/auditar.sh`.
