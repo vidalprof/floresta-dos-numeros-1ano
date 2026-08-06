@@ -4414,3 +4414,55 @@ passou — era JavaScript válido, só que errado. Desfiz tudo com `git checkout
 refiz varrendo a árvore de funções, do mais interno para o mais externo, para
 achar o selo certo de cada fase. **Reescrita em massa por regex se confere fase
 por fase, com o nome de cada uma impresso, antes de gravar.**
+
+---
+
+## 🗺️ A MAQUETE E O MAPA ERAM LUGARES DIFERENTES (ago/2026)
+
+O Marcos reportou duas coisas pequenas na fase "da maquete ao mapa" do 3º ano:
+*"ele não fala a palavra ponte no áudio"* e *"quando se clica na ponte aparece um
+quadrado branco"*. Fui olhar e achei uma terceira, que era a de verdade:
+
+**a maquete e o mapa não eram o mesmo lugar** — e a fase inteira existe para
+mostrar que são o mesmo lugar, um com altura e outro achatado. A maquete tinha
+igreja, praça, fileira de casas, rio **e ponte**; o mapa tinha uma igreja, quatro
+quadradinhos vermelhos, um círculo verde e um rio — **sem ponte**, com outro
+arranjo. O que a criança tomava por ponte era o **tronco da árvore** cruzando o
+rio. Pedir "ache a ponte no mapa" era pedir o impossível.
+
+**Conserto:** gerei o mapa como a maquete vista de cima (igreja à esquerda, praça
+no meio, casas à direita, rio embaixo e a ponte sobre ele) e **remedi por COR**
+os alvos das três fases que apontam nele — `NAMAQ`, `COORD` e `ONDE`.
+
+### O que mais saiu desta rodada
+- **Quadrado branco → luz.** O alvo acertado virava `.achado.ok`, um retângulo
+  claro por cima do mapa. Agora some e no lugar acende a mesma **luz redonda com
+  o nome** que já se usava no "bairro lá de cima".
+- **"Onde fica no mapa" tinha DOIS eixos.** As gavetas misturavam
+  esquerda/direita com meio/embaixo. Palavras dele: *"peça para classificar em
+  cima, no meio e embaixo, porque a direita e a esquerda ficou confuso"*. Certo:
+  não se classifica bem quando as caixas não são do mesmo tipo. Virou um eixo só.
+- **"Ache pela coordenada" não usava a coordenada.** A tela perguntava "onde está
+  a igreja?" e a criança achava **a olho**. Pedido dele: *"melhor colocar A1, D4
+  etc"*. Agora a tela **dá** a coordenada e ela lê a letra (linha) e o número
+  (coluna) para chegar lá — que é o que a fase se propõe a ensinar.
+- **A barra fixa cobria conteúdo.** Ele viu na legenda; medindo em 360×640 eram
+  16 fases. Metade era falso positivo (bastava rolar) — o medidor agora **rola
+  antes de medir**, que é o que a criança faz. O que sobrou foi resolvido
+  encolhendo a fase para caber sem rolagem: *ninguém rola o que não sabe que
+  existe*.
+- **Verso do jogo da memória cortado.** `object-fit:cover` preenche a carta
+  cortando o desenho; o verso é ARTE e tem que aparecer inteiro. Virou `contain`
+  e a carta cresceu de 118 para 138px de altura mínima — a regra da casa já dizia
+  *carta grande*, agora com a arte inteira dentro.
+
+### 🇧🇷 A armadilha da frase montada (de novo, três vezes)
+`"Toque em " + it.q` → **"Toque em a roça"**. `"onde fica " + q` → **"onde fica
+as casas"**. `"em cima " + rot` → **"em cima a mesa"**. `"é onde fica " + q` →
+**"é onde fica as casas"**.
+
+**Regra:** quando o enunciado é montado com um pedaço variável, o começo da frase
+tem que funcionar com **todos** os pedaços — o feminino, o masculino e o plural.
+Os consertos que servem sempre: trocar o verbo (*"Ache a roça"*, *"Ache as
+casas"*), usar a forma contraída declarada na tabela (`de:"da mesa"`), ou uma
+construção neutra (*"Lá tem a igreja" / "Lá tem as casas"*).
