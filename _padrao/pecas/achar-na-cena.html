@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — achar na cena</title>
+<!-- ============================================================
+     PEÇA: ACHAR NA CENA (lupa / observação dirigida)
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A ARMADILHA QUE ESTA PEÇA FECHA (DINAMICAS.md, linha "Achar na cena"):
+       "zona = a FIGURA recortada, NUNCA um pontinho com raio". O defeito que já
+       chegou perto da criança: ela toca em cima do bichinho, o app mede a
+       distância até um ponto guardado, dá mais que o raio e responde "errou".
+       Aqui não existe ponto nem raio: cada coisa é uma GRADE DE BITS (6x5) e o
+       desenho dela é POSICIONADO A PARTIR DA PRÓPRIA GRADE (bbox). Zona e figura
+       são a mesma coisa por construção — é impossível uma sair do lugar da outra.
+
+     Como o toque chega: a grade de bits vira uma camada de células transparentes
+     (.zona) por cima do desenho. Clicar numa célula é clicar na REGIÃO. Assim o
+     acerto não depende de coordenada de mouse (que um clique sintético não tem)
+     nem de qual pedacinho de arte ficou por cima.
+
+     Numa atividade de verdade a cena é ARTE DE IA (uma <img> no fundo de .cena) e
+     a grade de bits é medida na figura. Aqui, sem arquivo externo, a cena é
+     desenhada com divs — a mecânica é a mesma.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox 106);
+     alvo >= 44px; nada essencial só na cor (achou = V + texto "faltam N");
+     funciona no mudo; publica data-qa; NUNCA trava (a cada 3 erros o andaime
+     cresce e no 3º ele revela um bichinho).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- A CENA (fundo desenhado) ---------- */
+/* ⚠️ margem PROPRIA (13px em cima): a regra `.balao + *` do motorzinho tem a
+   mesma forca que `.cena` e perde por vir ANTES no arquivo — a cena nascia
+   colada no enunciado (defeito que o Marcos ja cobrou duas vezes). */
+.cena{position:relative;width:100%;max-width:330px;margin:13px auto 0;padding-bottom:83.33%;
+      border-radius:16px;overflow:hidden;border:3px solid #6b4b2a;background:#8fd3f4}
+.grama{position:absolute;left:0;right:0;bottom:0;height:42%;background:#5fa83e;
+       border-top:4px solid #4a8c30}
+.sol{position:absolute;left:36%;top:3%;width:15%;padding-bottom:15%;border-radius:50%;
+     background:#ffd54a;box-shadow:0 0 0 5px rgba(255,213,74,.35)}
+.nuvem{position:absolute;left:8%;top:44%;width:22%;height:9%;border-radius:20px;
+       background:rgba(255,255,255,.85)}
+.arvt{position:absolute;left:45%;top:40%;width:6%;height:26%;background:#7a5327;border-radius:3px}
+.arvc{position:absolute;left:34%;top:20%;width:28%;padding-bottom:26%;border-radius:50%;
+      background:#3f8f2e;border:3px solid #2f6f22}
+.flor1{position:absolute;left:52%;top:78%;width:7%;padding-bottom:7%;border-radius:50%;background:#e86ea8}
+.flor2{position:absolute;left:60%;top:84%;width:6%;padding-bottom:6%;border-radius:50%;background:#f0e05a}
+
+/* ---------- AS COISAS (o desenho nasce da grade de bits) ---------- */
+.coisa{position:absolute}
+.bo1{position:absolute;left:4%;top:16%;width:42%;height:56%;background:#f2913b;
+     border:3px solid #b3611c;border-radius:60% 20% 60% 40%}
+.bo2{position:absolute;right:4%;top:16%;width:42%;height:56%;background:#f5b357;
+     border:3px solid #b3611c;border-radius:20% 60% 40% 60%}
+.bo3{position:absolute;left:44%;top:12%;width:12%;height:64%;background:#3a2a18;border-radius:6px}
+.pa1{position:absolute;left:14%;top:26%;width:58%;height:48%;background:#3c6ee0;
+     border:3px solid #24468f;border-radius:50%}
+.pa2{position:absolute;left:30%;top:42%;width:30%;height:22%;background:#24468f;border-radius:50%}
+.pa3{position:absolute;left:68%;top:40%;width:16%;height:12%;background:#ffd54a;border-radius:2px}
+.pa4{position:absolute;left:24%;top:34%;width:9%;height:9%;background:#10131a;border-radius:50%}
+.ca1{position:absolute;left:28%;top:16%;width:48%;height:48%;background:#d99a3f;
+     border:5px solid #a4702a;border-radius:50%}
+.ca2{position:absolute;left:8%;top:52%;width:70%;height:22%;background:#e6e79a;
+     border:3px solid #a9aa5c;border-radius:20px}
+.ca3{position:absolute;left:10%;top:40%;width:4%;height:16%;background:#a9aa5c}
+.jo1{position:absolute;left:18%;top:24%;width:60%;height:50%;background:#d63b2a;
+     border:3px solid #8e2318;border-radius:50%}
+.jo2{position:absolute;left:8%;top:34%;width:22%;height:30%;background:#2a2018;border-radius:50%}
+.jo3{position:absolute;left:40%;top:34%;width:12%;height:12%;background:#2a2018;border-radius:50%}
+.jo4{position:absolute;left:58%;top:50%;width:12%;height:12%;background:#2a2018;border-radius:50%}
+
+/* ---------- A GRADE DE BITS (a camada que recebe o toque) ---------- */
+.gradecena{position:absolute;left:0;top:0;right:0;bottom:0}
+.zona{position:absolute;background:transparent;cursor:pointer}
+.zona:active{background:rgba(255,255,255,.3)}
+.zona.pisca{background:rgba(255,255,255,.55);
+  -webkit-animation:bate .6s linear 3;animation:bate .6s linear 3}
+@-webkit-keyframes bate{0%{opacity:.15}50%{opacity:.9}100%{opacity:.15}}
+@keyframes bate{0%{opacity:.15}50%{opacity:.9}100%{opacity:.15}}
+.treme{-webkit-animation:sacode .32s linear 1;animation:sacode .32s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+
+/* achou = V VERDE (forma + cor + o texto "faltam N", nunca so a cor) */
+.vok{position:absolute;left:50%;top:50%;margin-left:-23px;margin-top:-23px;width:46px;height:46px;
+     border-radius:50%;background:#1f6b12;border:3px solid #fffdf6;color:#fff;font-size:24px;
+     font-weight:800;line-height:40px;text-align:center;
+     -webkit-animation:cresce .35s ease-out 1;animation:cresce .35s ease-out 1}
+@-webkit-keyframes cresce{0%{-webkit-transform:scale(.2)}100%{-webkit-transform:scale(1)}}
+@keyframes cresce{0%{transform:scale(.2)}100%{transform:scale(1)}}
+
+/* ---------- placar e lista do que falta ---------- */
+.cont{margin-top:12px;font-size:17px;font-weight:700}
+.cont b{color:#ffd54a}
+.chips{margin-top:8px}
+.chip{display:inline-block;background:#fffdf6;color:#221a12;border-radius:14px;padding:8px 12px;
+      margin:4px 3px;font-size:14px;font-weight:700;min-height:40px;line-height:24px}
+.chip.feito{background:#d6f5c8;color:#123d08;text-decoration:line-through}
+/* tela baixa (projetor/janela): a cena encolhe um pouco, mas a CÉLULA continua
+   maior que 44px — o dedo da criança não muda de tamanho junto com a janela. */
+@media (max-height:470px){.cena{max-width:288px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* A GRADE: 6 colunas x 5 linhas. Cada coisa e um mapa de BITS sobre ela.
+   O desenho de cada coisa e posicionado pelo BBOX do proprio mapa — por isso
+   "onde a crianca ve" e "onde o app aceita o toque" sao a mesma regiao.      */
+var GC=6, GL=5;
+var COISAS=[
+ {k:"borb", n:"A BORBOLETA", pista:"tem duas asas laranja",
+  m:["110000",
+     "110000",
+     "000000",
+     "000000",
+     "000000"],
+  arte:'<i class="bo1"></i><i class="bo2"></i><i class="bo3"></i>'},
+ {k:"pass", n:"O PASSARINHO", pista:"e azul e tem bico amarelo",
+  m:["000011",
+     "000011",
+     "000000",
+     "000000",
+     "000000"],
+  arte:'<i class="pa1"></i><i class="pa2"></i><i class="pa3"></i><i class="pa4"></i>'},
+ {k:"cara", n:"O CARACOL", pista:"carrega a casinha redonda nas costas",
+  m:["000000",
+     "000000",
+     "000000",
+     "110000",
+     "110000"],
+  arte:'<i class="ca3"></i><i class="ca2"></i><i class="ca1"></i>'},
+ {k:"joan", n:"A JOANINHA", pista:"e vermelha com pintinhas pretas",
+  m:["000000",
+     "000000",
+     "000000",
+     "000011",
+     "000011"],
+  arte:'<i class="jo1"></i><i class="jo2"></i><i class="jo3"></i><i class="jo4"></i>'}
+];
+
+var achadas, erros, progI, elCont, elChips;
+
+/* naZona: a pergunta honesta desta mecanica — este pedaco da tela pertence a
+   esta coisa? Le o BIT, nao mede distancia ate ponto nenhum. */
+function naZona(coisa,l,c){ return !!(coisa.m[l] && coisa.m[l].charAt(c)==="1"); }
+function coisaEm(l,c){ var i; for(i=0;i<COISAS.length;i++){ if(naZona(COISAS[i],l,c)) return COISAS[i]; } return null; }
+function bbox(m){ var l,c,l0=99,c0=99,l1=-1,c1=-1;
+  for(l=0;l<GL;l++){ for(c=0;c<GC;c++){ if(m[l].charAt(c)==="1"){
+    if(l<l0)l0=l; if(l>l1)l1=l; if(c<c0)c0=c; if(c>c1)c1=c; } } }
+  return {l0:l0,c0:c0,l1:l1,c1:c1};
+}
+function quantasFaltam(){ var i,n=0; for(i=0;i<COISAS.length;i++){ if(!achadas[COISAS[i].k]) n++; } return n; }
+function proximaCoisa(){ var i; for(i=0;i<COISAS.length;i++){ if(!achadas[COISAS[i].k]) return COISAS[i]; } return null; }
+
+function pecaAchar(){
+  limpa();
+  achadas={}; erros=0;
+  var t=el("div","tela");
+  setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","OLHO DE LINCE"));
+  c.appendChild(el("div","balao","Ache os <b>4 bichinhos</b> escondidos no jardim."));
+
+  var cena=el("div","cena");
+  cena.appendChild(el("div","grama"));
+  cena.appendChild(el("div","sol"));
+  cena.appendChild(el("div","nuvem"));
+  cena.appendChild(el("div","arvt"));
+  cena.appendChild(el("div","arvc"));
+  cena.appendChild(el("div","flor1"));
+  cena.appendChild(el("div","flor2"));
+
+  var i,l,cc,co,b,d;
+  for(i=0;i<COISAS.length;i++){
+    co=COISAS[i]; b=bbox(co.m);
+    d=el("div","coisa",co.arte);
+    d.style.left=(b.c0*100/GC)+"%";
+    d.style.top=(b.l0*100/GL)+"%";
+    d.style.width=((b.c1-b.c0+1)*100/GC)+"%";
+    d.style.height=((b.l1-b.l0+1)*100/GL)+"%";
+    co.el=d;
+    cena.appendChild(d);
+  }
+
+  /* a camada de toque: uma celula por bit da grade */
+  var g=el("div","gradecena");
+  for(i=0;i<COISAS.length;i++){ COISAS[i].cels=[]; }
+  for(l=0;l<GL;l++){
+    for(cc=0;cc<GC;cc++){
+      var z=el("div","zona");
+      z.style.left=(cc*100/GC)+"%";
+      z.style.top=(l*100/GL)+"%";
+      z.style.width=(100/GC)+"%";
+      z.style.height=(100/GL)+"%";
+      co=coisaEm(l,cc);
+      if(co){ co.cels.push(z); z.setAttribute("data-qa","1"); }
+      z.onclick=(function(ll,ccc,cel){ return function(){ tocar(ll,ccc,cel); }; })(l,cc,z);
+      g.appendChild(z);
+    }
+  }
+  cena.appendChild(g);
+  c.appendChild(cena);
+
+  elCont=el("div","cont","");
+  c.appendChild(elCont);
+  elChips=el("div","chips","");
+  c.appendChild(elChips);
+  c.appendChild(el("div","hint","Toque em cima do bichinho. Se não achar, eu vou te ajudando."));
+  t.appendChild(c);
+  app.appendChild(t);
+  atualiza();
+}
+
+function atualiza(){
+  var n=quantasFaltam(), i, co, ch;
+  elCont.innerHTML = n>0
+    ? ("Faltam <b>"+n+"</b> "+(n===1?"bichinho":"bichinhos"))
+    : "Você achou <b>todos</b>!";
+  elChips.innerHTML="";
+  for(i=0;i<COISAS.length;i++){
+    co=COISAS[i];
+    ch=el("div","chip",(achadas[co.k]?"✓ ":"")+co.n);
+    if(achadas[co.k]) ch.className="chip feito";
+    elChips.appendChild(ch);
+  }
+  if(progI) progI.style.width=Math.round((COISAS.length-n)*100/COISAS.length)+"%";
+}
+
+function tocar(l,c,cel){
+  var co=coisaEm(l,c);
+  if(co && achadas[co.k]){ sTap(); return; }          /* ja achado: nunca pune */
+  if(co){ achar(co); return; }
+  sErro(); erros++;
+  cel.className="zona treme";
+  setTimeout((function(z){ return function(){ if(z.className.indexOf("pisca")<0) z.className="zona"; }; })(cel),400);
+  ajuda(erros);
+}
+
+function achar(co){
+  if(achadas[co.k]) return;
+  achadas[co.k]=1;
+  sCerto();
+  var v=el("div","vok","✓");
+  co.el.appendChild(v);
+  var i;
+  for(i=0;i<co.cels.length;i++){ co.cels[i].removeAttribute("data-qa"); co.cels[i].className="zona"; }
+  atualiza();
+  if(quantasFaltam()===0) setTimeout(fim,700);
+}
+
+/* O ANDAIME QUE CRESCE — nunca X, nunca "errou", e no 3o erro ele RESOLVE um
+   para a crianca (e para o auditor): a peca nao tem como travar. */
+function ajuda(n){
+  var alvo=proximaCoisa();
+  if(!alvo) return;
+  var p=n%3;
+  if(p===1){ mostraDica("Procure <b>"+alvo.n+"</b>: "+alvo.pista+"."); }
+  else if(p===2){ mostraDica("Está piscando o lugar onde ela está. Toque ali."); pisca(alvo); }
+  else { mostraDica("Vou mostrar <b>"+alvo.n+"</b> para você. Agora ache os outros."); achar(alvo); }
+}
+function pisca(co){
+  var i;
+  for(i=0;i<co.cels.length;i++){ co.cels[i].className="zona pisca"; }
+  setTimeout((function(cs){ return function(){ var k; for(k=0;k<cs.length;k++){ cs[k].className="zona"; } }; })(co.cels),1900);
+}
+
+function fim(){
+  mostraBanner('<div class="medal">★</div><b>Olho de lince!</b><br>Você achou os 4 bichinhos.', pecaAchar);
+}
+
+pecaAchar();
+</script>
+</body></html>

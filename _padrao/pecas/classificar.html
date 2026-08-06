@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — classificar em gavetas</title>
+<!-- ============================================================
+     PEÇA: CLASSIFICAR EM GAVETAS (copiada do _padrao/pecas/MOLDE.html)
+
+     As armadilhas desta mecânica (DINAMICAS.md, linhas "Classificar" e
+     "Arrastar") — cada uma já custou caro:
+       · TRÊS CAMINHOS: mouse, dedo (touch) e TOQUE SIMPLES (tocar na ficha e
+         depois na gaveta). Defeito pego DUAS vezes pelo Marcos;
+       · NUNCA `preventDefault` no `touchstart` — isso MATA o toque no celular.
+         O preventDefault vive no `touchmove` (e só enquanto há ficha na mão);
+       · guarda contra o evento de mouse FANTASMA que o celular dispara depois
+         do toque (var `ultimoToque`, com carimbo de tempo) — sem ele o mouse
+         fantasma DESMARCA a ficha que a criança acabou de escolher;
+       · o enunciado não usa termo que a criança não conhece;
+       · a explicação espera o áudio (aqui não há voz: a peça é o motor cru).
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor
+     (a gaveta certa acende E ganha a ficha escrita dentro), funciona no mudo,
+     erro com sErro() + andaime que cresce, `data-qa` para o auditor-jogador
+     (a ficha e a gaveta publicam a MESMA chave) e nunca trava.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* a bandeja de fichas que ainda nao foram guardadas */
+.bandeja{background:rgba(255,255,255,.10);border:2px dashed rgba(255,255,255,.30);
+         border-radius:16px;padding:8px 6px 4px;min-height:64px}
+/* A FICHA (.pc). min-height 48px = alvo de dedo de crianca com folga. */
+.pc{display:inline-block;vertical-align:middle;background:#fffdf6;color:#221a12;border:0;
+    border-radius:14px;padding:12px 14px;margin:5px 4px;font-size:15px;font-weight:700;
+    min-height:48px;min-width:96px;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+    -webkit-user-select:none;user-select:none}
+/* escolhida: nao e SO a cor — ganha borda grossa e sobe um degrau */
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f;
+        -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.pc.usada{background:#d6f5c8;box-shadow:0 3px 0 #7cb464;cursor:default;opacity:.95}
+/* o FANTASMA que segue o dedo/mouse durante o arrasto */
+.fant{position:fixed;z-index:60;pointer-events:none;background:#fff3c9;color:#221a12;
+      border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;
+      box-shadow:0 8px 18px rgba(0,0,0,.45)}
+/* as GAVETAS, lado a lado */
+.gavs{display:block;margin-top:12px;font-size:0}
+.cam{display:inline-block;vertical-align:top;width:48%;margin:0 1% 0 0;font-size:15px;
+     background:rgba(255,255,255,.10);border:3px solid rgba(255,255,255,.34);border-radius:18px;
+     padding:8px 6px 10px;min-height:132px;cursor:pointer}
+.cam.luz{border-color:#8fe07a;background:rgba(143,224,122,.22)}
+/* gaveta revelada no 3o erro: borda grossa + a palavra na dica. Nunca so cor. */
+.cam.alvo{border-color:#ffd54a;background:rgba(255,213,74,.20)}
+.gtit{display:block;background:#3c6ee0;color:#fff;font-size:13px;font-weight:800;
+      border-radius:12px;padding:7px 6px;margin-bottom:6px;line-height:1.2}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (partes da planta, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS este bloco: as gavetas, as fichas e as três
+   dicas (dica -> apoio concreto -> revela). Duas ou três gavetas; mais que
+   isso a criança não segura na cabeça de uma vez.                          */
+var GAVETAS=[
+  {k:"raiz",  n:"A RAIZ<br>(embaixo da terra)"},
+  {k:"folha", n:"A FOLHA<br>(no ar, verde)"}
+];
+var FICHAS=[
+  {t:"BEBE A ÁGUA",     alvo:"raiz"},
+  {t:"SEGURA A PLANTA", alvo:"raiz"},
+  {t:"PEGA O SOL",      alvo:"folha"},
+  {t:"FAZ O ALIMENTO",  alvo:"folha"}
+];
+var DICAS=[
+  "Pense onde essa coisa acontece: debaixo do chão ou no ar?",
+  "A RAIZ fica na terra: ela puxa a água e segura a planta. A FOLHA fica no ar: ela recebe o sol e faz o alimento.",
+  "Olhe a gaveta que está com a borda amarela: é ali que esta ficha mora."
+];
+
+var feitos=0;          /* fichas ja guardadas */
+var marcada=null;      /* a ficha escolhida pelo toque simples */
+var barraP=null;       /* a barrinha de progresso, para andar sem refazer a tela */
+var ger=0;             /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a ficha que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.  */
+var ultimoToque=0;
+var pegou=null, fantasma=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+function pecaClassificar(){
+  feitos=0; marcada=null; pegou=null; arrastando=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","ONDE CADA UMA MORA?"));
+  c.appendChild(el("div","balao","Cada ficha conta uma <b>tarefa</b> da planta. Guarde a ficha na parte que faz essa tarefa."));
+
+  var band=el("div","bandeja"), i;
+  var ordem=[];
+  for(i=0;i<FICHAS.length;i++) ordem.push(FICHAS[i]);
+  baguncar(ordem);
+  for(i=0;i<ordem.length;i++) band.appendChild(fazFicha(ordem[i]));
+  c.appendChild(band);
+
+  var gs=el("div","gavs");
+  for(i=0;i<GAVETAS.length;i++) gs.appendChild(fazGaveta(GAVETAS[i]));
+  c.appendChild(gs);
+
+  c.appendChild(el("div","hint","Toque na ficha e depois na gaveta. Também dá para arrastar com o dedo ou com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazFicha(f){
+  var p=el("div","pc",f.t);
+  /* ficha e gaveta publicam a MESMA chave: e assim que o auditor-jogador
+     consegue terminar a fase (e so ele olha para isto). */
+  p.setAttribute("data-qa",f.alvo);
+  p.onclick=function(){
+    if(cliqueDeArrasto()) return;          /* este clique e o rabo do arrasto */
+    if(p.className.indexOf("usada")>=0) return;
+    sTap(); seleciona(p);
+  };
+  p.onmousedown=function(ev){
+    if(souDedo()) return;                  /* mouse FANTASMA do celular: ignora */
+    comeca(p,ev.clientX,ev.clientY);
+  };
+  p.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(p,d.clientX,d.clientY);
+  },false);
+  return p;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, la embaixo, e so enquanto ha ficha na mao.        */
+function comeca(p,x,y){
+  if(p.className.indexOf("usada")>=0) return;
+  pegou=p; x0=x; y0=y; arrastando=false;
+  seleciona(p);
+}
+
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant",pegou.innerHTML);
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-52)+"px";
+  fantasma.style.top=(y-24)+"px";
+}
+
+function solta(x,y){
+  if(!pegou) return;
+  var p=pegou; pegou=null;
+  if(fantasma&&fantasma.parentNode){ fantasma.parentNode.removeChild(fantasma); }
+  fantasma=null;
+  if(!arrastando) return;                  /* foi so um toque: a selecao ja valeu */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")<0) alvo=alvo.parentNode;
+  if(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")>=0) guarda(p,alvo);
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();      /* so aqui, e so com ficha na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+function seleciona(p){
+  var a=app.getElementsByClassName("pc"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
+  marcada=p;
+}
+
+function fazGaveta(g){
+  var d=el("div","cam");
+  d.setAttribute("data-qa",g.k);
+  d.appendChild(el("div","gtit",g.n));
+  d.onclick=function(){
+    if(cliqueDeArrasto()) return;
+    if(!marcada){ sTap(); mostraDica("Primeiro toque numa ficha lá de cima. Depois toque na gaveta."); return; }
+    guarda(marcada,d);
+  };
+  return d;
+}
+
+function guarda(p,g){
+  if(!p||!g) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    sCerto();
+    p.className="pc usada";
+    p.onclick=null; p.onmousedown=null;
+    g.appendChild(p);
+    g.className="cam luz";
+    marcada=null;
+    feitos++;
+    if(barraP) barraP.style.width=Math.round(feitos*100/FICHAS.length)+"%";
+    var gg=g, ge=ger;
+    setTimeout(function(){ if(ge!==ger) return; if(gg.className.indexOf("luz")>=0) gg.className="cam"; },500);
+    if(feitos>=FICHAS.length){
+      setTimeout(function(){
+        if(ge!==ger) return;
+        mostraBanner("Você guardou todas as tarefas no lugar certo!", fimDaPeca);
+      },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a ficha volta para a mão e o andaime CRESCE. */
+  sErro();
+  p._err=(p._err||0)+1;
+  mostraDica(DICAS[Math.min(p._err,DICAS.length)-1]);
+  if(p._err>=3) revela(p);
+}
+
+/* 3º erro: acende a gaveta certa e DEIXA seguir — é o que garante que a peça
+   nunca trava. A informação também vai escrita na dica (nada só na cor).   */
+function revela(p){
+  var a=app.getElementsByClassName("cam"), i, k=p.getAttribute("data-qa");
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")===k) a[i].className="cam alvo";
+    else a[i].className="cam";
+  }
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Todas as "+FICHAS.length+" fichas estão na gaveta certa."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaClassificar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça CLASSIFICAR: mouse, dedo e toque simples, os três."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaClassificar();
+</script>
+</body></html>

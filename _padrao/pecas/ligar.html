@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ligar duas colunas</title>
+<!-- ============================================================
+     PEÇA: LIGAR DUAS COLUNAS (copiada do _padrao/pecas/MOLDE.html)
+
+     As armadilhas desta mecânica (DINAMICAS.md, linhas "Ligar colunas" e
+     "Arrastar"):
+       · nunca mais que ~6 pares — acima disso vira jogo da memória disfarçado
+         (aqui são 4);
+       · a linha precisa de `touchmove`: ela SEGUE o dedo enquanto a criança
+         puxa, senão o gesto não tem resposta nenhuma;
+       · alto-falante nos DOIS lados (na atividade o motor põe sozinho nas
+         classes .lig — por isso os dois lados usam .lig);
+       · TRÊS CAMINHOS: mouse, dedo (touch) e TOQUE SIMPLES (tocar de um lado
+         e depois do outro). Defeito pego DUAS vezes pelo Marcos;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+         ele mora no `touchmove`, e só enquanto há ponta na mão;
+       · guarda contra o evento de mouse FANTASMA do celular (`ultimoToque`).
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor (o par
+     feito ganha a LINHA desenhada, não só uma cor), funciona no mudo, erro com
+     sErro() + andaime que cresce, `data-qa` (os DOIS lados publicam a mesma
+     chave — é assim que o auditor-jogador fecha a fase) e nunca trava.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* a caixa das duas colunas. `position:relative` porque a camada das linhas
+   se apoia nela; `font-size:0` mata o espaco entre os inline-block.        */
+.ligbox{position:relative;font-size:0;margin-top:13px}
+.lcol{display:inline-block;vertical-align:top;width:48%;font-size:15px}
+.lesq{margin-right:4%}
+.ldir{margin-right:0}
+/* o item dos DOIS lados usa .lig — e a classe que, dentro de uma atividade,
+   ganha o alto-falante automatico do motor. min-height 62px = alvo folgado. */
+.lig{display:block;width:100%;min-height:62px;background:#fffdf6;color:#221a12;border:0;
+     border-radius:14px;padding:11px 10px;margin-bottom:8px;font-size:14px;font-weight:700;
+     line-height:1.28;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+     -webkit-user-select:none;user-select:none}
+/* escolhido: NAO e so a cor — ganha borda grossa e sobe um degrau */
+.lig.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f;
+         -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+/* par fechado: alem da cor, fica a LINHA desenhada ligando os dois */
+.lig.feita{background:#d6f5c8;box-shadow:0 3px 0 #7cb464;cursor:default}
+/* revelado no 3o erro: borda amarela + a frase escrita na dica */
+.lig.pisca{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+/* a camada das linhas fica POR CIMA, mas sem receber o dedo — senao ela
+   roubaria o toque do item que esta embaixo (botao sobre botao).           */
+.linhas{position:absolute;left:0;top:0;right:0;bottom:0;z-index:5;pointer-events:none}
+.linha{position:absolute;height:6px;margin-top:-3px;border-radius:6px;background:#8fe07a;
+       -webkit-transform-origin:0 50%;transform-origin:0 50%}
+.linha.viva{background:#ffd54a}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (partes da planta, 8 anos). Ao copiar a peça para
+   uma atividade troque APENAS este bloco: no máximo 6 pares, texto curto dos
+   dois lados, e as três dicas (dica -> apoio concreto -> revela).          */
+var LIG=[
+  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra"},
+  {k:"p1", t:"O CAULE", s:"Leva a água para cima"},
+  {k:"p2", t:"A FOLHA", s:"Faz o alimento com o sol"},
+  {k:"p3", t:"A FLOR",  s:"Vira fruto e semente"}
+];
+var DICAS=[
+  "Pense no que essa parte da planta FAZ o dia inteiro.",
+  "A raiz puxa a água da terra. O caule é o cano em pé. A folha recebe o sol. A flor vira fruto.",
+  "Olhe do outro lado: a resposta certa está com a borda amarela. Toque nela."
+];
+
+var caixaL=null;     /* a .ligbox — as linhas sao medidas a partir dela */
+var camadaL=null;    /* a .linhas, onde as linhas moram */
+var barraP=null;     /* a barrinha, para andar sem refazer a tela */
+var FEITOS=[];       /* pares ja fechados, para redesenhar as linhas */
+var marcada=null;    /* a ponta escolhida pelo toque simples */
+var ger=0;           /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a ponta que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.  */
+var ultimoToque=0;
+var pegou=null, linhaViva=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+
+function pecaLigar(){
+  FEITOS=[]; marcada=null; pegou=null; arrastando=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CADA PARTE, SEU TRABALHO"));
+  c.appendChild(el("div","balao","Ligue cada parte da planta com o <b>trabalho</b> que ela faz."));
+
+  caixaL=el("div","ligbox");
+  camadaL=el("div","linhas");
+  caixaL.appendChild(camadaL);
+
+  var esq=el("div","lcol lesq"), dir=el("div","lcol ldir"), i;
+  var lista=[];
+  for(i=0;i<LIG.length;i++) lista.push(LIG[i]);
+  /* o lado direito vai EMBARALHADO: senao a criança liga pela posição
+     (linha 1 com linha 1) e não pelo sentido. */
+  var sort=[];
+  for(i=0;i<LIG.length;i++) sort.push(LIG[i]);
+  baguncar(sort);
+  for(i=0;i<lista.length;i++) esq.appendChild(fazPonta(lista[i],"e",lista[i].t));
+  for(i=0;i<sort.length;i++)  dir.appendChild(fazPonta(sort[i],"d",sort[i].s));
+  caixaL.appendChild(esq);
+  caixaL.appendChild(dir);
+  c.appendChild(caixaL);
+
+  c.appendChild(el("div","hint","Toque de um lado e depois do outro. Também dá para puxar com o dedo ou com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazPonta(dado,lado,texto){
+  var l=el("div","lig",texto);
+  /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
+     consegue fechar a fase. A criança não vê diferença nenhuma. */
+  l.setAttribute("data-qa",dado.k);
+  l._lado=lado;
+  l.onclick=function(){
+    if(cliqueDeArrasto()) return;            /* este clique e o rabo do arrasto */
+    if(souDedo()) return;                    /* o CLIQUE FANTASMA do dedo: ja tratado no touchend */
+    toca(l);
+  };
+  l.onmousedown=function(ev){
+    if(souDedo()) return;                    /* mouse FANTASMA do celular: ignora */
+    comeca(l,ev.clientX,ev.clientY);
+  };
+  l.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(l,d.clientX,d.clientY);
+  },false);
+  return l;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, mais abaixo, e só enquanto há ponta na mão.       */
+/* ⚠️ LIÇÃO: aqui NÃO se marca a ponta. Marcar no mousedown fazia o `click`
+   que vem logo depois cair em "já estava marcada" e DESMARCAR — com o mouse
+   a criança clicava e nada acontecia. A marca é do clique (que serve ao
+   mouse, ao dedo e ao toque simples); o arrasto marca só quando anda mesmo. */
+function comeca(l,x,y){
+  if(temClasse(l,"feita")) return;
+  pegou=l; x0=x; y0=y; arrastando=false;
+}
+
+function move(x,y){
+  if(!pegou||!caixaL) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    marca(pegou);
+  }
+  var b=caixaL.getBoundingClientRect();
+  if(linhaViva&&linhaViva.parentNode) linhaViva.parentNode.removeChild(linhaViva);
+  var p=ponto(pegou);
+  linhaViva=traca(p.x,p.y,x-b.left,y-b.top,"viva");
+}
+
+/* ⚠️ DEFEITO PAGO NESTA PEÇA (medido com dedo de verdade, ago/2026): o celular
+   dispara mousedown/mouseup e um CLIQUE fantasma logo depois do toque. Como
+   tocar duas vezes na mesma ponta DESMARCA (e tem que desmarcar mesmo), o
+   clique fantasma apagava a escolha que a criança acabara de fazer — ela
+   tocava e nada ficava marcado. Cura: quem veio do DEDO resolve tudo aqui no
+   `touchend` (`doDedo`), e o clique que vier atrás é engolido pelo souDedo().
+   O mouse de verdade continua entrando pelo `click`, como sempre.          */
+function solta(x,y,doDedo){
+  if(!pegou) return;
+  var l=pegou; pegou=null;
+  if(linhaViva&&linhaViva.parentNode) linhaViva.parentNode.removeChild(linhaViva);
+  linhaViva=null;
+  if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"lig")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"lig")&&alvo!==l) juntar(l,alvo);
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY,false); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();        /* so aqui, e so com ponta na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY,true);
+},false);
+
+/* ---- o TOQUE SIMPLES: escolhe de um lado, escolhe do outro ---- */
+function toca(l){
+  if(temClasse(l,"feita")) return;
+  if(!marcada){ sTap(); marca(l); return; }
+  if(marcada===l){ sTap(); desmarca(); return; }
+  if(marcada._lado===l._lado){ sTap(); marca(l); return; }   /* mesmo lado: troca */
+  juntar(marcada,l);
+}
+
+function marca(l){
+  desmarca();
+  l.className="lig sel";
+  marcada=l;
+}
+
+function desmarca(){
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
+  marcada=null;
+}
+
+function juntar(a,b){
+  if(!a||!b||a===b) return;
+  if(temClasse(a,"feita")||temClasse(b,"feita")) return;
+  if(a._lado===b._lado) return;
+  if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
+    sCerto();
+    a.className="lig feita"; b.className="lig feita";
+    marcada=null;
+    FEITOS.push([a,b]);
+    redesenha();
+    if(barraP) barraP.style.width=Math.round(FEITOS.length*100/LIG.length)+"%";
+    if(FEITOS.length>=LIG.length){
+      var ge=ger;
+      setTimeout(function(){
+        if(ge!==ger) return;
+        mostraBanner("Você ligou cada parte da planta ao trabalho dela!", fimDaPeca);
+      },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, as pontas voltam e o andaime CRESCE. */
+  sErro();
+  a._err=(a._err||0)+1;
+  mostraDica(DICAS[Math.min(a._err,DICAS.length)-1]);
+  var guardar=a;
+  desmarca();
+  if(guardar._err>=3) revela(guardar);
+}
+
+/* 3º erro: acende a ponta certa do outro lado e DEIXA seguir — é o que
+   garante que a peça nunca trava. A dica diz isso em palavras também.    */
+function revela(l){
+  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa");
+  for(i=0;i<a.length;i++){
+    if(temClasse(a[i],"feita")) continue;
+    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="lig pisca";
+  }
+  l.className="lig sel";
+  marcada=l;
+}
+
+/* ---- as linhas ---- */
+function ponto(l){
+  var r=l.getBoundingClientRect(), b=caixaL.getBoundingClientRect();
+  var x=(l._lado==="e") ? (r.right-b.left) : (r.left-b.left);
+  return {x:x, y:r.top+r.height/2-b.top};
+}
+
+function traca(x1,y1,x2,y2,extra){
+  var dx=x2-x1, dy=y2-y1, comp=Math.sqrt(dx*dx+dy*dy);
+  var ang=Math.atan2(dy,dx)*180/Math.PI;
+  var ln=el("div","linha");
+  if(extra) ln.className="linha viva";
+  ln.style.left=x1+"px"; ln.style.top=y1+"px"; ln.style.width=comp+"px";
+  ln.style.webkitTransform="rotate("+ang+"deg)";
+  ln.style.transform="rotate("+ang+"deg)";
+  camadaL.appendChild(ln);
+  return ln;
+}
+
+function redesenha(){
+  if(!camadaL) return;
+  camadaL.innerHTML="";
+  linhaViva=null;
+  var i,p1,p2;
+  for(i=0;i<FEITOS.length;i++){
+    p1=ponto(FEITOS[i][0]); p2=ponto(FEITOS[i][1]);
+    traca(p1.x,p1.y,p2.x,p2.y,"");
+  }
+}
+/* a tela do PC vira ao contrario e as linhas ficariam tortas: redesenha */
+window.onresize=function(){ redesenha(); };
+
+function fimDaPeca(){
+  ger++;
+  caixaL=null; camadaL=null; linhaViva=null; marcada=null; pegou=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você fechou os "+LIG.length+" pares."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaLigar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça LIGAR: mouse, dedo e toque simples, os três."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaLigar();
+</script>
+</body></html>

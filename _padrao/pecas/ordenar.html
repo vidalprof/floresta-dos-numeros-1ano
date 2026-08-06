@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ordenar</title>
+<!-- ============================================================
+     PEÇA: ORDENAR (por 5 itens em ordem)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     Armadilhas desta mecânica (_padrao/DINAMICAS.md, linha "Ordenar / linha
+     do tempo" e linha "Arrastar"), cada uma já paga em atividade de verdade:
+       · TRÊS caminhos: mouse, dedo (arrasto real) e TOQUE SIMPLES;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+       · guarda contra o evento de mouse FANTASMA que o celular dispara
+         depois do toque (`ultimoToque`): sem ele o clique fantasma
+         desmarca/reaciona a peça. Defeito pego DUAS vezes pelo Marcos;
+       · nunca trava: no 3º erro a peça é revelada e a fila anda;
+       · `data-qa` publicado (peça que serve AGORA = "1", e a vaga da vez
+         também = "1") para o auditor-jogador conseguir terminar.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: ORDENAR ---------------- */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.fila{display:block;text-align:center;margin:13px auto 12px}
+.cam{display:inline-block;vertical-align:top;width:50px;height:56px;line-height:50px;margin:0 2px;
+     border:3px dashed #a08e73;border-radius:14px;background:rgba(255,255,255,.10);
+     color:#f4efe6;font-size:15px;font-weight:700;text-align:center}
+/* certo = borda INTEIRA + a ficha dentro: forma, nao so cor (funciona no mudo
+   e para quem nao distingue verde) */
+.cam.ok{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12;font-size:24px;font-weight:800}
+.banco{display:block;text-align:center;margin-top:6px}
+.pc{display:inline-block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
+    width:52px;height:52px;line-height:52px;margin:5px 4px;font-size:23px;font-weight:800;
+    text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#ffeeb0;box-shadow:0 4px 0 #c9a52f}
+.pc.usada{visibility:hidden;pointer-events:none}
+.pc.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+.pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a sombra que segue o dedo/o mouse durante o arrasto. pointer-events:none
+   para nao roubar o hit-test de quem esta embaixo. */
+.somb{position:fixed;width:52px;height:52px;line-height:52px;text-align:center;border-radius:14px;
+      background:#fffdf6;color:#221a12;font-size:23px;font-weight:800;pointer-events:none;z-index:60;
+      box-shadow:0 8px 18px rgba(0,0,0,.45)}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* ORDENAR — a crianca poe 5 fichas em ordem, do MENOR para o MAIOR.
+   Conteudo neutro de proposito: numero e o mesmo em qualquer disciplina.
+   Trocar `ORDEM` (e o texto do balao) ja adapta a peca a outro conteudo,
+   desde que a lista continue tendo UMA ordem certa e so uma. */
+var ORDEM=[2,5,9,14,21];
+var vagaAtual=0, errosSeg=0, telaAtual=null, barraP=null;
+var pecas=[], camas=[];
+/* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
+   toque. Sem esta marca de tempo a peca era acionada duas vezes (o toque
+   colocava e o fantasma tentava colocar de novo). */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false;
+
+function telaOrdenar(){
+  limpa(); document.onkeydown=null; soltaSombra();
+  vagaAtual=0; errosSeg=0; pecas=[]; camas=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","EM ORDEM"));
+  c.appendChild(el("div","balao","Ponha as fichas <b>da menor para a maior</b>."));
+  var f=el("div","fila"), i, cm, b, n;
+  for(i=0;i<ORDEM.length;i++){
+    cm=el("div","cam",(i+1)+"&#186;");
+    f.appendChild(cm); camas.push(cm);
+  }
+  c.appendChild(f);
+  var bc=el("div","banco");
+  var sorteadas=baguncar(ORDEM.slice(0));
+  for(i=0;i<sorteadas.length;i++){
+    n=sorteadas[i];
+    b=el("div","pc",""+n);
+    b.num=n;
+    ligaFicha(b);
+    bc.appendChild(b); pecas.push(b);
+  }
+  c.appendChild(bc);
+  c.appendChild(el("div","hint","Toque na ficha ou arraste at&#233; a fila."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQualServe();
+}
+
+/* ---------- as TRES portas de entrada da mesma ficha ---------- */
+/* ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart mata o
+   toque no celular (armadilha registrada no _padrao/DINAMICAS.md). */
+function ligaFicha(b){
+  b.onclick=cliqueFicha;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+}
+function cliqueFicha(){
+  if(Date.now()-ultimoToque<700) return;   /* clique FANTASMA depois do toque */
+  tocaFicha(this);
+}
+function mouseIni(ev){
+  if(Date.now()-ultimoToque<700) return;
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=Date.now();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();   /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=Date.now();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) tocaFicha(alvo);   /* toque simples: vale como clique */
+}
+function moveMouse(ev){ if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------- o arrasto de verdade (mouse e dedo usam o mesmo caminho) ---- */
+function pegaEm(b,x,y){
+  if(!b||b.className.indexOf("usada")>=0) return;
+  pego=b; px0=x; py0=y; moveu=false;
+  sTap();
+  b.className="pc sel";
+  somb=el("div","somb",""+b.num);
+  somb.style.left=(x-26)+"px"; somb.style.top=(y-26)+"px";
+  somb.style.display="none";
+  document.body.appendChild(somb);
+}
+function moveEm(x,y){
+  if(!pego||!somb) return;
+  if(!moveu&&(Math.abs(x-px0)>8||Math.abs(y-py0)>8)){ moveu=true; somb.style.display="block"; }
+  if(moveu){ somb.style.left=(x-26)+"px"; somb.style.top=(y-26)+"px"; }
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b) return;
+  if(b.className.indexOf("usada")<0) b.className="pc";
+  if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
+  if(naFila(x,y)) tocaFicha(b);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+}
+function naFila(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&n<6){
+    var cl=" "+String(e.className||"")+" ";
+    if(cl.indexOf(" cam ")>=0||cl.indexOf(" fila ")>=0) return true;
+    e=e.parentNode; n++;
+  }
+  return false;
+}
+
+/* ---------- a regra da fase ---------- */
+function tocaFicha(b){
+  if(!b||b.className.indexOf("usada")>=0) return;
+  if(vagaAtual>=ORDEM.length) return;
+  if(b.num===ORDEM[vagaAtual]) poeNaFila(b); else erraFicha(b);
+}
+function poeNaFila(b){
+  var cm=camas[vagaAtual];
+  cm.className="cam ok"; cm.innerHTML=""+b.num;
+  b.className="pc usada";
+  sCerto();
+  vagaAtual++; errosSeg=0;
+  apagaDica();
+  if(barraP) barraP.style.width=Math.round(vagaAtual*100/ORDEM.length)+"%";
+  marcaQualServe();
+  if(vagaAtual>=ORDEM.length) fechaFase();
+}
+function erraFicha(b){
+  sErro(); errosSeg++;
+  b.className="pc treme";
+  destreme(b);
+  ajuda(errosSeg);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda
+   `!telaAtual.parentNode` ele mexeria numa tela que ja saiu. */
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("usada")<0) b.className="pc";
+  },340);
+}
+function ajuda(n){
+  if(n===1){
+    mostraDica("Olhe as fichas soltas e procure a <b>menor</b> de todas.");
+  }else if(n===2){
+    mostraDica("A menor que sobrou est&#225; <b>piscando</b>. Toque nela.");
+    acendeCerta();
+  }else{
+    mostraDica("Era esta! Vamos juntos: eu coloco e voc&#234; segue.");
+    revela();
+  }
+}
+function acendeCerta(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(b.className.indexOf("usada")>=0) continue;
+    b.className=(b.num===ORDEM[vagaAtual])?"pc pisca":"pc";
+  }
+}
+function revela(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(b.className.indexOf("usada")<0&&b.num===ORDEM[vagaAtual]){ poeNaFila(b); return; }
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* data-qa: a ficha que serve AGORA e a vaga da vez ficam com "1". E so para o
+   auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho. */
+function marcaQualServe(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    b.setAttribute("data-qa",(b.className.indexOf("usada")<0&&vagaAtual<ORDEM.length&&b.num===ORDEM[vagaAtual])?"1":"0");
+  }
+  for(i=0;i<camas.length;i++) camas[i].setAttribute("data-qa",(i===vagaAtual)?"1":"0");
+}
+function fechaFase(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    mostraBanner("Fila pronta! Da menor para a maior.",telaFim);
+  },420);
+}
+
+function telaFim(){
+  limpa(); document.onkeydown=null; soltaSombra();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; colocou tudo <b>em ordem</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaOrdenar;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaOrdenar();
+</script>
+</body></html>

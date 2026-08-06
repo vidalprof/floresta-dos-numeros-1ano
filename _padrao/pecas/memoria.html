@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — jogo da memória (par conceitual)</title>
+<!-- ============================================================
+     PEÇA: JOGO DA MEMÓRIA — PAR CONCEITUAL (palavra <-> significado)
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     POR QUE PAR CONCEITUAL E NÃO IGUAL<->IGUAL: memória de figuras iguais treina
+     só a posição no tabuleiro — some o conteúdo. Aqui a criança só fecha o par se
+     ENTENDER: "ABELHA" casa com "faz o mel". O gesto continua sendo memória; o
+     que está sendo lembrado passa a ser o sentido.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (regra permanente do Marcos, ago/2026 —
+     "quando fizer jogo da memória faça cartas maiores, registre para sempre"):
+       · CARTA FLUIDA E GRANDE: .mcarta{width:48%;max-width:210px;min-height:100px}
+         dentro de .mcartas{max-width:430px;width:100%}. O piso medido pelo
+         _qa/leiaute.js é 130x88px — px fixo reprova em tela de 320.
+       · EM TELA BAIXA ENCOLHE A LETRA, NUNCA A CARTA (@media max-height).
+       · VIRADA 3D DE VERDADE (rotateY + preserve-3d) com QUEDA para troca-de-face
+         onde não há 3D — carta que troca de face sem girar perde metade da graça,
+         mas é melhor que carta que some.
+       · VERSO DE ARTE, nunca retângulo liso (aqui um SVG embutido; na atividade
+         de verdade entra a arte de IA no lugar) + BRILHO CORRENDO pelo verso,
+         que é o que chama a criança para tocar.
+       · SOM PRÓPRIO DE VIRAR E DE FORMAR PAR (não reusar o "ding" de acerto).
+       · PAR QUE ACERTA PULSA E ACENDE + "✓" (nada essencial só na cor).
+       · PLACAR DE PARES e a BARRA ANDANDO — sem isso a criança não vê progresso
+         e o auditor-jogador acha que a tela travou.
+       · NUNCA TRAVA: a cada 6 tentativas sem par o andaime cresce; na terceira
+         vez ele abre um par sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- O TABULEIRO ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o tabuleiro nasce COLADO
+   no enunciado (defeito que o Marcos ja cobrou duas vezes).                  */
+.mcartas{max-width:430px;width:100%;margin:13px auto 0;
+         display:-webkit-box;display:-webkit-flex;display:flex;
+         -webkit-flex-wrap:wrap;flex-wrap:wrap;
+         -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+/* CARTA FLUIDA E GRANDE — nunca px fixo (piso do auditor: 130x88) */
+.mcarta{width:48%;max-width:210px;min-height:100px;margin:5px 1%;position:relative;cursor:pointer;
+        -webkit-perspective:900px;perspective:900px}
+.mflip{position:absolute;left:0;top:0;right:0;bottom:0;
+       -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+       -webkit-transition:-webkit-transform .45s;transition:transform .45s}
+.mcarta.vira .mflip{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mface{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:16px;overflow:hidden;
+       -webkit-backface-visibility:hidden;backface-visibility:hidden;
+       display:-webkit-box;display:-webkit-flex;display:flex;
+       -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       text-align:center;padding:8px}
+.mverso{background:#6b4b2a;background-size:cover;background-position:center;
+        border:3px solid #4a3218;box-shadow:0 4px 0 #3a2712}
+/* BRILHO CORRENDO — o convite para tocar */
+.mverso:after{content:"";position:absolute;top:-40%;left:-60%;width:40%;height:180%;
+  background:-webkit-linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.42),rgba(255,255,255,0));
+  background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.42),rgba(255,255,255,0));
+  -webkit-transform:rotate(18deg);transform:rotate(18deg);
+  -webkit-animation:brilha 2.6s linear infinite;animation:brilha 2.6s linear infinite}
+@-webkit-keyframes brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}
+@keyframes brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}
+/* a face da frente so EXISTE para a crianca depois que ela vira a carta */
+.mfrente{background:#fffdf6;color:#221a12;border:3px solid #c9bda6;visibility:hidden;
+         -webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mcarta.vira .mfrente{visibility:visible}
+.mtxt{font-size:17px;font-weight:800;line-height:1.25}
+.mtxt.msent{font-size:15px;font-weight:600}
+.meti{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;color:#33526f;margin-bottom:4px}
+/* PAR FECHADO: acende, pulsa e ganha o "V" (forma + cor + som) */
+.mcarta.par .mfrente{background:#d6f5c8;border:3px solid #1f6b12}
+.mcarta.par{-webkit-animation:pulsa .7s ease-out 2;animation:pulsa .7s ease-out 2}
+@-webkit-keyframes pulsa{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.07)}100%{-webkit-transform:scale(1)}}
+@keyframes pulsa{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+.vpar{position:absolute;right:5px;top:5px;width:30px;height:30px;border-radius:50%;
+      background:#1f6b12;color:#fff;font-size:17px;font-weight:800;line-height:30px;text-align:center}
+/* QUEDA (Chrome antigo sem 3D): troca de face, sem girar */
+.sem3d .mflip{-webkit-transition:none;transition:none;
+              -webkit-transform:none !important;transform:none !important}
+.sem3d .mfrente{-webkit-transform:none;transform:none;display:none}
+.sem3d .mcarta.vira .mfrente{display:-webkit-box;display:-webkit-flex;display:flex;visibility:visible}
+.sem3d .mcarta.vira .mverso{display:none}
+
+.placar{margin-top:12px;font-size:17px;font-weight:700}
+.placar b{color:#ffd54a}
+.pares{margin-top:8px}
+.ppt{display:inline-block;width:26px;height:26px;border-radius:50%;margin:0 4px;
+     background:rgba(255,255,255,.16);border:3px dashed rgba(255,255,255,.45)}
+.ppt.on{background:#59c24b;border:3px solid #d6f5c8}
+/* tela baixa: encolhe a LETRA, NUNCA a carta */
+@media (max-height:470px){.mtxt{font-size:15px}.mtxt.msent{font-size:13px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- ARTE DO VERSO ----
+   Numa atividade de verdade este data-URI sai e entra a ARTE DE IA da atividade
+   (regra da casa: verso de arte, nunca retangulo liso). Aqui vai um SVG embutido
+   para a peca rodar sozinha, sem arquivo externo.                            */
+var ARTE={
+ verso:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 90' preserveAspectRatio='none'>"+
+   "<rect width='120' height='90' fill='#6b4b2a'/>"+
+   "<g fill='#805c36'><circle cx='24' cy='20' r='14'/><circle cx='96' cy='24' r='11'/>"+
+   "<circle cx='60' cy='58' r='16'/><circle cx='18' cy='72' r='10'/><circle cx='104' cy='70' r='13'/></g>"+
+   "<g stroke='#8f6b41' stroke-width='3' fill='none'><path d='M0 45 L120 45'/><path d='M60 0 L60 90'/></g>"+
+   "<g fill='#c9a05e'><path d='M60 34 l7 12 -7 12 -7 -12 z'/>"+
+   "<circle cx='24' cy='20' r='4'/><circle cx='96' cy='24' r='4'/>"+
+   "<circle cx='18' cy='72' r='4'/><circle cx='104' cy='70' r='4'/></g></svg>"
+};
+function imgSvg(nome){ return "url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(ARTE[nome])+"\")"; }
+var VERSO = imgSvg("verso");   /* o verso e IMAGEM, nunca cor lisa */
+
+/* ---- O CONTEUDO: par CONCEITUAL (palavra <-> significado) ---- */
+var PARES=[
+ {k:"abelha", pal:"ABELHA",  sen:"faz o mel"},
+ {k:"semen",  pal:"SEMENTE", sen:"vira uma planta"},
+ {k:"chuva",  pal:"CHUVA",   sen:"cai da nuvem"},
+ {k:"ninho",  pal:"NINHO",   sen:"casa do passarinho"}
+];
+
+var cartas, virada, travado, feitos, tentativas, progI, elPlacar, elPares;
+
+function sVira(){ nota(300,.05,.13,"square",0); nota(520,.06,.10,"square",.045); }
+function sPar(){ nota(659.25,.16,.16,"triangle",0); nota(880,.22,.15,"triangle",.09); }
+
+function pecaMemoria(){
+  limpa();
+  virada=null; travado=false; feitos=0; tentativas=0;
+  var t=el("div","tela");
+  setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MEMÓRIA DOS PARES"));
+  c.appendChild(el("div","balao","Ache a <b>palavra</b> e o <b>que ela quer dizer</b>."));
+
+  /* monta as 8 cartas: metade palavra, metade significado */
+  cartas=[];
+  var i;
+  for(i=0;i<PARES.length;i++){
+    cartas.push({k:PARES[i].k,tipo:"pal",txt:PARES[i].pal});
+    cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen});
+  }
+  baguncar(cartas);
+
+  var mesa=el("div","mcartas");
+  /* QUEDA: sem 3D no navegador, a carta troca de face em vez de girar */
+  if(!temTresD()) mesa.className="mcartas sem3d";
+  for(i=0;i<cartas.length;i++){ mesa.appendChild(fazCarta(cartas[i])); }
+  c.appendChild(mesa);
+
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  elPares=el("div","pares","");
+  c.appendChild(elPares);
+  c.appendChild(el("div","hint","Toque em duas cartas. Se não formar par, elas voltam."));
+  t.appendChild(c);
+  app.appendChild(t);
+  atualiza();
+}
+
+function temTresD(){
+  var s=document.body.style;
+  return ("transformStyle" in s)||("webkitTransformStyle" in s)||("MozTransformStyle" in s);
+}
+
+function fazCarta(o){
+  var d=el("div","mcarta");
+  d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
+  var f=el("div","mflip");
+  var v=el("div","mface mverso");
+  v.style.backgroundImage=VERSO;
+  var fr=el("div","mface mfrente");
+  var et=(o.tipo==="pal")?"PALAVRA":"QUER DIZER";
+  var tx=el("span",(o.tipo==="pal")?"mtxt":"mtxt msent",
+            '<i class="meti">'+et+'</i>'+o.txt);
+  fr.appendChild(tx);
+  f.appendChild(v); f.appendChild(fr);
+  d.appendChild(f);
+  o.el=d;
+  d.onclick=(function(carta){ return function(){ tocar(carta); }; })(o);
+  return d;
+}
+
+function atualiza(){
+  var i,p;
+  elPlacar.innerHTML="Pares: <b>"+feitos+"</b> de <b>"+PARES.length+"</b>";
+  elPares.innerHTML="";
+  for(i=0;i<PARES.length;i++){
+    p=el("span","ppt");
+    if(i<feitos) p.className="ppt on";
+    elPares.appendChild(p);
+  }
+  if(progI) progI.style.width=Math.round(feitos*100/PARES.length)+"%";
+}
+
+function tocar(o){
+  if(travado) return;
+  if(o.el.className.indexOf("par")>=0){ sTap(); return; }     /* ja fechada */
+  if(virada===o) return;
+  if(o.el.className.indexOf("vira")>=0) return;
+  o.el.className="mcarta vira";
+  sVira();
+  if(!virada){ virada=o; return; }
+  tentativas++;
+  if(virada.k===o.k){ fechaPar(virada,o); virada=null; return; }
+  /* nao formou par: as duas voltam. Erro NUNCA pune — so devolve. */
+  travado=true;
+  var a=virada; virada=null;
+  setTimeout((function(x,y){ return function(){
+    if(x.el.className.indexOf("par")<0) x.el.className="mcarta";
+    if(y.el.className.indexOf("par")<0) y.el.className="mcarta";
+    travado=false;
+    ajuda(tentativas);
+  }; })(a,o),900);
+}
+
+function fechaPar(a,b){
+  a.el.className="mcarta vira par";
+  b.el.className="mcarta vira par";
+  a.el.appendChild(el("div","vpar","✓"));
+  b.el.appendChild(el("div","vpar","✓"));
+  a.el.removeAttribute("data-qa");
+  b.el.removeAttribute("data-qa");
+  sPar();
+  feitos++;
+  atualiza();
+  if(feitos===PARES.length) setTimeout(fim,800);
+}
+
+/* O ANDAIME QUE CRESCE — a cada 6 tentativas sem par ele ajuda mais; na terceira
+   vez abre um par sozinho. Assim a peca nao trava nem para quem tem pouca
+   memoria de trabalho (e nem para o auditor-jogador).                        */
+function ajuda(n){
+  if(n%6!==0) return;
+  var vez=n/6, alvo=proximoPar();
+  if(!alvo) return;
+  if(vez===1){ mostraDica("Leia a carta em voz baixa e pense: <b>quem faz isso?</b>"); }
+  else if(vez===2){ mostraDica("Dica: uma das cartas fala de <b>"+alvo.pal.toLowerCase()+"</b>."); }
+  else { mostraDica("Vou abrir este par para você: <b>"+alvo.pal+"</b> — "+alvo.sen+"."); abrePar(alvo.k); }
+}
+function proximoPar(){
+  var i,j;
+  for(i=0;i<PARES.length;i++){
+    for(j=0;j<cartas.length;j++){
+      if(cartas[j].k===PARES[i].k && cartas[j].el.className.indexOf("par")<0) return PARES[i];
+    }
+  }
+  return null;
+}
+function abrePar(k){
+  var i,a=null,b=null;
+  for(i=0;i<cartas.length;i++){ if(cartas[i].k===k){ if(!a) a=cartas[i]; else b=cartas[i]; } }
+  if(!a||!b) return;
+  if(virada){ if(virada.el.className.indexOf("par")<0) virada.el.className="mcarta"; virada=null; }
+  fechaPar(a,b);
+}
+
+function fim(){
+  mostraBanner('<div class="medal">★</div><b>Memória de elefante!</b><br>Você fechou os 4 pares.', pecaMemoria);
+}
+
+pecaMemoria();
+</script>
+</body></html>
