@@ -117,6 +117,16 @@ tem graça. Portão nenhum substitui olhar.
 
 ## 1. A ESCADA DIDÁTICA — o que o Marcos quer dizer
 
+> 🛑 **AS MUDANÇAS DESTA SEÇÃO VALEM PARA AS PRÓXIMAS ATIVIDADES — NÃO SE MEXE
+> NAS QUE JÁ ESTÃO PRONTAS.** Ordem do Marcos (ago/2026): *"não faça essas
+> modificações nessas atividades; depois vejo o que eu quero modificar na próxima
+> que a gente criar"*. Ou seja: ler as pesquisas mudou a RECEITA, não o acervo.
+> Mexer no que já está no ar (Voo do Nico, Terra dos Papagaios, Jardim do Broto,
+> e as demais) só quando ELE pedir, atividade por atividade. Aplicar em massa uma
+> ideia nova, por melhor que ela seja, é justamente o jeito de estragar o que já
+> estava aprovado.
+
+
 Não é a barra de progresso (isso é sintoma). É a escada do aprender:
 
 - **O problema vem primeiro, o conceito por último.** A criança tem que sentir a
