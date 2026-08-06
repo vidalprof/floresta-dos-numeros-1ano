@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — o teste justo (controle de variáveis)</title>
+<!-- ============================================================
+     PEÇA: O TESTE JUSTO — CONTROLE DE VARIÁVEIS
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     POR QUE ESTA PEÇA EXISTE (e por que ela transfere):
+     "só posso mudar UMA coisa de cada vez" não é conteúdo de ciências: é um
+     jeito de pensar que a criança leva para a vida inteira — para a receita de
+     bolo, para o conserto do brinquedo, para a discussão sobre o que causou o
+     quê. É dos aprendizados mais FORTES que cabem numa tela, e quase nunca é
+     ensinado: normalmente a criança lê o resultado de um experimento que outra
+     pessoa montou. Aqui ela MONTA — e é o experimento injusto que ensina.
+
+     O CORAÇÃO DA MECÂNICA: a criança regula o vaso B ao lado do vaso A. O
+     mascote não corrige: ele PERGUNTA — "se mudei a luz E a água, como vou
+     saber quem fez a planta crescer?". E a comparação fica travada enquanto o
+     teste for injusto: a trava não é castigo, é o próprio conceito (não há o
+     que concluir de um teste com duas mudanças).
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · O AVISO É PERGUNTA, NUNCA BRONCA. Nada de "errado": o mascote pensa
+         em voz alta e devolve a decisão para a criança.
+       · COMPARAR SÓ QUANDO É JUSTO — e o botão diz POR ESCRITO em que estado
+         está ("ainda não dá para comparar"), não só pela cor.
+       · NADA ESSENCIAL SÓ NA COR: a linha que ficou diferente ganha a etiqueta
+         escrita MUDOU, além da moldura.
+       · A 3ª rodada JÁ COMEÇA INJUSTA (duas coisas mudadas): consertar um teste
+         alheio é um degrau acima de montar o seu.
+       · NUNCA TRAVA: o botão travado continua tocável (e responde com a
+         pergunta), e no 3º tropeço o andaime diz exatamente onde tocar.
+       · data-qa="1" no alvo que serve AGORA — só para o auditor-jogador.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     Sem imagem externa: o mascote e os vasos são SVG desenhado aqui dentro.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* A BANCADA: duas colunas (vaso A e vaso B) e uma linha por coisa que dá para
+   mudar. Tudo em flex com fallback de bloco para PC antigo.                  */
+.cab{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:end;-webkit-align-items:flex-end;align-items:flex-end;margin:13px 0 6px}
+.rot{width:66px;min-width:66px;text-align:left;font-size:13px;font-weight:800;
+     letter-spacing:.3px;color:#f4efe6}
+.colv{-webkit-box-flex:1;-webkit-flex:1;flex:1;text-align:center}
+.colv b{display:block;font-size:13px;font-weight:800;color:#f4efe6;margin-top:2px}
+.planta{margin:0 auto;-webkit-transition:height .6s;transition:height .6s}
+.planta svg{width:100%;height:100%;display:block}
+.lin{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;margin-bottom:6px}
+/* o valor do vaso A é FIXO: não é botão, e tem que parecer que não é
+   (tracejado, sem sombra de relevo). */
+.fixo{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 4px;min-height:42px;
+      border:2px dashed #9c9078;border-radius:12px;background:rgba(255,255,255,.06);
+      color:#f4efe6;font-size:14px;font-weight:700;padding:11px 4px}
+/* o valor do vaso B é o botão que a criança toca (alvo >= 42px) */
+.bin{-webkit-box-flex:1;-webkit-flex:1;flex:1;margin:0 4px;min-height:42px;border:0;
+     border-radius:12px;background:#fffdf6;color:#221a12;font-size:14px;font-weight:800;
+     padding:8px 4px;cursor:pointer;box-shadow:0 3px 0 #c9bda6;position:relative}
+.bin:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #c9bda6}
+/* MUDOU = etiqueta escrita + moldura. Nunca só a cor. */
+.bin.dif{background:#ffe9b8;box-shadow:0 0 0 3px #ffd54a,0 3px 0 #c9a52f}
+.tag{display:block;font-size:10px;font-weight:800;letter-spacing:.6px;color:#6b4a00}
+.bin.aponta{box-shadow:0 0 0 4px #fff3c9,0 3px 0 #c9bda6}
+/* o mascote pergunta — e a pergunta tem lugar FIXO na tela, para nada pular
+   de lugar quando ela aparece. */
+.msg{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+     text-align:left;background:rgba(255,255,255,.09);border-radius:14px;
+     padding:8px 10px;margin-top:8px;min-height:56px}
+.mbicho{width:42px;min-width:42px;height:42px;margin-right:9px}
+.mbicho svg{width:100%;height:100%;display:block}
+.mtexto{font-size:14px;font-weight:700;line-height:1.3;color:#f4efe6}
+.mtexto b{color:#ffd54a}
+.msg.pode{background:#d6f5c8}
+.msg.pode .mtexto{color:#1a3d10}
+.msg.pode .mtexto b{color:#1a3d10}
+.btn.trava{background:#b8ad95;color:#2a2415;box-shadow:0 4px 0 #8e8571}
+.btn.solto{background:#ffd54a}
+.cmp{margin-top:10px}
+/* a tela do resultado */
+.resfr{font-size:16px;font-weight:700;margin-top:10px;color:#f4efe6}
+.resfr b{color:#ffd54a}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa: encolhe a letra e as plantas, nunca os botões */
+@media (max-height:520px){
+  .cab{margin:8px 0 4px}
+  .lin{margin-bottom:4px}
+  .bin{min-height:41px;font-size:13px}
+  .fixo{min-height:41px;font-size:13px;padding:10px 4px}
+  .msg{min-height:46px;margin-top:6px;padding:6px 9px}
+  .mtexto{font-size:13px}
+  .cmp{margin-top:6px}
+  .balao{font-size:15px;padding:9px 14px}
+  .hint{margin-top:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- A ARTE (SVG desenhado aqui: a peça roda sem arquivo nenhum ao lado).
+   Numa atividade de verdade, o vaso e o mascote viram arte de IA — o CSS
+   continua cuidando só do que se MEXE (a planta que cresce).               */
+function svgPlanta(altura,folhas){
+  var s="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 60'>";
+  s+="<path d='M11 40 h22 l-3 18 h-16 z' fill='#b5623a'/>";
+  s+="<rect x='9' y='36' width='26' height='6' rx='2' fill='#8f4b2c'/>";
+  var topo=38-altura;
+  s+="<path d='M22 40 L22 "+topo+"' stroke='#3f8f3a' stroke-width='3' fill='none'/>";
+  if(folhas>0) s+="<ellipse cx='13' cy='"+(topo+8)+"' rx='8' ry='4' fill='#59c24b'/>";
+  if(folhas>1) s+="<ellipse cx='31' cy='"+(topo+3)+"' rx='8' ry='4' fill='#59c24b'/>";
+  if(folhas>2) s+="<ellipse cx='22' cy='"+topo+"' rx='7' ry='4' fill='#7ad169'/>";
+  return s+"</svg>";
+}
+/* o mascote: um brotinho de olhos grandes. Ele PERGUNTA, não responde. */
+function svgBroto(){
+  return "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 44 44'>"+
+   "<ellipse cx='22' cy='39' rx='13' ry='4' fill='rgba(0,0,0,.25)'/>"+
+   "<path d='M22 38 L22 20' stroke='#3f8f3a' stroke-width='4' fill='none'/>"+
+   "<ellipse cx='11' cy='23' rx='9' ry='5' fill='#59c24b'/>"+
+   "<ellipse cx='33' cy='20' rx='9' ry='5' fill='#59c24b'/>"+
+   "<circle cx='22' cy='14' r='11' fill='#7ad169'/>"+
+   "<circle cx='18' cy='13' r='3' fill='#fffdf6'/><circle cx='27' cy='13' r='3' fill='#fffdf6'/>"+
+   "<circle cx='18.6' cy='13.6' r='1.6' fill='#22300f'/><circle cx='27.6' cy='13.6' r='1.6' fill='#22300f'/>"+
+   "<path d='M19 19 q3 3 6 0' stroke='#22300f' stroke-width='1.6' fill='none'/></svg>";
+}
+
+/* ---- O CONTEÚDO (exemplo de ciências, 8 a 10 anos). Para reusar a peça numa
+   atividade, troque SÓ este bloco: as coisas que dá para mudar e as rodadas. */
+var VARS=[
+ {k:"luz",   nome:"LUZ",   vals:["no sol","na sombra"]},
+ {k:"agua",  nome:"&Aacute;GUA",  vals:["1 copo","3 copos"]},
+ {k:"terra", nome:"TERRA", vals:["terra comum","terra com adubo"]}
+];
+/* alvo = a coisa que a pergunta desta rodada quer investigar.
+   ini   = como o vaso B já começa (0 = igualzinho ao vaso A).
+   ⚠️ A ESCADA: 1ª rodada monta do zero; 2ª tem uma pegadinha fácil de cair
+   (mexer na luz "de brinde"); 3ª JÁ COMEÇA INJUSTA e ela precisa consertar. */
+var EXP=[
+ {alvo:"luz",   ini:{luz:0,agua:0,terra:0},
+  p:"Queremos descobrir se a <b>LUZ</b> muda o tamanho da planta."},
+ {alvo:"agua",  ini:{luz:0,agua:0,terra:0},
+  p:"Agora a pergunta &eacute; sobre a <b>&Aacute;GUA</b>. Deixe o resto igualzinho."},
+ {alvo:"terra", ini:{luz:1,agua:0,terra:1},
+  p:"Algu&eacute;m montou este teste sobre a <b>TERRA</b> e mudou coisa demais. Conserte."}
+];
+var CONCL={
+ luz:"A planta que ficou <b>na sombra</b> cresceu menos. S&oacute; a luz era diferente: foi a <b>LUZ</b>.",
+ agua:"A planta com <b>3 copos</b> cresceu mais. S&oacute; a &aacute;gua era diferente: foi a <b>&Aacute;GUA</b>.",
+ terra:"A planta na <b>terra com adubo</b> cresceu mais. S&oacute; a terra era diferente: foi a <b>TERRA</b>."
+};
+
+var ri=0;          /* rodada de agora */
+var vasoB={};      /* como está o vaso B */
+var err=0;         /* tropeços nesta rodada: é o que faz o andaime crescer */
+var ger=0;
+var elMsg,elMtx,btCmp,chips={};
+
+function copiaIni(o){ var r={},k; for(k in o){ if(o.hasOwnProperty(k)) r[k]=o[k]; } return r; }
+function nomeDe(k){ var i; for(i=0;i<VARS.length;i++){ if(VARS[i].k===k) return VARS[i].nome; } return k; }
+function difs(){ var l=[],i,k; for(i=0;i<VARS.length;i++){ k=VARS[i].k; if(vasoB[k]) l.push(k); } return l; }
+function sMuda(){ nota(440,.05,.12,"triangle",0); nota(587.33,.07,.10,"triangle",.045); }
+
+function pecaExperimento(){
+  if(!EXP[ri]){ fimExp(); return; }
+  var r=EXP[ri], i;
+  vasoB=copiaIni(r.ini); err=0; ger++; chips={};
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/(EXP.length+1)));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O TESTE JUSTO"));
+  c.appendChild(el("div","balao",r.p));
+
+  /* cabeçalho: os dois vasos, do mesmo tamanho — antes do teste ninguém sabe */
+  var cab=el("div","cab");
+  cab.appendChild(el("div","rot",""));
+  cab.appendChild(colunaVaso("VASO A",26,2));
+  cab.appendChild(colunaVaso("VASO B",26,2));
+  c.appendChild(cab);
+
+  for(i=0;i<VARS.length;i++) c.appendChild(linhaVar(VARS[i]));
+
+  elMsg=el("div","msg");
+  var bi=el("div","mbicho",svgBroto());
+  elMtx=el("div","mtexto","");
+  elMsg.appendChild(bi); elMsg.appendChild(elMtx);
+  c.appendChild(elMsg);
+
+  var cx=el("div","cmp");
+  btCmp=el("button","btn trava","");
+  btCmp.onclick=comparar;
+  cx.appendChild(btCmp);
+  c.appendChild(cx);
+  c.appendChild(el("div","hint","Teste "+(ri+1)+" de "+EXP.length+
+                   ". Toque no vaso B para mudar; o vaso A fica sempre igual."));
+  t.appendChild(c);
+  app.appendChild(t);
+  confere();
+}
+
+function colunaVaso(nome,alt,folhas){
+  var d=el("div","colv","");
+  var pl=el("div","planta",svgPlanta(alt,folhas));
+  pl.style.width="44px"; pl.style.height="46px";
+  d.appendChild(pl);
+  d.appendChild(el("b",null,nome));
+  return d;
+}
+
+function linhaVar(v){
+  var l=el("div","lin");
+  l.appendChild(el("div","rot",v.nome));
+  l.appendChild(el("div","fixo",v.vals[0]));
+  var b=el("button","bin","");
+  b.onclick=(function(kk){ return function(){ troca(kk); }; })(v.k);
+  chips[v.k]=b;
+  l.appendChild(b);
+  return l;
+}
+
+function troca(k){
+  vasoB[k]=vasoB[k]?0:1;
+  sMuda();
+  confere();
+}
+
+/* confere() é o coração: redesenha os chips, decide se o teste é justo e
+   escreve o que o mascote está pensando. */
+function confere(){
+  var d=difs(), alvo=EXP[ri].alvo, i,v,b,justo;
+  for(i=0;i<VARS.length;i++){
+    v=VARS[i]; b=chips[v.k];
+    b.className = vasoB[v.k] ? "bin dif" : "bin";
+    b.innerHTML = (vasoB[v.k] ? '<i class="tag">MUDOU</i>' : '<i class="tag">igual ao A</i>')+
+                  v.vals[vasoB[v.k]?1:0];
+    b.removeAttribute("data-qa");
+  }
+  justo = (d.length===1 && d[0]===alvo);
+
+  if(justo){
+    elMsg.className="msg pode";
+    elMtx.innerHTML="Agora sim: s&oacute; a <b>"+nomeDe(alvo)+"</b> est&aacute; diferente. "+
+                    "D&aacute; para descobrir!";
+    btCmp.className="btn solto";
+    btCmp.innerHTML="Comparar os dois vasos";
+    btCmp.setAttribute("data-qa","1");
+  }else{
+    elMsg.className="msg";
+    if(d.length===0){
+      elMtx.innerHTML="Os dois vasos est&atilde;o iguaizinhos. Se nada &eacute; diferente, "+
+                      "<b>o que a gente vai comparar?</b>";
+    }else if(d.length===1){
+      elMtx.innerHTML="S&oacute; uma coisa mudou, muito bem. Mas a pergunta &eacute; sobre a "+
+                      "<b>"+nomeDe(alvo)+"</b>&hellip; e a "+nomeDe(alvo)+" est&aacute; igual nos dois. "+
+                      "<b>E se a diferen&ccedil;a fosse a&iacute;?</b>";
+    }else{
+      elMtx.innerHTML="Espere: mudei a <b>"+nomeDe(d[0])+"</b> e a <b>"+nomeDe(d[1])+"</b>. "+
+                      "Se a planta crescer, <b>como vou saber quem fez isso?</b>";
+    }
+    btCmp.className="btn trava";
+    btCmp.innerHTML="Comparar (ainda n&atilde;o d&aacute;)";
+    /* o alvo que serve AGORA, só para o auditor-jogador */
+    marcaProximo(d,alvo);
+  }
+}
+
+/* qual chip deixaria o teste justo, se tocado agora */
+function proximoChip(d,alvo){
+  var i;
+  for(i=0;i<d.length;i++){ if(d[i]!==alvo) return chips[d[i]]; }  /* desfaz a mudança sobrando */
+  if(d.length===0) return chips[alvo];                            /* falta mudar o alvo */
+  return chips[alvo];
+}
+function marcaProximo(d,alvo){
+  var b=proximoChip(d,alvo);
+  if(b) b.setAttribute("data-qa","1");
+}
+
+/* A TRAVA NÃO É CASTIGO: quem toca no botão travado recebe a pergunta de novo,
+   e o andaime CRESCE a cada tentativa. Nunca "errado", nunca X vermelho. */
+function comparar(){
+  var d=difs(), alvo=EXP[ri].alvo;
+  if(d.length===1 && d[0]===alvo){ sCerto(); expResultado(); return; }
+  sErro();
+  err++;
+  if(err===1){
+    mostraDica("Um teste s&oacute; conta a verdade quando <b>uma coisa</b> est&aacute; "+
+               "diferente. Quantas est&atilde;o com a etiqueta <b>MUDOU</b>?");
+  }else if(err===2){
+    mostraDica("Conte as etiquetas <b>MUDOU</b>: precisa sobrar <b>uma s&oacute;</b>, "+
+               "e ela tem que ser a <b>"+nomeDe(alvo)+"</b>.");
+  }else{
+    var b=proximoChip(d,alvo), qual=null, i;
+    for(i=0;i<VARS.length;i++){ if(chips[VARS[i].k]===b) qual=VARS[i]; }
+    if(qual){
+      mostraDica("Toque em <b>"+qual.nome+"</b> no vaso B: assim s&oacute; a <b>"+
+                 nomeDe(alvo)+"</b> fica diferente.");
+      b.className=b.className+" aponta";
+    }
+  }
+}
+
+/* A TELA DO RESULTADO — o payoff: agora as plantas ficam diferentes, e a frase
+   diz POR QUE dá para concluir (foi a única coisa diferente). */
+function expResultado(){
+  var r=EXP[ri];
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round((ri+0.5)*100/(EXP.length+1)));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O QUE ACONTECEU"));
+  c.appendChild(el("div","balao","Teste justo: s&oacute; a <b>"+nomeDe(r.alvo)+
+                   "</b> estava diferente."));
+  var cab=el("div","cab");
+  cab.appendChild(el("div","rot",""));
+  cab.appendChild(colunaVaso("VASO A",30,3));
+  cab.appendChild(colunaVaso("VASO B",14,1));
+  c.appendChild(cab);
+  c.appendChild(el("div","resfr",CONCL[r.alvo]));
+  var cx=el("div","cmp");
+  var b=el("button","btn solto","Continuar");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){
+    ri++;
+    if(ri<EXP.length) pecaExperimento();
+    /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
+       que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
+    else mostraBanner("<b>Cientista de verdade!</b><br>Uma coisa de cada vez.", fimExp);
+  };
+  cx.appendChild(b);
+  c.appendChild(cx);
+  c.appendChild(el("div","hint","Se duas coisas estivessem diferentes, esta resposta "+
+                   "n&atilde;o valeria nada."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fimExp(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; montou <b>"+EXP.length+"</b> testes justos."));
+  var b=el("button","btn solto","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaExperimento(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Mudou duas coisas? A&iacute; ningu&eacute;m sabe quem causou."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaExperimento();
+</script>
+</body></html>

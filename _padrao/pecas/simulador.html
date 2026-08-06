@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — simulador</title>
+<!-- ============================================================
+     PEÇA: SIMULADOR (um controle deslizante que muda o mundo de verdade)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     A mecânica que o Marcos mais elogiou ("A ÁGUA SOBE", da atividade de
+     história). O que faz dela um SIMULADOR e não uma figura bonita:
+       · o mundo REAGE — a água sobe, o barco sobe junto, a chuva engrossa,
+         o céu escurece e a ponte fica molhada. Figura que só gira não é
+         simulador (armadilha registrada no _padrao/DINAMICAS.md);
+       · o gesto EXPÕE o conceito — a pergunta ("em que número a água
+         encosta na ponte?") NÃO tem resposta sem mexer no controle. Não é
+         quiz com enfeite: é medir mexendo;
+       · o ponto onde a água encosta na ponte é MEDIDO (a ponte mora em
+         44,5% da altura, que é exatamente a altura da água no nível 5) —
+         nunca "a olho";
+       · duas portas de entrada: o controle deslizante (dedo/mouse/setas do
+         teclado, que o <input range> já faz sozinho) E os botões grandes
+         de mais/menos, para quem não consegue arrastar;
+       · funciona no mudo: todo som tem gêmeo visual, e o aviso da ponte é
+         TEXTO, não só a mudança de cor;
+       · nunca trava: no 3º erro a resposta é revelada e a peça anda;
+       · `data-qa` no controle (o valor que a fase espera) e na resposta
+         certa — é assim que o auditor-jogador termina a peça sozinho.
+     ⚠️ Numa atividade de verdade a PAISAGEM é arte de IA e o CSS anima só o
+        que se mexe (a água, o barco). Aqui ela é desenhada com divs para a
+        peça rodar sozinha, sem depender de imagem nenhuma.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ 13px de folga do enunciado: o balao tem sombra e nenhuma margem por
+   baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.cena{position:relative;width:100%;max-width:400px;height:104px;margin:13px auto 0;
+      border-radius:14px;overflow:hidden;background:#7fb6d6;
+      box-shadow:0 5px 14px rgba(0,0,0,.3);
+      -webkit-transition:background .25s;transition:background .25s}
+.morro{position:absolute;left:-6%;bottom:0;width:52%;height:40%;background:#5aa04a;
+       border-radius:50% 50% 0 0}
+.morro2{position:absolute;right:-8%;bottom:0;width:46%;height:32%;background:#4d8f40;
+        border-radius:50% 50% 0 0}
+/* a PONTE mora em 44,5% da altura porque e essa a altura da agua no nivel 5.
+   O ponto foi MEDIDO na figura, nao estimado (armadilha do simulador).    */
+.ponte{position:absolute;left:52%;right:4%;bottom:44.5%;height:9px;background:#a9793f;
+       border-radius:3px;box-shadow:0 2px 0 #7d5729}
+.ponte.molhada{background:#7d5729;box-shadow:0 0 0 3px rgba(255,255,255,.45)}
+.pilar{position:absolute;bottom:0;width:9px;background:#a9793f}
+.pilarE{left:56%;height:44.5%}
+.pilarD{right:12%;height:44.5%}
+/* a AGUA: a altura dela e o coracao do simulador — muda a cada passo. */
+.agua{position:absolute;left:0;right:0;bottom:0;height:12%;background:#2f7fb8;
+      border-top:3px solid #6fc0e8;
+      -webkit-transition:height .28s;transition:height .28s}
+.barco{position:absolute;left:10%;width:34px;height:16px;bottom:12%;background:#f4efe6;
+       border-radius:0 0 14px 14px;border-bottom:4px solid #c9bda6;
+       -webkit-transition:bottom .28s;transition:bottom .28s}
+.vela{position:absolute;left:14px;bottom:14px;width:0;height:0;
+      border-left:3px solid transparent;border-right:12px solid #e35b4b;border-bottom:20px solid transparent}
+.gota{position:absolute;top:-12px;width:3px;height:12px;border-radius:3px;background:rgba(255,255,255,.85);
+      -webkit-animation:cai 1s linear infinite;animation:cai 1s linear infinite}
+@-webkit-keyframes cai{0%{-webkit-transform:translateY(0)}100%{-webkit-transform:translateY(120px)}}
+@keyframes cai{0%{transform:translateY(0)}100%{transform:translateY(120px)}}
+/* a regua: 8 riscos na borda. Nada de texto aqui dentro (fundo que muda de
+   cor + letra = contraste imprevisivel); o numero mora na leitura, embaixo. */
+.regua{position:absolute;left:0;top:6px;bottom:6px;width:14px;background:rgba(0,0,0,.22)}
+.risco{position:absolute;left:2px;width:10px;height:3px;border-radius:2px;background:rgba(255,255,255,.55)}
+.risco.on{background:#ffd54a;height:5px;left:0;width:14px}
+/* a barra de controle: botao grande, controle, botao grande */
+.ctrl{display:block;text-align:center;margin-top:8px;white-space:nowrap}
+.zbt{display:inline-block;vertical-align:middle;width:52px;min-width:52px;height:48px;padding:0;
+     font-size:26px;line-height:44px}
+.rng{display:inline-block;vertical-align:middle;width:56%;max-width:250px;height:44px;margin:0 6px;
+     background:transparent;-webkit-appearance:none;appearance:none;cursor:pointer}
+.rng::-webkit-slider-runnable-track{height:14px;border-radius:9px;background:#6b5a45;border:2px solid #cbbfa8}
+.rng::-webkit-slider-thumb{-webkit-appearance:none;width:34px;height:34px;border-radius:50%;
+     background:#ffd54a;border:3px solid #7a5a10;margin-top:-12px}
+.rng::-moz-range-track{height:14px;border-radius:9px;background:#6b5a45;border:2px solid #cbbfa8}
+.rng::-moz-range-thumb{width:32px;height:32px;border-radius:50%;background:#ffd54a;border:3px solid #7a5a10}
+/* a LEITURA: o gemeo em TEXTO do que a figura esta mostrando. E ela que faz
+   a peca funcionar no mudo e para quem nao distingue as cores da agua.   */
+.leitura{background:#fffdf6;color:#221a12;border-radius:14px;padding:8px 12px;margin:8px auto 0;
+         font-size:14px;font-weight:700;line-height:1.25;max-width:400px}
+.leitura b{color:#1f6b12}
+.leitura.encostou{background:#d6f5c8;box-shadow:0 0 0 3px #7cb464}
+/* as respostas ficam lado a lado: e a unica forma de a tela baixa do PC da
+   escola caber tudo sem esconder o que se toca. */
+.opt{display:inline-block;width:auto;min-width:84px;max-width:none;margin:9px 5px;padding:13px 12px;
+     font-size:17px;font-weight:800}
+.opt.fora{opacity:.72;text-decoration:line-through}
+.opt.rev{background:#d6f5c8;box-shadow:0 0 0 3px #ffd54a,0 4px 0 #7cb464}
+.opt.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): tudo encolhe junto para que
+   NADA que se toca saia da area visivel. */
+@media(max-height:500px){
+  .balao{font-size:15px;padding:10px 14px}
+  .cena{height:78px}
+  .leitura{margin-top:6px;padding:6px 10px}
+  .opt{margin:6px 5px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* O RIO E A CHUVA — a criança mexe na chuva (0 a 8) e o mundo responde: a
+   água sobe, o barco sobe junto, as gotas engrossam, o céu escurece e a
+   ponte fica molhada. A pergunta ("em que número a água ENCOSTA na ponte?")
+   não tem resposta possível sem mexer: é isso que faz o gesto ensinar.
+
+   Trocar para outro conteúdo = trocar o que a barra controla e o que
+   reage (o sol e a sombra, a comida e o crescimento, o volume e o som).
+   O esqueleto — reagir a cada passo, ler em texto o que mudou, perguntar
+   algo que só o experimento responde — continua igual. */
+var MAXC=8;          /* a chuva vai de 0 a 8 */
+var NIVEL_PONTE=5;   /* a agua encosta na ponte neste passo (medido) */
+var BASE=12, PASSO=6.5;   /* altura da agua, em % da cena: BASE + PASSO*chuva */
+
+var telaAtual=null, barraP=null, ger=0;
+var chuva=0, mexeu=0, respondido=false, erros=0;
+var aguaEl=null, barcoEl=null, cenaEl=null, ponteEl=null, leituraEl=null, rngEl=null;
+var gotas=[], riscos=[];
+
+var DICAS=[
+  "Mexa a chuva <b>devagar</b>, de um em um, e olhe a &#225;gua chegando perto da ponte.",
+  "Quando a &#225;gua encosta, o aviso l&#225; embaixo muda e a ponte fica <b>molhada</b>. Em que n&#250;mero isso acontece?",
+  "&#201; esta! Toque nela que eu sigo com voc&#234;."
+];
+
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+
+function pecaSimulador(){
+  ger++; limpa();
+  chuva=0; mexeu=0; respondido=false; erros=0; gotas=[]; riscos=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O RIO E A CHUVA"));
+  c.appendChild(el("div","balao","Mexa a chuva. Em que n&#250;mero a &#225;gua <b>encosta na ponte</b>?"));
+
+  /* ---- o mundo ---- */
+  cenaEl=el("div","cena");
+  var i,g,r;
+  for(i=0;i<MAXC;i++){
+    g=el("div","gota","");
+    g.style.left=(6+i*11)+"%";
+    g.style.webkitAnimationDelay=(i*0.11)+"s";
+    g.style.animationDelay=(i*0.11)+"s";
+    g.style.display="none";
+    cenaEl.appendChild(g); gotas.push(g);
+  }
+  cenaEl.appendChild(el("div","morro",""));
+  cenaEl.appendChild(el("div","morro2",""));
+  var rg=el("div","regua","");
+  for(i=0;i<=MAXC;i++){
+    r=el("div","risco","");
+    r.style.bottom="calc("+(BASE+PASSO*i)+"% - 2px)";
+    rg.appendChild(r); riscos.push(r);
+  }
+  cenaEl.appendChild(rg);
+  cenaEl.appendChild(el("div","pilar pilarE",""));
+  cenaEl.appendChild(el("div","pilar pilarD",""));
+  ponteEl=el("div","ponte",""); cenaEl.appendChild(ponteEl);
+  aguaEl=el("div","agua",""); cenaEl.appendChild(aguaEl);
+  barcoEl=el("div","barco",""); barcoEl.appendChild(el("div","vela","")); cenaEl.appendChild(barcoEl);
+  c.appendChild(cenaEl);
+
+  /* ---- o controle: as DUAS portas (deslizar e os botoes grandes) ---- */
+  var ctrl=el("div","ctrl");
+  var menos=el("button","btn zbt","&#8722;");
+  menos.onclick=function(){ passo(-1); };
+  rngEl=document.createElement("input");
+  rngEl.type="range"; rngEl.className="rng";
+  rngEl.min="0"; rngEl.max=""+MAXC; rngEl.step="1"; rngEl.value="0";
+  /* data-qa = o valor que a fase espera. E so para o auditor-jogador
+     (_qa/jogador.js), que nao sabe arrastar um controle: ele percorre as
+     posicoes uma a uma e para nesta. */
+  rngEl.setAttribute("data-qa",""+NIVEL_PONTE);
+  rngEl.setAttribute("aria-label","quanta chuva");
+  rngEl.oninput=function(){ poeChuva(parseInt(rngEl.value,10)); };
+  rngEl.onchange=function(){ poeChuva(parseInt(rngEl.value,10)); };
+  var mais=el("button","btn zbt","+");
+  mais.onclick=function(){ passo(1); };
+  ctrl.appendChild(menos); ctrl.appendChild(rngEl); ctrl.appendChild(mais);
+  c.appendChild(ctrl);
+
+  leituraEl=el("div","leitura","");
+  c.appendChild(leituraEl);
+
+  /* ---- a pergunta que so o experimento responde ---- */
+  var box=el("div","opts");
+  var lista=baguncar([3,5,7]);
+  for(i=0;i<lista.length;i++) box.appendChild(fazResposta(lista[i]));
+  c.appendChild(box);
+  c.appendChild(el("div","hint","Arraste a bolinha, ou use os bot&#245;es &#8722; e +."));
+  t.appendChild(c); app.appendChild(t);
+  poeChuva(0);
+  mexeu=0;   /* o desenho inicial nao conta como "a crianca mexeu" */
+}
+
+function fazResposta(n){
+  var o=el("div","opt",""+n);
+  o._n=n;
+  /* a certa publica data-qa="1" — so para o auditor-jogador conseguir
+     terminar a peca. A crianca nao ve diferenca nenhuma. */
+  o.setAttribute("data-qa",(n===NIVEL_PONTE)?"1":"0");
+  o.onclick=function(){ responde(o); };
+  return o;
+}
+
+/* ---------- O MUNDO REAGE (o coracao do simulador) ---------- */
+function passo(d){
+  var n=chuva+d;
+  if(n<0) n=0;
+  if(n>MAXC) n=MAXC;
+  if(n===chuva){ sTap(); return; }
+  if(rngEl) rngEl.value=""+n;
+  poeChuva(n);
+}
+function poeChuva(n){
+  if(!viva()||!aguaEl) return;
+  if(isNaN(n)) n=0;
+  if(n<0) n=0;
+  if(n>MAXC) n=MAXC;
+  var antes=chuva;
+  chuva=n; mexeu++;
+  var alt=BASE+PASSO*chuva;
+  aguaEl.style.height=alt+"%";
+  barcoEl.style.bottom=(alt-1)+"%";
+  /* a chuva: quantas gotas caem e quanto o ceu escurece */
+  var i;
+  for(i=0;i<gotas.length;i++) gotas[i].style.display=(i<chuva)?"block":"none";
+  var esc=Math.round(127-chuva*7);
+  cenaEl.style.background="rgb("+esc+","+(esc+55)+","+(esc+87)+")";
+  for(i=0;i<riscos.length;i++) riscos[i].className=(i===chuva)?"risco on":"risco";
+  /* a ponte molhada + a leitura em TEXTO (o gemeo visual do que mudou) */
+  var enc=(chuva>=NIVEL_PONTE);
+  ponteEl.className=enc?"ponte molhada":"ponte";
+  leituraEl.className=enc?"leitura encostou":"leitura";
+  if(chuva<NIVEL_PONTE)
+    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua ainda est&#225; ABAIXO da ponte.";
+  else if(chuva===NIVEL_PONTE)
+    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua ENCOSTOU na ponte!";
+  else
+    leituraEl.innerHTML="Chuva <b>"+chuva+"</b> &#183; a &#225;gua passou ACIMA da ponte.";
+  if(chuva!==antes) nota(220+chuva*42,.09,.09,"sine",0);
+  if(chuva===NIVEL_PONTE&&antes!==NIVEL_PONTE) nota(660,.12,.10,"triangle",.06);
+  if(barraP&&!respondido) barraP.style.width=Math.min(60,mexeu*10)+"%";
+}
+
+/* ---------- a pergunta ---------- */
+function responde(o){
+  if(respondido) return;
+  /* ⭐ "so se responde MEXENDO": antes de experimentar, o toque nao vale
+     como erro — vira um convite. Nada de punir quem ainda nem brincou. */
+  if(mexeu<3){
+    sTap();
+    mostraDica("Primeiro <b>mexa a chuva</b> e olhe o rio subir. A resposta est&#225; na figura.");
+    return;
+  }
+  if(o._n===NIVEL_PONTE){
+    respondido=true;
+    o.className="opt ok";
+    sCerto();
+    if(barraP) barraP.style.width="100%";
+    apagaDica();
+    var g=ger;
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      mostraBanner("Isso! Com chuva <b>"+NIVEL_PONTE+"</b> a &#225;gua encosta na ponte.",fimDaPeca);
+    },460);
+    return;
+  }
+  /* ERRO NAO PUNE: som grave curto, a resposta treme e sai da frente, e o
+     andaime CRESCE. Nunca um X vermelho, nunca a palavra "errou". */
+  sErro(); erros++;
+  o.className="opt treme";
+  desmarca(o);
+  mostraDica(DICAS[Math.min(erros,DICAS.length)-1]);
+  if(erros>=3) revela();
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele mexeria numa tela que ja saiu. */
+function desmarca(o){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(o,"ok")) o.className="opt fora";
+  },340);
+}
+/* 3º erro: a certa acende e a crianca segue. A peca nunca prende ninguem. */
+function revela(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="opt rev";
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+function fimDaPeca(){
+  ger++; limpa();
+  aguaEl=null; barcoEl=null; cenaEl=null; ponteEl=null; leituraEl=null; rngEl=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; descobriu <b>mexendo</b>: quanto mais chuva, mais alto o rio."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=pecaSimulador;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a SIMULADOR: o mundo reage a cada passo do controle."));
+  t.appendChild(c); app.appendChild(t);
+}
+pecaSimulador();
+</script>
+</body></html>

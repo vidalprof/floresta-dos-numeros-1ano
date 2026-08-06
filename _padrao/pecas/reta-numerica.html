@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — cravar na reta numérica</title>
+<!-- ============================================================
+     PEÇA: CRAVAR NA RETA NUMÉRICA
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     DE ONDE ELA VEM: `_pesquisa/REGRAS-INTERATIVIDADE.md`, bloco (B), item 5 —
+     "Cravar na reta numérica. Toca onde fica o 62. UM DOS MELHORES PREDITORES
+     DO DESEMPENHO MATEMÁTICO, e o erro absoluto vira nota contínua limpa para o
+     professor". A casa nunca tinha montado.
+
+     POR QUE ENSINA: aqui não há alternativa para reconhecer. A criança precisa
+     construir a magnitude — onde 60 mora entre 0 e 100 — e isso é o que a
+     pesquisa liga ao desempenho posterior. E o que ela devolve não é
+     "certo/errado": é uma DISTÂNCIA. Duas crianças que "erraram" podem estar a
+     2 e a 40 passos, e isso é informação de verdade para o professor.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · O ALVO NÃO É UM PIXEL: a faixa inteira recebe o toque (78px de altura,
+         de ponta a ponta), há TOLERÂNCIA por rodada e ninguém precisa acertar o
+         pixel. Reta que exige o pixel é loteria motora, não matemática.
+       · MOSTRA O QUANTO ERROU: a marca da criança e a certa ficam lado a lado
+         na mesma reta, e a frase diz a distância em passos. Sem isso o erro não
+         vira aprendizado nenhum.
+       · O ANDAIME DESVANECE (exemplo resolvido que desvanece, [FORTE]): errou
+         longe, a próxima reta ganha mais traços; cravou bem, a reta perde os
+         traços de novo. O apoio some sozinho, que é o ponto da técnica.
+       · TRÊS CAMINHOS: mouse (arrasta), dedo (arrasta) e TOQUE simples. E ainda
+         o TECLADO DE VERDADE (setas + Enter) — no PC da escola tem teclado, e
+         essa é a segunda porta da regra da casa.
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular); ele
+         mora no `touchmove`.
+       · GUARDA DO MOUSE FANTASMA (`ultimoToque`): o celular dispara mouse e
+         clique FALSOS depois do toque, e eles remexiam a marca já escolhida.
+       · NUNCA TRAVA: a rodada é de um tiro só e sempre fecha com "Continuar",
+         acertando ou não. Ninguém fica preso tentando cravar o pixel.
+       · `data-qa="1"` num alvo de cada vez (a reta, depois o botão) e o valor
+         esperado em `data-alvo`, porque o `element.click()` do auditor não tem
+         coordenada nenhuma — é a mesma convenção do caça-palavras e do
+         simulador. Dedo e mouse nunca caem nesse caminho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: RETA NUMÉRICA ----------------
+   ⚠️ margem propria de 13px: `.balao + *` tem a mesma forca que `.reta` e perde
+   por vir antes no arquivo (regra 9 do _qa/leiaute.js, cobrada duas vezes). */
+.reta{position:relative;max-width:430px;height:78px;margin:13px auto 0;border-radius:16px;
+      background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.22)}
+/* a faixa INTEIRA recebe o toque: o alvo nunca e um pixel */
+.zona{cursor:pointer}
+/* trilho interno: guarda 18px de folga nas pontas para o "0" e o "100" nao
+   sairem pela borda da caixa */
+.rint{position:absolute;left:18px;right:18px;top:0;bottom:0}
+.rlinha{position:absolute;left:0;right:0;top:34px;height:7px;border-radius:4px;background:#f4efe6}
+.rtick{position:absolute;top:28px;width:3px;height:19px;margin-left:-1px;border-radius:2px;
+       background:rgba(255,255,255,.55)}
+.rtick.gr{top:22px;height:31px;width:4px;margin-left:-2px;background:#f4efe6}
+.rnum{position:absolute;top:55px;font-size:13px;font-weight:800;color:#f4efe6;
+      -webkit-transform:translateX(-50%);transform:translateX(-50%)}
+/* a MIRA: onde a crianca vai cravar, antes de confirmar */
+.rmira{position:absolute;top:6px;width:5px;height:63px;margin-left:-2px;border-radius:3px;
+       background:#ffd54a;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
+.rmira:after{content:"";position:absolute;left:-9px;top:-9px;width:23px;height:23px;border-radius:50%;
+             background:#ffd54a;box-shadow:0 0 0 3px rgba(0,0,0,.22)}
+/* as duas marcas do resultado, LADO A LADO na mesma reta */
+.marc{position:absolute;top:6px;width:5px;height:63px;margin-left:-2px;border-radius:3px}
+.marc.mvoce{background:#ffd54a}
+.marc.mcerto{background:#59c24b}
+.chip{position:absolute;font-size:12px;font-weight:800;padding:3px 7px;border-radius:9px;
+      white-space:nowrap;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
+.chip.mvoce{background:#ffd54a;color:#33280a;top:0}
+.chip.mcerto{background:#d6f5c8;color:#123f08;top:53px}
+/* o resultado ja nasce com altura: assim nada PULA quando o texto entra */
+.res{display:block;min-height:52px;margin-top:10px;font-size:15px;font-weight:700;line-height:1.35}
+.res b{color:#ffd54a}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+.placar{font-size:15px;font-weight:700;margin-bottom:6px}
+.placar b{color:#ffd54a}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (8 a 10 anos). Ao copiar a peça troque APENAS este
+   bloco. As regras do conteúdo:
+     1. a escada é DA RETA, não do número: primeiro 0–10 com todos os traços,
+        depois 0–100 com traços de 10, depois 0–100 só com as pontas;
+     2. `tol` é a tolerância em passos — nunca zero, senão vira loteria motora;
+     3. `ap1` e `ap2` são os traços que o ANDAIME acrescenta quando ela erra
+        longe, e que somem de novo quando ela crava bem (desvanecer).       */
+var RETAS=[
+ {selo:"A RÉGUA DOS PASSOS", min:0, max:10, alvo:7, tol:1, traco:1, num:[0,5,10],
+  ap1:[2,8], ap2:[1,3,4,6,9],
+  bal:"Onde fica o <b>7</b>?",
+  dica:"Conte os tracinhos a partir do 0: 1, 2, 3..."},
+ {selo:"A TRILHA DE 100", min:0, max:100, alvo:60, tol:5, traco:10, num:[0,50,100],
+  ap1:[25,75], ap2:[10,20,30,40,70,80,90],
+  bal:"Onde fica o <b>60</b>?",
+  dica:"O 50 &#233; o meio. O 60 fica um pouquinho depois do meio."},
+ {selo:"SÓ AS PONTAS", min:0, max:100, alvo:25, tol:8, traco:0, num:[0,100],
+  ap1:[50], ap2:[20,40,60,80],
+  bal:"Onde fica o <b>25</b>?",
+  dica:"Ache o meio (50). O 25 &#233; o meio do meio."}
+];
+
+var rodR=0;            /* rodada da vez */
+var apoio=0;           /* quantos degraus de andaime a reta esta mostrando */
+var fase="mirar";      /* mirar -> resultado */
+var pos=null;          /* onde a mira esta, em passos (numero continuo) */
+var ERROS=[];          /* a distancia de cada rodada — a medida do professor */
+var elReta=null, elInt=null, elMira=null, elRes=null, elBtn=null, barraP=null, telaA=null, ger=0;
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA: o celular dispara mousedown/mouseup/click
+   FALSOS logo depois do toque; sem este carimbo eles remexiam a marca que a
+   crianca acabara de escolher. Defeito pego DUAS vezes pelo Marcos.       */
+var ultimoToque=0, fimArrasto=0, pegouReta=false, movimentou=false, mx0=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function sPerto(){ nota(659.25,.10,.15,"triangle",0); nota(880,.13,.14,"triangle",.075); }
+
+function pecaReta(){
+  limpa(); apagaDica(); ger++;
+  fase="mirar"; pos=null; elMira=null; pegouReta=false; movimentou=false;
+  var R=RETAS[rodR], i;
+  var t=el("div","tela"); telaA=t;
+  setProg(t,Math.round(rodR*100/RETAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.bal));
+
+  elReta=el("div","reta zona");
+  elReta.setAttribute("data-alvo",R.alvo);   /* so o auditor le isto (ver cliqueReta) */
+  elInt=el("div","rint");
+  elInt.appendChild(el("div","rlinha",""));
+  elReta.appendChild(elInt);
+  desenhaTracos();
+  ligaReta();
+  c.appendChild(elReta);
+
+  elRes=el("div","res","");
+  c.appendChild(elRes);
+  elBtn=el("button","btn","CRAVAR AQUI");
+  elBtn.onclick=cravar;
+  c.appendChild(elBtn);
+  c.appendChild(el("div","hint","Toque na reta (ou arraste). D&#225; para usar as setas do teclado e o Enter."));
+  t.appendChild(c); app.appendChild(t);
+
+  /* A SEGUNDA PORTA: o teclado de verdade. No PC da escola tem teclado e a
+     crianca vai usar; no celular, nao tem. Nunca so uma porta.            */
+  document.onkeydown=teclou;
+  marcaVez();
+}
+
+/* ---------- a reta ---------- */
+function desenhaTracos(){
+  var R=RETAS[rodR], marcados=[], i, v;
+  for(i=0;i<R.num.length;i++) marcados.push(R.num[i]);
+  if(apoio>=1) for(i=0;i<R.ap1.length;i++) marcados.push(R.ap1[i]);
+  if(apoio>=2) for(i=0;i<R.ap2.length;i++) marcados.push(R.ap2[i]);
+  if(R.traco>0)
+    for(v=R.min;v<=R.max;v+=R.traco) if(temNa(marcados,v)<0) tracoEm(v,false);
+  for(i=0;i<marcados.length;i++) tracoEm(marcados[i],true);
+}
+function temNa(lista,v){ var i; for(i=0;i<lista.length;i++) if(lista[i]===v) return i; return -1; }
+function tracoEm(v,grande){
+  var d=el("div",grande?"rtick gr":"rtick");
+  d.style.left=pct(v)+"%";
+  elInt.appendChild(d);
+  if(grande){
+    var n=el("div","rnum",""+v);
+    n.style.left=pct(v)+"%";
+    elInt.appendChild(n);
+  }
+}
+function pct(v){
+  var R=RETAS[rodR];
+  return (v-R.min)*100/(R.max-R.min);
+}
+
+/* ---------- as TRÊS portas de entrada da mesma reta ----------
+   ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart MATA o toque
+   no celular (armadilha registrada no _padrao/DINAMICAS.md).             */
+function ligaReta(){
+  elReta.onclick=cliqueReta;
+  elReta.onmousedown=mouseReta;
+  elReta.addEventListener("touchstart",toqueReta,false);
+}
+function cliqueReta(ev){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no toque */
+  var v=valorDoEvento(ev);
+  /* ⚠️ SO PARA O AUDITOR-JOGADOR: o `element.click()` do robo nao carrega
+     coordenada nenhuma (clientX = 0). A tela publica em `data-alvo` o valor
+     que a fase espera — mesma convencao do caca-palavras e do simulador.
+     Dedo e mouse NUNCA caem aqui: a reta comeca a uns 30px da borda.     */
+  if(v===null) v=Number(elReta.getAttribute("data-alvo"));
+  poeMira(v,true);
+}
+function mouseReta(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  pegouReta=true; movimentou=false; mx0=ev.clientX;
+}
+function toqueReta(ev){
+  ultimoToque=agora();
+  var d=ev.touches[0]; if(!d) return;
+  pegouReta=true; movimentou=false; mx0=d.clientX;
+  poeMira(valorDeX(d.clientX),true);   /* o dedo ja mostra onde encostou */
+}
+/* ⚠️ NUNCA `preventDefault` no touchstart acima. Ele mora no touchmove, e so
+   enquanto a crianca esta mesmo arrastando. */
+function moveReta(x){
+  if(!pegouReta) return;
+  if(!movimentou&&Math.abs(x-mx0)<8) return;
+  movimentou=true;
+  poeMira(valorDeX(x),false);
+}
+document.onmousemove=function(ev){ if(souDedo()) return; moveReta(ev.clientX); };
+document.onmouseup=function(){
+  if(souDedo()) return;
+  if(pegouReta&&movimentou) fimArrasto=agora();
+  pegouReta=false; movimentou=false;
+};
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegouReta) return;
+  var d=ev.touches[0]; if(!d) return;
+  moveReta(d.clientX);
+  if(movimentou) ev.preventDefault();   /* so aqui, e so arrastando de verdade */
+},{passive:false});
+document.addEventListener("touchend",function(){
+  ultimoToque=agora();
+  if(pegouReta&&movimentou) fimArrasto=agora();
+  pegouReta=false; movimentou=false;
+},false);
+
+function valorDoEvento(ev){
+  if(!ev) return null;
+  if(!ev.clientX&&!ev.clientY) return null;   /* clique sem coordenada = robo */
+  return valorDeX(ev.clientX);
+}
+function valorDeX(x){
+  var R=RETAS[rodR], r=elInt.getBoundingClientRect();
+  var p=(x-r.left)/r.width;
+  if(p<0) p=0; if(p>1) p=1;
+  return R.min+p*(R.max-R.min);
+}
+function poeMira(v,comSom){
+  if(fase!=="mirar") return;
+  var R=RETAS[rodR];
+  if(v<R.min) v=R.min; if(v>R.max) v=R.max;
+  pos=v;
+  if(!elMira){ elMira=el("div","rmira",""); elInt.appendChild(elMira); }
+  elMira.style.left=pct(v)+"%";
+  if(comSom) sTap();
+  if(elBtn) elBtn.innerHTML="CRAVAR NO "+Math.round(pos);
+  marcaVez();
+}
+
+/* A SEGUNDA PORTA: setas do teclado andam de 1 em 1, Enter/espaco crava. */
+function teclou(ev){
+  var k=ev.keyCode||ev.which, R=RETAS[rodR];
+  if(fase==="resultado"){
+    if(k===13||k===32){ ev.preventDefault(); if(elBtn) elBtn.onclick(); }
+    return;
+  }
+  if(k===37||k===39){
+    ev.preventDefault();
+    var p=(pos===null)?(R.min+(R.max-R.min)/2):pos;
+    poeMira(Math.round(p)+(k===39?1:-1),true);
+    return;
+  }
+  if(k===13||k===32){ ev.preventDefault(); cravar(); }
+}
+
+/* ---------- cravar: um tiro por rodada, e a medida e a DISTANCIA ---------- */
+function cravar(){
+  if(fase!=="mirar"){ sTap(); return; }
+  if(pos===null){
+    sTap();
+    mostraDica("Primeiro toque na reta para escolher o lugar. Depois crave.");
+    return;
+  }
+  var R=RETAS[rodR], v=Math.round(pos), err=Math.abs(v-R.alvo);
+  fase="resultado";
+  ERROS.push(err);
+  if(elMira&&elMira.parentNode) elMira.parentNode.removeChild(elMira);
+  elMira=null;
+  /* AS DUAS MARCAS LADO A LADO — e daqui que sai o aprendizado */
+  marca("mvoce",v,"VOC&#202;: "+v);
+  marca("mcerto",R.alvo,"O "+R.alvo+" &#201; AQUI");
+  var lado=(v<R.alvo)?"para a <b>direita</b>":"para a <b>esquerda</b>";
+  if(err<=R.tol){
+    sCerto();
+    elRes.innerHTML="Em cheio! Voc&#234; cravou no <b>"+v+"</b>"+(err?" — s&#243; <b>"+err+"</b> de dist&#226;ncia.":".");
+    if(apoio>0) apoio--;                 /* cravou bem: o apoio DESVANECE */
+  }else if(err<=R.tol*2){
+    sPerto();
+    elRes.innerHTML="Quase! Voc&#234; cravou no <b>"+v+"</b>. Faltaram <b>"+err+"</b> passos "+lado+".";
+  }else{
+    /* ERRO NAO PUNE: mostra a dist&#226;ncia, ensina a estrat&#233;gia e segue. */
+    sErro();
+    elRes.innerHTML="Voc&#234; cravou no <b>"+v+"</b>. O "+R.alvo+" fica <b>"+err+"</b> passos "+lado+".";
+    mostraDica(R.dica);
+    if(apoio<2) apoio++;                 /* errou longe: o apoio CRESCE */
+  }
+  if(barraP) barraP.style.width=Math.round((rodR+1)*100/RETAS.length)+"%";
+  elBtn.innerHTML=(rodR+1>=RETAS.length)?"Ver o resultado":"Pr&#243;xima reta";
+  elBtn.onclick=proxima;
+  marcaVez();
+}
+function marca(cls,v,rotulo){
+  var b=el("div","marc "+cls);
+  b.style.left=pct(v)+"%";
+  elInt.appendChild(b);
+  var ch=el("div","chip "+cls,rotulo);
+  ch.style.left=pct(v)+"%";
+  elInt.appendChild(ch);
+}
+function proxima(){
+  rodR++;
+  if(rodR>=RETAS.length){ fimReta(); return; }
+  pecaReta();
+}
+
+/* ---------- os ajudantes ---------- */
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* data-qa: UM alvo de cada vez, e so para o auditor-jogador (_qa/jogador.js).
+   Antes de mirar, a vez e da RETA; depois de mirar, e do BOTAO.          */
+function marcaVez(){
+  if(elReta) elReta.setAttribute("data-qa",(fase==="mirar"&&pos===null)?"1":"0");
+  if(elBtn) elBtn.setAttribute("data-qa",(fase==="mirar"&&pos===null)?"0":"1");
+}
+
+function fimReta(){
+  limpa(); apagaDica(); ger++;
+  document.onkeydown=null;
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MEDIDOR DE DIST&#194;NCIA"));
+  c.appendChild(el("div","medal",""));
+  /* a MEDIDA CONTINUA, que e o que esta peca tem de melhor para o professor:
+     nao e "acertou/errou", e a que distancia ficou em cada reta.          */
+  var soma=0, i, txt=[];
+  for(i=0;i<ERROS.length;i++){ soma+=ERROS[i]; txt.push(""+ERROS[i]); }
+  var media=ERROS.length?Math.round(soma*10/ERROS.length)/10:0;
+  c.appendChild(el("div","placar","Suas dist&#226;ncias: <b>"+(txt.join(" &#183; ")||"-")+
+                   "</b><br>M&#233;dia: <b>"+media+"</b> passo(s)"));
+  c.appendChild(el("div","balao","Quanto menor a dist&#226;ncia, mais firme est&#225; a sua <b>reta na cabe&#231;a</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){
+  rodR=0; apoio=0; ERROS=[];
+  pecaReta();
+}
+
+pecaReta();
+</script>
+</body></html>

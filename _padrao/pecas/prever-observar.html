@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — prever, observar e comparar (POE)</title>
+<!-- ============================================================
+     PEÇA: PREVER-OBSERVAR-COMPARAR (copiada do _padrao/pecas/MOLDE.html)
+
+     O ciclo, na ordem que a pesquisa manda (REGRAS-INTERATIVIDADE.md, linha
+     "POE"): prever ANTES é falha produtiva (d ≈ 0,43) — a criança se
+     compromete com um palpite, e é esse compromisso que faz a observação
+     virar aprendizado em vez de desenho bonito passando na tela.
+
+     Por isso, aqui:
+       · PREVER não tem certo nem errado. Nenhum som de erro, nenhuma marca
+         vermelha, nenhum "tente de novo": o palpite é ANOTADO e pronto;
+       · a CONCEPÇÃO ERRADA COMUM é NOMEADA em voz alta ANTES de a criança ver
+         o que acontece ("muita gente pensa que...") — é a refutação explícita
+         da pesquisa. Mostrar o certo sem nomear o errado deixa a ideia antiga
+         viva embaixo;
+       · quem faz a coisa acontecer é ela (o botão AMASSAR, o botão DESPEJAR):
+         a mão dela é que dispara o mundo;
+       · e o ciclo TERMINA na comparação explícita "O QUE EU PENSAVA × O QUE EU
+         VI", com o palpite dela escrito lá, do jeito que ela deu. Quem mudou
+         de ideia é elogiado — mudar de ideia olhando é o trabalho do cientista.
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor (o
+     resultado vem em PALAVRAS, não só no desenho), funciona no mudo, andaime
+     que cresce na hora de EXPLICAR (dica -> apoio -> revela), `data-qa` no que
+     o auditor-jogador precisa, nunca trava, e a peça termina numa `.medal`.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ A tela desta peça é LONGA de propósito: enunciado + a bancada desenhada +
+   três palpites (e, no fim, a tabela de comparação). Num celular de 320x568 a
+   última resposta cairia abaixo da dobra e o portão de leiaute reprovaria —
+   com razão: sem rolagem a criança acha que a tela acabou. Com
+   `overflow-y:auto` a tela ROLA de verdade, que é o que ela faz com o dedo. */
+.tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* a bancada onde a coisa acontece. Tudo desenhado em CSS: sem figura de fora,
+   e leve o bastante para o PC da escola. */
+.cena{position:relative;height:186px;max-width:430px;margin:13px auto 0;
+      background:#3a2d20;border:3px solid #5b4830;border-radius:16px;overflow:hidden}
+.cenr{position:absolute;top:150px;font-size:12px;font-weight:800;color:#f4efe6;
+      width:40%;text-align:center}
+.cesq{left:2%}
+.cdir{right:2%}
+/* --- a balança da massinha --- */
+.baviga{position:absolute;left:8%;right:8%;top:52px;height:11px;background:#c9a52f;border-radius:6px;
+        -webkit-transform-origin:50% 50%;transform-origin:50% 50%}
+.baviga.trm{-webkit-animation:bal .9s ease-in-out 1;animation:bal .9s ease-in-out 1}
+@-webkit-keyframes bal{0%{-webkit-transform:rotate(0)}30%{-webkit-transform:rotate(3deg)}
+  60%{-webkit-transform:rotate(-2deg)}100%{-webkit-transform:rotate(0)}}
+@keyframes bal{0%{transform:rotate(0)}30%{transform:rotate(3deg)}
+  60%{transform:rotate(-2deg)}100%{transform:rotate(0)}}
+.bapoio{position:absolute;left:50%;margin-left:-7px;top:58px;width:14px;height:66px;background:#7a5c33}
+.babase{position:absolute;left:28%;right:28%;top:120px;height:12px;background:#7a5c33;border-radius:6px}
+.bapan{position:absolute;top:60px;width:38%;height:11px;background:#c9bda6;border-radius:6px}
+.bapl{left:6%}
+.bapd{right:6%}
+.massa{position:absolute;bottom:11px;left:50%;margin-left:-27px;width:54px;height:54px;
+       background:#b5651d;border-radius:50%;
+       -webkit-transition:all .8s;transition:all .8s}
+.massa.chata{width:100px;height:17px;margin-left:-50px;border-radius:9px}
+.peso{position:absolute;bottom:11px;left:50%;margin-left:-25px;width:50px;height:44px;
+      background:#9aa0aa;border-radius:7px}
+/* --- os dois copos --- */
+.copo{position:absolute;bottom:44px;border:4px solid #cfd6e2;border-top:0;
+      border-radius:0 0 14px 14px;background:rgba(255,255,255,.08);overflow:hidden}
+.copoL{left:9%;width:122px;height:76px}
+.copoA{right:9%;width:66px;height:132px}
+.agua{position:absolute;left:0;right:0;bottom:0;height:0;background:#3f8fd0;
+      -webkit-transition:height .9s;transition:height .9s}
+/* a medida: aparece SÓ na hora de conferir, e vem com o número escrito junto
+   — nunca só o desenho. Fica FORA da cena de propósito: dentro dela ela
+   cairia por cima dos rótulos (medido pelo leiaute, regra do botão sobre
+   texto) e a criança leria duas coisas amontoadas. */
+.medbox{max-width:430px;margin:9px auto 0;font-size:0;text-align:center}
+.medcol{display:inline-block;width:48%;vertical-align:top;font-size:0}
+.med{display:inline-block;width:15px;height:15px;margin:0 2px;background:#3f8fd0;
+     border:2px solid #cfd6e2;border-radius:3px}
+.medn{display:block;font-size:12px;font-weight:800;color:#f4efe6;margin-top:5px}
+/* --- a comparação final: o que eu pensava x o que eu vi --- */
+.cmp{max-width:430px;margin:12px auto 0;text-align:left}
+.cmpl{background:#fffdf6;color:#221a12;border-radius:14px;padding:10px 13px;margin-bottom:9px;
+      box-shadow:0 3px 0 #c9bda6}
+.cmpt{display:block;font-size:12px;font-weight:800;color:#5a4a2a;letter-spacing:.4px}
+.cmpa{display:block;font-size:14px;font-weight:700;margin-top:2px}
+.cmpb{display:block;font-size:14px;font-weight:700;margin-top:6px;color:#1f5b12}
+.cmpm{display:inline-block;margin-top:7px;background:#fff3c9;color:#3a2c07;border-radius:9px;
+      padding:4px 9px;font-size:12px;font-weight:800}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* ⚠️ JANELA BAIXA (1024x420 — o projetor da sala, o PC com muitas barras).
+   Medido pelo `_qa/leiaute.js`: com a altura cheia a ultima resposta ficava
+   abaixo da dobra numa tela que nao rola. Encolhe a letra e a folga, NUNCA o
+   alvo: nada desce de 44px de altura.                                     */
+@media (max-height:560px){
+  #app{padding-top:6px}
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px;font-size:12px}
+  .balao{font-size:15px;padding:9px 14px}
+  .opt{min-height:44px;margin:6px auto;font-size:15px;padding:9px 12px}
+  .cena{height:150px;margin-top:9px}
+  .cenr{top:120px}
+  .hint{font-size:12px;margin-top:6px}
+  .cmpl{padding:8px 11px;margin-bottom:7px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (duas conservações clássicas, 8 a 11 anos). Ao
+   copiar a peça, troque APENAS este bloco. Regras para escolher o caso:
+     · tem que ter uma CONCEPÇÃO ERRADA COMUM de verdade (`errada`) — sem ela
+       o POE vira desenho animado com pergunta;
+     · o resultado tem que caber numa frase curta (`viu`);
+     · e a criança tem que poder DISPARAR o acontecimento com o dedo.      */
+var CASOS=[
+ {sel:"A MASSINHA",
+  cena:"massa",
+  p:"A balan&#231;a est&#225; <b>igual</b> dos dois lados. Se eu amassar a massinha e deixar bem CHATA, o que voc&#234; acha que acontece?",
+  ops:["A balan&#231;a vai pender: a massinha fica mais leve",
+       "A balan&#231;a vai pender: a massinha fica mais pesada",
+       "A balan&#231;a continua IGUAL dos dois lados"],
+  cert:2,
+  errada:"Muita gente da sua idade pensa que a massinha chata fica mais <b>leve</b>, porque ela fica maior e mais fina. Vamos olhar.",
+  botao:"Amassar a massinha",
+  viu:"A balan&#231;a continuou IGUAL: a massinha mudou de forma, mas n&#227;o mudou de quantidade.",
+  q:"Por que a balan&#231;a n&#227;o mexeu?",
+  qc:"Mudou a FORMA, mas a massinha &#233; a mesma",
+  qe:["Porque massinha chata n&#227;o pesa nada",
+      "Porque a balan&#231;a est&#225; presa",
+      "Porque tiramos um peda&#231;o da massinha"],
+  d:["Olhe de novo: tirei ou coloquei massinha em algum momento?",
+     "Nada saiu e nada entrou. S&#243; a forma mudou: de bola virou disco.",
+     "A resposta certa est&#225; acesa: mudou a forma, a massinha &#233; a mesma."]},
+ {sel:"OS DOIS COPOS",
+  cena:"copos",
+  p:"Toda a &#225;gua do copo largo vai para o copo alto e fino. Depois disso, o que voc&#234; acha da <b>quantidade</b> de &#225;gua?",
+  ops:["No copo alto fica MAIS &#225;gua",
+       "No copo alto fica MENOS &#225;gua",
+       "&#201; a MESMA &#225;gua, s&#243; que em outro copo"],
+  cert:2,
+  errada:"Muita gente pensa que no copo alto fica <b>mais</b> &#225;gua, porque a &#225;gua sobe bem alto ali dentro. Vamos medir.",
+  botao:"Despejar no copo alto",
+  viu:"A &#225;gua subiu mais alto, mas s&#227;o os MESMOS 4 copinhos: nada foi tirado nem acrescentado.",
+  q:"Por que d&#225; 4 copinhos nos dois?",
+  qc:"O copo alto &#233; estreito: a mesma &#225;gua sobe mais",
+  qe:["Porque a &#225;gua cresce quando sobe",
+      "Porque o copo alto &#233; mais forte",
+      "Porque uma parte da &#225;gua evaporou"],
+  d:["Compare a LARGURA dos dois copos, n&#227;o a altura.",
+     "No copo estreito a mesma &#225;gua n&#227;o tem para onde se espalhar: ela sobe.",
+     "A resposta certa est&#225; acesa: o copo estreito faz a mesma &#225;gua subir mais."]}
+];
+
+var caso=0;        /* qual caso estamos vendo */
+var PENSEI=[];     /* o palpite da criança, do jeito que ela deu */
+var errE=0;        /* erros da hora de EXPLICAR (o andaime cresce com eles) */
+var ger=0;         /* geracao da tela: mata setTimeout de tela que ja saiu */
+var agindo=false;
+
+/* ============ P — PREVER (não existe certo nem errado aqui) ============ */
+function pecaPrever(){
+  if(caso>=CASOS.length){ telaComparar(); return; }
+  ger++; agindo=false;
+  var f=CASOS[caso];
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(caso*100/(CASOS.length+0.5)));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O QUE VOC&#202; ACHA?"));
+  c.appendChild(el("div","balao",f.p));
+  c.appendChild(montaCena(f,false));
+
+  var lista=[], i;
+  for(i=0;i<f.ops.length;i++) lista.push({txt:f.ops[i], i:i});
+  /* embaralhar sempre: senão ela decora a POSIÇÃO da resposta, e aqui isso
+     seria pior ainda — o palpite dela precisa ser dela mesma. */
+  baguncar(lista);
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++) cx.appendChild(fazPalpite(lista[i],f));
+  c.appendChild(cx);
+  c.appendChild(el("div","hint","N&#227;o d&#225; para errar aqui: &#233; um palpite. Depois a gente olha."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazPalpite(it,f){
+  var o=el("div","opt",it.txt);
+  /* ⭐ NENHUM palpite é "a resposta que serve agora": qualquer um segue. O
+     data-qa existe só para o auditor-jogador saber onde tocar. */
+  o.setAttribute("data-qa","1");
+  o.onclick=function(){
+    if(agindo) return;
+    agindo=true;
+    sTap();                       /* anotou. NUNCA som de erro no palpite. */
+    o.className="opt ok";
+    PENSEI[caso]={txt:it.txt, i:it.i, acertou:(it.i===f.cert)};
+    var ge=ger;
+    setTimeout(function(){ if(ge===ger) telaObservar(); },520);
+  };
+  return o;
+}
+
+/* ============ O — OBSERVAR (com a ideia errada NOMEADA antes) ============ */
+function telaObservar(){
+  ger++; agindo=false; errE=0;
+  var f=CASOS[caso];
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round((caso+0.5)*100/(CASOS.length+0.5)));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","AGORA OLHE"));
+  /* ⭐ A REFUTAÇÃO: a concepção errada comum é dita com todas as letras ANTES
+     de o certo aparecer. Mostrar o certo sem nomear o errado deixa a ideia
+     antiga viva embaixo — a pesquisa é clara nisso. */
+  c.appendChild(el("div","balao",f.errada));
+  c.appendChild(montaCena(f,false));
+  var b=el("button","btn",f.botao);
+  b.style.marginTop="13px";
+  b.id="agirB";
+  b.onclick=function(){ age(f,b); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Toque no bot&#227;o e veja com os seus olhos."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+/* a mão dela é que dispara o mundo */
+function age(f,b){
+  if(agindo) return;
+  agindo=true;
+  b.onclick=null;
+  b.disabled=true;
+  sTap();
+  if(f.cena==="massa"){
+    var m=document.getElementById("cobj");
+    var v=document.getElementById("cviga");
+    if(m) m.className="massa chata";
+    if(v) v.className="baviga trm";
+  }else{
+    var a1=document.getElementById("cag1"), a2=document.getElementById("cag2");
+    if(a1) a1.style.height="0%";
+    if(a2) a2.style.height="86%";
+  }
+  var ge=ger;
+  setTimeout(function(){ if(ge===ger) mostraMedida(f); },1000);
+  setTimeout(function(){ if(ge===ger) perguntaPorque(f); },1500);
+}
+
+/* a conferência em números (o "4 copinhos dos dois lados"): aparece só depois
+   do acontecimento, e vem escrita, nunca só desenhada. */
+function mostraMedida(f){
+  var cena=document.getElementById("cena1");
+  if(!cena||!cena.parentNode) return;
+  var box=el("div","medbox"), i, lado, col;
+  for(lado=0;lado<2;lado++){
+    col=el("div","medcol");
+    for(i=0;i<4;i++) col.appendChild(el("i","med"));
+    col.appendChild(el("b","medn", f.cena==="massa" ? "100 g" : "4 copinhos"));
+    box.appendChild(col);
+  }
+  cena.parentNode.insertBefore(box, cena.nextSibling);
+  nota(660,.12,.12,"triangle",0);
+}
+
+/* ============ E — EXPLICAR (aqui sim tem andaime) ============ */
+function perguntaPorque(f){
+  var c=app.querySelector(".centro");
+  if(!c) return;
+  var b=document.getElementById("agirB");
+  if(b&&b.parentNode) b.parentNode.removeChild(b);
+  c.appendChild(el("div","balao","<b>"+f.viu+"</b>"));
+  var cx=el("div","opts"); cx.id="pergP";
+  var lista=[{txt:f.qc,ok:1}], i;
+  for(i=0;i<f.qe.length;i++) lista.push({txt:f.qe[i],ok:0});
+  baguncar(lista);
+  for(i=0;i<lista.length;i++) cx.appendChild(fazOpcao(lista[i],f));
+  c.appendChild(el("div","selo",f.q));
+  c.appendChild(cx);
+}
+
+function fazOpcao(it,f){
+  var o=el("div","opt",it.txt);
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ responde(o,it.ok,f); };
+  return o;
+}
+
+function responde(o,certa,f){
+  if(o.className.indexOf("no")>=0) return;
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    tranca();
+    var ge=ger;
+    setTimeout(function(){
+      if(ge!==ger) return;
+      caso++;
+      if(caso<CASOS.length) mostraBanner("Boa! Vamos a outro palpite.", pecaPrever);
+      else mostraBanner("Agora vamos comparar o que voc&#234; pensava.", telaComparar);
+    },620);
+    return;
+  }
+  /* ERRO na explicação: não pune. Som grave curto, a opção sai do alcance e o
+     andaime CRESCE (dica -> apoio concreto -> revela e segue). */
+  sErro();
+  o.className="opt no";
+  o.onclick=null;
+  errE++;
+  var acabou=(sobramErradas()===0);
+  mostraDica(acabou ? f.d[f.d.length-1] : f.d[Math.min(errE,f.d.length)-1]);
+  if(errE>=3||acabou) revela();
+}
+
+function sobramErradas(){
+  var cx=document.getElementById("pergP"); if(!cx) return 0;
+  var a=cx.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")!=="1"&&a[i].className.indexOf("no")<0) n++;
+  return n;
+}
+
+/* 3º erro: acende a certa e DEIXA seguir — a peça nunca trava. */
+function revela(){
+  var cx=document.getElementById("pergP"); if(!cx) return;
+  var a=cx.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="opt ok";
+}
+
+function tranca(){
+  var cx=document.getElementById("pergP"); if(!cx) return;
+  var a=cx.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].onclick=null;
+}
+
+/* ============ AS CENAS (CSS puro: nada de figura de fora) ============ */
+function montaCena(f,pronta){
+  var cena=el("div","cena");
+  cena.id="cena1";
+  if(f.cena==="massa"){
+    var pl=el("div","bapan bapl"), pd=el("div","bapan bapd");
+    var m=el("div","massa"); m.id="cobj";
+    if(pronta) m.className="massa chata";
+    pl.appendChild(m);
+    pd.appendChild(el("div","peso"));
+    var v=el("div","baviga"); v.id="cviga";
+    cena.appendChild(v);
+    cena.appendChild(pl); cena.appendChild(pd);
+    cena.appendChild(el("div","bapoio"));
+    cena.appendChild(el("div","babase"));
+    cena.appendChild(el("div","cenr cesq","MASSINHA"));
+    cena.appendChild(el("div","cenr cdir","PESO DE 100 g"));
+  }else{
+    var c1=el("div","copo copoL"), c2=el("div","copo copoA");
+    var a1=el("div","agua"), a2=el("div","agua");
+    a1.id="cag1"; a2.id="cag2";
+    c1.appendChild(a1); c2.appendChild(a2);
+    cena.appendChild(c1); cena.appendChild(c2);
+    cena.appendChild(el("div","cenr cesq","COPO LARGO"));
+    cena.appendChild(el("div","cenr cdir","COPO ALTO"));
+    /* a água só "nasce" depois que a tela entra: assim a criança vê o nível
+       aparecer, e não um valor que já estava lá. */
+    setTimeout(function(){
+      if(pronta){ a1.style.height="0%"; a2.style.height="86%"; }
+      else { a1.style.height="74%"; a2.style.height="0%"; }
+    },60);
+  }
+  return cena;
+}
+
+/* ============ A COMPARAÇÃO FINAL — o coração do POE ============ */
+/* O ciclo NÃO pode terminar em "tente de novo". Termina aqui: o palpite dela,
+   escrito do jeito que ela deu, ao lado do que aconteceu de verdade.       */
+function telaComparar(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","<b>O que eu pensava</b> e <b>o que eu vi</b>:"));
+  var box=el("div","cmp"), i, p, li, mudou=0;
+  for(i=0;i<CASOS.length;i++){
+    p=PENSEI[i];
+    li=el("div","cmpl");
+    li.appendChild(el("span","cmpt",CASOS[i].sel));
+    li.appendChild(el("span","cmpa","Eu pensava: "+(p?p.txt:"(sem palpite desta vez)")));
+    li.appendChild(el("span","cmpb","Eu vi: "+CASOS[i].viu));
+    if(p&&!p.acertou){ mudou++; li.appendChild(el("span","cmpm","MUDEI DE IDEIA OLHANDO")); }
+    else if(p) li.appendChild(el("span","cmpm","MEU PALPITE BATEU"));
+    box.appendChild(li);
+  }
+  c.appendChild(box);
+  c.appendChild(el("div","balao", mudou
+    ? "Voc&#234; mudou de ideia depois de olhar. <b>&#201; assim que cientista trabalha.</b>"
+    : "Seus palpites bateram com o que aconteceu. <b>Agora voc&#234; sabe por qu&#234;.</b>"));
+  var b=el("button","btn","Jogar de novo");
+  b.style.marginTop="13px";
+  b.onclick=function(){ caso=0; PENSEI=[]; pecaPrever(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a PREVER-OBSERVAR: palpite, olhada e compara&#231;&#227;o."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaPrever();
+</script>
+</body></html>

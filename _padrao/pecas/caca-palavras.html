@@ -222,30 +222,74 @@ function pecaCaca(){
     g=[]; posicoes={}; onde={};
     for(a=0;a<N;a++){ g[a]=[]; for(b2=0;b2<N;b2++) g[a][b2]=""; }
   }
+  /* a palavra CRUZA outra? (passa por uma casa que ja tem letra) */
+  function cruza(w,li,co,dl,dc){
+    var z;
+    for(z=0;z<w.length;z++) if(g[li+dl*z][co+dc*z]) return true;
+    return false;
+  }
+  /* ⚠️ DEFEITO PEGO NO TESTE À MÃO (e que portão nenhum via): sorteando a
+     direção A CADA palavra, saía grade em que NENHUMA palavra estava na
+     diagonal — e o enunciado, esse, prometia diagonal sempre. A criança
+     varre a diagonal à toa, e "a atividade mentiu" é pior que diagonal
+     nenhuma. Agora as quatro direções são um PLANO embaralhado: com cinco
+     palavras, as quatro direções entram sempre, a diagonal inclusive.
+
+     E, entre todas as casas onde a palavra cabe, prefere as que CRUZAM outra
+     palavra — cruzamento é o que faz um caça-palavras de verdade (e é o que
+     exercita a armadilha nº 5: as letras do cruzamento já vêm marcadas). */
   function sorteia(){
-    var w,posto,tent,d,dl,dc,li,co;
+    var w,dl,dc,li,co,vagas,comCruz,esc,z;
     var dirs=[[0,1],[1,0],[1,1],[1,-1]];   /* deitada, em pe e as DUAS diagonais */
+    var plano=[];
     zera();
+    for(z=0;z<PAL.length;z++) plano.push(dirs[z%dirs.length]);
+    baguncar(plano);
     for(w=0;w<PAL.length;w++){
-      posto=false; tent=0;
-      while(!posto&&tent<400){
-        tent++;
-        d=dirs[Math.floor(Math.random()*dirs.length)]; dl=d[0]; dc=d[1];
-        li=Math.floor(Math.random()*N); co=Math.floor(Math.random()*N);
-        if(cabe(PAL[w],li,co,dl,dc)){ poe(PAL[w],li,co,dl,dc); posto=true; }
+      dl=plano[w][0]; dc=plano[w][1];
+      vagas=[]; comCruz=[];
+      for(li=0;li<N;li++) for(co=0;co<N;co++){
+        if(!cabe(PAL[w],li,co,dl,dc)) continue;
+        vagas.push([li,co]);
+        if(cruza(PAL[w],li,co,dl,dc)) comCruz.push([li,co]);
       }
-      if(!posto) return false;
+      /* a 1a palavra nao tem quem cruzar; da 2a em diante, cruzar vem antes */
+      if(comCruz.length&&w>0) esc=comCruz[Math.floor(Math.random()*comCruz.length)];
+      else if(vagas.length) esc=vagas[Math.floor(Math.random()*vagas.length)];
+      else return false;
+      poe(PAL[w],esc[0],esc[1],dl,dc);
     }
     return true;
   }
+  function faltaAlguma(){
+    var z;
+    for(z=0;z<PAL.length;z++) if(!onde[PAL[z]]) return true;
+    return false;
+  }
   var voltas=0;
   while(!sorteia()&&voltas<60) voltas++;
-  if(!onde[PAL[PAL.length-1]]){
-    /* rede de seguranca: se o sorteio nao fechou (praticamente impossivel),
-       monta deitado, uma palavra por linha. A peca NUNCA nasce quebrada. */
+  if(faltaAlguma()){
+    /* rede de seguranca: se o sorteio nao fechou (praticamente impossivel,
+       mas palavra comprida demais para a grade fecharia aqui), monta deitado,
+       uma palavra por linha. A peca NUNCA nasce quebrada.                */
     zera();
-    for(i=0;i<PAL.length;i++) poe(PAL[i],i+1,0,0,1);
+    for(i=0;i<PAL.length;i++) poe(PAL[i],i%N,0,0,1);
   }
+  /* ⭐ O ENUNCIADO DIZ A VERDADE SOBRE ESTA GRADE.
+     Não é frase decorada: ele é montado a partir de onde as palavras
+     REALMENTE ficaram. Prometer diagonal numa grade sem diagonal é pôr a
+     criança para varrer o que não existe — e é o tipo de mentira que
+     nenhum portão vê, porque o código está "funcionando".              */
+  function temDir(dl,dc){
+    var w;
+    for(w in onde) if(onde.hasOwnProperty(w)&&onde[w].dl===dl&&onde[w].dc===dc) return true;
+    return false;
+  }
+  var jeitos=[];
+  if(temDir(0,1)) jeitos.push("deitadas");
+  if(temDir(1,0)) jeitos.push("em p&#233;");
+  var temDiag=(temDir(1,1)||temDir(1,-1));
+  var comoEstao = jeitos.join(", ") + (temDiag ? (jeitos.length?" ou na <b>diagonal</b>":"na <b>diagonal</b>") : "");
   /* --- 2) a grade fica CHEIA: toda casa vazia ganha uma letra sorteada --- */
   for(i=0;i<N;i++) for(j=0;j<N;j++)
     if(!g[i][j]) g[i][j]=LETRAS.charAt(Math.floor(Math.random()*LETRAS.length));
@@ -253,7 +297,7 @@ function pecaCaca(){
   /* --- 3) a tela --------------------------------------------------------- */
   var c=el("div","centro");
   c.appendChild(el("div","selo","CA&#199;A-PALAVRAS DA HORTA"));
-  var bal=el("div","balao","Ache as <b>cinco palavras</b> da horta. Elas podem estar deitadas, em p&#233; ou na <b>diagonal</b>.");
+  var bal=el("div","balao","Ache as <b>"+PAL.length+" palavras</b> da horta. Elas est&#227;o "+comoEstao+".");
   c.appendChild(bal);
 
   var lista=el("div","lista"), chips={};

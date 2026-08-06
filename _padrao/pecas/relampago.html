@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — relâmpago</title>
+<!-- ============================================================
+     PEÇA: RELÂMPAGO (desafio de velocidade)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O que ela treina: EVOCAÇÃO RÁPIDA (prática de recuperação —
+     Roediger/Karpicke) do que a criança JÁ VIU antes na atividade. Não é
+     para ensinar coisa nova: é para o que já foi ensinado sair sozinho,
+     sem apoio. Por isso ela mora no fim de um bloco, nunca no começo.
+
+     ⚠️ AQUI NÃO EXISTE ANDAIME (_padrao/DINAMICAS.md, linha "Relâmpago";
+     lista SEM_ERRO do _qa/pedagogo.py). Dica no meio acaba exatamente com
+     o que a fase treina: se alguém sopra, não houve evocação nenhuma.
+     Então: nada de dica, nada de "apoio concreto", nada de revelar antes.
+
+     ⚠️ E TAMBÉM NÃO PUNE. Sem andaime é fácil escorregar para o castigo —
+     e aí a peça vira prova cronometrada, que é o contrário do padrão da
+     casa. As regras deste arquivo:
+       · o relógio NUNCA trava a peça: quando o tempo acaba ela FECHA
+         sozinha e mostra o resultado (nenhuma criança fica presa);
+       · a criança pode passar a pergunta (botão "Passar") — sem culpa;
+       · no fim aparece O QUE ELA ACERTOU, contado e listado. A palavra
+         "errou" não existe; o que faltou vira "para treinar de novo";
+       · resposta trocada não vira X vermelho: a certa acende com a marca
+         escrita "era esta" (nada essencial só na cor) e a rodada anda;
+       · o tempo aparece em NÚMERO e em barra — quem não distingue cor
+         continua sabendo quanto falta;
+       · `data-qa="1"` na resposta que serve AGORA, só para o auditor.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:12px 16px;font-size:17px;font-weight:600;text-align:center;line-height:1.3;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:12px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:11px 14px;
+     margin:7px auto;font-size:16px;font-weight:700;min-height:46px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:6px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: RELÂMPAGO ---------------- */
+/* o relogio: NUMERO grande + barra que encolhe. Quem nao enxerga a cor da
+   barra continua lendo os segundos; quem nao le o numero ve a barra. */
+.relbar{display:block;margin:2px 0 8px}
+.reltopo{display:block;font-size:13px;font-weight:800;letter-spacing:.5px;color:#f4efe6;
+         margin-bottom:4px}
+.reltempo{color:#ffd54a}
+.reltrilho{display:block;height:14px;border-radius:9px;background:rgba(255,255,255,.16);overflow:hidden}
+.relcheio{display:block;height:100%;width:100%;background:#59c24b;
+          -webkit-transition:width .9s linear;transition:width .9s linear}
+.relcheio.curto{background:#f6a13a}
+.relcheio.fim{background:#e0603f}
+.placar{display:inline-block;background:rgba(255,255,255,.12);border-radius:12px;padding:5px 12px;
+        font-size:13px;font-weight:800;color:#f4efe6;margin-bottom:2px}
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.marca.fria{background:#6b5a2a}
+/* passar a pergunta e um direito, nao um castigo: botao discreto, sempre a mao */
+.passar{display:inline-block;background:rgba(255,255,255,.14);color:#f4efe6;border:2px solid #a08e73;
+        border-radius:14px;padding:10px 18px;margin-top:8px;font-size:14px;font-weight:700;
+        min-height:44px;cursor:pointer}
+/* o boletim do fim: SO o que ela acertou vira estrela; o que faltou volta
+   como "para treinar", nunca como erro */
+/* ⚠️ o boletim pode ter as 8 linhas de uma vez (a crianca parou e o tempo
+   acabou). Empilhadas, elas empurravam o botao "Jogar de novo" para FORA da
+   tela — o pior defeito do leiaute: parece que acabou e nao tem o que tocar.
+   Entao a lista rola DENTRO dela mesma e o botao fica sempre a vista. */
+.lista{display:block;max-width:430px;margin:8px auto 0;text-align:left;
+       max-height:210px;overflow-y:auto}
+.item{display:block;background:rgba(255,255,255,.10);border-radius:12px;padding:8px 12px;
+      margin:5px 0;font-size:14px;font-weight:600;color:#f4efe6}
+.item.acertou{background:#d6f5c8;color:#1c3a12}
+.tit{display:block;font-size:14px;font-weight:800;letter-spacing:.4px;color:#ffd54a;margin:12px 0 2px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (PC da escola com barras, projetor): a medalha e o boletim
+   encolhem para o botao do fim nunca sair da tela. */
+@media (max-height:660px){
+  .medal{width:74px;height:74px;line-height:62px;font-size:32px;margin-bottom:8px}
+  .lista{max-height:98px}
+  .balao{font-size:15px;padding:10px 14px}
+  .item{padding:6px 10px;margin:4px 0;font-size:13px}
+  .tit{margin:8px 0 2px;font-size:13px}
+  .hint{font-size:12px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (a planta, 8 anos) e é DE PROPÓSITO coisa já vista:
+   relâmpago não ensina, RECUPERA. Ao copiar a peça, troque só este bloco —
+   perguntas curtas, respostas curtas, tudo que a criança já encontrou antes
+   na atividade. Pergunta comprida mata a velocidade.                        */
+var RAIO=[
+ {p:"Que parte fica <b>embaixo da terra</b>?", c:"A RAIZ", e:["A FLOR","A FOLHA"]},
+ {p:"Quem faz o alimento com a <b>luz do sol</b>?", c:"A FOLHA", e:["A RAIZ","A SEMENTE"]},
+ {p:"O que a planta <b>bebe</b>?", c:"&#193;GUA", e:["AREIA","PEDRA"]},
+ {p:"De onde nasce a planta?", c:"DA SEMENTE", e:["DA PEDRA","DO VENTO"]},
+ {p:"Que parte &#233; <b>colorida e cheirosa</b>?", c:"A FLOR", e:["A RAIZ","O CAULE"]},
+ {p:"Qual &#233; o caminho da &#225;gua at&#233; as folhas?", c:"O CAULE", e:["A FLOR","A TERRA"]},
+ {p:"O que a planta precisa que vem do c&#233;u?", c:"A CHUVA", e:["A NEVE","A FUMA&#199;A"]},
+ {p:"Onde a semente &#233; plantada?", c:"NA TERRA", e:["NA PEDRA","NO VIDRO"]}
+];
+
+var TEMPO=45;          /* segundos da rodada inteira */
+var ri=0;              /* pergunta da vez */
+var acertos=[];        /* o que ela acertou (vira estrela no fim) */
+var faltou=[];         /* o que ficou para treinar — nunca "erros" */
+var resta=TEMPO;
+var relogio=null;      /* o setInterval do relogio */
+var ger=0;             /* geracao da tela: mata setTimeout de tela que ja saiu */
+var travado=0;         /* entre uma pergunta e a proxima, nao aceita toque */
+
+function telaComecarRelampago(){
+  paraRelogio(); ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","REL&#194;MPAGO"));
+  c.appendChild(el("div","balao",
+    "Agora &#233; <b>r&#225;pido</b>! S&#227;o "+RAIO.length+" perguntas do que voc&#234; j&#225; viu, em "+TEMPO+" segundos."));
+  var b=el("button","btn","Come&#231;ar");
+  b.onclick=function(){ iniciaRelampago(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint",
+    "Sem dica e sem pressa no fim: quando o tempo acabar, a pe&#231;a fecha sozinha e mostra o que voc&#234; acertou."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function iniciaRelampago(){
+  ri=0; acertos=[]; faltou=[]; resta=TEMPO;
+  RAIO=baguncar(RAIO);              /* a ordem das perguntas tambem muda */
+  telaRelampago();
+}
+
+function telaRelampago(){
+  var f=RAIO[ri];
+  if(!f){ telaFimRelampago(); return; }
+  ger++; travado=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,Math.round(ri*100/RAIO.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","REL&#194;MPAGO"));
+  c.appendChild(el("div","placar","Pergunta "+(ri+1)+" de "+RAIO.length+
+                                  " &#183; acertos: "+acertos.length));
+  /* o relogio: numero E barra */
+  var rb=el("div","relbar");
+  var rt=el("div","reltopo",'TEMPO: <span class="reltempo" id="relnum">'+resta+'</span> segundos');
+  var tr=el("div","reltrilho");
+  var ch=el("div","relcheio"); ch.id="relcheio";
+  tr.appendChild(ch); rb.appendChild(rt); rb.appendChild(tr);
+  c.appendChild(rb);
+  c.appendChild(el("div","balao",f.p));
+  /* ⭐ A ARMADILHA DA MECANICA ESCOLHER, que vale aqui tambem: embaralhar. */
+  var lista=[{txt:f.c,ok:1}], i;
+  for(i=0;i<f.e.length;i++) lista.push({txt:f.e[i],ok:0});
+  baguncar(lista);
+  var box=el("div","opts");
+  for(i=0;i<lista.length;i++) box.appendChild(fazRaio(lista[i],f));
+  c.appendChild(box);
+  /* passar e um DIREITO: sem isso a crianca que travou fica olhando o relogio */
+  var ps=el("div","passar","Passar esta &#187;");
+  ps.onclick=function(){ passa(f); };
+  c.appendChild(ps);
+  t.appendChild(c);
+  app.appendChild(t);
+  pintaRelogio();
+  ligaRelogio();
+}
+
+function fazRaio(it,f){
+  var o=el("div","opt",it.txt);
+  /* data-qa="1" = "esta serve AGORA". Existe SÓ para o auditor-jogador
+     conseguir terminar a peça; a criança não vê diferença nenhuma. */
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ responde(o,it.ok,f); };
+  return o;
+}
+
+/* ---------- o relógio: mede, mas NUNCA prende ---------- */
+function ligaRelogio(){
+  if(relogio) return;
+  relogio=setInterval(passaSegundo,1000);
+}
+function paraRelogio(){
+  if(relogio){ clearInterval(relogio); relogio=null; }
+}
+function passaSegundo(){
+  resta--;
+  if(resta<=0){
+    resta=0;
+    pintaRelogio();
+    paraRelogio();
+    acabouOTempo();
+    return;
+  }
+  pintaRelogio();
+  if(resta<=5) sTap();     /* o tique-taque final tem gemeo visual: o numero */
+}
+function pintaRelogio(){
+  var n=document.getElementById("relnum"), ch=document.getElementById("relcheio");
+  if(n) n.innerHTML=""+resta;
+  if(ch){
+    ch.style.width=Math.round(resta*100/TEMPO)+"%";
+    ch.className="relcheio"+(resta<=5?" fim":(resta<=15?" curto":""));
+  }
+}
+/* ⭐ o tempo acabou: a peca FECHA SOZINHA com o resultado. O relogio nunca
+   deixa a crianca parada numa tela que nao anda. */
+function acabouOTempo(){
+  var i;
+  for(i=ri;i<RAIO.length;i++) if(faltou.indexOf(RAIO[i].c)<0&&acertos.indexOf(RAIO[i].c)<0)
+    faltou.push(RAIO[i].c);
+  ri=RAIO.length;
+  mostraBanner("Tempo! Vamos ver o que voc&#234; j&#225; sabe de cor.",telaFimRelampago);
+}
+
+/* ---------- responder ---------- */
+function responde(o,certa,f){
+  if(travado) return;
+  travado=1;
+  trancaTudo();
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    o.innerHTML=o.innerHTML+'<span class="marca">isso!</span>';
+    acertos.push(f.c);
+    proxima(430);
+    return;
+  }
+  /* ⚠️ SEM ANDAIME e SEM CASTIGO: a certa acende com a marca escrita, a
+     rodada anda, e o que faltou volta no boletim como "treinar de novo".
+     Nada de X vermelho, nada da palavra "errou". */
+  sErro();
+  o.className="opt no";
+  acendeCerta(f);
+  if(faltou.indexOf(f.c)<0) faltou.push(f.c);
+  proxima(900);
+}
+function passa(f){
+  if(travado) return;
+  travado=1;
+  sTap();
+  trancaTudo();
+  acendeCerta(f);
+  if(faltou.indexOf(f.c)<0) faltou.push(f.c);
+  proxima(800);
+}
+function acendeCerta(f){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")==="1"&&a[i].className.indexOf("marca")<0){
+      a[i].className="opt ok";
+      a[i].innerHTML=a[i].innerHTML+'<span class="marca fria">era esta</span>';
+    }
+  }
+}
+function trancaTudo(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].onclick=null;
+  var p=app.getElementsByClassName("passar");
+  for(i=0;i<p.length;i++) p[i].onclick=null;
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele passaria de pergunta numa tela que ja saiu. */
+function proxima(ms){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger) return;
+    ri++;
+    if(ri<RAIO.length&&resta>0) telaRelampago();
+    else { paraRelogio(); telaFimRelampago(); }
+  },ms);
+}
+
+/* ---------- o fim: mostra O QUE ACERTOU. "Errou" não existe aqui. ------- */
+function telaFimRelampago(){
+  paraRelogio(); ger++;
+  /* tela de fim aberta sem ninguem ter respondido (o tempo acabou com a
+     crianca parada, ou o auditor chamou a tela direto): e o mesmo estado, e
+     ele tem que aparecer INTEIRO — senao a lista do boletim nunca e medida
+     pelos portoes de contraste e leiaute. */
+  if(!acertos.length&&!faltou.length){
+    for(var k=0;k<RAIO.length;k++) faltou.push(RAIO[k].c);
+  }
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao",
+    "Voc&#234; respondeu de cabe&#231;a e acertou <b>"+acertos.length+" de "+RAIO.length+"</b>."));
+  var li=el("div","lista"), i;
+  if(acertos.length){
+    li.appendChild(el("div","tit","VOC&#202; ACERTOU"));
+    for(i=0;i<acertos.length;i++) li.appendChild(el("div","item acertou","&#10003; "+acertos[i]));
+  }
+  if(faltou.length){
+    li.appendChild(el("div","tit","PARA TREINAR DE NOVO"));
+    for(i=0;i<faltou.length;i++) li.appendChild(el("div","item","&#183; "+faltou[i]));
+  }
+  c.appendChild(li);
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaComecarRelampago;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a REL&#194;MPAGO: sem dica no meio, sem castigo no fim."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+telaComecarRelampago();
+</script>
+</body></html>

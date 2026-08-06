@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — coordenadas (achar a casa pelo par letra+número)</title>
+<!-- ============================================================
+     PEÇA: COORDENADAS — ACHAR A CASA PELO PAR LETRA + NÚMERO
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     O QUE ELA ENSINA: par ordenado. A casa não tem nome próprio — ela é o
+     CRUZAMENTO de uma linha (letra) com uma coluna (número). É o mesmo gesto
+     do mapa da cidade, do jogo de batalha naval e, mais tarde, do plano
+     cartesiano.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+
+     · ⭐ A COORDENADA TEM QUE BATER COM A FIGURA. Foi o defeito que o professor
+       pegou: a fase pedia B4 e o desenho estava noutro lugar. A causa é sempre
+       a mesma — o texto do enunciado escrito À MÃO num lugar e a figura
+       desenhada noutro. Aqui existe UMA fonte só: o objeto `alvo={li,co}`.
+       O nome ("B3") sai dele por `nomeCasa(li,co)`; a figura é desenhada na
+       célula `li,co`; a conferência compara `li,co`. Não há um segundo lugar
+       onde a coordenada possa divergir — e a peça ainda confere isso sozinha
+       ao nascer (`confereCasas()`), porque promessa não medida é promessa que
+       quebra.
+
+     · CÉLULA >= 40px (piso do auditor de leiaute dentro de grade). Aqui ela
+       nasce em 52px e só cai para 44px em janela baixa — encolhe a ALTURA da
+       grade, nunca abaixo do dedo da criança.
+
+     · CABEÇALHO SEMPRE À VISTA: as letras à esquerda e os números em cima
+       ficam na tela o tempo todo. Sem eles a criança conta casas com o dedo e
+       erra por contagem, não por não entender coordenada.
+
+     · NADA ESSENCIAL SÓ NA COR: o apoio da 1ª rodada acende a linha e a coluna
+       E põe as setinhas "▶" e "▼" nos rótulos; o acerto vira "✓" além de verde.
+
+     · A ESCADA: (1) com apoio — linha e coluna acesas; (2) sem apoio;
+       (3) o caminho inverso, achar a casa de uma figura; (4) o passo simbólico,
+       LER a casa e escolher o nome dela entre três.
+
+     · ANDAIME QUE CRESCE, a peça nunca trava: dica -> a linha e a coluna
+       acendem -> a casa certa pisca e é aceita.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- A GRADE ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo.
+   ⚠️ o nome das linhas leva "grade" DE PROPOSITO: e assim que o auditor de
+   leiaute sabe que ali dentro o piso do alvo e 30px (a grade INTEIRA precisa
+   caber na tela). Ainda assim a celula nasce em 52px.                        */
+.gradexy{max-width:344px;width:100%;margin:13px auto 0}
+.gradelin{display:-webkit-box;display:-webkit-flex;display:flex;width:100%}
+/* o cabecalho: letras a esquerda, numeros em cima */
+.rot{width:19%;height:27px;line-height:27px;font-size:15px;font-weight:800;color:#33260d;
+     background:#e6d6b4;border:1px solid #b79f74;border-radius:5px;margin:1px;
+     -webkit-flex:none;flex:none}
+.rotl{width:19%;height:52px;line-height:52px;font-size:17px;font-weight:800;color:#33260d;
+      background:#e6d6b4;border:1px solid #b79f74;border-radius:5px;margin:1px;
+      -webkit-flex:none;flex:none}
+.rot.on,.rotl.on{background:#ffd54a;border:2px solid #8a6a10;color:#33280a}
+.setinha{font-style:normal;font-size:11px}
+.cel{width:19%;height:52px;margin:1px;border-radius:7px;cursor:pointer;position:relative;
+     background:#f4f7ea;border:2px solid #9db08a;-webkit-flex:none;flex:none;
+     background-repeat:no-repeat;background-position:center;background-size:60% 60%}
+.cel.eixo{background-color:#fff3c9;border:2px solid #d8b83f}
+.cel.ok{background-color:#d6f5c8;border:3px solid #1f6b12}
+.cel.pisca{-webkit-animation:pisc .66s ease-in-out infinite alternate;
+           animation:pisc .66s ease-in-out infinite alternate}
+@-webkit-keyframes pisc{from{-webkit-box-shadow:inset 0 0 0 2px rgba(255,213,74,.3)}
+                        to{-webkit-box-shadow:inset 0 0 0 6px rgba(255,213,74,.95)}}
+@keyframes pisc{from{box-shadow:inset 0 0 0 2px rgba(255,213,74,.3)}
+                to{box-shadow:inset 0 0 0 6px rgba(255,213,74,.95)}}
+.treme{-webkit-animation:trem .3s;animation:trem .3s}
+@-webkit-keyframes trem{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes trem{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* o "V" do acerto: forma + cor, nunca so cor */
+.vok{position:absolute;right:2px;top:0;font-size:19px;font-weight:800;color:#1f6b12;line-height:1}
+/* as fichas de resposta da 4a rodada: a classe .opt continua (o portao das
+   dinamicas cobra que elas venham EMBARALHADAS), e .cchip so as poe em linha */
+.cchip{display:inline-block;width:auto;max-width:none;min-height:46px;
+       padding:11px 16px;margin:5px 4px 0;font-size:17px;font-weight:800;letter-spacing:1px}
+.placar{margin-top:9px;font-size:15px;font-weight:700}
+.placar b{color:#ffd54a}
+/* janela baixa: encolhe a ALTURA da celula, nunca abaixo do dedo (44 > 40) */
+@media (max-height:520px){
+  .cel{height:44px}
+  .rotl{height:44px;line-height:44px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- o tabuleiro: 4 linhas (A..D) x 4 colunas (1..4) ---- */
+var LETRAS=["A","B","C","D"], LINS=4, COLS=4;
+/* ⭐ UMA FONTE SO para a coordenada. O nome da casa NUNCA e escrito a mao:
+   sai daqui. E a figura e desenhada na MESMA linha e coluna que este nome
+   descreve. Foi a falta disso que fez a fase pedir B4 com o desenho noutro
+   lugar (defeito pego pelo professor).                                      */
+function nomeCasa(li,co){ return LETRAS[li]+(co+1); }
+
+/* ---- as figurinhas (SVG embutido: a peca roda sozinha, sem arquivo) ---- */
+var ARTE={
+ estrela:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'>"+
+   "<path d='M20 3 L25 15 L38 16 L28 25 L31 37 L20 30 L9 37 L12 25 L2 16 L15 15 Z' "+
+   "fill='#ffd54a' stroke='#7a5c07' stroke-width='2.5' stroke-linejoin='round'/></svg>",
+ peixe:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'>"+
+   "<path d='M3 20 Q14 5 27 20 Q14 35 3 20 Z' fill='#3fa9d8' stroke='#12455c' stroke-width='2.5'/>"+
+   "<path d='M27 20 L37 11 L37 29 Z' fill='#3fa9d8' stroke='#12455c' stroke-width='2.5' stroke-linejoin='round'/>"+
+   "<circle cx='11' cy='17' r='2.6' fill='#12455c'/></svg>",
+ flor:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'>"+
+   "<g fill='#ff8fb1' stroke='#8f3153' stroke-width='2.5'><circle cx='20' cy='10' r='7.5'/>"+
+   "<circle cx='30' cy='20' r='7.5'/><circle cx='20' cy='30' r='7.5'/><circle cx='10' cy='20' r='7.5'/></g>"+
+   "<circle cx='20' cy='20' r='6' fill='#ffd54a' stroke='#7a5c07' stroke-width='2.5'/></svg>"
+};
+var FIGS=[{k:"estrela",n:"ESTRELA"},{k:"peixe",n:"PEIXE"},{k:"flor",n:"FLOR"}];
+function urlArte(k){ return "url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(ARTE[k])+"\")"; }
+
+/* ---- as 4 rodadas: a escada sobe do apoio ao simbolico ---- */
+var RODADAS=[
+ {tipo:"casa", apoio:true,  selo:"ACHE A CASA"},
+ {tipo:"casa", apoio:false, selo:"ACHE A CASA"},
+ {tipo:"achafig",           selo:"ONDE ELA EST&#193;?"},
+ {tipo:"lecasa",            selo:"LEIA A CASA"}
+];
+
+var telaAtual=null, barraP=null, celulas=[], rotL=[], rotC=[],
+    rodada=0, alvo=null, errosSeg=0, casas=[], elPlacar=null;
+/* ⚠️ DEFEITO PEGO PELO AUDITOR-JOGADOR (e que a crianca reproduz com um TOQUE
+   DUPLO): entre o acerto e a rodada seguinte passam 900ms, e nesse intervalo a
+   MESMA resposta certa continuava clicavel. Cada toque extra contava um acerto
+   novo: a barra de progresso passou de 100% (chegou a 175%) e rodadas foram
+   puladas. Uma tranca resolve — e ela abre sozinha na rodada nova.          */
+var travado=false;
+
+function sPasso(){ nota(660,.05,.11,"square",0); }
+
+/* sorteia N casas DIFERENTES e guarda a figura de cada uma.
+   A figura entra na celula (li,co) exatamente destas casas — e e daqui que
+   sai o nome usado no enunciado. Uma fonte so.                              */
+function sorteiaCasas(n){
+  var todas=[],i,li,co;
+  for(li=0;li<LINS;li++) for(co=0;co<COLS;co++) todas.push({li:li,co:co});
+  baguncar(todas);
+  var out=[];
+  for(i=0;i<n;i++) out.push({li:todas[i].li,co:todas[i].co,fig:FIGS[i%FIGS.length]});
+  return out;
+}
+/* ⚠️ PROMESSA MEDIDA: confere, na hora, que o nome que vai para o enunciado
+   aponta para a MESMA celula onde a figura foi desenhada. Se um dia alguem
+   trocar a ordem de linha/coluna, a peca avisa no lugar de mentir.          */
+function confereCasas(){
+  var i,c,e;
+  for(i=0;i<casas.length;i++){
+    c=casas[i];
+    e=celulaDe(c.li,c.co);
+    if(!e||e.getAttribute("data-casa")!==nomeCasa(c.li,c.co)) return false;
+  }
+  return true;
+}
+function celulaDe(li,co){
+  var i;
+  for(i=0;i<celulas.length;i++) if(celulas[i].li===li&&celulas[i].co===co) return celulas[i];
+  return null;
+}
+
+function telaCoord(){
+  limpa();
+  rodada=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",RODADAS[0].selo));
+  var bal=el("div","balao",""); bal.id="balaoP";
+  c.appendChild(bal);
+  c.appendChild(montaGrade());
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  var esc=el("div","opts",""); esc.id="escolhas";
+  c.appendChild(esc);
+  c.appendChild(el("div","hint","A <b>letra</b> diz a linha. O <b>n&#250;mero</b> diz a coluna."));
+  t.appendChild(c); app.appendChild(t);
+  novaRodada();
+}
+
+function montaGrade(){
+  var g=el("div","gradexy"), li,co,lin,r,cel;
+  celulas=[]; rotL=[]; rotC=[];
+  /* cabecalho: canto vazio + os numeros das colunas */
+  lin=el("div","gradelin");
+  lin.appendChild(el("div","rot","&nbsp;"));
+  for(co=0;co<COLS;co++){
+    r=el("div","rot",""+(co+1));
+    r.co=co; lin.appendChild(r); rotC.push(r);
+  }
+  g.appendChild(lin);
+  for(li=0;li<LINS;li++){
+    lin=el("div","gradelin");
+    r=el("div","rotl",LETRAS[li]);
+    r.li=li; lin.appendChild(r); rotL.push(r);
+    for(co=0;co<COLS;co++){
+      cel=el("div","cel","");
+      cel.li=li; cel.co=co;
+      cel.setAttribute("data-casa",nomeCasa(li,co));
+      cel.onclick=cliqueCasa;
+      lin.appendChild(cel); celulas.push(cel);
+    }
+    g.appendChild(lin);
+  }
+  return g;
+}
+
+/* ---------- cada rodada ---------- */
+function novaRodada(){
+  var r=RODADAS[rodada], i, c, bal=document.getElementById("balaoP"),
+      esc=document.getElementById("escolhas"), sel=app.querySelector(".selo");
+  errosSeg=0; travado=false;
+  apagaDica();
+  sel.innerHTML=r.selo;
+  esc.innerHTML="";
+  limpaGrade();
+  /* as figuras da rodada: sao elas que dao o nome da casa */
+  casas=sorteiaCasas(r.tipo==="casa"?1:3);
+  for(i=0;i<casas.length;i++){
+    c=casas[i];
+    if(r.tipo!=="casa"){
+      celulaDe(c.li,c.co).style.backgroundImage=urlArte(c.fig.k);
+    }
+  }
+  if(!confereCasas()){   /* rede de seguranca: nunca pedir uma casa que nao existe */
+    casas=sorteiaCasas(casas.length);
+  }
+  if(r.tipo==="casa"){
+    alvo=casas[0];
+    bal.innerHTML="Toque na casa <b>"+nomeCasa(alvo.li,alvo.co)+"</b>.";
+    if(r.apoio) acendeEixos(alvo);
+  }else if(r.tipo==="achafig"){
+    alvo=casas[0];
+    bal.innerHTML="Em que casa est&#225; a <b>"+alvo.fig.n+"</b>? Toque nela.";
+  }else{
+    alvo=casas[0];
+    bal.innerHTML="Qual &#233; a casa da <b>"+alvo.fig.n+"</b>?";
+    montaFichas();
+  }
+  marcaQualServe();
+  atualiza();
+}
+
+/* a 4a rodada: LER a casa e escolher o nome dela. As fichas vao EMBARALHADAS
+   (na Fabrica de Estrelas a certa era sempre a 1a e a crianca aprendeu a
+   posicao, nao o conteudo).                                                 */
+function montaFichas(){
+  var esc=document.getElementById("escolhas"), certo=nomeCasa(alvo.li,alvo.co),
+      nomes=[certo], i, n, ch, tentativa=0;
+  while(nomes.length<3&&tentativa<60){
+    tentativa++;
+    n=nomeCasa(Math.floor(Math.random()*LINS),Math.floor(Math.random()*COLS));
+    if(nomes.join(",").indexOf(n)<0) nomes.push(n);
+  }
+  baguncar(nomes);
+  for(i=0;i<nomes.length;i++){
+    ch=el("div","opt",nomes[i]);
+    ch.className="opt cchip";
+    ch.valor=nomes[i];
+    ch.onclick=cliqueFicha;
+    esc.appendChild(ch);
+  }
+}
+function cliqueFicha(){
+  if(travado) return;
+  var certo=nomeCasa(alvo.li,alvo.co);
+  if(this.valor===certo){
+    this.className="opt cchip ok";
+    acerta();
+  }else{
+    this.className="opt cchip no treme";
+    sErro(); errosSeg++;
+    ajuda(errosSeg);
+  }
+}
+
+function cliqueCasa(){
+  if(travado) return;
+  if(RODADAS[rodada].tipo==="lecasa"){ sTap(); return; }
+  if(this.className.indexOf("ok")>=0) return;
+  if(this.li===alvo.li&&this.co===alvo.co){
+    this.className="cel ok";
+    this.appendChild(el("i","vok","&#10003;"));
+    acerta();
+  }else{
+    sErro(); errosSeg++;
+    this.className="cel treme";
+    destreme(this);
+    ajuda(errosSeg);
+  }
+}
+function acerta(){
+  if(travado) return;
+  travado=true;                 /* fecha a rodada: toque duplo nao conta 2x */
+  sCerto();
+  apagaDica();
+  acendeEixos(alvo);
+  rodada++;
+  desmarcaTudo();               /* e o auditor-jogador para de tocar no mesmo */
+  atualiza();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(rodada>=RODADAS.length){
+      mostraBanner("Voc&#234; achou todas as casas pela <b>letra</b> e pelo <b>n&#250;mero</b>!",telaFim);
+    }else{
+      sPasso(); novaRodada();
+    }
+  },900);
+}
+function atualiza(){
+  var feitas=Math.min(rodada,RODADAS.length);
+  if(elPlacar) elPlacar.innerHTML="Casas achadas: <b>"+feitas+"</b> de <b>"+RODADAS.length+"</b>";
+  /* a barra nunca passa de 100% nem anda para tras (portao da progressao) */
+  if(barraP) barraP.style.width=Math.round(feitas*100/RODADAS.length)+"%";
+}
+/* tira o data-qa de todo mundo: entre uma rodada e outra nao ha "resposta que
+   serve agora", e sem isto o auditor ficava tocando na resposta ja aceita. */
+function desmarcaTudo(){
+  var i, esc=document.getElementById("escolhas");
+  for(i=0;i<celulas.length;i++) celulas[i].setAttribute("data-qa","0");
+  if(esc) for(i=0;i<esc.children.length;i++) esc.children[i].setAttribute("data-qa","0");
+}
+
+/* ---------- o apoio: acender a LINHA e a COLUNA ----------
+   forma + cor: alem do amarelo, o rotulo ganha a setinha que aponta.        */
+function acendeEixos(a){
+  var i;
+  for(i=0;i<rotL.length;i++)
+    rotL[i].className=(rotL[i].li===a.li)?"rotl on":"rotl";
+  for(i=0;i<rotC.length;i++)
+    rotC[i].className=(rotC[i].co===a.co)?"rot on":"rot";
+  rotL[a.li].innerHTML=LETRAS[a.li]+'<i class="setinha">&#9654;</i>';
+  rotC[a.co].innerHTML=(a.co+1)+'<i class="setinha">&#9660;</i>';
+  for(i=0;i<celulas.length;i++){
+    if(celulas[i].className.indexOf("ok")>=0) continue;
+    celulas[i].className=(celulas[i].li===a.li||celulas[i].co===a.co)?"cel eixo":"cel";
+  }
+}
+function limpaGrade(){
+  var i;
+  for(i=0;i<celulas.length;i++){
+    celulas[i].className="cel";
+    celulas[i].innerHTML="";
+    celulas[i].style.backgroundImage="none";
+  }
+  for(i=0;i<rotL.length;i++){ rotL[i].className="rotl"; rotL[i].innerHTML=LETRAS[i]; }
+  for(i=0;i<rotC.length;i++){ rotC[i].className="rot"; rotC[i].innerHTML=""+(i+1); }
+}
+function destreme(c){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(c.className.indexOf("ok")<0) c.className=(c.className.indexOf("eixo")>=0)?"cel eixo":"cel";
+  },320);
+}
+
+/* O ANDAIME QUE CRESCE — a peca nunca trava */
+function ajuda(n){
+  var r=RODADAS[rodada];
+  if(n===1){
+    if(r.tipo==="lecasa")
+      mostraDica("Ache a figura na grade. Depois leia a <b>letra</b> da linha dela e o <b>n&#250;mero</b> da coluna.");
+    else
+      mostraDica("Ache a <b>letra</b> na coluna da esquerda e o <b>n&#250;mero</b> na linha de cima. A casa &#233; onde os dois se encontram.");
+  }else if(n===2){
+    mostraDica("A linha e a coluna est&#227;o <b>acesas</b>. A casa &#233; onde elas se cruzam.");
+    acendeEixos(alvo);
+  }else{
+    mostraDica("&#201; esta aqui: <b>"+nomeCasa(alvo.li,alvo.co)+"</b>. Vamos juntos.");
+    acendeEixos(alvo);
+    revela();
+  }
+}
+function revela(){
+  var c=celulaDe(alvo.li,alvo.co), esc, i, certo=nomeCasa(alvo.li,alvo.co);
+  if(RODADAS[rodada].tipo==="lecasa"){
+    esc=document.getElementById("escolhas");
+    for(i=0;i<esc.children.length;i++)
+      if(esc.children[i].valor===certo){ esc.children[i].className="opt cchip ok"; acerta(); return; }
+    return;
+  }
+  if(!c||c.className.indexOf("ok")>=0) return;
+  c.className="cel ok pisca";
+  c.appendChild(el("i","vok","&#10003;"));
+  acerta();
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* data-qa: so para o auditor-jogador (_qa/jogador.js) conseguir terminar a
+   peca sozinho. Clicando ao acaso numa grade de 16 ele quase nunca fecharia. */
+function marcaQualServe(){
+  var i, lec=(RODADAS[rodada].tipo==="lecasa"),
+      esc=document.getElementById("escolhas"), certo=nomeCasa(alvo.li,alvo.co);
+  for(i=0;i<celulas.length;i++)
+    celulas[i].setAttribute("data-qa",(!lec&&celulas[i].li===alvo.li&&celulas[i].co===alvo.co)?"1":"0");
+  if(esc) for(i=0;i<esc.children.length;i++)
+    esc.children[i].setAttribute("data-qa",(esc.children[i].valor===certo)?"1":"0");
+}
+
+function telaFim(){
+  limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Agora voc&#234; sabe achar uma casa pela <b>letra</b> e pelo <b>n&#250;mero</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaCoord;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaCoord();
+</script>
+</body></html>

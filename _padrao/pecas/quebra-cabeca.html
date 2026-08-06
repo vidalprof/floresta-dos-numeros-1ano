@@ -97,7 +97,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
              box-shadow:inset 0 0 0 3px rgba(255,213,74,.5)}
 .qcvaga.cheia{border:2px solid rgba(0,0,0,.22);cursor:default}
 /* ---------- O BANCO (as pecas soltas) ---------- */
-.qcbanco{max-width:340px;margin:12px auto 0;
+/* 226px = exatamente TRES pecas por linha (3 x (0,62 da vaga + margem)); com a
+   caixa mais larga entravam 4 numa linha e 2 na outra, e a criança lia o banco
+   como se fosse o tabuleiro. */
+.qcbanco{max-width:226px;margin:12px auto 0;
          display:-webkit-box;display:-webkit-flex;display:flex;
          -webkit-flex-wrap:wrap;flex-wrap:wrap;
          -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — balança da igualdade</title>
+<!-- ============================================================
+     PEÇA: BALANÇA DA IGUALDADE  (copiada do _padrao/pecas/MOLDE.html)
+
+     PARA QUE ELA EXISTE (o defeito de leitura que ela conserta):
+     a criança que passou dois anos vendo "3 + 2 = __" aprende que o sinal "="
+     quer dizer *"aqui vem a resposta"*. Depois, quando aparece "3 + 2 = 1 + __",
+     ela escreve 5 — porque leu o "=" como um botão de resultado, não como
+     "os dois lados valem o mesmo". Isso não se conserta explicando: se
+     conserta PONDO PESO nos dois pratos até a barra parar no meio.
+     (Concreto -> figural -> simbólico: os cubos, a balança, e só no fim a frase
+     numérica que aparece embaixo, já preenchida pelo que ela mesma fez.)
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · O MOVIMENTO É O ARGUMENTO: a viga gira de verdade, com transição
+         contínua (.55s) e proporcional à diferença — prato mais pesado DESCE.
+         Balança que só troca de figura (nivelada/torta) não ensina nada: é a
+         descida que faz a criança dizer "ah, esse lado tem mais".
+       · DESEQUILÍBRIO NÃO É ERRO. Enquanto está torta, ninguém diz "errado":
+         a própria balança já é o feedback. Só quando a criança anda para LONGE
+         da igualdade é que o andaime aparece — e como PERGUNTA.
+       · NADA ESSENCIAL SÓ NA COR: a inclinação (forma) + o número de cada prato
+         + a frase escrita ("A DIREITA está mais leve") dizem a mesma coisa.
+       · FUNCIONA NO MUDO: todo som tem gêmeo visual (o cubo que entra, a viga
+         que gira, a frase que acende).
+       · NUNCA TRAVA: os dois botões continuam vivos o tempo todo, e no 3º passo
+         para o lado errado o andaime diz exatamente quantos faltam.
+       · data-qa="1" no botão que serve AGORA — só para o auditor-jogador
+         conseguir fechar a peça (a criança não vê diferença nenhuma).
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* A BALANÇA. Tudo desenhado com div (nada de imagem externa): a viga gira e os
+   pratos, que são FILHOS das pontas dela, descem junto — é o que dá a sensação
+   de peso. Cada prato ganha um contra-giro para o conteúdo ficar em pé.       */
+.bal{position:relative;max-width:420px;height:172px;margin:13px auto 0}
+.pebase{position:absolute;left:50%;margin-left:-58px;bottom:0;width:116px;height:13px;
+        background:#6b4b2a;border-radius:7px}
+.poste{position:absolute;left:50%;margin-left:-8px;top:22px;width:16px;height:146px;
+       background:#8a6a44;border-radius:5px}
+.viga{position:absolute;left:17%;right:17%;top:18px;height:13px;background:#c9a05e;border-radius:7px;
+      box-shadow:0 3px 0 #a07c3f;
+      -webkit-transform-origin:50% 50%;transform-origin:50% 50%;
+      -webkit-transition:-webkit-transform .55s;transition:transform .55s}
+.ponta{position:absolute;top:9px;width:96px;margin-left:-48px;
+       -webkit-transform-origin:50% 0;transform-origin:50% 0;
+       -webkit-transition:-webkit-transform .55s;transition:transform .55s}
+.lesq{left:0}
+.ldir{left:100%}
+.fio{width:3px;height:22px;margin:0 auto;background:#e8dcc4}
+.prato{background:#efe7d6;border:3px solid #a89880;border-top:0;border-radius:0 0 18px 18px;
+       min-height:50px;padding:5px 3px 6px}
+.cubos{display:-webkit-box;display:-webkit-flex;display:flex;
+       -webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+/* os cubos de cada parcela têm COR e TAMANHO iguais: o que muda é a quantidade.
+   Cor diferente marca a parcela (3 + 2), nunca o "certo/errado". */
+.cubo{width:15px;height:15px;margin:2px;border-radius:4px;background:#3c6ee0;box-shadow:0 2px 0 #2a4f9f}
+.cubo.cb{background:#e07b3c;box-shadow:0 2px 0 #a95a28}
+.cubo.cc{background:#7a5cc7;box-shadow:0 2px 0 #57409a}
+.cubo.cd{background:#59c24b;box-shadow:0 2px 0 #3d8a33}
+.cubo.novo{-webkit-animation:cai .3s ease-out;animation:cai .3s ease-out}
+@-webkit-keyframes cai{0%{-webkit-transform:translateY(-16px);opacity:.2}100%{-webkit-transform:translateY(0);opacity:1}}
+@keyframes cai{0%{transform:translateY(-16px);opacity:.2}100%{transform:translateY(0);opacity:1}}
+.ptot{margin-top:5px;font-size:16px;font-weight:800;color:#f4efe6}
+/* a frase numérica é o ÚLTIMO degrau (simbólico): ela só relata o que a
+   criança já fez com as mãos. */
+.frase{margin-top:10px;font-size:19px;font-weight:800;letter-spacing:.5px;color:#f4efe6}
+.frase b{color:#ffd54a}
+.frase.ok{display:inline-block;background:#d6f5c8;color:#1a3d10;border-radius:12px;padding:3px 12px}
+.frase.ok b{color:#1a3d10}
+.estado{margin-top:7px;font-size:15px;font-weight:700;color:#f4efe6;min-height:20px}
+.estado b{color:#ffd54a}
+.estado.ok b{color:#bff0a6}
+.cbt{margin-top:12px}
+.btn.menos{background:#e4d9c2;box-shadow:0 4px 0 #b0a68f;margin-right:10px}
+.btn.mais{background:#ffd54a}
+/* ⚠️ botão "apagado" NUNCA por `opacity`: o texto desbota junto com o fundo e o
+   contraste cai (4,04:1 medido pelo portão, mínimo 4,5). Apaga-se trocando a
+   COR do fundo e mantendo a letra escura. */
+.btn.off{background:#b8ad95;color:#2a2415;box-shadow:0 4px 0 #8e8571}
+/* o anel do 3º degrau do andaime: aponta o botão E o texto diz qual é */
+.btn.aponta{box-shadow:0 0 0 4px #fff3c9,0 4px 0 #c9a52f}
+/* a medalha fecha a peça: é por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — não é emoji e não é texto medido pelo contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (projetor, PC da escola com barras): encolhe a BALANÇA e a
+   letra, nunca os botões — eles são o que a criança precisa alcançar. */
+@media (max-height:520px){
+  .bal{height:132px}
+  .poste{height:110px;top:16px}
+  .viga{top:14px}
+  .ponta{top:6px}
+  .fio{height:14px}
+  .cubo{width:12px;height:12px;margin:2px}
+  .prato{min-height:40px;padding:4px 3px 5px}
+  .ptot{margin-top:3px;font-size:15px}
+  .frase{font-size:16px;margin-top:6px}
+  .estado{font-size:13px;margin-top:4px}
+  .cbt{margin-top:8px}
+  .balao{font-size:15px;padding:9px 14px}
+  .hint{margin-top:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (7 a 10 anos, números até 9). Ao copiar a peça para
+   uma atividade, troque APENAS este bloco: as parcelas da esquerda (a + b), o
+   que já vem posto na direita (ini) e o enunciado.
+   ⚠️ A ESCADA: a 1ª rodada tem pouca coisa na direita (a criança quase só
+   completa); a 2ª já tem mais peso posto do que ela imagina; a 3ª tem as duas
+   parcelas maiores. Nenhuma delas começa equilibrada — se começasse, a peça
+   fecharia sozinha e não ensinaria nada. */
+var RODS=[
+ {a:3,b:2,ini:1},
+ {a:4,b:4,ini:5},
+ {a:5,b:4,ini:4}
+];
+
+var ri=0;        /* rodada de agora */
+var add=0;       /* quantos cubos a criança já pôs no prato da direita */
+var err=0;       /* passos para LONGE da igualdade: é o que faz o andaime crescer */
+var travado=false;
+var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
+var elViga,elPE,elPD,elCubE,elCubD,elTotE,elTotD,elFrase,elEstado,btMais,btMenos;
+
+function esqTotal(){ return RODS[ri].a+RODS[ri].b; }
+function dirTotal(){ return RODS[ri].ini+add; }
+
+/* sons próprios: pôr peso e tirar peso não podem soar igual (no mudo, quem
+   conta é a animação do cubo caindo). */
+function sPoe(){ nota(392,.07,.13,"triangle",0); nota(523.25,.09,.11,"triangle",.05); }
+function sTira(){ nota(392,.07,.12,"triangle",0); nota(294,.09,.11,"triangle",.05); }
+
+function pecaBalanca(){
+  if(!RODS[ri]){ fimBalanca(); return; }
+  add=0; err=0; travado=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/RODS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A BALAN&Ccedil;A DA IGUALDADE"));
+  /* ⚠️ enunciado CURTO (carga cognitiva): uma ideia só. O que o "=" quer dizer
+     de verdade quem mostra é a balança, não o texto. */
+  c.appendChild(el("div","balao",
+    "Ponha peso &agrave; direita at&eacute; a viga parar <b>no meio</b>."));
+  c.appendChild(montaBalanca());
+  elFrase=el("div","frase","");
+  c.appendChild(elFrase);
+  elEstado=el("div","estado","");
+  c.appendChild(elEstado);
+  var lin=el("div","cbt");
+  btMenos=el("button","btn menos","− tirar");
+  btMais=el("button","btn mais","+ p&ocirc;r");
+  btMenos.onclick=function(){ passo(-1); };
+  btMais.onclick=function(){ passo(1); };
+  lin.appendChild(btMenos); lin.appendChild(btMais);
+  c.appendChild(lin);
+  c.appendChild(el("div","hint","Balan&ccedil;a "+(ri+1)+" de "+RODS.length+
+                   ". O prato que desce &eacute; o mais pesado."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenha(0);
+}
+
+function montaBalanca(){
+  var b=el("div","bal");
+  b.appendChild(el("div","pebase",""));
+  b.appendChild(el("div","poste",""));
+  elViga=el("div","viga","");
+  elPE=el("div","ponta lesq","");
+  elPD=el("div","ponta ldir","");
+  elPE.appendChild(el("div","fio",""));
+  elPD.appendChild(el("div","fio",""));
+  var prE=el("div","prato",""), prD=el("div","prato","");
+  elCubE=el("div","cubos",""); elCubD=el("div","cubos","");
+  prE.appendChild(elCubE); prD.appendChild(elCubD);
+  elPE.appendChild(prE); elPD.appendChild(prD);
+  elTotE=el("div","ptot",""); elTotD=el("div","ptot","");
+  elPE.appendChild(elTotE); elPD.appendChild(elTotD);
+  elViga.appendChild(elPE); elViga.appendChild(elPD);
+  b.appendChild(elViga);
+  return b;
+}
+
+/* gira(el, graus) — a mesma escrita nos dois prefixos (Chrome 109 antigo) */
+function gira(e,g){
+  e.style.webkitTransform="rotate("+g+"deg)";
+  e.style.transform="rotate("+g+"deg)";
+}
+
+function desenha(quantosNovos){
+  var r=RODS[ri], e=esqTotal(), d=dirTotal(), dif=d-e, i, cu;
+  elCubE.innerHTML=""; elCubD.innerHTML="";
+  for(i=0;i<r.a;i++) elCubE.appendChild(el("div","cubo",""));
+  for(i=0;i<r.b;i++) elCubE.appendChild(el("div","cubo cb",""));
+  for(i=0;i<r.ini;i++) elCubD.appendChild(el("div","cubo cc",""));
+  for(i=0;i<add;i++){
+    cu=el("div", (quantosNovos>0&&i>=add-quantosNovos) ? "cubo cd novo" : "cubo cd", "");
+    elCubD.appendChild(cu);
+  }
+  elTotE.innerHTML=""+e;
+  elTotD.innerHTML=""+d;
+
+  /* O MOVIMENTO É O ARGUMENTO: o giro é proporcional à diferença (até um
+     limite), e o prato mais pesado DESCE. Como os pratos são filhos das pontas
+     da viga, eles descem junto; o contra-giro deixa o conteúdo em pé. */
+  var ang=dif*3.2;
+  if(ang>16) ang=16;
+  if(ang<-16) ang=-16;
+  gira(elViga,ang);
+  gira(elPE,-ang);
+  gira(elPD,-ang);
+
+  /* a frase numérica: o "?" só some quando ela mesma põe peso */
+  elFrase.className = (dif===0) ? "frase ok" : "frase";
+  elFrase.innerHTML = r.a+" + "+r.b+" &nbsp;=&nbsp; "+r.ini+" + <b>"+(add>0?(""+add):"?")+"</b>";
+
+  if(dif===0){
+    elEstado.className="estado ok";
+    elEstado.innerHTML="IGUAL! Os dois lados t&ecirc;m <b>"+e+"</b>.";
+  }else if(dif<0){
+    elEstado.className="estado";
+    elEstado.innerHTML="A DIREITA est&aacute; mais <b>leve</b>: o prato dela subiu.";
+  }else{
+    elEstado.className="estado";
+    elEstado.innerHTML="A DIREITA est&aacute; mais <b>pesada</b>: o prato dela desceu.";
+  }
+
+  /* data-qa="1" = "este botão serve AGORA". Só o auditor-jogador usa. */
+  btMais.removeAttribute("data-qa");
+  btMenos.removeAttribute("data-qa");
+  if(dif<0) btMais.setAttribute("data-qa","1");
+  else if(dif>0) btMenos.setAttribute("data-qa","1");
+  btMenos.className = (add<=0) ? "btn menos off" : "btn menos";
+  btMais.className="btn mais";
+
+  if(dif===0 && !travado){
+    travado=true;
+    sCerto();
+    var g=ger;
+    setTimeout(function(){
+      if(g!==ger) return;
+      ri++;
+      if(ri<RODS.length) pecaBalanca();
+      /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece
+         que acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. Se a
+         medalha nascesse sozinha de um setTimeout, ele clicaria em "Jogar de
+         novo" na iteração seguinte e a partida recomeçaria para sempre. */
+      else mostraBanner("<b>Balan&ccedil;a no meio!</b><br>Os dois lados valem o mesmo.", fimBalanca);
+    },1400);
+  }
+}
+
+function passo(d){
+  if(travado) return;
+  if(d<0 && add<=0){ sTap(); return; }   /* o peso que já veio posto não sai */
+  var antes=Math.abs(dirTotal()-esqTotal());
+  add+=d;
+  var depois=Math.abs(dirTotal()-esqTotal());
+  if(d>0) sPoe(); else sTira();
+  desenha(d>0?1:0);
+  /* ⚠️ DESEQUILÍBRIO NÃO É ERRO: ninguém é corrigido por estar torto. O andaime
+     só entra quando o passo AFASTOU da igualdade — e mesmo aí, perguntando. */
+  if(depois>antes){ err++; ajuda(); }
+}
+
+/* O ANDAIME QUE CRESCE: pergunta -> apoio concreto (os dois números) ->
+   revela quantos faltam e aponta o botão. Nunca a palavra "errou". */
+function ajuda(){
+  var e=esqTotal(), d=dirTotal(), falta=e-d;
+  if(err===1){
+    mostraDica("Olhe a balan&ccedil;a: o prato que <b>desceu</b> &eacute; o mais pesado. "+
+               "O que este lado est&aacute; pedindo?");
+  }else if(err===2){
+    mostraDica("Conte de novo: <b>"+e+"</b> de um lado e <b>"+d+"</b> do outro. "+
+               "Qual lado precisa mudar para os dois ficarem iguais?");
+  }else{
+    if(falta>0) mostraDica("Faltam <b>"+falta+"</b> deste lado. Toque em <b>+ p&ocirc;r</b> "+
+                           falta+(falta>1?" vezes.":" vez."));
+    else mostraDica("Sobra<b>"+((-falta)>1?"m":"")+" "+(-falta)+"</b> deste lado. "+
+                    "Toque em <b>&minus; tirar</b>.");
+    if(falta>0) btMais.className="btn mais aponta";
+    else btMenos.className="btn menos aponta";
+  }
+}
+
+function fimBalanca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&ecirc; deixou as <b>"+RODS.length+"</b> balan&ccedil;as "+
+                   "iguais dos dois lados."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pecaBalanca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","O sinal = n&atilde;o pede a resposta: ele diz que os dois "+
+                   "lados valem o mesmo."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaBalanca();
+</script>
+</body></html>

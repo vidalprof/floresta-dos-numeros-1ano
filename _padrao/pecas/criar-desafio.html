@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — criar o desafio</title>
+<!-- ============================================================
+     PEÇA: CRIAR O DESAFIO (copiada do _padrao/pecas/MOLDE.html)
+
+     A mecânica: quem cria o desafio é a CRIANÇA. Ela esconde o tesouro numa
+     grade, escolhe a PISTA e o desafio fica guardado e mostrável (com um
+     código, para o colega montar de novo sem servidor nenhum).
+     Criar um desafio bem-formado é prova forte de domínio — e é o "quero
+     mais" do fecho (REGRAS-INTERATIVIDADE.md, linha "Autoria / galeria").
+
+     As armadilhas desta mecânica — cada uma escrita porque já custou caro:
+       · SEM RESTRIÇÃO VIRA DESENHO LIVRE e não mede nada. Aqui a regra está
+         escrita na tela e é COBRADA pela máquina: esconder em exatamente
+         3 casas e escolher uma pista VERDADEIRA sobre o próprio mapa —
+         o app confere a pista contra o mapa que ela mesma montou;
+       · o artefato PERSISTE (é o que dá sentido a criar): fica guardado no
+         código do desafio e reaparece na tela final, mostrável;
+       · nunca trava: dá para desfazer tocando de novo na casa, e depois de
+         3 erros a pista verdadeira acende com a marca escrita "é esta".
+
+     Mais o que o contrato cobra: alvo >= 44px (casa de 58px), nada essencial
+     só na cor (a casa escondida ganha a moeda desenhada E o contador em
+     palavras), funciona no mudo, erro com sErro() + andaime que CRESCE,
+     `data-qa` para o auditor-jogador, termina numa `.medal`.
+     ES5 puro, um arquivo só (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a tela e alta (mapa + regra + pistas). Sem rolagem, num celular de
+   320x568, o que se toca cairia abaixo da dobra e a crianca acharia que a
+   tela acabou. Aqui a tela ROLA de verdade — que e o que o dedo faz. */
+.tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* A REGRA do desafio, sempre a vista: e ela que impede o "desenho livre". */
+/* ⚠️ a margem de cima tem que ser ESCRITA: `.balao + *{margin-top:13px}` vem
+   ANTES no arquivo e com a mesma forca, entao um `margin:0 auto` aqui embaixo
+   ganharia e a regra nasceria COLADA no enunciado (portao de leiaute, regra
+   9 — cobranca do Marcos duas vezes). */
+.regra{background:rgba(255,213,74,.16);border:2px solid #ffd54a;border-radius:14px;
+       padding:9px 12px;margin:13px auto 0;max-width:430px;font-size:15px;font-weight:700;
+       color:#ffe9a8;line-height:1.3}
+/* O MAPA. Casa de 58px: dedo de crianca com folga. */
+.tabu{display:block;margin:12px auto 0;max-width:300px;font-size:0}
+.tabum{max-width:236px}
+.cx{display:inline-block;vertical-align:top;width:25%;height:58px;font-size:13px;
+    background:#fffdf6;color:#4a3a1c;border:2px solid #c9bda6;border-radius:12px;
+    cursor:pointer;padding:3px 0 0;-webkit-user-select:none;user-select:none}
+/* escondida: NAO e so a cor — ganha a moeda desenhada e a borda grossa */
+.cx.cheia{background:#ffe9a8;border:3px solid #a8791a}
+.cxr{display:block;font-size:12px;font-weight:800;color:#4a3a1c;line-height:1.1}
+.pino{display:block;width:28px;height:28px;margin:3px auto 0;border-radius:50%;
+      background:#f6c23a;border:3px solid #8a6410;color:#4a3608;font-size:14px;
+      line-height:22px;font-weight:800;text-align:center}
+.pino:before{content:"\2605"}
+.placar{display:block;font-size:15px;font-weight:800;color:#ffe9a8;margin:10px 0 0}
+/* a opcao revelada depois do 3o erro: acende E ganha a marca ESCRITA */
+.opt.rev{background:#d6f5c8;box-shadow:0 0 0 3px #ffd54a,0 4px 0 #7cb464}
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+/* O DESAFIO GUARDADO — o artefato que fica. */
+.cartao{background:rgba(255,255,255,.10);border:3px solid #ffd54a;border-radius:18px;
+        padding:12px 14px 14px;margin:0 auto;max-width:430px;text-align:left}
+.ctit{display:block;font-size:15px;font-weight:800;color:#ffe9a8;margin-bottom:6px}
+.cpista{display:block;font-size:16px;font-weight:700;color:#f4efe6;line-height:1.35}
+.ccod{display:block;font-family:"Courier New",monospace;font-size:17px;font-weight:800;
+      color:#221a12;background:#ffe9a8;border-radius:10px;padding:7px 10px;margin-top:9px;
+      letter-spacing:1px;text-align:center}
+.resp{display:block;font-size:15px;font-weight:700;color:#ffe9a8;margin-top:9px;line-height:1.3}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (mapa de 4x4 e pistas de posição, 8-10 anos).
+   Ao copiar a peça para uma atividade, troque APENAS: o tamanho do mapa
+   (LINHAS/COLUNAS), quantas peças ela esconde (QUANTAS) e a lista PISTAS —
+   cada pista é uma FRASE mais a função que diz se ela é verdadeira naquele
+   mapa. É essa função que transforma "criar" em algo MEDIDO.              */
+var COLUNAS=["A","B","C","D"];
+var LINHAS=4;
+var QUANTAS=3;
+
+var PISTAS=[
+  {t:"As três moedas estão na <b>mesma linha</b>.",
+   f:function(p){ return p[0].r===p[1].r&&p[1].r===p[2].r; }},
+  {t:"As três moedas estão na <b>mesma coluna</b>.",
+   f:function(p){ return p[0].c===p[1].c&&p[1].c===p[2].c; }},
+  {t:"Cada moeda está numa <b>linha diferente</b>.",
+   f:function(p){ return p[0].r!==p[1].r&&p[1].r!==p[2].r&&p[0].r!==p[2].r; }},
+  {t:"Cada moeda está numa <b>coluna diferente</b>.",
+   f:function(p){ return p[0].c!==p[1].c&&p[1].c!==p[2].c&&p[0].c!==p[2].c; }},
+  {t:"Pelo menos uma moeda está na <b>metade de cima</b> (linhas 1 e 2).",
+   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r<2) return true; return false; }},
+  {t:"Pelo menos uma moeda está na <b>metade de baixo</b> (linhas 3 e 4).",
+   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r>=2) return true; return false; }},
+  {t:"<b>Nenhuma</b> moeda está na coluna A.",
+   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].c===0) return false; return true; }},
+  {t:"<b>Nenhuma</b> moeda está na linha 1.",
+   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r===0) return false; return true; }},
+  {t:"Duas moedas estão <b>grudadas</b>, lado a lado na mesma linha.",
+   f:function(p){ var i,j; for(i=0;i<p.length;i++) for(j=i+1;j<p.length;j++)
+       if(p[i].r===p[j].r&&Math.abs(p[i].c-p[j].c)===1) return true; return false; }},
+  {t:"Pelo menos uma moeda está num <b>canto</b> do mapa.",
+   f:function(p){ var i,c; for(i=0;i<p.length;i++){ c=p[i];
+       if((c.r===0||c.r===LINHAS-1)&&(c.c===0||c.c===COLUNAS.length-1)) return true; } return false; }}
+];
+
+var ESC=[];          /* as casas escondidas: [{r,c}] — o desafio dela */
+var DESAFIO=null;    /* o artefato guardado: {cod, pista} */
+var err=0;           /* erros da tela de agora */
+var ger=0;           /* geracao da tela: mata setTimeout de tela que ja saiu */
+
+function nomeCasa(p){ return COLUNAS[p.c]+(p.r+1); }
+function codigoDe(lista){
+  var a=[], i;
+  for(i=0;i<lista.length;i++) a.push(lista[i]);
+  a.sort(function(x,y){ return (x.r-y.r)||(x.c-y.c); });
+  var s=[];
+  for(i=0;i<a.length;i++) s.push(nomeCasa(a[i]));
+  return s.join(" · ");
+}
+/* se alguem abrir a tela 2 ou 3 direto (o auditor faz isso), inventa um mapa
+   valido — a peca nunca pode estourar por falta de estado. */
+function garanteMapa(){
+  if(ESC.length===QUANTAS) return;
+  ESC=[];
+  var usadas={}, r, c, k;
+  while(ESC.length<QUANTAS){
+    r=Math.floor(Math.random()*LINHAS); c=Math.floor(Math.random()*COLUNAS.length);
+    k=r+"_"+c;
+    if(usadas[k]) continue;
+    usadas[k]=1; ESC.push({r:r,c:c});
+  }
+}
+function guardaNoAparelho(){
+  /* localStorage nao existe em file:// — por isso o try/catch. O desafio
+     continua guardado na memoria de qualquer jeito. */
+  try{ if(window.localStorage&&DESAFIO) localStorage.setItem("pecaDesafio",JSON.stringify(DESAFIO)); }catch(e){}
+}
+
+/* ---------------- TELA 1: ESCONDER O TESOURO ---------------- */
+function pecaDesafio(){
+  ESC=[]; err=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","VOCÊ FAZ O DESAFIO"));
+  c.appendChild(el("div","balao","Agora é você quem <b>cria</b>. Esconda as moedas no mapa — o desafio vai ficar guardado com o seu código."));
+  c.appendChild(el("div","regra","A REGRA: esconda em <b>3 casas</b> e depois escolha uma pista <b>verdadeira</b> sobre o seu mapa."));
+  c.appendChild(fazMapa(true));
+  c.appendChild(el("div","placar","0 de 3 moedas escondidas"));
+  c.appendChild(el("div","hint","Toque na casa para esconder. Toque de novo para tirar."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazMapa(vivo){
+  var g=el("div", vivo?"tabu":"tabu tabum"), r, c, cel;
+  for(r=0;r<LINHAS;r++){
+    for(c=0;c<COLUNAS.length;c++){
+      cel=fazCasa(r,c,vivo);
+      g.appendChild(cel);
+    }
+  }
+  return g;
+}
+
+function fazCasa(r,c,vivo){
+  var d=el("div","cx");
+  d.appendChild(el("span","cxr",COLUNAS[c]+(r+1)));
+  if(temMoeda(r,c)){ d.className="cx cheia"; d.appendChild(el("span","pino","")); }
+  if(!vivo){ d.style.cursor="default"; return d; }
+  /* data-qa="1" = "esta serve AGORA". Só o auditor-jogador olha para isto:
+     qualquer casa vazia serve, então todas as vazias publicam a marca. */
+  if(!temMoeda(r,c)) d.setAttribute("data-qa","1");
+  d.onclick=function(){ mexeCasa(d,r,c); };
+  return d;
+}
+
+function temMoeda(r,c){
+  var i;
+  for(i=0;i<ESC.length;i++) if(ESC[i].r===r&&ESC[i].c===c) return true;
+  return false;
+}
+
+function mexeCasa(d,r,c){
+  var i;
+  for(i=0;i<ESC.length;i++){
+    if(ESC[i].r===r&&ESC[i].c===c){          /* ja tinha moeda: tira */
+      ESC.splice(i,1);
+      d.className="cx";
+      d.innerHTML="";
+      d.appendChild(el("span","cxr",COLUNAS[c]+(r+1)));
+      d.setAttribute("data-qa","1");
+      sTap(); atualizaPlacar();
+      return;
+    }
+  }
+  if(ESC.length>=QUANTAS){                    /* a regra e 3: nao pune, explica */
+    sErro();
+    mostraDica("O desafio é de <b>3 moedas</b>. Para trocar de lugar, toque numa moeda que você já escondeu para tirá-la.");
+    return;
+  }
+  ESC.push({r:r,c:c});
+  d.className="cx cheia";
+  d.setAttribute("data-qa","0");
+  d.appendChild(el("span","pino",""));
+  sTap();
+  atualizaPlacar();
+  if(ESC.length>=QUANTAS){
+    sCerto();
+    var p=app.querySelector(".prog i");
+    if(p) p.style.width="50%";
+    var g=ger;
+    setTimeout(function(){ if(g!==ger) return; desafioPista(); },700);
+  }
+}
+
+function atualizaPlacar(){
+  var p=app.querySelector(".placar");
+  if(p) p.innerHTML=ESC.length+" de "+QUANTAS+" moedas escondidas";
+}
+
+/* ---------------- TELA 2: A PISTA TEM QUE SER VERDADEIRA ----------------
+   ⭐ É AQUI QUE "CRIAR" DEIXA DE SER DESENHO LIVRE. A máquina confere cada
+   frase contra o mapa que ELA montou: pista falsa não entra no desafio.  */
+function desafioPista(){
+  garanteMapa();
+  err=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,50);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","ESCOLHA UMA PISTA VERDADEIRA"));
+  c.appendChild(el("div","balao","Este é o <b>seu</b> mapa. Qual destas pistas é <b>verdadeira</b> sobre ele? Ela vai junto com o seu desafio."));
+  c.appendChild(fazMapa(false));
+
+  var certas=[], erradas=[], i;
+  for(i=0;i<PISTAS.length;i++){
+    if(PISTAS[i].f(ESC)) certas.push(PISTAS[i]); else erradas.push(PISTAS[i]);
+  }
+  baguncar(certas); baguncar(erradas);
+  var lista=[];
+  if(certas.length) lista.push({t:certas[0].t,ok:1});
+  for(i=0;i<erradas.length&&lista.length<4;i++) lista.push({t:erradas[i].t,ok:0});
+  for(i=1;i<certas.length&&lista.length<4;i++) lista.push({t:certas[i].t,ok:1});
+  baguncar(lista);
+
+  var box=el("div","opts");
+  for(i=0;i<lista.length;i++) box.appendChild(fazPista(lista[i]));
+  c.appendChild(box);
+  c.appendChild(el("div","hint","Confira cada frase olhando as suas <b>3 moedas</b> no mapa."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazPista(it){
+  var o=el("div","opt",it.t);
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ respondePista(o,it); };
+  return o;
+}
+
+function respondePista(o,it){
+  if(o.className.indexOf("no")>=0) return;
+  if(it.ok){
+    sCerto();
+    o.className="opt ok";
+    if(o.innerHTML.indexOf("marca")<0) o.innerHTML=o.innerHTML+'<span class="marca">verdadeira</span>';
+    trancaOpts();
+    DESAFIO={cod:codigoDe(ESC), pista:it.t};
+    guardaNoAparelho();
+    var g=ger;
+    setTimeout(function(){
+      if(g!==ger) return;
+      mostraBanner("Desafio pronto! A sua pista é verdadeira <b>e</b> ajuda quem for procurar.", fimDaPeca);
+    },620);
+    return;
+  }
+  /* ERRO: não pune. A dica manda ela CONFERIR no próprio mapa — que é
+     exatamente o raciocínio que a peça quer treinar. */
+  sErro();
+  o.className="opt no";
+  o.onclick=null;
+  err++;
+  var acabou=(sobramErradas()===0);
+  mostraDica(acabou?dicaFinal():dicaDoErro(err));
+  if(err>=3||acabou) revela();
+}
+
+function dicaDoErro(n){
+  if(n<=1) return "Confira no seu mapa: as moedas estão em <b>"+codigoDe(ESC)+"</b>. A frase precisa combinar com essas três casas.";
+  if(n===2) return "Leia a frase devagar e olhe as três moedas: se <b>uma só</b> delas desmentir a frase, a pista é falsa.";
+  return dicaFinal();
+}
+function dicaFinal(){
+  return "A pista verdadeira está acesa e marcada “é esta”. As suas moedas estão em <b>"+codigoDe(ESC)+"</b>.";
+}
+
+function sobramErradas(){
+  var a=app.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")!=="1"&&a[i].className.indexOf("no")<0) n++;
+  return n;
+}
+function revela(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")==="1"&&a[i].className.indexOf("ok")<0){
+      a[i].className="opt rev";
+      if(a[i].innerHTML.indexOf("marca")<0)
+        a[i].innerHTML=a[i].innerHTML+'<span class="marca">é esta</span>';
+    }
+  }
+}
+function trancaOpts(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].onclick=null;
+}
+
+/* ---------------- FIM: O DESAFIO GUARDADO E MOSTRÁVEL ---------------- */
+function fimDaPeca(){
+  garanteMapa();
+  if(!DESAFIO) DESAFIO={cod:codigoDe(ESC), pista:PISTAS[4].t};
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O SEU DESAFIO ESTÁ GUARDADO"));
+  c.appendChild(el("div","medal",""));
+
+  var cart=el("div","cartao");
+  cart.appendChild(el("span","ctit","DESAFIO DO CAÇA-MOEDAS"));
+  cart.appendChild(el("span","cpista","Pista: "+DESAFIO.pista));
+  cart.appendChild(el("span","ccod",DESAFIO.cod));
+  var resp=el("span","resp","O esconderijo está guardado. Toque em “Mostrar o esconderijo” quando o colega desistir.");
+  cart.appendChild(resp);
+  c.appendChild(cart);
+
+  var b1=el("button","btn","Mostrar o esconderijo");
+  b1.onclick=function(){ sTap(); resp.innerHTML="Esconderijo: <b>"+DESAFIO.cod+"</b>."; };
+  c.appendChild(b1);
+  var b2=el("button","btn","Criar outro desafio");
+  b2.style.marginTop="10px";
+  b2.onclick=function(){ pecaDesafio(); };
+  c.appendChild(b2);
+  c.appendChild(el("div","hint","Esta é a peça CRIAR O DESAFIO: a regra é cobrada pela máquina e o que ela cria fica guardado."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaDesafio();
+</script>
+</body></html>

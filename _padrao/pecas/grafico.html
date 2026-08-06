@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — construir o gráfico de barras</title>
+<!-- ============================================================
+     PEÇA: CONSTRUIR O GRÁFICO DE BARRAS (arrastar a barra até a altura certa)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     POR QUE CONSTRUIR E NÃO LER: quase toda atividade de gráfico pergunta
+     "quem tem mais?" — isso é LER. Construir é outra competência: a criança
+     precisa contar o real, decidir a altura e conferir. Aqui ela faz o
+     gráfico com a mão e só DEPOIS lê o que construiu (a última tela).
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · PASSO DISCRETO, nunca precisão de pixel: cada degrau de arrasto vale
+         UM da contagem e a barra encaixa sozinha no degrau. Pedir ao dedo de
+         uma criança que pare em "3,0" é pedir o impossível — e é assim que a
+         barra fica em 2,7 e a fase diz que está errada;
+       · TRÊS CAMINHOS: arrastar (mouse/dedo), tocar na altura desejada da
+         coluna, e os botões +/− de 48px (quem não arrasta fecha a peça);
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular);
+       · guarda contra o clique de mouse FANTASMA (`ultimoToque`);
+       · O GRÁFICO LIGADO AO QUE ELE REPRESENTA: as fichas de verdade ficam
+         acima da coluna que está sendo construída, e a barra pronta guarda o
+         número. Gráfico sem o dado ao lado vira desenho solto;
+       · NADA ESSENCIAL SÓ NA COR: cada categoria tem forma própria (bolinha,
+         quadrado, gota), o número aparece escrito na barra e a barra pronta
+         ganha "✓" e borda inteira;
+       · NUNCA TRAVA: passar da conta não pune — a barra só avisa e volta; e o
+         andaime cresce até acender o degrau certo.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+/* resposta curta vai DEITADA: três opções empilhadas não cabem na janela
+   baixa (1024x420) e a terceira fica cortada no pé da tela. */
+.opt.curta{display:inline-block;width:auto;min-width:86px;max-width:none;margin:6px 3px;
+           vertical-align:top;padding:13px 12px}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: CONSTRUIR O GRÁFICO ----------------
+   ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes).       */
+/* O DADO DE VERDADE, logo acima do grafico: e o que liga a barra ao mundo */
+.gdado{display:block;text-align:center;margin:13px auto 6px;padding:6px 8px;
+      background:rgba(255,255,255,.09);border-radius:14px;font-size:14px;font-weight:700;
+      line-height:1.25}
+.gfic{display:inline-block;width:19px;height:19px;margin:2px 3px;vertical-align:middle;
+     background:#ffd54a;border:2px solid #fff3c9}
+.gfic.gf0{border-radius:50%}                       /* bolinha */
+.gfic.gf1{border-radius:4px}                       /* quadrado */
+.gfic.gf2{border-radius:50% 50% 50% 4px}           /* gota    */
+.gfic.gc0{background:#ffd54a}
+.gfic.gc1{background:#7fd3ff}
+.gfic.gc2{background:#ffa1c4}
+/* O GRAFICO */
+.ggraf{position:relative;margin:0 auto;text-align:center;line-height:0}
+.geixo{position:absolute;left:0;right:0;border-top:1px dashed rgba(255,255,255,.25)}
+.geixon{position:absolute;left:0;font-size:11px;font-weight:700;color:#e2dacd;line-height:1;
+       -webkit-transform:translateY(-4px);transform:translateY(-4px)}
+.gcol{display:inline-block;vertical-align:bottom;position:relative;width:64px;margin:0 6px;
+     cursor:pointer}
+.gbarra{position:absolute;left:8px;right:8px;bottom:0;background:#ffd54a;border:3px solid #fff3c9;
+       border-radius:8px 8px 0 0;color:#33280a;font-size:15px;font-weight:800;line-height:1;
+       padding-top:3px;-webkit-transition:height .18s;transition:height .18s}
+.gbarra.gb0{background:#ffd54a;border-color:#fff3c9}
+.gbarra.gb1{background:#7fd3ff;border-color:#daf1ff}
+.gbarra.gb2{background:#ffa1c4;border-color:#ffe1ec}
+/* pronta = borda INTEIRA + o "V": forma e texto, nunca so a cor */
+.gbarra.pronta{border-color:#1f6b12;border-width:4px}
+.gbarra.agora{-webkit-animation:respira 1.6s infinite;animation:respira 1.6s infinite}
+@-webkit-keyframes respira{0%,100%{-webkit-box-shadow:0 0 0 0 rgba(255,213,74,.0)}50%{-webkit-box-shadow:0 0 0 5px rgba(255,213,74,.45)}}
+@keyframes respira{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.45)}}
+.gvok{position:absolute;left:0;right:0;top:-19px;font-size:15px;font-weight:800;color:#8ee87a;
+     line-height:1}
+.grot{position:absolute;left:0;right:0;font-size:11px;font-weight:700;line-height:1.15;
+      color:#f4efe6}
+.gbase{position:absolute;left:0;right:0;border-top:3px solid rgba(255,255,255,.5)}
+/* OS BOTOES — a porta de quem nao arrasta */
+.gctrl{display:block;text-align:center;line-height:0}
+.pc{display:inline-block;vertical-align:top;width:110px;height:52px;line-height:1.05;
+    margin:0 5px;padding:7px 4px 0;background:#fffdf6;color:#221a12;border-radius:16px;
+    font-size:21px;font-weight:800;text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc i{display:block;font-size:11px;font-weight:700;font-style:normal;letter-spacing:.3px}
+.pc.usada{visibility:hidden;pointer-events:none}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+@media (max-height:470px){.gdado{margin-top:10px;margin-bottom:3px;padding:3px 8px;font-size:13px}
+  .gfic{width:15px;height:15px;margin:1px 2px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* CONSTRUIR O GRAFICO — uma coluna por vez. A crianca ve as fichas de
+   verdade, conta, e leva a barra ate aquela altura.
+   Trocar `DADOS` ja adapta a peca a outro conteudo; a unica regra e que o
+   maior valor caiba em `TETO` degraus (senao a barra sai da tela).        */
+var DADOS=[
+  {n:"Ma&#231;&#227;",  p:"ma&#231;&#227;s",   v:4},
+  {n:"Pera",  p:"peras",   v:2},
+  {n:"Uva",   p:"uvas",    v:5}
+];
+var TETO=6;
+
+var col=0, valor=0, errosSeg=0, telaAtual=null, barraP=null;
+var feitos=[], barras=[], colunas=[], elMais=null, elMenos=null;
+var passo=26, altG=0;
+/* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
+   toque. Sem esta marca de tempo a barra andava dois degraus por toque. */
+var ultimoToque=0, arrastando=false, yIni=0, vIni=0, moveu=false;
+
+function sSobe(){ nota(440,.05,.11,"square",0); }
+function sDesce(){ nota(330,.05,.11,"square",0); }
+
+function telaGrafico(){
+  limpa(); document.onkeydown=null; arrastando=false;
+  if(col>=DADOS.length){ col=0; feitos=[]; }
+  if(col===0) feitos=[];
+  valor=0; errosSeg=0; barras=[]; colunas=[];
+  /* PASSO DISCRETO calculado pela ALTURA DA JANELA: na janela baixa da escola
+     o grafico inteiro tem que caber junto com os botoes. */
+  passo=(window.innerHeight<560)?20:26;
+  altG=passo*TETO;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(col*100/DADOS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CONSTRUA O GR&#193;FICO "+(col+1)+"/"+DADOS.length));
+  c.appendChild(el("div","balao","Levante a barra da <b>"+DADOS[col].n+
+    "</b> at&#233; a altura certa."));
+
+  /* O DADO DE VERDADE — as fichas que a barra vai representar */
+  var d=el("div","gdado"), i;
+  d.innerHTML="Colhemos estas "+DADOS[col].p+":<br>";
+  for(i=0;i<DADOS[col].v;i++) d.appendChild(el("span","gfic gf"+col+" gc"+col,""));
+  c.appendChild(d);
+
+  c.appendChild(montaGrafico());
+
+  /* OS BOTOES: a porta de quem nao arrasta */
+  var ct=el("div","gctrl");
+  elMenos=el("div","pc","&#8722;<i>DESCER UM</i>");
+  elMais =el("div","pc","+<i>SUBIR UM</i>");
+  ligaBotao(elMenos,-1); ligaBotao(elMais,1);
+  ct.appendChild(elMenos); ct.appendChild(elMais);
+  c.appendChild(ct);
+  c.appendChild(el("div","hint","Arraste a barra para cima ou use os bot&#245;es."));
+  t.appendChild(c); app.appendChild(t);
+  desenha();
+  marcaQualServe();
+}
+
+/* ---------- o desenho do grafico ---------- */
+function montaGrafico(){
+  var g=el("div","ggraf"), i, k, li, no, cl, b, r;
+  g.style.height=(altG+26)+"px";
+  g.style.maxWidth=(DADOS.length*76+30)+"px";
+  /* as linhas do eixo: sao elas que fazem o degrau ser VISIVEL */
+  for(k=0;k<=TETO;k++){
+    li=el("div","geixo");
+    li.style.bottom=(26+k*passo)+"px";
+    g.appendChild(li);
+    no=el("div","geixon",""+k);
+    no.style.bottom=(26+k*passo)+"px";
+    g.appendChild(no);
+  }
+  var base=el("div","gbase"); base.style.bottom="26px"; g.appendChild(base);
+  var linha=el("div","ggraf");
+  linha.style.height=(altG+26)+"px";
+  linha.style.position="relative";
+  for(i=0;i<DADOS.length;i++){
+    cl=el("div","gcol");
+    cl.style.height=(altG+26)+"px";
+    b=el("div","gbarra gb"+i);
+    b.style.height="0px";
+    b.style.bottom="26px";
+    cl.appendChild(b);
+    r=el("div","grot",DADOS[i].n);
+    r.style.bottom="4px";
+    cl.appendChild(r);
+    ligaColuna(cl,i);
+    linha.appendChild(cl);
+    barras.push(b); colunas.push(cl);
+  }
+  g.appendChild(linha);
+  /* as colunas ja construidas voltam prontas */
+  for(i=0;i<feitos.length;i++) if(feitos[i]!==undefined) pintaBarra(i,feitos[i],true);
+  return g;
+}
+function pintaBarra(i,v,pronta){
+  var b=barras[i];
+  if(!b) return;
+  b.style.height=(v*passo)+"px";
+  b.innerHTML=(v>0)?(""+v):"";
+  b.className="gbarra gb"+i+(pronta?" pronta":(i===col?" agora":""));
+  if(pronta&&!b.querySelector(".gvok")) b.appendChild(el("div","gvok","&#10003;"));
+}
+function desenha(){
+  pintaBarra(col,valor,false);
+}
+
+/* ---------- as TRES portas da mesma barra ----------
+   ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart mata o
+   toque no celular (armadilha registrada no _padrao/DINAMICAS.md).       */
+function ligaColuna(cl,i){
+  cl.idx=i;
+  cl.onmousedown=colMouseIni;
+  cl.onclick=colClique;
+  cl.addEventListener("touchstart",colToqueIni,false);
+  cl.addEventListener("touchmove",colToqueMeio,false);
+  cl.addEventListener("touchend",colToqueFim,false);
+}
+function colClique(ev){
+  if(Date.now()-ultimoToque<700) return;   /* clique FANTASMA depois do toque */
+  if(this.idx!==col) { avisaColuna(this.idx); return; }
+  poeNaAltura(ev.clientY);
+}
+function colMouseIni(ev){
+  if(Date.now()-ultimoToque<700) return;
+  if(this.idx!==col){ avisaColuna(this.idx); return; }
+  pegaBarra(ev.clientY);
+}
+function colToqueIni(ev){
+  ultimoToque=Date.now();
+  if(this.idx!==col){ avisaColuna(this.idx); return; }
+  var to=ev.touches[0]; if(!to) return;
+  pegaBarra(to.clientY);
+}
+function colToqueMeio(ev){
+  if(!arrastando) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveBarra(to.clientY);
+  if(moveu) ev.preventDefault();   /* so no MEIO do arrasto, nunca no comeco */
+}
+function colToqueFim(ev){
+  ultimoToque=Date.now();
+  var arrastou=moveu, to=ev.changedTouches[0];
+  soltaBarra();
+  if(!arrastou&&this.idx===col&&to) poeNaAltura(to.clientY); /* toque simples */
+}
+document.onmousemove=function(ev){ if(arrastando) moveBarra(ev.clientY); };
+document.onmouseup=function(){ if(arrastando) soltaBarra(); };
+
+/* ---------- o arrasto com PASSO DISCRETO ----------
+   Cada `passo` de pixel percorrido vale UM da contagem, e a barra so para em
+   degrau inteiro. Nunca se pede precisao de pixel ao dedo de uma crianca —
+   e assim a barra tambem nunca fica "quase" na altura certa.              */
+function pegaBarra(y){
+  if(feitos[col]!==undefined) return;
+  arrastando=true; yIni=y; vIni=valor; moveu=false;
+  sTap();
+}
+function moveBarra(y){
+  if(!arrastando) return;
+  if(!moveu&&Math.abs(y-yIni)>6) moveu=true;
+  var v=vIni+Math.round((yIni-y)/passo);
+  if(v<0) v=0;
+  if(v>TETO) v=TETO;
+  if(v!==valor){ if(v>valor) sSobe(); else sDesce(); valor=v; desenha(); confere(); }
+}
+function soltaBarra(){ arrastando=false; moveu=false; }
+/* tocar na coluna na altura desejada: o degrau tocado vira o valor */
+function poeNaAltura(y){
+  if(feitos[col]!==undefined) return;
+  var cl=colunas[col], r=cl.getBoundingClientRect();
+  var v=Math.round((r.bottom-26-y)/passo);
+  if(v<0) v=0;
+  if(v>TETO) v=TETO;
+  if(v===valor) return;
+  if(v>valor) sSobe(); else sDesce();
+  valor=v; desenha(); confere();
+}
+/* ⚠️ DEFEITO PEGO NO TESTE DO DEDO (ago/2026, nesta própria peça): o botão
+   tinha SÓ `onclick`, e o guarda do mouse fantasma ignora qualquer clique nos
+   700ms seguintes a um toque. Resultado no celular: a criança arrastava a
+   barra com o dedo e, se tocasse no "+" logo em seguida, O BOTÃO NÃO FAZIA
+   NADA — parecia quebrado. Nenhum portão vê isso; só o teste que dispara
+   touchstart/touchend de verdade. A cura: o botão também tem a PORTA DO
+   TOQUE, e o `onclick` continua guardado contra o fantasma. */
+function ligaBotao(b,dir){
+  b.onclick=(function(k){ return function(){ cliqueBotao(k); }; })(dir);
+  b.addEventListener("touchend",(function(k){ return function(){
+    ultimoToque=Date.now(); passoBotao(k); }; })(dir),false);
+}
+function cliqueBotao(d){
+  if(Date.now()-ultimoToque<700) return;
+  passoBotao(d);
+}
+function passoBotao(d){
+  if(feitos[col]!==undefined) return;
+  var v=valor+d;
+  if(v<0) v=0;
+  if(v>TETO) v=TETO;
+  if(v===valor) return;
+  if(d>0) sSobe(); else sDesce();
+  valor=v; desenha(); confere();
+}
+function avisaColuna(i){
+  sTap();
+  mostraDica("Agora estamos construindo a barra da <b>"+DADOS[col].n+"</b>. "+
+             "A da "+DADOS[i].n+" fica para depois.");
+}
+
+/* ---------- a regra da fase ---------- */
+function confere(){
+  marcaQualServe();
+  if(valor===DADOS[col].v){ fechaColuna(); return; }
+  /* passar da conta NAO pune: so avisa, e o andaime cresce */
+  if(valor>DADOS[col].v){
+    errosSeg++;
+    ajuda(errosSeg);
+  }
+}
+function fechaColuna(){
+  feitos[col]=valor;
+  pintaBarra(col,valor,true);
+  sCerto();
+  apagaDica();
+  if(barraP) barraP.style.width=Math.round((col+1)*100/DADOS.length)+"%";
+  marcaQualServe();
+  /* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda
+     `!telaAtual.parentNode` ele mexeria numa tela que ja saiu. */
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    col++;
+    mostraBanner("A barra da "+DADOS[col-1].n+" ficou com <b>"+valor+
+                 "</b> — igualzinho &#224;s fichas.",
+                 (col<DADOS.length)?telaGrafico:telaLer);
+  },520);
+}
+/* O ANDAIME QUE CRESCE — dica, apoio concreto, e por fim a barra vai sozinha
+   ate o degrau certo. Erro nunca vira X vermelho nem a palavra "errou".   */
+function ajuda(n){
+  if(n===1){
+    mostraDica("Conte as fichas l&#225; de cima, uma por uma, e pare no mesmo n&#250;mero.");
+  }else if(n===2){
+    mostraDica("S&#227;o <b>"+DADOS[col].v+"</b> fichas. A barra precisa parar na linha do <b>"+
+               DADOS[col].v+"</b>.");
+  }else{
+    mostraDica("Vou levar a barra at&#233; o <b>"+DADOS[col].v+"</b>. Da pr&#243;xima voc&#234; leva.");
+    valor=DADOS[col].v; desenha(); confere();
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* data-qa: o botao que aproxima da altura certa fica com "1". E so para o
+   auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho.
+   ⚠️ com a coluna fechada o data-qa SAI dos dois: senao o jogador fica
+   batendo num botao que nao muda mais nada e da "PRESO". */
+function marcaQualServe(){
+  if(!elMais||!elMenos) return;
+  if(feitos[col]!==undefined||col>=DADOS.length){
+    elMais.removeAttribute("data-qa"); elMenos.removeAttribute("data-qa");
+    elMais.className="pc usada"; elMenos.className="pc usada";
+    return;
+  }
+  elMais.className="pc"; elMenos.className="pc";
+  elMais.setAttribute("data-qa",(valor<DADOS[col].v)?"1":"0");
+  elMenos.setAttribute("data-qa",(valor>DADOS[col].v)?"1":"0");
+}
+
+/* ---------- LER O QUE CONSTRUIU (a outra competencia) ---------- */
+function telaLer(){
+  limpa(); document.onkeydown=null; arrastando=false;
+  col=DADOS.length; valor=0; barras=[]; colunas=[];
+  passo=(window.innerHeight<560)?18:24;
+  altG=passo*TETO;
+  var i;
+  if(!feitos.length) for(i=0;i<DADOS.length;i++) feitos[i]=DADOS[i].v;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","AGORA LEIA"));
+  c.appendChild(el("div","balao","Este gr&#225;fico &#233; seu. <b>Qual fruta apareceu mais?</b>"));
+  var g=montaGrafico();
+  g.style.marginTop="13px";
+  c.appendChild(g);
+  var box=el("div","opts"), lista=[], o, maior=0;
+  for(i=0;i<DADOS.length;i++){ lista.push(i); if(DADOS[i].v>DADOS[maior].v) maior=i; }
+  baguncar(lista);                 /* a certa NUNCA pode ser sempre a 1a */
+  for(i=0;i<lista.length;i++){
+    /* ⚠️ nasce como el("div","opt",...) e SO DEPOIS ganha a "curta": o portao
+       _qa/dinamicas.py reconhece o quiz por esse literal, e um
+       `el("div","opt curta",...)` faria a mecanica passar SEM SER MEDIDA —
+       aprovacao vazia, que e pior que reprovar. */
+    o=el("div","opt",DADOS[lista[i]].n);
+    o.className="opt curta";
+    o.setAttribute("data-qa",(lista[i]===maior)?"1":"0");
+    o.onclick=(function(k,e){ return function(){ respondeLer(k,e); }; })(lista[i],o);
+    box.appendChild(o);
+  }
+  c.appendChild(box);
+  c.appendChild(el("div","hint","Olhe qual barra ficou mais alta."));
+  t.appendChild(c); app.appendChild(t);
+}
+function respondeLer(k,o){
+  var i,maior=0;
+  for(i=0;i<DADOS.length;i++) if(DADOS[i].v>DADOS[maior].v) maior=i;
+  if(k===maior){
+    o.className="opt curta ok";
+    sCerto();
+    setTimeout(function(){
+      if(!telaAtual||!telaAtual.parentNode) return;
+      mostraBanner("Isso! A barra mais <b>alta</b> &#233; a que apareceu mais vezes.",telaFimGraf);
+    },420);
+  }else{
+    o.className="opt curta no";
+    sErro();
+    mostraDica("Compare a <b>altura</b> das barras: qual delas chega mais perto do topo?");
+  }
+}
+function telaFimGraf(){
+  limpa(); document.onkeydown=null; arrastando=false;
+  col=0; feitos=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; <b>construiu</b> um gr&#225;fico: cada barra "+
+    "&#233; do tamanho da conta que ela representa."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaGrafico;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaGrafico();
+</script>
+</body></html>

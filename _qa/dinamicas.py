@@ -73,7 +73,15 @@ def main():
     usa, ruins, avisos = [], [], []
 
     # ---------------------------------------------------- CACA-PALAVRAS
-    if re.search(r'\.grade\b', css) and re.search(r'data-qa', js) and re.search(r'\bcaca|CACA|ca&#231;a|caça', html, re.I):
+    # ⚠️ TERCEIRO CONSERTO DO PROPRIO PORTAO, na mesma tarde (ago/2026). O gatilho
+    #    era `.grade` + `data-qa` + a palavra "caca" EM QUALQUER LUGAR do arquivo,
+    #    comentario inclusive — e uma CRUZADINHA que citava "mesma regra do
+    #    caca-palavras" numa nota de CSS passou a ser cobrada pelas regras da
+    #    mecanica errada (levou aviso de diagonal, que cruzadinha nao tem).
+    #    O gatilho honesto e o que SO um caca-palavras publica: o `data-qa` da
+    #    grade com o JSON das posicoes ({"PALAVRA":{"r":..,"c":..,"n":..}}).
+    if re.search(r'\.grade\b', css) and re.search(
+            r'setAttribute\("data-qa"\s*,\s*JSON\.stringify|"r"\s*:.{0,40}"c"\s*:.{0,40}"n"\s*:', js):
         usa.append("caca-palavras")
         # 1) celula em porcentagem
         cel = re.search(r'\.qcel\{([^}]*)\}|\.cel\{([^}]*)\}', css)

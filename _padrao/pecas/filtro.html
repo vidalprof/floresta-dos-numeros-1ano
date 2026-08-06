@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — filtro (o que passa pela peneira)</title>
+<!-- ============================================================
+     PEÇA: FILTRO — APLICAR UM CRITÉRIO E VER O QUE PASSA PELA PENEIRA
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+     Vem do "FILTRO MÁGICO": a criança escolhe e o MUNDO RESPONDE na hora.
+
+     O QUE ESTA MECÂNICA ENSINA (e por que não é um quiz de várias respostas):
+       · num quiz a criança julga UMA coisa por vez e a pergunta troca; aqui o
+         critério fica PARADO na tela e ela passa a mesma régua por todas as
+         fichas — que é exatamente o que "classificar por atributo" pede;
+       · o critério é sempre VERIFICÁVEL na própria ficha (contar as letras,
+         olhar a primeira letra), nunca uma memória de fora;
+       · a ficha que passa CAI pela peneira até a cesta, na frente dela: o
+         resultado do critério é uma coisa que se vê acontecer, não um X.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · A FICHA QUE NÃO PASSA NÃO É "ERRO PUNIDO": ela QUICA na peneira, volta
+         para a bandeja e o app diz o que olhar. Nunca X vermelho, nunca "errou";
+       · NADA SÓ NA COR: quem passou ganha o "\2713" e o lugar na cesta; quem
+         quicou ganha a moldura tracejada e uma frase. Quem não distingue cor
+         continua entendendo tudo;
+       · CONTADOR À VISTA ("2 de 4 passaram"): sem ele a criança não sabe se
+         ainda falta alguma ficha lá em cima;
+       · O ANDAIME CRESCE no lugar certo: 1º quica = a regra repetida; 2º = a
+         régua aplicada numa ficha de exemplo; 3º = a peça acende as que faltam
+         e deixa seguir. A peça NUNCA trava;
+       · ⚠️ o `setTimeout` que fecha a rodada continua correndo depois que a
+         tela saiu — o guarda `ger` impede que ele monte a rodada seguinte por
+         cima de outra tela;
+       · `data-qa="1"` nas fichas que passam, só para o auditor-jogador
+         conseguir fechar a peça sozinho (a criança não vê nada disso).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA (FILTRO) ====== */
+/* ⚠️ a folga de cima e obrigatoria: o balao tem sombra e nenhuma margem por
+   baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+/* A BANDEJA — as fichas que ainda nao foram julgadas */
+.bandeja{max-width:430px;margin:13px auto 0;background:rgba(255,255,255,.10);
+         border:2px dashed rgba(255,255,255,.30);border-radius:16px;padding:8px 6px 4px;min-height:64px}
+/* A FICHA. min-height 48px = alvo de dedo de crianca com folga. */
+.pc{display:inline-block;vertical-align:middle;background:#fffdf6;color:#221a12;border:0;
+    border-radius:14px;padding:12px 14px;margin:5px 4px;font-size:16px;font-weight:800;
+    min-height:48px;min-width:96px;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+    -webkit-user-select:none;user-select:none}
+/* passou: vai para a cesta, ganha o sinal de conferido e sai do alcance */
+.pc.usada{background:#d6f5c8;box-shadow:0 3px 0 #7cb464;cursor:default;pointer-events:none}
+/* acesa no 3o quique: moldura grossa + a palavra escrita na dica (nunca so cor) */
+.pc.mostra{box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+/* CAINDO pela peneira: o resultado do criterio e uma coisa que se VE acontecer */
+.pc.cai{-webkit-animation:caipeneira .42s ease-in forwards;animation:caipeneira .42s ease-in forwards}
+@-webkit-keyframes caipeneira{60%{-webkit-transform:translateY(34px) scale(.92)}100%{-webkit-transform:translateY(58px) scale(.8);opacity:.15}}
+@keyframes caipeneira{60%{transform:translateY(34px) scale(.92)}100%{transform:translateY(58px) scale(.8);opacity:.15}}
+/* QUICOU na peneira: nao passou, volta para a bandeja. Nao e castigo, e resposta. */
+.pc.quica{-webkit-animation:quicar .5s ease-out;animation:quicar .5s ease-out}
+@-webkit-keyframes quicar{30%{-webkit-transform:translateY(16px)}60%{-webkit-transform:translateY(-12px) rotate(-4deg)}100%{-webkit-transform:translateY(0)}}
+@keyframes quicar{30%{transform:translateY(16px)}60%{transform:translateY(-12px) rotate(-4deg)}100%{transform:translateY(0)}}
+/* A PENEIRA — a regra fica PARADA na tela enquanto a crianca julga todas */
+.peneira{max-width:430px;margin:10px auto 0;background:#5a4a34;border:3px solid #a4885d;
+         border-radius:16px;padding:10px 12px 8px;color:#ffe9a8;font-size:15px;font-weight:800;
+         line-height:1.3;text-align:center}
+.furos{height:14px;margin-top:8px;border-radius:8px;background:#3b3021;
+       background-image:-webkit-repeating-linear-gradient(left,#3b3021 0,#3b3021 9px,#20180f 9px,#20180f 17px);
+       background-image:repeating-linear-gradient(to right,#3b3021 0,#3b3021 9px,#20180f 9px,#20180f 17px)}
+/* A CESTA — o que passou fica a vista, embaixo da peneira */
+.cesta{max-width:430px;margin:0 auto;background:rgba(143,224,122,.14);
+       border:3px solid rgba(143,224,122,.55);border-top:0;border-radius:0 0 20px 20px;
+       padding:6px 6px 8px;min-height:70px}
+.ctit{display:block;font-size:12px;font-weight:800;letter-spacing:.6px;color:#d6f5c8;
+      padding:6px 0 2px}
+.vpas{display:inline-block;margin-left:6px;color:#1f6b12;font-size:17px;font-weight:800}
+/* quantas ja passaram — sem contador a crianca nao sabe se ainda falta ficha */
+.conta{margin-top:10px;font-size:16px;font-weight:800;color:#ffe9a8}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* FILTRO — passar o mesmo critério por todas as fichas e ver o que atravessa.
+
+   O CONTEÚDO É SÓ EXEMPLO (8 a 10 anos). Ao levar a peça para uma atividade,
+   troque APENAS este bloco: o critério de cada peneira, as fichas (`ok:true`
+   nas que passam) e as três falas do andaime.
+   A escada aqui é de propósito: 1ª peneira se resolve CONTANDO (dá para
+   conferir na própria ficha), a 2ª OLHANDO a primeira letra, e só a 3ª pede
+   uma ideia (o que é animal). Critério que a criança não consegue conferir
+   sozinha vira adivinhação.                                                */
+var PENEIRAS=[
+ {reg:"S&#243; passam as palavras com <b>5 letras</b>.",
+  curta:"5 letras",
+  fichas:[{t:"LIVRO",ok:true},{t:"PONTE",ok:true},{t:"CHAVE",ok:true},
+          {t:"SOL",ok:false},{t:"CADERNO",ok:false},{t:"MAPA",ok:false}],
+  d1:"Conte as letras com o dedo, uma por uma.",
+  d2:"Olhe PONTE: P-O-N-T-E. S&#227;o cinco, ent&#227;o essa passa.",
+  d3:"As que ainda passam est&#227;o com a moldura acesa: "},
+ {reg:"S&#243; passam as palavras que come&#231;am com <b>M</b>.",
+  curta:"come&#231;a com M",
+  fichas:[{t:"MESA",ok:true},{t:"MILHO",ok:true},{t:"MARTELO",ok:true},
+          {t:"CADEIRA",ok:false},{t:"PATO",ok:false},{t:"JANELA",ok:false}],
+  d1:"Olhe s&#243; a <b>primeira</b> letra de cada ficha.",
+  d2:"MILHO come&#231;a com M: essa passa. PATO come&#231;a com P: fica.",
+  d3:"As que ainda passam est&#227;o com a moldura acesa: "},
+ {reg:"S&#243; passam os nomes de <b>animais</b>.",
+  curta:"&#233; animal",
+  fichas:[{t:"TARTARUGA",ok:true},{t:"FORMIGA",ok:true},{t:"CAVALO",ok:true},
+          {t:"PANELA",ok:false},{t:"NUVEM",ok:false},{t:"TIJOLO",ok:false}],
+  d1:"Pergunte a cada ficha: <b>isso nasce, come e anda?</b>",
+  d2:"FORMIGA anda e come: passa. PANELA fica parada: n&#227;o passa.",
+  d3:"As que ainda passam est&#227;o com a moldura acesa: "}
+];
+
+var pen=0, passaram=0, quiques=0, ger=0;
+var barraF=null, cestaEl=null, contaEl=null, alvos=0;
+
+/* som proprio do filtro: um "chuá" curto quando a ficha atravessa a peneira */
+function sPassa(){ nota(392,.09,.13,"triangle",0); nota(659.25,.13,.12,"triangle",.07); }
+function sQuica(){ nota(240,.09,.11,"sine",0); nota(200,.12,.10,"sine",.08); }
+
+function telaFiltro(){
+  limpa();
+  ger++;
+  passaram=0; quiques=0;
+  var it=PENEIRAS[pen], i;
+  alvos=0;
+  for(i=0;i<it.fichas.length;i++) if(it.fichas[i].ok) alvos++;
+
+  var t=el("div","tela");
+  setProg(t,Math.round(pen*100/PENEIRAS.length));
+  barraF=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PENEIRA "+(pen+1)+" DE "+PENEIRAS.length));
+  c.appendChild(el("div","balao",it.reg+"<br>Toque nas que <b>passam</b>."));
+
+  /* a bandeja: todas as fichas comecam aqui, embaralhadas */
+  var bd=el("div","bandeja"), lista=baguncar(it.fichas.slice(0)), b;
+  for(i=0;i<lista.length;i++){
+    b=el("div","pc",lista[i].t);
+    /* `data-qa="1"` = "esta serve agora" — SO para o auditor-jogador */
+    if(lista[i].ok) b.setAttribute("data-qa","1");
+    b.onclick=(function(f){ return function(){ toca(f,this); }; })(lista[i]);
+    bd.appendChild(b);
+  }
+  c.appendChild(bd);
+
+  /* a peneira fica PARADA na tela: e a regua que a crianca passa em todas */
+  var pe=el("div","peneira","PENEIRA: "+it.curta);
+  pe.appendChild(el("div","furos",""));
+  c.appendChild(pe);
+
+  cestaEl=el("div","cesta","");
+  cestaEl.appendChild(el("span","ctit","CESTA &#8212; O QUE PASSOU"));
+  c.appendChild(cestaEl);
+
+  contaEl=el("div","conta","");
+  c.appendChild(contaEl);
+  c.appendChild(el("div","hint","A ficha que n&#227;o passa <b>quica</b> e volta para a bandeja."));
+  t.appendChild(c); app.appendChild(t);
+  atualizaConta();
+}
+
+function atualizaConta(){
+  if(!contaEl) return;
+  contaEl.innerHTML="Passaram <b>"+passaram+"</b> de <b>"+alvos+"</b>.";
+}
+
+/* ⚠️ o guarda `_indo`: entre o toque e a ficha chegar na cesta passam 420ms, e
+   nesse meio-tempo cabe um segundo toque (dedo de crianca repete; o auditor
+   tambem). Sem ele a mesma ficha contava duas vezes e a peneira fechava
+   faltando ficha. */
+function toca(f,b){
+  if(b._indo||b.className.indexOf("usada")>=0) return;
+  if(f.ok){ b._indo=true; passa(b); } else quica(b);
+}
+
+/* PASSOU: cai pela peneira e vai parar na cesta, na frente da crianca. */
+function passa(b){
+  var meu=ger;
+  b.className="pc cai";
+  b.removeAttribute("data-qa");      /* saiu da lista do auditor */
+  sPassa();
+  setTimeout(function(){
+    if(meu!==ger) return;
+    b.className="pc usada";
+    b.style.opacity="";
+    b.appendChild(el("span","vpas","&#10003;"));
+    if(cestaEl) cestaEl.appendChild(b);
+    passaram++;
+    apagaDica();
+    atualizaConta();
+    if(barraF) barraF.style.width=
+      Math.round((pen+passaram/alvos)*100/PENEIRAS.length)+"%";
+    if(passaram>=alvos) fechaPeneira();
+  },420);
+}
+
+/* NÃO PASSOU: quica na peneira e volta. Nunca X, nunca a palavra "errou" —
+   o app diz O QUE OLHAR e o andaime cresce a cada quique. */
+function quica(b){
+  sErro(); sQuica();
+  b.className="pc quica";
+  var meu=ger;
+  setTimeout(function(){
+    if(meu!==ger) return;
+    if(b.className.indexOf("usada")<0) b.className="pc";
+  },520);
+  quiques++;
+  ajuda(quiques);
+}
+
+/* o andaime CRESCE: a regra outra vez -> a regua aplicada num exemplo ->
+   acende as que faltam e deixa seguir. A peca nunca trava. */
+function ajuda(n){
+  var it=PENEIRAS[pen];
+  if(n===1) mostraDica(it.d1);
+  else if(n===2) mostraDica(it.d2);
+  else { mostraDica(it.d3+"<b>"+queFaltam()+"</b>."); acendeQueFaltam(); }
+}
+function queFaltam(){
+  var a=app.getElementsByClassName("pc"), i, fora=[];
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="1") fora.push(a[i].firstChild.nodeValue||a[i].innerHTML);
+  return fora.join(", ");
+}
+function acendeQueFaltam(){
+  var a=app.getElementsByClassName("pc"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="pc mostra";
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* ⚠️ o temporizador continua correndo depois que a tela sai: o guarda `ger`
+   impede que ele monte a peneira seguinte por cima de outra tela. */
+function fechaPeneira(){
+  var meu=ger;
+  sCerto();
+  setTimeout(function(){
+    if(meu!==ger) return;
+    pen++;
+    if(pen<PENEIRAS.length){ telaFiltro(); return; }
+    mostraBanner("Voc&#234; peneirou as tr&#234;s!",telaFimFiltro);
+  },820);
+}
+
+function telaFimFiltro(){
+  limpa(); ger++;
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; passou a <b>mesma r&#233;gua</b> em todas as fichas."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomecaF;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a FILTRO: o crit&#233;rio fica parado e a crian&#231;a julga cada ficha."));
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaF(){ pen=0; telaFiltro(); }
+
+telaFiltro();
+</script>
+</body></html>

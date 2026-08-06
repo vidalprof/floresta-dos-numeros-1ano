@@ -124,3 +124,14 @@ para a próxima não repetir.
 - **Cuidado com nome de propriedade que colide com nome de classe.** Uma
   propriedade `r.pal` fez o portão reconhecer a peça como marca-texto. Nome de
   dado ≠ nome de classe.
+- **O enunciado não pode PROMETER o que a grade não tem.** No caça-palavras, com
+  a direção sorteada palavra a palavra, saíam grades **sem nenhuma diagonal** — e
+  o enunciado prometia diagonal sempre. A criança varre a diagonal à toa. Cura:
+  as direções são um **plano embaralhado** (todas entram) **e** o enunciado é
+  montado a partir de onde as palavras realmente ficaram.
+- **Sorteio que nunca exercita a armadilha esconde o defeito.** As palavras quase
+  nunca se cruzavam, então a armadilha da palavra cruzada (que conferia só `mark`
+  e não `ok`) não era testada de verdade. A colocação passou a **preferir**
+  posições que cruzam.
+- **Tom: "Faltam 0 tentativas" soa como bronca.** No fim da forca virou "Vamos
+  olhar a palavra juntos" — que é o que a peça de fato faz.

@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — máquina de palavras (prefixo + raiz + sufixo)</title>
+<!-- ============================================================
+     PEÇA: MORFEMAS — MONTAR A PALAVRA JUNTANDO OS PEDAÇOS
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A MECÂNICA: a criança monta uma palavra encaixando COMEÇO (prefixo),
+     PALAVRA (raiz) e FIM (sufixo). O que se aprende não é decorar a palavra: é
+     que os pedaços têm LUGAR e têm SENTIDO — RE- quer dizer "de novo", -EIRO
+     quer dizer "quem trabalha com", -INHO quer dizer "pequeno".
+
+     ⭐ A REGRA DE FORMAÇÃO É O FEEDBACK (o coração desta peça):
+     combinação impossível NÃO vira X vermelho nem "errou" — a máquina DEVOLVE
+     o pedaço e diz a regra que o impediu de encaixar:
+       · pedaço no lugar errado -> "-EIRO é pedaço de FIM: mora na última vaga";
+       · pedaço que não forma palavra -> "-MENTO fala de AÇÃO: mover vira
+         movimento. PEDRAMENTO não existe";
+       · pedaço que forma OUTRA palavra -> "LIVREIRO existe, mas é quem vende
+         LIVROS; esta palavra fala de PEDRA".
+     Devolver ensina; X vermelho só assusta.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRÊS CAMINHOS: mouse, dedo (touch) e TOQUE SIMPLES (tocar no pedaço e
+         depois na vaga). Defeito pego DUAS vezes pelo Marcos;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular. Ele
+         vive no `touchmove`, e só enquanto há pedaço na mão;
+       · guarda do MOUSE FANTASMA (`ultimoToque`, com carimbo de tempo): o
+         celular dispara mouse falso depois do toque e ele desmarcava a peça;
+       · a marca é do CLIQUE, não do `mousedown` (senão o clique de trás
+         desmarca e, com mouse de verdade, a criança clica e nada acontece);
+       · alvo >= 44px, nada essencial só na cor (a vaga cheia mostra o pedaço
+         ESCRITO dentro), funciona no mudo, nunca trava (no 3º erro a máquina
+         acende a vaga certa e no 4º encaixa sozinha), `data-qa` para o
+         auditor-jogador (pedaço certo e vaga publicam a MESMA chave).
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A MÁQUINA: as vagas da palavra, lado a lado.
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto a maquina nasce COLADA no
+   enunciado (defeito que o Marcos ja cobrou duas vezes).                     */
+.maq{margin:13px auto 0;max-width:430px;font-size:0;text-align:center}
+.mais{display:inline-block;vertical-align:middle;width:16px;font-size:20px;font-weight:800;
+      color:#f4efe6;line-height:62px}
+/* A VAGA. Vazia = tracejada; cheia = o pedaco ESCRITO dentro (nunca so cor). */
+.cam{display:inline-block;vertical-align:middle;width:27%;min-width:78px;min-height:74px;
+     margin:0 1px;padding:5px 3px;font-size:15px;cursor:pointer;
+     background:rgba(255,255,255,.10);border:3px dashed rgba(255,255,255,.42);border-radius:16px}
+.cam.luz{border-color:#8fe07a;background:rgba(143,224,122,.22)}
+/* vaga revelada no 3o erro: borda cheia e amarela + a palavra na dica */
+.cam.alvo{border-style:solid;border-color:#ffd54a;background:rgba(255,213,74,.20)}
+.cam.ok{border-style:solid;border-color:#7cb464;background:rgba(124,180,100,.20)}
+.vgtit{display:block;background:#3c6ee0;color:#fff;font-size:11px;font-weight:800;
+       letter-spacing:.4px;border-radius:10px;padding:5px 2px;line-height:1.15}
+/* A BANDEJA dos pedacos que ainda nao foram usados */
+.bandeja{background:rgba(255,255,255,.10);border:2px dashed rgba(255,255,255,.30);
+         border-radius:16px;padding:8px 6px 4px;min-height:64px;margin-top:12px}
+/* O PEDACO (.pc). min-height 48px = alvo de dedo de crianca com folga. */
+.pc{display:inline-block;vertical-align:middle;background:#fffdf6;color:#221a12;border:0;
+    border-radius:14px;padding:12px 14px;margin:5px 4px;font-size:16px;font-weight:800;
+    letter-spacing:.5px;min-height:48px;min-width:88px;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+    -webkit-user-select:none;user-select:none}
+/* escolhido: nao e SO a cor — ganha borda grossa e sobe um degrau */
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f;
+        -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.pc.usada{background:#d6f5c8;box-shadow:0 3px 0 #7cb464;cursor:default;margin:0;
+          min-width:0;width:100%;padding:12px 2px;font-size:14px}
+/* DEVOLVIDO: o pedaco balanca e volta para a bandeja. Nunca X, nunca vermelho. */
+.pc.volta{-webkit-animation:sacode .34s linear 1;animation:sacode .34s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}
+  75%{-webkit-transform:translateX(6px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}100%{transform:translateX(0)}}
+/* o FANTASMA que segue o dedo/mouse durante o arrasto */
+.fant{position:fixed;z-index:60;pointer-events:none;background:#fff3c9;color:#221a12;
+      border-radius:14px;padding:12px 14px;font-size:16px;font-weight:800;
+      box-shadow:0 8px 18px rgba(0,0,0,.45)}
+/* A PALAVRA SE FORMANDO — a crianca le o que ja montou */
+.palavraf{margin-top:10px;font-size:19px;font-weight:800;color:#ffd54a;letter-spacing:1px;
+          min-height:26px;line-height:26px}
+.palavraf b{color:#f4efe6}
+.placar{margin-top:8px;font-size:16px;font-weight:700;color:#f4efe6}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (max-height:470px){.pc{font-size:15px;padding:11px 12px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (formação de palavras, 8-10 anos). Ao copiar a peça
+   para uma atividade, troque APENAS este bloco. Cada pedaço ERRADO carrega a
+   REGRA que o impede de encaixar — é ela que a criança leva embora.
+   TIPOS: "pre" = começo (prefixo) · "raiz" = a palavra · "suf" = fim (sufixo) */
+var RODADAS=[
+ { pista:"quem trabalha com PEDRA e levanta as paredes",
+   palavra:"PEDREIRO",
+   vagas:[{k:"v1",tipo:"raiz",rot:"PALAVRA"},{k:"v2",tipo:"suf",rot:"FIM"}],
+   pecas:[
+     {t:"PEDR", tipo:"raiz", k:"v1"},
+     {t:"LIVR", tipo:"raiz", msg:"LIVREIRO existe, mas é quem vende LIVROS. Esta palavra fala de PEDRA."},
+     {t:"EIRO", tipo:"suf",  k:"v2"},
+     {t:"MENTO",tipo:"suf",  msg:"-MENTO fala de uma AÇÃO: mover vira movimento. PEDRA não é ação, então PEDRAMENTO não existe."},
+     {t:"INHO", tipo:"suf",  msg:"-INHO quer dizer PEQUENO: pedrinha é uma pedra pequena. Não é quem trabalha."}
+   ]},
+ { pista:"fazer outra vez, DE NOVO",
+   palavra:"REFAZER",
+   vagas:[{k:"v1",tipo:"pre",rot:"COMEÇO"},{k:"v2",tipo:"raiz",rot:"PALAVRA"}],
+   pecas:[
+     {t:"RE",   tipo:"pre",  k:"v1"},
+     {t:"DES",  tipo:"pre",  msg:"DESFAZER existe, mas quer dizer o CONTRÁRIO de fazer. Para dizer DE NOVO o começo é RE-."},
+     {t:"IN",   tipo:"pre",  msg:"IN- quer dizer NÃO: feliz vira infeliz. INFAZER não existe."},
+     {t:"FAZER",tipo:"raiz", k:"v2"},
+     {t:"FELIZ",tipo:"raiz", msg:"REFELIZ não existe. A palavra que estamos montando fala de FAZER."}
+   ]},
+ { pista:"quem NÃO cuida das suas coisas",
+   palavra:"DESCUIDADO",
+   vagas:[{k:"v1",tipo:"pre",rot:"COMEÇO"},{k:"v2",tipo:"raiz",rot:"PALAVRA"},{k:"v3",tipo:"suf",rot:"FIM"}],
+   pecas:[
+     {t:"DES",  tipo:"pre",  k:"v1"},
+     {t:"RE",   tipo:"pre",  msg:"RECUIDADO não existe. RE- é DE NOVO, e aqui a palavra fala de NÃO cuidar."},
+     {t:"CUID", tipo:"raiz", k:"v2"},
+     {t:"ADO",  tipo:"suf",  k:"v3"},
+     {t:"MENTO",tipo:"suf",  msg:"DESCUIDAMENTO não existe. Quem é assim fica cuidadoso ou descuidADO: o fim é -ADO."},
+     {t:"EIRO", tipo:"suf",  msg:"-EIRO é quem trabalha com uma coisa: pedra vira pedreiro. DESCUIDEIRO não existe."}
+   ]}
+];
+/* a regra do LUGAR — pedaço certo, vaga errada. Isto é a formação de palavras
+   dita em voz alta: o começo vem antes, o fim vem depois. */
+var TIPOMSG={
+ pre:"Este pedaço é de COMEÇO: ele mora na primeira vaga, antes da palavra.",
+ raiz:"Este é o pedaço PALAVRA: ele mora no meio, entre o começo e o fim.",
+ suf:"Este pedaço é de FIM: ele mora na última vaga, depois da palavra."
+};
+
+var rod=0;             /* rodada da vez */
+var cheias=0;          /* vagas ja preenchidas nesta rodada */
+var marcada=null;      /* o pedaco escolhido pelo toque simples */
+var barraP=null;       /* a barrinha de progresso */
+var elPal=null;        /* a linha que mostra a palavra se formando */
+var ger=0;             /* geracao da tela: mata setTimeout de tela que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam o pedaço que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.   */
+var ultimoToque=0;
+var pegou=null, fantasma=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+function pecaMorfemas(){
+  if(rod>=RODADAS.length) rod=0;
+  ger++; cheias=0; marcada=null; pegou=null; arrastando=false;
+  limpa();
+  var R=RODADAS[rod], i;
+  var t=el("div","tela");
+  setProg(t,Math.round(rod*100/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A MÁQUINA DE PALAVRAS"));
+  c.appendChild(el("div","balao","Monte a palavra que quer dizer: <b>"+R.pista+"</b>"));
+
+  var m=el("div","maq");
+  for(i=0;i<R.vagas.length;i++){
+    if(i>0) m.appendChild(el("span","mais","+"));
+    m.appendChild(fazVaga(R.vagas[i]));
+  }
+  c.appendChild(m);
+
+  elPal=el("div","palavraf","");
+  c.appendChild(elPal);
+
+  var band=el("div","bandeja");
+  var ordem=[];
+  for(i=0;i<R.pecas.length;i++) ordem.push(R.pecas[i]);
+  baguncar(ordem);
+  for(i=0;i<ordem.length;i++) band.appendChild(fazPeca(ordem[i]));
+  c.appendChild(band);
+
+  c.appendChild(el("div","placar","Palavra <b>"+(rod+1)+"</b> de <b>"+RODADAS.length+"</b>"));
+  c.appendChild(el("div","hint","Toque no pedaço e depois na vaga. Também dá para arrastar com o dedo ou com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+  desenhaPalavra();
+}
+
+function fazVaga(v){
+  var d=el("div","cam");
+  d._o=v;
+  /* vaga e pedaco CERTO publicam a MESMA chave: e assim que o auditor-jogador
+     consegue terminar a fase (e so ele olha para isto). */
+  d.setAttribute("data-qa",v.k);
+  d.appendChild(el("span","vgtit",v.rot));
+  d.onclick=function(){
+    if(cliqueDeArrasto()) return;
+    if(!marcada){ sTap(); mostraDica("Primeiro toque num pedaço lá de baixo. Depois toque na vaga."); return; }
+    encaixa(marcada,d);
+  };
+  return d;
+}
+
+function fazPeca(o){
+  var p=el("div","pc",o.t);
+  p._o=o;
+  if(o.k) p.setAttribute("data-qa",o.k);   /* so o pedaco CERTO publica a chave */
+  /* ⚠️ a marca e do CLIQUE, nao do mousedown: marcar no mousedown fazia o clique
+     de trás cair em "ja estava marcada" e DESMARCAR — com mouse de verdade a
+     crianca clicava e nada acontecia. */
+  p.onclick=function(){
+    if(cliqueDeArrasto()) return;          /* este clique e o rabo do arrasto */
+    if(p.className.indexOf("usada")>=0) return;
+    sTap(); seleciona(p);
+  };
+  p.onmousedown=function(ev){
+    if(souDedo()) return;                  /* mouse FANTASMA do celular: ignora */
+    comeca(p,ev.clientX,ev.clientY);
+  };
+  p.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(p,d.clientX,d.clientY);
+  },false);
+  return p;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, la embaixo, e so enquanto ha pedaco na mao.        */
+function comeca(p,x,y){
+  if(p.className.indexOf("usada")>=0) return;
+  pegou=p; x0=x; y0=y; arrastando=false;
+  seleciona(p);
+}
+
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant",pegou.innerHTML);
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-48)+"px";
+  fantasma.style.top=(y-24)+"px";
+}
+
+function solta(x,y){
+  if(!pegou) return;
+  var p=pegou; pegou=null;
+  if(fantasma&&fantasma.parentNode){ fantasma.parentNode.removeChild(fantasma); }
+  fantasma=null;
+  if(!arrastando) return;                  /* foi so um toque: a selecao ja valeu */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")<0) alvo=alvo.parentNode;
+  if(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")>=0) encaixa(p,alvo);
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();      /* so aqui, e so com pedaco na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+function seleciona(p){
+  var a=app.getElementsByClassName("pc"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
+  marcada=p;
+}
+
+/* ⭐ O CORAÇÃO DA PEÇA: a combinação impossível DEVOLVE o pedaço e diz a REGRA.
+   Três respostas diferentes, nenhuma delas um X:
+     1. lugar errado  -> a regra do LUGAR (começo antes, fim depois);
+     2. lugar certo, mas não forma palavra -> a regra do SENTIDO do pedaço;
+     3. encaixa       -> entra na vaga e a palavra cresce.                    */
+function encaixa(p,vaga){
+  if(!p||!vaga) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(vaga.className.indexOf("ok")>=0){ sTap(); mostraDica("Esta vaga já está cheia. Olhe as outras."); return; }
+  var o=p._o, v=vaga._o;
+
+  if(o.tipo!==v.tipo){ devolve(p,TIPOMSG[o.tipo]); return; }
+  if(o.k!==v.k){ devolve(p,o.msg); return; }
+
+  sCerto();
+  p.className="pc usada";
+  p.onclick=null; p.onmousedown=null;
+  p.removeAttribute("data-qa");
+  vaga.appendChild(p);
+  vaga.className="cam ok";
+  marcada=null;
+  cheias++;
+  desenhaPalavra();
+  var R=RODADAS[rod];
+  if(barraP) barraP.style.width=Math.round((rod+cheias/R.vagas.length)*100/RODADAS.length)+"%";
+  if(cheias>=R.vagas.length){
+    var ge=ger;
+    setTimeout(function(){
+      if(ge!==ger) return;
+      mostraBanner("A palavra ficou <b>"+R.palavra+"</b>! Você juntou os pedaços certos.",proxima);
+    },620);
+  }
+}
+
+/* DEVOLVER, nunca punir: o pedaço balança, volta para a bandeja e a REGRA
+   aparece escrita. No 3º erro a máquina acende a vaga certa; no 4º ela encaixa
+   sozinha — é isto que garante que a peça nunca trava.                       */
+function devolve(p,regra){
+  sErro();
+  p._err=(p._err||0)+1;
+  p.className="pc volta";
+  var pp=p, ge=ger;
+  setTimeout(function(){
+    if(ge!==ger) return;
+    if(pp.className.indexOf("usada")<0) pp.className="pc";
+  },360);
+  mostraDica("<b>Devolvi o pedaço.</b> "+(regra||"Este pedaço não forma a palavra que a máquina pediu."));
+  if(p._err===3) acendeVaga();
+  if(p._err>=4) socorro();
+}
+
+/* 3º erro: a vaga que ainda falta acende (borda cheia amarela) E o texto diz
+   qual pedaço serve — nada essencial só na cor. */
+function acendeVaga(){
+  var v=proximaVaga();
+  if(!v) return;
+  v.className="cam alvo";
+  var pc=pecaDaVaga(v);
+  if(pc) mostraDica("Olhe a vaga de borda amarela: ali cabe <b>"+pc._o.t+"</b>.");
+}
+/* 4º erro: encaixa sozinho e segue. A criança não fica presa nunca. */
+function socorro(){
+  var v=proximaVaga(); if(!v) return;
+  var pc=pecaDaVaga(v); if(!pc) return;
+  mostraDica("Vou encaixar <b>"+pc._o.t+"</b> para você. Agora complete o resto.");
+  encaixa(pc,v);
+}
+function proximaVaga(){
+  var a=app.getElementsByClassName("cam"), i;
+  for(i=0;i<a.length;i++) if(a[i].className.indexOf("ok")<0) return a[i];
+  return null;
+}
+function pecaDaVaga(v){
+  var a=app.getElementsByClassName("pc"), i, k=v._o.k;
+  for(i=0;i<a.length;i++)
+    if(a[i].className.indexOf("usada")<0 && a[i]._o && a[i]._o.k===k) return a[i];
+  return null;
+}
+
+/* a palavra se formando, para a criança LER o que já montou */
+function desenhaPalavra(){
+  if(!elPal) return;
+  var R=RODADAS[rod], a=app.getElementsByClassName("cam"), i, s="", pc;
+  for(i=0;i<a.length;i++){
+    pc=a[i].getElementsByClassName("pc")[0];
+    if(i>0) s+=" + ";
+    s+= pc ? pc._o.t : "<b>___</b>";
+  }
+  if(cheias>=R.vagas.length) s+=" = "+R.palavra;
+  elPal.innerHTML=s;
+}
+
+function proxima(){
+  rod++;
+  if(rod>=RODADAS.length){ fimDaPeca(); return; }
+  pecaMorfemas();
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você montou as <b>"+RODADAS.length+"</b> palavras juntando os pedaços."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ rod=0; pecaMorfemas(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça MORFEMAS: começo, palavra e fim — e a regra é o feedback."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaMorfemas();
+</script>
+</body></html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — girar em passos de 90° (a quantidade não muda)</title>
+<!-- ============================================================
+     PEÇA: GIRAR A FIGURA DE 90° EM 90° ATÉ ENCAIXAR NA SILHUETA
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ELA ENSINA (e por que o gesto É o conceito): a criança gira a peça
+     até encaixar no molde. A figura deita, vira de cabeça para baixo, muda de
+     lado — e o contador de peças ao lado NUNCA muda. É a invariância vista com
+     a mão, não explicada com palavras: girar muda a POSIÇÃO, não a QUANTIDADE.
+     O conceito só é nomeado no fim (Portão 0: o problema primeiro).
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · ARRASTO ANGULAR COM ENCAIXE NOS 90°: o dedo pequeno não faz círculo
+         bonito. Aqui o giro DISPARA acima de ~50° de arrasto e cai direto no
+         próximo quarto de volta — nunca fica preso num ângulo torto;
+       · BOTÕES DE GIRAR TAMBÉM (esquerda/direita, 56px): quem não consegue
+         arrastar em círculo fecha a peça só tocando. Nunca uma porta só;
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular) —
+         o preventDefault só entra no MEIO do arrasto;
+       · guarda contra o clique de mouse FANTASMA (`ultimoToque`);
+       · NADA ESSENCIAL SÓ NA COR: o molde é uma silhueta com o mesmo contorno
+         da peça, e o encaixe avisa por forma (a moldura fecha), som e texto;
+       · NUNCA TRAVA: são 4 posições possíveis; se demorar, a dica diz para que
+         lado tocar. Não existe estado de erro — a peça encaixa quando encaixa.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+/* ⚠️ RESPOSTA CURTA VAI DEITADA (lição paga nesta própria peça, ago/2026):
+   na "janela baixa" (1024x420) a terceira opção empilhada ficava cortada no
+   pé da tela — a criança não via que havia uma terceira. Três respostas de
+   duas palavras cabem numa linha só e o problema some, sem encolher o alvo. */
+.opt.curta{display:inline-block;width:auto;min-width:86px;max-width:none;margin:6px 3px;
+           vertical-align:top;padding:13px 12px}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: GIRAR ----------------
+   ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes).       */
+.mesa{display:block;text-align:center;margin:13px auto 0;line-height:0}
+.cai{display:inline-block;vertical-align:top;margin:0 5px}
+.rot{display:block;font-size:12px;font-weight:700;letter-spacing:.4px;opacity:.9;
+     margin-bottom:4px;line-height:1.2}
+/* as duas caixas tem o MESMO tamanho: o molde e a peca sao a mesma figura */
+.fig{position:relative;background:rgba(255,255,255,.07);border-radius:12px;
+     border:2px solid rgba(255,255,255,.22);cursor:pointer}
+.fig.molde{cursor:default;border-style:dashed}
+.fig.encaixou{border-color:#59c24b;border-style:solid;background:rgba(89,194,75,.18)}
+/* a camada que gira de verdade */
+.gira{position:absolute;left:0;top:0;right:0;bottom:0;
+      -webkit-transition:-webkit-transform .35s;transition:transform .35s}
+.gira.solto{-webkit-transition:none;transition:none}
+.blk{position:absolute;background:#ffd54a;border-radius:7px;box-shadow:0 3px 0 #c9a52f}
+/* a peca que marca o "topo" da figura: sem ela, girar 180 parece nao mudar */
+.blk.topo{background:#ff9a4a;box-shadow:0 3px 0 #c06a22}
+.vaz{position:absolute;border:3px dashed rgba(244,239,230,.75);border-radius:7px}
+.setas{display:block;text-align:center;margin-top:8px;line-height:0}
+.seta{display:inline-block;vertical-align:top;width:122px;height:56px;line-height:1.05;
+      margin:0 5px;padding:8px 4px 0;background:#fffdf6;color:#221a12;border-radius:16px;
+      font-size:22px;font-weight:800;text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.seta:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.seta i{display:block;font-size:11px;font-weight:700;font-style:normal;letter-spacing:.3px}
+.conta{margin-top:9px;font-size:15px;font-weight:700;line-height:1.25}
+.conta b{color:#ffd54a}
+.ponto{display:inline-block;width:15px;height:15px;border-radius:50%;margin:0 3px;
+       background:#ffd54a;border:2px solid #fff3c9}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+@media (max-height:470px){.conta{margin-top:5px;font-size:14px}.setas{margin-top:5px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* GIRAR ATE ENCAIXAR — a figura e a MESMA nos dois quadros; o que muda e o
+   quarto de volta. Trocar `FORMA` (as casas pintadas numa grade 3x3) e
+   `ALVOS` (os angulos pedidos) ja adapta a peca a outro conteudo.
+
+   ⚠️ A CONTA DE PECAS NAO PODE MUDAR NUNCA: e ela que carrega a ideia. Por
+   isso o contador le o TAMANHO da lista FORMA, em vez de um numero escrito
+   a mao — assim ninguem consegue, por descuido, fazer o total "mudar".    */
+var FORMA=[[0,0],[1,0],[2,0],[2,1],[2,2]];   /* um "L" de 5 casas: cada giro fica diferente */
+var TOPO=0;                                  /* qual casa marca o topo da figura */
+var ALVOS=[90,270,180];                      /* os tres quartos de volta pedidos */
+
+var rodada=0, ang=0, travado=false, giros=0, telaAtual=null, barraP=null;
+var elGira=null, elFig=null, elDir=null, elEsq=null, elRot=null;
+/* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
+   toque. Sem esta marca de tempo o giro acontecia duas vezes. */
+var ultimoToque=0, girando=false, angIni=0, dAtual=0;
+
+function passoPx(){ return (window.innerHeight<520)?33:41; }
+function ladoPx(){ return passoPx()*3-3; }
+
+/* ---------- desenha a figura (peca colorida ou molde vazado) ---------- */
+function fazFigura(molde,angulo){
+  var p=passoPx(), lado=ladoPx(), i, b, d=el("div","fig"+(molde?" molde":""));
+  d.style.width=lado+"px"; d.style.height=lado+"px";
+  var g=el("div","gira");
+  g.style.width=lado+"px"; g.style.height=lado+"px";
+  poeAngulo(g,angulo);
+  for(i=0;i<FORMA.length;i++){
+    b=el("div",molde?"vaz":("blk"+(i===TOPO?" topo":"")));
+    b.style.width=(p-3)+"px"; b.style.height=(p-3)+"px";
+    b.style.left=(FORMA[i][1]*p)+"px"; b.style.top=(FORMA[i][0]*p)+"px";
+    g.appendChild(b);
+  }
+  d.appendChild(g);
+  d.gira=g;
+  return d;
+}
+function poeAngulo(g,a){
+  g.style.webkitTransform="rotate("+a+"deg)";
+  g.style.transform="rotate("+a+"deg)";
+}
+function norma(a){ a=a%360; if(a<0) a+=360; return a; }
+
+/* ---------------------------- A TELA ---------------------------- */
+function telaGirar(){
+  limpa(); document.onkeydown=null; girando=false;
+  if(rodada>=ALVOS.length) rodada=0;
+  ang=0; travado=false; giros=0;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/ALVOS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","ENCAIXE NO MOLDE "+(rodada+1)+"/"+ALVOS.length));
+  c.appendChild(el("div","balao","Gire a pe&#231;a at&#233; ela <b>encaixar no molde</b>."));
+
+  var m=el("div","mesa");
+  var c1=el("div","cai");
+  c1.appendChild(el("div","rot","O MOLDE"));
+  var molde=fazFigura(true,ALVOS[rodada]);
+  c1.appendChild(molde);
+  var c2=el("div","cai");
+  elRot=el("div","rot","A SUA PE&#199;A");
+  c2.appendChild(elRot);
+  elFig=fazFigura(false,0);
+  elGira=elFig.gira;
+  ligaGiro(elFig);
+  c2.appendChild(elFig);
+  m.appendChild(c1); m.appendChild(c2);
+  c.appendChild(m);
+
+  /* OS BOTOES — a segunda porta, para quem nao faz arrasto em circulo */
+  var s=el("div","setas");
+  elEsq=el("div","seta","&#8630;<i>GIRAR PARA A ESQUERDA</i>");
+  elDir=el("div","seta","&#8631;<i>GIRAR PARA A DIREITA</i>");
+  ligaSeta(elEsq,-1); ligaSeta(elDir,1);
+  s.appendChild(elEsq); s.appendChild(elDir);
+  c.appendChild(s);
+
+  /* A CONTA QUE NUNCA MUDA — o coracao da peca */
+  var q=el("div","conta",""), i;
+  q.innerHTML="Pe&#231;as da figura: <b>"+FORMA.length+"</b><br>";
+  for(i=0;i<FORMA.length;i++) q.appendChild(el("span","ponto",""));
+  c.appendChild(q);
+  c.appendChild(el("div","hint","Toque nos bot&#245;es ou gire a pe&#231;a com o dedo."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQualServe();
+}
+
+/* ---------- as TRES portas: botao, arrasto de mouse e arrasto de dedo ----
+   ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart mata o
+   toque no celular (armadilha registrada no _padrao/DINAMICAS.md).       */
+function ligaGiro(d){
+  d.onmousedown=giroMouseIni;
+  d.addEventListener("touchstart",giroToqueIni,false);
+  d.addEventListener("touchmove",giroToqueMeio,false);
+  d.addEventListener("touchend",giroToqueFim,false);
+}
+/* ⚠️ DEFEITO PEGO NO TESTE DO DEDO (ago/2026, nesta própria peça): o botão
+   tinha SÓ `onclick`, e o guarda do mouse fantasma ignora qualquer clique nos
+   700ms seguintes a um toque. Resultado no celular: a criança girava a peça
+   com o dedo e, se tocasse no botão logo em seguida, O BOTÃO NÃO FAZIA NADA —
+   parecia quebrado. O `node --check` e a bancada inteira passavam: só o teste
+   que dispara touchstart/touchend de verdade encontra isso.
+   A cura é a mesma regra das peças: o botão também tem a PORTA DO TOQUE. */
+function ligaSeta(d,dir){
+  d.onclick=(function(k){ return function(){ cliqueSeta(k); }; })(dir);
+  d.addEventListener("touchend",(function(k){ return function(){
+    ultimoToque=Date.now(); daUmQuarto(k); }; })(dir),false);
+}
+function cliqueSeta(dir){
+  if(Date.now()-ultimoToque<700) return;   /* clique FANTASMA depois do toque */
+  daUmQuarto(dir);
+}
+function giroMouseIni(ev){
+  if(Date.now()-ultimoToque<700) return;
+  pegaGiro(ev.clientX,ev.clientY);
+}
+function giroToqueIni(ev){
+  ultimoToque=Date.now();
+  var to=ev.touches[0]; if(!to) return;
+  pegaGiro(to.clientX,to.clientY);
+}
+function giroToqueMeio(ev){
+  if(!girando) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveGiro(to.clientX,to.clientY);
+  ev.preventDefault();   /* so no MEIO do arrasto, nunca no comeco */
+}
+function giroToqueFim(ev){
+  ultimoToque=Date.now();
+  var arrastou=(Math.abs(dAtual)>6);
+  soltaGiro();
+  if(!arrastou) daUmQuarto(1);   /* toque simples na peca: vale um quarto de volta */
+}
+document.onmousemove=function(ev){ if(girando) moveGiro(ev.clientX,ev.clientY); };
+document.onmouseup=function(){ if(girando) soltaGiro(); };
+
+/* ---------- o arrasto ANGULAR com encaixe nos 90° ----------
+   O dedo de crianca nao faz circulo bonito, e um arrasto livre deixaria a
+   figura num angulo torto — que nunca encaixa. Entao aqui o arrasto nao gira
+   "de qualquer jeito": ele ACUMULA e, passando de ~50°, cai de uma vez no
+   proximo quarto de volta. E o mesmo encaixe magnetico das pecas de madeira. */
+var LIMIAR=50;
+function anguloEm(x,y){
+  var r=elFig.getBoundingClientRect();
+  return Math.atan2(y-(r.top+r.height/2),x-(r.left+r.width/2))*180/Math.PI;
+}
+function pegaGiro(x,y){
+  if(travado||!elFig) return;
+  girando=true; angIni=anguloEm(x,y); dAtual=0;
+  sTap();
+  elGira.className="gira solto";
+}
+function moveGiro(x,y){
+  if(!girando) return;
+  var a=anguloEm(x,y), d=a-angIni;
+  while(d>180) d-=360;
+  while(d<-180) d+=360;
+  dAtual=d;
+  if(Math.abs(d)>=LIMIAR){
+    angIni=a; dAtual=0;
+    elGira.className="gira";
+    daUmQuarto(d>0?1:-1);
+    if(!travado) elGira.className="gira solto";
+    return;
+  }
+  poeAngulo(elGira,ang+d);      /* previa: a peca acompanha o dedo */
+}
+function soltaGiro(){
+  girando=false; dAtual=0;
+  if(elGira){ elGira.className="gira"; poeAngulo(elGira,ang); }
+}
+
+/* ---------- a regra da fase ---------- */
+function daUmQuarto(dir){
+  if(travado||!elGira) return;
+  ang+=90*dir; giros++;
+  poeAngulo(elGira,ang);
+  elRot.innerHTML="A SUA PE&#199;A ("+norma(ang)+"&#176;)";
+  marcaQualServe();
+  if(norma(ang)===ALVOS[rodada]) encaixou();
+  else { sTap(); ajuda(giros); }
+}
+function encaixou(){
+  travado=true;
+  elFig.className="fig encaixou";
+  sCerto();
+  if(barraP) barraP.style.width=Math.round((rodada+1)*100/ALVOS.length)+"%";
+  marcaQualServe();
+  /* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda
+     `!telaAtual.parentNode` ele mexeria numa tela que ja saiu. */
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    rodada++;
+    mostraBanner("Encaixou! A figura deitou, mas continua com <b>"+FORMA.length+
+                 "</b> pe&#231;as.", (rodada<ALVOS.length)?telaGirar:telaConta);
+  },520);
+}
+/* NAO EXISTE ESTADO DE ERRO nesta mecanica: sao quatro posicoes e a peca
+   encaixa quando encaixa. O andaime so aparece se a crianca estiver rodando
+   sem parar — e ai ele diz PARA QUE LADO tocar. */
+function ajuda(n){
+  if(n<4) return;
+  var falta=norma(ALVOS[rodada]-norma(ang));
+  mostraDica("Olhe a pe&#231;a <b>laranja</b> do molde e a da sua figura. "+
+             "Toque em <b>GIRAR PARA A "+((falta<=180)?"DIREITA":"ESQUERDA")+"</b>.");
+}
+/* data-qa: o botao que aproxima do molde fica com "1" — e so para o
+   auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho. */
+function marcaQualServe(){
+  if(!elDir||!elEsq) return;
+  if(travado){ elDir.removeAttribute("data-qa"); elEsq.removeAttribute("data-qa"); return; }
+  var falta=norma(ALVOS[rodada]-norma(ang));
+  elDir.setAttribute("data-qa",(falta>0&&falta<=180)?"1":"0");
+  elEsq.setAttribute("data-qa",(falta>180)?"1":"0");
+}
+
+/* ---------- O CONCEITO POR ULTIMO: a quantidade nao muda ---------- */
+function telaConta(){
+  limpa(); document.onkeydown=null; girando=false; travado=false;
+  rodada=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","E AGORA?"));
+  c.appendChild(el("div","balao","Voc&#234; girou a figura de todo jeito. "+
+    "<b>Quantas pe&#231;as</b> ela tem agora?"));
+  var m=el("div","mesa"), ca=el("div","cai");
+  ca.appendChild(el("div","rot","DEPOIS DE GIRAR"));
+  ca.appendChild(fazFigura(false,270));
+  m.appendChild(ca);
+  c.appendChild(m);
+  var box=el("div","opts"), lista=[FORMA.length,FORMA.length-1,FORMA.length+1], i, o;
+  baguncar(lista);                 /* a certa NUNCA pode ser sempre a 1a */
+  for(i=0;i<lista.length;i++){
+    /* ⚠️ nasce como el("div","opt",...) e SÓ DEPOIS ganha a "curta": o portão
+       _qa/dinamicas.py reconhece o quiz por esse literal, e um `el("div","opt
+       curta",...)` faria a mecânica passar SEM SER MEDIDA — aprovação vazia,
+       que é pior que reprovar (o mesmo buraco que a peça `pintar` achou). */
+    o=el("div","opt",lista[i]+" pe&#231;as");
+    o.className="opt curta";
+    o.setAttribute("data-qa",(lista[i]===FORMA.length)?"1":"0");
+    o.onclick=(function(v,e){ return function(){ respondeConta(v,e); }; })(lista[i],o);
+    box.appendChild(o);
+  }
+  c.appendChild(box);
+  c.appendChild(el("div","hint","Conte as pe&#231;as da figura girada."));
+  t.appendChild(c); app.appendChild(t);
+}
+function respondeConta(v,o){
+  if(v===FORMA.length){
+    o.className="opt curta ok";
+    sCerto();
+    setTimeout(function(){
+      if(!telaAtual||!telaAtual.parentNode) return;
+      mostraBanner("Isso! Girar muda o <b>lado</b>, nunca a <b>quantidade</b>.",telaFimGirar);
+    },420);
+  }else{
+    /* erro nunca vira X vermelho nem a palavra "errou": a opcao so recua e a
+       ajuda cresce — aqui ela manda CONTAR os pontinhos, que estao ali. */
+    o.className="opt curta no";
+    sErro();
+    mostraDica("Conte de novo, tocando com o dedo em cada quadradinho da figura.");
+  }
+}
+function telaFimGirar(){
+  limpa(); document.onkeydown=null; girando=false;
+  rodada=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","A figura <b>girou</b> e continuou com as mesmas "+
+    "<b>"+FORMA.length+" pe&#231;as</b>. Girar muda a posi&#231;&#227;o, n&#227;o a quantidade."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaGirar;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaGirar();
+</script>
+</body></html>

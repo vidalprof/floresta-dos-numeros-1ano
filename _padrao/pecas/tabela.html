@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — tabela de dupla entrada</title>
+<!-- ============================================================
+     PEÇA: TABELA DE DUPLA ENTRADA (ler cruzando linha e coluna)
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ESTA MECÂNICA ENSINA: um quadro de dupla entrada não se lê de cima
+     para baixo nem da esquerda para a direita — se lê CRUZANDO. O dado só
+     existe no encontro dos dois. Por isso a resposta é a PRÓPRIA CÉLULA: a
+     criança não escolhe um número numa lista de opções, ela põe o dedo no
+     cruzamento. O gesto é a ideia.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · SE A PERGUNTA NÃO EXIGIR CRUZAR, VIRA LEITURA SIMPLES. As três rodadas
+         cobrem as três leituras possíveis do quadro, e nenhuma se resolve
+         olhando uma linha só:
+             1) linha + coluna -> qual é o número      (Bia na QUA?)
+             2) linha + número -> qual é a coluna      (quando o Caio leu 5?)
+             3) coluna + número -> qual é a linha      (quem leu 2 na SEX?)
+       · CÉLULA GRANDE E TOCÁVEL: 74 x 46px medidos (o piso do _qa/leiaute.js
+         para `.cel` é 40x40). Célula de tabela em px fixo estoura em 320px;
+         aqui a linha é flex e a célula divide o que sobra.
+       · O CRUZAMENTO TEM QUE SER VISÍVEL: ao responder, a LINHA acende, depois
+         a COLUNA, e só então a célula do encontro pulsa. É a figura do
+         conceito — sem isso a criança acerta sem saber por quê.
+       · ERRO NÃO PUNE: a célula treme e volta; o andaime cresce (dica -> acende
+         a linha -> acende a coluna -> mostra o encontro). Nunca X, nunca
+         "errou", nunca trava.
+       · NADA ESSENCIAL SÓ NA COR: a linha acesa ganha borda inteira e seta na
+         etiqueta; a célula certa ganha o sinal de conferido.
+       · `data-qa` na célula que serve AGORA (só para o auditor-jogador).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: O QUADRO DE DUPLA ENTRADA ----------------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o quadro nasce COLADO no
+   enunciado (regra 9 do _qa/leiaute.js).                                     */
+.quadro{margin:14px auto 0;max-width:430px;width:100%;background:rgba(255,255,255,.07);
+        border-radius:14px;padding:5px}
+.lintab{display:-webkit-box;display:-webkit-flex;display:flex;width:100%}
+/* etiqueta da LINHA (quem) — largura fixa, o resto e das celulas */
+.cabl{-webkit-box-flex:0;-webkit-flex:0 0 76px;flex:0 0 76px;min-height:46px;line-height:40px;
+      margin:2px;border-radius:10px;background:#4b3a26;color:#fff6e2;font-size:15px;font-weight:800;
+      text-align:center;border:3px solid #4b3a26;padding:0 2px;overflow:hidden}
+/* etiqueta da COLUNA (quando) */
+.cabc{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;min-height:40px;line-height:34px;
+      margin:2px;border-radius:10px;background:#3c6ee0;color:#fff;font-size:15px;font-weight:800;
+      text-align:center;border:3px solid #3c6ee0;overflow:hidden}
+.canto{-webkit-box-flex:0;-webkit-flex:0 0 76px;flex:0 0 76px;min-height:40px;margin:2px}
+/* A CELULA — o alvo. Piso do auditor: 40x40; aqui 46 de altura e ~74 de largura */
+.cel{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;min-height:46px;line-height:40px;
+     margin:2px;border-radius:10px;background:#fffdf6;color:#221a12;font-size:21px;font-weight:800;
+     text-align:center;cursor:pointer;border:3px solid #d8cbb2;position:relative}
+.cel:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+/* LINHA ACESA: cor + borda inteira mais grossa (nada essencial so na cor) */
+.cel.dlin,.cabl.dlin{background:#fff3c9;color:#3a2c07;border-color:#ffd54a}
+.cabl.dlin{background:#7a5a2e;color:#fff6e2}
+/* COLUNA ACESA */
+.cel.dcol,.cabc.dcol{background:#d9e6ff;color:#12224a;border-color:#3c6ee0}
+.cabc.dcol{background:#254a9c;color:#fff}
+/* o ENCONTRO: onde a linha acesa cruza a coluna acesa */
+.cel.dlin.dcol{background:#ffe08a;color:#33280a;border-color:#e0a90f}
+.cel.certa{background:#d6f5c8;border-color:#1f6b12;color:#123d09;
+           -webkit-animation:pulsa .7s ease-out 2;animation:pulsa .7s ease-out 2}
+.cel.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes pulsa{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1)}}
+@keyframes pulsa{0%{transform:scale(1)}45%{transform:scale(1.08)}100%{transform:scale(1)}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.vcerto{position:absolute;right:3px;top:1px;font-size:14px;font-weight:800;color:#1f6b12;line-height:14px}
+/* a etiqueta acesa ganha uma SETA (forma), nao so cor: quem nao distingue a
+   cor continua vendo por onde andar. Nao e texto de verdade, entao nao entra
+   na conta do contraste — e o reforco, nunca a unica pista. */
+.cabl.dlin:after{content:" \25B6"}
+.cabc.dcol:after{content:" \25BC"}
+.legenda{margin-top:9px;font-size:13px;opacity:.9}
+.placar{margin-top:9px;font-size:16px;font-weight:700}
+.placar b{color:#ffd54a}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* tela baixa: encolhe a LETRA, nunca a celula */
+@media (max-height:470px){.cel{font-size:19px}.cabl,.cabc{font-size:14px}.legenda{margin-top:6px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- O QUADRO ----
+   Linhas = quem; colunas = quando; a celula = quantos. Numeros pequenos e
+   REPETIDOS de proposito (o 5 aparece duas vezes, o 2 tambem): assim nenhuma
+   pergunta se resolve procurando "o numero diferente" — tem que cruzar.     */
+var QUEM=["Bia","Caio","Dani"];
+var QUANDO=["SEG","QUA","SEX"];
+var DADOS=[[3,5,2],
+           [4,1,5],
+           [2,4,6]];
+/* As tres leituras de um quadro de dupla entrada. `li`/`co` e a resposta. */
+var PERG=[
+ {li:0,co:1,txt:"Quantos livros a <b>Bia</b> leu na <b>QUA</b>?",
+  dic:"Ache primeiro a linha da <b>Bia</b>. Depois desca pela coluna <b>QUA</b>.",
+  fim:"A Bia leu <b>5</b> na quarta."},
+ {li:1,co:2,txt:"Em que dia o <b>Caio</b> leu <b>5</b> livros?",
+  dic:"Ande pela linha do <b>Caio</b> at&#233; achar o <b>5</b>. Depois olhe a etiqueta de cima.",
+  fim:"Foi na <b>SEX</b> que o Caio leu 5."},
+ {li:0,co:2,txt:"Quem leu <b>2</b> livros na <b>SEX</b>?",
+  dic:"Desca pela coluna <b>SEX</b> at&#233; achar o <b>2</b>. Depois olhe a etiqueta da esquerda.",
+  fim:"Quem leu 2 na sexta foi a <b>Bia</b>."}
+];
+
+var rodadaQ=0, errosQ=0, respondida=false, acertosQ=0;
+var celsQ=[], etiqL=[], etiqC=[], telaQ=null, barraQ=null, placarQ=null;
+
+function telaTabela(){
+  limpa();
+  errosQ=0; respondida=false; celsQ=[]; etiqL=[]; etiqC=[];
+  var q=PERG[rodadaQ];
+  var t=el("div","tela"); telaQ=t;
+  setProg(t,Math.round(rodadaQ*100/PERG.length));
+  barraQ=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","QUADRO DA TURMA "+(rodadaQ+1)+"/"+PERG.length));
+  c.appendChild(el("div","balao",q.txt+"<br>Toque na <b>casinha do encontro</b>."));
+
+  var quadro=el("div","quadro"), i, j;
+  /* fileira das etiquetas de coluna */
+  var topo=el("div","lintab");
+  topo.appendChild(el("div","canto",""));
+  for(j=0;j<QUANDO.length;j++){
+    var ec=el("div","cabc",QUANDO[j]);
+    topo.appendChild(ec); etiqC.push(ec);
+  }
+  quadro.appendChild(topo);
+  /* uma fileira por pessoa */
+  for(i=0;i<QUEM.length;i++){
+    var lin=el("div","lintab");
+    var eq=el("div","cabl",QUEM[i]);
+    lin.appendChild(eq); etiqL.push(eq);
+    celsQ.push([]);
+    for(j=0;j<QUANDO.length;j++) lin.appendChild(fazCel(i,j));
+    quadro.appendChild(lin);
+  }
+  c.appendChild(quadro);
+  c.appendChild(el("div","legenda","SEG = segunda &#183; QUA = quarta &#183; SEX = sexta"));
+  placarQ=el("div","placar","acertou <b>"+acertosQ+"</b> de "+PERG.length);
+  c.appendChild(placarQ);
+  t.appendChild(c); app.appendChild(t);
+}
+
+function fazCel(li,co){
+  var d=el("div","cel",""+DADOS[li][co]);
+  d._li=li; d._co=co;
+  /* qual celula serve AGORA — so para o auditor-jogador */
+  var q=PERG[rodadaQ];
+  d.setAttribute("data-qa",(li===q.li&&co===q.co)?"1":"0");
+  d.onclick=function(){ toqueCel(li,co,d); };
+  celsQ[li].push(d);
+  return d;
+}
+
+function toqueCel(li,co,d){
+  if(respondida) return;
+  var q=PERG[rodadaQ];
+  if(li===q.li&&co===q.co){ acerta(d); return; }
+  sErro(); errosQ++;
+  d.className="cel treme";
+  destremeCel(d);
+  andaimeQ(errosQ);
+}
+function destremeCel(d){
+  setTimeout(function(){
+    if(!telaQ||!telaQ.parentNode) return;
+    if(d.className.indexOf("certa")<0) d.className="cel";
+  },340);
+}
+
+/* O CRUZAMENTO EM CENA: a linha acende, depois a coluna, depois o encontro.
+   E a unica parte que faz a crianca entender POR QUE a resposta e aquela.  */
+function acerta(d){
+  respondida=true;
+  acertosQ++;
+  apagaDicaQ();
+  acendeLinha(PERG[rodadaQ].li);
+  setTimeout(passoColuna,340);
+  setTimeout(passoEncontro,700);
+  if(placarQ) placarQ.innerHTML="acertou <b>"+acertosQ+"</b> de "+PERG.length;
+  if(barraQ) barraQ.style.width=Math.round((rodadaQ+1)*100/PERG.length)+"%";
+}
+function passoColuna(){
+  if(!telaQ||!telaQ.parentNode) return;
+  acendeColuna(PERG[rodadaQ].co);
+}
+function passoEncontro(){
+  if(!telaQ||!telaQ.parentNode) return;
+  var q=PERG[rodadaQ], d=celsQ[q.li][q.co];
+  if(d){
+    d.className="cel certa";
+    if(d.getElementsByClassName("vcerto").length===0) d.appendChild(el("i","vcerto","&#10003;"));
+  }
+  sCerto();
+  mostraDica(q.fim);
+  setTimeout(proximaPergunta,1900);
+}
+function proximaPergunta(){
+  if(!telaQ||!telaQ.parentNode) return;
+  rodadaQ++;
+  if(rodadaQ<PERG.length){ telaTabela(); return; }
+  mostraBanner("No quadro de dupla entrada o n&#250;mero mora no <b>encontro</b> da linha com a coluna!",telaFimTabela);
+}
+
+/* ---- acender linha / coluna (usado pelo acerto E pelo andaime) ---- */
+function acendeLinha(li){
+  var j;
+  if(etiqL[li]) etiqL[li].className="cabl dlin";
+  for(j=0;j<QUANDO.length;j++)
+    if(celsQ[li]&&celsQ[li][j]&&celsQ[li][j].className.indexOf("certa")<0)
+      celsQ[li][j].className="cel dlin";
+}
+function acendeColuna(co){
+  var i;
+  if(etiqC[co]) etiqC[co].className="cabc dcol";
+  for(i=0;i<QUEM.length;i++){
+    if(!celsQ[i]||!celsQ[i][co]) continue;
+    if(celsQ[i][co].className.indexOf("certa")>=0) continue;
+    celsQ[i][co].className=(celsQ[i][co].className.indexOf("dlin")>=0)?"cel dlin dcol":"cel dcol";
+  }
+}
+
+/* ---- O ANDAIME QUE CRESCE ----
+   1) dica; 2) acende a linha (ou a coluna, conforme a pergunta); 3) acende as
+   duas; 4) mostra o encontro e segue. Nunca X, nunca "errou", nunca preso. */
+function andaimeQ(n){
+  var q=PERG[rodadaQ];
+  if(n===1){ mostraDica(q.dic); return; }
+  if(n===2){
+    mostraDica("Este &#233; o caminho que voc&#234; tem que seguir.");
+    if(rodadaQ===2) acendeColuna(q.co); else acendeLinha(q.li);
+    return;
+  }
+  if(n===3){
+    mostraDica("Agora as <b>duas</b> pistas est&#227;o acesas. A resposta est&#225; onde elas se cruzam.");
+    acendeLinha(q.li); acendeColuna(q.co);
+    return;
+  }
+  mostraDica("O encontro &#233; aqui. " + q.fim);
+  var d=celsQ[q.li][q.co];
+  if(d) acerta(d);
+}
+function apagaDicaQ(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+function telaFimTabela(){
+  limpa();
+  var t=el("div","tela"); telaQ=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; leu o quadro <b>cruzando</b> a linha com a coluna."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomecaTabela;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaTabela(){ rodadaQ=0; acertosQ=0; telaTabela(); }
+
+telaTabela();
+</script>
+</body></html>

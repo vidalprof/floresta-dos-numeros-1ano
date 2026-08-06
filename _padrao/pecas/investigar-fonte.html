@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — investigar a fonte</title>
+<!-- ============================================================
+     PEÇA: INVESTIGAR A FONTE (copiada do _padrao/pecas/MOLDE.html)
+
+     A mecânica: TRÊS fontes contam a MESMA história de jeitos DIFERENTES.
+     A criança decide o que provavelmente aconteceu e, depois, tem que
+     APONTAR em qual evidência se apoiou.
+
+     As armadilhas desta mecânica (REGRAS-INTERATIVIDADE.md, linha
+     "Investigar a fonte") — cada uma escrita porque já custou caro:
+       · SEM AUTOR, DATA E MOTIVO VISÍVEIS a fase vira palpite. Aqui os três
+         aparecem em cima de cada fonte, em texto (nunca só na cor);
+       · O VEREDITO SÓ FECHA COM A EVIDÊNCIA APONTADA. Escolher a resposta
+         certa não termina a peça: a segunda tela cobra as DUAS provas que
+         sustentam o veredito, e uma delas é uma pegadinha honesta —
+         "quase ninguém veio" é a CONSEQUÊNCIA, não o motivo;
+       · TRÊS distratores no veredito (nem mais nem menos): com dois, a
+         criança elimina tudo antes do 3º erro e o degrau "revelar" vira
+         código morto. Com a rede de segurança: se as erradas acabarem
+         antes, revela na hora;
+       · opções SEMPRE embaralhadas (`baguncar`) — na Fábrica de Estrelas a
+         certa era sempre a 1ª e a criança aprendeu a posição.
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor
+     (a opção revelada ganha a palavra "é esta" escrita), funciona no mudo,
+     erro com sErro() + andaime que CRESCE (dica -> apoio concreto ->
+     revela), `data-qa` para o auditor-jogador, nunca trava, termina numa
+     `.medal`. ES5 puro, um arquivo só (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ A tela desta peca e LONGA (tres fontes + quatro respostas). Num celular
+   de 320x568 as respostas cairiam abaixo da dobra e o portao de leiaute
+   reprovaria — com razao: sem rolagem a crianca acha que a tela acabou.
+   Com `overflow-y:auto` a tela ROLA de verdade, que e o que a crianca faz
+   com o dedo (e o auditor-jogador tambem sabe rolar). */
+.tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* A FONTE. Autor, data e motivo NUNCA saem daqui: sem eles a fase vira palpite. */
+.fontes{display:block;margin:0 auto;max-width:430px}
+.fonte{background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.30);border-radius:16px;
+       padding:9px 12px 11px;margin:9px 0;text-align:left}
+.fcab{display:block;font-size:15px;font-weight:800;color:#ffe9a8;line-height:1.25}
+.fmeta{display:block;font-size:13px;font-weight:700;color:#f0d9a8;margin:3px 0 6px;line-height:1.3}
+.ftxt{display:block;font-size:15px;font-weight:600;color:#f4efe6;line-height:1.35}
+/* a pergunta do veredito: separada do enunciado, para uma ideia por vez */
+.pergunta{display:block;font-size:16px;font-weight:800;color:#ffe9a8;margin:14px 0 2px;line-height:1.3}
+/* ⚠️ a margem daqui tem que ser ESCRITA: `.balao + *{margin-top:13px}` vem
+   ANTES no arquivo e com a mesma forca, entao uma regra `margin:0` aqui
+   embaixo ganhava e o placar nascia COLADO no enunciado (portao de leiaute,
+   regra 9 — cobranca do Marcos duas vezes). */
+.placar{display:block;font-size:15px;font-weight:800;color:#ffe9a8;margin:13px 0 2px}
+/* a opcao revelada depois do 3o erro: acende E ganha a marca ESCRITA
+   (nada essencial so na cor — serve no mudo e para quem nao ve a cor). */
+.opt.rev{background:#d6f5c8;box-shadow:0 0 0 3px #ffd54a,0 4px 0 #7cb464}
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (o caso da feira, 9-10 anos). Ao copiar a peça para
+   uma atividade, troque APENAS este bloco. Regra de ouro do conteúdo: as três
+   fontes têm que DISCORDAR de verdade — se todas dizem a mesma coisa, não há
+   o que investigar; e uma delas tem que ser tardia/de ouvir falar, para a
+   DATA e o MOTIVO valerem alguma coisa.                                    */
+var PERGUNTA="Por que a feira mudou de lugar?";
+var FONTES=[
+  {aut:"Cartaz da prefeitura",
+   meta:"3 de março · feito para AVISAR os moradores",
+   txt:"“A feira passa para a Praça Nova enquanto a rua for consertada.”"},
+  {aut:"Bilhete de dona Alzira, que vende frutas na feira",
+   meta:"5 de março · escrito para o filho, no mesmo dia",
+   txt:"“Hoje quase ninguém veio. A rua está toda aberta, com máquinas trabalhando nela.”"},
+  {aut:"Jornal do bairro",
+   meta:"20 de março · escrito para CONTAR a notícia, 17 dias depois",
+   txt:"“Moradores contam que a feira mudou porque a Praça Nova é mais bonita.”"}
+];
+
+/* UM certo + TRÊS distratores (o número que mantém o andaime vivo). */
+var VEREDITOS=[
+  {t:"A feira mudou porque a rua estava <b>em obra</b>.", ok:1},
+  {t:"A feira mudou porque a Praça Nova é mais bonita.", ok:0},
+  {t:"A feira mudou porque ninguém queria mais comprar lá.", ok:0},
+  {t:"A feira acabou e não existe mais.", ok:0}
+];
+var DICAS=[
+  "Olhe a DATA de cada fonte. Quem escreveu no dia em que a coisa aconteceu?",
+  "Duas fontes falam da RUA: o cartaz da prefeitura (3 de março) e o bilhete de dona Alzira (5 de março). O jornal escreveu 17 dias depois, e só de ouvir falar.",
+  "A resposta está acesa e marcada “é esta”: a feira mudou por causa da obra na rua."
+];
+
+/* AS PROVAS. Duas sustentam o veredito; as outras duas são a pegadinha
+   honesta: uma é OPINIÃO tardia e a outra é a CONSEQUÊNCIA, não o motivo. */
+var PROVAS=[
+  {t:"Cartaz da prefeitura: “enquanto a rua for consertada”.", ok:1},
+  {t:"Bilhete de dona Alzira: “a rua está toda aberta, com máquinas”.", ok:1},
+  {t:"Jornal do bairro: “a Praça Nova é mais bonita”.", ok:0},
+  {t:"Bilhete de dona Alzira: “hoje quase ninguém veio”.", ok:0}
+];
+var DICAS2=[
+  "A prova precisa falar da OBRA. Procure quem contou o que estava acontecendo NA RUA.",
+  "“Quase ninguém veio” é o que ACONTECEU depois da mudança, não o motivo dela. E “é mais bonita” é opinião de quem ouviu falar, 17 dias depois.",
+  "As duas provas certas estão acesas e marcadas “é esta”: as que falam da rua consertada."
+];
+
+var err=0;      /* erros da tela de agora (o andaime cresce com ele) */
+var achadas=0;  /* provas ja apontadas */
+var ger=0;      /* geracao da tela: mata setTimeout de tela que ja saiu */
+
+/* ---------------- TELA 1: LER AS FONTES E DAR O VEREDITO ---------------- */
+function pecaFonte(){
+  err=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","QUEM CONTOU? QUANDO? POR QUÊ?"));
+  c.appendChild(el("div","balao","Três pessoas contaram o que houve com a feira — e não contaram igual. Leia <b>quem</b> escreveu, <b>quando</b> e <b>por que</b>."));
+
+  var box=el("div","fontes"), i, f, d;
+  for(i=0;i<FONTES.length;i++){
+    f=FONTES[i];
+    d=el("div","fonte");
+    d.appendChild(el("span","fcab",f.aut));
+    d.appendChild(el("span","fmeta",f.meta));
+    d.appendChild(el("span","ftxt",f.txt));
+    box.appendChild(d);
+  }
+  c.appendChild(box);
+
+  c.appendChild(el("div","pergunta",PERGUNTA));
+  var lista=[], o=el("div","opts");
+  for(i=0;i<VEREDITOS.length;i++) lista.push(VEREDITOS[i]);
+  baguncar(lista);                       /* ⭐ a armadilha do "escolher" */
+  for(i=0;i<lista.length;i++) o.appendChild(fazVeredito(lista[i]));
+  c.appendChild(o);
+  c.appendChild(el("div","hint","Toque no que você acha que <b>provavelmente</b> aconteceu."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazVeredito(it){
+  var o=el("div","opt",it.t);
+  /* data-qa="1" = "esta serve AGORA". Existe SÓ para o auditor-jogador; a
+     criança não vê diferença nenhuma. */
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ respondeVeredito(o,it.ok); };
+  return o;
+}
+
+function respondeVeredito(o,certa){
+  if(o.className.indexOf("no")>=0) return;      /* ja apagada: nao responde */
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    if(o.innerHTML.indexOf("marca")<0) o.innerHTML=o.innerHTML+'<span class="marca">certo</span>';
+    tranca("opt");
+    var g=ger;
+    setTimeout(function(){ if(g!==ger) return; fonteProva(); },620);
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a opção sai do alcance, andaime CRESCE. */
+  sErro();
+  o.className="opt no";
+  o.onclick=null;
+  err++;
+  var acabou=(sobramErradas()===0);
+  mostraDica(acabou?DICAS[DICAS.length-1]:DICAS[Math.min(err,DICAS.length)-1]);
+  if(err>=3||acabou) revela();
+}
+
+function sobramErradas(){
+  var a=app.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")!=="1"&&a[i].className.indexOf("no")<0) n++;
+  return n;
+}
+
+/* 3º erro (ou erradas esgotadas): revela e DEIXA SEGUIR — é o degrau que
+   garante que a peça nunca trava. */
+function revela(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")==="1"&&a[i].className.indexOf("ok")<0){
+      a[i].className="opt rev";
+      if(a[i].innerHTML.indexOf("marca")<0)
+        a[i].innerHTML=a[i].innerHTML+'<span class="marca">é esta</span>';
+    }
+  }
+}
+
+function tranca(cls){
+  var a=app.getElementsByClassName(cls), i;
+  for(i=0;i<a.length;i++) a[i].onclick=null;
+}
+
+/* ---------------- TELA 2: EM QUE EVIDÊNCIA VOCÊ SE APOIOU? -------------
+   ⭐ É ESTA TELA QUE FECHA O VEREDITO. Sem ela a criança "acha" e pronto —
+   e a mecânica inteira perde o sentido: investigar fonte é APOIAR o que se
+   diz em algo que alguém escreveu, num dia, por um motivo.               */
+function fonteProva(){
+  err=0; achadas=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,50);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","EM QUE VOCÊ SE APOIOU?"));
+  c.appendChild(el("div","balao","Você disse que a feira mudou por causa da <b>obra na rua</b>. Agora mostre <b>onde</b> você viu isso."));
+  c.appendChild(el("div","placar","0 de 2 provas apontadas"));
+
+  var lista=[], i, o=el("div","opts");
+  for(i=0;i<PROVAS.length;i++) lista.push(PROVAS[i]);
+  baguncar(lista);
+  for(i=0;i<lista.length;i++) o.appendChild(fazProva(lista[i]));
+  c.appendChild(o);
+  c.appendChild(el("div","hint","Toque nas <b>duas</b> provas que falam da obra."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazProva(it){
+  var o=el("div","opt",it.t);
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ respondeProva(o,it.ok); };
+  return o;
+}
+
+function respondeProva(o,certa){
+  if(o.className.indexOf("ok")>=0||o.className.indexOf("rev")>=0) return;
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    o.setAttribute("data-qa","0");            /* ja consumida: sai da mira */
+    if(o.innerHTML.indexOf("marca")<0) o.innerHTML=o.innerHTML+'<span class="marca">prova</span>';
+    o.onclick=null;
+    achadas++;
+    atualizaPlacar();
+    if(achadas>=2){
+      var g=ger, p=app.querySelector(".prog i");
+      if(p) p.style.width="100%";
+      setTimeout(function(){
+        if(g!==ger) return;
+        mostraBanner("Você decidiu <b>e</b> mostrou em que se apoiou. É assim que se investiga!", fimDaPeca);
+      },560);
+    }
+    return;
+  }
+  sErro();
+  o.className="opt no";
+  o.onclick=null;
+  err++;
+  mostraDica(DICAS2[Math.min(err,DICAS2.length)-1]);
+  if(err>=2) revelaProvas();                  /* so restam 2 erradas: 2 erros */
+}
+
+function atualizaPlacar(){
+  var p=app.querySelector(".placar");
+  if(p) p.innerHTML=achadas+" de 2 provas apontadas";
+}
+
+/* rede de segurança: com só duas erradas, o 2º erro já esgotou o que dava
+   para eliminar. Acende as certas e deixa terminar — a peça nunca trava. */
+function revelaProvas(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")==="1"&&a[i].className.indexOf("ok")<0){
+      a[i].className="opt rev";
+      if(a[i].innerHTML.indexOf("marca")<0)
+        a[i].innerHTML=a[i].innerHTML+'<span class="marca">é esta</span>';
+    }
+  }
+}
+
+/* ---------------- FIM: A MEDALHA (e o gancho) ---------------- */
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","O jornal escreveu 17 dias depois, só de <b>ouvir falar</b>. Quem estava lá no dia contou outra coisa. <b>Quem conta muda a história?</b>"));
+  var b=el("button","btn","Investigar de novo");
+  b.onclick=function(){ pecaFonte(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça INVESTIGAR A FONTE: autor, data e motivo à vista, e o veredito só fecha com a evidência apontada."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaFonte();
+</script>
+</body></html>

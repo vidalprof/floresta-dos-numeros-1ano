@@ -76,6 +76,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .cena{margin:13px auto 8px;max-width:250px;background:#3a2c20;border:3px solid #6b4b2a;
       border-radius:16px;padding:6px}
 .cena svg{display:block;width:100%;height:auto}
+/* a cena do FIM divide o espaço com a medalha e com o botão: em celular
+   pequeno (320x568) a lupa grande empurrava o botão para fora da tela — e
+   resposta fora da tela é o defeito que o Marcos fotografou. */
+.cenafim{max-width:148px;margin-top:10px}
 /* os tres lugares, lado a lado: com font-size:0 no pai some o espaco entre
    os inline-block e as tres colunas fecham certinho em 320px. */
 .locs{display:block;margin-top:13px;font-size:0}
@@ -411,9 +415,9 @@ function telaFim(){
   c.appendChild(el("div","selo","CASO ENCERRADO"));
   c.appendChild(el("div","medal","PROVA"));
   c.appendChild(el("div","balao","Você achou as pistas, pensou uma hipótese e <b>provou</b> com uma delas."));
-  var cn=el("div","cena",SVG_LUPA); c.appendChild(cn);
+  var cn=el("div","cena cenafim",SVG_LUPA); c.appendChild(cn);
   /* fecho com gancho: a atividade termina deixando uma pergunta aberta */
-  c.appendChild(el("div","hint","E se a terra estivesse <b>encharcada</b> e a planta murchasse do mesmo jeito? Que pista você procuraria primeiro?"));
+  c.appendChild(el("div","hint","E se a terra estivesse <b>encharcada</b> e a planta murchasse assim mesmo? Que pista você olharia?"));
   var b=el("button","btn","Investigar de novo");
   b.setAttribute("data-qa","1");
   b.onclick=function(){sTap();telaCaso();};

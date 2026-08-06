@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — o caixa (montar o valor com moedas e notas)</title>
+<!-- ============================================================
+     PEÇA: O CAIXA — MONTAR UM VALOR COM MOEDAS E NOTAS (e dar o troco)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     DE ONDE VEIO: a fase "O CAIXA" da Doceria. Lá a criança punha a MESMA
+     moeda uma vez por saquinho (o preço repetido = multiplicação). Aqui a
+     mecânica foi separada do conteúdo dela e virou o que ela é de verdade:
+     COMPOR UM VALOR com as peças do sistema monetário — e depois DEVOLVER O
+     TROCO contando para cima.
+
+     POR QUE ELA NÃO É UM QUIZ: a criança não escolhe entre "5, 6 ou 7" —
+     ela MONTA o 13 com uma nota de 10, uma de 2 e uma moeda de 1. Reconhecer
+     a resposta pronta é prova disfarçada; compor o valor é o gesto de quem
+     está no caixa de verdade. Por isso não existe alternativa nenhuma na
+     tela: existe uma carteira e uma bandeja.
+
+     O TROCO SEM CONTA DE MENOS: na última rodada a criança não faz 20 − 11.
+     Ela CONTA PARA CIMA, que é o que o comerciante faz: "a compra deu 11...
+     12, 13, 15, 20". A tela mostra a soma andando (11 + o que já está na
+     bandeja) e o alvo parado em 20 — a subtração aparece como caminho, não
+     como algoritmo.
+
+     ARMADILHAS QUE ESTA PEÇA FECHA:
+       · PASSAR DO VALOR NÃO PUNE: a peça que estouraria o total simplesmente
+         não entra — ela treme, dá o som grave curto e o andaime cresce.
+         Nunca X vermelho, nunca a palavra "errou";
+       · DÁ PARA VOLTAR ATRÁS: qualquer peça da bandeja sai com um toque. Sem
+         isso a criança que se enganou fica presa olhando para o próprio erro;
+       · O VALOR ESTÁ ESCRITO NA PEÇA, não só na cor — moeda é REDONDA e nota
+         é RETANGULAR (forma + número + cor, nunca cor sozinha);
+       · A RÉGUA que enche mostra o quanto falta de forma CONCRETA, antes de
+         qualquer número — concreto → figural → simbólico;
+       · nunca trava: no 3º tropeço a peça que serve entra sozinha;
+       · `data-qa="1"` marca, a cada instante, a peça que cabe agora — é assim
+         que o auditor-jogador (`_qa/jogador.js`) fecha a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ margem PROPRIA em cima: a regra `.balao + *` tem a mesma forca e perde
+   por vir ANTES no arquivo — sem isto o balcao nasce COLADO no enunciado
+   (regra 9 do _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.balcao{margin:13px auto 0;max-width:430px;min-height:74px;padding:8px 8px 6px;
+        border-radius:14px 14px 6px 6px;background:#4a3a26;
+        border:3px solid #6b543a;border-bottom:6px solid #33280a;text-align:center}
+.balcrot{display:block;font-size:11px;font-weight:800;letter-spacing:1px;color:#e6d5b6;margin-bottom:5px}
+.vazio{font-size:14px;font-weight:600;color:#e6d5b6;opacity:.85;padding:10px 4px;display:block}
+/* a peca JA POSTA na bandeja: menor que a da carteira, e sai com um toque */
+.chip{display:inline-block;vertical-align:middle;min-width:46px;height:44px;margin:3px;padding:2px 8px;
+      border-radius:22px;background:#fffdf6;color:#221a12;font-size:17px;font-weight:800;line-height:40px;
+      border:3px solid #c9bda6;cursor:pointer}
+.chip.nota{border-radius:8px;background:#e8f0d8;border-color:#7f9a5c}
+.chipx{display:block;font-size:9px;font-weight:700;line-height:1;letter-spacing:.5px;color:#5a4408;margin-top:-9px}
+/* a REGUA: o quanto falta, de forma concreta, ANTES de virar numero */
+.regua{position:relative;max-width:430px;height:22px;margin:9px auto 0;border-radius:11px;
+       background:rgba(255,255,255,.16);border:2px solid rgba(255,255,255,.4);overflow:hidden}
+.reguai{display:block;height:100%;width:0;background:#59c24b;
+        -webkit-transition:width .35s;transition:width .35s}
+.conta{max-width:430px;margin:8px auto 0;font-size:16px;font-weight:700;line-height:1.3}
+.conta b{color:#ffd54a}
+/* A CARTEIRA — moeda REDONDA, nota RETANGULAR (forma, nao so cor) */
+.carteira{display:block;text-align:center;margin-top:10px}
+.moeda{display:inline-block;vertical-align:middle;width:58px;height:58px;margin:5px 4px;padding:0;
+       border-radius:50%;background:#f0c357;color:#3a2c07;border:4px solid #c9962c;cursor:pointer;
+       box-shadow:0 4px 0 #9c7420;-webkit-user-select:none;user-select:none}
+.moeda:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #9c7420}
+.moeda.mnota{width:70px;height:50px;border-radius:9px;background:#dbe9c4;border:4px solid #7f9a5c;
+             box-shadow:0 4px 0 #5c7440;color:#22300f}
+.moeda.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+.moeda.treme{-webkit-animation:treme .32s;animation:treme .32s}
+.mval{display:block;font-size:21px;font-weight:800;line-height:1.05;margin-top:9px}
+.moeda.mnota .mval{margin-top:6px}
+.mrs{display:block;font-size:9px;font-weight:800;letter-spacing:.6px;line-height:1}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #9c7420}50%{box-shadow:0 0 0 6px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 #9c7420}50%{box-shadow:0 0 0 6px #ffd54a}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): tudo encolhe JUNTO para que
+   nada que se toca saia da area visivel. */
+@media(max-height:520px){
+  .moeda{width:52px;height:52px;margin:3px 3px}
+  .moeda.mnota{width:64px;height:46px}
+  .mval{font-size:19px;margin-top:7px}
+  .moeda.mnota .mval{margin-top:5px}
+  .balcao{min-height:62px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* A CARTEIRA: os valores inteiros do dinheiro brasileiro que a criança de 7 a
+   10 anos usa na padaria. Moeda de 1 real; notas de 2, 5, 10 e 20. Trocar
+   esta tabela adapta a peça (centavos, outro país) sem tocar no resto.     */
+var DINHEIRO=[{v:1,t:"moeda"},{v:2,t:"nota"},{v:5,t:"nota"},{v:10,t:"nota"},{v:20,t:"nota"}];
+
+/* AS RODADAS. `base` é o que já está contado antes da bandeja: nas duas
+   primeiras é 0 (montar o preço); na terceira é o valor da compra, e a
+   criança conta PARA CIMA até o que o freguês entregou — isso é o troco. */
+var RODADAS=[
+  {base:0, alvo:6, selo:"O CAIXA",
+   fala:"O fregu&#234;s vai pagar <b>6 reais</b>. Monte esse valor na bandeja."},
+  {base:0, alvo:13, selo:"O CAIXA",
+   fala:"Agora a conta deu <b>13 reais</b>. Monte com as pe&#231;as que voc&#234; tem."},
+  {base:11, alvo:20, selo:"O TROCO", troco:1,
+   fala:"A compra deu <b>11</b> e ele entregou <b>20</b>. Monte o <b>troco</b> na bandeja."}
+];
+
+var DICAS=[
+  "Olhe a r&#233;gua verde: ela mostra o quanto ainda falta encher.",
+  "Essa pe&#231;a passa do valor. As que <b>cabem agora</b> est&#227;o piscando.",
+  "Deixa comigo: eu ponho esta e voc&#234; continua."
+];
+
+var idxR=0, postas=[], soma=0, errosR=0, ger=0;
+var telaAtual=null, barraP=null, elBalcao=null, elConta=null, elReguaI=null, elCart=null;
+
+function agora(){ return (new Date()).getTime(); }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function rodada(){ return RODADAS[idxR]; }
+function falta(){ return rodada().alvo-rodada().base-soma; }
+function sMoeda(){ nota(1180,.05,.11,"square",0); nota(1560,.07,.09,"square",.04); }
+
+/* ---------------------------------------------------------- a tela */
+function pecaCaixa(){
+  ger++; limpa();
+  postas=[]; soma=0; errosR=0;
+  var r=rodada();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(idxR*100/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",r.selo));
+  c.appendChild(el("div","balao",r.fala));
+
+  elBalcao=el("div","balcao");
+  c.appendChild(elBalcao);
+
+  var rg=el("div","regua");
+  elReguaI=el("i","reguai","");
+  rg.appendChild(elReguaI);
+  c.appendChild(rg);
+
+  elConta=el("div","conta","");
+  c.appendChild(elConta);
+
+  elCart=el("div","carteira");
+  var i;
+  for(i=0;i<DINHEIRO.length;i++) elCart.appendChild(fazPeca(DINHEIRO[i]));
+  c.appendChild(elCart);
+
+  c.appendChild(el("div","hint","Toque na moeda ou na nota para p&#244;r. Toque na pe&#231;a da bandeja para tirar."));
+  t.appendChild(c); app.appendChild(t);
+  atualiza();
+}
+
+function fazPeca(d){
+  var b=el("div","moeda"+(d.t==="nota"?" mnota":""));
+  b.appendChild(el("span","mrs",d.t==="nota"?"NOTA":"MOEDA"));
+  b.appendChild(el("b","mval",""+d.v));
+  b._v=d.v;
+  b.onclick=(function(v,bt){ return function(){ poe(v,bt); }; })(d.v,b);
+  return b;
+}
+
+/* ------------------------------------------------- pôr e tirar dinheiro */
+function poe(v,bt){
+  if(!viva()) return;
+  if(v>falta()){ recusa(bt); return; }
+  postas.push(v);
+  soma+=v;
+  sMoeda();
+  atualiza();
+  if(falta()===0) fecha();
+}
+function tira(i){
+  if(!viva()) return;
+  soma-=postas[i];
+  postas.splice(i,1);
+  sTap();
+  atualiza();
+}
+/* PASSAR DO VALOR NÃO PUNE. A peça não entra, treme, dá o som grave curto e o
+   andaime CRESCE. Nunca X vermelho, nunca a palavra "errou".              */
+function recusa(bt){
+  errosR++;
+  sErro();
+  if(bt){ bt.className=classePeca(bt)+" treme"; destreme(bt); }
+  mostraDica(DICAS[Math.min(errosR,DICAS.length)-1]);
+  if(errosR===2) piscaQuemCabe();
+  if(errosR>=3) poeSozinho();
+}
+function classePeca(bt){ return "moeda"+(bt._v>1?" mnota":""); }
+function destreme(bt){
+  var g=ger;
+  setTimeout(function(){ if(g!==ger||!viva()) return; bt.className=classePeca(bt); },340);
+}
+function piscaQuemCabe(){
+  var a=elCart.getElementsByClassName("moeda"), i;
+  for(i=0;i<a.length;i++) if(a[i]._v<=falta()) a[i].className=classePeca(a[i])+" pisca";
+}
+/* 3º tropeço: a peça que serve entra sozinha e a rodada ANDA. É isto que
+   garante que a criança nunca fica presa. */
+function poeSozinho(){
+  var d=maiorQueCabe();
+  if(d===null) return;
+  var a=elCart.getElementsByClassName("moeda"), i, bt=null;
+  for(i=0;i<a.length;i++) if(a[i]._v===d) bt=a[i];
+  poe(d,bt);
+}
+function maiorQueCabe(){
+  var i, m=null, f=falta();
+  for(i=0;i<DINHEIRO.length;i++) if(DINHEIRO[i].v<=f&&(m===null||DINHEIRO[i].v>m)) m=DINHEIRO[i].v;
+  return m;
+}
+
+/* ---------------------------------------------------------- a pintura */
+function atualiza(){
+  var r=rodada(), i, ch;
+  /* a bandeja */
+  elBalcao.innerHTML="";
+  elBalcao.appendChild(el("span","balcrot","BANDEJA DO CAIXA"));
+  if(!postas.length){
+    elBalcao.appendChild(el("span","vazio","A bandeja est&#225; vazia."));
+  } else {
+    for(i=0;i<postas.length;i++){
+      ch=el("div","chip"+(postas[i]>1?" nota":""),""+postas[i]);
+      ch.appendChild(el("i","chipx","TIRAR"));
+      ch.onclick=(function(k){ return function(){ tira(k); }; })(i);
+      elBalcao.appendChild(ch);
+    }
+  }
+  /* a régua: concreto antes do número */
+  var cheio=Math.round((r.base+soma)*100/r.alvo);
+  if(cheio>100) cheio=100;
+  elReguaI.style.width=cheio+"%";
+  /* a conta em palavras: na rodada do troco a soma anda a partir da compra */
+  if(r.troco){
+    elConta.innerHTML="Compra <b>"+r.base+"</b> + bandeja <b>"+soma+"</b> = <b>"+(r.base+soma)+
+                      "</b> &#8212; ele tem que ficar com <b>"+r.alvo+"</b>";
+  } else {
+    elConta.innerHTML="Na bandeja: <b>"+soma+"</b> de <b>"+r.alvo+"</b> reais";
+  }
+  marcaQuemServe();
+}
+/* ⭐ `data-qa="1"` na peça que cabe AGORA — só para o auditor-jogador. Sem
+   isto ele toca ao acaso, estoura o valor sem parar e reprova uma peça que
+   funciona. A criança não vê nada disso.                                  */
+function marcaQuemServe(){
+  var a=elCart.getElementsByClassName("moeda"), i, m=maiorQueCabe();
+  for(i=0;i<a.length;i++){
+    if(a[i].className.indexOf("pisca")<0) a[i].className=classePeca(a[i]);
+    if(a[i]._v===m) a[i].setAttribute("data-qa","1");
+    else a[i].removeAttribute("data-qa");
+  }
+}
+
+/* ---------------------------------------------------------- fechar */
+function fecha(){
+  var g=ger, r=rodada();
+  sCerto();
+  if(barraP) barraP.style.width=Math.round((idxR+1)*100/RODADAS.length)+"%";
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    idxR++;
+    if(idxR>=RODADAS.length){
+      mostraBanner("Troco fechado! Voc&#234; contou <b>para cima</b> at&#233; os "+r.alvo+".",fimDaPeca);
+    } else {
+      mostraBanner("Valor montado com <b>"+postas.length+"</b> pe&#231;a(s)!",pecaCaixa);
+    }
+  },620);
+}
+
+function fimDaPeca(){
+  ger++; limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; montou <b>3 valores</b> com moedas e notas &#8212; e devolveu o troco certinho."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ idxR=0; pecaCaixa(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a O CAIXA: compor um valor e contar para cima."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaCaixa();
+</script>
+</body></html>

@@ -69,9 +69,9 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
      font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
 /* ====== CSS DESTA PEÇA ====== */
-/* A GRADE da cruzadinha. Mesma regra do caça-palavras: a célula vai em
-   PORCENTAGEM (JS: `(100/N)%`), nunca em px fixo, senão numa tela estreita
-   cabe uma coluna a mais e a palavra quebra a linha.                      */
+/* A GRADE da cruzadinha. Mesma regra de todo quadro de letras da casa: a
+   célula vai em PORCENTAGEM (JS: `(100/N)%`), nunca em px fixo, senão numa
+   tela estreita cabe uma coluna a mais e a palavra quebra a linha.        */
 .grade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
        width:100%;max-width:300px;margin:13px auto 0;padding:5px;
        background:#4a3a2a;border:2px solid #6b5540;border-radius:14px}
@@ -175,11 +175,11 @@ document.addEventListener("pointerdown",function(){ac();},false);
    mostre a forma CERTA na comemoração (campo `ac`) — como faz a forca.   */
 var LADO=5;
 var CRUZ=[
- {p:"CHUVA", ac:"CHUVA", r:0, c:0, dl:0, dc:1, n:1,
+ {p:"CHUVA", ac:"CHUVA", r:0, c:0, pLin:0, pCol:1, n:1,
   d:"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora."},
- {p:"VENTO", ac:"VENTO", r:0, c:3, dl:1, dc:0, n:2,
+ {p:"VENTO", ac:"VENTO", r:0, c:3, pLin:1, pCol:0, n:2,
   d:"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore."},
- {p:"SOL",   ac:"SOL",   r:4, c:2, dl:0, dc:1, n:3,
+ {p:"SOL",   ac:"SOL",   r:4, c:2, pLin:0, pCol:1, n:3,
   d:"A bola de luz que esquenta o dia e some de noite."}
 ];
 var BANCO="ABCEHILMNORSTUV";   /* as letras das respostas + alguns vizinhos */
@@ -200,7 +200,10 @@ function pecaCruzadinha(){
   var totalL=0, feitas=0;
   for(i=0;i<CRUZ.length;i++) totalL+=CRUZ[i].p.length;
 
-  function chave(w,z){ return (w.r+w.dl*z)+"_"+(w.c+w.dc*z); }
+  /* `pLin`/`pCol` = o passo da palavra (1,0 = em pé; 0,1 = deitada). Nomes
+     próprios de propósito: são a assinatura de UMA casa da cruzadinha, não a
+     posição publicada em `data-qa` que o quadro de letras usa.            */
+  function chave(w,z){ return (w.r+w.pLin*z)+"_"+(w.c+w.pCol*z); }
   /* dono = as casas que existem na cruzadinha (o resto e casa fechada) */
   for(i=0;i<CRUZ.length;i++)
     for(j=0;j<CRUZ[i].p.length;j++) dono[chave(CRUZ[i],j)]=1;
