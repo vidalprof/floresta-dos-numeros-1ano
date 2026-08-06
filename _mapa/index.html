@@ -873,6 +873,37 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   -webkit-box-orient:horizontal;-webkit-flex-direction:row;flex-direction:row;padding-left:20px}
 /* --- PLANTA DA SALA (construir) --- */
 .achado.vazio{background:rgba(255,255,255,.35);border-style:dashed}
+/* ⭐ A PLANTA DA SALA MAIS BONITA (pedido do Marcos, ago/2026: *"a planta da
+   sala deveria ser mais legal, as imagens sem os fundos brancos, mais
+   profissional sabe, algo mais bonito"*). Tres coisas mudaram: a VAGA virou
+   marca de planta de arquiteto (cantoneira dourada em vez de retangulo
+   tracejado), a vaga RESPIRA enquanto ha movel na mao — assim a crianca ve
+   onde cabe —, e o movel CAI no lugar com estalo. As figuras foram refeitas
+   em fundo chroma, sem a mancha branca que ele viu.                       */
+.vagam{position:absolute;z-index:3;cursor:pointer;border-radius:10px;
+  -webkit-box-sizing:border-box;box-sizing:border-box;
+  border:2px dashed rgba(255,253,246,.9);background:rgba(255,253,246,.16);
+  -webkit-box-shadow:inset 0 0 0 1px rgba(60,40,15,.25);box-shadow:inset 0 0 0 1px rgba(60,40,15,.25)}
+.vagam u{position:absolute;left:-3px;top:-3px;width:12px;height:12px;display:block;
+  border-left:3px solid #ffd43b;border-top:3px solid #ffd43b;border-radius:3px 0 0 0}
+.vagam s{position:absolute;right:-3px;bottom:-3px;width:12px;height:12px;display:block;
+  border-right:3px solid #ffd43b;border-bottom:3px solid #ffd43b;border-radius:0 0 3px 0}
+.janela.mirando .vagam{border-color:#ffd43b;
+  -webkit-animation:qcresp 1.2s infinite;animation:qcresp 1.2s infinite}
+.janela.mirando .vagam.cheia{-webkit-animation:none;animation:none}
+.vagam.cheia{border:2px solid rgba(107,210,63,.95);background:rgba(107,210,63,.14);
+  -webkit-animation:qcencaixa .42s;animation:qcencaixa .42s}
+.vagam.no{border-color:var(--erro);background:rgba(214,74,64,.3);
+  -webkit-animation:shk .35s;animation:shk .35s}
+.vagam .pecaimg{width:100%;height:100%;-o-object-fit:contain;object-fit:contain;display:block;
+  -webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.45));filter:drop-shadow(0 3px 5px rgba(0,0,0,.45))}
+/* a bandeja dos moveis: quatro numa fila so, com a figura solta (sem chapa) */
+.pecas.mov{max-width:412px;gap:6px}
+.pecas.mov .peca{padding:6px 5px 5px;min-width:86px}
+.pecas.mov .peca .pecaimg{width:52px;height:52px}
+.pecas.mov .peca .pecatx{font-size:11px}
+@media (max-width:380px){ .pecas.mov .peca{min-width:74px} .pecas.mov .peca .pecaimg{width:44px;height:44px} }
+
 .peca .pecatx{font-size:11.5px;font-weight:800;color:var(--texto);margin-top:2px;text-align:center}
 /* --- PINTAR O MAPA --- */
 .paleta{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;
@@ -1342,12 +1373,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    com o Nico hoje?" ficou na tela de entrada de outra atividade.      */
 var MASCOTE_NOME="Nico";
 var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
-           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_bairro:1,
+           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_planta_papel:1,mp_bairro:1,
            mp_pmapa:1,mp_grade:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_bairro","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa",
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_planta_papel","mp_lousa_c","mp_armario_c","mp_bairro","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa",
 "mp_pmapa","mp_grade","mp_pint_rio","mp_pint_verde","mp_pint_casas","mp_pint_igreja","mp_pint_ponte"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
@@ -2699,7 +2730,7 @@ function mCoord(){
    comprida e fina, a cadeira e quadradinha). Sem isso todas as vagas eram
    quadrados iguais de 66px — e a planta nao parecia uma planta.        */
 var MOVEIS=[{n:"lousa",   img:"mp_lousa_c",   rot:"a lousa",   x:50,y:14,w:104,h:26},
-            {n:"mesa",    img:"mp_mesa_c",    rot:"a mesa da professora", x:26,y:32,w:62,h:44},
+            {n:"mesa",    img:"mp_mesa_c",    rot:"a mesa", x:26,y:32,w:62,h:44},
             {n:"armario", img:"mp_armario_c", rot:"o arm&#225;rio", x:84,y:76,w:64,h:36},
             {n:"cadeira", img:"mp_cadeira_c", rot:"a cadeira",  x:50,y:62,w:40,h:40}];
 function mPlanta(){
@@ -2710,10 +2741,10 @@ function mPlanta(){
   var bal=el("div","balao","Esta &#233; a sua sala <b>vista de cima</b>, ainda vazia. Ponha cada m&#243;vel no lugar dele.");
   c.appendChild(bal);
   var sala=el("div","janela");
-  sala.appendChild(cenaImg("mp_planta_sala","jimg"));
+  sala.appendChild(cenaImg("mp_planta_papel","jimg"));
   var vagas={},i;
   for(i=0;i<MOVEIS.length;i++){(function(m){
-    var v=el("div","achado mira vazio");
+    var v=el("div","vagam","<u></u><s></s>");
     v.style.left=m.x+"%"; v.style.top=m.y+"%";
     v.style.width=m.w+"px"; v.style.height=m.h+"px";
     v.style.marginLeft=(-m.w/2)+"px"; v.style.marginTop=(-m.h/2)+"px";
@@ -2722,7 +2753,7 @@ function mPlanta(){
     vagas[m.n]=v; sala.appendChild(v);
   })(MOVEIS[i]);}
   c.appendChild(sala);
-  var banca=el("div","pecas"),ordem=baguncar(MOVEIS.slice(0));
+  var banca=el("div","pecas mov"),ordem=baguncar(MOVEIS.slice(0));
   for(i=0;i<ordem.length;i++){(function(m){
     var b=el("div","peca");
     b.appendChild(imgEl(m.img,"pecaimg"));
@@ -2731,7 +2762,8 @@ function mPlanta(){
     function marca(){ if(b.className.indexOf("usada")>=0) return;
       var a=banca.getElementsByClassName("peca"),z;
       for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="peca";
-      b.className="peca sel"; sel={m:m,el:b}; arma(); sTap(); }
+      b.className="peca sel"; sel={m:m,el:b}; arma(); sTap();
+      if(postos<MOVEIS.length) sala.className="janela mirando"; }
     b.onclick=function(){ if((new Date()).getTime()-ultimoToque<600) return; marca(); };
     b.addEventListener("touchend",function(){ ultimoToque=(new Date()).getTime(); marca(); },false);
     banca.appendChild(b);
@@ -2742,16 +2774,17 @@ function mPlanta(){
     arma();
     if(sel.m.n===m.n){
       v.innerHTML=""; v.appendChild(imgEl(m.img,"pecaimg"));
-      v.className="achado mira ok"; sel.el.className="peca usada"; sel=null;
-      postos++; sCerto();
+      v.className="vagam cheia"; sel.el.className="peca usada"; sel=null;
+      postos++; sCerto(); sPop(postos); sala.className="janela";
       reg("producao",err===0,err+1);
       var ce=centroTela(v); faisca(ce[0],ce[1],"#6bd23f",12);
       bal.innerHTML="J&#225; s&#227;o <b>"+postos+"</b> de <b>"+MOVEIS.length+"</b> m&#243;veis no lugar.";
       if(postos>=MOVEIS.length){ sFesta(); festa();
         setTimeout(function(){ depoisDaFala("mp_planta_revela",12000,function(){
           mostraBanner("Isto &#233; uma <b>planta</b>: o lugar visto de cima, com cada coisa no seu lugar.",mPintar); }); },800); }
-    } else { err++; v.className="achado mira no"; sErro();
-      setTimeout(function(){ if(v.className.indexOf("ok")<0) v.className="achado mira vazio"; },500);
+    } else { err++; v.className="vagam no"; sErro();
+      setTimeout(function(){ if(v.className.indexOf("cheia")<0)
+        v.className=(sel?"vagam":"vagam"); },500);
       if(err===2) consolo();
       if(err>=3) mostraDica("Olhe o <b>formato</b> do m&#243;vel visto de cima e procure o lugar do mesmo tamanho.");
     }
