@@ -1439,7 +1439,7 @@ function mVento(){
   c.appendChild(el("div","selo","O SEGREDO DO VENTO"));
   c.appendChild(el("div","balao","O vento sopra sempre <b>para c&#225;</b>. Gire a <b>vela</b> e veja o que o barco faz."));
   var cx=el("div","voobox");
-  cx.appendChild(cenaImg("nv_caravela","mfoto prim"));
+  cx.appendChild(cenaImg("nv_caravela","mfoto prim on"));
   var selo=el("div","selodagua","");cx.appendChild(selo);
   c.appendChild(cx);
   var leg=el("div","balao pequeno","");c.appendChild(leg);
@@ -1457,6 +1457,7 @@ function mVento(){
   var ANG=[0,-18,-40], DX=[0,8,26];
   var fo=cx.getElementsByClassName("mfoto")[0];
   function pinta(){ var v=parseInt(r.value,10);
+    fo.className="mfoto prim on";
     fo.style.webkitTransform="rotate("+ANG[v]+"deg) translateX("+DX[v]+"%)";
     fo.style.transform="rotate("+ANG[v]+"deg) translateX("+DX[v]+"%)";
     leg.innerHTML=TX[v]; selo.innerHTML="<b>"+SELO[v]+"</b>";
