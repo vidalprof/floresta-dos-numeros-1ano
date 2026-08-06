@@ -69,26 +69,35 @@ segundos e não se esquece — e é o gesto "deslizar e o mundo reage" do catál
 | 3 | ⭐ **O VENTO** | deslizar | Gira a vela; o barco anda ou empaca. Descobre a vela que anda contra o vento. |
 | 4 | Quem já estava aqui | achar-na-cena | Os povos que já viviam aqui — com os de **Santa Catarina** (Guarani, Kaingang, Xokleng) |
 | 5 | ⭐ **O navio por dentro** | explorar | Abre os porões: o que trouxeram, para quê |
-| 6 | A rota | ordenar | Põe a viagem em ordem no mapa do Atlântico |
-| 7 | Veio ou foi? | classificar | Mandioca, milho, batata, cacau ↔ cavalo, trigo, cana, roda |
-| 8 | Aquecimento | misto | Revisão espaçada do que já viu |
-| 9 | ⭐ **As três raízes** | arrastar | O que ficou de cada povo na comida, na palavra, no jeito |
-| 10 | A palavra que ficou | digitar/forca | Abacaxi, pipoca, jacaré (tupi); dendê, cafuné, quitanda (banto) |
-| 11 | Cruzadinha | grade+teclado | Teclado na tela **e** teclado de verdade |
-| 12 | Caça-palavras | grade | CARAVELA, VELA, BÚSSOLA, ROTA, TROCA |
-| 13 | Memória | memória | Palavra ↔ de onde veio (padrão novo: grande, com efeito e som) |
-| 14 | ⭐ **O que a viagem custou** | escolher | O lado que não se conta: quem foi trazido à força. Honesto e no tamanho de 10 anos. |
-| 15 | O mapa das rotas | achar | Acha no mapa de onde veio cada coisa |
-| 16 | Relâmpago | escolher | Rodada rápida de revisão |
-| 17 | Ensine o Ará | produzir | Explica com as próprias palavras o que forma o nosso povo |
-| 18 | Boletim e medalha | — | Boletim animado + relatório do professor + "Treinar o que faltou" |
+| 6 | ⭐ **Para que servia?** | ligar | Liga cada coisa do porão ao que ela fazia — prática de recuperação NA HORA |
+| 7 | A rota | ordenar | Põe a viagem em ordem no mapa do Atlântico |
+| 8 | ⭐ **Para que lado?** | orientar | A bússola do porão aplicada à viagem: descer é Sul, atravessar é Oeste, voltar é Leste |
+| 9 | Veio ou foi? | classificar | Mandioca, milho, batata, cacau ↔ cavalo, trigo, cana, roda |
+| 10 | Aquecimento | misto | Revisão espaçada do que já viu |
+| 11 | ⭐ **As três raízes** | classificar | O que ficou de cada povo na comida, na palavra, no jeito |
+| 12 | A palavra que ficou | forca | Abacaxi, pipoca (tupi); dendê, cafuné (banto) — a maré sobe a cada erro |
+| 13 | ⭐ **A língua guarda** | pintar | Marca-texto num dia comum: 4 palavras tupi, 4 africanas, **nenhuma** de Portugal |
+| 14 | Cruzadinha | grade+teclado | Teclado na tela **e** teclado de verdade |
+| 15 | ⭐ **Complete a história** | digitar | Escreve a palavra inteira, sem ninguém dar as letras (degrau simbólico) |
+| 16 | Caça-palavras | grade | VELA, ROTA, TROCA, POVO, MAR |
+| 17 | Memória | memória | Coisa ↔ de onde veio (padrão novo: grande, com efeito e som) |
+| 18 | ⭐ **O que a viagem custou** | escolher | O lado que não se conta: quem foi trazido à força. Honesto e no tamanho de 10 anos. |
+| 19 | O mapa das rotas | achar | Acha no mapa quem estava de cada lado do oceano |
+| 20 | ⭐ **O mapa antigo** | explorar (lupa) | Lê uma carta de marear de 1500: os papagaios, a caravela, o monstro, a costa torta |
+| 21 | Relâmpago | escolher | Rodada rápida de revisão |
+| 22 | Ensine o Ará | produzir | Explica com as próprias palavras o que forma o nosso povo |
+| 23 | Boletim e medalha | — | Boletim animado + relatório do professor + "Treinar o que faltou" |
 | + | Terra dos Papagaios | gancho | **Por que chamaram a nossa terra assim?** — a pergunta que fica |
 
 **Conceitos medidos (`reg`):** `encontro`, `rota`, `troca`, `palavra`, `povo`.
 
-**Gestos diferentes: 11+** (deslizar, escolher, achar, explorar, ordenar,
-classificar, arrastar, digitar, grade, memória, produzir) — nenhum acima de 40%,
-medido pelo `_qa/padrao.py`.
+**Medido pelo `_qa/padrao.py`:** 21 fases com gesto, **14 gestos diferentes**,
+maior gesto ("escolher") em **28,6%** — abaixo do teto de 40% da casa e mais
+variada que a de História do 4º ano (21 fases, 12 gestos, 23,8%), que era a
+régua pedida pelo Marcos.
+
+**Alto-falante em TODAS as 58 respostas tocáveis** (`op_<chave>.mp3` + `VOZOK`),
+medido pelo item 3c do mesmo portão.
 
 ---
 

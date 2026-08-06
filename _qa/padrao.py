@@ -117,6 +117,30 @@ for n, c in fases:
         semimg.append(n)
 
 
+# ---- 3c) ALTO-FALANTE NAS RESPOSTAS (o terceiro pilar, medido)
+#   Regra do Marcos (ago/2026): *"o alto-falante nas respostas também, para
+#   ajudar os alunos que não sabem ler"*. O motor faz isso sozinho: o `VOZOK`
+#   lista as chaves que TEM mp3 e o observador pendura o botãozinho em cada
+#   resposta. Só que o clone traz `var VOZOK={}` VAZIO — e aí o motor não
+#   pendura nada, nenhum portão reclama, e a atividade nasce MUDA nas
+#   respostas. Foi assim na Terra dos Papagaios: 21 fases prontas, banca
+#   aprovada, e nem uma resposta falava. O portão de clone só pega o contrário
+#   (voz prometida sem mp3), então o buraco ficava exatamente aqui.
+#   ⚠️ Vale só para quem TEM resposta tocável: fase de digitar ou de arrastar
+#   sem rótulo não precisa de alto-falante.
+RESPOSTA = r'el\("div","opt|el\("div","cx|el\("div","lig|el\("div","gav|' \
+           r'el\("div","relcard|el\("div","bin|el\("div","tlin'
+semzap = None
+if re.search(RESPOSTA, js) and re.search(r"VOZOK", js):
+    chaves = re.search(r"var VOZOK\s*=\s*\{(.*?)\}\s*;", js, re.S)
+    quantas = len(re.findall(r'"[^"]+"\s*:', chaves.group(1))) if chaves else 0
+    if quantas == 0:
+        semzap = ("a atividade tem respostas para a crianca TOCAR, mas o `VOZOK` esta "
+                  "VAZIO: nenhuma resposta tem alto-falante. Quem ainda nao le escolhe "
+                  "pelo desenho, e a atividade vira loteria")
+    else:
+        print("   alto-falante: %d resposta(s) com voz propria (op_<chave>.mp3)" % quantas)
+
 # ---- 4) TECLADO VIRTUAL sem o teclado DE VERDADE
 #   Regra permanente do Marcos (ago/2026): *"essa dinâmica de aceitar também o
 #   teclado seria interessante registrar para todas as próximas atividades"*.
@@ -147,6 +171,8 @@ problemas = []
 #    AQUI, depois que `problemas` existe. Na estreia ele estourou um NameError
 #    na primeira atividade que tinha teclado na tela sem teclado de verdade —
 #    ou seja, o portao morria justo na hora em que tinha algo a dizer.
+if semzap:
+    problemas.append(semzap)
 if semtecla:
     problemas.append("%d fase(s) com teclado NA TELA que nao aceitam o teclado DE VERDADE "
                      "(no PC da escola a crianca vai digitar): %s"

@@ -4129,3 +4129,80 @@ dois botões passaram a repetir `falaTela`. Aplicado nas três atividades.
 que passou por aqui" — e "a última que passou" raramente é "a que interessa".
 Quando um botão promete repetir ALGO ESPECÍFICO, ele precisa de uma variável que
 guarde **aquilo**, não de um histórico global.
+
+---
+
+## 🦜 A TERRA DOS PAPAGAIOS — História, 5º ano (ago/2026)
+
+Pedido do Marcos: *"uma atividade incrível para o 5º ano sobre as grandes
+navegações"* e, depois de ver a primeira versão, o recado que virou meta:
+***"tem que ficar uma atividade fantástica igual a de história do 4º ano"***.
+
+**O ano certo (checado ANTES de escrever).** "Expansão marítima europeia" está
+no **7º ano** do currículo de Blumenau. No 5º ano a unidade é *"Povos e
+culturas: meu lugar no mundo"*, objeto **"o que forma um povo"**. Por isso as
+navegações aqui **não são a matéria**: são o acontecimento que responde à
+pergunta do 5º ano. Nada de capitães, datas e Tordesilhas. Ver `_naveg/PLANO.md`,
+que amarra cada fase a um objetivo escrito do ano.
+
+**A ideia:** o mascote é uma **arara** (*Ará* = arara em tupi) e **ela já estava
+aqui**. A criança não "descobre" nada — ela **vê chegar**. E o título é verdade
+histórica: os primeiros mapas europeus escreveram *Terra Papagalli*.
+
+### O que "igual à do 4º ano" queria dizer, em número
+A régua não era opinião: bastou medir as duas com o `_qa/padrao.py`.
+
+| | A Máquina do Tempo do Vale (4º) | Papagaios, 1ª versão | Papagaios, agora |
+|---|---|---|---|
+| fases com gesto | 21 | 16 | **21** |
+| gestos diferentes | 12 | 9 | **14** |
+| maior gesto | 23,8% | 37,5% | **28,6%** |
+
+As **cinco fases novas**, escolhidas pelo gesto que faltava (não pelo conteúdo
+que sobrava): **ligar** ("para que servia?", prática de recuperação logo depois
+do porão), **orientar** ("para que lado?", a bússola aplicada à rota),
+**pintar** ("a língua guarda", marca-texto num dia comum sem **uma** palavra
+vinda de Portugal), **digitar** ("complete a história", o degrau simbólico
+depois da cruzadinha) e **explorar** ("o mapa antigo", lupa sobre uma carta de
+marear de 1500).
+
+### As lições desta rodada (as duas com portão, como manda a casa)
+
+**1. `var VOZOK={}` vazio = atividade MUDA nas respostas, e ninguém percebia.**
+A atividade tinha 21 fases, a banca inteira aprovada — e **nenhuma resposta
+falava**. O motor pendura o alto-falante sozinho a partir do `VOZOK`, e o clone
+traz esse objeto **vazio**. O `_qa/clone.py` só pega o contrário (voz prometida
+sem mp3), então um `VOZOK` vazio passava calado. **Portão novo (`_qa/padrao.py`,
+item 3c):** se a atividade tem resposta tocável (`.opt`, `.cx`, `.lig`, `.gav`…)
+e o `VOZOK` está vazio, **reprova**. Conferido nas quatro atividades: 58, 38, 70
+e 25 vozes de resposta. *Para juntar as respostas de uma atividade inteira sem
+fazer na mão:* percorrer as tabelas de conteúdo com o mesmo `chaveVoz` (djb2 →
+base36) e escrever `op_<chave>` no `_lote_falas.json`.
+
+**2. O jogador reprovava fase que funcionava, por não rolar a tela.** No porão
+do navio ficavam 4 fichas à vista e **2 abaixo da dobra**. Como sempre havia
+algo clicável visível, o auditor nunca rolava: clicava eternamente nas 4 de cima
+e dava `PRESO`. **Conserto (`_qa/jogador.js`):** quando o estado não anda há um
+tempo (a cada 60 giros parados), ele **rola** — que é o que a criança faz quando
+acha que já tocou em tudo. A rolagem-por-último-recurso (só quando não sobra
+nada visível) não bastava.
+
+**3. Legenda tem que descrever o que o recorte REALMENTE mostra.** A quarta
+lupa prometia "o pedaço em branco" do mapa, mas com zoom de 3× a janela é
+grande demais para centrar num canto: o recorte saía cheio de papagaios. Virou
+"a terra do Ará" — que é o que aparece. *Regra:* depois de escolher um recorte,
+**olhar o recorte** e só então escrever a legenda; nunca o contrário.
+
+**Uma imagem só:** `nv_mapavelho` (Gemini, estilo de barro, sem letra nenhuma
+para não arriscar palavra torta na frente da criança). A lupa aproxima **o mesmo
+arquivo** (`background-size:300% 300%` numa janela quadrada) — quatro detalhes
+sem gerar quatro imagens.
+
+**4. E a mesma lição de sempre, cobrada duas vezes numa rodada só:** as duas
+mecânicas novas (`.pal` do marca-texto e `.lupamira` da lupa) **não estavam na
+lista do `_qa/jogador.js`** — ele não enxergava onde tocar e deu `PRESO` em fase
+que funciona. E o marca-texto ainda tinha o **`data-qa` que nunca se apagava**:
+a palavra já pintada continuava anunciando "é aqui", então o auditor (e a
+criança teimosa) tocava nela para sempre. *Regra que vale para toda fase nova:*
+**alvo novo entra no `SEL` do jogador no mesmo commit**, e **todo `data-qa` sai
+do elemento no instante em que ele deixa de servir**.

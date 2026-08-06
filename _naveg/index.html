@@ -2050,7 +2050,11 @@ function mPinta(){
       if(ehAlvo) p.setAttribute("data-qa","1");
       p.onclick=function(){ arma();
         if(fim||p.className.indexOf("pint")>=0) return;
-        if(ehAlvo){ p.className="pal pint "+it.cor; sPop(it.alvo.length-falta); falta--;
+        /* ⚠️ a palavra pintada SAI do data-qa. Sem isto o auditor jogador (e a
+           crianca teimosa) fica tocando na mesma palavra para sempre: a tela
+           continua dizendo "e esta aqui" mesmo depois de ela ja estar feita. */
+        if(ehAlvo){ p.className="pal pint "+it.cor; p.setAttribute("data-qa","0");
+          sPop(it.alvo.length-falta); falta--;
           cont.innerHTML= falta>0 ? "Faltam "+falta : "Achou todas!";
           var ce=centroTela(p); faisca(ce[0],ce[1],it.cor==="tupi"?"#6bd23f":"#ffd43b",8);
           if(falta<=0){ fim=true; sCerto(); reg("palavra",err===0,err+1);
