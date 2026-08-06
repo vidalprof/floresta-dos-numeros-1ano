@@ -1,0 +1,152 @@
+name: Pesquisar na internet (busca + leitura -> texto no repo)
+
+# 🔎 A PESQUISA DE VERDADE — a internet mora AQUI, nao no chat.
+#
+# Lembrete do Marcos (ago/2026): *"veja, mas você pode usar o GitHub para
+# pesquisar, lembra? nós fazemos tudo de lá"*. Ele estava certo e eu tinha
+# esquecido: daqui do chat a rede e travada (testei — o servico de voz da
+# Microsoft, Pollinations e OpenAI todos dao 403), mas o servidor do GitHub
+# Actions tem internet aberta. E assim que a gente gera imagem e voz; serve
+# igualmente para LER a internet.
+#
+# O que este workflow faz:
+#   1. BUSCA (DuckDuckGo, sem chave nenhuma) o termo que eu passar e pega os
+#      primeiros resultados;
+#   2. ABRE cada pagina e converte para TEXTO limpo (sem menu, sem propaganda);
+#   3. salva tudo em `_pesquisa/web/<assunto>.md`, com a fonte de cada trecho, e
+#      commita — dai eu leio aqui e destilo em REGRA de montagem.
+#
+# Tambem aceita `urls` direto, quando eu ja sei onde quero ler.
+#
+# ⚠️ O que ele NAO faz: julgar. Ele traz o texto; quem decide o que vira regra da
+#    casa sou eu, e quem aprova e o Marcos. Pesquisa que nao vira regra na hora de
+#    montar nao muda atividade nenhuma.
+
+on:
+  workflow_dispatch:
+    inputs:
+      assunto:
+        description: "Nome do arquivo de saida (ex: mecanicas-mapa-conceitual)"
+        required: true
+        type: string
+      busca:
+        description: "O que buscar (ex: 'concept map drag arrow educational game HTML')"
+        required: false
+        default: ""
+        type: string
+      urls:
+        description: "URLs especificas separadas por virgula (opcional)"
+        required: false
+        default: ""
+        type: string
+      quantas:
+        description: "Quantas paginas ler da busca (padrao 6)"
+        required: false
+        default: "6"
+        type: string
+
+jobs:
+  pesquisar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Instalar leitor de paginas
+        run: pip3 install --quiet requests beautifulsoup4 lxml
+
+      - name: Buscar e ler
+        env:
+          ASSUNTO: ${{ inputs.assunto }}
+          BUSCA: ${{ inputs.busca }}
+          URLS: ${{ inputs.urls }}
+          QUANTAS: ${{ inputs.quantas }}
+        run: |
+          python3 - <<'PY'
+          import os, re, time, json, urllib.parse
+          import requests
+          from bs4 import BeautifulSoup
+
+          UA = {"User-Agent": "Mozilla/5.0 (compatible; pesquisa-escola/1.0)"}
+          assunto = re.sub(r"[^a-z0-9-]+", "-", os.environ["ASSUNTO"].lower()).strip("-") or "pesquisa"
+          busca   = os.environ.get("BUSCA", "").strip()
+          urls    = [u.strip() for u in os.environ.get("URLS", "").split(",") if u.strip()]
+          quantas = max(1, min(15, int(os.environ.get("QUANTAS") or 6)))
+
+          def procura(termo, n):
+              """DuckDuckGo HTML — sem chave, sem cadastro, sem custo."""
+              try:
+                  r = requests.post("https://html.duckduckgo.com/html/",
+                                    data={"q": termo}, headers=UA, timeout=25)
+                  s = BeautifulSoup(r.text, "lxml")
+                  achados = []
+                  for a in s.select("a.result__a"):
+                      href = a.get("href", "")
+                      m = re.search(r"uddg=([^&]+)", href)
+                      if m:
+                          href = urllib.parse.unquote(m.group(1))
+                      if href.startswith("http") and href not in achados:
+                          achados.append(href)
+                      if len(achados) >= n:
+                          break
+                  return achados
+              except Exception as e:
+                  print("busca falhou: %s" % e); return []
+
+          def le(url):
+              try:
+                  r = requests.get(url, headers=UA, timeout=30)
+                  if r.status_code != 200 or "html" not in r.headers.get("content-type", ""):
+                      return None, None
+                  s = BeautifulSoup(r.text, "lxml")
+                  for tag in s(["script", "style", "nav", "footer", "header", "aside", "form", "noscript"]):
+                      tag.decompose()
+                  titulo = (s.title.string if s.title else url) or url
+                  txt = s.get_text("\n")
+                  linhas = [l.strip() for l in txt.split("\n")]
+                  linhas = [l for l in linhas if len(l) > 40]      # fora menu e migalha
+                  return titulo.strip()[:120], "\n\n".join(linhas[:220])
+              except Exception as e:
+                  print("  nao consegui ler %s: %s" % (url, e)); return None, None
+
+          if busca and len(urls) < quantas:
+              urls += [u for u in procura(busca, quantas - len(urls)) if u not in urls]
+          print("%d endereco(s) para ler" % len(urls))
+
+          partes = ["# 🔎 Pesquisa: %s" % os.environ["ASSUNTO"], ""]
+          if busca:
+              partes += ["> Busca: `%s`" % busca, ""]
+          partes += ["> Trazido pelo `pesquisar.yml` (a internet do GitHub). **Isto e MATERIA-PRIMA,",
+                     "> nao regra.** So vira regra da casa depois de eu destilar em `_pesquisa/` e o",
+                     "> Marcos aprovar. Texto de terceiro: ler com juizo.", "", "---", ""]
+          lidas = 0
+          for u in urls:
+              t, c = le(u)
+              if not c:
+                  continue
+              lidas += 1
+              partes += ["## %s" % t, "", "`%s`" % u, "", c, "", "---", ""]
+              time.sleep(1.2)
+          print("li %d pagina(s)" % lidas)
+
+          os.makedirs("_pesquisa/web", exist_ok=True)
+          cam = "_pesquisa/web/%s.md" % assunto
+          open(cam, "w", encoding="utf-8").write("\n".join(partes))
+          print("salvo em %s (%d KB)" % (cam, os.path.getsize(cam) // 1024))
+          PY
+
+      - name: Guardar no repo
+        run: |
+          git config user.name "Pesquisador"
+          git config user.email "pesquisador@users.noreply.github.com"
+          git add -A _pesquisa/web || true
+          if git diff --cached --quiet; then echo "nada novo";
+          else
+            git commit -m "pesquisa: ${{ inputs.assunto }}"
+            git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
