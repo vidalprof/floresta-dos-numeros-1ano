@@ -299,6 +299,60 @@ que ela decide alguma coisa.** Ler no momento certo, não "um dia".
 | **entregar** | `MANUAL-MESTRE.md` §"caminho curto" | `entregar.yml`: uma corrida só |
 | **o que já aconteceu** | `MEMORIA-DO-PROJETO.md` | a memória — toda capacidade e decisão nova vai para lá |
 
+### A BIBLIOTECA DE PESQUISA — o que cada bloco já provou
+
+> *"e também tem as pesquisas de ensino-aprendizagem que já realizamos antes,
+> estão em documentos, e a pesquisa de neurociência também, juntamente com as
+> pesquisas de interatividades"*.
+
+São três blocos, e **cada um responde uma pergunta diferente**. Confundi-los é o
+que faz a atividade sair bonita e não ensinar, ou ensinar e ser chata.
+
+**BLOCO 1 — ENSINO-APRENDIZAGEM: *o que faz aprender de verdade?***
+`PESQUISA-FORMATOS-APRENDIZAGEM-REAL`, `MODELO-APRENDIZAGEM-EDUCAVERSO`,
+`PEDAGOGIA-APRENDIZAGEM-CONCRETA`, `PEDAGOGIA-VYGOTSKY-DINAMICAS`,
+`AUDITORIA-APRENDIZAGEM-E-DINAMICAS`.
+- O que ensina não é o conteúdo bonito: é o **design da interação e do feedback**.
+- **Micro-mundo guiado** (PhET, meta-análise de 31 estudos [FORTE]) — a criança
+  mexe e o mundo responde; a concretude vai **desvanecendo**.
+- **Prática de recuperação + revisão espaçada** (Roediger, Bjork [FORTE]) — o
+  Aquecimento não é enchimento: é o que fixa.
+- **Dificuldade desejável** (Bjork) — errar e ser ajudado ensina mais que acertar
+  de primeira. É a razão do andaime que cresce.
+- **Feedback imediato e específico** (Hattie) — o erro responde na hora e diz o
+  que olhar; nunca "errou".
+- **Autoria** (generation effect) — a criança CRIAR algo (a legenda, a planta, o
+  mapa pintado) vale mais que reconhecer. A auditoria já cobrou: falta autoria
+  **persistente** (guardar o que ela fez).
+
+**BLOCO 2 — NEUROCIÊNCIA: *o que traz e o que prende?***
+`PESQUISA-APPS-AMAR-E-NEUROCIENCIA`, `PRINCIPIOS-ENCANTAMENTO`,
+`PESQUISA-SOM-E-GAMEFEEL`.
+- **Beleza e voz TRAZEM; o micro-mundo guiado PRENDE.** Enfeite sem mundo cansa
+  em dois dias.
+- **Lacuna de curiosidade** (Loewenstein) — o problema antes do conceito: ela
+  percebe que não sabe e QUER saber.
+- **Malone & Lepper — 4 motores:** desafio, curiosidade, controle, fantasia.
+- **Autonomia, competência e vínculo** (Deci & Ryan, N=213 mil [FORTE]) — o que
+  prende não é "diversão": é escolher o crachá, ver a barra andar, ter quem torça.
+- **Carga cognitiva** (Sweller) + **modalidade** (Mayer, d≈1,02 [FORTE]) — uma
+  ideia por tela, e a explicação **falada junto com a figura**, nunca texto ao lado.
+- **Recompensa variável** — duas jogadas nunca iguais.
+
+**BLOCO 3 — INTERATIVIDADE: *qual gesto, e como ele responde?***
+`CATALOGO-DINAMICAS-INTERATIVAS` (11 famílias),
+`PESQUISA-CATALOGO-INTERATIVIDADES`, `PESQUISA-SIMULACOES-EFICAZES`,
+`PESQUISA-DIFERENCIAL-E-MECANICAS`, `PESQUISA-ARSENAL-TECNICO`.
+- O gesto tem que ser o **movimento natural daquele conteúdo**.
+- **Simulação eficaz** = a criança muda UMA coisa e vê a consequência; não é
+  animação bonita.
+- E as **armadilhas de cada gesto** estão no §4 — que é a destilação prática
+  deste bloco, escrita a partir do que já falhou aqui.
+
+**Como usar sem reler 70 arquivos:** o §7 diz QUAL ler em QUE passo. Se a dúvida
+é *"isso ensina?"* → bloco 1. *"isso prende?"* → bloco 2. *"que gesto uso e como
+ele responde?"* → bloco 3.
+
 ### As três coisas destes documentos que eu mais esqueço
 
 1. **Narração por idade** (`NARRACAO-POR-IDADE`): no 3º–5º ano não é "narrar
