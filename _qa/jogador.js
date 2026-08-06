@@ -42,6 +42,20 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    });
    if(est!==ultimo){ visto.push(i+' '+est); ultimo=est; paradas=0; } else paradas++;
    if(paradas>420){ visto.push('>>> PRESO em '+est); break; }
+   /* ⚠️ LICAO PAGA (ago/2026, Terra dos Papagaios): havia rolagem SO quando nao
+      sobrava NADA clicavel na parte visivel. No porao do navio ficavam 4 fichas
+      a vista e 2 abaixo da dobra: o jogador clicava eternamente nas 4 de cima,
+      nunca via as outras duas, e reprovava uma fase que a crianca fecha rolando
+      a tela com o dedo. Entao, quando o estado nao anda ha um tempo, ele ROLA —
+      que e exatamente o que a crianca faz quando acha que ja tocou em tudo. */
+   if(paradas&&paradas%60===0){
+     await p.evaluate(()=>{
+       const t=document.querySelector('.tela');
+       if(!t||t.scrollHeight<=t.clientHeight+4) return;
+       const fim=t.scrollTop+t.clientHeight>=t.scrollHeight-6;
+       t.scrollTop = fim ? 0 : t.scrollTop+Math.round(t.clientHeight*0.5);
+     });
+   }
    const n=await p.evaluate((sel)=>{
      const bn=document.getElementById('banner');
      if(bn&&bn.className.indexOf('show')>=0){ document.getElementById('bcta').click(); return 1; }
