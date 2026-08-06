@@ -293,7 +293,15 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .clinha.ativa{background:rgba(255,212,59,.35)}
 .clinha.pronta{opacity:.75}
 .cnum{width:20px;-webkit-flex:none;flex:none;font-size:14px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.5);text-align:right;margin-right:3px}
-.cquad{width:31px;height:34px;-webkit-flex:none;flex:none;background:var(--papel);border:2px solid var(--linha);border-radius:7px;text-align:center;line-height:31px;font-size:18px;font-weight:700;color:var(--texto)}
+.cquad{height:42px;-webkit-flex:none;flex:none;background:var(--papel);border:2px solid var(--linha);border-radius:7px;text-align:center;line-height:38px;font-size:20px;font-weight:700;color:var(--texto)}
+/* ⚠️ A GRADE TEM QUE TER AS COLUNAS DA GRADE LOGICA (cobranca do Marcos,
+   ago/2026: *"o caca-palavras deve preencher de letras o quadrado todo... ele
+   pode ser maior, parece pequeno"*). A largura da celula era FIXA em px e a
+   caixa era fluida: numa tela cabiam 10 por linha numa grade de 9, e sobrava
+   uma letra sozinha na ultima linha — o "quadrado" nunca fechava. Agora a
+   celula mede 100/N por cento com `box-sizing:border-box`, entao a grade fecha
+   em QUALQUER tela e com qualquer N.                                       */
+.cquad{-webkit-box-sizing:border-box;box-sizing:border-box}
 .cquad.cheio{background:#d8f5c6;border-color:var(--ok);color:#2c6b13;-webkit-animation:pop .25s;animation:pop .25s}
 .altofalante{width:120px;height:82px;margin-top:12px;background:var(--papel);border:2px solid var(--linha);border-bottom-width:5px;border-radius:18px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;-webkit-box-shadow:0 6px 14px rgba(50,40,20,.22);box-shadow:0 6px 14px rgba(50,40,20,.22)}
 .ondas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:5px;height:44px}
@@ -306,7 +314,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 @keyframes onda{0%,100%{height:12px}50%{height:40px}}
 .vida{display:inline-block;width:14px;height:14px;border-radius:50%;background:#ef5a4a;margin-right:4px;-webkit-box-shadow:0 1px 3px rgba(0,0,0,.35);box-shadow:0 1px 3px rgba(0,0,0,.35)}
 .vida.ida{background:rgba(255,255,255,.35)}
-@media (max-height:720px){ .cquad{width:27px;height:30px;line-height:27px;font-size:16px} .altofalante{width:104px;height:70px} }
+@media (max-height:720px){ .cquad{height:34px;line-height:30px;font-size:17px} .altofalante{width:104px;height:70px} }
 /* alto-falante discreto: le a resposta para quem ainda nao le */
 .zap{position:relative;-webkit-flex:none;flex:none;width:30px;height:30px;border-radius:50%;background:rgba(47,107,216,.09);border:0;cursor:pointer;padding:0;margin-left:8px;vertical-align:middle;display:inline-block;opacity:.55;-webkit-transition:opacity .2s;transition:opacity .2s}
 .balao.comzap{padding-right:56px}
@@ -404,7 +412,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .cracha .cnome{font-size:20px;font-weight:700;color:var(--texto);line-height:1.15;word-break:break-word}
 .cracha .cfun{font-size:12px;font-weight:600;color:#6b6252}
 .cracha:before{content:"";position:absolute;top:-7px;left:50%;margin-left:-11px;width:22px;height:9px;border:2px solid var(--linha);border-bottom:0;border-radius:11px 11px 0 0;background:transparent}
-.grade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:100%;max-width:328px;margin-top:8px;background:var(--papel);border:2px solid var(--linha);border-radius:14px;padding:5px}
+.grade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;width:100%;max-width:400px;margin-top:8px;background:var(--papel);border:2px solid var(--linha);border-radius:14px;padding:5px}
 .cel{width:11.11%;padding-top:0;height:32px;line-height:32px;text-align:center;font-size:15px;font-weight:700;cursor:pointer;color:#5a5346;border-radius:6px}
 .cel{min-height:34px}
 .cel.sel{background:var(--dourado);color:#5a4200}
@@ -2780,7 +2788,13 @@ function mCaca(){
     var p=CACAM[i],posto=false,tent=0;
     cor[p]="p"+(i+1);
     while(!posto&&tent<300){ tent++;
-      var hor=Math.random()<0.6, dl=hor?0:1, dc=hor?1:0;
+      /* ⭐ AGORA TEM DIAGONAL (pedido do Marcos, ago/2026: *"na dica dizer que
+         tem palavras na diagonal"*). Quatro direcoes: deitada, em pe, e as duas
+         diagonais para baixo. Diagonal e o que faz a crianca VARRER a grade
+         inteira em vez de ler so linha e coluna.                          */
+      var dirs=[[0,1],[1,0],[1,1],[1,-1]];
+      var d=dirs[Math.floor(Math.random()*dirs.length)], dl=d[0], dc=d[1];
+      var hor=(dl===0);
       var li=Math.floor(Math.random()*N), co=Math.floor(Math.random()*N);
       if(cabe(p,li,co,dl,dc)){ var cel=[],k;
         for(k=0;k<p.length;k++){ g[li+dl*k][co+dc*k]=p.charAt(k); cel.push((li+dl*k)+"_"+(co+dc*k)); }
@@ -2790,7 +2804,7 @@ function mCaca(){
   for(i=0;i<N;i++) for(j=0;j<N;j++) if(!g[i][j]) g[i][j]=LET.charAt(Math.floor(Math.random()*LET.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","CA&#199;A-PALAVRAS DO MAR"));
-  var bal=el("div","balao","Ache as <b>cinco palavras</b> da viagem. Cada uma tem a <b>sua cor</b>.");
+  var bal=el("div","balao","Ache as <b>cinco palavras</b> da viagem. Elas podem estar deitadas, em p&#233; ou na <b>diagonal</b>.");
   c.appendChild(bal);
   var lista=el("div","lista"),chips={};
   for(i=0;i<CACAM.length;i++){
@@ -2804,6 +2818,7 @@ function mCaca(){
   var cels={};
   for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
     var q=el("div","cquad",g[y][x]);
+    q.style.width=(100/N)+"%";   /* a grade fecha em N colunas, sempre */
     cels[y+"_"+x]=q;
     q.onclick=function(){ arma();
       if(q.className.indexOf("ok")>=0){ sTap(); return; }
@@ -2847,7 +2862,7 @@ function mCaca(){
   c.appendChild(grade);
   c.appendChild(el("div","hint","Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
   t.appendChild(c);app.appendChild(t);
-  montaBarra("nv_caca_dica","As palavras est&#227;o deitadas ou em p&#233;.");
+  montaBarra("nv_caca_dica","As palavras est&#227;o deitadas, em p&#233; ou na diagonal.");
   falar("nv_caca_intro");
 }
 
