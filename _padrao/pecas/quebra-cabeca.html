@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — quebra-cabeça (6 pedaços nas vagas)</title>
+<!-- ============================================================
+     PEÇA: QUEBRA-CABEÇA — MONTAR A FIGURA EM 6 PEDAÇOS
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     O QUE ELA ENSINA: parte-todo e orientação. A criança olha o pedaço, procura
+     a borda que continua e decide ONDE ele mora dentro da figura inteira.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (cada uma já custou caro):
+
+     · PROPORÇÃO DA PEÇA (o professor pegou peça ESTICADA). A figura é 320x240
+       (4:3) e o corte é 3 colunas x 2 linhas — então o pedaço NÃO é quadrado:
+       ele mede (320/3) x (240/2), ou seja largura x 1,125. O tamanho é
+       CALCULADO da figura (`PH = PW * (IMGH/LINS) / (IMGW/COLS)`), nunca
+       escrito à mão e nunca forçado em 1:1. Trocar isso por `width:h:1/1`
+       espicha o desenho e a criança não reconhece mais o pedaço.
+       O mesmo cálculo vale para a peça pequena do banco (a MESMA proporção,
+       só que em escala) — peça do banco esticada engana igual.
+
+     · A VAGA MIRA QUANDO A PEÇA PASSA POR CIMA. Sem a mira a criança solta no
+       vazio e não entende por que "não pegou". A mira é BORDA + brilho (forma,
+       não só cor) e some assim que a peça sai de cima.
+
+     · TRÊS CAMINHOS DE ENTRADA (defeito pego DUAS vezes pelo Marcos):
+       mouse (arrastar), dedo (arrastar) e TOQUE SIMPLES (toca na peça, toca na
+       vaga). Nunca `preventDefault` no `touchstart` — isso MATA o toque no
+       celular; o `preventDefault` só entra no MEIO do arrasto (`touchmove`),
+       quando já se sabe que é arrasto e não toque.
+       E o guarda `ultimoToque`: o celular dispara mousedown/click FANTASMA
+       depois do toque, e sem a marca de tempo a peça era acionada duas vezes.
+
+     · SOM DE PEGAR, DE ENCAIXAR E DE FECHAR (três sons diferentes) + festa no
+       fim. Som só de acerto não conta a história do gesto.
+
+     · NUNCA TRAVA: o andaime cresce a cada erro (dica -> a vaga certa pisca ->
+       a peça é encaixada junto com a criança).
+
+     · ERRO NÃO PUNE: a peça treme e volta para a mão, sem X vermelho e sem a
+       palavra "errou".
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- O TABULEIRO (as vagas) ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o tabuleiro nasce COLADO
+   no enunciado (defeito ja cobrado duas vezes).                              */
+.qctab{position:relative;width:100%;max-width:300px;margin:13px auto 0;
+       border-radius:14px;background:#181109;box-shadow:0 4px 0 #0d0905}
+/* a figura inteira, apagadinha, atras das vagas: e o MODELO. Ajuda a crianca
+   a decidir onde o pedaco mora sem entregar a resposta.                      */
+.qcfundo{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:14px;
+         background-repeat:no-repeat;background-position:center;background-size:100% 100%;opacity:.17}
+.qcvaga{position:absolute;background-repeat:no-repeat;border-radius:9px;cursor:pointer;
+        border:2px dashed rgba(255,255,255,.45)}
+/* A MIRA: forma (borda grossa) + brilho, nunca so cor */
+.qcvaga.mira{border:3px solid #ffd54a;-webkit-box-shadow:inset 0 0 0 3px rgba(255,213,74,.5);
+             box-shadow:inset 0 0 0 3px rgba(255,213,74,.5)}
+.qcvaga.cheia{border:2px solid rgba(0,0,0,.22);cursor:default}
+/* ---------- O BANCO (as pecas soltas) ---------- */
+.qcbanco{max-width:340px;margin:12px auto 0;
+         display:-webkit-box;display:-webkit-flex;display:flex;
+         -webkit-flex-wrap:wrap;flex-wrap:wrap;
+         -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.qcpc{margin:4px;border-radius:9px;background-repeat:no-repeat;cursor:pointer;
+      border:2px solid rgba(255,255,255,.6);
+      -webkit-box-shadow:0 3px 0 rgba(0,0,0,.5);box-shadow:0 3px 0 rgba(0,0,0,.5)}
+.qcpc.sel{border:3px solid #ffd54a;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.qcpc.usada{border:2px dashed rgba(255,255,255,.22);background:rgba(255,255,255,.07);
+            -webkit-box-shadow:none;box-shadow:none;cursor:default}
+.pisca{-webkit-animation:pisc .66s ease-in-out infinite alternate;
+       animation:pisc .66s ease-in-out infinite alternate}
+@-webkit-keyframes pisc{from{-webkit-box-shadow:inset 0 0 0 3px rgba(255,213,74,.25)}
+                        to{-webkit-box-shadow:inset 0 0 0 6px rgba(255,213,74,.95)}}
+@keyframes pisc{from{box-shadow:inset 0 0 0 3px rgba(255,213,74,.25)}
+                to{box-shadow:inset 0 0 0 6px rgba(255,213,74,.95)}}
+.treme{-webkit-animation:trem .3s;animation:trem .3s}
+@-webkit-keyframes trem{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes trem{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a sombra que segue o dedo/o mouse. pointer-events:none e obrigatorio, senao
+   ela fica ENTRE o dedo e a vaga e a mira nunca acende. */
+.somb{position:fixed;z-index:60;pointer-events:none;border-radius:9px;
+      background-repeat:no-repeat;opacity:.94;
+      border:3px solid #ffd54a;-webkit-box-shadow:0 10px 20px rgba(0,0,0,.55);box-shadow:0 10px 20px rgba(0,0,0,.55)}
+.placar{margin-top:10px;font-size:16px;font-weight:700}
+.placar b{color:#ffd54a}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- A FIGURA ----
+   Numa atividade de verdade este SVG sai e entra a ARTE DE IA da atividade.
+   Aqui ele vai embutido para a peca rodar sozinha, sem arquivo externo.
+   O TAMANHO DELA E O QUE MANDA NA PROPORCAO DA PECA: 320 x 240.            */
+var IMGW=320, IMGH=240, COLS=3, LINS=2;
+var CENA="<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 240'>"+
+ "<rect width='320' height='240' fill='#9fdcf7'/>"+
+ "<circle cx='276' cy='42' r='27' fill='#ffd54a'/>"+
+ "<g stroke='#ffd54a' stroke-width='7' stroke-linecap='round'>"+
+   "<path d='M276 96 L276 108'/><path d='M226 66 L214 70'/></g>"+
+ "<g fill='#ffffff'><ellipse cx='56' cy='42' rx='30' ry='17'/>"+
+   "<ellipse cx='82' cy='38' rx='22' ry='14'/><ellipse cx='34' cy='48' rx='19' ry='12'/></g>"+
+ "<g stroke='#3a2b1c' stroke-width='4' fill='none' stroke-linecap='round'>"+
+   "<path d='M136 54 q10 -11 20 0'/><path d='M156 54 q10 -11 20 0'/>"+
+   "<path d='M170 82 q8 -9 16 0'/><path d='M186 82 q8 -9 16 0'/></g>"+
+ "<path d='M0 150 Q70 116 150 150 Q232 184 320 146 L320 240 L0 240 Z' fill='#6cba4e'/>"+
+ "<rect x='0' y='200' width='320' height='40' fill='#55a03c'/>"+
+ "<path d='M16 133 L73 88 L130 133 Z' fill='#c4553a'/>"+
+ "<rect x='29' y='131' width='88' height='70' fill='#f6e6c8' stroke='#8a5a34' stroke-width='4'/>"+
+ "<rect x='58' y='159' width='28' height='42' fill='#8a5a34'/>"+
+ "<circle cx='80' cy='181' r='3' fill='#ffd54a'/>"+
+ "<rect x='93' y='143' width='22' height='20' fill='#bfe6ff' stroke='#8a5a34' stroke-width='3'/>"+
+ "<rect x='241' y='150' width='16' height='52' fill='#8a5a34'/>"+
+ "<circle cx='249' cy='139' r='32' fill='#39843a'/>"+
+ "<circle cx='225' cy='155' r='21' fill='#46a144'/><circle cx='273' cy='153' r='19' fill='#46a144'/>"+
+ "<path d='M122 240 L150 202 L188 202 L166 240 Z' fill='#e6d5ab'/>"+
+ "<circle cx='143' cy='220' r='7' fill='#ff8fb1'/><circle cx='143' cy='220' r='3' fill='#fff3c9'/>"+
+ "<circle cx='201' cy='227' r='7' fill='#ffd54a'/><circle cx='201' cy='227' r='3' fill='#fff8e2'/>"+
+ "<circle cx='176' cy='213' r='6' fill='#b98cff'/><circle cx='176' cy='213' r='2.5' fill='#fff8e2'/>"+
+ "</svg>";
+function urlCena(){ return "url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(CENA)+"\")"; }
+var FIGURA=urlCena();
+
+/* ---- estado ---- */
+var telaAtual=null, barraP=null, vagas=[], pecas=[], postas=0, errosSeg=0,
+    escolhida=null, PW=0, PH=0, BW=0, BH=0, elPlacar=null;
+/* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
+   toque. Sem esta marca de tempo a peca era acionada duas vezes. */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, vagaMira=null;
+
+/* tres sons diferentes: pegar, encaixar e fechar a figura */
+function sPega(){ nota(520,.05,.12,"square",0); }
+function sEncaixa(){ nota(392,.09,.15,"triangle",0); nota(587.33,.16,.14,"triangle",.06); }
+function sFecha(){ nota(523.25,.2,.16,"triangle",0); nota(659.25,.2,.15,"triangle",.1);
+                   nota(783.99,.3,.15,"triangle",.2); nota(1046.5,.4,.13,"triangle",.3); }
+
+/* ---- CORTAR A FIGURA: e AQUI que a proporcao se decide ----
+   O pedaco mede (IMGW/COLS) x (IMGH/LINS) na figura. Entao, em pixels de tela,
+   a ALTURA sai da LARGURA pela mesma conta — nunca 1:1, nunca chutada.       */
+function alturaDaPeca(larg){ return Math.round(larg*(IMGH/LINS)/(IMGW/COLS)); }
+/* pinta o pedaco (li,co) num elemento de larg x alt */
+function recorta(e,li,co,larg,alt){
+  e.style.width=larg+"px"; e.style.height=alt+"px";
+  e.style.backgroundImage=FIGURA;
+  e.style.backgroundSize=(larg*COLS)+"px "+(alt*LINS)+"px";
+  e.style.backgroundPosition=(-co*larg)+"px "+(-li*alt)+"px";
+}
+
+function telaQuebra(){
+  limpa(); soltaSombra();
+  vagas=[]; pecas=[]; postas=0; errosSeg=0; escolhida=null; vagaMira=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MONTE A FIGURA"));
+  c.appendChild(el("div","balao","Ponha cada <b>peda&#231;o</b> na vaga certa."));
+  var tab=el("div","qctab");
+  c.appendChild(tab);
+  var banco=el("div","qcbanco");
+  c.appendChild(banco);
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  c.appendChild(el("div","hint","Arraste o peda&#231;o at&#233; a vaga, ou toque nele e depois na vaga."));
+  t.appendChild(c); app.appendChild(t);
+
+  /* so DEPOIS de estar na tela da para medir a largura de verdade */
+  var larg=tab.offsetWidth||280;
+  PW=Math.floor(larg/COLS);
+  PH=alturaDaPeca(PW);
+  BW=Math.round(PW*0.62); BH=alturaDaPeca(BW);   /* a MESMA proporcao, menor */
+  tab.style.width=(PW*COLS)+"px";
+  tab.style.height=(PH*LINS)+"px";
+
+  var f=el("div","qcfundo");
+  f.style.backgroundImage=FIGURA;
+  tab.appendChild(f);
+
+  var li,co,v,p,lista=[];
+  for(li=0;li<LINS;li++){
+    for(co=0;co<COLS;co++){
+      v=el("div","qcvaga");
+      v.style.left=(co*PW)+"px"; v.style.top=(li*PH)+"px";
+      v.style.width=PW+"px"; v.style.height=PH+"px";
+      v.setAttribute("data-vaga",li+"_"+co);
+      v.li=li; v.co=co;
+      v.onclick=cliqueVaga;
+      tab.appendChild(v); vagas.push(v);
+      lista.push({li:li,co:co});
+    }
+  }
+  baguncar(lista);
+  for(li=0;li<lista.length;li++){
+    p=el("div","qcpc");
+    recorta(p,lista[li].li,lista[li].co,BW,BH);
+    p.li=lista[li].li; p.co=lista[li].co;
+    p.setAttribute("data-qa",p.li+"_"+p.co);
+    ligaPeca(p);
+    banco.appendChild(p); pecas.push(p);
+  }
+  atualiza();
+}
+
+/* ---------- as TRES portas de entrada da mesma peca ---------- */
+/* ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart mata o toque
+   no celular (armadilha registrada no _padrao/DINAMICAS.md).                */
+function ligaPeca(p){
+  p.onclick=cliquePeca;
+  p.onmousedown=mouseIni;
+  p.addEventListener("touchstart",toqueIni,false);
+  p.addEventListener("touchmove",toqueMeio,false);
+  p.addEventListener("touchend",toqueFim,false);
+}
+function cliquePeca(){
+  if(Date.now()-ultimoToque<700) return;    /* clique FANTASMA depois do toque */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(Date.now()-ultimoToque<700) return;
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=Date.now();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();   /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=Date.now();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) escolhe(alvo);     /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------- o arrasto de verdade (mouse e dedo usam o mesmo caminho) ------ */
+function pegaEm(p,x,y){
+  if(!p||p.className.indexOf("usada")>=0) return;
+  pego=p; px0=x; py0=y; moveu=false;
+  sPega();
+  somb=el("div","somb");
+  recorta(somb,p.li,p.co,PW,PH);           /* a sombra ja vem no tamanho da VAGA */
+  somb.style.left=(x-PW/2)+"px"; somb.style.top=(y-PH/2)+"px";
+  somb.style.display="none";
+  document.body.appendChild(somb);
+}
+function moveEm(x,y){
+  if(!pego||!somb) return;
+  if(!moveu&&(Math.abs(x-px0)>7||Math.abs(y-py0)>7)){
+    moveu=true; somb.style.display="block";
+    pego.className="qcpc sel";
+  }
+  if(!moveu) return;
+  somb.style.left=(x-PW/2)+"px"; somb.style.top=(y-PH/2)+"px";
+  acendeMira(vagaSob(x,y));
+}
+function soltaEm(x,y){
+  var p=pego, arrastou=moveu, v=arrastou?vagaSob(x,y):null;
+  soltaSombra();
+  if(!p) return;
+  if(p.className.indexOf("usada")<0) p.className="qcpc";
+  if(!arrastou) return;            /* nao arrastou: quem resolve e o toque */
+  if(v) tentaPor(p,v);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  acendeMira(null);
+}
+/* qual vaga esta debaixo do dedo? (a sombra tem pointer-events:none, entao
+   elementFromPoint enxerga a vaga por baixo dela) */
+function vagaSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&n<5){
+    if((" "+String(e.className||"")+" ").indexOf(" qcvaga ")>=0) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+function acendeMira(v){
+  if(vagaMira===v) return;
+  if(vagaMira&&vagaMira.className.indexOf("cheia")<0) vagaMira.className="qcvaga";
+  vagaMira=(v&&v.className.indexOf("cheia")<0)?v:null;
+  if(vagaMira){ vagaMira.className="qcvaga mira"; sTap(); }
+}
+
+/* ---------- a regra da fase ---------- */
+function escolhe(p){
+  if(!p||p.className.indexOf("usada")>=0) return;
+  var i;
+  for(i=0;i<pecas.length;i++)
+    if(pecas[i].className.indexOf("usada")<0) pecas[i].className="qcpc";
+  escolhida=p; p.className="qcpc sel";
+  sPega();
+}
+function cliqueVaga(){
+  if(this.className.indexOf("cheia")>=0){ sTap(); return; }
+  if(!escolhida){
+    mostraDica("Primeiro toque num <b>peda&#231;o</b> l&#225; embaixo. Depois toque na vaga.");
+    sTap(); return;
+  }
+  tentaPor(escolhida,this);
+}
+function tentaPor(p,v){
+  if(!p||!v) return;
+  if(p.className.indexOf("usada")>=0||v.className.indexOf("cheia")>=0) return;
+  if(p.li===v.li&&p.co===v.co) encaixa(p,v); else recusa(p,v);
+}
+function encaixa(p,v){
+  recorta(v,v.li,v.co,PW,PH);
+  v.className="qcvaga cheia";
+  p.className="qcpc usada";
+  p.style.backgroundImage="none";
+  escolhida=null; errosSeg=0;
+  apagaDica();
+  sEncaixa();
+  postas++;
+  atualiza();
+  if(postas>=vagas.length) fechaFase();
+}
+function recusa(p,v){
+  sErro(); errosSeg++;
+  v.className="qcvaga treme";
+  destreme(v);
+  ajuda(errosSeg);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda
+   `!telaAtual.parentNode` ele mexeria numa tela que ja saiu. */
+function destreme(v){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(v.className.indexOf("cheia")<0) v.className="qcvaga";
+  },330);
+}
+function atualiza(){
+  if(elPlacar) elPlacar.innerHTML="Peda&#231;os no lugar: <b>"+postas+"</b> de <b>"+vagas.length+"</b>";
+  if(barraP) barraP.style.width=Math.round(postas*100/vagas.length)+"%";
+}
+/* O ANDAIME QUE CRESCE — a peca nunca trava */
+function ajuda(n){
+  if(n===1){
+    mostraDica("Olhe as <b>bordas</b>: a linha do peda&#231;o precisa continuar na figura.");
+  }else if(n===2){
+    mostraDica("A vaga deste peda&#231;o est&#225; <b>piscando</b>.");
+    acendeCerta();
+  }else{
+    mostraDica("Era esta! Eu coloco esta e voc&#234; segue.");
+    revela();
+  }
+}
+function acendeCerta(){
+  var p=escolhida||primeiraSolta(), i;
+  for(i=0;i<vagas.length;i++)
+    if(vagas[i].className.indexOf("cheia")<0) vagas[i].className="qcvaga";
+  if(!p) return;
+  for(i=0;i<vagas.length;i++)
+    if(vagas[i].li===p.li&&vagas[i].co===p.co&&vagas[i].className.indexOf("cheia")<0)
+      vagas[i].className="qcvaga pisca";
+}
+function revela(){
+  var p=escolhida||primeiraSolta(), i;
+  if(!p) return;
+  for(i=0;i<vagas.length;i++)
+    if(vagas[i].li===p.li&&vagas[i].co===p.co){ encaixa(p,vagas[i]); return; }
+}
+function primeiraSolta(){
+  var i;
+  for(i=0;i<pecas.length;i++) if(pecas[i].className.indexOf("usada")<0) return pecas[i];
+  return null;
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function fechaFase(){
+  sFecha();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    mostraBanner("Figura montada! Voc&#234; achou o lugar de cada peda&#231;o.",telaFim);
+  },520);
+}
+
+function telaFim(){
+  limpa(); soltaSombra();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Voc&#234; montou a figura <b>inteira</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaQuebra;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaQuebra();
+</script>
+</body></html>

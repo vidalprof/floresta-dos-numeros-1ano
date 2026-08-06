@@ -388,7 +388,6 @@ function escolheuEv(){
   destreme(this);
   if(errosSeg>=3){ revelaEv(); return; }
   mostraDica(this.ev.pq);
-  this.className="opt fora";
 }
 function revelaEv(){
   var i;
@@ -423,10 +422,12 @@ function telaFim(){
 }
 
 /* ---------------- apoio ---------------- */
+/* depois da tremida a opção fica RISCADA (forma, não só cor): ela mostra o que
+   já foi descartado — o contrário de punir. Continua tocável, então nunca trava. */
 function destreme(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("ok")<0&&b.className.indexOf("fora")<0) b.className="opt no";
+    if(b.className.indexOf("ok")<0) b.className="opt fora";
   },340);
 }
 function repintaQuadro(){
