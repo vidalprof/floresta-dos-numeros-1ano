@@ -430,7 +430,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .vaga.sub{border-radius:999px}
 .vaga.adj{border-radius:9px;-webkit-clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);clip-path:polygon(12% 0,100% 0,88% 100%,0 100%);padding:0 18px}
 .vaga.cheia{border-style:solid;color:#fff}
-.vaga.art.cheia{background:-webkit-linear-gradient(top,#6d9bec,#2f6bd8);background:linear-gradient(#6d9bec,#2f6bd8);border-color:#1d4ea8}
+.vaga.art.cheia{background:#2a5fc8;/* ⚠️ o branco em cima do azul claro dava 4,08:1 e o portao
+     de contraste reprovou: o degrade agora comeca mais escuro. */
+  background:-webkit-linear-gradient(top,#4a7fdd,#1f4fb4);background:linear-gradient(#4a7fdd,#1f4fb4);border-color:#1d4ea8}
 .vaga.sub.cheia{background:-webkit-linear-gradient(top,#6bd23f,#3f9a26);background:linear-gradient(#6bd23f,#3f9a26);border-color:#2c6b13}
 .vaga.adj.cheia{background:-webkit-linear-gradient(top,#ffb45e,#ef8a1e);background:linear-gradient(#ffb45e,#ef8a1e);border-color:#c26a08}
 .pcs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:360px}
@@ -743,6 +745,30 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   .fichas{max-width:640px} .ficha{max-width:200px} .ficha .fimg{height:128px}
   .trilhotempo .tvaga{min-width:124px;height:96px} .trilhotempo .tvimg{width:120px;height:88px} }
 
+/* ⭐ A CRUZADINHA COMEMORA CADA PALAVRA (pedido do Marcos, ago/2026: *"na
+   cruzadinha seria legal uma comemoracao ao achar as palavras"*). Antes a
+   ultima letra caia e a fase seguia — a crianca nao ganhava nada por ter
+   fechado a palavra. Agora as letras acendem UMA A UMA com som subindo, a
+   palavra inteira da um pulo e a faixa com ela sobe na tela.             */
+.cruzfesta .clin.ok,.cruzfesta .slot.cheio{-webkit-animation:letracende .5s backwards;animation:letracende .5s backwards}
+@-webkit-keyframes letracende{0%{-webkit-transform:scale(1);background:#eafce0}
+  45%{-webkit-transform:scale(1.35);background:#ffd43b}100%{-webkit-transform:scale(1)}}
+@keyframes letracende{0%{transform:scale(1);background:#eafce0}
+  45%{transform:scale(1.35);background:#ffd43b}100%{transform:scale(1)}}
+.faixapal{position:fixed;left:50%;top:38%;z-index:40;padding:10px 26px;border-radius:14px;
+  font-size:24px;font-weight:800;letter-spacing:3px;color:#22540f;white-space:nowrap;
+  background:#cdf0bd;border:4px solid #3f9a26;
+  -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+  -webkit-box-shadow:0 10px 26px rgba(20,40,10,.45);box-shadow:0 10px 26px rgba(20,40,10,.45);
+  -webkit-animation:faixasobe 1.5s forwards;animation:faixasobe 1.5s forwards}
+@-webkit-keyframes faixasobe{0%{-webkit-transform:translate(-50%,-50%) scale(.4);opacity:0}
+  22%{-webkit-transform:translate(-50%,-50%) scale(1.08);opacity:1}
+  72%{-webkit-transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{-webkit-transform:translate(-50%,-130%) scale(.9);opacity:0}}
+@keyframes faixasobe{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}
+  22%{transform:translate(-50%,-50%) scale(1.08);opacity:1}
+  72%{transform:translate(-50%,-50%) scale(1);opacity:1}
+  100%{transform:translate(-50%,-130%) scale(.9);opacity:0}}
 /* ================= FASES NOVAS (ago/2026) ================= */
 /* MARCA-TEXTO: paragrafo de verdade, palavra a palavra, para PINTAR */
 .paragrafo{max-width:430px;margin-top:12px;background:rgba(255,253,244,.96);border:2px solid var(--linha);
@@ -1098,13 +1124,23 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .trilhotempo{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;
   flex-wrap:wrap;gap:6px;-webkit-box-pack:center;justify-content:center;margin-top:12px;width:100%}
 .trilhotempo .tvaga{min-width:104px;height:82px;padding:0}
-.trilhotempo .tvimg{width:100px;height:74px;object-fit:cover;border-radius:8px}
+.trilhotempo .tvimg{width:100px;height:74px;-o-object-fit:contain;object-fit:contain;
+  border-radius:8px;background:rgba(255,253,246,.5)}
 .fichas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
   gap:8px;-webkit-box-pack:center;justify-content:center;margin-top:14px;max-width:430px;width:100%}
 .ficha{width:47%;max-width:196px;background:rgba(255,253,246,.96);border:2px solid var(--linha);
   border-bottom-width:5px;border-radius:14px;padding:5px;cursor:pointer;text-align:center;
   -webkit-box-shadow:0 5px 14px rgba(30,25,10,.3);box-shadow:0 5px 14px rgba(30,25,10,.3)}
-.ficha .fimg{width:100%;height:112px;object-fit:cover;border-radius:11px;display:block}
+/* ⚠️ NADA DE `cover` NA FIGURA QUE A CRIANCA PRECISA RECONHECER (cobranca
+   do Marcos, ago/2026: *"as imagens nao podem ficar cortadas dentro dos
+   quadrados, precisam ser ajustadas"* e *"na fase o navio por dentro as
+   imagens estao cortadas nos quadrados"*). `cover` enche a caixa cortando
+   o que sobra — e o que sobrava era o topo do barril e a borda da bussola.
+   `contain` mostra a peca INTEIRA; a caixa ganha um fundo claro para a
+   sobra nao virar buraco. Medido pelo portao 5, regra 10.             */
+.ficha .fimg{width:100%;height:120px;-o-object-fit:contain;object-fit:contain;border-radius:11px;
+  display:block;background:rgba(255,253,246,.55);padding:4px;
+  -webkit-box-sizing:border-box;box-sizing:border-box}
 .ficha .flab{font-size:13.5px;font-weight:700;color:var(--texto);margin-top:3px;line-height:1.15}
 .ficha.usada{opacity:.25}
 .ficha.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
@@ -1338,7 +1374,8 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .quadro{width:47%;max-width:196px;cursor:pointer;background:#fffdf6;padding:6px 6px 3px;
   border:3px solid #8a6b3f;border-radius:3px;
   -webkit-box-shadow:0 8px 18px rgba(20,14,4,.5);box-shadow:0 8px 18px rgba(20,14,4,.5)}
-.quadro .qimg{width:100%;height:96px;object-fit:cover;display:block}
+.quadro .qimg{width:100%;height:104px;-o-object-fit:contain;object-fit:contain;display:block;
+  background:rgba(255,253,246,.5)}
 .quadro .qtit{font-size:11.5px;font-weight:700;color:#4a4230;margin-top:4px;text-align:center;line-height:1.2}
 .quadro:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 /* a foto aberta, em cima de tudo */
@@ -1427,6 +1464,17 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    a voz repete a abertura da fase, o botao nao serve para o que foi feito.
    Medido pelo `_qa/vozpergunta.py`.                                        */
 function falaDaTela(id,cb){ falaTela=id; telaNarrou=true; falar(id,cb); }
+/* comemoracao de palavra fechada: letras acendendo em cascata + faixa + som */
+function festaPalavra(linha,palavra){
+  var cx=linha.getElementsByTagName("div"),i;
+  linha.className=linha.className+" cruzfesta";
+  for(i=0;i<cx.length;i++){ cx[i].style.webkitAnimationDelay=(i*0.07)+"s"; cx[i].style.animationDelay=(i*0.07)+"s"; }
+  for(i=0;i<palavra.length;i++) tom(520+i*80,0.13,"triangle",0.13,i*0.07);
+  var f=el("div","faixapal",palavra);
+  document.body.appendChild(f);
+  setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1600);
+  var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",18); sFesta(); festa();
+}
 /* o V de verificacao + a plaquinha com o nome, no lugar tocado */
 function poeVok(cena,px,py,nome){
   var v=el("div","vok","<i></i><b></b>");
@@ -1478,8 +1526,29 @@ function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
 function fimFala(){ paraBoca(); if(btnOuvir) btnOuvir.className="mini"; var c=falandoCb; falandoCb=null; if(c)c(); }
 narr.addEventListener("ended",fimFala);
 narr.addEventListener("error",function(){ fimFala(); });
-function iniciaBoca(){ if(falaTimer)clearInterval(falaTimer); bocaAlvo=0.7;
-  falaTimer=setInterval(function(){ if(narr.paused||narr.ended){bocaAlvo=0;} else if(!anaOk){ bocaAlvo=0.25+Math.random()*0.75; } },95); }
+/* ⭐ A BOCA TEM QUE PARECER BOCA (cobranca do Marcos, ago/2026: *"esta esquisito
+   o movimentar da boca da arara, nao esta natural"*). Ele estava certo, e o
+   motivo era medivel:
+
+   1. **Sem o analisador, a boca era RUIDO.** `bocaAlvo=0.25+random*0.75` a cada
+      95ms = 10 saltos por segundo, sem relacao nenhuma com a voz. Mandibula
+      humana nao passa de ~5 aberturas por segundo (a silaba). Agora a queda e
+      um RITMO DE SILABA: uma onda de ~4,2 Hz que fecha de verdade entre uma
+      silaba e outra, com uma variacaozinha para nao ficar mecanica.
+   2. **Abria e fechava na mesma velocidade.** Boca de verdade ABRE rapido e
+      FECHA devagar (a mandibula cai e volta). Agora a suavizacao e assimetrica.
+   3. **Saturava.** `0.18+rms*6` grudava no 1 em qualquer voz alta: a boca ficava
+      escancarada o tempo todo. Agora o volume passa por uma curva com teto e um
+      pouco de raiz, que e como a orelha ouve.                               */
+var bocaFase=0;
+function iniciaBoca(){ if(falaTimer)clearInterval(falaTimer); bocaAlvo=0.55; bocaFase=0;
+  falaTimer=setInterval(function(){
+    if(narr.paused||narr.ended){ bocaAlvo=0; return; }
+    if(anaOk) return;                       /* o analisador manda; isto e a reserva */
+    bocaFase+=1.15+Math.random()*0.45;      /* ~3,3 silabas por segundo, como a fala */
+    var s=(Math.sin(bocaFase)+1)/2;         /* 0..1 suave, fecha entre silabas */
+    bocaAlvo=s*s*(0.55+Math.random()*0.45);
+  },60); }
 function paraBoca(){ if(falaTimer){clearInterval(falaTimer);falaTimer=0;} bocaAlvo=0; }
 function depoisDaFala(id,maxMs,cb){
   var fired=false;
@@ -1494,10 +1563,12 @@ function loopBoca(){
     try{ anaNode.getByteTimeDomainData(anaBuf); var i,s=0;
       for(i=0;i<anaBuf.length;i+=4){ var v=(anaBuf[i]-128)/128; s+=v*v; }
       var rms=Math.sqrt(s/(anaBuf.length/4));
-      bocaAlvo=(rms<0.012)?0:Math.min(1,0.18+rms*6);
+      /* curva com teto: som alto nao escancara a boca */
+      bocaAlvo=(rms<0.014)?0:Math.min(1,0.12+Math.pow(Math.min(rms*4.2,1),0.65)*0.9);
     }catch(e){}
   }
-  bocaSuave += (bocaAlvo-bocaSuave)*0.4;
+  /* abre rapido, fecha devagar — e assim que a mandibula se mexe */
+  bocaSuave += (bocaAlvo-bocaSuave)*((bocaAlvo>bocaSuave)?0.55:0.20);
   if(nicoAtual&&nicoAtual.fala) nicoAtual.fala.style.opacity=bocaSuave.toFixed(3);
   requestAnimationFrame(loopBoca);
 }
@@ -1855,7 +1926,7 @@ function mPalpite(){limpa();var t=el("div","tela");setProg(t,4);var c=el("div","
    As três são ILUSTRAÇÕES DE IA do mesmo lugar (regra do Marcos: interação
    dinâmica usa arte de IA, não desenho de CSS). O conceito só é dito no fim. */
 function mVoo(){
-  limpa();var t=el("div","tela");setProg(t,10);
+  limpa();var t=el("div","tela");setProg(t,8);
   var visto={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O VOO DO NICO"));
@@ -1908,7 +1979,7 @@ var VISTAS=[{k:0,n:"mesa",   rot:"a mesa",    de:"da mesa"},
 function mDeCima(){
   var fila=baguncar(VISTAS.slice(0)),idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,18+idx*2);
+    limpa();var t=el("div","tela");setProg(t,11+Math.min(idx,3));
     var it=fila[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","DE CIMA OU DE LADO?"));
@@ -1949,7 +2020,7 @@ function mDeCima(){
     c.appendChild(box);
     if(idx===0) postIt(c,"norte");
     t.appendChild(c);app.appendChild(t);
-    montaBarra("mp_cima_dica","De cima voc&#234; v&#234; o telhado, nunca a porta.");
+    montaBarra("mp_cima_dica","De cima voc&#234; v&#234; o que est&#225; virado para o c&#233;u: o tampo da mesa, o assento da cadeira, o teto do carro.");
     if(idx===0) introEPergunta("mp_cima_intro");
   }
   passo();
@@ -1958,7 +2029,7 @@ function mDeCima(){
 /* ---------- 5) A SOMBRA DE CIMA (ligar) ---------- */
 var LIGAS=[["mesa","a mesa"],["cadeira","a cadeira"],["arvore","a &#225;rvore"],["carro","o carro"]];
 function mSombra(){
-  limpa();var t=el("div","tela");setProg(t,26);
+  limpa();var t=el("div","tela");setProg(t,15);
   var sel=null,feitos=0,err=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","ACHE O PAR"));
@@ -2029,7 +2100,7 @@ var NAMAQ=[{q:"a <b>igreja</b>",x:26,y:23},
 function mMaquete(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,34+idx);
+    limpa();var t=el("div","tela");setProg(t,19+Math.min(idx,2));
     if(idx>=NAMAQ.length){ fechaFase("DA MAQUETE AO MAPA","A <b>maquete</b> tem altura. O <b>mapa</b> &#233; a mesma coisa, achatada no papel.","mp_maq_revela",11000,mOndeFica,34); return; }
     var it=NAMAQ[idx],fim=false;
     var c=el("div","centro");
@@ -2109,7 +2180,7 @@ var ONDE=[{k:0,q:"a <b>igreja</b>",        d:"cima",  eixo:"v"},
           {k:4,q:"a <b>igreja</b>",        d:"esq",   eixo:"h"},
           {k:5,q:"as <b>casas</b> de telhado vermelho", d:"dir", eixo:"h", pl:1}];
 function mOndeFica(){
-  limpa();var t=el("div","tela");setProg(t,42);
+  limpa();var t=el("div","tela");setProg(t,22);
   /* ⚠️ os dois eixos NAO se misturam: primeiro tudo de cima/meio/embaixo,
      depois tudo de esquerda/direita. Bagunçar a lista inteira fazia as
      gavetas trocarem de significado a cada pergunta — a crianca respondia
@@ -2192,12 +2263,17 @@ var ROTAS=[
       igreja (22,20) | praca (46,50) | casas (81,50) | ponte (48,80) | rio (39,79) */
  {t:"da <b>igreja</b> at&#233; a <b>ponte</b>",  p:[[22,20],[22,50],[48,50],[48,80]], s:["baixo","dir","baixo"]},
  {t:"da <b>ponte</b> at&#233; a <b>igreja</b>",  p:[[48,80],[48,50],[22,50],[22,20]], s:["cima","esq","cima"]},
- {t:"das <b>casas</b> at&#233; o <b>rio</b>",    p:[[81,50],[81,79],[39,79]],         s:["baixo","esq"]}];
+ /* ⚠️ o Marcos: *"das casas ate o rio nao ficou legal, posicione ele nas casas,
+    faca andar ate a praca de arvores e depois ate o rio"*. O caminho de dois
+    passos passava por fora de tudo; agora ele encosta na praca no meio do
+    caminho, que e o que da sentido ao roteiro. */
+ {t:"das <b>casas</b> at&#233; o <b>rio</b>, passando pela <b>pra&#231;a</b>",
+  p:[[81,50],[46,50],[46,79],[39,79]], s:["esq","baixo","esq"]}];
 var SETAS={cima:"&#8593;",baixo:"&#8595;",esq:"&#8592;",dir:"&#8594;"};
 function mRoteiro(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,50+idx*2);
+    limpa();var t=el("div","tela");setProg(t,26+Math.min(idx,3));
     if(idx>=ROTAS.length){ fechaFase("O ROTEIRO DO NICO","Um <b>roteiro</b> &#233; isto: dizer o caminho em passos, olhando o mapa.","mp_rota_revela",11000,mAquecimento,50); return; }
     var it=ROTAS[idx],passos=[],fim=false;
     var c=el("div","centro");
@@ -2260,7 +2336,7 @@ function mRoteiro(){
 
 /* ---------- 9) AQUECIMENTO (prática de recuperação — Roediger/Bjork) ---- */
 function mAquecimento(){
-  limpa();var t=el("div","tela");setProg(t,56);
+  limpa();var t=el("div","tela");setProg(t,30);
   var perg=[["De cima, o que voc&#234; v&#234; de uma casa?",["O telhado",1],["A porta da frente",0],["A janela do lado",0]],
             ["A maquete e o mapa mostram o mesmo lugar. O que muda?",["A maquete tem <b>altura</b>; o mapa &#233; achatado",1],["O mapa &#233; maior",0],["A maquete &#233; colorida e o mapa n&#227;o",0]]];
   var i=0,err=0;
@@ -2302,7 +2378,7 @@ var SIMB=[["igreja","a igreja"],["escola","a escola"],["ponte","a ponte"],
 function mSimbolo(){
   var fila=baguncar(SIMB.slice(0)),idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,62+idx);
+    limpa();var t=el("div","tela");setProg(t,34+Math.min(idx,2));
     if(idx>=fila.length){ fechaFase("O QUE QUER DIZER?","Cada <b>s&#237;mbolo</b> guarda um lugar inteiro num desenho pequenininho.","mp_sim_revela",10000,mLegenda,62); return; }
     var it=fila[idx],fim=false;
     var c=el("div","centro");
@@ -2348,7 +2424,7 @@ function mSimbolo(){
    As duas portas: arrastar com o dedo/mouse OU tocar no símbolo e na linha.  */
 var LEGL=[["escola","ESCOLA"],["igreja","IGREJA"],["ponte","PONTE"],["praca","PRA&#199;A"],["rio","RIO"]];
 function mLegenda(){
-  limpa();var t=el("div","tela");setProg(t,70);
+  limpa();var t=el("div","tela");setProg(t,37);
   var feitos=0,err=0,sel=null,ultimoToque=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","MONTE A LEGENDA"));
@@ -2484,7 +2560,7 @@ var MUDO=[["igreja","IGREJA"],["ponte","PONTE"],["rio","RIO"]];
 function mMudo(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,76+idx);
+    limpa();var t=el("div","tela");setProg(t,41+Math.min(idx,3));
     if(idx>=MUDO.length){ fechaFase("O MAPA MUDO","Escrever o nome no mapa &#233; o que transforma o desenho em <b>informa&#231;&#227;o</b>.","mp_mudo_revela",9000,mEscala,76); return; }
     var it=MUDO[idx],fim=false;
     var c=el("div","centro");
@@ -2529,7 +2605,7 @@ function mMudo(){
    mesmo lugar aparece de mais longe a cada passo: a sala, a escola, o bairro,
    a cidade. Ela vê com os olhos que, quanto mais longe, MENOS detalhe cabe. */
 function mEscala(){
-  limpa();var t=el("div","tela");setProg(t,82);
+  limpa();var t=el("div","tela");setProg(t,45);
   var visto={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PERTO E LONGE"));
@@ -2602,7 +2678,7 @@ var NOMEV={N:"Norte",S:"Sul",L:"Leste",O:"Oeste"};
 function mRosa(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,84);
+    limpa();var t=el("div","tela");setProg(t,48);
     if(idx>=VENTOS.length){ fechaFase("A ROSA DOS VENTOS","Quase todo mapa vem com o <b>Norte para cima</b>. &#201; um combinado entre quem faz mapas.","mp_rosa_revela",11000,mCoord,84); return; }
     var it=VENTOS[idx],fim=false;
     var c=el("div","centro");
@@ -2671,7 +2747,7 @@ var COORD=[{q:"a <b>igreja</b>",cels:["A1"]},
 function mCoord(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,86);
+    limpa();var t=el("div","tela");setProg(t,52);
     if(idx>=COORD.length){ fechaFase("ACHE PELA COORDENADA","Com <b>linha e coluna</b> d&#225; para dizer onde fica qualquer lugar do mapa.","mp_coord_revela",11000,mPlanta,86); return; }
     var it=COORD[idx],fim=false;
     var c=el("div","centro");
@@ -2734,7 +2810,7 @@ var MOVEIS=[{n:"lousa",   img:"mp_lousa_c",   rot:"a lousa",   x:50,y:14,w:104,h
             {n:"armario", img:"mp_armario_c", rot:"o arm&#225;rio", x:84,y:76,w:64,h:36},
             {n:"cadeira", img:"mp_cadeira_c", rot:"a cadeira",  x:50,y:62,w:40,h:40}];
 function mPlanta(){
-  limpa();var t=el("div","tela");setProg(t,88);
+  limpa();var t=el("div","tela");setProg(t,56);
   var postos=0,err=0,sel=null,ultimoToque=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","A PLANTA DA SALA"));
@@ -2833,7 +2909,7 @@ function pzona(px,py){
   return null;
 }
 function mPintar(){
-  limpa();var t=el("div","tela");setProg(t,90);
+  limpa();var t=el("div","tela");setProg(t,59);
   var idx=0,err=0,tinta=null;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PINTE O MAPA"));
@@ -2940,7 +3016,7 @@ function mPintar(){
    palavra, o chip carimba, a faixa "ACHOU!" sobe e a VOZ diz a palavra.       */
 var CACAM=["MAPA","RIO","PONTE","LEGENDA","MAQUETE"];
 function mCaca(){
-  limpa();var t=el("div","tela");setProg(t,86);
+  limpa();var t=el("div","tela");setProg(t,63);
   var N=9,g=[],i,j;
   for(i=0;i<N;i++){ g[i]=[]; for(j=0;j<N;j++) g[i][j]=""; }
   var achadas={},posicoes={},onde={},cor={};
@@ -3044,7 +3120,7 @@ var CRUZM=[{p:"MAPA",d:"Desenho do lugar visto de cima."},
 function mCruzada(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,90+idx);
+    limpa();var t=el("div","tela");setProg(t,67+Math.min(idx,2));
     if(idx>=CRUZM.length){ fechaFase("CRUZADINHA","Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.","mp_cruz_revela",8000,mForca,90); return; }
     var it=CRUZM[idx],pos=0,fim=false;
     var c=el("div","centro");
@@ -3062,8 +3138,8 @@ function mCruzada(){
         marcaQA();
         if(pos>=it.p.length){ fim=true; sCerto(); elogio();
           reg("producao",err===0,err+1);
-          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",14);
-          setTimeout(function(){ idx++; err=0; passo(); },1200); }
+          festaPalavra(linha,it.p);
+          setTimeout(function(){ idx++; err=0; passo(); },1900); }
       } else { err++; sErro();
         if(bts[L]){ bts[L].className="tec no"; setTimeout(function(){ if(bts[L]) bts[L].className="tec"; },420); }
         if(err===2) consolo();
@@ -3097,7 +3173,7 @@ function mCruzada(){
 var MEMM=[{k:"igreja",a:"igreja"},{k:"ponte",a:"ponte"},
           {k:"escola",a:"escola"},{k:"campo",a:"campo de futebol"}];
 function mMemoria(){
-  limpa();var t=el("div","tela");setProg(t,93);
+  limpa();var t=el("div","tela");setProg(t,74);
   t.appendChild(el("div","selo","MEM&#211;RIA DOS S&#205;MBOLOS"));
   t.appendChild(el("div","balao","Vire <b>duas cartas</b> e ache o par: o <b>s&#237;mbolo</b> e o <b>nome</b> do lugar."));
   var baralho=[],i;
@@ -3182,7 +3258,7 @@ var MARCAR=[{q:"da <b>escola</b> (o pr&#233;dio de telhado vermelho, com a quadr
 function mDesenhe(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,96);
+    limpa();var t=el("div","tela");setProg(t,78);
     if(idx>=MARCAR.length){ fechaFase("O MAPA DO BAIRRO","Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>","mp_des_revela",10000,mAlto,96); return; }
     var it=MARCAR[idx],fim=false;
     var c=el("div","centro");
@@ -3270,7 +3346,7 @@ var ALTO=[
 function mAlto(){
   var idx=0,err=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,97);
+    limpa();var t=el("div","tela");setProg(t,82);
     if(idx>=ALTO.length){ fechaFase("O BAIRRO L&#193; DE CIMA","Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.","mp_alto_revela",13000,mQuebra,97); return; }
     var it=ALTO[idx],fim=false;
     var c=el("div","centro");
@@ -3320,8 +3396,15 @@ function mAlto(){
    todas as letras. Aqui a PALAVRA e o conteudo: sao os cinco nomes que quem le
    mapa precisa saber. O medidor de erro e a NEBLINA fechando em cima do mapa —
    tematico e sem boneco enforcado, que nao combina com crianca de 8 anos.   */
-var FORCAP=[{p:"BUSSOLA", d:"O aparelhinho que mostra onde fica o Norte."},
-            {p:"SIMBOLO", d:"O desenhinho que representa um lugar no mapa."},
+/* ⚠️ `ac` = como a palavra se escreve DE VERDADE (cobranca do Marcos,
+   ago/2026: *"na palavra bussola esta sem acento ne? favor corrigir"*). O
+   teclado da forca nao tem tecla de acento — a crianca digita B-U-S-S-O-L-A —,
+   entao a palavra a ADIVINHAR fica sem acento. Mas na hora em que ela fecha,
+   quem aparece na faixa e a palavra CERTA: BUSSOLA vira BUSSOLA com acento.
+   Errado seria ensinar a escrita errada; errado tambem seria pedir uma tecla
+   que nao existe.                                                        */
+var FORCAP=[{p:"BUSSOLA", ac:"B\u00daSSOLA", d:"O aparelhinho que mostra onde fica o Norte."},
+            {p:"SIMBOLO", ac:"S\u00cdMBOLO", d:"O desenhinho que representa um lugar no mapa."},
             {p:"PLANTA",  d:"O desenho de um lugar visto de cima, com tudo no lugar."},
             {p:"ESCALA",  d:"Diz de que tamanho o mapa mostra o mundo."}];
 var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -3330,7 +3413,7 @@ var NEBAV=["o c\u00e9u est\u00e1 limpo","entrou uma neblina fina","a neblina est
 function mForca(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,91+idx);
+    limpa();var t=el("div","tela");setProg(t,70+Math.min(idx,3));
     var it=FORCAP[idx],pal=it.p,achou={},erros=0,MAXE=5,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A PALAVRA DO MAPA"));
@@ -3361,7 +3444,7 @@ function mForca(){
       b._usada=1; b.setAttribute("data-qa","0"); arma();
       if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sCerto();
         if(revela()){ fim=true; document.onkeydown=null; elogio(); reg("legenda",erros===0,erros+1);
-          var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffd43b",16);
+          festaPalavra(linha,it.ac||it.p);
           neb.style.background="rgba(226,230,236,0)"; ntx.innerHTML="a neblina foi embora!";
           segue(1600); }
       } else { erros++; b.className="teclafc no"; sErro(); fecha();
@@ -3400,7 +3483,7 @@ function mForca(){
    COMO as partes se ligam: o rio que continua, a rua que atravessa. E o gesto
    de encaixe, que nao existia em nenhuma outra fase.                        */
 function mQuebra(){
-  limpa();var t=el("div","tela");setProg(t,97);
+  limpa();var t=el("div","tela");setProg(t,85);
   var COLS=3,LINS=2,total=COLS*LINS,postas=0,err=0,sel=null;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O MAPA EM PEDA&#199;OS"));
@@ -3471,7 +3554,7 @@ function mQuebra(){
   }
   c.appendChild(el("div","hint","Toque no peda&#231;o e depois no lugar dele."));
   t.appendChild(c);app.appendChild(t);
-  montaBarra("mp_quebra_dica","Comece pelos peda&#231;os que t&#234;m o rio ou a igreja.");
+  montaBarra("mp_quebra_dica","Comece pelos peda&#231;os que t&#234;m o rio ou a ponte.");
   falar("mp_quebra_intro");
 }
 
@@ -3486,7 +3569,7 @@ var ANDE=[{alvo:{l:2,c:4},sim:"mp_sim_escola",n:"a escola"},
 function mAnde(){
   var idx=0;
   function passo(){
-    limpa();var t=el("div","tela");setProg(t,98);
+    limpa();var t=el("div","tela");setProg(t,89);
     var it=ANDE[idx],N=5,pos={l:4,c:0},passos=0,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ANDE AT&#201; O LUGAR"));
@@ -3551,7 +3634,7 @@ var RELM=[["Um mapa mostra o lugar visto de <b>cima</b>.",1],
           ["Quanto mais longe, <b>mais</b> detalhe cabe no mapa.",0],
           ["O s&#237;mbolo do rio &#233; uma linha <b>azul</b>.",1]];
 function mRelampago(){
-  limpa();var t=el("div","tela");setProg(t,98);
+  limpa();var t=el("div","tela");setProg(t,93);
   var fila=baguncar(RELM.slice(0)),i=0,acertos=0;
   var c=el("div","centro");
   c.appendChild(el("div","selo","DESAFIO REL&#194;MPAGO"));
@@ -3589,7 +3672,7 @@ function mRelampago(){
 }
 
 /* ---------- 19) ENSINE O NICO (autoexplicação — efeito protégé) -------- */
-function mEnsinar(){limpa();var t=el("div","tela");setProg(t,99);var c=el("div","centro");
+function mEnsinar(){limpa();var t=el("div","tela");setProg(t,96);var c=el("div","centro");
   c.appendChild(nicoEl("pq"));
   c.appendChild(el("div","selo","ENSINE O NICO"));
   c.appendChild(el("div","balao","Me conta com as suas palavras: por que o mapa mostra o lugar <b>visto de cima</b>?"));

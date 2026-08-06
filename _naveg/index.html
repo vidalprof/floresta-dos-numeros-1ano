@@ -1401,7 +1401,7 @@ function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
    est&#225; sem cr&#233;dito. Com a c&#243;pia a arara n&#227;o treme: ela s&#243; n&#227;o mexe o bico.
    Assim que houver cr&#233;dito (ou o Marcos editar no ChatGPT), &#233; s&#243; trocar os
    dois arquivos — nenhuma linha de c&#243;digo muda.                            */
-var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico","nv_mapavelho","nv_mar","nv_vela0","nv_vela1","nv_vela2","nv_rede","nv_berimbau","nv_dende","nv_abacaxi","nv_pipoca","nv_cafune"];
+var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico","nv_mapavelho","nv_mar","nv_vela0","nv_vela1","nv_vela2"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1452,6 +1452,13 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    voz conta a historia da aldeia, o botao nao serve para o que foi feito.
    `falaDaTela` e como a fase diz "a voz desta tela agora e esta": narra na
    hora E passa a ser o que o alto-falante repete.                          */
+/* ⚠️ ARTE QUE AINDA NAO CHEGOU: a fila do GitHub Actions estava com uma hora
+   de atraso e a aula era em minutos. Figura que nao existe vira QUADRADINHO
+   VAZIO na frente da crianca — pior do que nao ter figura. Entao o motor
+   pula a figura que falta e a fase segue inteira; quando o arquivo chega,
+   basta tirar o nome daqui e ela aparece.                              */
+var ARTEFALTA={nv_rede:1,nv_berimbau:1,nv_dende:1,nv_abacaxi:1,nv_pipoca:1,nv_cafune:1};
+function temArte(n){ return n && !ARTEFALTA[n]; }
 function falaDaTela(id,cb){ falaTela=id; telaNarrou=true; falar(id,cb); }
 /* comemoracao de palavra fechada: letras acendendo em cascata + faixa + som */
 function festaPalavra(linha,palavra){
@@ -2470,7 +2477,7 @@ function mRaizes(){
     if(idx>=ordem.length){ sFesta(); festa();
       fechaFase("AS TR&#202;S RA&#205;ZES","O nosso povo tem <b>tr&#234;s ra&#237;zes</b>, e todas est&#227;o no seu prato, na sua m&#250;sica e na sua fala.","nv_raizes_revela",14000,mPalavra,40); return; }
     bal.innerHTML="De onde veio <b>"+ordem[idx].n+"</b>?";
-    fig.innerHTML=""; if(ordem[idx].im) fig.appendChild(imgEl(ordem[idx].im));
+    fig.innerHTML=""; if(temArte(ordem[idx].im)) fig.appendChild(imgEl(ordem[idx].im));
     falaDaTela("nv_raiz_q"+ordem[idx].k);
     var a=gav.getElementsByClassName("gav"),z;
     for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===ordem[idx].d)?"1":"0");
@@ -2529,7 +2536,7 @@ function mPalavra(){
     c.appendChild(el("div","balao",it.d)); falaDaTela("nv_palavra_q"+idx);
     var nb=el("div","nebbox");
     nb.appendChild(cenaImg("nv_horizonte","nbimg"));
-    if(it.im) nb.appendChild(imgEl(it.im,"nebobj"));   /* a coisa da palavra, no mar */
+    if(temArte(it.im)) nb.appendChild(imgEl(it.im,"nebobj"));   /* a coisa da palavra, no mar */
     var neb=el("div","neb"); nb.appendChild(neb);
     var ntx=el("div","nebtx",MARE[0]); nb.appendChild(ntx);
     c.appendChild(nb);
