@@ -173,3 +173,31 @@ Antes eu gastava 4 minutos para descobrir um erro de uma linha.
 **E pare de chutar coordenada:** `python3 _qa/pontos.py <imagem>` diz onde está
 cada mancha de cor, em % da largura e da altura. Alvo chutado cai AO LADO da
 coisa, e a criança toca no lugar certo e leva "errado".
+
+
+---
+
+## 🏷️ `var MASCOTE_NOME` — a linha que o portão lê (ago/2026)
+
+Toda atividade declara o nome do seu mascote numa linha só, perto do `var CENAS`:
+
+```js
+var MASCOTE_NOME="Ará";
+```
+
+Não é enfeite. O **item 12 do `_qa/clone.py`** lê essa linha de TODAS as
+atividades e **reprova** quando:
+
+1. o nome do mascote de **outra** atividade aparece no texto que a criança lê —
+   foi assim que *"Quem vai voar com o **Nico** hoje?"* e *"Escolha o seu crachá
+   de **cartógrafo**"* ficaram na tela de entrada da Terra dos Papagaios, que é
+   de História e tem uma arara;
+2. o nome declarado aqui é **igual** ao de uma vizinha — ou seja, clonei o motor
+   e esqueci de trocar.
+
+**Ao clonar, esta linha entra na mesma passada em que se troca `IMGS`, `VOZOK`,
+`DOM`, o prefixo dos áudios, o `sw.js` e as três camadas do mascote.** E, junto
+com ela, os três lugares que o nome do mascote alcança e que já escaparam:
+a **tela "Quem vai jogar?"**, o **rótulo do crachá** e o **relatório do
+professor** (o bloco do currículo e o "Como ler" descrevem a atividade de
+origem, fase por fase — reescrever inteiro, não remendar).

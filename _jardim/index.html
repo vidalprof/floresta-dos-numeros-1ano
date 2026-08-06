@@ -417,6 +417,10 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 <script>
 "use strict";
 /* ============ IMAGENS ============ */
+/* ⚠️ O NOME DO MASCOTE, DECLARADO. Nao e enfeite: o `_qa/clone.py`
+   le esta linha de TODAS as atividades e reprova se o nome de um
+   mascote alheio aparecer no texto desta.                            */
+var MASCOTE_NOME="Broto";
 var IMGS=["jd_broto_feliz","jd_broto_fala","jd_broto_pisca","jd_broto_pensa","jd_broto_festa","jd_g0","jd_g1","jd_g2","jd_g3","jd_g4","jd_sol","jd_agua","jd_terra","jd_ar","jd_refri","jd_celular","jd_meia","jd_partes","med_jardim","jd_cr1","jd_cr2","jd_cr3","jd_cr4","jd_cr5","jd_cr6"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}})();
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}

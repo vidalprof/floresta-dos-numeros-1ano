@@ -361,6 +361,55 @@ if minhas:
     else:
         print("   frases: nenhuma frase exclusiva do motor sobrou")
 
+# ---- 12) ⭐ O NOME DO MASCOTE DE OUTRA ATIVIDADE
+#   Ago/2026, Terra dos Papagaios: a tela de entrada perguntava "Quem vai VOAR
+#   COM O NICO hoje?" e o crachá era "de cartógrafo" — o mascote e o papel da
+#   CARTOGRAFIA, na primeira tela que a criança vê, numa atividade de História.
+#   O relatório do professor ainda trazia o currículo de Geografia do 3º ano
+#   inteirinho. Nenhum item anterior pegava: não tem prefixo (item 8), não é o
+#   título (item 10) e a frase aparecia em UMA outra atividade só, então caía no
+#   AVISO do item 11 — que é para ler, e é fácil não ler.
+#   Tentei achar isso por estatística (nome próprio raro aqui e frequente lá) e
+#   o resultado foi lixo: "Agora", "Vamos", "Vale", "Terra". Portão que grita à
+#   toa ensina a ignorar portão. Então a solução é DECLARAR: cada atividade tem
+#   `var MASCOTE_NOME="..."`, e aqui a conta é exata.
+mm = re.search(r'var\s+MASCOTE_NOME\s*=\s*"([^"]+)"', html)
+meu_masc = _texto(mm.group(1)) if mm else ""
+if not meu_masc:
+    print("   aviso: esta atividade nao declara `var MASCOTE_NOME` — sem isso eu nao "
+          "consigo conferir se o mascote de outra atividade sobrou no texto")
+else:
+    raiz4 = os.path.dirname(os.path.abspath(pasta)) or "."
+    # ⚠️ COMENTARIO NAO CHEGA NA CRIANCA — e este portao existe para o que ela
+    #    LE. Sem tirar os comentarios, a propria licao escrita aqui ("foi assim
+    #    que 'com o Nico' ficou na tela de outra atividade") reprovava as quatro
+    #    atividades de uma vez. Portao que reprova a si mesmo nao serve.
+    corpo4 = re.sub(r"/\*.*?\*/", " ", html, flags=re.S)
+    corpo4 = re.sub(r"(?m)^\s*//.*$", " ", corpo4)
+    corpo4 = _texto(re.sub(r"var\s+MASCOTE_NOME\s*=\s*\"[^\"]+\"", "", corpo4))
+    alheios4, gemeos = [], []
+    for outra in sorted(os.listdir(raiz4)):
+        cam = os.path.join(raiz4, outra, "index.html")
+        if not outra.startswith("_") or not os.path.exists(cam): continue
+        if os.path.abspath(os.path.dirname(cam)) == os.path.abspath(pasta): continue
+        mo = re.search(r'var\s+MASCOTE_NOME\s*=\s*"([^"]+)"',
+                       open(cam, encoding="utf-8", errors="replace").read())
+        if not mo: continue
+        nome_o = _texto(mo.group(1))
+        if nome_o == meu_masc:
+            gemeos.append(outra); continue
+        if len(nome_o) >= 3 and re.search(r"\b" + re.escape(nome_o) + r"\b", corpo4):
+            alheios4.append((nome_o, outra))
+    if gemeos:
+        problemas.append("o mascote daqui se chama %r, o MESMO nome do mascote de %s "
+                         "— clonei o motor e esqueci de trocar o nome"
+                         % (meu_masc, ", ".join(gemeos)))
+    if alheios4:
+        problemas.append("o nome do mascote de OUTRA atividade aparece no texto: %s"
+                         % ", ".join("%r (e da %s)" % (n, d) for n, d in alheios4[:3]))
+    if not gemeos and not alheios4:
+        print("   mascote: so o nome daqui aparece no texto (%r)" % meu_masc)
+
 print("%s -> resto de clone conferido" % pasta)
 if not problemas:
     print("   clone ok: nada da atividade de origem sobrou")

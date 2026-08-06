@@ -4206,3 +4206,26 @@ a palavra já pintada continuava anunciando "é aqui", então o auditor (e a
 criança teimosa) tocava nela para sempre. *Regra que vale para toda fase nova:*
 **alvo novo entra no `SEL` do jogador no mesmo commit**, e **todo `data-qa` sai
 do elemento no instante em que ele deixa de servir**.
+
+**5. E o pior deles, achado no AVISO da própria banca:** a tela de entrada
+perguntava ***"Quem vai voar com o NICO hoje?"*** e o crachá era ***"de
+cartógrafo"*** — o mascote e o papel da **cartografia**, na primeira tela que a
+criança vê, numa atividade de História. O relatório do professor ainda trazia o
+**currículo de Geografia do 3º ano** inteirinho. Nenhum item do `_qa/clone.py`
+pegava: não tem prefixo (item 8), não é o título (item 10), e a frase existia em
+UMA outra atividade só — ou seja, caía no **aviso** do item 11, que é para ler,
+e é fácil não ler.
+
+**O portão novo (item 12 do `_qa/clone.py`): o NOME DO MASCOTE.** Cada atividade
+declara `var MASCOTE_NOME="..."` (Ará, Nico, Juca, Broto) e o portão **reprova**
+se (a) o nome do mascote de outra atividade aparecer no texto que a criança lê,
+ou (b) o meu nome for igual ao de uma vizinha — que é o clone com o nome
+esquecido. Duas armadilhas aprendidas ao montá-lo:
+- **por estatística não dá.** Tentei achar o nome alheio por frequência (próprio
+  raro aqui, frequente lá) e o resultado foi "Agora", "Vamos", "Vale", "Terra".
+  Portão que grita à toa ensina a ignorar portão. **Declarar é melhor que
+  adivinhar.**
+- **comentário não é texto da criança.** Sem tirar os comentários antes de
+  procurar, a própria lição escrita no código ("foi assim que *com o Nico* ficou
+  na tela") reprovava as quatro atividades. Portão que reprova a si mesmo não
+  serve.

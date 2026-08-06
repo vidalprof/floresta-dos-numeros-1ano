@@ -714,7 +714,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    natural (860px de altura) e a fase do roteiro ficava com 1900px — a crianca
    nao via o mapa e as setas ao mesmo tempo.                                  */
 .janela .jimg{width:100%;height:auto;display:block;-webkit-animation:apfoto .45s;animation:apfoto .45s}
-/* o Nico voando por cima do mapa, no roteiro: posicao ABSOLUTA (a .silh do
+/* o mascote voando por cima da cena: posicao ABSOLUTA (a .silh do
    motor e outra coisa — barras de esqueleto — e empurrava a tela para 1900px) */
 .janela .voando{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;z-index:4;
   -webkit-transition:left .55s ease,top .55s ease;transition:left .55s ease,top .55s ease}
@@ -1102,6 +1102,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* ================= IMAGENS ================= */
 /* as CENAS largas sao .jpg (760px, ~100 KB cada) — em .png davam 1,3 MB cada,
    10 MB so de cena, o que e inviavel no PC da escola. */
+/* ⚠️ O NOME DO MASCOTE, DECLARADO. Nao e enfeite: o `_qa/clone.py`
+   le esta linha de TODAS as atividades e reprova se o nome de um
+   mascote alheio aparecer no texto desta. Foi assim que "Quem vai voar
+   com o Nico hoje?" ficou na tela de entrada de outra atividade.      */
+var MASCOTE_NOME="Ará";
 var CENAS={nv_fundo:1,nv_horizonte:1,nv_caravela:1,nv_aldeia:1,nv_porao:1,nv_atlantico:1,nv_mapavelho:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
@@ -1270,7 +1275,7 @@ function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner bom sh
 /* ⚠️ estas cinco falas eram "vb_..." — da atividade dos VERBOS. Os MP3 nunca
    existiram nesta pasta, entao elogio() e consolo() estavam MUDOS nas 18 vezes
    em que o motor os chama. O app funcionava inteiro; so a crianca ficava sem a
-   voz do mascote justo quando errava. Agora sao as falas do Nico.             */
+   voz do mascote justo quando errava. Agora sao as falas do Ara.              */
 function elogio(){ var n=["nv_acerto1","nv_acerto2","nv_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?"nv_erro1":"nv_erro2"); }
 /* monta uma frase em palavras tocáveis; alvo = índice da palavra certa */
@@ -2737,10 +2742,10 @@ function telaCapa(){limpa();var t=el("div","tela");var c=el("div","centro");
   t.appendChild(c);app.appendChild(t);
   montaBarra(null,null);}
 function telaQuem(){limpa();var t=el("div","tela");var c=el("div","centro");
-  c.appendChild(el("div","balao","<b>Quem</b> vai voar com o Nico hoje?"));
+  c.appendChild(el("div","balao","<b>Quem</b> vai viajar com o Ar&#225; hoje?"));
   var inp=el("input","campo");inp.type="text";inp.placeholder="Escreva o seu nome";inp.maxLength=18;inp.value=perfil.nome||"";
   c.appendChild(inp);
-  c.appendChild(el("div","hint","Escolha o seu crach&#225; de cart&#243;grafo:"));
+  c.appendChild(el("div","hint","Escolha o seu crach&#225; de vigia do mar:"));
   var figs=el("div","figs"),lista=["nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6"],i;
   for(i=0;i<lista.length;i++){(function(n){
     var f=el("div","fig"+(perfil.fig===n?" sel":""));f.appendChild(imgEl(n));
@@ -2902,8 +2907,8 @@ function telaPainel(){
     h+="<tr><td>"+(CONCN[kk]||kk)+"</td><td>"+pct(DOM[kk])+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
-  h+="<div class='bloco'><b>Curr&#237;culo (Blumenau, 3&#186; ano &#8212; Geografia):</b> unidade <i>&#8220;Formas de representa&#231;&#227;o e pensamento espacial&#8221;</i>, objeto <i>&#8220;Representa&#231;&#245;es cartogr&#225;ficas em Blumenau&#8221;</i>: <i>&#8220;Identificar e interpretar imagens bidimensionais e tridimensionais em diferentes tipos de representa&#231;&#227;o cartogr&#225;fica&#8221;</i> e <i>&#8220;Reconhecer e elaborar legendas com s&#237;mbolos de diversos tipos de representa&#231;&#245;es em diferentes escalas cartogr&#225;ficas&#8221;</i>. Conte&#250;dos da mesma linha trabalhados aqui: maquete, mapa mental, roteiro escola&#8211;casa, rela&#231;&#245;es projetivas (direita/esquerda, frente/atr&#225;s) e a representa&#231;&#227;o do bairro.</div>";
-  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Ela subiu com o Nico e viu a mesma pra&#231;a virar mapa, escolheu a vista de cima de v&#225;rios objetos, achou no mapa o que estava na maquete, disse onde cada coisa fica, montou um roteiro com setas, leu e <b>montou a legenda</b> do pr&#243;prio mapa, comparou a sala, a escola, o bairro e a cidade, e marcou no mapa do bairro onde ficam os lugares.</div>";
+  h+="<div class='bloco'><b>Curr&#237;culo (Blumenau, 5&#186; ano &#8212; Hist&#243;ria):</b> unidade <i>&#8220;Povos e culturas: meu lugar no mundo e meu grupo social&#8221;</i>, objeto <i>&#8220;O que forma um povo&#8221;</i>: <i>&#8220;Identificar os processos de forma&#231;&#227;o das culturas e dos povos, relacionando-os com o espa&#231;o geogr&#225;fico ocupado&#8221;</i>, com o <i>&#8220;conceito de etnia&#8221;</i> e a <i>&#8220;trajet&#243;ria (perman&#234;ncias e transforma&#231;&#245;es) cultural dos grupos &#233;tnico-raciais de sua regi&#227;o e do estado de Santa Catarina&#8221;</i>; e a unidade <i>&#8220;Registros da hist&#243;ria&#8221;</i>: <i>&#8220;Inventariar os patrim&#244;nios materiais e imateriais da humanidade e analisar mudan&#231;as e perman&#234;ncias&#8221;</i> &#8212; que aqui &#233; a <b>l&#237;ngua</b>. As grandes navega&#231;&#245;es entram como o acontecimento que explica o encontro dos povos, n&#227;o como mat&#233;ria de 7&#186; ano (capit&#227;es, datas, Tordesilhas ficam de fora de prop&#243;sito).</div>";
+  h+="<div class='bloco'><b>Como ler:</b> a crian&#231;a n&#227;o fez prova. Ela descobriu, girando a vela, por que os navios passaram a <b>ir e voltar</b>; achou na cena a aldeia que <b>j&#225; estava aqui</b>; abriu o por&#227;o e ligou cada objeto ao que ele resolvia; p&#244;s a rota em ordem e usou a b&#250;ssola para dizer o lado; separou o que <b>j&#225; era daqui</b> do que <b>veio de l&#225;</b>; distribuiu as tr&#234;s ra&#237;zes do nosso povo; pintou num texto comum as palavras <b>tupi</b> e <b>africanas</b>; escreveu as palavras da viagem; encarou, no tamanho dela, o que a viagem <b>custou</b> a quem foi trazido &#224; for&#231;a; leu um mapa de 1500 com a lupa; e, no fim, <b>explicou com as pr&#243;prias palavras</b> o que forma um povo.</div>";
   h+="<p class='noprint'><button onclick='window.print()'>Imprimir</button> <button onclick='location.href=location.pathname'>Voltar ao jogo</button></p>";
   d.innerHTML=h;document.body.appendChild(d);
 }
