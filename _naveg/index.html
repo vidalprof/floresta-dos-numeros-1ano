@@ -673,8 +673,69 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* ⚠️ as duas tintas sao as DESTA atividade (tupi / africana). O motor veio
    com `sub`/`adj`, que sao substantivo e adjetivo da atividade de gramatica —
    resto de clone que nao dava erro nenhum e ficaria ali para sempre.        */
+/* ⭐ MARCA-TEXTO DE VERDADE (pedido do Marcos, ago/2026: *"a fase 'a lingua
+   guarda' pode ser um design mais bonito, moderno, sonoro, com comemoracao,
+   algo bem profissional"*). Era uma caixinha que trocava de cor. Agora:
+   a folha e uma PAGINA (papel com margem e linha-guia), a palavra pintada
+   recebe um TRAÇO DE CANETA que corre da esquerda para a direita (como um
+   marca-texto de verdade), fica em relevo e da um pulinho; no fim as palavras
+   achadas pulsam juntas e o carimbo da origem desce na pagina.
+   ⚠️ Tudo com queda para PC velho: quem nao entende `linear-gradient` recebe a
+   cor chapada da linha de cima, que ja era o visual antigo.               */
 .pal.pint.tupi{background:#cdf0bd;border-color:#3f9a26;color:#22540f}
 .pal.pint.afr{background:#ffe9a3;border-color:#e0a800;color:#5a4200}
+.paragrafo{position:relative;background:rgba(255,253,244,.97);
+  background:-webkit-linear-gradient(top,rgba(255,254,250,.99),rgba(252,246,229,.97));
+  background:linear-gradient(rgba(255,254,250,.99),rgba(252,246,229,.97));
+  border-color:#d9c9a4;text-align:left;padding:16px 14px 14px 20px}
+/* a margem vermelha do caderno */
+.paragrafo:before{content:"";position:absolute;left:11px;top:10px;bottom:10px;width:2px;
+  background:rgba(200,120,110,.45);border-radius:2px}
+.paragrafo .pal{position:relative;overflow:hidden;background:transparent;border:0;
+  border-radius:8px;padding:5px 7px;margin:2px 1px;font-size:17px;color:var(--texto);
+  -webkit-box-shadow:none;box-shadow:none;
+  -webkit-transition:-webkit-transform .18s;transition:transform .18s}
+.paragrafo .pal:active{-webkit-transform:scale(.94);transform:scale(.94)}
+/* o traco da caneta: corre por baixo da palavra da esquerda para a direita */
+.paragrafo .pal.pint{color:#22540f;font-weight:800;
+  -webkit-animation:palpulo .45s;animation:palpulo .45s}
+.paragrafo .pal.pint:before{content:"";position:absolute;left:0;top:8%;bottom:8%;width:100%;
+  border-radius:7px;z-index:-1;
+  -webkit-transform-origin:left center;transform-origin:left center;
+  -webkit-animation:tracocorre .38s ease-out;animation:tracocorre .38s ease-out}
+.paragrafo .pal.pint.tupi:before{background:#a8e884;
+  background:-webkit-linear-gradient(left,#8ce05a,#cdf0bd);background:linear-gradient(90deg,#8ce05a,#cdf0bd)}
+.paragrafo .pal.pint.afr:before{background:#ffd970;
+  background:-webkit-linear-gradient(left,#ffc93c,#ffe9a3);background:linear-gradient(90deg,#ffc93c,#ffe9a3)}
+.paragrafo .pal.pint.afr{color:#5a4200}
+@-webkit-keyframes tracocorre{0%{-webkit-transform:scaleX(0)}100%{-webkit-transform:scaleX(1)}}
+@keyframes tracocorre{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@-webkit-keyframes palpulo{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.16) rotate(-2deg)}100%{-webkit-transform:scale(1)}}
+@keyframes palpulo{0%{transform:scale(1)}45%{transform:scale(1.16) rotate(-2deg)}100%{transform:scale(1)}}
+/* a comemoracao: as palavras achadas pulsam juntas */
+.paragrafo.festa .pal.pint{-webkit-animation:palfesta .7s 2;animation:palfesta .7s 2}
+@-webkit-keyframes palfesta{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.13)}}
+@keyframes palfesta{0%,100%{transform:scale(1)}50%{transform:scale(1.13)}}
+/* o carimbo da origem, que desce na pagina no fim da rodada */
+.carimbo{position:absolute;left:50%;top:50%;z-index:5;padding:8px 20px;border-radius:10px;
+  font-size:19px;font-weight:800;letter-spacing:2px;color:#fff;white-space:nowrap;
+  -webkit-transform:translate(-50%,-50%) rotate(-9deg);transform:translate(-50%,-50%) rotate(-9deg);
+  -webkit-box-shadow:0 8px 20px rgba(30,25,10,.4);box-shadow:0 8px 20px rgba(30,25,10,.4);
+  -webkit-animation:carimba .5s;animation:carimba .5s}
+.carimbo.tupi{background:#3f9a26;border:3px solid #2c6b13}
+.carimbo.afr{background:#c98a00;border:3px solid #8f6200}
+@-webkit-keyframes carimba{0%{-webkit-transform:translate(-50%,-50%) rotate(-9deg) scale(2.4);opacity:0}
+  70%{-webkit-transform:translate(-50%,-50%) rotate(-9deg) scale(.92);opacity:1}
+  100%{-webkit-transform:translate(-50%,-50%) rotate(-9deg) scale(1);opacity:1}}
+@keyframes carimba{0%{transform:translate(-50%,-50%) rotate(-9deg) scale(2.4);opacity:0}
+  70%{transform:translate(-50%,-50%) rotate(-9deg) scale(.92);opacity:1}
+  100%{transform:translate(-50%,-50%) rotate(-9deg) scale(1);opacity:1}}
+/* a barrinha de quantas faltam, no lugar do "Faltam 3" seco */
+.marcabarra{width:100%;max-width:430px;height:10px;border-radius:99px;margin:8px auto 0;
+  background:rgba(255,253,244,.35);overflow:hidden}
+.marcabarra i{display:block;height:100%;width:0;border-radius:99px;background:#8ce05a;
+  -webkit-transition:width .4s ease;transition:width .4s ease}
+.marcabarra.afr i{background:#ffc93c}
 /* ORDENAR: o trilho da legenda, vaga numerada */
 .trilho{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;justify-content:center;
   -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin-top:12px;width:100%}
@@ -914,7 +975,14 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .nebbox{position:relative;width:100%;max-width:300px;margin:6px auto 0;border-radius:14px;overflow:hidden;
   border:3px solid #fffdf6;-webkit-box-shadow:0 6px 16px rgba(30,25,10,.32);box-shadow:0 6px 16px rgba(30,25,10,.32)}
 .nebbox .nbimg{width:100%;height:auto;display:block}
-.nebbox .neb{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(70,130,180,0);
+/* a coisa da palavra fica no meio do mar, e a mare sobe POR CIMA dela */
+.nebbox .nebobj{position:absolute;left:50%;top:50%;width:52%;max-width:150px;height:auto;
+  margin:-26% 0 0 -26%;z-index:2;display:block;
+  -webkit-filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));filter:drop-shadow(0 6px 12px rgba(0,0,0,.5));
+  -webkit-animation:bboia 3.4s ease-in-out infinite;animation:bboia 3.4s ease-in-out infinite}
+@-webkit-keyframes bboia{0%,100%{-webkit-transform:translateY(0) rotate(-2deg)}50%{-webkit-transform:translateY(-5px) rotate(2deg)}}
+@keyframes bboia{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-5px) rotate(2deg)}}
+.nebbox .neb{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(70,130,180,0);z-index:3;
   -webkit-transition:background .5s;transition:background .5s}
 .nebbox .nebtx{position:absolute;left:0;right:0;bottom:0;padding:5px;text-align:center;font-size:12px;
   font-weight:700;color:#fff;background:rgba(28,22,12,.72)}
@@ -1175,6 +1243,13 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
   border-radius:6px;border:1px solid #e0d6bd;
   -webkit-box-shadow:0 10px 24px rgba(30,25,10,.45);box-shadow:0 10px 24px rgba(30,25,10,.45)}
 .moldurafoto .fotoreal{width:100%;display:block;border-radius:2px}
+/* a figura do Aquecimento e uma ALCA de memoria, nao uma cena: pequena, para
+   as tres opcoes caberem junto na tela. */
+.moldurafoto.lembra{max-width:210px;padding:6px 6px 4px}
+.moldurafoto.lembra .fotoreal{max-height:132px;width:auto;margin:0 auto;
+  -o-object-fit:contain;object-fit:contain}
+@media (max-height:720px){ .moldurafoto.lembra{max-width:168px}
+  .moldurafoto.lembra .fotoreal{max-height:104px} }
 /* ⚠️ o credito da foto as vezes cai EM CIMA da imagem (a foto aerea real),
    e ali o fundo e escuro: cinza sobre marrom dava 1,35:1. Faixa clara propria
    atras do texto resolve nos dois lugares. */
@@ -2224,9 +2299,18 @@ function mVeioFoi(){
 /* ---------- 8) AQUECIMENTO (revisão espaçada) ----------
    Prática de recuperação no MEIO da atividade, não no fim: é o que fixa
    (Roediger; Bjork). Perguntas curtas do que ela já viu.                    */
-var AQUEC=[{p:"O que fez o navio conseguir <b>ir e voltar</b>?",o:["A vela que anda contra o vento","A coragem dos marinheiros","O tamanho do barco"],c:0,cn:"rota"},
-           {p:"Antes dos navios, esta terra&#8230;",o:["estava vazia","j&#225; tinha gente, casa e ro&#231;a","s&#243; tinha bichos"],c:1,cn:"povo"},
-           {p:"A mandioca &#233;&#8230;",o:["daqui, e foi para o mundo","de Portugal","da &#193;frica"],c:0,cn:"troca"}];
+/* ⚠️ o Marcos: *"na fase 'lembrando' deveriam haver imagens, nao, ao inves de
+   so texto?"*. Ele tem razao e o motivo e do metodo: o Aquecimento e PRATICA
+   DE RECUPERACAO — a crianca tem que puxar da memoria o que ela VIU. Tres
+   perguntas de texto puro nao dao gancho nenhum para puxar. Cada pergunta
+   agora traz a figura da propria coisa (a caravela, a aldeia, a mandioca),
+   toda ela ja da atividade: a imagem e a alca da lembranca.               */
+var AQUEC=[{p:"O que fez o navio conseguir <b>ir e voltar</b>?",im:"nv_vela2",
+            o:["A vela que anda contra o vento","A coragem dos marinheiros","O tamanho do barco"],c:0,cn:"rota"},
+           {p:"Antes dos navios, esta terra&#8230;",im:"nv_aldeia",
+            o:["estava vazia","j&#225; tinha gente, casa e ro&#231;a","s&#243; tinha bichos"],c:1,cn:"povo"},
+           {p:"A mandioca &#233;&#8230;",im:"nv_mandioca",
+            o:["daqui, e foi para o mundo","de Portugal","da &#193;frica"],c:0,cn:"troca"}];
 function mAquecimento(){
   var idx=0;
   function passo(){
@@ -2236,6 +2320,8 @@ function mAquecimento(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","LEMBRANDO&#8230;"));
     c.appendChild(el("div","balao",it.p)); falaDaTela("nv_aquec_q"+idx);
+    if(it.im){ var mo=el("div","moldurafoto lembra");
+      mo.appendChild(cenaImg(it.im,"fotoreal")); c.appendChild(mo); }
     var box=el("div","opts"),i;
     var ord=[],z; for(z=0;z<it.o.length;z++) ord.push(z);
     ord=baguncar(ord);
@@ -2318,10 +2404,16 @@ function mRaizes(){
    Patrimônio IMATERIAL (objetivo do 5º ano) e a prova viva do encontro: a
    criança fala tupi e banto todo dia sem saber. O medidor de erro é a maré
    subindo na praia — sem boneco enforcado.                                  */
-var FORCAP=[{p:"ABACAXI", d:"Fruta de casca dura e espinhos. O nome &#233; tupi: <b>&#225;-ka-ti</b>, fruta que cheira."},
-            {p:"PIPOCA",  d:"Milho que estoura no fogo. Do tupi <b>pi-poka</b>: pele que estala."},
-            {p:"DENDE",   d:"O &#243;leo alaranjado da comida baiana. A palavra veio da &#193;frica."},
-            {p:"CAFUNE",  d:"Aquele carinho de leve na cabe&#231;a. Tamb&#233;m veio da &#193;frica."}];
+/* ⚠️ o Marcos: *"na fase 'a palavra que ficou' fica sempre a mesma imagem,
+   deveria ser algo mais bonito daquele tempo trocando as imagens"*. Era o
+   mesmo horizonte de mar nas quatro rodadas. Agora cada palavra tem a SUA
+   coisa, e ela fica DENTRO do mar: a mare sobe por cima do abacaxi, da
+   pipoca, do dende — "a agua vai levar a palavra" deixou de ser so uma frase.
+   As quatro figuras sairam numa cartela so (1 chamada paga, pecas irmas).  */
+var FORCAP=[{p:"ABACAXI", im:"nv_abacaxi", d:"Fruta de casca dura e espinhos. O nome &#233; tupi: <b>&#225;-ka-ti</b>, fruta que cheira."},
+            {p:"PIPOCA",  im:"nv_pipoca",  d:"Milho que estoura no fogo. Do tupi <b>pi-poka</b>: pele que estala."},
+            {p:"DENDE",   im:"nv_dende",   d:"O &#243;leo alaranjado da comida baiana. A palavra veio da &#193;frica."},
+            {p:"CAFUNE",  im:"nv_cafune",  d:"Aquele carinho de leve na cabe&#231;a. Tamb&#233;m veio da &#193;frica."}];
 var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 var MARE=["a mar&#233; est&#225; baixa","a &#225;gua subiu um pouco","a &#225;gua chegou na areia",
           "a &#225;gua est&#225; nos p&#233;s do Ar&#225;","a &#225;gua vai levar a palavra"];
@@ -2335,6 +2427,7 @@ function mPalavra(){
     c.appendChild(el("div","balao",it.d)); falaDaTela("nv_palavra_q"+idx);
     var nb=el("div","nebbox");
     nb.appendChild(cenaImg("nv_horizonte","nbimg"));
+    if(it.im) nb.appendChild(imgEl(it.im,"nebobj"));   /* a coisa da palavra, no mar */
     var neb=el("div","neb"); nb.appendChild(neb);
     var ntx=el("div","nebtx",MARE[0]); nb.appendChild(ntx);
     c.appendChild(nb);
@@ -2412,7 +2505,13 @@ function mPinta(){
     c.appendChild(el("div","selo","A L&#205;NGUA GUARDA"));
     c.appendChild(el("div","balao","Pinte de "+it.rot+" "+it.tit+"."));
     falaDaTela("nv_pinta_q"+rodada);
+    var total=it.alvo.length;
     var cont=el("div","placar","Faltam "+falta);c.appendChild(cont);
+    var barra=el("div","marcabarra"+(it.cor==="afr"?" afr":""),"<i></i>");
+    c.appendChild(barra);
+    var barrai=barra.getElementsByTagName("i")[0];
+    /* som do marca-texto: um "risco" curto que sobe a cada palavra */
+    function sRisco(n){ tom(280+n*55,0.07,"sawtooth",0.05); tom(620+n*70,0.10,"triangle",0.09,0.03); }
     var par=el("div","paragrafo"),i;
     for(i=0;i<TXPAL.length;i++){(function(w){
       if(w==="."||w===","){ par.appendChild(el("span","pont",w)); return; }
@@ -2425,15 +2524,22 @@ function mPinta(){
            crianca teimosa) fica tocando na mesma palavra para sempre: a tela
            continua dizendo "e esta aqui" mesmo depois de ela ja estar feita. */
         if(ehAlvo){ p.className="pal pint "+it.cor; p.setAttribute("data-qa","0");
-          sPop(it.alvo.length-falta); falta--;
+          sRisco(total-falta); sPop(total-falta); falta--;
           cont.innerHTML= falta>0 ? "Faltam "+falta : "Achou todas!";
+          barrai.style.width=Math.round((total-falta)*100/total)+"%";
           var ce=centroTela(p); faisca(ce[0],ce[1],it.cor==="tupi"?"#6bd23f":"#ffd43b",8);
           if(falta<=0){ fim=true; sCerto(); reg("palavra",err===0,err+1);
+            /* COMEMORACAO: as palavras pulsam juntas e o carimbo da origem desce */
+            par.className="paragrafo festa";
+            var ca=el("div","carimbo "+it.cor, it.cor==="tupi"?"TUPI":"BANTO");
+            par.appendChild(ca);
+            sFesta(); festa();
+            var cp=centroTela(par); faisca(cp[0],cp[1],it.cor==="tupi"?"#8ce05a":"#ffc93c",20);
             setTimeout(function(){ rodada++;
               if(rodada>=PINTAR.length){ depoisDaFala("nv_pinta_revela",13000,function(){
                 mostraBanner("Nesse dia inteiro n&#227;o houve <b>uma</b> palavra vinda de Portugal. Voc&#234; fala as tr&#234;s l&#237;nguas.",mCruzada); }); }
               else passo();
-            },1200); }
+            },2100); }
         } else { err++; p.className="pal no"; sErro();
           setTimeout(function(){ if(p.className==="pal no") p.className="pal"; },520);
           if(err===2) consolo();
