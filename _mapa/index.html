@@ -3152,7 +3152,11 @@ function mRelampago(){
   function mostra(){
     if(i>=fila.length){ fechaFase("DESAFIO REL&#194;MPAGO","Voc&#234; fez <b>"+acertos+" de "+fila.length+"</b>. Vamos ao seu boletim!","mp_rel_revela",8000,mEnsinar,98); return; }
     var it=fila[i],resp=false;
-    bal.innerHTML=it[0]; falaDaTela("mp_rel_q"+i);
+    bal.innerHTML=it[0];
+    /* ⚠️ a fila e EMBARALHADA: o indice da RODADA nao e o da tabela. Sem isto a
+       voz lia a pergunta de outro item — exatamente o defeito que este portao
+       existe para pegar. */
+    falaDaTela("mp_rel_q"+RELM.indexOf(it));
     bal.setAttribute("data-qa",it[1]?"1":"0");
     box.innerHTML="";
     var pares=[["CERTO",1],["ERRADO",0]],z;
