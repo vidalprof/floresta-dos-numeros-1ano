@@ -316,6 +316,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    A cura e a largura em PORCENTAGEM: 1/9 da grade, sempre 9 por linha, em
    qualquer tela e em qualquer zoom. `flex:none` era justamente o que impedia. */
 .cquad{width:11.11%;-webkit-flex:0 0 11.11%;flex:0 0 11.11%;height:34px;background:var(--papel);border:2px solid var(--linha);border-radius:7px;text-align:center;line-height:31px;font-size:18px;font-weight:700;color:var(--texto)}
+.cquad.pisca{-webkit-animation:piscacel 1s infinite;animation:piscacel 1s infinite}
+@-webkit-keyframes piscacel{0%,100%{background:var(--papel)}50%{background:#ffd43b}}
+@keyframes piscacel{0%,100%{background:var(--papel)}50%{background:#ffd43b}}
 .cquad.cheio{background:#d8f5c6;border-color:var(--ok);color:#2c6b13;-webkit-animation:pop .25s;animation:pop .25s}
 /* ⚠️ ESTAS REGRAS NAO EXISTIAM — e era ESSE o "bugou" do caca-palavras. O JS
    punha `mark` ao tocar e `ok` ao completar a palavra, mas nenhuma das duas
@@ -3034,7 +3037,7 @@ function mCaca(){
       var li=Math.floor(Math.random()*N), co=Math.floor(Math.random()*N);
       if(cabe(p,li,co,dl,dc)){ var cel=[],k;
         for(k=0;k<p.length;k++){ g[li+dl*k][co+dc*k]=p.charAt(k); cel.push((li+dl*k)+"_"+(co+dc*k)); }
-        posicoes[p]=cel; onde[p]={r:li,c:co,n:p.length,h:hor}; posto=true; }
+        posicoes[p]=cel; onde[p]={r:li,c:co,n:p.length,h:hor,dl:dl,dc:dc}; posto=true; }
     }
   }
   for(i=0;i<N;i++) for(j=0;j<N;j++) if(!g[i][j]) g[i][j]=LET.charAt(Math.floor(Math.random()*LET.length));
@@ -3069,6 +3072,43 @@ function mCaca(){
   })(i,j);}
   /* uma celula conta para a conferencia se esta SELECIONADA (mark) ou ja
      CONQUISTADA por outra palavra (ok) — e isso que destrava as cruzadas */
+
+  /* ⭐ ANDAIME QUE CRESCE — NUM CACA-PALAVRAS ELE NAO PODE SER POR ERRO
+     (auditoria da progressao didatica, ago/2026). Aqui nao existe "errar":
+     a crianca marca letra e desmarca. O que existe e EMPACAR — e empacar
+     calado, sem ninguem perceber, e onde a crianca desiste.
+
+     Entao o andaime aqui cresce pelo TEMPO PARADO, nao pelo erro:
+       25s sem achar nada -> diz QUAL palavra procurar e em que direcao;
+       50s               -> acende a primeira letra dela.
+     O relogio zera a cada palavra achada.                                */
+  var paradaT=0,nivelAj=0;
+  function proxPal(){ var k;
+    for(k=0;k<CACAM.length;k++) if(!achadas[CACAM[k]]) return CACAM[k];
+    return null; }
+  function dirDe(p){ var o=onde[p];
+    if(!o) return "";
+    if(o.dl===0) return "deitada";
+    if(o.dc===0) return "em p&#233;";
+    return "na diagonal"; }
+  function relogioAjuda(){
+    if(paradaT) clearInterval(paradaT);
+    nivelAj=0;
+    paradaT=setInterval(function(){
+      var p=proxPal();
+      if(!p){ clearInterval(paradaT); return; }
+      nivelAj++;
+      if(nivelAj===1) mostraDica("Procure a palavra <b>"+p+"</b> &#8212; ela est&#225; "+dirDe(p)+".");
+      else if(nivelAj>=2){
+        var c0=posicoes[p][0];
+        if(cels[c0]&&cels[c0].className.indexOf("ok")<0){
+          cels[c0].className="cquad pisca";
+          mostraDica("A palavra <b>"+p+"</b> come&#231;a na letra que est&#225; piscando.");
+        }
+        clearInterval(paradaT);
+      }
+    },25000);
+  }
   function pega(id){ var cl=cels[id].className;
     return cl.indexOf("mark")>=0||cl.indexOf("ok")>=0; }
   function sAchou(){ var n=[659,784,988,1175,1568],z;
@@ -3109,6 +3149,7 @@ function mCaca(){
   c.appendChild(grade);
   c.appendChild(el("div","hint","Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
   t.appendChild(c);app.appendChild(t);
+  relogioAjuda();
   montaBarra("mp_caca_dica","As palavras est&#227;o deitadas ou em p&#233;.");
   falar("mp_caca_intro");
 }

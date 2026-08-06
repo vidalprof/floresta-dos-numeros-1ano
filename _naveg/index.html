@@ -302,6 +302,9 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    celula mede 100/N por cento com `box-sizing:border-box`, entao a grade fecha
    em QUALQUER tela e com qualquer N.                                       */
 .cquad{-webkit-box-sizing:border-box;box-sizing:border-box}
+.cquad.pisca{-webkit-animation:piscacel 1s infinite;animation:piscacel 1s infinite}
+@-webkit-keyframes piscacel{0%,100%{background:var(--papel)}50%{background:#ffd43b}}
+@keyframes piscacel{0%,100%{background:var(--papel)}50%{background:#ffd43b}}
 .cquad.cheio{background:#d8f5c6;border-color:var(--ok);color:#2c6b13;-webkit-animation:pop .25s;animation:pop .25s}
 .altofalante{width:120px;height:82px;margin-top:12px;background:var(--papel);border:2px solid var(--linha);border-bottom-width:5px;border-radius:18px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;-webkit-box-shadow:0 6px 14px rgba(50,40,20,.22);box-shadow:0 6px 14px rgba(50,40,20,.22)}
 .ondas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;align-items:center;gap:5px;height:44px}
@@ -2805,7 +2808,7 @@ function mCaca(){
       var li=Math.floor(Math.random()*N), co=Math.floor(Math.random()*N);
       if(cabe(p,li,co,dl,dc)){ var cel=[],k;
         for(k=0;k<p.length;k++){ g[li+dl*k][co+dc*k]=p.charAt(k); cel.push((li+dl*k)+"_"+(co+dc*k)); }
-        posicoes[p]=cel; onde[p]={r:li,c:co,n:p.length,h:hor}; posto=true; }
+        posicoes[p]=cel; onde[p]={r:li,c:co,n:p.length,h:hor,dl:dl,dc:dc}; posto=true; }
     }
   }
   for(i=0;i<N;i++) for(j=0;j<N;j++) if(!g[i][j]) g[i][j]=LET.charAt(Math.floor(Math.random()*LET.length));
@@ -2834,6 +2837,43 @@ function mCaca(){
     };
     grade.appendChild(q);
   })(i,j);}
+
+  /* ⭐ ANDAIME QUE CRESCE — NUM CACA-PALAVRAS ELE NAO PODE SER POR ERRO
+     (auditoria da progressao didatica, ago/2026). Aqui nao existe "errar":
+     a crianca marca letra e desmarca. O que existe e EMPACAR — e empacar
+     calado, sem ninguem perceber, e onde a crianca desiste.
+
+     Entao o andaime aqui cresce pelo TEMPO PARADO, nao pelo erro:
+       25s sem achar nada -> diz QUAL palavra procurar e em que direcao;
+       50s               -> acende a primeira letra dela.
+     O relogio zera a cada palavra achada.                                */
+  var paradaT=0,nivelAj=0;
+  function proxPal(){ var k;
+    for(k=0;k<CACAM.length;k++) if(!achadas[CACAM[k]]) return CACAM[k];
+    return null; }
+  function dirDe(p){ var o=onde[p];
+    if(!o) return "";
+    if(o.dl===0) return "deitada";
+    if(o.dc===0) return "em p&#233;";
+    return "na diagonal"; }
+  function relogioAjuda(){
+    if(paradaT) clearInterval(paradaT);
+    nivelAj=0;
+    paradaT=setInterval(function(){
+      var p=proxPal();
+      if(!p){ clearInterval(paradaT); return; }
+      nivelAj++;
+      if(nivelAj===1) mostraDica("Procure a palavra <b>"+p+"</b> &#8212; ela est&#225; "+dirDe(p)+".");
+      else if(nivelAj>=2){
+        var c0=posicoes[p][0];
+        if(cels[c0]&&cels[c0].className.indexOf("ok")<0){
+          cels[c0].className="cquad pisca";
+          mostraDica("A palavra <b>"+p+"</b> come&#231;a na letra que est&#225; piscando.");
+        }
+        clearInterval(paradaT);
+      }
+    },25000);
+  }
   function pega(id){ var cl=cels[id].className;
     return cl.indexOf("mark")>=0||cl.indexOf("ok")>=0; }
   function sAchou(){ var n=[659,784,988,1175,1568],z;
@@ -2857,7 +2897,7 @@ function mCaca(){
     for(p in posicoes){ if(!posicoes.hasOwnProperty(p)||achadas[p]) continue;
       todas=true;
       for(k=0;k<posicoes[p].length;k++) if(!pega(posicoes[p][k])) todas=false;
-      if(todas){ achadas[p]=1; comemora(p); reg("palavra",true,1);
+      if(todas){ achadas[p]=1; comemora(p); reg("palavra",true,1); relogioAjuda();
         n=0; for(k in posicoes) if(posicoes.hasOwnProperty(k)&&achadas[k]) n++;
         bal.innerHTML="J&#225; achou <b>"+n+"</b> de <b>"+CACAM.length+"</b>!";
       } }
