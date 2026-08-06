@@ -4572,3 +4572,22 @@ curl no github.io volta 403 pelo proxy). **Ficar re-disparando o build resolve**
 agora **pergunta ao site** — faz `curl` no index e em arquivos-chave, imprime o
 código HTTP de cada um e conta as marcas da versão nova dentro do index no ar.
 É a única resposta honesta sobre o que a criança está recebendo.
+
+## 🗓️ FILA COMBINADA COM O MARCOS (o que ficou agendado, por ordem)
+
+Ele mesmo mandou agendar. Fica escrito aqui porque eu começo cada sessão sem
+memória — e "agendar" só vale se o recado sobreviver ao reinício.
+
+1. **Ler TODAS as pesquisas registradas** — ordem dele (ago/2026): *"faça uma
+   leitura nos documentos das pesquisas que temos registrados, tanto as de
+   educação, quanto interatividades e neurociência do aprendizado"*. São 24
+   `PESQUISA-*.md` + `PEDAGOGIA-APRENDIZAGEM-CONCRETA`, `PEDAGOGIA-VYGOTSKY-
+   DINAMICAS`, `AUDITORIA-APRENDIZAGEM-E-DINAMICAS`, `NARRACAO-POR-IDADE`,
+   `MODELO-APRENDIZAGEM-EDUCAVERSO`, `CATALOGO-DINAMICAS-INTERATIVAS`.
+   **O produto da leitura não é um resumo:** é o `_padrao/RECEITA.md` §7 deixar
+   de ser índice e passar a responder por PERGUNTA de montagem ("como faço o
+   erro ensinar?", "quantos gestos?", "que som usar?"), com a fonte ao lado.
+   Pesquisa que não vira regra na hora de montar não muda atividade nenhuma.
+2. **Jardim do Broto** — tirar/corrigir o áudio dos enunciados que não fala o
+   mesmo que está escrito, e pôr alto-falante nas respostas (`op_<chave>.mp3`).
+   Ele pediu para deixar para depois das correções do 5º ano.
