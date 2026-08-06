@@ -4097,3 +4097,35 @@ só, a pergunta pôde voltar ao português natural: *"a ponte em cima do rio"*.
 Antes de usar uma cena numa fase de procurar, contar quantas vezes cada coisa
 pedida aparece nela. Se aparece mais de uma vez: ou muda o artigo, ou muda a
 figura — e mudar a figura é melhor.
+
+---
+
+## 🔊 "O BOTÃO FALA A CURIOSIDADE, NÃO A PERGUNTA" (ago/2026)
+
+O Marcos: *"na fase da maquete ao mapa, se clica no botão ao lado do enunciado
+ele não fala isso: fala da curiosidade lá embaixo. Aliás isso está acontecendo
+nas fases da atividade do terceiro ano"*.
+
+**A causa é uma armadilha de nome.** O motor guardava `falaAtual` = **o último
+áudio tocado**. E quem toca áudio numa fase não é só a tela: é o **elogio**, o
+**consolo**, a **dica** e o **post-it de curiosidade**. Bastava a criança abrir o
+"Você sabia?" para o botão do enunciado passar a repetir a curiosidade para
+sempre.
+
+**E o defeito era mais velho do que parecia:** o botão **"Ouvir de novo"**, que
+existe desde o começo, tinha exatamente o mesmo problema — só que ninguém o
+notava, porque ele fica longe do texto e é usado com menos frequência. O
+alto-falante no enunciado não criou o defeito: tornou impossível não vê-lo.
+
+**O conserto** é uma variável separada, `falaTela`, que só recebe narração **da
+tela**; as secundárias (`_cur_`, `_dica`, `_acerto`, `_erro`) não a alteram. Os
+dois botões passaram a repetir `falaTela`. Aplicado nas três atividades.
+
+**O portão: `_qa/voztela.py` (0d da banca).** Confere que existe `falaTela`, que
+`falar()` tem um GUARDA antes de gravar nela, e que nenhum botão de repetir lê
+`falaAtual` sozinho. Conferido contra o arquivo antigo: acusa os dois.
+
+**A lição que fica:** variável chamada "atual" quase sempre quer dizer "a última
+que passou por aqui" — e "a última que passou" raramente é "a que interessa".
+Quando um botão promete repetir ALGO ESPECÍFICO, ele precisa de uma variável que
+guarde **aquilo**, não de um histórico global.
