@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — mistério (investigação guiada)</title>
+<!-- ============================================================
+     PEÇA: MISTÉRIO / INVESTIGAÇÃO GUIADA  (copiada do _padrao/pecas/MOLDE.html)
+
+     O que a criança faz: COLETA PISTAS num lugar de cada vez, LEVANTA UMA
+     HIPÓTESE e dá o VEREDITO apontando em qual evidência se apoiou.
+
+     A armadilha desta mecânica, em uma linha (REGRAS-INTERATIVIDADE, linha
+     "Mistério / investigação"):
+       "mistério aberto demais, sem pista nem meta, frustra —
+        o erro tem que DAR MAIS PISTA, nunca punir".
+
+     Como isso virou código aqui:
+       · a META está sempre escrita ("Faltam 2 lugares para investigar") e a
+         PRÓXIMA PISTA está sempre visível: os três lugares ficam na tela o
+         tempo todo, nenhum é escondido atrás de adivinhação;
+       · quem já foi investigado ganha o sinal "\2713 anotado" (forma + palavra,
+         nunca só a cor) e sai do caminho;
+       · ERRAR NA HIPÓTESE ABRE UMA PISTA NOVA (o vetor EXTRAS) e mostra qual
+         evidência briga com aquela ideia — o andaime CRESCE em vez de punir;
+         no 3º erro a investigação revela e segue, para ninguém ficar preso;
+       · o VEREDITO só fecha quando ela aponta a evidência que sustenta a
+         conclusão — é a regra "o veredito exige apontar a evidência"
+         (linha "Investigar a fonte" da mesma tabela);
+       · cada distrator é derrubado por UMA pista específica, então nunca há
+         duas respostas defensáveis (armadilha das categorias que se sobrepõem);
+       · nada de emoji: os lugares e a cena são desenho (SVG embutido);
+       · `data-qa="1"` no que serve AGORA, para o auditor-jogador terminar;
+       · CADA TELA SE VIRA SOZINHA (`garanteCaso`): os portões de contraste e de
+         leiaute abrem cada tela do zero, sem passar pelas anteriores — tela que
+         depende de estado anterior estoura e derruba o portão inteiro.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: MISTÉRIO (investigação guiada) ---------------- */
+/* ⚠️ os 13px de folga em cima sao obrigatorios: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.cena{margin:13px auto 8px;max-width:250px;background:#3a2c20;border:3px solid #6b4b2a;
+      border-radius:16px;padding:6px}
+.cena svg{display:block;width:100%;height:auto}
+/* os tres lugares, lado a lado: com font-size:0 no pai some o espaco entre
+   os inline-block e as tres colunas fecham certinho em 320px. */
+.locs{display:block;margin-top:13px;font-size:0}
+.loc{display:inline-block;vertical-align:top;width:31.3%;max-width:150px;margin:0 1% 8px;
+     padding:7px 4px 6px;font-size:13px;line-height:1.2;min-height:80px}
+.loc svg{display:block;width:42px;height:42px;margin:0 auto 4px}
+/* ⚠️ "ja investigado" NUNCA e so cor: entra o sinal de visto e a palavra. */
+.loc.ok:after{content:"\2713 anotado";display:block;font-size:11px;font-weight:800;color:#1c3d0e}
+.quadro{margin:10px auto 0;max-width:430px;background:rgba(255,255,255,.10);
+        border:2px solid rgba(255,255,255,.22);border-radius:14px;padding:8px 10px;text-align:left}
+.qtit{font-size:13px;font-weight:800;letter-spacing:.4px;opacity:.9;margin-bottom:4px}
+.pist{font-size:14px;line-height:1.35;margin:5px 0;padding-left:16px;position:relative;color:#f4efe6}
+.pist:before{content:"\2022";position:absolute;left:3px;top:0;font-weight:800}
+.pist b{color:#ffe082}
+.pist.nova{background:rgba(255,224,130,.16);border-radius:8px;padding:4px 6px 4px 16px}
+.opt.fora{text-decoration:line-through;opacity:.6}
+.opt.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* janela baixa (projetor, PC da escola com barras): encolhe o miolo, nunca o
+   alvo de toque — o piso de 44px continua de pe. */
+@media (max-height:470px){
+  .cena{max-width:150px;margin-top:10px}
+  .balao{font-size:15px;padding:9px 13px}
+  .loc{min-height:70px;padding:5px 3px}
+  .loc svg{width:32px;height:32px}
+  .opt{min-height:44px;padding:9px 14px;margin:6px auto;font-size:15px}
+  .pist{font-size:13px;margin:3px 0}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* MISTÉRIO — coletar pistas, levantar a hipótese, dar o veredito apontando a
+   evidência. Trocar os quatro blocos abaixo adapta a peça a qualquer conteúdo:
+     CENA   = o desenho do caso     · PISTAS = os lugares que se investigam
+     EXTRAS = as pistas que o ERRO abre (nunca punir: dar mais pista)
+     HIP    = as hipóteses (cada distrator derrubado por UMA pista)
+     EVID   = o veredito: em qual evidência a conclusão se apoia            */
+
+/* --- desenhos (SVG embutido: sem arquivo externo, sem emoji) --- */
+var SVG_PLANTA=
+ "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 96'>"+
+ "<rect x='0' y='0' width='120' height='96' fill='#5b8fc7'/>"+
+ "<rect x='0' y='70' width='120' height='26' fill='#8a6a45'/>"+
+ "<polygon points='42,70 78,70 72,92 48,92' fill='#c0703f'/>"+
+ "<rect x='40' y='66' width='40' height='7' rx='2' fill='#d0834f'/>"+
+ "<path d='M60 68 C58 56 62 48 58 40' stroke='#5f8a3a' stroke-width='4' fill='none'/>"+
+ "<path d='M58 44 C46 42 40 50 36 56 C46 58 55 54 58 46 Z' fill='#7aa84a'/>"+
+ "<path d='M60 54 C72 54 78 62 80 68 C70 68 62 63 60 56 Z' fill='#6f9a43'/>"+
+ "<circle cx='100' cy='18' r='11' fill='#ffd54a'/>"+
+ "</svg>";
+var SVG_JANELA=
+ "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'>"+
+ "<rect x='6' y='6' width='36' height='36' rx='3' fill='#9fd0f0' stroke='#6b4b2a' stroke-width='4'/>"+
+ "<line x1='24' y1='6' x2='24' y2='42' stroke='#6b4b2a' stroke-width='4'/>"+
+ "<line x1='6' y1='24' x2='42' y2='24' stroke='#6b4b2a' stroke-width='4'/>"+
+ "<circle cx='33' cy='15' r='5' fill='#ffd54a'/></svg>";
+var SVG_VASO=
+ "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'>"+
+ "<polygon points='11,18 37,18 33,42 15,42' fill='#c0703f'/>"+
+ "<rect x='9' y='13' width='30' height='7' rx='2' fill='#d0834f'/>"+
+ "<rect x='13' y='20' width='22' height='7' fill='#6b4b2a'/>"+
+ "<line x1='16' y1='20' x2='18' y2='27' stroke='#3a2c20' stroke-width='2'/>"+
+ "<line x1='25' y1='20' x2='23' y2='27' stroke='#3a2c20' stroke-width='2'/>"+
+ "<line x1='31' y1='20' x2='33' y2='27' stroke='#3a2c20' stroke-width='2'/></svg>";
+var SVG_REGADOR=
+ "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'>"+
+ "<rect x='12' y='18' width='22' height='22' rx='4' fill='#7fa9c9' stroke='#3c5e78' stroke-width='3'/>"+
+ "<rect x='14' y='21' width='18' height='17' fill='#4fa3d8'/>"+
+ "<path d='M34 24 L44 18 L44 24 L36 30 Z' fill='#7fa9c9' stroke='#3c5e78' stroke-width='2'/>"+
+ "<path d='M16 18 C16 10 30 10 30 18' stroke='#3c5e78' stroke-width='3' fill='none'/></svg>";
+var SVG_LUPA=
+ "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 96'>"+
+ "<rect x='0' y='0' width='120' height='96' fill='#3f5f3a'/>"+
+ "<circle cx='52' cy='42' r='24' fill='#cfe8f7' stroke='#e0c060' stroke-width='6'/>"+
+ "<line x1='70' y1='60' x2='94' y2='84' stroke='#e0c060' stroke-width='9' stroke-linecap='round'/>"+
+ "<path d='M44 44 h16 M44 52 h10' stroke='#3f5f3a' stroke-width='4'/></svg>";
+
+var PISTAS=[
+  {k:"janela", nome:"A janela", svg:SVG_JANELA,
+   txt:"A cortina ficou <b>aberta</b>. O sol bateu na planta a semana inteira."},
+  {k:"vaso", nome:"O vaso", svg:SVG_VASO,
+   txt:"A terra está <b>seca e rachada</b>, até o fundo."},
+  {k:"regador", nome:"O regador", svg:SVG_REGADOR,
+   txt:"O regador continua <b>cheio até a boca</b>."}
+];
+/* o ERRO abre pista nova — este é o coração da mecânica */
+var EXTRAS=[
+  "No calendário da parede: <b>ninguém entrou</b> na sala por 7 dias.",
+  "As folhas estão <b>moles e enroladas</b>, sem manchas e sem bichos."
+];
+var HIP=[
+  {t:"A planta ficou <b>sem água</b>.", c:true},
+  {t:"A planta recebeu <b>água demais</b>.", c:false,
+   pq:"A pista do vaso briga com essa ideia: a terra está seca até o fundo. Água demais deixaria a terra encharcada."},
+  {t:"A planta ficou <b>no escuro</b>.", c:false,
+   pq:"A pista da janela briga com essa ideia: a cortina ficou aberta e o sol bateu nela a semana toda."}
+];
+var EVID=[
+  {t:"A terra está seca e rachada, até o fundo.", c:true},
+  {t:"A cortina ficou aberta e o sol bateu forte.", c:false,
+   pq:"Essa conta o que acontecia <b>ao redor</b> da planta. Eu quero a que fala da <b>terra</b>."},
+  {t:"O regador continua cheio até a boca.", c:false,
+   pq:"Essa mostra que <b>ninguém regou</b>. Eu quero a que fala da <b>terra</b>."}
+];
+
+var coletadas=[], extrasAbertas=0, errosSeg=0, respondida=false, telaAtual=null, cartoes=[];
+
+/* ⚠️ cada tela pode ser aberta SOZINHA (é o que os portões de contraste e de
+   leiaute fazem). Sem isto, telaVeredito() sem pista nenhuma montaria um
+   quadro vazio — e tela vazia derruba o portão inteiro. */
+function garanteCaso(){
+  if(!coletadas.length){ var i; for(i=0;i<PISTAS.length;i++) coletadas.push(PISTAS[i]); }
+}
+function achaPista(k){var i;for(i=0;i<PISTAS.length;i++)if(PISTAS[i].k===k)return PISTAS[i];return null;}
+function jaColetada(k){var i;for(i=0;i<coletadas.length;i++)if(coletadas[i].k===k)return true;return false;}
+
+/* ---------------- 1) O CASO ---------------- */
+function telaCaso(){
+  limpa();
+  coletadas=[]; extrasAbertas=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,6);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O CASO"));
+  c.appendChild(el("div","balao","A planta da sala <b>murchou</b> nas férias. O que aconteceu com ela?"));
+  var cn=el("div","cena",SVG_PLANTA); c.appendChild(cn);
+  c.appendChild(el("div","hint","Um investigador não adivinha: ele procura pistas."));
+  var b=el("button","btn","Começar a investigar");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){sTap();telaPistas();};
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+
+/* ---------------- 2) COLETAR AS PISTAS ---------------- */
+/* a META fica escrita e os tres lugares ficam a vista: nunca "mistério aberto
+   demais". A próxima pista está sempre a um toque de distância. */
+function telaPistas(){
+  limpa();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,6+Math.round(coletadas.length*18));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PISTAS: "+coletadas.length+" DE 3"));
+  c.appendChild(el("div","balao",textoMeta()));
+  var box=el("div","locs"), i, p, d;
+  cartoes=[];
+  for(i=0;i<PISTAS.length;i++){
+    p=PISTAS[i];
+    d=el("div","opt loc",p.svg+"<span>"+p.nome+"</span>");
+    d.pista=p;
+    if(jaColetada(p.k)){ d.className="opt loc ok"; d.setAttribute("data-qa","0"); }
+    else { d.setAttribute("data-qa","1"); d.onclick=investiga; }
+    box.appendChild(d); cartoes.push(d);
+  }
+  c.appendChild(box);
+  c.appendChild(quadroPistas());
+  if(coletadas.length>=PISTAS.length){
+    var b=el("button","btn","Já sei o que aconteceu");
+    b.setAttribute("data-qa","1");
+    b.onclick=function(){sTap();telaHipotese();};
+    c.appendChild(b);
+  }
+  t.appendChild(c); app.appendChild(t);
+}
+function textoMeta(){
+  var falta=PISTAS.length-coletadas.length;
+  if(falta<=0) return "Três pistas anotadas. Agora <b>o que você pensa</b> que aconteceu?";
+  if(falta===1) return "Falta <b>1 lugar</b> para investigar. Toque nele.";
+  return "Toque num lugar para investigar. Faltam <b>"+falta+" lugares</b>.";
+}
+function quadroPistas(){
+  var q=el("div","quadro"), i;
+  q.appendChild(el("div","qtit","CADERNO DE PISTAS"));
+  if(!coletadas.length) q.appendChild(el("div","pist","Ainda sem pistas. Comece por onde quiser."));
+  for(i=0;i<coletadas.length;i++) q.appendChild(el("div","pist",coletadas[i].txt));
+  for(i=0;i<extrasAbertas;i++) q.appendChild(el("div","pist nova",EXTRAS[i]));
+  return q;
+}
+function investiga(){
+  if(jaColetada(this.pista.k)) return;
+  sTap(); sCerto();
+  coletadas.push(this.pista);
+  telaPistas();
+}
+
+/* ---------------- 3) A HIPÓTESE ---------------- */
+function telaHipotese(){
+  limpa(); garanteCaso();
+  errosSeg=0; respondida=false; cartoes=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,62);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A HIPÓTESE"));
+  c.appendChild(el("div","balao","Com as pistas na mão: <b>o que você pensa</b> que aconteceu?"));
+  var lista=baguncar(HIP.slice(0)), i, b;
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++){
+    b=el("div","opt",lista[i].t);
+    b.hip=lista[i];
+    b.setAttribute("data-qa",lista[i].c?"1":"0");
+    b.onclick=escolheuHip;
+    cx.appendChild(b); cartoes.push(b);
+  }
+  c.appendChild(cx);
+  c.appendChild(quadroPistas());
+  t.appendChild(c); app.appendChild(t);
+}
+function escolheuHip(){
+  if(respondida) return;
+  sTap();
+  if(this.hip.c){ acertouHip(this); return; }
+  sErro(); errosSeg++;
+  this.className="opt no treme";
+  destreme(this);
+  /* ⚠️ AQUI MORA A REGRA DA MECÂNICA: o erro NÃO tira ponto, NÃO marca X e
+     NÃO diz "errou" — ele mostra a pista que briga com aquela ideia e ABRE
+     UMA PISTA NOVA. Investigar errado é investigar. */
+  if(errosSeg>=3){ revelaHip(); return; }
+  mostraDica(this.hip.pq+" "+(extrasAbertas<EXTRAS.length?"Achei mais uma pista para você:":"Olhe o caderno de novo."));
+  if(extrasAbertas<EXTRAS.length){ extrasAbertas++; repintaQuadro(); }
+  this.className="opt fora";
+}
+function acertouHip(b){
+  respondida=true;
+  b.className="opt ok";
+  sCerto(); apagaDica();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    mostraBanner("Boa hipótese! Agora <b>prove</b> com uma pista.",telaVeredito);
+  },700);
+}
+function revelaHip(){
+  var i;
+  for(i=0;i<cartoes.length;i++) if(cartoes[i].hip&&cartoes[i].hip.c){
+    mostraDica("Olhe esta: as pistas apontam para <b>a falta de água</b>.");
+    acertouHip(cartoes[i]); return;
+  }
+}
+
+/* ---------------- 4) O VEREDITO (apontar a evidência) ---------------- */
+function telaVeredito(){
+  limpa(); garanteCaso();
+  errosSeg=0; respondida=false; cartoes=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,84);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O VEREDITO"));
+  c.appendChild(el("div","balao","Você disse: <b>faltou água</b>. Qual pista mostra que <b>a terra</b> ficou sem água?"));
+  var lista=baguncar(EVID.slice(0)), i, b;
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++){
+    b=el("div","opt",lista[i].t);
+    b.ev=lista[i];
+    b.setAttribute("data-qa",lista[i].c?"1":"0");
+    b.onclick=escolheuEv;
+    cx.appendChild(b); cartoes.push(b);
+  }
+  c.appendChild(cx);
+  c.appendChild(el("div","hint","Um veredito sem prova não vale: aponte a pista."));
+  t.appendChild(c); app.appendChild(t);
+}
+function escolheuEv(){
+  if(respondida) return;
+  sTap();
+  if(this.ev.c){
+    respondida=true;
+    this.className="opt ok";
+    sCerto(); apagaDica();
+    setTimeout(function(){
+      if(!telaAtual||!telaAtual.parentNode) return;
+      mostraBanner("Caso resolvido <b>com prova</b> na mão!",telaFim);
+    },700);
+    return;
+  }
+  sErro(); errosSeg++;
+  this.className="opt no treme";
+  destreme(this);
+  if(errosSeg>=3){ revelaEv(); return; }
+  mostraDica(this.ev.pq);
+  this.className="opt fora";
+}
+function revelaEv(){
+  var i;
+  for(i=0;i<cartoes.length;i++) if(cartoes[i].ev&&cartoes[i].ev.c){
+    mostraDica("A prova é esta: <b>a terra seca até o fundo</b>.");
+    cartoes[i].className="opt ok";
+    respondida=true; sCerto();
+    setTimeout(function(){
+      if(!telaAtual||!telaAtual.parentNode) return;
+      mostraBanner("Caso resolvido <b>com prova</b> na mão!",telaFim);
+    },900);
+    return;
+  }
+}
+
+/* ---------------- 5) O FIM (medalha + gancho) ---------------- */
+function telaFim(){
+  limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CASO ENCERRADO"));
+  c.appendChild(el("div","medal","PROVA"));
+  c.appendChild(el("div","balao","Você achou as pistas, pensou uma hipótese e <b>provou</b> com uma delas."));
+  var cn=el("div","cena",SVG_LUPA); c.appendChild(cn);
+  /* fecho com gancho: a atividade termina deixando uma pergunta aberta */
+  c.appendChild(el("div","hint","E se a terra estivesse <b>encharcada</b> e a planta murchasse do mesmo jeito? Que pista você procuraria primeiro?"));
+  var b=el("button","btn","Investigar de novo");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){sTap();telaCaso();};
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+
+/* ---------------- apoio ---------------- */
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("ok")<0&&b.className.indexOf("fora")<0) b.className="opt no";
+  },340);
+}
+function repintaQuadro(){
+  var velho=app.querySelector(".quadro");
+  if(!velho||!velho.parentNode) return;
+  velho.parentNode.replaceChild(quadroPistas(),velho);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+telaCaso();
+</script>
+</body></html>
