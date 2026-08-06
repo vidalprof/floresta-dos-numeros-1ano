@@ -99,9 +99,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    cor por `background`. A SOMBRA e o MESMO desenho com a classe `som`: a
    regra abaixo troca a cor de TODA parte por escuro. Assim a silhueta nao
    pode "desencontrar" da figura — e a mesma forma, so preenchida.
-   ⚠️ nao escrever aqui a palavra que o _qa/dinamicas.py usa para reconhecer
-   o marca-texto: comentario de CSS entra na conta do portao e ele passa a
-   cobrar de uma peca as armadilhas de OUTRA mecanica.                    */
+   ⚠️ CUIDADO COM O QUE SE ESCREVE NOS COMENTARIOS: o _qa/dinamicas.py
+   reconhece a mecanica procurando palavras no CSS, e ele NAO separa
+   comentario de regra. Uma palavra solta aqui dentro faz o portao cobrar
+   desta peca as armadilhas de uma mecanica que ela nem tem — aviso falso
+   custa caro, faz a gente desconfiar do que esta certo.                  */
 .fig{position:relative;display:block;width:100%;height:100%}
 .pt{position:absolute}
 .som .pt{background:#1c1610}

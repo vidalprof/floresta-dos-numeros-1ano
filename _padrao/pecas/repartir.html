@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — repartir em partes iguais</title>
+<!-- ============================================================
+     PEÇA: REPARTIR EM PARTES IGUAIS (a fração como divisão justa)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     DE ONDE VEIO: a fase "CORTE A BANDEJA" da Doceria. Lá o corte servia para
+     partir uma multiplicação difícil em duas fáceis. Aqui a mecânica foi
+     separada daquele conteúdo e virou o que o gesto é por si só: CORTAR EM
+     PARTES IGUAIS e DAR UMA PARA CADA — que é a divisão justa, e é de onde a
+     fração nasce.
+
+     POR QUE ELA NÃO É UM QUIZ: a criança não escolhe "1/2, 1/3 ou 1/4" numa
+     lista. Ela CORTA a fita (e vê as partes se reorganizarem), olha se
+     ficaram iguais, e entrega uma parte para cada prato. O nome da fração
+     ("metade", "um terço") aparece POR ÚLTIMO, depois que ela já repartiu —
+     o problema primeiro, o conceito no fim.
+
+     ⭐ AS PARTES SAEM IGUAIS DE VERDADE — CALCULADAS, NÃO DESENHADAS.
+     A fita tem um número inteiro de pedacinhos (8 ou 12). Cada parte recebe
+     `piso(pedacinhos/partes)` e o resto é espalhado uma unidade por vez. Com
+     isso: (a) quando o corte fecha certo, as partes são EXATAMENTE do mesmo
+     tamanho, porque a largura é calculada em porcentagem a partir da contagem
+     de pedacinhos, nunca "no olho"; (b) quando NÃO fecha, a desigualdade
+     aparece na tela — e é justamente aí que a criança vê que "repartir" e
+     "cortar em qualquer lugar" não são a mesma coisa.
+
+     ARMADILHAS QUE ESTA PEÇA FECHA:
+       · a fita mostra os PEDACINHOS (linhas tracejadas) — a criança conta,
+         não confia no tamanho aparente; nada essencial só na cor;
+       · dá para VOLTAR ATRÁS (juntar um corte) — quem se enganou não fica
+         presa olhando para o próprio erro;
+       · entregar as partes tem TRÊS caminhos: arrastar com o mouse, arrastar
+         com o dedo e o TOQUE SIMPLES (tocar a parte e depois o prato);
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular) —
+         ele mora só no `touchmove`, e só depois que o dedo ANDOU;
+       · guarda `ultimoToque` contra o clique FANTASMA que o celular dispara
+         depois do toque (defeito pego DUAS vezes pelo Marcos);
+       · nunca trava: depois de muitas mexidas o corte se ajeita sozinho;
+       · `data-qa` na parte E no prato (a mesma chave), que é como o
+         auditor-jogador fecha a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ margem PROPRIA em cima: a regra `.balao + *` tem a mesma forca e perde por
+   vir ANTES no arquivo — sem isto a fita nasce COLADA no enunciado (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.fita{max-width:300px;height:58px;margin:13px auto 0;font-size:0;cursor:pointer;
+      padding:3px;border-radius:12px;background:rgba(255,255,255,.12)}
+/* A PARTE. A largura vem da CONTA (pedacinhos da parte / pedacinhos da fita),
+   nunca do olho — e box-sizing:border-box faz as bordas caberem dentro, entao
+   N partes iguais somam exatamente 100%. */
+.tira{position:relative;display:inline-block;vertical-align:top;height:100%;
+      border:3px solid #6b4a2f;border-radius:9px;background:#e7c58c;overflow:hidden}
+.tira.certa{border-color:#1f6b12;background:#e2f0c8}
+.uns{position:absolute;left:0;top:0;right:0;bottom:0;font-size:0}
+.umped{display:inline-block;height:100%;border-right:1px dashed rgba(51,40,10,.5)}
+.tnum{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:19px;font-weight:800;
+      color:#33280a;line-height:26px;text-align:center}
+/* o placar do corte: numeros E palavras, nunca so a cor */
+.mstat{max-width:430px;margin:9px auto 0;font-size:16px;font-weight:700;line-height:1.3}
+.mstat b{color:#ffd54a}
+.mstat.igual b{color:#a8e88f}
+.mbts{display:block;text-align:center;margin-top:9px}
+.mbts .btn{margin:0 5px}
+.btn.fraco{background:#d9cdb4;box-shadow:0 4px 0 #a8997c}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+
+/* ---- ETAPA 2: dar uma parte para cada prato ---- */
+.banco{display:block;text-align:center;margin-top:12px;min-height:56px}
+.pc{position:relative;display:inline-block;vertical-align:top;height:52px;min-width:56px;
+    margin:4px 5px;padding:0 8px;border:3px solid #6b4a2f;border-radius:9px;background:#e7c58c;
+    color:#33280a;font-size:19px;font-weight:800;line-height:46px;cursor:pointer;
+    box-shadow:0 4px 0 #4a3218;-webkit-user-select:none;user-select:none}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #4a3218}
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+.pc.usada{visibility:hidden;pointer-events:none}
+.pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
+.pratos{display:block;text-align:center;margin-top:10px}
+.cam{position:relative;display:inline-block;vertical-align:top;width:84px;height:60px;margin:5px 4px;
+     border:3px dashed #cbbfa6;border-radius:50%/44%;background:rgba(255,255,255,.14);cursor:pointer}
+.cam.livre{border-color:#fff3c9;background:rgba(255,255,255,.24)}
+.cam.alvo{border-style:solid;border-color:#e8a020;background:rgba(255,213,74,.5);
+          box-shadow:0 0 0 4px rgba(255,213,74,.5)}
+.cam.ok{border-style:solid;border-color:#59c24b;background:rgba(89,194,75,.22);cursor:default}
+.pnome{position:absolute;left:0;right:0;bottom:3px;font-size:10px;font-weight:800;letter-spacing:.5px;
+       color:#f4efe6;line-height:1}
+.cam.ok .pnome{color:#eaf7e2}
+.posta{position:absolute;left:8px;right:8px;top:9px;height:26px;border:3px solid #1f6b12;
+       border-radius:7px;background:#e2f0c8;color:#22300f;font-size:15px;font-weight:800;line-height:20px}
+/* a sombra que segue o dedo/o mouse. pointer-events:none para nao roubar o
+   hit-test de quem esta embaixo (senao o prato nunca acenderia). */
+.somb{position:fixed;width:64px;height:44px;border:3px solid #6b4a2f;border-radius:9px;
+      background:#e7c58c;color:#33280a;font-size:18px;font-weight:800;line-height:38px;text-align:center;
+      pointer-events:none;z-index:60;
+      -webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): tudo encolhe JUNTO para que
+   nada que se toca saia da area visivel. */
+@media(max-height:520px){
+  .fita{height:48px}
+  .tnum{font-size:17px}
+  .pc{height:46px;line-height:40px}
+  .cam{width:76px;height:52px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* AS RODADAS. `un` = quantos pedacinhos a fita tem; `n` = quantos vão repartir.
+   `un` sempre divisível por `n`, senão não existe divisão justa. O NOME da
+   fração vem por último, na hora do fecho — nunca antes.                    */
+var RODADAS=[
+  {un:8,  n:2, nome:"a <b>metade</b>",     selo:"REPARTIR IGUAL"},
+  {un:12, n:3, nome:"<b>um ter&#231;o</b>",     selo:"REPARTIR IGUAL"},
+  {un:12, n:4, nome:"<b>um quarto</b>",    selo:"REPARTIR IGUAL"}
+];
+var MAXP=6;   /* teto de cortes: abaixo disso a parte fica pequena de tocar */
+
+var DICAS=[
+  "Conte os pratos e corte a fita nesse mesmo tanto de partes.",
+  "Olhe o placar: ele diz quantas partes voc&#234; j&#225; tem.",
+  "Deixa comigo: eu ajeito o corte e voc&#234; reparte."
+];
+
+var idxR=0, partes=1, etapa=1, mexidas=0, entregues=0, ger=0;
+var telaAtual=null, barraP=null, elFita=null, elStat=null, elBts=null, elBanco=null, elPratos=null;
+var btCorta=null, btJunta=null, pecas=[], vagas=[], marcada=null;
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles desmarcavam a
+   parte que a criança tinha acabado de escolher. Pego DUAS vezes.         */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function rodada(){ return RODADAS[idxR]; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function sCorte(){ nota(1500,.03,.10,"square",0); nota(700,.05,.09,"square",.03); }
+
+/* ⭐ O TAMANHO DE CADA PARTE, CALCULADO — nunca desenhado à mão.
+   piso(un/p) para todas e o resto espalhado de uma em uma. Quando `p` divide
+   `un`, todas saem EXATAMENTE iguais; quando não divide, a diferença aparece
+   na tela, que é a lição.                                                  */
+function tamanhos(un,p){
+  var base=Math.floor(un/p), resto=un-base*p, a=[], i;
+  for(i=0;i<p;i++) a.push(base+(i<resto?1:0));
+  return a;
+}
+function todasIguais(a){
+  var i;
+  for(i=1;i<a.length;i++) if(a[i]!==a[0]) return false;
+  return true;
+}
+
+/* ---------------------------------------------------------- a tela */
+function pecaRepartir(){
+  ger++; limpa(); soltaSombra();
+  partes=1; etapa=1; mexidas=0; entregues=0; marcada=null; pecas=[]; vagas=[];
+  var r=rodada();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(idxR*100/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",r.selo));
+  c.appendChild(el("div","balao","S&#227;o <b>"+r.n+" pratos</b> e uma fita s&#243;. Corte a fita em partes <b>iguais</b>."));
+
+  elFita=el("div","fita");
+  elFita.onclick=function(){ corta(); };
+  c.appendChild(elFita);
+
+  elStat=el("div","mstat","");
+  c.appendChild(elStat);
+
+  elBts=el("div","mbts");
+  btCorta=el("button","btn","Cortar");
+  btCorta.onclick=function(){ corta(); };
+  btJunta=el("button","btn fraco","Juntar");
+  btJunta.onclick=function(){ junta(); };
+  elBts.appendChild(btCorta); elBts.appendChild(btJunta);
+  c.appendChild(elBts);
+
+  elBanco=el("div","banco","");
+  elPratos=el("div","pratos","");
+  c.appendChild(elBanco); c.appendChild(elPratos);
+
+  c.appendChild(el("div","hint","Toque na fita (ou no bot&#227;o) para cortar. D&#225; para juntar de volta."));
+  t.appendChild(c); app.appendChild(t);
+  elBanco.style.display="none"; elPratos.style.display="none";
+  desenhaFita();
+}
+
+/* ---------------------------------------------------- ETAPA 1: cortar */
+function desenhaFita(){
+  var r=rodada(), tam=tamanhos(r.un,partes), igual=todasIguais(tam), i, j, tr, uns, u;
+  elFita.innerHTML="";
+  for(i=0;i<tam.length;i++){
+    tr=el("div","tira"+(igual&&partes===r.n?" certa":""));
+    tr.style.width=(tam[i]*100/r.un)+"%";
+    uns=el("div","uns");
+    for(j=0;j<tam[i];j++){
+      u=el("i","umped","");
+      u.style.width=(100/tam[i])+"%";
+      uns.appendChild(u);
+    }
+    tr.appendChild(uns);
+    tr.appendChild(el("div","tnum",""+tam[i]));
+    elFita.appendChild(tr);
+  }
+  if(partes===1){
+    elStat.className="mstat";
+    elStat.innerHTML="A fita est&#225; inteira: <b>"+r.un+"</b> pedacinhos.";
+  } else if(igual){
+    elStat.className="mstat igual";
+    elStat.innerHTML="<b>"+partes+"</b> partes <b>IGUAIS</b>, de <b>"+tam[0]+"</b> pedacinhos cada.";
+  } else {
+    elStat.className="mstat";
+    elStat.innerHTML="<b>"+partes+"</b> partes, mas <b>desiguais</b>: umas com "+
+                     Math.max.apply(null,tam)+" e outras com "+Math.min.apply(null,tam)+".";
+  }
+  btCorta.style.visibility=(partes<Math.min(MAXP,r.un))?"visible":"hidden";
+  btJunta.style.visibility=(partes>1)?"visible":"hidden";
+  /* ⭐ data-qa="1" no botão que serve AGORA — só para o auditor-jogador. */
+  if(partes<r.n){ btCorta.setAttribute("data-qa","1"); btJunta.removeAttribute("data-qa"); }
+  else if(partes>r.n){ btJunta.setAttribute("data-qa","1"); btCorta.removeAttribute("data-qa"); }
+  else { btCorta.removeAttribute("data-qa"); btJunta.removeAttribute("data-qa"); }
+}
+function corta(){
+  var r=rodada();
+  if(etapa!==1) return;
+  if(partes>=Math.min(MAXP,r.un)){ sErro(); mostraDica("A fita j&#225; est&#225; bem picada. Tente <b>juntar</b> e recomear."); return; }
+  partes++; mexidas++; sCorte(); desenhaFita(); confere();
+}
+function junta(){
+  if(etapa!==1) return;
+  if(partes<=1){ sErro(); return; }
+  partes--; mexidas++; sTap(); desenhaFita(); confere();
+}
+function confere(){
+  var r=rodada(), g=ger;
+  if(partes===r.n&&todasIguais(tamanhos(r.un,partes))){
+    sCerto(); apagaDica();
+    setTimeout(function(){ if(g!==ger||!viva()) return; etapaDois(); },700);
+    return;
+  }
+  /* NUNCA TRAVA: depois de muita mexida o corte se ajeita sozinho. */
+  if(mexidas===4) mostraDica(DICAS[0]);
+  else if(mexidas===7) mostraDica(DICAS[1]);
+  else if(mexidas>=10){
+    mostraDica(DICAS[2]);
+    partes=r.n; desenhaFita();
+    setTimeout(function(){ if(g!==ger||!viva()) return; confere(); },300);
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* ------------------------------------------- ETAPA 2: uma para cada prato */
+function etapaDois(){
+  var r=rodada(), tam=tamanhos(r.un,partes), i, p, v;
+  etapa=2; marcada=null; entregues=0; pecas=[]; vagas=[];
+  elFita.style.display="none";
+  elBts.style.display="none";
+  elFita.onclick=null;
+  elStat.className="mstat igual";
+  elStat.innerHTML="<b>"+r.n+"</b> partes iguais, de <b>"+tam[0]+"</b> pedacinhos. Agora d&#234; <b>uma para cada</b>.";
+  var bal=telaAtual.getElementsByClassName("balao")[0];
+  if(bal) bal.innerHTML="Cada prato leva <b>uma parte</b> &#8212; nem mais, nem menos.";
+  elBanco.style.display="block"; elPratos.style.display="block";
+  elBanco.innerHTML=""; elPratos.innerHTML="";
+  for(i=0;i<r.n;i++){
+    p=fazParte(tam[i]);
+    elBanco.appendChild(p); pecas.push(p);
+    v=el("div","cam");
+    v.appendChild(el("i","pnome","PRATO "+(i+1)));
+    v.onclick=cliqueVaga;
+    elPratos.appendChild(v); vagas.push(v);
+  }
+  reindexa();
+}
+function fazParte(tam){
+  var b=el("div","pc",""+tam);
+  b._t=tam;
+  b.onclick=cliquePeca;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+  return b;
+}
+/* ⭐ a MESMA chave na parte livre e no prato livre. Como todas as partes são
+   iguais, qualquer uma serve em qualquer prato; a chave é recalculada a cada
+   entrega só para o auditor-jogador (_qa/jogador.js) conseguir fechar.     */
+function reindexa(){
+  var i, k=0;
+  for(i=0;i<pecas.length;i++){
+    if(temClasse(pecas[i],"usada")) pecas[i].removeAttribute("data-qa");
+    else { k++; pecas[i].setAttribute("data-qa",""+k); }
+  }
+  k=0;
+  for(i=0;i<vagas.length;i++){
+    if(temClasse(vagas[i],"ok")) vagas[i].removeAttribute("data-qa");
+    else { k++; vagas[i].setAttribute("data-qa",""+k); }
+  }
+}
+
+/* ---------- as TRÊS portas de entrada ----------
+   ⚠️ os tratadores de toque sao FUNCOES COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular e a
+   armadilha nº1 desta mecanica). Ele mora so no `touchmove`, e so depois que
+   o dedo ANDOU de verdade. */
+function cliquePeca(){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no touchend */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();  /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) escolhe(alvo);    /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(souDedo()) return; if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+function pegaEm(b,x,y){
+  if(!b||temClasse(b,"usada")) return;
+  pego=b; px0=x; py0=y; moveu=false;
+}
+function moveEm(x,y){
+  if(!pego) return;
+  if(!moveu){
+    if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
+    moveu=true; sTap(); escolhe(pego);
+    somb=el("div","somb",""+pego._t);
+    document.body.appendChild(somb);
+  }
+  somb.style.left=(x-32)+"px"; somb.style.top=(y-22)+"px";
+  acendeSob(x,y);
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b||!arrastou) return;
+  fimArrasto=agora();
+  var v=vagaSob(x,y);
+  if(v) poe(b,v);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  apagaAceso();
+}
+function vagaSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&e.nodeType===1&&n<6){
+    if(temClasse(e,"cam")&&!temClasse(e,"ok")) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+/* ⭐ O PRATO ACENDE QUANDO A PARTE PASSA POR CIMA: a criança precisa saber
+   onde pode soltar ANTES de soltar. */
+function acendeSob(x,y){
+  var v=vagaSob(x,y), i;
+  for(i=0;i<vagas.length;i++){
+    if(temClasse(vagas[i],"ok")) continue;
+    vagas[i].className=(vagas[i]===v)?"cam alvo":"cam livre";
+  }
+}
+function apagaAceso(){
+  var i;
+  for(i=0;i<vagas.length;i++){
+    if(temClasse(vagas[i],"ok")) continue;
+    vagas[i].className=marcada?"cam livre":"cam";
+  }
+}
+function escolhe(b){
+  if(!b||temClasse(b,"usada")) return;
+  var i;
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+}
+function cliqueVaga(){
+  if(cliqueDeArrasto()) return;
+  if(souDedo()&&!marcada) return;
+  if(temClasse(this,"ok")) return;
+  if(!marcada){ mostraDica("Primeiro toque numa <b>parte</b>. Depois toque no prato."); return; }
+  poe(marcada,this);
+}
+/* Todas as partes são iguais, então qualquer uma serve em qualquer prato
+   vazio: aqui não existe "resposta errada" — existe prato já servido, e ele
+   apenas devolve a parte com um som curto e uma dica.                      */
+function poe(b,v){
+  if(!b||!v||temClasse(b,"usada")) return;
+  if(temClasse(v,"ok")){
+    sErro(); b.className="pc treme"; destreme(b);
+    mostraDica("Esse prato j&#225; tem a parte dele. Cada um leva <b>uma</b>.");
+    return;
+  }
+  v.className="cam ok";
+  v.innerHTML="";
+  v.appendChild(el("div","posta",""+b._t));
+  v.appendChild(el("i","pnome","SERVIDO"));
+  b.className="pc usada";
+  marcada=null;
+  sCerto();
+  entregues++;
+  apagaDica(); apagaAceso(); reindexa();
+  if(barraP) barraP.style.width=Math.round((idxR*rodada().n+entregues)*100/(RODADAS.length*rodada().n))+"%";
+  if(entregues>=rodada().n) fechaRodada();
+}
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+  },340);
+}
+
+function fechaRodada(){
+  var g=ger, r=rodada(), cada=Math.round(r.un/r.n);
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    idxR++;
+    var msg="Cada um levou <b>"+cada+"</b> de <b>"+r.un+"</b> pedacinhos &#8212; isso &#233; "+r.nome+" da fita.";
+    if(idxR>=RODADAS.length) mostraBanner(msg,fimDaPeca);
+    else mostraBanner(msg,pecaRepartir);
+  },560);
+}
+
+function fimDaPeca(){
+  ger++; limpa(); soltaSombra();
+  etapa=0; marcada=null; pecas=[]; vagas=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; repartiu a fita em <b>2</b>, em <b>3</b> e em <b>4</b> partes iguais."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ idxR=0; pecaRepartir(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a REPARTIR: cortar igual e dar uma para cada."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaRepartir();
+</script>
+</body></html>

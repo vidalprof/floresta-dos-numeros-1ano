@@ -246,8 +246,8 @@ function pecaExperimento(){
   /* cabeçalho: os dois vasos, do mesmo tamanho — antes do teste ninguém sabe */
   var cab=el("div","cab");
   cab.appendChild(el("div","rot",""));
-  cab.appendChild(colunaVaso("VASO A",26,2));
-  cab.appendChild(colunaVaso("VASO B",26,2));
+  cab.appendChild(colunaVaso("VASO A",26,2,52));
+  cab.appendChild(colunaVaso("VASO B",26,2,52));
   c.appendChild(cab);
 
   for(i=0;i<VARS.length;i++) c.appendChild(linhaVar(VARS[i]));
@@ -270,13 +270,25 @@ function pecaExperimento(){
   confere();
 }
 
-function colunaVaso(nome,alt,folhas){
+/* px = a ALTURA da caixa da planta; a largura sai da proporção do desenho
+   (44x60), senão a planta estica e fica torta. */
+function colunaVaso(nome,alt,folhas,px){
   var d=el("div","colv","");
   var pl=el("div","planta",svgPlanta(alt,folhas));
-  pl.style.width="44px"; pl.style.height="46px";
+  pl.style.height=px+"px";
+  pl.style.width=Math.round(px*44/60)+"px";
   d.appendChild(pl);
   d.appendChild(el("b",null,nome));
   return d;
+}
+/* a planta CRESCENDO na frente da criança (transição de .6s no CSS) — é o
+   pagamento por ter montado um teste justo. */
+function cresce(col,alt,folhas,px){
+  var pl=col.getElementsByClassName("planta")[0];
+  if(!pl) return;
+  pl.innerHTML=svgPlanta(alt,folhas);
+  pl.style.height=px+"px";
+  pl.style.width=Math.round(px*44/60)+"px";
 }
 
 function linhaVar(v){
@@ -386,9 +398,17 @@ function expResultado(){
                    "</b> estava diferente."));
   var cab=el("div","cab");
   cab.appendChild(el("div","rot",""));
-  cab.appendChild(colunaVaso("VASO A",30,3));
-  cab.appendChild(colunaVaso("VASO B",14,1));
+  /* as duas começam do MESMO tamanho e crescem na frente dela: se já
+     nascessem diferentes, a criança leria "resposta", não "resultado". */
+  var cA=colunaVaso("VASO A",26,2,58), cB=colunaVaso("VASO B",26,2,58);
+  cab.appendChild(cA); cab.appendChild(cB);
   c.appendChild(cab);
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger) return;
+    cresce(cA,32,3,104); cresce(cB,12,1,64);
+    sCerto();
+  },420);
   c.appendChild(el("div","resfr",CONCL[r.alvo]));
   var cx=el("div","cmp");
   var b=el("button","btn solto","Continuar");

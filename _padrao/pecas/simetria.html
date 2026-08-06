@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — simetria (complete o outro lado do espelho)</title>
+<!-- ============================================================
+     PEÇA: SIMETRIA — COMPLETAR O OUTRO LADO DA FIGURA NUMA GRADE
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A MECÂNICA: metade da figura já está desenhada na grade; a criança pinta as
+     casas que faltam do outro lado do espelho. Primeiro com o espelho EM PÉ
+     (eixo vertical, o mais fácil de enxergar), depois com o espelho DEITADO
+     (eixo horizontal) — a mesma ideia num degrau acima, que é o que o contrato
+     chama de escada.
+
+     ⭐ A CASA ESPELHADA É CALCULADA, NUNCA ESCRITA À MÃO:
+        eixo em pé   -> coluna espelhada = (COLS-1) - c
+        eixo deitado -> linha  espelhada = (LINS-1) - r
+     Escrever o gabarito à mão é o caminho garantido para o desenho e a resposta
+     divergirem (a figura pede uma casa e o app cobra outra). Aqui só existe UMA
+     fonte de verdade: a metade-modelo. O resto é conta.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · CASA EM PORCENTAGEM, nunca px fixo — com px a grade de 6 colunas estoura
+         em tela de 320 e a última coluna quebra a linha (defeito já pago no
+         caça-palavras). Aqui: width e padding-bottom de 100/6% = casa QUADRADA
+         em qualquer tela, e a grade inteira cabe;
+       · ALVO DE GRADE >= 40px de verdade (o piso do auditor é 30 dentro de
+         grade; aqui a casa fica com ~49px);
+       · NADA ESSENCIAL SÓ NA COR: casa vazia é TRACEJADA e casa cheia é MACIÇA
+         com borda contínua — quem não distingue a cor lê a diferença; o espelho
+         é uma linha TRACEJADA grossa + a frase que diz onde ele está;
+       · O ERRO DEVOLVE, NUNCA PUNE: a casa errada balança e volta a ficar vazia,
+         com a dica dizendo o que olhar. Nada de X nem da palavra "errou";
+       · NUNCA TRAVA: no 3º engano a casa certa pisca; no 5º ela se pinta
+         sozinha e a criança segue;
+       · `data-qa` nas casas que faltam — sem isso o auditor-jogador clica ao
+         acaso numa grade de 24 casas e reprova uma fase que funciona.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A GRADE. ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a
+   mesma forca e perde por vir ANTES no arquivo — sem isto a grade nasce COLADA
+   no enunciado (defeito que o Marcos ja cobrou duas vezes).
+   `font-size:0` mata o espaco entre os inline-block: com ele a 6a casa cai para
+   a linha de baixo em tela de 320.                                           */
+.gradesim{max-width:300px;width:100%;margin:13px auto 0;font-size:0;line-height:0;
+          background:rgba(255,255,255,.07);border-radius:14px;padding:2px}
+/* A CASA: quadrada SEMPRE, porque a altura vem da largura (padding-bottom).
+   Nada de px fixo — e o que faz a grade caber em 320 e em 1366.              */
+.cel{display:inline-block;vertical-align:top;position:relative;width:16.666%;height:0;
+     padding-bottom:16.666%;margin:0;cursor:pointer}
+.celin{position:absolute;left:3px;top:3px;right:3px;bottom:3px;border-radius:8px;
+       border:3px dashed rgba(255,255,255,.38);background:transparent;
+       -webkit-transition:background .25s;transition:background .25s}
+/* CHEIA = macica + borda continua (nunca so a cor) */
+.cel.mod .celin{background:#59c24b;border:3px solid #d6f5c8}
+.cel.cheia .celin{background:#59c24b;border:3px solid #d6f5c8}
+.cel.cheia{-webkit-animation:pulo .34s ease-out 1;animation:pulo .34s ease-out 1}
+@-webkit-keyframes pulo{0%{-webkit-transform:scale(.72)}60%{-webkit-transform:scale(1.08)}100%{-webkit-transform:scale(1)}}
+@keyframes pulo{0%{transform:scale(.72)}60%{transform:scale(1.08)}100%{transform:scale(1)}}
+/* DEVOLVIDA: balanca e volta a ficar vazia. Nunca X, nunca vermelho. */
+.cel.erra{-webkit-animation:sacode .34s linear 1;animation:sacode .34s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+/* a casa que o andaime aponta: pisca com anel grosso (forma, nao so cor) */
+.cel.pisca .celin{border:3px solid #ffd54a;background:rgba(255,213,74,.30);
+                  -webkit-animation:bate .6s linear 4;animation:bate .6s linear 4}
+@-webkit-keyframes bate{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+@keyframes bate{0%{opacity:1}50%{opacity:.4}100%{opacity:1}}
+/* O ESPELHO: linha tracejada GROSSA entre as duas metades */
+.cel.eixov{border-right:4px dashed #ffd54a}
+.cel.eixoh{border-bottom:4px dashed #ffd54a}
+.eixolab{margin-top:10px;font-size:14px;font-weight:700;color:#ffd54a}
+.placar{margin-top:8px;font-size:17px;font-weight:700;color:#f4efe6}
+.placar b{color:#ffd54a}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa: encolhe a LETRA de apoio, nunca a casa da grade */
+@media (max-height:470px){.eixolab{font-size:13px;margin-top:6px}.placar{font-size:15px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO. Ao copiar a peça para uma atividade, troque APENAS
+   este bloco: as casas da METADE-MODELO e o nome da figura. A outra metade
+   NUNCA se escreve — ela é calculada (é isso que impede o desenho e o gabarito
+   de discordarem).                                                            */
+var COLS=6, LINS=4;
+var RODADAS=[
+ { eixo:"v", figura:"árvore",
+   /* metade da esquerda: [linha, coluna] */
+   modelo:[[0,2],[1,1],[1,2],[2,0],[2,1],[2,2],[3,2]],
+   fala:"O espelho está <b>EM PÉ</b>, no meio da grade. Pinte o lado direito igualzinho ao esquerdo." },
+ { eixo:"h", figura:"laço",
+   /* metade de cima */
+   modelo:[[0,1],[0,2],[0,3],[0,4],[1,2],[1,3]],
+   fala:"Agora o espelho está <b>DEITADO</b>. Pinte a parte de baixo igualzinha à de cima." }
+];
+
+var rod=0;          /* rodada da vez */
+var casas=null;     /* matriz de elementos, [linha][coluna] */
+var faltam=0, total=0, erros=0;
+var barraP=null, elPlacar=null;
+var ger=0;          /* geracao da tela: mata setTimeout de tela que ja saiu */
+
+function sPinta(){ nota(392,.09,.13,"triangle",0); nota(587.33,.12,.11,"triangle",.06); }
+
+/* ⭐ O ESPELHO EM CONTA, NUNCA À MÃO. Uma casa do lado livre é alvo quando a
+   IRMÃ dela (calculada aqui) está pintada no modelo.                         */
+function espelhoDe(r,c,eixo){
+  if(eixo==="v") return [r, (COLS-1)-c];
+  return [(LINS-1)-r, c];
+}
+/* de que lado esta casa está? "modelo" = metade pronta · "livre" = a completar */
+function ladoDe(r,c,eixo){
+  if(eixo==="v") return c < COLS/2 ? "modelo" : "livre";
+  return r < LINS/2 ? "modelo" : "livre";
+}
+
+function pecaSimetria(){
+  if(rod>=RODADAS.length) rod=0;
+  ger++; erros=0;
+  limpa();
+  var R=RODADAS[rod], r, c, i;
+  var t=el("div","tela");
+  setProg(t,Math.round(rod*100/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var ct=el("div","centro");
+  ct.appendChild(el("div","selo","O ESPELHO DA FIGURA"));
+  ct.appendChild(el("div","balao",R.fala));
+
+  /* 1) a metade-modelo vira uma tabela de consulta */
+  var cheio={};
+  for(i=0;i<R.modelo.length;i++) cheio[R.modelo[i][0]+"_"+R.modelo[i][1]]=1;
+
+  /* 2) a grade */
+  var g=el("div","gradesim");
+  casas=[];
+  faltam=0; total=0;
+  for(r=0;r<LINS;r++){
+    casas.push([]);
+    for(c=0;c<COLS;c++){
+      var d=el("div","cel");
+      var cls="cel";
+      var lado=ladoDe(r,c,R.eixo);
+      /* a linha do espelho: a última casa da metade-modelo carrega o tracejado */
+      if(R.eixo==="v" && c===(COLS/2-1)) cls+=" eixov";
+      if(R.eixo==="h" && r===(LINS/2-1)) cls+=" eixoh";
+      var alvo=0;
+      if(lado==="modelo"){
+        if(cheio[r+"_"+c]) cls+=" mod";
+      }else{
+        var e=espelhoDe(r,c,R.eixo);
+        if(cheio[e[0]+"_"+e[1]]){ alvo=1; faltam++; total++; }
+      }
+      d.className=cls;
+      d._r=r; d._c=c; d._alvo=alvo; d._lado=lado;
+      if(alvo) d.setAttribute("data-qa","1");   /* so o auditor-jogador olha isto */
+      d.appendChild(el("i","celin",""));
+      d.onclick=(function(cel){ return function(){ tocar(cel); }; })(d);
+      g.appendChild(d);
+      casas[r].push(d);
+    }
+  }
+  ct.appendChild(g);
+
+  ct.appendChild(el("div","eixolab", R.eixo==="v"
+    ? "A linha tracejada em pé é o espelho."
+    : "A linha tracejada deitada é o espelho."));
+  elPlacar=el("div","placar","");
+  ct.appendChild(elPlacar);
+  ct.appendChild(el("div","hint","Toque nas casas que faltam para a figura ficar igual dos dois lados."));
+  t.appendChild(ct);
+  app.appendChild(t);
+  atualiza();
+}
+
+function atualiza(){
+  var R=RODADAS[rod], feitos=total-faltam;
+  elPlacar.innerHTML = faltam>0
+    ? ("Faltam <b>"+faltam+"</b> casa"+(faltam===1?"":"s")+" para fechar a "+R.figura)
+    : ("A "+R.figura+" ficou igual dos dois lados!");
+  if(barraP) barraP.style.width=Math.round((rod+(total?feitos/total:0))*100/RODADAS.length)+"%";
+}
+
+function tocar(d){
+  if(d._lado==="modelo"){
+    sTap();
+    mostraDica("Estas casas já vêm prontas: elas são o <b>modelo</b>. Pinte do outro lado do espelho.");
+    return;
+  }
+  if(d.className.indexOf("cheia")>=0){ sTap(); return; }   /* ja pintada: nunca pune */
+  if(d._alvo){ pinta(d); return; }
+  /* DEVOLVE: a casa balança e volta a ficar vazia, com a regra escrita. */
+  sErro(); erros++;
+  d.className=d.className.replace(" erra","")+" erra";
+  var dd=d, ge=ger;
+  setTimeout(function(){
+    if(ge!==ger) return;
+    if(dd.className.indexOf("cheia")<0) dd.className=dd.className.replace(" erra","");
+  },380);
+  ajuda(erros);
+}
+
+function pinta(d){
+  if(d.className.indexOf("cheia")>=0) return;
+  d.className=d.className.replace(" pisca","").replace(" erra","")+" cheia";
+  d.removeAttribute("data-qa");
+  d._alvo=0;
+  sPinta();
+  faltam--;
+  atualiza();
+  if(faltam<=0){
+    var ge=ger;
+    setTimeout(function(){
+      if(ge!==ger) return;
+      sCerto();
+      mostraBanner("A <b>"+RODADAS[rod].figura+"</b> ficou igual dos dois lados do espelho!",proxima);
+    },620);
+  }
+}
+
+/* O ANDAIME QUE CRESCE — e a garantia de que a peça nunca trava:
+   1º e 2º engano: a regra do espelho dita em palavras;
+   3º e 4º: a casa que falta PISCA;
+   5º: ela se pinta sozinha e a criança segue.                                */
+function ajuda(n){
+  var alvo=proximaCasa();
+  if(!alvo) return;
+  var R=RODADAS[rod];
+  if(n<3){
+    mostraDica(R.eixo==="v"
+      ? "Conte quantas casas a figura tem <b>até o espelho</b> e conte o mesmo do outro lado, na mesma linha."
+      : "Olhe a coluna: conte quantas casas a figura tem <b>acima do espelho</b> e faça o mesmo abaixo.");
+  }else if(n<5){
+    mostraDica("Está piscando uma casa que falta. Toque nela.");
+    pisca(alvo);
+  }else{
+    mostraDica("Vou pintar uma casa para você. Agora ache as outras.");
+    pinta(alvo);
+  }
+}
+function proximaCasa(){
+  var r,c;
+  for(r=0;r<LINS;r++) for(c=0;c<COLS;c++)
+    if(casas[r][c]._alvo) return casas[r][c];
+  return null;
+}
+function pisca(d){
+  if(d.className.indexOf("cheia")>=0) return;
+  d.className=d.className.replace(" pisca","")+" pisca";
+  var dd=d, ge=ger;
+  setTimeout(function(){
+    if(ge!==ger) return;
+    if(dd.className.indexOf("cheia")<0) dd.className=dd.className.replace(" pisca","");
+  },2400);
+}
+
+function proxima(){
+  rod++;
+  if(rod>=RODADAS.length){ fimDaPeca(); return; }
+  pecaSimetria();
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você completou as <b>"+RODADAS.length+"</b> figuras: com o espelho em pé e com o espelho deitado."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ rod=0; pecaSimetria(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça SIMETRIA: a casa espelhada é sempre calculada, nunca escrita à mão."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaSimetria();
+</script>
+</body></html>
