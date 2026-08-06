@@ -1,8 +1,8 @@
 /* Service worker — rede primeiro no HTML; cache primeiro em imagem/áudio. */
-var PREFIXO="voo-do-nico-";
-var CACHE=PREFIXO+"v6";
+var PREFIXO="naveg-";
+var CACHE=PREFIXO+"v2";
 
-var ATIVOS=["./","./index.html","./manifest.json","./img/mp_base.png","./img/mp_fala.png","./img/mp_pisca.png","./img/mp_cr1.png","./img/mp_cr2.png","./img/mp_cr3.png","./img/mp_cr4.png","./img/mp_cr5.png","./img/mp_cr6.png","./img/mp_med.png","./img/mp_verso.png","./img/mp_fundo.jpg","./img/mp_voo_a.jpg","./img/mp_voo_b.jpg","./img/mp_voo_c.jpg","./img/mp_maquete.jpg","./img/mp_mapa.jpg","./img/mp_esc_sala.jpg","./img/mp_esc_escola.jpg","./img/mp_esc_bairro.jpg","./img/mp_esc_cidade.jpg","./img/mp_rosa.png","./img/mp_planta_sala.jpg","./img/mp_lousa_c.png","./img/mp_armario_c.png","./img/mp_bairro.jpg","./audio/mp_abertura.mp3"];
+var ATIVOS=["./","./index.html","./manifest.json","./img/nv_base.png","./img/nv_fala.png","./img/nv_pisca.png","./img/nv_cr1.png","./img/nv_cr2.png","./img/nv_cr3.png","./img/nv_cr4.png","./img/nv_cr5.png","./img/nv_cr6.png","./img/nv_mandioca.png","./img/nv_milho.png","./img/nv_batata.png","./img/nv_cacau.png","./img/nv_cavalo.png","./img/nv_trigo.png","./img/nv_cana.png","./img/nv_roda.png","./img/nv_bussola.png","./img/nv_astrolabio.png","./img/nv_barril.png","./img/nv_corda.png","./img/nv_mapa.png","./img/nv_luneta.png","./img/nv_bau.png","./img/nv_ampulheta.png","./img/nv_fundo.jpg","./img/nv_horizonte.jpg","./img/nv_caravela.jpg","./img/nv_aldeia.jpg","./img/nv_porao.jpg","./img/nv_atlantico.jpg"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});
 function guardar(req,resp){try{if(resp&&resp.status===200&&resp.type==="basic"){var cp=resp.clone();caches.open(CACHE).then(function(c){c.put(req,cp);});}}catch(x){}return resp;}
