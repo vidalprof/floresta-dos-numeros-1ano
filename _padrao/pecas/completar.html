@@ -62,10 +62,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .frase{margin:13px auto 12px;max-width:430px;background:rgba(255,255,255,.10);
        border:2px solid rgba(255,255,255,.22);border-radius:16px;padding:12px 14px;
        font-size:18px;font-weight:600;line-height:1.5;color:#f4efe6;text-align:center}
-.lac{display:inline-block;min-width:92px;background:#fff3c9;color:#3a2c07;border-radius:8px;
-     padding:1px 8px;font-weight:800;letter-spacing:1px}
+.lac{display:inline-block;min-width:96px;background:#fff3c9;color:#3a2c07;border-radius:8px;
+     border:2px dashed #a58a33;padding:0 8px;font-weight:800;letter-spacing:1px}
 /* cheia = a lacuna fechada. Muda a BORDA e a letra, nao so a cor. */
-.lac.cheia{background:#d6f5c8;color:#1c3d0e;border-bottom:3px solid #4f9a34;letter-spacing:0}
+.lac.cheia{background:#d6f5c8;color:#1c3d0e;border:2px solid #4f9a34;letter-spacing:0}
 /* riscada = a opcao que o andaime tirou do caminho: risco (forma), nao so cor */
 .opt.fora{text-decoration:line-through;opacity:.6}
 .opt.treme{-webkit-animation:treme .32s;animation:treme .32s}
@@ -135,7 +135,7 @@ function telaCompletar(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","FRASE "+(rodada+1)+" DE "+FRASES.length));
   c.appendChild(el("div","balao","Toque no peda&#231;o que <b>completa</b> a frase."));
-  var fr=el("div","frase",f.ante+'<span class="lac">?????</span>'+f.dep);
+  var fr=el("div","frase",f.ante+'<span class="lac">_____</span>'+f.dep);
   c.appendChild(fr);
   lacuna=fr.querySelector(".lac");
   var lista=baguncar([f.cer].concat(f.out)), i, b;

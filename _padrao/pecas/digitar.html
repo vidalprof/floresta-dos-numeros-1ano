@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — digitar (monte a palavra)</title>
+<!-- ============================================================
+     PEÇA: DIGITAR / MONTE A PALAVRA (teclado na tela, letra a letra)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     Armadilhas desta mecânica (_padrao/DINAMICAS.md, linhas "Montar a
+     palavra" e "Forca"), todas já pagas em atividade de verdade:
+       · AS DUAS PORTAS: teclado na tela **e** `document.onkeydown`. No PC da
+         escola tem teclado e a criança vai digitar; no celular, não tem;
+       · a palavra a adivinhar vai SEM ACENTO — o teclado não tem tecla de
+         acento (a criança digitaria "AGUA" e o app diria que errou);
+       · a letra já usada SAI DO ALCANCE (classe "usada"), senão fica
+         clicável para sempre e prende a criança (e o auditor);
+       · ⚠️ o `setTimeout` que troca de rodada continua correndo depois que a
+         tela sai: sem o guarda `!telaAtual.parentNode` ele reinstala o
+         `onkeydown` POR CIMA da tela seguinte e o teclado fica preso na fase
+         anterior. Aqui o guarda está no temporizador E dentro do próprio
+         `teclaReal`;
+       · `data-qa` com a palavra da vez em `.letras`, para o auditor-jogador
+         conseguir terminar a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: MONTE A PALAVRA ---------------- */
+/* ⚠️ os 13px de folga em cima sao obrigatorios: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.vagas{display:block;text-align:center;margin:13px auto 12px}
+.vaga{display:inline-block;vertical-align:top;width:44px;height:50px;line-height:44px;margin:0 2px;
+      border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10);
+      color:#f4efe6;font-size:24px;font-weight:800;text-align:center}
+/* cheia = borda INTEIRA + a letra dentro: forma, nao so cor */
+.vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12}
+.letras{display:block;text-align:center;margin-top:6px}
+.tecl{display:inline-block;width:46px;height:46px;line-height:46px;margin:4px 3px;
+      background:#fffdf6;color:#221a12;border:0;border-radius:12px;font-size:22px;font-weight:800;
+      text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.tecl:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* letra ja usada SAI DO ALCANCE (some do dedo e do auditor), mas guarda o
+   lugar dela para o teclado nao pular embaixo do dedo da crianca */
+.tecl.usada{visibility:hidden;pointer-events:none}
+.tecl.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+.tecl.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* MONTE A PALAVRA — teclado na tela, letra por letra, na ordem.
+   ⚠️ `pal` vai SEM ACENTO de proposito: o teclado da crianca nao tem tecla de
+   acento, entao palavra acentuada aqui viraria erro garantido. A pista pode
+   ter acento a vontade — ela e lida, nao digitada. */
+var PALAVRAS=[
+  {palavra:"GATO",  pista:"Bicho que mia e gosta de dormir no sol.",
+   dic:"Diga a palavra devagar: <b>GA-TO</b>."},
+  {palavra:"PEIXE", pista:"Ele nada e vive dentro da &#225;gua.",
+   dic:"Comece pelo som <b>PEI</b>."},
+  {palavra:"ESCOLA",pista:"Lugar onde a gente estuda e encontra os amigos.",
+   dic:"&#201; a palavra <b>ES-CO-LA</b>."}
+];
+var LETRAS="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var rodada=0, pos=0, errosSeg=0, telaAtual=null, barraP=null;
+var palavra="", vagas=[], teclas=[];
+
+function telaDigitar(){
+  limpa();
+  pos=0; errosSeg=0; vagas=[]; teclas=[];
+  var r=PALAVRAS[rodada];
+  palavra=r.palavra;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/PALAVRAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro"), i, v, b;
+  c.appendChild(el("div","selo","PALAVRA "+(rodada+1)+" DE "+PALAVRAS.length));
+  c.appendChild(el("div","balao","<b>"+r.pista+"</b><br>Monte a palavra, letra por letra."));
+  var cx=el("div","vagas");
+  for(i=0;i<palavra.length;i++){ v=el("div","vaga",""); cx.appendChild(v); vagas.push(v); }
+  c.appendChild(cx);
+  /* o teclado da tela: as letras DESTA palavra, embaralhadas. `data-qa` na
+     caixa e so para o auditor-jogador; a crianca nao ve nada. */
+  var tec=el("div","letras");
+  tec.setAttribute("data-qa",palavra);
+  var soltas=baguncar(palavra.split(""));
+  for(i=0;i<soltas.length;i++){
+    b=el("div","tecl",soltas[i]);
+    b.letra=soltas[i];
+    b.onclick=toqueTecla;
+    tec.appendChild(b); teclas.push(b);
+  }
+  c.appendChild(tec);
+  c.appendChild(el("div","hint","Toque nas letras <b>ou</b> use o teclado do computador."));
+  t.appendChild(c); app.appendChild(t);
+  /* PORTA 2: o teclado de verdade. Vale a mesma regra do toque. */
+  document.onkeydown=teclaReal;
+}
+
+/* ---------- as DUAS portas de entrada da mesma letra ---------- */
+function toqueTecla(){
+  if(this.className.indexOf("usada")>=0) return;
+  sTap();
+  usaLetra(this.letra,this);
+}
+/* ⚠️ o guarda `!telaAtual.parentNode` aqui e o que impede o teclado de ficar
+   preso na fase anterior quando a tela ja trocou. */
+function teclaReal(ev){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  var k=ev.key||"";
+  if(!k&&(ev.keyCode||ev.which)) k=String.fromCharCode(ev.keyCode||ev.which);
+  k=String(k).toUpperCase();
+  if(k.length!==1||LETRAS.indexOf(k)<0) return;
+  sTap();
+  usaLetra(k,achaTecla(k));
+}
+function achaTecla(k){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].letra===k&&teclas[i].className.indexOf("usada")<0) return teclas[i];
+  return null;
+}
+
+/* ---------- a regra da fase ---------- */
+function usaLetra(k,bot){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  if(pos>=palavra.length) return;
+  if(k===palavra.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
+}
+function poeLetra(k,bot){
+  vagas[pos].className="vaga cheia";
+  vagas[pos].innerHTML=k;
+  if(bot) bot.className="tecl usada";
+  pos++; errosSeg=0;
+  apagaDica();
+  limpaPisca();
+  sCerto();
+  if(barraP) barraP.style.width=Math.round((rodada*palavra.length+pos)*100/(PALAVRAS.length*palavra.length))+"%";
+  if(pos>=palavra.length) fechaRodada();
+}
+function erraLetra(bot){
+  sErro(); errosSeg++;
+  if(bot){ bot.className="tecl treme"; destreme(bot); }
+  ajuda(errosSeg);
+}
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("usada")<0) b.className="tecl";
+  },340);
+}
+/* o andaime CRESCE: dica -> a letra da vez pisca -> revelar e seguir.
+   Nunca X, nunca "errou", nunca fica travado. */
+function ajuda(n){
+  if(n===1){
+    mostraDica(PALAVRAS[rodada].dic);
+  }else if(n===2){
+    mostraDica("A letra que vem agora est&#225; <b>piscando</b>.");
+    acendeCerta();
+  }else{
+    mostraDica("Era esta! Eu coloco e voc&#234; segue.");
+    revela();
+  }
+}
+function acendeCerta(){
+  var k=palavra.charAt(pos), b=achaTecla(k);
+  limpaPisca();
+  if(b) b.className="tecl pisca";
+}
+function limpaPisca(){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].className.indexOf("pisca")>=0) teclas[i].className="tecl";
+}
+function revela(){
+  var k=palavra.charAt(pos);
+  poeLetra(k,achaTecla(k));
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* ⚠️ o temporizador da rodada continua correndo depois que a tela sai. Sem o
+   guarda `!telaAtual.parentNode` ele montaria a rodada seguinte por cima de
+   outra tela — e o `onkeydown` ficaria preso na fase anterior. */
+function fechaRodada(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    proxima();
+  },900);
+}
+function proxima(){
+  rodada++;
+  if(rodada<PALAVRAS.length){ telaDigitar(); return; }
+  document.onkeydown=null;
+  mostraBanner("Voc&#234; montou as tr&#234;s palavras!",telaFim);
+}
+
+function telaFim(){
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; montou <b>letra por letra</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; telaDigitar(); }
+telaDigitar();
+</script>
+</body></html>

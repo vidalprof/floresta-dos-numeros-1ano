@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — caça-palavras</title>
+<!-- ============================================================
+     PEÇA: CAÇA-PALAVRAS  (copiada do _padrao/pecas/MOLDE.html)
+
+     AS ARMADILHAS DESTA MECÂNICA (DINAMICAS.md), uma a uma, e onde cada
+     uma está fechada aqui dentro:
+
+     1) CÉLULA EM PORCENTAGEM, NUNCA px FIXO.
+        Com largura fixa em px cabem 10 células numa grade de 9 e a palavra
+        QUEBRA A LINHA — foi o defeito que o professor cobrou com todas as
+        letras ("TROCA e o A em outra linha"). Aqui a célula recebe
+        `q.style.width=(100/N)+"%"` e o `box-sizing:border-box` global, então
+        a grade fecha em N colunas em QUALQUER largura de tela.
+
+     2) A GRADE FICA CHEIA DE LETRAS, SEM BURACO.
+        Toda casa que sobrou depois das palavras recebe uma letra sorteada.
+        Buraco na grade entrega onde a palavra está e estraga a caçada.
+
+     3) AS QUATRO DIREÇÕES, INCLUINDO A DIAGONAL — E O ENUNCIADO AVISA.
+        Diagonal é o que faz a criança VARRER a grade em vez de ler só linha
+        e coluna. Mas diagonal sem aviso é criança desistindo: por isso a
+        palavra "diagonal" está no enunciado E na dica.
+
+     4) CÉLULA CONQUISTADA TRAVA.
+        Letra que já é de uma palavra achada não desmarca mais — senão a
+        criança desmancha sem querer o que já ganhou.
+
+     5) CONFERIR `mark` **OU** `ok`.
+        Palavra que CRUZA outra tem letras já marcadas pela palavra anterior.
+        Conferindo só `mark`, a palavra cruzada NUNCA fechava.
+
+     6) `data-qa` NA GRADE (JSON com r, c, n, h, dl, dc).
+        É por ele que o auditor-jogador consegue jogar; sem isso ele dá
+        "PRESO" numa fase que funciona.
+
+     7) ANDAIME QUE CRESCE PELO TEMPO PARADO, NÃO PELO ERRO.
+        Aqui não existe "errar": a criança marca e desmarca. O que existe é
+        EMPACAR calado — e é aí que ela desiste. Então o relógio dá a dica.
+
+     Regras da casa que valem para toda peça: ES5 puro, um arquivo só, alvo
+     de toque grande, nada essencial só na cor (a palavra achada ganha risco
+     e ✔ no chip, além da cor), funciona no mudo, nunca trava.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* a LISTA de palavras a procurar. Cada chip tem a bolinha da COR daquela
+   palavra (a mesma que acende na grade) — e, quando fecha, ganha risco e o
+   sinal de ✔: nada essencial fica so na cor. */
+.lista{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       margin-top:13px}
+.pchip{background:#fffdf6;color:#221a12;border-radius:999px;padding:5px 12px;margin:3px;
+       font-size:14px;font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.24)}
+.pchip.feito{background:#d6f5c8;color:#1f5010;text-decoration:line-through}
+.pchip.feito:after{content:"\2714";margin-left:6px;text-decoration:none;display:inline-block}
+.pbola{display:inline-block;width:11px;height:11px;border-radius:50%;background:#8b7f6a;
+       margin-right:7px;vertical-align:middle}
+.pchip.p1 .pbola{background:#2a6ea8} .pchip.p2 .pbola{background:#2e7a1c}
+.pchip.p3 .pbola{background:#a8531a} .pchip.p4 .pbola{background:#6b3fa0}
+.pchip.p5 .pbola{background:#a8306b}
+/* A GRADE. `display:flex` + `flex-wrap` + celula em (100/N)% = N colunas
+   sempre, em qualquer largura. NUNCA px fixo aqui.                        */
+.grade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       width:100%;max-width:400px;margin:8px auto 0;background:#4a3a2a;border:2px solid #6b5540;
+       border-radius:14px;padding:5px}
+.cel{height:38px;line-height:38px;text-align:center;font-size:17px;font-weight:800;cursor:pointer;
+     background:#fffdf6;color:#221a12;border:1px solid #e0d6c2;border-radius:6px}
+.cel.mark{background:#ffd54a;color:#33280a;border-color:#c9a52f}
+.cel.ok{background:#2e7a1c;color:#fff;border-color:#1f5010;cursor:default}
+.cel.ok.p1{background:#2a6ea8;border-color:#1b4a72} .cel.ok.p2{background:#2e7a1c;border-color:#1f5010}
+.cel.ok.p3{background:#a8531a;border-color:#733711} .cel.ok.p4{background:#6b3fa0;border-color:#492a6e}
+.cel.ok.p5{background:#a8306b;border-color:#731f49}
+.cel.pisca{-webkit-animation:pis .8s infinite;animation:pis .8s infinite}
+@-webkit-keyframes pis{50%{background:#ffe9a8;-webkit-box-shadow:0 0 0 3px #ffd54a}}
+@keyframes pis{50%{background:#ffe9a8;box-shadow:0 0 0 3px #ffd54a}}
+/* a faixa de "achou!" — comemoracao curta, sem tapar o dedo da crianca */
+.achouf{position:fixed;left:0;right:0;top:38%;text-align:center;font-size:30px;font-weight:800;
+        color:#fff;text-shadow:0 3px 10px rgba(0,0,0,.6);pointer-events:none;
+        -webkit-animation:sobe 1.2s ease-out;animation:sobe 1.2s ease-out}
+@-webkit-keyframes sobe{0%{opacity:0;-webkit-transform:scale(.6)}30%{opacity:1;-webkit-transform:scale(1.1)}100%{opacity:0;-webkit-transform:translateY(-40px)}}
+@keyframes sobe{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-40px)}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS, nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* TELA ESTREITA: encolhe a LETRA e a altura da celula, nunca o numero de
+   colunas — a palavra continua inteira na mesma linha. */
+@media (max-width:400px){
+  .cel{height:34px;line-height:34px;font-size:15px}
+  .pchip{font-size:13px;padding:4px 10px}
+}
+/* JANELA BAIXA (projetor, PC com barras): a grade INTEIRA precisa continuar
+   dentro da tela, senao a crianca nao ve as ultimas linhas. */
+@media (max-height:470px){
+  .prog{margin:4px 0 6px}
+  .selo{font-size:11px;padding:3px 10px;margin-bottom:5px}
+  .balao{font-size:13px;padding:7px 11px}
+  .balao + *{margin-top:6px}
+  .lista{margin-top:6px}
+  .pchip{font-size:12px;padding:3px 9px}
+  .grade{margin-top:6px;max-width:330px}
+  .cel{height:31px;line-height:31px;font-size:14px}
+  .hint{font-size:12px;margin-top:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (a horta da escola, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS esta lista. Palavras curtas, sem acento e sem
+   Ç: o quadro de letras não tem tecla de acento e a criança compara letra a
+   letra — MAÇÃ na grade viraria MACA e ela acharia que está errada.        */
+var PAL=["MILHO","ALFACE","TOMATE","CENOURA","FEIJAO"];
+var CORP=["p1","p2","p3","p4","p5"];
+var LADO=8;                 /* a grade tem LADO x LADO casas */
+var LETRAS="ABCDEFGHIJLMNOPRSTUVZ";
+
+var ger=0;                  /* geracao da tela: mata timer de fase que ja saiu */
+var relogio=0;              /* o relogio do andaime */
+
+function pecaCaca(){
+  ger++;
+  if(relogio){ clearInterval(relogio); relogio=0; }
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var barraP=t.getElementsByTagName("i")[0];
+  var N=LADO, g=[], posicoes={}, onde={}, cor={}, achadas={}, cels={};
+  var i,j,k,p;
+
+  for(i=0;i<PAL.length;i++) cor[PAL[i]]=CORP[i%CORP.length];
+
+  /* --- 1) sortear a grade ------------------------------------------------
+     `cabe` deixa a palavra passar POR CIMA de outra quando a letra bate: e
+     assim que nascem os cruzamentos, que sao a graca do caca-palavras (e a
+     armadilha nº 5: as letras do cruzamento ja vem marcadas).            */
+  function cabe(w,li,co,dl,dc){
+    var z,y,x;
+    for(z=0;z<w.length;z++){
+      y=li+dl*z; x=co+dc*z;
+      if(y<0||y>=N||x<0||x>=N) return false;
+      if(g[y][x]&&g[y][x]!==w.charAt(z)) return false;
+    }
+    return true;
+  }
+  function poe(w,li,co,dl,dc){
+    var z,cs=[];
+    for(z=0;z<w.length;z++){
+      g[li+dl*z][co+dc*z]=w.charAt(z);
+      cs.push((li+dl*z)+"_"+(co+dc*z));
+    }
+    posicoes[w]=cs;
+    onde[w]={r:li,c:co,n:w.length,h:(dl===0),dl:dl,dc:dc};
+  }
+  function zera(){
+    var a,b2;
+    g=[]; posicoes={}; onde={};
+    for(a=0;a<N;a++){ g[a]=[]; for(b2=0;b2<N;b2++) g[a][b2]=""; }
+  }
+  function sorteia(){
+    var w,posto,tent,d,dl,dc,li,co;
+    var dirs=[[0,1],[1,0],[1,1],[1,-1]];   /* deitada, em pe e as DUAS diagonais */
+    zera();
+    for(w=0;w<PAL.length;w++){
+      posto=false; tent=0;
+      while(!posto&&tent<400){
+        tent++;
+        d=dirs[Math.floor(Math.random()*dirs.length)]; dl=d[0]; dc=d[1];
+        li=Math.floor(Math.random()*N); co=Math.floor(Math.random()*N);
+        if(cabe(PAL[w],li,co,dl,dc)){ poe(PAL[w],li,co,dl,dc); posto=true; }
+      }
+      if(!posto) return false;
+    }
+    return true;
+  }
+  var voltas=0;
+  while(!sorteia()&&voltas<60) voltas++;
+  if(!onde[PAL[PAL.length-1]]){
+    /* rede de seguranca: se o sorteio nao fechou (praticamente impossivel),
+       monta deitado, uma palavra por linha. A peca NUNCA nasce quebrada. */
+    zera();
+    for(i=0;i<PAL.length;i++) poe(PAL[i],i+1,0,0,1);
+  }
+  /* --- 2) a grade fica CHEIA: toda casa vazia ganha uma letra sorteada --- */
+  for(i=0;i<N;i++) for(j=0;j<N;j++)
+    if(!g[i][j]) g[i][j]=LETRAS.charAt(Math.floor(Math.random()*LETRAS.length));
+
+  /* --- 3) a tela --------------------------------------------------------- */
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CA&#199;A-PALAVRAS DA HORTA"));
+  var bal=el("div","balao","Ache as <b>cinco palavras</b> da horta. Elas podem estar deitadas, em p&#233; ou na <b>diagonal</b>.");
+  c.appendChild(bal);
+
+  var lista=el("div","lista"), chips={};
+  for(i=0;i<PAL.length;i++){
+    var ch=el("div","pchip "+cor[PAL[i]]);
+    ch.innerHTML='<i class="pbola"></i>'+PAL[i];
+    chips[PAL[i]]=ch;
+    lista.appendChild(ch);
+  }
+  c.appendChild(lista);
+
+  var grade=el("div","grade");
+  /* ⭐ data-qa: onde cada palavra ficou (r, c, tamanho, deitada?, e o PASSO
+     dl/dc, que e o que ensina a diagonal ao auditor). Existe SO para o
+     auditor-jogador; a crianca nao ve diferenca nenhuma.                 */
+  grade.setAttribute("data-qa",JSON.stringify(onde));
+  for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
+    var q=el("div","cel",g[y][x]);
+    /* ⭐ A ARMADILHA Nº 1: porcentagem, nunca px. */
+    q.style.width=(100/N)+"%";
+    cels[y+"_"+x]=q;
+    q.onclick=function(){
+      if(q.className.indexOf("ok")>=0){ sTap(); confere(); return; }  /* TRAVA */
+      q.className = q.className.indexOf("mark")>=0 ? "cel" : "cel mark";
+      sTap();
+      confere();
+    };
+    grade.appendChild(q);
+  })(i,j);}
+  c.appendChild(grade);
+  c.appendChild(el("div","hint","Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
+  t.appendChild(c);
+  app.appendChild(t);
+
+  /* --- 4) conferir: `mark` OU `ok` (armadilha nº 5) ---------------------- */
+  function pega(id){
+    var cl=cels[id].className;
+    return cl.indexOf("mark")>=0||cl.indexOf("ok")>=0;
+  }
+  function quantas(){
+    var n=0,w;
+    for(w in achadas) if(achadas.hasOwnProperty(w)) n++;
+    return n;
+  }
+  function faixa(w){
+    var f=el("div","achouf",w+"!");
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1200);
+  }
+  function comemora(w){
+    var cs=posicoes[w],z;
+    for(z=0;z<cs.length;z++){(function(q,atraso){
+      setTimeout(function(){ q.className="cel ok "+cor[w]; },atraso);
+    })(cels[cs[z]],z*70);}
+    sCerto();
+    faixa(w);
+    chips[w].className="pchip "+cor[w]+" feito";
+  }
+  function confere(){
+    var w,z,todas,n;
+    for(w in posicoes){
+      if(!posicoes.hasOwnProperty(w)||achadas[w]) continue;
+      todas=true;
+      for(z=0;z<posicoes[w].length;z++) if(!pega(posicoes[w][z])) todas=false;
+      if(todas){
+        achadas[w]=1;
+        comemora(w);
+        relogioAjuda();
+      }
+    }
+    n=quantas();
+    barraP.style.width=Math.round(n*100/PAL.length)+"%";
+    if(n>0&&n<PAL.length) bal.innerHTML="J&#225; achou <b>"+n+"</b> de <b>"+PAL.length+"</b>! Faltam as outras.";
+    if(n>=PAL.length){
+      if(relogio){ clearInterval(relogio); relogio=0; }
+      bal.innerHTML="Achou as <b>"+PAL.length+"</b> palavras da horta!";
+      var meu=ger;
+      setTimeout(function(){
+        if(meu!==ger) return;
+        mostraBanner("Voc&#234; varreu a grade inteira &#8212; at&#233; a <b>diagonal</b>!",fimDaPeca);
+      },900);
+    }
+  }
+
+  /* --- 5) o andaime CRESCE pelo TEMPO PARADO (armadilha nº 7) ------------ */
+  function proxima(){
+    var z;
+    for(z=0;z<PAL.length;z++) if(!achadas[PAL[z]]) return PAL[z];
+    return null;
+  }
+  function direcaoDe(w){
+    var o=onde[w];
+    if(!o) return "";
+    if(o.dl===0) return "deitada";
+    if(o.dc===0) return "em p&#233;";
+    return "na <b>diagonal</b>";
+  }
+  function relogioAjuda(){
+    var nivel=0, meu=ger;
+    if(relogio) clearInterval(relogio);
+    relogio=setInterval(function(){
+      if(meu!==ger){ clearInterval(relogio); relogio=0; return; }
+      var w=proxima();
+      if(!w){ clearInterval(relogio); relogio=0; return; }
+      nivel++;
+      if(nivel===1){
+        mostraDica("Procure a palavra <b>"+w+"</b> &#8212; ela est&#225; "+direcaoDe(w)+".");
+      } else {
+        var c0=posicoes[w][0];
+        if(cels[c0]&&cels[c0].className.indexOf("ok")<0)
+          cels[c0].className=cels[c0].className+" pisca";
+        mostraDica("A palavra <b>"+w+"</b> come&#231;a na letra que est&#225; piscando.");
+        clearInterval(relogio); relogio=0;
+      }
+    },20000);
+  }
+  relogioAjuda();
+}
+
+function fimDaPeca(){
+  ger++;
+  if(relogio){ clearInterval(relogio); relogio=0; }
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; achou as "+PAL.length+" palavras da horta."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaCaca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a CA&#199;A-PALAVRAS: grade em porcentagem, quatro dire&#231;&#245;es, letra conquistada travada."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaCaca();
+</script>
+</body></html>
