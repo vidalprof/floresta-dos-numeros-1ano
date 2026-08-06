@@ -4503,3 +4503,72 @@ código chamava `falaDaTela("mp_rel_q"+i)` com o índice da RODADA. Resultado: a
 criança lia uma afirmação e ouvia outra. Conserto: `RELM.indexOf(it)` — o índice
 da TABELA, não o da vez. **Regra:** em fase embaralhada, o id da voz vem do
 ITEM, nunca do contador da rodada.
+
+---
+
+## 🗣️ A INTRO CALAVA A PERGUNTA — 27 fases, e o Marcos achou UMA (ago/2026)
+
+Palavras dele: *"no mapa do bairro o símbolo escola não é falado"*. Fui medir e
+eram **27 fases** das duas atividades. O molde era do motor:
+
+```js
+falaDaTela("x_q0");              // toca a pergunta...
+if(idx===0) falar("x_intro");    // ...e a intro entra por cima
+```
+
+`falar()` dá `narr.pause()` antes do áudio novo. Então, na **primeira rodada de
+quase toda fase**, a criança ouvia só a abertura — a pergunta nunca era dita.
+Quem lê não percebe (o texto está na tela). **Quem não lê fica sem instrução
+nenhuma** — e o alto-falante existe exatamente para essa criança.
+
+**Conserto (motor):** `introEPergunta(idIntro,ms)` — guarda a `falaTela`, toca a
+intro e, quando ela acaba, toca a pergunta.
+**Portão:** `_qa/vozintro.py` (0h da banca) — dentro de uma mesma função,
+`falar("..._intro")` não pode vir depois de um `falaDaTela(...)`.
+
+## 🎯 ZONA MEDIDA POR PIXEL — "pode ser qualquer rua"
+
+Cobranças dele: *"seria interessante o símbolo do rio ser colocado em qualquer
+lugar onde esteja o rio"* e *"nessa fase pode ser qualquer rua, senão o aluno
+não acha nunca"*. Antes eram 3–5 pontinhos escolhidos a olho com raio de 9%.
+
+**A técnica (vale para toda fase de "ache na figura"):** recortar a coisa da
+PRÓPRIA figura pela cor do pixel (numpy + scipy), virar uma string de 48×48
+quadradinhos (`1` = ali é a coisa) e testar o toque com margem de 1 quadradinho.
+O ponto do alvo visível é o pixel **mais longe da borda** da região
+(`distance_transform_edt`), nunca o centroide — o centroide de um rio em curva
+cai fora do rio.
+
+**Mesma técnica, outro uso — PINTAR:** ideia do Marcos (*"o mapa deveria ser sem
+cor, daí quando a criança clica com a cor certa ela pinta o desenho"*). O mapa
+vira base clara (`mp_pmapa.jpg`) e cada região vira uma camada tingida com a cor
+da legenda (`mp_pint_<zona>.png`), que aparece com o toque certo. Registro
+perfeito de graça, porque as camadas saem da mesma imagem.
+
+**⚠️ Onde a medição por cor NÃO resolve:** quando a mancha e o objeto têm a mesma
+cor. As peças da planta da sala têm uma sombra creme assada no PNG, e ela é a
+mesma cor da madeira clara — tentei cinco caminhos (cor do canto, contorno por
+gradiente, saturação adaptativa, sombra translúcida, chroma novo) e todos comeram
+a peça. **Solução real:** o FUNDO virou papel claro (`mp_planta_papel.jpg`), onde
+a mancha some. O conserto definitivo é regerar as peças com recorte transparente
+no Gemini — o Pollinations **não** entrega vista de cima isolada em fundo chroma
+(pedi quatro, voltaram quatro vistas laterais sobre chão de madeira).
+
+## 📐 O ENUNCIADO NUNCA ENCOSTA NO QUE VEM DEPOIS
+
+Cobrado DUAS vezes: *"as opções de resposta estão encostando no enunciado"* e
+depois *"esse encosto no enunciado eu já tinha comentado antes"*. Da primeira vez
+consertei A FASE — por isso voltou. A causa era do motor: o balão tem sombra e
+não tinha margem por baixo. Agora `.balao + *{margin-top:13px}` **e** o portão 5
+regra 9 (`_qa/leiaute.js`), que mede a folga em 6 tamanhos e reprova abaixo de
+6px. Ele achou de cara um caso que ninguém tinha visto (jogo da memória).
+
+## 🌐 "O SITE NO AR ESTÁ SERVINDO O QUÊ?" — pergunte a ele
+
+O build do Pages deu `errored` três vezes seguidas mesmo depois do
+`republicar-limpo.yml`, e daqui do chat não dá para conferir (a rede é travada:
+curl no github.io volta 403 pelo proxy). **Ficar re-disparando o build resolve**
+— na quarta tentativa deu `built`. Mas a lição é outra: o `deploy-pages.yml`
+agora **pergunta ao site** — faz `curl` no index e em arquivos-chave, imprime o
+código HTTP de cada um e conta as marcas da versão nova dentro do index no ar.
+É a única resposta honesta sobre o que a criança está recebendo.
