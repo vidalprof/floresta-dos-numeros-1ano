@@ -62,9 +62,18 @@ def main():
     if os.path.exists(cam):
         texto = dict((x["id"], x["texto"]) for x in json.load(io.open(cam, encoding="utf-8")))
 
-    faltam = sorted(i for i in ids if i not in tem and i in texto)
+    # ⚠️ SEGUNDO BURACO, ago/2026 (Jardim do Broto): a fase que fala uma voz por
+    #    rodada monta o id em tempo de execucao — `falaDaTela("jd_come_"+it.img
+    #    .replace("jd_",""))`. Nenhuma expressao regular acha isso no codigo, e o
+    #    portao dava "voz ok" com 16 alimentos MUDOS. A saida honesta e inverter
+    #    a pergunta: o `falas.json` e a VERDADE do que a atividade promete falar,
+    #    entao TODA linha dele precisa do mp3 — tenha o id aparecido no codigo ou
+    #    nao. Se o texto esta escrito ali, a crianca vai ouvi-lo.
+    faltam = sorted(set(i for i in ids if i not in tem and i in texto)
+                    | set(i for i in texto if i not in tem))
 
-    print(u"%s -> %d narracao(oes) usada(s) no codigo" % (alvo, len(ids)))
+    print(u"%s -> %d narracao(oes) usada(s) no codigo, %d prometida(s) no falas.json"
+          % (alvo, len(ids), len(texto)))
     if faltam:
         print(u"   %d VOZ(ES) COM TEXTO ESCRITO E SEM MP3 (a fase fica MUDA e o "
               u"'ouvir de novo' nao faz nada):" % len(faltam))

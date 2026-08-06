@@ -25,6 +25,29 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
  await p.waitForTimeout(600);
  // pula narracoes: falar() vira no-op
  await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(id,ms,cb){setTimeout(cb,120);}; });
+ /* ⭐ COLHEITA DE VOZES (ago/2026). Enquanto ele joga, anota TODO texto que a
+    crianca poderia tocar (`.opt/.pc/.lig/.bin`) e todo enunciado (`.balao`).
+    Nasceu de uma cobranca do Marcos: *"lembre-se que nas respostas precisa do
+    som para ajudar os estudantes que nao sabem ler"* — e a pergunta seguinte,
+    *"verifique nas atividades do broto QUAIS nao tem o som nas respostas"*,
+    nao tinha resposta possivel sem jogar a atividade inteira: as respostas de
+    uma rodada so existem naquela rodada. Ler o codigo nao acha; jogar acha.
+    Ligue com COLHEITA=<arquivo.json>. */
+ if(process.env.COLHEITA) await p.evaluate(()=>{
+   window.__colh={op:{},bal:{}};
+   var SELC=".opt,.lig,.pc,.bin,.alim,.ficha,.pt,.gav,.carta";
+   function varre(){
+     var i,e,t,a=document.querySelectorAll(SELC);
+     for(i=0;i<a.length;i++){ e=a[i]; t=(e.textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+       if(t&&t.length<90) window.__colh.op[t]=1; }
+     a=document.getElementsByClassName("balao");
+     for(i=0;i<a.length;i++){ t=(a[i].textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+       if(t) window.__colh.bal[t]=1; }
+   }
+   varre();
+   if(window.MutationObserver) new MutationObserver(varre).observe(
+     document.getElementById("app"),{childList:true,subtree:true,characterData:true});
+ });
  await p.evaluate((t)=>{ (window[t]||telaCapa)(); }, process.env.INICIO||'telaCapa');
  let visto=[]; const encaixe=[]; let ultimo='', paradas=0;
  const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel'+',.ferr,.vaso,.carta,.zona,.tec,.slot,.mcarta,.gfoto,.pal,.fichaP,.cx,.tlin,.vaga,.relcard,.alim,.rpos,.moeda'+',.pt,.plb,.fs,.errow,.gav,.ficha,.achado,.teclafc'
@@ -276,6 +299,16 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
    });
    for(const e of estouro) if(encaixe.indexOf(e)<0) encaixe.push(e);
    if(await p.evaluate(()=>!!document.querySelector('.medal'))){ visto.push(i+' >>> CHEGOU NO FIM'); break; }
+ }
+ if(process.env.COLHEITA){
+   const c=await p.evaluate(()=>window.__colh||{op:{},bal:{}});
+   const antes=require('fs').existsSync(process.env.COLHEITA)
+     ? JSON.parse(require('fs').readFileSync(process.env.COLHEITA,'utf8')) : {op:{},bal:{}};
+   for(const k in c.op) antes.op[k]=1;
+   for(const k in c.bal) antes.bal[k]=1;
+   require('fs').writeFileSync(process.env.COLHEITA,JSON.stringify(antes,null,1));
+   console.log('COLHEITA: '+Object.keys(antes.op).length+' resposta(s) e '
+               +Object.keys(antes.bal).length+' enunciado(s) vistos ate agora');
  }
  console.log(visto.join('\n'));
  /* o barulho do file:// nao conta: service worker so existe em http(s) */
