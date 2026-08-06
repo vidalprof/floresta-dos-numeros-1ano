@@ -20,6 +20,8 @@
 #       (aceita a pasta também: python3 _qa/arte_propria.py _orbi)
 # ============================================================
 import hashlib, os, sys, glob
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pastas import e_atividade   # UM CEREBRO SO: quem e atividade e quem e area de servico
 
 alvo = sys.argv[1] if len(sys.argv) > 1 else ""
 if not alvo:
@@ -64,6 +66,10 @@ for p in sorted(glob.glob(os.path.join(img, "*"))):
 # todas as outras atividades = pastas irmãs que também tenham img/ e index.html
 outras = []
 for d in sorted(glob.glob("_*")):
+    # ⚠️ `_novo` e a COPIA que vai ao ar. Sem esta linha o portao acusava as 28
+    #    imagens da atividade como "copiadas de outra atividade" — dela mesma.
+    if not e_atividade(d):
+        continue
     if os.path.abspath(d) == os.path.abspath(pasta) or parente(d, pasta):
         continue
     if os.path.isdir(os.path.join(d, "img")) and os.path.isfile(os.path.join(d, "index.html")):

@@ -28,16 +28,8 @@ import os, re, sys
 #    a SI MESMA ("o mascote daqui se chama 'Ara', o MESMO nome do mascote de
 #    _novo"). Portao que reprova por causa da propria copia nao serve; e pior,
 #    ensina a ignorar o portao justo no passo de publicar.
-NAO_E_ATIVIDADE = ("_novo", "_recuperado", "_lote", "_cartelas", "_templates",
-                   "_padrao", "_qa", "_audio", "_imagens", "_curriculo",
-                   "_status", "_plano", "_demos", "_kit", "_lib_jogo")
-
-
-def e_vizinha(nome):
-    u"""a pasta e outra ATIVIDADE (e nao area de servico)?"""
-    return nome.startswith("_") and nome not in NAO_E_ATIVIDADE
-
-
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pastas import e_atividade as e_vizinha   # UM CEREBRO SO (ver _qa/pastas.py)
 alvo = sys.argv[1] if len(sys.argv) > 1 else ""
 if not alvo:
     print("uso: python3 _qa/clone.py <arquivo.html|pasta>")
