@@ -1886,7 +1886,10 @@ function hForca(){
     }
     function tentaLetra(L,b){
       if(fim||b._usada) return;
-      b._usada=1; arma();
+      /* ⚠️ a tecla usada SAI do data-qa (o mesmo que ja se faz nas outras
+         atividades): sem isso a tela continua anunciando "esta letra serve" e
+         o auditor jogador toca nela para sempre. */
+      b._usada=1; b.setAttribute("data-qa","0"); arma();
       if(pal.indexOf(L)>=0){ achou[L]=1; b.className="teclafc ok"; sPop(erros+1);
         if(revela()){ fim=true; sCerto(); reg("producao",erros===0,erros+1);
           var ce=centroTela(linha); faisca(ce[0],ce[1],"#ffb45e",16);
@@ -2336,7 +2339,11 @@ function hAcervo(){
       b.setAttribute("data-qa",o.g?"1":"0");
       b.onclick=function(){ arma();
         if(fim||b.className.indexOf("ok")>=0) return;
-        if(o.g){ b.className="opt ok"; sPop(1); falta--;
+        /* ⚠️ a opcao ja achada SAI do data-qa. Esta fase aceita VARIAS
+           respostas certas na mesma tela: sem limpar, ela continua dizendo "e
+           esta" para uma que ja foi, e o jogador (e a crianca teimosa) toca
+           nela para sempre. */
+        if(o.g){ b.className="opt ok"; b.setAttribute("data-qa","0"); sPop(1); falta--;
           cont.innerHTML= falta>0 ? "Faltam "+falta : "Achou todos!";
           var ce=centroTela(b); faisca(ce[0],ce[1],"#6bd23f",8);
           reg("permanencia",err===0,err+1);
