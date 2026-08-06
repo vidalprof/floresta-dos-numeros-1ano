@@ -114,13 +114,22 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
                     quando todas estao marcadas (cartografia).
               Trocar um pelo outro reprova uma fase que funciona. Entao: toca na
               primeira e PERGUNTA a tela em qual molde ela esta.              */
+           /* ⚠️ TERCEIRO MOLDE, ago/2026: a DIAGONAL. O Marcos pediu que o
+              caca-palavras tivesse palavras na diagonal; a fase publica o passo
+              em `dl`/`dc`, mas o auditor so sabia somar na linha OU na coluna e
+              ficava clicando as celulas erradas para sempre — "PRESO em
+              CACA-PALAVRAS DO MAR" numa fase que a crianca fecha. Portao que
+              nao conhece a mecanica nova reprova o que funciona, e isso e pior
+              que portao nenhum: faz a gente desconfiar do certo.              */
+           const dl = (typeof d.dl==='number') ? d.dl : (d.h?0:1);
+           const dc = (typeof d.dc==='number') ? d.dc : (d.h?1:0);
            const prim=g.children[d.r*N+d.c];
-           const r2=d.h? d.r : d.r+d.n-1, c2=d.h? d.c+d.n-1 : d.c;
+           const r2=d.r+dl*(d.n-1), c2=d.c+dc*(d.n-1);
            if(prim.className.indexOf('sel')<0&&prim.className.indexOf('mark')<0) prim.click();
            if(prim.className.indexOf('sel')>=0){ g.children[r2*N+c2].click(); return 1; }
            let tocou=false;
            for(let k=1;k<d.n;k++){
-             const rr=d.h? d.r : d.r+k, cc=d.h? d.c+k : d.c;
+             const rr=d.r+dl*k, cc=d.c+dc*k;
              const cel=g.children[rr*N+cc];
              if(cel&&cel.className.indexOf('ok')<0&&cel.className.indexOf('mark')<0){ cel.click(); tocou=true; }
            }
@@ -130,7 +139,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
               sem esforco. Nesse caso desmarca e remarca a ultima letra, so para
               a tela refazer a conferencia. */
            if(!tocou){
-             const rz=d.h? d.r : d.r+d.n-1, cz=d.h? d.c+d.n-1 : d.c;
+             const rz=d.r+dl*(d.n-1), cz=d.c+dc*(d.n-1);
              const ult=g.children[rz*N+cz];
              if(ult&&ult.className.indexOf('ok')<0){ ult.click(); ult.click(); }
            }
