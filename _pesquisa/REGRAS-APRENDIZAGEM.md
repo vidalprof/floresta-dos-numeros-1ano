@@ -198,6 +198,19 @@ min**. Para fechar 55 é preciso 2ª rodada embutida na jornada, não só "prati
 
 ---
 
+# 🛑 ANTES DE USAR ESTE ARQUIVO — o veto do Marcos (ago/2026)
+
+*"eles nunca voltam a fazer a mesma atividade, é sempre diferente; e não podemos
+fazer muito difícil, a criança tem que conseguir passar"*.
+
+Estas pesquisas foram feitas para **app usado por semanas**. Aqui é **uma
+atividade, uma aula, uma vez**. Então **não se adota**: revisão espaçada de
+1/3/7/14 dias, medição de retenção dias depois, a dica que não revela no 3º erro,
+e portão de domínio. Vale o resto — que é acabamento, não dificuldade.
+Ver o quadro no topo de `_padrao/RECEITA.md` §1.
+
+---
+
 # ⚠️ SEIS DIVERGÊNCIAS COM O QUE A RECEITA DIZ HOJE
 
 Não são estilo: mudam o que eu escreveria no HTML. Cada uma tem a decisão tomada ao lado.

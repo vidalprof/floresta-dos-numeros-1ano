@@ -117,6 +117,41 @@ tem graça. Portão nenhum substitui olhar.
 
 ## 1. A ESCADA DIDÁTICA — o que o Marcos quer dizer
 
+> ## 🛑🎯 A REALIDADE DA AULA MANDA MAIS QUE A PESQUISA — leia isto antes de §1
+>
+> Palavras dele (ago/2026), depois de eu trazer as pesquisas: *"mas veja, eles
+> nunca voltam a fazer a mesma atividade, é sempre diferente; e não podemos fazer
+> muito difícil, a criança tem que conseguir passar. Achei que a atividade do
+> Broto está perfeita e o pessoal está gostando, não sei se devemos aplicar essas
+> regras"*. **Ele está certo, e eu estava aplicando pesquisa feita para outro
+> cenário.** Quase toda a literatura parte de um app usado por SEMANAS. Aqui é
+> **uma atividade, uma aula, uma vez** — e turma de escola pública, com a criança
+> que lê devagar na mesma sala da que voa.
+>
+> **NÃO se aplica (e não se tenta aplicar de novo):**
+> - **Revisão espaçada de 1/3/7/14 dias** — ninguém volta. O que vale é o
+>   Aquecimento no MEIO da própria aula, que a casa já faz.
+> - **Medir retenção dias depois** — não existe nesse contexto.
+> - **A última dica não revelar a resposta.** Esta é a mais perigosa das seis: a
+>   pesquisa protege contra quem burla o sistema por semanas; a aula protege
+>   contra **a criança travada, que perde a aula inteira**. Entre as duas, manda a
+>   segunda. **O 3º erro continua revelando e seguindo.**
+> - **Portão de domínio** que segura quem não atingiu X — mesma razão.
+>
+> **Continua valendo (é acabamento, não dificuldade):** os números do som, animar
+> só `transform`/`opacity`, `prefers-reduced-motion`, nada de animação em loop
+> enquanto o enunciado espera, **embaralhar as opções**, não repetir o mesmo gesto
+> em fases vizinhas, 44px de alvo para os pequenos, contar junto em voz alta.
+>
+> **E o que já está aprovado NÃO se mexe.** O Jardim do Broto está no ar, as
+> crianças estão gostando, e "melhorar" o que funciona é o jeito mais rápido de
+> estragar. Ideia nova entra em atividade NOVA.
+>
+> **A pergunta que eu faço antes de adotar qualquer regra de pesquisa:**
+> *isso pressupõe que a criança volta amanhã? isso pode deixar alguém sem
+> conseguir passar?* Se a resposta for sim para qualquer uma das duas, não entra.
+
+
 > 🛑 **AS MUDANÇAS DESTA SEÇÃO VALEM PARA AS PRÓXIMAS ATIVIDADES — NÃO SE MEXE
 > NAS QUE JÁ ESTÃO PRONTAS.** Ordem do Marcos (ago/2026): *"não faça essas
 > modificações nessas atividades; depois vejo o que eu quero modificar na próxima
