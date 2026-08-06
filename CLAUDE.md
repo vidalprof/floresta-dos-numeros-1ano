@@ -88,6 +88,18 @@ Leia tudo antes de agir e responda sempre em **português**.
 > de graça). ⚠️ **O Gemini está SEM CRÉDITO** (HTTP 429 "prepayment credits
 > depleted") — recarregar em https://ai.studio/projects.
 
+> ## 🧰 A MECÂNICA JÁ EXISTE — COPIE, NÃO REESCREVA (`_padrao/DINAMICAS.md`)
+> Cobrança do Marcos (ago/2026): *"temos um leque de interatividades muito grande,
+> precisam ser TREINADAS, para quando for posta em prática não dar todos esses
+> erros"* — e ele listou: arrastar, sombra, ligar, achar, completar, forca...
+> **O defeito não é falta de ideia: é REESCRITA.** Cada vez que eu montava um
+> caça-palavras do zero, repetia um erro já pago noutra atividade. O
+> `_padrao/DINAMICAS.md` diz, para cada uma das ~20 mecânicas, **em qual atividade
+> mora a versão mais corrigida** (a que já passou pelo Marcos) e as armadilhas
+> dela. E o **`_qa/dinamicas.py`** (portão 0b2) confere sozinho: reconhece a
+> mecânica no código e cobra as armadilhas DELA. Mecânica nova = linha nova no
+> arquivo **e** regra nova no portão, no mesmo commit.
+
 > ## 🍞 ANTES DE MONTAR QUALQUER COISA: `_padrao/RECEITA.md`
 > Cobrança do Marcos (ago/2026): *"preciso que você treine para ANTES de montar,
 > para quando você monte já sair perfeito, mesmo o portão verificando"* e
