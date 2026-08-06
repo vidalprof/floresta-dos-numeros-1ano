@@ -1351,6 +1351,28 @@ function mostraDica(txt){
 }
 function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
 function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+
+/* ⭐ FECHO DE FASE — nunca deixar a tela VAZIA falando sozinha.
+   Defeito que o Marcos pegou (ago/2026): *"na fase de quem esta aqui, quando
+   conclui, fica so a tela de fundo e falando, fica feio"*. E ele estava certo:
+   a fase terminava com `limpa()` apagando TUDO e a narracao de revelacao
+   tocando por ate 13 SEGUNDOS — a crianca ficava olhando o fundo de madeira
+   ouvindo uma voz sem dono. Estava assim em 23 fases das duas atividades.
+   Agora o fecho e uma TELA de verdade: o mascote, o selo da fase e o que ele
+   esta dizendo, ESCRITO — para quem le acompanhar e para quem nao le ter o
+   personagem olhando de volta. So depois vem a faixa com o botao.
+   ⚠️ `prog` mantem a barra onde ela estava; sem isso ela sumia justo no fecho. */
+function fechaFase(selo,texto,idFala,ms,prox,prog){
+  limpa(); var t=el("div","tela");
+  if(prog) setProg(t,prog);
+  var c=el("div","centro");
+  c.appendChild(nicoEl("gg"));
+  c.appendChild(el("div","selo",selo));
+  c.appendChild(el("div","balao",texto));
+  t.appendChild(c); app.appendChild(t);
+  montaBarra(null,null);
+  depoisDaFala(idFala,ms,function(){ mostraBanner(texto,prox); });
+}
 /* ⚠️ estas cinco falas eram "vb_..." — da atividade dos VERBOS. Os MP3 nunca
    existiram nesta pasta, entao elogio() e consolo() estavam MUDOS nas 18 vezes
    em que o motor os chama. O app funcionava inteiro; so a crianca ficava sem a
@@ -1760,8 +1782,7 @@ function mMaquete(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,34+idx);
-    if(idx>=NAMAQ.length){ depoisDaFala("mp_maq_revela",11000,function(){
-      mostraBanner("A <b>maquete</b> tem altura. O <b>mapa</b> &#233; a mesma coisa, achatada no papel.",mOndeFica); }); return; }
+    if(idx>=NAMAQ.length){ fechaFase("DA MAQUETE AO MAPA","A <b>maquete</b> tem altura. O <b>mapa</b> &#233; a mesma coisa, achatada no papel.","mp_maq_revela",11000,mOndeFica,34); return; }
     var it=NAMAQ[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","DA MAQUETE AO MAPA"));
@@ -1826,8 +1847,7 @@ function mOndeFica(){
   })(chaves[z][0],chaves[z][1]);}
   c.appendChild(cxs);
   function mostra(){
-    if(i>=fila.length){ depoisDaFala("mp_onde_revela",10000,function(){
-      mostraBanner("No mapa d&#225; para dizer <b>onde</b> cada coisa fica &#8212; e todo mundo entende igual.",mRoteiro); }); return; }
+    if(i>=fila.length){ fechaFase("ONDE FICA NO MAPA?","No mapa d&#225; para dizer <b>onde</b> cada coisa fica &#8212; e todo mundo entende igual.","mp_onde_revela",10000,mRoteiro,42); return; }
     bal.innerHTML="No mapa, onde fica <b>"+fila[i][0]+"</b>?";
     bal.setAttribute("data-qa",fila[i][1]);
   }
@@ -1863,8 +1883,7 @@ function mRoteiro(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,50+idx*2);
-    if(idx>=ROTAS.length){ depoisDaFala("mp_rota_revela",11000,function(){
-      mostraBanner("Um <b>roteiro</b> &#233; isto: dizer o caminho em passos, olhando o mapa.",mAquecimento); }); return; }
+    if(idx>=ROTAS.length){ fechaFase("O ROTEIRO DO NICO","Um <b>roteiro</b> &#233; isto: dizer o caminho em passos, olhando o mapa.","mp_rota_revela",11000,mAquecimento,50); return; }
     var it=ROTAS[idx],passos=[],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O ROTEIRO DO NICO"));
@@ -1935,8 +1954,7 @@ function mAquecimento(){
   var bal=el("div","balao","");c.appendChild(bal);
   var box=el("div","opts col");c.appendChild(box);
   function mostra(){
-    if(i>=perg.length){ depoisDaFala("mp_aquec_revela",8000,function(){
-      mostraBanner("Voc&#234; lembrou! Lembrar &#233; o que faz a gente <b>aprender de verdade</b>.",mSimbolo); }); return; }
+    if(i>=perg.length){ fechaFase("LEMBRANDO&#8230;","Voc&#234; lembrou! Lembrar &#233; o que faz a gente <b>aprender de verdade</b>.","mp_aquec_revela",8000,mSimbolo,56); return; }
     var p=perg[i],fim=false;
     bal.innerHTML=p[0];
     box.innerHTML="";
@@ -1969,8 +1987,7 @@ function mSimbolo(){
   var fila=baguncar(SIMB.slice(0)),idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,62+idx);
-    if(idx>=fila.length){ depoisDaFala("mp_sim_revela",10000,function(){
-      mostraBanner("Cada <b>s&#237;mbolo</b> guarda um lugar inteiro num desenho pequenininho.",mLegenda); }); return; }
+    if(idx>=fila.length){ fechaFase("O QUE QUER DIZER?","Cada <b>s&#237;mbolo</b> guarda um lugar inteiro num desenho pequenininho.","mp_sim_revela",10000,mLegenda,62); return; }
     var it=fila[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O QUE QUER DIZER?"));
@@ -2086,8 +2103,7 @@ function mMudo(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,76+idx);
-    if(idx>=MUDO.length){ depoisDaFala("mp_mudo_revela",9000,function(){
-      mostraBanner("Escrever o nome no mapa &#233; o que transforma o desenho em <b>informa&#231;&#227;o</b>.",mEscala); }); return; }
+    if(idx>=MUDO.length){ fechaFase("O MAPA MUDO","Escrever o nome no mapa &#233; o que transforma o desenho em <b>informa&#231;&#227;o</b>.","mp_mudo_revela",9000,mEscala,76); return; }
     var it=MUDO[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA MUDO"));
@@ -2205,8 +2221,7 @@ function mRosa(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,84);
-    if(idx>=VENTOS.length){ depoisDaFala("mp_rosa_revela",11000,function(){
-      mostraBanner("Quase todo mapa vem com o <b>Norte para cima</b>. &#201; um combinado entre quem faz mapas.",mCoord); }); return; }
+    if(idx>=VENTOS.length){ fechaFase("A ROSA DOS VENTOS","Quase todo mapa vem com o <b>Norte para cima</b>. &#201; um combinado entre quem faz mapas.","mp_rosa_revela",11000,mCoord,84); return; }
     var it=VENTOS[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","A ROSA DOS VENTOS"));
@@ -2262,8 +2277,7 @@ function mCoord(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,86);
-    if(idx>=COORD.length){ depoisDaFala("mp_coord_revela",11000,function(){
-      mostraBanner("Com <b>linha e coluna</b> d&#225; para dizer onde fica qualquer lugar do mapa.",mPlanta); }); return; }
+    if(idx>=COORD.length){ fechaFase("ACHE PELA COORDENADA","Com <b>linha e coluna</b> d&#225; para dizer onde fica qualquer lugar do mapa.","mp_coord_revela",11000,mPlanta,86); return; }
     var it=COORD[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","ACHE PELA COORDENADA"));
@@ -2421,8 +2435,7 @@ function mPintar(){
   }
   function mostra(){
     if(idx>=PINTAS.length){ sFesta(); festa();
-      depoisDaFala("mp_pint_revela",11000,function(){
-        mostraBanner("A <b>cor</b> tamb&#233;m &#233; s&#237;mbolo: azul &#233; &#225;gua, verde &#233; mata, e o resto &#233; o que a gente construiu.",mCaca); }); return; }
+      fechaFase("PINTE O MAPA","A <b>cor</b> tamb&#233;m &#233; s&#237;mbolo: azul &#233; &#225;gua, verde &#233; mata, e o resto &#233; o que a gente construiu.","mp_pint_revela",11000,mCaca,90); return; }
     bal.innerHTML="Escolha a cor certa e pinte "+PINTAS[idx].q+".";
     marcaQA();
   }
@@ -2575,8 +2588,7 @@ function mCruzada(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,90+idx);
-    if(idx>=CRUZM.length){ depoisDaFala("mp_cruz_revela",8000,function(){
-      mostraBanner("Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.",mForca); }); return; }
+    if(idx>=CRUZM.length){ fechaFase("CRUZADINHA","Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.","mp_cruz_revela",8000,mForca,90); return; }
     var it=CRUZM[idx],pos=0,fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","CRUZADINHA"));
@@ -2697,8 +2709,7 @@ function mDesenhe(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,96);
-    if(idx>=MARCAR.length){ depoisDaFala("mp_des_revela",10000,function(){
-      mostraBanner("Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>",mAlto); }); return; }
+    if(idx>=MARCAR.length){ fechaFase("O MAPA DO BAIRRO","Este mapa agora tem a sua marca. <b>Voc&#234; fez um mapa.</b>","mp_des_revela",10000,mAlto,96); return; }
     var it=MARCAR[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA DO BAIRRO"));
@@ -2777,12 +2788,11 @@ function mAlto(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,97);
-    if(idx>=ALTO.length){ depoisDaFala("mp_alto_revela",13000,function(){
-      mostraBanner("Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.",mQuebra); }); return; }
+    if(idx>=ALTO.length){ fechaFase("O BAIRRO L&#193; DE CIMA","Voc&#234; achou tudo <b>sem legenda nenhuma</b>. Isso &#233; ler uma vista de cima.","mp_alto_revela",13000,mQuebra,97); return; }
     var it=ALTO[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O BAIRRO L&#193; DE CIMA"));
-    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Toque em "+it.q+"."));
+    c.appendChild(el("div","balao","O Nico subiu bem alto e olhou o bairro inteiro. Aqui <b>n&#227;o tem s&#237;mbolo nenhum</b>: &#233; tudo do jeito que &#233;. Ache "+it.q+"."));
     var cena=el("div","janela");
     cena.appendChild(cenaImg("mp_bairro","jimg"));
     /* alvos INVISIVEIS, um por zona — servem ao auditor jogador (data-qa) e ao
@@ -3062,8 +3072,7 @@ function mRelampago(){
   var box=el("div","opts");c.appendChild(box);
   var plac=el("div","placar","0 de "+fila.length);c.appendChild(plac);
   function mostra(){
-    if(i>=fila.length){ depoisDaFala("mp_rel_revela",8000,function(){
-      mostraBanner("Voc&#234; fez <b>"+acertos+" de "+fila.length+"</b>. Vamos ao seu boletim!",mEnsinar); }); return; }
+    if(i>=fila.length){ fechaFase("DESAFIO REL&#194;MPAGO","Voc&#234; fez <b>"+acertos+" de "+fila.length+"</b>. Vamos ao seu boletim!","mp_rel_revela",8000,mEnsinar,98); return; }
     var it=fila[i],resp=false;
     bal.innerHTML=it[0];
     bal.setAttribute("data-qa",it[1]?"1":"0");

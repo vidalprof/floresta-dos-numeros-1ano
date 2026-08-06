@@ -853,6 +853,44 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* --- a moldura do VOO e da ESCALA: a cena tem que caber INTEIRA (a criança
    precisa ver a igreja, as casas, a praça e o rio ao mesmo tempo). A primeira
    figura define a altura; as outras entram por cima, no mesmo lugar.        */
+
+/* --- O SEGREDO DO VENTO: o mar e ARTE, o navio ANDA por cima --- */
+/* ⚠️ a foto NAO gira mais (ver mVento). A figura de cada coisa vem da IA; o
+   CSS so move o que precisa se mexer: a posicao do barco e as rajadas.    */
+.marbox{position:relative;width:100%;max-width:430px;margin-top:10px;border-radius:16px;overflow:hidden;
+  border:4px solid #fffdf6;-webkit-box-shadow:0 8px 20px rgba(30,25,10,.4);box-shadow:0 8px 20px rgba(30,25,10,.4)}
+.marbox .marimg{width:100%;height:auto;display:block}
+.navio{position:absolute;bottom:16%;width:38%;margin-left:-19%;z-index:3;
+  -webkit-transition:left 1.5s cubic-bezier(.35,0,.3,1);transition:left 1.5s cubic-bezier(.35,0,.3,1);
+  -webkit-animation:balanca 3.4s ease-in-out infinite;animation:balanca 3.4s ease-in-out infinite}
+.navio .navimg{width:100%;height:auto;display:block;
+  -webkit-filter:drop-shadow(0 4px 6px rgba(10,20,40,.45));filter:drop-shadow(0 4px 6px rgba(10,20,40,.45))}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:translateY(0) rotate(-1.6deg)}50%{-webkit-transform:translateY(-5px) rotate(1.6deg)}}
+@keyframes balanca{0%,100%{transform:translateY(0) rotate(-1.6deg)}50%{transform:translateY(-5px) rotate(1.6deg)}}
+/* a esteira de espuma: so aparece quando o barco anda de verdade */
+.esteira{position:absolute;bottom:19%;height:5px;border-radius:99px;z-index:2;opacity:0;
+  background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.85));
+  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85));
+  -webkit-transition:all .9s ease;transition:all .9s ease}
+.esteira.e0{left:8%;width:16%;opacity:.5;
+  background:-webkit-linear-gradient(right,rgba(255,255,255,0),rgba(255,200,160,.8));
+  background:linear-gradient(270deg,rgba(255,255,255,0),rgba(255,200,160,.8))}
+.esteira.e1{left:14%;width:22%;opacity:.55}
+.esteira.e2{left:22%;width:50%;opacity:.9}
+/* as rajadas de vento, sempre soprando para a direita */
+.rajadas{position:absolute;left:0;right:0;top:8%;height:34%;z-index:1;pointer-events:none}
+.rajada{position:absolute;height:4px;border-radius:99px;background:rgba(255,255,255,.55);
+  -webkit-animation:sopra 2.6s linear infinite;animation:sopra 2.6s linear infinite}
+.rajada.r0{top:6%;width:34%;-webkit-animation-delay:0s;animation-delay:0s}
+.rajada.r1{top:34%;width:26%;-webkit-animation-delay:.5s;animation-delay:.5s}
+.rajada.r2{top:60%;width:40%;-webkit-animation-delay:1.1s;animation-delay:1.1s}
+.rajada.r3{top:84%;width:22%;-webkit-animation-delay:1.7s;animation-delay:1.7s}
+@-webkit-keyframes sopra{0%{left:-42%;opacity:0}15%{opacity:.75}85%{opacity:.75}100%{left:104%;opacity:0}}
+@keyframes sopra{0%{left:-42%;opacity:0}15%{opacity:.75}85%{opacity:.75}100%{left:104%;opacity:0}}
+.marbox .selodagua{position:absolute;left:0;right:0;bottom:6px;z-index:5;text-align:center;font-size:13px}
+.marbox .selodagua b{display:inline-block;background:rgba(24,44,62,.86);color:#fff;border-radius:999px;padding:4px 12px}
+@media (max-height:700px){ .navio{width:34%;margin-left:-17%} }
+
 .voobox{position:relative;width:100%;max-width:430px;margin-top:10px;border-radius:16px;
   overflow:hidden;background:#cfe6f5;border:3px solid #fffdf6;
   -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}
@@ -1122,7 +1160,7 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    mascote alheio aparecer no texto desta. Foi assim que "Quem vai voar
    com o Nico hoje?" ficou na tela de entrada de outra atividade.      */
 var MASCOTE_NOME="Ará";
-var CENAS={nv_fundo:1,nv_horizonte:1,nv_caravela:1,nv_aldeia:1,nv_porao:1,nv_atlantico:1,nv_mapavelho:1};
+var CENAS={nv_fundo:1,nv_horizonte:1,nv_caravela:1,nv_aldeia:1,nv_porao:1,nv_atlantico:1,nv_mapavelho:1,nv_mar:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
@@ -1132,7 +1170,7 @@ function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
    est&#225; sem cr&#233;dito. Com a c&#243;pia a arara n&#227;o treme: ela s&#243; n&#227;o mexe o bico.
    Assim que houver cr&#233;dito (ou o Marcos editar no ChatGPT), &#233; s&#243; trocar os
    dois arquivos — nenhuma linha de c&#243;digo muda.                            */
-var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico","nv_mapavelho"];
+var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico","nv_mapavelho","nv_mar","nv_vela0","nv_vela1","nv_vela2"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1173,6 +1211,17 @@ function ligaAnalisador(){ if(anaOk||anaTent)return; anaTent=true;
    1a narracao depois do `limpa()` seria justamente um elogio).            */
 var telaNarrou=false;
 function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||""); }
+/* ⭐ A FASE TROCOU O ENUNCIADO -> TROCA TAMBEM A VOZ DA TELA.
+   Cobranca do Marcos (ago/2026): *"na fase o navio por dentro, o texto la em
+   cima fica a explicacao correta, mas se clica para ouvir ele narra a
+   introducao da fase e nao a explicacao da foto que se clicou"* e, logo
+   depois, *"o botao de som ao lado do enunciado nao fala exatamente o que diz
+   o texto do enunciado"*. Ele esta certo nas duas: o botao existe para quem
+   NAO LE saber o que a tela esta pedindo — se a tela pede "toque na roca" e a
+   voz conta a historia da aldeia, o botao nao serve para o que foi feito.
+   `falaDaTela` e como a fase diz "a voz desta tela agora e esta": narra na
+   hora E passa a ser o que o alto-falante repete.                          */
+function falaDaTela(id,cb){ falaTela=id; telaNarrou=true; falar(id,cb); }
 function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
   if(!ehSecundaria(id)&&!telaNarrou){ falaTela=id; telaNarrou=true; }
   if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}}
@@ -1301,6 +1350,28 @@ function mostraDica(txt){
 }
 function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
 function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+
+/* ⭐ FECHO DE FASE — nunca deixar a tela VAZIA falando sozinha.
+   Defeito que o Marcos pegou (ago/2026): *"na fase de quem esta aqui, quando
+   conclui, fica so a tela de fundo e falando, fica feio"*. E ele estava certo:
+   a fase terminava com `limpa()` apagando TUDO e a narracao de revelacao
+   tocando por ate 13 SEGUNDOS — a crianca ficava olhando o fundo de madeira
+   ouvindo uma voz sem dono. Estava assim em 23 fases das duas atividades.
+   Agora o fecho e uma TELA de verdade: o mascote, o selo da fase e o que ele
+   esta dizendo, ESCRITO — para quem le acompanhar e para quem nao le ter o
+   personagem olhando de volta. So depois vem a faixa com o botao.
+   ⚠️ `prog` mantem a barra onde ela estava; sem isso ela sumia justo no fecho. */
+function fechaFase(selo,texto,idFala,ms,prox,prog){
+  limpa(); var t=el("div","tela");
+  if(prog) setProg(t,prog);
+  var c=el("div","centro");
+  c.appendChild(nicoEl("gg"));
+  c.appendChild(el("div","selo",selo));
+  c.appendChild(el("div","balao",texto));
+  t.appendChild(c); app.appendChild(t);
+  montaBarra(null,null);
+  depoisDaFala(idFala,ms,function(){ mostraBanner(texto,prox); });
+}
 /* ⚠️ estas cinco falas eram "vb_..." — da atividade dos VERBOS. Os MP3 nunca
    existiram nesta pasta, entao elogio() e consolo() estavam MUDOS nas 18 vezes
    em que o motor os chama. O app funcionava inteiro; so a crianca ficava sem a
@@ -1541,35 +1612,53 @@ function mVento(){
   var visto={},fim=false;
   var c=el("div","centro");
   c.appendChild(el("div","selo","O SEGREDO DO VENTO"));
-  c.appendChild(el("div","balao","O vento sopra sempre <b>para c&#225;</b>. Gire a <b>vela</b> e veja o que o barco faz."));
-  var cx=el("div","voobox");
-  cx.appendChild(cenaImg("nv_caravela","mfoto prim on"));
+  c.appendChild(el("div","balao","O vento sopra sempre <b>para c&#225;</b>. Mude a <b>vela</b> e veja o que o barco faz."));
+  /* ⚠️ ANTES: girava a FOTO INTEIRA (mar, ceu e barco juntos) uns graus.
+     Cobranca do Marcos (ago/2026): *"o segredo do vento nao funciona como o
+     esperado, a foto e que gira e fica feio, deveria ter uma animacao onde o
+     navio avanca"*. Ele esta certo — e nao era so feio: girar a foto nao
+     ensina NADA. O que ensina e o barco ANDAR.
+     Agora: o mar e o fundo (arte de IA), o navio e uma peca RECORTADA que
+     desliza por cima, e a vela troca de posicao (tres desenhos irmaos, da
+     mesma cartela). O CSS anima so o que precisa se mexer — a posicao do
+     barco e as rajadas de vento —, que e a regra da casa.                  */
+  var cx=el("div","marbox");
+  cx.appendChild(cenaImg("nv_mar","marimg"));
+  var raj=el("div","rajadas"),z;
+  for(z=0;z<4;z++){ var rr=el("div","rajada r"+z); raj.appendChild(rr); }
+  cx.appendChild(raj);
+  var nav=el("div","navio");
+  nav.appendChild(imgEl("nv_vela0","navimg"));
+  cx.appendChild(nav);
+  var esteira=el("div","esteira"); cx.appendChild(esteira);
   var selo=el("div","selodagua","");cx.appendChild(selo);
   c.appendChild(cx);
   var leg=el("div","balao pequeno","");c.appendChild(leg);
   var r=document.createElement("input"); r.type="range"; r.min="0"; r.max="2"; r.step="1";
-  r.value="0"; r.className="simul"; r.setAttribute("aria-label","angulo da vela");
+  r.value="0"; r.className="simul"; r.setAttribute("aria-label","posicao da vela");
   r.setAttribute("data-qa","2");
   c.appendChild(r);
   var lab=el("div","simullab");
-  lab.innerHTML="<span>vela reta</span><span>vela atravessada</span>";
+  lab.innerHTML="<span>vela atravessada</span><span>vela alinhada</span>";
   c.appendChild(lab);
-  var TX=["Vela <b>reta</b>: o vento bate de frente e empurra o barco <b>para tr&#225;s</b>. Assim ningu&#233;m sai do lugar.",
+  var TX=["Vela <b>atravessada</b> no barco: o vento bate nela de frente e empurra o barco <b>para tr&#225;s</b>. Assim ningu&#233;m sai do lugar.",
           "Vela <b>meio virada</b>: o barco anda de lado, devagarinho. J&#225; &#233; alguma coisa.",
-          "Vela <b>atravessada</b>: o vento escorrega nela e empurra o barco <b>para frente</b>! Agora d&#225; para ir e para <b>voltar</b>."];
-  var SELO=["parado","devagar","navegando!"];
-  var ANG=[0,-18,-40], DX=[0,8,26];
-  var fo=cx.getElementsByClassName("mfoto")[0];
+          "Vela <b>alinhada</b> com o barco: o vento <b>escorrega</b> nela e empurra o barco <b>para frente</b>! Agora d&#225; para ir e para <b>voltar</b>."];
+  var SELO=["indo para tr&#225;s","devagar","navegando!"];
+  /* onde o barco fica em cada posicao da vela (% da largura do mar) */
+  var POS=[14,42,80];   /* medido: em 6% o casco saia pela borda esquerda */
   function pinta(){ var v=parseInt(r.value,10);
-    fo.className="mfoto prim on";
-    fo.style.webkitTransform="rotate("+ANG[v]+"deg) translateX("+DX[v]+"%)";
-    fo.style.transform="rotate("+ANG[v]+"deg) translateX("+DX[v]+"%)";
+    nav.getElementsByTagName("img")[0].src="img/nv_vela"+v+".png";
+    nav.style.left=POS[v]+"%";
+    nav.className="navio v"+v;
+    esteira.className="esteira e"+v;
     leg.innerHTML=TX[v]; selo.innerHTML="<b>"+SELO[v]+"</b>";
     visto[v]=1; var n=0,k; for(k in visto) if(visto.hasOwnProperty(k)) n++;
     if(n>=3&&!fim){ fim=true; sCerto(); reg("rota",true,1);
       var ce=centroTela(cx); faisca(ce[0],ce[1],"#ffd43b",16);
-      setTimeout(function(){ depoisDaFala("nv_vento_revela",12000,function(){
-        mostraBanner("N&#227;o foi a coragem que atravessou o mar: foi a <b>vela</b> que aprendeu a andar contra o vento.",mAldeia); }); },900);
+      setTimeout(function(){
+        fechaFase("O SEGREDO DO VENTO","N&#227;o foi a coragem que atravessou o mar: foi a <b>vela</b> que aprendeu a andar contra o vento.","nv_vento_revela",12000,mAldeia,8);
+      },1400);
     }
   }
   r.oninput=function(){ arma(); sTap(); pinta(); };
@@ -1603,12 +1692,14 @@ function mAldeia(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,12);
-    if(idx>=ALDEIA.length){ depoisDaFala("nv_aldeia_revela",13000,function(){
-      mostraBanner("Aqui j&#225; havia <b>gente</b>: casa, ro&#231;a, caminho e l&#237;ngua. E ainda h&#225; &#8212; em Santa Catarina vivem <b>Guarani, Kaingang e Xokleng</b>.",mPorao); }); return; }
+    if(idx>=ALDEIA.length){ fechaFase("QUEM J&#193; ESTAVA AQUI","Aqui j&#225; havia <b>gente</b>: casa, ro&#231;a, caminho e l&#237;ngua. E ainda h&#225; &#8212; em Santa Catarina vivem <b>Guarani, Kaingang e Xokleng</b>.","nv_aldeia_revela",13000,mPorao,12); return; }
     var it=ALDEIA[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","QUEM J&#193; ESTAVA AQUI"));
-    c.appendChild(el("div","balao","Muito antes do navio, esta terra tinha dono. Toque em "+it.q+"."));
+    c.appendChild(el("div","balao","Muito antes do navio, esta terra tinha dono. Ache "+it.q+"."));
+    /* cada rodada tem a SUA pergunta falada: "toque na casa de palha",
+       "toque na roca", "toque no caminho" — e nao a introducao da fase. */
+    falaDaTela("nv_aldeia_q"+(idx+1));
     var cena=el("div","janela");
     cena.appendChild(cenaImg("nv_aldeia","jimg"));
     var k;
@@ -1684,6 +1775,8 @@ function mPorao(){
          mesma para sempre e da PRESO — e a crianca que insiste tambem. */
       f.className="ficha vista"; f.setAttribute("data-qa","0");
       bal.innerHTML="<b>"+o.t+"</b> &#8212; "+o.x;
+      /* fala a explicacao DA PECA na hora, e o alto-falante passa a repeti-la */
+      falaDaTela("nv_porao_"+o.img.replace("nv_",""));
       vistos[o.t]=1;
       var n=0,k; for(k in vistos) if(vistos.hasOwnProperty(k)) n++;
       if(n>=PORAO.length&&!fim){ fim=true; sCerto(); reg("encontro",true,1);
@@ -1828,8 +1921,7 @@ function mBussola(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,28);
-    if(idx>=BUSSP.length){ depoisDaFala("nv_bus_revela",11000,function(){
-      mostraBanner("No meio do oceano n&#227;o h&#225; placa nenhuma. Quem dizia o caminho era a <b>b&#250;ssola</b>.",mVeioFoi); }); return; }
+    if(idx>=BUSSP.length){ fechaFase("PARA QUE LADO?","No meio do oceano n&#227;o h&#225; placa nenhuma. Quem dizia o caminho era a <b>b&#250;ssola</b>.","nv_bus_revela",11000,mVeioFoi,28); return; }
     var it=BUSSP[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","PARA QUE LADO?"));
@@ -1868,10 +1960,10 @@ function mBussola(){
    para o mundo; cavalo, trigo, cana e roda vieram de LÁ. Quase toda criança
    acha que tudo veio de fora — e descobrir o contrário muda o olhar dela
    sobre quem ela é.                                                         */
-var TROCAI=[{img:"nv_mandioca",n:"a mandioca",d:"aqui"},{img:"nv_milho",n:"o milho",d:"aqui"},
-            {img:"nv_batata",n:"a batata",d:"aqui"},{img:"nv_cacau",n:"o cacau",d:"aqui"},
-            {img:"nv_cavalo",n:"o cavalo",d:"la"},{img:"nv_trigo",n:"o trigo",d:"la"},
-            {img:"nv_cana",n:"a cana",d:"la"},{img:"nv_roda",n:"a roda",d:"la"}];
+var TROCAI=[{k:0,img:"nv_mandioca",n:"a mandioca",d:"aqui"},{k:1,img:"nv_milho",n:"o milho",d:"aqui"},
+            {k:2,img:"nv_batata",n:"a batata",d:"aqui"},{k:3,img:"nv_cacau",n:"o cacau",d:"aqui"},
+            {k:4,img:"nv_cavalo",n:"o cavalo",d:"la"},{k:5,img:"nv_trigo",n:"o trigo",d:"la"},
+            {k:6,img:"nv_cana",n:"a cana",d:"la"},{k:7,img:"nv_roda",n:"a roda",d:"la"}];
 function mVeioFoi(){
   limpa();var t=el("div","tela");setProg(t,32);
   var idx=0,err=0,ordem=baguncar(TROCAI.slice(0));
@@ -1892,11 +1984,11 @@ function mVeioFoi(){
   c.appendChild(caixas);
   function mostra(){
     if(idx>=ordem.length){ sFesta(); festa();
-      depoisDaFala("nv_troca_revela",13000,function(){
-        mostraBanner("Metade do que a gente come todo dia <b>j&#225; estava aqui</b> &#8212; e foi daqui para o mundo inteiro.",mAquecimento); }); return; }
+      fechaFase("VEIO OU J&#193; ESTAVA?","Metade do que a gente come todo dia <b>j&#225; estava aqui</b> &#8212; e foi daqui para o mundo inteiro.","nv_troca_revela",13000,mAquecimento,32); return; }
     var it=ordem[idx];
     fig.innerHTML=""; fig.appendChild(imgEl(it.img,"objimg"));
     bal.innerHTML="E "+it.n+"? J&#225; estava aqui ou veio de l&#225;?";
+    falaDaTela("nv_troca_q"+it.k);
     var a=caixas.getElementsByClassName("cx"),z;
     for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===it.d)?"1":"0");
   }
@@ -1929,8 +2021,7 @@ function mAquecimento(){
   var idx=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,36);
-    if(idx>=AQUEC.length){ depoisDaFala("nv_aquec_revela",9000,function(){
-      mostraBanner("Lembrar do que a gente aprendeu &#233; o que faz aquilo <b>ficar</b>.",mRaizes); }); return; }
+    if(idx>=AQUEC.length){ fechaFase("LEMBRANDO&#8230;","Lembrar do que a gente aprendeu &#233; o que faz aquilo <b>ficar</b>.","nv_aquec_revela",9000,mRaizes,36); return; }
     var it=AQUEC[idx],err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","LEMBRANDO&#8230;"));
@@ -1963,12 +2054,12 @@ function mAquecimento(){
    O objetivo do 5º ano em pessoa: "conceito de etnia" e "trajetória cultural
    dos grupos étnico-raciais". A criança descobre que o que ela come, fala e
    canta veio de TRÊS lugares — e que nenhum deles é "o certo".              */
-var RAIZ=[{n:"a mandioca",d:"ind",e:"Os povos daqui plantavam mandioca muito antes de qualquer navio."},
-          {n:"o dend&#234;",d:"afr",e:"O dend&#234; veio da &#193;frica &#8212; e virou o cheiro da comida da Bahia."},
-          {n:"o trigo do p&#227;o",d:"eur",e:"O trigo veio da Europa, no por&#227;o dos navios."},
-          {n:"a rede de dormir",d:"ind",e:"A rede &#233; inven&#231;&#227;o dos povos daqui. Os europeus copiaram na hora."},
-          {n:"o berimbau",d:"afr",e:"O berimbau chegou com os africanos e virou capoeira."},
-          {n:"o cavalo",d:"eur",e:"Aqui n&#227;o havia cavalo nenhum antes dos navios."}];
+var RAIZ=[{k:0,n:"a mandioca",d:"ind",e:"Os povos daqui plantavam mandioca muito antes de qualquer navio."},
+          {k:1,n:"o dend&#234;",d:"afr",e:"O dend&#234; veio da &#193;frica &#8212; e virou o cheiro da comida da Bahia."},
+          {k:2,n:"o trigo do p&#227;o",d:"eur",e:"O trigo veio da Europa, no por&#227;o dos navios."},
+          {k:3,n:"a rede de dormir",d:"ind",e:"A rede &#233; inven&#231;&#227;o dos povos daqui. Os europeus copiaram na hora."},
+          {k:4,n:"o berimbau",d:"afr",e:"O berimbau chegou com os africanos e virou capoeira."},
+          {k:5,n:"o cavalo",d:"eur",e:"Aqui n&#227;o havia cavalo nenhum antes dos navios."}];
 var NOMER={ind:"DOS POVOS DAQUI",afr:"DA &#193;FRICA",eur:"DA EUROPA"};
 function mRaizes(){
   limpa();var t=el("div","tela");setProg(t,40);
@@ -1987,9 +2078,9 @@ function mRaizes(){
   c.appendChild(gav);
   function mostra(){
     if(idx>=ordem.length){ sFesta(); festa();
-      depoisDaFala("nv_raizes_revela",14000,function(){
-        mostraBanner("O nosso povo tem <b>tr&#234;s ra&#237;zes</b>, e todas est&#227;o no seu prato, na sua m&#250;sica e na sua fala.",mPalavra); }); return; }
+      fechaFase("AS TR&#202;S RA&#205;ZES","O nosso povo tem <b>tr&#234;s ra&#237;zes</b>, e todas est&#227;o no seu prato, na sua m&#250;sica e na sua fala.","nv_raizes_revela",14000,mPalavra,40); return; }
     bal.innerHTML="De onde veio <b>"+ordem[idx].n+"</b>?";
+    falaDaTela("nv_raiz_q"+ordem[idx].k);
     var a=gav.getElementsByClassName("gav"),z;
     for(z=0;z<a.length;z++) a[z].setAttribute("data-qa",(a[z].getAttribute("data-cx")===ordem[idx].d)?"1":"0");
   }
@@ -1997,7 +2088,7 @@ function mRaizes(){
     if(idx>=ordem.length) return; arma();
     var it=ordem[idx];
     if(k===it.d){ g.className="gav ok"; sCerto(); elogio(); reg("povo",err===0,err+1);
-      bal.innerHTML=it.e;
+      bal.innerHTML=it.e; falaDaTela("nv_raiz_e"+it.k);
       var ce=centroTela(g); faisca(ce[0],ce[1],"#6bd23f",12);
       setTimeout(function(){ g.className="gav"; idx++; err=0; mostra(); },1800);
     } else { err++; g.className="gav no"; sErro();
@@ -2157,8 +2248,7 @@ function mCruzada(){
   var idx=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,52+idx);
-    if(idx>=CRUZ.length){ depoisDaFala("nv_cruz_revela",9000,function(){
-      mostraBanner("Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.",mCompleta); }); return; }
+    if(idx>=CRUZ.length){ fechaFase("CRUZADINHA","Voc&#234; j&#225; sabe as palavras <b>e</b> o que elas querem dizer.","nv_cruz_revela",9000,mCompleta,52); return; }
     var it=CRUZ[idx],pos=0,err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","CRUZADINHA"));
@@ -2218,8 +2308,7 @@ function mCompleta(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,57+idx);
-    if(idx>=LACN.length){ depoisDaFala("nv_lac_revela",10000,function(){
-      mostraBanner("Voc&#234; j&#225; <b>escreve</b> as palavras da viagem, sem ningu&#233;m dar as letras.",mCaca); }); return; }
+    if(idx>=LACN.length){ fechaFase("COMPLETE A HIST&#211;RIA","Voc&#234; j&#225; <b>escreve</b> as palavras da viagem, sem ningu&#233;m dar as letras.","nv_lac_revela",10000,mCaca,57); return; }
     var it=LACN[idx];
     var c=el("div","centro");
     c.appendChild(el("div","selo","COMPLETE A HIST&#211;RIA"));
@@ -2417,8 +2506,7 @@ function mCusto(){
   var idx=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,73+idx);
-    if(idx>=CUSTO.length){ depoisDaFala("nv_custo_revela",15000,function(){
-      mostraBanner("Contar a hist&#243;ria inteira &#233; um jeito de <b>respeitar</b> quem veio antes.",mMapaRotas); }); return; }
+    if(idx>=CUSTO.length){ fechaFase("O QUE A VIAGEM CUSTOU","Contar a hist&#243;ria inteira &#233; um jeito de <b>respeitar</b> quem veio antes.","nv_custo_revela",15000,mMapaRotas,73); return; }
     var it=CUSTO[idx],err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O QUE A VIAGEM CUSTOU"));
@@ -2461,12 +2549,12 @@ function mMapaRotas(){
   var idx=0,err=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,79);
-    if(idx>=ROTAS.length){ depoisDaFala("nv_rotas_revela",11000,function(){
-      mostraBanner("Tr&#234;s peda&#231;os de terra, um oceano no meio &#8212; e o encontro que fez o nosso povo.",mLupa); }); return; }
+    if(idx>=ROTAS.length){ fechaFase("O MAPA DAS ROTAS","Tr&#234;s peda&#231;os de terra, um oceano no meio &#8212; e o encontro que fez o nosso povo.","nv_rotas_revela",11000,mLupa,79); return; }
     var it=ROTAS[idx],fim=false;
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA DAS ROTAS"));
-    c.appendChild(el("div","balao","Este &#233; o mapa da viagem. Toque em "+it.q+"."));
+    c.appendChild(el("div","balao","Este &#233; o mapa da viagem. Ache "+it.q+"."));
+    falaDaTela("nv_rotas_q"+(idx+1));
     var cena=el("div","janela");
     cena.appendChild(cenaImg("nv_atlantico","jimg"));
     var k;
@@ -2595,8 +2683,7 @@ function mRelampago(){
   var idx=0,acertos=0;
   function passo(){
     limpa();var t=el("div","tela");setProg(t,89);
-    if(idx>=RELP.length){ depoisDaFala("nv_rel_revela",9000,function(){
-      mostraBanner("Voc&#234; acertou <b>"+acertos+" de "+RELP.length+"</b> no rel&#226;mpago!",mEnsinar); }); return; }
+    if(idx>=RELP.length){ fechaFase("DESAFIO REL&#194;MPAGO","Voc&#234; acertou <b>"+acertos+" de "+RELP.length+"</b> no rel&#226;mpago!","nv_rel_revela",9000,mEnsinar,89); return; }
     var it=RELP[idx],err=0;
     var c=el("div","centro");
     c.appendChild(el("div","selo","DESAFIO REL&#194;MPAGO"));
