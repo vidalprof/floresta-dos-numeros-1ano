@@ -2709,6 +2709,8 @@ function mCompleta(){
       if(normal(inp.value)===normal(it.cer)){
         sCerto(); elogio(); inp.style.borderColor="#3f9a26"; fb.innerHTML="";
         /* O PREMIO E VER A FRASE FICAR INTEIRA: a palavra cai na lacuna. */
+        "sem voz: e a MESMA frase que a crianca acabou de ouvir, agora completa. "
+        + "Nao e pergunta nova: e o premio de ter acertado.";
         bal.innerHTML=it.fr.replace("______","<span class='lacok'>"+it.cer.toUpperCase()+"</span>");
         inp.style.display="none"; b.style.display="none";
         sFesta(); festa();
