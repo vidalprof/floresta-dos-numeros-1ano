@@ -71,6 +71,9 @@ python3 _qa/pedagogo.py "$ARQ" || FALHOU=1
 echo "--- 0b) PADRAO DA CASA (didatica, ilustrada, sonora, variada) -"
 python3 _qa/padrao.py "$ARQ" || FALHOU=1
 
+echo "--- 0b2) DINAMICAS (cada mecanica e as armadilhas DELA) -"
+python3 _qa/dinamicas.py "$ARQ" || FALHOU=1
+
 echo "--- 0c) PERGUNTA AMBIGUA (pede 'a ponte' e tem duas?) -"
 python3 _qa/ambiguo.py "$ARQ" || FALHOU=1
 

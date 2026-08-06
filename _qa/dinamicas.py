@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+u"""PORTÃO DAS DINÂMICAS — cada mecânica conferida pelas armadilhas DELA.
+
+Cobrança do Marcos (ago/2026): *"veja, nós temos um leque de interatividades
+muito grande, precisam ser TREINADAS, para quando for posta em prática não dar
+todos esses erros"*.
+
+Ele está certo sobre a causa. Toda vez que eu monto um caça-palavras, um jogo da
+memória ou uma fase de arrastar, eu **escrevo aquilo do zero** — e repito um
+defeito que já foi pago numa atividade anterior. São catorze mecânicas, cada uma
+com as suas armadilhas; memória de humano (ou de máquina sem memória) não dá
+conta. "Treinar" só vale se for MEDIDO, como os outros portões.
+
+Aqui cada regra é uma linha nascida de um defeito que chegou até ele:
+
+  CAÇA-PALAVRAS
+    · célula em PORCENTAGEM, não px fixo — com px cabem 10 numa grade de 9 e a
+      palavra quebra a linha ("TROCA e o A em outra linha", cobrado por ele);
+    · se há palavra na diagonal, o enunciado TEM que avisar;
+    · a grade publica `data-qa` — sem isso o auditor-jogador nunca fecha a fase.
+  MEMÓRIA
+    · verso de ARTE, não retângulo liso; virada 3D; carta grande (o piso de
+      130×88 quem mede é o `_qa/leiaute.js`).
+  ARRASTAR
+    · nunca `preventDefault` no `touchstart` (mata o toque no celular);
+    · guarda contra o evento de mouse FANTASMA que vem depois do toque;
+    · caminho de TOQUE simples além do arrasto. Defeito pego DUAS vezes.
+  TECLADO NA TELA (cruzadinha, forca, monte a palavra)
+    · tem que aceitar TAMBÉM o teclado de verdade (`document.onkeydown`) — no PC
+      da escola tem teclado e a criança vai digitar.
+  FORCA
+    · letra usada sai do alcance (senão a criança — e o auditor — toca nela para
+      sempre);
+    · a palavra a adivinhar vai SEM acento (o teclado não tem tecla de acento) e
+      a da faixa vai COM.
+  ESCOLHER / QUIZ
+    · opções EMBARALHADAS: na Fábrica de Estrelas a certa era sempre a 1ª e a
+      criança aprendia a posição, não o conteúdo.
+  ACHAR NA CENA
+    · a zona é a FIGURA recortada (grade de bits), não um pontinho com raio.
+
+⚠️ Este portão AVISA onde não dá para ter certeza e REPROVA só o que é medível
+sem ambiguidade. Portão que grita à toa é portão que ninguém lê.
+
+Uso:  python3 _qa/dinamicas.py _naveg/index.html
+Sai com 1 se alguma armadilha conhecida estiver aberta.
+"""
+import io
+import re
+import sys
+
+
+def js_de(html):
+    js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
+    return re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), js, flags=re.S)
+
+
+def css_de(html):
+    return "".join(re.findall(r"<style>(.*?)</style>", html, re.S))
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return 2
+    alvo = sys.argv[1]
+    html = io.open(alvo, encoding="utf-8").read()
+    js = js_de(html)
+    css = css_de(html)
+    baixo = html.lower()
+
+    usa, ruins, avisos = [], [], []
+
+    # ---------------------------------------------------- CACA-PALAVRAS
+    if re.search(r'\.grade\b', css) and re.search(r'data-qa', js) and re.search(r'\bcaca|CACA|ca&#231;a|caça', html, re.I):
+        usa.append("caca-palavras")
+        # 1) celula em porcentagem
+        cel = re.search(r'\.qcel\{([^}]*)\}|\.cel\{([^}]*)\}', css)
+        largura_js = re.search(r'\.style\.width\s*=\s*\(?100\s*/\s*\w+', js)
+        if not largura_js:
+            regra = (cel.group(1) or cel.group(2)) if cel else ""
+            if re.search(r'width\s*:\s*\d+px', regra):
+                ruins.append(u"caca-palavras: a celula tem LARGURA FIXA em px. Numa grade de 9 "
+                             u"cabem 10 e a palavra quebra a linha (defeito 'TROCA e o A em "
+                             u"outra linha'). Use (100/N)%% + box-sizing:border-box.")
+            else:
+                avisos.append(u"caca-palavras: nao achei a largura da celula em porcentagem — "
+                              u"confira que a grade fecha certo em 320px.")
+        # 2) diagonal avisada
+        tem_diag = re.search(r'\[1,\s*1\]|\[1,\s*-1\]|dl\s*:\s*|diagonal', js)
+        if tem_diag and "diagonal" not in baixo:
+            ruins.append(u"caca-palavras: ha palavra na DIAGONAL e o enunciado nao avisa. "
+                         u"A crianca varre so linha e coluna e desiste.")
+        # 3) data-qa para o auditor
+        if not re.search(r'\.setAttribute\("data-qa"', js):
+            avisos.append(u"caca-palavras: a grade nao publica data-qa — o auditor-jogador nao "
+                          u"consegue fechar a fase e vai dar 'PRESO' num lugar que funciona.")
+
+    # ---------------------------------------------------- MEMORIA
+    if re.search(r'\.mcarta|\.mcard', css):
+        usa.append("memoria")
+        if "rotateY" not in css and "rotatey" not in css.lower():
+            avisos.append(u"memoria: nao achei a virada 3D (rotateY). Carta que troca de face "
+                          u"sem girar perde metade da graca.")
+        verso = re.search(r'VERSO\s*=\s*([^;]{0,200})', js)
+        if verso and "img" not in verso.group(1) and "imgEl" not in verso.group(1):
+            ruins.append(u"memoria: o VERSO da carta nao usa imagem — retangulo liso nao e "
+                         u"ilustracao. Regra da casa: verso de arte de IA.")
+
+    # ---------------------------------------------------- ARRASTAR
+    if re.search(r'touchstart', js):
+        usa.append("arrastar/toque")
+        # preventDefault dentro do touchstart mata o toque
+        for m in re.finditer(r'touchstart["\']?\s*,\s*function\s*\([^)]*\)\s*\{(.{0,300})', js, re.S):
+            if "preventDefault" in m.group(1):
+                ruins.append(u"arrastar: ha preventDefault dentro do touchstart. Isso MATA o "
+                             u"toque no celular — a peca nao pega.")
+                break
+        if not re.search(r'ultimoToque|ultToque|__toque|toqueAgora', js):
+            avisos.append(u"arrastar: nao achei o guarda contra o evento de mouse FANTASMA que o "
+                          u"celular dispara depois do toque (ele desmarca a peca). "
+                          u"Defeito ja pego DUAS vezes.")
+
+    # ---------------------------------------------------- TECLADO NA TELA
+    tecla_tela = re.search(r'\.tec\b|\.tecl\b|teclafc|tecladofc', css) or re.search(r'"tec"|"tecl"', js)
+    if tecla_tela:
+        usa.append("teclado na tela")
+        if "document.onkeydown" not in js and "addEventListener(\"keydown\"" not in js:
+            ruins.append(u"teclado na tela: a fase NAO aceita o teclado de verdade "
+                         u"(document.onkeydown). No PC da escola tem teclado e a crianca vai "
+                         u"digitar. Regra das DUAS PORTAS.")
+
+    # ---------------------------------------------------- FORCA
+    if re.search(r'FORCA|forca', js):
+        usa.append("forca")
+        if not re.search(r'usada', js):
+            avisos.append(u"forca: nao achei a marca 'usada' na letra ja tocada. Letra que "
+                          u"continua clicavel prende a crianca (e o auditor) para sempre.")
+
+    # ---------------------------------------------------- ESCOLHER / QUIZ
+    if re.search(r'el\("div","opt"|"opt"', js):
+        usa.append("escolher")
+        if not re.search(r'baguncar\(|embaralh|shuffle', js):
+            ruins.append(u"escolher: as opcoes nao sao EMBARALHADAS. Na Fabrica de Estrelas a "
+                         u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
+
+    # ---------------------------------------------------- ACHAR NA CENA
+    if re.search(r'naZona\(|pzona\(|ZONAS\b', js):
+        usa.append("achar na cena")
+        if re.search(r'Math\.sqrt\(.{0,40}raio|dist\s*<\s*\d+', js) and not re.search(r'naZona\(', js):
+            ruins.append(u"achar na cena: o alvo e um PONTO com raio, nao a figura recortada. "
+                         u"A crianca toca na coisa certa e o app diz que errou.")
+
+    print(u"%s -> %d dinamica(s) reconhecida(s): %s"
+          % (alvo, len(usa), ", ".join(usa) if usa else "nenhuma"))
+    for a in avisos:
+        print(u"   aviso: %s" % a)
+    if ruins:
+        print(u"   %d ARMADILHA(S) ABERTA(S):" % len(ruins))
+        for r in ruins:
+            print(u"    - %s" % r)
+        return 1
+    if usa:
+        print(u"   dinamicas ok: as armadilhas conhecidas de cada mecanica estao fechadas")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
