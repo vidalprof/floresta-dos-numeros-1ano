@@ -4466,3 +4466,40 @@ tem que funcionar com **todos** os pedaços — o feminino, o masculino e o plur
 Os consertos que servem sempre: trocar o verbo (*"Ache a roça"*, *"Ache as
 casas"*), usar a forma contraída declarada na tabela (`de:"da mesa"`), ou uma
 construção neutra (*"Lá tem a igreja" / "Lá tem as casas"*).
+
+---
+
+## 🔊= "O ÁUDIO TEM QUE FALAR EXATAMENTE O QUE ESTÁ ESCRITO" (ago/2026)
+
+Palavras do Marcos: *"seria interessante que o áudio ao lado das instruções
+falasse exatamente o que está escrito, favor verificar a escrita se está
+correta, isso em toda atividade"*.
+
+**O motivo é o pilar 3 levado até o fim.** Esse botão existe para quem NÃO LÊ.
+Se a tela pede uma coisa e a voz conta outra — mesmo que as duas sejam boas —, a
+criança que depende da voz recebe uma instrução diferente da que está na frente
+dela; e quem lê devagar, acompanhando a voz com o dedo no texto, se perde. Não
+adianta a voz ser "sobre" a tela: tem que ser **a tela**.
+
+**Feito nas duas atividades:** 26 fases do 3º ano e 21 do 5º. Todas as narrações
+de abertura foram **regravadas com o texto escrito**, e as fases cujo enunciado
+muda a cada rodada ganharam voz por rodada (rosa dos ventos, cruzadinha, forca,
+complete a frase, o custo, relâmpago, ensine o mascote, a bússola, o aquecimento).
+
+### O portão: `_qa/vozigual.js` (0g da banca)
+Abre cada fase, lê o balão **como a criança vê**, descobre qual áudio o
+alto-falante repete (`falaTela`) e compara com o texto daquela narração. Acento,
+vírgula e caixa não contam; palavra diferente conta.
+
+### 📄 `<pasta>/falas.json` — o texto da voz vira parte da atividade
+Sem isso o portão é impossível: **mp3 não se lê**. Agora cada atividade guarda
+`[{"id","texto"}]` de todas as narrações, ao lado do `index.html`. Toda atividade
+nova nasce com ele, e ele é a fonte do lote de geração de voz — um texto só,
+usado para gravar E para conferir.
+
+### 🎲 O defeito que só apareceu por causa do portão
+No **Desafio Relâmpago** a fila de perguntas é **embaralhada** (`baguncar`), e o
+código chamava `falaDaTela("mp_rel_q"+i)` com o índice da RODADA. Resultado: a
+criança lia uma afirmação e ouvia outra. Conserto: `RELM.indexOf(it)` — o índice
+da TABELA, não o da vez. **Regra:** em fase embaralhada, o id da voz vem do
+ITEM, nunca do contador da rodada.
