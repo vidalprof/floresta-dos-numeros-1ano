@@ -76,7 +76,14 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
         /* se a tela ROLA, o que esta embaixo continua alcancavel — nao e defeito.
            O defeito da foto do Marcos era outro: nao rolava e a resposta sumia.  */
         const rola=tela? (tela.scrollHeight>tela.clientHeight+4) : false;
-        const els=[...document.querySelectorAll("#app "+sel)].filter(e=>e.offsetParent!==null);
+        /* ⚠️ DEFEITO DO PROPRIO PORTAO (ago/2026): estava `"#app "+sel`, e como
+           `sel` e uma LISTA separada por virgula, so o PRIMEIRO seletor ficava
+           preso ao #app — todo o resto varria a pagina inteira, inclusive o
+           banner escondido la embaixo. Resultado: "resposta FORA da tela" numa
+           tela que esta perfeita. Portao que acusa o inocente faz a gente
+           desconfiar do certo, que e o pior estrago possivel.                */
+        const els=[...document.querySelectorAll(sel.split(",").map(x=>"#app "+x.trim()).join(","))]
+                    .filter(e=>e.offsetParent!==null);
         let forams=0, atras=0, pequenos=0, grade=0;
         for(const e of els){
           const b=e.getBoundingClientRect();
