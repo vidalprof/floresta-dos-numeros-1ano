@@ -721,3 +721,27 @@ igual ao pago" em recorte sem a ressalva.
 - **Nunca** peça nem aceite o valor do token colado no chat. Ele vive apenas
   como secret `PAGES_TOKEN` em *Settings → Secrets → Actions*.
 - Se um deploy falhar, o GitHub envia e-mail automático ao dono do repositório.
+
+## ⚡ ENTREGA EM UMA CORRIDA SÓ (`entregar.yml`) — e como conferir de graça
+
+Cobrança do Marcos (ago/2026): *"otimize tudo para que no GitHub não fique essas
+filas demoradas e pesadas"*. O que ficou:
+
+- **Uma execução para TODAS as atividades:** `entregar.yml` com o input
+  `alvos=_naveg:a-terra-dos-papagaios,_mapa:o-voo-do-nico,_jardim:...`. Ele grava
+  a voz que falta (lendo o `falas.json`), publica, força o build e **pergunta ao
+  próprio site** se está servindo o que subiu.
+- **A voz sai 8 ao mesmo tempo**, pela biblioteca, num Python só. Antes era o
+  programa `edge-tts` chamado uma vez por fala: 199 falas = ~7 min só de partida
+  de processo. Agora é menos de um minuto.
+- **`<pasta>/falas.json` é a VERDADE.** Texto escrito ali = voz gravada; texto
+  mudou = voz regravada (carimbo sha1 em `audio/_carimbo.json`). É isso que acaba
+  com "a tela diz uma coisa e a voz diz outra". Atividade sem `falas.json` **não
+  tem como ser conferida** — MP3 não se lê. Criar o arquivo é parte do trabalho.
+
+**⚠️ NUNCA chamar `actions_list` para saber se terminou.** Um
+`list_workflow_runs` com `per_page:1` devolve **55 mil caracteres** (o objeto do
+repositório inteiro, duas vezes) e come a conversa. O jeito barato:
+`git fetch origin <branch>` e ler **`_status/entrega-<repo>.json`** — 200 bytes
+que o próprio workflow deixa, dizendo se ficou no ar. Para esperar sem gastar
+nada: um `until git fetch ... ; do sleep 20; done` em segundo plano.

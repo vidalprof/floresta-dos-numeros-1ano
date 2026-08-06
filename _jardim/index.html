@@ -19,6 +19,15 @@ body{font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,Arial,sans-serif;colo
 .balao{position:relative;max-width:430px;background:rgba(255,253,246,.95);border:0;border-radius:22px;padding:13px 18px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
   -webkit-box-shadow:0 6px 18px rgba(30,50,20,.22);box-shadow:0 6px 18px rgba(30,50,20,.22)}
 .balao b{color:#2c7318}
+/* ⭐ REGRA DO MOTOR — O ENUNCIADO NUNCA ENCOSTA NO QUE VEM DEPOIS.
+   O Marcos cobrou isto DUAS vezes noutras atividades (*"as opcoes de resposta
+   estao encostando no enunciado"* e, depois, *"esse encosto no enunciado eu ja
+   tinha comentado antes"*). Aqui o portao de leiaute achou o mesmo defeito em
+   10 telas x 6 tamanhos: folga ZERO. O balao tem sombra, e o vizinho colado por
+   baixo entra nela e parece grudado. Regra de motor, nao conserto de fase — e a
+   unica forma de o defeito nao voltar na proxima tela que alguem montar.     */
+.balao + *{margin-top:13px}
+.balao + .balao{margin-top:8px}
 .centro{-webkit-box-flex:1;-webkit-flex:1;flex:1;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;width:100%}
 h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
   background:rgba(40,52,20,.78);padding:6px 18px;border-radius:20px;
