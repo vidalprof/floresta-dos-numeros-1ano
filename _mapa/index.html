@@ -1223,6 +1223,13 @@ function ligaAnalisador(){ if(anaOk||anaTent)return; anaTent=true;
    1a narracao depois do `limpa()` seria justamente um elogio).            */
 var telaNarrou=false;
 function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||""); }
+/* ⭐ A FASE TROCOU O ENUNCIADO -> TROCA TAMBEM A VOZ DA TELA.
+   Cobranca do Marcos (ago/2026): *"o botao de som ao lado do enunciado nao fala
+   exatamente o que diz o texto do enunciado"*. Ele existe para quem NAO LE
+   saber o que a tela esta pedindo — se a tela pergunta "onde fica a igreja?" e
+   a voz repete a abertura da fase, o botao nao serve para o que foi feito.
+   Medido pelo `_qa/vozpergunta.py`.                                        */
+function falaDaTela(id,cb){ falaTela=id; telaNarrou=true; falar(id,cb); }
 function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
   if(!ehSecundaria(id)&&!telaNarrou){ falaTela=id; telaNarrou=true; }
   if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}}
@@ -1848,7 +1855,7 @@ function mOndeFica(){
   c.appendChild(cxs);
   function mostra(){
     if(i>=fila.length){ fechaFase("ONDE FICA NO MAPA?","No mapa d&#225; para dizer <b>onde</b> cada coisa fica &#8212; e todo mundo entende igual.","mp_onde_revela",10000,mRoteiro,42); return; }
-    bal.innerHTML="No mapa, onde fica <b>"+fila[i][0]+"</b>?";
+    bal.innerHTML="No mapa, ache <b>"+fila[i][0]+"</b>."; falaDaTela("mp_onde_q"+fila[i][1]);
     bal.setAttribute("data-qa",fila[i][1]);
   }
   function resp(k,d){ arma();
@@ -1956,7 +1963,7 @@ function mAquecimento(){
   function mostra(){
     if(i>=perg.length){ fechaFase("LEMBRANDO&#8230;","Voc&#234; lembrou! Lembrar &#233; o que faz a gente <b>aprender de verdade</b>.","mp_aquec_revela",8000,mSimbolo,56); return; }
     var p=perg[i],fim=false;
-    bal.innerHTML=p[0];
+    bal.innerHTML=p[0]; falaDaTela("mp_aquec_q"+i);
     box.innerHTML="";
     var alts=baguncar(p.slice(1)),z;
     for(z=0;z<alts.length;z++){(function(a){
@@ -2436,7 +2443,7 @@ function mPintar(){
   function mostra(){
     if(idx>=PINTAS.length){ sFesta(); festa();
       fechaFase("PINTE O MAPA","A <b>cor</b> tamb&#233;m &#233; s&#237;mbolo: azul &#233; &#225;gua, verde &#233; mata, e o resto &#233; o que a gente construiu.","mp_pint_revela",11000,mCaca,90); return; }
-    bal.innerHTML="Escolha a cor certa e pinte "+PINTAS[idx].q+".";
+    bal.innerHTML="Escolha a cor certa e pinte "+PINTAS[idx].q+"."; falaDaTela("mp_pint_q"+idx);
     marcaQA();
   }
   function pinta(k,p,m){
@@ -3074,7 +3081,7 @@ function mRelampago(){
   function mostra(){
     if(i>=fila.length){ fechaFase("DESAFIO REL&#194;MPAGO","Voc&#234; fez <b>"+acertos+" de "+fila.length+"</b>. Vamos ao seu boletim!","mp_rel_revela",8000,mEnsinar,98); return; }
     var it=fila[i],resp=false;
-    bal.innerHTML=it[0];
+    bal.innerHTML=it[0]; falaDaTela("mp_rel_q"+i);
     bal.setAttribute("data-qa",it[1]?"1":"0");
     box.innerHTML="";
     var pares=[["CERTO",1],["ERRADO",0]],z;
