@@ -74,6 +74,29 @@ Leia tudo antes de agir e responda sempre em **português**.
 > `git pull` para trazer o resultado. Fluxo completo de atividade: ver o
 > "PROCESSO OFICIAL" no topo do `MANUAL-MESTRE.md`.
 
+> ## 🌐🔎 A INTERNET MORA NO GITHUB — INCLUSIVE PARA PESQUISAR (nunca esquecer)
+> Cobrança do Marcos (ago/2026): *"veja, mas você pode usar o GitHub para
+> pesquisar, lembra? nós fazemos tudo de lá"* — e, logo depois: *"faça com que
+> você não se esqueça deste detalhe"*. **Eu tinha esquecido e disse a ele que não
+> dava para pesquisar.** Estava errado.
+>
+> **A regra, em uma linha: o chat NÃO tem internet; o GitHub Actions TEM.** Tudo o
+> que precisa de rede — gerar imagem, gravar voz, **LER a internet** — roda por
+> workflow. Se eu me pegar dizendo "não consigo acessar/pesquisar isso", a
+> resposta certa é **acionar um workflow**, não desistir.
+> - **Pesquisar/ler a internet:** `pesquisar.yml` — busca no DuckDuckGo (sem
+>   chave), abre as páginas, converte para texto limpo e salva em
+>   `_pesquisa/web/<assunto>.md`. Depois é `git pull` e eu leio aqui.
+> - **Baixar PDF/currículo:** `baixar-curriculo.yml` · **fotos:** `buscar-fotos.yml`
+> - **Imagem:** `gerar-imagens.yml` · **Voz:** `entregar.yml` / `gerar-audio.yml`
+>
+> **Medido em ago/2026, para não repetir o diagnóstico errado:** daqui o erro do
+> `edge-tts` NÃO era rede, era certificado (o proxy faz MITM e o `certifi` da
+> biblioteca ignora o `SSL_CERT_FILE` — juntar `/root/.ccr/ca-bundle.crt` no
+> `certifi.where()` resolve). Resolvido o certificado, o portão respondeu **403**
+> ao serviço de voz da Microsoft, ao Pollinations e à OpenAI — aí sim é política
+> de rede. `generativelanguage.googleapis.com` **alcança** (404, não 403).
+
 > ## 💰 IMAGEM SE GERA EM CARTELA — E ISSO É MEDIDO (cobrança do Marcos, ago/2026)
 > Palavras dele: *"tem como otimizar as imagens em cartela para não gastar tanto?
 > Tem até isso registrado nos manuais"*. Tinha — e mesmo assim a cartografia saiu

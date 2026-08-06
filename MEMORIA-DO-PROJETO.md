@@ -4618,3 +4618,20 @@ foi o que o `entregar.yml` passou a fazer (uma corrida para todas as atividades;
 retorne pouco. Um `list_workflow_runs` com `per_page:1` devolveu **55 mil
 caracteres** (o objeto do repositório inteiro, duas vezes). Quando precisar do
 id da execução, deixar o resultado cair no arquivo e ler com `python3`.
+
+## 🔎 PESQUISAR TAMBÉM É PELO GITHUB — o esquecimento que ele corrigiu
+
+Ago/2026. Eu disse a ele que não dava para pesquisar na internet daqui, e ele
+respondeu: *"veja, mas você pode usar o GitHub para pesquisar, lembra? nós
+fazemos tudo de lá"* — e depois: *"faça com que você não se esqueça deste
+detalhe"*. **Ele estava certo.** Eu tinha medido corretamente que o CHAT não tem
+rede e concluí errado que o PROJETO não tem.
+
+Nasceu daí o **`pesquisar.yml`**: busca no DuckDuckGo (sem chave, sem custo), abre
+as páginas, limpa menu e propaganda, salva em `_pesquisa/web/<assunto>.md` e
+commita. `git pull` e eu leio aqui.
+
+**A regra que eu tenho que carregar:** *o chat não tem internet; o projeto tem.*
+Sempre que eu for dizer "não consigo acessar isso", a frase certa é "vou acionar
+o workflow que acessa". Está no topo do `CLAUDE.md` para eu ler no começo de toda
+sessão.
