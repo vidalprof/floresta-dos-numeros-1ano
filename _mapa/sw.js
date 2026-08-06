@@ -1,6 +1,6 @@
 /* Service worker — rede primeiro no HTML; cache primeiro em imagem/áudio. */
 var PREFIXO="voo-do-nico-";
-var CACHE=PREFIXO+"v4";
+var CACHE=PREFIXO+"v5";
 
 var ATIVOS=["./","./index.html","./manifest.json","./img/mp_base.png","./img/mp_fala.png","./img/mp_pisca.png","./img/mp_cr1.png","./img/mp_cr2.png","./img/mp_cr3.png","./img/mp_cr4.png","./img/mp_cr5.png","./img/mp_cr6.png","./img/mp_med.png","./img/mp_verso.png","./img/mp_fundo.jpg","./img/mp_voo_a.jpg","./img/mp_voo_b.jpg","./img/mp_voo_c.jpg","./img/mp_maquete.jpg","./img/mp_mapa.jpg","./img/mp_esc_sala.jpg","./img/mp_esc_escola.jpg","./img/mp_esc_bairro.jpg","./img/mp_esc_cidade.jpg","./img/mp_rosa.png","./img/mp_planta_sala.jpg","./img/mp_lousa_c.png","./img/mp_armario_c.png","./img/mp_bairro.jpg","./audio/mp_abertura.mp3"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});
