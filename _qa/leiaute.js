@@ -18,7 +18,10 @@
      7. FIGURA MAIOR QUE O LUGAR DELA (ago/2026): <img> que estoura o pai
         posicionado — foi a lousa gigante em cima da planta da sala;
      8. BOTAO EM CIMA DO TEXTO (ago/2026): o alto-falante da pergunta cobrindo
-        a ultima palavra do enunciado.
+        a ultima palavra do enunciado;
+     9. COISA ENCOSTANDO NO ENUNCIADO (ago/2026, cobrado DUAS vezes): o que
+        vem logo abaixo do balao precisa de 6px de folga — colado, entra na
+        sombra do balao e parece um bloco so.
    Rolagem vertical NAO e erro por si so — so e erro quando o que
    se toca fica fora.
 
@@ -200,6 +203,38 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           }
         }
         if(tapa.length) out.push(tapa.length+" BOTAO(OES) EM CIMA DO TEXTO: "+tapa[0]);
+
+        /* 9. O ENUNCIADO ENCOSTANDO NO QUE VEM DEPOIS (ago/2026).
+           Cobranca do Marcos DUAS vezes — a segunda com a paciencia curta, e
+           com razao: *"na fase monte a legenda as opcoes de resposta estao
+           encostando no enunciado"* e depois *"esse encosto no enunciado eu ja
+           tinha comentado antes e pedido para nao acontecer"*.
+
+           Da primeira vez eu consertei A FASE. Errado: a causa nao era da
+           fase, era do motor — o balao tem sombra e nenhuma margem por baixo,
+           entao QUALQUER coisa colada nele nasce grudada, e o defeito ia
+           reaparecer na proxima tela que alguem montasse. Consertar o caso e
+           deixar a causa e o mesmo que nao consertar.
+
+           Agora e MEDIDO: o retangulo do enunciado tem que ter pelo menos 6px
+           de folga ate o vizinho de baixo. Vale em toda fase e em todo tamanho
+           de tela — inclusive nas atividades que ainda nem existem.          */
+        const cola=[];
+        for(const bl of [...document.querySelectorAll(".balao")]){
+          if(bl.offsetParent===null) continue;
+          const rb=bl.getBoundingClientRect(); if(rb.height<6) continue;
+          let ir=bl.nextElementSibling;
+          while(ir&&ir.offsetParent===null) ir=ir.nextElementSibling;
+          if(!ir) continue;
+          const ri=ir.getBoundingClientRect(); if(ri.height<6) continue;
+          const folga=ri.top-rb.bottom;
+          if(folga<6){
+            const q="."+String(ir.className||ir.tagName).split(" ")[0]+
+                    (folga<0?" SOBRE":" colado n")+"o enunciado (folga "+Math.round(folga)+"px)";
+            if(cola.indexOf(q)<0) cola.push(q);
+          }
+        }
+        if(cola.length) out.push(cola.length+" COISA(S) ENCOSTANDO NO ENUNCIADO: "+cola.join(" ; "));
         return out;
       },{sel:RESPOSTA,clic:CLICAVEL});
       for(const m of r) falhas.push(vp.n+" | "+t+" | "+m);

@@ -501,6 +501,13 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    balao que vem depois de alguma coisa ganha ar. Depois do selo fica curto, que
    ali eles sao um par. Medir com /tmp/vao.js, nao confiar no olho.            */
 .centro > .balao{margin-top:15px}
+/* ⚠️ O ENUNCIADO NUNCA ENCOSTA NO QUE VEM DEPOIS (cobrado DUAS vezes pelo
+   Marcos, ago/2026). O balao tem sombra: o vizinho colado por baixo entra
+   na sombra e vira um bloco so. Regra do MOTOR, nao da fase — senao o
+   defeito volta na proxima tela que alguem montar. Medido pelo portao 5,
+   regra 9 (`_qa/leiaute.js`), em 6 tamanhos de tela.                     */
+.balao + *{margin-top:13px}
+.balao + .balao{margin-top:8px}
 .centro > .selo + .balao{margin-top:6px}
 .centro > .pedido{margin-top:15px}
 @media (max-height:600px){

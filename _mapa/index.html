@@ -147,6 +147,19 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .silh .sb.dir{margin-left:auto}
 .silh .gap{height:12px}
 .folha{width:250px;background:var(--papel);border:1px solid var(--linha);border-radius:12px;padding:14px 16px;-webkit-box-shadow:0 8px 20px rgba(50,40,20,.3);box-shadow:0 8px 20px rgba(50,40,20,.3)}
+/* a folha da legenda: 5 linhas + 5 pecas + dica nao cabiam em tela de 740px,
+   e a dica sumia atras dos botoes. Linha mais baixa, mesma area de toque. */
+.folha.leg{width:268px;padding:9px 11px}
+.folha.leg .clin{padding:6px 9px;margin-bottom:6px}
+.folha.leg .tvaga{height:46px;min-width:80px}
+.folha.leg .tvaga .pecaimg{width:34px;height:34px}
+@media (max-height:700px){ .folha.leg .clin{padding:4px 8px;margin-bottom:5px}
+  .folha.leg .tvaga{height:40px} .folha.leg .tvaga .pecaimg{width:30px;height:30px} }
+/* as 5 pecas numa fila so: a 5a sozinha na 2a fila comia 78px de altura e
+   empurrava a dica para tras dos botoes. Alvo continua acima de 44px.      */
+.pecas.leg{max-width:404px;gap:6px}
+.pecas.leg .peca{padding:7px 8px}
+.pecas.leg .peca .pecaimg{width:42px;height:42px}
 .folha.carta{min-height:150px;text-align:left}
 .cartalin{font-size:14px;font-weight:600;margin:4px 0}
 .txcard{width:260px;background:var(--papel);border:2px solid var(--linha);border-bottom-width:5px;border-radius:16px;padding:9px 11px;-webkit-box-shadow:0 8px 18px rgba(50,40,20,.26);box-shadow:0 8px 18px rgba(50,40,20,.26)}
@@ -561,6 +574,13 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    ali eles sao um par. Medir com /tmp/vao.js, nao confiar no olho.            */
 .centro > .balao{margin-top:15px}
 .centro > .selo + .balao{margin-top:6px}
+/* ⚠️ O ENUNCIADO NUNCA ENCOSTA NO QUE VEM DEPOIS (defeito que o Marcos pegou,
+   ago/2026: *"na fase monte a legenda as opcoes de resposta estao encostando
+   no enunciado"*). O balao tem sombra; o vizinho colado por baixo entra na
+   sombra e parece grudado. A regra vale para TODA fase de uma vez, senao o
+   mesmo defeito volta na proxima tela que alguem montar.                    */
+.balao + *{margin-top:13px}
+.balao + .balao{margin-top:8px}
 .centro > .pedido{margin-top:15px}
 @media (max-height:600px){
   .centro > .balao{margin-top:9px}
@@ -862,11 +882,36 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .tcor.verde{background:#2e7a1c}
 .tcor.casa{background:#a8531a}
 .tcor.sel{border-color:#ffd43b;-webkit-transform:translateY(-2px);transform:translateY(-2px)}
-.tinta{position:absolute;width:66px;height:66px;border-radius:50%;cursor:pointer;
-  border:3px dashed rgba(255,255,255,.9);background:rgba(255,255,255,.22)}
-.tinta.agua{background:rgba(47,127,196,.72);border:3px solid #2f7fc4}
-.tinta.verde{background:rgba(63,154,38,.72);border:3px solid #3f9a26}
-.tinta.casa{background:rgba(210,115,42,.72);border:3px solid #d2732a}
+/* ⭐ O MAPA COMECA SEM COR E A CRIANCA PINTA DE VERDADE (ideia do Marcos,
+   ago/2026: *"o mapa deveria ser sem cor (o desenho do mapa), dai quando a
+   crianca clica com a cor certa ela pinta o desenho, seria legal nao?"*).
+   Era: uma bolota colorida caia em cima da foto, e as bolotas nem batiam com
+   as figuras. Agora: `mp_pmapa.jpg` e o desenho apagado e cada regiao tem a
+   SUA camada (`mp_pint_rio.png` etc.), recortada do proprio mapa por cor de
+   pixel e tingida com a cor da legenda — some/aparece com o toque certo. Por
+   isso a tinta cai exatamente em cima do rio, e nunca ao lado dele.        */
+.pmapa{position:relative;width:100%;max-width:400px;margin-top:10px;border-radius:16px;overflow:hidden;
+  border:3px solid #d9c9a4;-webkit-box-shadow:0 8px 20px rgba(50,40,20,.32);box-shadow:0 8px 20px rgba(50,40,20,.32)}
+.pmapa .pbase{width:100%;height:auto;display:block}
+.pmapa .pcam{position:absolute;opacity:0;pointer-events:none;
+  -webkit-transition:opacity .6s ease;transition:opacity .6s ease}
+.pmapa .pcam.on{opacity:1}
+.pmapa .ptoque{position:absolute;left:0;top:0;right:0;bottom:0;cursor:pointer;z-index:3}
+/* ⚠️ o ALVO nao pisca; quem pisca e o anel de DENTRO. Elemento que se mexe
+   sem parar e "instavel" para o navegador de teste: o auditor-jogador fica
+   esperando ele sossegar e da PRESO numa fase que funciona.               */
+.pmapa .palvo{position:absolute;width:15%;height:15%;margin:-7.5% 0 0 -7.5%;z-index:4;cursor:pointer}
+.pmapa .palvo i{position:absolute;left:0;top:0;right:0;bottom:0;display:block;
+  border-radius:50%;border:3px dashed rgba(255,255,255,.92);background:rgba(255,255,255,.2);
+  -webkit-animation:pulsa 1.5s infinite;animation:pulsa 1.5s infinite}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.14)}}
+@keyframes pulsa{0%,100%{transform:scale(1)}50%{transform:scale(1.14)}}
+.pmapa.errou{-webkit-animation:shk .35s;animation:shk .35s}
+.pmapa .pfaixa{position:absolute;left:0;right:0;bottom:0;z-index:5;background:rgba(46,36,20,.9);
+  color:#fff;font-size:13.5px;font-weight:800;text-align:center;padding:5px 8px;
+  -webkit-transform:translateY(100%);transform:translateY(100%);
+  -webkit-transition:-webkit-transform .3s;transition:transform .3s}
+.pmapa .pfaixa.show{-webkit-transform:translateY(0);transform:translateY(0)}
 /* ================= FASES NOVAS (ago/2026) =================
    Pedido do Marcos: "aumentar as fases pois nao dura 55 minutos, melhorar as
    interatividades, aumentar o leque". Nenhuma delas precisou de arte nova: a
@@ -894,22 +939,56 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .nebbox .nebtx{position:absolute;left:0;right:0;bottom:0;padding:5px;text-align:center;font-size:12px;
   font-weight:700;color:#fff;background:rgba(28,22,12,.72)}
 /* --- QUEBRA-CABECA: pedacos do proprio mapa --- */
+/* ⭐ GRANDE, COM SOM, DESTAQUE E FESTA (pedido do Marcos, ago/2026: *"o
+   quebra-cabeca pode ser maior e mais fantastico, com som, comemoracao,
+   destaque"*). Era um tabuleiro de 312px com pecas de 94x66 — do tamanho de
+   uma miniatura, sem brilho e sem barulho. Agora o tabuleiro e FLUIDO (enche
+   a tela ate 420px), a peca escolhida acende e flutua, o encaixe estala, a
+   vaga certa pisca, e no fim as linhas somem e o mapa aparece inteiro.    */
 .qcban{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
-  -webkit-box-pack:center;justify-content:center;gap:8px;margin-top:12px}
-.qcgrade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
-  width:100%;max-width:312px;margin:10px auto 0;background:rgba(255,253,246,.55);
-  border:3px dashed rgba(255,255,255,.85);border-radius:14px;padding:4px}
-.qcvaga{width:33.33%;height:66px;border:2px dashed rgba(120,100,60,.45);border-radius:8px}
+  -webkit-box-pack:center;justify-content:center;gap:9px;margin-top:12px;width:100%;max-width:420px}
+.qcgrade{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  width:100%;max-width:396px;margin:10px auto 0;background:rgba(255,253,246,.55);
+  border:3px dashed rgba(255,255,255,.85);border-radius:16px;padding:5px;
+  -webkit-box-shadow:0 10px 24px rgba(30,25,10,.4);box-shadow:0 10px 24px rgba(30,25,10,.4);
+  -webkit-transition:-webkit-transform .5s;transition:transform .5s}
+.qcvaga{position:relative;width:33.33%;height:0;padding-bottom:36.6%;border:2px dashed rgba(120,100,60,.45);
+  border-radius:10px;-webkit-box-sizing:border-box;box-sizing:border-box}
+/* a vaga vazia respira devagar enquanto ha peca escolhida: mostra ONDE cabe */
+.qcgrade.mirando .qcvaga{border-color:rgba(255,212,59,.95);
+  -webkit-animation:qcresp 1.2s infinite;animation:qcresp 1.2s infinite}
+.qcgrade.mirando .qcvaga.cheia{-webkit-animation:none;animation:none;border-color:#6bd23f}
+@-webkit-keyframes qcresp{0%,100%{background:rgba(255,212,59,.10)}50%{background:rgba(255,212,59,.30)}}
+@keyframes qcresp{0%,100%{background:rgba(255,212,59,.10)}50%{background:rgba(255,212,59,.30)}}
+/* o encaixe: a peca "cai" no lugar */
+@-webkit-keyframes qcencaixa{0%{-webkit-transform:scale(1.3);opacity:.2}60%{-webkit-transform:scale(.94)}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes qcencaixa{0%{transform:scale(1.3);opacity:.2}60%{transform:scale(.94)}100%{transform:scale(1);opacity:1}}
+.qcvaga.cheia{-webkit-animation:qcencaixa .42s;animation:qcencaixa .42s}
+/* o fim: as linhas somem e o mapa aparece inteiro */
+.qcgrade.pronto{border-color:transparent;background:none;padding:5px;
+  -webkit-transform:scale(1.04);transform:scale(1.04)}
+.qcgrade.pronto .qcvaga{border-color:transparent;border-radius:0}
 /* ⚠️ a figura do quebra-cabeca tem que ser CHEIA. Com o mapa simples, tres
    dos seis pedacos eram creme liso e iguais entre si — a crianca nao montava,
    adivinhava. A vista do bairro tem casa, rio, rua e mata em todo pedaco.  */
 .qcpc,.qcvaga.cheia{background-image:url(img/mp_bairro.jpg);background-size:300% 200%;background-repeat:no-repeat}
-.qcpc{width:94px;height:66px;border-radius:8px;cursor:pointer;border:2px solid #fffdf6;
-  -webkit-box-shadow:0 3px 8px rgba(30,25,10,.3);box-shadow:0 3px 8px rgba(30,25,10,.3)}
-.qcpc.sel{border-color:#ffd43b;-webkit-transform:translateY(-3px);transform:translateY(-3px)}
-.qcpc.usada{opacity:.25;pointer-events:none}
-.qcvaga.cheia{border-style:solid;border-color:#6bd23f}
+/* ⚠️ a peca tem a PROPORCAO do pedaco que ela mostra: a foto e 820x601 e o
+   corte e 3x2, entao cada pedaco e 0,91 de largura por altura. Antes a peca
+   era 94x66 (1,42) e o `background-size:300% 200%` ESTICAVA o pedaco — as
+   bordas nao casavam com as da vaga e a crianca montava no chute.        */
+.qcpc{width:106px;height:116px;border-radius:10px;cursor:pointer;border:3px solid #fffdf6;
+  -webkit-box-shadow:0 5px 12px rgba(30,25,10,.36);box-shadow:0 5px 12px rgba(30,25,10,.36);
+  -webkit-transition:-webkit-transform .18s;transition:transform .18s}
+@media (max-width:400px){ .qcpc{width:92px;height:101px} }
+@media (max-height:700px){ .qcpc{width:88px;height:97px} }
+.qcpc.sel{border-color:#ffd43b;-webkit-transform:translateY(-6px) scale(1.06);transform:translateY(-6px) scale(1.06);
+  -webkit-box-shadow:0 0 0 4px rgba(255,212,59,.55),0 10px 20px rgba(30,25,10,.45);
+  box-shadow:0 0 0 4px rgba(255,212,59,.55),0 10px 20px rgba(30,25,10,.45)}
+.qcpc.usada{opacity:.22;pointer-events:none;-webkit-transform:scale(.9);transform:scale(.9)}
+.qcvaga.cheia{border-style:solid;border-color:#6bd23f;background-size:300% 200%}
 .qcvaga.no{border-color:var(--erro);-webkit-animation:shk .35s;animation:shk .35s}
+.qcplac{margin-top:9px;font-size:15px;font-weight:800;color:#fff;background:rgba(46,36,20,.9);
+  padding:6px 15px;border-radius:999px}
 /* --- TABULEIRO: ande at&#233; o lugar --- */
 .tabu{position:relative;width:100%;max-width:300px;margin:10px auto 0;background:rgba(255,253,246,.9);
   border:3px solid #fffdf6;border-radius:14px;padding:4px;
@@ -1148,6 +1227,28 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 }
 
 /* ================= ACERVO REAL e EXPOSIÇÃO ================= */
+
+/* ⚠️ SIMBOLO DE LEGENDA NAO E FOTO. Posto como `.fotoreal` ele esticava para os
+   340px da moldura e virava um desenho gigante — cobranca do Marcos (ago/2026:
+   *"os simbolos, tipo do hospital, igreja etc, ficaram muito grandes"*). Icone
+   de legenda se le de relance: tamanho de icone, centrado, com ar em volta.  */
+.moldurafoto .simbolo{display:block;margin:2px auto;width:auto;height:auto;
+  max-width:112px;max-height:112px}
+/* a moldura encolhe junto: chapa branca gigante em volta de um icone pequeno
+   fica pior do que o icone grande. */
+.moldurafoto.sim{max-width:190px;padding:8px 8px 6px}
+@media (max-height:760px){ .moldurafoto .simbolo{max-width:92px;max-height:92px}
+                           .moldurafoto.sim{max-width:160px} }
+
+/* --- as tres faixas do "onde fica no mapa" --- */
+.moldurafoto.faixas{position:relative}
+.faixa{position:absolute;left:8px;right:8px;height:33.3%;pointer-events:none;
+  border-top:2px dashed rgba(40,30,10,.35)}
+.faixa.fcima{top:8px;border-top:0}
+.faixa.fmeio{top:33.3%}
+.faixa.fbaixo{top:66.6%}
+.faixatx{position:absolute;left:6px;top:4px;background:rgba(24,20,10,.78);color:#fff;
+  font-size:11px;font-weight:800;letter-spacing:.4px;border-radius:999px;padding:2px 8px}
 .moldurafoto{width:100%;max-width:420px;margin-top:10px;background:#fffdf6;padding:8px 8px 4px;
   border-radius:6px;border:1px solid #e0d6bd;
   -webkit-box-shadow:0 10px 24px rgba(30,25,10,.45);box-shadow:0 10px 24px rgba(30,25,10,.45)}
@@ -1201,11 +1302,13 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    com o Nico hoje?" ficou na tela de entrada de outra atividade.      */
 var MASCOTE_NOME="Nico";
 var CENAS={mp_fundo:1,mp_voo_a:1,mp_voo_b:1,mp_voo_c:1,mp_maquete:1,mp_mapa:1,
-           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_bairro:1};
+           mp_esc_sala:1,mp_esc_escola:1,mp_esc_bairro:1,mp_esc_cidade:1,mp_planta_sala:1,mp_bairro:1,
+           mp_pmapa:1,mp_grade:1};
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_bairro","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa"];
+var IMGS=["mp_base","mp_fala","mp_pisca","mp_cr1","mp_cr2","mp_cr3","mp_cr4","mp_cr5","mp_cr6","mp_voo_a","mp_voo_b","mp_voo_c","mp_maquete","mp_mapa","mp_mesa_l","mp_mesa_c","mp_carro_l","mp_carro_c","mp_arvore_l","mp_arvore_c","mp_piscina_l","mp_piscina_c","mp_cadeira_l","mp_cadeira_c","mp_sim_igreja","mp_sim_escola","mp_sim_ponte","mp_sim_rio","mp_sim_praca","mp_sim_hospital","mp_sim_mercado","mp_sim_campo","mp_esc_sala","mp_esc_escola","mp_esc_bairro","mp_esc_cidade","mp_rosa","mp_planta_sala","mp_lousa_c","mp_armario_c","mp_bairro","mp_fundo","mp_recado","mp_verso","mp_med","mp_lupa",
+"mp_pmapa","mp_grade","mp_pint_rio","mp_pint_verde","mp_pint_casas","mp_pint_igreja","mp_pint_ponte"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1426,14 +1529,7 @@ function fraseEl(palavras,alvo,onOk,onNo){
 /* as vozes das RESPOSTAS (alto-falante em cada opcao) que existem em audio/op_<chave>.mp3 */
 /* as vozes das RESPOSTAS (alto-falante em cada opcao) — audio/op_<chave>.mp3.
    ⚠️ as chaves sao base36 e podem comecar com numero: SEM ASPAS o JS nem carrega. */
-var VOZOK={"13fa1b":1,"13zhsg1":1,"151187x":1,"179h1z":1,"17e2r7c":1,"19dzacf":1,"1e8uhxx":1,"1ej0y5n":1,
-  "1ep4fkf":1,"1hfubyk":1,"1lj2qp0":1,"1m145bp":1,"1othqwk":1,"1tniq0u":1,"1tnqioc":1,"1txixyt":1,
-  "1w3w2bc":1,"1xuxsyq":1,"1xvc01o":1,"480b6q":1,"4hecx7":1,"7ynxgs":1,"bd0pj3":1,"gjpem6":1,
-  "k1nozx":1,"l1de7j":1,"sqaaps":1,"stl6tm":1,"t4cjsl":1,"u4e4ha":1,"wsiuh3":1,"wy6cf3":1,
-  "zesn38":1,"zw9bvw":1,
-  /* as 5 palavras do caca-palavras: a lista ganhou alto-falante e a
-     comemoracao DIZ a palavra achada (crianca de 3o ano que ainda soletra) */
-  "ykmo90":1,"377h73":1,"v6xdpx":1,"1e613o7":1};
+var VOZOK={"13fa1b":1,"13zhsg1":1,"151187x":1,"179h1z":1,"17e2r7c":1,"19dzacf":1,"1e613o7":1,"1e8uhxx":1,"1ej0y5n":1,"1ep4fkf":1,"1hfubyk":1,"1lj2qp0":1,"1m145bp":1,"1othqwk":1,"1tniq0u":1,"1tnqioc":1,"1txixyt":1,"1w3w2bc":1,"1xuxsyq":1,"1xvc01o":1,"377h73":1,"480b6q":1,"4hecx7":1,"7ynxgs":1,"bd0pj3":1,"gjpem6":1,"k1nozx":1,"l1de7j":1,"sqaaps":1,"stl6tm":1,"t4cjsl":1,"u4e4ha":1,"v6xdpx":1,"wsiuh3":1,"wy6cf3":1,"ykmo90":1,"zesn38":1,"zw9bvw":1};
 var vz=document.getElementById("vz"), zapAtual=null;
 function chaveVoz(s){
   s=(s||"").replace(/\s+/g," ").replace(/^ | $/g,"").toLowerCase();
@@ -1884,36 +1980,73 @@ function mMaquete(){
    O mapa (mp_mapa) se divide sozinho em tres faixas horizontais bem limpas:
    igreja e casas EM CIMA, a praca verde NO MEIO, o rio EMBAIXO. Medido na arte.
    ⚠️ E saiu "a ponte", que a fase pedia e que NAO EXISTE nesta figura.       */
-var ONDE=[{k:0,q:"a <b>igreja</b>",                       d:"cima"},
-          {k:1,q:"a <b>casa</b> de telhado vermelho l&#225; em cima", d:"cima"},
-          {k:2,q:"a <b>pra&#231;a</b> verde",                 d:"meio"},
-          {k:3,q:"o <b>rio</b>",                          d:"baixo"},
-          {k:4,q:"a <b>ponte</b>",                        d:"baixo"}];
+/* ⚠️ CADA COISA EM UMA FAIXA SÓ (cobranca do Marcos, ago/2026: *"as casas ficam
+   onde? tem que ficar claro para o estudante, nao pode ficar confuso"*). Ele
+   esta certo: no mapa as casas descem pelo lado direito e ocupam as TRES
+   faixas — nao ha resposta certa para elas. Ficaram so as coisas que estao
+   inteiras dentro de uma faixa, e a tela passou a DESENHAR as faixas.        */
+/* ⚠️ UM EIXO POR BLOCO (cobranca do Marcos, ago/2026: *"as casas ficam onde?
+   tem que ficar claro para o estudante"* e *"se tiver a direita ou a esquerda
+   tambem tem que ficar claro"*). A fase corre em DOIS blocos, cada um com o seu
+   par de gavetas — nunca os dois eixos misturados, que era o defeito original:
+     1) EM CIMA / NO MEIO / EMBAIXO  — so coisas inteiras dentro de uma faixa;
+     2) A ESQUERDA / A DIREITA       — a igreja esta a esquerda e as casas de
+        telhado vermelho a direita, sem discussao possivel nesta figura.      */
+var ONDE=[{k:0,q:"a <b>igreja</b>",        d:"cima",  eixo:"v"},
+          {k:1,q:"a <b>pra&#231;a</b> verde", d:"meio",  eixo:"v"},
+          {k:2,q:"o <b>rio</b>",           d:"baixo", eixo:"v"},
+          {k:3,q:"a <b>ponte</b>",         d:"baixo", eixo:"v"},
+          {k:4,q:"a <b>igreja</b>",        d:"esq",   eixo:"h"},
+          {k:5,q:"as <b>casas</b> de telhado vermelho", d:"dir", eixo:"h", pl:1}];
 function mOndeFica(){
   limpa();var t=el("div","tela");setProg(t,42);
-  var fila=baguncar(ONDE.slice(0)),i=0,err=0,contas={};
+  /* ⚠️ os dois eixos NAO se misturam: primeiro tudo de cima/meio/embaixo,
+     depois tudo de esquerda/direita. Bagunçar a lista inteira fazia as
+     gavetas trocarem de significado a cada pergunta — a crianca respondia
+     "embaixo" numa tela e na seguinte a mesma gaveta era "à direita".     */
+  var fv=[],fh=[],fz0;
+  for(fz0=0;fz0<ONDE.length;fz0++) (ONDE[fz0].eixo==="v"?fv:fh).push(ONDE[fz0]);
+  var fila=baguncar(fv).concat(baguncar(fh)),i=0,err=0,contas={},eixoAtual="";
   var c=el("div","centro");
   c.appendChild(el("div","selo","ONDE FICA NO MAPA?"));
   var bal=el("div","balao","");c.appendChild(bal);
-  var mini=el("div","moldurafoto");
+  var mini=el("div","moldurafoto faixas");
   mini.appendChild(cenaImg("mp_mapa","fotoreal"));
+  /* as tres faixas ficam A VISTA: a crianca nao precisa adivinhar onde comeca
+     "o meio". Ver o corte e metade do que a fase ensina. */
+  var FX=[["cima","EM CIMA"],["meio","NO MEIO"],["baixo","EMBAIXO"]],fz;
+  for(fz=0;fz<3;fz++){
+    var fa=el("div","faixa f"+FX[fz][0]);
+    fa.appendChild(el("span","faixatx",FX[fz][1]));
+    mini.appendChild(fa);
+  }
   c.appendChild(mini);
   var cxs=el("div","gavetas");
-  var chaves=[["cima","EM CIMA"],["meio","NO MEIO"],["baixo","EMBAIXO"]];
+  var CHV={v:[["cima","EM CIMA"],["meio","NO MEIO"],["baixo","EMBAIXO"]],
+           h:[["esq","&#192; ESQUERDA"],["dir","&#192; DIREITA"]]};
+  var chaves=CHV.v;
   var ns={};
-  var z;
-  for(z=0;z<chaves.length;z++){(function(k,rot){
-    var d=el("div","gav");
-    d.appendChild(el("div","gavtit",rot));
-    var n=el("div","gavnum","0"); d.appendChild(n); ns[k]=n; contas[k]=0;
-    d.setAttribute("data-qa",k);
-    d.onclick=function(){ resp(k,d); };
-    cxs.appendChild(d);
-  })(chaves[z][0],chaves[z][1]);}
+  /* ⚠️ as gavetas se REFAZEM quando o bloco muda: nunca os dois eixos juntos. */
+  function montaGavetas(eixo){
+    cxs.innerHTML=""; chaves=CHV[eixo]; eixoAtual=eixo;
+    for(var z=0;z<chaves.length;z++){(function(k,rot){
+      var d=el("div","gav");
+      d.appendChild(el("div","gavtit",rot));
+      var n=el("div","gavnum","0"); d.appendChild(n); ns[k]=n; contas[k]=0;
+      d.setAttribute("data-qa",k);
+      d.onclick=function(){ resp(k,d); };
+      cxs.appendChild(d);
+    })(chaves[z][0],chaves[z][1]);}
+  }
+  montaGavetas("v");
   c.appendChild(cxs);
   function mostra(){
     if(i>=fila.length){ fechaFase("ONDE FICA NO MAPA?","No mapa d&#225; para dizer <b>onde</b> cada coisa fica &#8212; e todo mundo entende igual.","mp_onde_revela",10000,mRoteiro,42); return; }
-    bal.innerHTML="No mapa, onde fica "+fila[i].q+"? Em cima, no meio ou embaixo?";
+    if(fila[i].eixo!==eixoAtual) montaGavetas(fila[i].eixo);
+    /* "onde FICAM as casas" — portugues montado por concatenacao vira erro de
+       concordancia, e a voz repete o erro em voz alta para a turma inteira. */
+    bal.innerHTML="No mapa, onde "+(fila[i].pl?"ficam":"fica")+" "+fila[i].q+"? "
+      +(fila[i].eixo==="v"?"Em cima, no meio ou embaixo?":"&#192; esquerda ou &#224; direita?");
     falaDaTela("mp_onde_q"+fila[i].k);
     bal.setAttribute("data-qa",fila[i].d);
   }
@@ -2059,8 +2192,8 @@ function mSimbolo(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","O QUE QUER DIZER?"));
     c.appendChild(el("div","balao","Este s&#237;mbolo apareceu no mapa. O que ele quer dizer?"));
-    var m=el("div","moldurafoto");
-    m.appendChild(imgEl("mp_sim_"+it[0],"fotoreal"));
+    var m=el("div","moldurafoto sim");
+    m.appendChild(imgEl("mp_sim_"+it[0],"simbolo"));
     c.appendChild(m);
     var outros=[],z;
     for(z=0;z<SIMB.length;z++) if(SIMB[z][0]!==it[0]) outros.push(SIMB[z][1]);
@@ -2104,7 +2237,7 @@ function mLegenda(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","MONTE A LEGENDA"));
   c.appendChild(el("div","balao","Esta &#233; a <b>legenda</b> do seu mapa. Ponha o s&#237;mbolo certo ao lado de cada nome."));
-  var quadro=el("div","folha");
+  var quadro=el("div","folha leg");
   var linhas={},i;
   var ordem=baguncar(LEGL.slice(0));
   for(i=0;i<ordem.length;i++){(function(p){
@@ -2118,7 +2251,7 @@ function mLegenda(){
     quadro.appendChild(ln);
   })(ordem[i]);}
   c.appendChild(quadro);
-  var banca=el("div","pecas");
+  var banca=el("div","pecas leg");
   var pecas=baguncar(LEGL.slice(0));
   for(i=0;i<pecas.length;i++){(function(p){
     var b=el("div","peca");
@@ -2175,8 +2308,8 @@ function mMudo(){
     var c=el("div","centro");
     c.appendChild(el("div","selo","O MAPA MUDO"));
     c.appendChild(el("div","balao","Este s&#237;mbolo perdeu o nome. <b>Escreva</b> o que ele quer dizer."));
-    var m=el("div","moldurafoto");
-    m.appendChild(imgEl("mp_sim_"+it[0],"fotoreal"));
+    var m=el("div","moldurafoto sim");
+    m.appendChild(imgEl("mp_sim_"+it[0],"simbolo"));
     c.appendChild(m);
     var inp=document.createElement("input");
     inp.type="text"; inp.className="campo"; inp.placeholder="escreva aqui";
@@ -2336,11 +2469,23 @@ function mRosa(){
    quadradinho so.                                                          */
 /* ⚠️ UMA celula por item (a tela DA a coordenada e so ela vale), medida por cor
    na arte nova: onde a coisa tem mais pixels.                              */
-var COORD=[{q:"a <b>igreja</b>",cels:["A2"]},
-           {q:"as <b>casas</b> de telhado vermelho",cels:["B4"]},
-           {q:"a <b>pra&#231;a</b> verde",cels:["C2"]},
+/* ⚠️ REFEITA DE NOVO (cobranca do Marcos, ago/2026): *"na fase ache a
+   coordenada, as coordenadas tem que bater na imagem com o que se pede no
+   enunciado, nao esta batendo"*. Ele estava certo, e a medicao por pixel
+   mostrou o porque: o mapa `mp_mapa.jpg` e uma FOTO, e as coisas dela caem em
+   cima das linhas da grade — a igreja fica bem no cruzamento de A1, A2, B1 e
+   B2. Nao havia enunciado honesto possivel: qualquer letra que eu escrevesse
+   estaria meio certa e meio errada.
+   O conserto nao foi mexer no texto: foi fazer um TABULEIRO proprio
+   (`mp_grade.jpg`), com os simbolos da legenda — os MESMOS que ela acabou de
+   montar duas fases atras — cada um no CENTRO da sua casa. Conferido por
+   pixel: os 8 centroides caem dentro da celula que o enunciado diz.        */
+var COORD=[{q:"a <b>igreja</b>",cels:["A1"]},
+           {q:"o <b>mercado</b>",cels:["B4"]},
+           {q:"a <b>pra&#231;a</b>",cels:["C3"]},
            {q:"a <b>ponte</b>",cels:["D2"]},
-           {q:"o <b>rio</b>",cels:["D3"]}];
+           {q:"o <b>campo</b> de futebol",cels:["C1"]},
+           {q:"o <b>rio</b>",cels:["D4"]}];
 function mCoord(){
   var idx=0,err=0;
   function passo(){
@@ -2359,7 +2504,7 @@ function mCoord(){
     c.appendChild(el("div","balao","Ache o quadradinho <b>"+alvo+"</b>. L&#225; tem "+it.q+"."));
     falaDaTela("mp_coord_q"+idx);
     var qd=el("div","quadric");
-    qd.appendChild(cenaImg("mp_mapa","qdimg"));
+    qd.appendChild(cenaImg("mp_grade","qdimg"));
     var LET=["A","B","C","D"],i,j;
     for(i=0;i<4;i++) for(j=0;j<4;j++){(function(li,co){
       var cel=el("div","qcel");
@@ -2470,62 +2615,115 @@ function mPlanta(){
    O gesto de quem FAZ um mapa temático: pintar por tipo de lugar. E fecha o
    arco da legenda — cor também é símbolo, e é a primeira coisa que a criança
    lê num mapa de verdade.                                                   */
-var PINTAS=[{q:"o <b>rio</b>",cor:"agua",x:24,y:76},
-            {q:"a <b>pra&#231;a com as &#225;rvores</b>",cor:"verde",x:51,y:52},
-            {q:"as <b>casas</b>",cor:"casa",x:52,y:28},
-            {q:"a <b>igreja</b>",cor:"casa",x:32,y:28}];
+/* A REGIAO E A PECA, NAO UMA BOLOTA EM CIMA DELA.
+   Cada camada foi recortada do proprio `mp_mapa.jpg` pela COR DO PIXEL (rio
+   azul, mata verde, casas vermelhas, igreja cinza, ponte marrom) e tingida
+   com a cor da legenda. `PCAM` e a moldura de cada camada em % do mapa;
+   `PCEN` e um ponto garantidamente DENTRO da regiao (o mais longe da borda);
+   `PGRADE` e o mapa em 40x40 quadradinhos dizendo de quem e cada pedaco —
+   por isso o toque vale em QUALQUER ponto do rio, e nao so num alvo. Tudo
+   isso foi MEDIDO, nao estimado a olho: era exatamente o que estava errado. */
+var PCAM={ponte:[44.02,71.71,8.05,12.56],rio:[11.22,66.1,75.12,18.54],verde:[23.29,26.83,46.46,46.71],casas:[66.95,14.76,20.85,60.98],igreja:[15.73,13.9,16.71,16.46]};
+var PCEN={ponte:[48.0,80.1],rio:[39.1,78.8],verde:[46.5,50.5],casas:[81.1,50.1],igreja:[22.0,20.1]};
+var PGN=40,PORD=["ponte","rio","verde","casas","igreja"];
+var PGRADE="0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000555000000000000000000044000000000000000055550000000000000000444400000000000000005555500000000000000044440000000000000000555555000000000000000440000000000000000005555000000000000000000444000000000000000055500003333330000000444440000000000000000000033333333300000044440000000000000000000033333333333300000400000000000000000000333333333333333000004444000000000000000033333333333333300004444400000000000000033333333333333333000044440000000000000003333333333333333300004000000000000000003333333333333333330000440000000000000000033333333333333333300044440000000000000033333333333333333330004444000000000000000333333333333333333000444400000000000000033333333333333333000040000000000000000003333333333333333300044440000000000000000033333333333333300004444000000000000000003333333333333330000444400000000000022000033333333333330000440000000000000022222200333333333330000444400000000000002222222000333333300000044440000000000000000222220000011102222200444000000000000000000222222221112222222000000000000000000000000222222111222222222222200000000000000000002222211100000022222222000000000000000000000001000000000022220000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+var PINTAS=[{k:"rio",   q:"o <b>rio</b>",                   cor:"agua"},
+            {k:"verde", q:"a <b>pra&#231;a com as &#225;rvores</b>", cor:"verde"},
+            {k:"casas", q:"as <b>casas</b>",                cor:"casa"},
+            {k:"igreja",q:"a <b>igreja</b>",                cor:"casa"},
+            {k:"ponte", q:"a <b>ponte</b>",                 cor:"casa"}];
 var NOMEC={agua:"&#193;GUA",verde:"VERDE",casa:"CONSTRU&#205;DO"};
+var PNOME={ponte:"a ponte",rio:"o rio",verde:"a pra&#231;a",casas:"as casas",igreja:"a igreja"};
+/* de que regiao e o ponto tocado? procura em circulos, para que a ponte
+   (que e pequena) tambem seja facil de acertar com o dedo. */
+function pzona(px,py){
+  var c=Math.floor(px*PGN),r=Math.floor(py*PGN),d,rr,cc,ch;
+  for(d=0;d<=3;d++){
+    for(rr=r-d;rr<=r+d;rr++) for(cc=c-d;cc<=c+d;cc++){
+      if(Math.max(Math.abs(rr-r),Math.abs(cc-c))!==d) continue;
+      if(rr<0||cc<0||rr>=PGN||cc>=PGN) continue;
+      ch=PGRADE.charAt(rr*PGN+cc);
+      if(ch!=="0") return PORD[parseInt(ch,10)-1];
+    }
+  }
+  return null;
+}
 function mPintar(){
   limpa();var t=el("div","tela");setProg(t,90);
   var idx=0,err=0,tinta=null;
   var c=el("div","centro");
   c.appendChild(el("div","selo","PINTE O MAPA"));
   var bal=el("div","balao","");c.appendChild(bal);
-  var cena=el("div","janela");
-  cena.appendChild(cenaImg("mp_mapa","jimg"));
-  var marcas=[],i;
-  for(i=0;i<PINTAS.length;i++){(function(p,k){
-    var m=el("div","tinta mira");
-    m.style.left=p.x+"%"; m.style.top=p.y+"%";
-    m.setAttribute("data-qa","0");
-    m.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation(); pinta(k,p,m); };
-    marcas.push(m); cena.appendChild(m);
-  })(PINTAS[i],i);}
+  var cena=el("div","pmapa");
+  cena.appendChild(cenaImg("mp_pmapa","pbase"));
+  var cams={},i,z;
+  for(i=0;i<PORD.length;i++){(function(k){
+    var m=PCAM[k],im=imgEl("mp_pint_"+k,"pcam");
+    im.style.left=m[0]+"%"; im.style.top=m[1]+"%"; im.style.width=m[2]+"%";
+    cams[k]=im; cena.appendChild(im);
+  })(PORD[i]);}
+  var faixa=el("div","pfaixa","");cena.appendChild(faixa);
+  var toque=el("div","ptoque");
+  toque.onclick=function(ev){
+    var cx=(ev.clientX!==undefined)?ev.clientX:0, cy=(ev.clientY!==undefined)?ev.clientY:0;
+    var b=cena.getBoundingClientRect();
+    tenta(pzona((cx-b.left)/b.width,(cy-b.top)/b.height));
+  };
+  cena.appendChild(toque);
+  var alvo=el("div","palvo","<i></i>");
+  alvo.setAttribute("data-qa","0");
+  alvo.onclick=function(ev){ if(ev&&ev.stopPropagation) ev.stopPropagation();
+    tenta(idx<PINTAS.length?PINTAS[idx].k:null); };
+  cena.appendChild(alvo);
   c.appendChild(cena);
   var pal=el("div","paleta"),cores=["agua","verde","casa"];
   var bts={};
   for(i=0;i<cores.length;i++){(function(k){
     var b=el("div","tcor "+k,NOMEC[k]);
     b.onclick=function(){ arma(); sTap();
-      var z; for(z in bts) if(bts.hasOwnProperty(z)) bts[z].className="tcor "+z;
+      var y; for(y in bts) if(bts.hasOwnProperty(y)) bts[y].className="tcor "+y;
       b.className="tcor "+k+" sel"; tinta=k; marcaQA(); };
     bts[k]=b; pal.appendChild(b);
   })(cores[i]);}
   c.appendChild(pal);
-  function marcaQA(){ var z;
-    for(z=0;z<marcas.length;z++)
-      marcas[z].setAttribute("data-qa",(z===idx&&tinta===PINTAS[idx].cor)?"1":"0");
-    var k; for(k in bts) if(bts.hasOwnProperty(k))
+  function marcaQA(){ var k;
+    alvo.setAttribute("data-qa",(idx<PINTAS.length&&tinta===PINTAS[idx].cor)?"1":"0");
+    for(k in bts) if(bts.hasOwnProperty(k))
       bts[k].setAttribute("data-qa",(idx<PINTAS.length&&k===PINTAS[idx].cor&&tinta!==k)?"1":"0");
   }
+  function aviso(tx){ faixa.innerHTML=tx; faixa.className="pfaixa show";
+    setTimeout(function(){ faixa.className="pfaixa"; },1500); }
   function mostra(){
-    if(idx>=PINTAS.length){ sFesta(); festa();
+    if(idx>=PINTAS.length){ alvo.style.display="none"; sFesta(); festa();
       fechaFase("PINTE O MAPA","A <b>cor</b> tamb&#233;m &#233; s&#237;mbolo: azul &#233; &#225;gua, verde &#233; mata, e o resto &#233; o que a gente construiu.","mp_pint_revela",11000,mCaca,90); return; }
-    bal.innerHTML="Escolha a cor certa e pinte "+PINTAS[idx].q+"."; falaDaTela("mp_pint_q"+idx);
+    var p=PINTAS[idx];
+    bal.innerHTML="Escolha a cor certa e pinte "+p.q+"."; falaDaTela("mp_pint_q"+idx);
+    alvo.style.left=PCEN[p.k][0]+"%"; alvo.style.top=PCEN[p.k][1]+"%";
     marcaQA();
   }
-  function pinta(k,p,m){
-    if(k!==idx) return; arma();
-    if(!tinta){ mostraDica("Escolha primeiro uma <b>cor</b> a&#237; embaixo."); return; }
-    if(tinta===p.cor){ m.className="tinta mira "+p.cor; sCerto();
-      reg("legenda",err===0,err+1);
-      var ce=centroTela(m); faisca(ce[0],ce[1],"#6bd23f",12);
-      idx++; err=0; mostra();
-    } else { err++; m.className="tinta mira no"; sErro();
-      setTimeout(function(){ m.className="tinta mira"; },450);
+  function tenta(zona){
+    if(idx>=PINTAS.length) return;
+    arma();
+    var p=PINTAS[idx];
+    if(!tinta){ aviso("Escolha primeiro uma cor a&#237; embaixo."); sErro(); return; }
+    if(zona!==p.k){ err++; sErro();
+      cena.className="pmapa errou";
+      setTimeout(function(){ cena.className="pmapa"; },380);
+      aviso(zona?("Isso a&#237; &#233; "+PNOME[zona]+"."):"Toque em cima do desenho.");
+      if(err===2) consolo();
+      if(err>=3) mostraDica("Procure "+p.q+" no desenho e toque bem em cima.");
+      return; }
+    if(tinta!==p.cor){ err++; sErro();
+      cena.className="pmapa errou";
+      setTimeout(function(){ cena.className="pmapa"; },380);
+      aviso("Essa cor n&#227;o &#233; a de "+PNOME[p.k]+".");
       if(err===2) consolo();
       if(err>=3) mostraDica("Pense: aquilo &#233; <b>&#225;gua</b>, &#233; <b>mata</b> ou &#233; coisa que a gente <b>construiu</b>?");
-    }
+      return; }
+    cams[p.k].className="pcam on"; sCerto(); sPop(idx);
+    reg("legenda",err===0,err+1);
+    var ce=centroTela(alvo); faisca(ce[0],ce[1],"#6bd23f",12);
+    idx++; err=0; mostra();
   }
   mostra();
   c.appendChild(el("div","hint","Toque na cor e depois no lugar do mapa."));
@@ -3018,6 +3216,12 @@ function mQuebra(){
   c.appendChild(el("div","selo","O MAPA EM PEDA&#199;OS"));
   var bal=el("div","balao","O mapa se despeda&#231;ou! Ponha cada peda&#231;o no lugar certo.");
   c.appendChild(bal);
+  /* sons proprios desta fase: pegar, encaixar e a virada do fim */
+  function sPega(){ tom(430,0.05,"triangle",0.10); tom(660,0.05,"sine",0.09,0.045); }
+  function sEncaixa(n){ tom(300,0.05,"square",0.07); tom(560+n*70,0.16,"sine",0.15,0.03);
+                        tom(840+n*90,0.14,"triangle",0.10,0.09); }
+  function sInteiro(){ var e=[523,659,784,1046,1318],z;
+                       for(z=0;z<e.length;z++) tom(e[z],0.3,"sine",0.16,z*0.1); }
   var grade=el("div","qcgrade"),vagas=[],i,j;
   for(i=0;i<LINS;i++) for(j=0;j<COLS;j++){(function(li,co){
     var v=el("div","qcvaga");
@@ -3026,6 +3230,8 @@ function mQuebra(){
     vagas.push(v); grade.appendChild(v);
   })(i,j);}
   c.appendChild(grade);
+  var plac=el("div","qcplac","<b>0</b> de <b>"+total+"</b> peda&#231;os no lugar");
+  c.appendChild(plac);
   var banca=el("div","qcban"),ordem=[],k;
   for(k=0;k<total;k++) ordem.push(k);
   ordem=baguncar(ordem);
@@ -3037,7 +3243,9 @@ function mQuebra(){
     b.onclick=function(){ if(b.className.indexOf("usada")>=0) return;
       var a=banca.getElementsByClassName("qcpc"),z;
       for(z=0;z<a.length;z++) if(a[z].className.indexOf("usada")<0) a[z].className="qcpc";
-      b.className="qcpc sel"; sel={li:li,co:co,el:b}; arma(); sTap(); };
+      b.className="qcpc sel"; sel={li:li,co:co,el:b}; arma(); sPega();
+      /* DESTAQUE: com a peca na mao, as vagas vazias respiram */
+      if(grade.className.indexOf("pronto")<0) grade.className="qcgrade mirando"; };
     banca.appendChild(b);
   })(ordem[k]);}
   c.appendChild(banca);
@@ -3047,15 +3255,26 @@ function mQuebra(){
     if(sel.li===li&&sel.co===co){
       v.className="qcvaga cheia";
       v.style.backgroundPosition=(co*50)+"% "+(li*100)+"%";
-      sel.el.className="qcpc usada"; sel=null; postas++; sCerto();
+      sel.el.className="qcpc usada"; sel=null; postas++;
+      grade.className="qcgrade"; sEncaixa(postas); sCerto();
       reg("dimensao",err===0,err+1);
-      var ce=centroTela(v); faisca(ce[0],ce[1],"#6bd23f",12);
-      bal.innerHTML="J&#225; s&#227;o <b>"+postas+"</b> de <b>"+total+"</b> peda&#231;os no lugar.";
-      if(postas>=total){ sFesta(); festa();
-        setTimeout(function(){ depoisDaFala("mp_quebra_revela",11000,function(){
-          mostraBanner("O mapa s&#243; funciona <b>inteiro</b>: cada peda&#231;o continua no outro.",mAnde); }); },900); }
+      var ce=centroTela(v); faisca(ce[0],ce[1],"#6bd23f",16);
+      plac.innerHTML="<b>"+postas+"</b> de <b>"+total+"</b> peda&#231;os no lugar";
+      if(postas>=total){
+        /* COMEMORACAO: as linhas somem, o mapa aparece inteiro e cresce */
+        grade.className="qcgrade pronto"; banca.style.display="none";
+        plac.innerHTML="<b>O mapa est&#225; inteiro!</b>";
+        sInteiro(); sFesta(); festa();
+        var cg=centroTela(grade);
+        faisca(cg[0],cg[1],"#ffd43b",26);
+        setTimeout(function(){ faisca(cg[0],cg[1]-40,"#6bd23f",20); },320);
+        setTimeout(function(){
+          fechaFase("O MAPA EM PEDA&#199;OS","O mapa s&#243; funciona <b>inteiro</b>: cada peda&#231;o continua no outro.","mp_quebra_revela",11000,mAnde,97);
+        },2400);
+      }
     } else { err++; v.className="qcvaga no"; sErro();
-      setTimeout(function(){ if(v.className.indexOf("cheia")<0) v.className="qcvaga"; },420);
+      setTimeout(function(){ if(v.className.indexOf("cheia")<0)
+        v.className=(grade.className.indexOf("mirando")>=0)?"qcvaga":"qcvaga"; },420);
       if(err===2) consolo();
       if(err>=3) mostraDica("Olhe as <b>bordas</b>: o rio de um peda&#231;o tem que continuar no outro.");
     }
