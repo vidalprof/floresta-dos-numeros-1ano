@@ -81,8 +81,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    que a agua tem no nivel 5 (`BASE+PASSO*NIVEL_PONTE`). Assim o "encosta na
    ponte" e verdade por CONSTRUCAO — mexer na conta da agua move a ponte
    junto. Ponto estimado a olho e a armadilha nº1 desta mecanica.         */
-.ponte{position:absolute;left:52%;right:4%;bottom:35%;height:9px;background:#a9793f;
-       border-radius:3px;box-shadow:0 2px 0 #7d5729}
+.ponte{position:absolute;left:46%;right:5%;bottom:35%;height:10px;background:#c08a4c;
+       border-radius:3px;border-top:3px solid #e0b47a;box-shadow:0 3px 0 #7d5729}
+/* o corrimao: sem ele a ponte vira "um risco" e, com a agua por cima, a
+   crianca perde a referencia que a pergunta manda olhar. */
+.ponte:before{content:"";position:absolute;left:4%;right:4%;bottom:12px;height:3px;
+              border-radius:3px;background:#e0b47a}
 .ponte.molhada{background:#7d5729;box-shadow:0 0 0 3px rgba(255,255,255,.6)}
 .pilar{position:absolute;bottom:0;width:9px;background:#a9793f}
 .pilarE{left:56%;height:35%}

@@ -344,8 +344,12 @@ function fechaContagem(){
   contando=false;
   atualizaBotoes();
   if(qtd===a){
+    /* ⚠️ dica VELHA some quando ela já fez o que a dica pedia — andaime que
+       continua mandando fazer o que está feito confunde mais do que ajuda. */
+    var dv=document.getElementById("dicaP");
+    if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
     elTotal.className="total ok";
-    elTotal.innerHTML="Contamos <b>"+qtd+"</b>. "+nomeNum(qtd)+" sementes!";
+    elTotal.innerHTML="Contamos <b>"+qtd+"</b>: s&atilde;o "+nomeNum(qtd)+" sementes!";
     diz("Total: "+nomeNum(qtd)+". Você conseguiu!");
     sCerto();
     setTimeout(function(){
