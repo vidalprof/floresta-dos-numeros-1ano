@@ -1,0 +1,183 @@
+name: Entregar atividade (voz que falta + publicar + conferir)
+
+# ⚡ UMA CORRIDA SO, onde hoje sao QUATRO.
+#
+# Cobranca do Marcos (ago/2026): *"otimize todos esses processos, precisamos ser
+# mais ageis e rapidos, organizados"* e *"otimize a parte do GitHub"*.
+#
+# O problema medido: entregar uma atividade custava 4 a 6 execucoes separadas —
+# gerar-audio (uma por lote), gerar-imagens, atualizar e deploy-pages. Cada uma
+# entra no FIM da fila do GitHub. Numa tarde de fila cheia isso deu MAIS DE UMA
+# HORA de espera so em enfileiramento, com o trabalho em si levando 40 segundos.
+# A conta que importa nao e quanto cada passo demora: e quantas vezes a gente
+# entra na fila.
+#
+# Aqui tudo acontece numa execucao so:
+#   1. le `<pasta>/falas.json` e o `<pasta>/audio/`, descobre SOZINHO que voz
+#      esta faltando ou mudou de texto, e grava so essas (edge-tts, gratis);
+#   2. publica a pasta no repositorio de destino (espelha, com .nojekyll);
+#   3. forca o build do Pages e PERGUNTA AO SITE se ele esta servindo o que
+#      acabou de subir — o status do build mente, o site nao.
+#
+# ⚠️ O item 1 e o coracao: e ele que acaba com o "esqueci de gerar a voz da
+#    cruzadinha". O falas.json passa a ser a VERDADE — se o texto esta escrito
+#    ali, a voz sai; se mudou, ela e regravada. Ninguem precisa montar lote.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: "Pasta da atividade neste repo (ex: _mapa, _naveg)"
+        required: true
+        type: string
+      repo_name:
+        description: "Repositorio de destino (ex: o-voo-do-nico)"
+        required: true
+        type: string
+      so_voz:
+        description: "sim = so gera as vozes que faltam, nao publica"
+        required: false
+        default: "nao"
+        type: string
+
+jobs:
+  entregar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Instalar edge-tts
+        run: pip3 install --quiet edge-tts || pip install --quiet edge-tts
+
+      # ---------------------------------------------------------------
+      - name: Gravar as vozes que faltam (le o falas.json)
+        id: voz
+        env:
+          PASTA: ${{ inputs.pasta }}
+        run: |
+          python3 - <<'PY'
+          import os, json, hashlib, subprocess, sys
+          pasta=os.environ["PASTA"].strip("/")
+          cam=os.path.join(pasta,"falas.json")
+          if not os.path.exists(cam):
+              print("sem %s — nada a gravar"%cam); sys.exit(0)
+          audio=os.path.join(pasta,"audio"); os.makedirs(audio, exist_ok=True)
+          # o carimbo diz QUAL TEXTO gerou cada mp3: se o texto mudou, regrava.
+          camc=os.path.join(audio,"_carimbo.json")
+          carimbo=json.load(open(camc,encoding="utf-8")) if os.path.exists(camc) else {}
+          falas=json.load(open(cam,encoding="utf-8"))
+          def sel(t): return hashlib.sha1(t.encode("utf-8")).hexdigest()[:12]
+          faltam=[]
+          for f in falas:
+              mp3=os.path.join(audio,f["id"]+".mp3")
+              if (not os.path.exists(mp3)) or carimbo.get(f["id"])!=sel(f["texto"]):
+                  faltam.append(f)
+          print("%d fala(s) no falas.json | %d a gravar"%(len(falas),len(faltam)))
+          if not faltam:
+              print("nada a fazer"); sys.exit(0)
+          VOZ="pt-BR-AntonioNeural"
+          erros=0
+          for f in faltam:
+              mp3=os.path.join(audio,f["id"]+".mp3")
+              try:
+                  subprocess.run(["edge-tts","--voice",VOZ,"--rate=-4%",
+                                  "--text",f["texto"],"--write-media",mp3],
+                                 check=True, timeout=90)
+                  carimbo[f["id"]]=sel(f["texto"])
+                  print("  ok  %s"%f["id"])
+              except Exception as e:
+                  erros+=1; print("  ERRO %s: %s"%(f["id"],e))
+          json.dump(carimbo, open(camc,"w",encoding="utf-8"), ensure_ascii=False, indent=0)
+          print("gravadas: %d | erros: %d"%(len(faltam)-erros,erros))
+          if erros: sys.exit(1)
+          PY
+
+      - name: Guardar as vozes novas no repo
+        run: |
+          git config user.name "Entregador"
+          git config user.email "entregador@users.noreply.github.com"
+          git add -A "${{ inputs.pasta }}/audio" || true
+          if git diff --cached --quiet; then
+            echo "nenhuma voz nova"
+          else
+            git commit -m "audio: vozes que faltavam em ${{ inputs.pasta }}"
+            git push
+          fi
+
+      # ---------------------------------------------------------------
+      - name: Publicar no repositorio de destino
+        if: ${{ inputs.so_voz != 'sim' }}
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+          SRC: ${{ inputs.pasta }}
+        run: |
+          set -e
+          tmp=$(mktemp -d)
+          git clone --depth 1 "https://x-access-token:$GH_TOKEN@github.com/$OWNER/$DEST.git" "$tmp"
+          find "$tmp" -mindepth 1 -maxdepth 1 ! -name '.git' -exec rm -rf {} +
+          cp -r "$SRC/." "$tmp/"
+          rm -f "$tmp"/*.md "$tmp"/*.py "$tmp"/audio/_carimbo.json
+          : > "$tmp/.nojekyll"
+          cd "$tmp"
+          git config user.name "Entregador"
+          git config user.email "entregador@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "nada mudou no destino";
+          else git commit -m "Atualiza a atividade"; git push; fi
+
+      - name: Forcar o build do Pages
+        if: ${{ inputs.so_voz != 'sim' }}
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          set +e
+          gh api -X PUT "repos/$OWNER/$DEST/pages" \
+            -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" >/dev/null 2>&1
+          gh api -X POST "repos/$OWNER/$DEST/pages/builds" --jq '.status' 2>&1 | head -1
+
+      # ⚠️ O STATUS DO BUILD MENTE; O SITE NAO. Ja aconteceu de o build dizer
+      #    "errored" com o site servindo a versao nova, e o contrario tambem.
+      #    Aqui a gente PERGUNTA AO SITE, com paciencia, e so entao diz pronto.
+      - name: Conferir no ar (pergunta ao proprio site)
+        if: ${{ inputs.so_voz != 'sim' }}
+        env:
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+          PASTA: ${{ inputs.pasta }}
+        run: |
+          URL="https://$OWNER.github.io/$DEST"
+          # a marca da versao: os primeiros 12 caracteres do sha1 do index local
+          marca=$(sha1sum "$PASTA/index.html" | cut -c1-12)
+          echo "index local: $marca"
+          ok=0
+          for t in 1 2 3 4 5 6 7 8 9 10; do
+            sleep 20
+            code=$(curl -s -o /tmp/no_ar.html -w "%{http_code}" "$URL/index.html?v=$RANDOM$t")
+            noar=$(sha1sum /tmp/no_ar.html | cut -c1-12)
+            echo "  tentativa $t: HTTP $code  index no ar: $noar"
+            if [ "$code" = "200" ] && [ "$noar" = "$marca" ]; then ok=1; break; fi
+          done
+          {
+            echo "## Entrega"
+            echo ""
+            echo "- Pasta: **$PASTA**"
+            echo "- Destino: **$OWNER/$DEST**"
+            if [ "$ok" = "1" ]; then
+              echo "- Estado: **NO AR e conferido** (o index servido e byte a byte o que subiu)"
+            else
+              echo "- Estado: **subiu, mas o Pages ainda nao trocou** — o build costuma"
+              echo "  levar mais alguns minutos; rode o \`deploy-pages.yml\` para reconferir."
+            fi
+            echo ""
+            echo "Link: $URL/"
+          } >> "$GITHUB_STEP_SUMMARY"
+          exit 0
