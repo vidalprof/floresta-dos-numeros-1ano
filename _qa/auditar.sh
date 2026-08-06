@@ -74,6 +74,10 @@ python3 _qa/ambiguo.py "$ARQ" || FALHOU=1
 
 echo "--- 0d) VOZ DA TELA (o botao repete a PERGUNTA?) -"
 python3 _qa/voztela.py "$ARQ" || FALHOU=1
+echo "--- 0e) TELA VAZIA (sobrou o fundo falando sozinho?) -"
+python3 _qa/telavazia.py "$ARQ"   || FALHOU=1
+echo "--- 0f) VOZ DA PERGUNTA (o botao fala o que esta escrito?) -"
+python3 _qa/vozpergunta.py "$ARQ" || FALHOU=1
 
 echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"

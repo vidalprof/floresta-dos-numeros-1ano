@@ -4351,3 +4351,66 @@ falta — é a forma da regra.
    portões que ABREM o app (leiaute e jogador). É a mesma lição do `_qa/funcoes.py`
    (função que não existe), agora com variável: **portão que só lê o código não
    substitui portão que roda o código.**
+
+---
+
+## 🖤🔊 TRÊS DEFEITOS NUMA TARDE — e os três viraram portão (ago/2026)
+
+O Marcos testou a Terra dos Papagaios e mandou três coisas seguidas, fechando
+com *"esses erros não podem acontecer mais"*. As três eram reais e nenhuma era
+pequena.
+
+### 1. "O segredo do vento… a foto é que gira e fica feio"
+Palavras dele: *"deveria ter uma animação onde o navio avança, não?"*. Certíssimo
+— e o problema não era só estético: **girar a foto não ensina nada**. A fase
+rodava a cena inteira (mar, céu e barco juntos) uns graus, como se inclinar a
+fotografia fosse navegar.
+
+**Agora:** o mar é o fundo (arte de IA), o navio é uma **peça recortada** que
+desliza por cima, e a vela **troca de posição** — três desenhos irmãos da mesma
+cartela (1 chamada). O CSS anima só o que precisa se mexer: a posição do barco
+(transição de 1,5 s), o balanço, a esteira de espuma e as rajadas de vento. Isso
+é a regra da casa aplicada: *arte de IA para a figura, CSS só para o movimento*.
+
+### 2. "Quando conclui, fica só a tela de fundo e falando"
+O molde do defeito estava em **23 fases** das duas atividades:
+
+    limpa();                          // apaga TUDO
+    if(acabou){ depoisDaFala("x_revela",13000,...); return; }   // e nao desenha nada
+
+Entre o `limpa()` e a faixa final passavam-se **até 13 segundos** de narração com
+a criança olhando o fundo de madeira. Print nenhum pega isso: só jogando a fase
+até o fim. **Conserto:** `fechaFase()` no motor — o fecho virou uma tela com o
+mascote, o selo e o que ele está dizendo, escrito. **Portão: `_qa/telavazia.py`**
+(0e da banca), testado contra a versão antiga: acusa as 8 do 5º ano.
+
+### 3. "O botão de som não fala exatamente o que diz o enunciado"
+A pergunta dele foi *"isso é problema?"* — e a resposta honesta é **sim, e do
+pior tipo**: o botão existe exatamente para quem não lê saber o que a tela está
+pedindo. Muitas fases **trocam o texto do balão a cada rodada** (a pergunta muda,
+a explicação da peça aparece) e continuavam com a narração da abertura, tocada
+uma vez só lá no começo. Ele tinha notado antes, no porão: *"o texto lá em cima
+fica a explicação correta, mas se clica para ouvir ele narra a introdução"*.
+
+**Conserto:** `falaDaTela(id)` — a fase diz "a voz desta tela agora é esta":
+narra na hora **e** passa a ser o que o alto-falante repete. **44 vozes novas**
+(29 no 5º ano, 15 no 3º). **Portão: `_qa/vozpergunta.py`** (0f), que exige
+`falaDaTela` sempre que o balão recebe conteúdo — e sabe distinguir **placar**
+("Faltam 3", "Já achou 2 de 5") e **aviso** ("Primeiro toque num povo"), que não
+são pergunta e não precisam de voz.
+
+### 🇧🇷 De brinde, um erro de português que a criança lia
+Montar a frase por concatenação — `"Toque em " + it.q` — produzia **"Toque em a
+roça"** e **"onde fica as casas"**. O verbo tem que aceitar qualquer artigo e
+qualquer número: virou **"Ache a roça"**, **"Ache as casas"**. Vale como regra:
+*quando o enunciado é montado com um pedaço variável, o começo da frase tem que
+funcionar com todos os pedaços* — testar com o artigo feminino, o masculino e o
+plural antes de fechar.
+
+### ⚠️ E uma lição sobre MIM
+Fiz a troca das 23 fases com um script de regex e ele **embaralhou os
+argumentos** (pegou o texto de uma fase com o áudio de outra). O `node --check`
+passou — era JavaScript válido, só que errado. Desfiz tudo com `git checkout` e
+refiz varrendo a árvore de funções, do mais interno para o mais externo, para
+achar o selo certo de cada fase. **Reescrita em massa por regex se confere fase
+por fase, com o nome de cada uma impresso, antes de gravar.**
