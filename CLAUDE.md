@@ -88,6 +88,21 @@ Leia tudo antes de agir e responda sempre em **português**.
 > de graça). ⚠️ **O Gemini está SEM CRÉDITO** (HTTP 429 "prepayment credits
 > depleted") — recarregar em https://ai.studio/projects.
 
+> ## 🍞 ANTES DE MONTAR QUALQUER COISA: `_padrao/RECEITA.md`
+> Cobrança do Marcos (ago/2026): *"preciso que você treine para ANTES de montar,
+> para quando você monte já sair perfeito, mesmo o portão verificando"* e
+> *"precisamos otimizar isso... para que eu não fique toda hora dizendo o que tem
+> que ser arrumado"*. **O portão é a rede de segurança, não o método.**
+> A RECEITA tem, em um lugar só: **quem senta na mesa** (até o 5º ano manda o
+> PEDAGOGO; do 6º ao 9º, o ESPECIALISTA DA DISCIPLINA; sempre com ROTEIRISTA,
+> game designer, especialista em interatividade, web designer, diretor de arte,
+> engenheiro e o PhD de testes **que auto-aprende**), a **escada didática** (o que
+> "progressivo" quer dizer de verdade), as **5 regras da voz**, e — o coração — as
+> **ARMADILHAS DE CADA DINÂMICA**, uma linha por defeito que já chegou até ele.
+> Traz também a **biblioteca de pesquisa em 3 blocos** (ensino-aprendizagem =
+> "isso ensina?"; neurociência = "isso prende?"; interatividade = "que gesto e
+> como ele responde?") e o índice de qual documento ler em qual passo.
+
 > **⭐ TODA ATIVIDADE NOVA NASCE COM O `_padrao/FIM-DE-ATIVIDADE.md`** (decisão do Marcos,
 > ago/2026: *"coloque isso para as novas que criarmos já ter essas regras"*). São 4 itens
 > NÃO negociáveis no fim de qualquer atividade: (1) **boletim animado** para a criança —
