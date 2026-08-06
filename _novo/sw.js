@@ -1,14 +1,8 @@
-/* Service worker — REDE PRIMEIRO no HTML (nunca prende versão velha);
-   CACHE PRIMEIRO em imagens/áudio (rápido em PC fraco), atualizando em 2º plano. */
-var PREFIXO="jardim-broto-";
-var CACHE=PREFIXO+"v4";
-var ATIVOS=["./","./index.html","./manifest.json",
- "./img/jd_fundo.jpg","./img/jd_broto_feliz.png","./img/jd_broto_fala.png","./img/jd_broto_pisca.png",
- "./img/jd_broto_pensa.png","./img/jd_broto_festa.png","./img/med_jardim.png",
- "./img/jd_g0.png","./img/jd_g1.png","./img/jd_g2.png","./img/jd_g3.png","./img/jd_g4.png",
- "./img/jd_sol.png","./img/jd_agua.png","./img/jd_terra.png","./img/jd_ar.png",
- "./img/jd_refri.png","./img/jd_celular.png","./img/jd_meia.png","./img/jd_partes.png",
- "./audio/jd_abertura.mp3","./audio/jd_p1_intro.mp3","./audio/jd_p1_prever.mp3","./audio/jd_p1_faca.mp3"];
+/* Service worker — rede primeiro no HTML; cache primeiro em imagem/áudio. */
+var PREFIXO="naveg-";
+var CACHE=PREFIXO+"v1";
+
+var ATIVOS=["./","./index.html","./manifest.json","./img/nv_base.png","./img/nv_fala.png","./img/nv_pisca.png","./img/nv_cr1.png","./img/nv_cr2.png","./img/nv_cr3.png","./img/nv_cr4.png","./img/nv_cr5.png","./img/nv_cr6.png","./img/nv_mandioca.png","./img/nv_milho.png","./img/nv_batata.png","./img/nv_cacau.png","./img/nv_cavalo.png","./img/nv_trigo.png","./img/nv_cana.png","./img/nv_roda.png","./img/nv_bussola.png","./img/nv_astrolabio.png","./img/nv_barril.png","./img/nv_corda.png","./img/nv_mapa.png","./img/nv_luneta.png","./img/nv_bau.png","./img/nv_ampulheta.png","./img/nv_fundo.jpg","./img/nv_horizonte.jpg","./img/nv_caravela.jpg","./img/nv_aldeia.jpg","./img/nv_porao.jpg","./img/nv_atlantico.jpg"];
 self.addEventListener("install",function(e){self.skipWaiting();e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(ATIVOS).catch(function(){});}));});
 self.addEventListener("activate",function(e){e.waitUntil(caches.keys().then(function(ks){return Promise.all(ks.map(function(k){if(k!==CACHE&&k.indexOf(PREFIXO)===0)return caches.delete(k);}));}));self.clients.claim();});
 function guardar(req,resp){try{if(resp&&resp.status===200&&resp.type==="basic"){var cp=resp.clone();caches.open(CACHE).then(function(c){c.put(req,cp);});}}catch(x){}return resp;}
