@@ -145,11 +145,22 @@ jobs:
               print("%d fala(s) nao gravaram" % erros); sys.exit(1)
           PY
 
+      # ⚠️ DEFEITO PAGO (ago/2026): aqui estava `git add -A "*/audio"`. Pathspec
+      #    do git com curinga precisa casar o CAMINHO INTEIRO — `*/audio` nao
+      #    casa `_naveg/audio/_carimbo.json`. Resultado: o carimbo nunca era
+      #    guardado, e TODA execucao regravava as 101 vozes do zero (30 s
+      #    jogados fora por corrida) sem que nada aparecesse no repo. O passo
+      #    dizia "nenhuma voz nova" e parecia que tudo estava certo.
       - name: Guardar as vozes novas no repo
+        env:
+          LISTA: ${{ steps.alvos.outputs.lista }}
         run: |
           git config user.name "Entregador"
           git config user.email "entregador@users.noreply.github.com"
-          git add -A "*/audio" || true
+          for par in $(echo "$LISTA" | tr ',' ' '); do
+            p="${par%%:*}"; p="${p%/}"
+            [ -d "$p/audio" ] && git add -A "$p/audio" || true
+          done
           if git diff --cached --quiet; then
             echo "nenhuma voz nova"
           else
@@ -160,7 +171,7 @@ jobs:
 
       # ---------------------------------------------------------------
       - name: Publicar e conferir no ar
-        if: ${{ inputs.so_voz != 'sim' }}
+        if: ${{ success() && inputs.so_voz != 'sim' }}
         env:
           GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
           OWNER: vidalprof
