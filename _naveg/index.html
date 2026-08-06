@@ -157,7 +157,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 }
 
 @media (max-height:620px){ .tela{padding-bottom:calc(104px + env(safe-area-inset-bottom))}
-  .opt{padding:8px 10px;font-size:13.5px}
+  /* ⚠️ em tela baixa o botao de resposta encolhia para menos de 40px de altura
+     — abaixo do dedo de uma crianca (portao 4 do leiaute). Encolhe a LETRA,
+     nunca o alvo: min-height segura o piso.                                */
+  .opt{padding:8px 10px;font-size:13.5px;min-height:42px;
+    display:-webkit-box;display:-webkit-flex;display:flex;
+    -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
   .opts{gap:6px;margin-top:8px}
   .balao{padding:10px 14px;font-size:15px}
   .dicain{margin-top:7px}
@@ -190,7 +195,10 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 .tlin{background:var(--papel);border:2px solid var(--linha);border-bottom-width:4px;border-radius:13px;padding:10px 12px;font-size:14px;font-weight:600;color:var(--texto);cursor:pointer;text-align:left;line-height:1.3}
 .tlin.ok{border-color:var(--ok);background:#eefbe6;cursor:default}
 .tlin.no{border-color:var(--erro);background:#ffece9;-webkit-animation:shk .4s;animation:shk .4s}
-.tnum{display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:var(--ok);color:#fff;font-size:13px;font-weight:700;text-align:center;margin-right:7px}
+/* ⚠️ o verde do motor (--ok) com letra branca da 4,2:1 — passa raspando por
+   BAIXO do minimo. Numero pequeno em bola pequena e justamente onde nao da
+   para arriscar: verde mais escuro, medido em 5,4:1.                     */
+.tnum{display:inline-block;width:22px;height:22px;line-height:22px;border-radius:50%;background:#2e7a1c;color:#fff;font-size:13px;font-weight:700;text-align:center;margin-right:7px}
 /* ===== JOGO DA MEMORIA — GRANDE, COM ARTE E COM EFEITO =====
    Duas ordens do Marcos (ago/2026), no mesmo dia:
    1) *"quando fizer jogo da memória faça cartas maiores"* — a carta e o alvo
@@ -1075,7 +1083,13 @@ var CENAS={nv_fundo:1,nv_horizonte:1,nv_caravela:1,nv_aldeia:1,nv_porao:1,nv_atl
 function srcDe(n){ return "img/"+n+(CENAS[n]?".jpg":".png"); }
 function cenaImg(n,c){ var e=document.createElement("img"); if(c)e.className=c;
   e.src=srcDe(n); e.alt=""; e.draggable=false; return e; }
-var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_med","nv_verso","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico"];
+/* ⚠️ PROVIS&#211;RIO E DECLARADO: nv_fala e nv_pisca s&#227;o hoje C&#211;PIAS da pose
+   parada, porque as duas camadas T&#202;M que ser EDI&#199;&#195;O do mesmo desenho (se
+   forem geradas do zero a arara treme, ver _qa/mascote.py) e a chave do Gemini
+   est&#225; sem cr&#233;dito. Com a c&#243;pia a arara n&#227;o treme: ela s&#243; n&#227;o mexe o bico.
+   Assim que houver cr&#233;dito (ou o Marcos editar no ChatGPT), &#233; s&#243; trocar os
+   dois arquivos — nenhuma linha de c&#243;digo muda.                            */
+var IMGS=["nv_base","nv_fala","nv_pisca","nv_cr1","nv_cr2","nv_cr3","nv_cr4","nv_cr5","nv_cr6","nv_mandioca","nv_milho","nv_batata","nv_cacau","nv_cavalo","nv_trigo","nv_cana","nv_roda","nv_bussola","nv_astrolabio","nv_barril","nv_corda","nv_mapa","nv_luneta","nv_bau","nv_ampulheta","nv_fundo","nv_horizonte","nv_caravela","nv_aldeia","nv_porao","nv_atlantico"];
 var IMG={};(function(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src=srcDe(IMGS[i]);IMG[IMGS[i]]=im;}})();
 function imgEl(n,c){var e=document.createElement("img");if(c)e.className=c;e.src="img/"+n+".png";e.alt="";e.draggable=false;return e;}
 /* ================= SOM ================= */
@@ -1554,7 +1568,9 @@ function mPorao(){
     f.appendChild(el("div","flab",o.t));
     f.setAttribute("data-qa","1");
     f.onclick=function(){ arma(); sTap();
-      f.className="ficha vista";
+      /* ⚠️ ficha vista sai do data-qa: sem isto o auditor jogador toca na
+         mesma para sempre e da PRESO — e a crianca que insiste tambem. */
+      f.className="ficha vista"; f.setAttribute("data-qa","0");
       bal.innerHTML="<b>"+o.t+"</b> &#8212; "+o.x;
       vistos[o.t]=1;
       var n=0,k; for(k in vistos) if(vistos.hasOwnProperty(k)) n++;
@@ -2007,7 +2023,7 @@ function mMemoria(){
   function sPar(){ var n=[784,1046,1318,1568],z; for(z=0;z<n.length;z++) tom(n[z],0.22,"sine",0.15,z*0.07); }
   for(i=0;i<baralho.length;i++){(function(cc){
     var e=el("div","mcarta");
-    var fv=el("div","fa fv"); fv.appendChild(imgEl("nv_verso")); e.appendChild(fv);
+    var fv=el("div","fa fv"); fv.appendChild(imgEl("nv_mapa")); e.appendChild(fv);
     var ff=el("div","fa ff");
     if(cc.tipo==="s") ff.appendChild(imgEl(cc.img,"memimg"));
     else ff.innerHTML=cc.tx;
@@ -2274,16 +2290,16 @@ function crachaEl(funcao){
   d.appendChild(imgEl(perfil.fig,"cfoto"));
   var tx=el("div","ctx");
   tx.appendChild(el("div","csel","MEU CRACH&#193;"));
-  tx.appendChild(el("div","cnome",perfil.nome||"Cart&#243;grafo"));
+  tx.appendChild(el("div","cnome",perfil.nome||"Vigia do Mar"));
   tx.appendChild(el("div","cfun",funcao));
   d.appendChild(tx);
   return d;
 }
 function mFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro topo");
-  var med=imgEl("nv_med","medal"); c.appendChild(med); segredoRelatorio(med);
-  c.appendChild(el("h1","","Cart&#243;grafo de Blumenau!"));
-  c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", a":"A")+" viagem com o Nico est&#225; completa."));
-  c.appendChild(crachaEl("Cart&#243;grafo de Blumenau"));
+  var med=imgEl("nv_bau","medal"); c.appendChild(med); segredoRelatorio(med);
+  c.appendChild(el("h1","","Vigia do Mar!"));
+  c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", voc":"Voc")+"&#234; descobriu o que forma o nosso povo."));
+  c.appendChild(crachaEl("Vigia do Mar"));
   resumoAnimado(c);
   if(fracos().length){
     var bt=el("button","btntreino","Treinar o que faltou<small>s&#243; as partes que voc&#234; quer melhorar</small>");
