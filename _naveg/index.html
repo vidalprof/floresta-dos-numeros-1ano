@@ -1234,6 +1234,25 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    `falaDaTela` e como a fase diz "a voz desta tela agora e esta": narra na
    hora E passa a ser o que o alto-falante repete.                          */
 function falaDaTela(id,cb){ falaTela=id; telaNarrou=true; falar(id,cb); }
+/* ⚠️ A INTRO NAO PODE CALAR A PERGUNTA (defeito que o Marcos pegou, ago/2026:
+   *"no mapa do bairro o simbolo escola nao e falado"*). Ele achou UMA fase; a
+   causa era do motor e valia para 27 delas nas duas atividades.
+
+   O molde era sempre este:
+       falaDaTela  da pergunta        -> toca a pergunta...
+       ...
+       if(idx===0) falar  da abertura  -> ...e a intro entra por cima dela
+   `falar()` da pause no audio anterior, entao na PRIMEIRA rodada de quase toda
+   fase a crianca ouvia so a introducao — a pergunta nunca era dita em voz alta.
+   Quem le nao percebe (o texto esta na tela). Quem NAO le fica sem instrucao —
+   e o botao de voz existe exatamente para essa crianca.
+
+   Agora a intro toca e, quando ela acaba, a pergunta vem em seguida.        */
+function introEPergunta(idIntro,ms){
+  var q=falaTela;
+  depoisDaFala(idIntro,ms||11000,function(){ if(q&&q!==idIntro) falar(q); });
+}
+
 function falar(id,cb){ falandoCb=cb||null; falaAtual=id;
   if(!ehSecundaria(id)&&!telaNarrou){ falaTela=id; telaNarrou=true; }
   if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}}
@@ -1751,7 +1770,7 @@ function mAldeia(){
     if(idx===0) postIt(c,"tupi");
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_aldeia_dica","Pode tocar em <b>qualquer parte</b> da coisa que eu pedi.");
-    if(idx===0) falar("nv_aldeia_intro");
+    if(idx===0) introEPergunta("nv_aldeia_intro");
   }
   passo();
 }
@@ -1802,7 +1821,7 @@ function mPorao(){
   c.appendChild(el("div","hint","Toque em todas as seis coisas."));
   t.appendChild(c);app.appendChild(t);
   montaBarra("nv_porao_dica","Falta alguma? As que voc&#234; j&#225; viu ficam mais claras.");
-  falar("nv_porao_intro");
+  introEPergunta("nv_porao_intro");
 }
 
 /* ---------- 5b) ⭐ PARA QUE SERVIA? (ligar) ----------
@@ -1962,7 +1981,7 @@ function mBussola(){
     c.appendChild(el("div","hint","N = Norte, S = Sul, L = Leste, O = Oeste."));
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_bus_dica","Norte em cima, Sul embaixo, Leste &#224; direita, Oeste &#224; esquerda.");
-    if(idx===0) falar("nv_bus_intro");
+    if(idx===0) introEPergunta("nv_bus_intro");
   }
   passo();
 }
@@ -2020,7 +2039,7 @@ function mVeioFoi(){
   c.appendChild(el("div","hint","Toque na caixa certa."));
   t.appendChild(c);app.appendChild(t);
   montaBarra("nv_troca_dica","Pense se essa planta ou bicho existia aqui antes dos navios.");
-  falar("nv_troca_intro");
+  introEPergunta("nv_troca_intro");
 }
 
 /* ---------- 8) AQUECIMENTO (revisão espaçada) ----------
@@ -2057,7 +2076,7 @@ function mAquecimento(){
     c.appendChild(box);
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_aquec_dica","Volte com calma no que o Ar&#225; te mostrou.");
-    if(idx===0) falar("nv_aquec_intro");
+    if(idx===0) introEPergunta("nv_aquec_intro");
   }
   passo();
 }
@@ -2113,7 +2132,7 @@ function mRaizes(){
   c.appendChild(el("div","hint","Toque na gaveta certa."));
   t.appendChild(c);app.appendChild(t);
   montaBarra("nv_raizes_dica","Tr&#234;s povos formaram este pa&#237;s. Cada coisa veio de um deles.");
-  falar("nv_raizes_intro");
+  introEPergunta("nv_raizes_intro");
 }
 
 /* ---------- 10) A PALAVRA QUE FICOU (forca) ----------
@@ -2185,7 +2204,7 @@ function mPalavra(){
     c.appendChild(el("div","hint","D&#225; para tocar na tela ou usar o teclado do computador."));
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_palavra_dica","Comece pelas vogais: A, E, I, O, U.");
-    if(idx===0) falar("nv_palavra_intro");
+    if(idx===0) introEPergunta("nv_palavra_intro");
   }
   passo();
 }
@@ -2247,7 +2266,7 @@ function mPinta(){
     c.appendChild(par);
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_pinta_dica","Leia a frase inteira antes de pintar.");
-    if(rodada===0) falar("nv_pinta_intro");
+    if(rodada===0) introEPergunta("nv_pinta_intro");
   }
   passo();
 }
@@ -2297,7 +2316,7 @@ function mCruzada(){
     c.appendChild(el("div","hint","Toque nas letras ou use o teclado do computador."));
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_cruz_dica","Escreva a palavra letra por letra, na ordem.");
-    if(idx===0) falar("nv_cruz_intro");
+    if(idx===0) introEPergunta("nv_cruz_intro");
   }
   passo();
 }
@@ -2349,7 +2368,7 @@ function mCompleta(){
     c.appendChild(b);
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_lac_dica","Leia a frase inteira antes de escrever.");
-    if(idx===0) falar("nv_lac_intro");
+    if(idx===0) introEPergunta("nv_lac_intro");
   }
   passo();
 }
@@ -2544,7 +2563,7 @@ function mCusto(){
     c.appendChild(box);
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_custo_dica","N&#227;o tem jeito bonito de contar isto. Tem o jeito <b>verdadeiro</b>.");
-    if(idx===0) falar("nv_custo_intro");
+    if(idx===0) introEPergunta("nv_custo_intro");
   }
   passo();
 }
@@ -2607,7 +2626,7 @@ function mMapaRotas(){
     if(idx===0) postIt(c,"papagaio");
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_rotas_dica","Pode tocar em qualquer parte do lugar que eu pedi.");
-    if(idx===0) falar("nv_rotas_intro");
+    if(idx===0) introEPergunta("nv_rotas_intro");
   }
   passo();
 }
@@ -2720,7 +2739,7 @@ function mRelampago(){
     c.appendChild(box);
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_rel_dica","R&#225;pido, mas sem pressa de errar.");
-    if(idx===0) falar("nv_rel_intro");
+    if(idx===0) introEPergunta("nv_rel_intro");
   }
   passo();
 }
@@ -2780,7 +2799,7 @@ function mEnsinar(){
     c.appendChild(box);
     t.appendChild(c);app.appendChild(t);
     montaBarra("nv_ensinar_dica","Escolha o peda&#231;o que deixa a frase verdadeira.");
-    if(idx===0) falar("nv_ensinar_intro");
+    if(idx===0) introEPergunta("nv_ensinar_intro");
   }
   passo();
 }

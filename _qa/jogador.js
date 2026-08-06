@@ -32,7 +32,7 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
       paleta de pintar (.tcor/.tinta) nasceram na cartografia e o jogador
       deu "PRESO" numa fase que funcionava: ele simplesmente nao enxergava
       onde tocar. Toda dinamica nova entra nesta lista no mesmo commit. */
-   +',.vento,.tcor,.tinta,.qcpc,.qcvaga,.seta'
+   +',.vento,.tcor,.tinta,.palvo,.qcpc,.qcvaga,.seta'
    /* Terra dos Papagaios (ago/2026): o marca-texto (`.pal`, a palavra dentro
       do paragrafo) e a lupa do mapa antigo (`.lupamira`) repetiram a mesma
       historia — fases que funcionam, auditor cego, "PRESO". A lista e o

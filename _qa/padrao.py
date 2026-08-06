@@ -119,7 +119,10 @@ for n, c in fases:
     g = g or "outro"
     conta[g] = conta.get(g, 0) + 1
     porfase.append((n, g))
-    if not re.search(r"falar\(|depoisDaFala\(", c):
+    # ⚠️ `falaDaTela()` e `introEPergunta()` TAMBEM narram (o motor cresceu e o
+    #    portao nao sabia). Sem eles na lista, 11 fases faladas eram acusadas de
+    #    mudas — e portao que acusa quem esta certo ensina a ignorar portao.
+    if not re.search(r"falar\(|depoisDaFala\(|falaDaTela\(|introEPergunta\(", c):
         mudas.append(n)
     # ⚠️ cenaImg() e a funcao que poe as CENAS grandes (o motor novo usa ela em
     #    quase tudo). Sem ela na lista, o portao avisava "12 fases sem
