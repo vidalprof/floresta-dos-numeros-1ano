@@ -202,7 +202,15 @@ function telaFrase(){
     f.appendChild(cm); camas.push(cm);
   }
   c.appendChild(f);
-  c.appendChild(el("div","legenda","Forma e cor mostram a classe; o nome dela est&#225; escrito na vaga."));
+  /* A ESCADA (o `apoio` da rodada): na 1a rodada a peca vem com a ETIQUETA da
+     classe escrita nela — a crianca casa etiqueta com etiqueta e entende a
+     regra do jogo. Da 2a em diante a etiqueta SAI: sobram a forma e a cor, e
+     ela precisa decidir sozinha o que aquela palavra e. Mesma mecanica, um
+     degrau acima — e nada essencial fica so na cor, porque cada classe tem a
+     SUA forma (`.f-*`) e a vaga continua dizendo o nome dela por escrito. */
+  c.appendChild(el("div","legenda", frase.apoio
+    ? "Forma e cor mostram a classe; o nome dela est&#225; escrito na vaga e na pe&#231;a."
+    : "Agora as pe&#231;as v&#234;m <b>sem etiqueta</b>: use a forma, a cor e o nome da vaga."));
 
   /* AS PECAS: as mesmas palavras, bagunçadas */
   var bc=el("div","banco"), ordem=[], b;
@@ -210,7 +218,8 @@ function telaFrase(){
   baguncar(ordem);
   for(i=0;i<ordem.length;i++){
     b=el("div","pc f-"+frase.c[ordem[i]]+" c-"+frase.c[ordem[i]],
-         frase.w[ordem[i]]+'<i class="eti">'+CLA[frase.c[ordem[i]]].r+'</i>');
+         frase.w[ordem[i]]+(frase.apoio
+           ? '<i class="eti">'+CLA[frase.c[ordem[i]]].r+'</i>' : ''));
     b.idx=ordem[i];
     ligaFicha(b);
     bc.appendChild(b); pecas.push(b);
@@ -338,16 +347,21 @@ function destreme(b){
 /* O ANDAIME QUE CRESCE — dica, apoio concreto, e por fim revela e segue.
    Erro nunca vira X vermelho nem a palavra "errou": a peca treme e a ajuda
    aumenta.                                                                */
+/* ⚠️ A ORDEM DO 3o DEGRAU E O CONSERTO (defeito medido ago/2026): a dica saia
+   ANTES do `revela()`, e o `poeNaFrase()` de dentro dele chama `apagaDica()` —
+   a fala que EXPLICA a revelacao aparecia e sumia no mesmo quadro. A crianca
+   via a palavra entrar sozinha na frase sem entender de onde veio. Revela-se
+   primeiro; a dica vem depois e fica na tela. */
 function ajuda(n){
-  var k=frase.c[vagaAtual];
+  var k=frase.c[vagaAtual], palavra=frase.w[vagaAtual];
   if(n===1){
     mostraDica("Esta vaga pede "+CLA[k].d+".");
   }else if(n===2){
     mostraDica("Olhe a <b>forma</b> da vaga: a pe&#231;a que encaixa est&#225; <b>piscando</b>.");
     acendeCerta();
   }else{
-    mostraDica("Era esta! Eu coloco e voc&#234; segue: <b>"+frase.w[vagaAtual]+"</b>.");
     revela();
+    mostraDica("Era esta: <b>"+palavra+"</b>. Eu coloquei, e a pr&#243;xima &#233; sua.");
   }
 }
 function acendeCerta(){

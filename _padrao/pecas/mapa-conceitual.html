@@ -393,9 +393,14 @@ function escolheNome(o){
   L._e++;
   o.className="opt no";
   devolve(o);
-  mostraDica(L.dicas[Math.min(L._e,L.dicas.length)-1]);
+  /* ⚠️ A ORDEM DO 3o DEGRAU E O CONSERTO (defeito medido ago/2026): a dica saia
+     ANTES do `fechaSeta()`, que chama `apagaDica()` — a fala que EXPLICA a
+     revelacao ("era `da agua`, eu escrevi na seta para voce") aparecia e sumia
+     no mesmo quadro. A seta ganhava nome sozinha e a crianca nao sabia por
+     que. Revela-se primeiro; a dica vem depois e fica ao lado do "porque". */
+  if(L._e>=3){ fechaSeta(L); mostraDica(L.dicas[2]); return; }
+  mostraDica(L.dicas[L._e-1]);
   if(L._e===2) acendeCerto(L);
-  if(L._e>=3) fechaSeta(L);      /* revela e SEGUE — a peca nunca trava */
 }
 function acendeCerto(L){
   var i;

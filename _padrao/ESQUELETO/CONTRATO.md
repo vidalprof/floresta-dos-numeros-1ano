@@ -167,3 +167,13 @@ para a próxima não repetir.
   posições que cruzam.
 - **Tom: "Faltam 0 tentativas" soa como bronca.** No fim da forca virou "Vamos
   olhar a palavra juntos" — que é o que a peça de fato faz.
+- **A CORRIDA DE EVENTOS: o toque que chega no meio da comemoração.** Ao acertar,
+  a fase agenda a próxima etapa em ~700ms — mas continuava aceitando toque nesse
+  intervalo. Um segundo toque rápido fazia a fase avançar com o estado ERRADO (a
+  fita cortada em outro número de partes). Toda fase precisa de uma trava
+  (`travada = true`) no instante do acerto, não só no fim da animação. **Criança
+  toca duas vezes; é o normal dela, não o excepcional.**
+- **Ajudante chamado antes do elemento existir.** Uma função de limpeza era
+  chamada no começo da fase e lia um elemento criado mais abaixo — `TypeError` na
+  primeira carga, derrubando quatro portões de uma vez. Todo ajudante que toca no
+  DOM começa com `if(!elemento) return;`.

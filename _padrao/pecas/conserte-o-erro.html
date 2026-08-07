@@ -162,7 +162,7 @@ var RODS=[
          "Era este aqui. Eu marquei para voc&#234;: agora escolha o certo."],
   dicas2:["Comece no 6 e conte mais dois: 7, <b>8</b>.",
           "Entre o 6 e o 10 s&#243; cabe um n&#250;mero par. Ele est&#225; piscando.",
-          "Era o 8. Toque nele para consertar."]},
+          "Era o <b>8</b>. Eu troquei para voc&#234; ver: 6, 8, 10."]},
 
  {selo:"A FRASE DO TÉO", cab:"O QUE A ABELHA FAZ",
   bal:"Uma palavra desta frase est&#225; trocada. Ache e conserte.",
@@ -173,10 +173,10 @@ var RODS=[
          "Era a &#250;ltima palavra. Eu marquei para voc&#234;."],
   dicas2:["&#201; algo do&#231;inho que a gente come no p&#227;o.",
           "N&#227;o vem de vaca nem de forno. Est&#225; piscando.",
-          "Era o mel. Toque nele para consertar."]},
+          "Era o <b>mel</b>. Eu troquei para voc&#234; ler a frase inteira."]},
 
  {selo:"A CONTA DO TÉO", cab:"SOMANDO",
-  bal:"O T&#233;o somou e errou por pouco. Ache e conserte.",
+  bal:"O T&#233;o somou e um n&#250;mero n&#227;o bateu. Ache e conserte.",
   pecas:["10","+","5","=","14"], erro:4, certa:"15", ops:["15","16","13"],
   por:"10 mais 5 d&#225; <b>15</b>. O T&#233;o contou um a menos.",
   dicas:["Comece no 10 e conte mais 5 nos dedos.",
@@ -184,7 +184,7 @@ var RODS=[
          "Era o resultado. Eu marquei para voc&#234;."],
   dicas2:["11, 12, 13, 14, <b>15</b> — cinco dedos a partir do 10.",
           "&#201; um a mais do que o T&#233;o escreveu. Est&#225; piscando.",
-          "Era o 15. Toque nele para consertar."]}
+          "Era o <b>15</b>. Eu troquei para voc&#234; ver a conta certa."]}
 ];
 
 var rod=0;            /* rodada da vez */
@@ -257,11 +257,17 @@ function achou(b){
   marcaVez();
 }
 
+/* ⚠️ A ORDEM AQUI E O CONSERTO (defeito medido ago/2026): antes a dica saia
+   PRIMEIRO e o `achou()` logo atras chamava `apagaDica()` — a fala do 3o
+   degrau, justamente a que EXPLICA ("era este aqui, eu marquei para voce"),
+   aparecia e sumia no mesmo quadro. A crianca via a peca se marcar sozinha
+   sem entender por que. Revela-se PRIMEIRO, e a dica vem DEPOIS, para ficar
+   na tela enquanto ela escolhe o conserto. */
 function ajudaAchar(n){
   var R=RODS[rod];
-  mostraDica(R.dicas[Math.min(n,R.dicas.length)-1]);
   /* 3o toque errado: a peca marca sozinha e SEGUE. Nunca trava. */
-  if(n>=3) achou(pecas[R.erro]);
+  if(n>=3){ achou(pecas[R.erro]); mostraDica(R.dicas[2]); return; }
+  mostraDica(R.dicas[n-1]);
 }
 
 /* ---------------- ETAPA 2: CONSERTAR ---------------- */
@@ -294,12 +300,15 @@ function escolhe(o){
 
 function ajudaTrocar(n){
   var R=RODS[rod], i;
-  mostraDica(R.dicas2[Math.min(n,R.dicas2.length)-1]);
+  /* revela e SEGUE — a peca nunca trava. A dica vem DEPOIS do conserto (ver a
+     nota em `ajudaAchar`), senao o `apagaDica()` de dentro do `conserta()` a
+     engolia no mesmo quadro. */
+  if(n>=3){ conserta(R.certa); mostraDica(R.dicas2[2]); return; }
+  mostraDica(R.dicas2[n-1]);
   if(n===2){                       /* apoio concreto: a certa acende */
     for(i=0;i<opcoes.length;i++)
       if(opcoes[i]._t===R.certa) opcoes[i].className="opt ok";
   }
-  if(n>=3) conserta(R.certa);      /* revela e SEGUE — a peca nunca trava */
 }
 
 function conserta(txt){
