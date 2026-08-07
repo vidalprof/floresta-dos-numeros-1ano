@@ -40,23 +40,40 @@ sys.path.insert(0, AQUI)
 from montar import chave_voz, eh_fala, texto_limpo  # noqa: E402
 
 
-def joga_e_anota(pasta):
-    u"""roda o auditor-jogador em modo colheita e devolve o que ele viu."""
+def joga_e_anota(pasta, voltas=3):
+    u"""roda o auditor-jogador em modo colheita e devolve o que ele viu.
+
+    ⚠️ UMA PASSADA NAO BASTA, e a segunda colheita provou: sobraram justamente
+    as DICAS DO ANDAIME — "uma das cartas fala de semente", "vou abrir este par
+    para voce". Elas so aparecem para quem ERRA varias vezes, e numa partida de
+    sorte o jogador nao erra o bastante. E e a crianca que erra quem MAIS precisa
+    da voz: sem isso, quem esta perdida e justamente quem fica sem ajuda falada.
+
+    Entao ele joga de novo ate uma partida inteira nao trazer NADA de novo. Nao
+    e "rodei uma vez e deu": e "rodei mais uma vez inteira e nao apareceu mais
+    nada"."""
     saco = os.path.join(pasta, "_colheita.json")
     if os.path.exists(saco):
         os.remove(saco)
     amb = dict(os.environ, COLHEITA=saco)
-    r = subprocess.run(["node", os.path.join(RAIZ, "_qa", "jogador.js"),
-                        os.path.join(pasta, "index.html")],
-                       env=amb, cwd=RAIZ, capture_output=True, text=True)
-    fim = [l for l in (r.stdout or "").splitlines() if "COLHEITA" in l
-           or "CHEGOU NO FIM" in l or "PRESO" in l]
-    for l in fim:
-        print(u"   %s" % l.strip())
-    if not os.path.exists(saco):
-        print(u"   o jogador nao deixou colheita — a atividade abriu?")
-        return {}
-    d = json.load(io.open(saco, encoding="utf-8"))
+    d, antes = {}, -1
+    for volta in range(voltas):
+        r = subprocess.run(["node", os.path.join(RAIZ, "_qa", "jogador.js"),
+                            os.path.join(pasta, "index.html")],
+                           env=amb, cwd=RAIZ, capture_output=True, text=True)
+        fim = [l for l in (r.stdout or "").splitlines() if "COLHEITA" in l
+               or "CHEGOU NO FIM" in l or "PRESO" in l]
+        for l in fim:
+            print(u"   volta %d: %s" % (volta + 1, l.strip()))
+        if not os.path.exists(saco):
+            print(u"   o jogador nao deixou colheita — a atividade abriu?")
+            return {}
+        d = json.load(io.open(saco, encoding="utf-8"))
+        agora = len(d.get("op") or {}) + len(d.get("bal") or {})
+        if agora == antes:
+            print(u"   uma partida inteira sem nada novo — colheita fechada")
+            break
+        antes = agora
     os.remove(saco)
     # `op` sao as respostas tocaveis; `bal` sao os enunciados/baloes
     vistos = {}
