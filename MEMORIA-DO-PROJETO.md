@@ -4835,3 +4835,67 @@ pedir a revisão do Jardim, aí sim estes 4 entram na lista.
 reprovar. Isso é o portão funcionando, não a atividade piorando — e a diferença
 tem que ficar ESCRITA, senão a próxima sessão gasta a manhã do Marcos
 consertando o que ele mandou deixar quieto.
+
+---
+
+## 🧊 FLORESTA DOS NÚMEROS — o travamento nas contagens (ago/2026)
+
+Pergunta do Marcos, do nada, no meio de outro assunto: *"achei que a atividade
+meio que travava nas contagens"*. Não era impressão. Reproduzi e medi.
+
+**A causa:** a contagem só andava quando a **voz do navegador avisava que tinha
+terminado de falar** (`u.onend`). São **9 lugares** assim no `index.html`, e
+todos são contagem: o "Conhecer os números até 10/20/30" e o "vamos contar
+juntos" que aparece depois do erro.
+
+Só que a voz nem sempre avisa: quando o motor de fala falha, quando a criança
+troca de aba (o Chrome suspende a fala), ou pelo defeito conhecido do `cancel()`
+logo antes do `speak()`. E o arquivo **não tinha `onerror` nenhum** (zero
+ocorrências) **nem prazo**. Quando o aviso não chega, a contagem **morre
+parada** — a tela fica dizendo "Vou começar a contar..." para sempre, e não há
+botão nenhum para escapar: só voltando ao mapa.
+
+Por isso era intermitente. O "**meio que** travava" dele era literal.
+
+**Medido** na fase "Conhecer até 10", com a voz indisponível:
+
+| | 0s | 4s | 8s |
+|---|---|---|---|
+| antes | 0 acesos | 0 | 0 — parada para sempre |
+| depois | 1 aceso | 10 | "Concluímos!" |
+
+**O conserto** (commit `bda96498` na `main`): a fala ganhou **prazo** e
+**`onerror`**, com guarda para só uma das três portas passar (terminou / deu
+erro / estourou o prazo). Uma função só, e cura os 9 lugares de uma vez.
+Conferido que **não atrapalha quem tem voz boa**: com motor de fala simulado, o
+original e o corrigido falam exatamente a mesma coisa na mesma ordem, sem
+repetir e sem pular — o prazo é cancelado pelo `onend` muito antes de disparar.
+
+### ⭐ A REGRA QUE FICA, e vale para TODA atividade da casa
+
+> **Nada na atividade pode depender do retorno da voz para continuar.**
+> A voz é enfeite que ajuda muito; ela **não** pode ser o trilho. Todo
+> `falar(texto, callback)` precisa de **prazo** e de **`onerror`**, senão um PC
+> sem voz — ou uma criança que troca de aba — trava a atividade inteira, sem
+> mensagem de erro e sem saída.
+
+Isso é irmão da lição *"existir não é medir"*: o `onend` **existia**, e por isso
+parecia seguro. Ninguém tinha medido o que acontece quando ele **não chega**.
+
+⚠️ E uma armadilha desta sessão, registrada para não custar de novo: a branch
+`claude/vc-nao-funcionando-0pya0w` carrega uma cópia **VELHA** do `index.html`
+(de antes do conserto dos 70 min de validade). **Ela nunca pode ser fundida na
+`main`** — desfaria conserto que já está no ar. O conserto das contagens foi
+publicado direto na `main`, por worktree, sem passar por essa branch.
+
+### 🐚 E a armadilha do shell que quase me fez mentir
+
+Nesta mesma conversa eu rodei um `cd _padaria` e, várias chamadas depois, listei
+os manuais — **de dentro da `_padaria/`**. Conclusão que quase saiu da minha
+boca: *"o `MANUAL-MESTRE.md` e o `MEMORIA-DO-PROJETO.md` não existem e nunca
+existiram neste repositório"*. Existem os dois, com 1605 e 4837 linhas.
+
+> **O diretório do shell PERSISTE entre as chamadas.** Antes de concluir que
+> algo "não existe", conferir o `pwd` — e refazer a busca da RAIZ. É a mesma
+> família do aviso que já está no `CLAUDE.md` sobre a cópia local atrasada:
+> **"não existe" quase sempre é "eu estava olhando no lugar errado"**.
