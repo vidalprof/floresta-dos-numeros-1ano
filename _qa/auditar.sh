@@ -158,6 +158,12 @@ echo "--- 0k) A FASE DIZ O QUE ELA QUER? (regra escondida no enunciado) -"
 portao "0k explica a regra" python3 _qa/explica.py "$ARQ"
 
 echo
+echo "--- 0l) A ARTE PEDIDA FOI DESENHADA? (lista de compras x pasta img/) -"
+# ⚠️ nasceu de um defeito medido: o montador dizia "0 figura(s) a gerar" e a
+#    atividade pedia DEZ que ninguem tinha mandado desenhar. Ver _qa/arte_pedida.py.
+portao "0l arte pedida" python3 _qa/arte_pedida.py "$(dirname "$ARQ")"
+
+echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
 portao "1b funcao que nao existe" python3 _qa/funcoes.py "$ARQ"
 

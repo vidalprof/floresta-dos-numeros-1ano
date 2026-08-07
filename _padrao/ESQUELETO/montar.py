@@ -388,13 +388,51 @@ def arte_de(c):
     u"""O que a atividade precisa desenhar — e o que o BANCO já resolve.
     É o passo que economiza dinheiro: o que já existe não se gera."""
     pedidos = []
+
+    # ⭐⭐ A ARTE DA IDENTIDADE — a que o MOTOR pede em TODA atividade, e que
+    #    este arquivo esquecia. Defeito medido (ago/2026) montando a atividade
+    #    de teste: o `arte.json` voltou com "0 figura(s) a gerar" e mesmo assim
+    #    a banca achou DEZ imagens que nao carregam — as tres camadas do
+    #    mascote, os seis crachas e a medalha. Ninguem tinha mandado desenhar,
+    #    porque ninguem tinha PEDIDO. Quem fosse montar de manha geraria a arte
+    #    das fases, publicaria, e a crianca abriria a atividade com o mascote
+    #    e as figurinhas em quadradinho vazio.
+    #    ⚠️ Os nomes vem do motor, nao da minha memoria: ver `motor.html`
+    #    (`ID.pre+"_"+ID.mascote+"_feliz"`, `ID.pre+"_cr"+n`, `"med_"+ID.pre`).
+    pre = c.get("prefixo") or ""
+    masc = c.get("mascote") or "mascote"
+    for camada in ("feliz", "fala", "pisca"):
+        pedidos.append("%s_%s_%s" % (pre, masc, camada))
+    for n in range(1, int(c.get("crachas") or 6) + 1):
+        pedidos.append("%s_cr%d" % (pre, n))
+    pedidos.append("med_%s" % pre)
+    if c.get("fundo"):
+        pedidos.append(re.sub(r"\.(png|jpg|jpeg|webp)$", "", c["fundo"]))
+
+    # ⚠️ E AS FIGURAS DAS FASES moram no `dados`/`dadosExtra` (e o que a peca
+    #    le), nao em `itens`/`opcoes` — que era o formato ANTIGO, de antes do
+    #    esqueleto. Sem descer ali, atividade nenhuma pedia a arte das fases.
+    def desce(v):
+        if isinstance(v, dict):
+            for k in v:
+                if k in ("img", "fig", "foto", "imagem", "cena", "verso", "cenaA", "cenaB") \
+                        and isinstance(v[k], str) and v[k] and "<" not in v[k]:
+                    pedidos.append(re.sub(r"\.(png|jpg|jpeg|webp)$", "", v[k]))
+                else:
+                    desce(v[k])
+        elif isinstance(v, list):
+            for x in v:
+                desce(x)
+
     for f in c["fases"]:
         for it in (f.get("itens") or []) + (f.get("opcoes") or []):
             if isinstance(it, dict) and it.get("img"):
                 pedidos.append(it["img"])
         if f.get("img"):
             pedidos.append(f["img"])
-    pedidos = sorted(set(pedidos))
+        desce(f.get("dados"))
+        desce(f.get("dadosExtra"))
+    pedidos = sorted(set(p for p in pedidos if p))
 
     banco = {}
     cam = os.path.join(RAIZ, "_banco", "index.json")

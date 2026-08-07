@@ -367,3 +367,40 @@ caixa dela"*. O Jardim do Broto, que está no ar e foi aprovado pelo Marcos, dá
 mesmo aviso (11%) e sai com código 0 — é elemento decorativo centrado numa área
 larga, não figura perdida. Conferi antes de mexer: **não era nada que o esqueleto
 tivesse introduzido.**
+
+---
+
+## ⚠️ LIÇÃO PAGA — "0 figura a gerar" com DEZ figuras faltando (ago/2026)
+
+Re-provei o esqueleto montando uma atividade de teste com 32 fases. O montador
+anunciou, satisfeito: **"0 figura(s): 0 já no banco, 0 a gerar"**. A banca, logo
+depois, achou **DEZ imagens que não carregam** — as três camadas do mascote, os
+seis crachás e a medalha.
+
+**O `arte.json` é a LISTA DE COMPRAS da atividade**, e ela vinha vazia por dois
+motivos, os dois do mesmo tipo — olhar no lugar errado:
+
+1. o montador só procurava figura em `itens`/`opcoes`, que é o formato ANTIGO,
+   de antes do esqueleto. A arte das fases mora no **`dados`/`dadosExtra`** (é o
+   que a peça lê), e ninguém descia até lá;
+2. ninguém pedia a **arte da IDENTIDADE** — a que o MOTOR exige em toda
+   atividade, exista o conteúdo que existir: `<pre>_<mascote>_feliz/_fala/_pisca`,
+   `<pre>_cr1..crN`, `med_<pre>` e o fundo.
+
+**O estrago que isso faria:** quem montasse uma atividade de manhã geraria a arte
+que o `arte.json` listasse, publicaria, e a criança abriria o app com o mascote,
+os crachás e a medalha em quadradinho vazio. Nada acusaria antes — o HTML está
+certo; a figura simplesmente não existe.
+
+**Os dois consertos**, porque um só não bastaria:
+- `montar.py` desce ao `dados`/`dadosExtra` e sempre inclui a arte da identidade
+  (os nomes vêm do `motor.html`, não da memória de ninguém);
+- **`_qa/arte_pedida.py`** (portão 0l da banca) compara a lista de compras com a
+  pasta `img/` e reprova o que foi pedido e não foi desenhado — e reprova
+  também a lista VAZIA, que era a assinatura do defeito de origem. Visto
+  reprovando os dois casos e aprovando depois de a arte existir.
+
+**A regra que fica:** número que o montador imprime (`0 a gerar`) é afirmação,
+não medição. Toda conta que o montador anuncia precisa de um portão que a
+confira contra o mundo — arquivo em disco, tela no navegador. *Existir não é
+medir* apareceu de novo, agora do lado de quem produz.
