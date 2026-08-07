@@ -222,6 +222,11 @@ var RODADAS=[
 var rodada, MAPA, INI, FIM, cels, trilha, erros, travado, progI, elCont, elAviso, TEMA;
 var ultimoToque=0, arrastando=false, mouseDown=false, mouseAndou=false;
 var progVisto=0;
+/* ger = geração da tela. Todo setTimeout que MEXE no estado confere a geração
+   antes de agir: senão o "abrir o resto do caminho" da rodada que já saiu
+   continua cavando na rodada nova (e, pior, deixa `travado` ligado, o que faz a
+   tela parar de responder ao dedo). Achado testando errar de propósito. */
+var ger=0;
 
 /* ---------------------------------------------------------------
    2) O TERRENO EM DADO (nada de desenhar "quase igual" à mão)
@@ -288,7 +293,7 @@ function pecaCaminho(){
   INI=-1; FIM=-1;
   var i;
   for(i=0;i<MAPA.length;i++){ if(MAPA[i]==="ini") INI=i; if(MAPA[i]==="fim") FIM=i; }
-  trilha=[INI]; erros=0; travado=false; cels=[];
+  trilha=[INI]; erros=0; travado=false; cels=[]; ger++;
 
   var t=el("div","tela");
   setProg(t,progVisto);
@@ -544,7 +549,7 @@ function ajuda(n,motivo){
         +"<b>tr&#225;s</b>: toque nela para voltar."
       : "Est&#225; piscando a <b>pr&#243;xima casa</b> que serve. Passe o dedo por ela.");
     if(pu.i>=0){ cels[pu.i].className="cel pisca";
-      setTimeout(function(){ pinta(); },2200); }
+      setTimeout((function(g){ return function(){ if(g===ger) pinta(); }; })(ger),2200); }
   }else{
     mostraDica("Vou abrir o resto do caminho com voc&#234;. Olhe "+nomeCorre()+".");
     abreResto();
@@ -559,8 +564,9 @@ function abreResto(){
   if(!r){ return; }
   pinta();
   travado=true;
-  var i=1;
+  var i=1, g=ger;
   function anda(){
+    if(g!==ger) return;              /* a rodada mudou: este cano morreu */
     if(i>=r.length){ travado=false; entraForcado(r[r.length-1]); return; }
     trilha.push(r[i]);
     nota(TEMA.liq==="agua"?420:660,.07,.11,"sine",0);

@@ -66,6 +66,13 @@ def main():
     #    e recolhe todo texto entre aspas que aparecer ali.
     for m in re.finditer(r'className\s*=', js):
         trecho = js[m.end():m.end() + 200].split(";")[0].split("\n")[0]
+        # ⚠️ FALSO ALARME PAGO (ago/2026): a instrucao
+        #    `x.className = (x.getAttribute("data-qa")==="1") ? "a" : "b"`
+        #    fazia o portao ler `"data-qa"` como se fosse nome de classe e
+        #    acusar `SEM CSS: .data-qa`. O texto entre aspas que esta DENTRO de
+        #    uma chamada de funcao (getAttribute, indexOf, split...) nao e
+        #    classe: e argumento. Some com esses antes de recolher.
+        trecho = re.sub(r'\.\s*\w+\s*\([^)]*\)', ' ', trecho)
         for lit in re.findall(r'"([^"]*)"', trecho):
             for c in lit.split():
                 usadas.setdefault(c, 0)
