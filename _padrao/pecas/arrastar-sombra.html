@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — arrastar até a sombra</title>
+<!-- ============================================================
+     PEÇA: ARRASTAR ATÉ A SOMBRA — levar cada objeto até a silhueta dele
+     (copiada do _padrao/pecas/MOLDE.html; a mecânica existe na atividade de
+     PRÉ-ESCOLA `_lote/pr-escola-1/index.html`, e ficou fora do catálogo)
+
+     PARA QUEM É: PRÉ e 1º ano. Alvo de dedo de 56px para cima, enunciado de
+     uma linha, e NADA essencial escrito: o par se faz pela FORMA.
+
+     ⚠️ NÃO CONFUNDIR COM A PEÇA `sombra.html`. Lá o gesto é CASAR POR TOQUE
+     (toca no objeto, toca na sombra). Aqui o gesto é ARRASTAR — e o gesto é
+     conteúdo: puxar a coisa até a sombra dela é o que faz a criança comparar
+     contorno com contorno o caminho inteiro, em vez de comparar duas vezes,
+     de longe. Duas peças, dois gestos, dois aprendizados.
+
+     O QUE ELA ENSINA: reconhecer um objeto pelo CONTORNO, sem a cor e sem o
+     detalhe. É abstração visual — o mesmo músculo que depois lê a letra "a"
+     escrita de dez jeitos diferentes. Por isso a segunda rodada traz duas
+     silhuetas PARECIDAS (a folha e o coração): quando as formas são muito
+     diferentes, a criança acerta sem olhar.
+
+     AS TRÊS PORTAS DE ENTRADA (a armadilha nº1 desta mecânica):
+       · arrastar com o MOUSE;
+       · arrastar com o DEDO;
+       · TOQUE SIMPLES — tocar no objeto e depois na sombra. No celular da
+         escola nem toda criança consegue arrastar, e sem esta porta ela fica
+         de fora da atividade inteira.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (todas já pagas em atividade real):
+       · NUNCA `preventDefault` no `touchstart` — isso MATA o toque no celular.
+         Ele mora só no `touchmove`, e só depois que o dedo ANDOU de verdade.
+         Por isso os tratadores de toque são FUNÇÕES COM NOME: assim nenhum
+         `preventDefault` fica sequer perto do `touchstart`;
+       · o guarda `ultimoToque` contra o evento de mouse FANTASMA que o
+         celular dispara depois do toque — sem ele o clique fantasma desmarca
+         a peça que a criança acabou de escolher. Defeito pego DUAS vezes;
+       · a marca é do CLIQUE, não do `mousedown` (senão o clique que vem atrás
+         desmarca e, com mouse de verdade, nada acontece);
+       · ⭐ A SOMBRA ACENDE quando o objeto passa por cima — a criança precisa
+         saber onde pode soltar ANTES de soltar. Acende qualquer sombra sob o
+         dedo, não só a certa: acender só a certa entregaria a resposta;
+       · TRAVA no instante do acerto; GERAÇÃO (`ger`) em todo setTimeout;
+       · o 3º degrau do andaime REVELA e só DEPOIS a dica fica de pé ~1s —
+         senão a explicação nasce e morre no mesmo quadro;
+       · nunca trava: no 3º erro o objeto vai sozinho para a sombra dele;
+       · `data-qa` com a MESMA chave no objeto e na sombra, para o
+         auditor-jogador conseguir fechar a peça sozinho.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.chao{margin:13px auto 0;line-height:0}
+/* A SOMBRA (o destino). Vazia: contorno TRACEJADO — forma, nao cor.
+   `alvo` = tem objeto passando por cima AGORA. */
+.cam{display:inline-block;position:relative;width:80px;height:80px;margin:5px 4px;padding:7px;
+     border:3px dashed #8a7a5c;border-radius:16px;background:#e8dfc9;cursor:pointer;
+     vertical-align:top}
+.cam.livre{border-color:#33280a;background:#f2ead6}
+.cam.alvo{border-style:solid;border-color:#e8a020;background:#ffeeba;
+          -webkit-box-shadow:0 0 0 5px rgba(255,213,74,.65);box-shadow:0 0 0 5px rgba(255,213,74,.65)}
+.cam.ok{border-style:solid;border-color:#59c24b;background:#d6f5c8;cursor:default;
+        -webkit-box-shadow:none;box-shadow:none}
+.cam.chama{-webkit-animation:chamaS .8s infinite;animation:chamaS .8s infinite}
+@-webkit-keyframes chamaS{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.95)}}
+@keyframes chamaS{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.95)}}
+/* A BANDEJA e os objetos coloridos que a crianca puxa */
+.banco{margin-top:8px;line-height:0}
+.pc{display:inline-block;position:relative;width:80px;height:92px;margin:5px 4px;padding:5px 3px 2px;
+    border:0;border-radius:16px;background:#fffdf6;color:#221a12;cursor:pointer;vertical-align:top;
+    -webkit-user-select:none;user-select:none;
+    -webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);
+           -webkit-box-shadow:0 1px 0 #c9bda6;box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#fff3c9;-webkit-box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f;
+        box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+.pc.usada{visibility:hidden;pointer-events:none}
+.pc.treme{-webkit-animation:tremeS .32s;animation:tremeS .32s}
+@-webkit-keyframes tremeS{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes tremeS{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pnome{display:block;font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1.1;margin-top:1px}
+/* ---- A FORMA. A MESMA silhueta serve ao objeto colorido, a sombra preta e
+   ao fantasma que segue o dedo — e por isso o par se faz pelo CONTORNO. ---- */
+.frm{display:block;width:100%;height:100%}
+.dpc{width:58px;height:58px;margin:0 auto}
+.dvg{width:100%;height:100%}
+/* o fantasma que segue o dedo/o mouse. pointer-events:none para nao roubar o
+   hit-test de quem esta embaixo (senao a sombra nunca acenderia). */
+.somb{position:fixed;width:64px;height:64px;pointer-events:none;z-index:60;
+      -webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (projetor, 1024x420 do PC da escola): encolhe a MOLDURA e a
+   letra, nunca o alvo do dedo abaixo do minimo. */
+@media(max-height:560px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:14px;padding:8px 13px}
+  .balao + *{margin-top:8px}
+  .chao{margin-top:8px}
+  .cam{width:66px;height:66px;margin:4px 3px;padding:5px}
+  .pc{width:66px;height:78px;margin:4px 3px}
+  .dpc{width:48px;height:48px}
+  .banco{margin-top:5px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* AS FORMAS. Cada uma e um recorte (`clip-path`) e uma cor. O recorte e o
+   MESMO no objeto colorido, na silhueta preta e no fantasma que segue o dedo:
+   e isso que faz o par ser de CONTORNO, e nao de cor nem de tamanho.
+   Trocar esta tabela adapta a peca a qualquer conteudo. */
+var FORMAS={
+ estrela:{n:"ESTRELA", voz:"a estrela", cor:"#ffd54a",
+  cp:"polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)"},
+ casa:{n:"CASA", voz:"a casa", cor:"#e07a3c",
+  cp:"polygon(50% 2%,98% 42%,84% 42%,84% 98%,16% 98%,16% 42%,2% 42%)"},
+ peixe:{n:"PEIXE", voz:"o peixe", cor:"#3f9fd0",
+  /* ⚠️ dez vertices, nao oito: com oito o corpo saia PONTUDO dos dois lados e
+     a silhueta lia como uma seta, nao como um peixe. Numa peca de casar
+     CONTORNO, silhueta ambigua e defeito de conteudo, nao de desenho. */
+  cp:"polygon(2% 8%,26% 50%,2% 92%,34% 74%,54% 88%,78% 82%,96% 56%,96% 44%,78% 18%,54% 12%,34% 26%)"},
+ arvore:{n:"&#193;RVORE", voz:"a árvore", cor:"#4aa845",
+  cp:"polygon(50% 2%,74% 36%,62% 36%,84% 68%,58% 68%,58% 98%,42% 98%,42% 68%,16% 68%,38% 36%,26% 36%)"},
+ coracao:{n:"CORA&#199;&#195;O", voz:"o coração", cor:"#e2506e",
+  cp:"polygon(50% 96%,20% 74%,4% 50%,4% 28%,18% 10%,36% 10%,50% 26%,64% 10%,82% 10%,96% 28%,96% 50%,80% 74%)"},
+ folha:{n:"FOLHA", voz:"a folha", cor:"#7cb464",
+  cp:"polygon(50% 0,66% 14%,80% 34%,86% 56%,74% 80%,50% 100%,26% 80%,14% 56%,20% 34%,34% 14%)"}
+};
+/* AS RODADAS. ⚠️ A ESCADA: a 1a traz tres formas MUITO diferentes (a crianca
+   ganha confianca e entende a regra do jogo). A 2a traz quatro, e duas delas
+   — a folha e o coracao — sao silhuetas PARECIDAS: sem olhar o contorno de
+   verdade, nao sai. Quem so acerta quando as formas sao obvias nao aprendeu
+   a comparar; aprendeu a chutar. */
+var RODADAS=[
+ {selo:"CADA COISA, SUA SOMBRA", quais:["estrela","casa","peixe"]},
+ {selo:"OLHE BEM O CONTORNO",    quais:["arvore","coracao","folha","casa"]}
+];
+/* O ANDAIME. O 3o degrau revela — e a dica dele fica DE PE enquanto isso. */
+var DICAS=[
+ "Compare o <b>contorno</b>: a sombra tem o mesmo formato do objeto.",
+ "A sombra certa est&#225; <b>piscando</b>. Leve o objeto at&#233; ela.",
+ "Deixa comigo: eu levo esta e voc&#234; continua."
+];
+
+var ri=0;                 /* rodada de agora */
+var sombras={}, pecas=[], postas=0, errosSeg=0, marcada=null;
+/* ⚠️ DEFEITO PEGO NA BANCADA (ago/2026): quem ARRASTA nao via a sombra piscar.
+   O 2o degrau do andaime piscava a sombra da peca MARCADA, e o arrasto
+   chamava `escolhe()`, que ALTERNA — arrastar a mesma peca duas vezes
+   desmarcava. Resultado: a crianca lia "a sombra certa esta piscando" e nada
+   piscava. O andaime existia e nao chegava em quem arrasta, que e o gesto
+   principal desta peca. Agora o piscar segue a peca que TROPECOU, nao a
+   selecao — e o arrasto MARCA (nunca alterna). */
+var tropecouEm=null;
+var acertosDePrimeira=0, tentativas=0;
+var telaAtual=null, barraP=null, ger=0;
+var travada=false;        /* ⚠️ trava NO INSTANTE do acerto */
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles desmarcavam a
+   peca que a crianca tinha acabado de escolher. Pego DUAS vezes. */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function rodada(){ return RODADAS[ri]||RODADAS[0]; }
+
+/* A VOZ. Se o PC nao tiver voz a peca continua inteira: o nome do objeto
+   tambem esta escrito embaixo dele. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.98; u.pitch=1.06;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sEncaixa(){ nota(587.33,.10,.13,"triangle",0); nota(880,.14,.11,"triangle",.07); }
+function sNao(){ nota(330,.12,.10,"sine",0); nota(262,.14,.09,"sine",.07); }
+
+/* o recorte: o mesmo para o objeto, para a sombra e para o fantasma */
+function forma(k,escura){
+  var d=el("i","frm","");
+  var f=FORMAS[k]?FORMAS[k].cp:"none";
+  d.style.webkitClipPath=f;
+  d.style.clipPath=f;
+  d.style.background=escura?"#3b3226":(FORMAS[k]?FORMAS[k].cor:"#999");
+  return d;
+}
+function caixaForma(k,cls,escura){
+  var b=el("div",cls,"");
+  b.appendChild(forma(k,escura));
+  return b;
+}
+
+/* ---------------------------------------------------------------
+   A TELA DA RODADA. As sombras em cima, os objetos embaixo.
+   --------------------------------------------------------------- */
+function telaSombras(){
+  if(ri>=RODADAS.length){ fimDaPeca(); return; }
+  ger++; travada=false; errosSeg=0;
+  limpa(); soltaFantasma();
+  var rd=RODADAS[ri], i, k, v;
+  sombras={}; pecas=[]; postas=0; marcada=null; tropecouEm=null;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(ri*100/RODADAS.length));
+  barraP=t.getElementsByTagName("i")[0];
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",rd.selo));
+  c.appendChild(el("div","balao","Leve cada coisa at&#233; a <b>sombra</b> dela."));
+
+  var ch=el("div","chao");
+  var ordem=baguncar(rd.quais.slice(0));
+  for(i=0;i<ordem.length;i++){
+    k=ordem[i];
+    v=el("div","cam");
+    v.appendChild(caixaForma(k,"dvg",1));
+    /* a MESMA chave no objeto e na sombra: e assim que o auditor-jogador
+       (_qa/jogador.js) consegue fechar a peca sozinho. */
+    v.setAttribute("data-qa",k);
+    v.setAttribute("aria-label","Sombra");
+    v._k=k;
+    v.onclick=cliqueSombra;
+    ch.appendChild(v);
+    sombras[k]=v;
+  }
+  c.appendChild(ch);
+
+  var bc=el("div","banco");
+  var ordem2=baguncar(rd.quais.slice(0));
+  for(i=0;i<ordem2.length;i++) bc.appendChild(fazPeca(ordem2[i]));
+  c.appendChild(bc);
+  c.appendChild(el("div","hint","Arraste com o dedo ou com o mouse &#8212; ou <b>toque</b> "+
+                   "no objeto e depois na sombra. Rodada "+(ri+1)+" de "+RODADAS.length+"."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Leve cada coisa até a sombra dela.");
+}
+function fazPeca(k){
+  var b=el("div","pc");
+  b.appendChild(caixaForma(k,"dpc",0));
+  b.appendChild(el("span","pnome",FORMAS[k]?FORMAS[k].n:k));
+  b.setAttribute("data-qa",k);
+  b.setAttribute("aria-label",FORMAS[k]?FORMAS[k].voz:k);
+  b._k=k;
+  b.onclick=cliquePeca;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+  pecas.push(b);
+  return b;
+}
+
+/* ---------- AS TRÊS PORTAS DE ENTRADA ----------
+   ⚠️ os tratadores de toque sao FUNCOES COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular e a
+   armadilha nº1 desta mecanica). Ele mora so no `touchmove`, e so depois que
+   o dedo ANDOU de verdade. */
+function cliquePeca(){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no touchend */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();  /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaFantasma();
+  if(!arrastou) escolhe(alvo);    /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(souDedo()) return; if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------- o arrasto de verdade (mouse e dedo pelo mesmo caminho) ------- */
+function pegaEm(b,x,y){
+  if(travada||!b||temClasse(b,"usada")) return;
+  pego=b; px0=x; py0=y; moveu=false;
+}
+function moveEm(x,y){
+  if(!pego) return;
+  if(!moveu){
+    if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
+    moveu=true;
+    sTap();
+    marca(pego);            /* MARCA, nunca alterna: arrastar nao e "clicar" */
+    somb=el("div","somb");
+    somb.appendChild(caixaForma(pego._k,"dvg",0));
+    document.body.appendChild(somb);
+  }
+  somb.style.left=(x-32)+"px"; somb.style.top=(y-32)+"px";
+  acendeSombraSob(x,y);
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaFantasma();
+  if(!b||!arrastou) return;
+  fimArrasto=agora();
+  var v=sombraSob(x,y);
+  if(v) poe(b,v);
+}
+function soltaFantasma(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  apagaAceso();
+}
+/* quem esta embaixo do dedo? sobe ate 6 pais porque o dedo pode cair no
+   desenho que esta DENTRO da sombra. */
+function sombraSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&e.nodeType===1&&n<6){
+    if(temClasse(e,"cam")&&!temClasse(e,"ok")) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+/* ⭐ A SOMBRA ACENDE QUANDO O OBJETO PASSA POR CIMA. Acende QUALQUER sombra
+   que esteja embaixo do dedo — acender so a certa seria entregar a resposta. */
+function acendeSombraSob(x,y){
+  var v=sombraSob(x,y), k;
+  for(k in sombras){
+    if(!sombras.hasOwnProperty(k)) continue;
+    if(temClasse(sombras[k],"ok")) continue;
+    sombras[k].className=(sombras[k]===v)?"cam alvo":"cam livre";
+  }
+}
+/* ⚠️ ajudante que mexe no DOM comeca conferindo se o DOM existe. */
+function apagaAceso(){
+  var k;
+  for(k in sombras){
+    if(!sombras.hasOwnProperty(k)) continue;
+    if(!sombras[k]) continue;
+    if(temClasse(sombras[k],"ok")) continue;
+    /* o piscar do 2o degrau segue quem TROPECOU — assim ele chega em quem
+       arrasta e em quem toca, e nao depende de a peca estar selecionada. */
+    if(errosSeg>=2&&tropecouEm&&sombras[k]._k===tropecouEm._k){ sombras[k].className="cam chama"; continue; }
+    sombras[k].className=marcada?"cam livre":"cam";
+  }
+}
+
+/* ---------- escolher o objeto ----------
+   `marca` sempre MARCA (e o que o arrasto usa); `escolhe` alterna (e o que o
+   toque simples usa, porque a crianca precisa poder desistir da escolha). */
+function marca(b){
+  if(travada||!b||temClasse(b,"usada")) return;
+  var i;
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  b.className="pc sel"; marcada=b; apagaAceso();
+}
+function escolhe(b){
+  if(travada||!b||temClasse(b,"usada")) return;
+  var i;
+  if(marcada===b){
+    for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+    marcada=null; sTap(); apagaAceso(); return;
+  }
+  marca(b); sTap();
+  diz(FORMAS[b._k]?FORMAS[b._k].voz:"");
+}
+function cliqueSombra(){
+  if(travada) return;
+  if(cliqueDeArrasto()) return;
+  if(souDedo()&&!marcada) return;
+  if(temClasse(this,"ok")) return;
+  if(!marcada){
+    sTap();
+    mostraDica("Primeiro toque num <b>objeto</b> l&#225; embaixo. Depois toque na sombra.");
+    return;
+  }
+  poe(marcada,this);
+}
+
+/* ---------- a regra da peça ---------- */
+function poe(b,v){
+  if(travada||!b||!v||temClasse(b,"usada")||temClasse(v,"ok")) return;
+  tentativas++;
+  if(b._k===v._k) acerta(b,v); else erra(b);
+}
+function acerta(b,v){
+  var rd=rodada();
+  if(errosSeg===0) acertosDePrimeira++;
+  v.className="cam ok";
+  v.innerHTML="";
+  v.appendChild(caixaForma(b._k,"dvg",0));
+  b.className="pc usada";
+  marcada=null; tropecouEm=null;
+  sEncaixa();
+  postas++; errosSeg=0;
+  apagaDica(); apagaAceso();
+  if(barraP) barraP.style.width=
+    Math.round((ri+postas/rd.quais.length)*100/RODADAS.length)+"%";
+  diz("Isso! " + (FORMAS[b._k]?FORMAS[b._k].voz:"") + ".");
+  if(postas>=rd.quais.length) fecha();
+}
+/* ERRO NAO PUNE: som grave curto, o objeto treme e o andaime CRESCE. Nunca um
+   X vermelho, nunca a palavra que reprova. */
+function erra(b){
+  sNao(); errosSeg++; tropecouEm=b;
+  b.className="pc treme";
+  destreme(b);
+  mostraDica(DICAS[Math.min(errosSeg,DICAS.length)-1]);
+  if(errosSeg>=2) apagaAceso();
+  if(errosSeg>=3) esperaERevela(b);
+}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): no 3º degrau a dica sumia no MESMO
+   instante em que aparecia — `revela()` chama `acerta()`, que chama
+   `apagaDica()`. O objeto pulava sozinho para a sombra e a criança não lia
+   explicação nenhuma. Agora o revelar ESPERA a dica ser lida (e a sombra
+   certa fica piscando durante a espera). Os guardas de geração e de peça já
+   posta existem porque a criança pode resolver sozinha nesse meio-tempo. */
+function esperaERevela(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!b||temClasse(b,"usada")) return;
+    var v=sombras[b._k];
+    if(v&&!temClasse(v,"ok")) acerta(b,v);
+  },1100);
+}
+/* ⚠️ o temporizador continua correndo depois que a tela sai: sem o guarda da
+   geracao ele mexeria numa tela que ja nao existe. */
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()||!b) return;
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+  },340);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function fecha(){
+  travada=true;                     /* ⚠️ trava NO INSTANTE, nao no fim */
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    ri++;
+    var msg=(ri<RODADAS.length)
+      ? "<b>Todas acharam a sombra!</b><br>Agora vem umas bem parecidas."
+      : "<b>Voc&#234; achou todas as sombras!</b><br>Pelo contorno, sem a cor.";
+    mostraBanner(msg, (ri<RODADAS.length)?telaSombras:fimDaPeca);
+  },520);
+}
+
+/* ---------------------------------------------------------------
+   A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimDaPeca(){
+  ger++; travada=false;
+  limpa(); soltaFantasma();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro"), total=0, i;
+  for(i=0;i<RODADAS.length;i++) total+=RODADAS[i].quais.length;
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(acertosDePrimeira>=total) parecer="Voc&#234; achou as <b>"+total+"</b> sombras de primeira. "+
+                                       "O seu olho pega o contorno de longe!";
+  else if(acertosDePrimeira>=Math.ceil(total*0.6)) parecer="Voc&#234; achou <b>"+acertosDePrimeira+
+                                       "</b> de primeira. Comparar contorno j&#225; est&#225; ficando f&#225;cil.";
+  else parecer="Voc&#234; comparou os contornos at&#233; achar <b>todas</b>. &#201; olhando de novo "+
+               "que a gente aprende a ver.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; acertosDePrimeira=0; tentativas=0; telaSombras(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a ARRASTAR AT&#201; A SOMBRA: mouse, dedo e toque simples."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaSombras();
+</script>
+</body></html>

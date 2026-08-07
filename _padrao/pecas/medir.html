@@ -253,16 +253,16 @@ var ROD=[
  {selo:"A FITA AZUL",
   enun:"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.",
   voz:"Encoste o zero da régua na ponta da fita azul.",
-  objs:[{n:"FITA AZUL",nome:"fita azul",voz:"fita azul",cm:6,cls:"oazul",ini:1,ops:[4,5,6,7]}]},
+  objs:[{n:"FITA AZUL",art:"a",nome:"fita azul",voz:"fita azul",cm:6,cls:"oazul",ini:1,ops:[4,5,6,7]}]},
  {selo:"O PALITO",
   enun:"Agora o palito. Encoste o <b>zero</b> na ponta dele.",
   voz:"Agora o palito. Encoste o zero na ponta dele.",
-  objs:[{n:"PALITO",nome:"palito",voz:"palito",cm:4.5,cls:"opalito",ini:1.6,ops:[4,4.5,5,5.5]}]},
+  objs:[{n:"PALITO",art:"o",nome:"palito",voz:"palito",cm:4.5,cls:"opalito",ini:1.6,ops:[4,4.5,5,5.5]}]},
  {selo:"DUAS FITAS",
   enun:"Me&ccedil;a as duas fitas, uma de cada vez.",
   voz:"Meça as duas fitas, uma de cada vez.",
-  objs:[{n:"VERMELHA",nome:"fita vermelha",voz:"fita vermelha",cm:5,cls:"overm",ini:1,ops:[3,4,5,6]},
-        {n:"VERDE",nome:"fita verde",voz:"fita verde",cm:8,cls:"overde",ini:1.6,ops:[6,7,8,9]}],
+  objs:[{n:"VERMELHA",art:"a",nome:"fita vermelha",voz:"fita vermelha",cm:5,cls:"overm",ini:1,ops:[3,4,5,6]},
+        {n:"VERDE",art:"a",nome:"fita verde",voz:"fita verde",cm:8,cls:"overde",ini:1.6,ops:[6,7,8,9]}],
   comp:{p:"Quantos cent&iacute;metros a <b>fita verde</b> tem a mais que a <b>fita vermelha</b>?",
         voz:"Quantos centímetros a fita verde tem a mais que a fita vermelha?",
         ops:[1,2,3,4],cert:3}}
@@ -330,6 +330,13 @@ function fmtCm(v){
   if(i===0) return "meio cent&iacute;metro";
   return i+" cm e meio";
 }
+/* ⚠️ O ARTIGO SAI DO DADO (`art`), nunca de um `indexOf("fita")` no nome.
+   A versao anterior montava "encostado na ponta do a fita azul" — defeito que
+   nenhum portao ve e que so a crianca (e o professor) percebe. E, pior, ele
+   voltaria na primeira troca de conteudo. */
+function artMai(o){ return (o.art==="a")?"A ":"O "; }
+function artMin(o){ return (o.art==="a")?"a ":"o "; }
+function daDo(o){ return (o.art==="a")?"da ":"do "; }
 function vozNum(v){
   var i=Math.floor(v), meio=(Math.round((v-i)*2)===1), t=(i<UNM.length?UNM[i]:""+i);
   if(!meio) return t;
@@ -353,7 +360,8 @@ function telaMedir(){
   var c=el("div","centro");
   c.appendChild(el("div","selo",r.selo));
   c.appendChild(el("div","balao", oi===0 ? r.enun
-      : "Agora a <b>"+o.n+"</b>. Encoste o zero na ponta dela."));
+      : ("Agora "+artMin(o)+"<b>"+o.n+"</b>. Encoste o zero na ponta "+
+         ((o.art==="a")?"dela":"dele")+".")));
   mesaEl=el("div","mesa","");
   c.appendChild(mesaEl);
   leituraEl=el("div","leitura","");
@@ -367,7 +375,8 @@ function telaMedir(){
   montaMesa(r,o);
   montaBotoes(g);
   atualizaLeitura();
-  diz(oi===0 ? r.voz : ("Agora a "+o.voz+". Encoste o zero na ponta dela."));
+  diz(oi===0 ? r.voz : ("Agora "+artMin(o)+o.voz+". Encoste o zero na ponta "+
+      ((o.art==="a")?"dela":"dele")+"."));
 }
 
 /* ---------- a mesa, a régua e as linhas-guia ----------
@@ -548,9 +557,11 @@ function atualizaLeitura(){
   if(!leituraEl||!regEl) return;
   var v=marcaNaPonta(), ok=alinhado(), o=objAtual(), s;
   regEl.className = ok ? "reg alinhada" : "reg";
-  if(ok) s="O <b>zero</b> est&aacute; encostado na ponta do "+
-           (o.nome.indexOf("fita")===0?"a ":"")+o.nome+". Pode ler!";
+  if(ok) s="O <b>zero</b> est&aacute; encostado na ponta "+daDo(o)+o.nome+". Pode ler!";
   else if(v<-0.35) s="A r&eacute;gua passou da ponta: o <b>zero</b> ficou depois dela.";
+  /* abaixo de 1 o numero vira "meio", que sozinho nao quer dizer nada para a
+     crianca ("no meio de que?"). Ai a frase diz ONDE, nao QUANTO. */
+  else if(v<1) s="A ponta est&aacute; <b>entre o zero e o 1</b>. Falta encostar no <b>zero</b>.";
   else s="A ponta est&aacute; no <b>"+fmtNum(Math.round(v*2)/2)+"</b>, n&atilde;o no <b>zero</b>.";
   leituraEl.innerHTML=s;
   leituraEl.className = ok ? "leitura ok" : "leitura";
@@ -632,8 +643,7 @@ function abreLeitura(g,revelado){
   travada=false; errosLer=0;
   var o=objAtual();
   leituraEl.className="leitura ok";
-  leituraEl.innerHTML="Zero na ponta. Agora leia: onde termina "+
-                      (o.nome.indexOf("fita")===0?"a ":"o ")+o.nome+"?";
+  leituraEl.innerHTML="Zero na ponta. Agora leia: onde termina "+artMin(o)+o.nome+"?";
   acaoEl.innerHTML="";
   var cx=el("div","linha","");
   var lista=baguncar(o.ops.slice(0)), i, bt;
@@ -712,12 +722,12 @@ function fechaObjeto(g,revelado){
   var o=objAtual(), msg;
   sCerto();
   feitos++;
-  msg=(o.nome.indexOf("fita")===0?"A ":"O ")+o.nome+" mede <b>"+fmtCm(o.cm)+"</b>.";
+  msg=artMai(o)+o.nome+" mede <b>"+fmtCm(o.cm)+"</b>.";
   if(veioDoUm) msg+=" Come&ccedil;ando pelo <b>1</b> voc&ecirc; leria <b>"+fmtNum(o.cm+1)+
                     "</b>: um cent&iacute;metro a mais, que n&atilde;o existe no objeto.";
   leituraEl.className="leitura ok";
   leituraEl.innerHTML=msg;
-  if(!revelado) diz((o.nome.indexOf("fita")===0?"A ":"O ")+o.voz+" mede "+vozNum(o.cm)+" centímetros.");
+  if(!revelado) diz(artMai(o)+o.voz+" mede "+vozNum(o.cm)+" centímetros.");
   setTimeout(function(){
     if(g!==ger||!viva()) return;
     proximoObjeto();

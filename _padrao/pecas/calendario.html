@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — calendário (o mês num quadro, e os pulos de um dia ao outro)</title>
+<!-- ============================================================
+     PEÇA: CALENDÁRIO — achar o dia, e CONTAR OS PULOS até outro
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     POR QUE ELA EXISTE:
+     "faltam quantos dias?" não é uma subtração para quem tem 6 anos — é um
+     CAMINHO. A criança que responde 17 menos 12 sem entender nada acerta
+     hoje e erra amanhã; a que PULA de casinha em casinha, contando um, dois,
+     três, aprende o que a conta quer dizer. Por isso aqui o gesto é tocar
+     no dia seguinte, e o pulo é ANIMADO: é ele que ensina, não a conta.
+
+     O QUE FAZ ESTA MECÂNICA VALER:
+       · UM PULO DE CADA VEZ. Tocar direto no destino é o gesto mais natural
+         do mundo ("quero chegar ALI") — e é justamente o que a peça não
+         deixa passar batido. Não vira tropeço: vira a frase "para saber
+         quantos dias faltam, a gente vai de um em um".
+       · CADA CASINHA VISITADA GUARDA O NÚMERO DO PULO (1, 2, 3...) escrito
+         nela. No fim a resposta está desenhada no quadro, não só no
+         contador — e quem não distingue cor lê o mesmo.
+       · O MESMO QUADRO SERVE A TUDO: achar o dia, ontem/hoje/amanhã, o dia
+         da semana (subindo pela COLUNA até o nome) e "daqui a 3 dias".
+         Trocar de pergunta sem trocar de cenário é o que deixa o calendário
+         virar objeto conhecido, e não mais um exercício.
+       · FECHO COM GANCHO: "quantos dias tem este mês?" — e a pergunta que
+         fica é se o próximo tem o mesmo tanto.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · O ANDAIME CRESCE NO ERRO MAIS NATURAL: ir direto ao destino chama
+         `ajudaCal(n)` como qualquer outro erro — não é um ramo com frase
+         fixa que a criança leria para sempre.
+       · REVELA E DEPOIS EXPLICA: no 3º erro a peça dá o pulo sozinha e SÓ
+         DEPOIS escreve a dica que explica o que aconteceu.
+       · TRAVA NO INSTANTE DO TOQUE (`travada=true`), nunca no fim da
+         animação — criança toca duas vezes e pulava dois dias.
+       · GERAÇÃO (`ger`) em todo setTimeout: o relógio do salto de uma fase
+         que já saiu não mexe na fase nova.
+       · AS DUAS PORTAS: dá para tocar na casinha E para andar pelo quadro
+         com as SETAS do teclado (Enter escolhe) — no PC da escola tem
+         teclado.
+       · 3 DISTRATORES no fecho, nunca 2: com duas erradas a criança elimina
+         tudo antes do 3º erro e o degrau "revelar" vira código morto.
+       · TUDO TEM GÊMEO ESCRITO: o pulo toca um som e escreve o número; o
+         contador diz em palavras. Funciona no mudo.
+       · NUNCA TRAVA: 3 erros em qualquer fase e a peça anda sozinha.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.calmold{max-width:430px;margin:13px auto 6px;background:#6b573d;border-radius:14px;padding:5px}
+/* ⚠️ o quadro NAO tem borda nem padding proprios: o pino e posicionado por
+   diferenca de retangulos, e borda no pai desloca tudo em 3px. */
+.calbox{position:relative;border:0;padding:0}
+.mescab{background:#3c6ee0;color:#fff;font-size:13px;font-weight:800;letter-spacing:1px;
+        border-radius:8px 8px 0 0;padding:5px 8px}
+/* ⚠️ o nome da classe da LINHA precisa conter "grade": e assim que o
+   _qa/leiaute.js sabe que ali dentro vale o piso de 30px (grade inteira tem
+   que caber na tela), e nao o de 40px de botao solto. */
+.gradelin{overflow:hidden}
+.cel{float:left;width:14.2857%;height:44px;line-height:42px;text-align:center;
+     border:1px solid #6b573d;background:#fffdf6;color:#221a12;
+     font-size:17px;font-weight:700;cursor:pointer}
+.cel.cabc{height:32px;line-height:30px;background:#e8dfc9;color:#3a2c07;
+     font-size:11px;font-weight:800;letter-spacing:.3px;cursor:default}
+/* casinha antes do dia 1: sem numero nenhum (numero da cor do fundo seria
+   texto invisivel — e o portao do contraste mede isso, com razao). */
+.cel.vazio{background:#d8cdb6;cursor:default}
+/* HOJE se marca por FORMA (negrito + sublinhado), nunca so pela cor */
+.cel.hoje{font-weight:900;text-decoration:underline;background:#fff3c9}
+.cel.andado{background:#d6f5c8;color:#183a0e}
+.cel.alvo{background:#ffd54a;font-weight:900;
+     -webkit-box-shadow:inset 0 0 0 3px #7a2f0b;box-shadow:inset 0 0 0 3px #7a2f0b}
+/* o foco do TECLADO: contorno, que e forma, e nao mancha de cor */
+.cel.foco{outline:3px solid #3c6ee0;outline-offset:-3px}
+/* o numero do pulo escrito DENTRO da casinha: e o gemeo escrito da contagem */
+.npulo{display:inline-block;font-style:normal;font-size:10px;font-weight:800;
+       color:#1f6b12;vertical-align:super;margin-left:1px}
+/* O PINO: o anel que diz "voce esta aqui" e pula de casinha em casinha.
+   `pointer-events:none` e obrigatorio — senao ele recebe o dedo no lugar da
+   casinha, e o portao de leiaute acusa "botao sobre botao" com razao. */
+.pino{position:absolute;left:0;top:0;width:10px;height:10px;border:4px solid #e0602a;
+      border-radius:9px;pointer-events:none;z-index:5;
+      -webkit-transition:left .28s,top .28s,-webkit-transform .2s;
+      transition:left .28s,top .28s,transform .2s}
+.pino.saltando{-webkit-transform:scale(1.18);transform:scale(1.18)}
+.contador{max-width:430px;margin:0 auto;background:rgba(255,255,255,.12);border-radius:12px;
+          padding:6px 10px;font-size:15px;font-weight:700;color:#f4efe6;min-height:30px;line-height:1.3}
+.contador b{color:#ffd54a}
+.contador.ok{background:#d6f5c8;color:#183a0e}
+.contador.ok b{color:#183a0e}
+.acao{margin-top:6px}
+.linha .opt{display:inline-block;width:auto;min-width:104px;max-width:none;margin:5px 5px;
+      vertical-align:middle}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (o monitor 1024x420 da escola): o quadro encolhe, mas nenhuma
+   casinha desce dos 30px que o auditor de leiaute cobra numa grade. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{padding:6px 11px;font-size:13px;margin-top:8px}
+  .calmold{margin-top:8px;padding:4px}
+  .mescab{font-size:11px;padding:3px 8px}
+  .cel{height:32px;line-height:30px;font-size:14px}
+  .cel.cabc{height:31px;line-height:29px;font-size:10px}
+  .contador{font-size:13px;padding:5px 9px;min-height:26px}
+  .opt{min-height:44px;padding:9px 13px;margin:5px auto}
+  .hint{margin-top:4px;font-size:12px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O MÊS É SÓ EXEMPLO. Para reusar a peça troque `MES` e `HOJE` — todo o resto
+   (as linhas, as colunas, as dicas) é calculado a partir daí.
+   ⚠️ `HOJE` é de propósito um dia do MEIO da semana (segunda, coluna 1): com
+   um dia de ponta, "ontem" e "amanhã" cairiam na linha de cima ou de baixo e
+   a dica "a casinha logo à direita" viraria mentira. */
+var MES={nome:"MAIO", dias:31, inicio:4};   /* inicio: 0=DOM ... o dia 1 cai numa quinta */
+var HOJE=12;
+var SEM=["DOM","SEG","TER","QUA","QUI","SEX","SAB"];
+var SEMH=["DOMINGO","SEGUNDA","TER&Ccedil;A","QUARTA","QUINTA","SEXTA","S&Aacute;BADO"];
+var SEMV=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];
+/* ⚠️ o nome COMPLETO ja vem pronto, com o "-feira" onde ele existe. Antes eu
+   colava "-feira" no fim de SEMH e saía "domingo-feira" e "sábado-feira" no dia
+   em que alguem trocasse `HOJE`. Bomba-relogio de conteudo: nao estoura nada,
+   so fica errado na tela. */
+var SEMD=["domingo","segunda-feira","ter&ccedil;a-feira","quarta-feira","quinta-feira",
+          "sexta-feira","s&aacute;bado"];
+var ORD=["primeira","segunda","terceira","quarta","quinta","sexta"];
+var UNM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez"];
+
+/* A ESCADA: achar (o quadro é um mapa) -> ontem/amanhã (o vizinho) -> a
+   coluna (a semana se repete) -> contar os pulos (quantos faltam) -> dar os
+   pulos sem saber onde chega -> e o fecho, que é o gancho. */
+var FASES=[
+ {t:"achar", alvo:12, selo:"ACHE O DIA",
+  enun:"Hoje &eacute; dia <b>12</b>. Toque no dia <b>12</b> no quadro.",
+  voz:"Hoje é dia doze. Toque no dia doze no quadro."},
+ {t:"vizinho", base:12, alvo:13, palavra:"amanh&atilde;", selo:"ONTEM E AMANH&Atilde;",
+  enun:"Hoje &eacute; <b>12</b>. Toque no dia de <b>amanh&atilde;</b>.",
+  voz:"Hoje é doze. Toque no dia de amanhã."},
+ {t:"vizinho", base:12, alvo:11, palavra:"ontem", selo:"ONTEM E AMANH&Atilde;",
+  enun:"Hoje &eacute; <b>12</b>. Toque no dia de <b>ontem</b>.",
+  voz:"Hoje é doze. Toque no dia de ontem."},
+ {t:"semana", dia:20, selo:"QUE DIA DA SEMANA?",
+  enun:"Em que dia da semana cai o dia <b>20</b>? Toque no nome, l&aacute; em cima.",
+  voz:"Em que dia da semana cai o dia vinte? Toque no nome, lá em cima."},
+ {t:"pulos", de:12, ate:17, selo:"CONTE OS PULOS",
+  enun:"Faltam quantos dias para o dia <b>17</b>? Pule de <b>um em um</b>.",
+  voz:"Faltam quantos dias para o dia dezessete? Pule de um em um."},
+ {t:"daqui", de:12, n:3, selo:"DAQUI A 3 DIAS",
+  enun:"A festa &eacute; <b>daqui a 3 dias</b>. D&ecirc; 3 pulos e veja onde cai.",
+  voz:"A festa é daqui a três dias. Dê três pulos e veja onde cai."},
+ {t:"quantos", cert:31, ops:[28,29,30,31], selo:"O M&Ecirc;S INTEIRO",
+  enun:"Quantos dias tem este m&ecirc;s? Conte at&eacute; a &uacute;ltima casinha.",
+  voz:"Quantos dias tem este mês? Conte até a última casinha."}
+];
+
+var fi=0, pos=HOJE, pulos=0, errosSeg=0, cur=0;
+var ger=0, travada=false, deprimeira=0;
+var telaAtual=null, calboxEl=null, pinoEl=null, contEl=null, acaoEl=null;
+var cels=[], cabs=[];
+
+function fase(){ return FASES[fi]||FASES[0]; }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function colDe(d){ return (MES.inicio+d-1)%7; }
+function linDe(d){ return Math.floor((MES.inicio+d-1)/7); }
+function ordinal(i){ return ORD[i]||(""+(i+1)+"a"); }
+function nomeNum(n){ return (n>=0&&n<UNM.length)?UNM[n]:(""+n); }
+function temClasse(e,c){ if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0; }
+
+/* A VOZ. Web Speech: se o PC nao tiver voz, a peca continua inteira — todo
+   numero falado tambem aparece escrito no quadro. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sPulo(){ nota(587.33,.07,.13,"triangle",0); nota(880,.06,.10,"triangle",.05); }
+function sNeutro(){ nota(440,.12,.12,"triangle",0); nota(587.33,.16,.11,"triangle",.07); }
+
+/* ---------------------------------------------------------------
+   A TELA — sempre o mesmo quadro; o que muda é a pergunta.
+   --------------------------------------------------------------- */
+function telaCal(){
+  limpa();
+  ger++; travada=false; errosSeg=0; cur=0;
+  document.onkeydown=null;
+  var g=ger, f=fase();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(fi*100/FASES.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",f.selo));
+  c.appendChild(el("div","balao",f.enun));
+  montaQuadro(c,g);
+  contEl=el("div","contador","");
+  c.appendChild(contEl);
+  acaoEl=el("div","acao","");
+  c.appendChild(acaoEl);
+  c.appendChild(el("div","hint","Toque na casinha &#8212; ou ande pelo quadro com as "+
+                   "<b>setas</b> do teclado e escolha com <b>Enter</b>."));
+  t.appendChild(c); app.appendChild(t);
+  iniciaFase(g);
+  diz(f.voz);
+}
+
+/* ---------- o quadro do mês ---------- */
+function montaQuadro(c,g){
+  var mold=el("div","calmold","");
+  mold.appendChild(el("div","mescab",MES.nome+" &#8212; o m&ecirc;s inteiro num quadro"));
+  calboxEl=el("div","calbox","");
+  cels=[]; cabs=[];
+  var i,d,lin,ce;
+  lin=el("div","gradelin","");
+  for(i=0;i<7;i++){
+    ce=el("div","cel cabc",SEM[i]);
+    ce._cab=i;
+    ce.onclick=fazCliqueCab(g,i,ce);
+    cabs.push(ce);
+    lin.appendChild(ce);
+  }
+  calboxEl.appendChild(lin);
+  var total=MES.inicio+MES.dias, linhas=Math.ceil(total/7), k=0;
+  for(i=0;i<linhas;i++){
+    lin=el("div","gradelin","");
+    for(k=0;k<7;k++){
+      d=i*7+k-MES.inicio+1;
+      if(d<1||d>MES.dias){ lin.appendChild(el("div","cel vazio","")); continue; }
+      ce=el("div","cel",""+d);
+      ce._d=d;
+      ce.onclick=fazCliqueCel(g,d,ce);
+      cels[d]=ce;
+      lin.appendChild(ce);
+    }
+    calboxEl.appendChild(lin);
+  }
+  mold.appendChild(calboxEl);
+  c.appendChild(mold);
+}
+/* ⚠️ o tratador nasce numa FUNCAO propria de proposito: closure feita dentro
+   do `for` com `var` (ES5) guardaria o ULTIMO valor de i para todas as
+   casinhas — o quadro inteiro responderia como se fosse o dia 31. */
+function fazCliqueCel(g,d,ce){ return function(){ tocaCel(g,d,ce); }; }
+function fazCliqueCab(g,i,ce){ return function(){ tocaCab(g,i,ce); }; }
+
+/* ---------- pintar: o estado inteiro da casinha num lugar só ----------
+   ⚠️ `if(!ce) return;` porque este ajudante e chamado tambem no comeco da
+   fase, quando nem toda casinha existe (ajudante que le elemento inexistente
+   ja derrubou quatro portoes de uma vez). */
+function pintaCel(d){
+  var ce=cels[d]; if(!ce) return;
+  var c="cel";
+  if(ce._andado) c=c+" andado";
+  if(d===HOJE) c=c+" hoje";
+  if(ce._alvo) c=c+" alvo";
+  if(d===cur) c=c+" foco";
+  ce.className=c;
+}
+function repintaTudo(){
+  var d;
+  for(d=1;d<=MES.dias;d++) pintaCel(d);
+}
+function acendeAlvo(d,liga){
+  var ce=cels[d]; if(!ce) return;
+  ce._alvo=liga?1:0; pintaCel(d);
+}
+
+/* ---------- o pino que pula ---------- */
+function poeVal(d,anima){
+  var ce=cels[d];
+  if(!ce||!calboxEl) return;
+  var rc=ce.getBoundingClientRect(), rb=calboxEl.getBoundingClientRect();
+  if(!pinoEl){
+    pinoEl=el("div","pino","");
+    pinoEl.style.left=Math.round(rc.left-rb.left)+"px";
+    pinoEl.style.top=Math.round(rc.top-rb.top)+"px";
+    pinoEl.style.width=Math.round(rc.width)+"px";
+    pinoEl.style.height=Math.round(rc.height)+"px";
+    calboxEl.appendChild(pinoEl);   /* ja nasce no lugar: sem deslizada do canto */
+    return;
+  }
+  pinoEl.style.left=Math.round(rc.left-rb.left)+"px";
+  pinoEl.style.top=Math.round(rc.top-rb.top)+"px";
+  pinoEl.style.width=Math.round(rc.width)+"px";
+  pinoEl.style.height=Math.round(rc.height)+"px";
+  if(!anima) return;
+  pinoEl.className="pino saltando";
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!pinoEl) return;
+    pinoEl.className="pino";
+  },260);
+}
+
+/* ---------- quem é o alvo AGORA (e o data-qa que o auditor usa) ---------- */
+function marcaAlvo(){
+  var f=fase(), d, i;
+  for(d=1;d<=MES.dias;d++) if(cels[d]) cels[d].removeAttribute("data-qa");
+  for(i=0;i<cabs.length;i++) cabs[i].removeAttribute("data-qa");
+  if(f.t==="achar"||f.t==="vizinho"){ if(cels[f.alvo]) cels[f.alvo].setAttribute("data-qa","1"); return; }
+  if(f.t==="semana"){ if(cabs[colDe(f.dia)]) cabs[colDe(f.dia)].setAttribute("data-qa","1"); return; }
+  if(f.t==="pulos"||f.t==="daqui"){
+    if(cels[pos+1]) cels[pos+1].setAttribute("data-qa","1");
+  }
+}
+
+function iniciaFase(g){
+  var f=fase();
+  pos=f.de||HOJE; pulos=0;
+  pinoEl=null;
+  repintaTudo();
+  poeVal(pos,false);
+  if(f.t==="semana") acendeAlvo(f.dia,true);
+  if(f.t==="quantos") montaOpcoes(g,f);
+  contadorPadrao();
+  marcaAlvo();
+  ligaTeclado(g);
+}
+function contadorPadrao(){
+  var f=fase();
+  if(!contEl) return;
+  contEl.className="contador";
+  if(f.t==="pulos") contEl.innerHTML="pulos dados: <b>0</b>";
+  else if(f.t==="daqui") contEl.innerHTML="pulos dados: <b>0</b> de <b>3</b>";
+  else contEl.innerHTML="Hoje &eacute; <b>"+HOJE+"</b> de "+MES.nome+
+       ", <b>"+SEMD[colDe(HOJE)]+"</b>.";
+}
+
+/* ---------- AS DUAS PORTAS: o teclado de verdade ---------- */
+function ligaTeclado(g){
+  document.onkeydown=function(ev){
+    var e=ev||window.event, k=e.keyCode||e.which;
+    if(travada) return;
+    if(k===37||k===39||k===38||k===40){
+      if(!cur) cur=pos;
+      else if(k===37) cur=cur-1;
+      else if(k===39) cur=cur+1;
+      else if(k===38) cur=cur-7;
+      else cur=cur+7;
+      if(cur<1) cur=1; if(cur>MES.dias) cur=MES.dias;
+      repintaTudo(); sTap();
+      if(e.preventDefault) e.preventDefault();
+    }else if(k===13||k===32){
+      if(cur&&cels[cur]) tocaCel(g,cur,cels[cur]);
+      if(e.preventDefault) e.preventDefault();
+    }
+  };
+}
+
+/* ---------------------------------------------------------------
+   O TOQUE NA CASINHA — cada fase lê o mesmo gesto do seu jeito.
+   --------------------------------------------------------------- */
+function tocaCel(g,d,ce){
+  if(g!==ger||travada) return;
+  var f=fase();
+  if(f.t==="semana"){
+    sTap();
+    mostraDica("A resposta est&aacute; na <b>primeira linha</b> do quadro: toque no "+
+               "<b>nome</b> da coluna em que o dia "+f.dia+" est&aacute;.");
+    return;
+  }
+  if(f.t==="quantos"){
+    sTap();
+    mostraDica("Conte as casinhas do quadro at&eacute; a <b>&uacute;ltima</b> e depois "+
+               "escolha o n&uacute;mero l&aacute; embaixo.");
+    return;
+  }
+  if(f.t==="achar"||f.t==="vizinho"){ escolheDia(g,d,ce); return; }
+  daPulo(g,d,ce);
+}
+function tocaCab(g,i,ce){
+  if(g!==ger||travada) return;
+  var f=fase();
+  if(f.t!=="semana"){ sTap(); return; }
+  if(i===colDe(f.dia)){
+    travada=true;                        /* ⚠️ trava NO INSTANTE do acerto */
+    sCerto();
+    if(errosSeg===0) deprimeira++;
+    ce.className="cel cabc andado";
+    contEl.className="contador ok";
+    contEl.innerHTML="O dia <b>"+f.dia+"</b> cai numa <b>"+SEMH[i]+"</b>. A semana se "+
+                     "repete: por isso a coluna d&aacute; a resposta.";
+    diz("O dia " + f.dia + " cai numa " + SEMV[i] + ".");
+    fechaFase(g,1600);
+    return;
+  }
+  erroSemana(g,i,ce);
+}
+
+/* ---------- achar o dia / ontem e amanhã ---------- */
+function escolheDia(g,d,ce){
+  var f=fase();
+  if(d===f.alvo){
+    travada=true;
+    ce._andado=1; pintaCel(d);
+    poeVal(d,true); sCerto();
+    if(errosSeg===0) deprimeira++;
+    contEl.className="contador ok";
+    contEl.innerHTML = (f.t==="achar")
+      ? "Achou! O dia <b>"+d+"</b> mora na <b>"+ordinal(linDe(d))+" linha</b>, na coluna <b>"+SEM[colDe(d)]+"</b>."
+      : ("Isso: "+f.palavra+" &eacute; o dia <b>"+d+"</b>, a casinha "+
+         (d>f.base?"logo &agrave; direita":"logo &agrave; esquerda")+" do <b>"+f.base+"</b>.");
+    diz((f.t==="achar") ? ("Achou. Dia " + d + ".")
+                        : ("Isso. É o dia " + d + "."));
+    fechaFase(g,1600);
+    return;
+  }
+  errosSeg++;
+  sErro();
+  ajudaCal(errosSeg, (f.t==="achar")?dicasAchar(f):dicasViz(f));
+  if(errosSeg===2) acendeAlvo(f.alvo,true);
+  if(errosSeg>=3) esperaERevelaDia(g);
+}
+function dicasAchar(f){
+  return ["Os n&uacute;meros v&atilde;o em ordem, de <b>1</b> at&eacute; <b>"+MES.dias+
+          "</b>. Procure o <b>"+f.alvo+"</b>.",
+          "Ele est&aacute; na <b>"+ordinal(linDe(f.alvo))+" linha</b>, na coluna <b>"+
+          SEM[colDe(f.alvo)]+"</b> &#8212; e j&aacute; est&aacute; aceso no quadro.",
+          "&Eacute; esta casinha: o dia <b>"+f.alvo+"</b>."];
+}
+function dicasViz(f){
+  var depois=(f.alvo>f.base);
+  return [(depois?"<b>Amanh&atilde;</b> &eacute; <b>um dia depois</b> de hoje: o pr&oacute;ximo n&uacute;mero."
+                : "<b>Ontem</b> foi <b>um dia antes</b> de hoje: o n&uacute;mero anterior."),
+          "Hoje &eacute; <b>"+f.base+"</b>. Ent&atilde;o "+f.palavra+" &eacute; a casinha "+
+          (depois?"logo &agrave; <b>direita</b>":"logo &agrave; <b>esquerda</b>")+
+          " &#8212; ela j&aacute; est&aacute; acesa.",
+          "&Eacute; o dia <b>"+f.alvo+"</b>."];
+}
+/* ⚠️ ORDEM SAGRADA: revela PRIMEIRO, escreve a explicacao DEPOIS. Ao
+   contrario (defeito que apareceu em 5 de 6 pecas de um lote), a peca se
+   conserta sozinha e a crianca nunca sabe por que. */
+function esperaERevelaDia(g){
+  travada=true;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    var f=fase(), ce=cels[f.alvo];
+    if(ce){ ce._andado=1; ce._alvo=0; pintaCel(f.alvo); }
+    poeVal(f.alvo,true); sNeutro();
+    contEl.className="contador ok";
+    contEl.innerHTML="&Eacute; o dia <b>"+f.alvo+"</b>.";
+    mostraDica("Repare onde ele fica: <b>"+ordinal(linDe(f.alvo))+" linha</b>, coluna <b>"+
+               SEM[colDe(f.alvo)]+"</b>. Da pr&oacute;xima vez voc&ecirc; acha sozinho.");
+    diz("É o dia " + f.alvo + ".");
+    fechaFase(g,1700);
+  },1000);
+}
+function erroSemana(g,i,ce){
+  var f=fase(), col=colDe(f.dia);
+  errosSeg++;
+  sErro();
+  ajudaCal(errosSeg,[
+    "Ache primeiro a casinha do dia <b>"+f.dia+"</b> (ela est&aacute; acesa) e <b>suba</b> "+
+    "com o dedo pela mesma coluna.",
+    "O dia <b>"+f.dia+"</b> est&aacute; na <b>"+ordinal(linDe(f.dia))+" linha</b>. "+
+    "O nome que voc&ecirc; procura est&aacute; bem no alto <b>dessa</b> coluna.",
+    "&Eacute; <b>"+SEMH[col]+"</b>."
+  ]);
+  if(errosSeg>=3){
+    travada=true;
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      if(cabs[col]) cabs[col].className="cel cabc andado";
+      contEl.className="contador ok";
+      contEl.innerHTML="O dia <b>"+f.dia+"</b> cai numa <b>"+SEMH[col]+"</b>.";
+      mostraDica("Toda casinha da <b>mesma coluna</b> cai no mesmo dia da semana. "+
+                 "&Eacute; s&oacute; subir pela coluna.");
+      diz("O dia " + f.dia + " cai numa " + SEMV[col] + ".");
+      fechaFase(g,1700);
+    },1000);
+  }
+}
+
+/* ---------------------------------------------------------------
+   O PULO — o coração da peça. Um dia de cada vez, e cada casinha
+   guarda escrito o número do pulo que foi dado nela.
+   --------------------------------------------------------------- */
+function daPulo(g,d,ce){
+  var f=fase(), prox=pos+1;
+  if(d===prox){
+    travada=true;                        /* ⚠️ trava NO INSTANTE do toque */
+    pos=prox; pulos++;
+    acendeAlvo(prox,false);
+    ce._andado=1; pintaCel(d);
+    ce.innerHTML=""+d+"<i class=\"npulo\">"+pulos+"</i>";
+    poeVal(d,true); sPulo();
+    diz(nomeNum(pulos));
+    contEl.className="contador";
+    contEl.innerHTML = (f.t==="pulos")
+      ? ("pulos dados: <b>"+pulos+"</b>")
+      : ("pulos dados: <b>"+pulos+"</b> de <b>"+f.n+"</b>");
+    var chegou = (f.t==="pulos") ? (pos>=f.ate) : (pulos>=f.n);
+    if(chegou){ fechaPulos(g,false); return; }
+    marcaAlvo();
+    destrava(g,320);
+    return;
+  }
+  errosSeg++;
+  sErro();
+  /* ⚠️ O ERRO MAIS NATURAL DESTA MECANICA e ir DIRETO ao destino ("quero
+     chegar ALI"). Ele tem frase propria — mas passa pelo MESMO andaime, com
+     `ajudaCal(n)`, senao quem so comete ESSE erro leria a mesma frase para
+     sempre e nunca chegaria aos degraus de acender e de pular sozinho. */
+  var direto = (f.t==="pulos" && d===f.ate);
+  ajudaCal(errosSeg, dicasPulo(f,prox,direto,d));
+  if(errosSeg===2) acendeAlvo(prox,true);
+  if(errosSeg>=3) esperaEPula(g);
+}
+function dicasPulo(f,prox,direto,tocado){
+  var primeira = direto
+    ? ("Voc&ecirc; foi <b>direto</b> ao dia "+tocado+". Para saber <b>quantos dias faltam</b>, "+
+       "a gente vai de <b>um em um</b>: o pr&oacute;ximo &eacute; o <b>"+prox+"</b>.")
+    : ("Um pulo de cada vez, na ordem. O pr&oacute;ximo &eacute; o <b>"+prox+"</b>.");
+  return [primeira,
+          "O pr&oacute;ximo dia est&aacute; <b>aceso</b> no quadro. Toque nele.",
+          "Deixa comigo: eu dou este pulo e voc&ecirc; continua."];
+}
+function esperaEPula(g){
+  travada=true;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    var f=fase(), prox=pos+1, ce=cels[prox];
+    if(!ce){ fechaPulos(g,true); return; }
+    pos=prox; pulos++;
+    acendeAlvo(prox,false);
+    ce._andado=1; pintaCel(prox);
+    ce.innerHTML=""+prox+"<i class=\"npulo\">"+pulos+"</i>";
+    poeVal(prox,true); sPulo();
+    contEl.className="contador";
+    contEl.innerHTML = (f.t==="pulos")
+      ? ("pulos dados: <b>"+pulos+"</b>")
+      : ("pulos dados: <b>"+pulos+"</b> de <b>"+f.n+"</b>");
+    /* revela PRIMEIRO (o pulo acima), explica DEPOIS */
+    mostraDica("Este foi o pulo <b>"+pulos+"</b>: do dia <b>"+(pos-1)+"</b> para o <b>"+
+               pos+"</b>. Continue voc&ecirc;, de um em um.");
+    diz("Pulo " + nomeNum(pulos) + ".");
+    var chegou = (f.t==="pulos") ? (pos>=f.ate) : (pulos>=f.n);
+    if(chegou){ fechaPulos(g,true); return; }
+    errosSeg=0;
+    marcaAlvo();
+    travada=false;
+  },1000);
+}
+function fechaPulos(g,revelado){
+  travada=true;
+  var f=fase();
+  sCerto();
+  if(errosSeg===0&&!revelado) deprimeira++;
+  contEl.className="contador ok";
+  if(f.t==="pulos"){
+    contEl.innerHTML="Do dia <b>"+f.de+"</b> at&eacute; o <b>"+f.ate+"</b> foram <b>"+pulos+
+                     " pulos</b>: faltam <b>"+pulos+" dias</b>.";
+    diz("Foram " + nomeNum(pulos) + " pulos. Faltam " + nomeNum(pulos) + " dias.");
+  }else{
+    contEl.innerHTML="<b>"+f.n+"</b> pulos depois do dia <b>"+f.de+"</b> a festa cai no dia <b>"+
+                     pos+"</b>, numa <b>"+SEMD[colDe(pos)]+"</b>.";
+    diz("A festa cai no dia " + pos + ", uma " + SEMV[colDe(pos)] + ".");
+  }
+  fechaFase(g,2300);
+}
+
+/* ---------------------------------------------------------------
+   O FECHO — quantos dias tem o mês. É aqui que entram as opções
+   (3 distratores, embaralhadas) e o gancho para o mês seguinte.
+   --------------------------------------------------------------- */
+function montaOpcoes(g,f){
+  acaoEl.innerHTML="";
+  var cx=el("div","linha","");
+  var lista=baguncar(f.ops.slice(0)), i;
+  for(i=0;i<lista.length;i++){
+    (function(v){
+      var b=el("div","opt",v+" dias");
+      if(v===f.cert) b.setAttribute("data-qa","1");
+      b.onclick=function(){ respondeQuantos(g,f,v,b); };
+      cx.appendChild(b);
+    })(lista[i]);
+  }
+  acaoEl.appendChild(cx);
+}
+function respondeQuantos(g,f,v,b){
+  if(g!==ger||travada||temClasse(b,"no")||temClasse(b,"ok")) return;
+  if(v===f.cert){
+    travada=true;
+    b.className="opt ok"; b.removeAttribute("data-qa");
+    sCerto();
+    if(errosSeg===0) deprimeira++;
+    contEl.className="contador ok";
+    contEl.innerHTML=MES.nome+" tem <b>"+f.cert+"</b> dias. A &uacute;ltima casinha do quadro &eacute; o <b>"+
+                     f.cert+"</b>.";
+    diz(MES.nome + " tem " + f.cert + " dias.");
+    fechaFase(g,1800);
+    return;
+  }
+  errosSeg++;
+  sErro();
+  b.className="opt no"; b.removeAttribute("data-qa");
+  ajudaCal(errosSeg,[
+    "Olhe a <b>&uacute;ltima</b> casinha com n&uacute;mero, l&aacute; embaixo do quadro.",
+    "Conte as linhas: s&atilde;o quase 5 semanas cheias. O &uacute;ltimo n&uacute;mero &eacute; a resposta.",
+    "&Eacute; <b>"+f.cert+"</b>: o quadro termina no dia "+f.cert+"."
+  ]);
+  /* ⚠️ A REDE: se as erradas acabarem antes do 3º erro, a crianca fica com
+     UMA opcao so — que nao e escolha nenhuma. Aí a peca revela na hora. */
+  if(errosSeg>=3||!sobrouErrada()){
+    travada=true;
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      var lista=acaoEl.getElementsByClassName("opt"), i;
+      for(i=0;i<lista.length;i++)
+        if(lista[i].getAttribute("data-qa")==="1") lista[i].className="opt ok";
+      contEl.className="contador ok";
+      contEl.innerHTML=MES.nome+" tem <b>"+f.cert+"</b> dias.";
+      mostraDica("O quadro termina no dia <b>"+f.cert+"</b> &#8212; e &eacute; esse o tamanho do m&ecirc;s.");
+      diz(MES.nome + " tem " + f.cert + " dias.");
+      fechaFase(g,1800);
+    },1000);
+  }
+}
+function sobrouErrada(){
+  if(!acaoEl) return false;
+  var lista=acaoEl.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<lista.length;i++)
+    if(!temClasse(lista[i],"no")&&lista[i].getAttribute("data-qa")!=="1") n++;
+  return n>0;
+}
+
+/* ---------- os ajudantes de sempre ---------- */
+function ajudaCal(n,lista){
+  var i=n; if(i<1) i=1; if(i>lista.length) i=lista.length;
+  mostraDica(lista[i-1]);
+}
+function destrava(g,ms){
+  setTimeout(function(){ if(g!==ger||!viva()) return; travada=false; },ms);
+}
+function fechaFase(g,ms){
+  document.onkeydown=null;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    proxFase();
+  },ms);
+}
+function proxFase(){
+  fi++;
+  if(fi<FASES.length){ telaCal(); return; }
+  mostraBanner("<b>Voc&ecirc; leu o m&ecirc;s inteiro!</b><br>Contar os <b>pulos</b> "+
+               "&eacute; o jeito de saber quantos dias faltam.", fimCal);
+}
+
+/* ---------------------------------------------------------------
+   A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimCal(){
+  limpa();
+  ger++; travada=false;
+  document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(deprimeira>=6) parecer="Voc&ecirc; andou pelo m&ecirc;s inteiro quase sempre de primeira. "+
+                            "O calend&aacute;rio virou seu conhecido!";
+  else if(deprimeira>=3) parecer="Voc&ecirc; j&aacute; acha o dia e conta os <b>pulos</b> at&eacute; "+
+                                 "o outro. &Eacute; assim que se sabe quantos dias faltam.";
+  else parecer="Voc&ecirc; descobriu o principal: para saber <b>quantos dias faltam</b>, "+
+               "pula-se de <b>um em um</b> e contam-se os pulos.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ fi=0; deprimeira=0; telaCal(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","E o pr&oacute;ximo m&ecirc;s: ser&aacute; que tem o "+
+                   "<b>mesmo tanto</b> de dias?"));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaCal();
+</script>
+</body></html>

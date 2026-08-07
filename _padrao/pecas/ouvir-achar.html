@@ -148,10 +148,17 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .cpor{position:absolute;left:23px;top:38px;width:13px;height:18px;background:#6b4b2a;border-radius:3px 3px 0 0}
 .bcir{position:absolute;left:4px;top:4px;width:50px;height:50px;border-radius:50%;background:#e8563f;
       overflow:hidden;-webkit-box-shadow:inset 0 0 0 3px #8c2c1c;box-shadow:inset 0 0 0 3px #8c2c1c}
-/* ⚠️ DEFEITO PEGO NO PRINT: com UMA faixa branca larga no meio, a bola virava
-   uma placa de PROIBIDO. Duas faixas finas cruzadas leem como bola. */
-.bfai{position:absolute;left:-2px;top:22px;width:54px;height:6px;background:#fffdf6}
-.bfa2{position:absolute;left:22px;top:-2px;width:6px;height:54px;background:#fffdf6}
+/* ⚠️ DEFEITO PEGO NO PRINT, DUAS VEZES: com UMA faixa branca larga no meio a
+   bola virava placa de PROIBIDO; so com a cruz, virou uma CRUZ. O que le como
+   bola sao as quatro linhas da bola de basquete — a cruz MAIS as duas curvas
+   dos lados. Desenho de figura tem que ser CONFERIDO no print, nunca no
+   codigo: no codigo os tres desenhos eram "um circulo com listras". */
+.bfai{position:absolute;left:-2px;top:23px;width:54px;height:5px;background:#fffdf6}
+.bfa2{position:absolute;left:23px;top:-2px;width:5px;height:54px;background:#fffdf6}
+.bcu1{position:absolute;left:-15px;top:-3px;width:40px;height:56px;border-radius:50%;
+      border-right:5px solid #fffdf6}
+.bcu2{position:absolute;left:26px;top:-3px;width:40px;height:56px;border-radius:50%;
+      border-left:5px solid #fffdf6}
 .pcor{position:absolute;left:14px;top:16px;width:40px;height:27px;border-radius:50%;background:#3f8fa8;
       -webkit-box-shadow:inset 0 0 0 3px #1c5162;box-shadow:inset 0 0 0 3px #1c5162}
 .prab{position:absolute;left:1px;top:19px;width:0;height:0;border-top:10px solid rgba(0,0,0,0);
@@ -338,6 +345,7 @@ function desenho(k){
   }else if(k==="bola"){
     e=el("i","bcir","");
     e.appendChild(el("i","bfai","")); e.appendChild(el("i","bfa2",""));
+    e.appendChild(el("i","bcu1","")); e.appendChild(el("i","bcu2",""));
     d.appendChild(e);
   }else if(k==="peixe"){
     d.appendChild(el("i","prab","")); d.appendChild(el("i","pcor","")); d.appendChild(el("i","polh",""));

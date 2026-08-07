@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — comparar (ver quem tem mais e só então escolher o sinal)</title>
+<!-- ============================================================
+     PEÇA: MAIOR, MENOR OU IGUAL — o olho compara ANTES do símbolo
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     POR QUE ELA EXISTE:
+     "5 > 3" só quer dizer alguma coisa para quem JÁ VIU que cinco é mais
+     que três. O jeito comum de ensinar isso — mostrar dois números e pedir
+     o sinal — pula justamente a parte que ensina, e sobra decorar para que
+     lado abre a boca do jacaré. Aqui a ordem é a inversa e é inegociável:
+     primeiro as duas quantidades ficam LADO A LADO, começando no mesmo
+     lugar, para o olho ver quem sobra; o sinal vem depois, para dar NOME
+     ao que a criança acabou de enxergar.
+
+     O QUE FAZ ESTA MECÂNICA VALER:
+       · DOIS PASSOS, SEMPRE NESSA ORDEM. Passo 1: "quem tem mais?" —
+         responde-se tocando na própria fileira (ou em "têm o mesmo
+         tanto"). Passo 2, e só então: o sinal. Nunca o sinal sozinho.
+       · AS FILEIRAS COMEÇAM NO MESMO LUGAR. Comparar comprimentos que
+         começam em pontos diferentes é o erro clássico da comparação; aqui
+         as duas partem da mesma borda e o que sobra fica à vista.
+       · O EMPATE EXISTE. Uma das rodadas é 4 contra 4: sem ela, "igual"
+         vira um botão que nunca serve e a criança aprende que sempre há um
+         vencedor.
+       · CONCRETO -> SIMBÓLICO DE VERDADE: as três primeiras rodadas
+         mostram as fileiras e só revelam os números depois; a última mostra
+         os NÚMEROS primeiro (a criança prevê) e revela as fileiras para
+         CONFIRMAR. Mesmo ali a comparação é vista antes do sinal.
+       · O SINAL NUNCA É SÓ O SÍMBOLO: cada botão traz o desenho E as
+         palavras ("MAIOR QUE"), e a resposta final é lida como frase
+         ("5 é maior que 3"). Quem não decodifica o símbolo continua junto.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · O LADO É SORTEADO (`baguncar`): sem isso a maior seria sempre a de
+         cima e a criança aprenderia a POSIÇÃO, não a comparação. A ordem
+         dos três sinais também é sorteada.
+       · SÓ EXISTEM 3 SINAIS — ou seja, 2 distratores. Com 2 erradas a
+         criança elimina tudo antes do 3º erro e o degrau "revelar" viraria
+         CÓDIGO MORTO. Por isso há a rede `sobrouErrada()`: quando as
+         erradas acabam, a peça revela na hora — e as TRÊS frases do andaime
+         chegam mesmo assim (a 3ª é escrita DEPOIS da revelação).
+       · REVELA E DEPOIS EXPLICA: a dica que explica a revelação é escrita
+         depois que o sinal entra no lugar, nunca no mesmo quadro.
+       · TRAVA NO INSTANTE DO TOQUE (`travada=true`), nunca no fim da
+         animação — criança toca duas vezes.
+       · GERAÇÃO (`ger`) em todo setTimeout: relógio de rodada velha não
+         mexe em tela nova.
+       · A VOZ ACOMPANHA A TROCA DE ENUNCIADO: quando o passo 2 começa, o
+         balão muda E a voz fala na mesma hora.
+       · AS DUAS PORTAS: dá para tocar E para escolher pelo TECLADO (1, 2,
+         3 nas opções) — no PC da escola tem teclado.
+       · NUNCA TRAVA: em qualquer passo a peça revela e anda.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.cmp{max-width:430px;margin:13px auto 4px}
+/* AS DUAS FILEIRAS, uma embaixo da outra e COMECANDO NA MESMA BORDA: e este
+   alinhamento que faz o olho comparar sozinho. */
+.grupo{display:block;background:rgba(255,255,255,.10);color:#f4efe6;border-radius:14px;
+       padding:6px 9px;margin:0 auto 6px;max-width:430px;text-align:left;min-height:46px}
+/* quando o grupo e TOCAVEL (passo 1) ele vira botao de verdade */
+.grupo.opt{background:#fffdf6;color:#221a12;cursor:pointer;min-height:52px;
+       box-shadow:0 4px 0 #c9bda6}
+/* ⚠️ estas duas regras existem porque `.grupo.opt` vem DEPOIS de `.opt.ok`
+   no arquivo e ganharia dela por ordem — o acerto ficaria sem cor nenhuma. */
+.grupo.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.grupo.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.rotulo{display:block;font-size:12px;font-weight:800;letter-spacing:.4px;margin-bottom:3px}
+.fileira{display:block;white-space:nowrap;overflow:hidden;min-height:22px}
+/* as duas turmas se distinguem por COR e por FORMA (quadrado x redondo):
+   quem nao enxerga a cor continua vendo duas coisas diferentes. */
+.bloco{display:inline-block;font-style:normal;width:18px;height:18px;margin-right:4px;
+       vertical-align:middle}
+.bloco.bA{background:#5aa0e0;border:2px solid #1c4f7d;border-radius:4px}
+.bloco.bB{background:#f0a04b;border:2px solid #7d4a0c;border-radius:50%}
+.numg{display:inline-block;font-size:24px;font-weight:800;vertical-align:middle;margin-left:4px}
+.numg.grandao{font-size:34px}
+.escondido{display:none}
+/* A FRASE: os dois numeros e a vaga do sinal no meio. */
+.frase{max-width:430px;margin:4px auto 0;background:rgba(255,255,255,.12);border-radius:12px;
+       padding:6px 8px;white-space:nowrap}
+.numf{display:inline-block;font-size:26px;font-weight:800;color:#ffd54a;margin:0 3px;
+      vertical-align:middle}
+.slotsin{display:inline-block;min-width:56px;height:44px;line-height:38px;margin:0 10px;
+      border:3px dashed #ffd54a;border-radius:10px;vertical-align:middle;
+      font-size:26px;font-weight:800;color:#ffd54a;text-align:center}
+.slotsin.cheio{border-style:solid;background:#ffd54a;color:#33280a}
+.linha{margin-top:2px}
+.linha .opt{display:inline-block;width:auto;min-width:104px;max-width:none;margin:5px 5px;
+      padding:6px 10px;min-height:58px;vertical-align:middle}
+.sinal{display:block;font-size:26px;line-height:1.1;font-weight:800}
+.sinword{display:block;font-size:11px;font-weight:800;letter-spacing:.3px}
+.msgc{max-width:430px;margin:6px auto 0;background:rgba(255,255,255,.12);border-radius:12px;
+      padding:6px 10px;font-size:15px;font-weight:700;color:#f4efe6;min-height:30px;line-height:1.3}
+.msgc b{color:#ffd54a}
+.msgc.ok{background:#d6f5c8;color:#183a0e}
+.msgc.ok b{color:#183a0e}
+.acao{margin-top:2px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (o monitor 1024x420 da escola): encolhe as letras e os
+   quadradinhos, NUNCA os botoes. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{padding:6px 11px;font-size:13px;margin-top:8px}
+  .cmp{margin-top:8px}
+  .grupo{padding:4px 8px;min-height:42px;margin-bottom:4px}
+  .grupo.opt{min-height:46px}
+  .rotulo{font-size:11px;margin-bottom:2px}
+  .bloco{width:16px;height:16px;margin-right:3px}
+  .numg{font-size:20px}
+  .numg.grandao{font-size:26px}
+  .frase{padding:4px 8px}
+  .numf{font-size:22px}
+  .slotsin{height:40px;line-height:34px;min-width:50px}
+  .linha .opt{min-height:52px;margin:4px 5px}
+  .sinal{font-size:22px}
+  .msgc{font-size:13px;padding:5px 9px;min-height:26px}
+  .opt{min-height:44px;padding:9px 13px;margin:5px auto}
+  .hint{margin-top:4px;font-size:12px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (6 a 9 anos). Para reusar a peça troque SÓ este
+   bloco: os dois números de cada rodada e o modo.
+   ⚠️ A ESCADA: 5x3 (diferença grande, dá para ver de longe) -> 4x4 (o
+   EMPATE, sem o qual "igual" vira botão decorativo) -> 7x9 (diferença de 2,
+   já precisa correr o dedo) -> 12x8 em modo NÚMEROS, onde a criança prevê
+   pelo símbolo e as fileiras aparecem para confirmar. */
+var RODS=[
+ {a:5,b:3,modo:"blocos",selo:"QUEM TEM MAIS?",
+  enun:"Olhe as duas fileiras. <b>Quem tem mais</b>?",
+  voz:"Olhe as duas fileiras. Quem tem mais?"},
+ {a:4,b:4,modo:"blocos",selo:"SER&Aacute; QUE EMPATA?",
+  enun:"E agora? Olhe bem: <b>quem tem mais</b>?",
+  voz:"E agora? Olhe bem: quem tem mais?"},
+ {a:7,b:9,modo:"blocos",selo:"POR POUCO",
+  enun:"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?",
+  voz:"Estas duas estão quase iguais. Quem tem mais?"},
+ {a:12,b:8,modo:"numeros",selo:"S&Oacute; OS N&Uacute;MEROS",
+  enun:"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?",
+  voz:"Agora só os números. Qual é o maior?"}
+];
+var NOMEA="TURMA AZUL", NOMEB="TURMA LARANJA";
+var VOZA="turma azul", VOZB="turma laranja";
+var UNM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+         "onze","doze"];
+
+/* O ANDAIME DO PASSO 1 (quem tem mais). Frases GENÉRICAS de propósito: o
+   nome do que está na tela sai de uma função, nunca escrito à mão em cada
+   dica — senão a 2ª rodada continuaria falando da 1ª. */
+var D1=[
+ "As duas fileiras come&ccedil;am no <b>mesmo lugar</b>. Olhe onde cada uma <b>termina</b>.",
+ "Corra o dedo pelas duas ao mesmo tempo. A que ainda tem pe&ccedil;a quando a outra acabou &eacute; a que tem <b>mais</b>."
+];
+
+var ri=0, passo=1, errosP1=0, errosSin=0, deprimeira=0;
+var ger=0, travada=false;
+var vTopo=0, vBaixo=0;
+var telaAtual=null, balaoEl=null, acaoEl=null, msgEl=null, fraseEl=null, slotEl=null;
+var painelA=null, painelB=null, numA=null, numB=null, filA=null, filB=null, optIgual=null;
+
+function rod(){ return RODS[ri]||RODS[0]; }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function temClasse(e,c){ if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0; }
+function nomeNum(n){ return (n>=0&&n<UNM.length)?UNM[n]:(""+n); }
+function simbolo(){ return vTopo>vBaixo ? "&gt;" : (vTopo<vBaixo ? "&lt;" : "="); }
+function palavraSin(){ return vTopo>vBaixo ? "maior que" : (vTopo<vBaixo ? "menor que" : "igual a"); }
+
+/* A VOZ. Web Speech: se o PC nao tiver voz, a peca continua inteira — toda
+   frase falada tambem esta escrita na tela. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sPop(){ nota(659.25,.09,.13,"triangle",0); }
+function sNeutro(){ nota(440,.12,.12,"triangle",0); nota(587.33,.16,.11,"triangle",.07); }
+
+/* ---------------------------------------------------------------
+   A TELA DA RODADA. Passo 1 (ver) e passo 2 (nomear) moram na mesma
+   tela: a comparação continua à vista enquanto o sinal é escolhido.
+   --------------------------------------------------------------- */
+function telaComp(){
+  limpa();
+  ger++; travada=false; passo=1; errosP1=0; errosSin=0;
+  document.onkeydown=null;
+  fraseEl=null; slotEl=null;
+  var g=ger, r=rod();
+  /* ⚠️ SORTEIA QUAL VALOR FICA EM CIMA. Sem isto a maior seria sempre a
+     primeira e a crianca aprenderia a POSICAO, nao a comparacao. */
+  var par=baguncar([r.a,r.b]);
+  vTopo=par[0]; vBaixo=par[1];
+
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(ri*100/RODS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",r.selo));
+  balaoEl=el("div","balao",r.enun);
+  c.appendChild(balaoEl);
+
+  var cmp=el("div","cmp","");
+  painelA=fazPainel("A",NOMEA,vTopo,r.modo);
+  painelB=fazPainel("B",NOMEB,vBaixo,r.modo);
+  cmp.appendChild(painelA); cmp.appendChild(painelB);
+  c.appendChild(cmp);
+
+  msgEl=el("div","msgc","");
+  msgEl.innerHTML = (r.modo==="numeros")
+    ? "Sem contar nada: <b>qual n&uacute;mero &eacute; o maior</b>?"
+    : "As duas come&ccedil;am na mesma borda.";
+  c.appendChild(msgEl);
+
+  acaoEl=el("div","acao","");
+  c.appendChild(acaoEl);
+  c.appendChild(el("div","hint","Toque na fileira que tem mais &#8212; ou use as "+
+                   "teclas <b>1</b>, <b>2</b> e <b>3</b>."));
+  t.appendChild(c); app.appendChild(t);
+
+  montaPasso1(g);
+  diz(r.voz);
+}
+
+/* ---------- um painel: rótulo, fileira e o número ----------
+   No modo "blocos" o numero comeca escondido (ele e a RECOMPENSA de ter
+   olhado); no modo "numeros" e a fileira que comeca escondida (ela e a
+   CONFIRMACAO do palpite). Nos dois casos a comparacao aparece inteira
+   ANTES do sinal — que e a regra desta peca. */
+function fazPainel(lado,nome,valor,modo){
+  var p=el("div","grupo","");
+  p.appendChild(el("span","rotulo",nome));
+  var f=el("div","fileira",""), i, b;
+  for(i=0;i<valor;i++){
+    b=el("i","bloco","");
+    b.className = (lado==="A") ? "bloco bA" : "bloco bB";
+    f.appendChild(b);
+  }
+  var n=el("b","numg",""+valor);
+  if(modo==="numeros"){
+    f.className="fileira escondido";
+    n.className="numg grandao";
+  }else{
+    n.className="numg escondido";
+  }
+  p.appendChild(f);
+  p.appendChild(n);
+  p._v=valor; p._lado=lado; p._fil=f; p._num=n;
+  if(lado==="A"){ filA=f; numA=n; } else { filB=f; numB=n; }
+  return p;
+}
+
+/* ---------------------------------------------------------------
+   PASSO 1 — VER. Toca-se na própria fileira; o "têm o mesmo tanto"
+   é uma opção de verdade, e uma das rodadas é empate mesmo.
+   --------------------------------------------------------------- */
+function montaPasso1(g){
+  passo=1;
+  painelA.className="grupo opt";
+  painelB.className="grupo opt";
+  painelA.onclick=function(){ escolheLado(g,painelA); };
+  painelB.onclick=function(){ escolheLado(g,painelB); };
+  acaoEl.innerHTML="";
+  optIgual=el("div","opt","OS DOIS T&Ecirc;M O MESMO TANTO");
+  optIgual.onclick=function(){ escolheLado(g,optIgual); };
+  acaoEl.appendChild(optIgual);
+  marcaCerto1();
+  ligaTeclado(g,[painelA,painelB,optIgual]);
+}
+/* o data-qa="1" e so para o auditor-jogador: sem ele a partida ficaria na
+   sorte e uma peca perfeita levaria "PRESO". */
+function marcaCerto1(){
+  painelA.removeAttribute("data-qa");
+  painelB.removeAttribute("data-qa");
+  optIgual.removeAttribute("data-qa");
+  if(vTopo>vBaixo) painelA.setAttribute("data-qa","1");
+  else if(vTopo<vBaixo) painelB.setAttribute("data-qa","1");
+  else optIgual.setAttribute("data-qa","1");
+}
+function certo1(alvo){
+  if(vTopo>vBaixo) return alvo===painelA;
+  if(vTopo<vBaixo) return alvo===painelB;
+  return alvo===optIgual;
+}
+function escolheLado(g,alvo){
+  if(g!==ger||travada||passo!==1) return;
+  if(temClasse(alvo,"no")||temClasse(alvo,"ok")) return;
+  if(certo1(alvo)){
+    travada=true;                         /* ⚠️ trava NO INSTANTE do acerto */
+    alvo.className = (alvo===optIgual) ? "opt ok" : "grupo opt ok";
+    alvo.removeAttribute("data-qa");
+    sCerto();
+    if(errosP1===0) deprimeira++;
+    revelaTudo();
+    msgEl.className="msgc ok";
+    msgEl.innerHTML=frasePasso1();
+    diz(vozPasso1());
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      montaPasso2(g);
+    },1600);
+    return;
+  }
+  errosP1++;
+  sErro();
+  alvo.className = (alvo===optIgual) ? "opt no" : "grupo opt no";
+  alvo.removeAttribute("data-qa");
+  ajudaComp(errosP1,D1);
+  /* ⚠️ A REDE: so ha 3 opcoes, entao as erradas acabam no 2º erro. Sem isto
+     a crianca ficaria diante de UMA opcao so — que nao e escolha nenhuma — e
+     o degrau "revelar" nunca chegaria em ninguem. */
+  if(errosP1>=3||!sobrouErrada1()) esperaERevela1(g);
+}
+function sobrouErrada1(){
+  var l=[painelA,painelB,optIgual], i, n=0;
+  for(i=0;i<l.length;i++)
+    if(!temClasse(l[i],"no")&&l[i].getAttribute("data-qa")!=="1") n++;
+  return n>0;
+}
+/* ⚠️ ORDEM SAGRADA: revela PRIMEIRO, explica DEPOIS. Ao contrario (defeito
+   que apareceu em 5 de 6 pecas de um lote) a peca se conserta sozinha e a
+   crianca nao sabe por que. */
+/* ⚠️ 1500ms, e nao 1000 (medido pelo errador, ago/2026): so ha 3 opcoes,
+   entao a REDE dispara ja no 2º erro — e a dica do degrau do meio seria
+   apagada pela dica da revelacao antes de a crianca conseguir ler. Degrau
+   que existe no codigo e nao chega no olho e degrau que nao existe. */
+function esperaERevela1(g){
+  travada=true;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    var alvo = (vTopo>vBaixo)?painelA:((vTopo<vBaixo)?painelB:optIgual);
+    alvo.className = (alvo===optIgual) ? "opt ok" : "grupo opt ok";
+    alvo.removeAttribute("data-qa");
+    revelaTudo(); sNeutro();
+    msgEl.className="msgc ok";
+    msgEl.innerHTML=frasePasso1();
+    mostraDica(explica1());
+    diz(vozPasso1());
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      montaPasso2(g);
+    },1700);
+  },1500);
+}
+function revelaTudo(){
+  if(!painelA||!painelB) return;
+  if(filA) filA.className="fileira";
+  if(filB) filB.className="fileira";
+  if(numA) numA.className="numg";
+  if(numB) numB.className="numg";
+  painelA.onclick=null; painelB.onclick=null;
+  painelA.className="grupo"; painelB.className="grupo";
+  if(optIgual&&optIgual.parentNode) optIgual.parentNode.removeChild(optIgual);
+}
+function frasePasso1(){
+  if(vTopo===vBaixo)
+    return "As duas t&ecirc;m <b>"+vTopo+"</b>: terminam no <b>mesmo lugar</b>.";
+  var maiorN=(vTopo>vBaixo)?NOMEA:NOMEB, mv=Math.max(vTopo,vBaixo), nv=Math.min(vTopo,vBaixo);
+  return "A <b>"+maiorN+"</b> tem <b>"+mv+"</b> e a outra tem <b>"+nv+"</b>: sobraram <b>"+
+         (mv-nv)+"</b>.";
+}
+function vozPasso1(){
+  if(vTopo===vBaixo) return "As duas têm " + nomeNum(vTopo) + ". Terminam no mesmo lugar.";
+  var maiorV=(vTopo>vBaixo)?VOZA:VOZB;
+  return "A " + maiorV + " tem " + nomeNum(Math.max(vTopo,vBaixo)) + " e a outra tem " +
+         nomeNum(Math.min(vTopo,vBaixo)) + ".";
+}
+function explica1(){
+  if(vTopo===vBaixo)
+    return "Repare: as duas fileiras <b>terminam juntas</b>. Quando isso acontece, "+
+           "ningu&eacute;m tem mais &#8212; elas s&atilde;o <b>iguais</b>.";
+  return "Repare: uma fileira <b>passa</b> da outra. A que vai mais longe &eacute; a que tem <b>mais</b>.";
+}
+
+/* ---------------------------------------------------------------
+   PASSO 2 — NOMEAR. Só agora entra o sinal, e ele nunca aparece
+   sozinho: a frase inteira fica montada com os dois números.
+   --------------------------------------------------------------- */
+function montaPasso2(g){
+  if(g!==ger||!viva()) return;
+  passo=2; travada=false; errosSin=0;
+  /* ⚠️ o enunciado MUDA dentro da fase: entao a voz fala na MESMA hora. */
+  balaoEl.innerHTML="Agora d&ecirc; um <b>nome</b> ao que voc&ecirc; viu: escolha o <b>sinal</b>.";
+  diz("Agora escolha o sinal.");
+  msgEl.className="msgc";
+  msgEl.innerHTML="O sinal vai no meio dos dois n&uacute;meros.";
+
+  fraseEl=el("div","frase","");
+  fraseEl.appendChild(el("i","bloco bA",""));
+  fraseEl.appendChild(el("b","numf",""+vTopo));
+  slotEl=el("span","slotsin","?");
+  fraseEl.appendChild(slotEl);
+  fraseEl.appendChild(el("i","bloco bB",""));
+  fraseEl.appendChild(el("b","numf",""+vBaixo));
+  msgEl.parentNode.insertBefore(fraseEl,msgEl);
+
+  acaoEl.innerHTML="";
+  var cx=el("div","linha",""), i;
+  var sinais=baguncar([
+    {s:"&gt;",p:"MAIOR QUE",k:"maior"},
+    {s:"&lt;",p:"MENOR QUE",k:"menor"},
+    {s:"=",   p:"IGUAL A",  k:"igual"}
+  ]);
+  var kcerto = (vTopo>vBaixo)?"maior":((vTopo<vBaixo)?"menor":"igual");
+  var botoes=[];
+  for(i=0;i<sinais.length;i++){
+    (function(sn){
+      var b=el("div","opt","<span class=\"sinal\">"+sn.s+"</span>"+
+                           "<span class=\"sinword\">"+sn.p+"</span>");
+      if(sn.k===kcerto) b.setAttribute("data-qa","1");
+      b.onclick=function(){ escolheSinal(g,sn,b,kcerto); };
+      cx.appendChild(b);
+      botoes.push(b);
+    })(sinais[i]);
+  }
+  acaoEl.appendChild(cx);
+  ligaTeclado(g,botoes);
+}
+function escolheSinal(g,sn,b,kcerto){
+  if(g!==ger||travada||passo!==2) return;
+  if(temClasse(b,"no")||temClasse(b,"ok")) return;
+  if(sn.k===kcerto){
+    travada=true;                         /* ⚠️ trava NO INSTANTE do acerto */
+    b.className="opt ok"; b.removeAttribute("data-qa");
+    poeSinal(sn.s);
+    sCerto();
+    if(errosSin===0&&errosP1===0) deprimeira++;
+    msgEl.className="msgc ok";
+    msgEl.innerHTML="<b>"+vTopo+"</b> &eacute; <b>"+palavraSin()+"</b> <b>"+vBaixo+"</b>.";
+    diz(nomeNum(vTopo) + " é " + palavraSin() + " " + nomeNum(vBaixo) + ".");
+    fechaRodada(g,1900);
+    return;
+  }
+  errosSin++;
+  sErro();
+  b.className="opt no"; b.removeAttribute("data-qa");
+  ajudaComp(errosSin,dicasSin());
+  /* mesma rede do passo 1: com 3 sinais as erradas acabam no 2º erro */
+  if(errosSin>=3||!sobrouErradaSin()) esperaERevelaSin(g);
+}
+function sobrouErradaSin(){
+  if(!acaoEl) return false;
+  var l=acaoEl.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<l.length;i++)
+    if(!temClasse(l[i],"no")&&l[i].getAttribute("data-qa")!=="1") n++;
+  return n>0;
+}
+function dicasSin(){
+  if(vTopo===vBaixo) return [
+    "As duas fileiras terminam no <b>mesmo lugar</b>: nenhuma tem mais.",
+    "N&atilde;o &eacute; maior nem menor. Procure o sinal dos <b>dois tracinhos iguais</b>.",
+    "Quando o tanto &eacute; o mesmo, o sinal &eacute; o de <b>igual</b>."
+  ];
+  var lado=(vTopo>vBaixo)?"primeiro":"segundo";
+  return [
+    "O <b>bico aberto</b> do sinal olha sempre para o lado que tem <b>mais</b>.",
+    "Aqui o maior &eacute; o <b>"+lado+"</b> n&uacute;mero da frase. A boca do sinal abre para <b>ele</b>.",
+    "Por isso o sinal &eacute; este: a boca aberta fica do lado do <b>"+
+    Math.max(vTopo,vBaixo)+"</b>, e a pontinha do lado do <b>"+Math.min(vTopo,vBaixo)+"</b>."
+  ];
+}
+/* mesma razao do passo 1: a dica do meio precisa de tempo de leitura antes
+   de a explicacao da revelacao tomar o lugar dela. */
+function esperaERevelaSin(g){
+  travada=true;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    var l=acaoEl.getElementsByClassName("opt"), i;
+    for(i=0;i<l.length;i++)
+      if(l[i].getAttribute("data-qa")==="1"){ l[i].className="opt ok"; l[i].removeAttribute("data-qa"); }
+    poeSinal(simbolo());
+    sNeutro();
+    msgEl.className="msgc ok";
+    msgEl.innerHTML="<b>"+vTopo+"</b> &eacute; <b>"+palavraSin()+"</b> <b>"+vBaixo+"</b>.";
+    /* revela PRIMEIRO (o sinal ja entrou), explica DEPOIS */
+    mostraDica(dicasSin()[2]);
+    diz(nomeNum(vTopo) + " é " + palavraSin() + " " + nomeNum(vBaixo) + ".");
+    fechaRodada(g,2100);
+  },1500);
+}
+function poeSinal(s){
+  if(!slotEl) return;
+  slotEl.className="slotsin cheio";
+  slotEl.innerHTML=s;
+}
+
+/* ---------- os ajudantes de sempre ---------- */
+function ajudaComp(n,lista){
+  var i=n; if(i<1) i=1; if(i>lista.length) i=lista.length;
+  mostraDica(lista[i-1]);
+}
+/* AS DUAS PORTAS: no PC da escola tem teclado e a crianca vai usar. */
+function ligaTeclado(g,alvos){
+  document.onkeydown=function(ev){
+    var e=ev||window.event, k=e.keyCode||e.which, n=k-48;
+    if(travada||g!==ger) return;
+    if(n>=1&&n<=alvos.length&&alvos[n-1]&&alvos[n-1].onclick){
+      alvos[n-1].onclick();
+      if(e.preventDefault) e.preventDefault();
+    }
+  };
+}
+function fechaRodada(g,ms){
+  document.onkeydown=null;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    ri++;
+    if(ri<RODS.length){ telaComp(); return; }
+    mostraBanner("<b>Voc&ecirc; comparou e deu nome!</b><br>Primeiro a gente <b>v&ecirc;</b> "+
+                 "quem tem mais; o sinal s&oacute; conta isso por escrito.", fimComp);
+  },ms);
+}
+
+/* ---------------------------------------------------------------
+   A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimComp(){
+  limpa();
+  ger++; travada=false;
+  document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(deprimeira>=6) parecer="Voc&ecirc; viu quem tinha mais <b>e</b> deu o nome certo quase sempre "+
+                            "de primeira. Olho e sinal andando juntos!";
+  else if(deprimeira>=3) parecer="Voc&ecirc; j&aacute; olha as duas fileiras <b>antes</b> de escolher o "+
+                                 "sinal. &Eacute; assim que o sinal faz sentido.";
+  else parecer="Voc&ecirc; descobriu o principal: o sinal n&atilde;o &eacute; um desenho para decorar "+
+               "&#8212; ele <b>conta</b> quem tem mais.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; deprimeira=0; telaComp(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","E se as duas fileiras come&ccedil;assem em lugares "+
+                   "<b>diferentes</b>? Daria para comparar s&oacute; olhando?"));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaComp();
+</script>
+</body></html>
