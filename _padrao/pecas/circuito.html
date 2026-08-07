@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — fechar o circuito</title>
+<!-- ============================================================
+     PEÇA: FECHAR O CIRCUITO (copiada do _padrao/pecas/MOLDE.html)
+
+     A criança liga os fios que faltam e a lâmpada ACENDE — de verdade, na
+     hora. É o coração da mecânica (REGRAS-INTERATIVIDADE.md, linha "Traçar
+     caminho / circuito"): desenhar-para-aprender rende d ≈ 0,52–0,85 QUANDO
+     o traço produz alguma coisa. Traço decorativo, que só fica bonito na
+     tela, perde todo o efeito — por isso aqui cada fio ligado muda o mundo:
+     o último fecha o laço e a lâmpada acende no mesmo instante.
+
+     As armadilhas desta mecânica:
+       · a consequência tem que ser VISÍVEL E IMEDIATA, senão vira "mexer à
+         toa" — a lâmpada acende no mesmo toque que fecha o laço;
+       · `touchmove` com tolerância (10px), para o dedo trêmulo de criança não
+         virar um monte de traço solto;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+         ele mora no `touchmove`, e só enquanto há ponta na mão;
+       · guarda `ultimoToque` contra o clique FANTASMA que o celular dispara
+         depois do dedo (defeito pego DUAS vezes pelo Marcos);
+       · TRÊS CAMINHOS: mouse, dedo puxando e TOQUE SIMPLES (tocar uma ponta e
+         depois a outra) — no celular da escola nem sempre o arrasto pega;
+       · nada essencial só na cor: a lâmpada diz APAGADA / ACESA por escrito,
+         e o pedaço que falta aparece TRACEJADO, não "de outra cor".
+
+     Mais o que o contrato cobra: alvo >= 44px, funciona no mudo, erro com
+     sErro() + andaime que cresce, `data-qa` no que o auditor-jogador precisa
+     (as duas pontas do mesmo pedaço publicam a MESMA chave), nunca trava, e a
+     peça termina numa `.medal`.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ A tela e LONGA (a placa + o enunciado + o que vem depois). Num celular de
+   320x568 o que fica embaixo cairia fora da dobra e o portao de leiaute
+   reprovaria — com razao: sem rolagem a crianca acha que a tela acabou. Com
+   `overflow-y:auto` a tela ROLA, que e o que ela faz com o dedo.          */
+.tela{max-height:calc(100vh - 46px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* a placa onde o circuito mora. Tudo desenhado em CSS: nenhuma figura de fora
+   e nenhum laco de animacao — o PC da escola aguenta. */
+.placa{position:relative;height:238px;max-width:430px;margin:13px auto 0;
+       background:#2f3a2b;border:3px solid #5b6b52;border-radius:16px}
+/* o fio que JÁ está lá */
+.fio{position:absolute;background:#9aa0aa;border-radius:4px}
+.fioh{height:8px;margin-top:-4px}
+.fiov{width:8px;margin-left:-4px}
+/* o pedaço que FALTA: tracejado (não é "outra cor", é outra FORMA) */
+.falta{position:absolute;height:0;margin-top:-3px;border-top:6px dashed #cfc7a8;opacity:.85}
+/* o fio que a criança acabou de puxar */
+.wire{position:absolute;height:9px;margin-top:-4px;border-radius:5px;background:#e8b84b;
+      box-shadow:0 0 8px rgba(232,184,75,.5)}
+/* o traço vivo, o que segue o dedo enquanto ela puxa */
+.wviva{position:absolute;height:7px;margin-top:-3px;border-radius:4px;background:#ffd54a;
+       -webkit-transform-origin:0 50%;transform-origin:0 50%;z-index:6;pointer-events:none}
+/* as pontas soltas. Usam .lig porque, dentro de uma atividade, é essa classe
+   que ganha o alto-falante automático do motor — e é a que o auditor-jogador
+   conhece. O .pto só troca o formato: bolinha grande, no lugar certo.     */
+.lig{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
+     font-weight:700;cursor:pointer;-webkit-user-select:none;user-select:none}
+.pto{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;padding:0;border-radius:50%;
+     background:#cfd6e2;box-shadow:0 0 0 4px #6b7686;z-index:4}
+.lig.sel{background:#ffd54a;box-shadow:0 0 0 6px #c9a52f}
+.lig.feita{background:#e8b84b;box-shadow:0 0 0 4px #8a6a20;cursor:default}
+.lig.pisca{background:#fff3c9;box-shadow:0 0 0 6px #ffd54a}
+/* a lâmpada: apagada é cinza e ESCRITO "APAGADA"; acesa acende de verdade */
+.lamp{position:absolute;left:50%;margin-left:-34px;top:14px;width:68px;height:68px;border-radius:50%;
+      background:#59604f;border:4px solid #aab2a0;z-index:3;
+      -webkit-transition:background .25s,box-shadow .25s;transition:background .25s,box-shadow .25s}
+.lamp.acesa{background:#ffe9a8;border-color:#fff3c9;box-shadow:0 0 30px 12px rgba(255,220,120,.6)}
+.lampf{position:absolute;left:50%;margin-left:-11px;top:22px;width:22px;height:16px;
+       border:3px solid #8b9280;border-top:0;border-radius:0 0 11px 11px}
+.lamp.acesa .lampf{border-color:#a8730f}
+.lampt{position:absolute;left:0;right:0;top:90px;text-align:center;font-size:13px;
+       font-weight:800;color:#f4efe6;letter-spacing:.5px}
+/* a pilha */
+.pilha{position:absolute;left:37%;right:37%;top:162px;height:40px;background:#c9a52f;
+       border-radius:7px;z-index:3;color:#33280a;font-size:12px;font-weight:800;
+       text-align:center;line-height:40px}
+/* o interruptor: é um BOTÃO de verdade (alvo 62x44) em cima do fio */
+.chave{position:absolute;left:75%;margin-left:-31px;top:160px;width:62px;height:44px;
+       padding:0;font-size:12px;line-height:1.1;border-radius:10px;z-index:5}
+.chave.aberta{background:#e0e4ea;color:#221a12;box-shadow:0 4px 0 #99a1ad}
+/* o fio que o interruptor abriu: some da linha e vira tracejado */
+.fio.corte{background:transparent;border-top:6px dashed #cfc7a8;height:0;margin-top:-3px}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* ⚠️ JANELA BAIXA (1024x420 — o projetor da sala, o PC com muitas barras):
+   a placa encolhe junto com a letra. O ALVO nunca encolhe: a ponta continua
+   com 46px, acima do piso de 40 do `_qa/leiaute.js`.                      */
+@media (max-height:560px){
+  #app{padding-top:6px}
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px;font-size:12px}
+  .balao{font-size:15px;padding:9px 14px}
+  .opt{min-height:44px;margin:6px auto;font-size:15px;padding:9px 12px}
+  .hint{font-size:12px;margin-top:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O DESENHO DO CIRCUITO. x em PORCENTAGEM (a placa muda de largura), y em px
+   (a altura é fixa). Ao copiar a peça, é só este mapa que muda.
+   O laço inteiro: lâmpada -> g1 -> trilho da direita -> fio de baixo ->
+   pilha -> g2 -> trilho da esquerda -> g0 -> lâmpada.                     */
+var YTOP=48, YBASE=182;
+var FIOS=[                                   /* o que já vem ligado */
+  {t:"h", x1:38, x2:62, y:YTOP},             /* atrás da lâmpada */
+  {t:"h", x1:38, x2:62, y:YBASE},            /* atrás da pilha */
+  {t:"h", x1:62, x2:88, y:YBASE, id:"fbd"},  /* onde mora o interruptor */
+  {t:"v", x:12, y1:YTOP, y2:YBASE},          /* trilho da esquerda */
+  {t:"v", x:88, y1:YTOP, y2:YBASE}           /* trilho da direita */
+];
+var PEDACOS=[                                /* o que FALTA (as três pontas soltas) */
+  {k:"g0", x1:12, x2:38, y:YTOP},
+  {k:"g1", x1:62, x2:88, y:YTOP},
+  {k:"g2", x1:12, x2:38, y:YBASE}
+];
+var DICAS=[
+  "Ligue as duas pontas do MESMO peda&#231;o tracejado.",
+  "Olhe o tracejado: ele mostra exatamente onde falta fio. Toque numa ponta e depois na outra do mesmo tracejado.",
+  "A ponta que combina est&#225; com a borda amarela. Toque nela."
+];
+var PORQUE={
+  q:"Por que a l&#226;mpada apagou quando o interruptor abriu?",
+  c:"O caminho ficou aberto: a energia n&#227;o d&#225; a volta",
+  e:["A pilha acabou na hora","A l&#226;mpada queimou","O fio ficou com frio"],
+  d:["Olhe o desenho: o caminho continua inteiro ou tem um buraco?",
+     "Com o interruptor aberto sobrou um buraco no caminho. A energia precisa dar a volta INTEIRA.",
+     "A resposta certa est&#225; acesa: o caminho ficou aberto."]
+};
+
+var placa=null;        /* a .placa de agora */
+var LIGADOS={};        /* que pedaços já foram ligados */
+var nlig=0;
+var marcada=null;      /* a ponta escolhida pelo toque simples */
+var barraP=null;
+var ger=0;             /* geracao da tela: mata setTimeout de tela que ja saiu */
+var errC=0;
+var chaveAberta=false, viuApagada=false, viuAcesa=false, perguntou=false;
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a ponta que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.  */
+var ultimoToque=0;
+var pegou=null, viva=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+
+/* ============ A PLACA (as duas telas usam a mesma) ============ */
+function montaPlaca(tudoLigado){
+  var p=el("div","placa"), i, f;
+  for(i=0;i<FIOS.length;i++){
+    f=FIOS[i];
+    p.appendChild(desenhaFio(f));
+  }
+  var lamp=el("div","lamp"); lamp.id="lampada";
+  lamp.appendChild(el("div","lampf"));
+  p.appendChild(lamp);
+  p.appendChild(el("div","lampt","APAGADA"));
+  p.appendChild(el("div","pilha","PILHA"));
+  for(i=0;i<PEDACOS.length;i++){
+    if(tudoLigado){ p.appendChild(fioPronto(PEDACOS[i])); }
+    else{
+      p.appendChild(tracejado(PEDACOS[i]));
+      p.appendChild(fazPonta(PEDACOS[i],"a"));
+      p.appendChild(fazPonta(PEDACOS[i],"b"));
+    }
+  }
+  return p;
+}
+
+function desenhaFio(f){
+  var d;
+  if(f.t==="h"){
+    d=el("div","fio fioh");
+    d.style.left=f.x1+"%"; d.style.width=(f.x2-f.x1)+"%"; d.style.top=f.y+"px";
+  }else{
+    d=el("div","fio fiov");
+    d.style.left=f.x+"%"; d.style.top=f.y1+"px"; d.style.height=(f.y2-f.y1)+"px";
+  }
+  if(f.id) d.id=f.id;
+  return d;
+}
+
+function tracejado(g){
+  var d=el("div","falta");
+  d.style.left=g.x1+"%"; d.style.width=(g.x2-g.x1)+"%"; d.style.top=g.y+"px";
+  d.id="tr_"+g.k;
+  return d;
+}
+
+function fioPronto(g){
+  var d=el("div","wire");
+  d.style.left=g.x1+"%"; d.style.width=(g.x2-g.x1)+"%"; d.style.top=g.y+"px";
+  return d;
+}
+
+function fazPonta(g,lado){
+  var l=el("div","lig pto");
+  l._base="lig pto";
+  l._gap=g.k; l._lado=lado;
+  l.style.left=(lado==="a"?g.x1:g.x2)+"%";
+  l.style.top=g.y+"px";
+  /* as DUAS pontas do mesmo pedaço publicam a MESMA chave: é assim que o
+     auditor-jogador consegue fechar a fase. A criança não vê diferença. */
+  l.setAttribute("data-qa",g.k);
+  l.onclick=function(){
+    if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+    if(souDedo()) return;           /* o CLIQUE FANTASMA do dedo: ja tratado no touchend */
+    toca(l);
+  };
+  l.onmousedown=function(ev){
+    if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+    comeca(l,ev.clientX,ev.clientY);
+  };
+  l.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(l,d.clientX,d.clientY);
+  },false);
+  return l;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, mais abaixo, e só enquanto há ponta na mão.
+   ⚠️ E aqui NÃO se marca a ponta: marcar no mousedown fazia o `click` de trás
+   cair em "já estava marcada" e DESMARCAR — com mouse a criança clicava e
+   nada acontecia. A marca é do clique; o arrasto marca quando anda mesmo.  */
+function comeca(l,x,y){
+  if(temClasse(l,"feita")) return;
+  pegou=l; x0=x; y0=y; arrastando=false;
+}
+
+function move(x,y){
+  if(!pegou||!placa) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;   /* tolerancia do traco */
+    arrastando=true;
+    marca(pegou);
+  }
+  var b=placa.getBoundingClientRect();
+  if(viva&&viva.parentNode) viva.parentNode.removeChild(viva);
+  var p=centroDe(pegou);
+  var dx=(x-b.left)-p.x, dy=(y-b.top)-p.y;
+  var comp=Math.sqrt(dx*dx+dy*dy), ang=Math.atan2(dy,dx)*180/Math.PI;
+  viva=el("div","wviva");
+  viva.style.left=p.x+"px"; viva.style.top=p.y+"px"; viva.style.width=comp+"px";
+  viva.style.webkitTransform="rotate("+ang+"deg)";
+  viva.style.transform="rotate("+ang+"deg)";
+  placa.appendChild(viva);
+}
+
+function solta(x,y,doDedo){
+  if(!pegou) return;
+  var l=pegou; pegou=null;
+  if(viva&&viva.parentNode) viva.parentNode.removeChild(viva);
+  viva=null;
+  if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"pto")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"pto")&&alvo!==l) juntar(l,alvo);
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY,false); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();   /* so aqui, e so com ponta na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY,true);
+},false);
+
+function centroDe(l){
+  var r=l.getBoundingClientRect(), b=placa.getBoundingClientRect();
+  return {x:r.left+r.width/2-b.left, y:r.top+r.height/2-b.top};
+}
+
+/* ---- o TOQUE SIMPLES: toca uma ponta e depois a outra ---- */
+function toca(l){
+  if(temClasse(l,"feita")) return;
+  if(!marcada){ sTap(); marca(l); return; }
+  if(marcada===l){ sTap(); desmarca(); return; }
+  juntar(marcada,l);
+}
+
+function marca(l){ desmarca(); l.className=l._base+" sel"; marcada=l; }
+
+function desmarca(){
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=a[i]._base||"lig";
+  marcada=null;
+}
+
+/* ⭐ AQUI O TRAÇO PRODUZ O EFEITO. O fio aparece na hora, e quando o terceiro
+   fecha o laço a lâmpada acende no MESMO toque — sem espera, sem tela nova. */
+function juntar(a,b){
+  if(!a||!b||a===b) return;
+  if(temClasse(a,"feita")||temClasse(b,"feita")) return;
+  if(a._gap===b._gap){
+    sCerto();
+    a.className=a._base+" feita"; b.className=b._base+" feita";
+    marcada=null;
+    LIGADOS[a._gap]=1; nlig++;
+    var i, g=null;
+    for(i=0;i<PEDACOS.length;i++) if(PEDACOS[i].k===a._gap) g=PEDACOS[i];
+    var tr=document.getElementById("tr_"+a._gap);
+    if(tr&&tr.parentNode) tr.parentNode.removeChild(tr);
+    if(g&&placa) placa.appendChild(fioPronto(g));
+    if(barraP) barraP.style.width=Math.round(nlig*60/PEDACOS.length)+"%";
+    if(nlig>=PEDACOS.length) acende(true);
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, as pontas voltam e o andaime CRESCE. */
+  sErro();
+  a._err=(a._err||0)+1;
+  mostraDica(DICAS[Math.min(a._err,DICAS.length)-1]);
+  var guardar=a;
+  desmarca();
+  if(guardar._err>=3) revelaPar(guardar);
+}
+
+/* 3º erro: acende a outra ponta do mesmo pedaço e DEIXA seguir — é o que
+   garante que a peça nunca trava. */
+function revelaPar(l){
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++){
+    if(temClasse(a[i],"feita")) continue;
+    if(a[i]!==l&&a[i]._gap===l._gap) a[i].className=a[i]._base+" pisca";
+  }
+  l.className=l._base+" sel";
+  marcada=l;
+}
+
+/* a lâmpada. O estado vem em PALAVRA também (APAGADA / ACESA): quem não
+   distingue o amarelo do cinza continua sabendo o que aconteceu. */
+function acende(ligada){
+  var lp=document.getElementById("lampada");
+  var tx=app.querySelector(".lampt");
+  if(lp) lp.className=ligada?"lamp acesa":"lamp";
+  if(tx) tx.innerHTML=ligada?"ACESA":"APAGADA";
+  if(ligada){
+    nota(392,.16,.14,"triangle",0); nota(587.33,.3,.16,"triangle",.1);
+    if(!perguntou&&nlig>=PEDACOS.length&&!chaveAberta&&!viuApagada){
+      var ge=ger;
+      setTimeout(function(){
+        if(ge!==ger) return;
+        if(app.querySelector(".chave")) return;      /* já é a tela do interruptor */
+        mostraBanner("Acendeu! Voc&#234; fechou o caminho inteiro.", telaInterruptor);
+      },700);
+    }
+  }else{
+    nota(220,.18,.12,"sine",0);
+  }
+}
+
+/* ============ TELA 1: LIGAR OS FIOS QUE FALTAM ============ */
+function pecaCircuito(){
+  ger++; LIGADOS={}; nlig=0; marcada=null; pegou=null; arrastando=false;
+  chaveAberta=false; viuApagada=false; viuAcesa=false; perguntou=false; errC=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","FECHE O CAMINHO"));
+  c.appendChild(el("div","balao","Faltam <b>tr&#234;s peda&#231;os</b> de fio. Ligue as duas pontas de cada tracejado e veja o que acontece."));
+  placa=montaPlaca(false);
+  c.appendChild(placa);
+  c.appendChild(el("div","hint","Toque numa ponta e depois na outra. Tamb&#233;m d&#225; para puxar o fio com o dedo ou com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+/* ============ TELA 2: O INTERRUPTOR ABRE E FECHA O CAMINHO ============ */
+function telaInterruptor(){
+  ger++; marcada=null; pegou=null;
+  chaveAberta=false; viuApagada=false; viuAcesa=false; perguntou=false; errC=0;
+  nlig=PEDACOS.length;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,70);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O INTERRUPTOR"));
+  c.appendChild(el("div","balao","O circuito est&#225; inteiro. Toque no <b>interruptor</b> e descubra o que ele faz com o caminho."));
+  placa=montaPlaca(true);
+  var ch=el("button","btn chave","FECHADO");
+  ch.id="chaveB";
+  ch.onclick=function(){ viraChave(ch); };
+  placa.appendChild(ch);
+  c.appendChild(placa);
+  c.appendChild(el("div","hint","Abra e feche: o mesmo bot&#227;o faz as duas coisas."));
+  t.appendChild(c);
+  app.appendChild(t);
+  acende(true);
+}
+
+function viraChave(ch){
+  chaveAberta=!chaveAberta;
+  sTap();
+  ch.innerHTML=chaveAberta?"ABERTO":"FECHADO";
+  ch.className=chaveAberta?"btn chave aberta":"btn chave";
+  var f=document.getElementById("fbd");
+  if(f) f.className=chaveAberta?"fio fioh corte":"fio fioh";
+  acende(!chaveAberta);
+  if(chaveAberta) viuApagada=true; else if(viuApagada) viuAcesa=true;
+  if(viuApagada&&viuAcesa&&!perguntou){
+    perguntou=true;
+    var ge=ger;
+    setTimeout(function(){ if(ge===ger) perguntaPorque(); },520);
+  }
+}
+
+function perguntaPorque(){
+  var c=app.querySelector(".centro");
+  if(!c) return;
+  var cx=el("div","opts"); cx.id="pergP";
+  c.appendChild(el("div","balao",PORQUE.q));
+  var lista=[{txt:PORQUE.c,ok:1}], i;
+  for(i=0;i<PORQUE.e.length;i++) lista.push({txt:PORQUE.e[i],ok:0});
+  baguncar(lista);   /* ⭐ ARMADILHA DO QUIZ: embaralhar SEMPRE */
+  for(i=0;i<lista.length;i++) cx.appendChild(fazOpcao(lista[i]));
+  c.appendChild(cx);
+}
+
+function fazOpcao(it){
+  var o=el("div","opt",it.txt);
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ responde(o,it.ok); };
+  return o;
+}
+
+function responde(o,certa){
+  if(o.className.indexOf("no")>=0) return;
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    tranca();
+    var ge=ger;
+    setTimeout(function(){
+      if(ge!==ger) return;
+      mostraBanner("Isso: o caminho tem que dar a volta inteira.", fimDaPeca);
+    },620);
+    return;
+  }
+  sErro();
+  o.className="opt no";
+  o.onclick=null;
+  errC++;
+  var acabou=(sobramErradas()===0);
+  mostraDica(acabou ? PORQUE.d[PORQUE.d.length-1] : PORQUE.d[Math.min(errC,PORQUE.d.length)-1]);
+  if(errC>=3||acabou) revelaCerta();
+}
+
+function sobramErradas(){
+  var cx=document.getElementById("pergP"); if(!cx) return 0;
+  var a=cx.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")!=="1"&&a[i].className.indexOf("no")<0) n++;
+  return n;
+}
+
+/* 3º erro: acende a certa e DEIXA seguir — a peça nunca trava. */
+function revelaCerta(){
+  var cx=document.getElementById("pergP"); if(!cx) return;
+  var a=cx.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="opt ok";
+}
+
+function tranca(){
+  var cx=document.getElementById("pergP"); if(!cx) return;
+  var a=cx.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].onclick=null;
+}
+
+/* ============ FIM ============ */
+function fimDaPeca(){
+  ger++;
+  placa=null; viva=null; marcada=null; pegou=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; fechou o caminho e a l&#226;mpada acendeu. <b>Um buraco no caminho apaga tudo.</b>"));
+  var b=el("button","btn","Jogar de novo");
+  b.style.marginTop="13px";
+  b.onclick=function(){ pecaCircuito(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a CIRCUITO: o tra&#231;o acende a l&#226;mpada de verdade."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaCircuito();
+</script>
+</body></html>

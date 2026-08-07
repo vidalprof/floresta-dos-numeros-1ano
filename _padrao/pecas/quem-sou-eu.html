@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — quem sou eu? (pistas que chegam uma a uma)</title>
+<!-- ============================================================
+     PEÇA: QUEM SOU EU? — ADIVINHAR POR PISTAS QUE CHEGAM UMA A UMA
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+     Vem do "QUEM SOU EU?": a criança reconhece pelo que a coisa TEM, não pelo
+     nome decorado.
+
+     O QUE ESTA MECÂNICA ENSINA (e por que não é um quiz):
+       · no quiz a pergunta é fechada e a resposta é lembrar; aqui a criança
+         ELIMINA candidatos com um atributo por vez — é raciocínio por pistas,
+         o mesmo gesto do "adivinhe o animal" e do jogo de detetive;
+       · a informação chega em DOSES: a 1ª pista serve para muitos, a última só
+         para um. Quem já sabe fecha na primeira; quem não sabe recebe mais
+         dados e fecha também — sem nunca ficar sem saída;
+       · quanto antes acerta, melhor: as três estrelas ficam à vista e apagam
+         conforme a criança pede mais pista. É recompensa por raciocinar cedo,
+         nunca castigo por precisar de ajuda (a estrela mínima é sempre uma).
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · ⚠️ CADA PISTA NOVA É UMA PISTA, NÃO UM CONSOLO. O texto que chega
+         depois do erro traz FATO NOVO sobre a resposta ("tenho oito braços"),
+         nunca "tente de novo" nem "quase!". Frase de consolo gasta uma rodada
+         e não ensina nada;
+       · O ERRO TRAZ A PRÓXIMA PISTA — o caminho do erro é o caminho do
+         aprendizado, e por isso não há X vermelho nem a palavra "errou": a
+         opção descartada apenas SAI DE CENA, escrita com "não combina";
+       · NADA SÓ NA COR: a opção descartada fica apagada E ganha a palavra; a
+         estrela gasta fica vazada E some do contador escrito;
+       · 3 DISTRATORES (4 opções): com 2 a criança elimina tudo antes da última
+         pista e o degrau "revelar" vira código morto (lição do CONTRATO);
+       · A PEÇA NUNCA TRAVA: acabaram as pistas e ainda errou, a resposta certa
+         acende com moldura e a peça segue;
+       · `data-qa="1"` na opção certa, só para o auditor-jogador — e o trinco
+         `travadoQ`, senão o segundo toque dentro da comemoração pula uma
+         rodada inteira.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA (QUEM SOU EU?) ====== */
+/* ⚠️ a folga de cima e obrigatoria: o balao tem sombra e nenhuma margem por
+   baixo (regra 9 do _qa/leiaute.js). */
+/* A CARTA DO MISTERIO: quem esta falando ainda nao tem cara */
+.misterio{max-width:430px;margin:13px auto 0;background:#3a2a52;border:3px solid #a98fd0;
+          border-radius:18px;padding:8px 12px;color:#efe6ff;font-size:15px;font-weight:700;
+          text-align:center;position:relative;min-height:52px;line-height:1.25}
+.inter{display:inline-block;width:38px;height:38px;line-height:34px;margin-right:8px;
+       vertical-align:middle;border-radius:50%;background:#a98fd0;color:#231633;
+       font-size:24px;font-weight:800;text-align:center}
+.inter:before{content:"?"}
+/* AS ESTRELAS — quanto antes acerta, melhor. A gasta fica VAZADA (forma), e o
+   numero tambem vai escrito ao lado: nunca so a cor. */
+.estrelas{display:inline-block;vertical-align:middle;font-size:0}
+.est{display:inline-block;width:24px;height:24px;line-height:24px;font-size:19px;
+     color:#ffd54a;text-align:center}
+.est:before{content:"\2606"}
+.est.on:before{content:"\2605"}
+/* A PILHA DE PISTAS — a de cima e a mais nova e chega deslizando */
+.pistas{max-width:430px;margin:8px auto 0;text-align:left}
+.pista{background:#fffdf6;color:#221a12;border-radius:12px;border-left:8px solid #3c6ee0;
+       padding:8px 10px;margin:6px 0;font-size:15px;font-weight:600;line-height:1.3}
+.pista.nova{-webkit-animation:chega .45s ease-out;animation:chega .45s ease-out}
+@-webkit-keyframes chega{0%{opacity:0;-webkit-transform:translateY(-14px)}100%{opacity:1}}
+@keyframes chega{0%{opacity:0;transform:translateY(-14px)}100%{opacity:1}}
+/* a linha de apoio DENTRO da carta escura precisa da cor clara dela: usar
+   aqui a classe da opcao descartada (fundo claro) daria texto escuro em fundo
+   escuro — o _qa/contraste.js pega, mas o certo e nao escrever assim. */
+.subm{display:block;font-size:11px;font-weight:700;letter-spacing:.4px;color:#d9cdf0;margin-top:2px}
+.ptxt{display:inline}
+.pnum{display:inline-block;background:#3c6ee0;color:#fff;font-size:11px;font-weight:800;
+      border-radius:8px;padding:2px 7px;margin-right:6px;vertical-align:middle}
+/* AS OPCOES em duas colunas: 4 candidatos cabem sem rolar nem em janela baixa.
+   (o motor da atividade poe o alto-falante sozinho em tudo que e `.opt`) */
+.opt{display:inline-block;vertical-align:top;width:47%;max-width:210px;margin:5px 1%;
+     padding:12px 8px;font-size:15px;min-height:48px}
+/* descartada: apaga, sai do alcance E ganha a palavra escrita */
+.opt.fora{background:#e6e0d4;color:#5d5548;box-shadow:none;opacity:.75;pointer-events:none}
+.fmarca{display:block;font-size:11px;font-weight:700;letter-spacing:.4px;color:#5d5548}
+/* acesa quando as pistas acabam: moldura grossa + a frase na dica */
+.opt.mostra{box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+/* placar das estrelas ganhas ate agora */
+.conta{margin-top:10px;font-size:15px;font-weight:800;color:#ffe9a8}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* ⚠️ TELA BAIXA (janela de 420px — o PC da escola com as barras e o projetor):
+   aqui se empilham enunciado + carta + tres pistas + quatro opcoes + botao.
+   Encolhe a LETRA e as folgas; o alvo de toque continua acima de 44px. */
+@media (max-height:470px){
+  #app{padding-top:4px;padding-bottom:8px}
+  .balao{font-size:14px;padding:8px 12px;line-height:1.25}
+  .misterio{margin-top:8px;min-height:40px;padding:6px 10px;font-size:13px}
+  .inter{width:30px;height:30px;line-height:27px;font-size:19px}
+  .pistas{margin-top:4px}
+  .pista{font-size:13px;padding:6px 8px;margin:4px 0}
+  .opt{font-size:14px;min-height:44px;padding:10px 6px;margin:4px 1%}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* QUEM SOU EU? — pistas que chegam uma a uma; quanto antes acerta, melhor.
+
+   O CONTEÚDO É SÓ EXEMPLO (8 a 10 anos). Ao levar a peça para uma atividade,
+   troque APENAS este bloco: as pistas, a resposta e os três distratores.
+   ⚠️ A ORDEM DAS PISTAS É O CORAÇÃO DA MECÂNICA: a 1ª serve para VÁRIOS
+   candidatos (por isso vale três estrelas quem já fecha nela), a 2ª corta a
+   metade, e a 3ª só cabe na resposta. Pista que entrega tudo de cara mata a
+   fase; pista que não corta ninguém é enfeite.
+   ⚠️ Cada pista é FATO NOVO sobre a resposta — nunca "tente outra vez".      */
+var MISTERIOS=[
+ {resp:"PASSARINHO",
+  pistas:["Eu tenho <b>penas</b> e um bico pequeno.",
+          "Eu fa&#231;o o meu <b>ninho</b> l&#225; em cima da &#225;rvore.",
+          "De manh&#227; bem cedo, eu <b>canto</b> na sua janela."],
+  outros:["GATO","PEIXE","TARTARUGA"]},
+ {resp:"LIVRO",
+  pistas:["Eu sou de <b>papel</b> e fico parado na estante.",
+          "Eu tenho muitas <b>p&#225;ginas</b> e uma capa dura.",
+          "Guardo uma <b>hist&#243;ria inteira</b>, do come&#231;o ao fim."],
+  outros:["CAIXA","R&#201;GUA","GARRAFA"]},
+ {resp:"POLVO",
+  pistas:["Eu moro no <b>fundo do mar</b>.",
+          "Eu tenho <b>oito bra&#231;os</b> compridos.",
+          "Quando me assusto, solto uma <b>tinta escura</b> e sumo."],
+  outros:["BALEIA","CARANGUEJO","TUBAR&#195;O"]}
+];
+
+var mist=0, pistasAbertas=1, ganhas=0, travadoQ=false, gerQ=0;
+var barraQ=null, pistasEl=null, estrelasEl=null, contaEl=null, opcoesEl=null;
+
+/* som proprio: a pista nova "chega" com dois toques curtos subindo — o mesmo
+   aviso que a animacao da, para quem joga no mudo e para quem joga sem ver. */
+function sPista(){ nota(392,.07,.12,"triangle",0); nota(523.25,.10,.11,"triangle",.07); }
+
+function telaQuem(){
+  limpa();
+  gerQ++;
+  pistasAbertas=1; travadoQ=false;
+  var it=MISTERIOS[mist], i;
+  var t=el("div","tela");
+  setProg(t,Math.round(mist*100/MISTERIOS.length));
+  barraQ=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","QUEM SOU EU? "+(mist+1)+" DE "+MISTERIOS.length));
+  c.appendChild(el("div","balao","Descubra <b>quem est&#225; falando</b>. Cada pista nova conta mais."));
+
+  /* a carta do misterio + as estrelas ainda em jogo */
+  var mi=el("div","misterio","");
+  mi.appendChild(el("span","inter",""));
+  estrelasEl=el("span","estrelas","");
+  mi.appendChild(estrelasEl);
+  mi.appendChild(el("span","subm","quanto menos pista, mais estrela"));
+  c.appendChild(mi);
+
+  pistasEl=el("div","pistas","");
+  c.appendChild(pistasEl);
+
+  opcoesEl=el("div","opts","");
+  var lista=baguncar([it.resp].concat(it.outros)), b;
+  for(i=0;i<lista.length;i++){
+    b=el("div","opt",lista[i]);
+    /* `data-qa="1"` = a que serve agora — SO para o auditor-jogador */
+    if(lista[i]===it.resp) b.setAttribute("data-qa","1");
+    b.onclick=(function(nome,bot){ return function(){ responde(nome,bot); }; })(lista[i],b);
+    opcoesEl.appendChild(b);
+  }
+  c.appendChild(opcoesEl);
+
+  var mais=el("button","btn","Quero outra pista");
+  mais.onclick=pedePista;
+  c.appendChild(mais);
+
+  contaEl=el("div","conta","");
+  c.appendChild(contaEl);
+  c.appendChild(el("div","hint","Cada pista conta uma coisa <b>nova</b> sobre quem eu sou."));
+  t.appendChild(c); app.appendChild(t);
+
+  poePista(0);
+  pintaEstrelas();
+  atualizaConta();
+}
+
+/* as estrelas DESTA rodada: 3 se fechar na 1a pista, 2 na 2a, 1 da 3a em
+   diante. A minima e sempre UMA: pedir ajuda nunca zera a crianca. */
+function valeAgora(){
+  var v=4-pistasAbertas;
+  return v<1?1:v;
+}
+function pintaEstrelas(){
+  if(!estrelasEl) return;
+  var i, s, v=valeAgora();
+  estrelasEl.innerHTML="";
+  for(i=0;i<3;i++){
+    s=el("span",(i<v)?"est on":"est","");
+    estrelasEl.appendChild(s);
+  }
+}
+function atualizaConta(){
+  if(!contaEl) return;
+  contaEl.innerHTML="Esta vale <b>"+valeAgora()+"</b> estrela(s). Voc&#234; j&#225; tem <b>"+ganhas+"</b>.";
+}
+
+function poePista(i){
+  var it=MISTERIOS[mist], p=el("div","pista nova","");
+  p.appendChild(el("span","pnum","PISTA "+(i+1)));
+  p.appendChild(el("span","ptxt",it.pistas[i]));
+  if(pistasEl) pistasEl.appendChild(p);
+  /* ⚠️ NA ATIVIDADE DE VERDADE a pista tambem e FALADA, na mesma hora em que o
+     texto aparece (regra 7 do CONTRATO — voz por rodada). O gancho vai aqui:
+
+         falaDaTela(MISTERIOS[mist].vozes[i]);
+
+     Na peca, que roda sozinha e sem arquivo de audio, fica so o som curto. */
+  sPista();
+}
+
+function pedePista(){
+  if(travadoQ) return;
+  var it=MISTERIOS[mist];
+  if(pistasAbertas>=it.pistas.length){
+    mostraDica("Acabaram as pistas. A resposta est&#225; com a moldura acesa.");
+    acendeCerta();
+    return;
+  }
+  poePista(pistasAbertas);
+  pistasAbertas++;
+  pintaEstrelas();
+  atualizaConta();
+}
+
+function responde(nome,bot){
+  if(travadoQ) return;
+  var it=MISTERIOS[mist];
+  if(nome===it.resp){
+    travadoQ=true;
+    bot.className="opt ok";
+    bot.removeAttribute("data-qa");
+    sCerto();
+    ganhas+=valeAgora();
+    atualizaConta();
+    if(barraQ) barraQ.style.width=Math.round((mist+1)*100/MISTERIOS.length)+"%";
+    fechaMisterio();
+    return;
+  }
+  /* ERRO: a opcao SAI DE CENA (apagada + escrito "nao combina") e chega a
+     PISTA seguinte. Nunca X, nunca a palavra "errou": o caminho do erro e o
+     caminho da informacao nova.                                            */
+  sErro();
+  bot.className="opt fora";
+  bot.appendChild(el("span","fmarca","n&#227;o combina com a pista"));
+  if(pistasAbertas<it.pistas.length){
+    poePista(pistasAbertas);
+    pistasAbertas++;
+    pintaEstrelas();
+    atualizaConta();
+  }else{
+    /* acabaram as pistas: a peca NAO trava — acende a resposta e deixa seguir */
+    mostraDica("Olhe as pistas de novo: a resposta est&#225; com a moldura acesa.");
+    acendeCerta();
+  }
+}
+
+function acendeCerta(){
+  var a=app.getElementsByClassName("opt"), i, it=MISTERIOS[mist];
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="opt mostra";
+}
+
+/* ⚠️ o temporizador continua correndo depois que a tela sai: o guarda `gerQ`
+   impede que ele monte o misterio seguinte por cima de outra tela. */
+function fechaMisterio(){
+  var meu=gerQ;
+  setTimeout(function(){
+    if(meu!==gerQ) return;
+    mist++;
+    if(mist<MISTERIOS.length){ telaQuem(); return; }
+    mostraBanner("Voc&#234; descobriu os tr&#234;s <b>s&#243; pelas pistas</b>!",telaFimQuem);
+  },900);
+}
+
+function telaFimQuem(){
+  limpa(); gerQ++;
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; juntou <b>"+ganhas+"</b> estrela(s) de 9: quem acerta com <b>menos pista</b> ganha mais."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomecaQ;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a QUEM SOU EU: cada pista nova &#233; fato novo, nunca consolo."));
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaQ(){ mist=0; ganhas=0; telaQuem(); }
+
+telaQuem();
+</script>
+</body></html>

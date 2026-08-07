@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — trocar 10 por 1 (base dez)</title>
+<!-- ============================================================
+     PEÇA: BASE DEZ — TROCAR 10 UNIDADES POR 1 DEZENA (e 10 DEZENAS POR 1 CENTENA)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     DE ONDE VEIO: a fase "CAIXAS DE 10 E CAIXOTES DE 100" da Fábrica. Lá a
+     criança olhava as caixas prontas e escolhia o resultado numa fileira de
+     números. Aqui a mecânica foi virada do avesso: ela ENCHE a caixa, uma peça
+     por vez, e é ELA quem manda fazer a troca.
+
+     ⭐ O CONCEITO MORA NA TROCA, E A TROCA TEM QUE SER VISÍVEL.
+     Este é o coração da peça: quando a caixa fecha os 10, a criança aperta
+     "Trocar 10 por 1" e vê as DEZ peças encolherem e sumirem enquanto UMA
+     peça nova nasce na prateleira. Se a troca acontecesse sozinha, ou só
+     mudasse um número na tela, o "10 vira 1" seria uma regra decorada. Vendo
+     dez sumirem e uma nascer, vira uma coisa que aconteceu na frente dela.
+
+     POR QUE ELA NÃO É UM QUIZ: não há alternativa nenhuma para escolher. A
+     criança arrasta as peças, enche a caixa, troca, e no fim DECIDE sozinha
+     quando não dá mais para formar outro grupo de 10 ("Não dá mais 10") —
+     que é o juízo que separa quem entendeu o agrupamento de quem decorou.
+
+     ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRÊS caminhos para levar a peça: mouse, dedo (arrasto) e TOQUE
+         SIMPLES (tocar a peça e depois a caixa);
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular.
+         Ele mora só no `touchmove`, e só depois que o dedo ANDOU;
+       · guarda `ultimoToque` contra o clique FANTASMA do celular (defeito
+         pego DUAS vezes pelo Marcos);
+       · a caixa CHEIA fecha a porta (não aceita a 11ª peça) em vez de deixar
+         a criança empilhar sem sentido;
+       · dizer "não dá mais 10" cedo demais NÃO PUNE: som grave curto e o
+         andaime cresce até contar os soltos junto com ela;
+       · o valor aparece nas TRÊS formas ao mesmo tempo — peça desenhada,
+         palavra e número —, nunca só na cor;
+       · `data-qa` na peça E na caixa (mesma chave) e no botão que serve
+         agora, que é como o auditor-jogador fecha a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ margem PROPRIA em cima: a regra `.balao + *` tem a mesma forca e perde por
+   vir ANTES no arquivo — sem isto a prateleira nasce COLADA no enunciado
+   (regra 9 do _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.prat{max-width:430px;margin:13px auto 0;min-height:44px;padding:5px 8px;border-radius:12px;
+      background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.28);
+      font-size:15px;font-weight:700;line-height:30px;text-align:center}
+.prat b{color:#ffd54a}
+.pvazia{opacity:.85}
+/* ---- OS DESENHOS DO MATERIAL DOURADO (unidade, dezena, centena) ----
+   Cada um se le pela FORMA, nao pela cor: o solto e um quadradinho, a dezena e
+   uma barra com dez riscos para contar, a centena e uma placa quadriculada. */
+.dsuni{display:inline-block;width:22px;height:22px;border-radius:4px;background:#f0c357;
+       border:2px solid #9c7420}
+.dsdez{display:inline-block;width:46px;height:20px;border-radius:4px;background:#8fc4de;
+       border:2px solid #3d6d86;
+       background-image:-webkit-linear-gradient(left,#3d6d86 1px,transparent 1px);
+       background-image:linear-gradient(to right,#3d6d86 1px,transparent 1px);
+       background-size:10% 100%}
+.dscem{display:inline-block;width:34px;height:34px;border-radius:4px;background:#c8b6e8;
+       border:2px solid #5c4a86;
+       background-image:-webkit-linear-gradient(left,#5c4a86 1px,transparent 1px),-webkit-linear-gradient(top,#5c4a86 1px,transparent 1px);
+       background-image:linear-gradient(to right,#5c4a86 1px,transparent 1px),linear-gradient(to bottom,#5c4a86 1px,transparent 1px);
+       background-size:10% 100%,100% 10%}
+.chega{display:inline-block;vertical-align:middle;margin:0 3px;
+       -webkit-animation:nasce .5s;animation:nasce .5s}
+@-webkit-keyframes nasce{0%{-webkit-transform:scale(.2);opacity:0}60%{-webkit-transform:scale(1.25)}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes nasce{0%{transform:scale(.2);opacity:0}60%{transform:scale(1.25)}100%{transform:scale(1);opacity:1}}
+/* ---- A CAIXA DE 10: dez lugares numa fileira so ---- */
+.cam{max-width:340px;margin:9px auto 0;padding:4px 4px 2px;border-radius:10px;
+     background:rgba(255,255,255,.12);border:3px dashed #cbbfa6;cursor:pointer;font-size:0}
+.cam.livre{border-color:#fff3c9;background:rgba(255,255,255,.2)}
+.cam.alvo{border-style:solid;border-color:#e8a020;background:rgba(255,213,74,.4);
+          box-shadow:0 0 0 4px rgba(255,213,74,.45)}
+.cam.ok{border-style:solid;border-color:#59c24b;background:rgba(89,194,75,.22);cursor:default}
+.cxvaga{display:inline-block;vertical-align:middle;width:9%;margin:0 .5%;height:34px;
+        border-radius:5px;border:2px dashed rgba(255,255,255,.35);text-align:center;line-height:30px}
+.cxvaga.cheia{border-style:solid;border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.12)}
+.cxrot{display:block;font-size:11px;font-weight:800;letter-spacing:.6px;color:#f4efe6;
+       line-height:14px;text-align:center}
+.cxpc{-webkit-transition:-webkit-transform .45s,opacity .45s;transition:transform .45s,opacity .45s}
+.cxpc.some{-webkit-transform:scale(.15);transform:scale(.15);opacity:0}
+/* ---- OS BOTOES ---- */
+.mbts{display:block;text-align:center;margin-top:9px}
+.mbts .btn{margin:4px 4px;font-size:16px;padding:12px 16px}
+.btn.fraco{background:#d9cdb4;box-shadow:0 4px 0 #a8997c}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+/* ---- A MESA: as pecas soltas ---- */
+.mesa{display:block;text-align:center;margin-top:9px}
+.mrot{display:block;font-size:11px;font-weight:800;letter-spacing:.6px;color:#f4efe6;
+      opacity:.85;line-height:14px;margin-bottom:2px}
+.pc{display:inline-block;vertical-align:middle;width:52px;height:42px;margin:3px;padding:0;
+    border-radius:9px;background:#fffdf6;border:0;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+    line-height:38px;text-align:center;-webkit-user-select:none;user-select:none}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+.pc.usada{display:none}
+/* a sombra que segue o dedo/o mouse. pointer-events:none para nao roubar o
+   hit-test de quem esta embaixo (senao a caixa nunca acenderia). */
+.somb{position:fixed;width:52px;height:42px;border-radius:9px;background:#fffdf6;
+      line-height:38px;text-align:center;pointer-events:none;z-index:60;
+      -webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): tudo encolhe JUNTO para que
+   nada que se toca saia da area visivel. */
+@media(max-height:520px){
+  .pc{width:48px;height:40px;line-height:36px;margin:2px}
+  .cxvaga{height:30px;line-height:26px}
+  .prat{min-height:38px;line-height:26px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* AS DUAS RODADAS. A segunda é o mesmo gesto um degrau acima: o que era
+   "solto" agora é a DEZENA, e o grupo de dez vira a CENTENA. Trocar esta
+   tabela adapta a peça (milhar, dúzia, dinheiro) sem tocar no resto.      */
+var RODADAS=[
+  {selo:"CAIXA DE 10", soltos:13, pTipo:"dsuni", tTipo:"dsdez", vale:1, valeT:10,
+   nomeP:"soltos", nomeT:"caixa de 10", nomeTs:"caixas de 10",
+   fala:"Cada <b>10 soltos</b> viram <b>1 caixa</b>. Encha a caixa e troque."},
+  {selo:"CAIXOTE DE 100", soltos:12, pTipo:"dsdez", tTipo:"dscem", vale:10, valeT:100,
+   nomeP:"caixas de 10", nomeT:"caixote de 100", nomeTs:"caixotes de 100",
+   fala:"Agora s&#227;o <b>caixas de 10</b>. Cada <b>10 caixas</b> viram <b>1 caixote</b>."}
+];
+var DICAS=[
+  "Conte quantas pe&#231;as ainda est&#227;o na mesa. D&#225; para juntar mais dez?",
+  "Ponha as pe&#231;as que sobraram na caixa e conte os lugares cheios.",
+  "Sobrou menos de dez? A&#237; sim n&#227;o d&#225; mais: pode dizer que acabou."
+];
+
+var idxR=0, ger=0, telaAtual=null, barraP=null;
+var elPrat=null, elCaixa=null, elMesa=null, elBts=null, btTroca=null, btPronto=null;
+var pecas=[], vagas=[], naCaixa=[], trocados=[], marcada=null, travado=false, errosR=0;
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles desmarcavam a
+   peça que a criança tinha acabado de escolher. Pego DUAS vezes.         */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function rodada(){ return RODADAS[idxR]; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function sPoe(){ nota(660,.04,.10,"square",0); }
+function sTroca(){ nota(392,.14,.14,"triangle",0); nota(523.25,.16,.14,"triangle",.1);
+                   nota(784,.26,.14,"triangle",.2); }
+
+/* soltos ainda por agrupar = os que estao na mesa + os que ja entraram na caixa */
+function naMesa(){
+  var i,n=0;
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) n++;
+  return n;
+}
+function porAgrupar(){ return naMesa()+naCaixa.length; }
+
+/* ---------------------------------------------------------- a tela */
+function pecaBaseDez(){
+  ger++; limpa(); soltaSombra();
+  var r=rodada(), i;
+  pecas=[]; vagas=[]; naCaixa=[]; trocados=[]; marcada=null; travado=false; errosR=0;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(idxR*100/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",r.selo));
+  c.appendChild(el("div","balao",r.fala));
+
+  elPrat=el("div","prat","");
+  c.appendChild(elPrat);
+
+  elCaixa=el("div","cam");
+  elCaixa.setAttribute("data-qa","cx");
+  elCaixa.onclick=cliqueCaixa;
+  for(i=0;i<10;i++){
+    var v=el("i","cxvaga","");
+    elCaixa.appendChild(v); vagas.push(v);
+  }
+  c.appendChild(elCaixa);
+  c.appendChild(el("div","cxrot","A CAIXA S&#211; FECHA COM 10"));
+
+  elBts=el("div","mbts");
+  btTroca=el("button","btn","Trocar 10 por 1");
+  btTroca.onclick=troca;
+  btTroca.style.display="none";
+  btPronto=el("button","btn fraco","N&#227;o d&#225; mais 10");
+  btPronto.onclick=pronto;
+  elBts.appendChild(btTroca); elBts.appendChild(btPronto);
+  c.appendChild(elBts);
+
+  elMesa=el("div","mesa");
+  elMesa.appendChild(el("i","mrot","MESA"));
+  for(i=0;i<r.soltos;i++) elMesa.appendChild(fazPeca(r));
+  c.appendChild(elMesa);
+
+  c.appendChild(el("div","hint","Arraste com o dedo ou com o mouse &#8212; ou toque na pe&#231;a e depois na caixa."));
+  t.appendChild(c); app.appendChild(t);
+  atualiza();
+}
+
+function fazPeca(r){
+  var b=el("div","pc");
+  b.appendChild(el("i",r.pTipo,""));
+  b.setAttribute("data-qa","cx");
+  b.onclick=cliquePeca;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+  pecas.push(b);
+  return b;
+}
+
+/* ---------- as TRÊS portas de entrada ----------
+   ⚠️ os tratadores de toque sao FUNCOES COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular e a
+   armadilha nº1 desta mecanica). Ele mora so no `touchmove`, e so depois que
+   o dedo ANDOU de verdade. */
+function cliquePeca(){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no touchend */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();  /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) escolhe(alvo);    /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(souDedo()) return; if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+function pegaEm(b,x,y){
+  if(travado||!b||temClasse(b,"usada")) return;
+  pego=b; px0=x; py0=y; moveu=false;
+}
+function moveEm(x,y){
+  if(!pego) return;
+  if(!moveu){
+    if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
+    moveu=true; sTap(); escolhe(pego);
+    somb=el("div","somb");
+    somb.appendChild(el("i",rodada().pTipo,""));
+    document.body.appendChild(somb);
+  }
+  somb.style.left=(x-26)+"px"; somb.style.top=(y-21)+"px";
+  acendeSob(x,y);
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b||!arrastou) return;
+  fimArrasto=agora();
+  if(caixaSob(x,y)) poe(b);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  apagaAceso();
+}
+function caixaSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&e.nodeType===1&&n<6){
+    if(temClasse(e,"cam")) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+/* ⭐ A CAIXA ACENDE QUANDO A PEÇA PASSA POR CIMA: a criança precisa saber onde
+   pode soltar ANTES de soltar. */
+function acendeSob(x,y){
+  if(naCaixa.length>=10) return;
+  elCaixa.className=caixaSob(x,y)?"cam alvo":"cam livre";
+}
+function apagaAceso(){
+  if(naCaixa.length>=10){ elCaixa.className="cam ok"; return; }
+  elCaixa.className=marcada?"cam livre":"cam";
+}
+function escolhe(b){
+  if(travado||!b||temClasse(b,"usada")) return;
+  var i;
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+}
+function cliqueCaixa(){
+  if(cliqueDeArrasto()) return;
+  if(souDedo()&&!marcada) return;
+  if(!marcada){
+    if(naCaixa.length>=10) mostraDica("A caixa fechou os <b>10</b>. Aperte <b>Trocar 10 por 1</b>.");
+    else mostraDica("Primeiro toque numa <b>pe&#231;a</b> da mesa. Depois toque na caixa.");
+    return;
+  }
+  poe(marcada);
+}
+
+/* ---------- pôr a peça na caixa ---------- */
+function poe(b){
+  if(travado||!b||temClasse(b,"usada")) return;
+  /* a caixa CHEIA fecha a porta: dez é dez. */
+  if(naCaixa.length>=10){
+    sErro();
+    mostraDica("A caixa j&#225; tem <b>10</b>. Aperte <b>Trocar 10 por 1</b> para esvaziar.");
+    return;
+  }
+  b.className="pc usada";
+  marcada=null;
+  var v=vagas[naCaixa.length];
+  var d=el("i",rodada().pTipo+" cxpc","");
+  v.className="cxvaga cheia";
+  v.appendChild(d);
+  naCaixa.push(d);
+  sPoe();
+  apagaAceso();
+  atualiza();
+}
+
+/* ⭐ A TROCA — O CORAÇÃO DA PEÇA. As DEZ encolhem e somem; UMA nasce na
+   prateleira. É a única coisa desta tela que a criança precisa lembrar. */
+function troca(){
+  if(travado||naCaixa.length<10) return;
+  var g=ger, i;
+  travado=true;
+  sTroca();
+  for(i=0;i<naCaixa.length;i++) naCaixa[i].className=rodada().pTipo+" cxpc some";
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    for(i=0;i<vagas.length;i++){ vagas[i].innerHTML=""; vagas[i].className="cxvaga"; }
+    naCaixa=[];
+    trocados.push(1);
+    travado=false;
+    errosR=0;
+    apagaDica(); apagaAceso(); atualiza(true);
+  },520);
+}
+
+/* ---------- o juízo da criança: "não dá mais 10" ---------- */
+function pronto(){
+  if(travado) return;
+  if(porAgrupar()>=10){
+    errosR++;
+    sErro();
+    mostraDica(DICAS[Math.min(errosR,DICAS.length)-1]);
+    /* NUNCA TRAVA: no 3º tropeço as peças que faltam entram sozinhas na caixa. */
+    if(errosR>=3) enche();
+    return;
+  }
+  fechaRodada();
+}
+function enche(){
+  var i;
+  for(i=0;i<pecas.length&&naCaixa.length<10;i++)
+    if(!temClasse(pecas[i],"usada")) poe(pecas[i]);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* ---------------------------------------------------------- a pintura */
+function atualiza(nova){
+  var r=rodada(), i, p;
+  /* a prateleira: o que já foi trocado, desenhado + escrito + em número */
+  elPrat.innerHTML="";
+  if(!trocados.length){
+    elPrat.className="prat pvazia";
+    elPrat.appendChild(el("span","","Prateleira vazia &#8212; ainda nenhuma troca."));
+  } else {
+    elPrat.className="prat";
+    for(i=0;i<trocados.length;i++){
+      p=el("i",r.tTipo+(nova&&i===trocados.length-1?" chega":""),"");
+      elPrat.appendChild(p);
+    }
+    elPrat.appendChild(el("span","","&#160; <b>"+trocados.length+"</b> "+
+      (trocados.length>1?r.nomeTs:r.nomeT)+" &#160;+&#160; <b>"+porAgrupar()+"</b> "+r.nomeP+
+      " &#160;=&#160; <b>"+(trocados.length*r.valeT+porAgrupar()*r.vale)+"</b>"));
+  }
+  /* o botão que serve AGORA (e o data-qa que deixa o auditor-jogador fechar) */
+  if(naCaixa.length>=10){
+    btTroca.style.display=""; btTroca.setAttribute("data-qa","1");
+    elCaixa.className="cam ok";
+    /* ⚠️ a caixa cheia sai da lista de destinos do auditor (o `.cam` com
+       classe `ok` e ignorado por ele) — senao ele tenta encaixar a 11a peca
+       para sempre e da "PRESO" numa tela que funciona. */
+  } else {
+    btTroca.style.display="none"; btTroca.removeAttribute("data-qa");
+  }
+  if(porAgrupar()<10) btPronto.setAttribute("data-qa","1");
+  else btPronto.removeAttribute("data-qa");
+  if(barraP){
+    var feito=(r.soltos-porAgrupar())/r.soltos;
+    barraP.style.width=Math.round((idxR+feito)*100/RODADAS.length)+"%";
+  }
+}
+
+function fechaRodada(){
+  var g=ger, r=rodada(), resto=porAgrupar();
+  sCerto();
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    idxR++;
+    var msg="<b>"+trocados.length+"</b> "+(trocados.length>1?r.nomeTs:r.nomeT)+
+            " e <b>"+resto+"</b> "+r.nomeP+" = <b>"+(trocados.length*r.valeT+resto*r.vale)+"</b>.";
+    if(idxR>=RODADAS.length) mostraBanner(msg,fimDaPeca);
+    else mostraBanner(msg,pecaBaseDez);
+  },520);
+}
+
+function fimDaPeca(){
+  ger++; limpa(); soltaSombra();
+  marcada=null; pecas=[]; vagas=[]; naCaixa=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Dez soltos viram <b>uma caixa</b>. Dez caixas viram <b>um caixote</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ idxR=0; pecaBaseDez(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a BASE DEZ: agrupar de dez em dez e trocar."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaBaseDez();
+</script>
+</body></html>

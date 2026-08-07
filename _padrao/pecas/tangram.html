@@ -220,7 +220,12 @@ function pecaTangram(){
   ger++; postas=0; marcada=null; pegou=null; arrastando=false;
   limpa();
   var i;
-  for(i=0;i<PECAS.length;i++){ PECAS[i].ang=PECAS[i].ang0; PECAS[i]._err=0; }
+  /* ⚠️ o angulo de partida se guarda na PRIMEIRA vez: sem isto o "jogar de
+     novo" devolvia `undefined` para o angulo e as formas nasciam tortas. */
+  for(i=0;i<PECAS.length;i++){
+    if(PECAS[i].ang0===undefined) PECAS[i].ang0=PECAS[i].ang;
+    PECAS[i].ang=PECAS[i].ang0; PECAS[i]._err=0;
+  }
   var t=el("div","tela");
   setProg(t,0);
   barraP=t.querySelector(".prog i");

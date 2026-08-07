@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — camadas do mapa (ligar, desligar e comparar)</title>
+<!-- ============================================================
+     PEÇA: CAMADAS DO MAPA — o MESMO mapa, três camadas que ligam e desligam
+     (relevo, rios, cidades), e uma pergunta que SÓ se responde comparando.
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     POR QUE ISTO NÃO É UM QUIZ COM FIGURA: a resposta não está escrita em
+     lugar nenhum da tela. Ela aparece na cabeça da criança quando ela põe duas
+     camadas uma em cima da outra e vê que as cidades estão coladas nos rios e
+     que em cima dos morros altos não tem nenhuma. O gesto (ligar/desligar) é o
+     próprio raciocínio — é assim que se lê um mapa de verdade.
+
+     AS ARMADILHAS DESTA MECÂNICA, FECHADAS AQUI:
+       · UMA CAMADA POR VEZ NO COMEÇO. Se as três aparecem juntas de saída, a
+         criança vê um borrão: são dezenas de formas novas de uma vez só (carga
+         cognitiva, Sweller). No 1º passo, ligar uma DESLIGA as outras; só
+         depois de conhecer as três é que elas se somam.
+       · SINALIZAR O QUE MUDOU. Camada que só aparece não ensina: a que acabou
+         de entrar PISCA e o aviso diz, em palavras, o que apareceu e o que
+         aquilo quer dizer. Sem isso a criança liga e desliga sem ver.
+       · A PERGUNTA SÓ ABRE COM AS CAMADAS CERTAS LIGADAS. Enquanto faltar
+         camada, a tela pede a camada em vez de mostrar as respostas — assim é
+         impossível "acertar" sem ter olhado.
+       · NADA SÓ NA COR: cada camada tem FORMA própria (morro = bolha com pico,
+         rio = linha, cidade = quadradinho branco-e-vermelho) e cada botão diz
+         "ligada"/"desligada" com sinal, não só cor.
+       · OPÇÕES EMBARALHADAS (na Fábrica de Estrelas a certa era sempre a 1ª e
+         a criança aprendia a POSIÇÃO). São 3 distratores, para o 3º degrau do
+         andaime (revelar) existir de verdade.
+       · NUNCA TRAVA: andaime que cresce (1 onde olhar, 2 acende as duas
+         camadas, 3 revela e deixa seguir).
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; funciona no mudo; publica data-qa; termina em .medal.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- A TELA ROLA QUANDO NÃO CABE ----------
+   Mapa + três botões de camada + resposta é mais alto que a tela de um celular
+   deitado. Encolher tudo até caber deixaria o alvo do dedo pequeno; então a
+   tela ROLA — que é o que a criança faz com o dedo. */
+.tela{max-height:calc(100vh - 22px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* ---------- O MAPA (as três camadas moram no MESMO quadro) ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o mapa nasce COLADO no
+   enunciado (defeito que o Marcos ja cobrou duas vezes). */
+.mapa{position:relative;width:100%;max-width:268px;margin:13px auto 0;padding-bottom:72%;
+      border-radius:14px;overflow:hidden;border:3px solid #6b4b2a;background:#cfe3b4}
+.cmcam{position:absolute;left:0;top:0;right:0;bottom:0;display:none}
+.cmcam.on{display:block}
+.cmcam.novo{-webkit-animation:acende .5s linear 4;animation:acende .5s linear 4}
+@-webkit-keyframes acende{0%{opacity:.25}50%{opacity:1}100%{opacity:.25}}
+@keyframes acende{0%{opacity:.25}50%{opacity:1}100%{opacity:.25}}
+.svgm{position:absolute;left:0;top:0;width:100%;height:100%}
+/* relevo: bolha de morro, com o PICO mais claro (forma, nao so cor) */
+.morro{position:absolute;background:#b08a54;border:3px solid #8a6a3c;
+       border-radius:50% 50% 44% 44%}
+.pico{position:absolute;background:#e6ded0;border-radius:50%}
+/* cidade: quadradinho branco por fora (le-se sobre qualquer fundo) */
+.cid{position:absolute;width:9%;height:12%;background:#a8321f;border:2px solid #fffdf6;
+     border-radius:2px}
+.cid i{position:absolute;left:22%;top:-32%;width:56%;height:34%;background:#a8321f;
+       border:2px solid #fffdf6;border-radius:1px}
+
+/* ---------- OS BOTÕES DE CAMADA ---------- */
+.cams{margin-top:11px;display:-webkit-box;display:-webkit-flex;display:flex;
+      -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.bin{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;max-width:150px;margin:0 3px;
+     background:#fffdf6;color:#221a12;border:0;border-radius:14px;padding:7px 4px;min-height:52px;
+     font-size:13px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.bin.on{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.bin:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.bcx{display:inline-block;width:19px;height:19px;line-height:15px;border:2px solid #6b6350;
+     border-radius:4px;font-size:13px;font-weight:800;margin-right:4px;vertical-align:-3px}
+.bin.on .bcx{background:#1f6b12;border:2px solid #1f6b12;color:#fff}
+.bst{display:block;font-size:11px;font-weight:700;font-style:normal;letter-spacing:.3px;
+     color:#5a5347;margin-top:2px}
+.bin.on .bst{color:#1f6b12}
+
+/* ---------- avisos e placar ---------- */
+.cont{margin-top:11px;font-size:16px;font-weight:700}
+.cont b{color:#ffd54a}
+.aviso{margin-top:9px;font-size:15px;font-weight:700;background:#1f6b12;color:#fff;
+       border-radius:12px;padding:9px 12px;display:none;text-align:left}
+.aviso.ver{display:block}
+.aviso.pede{background:#8a5a10;color:#fff}
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:2px}
+/* tela baixa (projetor/janela): o mapa encolhe um pouco; o botao nao. */
+@media (max-height:470px){.mapa{max-width:210px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) O MAPA. Um só quadro; três camadas desenhadas em cima dele.
+      As cidades ficam TODAS coladas nos rios e NENHUMA em cima dos
+      morros — é este dado que faz as duas perguntas terem resposta.
+   --------------------------------------------------------------- */
+var CIDADES=[[9.5,16],[15.5,41],[23.5,58],[35.5,83],[47.5,77]];
+var MORROS=[
+ {l:56,t:6,w:30,h:34,pico:1},
+ {l:76,t:36,w:24,h:30,pico:0},
+ {l:60,t:54,w:26,h:28,pico:0}
+];
+var RIOS='<svg class="svgm" viewBox="0 0 100 72" preserveAspectRatio="none">'
+ +'<path d="M8 1 C 16 15, 14 29, 22 39 C 30 49, 38 60, 42 71" stroke="#2f8fd8" stroke-width="5"'
+ +' fill="none" stroke-linecap="round"/>'
+ +'<path d="M70 71 C 60 60, 48 52, 30 44" stroke="#2f8fd8" stroke-width="4" fill="none"'
+ +' stroke-linecap="round"/>'
+ +'<ellipse cx="27" cy="20" rx="6" ry="4" fill="#2f8fd8"/></svg>';
+
+var CAMADAS=[
+ {k:"relevo", n:"RELEVO",
+  novo:"Apareceram <b>3 morros</b>. Onde tem morro, o ch&#227;o &#233; alto e inclinado.",
+  monta:function(){
+    var d=el("div","cmcam"), i, m, mo, pc;
+    for(i=0;i<MORROS.length;i++){
+      m=MORROS[i];
+      mo=el("i","morro");
+      mo.style.left=m.l+"%"; mo.style.top=m.t+"%";
+      mo.style.width=m.w+"%"; mo.style.height=m.h+"%";
+      d.appendChild(mo);
+      if(m.pico){
+        pc=el("i","pico");
+        pc.style.left=(m.l+m.w*0.3)+"%"; pc.style.top=(m.t+m.h*0.06)+"%";
+        pc.style.width=(m.w*0.4)+"%"; pc.style.height=(m.h*0.22)+"%";
+        d.appendChild(pc);
+      }
+    }
+    return d;
+  }},
+ {k:"rios", n:"RIOS",
+  novo:"Apareceram <b>2 rios</b> e um lago. Rio &#233; &#225;gua que corre sempre no mesmo lugar.",
+  monta:function(){ return el("div","cmcam",RIOS); }},
+ {k:"cidades", n:"CIDADES",
+  novo:"Apareceram <b>5 cidades</b> (os quadradinhos). Cada uma &#233; um lugar onde mora gente.",
+  monta:function(){
+    var d=el("div","cmcam"), i, c;
+    for(i=0;i<CIDADES.length;i++){
+      c=el("i","cid","<i></i>");
+      c.style.left=CIDADES[i][0]+"%"; c.style.top=CIDADES[i][1]+"%";
+      d.appendChild(c);
+    }
+    return d;
+  }}
+];
+
+/* ---------------------------------------------------------------
+   2) AS PERGUNTAS QUE SÓ SE RESPONDEM COMPARANDO
+   --------------------------------------------------------------- */
+var PERG=[
+ {selo:"RIO E CIDADE",
+  pede:["rios","cidades"],
+  p:"Ligue <b>RIOS</b> e <b>CIDADES</b> juntas. O que d&#225; para ver s&#243; com as duas ligadas?",
+  c:"Quase todas as cidades est&#227;o coladas nos rios",
+  e:["As cidades est&#227;o em cima dos morros",
+     "As cidades est&#227;o longe da &#225;gua",
+     "As cidades est&#227;o todas no canto de cima"],
+  fecha:"Gente precisa de &#225;gua todo dia: por isso as cidades nasceram na beira do rio.",
+  d:["Olhe os quadradinhos das cidades e veja o que passa <b>do lado</b> de cada um.",
+     "Estou acendendo as duas camadas. Siga o rio com o dedo e conte quantas cidades ele encosta.",
+     "&#201; esta: quase todas as cidades est&#227;o <b>coladas nos rios</b>. Toque nela para seguir."]},
+ {selo:"MORRO E CIDADE",
+  pede:["relevo","cidades"],
+  p:"Agora ligue <b>RELEVO</b> e <b>CIDADES</b>. Onde <b>n&#227;o tem nenhuma</b> cidade?",
+  c:"Em cima dos morros",
+  e:["Na beira dos rios",
+     "No canto de baixo do mapa",
+     "No meio do mapa"],
+  fecha:"Morro alto &#233; inclinado e dif&#237;cil de subir: quase ningu&#233;m constr&#243;i casa l&#225; em cima.",
+  d:["Ache as bolhas dos morros e veja se algum quadradinho caiu dentro delas.",
+     "Estou acendendo as duas camadas. Passe o dedo por cima de cada morro e procure quadradinho.",
+     "&#201; esta: <b>em cima dos morros</b> n&#227;o tem cidade nenhuma. Toque nela para seguir."]}
+];
+
+/* ---------------------------------------------------------------
+   3) ESTADO (inicializado aqui em cima: cada auditor abre UMA tela
+      sozinha, direto, e ela tem que funcionar sem a anterior)
+   --------------------------------------------------------------- */
+var ligada={relevo:0, rios:0, cidades:0};
+var vistas={};
+var camEl={};
+var qi=0, err=0, ger=0;
+var elMapa, elAviso, elCont, elOpts, elBins={};
+
+function acha(k){ var i; for(i=0;i<CAMADAS.length;i++){ if(CAMADAS[i].k===k) return CAMADAS[i]; } return null; }
+function contaVistas(){ var n=0,k; for(k in vistas){ if(vistas[k]) n++; } return n; }
+
+/* o mapa e os botões são os mesmos nas duas telas — um lugar só para arrumar */
+function montaMapa(c){
+  elMapa=el("div","mapa");
+  camEl={};
+  var i, cm;
+  for(i=0;i<CAMADAS.length;i++){
+    cm=CAMADAS[i].monta();
+    camEl[CAMADAS[i].k]=cm;
+    elMapa.appendChild(cm);
+  }
+  c.appendChild(elMapa);
+}
+function montaBotoes(c,aoTocar){
+  var box=el("div","cams"), i, b;
+  elBins={};
+  for(i=0;i<CAMADAS.length;i++){
+    b=el("div","bin");
+    b.innerHTML='<span class="bcx">&#8211;</span>'+CAMADAS[i].n+'<i class="bst">desligada</i>';
+    b.onclick=(function(k){ return function(){ aoTocar(k); }; })(CAMADAS[i].k);
+    elBins[CAMADAS[i].k]=b;
+    box.appendChild(b);
+  }
+  c.appendChild(box);
+}
+function pintaCamadas(){
+  var i, k, b;
+  for(i=0;i<CAMADAS.length;i++){
+    k=CAMADAS[i].k;
+    camEl[k].className = ligada[k] ? "cmcam on" : "cmcam";
+    b=elBins[k];
+    b.className = ligada[k] ? "bin on" : "bin";
+    b.innerHTML='<span class="bcx">'+(ligada[k]?"&#10003;":"&#8211;")+'</span>'+CAMADAS[i].n
+                +'<i class="bst">'+(ligada[k]?"ligada":"desligada")+'</i>';
+  }
+}
+function piscaCamada(k){
+  if(!camEl[k]||!ligada[k]) return;
+  camEl[k].className="cmcam on novo";
+  setTimeout((function(e){ return function(){
+    if(e.className.indexOf("novo")>=0) e.className="cmcam on";
+  }; })(camEl[k]),2100);
+}
+
+/* ---------------------------------------------------------------
+   4) TELA 1 — EXPLORAR: uma camada de cada vez (carga baixa)
+   --------------------------------------------------------------- */
+function telaCamadas(){
+  limpa();
+  vistas={}; ligada={relevo:0, rios:0, cidades:0};
+  var t=el("div","tela");
+  setProg(t,0);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O MESMO MAPA, TR&#202;S CAMADAS"));
+  c.appendChild(el("div","balao","Este &#233; <b>um mapa s&#243;</b>. Ligue <b>uma camada de cada vez</b> e veja o que aparece nele."));
+  montaMapa(c);
+  montaBotoes(c,ligaSozinha);
+  elCont=el("div","cont","");
+  c.appendChild(elCont);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  c.appendChild(el("div","hint","Toque no bot&#227;o da camada. Ligar uma desliga a outra: assim d&#225; para ver o que cada uma trouxe."));
+  t.appendChild(c);
+  app.appendChild(t);
+  pintaCamadas();
+  atualizaExplorar();
+}
+
+/* uma por vez: ligar esta DESLIGA as outras */
+function ligaSozinha(k){
+  var i, kk;
+  for(i=0;i<CAMADAS.length;i++){
+    kk=CAMADAS[i].k;
+    ligada[kk] = (kk===k) ? 1 : 0;
+  }
+  vistas[k]=1;
+  sTap(); nota(560,.1,.11,"triangle",.03);
+  pintaCamadas();
+  piscaCamada(k);
+  elAviso.innerHTML=acha(k).novo;
+  elAviso.className="aviso ver";
+  atualizaExplorar();
+  if(contaVistas()===CAMADAS.length){
+    sCerto();
+    setTimeout(function(){ qi=0; telaComparar(); },1800);
+  }
+}
+function atualizaExplorar(){
+  var n=contaVistas(), i, k, falta=null;
+  elCont.innerHTML="Camadas vistas: <b>"+n+"</b> de <b>"+CAMADAS.length+"</b>";
+  var p=Math.round(n*100/(CAMADAS.length+PERG.length));
+  var pi=app.querySelector(".prog i");
+  if(pi) pi.style.width=p+"%";
+  /* data-qa: só para o auditor-jogador — a camada que falta ver AGORA. */
+  for(i=0;i<CAMADAS.length;i++){
+    k=CAMADAS[i].k;
+    elBins[k].removeAttribute("data-qa");
+    if(!vistas[k]&&!falta) falta=k;
+  }
+  if(falta) elBins[falta].setAttribute("data-qa","1");
+}
+
+/* ---------------------------------------------------------------
+   5) TELA 2 — COMPARAR: a pergunta só abre com as camadas ligadas
+   --------------------------------------------------------------- */
+function telaComparar(){
+  var f=PERG[qi];
+  if(!f){ fim(); return; }
+  err=0; ger++;
+  limpa();
+  ligada={relevo:0, rios:0, cidades:0};
+  var t=el("div","tela");
+  setProg(t,Math.round((CAMADAS.length+qi)*100/(CAMADAS.length+PERG.length)));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",f.selo));
+  c.appendChild(el("div","balao",f.p));
+  montaMapa(c);
+  montaBotoes(c,ligaLivre);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  elOpts=el("div","opts","");
+  c.appendChild(elOpts);
+  c.appendChild(el("div","hint","Ligue as camadas que o enunciado pediu e olhe o mapa antes de responder."));
+  t.appendChild(c);
+  app.appendChild(t);
+  pintaCamadas();
+  atualizaComparar();
+}
+
+/* aqui já pode somar camadas — é o passo seguinte da escada */
+function ligaLivre(k){
+  ligada[k]=ligada[k]?0:1;
+  sTap();
+  if(ligada[k]) nota(560,.1,.11,"triangle",.03);
+  pintaCamadas();
+  if(ligada[k]) piscaCamada(k);
+  atualizaComparar();
+}
+
+function faltaCamada(){
+  var f=PERG[qi], i;
+  for(i=0;i<f.pede.length;i++){ if(!ligada[f.pede[i]]) return f.pede[i]; }
+  return null;
+}
+
+function atualizaComparar(){
+  var f=PERG[qi], falta=faltaCamada(), i, k;
+  for(i=0;i<CAMADAS.length;i++){ elBins[CAMADAS[i].k].removeAttribute("data-qa"); }
+  if(falta){
+    /* enquanto faltar camada, a tela PEDE a camada em vez de mostrar resposta:
+       é isso que torna impossível "acertar" sem ter comparado. */
+    elAviso.innerHTML="Ligue a camada <b>"+acha(falta).n+"</b> para poder comparar.";
+    elAviso.className="aviso ver pede";
+    elOpts.innerHTML="";
+    elBins[falta].setAttribute("data-qa","1");
+    return;
+  }
+  elAviso.innerHTML="As duas camadas est&#227;o no mesmo mapa. Agora d&#225; para comparar.";
+  elAviso.className="aviso ver";
+  if(elOpts.getElementsByClassName("opt").length) return;   /* já estão na tela */
+  var lista=[{txt:f.c,ok:1}];
+  for(i=0;i<f.e.length;i++) lista.push({txt:f.e[i],ok:0});
+  baguncar(lista);          /* ⭐ a armadilha do quiz: embaralhar SEMPRE */
+  for(i=0;i<lista.length;i++) elOpts.appendChild(fazOpcao(lista[i]));
+}
+
+function fazOpcao(it){
+  var o=el("div","opt",it.txt);
+  /* data-qa="1" = "esta serve AGORA". Existe SÓ para o auditor-jogador; a
+     criança não vê diferença nenhuma. */
+  if(it.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ responde(o,it.ok); };
+  return o;
+}
+
+function responde(o,certa){
+  if(o.className.indexOf("no")>=0) return;      /* opção já apagada */
+  var f=PERG[qi], g=ger;
+  if(certa){
+    sCerto();
+    o.className="opt ok";
+    o.innerHTML=o.innerHTML+'<span class="marca">isso</span>';
+    trancaTudo();
+    elAviso.innerHTML=f.fecha;
+    elAviso.className="aviso ver";
+    setTimeout(function(){
+      if(g!==ger) return;                       /* a fase já mudou: não mexe */
+      qi++;
+      if(qi<PERG.length) telaComparar();
+      else fim();
+    },1500);
+    return;
+  }
+  /* ERRO: não pune. Som grave curto + a opção sai do alcance + andaime CRESCE. */
+  sErro();
+  o.className="opt no";
+  o.onclick=null;
+  err++;
+  ajuda(err);
+}
+function trancaTudo(){
+  var a=elOpts.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){ a[i].onclick=null; a[i].removeAttribute("data-qa"); }
+}
+
+/* ---------------------------------------------------------------
+   6) O ANDAIME QUE CRESCE (1 onde olhar, 2 acende as duas camadas,
+      3 revela) — a peça não tem como travar.
+   --------------------------------------------------------------- */
+function ajuda(n){
+  var f=PERG[qi], i, a;
+  mostraDica(f.d[Math.min(n,f.d.length)-1]);
+  if(n===2){
+    for(i=0;i<f.pede.length;i++) piscaCamada(f.pede[i]);
+  }
+  if(n>=3){
+    a=elOpts.getElementsByClassName("opt");
+    for(i=0;i<a.length;i++){
+      if(a[i].getAttribute("data-qa")==="1"){ a[i].className="opt ok"; }
+      else { a[i].className="opt no"; a[i].onclick=null; }
+    }
+  }
+}
+
+function fim(){
+  mostraBanner('<div class="medal">&#9733;</div><b>Voc&#234; leu o mapa por camadas!</b><br>'
+               +'Rio, morro e cidade contam a mesma hist&#243;ria juntos.<br>'
+               +'E na sua cidade: ela nasceu perto de qu&#234;?', telaCamadas);
+}
+
+telaCamadas();
+</script>
+</body></html>

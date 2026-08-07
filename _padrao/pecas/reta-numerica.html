@@ -81,32 +81,37 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* ---------------- A PEÇA: RETA NUMÉRICA ----------------
    ⚠️ margem propria de 13px: `.balao + *` tem a mesma forca que `.reta` e perde
    por vir antes no arquivo (regra 9 do _qa/leiaute.js, cobrada duas vezes). */
-.reta{position:relative;max-width:430px;height:78px;margin:13px auto 0;border-radius:16px;
+/* ⚠️ ALTURA DE 96px, e cada faixa tem o SEU andar (defeito visto no print da
+   1a montagem): a plaquinha "O 60 É AQUI" pousava em cima dos numeros da reta
+   e escondia justamente o 50 — que e a referencia que a dica manda usar.
+   Andares: plaquinha da crianca 0-20 · marcas 24-70 · numeros 65 · plaquinha
+   da resposta 74-93.                                                       */
+.reta{position:relative;max-width:430px;height:96px;margin:13px auto 0;border-radius:16px;
       background:rgba(255,255,255,.10);border:2px solid rgba(255,255,255,.22)}
 /* a faixa INTEIRA recebe o toque: o alvo nunca e um pixel */
 .zona{cursor:pointer}
 /* trilho interno: guarda 18px de folga nas pontas para o "0" e o "100" nao
    sairem pela borda da caixa */
 .rint{position:absolute;left:18px;right:18px;top:0;bottom:0}
-.rlinha{position:absolute;left:0;right:0;top:34px;height:7px;border-radius:4px;background:#f4efe6}
-.rtick{position:absolute;top:28px;width:3px;height:19px;margin-left:-1px;border-radius:2px;
+.rlinha{position:absolute;left:0;right:0;top:44px;height:7px;border-radius:4px;background:#f4efe6}
+.rtick{position:absolute;top:38px;width:3px;height:19px;margin-left:-1px;border-radius:2px;
        background:rgba(255,255,255,.55)}
-.rtick.gr{top:22px;height:31px;width:4px;margin-left:-2px;background:#f4efe6}
-.rnum{position:absolute;top:55px;font-size:13px;font-weight:800;color:#f4efe6;
+.rtick.gr{top:32px;height:31px;width:4px;margin-left:-2px;background:#f4efe6}
+.rnum{position:absolute;top:65px;font-size:13px;font-weight:800;color:#f4efe6;
       -webkit-transform:translateX(-50%);transform:translateX(-50%)}
 /* a MIRA: onde a crianca vai cravar, antes de confirmar */
-.rmira{position:absolute;top:6px;width:5px;height:63px;margin-left:-2px;border-radius:3px;
+.rmira{position:absolute;top:22px;width:5px;height:50px;margin-left:-2px;border-radius:3px;
        background:#ffd54a;box-shadow:0 0 0 2px rgba(0,0,0,.25)}
 .rmira:after{content:"";position:absolute;left:-9px;top:-9px;width:23px;height:23px;border-radius:50%;
              background:#ffd54a;box-shadow:0 0 0 3px rgba(0,0,0,.22)}
 /* as duas marcas do resultado, LADO A LADO na mesma reta */
-.marc{position:absolute;top:6px;width:5px;height:63px;margin-left:-2px;border-radius:3px}
+.marc{position:absolute;top:24px;width:5px;height:46px;margin-left:-2px;border-radius:3px}
 .marc.mvoce{background:#ffd54a}
 .marc.mcerto{background:#59c24b}
 .chip{position:absolute;font-size:12px;font-weight:800;padding:3px 7px;border-radius:9px;
       white-space:nowrap;-webkit-transform:translateX(-50%);transform:translateX(-50%)}
 .chip.mvoce{background:#ffd54a;color:#33280a;top:0}
-.chip.mcerto{background:#d6f5c8;color:#123f08;top:53px}
+.chip.mcerto{background:#d6f5c8;color:#123f08;top:74px}
 /* o resultado ja nasce com altura: assim nada PULA quando o texto entra */
 .res{display:block;min-height:52px;margin-top:10px;font-size:15px;font-weight:700;line-height:1.35}
 .res b{color:#ffd54a}
