@@ -60,16 +60,20 @@ def css_de(html):
     return "".join(re.findall(r"<style>(.*?)</style>", html, re.S))
 
 
-def main():
-    if len(sys.argv) < 2:
-        print(__doc__)
-        return 2
-    alvo = sys.argv[1]
-    html = io.open(alvo, encoding="utf-8").read()
-    js = js_de(html)
-    css = css_de(html)
-    baixo = html.lower()
+def analisa(js, css, baixo, html=None):
+    u"""⭐ AS ARMADILHAS SAO DA MECANICA, NAO DO ARQUIVO.
 
+    Cada regra aqui pergunta uma coisa do tipo *"esta peca de CRIACAO tem som de
+    tropeco?"*. Enquanto uma atividade tinha uma mecanica de cada, olhar o
+    arquivo inteiro dava no mesmo. Numa atividade MONTADA sao DEZESSEIS mecanicas
+    no mesmo arquivo — e ai a pergunta se perde: o `sErro()` legitimo de uma fase
+    de quiz virava acusacao contra a fase de PINTAR, que nem chama `sErro`.
+    Medido na primeira atividade montada: 2 armadilhas "abertas", nenhuma das
+    duas existia. Portao que acusa o inocente ensina a ignorar portao.
+
+    Por isso a analise virou funcao: o `main` roda uma vez por PECA quando o
+    arquivo e montado, e cada regra volta a olhar so o codigo da mecanica dela.
+    """
     usa, ruins, avisos = [], [], []
 
     # ---------------------------------------------------- CACA-PALAVRAS
@@ -250,7 +254,11 @@ def main():
         if "onkeydown" not in js and 'addEventListener("keydown"' not in js:
             ruins.append(u"labirinto: so ha botao na tela. AS DUAS PORTAS — no PC da "
                          u"escola a crianca vai usar as SETAS DO TECLADO.")
-        if re.search(r'vida|game ?over|morreu|perdeu', js, re.I):
+        # ⚠️ ACUSOU O INOCENTE (ago/2026): `vida` sem fronteira de palavra casa
+        #    dentro de "atiVIDAde" — e a palavra "atividade" esta em toda parte.
+        #    O labirinto dizia, no proprio comentario, "sem vida perdida, sem fim
+        #    de jogo", e mesmo assim levava a acusacao.
+        if re.search(r'\bvidas?\b|game ?over|morreu|perdeu', js, re.I):
             ruins.append(u"labirinto: ha vida/derrota. Encostar no inimigo NAO e "
                          u"castigo — volta ao comeco do trecho e segue.")
         if not re.search(r'setAttribute\("data-qa"', js):
@@ -279,7 +287,12 @@ def main():
                          u"existe certo e errado — e desenho dela.")
 
     # ---------------------------------------------------- LIGAR PONTOS
-    if re.search(r'ligar.?pontos|\.pt\b', css) and re.search(r'proximo|ordem', js, re.I):
+    # ⚠️ `.pt` sozinho e generico demais: o ARRASTAR-LUGAR tambem tem uma classe
+    #    `.pt`, e levava as regras de ligar-pontos. Agora o gatilho pede tambem a
+    #    palavra "ponto" no codigo — quem liga pontos fala em pontos.
+    if (re.search(r'ligar.?pontos', css)
+            or (re.search(r'\.pt\b', css) and re.search(r'\bpontos?\b', js, re.I))) \
+            and re.search(r'proximo|ordem', js, re.I):
         usa.append("ligar pontos")
         # ⚠️ MESMO DESCUIDO DUAS VEZES NA MESMA NOITE: `sErro` vem DECLARADO no
         #    motorzinho de toda peca. Eu tinha consertado isso em "colorir" e
@@ -321,6 +334,52 @@ def main():
         if re.search(r'Math\.sqrt\(.{0,40}raio|dist\s*<\s*\d+', js) and not re.search(r'naZona\(', js):
             ruins.append(u"achar na cena: o alvo e um PONTO com raio, nao a figura recortada. "
                          u"A crianca toca na coisa certa e o app diz que errou.")
+
+    return usa, ruins, avisos
+
+
+def main():
+    if len(sys.argv) < 2:
+        print(__doc__)
+        return 2
+    alvo = sys.argv[1]
+    html = io.open(alvo, encoding="utf-8").read()
+    js = js_de(html)
+    css = css_de(html)
+    baixo = html.lower()
+
+    # ⭐ atividade MONTADA: cada mecanica se mede no bloco DELA
+    # ⚠️ a marca de peca e um COMENTARIO, e o `js_de` tira comentarios (de
+    #    proposito: e assim que o portao para de acusar o que esta escrito em
+    #    nota). Entao a divisao por peca se faz no script CRU, e so depois cada
+    #    pedaco passa pelo mesmo limpador.
+    cru = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
+    # ⚠️ e a ULTIMA peca nao pode engolir o que vem depois dela (o conteudo que
+    #    o montador escreve: FASES, VOZOK, ID). Sem este corte, a peca da SOMBRA
+    #    levou acusacao de forca, de labirinto e de ligar pontos — porque a lista
+    #    de fases, logo abaixo dela, cita todas as mecanicas da atividade.
+    blocos = []
+    for n, c in re.findall(
+            r"/\* ==== PECA: ([\w-]+) ==== \*/(.*?)(?=/\* ==== PECA: |\Z)",
+            cru, re.S):
+        corte = c.find("/* ====== O CONTEUDO DESTA ATIVIDADE")
+        if corte >= 0:
+            c = c[:corte]
+        blocos.append((n, re.sub(r"/\*.*?\*/", " ", c, flags=re.S)))
+    if blocos:
+        cssb = dict(re.findall(
+            r"/\* ==== PECA: ([\w-]+) ==== \*/(.*?)(?=/\* ==== PECA: |$)", css, re.S))
+        usa, ruins, avisos = [], [], []
+        for nome, corpo in blocos:
+            u2, r2, a2 = analisa(corpo, cssb.get(nome, ""), corpo.lower(),
+                                 corpo + cssb.get(nome, ""))
+            for x in u2:
+                if x not in usa:
+                    usa.append(x)
+            ruins.extend(u"[%s] %s" % (nome, x) for x in r2)
+            avisos.extend(u"[%s] %s" % (nome, x) for x in a2)
+    else:
+        usa, ruins, avisos = analisa(js, css, baixo, html)
 
     print(u"%s -> %d dinamica(s) reconhecida(s): %s"
           % (alvo, len(usa), ", ".join(usa) if usa else "nenhuma"))
