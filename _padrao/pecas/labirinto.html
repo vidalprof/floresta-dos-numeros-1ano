@@ -235,13 +235,28 @@ var TRECHOS=[
  {selo:"OLHE ANTES DE ANDAR",
   linhas:["S...X","#X#..","....#",".#X.F"]}
 ];
-/* o andaime, degrau a degrau. O 3o e o que sempre falta nas pecas: ele DA UM
-   PASSO pela crianca e so DEPOIS escreve a explicacao. */
-var DICAS=[
- "Ande pelo caminho <b>claro</b>. A parede riscada n&#227;o deixa passar.",
- "A casinha certa est&#225; <b>piscando</b>. Aperte a seta que vai at&#233; ela.",
- "Eu dei um passo por voc&#234;. Agora siga a casinha que <b>pisca</b>."
-];
+/* O ANDAIME, degrau a degrau — E UM JOGO DE DICAS POR RAMO DE ERRO.
+   ⚠️ DEFEITO PEGO NA BANCADA (ago/2026): havia UMA lista so, e quem encostava
+   no espinhudo lia "a parede riscada nao deixa passar". Nada estourava, o
+   portao aprovava, e a crianca recebia a explicacao de OUTRA coisa — o mesmo
+   parentesco do "vocabulario de outra rodada". A palavra do que ACABOU de
+   acontecer sai daqui, nunca escrita a mao no meio do codigo.
+   O 3o degrau e o que sempre falta nas pecas: ele DA UM PASSO pela crianca e
+   so DEPOIS escreve a explicacao. */
+var DICAS={
+ parede:[
+  "A parede riscada n&#227;o deixa passar. Ande pelo caminho <b>claro</b>.",
+  "A casinha certa est&#225; <b>piscando</b>. Aperte a seta que vai at&#233; ela.",
+  "Eu dei um passo por voc&#234;. Agora siga a casinha que <b>pisca</b>."],
+ borda:[
+  "Aqui o tabuleiro acaba. Experimente <b>outra seta</b>.",
+  "A casinha certa est&#225; <b>piscando</b>. Aperte a seta que vai at&#233; ela.",
+  "Eu dei um passo por voc&#234;. Agora siga a casinha que <b>pisca</b>."],
+ espinhudo:[
+  "O espinhudo estava ali! O amigo voltou para o come&#231;o. Passe <b>longe</b> dele.",
+  "A casinha que <b>pisca</b> passa longe do espinhudo. Aperte a seta que vai at&#233; ela.",
+  "Eu dei um passo por voc&#234;, por fora do espinhudo. Agora siga a casinha que <b>pisca</b>."]
+};
 var DIRS=[
  {dl:-1,dc:0, cls:"pcima",  rot:"cima",     lbl:"para cima"},
  {dl:0, dc:-1,cls:"pesq",   rot:"esquerda", lbl:"para a esquerda"},
@@ -441,10 +456,16 @@ function teclaLab(ev){
 function move(dl,dc){
   if(travada||!viva()) return;
   var nr=lin+dl, nc=col+dc;
-  /* saiu do tabuleiro ou bateu na parede: nao pune, mas o andaime CRESCE */
-  if(nr<0||nc<0||nr>=nLin()||nc>=nCol()||marca(nr,nc)==="#"){
+  /* saiu do tabuleiro: nao pune, mas o andaime CRESCE */
+  if(nr<0||nc<0||nr>=nLin()||nc>=nCol()){
     sParede();
-    ajuda(errosSeg+1);
+    ajuda(errosSeg+1,"borda");
+    return;
+  }
+  /* bateu na parede: idem, com a palavra da PAREDE */
+  if(marca(nr,nc)==="#"){
+    sParede();
+    ajuda(errosSeg+1,"parede");
     return;
   }
   /* encostou no espinhudo: volta ao comeco do TRECHO. Sem vida perdida, sem
@@ -453,8 +474,8 @@ function move(dl,dc){
     tropecos++;
     sVolta();
     lin=iniL; col=iniC;
-    ajuda(errosSeg+1);
-    diz("Opa! Por aqui não. O amigo voltou para o começo.");
+    ajuda(errosSeg+1,"espinhudo");
+    diz("Opa! O espinhudo estava ali. O amigo voltou para o começo.");
     return;
   }
   sPasso();
@@ -485,11 +506,12 @@ function pegou(){
    num ramo natural de erro ja fez a crianca ler a MESMA frase para
    sempre, sem nunca chegar aos degraus de piscar e de revelar.
    --------------------------------------------------------------- */
-function ajuda(n){
-  errosSeg=Math.min(n,DICAS.length);
+function ajuda(n,tipo){
+  var fala=DICAS[tipo]||DICAS.parede;
+  errosSeg=Math.min(n,fala.length);
   if(errosSeg<3){
     pintaLab();
-    mostraDica(DICAS[errosSeg-1]);
+    mostraDica(fala[errosSeg-1]);
     return;
   }
   /* ⚠️ 3o DEGRAU: primeiro DA o passo, DEPOIS escreve a dica. Ao contrario,
@@ -497,7 +519,7 @@ function ajuda(n){
      apareceu em cinco pecas do mesmo lote). */
   passoSozinho();
   pintaLab();
-  mostraDica(DICAS[2]);
+  mostraDica(fala[2]);
 }
 function passoSozinho(){
   var d=proximoPasso();

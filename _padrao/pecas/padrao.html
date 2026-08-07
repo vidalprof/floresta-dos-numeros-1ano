@@ -229,10 +229,15 @@ var RODADAS=[
    regra:"forte, m&#233;dia, fraca, e come&#231;a de novo",
    grupo:3, grupoTxt:"forte, m&#233;dia, fraca",
    d1:"Bata na mesa junto com a fila: forte, m&#233;dia, fraca. Depois da fraca, o que volta?" },
+/* ⚠️ ESTA RODADA NAO TEM GRUPO QUE SE REPETE — ela CRESCE. Antes ela herdava
+   o texto das outras ("depois dele, tudo recomeça igual"), que aqui e
+   simplesmente falso: e o mesmo defeito do "resto de clone", em miniatura,
+   dentro da propria peca. Por isso ela declara `salto` em vez de `grupo`, e o
+   2o degrau acende as DUAS ultimas casas para mostrar o pulo.            */
  { selo:"DE QUANTO EM QUANTO?", enun:"Aqui o padr&#227;o &#233; um <b>salto</b>. Continue a fila.",
    seq:["2","4","6","8","10","12","14"], mostra:4, paleta:["9","10","11","12","13","14"],
    regra:"de 2 em 2",
-   grupo:0, grupoTxt:"o salto de 2 em 2",
+   grupo:0, salto:2, grupoTxt:"o salto de 2 em 2",
    d1:"Olhe o salto de um n&#250;mero para o outro: de 2 para 4, de 4 para 6. Quanto anda cada vez?" }
 ];
 
@@ -385,13 +390,20 @@ function erra(b){
    3) revela e explica (ver esperaERevela).                                */
 function degrau(){
   var R=RODADAS[rodada];
-  if(errosSeg===1) mostraDica(R.d1);
-  else if(errosSeg===2) mostraDica("Olhe o peda&#231;o aceso no come&#231;o da fila: <b>"+R.grupoTxt+"</b>. Depois dele, tudo recome&#231;a igual.");
-  else mostraDica("Deixa comigo: eu ponho a pr&#243;xima e te mostro a regra.");
+  if(errosSeg===1){ mostraDica(R.d1); return; }
+  if(errosSeg>=3){ mostraDica("Deixa comigo: eu ponho a pr&#243;xima e te mostro a regra."); return; }
+  /* 2o degrau: apoio concreto. As PALAVRAS mudam com o tipo de padrao — fila
+     que se repete fala de "grupo", fila que cresce fala de "salto". */
+  if(R.salto&&passo>=2)
+    mostraDica("Olhe as duas casas acesas: de <b>"+R.seq[passo-2]+"</b> para <b>"+R.seq[passo-1]+
+               "</b> a fila andou <b>"+R.salto+"</b>. Ela anda sempre o mesmo tanto.");
+  else
+    mostraDica("Olhe o peda&#231;o aceso no come&#231;o da fila: <b>"+R.grupoTxt+"</b>. Depois dele, tudo recome&#231;a igual.");
 }
 function acendeGrupo(){
-  var R=RODADAS[rodada], i, ate=R.grupo?R.grupo:R.mostra;
-  for(i=0;i<ate&&i<casas.length;i++)
+  var R=RODADAS[rodada], i, de=0, ate=R.grupo?R.grupo:R.mostra;
+  if(R.salto){ de=Math.max(0,passo-2); ate=passo; }
+  for(i=de;i<ate&&i<casas.length;i++)
     if(temClasse(casas[i],"pdfeito")) casas[i].className="pdcx pdfeito pdgrp";
 }
 function apagaGrupo(){
@@ -453,12 +465,11 @@ function fimDaPeca(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","PE&#199;A FECHADA"));
   c.appendChild(el("div","medal",""));
-  c.appendChild(el("div","balao","Voc&#234; continuou <b>4 padr&#245;es</b> e descobriu a regra de cada um."));
-  var u=el("ul","pdlista",""), i;
-  var regras=descobertas.length?descobertas:regrasTodas();
-  for(i=0;i<regras.length;i++) u.appendChild(el("li","pditem",regras[i]));
-  c.appendChild(u);
-  c.appendChild(el("div","pdregra","E fica a pergunta: e se o grupo tivesse <b>quatro</b> pe&#231;as? Tente inventar uma fila assim."));
+  /* FECHO COM GANCHO: a peca termina deixando uma pergunta aberta. */
+  c.appendChild(el("div","balao","Voc&#234; continuou <b>4 padr&#245;es</b>. E se um grupo tivesse <b>quatro</b> pe&#231;as? Tente inventar uma fila assim."));
+  var i, regras=descobertas.length?descobertas:regrasTodas(), txt="As regras que voc&#234; descobriu:";
+  for(i=0;i<regras.length;i++) txt+="<br>&#8226; <b>"+regras[i]+"</b>";
+  c.appendChild(el("div","pdregra",txt));
   var b=el("button","btn","Jogar de novo");
   b.onclick=recomeca;
   c.appendChild(b);
