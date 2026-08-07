@@ -4779,3 +4779,37 @@ O aviso era de **05/08** e tinha ficado velho.
   que a cobra (`_qa/cartela.py`) só nasceu em **05/08**, depois de a cartografia
   sair com **45 imagens uma a uma (~R$9 onde ~R$1,60 bastaria)**. Regra escrita
   não é regra cumprida — é a mesma lição de sempre, agora custando dinheiro.
+
+---
+
+## 🔍 A LIÇÃO QUE APARECEU QUATRO VEZES NUM DIA: **existir não é medir**
+
+Não é uma lição sobre código. É sobre **como eu me engano** — e por isso vale
+estar escrita num lugar só, com os quatro casos, porque ela vai voltar.
+
+O padrão é sempre o mesmo: **uma coisa que deveria conferir algo produz um
+resultado com cara de sucesso sem ter conferido nada.** E como o resultado tem
+cara de sucesso, eu sigo em frente — que é o pior desfecho possível, pior do que
+uma falha barulhenta.
+
+| onde apareceu | o que "parecia" | o que era |
+|---|---|---|
+| **três portões da banca** | `ok:` | *"0 alvo(s) conferido(s)"*, *"0 fase(s)"*, *"0 dica(s)"* — não olharam nada |
+| **a pesquisa do EdiLim** | arquivo salvo, 1,8 KB, com título | cinco páginas de Scribd dizendo "Client Challenge" |
+| **a peça dentro da fase** | a fase abre e joga | rodando com o conteúdo de EXEMPLO, não com o da atividade |
+| **o `falas.json`** | montador rodou, arquivo escrito | tinha apagado as 61 falas colhidas jogando |
+
+**A regra que fica, e que já virou código nos quatro lugares:**
+
+> Quem confere tem que dizer **quantos** conferiu. Zero conferido é
+> **"rodou cego"**, nunca "passou". E quem gera um arquivo tem que dizer se o
+> arquivo tem conteúdo — porque existir não é medir.
+
+Onde isso vive hoje:
+- `_qa/auditar.sh` → a lista de **PORTÕES QUE RODARAM CEGOS**, ao lado do veredito;
+- `_qa/dinamicas.py` → *"NENHUMA mecânica reconhecida — este portão NÃO mediu nada"*;
+- `.github/workflows/pesquisar.yml` → reconhece muro anti-robô e grita quando
+  nenhuma página deu texto;
+- `_padrao/ESQUELETO/montar.py` → preserva o que colheu e avisa gaveta meia-cheia;
+- `_padrao/ESQUELETO/provar_conteudo.js` → abre as 32 fases e confere que o que
+  está na tela é o conteúdo **daquela** fase.
