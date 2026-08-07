@@ -351,12 +351,45 @@ function encaixou(){
 }
 /* NAO EXISTE ESTADO DE ERRO nesta mecanica: sao quatro posicoes e a peca
    encaixa quando encaixa. O andaime so aparece se a crianca estiver rodando
-   sem parar — e ai ele diz PARA QUE LADO tocar. */
+   sem parar — e ai ele CRESCE em tres degraus, como em toda peca da casa.
+   ⚠️ DEFEITO MEDIDO (ago/2026): antes havia UM degrau so, e ele se repetia
+   para sempre — quem nao entendia da primeira vez lia a mesma frase quarenta
+   vezes. Rodar sem parar e exatamente o sinal de que a crianca NAO esta
+   planejando o giro; a ajuda tem de mudar de tamanho, nao de lado.
+   As voltas contam a partir da 4a: quatro giros ja deram a volta inteira, ou
+   seja, ela passou pela posicao certa e nao percebeu.                     */
+function ladoQueServe(){ return (norma(ALVOS[rodada]-norma(ang))<=180)?1:-1; }
 function ajuda(n){
   if(n<4) return;
-  var falta=norma(ALVOS[rodada]-norma(ang));
-  mostraDica("Olhe a pe&#231;a <b>laranja</b> do molde e a da sua figura. "+
-             "Toque em <b>GIRAR PARA A "+((falta<=180)?"DIREITA":"ESQUERDA")+"</b>.");
+  var dir=ladoQueServe(), falta=norma(ALVOS[rodada]-norma(ang));
+  var quartos=Math.round((dir>0?falta:360-falta)/90);
+  var nome=(dir>0)?"DIREITA":"ESQUERDA";
+  if(n<8){                       /* 1o degrau: para que lado olhar */
+    mostraDica("Olhe a pe&#231;a <b>laranja</b> do molde e a da sua figura. "+
+               "Toque em <b>GIRAR PARA A "+nome+"</b>.");
+    return;
+  }
+  if(n<12){                      /* 2o degrau: apoio concreto — quantos giros */
+    acendeSeta(dir);
+    mostraDica("Falta <b>"+quartos+"</b> quarto(s) de volta para a <b>"+nome+
+               "</b>. O bot&#227;o certo est&#225; <b>piscando</b>.");
+    return;
+  }
+  /* 3o degrau: revela e SEGUE. A peca gira sozinha ate o molde — a crianca ve
+     o movimento acontecer, que e o que ela nao estava conseguindo imaginar. */
+  acendeSeta(0);
+  mostraDica("Eu giro com voc&#234;: olhe a pe&#231;a <b>laranja</b> indo parar em cima "+
+             "da laranja do molde.");
+  ang=ALVOS[rodada];
+  poeAngulo(elGira,ang);
+  elRot.innerHTML="A SUA PE&#199;A ("+norma(ang)+"&#176;)";
+  marcaQualServe();
+  encaixou();
+}
+function acendeSeta(dir){
+  if(!elDir||!elEsq) return;
+  elDir.className=(dir>0)?"seta pisca":"seta";
+  elEsq.className=(dir<0)?"seta pisca":"seta";
 }
 /* data-qa: o botao que aproxima do molde fica com "1" — e so para o
    auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho. */
