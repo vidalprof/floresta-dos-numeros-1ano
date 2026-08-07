@@ -427,8 +427,23 @@ function ajuda(n){
     acendeCerta();
   }else{
     mostraDica("Era esta! Eu coloco esta e voc&#234; segue.");
-    revela();
+    acendeCerta();
+    esperaERevela();
   }
+}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): no 3º degrau a dica sumia no MESMO
+   instante em que aparecia — `revela()` chama `encaixa()`, que chama
+   `apagaDica()`. O pedaço pulava sozinho para a vaga e a criança não lia
+   explicação nenhuma. Agora o revelar ESPERA a dica ser lida (e a vaga fica
+   piscando durante a espera). O guarda da peça existe porque ela pode
+   encaixar sozinha nesse meio-tempo. */
+function esperaERevela(){
+  var p=escolhida||primeiraSolta();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(!p||p.className.indexOf("usada")>=0) return;
+    revela(p);
+  },1000);
 }
 function acendeCerta(){
   var p=escolhida||primeiraSolta(), i;
@@ -439,11 +454,14 @@ function acendeCerta(){
     if(vagas[i].li===p.li&&vagas[i].co===p.co&&vagas[i].className.indexOf("cheia")<0)
       vagas[i].className="qcvaga pisca";
 }
-function revela(){
-  var p=escolhida||primeiraSolta(), i;
-  if(!p) return;
+function revela(peca){
+  var p=peca||escolhida||primeiraSolta(), i;
+  if(!p||p.className.indexOf("usada")>=0) return;
   for(i=0;i<vagas.length;i++)
-    if(vagas[i].li===p.li&&vagas[i].co===p.co){ encaixa(p,vagas[i]); return; }
+    if(vagas[i].li===p.li&&vagas[i].co===p.co){
+      if(vagas[i].className.indexOf("cheia")>=0) return;
+      encaixa(p,vagas[i]); return;
+    }
 }
 function primeiraSolta(){
   var i;

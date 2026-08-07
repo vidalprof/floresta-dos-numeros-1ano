@@ -494,7 +494,7 @@ function ajuda(n){
     a=elOpts.getElementsByClassName("opt");
     for(i=0;i<a.length;i++){
       if(a[i].getAttribute("data-qa")==="1"){ a[i].className="opt ok"; }
-      else { a[i].className="opt no"; a[i].onclick=null; }
+      else { a[i].className="opt no"; marcaFora(a[i]); a[i].onclick=null; }
     }
   }
 }

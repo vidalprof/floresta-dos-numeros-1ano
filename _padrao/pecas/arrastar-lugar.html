@@ -420,7 +420,21 @@ function erra(b){
   destreme(b);
   mostraDica(DICAS[Math.min(errosSeg,DICAS.length)-1]);
   if(errosSeg===2) piscaCerta(b);
-  if(errosSeg>=3) revela(b);
+  if(errosSeg>=3){ piscaCerta(b); esperaERevela(b); }
+}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): no 3º degrau a dica sumia no MESMO
+   instante em que aparecia — `revela()` chama `acerta()`, que chama
+   `apagaDica()`. A peça pulava sozinha para o lugar e a criança não lia
+   explicação nenhuma. Agora o revelar ESPERA a dica ser lida (e o lugar
+   certo fica aceso durante a espera). Os guardas de geração e de peça já
+   posta existem porque a criança pode resolver sozinha nesse meio-tempo. */
+function esperaERevela(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!b||temClasse(b,"usada")) return;
+    revela(b);
+  },1000);
 }
 /* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
    geracao ele mexeria numa tela que ja saiu. */

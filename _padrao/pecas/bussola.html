@@ -429,8 +429,22 @@ function ajuda(n){
   }else{
     mostraDica("&#201; para c&#225;: <b>"+alvoDir+"</b>, "+REF[alvoDir]+". Vamos juntos.");
     piscaRosa(alvoDir);
-    revela();
+    esperaERevela();
   }
+}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): no 3º degrau a dica sumia no MESMO
+   instante em que aparecia — `revela()` chama `acerta()`, que chama
+   `apagaDica()`. A resposta acendia sozinha e a criança não lia explicação
+   nenhuma. Agora o revelar ESPERA a dica ser lida. Os guardas (`rodada`,
+   `travado`, a tela ainda no ar) existem porque a criança pode acertar
+   sozinha durante essa espera. */
+function esperaERevela(){
+  var r=rodada;
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(rodada!==r||travado) return;
+    revela();
+  },1100);
 }
 function revela(){
   var i;
