@@ -301,6 +301,56 @@ MEC["%(nome)s"] = function(f, cen, fim){
 
 
 CSS_PONTE = u'''
+/* ============================================================
+   ⭐⭐ O JEITO DO BROTO — o molde visual da casa, para as 76 pecas.
+
+   Ordem do Marcos (ago/2026), depois de abrir a Padaria: *"quero atividade
+   bonita tipo app como o broto, o visual tem que ser mais caprichado"* e
+   *"a atividade tem que ser nos moldes do que a gente vinha fazendo por
+   ultimo, com o molde do broto"*.
+
+   ⚠️ O QUE EU TINHA ERRADO: extrai do Broto a MOLDURA (capa, cracha, barra,
+   banner, boletim) e deixei as FASES com o visual de cada peca, que nasceu na
+   bancada — cartao branco chapado, borda fina, tudo encostado a esquerda. Por
+   fora era o Broto; por dentro, nao. Todos os defeitos visuais que ele apontou
+   numa noite (nome fora do quadro, letra pela metade, quadrado desalinhado,
+   silaba sem cor) sao ESTE unico problema.
+
+   Os valores abaixo NAO foram inventados: sao os do proprio `_jardim/index.html`
+   — a mesma paleta, o mesmo raio, a mesma sombra, e a assinatura da casa, que e
+   a BORDA DE BAIXO MAIS GROSSA (5px). E ela que da o ar de app, de peca que da
+   para apertar.
+
+   Especificidade: as regras da peca entram como `.mec-<nome> .opt` (0,2,0).
+   Estas usam tres classes (0,3,0) de proposito — precisam ganhar, e sem
+   `!important`, que seria pior de depurar.
+   ============================================================ */
+.centro .pecabox .opt,.centro .pecabox .pc,.centro .pecabox .ficha,.centro .pecabox .cx{
+  background:rgba(255,253,246,.96);border:2px solid #e6dcc6;border-bottom-width:5px;
+  border-radius:18px;color:#3a3020;font-weight:600;
+  -webkit-box-shadow:0 5px 12px rgba(30,50,20,.16);box-shadow:0 5px 12px rgba(30,50,20,.16)}
+.centro .pecabox .opt.ok,.centro .pecabox .pc.ok{border-color:#5bbf3a;background:#eafce0}
+.centro .pecabox .opt.no{border-color:#ff7a6b;background:#fff0ee}
+.centro .pecabox .balao{background:rgba(255,253,246,.95);border:0;border-radius:22px;
+  padding:13px 18px;font-size:17px;font-weight:600;line-height:1.35;
+  -webkit-box-shadow:0 6px 18px rgba(30,50,20,.22);box-shadow:0 6px 18px rgba(30,50,20,.22)}
+.centro .pecabox .selo{background:#7d3fe0;color:#fff;font-size:13px;font-weight:700;
+  padding:5px 12px;border-radius:999px}
+.centro .pecabox .zap{width:30px;height:30px;border-radius:50%;background:rgba(58,48,32,.09);
+  border:0;opacity:.62;padding:0}
+.centro .pecabox .hint{color:#fffdf6;background:rgba(58,48,32,.55);border-radius:999px;
+  padding:6px 14px;display:inline-block;font-size:14px}
+
+/* ⭐ O MEDALHAO: no Broto a figura da rodada e GRANDE, redonda e centrada — a
+   arte e a estrela da tela, nao um selinho no canto do cartao. */
+.centro .pecabox .medalhao{width:168px;height:168px;margin:12px auto 4px;border-radius:50%;
+  background:rgba(255,253,246,.97);border:4px solid rgba(255,255,255,.75);padding:14px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-shadow:0 8px 22px rgba(30,50,20,.24);box-shadow:0 8px 22px rgba(30,50,20,.24)}
+.centro .pecabox .medalhao img{width:100%;height:100%;object-fit:contain;display:block}
+@media (max-height:620px){ .centro .pecabox .medalhao{width:124px;height:124px;padding:10px} }
+
 /* ==== O QUE A PONTE PRECISA (vale para todas as mecanicas) ==== */
 /* a barra de DENTRO da fase (quantas palavras achou, que rodada e esta) — a de
    cima, do motor, e a da atividade inteira. Duas informacoes diferentes, entao

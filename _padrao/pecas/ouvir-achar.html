@@ -226,21 +226,25 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    O molde agora: cartao centrado e largo, com MOLDURA propria em volta da
    figura (fundo creme, borda suave), a figura GRANDE dentro dela, e o nome
    LOGO ABAIXO, dentro do cartao. O alto-falante fica a direita, no meio. */
-.opt.fig{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
-  width:100%;max-width:430px;margin:7px auto;padding:7px 10px;text-align:left;min-height:0}
-.opt.fig .moldura{-webkit-box-flex:0;flex:0 0 auto;width:72px;height:72px;border-radius:16px;
-  background:#fff8e8;border:2px solid #e7dcc4;padding:6px;
+/* ⭐ NO JEITO DO BROTO: cartao quadrado, figura GRANDE em cima e o nome
+   EMBAIXO, dentro do cartao — nunca pendurado para fora. Dois por linha. */
+.opts{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:10px;max-width:412px;margin:12px auto 0}
+.opt.fig{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px;
+  text-align:center;min-height:0}
+.opt.fig .moldura{width:104px;height:104px;margin:0 auto;border-radius:50%;
+  background:#fff8e8;border:3px solid rgba(255,255,255,.8);padding:8px;
   display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:center;justify-content:center;overflow:hidden}
 .opt.fig .des{position:relative;width:100%;height:100%;margin:0}
 .opt.fig .des img{width:100%;height:100%;object-fit:contain;display:block}
-.opt.fig .linha{-webkit-box-flex:1;flex:1 1 auto;margin:0 0 0 14px;white-space:normal;
+.opt.fig .linha{margin:8px 0 0;white-space:normal;
   display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
-  -webkit-box-pack:justify;justify-content:space-between}
-.opt.fig .nom{display:block;max-width:none;font-size:20px;line-height:1.15;overflow:visible}
+  -webkit-box-pack:center;justify-content:center}
+.opt.fig .nom{display:inline-block;max-width:none;font-size:19px;line-height:1.15;overflow:visible}
 .opt.fig .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}
 @media (max-width:360px){
-  .opt.fig .moldura{width:62px;height:62px}
+  .opt.fig .moldura{width:86px;height:86px}
   .opt.fig .nom{font-size:18px}
 }
 /* janela baixa (o monitor da escola, 1024x420): encolhe a moldura, nunca some
@@ -249,8 +253,8 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    baixo. Resposta que a crianca nao alcanca e resposta que nao existe. */
 .opts{max-height:none}
 @media (max-height:560px){
-  .opts{max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .opt.fig .moldura{width:56px;height:56px}
+  .opts{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .opt.fig .moldura{width:74px;height:74px}
   .opt.fig{margin:5px auto;padding:5px 9px}
   .opt.fig .nom{font-size:17px}
 }
@@ -505,7 +509,7 @@ function cartao(k){
   o.className="opt fig";
   o.appendChild(el("div","ini",letraDe(k)));
   /* ⭐ a MOLDURA: e ela que da o acabamento e impede a figura de vazar */
-  var mo=el("div","moldura","");
+  var mo=el("div","moldura medalhao","");
   mo.appendChild(desenho(k));
   o.appendChild(mo);
   var lin=el("div","linha","");
