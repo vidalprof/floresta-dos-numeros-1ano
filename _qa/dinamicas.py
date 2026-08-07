@@ -149,9 +149,51 @@ def main():
     # ---------------------------------------------------- ESCOLHER / QUIZ
     if re.search(r'el\("div","opt"|"opt"', js):
         usa.append("escolher")
+        # ⚠️ TERCEIRA VEZ QUE ESTE DEFEITO APARECE (ago/2026) — por isso virou
+        #    REGRA MEDIDA, nao licao escrita. Com 2 distratores a crianca elimina
+        #    tudo antes do 3o erro: o degrau REVELAR nunca acontece (codigo morto)
+        #    e sobra uma tela com uma opcao so, onde o auditor fica PRESO.
+        for mm in re.finditer(r'alts?\s*=\s*\[(.{0,600}?)\]\s*;', js, re.S):
+            corpo = mm.group(1)
+            erradas = len(re.findall(r'false', corpo))
+            if 0 < erradas < 3 and corpo.count("[") >= 2:
+                avisos.append(u"escolher: uma rodada tem so %d opcao(oes) ERRADA(S). "
+                              u"Com menos de 3, a crianca elimina tudo antes do 3o "
+                              u"erro e o degrau 'revelar' vira codigo morto." % erradas)
+                break
         if not re.search(r'baguncar\(|embaralh|shuffle', js):
             ruins.append(u"escolher: as opcoes nao sao EMBARALHADAS. Na Fabrica de Estrelas a "
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
+
+    # ---------------------------------------------------- LABIRINTO
+    if re.search(r'labirint', css + js, re.I) or re.search(r'\.seta\b', css) and re.search(r'onkeydown', js):
+        usa.append("labirinto")
+        if "onkeydown" not in js and 'addEventListener("keydown"' not in js:
+            ruins.append(u"labirinto: so ha botao na tela. AS DUAS PORTAS — no PC da "
+                         u"escola a crianca vai usar as SETAS DO TECLADO.")
+        if re.search(r'vida|game ?over|morreu|perdeu', js, re.I):
+            ruins.append(u"labirinto: ha vida/derrota. Encostar no inimigo NAO e "
+                         u"castigo — volta ao comeco do trecho e segue.")
+        if not re.search(r'setAttribute\("data-qa"', js):
+            avisos.append(u"labirinto: nao publica o proximo passo em data-qa — o "
+                          u"auditor-jogador nao consegue atravessar e dara 'PRESO'.")
+
+    # ---------------------------------------------------- PINTAR / LIVRO DE COLORIR
+    if re.search(r'\.tcor\b|\.tinta\b|\.balde\b|paleta', css):
+        usa.append("colorir")
+        if not re.search(r'[Rr]ecome|[Ll]impar|[Aa]pagar', js):
+            avisos.append(u"colorir: nao achei o RECOMECAR. Criança que se arrepende "
+                          u"precisa poder voltar sem perder a vontade.")
+        if re.search(r'sErro\(', js):
+            ruins.append(u"colorir: ha som de tropeco numa peca de CRIACAO. Aqui nao "
+                         u"existe certo e errado — e desenho dela.")
+
+    # ---------------------------------------------------- LIGAR PONTOS
+    if re.search(r'ligar.?pontos|\.pt\b', css) and re.search(r'proximo|ordem', js, re.I):
+        usa.append("ligar pontos")
+        if re.search(r'sErro\(', js):
+            avisos.append(u"ligar pontos: tocar no ponto errado nao deve punir — so "
+                          u"nao liga.")
 
     # ---------------------------------------------------- PINTAR / MARCA-TEXTO
     # ⚠️ BURACO ACHADO PELO PROPRIO PROFISSIONAL QUE MONTOU A PECA (ago/2026):
