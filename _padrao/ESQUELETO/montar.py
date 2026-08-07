@@ -167,8 +167,70 @@ def falas_de(c):
             nome = it.get("n") if isinstance(it, dict) else it
             if nome:
                 poe("op_" + chave_voz(texto_limpo(nome)), nome)
+        # ...e de TUDO o que a mecanica mostra a partir do `dados` dela
+        if f.get("dados") is not None:
+            falas_dos_dados(f["dados"], poe)
     poe(pre + "_fim", c.get("fim") or u"Você conseguiu!")
     return out
+
+
+# chaves cujo valor NAO e texto para a crianca (sao codigo: identificador,
+# imagem, cor, coordenada). Sem esta lista, o montador mandaria gravar "p0".
+CHAVES_MUDAS = set("""k id img ic cor classe cls tipo mec r c x y w h lin col
+    pLin pCol lado dir face src href fundo forma icone""".split())
+
+
+def eh_fala(txt):
+    u"""isto e frase para a crianca ouvir, ou e codigo?"""
+    t = (txt or "").strip()
+    if len(t) < 3:
+        return False
+    baixo = t.lower()
+    for ruim in ("<svg", "xmlns", "data:", "url(", "http", "#fff", "rgba(",
+                 "translate", "polygon", "viewbox"):
+        if ruim in baixo:
+            return False
+    if t.startswith("#") or t.startswith("."):
+        return False
+    letras = sum(1 for ch in t if ch.isalpha())
+    if letras < 2:
+        return False
+    # identificador solto ("raiz", "p0", "gav1"): sem espaco, tudo minusculo e
+    # curto. Palavra que a crianca le vem em CAIXA ou com espaco.
+    if " " not in t and t == baixo and len(t) <= 6:
+        return False
+    return True
+
+
+def falas_dos_dados(dados, poe):
+    u"""⭐ O ALTO-FALANTE DE TUDO O QUE A PECA MOSTRA.
+
+    O motor ja tem um observador que, a cada mudanca na tela, poe o botaozinho
+    de voz em toda resposta cujo TEXTO esteja no `VOZOK` (a conta e o sha do
+    proprio texto). So que o `VOZOK` nascia VAZIO nas atividades montadas: as
+    respostas moram dentro do `dados` da fase, e ninguem tinha mandado gravar.
+
+    Resultado medido pela banca: *"a atividade tem respostas para a crianca
+    TOCAR, mas o VOZOK esta VAZIO — quem ainda nao le escolhe pelo desenho, e a
+    atividade vira loteria"*. E o Marcos ja tinha cobrado isso com todas as
+    letras: *"o alto-falante nas respostas tambem, para ajudar os alunos que
+    nao sabem ler"*.
+
+    Aqui o montador desce o `dados` inteiro e manda gravar CADA frase que a
+    crianca ve — pergunta de rodada, resposta, dica, pista. Nada por mecanica:
+    vale para as 74 de uma vez, hoje e nas que vierem."""
+    if isinstance(dados, dict):
+        for chave, val in dados.items():
+            if chave in CHAVES_MUDAS:
+                continue
+            falas_dos_dados(val, poe)
+    elif isinstance(dados, list):
+        for x in dados:
+            falas_dos_dados(x, poe)
+    elif isinstance(dados, str):
+        t = texto_limpo(dados)
+        if eh_fala(t):
+            poe("op_" + chave_voz(t), t)
 
 
 def chave_voz(s):

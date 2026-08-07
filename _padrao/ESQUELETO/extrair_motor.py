@@ -111,6 +111,16 @@ TROCAS = [
      r' else \{ telaCapa\(\); \}', '/* o boot mudou de lugar: ver inicia() */'),
 ]
 
+# ⚠️ A PARTIDA VAI PARA O FIM DA FILA, e isto NAO e detalhe: as pecas e o
+#    conteudo (FASES, ID, IMGS) sao escritos pelo montador DEPOIS do condutor.
+#    Chamando `inicia()` direto, ele rodava com `FASES` ainda vazia — a capa
+#    abria bonita, mas o menu do professor (senha 1275@) nascia sem nenhuma
+#    fase, o boletim do fim sem nenhum objetivo e a pre-carga sem nenhuma
+#    figura. Nada disso da erro, e o auditor-jogador nao ve (ele nunca abre o
+#    menu do professor). O `setTimeout(...,0)` espera o arquivo inteiro ser
+#    lido — e funciona tanto na atividade montada quanto no motor sozinho.
+PARTIDA = u"\nsetTimeout(inicia, 0);\n"
+
 # ⚠️ O `ID` PRECISA EXISTIR ANTES DO BOOT: `carregaEstado()` e `var perfil` rodam
 #    no meio do motor, muito antes do CONDUTOR (que e acrescentado no fim). Se o
 #    `ID` so nascesse la, a atividade morria na primeira linha com "ID is not
@@ -347,7 +357,7 @@ def main():
         novo, n = re.subn(alvo, troco.replace("\\", "\\\\"), novo)
         if not n and not re.search(alvo, css_orig):
             nao_pegou.append(alvo)
-    novo = CABECA + novo + "\n" + CONDUTOR + "\ninicia();\n"
+    novo = CABECA + novo + "\n" + CONDUTOR + PARTIDA
 
     # ⭐ A CONFERENCIA — o extrator NAO escreve um motor que ainda carregue a
     #    marca do Broto. Sem isto, cada marca esquecida aqui viraria "resto de

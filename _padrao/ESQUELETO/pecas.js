@@ -1,5 +1,43 @@
 /* GERADO por integrar.py — nao editar a mao */
 
+/* ==== A VOZ DA RODADA ====
+   ⭐ O pilar SONORO, medido pela banca: *"16 fase(s) MUDA(S), sem nenhuma
+   narracao"* e *"16 perguntas que mudam na tela sem mudar a voz — quem nao le
+   aperta o alto-falante e ouve outra coisa"*.
+
+   Por que acontecia: o motor narra o ENUNCIADO DA FASE (o do conteudo.json).
+   Mas a peca troca a pergunta DENTRO da fase, a cada rodada, e essa troca o
+   motor nao via. A crianca de 2o ano ouvia a instrucao da 1a rodada e, da 2a
+   em diante, ficava sem instrucao nenhuma. E o botao "Ouvir de novo" repetia a
+   fala da fase, nao a pergunta que estava na tela — pior que silencio.
+
+   O conserto nao e por mecanica (seriam 74): e um olheiro no balao. Toda vez
+   que o texto do balao de dentro da fase muda, se existir voz gravada para
+   AQUELE texto (a conta e o sha do proprio texto, a mesma do alto-falante das
+   respostas), ele fala. Como o `falas.json` sai do proprio `dados`, a voz e o
+   texto nao tem COMO divergir.                                              */
+(function(){
+  var ultimo = "";
+  function olha(){
+    var box = document.getElementsByClassName("pecabox")[0];
+    if(!box) { ultimo = ""; return; }
+    var bs = box.getElementsByClassName("balao");
+    if(!bs.length) return;
+    var b = bs[0], txt = (b.textContent || "").replace(/\s+/g, " ").replace(/^ | $/g, "");
+    if(!txt || txt === ultimo) return;
+    ultimo = txt;
+    if(typeof temVoz !== "function") return;
+    var k = temVoz(txt);
+    /* sem voz gravada nao inventa nada: ficar calado e melhor que falar
+       outra coisa (foi esse o defeito que o Marcos cobrou tres vezes). */
+    if(k && typeof falaDaTela === "function") falaDaTela(k);
+  }
+  if(window.MutationObserver){
+    var alvo = document.getElementById("app");
+    if(alvo) new MutationObserver(function(){ setTimeout(olha, 70); })
+      .observe(alvo, {childList:true, subtree:true, characterData:true});
+  }
+})();
 /* ==== FERRAMENTAS QUE AS PECAS USAM E O MOTOR NAO TINHA ====
    ⚠️ LICAO PAGA (achada pelo auditor-jogador, na 3a fase): o integrador so
    trazia o SEGUNDO <script> da peca (a mecanica). O PRIMEIRO — o motorzinho do
