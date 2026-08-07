@@ -180,6 +180,7 @@ var RETAS=[
 ];
 
 var rodR=0;            /* rodada da vez */
+var semMira=0;         /* quantas vezes ela cravou sem ter escolhido o lugar */
 var apoio=0;           /* quantos degraus de andaime a reta esta mostrando */
 var fase="mirar";      /* mirar -> resultado */
 var pos=null;          /* onde a mira esta, em passos (numero continuo) */
@@ -198,7 +199,7 @@ function sPerto(){ nota(659.25,.10,.15,"triangle",0); nota(880,.13,.14,"triangle
 
 function pecaReta(){
   limpa(); apagaDica(); ger++;
-  fase="mirar"; pos=null; elMira=null; pegouReta=false; movimentou=false;
+  fase="mirar"; pos=null; elMira=null; pegouReta=false; movimentou=false; semMira=0;
   var R=RETAS[rodR], i;
   var t=el("div","tela"); telaA=t;
   setProg(t,Math.round(rodR*100/RETAS.length));
@@ -356,8 +357,27 @@ function teclou(ev){
 function cravar(){
   if(fase!=="mirar"){ sTap(); return; }
   if(pos===null){
+    /* ⚠️ CRAVAR SEM MIRAR (defeito medido ago/2026): antes esta frase se
+       repetia identica para sempre. A crianca que nao percebeu que a RETA e
+       o alvo do dedo apertava o botao dez vezes e lia dez vezes a mesma
+       coisa — a peca nao travava, mas tambem nao ajudava. Agora o aviso
+       cresce e, na terceira, a marca aparece sozinha no meio da reta: dali
+       ela ja consegue arrastar, usar as setas do teclado e cravar. */
     sTap();
-    mostraDica("Primeiro toque na reta para escolher o lugar. Depois crave.");
+    semMira++;
+    if(semMira===1){
+      mostraDica("Primeiro toque na <b>reta</b> para escolher o lugar. Depois crave.");
+      return;
+    }
+    if(semMira===2){
+      mostraDica("O alvo do dedo &#233; a <b>faixa comprida</b> l&#225; de cima, "+
+                 "onde est&#227;o os n&#250;meros. Toque em cima dela.");
+      return;
+    }
+    var R0=RETAS[rodR];
+    poeMira(Math.round(R0.min+(R0.max-R0.min)/2),true);
+    mostraDica("Eu pus a marca no <b>meio</b> da reta para come&#231;ar. "+
+               "Agora arraste (ou use as setas do teclado) at&#233; o lugar certo.");
     return;
   }
   var R=RETAS[rodR], v=Math.round(pos), err=Math.abs(v-R.alvo);

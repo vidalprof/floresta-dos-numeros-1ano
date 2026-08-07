@@ -127,6 +127,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .aviso.pede{background:#8a5a10;color:#fff}
 .marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
        border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:2px}
+/* a opcao que saiu do alcance NAO pode se distinguir so pelo rosa: quem nao
+   enxerga cor tocaria nela para sempre e nada aconteceria. Ganha ETIQUETA em
+   palavras. O tom e marrom escuro sobre o rosa claro do `.opt.no` (contraste
+   medido pelo portao), e o texto e convite, nunca bronca. */
+.fora{display:inline-block;background:#6b4b2a;color:#fff;font-size:12px;font-weight:800;
+      border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:2px}
 /* tela baixa (projetor/janela): o mapa encolhe um pouco; o botao nao. */
 @media (max-height:470px){.mapa{max-width:210px}}
 </style></head>
@@ -434,8 +440,17 @@ function fazOpcao(it){
   return o;
 }
 
+/* etiqueta em PALAVRAS na opção que saiu — o rosa sozinho não conta (regra
+   "nada essencial só na cor"). Idempotente: tocar de novo não empilha etiqueta. */
+function marcaFora(o){
+  if(o.getElementsByClassName("fora").length) return;
+  o.innerHTML=o.innerHTML+'<span class="fora">j&#225; tentamos</span>';
+}
+
 function responde(o,certa){
-  if(o.className.indexOf("no")>=0) return;      /* opção já apagada */
+  /* opção já fora: devolve um toque (nunca silêncio — dedo que toca e não
+     recebe nada faz a criança achar que a tela travou) e não pune. */
+  if(o.className.indexOf("no")>=0){ sTap(); marcaFora(o); return; }
   var f=PERG[qi], g=ger;
   if(certa){
     sCerto();
@@ -455,6 +470,7 @@ function responde(o,certa){
   /* ERRO: não pune. Som grave curto + a opção sai do alcance + andaime CRESCE. */
   sErro();
   o.className="opt no";
+  marcaFora(o);
   o.onclick=null;
   err++;
   ajuda(err);

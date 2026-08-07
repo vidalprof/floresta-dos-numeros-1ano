@@ -282,7 +282,12 @@ function pecaSimulador(){
 
   /* ---- a pergunta que so o experimento responde ---- */
   var box=el("div","opts");
-  var lista=baguncar([3,5,7]);
+  /* TRES distratores, nunca dois (licao 1 do CONTRATO §6): com 3 respostas
+     a crianca elimina as duas erradas e ACERTA POR SOBRA antes do 3o erro —
+     o degrau "revelar" nunca acontecia e ela ainda ficava olhando uma tela
+     de uma opcao so. O 4 entra de proposito: e o vizinho ("quase encostou"),
+     que obriga a olhar a figura em vez de chutar longe. */
+  var lista=baguncar([3,4,5,7]);
   for(i=0;i<lista.length;i++) box.appendChild(fazResposta(lista[i]));
   c.appendChild(box);
   c.appendChild(el("div","hint","Arraste a bolinha, ou use os bot&#245;es &#8722; e +."));
@@ -364,13 +369,30 @@ function responde(o){
     },460);
     return;
   }
+  /* uma resposta ja riscada nao conta erro DE NOVO: a crianca so repetiu o
+     mesmo toque. Repete a dica que ela esta vendo, sem punir duas vezes. */
+  if(o._fora){
+    sTap();
+    mostraDica(DICAS[Math.min(erros,DICAS.length)-1]);
+    return;
+  }
   /* ERRO NAO PUNE: som grave curto, a resposta treme e sai da frente, e o
      andaime CRESCE. Nunca um X vermelho, nunca a palavra "errou". */
-  sErro(); erros++;
+  sErro(); erros++; o._fora=true;
   o.className="opt treme";
   desmarca(o);
-  mostraDica(DICAS[Math.min(erros,DICAS.length)-1]);
-  if(erros>=3) revela();
+  /* A REDE DA LICAO 1 (CONTRATO §6): se as erradas acabarem ANTES do 3o erro,
+     revela na hora — melhor que deixar a tela com uma opcao so. */
+  var acabou=(sobramErradas()===0);
+  mostraDica(DICAS[(erros>=3||acabou)?DICAS.length-1:erros-1]);
+  if(erros>=3||acabou) revela();
+}
+/* quantas respostas erradas a crianca ainda NAO tocou */
+function sobramErradas(){
+  var a=app.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")==="0"&&!a[i]._fora) n++;
+  return n;
 }
 /* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
    geracao ele mexeria numa tela que ja saiu. */

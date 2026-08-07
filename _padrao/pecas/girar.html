@@ -163,6 +163,8 @@ var ALVOS=[90,270,180];                      /* os tres quartos de volta pedidos
 
 var rodada=0, ang=0, travado=false, giros=0, telaAtual=null, barraP=null;
 var elGira=null, elFig=null, elDir=null, elEsq=null, elRot=null;
+/* a pergunta final (quantas pecas?) tem o andaime dela, com os mesmos 3 degraus */
+var errosConta=0, opsConta=[], contaFeita=false;
 /* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
    toque. Sem esta marca de tempo o giro acontecia duas vezes. */
 var ultimoToque=0, girando=false, angIni=0, dAtual=0;
@@ -404,7 +406,7 @@ function marcaQualServe(){
 /* ---------- O CONCEITO POR ULTIMO: a quantidade nao muda ---------- */
 function telaConta(){
   limpa(); document.onkeydown=null; girando=false; travado=false;
-  rodada=0;
+  rodada=0; errosConta=0; opsConta=[]; contaFeita=false;
   var t=el("div","tela"); telaAtual=t; setProg(t,100);
   var c=el("div","centro");
   c.appendChild(el("div","selo","E AGORA?"));
@@ -424,29 +426,58 @@ function telaConta(){
        que é pior que reprovar (o mesmo buraco que a peça `pintar` achou). */
     o=el("div","opt",lista[i]+" pe&#231;as");
     o.className="opt curta";
+    o._v=lista[i];
     o.setAttribute("data-qa",(lista[i]===FORMA.length)?"1":"0");
     o.onclick=(function(v,e){ return function(){ respondeConta(v,e); }; })(lista[i],o);
-    box.appendChild(o);
+    box.appendChild(o); opsConta.push(o);
   }
   c.appendChild(box);
   c.appendChild(el("div","hint","Conte as pe&#231;as da figura girada."));
   t.appendChild(c); app.appendChild(t);
 }
 function respondeConta(v,o){
-  if(v===FORMA.length){
-    o.className="opt curta ok";
-    sCerto();
-    setTimeout(function(){
-      if(!telaAtual||!telaAtual.parentNode) return;
-      mostraBanner("Isso! Girar muda o <b>lado</b>, nunca a <b>quantidade</b>.",telaFimGirar);
-    },420);
-  }else{
-    /* erro nunca vira X vermelho nem a palavra "errou": a opcao so recua e a
-       ajuda cresce — aqui ela manda CONTAR os pontinhos, que estao ali. */
-    o.className="opt curta no";
-    sErro();
+  if(contaFeita){ sTap(); return; }   /* ja fechou: mais um toque nao repete a festa */
+  if(v===FORMA.length){ fechaConta(o); return; }
+  /* erro nunca vira X vermelho nem a palavra "errou": a opcao so recua e a
+     ajuda CRESCE em tres degraus — aqui ela manda CONTAR, depois mostra onde
+     contar, e por fim conta junto. Antes era uma frase so, repetida: quem nao
+     entendia ficava batendo nas tres opcoes ate cansar. */
+  o.className="opt curta no";
+  sErro();
+  errosConta++;
+  if(errosConta===1){
     mostraDica("Conte de novo, tocando com o dedo em cada quadradinho da figura.");
+    return;
   }
+  if(errosConta===2){
+    acendeConta();
+    mostraDica("Conte em voz alta, um quadradinho por vez: <b>1, 2, 3, 4, 5</b>. "+
+               "A resposta certa est&#225; <b>acesa</b>.");
+    return;
+  }
+  mostraDica("Contando junto: s&#227;o <b>"+FORMA.length+"</b> quadradinhos, antes e "+
+             "depois de girar.");
+  acendeConta();
+  fechaConta(certaDaConta());
+}
+function certaDaConta(){
+  var i;
+  for(i=0;i<opsConta.length;i++) if(opsConta[i]._v===FORMA.length) return opsConta[i];
+  return null;
+}
+function acendeConta(){
+  var i;
+  for(i=0;i<opsConta.length;i++)
+    if(opsConta[i]._v===FORMA.length) opsConta[i].className="opt curta ok";
+}
+function fechaConta(o){
+  contaFeita=true;
+  if(o) o.className="opt curta ok";
+  sCerto();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    mostraBanner("Isso! Girar muda o <b>lado</b>, nunca a <b>quantidade</b>.",telaFimGirar);
+  },420);
 }
 function telaFimGirar(){
   limpa(); document.onkeydown=null; girando=false;

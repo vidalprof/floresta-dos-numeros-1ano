@@ -116,6 +116,13 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
 .pc i{display:block;font-size:11px;font-weight:700;font-style:normal;letter-spacing:.3px}
 .pc.usada{visibility:hidden;pointer-events:none}
+/* 2o degrau do andaime da leitura: a barra mais alta ganha um anel e pulsa.
+   Nao e so a cor — o anel e o movimento tambem contam a historia. */
+.gbarra.alta{-webkit-animation:pulsa .9s infinite;animation:pulsa .9s infinite}
+@-webkit-keyframes pulsa{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}
+  50%{box-shadow:0 0 0 5px rgba(255,213,74,.95)}}
+@keyframes pulsa{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}
+  50%{box-shadow:0 0 0 5px rgba(255,213,74,.95)}}
 .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
        background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
        box-shadow:0 6px 0 #c9a52f}
@@ -168,6 +175,8 @@ var DADOS=[
 var TETO=6;
 
 var col=0, valor=0, errosSeg=0, telaAtual=null, barraP=null;
+/* a pergunta final (qual apareceu mais?) tem o andaime dela, com os 3 degraus */
+var errosLer=0, opsLer=[], lerFeita=false;
 var feitos=[], barras=[], colunas=[], elMais=null, elMenos=null;
 var passo=26, altG=0;
 /* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
@@ -312,12 +321,12 @@ document.onmouseup=function(){ if(arrastando) soltaBarra(); };
    degrau inteiro. Nunca se pede precisao de pixel ao dedo de uma crianca —
    e assim a barra tambem nunca fica "quase" na altura certa.              */
 function pegaBarra(y){
-  if(feitos[col]!==undefined) return;
+  if(!emJogo()) return;
   arrastando=true; yIni=y; vIni=valor; moveu=false;
   sTap();
 }
 function moveBarra(y){
-  if(!arrastando) return;
+  if(!arrastando||!emJogo()) return;
   if(!moveu&&Math.abs(y-yIni)>6) moveu=true;
   var v=vIni+Math.round((yIni-y)/passo);
   if(v<0) v=0;
@@ -327,8 +336,9 @@ function moveBarra(y){
 function soltaBarra(){ arrastando=false; moveu=false; }
 /* tocar na coluna na altura desejada: o degrau tocado vira o valor */
 function poeNaAltura(y){
-  if(feitos[col]!==undefined) return;
-  var cl=colunas[col], r=cl.getBoundingClientRect();
+  if(!emJogo()) return;
+  var cl=colunas[col]; if(!cl) return;
+  var r=cl.getBoundingClientRect();
   var v=Math.round((r.bottom-26-y)/passo);
   if(v<0) v=0;
   if(v>TETO) v=TETO;
@@ -352,8 +362,17 @@ function cliqueBotao(d){
   if(Date.now()-ultimoToque<700) return;
   passoBotao(d);
 }
+/* ⚠️ O GUARDA `emJogo()` (defeito medido ago/2026): `col` passa a valer
+   DADOS.length assim que a ultima coluna fecha — e a tela antiga continua na
+   frente enquanto o banner esta aberto, com os botoes e as colunas ainda
+   clicaveis. Um toque no "+" ali dentro caia em `DADOS[3].v` e estourava
+   `TypeError: Cannot read properties of undefined (reading 'v')`, matando o
+   resto do JS da partida. O mesmo vale na tela de LER, onde `col` tambem fica
+   fora da lista e as colunas continuam ligadas. Nenhum portao pegava: so
+   aparece quem toca na tela no meio do banner — que e o que a crianca faz. */
+function emJogo(){ return col<DADOS.length && feitos[col]===undefined; }
 function passoBotao(d){
-  if(feitos[col]!==undefined) return;
+  if(!emJogo()) return;
   var v=valor+d;
   if(v<0) v=0;
   if(v>TETO) v=TETO;
@@ -363,6 +382,7 @@ function passoBotao(d){
 }
 function avisaColuna(i){
   sTap();
+  if(!emJogo()) return;   /* na tela de LER nao ha coluna "da vez" para avisar */
   mostraDica("Agora estamos construindo a barra da <b>"+DADOS[col].n+"</b>. "+
              "A da "+DADOS[i].n+" fica para depois.");
 }
@@ -370,6 +390,7 @@ function avisaColuna(i){
 /* ---------- a regra da fase ---------- */
 function confere(){
   marcaQualServe();
+  if(!emJogo()) return;
   if(valor===DADOS[col].v){ fechaColuna(); return; }
   /* passar da conta NAO pune: so avisa, e o andaime cresce */
   if(valor>DADOS[col].v){
@@ -431,6 +452,7 @@ function marcaQualServe(){
 function telaLer(){
   limpa(); document.onkeydown=null; arrastando=false;
   col=DADOS.length; valor=0; barras=[]; colunas=[];
+  errosLer=0; opsLer=[]; lerFeita=false;
   passo=(window.innerHeight<560)?18:24;
   altG=passo*TETO;
   var i;
@@ -454,27 +476,56 @@ function telaLer(){
     o.className="opt curta";
     o.setAttribute("data-qa",(lista[i]===maior)?"1":"0");
     o.onclick=(function(k,e){ return function(){ respondeLer(k,e); }; })(lista[i],o);
-    box.appendChild(o);
+    box.appendChild(o); opsLer[lista[i]]=o;
   }
   c.appendChild(box);
   c.appendChild(el("div","hint","Olhe qual barra ficou mais alta."));
   t.appendChild(c); app.appendChild(t);
 }
+/* O ANDAIME DA PERGUNTA FINAL — os mesmos tres degraus da construcao.
+   ⚠️ DEFEITO MEDIDO (ago/2026): aqui havia UMA frase so, repetida a cada
+   toque, e nenhum degrau de revelacao. Quem nao sabia ler o grafico ficava
+   batendo nas tres opcoes ate acertar por sorte — o contrario de aprender. */
+function maiorDe(){
+  var i,m=0;
+  for(i=0;i<DADOS.length;i++) if(DADOS[i].v>DADOS[m].v) m=i;
+  return m;
+}
 function respondeLer(k,o){
-  var i,maior=0;
-  for(i=0;i<DADOS.length;i++) if(DADOS[i].v>DADOS[maior].v) maior=i;
-  if(k===maior){
-    o.className="opt curta ok";
-    sCerto();
-    setTimeout(function(){
-      if(!telaAtual||!telaAtual.parentNode) return;
-      mostraBanner("Isso! A barra mais <b>alta</b> &#233; a que apareceu mais vezes.",telaFimGraf);
-    },420);
-  }else{
-    o.className="opt curta no";
-    sErro();
+  if(lerFeita){ sTap(); return; }
+  var maior=maiorDe();
+  if(k===maior){ fechaLer(o); return; }
+  o.className="opt curta no";
+  sErro();
+  errosLer++;
+  if(errosLer===1){
     mostraDica("Compare a <b>altura</b> das barras: qual delas chega mais perto do topo?");
+    return;
   }
+  if(errosLer===2){
+    acendeBarraMaior();
+    mostraDica("Olhe a barra que est&#225; <b>brilhando</b>: ela parou no n&#250;mero <b>"+
+               DADOS[maior].v+"</b>, o maior de todos.");
+    return;
+  }
+  acendeBarraMaior();
+  mostraDica("A mais alta &#233; a da <b>"+DADOS[maior].n+"</b>: <b>"+DADOS[maior].v+
+             "</b>. Barra mais alta = apareceu mais vezes.");
+  fechaLer(opsLer[maior]||null);
+}
+function acendeBarraMaior(){
+  var m=maiorDe(), b=barras[m];
+  if(b&&b.className.indexOf("alta")<0) b.className=b.className+" alta";
+  if(opsLer[m]) opsLer[m].className="opt curta ok";
+}
+function fechaLer(o){
+  lerFeita=true;
+  if(o) o.className="opt curta ok";
+  sCerto();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    mostraBanner("Isso! A barra mais <b>alta</b> &#233; a que apareceu mais vezes.",telaFimGraf);
+  },420);
 }
 function telaFimGraf(){
   limpa(); document.onkeydown=null; arrastando=false;
