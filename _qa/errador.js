@@ -91,6 +91,7 @@ const RECEITA={
      for(var i=0;i<4;i++){ r.value=String(i+1); var ev=document.createEvent('HTMLEvents'); ev.initEvent('input',true,false); r.dispatchEvent(ev); } });
    await p.waitForTimeout(400);
  }
+ let genericaUsada = null;
  console.log('ARQUIVO: '+arq);
  /* ⚠️⚠️ LICAO PAGA (ago/2026), e das que quase estragou a banca inteira: este
     portao so sabe jogar UMA PECA — ele escolhe a receita pelo NOME DO ARQUIVO
@@ -101,11 +102,68 @@ const RECEITA={
     Jardim do Broto, que esta no ar e tem o andaime certo. Se eu o tivesse
     deixado bloquear, ele reprovaria tudo, sempre, por nao saber medir.
     Portao sem receita nao "reprova": ele DIZ que nao sabe. */
+ /* ⭐⭐ RECEITA GENERICA — porque 59 das 65 pecas rodavam CEGAS aqui.
+    Medido (ago/2026): a bancada das pecas dava codigo 0 em 65 pecas, e em 59
+    delas ESTE portao — o do ANDAIME, que e a coisa mais pedagogica que a
+    bancada mede — nao tinha medido NADA, por falta de receita. Codigo 0 com o
+    portao mais importante cego e a "aprovacao vazia" que a casa ja aprendeu a
+    nao aceitar.
+    Escrever 59 receitas a mao seria trabalho de dias e envelheceria. Mas as
+    pecas da casa erram de tres jeitos so, e os tres se reconhecem pelo DOM:
+      · TOCAR a resposta errada  (data-qa="0", ou uma opcao que nao e a certa);
+      · LEVAR a peca para a vaga errada (peca + vaga com data-qa diferente);
+      · LIGAR o par errado.
+    A generica tenta os tres, nesta ordem. Se nenhum casar, ai sim ela diz que
+    nao sabe — e continua sem reprovar, porque portao sem receita nao reprova:
+    ele DIZ que nao sabe. */
  if(typeof RECEITA[nome]!=='function'){
+   /* ⚠️ ESTA funcao roda DENTRO da pagina — nada de `p` aqui. A primeira
+      versao guardava o embrulho (que chama `p.evaluate`) dentro de RECEITA, e
+      o harness o injetava na pagina: "ReferenceError: p is not defined". */
+   const genericaNaPagina = () => {
+     const viva = e => e && e.offsetParent !== null &&
+       e.className.indexOf('ok') < 0 && e.className.indexOf('usada') < 0;
+     /* 1. tocar a resposta ERRADA */
+     const ops = [...document.querySelectorAll('.opt,.oaf,.escolha,.bin,.chip,.cubo,.coisa,.carta')].filter(viva);
+     const marcadas = ops.filter(o => o.getAttribute('data-qa') !== null);
+     if (marcadas.length > 1) {
+       const erradas = marcadas.filter(o => o.getAttribute('data-qa') === '0');
+       const alvo = erradas[0] || marcadas[marcadas.length - 1];
+       alvo.click();
+       return 'tocou a resposta errada "' +
+         (alvo.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 22) + '"';
+     }
+     /* 2. levar a peca para a VAGA errada */
+     const pcs = [...document.querySelectorAll('.pc,.qcpc,.pchip,.peca')].filter(viva);
+     const vgs = [...document.querySelectorAll('.cam,.qcvaga,.vaga,.zona')].filter(viva);
+     if (pcs.length && vgs.length) {
+       const p0 = pcs.find(x => x.className.indexOf('sel') >= 0) || pcs[0];
+       const k = p0.getAttribute('data-qa');
+       const v0 = vgs.find(x => x.getAttribute('data-qa') !== k) || vgs[vgs.length - 1];
+       if (v0 && v0 !== p0) {
+         if (p0.className.indexOf('sel') < 0) p0.click();
+         v0.click();
+         return 'levou a peca para a vaga errada';
+       }
+     }
+     /* 3. ligar o par ERRADO */
+     const ls = [...document.querySelectorAll('.lig,.par')].filter(viva);
+     if (ls.length > 2) {
+       ls[0].click(); ls[ls.length - 1].click();
+       return 'ligou o par errado';
+     }
+     return null;
+   };
+   const provou = await p.evaluate(genericaNaPagina);
+   if (provou !== null) {
+     RECEITA[nome] = genericaNaPagina; genericaUsada = genericaNaPagina;
+     console.log('  (sem receita propria — usando a GENERICA: ' + provou + ')');
+   } else {
    console.log('  ✋ NAO SEI JOGAR "'+nome+'": nao tenho receita para esta peca.');
    console.log('     Este portao e da BANCADA DA PECA (_qa/peca.sh), nao da banca');
    console.log('     da atividade. Receita nova = uma entrada em RECEITA{}.');
    await b.close(); process.exit(2);
+   }
  }
  const dicas=[];
  for(let n=1;n<=3;n++){
@@ -131,6 +189,21 @@ const RECEITA={
    fim=await p.evaluate(()=>!!document.querySelector('.medal'));
  }
  console.log('  chegou na MEDALHA depois de errar: '+(fim?'SIM':'NAO'));
+ /* ⚠️ LICAO PAGA (ago/2026), no mesmo dia em que a generica nasceu: com a
+    receita GENERICA, "nao chegou na medalha" NAO e defeito da peca — e limite
+    do auditor. A generica sabe ERRAR de proposito (e o andaime, que e o que
+    importa aqui, ela mede muito bem), mas nao sabe RESOLVER a peca depois.
+    Medido no `arrastar-sombra`: 3 dicas distintas e crescentes — dica, "a
+    sombra certa esta piscando", "deixa comigo: eu levo esta" — andaime
+    exemplar, e mesmo assim "MEDALHA: NAO", porque o auditor continuou errando.
+    Reprovar por isso seria mandar consertar o que esta certo.
+    Entao: com receita propria, a medalha CONTA; com a generica, ela e
+    INCONCLUSIVA e o veredito sai do andaime, que e o que foi medido de fato. */
+ const usouGenerica = RECEITA[nome] === genericaUsada;
+ if(usouGenerica && !fim){
+   console.log('  (medalha INCONCLUSIVA: a receita generica sabe errar, nao sabe');
+   console.log('   resolver. O veredito sai do ANDAIME, que foi medido de verdade.)');
+ }
  /* o barulho do file:// nao conta: service worker so existe em http(s) */
  const reais=jse.filter(e=>!/ServiceWorker|protocol of the current origin/i.test(e));
  console.log('  ERROS JS: '+(reais.length?reais.join(' | '):'nenhum'));
@@ -142,5 +215,22 @@ const RECEITA={
     andaime da casa: errar tres vezes e AINDA ASSIM conseguir seguir.
     A regra que fica: todo portao novo precisa de um teste que o veja REPROVAR.
     So ver "passou" nao prova nada — pode ser que ele nunca reprove. */
- process.exit((fim && !reais.length) ? 0 : 1);
+ /* o andaime tem que CRESCER: ao menos duas ajudas diferentes em tres erros */
+ const ajudas = new Set(dicas.filter(d => d && d !== '(sem dica)'));
+ /* ⚠️ LICAO PAGA: a generica reprovou o `passo-a-passo` por "1 de 3 dicas" — e a
+    peca TEM andaime de tres degraus, escrito no codigo. O que aconteceu foi que
+    o gesto generico ("levar a peca para a vaga errada") nao conta como ERRO
+    naquela mecanica: o auditor nao errou, entao nao havia ajuda a mostrar.
+    Portao que nao consegue PRODUZIR a condicao que mede nao pode reprovar por
+    nao te-la visto — tem que dizer que nao mediu. */
+ if(usouGenerica && ajudas.size === 0){
+   console.log('  ⚠️ A GENERICA NAO CONSEGUIU ERRAR nesta peca: nenhuma ajuda');
+   console.log('     apareceu. Isso NAO quer dizer que falta andaime — quer dizer');
+   console.log('     que este portao nao mediu. Receita propria em RECEITA{}.');
+   process.exit(2);
+ }
+ const andaimeOk = ajudas.size >= 2;
+ const passou = usouGenerica ? (andaimeOk && !reais.length)
+                             : (fim && !reais.length);
+ process.exit(passou ? 0 : 1);
 })();
