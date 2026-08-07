@@ -228,8 +228,20 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    LOGO ABAIXO, dentro do cartao. O alto-falante fica a direita, no meio. */
 /* ⭐ NO JEITO DO BROTO: cartao quadrado, figura GRANDE em cima e o nome
    EMBAIXO, dentro do cartao — nunca pendurado para fora. Dois por linha. */
-.opts{display:-webkit-box;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
-  -webkit-box-pack:center;justify-content:center;gap:10px;max-width:412px;margin:12px auto 0}
+/* ⚠️ LICAO PAGA (ago/2026): o MOTOR tem `.opts{flex-direction:column}` (vem do
+   Broto, onde as respostas sao uma lista). Esta regra aqui define `display` e
+   `flex-wrap`, mas eu NAO tinha escrito a DIRECAO — e especificidade vale por
+   PROPRIEDADE: a coluna do motor continuava mandando, e os cartoes ficavam
+   empilhados por mais que a largura coubesse dois. Medido no navegador
+   (`display:flex, wrap:wrap, largura 179px, pai 380px`) — deduzir nao resolveu,
+   MEDIR resolveu. Toda regra de flex que disputa com o motor escreve a direcao. */
+.opts{display:-webkit-box;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:start;align-items:flex-start;
+  gap:10px;max-width:412px;margin:12px auto 0}
 .opt.fig{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px;
   text-align:center;min-height:0}
 .opt.fig .moldura{width:104px;height:104px;margin:0 auto;border-radius:50%;
@@ -509,7 +521,7 @@ function cartao(k){
   o.className="opt fig";
   o.appendChild(el("div","ini",letraDe(k)));
   /* ⭐ a MOLDURA: e ela que da o acabamento e impede a figura de vazar */
-  var mo=el("div","moldura medalhao","");
+  var mo=el("div","moldura","");
   mo.appendChild(desenho(k));
   o.appendChild(mo);
   var lin=el("div","linha","");

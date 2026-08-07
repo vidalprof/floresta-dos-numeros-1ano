@@ -19136,7 +19136,7 @@ function cartao(k){
   o.className="opt fig";
   o.appendChild(el("div","ini",letraDe(k)));
   /* ⭐ a MOLDURA: e ela que da o acabamento e impede a figura de vazar */
-  var mo=el("div","moldura medalhao","");
+  var mo=el("div","moldura","");
   mo.appendChild(desenho(k));
   o.appendChild(mo);
   var lin=el("div","linha","");
