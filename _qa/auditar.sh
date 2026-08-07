@@ -136,6 +136,9 @@ wait $PID_CON || FALHOU=1
 cat "$TMPQ/contraste.txt"
 
 echo
+echo "--- 1f) ENCAIXE DA IMAGEM (esticada? cortada? perdida?) -"
+node _qa/encaixe.js "$ARQ" $TELAS || FALHOU=1
+
 echo "--- 1e) IMAGEM QUEBRADA (a figura aparece mesmo?) --"
 wait $PID_IMG || FALHOU=1
 cat "$TMPQ/imagens.txt"

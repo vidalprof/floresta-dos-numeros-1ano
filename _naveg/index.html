@@ -989,8 +989,12 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
    apontar para um lugar que nao era mais aquele. O portao 5 regra 10 pegou. */
 .janela.baixa{position:relative;width:100%;max-width:330px;height:0;padding-bottom:23.1%;
   padding-top:47%;overflow:hidden}
+/* ⚠️ `object-fit:fill` DEFORMA a figura para preencher a caixa — o navio ficava
+   16% esticado, medido. O Marcos: *"sempre verificar a proporcao dela na pagina,
+   se nao fica pequena, se nao fica grande, se ela nao corta"*. `contain` cabe
+   inteira sem deformar; `cover` corta. Aqui tem que ser CONTAIN.            */
 .janela.baixa .jimg{position:absolute;left:0;top:0;width:100%;height:100%;display:block;
-  -o-object-fit:fill;object-fit:fill}
+  -o-object-fit:contain;object-fit:contain}
 @media (max-height:700px){ .janela.baixa{max-width:270px} }
 .bussola.peq{width:196px;height:196px;margin:10px auto 4px}
 .bussola.peq .vento{width:44px;height:44px;line-height:40px;font-size:18px}
@@ -1238,7 +1242,11 @@ h1{font-size:31px;font-weight:700;color:#fff;text-shadow:0 2px 0 var(--tinta-d),
 /* --- as pecas da legenda e os simbolos dentro das cartas de memoria --- */
 .peca .pecaimg{width:44px;height:44px;-o-object-fit:contain;object-fit:contain;display:block}
 .tvaga .pecaimg{width:40px;height:40px;-o-object-fit:contain;object-fit:contain;display:block}
-.memimg{width:56px;height:56px;-o-object-fit:contain;object-fit:contain;display:block;margin:0 auto}
+/* ⚠️ 56px numa carta de 206x138 e 13%% da carta: a figura fica perdida no
+   meio do vazio. A carta e grande justamente para a crianca VER. Medido e
+   corrigido para ocupar a carta de verdade.                              */
+.memimg{width:86px;height:86px;-o-object-fit:contain;object-fit:contain;display:block;margin:0 auto}
+@media (max-height:640px){ .memimg{width:64px;height:64px} }
 .reguario{position:relative;width:100%;max-width:400px;height:auto;margin-top:10px;
   border-radius:16px;overflow:hidden;border:3px solid #fffdf6;background:#cfe6f5;
   -webkit-box-shadow:0 8px 20px rgba(30,25,10,.35);box-shadow:0 8px 20px rgba(30,25,10,.35)}
