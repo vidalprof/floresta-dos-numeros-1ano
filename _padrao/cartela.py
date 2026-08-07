@@ -35,6 +35,7 @@ USO
 """
 import io
 import json
+import re
 import os
 import sys
 
@@ -106,7 +107,19 @@ def plano(caminho):
         g = x.get("grupo", "_solto")
         if g not in familias:
             familias[g] = []; ordem.append(g)
-        familias[g].append({"nome": x["nome"], "desc": (x.get("prompt") or "").strip()})
+        # ⚠️ LICAO PAGA (ago/2026): o embrulho da cartela manda "PLAIN PURE BLACK
+        #    background" (e o preto que vira transparencia no recorte), mas o
+        #    prompt de CADA peca costuma trazer "plain flat WHITE background" —
+        #    porque sozinha ela seria gerada em branco. As duas ordens iam na
+        #    mesma folha, contradizendo uma a outra. A cartela dos crachas
+        #    simplesmente NAO voltou, e eu perdi uma rodada inteira por isso.
+        #    Aqui a instrucao de fundo da peca e removida: quem manda no fundo
+        #    da folha e a folha.
+        _d = (x.get("prompt") or "").strip()
+        _d = re.sub(r",?\s*(plain (flat )?|pure |solid )?"
+                    r"(white|black|transparent|plain)\s+back(ground|drop)[^,.]*", "", _d, flags=re.I)
+        _d = re.sub(r"\s{2,}", " ", _d).replace(" ,", ",").strip()
+        familias[g].append({"nome": x["nome"], "desc": _d})
 
     grupos, nomes = [], []
     for g in ordem:
