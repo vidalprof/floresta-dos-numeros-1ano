@@ -156,7 +156,21 @@ MEC["%(nome)s"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -166,6 +180,20 @@ MEC["%(nome)s"] = function(f, cen, fim){
 %(corpo)s
   })();
 };
+'''
+
+
+CSS_PONTE = u'''
+/* ==== O QUE A PONTE PRECISA (vale para todas as mecanicas) ==== */
+/* a barra de DENTRO da fase (quantas palavras achou, que rodada e esta) — a de
+   cima, do motor, e a da atividade inteira. Duas informacoes diferentes, entao
+   as duas ficam; esta e menorzinha para nao competir com a de cima.          */
+.progpeca{height:6px;margin:2px 0 10px;opacity:.85}
+/* ⚠️ o SELO da peca e o mesmo rotulo que o motor ja poe em cima, vindo do
+   conteudo.json: duas plaquinhas iguais, uma embaixo da outra, so ocupam a tela
+   da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda
+   dentro da fase e nao esta no enunciado.                                    */
+.pecabox .selo{display:none}
 '''
 
 
@@ -361,7 +389,7 @@ def main():
         u"/* GERADO por integrar.py — nao editar a mao */\n" + FERRAMENTAS
         + "".join(js_out))
     io.open(os.path.join(AQUI, "pecas.css"), "w", encoding="utf-8").write(
-        u"/* GERADO por integrar.py — nao editar a mao */\n" + "\n".join(css_out))
+        u"/* GERADO por integrar.py — nao editar a mao */\n" + CSS_PONTE + "\n".join(css_out))
     print(u"  escrito: pecas.js (%d KB) e pecas.css (%d KB)"
           % (sum(len(x) for x in js_out) // 1024,
              sum(len(x) for x in css_out) // 1024))

@@ -55,7 +55,21 @@ MEC["achar-na-cena"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -256,7 +270,21 @@ MEC["andar-ate"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -536,7 +564,21 @@ MEC["arrastar-lugar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -871,7 +913,21 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -1295,7 +1351,21 @@ MEC["autoexplicacao"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -1626,7 +1696,21 @@ MEC["balanca"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -1862,7 +1946,21 @@ MEC["base-dez"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -2233,7 +2331,21 @@ MEC["bingo"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -2643,7 +2755,21 @@ MEC["bussola"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -3000,7 +3126,21 @@ MEC["caca-palavras"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -3300,7 +3440,21 @@ MEC["caixa-dinheiro"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -3532,7 +3686,21 @@ MEC["calendario"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -4138,7 +4306,21 @@ MEC["camadas-mapa"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -4508,7 +4690,21 @@ MEC["circuito"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -4952,7 +5148,21 @@ MEC["classificar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -5194,7 +5404,21 @@ MEC["comparar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -5653,7 +5877,21 @@ MEC["completar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -5814,7 +6052,21 @@ MEC["conserte-o-erro"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -6086,7 +6338,21 @@ MEC["contadores"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -6374,7 +6640,21 @@ MEC["coordenadas"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -6756,7 +7036,21 @@ MEC["criar-desafio"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -7072,7 +7366,21 @@ MEC["cruzadinha"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -7299,7 +7607,21 @@ MEC["decisao"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -7546,7 +7868,21 @@ MEC["digitar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -7742,7 +8078,21 @@ MEC["ditado"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -8021,7 +8371,21 @@ MEC["domino"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -8515,7 +8879,21 @@ MEC["ensinar-mascote"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -8805,7 +9183,21 @@ MEC["escolher"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -8973,7 +9365,21 @@ MEC["escrever-legenda"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -9240,7 +9646,21 @@ MEC["estimar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -9679,7 +10099,21 @@ MEC["experimento-justo"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -9995,7 +10429,21 @@ MEC["filtro"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -10213,7 +10661,21 @@ MEC["forca"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -10425,7 +10887,21 @@ MEC["girar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -10813,7 +11289,21 @@ MEC["grafico"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -11248,7 +11738,21 @@ MEC["intruso"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -11614,7 +12118,21 @@ MEC["investigar-fonte"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -11886,7 +12404,21 @@ MEC["labirinto"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -12270,7 +12802,21 @@ MEC["ligar-pontos"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -12599,7 +13145,21 @@ MEC["ligar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -12897,7 +13457,21 @@ MEC["linha-do-tempo"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -13200,7 +13774,21 @@ MEC["mapa-conceitual"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -13633,7 +14221,21 @@ MEC["medir"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -14323,7 +14925,21 @@ MEC["memoria"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -14525,7 +15141,21 @@ MEC["misterio"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -14861,7 +15491,21 @@ MEC["montar-frase"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -15171,7 +15815,21 @@ MEC["morfemas"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -15515,7 +16173,21 @@ MEC["mudanca-permanencia"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -15903,7 +16575,21 @@ MEC["ordenar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -16149,7 +16835,21 @@ MEC["ouvir-achar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -16518,7 +17218,21 @@ MEC["padrao"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -16843,7 +17557,21 @@ MEC["passo-a-passo"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -17486,7 +18214,21 @@ MEC["pintar-desenho"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -17836,7 +18578,21 @@ MEC["pintar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -17979,7 +18735,21 @@ MEC["prever-observar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -18327,7 +19097,21 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -18693,7 +19477,21 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -18923,7 +19721,21 @@ MEC["relampago"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -19184,7 +19996,21 @@ MEC["relogio"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -19754,7 +20580,21 @@ MEC["repartir"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -20160,7 +21000,21 @@ MEC["reta-numerica"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -20500,7 +21354,21 @@ MEC["rotular"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -20953,7 +21821,21 @@ MEC["saltos-na-fita"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -21209,7 +22091,21 @@ MEC["sete-erros"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -21476,7 +22372,21 @@ MEC["simetria"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -21710,7 +22620,21 @@ MEC["simulador"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -21988,7 +22912,21 @@ MEC["sombra"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -22185,7 +23123,21 @@ MEC["tabela"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -22400,7 +23352,21 @@ MEC["tangram"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -22784,7 +23750,21 @@ MEC["teia-alimentar"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -23266,7 +24246,21 @@ MEC["termometro"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -23506,7 +24500,21 @@ MEC["tracar-caminho"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -23945,7 +24953,21 @@ MEC["tracar-letra"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
@@ -24386,7 +25408,21 @@ MEC["trilha"] = function(f, cen, fim){
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
-    function setProg(){}
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
     function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
