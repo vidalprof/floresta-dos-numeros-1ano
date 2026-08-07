@@ -121,8 +121,19 @@ const RECEITA={
       versao guardava o embrulho (que chama `p.evaluate`) dentro de RECEITA, e
       o harness o injetava na pagina: "ReferenceError: p is not defined". */
    const genericaNaPagina = () => {
-     const viva = e => e && e.offsetParent !== null &&
-       e.className.indexOf('ok') < 0 && e.className.indexOf('usada') < 0;
+     /* ⚠️ LICAO PAGA: a generica clicava SEMPRE na mesma opcao errada. Na peca
+        `completar` a primeira tentativa RISCA aquela opcao, e clicar de novo
+        deixa de ser erro — "(sem dica)". Na `intruso` a peca responde "nesta
+        nos ja tentamos" as tres vezes. As duas reprovavam por andaime que
+        existe. Errar tres vezes e errar em TRES lugares diferentes. */
+     const viva = e => {
+       if (!e || e.offsetParent === null) return false;
+       const c = e.className || '';
+       if (/\bok\b|usada|riscad|tentad|feito|no\b/.test(c)) return false;
+       if (e.disabled) return false;
+       if (/j[aá] tentamos/i.test(e.textContent || '')) return false;
+       return true;
+     };
      /* 1. tocar a resposta ERRADA */
      const ops = [...document.querySelectorAll('.opt,.oaf,.escolha,.bin,.chip,.cubo,.coisa,.carta')].filter(viva);
      const marcadas = ops.filter(o => o.getAttribute('data-qa') !== null);
@@ -165,9 +176,10 @@ const RECEITA={
    await b.close(); process.exit(2);
    }
  }
- const dicas=[];
+ const dicas=[]; let errosReais=0;
  for(let n=1;n<=3;n++){
    const q=await p.evaluate(RECEITA[nome]);
+   if(q!==null&&q!==undefined) errosReais++;
    await p.waitForTimeout(500);
    const d=await p.evaluate(()=>{var e=document.getElementById('dicaP');return e?e.innerText.trim():'(sem dica)';});
    console.log('  erro '+n+' ('+q+') -> '+JSON.stringify(d));
@@ -223,6 +235,18 @@ const RECEITA={
     naquela mecanica: o auditor nao errou, entao nao havia ajuda a mostrar.
     Portao que nao consegue PRODUZIR a condicao que mede nao pode reprovar por
     nao te-la visto — tem que dizer que nao mediu. */
+ /* ⚠️ LICAO PAGA: a peca `completar` RISCA a opcao errada a cada erro — que e
+    o andaime funcionando: ela vai eliminando alternativas. Depois de dois
+    erros so sobra a certa, e a generica fica SEM ONDE ERRAR. O portao contava
+    isso como "andaime que nao cresce" e reprovava a peca justamente por ela
+    ajudar bem. Se a generica nao conseguiu produzir os TRES erros, o teste
+    ficou pela metade — e teste pela metade nao reprova. */
+ if(usouGenerica && errosReais < 3 && ajudas.size < 2){
+   console.log('  ⚠️ so consegui errar '+errosReais+' vez(es): a peca eliminou as');
+   console.log('     alternativas erradas (o andaime dela funciona). Teste pela');
+   console.log('     metade NAO reprova — receita propria mede isto direito.');
+   process.exit(2);
+ }
  if(usouGenerica && ajudas.size === 0){
    console.log('  ⚠️ A GENERICA NAO CONSEGUIU ERRAR nesta peca: nenhuma ajuda');
    console.log('     apareceu. Isso NAO quer dizer que falta andaime — quer dizer');
