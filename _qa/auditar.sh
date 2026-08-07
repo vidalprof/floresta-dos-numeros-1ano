@@ -89,6 +89,15 @@ echo "--- 0e) TELA VAZIA (sobrou o fundo falando sozinho?) -"
 python3 _qa/telavazia.py "$ARQ"   || FALHOU=1
 echo "--- 0f) VOZ DA PERGUNTA (o botao fala o que esta escrito?) -"
 python3 _qa/vozpergunta.py "$ARQ" || FALHOU=1
+# ⭐ 0f2) SO PARA ATIVIDADE MONTADA: a voz da rodada nao se confere lendo o
+#    codigo (quem fala e um olheiro no balao). Confere-se JOGANDO: o colher.py
+#    atravessa a atividade e anota todo texto que aparece; se sobrar algum sem
+#    voz gravada, ele diz quantos e quais. "nada a acrescentar" = nenhuma tela
+#    muda. E medicao, nao heuristica.
+if grep -q "pecabox" "$ARQ" && grep -q "MEC\[" "$ARQ"; then
+  echo "--- 0f2) VOZ DA RODADA, MEDIDA JOGANDO (atividade montada) -"
+  python3 _padrao/ESQUELETO/colher.py "$(dirname "$ARQ")" --so-ver || FALHOU=1
+fi
 echo "--- 0g) VOZ IGUAL AO TEXTO (o audio diz o que esta escrito?) -"
 node _qa/vozigual.js "$ARQ" || FALHOU=1
 echo "--- 0h) INTRO CALANDO A PERGUNTA (a 1a rodada e falada?) -"

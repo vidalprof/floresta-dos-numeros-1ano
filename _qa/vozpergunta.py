@@ -42,12 +42,36 @@ CONTADOR = re.compile(r"Faltam?\b|J&#225; achou|J&#225; s&#227;o|J&#225; est&#22
 AVISO = re.compile(r"Primeiro toque|Toque primeiro|Escolha primeiro", re.I)
 
 
+def montada(html):
+    u"""⭐ A ATIVIDADE MONTADA RESOLVE ISTO DE OUTRO JEITO — e este portao, que
+    le o CODIGO, nao tem como enxergar.
+
+    Aqui a regra e "todo texto de balao que muda tem que chamar `falaDaTela` na
+    mesma hora". No esqueleto ninguem chama: um OLHEIRO no balao percebe a troca
+    e fala sozinho, se houver voz gravada para aquele texto (a conta e o sha do
+    proprio texto). Lendo o codigo, este portao acusava 16 perguntas "sem voz"
+    numa atividade com 79 vozes gravadas.
+
+    E a medicao de verdade existe, e e melhor que a estatica: o `colher.py` JOGA
+    a atividade inteira e anota TODO texto que aparece; quando ele diz "nada a
+    acrescentar", e porque nao ha tela sem voz. Por isso, em atividade montada,
+    este portao aponta para la em vez de adivinhar pelo codigo."""
+    return bool(re.search(r"\bMEC\[", html) and re.search(r"\bFASES\s*=", html)
+                and "pecabox" in html)
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
         return 2
     alvo = sys.argv[1]
     html = io.open(alvo, encoding="utf-8").read()
+    if montada(html):
+        print(u"%s -> atividade MONTADA: a voz da rodada e do olheiro do balao, "
+              u"nao de uma chamada no codigo." % alvo)
+        print(u"   a medicao de verdade e jogando: "
+              u"python3 _padrao/ESQUELETO/colher.py <pasta> --so-ver")
+        return 0
     js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
     js = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), js, flags=re.S)
 
