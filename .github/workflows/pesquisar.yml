@@ -23,11 +23,20 @@ name: Pesquisar na internet (busca + leitura -> texto no repo)
 #    montar nao muda atividade nenhuma.
 
 on:
+  # 🔁 A FÁBRICA PESQUISA SOZINHA (ordem do Marcos, ago/2026: *"a fábrica de
+  #    mecânicas pode pesquisar sempre para adicionar coisas novas"*).
+  #    Toda segunda-feira de madrugada ela busca UM tema da roda abaixo e deixa o
+  #    texto em `_pesquisa/web/`. Quando eu abrir a sessão, o material novo já
+  #    está lá — não depende de eu lembrar de pesquisar.
+  #    Custa zero: repositório público tem Actions ilimitado.
+  schedule:
+    - cron: "17 6 * * 1"
   workflow_dispatch:
     inputs:
       assunto:
-        description: "Nome do arquivo de saida (ex: mecanicas-mapa-conceitual)"
-        required: true
+        description: "Nome do arquivo de saida (vazio = tema da roda da semana)"
+        required: false
+        default: ""
         type: string
       busca:
         description: "O que buscar (ex: 'concept map drag arrow educational game HTML')"
@@ -56,13 +65,40 @@ jobs:
         with:
           fetch-depth: 1
 
+      # ⚠️ Quando roda sozinho (agendado) nao ha `assunto`: a roda escolhe um,
+      #    girando pela semana do ano — assim ela cobre todos os temas ao longo
+      #    do tempo em vez de trazer sempre a mesma coisa.
+      - name: Escolher o tema da semana (quando roda sozinho)
+        id: tema
+        env:
+          ASSUNTO: ${{ inputs.assunto }}
+          BUSCA: ${{ inputs.busca }}
+        run: |
+          if [ -n "$ASSUNTO" ]; then
+            echo "assunto=$ASSUNTO" >> "$GITHUB_OUTPUT"
+            echo "busca=$BUSCA"     >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          SEM=$(date -u +%V)
+          case $(( 10#$SEM % 6 )) in
+            0) A="mecanicas-novas";        B="new interactive learning mechanics classroom HTML5 evidence 2026";;
+            1) A="matematica-mecanicas";   B="interactive math manipulatives primary school number sense evidence";;
+            2) A="lingua-mecanicas";       B="interactive literacy activities morphology vocabulary primary evidence";;
+            3) A="ciencias-simulacoes";    B="interactive science simulation primary school inquiry evidence PhET";;
+            4) A="acessibilidade-crianca"; B="accessibility children touch targets colour blindness screen reader learning app";;
+            5) A="motivacao-engajamento";  B="what makes children want to keep learning game based learning motivation evidence";;
+          esac
+          echo "assunto=$A-semana-$SEM" >> "$GITHUB_OUTPUT"
+          echo "busca=$B"               >> "$GITHUB_OUTPUT"
+          echo "tema da semana $SEM: $A"
+
       - name: Instalar leitor de paginas
         run: pip3 install --quiet requests beautifulsoup4 lxml
 
       - name: Buscar e ler
         env:
-          ASSUNTO: ${{ inputs.assunto }}
-          BUSCA: ${{ inputs.busca }}
+          ASSUNTO: ${{ steps.tema.outputs.assunto }}
+          BUSCA: ${{ steps.tema.outputs.busca }}
           URLS: ${{ inputs.urls }}
           QUANTAS: ${{ inputs.quantas }}
         run: |
@@ -146,7 +182,7 @@ jobs:
           git add -A _pesquisa/web || true
           if git diff --cached --quiet; then echo "nada novo";
           else
-            git commit -m "pesquisa: ${{ inputs.assunto }}"
+            git commit -m "pesquisa: ${{ steps.tema.outputs.assunto }}"
             git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
             git push origin "HEAD:${GITHUB_REF_NAME}"
           fi
