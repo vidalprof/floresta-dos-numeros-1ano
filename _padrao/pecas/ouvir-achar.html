@@ -342,8 +342,66 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* o ALTO-FALANTE da resposta: bem visivel e dentro do cartao. Estava com 0.62 de
    opacidade e pendurado no canto — o Marcos: "o botao de som esta fora do
    quadrado, esta feio". */
-.opt.oaf .zap{opacity:1;background:rgba(255,210,63,.9);width:34px;height:34px;
-  box-shadow:0 2px 0 rgba(150,110,10,.45)}
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos apontou DUAS vezes: "esse botao de som
+   nao ficou certo". Eu tinha aumentado o botao de 30 para 34px para ele ficar
+   mais visivel — e as PECAS DE DENTRO (o corpinho do alto-falante e as ondas)
+   sao posicionadas em pixel ABSOLUTO pelo motor, para 30px. Com a caixa maior
+   elas ficaram para fora: medido, o corpo terminava 6px ABAIXO do botao, e a
+   onda sonora aparecia como um ")" solto ao lado do circulo.
+   Regra: nao se muda o TAMANHO de um componente cujo miolo e posicionado em
+   pixel absoluto por outro arquivo. Muda-se o que nao mexe na geometria — cor,
+   opacidade, sombra. O tamanho volta a ser o do motor. */
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos apontou DUAS vezes: *"esse botao de
+   som nao ficou certo"*. Eu tinha mexido so no tamanho e na cor — e o botao
+   ficou desmontado: o circulo ambar em cima, o corpinho preto embaixo dele e a
+   onda sonora como um ")" solto do lado. Fotografando o cartao em 3x deu para
+   ver; medindo em numero eu tinha rodado em circulos.
+
+   A CAUSA: o alto-falante e um componente com MIOLO em `position:absolute`
+   (corpo, cone e onda), cujos left/top em PIXEL vivem no motor. Redefinir a
+   caixa dele numa peca — tamanho, posicao, qualquer coisa — desmonta o miolo,
+   porque as pecas de dentro continuam nas coordenadas antigas.
+
+   A REGRA: componente com miolo absoluto se redefine INTEIRO ou nao se
+   redefine. Aqui ele e redefinido inteiro, com os MESMOS numeros do motor —
+   muda so a cor, que e o que a crianca precisava (ele era cinza a 55% e sumia
+   no cartao claro). */
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos apontou DUAS vezes: *"esse botao de
+   som nao ficou certo"*. Fotografando o cartao em 3x deu para ver o que numero
+   nenhum me mostrou: o circulo ambar de um lado, o corpo do alto-falante de
+   outro e a onda sonora como um ")" solto FORA do botao.
+
+   ⚠️ E EU PASSEI TRES RODADAS CONSERTANDO O LUGAR ERRADO. Escrevi regras para
+   `.zap i`, `.zap b`, `.zap s` — os elementos que o MOTOR usa. So que o botao
+   desta peca e outro: `<button class="zap"><i class="fone"></i></button>`, e o
+   desenho inteiro sai do `.fone` com `:before` e `:after`. O `:before` mora em
+   `left:14px` e tem 9px de largura mais 3px de borda: termina em 26px, e ainda
+   ha `margin-right:23px` empurrando tudo. Num circulo de 30px, sobra para fora.
+
+   A REGRA: antes de escrever CSS para um componente, ABRIR o HTML DELE. Eu
+   deduzi a marcacao a partir de outra peca e paguei tres rodadas por isso.
+
+   O conserto e o desenho INTEIRO, com o cone e a onda dentro do circulo. */
+.opt.oaf .zap{position:relative;display:-webkit-inline-box;display:inline-flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  width:32px;height:32px;border-radius:50%;border:0;padding:0;margin-left:8px;
+  vertical-align:middle;cursor:pointer;opacity:1;
+  background:rgba(255,210,63,.95);box-shadow:0 2px 0 rgba(150,110,10,.4)}
+/* O desenho do alto-falante e feito de bordas num elemento de tamanho ZERO
+   (`.fone`), com o corpo no `:after` e a onda no `:before`. Elemento de tamanho
+   zero nao se centra com flex — o que o navegador centra e o ponto, e o desenho
+   sai todo para um lado. Por isso a ancora vai em COORDENADA FIXA, e as tres
+   partes foram medidas para caber num circulo de 32px:
+     corpo  x  6..11   ·  cone  x 11..19   ·  onda  x 21..27
+   (o desenho inteiro ocupa 6..27 de 32 — sobra folga dos dois lados). */
+.opt.oaf .zap .fone{position:absolute;left:11px;top:16px;margin:0;
+  border-top:6px solid rgba(0,0,0,0);border-bottom:6px solid rgba(0,0,0,0);
+  border-right:8px solid #3a3020}
+.opt.oaf .zap .fone:after{content:"";position:absolute;left:-5px;top:-3px;
+  width:5px;height:6px;background:#3a3020}
+.opt.oaf .zap .fone:before{content:"";position:absolute;left:10px;top:-6px;
+  width:4px;height:12px;border-right:2px solid #3a3020;
+  border-radius:0 60% 60% 0/0 50% 50% 0}
 @media (prefers-reduced-motion:reduce){
   .oafaisca{display:none}
   .opt.oaf.certa,.oaprox{-webkit-animation:none;animation:none}
