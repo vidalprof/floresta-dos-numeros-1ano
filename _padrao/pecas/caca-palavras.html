@@ -200,7 +200,15 @@ function pecaCaca(){
   var t=el("div","tela");
   setProg(t,0);
   var barraP=t.getElementsByTagName("i")[0];
-  var N=LADO, g=[], posicoes={}, onde={}, cor={}, achadas={}, cels={};
+  /* ⚠️ LICAO PAGA: a grade era SEMPRE LADO x LADO. Palavra maior que o lado
+     nunca cabia; `sorteia()` devolvia false as 60 tentativas, a peca seguia com
+     a grade incompleta e estourava no primeiro toque — 857 erros de JS numa
+     partida, e a crianca presa numa fase sem saida. A grade existe para caber
+     as palavras: agora ela CRESCE ate a maior delas. */
+  var maior = 0, _z;
+  for(_z = 0; _z < PAL.length; _z++)
+    if(PAL[_z].length > maior) maior = PAL[_z].length;
+  var N = Math.max(LADO, maior + 1), g=[], posicoes={}, onde={}, cor={}, achadas={}, cels={};
   var i,j,k,p;
 
   for(i=0;i<PAL.length;i++) cor[PAL[i]]=CORP[i%CORP.length];
@@ -358,7 +366,9 @@ function pecaCaca(){
     setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1200);
   }
   function comemora(w){
+    /* cinto de seguranca: palavra sem lugar na grade nao pode virar estouro */
     var cs=posicoes[w],z;
+    if(!cs) return;
     for(z=0;z<cs.length;z++){(function(q,atraso){
       setTimeout(function(){ q.className="cel ok "+cor[w]; },atraso);
     })(cels[cs[z]],z*70);}

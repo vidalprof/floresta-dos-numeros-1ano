@@ -183,6 +183,19 @@ def confere_dados(c, oficina):
         info = g.get(mec)
         if not info or not f.get("dados"):
             continue
+        # ⚠️ limite de LEITURA, nao so de grade: caca-palavras com palavra de
+        #    12+ letras fica ilegivel na tela de 640px da escola, e a peca teria
+        #    de abrir tanto a grade que a letra encolheria demais. Isto vem ANTES
+        #    da conferencia de formato: a lista de palavras nao tem campo
+        #    nomeado, entao aquela conferencia saia fora antes de chegar aqui.
+        if mec == "caca-palavras" and isinstance(f["dados"], list):
+            longas = [w for w in f["dados"]
+                      if isinstance(w, str) and len(w) > 12]
+            if longas:
+                ruins.append(u"fase %d (%s): palavra(s) longa(s) demais para o "
+                             u"caca-palavras (max 12 letras): %s"
+                             % (i + 1, f.get("id"), ", ".join(longas)))
+
         exemplo = literal(info.get("exemplo"))
         if exemplo is None:
             continue
