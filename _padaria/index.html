@@ -417,6 +417,29 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
    caixa abre para TRES colunas, e ai o tabuleiro inteiro cabe sem rolar.     */
 @media (min-width:760px){ .mcartas{max-width:680px} }
 
+
+/* ⭐ AS FIGURAS TÊM VIDA (ordem do Marcos, ago/2026: *"imagens devem ser lindas,
+   sem fundo e animadas se possível"*). Duas animações, e só duas:
+   · a figura ENTRA (aparece crescendo um tiquinho) — dá a sensação de que a
+     tela respondeu, que é o que prende a criança pequena;
+   · a figura da rodada FLUTUA devagar — sinal de "é aqui que você olha".
+   ⚠️ nada de piscar, girar ou saltar: numa tela com 8 figuras isso vira
+   poluição e atrapalha quem tem dificuldade de atenção.
+   ⚠️ quem pediu menos movimento no sistema operacional recebe menos movimento
+   (`prefers-reduced-motion`) — é acessibilidade, não enfeite.
+   ⚠️ o "sem fundo" NÃO se resolve aqui: vem do RECORTE (a cartela é gerada em
+   fundo preto e o `_padrao/cartela.py cortar` transforma em alfa de verdade). */
+@-webkit-keyframes figentra{0%{opacity:0;-webkit-transform:scale(.86)}100%{opacity:1;-webkit-transform:scale(1)}}
+@keyframes figentra{0%{opacity:0;transform:scale(.86)}100%{opacity:1;transform:scale(1)}}
+@-webkit-keyframes figflutua{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-5px)}}
+@keyframes figflutua{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+.pecabox img{-webkit-animation:figentra .3s ease-out both;animation:figentra .3s ease-out both}
+.jsFig img,.bsFig img,.oaFig img,.figrod img{
+  -webkit-animation:figflutua 3.6s ease-in-out infinite;animation:figflutua 3.6s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){
+  .pecabox img,.jsFig img,.bsFig img,.oaFig img,.figrod img{
+    -webkit-animation:none !important;animation:none !important}
+}
 /* GERADO por integrar.py — nao editar a mao */
 
 /* ==== O QUE A PONTE PRECISA (vale para todas as mecanicas) ==== */

@@ -450,9 +450,43 @@ def arte_de(c):
         banco = json.load(io.open(cam, encoding="utf-8"))["objetos"]
     chaves = dict((simples(n), n) for n in banco)
 
+    # ⚠️⚠️ O BANCO ESTAVA SENDO IGNORADO POR UM DETALHE DE NOME (achado pelo
+    #    Marcos, ago/2026: *"você chegou a consultar o banco de imagens?"*).
+    #    O montador procurava pelo nome COMPLETO — `pd_pao` — e o banco guarda
+    #    pela palavra — `pao`. Nunca casava. Ele anunciava "0 ja no banco" com
+    #    245 objetos guardados la, e mandava PAGAR por arte que ja existia.
+    #    Nesta atividade custou 1 figura; na proxima de ciencias custaria arvore,
+    #    agua, alface, abobora — tudo o que ja esta desenhado.
+    #
+    #    ⚠️ E POR QUE NAO CASAR POR PEDACO DE PALAVRA: eu testei. "mel" casa com
+    #    "bal-vermelho" e "sal" casa com "mesa_l" — ou seja, a figura ERRADA na
+    #    frente da crianca, que e muito pior do que gastar centavos. O casamento
+    #    e pela RAIZ EXATA (tirando so o prefixo da atividade), nunca por
+    #    substring.
+    def do_banco(nome):
+        k = chaves.get(simples(nome))
+        if k:
+            return k
+        # tira o prefixo da atividade (`pd_pao` -> `pao`) e tenta de novo, EXATO
+        if "_" in nome:
+            raiz = nome.split("_", 1)[1]
+            k = chaves.get(simples(raiz))
+            if k:
+                return k
+        return None
+
     tem, falta = [], []
     for p in pedidos:
-        k = chaves.get(simples(p))
+        # a arte da IDENTIDADE nunca vem do banco: mascote, cracha, medalha e
+        # fundo sao desta atividade e de mais nenhuma (regra do Marcos:
+        # "nunca copiar avatares, sempre novo e tematico")
+        raiz = p.split("_", 1)[1] if "_" in p else p
+        if p.startswith("med_") or re.match(r"^cr\d+$", raiz) or \
+           raiz in ("fundo", "cena") or raiz.startswith(("feliz", "fala", "pisca")) or \
+           re.search(r"_(feliz|fala|pisca)$", p):
+            falta.append(p)
+            continue
+        k = do_banco(p)
         (tem if k else falta).append(k or p)
     return {"pedidos": pedidos, "no_banco": tem, "gerar": falta}
 
