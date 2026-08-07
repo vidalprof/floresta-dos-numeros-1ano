@@ -478,3 +478,81 @@ não lê **acredita na voz**.
 > grudada em minúscula não acontece em frase escrita para criança; acontece
 > quando dois elementos viram um texto só. → `eh_colagem()` no `colher.py`,
 > testado em 10 casos, 10 certos.
+
+---
+
+## ⚠️ LIÇÃO PAGA — A RENOMEAÇÃO DE CLASSES CEGAVA OS AUDITORES (ago/2026)
+
+A banca reprovou uma atividade **certa**. O auditor-jogador dizia
+*"PRESO em EM ORDEM [4%]"* — e a tela estava perfeita: as prateleiras 1º a 5º,
+as letras D B A E C, tudo desenhado e clicável, sem um erro de JS.
+
+**A causa:** o integrador renomeia classes para duas peças não brigarem pelo
+mesmo nome (`.opt`, `.pc`, `.zona`). Ele renomeou `.pc` → `.o_pc` na peça de
+ordenar — renomeação **correta**, sem colisão nenhuma. Só que o
+`_qa/jogador.js` procura `.pc` para saber o que arrastar. Achou **zero peças** e
+declarou a criança presa.
+
+**O estrago real:** a banca reprovou o que estava bom, e eu quase fui
+"consertar" uma fase sem defeito — que é o pior uso possível de uma manhã.
+
+> **A regra que fica: classe pela qual um portão PEGA a atividade não se
+> renomeia.** O vocabulário dos auditores é contrato, igual ao do motor.
+
+Entraram no `VOCABULARIO_COMUM`: `pc cam lig par pchip peca qcpc qcvaga mcarta`
+— tiradas de `grep` no `_qa/jogador.js` e no `_qa/errador.js`. **Auditor novo que
+passe a depender de uma classe põe ela na lista no MESMO commit.**
+
+Medido: jogador preso em 4% → **chegou ao fim, 181 passos**.
+
+---
+
+## ⚠️ LIÇÃO PAGA — MEDI UM ARQUIVO QUE O MONTADOR NÃO TINHA ESCRITO (ago/2026)
+
+Reordenei as fases, rodei a banca inteira, li **"BANCA APROVOU"** e reportei ao
+Marcos. Era mentira — sem querer, mas mentira.
+
+O montador tinha **se recusado a gerar**: *"4 PROBLEMA(S) — nada foi gerado"*
+(mecânicas iguais coladas, consequência do meu próprio reordenamento). O
+`index.html` continuou sendo o de duas horas antes, e foi ele que a banca mediu.
+
+> **Montador que reprova NÃO escreve.** Quem mede depois está medindo o arquivo
+> de antes. Conferir a hora do arquivo (`ls -l`) antes de acreditar em qualquer
+> veredito — e ler a ÚLTIMA linha do montador, que diz `escrito:` quando gerou.
+
+É da mesma família de *"existir não é medir"*, agora no sentido inverso: o
+arquivo existia, e por isso pareceu recente.
+
+---
+
+## 🎨 O DIRETOR DE ARTE — o portão que faltava (ago/2026)
+
+Ordem do Marcos, quatro frases seguidas: *"profissional, lindo, sem erros"*,
+*"maravilhoso, impecável"*, *"sempre subir a régua nisso"*, *"crie um
+profissional especialista para isso"*.
+
+**Por que ele precisava existir:** os 31 portões mediam se a atividade
+**funciona**. Nenhum media se está **bonita**. Foi por isso que a banca deu
+código 0 numa tela em que o alto-falante **tapava a última palavra** do
+enunciado e a figura estava num **quadrado branco chapado** — os dois eu só
+achei **olhando a foto**.
+
+`_qa/visual.js` (portão 5b) mede em pixel, em 4 tamanhos: botão sobre palavra ·
+quadrado branco chapado · cartões irmãos com cantos diferentes · **fileira
+torta** (irmãos com alturas diferentes) · **botão esticado** (>6× mais largo que
+alto) · texto espremido na borda.
+
+**E já nasceu com a exceção que evita acusar inocente:** superfície em que a
+criança DESENHA (folha de ligar pontos, traçar letra, tela de pintar) é branca
+de propósito — papel é branco. Acusar isso seria o portão mandando pintar o
+caderno.
+
+**Dois defeitos estruturais que ele expôs:**
+1. **Especificidade não se vence com especificidade.** O `comzap` do motor
+   reserva 56px para o alto-falante; o CSS da peça, prefixado com `.mec-<nome>`,
+   ganhava e devolvia para 18px. Medido: 18 onde deviam ser 56. Conserto:
+   **estilo inline**, que folha nenhuma sobrepõe.
+2. **Vão mágico é sempre origem de defeito.** A lista de respostas só rolava
+   abaixo de 560px de altura — e 568 passa raspando por cima. Duas respostas
+   ficavam fora da tela no celular pequeno. Conserto: o teto sai da conta da
+   tela (`calc`), não de um número escolhido a dedo.
