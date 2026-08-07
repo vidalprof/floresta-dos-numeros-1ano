@@ -66,9 +66,25 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');
      const bn=document.getElementById('banner');
      const pr=document.querySelector('.prog i');
-     return ((s&&s.textContent)||(h1&&h1.textContent)||'?')+' ['+((pr&&pr.style.width)||'-')+']|'+((bn&&bn.className.indexOf('show')>=0)?'BANNER':'');
+     /* ⚠️ LICAO PAGA (ago/2026, esqueleto): a assinatura do estado so olhava o
+        SELO e a barra da atividade — ou seja, so notava quando a FASE trocava.
+        Numa fase longa com progresso de verdade (o jogo da memoria fechando
+        par por par) ela ficava identica a uma tela congelada, e o auditor dava
+        "PRESO" numa fase que a crianca fecha. Pior: era intermitente — passava
+        quando a sorte do clique ao acaso ajudava, reprovava quando nao. Agora
+        entra tambem o progresso DE DENTRO da fase, que so anda para a frente:
+        quantas pecas ja estao resolvidas e a barrinha da propria mecanica.
+        Sinal monotono nao esconde travamento: so zera o contador quem
+        realmente avancou.                                                   */
+     const feitos=document.querySelectorAll(
+       '.par,.feito,.ok,.certo,.achou,.resolvido,.preenchida,.on,.sel').length;
+     const pp=document.querySelector('.progpeca i');
+     return ((s&&s.textContent)||(h1&&h1.textContent)||'?')
+       +' ['+((pr&&pr.style.width)||'-')+']'
+       +'{'+feitos+'/'+((pp&&pp.style.width)||'-')+'}'
+       +'|'+((bn&&bn.className.indexOf('show')>=0)?'BANNER':'');
    });
-   if(est!==ultimo){ visto.push(i+' '+est); ultimo=est; paradas=0; } else paradas++;
+   if(est!==ultimo){ visto.push(i+' '+est.replace(/\{[^}]*\}/,'')); ultimo=est; paradas=0; } else paradas++;
    if(paradas>420){ visto.push('>>> PRESO em '+est); break; }
    /* ⚠️ LICAO PAGA (ago/2026, Terra dos Papagaios): havia rolagem SO quando nao
       sobrava NADA clicavel na parte visivel. No porao do navio ficavam 4 fichas

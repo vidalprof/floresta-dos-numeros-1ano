@@ -439,7 +439,8 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
    moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
 var ID = {pre:"skel", mascote:"mascote", mascoteNome:"", titulo:"Atividade",
-          sub:"", fundo:"", crachas:6};
+          sub:"", fundo:"", crachas:6,
+          convite:"<b>Quem vai jogar</b> hoje?"};
 
 "use strict";
 /* ============ IMAGENS ============ */
@@ -740,7 +741,7 @@ function telaCapa(){limpa();var t=el("div","tela");var c=el("div","centro");
   t.appendChild(c);app.appendChild(t);}
 /* ============ 2) QUEM VAI JOGAR ============ */
 function telaQuem(){limpa();var t=el("div","tela");var c=el("div","centro");
-  c.appendChild(el("div","balao","<b>Quem vai cuidar</b> do jardim hoje?"));
+  c.appendChild(el("div","balao",ID.convite));
   var inp=el("input","campo"); inp.type="text"; inp.placeholder="Escreva o seu nome"; inp.maxLength=18; inp.value=perfil.nome||"";
   c.appendChild(inp);
   c.appendChild(el("div","hint","Escolha a sua figurinha:"));
@@ -846,7 +847,7 @@ function crachaEl(funcao){
 }
 
 function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
-  var m=imgEl("med_jardim","medal"); c.appendChild(m); segredoRelatorio(m);
+  var m=imgEl("med_"+ID.pre,"medal"); c.appendChild(m); segredoRelatorio(m);
   c.appendChild(el("h1","","Jardineiro Mestre!"));
   c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", v":"V")+"oc&#234; cuidou da planta do come&#231;o ao fim."));
   c.appendChild(crachaEl("Jardineiro Mestre"));

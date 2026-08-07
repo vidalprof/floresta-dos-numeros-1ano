@@ -90,6 +90,14 @@ TROCAS = [
     (r'var lista=\["jd_cr1","jd_cr2","jd_cr3","jd_cr4","jd_cr5","jd_cr6"\];',
      'var lista=[],_c;for(_c=1;_c<=ID.crachas;_c++) lista.push(ID.pre+"_cr"+_c);'),
     (r'falar\("jd_fim"\)', 'falar(ID.pre+"_fim")'),
+    # ⚠️ a MEDALHA do Broto (`med_jardim`) escapou da varredura porque nao
+    #    comeca com `jd_` — a crianca de OUTRA atividade ganharia a medalha do
+    #    Jardim no fim. Por isso a varredura passou a procurar tambem 'jardim'.
+    (r'imgEl\("med_jardim","medal"\)', 'imgEl("med_"+ID.pre,"medal")'),
+    # ⚠️ o CONVITE do cracha era conteudo do Broto ("Quem vai cuidar do JARDIM
+    #    hoje?"). Toda atividade gerada perguntaria isso — de historia, de
+    #    matematica, de qualquer coisa. Vira dado, como o resto.
+    (r'"<b>Quem vai cuidar</b> do jardim hoje\?"', 'ID.convite'),
     # o fundo estava CRAVADO no CSS (`url(img/jd_fundo.jpg)`) — nenhum portão de
     # JS olha para lá, e ele viajaria calado para todas as atividades
     (r'background-image:url\(img/jd_fundo\.jpg\)', 'background-image:none'),
@@ -135,7 +143,8 @@ CABECA = u'''/* ====== A IDENTIDADE DESTA ATIVIDADE ======
    moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
 var ID = {pre:"skel", mascote:"mascote", mascoteNome:"", titulo:"Atividade",
-          sub:"", fundo:"", crachas:6};
+          sub:"", fundo:"", crachas:6,
+          convite:"<b>Quem vai jogar</b> hoje?"};
 '''
 
 
@@ -370,7 +379,8 @@ def main():
     codigo = re.sub(r"/\*.*?\*/", " ", novo + "\n" + css, flags=re.S)
     codigo = re.sub(r"(?m)^\s*//.*$", " ", codigo)
     sobrou = sorted(set(re.findall(r"jd_[a-z0-9_]+", codigo)
-                        + re.findall(r"Broto", codigo)))
+                        + re.findall(r"Broto", codigo)
+                        + re.findall(r"jardim", codigo, re.I)))
     print(u"EXTRACAO DO MOTOR")
     for a in nao_pegou:
         print(u"  ⚠️ TROCA QUE NAO PEGOU (o Broto mudou?): %s" % a[:66])
@@ -383,6 +393,10 @@ def main():
               % (len(sobrou), ", ".join(sobrou[:14])))
         print(u"    ponha na lista DADOS (se for dado) ou em TROCAS (se for "
               u"identidade) e rode de novo.")
+        for marca in sobrou[:6]:
+            i = codigo.lower().find(marca.lower())
+            print(u"      %s -> ...%s..." % (marca, codigo[max(0,i-70):i+50]
+                                             .replace("\n", " ")))
         return 1
     print(u"  limpo: nenhuma marca do Broto sobrou no motor")
     if "--so-ver" in sys.argv:

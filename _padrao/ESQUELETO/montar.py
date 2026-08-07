@@ -299,7 +299,7 @@ def escreve_index(pasta, c, falas):
     #    O motor não sabe o nome de nenhum mascote, não tem prefixo de figura,
     #    não tem chave de localStorage própria. Tudo vem daqui.
     mascote = c.get("mascote", "mascote")
-    dados.append(u"ID = %s;" % json.dumps({
+    id_desta = json.dumps({
         "pre": pre,
         "mascote": mascote,
         "mascoteNome": c.get("mascoteNome") or mascote.capitalize(),
@@ -307,7 +307,10 @@ def escreve_index(pasta, c, falas):
         "sub": c.get("sub", ""),
         "fundo": c.get("fundo", ""),
         "crachas": int(c.get("crachas", 6)),
-    }, ensure_ascii=False))
+        # o convite do crachá é da HISTÓRIA desta atividade ("Quem vai pilotar
+        # o foguete hoje?"), não um texto de sistema
+        "convite": c.get("convite") or u"<b>Quem vai jogar</b> hoje?",
+    }, ensure_ascii=False)
     dados.append(u"ROTULOS = %s;" % json.dumps(c.get("conceitos") or {},
                                                ensure_ascii=False))
     # a pré-carga: o mascote em 3 camadas, os crachás, a medalha e a arte das
@@ -344,6 +347,19 @@ def escreve_index(pasta, c, falas):
         ensure_ascii=False) + u";")
 
     saida = motor
+    # ⚠️⚠️ LICAO PAGA, da familia da ORDEM DE BOOT: o `ID` era escrito no FIM,
+    #    junto com as fases. So que o corpo do motor USA `ID.pre` durante a
+    #    leitura do arquivo — `var perfil={nome:"",fig:ID.pre+"_cr1"}` roda ali
+    #    mesmo. Com o `ID` chegando depois, o crachá da criança nascia
+    #    `skel_cr1` (o valor de fábrica), uma figura que não existe em nenhuma
+    #    atividade: quadradinho vazio na tela do "Quem vai jogar?". Por isso o
+    #    `ID` desta atividade SUBSTITUI o de fábrica, lá em cima, e não é uma
+    #    atribuição no fim.
+    novo_id = u"var ID = %s;" % id_desta
+    saida, quantos = re.subn(r"var ID = \{[^;]*\};", lambda m: novo_id, saida, count=1)
+    if not quantos:
+        print(u"   AVISO: nao achei o `var ID` de fabrica no motor — "
+              u"rode extrair_motor.py de novo")
     saida = saida.replace(u"</style>", css_pecas + u"\n</style>", 1)
     saida = saida.replace(u"</script>\n</body>",
                           js_pecas + u"\n" + u"\n".join(dados) + u"\n</script>\n</body>", 1)
