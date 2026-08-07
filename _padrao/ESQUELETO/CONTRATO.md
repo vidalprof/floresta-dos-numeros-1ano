@@ -303,3 +303,42 @@ reescrevê-la é reintroduzir o que ela custou.
 O formato de `dados` de cada uma das 74 está em **`pecas.json`**, com o exemplo
 da própria peça ao lado. Fase **sem** `dados` roda com o exemplo — serve para
 ver a mecânica de pé, **nunca** para entregar ao Marcos.
+
+---
+
+## 8. A OFICINA FECHADA — 74 de 74 (ago/2026)
+
+Varredura de todas as peças pela bancada (`_qa/peca.sh`): **74 aprovadas, código 0**.
+
+Duas reprovavam e **nenhuma tinha defeito**: era o portão das dinâmicas acusando
+o inocente. A regra de *"ouvir e achar"* — que existe por um bom motivo, porque
+**PC de escola sem caixa de som existe e criança surda também** — tinha como
+gatilho `speechSynthesis` + opções na tela. Só que `speechSynthesis` é a **voz de
+reserva do navegador**, usada por várias peças para ler a resposta em voz alta:
+não é a marca daquela mecânica. Cinco peças casavam, uma só era de ouvir e achar.
+
+**A lição, que já se repetiu cinco vezes neste projeto:** gatilho de portão tem
+que ser a marca *daquela* mecânica, não uma ferramenta que qualquer peça usa.
+Quando o gatilho é largo, o portão cobra de quem não deve — e portão que acusa o
+inocente ensina a ignorar portão, que é o pior estrago possível.
+
+### As lições novas desta rodada (todas medidas, nenhuma suposta)
+
+- **A colisão de CSS entre a peça e o motor.** Elas usam os mesmos nomes — é isso
+  que dispensa reescrever as peças. O preço: **o que a peça não declara vem do
+  motor**. O `gap:10px` do motor entrou de carona no `.mcartas` da peça, a conta
+  de 48% + 1% estourou, e o jogo da memória empilhou as 8 cartas numa coluna de
+  950px — 4 fora da tela de 640px da escola. O integrador agora **lista as 54
+  classes que o motor também estiliza**.
+- **`.tela` do motor é camada absoluta de tela cheia.** A tela que a peça cria
+  por dentro da fase virava uma camada solta sem largura. A `.pecabox` neutraliza.
+- **Carta virada que a peça perde de vista fica MORTA.** A criança fecha 3 de 4
+  pares e trava com dois quadradinhos na tela, sem erro nenhum. A carta órfã
+  passou a ser **adotada**.
+- **A ordem de boot.** O conteúdo é escrito DEPOIS do condutor; chamar a partida
+  antes deixava o menu do professor sem fases e o boletim sem objetivos. E o `ID`
+  tem que **substituir** o de fábrica lá em cima, não ser atribuído no fim — o
+  corpo do motor usa `ID.pre` durante a leitura do arquivo.
+- **A voz de tudo o que a peça mostra.** O `VOZOK` nascia vazio; agora o montador
+  desce o `dados` inteiro. E o que só existe jogando se **colhe jogando**
+  (`colher.py`), até duas partidas seguidas não trazerem nada novo.
