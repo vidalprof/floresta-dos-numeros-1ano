@@ -164,6 +164,13 @@ echo "--- 0l) A ARTE PEDIDA FOI DESENHADA? (lista de compras x pasta img/) -"
 portao "0l arte pedida" python3 _qa/arte_pedida.py "$(dirname "$ARQ")"
 
 echo
+echo "--- 0m) TUDO O QUE FOI PEDIDO FOI ATENDIDO? (cobertura por objetivo) -"
+# ⚠️ nasceu do erro que o MARCOS pegou, nao um portao: silabas com 10 fases e a
+#    SEQUENCIA ALFABETICA — a primeira coisa que a professora pediu — com uma
+#    mecanica so. Ver _qa/cobertura.py.
+portao "0m cobertura" python3 _qa/cobertura.py "$ARQ"
+
+echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
 portao "1b funcao que nao existe" python3 _qa/funcoes.py "$ARQ"
 
