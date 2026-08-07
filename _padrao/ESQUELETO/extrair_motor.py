@@ -47,7 +47,87 @@ telaCacaBase telaCacaJd telaCacaPartes telaEnsinar telaRelampagoJd
 
 # os dados que são conteúdo do Broto — saem junto
 DADOS = ["COMER", "PARTES6", "MONTAJD", "MEMJD", "RELAJD", "CACAJD", "CACAPARTES",
-         "QUALP", "ORDEMJD", "CICLOJD", "PRECISAJD", "SERVEJD", "ROTJD"]
+         "QUALP", "ORDEMJD", "CICLOJD", "PRECISAJD", "SERVEJD", "ROTJD",
+         # ⚠️ estes quatro são a CARA do "resto de clone" e escaparam na 1ª
+         #    extração: são mapas de CONCEITO do Broto (luz_agua, sequencia...)
+         #    e — pior — o TREINO apontava para telas que já não existiam. A
+         #    atividade abria bonita, o `node --check` passava, e a criança
+         #    chegava ao boletim e a tela morria em `fracos()`. No esqueleto os
+         #    quatro NASCEM da lista de fases (ver `preparaIdentidade`).
+         "DOM", "ROTCRI", "TREINO", "FASES_MESTRE",
+         # achados pela CONFERENCIA abaixo, que varre o motor atras de marca do
+         # Broto: dados de conteudo que nao estavam dentro de nenhuma tela
+         "PLAQLADO", "RODA", "ZONAS", "PARTES", "FUNCOES"]
+
+# ⚠️ AS TROCAS DE IDENTIDADE — o coração do "nunca mais resto de clone".
+#    Cada linha aqui é uma marca do Broto que estava ESCRITA no motor e que, se
+#    ficasse, viajaria para toda atividade que o esqueleto gerasse: o prefixo
+#    das figuras, a chave do localStorage (e no GitHub Pages TODAS as atividades
+#    dividem a MESMA origem — duas com a chave "jardim_med" se apagariam uma à
+#    outra), o crachá, o nome do mascote, as vozes de elogio e consolo, o fundo.
+#    Viram consultas ao `ID`, que o montador escreve a partir do conteudo.json.
+TROCAS = [
+    (r'localStorage\.setItem\("jardim_med"', 'localStorage.setItem(ID.pre+"_med"'),
+    (r'localStorage\.getItem\("jardim_med"', 'localStorage.getItem(ID.pre+"_med"'),
+    (r'perfil\.fig\.indexOf\("jd_cr"\)!==0\) perfil\.fig="jd_cr1"',
+     'perfil.fig.indexOf(ID.pre+"_cr")!==0) perfil.fig=ID.pre+"_cr1"'),
+    (r'imgEl\("jd_broto_feliz","lay base"\), fala=imgEl\("jd_broto_fala","lay fala"\), '
+     r'pisca=imgEl\("jd_broto_pisca","lay pisca"\)',
+     'imgEl(ID.pre+"_"+ID.mascote+"_feliz","lay base"), '
+     'fala=imgEl(ID.pre+"_"+ID.mascote+"_fala","lay fala"), '
+     'pisca=imgEl(ID.pre+"_"+ID.mascote+"_pisca","lay pisca")'),
+    (r'var n=\["jd_acerto1","jd_acerto2","jd_acerto3"\]',
+     'var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]'),
+    (r'falar\(Math\.random\(\)<0\.5\?"jd_erro1":"jd_erro2"\)',
+     'falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2")'),
+    (r'"O Jardim do Broto"', 'ID.titulo'),
+    (r'O Jardim do Broto &#8212; parecer', '"+ID.titulo+" &#8212; parecer'),
+    (r'"Ci&#234;ncias &#183; 2&#186; ano &#183; As plantas"', 'ID.sub'),
+    (r'\{nome:"",fig:"jd_cr1"\}', '{nome:"",fig:ID.pre+"_cr1"}'),
+    # o CRACHA: a tela "Quem vai jogar?" trazia as 6 criancas do Jardim. Regra
+    # do Marcos: "nunca copiar avatar de outra atividade — sempre novo e
+    # tematico". Aqui a lista se MONTA do prefixo, entao nao ha o que copiar.
+    (r'var lista=\["jd_cr1","jd_cr2","jd_cr3","jd_cr4","jd_cr5","jd_cr6"\];',
+     'var lista=[],_c;for(_c=1;_c<=ID.crachas;_c++) lista.push(ID.pre+"_cr"+_c);'),
+    (r'falar\("jd_fim"\)', 'falar(ID.pre+"_fim")'),
+    # o fundo estava CRAVADO no CSS (`url(img/jd_fundo.jpg)`) — nenhum portão de
+    # JS olha para lá, e ele viajaria calado para todas as atividades
+    (r'background-image:url\(img/jd_fundo\.jpg\)', 'background-image:none'),
+    (r'var MASCOTE_NOME="Broto";', 'var MASCOTE_NOME="";  /* ID.mascoteNome */'),
+    # ⚠️ a PRE-CARGA e a VOZ das respostas do Broto: as duas primeiras da lista
+    #    do CLONAR-MOTOR.md. Ficam VAZIAS aqui; o montador escreve as desta
+    #    atividade. E a pre-carga deixa de rodar sozinha (IIFE) e vira funcao,
+    #    porque agora ela so pode rodar DEPOIS que a lista existir.
+    (r'var IMGS=\[[^\]]*\];', 'var IMGS=[];'),
+    (r'var IMG=\{\};\(function\(\)\{var i;for\(i=0;i<IMGS\.length;i\+\+\)'
+     r'\{var im=new Image\(\);im\.src="img/"\+IMGS\[i\]\+"\.png";'
+     r'IMG\[IMGS\[i\]\]=im;\}\}\)\(\);',
+     'var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++)'
+     '{var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}'),
+    (r'var VOZOK=\{[^}]*\};', 'var VOZOK={};'),
+    # ⚠️ o Broto abre a capa na ULTIMA linha do JS dele — que, no esqueleto,
+    #    vem ANTES do condutor. A capa abria antes de as fases existirem.
+    (r'if\(location\.search\.indexOf\("painel"\)>=0\)\{ telaPainel\(\); \}'
+     r' else \{ telaCapa\(\); \}', '/* o boot mudou de lugar: ver inicia() */'),
+]
+
+# ⚠️ O `ID` PRECISA EXISTIR ANTES DO BOOT: `carregaEstado()` e `var perfil` rodam
+#    no meio do motor, muito antes do CONDUTOR (que e acrescentado no fim). Se o
+#    `ID` so nascesse la, a atividade morria na primeira linha com "ID is not
+#    defined". Por isso ele e PREPENDIDO.
+CABECA = u'''/* ====== A IDENTIDADE DESTA ATIVIDADE ======
+   Tudo o que era a marca do Jardim do Broto dentro do motor (o prefixo das
+   figuras, a chave do localStorage, o cracha, o nome do mascote, as vozes de
+   elogio e consolo, o titulo, o fundo) vira consulta a este objeto. O montador
+   o reescreve a partir do conteudo.json.
+
+   ⚠️ A chave do localStorage E CRITICA: no GitHub Pages TODAS as atividades
+   moram na MESMA origem (vidalprof.github.io). Duas atividades com a chave
+   "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
+var ID = {pre:"skel", mascote:"mascote", mascoteNome:"", titulo:"Atividade",
+          sub:"", fundo:"", crachas:6};
+'''
+
 
 
 def blocos_de_funcao(js):
@@ -136,7 +216,7 @@ var IFASE = 0;
    PARA TRAS em duas passagens. */
 function progDaFase(i){ return Math.round(4 + 96 * (i / Math.max(1, FASES.length))); }
 
-function abreFase(i){
+function montaFase(i, aoFim){
   IFASE = i;
   if(i >= FASES.length){ telaFim(); return; }
   var f = FASES[i];
@@ -167,7 +247,66 @@ function abreFase(i){
   if(!m){ /* mecanica que nao existe nao pode virar tela branca na mao da crianca */
     cen.appendChild(el("div","hint","(mecanica '"+f.mec+"' nao registrada)"));
     return; }
-  m(f, cen, function(){ salvaEstado(); abreFase(i + 1); });
+  m(f, cen, aoFim);
+}
+
+function abreFase(i){
+  montaFase(i, function(){ salvaEstado(); abreFase(i + 1); });
+}
+/* a MESMA fase, mas no percurso do "Treinar o que faltou": ao acabar ela volta
+   para a fila do treino, nao para a fase seguinte da atividade */
+function abreFaseTreino(i){ montaFase(i, function(){ salvaEstado(); proximoTreino(); }); }
+
+/* ============================================================
+   OS QUATRO MAPAS QUE ERAM DO BROTO — agora NASCEM da lista de fases.
+
+   `DOM` (o quanto a crianca domina cada objetivo), `ROTCRI` (o nome do objetivo
+   em linguagem de crianca, para o boletim), `TREINO` (qual fase refazer quando
+   o objetivo ficou fraco) e `FASES_MESTRE` (o menu da senha 1275@).
+
+   ⚠️ LICAO PAGA, e das caras: na primeira extracao os quatro FICARAM com o
+   conteudo do Broto (luz_agua, sequencia, partes...) e o `TREINO` apontava para
+   telas que ja tinham sido removidas. A atividade abria bonita, o `node --check`
+   passava, o print ficava perfeito — e a crianca chegava ao BOLETIM DO FIM e a
+   tela morria em `fracos()`. Foi o auditor-jogador que pegou, jogando ate o fim.
+   ============================================================ */
+var DOM = {}, ROTCRI = {}, TREINO = {}, FASES_MESTRE = [];
+
+function preparaIdentidade(){
+  var i, f, c;
+  /* ⚠️ a ORDEM importa: primeiro o que a crianca ja tinha feito (a retomada de
+     55 min), DEPOIS os objetivos que faltarem. Ao contrario, o `DOM={}` novo
+     apagava o progresso salvo — a criança voltava e o boletim estava zerado. */
+  carregaEstado();
+  for(i = 0; i < FASES.length; i++){
+    f = FASES[i];
+    /* o menu do professor guarda o NOME de uma funcao global (e assim que o
+       telaMestre do Broto o le) — entao cada fase ganha a sua */
+    window["_f" + i] = (function(k){ return function(){ abreFase(k); }; })(i);
+    FASES_MESTRE.push(["_f" + i, (i + 1) + ". " + semTag(f.selo || f.id)]);
+    c = f.conceito;
+    if(!c) continue;
+    if(!DOM.hasOwnProperty(c)) DOM[c] = 0.3;      /* objetivo novo desta versao */
+    if(!ROTCRI[c]) ROTCRI[c] = ROTULOS[c] || c;   /* nome em lingua de crianca */
+    if(!TREINO[c]) TREINO[c] =
+      (function(k){ return function(){ abreFaseTreino(k); }; })(i);
+  }
+  /* o fundo saiu do CSS (era `url(img/jd_fundo.jpg)`, cravado) e virou dado:
+     assim ele nao viaja calado para a proxima atividade */
+  if(ID.fundo){ var bg = document.getElementById("bg");
+    if(bg) bg.style.backgroundImage = "url(img/" + ID.fundo + ")"; }
+  window["_ffim"] = function(){ telaFim(); };
+  FASES_MESTRE.push(["_ffim", (FASES.length + 1) + ". FIM"]);
+  precarrega();
+}
+var ROTULOS = {};   /* conceito -> nome de crianca (o montador escreve) */
+function semTag(h){ return String(h || "").replace(/<[^>]+>/g, ""); }
+
+/* o motor so comeca DEPOIS que a identidade e as fases existem — a linha
+   original do Broto abria a capa antes disso (ver TROCAS) */
+function inicia(){
+  preparaIdentidade();
+  if(location.search.indexOf("painel") >= 0){ telaPainel(); } else { telaCapa(); }
 }
 '''
 
@@ -187,22 +326,53 @@ def main():
         if b:
             fora.append(b)
 
+    css = css_orig = "".join(re.findall(r"<style>(.*?)</style>", html, re.S))
+    # ⚠️ o CSS TAMBEM carrega marca do Broto (`url(img/jd_fundo.jpg)`) e nenhum
+    #    portao de JS olha para la — passaria calado para toda atividade
+    for alvo, troco in TROCAS:
+        css = re.sub(alvo, troco.replace("\\", "\\\\"), css)
+
     fora.sort(reverse=True)
     novo = js
     for a, b in fora:
         novo = novo[:a] + novo[b:]
-    novo += "\n" + CONDUTOR
+    nao_pegou = []
+    for alvo, troco in TROCAS:
+        novo, n = re.subn(alvo, troco.replace("\\", "\\\\"), novo)
+        if not n and not re.search(alvo, css_orig):
+            nao_pegou.append(alvo)
+    novo = CABECA + novo + "\n" + CONDUTOR + "\ninicia();\n"
 
+    # ⭐ A CONFERENCIA — o extrator NAO escreve um motor que ainda carregue a
+    #    marca do Broto. Sem isto, cada marca esquecida aqui viraria "resto de
+    #    clone" em TODA atividade que o esqueleto gerasse: uma so falha,
+    #    multiplicada por todas. E a versao automatica da ordem do Marcos
+    #    ("favor nao poder mais haver resto do clone").
+    #    ⚠️ so o CODIGO conta: os comentarios do proprio esqueleto dizem, de
+    #    proposito, que ele NASCEU do Jardim do Broto — e isso e memoria, nao
+    #    resto. O que nao pode e a marca chegar em algo que a criança vê.
+    codigo = re.sub(r"/\*.*?\*/", " ", novo + "\n" + css, flags=re.S)
+    codigo = re.sub(r"(?m)^\s*//.*$", " ", codigo)
+    sobrou = sorted(set(re.findall(r"jd_[a-z0-9_]+", codigo)
+                        + re.findall(r"Broto", codigo)))
     print(u"EXTRACAO DO MOTOR")
+    for a in nao_pegou:
+        print(u"  ⚠️ TROCA QUE NAO PEGOU (o Broto mudou?): %s" % a[:66])
     print(u"  origem: _jardim/index.html (%d funcoes)" % len(fun))
     print(u"  saiu:   %d bloco(s) de conteudo (%d KB)"
           % (len(fora), (len(js) - len(novo) + len(CONDUTOR)) // 1024))
     print(u"  motor:  %d KB de JS" % (len(novo) // 1024))
+    if sobrou:
+        print(u"  ✗ MARCA DO BROTO NO MOTOR (%d) — nada foi escrito: %s"
+              % (len(sobrou), ", ".join(sobrou[:14])))
+        print(u"    ponha na lista DADOS (se for dado) ou em TROCAS (se for "
+              u"identidade) e rode de novo.")
+        return 1
+    print(u"  limpo: nenhuma marca do Broto sobrou no motor")
     if "--so-ver" in sys.argv:
         print(u"  (--so-ver: nada escrito)")
         return 0
 
-    css = "".join(re.findall(r"<style>(.*?)</style>", html, re.S))
     corpo = re.search(r"<body>(.*?)<script>", html, re.S)
     cab = (u"<!DOCTYPE html>\n<html lang=\"pt-BR\"><head>\n<meta charset=\"utf-8\">\n"
            u"<meta name=\"viewport\" content=\"width=device-width,initial-scale=1,"

@@ -232,6 +232,41 @@ def escreve_index(pasta, c, falas):
 
     pre = c["prefixo"].rstrip("_")
     dados = [u"\n/* ====== O CONTEUDO DESTA ATIVIDADE (escrito pelo montador) ====== */"]
+
+    # ⭐ A IDENTIDADE — o que antes era "resto de clone" e agora é DADO.
+    #    O motor não sabe o nome de nenhum mascote, não tem prefixo de figura,
+    #    não tem chave de localStorage própria. Tudo vem daqui.
+    mascote = c.get("mascote", "mascote")
+    dados.append(u"ID = %s;" % json.dumps({
+        "pre": pre,
+        "mascote": mascote,
+        "mascoteNome": c.get("mascoteNome") or mascote.capitalize(),
+        "titulo": c.get("titulo", "Atividade"),
+        "sub": c.get("sub", ""),
+        "fundo": c.get("fundo", ""),
+        "crachas": int(c.get("crachas", 6)),
+    }, ensure_ascii=False))
+    dados.append(u"ROTULOS = %s;" % json.dumps(c.get("conceitos") or {},
+                                               ensure_ascii=False))
+    # a pré-carga: o mascote em 3 camadas, os crachás, a medalha e a arte das
+    # fases — nunca a lista da atividade de origem
+    imgs = ["%s_%s_%s" % (pre, mascote, x) for x in
+            ("feliz", "fala", "pisca", "pensa", "festa")]
+    imgs += ["%s_cr%d" % (pre, i + 1) for i in range(int(c.get("crachas", 6)))]
+    imgs.append("med_" + pre)
+    for f in c["fases"]:
+        for it in (f.get("itens") or []) + (f.get("opcoes") or []):
+            if isinstance(it, dict) and it.get("img"):
+                imgs.append(it["img"])
+        if f.get("img"):
+            imgs.append(f["img"])
+    vistas, limpa = set(), []
+    for x in imgs:
+        if x not in vistas:
+            vistas.add(x)
+            limpa.append(x)
+    dados.append(u"IMGS = %s;" % json.dumps(limpa, ensure_ascii=False))
+
     dados.append(u"ABERTURA = {texto:%s, voz:%s};"
                  % (jstr(c.get("abertura") or ""), jstr(pre + "_abertura")))
     fases = []
