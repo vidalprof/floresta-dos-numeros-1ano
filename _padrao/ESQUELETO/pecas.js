@@ -3,24 +3,35 @@
 /* ==== FERRAMENTAS QUE AS PECAS USAM E O MOTOR NAO TINHA ====
    ⚠️ LICAO PAGA (achada pelo auditor-jogador, na 3a fase): o integrador so
    trazia o SEGUNDO <script> da peca (a mecanica). O PRIMEIRO — o motorzinho do
-   MOLDE — ficava para tras, e com ele o `nota()`/`ac()` que fazem o som. A peca
-   escolher passou, a completar passou, e a MEMORIA morreu no primeiro som de
-   carta virando: "nota is not defined". O motor tem `tom()`, mas as pecas foram
-   afinadas com estes numeros (PESQUISA-SOM-E-GAMEFEEL), entao vem os dois.
+   MOLDE — ficava para tras, e com ele o `nota()` que faz o som. A peca escolher
+   passou, a completar passou, e a MEMORIA morreu no primeiro som de carta
+   virando. O motor tem `tom()`, mas as pecas foram afinadas com estes numeros
+   (PESQUISA-SOM-E-GAMEFEEL), entao o `nota` vem junto.
+
+   ⚠️⚠️ E A SEGUNDA METADE DA MESMA LICAO: o `ac` da peca e uma FUNCAO (destrava
+   o som), e o `ac` do motor e o OBJETO AudioContext — o mesmo que alimenta o
+   lip-sync do mascote. Declarar a funcao aqui NAO deu erro nenhum: o `var ac=`
+   do motor simplesmente sobrescreveu, e a memoria voltou a morrer, agora com
+   'ac is not a function'. Nome igual e TIPO diferente e a colisao que nao
+   aparece. Solucao: `nota` usa o AudioContext do motor direto, e cada peca
+   ganha o SEU `ac()` local dentro do fechamento (ver PONTE) — que destrava com
+   `arma()`, o nome que o motor usa para isso, e devolve o contexto.
 
    Todo o resto do motorzinho (el, limpa, setProg, mostraDica, mostraBanner,
-   baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome — e por
-   isso a peca nunca precisou ser reescrita. */
-var _AC = null;
-function ac(){ try{ if(!_AC) _AC = new (window.AudioContext||window.webkitAudioContext)();
-  if(_AC.state === "suspended") _AC.resume(); }catch(e){} return _AC; }
-function nota(f, dur, vol, tipo, atraso){ var c = ac(); if(!c) return;
-  var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
-  o.type = tipo || "triangle"; o.frequency.value = f;
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.014);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02); }
+   baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
+   mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
+function nota(f, dur, vol, tipo, atraso){
+  if(typeof arma === "function") arma();
+  var c = window.ac; if(!c || !c.createOscillator) return;
+  try{
+    var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
+    o.type = tipo || "triangle"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02);
+  }catch(e){}
+}
 
 /* ==== PECA: achar-na-cena ==== */
 MEC["achar-na-cena"] = function(f, cen, fim){
@@ -28,6 +39,10 @@ MEC["achar-na-cena"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -216,6 +231,10 @@ MEC["andar-ate"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -483,6 +502,10 @@ MEC["arrastar-lugar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -805,6 +828,10 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -1216,6 +1243,10 @@ MEC["autoexplicacao"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -1534,6 +1565,10 @@ MEC["balanca"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -1757,6 +1792,10 @@ MEC["base-dez"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -2115,6 +2154,10 @@ MEC["bingo"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -2512,6 +2555,10 @@ MEC["bussola"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -2856,6 +2903,10 @@ MEC["caca-palavras"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -3143,6 +3194,10 @@ MEC["caixa-dinheiro"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -3362,6 +3417,10 @@ MEC["calendario"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -3955,6 +4014,10 @@ MEC["camadas-mapa"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -4312,6 +4375,10 @@ MEC["circuito"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -4743,6 +4810,10 @@ MEC["classificar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -4972,6 +5043,10 @@ MEC["comparar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -5418,6 +5493,10 @@ MEC["completar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -5566,6 +5645,10 @@ MEC["conserte-o-erro"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -5825,6 +5908,10 @@ MEC["contadores"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -6100,6 +6187,10 @@ MEC["coordenadas"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -6469,6 +6560,10 @@ MEC["criar-desafio"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -6772,6 +6867,10 @@ MEC["cruzadinha"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -6986,6 +7085,10 @@ MEC["decisao"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -7220,6 +7323,10 @@ MEC["digitar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -7403,6 +7510,10 @@ MEC["ditado"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -7669,6 +7780,10 @@ MEC["domino"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -8150,6 +8265,10 @@ MEC["ensinar-mascote"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -8427,6 +8546,10 @@ MEC["escolher"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -8582,6 +8705,10 @@ MEC["escrever-legenda"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -8836,6 +8963,10 @@ MEC["estimar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -9262,6 +9393,10 @@ MEC["experimento-justo"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -9565,6 +9700,10 @@ MEC["filtro"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -9770,6 +9909,10 @@ MEC["forca"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -9969,6 +10112,10 @@ MEC["girar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -10344,6 +10491,10 @@ MEC["grafico"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -10766,6 +10917,10 @@ MEC["intruso"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -11119,6 +11274,10 @@ MEC["investigar-fonte"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -11378,6 +11537,10 @@ MEC["labirinto"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -11749,6 +11912,10 @@ MEC["ligar-pontos"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -12065,6 +12232,10 @@ MEC["ligar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -12350,6 +12521,10 @@ MEC["linha-do-tempo"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -12640,6 +12815,10 @@ MEC["mapa-conceitual"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -13060,6 +13239,10 @@ MEC["medir"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -13737,6 +13920,10 @@ MEC["memoria"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -13926,6 +14113,10 @@ MEC["misterio"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -14249,6 +14440,10 @@ MEC["montar-frase"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -14546,6 +14741,10 @@ MEC["morfemas"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -14877,6 +15076,10 @@ MEC["mudanca-permanencia"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -15252,6 +15455,10 @@ MEC["ordenar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -15485,6 +15692,10 @@ MEC["ouvir-achar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -15841,6 +16052,10 @@ MEC["padrao"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -16153,6 +16368,10 @@ MEC["passo-a-passo"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -16783,6 +17002,10 @@ MEC["pintar-desenho"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -17120,6 +17343,10 @@ MEC["pintar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -17250,6 +17477,10 @@ MEC["prever-observar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -17585,6 +17816,10 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -17938,6 +18173,10 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -18155,6 +18394,10 @@ MEC["relampago"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -18403,6 +18646,10 @@ MEC["relogio"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -18960,6 +19207,10 @@ MEC["repartir"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -19353,6 +19604,10 @@ MEC["reta-numerica"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -19680,6 +19935,10 @@ MEC["rotular"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -20120,6 +20379,10 @@ MEC["saltos-na-fita"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -20363,6 +20626,10 @@ MEC["sete-erros"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -20617,6 +20884,10 @@ MEC["simetria"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -20838,6 +21109,10 @@ MEC["simulador"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -21103,6 +21378,10 @@ MEC["sombra"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -21287,6 +21566,10 @@ MEC["tabela"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -21489,6 +21772,10 @@ MEC["tangram"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -21860,6 +22147,10 @@ MEC["teia-alimentar"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -22329,6 +22620,10 @@ MEC["termometro"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -22556,6 +22851,10 @@ MEC["tracar-caminho"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -22982,6 +23281,10 @@ MEC["tracar-letra"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -23410,6 +23713,10 @@ MEC["trilha"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }

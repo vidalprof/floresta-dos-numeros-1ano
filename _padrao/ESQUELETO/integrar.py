@@ -140,6 +140,10 @@ MEC["%(nome)s"] = function(f, cen, fim){
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
     function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
       if(g) g.innerHTML = ""; else { g = document.createElement("div");
       g.className = "pecabox"; cen.appendChild(g); } app = g; }
@@ -160,25 +164,94 @@ FERRAMENTAS = u'''
 /* ==== FERRAMENTAS QUE AS PECAS USAM E O MOTOR NAO TINHA ====
    ⚠️ LICAO PAGA (achada pelo auditor-jogador, na 3a fase): o integrador so
    trazia o SEGUNDO <script> da peca (a mecanica). O PRIMEIRO — o motorzinho do
-   MOLDE — ficava para tras, e com ele o `nota()`/`ac()` que fazem o som. A peca
-   escolher passou, a completar passou, e a MEMORIA morreu no primeiro som de
-   carta virando: "nota is not defined". O motor tem `tom()`, mas as pecas foram
-   afinadas com estes numeros (PESQUISA-SOM-E-GAMEFEEL), entao vem os dois.
+   MOLDE — ficava para tras, e com ele o `nota()` que faz o som. A peca escolher
+   passou, a completar passou, e a MEMORIA morreu no primeiro som de carta
+   virando. O motor tem `tom()`, mas as pecas foram afinadas com estes numeros
+   (PESQUISA-SOM-E-GAMEFEEL), entao o `nota` vem junto.
+
+   ⚠️⚠️ E A SEGUNDA METADE DA MESMA LICAO: o `ac` da peca e uma FUNCAO (destrava
+   o som), e o `ac` do motor e o OBJETO AudioContext — o mesmo que alimenta o
+   lip-sync do mascote. Declarar a funcao aqui NAO deu erro nenhum: o `var ac=`
+   do motor simplesmente sobrescreveu, e a memoria voltou a morrer, agora com
+   'ac is not a function'. Nome igual e TIPO diferente e a colisao que nao
+   aparece. Solucao: `nota` usa o AudioContext do motor direto, e cada peca
+   ganha o SEU `ac()` local dentro do fechamento (ver PONTE) — que destrava com
+   `arma()`, o nome que o motor usa para isso, e devolve o contexto.
 
    Todo o resto do motorzinho (el, limpa, setProg, mostraDica, mostraBanner,
-   baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome — e por
-   isso a peca nunca precisou ser reescrita. */
-var _AC = null;
-function ac(){ try{ if(!_AC) _AC = new (window.AudioContext||window.webkitAudioContext)();
-  if(_AC.state === "suspended") _AC.resume(); }catch(e){} return _AC; }
-function nota(f, dur, vol, tipo, atraso){ var c = ac(); if(!c) return;
-  var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
-  o.type = tipo || "triangle"; o.frequency.value = f;
-  g.gain.setValueAtTime(0.0001, t);
-  g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.014);
-  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
-  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02); }
+   baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome E o
+   mesmo tipo — e por isso a peca nunca precisou ser reescrita. */
+function nota(f, dur, vol, tipo, atraso){
+  if(typeof arma === "function") arma();
+  var c = window.ac; if(!c || !c.createOscillator) return;
+  try{
+    var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
+    o.type = tipo || "triangle"; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.014);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02);
+  }catch(e){}
+}
 '''
+
+
+def sem_comentario(s):
+    u"""⚠️ A ORDEM É O DEFEITO. Tirando `//...` ANTES das aspas, um `"http://"`
+    no meio do código apaga o resto da linha — e, se a aspa de fechar for junto,
+    o estrago desce em cascata pelo arquivo. Foi assim que este mesmo portão
+    acusou 24 funções de "não existir" estando todas declaradas: bloco →
+    aspas → linha."""
+    s = re.sub(r"/\*.*?\*/", " ", s, flags=re.S)
+    s = re.sub(r'"(?:[^"\\\n]|\\.)*"', ' "" ', s)
+    s = re.sub(r"'(?:[^'\\\n]|\\.)*'", " '' ", s)
+    return re.sub(r"(?m)//.*$", " ", s)
+
+
+def confere_contra_motor(js_out):
+    u"""⭐ O PORTÃO QUE FALTAVA — as duas metades da mesma lição.
+
+    Metade 1 (**falta**): a peça chama um nome que o motor não tem. Foi o
+    `nota()`: a memória morria no primeiro som de carta virando.
+
+    Metade 2 (**colisão de tipo**): o motor TEM o nome, mas com outro tipo — o
+    `ac` da peça é uma função (destrava o som) e o do motor é o objeto
+    AudioContext. Esta é a pior das duas, porque declarar a função aqui não deu
+    erro nenhum: o `var ac=` do motor simplesmente sobrescreveu, e a memória
+    voltou a morrer, agora com "ac is not a function".
+
+    As duas só apareciam JOGANDO. Agora aparecem ao integrar — antes de existir
+    atividade, quanto mais criança."""
+    motor = os.path.join(AQUI, "motor.html")
+    if not os.path.exists(motor):
+        return [], []
+    mjs = sem_comentario("".join(re.findall(
+        r"<script>(.*?)</script>",
+        io.open(motor, encoding="utf-8").read(), re.S)))
+    funcoes = set(re.findall(r"function\s+([\w$]+)", mjs))
+    valores = set(re.findall(r"(?:^|[,;{]\s*|var\s+)([A-Za-z_$][\w$]*)\s*=(?!=)",
+                             mjs, re.M)) - funcoes
+    embutidos = set("""window document Math Date JSON String Number Array Object
+        parseInt parseFloat setTimeout setInterval clearInterval clearTimeout
+        isNaN navigator location Image RegExp Audio alert Boolean Error
+        encodeURIComponent decodeURIComponent requestAnimationFrame
+        SpeechSynthesisUtterance speechSynthesis Promise""".split())
+    kw = set("""if for while switch catch return typeof function new else do try
+        in of delete void instanceof throw case break continue""".split())
+
+    todo = sem_comentario("".join(js_out)) + sem_comentario(FERRAMENTAS)
+    chamados = set(re.findall(r"(?<![\w.$])([a-zA-Z_$][\w$]*)\s*\(", todo))
+    locais = (set(re.findall(r"function\s+([\w$]+)", todo))
+              | set(re.findall(r"var\s+([\w$]+)", todo)))
+    # ⚠️ os PARAMETROS também são nomes locais: `function montaBotoes(c,aoTocar)`
+    #    chama `aoTocar(k)` lá dentro, e sem isto o portão acusa o inocente.
+    for args in re.findall(r"function\s*[\w$]*\s*\(([^)]*)\)", todo):
+        for a in args.split(","):
+            a = a.strip()
+            if a:
+                locais.add(a)
+    resta = chamados - locais - kw - embutidos
+    return (sorted(resta - funcoes - valores), sorted(resta & valores))
 
 
 def main():
@@ -218,8 +291,21 @@ def main():
         css_out.append((MARCA % nome) + u"\n" + prefixa_css(css_da_peca(html), nome))
         prontas.append(nome)
 
+    faltando, colidindo = confere_contra_motor(js_out)
+
     print(u"INTEGRACAO DAS PECAS")
     print(u"  %d peca(s) com porta de entrada -> viram MEC[...]" % len(prontas))
+    if faltando:
+        print(u"  ✗ AS PECAS CHAMAM %d NOME(S) QUE NAO EXISTEM NO MOTOR: %s"
+              % (len(faltando), ", ".join(faltando)))
+        print(u"    -> ponha em FERRAMENTAS (a peca nao se reescreve)")
+    if colidindo:
+        print(u"  ✗ COLISAO DE TIPO com o motor (%d): %s"
+              % (len(colidindo), ", ".join(colidindo)))
+        print(u"    -> o motor declara este nome como VALOR e a peca o chama "
+              u"como FUNCAO (foi o caso do `ac`). Da um `ac()` local na PONTE.")
+    if faltando or colidindo:
+        return 1
     print(u"  %d com gaveta de conteudo (aceitam `dados` do conteudo.json)"
           % (len(prontas) - len(sem_gaveta)))
     if sem_porta:
