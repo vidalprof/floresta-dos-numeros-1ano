@@ -373,8 +373,8 @@ function ajuda(n){
   }
   if(n<12){                      /* 2o degrau: apoio concreto — quantos giros */
     acendeSeta(dir);
-    mostraDica("Falta <b>"+quartos+"</b> quarto(s) de volta para a <b>"+nome+
-               "</b>. O bot&#227;o certo est&#225; <b>piscando</b>.");
+    mostraDica("Falta <b>"+quartos+"</b> "+((quartos===1)?"quarto":"quartos")+
+               " de volta para a <b>"+nome+"</b>. O bot&#227;o certo est&#225; <b>piscando</b>.");
     return;
   }
   /* 3o degrau: revela e SEGUE. A peca gira sozinha ate o molde — a crianca ve
