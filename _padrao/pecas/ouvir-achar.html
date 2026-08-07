@@ -212,6 +212,48 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .hint{margin-top:4px;font-size:13px}
   .medal{width:70px;height:70px;font-size:30px;line-height:60px}
 }
+
+/* ⭐⭐ O CARTAO DA FIGURA — refeito (cobranca do Marcos, ago/2026: *"o dizer da
+   figura fica fora do quadrado branco, ficou feio, isso teria que ficar mais
+   profissional, com uma moldura, ou sem fundo somente a imagem sem fundo e seu
+   nome embaixo"*).
+
+   O que estava errado: esta peca nasceu com figuras DESENHADAS EM CSS, de 46px.
+   Quando ela passou a aceitar ARTE DE IA, o cartao nao acompanhou — a figura
+   ficou perdida num canto, o nome caiu PARA FORA da borda branca e os cartoes
+   encostaram na esquerda com um vazio enorme a direita.
+
+   O molde agora: cartao centrado e largo, com MOLDURA propria em volta da
+   figura (fundo creme, borda suave), a figura GRANDE dentro dela, e o nome
+   LOGO ABAIXO, dentro do cartao. O alto-falante fica a direita, no meio. */
+.opt.fig{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  width:100%;max-width:430px;margin:7px auto;padding:7px 10px;text-align:left;min-height:0}
+.opt.fig .moldura{-webkit-box-flex:0;flex:0 0 auto;width:72px;height:72px;border-radius:16px;
+  background:#fff8e8;border:2px solid #e7dcc4;padding:6px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;overflow:hidden}
+.opt.fig .des{position:relative;width:100%;height:100%;margin:0}
+.opt.fig .des img{width:100%;height:100%;object-fit:contain;display:block}
+.opt.fig .linha{-webkit-box-flex:1;flex:1 1 auto;margin:0 0 0 14px;white-space:normal;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:justify;justify-content:space-between}
+.opt.fig .nom{display:block;max-width:none;font-size:20px;line-height:1.15;overflow:visible}
+.opt.fig .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}
+@media (max-width:360px){
+  .opt.fig .moldura{width:62px;height:62px}
+  .opt.fig .nom{font-size:18px}
+}
+/* janela baixa (o monitor da escola, 1024x420): encolhe a moldura, nunca some
+   com a opcao — resposta que a crianca nao ve e resposta que nao existe. */
+/* ⚠️ e a lista ROLA: em janela baixa a 4a opcao ficava presa atras da barra de
+   baixo. Resposta que a crianca nao alcanca e resposta que nao existe. */
+.opts{max-height:none}
+@media (max-height:560px){
+  .opts{max-height:52vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .opt.fig .moldura{width:56px;height:56px}
+  .opt.fig{margin:5px auto;padding:5px 9px}
+  .opt.fig .nom{font-size:17px}
+}
 </style></head>
 <body>
 <div id="app"></div>
@@ -462,7 +504,10 @@ function cartao(k){
   var o=el("div","opt","");
   o.className="opt fig";
   o.appendChild(el("div","ini",letraDe(k)));
-  o.appendChild(desenho(k));
+  /* ⭐ a MOLDURA: e ela que da o acabamento e impede a figura de vazar */
+  var mo=el("div","moldura","");
+  mo.appendChild(desenho(k));
+  o.appendChild(mo);
   var lin=el("div","linha","");
   lin.appendChild(el("span","nom",CATALOGO[k].nome));
   var z=el("button","zap","");

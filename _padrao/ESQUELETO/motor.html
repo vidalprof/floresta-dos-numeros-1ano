@@ -1127,8 +1127,35 @@ function montaFase(i, aoFim){
   window.regFase = function(ok, tent){ if(f.conceito) reg(f.conceito, ok, tent); };
 
   montaBarra(f.dicaVoz || null, f.dica || null);
-  /* a instrucao da fase so fala sozinha ate o 5o ano (ver ID.narrar) */
-  if(f.vozIntro && ID.narrar !== "manual") falar(f.vozIntro);
+  /* ⭐⭐ A VOZ DIZ O QUE ESTA ESCRITO NA TELA — sempre.
+     ⚠️ LICAO PAGA (ago/2026), e o Marcos pegou JOGANDO: *"os audios dos
+     enunciados nao estao como esta escrito no enunciado"*. Na fase 1 a crianca
+     LIA "Ouca a palavra e toque na figura dela" (o balao que a PECA escreve) e
+     OUVIA "As etiquetas da padaria cairam!" (o enunciado da FASE, que o motor
+     narrava). Duas frases diferentes ao mesmo tempo — para quem nao le, e pior
+     que silencio.
+     A causa era estrutural: o motor narrava `f.vozIntro` as cegas, sem olhar o
+     que a peca tinha acabado de por na tela. E o esqueleto existe justamente
+     para isso nao poder acontecer.
+     Agora ele ESPERA a peca desenhar, LE o balao de verdade e fala a gravacao
+     DAQUELE texto. So cai no `vozIntro` quando a peca nao escreveu balao
+     nenhum — ai o enunciado da fase e mesmo o que esta na tela. */
+  if(ID.narrar !== "manual"){
+    setTimeout(function(){
+      var cx = document.getElementsByClassName("pecabox")[0];
+      var bs = cx ? cx.getElementsByClassName("balao") : null;
+      var txt = (bs && bs.length) ? (bs[0].textContent || "") : "";
+      txt = txt.replace(/\s+/g, " ").replace(/^ | $/g, "");
+      if(txt && typeof temVoz === "function"){
+        var k = temVoz(txt);
+        if(k){ falaDaTela(k); return; }
+        /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
+           foi exatamente o defeito. */
+        return;
+      }
+      if(f.vozIntro) falar(f.vozIntro);
+    }, 260);
+  }
 
   var m = MEC[f.mec];
   if(!m){ /* mecanica que nao existe nao pode virar tela branca na mao da crianca */
