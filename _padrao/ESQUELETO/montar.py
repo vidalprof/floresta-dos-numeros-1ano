@@ -448,6 +448,36 @@ def arte_de(c):
 
 
 # ------------------------------------------------------------------ o HTML
+
+def politica_de_voz(ano):
+    u"""⭐ QUANTO A ATIVIDADE FALA SOZINHA, por faixa etária.
+
+    Ordem do Marcos (ago/2026): *"o botão com o áudio em tudo para ajudar quem
+    não sabe ler é interessante, o aluno clica e escuta, mas a fala automática,
+    acredito que os maiores não gostem disso a todo momento"*.
+
+    O que sustenta: o princípio da SEGMENTAÇÃO de Mayer — *"melhores resultados
+    quando a informação é segmentada e os alunos têm controle sobre o ritmo"*
+    (`_pesquisa/web/narracao-automatica-por-faixa-etaria.md`). E o padrão de
+    acessibilidade é não tocar áudio sozinho; a mesma fonte reconhece que
+    obrigar a apertar Play em toda tela *"levaria a uma experiência ruim"*.
+
+    ⚠️ HONESTIDADE, para não virar lenda daqui a um mês: **não achei estudo com
+    corte por idade**. A linha abaixo vem do princípio (o controle do aprendiz
+    cresce com a idade) e da prática da escola — não de um número medido. Está
+    combinado com ele reavaliar.
+
+    O BOTÃO de alto-falante continua em TUDO, em toda idade: é ele que ajuda
+    quem não lê sem expor ninguém — o oposto do estigma."""
+    n = re.search(r"(\d+)", str(ano or ""))
+    n = int(n.group(1)) if n else 0
+    if not n or n <= 2:
+        return "tudo"          # pré, 1º e 2º: sem voz não há atividade
+    if n <= 5:
+        return "instrucao"     # 3º ao 5º: a instrução da fase, uma vez
+    return "manual"            # 6º ao 9º: nada sozinho
+
+
 def escreve_index(pasta, c, falas):
     u"""motor + SÓ as mecânicas usadas + o conteúdo = a atividade.
 
@@ -482,6 +512,8 @@ def escreve_index(pasta, c, falas):
         # o convite do crachá é da HISTÓRIA desta atividade ("Quem vai pilotar
         # o foguete hoje?"), não um texto de sistema
         "convite": c.get("convite") or u"<b>Quem vai jogar</b> hoje?",
+        # ⭐ a VOZ QUE FALA SOZINHA sai da IDADE, nao do gosto de quem monta
+        "narrar": politica_de_voz(c.get("ano", "")),
     }, ensure_ascii=False)
     dados.append(u"ROTULOS = %s;" % json.dumps(c.get("conceitos") or {},
                                                ensure_ascii=False))

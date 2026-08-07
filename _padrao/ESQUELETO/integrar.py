@@ -349,6 +349,10 @@ FERRAMENTAS = u'''
     var b = bs[0], txt = (b.textContent || "").replace(/\s+/g, " ").replace(/^ | $/g, "");
     if(!txt || txt === ultimo) return;
     ultimo = txt;
+    /* ⭐ a voz de CADA RODADA e so para quem nao le (ate o 2o ano). Do 3o em
+       diante a instrucao da fase ja foi narrada uma vez e o resto e por botao —
+       repetir a cada rodada e o que o Marcos disse que os maiores nao gostam. */
+    if(typeof ID === "object" && ID.narrar !== "tudo") return;
     if(typeof temVoz !== "function") return;
     var k = temVoz(txt);
     /* sem voz gravada nao inventa nada: ficar calado e melhor que falar

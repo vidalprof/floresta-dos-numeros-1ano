@@ -144,7 +144,29 @@ CABECA = u'''/* ====== A IDENTIDADE DESTA ATIVIDADE ======
    "jardim_med" apagariam o progresso uma da outra na mesma tarde. */
 var ID = {pre:"skel", mascote:"mascote", mascoteNome:"", titulo:"Atividade",
           sub:"", fundo:"", crachas:6,
-          convite:"<b>Quem vai jogar</b> hoje?"};
+          convite:"<b>Quem vai jogar</b> hoje?",
+          /* ⭐ A VOZ QUE FALA SOZINHA MUDA COM A IDADE (ordem do Marcos, ago/2026:
+             *"o botão com o áudio em tudo para ajudar quem não sabe ler é
+             interessante... mas a fala automática, acredito que os maiores não
+             gostem disso a todo momento"*).
+
+             O que a pesquisa sustenta (`_pesquisa/web/narracao-automatica-por-
+             faixa-etaria.md`): o princípio da SEGMENTAÇÃO de Mayer — *"melhores
+             resultados quando a informação é segmentada e os alunos têm controle
+             sobre o ritmo"*. E o padrão de acessibilidade é NÃO tocar áudio
+             sozinho; a mesma fonte reconhece, do outro lado, que obrigar a
+             apertar Play em toda tela *"levaria a uma experiência ruim"*.
+             ⚠️ HONESTIDADE: não achei estudo com CORTE POR IDADE. A linha abaixo
+             vem do princípio (controle do aprendiz cresce com a idade) e da
+             prática da escola — não de um número medido. Reavaliar com o Marcos.
+
+               "tudo"      pré, 1º, 2º  — a criança não lê: sem voz não há atividade
+               "instrucao" 3º ao 5º     — narra a instrução da fase UMA vez
+               "manual"    6º ao 9º     — nada sozinho
+
+             O BOTÃO de alto-falante continua em TUDO, em TODA idade: é ele que
+             ajuda quem não lê sem expor ninguém.                              */
+          narrar:"tudo"};
 '''
 
 

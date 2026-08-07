@@ -260,7 +260,22 @@ if nomeados and pct > 40.0:
 if len(conta) < 4:
     problemas.append("so %d gesto(s) diferentes na atividade inteira (minimo 4) — o leque de "
                      "interatividade da casa e bem maior que isso" % len(conta))
-if mudas:
+# ⚠️⚠️ O PORTAO NAO PODE OBRIGAR A PIORAR (ago/2026). O Marcos decidiu que a
+#    voz que fala SOZINHA muda com a idade: do 6o ao 9o ano nada e narrado
+#    automaticamente, so o botao de alto-falante — porque "os maiores nao
+#    gostam disso a todo momento". Sem esta ressalva, este portao passaria a
+#    reprovar toda atividade dos maiores por "fase muda", e o jeito de passar
+#    seria desfazer a decisao dele. Portao que briga com a didatica em vez de
+#    defende-la e pior que portao nenhum.
+#    ⚠️ o alto-falante em TODA resposta continua obrigatorio em TODA idade —
+#    isso e outra regra, medida mais abaixo, e nao afrouxa aqui.
+_narrar = re.search(r'narrar\s*:\s*"(\w+)"', js)
+_narrar = _narrar.group(1) if _narrar else "tudo"
+if mudas and _narrar == "manual":
+    print("   (atividade de %s: narrar=manual — a voz e por BOTAO, entao fase sem "
+          "narracao automatica nao e defeito. %d fase(s) assim.)"
+          % ("6o ao 9o ano", len(mudas)))
+elif mudas:
     problemas.append("%d fase(s) MUDA(S), sem nenhuma narracao (o padrao e toda tela falada): %s"
                      % (len(mudas), ", ".join(mudas)))
 if semimg:

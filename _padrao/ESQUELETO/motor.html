@@ -1104,7 +1104,8 @@ function montaFase(i, aoFim){
   window.regFase = function(ok, tent){ if(f.conceito) reg(f.conceito, ok, tent); };
 
   montaBarra(f.dicaVoz || null, f.dica || null);
-  if(f.vozIntro) falar(f.vozIntro);
+  /* a instrucao da fase so fala sozinha ate o 5o ano (ver ID.narrar) */
+  if(f.vozIntro && ID.narrar !== "manual") falar(f.vozIntro);
 
   var m = MEC[f.mec];
   if(!m){ /* mecanica que nao existe nao pode virar tela branca na mao da crianca */
