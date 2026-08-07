@@ -17734,6 +17734,16 @@ MEC["ordenar"] = function(f, cen, fim){
    Trocar `ORDEM` (e o texto do balao) ja adapta a peca a outro conteudo,
    desde que a lista continue tendo UMA ordem certa e so uma. */
 var ORDEM=[2,5,9,14,21];
+/* ⭐ O TEXTO DA PECA E CONTEUDO, NAO MOLDE (licao paga ago/2026).
+   Esta peca compara por POSICAO NA LISTA (`b.num===ORDEM[vagaAtual]`), entao
+   ela ja servia para letras — `ORDEM=["A","B","C"]` funciona. So que o balao
+   dizia, fixo, "da menor para a maior": a crianca do 1o ano ia ler isso na fase
+   do ALFABETO. Numa atividade montada o enunciado da fase fica escondido quando
+   a peca poe o balao dela, entao seria essa a unica instrucao na tela — e
+   estaria errada. Agora o texto vem na gaveta e acompanha o conteudo. */
+var ORDTXT={selo:"EM ORDEM",
+            balao:"Ponha as fichas <b>da menor para a maior</b>.",
+            hint:"Toque na ficha ou arraste at&#233; a fila."};
 var vagaAtual=0, errosSeg=0, telaAtual=null, barraP=null;
 var pecas=[], camas=[];
 /* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
@@ -17747,8 +17757,8 @@ function telaOrdenar(){
   var t=el("div","tela"); telaAtual=t; setProg(t,0);
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
-  c.appendChild(el("div","selo","EM ORDEM"));
-  c.appendChild(el("div","balao","Ponha as fichas <b>da menor para a maior</b>."));
+  c.appendChild(el("div","selo",ORDTXT.selo||"EM ORDEM"));
+  c.appendChild(el("div","balao",ORDTXT.balao||"Ponha as fichas <b>da menor para a maior</b>."));
   var f=el("div","fila"), i, cm, b, n;
   for(i=0;i<ORDEM.length;i++){
     cm=el("div","cam",(i+1)+"&#186;");
@@ -17765,7 +17775,7 @@ function telaOrdenar(){
     bc.appendChild(b); pecas.push(b);
   }
   c.appendChild(bc);
-  c.appendChild(el("div","hint","Toque na ficha ou arraste at&#233; a fila."));
+  c.appendChild(el("div","hint",ORDTXT.hint||"Toque na ficha ou arraste at&#233; a fila."));
   t.appendChild(c); app.appendChild(t);
   marcaQualServe();
 }
@@ -17940,6 +17950,9 @@ function telaFim(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) ORDEM = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ORDTXT !== undefined) ORDTXT = _d.ORDTXT;
+    }
     telaOrdenar();
   })();
 };
