@@ -30,6 +30,7 @@ Uso:  python3 _padrao/ESQUELETO/colher.py <pasta>
 import io
 import json
 import os
+import re
 import subprocess
 import sys
 
@@ -106,6 +107,33 @@ def joga_e_anota(pasta, voltas=6, secas=2):
     return juntos
 
 
+COLAGEM = re.compile(
+    u"^([A-ZÀ-Ú])\\1"                       # "BBOLO": o cracha da letra + a palavra
+    u"|[A-ZÀ-Ú]{2,}[a-zà-ú]"                # "BOLOja": palavra em caixa colada na proxima
+    u"|[a-zà-ú][A-ZÀ-Ú]{2,}", re.UNICODE)   # "paoPAO": frase colada num rotulo
+
+
+def eh_colagem(t):
+    u"""⚠️ LICAO PAGA (ago/2026): a colheita trouxe SETE falas assim —
+    *"BBOLOjá tentamos"*, *"LLEITEjá tentamos"*, *"MMELjá tentamos"*...
+
+    Não é texto: é o `textContent` de um pai que juntou DOIS filhos que na tela
+    estão separados — o crachá da letra ("B"), a palavra ("BOLO") e o aviso de
+    outro canto ("já tentamos"). Na tela a criança lê três coisas distintas; no
+    texto colhido vira uma palavra que não existe.
+
+    Se isso passa, o Edge TTS grava a bobagem e a criança que aperta o
+    alto-falante ouve **"bêbolojá tentamos"** — exatamente o tipo de defeito
+    que o Marcos cobra como "a voz não diz o que está escrito", e o pior: no 1º
+    ano, quem ainda não lê acredita na voz.
+
+    A marca da colagem é a MUDANÇA DE CAIXA SEM ESPAÇO. Palavra em caixa alta
+    grudada em minúscula (ou o contrário) não acontece em frase escrita para
+    criança; acontece quando dois elementos viram um texto só.
+    """
+    return bool(COLAGEM.search(t or ""))
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
@@ -127,9 +155,13 @@ def main():
     vistos = joga_e_anota(pasta)
 
     novas = []
+    descartadas = []
     for txt in sorted(vistos):
         t = texto_limpo(txt)
         if not eh_fala(t) or t in ja_txt:
+            continue
+        if eh_colagem(t):
+            descartadas.append(t)
             continue
         ident = "op_" + chave_voz(t)
         if ident in ja:
@@ -140,6 +172,11 @@ def main():
 
     print(u"   %d texto(s) vistos em jogo | %d fala(s) novas a gravar"
           % (len(vistos), len(novas)))
+    if descartadas:
+        print(u"   %d descartada(s) por COLAGEM de elementos (nao sao frases):"
+              % len(descartadas))
+        for d in descartadas[:6]:
+            print(u"      x %s" % d[:64])
     for n in novas[:8]:
         print(u"      %s" % n["texto"][:74])
     if not novas:

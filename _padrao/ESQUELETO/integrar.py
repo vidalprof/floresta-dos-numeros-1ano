@@ -452,7 +452,8 @@ FERRAMENTAS = u'''
        MUDA dentro da fase, que e para isso que ele existe. */
     if(k && k === window.__falouAgora) return;
     window.__falouAgora = k;
-    if(k && typeof falaDaTela === "function") falaDaTela(k);
+    /* o arquivo gravado e `op_<conta>.mp3` — ver o mesmo conserto no motor */
+    if(k && typeof falaDaTela === "function") falaDaTela("op_" + k);
   }
   if(window.MutationObserver){
     var alvo = document.getElementById("app");

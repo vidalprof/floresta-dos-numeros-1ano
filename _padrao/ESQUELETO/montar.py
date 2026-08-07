@@ -351,8 +351,129 @@ def falas_de(c):
         # ...e de TUDO o que a mecanica mostra a partir do `dados` dela
         if f.get("dados") is not None:
             falas_dos_dados(f["dados"], poe)
+        # ⚠️ ...e do `dadosExtra` TAMBEM. Faltava, e nao era detalhe: o balao da
+        #    mecanica `ordenar` mora em `dadosExtra.ORDTXT.balao`, entao as tres
+        #    fases de por o alfabeto em ordem ficavam MUDAS — justo as do
+        #    objetivo que a professora pediu primeiro.
+        if f.get("dadosExtra") is not None:
+            falas_dos_dados(f["dadosExtra"], poe)
+    # ...e o BALAO QUE A PROPRIA PECA ESCREVE (ver `balaoes_das_pecas`)
+    balaoes_das_pecas(c, poe)
     poe(pre + "_fim", c.get("fim") or u"Você conseguiu!")
     return out
+
+
+# rende o HTML de um literal do jeito que o NAVEGADOR renderiza, porque e o
+# `textContent` que o motor le para procurar a gravacao.
+def como_na_tela(h):
+    t = re.sub(r"<[^>]+>", "", h or "")
+    try:
+        from html import unescape
+    except ImportError:                                    # python 2
+        from HTMLParser import HTMLParser
+        unescape = HTMLParser().unescape
+    t = unescape(t)
+    return re.sub(r"\s+", " ", t).strip()
+
+
+def balaoes_das_pecas(c, poe):
+    u"""⭐ O BALAO DA PECA TAMBEM E VOZ — foi ele que faltou.
+
+    ⚠️ LICAO PAGA (ago/2026). O Marcos: *"não teve fala automática, visto que
+    os pequinos precisam"*. Medi e as fases 2 e 3 estavam MUDAS. Nao era bug de
+    audio: era o montador nunca ter mandado gravar aquilo.
+
+    Como o motor narra a fase: ele LE o texto do balao que esta na tela e
+    procura a gravacao DAQUELE texto (`temVoz`). Se nao acha, fica calado de
+    proposito — porque falar outra coisa foi o defeito que o Marcos cobrou tres
+    vezes. Acontece que 10 das 11 mecanicas escrevem o proprio balao DENTRO do
+    codigo da peca (`el("div","balao","Junte os pedacos e forme a palavra...")`),
+    e nao no `conteudo.json`. O `falas_dos_dados` desce o `dados` da fase e
+    nunca via esses textos. Resultado: gravacao nenhuma, e o motor calado — por
+    decisao correta, a partir de um dado que faltava.
+
+    Aqui o montador abre a PECA de cada mecanica usada e manda gravar o balao
+    dela, renderizado como o navegador renderiza (tags fora, entidades
+    decodificadas, espacos colapsados) — que e exatamente o que o `textContent`
+    devolve e o que a conta do `chaveVoz` recebe.
+
+    So entram balões COMPLETOS (terminam em . ! ou ? e tem 3+ palavras). Os
+    pedacos de concatenacao ("Voce juntou <b>" + n + " palavras") sao a
+    comemoracao do fim da fase: montam-se em tempo de execucao e nao ha texto
+    fixo para gravar. Esses seguem com o som de festa, sem voz.
+    """
+    d = os.path.join(RAIZ, "_padrao", "pecas")
+    for mec in sorted(set(f.get("mec") for f in c["fases"] if f.get("mec"))):
+        cam = os.path.join(d, mec + ".html")
+        if not os.path.exists(cam):
+            continue
+        src = io.open(cam, encoding="utf-8").read()
+        lits = re.findall(r'"balao[^"]*"\s*,\s*"([^"]{6,160})"', src)
+        lits += re.findall(r'balao[^\n]{0,40}?innerHTML\s*=\s*"([^"]{6,160})"', src)
+        for bruto in lits:
+            txt = como_na_tela(bruto)
+            if len(txt.split()) < 3 or txt[-1:] not in u".!?":
+                continue                      # pedaco de concatenacao, nao frase
+            # mesma convencao das respostas tocaveis: `op_<chave>` -> op_<chave>.mp3
+            poe("op_" + chave_voz(txt), txt)
+        balao_por_item(src, c, mec, poe)
+
+
+# `el("div","balao", "Pinte " + des.nome + " do jeito que voce quiser.")`
+MOLDE_ITEM = re.compile(
+    r'el\(\s*"div"\s*,\s*"balao[^"]*"\s*,\s*'
+    r'("(?:[^"\\]|\\.)*"(?:\s*\+\s*[A-Za-z_$][\w$]*\.[\w$]+\s*\+\s*"(?:[^"\\]|\\.)*")+)\s*\)')
+
+
+def balao_por_item(src, c, mec, poe):
+    u"""⭐ O BALAO QUE MUDA A CADA ITEM tambem precisa de voz.
+
+    ⚠️ LICAO PAGA (ago/2026). Depois de gravar os balões fixos, 31 das 32 fases
+    narravam — e sobrou UMA muda: a de pintar. O balao dela nao e um texto
+    fixo, e montado no ato:
+
+        el("div","balao","Pinte "+des.nome+" do jeito que <b>voce</b> quiser.")
+
+    O `des.nome` sai do `dados` da fase ("a placa", "o bolo"), entao o texto
+    final so existe em tempo de jogo. O colhedor deveria pega-lo jogando, mas
+    ele nao chega a essa tela em toda partida — e "as vezes pega" nao serve
+    para a crianca do 1o ano que depende da voz.
+
+    Aqui o montador faz o que da para fazer em tempo de montagem: le o molde da
+    peca, ve qual CAMPO do item entra no meio ("nome"), e gera a frase pronta
+    para CADA item do `dados` daquela fase. Nada de adivinhar: o texto sai do
+    mesmo lugar de onde a peca vai tira-lo.
+    """
+    m = MOLDE_ITEM.search(src)
+    if not m:
+        return
+    partes = re.split(r'\s*\+\s*', m.group(1))
+    campos = [p.split(".", 1)[1] for p in partes if not p.startswith('"')]
+    if not campos:
+        return
+    for f in c["fases"]:
+        if f.get("mec") != mec:
+            continue
+        itens = f.get("dados")
+        if not isinstance(itens, list):
+            continue
+        for it in itens:
+            if not isinstance(it, dict):
+                continue
+            montado, i_campo = u"", 0
+            for p in partes:
+                if p.startswith('"'):
+                    montado += p[1:-1]
+                else:
+                    v = it.get(campos[i_campo])
+                    i_campo += 1
+                    if v is None:
+                        montado = u""
+                        break
+                    montado += u"%s" % v
+            txt = como_na_tela(montado)
+            if len(txt.split()) >= 3:
+                poe("op_" + chave_voz(txt), txt)
 
 
 # chaves cujo valor NAO e texto para a crianca (sao codigo: identificador,

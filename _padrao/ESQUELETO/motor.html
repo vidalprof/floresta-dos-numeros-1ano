@@ -1163,7 +1163,11 @@ function montaFase(i, aoFim){
            ouve o comeco duas vezes. Foi o que o Marcos ouviu como "duas vozes". */
         if(k){
           if(window.__falouAgora === k && narr && !narr.paused && !narr.ended) return;
-          window.__falouAgora = k; falaDaTela(k); return;
+          /* ⚠️ o `op_` NAO e enfeite: o `temVoz` devolve so a CONTA do texto,
+             e o arquivo gravado chama-se `op_<conta>.mp3` (mesma convencao das
+             respostas tocaveis). Sem o prefixo, o motor pedia `audio/<conta>.mp3`,
+             que nao existe — e a fase ficava MUDA mesmo com a voz gravada. */
+          window.__falouAgora = k; falaDaTela("op_" + k); return;
         }
         /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
            foi exatamente o defeito. */
