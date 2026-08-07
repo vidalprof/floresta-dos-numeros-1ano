@@ -85,10 +85,15 @@ Depois `gerar-imagens.yml`. **Fora da cartela** ficam só as camadas do mascote
 (`_fala`/`_pisca` são **EDIÇÃO** da pose parada — geradas do zero, ele treme) e
 as cenas largas (Pollinations, de graça).
 
-> ⚠️ **O Gemini está SEM CRÉDITO** (HTTP 429). Sem ele não há edição da pose do
-> mascote nem recorte transparente. Enquanto não recarregar
-> (https://ai.studio/projects), a arte sai só por Pollinations — o que serve
-> para cena e fundo, mas **não** para as 3 camadas do mascote.
+> ✅ **O Gemini TEM CRÉDITO** — medido em 2026-08-07: uma geração de teste voltou
+> com imagem 1024×1024. O aviso de "sem crédito" que estava aqui era de 05/08 e
+> ficou velho.
+>
+> ⚠️ **A lição, que vale para qualquer serviço de fora:** aviso de saldo tem
+> **data de validade**. Eu repeti o de 05/08 ao Marcos como se fosse de hoje, e
+> ele é que estranhou ("coloquei 60 reais, como pode?"). Conferir custa **um
+> minuto e centavos**: `gerar-imagens.yml` com `modelo=gemini` e um prompt
+> qualquer. Medir antes de repetir.
 
 ### 4. A voz (~1 min)
 

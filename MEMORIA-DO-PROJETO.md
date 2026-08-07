@@ -4748,3 +4748,34 @@ liam a primeira ocorrência. Quando há declaração e atribuição, **vale a ma
 
 No último, a saída não foi afrouxar: foi **trocar adivinhação por medição** —
 nasceu o portão `0f2`, que mede jogando (`colher.py --so-ver`).
+
+---
+
+## ✅ O GEMINI TEM CRÉDITO — e a lição do aviso vencido (2026-08-07)
+
+Passei a madrugada repetindo ao Marcos que *"o Gemini está sem crédito (429)"*,
+porque era o que estava escrito no `CLAUDE.md`. **Foi ele que estranhou:** *"eu
+coloquei 60 reais, não usamos tanto assim, como pode estar sem créditos?"*.
+
+Acionei `gerar-imagens.yml` com `modelo=gemini`. **Voltou imagem, 1024×1024.**
+O aviso era de **05/08** e tinha ficado velho.
+
+**A regra que fica, e vale para qualquer serviço de fora (saldo, cota, chave):**
+
+> Aviso de estado externo tem **data de validade**. Repetir o do manual sem
+> remedir é passar adiante uma informação que pode ter mudado — e neste caso ela
+> teria feito o Marcos recarregar uma conta que já tinha saldo.
+> **Medir custa um minuto e centavos.** Antes de repetir, testar.
+
+### O que respondi sobre o consumo (com os números que existem)
+
+- Custo medido: **centavos por imagem** (12 imagens < R$1). R$60 dariam ~700.
+- O erro de 22/07 e 05/08 era *"prepayment credits are depleted"* — o billing
+  **está** no projeto certo; o que acabava era saldo.
+- Neste repositório: **2.234 arquivos de imagem**, **90 rodadas de geração**
+  desde 20/07 — a maioria Pollinations (grátis), sem como separar quais foram
+  Gemini.
+- **E a cartela não estava sendo usada.** A regra existia no manual, mas o portão
+  que a cobra (`_qa/cartela.py`) só nasceu em **05/08**, depois de a cartografia
+  sair com **45 imagens uma a uma (~R$9 onde ~R$1,60 bastaria)**. Regra escrita
+  não é regra cumprida — é a mesma lição de sempre, agora custando dinheiro.

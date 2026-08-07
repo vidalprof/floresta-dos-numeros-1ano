@@ -108,8 +108,7 @@ Leia tudo antes de agir e responda sempre em **português**.
 > Cartela não é só dinheiro: peça gerada junto sai **irmã** das outras (mesma luz,
 > mesma escala). Ficam fora da cartela só as camadas do mascote (`_fala`/`_pisca`,
 > que são EDIÇÃO da pose parada, senão ele treme) e as cenas largas (Pollinations,
-> de graça). ⚠️ **O Gemini está SEM CRÉDITO** (HTTP 429 "prepayment credits
-> depleted") — recarregar em https://ai.studio/projects.
+> de graça). ✅ **O Gemini TEM CRÉDITO** (medido em 2026-08-07: uma geração de teste voltou com imagem 1024×1024). O aviso de "sem crédito" que estava aqui era de 05/08 e **ficou velho**, e eu o repeti ao Marcos como se fosse de hoje. ⚠️ REGRA: aviso de saldo/serviço externo tem **data** e se **remede** antes de repetir — acionar `gerar-imagens.yml` com `modelo=gemini` custa centavos e responde em um minuto.
 
 > ## 🧰 A MECÂNICA JÁ EXISTE — COPIE, NÃO REESCREVA (`_padrao/DINAMICAS.md`)
 > Cobrança do Marcos (ago/2026): *"temos um leque de interatividades muito grande,
