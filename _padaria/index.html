@@ -1636,6 +1636,28 @@ setTimeout(inicia, 0);
 
 /* GERADO por integrar.py — nao editar a mao */
 
+/* ⭐⭐ UMA VOZ SO. ⚠️ LICAO PAGA (ago/2026), pega pelo Marcos jogando: *"nas
+   atividades tem duas vozes falando ao mesmo tempo"*.
+
+   15 das 76 pecas usam a voz do NAVEGADOR (`speechSynthesis`) para nao ficarem
+   mudas quando sao testadas SOZINHAS na bancada — o que e certo la. Mas dentro
+   de uma atividade montada quem fala e o MOTOR, com o mp3 do Edge TTS: as duas
+   vozes saem juntas, uma por cima da outra. So duas pecas tinham o guarda.
+
+   Aqui a voz do navegador e DESLIGADA de uma vez, para as 76: numa atividade
+   montada existe o mp3, e voz de navegador nunca vai para a crianca (regra da
+   casa). O que a peca queria dizer continua sendo dito — pelo olheiro do balao,
+   com a voz de verdade. */
+(function(){
+  if(!window.speechSynthesis) return;
+  var vazio = function(){};
+  try{
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak = vazio;
+    window.speechSynthesis.cancel = vazio;
+  }catch(e){}
+})();
+
 /* ==== A VOZ DA RODADA ====
    ⭐ O pilar SONORO, medido pela banca: *"16 fase(s) MUDA(S), sem nenhuma
    narracao"* e *"16 perguntas que mudam na tela sem mudar a voz — quem nao le
