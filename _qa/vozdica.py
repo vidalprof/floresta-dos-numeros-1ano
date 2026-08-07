@@ -24,6 +24,7 @@ import io
 import json
 import os
 import re
+import subprocess
 import sys
 import unicodedata
 
@@ -79,6 +80,25 @@ def main():
     falas = dict((x["id"], x["texto"]) for x in json.load(io.open(cam, encoding="utf-8")))
 
     achados = re.findall(r'montaBarra\("([a-z0-9_]+)"\s*,\s*"((?:[^"\\]|\\.)*)"', js)
+
+    # ⚠️ LICAO PAGA (ago/2026): este portao ficava CEGO na atividade MONTADA.
+    #    Ele procura `montaBarra("id","texto")` escrito com todas as letras — o
+    #    jeito da atividade feita a mao. No esqueleto, quem chama e o motor:
+    #    `montaBarra(f.dicaVoz, f.dica)`, com VARIAVEIS. Resultado: "0 dica(s)
+    #    conferida(s)" numa atividade com 32 dicas, e a banca dando por bom o que
+    #    nao mediu. Aqui as dicas vem da lista FASES, que e onde elas moram.
+    if not achados:
+        crus = re.findall(r"(?:var\s+)?FASES\s*=\s*(\[[\s\S]*?\]);\s*\n", html)
+        if crus:
+            try:
+                r = subprocess.run(
+                    ["node", "-e", "console.log(JSON.stringify(%s))" % max(crus, key=len)],
+                    capture_output=True, text=True, timeout=30)
+                for f in (json.loads(r.stdout) if r.returncode == 0 else []):
+                    if f.get("dica") and f.get("dicaVoz"):
+                        achados.append((f["dicaVoz"], f["dica"]))
+            except Exception:
+                pass
     difs, ok, sem = [], 0, []
     for ident, texto in achados:
         voz = falas.get(ident)
