@@ -484,3 +484,51 @@ ele responde?"* → bloco 3.
 3. **Escolher a dinâmica pelo OBJETIVO** (`VYGOTSKY`): o verbo do currículo manda
    na mecânica. "Elaborar legendas" pede MONTAR, não pede escolher entre três.
 
+
+---
+
+## 🔤 O QUE A PESQUISA DIZ SOBRE ALFABETIZAÇÃO — destilado (ago/2026)
+
+Cinco pesquisas baixadas pelo `pesquisar.yml` (`_pesquisa/web/`): apps que
+funcionam, dinâmicas de "aprender fazendo", letras móveis e caixas sonoras,
+jogos que funcionam, e juntar/separar sílabas. O que sobra depois de tirar a
+propaganda — e que vira **regra de montagem** para 1º e 2º ano:
+
+**1. A instrução é EXPLÍCITA e SISTEMÁTICA, nunca ao acaso.**
+*"Systematic instruction means letters are introduced [in order], rather than
+randomly or all at once."* Ou seja: a ordem das letras da atividade é decisão
+pedagógica, não sorteio. Letras de traço e som mais fáceis primeiro, e as
+parecidas (b/d, p/q) **longe uma da outra**.
+
+**2. Caixas sonoras (Elkonin) são a mecânica com mais evidência.**
+Uma caixa por som, e a criança **empurra uma peça para dentro da caixa** ao
+dizer o som. É "aprender fazendo" de verdade: o gesto é a própria segmentação.
+*"boxes provide a visual representation for each sound in a word and help
+students stretch/blend the word"*. → No nosso leque isto é o **`bater-silabas`
+feito direito**: cada batida cria uma caixa, e a peça entra nela.
+
+**3. O ARCO DO ALFABETO ensina a sequência melhor que a fila.**
+*"Alphabet Arcs support students in visualizing the alphabetical sequence,
+recognizing shapes, and building phonics understanding."* A curva dá âncora
+espacial (o meio do arco é o M/N) que a linha reta não dá. → o `ordenar` do
+alfabeto ganha muito trocando a fileira por um **arco**.
+
+**4. Traçar é MULTISSENSORIAL, e o som vai junto do traço.**
+*"Tracing sandpaper letters while saying the sound; skywriting the letter in
+the air with large arm motions."* → no `tracar-letra`, o som da letra tem que
+tocar **enquanto** o dedo anda, não no fim. E o traço grande vale mais que o
+pequeno.
+
+**5. Sessão curta e diária ganha de sessão longa.**
+*"Short, daily activities that focus on listening, segmenting, and blending."*
+→ 32 fases é o tamanho de uma AULA, não de uma sentada. O "continuar de onde
+parou" (55 min) não é conforto: é o que torna a atividade compatível com a
+evidência.
+
+**6. Quem está com dificuldade precisa de MAIS gesto, não de mais texto.**
+→ o andaime cresce para o concreto (mostrar a figura, acender a caixa da vez),
+nunca para uma explicação mais longa.
+
+⚠️ **O que a pesquisa NÃO autoriza:** trocar a mecânica por outra "porque é
+nova". Item 1 manda: sistemático. Mecânica nova entra quando o gesto dela É o
+conteúdo — não para variar.
