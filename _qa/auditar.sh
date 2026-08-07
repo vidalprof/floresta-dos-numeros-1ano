@@ -50,6 +50,37 @@ echo "==================================================="
 JSTMP="$(mktemp -t qajs.XXXXXX.js)"
 FALHOU=0
 
+# ============================================================
+#  ⭐ O PORTAO QUE OLHA OS PORTOES — "aprovou" ou "rodou cego"?
+#
+#  ⚠️ LICAO PAGA (ago/2026). Na atividade montada, TRES portoes disseram "ok"
+#  tendo medido ZERO: "0 alvo(s) conferido(s)", "0 fase(s) com pergunta falada",
+#  "0 dica(s) conferida(s)". Zero medido nao e aprovacao — e o portao nao ter
+#  olhado nada. E aprovacao vazia da CONFIANCA FALSA, que e pior do que reprovar:
+#  eu leio "ok" e sigo em frente.
+#
+#  O `_qa/dinamicas.py` ja tinha aprendido isso sozinho ("NENHUMA mecanica
+#  reconhecida — este portao NAO mediu nada"). Aqui a licao vira regra da BANCA,
+#  para todos: portao que sai com 0 medido entra na lista dos CEGOS, e a banca
+#  avisa em separado. Nao reprova sozinho — pode ser que a atividade realmente
+#  nao tenha aquilo (nem toda atividade tem 'ache na cena') — mas nunca mais
+#  passa despercebido.
+# ============================================================
+CEGOS=""
+portao(){
+  local nome="$1"; shift
+  local saida
+  saida="$("$@" 2>&1)"; local st=$?
+  printf '%s\n' "$saida"
+  if [ "$st" != "0" ]; then FALHOU=1; fi
+  if printf '%s' "$saida" | grep -qE '\-> *0 |0 fase\(s\)|0 dica\(s\)|0 alvo\(s\)|[Nn]ada a conferir'; then
+    CEGOS="$CEGOS
+   · $nome"
+  fi
+}
+
+
+
 # ⚡ OS TRES PORTOES DE NAVEGADOR SAIEM NA FRENTE, EM PARALELO.
 #    Eles abrem o Chromium em 6 tamanhos x N telas e sozinhos levam quase todo
 #    o relogio da banca; os portoes de texto (python) levam segundos. Rodando
@@ -73,22 +104,22 @@ if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok (node --check)"; el
 
 echo
 echo "--- 0a) PEDAGOGO (a escada didatica sobe de verdade?) -"
-python3 _qa/pedagogo.py "$ARQ" || FALHOU=1
+portao "0a pedagogo" python3 _qa/pedagogo.py "$ARQ"
 echo "--- 0b) PADRAO DA CASA (didatica, ilustrada, sonora, variada) -"
-python3 _qa/padrao.py "$ARQ" || FALHOU=1
+portao "0b padrao da casa" python3 _qa/padrao.py "$ARQ"
 
 echo "--- 0b2) DINAMICAS (cada mecanica e as armadilhas DELA) -"
-python3 _qa/dinamicas.py "$ARQ" || FALHOU=1
+portao "0b2 dinamicas" python3 _qa/dinamicas.py "$ARQ"
 
 echo "--- 0c) PERGUNTA AMBIGUA (pede 'a ponte' e tem duas?) -"
-python3 _qa/ambiguo.py "$ARQ" || FALHOU=1
+portao "0c pergunta ambigua" python3 _qa/ambiguo.py "$ARQ"
 
 echo "--- 0d) VOZ DA TELA (o botao repete a PERGUNTA?) -"
-python3 _qa/voztela.py "$ARQ" || FALHOU=1
+portao "0d voz da tela" python3 _qa/voztela.py "$ARQ"
 echo "--- 0e) TELA VAZIA (sobrou o fundo falando sozinho?) -"
-python3 _qa/telavazia.py "$ARQ"   || FALHOU=1
+portao "0e tela vazia" python3 _qa/telavazia.py "$ARQ"
 echo "--- 0f) VOZ DA PERGUNTA (o botao fala o que esta escrito?) -"
-python3 _qa/vozpergunta.py "$ARQ" || FALHOU=1
+portao "0f voz da pergunta" python3 _qa/vozpergunta.py "$ARQ"
 # ⭐ 0f2) SO PARA ATIVIDADE MONTADA: a voz da rodada nao se confere lendo o
 #    codigo (quem fala e um olheiro no balao). Confere-se JOGANDO: o colher.py
 #    atravessa a atividade e anota todo texto que aparece; se sobrar algum sem
@@ -99,25 +130,25 @@ if grep -q "pecabox" "$ARQ" && grep -q "MEC\[" "$ARQ"; then
   python3 _padrao/ESQUELETO/colher.py "$(dirname "$ARQ")" --so-ver || FALHOU=1
 fi
 echo "--- 0g) VOZ IGUAL AO TEXTO (o audio diz o que esta escrito?) -"
-node _qa/vozigual.js "$ARQ" || FALHOU=1
+portao "0g voz igual ao texto" node _qa/vozigual.js "$ARQ"
 echo "--- 0h) INTRO CALANDO A PERGUNTA (a 1a rodada e falada?) -"
-python3 _qa/vozintro.py "$ARQ" || FALHOU=1
+portao "0h intro calando a pergunta" python3 _qa/vozintro.py "$ARQ"
 echo "--- 0i) VOZ SEM MP3 (a fase ficou muda de vez?) -"
-python3 _qa/vozfalta.py "$ARQ" || FALHOU=1
+portao "0i voz sem mp3" python3 _qa/vozfalta.py "$ARQ"
 echo "--- 0j) VOZ DA DICA (a dica fala o que esta escrito?) -"
-python3 _qa/vozdica.py "$ARQ" || FALHOU=1
+portao "0j voz da dica" python3 _qa/vozdica.py "$ARQ"
 
 echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
-python3 _qa/funcoes.py "$ARQ" || FALHOU=1
+portao "1b funcao que nao existe" python3 _qa/funcoes.py "$ARQ"
 
 echo
 echo "--- 1c) RESTO DE CLONE (sobrou coisa da origem?) --"
-python3 _qa/clone.py "$ARQ" || FALHOU=1
+portao "1c resto de clone" python3 _qa/clone.py "$ARQ"
 
 echo
 echo "--- 1d) PROMESSA (a voz promete e a tela cumpre?) --"
-python3 _qa/promessa.py "$ARQ" || FALHOU=1
+portao "1d promessa" python3 _qa/promessa.py "$ARQ"
 
 echo
 echo "--- 2) ARQUITETO DE FLUXO (da para chegar ao fim?) -"
@@ -129,15 +160,15 @@ python3 _qa/classes.py "$ARQ" || FALHOU=1
 
 echo
 echo "--- 3b) PROGRESSAO (a barra so anda para a frente?) -"
-python3 _qa/progressao.py "$ARQ" || FALHOU=1
+portao "3b progressao" python3 _qa/progressao.py "$ARQ"
 
 echo
 echo "--- 3c) ARTE PROPRIA (imagem copiada de outra atividade?) -"
-python3 _qa/arte_propria.py "$ARQ" || FALHOU=1
+portao "3c arte propria" python3 _qa/arte_propria.py "$ARQ"
 
 echo
 echo "--- 3d) MASCOTE (ele treme ao falar ou piscar?) ---"
-python3 _qa/mascote.py "$ARQ" || FALHOU=1
+portao "3d mascote" python3 _qa/mascote.py "$ARQ"
 
 echo
 echo "--- 4) ACESSIBILIDADE (a crianca ENXERGA o texto?) -"
@@ -171,6 +202,21 @@ node _qa/jogador.js "$ARQ" > "$TMPQ/jogador.txt" 2>&1 || FALHOU=1
 tail -6 "$TMPQ/jogador.txt"
 
 echo
+echo "--- 7) ERRADOR (erra de proposito: da para seguir?) -"
+# ⚠️ ESTE PORTAO EXISTIA E NAO ESTAVA NA BANCA. Ele joga cada mecanica ERRANDO
+#    de proposito 3 vezes e confere que a medalha continua alcancavel — que e o
+#    andaime da casa (dica -> apoio -> revela, e nunca travar). Os cinco piores
+#    defeitos de um dia inteiro passaram pelos outros oito portoes e so ele viu.
+node _qa/errador.js "$ARQ" > "$TMPQ/errador.txt" 2>&1 || FALHOU=1
+tail -8 "$TMPQ/errador.txt"
+
+echo
+if [ -n "$CEGOS" ]; then
+  echo "--- ⚠️ PORTOES QUE RODARAM CEGOS (mediram ZERO) ------"
+  echo "  aprovacao vazia da confianca falsa. Conferir se a atividade realmente"
+  echo "  nao tem aquilo — ou se o portao deixou de enxergar:$CEGOS"
+fi
+
 echo "==================================================="
 if [ "$FALHOU" = "0" ]; then
   echo " BANCA APROVOU. Falta so o PROFESSOR (portao final)."

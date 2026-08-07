@@ -58,39 +58,52 @@ def joga_e_anota(pasta, voltas=6, secas=2):
     uma unica rodada seca podia ser so falta de sorte. Duas seguidas ja e sinal
     de que o baralho de frases acabou. O teto de 6 partidas existe para a
     entrega nao ficar refem de um sorteio infeliz."""
-    saco = os.path.join(pasta, "_colheita.json")
-    if os.path.exists(saco):
-        os.remove(saco)
-    amb = dict(os.environ, COLHEITA=saco)
-    d, antes, seco = {}, -1, 0
-    for volta in range(voltas):
+    # ⚡ AS PARTIDAS SAO INDEPENDENTES — ENTAO VAO JUNTAS. Em fila, seis partidas
+    #    de 32 fases levavam uns doze minutos; e o Marcos pediu que o processo
+    #    fosse "bem mais agil". Cada partida escreve no SEU arquivo (senao uma
+    #    sobrescreve a colheita da outra) e no fim tudo se junta.
+    juntos = {}
+
+    def uma(n):
+        saco = os.path.join(pasta, "_colheita%d.json" % n)
+        if os.path.exists(saco):
+            os.remove(saco)
         r = subprocess.run(["node", os.path.join(RAIZ, "_qa", "jogador.js"),
                             os.path.join(pasta, "index.html")],
-                           env=amb, cwd=RAIZ, capture_output=True, text=True)
-        fim = [l for l in (r.stdout or "").splitlines() if "COLHEITA" in l
-               or "CHEGOU NO FIM" in l or "PRESO" in l]
-        for l in fim:
-            print(u"   volta %d: %s" % (volta + 1, l.strip()))
-        if not os.path.exists(saco):
-            print(u"   o jogador nao deixou colheita — a atividade abriu?")
-            return {}
-        d = json.load(io.open(saco, encoding="utf-8"))
-        agora = len(d.get("op") or {}) + len(d.get("bal") or {})
+                           env=dict(os.environ, COLHEITA=saco), cwd=RAIZ,
+                           capture_output=True, text=True)
+        fim = [l for l in (r.stdout or "").splitlines()
+               if "CHEGOU NO FIM" in l or "PRESO" in l]
+        d = {}
+        if os.path.exists(saco):
+            d = json.load(io.open(saco, encoding="utf-8"))
+            os.remove(saco)
+        return fim, d
+
+    import concurrent.futures as cf
+    antes, seco, rodada = -1, 0, 0
+    while rodada < voltas:
+        lote = min(3, voltas - rodada)          # tres de cada vez
+        with cf.ThreadPoolExecutor(max_workers=lote) as ex:
+            for k, (fim, d) in enumerate(ex.map(uma, range(rodada, rodada + lote))):
+                for l in fim:
+                    print(u"   partida %d: %s" % (rodada + k + 1, l.strip()))
+                for cx in ("op", "bal"):
+                    juntos.update(d.get(cx) or {})
+        rodada += lote
+        agora = len(juntos)
+        print(u"   %d texto(s) vistos ate agora" % agora)
         if agora == antes:
             seco += 1
-            if seco >= secas:
-                print(u"   %d partidas inteiras sem nada novo — colheita fechada"
-                      % secas)
+            if seco >= 1:      # um LOTE inteiro sem nada novo ja e sinal
+                print(u"   um lote inteiro de partidas sem nada novo — fechada")
                 break
         else:
             seco = 0
         antes = agora
-    os.remove(saco)
-    # `op` sao as respostas tocaveis; `bal` sao os enunciados/baloes
-    vistos = {}
-    vistos.update(d.get("op") or {})
-    vistos.update(d.get("bal") or {})
-    return vistos
+    if not juntos:
+        print(u"   o jogador nao deixou colheita — a atividade abriu?")
+    return juntos
 
 
 def main():
