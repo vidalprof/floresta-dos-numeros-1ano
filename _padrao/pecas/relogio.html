@@ -99,12 +99,16 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
       box-shadow:0 6px 16px rgba(0,0,0,.35);
       -webkit-user-select:none;user-select:none}
 .pegando{cursor:move}
-.rnum{position:absolute;width:26px;height:26px;margin:-13px 0 0 -13px;line-height:26px;
+/* ⚠️ O NUMERO FICA POR CIMA DOS PONTEIROS. Na primeira versao o "12" sumia
+   embaixo da argola do ponteiro justo as 12 horas — e o mostrador so e util se
+   TODOS os numeros forem legiveis o tempo todo. Numero pequeno em cima do
+   ponteiro incomoda menos do que numero que nao existe. */
+.rnum{position:absolute;z-index:4;width:26px;height:26px;margin:-13px 0 0 -13px;line-height:26px;
       text-align:center;font-style:normal;font-size:15px;font-weight:800;color:#221a12}
 /* os traquinhos de 5 em 5: e onde o ponteiro ENCAIXA. Mostrar o encaixe evita
    que a crianca tente parar no minuto 27 e ache que a peca esta quebrada. */
 .rtick{position:absolute;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#c9bda6}
-.rmao{position:absolute;left:50%;bottom:50%;
+.rmao{position:absolute;z-index:2;left:50%;bottom:50%;
       -webkit-transform-origin:50% 100%;transform-origin:50% 100%;
       -webkit-transition:-webkit-transform .16s;transition:transform .16s}
 /* ⚠️ NADA ESSENCIAL SO NA COR: o das HORAS e CURTO E GROSSO, o dos MINUTOS
@@ -115,7 +119,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 /* a argola: e a AFORDANCIA ("da para pegar aqui"), nao o alvo. O alvo e o
    relogio inteiro. */
 .rgrab{position:absolute;left:50%;top:-16px;width:52px;height:52px;margin-left:-26px;
-       border-radius:50%;background:rgba(255,213,74,.28);border:3px solid #a8801c}
+       border-radius:50%;background:rgba(255,213,74,.20);border:3px solid #a8801c}
 .rpino{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;
        border-radius:50%;background:#33280a}
 /* O PONTEIRO FANTASMA — 2o degrau do andaime. Apoio CONCRETO: em vez de
@@ -240,12 +244,14 @@ document.addEventListener("pointerdown",function(){ac();},false);
    Formar e ler são habilidades diferentes: quem forma 3h00 ainda pode não ler
    4h30. Por isso as rodadas vêm em par, e a mesma dificuldade aparece nas duas
    formas antes de subir o degrau.
-   `ih`/`im` = onde os ponteiros COMEÇAM. Nunca no lugar da resposta, e nunca
-   tão longe que a criança canse antes de chegar. */
+   `ih`/`im` = onde os ponteiros COMEÇAM. Nunca no lugar da resposta, nunca tão
+   longe que a criança canse antes de chegar — e ⚠️ NUNCA um em cima do outro
+   (às 12:00 o pequeno desaparece debaixo do grande, e a criança não descobre
+   que há DOIS ponteiros para mexer). */
 var FORMAR=[
-  {h:3, m:0,  ih:12, im:0, selo:"HORA CHEIA",   apelido:"3 horas"},
+  {h:3, m:0,  ih:11, im:0, selo:"HORA CHEIA",   apelido:"3 horas"},
   {h:6, m:30, ih:9,  im:0, selo:"MEIA HORA",    apelido:"6 e meia"},
-  {h:9, m:15, ih:12, im:0, selo:"DE 15 EM 15",  apelido:"9 e quinze"}
+  {h:9, m:15, ih:2,  im:0, selo:"DE 15 EM 15",  apelido:"9 e quinze"}
 ];
 var LER=[
   {h:8, m:0,  selo:"QUE HORAS S&Atilde;O?",
@@ -324,8 +330,8 @@ function montaRelogio(h,m,mexivel){
   for(i=1;i<=12;i++){
     a=i*30*Math.PI/180;
     e=el("i","rnum",""+i);
-    e.style.left=(50+Math.sin(a)*38)+"%";
-    e.style.top=(50-Math.cos(a)*38)+"%";
+    e.style.left=(50+Math.sin(a)*37)+"%";
+    e.style.top=(50-Math.cos(a)*37)+"%";
     r.appendChild(e);
   }
   eHora=el("b","rmao rhora","");
