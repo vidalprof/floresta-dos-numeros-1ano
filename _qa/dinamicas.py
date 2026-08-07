@@ -165,6 +165,29 @@ def main():
             ruins.append(u"escolher: as opcoes nao sao EMBARALHADAS. Na Fabrica de Estrelas a "
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
 
+    # ---------------------------------------------------- MEDIR COM A REGUA
+    if re.search(r'\bregua\b|\.regua', css + js, re.I):
+        usa.append("medir")
+        if not re.search(r'zero|\bcm\b', js, re.I):
+            avisos.append(u"medir: nao achei o ZERO. O erro que esta mecanica existe "
+                          u"para ensinar e comecar a medir do 1 — o zero tem que ser "
+                          u"visivel e ter encaixe com tolerancia.")
+
+    # ---------------------------------------------------- CALENDARIO
+    if re.search(r'calendari|\.diac\b|\.mes\b', css + js, re.I):
+        usa.append("calendario")
+        if not re.search(r'pulo|salto|conta', js, re.I):
+            avisos.append(u"calendario: contar de um dia a outro tem que ser um PULO "
+                          u"visivel, casa por casa. Sem o pulo vira conta de cabeca.")
+
+    # ---------------------------------------------------- COMPARAR (maior/menor)
+    if re.search(r'&gt;|&lt;|maior que|menor que', html) and re.search(r'compara', css + js, re.I):
+        usa.append("comparar")
+        if not re.search(r'fileira|coluna|barra|monte|torre', js, re.I):
+            ruins.append(u"comparar: o sinal aparece sem as duas quantidades LADO A "
+                         u"LADO. A crianca tem que VER quem tem mais antes de escolher "
+                         u"o simbolo — senao decora o bico do sinal.")
+
     # ---------------------------------------------------- LABIRINTO
     # ⚠️ o gatilho `.seta` acusava o 3o ano (a rota do Nico usa setas) de ser um
     #    labirinto com vida e derrota. Gatilho tem que ser EXPLICITO.

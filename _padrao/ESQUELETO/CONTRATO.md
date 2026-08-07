@@ -223,3 +223,10 @@ para a próxima não repetir.
 - **Tela antiga continua clicável embaixo do banner.** Um toque no "+" depois de
   fechar a última coluna caía num índice que não existe e **matava o resto do JS
   da partida**. Toda função que mexe no estado começa com `if(!emJogo()) return;`.
+- **PORTUGUÊS MONTADO POR CONCATENAÇÃO — o defeito que nenhum portão vê.**
+  Saíram na tela: *"encostado na ponta **do a** fita azul"* (artigo decidido por
+  `indexOf("fita")`) e *"**domingo-feira**"* (`nome + "-feira"`). Regra: **artigo
+  e flexão são DADO** (`art:"a"`, `nomeCompleto:"domingo"`), nunca deduzidos de
+  texto. Quem lê isso é uma criança aprendendo a ler.
+- **"A ponta está no meio" não quer dizer nada para ela.** Virou "está entre o
+  zero e o 1". Toda frase de ajuda tem que apontar para algo que ela VÊ na tela.
