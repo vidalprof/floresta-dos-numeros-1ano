@@ -137,7 +137,7 @@ jobs:
               try:
                   r = requests.get(url, headers=UA, timeout=30)
                   if r.status_code != 200 or "html" not in r.headers.get("content-type", ""):
-                      return None, None
+                      return None, None, "HTTP %s" % r.status_code
                   s = BeautifulSoup(r.text, "lxml")
                   for tag in s(["script", "style", "nav", "footer", "header", "aside", "form", "noscript"]):
                       tag.decompose()
@@ -145,9 +145,23 @@ jobs:
                   txt = s.get_text("\n")
                   linhas = [l.strip() for l in txt.split("\n")]
                   linhas = [l for l in linhas if len(l) > 40]      # fora menu e migalha
-                  return titulo.strip()[:120], "\n\n".join(linhas[:220])
+                  corpo = "\n\n".join(linhas[:220])
+                  # ⚠️ LICAO PAGA (ago/2026): a pesquisa do EdiLim voltou com CINCO
+                  #    paginas do Scribd/SlideShare dizendo "Client Challenge — a
+                  #    required part of this site couldn't load". O arquivo foi
+                  #    salvo, tinha titulo, tinha 1,8 KB e PARECIA resultado. Eu
+                  #    guardei e nunca percebi que estava vazio. Pagina bloqueada
+                  #    NAO e resultado: e barreira anti-robo, e tem que ser dita.
+                  baixo = corpo.lower()
+                  muros = ["client challenge", "couldn't load", "enable javascript",
+                           "are you a robot", "verify you are human", "access denied",
+                           "cloudflare", "captcha", "upgrade to pro to"]
+                  if len(corpo) < 400 or any(m in baixo for m in muros):
+                      return None, None, "bloqueada ou vazia"
+                  return titulo.strip()[:120], corpo, None
               except Exception as e:
-                  print("  nao consegui ler %s: %s" % (url, e)); return None, None
+                  print("  nao consegui ler %s: %s" % (url, e))
+                  return None, None, str(e)[:60]
 
           if busca and len(urls) < quantas:
               urls += [u for u in procura(busca, quantas - len(urls)) if u not in urls]
@@ -159,15 +173,31 @@ jobs:
           partes += ["> Trazido pelo `pesquisar.yml` (a internet do GitHub). **Isto e MATERIA-PRIMA,",
                      "> nao regra.** So vira regra da casa depois de eu destilar em `_pesquisa/` e o",
                      "> Marcos aprovar. Texto de terceiro: ler com juizo.", "", "---", ""]
-          lidas = 0
+          lidas, barradas = 0, []
           for u in urls:
-              t, c = le(u)
+              t, c, porque = le(u)
               if not c:
+                  barradas.append((u, porque or "?"))
                   continue
               lidas += 1
               partes += ["## %s" % t, "", "`%s`" % u, "", c, "", "---", ""]
               time.sleep(1.2)
-          print("li %d pagina(s)" % lidas)
+          print("li %d pagina(s); %d barrada(s)" % (lidas, len(barradas)))
+          if barradas:
+              partes += ["## ⚠️ Paginas que NAO deram texto", ""]
+              for u, porque in barradas:
+                  partes += ["- `%s` — %s" % (u, porque)]
+              partes += [""]
+          # ⭐ PESQUISA QUE NAO TROUXE NADA TEM QUE GRITAR. Antes ela salvava um
+          #    arquivo com so os cabecalhos, e eu lia como se fosse resultado.
+          if lidas == 0:
+              partes.insert(1, "")
+              partes.insert(1, "> ## ❌ ESTA PESQUISA NAO TROUXE NADA. Todas as paginas "
+                               "foram barradas ou vieram vazias. **Nao use este arquivo "
+                               "como fonte** — refaca a busca com outros termos, ou com "
+                               "`urls=` apontando para paginas abertas (evite scribd, "
+                               "slideshare e sites com muro anti-robo).")
+              print("::warning::a pesquisa nao trouxe NENHUM texto")
 
           os.makedirs("_pesquisa/web", exist_ok=True)
           cam = "_pesquisa/web/%s.md" % assunto
