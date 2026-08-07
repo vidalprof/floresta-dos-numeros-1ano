@@ -1,0 +1,94 @@
+/* ERRADOR 2 — erra de proposito, com a receita CERTA de cada peca. */
+const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
+const path=require('path');
+const RECEITA={
+ // clica uma peca do banco e depois uma VAGA que nao e a dela
+ 'quebra-cabeca':()=>{
+   var pcs=[].slice.call(document.querySelectorAll('.qcpc')).filter(function(e){return e.className.indexOf('usada')<0;});
+   var vgs=[].slice.call(document.querySelectorAll('.qcvaga')).filter(function(e){return e.className.indexOf('cheia')<0;});
+   if(!pcs.length||!vgs.length) return null;
+   var sel=null,i;
+   for(i=0;i<pcs.length;i++) if(pcs[i].className.indexOf('sel')>=0) sel=pcs[i];
+   var p=sel||pcs[0], v=null;
+   for(i=0;i<vgs.length;i++) if(!(vgs[i].li===p.li&&vgs[i].co===p.co)){v=vgs[i];break;}
+   if(!v) return null;
+   if(!sel) p.click(); v.click(); return 'peca '+p.li+'_'+p.co+' -> vaga '+v.li+'_'+v.co;
+ },
+ 'arrastar-lugar':()=>{
+   var pcs=[].slice.call(document.querySelectorAll('.pc')).filter(function(e){return e.className.indexOf('usada')<0&&e.className.indexOf('ok')<0;});
+   var vgs=[].slice.call(document.querySelectorAll('.cam')).filter(function(e){return e.className.indexOf('ok')<0;});
+   if(!pcs.length||!vgs.length) return null;
+   var sel=null,i;
+   for(i=0;i<pcs.length;i++) if(pcs[i].className.indexOf('sel')>=0) sel=pcs[i];
+   var p=sel||pcs[0], v=null, pk=p.getAttribute('data-qa');
+   for(i=0;i<vgs.length;i++) if(vgs[i].getAttribute('data-qa')!==pk){v=vgs[i];break;}
+   if(!v) return null;
+   if(!sel) p.click(); v.click(); return 'peca '+pk+' -> vaga '+v.getAttribute('data-qa');
+ },
+ 'sombra':()=>{
+   var ls=[].slice.call(document.querySelectorAll('.lig')).filter(function(e){return e.className.indexOf('feita')<0;});
+   var e=null,d=null,i;
+   for(i=0;i<ls.length;i++){ if(ls[i].className.indexOf('sel')>=0) e=ls[i]; }
+   for(i=0;i<ls.length;i++){ if(ls[i]._lado==='e'&&!e) e=ls[i]; }
+   for(i=0;i<ls.length;i++){ if(ls[i]._lado==='d'&&ls[i]._k!==(e&&e._k)) {d=ls[i];break;} }
+   if(!e||!d) return null;
+   if(e.className.indexOf('sel')<0) e.click(); d.click(); return 'liga '+e._k+' com '+d._k;
+ },
+ 'simulador':()=>{
+   var r=document.querySelector('input[type=range]');
+   if(r){ var v=Number(r.value); r.value=String(v+1>10?0:v+1); r.oninput&&r.oninput(); r.onchange&&r.onchange();
+          if(!r.oninput&&!r.onchange){ var ev=document.createEvent('HTMLEvents'); ev.initEvent('input',true,false); r.dispatchEvent(ev);} }
+   var a=[].slice.call(document.querySelectorAll('.opt')).filter(function(e){return e.getAttribute('data-qa')==='0'&&e.className.indexOf('fora')<0;});
+   if(!a.length) return null; a[0].click(); return 'opcao errada';
+ },
+ 'coordenadas':()=>{
+   var a=[].slice.call(document.querySelectorAll('[data-qa="0"]')).filter(function(e){var r=e.getBoundingClientRect();return r.width>4&&r.top<innerHeight&&e.className.indexOf('ok')<0;});
+   if(!a.length) return null; a[0].click(); return 'errada';
+ },
+ 'bussola':()=>{
+   var a=[].slice.call(document.querySelectorAll('[data-qa="0"]')).filter(function(e){var r=e.getBoundingClientRect();return r.width>4&&r.top<innerHeight&&e.className.indexOf('ok')<0;});
+   if(!a.length) return null; a[0].click(); return 'errada';
+ }
+};
+(async()=>{
+ const arq=process.argv[2];
+ const nome=path.basename(arq,'.html');
+ const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome',args:['--no-sandbox','--disable-gpu','--autoplay-policy=no-user-gesture-required']});
+ const p=await b.newPage({viewport:{width:412,height:820}});
+ const jse=[]; p.on('pageerror',e=>jse.push(e.message));
+ await p.goto('file://'+path.resolve(arq));
+ await p.waitForTimeout(700);
+ // simulador: precisa MEXER antes de responder (>=3 vezes)
+ if(nome==='simulador'){
+   await p.evaluate(()=>{ var r=document.querySelector('input[type=range]');
+     for(var i=0;i<4;i++){ r.value=String(i+1); var ev=document.createEvent('HTMLEvents'); ev.initEvent('input',true,false); r.dispatchEvent(ev); } });
+   await p.waitForTimeout(400);
+ }
+ console.log('ARQUIVO: '+arq);
+ const dicas=[];
+ for(let n=1;n<=3;n++){
+   const q=await p.evaluate(RECEITA[nome]);
+   await p.waitForTimeout(500);
+   const d=await p.evaluate(()=>{var e=document.getElementById('dicaP');return e?e.innerText.trim():'(sem dica)';});
+   console.log('  erro '+n+' ('+q+') -> '+JSON.stringify(d));
+   dicas.push(d);
+ }
+ console.log('  dicas distintas: '+new Set(dicas).size+' de '+dicas.length);
+ // depois do 3o erro, da para chegar na medalha?
+ let fim=false;
+ for(let g=0; g<200 && !fim; g++){
+   await p.evaluate(()=>{
+     var b=document.getElementById('banner');
+     if(/show/.test(b.className)){ document.getElementById('bcta').click(); return; }
+     var a=document.querySelectorAll('.opt,.lig,.pc,.vaga,.qcpc,.qcvaga,.cel,.bin,.btn,.rosa,.dirb,[data-qa]'), i,r,vis=[];
+     for(i=0;i<a.length;i++){ r=a[i].getBoundingClientRect();
+       if(r.width>4&&r.height>4&&r.top>=-2&&r.top<innerHeight) vis.push(a[i]); }
+     if(vis.length) vis[Math.floor(Math.random()*vis.length)].click();
+   });
+   await p.waitForTimeout(160);
+   fim=await p.evaluate(()=>!!document.querySelector('.medal'));
+ }
+ console.log('  chegou na MEDALHA depois de errar: '+(fim?'SIM':'NAO'));
+ console.log('  ERROS JS: '+(jse.length?jse.join(' | '):'nenhum'));
+ await b.close();
+})();

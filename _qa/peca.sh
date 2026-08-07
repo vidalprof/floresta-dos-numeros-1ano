@@ -18,6 +18,12 @@
 set -uo pipefail
 ARQ="${1:-}"
 if [ -z "$ARQ" ]; then echo "uso: bash _qa/peca.sh <_padrao/pecas/arquivo.html>"; exit 2; fi
+# ⚠️ CORRIDA ENTRE BANCADAS (ago/2026). O caminho era FIXO (`/tmp/_peca.js`).
+#    Com dois profissionais rodando a bancada ao mesmo tempo, um sobrescrevia o
+#    JS do outro e AS DUAS pecas reprovavam no portao 1 com erro de sintaxe
+#    FALSO. Reprovacao fantasma e o pior estrago: faz consertar o que nao esta
+#    quebrado. Cada corrida agora tem o seu arquivo.
+JSTMP="$(mktemp -t qajs.XXXXXX.js)"
 FALHOU=0
 TELAS=$(python3 - "$ARQ" <<'PY'
 import re,sys
@@ -42,12 +48,12 @@ echo " telas: $(echo $TELAS | wc -w)  ($TELAS)"
 echo "==================================================="
 
 echo; echo "--- 1) O CODIGO RODA? ------------------------------"
-python3 - "$ARQ" > /tmp/_peca.js <<'PY'
+python3 - "$ARQ" > "$JSTMP" <<'PY'
 import re,sys
 h=open(sys.argv[1],encoding="utf-8").read()
 print("".join(re.findall(r"<script>(.*?)</script>",h,re.S)))
 PY
-if node --check /tmp/_peca.js >/dev/null 2>&1; then echo "  JS ok"; else echo "  ERRO DE SINTAXE"; node --check /tmp/_peca.js; FALHOU=1; fi
+if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok"; else echo "  ERRO DE SINTAXE"; node --check "$JSTMP"; FALHOU=1; fi
 
 echo; echo "--- 2) FUNCAO QUE NAO EXISTE -----------------------"
 python3 _qa/funcoes.py "$ARQ" || FALHOU=1

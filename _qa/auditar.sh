@@ -42,6 +42,12 @@ echo "==================================================="
 echo " BANCA DE AUDITORIA — $ARQ"
 echo " telas: $(echo $TELAS | wc -w)"
 echo "==================================================="
+# ⚠️ CORRIDA ENTRE BANCADAS (ago/2026). O caminho era FIXO (`/tmp/_peca.js`).
+#    Com dois profissionais rodando a bancada ao mesmo tempo, um sobrescrevia o
+#    JS do outro e AS DUAS pecas reprovavam no portao 1 com erro de sintaxe
+#    FALSO. Reprovacao fantasma e o pior estrago: faz consertar o que nao esta
+#    quebrado. Cada corrida agora tem o seu arquivo.
+JSTMP="$(mktemp -t qajs.XXXXXX.js)"
 FALHOU=0
 
 # ⚡ OS TRES PORTOES DE NAVEGADOR SAIEM NA FRENTE, EM PARALELO.
@@ -58,12 +64,12 @@ node _qa/imagens.js   "$ARQ" $TELAS > "$TMPQ/imagens.txt"   2>&1 & PID_IMG=$!
 
 echo
 echo "--- 1) ENGENHEIRO (o codigo roda?) -----------------"
-python3 - "$ARQ" > /tmp/_qa_js.js <<'PY'
+python3 - "$ARQ" > "$JSTMP" <<'PY'
 import re,sys
 h=open(sys.argv[1],encoding="utf-8").read()
 print("".join(re.findall(r"<script>(.*?)</script>",h,re.S)))
 PY
-if node --check /tmp/_qa_js.js >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check /tmp/_qa_js.js; FALHOU=1; fi
+if node --check "$JSTMP" >/dev/null 2>&1; then echo "  JS ok (node --check)"; else echo "  ERRO DE SINTAXE NO JS"; node --check "$JSTMP"; FALHOU=1; fi
 
 echo
 echo "--- 0a) PEDAGOGO (a escada didatica sobe de verdade?) -"

@@ -194,3 +194,14 @@ para a próxima não repetir.
   silêncio.** Um retângulo rosa e um `return` seco: quem não distingue cor toca
   ali para sempre achando que travou. Etiqueta em palavras ("já tentamos") + som
   de retorno.
+- **A 3ª DICA INVISÍVEL — a família de defeito que passou pelos 8 portões.**
+  Em quatro peças diferentes, `revela()` chamava o "acertou" no mesmo instante, e
+  o "acertou" apagava a barra de dica. Resultado: o pedaço pulava sozinho para o
+  lugar **sem a criança ler a explicação**. O 3º degrau do andaime existia no
+  código e **nunca era visto**. Cura: `esperaERevela()` — acende o certo, deixa a
+  dica de pé ~1s, e só então resolve; com guarda de geração e de peça já usada.
+- **⭐ O ERRADOR (`_qa/errador.js`).** Os cinco defeitos mais graves do dia
+  passaram inteiros pelos 8 portões e só apareceram **errando de propósito, com a
+  receita certa de cada mecânica**, três vezes seguidas, e conferindo se ainda dá
+  para chegar à medalha. É um teste por mecânica, como o `_qa/dinamicas.py`.
+  **Mecânica nova = receita nova no errador**, junto com a linha no catálogo.

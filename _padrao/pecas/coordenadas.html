@@ -350,7 +350,14 @@ function cliqueFicha(){
 
 function cliqueCasa(){
   if(travado) return;
-  if(RODADAS[rodada].tipo==="lecasa"){ sTap(); return; }
+  /* ⚠️ nunca responder com SILÊNCIO (lição do CONTRATO §6): tocar na grade
+     durante a rodada de LER a casa é o gesto mais natural do mundo. Sem uma
+     palavra de volta a criança acha que a tela travou. */
+  if(RODADAS[rodada].tipo==="lecasa"){
+    sTap();
+    mostraDica("Nesta rodada a resposta est&#225; nos <b>bot&#245;es</b> de baixo: diga o NOME da casa.");
+    return;
+  }
   if(this.className.indexOf("ok")>=0) return;
   if(this.li===alvo.li&&this.co===alvo.co){
     this.className="cel ok";

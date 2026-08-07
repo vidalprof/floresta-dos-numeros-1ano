@@ -370,10 +370,12 @@ function responde(o){
     return;
   }
   /* uma resposta ja riscada nao conta erro DE NOVO: a crianca so repetiu o
-     mesmo toque. Repete a dica que ela esta vendo, sem punir duas vezes. */
+     mesmo toque. E a volta vem EM PALAVRAS + som (licao do CONTRATO §6:
+     "opcao ja tentada nao pode se distinguir so pela cor, nem responder com
+     silencio") — o risco no numero e a forma, a frase e a palavra. */
   if(o._fora){
     sTap();
-    mostraDica(DICAS[Math.min(erros,DICAS.length)-1]);
+    mostraDica("Nesta a gente <b>j&#225; tentou</b>. "+DICAS[Math.min(erros,DICAS.length)-1]);
     return;
   }
   /* ERRO NAO PUNE: som grave curto, a resposta treme e sai da frente, e o

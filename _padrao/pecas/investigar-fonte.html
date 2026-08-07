@@ -302,7 +302,12 @@ function fazProva(it){
 }
 
 function respondeProva(o,certa){
-  if(o.className.indexOf("ok")>=0||o.className.indexOf("rev")>=0) return;
+  /* ⚠️ "rev" NÃO pode entrar aqui: é a classe que revelaProvas() usa depois
+     do 2º erro para acender as provas certas — se ela travasse o clique, a
+     criança nunca conseguiria mesmo tocar na prova revelada e a peça
+     PRENDIA (achado testando "errar de propósito", nunca pelo jogador
+     automático, que só acerta de primeira). */
+  if(o.className.indexOf("ok")>=0) return;
   if(certa){
     sCerto();
     o.className="opt ok";
