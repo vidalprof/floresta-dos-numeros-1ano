@@ -97,11 +97,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .buraco{position:absolute;left:36px;bottom:30px;width:46px;height:22px;border-radius:50%;
         background:#40280f;display:none}
 .buraco.on{display:block}
-.csem{position:absolute;left:51px;bottom:54px;width:16px;height:12px;border-radius:50%;
+.csem{position:absolute;left:104px;bottom:52px;width:16px;height:12px;border-radius:50%;
       background:#e0bd72;display:none;
       -webkit-box-shadow:inset 0 0 0 2px #7d5c1c;box-shadow:inset 0 0 0 2px #7d5c1c}
 .csem.on{display:block}
-.csem.dentro{bottom:34px}
+/* ⚠️ a semente SOLTA fica ao LADO do buraco, em cima da terra: dentro do
+   montinho ela sumia e a cena "ficou por cima" nao se via. */
+.csem.dentro{left:51px;bottom:34px}
+.csem.off{display:none}
 .cmonte{position:absolute;left:34px;bottom:44px;width:50px;height:20px;background:#6b4520;
         border-radius:26px 26px 0 0;display:none}
 .cmonte.on{display:block}
@@ -116,9 +119,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .ccaule{position:absolute;left:56px;bottom:52px;width:7px;height:0;background:#2f8f3a;
         -webkit-transition:height .9s;transition:height .9s}
 .ccaule.on{height:44px}
-.cfolha{position:absolute;bottom:78px;width:22px;height:14px;background:#3fae4a;
-        border-radius:50% 0 50% 0;display:none}
+/* ⚠️ A FOLHA E UMA ELIPSE INCLINADA, nao um retangulo com dois cantos redondos:
+   no print o broto saia com cara de BANDEIRINHA. E as duas inclinam para lados
+   opostos — folha e coisa espelhada. */
+.cfolha{position:absolute;bottom:76px;width:26px;height:13px;background:#3fae4a;
+        border-radius:50%;display:none;
+        -webkit-transform:rotate(-20deg);transform:rotate(-20deg)}
 .cfolha.on{display:block}
+.cfolha.dir{-webkit-transform:rotate(20deg);transform:rotate(20deg)}
 /* -- a bancada (o suco de laranja) -- */
 .bmesa{position:absolute;left:0;right:0;bottom:0;height:20px;background:#a5743c}
 .blar{position:absolute;left:20px;bottom:24px;width:40px;height:40px;border-radius:50%;
@@ -432,8 +440,8 @@ function montaCena(){
     for(i=0;i<3;i++){ e=el("i","cgota",""); e.style.left=(44+i*14)+"px"; box.appendChild(e); CE.gotas.push(e); }
     CE.caule=el("i","ccaule",""); box.appendChild(CE.caule);
     CE.folhas=[];
-    e=el("i","cfolha",""); e.style.left="36px"; box.appendChild(e); CE.folhas.push(e);
-    e=el("i","cfolha",""); e.style.left="62px"; box.appendChild(e); CE.folhas.push(e);
+    e=el("i","cfolha",""); e.style.left="33px"; box.appendChild(e); CE.folhas.push(e);
+    e=el("i","cfolha dir",""); e.style.left="60px"; box.appendChild(e); CE.folhas.push(e);
   }else{
     box.appendChild(el("i","bmesa",""));
     CE.lar=el("i","blar",""); box.appendChild(CE.lar);
@@ -458,14 +466,18 @@ function montaCena(){
   }
   return box;
 }
+/* ⚠️ A GOTA TEM QUE SUMIR DEPOIS DE CAIR (defeito visto no print): a animacao
+   acaba e o elemento volta ao lugar de partida, entao as tres gotas ficavam
+   PENDURADAS no ceu para sempre, como se a chuva tivesse congelado. Some com
+   elas no fim — e com guarda de geracao, que a cena pode ter trocado. */
 function chuva(g){
-  var i;
+  var i, base=(R.cena==="canteiro"?"cgota":"bgota");
   if(!CE.gotas) return;
   for(i=0;i<CE.gotas.length;i++){
-    (function(e,n){ setTimeout(function(){
-      if(g!==ger) return;
-      e.className=(R.cena==="canteiro"?"cgota on":"bgota on");
-    },n*140); })(CE.gotas[i],i);
+    (function(e,n){
+      setTimeout(function(){ if(g===ger) e.className=base+" on"; },n*140);
+      setTimeout(function(){ if(g===ger) e.className=base; },n*140+1900);
+    })(CE.gotas[i],i);
   }
 }
 
@@ -474,7 +486,13 @@ function chuva(g){
 var EFEITO={
  cavar:function(ok){ CE.buraco.className="buraco on"; nota(180,.12,.12,"sine",0); },
  semear:function(ok){ CE.sem.className=ok?"csem on dentro":"csem on"; sPasso(); },
- cobrir:function(ok){ CE.monte.className="cmonte on"; nota(200,.14,.11,"sine",0); },
+ cobrir:function(ok){
+   CE.monte.className="cmonte on";
+   /* a semente que estava no buraco fica COBERTA — some debaixo da terra. A que
+      ficou por fora continua a vista, que e justamente a cena a ser lida. */
+   if(ok) CE.sem.className="csem off";
+   nota(200,.14,.11,"sine",0);
+ },
  regar:function(ok){ chuva(ger); if(!ok) CE.poca.className="cpoca on"; nota(620,.10,.10,"sine",0); },
  lavar:function(ok){
    chuva(ger);
@@ -765,7 +783,9 @@ function terminou(tudoOk,g){
     if(R.cena==="canteiro"){
       CE.caule.className="ccaule on";
       for(i=0;i<CE.folhas.length;i++){
-        (function(e,n){ setTimeout(function(){ if(g===ger) e.className="cfolha on"; },700+n*260); })(CE.folhas[i],i);
+        (function(e,n){ setTimeout(function(){
+          if(g===ger) e.className=(n===1?"cfolha dir on":"cfolha on");
+        },700+n*260); })(CE.folhas[i],i);
       }
     }
     elAviso.innerHTML=R.bom;
