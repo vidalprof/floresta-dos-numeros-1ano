@@ -76,10 +76,39 @@
   .aviso b{ color:#a8480d; }
   .pe{ text-align:center; color:#8a97a4; font-size:12px; margin:16px 0 0; }
   code{ background:#eef2f6; padding:1px 6px; border-radius:6px; font-size:13px; }
+  /* ---- trava de entrada ---- */
+  .trava{ position:fixed; left:0; top:0; right:0; bottom:0; z-index:50;
+    background:#eaf3ff; display:-webkit-box; display:-webkit-flex; display:flex;
+    -webkit-align-items:center; align-items:center;
+    -webkit-justify-content:center; justify-content:center; padding:16px; }
+  .travacx{ background:#fff; border-radius:18px; padding:26px 24px; max-width:380px; width:100%;
+    text-align:center; -webkit-box-shadow:0 8px 26px rgba(40,80,140,.18); box-shadow:0 8px 26px rgba(40,80,140,.18); }
+  .travacx h2{ margin:0 0 6px; font-size:20px; color:#1668bf; }
+  .travacx p{ margin:0 0 14px; font-size:14px; color:#5a6b7b; line-height:1.45; }
+  .travacx input{ width:100%; padding:12px 14px; font-size:17px; text-align:center;
+    border:2px solid #cdd9e6; border-radius:12px; margin:0 0 12px; }
+  .travacx input:focus{ outline:0; border-color:#1668bf; }
+  .travacx .bt{ width:100%; padding:12px; font-size:16px; }
+  .erro{ color:#b53535 !important; font-weight:bold; min-height:18px; margin:10px 0 0 !important; }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- ⭐ TRAVA DE ENTRADA (senha do Marcos). Ver o comentario grande no JS:
+     isto guarda a TELA, nao os dados. A tranca de verdade e a regra do
+     Firebase — enquanto /provas estiver com leitura aberta, quem souber o
+     endereco do banco le tudo sem passar por aqui. -->
+<div id="trava" class="trava">
+  <div class="travacx">
+    <h2>&#128274; Painel de Respostas</h2>
+    <p>Esta p&aacute;gina mostra <b>nome e nota de aluno</b>. Digite a senha do professor.</p>
+    <input id="senha" type="password" autocomplete="off" placeholder="senha" onkeydown="if(event.keyCode===13)destravar()">
+    <button class="bt" onclick="destravar()">Entrar</button>
+    <p class="erro" id="erroSenha"></p>
+  </div>
+</div>
+
+<div class="wrap" id="painel" style="display:none">
   <header>
     <h1>&#128203; Painel de Respostas</h1>
     <p class="sub">Aventura das Dire&ccedil;&otilde;es &mdash; lateralidade 2&ordm; ano</p>
@@ -360,8 +389,12 @@ function baixarPDF(){
     var cls = isNaN(nn) ? "z" : (nn >= 8 ? "a" : (nn >= 5 ? "b" : "c"));
     linhas += '<tr>' +
       '<td class="n">' + (j+1) + '</td>' +
-      '<td class="nm">' + esc(r.nome || "&mdash;") + '</td>' +
-      '<td class="tu">' + esc(r.turma || "&mdash;") + '</td>' +
+      /* ⚠️ o travessao e ENTIDADE, entao nao pode passar pelo esc(): o esc troca o
+         "&" e a folha imprimia o texto cru "&mdash;" no lugar do traco. Peguei
+         isto comparando a folha com o banco, campo por campo — leitura de codigo
+         nao pegaria. */
+      '<td class="nm">' + (r.nome ? esc(r.nome) : "&mdash;") + '</td>' +
+      '<td class="tu">' + (r.turma ? esc(r.turma) : "&mdash;") + '</td>' +
       '<td class="n"><span class="pl ' + cls + '">' +
         (r.nota === "" || r.nota == null ? "&mdash;" : esc(r.nota)) + '</span></td>' +
       '<td class="n ac">' + (r.acertos === "" || r.acertos == null ? "&mdash;" : esc(r.acertos)) + '</td>' +
@@ -435,8 +468,57 @@ function baixarPDF(){
   setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 400);
 }
 
-carregar();
-agendar();
+/* ============================================================
+   🔒 A TRAVA DE ENTRADA — e o que ela é, com todas as letras.
+
+   Pedido do Marcos (ago/2026): *"bota a senha 1275@"* — a mesma senha mestra
+   que ele já usa nas atividades.
+
+   ⚠️ O QUE ELA FAZ: esconde a TELA de quem chega pelo endereço sem saber a
+   senha. Isso resolve o caso real — o link publicado, que alguém acha ou
+   recebe encaminhado.
+
+   ⚠️ O QUE ELA **NÃO** FAZ, e eu não vou fingir que faz: ela não protege os
+   DADOS. A senha vive no código-fonte desta página (guardo só a conta dela,
+   não o texto, o que atrapalha o curioso e não segura o determinado), e as
+   respostas continuam num banco cujo caminho `/provas` está com **leitura
+   aberta** — quem souber o endereço do Firebase lê tudo sem passar por aqui.
+
+   A TRANCA DE VERDADE é a regra do Realtime Database: exigir autenticação em
+   `/provas`. Aí a página precisaria entrar com conta, como faz a Agenda. Isso
+   é meia hora de trabalho e uma decisão do Marcos — está anotado para quando
+   ele quiser.                                                                */
+function contaDaSenha(s){
+  var h = 5381, i;
+  for(i = 0; i < s.length; i++){ h = ((h * 33) ^ s.charCodeAt(i)) & 0xFFFFFFFF; }
+  return h;
+}
+var SENHA_CONTA = 114614020;   /* a conta de "1275@" — o texto não fica escrito */
+
+function destravar(){
+  var v = $("senha") ? $("senha").value : "";
+  if(contaDaSenha(v) === SENHA_CONTA){
+    try{ window.sessionStorage.setItem("painel_ok", "1"); }catch(e){}
+    abrirPainel();
+    return;
+  }
+  $("erroSenha").innerHTML = "Senha incorreta.";
+  if($("senha")){ $("senha").value = ""; $("senha").focus(); }
+}
+
+function abrirPainel(){
+  $("trava").style.display = "none";
+  $("painel").style.display = "";
+  carregar();
+  agendar();
+}
+
+/* já entrou nesta sessão do navegador? não pede de novo (ele vai atualizar a
+   página várias vezes durante a aula). Fechou o navegador, pede outra vez. */
+var jaEntrou = false;
+try{ jaEntrou = (window.sessionStorage.getItem("painel_ok") === "1"); }catch(e){}
+if(jaEntrou){ abrirPainel(); }
+else if($("senha")){ $("senha").focus(); }
 </script>
 </body>
 </html>
