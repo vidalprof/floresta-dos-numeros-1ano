@@ -297,11 +297,26 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    com a opcao — resposta que a crianca nao ve e resposta que nao existe. */
 /* ⚠️ e a lista ROLA: em janela baixa a 4a opcao ficava presa atras da barra de
    baixo. Resposta que a crianca nao alcanca e resposta que nao existe. */
-.opts{max-height:none}
+/* ⚠️⚠️ LICAO PAGA (ago/2026), medida na bancada da peca: em CELULAR PEQUENO
+   (320x568) DUAS das quatro respostas ficavam fora da tela, e nao havia rolagem
+   nenhuma para alcanca-las. A regra de rolar existia, mas so abaixo de 560px de
+   altura — e 568 passa raspando por cima do vao. Resposta que a crianca nao
+   alcanca e resposta que nao existe, e o vao magico e que estava errado: 568,
+   667, 740, cada aparelho de escola cai num lugar.
+   Agora a lista rola SEMPRE que nao couber, em qualquer altura: o teto sai da
+   conta da tela (`calc`), nao de um numero escolhido a dedo. Em tela alta o
+   teto e maior que o conteudo e a rolagem nem aparece. */
+.opts{max-height:calc(100vh - 260px);min-height:110px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
 @media (max-height:560px){
-  .opts{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .opt.oaf{margin:5px auto;padding:5px 9px}
   .opt.oaf .nom{font-size:17px}
+}
+/* em tela estreita a FIGURA encolhe antes da carta: assim cabem as duas linhas
+   e a crianca continua vendo o desenho inteiro. */
+@media (max-width:360px){
+  .opt.oaf .des{height:84px}
+  .opt.oaf{padding:9px 6px 8px}
 }
 </style></head>
 <body>

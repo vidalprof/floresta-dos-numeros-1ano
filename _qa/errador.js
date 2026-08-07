@@ -2,6 +2,19 @@
 const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
 const path=require('path');
 const RECEITA={
+ /* OUCA E ACHE: a peca marca a resposta certa com data-qa="1" e as erradas com
+    "0". Errar de proposito e clicar numa "0" — e o portao confere se, depois de
+    tres erros, o andaime cresceu e a crianca CONSEGUE seguir. Sem esta receita
+    o portao dizia "nao sei jogar esta peca" e a bancada reprovava por falta de
+    medicao, que e o certo: portao que nao mede nao aprova. */
+ 'ouvir-achar':()=>{
+   var op=[].slice.call(document.querySelectorAll('.opt'))
+     .filter(function(e){ return e.getAttribute('data-qa')==='0' &&
+       e.className.indexOf('ok')<0 && e.className.indexOf('no')<0; });
+   if(!op.length) return null;
+   op[0].click();
+   return 'clicou a opcao errada "'+(op[0].textContent||'').replace(/\s+/g,' ').trim().slice(0,24)+'"';
+ },
  // clica uma peca do banco e depois uma VAGA que nao e a dela
  'quebra-cabeca':()=>{
    var pcs=[].slice.call(document.querySelectorAll('.qcpc')).filter(function(e){return e.className.indexOf('usada')<0;});

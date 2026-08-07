@@ -51,6 +51,17 @@ import re
 import sys
 
 
+def sem_comentarios(t):
+    u"""tira comentario de HTML, de CSS/JS de bloco e de linha.
+
+    Existe porque gatilho de portao tem que casar com o que a atividade FAZ, e
+    nao com o que alguem escreveu explicando o que ela faz."""
+    t = re.sub(r"<!--.*?-->", " ", t, flags=re.S)
+    t = re.sub(r"/\*.*?\*/", " ", t, flags=re.S)
+    t = re.sub(r"(?m)^\s*//.*$", " ", t)
+    return t
+
+
 def js_de(html):
     js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
     return re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), js, flags=re.S)
@@ -408,6 +419,16 @@ def main():
     html = io.open(alvo, encoding="utf-8").read()
     js = js_de(html)
     css = css_de(html)
+    # ⚠️⚠️ LICAO PAGA (ago/2026), e pela SEGUNDA vez na mesma familia: o gatilho
+    #    de "comparar" (`maior que|menor que|&gt;|&lt;`) le o HTML CRU — e o HTML
+    #    cru inclui os COMENTARIOS. Eu escrevi num comentario da peca "o teto e
+    #    MAIOR QUE o conteudo" e a peca `ouvir-achar`, que nao compara nada,
+    #    passou a ser acusada de ser uma dinamica de maior/menor com armadilha
+    #    aberta. Portao que le prosa mede prosa.
+    #    O `js_de` e o `css_de` ja tiram comentario; o `html` nao tinha quem o
+    #    limpasse. Agora tem — e os gatilhos passam a ler so o que a crianca ve
+    #    ou o que o codigo faz.
+    html = sem_comentarios(html)
     baixo = html.lower()
 
     # ⭐ atividade MONTADA: cada mecanica se mede no bloco DELA

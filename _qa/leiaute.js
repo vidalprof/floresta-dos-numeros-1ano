@@ -209,7 +209,24 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           /* o BANNER de fim de fase e uma camada modal: cobrir o que esta
              atras dele e o trabalho dele, nao um defeito. */
           if(b.closest&&(b.closest("#barra")||b.closest("#banner"))) continue;
-          const rb=b.getBoundingClientRect(); if(rb.width<8) continue;
+          /* ⚠️ LICAO PAGA (ago/2026): esta regra acusou `.opt tapando o texto de
+             .hint` numa peca CERTA. O cartao estava dentro de uma lista que
+             ROLA e, naquele momento, ROLADO PARA FORA — o navegador nao pinta
+             um pixel dele ali. `getBoundingClientRect` devolve a posicao que o
+             elemento TERIA; quem recorta e o pai que rola.
+             Entao: antes de comparar, corta o retangulo do botao pelo recorte
+             de cada pai que rola. Se nao sobra nada visivel, nao ha o que tapar.
+             (Mesma familia do `paiRola`, que ja curou a regra 3.) */
+          let rb=b.getBoundingClientRect(); if(rb.width<8) continue;
+          for(let a=b.parentElement; a && a.id!=="app"; a=a.parentElement){
+            const c=getComputedStyle(a);
+            if(!/(auto|scroll|hidden)/.test(c.overflowY+" "+c.overflowX)) continue;
+            const ra=a.getBoundingClientRect();
+            rb={left:Math.max(rb.left,ra.left), right:Math.min(rb.right,ra.right),
+                top:Math.max(rb.top,ra.top),   bottom:Math.min(rb.bottom,ra.bottom)};
+            rb.width=rb.right-rb.left; rb.height=rb.bottom-rb.top;
+          }
+          if(!(rb.width>0&&rb.height>0)) continue;
           for(const cx of [...document.querySelectorAll(".balao,.hint,.selo,.pergunta,h1,h2")]){
             if(cx.offsetParent===null||cx.contains(b)===false&&b.contains(cx)) continue;
             for(const no of [...cx.childNodes]){
