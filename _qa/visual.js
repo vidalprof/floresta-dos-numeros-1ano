@@ -214,7 +214,52 @@ const TAMANHOS = [
           });
         });
 
-        /* 5. TEXTO ESPREMIDO na borda do proprio cartao */
+        /* 5. DESENHO SAINDO DO BOTAO (ago/2026) — o defeito que o Marcos apontou
+              DUAS vezes: *"esse botao de som nao ficou certo"*. O alto-falante e
+              desenhado com BORDAS e PSEUDO-ELEMENTOS num filho de tamanho zero;
+              quando alguem mexe no tamanho do botao, o desenho fica para fora —
+              o circulo de um lado e a onda sonora como um ")" solto do outro.
+
+              ⚠️ Portao nenhum via isso porque `getBoundingClientRect` nao enxerga
+              `:before`/`:after`. Aqui eles sao medidos pelo `getComputedStyle`
+              com o segundo argumento, que devolve o left/top/width/height reais
+              — e a caixa do desenho e comparada com a do botao. */
+        document.querySelectorAll('button, .zap, .zapb').forEach(bt => {
+          if (!vis(bt)) return;
+          const rb = bt.getBoundingClientRect();
+          if (rb.width > 70 || rb.height > 70) return;   // botao de texto, nao icone
+          const cs = getComputedStyle(bt);
+          const redondo = /50%|9999px/.test(cs.borderRadius);
+          for (const f of bt.children) {
+            const rf = f.getBoundingClientRect();
+            const px = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
+            /* a caixa do filho + a dos dois pseudo-elementos dele */
+            let cx0 = rf.left, cx1 = rf.right, cy0 = rf.top, cy1 = rf.bottom;
+            for (const pe of ['::before', '::after']) {
+              const p = getComputedStyle(f, pe);
+              if (!p || p.content === 'none' || p.display === 'none') continue;
+              const l = rf.left + px(p.left);
+              const t = rf.top + px(p.top);
+              const w = px(p.width) + px(p.borderRightWidth) + px(p.borderLeftWidth);
+              const h = px(p.height) + px(p.borderTopWidth) + px(p.borderBottomWidth);
+              cx0 = Math.min(cx0, l); cx1 = Math.max(cx1, l + w);
+              cy0 = Math.min(cy0, t); cy1 = Math.max(cy1, t + h);
+            }
+            /* num botao REDONDO o desenho ainda precisa caber no circulo, nao so
+               na caixa: por isso 3px de folga de cada lado. */
+            const folga = redondo ? 3 : 0;
+            const passa = Math.max(cx1 - (rb.right - folga), (rb.left + folga) - cx0,
+                                   cy1 - (rb.bottom - folga), (rb.top + folga) - cy0);
+            if (passa > 2) {
+              out.push('o DESENHO sai ' + Math.round(passa) + 'px do botao .' +
+                       String(bt.className).split(' ')[0] +
+                       ' (o icone nao cabe no proprio botao)');
+              break;
+            }
+          }
+        });
+
+        /* 6. TEXTO ESPREMIDO na borda do proprio cartao */
         document.querySelectorAll('.balao, .opt, .hint, .dica, .selo').forEach(cx => {
           if (!vis(cx)) return;
           const rc = cx.getBoundingClientRect();
