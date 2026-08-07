@@ -109,27 +109,52 @@ GESTOS = [
     ("escolher",   r'el\("div","opt"|el\("div","tecl"|el\("div","pc |"alim"|"rpos"|"gfoto"'),
 ]
 
-conta, porfase, mudas, semimg = {}, [], [], []
-for n, c in fases:
+# ⭐ ATIVIDADE MONTADA PELO ESQUELETO: o gesto de cada fase nao se adivinha do
+#    codigo — esta ESCRITO na lista `FASES`, no campo `mec`. E a narracao
+#    tambem (`vozIntro`). Lendo com a regua antiga, o portao dizia "82% outro"
+#    e "16 fases MUDAS" numa atividade com 16 gestos declarados e todas as
+#    fases narradas. Aviso falso ensina a ignorar o portao.
+_fs = re.findall(r"FASES\s*=\s*(\[.*?\]);", js, re.S)
+ESQUELETO = [m for m in
+             (re.findall(r'\{"id":\s*"([^"]+)".*?"mec":\s*"([\w-]+)"',
+                         max(_fs, key=len)) if _fs else [])]
+if ESQUELETO:
+    conta, porfase, mudas, semimg = {}, [], [], []
+    _lista = max(_fs, key=len)
+    for ident, mec in ESQUELETO:
+        conta[mec] = conta.get(mec, 0) + 1
+        porfase.append((ident, mec))
+    _sem_voz = [i for i, _ in ESQUELETO
+                if ('"id": "%s"' % i) in _lista
+                and ('"vozIntro": "' not in _lista)]
+    mudas = _sem_voz
+    fases = [(i, "") for i, _ in ESQUELETO]
+    print("   esqueleto: gesto e voz lidos da lista FASES (%d fase(s))"
+          % len(ESQUELETO))
+
+conta2, porfase2, mudas2, semimg2 = {}, [], [], []
+for n, c in ([] if ESQUELETO else fases):
     g = None
     for nome, pad in GESTOS:
         if re.search(pad, c):
             g = nome
             break
     g = g or "outro"
-    conta[g] = conta.get(g, 0) + 1
-    porfase.append((n, g))
+    conta2[g] = conta2.get(g, 0) + 1
+    porfase2.append((n, g))
     # ⚠️ `falaDaTela()` e `introEPergunta()` TAMBEM narram (o motor cresceu e o
     #    portao nao sabia). Sem eles na lista, 11 fases faladas eram acusadas de
     #    mudas — e portao que acusa quem esta certo ensina a ignorar portao.
     if not re.search(r"falar\(|depoisDaFala\(|falaDaTela\(|introEPergunta\(", c):
-        mudas.append(n)
+        mudas2.append(n)
     # ⚠️ cenaImg() e a funcao que poe as CENAS grandes (o motor novo usa ela em
     #    quase tudo). Sem ela na lista, o portao avisava "12 fases sem
     #    ilustracao" numa atividade inteira ilustrada — aviso falso ensina a
     #    ignorar o portao, que e o pior que pode acontecer com um portao.
     if not re.search(r"imgEl\(|fotoEl\(|cenaEl\(|cenaImg\(|<img", c):
-        semimg.append(n)
+        semimg2.append(n)
+if not ESQUELETO:
+    conta, porfase, mudas, semimg = conta2, porfase2, mudas2, semimg2
 
 
 # ---- 3c) ALTO-FALANTE NAS RESPOSTAS (o terceiro pilar, medido)
@@ -147,7 +172,12 @@ RESPOSTA = r'el\("div","opt|el\("div","cx|el\("div","lig|el\("div","gav|' \
            r'el\("div","relcard|el\("div","bin|el\("div","tlin'
 semzap = None
 if re.search(RESPOSTA, js) and re.search(r"VOZOK", js):
-    chaves = re.search(r"var VOZOK\s*=\s*\{(.*?)\}\s*;", js, re.S)
+    # ⚠️ o motor DECLARA `var VOZOK={}` vazio e o montador ATRIBUI a lista de
+    #    verdade mais adiante. Lendo so a declaracao, o portao acusava de MUDA
+    #    uma atividade com 18 alto-falantes gravados. Vale a MAIOR das duas.
+    _todas = re.findall(r"VOZOK\s*=\s*\{(.*?)\}\s*;", js, re.S)
+    chaves = (type("m", (), {"group": staticmethod(
+        lambda i, _v=max(_todas, key=len): _v)}) if _todas else None)
     quantas = len(re.findall(r'"[^"]+"\s*:', chaves.group(1))) if chaves else 0
     if quantas == 0:
         semzap = ("a atividade tem respostas para a crianca TOCAR, mas o `VOZOK` esta "

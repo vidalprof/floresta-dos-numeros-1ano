@@ -113,6 +113,58 @@ def mesa_de_paradas(html, nomes):
     return fora
 
 
+def blocos_de_mecanica(html):
+    u"""⭐ O ESQUELETO NAO TEM CADEIA DE CHAMADAS — TEM UMA LISTA DE FASES.
+
+    Numa atividade escrita a mao, uma tela chama a proxima pelo nome, e este
+    portao segue essa corrente. Na atividade MONTADA nao existe corrente: o
+    motor le a lista `FASES` e chama `MEC[f.mec]`. Nenhuma tela cita a outra.
+
+    Lendo com a regua antiga, o portao acusava TODAS as mecanicas de "TELA
+    ORFA: ninguem chega em pecaMemoria" — e as pecas que se redesenham a cada
+    rodada (a forca, o fim de peca) de "TELA PRESA". Vinte acusacoes falsas
+    numa atividade que o auditor-jogador atravessa inteira. Portao que grita em
+    coisa certa e pior que portao nenhum: ensina a ignorar o grito.
+
+    Devolve o conjunto de funcoes declaradas DENTRO de algum `MEC[...]` — para
+    o esqueleto, essas o motor alcanca por DADO, e a corrente nao se aplica.
+    O que importa ali e outra coisa, conferida em `confere_esqueleto`."""
+    dentro = set()
+    for m in re.finditer(r'MEC\[\s*"([\w-]+)"\s*\]\s*=\s*function', html):
+        i = html.index("{", m.end())
+        k, prof = i, 0
+        while k < len(html):
+            if html[k] == "{":
+                prof += 1
+            elif html[k] == "}":
+                prof -= 1
+                if prof == 0:
+                    break
+            k += 1
+        for f in re.finditer(r"function\s+([\w$]+)\s*\(", html[i:k]):
+            dentro.add(f.group(1))
+    return dentro
+
+
+def confere_esqueleto(html):
+    u"""o que DE FATO pode dar errado numa atividade montada: uma fase pedir
+    uma mecanica que nao foi embutida. Ai a crianca chega na fase e ve o aviso
+    '(mecanica nao registrada)' — tela morta no meio do caminho."""
+    tem = set(re.findall(r'MEC\[\s*"([\w-]+)"\s*\]\s*=', html))
+    pedidas, fora = set(), []
+    # ⚠️ o motor DECLARA `FASES = []` vazia e o montador ATRIBUI a de verdade
+    #    mais adiante. Pegando a primeira, o portao lia a lista vazia e dizia,
+    #    satisfeito, "0 mecanicas pedidas" — aprovando sem medir. Vale a MAIOR.
+    achadas = re.findall(r"FASES\s*=\s*(\[.*?\]);", html, re.S)
+    if achadas:
+        pedidas = set(re.findall(r'"mec"\s*:\s*"([\w-]+)"',
+                                 max(achadas, key=len)))
+    for x in sorted(pedidas - tem):
+        fora.append(u"FASE SEM MECANICA: nenhuma fase consegue rodar '%s' "
+                    u"(o montador nao embutiu a peca)" % x)
+    return fora, len(pedidas), len(tem)
+
+
 def alcancaveis(saidas, raizes):
     vistas, pilha = set(), list(raizes)
     while pilha:
@@ -135,8 +187,18 @@ def main():
 
     problemas = []
 
+    # ⭐ ATIVIDADE MONTADA PELO ESQUELETO: a regua e outra (ver acima)
+    esqueleto = bool(re.search(r"\bMEC\[", html) and re.search(r"\bFASES\s*=", html))
+    das_pecas = blocos_de_mecanica(html) if esqueleto else set()
+    if esqueleto:
+        fora, pedidas, tem = confere_esqueleto(html)
+        problemas.extend(fora)
+        print(u"   esqueleto: %d mecanica(s) pedida(s) pelas fases, %d embutida(s)"
+              % (pedidas, tem))
+
     # telaPainel se redesenha de proposito (imprimir/voltar) -> nao e "presa"
     presas = sorted(n for n, al in saidas.items() if n in al and n != "telaPainel"
+                    and n not in das_pecas
                     and re.search(r"\blimpa\(\)", corpos.get(n, "")))
     for n in presas:
         problemas.append("TELA PRESA: %s leva de volta para ela mesma" % n)
@@ -150,7 +212,7 @@ def main():
     # para app (vXxx, gXxx, nXxx, telaXxx) e um regex de nome deixa telas de
     # fora em silencio -- foi o que aconteceu com a "Legenda do Pingo".
     so_telas = set(n for n in saidas if re.search(r"\blimpa\(\)", corpos.get(n, "")))
-    orfas = sorted(so_telas - vistas - ignorar)
+    orfas = sorted(so_telas - vistas - ignorar - das_pecas)
     for n in orfas:
         problemas.append("TELA ORFA: ninguem chega em %s" % n)
 
