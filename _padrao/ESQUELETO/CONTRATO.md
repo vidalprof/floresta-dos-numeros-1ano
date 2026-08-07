@@ -1,5 +1,37 @@
 # 📐 O CONTRATO DO ESQUELETO — como uma mecânica se encaixa no motor
 
+> ## ⭐ O MODELO É O **JARDIM DO BROTO** (ordem do Marcos, ago/2026)
+>
+> Palavras dele: *"só lembrando que o nosso modelo de atividade é a atividade do
+> Broto por enquanto"*. **O esqueleto se parece com o Broto**, não com o Circo do
+> Teo nem com nenhuma outra. Ele está no ar, as crianças estão gostando, e ele
+> mesmo disse: *"achei que a atividade do Broto está perfeita"*. Quando houver
+> dúvida sobre como uma tela deve ser, a resposta é **abrir o `_jardim/index.html`
+> e olhar**.
+>
+> **A espinha do Broto, que o esqueleto herda inteira:**
+> `telaCapa` → `telaQuem` (o crachá: quem vai jogar) → as fases → `telaFim`
+> (boletim animado + medalha) → **relatório do professor escondido**
+> (`segredoRelatorio`: abre segurando a medalha 2 segundos, nunca botão à vista).
+>
+> **E as peças do motor dele, pelos nomes que já existem:**
+> - `ajudaJd(n, ops)` — o andaime que cresce: 1º erro dica · 2º consolo + apoio
+>   concreto · 3º revela e segue;
+> - `reg(conceito, acertouDePrimeira, tentativas)` — a medição invisível que vira
+>   o parecer do professor;
+> - `fracos()` + `treinarFracos()` — o "Treinar o que faltou", só para quem tem
+>   objetivo abaixo de 75%;
+> - `resumoAnimado()` — o boletim que conta estrelas e acertos, sem nota e sem a
+>   palavra "errou";
+> - `crachaEl()` — o crachá com o nome e a figurinha escolhida;
+> - `setProg` · `montaBarra(dicaId, dicaTxt)` · `falar`/`falaDaTela` · `VOZOK`
+>   (alto-falante em cada resposta) · `salvaEstado` (continuar de onde parou).
+>
+> **O que MUDA em relação ao Broto:** 32 fases no lugar de 17, e 16 mecânicas
+> diferentes (10–12 para pré/1º/2º, onde o gesto ainda é conteúdo). O resto é o
+> Broto — inclusive o jeito, o tom e o ritmo.
+
+
 > Decisão do Marcos (ago/2026): **32 fases** por atividade, **16 mecânicas
 > diferentes** (10–12 para pré/1º/2º, onde o gesto ainda é conteúdo). E a meta:
 > *"conseguir deixar uma atividade inteira com o esqueleto em minutos e não em
