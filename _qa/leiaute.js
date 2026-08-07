@@ -76,6 +76,21 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
         /* se a tela ROLA, o que esta embaixo continua alcancavel — nao e defeito.
            O defeito da foto do Marcos era outro: nao rolava e a resposta sumia.  */
         const rola=tela? (tela.scrollHeight>tela.clientHeight+4) : false;
+        /* ⚠️ MEDICAO INCOMPLETA DO PROPRIO PORTAO (ago/2026): ele so perguntava
+           se a TELA INTEIRA rola. Mas uma lista de respostas pode rolar POR
+           DENTRO (`.opts{max-height;overflow-y:auto}`) — e ai o que esta embaixo
+           continua alcancavel, que e o que importa. Sem isto o portao obrigava a
+           deixar a tela inteira rolando, mesmo quando o desenho certo era a
+           lista rolar dentro do seu lugar. Portao nao pode empurrar para um
+           desenho pior. Agora ele olha CADA elemento e pergunta: existe algum
+           pai meu que rola de verdade? */
+        function paiRola(e){
+          for(let a=e.parentElement; a && a.id!=="app"; a=a.parentElement){
+            const c=getComputedStyle(a);
+            if(/(auto|scroll)/.test(c.overflowY) && a.scrollHeight>a.clientHeight+4) return true;
+          }
+          return false;
+        }
         /* ⚠️ DEFEITO DO PROPRIO PORTAO (ago/2026): estava `"#app "+sel`, e como
            `sel` e uma LISTA separada por virgula, so o PRIMEIRO seletor ficava
            preso ao #app — todo o resto varria a pagina inteira, inclusive o
@@ -89,7 +104,7 @@ const CLICAVEL=RESPOSTA+',button,.marca,.cam,.mbt,.ajudabtn,.zap,.dbt';
           const b=e.getBoundingClientRect();
           if(b.width<1||b.height<1) continue;
           if(b.left<-1||b.right>innerWidth+1) out.push("estoura na horizontal: ."+String(e.className).split(" ")[0]);
-          if(!rola){
+          if(!rola && !paiRola(e)){
             if(b.top>=innerHeight-2) forams++;
             else if(b.bottom>topoBarra+2 && b.top<topoBarra) atras++;
           }
