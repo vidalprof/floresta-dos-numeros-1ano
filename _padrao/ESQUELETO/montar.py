@@ -305,13 +305,18 @@ def recorta(caminho, nomes):
     if not os.path.exists(caminho) or not nomes:
         return u""
     txt = io.open(caminho, encoding="utf-8").read()
-    fora = []
-    for bloco in re.split(r"(?=/\* ==== PECA: )", txt):
+    partes = re.split(r"(?=/\* ==== PECA: )", txt)
+    # ⚠️ o que vem ANTES da 1a peça são as FERRAMENTAS que todas usam (`nota`,
+    #    `ac`). Recortar só as peças deixava esse cabeçalho para trás e a
+    #    atividade morria no primeiro som — "nota is not defined".
+    fora = [partes[0]] if partes and not partes[0].startswith("/* ==== PECA:") else []
+    for bloco in partes:
         m = re.match(r"/\* ==== PECA: ([\w-]+) ==== \*/", bloco)
         if m and m.group(1) in nomes:
             fora.append(bloco)
-    achadas = set(re.match(r"/\* ==== PECA: ([\w-]+) ==== \*/", b).group(1)
-                  for b in fora)
+    achadas = set(m.group(1) for m in
+                  (re.match(r"/\* ==== PECA: ([\w-]+) ==== \*/", b) for b in fora)
+                  if m)
     for n in nomes:
         if n not in achadas:
             print(u"   AVISO: a mecanica '%s' nao esta em %s — rode "

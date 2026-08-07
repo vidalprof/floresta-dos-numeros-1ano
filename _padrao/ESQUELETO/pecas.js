@@ -1,5 +1,27 @@
 /* GERADO por integrar.py — nao editar a mao */
 
+/* ==== FERRAMENTAS QUE AS PECAS USAM E O MOTOR NAO TINHA ====
+   ⚠️ LICAO PAGA (achada pelo auditor-jogador, na 3a fase): o integrador so
+   trazia o SEGUNDO <script> da peca (a mecanica). O PRIMEIRO — o motorzinho do
+   MOLDE — ficava para tras, e com ele o `nota()`/`ac()` que fazem o som. A peca
+   escolher passou, a completar passou, e a MEMORIA morreu no primeiro som de
+   carta virando: "nota is not defined". O motor tem `tom()`, mas as pecas foram
+   afinadas com estes numeros (PESQUISA-SOM-E-GAMEFEEL), entao vem os dois.
+
+   Todo o resto do motorzinho (el, limpa, setProg, mostraDica, mostraBanner,
+   baguncar, sCerto, sErro, sTap, festa) o motor ja tem com o MESMO nome — e por
+   isso a peca nunca precisou ser reescrita. */
+var _AC = null;
+function ac(){ try{ if(!_AC) _AC = new (window.AudioContext||window.webkitAudioContext)();
+  if(_AC.state === "suspended") _AC.resume(); }catch(e){} return _AC; }
+function nota(f, dur, vol, tipo, atraso){ var c = ac(); if(!c) return;
+  var o = c.createOscillator(), g = c.createGain(), t = c.currentTime + (atraso||0);
+  o.type = tipo || "triangle"; o.frequency.value = f;
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(vol || 0.18, t + 0.014);
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g); g.connect(c.destination); o.start(t); o.stop(t + dur + 0.02); }
+
 /* ==== PECA: achar-na-cena ==== */
 MEC["achar-na-cena"] = function(f, cen, fim){
   cen.className = cen.className + " mec-achar-na-cena";
