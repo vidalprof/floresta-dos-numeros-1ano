@@ -404,3 +404,77 @@ certo; a figura simplesmente não existe.
 não medição. Toda conta que o montador anuncia precisa de um portão que a
 confira contra o mundo — arquivo em disco, tela no navegador. *Existir não é
 medir* apareceu de novo, agora do lado de quem produz.
+
+---
+
+## ⚠️ LIÇÃO PAGA — A ATIVIDADE MONTADA NASCEU MUDA (ago/2026)
+
+Cobrança do Marcos, depois de abrir a Padaria das Letras: *"não teve fala
+automática, visto que os pequinos precisam"* e, depois de eu mostrar a medição,
+*"tem que falar o que está escrito"*.
+
+**Medido antes de mexer:** 32 fases, **1 narrava sozinha**. E dos 23
+alto-falantes, só 15 diziam o texto ao lado — **8 estavam em cima de uma letra
+sozinha (M, B, P, D, C, G, Q, O) e não tocavam NADA**. Numa atividade de
+alfabeto: a criança tocava o alto-falante da letra — o gesto exato que a
+atividade ensina — e ouvia silêncio.
+
+Eram **quatro** causas somadas, todas no caminho entre o texto da tela e o mp3.
+Nenhuma delas dava erro; o app abria bonito e o `node --check` passava.
+
+1. **O balão que a PEÇA escreve nunca era gravado.** O motor narra a fase
+   *lendo* o balão que está na tela e procurando a gravação **daquele** texto; se
+   não acha, fica calado de propósito. Só que **10 das 11 mecânicas escrevem o
+   próprio balão dentro do código da peça**, e o montador só descia o `dados` da
+   fase. → `balaoes_das_pecas()` no `montar.py`: abre a peça de cada mecânica
+   usada e manda gravar o balão dela, renderizado como o navegador renderiza
+   (tags fora, entidades decodificadas, espaços colapsados).
+
+2. **Faltava o prefixo `op_` na hora de tocar.** `temVoz()` devolve só a *conta*
+   do texto, e o arquivo gravado chama-se `op_<conta>.mp3`. O motor pedia
+   `audio/<conta>.mp3`. **A fase ficaria muda mesmo com a voz gravada** — o
+   defeito mais traiçoeiro dos quatro, porque some na inspeção do `falas.json`.
+
+3. **O `dadosExtra` não era percorrido.** O balão do `ordenar` mora em
+   `dadosExtra.ORDTXT.balao`, então as três fases de pôr o alfabeto em ordem
+   ficavam mudas — justo o objetivo que a professora pediu primeiro.
+
+4. **`eh_fala()` recusava a letra solta.** Exigia 3 caracteres e 2 letras, para
+   impedir que `p0`/`gav1` virassem mp3. Regra certa, lugar errado: numa
+   atividade de alfabeto ela barrava o conteúdo. Agora **letra em CAIXA é voz**
+   (identificador de código é minúsculo), e duas letras em caixa são **sílaba**.
+
+**Medido depois:** 32 de 32 fases narram · 29 de 29 alto-falantes dizem
+exatamente o que está escrito.
+
+### A regra que fica
+
+> **O balão é contrato.** O que a peça escreve na tela tem que existir no
+> `falas.json`. Peça que escreve balão próprio **declara** esse texto, e o
+> montador o colhe — não se confia em "o colhedor pega jogando", porque ele só
+> pega o que a partida alcança.
+
+**Portão novo `_qa/fala_o_escrito.js` (0n da banca)**, porque a regra da casa é
+que todo defeito que chega ao Marcos ganha o portão que o pega sozinho. Ele abre
+a atividade e cobra três coisas: (1) o balão de cada fase tem gravação; (2) cada
+alto-falante toca exatamente o texto escrito ao lado; (3) avisa quando há
+resposta tocável sem alto-falante. Serve atividade **montada** (anda pelo
+`FASES`) e **escrita à mão** (descobre as telas pelo nome).
+
+**Testado com defeito plantado** — portão que só passa não prova nada:
+tirei a gravação do `M` → acusou; fiz o `B` dizer "ELEFANTE" → acusou; apaguei o
+balão do `juntar-silabas` → acusou as 5 fases, uma a uma. Código 1 nos três.
+
+### E um defeito de VOZ ERRADA, do mesmo dia
+
+O colhedor trouxe sete "falas" que não são frases: **`"BBOLOjá tentamos"`**,
+`"LLEITEjá tentamos"`, `"MMELjá tentamos"`. É o `textContent` de um pai que
+juntou dois filhos separados na tela (o crachá da letra, a palavra, e um aviso
+de outro canto). Se passassem, o Edge TTS gravaria a bobagem e a criança que
+aperta o alto-falante ouviria **"bêbolojá tentamos"** — e no 1º ano, quem ainda
+não lê **acredita na voz**.
+
+> **A marca da colagem é a mudança de caixa sem espaço.** Palavra em caixa alta
+> grudada em minúscula não acontece em frase escrita para criança; acontece
+> quando dois elementos viram um texto só. → `eh_colagem()` no `colher.py`,
+> testado em 10 casos, 10 certos.
