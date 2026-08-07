@@ -998,19 +998,55 @@ function escolherVoz(){
 if('speechSynthesis' in window){ try{ window.speechSynthesis.onvoiceschanged=function(){ VOZ_ESCOLHIDA=escolherVoz(); }; }catch(e){} }
 var _filaFala=[];
 var _aoTerminarFala=null;
+/* ==========================================================================
+   \u26a0\ufe0f TRAVAMENTO NAS CONTAGENS \u2014 conserto (ago/2026), achado pelo Marcos:
+   *"achei que a atividade meio que travava nas contagens"*.
+
+   A CAUSA: a contagem s\u00f3 andava quando a VOZ avisava que tinha terminado
+   ('u.onend'). S\u00e3o 9 lugares assim, e todos s\u00e3o contagem: o "conhecer os
+   n\u00fameros at\u00e9 10/20/30" e o "vamos contar juntos" que aparece depois do erro.
+   S\u00f3 que a voz do navegador NEM SEMPRE avisa: se o motor de fala falha
+   ('onerror' \u2014 que aqui nem existia), se a crian\u00e7a troca de aba (o Chrome
+   suspende a fala), ou pelo defeito conhecido do 'cancel()' logo antes do
+   'speak()'. Quando ela n\u00e3o avisa, o 'onend' NUNCA chega \u2014 e a contagem morre
+   parada, com a tela dizendo "Vou come\u00e7ar a contar..." para sempre. N\u00e3o havia
+   bot\u00e3o nenhum para escapar: s\u00f3 voltando ao mapa.
+
+   Medido no navegador (sem voz instalada, que \u00e9 o mesmo estado de uma voz que
+   falha): 8 segundos parada, 0 n\u00fameros acesos.
+
+   O CONSERTO: a fala ganha PRAZO e ganha 'onerror'. Se a voz n\u00e3o der not\u00edcia
+   dentro do tempo esperado, a atividade segue em frente sozinha. A crian\u00e7a
+   pode ficar sem o som (isso depende do PC), mas NUNCA mais fica sem a
+   atividade. Vale para os 9 lugares de uma vez, porque todos passam por aqui.
+   ========================================================================== */
+var _falaPrazo=null;
+function _limpaPrazo(){ if(_falaPrazo){ try{clearTimeout(_falaPrazo);}catch(e){} _falaPrazo=null; } }
 function _proxFrase(){
+  _limpaPrazo();
   if(!_filaFala.length){ var cb=_aoTerminarFala; _aoTerminarFala=null; if(cb) cb(); return; }
   var fr=_filaFala.shift();
   var u=new SpeechSynthesisUtterance(fr); u.lang='pt-BR'; u.rate=0.92; u.pitch=1.08;
   if(!VOZ_ESCOLHIDA) VOZ_ESCOLHIDA=escolherVoz();
   if(VOZ_ESCOLHIDA) u.voice=VOZ_ESCOLHIDA;
-  u.onend=function(){ setTimeout(_proxFrase, _filaFala.length?180:0); };
-  try{ window.speechSynthesis.speak(u); }catch(e){}
+  var seguiu=false;
+  /* s\u00f3 UMA das tr\u00eas portas passa: terminou, deu erro, ou estourou o prazo */
+  function segue(){ if(seguiu)return; seguiu=true; _limpaPrazo();
+    setTimeout(_proxFrase, _filaFala.length?180:0); }
+  u.onend=segue;
+  u.onerror=segue;
+  /* prazo generoso: ~95ms por letra + folga. Quando a voz funciona, o `onend`
+     chega MUITO antes e o prazo \u00e9 cancelado \u2014 ent\u00e3o isto n\u00e3o atrasa nada.
+     Quando ela falha, \u00e9 o \u00fanico jeito de a contagem continuar. */
+  var espera=Math.min(14000, Math.max(1400, fr.length*95+1400));
+  _falaPrazo=setTimeout(segue, espera);
+  try{ window.speechSynthesis.speak(u); }catch(e){ segue(); }
 }
 function falar(texto, aoTerminar){
   if(!SOM_LIGADO){ if(aoTerminar) setTimeout(aoTerminar, 1200); return; }
   if(!('speechSynthesis' in window)){ if(aoTerminar) setTimeout(aoTerminar, 1200); return; }
   try{ window.speechSynthesis.cancel(); }catch(e){}
+  _limpaPrazo();
   var limpo=limparFala(texto); if(!limpo){ if(aoTerminar) setTimeout(aoTerminar, 300); return; }
   var partes=limpo.match(/[^.!?:]+[.!?:]*/g)||[limpo];
   _filaFala=[];
