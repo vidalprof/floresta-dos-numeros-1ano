@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — estimar (chutar com jeito, depois conferir contando)</title>
+<!-- ============================================================
+     PEÇA: ESTIMAR — O PALPITE VEM ANTES DA CONTAGEM
+     (copiada do _padrao/pecas/MOLDE.html; irmã de `contadores.html`)
+
+     POR QUE ELA EXISTE:
+     a criança que só conta nunca desconfia do resultado. Ela soma 8 x 7 e
+     escreve 15 sem estranhar, porque não tem NENHUMA ideia do tamanho que a
+     resposta deveria ter. Estimar é o sentido numérico ligando: olhar um monte
+     e dizer "isso aí é mais ou menos vinte". Vem de "CABE NO CAMINHÃO?"
+     (`_fabrica/index.html`), mas lá a estimativa virava uma escolha entre duas
+     portas; aqui ela é PRODUZIDA numa régua e depois CONFERIDA contando.
+
+     O QUE FAZ ESTA MECÂNICA VALER (e o que quase todo mundo erra nela):
+       · O PALPITE NÃO PODE SER FALHA. Não existe resposta certa na hora do
+         chute: a peça NUNCA toca som de tropeço no palpite, nunca marca de
+         vermelho, nunca usa a palavra que reprova. Ela põe as duas coisas lado
+         a lado — "voce falou 6 / de verdade 8" — e comemora quem chegou perto.
+       · O CHUTE TEM QUE SER CHUTE. Se der para contar, não é estimativa: é
+         contagem devagar. Por isso a tampa FECHA sozinha depois de uma olhada
+         (a régua só aparece com o pote tampado).
+       · A CONFERÊNCIA É CONTANDO JUNTO, item a item, com a voz falando o número
+         e o item acendendo — é aí que o olho se calibra, não no chute.
+       · A ESTRATÉGIA SE ENSINA: a partir da 2a rodada aparece a ÂNCORA (um
+         grupinho de 5 do lado do pote). Estimar bem é comparar com um grupinho
+         conhecido, e isso se mostra, não se manda fazer.
+       · 3 rodadas com o número crescendo (8, 14, 22): a régua cresce junto.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA NO INSTANTE DO TOQUE (`travada=true`), nunca no fim da animação —
+         criança toca duas vezes, e o segundo toque pulava rodada.
+       · GERAÇÃO (`ger`): todo setTimeout confere se a tela ainda é a dele. Sem
+         isso o relógio da olhada disparava DEPOIS de a criança já ter passado.
+       · TRÊS PORTAS para o palpite: arrastar a régua, tocar num atalho (5/10/20)
+         e o TECLADO DE VERDADE (setas e Enter) — no PC da escola tem teclado.
+       · TUDO TEM GÊMEO VISUAL: a voz conta e o número aparece dentro do item e
+         no contador grande. Funciona no mudo.
+       · NUNCA TRAVA: qualquer valor da régua é um palpite válido; sempre há
+         botão para seguir.
+       · data-qa só para o auditor-jogador (a régua publica um palpite que serve).
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* O POTE: o monte que a crianca olha. Os itens ficam espalhados de verdade
+   (grade com sacudida), porque monte alinhado se conta com o dedo e ai a
+   estimativa deixa de existir. */
+.pote{position:relative;height:150px;max-width:430px;margin:12px auto 0;overflow:hidden;
+      background:#e8dfc9;border:4px solid #b3903c;border-radius:16px 16px 26px 26px}
+.pote.mini{height:92px}
+.pit{position:absolute;display:block;width:28px;height:28px;margin:-14px 0 0 -14px;
+     border-radius:50%;background:#c4622d;border:2px solid #7d3d1a;color:#fff2e6;
+     font-size:13px;font-weight:800;font-style:normal;line-height:24px;text-align:center}
+.grao{background:#d9a03a;border-color:#87611a;color:#33280a}
+.gude{background:#3f8fa8;border-color:#1c5162;color:#eaf7fc}
+/* ja contado: muda a COR e ganha o NUMERO escrito dentro (nada essencial so na
+   cor — quem nao distingue a cor le o numero). */
+.pit.contada{background:#ffd54a;border-color:#a8801c;color:#3a2c07}
+.pit.acesa{background:#fff3c9;border-color:#e09400;color:#3a2c07;
+           -webkit-box-shadow:0 0 0 4px rgba(224,148,0,.6);box-shadow:0 0 0 4px rgba(224,148,0,.6);
+           -webkit-transform:scale(1.2);transform:scale(1.2)}
+.tampa{position:absolute;left:0;top:0;right:0;bottom:0;background:#7a5c37;border-radius:11px 11px 20px 20px}
+.tsel{position:absolute;left:50%;top:50%;font-style:normal;
+      -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+      background:#3a2c07;color:#ffe9a8;font-size:15px;font-weight:800;letter-spacing:1px;
+      border-radius:10px;padding:8px 15px;white-space:nowrap}
+/* o relogio da olhada: a tampa avisa que vai fechar (posicao, nao so cor) */
+.relogio{height:12px;max-width:280px;margin:10px auto 0;border-radius:8px;overflow:hidden;
+         background:rgba(255,255,255,.18)}
+.relogio i{display:block;height:100%;width:100%;background:#ff9c3d;
+           -webkit-transition:width 4.1s linear;transition:width 4.1s linear}
+.rlabel{font-size:13px;font-weight:700;color:#ffd8a8;margin-top:5px}
+/* A ANCORA: o grupinho de 5 ao lado do pote. E a estrategia de quem estima bem,
+   mostrada em vez de mandada. */
+.ancora{max-width:430px;margin:10px auto 0;background:rgba(255,255,255,.12);border-radius:12px;
+        padding:7px 10px;font-size:14px;font-weight:700;color:#f4efe6}
+.apit{display:inline-block;width:20px;height:20px;margin:0 3px;border-radius:50%;
+      background:#ffd54a;border:2px solid #a8801c;vertical-align:middle}
+/* A REGUA DO PALPITE: producao, nao escolha entre quatro portas. */
+.regua{margin-top:12px}
+.rval{font-size:14px;font-weight:800;letter-spacing:.5px;color:#f0e6d4}
+.rval b{display:block;font-size:40px;line-height:1.1;color:#ffd54a}
+.faixa{-webkit-appearance:none;appearance:none;display:block;width:100%;max-width:430px;
+       height:44px;margin:2px auto 0;background:transparent;cursor:pointer}
+.faixa::-webkit-slider-runnable-track{height:14px;border-radius:9px;background:#6b5a44}
+.faixa::-webkit-slider-thumb{-webkit-appearance:none;width:38px;height:38px;border-radius:50%;
+       background:#ffd54a;border:4px solid #fff3c9;margin-top:-12px}
+.faixa::-moz-range-track{height:14px;border-radius:9px;background:#6b5a44}
+.faixa::-moz-range-thumb{width:32px;height:32px;border-radius:50%;background:#ffd54a;border:4px solid #fff3c9}
+.pontas{max-width:430px;margin:0 auto;font-size:13px;font-weight:700;color:#e6dcc8}
+.pontas i{font-style:normal;float:left}
+.pontas b{float:right;font-weight:700}
+.pontas u{display:block;clear:both;height:0;text-decoration:none}
+.atalhos{margin-top:8px}
+.tecl{display:inline-block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
+      min-width:66px;min-height:46px;line-height:46px;padding:0 12px;margin:4px 5px;
+      font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.tecl.on{background:#ffd54a;box-shadow:0 4px 0 #b08d1c}
+/* a contagem em voz alta, com gemeo escrito */
+.contador{margin-top:10px;font-size:16px;font-weight:800;color:#f4efe6;min-height:28px}
+.contador b{color:#ffd54a;font-size:24px}
+.fecho{margin-top:2px}
+/* O PLACAR: as duas coisas LADO A LADO. Nunca "certo/tropeco" — palpite e
+   verdade, que sao coisas diferentes e as duas valem. */
+.placar{margin-top:10px;text-align:center;display:-webkit-box;display:-webkit-flex;display:flex;
+        -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+        -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.pcol{background:rgba(255,255,255,.12);border-radius:14px;padding:6px 10px;margin:0 5px;min-width:112px}
+.pcol i{display:block;font-style:normal;font-size:11px;font-weight:800;letter-spacing:.6px;color:#f0e6d4}
+.pcol b{display:block;font-size:30px;line-height:1.15;color:#ffd54a}
+.pcol.real{background:#d6f5c8}
+.pcol.real i{color:#24500d}
+.pcol.real b{color:#183a0e}
+.pseta{font-size:20px;font-weight:800;color:#f4efe6}
+.veredito{margin-top:10px;font-size:16px;font-weight:700;line-height:1.35;color:#f4efe6}
+.veredito b{color:#ffd54a}
+.veredito.perto{display:inline-block;background:#d6f5c8;color:#183a0e;border-radius:12px;padding:7px 13px}
+.veredito.perto b{color:#183a0e}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa: encolhe o pote e as letras, NUNCA os botoes */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .pote{height:104px;margin-top:8px}
+  .pote.mini{height:52px}
+  .pit{width:24px;height:24px;margin:-12px 0 0 -12px;font-size:12px;line-height:20px}
+  .tsel{font-size:13px;padding:6px 12px}
+  .relogio{margin-top:6px;height:10px}
+  .ancora{margin-top:6px;padding:5px 8px;font-size:13px}
+  .regua{margin-top:6px}
+  .rval{font-size:12px}
+  .rval b{font-size:22px}
+  .faixa{height:40px}
+  .pontas{font-size:12px;line-height:1.1}
+  .atalhos{margin-top:2px}
+  .tecl{min-height:44px;line-height:44px;margin:2px 4px}
+  .contador{margin-top:6px;font-size:15px}
+  .placar{margin-top:6px}
+  .pcol b{font-size:24px}
+  .veredito{margin-top:6px;font-size:15px}
+  .hint{margin-top:4px;font-size:13px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");if(!d){d=el("div","dica");d.id="dicaP";
+  var c=app.querySelector(".centro")||app;c.appendChild(d);}d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (7 a 9 anos). Para reusar a peça, troque SÓ este
+   bloco.
+   ⚠️ A ESCADA: 8 itens (dá para "ver" o monte de uma vez), depois 14 (já
+   precisa comparar com um grupinho) e 22 (só sai bem quem conta de 5 em 5 com
+   os olhos). A régua cresce junto: quem estima 22 numa régua que vai só até 20
+   não está estimando, está batendo no teto.
+   `qa` é o palpite que o auditor-jogador dá — de propósito um perto, um longe e
+   um exato, para os três desfechos serem testados toda vez. */
+var CENAS=[
+ {n:8,  max:20, ini:10, qa:6,  cls:"",     seed:17, ancora:0,
+  selo:"O POTE DE BOT&Otilde;ES",   coisa:"bot&otilde;es",          voz:"botões",
+  atalhos:[5,10,15]},
+ {n:14, max:30, ini:15, qa:10, cls:"grao", seed:53, ancora:1,
+  selo:"O POTE DE MILHO",           coisa:"gr&atilde;os de milho",  voz:"grãos",
+  atalhos:[5,10,20]},
+ {n:22, max:40, ini:20, qa:22, cls:"gude", seed:91, ancora:1,
+  selo:"O POTE DE BOLINHAS",        coisa:"bolinhas de gude",       voz:"bolinhas",
+  atalhos:[10,20,30]}
+];
+/* a dica de estratégia que fica DEPOIS da conferência: ela só faz sentido
+   quando a criança acabou de ver o próprio palpite ao lado do número real. */
+var ESTRAT=[
+ "Dica de quem estima bem: ache um <b>grupinho de 5</b> e veja quantos "+
+ "grupinhos cabem no pote.",
+ "Viu? <b>5, 10, 15...</b> Contar de 5 em 5 com os olhos d&aacute; um palpite bem "+
+ "mais perto.",
+ ""
+];
+var UN=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+        "onze","doze","treze","catorze","quinze","dezesseis","dezessete","dezoito","dezenove"];
+var DZ=["","","vinte","trinta","quarenta"];
+
+var ri=0;          /* rodada de agora */
+var palpite=0;     /* o que a criança chutou nesta rodada (0 = ainda sem palpite) */
+var valor=0;       /* onde a régua está agora */
+var pertos=0;      /* quantas vezes ela chegou perto: vira o parecer no fim */
+var ger=0;         /* geração: mata o setTimeout de uma tela que já saiu */
+var travada=false; /* ⚠️ trava NO INSTANTE do toque — criança toca duas vezes */
+var elPote,elCont,elFecho,elVal,elFaixa,btConta,btSegue,atalhoEls;
+
+function cena(){ return CENAS[ri] || CENAS[0]; }
+function nomeNum(n){
+  if(n<0||n!==Math.floor(n)) return ""+n;
+  if(n<20) return UN[n];
+  var d=Math.floor(n/10), u=n%10;
+  if(d>=DZ.length||!DZ[d]) return ""+n;
+  return DZ[d]+(u?" e "+UN[u]:"");
+}
+/* a margem do "chegou perto": um quinto do total, nunca menos de 1. Estimar 22
+   e dizer 20 é um olho ótimo; a mesma diferença em 8 já é outra coisa. */
+function margem(n){ return Math.max(1,Math.round(n*0.2)); }
+
+/* A VOZ. Web Speech: se o PC não tiver voz, a peça continua inteira — todo
+   número falado também aparece escrito. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sConta(){ nota(659.25,.05,.10,"triangle",0); }
+function sTampa(){ nota(196,.16,.13,"sine",0); nota(147,.20,.11,"sine",.07); }
+function sPerto(){ nota(523.25,.16,.15,"triangle",0); nota(783.99,.22,.13,"triangle",.09); }
+function sNeutro(){ nota(440,.12,.12,"triangle",0); nota(587.33,.16,.11,"triangle",.07); }
+
+/* ESPALHAR SEM AMONTOAR: grade invisível + sacudida, com semente fixa. Semente
+   fixa é de propósito — o mesmo pote na olhada e na conferência, senão a
+   criança acha que trocaram o monte. */
+function semente(s){
+  var x=(s*2654435761)%2147483647;
+  return function(){ x=(x*48271)%2147483647; return x/2147483647; };
+}
+function espalha(n,seed){
+  var rnd=semente(seed);
+  var cols=Math.ceil(Math.sqrt(n*1.7)); if(cols<2) cols=2;
+  var rows=Math.ceil(n/cols);
+  var celulas=[],r,c,i,j,tmp;
+  for(r=0;r<rows;r++) for(c=0;c<cols;c++) celulas.push([r,c]);
+  for(i=celulas.length-1;i>0;i--){
+    j=Math.floor(rnd()*(i+1)); tmp=celulas[i]; celulas[i]=celulas[j]; celulas[j]=tmp;
+  }
+  var fora=[],x,y;
+  for(i=0;i<n;i++){
+    x=(celulas[i][1]+0.16+0.68*rnd())*(100/cols);
+    y=(celulas[i][0]+0.16+0.68*rnd())*(100/rows);
+    fora.push([Math.round(7+x*0.86), Math.round(11+y*0.78)]);
+  }
+  return fora;
+}
+function montaPote(tampado,mini){
+  var cn=cena(), d=el("div","pote"+(mini?" mini":"")), pos=espalha(cn.n,cn.seed), i, p;
+  for(i=0;i<cn.n;i++){
+    p=el("i","pit"+(cn.cls?" "+cn.cls:""),"");
+    p.style.left=pos[i][0]+"%"; p.style.top=pos[i][1]+"%";
+    d.appendChild(p);
+  }
+  if(tampado){
+    var tp=el("b","tampa","");
+    tp.appendChild(el("i","tsel","TAMPADO"));
+    d.appendChild(tp);
+  }
+  return d;
+}
+function montaAncora(c){
+  var a=el("div","ancora",""), i;
+  a.appendChild(document.createTextNode("Isto aqui é "));
+  for(i=0;i<5;i++) a.appendChild(el("i","apit",""));
+  var b=el("b",null," 5. Quantos grupinhos desses cabem no pote?");
+  a.appendChild(b);
+  c.appendChild(a);
+}
+
+/* ---------------------------------------------------------------
+   TELA 1 — A OLHADA RÁPIDA. O pote aberto, e a tampa fechando.
+   Aqui a criança NÃO responde nada: ela só olha. É a lacuna de
+   curiosidade (ela percebe que não sabe) antes de qualquer conta.
+   --------------------------------------------------------------- */
+function telaOlhada(){
+  if(ri>=CENAS.length){ fimEstimar(); return; }
+  limpa();
+  ger++; travada=false; palpite=0;
+  document.onkeydown=null;
+  var g=ger, cn=cena();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/CENAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","OLHADA R&Aacute;PIDA"));
+  c.appendChild(el("div","balao","Olhe r&aacute;pido: quantos <b>"+cn.coisa+
+                   "</b> tem no pote? <b>N&atilde;o d&aacute; tempo de contar!</b>"));
+  c.appendChild(montaPote(false,false));
+  if(cn.ancora) montaAncora(c);
+  var rl=el("div","relogio",""), barra=el("i",null,"");
+  rl.appendChild(barra);
+  c.appendChild(rl);
+  c.appendChild(el("div","rlabel","A tampa vai fechar."));
+  var bt=el("button","btn","J&aacute; olhei!");
+  bt.style.marginTop="10px";
+  bt.setAttribute("data-qa","1");
+  bt.onclick=function(){ fechaTampa(g); };
+  c.appendChild(bt);
+  c.appendChild(el("div","hint","Pote "+(ri+1)+" de "+CENAS.length+
+                   ". Primeiro o palpite, depois a gente confere contando."));
+  t.appendChild(c); app.appendChild(t);
+  setTimeout(function(){ if(g!==ger) return; barra.style.width="0%"; },40);
+  setTimeout(function(){ fechaTampa(g); },4200);
+  diz("Olhe rápido. Quantos " + cn.voz + " tem no pote?");
+}
+/* ⚠️ a mesma porta para o botão e para o relógio: quem chegar primeiro fecha, o
+   outro encontra a trava. Sem isso o relógio disparava depois de a criança já
+   estar na régua e a jogava de volta. */
+function fechaTampa(g){
+  if(g!==ger||travada) return;
+  travada=true;
+  sTampa();
+  telaPalpite();
+}
+
+/* ---------------------------------------------------------------
+   TELA 2 — O PALPITE. O pote está TAMPADO: não dá para contar, só
+   para chutar com jeito. O número é PRODUZIDO na régua (três portas:
+   arrastar, atalho, teclado de verdade), nunca escolhido entre quatro.
+   --------------------------------------------------------------- */
+function telaPalpite(){
+  limpa();
+  ger++; travada=false;
+  var g=ger, cn=cena();
+  valor=cn.ini;
+  var t=el("div","tela");
+  setProg(t, Math.round((ri+0.34)*100/CENAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O SEU PALPITE"));
+  c.appendChild(el("div","balao","Tampou! Sem contar: quantos <b>"+cn.coisa+
+                   "</b> voc&ecirc; acha que tem a&iacute; dentro?"));
+  c.appendChild(montaPote(true,true));
+
+  var rg=el("div","regua","");
+  elVal=el("div","rval","EU ACHO QUE S&Atilde;O<b>"+valor+"</b>");
+  rg.appendChild(elVal);
+  elFaixa=el("input","faixa",null);
+  elFaixa.type="range";
+  elFaixa.min="1"; elFaixa.max=""+cn.max; elFaixa.step="1"; elFaixa.value=""+valor;
+  elFaixa.setAttribute("aria-label","Régua do palpite");
+  /* data-qa = um palpite que serve AGORA. Só o auditor-jogador usa: ele não
+     sabe arrastar régua, e sem isto reprovaria uma tela que funciona. */
+  elFaixa.setAttribute("data-qa",""+cn.qa);
+  elFaixa.oninput=function(){ mudaValor(parseInt(elFaixa.value,10),false); };
+  elFaixa.onchange=function(){ mudaValor(parseInt(elFaixa.value,10),false); };
+  rg.appendChild(elFaixa);
+  var pt=el("div","pontas","");
+  pt.appendChild(el("i",null,"1"));
+  pt.appendChild(el("b",null,""+cn.max));
+  pt.appendChild(el("u",null,""));
+  rg.appendChild(pt);
+  c.appendChild(rg);
+
+  var at=el("div","atalhos",""), i;
+  atalhoEls=[];
+  for(i=0;i<cn.atalhos.length;i++){
+    (function(v){
+      var b=el("div","tecl",""+v);
+      b.onclick=function(){ if(travada) return; sTap(); mudaValor(v,true); };
+      at.appendChild(b);
+      atalhoEls.push(b);
+    })(cn.atalhos[i]);
+  }
+  c.appendChild(at);
+
+  var bt=el("button","btn","Est&aacute; valendo!");
+  bt.style.marginTop="10px";
+  bt.setAttribute("data-qa","1");
+  bt.onclick=function(){ valeOPalpite(g); };
+  c.appendChild(bt);
+  c.appendChild(el("div","hint","Arraste a r&eacute;gua, toque num n&uacute;mero "+
+                   "ou use as setas do teclado. Depois aperte Enter."));
+  t.appendChild(c); app.appendChild(t);
+  pintaAtalhos();
+  /* AS DUAS PORTAS: no PC da escola tem teclado e a criança vai usar. */
+  document.onkeydown=function(ev){
+    var e=ev||window.event, k=e.keyCode||e.which, alvo=e.target||e.srcElement;
+    if(alvo&&alvo.tagName==="INPUT") return;   /* a régua já trata sozinha */
+    if(k===37||k===40){ mudaValor(valor-1,true); if(e.preventDefault) e.preventDefault(); }
+    else if(k===39||k===38){ mudaValor(valor+1,true); if(e.preventDefault) e.preventDefault(); }
+    else if(k===13||k===32){ valeOPalpite(g); if(e.preventDefault) e.preventDefault(); }
+  };
+  diz("Sem contar: quantos você acha que tem?");
+}
+function mudaValor(v,mexeFaixa){
+  var cn=cena();
+  if(travada||!elVal) return;
+  if(isNaN(v)) return;
+  if(v<1) v=1; if(v>cn.max) v=cn.max;
+  valor=v;
+  if(mexeFaixa&&elFaixa) elFaixa.value=""+v;
+  elVal.innerHTML="EU ACHO QUE S&Atilde;O<b>"+v+"</b>";
+  pintaAtalhos();
+}
+function pintaAtalhos(){
+  if(!atalhoEls) return;
+  var i;
+  for(i=0;i<atalhoEls.length;i++)
+    atalhoEls[i].className=(parseInt(atalhoEls[i].innerHTML,10)===valor)?"tecl on":"tecl";
+}
+function valeOPalpite(g){
+  if(g!==ger||travada) return;
+  travada=true;                       /* ⚠️ trava ANTES de qualquer animação */
+  document.onkeydown=null;
+  palpite=valor;
+  sTap();
+  telaConferir();
+}
+
+/* ---------------------------------------------------------------
+   TELA 3 — CONFERIR CONTANDO. A tampa sai e a peça conta JUNTO com
+   ela, um item de cada vez, com a voz e com o número escrito dentro.
+   É aqui que o olho se calibra — no chute ninguém aprende nada.
+   --------------------------------------------------------------- */
+function telaConferir(){
+  limpa();
+  ger++; travada=false;
+  var g=ger, cn=cena();
+  document.onkeydown=null;
+  var t=el("div","tela");
+  setProg(t, Math.round((ri+0.67)*100/CENAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","VAMOS CONFERIR"));
+  c.appendChild(el("div","balao","Voc&ecirc; falou <b>"+(palpite||"?")+
+                   "</b>. Agora a gente conta junto, um por um."));
+  elPote=montaPote(false,false);
+  c.appendChild(elPote);
+  elCont=el("div","contador","");
+  c.appendChild(elCont);
+  btConta=el("button","btn","Contar comigo");
+  btConta.setAttribute("data-qa","1");
+  btConta.onclick=function(){ contaJunto(g); };
+  c.appendChild(btConta);
+  elFecho=el("div","fecho","");
+  c.appendChild(elFecho);
+  c.appendChild(el("div","hint","Pote "+(ri+1)+" de "+CENAS.length+
+                   ". O n&uacute;mero de verdade &eacute; o &uacute;ltimo da contagem."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Agora a gente confere contando.");
+}
+function contaJunto(g){
+  if(g!==ger||travada) return;
+  travada=true;                       /* ⚠️ trava no INSTANTE do toque */
+  var cn=cena(), itens=elPote.getElementsByClassName("pit"), i=0;
+  if(btConta&&btConta.parentNode) btConta.parentNode.removeChild(btConta);
+  var base="pit"+(cn.cls?" "+cn.cls:"");
+  var passo=function(){
+    if(g!==ger) return;
+    if(i>0&&itens[i-1]) itens[i-1].className=base+" contada";
+    if(i>=cn.n){ fechaRodada(g); return; }
+    itens[i].className=base+" acesa";
+    itens[i].innerHTML=""+(i+1);
+    elCont.innerHTML="contando... <b>"+(i+1)+"</b>";
+    diz(nomeNum(i+1));
+    sConta();
+    i++;
+    setTimeout(passo,300);
+  };
+  passo();
+}
+
+/* O DESFECHO: as duas coisas lado a lado. Não existe "tropeço" aqui — existe o
+   palpite (que era para ser um chute) e o número de verdade. */
+function fechaRodada(g){
+  if(g!==ger) return;
+  var cn=cena(), real=cn.n, dif=Math.abs(real-palpite), perto=(dif<=margem(real));
+  elCont.innerHTML="S&atilde;o <b>"+real+"</b> ao todo.";
+  var pl=el("div","placar","");
+  var a=el("div","pcol","<i>VOC&Ecirc; FALOU</i><b>"+(palpite||"&#8211;")+"</b>");
+  var s=el("div","pseta","&#8594;");
+  var b=el("div","pcol real","<i>DE VERDADE</i><b>"+real+"</b>");
+  pl.appendChild(a); pl.appendChild(s); pl.appendChild(b);
+  elFecho.appendChild(pl);
+
+  var msg, fala;
+  if(!palpite){
+    msg="Este pote tem <b>"+real+"</b> "+cn.coisa+".";
+    fala="Este pote tem "+nomeNum(real)+".";
+    sNeutro();
+  }else if(dif===0){
+    pertos++;
+    msg="Na mosca! Voc&ecirc; falou <b>"+palpite+"</b> e s&atilde;o <b>"+real+"</b>.";
+    fala="Na mosca! Você falou "+nomeNum(palpite)+" e são "+nomeNum(real)+".";
+    sCerto(); festa();
+  }else if(perto){
+    pertos++;
+    msg="Que olho bom! Faltou s&oacute; <b>"+dif+"</b> para o seu palpite bater. "+
+        "Isso &eacute; chegar <b>bem perto</b>.";
+    fala="Que olho bom! Você chegou bem perto.";
+    sPerto();
+  }else{
+    msg=(palpite<real ? "Tinha <b>"+dif+"</b> a mais do que voc&ecirc; imaginou."
+                      : "Tinha <b>"+dif+"</b> a menos do que voc&ecirc; imaginou.")+
+        " Palpite &eacute; para ser chute mesmo &#8212; e agora o seu olho j&aacute; sabe "+
+        "um pouco mais.";
+    fala="Tinha "+nomeNum(dif)+(palpite<real?" a mais":" a menos")+
+         " do que você imaginou. Agora o seu olho já sabe um pouco mais.";
+    sNeutro();
+  }
+  var v=el("div","veredito"+(perto&&palpite?" perto":""),msg);
+  elFecho.appendChild(v);
+  diz(fala);
+  if(ESTRAT[ri]) mostraDica(ESTRAT[ri]);
+
+  btSegue=el("button","btn",(ri+1<CENAS.length)?"Pr&oacute;ximo pote":"Ver o resultado");
+  btSegue.style.marginTop="12px";
+  btSegue.setAttribute("data-qa","1");
+  btSegue.onclick=function(){ segue(g); };
+  elFecho.appendChild(btSegue);
+  travada=false;                      /* a rodada acabou: o botão pode ser tocado */
+}
+function segue(g){
+  if(g!==ger||travada) return;
+  travada=true;
+  sTap();
+  ri++;
+  if(ri<CENAS.length){ telaOlhada(); return; }
+  /* ⚠️ o fim passa PELO BANNER de propósito: o auditor-jogador só reconhece que
+     acabou quando a `.medal` aparece LOGO DEPOIS de um toque dele. */
+  mostraBanner("<b>Voc&ecirc; estimou e conferiu!</b><br>Chutar com jeito &eacute; "+
+               "saber o tamanho da resposta antes de contar.", fimEstimar);
+}
+
+/* ---------------------------------------------------------------
+   TELA 4 — A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimEstimar(){
+  limpa();
+  ger++; travada=false;
+  document.onkeydown=null;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(pertos>=3) parecer="Voc&ecirc; chegou perto nos <b>3</b> potes: que olho afiado!";
+  else if(pertos===2) parecer="Voc&ecirc; chegou perto em <b>2</b> dos 3 potes. O olho j&aacute; "+
+                             "est&aacute; calibrando.";
+  else if(pertos===1) parecer="Voc&ecirc; chegou perto em <b>1</b> pote. Estimar se aprende "+
+                              "olhando de novo, e voc&ecirc; j&aacute; come&ccedil;ou.";
+  else parecer="Voc&ecirc; deu <b>3</b> palpites e conferiu os <b>3</b> contando. &Eacute; assim "+
+               "que o olho aprende o tamanho dos n&uacute;meros.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; pertos=0; palpite=0; telaOlhada(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Da pr&oacute;xima vez que voc&ecirc; fizer uma conta grande, "+
+                   "chute o tamanho da resposta antes. Bateu?"));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaOlhada();
+</script>
+</body></html>
