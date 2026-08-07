@@ -45,6 +45,20 @@ const RECEITA={
    var a=[].slice.call(document.querySelectorAll('[data-qa="0"]')).filter(function(e){var r=e.getBoundingClientRect();return r.width>4&&r.top<innerHeight&&e.className.indexOf('ok')<0;});
    if(!a.length) return null; a[0].click(); return 'errada';
  },
+ // toca num pedaco que NAO e o proximo da palavra (isca, ou silaba fora de ordem)
+ 'juntar-silabas':()=>{
+   var bs=[].slice.call(document.querySelectorAll('.jsSil')).filter(function(e){
+     return e.className.indexOf('usada')<0 && e.getAttribute('data-qa')==='0';});
+   if(!bs.length) return null; bs[0].click(); return 'pedaco '+bs[0].textContent;
+ },
+ // responde com a contagem ERRADA: apaga tudo e aperta Pronto com zero batidas
+ 'bater-silabas':()=>{
+   var pr=document.querySelector('.bsPronto'); if(!pr) return null;
+   if(pr.getAttribute('data-qa')==='1'){
+     var lp=document.querySelector('.bsLimpa'); if(lp) lp.click();
+   }
+   pr.click(); return 'Pronto com a conta errada';
+ },
  'bussola':()=>{
    var a=[].slice.call(document.querySelectorAll('[data-qa="0"]')).filter(function(e){var r=e.getBoundingClientRect();return r.width>4&&r.top<innerHeight&&e.className.indexOf('ok')<0;});
    if(!a.length) return null; a[0].click(); return 'errada';

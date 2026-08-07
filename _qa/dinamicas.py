@@ -120,12 +120,65 @@ def analisa(js, css, baixo, html=None):
             ruins.append(u"memoria: o VERSO da carta nao usa imagem — retangulo liso nao e "
                          u"ilustracao. Regra da casa: verso de arte de IA.")
 
+    # ------------------------------------------- BATER AS SILABAS (contar)
+    # Gatilho honesto: so esta mecanica publica um TAMBOR (`.bsBater`) junto com
+    # marcas que NASCEM do dedo (`.bsBatida`). E mecanica de CONTAGEM POR GESTO —
+    # a resposta nao e escolher, e bater o numero certo de vezes.
+    if re.search(r'\.bsBater\b', css) and re.search(r'\.bsBatida\b', css):
+        usa.append("bater silabas")
+        # ⭐ A ARMADILHA NUMERO UM desta familia: desenhar os lugares prontos.
+        #    Se a tela ja mostra 3 casinhas, a crianca conta as CASINHAS e nao os
+        #    pedacos da palavra — a resposta esta dada e a fase nao mede nada.
+        #    ⚠️ a 1a versao desta regra tambem escapou no teste do mutante: ela
+        #    perdoava o arquivo inteiro se a palavra "revela" aparecesse em
+        #    qualquer lugar (o 3o degrau do andaime, que PODE desenhar). Agora
+        #    olha o LUGAR certo: a linha que cria a linha das batidas. Ela tem
+        #    que nascer VAZIA — o que vier depois e outro assunto.
+        _bx = re.search(r'["\']bsBatidas["\']', js)
+        if _bx and re.search(r'bsBatida["\']', js[_bx.end():_bx.end() + 400]):
+            ruins.append(u"bater silabas: as batidas ja nascem desenhadas na tela. A crianca "
+                         u"conta as marcas em vez de contar os pedacos da palavra — a "
+                         u"resposta esta dada.")
+        # contar errado no meio nao pode prender: tem que dar para APAGAR
+        # ⚠️ esta regra ja escapou uma vez no teste do mutante: ela aceitava a
+        #    PALAVRA "apagar" — e o rotulo do botao continuava escrito mesmo
+        #    depois de eu arrancar o botao. Palavra na tela nao e botao que
+        #    funciona. Agora cobra o par: a classe estilizada no CSS **e** usada
+        #    no JS. Regra que so le texto nao mede nada.
+        if not (re.search(r'\.bsLimpa\b', css) and re.search(r'bsLimpa', js)):
+            ruins.append(u"bater silabas: nao achei o APAGAR. Quem se perdeu no meio da "
+                         u"contagem fica preso com um numero que sabe que esta errado.")
+        # ⭐ AS DUAS PORTAS (regra do Marcos, ago/2026): no PC da escola tem
+        #    teclado de verdade, e a crianca vai usar.
+        if not re.search(r'onkeydown|keydown', js):
+            ruins.append(u"bater silabas: so da para bater com o dedo. No PC da escola tem "
+                         u"teclado — a barra de espaco tambem tem que bater (as duas portas).")
+        # o andaime do 2o degrau desta mecanica e pelo OUVIDO, nao escrito
+        if not re.search(r'ecoDoRitmo|ritmo\s*\(', js):
+            avisos.append(u"bater silabas: nao achei o eco do RITMO (a peca batendo junto). "
+                          u"Sem ele o 2o degrau do andaime vira texto, e quem nao le "
+                          u"nao tem por onde subir.")
+
     # ---------------------------------------------------- ARRASTAR
     if re.search(r'touchstart', js):
         usa.append("arrastar/toque")
-        # preventDefault dentro do touchstart mata o toque
-        for m in re.finditer(r'touchstart["\']?\s*,\s*function\s*\([^)]*\)\s*\{(.{0,300})', js, re.S):
-            if "preventDefault" in m.group(1):
+        # ⚠️ LICAO PAGA (ago/2026): isto lia uma JANELA FIXA de 300 caracteres
+        #    depois do `touchstart`, e a janela invadia o handler seguinte. Uma
+        #    peca com `preventDefault` no TOUCHMOVE — onde ele e necessario, para
+        #    a pagina nao rolar durante o arrasto — levava a acusacao de matar o
+        #    toque. Agora conta as chaves e le o corpo DE VERDADE do handler.
+        for m in re.finditer(r'touchstart["\']?\s*,\s*function\s*\([^)]*\)\s*\{', js):
+            k, prof = m.end() - 1, 0
+            while k < len(js):
+                if js[k] == "{":
+                    prof += 1
+                elif js[k] == "}":
+                    prof -= 1
+                    if prof == 0:
+                        break
+                k += 1
+            corpo_ts = js[m.end():k]
+            if "preventDefault" in corpo_ts:
                 ruins.append(u"arrastar: ha preventDefault dentro do touchstart. Isso MATA o "
                              u"toque no celular — a peca nao pega.")
                 break

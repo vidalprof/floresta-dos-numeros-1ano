@@ -150,6 +150,8 @@ bancada em código 0.*
 | **ouvir-achar** | o enunciado chega pelo ouvido, a resposta é uma FIGURA | a palavra tem que estar ESCRITA junto: PC de escola sem caixa de som existe, e criança surda também |
 | **tracar-letra** | refazer o movimento da letra, sempre no mesmo sentido | sair da linha **não pune** — som de retorno, nunca de tropeço; o dedo da criança treme. E conferir por POSIÇÃO, não por identidade do elemento |
 | **andar-ate** | dizer o caminho passo a passo — o começo do pensamento computacional | um comando = uma casa, e o boneco **anda** até lá (a transição é o que ensina) |
+| **juntar-silabas** | **síntese**: BO + LO = BOLO. Os pedaços **deslizam** um até o outro e viram um só — é a corrida que ensina, não o encaixe | a palavra fecha dita **de uma vez**, nunca "BO… LO" (*Connected Phonation Is More Effective than Segmented Phonation*, Reading Rockets); a bandeja vai **embaralhada**, senão ela aprende a POSIÇÃO; erro devolve o pedaço com som de RETORNO; as **três portas** — clique, dedo e **arrasto** (aqui o arrasto **é** o conceito) |
+| **bater-silabas** | **análise**, a outra metade: BOLO = BO + LO. A criança **bate uma vez por pedaço** (palma / mão no queixo) | **não desenhar os lugares prontos** — com 3 casinhas na tela ela conta as casinhas, não a palavra, e a resposta está dada; tem que dar para **Apagar** (contar errado no meio não prende); 2º degrau do andaime é pelo **OUVIDO** (a peça bate junto), só o 3º escreve; **barra de espaço** bate e **Enter** responde (as duas portas) |
 
 ### Números e medida
 

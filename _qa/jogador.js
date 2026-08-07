@@ -60,7 +60,11 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
       do paragrafo) e a lupa do mapa antigo (`.lupamira`) repetiram a mesma
       historia — fases que funcionam, auditor cego, "PRESO". A lista e o
       unico lugar onde isso se conserta. */
-   +',.pal,.lupamira';
+   +',.pal,.lupamira'
+   /* juntar-silabas (ago/2026): a peca nova entra na lista NO MESMO COMMIT —
+      sem isto o jogador nao enxerga onde tocar e da "PRESO" numa peca que
+      funciona. Foi assim com a rosa dos ventos e com o marca-texto. */
+   +',.jsSil,.jsVaga,.bsBatida,.bsPronto';
  for(let i=0;i<5200;i++){
    const est=await p.evaluate(()=>{
      const s=document.querySelector('.selo'), h1=document.querySelector('h1');

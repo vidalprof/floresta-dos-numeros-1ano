@@ -2402,6 +2402,311 @@ function fimDaPeca(){
   })();
 };
 
+/* ==== PECA: bater-silabas ==== */
+MEC["bater-silabas"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-bater-silabas";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
+      /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
+         acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
+         no esqueleto quem manda no caminho e o motor.                        */
+      setTimeout(_seguir, 420); }
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (padaria, 1º ano). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco de dados.
+   · pal — a palavra inteira (a voz diz ela por último, junta)
+   · sil — as sílabas NA ORDEM: é o número delas que a criança tem que bater
+   · fig — o nome da figura (img/<fig>.png); a criança não lê
+   · d   — os TRÊS degraus do andaime: dica -> ritmo no ouvido -> revela      */
+var BATIDAS=[
+ {pal:"BOLO", sil:["BO","LO"], fig:"pd_bolo",
+  d:["Diga <b>BOLO</b> bem devagar e bata uma vez para cada peda&#231;o.",
+     "Escute: eu vou bater junto com a palavra. Conte comigo.",
+     "S&#227;o <b>2</b> peda&#231;os: BO-LO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"MALA", sil:["MA","LA"], fig:"pd_mala",
+  d:["Ponha a m&#227;o no queixo e diga MALA. O queixo desce a cada peda&#231;o.",
+     "Escute o ritmo da palavra e conte as batidas.",
+     "S&#227;o <b>2</b> peda&#231;os: MA-LA. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"SAPATO", sil:["SA","PA","TO"], fig:"pd_sapato",
+  d:["Esta &#233; mais comprida. Diga devagar: SA-PA-TO.",
+     "Escute: eu bato junto com a palavra. Conte as batidas.",
+     "S&#227;o <b>3</b> peda&#231;os: SA-PA-TO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"PAO", sil:["PAO"], fig:"pd_pao",
+  d:["Cuidado com esta: diga <b>P&#195;O</b>. Quantos peda&#231;os a boca faz?",
+     "Escute: a palavra tem UM golpe s&#243;. Bata junto comigo.",
+     "&#201; <b>1</b> peda&#231;o s&#243;: P&#195;O. A batida j&#225; est&#225; a&#237;: toque em Pronto."]}
+];
+
+var ri=0;        /* rodada de agora */
+var bat=0;       /* quantas batidas a criança já deu */
+var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
+var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela não existe, e a peça mostra a palavra escrita no lugar. Pegar por
+   `window.imgEl` (e não `typeof imgEl`) é de propósito: assim o nome fica
+   DECLARADO e o portão "função que não existe" consegue medir. */
+var figEl = window.imgEl || null;
+
+/* ⚠️ A VOZ. Dentro de uma atividade montada quem fala é o MOTOR, com o mp3 do
+   Edge TTS. Se não houver gravação para aquele texto, a peça fica CALADA — voz
+   de navegador nunca vai para a criança. Sozinha, na bancada, aí sim ela usa a
+   voz do navegador, só para não se testar no mudo. */
+function fala(txt){
+  if(typeof window.temVoz==="function"){
+    var k=window.temVoz(txt);
+    if(k && typeof window.falaDaTela==="function") window.falaDaTela(k);
+    return;
+  }
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.85; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function sBatida(){ nota(196,.10,.20,"sine",0); nota(660,.02,.09,"square",0); }
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+
+function pecaBater(){
+  var r=BATIDAS[ri];
+  if(!r){ fimDaPeca(); return; }
+  err=0; bat=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/BATIDAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","BATA OS PEDA&#199;OS"));
+  c.appendChild(el("div","balao","Diga a palavra da <b>figura</b> e bata uma vez para cada peda&#231;o."));
+
+  var fg=el("div","bsFig");
+  if(figEl){ fg.appendChild(figEl(r.fig)); }
+  else { fg.appendChild(el("div","semfig", r.pal)); }
+  c.appendChild(fg);
+
+  /* a linha nasce VAZIA — quem faz as marcas é o dedo da criança */
+  var bx=el("div","bsBatidas");
+  bx.id="bsBx";
+  bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui"));
+  c.appendChild(bx);
+
+  var bt=el("button","bsBater","BATER");
+  bt.type="button"; bt.id="bsBt";
+  bt.onclick=function(){ bate(r); };
+  c.appendChild(bt);
+
+  var ln=el("div","bsLinha");
+  var lp=el("button","bsLimpa","Apagar"); lp.type="button";
+  lp.onclick=function(){ zera(r); };
+  var pr=el("button","bsPronto","Pronto"); pr.type="button"; pr.id="bsPr";
+  pr.onclick=function(){ confere(r); };
+  ln.appendChild(lp); ln.appendChild(pr);
+  c.appendChild(ln);
+
+  c.appendChild(el("div","bsTeclado",
+    "Tamb&#233;m d&#225; para bater com a <b>barra de espa&#231;o</b> e responder com <b>Enter</b>."));
+
+  t.appendChild(c); app.appendChild(t);
+  marcaQA(r);
+  fala("Diga a palavra da figura e bata uma vez para cada pedaço.");
+}
+
+function bate(r){
+  var bx=document.getElementById("bsBx"), bt=document.getElementById("bsBt");
+  if(!bx) return;
+  if(bat===0) bx.innerHTML="";
+  bat++;
+  bx.appendChild(el("div","bsBatida",""));
+  if(bt){ bt.className="bsBater bate";
+    setTimeout(function(){ if(bt) bt.className="bsBater"; },200); }
+  sBatida();
+  marcaQA(r);
+}
+
+function zera(r){
+  var bx=document.getElementById("bsBx");
+  bat=0;
+  if(bx){ bx.innerHTML=""; bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui")); }
+  sTap();
+  marcaQA(r);
+}
+
+function confere(r){
+  if(bat===r.sil.length){ acerta(r); return; }
+  /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
+     Contar errado no 1º ano é o normal — é justamente o que está em treino. */
+  err++; sVolta();
+  zera(r);
+  ajuda(err, r);
+}
+
+function acerta(r){
+  var meu=ger;
+  sCerto(); festa();
+  var c=app.querySelector(".centro");
+  /* ⭐ AQUI A FALA É PICADA, de propósito: esta peça treina SEPARAR. Cada
+     pedaço acende e é dito sozinho, no ritmo da batida — e só no fim a palavra
+     volta inteira, para a criança ouvir que os pedaços eram dela o tempo todo. */
+  var cx=el("div","bsSilabas"), i;
+  for(i=0;i<r.sil.length;i++){
+    var s=el("div","bsSil", r.sil[i]);
+    s.id="bss"+i;
+    cx.appendChild(s);
+  }
+  c.appendChild(cx);
+  ritmo(r, 0, meu, function(){
+    if(meu!==ger) return;
+    fala(r.pal.toLowerCase());
+    setTimeout(function(){
+      if(meu!==ger) return;
+      ri++;
+      if(ri>=BATIDAS.length) fimDaPeca(); else pecaBater();
+    },1200);
+  });
+}
+
+/* toca o ritmo da palavra: um golpe por sílaba, com a sílaba acesa junto */
+function ritmo(r, i, meu, aoFim){
+  if(meu!==ger) return;
+  if(i>=r.sil.length){ if(aoFim) aoFim(); return; }
+  var s=document.getElementById("bss"+i);
+  if(s) s.className="bsSil toca";
+  sBatida();
+  fala(r.sil[i]);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    if(s) s.className="bsSil";
+    ritmo(r, i+1, meu, aoFim);
+  },520);
+}
+
+/* o ANDAIME que cresce — e que nunca deixa a criança presa */
+function ajuda(n, r){
+  var d=r.d||[];
+  if(n===1){ mostraDica(d[0]||"Diga a palavra devagar e bata em cada peda&#231;o."); }
+  else if(n===2){
+    mostraDica(d[1]||"Escute o ritmo da palavra.");
+    ecoDoRitmo(r);            /* apoio pelo OUVIDO: ainda não escreve nada */
+  }
+  else if(n>=3){
+    /* revela PRIMEIRO, escreve a dica DEPOIS — senão a fase se conserta
+       sozinha e a criança não sabe por quê (lição paga em 5 de 6 peças) */
+    revela(r);
+    setTimeout(function(){ mostraDica(d[2]||"As batidas j&#225; est&#227;o a&#237;: toque em Pronto."); },60);
+  }
+}
+
+/* 2º degrau: a peça BATE junto, em voz alta, sem escrever a resposta */
+function ecoDoRitmo(r){
+  var meu=ger, i;
+  for(i=0;i<r.sil.length;i++){
+    (function(k){
+      setTimeout(function(){
+        if(meu!==ger) return;
+        sBatida();
+        var bt=document.getElementById("bsBt");
+        if(bt){ bt.className="bsBater bate";
+          setTimeout(function(){ if(bt) bt.className="bsBater"; },180); }
+      }, 260+k*520);
+    })(i);
+  }
+}
+
+/* 3º degrau: revela os pedaços E já põe as batidas — a criança só confirma */
+function revela(r){
+  var bx=document.getElementById("bsBx"), c=app.querySelector(".centro"), i;
+  if(!bx||!c) return;
+  bx.innerHTML="";
+  for(i=0;i<r.sil.length;i++) bx.appendChild(el("div","bsBatida eco",""));
+  bat=r.sil.length;
+  if(!document.getElementById("bsRev")){
+    var cx=el("div","bsSilabas"); cx.id="bsRev";
+    for(i=0;i<r.sil.length;i++) cx.appendChild(el("div","bsSil", r.sil[i]));
+    var m=el("span","bsMarca","estes"); cx.appendChild(m);
+    c.insertBefore(cx, bx);
+  }
+  marcaQA(r);
+}
+
+/* ⭐ AS DUAS PORTAS (regra do Marcos, ago/2026): no PC da escola tem teclado de
+   verdade, e a criança vai usar. Espaço = bater; Enter = Pronto; Backspace =
+   apagar. O toque continua sendo o caminho principal — isto é um caminho A
+   MAIS, nunca o único. */
+document.onkeydown=function(e){
+  var r=BATIDAS[ri];
+  if(!r||!document.getElementById("bsBt")) return;
+  var k=e.keyCode||e.which;
+  if(k===32){ bate(r); if(e.preventDefault) e.preventDefault(); }
+  else if(k===13){ confere(r); if(e.preventDefault) e.preventDefault(); }
+  else if(k===8){ zera(r); if(e.preventDefault) e.preventDefault(); }
+};
+
+/* `data-qa` diz ao auditor-jogador o que serve AGORA: bater enquanto faltam
+   batidas, Pronto quando a conta fecha. Só para ele — a criança nunca vê. */
+function marcaQA(r){
+  var bt=document.getElementById("bsBt"), pr=document.getElementById("bsPr");
+  var falta = bat < r.sil.length;
+  if(bt) bt.setAttribute("data-qa", falta ? "1" : "0");
+  if(pr) pr.setAttribute("data-qa", falta ? "0" : "1");
+}
+
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; separou <b>"+BATIDAS.length+" palavras</b> em peda&#231;os!"));
+  t.appendChild(c); app.appendChild(t);
+  mostraBanner("<b>Que ouvido bom!</b><br>Voc&#234; achou os peda&#231;os das palavras.", pecaBater);
+}
+    if(f && f.dados) BATIDAS = f.dados;
+    pecaBater();
+  })();
+};
+
 /* ==== PECA: bingo ==== */
 MEC["bingo"] = function(f, cen, fim){
   cen.className = cen.className + " mec-bingo";
@@ -3293,7 +3598,15 @@ function pecaCaca(){
   var t=el("div","tela");
   setProg(t,0);
   var barraP=t.getElementsByTagName("i")[0];
-  var N=LADO, g=[], posicoes={}, onde={}, cor={}, achadas={}, cels={};
+  /* ⚠️ LICAO PAGA: a grade era SEMPRE LADO x LADO. Palavra maior que o lado
+     nunca cabia; `sorteia()` devolvia false as 60 tentativas, a peca seguia com
+     a grade incompleta e estourava no primeiro toque — 857 erros de JS numa
+     partida, e a crianca presa numa fase sem saida. A grade existe para caber
+     as palavras: agora ela CRESCE ate a maior delas. */
+  var maior = 0, _z;
+  for(_z = 0; _z < PAL.length; _z++)
+    if(PAL[_z].length > maior) maior = PAL[_z].length;
+  var N = Math.max(LADO, maior + 1), g=[], posicoes={}, onde={}, cor={}, achadas={}, cels={};
   var i,j,k,p;
 
   for(i=0;i<PAL.length;i++) cor[PAL[i]]=CORP[i%CORP.length];
@@ -3451,7 +3764,9 @@ function pecaCaca(){
     setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1200);
   }
   function comemora(w){
+    /* cinto de seguranca: palavra sem lugar na grade nao pode virar estouro */
     var cs=posicoes[w],z;
+    if(!cs) return;
     for(z=0;z<cs.length;z++){(function(q,atraso){
       setTimeout(function(){ q.className="cel ok "+cor[w]; },atraso);
     })(cels[cs[z]],z*70);}
@@ -12745,6 +13060,327 @@ function fimDaPeca(){
       if(_d.DICAS2 !== undefined) DICAS2 = _d.DICAS2;
     }
     pecaFonte();
+  })();
+};
+
+/* ==== PECA: juntar-silabas ==== */
+MEC["juntar-silabas"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-juntar-silabas";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
+      /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
+         acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
+         no esqueleto quem manda no caminho e o motor.                        */
+      setTimeout(_seguir, 420); }
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (padaria, 1º ano). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco de dados.
+   · pal   — a palavra inteira (é ela que a voz diz de UMA VEZ no fim)
+   · sil   — as sílabas NA ORDEM certa
+   · fig   — o nome da figura (img/<fig>.png). A criança não lê: é a figura
+             que diz qual palavra montar
+   · iscas — sílabas erradas que entram na bandeja junto (2 bastam no 1º ano)
+   · d     — os TRÊS degraus do andaime: dica -> apoio concreto -> revela   */
+var SILABAS=[
+ {pal:"BOLO", sil:["BO","LO"], fig:"pd_bolo", iscas:["MA","PE"],
+  d:["Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?",
+     "A palavra começa com o som <b>BO</b>. Ele está pulsando aí embaixo.",
+     "É o <b>BO</b>. Ele está aceso: toque nele para seguir."]},
+ {pal:"MALA", sil:["MA","LA"], fig:"pd_mala", iscas:["BO","TE"],
+  d:["Fale a palavra bem devagar e escute o começo.",
+     "O primeiro pedaço é <b>MA</b>, como em MÃE.",
+     "É o <b>MA</b>. Ele está aceso: toque nele para seguir."]},
+ {pal:"PATO", sil:["PA","TO"], fig:"pd_pato", iscas:["LO","SA"],
+  d:["Ponha a mão no queixo e diga: PA-TO. Qual vem primeiro?",
+     "O primeiro pedaço é <b>PA</b>, o mesmo de PAI.",
+     "É o <b>PA</b>. Ele está aceso: toque nele para seguir."]},
+ {pal:"SAPATO", sil:["SA","PA","TO"], fig:"pd_sapato", iscas:["MA","LO"],
+  d:["Esta tem TRÊS pedaços. Diga devagar: SA-PA-TO.",
+     "Comece pelo <b>SA</b>, que é o som que abre a palavra.",
+     "É o <b>SA</b>. Ele está aceso: toque nele para seguir."]}
+];
+
+var ri=0;        /* rodada de agora */
+var posto=0;     /* quantas sílabas já estão na forma */
+var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
+var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela não existe, e a peça mostra a palavra escrita no lugar. Pegar por
+   `window.imgEl` (e não `typeof imgEl`) é de propósito: assim o nome fica
+   DECLARADO, o portão "função que não existe" consegue medir, e um dia que o
+   motor trocar o nome dessa ferramenta a peça avisa em vez de sumir a figura. */
+var figEl = window.imgEl || null;
+
+/* ⚠️ A VOZ. Dentro de uma atividade montada quem fala é o motor (mp3 do Edge
+   TTS, a voz de verdade). Sozinha, na bancada, a peça usa a voz do navegador só
+   para não ficar muda. Nunca o contrário: voz de navegador não vai para a
+   criança. */
+function fala(txt, id){
+  if(typeof window.falar==="function" && id){ window.falar(id); return; }
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.85; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sDesliza(){ nota(520,.09,.10,"triangle",0); nota(700,.10,.10,"triangle",.06); }
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+
+function pecaJuntar(){
+  var r=SILABAS[ri];
+  if(!r){ fimDaPeca(); return; }
+  err=0; posto=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/SILABAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","JUNTE OS PEDA&#199;OS"));
+  c.appendChild(el("div","balao","Junte os peda&#231;os e forme a palavra da <b>figura</b>."));
+
+  /* a FIGURA diz qual palavra é — a criança de 6 anos não lê */
+  var fg=el("div","jsFig");
+  if(figEl){ fg.appendChild(figEl(r.fig)); }
+  else { fg.appendChild(el("div","semfig", r.pal)); }
+  c.appendChild(fg);
+
+  /* a FORMA: um lugar por sílaba */
+  var forma=el("div","jsForma"), i;
+  for(i=0;i<r.sil.length;i++){
+    var v=el("div","jsVaga"+(i===0?" agora":""));
+    v.id="jsv"+i;
+    forma.appendChild(v);
+  }
+  c.appendChild(forma);
+
+  /* a BANDEJA: as sílabas certas + as iscas, SEMPRE embaralhadas.
+     ⚠️ embaralhar é a armadilha número um desta família: sem isso a criança
+     aprende a POSIÇÃO e não o som. */
+  var lista=[], z;
+  for(z=0;z<r.sil.length;z++) lista.push({s:r.sil[z], ok:1});
+  for(z=0;z<(r.iscas||[]).length;z++) lista.push({s:r.iscas[z], ok:0});
+  baguncar(lista);
+  var band=el("div","jsMassa");
+  for(z=0;z<lista.length;z++) band.appendChild(fazSilaba(lista[z], r));
+  c.appendChild(band);
+
+  c.appendChild(el("div","hint","Toque no peda&#231;o certo. Ele escorrega at&#233; a forma."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQA(r);
+  fala("Junte os pedaços e forme a palavra da figura.", null);
+}
+
+function fazSilaba(item, r){
+  var b=el("button","jsSil", item.s);
+  b.type="button";
+  b._sil=item.s;
+  /* ⭐ AS TRÊS PORTAS (ordem do Marcos, ago/2026: *"nas atividades de clicar,
+     quando for possível, pode ser de arrastar também"*). Aqui o arrastar não é
+     só uma porta a mais: ARRASTAR **É** O DESLIZE que a pesquisa pede — a
+     criança faz com a mão o que o conceito diz (duas partes que correm uma até
+     a outra e viram uma só). Toque, clique e arrasto, os três.
+     ⚠️ o guarda do MOUSE FANTASMA: no celular o navegador dispara eventos de
+     mouse DEPOIS do toque, e sem este guarda eles desfaziam o gesto. Defeito já
+     pego duas vezes na casa. */
+  arrastavel(b, r);
+  b.onclick=function(){
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    if(b.className.indexOf("usada")>=0) return;
+    var esperada=r.sil[posto];
+    if(item.s===esperada && b.className.indexOf("usada")<0){
+      deslizaAte(b, document.getElementById("jsv"+posto), r);
+    } else {
+      /* ⚠️ ERRO NÃO PUNE: a peça devolve o pedaço com som de RETORNO, nunca de
+         tropeço. O gesto está em treino, e no 1º ano errar a ordem é o normal. */
+      err++; sVolta();
+      b.className="jsSil";
+      ajuda(err, r);
+    }
+  };
+  return b;
+}
+
+/* o ARRASTO: mouse e dedo. Solta em cima da forma = a mesma coisa que tocar. */
+function arrastavel(b, r){
+  var mx=0,my=0,arr=false;
+  function comeca(x,y,ev){
+    if(b.className.indexOf("usada")>=0) return;
+    arr=true; mx=x; my=y;
+    b.style.zIndex="30"; b.style.position="relative";
+    if(ev&&ev.type==="mousedown"&&ev.preventDefault) ev.preventDefault();
+  }
+  function move(x,y){
+    if(!arr) return;
+    b.style.webkitTransform="translate("+(x-mx)+"px,"+(y-my)+"px)";
+    b.style.transform="translate("+(x-mx)+"px,"+(y-my)+"px)";
+  }
+  function solta(x,y){
+    if(!arr) return;
+    arr=false;
+    b.style.webkitTransform=""; b.style.transform=""; b.style.zIndex="";
+    var v=document.getElementById("jsv"+posto);
+    if(v){
+      var q=v.getBoundingClientRect();
+      /* margem generosa: dedo de 6 anos nao acerta o pixel */
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+    }
+    sVolta();
+  }
+  b.onmousedown=function(e){ comeca(e.clientX,e.clientY,e); };
+  b.onmousemove=function(e){ move(e.clientX,e.clientY); };
+  b.onmouseup  =function(e){ solta(e.clientX,e.clientY); };
+  b.onmouseleave=function(e){ if(arr) solta(e.clientX,e.clientY); };
+  /* ⚠️ NUNCA `preventDefault` no touchstart: mata o toque simples. */
+  b.addEventListener("touchstart",function(e){
+    var t=e.touches[0]; b._ultimoToque=(new Date()).getTime(); comeca(t.clientX,t.clientY,null);
+  },false);
+  b.addEventListener("touchmove",function(e){
+    var t=e.touches[0]; move(t.clientX,t.clientY);
+    if(arr&&e.preventDefault) e.preventDefault();
+  },false);
+  b.addEventListener("touchend",function(e){
+    var t=(e.changedTouches&&e.changedTouches[0])||{clientX:0,clientY:0};
+    b._ultimoToque=(new Date()).getTime();
+    var q=document.getElementById("jsv"+posto);
+    /* soltou longe da forma? entao foi TOQUE simples, e toque simples tambem vale */
+    if(q){ var g=q.getBoundingClientRect();
+      if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
+        arr=false; b.style.webkitTransform=""; b.style.transform="";
+        b.onclick(); return; } }
+    solta(t.clientX,t.clientY);
+  },false);
+}
+
+/* ⭐ O DESLIZE — o coração da peça (Reading Rockets: "have the sounds slide
+   together to form a word"). A sílaba corre da bandeja até o lugar dela, e só
+   depois de chegar é que ela vira parte da palavra. */
+function deslizaAte(b, vaga, r){
+  var meu=ger;
+  var a=b.getBoundingClientRect(), v=vaga.getBoundingClientRect();
+  b.style.setProperty("--dx",(v.left-a.left+(v.width-a.width)/2)+"px");
+  b.style.setProperty("--dy",(v.top-a.top+(v.height-a.height)/2)+"px");
+  b.className="jsSil desliza";
+  sDesliza();
+  fala(b._sil, null);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    b.className="jsSil usada";
+    vaga.innerHTML=b._sil;
+    vaga.className="jsVaga cheia";
+    posto++;
+    var prox=document.getElementById("jsv"+posto);
+    if(prox) prox.className="jsVaga agora";
+    marcaQA(r);
+    if(posto>=r.sil.length) fechaPalavra(r);
+  },380);
+}
+
+function fechaPalavra(r){
+  var meu=ger;
+  sCerto(); festa();
+  var c=app.querySelector(".centro");
+  var p=el("div","jsPronta", r.pal);
+  c.appendChild(p);
+  /* ⭐⭐ O SOM CONTÍNUO. A pesquisa é explícita: "Connected Phonation Is More
+     Effective than Segmented Phonation". A palavra fecha dita de UMA VEZ —
+     nunca "BO... LO". É aqui que a criança ouve que dois pedaços viraram um. */
+  fala(r.pal.toLowerCase(), null);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    ri++;
+    if(ri>=SILABAS.length) fimDaPeca(); else pecaJuntar();
+  },1400);
+}
+
+/* o ANDAIME que cresce — e que nunca deixa a criança presa */
+function ajuda(n, r){
+  var d=r.d||[];
+  if(n===1){ mostraDica(d[0]||"Diga a palavra devagar."); }
+  else if(n===2){ mostraDica(d[1]||"Escute o come&#231;o da palavra.");
+    pisca(r, false); }
+  else if(n>=3){
+    /* revela PRIMEIRO, escreve a dica DEPOIS — senão a fase se conserta
+       sozinha e a criança não sabe por quê (lição paga em 5 de 6 peças) */
+    pisca(r, true);
+    setTimeout(function(){ mostraDica(d[2]||"Toque no peda&#231;o aceso."); },60);
+  }
+}
+function pisca(r, acende){
+  var bs=app.getElementsByClassName("jsSil"), i, alvo=r.sil[posto];
+  for(i=0;i<bs.length;i++){
+    if(bs[i].className.indexOf("usada")>=0) continue;
+    if(bs[i]._sil===alvo){
+      bs[i].className="jsSil "+(acende?"acesa pulsa":"pulsa");
+      if(acende && bs[i].getElementsByClassName("jsMarca").length===0){
+        var m=el("span","jsMarca","este"); bs[i].appendChild(m);
+      }
+    }
+  }
+}
+
+/* `data-qa="1"` na sílaba que serve AGORA: é assim que o auditor-jogador
+   atravessa a peça. Só para ele — a criança nunca vê isto. */
+function marcaQA(r){
+  var bs=app.getElementsByClassName("jsSil"), i, alvo=r.sil[posto];
+  for(i=0;i<bs.length;i++)
+    bs[i].setAttribute("data-qa",
+      (bs[i].className.indexOf("usada")<0 && bs[i]._sil===alvo) ? "1" : "0");
+}
+
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; juntou <b>"+SILABAS.length+" palavras</b>! Cada uma feita de peda&#231;os."));
+  t.appendChild(c); app.appendChild(t);
+  mostraBanner("<b>Padeiro de palavras!</b><br>Voc&#234; juntou os peda&#231;os.", pecaJuntar);
+}
+    if(f && f.dados) SILABAS = f.dados;
+    pecaJuntar();
   })();
 };
 

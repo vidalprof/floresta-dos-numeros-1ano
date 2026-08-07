@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — bater as sílabas</title>
+<!-- ============================================================
+     PEÇA: BATER AS SÍLABAS — a criança BATE uma vez para cada pedaço.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     PARA QUEM É: 1º ano (e pré). Não se lê nada aqui: é a FIGURA que diz a
+     palavra, e a resposta é um GESTO — bater.
+
+     POR QUE ELA EXISTE — e por que ela é a irmã da `juntar-silabas`:
+     juntar é SÍNTESE (BO + LO = BOLO); bater é ANÁLISE (BOLO = BO + LO). São
+     as duas metades da consciência silábica, e a pesquisa é explícita em pedir
+     as DUAS. Nenhuma das 74 peças da oficina fazia a segunda.
+
+     ⭐ O QUE A PESQUISA MANDOU (Reading Rockets, ago/2026 — ver
+        `_pesquisa/REGRAS-INTERATIVIDADE.md`):
+       · **bater palma / mão no queixo** é a atividade canônica de separar
+         sílabas: o corpo marca o ritmo antes de a cabeça contar. Aqui o gesto
+         é o mesmo — bater — e cada batida vira uma marca na tela;
+       · **da unidade grande para a pequena** (palavra → sílaba → fonema): no
+         1º ano a sílaba é o degrau, e é por ela que se começa;
+       · **aqui a fala É picada, ao contrário da peça de juntar.** Não é
+         contradição: separar exige ouvir os pedaços separados; juntar exige o
+         som contínuo. Cada peça fala do jeito da habilidade que ela treina.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · **não mostrar quantos lugares tem.** Se a tela desenhasse 3 casinhas,
+         a criança contaria as casinhas e não os pedaços da palavra — a resposta
+         estaria dada. Por isso as batidas NASCEM do dedo dela, uma a uma;
+       · dá para **Apagar** e recomeçar: contar errado no meio não pune;
+       · o andaime CRESCE: 1 erro → a dica; 2 erros → a peça BATE o ritmo em voz
+         alta (apoio pelo ouvido, sem escrever nada); 3 erros → revela os
+         pedaços escritos e já deixa as batidas postas. Nunca trava;
+       · erro devolve som de RETORNO, nunca de tropeço, e nunca a palavra
+         "errou";
+       · **as duas portas** (regra do Marcos, ago/2026): dá para bater com o
+         dedo E com a BARRA DE ESPAÇO do teclado de verdade; Enter é o Pronto.
+         No PC da escola tem teclado, e a criança vai usar;
+       · `data-qa` diz ao auditor-jogador o que serve AGORA — só para ele.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* a figura da palavra: é ela que diz O QUE bater (a criança não lê) */
+.bsFig{width:150px;height:150px;margin:13px auto 0;border-radius:22px;background:#fffdf6;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;overflow:hidden}
+.bsFig img{width:100%;height:100%;object-fit:contain}
+.bsFig .semfig{font-size:13px;color:#6b5c46;padding:8px;text-align:center;font-weight:600}
+/* a LINHA DAS BATIDAS: ela nasce VAZIA. Desenhar os lugares certos daria a
+   resposta — a criança contaria as casinhas em vez dos pedaços da palavra. */
+.bsBatidas{min-height:62px;margin:14px auto 4px;max-width:430px;
+  display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:center;align-items:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+.bsBatida{width:46px;height:46px;margin:4px;border-radius:50%;background:#ffd54a;
+  -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f;
+  -webkit-animation:bsPop .28s;animation:bsPop .28s}
+.bsBatida.eco{background:#f6c23a;-webkit-transform:scale(1.18);transform:scale(1.18)}
+@-webkit-keyframes bsPop{0%{-webkit-transform:scale(.2);opacity:0}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes bsPop{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
+.bsVazio{font-size:15px;color:#e6dcc9;opacity:.8;font-weight:600}
+/* o TAMBOR: o alvo mais fácil de acertar da tela inteira (dedo de 6 anos) */
+.bsBater{display:block;width:200px;max-width:86%;min-height:86px;margin:6px auto 0;
+  border:0;border-radius:26px;background:#e8734a;color:#fff;font-size:24px;font-weight:800;
+  letter-spacing:1px;cursor:pointer;-webkit-box-shadow:0 6px 0 #a94f31;box-shadow:0 6px 0 #a94f31}
+.bsBater:active{-webkit-transform:translateY(4px);transform:translateY(4px);
+  -webkit-box-shadow:0 2px 0 #a94f31;box-shadow:0 2px 0 #a94f31}
+.bsBater.bate{-webkit-animation:bsBat .18s;animation:bsBat .18s}
+@-webkit-keyframes bsBat{50%{-webkit-transform:scale(.94)}}
+@keyframes bsBat{50%{transform:scale(.94)}}
+/* a fileira de baixo: Apagar (sem punição) e Pronto (fechar a resposta) */
+.bsLinha{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  gap:10px;margin:12px auto 0;max-width:430px}
+.bsLimpa{border:0;border-radius:16px;background:#f2ece0;color:#3a2c07;font-size:16px;
+  font-weight:700;min-height:48px;padding:12px 20px;cursor:pointer;
+  -webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
+.bsPronto{border:0;border-radius:16px;background:#59c24b;color:#12300c;font-size:17px;
+  font-weight:800;min-height:48px;padding:12px 26px;cursor:pointer;
+  -webkit-box-shadow:0 4px 0 #3a8730;box-shadow:0 4px 0 #3a8730}
+.bsPronto:active,.bsLimpa:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+/* os PEDAÇOS ESCRITOS: só aparecem no acerto (ou no 3º erro, para revelar) */
+.bsSilabas{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin:12px auto 0;max-width:430px}
+.bsSil{min-width:78px;min-height:56px;border-radius:16px;background:#f6d79a;color:#4a3608;
+  font-size:26px;font-weight:800;padding:8px 12px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-shadow:0 4px 0 #c99b45;box-shadow:0 4px 0 #c99b45}
+.bsSil.toca{background:#ffd54a;-webkit-transform:scale(1.12);transform:scale(1.12)}
+.bsMarca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+  border-radius:9px;padding:2px 8px;margin-left:7px;vertical-align:middle}
+.bsTeclado{font-size:13px;color:#e6dcc9;opacity:.85;margin-top:10px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+  border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+  font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (padaria, 1º ano). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco de dados.
+   · pal — a palavra inteira (a voz diz ela por último, junta)
+   · sil — as sílabas NA ORDEM: é o número delas que a criança tem que bater
+   · fig — o nome da figura (img/<fig>.png); a criança não lê
+   · d   — os TRÊS degraus do andaime: dica -> ritmo no ouvido -> revela      */
+var BATIDAS=[
+ {pal:"BOLO", sil:["BO","LO"], fig:"pd_bolo",
+  d:["Diga <b>BOLO</b> bem devagar e bata uma vez para cada peda&#231;o.",
+     "Escute: eu vou bater junto com a palavra. Conte comigo.",
+     "S&#227;o <b>2</b> peda&#231;os: BO-LO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"MALA", sil:["MA","LA"], fig:"pd_mala",
+  d:["Ponha a m&#227;o no queixo e diga MALA. O queixo desce a cada peda&#231;o.",
+     "Escute o ritmo da palavra e conte as batidas.",
+     "S&#227;o <b>2</b> peda&#231;os: MA-LA. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"SAPATO", sil:["SA","PA","TO"], fig:"pd_sapato",
+  d:["Esta &#233; mais comprida. Diga devagar: SA-PA-TO.",
+     "Escute: eu bato junto com a palavra. Conte as batidas.",
+     "S&#227;o <b>3</b> peda&#231;os: SA-PA-TO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"PAO", sil:["PAO"], fig:"pd_pao",
+  d:["Cuidado com esta: diga <b>P&#195;O</b>. Quantos peda&#231;os a boca faz?",
+     "Escute: a palavra tem UM golpe s&#243;. Bata junto comigo.",
+     "&#201; <b>1</b> peda&#231;o s&#243;: P&#195;O. A batida j&#225; est&#225; a&#237;: toque em Pronto."]}
+];
+
+var ri=0;        /* rodada de agora */
+var bat=0;       /* quantas batidas a criança já deu */
+var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
+var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela não existe, e a peça mostra a palavra escrita no lugar. Pegar por
+   `window.imgEl` (e não `typeof imgEl`) é de propósito: assim o nome fica
+   DECLARADO e o portão "função que não existe" consegue medir. */
+var figEl = window.imgEl || null;
+
+/* ⚠️ A VOZ. Dentro de uma atividade montada quem fala é o MOTOR, com o mp3 do
+   Edge TTS. Se não houver gravação para aquele texto, a peça fica CALADA — voz
+   de navegador nunca vai para a criança. Sozinha, na bancada, aí sim ela usa a
+   voz do navegador, só para não se testar no mudo. */
+function fala(txt){
+  if(typeof window.temVoz==="function"){
+    var k=window.temVoz(txt);
+    if(k && typeof window.falaDaTela==="function") window.falaDaTela(k);
+    return;
+  }
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.85; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function sBatida(){ nota(196,.10,.20,"sine",0); nota(660,.02,.09,"square",0); }
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+
+function pecaBater(){
+  var r=BATIDAS[ri];
+  if(!r){ fimDaPeca(); return; }
+  err=0; bat=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/BATIDAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","BATA OS PEDA&#199;OS"));
+  c.appendChild(el("div","balao","Diga a palavra da <b>figura</b> e bata uma vez para cada peda&#231;o."));
+
+  var fg=el("div","bsFig");
+  if(figEl){ fg.appendChild(figEl(r.fig)); }
+  else { fg.appendChild(el("div","semfig", r.pal)); }
+  c.appendChild(fg);
+
+  /* a linha nasce VAZIA — quem faz as marcas é o dedo da criança */
+  var bx=el("div","bsBatidas");
+  bx.id="bsBx";
+  bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui"));
+  c.appendChild(bx);
+
+  var bt=el("button","bsBater","BATER");
+  bt.type="button"; bt.id="bsBt";
+  bt.onclick=function(){ bate(r); };
+  c.appendChild(bt);
+
+  var ln=el("div","bsLinha");
+  var lp=el("button","bsLimpa","Apagar"); lp.type="button";
+  lp.onclick=function(){ zera(r); };
+  var pr=el("button","bsPronto","Pronto"); pr.type="button"; pr.id="bsPr";
+  pr.onclick=function(){ confere(r); };
+  ln.appendChild(lp); ln.appendChild(pr);
+  c.appendChild(ln);
+
+  c.appendChild(el("div","bsTeclado",
+    "Tamb&#233;m d&#225; para bater com a <b>barra de espa&#231;o</b> e responder com <b>Enter</b>."));
+
+  t.appendChild(c); app.appendChild(t);
+  marcaQA(r);
+  fala("Diga a palavra da figura e bata uma vez para cada pedaço.");
+}
+
+function bate(r){
+  var bx=document.getElementById("bsBx"), bt=document.getElementById("bsBt");
+  if(!bx) return;
+  if(bat===0) bx.innerHTML="";
+  bat++;
+  bx.appendChild(el("div","bsBatida",""));
+  if(bt){ bt.className="bsBater bate";
+    setTimeout(function(){ if(bt) bt.className="bsBater"; },200); }
+  sBatida();
+  marcaQA(r);
+}
+
+function zera(r){
+  var bx=document.getElementById("bsBx");
+  bat=0;
+  if(bx){ bx.innerHTML=""; bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui")); }
+  sTap();
+  marcaQA(r);
+}
+
+function confere(r){
+  if(bat===r.sil.length){ acerta(r); return; }
+  /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
+     Contar errado no 1º ano é o normal — é justamente o que está em treino. */
+  err++; sVolta();
+  zera(r);
+  ajuda(err, r);
+}
+
+function acerta(r){
+  var meu=ger;
+  sCerto(); festa();
+  var c=app.querySelector(".centro");
+  /* ⭐ AQUI A FALA É PICADA, de propósito: esta peça treina SEPARAR. Cada
+     pedaço acende e é dito sozinho, no ritmo da batida — e só no fim a palavra
+     volta inteira, para a criança ouvir que os pedaços eram dela o tempo todo. */
+  var cx=el("div","bsSilabas"), i;
+  for(i=0;i<r.sil.length;i++){
+    var s=el("div","bsSil", r.sil[i]);
+    s.id="bss"+i;
+    cx.appendChild(s);
+  }
+  c.appendChild(cx);
+  ritmo(r, 0, meu, function(){
+    if(meu!==ger) return;
+    fala(r.pal.toLowerCase());
+    setTimeout(function(){
+      if(meu!==ger) return;
+      ri++;
+      if(ri>=BATIDAS.length) fimDaPeca(); else pecaBater();
+    },1200);
+  });
+}
+
+/* toca o ritmo da palavra: um golpe por sílaba, com a sílaba acesa junto */
+function ritmo(r, i, meu, aoFim){
+  if(meu!==ger) return;
+  if(i>=r.sil.length){ if(aoFim) aoFim(); return; }
+  var s=document.getElementById("bss"+i);
+  if(s) s.className="bsSil toca";
+  sBatida();
+  fala(r.sil[i]);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    if(s) s.className="bsSil";
+    ritmo(r, i+1, meu, aoFim);
+  },520);
+}
+
+/* o ANDAIME que cresce — e que nunca deixa a criança presa */
+function ajuda(n, r){
+  var d=r.d||[];
+  if(n===1){ mostraDica(d[0]||"Diga a palavra devagar e bata em cada peda&#231;o."); }
+  else if(n===2){
+    mostraDica(d[1]||"Escute o ritmo da palavra.");
+    ecoDoRitmo(r);            /* apoio pelo OUVIDO: ainda não escreve nada */
+  }
+  else if(n>=3){
+    /* revela PRIMEIRO, escreve a dica DEPOIS — senão a fase se conserta
+       sozinha e a criança não sabe por quê (lição paga em 5 de 6 peças) */
+    revela(r);
+    setTimeout(function(){ mostraDica(d[2]||"As batidas j&#225; est&#227;o a&#237;: toque em Pronto."); },60);
+  }
+}
+
+/* 2º degrau: a peça BATE junto, em voz alta, sem escrever a resposta */
+function ecoDoRitmo(r){
+  var meu=ger, i;
+  for(i=0;i<r.sil.length;i++){
+    (function(k){
+      setTimeout(function(){
+        if(meu!==ger) return;
+        sBatida();
+        var bt=document.getElementById("bsBt");
+        if(bt){ bt.className="bsBater bate";
+          setTimeout(function(){ if(bt) bt.className="bsBater"; },180); }
+      }, 260+k*520);
+    })(i);
+  }
+}
+
+/* 3º degrau: revela os pedaços E já põe as batidas — a criança só confirma */
+function revela(r){
+  var bx=document.getElementById("bsBx"), c=app.querySelector(".centro"), i;
+  if(!bx||!c) return;
+  bx.innerHTML="";
+  for(i=0;i<r.sil.length;i++) bx.appendChild(el("div","bsBatida eco",""));
+  bat=r.sil.length;
+  if(!document.getElementById("bsRev")){
+    var cx=el("div","bsSilabas"); cx.id="bsRev";
+    for(i=0;i<r.sil.length;i++) cx.appendChild(el("div","bsSil", r.sil[i]));
+    var m=el("span","bsMarca","estes"); cx.appendChild(m);
+    c.insertBefore(cx, bx);
+  }
+  marcaQA(r);
+}
+
+/* ⭐ AS DUAS PORTAS (regra do Marcos, ago/2026): no PC da escola tem teclado de
+   verdade, e a criança vai usar. Espaço = bater; Enter = Pronto; Backspace =
+   apagar. O toque continua sendo o caminho principal — isto é um caminho A
+   MAIS, nunca o único. */
+document.onkeydown=function(e){
+  var r=BATIDAS[ri];
+  if(!r||!document.getElementById("bsBt")) return;
+  var k=e.keyCode||e.which;
+  if(k===32){ bate(r); if(e.preventDefault) e.preventDefault(); }
+  else if(k===13){ confere(r); if(e.preventDefault) e.preventDefault(); }
+  else if(k===8){ zera(r); if(e.preventDefault) e.preventDefault(); }
+};
+
+/* `data-qa` diz ao auditor-jogador o que serve AGORA: bater enquanto faltam
+   batidas, Pronto quando a conta fecha. Só para ele — a criança nunca vê. */
+function marcaQA(r){
+  var bt=document.getElementById("bsBt"), pr=document.getElementById("bsPr");
+  var falta = bat < r.sil.length;
+  if(bt) bt.setAttribute("data-qa", falta ? "1" : "0");
+  if(pr) pr.setAttribute("data-qa", falta ? "0" : "1");
+}
+
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; separou <b>"+BATIDAS.length+" palavras</b> em peda&#231;os!"));
+  t.appendChild(c); app.appendChild(t);
+  mostraBanner("<b>Que ouvido bom!</b><br>Voc&#234; achou os peda&#231;os das palavras.", pecaBater);
+}
+
+pecaBater();
+</script>
+</body></html>

@@ -88,6 +88,17 @@
    "regra": "primeiro vetor",
    "var": "RODADAS"
   },
+  "bater-silabas": {
+   "exemplo": "[\n {pal:\"BOLO\", sil:[\"BO\",\"LO\"], fig:\"pd_bolo\",\n  d:[\"Diga <b>BOLO</b> bem devagar e bata uma vez para cada peda&#231;o.\",\n     \"Escute: eu vou bater junto com a palavra. Conte comigo.\",\n     \"S&#227;o <b>2</b> peda&#231;os: BO-LO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto.\"]},\n {pal:\"MALA\", sil:[\"MA\",\"LA\"], fig:\"pd_mala\",\n  d:[\"Ponha a m&#227;o no queixo e diga MALA. O queixo desce a cada peda&#231;o.\",\n     \"Escute o ritmo da palavra e conte as batidas.\",\n     \"S&#227;o <b>2</b> peda&#231;os: MA-LA. As batidas j&#225; est&#227;o a&#237;: toque em Pronto.\"]},\n {pal:\"SAPATO\", sil:[\"SA\",\"PA\",\"TO\"], fig:\"pd_sapato\",\n  d:[\"Esta &#233; mais comprida. Diga devagar: SA-PA-TO.\",\n     \"Escute: eu bato junto com a palavra. Conte as batidas.\",\n     \"S&#227;o <b>3</b> peda&#231;os: SA-PA-TO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto.\"]},\n {pal:\"PAO\", sil:[\"PAO\"], fig:\"pd_pao\",\n  d:[\"Cuidado com esta: diga <b>P&#195;O</b>. Quantos peda&#231;os a boca faz?\",\n     \"Escute: a palavra tem UM golpe s&#243;. Bata junto comigo.\",\n     \"&#201; <b>1</b> peda&#231;o s&#243;: P&#195;O. A batida j&#225; est&#225; a&#237;: toque em Pronto.\"]}\n]",
+   "exemplos": {
+    "BATIDAS": "[\n {pal:\"BOLO\", sil:[\"BO\",\"LO\"], fig:\"pd_bolo\",\n  d:[\"Diga <b>BOLO</b> bem devagar e bata uma vez para cada peda&#231;o.\",\n     \"Escute: eu vou bater junto com a palavra. Conte comigo.\",\n     \"S&#227;o <b>2</b> peda&#231;os: BO-LO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto.\"]},\n {pal:\"MALA\", sil:[\"MA\",\"LA\"], fig:\"pd_mala\",\n  d:[\"Ponha a m&#227;o no queixo e diga MALA. O queixo desce a cada peda&#231;o.\",\n     \"Escute o ritmo da palavra e conte as batidas.\",\n     \"S&#227;o <b>2</b> peda&#231;os: MA-LA. As batidas j&#225; est&#227;o a&#237;: toque em Pronto.\"]},\n {pal:\"SAPATO\", sil:[\"SA\",\"PA\",\"TO\"], fig:\"pd_sapato\",\n  d:[\"Esta &#233; mais comprida. Diga devagar: SA-PA-TO.\",\n     \"Escute: eu bato junto com a palavra. Conte as batidas.\",\n     \"S&#227;o <b>3</b> peda&#231;os: SA-PA-TO. As batidas j&#225; est&#227;o a&#237;: toque em Pronto.\"]},\n {pal:\"PAO\", sil:[\"PAO\"], fig:\"pd_pao\",\n  d:[\"Cuidado com esta: diga <b>P&#195;O</b>. Quantos peda&#231;os a boca faz?\",\n     \"Escute: a palavra tem UM golpe s&#243;. Bata junto comigo.\",\n     \"&#201; <b>1</b> peda&#231;o s&#243;: P&#195;O. A batida j&#225; est&#225; a&#237;: toque em Pronto.\"]}\n]"
+   },
+   "gavetas": [
+    "BATIDAS"
+   ],
+   "regra": "marca na peca",
+   "var": "BATIDAS"
+  },
   "bingo": {
    "exemplo": "[\n  {selo:\"BINGO DOS N&Uacute;MEROS\", tipo:\"num\",\n   enun:\"Tire a pedra e ache o <b>mesmo n&uacute;mero</b> na sua cartela.\",\n   cartela:[3,7,5,9,2,6], fora:[1,4]},\n  {selo:\"BINGO DOS PONTINHOS\", tipo:\"pts\",\n   enun:\"Agora a pedra vem com <b>pontinhos</b>. Conte e ache o n&uacute;mero na cartela.\",\n   cartela:[4,8,2,6,9,1], fora:[3,7]},\n  {selo:\"BINGO DAS PALAVRAS\", tipo:\"pal\",\n   enun:\"Agora a pedra vem <b>escrita</b>. Leia e ache o n&uacute;mero na cartela.\",\n   cartela:[5,2,8,3,7,4], fora:[6,9]}\n]",
    "exemplos": {
@@ -511,6 +522,17 @@
    ],
    "regra": "marca na peca",
    "var": "FONTES"
+  },
+  "juntar-silabas": {
+   "exemplo": "[\n {pal:\"BOLO\", sil:[\"BO\",\"LO\"], fig:\"pd_bolo\", iscas:[\"MA\",\"PE\"],\n  d:[\"Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?\",\n     \"A palavra começa com o som <b>BO</b>. Ele está pulsando aí embaixo.\",\n     \"É o <b>BO</b>. Ele está aceso: toque nele para seguir.\"]},\n {pal:\"MALA\", sil:[\"MA\",\"LA\"], fig:\"pd_mala\", iscas:[\"BO\",\"TE\"],\n  d:[\"Fale a palavra bem devagar e escute o começo.\",\n     \"O primeiro pedaço é <b>MA</b>, como em MÃE.\",\n     \"É o <b>MA</b>. Ele está aceso: toque nele para seguir.\"]},\n {pal:\"PATO\", sil:[\"PA\",\"TO\"], fig:\"pd_pato\", iscas:[\"LO\",\"SA\"],\n  d:[\"Ponha a mão no queixo e diga: PA-TO. Qual vem primeiro?\",\n     \"O primeiro pedaço é <b>PA</b>, o mesmo de PAI.\",\n     \"É o <b>PA</b>. Ele está aceso: toque nele para seguir.\"]},\n {pal:\"SAPATO\", sil:[\"SA\",\"PA\",\"TO\"], fig:\"pd_sapato\", iscas:[\"MA\",\"LO\"],\n  d:[\"Esta tem TRÊS pedaços. Diga devagar: SA-PA-TO.\",\n     \"Comece pelo <b>SA</b>, que é o som que abre a palavra.\",\n     \"É o <b>SA</b>. Ele está aceso: toque nele para seguir.\"]}\n]",
+   "exemplos": {
+    "SILABAS": "[\n {pal:\"BOLO\", sil:[\"BO\",\"LO\"], fig:\"pd_bolo\", iscas:[\"MA\",\"PE\"],\n  d:[\"Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?\",\n     \"A palavra começa com o som <b>BO</b>. Ele está pulsando aí embaixo.\",\n     \"É o <b>BO</b>. Ele está aceso: toque nele para seguir.\"]},\n {pal:\"MALA\", sil:[\"MA\",\"LA\"], fig:\"pd_mala\", iscas:[\"BO\",\"TE\"],\n  d:[\"Fale a palavra bem devagar e escute o começo.\",\n     \"O primeiro pedaço é <b>MA</b>, como em MÃE.\",\n     \"É o <b>MA</b>. Ele está aceso: toque nele para seguir.\"]},\n {pal:\"PATO\", sil:[\"PA\",\"TO\"], fig:\"pd_pato\", iscas:[\"LO\",\"SA\"],\n  d:[\"Ponha a mão no queixo e diga: PA-TO. Qual vem primeiro?\",\n     \"O primeiro pedaço é <b>PA</b>, o mesmo de PAI.\",\n     \"É o <b>PA</b>. Ele está aceso: toque nele para seguir.\"]},\n {pal:\"SAPATO\", sil:[\"SA\",\"PA\",\"TO\"], fig:\"pd_sapato\", iscas:[\"MA\",\"LO\"],\n  d:[\"Esta tem TRÊS pedaços. Diga devagar: SA-PA-TO.\",\n     \"Comece pelo <b>SA</b>, que é o som que abre a palavra.\",\n     \"É o <b>SA</b>. Ele está aceso: toque nele para seguir.\"]}\n]"
+   },
+   "gavetas": [
+    "SILABAS"
+   ],
+   "regra": "marca na peca",
+   "var": "SILABAS"
   },
   "labirinto": {
    "exemplo": "[\n {selo:\"O CAMINHO DA ESTRELA\",\n  linhas:[\"S..#.\",\"#.#..\",\"....#\",\".#X.F\"]},\n {selo:\"DOIS ESPINHUDOS\",\n  linhas:[\"S.#..\",\".X..#\",\"...X.\",\"#...F\"]},\n {selo:\"OLHE ANTES DE ANDAR\",\n  linhas:[\"S...X\",\"#X#..\",\"....#\",\".#X.F\"]}\n]",
