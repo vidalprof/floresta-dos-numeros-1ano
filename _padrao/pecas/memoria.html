@@ -279,7 +279,19 @@ function tocar(o){
   if(travado) return;
   if(o.el.className.indexOf("par")>=0){ sTap(); return; }     /* ja fechada */
   if(virada===o) return;
-  if(o.el.className.indexOf("vira")>=0) return;
+  /* ⚠️ LICAO PAGA (ago/2026): aqui era `if(...vira...) return;` — carta virada
+     nao se toca. So que se sobrar UMA carta de cara para cima que a peca nao
+     esta mais seguindo em `virada` (qualquer descompasso entre o desenho e a
+     memoria do jogo), ela vira uma carta MORTA: nunca mais aceita toque, e a
+     fase nao fecha NUNCA. A crianca fica com dois quadradinhos na tela sem
+     conseguir juntar o ultimo par. Foi assim que o auditor-jogador ficou preso
+     com 3 de 4 pares fechados.
+     Agora a carta orfa e ADOTADA: se esta virada e ninguem a segura, ela passa
+     a ser a carta da vez. Nao ha estado do qual a crianca nao consiga sair.  */
+  if(o.el.className.indexOf("vira")>=0){
+    if(!virada){ virada=o; }
+    return;
+  }
   o.el.className="mcarta vira";
   sVira();
   if(!virada){ virada=o; return; }
