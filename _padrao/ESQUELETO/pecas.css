@@ -10,6 +10,31 @@
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda
    dentro da fase e nao esta no enunciado.                                    */
 .pecabox .selo{display:none}
+/* ⚠️ LICAO PAGA, medida: com o enunciado da FASE em cima e o balao da PECA
+   logo abaixo, o tabuleiro do jogo da memoria comecava tao baixo que 4 das 8
+   cartas caiam fora da tela de 640px do monitor da escola. Da para rolar, mas
+   memoria e um jogo de VER o tabuleiro: metade escondida acaba com a mecanica.
+   E o dobro de enunciado tambem e defeito por si so — a regra da casa e uma
+   ideia por tela, enunciado curto (carga cognitiva).
+   Entao: quando a peca escreve o balao DELA (a pergunta da rodada), o
+   enunciado da fase recolhe. Ele ja foi FALADO na abertura da fase, e o botao
+   "Ouvir de novo" continua repetindo — nao se perde nada, ganha-se a tela. */
+.centro.tembalaopeca > .balao{display:none}
+/* ⚠️⚠️ A COLISAO DE CSS QUE DESMONTAVA O TABULEIRO. Toda peca constroi a tela
+   dela com `el("div","tela")` e `el("div","centro")` — os mesmos nomes do
+   motor, o que ate aqui era uma vantagem (por isso nenhuma peca precisou ser
+   reescrita). So que no motor `.tela` e uma CAMADA ABSOLUTA DE TELA CHEIA
+   (`position:absolute;inset:0`) em coluna. Dentro da fase, a tela da peca
+   virava uma camada solta por cima de tudo, sem largura propria — e o
+   tabuleiro do jogo da memoria, que devia ficar em 3 colunas, empilhava as 8
+   cartas numa coluna so, 950px de altura: quatro delas fora da tela do
+   monitor da escola. Medido: as 8 cartas no MESMO x.
+   Aqui a tela da peca volta a ser o que ela e por dentro da fase: um bloco
+   comum. O CSS proprio da peca (com `.mec-<nome>` na frente) manda no resto. */
+.pecabox{width:100%}
+.pecabox > .tela{position:static;inset:auto;display:block;padding:0;
+  -webkit-animation:none;animation:none;height:auto;overflow:visible}
+.pecabox > .tela > .centro{width:100%}
 /* ==== PECA: achar-na-cena ==== */
 
 .mec-achar-na-cena .medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a; border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
@@ -1559,7 +1584,8 @@
 /* ==== PECA: memoria ==== */
 
 .mec-memoria .medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a; border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
-.mec-memoria .mcartas{max-width:430px;width:100%;margin:13px auto 0; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.mec-memoria .mcartas{max-width:430px;width:100%;margin:13px auto 0;gap:0; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}@media (min-width:760px){
+.mec-memoria .mcartas{max-width:680px}}
 .mec-memoria .mcarta{width:48%;max-width:210px;min-height:100px;margin:5px 1%;position:relative;cursor:pointer; -webkit-perspective:900px;perspective:900px}
 .mec-memoria .mflip{position:absolute;left:0;top:0;right:0;bottom:0; -webkit-transform-style:preserve-3d;transform-style:preserve-3d; -webkit-transition:-webkit-transform .45s;transition:transform .45s}
 .mec-memoria .mcarta.vira .mflip{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}

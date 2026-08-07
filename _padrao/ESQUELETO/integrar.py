@@ -196,6 +196,12 @@ MEC["%(nome)s"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -244,6 +250,31 @@ CSS_PONTE = u'''
    da crianca. O BALAO da peca FICA — nele mora a pergunta da rodada, que muda
    dentro da fase e nao esta no enunciado.                                    */
 .pecabox .selo{display:none}
+/* ⚠️ LICAO PAGA, medida: com o enunciado da FASE em cima e o balao da PECA
+   logo abaixo, o tabuleiro do jogo da memoria comecava tao baixo que 4 das 8
+   cartas caiam fora da tela de 640px do monitor da escola. Da para rolar, mas
+   memoria e um jogo de VER o tabuleiro: metade escondida acaba com a mecanica.
+   E o dobro de enunciado tambem e defeito por si so — a regra da casa e uma
+   ideia por tela, enunciado curto (carga cognitiva).
+   Entao: quando a peca escreve o balao DELA (a pergunta da rodada), o
+   enunciado da fase recolhe. Ele ja foi FALADO na abertura da fase, e o botao
+   "Ouvir de novo" continua repetindo — nao se perde nada, ganha-se a tela. */
+.centro.tembalaopeca > .balao{display:none}
+/* ⚠️⚠️ A COLISAO DE CSS QUE DESMONTAVA O TABULEIRO. Toda peca constroi a tela
+   dela com `el("div","tela")` e `el("div","centro")` — os mesmos nomes do
+   motor, o que ate aqui era uma vantagem (por isso nenhuma peca precisou ser
+   reescrita). So que no motor `.tela` e uma CAMADA ABSOLUTA DE TELA CHEIA
+   (`position:absolute;inset:0`) em coluna. Dentro da fase, a tela da peca
+   virava uma camada solta por cima de tudo, sem largura propria — e o
+   tabuleiro do jogo da memoria, que devia ficar em 3 colunas, empilhava as 8
+   cartas numa coluna so, 950px de altura: quatro delas fora da tela do
+   monitor da escola. Medido: as 8 cartas no MESMO x.
+   Aqui a tela da peca volta a ser o que ela e por dentro da fase: um bloco
+   comum. O CSS proprio da peca (com `.mec-<nome>` na frente) manda no resto. */
+.pecabox{width:100%}
+.pecabox > .tela{position:static;inset:auto;display:block;padding:0;
+  -webkit-animation:none;animation:none;height:auto;overflow:visible}
+.pecabox > .tela > .centro{width:100%}
 '''
 
 
@@ -331,6 +362,39 @@ def sem_comentario(s):
     s = re.sub(r'"(?:[^"\\\n]|\\.)*"', ' "" ', s)
     s = re.sub(r"'(?:[^'\\\n]|\\.)*'", " '' ", s)
     return re.sub(r"(?m)//.*$", " ", s)
+
+
+def classes_que_vazam(css_out):
+    u"""⚠️ A COLISAO DE CSS, que e a irma da colisao de nomes em JS.
+
+    A peca usa os MESMOS nomes de classe do motor — e isso e proposital: e por
+    isso que nenhuma peca precisou ser reescrita. O preco: quando o motor tem
+    uma regra para a mesma classe, **o que a peca nao declara vem de la**. A
+    regra da peca ganha por especificidade, mas so nas propriedades que ela
+    escreve.
+
+    Foi assim que o jogo da memoria empilhou: o `.mcartas` da peca fecha a
+    conta com 48% + margem de 1%, e o `.mcartas` do MOTOR tem `gap:10px`. O gap
+    entrou de carona, duas cartas passaram de 100%, e o tabuleiro virou uma
+    coluna de 950px — quatro das oito cartas fora da tela de 640px da escola.
+    Nenhum erro, nenhum aviso: so um jogo de memoria em que nao da para ver o
+    tabuleiro.
+
+    Aqui a lista sai em aviso, para eu olhar quando uma conta de largura nao
+    fechar — em vez de passar duas horas medindo, como passei nesta."""
+    motor = os.path.join(AQUI, "motor.html")
+    if not os.path.exists(motor):
+        return []
+    mcss = "".join(re.findall(r"<style>(.*?)</style>",
+                              io.open(motor, encoding="utf-8").read(), re.S))
+    do_motor = set()
+    for _m, sel, _c in regras(mcss):
+        do_motor.update(re.findall(r"\.([\w-]+)", sel))
+    das_pecas = set()
+    for bloco in css_out:
+        for _m, sel, _c in regras(bloco):
+            das_pecas.update(re.findall(r"\.([\w-]+)", sel))
+    return sorted((das_pecas & do_motor) - set(["mec-" + x for x in das_pecas]))
 
 
 def confere_contra_motor(js_out):
@@ -441,6 +505,7 @@ def main():
         prontas.append(nome)
 
     faltando, colidindo = confere_contra_motor(js_out)
+    vazam = classes_que_vazam(css_out)
 
     print(u"INTEGRACAO DAS PECAS")
     print(u"  %d peca(s) com porta de entrada -> viram MEC[...]" % len(prontas))
@@ -460,6 +525,11 @@ def main():
     if sem_porta:
         print(u"  %d sem porta (nao chamam a propria funcao no fim): %s"
               % (len(sem_porta), ", ".join(sem_porta)))
+    if vazam:
+        print(u"  ⚠️ %d CLASSE(S) QUE O MOTOR TAMBEM ESTILIZA — o que a peca nao"
+              u" declara vem de la: %s" % (len(vazam), ", ".join(vazam[:12])))
+        print(u"    -> se a conta de largura da peca nao fechar, e por aqui "
+              u"(foi o `gap:10px` do motor empilhando o jogo da memoria)")
     if sem_css:
         print(u"  ⚠️ %d SEM CSS PROPRIO — a mecanica vai entrar sem estilo: %s"
               % (len(sem_css), ", ".join(sem_css)))

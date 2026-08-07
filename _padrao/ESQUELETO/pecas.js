@@ -83,6 +83,12 @@ MEC["achar-na-cena"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -298,6 +304,12 @@ MEC["andar-ate"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -592,6 +604,12 @@ MEC["arrastar-lugar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -941,6 +959,12 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -1379,6 +1403,12 @@ MEC["autoexplicacao"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -1724,6 +1754,12 @@ MEC["balanca"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -1974,6 +2010,12 @@ MEC["base-dez"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -2359,6 +2401,12 @@ MEC["bingo"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -2783,6 +2831,12 @@ MEC["bussola"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -3154,6 +3208,12 @@ MEC["caca-palavras"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -3468,6 +3528,12 @@ MEC["caixa-dinheiro"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -3714,6 +3780,12 @@ MEC["calendario"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -4334,6 +4406,12 @@ MEC["camadas-mapa"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -4718,6 +4796,12 @@ MEC["circuito"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5176,6 +5260,12 @@ MEC["classificar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5432,6 +5522,12 @@ MEC["comparar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5905,6 +6001,12 @@ MEC["completar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -6080,6 +6182,12 @@ MEC["conserte-o-erro"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -6366,6 +6474,12 @@ MEC["contadores"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -6668,6 +6782,12 @@ MEC["coordenadas"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7064,6 +7184,12 @@ MEC["criar-desafio"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7394,6 +7520,12 @@ MEC["cruzadinha"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7635,6 +7767,12 @@ MEC["decisao"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7896,6 +8034,12 @@ MEC["digitar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8106,6 +8250,12 @@ MEC["ditado"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8399,6 +8549,12 @@ MEC["domino"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8907,6 +9063,12 @@ MEC["ensinar-mascote"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -9211,6 +9373,12 @@ MEC["escolher"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -9393,6 +9561,12 @@ MEC["escrever-legenda"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -9674,6 +9848,12 @@ MEC["estimar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10127,6 +10307,12 @@ MEC["experimento-justo"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10457,6 +10643,12 @@ MEC["filtro"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10689,6 +10881,12 @@ MEC["forca"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10915,6 +11113,12 @@ MEC["girar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -11317,6 +11521,12 @@ MEC["grafico"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -11766,6 +11976,12 @@ MEC["intruso"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -12146,6 +12362,12 @@ MEC["investigar-fonte"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -12432,6 +12654,12 @@ MEC["labirinto"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -12830,6 +13058,12 @@ MEC["ligar-pontos"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -13173,6 +13407,12 @@ MEC["ligar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -13485,6 +13725,12 @@ MEC["linha-do-tempo"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -13802,6 +14048,12 @@ MEC["mapa-conceitual"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -14249,6 +14501,12 @@ MEC["medir"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -14953,6 +15211,12 @@ MEC["memoria"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -15181,6 +15445,12 @@ MEC["misterio"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -15531,6 +15801,12 @@ MEC["montar-frase"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -15855,6 +16131,12 @@ MEC["morfemas"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -16213,6 +16495,12 @@ MEC["mudanca-permanencia"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -16615,6 +16903,12 @@ MEC["ordenar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -16875,6 +17169,12 @@ MEC["ouvir-achar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -17258,6 +17558,12 @@ MEC["padrao"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -17597,6 +17903,12 @@ MEC["passo-a-passo"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -18254,6 +18566,12 @@ MEC["pintar-desenho"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -18618,6 +18936,12 @@ MEC["pintar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -18775,6 +19099,12 @@ MEC["prever-observar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -19137,6 +19467,12 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -19517,6 +19853,12 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -19761,6 +20103,12 @@ MEC["relampago"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -20036,6 +20384,12 @@ MEC["relogio"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -20620,6 +20974,12 @@ MEC["repartir"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21040,6 +21400,12 @@ MEC["reta-numerica"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21394,6 +21760,12 @@ MEC["rotular"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21861,6 +22233,12 @@ MEC["saltos-na-fita"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22131,6 +22509,12 @@ MEC["sete-erros"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22412,6 +22796,12 @@ MEC["simetria"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22660,6 +23050,12 @@ MEC["simulador"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22952,6 +23348,12 @@ MEC["sombra"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -23163,6 +23565,12 @@ MEC["tabela"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -23392,6 +23800,12 @@ MEC["tangram"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -23790,6 +24204,12 @@ MEC["teia-alimentar"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -24286,6 +24706,12 @@ MEC["termometro"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -24540,6 +24966,12 @@ MEC["tracar-caminho"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -24993,6 +25425,12 @@ MEC["tracar-letra"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -25448,6 +25886,12 @@ MEC["trilha"] = function(f, cen, fim){
      que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
      E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
   var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;

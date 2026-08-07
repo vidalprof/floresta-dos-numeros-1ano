@@ -73,11 +73,20 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
    forca e perde por vir ANTES no arquivo — sem isto o tabuleiro nasce COLADO
    no enunciado (defeito que o Marcos ja cobrou duas vezes).                  */
-.mcartas{max-width:430px;width:100%;margin:13px auto 0;
+/* ⚠️ `gap:0` DECLARADO de proposito: dentro de uma atividade montada, o motor
+   tambem tem uma regra `.mcartas` (com `gap:10px`), e o que a peca NAO declara
+   vem de la. Com o gap somado a conta de 48% + margem 1%, duas cartas passavam
+   de 100% e o tabuleiro empilhava numa coluna so — 4 das 8 cartas fora da tela
+   de 640px da escola. Aqui a peca fecha a propria conta.                    */
+.mcartas{max-width:430px;width:100%;margin:13px auto 0;gap:0;
          display:-webkit-box;display:-webkit-flex;display:flex;
          -webkit-flex-wrap:wrap;flex-wrap:wrap;
          -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
 /* CARTA FLUIDA E GRANDE — nunca px fixo (piso do auditor: 130x88) */
+/* ⭐ REGRA DA CASA (Marcos, ago/2026): no PC largo o tabuleiro abre em TRES
+   colunas, para caber sem rolar. Fica na PECA, e nao so no motor, porque a
+   regra da peca ganha por especificidade dentro da atividade montada.      */
+@media (min-width:760px){ .mcartas{max-width:680px} }
 .mcarta{width:48%;max-width:210px;min-height:100px;margin:5px 1%;position:relative;cursor:pointer;
         -webkit-perspective:900px;perspective:900px}
 .mflip{position:absolute;left:0;top:0;right:0;bottom:0;
