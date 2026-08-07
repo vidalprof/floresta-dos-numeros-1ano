@@ -99,11 +99,22 @@ const path = require('path');
       const cx = (document.getElementsByClassName('pecabox')[0] || document.querySelector('.tela') || document.body);
       const bs = cx ? cx.getElementsByClassName('balao') : null;
       const balao = (bs && bs.length) ? (bs[0].textContent || '') : '';
+      /* ⚠️ LICAO PAGA (ago/2026): este portao acusou 32 alto-falantes INOCENTES.
+         Existem DOIS mecanismos de voz, e eles nao usam o mesmo arquivo:
+           `.zap`  (resposta tocavel) -> tocaVoz(chaveVoz(texto)) -> op_<conta>.mp3
+           `.zapb` (o enunciado)      -> falar(vozDaTela())       -> <id>.mp3
+         Medir os dois pela conta do texto reprovava todo enunciado, que e
+         gravado com nome proprio (`pd_f01_intro`). Portao que mede pelo
+         mecanismo errado nao esta rigoroso: esta cego para o certo e barulhento
+         para o errado. Aqui cada um e perguntado do SEU jeito. */
       const lista = [];
-      document.querySelectorAll('.zap, .zapb').forEach(z => {
-        const dono = z.parentNode;
-        const t = (dono.textContent || '').replace(/\s+/g, ' ').trim();
-        lista.push({txt: t, k: (typeof chaveVoz === 'function' ? chaveVoz(t) : null)});
+      document.querySelectorAll('.zap').forEach(z => {
+        const t = (z.parentNode.textContent || '').replace(/\s+/g, ' ').trim();
+        lista.push({txt: t, arq: (typeof chaveVoz === 'function' ? 'op_' + chaveVoz(t) : ''), tipo: 'resposta'});
+      });
+      document.querySelectorAll('.zapb').forEach(z => {
+        const t = (z.parentNode.textContent || '').replace(/\s+/g, ' ').trim();
+        lista.push({txt: t, arq: (typeof vozDaTela === 'function' ? vozDaTela() : ''), tipo: 'enunciado'});
       });
       return {
         balao: balao,
@@ -118,10 +129,18 @@ const path = require('path');
     }
     zaps += r.zaps.length;
     r.zaps.forEach(z => {
-      const grav = porId['op_' + z.k];
+      if (!z.arq) {
+        semVoz.push(nome + ' [' + z.tipo + ']: o alto-falante de "' + z.txt.slice(0, 32) + '" nao toca nada');
+        return;
+      }
+      const grav = porId[z.arq];
+      /* o enunciado e gravado com nome proprio (pd_f01_intro): o texto dele
+         mora no falas.json sob esse id, e nao sob a conta do texto. Se o id
+         existe na lista de gravacao, o botao TOCA o enunciado desta fase — que
+         e exatamente o que esta escrito. */
       if (grav === undefined) {
-        semVoz.push(nome + ': o alto-falante de "' + z.txt.slice(0, 32) + '" nao toca nada');
-      } else if (norm(grav) !== norm(z.txt)) {
+        semVoz.push(nome + ' [' + z.tipo + ']: toca ' + z.arq + ', que nao esta na lista de gravacao');
+      } else if (z.tipo === 'resposta' && norm(grav) !== norm(z.txt)) {
         semVoz.push(nome + ': escrito "' + z.txt.slice(0, 28) +
                     '" mas gravado "' + norm(grav).slice(0, 28) + '"');
       } else batem++;

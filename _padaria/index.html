@@ -1066,13 +1066,41 @@ function brotoEl(tam){
   return d;
 }
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
-function limpa(){ telaNarrou=false; tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null;
+function limpa(){ telaNarrou=false;
+  /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos com a turma jogando:
+     *"tem audio falando da fase anterior, nos botoes de audio"*.
+
+     `telaNarrou` era zerado aqui, mas o `falaTela` — que diz QUAL audio o botao
+     do balao vai tocar — ficava com o id da tela ANTERIOR. Entre desenhar a
+     tela nova e a narracao dela comecar, o alto-falante tocava a pergunta da
+     fase passada; e numa tela que nao narra sozinha, tocava a fase anterior
+     PARA SEMPRE. Achado no Jardim do Broto e consertado aqui TAMBEM, porque o
+     motor e a origem: sem isto o defeito nasce em toda atividade nova. */
+  falaTela="";
+  tiraDica(); app.innerHTML=""; banner.className="banner"; barra.innerHTML=""; btnOuvir=null; btnDica=null;
   /* solta o teclado de verdade: so a fase que o pediu escuta as teclas */
   document.onkeydown=null; }
+/* ⭐ A VOZ DO BOTAO SAI DO QUE ESTA ESCRITO NA TELA — nunca de uma sobra.
+   Ordem: (1) a narracao DESTA tela, se ja comecou; (2) a gravacao do texto que
+   esta no balao AGORA; (3) nada. O `falaAtual` solto saiu da conta: era ele que
+   trazia a fase anterior. Calado e melhor que dizer outra coisa — a crianca
+   que ainda nao le acredita na voz. */
+function vozDoQueEstaEscrito(){
+  var bs=app?app.getElementsByClassName("balao"):null,i;
+  for(i=0;bs&&i<bs.length;i++){
+    var b=bs[i];
+    if(b.className.indexOf("pequeno")>=0||b.className.indexOf("porque")>=0) continue;
+    var t=(b.textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+    var k=(typeof temVoz==="function"&&t)?temVoz(t):null;
+    if(k) return "op_"+k;
+  }
+  return "";
+}
+function vozDaTela(){ return falaTela||vozDoQueEstaEscrito(); }
 function montaBarra(dicaId,dicaTxt){
   barra.innerHTML="";
   btnOuvir=el("button","mini","Ouvir de novo");
-  btnOuvir.onclick=function(){ arma(); var v=falaTela||falaAtual; if(v) falar(v); };
+  btnOuvir.onclick=function(){ arma(); var v=vozDaTela(); if(v) falar(v); };
   barra.appendChild(btnOuvir);
   if(dicaId){
     dicaAtual=dicaId; dicaTexto=dicaTxt||"";
@@ -1173,7 +1201,7 @@ function poeVozPergunta(){
     bt.onclick=function(ev){
       if(ev&&ev.stopPropagation) ev.stopPropagation();
       if(ev&&ev.preventDefault) ev.preventDefault();
-      arma(); var v=falaTela||falaAtual; if(v) falar(v);
+      arma(); var v=vozDaTela(); if(v) falar(v);
       return false;
     };
     b.appendChild(bt);
