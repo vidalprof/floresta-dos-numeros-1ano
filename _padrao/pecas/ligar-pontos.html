@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ligar os pontinhos (1, 2, 3… e a figura aparece)</title>
+<!-- ============================================================
+     PEÇA: LIGAR OS PONTINHOS — a figura escondida na ordem dos números
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     PARA QUEM É: PRÉ e 1º ano. Alvo de dedo de 56px, enunciado de uma linha,
+     e nada essencial escrito: o que a criança precisa saber é NÚMERO, que é
+     justamente o conteúdo.
+
+     POR QUE ELA EXISTE (não é passatempo de revista):
+       · A SEQUÊNCIA NUMÉRICA VIRA GESTO. Contar de cor ("um, dois, três...")
+         é canção; achar o 5 DEPOIS do 4 dentro de uma bagunça de números é
+         outra coisa — é reconhecer o símbolo e saber quem vem depois. É a
+         diferença entre recitar e contar.
+       · A CURIOSIDADE PUXA (Loewenstein): a figura está ali e não dá para ver.
+         A criança não liga os pontos para obedecer; liga para DESCOBRIR. O
+         problema vem antes, o nome da figura vem por último.
+       · MOTRICIDADE FINA e varredura visual: o olho tem que procurar.
+
+     A REGRA DE OURO DESTA MECÂNICA: **tocar fora não pune, só não liga.**
+     O traço SÓ nasce se o ponto for o PRÓXIMO da ordem. Tocar num ponto que
+     ainda não é a vez não vira X vermelho, não tira estrela, não diz a palavra
+     que reprova — o andaime é que cresce.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA NO INSTANTE em que o último ponto liga (`travada=true`) — a
+         criança toca duas vezes, e o segundo toque pulava a figura;
+       · GERAÇÃO (`ger`): todo setTimeout confere se a tela ainda é a dele;
+       · O ANDAIME CRESCE NO ERRO MAIS NATURAL — tocar num ponto QUALQUER (que
+         é o gesto de quem ainda não achou o número) chama `ajuda(n)`. Nada de
+         frase fixa: 1º diz qual número procurar, 2º o ponto certo PULSA, 3º a
+         peça liga aquele traço sozinha e SÓ DEPOIS escreve a explicação;
+       · ajudante que mexe no DOM começa com `if(!el) return;`;
+       · nada essencial só na cor: o ponto ligado ganha O TRAÇO (forma), o
+         ponto da vez PULSA (movimento), e o número continua escrito;
+       · funciona no mudo: cada ligação desenha a linha à vista;
+       · nunca trava: no 3º toque sem sorte a peça liga o traço por ela;
+       · `data-qa` publicado no ponto da vez, para o auditor-jogador fechar.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.folha{position:relative;width:100%;max-width:280px;height:280px;margin:13px auto 0;
+       background:#fffdf6;border:3px solid #b3903c;border-radius:14px;overflow:hidden;
+       box-shadow:0 6px 16px rgba(0,0,0,.32)}
+/* a camada do desenho: nunca pega o dedo (senao roubava o toque dos pontos) */
+.linhas{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none}
+.linhas svg{display:block;width:100%;height:100%}
+/* a figura escondida: existe desde o comeco, mas so ACENDE no fim */
+.figc{fill:none;stroke:none;opacity:0;-webkit-transition:opacity .6s;transition:opacity .6s}
+.figc.viva{opacity:1;-webkit-animation:acende 1.1s;animation:acende 1.1s}
+@-webkit-keyframes acende{0%{opacity:0}45%{opacity:1}62%{opacity:.55}100%{opacity:1}}
+@keyframes acende{0%{opacity:0}45%{opacity:1}62%{opacity:.55}100%{opacity:1}}
+.fio{fill:none;stroke:#3c6ee0;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+/* a camada de "tocou fora": responde com um toquinho e nao acontece mais nada */
+.fora{position:absolute;left:0;top:0;right:0;bottom:0;cursor:pointer}
+/* ---- OS PONTINHOS. Alvo de 56px, como manda o pre-escolar ---- */
+.pt{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;
+    background:#fffdf6;color:#221a12;border:3px solid #b3903c;font-size:22px;font-weight:800;
+    line-height:50px;text-align:center;cursor:pointer;-webkit-user-select:none;user-select:none;
+    -webkit-box-shadow:0 3px 0 rgba(0,0,0,.22);box-shadow:0 3px 0 rgba(0,0,0,.22)}
+/* ⭐ NADA ESSENCIAL SO NA COR: o ponto ja ligado tem o TRACO chegando nele
+   (forma) e encolhe; o ponto da vez PULSA (movimento). Cor e so o reforco. */
+.pt.feito{background:#d6f5c8;border-color:#59c24b;color:#183a0e;
+          -webkit-transform:scale(.72);transform:scale(.72)}
+.pt.prox{-webkit-animation:pulsaP .9s infinite;animation:pulsaP .9s infinite}
+@-webkit-keyframes pulsaP{0%,100%{box-shadow:0 3px 0 rgba(0,0,0,.22)}50%{box-shadow:0 0 0 7px rgba(255,213,74,.9)}}
+@keyframes pulsaP{0%,100%{box-shadow:0 3px 0 rgba(0,0,0,.22)}50%{box-shadow:0 0 0 7px rgba(255,213,74,.9)}}
+.pt.treme{-webkit-animation:tremeP .32s;animation:tremeP .32s}
+@-webkit-keyframes tremeP{25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes tremeP{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* o nome da figura so aparece DEPOIS que ela acende: o conceito por ultimo */
+.revela{margin-top:10px;font-size:19px;font-weight:800;color:#ffd54a;min-height:26px}
+/* ---- A GALERIA DO FIM ---- */
+.galeria{margin-top:8px;line-height:0}
+.mini{display:inline-block;position:relative;width:104px;height:104px;margin:5px;
+      background:#fffdf6;border:3px solid #b3903c;border-radius:12px;overflow:hidden;
+      vertical-align:top}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa: encolhe a FOLHA e, so entao, o pontinho — nunca ao contrario.
+   ⚠️ o pontinho tem que encolher JUNTO com a folha: em 210px de folha, um
+   ponto de 56px vira 27% do desenho e dois vizinhos se encavalam. */
+@media(max-height:660px){
+  .folha{max-width:250px;height:250px}
+  .mini{width:88px;height:88px}
+  .balao{font-size:15px;padding:10px 14px}
+}
+@media(max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .folha{max-width:210px;height:210px;margin-top:8px}
+  .pt{width:48px;height:48px;margin:-24px 0 0 -24px;font-size:19px;line-height:42px}
+  .revela{margin-top:5px;font-size:16px}
+  .medal{width:76px;height:76px;font-size:32px;line-height:66px;margin-bottom:8px}
+  .mini{width:74px;height:74px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* AS FIGURAS. `pts` sao os pontinhos em PORCENTAGEM da folha (nunca em px:
+   assim a folha encolhe junto com a tela e o desenho continua inteiro).
+   `d` e o contorno que ACENDE no fim, e `extra` sao os detalhes que aparecem
+   junto com ela (o olho, a porta) — nada disso e tocavel.
+   ⚠️ A ESCADA: a 1a figura tem 5 pontos (a criança conta até 5 sem apoio); a
+   2a tem 8 e os números ficam espalhados de verdade, sem seguir o relógio —
+   é aí que ela precisa PROCURAR o símbolo, não só continuar o movimento.
+   ⚠️ E OS PONTOS NÃO PODEM SE ENCOSTAR: o vizinho mais próximo tem que estar
+   a mais de 27% da folha, senão dois alvos de 56px se sobrepõem e a criança
+   mira num e toca no outro. */
+var FIGURAS=[
+ {selo:"A CASINHA ESCONDIDA", nome:"uma CASINHA", voz:"uma casinha",
+  pts:[[18,58],[50,26],[82,58],[82,88],[18,88]],
+  d:"M18 58 L50 26 L82 58 L82 88 L18 88 Z",
+  cor:"#f0c078",
+  extra:'<rect x="41" y="64" width="18" height="24" rx="2" fill="#8a5a2b" stroke="#5c3a17" stroke-width="1.4"/>'+
+        '<circle cx="55" cy="76" r="1.8" fill="#ffd54a"/>'},
+ {selo:"O BICHO DO MAR", nome:"um PEIXE", voz:"um peixe",
+  pts:[[14,32],[34,50],[14,68],[44,84],[74,74],[90,50],[74,26],[44,16]],
+  d:"M14 32 L34 50 L14 68 L44 84 L74 74 L90 50 L74 26 L44 16 Z",
+  cor:"#7ec8e3",
+  extra:'<circle cx="74" cy="44" r="4.6" fill="#fffdf6" stroke="#2b2118" stroke-width="1.2"/>'+
+        '<circle cx="75" cy="45" r="2.2" fill="#2b2118"/>'+
+        '<path d="M44 50 Q56 44 68 50" fill="none" stroke="#2b2118" stroke-width="1.2" stroke-linecap="round"/>'}
+];
+/* O ANDAIME. O 3o degrau LIGA o traco pela crianca e so DEPOIS escreve a
+   explicacao — na ordem contraria a dica nasce e morre no mesmo quadro. */
+var DICAS=[
+ "Procure o n&#250;mero <b>{n}</b>. Ele &#233; o pr&#243;ximo da fila.",
+ "O n&#250;mero <b>{n}</b> est&#225; <b>pulsando</b>. Toque nele.",
+ "Eu liguei este tracinho para voc&#234;. O pr&#243;ximo &#233; o que <b>pulsa</b>."
+];
+var NUM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+         "onze","doze","treze","catorze","quinze"];
+
+var fi=0;              /* figura de agora */
+var proximo=1;         /* o numero que a peca espera AGORA */
+var ptEls=[];          /* os pontinhos, na ordem 1..N */
+var fioEl=null, figEl=null, revelaEl=null, telaAtual=null, barraP=null;
+var FEITAS=[];         /* as figuras que ja acenderam, para a galeria do fim */
+var errosSeg=0;
+var ger=0;             /* geracao: mata o setTimeout de uma tela que ja saiu */
+var travada=false;     /* ⚠️ trava NO INSTANTE em que o ultimo ponto liga */
+
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function figura(){ return FIGURAS[fi]||FIGURAS[0]; }
+function nomeNum(n){ return NUM[n]||(""+n); }
+
+/* A VOZ. Se o PC nao tiver voz a peca continua inteira: todo numero que ela
+   fala tambem esta escrito dentro do pontinho. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.98; u.pitch=1.06;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* o traco sobe de tom a cada ligacao: a escada se OUVE, nao so se ve */
+function sLiga(i,total){ nota(392+ (i*(392/Math.max(total,1))), .10, .13, "triangle", 0); }
+function sNaoLiga(){ nota(330,.09,.09,"sine",0); }
+function sToque(){ nota(760,.010,.06,"square",0); }
+
+/* ---------------------------------------------------------------
+   A FOLHA. A MESMA funcao monta a folha grande e a miniatura da
+   galeria — o que a crianca ve no fim e o que ela mesma ligou.
+   --------------------------------------------------------------- */
+function montaFolha(fg,ligados,classe,vivo){
+  var q=el("div",classe), i, pts="", p;
+  var lin=el("div","linhas");
+  for(i=0;i<ligados;i++) pts+=fg.pts[i][0]+","+fg.pts[i][1]+" ";
+  if(ligados>=fg.pts.length) pts+=fg.pts[0][0]+","+fg.pts[0][1];
+  lin.innerHTML='<svg viewBox="0 0 100 100">'+
+                '<path class="figc" d="'+fg.d+'"></path>'+
+                '<polyline class="fio" points="'+pts+'"></polyline>'+
+                '</svg>';
+  var fg2=lin.getElementsByTagName("path")[0];
+  if(ligados>=fg.pts.length){
+    fg2.style.fill=fg.cor; fg2.style.stroke="#2b2118"; fg2.style.strokeWidth="1.6";
+    fg2.setAttribute("class","figc viva");
+    lin.getElementsByTagName("svg")[0].innerHTML+=fg.extra;
+  }
+  q.appendChild(lin);
+  if(vivo){
+    figEl=fg2; fioEl=lin.getElementsByTagName("polyline")[0];
+    /* a camada do "tocou fora": responde com um toquinho e nao acontece mais
+       nada. Fica ABAIXO dos pontinhos, entao nunca rouba o toque deles. */
+    var fr=el("div","fora","");
+    fr.onclick=tocouFora;
+    q.appendChild(fr);
+    ptEls=[];
+    for(i=0;i<fg.pts.length;i++){
+      p=el("div","pt",""+(i+1));
+      p.style.left=fg.pts[i][0]+"%";
+      p.style.top=fg.pts[i][1]+"%";
+      p.setAttribute("aria-label","Ponto "+(i+1));
+      p._n=i+1;
+      p.onclick=tocouPonto;
+      q.appendChild(p);
+      ptEls.push(p);
+    }
+  }
+  return q;
+}
+
+/* ---------------------------------------------------------------
+   A TELA DA FIGURA. Uma folha e nada mais: nem botao, nem placar.
+   O que empurra a crianca e a curiosidade de ver o que aparece.
+   --------------------------------------------------------------- */
+function telaPontos(){
+  if(fi>=FIGURAS.length){ fimDaPeca(); return; }
+  ger++; travada=false; proximo=1; errosSeg=0;
+  limpa();
+  var fg=FIGURAS[fi];
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(fi*100/FIGURAS.length));
+  barraP=t.getElementsByTagName("i")[0];
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",fg.selo));
+  c.appendChild(el("div","balao","Ligue os pontinhos: <b>1, 2, 3</b>... e veja o que aparece!"));
+  c.appendChild(montaFolha(fg,0,"folha",1));
+  revelaEl=el("div","revela","");
+  c.appendChild(revelaEl);
+  c.appendChild(el("div","hint","Toque no <b>1</b>. Depois no <b>2</b>. "+
+                   "Figura "+(fi+1)+" de "+FIGURAS.length+"."));
+  t.appendChild(c); app.appendChild(t);
+  marcaProximo();
+  diz("Ligue os pontinhos. Comece no um!");
+}
+
+/* ---------------------------------------------------------------
+   O TOQUE. Só liga se for o PRÓXIMO da ordem; qualquer outro toque
+   não pune — mas faz o andaime crescer, porque quem toca no ponto
+   errado é justamente quem ainda não achou o número.
+   --------------------------------------------------------------- */
+function tocouPonto(){
+  var p=this;
+  if(travada||!p||!viva()) return;
+  if(p._n===proximo){ liga(p); return; }
+  /* já ligado, ou ainda não é a vez: NÃO LIGA, e não acontece mais nada de
+     ruim. Uma etiqueta em palavras (a barra de dica) explica o que falta —
+     nunca um retângulo colorido e um silêncio, que faz a criança achar que
+     o app travou. */
+  sNaoLiga();
+  p.className=(p._n<proximo)?"pt feito treme":"pt treme";
+  destreme(p);
+  ajuda(errosSeg+1);
+}
+/* tocar fora dos pontinhos: responde ao dedo (a crianca precisa saber que a
+   tela ouviu) e nao acontece mais nada. Sem dica, sem andaime, sem som de
+   tropeco — tocar fora nao e tentativa, e exploracao. */
+function tocouFora(){
+  if(travada||!viva()) return;
+  sToque();
+}
+function liga(p){
+  var fg=figura();
+  proximo++;
+  errosSeg=0;
+  p.className="pt feito";
+  sLiga(proximo-1,fg.pts.length);
+  desenhaFio();
+  apagaDica();
+  if(barraP) barraP.style.width=
+    Math.round((fi+(proximo-1)/fg.pts.length)*100/FIGURAS.length)+"%";
+  if(proximo>fg.pts.length){ fecha(); return; }
+  marcaProximo();
+  diz(nomeNum(proximo));
+}
+/* ⚠️ todo ajudante que mexe no DOM comeca conferindo se o DOM existe: uma
+   funcao dessas, chamada antes do elemento nascer, ja derrubou quatro
+   portoes de uma vez com TypeError. */
+function desenhaFio(){
+  if(!fioEl) return;
+  var fg=figura(), i, s="";
+  for(i=0;i<proximo-1&&i<fg.pts.length;i++) s+=fg.pts[i][0]+","+fg.pts[i][1]+" ";
+  if(proximo>fg.pts.length) s+=fg.pts[0][0]+","+fg.pts[0][1];
+  fioEl.setAttribute("points",s);
+}
+/* `data-qa` = o pontinho da vez, so para o auditor-jogador. Para a crianca o
+   atributo nao existe (nao muda um pixel na tela). O PULSAR, esse sim, so
+   comeca no 2o degrau do andaime. */
+function marcaProximo(){
+  var i, p;
+  if(!ptEls.length) return;
+  for(i=0;i<ptEls.length;i++){
+    p=ptEls[i];
+    if(!p) continue;
+    if(p._n===proximo){
+      p.setAttribute("data-qa","1");
+      p.className=(errosSeg>=2)?"pt prox":"pt";
+    }else{
+      p.removeAttribute("data-qa");
+      if(p._n<proximo) p.className="pt feito";
+      else p.className="pt";
+    }
+  }
+}
+function destreme(p){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()||!p) return;
+    if(p._n<proximo) p.className="pt feito";
+    else if(p._n===proximo) p.className=(errosSeg>=2)?"pt prox":"pt";
+    else p.className="pt";
+  },340);
+}
+
+/* ---------------------------------------------------------------
+   O ANDAIME QUE CRESCE. Sempre com o NÚMERO da vez dentro da frase
+   (o nome do que está na tela sai de uma função, nunca escrito à
+   mão em cada dica — é assim que não sobra vocabulário de outra
+   rodada).
+   --------------------------------------------------------------- */
+function ajuda(n){
+  errosSeg=Math.min(n,DICAS.length);
+  if(errosSeg<3){
+    marcaProximo();
+    mostraDica(DICAS[errosSeg-1].replace("{n}",""+proximo));
+    if(errosSeg===2) diz("Procure o número " + nomeNum(proximo) + ".");
+    return;
+  }
+  /* ⚠️ 3o DEGRAU: primeiro LIGA o tracinho, DEPOIS escreve a dica. Ao
+     contrario, a explicacao e apagada no mesmo quadro em que nasce (defeito
+     que apareceu em cinco pecas do mesmo lote). */
+  var alvo=ptEls[proximo-1];
+  if(alvo) liga(alvo);
+  if(!travada){
+    errosSeg=3;
+    marcaProximo();
+    mostraDica(DICAS[2]);
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* ---------------------------------------------------------------
+   A FIGURA ACENDE INTEIRA. O nome dela vem AGORA, e não antes: o
+   conceito por último é a lei da casa.
+   --------------------------------------------------------------- */
+function fecha(){
+  travada=true;                        /* ⚠️ trava NO INSTANTE, nao no fim */
+  var fg=figura(), g=ger, i;
+  for(i=0;i<ptEls.length;i++) if(ptEls[i]) ptEls[i].removeAttribute("data-qa");
+  if(figEl){
+    figEl.style.fill=fg.cor;
+    figEl.style.stroke="#2b2118";
+    figEl.style.strokeWidth="1.6";
+    figEl.setAttribute("class","figc viva");
+    var sv=figEl.parentNode;
+    if(sv) sv.innerHTML+=fg.extra;
+  }
+  if(revelaEl) revelaEl.innerHTML="&#201; "+fg.nome+"!";
+  FEITAS.push(fi);
+  sCerto();
+  diz("É " + fg.voz + "!");
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    fi++;
+    var msg="<b>A figura apareceu!</b><br>Voc&#234; ligou tudo na ordem certa.";
+    if(fi<FIGURAS.length) mostraBanner(msg,telaPontos);
+    else mostraBanner(msg,fimDaPeca);
+  },1500);
+}
+
+/* ---------------------------------------------------------------
+   A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimDaPeca(){
+  ger++; travada=false;
+  limpa();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro"), i;
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; achou <b>"+(FEITAS.length||FIGURAS.length)+
+                   "</b> figura(s) seguindo os n&#250;meros na ordem."));
+  var gal=el("div","galeria");
+  for(i=0;i<FIGURAS.length;i++) gal.appendChild(montaFolha(FIGURAS[i],FIGURAS[i].pts.length,"mini",0));
+  c.appendChild(gal);
+  var b=el("button","btn","Jogar de novo");
+  b.style.marginTop="10px";
+  b.onclick=function(){ fi=0; FEITAS=[]; telaPontos(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a LIGAR OS PONTINHOS: a ordem dos n&#250;meros vira desenho."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaPontos();
+</script>
+</body></html>

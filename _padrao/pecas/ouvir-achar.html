@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ouvir e achar (o som chama, a figura responde)</title>
+<!-- ============================================================
+     PEÇA: OUVIR E ACHAR — toca a palavra, a criança acha a figura.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     POR QUE ELA EXISTE:
+     no pré e no 1º ano a criança ainda não lê — ela OUVE. Esta é a mecânica que
+     deixa a atividade inteira acessível a quem ainda soletra: o enunciado chega
+     pelo ouvido e a resposta é uma FIGURA, não uma frase. E é também a porta da
+     consciência fonológica: da palavra inteira (rodada 1 e 2) para o SOM DO
+     COMEÇO (rodada 3), que é o degrau que abre a leitura.
+
+     ⚠️ A REGRA QUE MANDA AQUI: ELA TEM QUE FUNCIONAR NO MUDO.
+     PC de escola sem caixa de som existe, e é a regra da casa que todo som tenha
+     gêmeo visual. Então a palavra da vez aparece SEMPRE ESCRITA, em letra
+     grande, ao lado do botão de ouvir; e cada figura tem o nome escrito embaixo.
+     Quem tem som ouve e acha; quem não tem, lê e acha; quem não lê nem ouve,
+     ainda tem o alto-falante de cada resposta. Nenhuma criança fica de fora.
+
+     A VOZ AQUI É `speechSynthesis` SÓ PARA PROVAR O CONTRATO. Na atividade de
+     verdade, cada chamada de `diz(...)` vira `falaDaTela(id)` (o MP3 gravado
+     pelo `entregar.yml` a partir do `falas.json`) e o alto-falante de cada
+     resposta vira `op_<chave>.mp3` + `VOZOK`, como manda o pilar SONORA.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · EXATAMENTE 3 DISTRATORES. Com 2, a criança elimina tudo antes do 3º erro
+         e o degrau "revelar" vira código morto; com 5, o andaime nunca chega.
+       · OPÇÃO JÁ TENTADA não se distingue só pela cor nem responde com silêncio:
+         ganha a etiqueta em PALAVRAS ("já tentamos") e um som de retorno.
+       · A CORRIDA DO TOQUE DUPLO: `travada = true` no INSTANTE do acerto, nunca
+         no fim da animação — criança toca duas vezes, é o normal dela.
+       · A 3ª DICA INVISÍVEL: o revelar acende a certa e SÓ DEPOIS escreve a
+         explicação, que fica 2,2s de pé. Nas cinco peças de ago/2026 ela era
+         escrita e apagada no mesmo quadro.
+       · TEMPORIZADOR DE RODADA VELHA: todo setTimeout guarda a GERAÇÃO.
+       · OPÇÕES EMBARALHADAS: na Fábrica de Estrelas a certa era sempre a 1ª e a
+         criança aprendeu a posição, não o conteúdo.
+       · NUNCA TRAVA: o 3º erro resolve a rodada sozinho.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; nada essencial só na cor; funciona no mudo; publica
+     data-qa; termina em .medal. Toda figura é desenhada em CSS — sem arquivo
+     externo, porque a peça tem que rodar sozinha em qualquer lugar.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A CAIXA DE SOM: o botao de ouvir E a palavra ESCRITA, lado a lado. A palavra
+   escrita nao e enfeite — e o gemeo visual do som, o que faz a peca funcionar
+   no PC sem caixa de som. */
+.somcard{max-width:430px;margin:13px auto 0;background:rgba(255,255,255,.12);border-radius:16px;
+         padding:7px 10px;text-align:center}
+.obt{display:inline-block;vertical-align:middle;background:#ffd54a;color:#33280a;border:0;
+     border-radius:14px;min-height:46px;min-width:96px;padding:0 14px;font-size:15px;font-weight:800;
+     cursor:pointer;-webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f}
+.obt:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+.palvbox{display:inline-block;vertical-align:middle;margin-left:11px;text-align:left}
+.palvr{font-size:11px;font-weight:800;letter-spacing:.7px;color:#f0e6d4}
+.palv{font-size:27px;line-height:1.1;font-weight:800;color:#ffd54a;letter-spacing:1px}
+/* O ALTO-FALANTE DESENHADO (nada de emoji).
+   ⚠️ DEFEITO PEGO NO PRINT (ago/2026): na 1a versao o corpinho ficava do lado
+   errado do cone e o desenho virava uma SETA PARA A ESQUERDA — a crianca lia
+   "voltar" num botao que fala. Corpo a ESQUERDA, cone abrindo para a DIREITA,
+   e a ondinha de som na frente: ai nao se confunde com seta. */
+.fone{display:inline-block;position:relative;width:0;height:0;vertical-align:middle;
+      border-top:8px solid rgba(0,0,0,0);border-bottom:8px solid rgba(0,0,0,0);
+      border-right:10px solid #33280a;margin:0 15px 0 8px}
+.fone:after{content:"";position:absolute;left:-6px;top:-4px;width:6px;height:8px;background:#33280a}
+.fone:before{content:"";position:absolute;left:14px;top:-7px;width:9px;height:22px;
+             border-right:3px solid #33280a;border-radius:0 60% 60% 0/0 50% 50% 0}
+/* dentro do botao de OUVIR o icone tem texto ao lado: a ondinha precisa de folga
+   ou ela encosta na palavra (defeito visto no print). */
+.obt .fone{margin-right:23px}
+
+/* AS FIGURAS. Duas colunas no celular; em janela baixa viram quatro numa linha
+   so (a altura e o que falta la, nao a largura). */
+.fig{display:inline-block;vertical-align:top;width:47%;max-width:190px;position:relative;
+     margin:4px 1%;padding:6px 6px 19px;min-height:0;text-align:center}
+.des{position:relative;width:58px;height:58px;margin:0 auto}
+.linha{margin-top:2px;white-space:nowrap}
+.nom{display:inline-block;vertical-align:middle;font-size:15px;font-weight:800;letter-spacing:.5px;
+     color:#221a12;max-width:56%;overflow:hidden}
+/* alto-falante de CADA resposta (pilar SONORA: no pre/1o ano tem quem nao le,
+   e sem a voz a escolha vira loteria) */
+.zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin-left:6px;
+     border:0;border-radius:12px;background:#efe6d2;cursor:pointer;padding:0;line-height:44px}
+.zap:active{background:#ded3b8}
+/* ETIQUETA EM PALAVRAS, nunca so a cor: quem nao distingue cor precisa LER que
+   ali ja se tentou. */
+.jat{position:absolute;left:6px;right:6px;bottom:3px;background:#6b5a44;color:#fff;
+     font-size:11px;font-weight:800;border-radius:8px;padding:2px 0;display:none}
+.jat.ver{display:block}
+/* APOIO CONCRETO do 2o degrau: a letra do comeco de cada nome, para comparar */
+.ini{position:absolute;left:5px;top:5px;width:26px;height:26px;border-radius:8px;background:#3c6ee0;
+     color:#fff;font-size:15px;font-weight:800;line-height:26px;display:none}
+.ini.ver{display:block}
+.fig.certa{background:#d6f5c8;-webkit-box-shadow:0 4px 0 #7cb464,0 0 0 4px #2f7a1c;
+           box-shadow:0 4px 0 #7cb464,0 0 0 4px #2f7a1c}
+.fig.usada{background:#e6ddcb;-webkit-box-shadow:0 4px 0 #b4a88f;box-shadow:0 4px 0 #b4a88f}
+
+/* ---- OS DESENHOS (CSS puro: nenhum arquivo externo) ---- */
+.solc{position:absolute;left:9px;top:9px;width:40px;height:40px;border-radius:50%;background:#ffd54a;
+      z-index:2;-webkit-box-shadow:inset 0 0 0 3px #a8710c;box-shadow:inset 0 0 0 3px #a8710c}
+.solr{position:absolute;left:50%;top:50%;width:6px;height:58px;margin:-29px 0 0 -3px;border-radius:3px;
+      background:#e09400}
+.cpar{position:absolute;left:8px;top:26px;width:42px;height:30px;background:#e0c9a0;
+      -webkit-box-shadow:inset 0 0 0 3px #8a6a45;box-shadow:inset 0 0 0 3px #8a6a45}
+.ctel{position:absolute;left:1px;top:4px;width:0;height:0;border-left:28px solid rgba(0,0,0,0);
+      border-right:28px solid rgba(0,0,0,0);border-bottom:23px solid #b1483a}
+.cpor{position:absolute;left:23px;top:38px;width:13px;height:18px;background:#6b4b2a;border-radius:3px 3px 0 0}
+.bcir{position:absolute;left:4px;top:4px;width:50px;height:50px;border-radius:50%;background:#e8563f;
+      overflow:hidden;-webkit-box-shadow:inset 0 0 0 3px #8c2c1c;box-shadow:inset 0 0 0 3px #8c2c1c}
+/* ⚠️ DEFEITO PEGO NO PRINT: com UMA faixa branca larga no meio, a bola virava
+   uma placa de PROIBIDO. Duas faixas finas cruzadas leem como bola. */
+.bfai{position:absolute;left:-2px;top:22px;width:54px;height:6px;background:#fffdf6}
+.bfa2{position:absolute;left:22px;top:-2px;width:6px;height:54px;background:#fffdf6}
+.pcor{position:absolute;left:14px;top:16px;width:40px;height:27px;border-radius:50%;background:#3f8fa8;
+      -webkit-box-shadow:inset 0 0 0 3px #1c5162;box-shadow:inset 0 0 0 3px #1c5162}
+.prab{position:absolute;left:1px;top:19px;width:0;height:0;border-top:10px solid rgba(0,0,0,0);
+      border-bottom:10px solid rgba(0,0,0,0);border-right:15px solid #3f8fa8}
+.polh{position:absolute;left:43px;top:23px;width:7px;height:7px;border-radius:50%;background:#0d2b33}
+.atro{position:absolute;left:23px;top:30px;width:13px;height:28px;background:#6b4b2a;border-radius:2px}
+.acop{position:absolute;left:5px;top:0;width:48px;height:39px;border-radius:50%;background:#2f8f3a;
+      -webkit-box-shadow:inset 0 0 0 3px #1c5c22;box-shadow:inset 0 0 0 3px #1c5c22}
+.fcau{position:absolute;left:26px;top:30px;width:6px;height:27px;background:#2f8f3a}
+.fpet{position:absolute;left:29px;top:24px;width:15px;height:24px;margin-left:-7px;border-radius:50%;
+      background:#e05c9e;-webkit-transform-origin:50% 0;transform-origin:50% 0;
+      -webkit-box-shadow:inset 0 0 0 2px #9c2f66;box-shadow:inset 0 0 0 2px #9c2f66}
+.fmio{position:absolute;left:20px;top:15px;width:18px;height:18px;border-radius:50%;background:#ffd54a;
+      z-index:2;-webkit-box-shadow:inset 0 0 0 2px #a8710c;box-shadow:inset 0 0 0 2px #a8710c}
+.kcab{position:absolute;left:2px;top:17px;width:25px;height:25px;border-radius:50%;
+      -webkit-box-shadow:inset 0 0 0 7px #c9a52f;box-shadow:inset 0 0 0 7px #c9a52f}
+.khas{position:absolute;left:25px;top:26px;width:31px;height:8px;background:#c9a52f;border-radius:2px}
+.kden{position:absolute;top:34px;width:7px;height:10px;background:#c9a52f}
+.lua{position:absolute;left:8px;top:6px;width:42px;height:42px;border-radius:50%;
+     -webkit-box-shadow:15px 7px 0 0 #ffe9a8;box-shadow:15px 7px 0 0 #ffe9a8}
+
+.cont{margin-top:10px;font-size:15px;font-weight:700}
+.cont b{color:#ffd54a}
+.aviso{margin-top:8px;font-size:16px;font-weight:700;background:#1f6b12;color:#fff;
+       border-radius:12px;padding:9px 12px;display:none}
+.aviso.ver{display:block}
+.medal{width:96px;height:96px;margin:2px auto 10px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:40px;line-height:84px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (o 1024x420 da escola): as quatro figuras numa linha so. A que
+   encolhe e a FIGURA e a letra — o alvo do dedo continua acima de 44px. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:8px 13px}
+  .balao + *{margin-top:8px}
+  .somcard{margin-top:8px;padding:5px 8px}
+  .obt{min-height:44px;font-size:14px}
+  .palv{font-size:22px}
+  .fig{width:23%;padding:5px 5px 18px;margin:3px .8%}
+  .des{width:46px;height:46px}
+  .solc{left:5px;top:5px;width:36px;height:36px}
+  .solr{height:46px;margin-top:-23px}
+  .nom{font-size:13px}
+  .zap{width:44px;height:44px;line-height:44px;margin-left:4px}
+  .cont{margin-top:5px;font-size:13px}
+  .aviso{margin-top:5px;font-size:14px;padding:6px 10px}
+  .hint{margin-top:4px;font-size:13px}
+  .medal{width:70px;height:70px;font-size:30px;line-height:60px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) O BANCO DE FIGURAS. Cada uma tem NOME (o gemeo escrito, que faz a
+      peca funcionar no mudo) e um desenho de CSS.
+   --------------------------------------------------------------- */
+var FIG={
+ sol:   {nome:"SOL",    voz:"sol"},
+ casa:  {nome:"CASA",   voz:"casa"},
+ bola:  {nome:"BOLA",   voz:"bola"},
+ peixe: {nome:"PEIXE",  voz:"peixe"},
+ arvore:{nome:"&#193;RVORE", voz:"árvore", letra:"A"},
+ flor:  {nome:"FLOR",   voz:"flor"},
+ chave: {nome:"CHAVE",  voz:"chave"},
+ lua:   {nome:"LUA",    voz:"lua"}
+};
+
+/* ---------------------------------------------------------------
+   2) AS RODADAS. SEMPRE 3 DISTRATORES: com 2 a crianca elimina tudo antes
+      do 3o erro (o degrau "revelar" nunca acontece) e com 5 o andaime
+      nunca chega nela.
+      A escada:  palavra inteira -> palavra inteira com duas figuras da
+      mesma familia (arvore/flor) -> o SOM DO COMECO, que e simbolico.
+   --------------------------------------------------------------- */
+var RODADAS=[
+ {selo:"OU&Ccedil;A E ACHE", alvo:"sol", opcoes:["sol","casa","bola","peixe"],
+  rotulo:"A PALAVRA &Eacute;", escrito:"SOL", fala:"sol",
+  enun:"Ou&#231;a a palavra e toque na <b>figura</b> dela.",
+  hint:"Sem som no computador? A palavra est&#225; escrita a&#237; em cima.",
+  msg:"Isso! O <b>SOL</b> &#233; este.",
+  dicas:["Aperte <b>Ouvir</b> de novo e diga a palavra junto, bem devagar.",
+         "Olhe a <b>letra do come&#231;o</b> de cada nome. A palavra come&#231;a com <b>S</b>.",
+         "Esta &#233; a figura da palavra <b>SOL</b>: o sol tem raios em volta."]},
+
+ {selo:"OU&Ccedil;A COM CUIDADO", alvo:"arvore", opcoes:["arvore","flor","casa","chave"],
+  rotulo:"A PALAVRA &Eacute;", escrito:"&#193;RVORE", fala:"árvore",
+  enun:"Agora tem <b>duas</b> figuras do mesmo jardim. Ou&#231;a at&#233; o fim.",
+  hint:"&#193;rvore e flor s&#227;o as duas do jardim: o que muda &#233; a palavra.",
+  msg:"Isso! <b>&#193;RVORE</b> tem tronco e copa.",
+  dicas:["Ou&#231;a de novo at&#233; o <b>fim</b> da palavra: flor acaba r&#225;pido, &#225;rvore &#233; comprida.",
+         "A letra do come&#231;o est&#225; em cada figura. A palavra come&#231;a com <b>A</b>.",
+         "Esta &#233; a <b>&#193;RVORE</b>: come&#231;a com A e tem tr&#234;s peda&#231;os: &#225;r-vo-re."]},
+
+ {selo:"O SOM DO COME&Ccedil;O", alvo:"flor", opcoes:["flor","peixe","lua","bola"],
+  rotulo:"O SOM DO COME&Ccedil;O &Eacute;", escrito:"F", fala:"efe. fffff",
+  enun:"Qual figura <b>come&#231;a</b> com este som?",
+  hint:"Diga o nome de cada figura em voz alta e escute s&#243; o come&#231;o.",
+  msg:"Isso! <b>FLOR</b> come&#231;a com F: fff-lor.",
+  dicas:["Diga o nome de cada figura e pare no <b>primeiro pedacinho</b>: fff, ppp, lll, bbb.",
+         "A letra do come&#231;o de cada nome apareceu no canto. Procure o <b>F</b>.",
+         "<b>FLOR</b> come&#231;a com o som <b>fff</b>. F de flor, de fada, de faca."]}
+];
+
+var rodada=0, R=null, erros=0, travada=false, revelando=false;
+var ger=0, progVisto=0, acertosDePrimeira=0;
+var elAviso=null, elCont=null, progI=null, cartoes=[];
+
+/* A VOZ. Aqui e `speechSynthesis` so para PROVAR o contrato — se o PC nao tiver
+   voz, a peca continua inteira, porque tudo que a voz diz esta escrito na tela.
+   NA ATIVIDADE DE VERDADE esta linha vira `falaDaTela("<id da fala>")`, e o
+   alto-falante de cada resposta vira `op_<chave>.mp3` + `VOZOK`. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.9; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sVolta(){ nota(392,.10,.11,"sine",0); nota(294,.12,.10,"sine",.08); }
+function sPing(){ nota(880,.09,.12,"triangle",0); }
+
+/* ---------------------------------------------------------------
+   3) OS DESENHOS — CSS puro, nenhum arquivo externo
+   --------------------------------------------------------------- */
+function desenho(k){
+  var d=el("div","des",""), i, e;
+  if(k==="sol"){
+    for(i=0;i<8;i++){
+      e=el("i","solr","");
+      e.style.webkitTransform="rotate("+(i*45)+"deg)";
+      e.style.transform="rotate("+(i*45)+"deg)";
+      d.appendChild(e);
+    }
+    d.appendChild(el("i","solc",""));
+  }else if(k==="casa"){
+    d.appendChild(el("i","ctel","")); d.appendChild(el("i","cpar","")); d.appendChild(el("i","cpor",""));
+  }else if(k==="bola"){
+    e=el("i","bcir","");
+    e.appendChild(el("i","bfai","")); e.appendChild(el("i","bfa2",""));
+    d.appendChild(e);
+  }else if(k==="peixe"){
+    d.appendChild(el("i","prab","")); d.appendChild(el("i","pcor","")); d.appendChild(el("i","polh",""));
+  }else if(k==="arvore"){
+    d.appendChild(el("i","atro","")); d.appendChild(el("i","acop",""));
+  }else if(k==="flor"){
+    d.appendChild(el("i","fcau",""));
+    for(i=0;i<5;i++){
+      e=el("i","fpet","");
+      e.style.webkitTransform="rotate("+(i*72)+"deg)";
+      e.style.transform="rotate("+(i*72)+"deg)";
+      d.appendChild(e);
+    }
+    d.appendChild(el("i","fmio",""));
+  }else if(k==="chave"){
+    d.appendChild(el("i","kcab","")); d.appendChild(el("i","khas",""));
+    e=el("i","kden",""); e.style.left="40px"; d.appendChild(e);
+    e=el("i","kden",""); e.style.left="50px"; d.appendChild(e);
+  }else{
+    d.appendChild(el("i","lua",""));
+  }
+  return d;
+}
+/* a letra do comeco, para o 2o degrau do andaime. Tira o acento (o &Aacute; da
+   ARVORE) porque o que a crianca compara e a LETRA, nao o acento. */
+function letraDe(k){ return FIG[k].letra || FIG[k].nome.charAt(0); }
+
+/* ---------------------------------------------------------------
+   4) A TELA
+   --------------------------------------------------------------- */
+function pecaOuvir(){
+  limpa();
+  R=RODADAS[rodada];
+  erros=0; travada=false; revelando=false; cartoes=[]; ger++;
+  var t=el("div","tela");
+  setProg(t,progVisto);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.enun));
+
+  /* A CAIXA DE SOM: botao de ouvir + a palavra ESCRITA (o gemeo visual) */
+  var sc=el("div","somcard","");
+  var bo=el("button","obt","");
+  bo.appendChild(el("i","fone",""));
+  bo.appendChild(document.createTextNode("Ouvir"));
+  bo.onclick=function(){ tocaAlvo(); };
+  sc.appendChild(bo);
+  var pb=el("div","palvbox","");
+  pb.appendChild(el("div","palvr",R.rotulo));
+  pb.appendChild(el("div","palv",R.escrito));
+  sc.appendChild(pb);
+  c.appendChild(sc);
+
+  /* AS FIGURAS, embaralhadas (na Fabrica de Estrelas a certa era sempre a 1a e
+     a crianca aprendeu a POSICAO, nao o conteudo) */
+  var box=el("div","opts",""), lista=baguncar(R.opcoes.slice(0)), i;
+  for(i=0;i<lista.length;i++) box.appendChild(cartao(lista[i]));
+  c.appendChild(box);
+
+  elCont=el("div","cont","Figura <b>"+(rodada+1)+"</b> de <b>"+RODADAS.length+"</b>");
+  c.appendChild(elCont);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  c.appendChild(el("div","hint",R.hint));
+  t.appendChild(c);
+  app.appendChild(t);
+  /* na atividade de verdade: falaDaTela("<id>") + depoisDaFala para tocar a
+     palavra logo depois do enunciado. */
+  diz(R.enun.replace(/<[^>]+>/g,""));
+  var g=ger;
+  setTimeout(function(){ if(g===ger) tocaAlvo(); },1500);
+}
+
+function cartao(k){
+  /* ⚠️ a classe sai em DUAS partes de proposito. O portao `_qa/dinamicas.py`
+     reconhece a familia "escolher" pelo literal `el("div","opt"` — escrito
+     `el("div","opt fig")` ele nao reconhece nada, e "0 dinamica reconhecida" e
+     aprovacao VAZIA: o portao passa sem ter medido a armadilha desta mecanica
+     (as opcoes embaralhadas). Esta peca E um escolher, entao ela se apresenta
+     como um. */
+  var o=el("div","opt","");
+  o.className="opt fig";
+  o.appendChild(el("div","ini",letraDe(k)));
+  o.appendChild(desenho(k));
+  var lin=el("div","linha","");
+  lin.appendChild(el("span","nom",FIG[k].nome));
+  var z=el("button","zap","");
+  z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label","Ouvir "+FIG[k].nome);
+  /* ⚠️ o alto-falante NAO escolhe: ele so fala. Sem parar o evento aqui, tocar
+     no alto-falante valia como resposta — e a crianca que so queria conferir o
+     nome levava um erro. */
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    sPing(); diz(FIG[k].voz);
+  };
+  lin.appendChild(z);
+  o.appendChild(lin);
+  o.appendChild(el("div","jat","j&#225; tentamos"));
+  o.setAttribute("data-qa", k===R.alvo ? "1" : "0");
+  o.onclick=function(){ escolhe(k,o); };
+  cartoes.push({k:k,el:o,tentada:false});
+  return o;
+}
+function achaCartao(k){ var i; for(i=0;i<cartoes.length;i++){ if(cartoes[i].k===k) return cartoes[i]; } return null; }
+
+function tocaAlvo(){
+  sPing();
+  diz(R.fala);
+}
+
+/* ---------------------------------------------------------------
+   5) A ESCOLHA
+   --------------------------------------------------------------- */
+function escolhe(k,o){
+  if(travada||revelando) return;
+  var c=achaCartao(k);
+  if(c&&c.tentada){
+    /* ⚠️ opcao ja tentada nao responde com SILENCIO nem se distingue so pela
+       cor: som de retorno + a etiqueta em palavras que ja esta na tela. */
+    sVolta();
+    mostraDica("Nesta a gente <b>j&#225; tentou</b>. Escute de novo e escolha outra figura.");
+    return;
+  }
+  if(k===R.alvo){ acertou(o); return; }
+  errouUma(c,o);
+}
+function acertou(o){
+  travada=true;                     /* ⚠️ trava NO INSTANTE do toque */
+  if(erros===0) acertosDePrimeira++;
+  o.className="opt fig certa";
+  sCerto();
+  if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
+  diz(R.msg.replace(/<[^>]+>/g,""));
+  segue(1600);
+}
+function errouUma(c,o){
+  if(c){ c.tentada=true; }
+  o.className="opt fig usada";
+  var j=o.getElementsByClassName("jat")[0];
+  if(j) j.className="jat ver";
+  o.setAttribute("data-qa","2");
+  erros++;
+  sErro();
+  ajuda(erros);
+}
+
+/* ---------------------------------------------------------------
+   6) O ANDAIME QUE CRESCE (1 metodo, 2 apoio concreto, 3 revela)
+   --------------------------------------------------------------- */
+function ajuda(n){
+  var p=n%3;
+  if(p===1){
+    mostraDica(R.dicas[0]);
+    diz(R.dicas[0].replace(/<[^>]+>/g,""));
+  }else if(p===2){
+    mostraDica(R.dicas[1]);
+    diz(R.dicas[1].replace(/<[^>]+>/g,""));
+    mostraIniciais();
+  }else{
+    revela();
+  }
+}
+/* APOIO CONCRETO: a letra do comeco aparece em cada figura. Nao e a resposta —
+   e a ferramenta com que se acha a resposta. */
+function mostraIniciais(){
+  var i,e;
+  for(i=0;i<cartoes.length;i++){
+    e=cartoes[i].el.getElementsByClassName("ini")[0];
+    if(e) e.className="ini ver";
+  }
+}
+/* ⚠️ O 3o DEGRAU: acende a certa PRIMEIRO e escreve a explicacao DEPOIS. Nas
+   cinco pecas de ago/2026 o "revelar" chamava o "acertou", e o "acertou"
+   apagava a barra de dica no mesmo quadro: a peca se consertava sozinha e a
+   crianca nunca lia por que. Aqui a dica fica 2,2s de pe antes de a tela virar. */
+function revela(){
+  if(revelando) return;
+  revelando=true; travada=true;
+  var g=ger, c=achaCartao(R.alvo);
+  if(c){ c.el.className="opt fig certa"; }
+  mostraIniciais();
+  sPing(); sCerto();
+  mostraDica(R.dicas[2]);
+  diz(R.dicas[2].replace(/<[^>]+>/g,""));
+  if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
+  setTimeout(function(){
+    if(g!==ger) return;
+    revelando=false;
+    segue(0);
+  },2200);
+}
+
+/* ---------------------------------------------------------------
+   7) O QUE VEM DEPOIS
+   --------------------------------------------------------------- */
+function segue(espera){
+  var g=ger;
+  travada=true;
+  progVisto=Math.round((rodada+1)*100/RODADAS.length);
+  if(progI) progI.style.width=progVisto+"%";
+  setTimeout(function(){
+    if(g!==ger) return;
+    rodada++;
+    if(rodada<RODADAS.length){ pecaOuvir(); return; }
+    mostraBanner("<b>Voc&#234; achou as tr&#234;s pelo som!</b><br>Ouvir com cuidado &#233; o "+
+                 "come&#231;o de ler.", fimOuvir);
+  }, espera||600);
+}
+
+/* ---------------------------------------------------------------
+   8) A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimOuvir(){
+  limpa();
+  ger++; travada=true;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(acertosDePrimeira>=3) parecer="Voc&#234; achou as <b>3</b> de primeira, s&#243; escutando. "+
+                                   "Seu ouvido est&#225; afiado!";
+  else if(acertosDePrimeira===2) parecer="Voc&#234; achou <b>2</b> de primeira. Na outra, escutar de "+
+                                          "novo resolveu &#8212; e isso tamb&#233;m &#233; saber ouvir.";
+  else if(acertosDePrimeira===1) parecer="Voc&#234; achou <b>1</b> de primeira e foi at&#233; o fim nas "+
+                                          "outras. Ouvir com cuidado se aprende ouvindo de novo.";
+  else parecer="Voc&#234; foi at&#233; o fim das <b>3</b>, escutando de novo cada vez. &#201; "+
+               "exatamente assim que o ouvido aprende.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Ouvir de novo tudo");
+  b.onclick=function(){ rodada=0; progVisto=0; acertosDePrimeira=0; pecaOuvir(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Na atividade de verdade a voz &#233; MP3 gravado, e cada "+
+                   "figura tem o alto-falante dela."));
+  t.appendChild(c);
+  app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+pecaOuvir();
+</script>
+</body></html>

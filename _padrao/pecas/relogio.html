@@ -137,9 +137,16 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .rdig b{display:block;font-size:30px;line-height:1.12;color:#ffd54a}
 .rtexto{font-size:15px;font-weight:700;color:#ffd8a8;margin-top:1px}
 .rbts{margin-top:8px}
+/* ⚠️ OS QUATRO BOTOES TEM QUE CABER NUMA LINHA SO. Com os rotulos por extenso
+   ("-1 hora") eles quebravam para uma segunda linha em 320px e empurravam o
+   "Esta pronto!" PARA FORA DA TELA — o portao de leiaute pegou. Agora o sinal
+   vai grande em cima e a unidade pequena embaixo, dentro do mesmo alvo de
+   56px: cabe na linha e continua legivel para quem esta aprendendo a ler. */
 .tecl{display:inline-block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
-      min-width:62px;min-height:56px;line-height:56px;padding:0 6px;margin:4px 4px;
+      min-width:62px;min-height:56px;line-height:1;padding:9px 5px 7px;margin:4px 4px;
       font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.tecl b{display:block;font-size:19px;line-height:22px}
+.tecl i{display:block;font-style:normal;font-size:11px;line-height:13px;letter-spacing:.4px}
 .tecl.on{background:#ffd54a;box-shadow:0 4px 0 #b08d1c}
 .rzona{margin-top:8px}
 /* opcoes em DUAS COLUNAS: com 4 opcoes empilhadas a ultima caia fora da tela
@@ -150,6 +157,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
        font-size:44px;line-height:92px;text-align:center;font-weight:800}
 .medal:before{content:"\2605"}
+/* CELULAR ESTREITO (320px). O relogio encolhe para que os quatro botoes e o
+   "Esta pronto!" continuem dentro da tela sem rolagem. */
+@media (max-width:359px){
+  .relo{width:176px;height:176px}
+  .tecl{min-width:58px;margin:4px 3px}
+}
 /* JANELA BAIXA (1024x420 = o monitor da escola). Encolhe o relogio e as
    letras, NUNCA os botoes — e sobra espaco para a barra de dica, que so
    aparece depois do erro (o portao de leiaute abre a fase sem ela). */
@@ -248,6 +261,11 @@ var LER=[
 /* o par FORMAR/LER, alternado */
 var ROT=["f","l","f","l","f","l"];
 var NOMEH=["doze","uma","duas","tr&ecirc;s","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"];
+/* ⚠️ os minutos VÃO POR EXTENSO. Enquanto era "doze e 5", a criança que ainda
+   soletra lia "doze e cinco" numa tela e via "5" na outra — e a peça é
+   justamente sobre juntar o número com a palavra. */
+var NOMEM=["","cinco","dez","quinze","vinte","vinte e cinco","trinta","trinta e cinco",
+           "quarenta","quarenta e cinco","cinquenta","cinquenta e cinco"];
 
 var pos=0;            /* onde estamos no roteiro */
 var fi=0, li=0;       /* rodada de FORMAR / de LER (calculadas de `pos`) */
@@ -283,9 +301,8 @@ function digital(h,m){ return h+":"+(m<10?"0"+m:""+m); }
 function textoDaHora(h,m){
   var nh=NOMEH[h%12===0?12:h%12];
   if(m===0)  return nh+(h===1?" hora":" horas");
-  if(m===15) return nh+" e quinze";
   if(m===30) return nh+" e meia";
-  if(m===45) return nh+" e quarenta e cinco";
+  if(m%5===0) return nh+" e "+NOMEM[m/5];
   return nh+" e "+m;
 }
 /* para que n&uacute;mero do mostrador o ponteiro GRANDE aponta */
@@ -469,8 +486,8 @@ function telaFormar(){
   c.appendChild(eTexto);
 
   var bts=el("div","rbts",""), i;
-  var DEF=[{k:"-h",r:"&#8722;1 hora"},{k:"-m",r:"&#8722;5 min"},
-           {k:"+m",r:"+5 min"},{k:"+h",r:"+1 hora"}];
+  var DEF=[{k:"-h",r:"<b>&#8722;1</b><i>hora</i>"},{k:"-m",r:"<b>&#8722;5</b><i>min</i>"},
+           {k:"+m",r:"<b>+5</b><i>min</i>"},{k:"+h",r:"<b>+1</b><i>hora</i>"}];
   for(i=0;i<DEF.length;i++) bts.appendChild(fazTecla(DEF[i].k,DEF[i].r));
   c.appendChild(bts);
 

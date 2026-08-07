@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — pintar o desenho (livro de colorir)</title>
+<!-- ============================================================
+     PEÇA: PINTAR O DESENHO — O LIVRO DE COLORIR
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     PARA QUEM É: PRÉ e 1º ano. A criança não lê: alvo de dedo de 56px,
+     enunciado de uma linha, e a cor escolhida se anuncia por VOZ.
+
+     ⚠️ ESTA PEÇA NÃO TEM CERTO NEM ERRADO — E ISSO É O PONTO.
+     Ela é a única do catálogo em que a criança PRODUZ em vez de responder.
+     Nenhum som de tropeço, nenhuma marca de recusa, nenhum andaime de erro:
+     não existe erro. O peixe pode ser roxo. O que a peça mede não é acerto,
+     é AUTORIA — e por isso o que ela pintou fica GUARDADO e volta na galeria
+     do fim, com o nome de quem pintou. É o "autonomia e competência" de Deci
+     & Ryan em forma de tela: escolher a cor é a primeira decisão de verdade
+     que a escola devolve para a criança pequena.
+
+     A DIFERENÇA PARA A PEÇA `pintar.html`: lá pintar é MARCAR (o marca-texto
+     que assinala a palavra certa dentro do texto — tem gabarito). Aqui pintar
+     é COLORIR: regiões separadas de um desenho de contorno, paleta, balde e
+     nenhum gabarito.
+
+     COMO O DESENHO É FEITO (e por que não é uma imagem):
+       · cada região é um `<path>` de SVG dentro do seu próprio `<div class="zona">`;
+       · o div tem `pointer-events:none` e o path `pointer-events:auto` — assim
+         o dedo acha a REGIÃO (a barbatana, a pétala), não o retângulo de cima.
+         Um único SVG com tudo dentro deixaria o auditor-jogador cego: elemento
+         de SVG não tem `click()` nem `offsetParent`, e a bancada estouraria.
+         O div é o cabo de vassoura que o teclado e o auditor pegam.
+       · trocar a tabela DESENHOS adapta a peça a qualquer conteúdo.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA NO INSTANTE do toque em "Pronto" (`travada=true`);
+       · GERAÇÃO (`ger`) em todo setTimeout;
+       · ajudante que mexe no DOM começa com `if(!el) return;`;
+       · a cor escolhida NÃO se distingue só pela cor: o quadradinho sobe,
+         ganha anel e um SINAL de conferido num círculo branco;
+       · funciona no mudo: a região muda de cor à vista e o balde mostra a
+         tinta carregada;
+       · nunca trava: "Pronto!" está sempre à mão, mesmo sem pintar nada;
+       · `data-qa` publicado para o auditor-jogador conseguir fechar a peça.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.quadro{position:relative;width:100%;max-width:250px;height:250px;margin:13px auto 0;
+        background:#fffdf6;border:3px solid #b3903c;border-radius:14px;overflow:hidden;
+        box-shadow:0 6px 16px rgba(0,0,0,.32)}
+/* cada regiao mora no SEU div, empilhado. O div nao pega o dedo; quem pega e
+   o desenho de dentro — e por isso o dedo acha a barbatana, nao o quadrado. */
+.zona{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none}
+.zona svg{display:block;width:100%;height:100%}
+.cheia{pointer-events:none}
+.reg{stroke:#2b2118;stroke-width:1.2;stroke-linejoin:round;pointer-events:auto;cursor:pointer;
+     -webkit-transition:fill .18s;transition:fill .18s}
+/* os tracos que a crianca NAO pinta (o olho, a boca, as bolhas): camada de
+   cima, e sem alcance nenhum para o dedo. */
+.tracos{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none}
+.tracos svg{display:block;width:100%;height:100%}
+/* ---- A FERRAMENTA: o balde mostra a tinta carregada ---- */
+.ferr{margin-top:8px;line-height:0}
+.balde{display:inline-block;position:relative;width:44px;height:40px;vertical-align:middle;
+       margin-right:8px;border:3px solid #7a6c52;border-radius:5px 5px 16px 16px;background:#e6dcc8;
+       font-style:normal;overflow:hidden}
+.tintab{position:absolute;left:0;right:0;bottom:0;height:60%;display:block;background:#e6dcc8;
+        font-style:normal}
+.cnome{display:inline-block;vertical-align:middle;background:#fffdf6;color:#221a12;
+       border-radius:12px;padding:7px 14px;font-size:15px;font-weight:800;line-height:1.2}
+/* ---- A PALETA. Alvo de 56px, como manda o pre-escolar ---- */
+.paleta{margin-top:8px;line-height:0}
+.tcor{display:inline-block;position:relative;width:56px;height:56px;margin:4px;border-radius:16px;
+      border:3px solid rgba(0,0,0,.35);cursor:pointer;vertical-align:top;
+      -webkit-box-shadow:0 4px 0 rgba(0,0,0,.30);box-shadow:0 4px 0 rgba(0,0,0,.30)}
+/* ⭐ NADA ESSENCIAL SO NA COR: a cor escolhida SOBE, ganha anel claro e um
+   SINAL de conferido dentro de um circulo branco. Quem nao distingue cor
+   continua sabendo qual esta na mao. */
+.tcor.on{-webkit-transform:translateY(-5px);transform:translateY(-5px);
+         border-color:#fff3c9;
+         -webkit-box-shadow:0 0 0 4px #ffd54a,0 6px 0 rgba(0,0,0,.30);
+         box-shadow:0 0 0 4px #ffd54a,0 6px 0 rgba(0,0,0,.30)}
+.tcor.on:after{content:"\2713";position:absolute;right:-6px;top:-6px;width:24px;height:24px;
+               line-height:22px;text-align:center;border-radius:50%;background:#fffdf6;color:#1f6b12;
+               font-size:15px;font-weight:800}
+.tcor.chama{-webkit-animation:chamaC .8s 3;animation:chamaC .8s 3}
+@-webkit-keyframes chamaC{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.30)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.9)}}
+@keyframes chamaC{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.30)}50%{box-shadow:0 0 0 6px rgba(255,213,74,.9)}}
+.acoes{margin-top:8px}
+.bmenor{padding:11px 16px;font-size:15px;margin:0 5px}
+.bclaro{background:#e6dcc8;box-shadow:0 4px 0 #9c907a}
+/* ---- A GALERIA DO FIM: o que a crianca pintou volta para ela ---- */
+.galeria{margin-top:10px;line-height:0}
+.mini{display:inline-block;position:relative;width:104px;height:104px;margin:5px;
+      background:#fffdf6;border:3px solid #b3903c;border-radius:12px;overflow:hidden;
+      vertical-align:top}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* celular pequeno / PC da escola: encolhe A FOLHA, nunca a paleta.
+   ⚠️ MEDIDO NA BANCADA (ago/2026): com a folha em 190px os dois botoes de
+   baixo terminavam em 578px numa tela de 568 — ou seja, "Pronto!" ficava
+   MEIO fora, e a crianca via um pedaco de botao. Quem encolhe e a FOLHA
+   (que continua grande o bastante para pintar) e a margem da paleta; o alvo
+   de dedo nao encolhe nunca. Na tela larga a folha volta a crescer. */
+@media(max-height:660px){
+  .quadro{max-width:170px;height:170px}
+  .tcor{margin:3px}
+  .mini{width:88px;height:88px}
+  .balao{font-size:15px;padding:10px 14px}
+}
+@media(max-height:660px) and (min-width:700px){
+  .quadro{max-width:210px;height:210px}
+}
+@media(max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .quadro{max-width:150px;height:150px;margin-top:8px}
+  .ferr{margin-top:5px}
+  .balde{width:38px;height:34px}
+  .cnome{padding:5px 11px;font-size:14px}
+  .paleta{margin-top:4px}
+  .tcor{width:46px;height:46px;margin:3px}
+  .acoes{margin-top:5px}
+  .medal{width:76px;height:76px;font-size:32px;line-height:66px;margin-bottom:8px}
+  .mini{width:74px;height:74px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* OS DESENHOS. Cada regiao e um `<path>` com a sua chave; `tracos` sao as
+   linhas que a crianca NAO pinta (olho, boca, bolhas) e que ficam por cima.
+   ⚠️ A ORDEM DAS REGIOES E A ORDEM DE EMPILHAMENTO: o fundo primeiro, o que
+   fica por cima por ultimo. Se o corpo do peixe viesse antes da agua, a agua
+   cobriria o peixe e o dedo nunca acharia o corpo.
+   ⚠️ TODA REGIAO TEM QUE SER GORDA O BASTANTE PARA UM DEDO DE 5 ANOS: o caule
+   da flor sozinho teria 15px de largura, entao ele e a folha sao UMA regiao so
+   (duas partes do mesmo `d`), e ai o alvo fica grande. */
+var DESENHOS=[
+ {selo:"O PEIXE DO AQUÁRIO", nome:"o peixe", voz:"o peixe",
+  regs:[
+   {k:"agua",  n:"a água",     d:"M0 0 H100 V100 H0 Z"},
+   {k:"cauda", n:"o rabo",          d:"M64 50 L94 26 L94 74 Z"},
+   {k:"barb",  n:"a barbatana",     d:"M30 32 L44 8 L58 34 Z"},
+   {k:"corpo", n:"o corpo",         d:"M66 50 A26 20 0 1 1 14 50 A26 20 0 1 1 66 50 Z"}
+  ],
+  tracos:'<circle cx="27" cy="44" r="5.2" fill="#fffdf6" stroke="#2b2118" stroke-width="1.2"/>'+
+         '<circle cx="26" cy="45" r="2.4" fill="#2b2118"/>'+
+         '<path d="M16 55 Q22 60 29 57" fill="none" stroke="#2b2118" stroke-width="1.2" stroke-linecap="round"/>'+
+         '<circle cx="13" cy="21" r="3.4" fill="none" stroke="#2b2118" stroke-width="1"/>'+
+         '<circle cx="24" cy="13" r="2.2" fill="none" stroke="#2b2118" stroke-width="1"/>'},
+ {selo:"A FLOR DO JARDIM", nome:"a flor", voz:"a flor",
+  regs:[
+   {k:"ceu",     n:"o céu",       d:"M0 0 H100 V100 H0 Z"},
+   {k:"petalas", n:"as pétalas",
+    d:"M63 14 A13 13 0 1 1 37 14 A13 13 0 1 1 63 14 Z"+
+      "M44 28 A13 13 0 1 1 18 28 A13 13 0 1 1 44 28 Z"+
+      "M51 50 A13 13 0 1 1 25 50 A13 13 0 1 1 51 50 Z"+
+      "M75 50 A13 13 0 1 1 49 50 A13 13 0 1 1 75 50 Z"+
+      "M82 28 A13 13 0 1 1 56 28 A13 13 0 1 1 82 28 Z"},
+   {k:"caule",   n:"o caule e a folha",
+    d:"M44 55 L44 97 L56 97 L56 55 Z"+
+      "M56 70 C70 59 85 65 88 76 C77 87 60 85 56 74 Z"},
+   {k:"miolo",   n:"o miolinho",   d:"M62 34 A12 12 0 1 1 38 34 A12 12 0 1 1 62 34 Z"}
+  ],
+  tracos:'<circle cx="45" cy="31" r="1.6" fill="#2b2118"/>'+
+         '<circle cx="55" cy="31" r="1.6" fill="#2b2118"/>'+
+         '<path d="M44 38 Q50 42 56 38" fill="none" stroke="#2b2118" stroke-width="1.2" stroke-linecap="round"/>'+
+         '<path d="M0 97 H100" stroke="#2b2118" stroke-width="1.4" fill="none"/>'}
+];
+/* A PALETA. Oito tintas — as que a crianca pequena nomeia sozinha. O `voz` e o
+   que o alto-falante fala; o `n` e o que aparece escrito no crachazinho. */
+var TINTAS=[
+ {c:"#e2402c", n:"Vermelho", voz:"vermelho"},
+ {c:"#f08a1e", n:"Laranja",  voz:"laranja"},
+ {c:"#f5cf2b", n:"Amarelo",  voz:"amarelo"},
+ {c:"#4aa845", n:"Verde",    voz:"verde"},
+ {c:"#3a76c8", n:"Azul",     voz:"azul"},
+ {c:"#8a55c7", n:"Roxo",     voz:"roxo"},
+ {c:"#ea72a8", n:"Rosa",     voz:"rosa"},
+ {c:"#8a5a2b", n:"Marrom",   voz:"marrom"}
+];
+var PAPEL="#fffdf6";      /* a folha em branco: a cor de "ainda nao pintei" */
+
+var di=0;                 /* desenho de agora */
+var tinta=null;           /* a tinta que esta no balde (null = nenhuma ainda) */
+var cores={};             /* o que a crianca pintou NESTE desenho */
+var zonaEls=[], corEls=[], baldeEl=null, nomeEl=null, telaAtual=null;
+var GALERIA=[];           /* ⭐ o que ela pintou fica GUARDADO e volta no fim */
+var ger=0;                /* geracao: mata o setTimeout de uma tela que ja saiu */
+var travada=false;        /* ⚠️ trava NO INSTANTE do toque em "Pronto" */
+
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+
+/* A VOZ. Se o PC nao tiver voz, a peca continua inteira: o nome da tinta
+   tambem aparece escrito no crachazinho ao lado do balde. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.98; u.pitch=1.06;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* som de MOLHAR o pincel — nunca som de acerto, porque aqui nao ha acerto */
+function sPinga(){ nota(659.25,.09,.12,"triangle",0); nota(880,.09,.09,"triangle",.06); }
+function sPega(){ nota(523.25,.05,.10,"square",0); }
+
+/* ---------------------------------------------------------------
+   O DESENHO. A MESMA funcao monta a folha grande e a miniatura da
+   galeria — assim o que a crianca ve no fim e exatamente o que ela
+   pintou, e nao um desenho parecido.
+   --------------------------------------------------------------- */
+function montaDesenho(des,pintado,classe,vivo){
+  var q=el("div",classe), i, r, z, pth;
+  for(i=0;i<des.regs.length;i++){
+    r=des.regs[i];
+    z=el("div","zona");
+    z.innerHTML='<svg viewBox="0 0 100 100"><path class="reg" d="'+r.d+'"></path></svg>';
+    pth=z.getElementsByTagName("path")[0];
+    pth.style.fill=(pintado&&pintado[r.k])?pintado[r.k]:PAPEL;
+    if(vivo){
+      z._k=r.k; z._n=r.n; z._p=pth;
+      z.onclick=tocouRegiao;
+      zonaEls.push(z);
+    }
+    q.appendChild(z);
+  }
+  var tr=el("div","tracos");
+  tr.innerHTML='<svg viewBox="0 0 100 100">'+des.tracos+'</svg>';
+  q.appendChild(tr);
+  return q;
+}
+
+/* ---------------------------------------------------------------
+   A TELA DE PINTAR. Uma folha, uma paleta, um balde e dois botoes.
+   Nao ha pergunta, nao ha resposta, nao ha placar.
+   --------------------------------------------------------------- */
+function telaPintar(){
+  if(di>=DESENHOS.length){ fimDaPeca(); return; }
+  ger++; travada=false;
+  limpa();
+  var des=DESENHOS[di], i;
+  cores={}; tinta=null; zonaEls=[]; corEls=[];
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(di*100/DESENHOS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",des.selo));
+  c.appendChild(el("div","balao","Pinte "+des.nome+" do jeito que <b>voc&#234;</b> quiser."));
+  c.appendChild(montaDesenho(des,null,"quadro",1));
+
+  /* o balde mostra a tinta que esta na mao, e o crachazinho diz o nome dela */
+  var f=el("div","ferr");
+  baldeEl=el("i","balde","");
+  baldeEl.appendChild(el("i","tintab",""));
+  nomeEl=el("span","cnome","Escolha uma cor");
+  f.appendChild(baldeEl); f.appendChild(nomeEl);
+  c.appendChild(f);
+
+  var pl=el("div","paleta");
+  for(i=0;i<TINTAS.length;i++) pl.appendChild(fazTinta(i));
+  c.appendChild(pl);
+
+  var ac2=el("div","acoes");
+  var br=el("button","btn bmenor bclaro","Recome&#231;ar");
+  br.setAttribute("aria-label","Apagar tudo e começar o desenho de novo");
+  br.onclick=recomecar;
+  var bp=el("button","btn bmenor","Pronto!");
+  bp.setAttribute("data-qa","1");
+  bp.onclick=pronto;
+  ac2.appendChild(br); ac2.appendChild(bp);
+  c.appendChild(ac2);
+  c.appendChild(el("div","hint","Toque numa cor e depois no desenho. "+
+                   "Tocou de novo, <b>troca a cor</b>. Desenho "+(di+1)+" de "+DESENHOS.length+"."));
+  t.appendChild(c); app.appendChild(t);
+  pintaBalde();
+  atualizaQA();
+  diz("Pinte " + des.voz + " do jeito que você quiser.");
+}
+function fazTinta(i){
+  var b=el("div","tcor","");
+  b.style.background=TINTAS[i].c;
+  b.setAttribute("aria-label","Tinta "+TINTAS[i].n);
+  b._i=i;
+  b.onclick=function(){ pegaTinta(this._i); };
+  corEls.push(b);
+  return b;
+}
+
+/* ---------------------------------------------------------------
+   PEGAR A TINTA. E a primeira decisao de verdade da crianca — por
+   isso ela e anunciada por voz e escrita no crachazinho.
+   --------------------------------------------------------------- */
+function pegaTinta(i){
+  if(travada||!TINTAS[i]) return;
+  tinta=TINTAS[i].c;
+  sPega();
+  var k;
+  for(k=0;k<corEls.length;k++) corEls[k].className=(k===i)?"tcor on":"tcor";
+  if(nomeEl) nomeEl.innerHTML=TINTAS[i].n;
+  pintaBalde();
+  apagaDica();
+  atualizaQA();
+  diz(TINTAS[i].voz);
+}
+/* ⚠️ todo ajudante que mexe no DOM comeca conferindo se o DOM existe. */
+function pintaBalde(){
+  if(!baldeEl) return;
+  var t2=baldeEl.getElementsByTagName("i")[0];
+  if(!t2) return;
+  t2.style.background=tinta?tinta:"#e6dcc8";
+}
+
+/* ---------------------------------------------------------------
+   PINTAR A REGIAO. Nao existe regiao errada: qualquer toque pinta.
+   Tocar de novo numa regiao ja pintada TROCA a cor — e por isso a
+   crianca pode mudar de ideia sem apagar o desenho inteiro.
+   --------------------------------------------------------------- */
+function tocouRegiao(){
+  var z=this;
+  if(travada||!z||!z._p) return;
+  if(!tinta){
+    /* ainda sem tinta na mao. Nao e falta: e o proximo passo. A paleta CHAMA
+       (anima), a barra de recado explica, e o som e o de sempre. */
+    sTap();
+    chamaPaleta();
+    mostraDica("Primeiro toque numa <b>cor</b> l&#225; embaixo. Depois toque no desenho.");
+    atualizaQA();
+    return;
+  }
+  var trocou=(cores[z._k]&&cores[z._k]!==tinta);
+  var novo=!cores[z._k];
+  cores[z._k]=tinta;
+  z._p.style.fill=tinta;
+  z.className="zona cheia";
+  sPinga();
+  apagaDica();
+  atualizaQA();
+  if(novo) diz(z._n+" ficou " + nomeDaTinta(tinta) + ".");
+  else if(trocou) diz(z._n+" trocou de cor.");
+}
+function nomeDaTinta(c){
+  var i;
+  for(i=0;i<TINTAS.length;i++) if(TINTAS[i].c===c) return TINTAS[i].voz;
+  return "colorido";
+}
+function chamaPaleta(){
+  var i;
+  if(!corEls.length) return;
+  for(i=0;i<corEls.length;i++) corEls[i].className="tcor chama";
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    var k;
+    for(k=0;k<corEls.length;k++)
+      corEls[k].className=(TINTAS[k]&&TINTAS[k].c===tinta)?"tcor on":"tcor";
+  },2500);
+}
+/* `data-qa` = o que serve AGORA, so para o auditor-jogador. Sem tinta na mao,
+   a proxima coisa a tocar e uma COR; com tinta, e uma regiao ainda em branco;
+   com tudo pintado, e o botao de fechar o desenho. */
+function atualizaQA(){
+  var i, achou=false;
+  for(i=0;i<corEls.length;i++) corEls[i].removeAttribute("data-qa");
+  for(i=0;i<zonaEls.length;i++) zonaEls[i].removeAttribute("data-qa");
+  if(!tinta){ if(corEls[0]) corEls[0].setAttribute("data-qa","1"); return; }
+  for(i=0;i<zonaEls.length;i++){
+    if(!achou&&!cores[zonaEls[i]._k]){ zonaEls[i].setAttribute("data-qa","1"); achou=true; }
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* RECOMECAR: a folha volta ao branco. A tinta continua na mao — quem apertou
+   "recomecar" quer pintar de novo, nao escolher tudo outra vez. */
+function recomecar(){
+  if(travada) return;
+  var i;
+  cores={};
+  for(i=0;i<zonaEls.length;i++){
+    zonaEls[i].className="zona";
+    if(zonaEls[i]._p) zonaEls[i]._p.style.fill=PAPEL;
+  }
+  sTap();
+  apagaDica();
+  atualizaQA();
+  diz("Folha limpa! Pode pintar de novo.");
+}
+/* PRONTO: guarda o desenho da crianca e segue. Vale mesmo sem pintar nada —
+   e por isso a peca nunca trava. */
+function pronto(){
+  if(travada) return;
+  travada=true;                     /* ⚠️ trava NO INSTANTE do toque */
+  var copia={}, k;
+  for(k in cores) if(cores.hasOwnProperty(k)) copia[k]=cores[k];
+  GALERIA.push({d:di, cores:copia});
+  var quantas=0;
+  for(k in copia) if(copia.hasOwnProperty(k)) quantas++;
+  sCerto();
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    di++;
+    var msg=quantas
+      ? "<b>Que desenho bonito!</b><br>Voc&#234; pintou "+quantas+" parte"+(quantas>1?"s":"")+"."
+      : "<b>Guardei a sua folha.</b><br>Voc&#234; pode pintar de novo quando quiser.";
+    if(di<DESENHOS.length) mostraBanner(msg,telaPintar);
+    else mostraBanner(msg,fimDaPeca);
+  },420);
+}
+
+/* ---------------------------------------------------------------
+   A GALERIA E A MEDALHA. O fim nao tem nota nem placar: tem o que
+   ELA fez, pendurado na parede.
+   --------------------------------------------------------------- */
+function fimDaPeca(){
+  ger++; travada=false;
+  limpa();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro"), i, g2;
+  c.appendChild(el("div","selo","A SUA EXPOSI&#199;&#195;O"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Estes desenhos s&#227;o <b>seus</b>. Ningu&#233;m pintou igual."));
+  var gal=el("div","galeria");
+  for(i=0;i<GALERIA.length;i++){
+    g2=GALERIA[i];
+    if(!DESENHOS[g2.d]) continue;
+    gal.appendChild(montaDesenho(DESENHOS[g2.d],g2.cores,"mini",0));
+  }
+  if(!GALERIA.length) gal.appendChild(montaDesenho(DESENHOS[0],null,"mini",0));
+  c.appendChild(gal);
+  var b=el("button","btn","Pintar de novo");
+  b.style.marginTop="10px";
+  b.onclick=function(){ di=0; GALERIA=[]; telaPintar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a PINTAR O DESENHO: sem certo, sem errado, s&#243; a sua cor."));
+  t.appendChild(c); app.appendChild(t);
+  diz("A sua exposição está pronta!");
+}
+
+telaPintar();
+</script>
+</body></html>

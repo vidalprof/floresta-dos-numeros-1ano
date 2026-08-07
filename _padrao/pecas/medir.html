@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — medir com a régua (encostar o zero na ponta)</title>
+<!-- ============================================================
+     PEÇA: MEDIR COM A RÉGUA — o zero na ponta, e só depois o número
+     (copiada do _padrao/pecas/MOLDE.html; irmã de `estimar.html`)
+
+     POR QUE ELA EXISTE:
+     medir não é ler um número: é ESCOLHER DE ONDE COMEÇAR. A criança que
+     encosta o "1" na ponta da fita lê 7 numa fita de 6 e não desconfia de
+     nada — porque o número está mesmo escrito ali. O erro não está na
+     leitura, está no começo, e nenhum quiz de "quanto mede?" ensina isso.
+
+     O QUE FAZ ESTA MECÂNICA VALER:
+       · O ERRO CLÁSSICO É O CONTEÚDO, NÃO O TROPEÇO. Na 1ª rodada a régua
+         JÁ NASCE com o "1" encostado na ponta: a peça deixa o erro
+         acontecer, mostra o centímetro que entrou na conta sem fazer parte
+         da fita (o retângulo tracejado do 0 até o 1) e só então convida a
+         encostar o zero. Ninguém é punido por isso — é o que se veio
+         aprender.
+       · A DIFERENÇA SE VÊ, NÃO SE OUVE: depois de ler certo, a peça diz,
+         com os dois números lado a lado, o que a criança teria lido
+         começando pelo 1. Um centímetro de diferença, escrito.
+       · O ENCAIXE DO ZERO TEM TOLERÂNCIA (35% de um centímetro). Dedo de
+         criança não acerta pixel; exigir pixel transforma uma peça de
+         medida numa peça de pontaria.
+       · DEGRAUS DE VERDADE: centímetros inteiros (6) -> meio centímetro
+         (4,5) -> comparar dois objetos (5 e 8, e quanto um tem a mais).
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRÊS CAMINHOS para a régua: arrastar com o MOUSE, arrastar com o
+         DEDO e o TOQUE SIMPLES (tocar na ponta da fita e o zero vai até
+         lá). Mais o TECLADO DE VERDADE (setas e Enter) — no PC da escola
+         tem teclado.
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular):
+         ele mora só no `touchmove`, e só depois que o dedo ANDOU.
+       · GUARDA CONTRA O CLIQUE FANTASMA (`ultimoToque`): o celular dispara
+         mouse falso depois do toque, e ele reposicionava a régua sozinho.
+       · TRAVA NO INSTANTE DO TOQUE (`travada=true`), nunca no fim da
+         animação — criança toca duas vezes.
+       · GERAÇÃO (`ger`) em todo setTimeout: relógio de rodada velha não
+         mexe em tela nova.
+       · O ANDAIME CRESCE NO ERRO MAIS NATURAL. "Começar pelo 1" não é um
+         ramo à parte com frase fixa: ele chama `ajudaMedir(n)` como
+         qualquer outro erro, então os degraus chegam também em quem só
+         comete ESSE erro.
+       · REVELA E DEPOIS EXPLICA: no 3º erro a régua vai sozinha para o
+         lugar e SÓ DEPOIS a dica é escrita — se fosse antes, a criança
+         veria a peça se consertar sem saber por quê.
+       · NUNCA TRAVA: 3 erros no encaixe = a régua encosta sozinha;
+         3 erros na leitura = o número certo acende e a fase anda.
+       · TUDO TEM GÊMEO ESCRITO: a régua acesa também vira frase
+         ("O zero está encostado na ponta"). Funciona no mudo.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.mesa{position:relative;width:100%;max-width:430px;height:126px;margin:13px auto 6px;
+      border-radius:14px;overflow:hidden;background:#3b2f22;border:3px solid #6b573d}
+/* o tampo da mesa: e sobre ele que os objetos ficam deitados */
+.tampo{position:absolute;left:0;right:0;top:0;height:52px;background:#cdb894}
+/* O OBJETO MEDIDO. `left` e `width` vem do JS (em px, calculados a partir do
+   centimetro real da tela); a ALTURA vem do CSS, para o @media conseguir
+   encolher tudo sem o JS saber de nada. */
+.obj{position:absolute;border-radius:5px;border:2px solid rgba(0,0,0,.35);overflow:hidden;
+     white-space:nowrap}
+.objU{top:16px;height:26px}
+.objA{top:6px;height:20px}
+.objB{top:28px;height:20px}
+.objn{display:block;color:#fff;font-size:11px;font-weight:800;letter-spacing:.5px;
+      line-height:22px;padding-left:6px}
+.objA .objn,.objB .objn{line-height:16px}
+/* o objeto que nao e o da vez fica esmaecido — mas continua VISIVEL e com o
+   nome escrito: apagar de vez faria a crianca achar que ele sumiu. */
+.apagado{opacity:.45}
+.oazul{background:#2f6fb0}
+.opalito{background:#8a5a2b}
+.overm{background:#b03a2e}
+.overde{background:#2e7d32}
+/* AS LINHAS-GUIA: descem da ponta e do fim do objeto ate os tracinhos da
+   regua. Sao POSICAO, nao cor — quem nao distingue cor continua vendo onde
+   cada ponta cai. */
+.guia{position:absolute;top:2px;bottom:54px;width:2px;margin-left:-1px;
+      background:#fff;opacity:.9;z-index:6}
+.guia.gfim{background:#ffd54a}
+/* O RETANGULO DO CENTIMETRO QUE NAO EXISTE: aparece quando a crianca encosta
+   o "1" na ponta. Borda TRACEJADA (forma), nao so cor. */
+.fora{position:absolute;top:6px;height:44px;z-index:4;border:2px dashed #ffd54a;
+      border-radius:6px;background:rgba(255,213,74,.30)}
+/* A REGUA. `left` e `width` vem do JS; o resto e CSS. */
+.reg{position:absolute;top:56px;height:58px;left:0;background:#f6e6b0;border:2px solid #8a6f2a;
+     border-radius:5px;z-index:3;cursor:pointer}
+.reg.alinhada{border-color:#1f6b12;-webkit-box-shadow:0 0 0 3px rgba(31,107,18,.55);
+     box-shadow:0 0 0 3px rgba(31,107,18,.55)}
+.rtr{position:absolute;top:0;width:2px;height:16px;margin-left:-1px;background:#5b4413;font-style:normal}
+.rtr.meio{height:9px;background:#96793a}
+.rtr.rzero{width:4px;height:20px;background:#7a2f0b}
+.rnum{position:absolute;top:20px;width:26px;margin-left:-13px;text-align:center;font-style:normal;
+      font-size:12px;font-weight:800;color:#3a2c07}
+.rnum.rzero{color:#7a2f0b;font-size:14px}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): os numeros das PONTAS (0 e 10) sao
+   centrados no tracinho, entao METADE da caixa deles caia FORA da regua — em
+   cima da fita verde ou do palito. O portao do contraste mediu a letra escura
+   contra o verde e reprovou (2,15:1). Nas pontas o numero encosta para dentro. */
+.rnum.resq{margin-left:-3px;text-align:left}
+.rnum.rdir{margin-left:-23px;text-align:right}
+/* A LEITURA EM PALAVRAS: o gemeo escrito de tudo que a regua mostra. */
+.leitura{max-width:430px;margin:0 auto;background:rgba(255,255,255,.12);border-radius:12px;
+         padding:7px 10px;font-size:14px;font-weight:700;color:#f4efe6;min-height:32px;line-height:1.3}
+.leitura b{color:#ffd54a}
+.leitura.ok{background:#d6f5c8;color:#183a0e}
+.leitura.ok b{color:#183a0e}
+.acao{margin-top:8px}
+.tecl{display:inline-block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
+      min-width:84px;min-height:46px;line-height:46px;padding:0 10px;margin:4px 5px;
+      font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.linha{margin-top:4px}
+.linha .opt{display:inline-block;width:auto;min-width:104px;max-width:none;margin:5px 5px;
+      vertical-align:middle}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (o monitor 1024x420 da escola): encolhe a mesa e as letras,
+   NUNCA os botoes. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{padding:6px 11px;font-size:13px;margin-top:8px}
+  .mesa{height:92px;margin-top:8px}
+  .tampo{height:40px}
+  .objU{top:10px;height:20px}
+  .objA{top:4px;height:16px}
+  .objB{top:20px;height:16px}
+  .objn{font-size:10px;line-height:16px}
+  .objA .objn,.objB .objn{line-height:12px}
+  .guia{bottom:38px}
+  .fora{top:4px;height:34px}
+  .reg{top:42px;height:46px}
+  .rtr{height:12px}
+  .rtr.meio{height:7px}
+  .rtr.rzero{height:16px}
+  .rnum{top:15px;font-size:11px}
+  .rnum.rzero{font-size:12px}
+  .leitura{font-size:13px;padding:5px 9px;min-height:28px}
+  .acao{margin-top:4px}
+  .tecl{min-height:44px;line-height:44px;margin:2px 4px}
+  .opt{min-height:44px;padding:9px 13px;margin:5px auto}
+  .hint{margin-top:4px;font-size:12px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (6 a 9 anos). Para reusar a peça troque SÓ este
+   bloco: nome, tamanho em centímetros, a cor da faixa e as opções de leitura.
+   ⚠️ `ini` é ONDE A RÉGUA NASCE, contado em centímetros de desalinho. `ini:1`
+   é de propósito: a régua nasce com o "1" encostado na ponta, que é
+   exatamente o erro clássico. A peça não espera a criança errar — ela oferece
+   o erro, deixa acontecer e mostra a diferença.
+   ⚠️ A última opção de cada lista é sempre a "armadilha do +1" (a leitura de
+   quem começou pelo 1): é ela que faz a peça ensinar em vez de sortear.
+   ⚠️ SÃO 3 DISTRATORES, NUNCA 2 (defeito pego pelo errador, ago/2026): com
+   duas erradas a criança elimina tudo antes do 3º erro e o degrau "revelar"
+   vira CÓDIGO MORTO — existe escrito e nunca chega em ninguém. E mesmo com
+   três há a rede em `sobrouErrada()`: se as erradas acabarem antes, a peça
+   revela na hora em vez de deixar uma tela com uma opção só. */
+var ROD=[
+ {selo:"A FITA AZUL",
+  enun:"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.",
+  voz:"Encoste o zero da régua na ponta da fita azul.",
+  objs:[{n:"FITA AZUL",nome:"fita azul",voz:"fita azul",cm:6,cls:"oazul",ini:1,ops:[4,5,6,7]}]},
+ {selo:"O PALITO",
+  enun:"Agora o palito. Encoste o <b>zero</b> na ponta dele.",
+  voz:"Agora o palito. Encoste o zero na ponta dele.",
+  objs:[{n:"PALITO",nome:"palito",voz:"palito",cm:4.5,cls:"opalito",ini:1.6,ops:[4,4.5,5,5.5]}]},
+ {selo:"DUAS FITAS",
+  enun:"Me&ccedil;a as duas fitas, uma de cada vez.",
+  voz:"Meça as duas fitas, uma de cada vez.",
+  objs:[{n:"VERMELHA",nome:"fita vermelha",voz:"fita vermelha",cm:5,cls:"overm",ini:1,ops:[3,4,5,6]},
+        {n:"VERDE",nome:"fita verde",voz:"fita verde",cm:8,cls:"overde",ini:1.6,ops:[6,7,8,9]}],
+  comp:{p:"Quantos cent&iacute;metros a <b>fita verde</b> tem a mais que a <b>fita vermelha</b>?",
+        voz:"Quantos centímetros a fita verde tem a mais que a fita vermelha?",
+        ops:[1,2,3,4],cert:3}}
+];
+
+/* O ANDAIME DO ENCAIXE. Cresce a cada erro: dica -> apoio concreto ->
+   a régua vai sozinha. As frases NÃO nomeiam a fita: o nome sai de uma
+   função, senão a 2ª rodada continuaria falando da fita azul (resto de
+   clone em miniatura). */
+var DENC=[
+ "O <b>zero</b> &eacute; o come&ccedil;o da r&eacute;gua, antes do 1. Ele tem que ficar bem em cima da ponta.",
+ "Arraste a r&eacute;gua at&eacute; a ponta &#8212; ou <b>toque na ponta</b> e o zero vai at&eacute; l&aacute; sozinho.",
+ "Deixa comigo desta vez: eu encosto o <b>zero</b> na ponta."
+];
+/* O ANDAIME DA LEITURA. */
+var DLER=[
+ "Siga a <b>linha amarela</b> do fim at&eacute; a r&eacute;gua e veja em que n&uacute;mero ela cai.",
+ "Conte os cent&iacute;metros a partir do <b>zero</b>: um, dois, tr&ecirc;s...",
+ "Olhe o n&uacute;mero que est&aacute; <b>aceso</b>: &eacute; ali que a ponta de tr&aacute;s termina."
+];
+var UNM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
+         "onze","doze"];
+
+var ri=0, oi=0, feitos=0, PASSOS=5;
+var ger=0, travada=false, errosEnc=0, errosLer=0, veioDoUm=false;
+var certos=0, deprimeira=0;
+var CM=22, mesaW=290, regW=222, objX=44, regX=0, regX0=0, px0=0;
+var pegou=false, moveu=false, ultimoToque=0, fimArrasto=0;
+var telaAtual=null, mesaEl=null, regEl=null, leituraEl=null, acaoEl=null, foraEl=null;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function rodada(){ return ROD[ri]||ROD[ROD.length-1]; }
+function objAtual(){ var r=rodada(); return r.objs[oi]||r.objs[0]; }
+function temClasse(e,c){ if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0; }
+
+/* A VOZ. Web Speech: se o PC nao tiver voz, a peca continua inteira — todo
+   numero falado tambem aparece escrito. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=1; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sPop(){ nota(659.25,.09,.13,"triangle",0); }
+function sEncaixe(){ nota(523.25,.10,.14,"triangle",0); nota(783.99,.12,.12,"triangle",.07); }
+function sNeutro(){ nota(440,.12,.12,"triangle",0); nota(587.33,.16,.11,"triangle",.07); }
+
+/* --------- numeros por extenso e em palavras (o gemeo escrito da voz) --- */
+function fmtNum(v){
+  var i=Math.floor(v), meio=(Math.round((v-i)*2)===1);
+  if(!meio) return ""+i;
+  if(i===0) return "meio";
+  return i+" e meio";
+}
+function fmtCm(v){
+  var i=Math.floor(v), meio=(Math.round((v-i)*2)===1);
+  if(!meio) return i+" cm";
+  if(i===0) return "meio cent&iacute;metro";
+  return i+" cm e meio";
+}
+function vozNum(v){
+  var i=Math.floor(v), meio=(Math.round((v-i)*2)===1), t=(i<UNM.length?UNM[i]:""+i);
+  if(!meio) return t;
+  if(i===0) return "meio";
+  return t+" e meio";
+}
+
+/* ---------------------------------------------------------------
+   TELA 1 — MEDIR. A mesma tela faz as duas coisas, na ordem certa:
+   primeiro ENCOSTAR O ZERO, depois LER. Ler antes de encostar é o
+   que a peça existe para desfazer.
+   --------------------------------------------------------------- */
+function telaMedir(){
+  limpa();
+  ger++; travada=false; errosEnc=0; errosLer=0; veioDoUm=false;
+  pegou=false; moveu=false; foraEl=null;
+  document.onkeydown=null;
+  var g=ger, r=rodada(), o=objAtual();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(feitos*100/PASSOS));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",r.selo));
+  c.appendChild(el("div","balao", oi===0 ? r.enun
+      : "Agora a <b>"+o.n+"</b>. Encoste o zero na ponta dela."));
+  mesaEl=el("div","mesa","");
+  c.appendChild(mesaEl);
+  leituraEl=el("div","leitura","");
+  c.appendChild(leituraEl);
+  acaoEl=el("div","acao","");
+  c.appendChild(acaoEl);
+  c.appendChild(el("div","hint","Arraste a r&eacute;gua com o dedo ou com o mouse, "+
+                   "toque na ponta do objeto, ou use as setas do teclado."));
+  t.appendChild(c); app.appendChild(t);
+
+  montaMesa(r,o);
+  montaBotoes(g);
+  atualizaLeitura();
+  diz(oi===0 ? r.voz : ("Agora a "+o.voz+". Encoste o zero na ponta dela."));
+}
+
+/* ---------- a mesa, a régua e as linhas-guia ----------
+   O CENTÍMETRO é calculado da largura REAL da tela: assim a régua de 10 cm
+   sempre sobra espaço para deslizar, do celular de 320px ao PC da escola. */
+function montaMesa(r,o){
+  mesaEl.innerHTML="";
+  mesaW=mesaEl.clientWidth; if(!mesaW||mesaW<120) mesaW=290;
+  CM=Math.floor(mesaW*0.78/10); if(CM<16) CM=16;
+  regW=10*CM+2; objX=2*CM;
+  mesaEl.appendChild(el("div","tampo",""));
+  var i,ob,b,cls;
+  for(i=0;i<r.objs.length;i++){
+    ob=r.objs[i];
+    b=el("div","obj","<span class=\"objn\">"+ob.n+"</span>");
+    cls="obj "+(r.objs.length>1?(i===0?"objA":"objB"):"objU")+" "+ob.cls;
+    b.className = (i===oi) ? cls : (cls+" apagado");
+    b.style.left=objX+"px";
+    b.style.width=Math.round(ob.cm*CM)+"px";
+    mesaEl.appendChild(b);
+  }
+  /* as guias marcam a ponta e o fim do objeto DA VEZ */
+  var g1=el("div","guia",""); g1.style.left=objX+"px"; mesaEl.appendChild(g1);
+  var g2=el("div","guia",""); g2.className="guia gfim";
+  g2.style.left=(objX+Math.round(o.cm*CM))+"px"; mesaEl.appendChild(g2);
+
+  regEl=desenhaRegua();
+  mesaEl.appendChild(regEl);
+  regX=objX-Math.round(CM*(o.ini||1.6));
+  limita(); posReg();
+  ligaArrasto();
+}
+/* A RÉGUA, num lugar só: tracinhos de centímetro, tracinhos de meio
+   centímetro e os números. Ela é desenhada igual na tela de medir e na de
+   comparar — duas cópias do mesmo desenho já foi como um defeito de ponta
+   escapou consertado só num dos dois lugares. */
+function desenhaRegua(){
+  var r=el("div","reg","");
+  r.style.width=regW+"px";
+  var k,tr,nm,mt;
+  for(k=0;k<=10;k++){
+    tr=el("i","rtr",""); if(k===0) tr.className="rtr rzero";
+    tr.style.left=(k*CM)+"px"; r.appendChild(tr);
+    nm=el("b","rnum",""+k);
+    if(k===0) nm.className="rnum rzero resq";
+    else if(k===10) nm.className="rnum rdir";
+    nm.style.left=(k*CM)+"px"; r.appendChild(nm);
+    if(k<10){ mt=el("i","rtr meio",""); mt.style.left=Math.round(k*CM+CM/2)+"px";
+              r.appendChild(mt); }
+  }
+  return r;
+}
+function posReg(){ if(regEl) regEl.style.left=Math.round(regX)+"px"; }
+function limita(){
+  var max=mesaW-regW-4; if(max<0) max=0;
+  if(regX<0) regX=0; if(regX>max) regX=max;
+}
+function marcaNaPonta(){ return (objX-regX)/CM; }
+function alinhado(){ return Math.abs(objX-regX)<=CM*0.35; }
+
+/* ---------- os TRÊS caminhos + o teclado ----------
+   ⚠️ os tratadores de toque sao FUNCOES COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular e a
+   armadilha nº1 desta mecanica). Ele mora so no `touchmove`, e so depois que
+   o dedo ANDOU de verdade. */
+function ligaArrasto(){
+  regEl.onmousedown=reguaMouse;
+  regEl.addEventListener("touchstart",reguaToqueIni,false);
+  regEl.addEventListener("touchmove",reguaToqueMeio,false);
+  regEl.addEventListener("touchend",reguaToqueFim,false);
+  mesaEl.onclick=mesaClique;
+  mesaEl.addEventListener("touchend",mesaToque,false);
+}
+function reguaMouse(ev){
+  if(travada) return;
+  if(souDedo()) return;               /* mouse FANTASMA do celular: ignora */
+  pegaEm(ev.clientX);
+}
+function reguaToqueIni(ev){
+  ultimoToque=agora();
+  if(travada) return;
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(to.clientX);
+}
+function reguaToqueMeio(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX);
+  if(moveu&&ev.preventDefault) ev.preventDefault();  /* so no MEIO do arrasto */
+}
+function reguaToqueFim(ev){
+  ultimoToque=agora();
+  var arrastou=moveu;
+  soltaArrasto();
+  if(!arrastou) sTap();               /* toque na regua sem andar: so um clique */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pegou) moveEm(ev.clientX); }
+function soltaMouse(){ if(souDedo()) return; if(pegou) soltaArrasto(); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+function pegaEm(x){ pegou=true; px0=x; regX0=regX; moveu=false; }
+function moveEm(x){
+  if(!pegou||!regEl) return;
+  if(!moveu){ if(Math.abs(x-px0)<8) return; moveu=true; sTap(); }
+  regX=regX0+(x-px0); limita(); posReg(); atualizaLeitura();
+}
+function soltaArrasto(){
+  if(!pegou) return;
+  pegou=false;
+  if(moveu){ fimArrasto=agora(); encaixa(); }
+  moveu=false;
+}
+/* O ENCAIXE COM TOLERANCIA: dedo de crianca nao acerta pixel. 35% de um
+   centimetro e a folga que faz a peca medir MEDIDA, e nao pontaria. */
+function encaixa(){
+  if(alinhado()&&regX!==objX){ regX=objX; posReg(); sEncaixe(); }
+  atualizaLeitura();
+}
+/* ---------- o TOQUE SIMPLES: tocar na ponta e o zero vai ate la ---------- */
+function mesaClique(ev){
+  if(travada||!regEl) return;
+  if(cliqueDeArrasto()) return;
+  if(souDedo()) return;               /* o dedo ja resolveu no touchend */
+  var e=ev||window.event;
+  if(dentroDaRegua(e.target||e.srcElement)) return;
+  zeroPara(e.clientX);
+}
+function mesaToque(ev){
+  ultimoToque=agora();
+  if(travada||!regEl||pegou||moveu) return;
+  var to=ev.changedTouches[0]; if(!to) return;
+  if(dentroDaRegua(to.target)) return;
+  zeroPara(to.clientX);
+}
+function dentroDaRegua(alvo){
+  var n=alvo,i=0;
+  while(n&&n.nodeType===1&&i<6){ if(n===regEl) return true; n=n.parentNode; i++; }
+  return false;
+}
+function zeroPara(clientX){
+  var rb=mesaEl.getBoundingClientRect();
+  regX=clientX-rb.left; limita(); posReg(); sTap(); encaixa();
+}
+/* as duas setas de ajuste fino: alvo grande, para quem nao consegue arrastar */
+function empurra(dir){
+  if(travada||!regEl) return;
+  regX=regX+dir*Math.max(2,Math.round(CM/4));
+  limita(); posReg(); sTap(); atualizaLeitura();
+}
+
+function montaBotoes(g){
+  acaoEl.innerHTML="";
+  var e=el("div","tecl","&#8592; mover");
+  e.onclick=function(){ empurra(-1); };
+  var d=el("div","tecl","mover &#8594;");
+  d.onclick=function(){ empurra(1); };
+  acaoEl.appendChild(e); acaoEl.appendChild(d);
+  var b=el("button","btn","Pronto, j&aacute; alinhei");
+  b.style.marginTop="6px";
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ confirmar(g); };
+  acaoEl.appendChild(el("div",null,""));
+  acaoEl.appendChild(b);
+  /* AS DUAS PORTAS: no PC da escola tem teclado e a crianca vai usar. */
+  document.onkeydown=function(ev){
+    var ee=ev||window.event, k=ee.keyCode||ee.which;
+    if(k===37||k===40){ empurra(-1); if(ee.preventDefault) ee.preventDefault(); }
+    else if(k===39||k===38){ empurra(1); if(ee.preventDefault) ee.preventDefault(); }
+    else if(k===13||k===32){ confirmar(g); if(ee.preventDefault) ee.preventDefault(); }
+  };
+}
+
+/* A LEITURA EM PALAVRAS — o gêmeo escrito da régua. Sem isto, "está
+   alinhado" existiria só na cor da borda. */
+function atualizaLeitura(){
+  if(!leituraEl||!regEl) return;
+  var v=marcaNaPonta(), ok=alinhado(), o=objAtual(), s;
+  regEl.className = ok ? "reg alinhada" : "reg";
+  if(ok) s="O <b>zero</b> est&aacute; encostado na ponta do "+
+           (o.nome.indexOf("fita")===0?"a ":"")+o.nome+". Pode ler!";
+  else if(v<-0.35) s="A r&eacute;gua passou da ponta: o <b>zero</b> ficou depois dela.";
+  else s="A ponta est&aacute; no <b>"+fmtNum(Math.round(v*2)/2)+"</b>, n&atilde;o no <b>zero</b>.";
+  leituraEl.innerHTML=s;
+  leituraEl.className = ok ? "leitura ok" : "leitura";
+}
+
+/* ---------------------------------------------------------------
+   O CONFIRMA. Aqui mora o coração da peça: quem encostou o "1" na
+   ponta não leva tropeço nenhum — leva a EXPLICAÇÃO desenhada.
+   --------------------------------------------------------------- */
+function confirmar(g){
+  if(g!==ger||travada||!regEl) return;
+  travada=true;                        /* ⚠️ trava NO INSTANTE do toque */
+  if(alinhado()){
+    regX=objX; posReg(); atualizaLeitura(); sEncaixe();
+    tiraFora();
+    abreLeitura(g,false);
+    return;
+  }
+  errosEnc++;
+  sErro();
+  var v=marcaNaPonta(), doUm=(Math.abs(v-1)<=0.45);
+  if(doUm){ veioDoUm=true; mostraFora(); }
+  /* ⚠️ O ANDAIME CRESCE TAMBEM NO ERRO MAIS NATURAL. "Comecar pelo 1" nao e
+     um ramo com frase fixa: ele passa pelo MESMO andaime, senao a crianca
+     que so comete ESSE erro leria a mesma frase para sempre. */
+  ajudaMedir(errosEnc,DENC);
+  if(doUm){
+    leituraEl.className="leitura";
+    leituraEl.innerHTML="Voc&ecirc; encostou a ponta no <b>1</b>. Ent&atilde;o este "+
+      "pedacinho tracejado, do <b>0</b> at&eacute; o <b>1</b>, entra na conta &#8212; "+
+      "e ele <b>n&atilde;o faz parte</b> do que voc&ecirc; est&aacute; medindo.";
+    diz("Você encostou a ponta no um. Esse pedacinho, do zero até o um, entra na conta sem fazer parte.");
+  }
+  if(errosEnc>=3) esperaEEncosta(g);
+  else destrava(g,420);
+}
+function destrava(g,ms){
+  setTimeout(function(){ if(g!==ger||!viva()) return; travada=false; },ms);
+}
+function ajudaMedir(n,lista){
+  var i=n; if(i<1) i=1; if(i>lista.length) i=lista.length;
+  mostraDica(lista[i-1]);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function mostraFora(){
+  if(!mesaEl||foraEl) return;
+  foraEl=el("div","fora","");
+  foraEl.style.left=Math.round(regX)+"px";
+  foraEl.style.width=CM+"px";
+  mesaEl.appendChild(foraEl);
+}
+function tiraFora(){
+  if(foraEl&&foraEl.parentNode) foraEl.parentNode.removeChild(foraEl);
+  foraEl=null;
+}
+/* ⚠️ ORDEM SAGRADA (defeito que apareceu em 5 de 6 pecas de um lote): PRIMEIRO
+   a regua vai para o lugar, DEPOIS a dica explica o que aconteceu. Ao
+   contrario, a peca se conserta sozinha e a crianca nao sabe por que. */
+function esperaEEncosta(g){
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    tiraFora();
+    regX=objX; posReg(); atualizaLeitura(); sEncaixe();
+    abreLeitura(g,true);
+    mostraDica("Eu encostei o <b>zero</b> na ponta. Repare: agora o come&ccedil;o do "+
+               "objeto e o come&ccedil;o da r&eacute;gua est&atilde;o no mesmo lugar.");
+    diz("Eu encostei o zero na ponta. Agora dá para ler.");
+  },1200);
+}
+
+/* ---------------------------------------------------------------
+   A LEITURA. Só existe depois do zero encostado — nunca antes.
+   --------------------------------------------------------------- */
+function abreLeitura(g,revelado){
+  if(g!==ger||!viva()) return;
+  travada=false; errosLer=0;
+  var o=objAtual();
+  leituraEl.className="leitura ok";
+  leituraEl.innerHTML="Zero na ponta. Agora leia: onde termina "+
+                      (o.nome.indexOf("fita")===0?"a ":"o ")+o.nome+"?";
+  acaoEl.innerHTML="";
+  var cx=el("div","linha","");
+  var lista=baguncar(o.ops.slice(0)), i, bt;
+  for(i=0;i<lista.length;i++){
+    (function(v){
+      var b=el("div","opt",fmtCm(v));
+      if(v===o.cm) b.setAttribute("data-qa","1");
+      b.onclick=function(){ respondeLeitura(g,v,b); };
+      cx.appendChild(b);
+    })(lista[i]);
+  }
+  acaoEl.appendChild(cx);
+  document.onkeydown=function(ev){
+    var ee=ev||window.event, k=ee.keyCode||ee.which, n=k-48;
+    if(n>=1&&n<=cx.children.length){ cx.children[n-1].onclick();
+      if(ee.preventDefault) ee.preventDefault(); }
+  };
+  if(!revelado) diz("Agora leia. Onde termina?");
+}
+function respondeLeitura(g,v,elb){
+  if(g!==ger||travada||temClasse(elb,"no")||temClasse(elb,"ok")) return;
+  var o=objAtual();
+  if(v===o.cm){
+    travada=true;                      /* ⚠️ trava NO INSTANTE do acerto */
+    elb.className="opt ok";
+    elb.removeAttribute("data-qa");
+    if(errosLer===0&&errosEnc===0) deprimeira++;
+    certos++;
+    fechaObjeto(g,false);
+    return;
+  }
+  errosLer++;
+  sErro();
+  elb.className="opt no";
+  elb.removeAttribute("data-qa");
+  /* a armadilha do +1 tem resposta PROPRIA — mas passa pelo MESMO andaime */
+  if(Math.abs(v-(o.cm+1))<0.01){
+    mostraDica("Esse seria o n&uacute;mero se o objeto come&ccedil;asse no <b>1</b>. "+
+               "Ele come&ccedil;a no <b>zero</b>: conte de novo a partir dali.");
+    diz("Esse seria o número começando pelo um. Conte de novo a partir do zero.");
+  }else{
+    ajudaMedir(errosLer,DLER);
+  }
+  /* ⚠️ A REDE (lição do CONTRATO §6): se as erradas acabarem antes do 3º erro,
+     a criança fica diante de UMA opção só — que não é escolha nenhuma. Aí a
+     peça revela na hora, em vez de fingir que ainda há pergunta. */
+  if(errosLer>=3||!sobrouErrada()) esperaERevela(g);
+}
+/* quantas opções erradas ainda estão de pé? */
+function sobrouErrada(){
+  if(!acaoEl) return false;
+  var lista=acaoEl.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<lista.length;i++)
+    if(!temClasse(lista[i],"no")&&lista[i].getAttribute("data-qa")!=="1") n++;
+  return n>0;
+}
+/* ⚠️ revela e SO DEPOIS escreve a explicacao (a dica do 3º degrau era escrita
+   e apagada no mesmo quadro em 5 de 6 pecas de um lote). */
+function esperaERevela(g){
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    var o=objAtual(), lista=acaoEl.getElementsByClassName("opt"), i;
+    /* acha a certa pelo data-qa, nunca comparando o TEXTO: entidade HTML
+       ("meio cent&iacute;metro") volta decodificada do innerHTML e a
+       comparacao falharia em silencio — a certa nunca acenderia. */
+    for(i=0;i<lista.length;i++)
+      if(lista[i].getAttribute("data-qa")==="1") lista[i].className="opt ok";
+    mostraDica("Este &eacute; o n&uacute;mero: a ponta de tr&aacute;s do objeto cai bem em <b>"+
+               fmtCm(o.cm)+"</b>, contando do zero.");
+    diz("A ponta de trás cai em " + vozNum(o.cm) + " centímetros, contando do zero.");
+    fechaObjeto(g,true);
+  },1100);
+}
+function fechaObjeto(g,revelado){
+  travada=true;
+  var o=objAtual(), msg;
+  sCerto();
+  feitos++;
+  msg=(o.nome.indexOf("fita")===0?"A ":"O ")+o.nome+" mede <b>"+fmtCm(o.cm)+"</b>.";
+  if(veioDoUm) msg+=" Come&ccedil;ando pelo <b>1</b> voc&ecirc; leria <b>"+fmtNum(o.cm+1)+
+                    "</b>: um cent&iacute;metro a mais, que n&atilde;o existe no objeto.";
+  leituraEl.className="leitura ok";
+  leituraEl.innerHTML=msg;
+  if(!revelado) diz((o.nome.indexOf("fita")===0?"A ":"O ")+o.voz+" mede "+vozNum(o.cm)+" centímetros.");
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    proximoObjeto();
+  }, veioDoUm?2600:1700);
+}
+function proximoObjeto(){
+  var r=rodada();
+  oi++;
+  if(oi<r.objs.length){ telaMedir(); return; }
+  if(r.comp){ telaComparar(); return; }
+  ri++; oi=0;
+  if(ri<ROD.length){ telaMedir(); return; }
+  mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b> &#8212; "+
+               "o resto &eacute; s&oacute; contar.", fimMedir);
+}
+
+/* ---------------------------------------------------------------
+   TELA 2 — COMPARAR. Os dois objetos ficam lado a lado, alinhados na
+   mesma ponta, com a régua embaixo. A diferença se VÊ antes de virar
+   conta.
+   --------------------------------------------------------------- */
+function telaComparar(){
+  limpa();
+  ger++; travada=false; errosLer=0;
+  document.onkeydown=null;
+  var g=ger;
+  var r=rodada(); if(!r.comp) r=ROD[ROD.length-1];
+  var cp=r.comp;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(feitos*100/PASSOS));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","QUANTO A MAIS?"));
+  c.appendChild(el("div","balao",cp.p));
+  mesaEl=el("div","mesa","");
+  c.appendChild(mesaEl);
+  leituraEl=el("div","leitura","");
+  c.appendChild(leituraEl);
+  acaoEl=el("div","acao","");
+  c.appendChild(acaoEl);
+  c.appendChild(el("div","hint","As duas come&ccedil;am no <b>zero</b>: d&aacute; para ver "+
+                   "quanto uma passa da outra."));
+  t.appendChild(c); app.appendChild(t);
+
+  /* mesa estática: a régua já nasce encostada no zero das duas */
+  mesaEl.innerHTML="";
+  mesaW=mesaEl.clientWidth; if(!mesaW||mesaW<120) mesaW=290;
+  CM=Math.floor(mesaW*0.78/10); if(CM<16) CM=16;
+  regW=10*CM+2; objX=2*CM; regX=objX;
+  mesaEl.appendChild(el("div","tampo",""));
+  var i,ob,b;
+  for(i=0;i<r.objs.length;i++){
+    ob=r.objs[i];
+    b=el("div","obj","<span class=\"objn\">"+ob.n+" ("+fmtCm(ob.cm)+")</span>");
+    b.className="obj "+(i===0?"objA":"objB")+" "+ob.cls;
+    b.style.left=objX+"px";
+    b.style.width=Math.round(ob.cm*CM)+"px";
+    mesaEl.appendChild(b);
+  }
+  var g1=el("div","guia",""); g1.style.left=objX+"px"; mesaEl.appendChild(g1);
+  for(i=0;i<r.objs.length;i++){
+    var gf=el("div","guia",""); gf.className="guia gfim";
+    gf.style.left=(objX+Math.round(r.objs[i].cm*CM))+"px"; mesaEl.appendChild(gf);
+  }
+  regEl=desenhaRegua();
+  regEl.className="reg alinhada";
+  regEl.style.left=regX+"px";
+  mesaEl.appendChild(regEl);
+
+  leituraEl.className="leitura";
+  leituraEl.innerHTML="Uma termina no <b>"+fmtNum(r.objs[0].cm)+"</b> e a outra no <b>"+
+                      fmtNum(r.objs[1].cm)+"</b>.";
+  var cx=el("div","linha","");
+  var lista=baguncar(cp.ops.slice(0));
+  for(i=0;i<lista.length;i++){
+    (function(v){
+      var bt=el("div","opt",fmtCm(v));
+      if(v===cp.cert) bt.setAttribute("data-qa","1");
+      bt.onclick=function(){ respondeComp(g,cp,v,bt); };
+      cx.appendChild(bt);
+    })(lista[i]);
+  }
+  acaoEl.appendChild(cx);
+  document.onkeydown=function(ev){
+    var ee=ev||window.event, k2=ee.keyCode||ee.which, n=k2-48;
+    if(n>=1&&n<=cx.children.length){ cx.children[n-1].onclick();
+      if(ee.preventDefault) ee.preventDefault(); }
+  };
+  diz(cp.voz);
+}
+function respondeComp(g,cp,v,elb){
+  if(g!==ger||travada||temClasse(elb,"no")||temClasse(elb,"ok")) return;
+  if(v===cp.cert){
+    travada=true;
+    elb.className="opt ok";
+    elb.removeAttribute("data-qa");
+    sCerto(); certos++; feitos++;
+    if(errosLer===0) deprimeira++;
+    leituraEl.className="leitura ok";
+    leituraEl.innerHTML="Isso: uma passa da outra em <b>"+fmtCm(cp.cert)+"</b>.";
+    diz("Isso. Uma passa da outra em " + vozNum(cp.cert) + " centímetros.");
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      mostraBanner("<b>Voc&ecirc; mediu e comparou!</b><br>Medir come&ccedil;a no "+
+                   "<b>zero</b> &#8212; o resto &eacute; s&oacute; contar.", fimMedir);
+    },1500);
+    return;
+  }
+  errosLer++;
+  sErro();
+  elb.className="opt no";
+  elb.removeAttribute("data-qa");
+  ajudaMedir(errosLer,[
+    "Olhe onde cada uma <b>termina</b> na r&eacute;gua e conte os cent&iacute;metros de uma at&eacute; a outra.",
+    "Uma termina em <b>"+fmtCm(ROD[ROD.length-1].objs[0].cm)+"</b>. Conte da&iacute; at&eacute; a outra.",
+    "Vamos olhar juntos: conte na r&eacute;gua de uma ponta at&eacute; a outra."
+  ]);
+  if(errosLer>=3||!sobrouErrada()){
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      var lista=acaoEl.getElementsByClassName("opt"), i;
+      for(i=0;i<lista.length;i++)
+        if(lista[i].getAttribute("data-qa")==="1") lista[i].className="opt ok";
+      mostraDica("De uma ponta at&eacute; a outra s&atilde;o <b>"+fmtCm(cp.cert)+"</b>.");
+      diz("De uma ponta até a outra são " + vozNum(cp.cert) + " centímetros.");
+      travada=true;
+      setTimeout(function(){
+        if(g!==ger||!viva()) return;
+        mostraBanner("<b>Voc&ecirc; mediu tudo!</b><br>Medir come&ccedil;a no <b>zero</b>.", fimMedir);
+      },1500);
+    },1100);
+  }
+}
+
+/* ---------------------------------------------------------------
+   TELA 3 — A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimMedir(){
+  limpa();
+  ger++; travada=false;
+  document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(deprimeira>=4) parecer="Voc&ecirc; encostou o <b>zero</b> e leu certo quase sempre de primeira. "+
+                            "M&atilde;o firme de quem mede!";
+  else if(deprimeira>=2) parecer="Voc&ecirc; j&aacute; encosta o <b>zero</b> antes de ler. "+
+                                 "&Eacute; esse o segredo todo.";
+  else parecer="Voc&ecirc; descobriu o mais importante: quem come&ccedil;a no <b>1</b> conta um "+
+               "cent&iacute;metro a mais. Come&ccedil;ar no <b>zero</b> resolve.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; oi=0; feitos=0; certos=0; deprimeira=0; telaMedir(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Da pr&oacute;xima vez que voc&ecirc; pegar uma r&eacute;gua, "+
+                   "olhe primeiro onde est&aacute; o <b>zero</b>."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaMedir();
+</script>
+</body></html>
