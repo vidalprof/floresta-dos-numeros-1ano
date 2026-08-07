@@ -26,6 +26,10 @@
     var b = bs[0], txt = (b.textContent || "").replace(/\s+/g, " ").replace(/^ | $/g, "");
     if(!txt || txt === ultimo) return;
     ultimo = txt;
+    /* ⭐ a voz de CADA RODADA e so para quem nao le (ate o 2o ano). Do 3o em
+       diante a instrucao da fase ja foi narrada uma vez e o resto e por botao —
+       repetir a cada rodada e o que o Marcos disse que os maiores nao gostam. */
+    if(typeof ID === "object" && ID.narrar !== "tudo") return;
     if(typeof temVoz !== "function") return;
     var k = temVoz(txt);
     /* sem voz gravada nao inventa nada: ficar calado e melhor que falar
@@ -13876,6 +13880,17 @@ var DICAS=[
  "O n&#250;mero <b>{n}</b> est&#225; <b>pulsando</b>. Toque nele.",
  "Eu liguei este tracinho para voc&#234;. O pr&#243;ximo &#233; o que <b>pulsa</b>."
 ];
+/* ⭐ A SEQUENCIA NAO PRECISA SER DE NUMEROS (ago/2026, atividade do 1o ano).
+   A peca nasceu para contar (1,2,3...), mas o que ela ENSINA e "achar o que vem
+   DEPOIS numa bagunca" — e isso serve igual para o ALFABETO, que e a primeira
+   coisa que a professora do 1o ano pediu. O rotulo do ponto era o numero cru
+   (`i+1`) e a voz saia de NUM[]: as duas coisas presas a contagem.
+   Agora a gaveta ROTULOS manda. Vazia, e a contagem de sempre; preenchida com
+   ["A","B","C"...], os pontos viram letras e a voz diz o NOME da letra.
+   ⚠️ o `data-qa` e a conferencia continuam sendo por POSICAO — trocar o rotulo
+   nao mexe em quem esta certo, so no que a crianca ve e ouve. */
+var ROTULOS=[];
+function rotuloDe(n){ return ROTULOS.length ? (ROTULOS[n-1]||(""+n)) : (""+n); }
 var NUM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez",
          "onze","doze","treze","catorze","quinze"];
 
@@ -13890,7 +13905,7 @@ var travada=false;     /* ⚠️ trava NO INSTANTE em que o ultimo ponto liga */
 
 function viva(){ return telaAtual&&telaAtual.parentNode; }
 function figura(){ return FIGURAS[fi]||FIGURAS[0]; }
-function nomeNum(n){ return NUM[n]||(""+n); }
+function nomeNum(n){ return ROTULOS.length ? ("letra "+rotuloDe(n)) : (NUM[n]||(""+n)); }
 
 /* A VOZ. Se o PC nao tiver voz a peca continua inteira: todo numero que ela
    fala tambem esta escrito dentro do pontinho. */
@@ -13937,7 +13952,7 @@ function montaFolha(fg,ligados,classe,vivo){
     q.appendChild(fr);
     ptEls=[];
     for(i=0;i<fg.pts.length;i++){
-      p=el("div","pt",""+(i+1));
+      p=el("div","pt",rotuloDe(i+1));
       p.style.left=fg.pts[i][0]+"%";
       p.style.top=fg.pts[i][1]+"%";
       p.setAttribute("aria-label","Ponto "+(i+1));
@@ -14064,7 +14079,7 @@ function ajuda(n){
   if(errosSeg<3){
     marcaProximo();
     mostraDica(DICAS[errosSeg-1].replace("{n}",""+proximo));
-    if(errosSeg===2) diz("Procure o número " + nomeNum(proximo) + ".");
+    if(errosSeg===2) diz(ROTULOS.length ? ("Procure a " + nomeNum(proximo) + ".") : ("Procure o número " + nomeNum(proximo) + "."));
     return;
   }
   /* ⚠️ 3o DEGRAU: primeiro LIGA o tracinho, DEPOIS escreve a dica. Ao
@@ -14139,6 +14154,7 @@ function fimDaPeca(){
     if(f && f.dados) FIGURAS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.ROTULOS !== undefined) ROTULOS = _d.ROTULOS;
       if(_d.NUM !== undefined) NUM = _d.NUM;
       if(_d.FEITAS !== undefined) FEITAS = _d.FEITAS;
     }
