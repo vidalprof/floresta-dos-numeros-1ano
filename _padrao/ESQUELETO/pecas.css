@@ -1964,6 +1964,25 @@
 .mec-ouvir-achar .opt.oaf .nom{font-size:17px}}@media (max-width:360px){
 .mec-ouvir-achar .opt.oaf .des{height:84px}
 .mec-ouvir-achar .opt.oaf{padding:9px 6px 8px}}
+.mec-ouvir-achar .oafaisca{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:60; -webkit-animation:oafsobe .95s ease-out forwards;animation:oafsobe .95s ease-out forwards}
+.mec-ouvir-achar 0%{-webkit-transform:translateY(0) scale(.4);opacity:0}
+.mec-ouvir-achar 25%{opacity:1}
+.mec-ouvir-achar 100%{-webkit-transform:translateY(-58px) scale(1.15);opacity:0}
+.mec-ouvir-achar 0%{transform:translateY(0) scale(.4);opacity:0}
+.mec-ouvir-achar 25%{opacity:1}
+.mec-ouvir-achar 100%{transform:translateY(-58px) scale(1.15);opacity:0}
+.mec-ouvir-achar .opt.oaf.certa{-webkit-animation:oafpula .5s ease;animation:oafpula .5s ease}
+.mec-ouvir-achar 0%, .mec-ouvir-achar 100%{-webkit-transform:scale(1)}
+.mec-ouvir-achar 40%{-webkit-transform:scale(1.07)}
+.mec-ouvir-achar 0%, .mec-ouvir-achar 100%{transform:scale(1)}
+.mec-ouvir-achar 40%{transform:scale(1.07)}
+.mec-ouvir-achar .oaprox{display:block;margin:14px auto 10px;/* ⚠️ os 84px de baixo NAO sao enfeite: a barra fixa ("Ouvir de novo"/"Dica") tem ~70px e tapava o Proximo pela metade — visto na foto do celular. Botao que a crianca nao alcanca e botao que nao existe. */min-height:52px;padding:13px 30px;border:0; border-radius:26px;font-size:19px;font-weight:800;color:#fff;cursor:pointer; background:-webkit-gradient(linear,left top,left bottom,from(#3aa0f5),to(#2472c8)); background:linear-gradient(#3aa0f5,#2472c8);box-shadow:0 5px 0 #1a5698; -webkit-animation:oafentra .28s ease;animation:oafentra .28s ease}
+.mec-ouvir-achar .oaprox:active{-webkit-transform:translateY(4px);transform:translateY(4px);box-shadow:0 1px 0 #1a5698}
+.mec-ouvir-achar from{-webkit-transform:translateY(10px);opacity:0}
+.mec-ouvir-achar from{transform:translateY(10px);opacity:0}
+.mec-ouvir-achar .opt.oaf .zap{opacity:1;background:rgba(255,210,63,.9);width:34px;height:34px; box-shadow:0 2px 0 rgba(150,110,10,.45)}@media (prefers-reduced-motion:reduce){
+.mec-ouvir-achar .oafaisca{display:none}
+.mec-ouvir-achar .opt.oaf.certa, .mec-ouvir-achar .oaprox{-webkit-animation:none;animation:none}}
 /* ==== PECA: padrao ==== */
 
 .mec-padrao .pdfila{display:block;width:100%;max-width:430px;margin:13px auto 0;padding:6px 0;font-size:0; white-space:nowrap;border-radius:14px;background:rgba(255,255,255,.10)}

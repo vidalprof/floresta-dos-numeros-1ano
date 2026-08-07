@@ -19227,11 +19227,62 @@ function escolhe(k,o){
 function acertou(o){
   travada=true;                     /* ⚠️ trava NO INSTANTE do toque */
   if(erros===0) acertosDePrimeira++;
-  o.className="opt oa_fig certa";
+  /* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos viu no celular: aqui estava
+     `o.className="opt oa_fig certa"` — uma ATRIBUICAO, que APAGA as outras classes.
+     A classe `oaf` (o cartao de vidro fosco) ia embora junto, e o cartao certo
+     perdia a moldura da casa bem no momento em que a crianca olha para ele.
+     Classe de ESTADO se ACRESCENTA; nunca se troca o crachá inteiro. */
+  if(o.className.indexOf("certa")<0) o.className=o.className+" certa ok";
   sCerto();
+  /* ⭐ A COMEMORACAO, que o Marcos cobrou: *"nao tem a comemoracao quando acerta
+     como no Broto"*. Antes era so um texto verde. Agora o cartao PULA, a festa
+     toca e o restante da tela recua — a crianca sabe que acertou sem ler. */
+  chuvinha(o);
   if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
   diz(R.msg.replace(/<[^>]+>/g,""));
-  segue(1600);
+  /* ⭐ E O BOTAO PROXIMO, como no Broto: *"tem que ter o botao de proximo"*.
+     Quem manda no ritmo e a crianca, nao um relogio de 1,6s — ela quer olhar a
+     figura certa, ouvir de novo, e so entao seguir. */
+  poeProximo();
+}
+
+/* faisquinhas em volta do cartao certo — CSS puro, sem imagem e sem biblioteca,
+   e some sozinha. Respeita quem pediu menos animacao. */
+function chuvinha(o){
+  try{
+    if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    var i,r=o.getBoundingClientRect();
+    for(i=0;i<10;i++){
+      var f=document.createElement("span");
+      f.className="oafaisca";
+      f.style.left=(r.left+r.width*(0.15+Math.random()*0.7))+"px";
+      f.style.top=(r.top+r.height*(0.2+Math.random()*0.6))+"px";
+      f.style.background=["#ffd23f","#7ed957","#ff9f45","#fff"][i%4];
+      f.style.webkitAnimationDelay=(i*40)+"ms";
+      f.style.animationDelay=(i*40)+"ms";
+      document.body.appendChild(f);
+      (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },1100); })(f);
+    }
+  }catch(e){}
+}
+
+function poeProximo(){
+  var alvo=document.getElementById("navOA");
+  if(!alvo){
+    alvo=el("div",""); alvo.id="navOA";
+    /* ⚠️ o Proximo entra LOGO DEPOIS do "Isso! ..." — nao no fim da tela. No
+       fim ele caia atras da barra fixa de baixo (visto na foto do celular), e
+       botao que a crianca nao alcanca e botao que nao existe. Aqui ele nasce
+       na altura em que o olho dela ja esta: no elogio do acerto. */
+    if(elAviso&&elAviso.parentNode) elAviso.parentNode.insertBefore(alvo, elAviso.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(alvo);
+  }
+  alvo.innerHTML="";
+  var b=document.createElement("button");
+  b.className="oaprox"; b.type="button"; b.innerHTML="Pr&#243;ximo &#8594;";
+  b.onclick=function(){ if(alvo.parentNode) alvo.innerHTML=""; segue(0); };
+  alvo.appendChild(b);
+  try{ b.focus(); }catch(e){}
 }
 function errouUma(c,o){
   if(c){ c.tentada=true; }

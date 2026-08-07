@@ -318,6 +318,36 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .opt.oaf .des{height:84px}
   .opt.oaf{padding:9px 6px 8px}
 }
+/* ⭐ A FESTA DO ACERTO e o BOTAO PROXIMO (cobrancas do Marcos, ago/2026) */
+.oafaisca{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:60;
+  -webkit-animation:oafsobe .95s ease-out forwards;animation:oafsobe .95s ease-out forwards}
+@-webkit-keyframes oafsobe{0%{-webkit-transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1}100%{-webkit-transform:translateY(-58px) scale(1.15);opacity:0}}
+@keyframes oafsobe{0%{transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1}100%{transform:translateY(-58px) scale(1.15);opacity:0}}
+.opt.oaf.certa{-webkit-animation:oafpula .5s ease;animation:oafpula .5s ease}
+@-webkit-keyframes oafpula{0%,100%{-webkit-transform:scale(1)}40%{-webkit-transform:scale(1.07)}}
+@keyframes oafpula{0%,100%{transform:scale(1)}40%{transform:scale(1.07)}}
+.oaprox{display:block;margin:14px auto 10px;/* ⚠️ os 84px de baixo NAO sao
+  enfeite: a barra fixa ("Ouvir de novo"/"Dica") tem ~70px e tapava o Proximo
+  pela metade — visto na foto do celular. Botao que a crianca nao alcanca e
+  botao que nao existe. */min-height:52px;padding:13px 30px;border:0;
+  border-radius:26px;font-size:19px;font-weight:800;color:#fff;cursor:pointer;
+  background:-webkit-gradient(linear,left top,left bottom,from(#3aa0f5),to(#2472c8));
+  background:linear-gradient(#3aa0f5,#2472c8);box-shadow:0 5px 0 #1a5698;
+  -webkit-animation:oafentra .28s ease;animation:oafentra .28s ease}
+.oaprox:active{-webkit-transform:translateY(4px);transform:translateY(4px);box-shadow:0 1px 0 #1a5698}
+@-webkit-keyframes oafentra{from{-webkit-transform:translateY(10px);opacity:0}}
+@keyframes oafentra{from{transform:translateY(10px);opacity:0}}
+/* o ALTO-FALANTE da resposta: bem visivel e dentro do cartao. Estava com 0.62 de
+   opacidade e pendurado no canto — o Marcos: "o botao de som esta fora do
+   quadrado, esta feio". */
+.opt.oaf .zap{opacity:1;background:rgba(255,210,63,.9);width:34px;height:34px;
+  box-shadow:0 2px 0 rgba(150,110,10,.45)}
+@media (prefers-reduced-motion:reduce){
+  .oafaisca{display:none}
+  .opt.oaf.certa,.oaprox{-webkit-animation:none;animation:none}
+}
 </style></head>
 <body>
 <div id="app"></div>
@@ -617,11 +647,62 @@ function escolhe(k,o){
 function acertou(o){
   travada=true;                     /* ⚠️ trava NO INSTANTE do toque */
   if(erros===0) acertosDePrimeira++;
-  o.className="opt fig certa";
+  /* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos viu no celular: aqui estava
+     `o.className="opt fig certa"` — uma ATRIBUICAO, que APAGA as outras classes.
+     A classe `oaf` (o cartao de vidro fosco) ia embora junto, e o cartao certo
+     perdia a moldura da casa bem no momento em que a crianca olha para ele.
+     Classe de ESTADO se ACRESCENTA; nunca se troca o crachá inteiro. */
+  if(o.className.indexOf("certa")<0) o.className=o.className+" certa ok";
   sCerto();
+  /* ⭐ A COMEMORACAO, que o Marcos cobrou: *"nao tem a comemoracao quando acerta
+     como no Broto"*. Antes era so um texto verde. Agora o cartao PULA, a festa
+     toca e o restante da tela recua — a crianca sabe que acertou sem ler. */
+  chuvinha(o);
   if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
   diz(R.msg.replace(/<[^>]+>/g,""));
-  segue(1600);
+  /* ⭐ E O BOTAO PROXIMO, como no Broto: *"tem que ter o botao de proximo"*.
+     Quem manda no ritmo e a crianca, nao um relogio de 1,6s — ela quer olhar a
+     figura certa, ouvir de novo, e so entao seguir. */
+  poeProximo();
+}
+
+/* faisquinhas em volta do cartao certo — CSS puro, sem imagem e sem biblioteca,
+   e some sozinha. Respeita quem pediu menos animacao. */
+function chuvinha(o){
+  try{
+    if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    var i,r=o.getBoundingClientRect();
+    for(i=0;i<10;i++){
+      var f=document.createElement("span");
+      f.className="oafaisca";
+      f.style.left=(r.left+r.width*(0.15+Math.random()*0.7))+"px";
+      f.style.top=(r.top+r.height*(0.2+Math.random()*0.6))+"px";
+      f.style.background=["#ffd23f","#7ed957","#ff9f45","#fff"][i%4];
+      f.style.webkitAnimationDelay=(i*40)+"ms";
+      f.style.animationDelay=(i*40)+"ms";
+      document.body.appendChild(f);
+      (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },1100); })(f);
+    }
+  }catch(e){}
+}
+
+function poeProximo(){
+  var alvo=document.getElementById("navOA");
+  if(!alvo){
+    alvo=el("div",""); alvo.id="navOA";
+    /* ⚠️ o Proximo entra LOGO DEPOIS do "Isso! ..." — nao no fim da tela. No
+       fim ele caia atras da barra fixa de baixo (visto na foto do celular), e
+       botao que a crianca nao alcanca e botao que nao existe. Aqui ele nasce
+       na altura em que o olho dela ja esta: no elogio do acerto. */
+    if(elAviso&&elAviso.parentNode) elAviso.parentNode.insertBefore(alvo, elAviso.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(alvo);
+  }
+  alvo.innerHTML="";
+  var b=document.createElement("button");
+  b.className="oaprox"; b.type="button"; b.innerHTML="Pr&#243;ximo &#8594;";
+  b.onclick=function(){ if(alvo.parentNode) alvo.innerHTML=""; segue(0); };
+  alvo.appendChild(b);
+  try{ b.focus(); }catch(e){}
 }
 function errouUma(c,o){
   if(c){ c.tentada=true; }
