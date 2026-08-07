@@ -1074,7 +1074,13 @@ function progDaFase(i){ return Math.round(4 + 96 * (i / Math.max(1, FASES.length
 
 function montaFase(i, aoFim){
   IFASE = i;
-  if(i >= FASES.length){ telaFim(); return; }
+  /* ⚠️ LICAO PAGA: quatro portoes da banca (contraste, leiaute, encaixe e
+     imagem quebrada) abrem CADA tela chamando a funcao dela — inclusive sem
+     argumento. `montaFase()` virava `FASES[undefined]`, e a linha seguinte
+     estourava lendo `.selo` de `undefined`. Quatro portoes cegos de uma vez,
+     e a atividade "passava" por nao ter sido medida. Fase que nao existe leva
+     ao fim, nunca a uma tela morta. */
+  if(!(i >= 0) || i >= FASES.length || !FASES[i]){ telaFim(); return; }
   var f = FASES[i];
   limpa();
   var t = el("div","tela"); setProg(t, progDaFase(i));

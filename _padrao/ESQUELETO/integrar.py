@@ -38,17 +38,67 @@ MARCA_CSS = "CSS DESTA"          # onde começa o CSS próprio da peça, no mold
 MARCA_JS = "A PE"                # "A PEÇA COMEÇA AQUI"
 
 
+def regras(css):
+    u"""quebra a folha em regras (seletor, corpo) — inclusive dentro de @media."""
+    fora, media = [], ""
+    for m in re.finditer(r"(@media[^{]*\{)|(\})|([^{}]+)(\{[^{}]*\})", css, re.S):
+        ab, fe, sel, corpo = m.groups()
+        if ab:
+            media = re.sub(r"\s+", " ", ab).strip()
+        elif fe:
+            media = ""
+        elif sel is not None:
+            s = re.sub(r"/\*.*?\*/", " ", sel, flags=re.S).strip()
+            if s and not s.startswith("@"):
+                fora.append((media, re.sub(r"\s+", " ", s),
+                             re.sub(r"\s+", " ", corpo or "").strip()))
+    return fora
+
+
+_MOLDE = [None]
+
+
+def css_do_molde():
+    if _MOLDE[0] is None:
+        cam = os.path.join(PECAS, "MOLDE.html")
+        h = io.open(cam, encoding="utf-8").read() if os.path.exists(cam) else ""
+        st = re.findall(r"<style>(.*?)</style>", h, re.S)
+        _MOLDE[0] = set((a, b, c) for a, b, c in regras(st[0] if st else ""))
+    return _MOLDE[0]
+
+
 def css_da_peca(html):
-    u"""só o bloco que a peça acrescentou — o CSS do molde já está no motor."""
+    u"""SÓ o que a peça acrescentou — o CSS do molde já está no motor.
+
+    ⚠️ LIÇÃO PAGA: isto procurava o comentário `/* ==== CSS DESTA PEÇA ==== */`.
+    Só que **28 das 74 peças não têm essa marca** — o CSS próprio delas mora
+    misturado ao do molde, no mesmo bloco. Resultado: 28 mecânicas entravam na
+    atividade **sem o estilo delas**. A memória perdia a virada 3D e as cartas
+    viravam retângulos (e o portão das dinâmicas ainda disse, em voz alta, "não
+    achei o rotateY" — eu é que li como defeito da peça).
+
+    Agora não depende de marca nenhuma: **tira o que é igual ao MOLDE**. O que
+    sobra é da peça, tenha ela comentário ou não. Regra que a peça redefine (o
+    `.opt` dela, diferente do do molde) continua vindo — e, prefixada com
+    `.mec-<nome>`, ganha do molde por especificidade, que é o que se quer."""
     st = re.findall(r"<style>(.*?)</style>", html, re.S)
     if not st:
         return ""
-    todo = st[0]
-    i = todo.find(MARCA_CSS)
-    if i < 0:
-        return ""
-    j = todo.find("*/", i)
-    return todo[j + 2:] if j > 0 else todo[i:]
+    molde = css_do_molde()
+    saida, media_aberta = [], ""
+    for media, sel, corpo in regras(st[0]):
+        if (media, sel, corpo) in molde:
+            continue
+        if media != media_aberta:
+            if media_aberta:
+                saida.append("}")
+            if media:
+                saida.append("\n" + media)
+            media_aberta = media
+        saida.append("\n" + sel + corpo)
+    if media_aberta:
+        saida.append("}")
+    return "".join(saida)
 
 
 def js_da_peca(html):
@@ -311,7 +361,7 @@ def confere_contra_motor(js_out):
 
 def main():
     escrever = "--escrever" in sys.argv
-    prontas, sem_porta, sem_gaveta = [], [], []
+    prontas, sem_porta, sem_gaveta, sem_css = [], [], [], []
     gavetas = {}
     js_out, css_out = [], []
 
@@ -343,7 +393,12 @@ def main():
         # o CSS leva a MESMA marca: o montador recorta peça inteira, nunca
         # regra a regra (um `@media{` que perdesse as regras de dentro deixaria
         # um `}` solto e derrubaria a folha inteira da atividade)
-        css_out.append((MARCA % nome) + u"\n" + prefixa_css(css_da_peca(html), nome))
+        propria = css_da_peca(html)
+        if len(propria.strip()) < 40:
+            # peca que nao acrescenta estilo nenhum e suspeita: quase toda
+            # mecanica tem pelo menos a classe da peca dela
+            sem_css.append(nome)
+        css_out.append((MARCA % nome) + u"\n" + prefixa_css(propria, nome))
         prontas.append(nome)
 
     faltando, colidindo = confere_contra_motor(js_out)
@@ -366,6 +421,9 @@ def main():
     if sem_porta:
         print(u"  %d sem porta (nao chamam a propria funcao no fim): %s"
               % (len(sem_porta), ", ".join(sem_porta)))
+    if sem_css:
+        print(u"  ⚠️ %d SEM CSS PROPRIO — a mecanica vai entrar sem estilo: %s"
+              % (len(sem_css), ", ".join(sem_css)))
     if sem_gaveta:
         print(u"  %d SEM GAVETA — vao rodar com o conteudo de EXEMPLO delas: %s"
               % (len(sem_gaveta), ", ".join(sem_gaveta)))
