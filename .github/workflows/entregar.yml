@@ -93,14 +93,32 @@ jobs:
           import os, json, hashlib, asyncio, sys
           import edge_tts
 
-          VOZ, RATE, PAR = "pt-BR-AntonioNeural", "-4%", 8
+          # ⭐⭐ A VOZ SEGUE O MASCOTE, e nao o contrario (cobranca do Marcos,
+          #    ago/2026: *"o mascote sera feminino? melhor tracar para masculino
+          #    pois sera a voz do Antonio... quando for feminino tem que pegar
+          #    voz feminina"* e *"quando for feminina chama uma voz feminina"*).
+          #    Isto aqui era `pt-BR-AntonioNeural` FIXO: TODA atividade da casa
+          #    saia com voz masculina, tivesse o mascote que tivesse. Nenhum
+          #    portao pegava, porque o audio existe e o texto bate — o que nao
+          #    batia era a PESSOA. Agora cada atividade escreve a voz dela em
+          #    `<pasta>/voz.txt` (o montador cobra o campo `voz` do
+          #    conteudo.json e se recusa a gerar sem ele).
+          VOZ_PADRAO, RATE, PAR = "pt-BR-AntonioNeural", "-4%", 8
           erros = 0
 
-          async def grava(sem, texto, mp3):
+          def voz_da_pasta(pasta):
+              cam = os.path.join(pasta, "voz.txt")
+              if os.path.exists(cam):
+                  v = open(cam, encoding="utf-8").read().strip()
+                  if v:
+                      return v
+              return VOZ_PADRAO
+
+          async def grava(sem, texto, mp3, voz):
               async with sem:
                   for tent in (1, 2, 3):
                       try:
-                          c = edge_tts.Communicate(texto, VOZ, rate=RATE)
+                          c = edge_tts.Communicate(texto, voz, rate=RATE)
                           await c.save(mp3)
                           if os.path.getsize(mp3) > 500:
                               return True
@@ -120,7 +138,13 @@ jobs:
               camc = os.path.join(audio, "_carimbo.json")
               carimbo = json.load(open(camc, encoding="utf-8")) if os.path.exists(camc) else {}
               falas = json.load(open(cam, encoding="utf-8"))
-              sel = lambda t: hashlib.sha1(t.encode("utf-8")).hexdigest()[:12]
+              voz = voz_da_pasta(pasta)
+              print("%s: voz = %s" % (pasta, voz))
+              # ⚠️ o carimbo passa a incluir a VOZ. Sem isso, trocar o mascote de
+              #    feminino para masculino NAO regravaria nada: o texto e o mesmo,
+              #    o mp3 existe, e a atividade continuaria com a voz errada — o
+              #    defeito exato que o Marcos acabou de pegar, so que invisivel.
+              sel = lambda t: hashlib.sha1((voz + "|" + t).encode("utf-8")).hexdigest()[:12]
               faltam = [f for f in falas
                         if not os.path.exists(os.path.join(audio, f["id"] + ".mp3"))
                         or carimbo.get(f["id"]) != sel(f["texto"])]
@@ -128,7 +152,7 @@ jobs:
               if not faltam: return
               sem = asyncio.Semaphore(PAR)
               res = await asyncio.gather(*[
-                  grava(sem, f["texto"], os.path.join(audio, f["id"] + ".mp3")) for f in faltam])
+                  grava(sem, f["texto"], os.path.join(audio, f["id"] + ".mp3"), voz) for f in faltam])
               ok = 0
               for f, r in zip(faltam, res):
                   if r: carimbo[f["id"]] = sel(f["texto"]); ok += 1

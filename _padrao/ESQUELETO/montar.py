@@ -112,6 +112,20 @@ def confere(c, mecs):
         p.append(u"falta dizer QUEM SENTOU NA MESA (campo 'mesa'): ate o 5o ano "
                  u"manda o PEDAGOGO; do 6o ao 9o, o ESPECIALISTA DA DISCIPLINA "
                  u"(ver _padrao/RECEITA.md)")
+    # ⭐⭐ A VOZ SEGUE O MASCOTE (cobranca do Marcos, ago/2026: *"o mascote sera
+    #    feminino? melhor tracar para masculino pois sera a voz do Antonio
+    #    lembra? quando for feminino tem que pegar voz feminina"*).
+    #    O `entregar.yml` tinha `pt-BR-AntonioNeural` FIXO no codigo: toda
+    #    atividade, sempre, voz masculina. Com um mascote feminino a crianca ve
+    #    uma personagem e ouve outra — e isso nenhum portao pegava porque o
+    #    audio "existe" e o texto "bate". Agora a atividade DECLARA, e sem a
+    #    declaracao nao vira HTML.
+    voz = str(c.get("voz", "")).strip().lower()
+    if voz not in ("masculina", "feminina"):
+        p.append(u"falta dizer a VOZ do mascote (campo 'voz': \"masculina\" ou "
+                 u"\"feminina\"). Mascote feminino com voz masculina e a crianca "
+                 u"vendo uma personagem e ouvindo outra.")
+
     cur = c.get("curriculo") or {}
     usados = sorted(set(f.get("conceito") for f in fases if f.get("conceito")))
     for k in usados:
@@ -712,6 +726,11 @@ def main():
     escreve_index(pasta, c, falas)
     io.open(os.path.join(pasta, "falas.json"), "w", encoding="utf-8").write(
         json.dumps(falas, ensure_ascii=False, indent=1))
+    # o workflow de voz le daqui qual voz usar nesta atividade
+    VOZES = {"masculina": "pt-BR-AntonioNeural", "feminina": "pt-BR-FranciscaNeural"}
+    io.open(os.path.join(pasta, "voz.txt"), "w", encoding="utf-8").write(
+        VOZES.get(str(c.get("voz", "")).strip().lower(), "pt-BR-AntonioNeural") + "\n")
+
     io.open(os.path.join(pasta, "arte.json"), "w", encoding="utf-8").write(
         json.dumps(arte, ensure_ascii=False, indent=1))
     print(u"   escrito: %s/index.html, falas.json e arte.json" % pasta)
