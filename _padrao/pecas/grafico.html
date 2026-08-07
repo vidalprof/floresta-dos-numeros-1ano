@@ -177,6 +177,9 @@ var TETO=6;
 var col=0, valor=0, errosSeg=0, telaAtual=null, barraP=null;
 /* a pergunta final (qual apareceu mais?) tem o andaime dela, com os 3 degraus */
 var errosLer=0, opsLer=[], lerFeita=false;
+/* `mexeu` = quantas vezes a barra mudou de valor sem parar no numero certo;
+   `grauDado` = ate que degrau do andaime ela ja recebeu (nunca volta atras) */
+var mexeu=0, grauDado=0;
 var feitos=[], barras=[], colunas=[], elMais=null, elMenos=null;
 var passo=26, altG=0;
 /* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
@@ -190,7 +193,7 @@ function telaGrafico(){
   limpa(); document.onkeydown=null; arrastando=false;
   if(col>=DADOS.length){ col=0; feitos=[]; }
   if(col===0) feitos=[];
-  valor=0; errosSeg=0; barras=[]; colunas=[];
+  valor=0; errosSeg=0; mexeu=0; grauDado=0; barras=[]; colunas=[];
   /* PASSO DISCRETO calculado pela ALTURA DA JANELA: na janela baixa da escola
      o grafico inteiro tem que caber junto com os botoes. */
   passo=(window.innerHeight<560)?20:26;
@@ -388,15 +391,26 @@ function avisaColuna(i){
 }
 
 /* ---------- a regra da fase ---------- */
+/* ⚠️ O ANDAIME SO OLHAVA PARA CIMA (defeito medido ago/2026): a ajuda subia um
+   degrau quando a barra PASSAVA da conta, e mais nada. So que, com os botoes
+   de um em um, a barra nunca passa — ela para exatamente no numero e a coluna
+   fecha. Ou seja: pelo caminho que a maioria das criancas usa, o andaime
+   inteiro era CODIGO MORTO. E quem parava ABAIXO do alvo (que e a crianca
+   perdida de verdade, a que contou errado e nao sabe o que fazer) nao recebia
+   ajuda nenhuma, nunca. Agora conta-se tambem o MEXER SEM CHEGAR: passar da
+   conta vale um degrau na hora (e o sinal mais claro), e ficar subindo e
+   descendo sem parar no numero certo vale um degrau mais devagar.          */
 function confere(){
   marcaQualServe();
   if(!emJogo()) return;
   if(valor===DADOS[col].v){ fechaColuna(); return; }
-  /* passar da conta NAO pune: so avisa, e o andaime cresce */
-  if(valor>DADOS[col].v){
-    errosSeg++;
-    ajuda(errosSeg);
-  }
+  mexeu++;
+  if(valor>DADOS[col].v) errosSeg++;   /* passou da conta: nao pune, so avisa */
+  var grau=0;
+  if(errosSeg>=1||mexeu>=4) grau=1;
+  if(errosSeg>=2||mexeu>=7) grau=2;
+  if(errosSeg>=3||mexeu>=10) grau=3;
+  if(grau>grauDado){ grauDado=grau; ajuda(grau); }
 }
 function fechaColuna(){
   feitos[col]=valor;
@@ -424,8 +438,15 @@ function ajuda(n){
     mostraDica("S&#227;o <b>"+DADOS[col].v+"</b> fichas. A barra precisa parar na linha do <b>"+
                DADOS[col].v+"</b>.");
   }else{
-    mostraDica("Vou levar a barra at&#233; o <b>"+DADOS[col].v+"</b>. Da pr&#243;xima voc&#234; leva.");
-    valor=DADOS[col].v; desenha(); confere();
+    /* ⚠️ A ORDEM AQUI E O CONSERTO (mesmo defeito das outras pecas do lote): a
+       dica saia ANTES, e o `confere()` logo atras fechava a coluna chamando
+       `apagaDica()` — a fala do 3o degrau, a que EXPLICA por que a barra andou
+       sozinha, aparecia e sumia no mesmo quadro. Leva-se a barra primeiro; a
+       dica vem depois e fica na tela ate o banner. */
+    var v=DADOS[col].v;
+    valor=v; desenha(); confere();
+    mostraDica("Eu levei a barra at&#233; o <b>"+v+"</b>, que &#233; o tanto de fichas. "+
+               "Da pr&#243;xima voc&#234; leva.");
   }
 }
 function apagaDica(){

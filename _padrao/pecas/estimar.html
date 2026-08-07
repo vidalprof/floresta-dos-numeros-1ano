@@ -86,15 +86,18 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .pote{position:relative;height:150px;max-width:430px;margin:12px auto 0;overflow:hidden;
       background:#e8dfc9;border:4px solid #b3903c;border-radius:16px 16px 26px 26px}
 .pote.mini{height:92px}
-.pit{position:absolute;display:block;width:28px;height:28px;margin:-14px 0 0 -14px;
+.pit{position:absolute;display:block;width:26px;height:26px;margin:-13px 0 0 -13px;
      border-radius:50%;background:#c4622d;border:2px solid #7d3d1a;color:#fff2e6;
-     font-size:13px;font-weight:800;font-style:normal;line-height:24px;text-align:center}
-.grao{background:#d9a03a;border-color:#87611a;color:#33280a}
-.gude{background:#3f8fa8;border-color:#1c5162;color:#eaf7fc}
+     font-size:13px;font-weight:800;font-style:normal;line-height:22px;text-align:center}
+/* pote CHEIO: item menor, senao dois vizinhos se sobrepoem e a crianca conta
+   um monte que ela nao consegue separar com o olho. */
+.pote.denso .pit{width:22px;height:22px;margin:-11px 0 0 -11px;font-size:11px;line-height:18px}
 /* ja contado: muda a COR e ganha o NUMERO escrito dentro (nada essencial so na
    cor — quem nao distingue a cor le o numero). */
 .pit.contada{background:#ffd54a;border-color:#a8801c;color:#3a2c07}
-.pit.acesa{background:#fff3c9;border-color:#e09400;color:#3a2c07;
+/* z-index: o item que a voz esta contando cresce, e num pote cheio ele passaria
+   POR BAIXO do vizinho desenhado depois — justo o item que a crianca precisa ver. */
+.pit.acesa{background:#fff3c9;border-color:#e09400;color:#3a2c07;z-index:2;
            -webkit-box-shadow:0 0 0 4px rgba(224,148,0,.6);box-shadow:0 0 0 4px rgba(224,148,0,.6);
            -webkit-transform:scale(1.2);transform:scale(1.2)}
 .tampa{position:absolute;left:0;top:0;right:0;bottom:0;background:#7a5c37;border-radius:11px 11px 20px 20px}
@@ -114,6 +117,10 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
         padding:7px 10px;font-size:14px;font-weight:700;color:#f4efe6}
 .apit{display:inline-block;width:20px;height:20px;margin:0 3px;border-radius:50%;
       background:#ffd54a;border:2px solid #a8801c;vertical-align:middle}
+/* a cor do item vem DEPOIS do .apit de proposito: o grupinho de 5 tem que ser
+   feito das MESMAS coisas do pote, senao nao serve de medida. */
+.grao{background:#d9a03a;border-color:#87611a;color:#33280a}
+.gude{background:#3f8fa8;border-color:#1c5162;color:#eaf7fc}
 /* A REGUA DO PALPITE: producao, nao escolha entre quatro portas. */
 .regua{margin-top:12px}
 .rval{font-size:14px;font-weight:800;letter-spacing:.5px;color:#f0e6d4}
@@ -166,7 +173,9 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .balao + *{margin-top:8px}
   .pote{height:104px;margin-top:8px}
   .pote.mini{height:52px}
-  .pit{width:24px;height:24px;margin:-12px 0 0 -12px;font-size:12px;line-height:20px}
+  .pit{width:22px;height:22px;margin:-11px 0 0 -11px;font-size:12px;line-height:18px}
+  .pote.denso .pit{width:18px;height:18px;margin:-9px 0 0 -9px;font-size:10px;line-height:14px}
+  .apit{width:17px;height:17px;margin:0 2px}
   .tsel{font-size:13px;padding:6px 12px}
   .relogio{margin-top:6px;height:10px}
   .ancora{margin-top:6px;padding:5px 8px;font-size:13px}
@@ -289,7 +298,11 @@ function sNeutro(){ nota(440,.12,.12,"triangle",0); nota(587.33,.16,.11,"triangl
 
 /* ESPALHAR SEM AMONTOAR: grade invisível + sacudida, com semente fixa. Semente
    fixa é de propósito — o mesmo pote na olhada e na conferência, senão a
-   criança acha que trocaram o monte. */
+   criança acha que trocaram o monte.
+   ⚠️ A SACUDIDA TEM LIMITE, e o de cima é MENOR que o do lado: as linhas do
+   pote são mais apertadas que as colunas (o pote é baixo e largo). Com
+   sacudida igual nos dois eixos, dois itens de linhas vizinhas encavalavam —
+   e num monte que se conta com o olho, dois grudados viram um. */
 function semente(s){
   var x=(s*2654435761)%2147483647;
   return function(){ x=(x*48271)%2147483647; return x/2147483647; };
@@ -303,16 +316,18 @@ function espalha(n,seed){
   for(i=celulas.length-1;i>0;i--){
     j=Math.floor(rnd()*(i+1)); tmp=celulas[i]; celulas[i]=celulas[j]; celulas[j]=tmp;
   }
-  var fora=[],x,y;
+  var fora=[],cw=100/cols,ch=100/rows,x,y;
   for(i=0;i<n;i++){
-    x=(celulas[i][1]+0.16+0.68*rnd())*(100/cols);
-    y=(celulas[i][0]+0.16+0.68*rnd())*(100/rows);
-    fora.push([Math.round(7+x*0.86), Math.round(11+y*0.78)]);
+    x=(celulas[i][1]+0.5+(rnd()-0.5)*0.40)*cw;
+    y=(celulas[i][0]+0.5+(rnd()-0.5)*0.20)*ch;
+    fora.push([Math.round(x*10)/10, Math.round(y*10)/10]);
   }
   return fora;
 }
 function montaPote(tampado,mini){
-  var cn=cena(), d=el("div","pote"+(mini?" mini":"")), pos=espalha(cn.n,cn.seed), i, p;
+  var cn=cena();
+  var d=el("div","pote"+(mini?" mini":"")+(cn.n>=18?" denso":""));
+  var pos=espalha(cn.n,cn.seed), i, p;
   for(i=0;i<cn.n;i++){
     p=el("i","pit"+(cn.cls?" "+cn.cls:""),"");
     p.style.left=pos[i][0]+"%"; p.style.top=pos[i][1]+"%";
@@ -326,11 +341,10 @@ function montaPote(tampado,mini){
   return d;
 }
 function montaAncora(c){
-  var a=el("div","ancora",""), i;
-  a.appendChild(document.createTextNode("Isto aqui é "));
-  for(i=0;i<5;i++) a.appendChild(el("i","apit",""));
-  var b=el("b",null," 5. Quantos grupinhos desses cabem no pote?");
-  a.appendChild(b);
+  var cn=cena(), a=el("div","ancora",""), i;
+  a.appendChild(document.createTextNode("Um grupinho de 5 é assim:"));
+  for(i=0;i<5;i++) a.appendChild(el("i","apit"+(cn.cls?" "+cn.cls:""),""));
+  a.appendChild(document.createTextNode(" Quantos grupinhos desses cabem no pote?"));
   c.appendChild(a);
 }
 

@@ -451,14 +451,23 @@ function respondeConta(v,o){
   }
   if(errosConta===2){
     acendeConta();
-    mostraDica("Conte em voz alta, um quadradinho por vez: <b>1, 2, 3, 4, 5</b>. "+
-               "A resposta certa est&#225; <b>acesa</b>.");
+    /* ⚠️ a contagem sai do TAMANHO da lista FORMA, nunca escrita a mao: trocar
+       a figura no topo do arquivo tem de trocar a dica junto, senao a peca
+       passa a mentir para a crianca sem ninguem perceber. */
+    mostraDica("Conte em voz alta, um quadradinho por vez: <b>"+contando()+
+               "</b>. A resposta certa est&#225; <b>acesa</b>.");
     return;
   }
   mostraDica("Contando junto: s&#227;o <b>"+FORMA.length+"</b> quadradinhos, antes e "+
              "depois de girar.");
   acendeConta();
   fechaConta(certaDaConta());
+}
+/* "1, 2, 3, 4, 5" montado a partir da propria figura */
+function contando(){
+  var i, t=[];
+  for(i=1;i<=FORMA.length;i++) t.push(i);
+  return t.join(", ");
 }
 function certaDaConta(){
   var i;
