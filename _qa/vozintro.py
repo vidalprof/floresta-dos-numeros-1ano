@@ -50,6 +50,44 @@ def corpos(js):
         yield m.group(1), js[j:k]
 
 
+def dentro_de_gatilho(corpo, pos):
+    u"""⚠️ LICAO PAGA (ago/2026): ORDEM DE ARQUIVO NAO E ORDEM DE TEMPO.
+
+    Este portao dizia que a intro do "Monte seu prato" calava a pergunta, porque
+    o `falaDaTela` aparecia ANTES do `falar(intro)` no arquivo. So que aquele
+    `falaDaTela` esta DENTRO de um `onclick`: ele so toca quando a crianca enche
+    o prato — muito DEPOIS de a tela abrir e a intro tocar. Eu quase "consertei"
+    uma atividade que esta no ar e funciona.
+
+    Uma chamada dentro de `onclick`/`onkeydown`/`addEventListener`/`setTimeout`
+    acontece por causa de um GESTO da crianca ou do relogio, nunca na abertura da
+    tela. Para esta pergunta, ela nao conta."""
+    trecho = corpo[:pos]
+    # conta as chaves abertas dentro de um gatilho ainda nao fechado
+    prof = 0
+    i = 0
+    dentro = []
+    while i < len(trecho):
+        if re.match(r"on\w+\s*=\s*function|addEventListener\s*\(|setTimeout\s*\(|setInterval\s*\(",
+                    trecho[i:i + 40]):
+            dentro.append(prof)
+        if trecho[i] == "{":
+            prof += 1
+        elif trecho[i] == "}":
+            prof -= 1
+            dentro = [d for d in dentro if d < prof]
+        i += 1
+    return bool(dentro)
+
+
+def primeira_na_abertura(corpo):
+    u"""o primeiro `falaDaTela` que toca QUANDO A TELA ABRE (fora de gatilho)."""
+    for m in re.finditer(r'falaDaTela\("([a-z0-9_]+)"', corpo):
+        if not dentro_de_gatilho(corpo, m.start()):
+            return m
+    return None
+
+
 def main():
     if len(sys.argv) < 2:
         print(__doc__)
@@ -65,7 +103,7 @@ def main():
 
     caladas, ok = [], 0
     for nome, corpo in corpos(js):
-        q = re.search(r'falaDaTela\("([a-z0-9_]+)"', corpo)
+        q = primeira_na_abertura(corpo)
         if not q:
             continue
         ok += 1
