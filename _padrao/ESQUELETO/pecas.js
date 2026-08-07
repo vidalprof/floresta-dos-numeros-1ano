@@ -226,7 +226,7 @@ function pecaAchar(){
 
   var cena=el("div","cena");
   cena.appendChild(el("div","grama"));
-  cena.appendChild(el("div","sol"));
+  cena.appendChild(el("div","anc_sol"));
   cena.appendChild(el("div","nuvem"));
   cena.appendChild(el("div","arvt"));
   cena.appendChild(el("div","arvc"));
@@ -250,7 +250,7 @@ function pecaAchar(){
   for(i=0;i<COISAS.length;i++){ COISAS[i].cels=[]; }
   for(l=0;l<GL;l++){
     for(cc=0;cc<GC;cc++){
-      var z=el("div","zona");
+      var z=el("div","anc_zona");
       z.style.left=(cc*100/GC)+"%";
       z.style.top=(l*100/GL)+"%";
       z.style.width=(100/GC)+"%";
@@ -294,8 +294,8 @@ function tocar(l,c,cel){
   if(co && achadas[co.k]){ sTap(); return; }          /* ja achado: nunca pune */
   if(co){ achar(co); return; }
   sErro(); erros++;
-  cel.className="zona treme";
-  setTimeout((function(z){ return function(){ if(z.className.indexOf("pisca")<0) z.className="zona"; }; })(cel),400);
+  cel.className="anc_zona treme";
+  setTimeout((function(z){ return function(){ if(z.className.indexOf("anc_pisca")<0) z.className="anc_zona"; }; })(cel),400);
   ajuda(erros);
 }
 
@@ -306,7 +306,7 @@ function achar(co){
   var v=el("div","vok","✓");
   co.el.appendChild(v);
   var i;
-  for(i=0;i<co.cels.length;i++){ co.cels[i].removeAttribute("data-qa"); co.cels[i].className="zona"; }
+  for(i=0;i<co.cels.length;i++){ co.cels[i].removeAttribute("data-qa"); co.cels[i].className="anc_zona"; }
   atualiza();
   if(quantasFaltam()===0) setTimeout(fim,700);
 }
@@ -323,8 +323,8 @@ function ajuda(n){
 }
 function pisca(co){
   var i;
-  for(i=0;i<co.cels.length;i++){ co.cels[i].className="zona pisca"; }
-  setTimeout((function(cs){ return function(){ var k; for(k=0;k<cs.length;k++){ cs[k].className="zona"; } }; })(co.cels),1900);
+  for(i=0;i<co.cels.length;i++){ co.cels[i].className="anc_zona anc_pisca"; }
+  setTimeout((function(cs){ return function(){ var k; for(k=0;k<cs.length;k++){ cs[k].className="anc_zona"; } }; })(co.cels),1900);
 }
 
 function fim(){
@@ -525,13 +525,13 @@ function poeBoneco(comPasso){
   bonecoM.style.width=q.offsetWidth+"px";
   bonecoM.style.height=q.offsetHeight+"px";
   if(comPasso){
-    bonecoM.className=(bonecoM.className.indexOf("esq")>=0)?"andarino esq anda":"andarino anda";
+    bonecoM.className=(bonecoM.className.indexOf("aa_esq")>=0)?"andarino aa_esq anda":"andarino anda";
     setTimeout(paraPasso,330);
   }
 }
 function paraPasso(){
   if(!bonecoM) return;
-  bonecoM.className=(bonecoM.className.indexOf("esq")>=0)?"andarino esq":"andarino";
+  bonecoM.className=(bonecoM.className.indexOf("aa_esq")>=0)?"andarino aa_esq":"andarino";
 }
 
 /* ---- O COMANDO: um toque = UMA casa ---- */
@@ -541,7 +541,7 @@ function anda(dl,dc,bot){
   var nl=ondeL+dl, nc=ondeC+dc;
   if(nl<0||nl>=NM||nc<0||nc>=NM){ trombada(); return; }
   /* vira para o lado de andar (so a figura, o comando e o mesmo) */
-  if(dc<0) bonecoM.className="andarino esq";
+  if(dc<0) bonecoM.className="andarino aa_esq";
   else if(dc>0) bonecoM.className="andarino";
   marcaTrilha();
   ondeL=nl; ondeC=nc; passosD++;
@@ -563,7 +563,7 @@ function marcaTrilha(){
 function trombada(){
   sBate();
   if(bonecoM){
-    bonecoM.className=(bonecoM.className.indexOf("esq")>=0)?"andarino esq bate":"andarino bate";
+    bonecoM.className=(bonecoM.className.indexOf("aa_esq")>=0)?"andarino aa_esq bate":"andarino bate";
     setTimeout(paraPasso,320);
   }
   mostraDica("Por a&#237; ele sai do mapa. Escolha outro lado.");
@@ -598,13 +598,13 @@ function socorro(){
 }
 function piscaLugar(){
   var g=LUGARES[lugarAtual], q=celsM[g.alvo.l][g.alvo.c];
-  if(q) q.className="mcel pisca";
+  if(q) q.className="mcel aa_pisca";
 }
 function piscaSeta(){
   var i,ehAProxima;
   for(i=0;i<setasM.length;i++){
     ehAProxima=(setasM[i].getAttribute("data-qa")==="1");
-    setasM[i].className=ehAProxima?"seta pisca":"seta";
+    setasM[i].className=ehAProxima?"seta aa_pisca":"seta";
   }
 }
 function limpaPiscas(){
@@ -762,7 +762,7 @@ function viva(){ return telaAtual&&telaAtual.parentNode; }
 
 /* ---------- o desenho, em porcentagem (serve na peça e na vaga) ---------- */
 function desenho(tipo,tam){
-  var d=el("div","fig "+tam);
+  var d=el("div","al_fig "+tam);
   if(tipo==="telhado"){ d.appendChild(el("div","pt ptelh","")); }
   else if(tipo==="porta"){ d.appendChild(el("div","pt pport","")); d.appendChild(el("div","pt pmaca","")); }
   else if(tipo==="janela"){ d.appendChild(el("div","pt pjan","")); }
@@ -808,7 +808,7 @@ function pecaLugar(){
 }
 
 function fazPeca(p){
-  var b=el("div","pc");
+  var b=el("div","al_pc");
   b.appendChild(desenho(p.k,"dpc"));
   b.appendChild(el("span","pnome",p.n));
   b._k=p.k; b._n=p.n;
@@ -924,9 +924,9 @@ function apagaAceso(){
 function escolhe(b){
   if(!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="al_pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="al_pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueVaga(){
   if(cliqueDeArrasto()) return;
@@ -945,7 +945,7 @@ function acerta(b,v){
   v.className="cam ok";
   v.innerHTML="";
   v.appendChild(desenho(b._k,"dvg"));
-  b.className="pc usada";
+  b.className="al_pc usada";
   marcada=null;
   sCerto();
   postas++; errosSeg=0;
@@ -957,7 +957,7 @@ function acerta(b,v){
    um X vermelho, nunca a palavra "errou". */
 function erra(b){
   sErro(); errosSeg++;
-  b.className="pc treme";
+  b.className="al_pc treme";
   destreme(b);
   mostraDica(DICAS[Math.min(errosSeg,DICAS.length)-1]);
   if(errosSeg===2) piscaCerta(b);
@@ -983,7 +983,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"al_pc sel":"al_pc";
   },340);
 }
 function piscaCerta(b){
@@ -1236,7 +1236,7 @@ function telaSombras(){
   diz("Leve cada coisa até a sombra dela.");
 }
 function fazPeca(k){
-  var b=el("div","pc");
+  var b=el("div","as_pc");
   b.appendChild(caixaForma(k,"dpc",0));
   b.appendChild(el("span","pnome",FORMAS[k]?FORMAS[k].n:k));
   b.setAttribute("data-qa",k);
@@ -1360,14 +1360,14 @@ function apagaAceso(){
 function marca(b){
   if(travada||!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
-  b.className="pc sel"; marcada=b; apagaAceso();
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="as_pc";
+  b.className="as_pc sel"; marcada=b; apagaAceso();
 }
 function escolhe(b){
   if(travada||!b||temClasse(b,"usada")) return;
   var i;
   if(marcada===b){
-    for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+    for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="as_pc";
     marcada=null; sTap(); apagaAceso(); return;
   }
   marca(b); sTap();
@@ -1398,7 +1398,7 @@ function acerta(b,v){
   v.className="cam ok";
   v.innerHTML="";
   v.appendChild(caixaForma(b._k,"dvg",0));
-  b.className="pc usada";
+  b.className="as_pc usada";
   marcada=null; tropecouEm=null;
   sEncaixa();
   postas++; errosSeg=0;
@@ -1412,7 +1412,7 @@ function acerta(b,v){
    X vermelho, nunca a palavra que reprova. */
 function erra(b){
   sNao(); errosSeg++; tropecouEm=b;
-  b.className="pc treme";
+  b.className="as_pc treme";
   destreme(b);
   mostraDica(DICAS[Math.min(errosSeg,DICAS.length)-1]);
   if(errosSeg>=2) apagaAceso();
@@ -1439,7 +1439,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()||!b) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"as_pc sel":"as_pc";
   },340);
 }
 function apagaDica(){
@@ -1985,7 +1985,7 @@ function pecaBalanca(){
   lin.appendChild(btMenos); lin.appendChild(btMais);
   c.appendChild(lin);
   c.appendChild(el("div","hint","Balan&ccedil;a "+(ri+1)+" de "+RODS.length+
-                   ". O prato que desce &eacute; o mais pesado."));
+                   ". O b_prato que desce &eacute; o mais pesado."));
   t.appendChild(c);
   app.appendChild(t);
   desenha(0);
@@ -2000,7 +2000,7 @@ function montaBalanca(){
   elPD=el("div","ponta ldir","");
   elPE.appendChild(el("div","fio",""));
   elPD.appendChild(el("div","fio",""));
-  var prE=el("div","prato",""), prD=el("div","prato","");
+  var prE=el("div","b_prato",""), prD=el("div","b_prato","");
   elCubE=el("div","cubos",""); elCubD=el("div","cubos","");
   prE.appendChild(elCubE); prD.appendChild(elCubD);
   elPE.appendChild(prE); elPD.appendChild(prD);
@@ -2049,10 +2049,10 @@ function desenha(quantosNovos){
     elEstado.innerHTML="IGUAL! Os dois lados t&ecirc;m <b>"+e+"</b>.";
   }else if(dif<0){
     elEstado.className="estado";
-    elEstado.innerHTML="A DIREITA est&aacute; mais <b>leve</b>: o prato dela subiu.";
+    elEstado.innerHTML="A DIREITA est&aacute; mais <b>leve</b>: o b_prato dela subiu.";
   }else{
     elEstado.className="estado";
-    elEstado.innerHTML="A DIREITA est&aacute; mais <b>pesada</b>: o prato dela desceu.";
+    elEstado.innerHTML="A DIREITA est&aacute; mais <b>pesada</b>: o b_prato dela desceu.";
   }
 
   /* data-qa="1" = "este botão serve AGORA". Só o auditor-jogador usa. */
@@ -2098,7 +2098,7 @@ function passo(d){
 function ajuda(){
   var e=esqTotal(), d=dirTotal(), falta=e-d;
   if(err===1){
-    mostraDica("Olhe a balan&ccedil;a: o prato que <b>desceu</b> &eacute; o mais pesado. "+
+    mostraDica("Olhe a balan&ccedil;a: o b_prato que <b>desceu</b> &eacute; o mais pesado. "+
                "O que este lado est&aacute; pedindo?");
   }else if(err===2){
     mostraDica("Conte de novo: <b>"+e+"</b> de um lado e <b>"+d+"</b> do outro. "+
@@ -2296,7 +2296,7 @@ function pecaBaseDez(){
 }
 
 function fazPeca(r){
-  var b=el("div","pc");
+  var b=el("div","bd_pc");
   b.appendChild(el("i",r.pTipo,""));
   b.setAttribute("data-qa","cx");
   b.onclick=cliquePeca;
@@ -2398,9 +2398,9 @@ function apagaAceso(){
 function escolhe(b){
   if(travado||!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="bd_pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="bd_pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueCaixa(){
   if(cliqueDeArrasto()) return;
@@ -2422,7 +2422,7 @@ function poe(b){
     mostraDica("A caixa j&#225; tem <b>10</b>. Aperte <b>Trocar 10 por 1</b> para esvaziar.");
     return;
   }
-  b.className="pc usada";
+  b.className="bd_pc usada";
   marcada=null;
   var v=vagas[naCaixa.length];
   var d=el("i",rodada().pTipo+" cxpc","");
@@ -2684,7 +2684,7 @@ function pecaBater(){
   c.appendChild(el("div","selo","BATA OS PEDA&#199;OS"));
   c.appendChild(el("div","balao","Diga a palavra da <b>figura</b> e bata uma vez para cada peda&#231;o."));
 
-  var fg=el("div","bsFig");
+  var fg=el("div","bs_bsFig");
   if(figEl){ fg.appendChild(figEl(r.fig)); }
   else { fg.appendChild(el("div","semfig", r.pal)); }
   c.appendChild(fg);
@@ -3061,7 +3061,7 @@ function telaBingo(){
   for(i=0;i<c.cartela.length;i++) cart.appendChild(fazCasa(c.cartela[i]));
   cx.appendChild(cart);
 
-  eZona=el("div","zona","");
+  eZona=el("div","b2_zona","");
   cx.appendChild(eZona);
   cx.appendChild(el("div","hint","Toque na casa, ou digite no teclado o n&uacute;mero que saiu. "+
                     "Enter tira a pedra."));
@@ -3080,7 +3080,7 @@ function telaBingo(){
   };
 }
 function fazCasa(v){
-  var b=el("div","bin",""+v);
+  var b=el("div","b2_bin",""+v);
   b._v=v;
   b.onclick=function(){ cliqueCasa(b); };
   celulas.push(b);
@@ -3179,7 +3179,7 @@ function naoTenho(g){
 function acerta(c){
   var g=ger;
   travada=true;                    /* ⚠️ trava NO INSTANTE do toque */
-  c.className="bin marcada";
+  c.className="b2_bin marcada";
   marcadas++; erros=0;
   sMarca();
   escondeTraducao(); apagaDica();
@@ -3205,7 +3205,7 @@ function acerta(c){
 function erra(c){
   var g=ger;
   sErro(); erros++; usouAjuda=true;
-  if(c){ c.className="bin treme"; destreme(g,c); }
+  if(c){ c.className="b2_bin treme"; destreme(g,c); }
   if(erros===1){
     /* o 1º degrau fala do erro QUE ACONTECEU. Dizer "não tenho" tendo é um
        engano diferente de tocar na casa errada, e ouvir a frase genérica nos
@@ -3227,7 +3227,7 @@ function erra(c){
 function destreme(g,c){
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(c,"marcada")) c.className="bin";
+    if(!temClasse(c,"marcada")) c.className="b2_bin";
   },340);
 }
 /* ⚠️ 3º DEGRAU: REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica FICA na tela até
@@ -3239,15 +3239,15 @@ function destreme(g,c){
 function esperaERevela(g){
   travada=true;
   var c=casaDe(pedra), bt=document.getElementById("naotem"), val=pedra;
-  if(c) c.className="bin pisca";                 /* REVELA primeiro */
-  else if(bt) bt.className="btn bbt pisca";
+  if(c) c.className="b2_bin b2_pisca";                 /* REVELA primeiro */
+  else if(bt) bt.className="btn bbt b2_pisca";
   setTimeout(function(){
     if(g!==ger||!viva()) return;
     if(c) mostraDica("Achei para voc&ecirc;: a casa que est&aacute; piscando &eacute; o <b>"+val+
                      "</b>, o mesmo valor da pedra. Toque em Entendi que eu marco.");
     else  mostraDica("Desta vez a pedra vale <b>"+nomeDoNumero(val)+
                      "</b> e esse n&uacute;mero <b>n&atilde;o</b> est&aacute; na sua cartela. "+
-                     "O bot&atilde;o que pisca &eacute; a resposta certa.");
+                     "O bot&atilde;o que b2_pisca &eacute; a resposta certa.");
     botaoSegue(g,c);                             /* e SÓ DEPOIS a explicação */
   },620);
 }
@@ -3491,7 +3491,7 @@ function telaBussola(){
   c.appendChild(elMapa);
   var v=el("div","ventos",""); v.id="ventos";
   c.appendChild(v);
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","b3_placar","");
   c.appendChild(elPlacar);
   c.appendChild(el("div","hint","No mapa o <b>norte</b> fica em cima e o <b>sul</b> embaixo. "+
     "O <b>leste</b> &#233; o lado da sua direita; o <b>oeste</b>, o da sua esquerda."));
@@ -3504,7 +3504,7 @@ function montaMapa(){
   var g=el("div","bgrade"), dr, dc, lin, item, e, i;
   elMapa.innerHTML="";
   for(dr=-1;dr<=1;dr++){
-    lin=el("div","blin");
+    lin=el("div","b3_blin");
     for(dc=-1;dc<=1;dc++){
       if(dr===0&&dc===0){
         e=el("div","bcentro",'<div class="ptfig"></div><span class="ptn">PRA&#199;A</span>');
@@ -3632,7 +3632,7 @@ function atualiza(){
 }
 function piscaRosa(d){
   var k;
-  for(k in rosas) if(rosas.hasOwnProperty(k)) rosas[k].className=(k===d)?"rosa pisca":"rosa";
+  for(k in rosas) if(rosas.hasOwnProperty(k)) rosas[k].className=(k===d)?"rosa b3_pisca":"rosa";
 }
 function destreme(e,base){
   setTimeout(function(){
@@ -3929,28 +3929,28 @@ function pecaCaca(){
   var bal=el("div","balao","Ache as <b>"+PAL.length+" palavras</b> da horta. Elas est&#227;o "+comoEstao+".");
   c.appendChild(bal);
 
-  var lista=el("div","lista"), chips={};
+  var lista=el("div","cp_lista"), chips={};
   for(i=0;i<PAL.length;i++){
-    var ch=el("div","pchip "+cor[PAL[i]]);
+    var ch=el("div","cp_pchip "+cor[PAL[i]]);
     ch.innerHTML='<i class="pbola"></i>'+PAL[i];
     chips[PAL[i]]=ch;
     lista.appendChild(ch);
   }
   c.appendChild(lista);
 
-  var grade=el("div","grade");
+  var grade=el("div","cp_grade");
   /* ⭐ data-qa: onde cada palavra ficou (r, c, tamanho, deitada?, e o PASSO
      dl/dc, que e o que ensina a diagonal ao auditor). Existe SO para o
      auditor-jogador; a crianca nao ve diferenca nenhuma.                 */
   grade.setAttribute("data-qa",JSON.stringify(onde));
   for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
-    var q=el("div","cel",g[y][x]);
+    var q=el("div","cp_cel",g[y][x]);
     /* ⭐ A ARMADILHA Nº 1: porcentagem, nunca px. */
     q.style.width=(100/N)+"%";
     cels[y+"_"+x]=q;
     q.onclick=function(){
       if(q.className.indexOf("ok")>=0){ sTap(); confere(); return; }  /* TRAVA */
-      q.className = q.className.indexOf("mark")>=0 ? "cel" : "cel mark";
+      q.className = q.className.indexOf("mark")>=0 ? "cp_cel" : "cp_cel mark";
       sTap();
       confere();
     };
@@ -3981,11 +3981,11 @@ function pecaCaca(){
     var cs=posicoes[w],z;
     if(!cs) return;
     for(z=0;z<cs.length;z++){(function(q,atraso){
-      setTimeout(function(){ q.className="cel ok "+cor[w]; },atraso);
+      setTimeout(function(){ q.className="cp_cel ok "+cor[w]; },atraso);
     })(cels[cs[z]],z*70);}
     sCerto();
     faixa(w);
-    chips[w].className="pchip "+cor[w]+" feito";
+    chips[w].className="cp_pchip "+cor[w]+" feito";
   }
   function confere(){
     var w,z,todas,n;
@@ -4008,7 +4008,7 @@ function pecaCaca(){
       var meu=ger;
       setTimeout(function(){
         if(meu!==ger) return;
-        mostraBanner("Voc&#234; varreu a grade inteira &#8212; at&#233; a <b>diagonal</b>!",fimDaPeca);
+        mostraBanner("Voc&#234; varreu a cp_grade inteira &#8212; at&#233; a <b>diagonal</b>!",fimDaPeca);
       },900);
     }
   }
@@ -4039,7 +4039,7 @@ function pecaCaca(){
       } else {
         var c0=posicoes[w][0];
         if(cels[c0]&&cels[c0].className.indexOf("ok")<0)
-          cels[c0].className=cels[c0].className+" pisca";
+          cels[c0].className=cels[c0].className+" cp_pisca";
         mostraDica("A palavra <b>"+w+"</b> come&#231;a na letra que est&#225; piscando.");
         clearInterval(relogio); relogio=0;
       }
@@ -4061,7 +4061,7 @@ function fimDaPeca(){
   var b=el("button","btn","Jogar de novo");
   b.onclick=function(){ pecaCaca(); };
   c.appendChild(b);
-  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a CA&#199;A-PALAVRAS: grade em porcentagem, quatro dire&#231;&#245;es, letra conquistada travada."));
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a CA&#199;A-PALAVRAS: cp_grade em porcentagem, quatro dire&#231;&#245;es, letra conquistada travada."));
   t.appendChild(c);
   app.appendChild(t);
 }
@@ -4250,7 +4250,7 @@ function destreme(bt){
 }
 function piscaQuemCabe(){
   var a=elCart.getElementsByClassName("moeda"), i;
-  for(i=0;i<a.length;i++) if(a[i]._v<=falta()) a[i].className=classePeca(a[i])+" pisca";
+  for(i=0;i<a.length;i++) if(a[i]._v<=falta()) a[i].className=classePeca(a[i])+" cd_pisca";
 }
 /* 3º tropeço: a peça que serve entra sozinha e a rodada ANDA. É isto que
    garante que a criança nunca fica presa. */
@@ -4302,7 +4302,7 @@ function atualiza(){
 function marcaQuemServe(){
   var a=elCart.getElementsByClassName("moeda"), i, m=maiorQueCabe();
   for(i=0;i<a.length;i++){
-    if(a[i].className.indexOf("pisca")<0) a[i].className=classePeca(a[i]);
+    if(a[i].className.indexOf("cd_pisca")<0) a[i].className=classePeca(a[i]);
     if(a[i]._v===m) a[i].setAttribute("data-qa","1");
     else a[i].removeAttribute("data-qa");
   }
@@ -4523,7 +4523,7 @@ function montaQuadro(c,g){
   var i,d,lin,ce;
   lin=el("div","gradelin","");
   for(i=0;i<7;i++){
-    ce=el("div","cel cabc",SEM[i]);
+    ce=el("div","c_cel cabc",SEM[i]);
     ce._cab=i;
     ce.onclick=fazCliqueCab(g,i,ce);
     cabs.push(ce);
@@ -4535,8 +4535,8 @@ function montaQuadro(c,g){
     lin=el("div","gradelin","");
     for(k=0;k<7;k++){
       d=i*7+k-MES.inicio+1;
-      if(d<1||d>MES.dias){ lin.appendChild(el("div","cel vazio","")); continue; }
-      ce=el("div","cel",""+d);
+      if(d<1||d>MES.dias){ lin.appendChild(el("div","c_cel vazio","")); continue; }
+      ce=el("div","c_cel",""+d);
       ce._d=d;
       ce.onclick=fazCliqueCel(g,d,ce);
       cels[d]=ce;
@@ -4559,7 +4559,7 @@ function fazCliqueCab(g,i,ce){ return function(){ tocaCab(g,i,ce); }; }
    ja derrubou quatro portoes de uma vez). */
 function pintaCel(d){
   var ce=cels[d]; if(!ce) return;
-  var c="cel";
+  var c="c_cel";
   if(ce._andado) c=c+" andado";
   if(d===HOJE) c=c+" hoje";
   if(ce._alvo) c=c+" alvo";
@@ -4686,7 +4686,7 @@ function tocaCab(g,i,ce){
     travada=true;                        /* ⚠️ trava NO INSTANTE do acerto */
     sCerto();
     if(errosSeg===0) deprimeira++;
-    ce.className="cel cabc andado";
+    ce.className="c_cel cabc andado";
     contEl.className="contador ok";
     contEl.innerHTML="O dia <b>"+f.dia+"</b> cai numa <b>"+SEMH[i]+"</b>. A semana se "+
                      "repete: por isso a coluna d&aacute; a resposta.";
@@ -4770,7 +4770,7 @@ function erroSemana(g,i,ce){
     travada=true;
     setTimeout(function(){
       if(g!==ger||!viva()) return;
-      if(cabs[col]) cabs[col].className="cel cabc andado";
+      if(cabs[col]) cabs[col].className="c_cel cabc andado";
       contEl.className="contador ok";
       contEl.innerHTML="O dia <b>"+f.dia+"</b> cai numa <b>"+SEMH[col]+"</b>.";
       mostraDica("Toda casinha da <b>mesma coluna</b> cai no mesmo dia da semana. "+
@@ -5178,7 +5178,7 @@ function montaBotoes(c,aoTocar){
   var box=el("div","cams"), i, b;
   elBins={};
   for(i=0;i<CAMADAS.length;i++){
-    b=el("div","bin");
+    b=el("div","cm_bin");
     b.innerHTML='<span class="bcx">&#8211;</span>'+CAMADAS[i].n+'<i class="bst">desligada</i>';
     b.onclick=(function(k){ return function(){ aoTocar(k); }; })(CAMADAS[i].k);
     elBins[CAMADAS[i].k]=b;
@@ -5190,18 +5190,18 @@ function pintaCamadas(){
   var i, k, b;
   for(i=0;i<CAMADAS.length;i++){
     k=CAMADAS[i].k;
-    camEl[k].className = ligada[k] ? "cmcam on" : "cmcam";
+    camEl[k].className = ligada[k] ? "cmcam cm_on" : "cmcam";
     b=elBins[k];
-    b.className = ligada[k] ? "bin on" : "bin";
+    b.className = ligada[k] ? "cm_bin cm_on" : "cm_bin";
     b.innerHTML='<span class="bcx">'+(ligada[k]?"&#10003;":"&#8211;")+'</span>'+CAMADAS[i].n
                 +'<i class="bst">'+(ligada[k]?"ligada":"desligada")+'</i>';
   }
 }
 function piscaCamada(k){
   if(!camEl[k]||!ligada[k]) return;
-  camEl[k].className="cmcam on novo";
+  camEl[k].className="cmcam cm_on novo";
   setTimeout((function(e){ return function(){
-    if(e.className.indexOf("novo")>=0) e.className="cmcam on";
+    if(e.className.indexOf("novo")>=0) e.className="cmcam cm_on";
   }; })(camEl[k]),2100);
 }
 
@@ -5583,8 +5583,8 @@ function fioPronto(g){
 }
 
 function fazPonta(g,lado){
-  var l=el("div","lig pto");
-  l._base="lig pto";
+  var l=el("div","c2_lig pto");
+  l._base="c2_lig pto";
   l._gap=g.k; l._lado=lado;
   l.style.left=(lado==="a"?g.x1:g.x2)+"%";
   l.style.top=g.y+"px";
@@ -5680,8 +5680,8 @@ function toca(l){
 function marca(l){ desmarca(); l.className=l._base+" sel"; marcada=l; }
 
 function desmarca(){
-  var a=app.getElementsByClassName("lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=a[i]._base||"lig";
+  var a=app.getElementsByClassName("c2_lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=a[i]._base||"c2_lig";
   marcada=null;
 }
 
@@ -5716,10 +5716,10 @@ function juntar(a,b){
 /* 3º erro: acende a outra ponta do mesmo pedaço e DEIXA seguir — é o que
    garante que a peça nunca trava. */
 function revelaPar(l){
-  var a=app.getElementsByClassName("lig"), i;
+  var a=app.getElementsByClassName("c2_lig"), i;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i]._gap===l._gap) a[i].className=a[i]._base+" pisca";
+    if(a[i]!==l&&a[i]._gap===l._gap) a[i].className=a[i]._base+" c2_pisca";
   }
   l.className=l._base+" sel";
   marcada=l;
@@ -6028,7 +6028,7 @@ function pecaClassificar(){
 }
 
 function fazFicha(f){
-  var p=el("div","pc",f.t);
+  var p=el("div","c3_pc",f.t);
   /* ficha e gaveta publicam a MESMA chave: e assim que o auditor-jogador
      consegue terminar a fase (e so ele olha para isto). */
   p.setAttribute("data-qa",f.alvo);
@@ -6097,10 +6097,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("pc"), i;
+  var a=app.getElementsByClassName("c3_pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
-  p.className="pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="c3_pc";
+  p.className="c3_pc sel";
   marcada=p;
 }
 
@@ -6121,7 +6121,7 @@ function guarda(p,g){
   if(p.className.indexOf("usada")>=0) return;
   if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
     sCerto();
-    p.className="pc usada";
+    p.className="c3_pc usada";
     p.onclick=null; p.onmousedown=null;
     g.appendChild(p);
     g.className="cam luz";
@@ -6364,8 +6364,8 @@ function fazPainel(lado,nome,valor,modo){
   p.appendChild(el("span","rotulo",nome));
   var f=el("div","fileira",""), i, b;
   for(i=0;i<valor;i++){
-    b=el("i","bloco","");
-    b.className = (lado==="A") ? "bloco bA" : "bloco bB";
+    b=el("i","c4_bloco","");
+    b.className = (lado==="A") ? "c4_bloco bA" : "c4_bloco bB";
     f.appendChild(b);
   }
   var n=el("b","numg",""+valor);
@@ -6518,11 +6518,11 @@ function montaPasso2(g){
   msgEl.innerHTML="O sinal vai no meio dos dois n&uacute;meros.";
 
   fraseEl=el("div","frase","");
-  fraseEl.appendChild(el("i","bloco bA",""));
+  fraseEl.appendChild(el("i","c4_bloco bA",""));
   fraseEl.appendChild(el("b","numf",""+vTopo));
   slotEl=el("span","slotsin","?");
   fraseEl.appendChild(slotEl);
-  fraseEl.appendChild(el("i","bloco bB",""));
+  fraseEl.appendChild(el("i","c4_bloco bB",""));
   fraseEl.appendChild(el("b","numf",""+vBaixo));
   msgEl.parentNode.insertBefore(fraseEl,msgEl);
 
@@ -6612,7 +6612,7 @@ function esperaERevelaSin(g){
 }
 function poeSinal(s){
   if(!slotEl) return;
-  slotEl.className="slotsin cheio";
+  slotEl.className="slotsin c4_cheio";
   slotEl.innerHTML=s;
 }
 
@@ -7667,7 +7667,7 @@ function telaCoord(){
   var bal=el("div","balao",""); bal.id="balaoP";
   c.appendChild(bal);
   c.appendChild(montaGrade());
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","c7_placar","");
   c.appendChild(elPlacar);
   var esc=el("div","opts",""); esc.id="escolhas";
   c.appendChild(esc);
@@ -7692,7 +7692,7 @@ function montaGrade(){
     r=el("div","rotl",LETRAS[li]);
     r.li=li; lin.appendChild(r); rotL.push(r);
     for(co=0;co<COLS;co++){
-      cel=el("div","cel","");
+      cel=el("div","c7_cel","");
       cel.li=li; cel.co=co;
       cel.setAttribute("data-casa",nomeCasa(li,co));
       cel.onclick=cliqueCasa;
@@ -7784,12 +7784,12 @@ function cliqueCasa(){
   }
   if(this.className.indexOf("ok")>=0) return;
   if(this.li===alvo.li&&this.co===alvo.co){
-    this.className="cel ok";
+    this.className="c7_cel ok";
     this.appendChild(el("i","vok","&#10003;"));
     acerta();
   }else{
     sErro(); errosSeg++;
-    this.className="cel treme";
+    this.className="c7_cel treme";
     destreme(this);
     ajuda(errosSeg);
   }
@@ -7831,20 +7831,20 @@ function desmarcaTudo(){
 function acendeEixos(a){
   var i;
   for(i=0;i<rotL.length;i++)
-    rotL[i].className=(rotL[i].li===a.li)?"rotl on":"rotl";
+    rotL[i].className=(rotL[i].li===a.li)?"rotl c7_on":"rotl";
   for(i=0;i<rotC.length;i++)
-    rotC[i].className=(rotC[i].co===a.co)?"rot on":"rot";
+    rotC[i].className=(rotC[i].co===a.co)?"rot c7_on":"rot";
   rotL[a.li].innerHTML=LETRAS[a.li]+'<i class="setinha">&#9654;</i>';
   rotC[a.co].innerHTML=(a.co+1)+'<i class="setinha">&#9660;</i>';
   for(i=0;i<celulas.length;i++){
     if(celulas[i].className.indexOf("ok")>=0) continue;
-    celulas[i].className=(celulas[i].li===a.li||celulas[i].co===a.co)?"cel eixo":"cel";
+    celulas[i].className=(celulas[i].li===a.li||celulas[i].co===a.co)?"c7_cel eixo":"c7_cel";
   }
 }
 function limpaGrade(){
   var i;
   for(i=0;i<celulas.length;i++){
-    celulas[i].className="cel";
+    celulas[i].className="c7_cel";
     celulas[i].innerHTML="";
     celulas[i].style.backgroundImage="none";
   }
@@ -7854,7 +7854,7 @@ function limpaGrade(){
 function destreme(c){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(c.className.indexOf("ok")<0) c.className=(c.className.indexOf("eixo")>=0)?"cel eixo":"cel";
+    if(c.className.indexOf("ok")<0) c.className=(c.className.indexOf("eixo")>=0)?"c7_cel eixo":"c7_cel";
   },320);
 }
 
@@ -7898,7 +7898,7 @@ function revela(){
     return;
   }
   if(!c||c.className.indexOf("ok")>=0) return;
-  c.className="cel ok pisca";
+  c.className="c7_cel ok c7_pisca";
   c.appendChild(el("i","vok","&#10003;"));
   acerta();
 }
@@ -8084,7 +8084,7 @@ function pecaDesafio(){
   c.appendChild(el("div","balao","Agora é você quem <b>cria</b>. Esconda as moedas no mapa — o desafio vai ficar guardado com o seu código."));
   c.appendChild(el("div","regra","A REGRA: esconda em <b>3 casas</b> e depois escolha uma pista <b>verdadeira</b> sobre o seu mapa."));
   c.appendChild(fazMapa(true));
-  c.appendChild(el("div","placar","0 de 3 moedas escondidas"));
+  c.appendChild(el("div","cd2_placar","0 de 3 moedas escondidas"));
   c.appendChild(el("div","hint","Toque na casa para esconder. Toque de novo para tirar."));
   t.appendChild(c);
   app.appendChild(t);
@@ -8153,7 +8153,7 @@ function mexeCasa(d,r,c){
 }
 
 function atualizaPlacar(){
-  var p=app.querySelector(".placar");
+  var p=app.querySelector(".cd2_placar");
   if(p) p.innerHTML=ESC.length+" de "+QUANTAS+" moedas escondidas";
 }
 
@@ -8410,10 +8410,10 @@ function pecaCruzadinha(){
   var bal=el("div","balao","");
   c.appendChild(bal);
 
-  var grade=el("div","grade cruz");
+  var grade=el("div","c8_grade cruz");
   for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
     var id=y+"_"+x;
-    var q=el("div", dono[id] ? "cel" : "cel vazia", "");
+    var q=el("div", dono[id] ? "c8_cel" : "c8_cel vazia", "");
     /* ⭐ porcentagem, nunca px: a grade fecha em N colunas em qualquer tela */
     q.style.width=(100/N)+"%";
     cels[id]=q;
@@ -8422,7 +8422,7 @@ function pecaCruzadinha(){
   /* o numerinho de cada palavra na primeira casa dela */
   for(i=0;i<CRUZ.length;i++){
     var q0=cels[chave(CRUZ[i],0)];
-    if(q0) q0.appendChild(el("i","num",""+CRUZ[i].n));
+    if(q0) q0.appendChild(el("i","c8_num",""+CRUZ[i].n));
   }
   c.appendChild(grade);
 
@@ -8457,7 +8457,7 @@ function pecaCruzadinha(){
       q=cels[chave(w,z)];
       if(!q) continue;
       if(q.className.indexOf("pronta")<0)
-        q.className = z<pos ? "cel cheio" : (z===pos ? "cel ativa" : "cel");
+        q.className = z<pos ? "c8_cel c8_cheio" : (z===pos ? "c8_cel ativa" : "c8_cel");
     }
     bal.innerHTML="<b>"+w.n+".</b> "+w.d;
     marcaQA();
@@ -8472,8 +8472,8 @@ function pecaCruzadinha(){
     var w=CRUZ[idx], q=cels[chave(w,pos)];
     if(q){
       q.innerHTML=L;
-      if(pos===0) q.appendChild(el("i","num",""+w.n));
-      q.className="cel cheio pulsa";
+      if(pos===0) q.appendChild(el("i","c8_num",""+w.n));
+      q.className="c8_cel c8_cheio pulsa";
     }
     pos++; feitas++;
     barraP.style.width=Math.round(feitas*100/totalL)+"%";
@@ -8485,7 +8485,7 @@ function pecaCruzadinha(){
     var w=CRUZ[idx], z, q;
     for(z=0;z<w.p.length;z++){
       q=cels[chave(w,z)];
-      if(q) q.className="cel pronta pulsa";
+      if(q) q.className="c8_cel pronta pulsa";
     }
     sCerto();
     faixa(w.ac||w.p);
@@ -8673,7 +8673,7 @@ var CAPS=[
    {t:"Deixar todos apertados", bom:false,
     ef:{h:9,umid:-8,fino:true},
     txt:"Apertados, eles <b>disputam a mesma água e a mesma luz</b>. Os caules ficaram fininhos."},
-   {t:"Ficar só com um broto", bom:false,
+   {t:"Ficar só com um d_broto", bom:false,
     ef:{h:28,umid:4,plantas:1},
     txt:"Esse cresceu bem — mas a horta ficou com <b>uma planta só</b> para colher."}
   ]}
@@ -8690,7 +8690,7 @@ function montaHorta(){
   h.appendChild(palhaEl);
   brotos=[];
   for(i=0;i<POS.length;i++){
-    b=el("div","broto",'<i class="caule"></i><b class="folha fe"></b><b class="folha fd"></b>');
+    b=el("div","d_broto",'<i class="caule"></i><b class="folha fe"></b><b class="folha fd"></b>');
     b.style.left=POS[i]+"%";
     h.appendChild(b); brotos.push(b);
   }
@@ -8711,14 +8711,14 @@ function aplicaMundo(){
   if(MUNDO.umid>100) MUNDO.umid=100;
   for(i=0;i<brotos.length;i++){
     vivo=(i<MUNDO.plantas);
-    cl="broto";
+    cl="d_broto";
     if(MUNDO.mole) cl+=" mole";
     if(MUNDO.fino) cl+=" fino";
     brotos[i].className=cl;
     brotos[i].style.height=(vivo?MUNDO.h:0)+"px";
     brotos[i].style.opacity=vivo?"1":"0";
   }
-  if(palhaEl) palhaEl.className=MUNDO.palha?"palha on":"palha";
+  if(palhaEl) palhaEl.className=MUNDO.palha?"palha d_on":"palha";
   if(umidEl) umidEl.style.width=MUNDO.umid+"%";
   if(umidTxt) umidTxt.innerHTML="Água na terra: <b>"+Math.round(MUNDO.umid)+"%</b>";
 }
@@ -8947,7 +8947,7 @@ function telaDigitar(){
   c.appendChild(cx);
   /* o teclado da tela: as letras DESTA palavra, embaralhadas. `data-qa` na
      caixa e so para o auditor-jogador; a crianca nao ve nada. */
-  var tec=el("div","letras");
+  var tec=el("div","d2_letras");
   tec.setAttribute("data-qa",palavra);
   var soltas=baguncar(palavra.split(""));
   for(i=0;i<soltas.length;i++){
@@ -8957,7 +8957,7 @@ function telaDigitar(){
     tec.appendChild(b); teclas.push(b);
   }
   c.appendChild(tec);
-  c.appendChild(el("div","hint","Toque nas letras <b>ou</b> use o teclado do computador."));
+  c.appendChild(el("div","hint","Toque nas d2_letras <b>ou</b> use o teclado do computador."));
   t.appendChild(c); app.appendChild(t);
   /* PORTA 2: o teclado de verdade. Vale a mesma regra do toque. */
   document.onkeydown=teclaReal;
@@ -9031,12 +9031,12 @@ function ajuda(n){
 function acendeCerta(){
   var k=palavra.charAt(pos), b=achaTecla(k);
   limpaPisca();
-  if(b) b.className="tecl pisca";
+  if(b) b.className="tecl d2_pisca";
 }
 function limpaPisca(){
   var i;
   for(i=0;i<teclas.length;i++)
-    if(teclas[i].className.indexOf("pisca")>=0) teclas[i].className="tecl";
+    if(teclas[i].className.indexOf("d2_pisca")>=0) teclas[i].className="tecl";
 }
 function revela(){
   var k=palavra.charAt(pos);
@@ -9208,7 +9208,7 @@ function telaDitado(){
 
   /* o teclado da tela: as letras DESTA frase mais tres que nao servem,
      embaralhadas. O `data-qa` e so para o auditor-jogador; a crianca nao ve. */
-  var tec=el("div","letras");
+  var tec=el("div","d3_letras");
   tec.setAttribute("data-qa",letras);
   var banco=letras.split(""), sobra=letrasQueNaoServem(3), k;
   for(k=0;k<sobra.length;k++) banco.push(sobra[k]);
@@ -9223,7 +9223,7 @@ function telaDitado(){
 
   contaEl=el("div","conta","");
   c.appendChild(contaEl);
-  c.appendChild(el("div","hint","Toque nas letras <b>ou</b> use o teclado do computador."));
+  c.appendChild(el("div","hint","Toque nas d3_letras <b>ou</b> use o teclado do computador."));
   t.appendChild(c); app.appendChild(t);
 
   /* PORTA 2: o teclado de verdade. Vale a mesma regra do toque. */
@@ -9330,12 +9330,12 @@ function ajuda(n){
 function acendeCerta(){
   var b=achaTecla(letras.charAt(pos));
   limpaPisca();
-  if(b) b.className="tecl pisca";
+  if(b) b.className="tecl d3_pisca";
 }
 function limpaPisca(){
   var i;
   for(i=0;i<teclas.length;i++)
-    if(teclas[i].className.indexOf("pisca")>=0) teclas[i].className="tecl";
+    if(teclas[i].className.indexOf("d3_pisca")>=0) teclas[i].className="tecl";
 }
 function revela(){
   var k=letras.charAt(pos);
@@ -9546,7 +9546,7 @@ function nomeDaChave(k){
 
 /* ---------- desenhar uma metade e uma peça ---------- */
 function meiaEl(k,tipo,lado){
-  var d=el("div","dme"+(lado==="dir"?" dir":"")), i, p, pip;
+  var d=el("div","dme"+(lado==="d4_dir"?" d4_dir":"")), i, p, pip;
   if(tipo==="num"){ d.appendChild(el("i","dnum",""+k)); }
   else if(tipo==="pal"){ d.appendChild(el("i","dpal",PALAVRA[k]||String(k))); }
   else if(tipo==="fig"){
@@ -9567,7 +9567,7 @@ function pecaEl(par,classe){
   var c=cena();
   var b=el("div",classe);
   b.appendChild(meiaEl(par.a,c.esq,"esq"));
-  b.appendChild(meiaEl(par.b,c.dir,"dir"));
+  b.appendChild(meiaEl(par.b,c.dir,"d4_dir"));
   return b;
 }
 
@@ -9611,7 +9611,7 @@ function telaDomino(){
   for(i=0;i<mao.length;i++) eBanco.appendChild(fazPeca(mao[i]));
   cx.appendChild(eBanco);
 
-  eZona=el("div","zona","");
+  eZona=el("div","d4_zona","");
   cx.appendChild(eZona);
   cx.appendChild(el("div","hint","Arraste a pe&ccedil;a at&eacute; a ponta, ou toque na pe&ccedil;a "+
                     "e depois na ponta."));
@@ -9625,7 +9625,7 @@ function fazPonta(lado){
   return v;
 }
 function fazPeca(par){
-  var b=pecaEl(par,"pc");
+  var b=pecaEl(par,"d4_pc");
   b._a=par.a; b._b=par.b;
   b.onclick=cliquePeca;
   b.onmousedown=mouseIni;
@@ -9702,7 +9702,7 @@ function moveEm(x,y){
     escolhe(pego);
     somb=el("div","somb","");
     somb.appendChild(meiaEl(pego._a,cena().esq,"esq"));
-    somb.appendChild(meiaEl(pego._b,cena().dir,"dir"));
+    somb.appendChild(meiaEl(pego._b,cena().dir,"d4_dir"));
     document.body.appendChild(somb);
   }
   if(somb){ somb.style.left=(x-58)+"px"; somb.style.top=(y-29)+"px"; }
@@ -9747,9 +9747,9 @@ function apagaAceso(){
 function escolhe(b){
   if(travada||!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="d4_pc";
   if(marcada===b){ marcada=null; sTap(); return; }
-  b.className="pc sel"; marcada=b; sTap();
+  b.className="d4_pc sel"; marcada=b; sTap();
 }
 function cliquePonta(){
   if(travada) return;
@@ -9783,7 +9783,7 @@ function acerta(b,lado){
     if(eMesa) eMesa.insertBefore(novo,camD);
     pontaD=b._b;
   }
-  b.className="pc usada";
+  b.className="d4_pc usada";
   marcada=null;
   postas++; erros=0;
   sPoe();
@@ -9806,7 +9806,7 @@ function acerta(b,lado){
 function erra(b,lado){
   var g=ger;
   sErro(); erros++; usouAjuda=true;
-  b.className="pc treme"; destreme(g,b);
+  b.className="d4_pc treme"; destreme(g,b);
   if(erros===1){
     mostraDica("Esta ponta mostra <b>"+nomeDaChave(lado==="L"?pontaE:pontaD)+
                "</b>. A pe&ccedil;a s&oacute; entra a&iacute; se tiver <b>"+
@@ -9825,12 +9825,12 @@ function erra(b,lado){
 function destreme(g,b){
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"d4_pc sel":"d4_pc";
   },340);
 }
 function acendeAsDuasPontas(){
   if(!camE||!camD) return;
-  camE.className="cam pisca"; camD.className="cam pisca";
+  camE.className="cam d4_pisca"; camD.className="cam d4_pisca";
 }
 function achaQueCabe(){
   var i;
@@ -10090,11 +10090,11 @@ function montaCena(qual){
   var fora=el("div","cena");
   var ce=el("div","cenain"); ce.id="cenaP";   /* o miolo que escala */
   fora.appendChild(ce);
-  var sol=el("div","sol"+(qual===1?" apagado":""));
+  var sol=el("div","em_sol"+(qual===1?" apagado":""));
   ce.appendChild(sol);
   var by=el("div","byteb"); by.id="byteP";
   by.appendChild(el("div","bcabeca",
-    '<span class="bolho esq"></span><span class="bolho dir"></span>'));
+    '<span class="bolho em_esq"></span><span class="bolho em_dir"></span>'));
   by.appendChild(el("div","bcorpo",""));
   ce.appendChild(by);
   var po=el("div","pote","");
@@ -10159,7 +10159,7 @@ function deuCerto(o){
   sCerto();
   if(ca) ca.className="caule viva";
   if(nu&&nu.parentNode) nu.parentNode.removeChild(nu);
-  if(so){ var s=so.getElementsByClassName("sol")[0]; if(s) s.className="sol"; }
+  if(so){ var s=so.getElementsByClassName("em_sol")[0]; if(s) s.className="em_sol"; }
   o.className="opt ok";
   if(o.innerHTML.indexOf("marca")<0) o.innerHTML=o.innerHTML+'<span class="marca">funcionou</span>';
   if(fa){ fa.innerHTML=f.bom; falaDaTela("falaByte"); }
@@ -10653,7 +10653,7 @@ function montaEscrita(f){
   zonaEl.appendChild(ap);
 
   campoEl=document.createElement("textarea");
-  campoEl.className="campo";
+  campoEl.className="el_campo";
   campoEl.setAttribute("placeholder","escreva aqui a sua legenda");
   campoEl.setAttribute("autocomplete","off");
   campoEl.setAttribute("autocorrect","off");
@@ -10695,7 +10695,7 @@ function atualizaContador(){
 function paraDePiscar(){
   var i;
   for(i=0;i<chipsEl.length;i++)
-    if(chipsEl[i].className.indexOf("pisca")>=0) chipsEl[i].className="apoio";
+    if(chipsEl[i].className.indexOf("el_pisca")>=0) chipsEl[i].className="apoio";
 }
 
 /* ---- PUBLICAR ----
@@ -10722,7 +10722,7 @@ function andaimeE(n,f){
     mostraDica("As palavras de apoio entram no seu texto com um toque. Elas est&#227;o <b>piscando</b>.");
     var i;
     for(i=0;i<chipsEl.length;i++)
-      if(chipsEl[i].className.indexOf("usada")<0) chipsEl[i].className="apoio pisca";
+      if(chipsEl[i].className.indexOf("usada")<0) chipsEl[i].className="apoio el_pisca";
     return;
   }
   mostraDica("Eu come&#231;o a frase e voc&#234; termina do seu jeito.");
@@ -10942,7 +10942,7 @@ function espalha(n,seed){
 }
 function montaPote(tampado,mini){
   var cn=cena();
-  var d=el("div","pote"+(mini?" mini":"")+(cn.n>=18?" denso":""));
+  var d=el("div","pote"+(mini?" e2_mini":"")+(cn.n>=18?" denso":""));
   var pos=espalha(cn.n,cn.seed), i, p;
   for(i=0;i<cn.n;i++){
     p=el("i","pit"+(cn.cls?" "+cn.cls:""),"");
@@ -11092,7 +11092,7 @@ function pintaAtalhos(){
   if(!atalhoEls) return;
   var i;
   for(i=0;i<atalhoEls.length;i++)
-    atalhoEls[i].className=(parseInt(atalhoEls[i].innerHTML,10)===valor)?"tecl on":"tecl";
+    atalhoEls[i].className=(parseInt(atalhoEls[i].innerHTML,10)===valor)?"tecl e2_on":"tecl";
 }
 function valeOPalpite(g){
   if(g!==ger||travada) return;
@@ -11161,7 +11161,7 @@ function fechaRodada(g){
   if(g!==ger) return;
   var cn=cena(), real=cn.n, dif=Math.abs(real-palpite), perto=(dif<=margem(real));
   elCont.innerHTML="S&atilde;o <b>"+real+"</b> ao todo.";
-  var pl=el("div","placar","");
+  var pl=el("div","e2_placar","");
   var a=el("div","pcol","<i>VOC&Ecirc; FALOU</i><b>"+(palpite||"&#8211;")+"</b>");
   var s=el("div","pseta","&#8594;");
   var b=el("div","pcol real","<i>DE VERDADE</i><b>"+real+"</b>");
@@ -11408,7 +11408,7 @@ function pecaExperimento(){
 
   for(i=0;i<VARS.length;i++) c.appendChild(linhaVar(VARS[i]));
 
-  elMsg=el("div","msg");
+  elMsg=el("div","ej_msg");
   var bi=el("div","mbicho",svgBroto());
   elMtx=el("div","mtexto","");
   elMsg.appendChild(bi); elMsg.appendChild(elMtx);
@@ -11451,7 +11451,7 @@ function linhaVar(v){
   var l=el("div","lin");
   l.appendChild(el("div","rot",v.nome));
   l.appendChild(el("div","fixo",v.vals[0]));
-  var b=el("button","bin","");
+  var b=el("button","ej_bin","");
   b.onclick=(function(kk){ return function(){ troca(kk); }; })(v.k);
   chips[v.k]=b;
   l.appendChild(b);
@@ -11470,7 +11470,7 @@ function confere(){
   var d=difs(), alvo=EXP[ri].alvo, i,v,b,justo;
   for(i=0;i<VARS.length;i++){
     v=VARS[i]; b=chips[v.k];
-    b.className = vasoB[v.k] ? "bin dif" : "bin";
+    b.className = vasoB[v.k] ? "ej_bin dif" : "ej_bin";
     b.innerHTML = (vasoB[v.k] ? '<i class="tag">MUDOU</i>' : '<i class="tag">igual ao A</i>')+
                   v.vals[vasoB[v.k]?1:0];
     b.removeAttribute("data-qa");
@@ -11482,14 +11482,14 @@ function confere(){
        continua mandando fazer o que já está feito confunde mais que ajuda. */
     var dv=document.getElementById("dicaP");
     if(dv&&dv.parentNode) dv.parentNode.removeChild(dv);
-    elMsg.className="msg pode";
+    elMsg.className="ej_msg pode";
     elMtx.innerHTML="Agora sim: s&oacute; a <b>"+nomeDe(alvo)+"</b> est&aacute; diferente. "+
                     "D&aacute; para descobrir!";
     btCmp.className="btn solto";
     btCmp.innerHTML="Comparar os dois vasos";
     btCmp.setAttribute("data-qa","1");
   }else{
-    elMsg.className="msg";
+    elMsg.className="ej_msg";
     if(d.length===0){
       elMtx.innerHTML="Os dois vasos est&atilde;o iguaizinhos. Se nada &eacute; diferente, "+
                       "<b>o que a gente vai comparar?</b>";
@@ -11739,7 +11739,7 @@ function telaFiltro(){
   /* a bandeja: todas as fichas comecam aqui, embaralhadas */
   var bd=el("div","bandeja"), lista=baguncar(it.fichas.slice(0)), b;
   for(i=0;i<lista.length;i++){
-    b=el("div","pc",lista[i].t);
+    b=el("div","f_pc",lista[i].t);
     /* `data-qa="1"` = "esta serve agora" — SO para o auditor-jogador */
     if(lista[i].ok) b.setAttribute("data-qa","1");
     b.onclick=(function(f){ return function(){ toca(f,this); }; })(lista[i]);
@@ -11780,12 +11780,12 @@ function toca(f,b){
 /* PASSOU: cai pela peneira e vai parar na cesta, na frente da crianca. */
 function passa(b){
   var meu=ger;
-  b.className="pc cai";
+  b.className="f_pc cai";
   b.removeAttribute("data-qa");      /* saiu da lista do auditor */
   sPassa();
   setTimeout(function(){
     if(meu!==ger) return;
-    b.className="pc usada";
+    b.className="f_pc usada";
     b.style.opacity="";
     b.appendChild(el("span","vpas","&#10003;"));
     if(cestaEl) cestaEl.appendChild(b);
@@ -11802,11 +11802,11 @@ function passa(b){
    o app diz O QUE OLHAR e o andaime cresce a cada quique. */
 function quica(b){
   sErro(); sQuica();
-  b.className="pc quica";
+  b.className="f_pc quica";
   var meu=ger;
   setTimeout(function(){
     if(meu!==ger) return;
-    if(b.className.indexOf("usada")<0) b.className="pc";
+    if(b.className.indexOf("usada")<0) b.className="f_pc";
   },520);
   quiques++;
   ajuda(quiques);
@@ -11821,15 +11821,15 @@ function ajuda(n){
   else { mostraDica(it.d3+"<b>"+queFaltam()+"</b>."); acendeQueFaltam(); }
 }
 function queFaltam(){
-  var a=app.getElementsByClassName("pc"), i, fora=[];
+  var a=app.getElementsByClassName("f_pc"), i, fora=[];
   for(i=0;i<a.length;i++)
     if(a[i].getAttribute("data-qa")==="1") fora.push(a[i].firstChild.nodeValue||a[i].innerHTML);
   return fora.join(", ");
 }
 function acendeQueFaltam(){
-  var a=app.getElementsByClassName("pc"), i;
+  var a=app.getElementsByClassName("f_pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].getAttribute("data-qa")==="1") a[i].className="pc mostra";
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="f_pc mostra";
 }
 function apagaDica(){
   var d=document.getElementById("dicaP");
@@ -11985,7 +11985,7 @@ function pecaForca(){
   var chan=el("div","chances");
   var bolas=[];
   for(i=0;i<MAXE;i++){ var bo=el("i","chance",""); chan.appendChild(bo); bolas.push(bo); }
-  var ctx=el("b","ctx","Voc&#234; tem "+MAXE+" tentativas.");
+  var ctx=el("b","f2_ctx","Voc&#234; tem "+MAXE+" tentativas.");
   chan.appendChild(ctx);
   c.appendChild(chan);
 
@@ -12209,7 +12209,7 @@ function ladoPx(){ return passoPx()*3-3; }
 
 /* ---------- desenha a figura (peca colorida ou molde vazado) ---------- */
 function fazFigura(molde,angulo){
-  var p=passoPx(), lado=ladoPx(), i, b, d=el("div","fig"+(molde?" molde":""));
+  var p=passoPx(), lado=ladoPx(), i, b, d=el("div","g_fig"+(molde?" molde":""));
   d.style.width=lado+"px"; d.style.height=lado+"px";
   var g=el("div","gira");
   g.style.width=lado+"px"; g.style.height=lado+"px";
@@ -12373,7 +12373,7 @@ function daUmQuarto(dir){
 }
 function encaixou(){
   travado=true;
-  elFig.className="fig encaixou";
+  elFig.className="g_fig encaixou";
   sCerto();
   if(barraP) barraP.style.width=Math.round((rodada+1)*100/ALVOS.length)+"%";
   marcaQualServe();
@@ -12425,8 +12425,8 @@ function ajuda(n){
 }
 function acendeSeta(dir){
   if(!elDir||!elEsq) return;
-  elDir.className=(dir>0)?"seta pisca":"seta";
-  elEsq.className=(dir<0)?"seta pisca":"seta";
+  elDir.className=(dir>0)?"seta g_pisca":"seta";
+  elEsq.className=(dir<0)?"seta g_pisca":"seta";
 }
 /* data-qa: o botao que aproxima do molde fica com "1" — e so para o
    auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho. */
@@ -12666,8 +12666,8 @@ function telaGrafico(){
 
   /* OS BOTOES: a porta de quem nao arrasta */
   var ct=el("div","gctrl");
-  elMenos=el("div","pc","&#8722;<i>DESCER UM</i>");
-  elMais =el("div","pc","+<i>SUBIR UM</i>");
+  elMenos=el("div","g2_pc","&#8722;<i>DESCER UM</i>");
+  elMais =el("div","g2_pc","+<i>SUBIR UM</i>");
   ligaBotao(elMenos,-1); ligaBotao(elMais,1);
   ct.appendChild(elMenos); ct.appendChild(elMais);
   c.appendChild(ct);
@@ -12911,10 +12911,10 @@ function marcaQualServe(){
   if(!elMais||!elMenos) return;
   if(feitos[col]!==undefined||col>=DADOS.length){
     elMais.removeAttribute("data-qa"); elMenos.removeAttribute("data-qa");
-    elMais.className="pc usada"; elMenos.className="pc usada";
+    elMais.className="g2_pc usada"; elMenos.className="g2_pc usada";
     return;
   }
-  elMais.className="pc"; elMenos.className="pc";
+  elMais.className="g2_pc"; elMenos.className="g2_pc";
   elMais.setAttribute("data-qa",(valor<DADOS[col].v)?"1":"0");
   elMenos.setAttribute("data-qa",(valor>DADOS[col].v)?"1":"0");
 }
@@ -13637,7 +13637,7 @@ function fonteProva(){
   var c=el("div","centro");
   c.appendChild(el("div","selo","EM QUE VOCÊ SE APOIOU?"));
   c.appendChild(el("div","balao","Você disse que a feira mudou por causa da <b>obra na rua</b>. Agora mostre <b>onde</b> você viu isso."));
-  c.appendChild(el("div","placar","0 de 2 provas apontadas"));
+  c.appendChild(el("div","if_placar","0 de 2 provas apontadas"));
 
   var lista=[], i, o=el("div","opts");
   for(i=0;i<PROVAS.length;i++) lista.push(PROVAS[i]);
@@ -13690,7 +13690,7 @@ function respondeProva(o,certa){
 }
 
 function atualizaPlacar(){
-  var p=app.querySelector(".placar");
+  var p=app.querySelector(".if_placar");
   if(p) p.innerHTML=achadas+" de 2 provas apontadas";
 }
 
@@ -13871,7 +13871,7 @@ function pecaJuntar(){
   c.appendChild(el("div","balao","Junte os peda&#231;os e forme a palavra da <b>figura</b>."));
 
   /* a FIGURA diz qual palavra é — a criança de 6 anos não lê */
-  var fg=el("div","jsFig");
+  var fg=el("div","js_jsFig");
   if(figEl){ fg.appendChild(figEl(r.fig)); }
   else { fg.appendChild(el("div","semfig", r.pal)); }
   c.appendChild(fg);
@@ -14294,7 +14294,7 @@ function telaLabirinto(){
   ce.appendChild(el("div","selo",tr.selo));
   ce.appendChild(el("div","balao","Leve o amigo at&#233; a <b>estrela</b>. Desvie dos espinhudos!"));
 
-  var lb=el("div","lab");
+  var lb=el("div","l_lab");
   for(r=0;r<nLin();r++){
     var lr=el("div","llin");
     for(c=0;c<nCol();c++){
@@ -14348,7 +14348,7 @@ function pintaLab(){
     if(m==="X") q.appendChild(el("i","guarda",""));
     if(r===lin&&c===col) q.appendChild(el("i","bicho",""));
     /* o piscar so acende a partir do 2o degrau do andaime */
-    if(errosSeg>=2&&alvo&&alvo[0]===r&&alvo[1]===c) q.className+=" pisca";
+    if(errosSeg>=2&&alvo&&alvo[0]===r&&alvo[1]===c) q.className+=" l_pisca";
   }
   marcaSetaCerta(dica);
 }
@@ -14860,7 +14860,7 @@ function fimDaPeca(){
   c.appendChild(el("div","balao","Voc&#234; achou <b>"+(FEITAS.length||FIGURAS.length)+
                    "</b> figura(s) seguindo os n&#250;meros na ordem."));
   var gal=el("div","galeria");
-  for(i=0;i<FIGURAS.length;i++) gal.appendChild(montaFolha(FIGURAS[i],FIGURAS[i].pts.length,"mini",0));
+  for(i=0;i<FIGURAS.length;i++) gal.appendChild(montaFolha(FIGURAS[i],FIGURAS[i].pts.length,"lp_mini",0));
   c.appendChild(gal);
   var b=el("button","btn","Jogar de novo");
   b.style.marginTop="10px";
@@ -15020,7 +15020,7 @@ function pecaLigar(){
 }
 
 function fazPonta(dado,lado,texto){
-  var l=el("div","lig",texto);
+  var l=el("div","l2_lig",texto);
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
@@ -15081,8 +15081,8 @@ function solta(x,y,doDedo){
   if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
   arrastando=false; fimArrasto=agora();
   var alvo=document.elementFromPoint(x,y);
-  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"lig")) alvo=alvo.parentNode;
-  if(alvo&&temClasse(alvo,"lig")&&alvo!==l) juntar(l,alvo);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"l2_lig")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"l2_lig")&&alvo!==l) juntar(l,alvo);
 }
 
 document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
@@ -15111,13 +15111,13 @@ function toca(l){
 
 function marca(l){
   desmarca();
-  l.className="lig sel";
+  l.className="l2_lig sel";
   marcada=l;
 }
 
 function desmarca(){
-  var a=app.getElementsByClassName("lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
+  var a=app.getElementsByClassName("l2_lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="l2_lig";
   marcada=null;
 }
 
@@ -15127,7 +15127,7 @@ function juntar(a,b){
   if(a._lado===b._lado) return;
   if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
     sCerto();
-    a.className="lig feita"; b.className="lig feita";
+    a.className="l2_lig feita"; b.className="l2_lig feita";
     marcada=null;
     FEITOS.push([a,b]);
     redesenha();
@@ -15153,12 +15153,12 @@ function juntar(a,b){
 /* 3º erro: acende a ponta certa do outro lado e DEIXA seguir — é o que
    garante que a peça nunca trava. A dica diz isso em palavras também.    */
 function revela(l){
-  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa");
+  var a=app.getElementsByClassName("l2_lig"), i, k=l.getAttribute("data-qa");
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="lig pisca";
+    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="l2_lig l2_pisca";
   }
-  l.className="lig sel";
+  l.className="l2_lig sel";
   marcada=l;
 }
 
@@ -15356,7 +15356,7 @@ function telaLinhaDoTempo(){
   var sorteadas=baguncar(FATOS.slice(0));
   for(i=0;i<sorteadas.length;i++){
     f=sorteadas[i];
-    b=el("div","pc",f.n);
+    b=el("div","ldt_pc",f.n);
     b.momento=f.t; b.nome=f.n;
     ligaFicha(b);
     bc.appendChild(b); pecas.push(b);
@@ -15414,7 +15414,7 @@ function pegaEm(b,x,y){
   if(!b||b.className.indexOf("usada")>=0) return;
   pego=b; px0=x; py0=y; moveu=false;
   sTap();
-  b.className="pc sel";
+  b.className="ldt_pc sel";
   somb=el("div","somb",b.nome);
   somb.style.left=(x-66)+"px"; somb.style.top=(y-29)+"px";
   somb.style.display="none";
@@ -15429,7 +15429,7 @@ function soltaEm(x,y){
   var b=pego, arrastou=moveu;
   soltaSombra();
   if(!b) return;
-  if(b.className.indexOf("usada")<0) b.className="pc";
+  if(b.className.indexOf("usada")<0) b.className="ldt_pc";
   if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
   if(naFaixa(x,y)) tocaFicha(b);
 }
@@ -15459,7 +15459,7 @@ function tocaFicha(b){
 function poeNaFaixa(b){
   var cm=camas[vagaAtual];
   cm.className="cam ok"; cm.innerHTML=b.nome;
-  b.className="pc usada";
+  b.className="ldt_pc usada";
   sCerto();
   vagaAtual++; errosSeg=0;
   apagaDica();
@@ -15470,7 +15470,7 @@ function poeNaFaixa(b){
 }
 function erraFicha(b){
   sErro(); errosSeg++;
-  b.className="pc treme";
+  b.className="ldt_pc treme";
   destreme(b);
   ajuda(errosSeg);
 }
@@ -15479,7 +15479,7 @@ function erraFicha(b){
 function destreme(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("usada")<0) b.className="pc";
+    if(b.className.indexOf("usada")<0) b.className="ldt_pc";
   },340);
 }
 function ajuda(n){
@@ -15498,7 +15498,7 @@ function acendeCerta(){
   for(i=0;i<pecas.length;i++){
     b=pecas[i];
     if(b.className.indexOf("usada")>=0) continue;
-    b.className=(b.momento===ORDEM[vagaAtual])?"pc pisca":"pc";
+    b.className=(b.momento===ORDEM[vagaAtual])?"ldt_pc ldt_pisca":"ldt_pc";
   }
 }
 function revela(){
@@ -15713,7 +15713,7 @@ function pecaMapa(){
   }
   c.appendChild(mapa);
 
-  painel=el("div","painel");
+  painel=el("div","mc_painel");
   c.appendChild(painel);
   c.appendChild(el("div","hint","Toque em um conceito e depois no outro. Arraste para arrumar o mapa."));
   t.appendChild(c); app.appendChild(t);
@@ -16857,7 +16857,7 @@ var VERSO = imgSvg("verso");   /* o verso e IMAGEM, nunca cor lisa */
 /* ---- O CONTEUDO: par CONCEITUAL (palavra <-> significado) ---- */
 var PARES=[
  {k:"abelha", pal:"ABELHA",  sen:"faz o mel"},
- {k:"semen",  pal:"SEMENTE", sen:"vira uma planta"},
+ {k:"semen",  pal:"SEMENTE", sen:"m2_vira uma planta"},
  {k:"chuva",  pal:"CHUVA",   sen:"cai da nuvem"},
  {k:"ninho",  pal:"NINHO",   sen:"casa do passarinho"}
 ];
@@ -16886,17 +16886,17 @@ function pecaMemoria(){
   }
   baguncar(cartas);
 
-  var mesa=el("div","mcartas");
+  var mesa=el("div","m2_mcartas");
   /* QUEDA: sem 3D no navegador, a carta troca de face em vez de girar */
-  if(!temTresD()) mesa.className="mcartas sem3d";
+  if(!temTresD()) mesa.className="m2_mcartas sem3d";
   for(i=0;i<cartas.length;i++){ mesa.appendChild(fazCarta(cartas[i])); }
   c.appendChild(mesa);
 
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","m2_placar","");
   c.appendChild(elPlacar);
   elPares=el("div","pares","");
   c.appendChild(elPares);
-  c.appendChild(el("div","hint","Toque em duas cartas. Se não formar par, elas voltam."));
+  c.appendChild(el("div","hint","Toque em duas cartas. Se não formar m2_par, elas voltam."));
   t.appendChild(c);
   app.appendChild(t);
   atualiza();
@@ -16908,7 +16908,7 @@ function temTresD(){
 }
 
 function fazCarta(o){
-  var d=el("div","mcarta");
+  var d=el("div","m2_mcarta");
   d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
   var f=el("div","mflip");
   var v=el("div","mface mverso");
@@ -16931,7 +16931,7 @@ function atualiza(){
   elPares.innerHTML="";
   for(i=0;i<PARES.length;i++){
     p=el("span","ppt");
-    if(i<feitos) p.className="ppt on";
+    if(i<feitos) p.className="ppt m2_on";
     elPares.appendChild(p);
   }
   if(progI) progI.style.width=Math.round(feitos*100/PARES.length)+"%";
@@ -16939,7 +16939,7 @@ function atualiza(){
 
 function tocar(o){
   if(travado) return;
-  if(o.el.className.indexOf("par")>=0){ sTap(); return; }     /* ja fechada */
+  if(o.el.className.indexOf("m2_par")>=0){ sTap(); return; }     /* ja fechada */
   if(virada===o) return;
   /* ⚠️ LICAO PAGA (ago/2026): aqui era `if(...vira...) return;` — carta virada
      nao se toca. So que se sobrar UMA carta de cara para cima que a peca nao
@@ -16950,11 +16950,11 @@ function tocar(o){
      com 3 de 4 pares fechados.
      Agora a carta orfa e ADOTADA: se esta virada e ninguem a segura, ela passa
      a ser a carta da vez. Nao ha estado do qual a crianca nao consiga sair.  */
-  if(o.el.className.indexOf("vira")>=0){
+  if(o.el.className.indexOf("m2_vira")>=0){
     if(!virada){ virada=o; }
     return;
   }
-  o.el.className="mcarta vira";
+  o.el.className="m2_mcarta m2_vira";
   sVira();
   if(!virada){ virada=o; return; }
   tentativas++;
@@ -16963,16 +16963,16 @@ function tocar(o){
   travado=true;
   var a=virada; virada=null;
   setTimeout((function(x,y){ return function(){
-    if(x.el.className.indexOf("par")<0) x.el.className="mcarta";
-    if(y.el.className.indexOf("par")<0) y.el.className="mcarta";
+    if(x.el.className.indexOf("m2_par")<0) x.el.className="m2_mcarta";
+    if(y.el.className.indexOf("m2_par")<0) y.el.className="m2_mcarta";
     travado=false;
     ajuda(tentativas);
   }; })(a,o),900);
 }
 
 function fechaPar(a,b){
-  a.el.className="mcarta vira par";
-  b.el.className="mcarta vira par";
+  a.el.className="m2_mcarta m2_vira m2_par";
+  b.el.className="m2_mcarta m2_vira m2_par";
   a.el.appendChild(el("div","vpar","✓"));
   b.el.appendChild(el("div","vpar","✓"));
   a.el.removeAttribute("data-qa");
@@ -16992,13 +16992,13 @@ function ajuda(n){
   if(!alvo) return;
   if(vez===1){ mostraDica("Leia a carta em voz baixa e pense: <b>quem faz isso?</b>"); }
   else if(vez===2){ mostraDica("Dica: uma das cartas fala de <b>"+alvo.pal.toLowerCase()+"</b>."); }
-  else { mostraDica("Vou abrir este par para você: <b>"+alvo.pal+"</b> — "+alvo.sen+"."); abrePar(alvo.k); }
+  else { mostraDica("Vou abrir este m2_par para você: <b>"+alvo.pal+"</b> — "+alvo.sen+"."); abrePar(alvo.k); }
 }
 function proximoPar(){
   var i,j;
   for(i=0;i<PARES.length;i++){
     for(j=0;j<cartas.length;j++){
-      if(cartas[j].k===PARES[i].k && cartas[j].el.className.indexOf("par")<0) return PARES[i];
+      if(cartas[j].k===PARES[i].k && cartas[j].el.className.indexOf("m2_par")<0) return PARES[i];
     }
   }
   return null;
@@ -17007,7 +17007,7 @@ function abrePar(k){
   var i,a=null,b=null;
   for(i=0;i<cartas.length;i++){ if(cartas[i].k===k){ if(!a) a=cartas[i]; else b=cartas[i]; } }
   if(!a||!b) return;
-  if(virada){ if(virada.el.className.indexOf("par")<0) virada.el.className="mcarta"; virada=null; }
+  if(virada){ if(virada.el.className.indexOf("m2_par")<0) virada.el.className="m2_mcarta"; virada=null; }
   fechaPar(a,b);
 }
 
@@ -17526,7 +17526,7 @@ function telaFrase(){
   for(i=0;i<frase.w.length;i++) ordem.push(i);
   baguncar(ordem);
   for(i=0;i<ordem.length;i++){
-    b=el("div","pc f-"+frase.c[ordem[i]]+" c-"+frase.c[ordem[i]],
+    b=el("div","mf_pc f-"+frase.c[ordem[i]]+" c-"+frase.c[ordem[i]],
          frase.w[ordem[i]]+(frase.apoio
            ? '<i class="eti">'+CLA[frase.c[ordem[i]]].r+'</i>' : ''));
     b.idx=ordem[i];
@@ -17618,7 +17618,7 @@ function naFrase(x,y){
   return false;
 }
 /* a classe base da peca (forma + cor), sem os estados sel/pisca/treme */
-function classeDe(b){ return "pc f-"+frase.c[b.idx]+" c-"+frase.c[b.idx]; }
+function classeDe(b){ return "mf_pc f-"+frase.c[b.idx]+" c-"+frase.c[b.idx]; }
 
 /* ---------- a regra da fase ---------- */
 function tocaFicha(b){
@@ -17678,7 +17678,7 @@ function acendeCerta(){
   for(i=0;i<pecas.length;i++){
     b=pecas[i];
     if(b.className.indexOf("usada")>=0) continue;
-    b.className=classeDe(b)+((b.idx===vagaAtual)?" pisca":"");
+    b.className=classeDe(b)+((b.idx===vagaAtual)?" mf_pisca":"");
   }
 }
 function revela(){
@@ -17907,7 +17907,7 @@ function pecaMorfemas(){
   for(i=0;i<ordem.length;i++) band.appendChild(fazPeca(ordem[i]));
   c.appendChild(band);
 
-  c.appendChild(el("div","placar","Palavra <b>"+(rod+1)+"</b> de <b>"+RODADAS.length+"</b>"));
+  c.appendChild(el("div","m4_placar","Palavra <b>"+(rod+1)+"</b> de <b>"+RODADAS.length+"</b>"));
   c.appendChild(el("div","hint","Toque no pedaço e depois na vaga. Também dá para arrastar com o dedo ou com o mouse."));
   t.appendChild(c);
   app.appendChild(t);
@@ -17930,7 +17930,7 @@ function fazVaga(v){
 }
 
 function fazPeca(o){
-  var p=el("div","pc",o.t);
+  var p=el("div","m4_pc",o.t);
   p._o=o;
   if(o.k) p.setAttribute("data-qa",o.k);   /* so o pedaco CERTO publica a chave */
   /* ⚠️ a marca e do CLIQUE, nao do mousedown: marcar no mousedown fazia o clique
@@ -18001,10 +18001,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("pc"), i;
+  var a=app.getElementsByClassName("m4_pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
-  p.className="pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="m4_pc";
+  p.className="m4_pc sel";
   marcada=p;
 }
 
@@ -18023,7 +18023,7 @@ function encaixa(p,vaga){
   if(o.k!==v.k){ devolve(p,o.msg); return; }
 
   sCerto();
-  p.className="pc usada";
+  p.className="m4_pc usada";
   p.onclick=null; p.onmousedown=null;
   p.removeAttribute("data-qa");
   vaga.appendChild(p);
@@ -18048,11 +18048,11 @@ function encaixa(p,vaga){
 function devolve(p,regra){
   sErro();
   p._err=(p._err||0)+1;
-  p.className="pc volta";
+  p.className="m4_pc volta";
   var pp=p, ge=ger;
   setTimeout(function(){
     if(ge!==ger) return;
-    if(pp.className.indexOf("usada")<0) pp.className="pc";
+    if(pp.className.indexOf("usada")<0) pp.className="m4_pc";
   },360);
   mostraDica("<b>Devolvi o pedaço.</b> "+(regra||"Este pedaço não forma a palavra que a máquina pediu."));
   if(p._err===3) acendeVaga();
@@ -18081,7 +18081,7 @@ function proximaVaga(){
   return null;
 }
 function pecaDaVaga(v){
-  var a=app.getElementsByClassName("pc"), i, k=v._o.k;
+  var a=app.getElementsByClassName("m4_pc"), i, k=v._o.k;
   for(i=0;i<a.length;i++)
     if(a[i].className.indexOf("usada")<0 && a[i]._o && a[i]._o.k===k) return a[i];
   return null;
@@ -18092,7 +18092,7 @@ function desenhaPalavra(){
   if(!elPal) return;
   var R=RODADAS[rod], a=app.getElementsByClassName("cam"), i, s="", pc;
   for(i=0;i<a.length;i++){
-    pc=a[i].getElementsByClassName("pc")[0];
+    pc=a[i].getElementsByClassName("m4_pc")[0];
     if(i>0) s+=" + ";
     s+= pc ? pc._o.t : "<b>___</b>";
   }
@@ -18262,7 +18262,7 @@ function montaCena(){
       d.appendChild(el("div","chaoped",""));
       d.appendChild(el("div","chaofx",""));
     }
-    d.appendChild(el("div","num",""+(i+1)));
+    d.appendChild(el("div","mp_num",""+(i+1)));
     PECAS[it.k]=d;
     box.appendChild(d);
   }
@@ -18367,7 +18367,7 @@ function mudancaFichas(){
   gs.appendChild(fazCaixa("mudou","MUDOU<br>(está diferente)"));
   gs.appendChild(fazCaixa("ficou","FICOU<br>(está do mesmo jeito)"));
   c.appendChild(gs);
-  c.appendChild(el("div","placar","0 de "+BASE.length+" arrumadas"));
+  c.appendChild(el("div","mp_placar","0 de "+BASE.length+" arrumadas"));
   c.appendChild(el("div","hint","Toque na ficha e depois na caixa. Também dá para arrastar com o dedo ou com o mouse."));
   t.appendChild(c);
   app.appendChild(t);
@@ -18384,7 +18384,7 @@ function souDedo(){ return agora()-ultimoToque<800; }
 function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
 
 function fazFicha(f){
-  var p=el("div","pc",f.n);
+  var p=el("div","mp_pc",f.n);
   /* ficha e caixa publicam a MESMA chave: é assim que o auditor-jogador
      consegue terminar a fase (e só ele olha para isto). */
   p.setAttribute("data-qa", mudouMesmo(f.k)?"mudou":"ficou");
@@ -18451,10 +18451,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("pc"), i;
+  var a=app.getElementsByClassName("mp_pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
-  p.className="pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="mp_pc";
+  p.className="mp_pc sel";
   marcada=p;
   acende(p._k);
 }
@@ -18497,13 +18497,13 @@ function guarda(p,g){
   if(p.className.indexOf("usada")>=0) return;
   if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
     sCerto();
-    p.className="pc usada";
+    p.className="mp_pc usada";
     p.onclick=null; p.onmousedown=null;
     g.appendChild(p);
     g.className="cam luz";
     marcada=null;
     feitos++;
-    var pl=app.querySelector(".placar");
+    var pl=app.querySelector(".mp_placar");
     if(pl) pl.innerHTML=feitos+" de "+BASE.length+" arrumadas";
     var pr=app.querySelector(".prog i");
     if(pr) pr.style.width=(50+Math.round(feitos*50/BASE.length))+"%";
@@ -18674,7 +18674,7 @@ function telaOrdenar(){
   var sorteadas=baguncar(ORDEM.slice(0));
   for(i=0;i<sorteadas.length;i++){
     n=sorteadas[i];
-    b=el("div","pc",""+n);
+    b=el("div","o_pc",""+n);
     b.num=n;
     ligaFicha(b);
     bc.appendChild(b); pecas.push(b);
@@ -18731,7 +18731,7 @@ function pegaEm(b,x,y){
   if(!b||b.className.indexOf("usada")>=0) return;
   pego=b; px0=x; py0=y; moveu=false;
   sTap();
-  b.className="pc sel";
+  b.className="o_pc sel";
   somb=el("div","somb",""+b.num);
   somb.style.left=(x-26)+"px"; somb.style.top=(y-26)+"px";
   somb.style.display="none";
@@ -18746,7 +18746,7 @@ function soltaEm(x,y){
   var b=pego, arrastou=moveu;
   soltaSombra();
   if(!b) return;
-  if(b.className.indexOf("usada")<0) b.className="pc";
+  if(b.className.indexOf("usada")<0) b.className="o_pc";
   if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
   if(naFila(x,y)) tocaFicha(b);
 }
@@ -18773,7 +18773,7 @@ function tocaFicha(b){
 function poeNaFila(b){
   var cm=camas[vagaAtual];
   cm.className="cam ok"; cm.innerHTML=""+b.num;
-  b.className="pc usada";
+  b.className="o_pc usada";
   sCerto();
   vagaAtual++; errosSeg=0;
   apagaDica();
@@ -18783,7 +18783,7 @@ function poeNaFila(b){
 }
 function erraFicha(b){
   sErro(); errosSeg++;
-  b.className="pc treme";
+  b.className="o_pc treme";
   destreme(b);
   ajuda(errosSeg);
 }
@@ -18792,7 +18792,7 @@ function erraFicha(b){
 function destreme(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("usada")<0) b.className="pc";
+    if(b.className.indexOf("usada")<0) b.className="o_pc";
   },340);
 }
 function ajuda(n){
@@ -18811,7 +18811,7 @@ function acendeCerta(){
   for(i=0;i<pecas.length;i++){
     b=pecas[i];
     if(b.className.indexOf("usada")>=0) continue;
-    b.className=(b.num===ORDEM[vagaAtual])?"pc pisca":"pc";
+    b.className=(b.num===ORDEM[vagaAtual])?"o_pc o_pisca":"o_pc";
   }
 }
 function revela(){
@@ -19128,7 +19128,7 @@ function pecaOuvir(){
 function cartao(k){
   /* ⚠️ a classe sai em DUAS partes de proposito. O portao `_qa/dinamicas.py`
      reconhece a familia "escolher" pelo literal `el("div","opt"` — escrito
-     `el("div","opt fig")` ele nao reconhece nada, e "0 dinamica reconhecida" e
+     `el("div","opt oa_fig")` ele nao reconhece nada, e "0 dinamica reconhecida" e
      aprovacao VAZIA: o portao passa sem ter medido a armadilha desta mecanica
      (as opcoes embaralhadas). Esta peca E um escolher, entao ela se apresenta
      como um. */
@@ -19139,7 +19139,7 @@ function cartao(k){
   o.appendChild(desenho(k));
   var lin=el("div","linha","");
   lin.appendChild(el("span","nom",CATALOGO[k].nome));
-  var z=el("button","zap","");
+  var z=el("button","oa_zap","");
   z.appendChild(el("i","fone",""));
   z.setAttribute("aria-label","Ouvir "+CATALOGO[k].nome);
   /* ⚠️ o alto-falante NAO escolhe: ele so fala. Sem parar o evento aqui, tocar
@@ -19184,7 +19184,7 @@ function escolhe(k,o){
 function acertou(o){
   travada=true;                     /* ⚠️ trava NO INSTANTE do toque */
   if(erros===0) acertosDePrimeira++;
-  o.className="opt fig certa";
+  o.className="opt oa_fig certa";
   sCerto();
   if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
   diz(R.msg.replace(/<[^>]+>/g,""));
@@ -19192,7 +19192,7 @@ function acertou(o){
 }
 function errouUma(c,o){
   if(c){ c.tentada=true; }
-  o.className="opt fig usada";
+  o.className="opt oa_fig usada";
   var j=o.getElementsByClassName("jat")[0];
   if(j) j.className="jat ver";
   o.setAttribute("data-qa","2");
@@ -19234,7 +19234,7 @@ function revela(){
   if(revelando) return;
   revelando=true; travada=true;
   var g=ger, c=achaCartao(R.alvo);
-  if(c){ c.el.className="opt fig certa"; }
+  if(c){ c.el.className="opt oa_fig certa"; }
   mostraIniciais();
   sPing(); sCerto();
   mostraDica(R.dicas[2]);
@@ -19852,7 +19852,7 @@ function montaCena(){
     CE.caule=el("i","ccaule",""); box.appendChild(CE.caule);
     CE.folhas=[];
     e=el("i","cfolha",""); e.style.left="33px"; box.appendChild(e); CE.folhas.push(e);
-    e=el("i","cfolha dir",""); e.style.left="60px"; box.appendChild(e); CE.folhas.push(e);
+    e=el("i","cfolha pap_dir",""); e.style.left="60px"; box.appendChild(e); CE.folhas.push(e);
   }else{
     box.appendChild(el("i","bmesa",""));
     CE.lar=el("i","blar",""); box.appendChild(CE.lar);
@@ -19886,7 +19886,7 @@ function chuva(g){
   if(!CE.gotas) return;
   for(i=0;i<CE.gotas.length;i++){
     (function(e,n){
-      setTimeout(function(){ if(g===ger) e.className=base+" on"; },n*140);
+      setTimeout(function(){ if(g===ger) e.className=base+" pap_on"; },n*140);
       setTimeout(function(){ if(g===ger) e.className=base; },n*140+1900);
     })(CE.gotas[i],i);
   }
@@ -19895,39 +19895,39 @@ function chuva(g){
 /* O QUE CADA PASSO FAZ NO MUNDO. `ok=false` nao e castigo: e o mundo fazendo
    ao pe da letra o que foi mandado — e mostrando o resultado disso. */
 var EFEITO={
- cavar:function(ok){ CE.buraco.className="buraco on"; nota(180,.12,.12,"sine",0); },
- semear:function(ok){ CE.sem.className=ok?"csem on dentro":"csem on"; sPasso(); },
+ cavar:function(ok){ CE.buraco.className="buraco pap_on"; nota(180,.12,.12,"sine",0); },
+ semear:function(ok){ CE.sem.className=ok?"csem pap_on dentro":"csem pap_on"; sPasso(); },
  cobrir:function(ok){
-   CE.monte.className="cmonte on";
+   CE.monte.className="cmonte pap_on";
    /* a semente que estava no buraco fica COBERTA — some debaixo da terra. A que
       ficou por fora continua a vista, que e justamente a cena a ser lida. */
    if(ok) CE.sem.className="csem off";
    nota(200,.14,.11,"sine",0);
  },
- regar:function(ok){ chuva(ger); if(!ok) CE.poca.className="cpoca on"; nota(620,.10,.10,"sine",0); },
+ regar:function(ok){ chuva(ger); if(!ok) CE.poca.className="cpoca pap_on"; nota(620,.10,.10,"sine",0); },
  lavar:function(ok){
    chuva(ger);
    var i; for(i=0;i<CE.suj.length;i++) CE.suj[i].className="bsuj off";
    nota(620,.10,.10,"sine",0);
  },
  cortar:function(ok){
-   CE.lar.className="blar off"; CE.met.className="bmet on";
+   CE.lar.className="blar off"; CE.met.className="bmet pap_on";
    if(!ok) mundo.sujeira=true;
    nota(300,.08,.12,"square",0);
  },
  espremer:function(ok){
-   if(ok){ CE.psu.className="bpsu on"; nota(520,.14,.11,"sine",0); }
+   if(ok){ CE.psu.className="bpsu pap_on"; nota(520,.14,.11,"sine",0); }
    else { CE.lar.className="blar treme"; sTropeco(); }
  },
  encher:function(ok){
    if(ok){
-     CE.suco.className="bsuco on";
-     if(mundo.sujeira){ var i; for(i=0;i<CE.pont.length;i++) CE.pont[i].className="bpont on"; }
+     CE.suco.className="bsuco pap_on";
+     if(mundo.sujeira){ var i; for(i=0;i<CE.pont.length;i++) CE.pont[i].className="bpont pap_on"; }
      nota(440,.16,.11,"sine",0);
    }else{ sTropeco(); }
  },
  beber:function(ok){
-   CE.can.className="bcan on";
+   CE.can.className="bcan pap_on";
    if(ok){ CE.suco.className="bsuco"; nota(660,.10,.11,"triangle",0); nota(880,.12,.10,"triangle",.10); }
    else { sTropeco(); }
  }
@@ -19959,7 +19959,7 @@ function desenhaTela(){
   c.appendChild(el("div","balao",R.enun));
   elCena=montaCena();
   c.appendChild(elCena);
-  elFala=el("div","fala",R.hint);
+  elFala=el("div","pap_fala",R.hint);
   c.appendChild(elFala);
   var ar=el("div","arruma","");
   elFita=el("div","fita","");
@@ -19996,7 +19996,7 @@ function pinta(){
          peca para a mesa: ele punha e tirava a mesma peca para sempre, numa
          tela que a crianca fecha em quatro toques. `data-qa` e endereco do que
          serve AGORA; peca ja colocada nao serve mais. */
-      cart=el("div","pc usada","");
+      cart=el("div","pap_pc usada","");
       cart.appendChild(icone(p.ic));
       cel.appendChild(el("span","vnum",String(i+1)));
       cel.appendChild(cart);
@@ -20016,7 +20016,7 @@ function pinta(){
   for(i=0;i<R.passos.length;i++){
     p=R.passos[i];
     if(naFita(p.k)>=0) continue;
-    s=el("div","pc"+(sel===p.k?" sel":""),"");
+    s=el("div","pap_pc"+(sel===p.k?" sel":""),"");
     s.setAttribute("data-qa",String(i+1));
     s.appendChild(icone(p.ic));
     s.appendChild(el("span","prot",p.rot));
@@ -20171,7 +20171,7 @@ function executa(){
     if(!bem){ tudoOk=false; if(!problema) problema={k:k,falta:falta}; }
     marcaAgora(i);
     EFEITO[k](ok);
-    elFala.className=bem?"fala":"fala tropeco";
+    elFala.className=bem?"pap_fala":"pap_fala tropeco";
     elFala.innerHTML="<b>"+(i+1)+".</b> "+(bem?p.bom:p.ruim);
     diz(semTag(bem?p.bom:p.ruim));
     if(bem) sPasso();
@@ -20192,10 +20192,10 @@ function terminou(tudoOk,g){
   if(tudoOk){
     semTropeco++;
     if(R.cena==="canteiro"){
-      CE.caule.className="ccaule on";
+      CE.caule.className="ccaule pap_on";
       for(i=0;i<CE.folhas.length;i++){
         (function(e,n){ setTimeout(function(){
-          if(g===ger) e.className=(n===1?"cfolha dir on":"cfolha on");
+          if(g===ger) e.className=(n===1?"cfolha pap_dir pap_on":"cfolha pap_on");
         },700+n*260); })(CE.folhas[i],i);
       }
     }
@@ -20233,7 +20233,7 @@ function conserta(){
   if(revelando) return;
   modo="ordena"; travada=false; sel=null;
   desenhaTela();
-  elFala.className="fala";
+  elFala.className="pap_fala";
   elFala.innerHTML="Troque os passos de lugar e mande rodar de novo.";
 }
 
@@ -20267,7 +20267,7 @@ function pisca(ks){
   var i,j,cels=elFita.childNodes;
   for(i=0;i<cels.length;i++){
     for(j=0;j<ks.length;j++){
-      if(ordem[i]===ks[j]) cels[i].className="cam cheia pisca";
+      if(ordem[i]===ks[j]) cels[i].className="cam cheia pap_pisca";
     }
   }
 }
@@ -20281,7 +20281,7 @@ function revela(){
   revelando=true; travada=true;
   var g=ger, i=0;
   elBotao.innerHTML="";
-  elFala.className="fala";
+  elFala.className="pap_fala";
   elFala.innerHTML="Vou p&#244;r os passos na ordem <b>com voc&#234;</b>. Olhe a fita.";
   diz("Vou pôr os passos na ordem com você. Olhe a fita.");
   function arruma(){
@@ -20508,7 +20508,7 @@ function montaDesenho(des,pintado,classe,vivo){
   var q=el("div",classe), i, r, z, pth;
   for(i=0;i<des.regs.length;i++){
     r=des.regs[i];
-    z=el("div","zona");
+    z=el("div","pd_zona");
     z.innerHTML='<svg viewBox="0 0 100 100"><path class="reg" d="'+r.d+'"></path></svg>';
     pth=z.getElementsByTagName("path")[0];
     pth.style.fill=(pintado&&pintado[r.k])?pintado[r.k]:PAPEL;
@@ -20543,10 +20543,10 @@ function telaPintar(){
   c.appendChild(montaDesenho(des,null,"quadro",1));
 
   /* o balde mostra a tinta que esta na mao, e o crachazinho diz o nome dela */
-  var f=el("div","ferr");
+  var f=el("div","pd_ferr");
   baldeEl=el("i","balde","");
   baldeEl.appendChild(el("i","tintab",""));
-  nomeEl=el("span","cnome","Escolha uma cor");
+  nomeEl=el("span","pd_cnome","Escolha uma cor");
   f.appendChild(baldeEl); f.appendChild(nomeEl);
   c.appendChild(f);
 
@@ -20589,7 +20589,7 @@ function pegaTinta(i){
   tinta=TINTAS[i].c;
   sPega();
   var k;
-  for(k=0;k<corEls.length;k++) corEls[k].className=(k===i)?"tcor on":"tcor";
+  for(k=0;k<corEls.length;k++) corEls[k].className=(k===i)?"tcor pd_on":"tcor";
   if(nomeEl) nomeEl.innerHTML=TINTAS[i].n;
   pintaBalde();
   apagaDica();
@@ -20625,7 +20625,7 @@ function tocouRegiao(){
   var novo=!cores[z._k];
   cores[z._k]=tinta;
   z._p.style.fill=tinta;
-  z.className="zona cheia";
+  z.className="pd_zona cheia";
   sPinga();
   apagaDica();
   atualizaQA();
@@ -20646,7 +20646,7 @@ function chamaPaleta(){
     if(g!==ger||!viva()) return;
     var k;
     for(k=0;k<corEls.length;k++)
-      corEls[k].className=(TINTAS[k]&&TINTAS[k].c===tinta)?"tcor on":"tcor";
+      corEls[k].className=(TINTAS[k]&&TINTAS[k].c===tinta)?"tcor pd_on":"tcor";
   },2500);
 }
 /* `data-qa` = o que serve AGORA, so para o auditor-jogador. Sem tinta na mao,
@@ -20673,7 +20673,7 @@ function recomecar(){
   var i;
   cores={};
   for(i=0;i<zonaEls.length;i++){
-    zonaEls[i].className="zona";
+    zonaEls[i].className="pd_zona";
     if(zonaEls[i]._p) zonaEls[i]._p.style.fill=PAPEL;
   }
   sTap();
@@ -20721,9 +20721,9 @@ function fimDaPeca(){
   for(i=0;i<GALERIA.length;i++){
     g2=GALERIA[i];
     if(!DESENHOS[g2.d]) continue;
-    gal.appendChild(montaDesenho(DESENHOS[g2.d],g2.cores,"mini",0));
+    gal.appendChild(montaDesenho(DESENHOS[g2.d],g2.cores,"pd_mini",0));
   }
-  if(!GALERIA.length) gal.appendChild(montaDesenho(DESENHOS[0],null,"mini",0));
+  if(!GALERIA.length) gal.appendChild(montaDesenho(DESENHOS[0],null,"pd_mini",0));
   c.appendChild(gal);
   var b=el("button","btn","Pintar de novo");
   b.style.marginTop="10px";
@@ -20853,7 +20853,7 @@ function pecaPintar(){
 
   elBarra=el("div","barrap");
   c.appendChild(elBarra);
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","p2_placar","");
   c.appendChild(elPlacar);
   elCarimbo=el("div","carimbo","Falta pintar");
   c.appendChild(elCarimbo);
@@ -20868,7 +20868,7 @@ function atualiza(){
   elBarra.innerHTML="";
   for(i=0;i<alvos.length;i++){
     s=el("div","seg",i<pintadas?"✓":"");
-    if(i<pintadas) s.className="seg on";
+    if(i<pintadas) s.className="seg p2_on";
     elBarra.appendChild(s);
   }
   elPlacar.innerHTML="Pintadas <b>"+pintadas+"</b> de <b>"+alvos.length+"</b>";
@@ -20910,7 +20910,7 @@ function ajuda(n){
 function proximaPalavra(){ var i; for(i=0;i<alvos.length;i++){ if(alvos[i].className.indexOf("pintada")<0) return alvos[i]; } return null; }
 function piscaP(sp){
   if(sp.className.indexOf("pintada")>=0) return;
-  sp.className="pal pisca";
+  sp.className="pal p2_pisca";
   setTimeout((function(x){ return function(){ if(x.className.indexOf("pintada")<0) x.className="pal"; }; })(sp),2200);
 }
 
@@ -21251,7 +21251,7 @@ function montaCena(f,pronta){
     cena.appendChild(el("div","cenr cdir","PESO DE 100 g"));
   }else{
     var c1=el("div","copo copoL"), c2=el("div","copo copoA");
-    var a1=el("div","agua"), a2=el("div","agua");
+    var a1=el("div","po_agua"), a2=el("div","po_agua");
     a1.id="cag1"; a2.id="cag2";
     c1.appendChild(a1); c2.appendChild(a2);
     cena.appendChild(c1); cena.appendChild(c2);
@@ -21449,7 +21449,7 @@ function telaQuebra(){
   c.appendChild(tab);
   var banco=el("div","qcbanco");
   c.appendChild(banco);
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","qc_placar","");
   c.appendChild(elPlacar);
   c.appendChild(el("div","hint","Arraste o peda&#231;o at&#233; a vaga, ou toque nele e depois na vaga."));
   t.appendChild(c); app.appendChild(t);
@@ -21669,7 +21669,7 @@ function acendeCerta(){
   if(!p) return;
   for(i=0;i<vagas.length;i++)
     if(vagas[i].li===p.li&&vagas[i].co===p.co&&vagas[i].className.indexOf("cheia")<0)
-      vagas[i].className="qcvaga pisca";
+      vagas[i].className="qcvaga qc_pisca";
 }
 function revela(peca){
   var p=peca||escolhida||primeiraSolta(), i;
@@ -21874,7 +21874,7 @@ function pintaEstrelas(){
   var i, s, v=valeAgora();
   estrelasEl.innerHTML="";
   for(i=0;i<3;i++){
-    s=el("span",(i<v)?"est on":"est","");
+    s=el("span",(i<v)?"est qse_on":"est","");
     estrelasEl.appendChild(s);
   }
 }
@@ -22106,7 +22106,7 @@ function telaRelampago(){
   setProg(t,Math.round(ri*100/RAIO.length));
   var c=el("div","centro");
   c.appendChild(el("div","selo","REL&#194;MPAGO"));
-  c.appendChild(el("div","placar","Pergunta "+(ri+1)+" de "+RAIO.length+
+  c.appendChild(el("div","r_placar","Pergunta "+(ri+1)+" de "+RAIO.length+
                                   " &#183; acertos: "+acertos.length));
   /* o relogio: numero E barra */
   var rb=el("div","relbar");
@@ -22256,7 +22256,7 @@ function telaFimRelampago(){
   c.appendChild(el("div","medal",""));
   c.appendChild(el("div","balao",
     "Voc&#234; respondeu de cabe&#231;a e acertou <b>"+acertos.length+" de "+RAIO.length+"</b>."));
-  var li=el("div","lista"), i;
+  var li=el("div","r_lista"), i;
   if(acertos.length){
     li.appendChild(el("div","tit","VOC&#202; ACERTOU"));
     for(i=0;i<acertos.length;i++) li.appendChild(el("div","item acertou","&#10003; "+acertos[i]));
@@ -22814,7 +22814,7 @@ function erraLer(b,g){
   /* a REDE: se as erradas acabarem antes do 3º erro, revela na hora em vez de
      deixar uma tela com uma opção só. */
   if(erros===2&&sobrou>0){
-    if(eHora) eHora.className="rmao rhora pisca";
+    if(eHora) eHora.className="rmao rhora r2_pisca";
     mostraDica("Olhe: o pequeno est&aacute; "+ondeEstaOPequeno(c0)+
                ", ent&atilde;o a hora &eacute; <b>"+c0.h+"</b>. Agora conte os minutos no comprido.");
     return;
@@ -22833,7 +22833,7 @@ function revelaLer(g){
     opcoes[i].removeAttribute("data-qa");
     if(opcoes[i]._ok) opcoes[i].className="opt oph ok";
   }
-  if(eHora) eHora.className="rmao rhora pisca";
+  if(eHora) eHora.className="rmao rhora r2_pisca";
   sPasso();
   setTimeout(function(){
     if(g!==ger||!viva()) return;
@@ -23146,7 +23146,7 @@ function etapaDois(){
   reindexa();
 }
 function fazParte(tam){
-  var b=el("div","pc",""+tam);
+  var b=el("div","r3_pc",""+tam);
   b._t=tam;
   b.onclick=cliquePeca;
   b.onmousedown=mouseIni;
@@ -23263,9 +23263,9 @@ function apagaAceso(){
 function escolhe(b){
   if(!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="r3_pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="r3_pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueVaga(){
   if(cliqueDeArrasto()) return;
@@ -23280,15 +23280,15 @@ function cliqueVaga(){
 function poe(b,v){
   if(!b||!v||temClasse(b,"usada")) return;
   if(temClasse(v,"ok")){
-    sErro(); b.className="pc treme"; destreme(b);
+    sErro(); b.className="r3_pc treme"; destreme(b);
     mostraDica("Esse prato j&#225; tem a parte dele. Cada um leva <b>uma</b>.");
     return;
   }
   v.className="cam ok";
   v.innerHTML="";
-  v.appendChild(el("div","posta",""+b._t));
+  v.appendChild(el("div","r3_posta",""+b._t));
   v.appendChild(el("i","pnome","SERVIDO"));
-  b.className="pc usada";
+  b.className="r3_pc usada";
   marcada=null;
   sCerto();
   entregues++;
@@ -23300,7 +23300,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"r3_pc sel":"r3_pc";
   },340);
 }
 
@@ -23457,7 +23457,7 @@ function pecaReta(){
   c.appendChild(el("div","selo",R.selo));
   c.appendChild(el("div","balao",R.bal));
 
-  elReta=el("div","reta zona");
+  elReta=el("div","reta rn_zona");
   elReta.setAttribute("data-alvo",R.alvo);   /* so o auditor le isto (ver cliqueReta) */
   elInt=el("div","rint");
   elInt.appendChild(el("div","rlinha",""));
@@ -23699,7 +23699,7 @@ function fimReta(){
   var soma=0, i, txt=[];
   for(i=0;i<ERROS.length;i++){ soma+=ERROS[i]; txt.push(""+ERROS[i]); }
   var media=ERROS.length?Math.round(soma*10/ERROS.length)/10:0;
-  c.appendChild(el("div","placar","Suas dist&#226;ncias: <b>"+(txt.join(" &#183; ")||"-")+
+  c.appendChild(el("div","rn_placar","Suas dist&#226;ncias: <b>"+(txt.join(" &#183; ")||"-")+
                    "</b><br>M&#233;dia: <b>"+media+"</b> passo(s)"));
   c.appendChild(el("div","balao","Quanto menor a dist&#226;ncia, mais firme est&#225; a sua <b>reta na cabe&#231;a</b>."));
   var b=el("button","btn","Jogar de novo");
@@ -23945,7 +23945,7 @@ function pecaRotular(){
 }
 
 function fazPlaquinha(p){
-  var b=el("div","pc",p.n);
+  var b=el("div","r4_pc",p.n);
   b._p=p;
   b.setAttribute("data-qa",p.k);
   b.onclick=cliquePlaquinha;
@@ -24060,9 +24060,9 @@ function escolhe(b){
   if(!emJogo()) return;
   if(!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<plaqs.length;i++) if(!temClasse(plaqs[i],"usada")) plaqs[i].className="pc";
+  for(i=0;i<plaqs.length;i++) if(!temClasse(plaqs[i],"usada")) plaqs[i].className="r4_pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="r4_pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueVaga(){
   if(!emJogo()) return;
@@ -24087,7 +24087,7 @@ function acerta(b,v){
   v.className="cam ok";
   v.innerHTML="";
   v.appendChild(el("span","rtposto",b._p.n));
-  b.className="pc usada";
+  b.className="r4_pc usada";
   b.removeAttribute("data-qa");
   v.removeAttribute("data-qa");
   marcada=null;
@@ -24104,7 +24104,7 @@ function acerta(b,v){
    Nunca um X vermelho, nunca a palavra que o Marcos proibiu. */
 function erra(b){
   sErro(); errosSeg++;
-  b.className="pc treme";
+  b.className="r4_pc treme";
   destreme(b);
   degrau(b._p);
   if(errosSeg===2) piscaCerta(b._p.k);
@@ -24121,7 +24121,7 @@ function erraSemPlaquinha(v){
     mostraDica("Primeiro toque numa <b>plaquinha</b> l&#225; embaixo. Depois toque no lugar.");
   }else if(errosSeg===2){
     mostraDica("Escolha a plaquinha e a moldura fica <b>mais forte</b>: &#233; ali que ela cabe. "+p.d1);
-    if(alvo){ alvo.className="pc sel"; marcada=alvo; apagaAceso(); }
+    if(alvo){ alvo.className="r4_pc sel"; marcada=alvo; apagaAceso(); }
   }else{
     /* ⚠️ ate a 3a rodada deste caminho a dica repetia a do 2o degrau (medido
        errando de proposito): a crianca lia a mesma frase duas vezes e o
@@ -24166,7 +24166,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"r4_pc sel":"r4_pc";
   },340);
 }
 function piscaCerta(k){
@@ -24334,7 +24334,7 @@ function telaSaltos(){
   boxEl.appendChild(fitaEl);
   c.appendChild(boxEl);
 
-  placarEl=el("div","placar","saltos: <b>0</b>");
+  placarEl=el("div","snf_placar","saltos: <b>0</b>");
   c.appendChild(placarEl);
   contaEl=el("div","conta","");
   contaEl.style.display="none";
@@ -24692,7 +24692,7 @@ function montaCena(dados,lado){
   /* a camada do dedo: uma célula por lugar da MESMA grade */
   var g=el("div","gradecena");
   for(i=0;i<9;i++){
-    var z=el("div","zona");
+    var z=el("div","se_zona");
     z.style.left=((i%GC)*100/GC)+"%";
     z.style.top=(Math.floor(i/GC)*100/GL)+"%";
     if(naZona(i)) z.setAttribute("data-qa","1");   /* só para o auditor */
@@ -24751,7 +24751,7 @@ function atualiza(){
   elPts.innerHTML="";
   for(i=0;i<DIFS.length;i++){
     p=el("span","ppt");
-    if(achadas[DIFS[i]]) p.className="ppt on";
+    if(achadas[DIFS[i]]) p.className="ppt se_on";
     elPts.appendChild(p);
   }
   if(progI) progI.style.width=Math.round((DIFS.length-n)*100/DIFS.length)+"%";
@@ -24765,8 +24765,8 @@ function tocar(sp,cel){
   }
   /* aqui não havia diferença: o app devolve, não castiga */
   sErro(); erros++;
-  cel.className="zona treme";
-  setTimeout((function(z){ return function(){ if(z.className.indexOf("pisca")<0) z.className="zona"; }; })(cel),400);
+  cel.className="se_zona treme";
+  setTimeout((function(z){ return function(){ if(z.className.indexOf("se_pisca")<0) z.className="se_zona"; }; })(cel),400);
   ajuda(erros);
 }
 
@@ -24781,7 +24781,7 @@ function achar(sp){
 function marca(lado,sp){
   lado.pts[sp].appendChild(el("div","vok","&#10003;"));
   lado.zonas[sp].removeAttribute("data-qa");
-  lado.zonas[sp].className="zona";
+  lado.zonas[sp].className="se_zona";
 }
 
 /* O ANDAIME QUE CRESCE — 1) método, 2) o lugar piscando, 3) resolve uma.
@@ -24801,11 +24801,11 @@ function ajuda(n){
   }
 }
 function pisca(sp){
-  LADO1.zonas[sp].className="zona pisca";
-  LADO2.zonas[sp].className="zona pisca";
+  LADO1.zonas[sp].className="se_zona se_pisca";
+  LADO2.zonas[sp].className="se_zona se_pisca";
   setTimeout((function(a,b){ return function(){
-    if(a.className.indexOf("pisca")>=0) a.className="zona";
-    if(b.className.indexOf("pisca")>=0) b.className="zona";
+    if(a.className.indexOf("se_pisca")>=0) a.className="se_zona";
+    if(b.className.indexOf("se_pisca")>=0) b.className="se_zona";
   }; })(LADO1.zonas[sp],LADO2.zonas[sp]),2400);
 }
 
@@ -24953,8 +24953,8 @@ function pecaSimetria(){
   for(r=0;r<LINS;r++){
     casas.push([]);
     for(c=0;c<COLS;c++){
-      var d=el("div","cel");
-      var cls="cel";
+      var d=el("div","s_cel");
+      var cls="s_cel";
       var lado=ladoDe(r,c,R.eixo);
       /* a linha do espelho: a última casa da metade-modelo carrega o tracejado */
       if(R.eixo==="v" && c===(COLS/2-1)) cls+=" eixov";
@@ -24980,7 +24980,7 @@ function pecaSimetria(){
   ct.appendChild(el("div","eixolab", R.eixo==="v"
     ? "A linha tracejada em pé é o espelho."
     : "A linha tracejada deitada é o espelho."));
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","s_placar","");
   ct.appendChild(elPlacar);
   ct.appendChild(el("div","hint","Toque nas casas que faltam para a figura ficar igual dos dois lados."));
   t.appendChild(ct);
@@ -25017,7 +25017,7 @@ function tocar(d){
 
 function pinta(d){
   if(d.className.indexOf("cheia")>=0) return;
-  d.className=d.className.replace(" pisca","").replace(" erra","")+" cheia";
+  d.className=d.className.replace(" s_pisca","").replace(" erra","")+" cheia";
   d.removeAttribute("data-qa");
   d._alvo=0;
   sPinta();
@@ -25060,11 +25060,11 @@ function proximaCasa(){
 }
 function pisca(d){
   if(d.className.indexOf("cheia")>=0) return;
-  d.className=d.className.replace(" pisca","")+" pisca";
+  d.className=d.className.replace(" s_pisca","")+" s_pisca";
   var dd=d, ge=ger;
   setTimeout(function(){
     if(ge!==ger) return;
-    if(dd.className.indexOf("cheia")<0) dd.className=dd.className.replace(" pisca","");
+    if(dd.className.indexOf("cheia")<0) dd.className=dd.className.replace(" s_pisca","");
   },2400);
 }
 
@@ -25230,7 +25230,7 @@ function pecaSimulador(){
   pE.style.height=altP+"%"; pD.style.height=altP+"%";
   cenaEl.appendChild(pE); cenaEl.appendChild(pD);
   ponteEl=el("div","ponte",""); ponteEl.style.bottom=altP+"%"; cenaEl.appendChild(ponteEl);
-  aguaEl=el("div","agua",""); cenaEl.appendChild(aguaEl);
+  aguaEl=el("div","s2_agua",""); cenaEl.appendChild(aguaEl);
   barcoEl=el("div","barco",""); barcoEl.appendChild(el("div","vela","")); cenaEl.appendChild(barcoEl);
   c.appendChild(cenaEl);
 
@@ -25306,7 +25306,7 @@ function poeChuva(n){
   for(i=0;i<gotas.length;i++) gotas[i].style.display=(i<chuva)?"block":"none";
   var esc=Math.round(127-chuva*7);
   cenaEl.style.background="rgb("+esc+","+(esc+55)+","+(esc+87)+")";
-  for(i=0;i<riscos.length;i++) riscos[i].className=(i===chuva)?"risco on":"risco";
+  for(i=0;i<riscos.length;i++) riscos[i].className=(i===chuva)?"risco s2_on":"risco";
   /* a ponte molhada + a leitura em TEXTO (o gemeo visual do que mudou) */
   var enc=(chuva>=NIVEL_PONTE);
   ponteEl.className=enc?"ponte molhada":"ponte";
@@ -25512,7 +25512,7 @@ function temClasse(e,c){
 /* ⭐ O CORAÇÃO DA PEÇA: um desenho só, dois usos. `som=true` só acrescenta a
    classe que pinta as partes de escuro — a GEOMETRIA é exatamente a mesma. */
 function desenho(f,som){
-  var d=el("div","fig"+(som?" som":"")), i;
+  var d=el("div","s3_fig"+(som?" som":"")), i;
   for(i=0;i<f.p.length;i++) d.appendChild(el("div","pt "+f.p[i],""));
   return d;
 }
@@ -25540,7 +25540,7 @@ function pecaSombra(){
 }
 
 function fazCartao(f,som){
-  var l=el("div","lig");
+  var l=el("div","s3_lig");
   var cx=el("span","fbox");
   cx.appendChild(desenho(f,som));
   l.appendChild(cx);
@@ -25563,12 +25563,12 @@ function toca(l){
 }
 function marca(l){
   desmarca();
-  l.className="lig sel";
+  l.className="s3_lig sel";
   marcada=l;
 }
 function desmarca(){
-  var a=app.getElementsByClassName("lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
+  var a=app.getElementsByClassName("s3_lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="s3_lig";
   marcada=null;
 }
 
@@ -25595,7 +25595,7 @@ function junta(a,b){
    `fecha()` sem argumento nenhum e o portao estourava numa peca sadia. */
 function fecha(a,b){
   sCerto();
-  a.className="lig feita pulsa"; b.className="lig feita pulsa";
+  a.className="s3_lig feita pulsa"; b.className="s3_lig feita pulsa";
   a.appendChild(el("span","vok","&#10003;"));
   marcada=null; feitos++;
   apagaDica();
@@ -25603,8 +25603,8 @@ function fecha(a,b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(temClasse(a,"feita")) a.className="lig feita";
-    if(temClasse(b,"feita")) b.className="lig feita";
+    if(temClasse(a,"feita")) a.className="s3_lig feita";
+    if(temClasse(b,"feita")) b.className="s3_lig feita";
   },1180);
   if(feitos>=FORMAS.length){
     setTimeout(function(){
@@ -25617,12 +25617,12 @@ function fecha(a,b){
 /* 3º erro: a sombra certa acende e a crianca segue. Nunca prende ninguem. */
 function revela(l){
   if(!l) return;
-  var a=app.getElementsByClassName("lig"), i;
+  var a=app.getElementsByClassName("s3_lig"), i;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i]._k===l._k) a[i].className="lig pisca";
+    if(a[i]!==l&&a[i]._k===l._k) a[i].className="s3_lig s3_pisca";
   }
-  l.className="lig sel";
+  l.className="s3_lig sel";
   marcada=l;
 }
 function apagaDica(){
@@ -25776,13 +25776,13 @@ function telaTabela(){
   }
   c.appendChild(quadro);
   c.appendChild(el("div","legenda","SEG = segunda &#183; QUA = quarta &#183; SEX = sexta"));
-  placarQ=el("div","placar","acertou <b>"+acertosQ+"</b> de "+PERG.length);
+  placarQ=el("div","t_placar","acertou <b>"+acertosQ+"</b> de "+PERG.length);
   c.appendChild(placarQ);
   t.appendChild(c); app.appendChild(t);
 }
 
 function fazCel(li,co){
-  var d=el("div","cel",""+DADOS[li][co]);
+  var d=el("div","t_cel",""+DADOS[li][co]);
   d._li=li; d._co=co;
   /* qual celula serve AGORA — so para o auditor-jogador */
   var q=PERG[rodadaQ];
@@ -25797,14 +25797,14 @@ function toqueCel(li,co,d){
   var q=PERG[rodadaQ];
   if(li===q.li&&co===q.co){ acerta(d); return; }
   sErro(); errosQ++;
-  d.className="cel treme";
+  d.className="t_cel treme";
   destremeCel(d);
   andaimeQ(errosQ);
 }
 function destremeCel(d){
   setTimeout(function(){
     if(!telaQ||!telaQ.parentNode) return;
-    if(d.className.indexOf("certa")<0) d.className="cel";
+    if(d.className.indexOf("certa")<0) d.className="t_cel";
   },340);
 }
 
@@ -25828,7 +25828,7 @@ function passoEncontro(){
   if(!telaQ||!telaQ.parentNode) return;
   var q=PERG[rodadaQ], d=celsQ[q.li][q.co];
   if(d){
-    d.className="cel certa";
+    d.className="t_cel certa";
     if(d.getElementsByClassName("vcerto").length===0) d.appendChild(el("i","vcerto","&#10003;"));
   }
   sCerto();
@@ -25848,7 +25848,7 @@ function acendeLinha(li){
   if(etiqL[li]) etiqL[li].className="cabl dlin";
   for(j=0;j<QUANDO.length;j++)
     if(celsQ[li]&&celsQ[li][j]&&celsQ[li][j].className.indexOf("certa")<0)
-      celsQ[li][j].className="cel dlin";
+      celsQ[li][j].className="t_cel dlin";
 }
 function acendeColuna(co){
   var i;
@@ -25856,7 +25856,7 @@ function acendeColuna(co){
   for(i=0;i<QUEM.length;i++){
     if(!celsQ[i]||!celsQ[i][co]) continue;
     if(celsQ[i][co].className.indexOf("certa")>=0) continue;
-    celsQ[i][co].className=(celsQ[i][co].className.indexOf("dlin")>=0)?"cel dlin dcol":"cel dcol";
+    celsQ[i][co].className=(celsQ[i][co].className.indexOf("dlin")>=0)?"t_cel dlin dcol":"t_cel dcol";
   }
 }
 
@@ -26068,7 +26068,7 @@ function pecaTangram(){
   for(i=0;i<VAGAS.length;i++) s.appendChild(fazVaga(VAGAS[i]));
   c.appendChild(s);
 
-  elPlacar=el("div","placar","");
+  elPlacar=el("div","t2_placar","");
   c.appendChild(elPlacar);
   c.appendChild(el("div","hint","Toque na forma e depois no contorno. Também dá para arrastar. Se a forma estiver virada, use GIRAR A PEÇA."));
   t.appendChild(c);
@@ -26097,7 +26097,7 @@ function fazVaga(v){
 
 function fazForma(o){
   if(o.ang0===undefined) o.ang0=o.ang;
-  var p=el("div","pc");
+  var p=el("div","t2_pc");
   p._o=o;
   o._el=p;
   var sp=el("span","pcin",svgForma(o.forma,o.cor,"rgba(0,0,0,.35)",0));
@@ -26187,10 +26187,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("pc"), i;
+  var a=app.getElementsByClassName("t2_pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
-  p.className="pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="t2_pc";
+  p.className="t2_pc sel";
   marcada=p;
 }
 
@@ -26199,7 +26199,7 @@ function seleciona(p){
 function girar(){
   if(!marcada||marcada.className.indexOf("usada")>=0) marcada=null;
   if(!marcada){
-    var a=app.getElementsByClassName("pc"), i;
+    var a=app.getElementsByClassName("t2_pc"), i;
     for(i=0;i<a.length;i++) if(a[i].className.indexOf("usada")<0){ seleciona(a[i]); break; }
   }
   if(!marcada) return;
@@ -26230,7 +26230,7 @@ function encaixa(p,vaga){
   }
 
   sEncaixa();
-  p.className="pc usada";
+  p.className="t2_pc usada";
   p.onclick=null; p.onmousedown=null;
   p.removeAttribute("data-qa");
   giraEl(o._sp,v.livre?o.ang:v.ang);
@@ -26255,11 +26255,11 @@ function devolve(p,regra){
   sErro();
   var o=p._o;
   o._err=(o._err||0)+1;
-  p.className="pc volta";
+  p.className="t2_pc volta";
   var pp=p, ge=ger;
   setTimeout(function(){
     if(ge!==ger) return;
-    if(pp.className.indexOf("usada")<0) pp.className="pc sel";
+    if(pp.className.indexOf("usada")<0) pp.className="t2_pc sel";
   },360);
   mostraDica("<b>Devolvi a forma.</b> "+regra);
   var v=vagaDaForma(o);
@@ -26291,7 +26291,7 @@ function vagaDaForma(o){
    fica com o `data-qa="1"` é o botão GIRAR, e o jogador vira a peça como a
    criança faria.                                                             */
 function marcaQA(){
-  var a=app.getElementsByClassName("pc"), i, j, v;
+  var a=app.getElementsByClassName("t2_pc"), i, j, v;
   for(i=0;i<a.length;i++){
     if(a[i].className.indexOf("usada")>=0) continue;
     a[i].removeAttribute("data-qa");
@@ -26504,7 +26504,7 @@ function pecaTeia(){
 }
 
 function fazPonta(dado,lado,texto){
-  var l=el("div","lig",texto);
+  var l=el("div","ta_lig",texto);
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
@@ -26556,8 +26556,8 @@ function solta(x,y,doDedo){
   if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
   arrastando=false; fimArrasto=agora();
   var alvo=document.elementFromPoint(x,y);
-  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"lig")) alvo=alvo.parentNode;
-  if(alvo&&temClasse(alvo,"lig")&&alvo!==l) juntar(l,alvo);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"ta_lig")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"ta_lig")&&alvo!==l) juntar(l,alvo);
 }
 
 document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
@@ -26584,11 +26584,11 @@ function toca(l){
   juntar(marcada,l);
 }
 
-function marca(l){ desmarca(); l.className="lig sel"; marcada=l; }
+function marca(l){ desmarca(); l.className="ta_lig sel"; marcada=l; }
 
 function desmarca(){
-  var a=app.getElementsByClassName("lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
+  var a=app.getElementsByClassName("ta_lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="ta_lig";
   marcada=null;
 }
 
@@ -26598,7 +26598,7 @@ function juntar(a,b){
   if(a._lado===b._lado) return;
   if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
     sCerto();
-    a.className="lig feita"; b.className="lig feita";
+    a.className="ta_lig feita"; b.className="ta_lig feita";
     marcada=null;
     FEITOS.push([a,b]);
     redesenha();
@@ -26624,12 +26624,12 @@ function juntar(a,b){
 /* 3º erro: acende a ponta certa do outro lado e DEIXA seguir — é o que
    garante que a peça nunca trava. */
 function revelaPar(l){
-  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa");
+  var a=app.getElementsByClassName("ta_lig"), i, k=l.getAttribute("data-qa");
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="lig pisca";
+    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="ta_lig ta_pisca";
   }
-  l.className="lig sel";
+  l.className="ta_lig sel";
   marcada=l;
 }
 
@@ -26719,7 +26719,7 @@ function tiraBicho(e,f,l){
     sErro(); errC++;
     mostraDica(errC<2 ? ("Nesta rodada a gente tira <b>"+f.nome+"</b>. Procure o nome dele na lista.")
                       : ("<b>"+f.nome+"</b> est&#225; com a borda amarela. Toque nele."));
-    if(errC>=2&&LINHAS[f.tira]) LINHAS[f.tira].caixa.className="opt esp pisca";
+    if(errC>=2&&LINHAS[f.tira]) LINHAS[f.tira].caixa.className="opt esp ta_pisca";
     return;
   }
   rodando=true;
@@ -26820,7 +26820,7 @@ function revelaCerta(){
   var cx=document.getElementById("pergP"); if(!cx) return;
   var a=cx.getElementsByClassName("opt"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].getAttribute("data-qa")==="1") a[i].className="opt pisca";
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="opt ta_pisca";
 }
 
 function trancaOpcoes(){
@@ -27215,7 +27215,7 @@ MEC["tracar-caminho"] = function(f, cen, fim){
    --------------------------------------------------------------- */
 var NC=5, NL=5;
 var RODADAS=[
- {selo:"A VALETA DA HORTA", liq:"agua",
+ {selo:"A VALETA DA HORTA", liq:"tc_agua",
   enun:"Cave a valeta com o dedo, da <b>caixa d'&#225;gua</b> at&#233; a <b>horta</b>. A &#225;gua corre atr&#225;s do seu dedo.",
   ini:"CAIXA", fim:"HORTA", bloco:"pedra", nbloco:"pedra",
   hint:"Passe o dedo casa por casa (ou toque uma de cada vez). Para voltar, toque na casa de tr&#225;s.",
@@ -27330,7 +27330,7 @@ function pecaCaminho(){
     lin=el("div","tlinha");
     for(cc=0;cc<NC;cc++){
       idx=l*NC+cc;
-      cel=el("div","cel");
+      cel=el("div","tc_cel");
       cel.appendChild(el("i","sulco"));
       cel.appendChild(el("i","liq"));
       enfeita(cel,idx);
@@ -27364,13 +27364,13 @@ function enfeita(cel,i){
     if(TEMA.bloco==="pedra"){ cel.appendChild(el("i","rocha")); }
     else { cel.appendChild(el("i","tronco")); cel.appendChild(el("i","copa")); }
   }else if(e==="ini"){
-    if(TEMA.liq==="agua"){ cel.appendChild(el("i","fonte")); cel.appendChild(el("i","torn")); }
+    if(TEMA.liq==="tc_agua"){ cel.appendChild(el("i","fonte")); cel.appendChild(el("i","torn")); }
     else{ cel.appendChild(el("i","tomada"));
       var p1=el("i","tpino"); p1.style.left="32%"; cel.appendChild(p1);
       var p2=el("i","tpino"); p2.style.left="56%"; cel.appendChild(p2); }
     cel.appendChild(el("span","tag",TEMA.ini));
   }else if(e==="fim"){
-    if(TEMA.liq==="agua"){
+    if(TEMA.liq==="tc_agua"){
       cel.appendChild(el("i","horta"));
       var k, pl;
       for(k=0;k<3;k++){ pl=el("i","pl"); pl.style.left=(14+k*26)+"%"; cel.appendChild(pl); }
@@ -27474,7 +27474,7 @@ function entreAsDuas(a,b){
   return -1;
 }
 function passo(i){
-  nota(TEMA.liq==="agua"?420:660,.07,.11,"sine",0);
+  nota(TEMA.liq==="tc_agua"?420:660,.07,.11,"sine",0);
   pinta();
   if(i===FIM) chegou();
 }
@@ -27484,13 +27484,13 @@ function passo(i){
    o andaime acendia a casa certa e ela sumia antes de a criança olhar. Agora
    ele devolve SÓ a casa que tremeu, e nunca por cima de um pisca. */
 function sacode(i){
-  cels[i].className="cel treme";
+  cels[i].className="tc_cel treme";
   setTimeout((function(k){ return function(){
-    if(cels[k].className.indexOf("pisca")<0) cels[k].className=classeDe(k);
+    if(cels[k].className.indexOf("tc_pisca")<0) cels[k].className=classeDe(k);
   }; })(i),400);
 }
 function classeDe(i){
-  var k=naTrilha(i), cl="cel";
+  var k=naTrilha(i), cl="tc_cel";
   if(k>=0){ cl+=" can "+TEMA.liq; if(k===trilha.length-1) cl+=" ponta"; }
   return cl;
 }
@@ -27526,7 +27526,7 @@ function chegou(){
   travado=true;
   pinta();
   var i;
-  if(TEMA.liq==="agua"){
+  if(TEMA.liq==="tc_agua"){
     var pls=cels[FIM].getElementsByClassName("pl");
     for(i=0;i<pls.length;i++){
       setTimeout((function(e){ return function(){ e.className="pl viva";
@@ -27534,7 +27534,7 @@ function chegou(){
     }
   }else{
     var lm=cels[FIM].getElementsByClassName("lamp")[0];
-    setTimeout(function(){ if(lm) lm.className="lamp on";
+    setTimeout(function(){ if(lm) lm.className="lamp tc_on";
       nota(880,.3,.16,"triangle",0); nota(1174,.3,.14,"triangle",.09); },260);
   }
   elAviso.innerHTML=TEMA.msg;
@@ -27553,9 +27553,9 @@ function chegou(){
 /* o nome do traço e o nome do que corre mudam com a rodada — dizer "valeta" e
    "a água correr" no mapa do FIO DA LUZ é a mesma coisa que resto de clone:
    não estoura nada e só a criança percebe. */
-function nomeTraco(){ return TEMA.liq==="agua" ? "valeta" : "fio"; }
-function artTraco(){ return TEMA.liq==="agua" ? "A" : "O"; }
-function nomeCorre(){ return TEMA.liq==="agua" ? "a &#225;gua correr" : "a luz chegar"; }
+function nomeTraco(){ return TEMA.liq==="tc_agua" ? "valeta" : "fio"; }
+function artTraco(){ return TEMA.liq==="tc_agua" ? "A" : "O"; }
+function nomeCorre(){ return TEMA.liq==="tc_agua" ? "a &#225;gua correr" : "a luz chegar"; }
 
 function ajuda(n,motivo){
   var p=n%3, pu=passoUtil();
@@ -27564,14 +27564,14 @@ function ajuda(n,motivo){
       mostraDica(artTraco()+" "+nomeTraco()+" anda de <b>casa em casa</b>, sem pular. "
                  +"Continue pela casa <b>vizinha</b>.");
     else
-      mostraDica("A "+(TEMA.liq==="agua"?"&#225;gua":"luz")+" n&#227;o passa por dentro da "+TEMA.nbloco
+      mostraDica("A "+(TEMA.liq==="tc_agua"?"&#225;gua":"luz")+" n&#227;o passa por dentro da "+TEMA.nbloco
                  +". Ande pela <b>terra</b>, casa por casa.");
   }else if(p===2){
     mostraDica(pu.voltar
-      ? "Est"+(TEMA.liq==="agua"?"a":"e")+" "+nomeTraco()+" se fechou. Est&#225; piscando a casa de "
+      ? "Est"+(TEMA.liq==="tc_agua"?"a":"e")+" "+nomeTraco()+" se fechou. Est&#225; piscando a casa de "
         +"<b>tr&#225;s</b>: toque nela para voltar."
       : "Est&#225; piscando a <b>pr&#243;xima casa</b> que serve. Passe o dedo por ela.");
-    if(pu.i>=0){ cels[pu.i].className="cel pisca";
+    if(pu.i>=0){ cels[pu.i].className="tc_cel tc_pisca";
       setTimeout((function(g){ return function(){ if(g===ger) pinta(); }; })(ger),2200); }
   }else{
     mostraDica("Vou abrir o resto do caminho com voc&#234;. Olhe "+nomeCorre()+".");
@@ -27592,7 +27592,7 @@ function abreResto(){
     if(g!==ger) return;              /* a rodada mudou: este cano morreu */
     if(i>=r.length){ travado=false; entraForcado(r[r.length-1]); return; }
     trilha.push(r[i]);
-    nota(TEMA.liq==="agua"?420:660,.07,.11,"sine",0);
+    nota(TEMA.liq==="tc_agua"?420:660,.07,.11,"sine",0);
     pinta();
     i++;
     setTimeout(anda,190);
@@ -27951,7 +27951,7 @@ function pinta(){
   }
   for(i=0;i<segsEl.length;i++){
     o=segsEl[i];
-    o.el.className=feitoPonto(o.t,o.i)?"seg on":"seg";
+    o.el.className=feitoPonto(o.t,o.i)?"seg tl_on":"seg";
   }
   for(i=0;i<setasEl.length;i++){
     o=setasEl[i];
@@ -28426,7 +28426,7 @@ function telaDesafio(){
   ap.id="apoioP";
   cx.appendChild(ap);
 
-  eZona=el("div","zona","");
+  eZona=el("div","t4_zona","");
   /* OPÇÕES EMBARALHADAS: na Fábrica de Estrelas a certa era sempre a 1ª e a
      criança aprendeu a POSIÇÃO, não o conteúdo. */
   var lista=[{txt:d.certa,ok:1}];

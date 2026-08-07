@@ -501,6 +501,89 @@ def sem_comentario(s):
     return re.sub(r"(?m)//.*$", " ", s)
 
 
+
+# ============================================================
+#  ⭐⭐ FECHAR A PORTA DA COLISÃO DE NOMES (ago/2026)
+#
+#  ⚠️ A FAMÍLIA DE DEFEITOS QUE CUSTOU UMA NOITE INTEIRA, e que o Marcos pegou
+#  jogando, um a um: as duas vozes falando juntas, o botão CONTINUAR que sumiu,
+#  o alto-falante apagado das respostas e — o pior de ver — o cartão da resposta
+#  com 82px cravados, quadrado branco e o nome pendurado para fora.
+#
+#  A causa era SEMPRE a mesma: **a peça e o motor usam o mesmo nome para coisas
+#  diferentes.** O `.fig` da peça é a opção de resposta; o `.fig` do motor é a
+#  figurinha do crachá (82x82, quadrada). No mesmo documento, o crachá do Broto
+#  caía em cima da resposta. Medido: **67 das 76 peças** definem pelo menos uma
+#  classe com nome que o motor também usa — 40 nomes em disputa.
+#
+#  O prefixo do CSS (`.mec-<nome> .fig`) NÃO resolvia: ele evita que duas PEÇAS
+#  briguem entre si, mas a regra do MOTOR (`.fig{...}`) continua valendo por
+#  baixo, e o que a peça não declara vem de lá.
+#
+#  Aqui a porta se fecha de verdade: a classe em disputa é RENOMEADA — no CSS e
+#  no JavaScript, no mesmo passo. `.fig` da peça `ouvir-achar` vira `.oa1_fig`.
+#  Nenhuma peça pode mais colidir com o motor nem com outra peça, e isso é
+#  VERIFICÁVEL, não uma promessa de cuidado.
+#
+#  ⚠️ O que NÃO se renomeia: o vocabulário que a peça compartilha DE PROPÓSITO
+#  para herdar o visual da casa (`balao`, `selo`, `opt`, `hint`, `tela`...).
+#  Renomear isso quebraria o "jeito do Broto" que a ponte aplica.
+# ============================================================
+VOCABULARIO_COMUM = set("""balao selo opt opts hint tela centro prog dica btn
+    banner medal pecabox progpeca show ok no sel usada cheia agora acesa pulsa
+    feito certo errado tembalaopeca mec""".split())
+
+
+def classes_do_motor():
+    motor = os.path.join(AQUI, "motor.html")
+    if not os.path.exists(motor):
+        return set()
+    mcss = "".join(re.findall(r"<style>(.*?)</style>",
+                              io.open(motor, encoding="utf-8").read(), re.S))
+    fora = set()
+    for _m, sel, _c in regras(mcss):
+        fora.update(re.findall(r"\.([\w-]+)", sel))
+    return fora
+
+
+def sigla(nome, usadas):
+    u"""uma sigla curta e única por peça: `ouvir-achar` -> `oa`, e se já existir,
+    `oa2`. Curta de propósito: ela entra em todo nome de classe do arquivo."""
+    base = "".join(x[0] for x in re.split(r"[-_]", nome) if x)[:3] or "p"
+    s, n = base, 1
+    while s in usadas:
+        n += 1
+        s = "%s%d" % (base, n)
+    usadas.add(s)
+    return s
+
+
+def renomeia_classes(css, js, nome, sg, do_motor):
+    u"""renomeia, no CSS e no JS, toda classe que a peça define e que o motor
+    também usa. Devolve (css, js, lista_do_que_mudou)."""
+    delas = set()
+    for _m, sel, _c in regras(css):
+        delas.update(re.findall(r"\.([\w-]+)", sel))
+    trocar = sorted((delas & do_motor) - VOCABULARIO_COMUM)
+    if not trocar:
+        return css, js, []
+    mapa = dict((c, "%s_%s" % (sg, c)) for c in trocar)
+    for velho, novo in mapa.items():
+        # CSS: só em SELETOR (`.velho`), nunca dentro do corpo da regra
+        css = re.sub(r"\.%s\b" % re.escape(velho), "." + novo, css)
+        # JS: a classe viaja dentro de TEXTO — `el("div","velho")`,
+        # `className="a velho b"`, `getElementsByClassName("velho")`,
+        # `indexOf("velho")`, `querySelector(".velho")`. Troco a PALAVRA inteira
+        # dentro de literais de texto, que é onde nome de classe mora.
+        def troca(m):
+            asp, dentro = m.group(1), m.group(2)
+            if not re.search(r"(^|[\s.])%s($|[\s,.:\[])" % re.escape(velho), dentro):
+                return m.group(0)
+            return asp + re.sub(r"(^|[\s.])%s($|[\s,.:\[])" % re.escape(velho),
+                                lambda x: x.group(1) + novo + x.group(2), dentro) + asp
+        js = re.sub(r"([\"\'])((?:[^\"\'\\\n]|\\.)*)\1", troca, js)
+    return css, js, trocar
+
 def classes_que_vazam(css_out):
     u"""⚠️ A COLISAO DE CSS, que e a irma da colisao de nomes em JS.
 
@@ -603,6 +686,9 @@ def main():
     escrever = "--escrever" in sys.argv
     prontas, sem_porta, sem_gaveta, sem_css = [], [], [], []
     gavetas = {}
+    _do_motor = classes_do_motor()
+    _siglas = set()
+    renomeadas = {}
     js_out, css_out = [], []
 
     for arq in sorted(os.listdir(PECAS)):
@@ -655,11 +741,18 @@ def main():
                          #    de bancada, nao vai para o PC da escola: cabe
                          #    inteiro.
                          "exemplo": exemplo or ""}
+        # ⭐ FECHA A PORTA: a classe que colide com o motor e RENOMEADA aqui,
+        #    no CSS e no JS ao mesmo tempo, antes de a peca virar MEC[...].
+        _css_bruto = css_da_peca(html)
+        sg = sigla(nome, _siglas)
+        _css_bruto, corpo, _trocadas = renomeia_classes(_css_bruto, corpo, nome, sg, _do_motor)
+        if _trocadas:
+            renomeadas[nome] = (sg, _trocadas)
         js_out.append(PONTE % {"nome": nome, "corpo": corpo})
         # o CSS leva a MESMA marca: o montador recorta peça inteira, nunca
         # regra a regra (um `@media{` que perdesse as regras de dentro deixaria
         # um `}` solto e derrubaria a folha inteira da atividade)
-        propria = css_da_peca(html)
+        propria = _css_bruto
         if len(propria.strip()) < 40:
             # peca que nao acrescenta estilo nenhum e suspeita: quase toda
             # mecanica tem pelo menos a classe da peca dela
@@ -671,6 +764,10 @@ def main():
     vazam = classes_que_vazam(css_out)
 
     print(u"INTEGRACAO DAS PECAS")
+    if renomeadas:
+        _n = sum(len(v[1]) for v in renomeadas.values())
+        print(u"  🔒 %d classe(s) renomeada(s) em %d peca(s) — a porta da colisao "
+              u"com o motor esta FECHADA" % (_n, len(renomeadas)))
     print(u"  %d peca(s) com porta de entrada -> viram MEC[...]" % len(prontas))
     if faltando:
         print(u"  ✗ AS PECAS CHAMAM %d NOME(S) QUE NAO EXISTEM NO MOTOR: %s"
