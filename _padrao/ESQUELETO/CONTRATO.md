@@ -342,3 +342,28 @@ inocente ensina a ignorar portão, que é o pior estrago possível.
 - **A voz de tudo o que a peça mostra.** O `VOZOK` nascia vazio; agora o montador
   desce o `dados` inteiro. E o que só existe jogando se **colhe jogando**
   (`colher.py`), até duas partidas seguidas não trazerem nada novo.
+
+---
+
+## 9. A PRIMEIRA ATIVIDADE MONTADA PASSOU A BANCA INTEIRA (ago/2026)
+
+`bash _qa/auditar.sh` → **código 0. BANCA APROVOU.**
+
+32 fases · 16 mecânicas · 145 falas · 79 alto-falantes · 328 KB (as 74 peças
+juntas dão 1 MB de JS; a atividade leva só as 16 que usa).
+
+⚠️ **Como ler este resultado com honestidade.** A arte dessa atividade de teste é
+de mentira — discos coloridos gerados com Pillow, não arte de IA. O que está
+provado é o **motor**, não uma entrega. E as figuras de teste ensinaram uma coisa
+por conta própria: na primeira versão eram três desenhos diferentes para o
+mascote, e o portão `3d` reprovou com *"muda 69% do corpo — TREME"*. Refeitas
+como as de verdade têm que ser (edição da pose parada: muda só a boca, só os
+olhos), ele mediu **2,0% e 2,5% — ok**. O portão funciona, e a regra do
+`CLONAR-MOTOR.md` está certa: **as camadas do mascote se EDITAM, nunca se geram
+do zero**.
+
+**Um aviso que não é defeito:** o portão `1f` diz *"a medalha ocupa só 8% da
+caixa dela"*. O Jardim do Broto, que está no ar e foi aprovado pelo Marcos, dá o
+mesmo aviso (11%) e sai com código 0 — é elemento decorativo centrado numa área
+larga, não figura perdida. Conferi antes de mexer: **não era nada que o esqueleto
+tivesse introduzido.**
