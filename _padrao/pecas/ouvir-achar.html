@@ -242,8 +242,26 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   -webkit-box-pack:center;justify-content:center;
   -webkit-box-align:start;align-items:flex-start;
   gap:10px;max-width:412px;margin:12px auto 0}
-.opt.oaf{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px;
-  text-align:center;min-height:0}
+/* ⭐ VIDRO FOSCO — escolha do Marcos entre tres opcoes que eu mostrei (ago/2026).
+   Cartao creme TRANSLUCIDO: o cenario da padaria aparece desfocado por tras, em
+   vez de ser tapado por um quadrado branco chapado. E o acabamento de app que
+   ele pediu.
+   ⚠️ eu tinha avisado que o desfoque nao funcionaria no PC da escola. ESTAVA
+   ERRADO: `backdrop-filter` existe no Chrome desde a 76 e a escola tem a 109
+   (e o Firefox desde a 103). Corrigido antes de virar lenda.
+   Mesmo assim ha queda: sem desfoque o cartao continua legivel, porque o creme
+   translucido e a borda clara ja separam a figura do fundo. */
+.opt.oaf{display:block;width:47%;max-width:190px;margin:0;padding:12px 8px 10px;
+  text-align:center;min-height:0;
+  background:rgba(255,248,232,.55);
+  -webkit-backdrop-filter:blur(6px) saturate(1.05);backdrop-filter:blur(6px) saturate(1.05);
+  border:2px solid rgba(255,255,255,.78);border-bottom-width:5px;border-radius:22px;
+  -webkit-box-shadow:0 8px 18px rgba(40,25,10,.28);box-shadow:0 8px 18px rgba(40,25,10,.28)}
+.opt.oaf .des img{-webkit-filter:drop-shadow(0 5px 7px rgba(40,25,10,.3));
+  filter:drop-shadow(0 5px 7px rgba(40,25,10,.3))}
+.opt.oaf .nom{color:#3a3020;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.opt.oaf.ok{background:rgba(214,245,200,.75);border-color:#5bbf3a}
+.opt.oaf.no{background:rgba(255,224,218,.75);border-color:#ff7a6b}
 /* ⚠️⚠️ LICAO PAGA (ago/2026), e a que explica TODOS os defeitos visuais desta
    peca de uma vez: a opcao se chamava `.fig` — e `.fig` e o nome que o MOTOR usa
    para a figurinha do CRACHA (82x82, quadrada, fundo branco). Numa atividade

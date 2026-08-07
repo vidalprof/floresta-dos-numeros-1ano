@@ -796,7 +796,11 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-ouvir-achar .medal{width:70px;height:70px;font-size:30px;line-height:60px}}
 /* ⚠️ LICAO PAGA (ago/2026): o MOTOR tem `.opts{flex-direction:column}
 .mec-ouvir-achar ` (vem do Broto, .mec-ouvir-achar onde as respostas sao uma lista). Esta regra aqui define `display` e `flex-wrap`, .mec-ouvir-achar mas eu NAO tinha escrito a DIRECAO — e especificidade vale por PROPRIEDADE: a coluna do motor continuava mandando, .mec-ouvir-achar e os cartoes ficavam empilhados por mais que a largura coubesse dois. Medido no navegador (`display:flex, .mec-ouvir-achar wrap:wrap, .mec-ouvir-achar largura 179px, .mec-ouvir-achar pai 380px`) — deduzir nao resolveu, .mec-ouvir-achar MEDIR resolveu. Toda regra de flex que disputa com o motor escreve a direcao. */ .opts{display:-webkit-box;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;justify-content:center; -webkit-box-align:start;align-items:flex-start; gap:10px;max-width:412px;margin:12px auto 0}
-.mec-ouvir-achar .opt.oaf{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px; text-align:center;min-height:0}
+.mec-ouvir-achar .opt.oaf{display:block;width:47%;max-width:190px;margin:0;padding:12px 8px 10px; text-align:center;min-height:0; background:rgba(255,248,232,.55); -webkit-backdrop-filter:blur(6px) saturate(1.05);backdrop-filter:blur(6px) saturate(1.05); border:2px solid rgba(255,255,255,.78);border-bottom-width:5px;border-radius:22px; -webkit-box-shadow:0 8px 18px rgba(40,25,10,.28);box-shadow:0 8px 18px rgba(40,25,10,.28)}
+.mec-ouvir-achar .opt.oaf .des img{-webkit-filter:drop-shadow(0 5px 7px rgba(40,25,10,.3)); filter:drop-shadow(0 5px 7px rgba(40,25,10,.3))}
+.mec-ouvir-achar .opt.oaf .nom{color:#3a3020;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.mec-ouvir-achar .opt.oaf.ok{background:rgba(214,245,200,.75);border-color:#5bbf3a}
+.mec-ouvir-achar .opt.oaf.no{background:rgba(255,224,218,.75);border-color:#ff7a6b}
 .mec-ouvir-achar .opt.oaf .des{position:relative;width:100%;height:104px;margin:0 auto}
 .mec-ouvir-achar .opt.oaf .des img{width:100%;height:100%;object-fit:contain;display:block}
 .mec-ouvir-achar .opt.oaf .linha{margin:8px 0 0;white-space:normal; display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center}
