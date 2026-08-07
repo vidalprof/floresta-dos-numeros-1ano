@@ -147,3 +147,45 @@ Conferido contra o acervo (`_clima`, `_historia`, `_jardim`, `_orbi`, `_doceria`
 (14) e *Mistério guiado* (9) — o primeiro é quase de graça, o segundo é a evidência mais forte que
 ainda não usamos, e o terceiro é o formato que dá o "quero mais" que o Marcos cobra.
 Regra anti-repetição do `PLANO-FORA-DA-CAIXA.md`: **nunca o mesmo VERBO em fases vizinhas.**
+
+---
+
+## 🔤 SÍLABAS: JUNTAR E SEPARAR (pesquisa ago/2026 — Reading Rockets e outros)
+
+*Trazido pelo `pesquisar.yml`; fonte principal Reading Rockets, que é referência
+séria (as lojas de material didático que vieram junto foram descartadas).*
+
+**O que a pesquisa diz, e que muda o desenho da mecânica:**
+
+1. **Começar pela unidade GRANDE e descer.** *"Beginning with larger units of
+   speech can help"* — frase → palavra → **sílaba** → fonema. No 1º ano a sílaba
+   é o degrau certo; o fonema vem depois.
+2. **O som CONTÍNUO ensina mais que o som picado.** O estudo citado chama-se
+   *"Connected Phonation Is More Effective than Segmented Phonation for Teaching
+   Beginning Readers to Decode Unfamiliar Words"*: **"ssssuuunnn" rende mais que
+   "s‑u‑n"**. ⚠️ Isto é regra de ÁUDIO, não de tela: ao juntar sílabas, a voz
+   tem que **deslizar** de uma para a outra, não dar duas batidas separadas.
+3. **O gesto ajuda o conceito.** *"Hand motions help reinforce the concept."*
+   Para JUNTAR, a metáfora citada é o **escorregador**: as partes *deslizam* uma
+   até a outra e viram uma coisa só. Para SEPARAR, é **bater palma** — uma por
+   sílaba — ou **a mão no queixo**, que cai uma vez por sílaba.
+4. **"Robot Talk"** — o boneco fala picado e a criança junta. É o inverso do
+   escorregador, e é o mesmo conteúdo pelo outro lado.
+5. **Figura em vez de palavra escrita** para os menores.
+6. **Separar por NÚMERO de sílabas** (uma pilha para 1, outra para 2, outra para
+   3) é atividade consagrada — e isso a nossa peça `classificar` já faz.
+7. **Trocar sílabas para inventar palavras bobas** — manipular, não só
+   reconhecer. É autoria, e é o "quero mais".
+
+**O que isso significa para a oficina (medido contra as 74 peças):**
+
+| o que a pesquisa pede | temos? |
+|---|---|
+| som inicial (ouvir e achar a figura) | ✅ `ouvir-achar` |
+| separar por número de sílabas | ✅ `classificar` (gavetas 1, 2, 3) |
+| traçar a letra | ✅ `tracar-letra` |
+| **JUNTAR sílabas com deslize e som contínuo** | ❌ **falta** |
+| **BATER as sílabas (uma toque por sílaba)** | ❌ **falta** |
+
+As duas que faltam são o **coração da alfabetização** — e nenhuma das 74 faz o
+gesto delas.
