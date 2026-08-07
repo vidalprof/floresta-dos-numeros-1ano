@@ -19133,12 +19133,10 @@ function cartao(k){
      (as opcoes embaralhadas). Esta peca E um escolher, entao ela se apresenta
      como um. */
   var o=el("div","opt","");
-  o.className="opt fig";
+  o.className="opt oaf";
   o.appendChild(el("div","ini",letraDe(k)));
   /* ⭐ a MOLDURA: e ela que da o acabamento e impede a figura de vazar */
-  var mo=el("div","moldura","");
-  mo.appendChild(desenho(k));
-  o.appendChild(mo);
+  o.appendChild(desenho(k));
   var lin=el("div","linha","");
   lin.appendChild(el("span","nom",CATALOGO[k].nome));
   var z=el("button","zap","");

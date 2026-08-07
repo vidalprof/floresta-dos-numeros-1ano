@@ -1944,20 +1944,17 @@
 .mec-ouvir-achar .medal{width:70px;height:70px;font-size:30px;line-height:60px}}
 /* ⚠️ LICAO PAGA (ago/2026): o MOTOR tem `.opts{flex-direction:column}
 .mec-ouvir-achar ` (vem do Broto, .mec-ouvir-achar onde as respostas sao uma lista). Esta regra aqui define `display` e `flex-wrap`, .mec-ouvir-achar mas eu NAO tinha escrito a DIRECAO — e especificidade vale por PROPRIEDADE: a coluna do motor continuava mandando, .mec-ouvir-achar e os cartoes ficavam empilhados por mais que a largura coubesse dois. Medido no navegador (`display:flex, .mec-ouvir-achar wrap:wrap, .mec-ouvir-achar largura 179px, .mec-ouvir-achar pai 380px`) — deduzir nao resolveu, .mec-ouvir-achar MEDIR resolveu. Toda regra de flex que disputa com o motor escreve a direcao. */ .opts{display:-webkit-box;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row; -webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;justify-content:center; -webkit-box-align:start;align-items:flex-start; gap:10px;max-width:412px;margin:12px auto 0}
-.mec-ouvir-achar .opt.fig{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px; text-align:center;min-height:0}
-.mec-ouvir-achar .opt.fig .moldura{width:104px;height:104px;margin:0 auto;border-radius:50%; background:#fff8e8;border:3px solid rgba(255,255,255,.8);padding:8px; display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center;overflow:hidden}
-.mec-ouvir-achar .opt.fig .des{position:relative;width:100%;height:100%;margin:0}
-.mec-ouvir-achar .opt.fig .des img{width:100%;height:100%;object-fit:contain;display:block}
-.mec-ouvir-achar .opt.fig .linha{margin:8px 0 0;white-space:normal; display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center}
-.mec-ouvir-achar .opt.fig .nom{display:inline-block;max-width:none;font-size:19px;line-height:1.15;overflow:visible}
-.mec-ouvir-achar .opt.fig .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}@media (max-width:360px){
-.mec-ouvir-achar .opt.fig .moldura{width:86px;height:86px}
-.mec-ouvir-achar .opt.fig .nom{font-size:18px}}
+.mec-ouvir-achar .opt.oaf{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px; text-align:center;min-height:0}
+.mec-ouvir-achar .opt.oaf .des{position:relative;width:100%;height:104px;margin:0 auto}
+.mec-ouvir-achar .opt.oaf .des img{width:100%;height:100%;object-fit:contain;display:block}
+.mec-ouvir-achar .opt.oaf .linha{margin:8px 0 0;white-space:normal; display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center}
+.mec-ouvir-achar .opt.oaf .nom{display:inline-block;max-width:none;font-size:19px;line-height:1.15;overflow:visible}
+.mec-ouvir-achar .opt.oaf .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}@media (max-width:360px){
+.mec-ouvir-achar .opt.oaf .nom{font-size:18px}}
 .mec-ouvir-achar .opts{max-height:none}@media (max-height:560px){
 .mec-ouvir-achar .opts{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-.mec-ouvir-achar .opt.fig .moldura{width:74px;height:74px}
-.mec-ouvir-achar .opt.fig{margin:5px auto;padding:5px 9px}
-.mec-ouvir-achar .opt.fig .nom{font-size:17px}}
+.mec-ouvir-achar .opt.oaf{margin:5px auto;padding:5px 9px}
+.mec-ouvir-achar .opt.oaf .nom{font-size:17px}}
 /* ==== PECA: padrao ==== */
 
 .mec-padrao .pdfila{display:block;width:100%;max-width:430px;margin:13px auto 0;padding:6px 0;font-size:0; white-space:nowrap;border-radius:14px;background:rgba(255,255,255,.10)}

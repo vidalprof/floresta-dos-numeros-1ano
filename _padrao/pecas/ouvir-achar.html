@@ -242,22 +242,38 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   -webkit-box-pack:center;justify-content:center;
   -webkit-box-align:start;align-items:flex-start;
   gap:10px;max-width:412px;margin:12px auto 0}
-.opt.fig{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px;
+.opt.oaf{display:block;width:47%;max-width:190px;margin:0;padding:10px 8px 8px;
   text-align:center;min-height:0}
-.opt.fig .moldura{width:104px;height:104px;margin:0 auto;border-radius:50%;
-  background:#fff8e8;border:3px solid rgba(255,255,255,.8);padding:8px;
-  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
-  -webkit-box-pack:center;justify-content:center;overflow:hidden}
-.opt.fig .des{position:relative;width:100%;height:100%;margin:0}
-.opt.fig .des img{width:100%;height:100%;object-fit:contain;display:block}
-.opt.fig .linha{margin:8px 0 0;white-space:normal;
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e a que explica TODOS os defeitos visuais desta
+   peca de uma vez: a opcao se chamava `.fig` — e `.fig` e o nome que o MOTOR usa
+   para a figurinha do CRACHA (82x82, quadrada, fundo branco). Numa atividade
+   montada as duas viviam no mesmo documento, e o cracha do Broto atropelava a
+   resposta: 82px cravados, o quadrado branco que o Marcos estranhou, o nome
+   expulso para fora e o alto-falante sumido.
+   Nao era o meu CSS: era COLISAO DE NOME com o motor — a mesma familia do `ac`
+   funcao x objeto que ja tinha custado a peca da memoria.
+   Achado com `CSS.getMatchedStylesForNode` (CDP), listando TODAS as regras que
+   casavam com o elemento. Adivinhar nao resolveu tres vezes; medir resolveu na
+   primeira.
+   ⚠️ REGRA: peca nao usa nome de classe curto e generico (`fig`, `cel`, `pc`).
+   O integrador ja confere isso (`classes_que_vazam`) — e este caso mostra que o
+   aviso dele precisa virar REPROVACAO quando a colisao muda tamanho.
+
+   E, junto, a forma: UMA so (cobranca do Marcos: *"nao entendi os quadrados se
+   tem o circulo... ficou feio"*). A figura SEM FUNDO em cima, o nome embaixo. (cobranca do Marcos, ago/2026: *"nao entendi os quadrados se
+   tem o circulo... esse fundo branco e esses quadrados e circulos ficou feio"*).
+   Ele estava certo: eu tinha um cartao branco arredondado E um circulo branco
+   dentro dele. Duas formas competindo, e a figura espremida no meio.
+   Agora e uma so: a figura SEM FUNDO em cima, o nome embaixo. */
+.opt.oaf .des{position:relative;width:100%;height:104px;margin:0 auto}
+.opt.oaf .des img{width:100%;height:100%;object-fit:contain;display:block}
+.opt.oaf .linha{margin:8px 0 0;white-space:normal;
   display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:center;justify-content:center}
-.opt.fig .nom{display:inline-block;max-width:none;font-size:19px;line-height:1.15;overflow:visible}
-.opt.fig .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}
+.opt.oaf .nom{display:inline-block;max-width:none;font-size:19px;line-height:1.15;overflow:visible}
+.opt.oaf .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}
 @media (max-width:360px){
-  .opt.fig .moldura{width:86px;height:86px}
-  .opt.fig .nom{font-size:18px}
+  .opt.oaf .nom{font-size:18px}
 }
 /* janela baixa (o monitor da escola, 1024x420): encolhe a moldura, nunca some
    com a opcao — resposta que a crianca nao ve e resposta que nao existe. */
@@ -266,9 +282,8 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .opts{max-height:none}
 @media (max-height:560px){
   .opts{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-  .opt.fig .moldura{width:74px;height:74px}
-  .opt.fig{margin:5px auto;padding:5px 9px}
-  .opt.fig .nom{font-size:17px}
+  .opt.oaf{margin:5px auto;padding:5px 9px}
+  .opt.oaf .nom{font-size:17px}
 }
 </style></head>
 <body>
@@ -518,12 +533,10 @@ function cartao(k){
      (as opcoes embaralhadas). Esta peca E um escolher, entao ela se apresenta
      como um. */
   var o=el("div","opt","");
-  o.className="opt fig";
+  o.className="opt oaf";
   o.appendChild(el("div","ini",letraDe(k)));
   /* ⭐ a MOLDURA: e ela que da o acabamento e impede a figura de vazar */
-  var mo=el("div","moldura","");
-  mo.appendChild(desenho(k));
-  o.appendChild(mo);
+  o.appendChild(desenho(k));
   var lin=el("div","linha","");
   lin.appendChild(el("span","nom",CATALOGO[k].nome));
   var z=el("button","zap","");
