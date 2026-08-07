@@ -1178,7 +1178,7 @@ function preparaIdentidade(){
     if(!TREINO[c]) TREINO[c] =
       (function(k){ return function(){ abreFaseTreino(k); }; })(i);
   }
-  /* o fundo saiu do CSS (era `url(img/jd_fundo.jpg)`, cravado) e virou dado:
+  /* o fundo saiu do CSS (era um `url(img/...)` cravado no CSS, com o nome da atividade de origem) e virou dado:
      assim ele nao viaja calado para a proxima atividade */
   if(ID.fundo){ var bg = document.getElementById("bg");
     if(bg) bg.style.backgroundImage = "url(img/" + ID.fundo + ")"; }
