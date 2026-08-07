@@ -171,6 +171,15 @@ echo "--- 0m) TUDO O QUE FOI PEDIDO FOI ATENDIDO? (cobertura por objetivo) -"
 portao "0m cobertura" python3 _qa/cobertura.py "$ARQ"
 
 echo
+echo "--- 0n) A VOZ DIZ O QUE ESTA ESCRITO? (fala automatica + alto-falantes) -"
+# ⚠️ nasceu do que o MARCOS ouviu, nao de portao nenhum: *"os botoes nao falam
+#    o que esta escrito, e nao teve fala automatica, visto que os pequinos
+#    precisam"* e, depois, *"tem que falar o que esta escrito"*. Medido na
+#    Padaria: 1 fase narrava de 32, e 8 alto-falantes em cima de LETRA SOLTA
+#    nao tocavam nada — numa atividade de alfabeto. Ver _qa/fala_o_escrito.js.
+portao "0n a voz diz o escrito" node _qa/fala_o_escrito.js "$(dirname "$ARQ")"
+
+echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
 portao "1b funcao que nao existe" python3 _qa/funcoes.py "$ARQ"
 

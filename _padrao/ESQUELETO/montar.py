@@ -485,8 +485,26 @@ CHAVES_MUDAS = set("""k id img ic cor classe cls tipo mec r c x y w h lin col
 def eh_fala(txt):
     u"""isto e frase para a crianca ouvir, ou e codigo?"""
     t = (txt or "").strip()
+    # ⭐⭐ A LETRA SOLTA E VOZ — e na alfabetizacao e A voz mais importante.
+    #
+    # ⚠️ LICAO PAGA (ago/2026). O Marcos: *"tem que falar o que está escrito"*.
+    # Medi os alto-falantes da Padaria: 23 na atividade, e OITO deles em cima de
+    # uma letra sozinha (M, B, P, D, C, G, Q, O) nao tocavam nada. A crianca do
+    # 1o ano tocava o alto-falante da letra — o gesto exato que a atividade
+    # ensina — e ouvia SILENCIO.
+    #
+    # A causa era esta funcao: ela exigia 3 caracteres e 2 letras para
+    # considerar que um texto e fala. A regra nasceu certa (impedir que
+    # identificadores como "p0" ou "gav1" virassem mp3), mas numa atividade de
+    # ALFABETO ela barrava justamente o conteudo.
+    #
+    # Uma letra em CAIXA ALTA nunca e identificador de codigo — identificador e
+    # minusculo. Entao "M" passa, "p0" continua barrado.
+    if len(t) == 1:
+        return t.isalpha() and t == t.upper()
     if len(t) < 3:
-        return False
+        # duas letras em caixa e SILABA ("PA", "TO") — o coracao desta atividade
+        return t.isalpha() and t == t.upper()
     baixo = t.lower()
     for ruim in ("<svg", "xmlns", "data:", "url(", "http", "#fff", "rgba(",
                  "translate", "polygon", "viewbox"):
