@@ -532,3 +532,68 @@ nunca para uma explicação mais longa.
 ⚠️ **O que a pesquisa NÃO autoriza:** trocar a mecânica por outra "porque é
 nova". Item 1 manda: sistemático. Mecânica nova entra quando o gesto dela É o
 conteúdo — não para variar.
+
+---
+
+## 👥 QUEM SENTA NA MESA — a equipe completa (ordens do Marcos, ago/2026)
+
+Palavras dele: *"tem um monte de caminhos a seguir, roteirista, especialista da
+área, pedagogo ou da disciplina para verificar e montar a parte pedagógica, eles
+devem ser profundos conhecedores da BNCC e currículo de Blumenau"* e *"nas nossas
+atividades especialistas web designer, UI/UX, acessibilidade, e tudo que se
+precisa para desenvolver nosso app pedagógico"*.
+
+**Nenhuma atividade nasce de uma cabeça só.** Antes de o montador rodar, estes
+papéis passam pelo conteúdo — e cada um tem uma pergunta que só ele faz:
+
+| Papel | A pergunta dele | Onde está a resposta |
+|---|---|---|
+| **Pedagogo / especialista da disciplina** | *isto é o que a professora pediu, na habilidade do ANO certo?* | `_curriculo/blumenau.txt` (o documento oficial, 440 pág.) + BNCC quando o Marcos pedir. Do 1º ao 5º manda o PEDAGOGO; do 6º ao 9º, o ESPECIALISTA DA DISCIPLINA |
+| **Roteirista** | *existe um MUNDO que precisa da criança, ou é exercício com moldura?* | `EDUVERSE-FILOSOFIA.md` — o problema vem primeiro, o conceito por último |
+| **Game designer / interatividade** | *o gesto é o próprio conteúdo, ou é enfeite?* | `CATALOGO-DINAMICAS-INTERATIVAS.md` + `_padrao/DINAMICAS.md` |
+| **Diretor de arte** | *a proporção e o contexto batem com o mascote? é arte de IA, própria desta atividade?* | portões `3c` (arte própria) e `1f` (encaixe) |
+| **Web designer / UI** | *tem a cara do Broto — a mesma moldura, o mesmo raio, a mesma sombra?* | `_jardim/index.html` é a referência, e o bloco "O JEITO DO BROTO" no integrador |
+| **UX** | *a criança de 6 anos sabe o que fazer sem ninguém explicar?* | uma ideia por tela; alvo grande; o erro responde na hora |
+| **Acessibilidade** | *funciona no mudo, no contraste baixo, com o dedo grande e sem saber ler?* | portões `4` (contraste WCAG), `5` (alvo ≥40px), `0n` (toda resposta com voz) |
+| **Engenheiro** | *roda no Chrome 109 de 3,5 GB?* | ES5, `-webkit-`, `node --check` |
+| **PhD de testes** | *o que escapou desta vez vira portão?* | `_qa/` — a cada defeito, uma regra nova |
+
+⚠️ **O papel que NÃO pode ser pulado é o primeiro.** Mecânica bonita ensinando a
+habilidade errada é trabalho perdido inteiro — e é o único erro que os portões
+não pegam sozinhos, porque eles medem a execução, não a encomenda.
+
+---
+
+## 📈 PROGRESSÃO É PROGRESSÃO **DIDÁTICA** (correção do Marcos, ago/2026)
+
+Palavras dele, curtas e decisivas: *"quando eu falo em progressão eu falo
+progressão didática"*.
+
+**Isto corrige um mal-entendido caro.** A casa tem um portão chamado
+`_qa/progressao.py`, e ele mede a **barra de progresso** — se ela anda para trás.
+Útil, mas não é disto que ele fala. **Progressão didática é a escada do
+CONHECIMENTO**: cada fase só pede o que a anterior já ensinou, e pede um degrau
+a mais.
+
+**O que a escada exige, e onde se mede:**
+
+1. **O degrau é pequeno e é UM só.** Entre duas fases muda **uma** coisa: ou o
+   conteúdo, ou o gesto — nunca os dois. Fase que muda os dois é fase nova, não
+   degrau.
+2. **Concreto → figural → simbólico** (Bruner/CPA). A criança primeiro FAZ com a
+   figura, depois VÊ representado, e só então lida com o símbolo. Símbolo antes
+   do figural é a escada invertida — é o que o `_qa/pedagogo.py` reprova.
+3. **O problema antes do conceito.** A criança precisa sentir a falta antes de
+   receber o nome (lacuna de curiosidade). Conceito na primeira tela é aula
+   expositiva com botão.
+4. **O andaime CRESCE.** 1º erro dica · 2º apoio concreto · 3º revela e segue.
+   Andaime que repete a mesma dica não é andaime, é eco.
+5. **Aquecimento no meio** (revisão espaçada): a fase que retoma o que foi visto
+   há dez telas é o que transforma "fez" em "aprendeu".
+6. **Nada é cobrado antes de ser ensinado.** Se a fase 7 pede a sílaba complexa,
+   alguma fase antes dela ensinou a sílaba complexa — ou a fase 7 está fora de
+   lugar.
+
+**Medido por `_qa/pedagogo.py` (portão 0a)**, que é o portão da escada. O
+`_qa/progressao.py` (portão 3b) continua existindo e continua útil, mas ele é da
+BARRA. Quando o Marcos falar em progressão, é o **0a** que responde.
