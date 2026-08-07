@@ -11,6 +11,17 @@
 #  Sai 0 se a banca inteira aprovar; 1 se algum reprovar.
 # ============================================================
 set -uo pipefail
+# ⚠️ LICAO PAGA (ago/2026): editei este arquivo ENQUANTO ele rodava e a banca
+#    morreu com "syntax error near unexpected token" na linha 101 — o bash le o
+#    script em pedacos, entao trocar o arquivo no meio o corrompe. O erro parece
+#    defeito da atividade e nao e: e do relogio. A banca agora roda de uma COPIA,
+#    e continua inteira mesmo que eu mexa no original no meio.
+if [ "${QA_COPIA:-}" != "1" ]; then
+  _COPIA="$(mktemp -t qabanca.XXXXXX.sh)"
+  cp "$0" "$_COPIA"
+  QA_COPIA=1 bash "$_COPIA" "$@"; _ST=$?
+  rm -f "$_COPIA"; exit $_ST
+fi
 ARQ="${1:-}"
 if [ -z "$ARQ" ]; then echo "uso: bash _qa/auditar.sh <arquivo.html> [tela1 tela2 ...]"; exit 2; fi
 shift || true
