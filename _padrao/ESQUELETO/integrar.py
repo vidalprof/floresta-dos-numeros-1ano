@@ -115,40 +115,84 @@ def entrada(js):
     return m.group(1) if m else None
 
 
+def _ate_o_fim(js, i):
+    u"""do `[` ou `{` em `i` ate o fechamento dele."""
+    k, prof = i, 0
+    while k < len(js):
+        if js[k] in "[{":
+            prof += 1
+        elif js[k] in "]}":
+            prof -= 1
+            if prof == 0:
+                return k + 1
+        k += 1
+    return len(js)
+
+
+# nomes que sao ARTE ou CONFIGURACAO, nunca conteudo da fase
+NAO_E_CONTEUDO = set("""ARTE VERSO CORES COR PALETA SVG IMG IMGS AC CFG CONFIG
+    ESTILO FIG FIGS SONS TEMPO""".split())
+
+
 def gaveta(js):
     u"""A GAVETA DE CONTEÚDO da peça — o que faz a atividade virar dado.
 
-    Toda peça abre com um bloco assim, e o comentário acima dele diz sempre a
-    mesma frase: *"O CONTEÚDO É SÓ EXEMPLO... troque APENAS este bloco"*:
+    O integrador troca o conteúdo de exemplo da peça pelo desta fase (`f.dados`)
+    **sem tocar na peça** — que é o ponto: a peça já foi testada, e reescrevê-la
+    é reintroduzir os defeitos que ela custou.
 
-        var QZ = [ {p:"...", c:"...", e:[...], d:[...]}, ... ];
+    ⚠️ LIÇÃO PAGA, e das perigosas: a regra era *"a primeira `var` do topo"*.
+    No jogo da memória a primeira é **`ARTE`** — o desenho do verso da carta —
+    e o conteúdo é `PARES`, logo abaixo. Injetar `f.dados` teria trocado o
+    DESENHO DO VERSO pelos pares da atividade: nenhum erro de JS, nenhuma tela
+    branca, e um jogo de memória com o verso quebrado e as cartas de exemplo.
+    O tipo de defeito que só aparece com a criança na frente.
 
-    Essa `var` é a **primeira lista/objeto declarada no topo da peça**. Achando
-    o nome dela, o montador consegue trocar o conteúdo de exemplo pelo conteúdo
-    de verdade (`f.dados`) **sem tocar na peça** — que é o ponto: a peça já foi
-    testada, e reescrevê-la é reintroduzir os defeitos que ela custou.
+    A ordem de confiança agora é:
+      1. a **marca escrita na peça** (*"troque APENAS este bloco"*) — 32 das 74
+         a têm, e onde ela existe é a palavra final do autor;
+      2. o primeiro **vetor** do topo — conteúdo é quase sempre uma LISTA de
+         rodadas; arte e configuração costumam ser objeto;
+      3. o primeiro objeto, se não houver vetor nenhum.
+    Em qualquer caso, nomes que são arte ou configuração ficam de fora.
 
-    Devolve `(nome, exemplo)` — o exemplo é o valor de exemplo escrito na peça,
-    que vai para o `pecas.json` e é o que responde, sem abrir 74 arquivos, à
-    única pergunta que importa na hora de escrever o conteúdo: *"o que eu ponho
-    em `dados` desta mecânica?"*. Devolve `(None, "")` se a peça não tiver
-    gaveta (aí a fase roda com o exemplo dela e o montador avisa)."""
-    m = re.search(r"^var\s+([A-Za-z_$][\w$]*)\s*=\s*[\[{]", js, re.M)
-    if not m:
-        return None, ""
-    # até o `;` que fecha, contando colchetes — o exemplo pode ter vários níveis
-    k = m.end() - 1
-    p, fim = 0, len(js)
-    while k < len(js):
-        if js[k] in "[{":
-            p += 1
-        elif js[k] in "]}":
-            p -= 1
-            if p == 0:
-                fim = k + 1
-                break
-        k += 1
-    return m.group(1), js[m.end() - 1:fim]
+    ⚠️ E ALGUMAS MECANICAS TEM MAIS DE UMA GAVETA. No "ache o que mudou" a cena
+    esta em `CENA_A` e os erros em `MUDA`: injetar so uma da METADE do conteudo —
+    a atividade abre, nao da erro, e mostra a cena da fase com os erros de
+    exemplo. Por isso a funcao devolve tambem TODAS as vars de conteudo, e o
+    conteudo.json pode preencher as outras por `dadosExtra`.
+
+    Devolve `(nome, exemplo, regra, todas)` — a regra vai para o `pecas.json`
+    para o escolhido poder ser conferido, em vez de acreditado."""
+    achados = []
+    for m in re.finditer(r"^var\s+([A-Za-z_$][\w$]*)\s*=\s*([\[{])", js, re.M):
+        if m.group(1) in NAO_E_CONTEUDO:
+            continue
+        i = m.end() - 1
+        achados.append((m.group(1), i, _ate_o_fim(js, i), m.group(2)))
+    # ⚠️ so MAIUSCULA e conteudo. A convencao da casa em todas as pecas: dado
+    #    que a crianca ve nasce em CAIXA ALTA (`PARES`, `CENA_A`, `RODADAS`), e
+    #    o estado do jogo em minuscula (`cels`, `vagas`, `sombras`). Sem este
+    #    corte, o autor do conteudo receberia uma lista com o estado interno da
+    #    peca no meio — e mexer nele nao e trocar conteudo, e quebrar a peca.
+    todas = [a[0] for a in achados if a[0].upper() == a[0]]
+    # o exemplo de CADA gaveta, nao so o da principal: e o que permite conferir
+    # o formato do `dadosExtra` (foi por falta disso que um `MUDA` no formato
+    # errado passou e a fase saiu com ZERO diferencas, dando-se por concluida)
+    exemplos = dict((n, js[i:f]) for n, i, f, _t in achados if n.upper() == n)
+    if not achados:
+        return None, "", "nenhuma", [], {}
+
+    marca = re.search(r"troque APENAS|CONTE[UÚ]DO [EÉ] S[OÓ] EXEMPLO", js, re.I)
+    if marca:
+        for nome, i, f, _t in achados:
+            if i > marca.start():
+                return nome, js[i:f], "marca na peca", todas, exemplos
+    for nome, i, f, t in achados:
+        if t == "[":
+            return nome, js[i:f], "primeiro vetor", todas, exemplos
+    nome, i, f, _t = achados[0]
+    return nome, js[i:f], "primeiro objeto", todas, exemplos
 
 
 def prefixa_css(css, nome):
@@ -478,20 +522,46 @@ def main():
         if not porta:
             sem_porta.append(nome)
             continue
-        gav, exemplo = gaveta(js)
+        gav, exemplo, regra, todas, exemplos = gaveta(js)
         # ⭐ AQUI a atividade deixa de ser código: a última linha da peça (a
         #    chamada dela mesma) vira "troque o conteúdo de exemplo pelo desta
         #    fase, DEPOIS comece". A peça não sabe de nada; nada nela mudou.
         abre = "    " + porta + "();"
         if gav:
-            abre = ("    if(f && f.dados) %s = f.dados;\n" % gav) + abre
+            linhas = ["    if(f && f.dados) %s = f.dados;" % gav]
+            outras = [v for v in todas if v != gav]
+            if outras:
+                # ⚠️ as OUTRAS gavetas desta peca: o `sete-erros` guarda a cena
+                #    em CENA_A e os erros em MUDA. Sem isto, a fase saia com a
+                #    cena da atividade e os erros do exemplo — sem erro nenhum.
+                linhas.append("    if(f && f.dadosExtra){ var _d = f.dadosExtra;")
+                for v in outras:
+                    linhas.append("      if(_d.%s !== undefined) %s = _d.%s;" % (v, v, v))
+                linhas.append("    }")
+            abre = "\n".join(linhas) + "\n" + abre
         else:
             sem_gaveta.append(nome)
         corpo = re.sub(r"^\s*%s\s*\(\s*\)\s*;\s*$" % re.escape(porta),
                        abre, js, flags=re.M)
         gavetas[nome] = {"var": gav,
+                         # QUAL regra escolheu esta gaveta — para o escolhido
+                         # poder ser CONFERIDO, em vez de acreditado
+                         "regra": regra,
+                         # TODAS as gavetas de conteudo desta peca: as que nao
+                         # sao a principal se preenchem por `dadosExtra`
+                         "gavetas": todas,
+                         # o exemplo de CADA gaveta (o autor precisa do formato
+                         # do `MUDA` tanto quanto o do `CENA_A`)
+                         "exemplos": exemplos,
                          # o exemplo cru da peça: é o molde do que vai em `dados`
-                         "exemplo": (exemplo or "")[:900]}
+                         # ⚠️ LICAO PAGA: isto vinha cortado em 900 caracteres, e
+                         #    em varias mecanicas o exemplo terminava no meio de
+                         #    uma frase. Quem vai escrever o conteudo NAO consegue
+                         #    ler a forma num exemplo pela metade — e era esse o
+                         #    unico proposito do arquivo. Este JSON e ferramenta
+                         #    de bancada, nao vai para o PC da escola: cabe
+                         #    inteiro.
+                         "exemplo": exemplo or ""}
         js_out.append(PONTE % {"nome": nome, "corpo": corpo})
         # o CSS leva a MESMA marca: o montador recorta peça inteira, nunca
         # regra a regra (um `@media{` que perdesse as regras de dentro deixaria

@@ -3,298 +3,1022 @@
  "gavetas": {
   "achar-na-cena": {
    "exemplo": "[\n {k:\"borb\", n:\"A BORBOLETA\", pista:\"tem duas asas laranja\",\n  m:[\"110000\",\n     \"110000\",\n     \"000000\",\n     \"000000\",\n     \"000000\"],\n  arte:'<i class=\"bo1\"></i><i class=\"bo2\"></i><i class=\"bo3\"></i>'},\n {k:\"pass\", n:\"O PASSARINHO\", pista:\"e azul e tem bico amarelo\",\n  m:[\"000011\",\n     \"000011\",\n     \"000000\",\n     \"000000\",\n     \"000000\"],\n  arte:'<i class=\"pa1\"></i><i class=\"pa2\"></i><i class=\"pa3\"></i><i class=\"pa4\"></i>'},\n {k:\"cara\", n:\"O CARACOL\", pista:\"carrega a casinha redonda nas costas\",\n  m:[\"000000\",\n     \"000000\",\n     \"000000\",\n     \"110000\",\n     \"110000\"],\n  arte:'<i class=\"ca3\"></i><i class=\"ca2\"></i><i class=\"ca1\"></i>'},\n {k:\"joan\", n:\"A JOANINHA\", pista:\"e vermelha com pintinhas pretas\",\n  m:[\"000000\",\n     \"000000\",\n     \"000000\",\n     \"000011\",\n     \"000011\"],\n  arte:'<i class=\"jo1\"></i><i class=\"jo2\"></i><i class=\"jo3\"></i><i class=\"jo4\"></i>'}\n]",
+   "exemplos": {
+    "COISAS": "[\n {k:\"borb\", n:\"A BORBOLETA\", pista:\"tem duas asas laranja\",\n  m:[\"110000\",\n     \"110000\",\n     \"000000\",\n     \"000000\",\n     \"000000\"],\n  arte:'<i class=\"bo1\"></i><i class=\"bo2\"></i><i class=\"bo3\"></i>'},\n {k:\"pass\", n:\"O PASSARINHO\", pista:\"e azul e tem bico amarelo\",\n  m:[\"000011\",\n     \"000011\",\n     \"000000\",\n     \"000000\",\n     \"000000\"],\n  arte:'<i class=\"pa1\"></i><i class=\"pa2\"></i><i class=\"pa3\"></i><i class=\"pa4\"></i>'},\n {k:\"cara\", n:\"O CARACOL\", pista:\"carrega a casinha redonda nas costas\",\n  m:[\"000000\",\n     \"000000\",\n     \"000000\",\n     \"110000\",\n     \"110000\"],\n  arte:'<i class=\"ca3\"></i><i class=\"ca2\"></i><i class=\"ca1\"></i>'},\n {k:\"joan\", n:\"A JOANINHA\", pista:\"e vermelha com pintinhas pretas\",\n  m:[\"000000\",\n     \"000000\",\n     \"000000\",\n     \"000011\",\n     \"000011\"],\n  arte:'<i class=\"jo1\"></i><i class=\"jo2\"></i><i class=\"jo3\"></i><i class=\"jo4\"></i>'}\n]"
+   },
+   "gavetas": [
+    "COISAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "COISAS"
   },
   "andar-ate": {
    "exemplo": "[\n {nome:\"a horta\",   arte:svgHorta,  alvo:{l:4,c:3},\n  dic:\"A horta est&#225; na <b>mesma fileira</b> dele. S&#243; falta andar para o lado.\"},\n {nome:\"a escola\",  arte:svgEscola, alvo:{l:2,c:2},\n  dic:\"Primeiro <b>suba</b> as fileiras, depois ande para o <b>lado</b>.\"},\n {nome:\"o mirante\", arte:svgPonte,  alvo:{l:0,c:4},\n  dic:\"Ele est&#225; embaixo &#224; esquerda e o lugar est&#225; l&#225; em cima &#224; direita.\"}\n]",
+   "exemplos": {
+    "LADOS": "[[\"▲\",\"para cima\",-1,0],[\"▼\",\"para baixo\",1,0],\n           [\"◀\",\"esquerda\",0,-1],[\"▶\",\"direita\",0,1]]",
+    "LUGARES": "[\n {nome:\"a horta\",   arte:svgHorta,  alvo:{l:4,c:3},\n  dic:\"A horta est&#225; na <b>mesma fileira</b> dele. S&#243; falta andar para o lado.\"},\n {nome:\"a escola\",  arte:svgEscola, alvo:{l:2,c:2},\n  dic:\"Primeiro <b>suba</b> as fileiras, depois ande para o <b>lado</b>.\"},\n {nome:\"o mirante\", arte:svgPonte,  alvo:{l:0,c:4},\n  dic:\"Ele est&#225; embaixo &#224; esquerda e o lugar est&#225; l&#225; em cima &#224; direita.\"}\n]"
+   },
+   "gavetas": [
+    "LUGARES",
+    "LADOS"
+   ],
+   "regra": "primeiro vetor",
    "var": "LUGARES"
   },
   "arrastar-lugar": {
    "exemplo": "[\n  {k:\"sol\",     n:\"SOL\",     x:0.8,  y:1.2,  w:16.9, h:25.9},\n  {k:\"telhado\", n:\"TELHADO\", x:21.5, y:15.3, w:58.5, h:29.4},\n  {k:\"janela\",  n:\"JANELA\",  x:30.8, y:51.8, w:17.7, h:25.9},\n  {k:\"porta\",   n:\"PORTA\",   x:53.1, y:55.3, w:18.5, h:38.8}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Olhe o desenho: cada parte tem UM lugar. Onde fica o telhado de uma casa?\",\n  \"O lugar certo est&#225; <b>piscando</b> na figura. Leve a pe&#231;a at&#233; l&#225;.\",\n  \"Deixa comigo: eu ponho esta e voc&#234; continua.\"\n]",
+    "PARTES": "[\n  {k:\"sol\",     n:\"SOL\",     x:0.8,  y:1.2,  w:16.9, h:25.9},\n  {k:\"telhado\", n:\"TELHADO\", x:21.5, y:15.3, w:58.5, h:29.4},\n  {k:\"janela\",  n:\"JANELA\",  x:30.8, y:51.8, w:17.7, h:25.9},\n  {k:\"porta\",   n:\"PORTA\",   x:53.1, y:55.3, w:18.5, h:38.8}\n]"
+   },
+   "gavetas": [
+    "PARTES",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "PARTES"
   },
   "arrastar-sombra": {
-   "exemplo": "{\n estrela:{n:\"ESTRELA\", voz:\"a estrela\", cor:\"#ffd54a\",\n  cp:\"polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)\"},\n casa:{n:\"CASA\", voz:\"a casa\", cor:\"#e07a3c\",\n  cp:\"polygon(50% 2%,98% 42%,84% 42%,84% 98%,16% 98%,16% 42%,2% 42%)\"},\n peixe:{n:\"PEIXE\", voz:\"o peixe\", cor:\"#3f9fd0\",\n  /* ⚠️ dez vertices, nao oito: com oito o corpo saia PONTUDO dos dois lados e\n     a silhueta lia como uma seta, nao como um peixe. Numa peca de casar\n     CONTORNO, silhueta ambigua e defeito de conteudo, nao de desenho. */\n  cp:\"polygon(2% 8%,26% 50%,2% 92%,34% 74%,54% 88%,78% 82%,96% 56%,96% 44%,78% 18%,54% 12%,34% 26%)\"},\n arvore:{n:\"&#193;RVORE\", voz:\"a árvore\", cor:\"#4aa845\",\n  cp:\"polygon(50% 2%,74% 36%,62% 36%,84% 68%,58% 68%,58% 98%,42% 98%,42% 68%,16% 68%,38% 36%,26% 36%)\"},\n coracao:{n:\"CORA&#199;&#195;O\", voz:\"o coração\", cor:\"#e2506e\",\n  cp:\"polygon(50% 96%,20%",
-   "var": "FORMAS"
+   "exemplo": "[\n {selo:\"CADA COISA, SUA SOMBRA\", quais:[\"estrela\",\"casa\",\"peixe\"]},\n {selo:\"OLHE BEM O CONTORNO\",    quais:[\"arvore\",\"coracao\",\"folha\",\"casa\"]}\n]",
+   "exemplos": {
+    "DICAS": "[\n \"Compare o <b>contorno</b>: a sombra tem o mesmo formato do objeto.\",\n \"A sombra certa est&#225; <b>piscando</b>. Leve o objeto at&#233; ela.\",\n \"Deixa comigo: eu levo esta e voc&#234; continua.\"\n]",
+    "FORMAS": "{\n estrela:{n:\"ESTRELA\", voz:\"a estrela\", cor:\"#ffd54a\",\n  cp:\"polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%)\"},\n casa:{n:\"CASA\", voz:\"a casa\", cor:\"#e07a3c\",\n  cp:\"polygon(50% 2%,98% 42%,84% 42%,84% 98%,16% 98%,16% 42%,2% 42%)\"},\n peixe:{n:\"PEIXE\", voz:\"o peixe\", cor:\"#3f9fd0\",\n  /* ⚠️ dez vertices, nao oito: com oito o corpo saia PONTUDO dos dois lados e\n     a silhueta lia como uma seta, nao como um peixe. Numa peca de casar\n     CONTORNO, silhueta ambigua e defeito de conteudo, nao de desenho. */\n  cp:\"polygon(2% 8%,26% 50%,2% 92%,34% 74%,54% 88%,78% 82%,96% 56%,96% 44%,78% 18%,54% 12%,34% 26%)\"},\n arvore:{n:\"&#193;RVORE\", voz:\"a árvore\", cor:\"#4aa845\",\n  cp:\"polygon(50% 2%,74% 36%,62% 36%,84% 68%,58% 68%,58% 98%,42% 98%,42% 68%,16% 68%,38% 36%,26% 36%)\"},\n coracao:{n:\"CORA&#199;&#195;O\", voz:\"o coração\", cor:\"#e2506e\",\n  cp:\"polygon(50% 96%,20% 74%,4% 50%,4% 28%,18% 10%,36% 10%,50% 26%,64% 10%,82% 10%,96% 28%,96% 50%,80% 74%)\"},\n folha:{n:\"FOLHA\", voz:\"a folha\", cor:\"#7cb464\",\n  cp:\"polygon(50% 0,66% 14%,80% 34%,86% 56%,74% 80%,50% 100%,26% 80%,14% 56%,20% 34%,34% 14%)\"}\n}",
+    "RODADAS": "[\n {selo:\"CADA COISA, SUA SOMBRA\", quais:[\"estrela\",\"casa\",\"peixe\"]},\n {selo:\"OLHE BEM O CONTORNO\",    quais:[\"arvore\",\"coracao\",\"folha\",\"casa\"]}\n]"
+   },
+   "gavetas": [
+    "FORMAS",
+    "RODADAS",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
+   "var": "RODADAS"
   },
   "autoexplicacao": {
-   "exemplo": "[\n {selo:\"A PLANTA\",\n  tarefa:\"O sol da manhã bate só numa janela. <b>Onde</b> você põe o vaso?\",\n  dicas:[\"Pense no que a planta encontra na janela e não encontra dentro do armário.\",\n         \"Risquei um lugar que não serve. Onde entra a <b>luz</b>?\"],\n  esc:[{svg:SVG_JANELA_SOL,r:\"Na janela do sol\",c:true},\n       {svg:SVG_ARMARIO,r:\"No armário fechado\",c:false},\n       {svg:SVG_MESA,r:\"Embaixo da mesa\",c:false}],\n  pq:\"Deu certo! Mas <b>por que</b> deu certo?\",\n  perguntas:[\"E se eu perguntar assim: o que a planta <b>recebe</b> na janela e não recebe no armário?\",\n             \"Olhe o desenho em que a luz <b>toca a folha</b>. O que será que a folha faz com essa luz?\"],\n  cards:[{svg:SVG_LUZFOLHA,t:\"A folha usa a <b>luz do sol</b> para fabricar o alimento dela.\",c:true},\n         {svg:SVG_VASOGRANDE,t:\"O vaso da janela é <b>maior</b> que o outro.\",c:false},\n         {svg:SVG_VENTO,t:\"",
+   "exemplo": "[\n {selo:\"A PLANTA\",\n  tarefa:\"O sol da manhã bate só numa janela. <b>Onde</b> você põe o vaso?\",\n  dicas:[\"Pense no que a planta encontra na janela e não encontra dentro do armário.\",\n         \"Risquei um lugar que não serve. Onde entra a <b>luz</b>?\"],\n  esc:[{svg:SVG_JANELA_SOL,r:\"Na janela do sol\",c:true},\n       {svg:SVG_ARMARIO,r:\"No armário fechado\",c:false},\n       {svg:SVG_MESA,r:\"Embaixo da mesa\",c:false}],\n  pq:\"Deu certo! Mas <b>por que</b> deu certo?\",\n  perguntas:[\"E se eu perguntar assim: o que a planta <b>recebe</b> na janela e não recebe no armário?\",\n             \"Olhe o desenho em que a luz <b>toca a folha</b>. O que será que a folha faz com essa luz?\"],\n  cards:[{svg:SVG_LUZFOLHA,t:\"A folha usa a <b>luz do sol</b> para fabricar o alimento dela.\",c:true},\n         {svg:SVG_VASOGRANDE,t:\"O vaso da janela é <b>maior</b> que o outro.\",c:false},\n         {svg:SVG_VENTO,t:\"Perto da janela o <b>vento</b> empurra a planta para cima.\",c:false}]},\n {selo:\"OS DOIS COPOS\",\n  tarefa:\"Dois copos iguais, com água igual. Um no sol, outro na sombra. <b>Qual seca primeiro?</b>\",\n  dicas:[\"Pense em que lugar as coisas ficam mais <b>quentes</b>.\",\n         \"Risquei um que não serve. Onde bate o <b>sol</b>?\"],\n  esc:[{svg:SVG_COPOSOL,r:\"O copo do sol\",c:true},\n       {svg:SVG_COPOSOMBRA,r:\"O copo da sombra\",c:false},\n       {svg:SVG_DOISCOPOS,r:\"Os dois juntos\",c:false}],\n  pq:\"Isso! E <b>por que</b> o copo do sol seca primeiro?\",\n  perguntas:[\"Deixa eu perguntar de outro jeito: o sol deixa a água <b>como</b>?\",\n             \"Olhe o desenho da água <b>subindo em fiozinhos</b>. Para onde será que ela vai?\"],\n  cards:[{svg:SVG_VAPOR,t:\"O <b>calor</b> do sol faz a água virar vapor e subir para o ar.\",c:true},\n         {svg:SVG_FUNDO,t:\"O copo do sol é mais <b>fundo</b> que o outro.\",c:false},\n         {svg:SVG_PESO,t:\"A água da sombra é mais <b>pesada</b>.\",c:false}]}\n]",
+   "exemplos": {
+    "RODADAS": "[\n {selo:\"A PLANTA\",\n  tarefa:\"O sol da manhã bate só numa janela. <b>Onde</b> você põe o vaso?\",\n  dicas:[\"Pense no que a planta encontra na janela e não encontra dentro do armário.\",\n         \"Risquei um lugar que não serve. Onde entra a <b>luz</b>?\"],\n  esc:[{svg:SVG_JANELA_SOL,r:\"Na janela do sol\",c:true},\n       {svg:SVG_ARMARIO,r:\"No armário fechado\",c:false},\n       {svg:SVG_MESA,r:\"Embaixo da mesa\",c:false}],\n  pq:\"Deu certo! Mas <b>por que</b> deu certo?\",\n  perguntas:[\"E se eu perguntar assim: o que a planta <b>recebe</b> na janela e não recebe no armário?\",\n             \"Olhe o desenho em que a luz <b>toca a folha</b>. O que será que a folha faz com essa luz?\"],\n  cards:[{svg:SVG_LUZFOLHA,t:\"A folha usa a <b>luz do sol</b> para fabricar o alimento dela.\",c:true},\n         {svg:SVG_VASOGRANDE,t:\"O vaso da janela é <b>maior</b> que o outro.\",c:false},\n         {svg:SVG_VENTO,t:\"Perto da janela o <b>vento</b> empurra a planta para cima.\",c:false}]},\n {selo:\"OS DOIS COPOS\",\n  tarefa:\"Dois copos iguais, com água igual. Um no sol, outro na sombra. <b>Qual seca primeiro?</b>\",\n  dicas:[\"Pense em que lugar as coisas ficam mais <b>quentes</b>.\",\n         \"Risquei um que não serve. Onde bate o <b>sol</b>?\"],\n  esc:[{svg:SVG_COPOSOL,r:\"O copo do sol\",c:true},\n       {svg:SVG_COPOSOMBRA,r:\"O copo da sombra\",c:false},\n       {svg:SVG_DOISCOPOS,r:\"Os dois juntos\",c:false}],\n  pq:\"Isso! E <b>por que</b> o copo do sol seca primeiro?\",\n  perguntas:[\"Deixa eu perguntar de outro jeito: o sol deixa a água <b>como</b>?\",\n             \"Olhe o desenho da água <b>subindo em fiozinhos</b>. Para onde será que ela vai?\"],\n  cards:[{svg:SVG_VAPOR,t:\"O <b>calor</b> do sol faz a água virar vapor e subir para o ar.\",c:true},\n         {svg:SVG_FUNDO,t:\"O copo do sol é mais <b>fundo</b> que o outro.\",c:false},\n         {svg:SVG_PESO,t:\"A água da sombra é mais <b>pesada</b>.\",c:false}]}\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "RODADAS"
   },
   "balanca": {
    "exemplo": "[\n {a:3,b:2,ini:1},\n {a:4,b:4,ini:5},\n {a:5,b:4,ini:4}\n]",
+   "exemplos": {
+    "RODS": "[\n {a:3,b:2,ini:1},\n {a:4,b:4,ini:5},\n {a:5,b:4,ini:4}\n]"
+   },
+   "gavetas": [
+    "RODS"
+   ],
+   "regra": "marca na peca",
    "var": "RODS"
   },
   "base-dez": {
    "exemplo": "[\n  {selo:\"CAIXA DE 10\", soltos:13, pTipo:\"dsuni\", tTipo:\"dsdez\", vale:1, valeT:10,\n   nomeP:\"soltos\", nomeT:\"caixa de 10\", nomeTs:\"caixas de 10\",\n   fala:\"Cada <b>10 soltos</b> viram <b>1 caixa</b>. Encha a caixa e troque.\"},\n  {selo:\"CAIXOTE DE 100\", soltos:12, pTipo:\"dsdez\", tTipo:\"dscem\", vale:10, valeT:100,\n   nomeP:\"caixas de 10\", nomeT:\"caixote de 100\", nomeTs:\"caixotes de 100\",\n   fala:\"Agora s&#227;o <b>caixas de 10</b>. Cada <b>10 caixas</b> viram <b>1 caixote</b>.\"}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Conte quantas pe&#231;as ainda est&#227;o na mesa. D&#225; para juntar mais dez?\",\n  \"Ponha as pe&#231;as que sobraram na caixa e conte os lugares cheios.\",\n  \"Sobrou menos de dez? A&#237; sim n&#227;o d&#225; mais: pode dizer que acabou.\"\n]",
+    "RODADAS": "[\n  {selo:\"CAIXA DE 10\", soltos:13, pTipo:\"dsuni\", tTipo:\"dsdez\", vale:1, valeT:10,\n   nomeP:\"soltos\", nomeT:\"caixa de 10\", nomeTs:\"caixas de 10\",\n   fala:\"Cada <b>10 soltos</b> viram <b>1 caixa</b>. Encha a caixa e troque.\"},\n  {selo:\"CAIXOTE DE 100\", soltos:12, pTipo:\"dsdez\", tTipo:\"dscem\", vale:10, valeT:100,\n   nomeP:\"caixas de 10\", nomeT:\"caixote de 100\", nomeTs:\"caixotes de 100\",\n   fala:\"Agora s&#227;o <b>caixas de 10</b>. Cada <b>10 caixas</b> viram <b>1 caixote</b>.\"}\n]"
+   },
+   "gavetas": [
+    "RODADAS",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "RODADAS"
   },
   "bingo": {
    "exemplo": "[\n  {selo:\"BINGO DOS N&Uacute;MEROS\", tipo:\"num\",\n   enun:\"Tire a pedra e ache o <b>mesmo n&uacute;mero</b> na sua cartela.\",\n   cartela:[3,7,5,9,2,6], fora:[1,4]},\n  {selo:\"BINGO DOS PONTINHOS\", tipo:\"pts\",\n   enun:\"Agora a pedra vem com <b>pontinhos</b>. Conte e ache o n&uacute;mero na cartela.\",\n   cartela:[4,8,2,6,9,1], fora:[3,7]},\n  {selo:\"BINGO DAS PALAVRAS\", tipo:\"pal\",\n   enun:\"Agora a pedra vem <b>escrita</b>. Leia e ache o n&uacute;mero na cartela.\",\n   cartela:[5,2,8,3,7,4], fora:[6,9]}\n]",
+   "exemplos": {
+    "NUMPAL": "[\"zero\",\"um\",\"dois\",\"tr&ecirc;s\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\"]",
+    "RODADAS": "[\n  {selo:\"BINGO DOS N&Uacute;MEROS\", tipo:\"num\",\n   enun:\"Tire a pedra e ache o <b>mesmo n&uacute;mero</b> na sua cartela.\",\n   cartela:[3,7,5,9,2,6], fora:[1,4]},\n  {selo:\"BINGO DOS PONTINHOS\", tipo:\"pts\",\n   enun:\"Agora a pedra vem com <b>pontinhos</b>. Conte e ache o n&uacute;mero na cartela.\",\n   cartela:[4,8,2,6,9,1], fora:[3,7]},\n  {selo:\"BINGO DAS PALAVRAS\", tipo:\"pal\",\n   enun:\"Agora a pedra vem <b>escrita</b>. Leia e ache o n&uacute;mero na cartela.\",\n   cartela:[5,2,8,3,7,4], fora:[6,9]}\n]"
+   },
+   "gavetas": [
+    "RODADAS",
+    "NUMPAL"
+   ],
+   "regra": "marca na peca",
    "var": "RODADAS"
   },
   "bussola": {
    "exemplo": "[{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}]",
+   "exemplos": {
+    "DIRS": "[\"NORTE\",\"SUL\",\"LESTE\",\"OESTE\"]",
+    "LUGARES": "[{k:\"escola\",n:\"ESCOLA\",art:\"a\"},{k:\"padaria\",n:\"PADARIA\",art:\"a\"},\n             {k:\"parque\",n:\"PARQUE\",art:\"o\"},{k:\"mercado\",n:\"MERCADO\",art:\"o\"}]",
+    "POS": "[{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}]",
+    "REF": "{NORTE:\"o lado de <b>cima</b> do mapa\",\n         SUL:\"o lado de <b>baixo</b> do mapa\",\n         LESTE:\"o lado da sua <b>direita</b>\",\n         OESTE:\"o lado da sua <b>esquerda</b>\"}",
+    "RODADAS": "[\n {tipo:\"achalugar\", ref:true,  selo:\"ACHE O LUGAR\"},\n {tipo:\"achalugar\", ref:false, selo:\"ACHE O LUGAR\"},\n {tipo:\"achadir\",   ref:true,  selo:\"QUE DIRE&#199;&#195;O?\"},\n {tipo:\"achadir\",   ref:false, selo:\"QUE DIRE&#199;&#195;O?\"}\n]",
+    "SETA": "{NORTE:\"&#9650;\",SUL:\"&#9660;\",LESTE:\"&#9654;\",OESTE:\"&#9664;\"}"
+   },
+   "gavetas": [
+    "POS",
+    "REF",
+    "SETA",
+    "DIRS",
+    "LUGARES",
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "POS"
   },
   "caca-palavras": {
    "exemplo": "[\"MILHO\",\"ALFACE\",\"TOMATE\",\"CENOURA\",\"FEIJAO\"]",
+   "exemplos": {
+    "CORP": "[\"p1\",\"p2\",\"p3\",\"p4\",\"p5\"]",
+    "PAL": "[\"MILHO\",\"ALFACE\",\"TOMATE\",\"CENOURA\",\"FEIJAO\"]"
+   },
+   "gavetas": [
+    "PAL",
+    "CORP"
+   ],
+   "regra": "marca na peca",
    "var": "PAL"
   },
   "caixa-dinheiro": {
    "exemplo": "[{v:1,t:\"moeda\"},{v:2,t:\"nota\"},{v:5,t:\"nota\"},{v:10,t:\"nota\"},{v:20,t:\"nota\"}]",
+   "exemplos": {
+    "DICAS": "[\n  \"Olhe a r&#233;gua verde: ela mostra o quanto ainda falta encher.\",\n  \"Essa pe&#231;a passa do valor. As que <b>cabem agora</b> est&#227;o piscando.\",\n  \"Deixa comigo: eu ponho esta e voc&#234; continua.\"\n]",
+    "DINHEIRO": "[{v:1,t:\"moeda\"},{v:2,t:\"nota\"},{v:5,t:\"nota\"},{v:10,t:\"nota\"},{v:20,t:\"nota\"}]",
+    "RODADAS": "[\n  {base:0, alvo:6, selo:\"O CAIXA\",\n   fala:\"O fregu&#234;s vai pagar <b>6 reais</b>. Monte esse valor na bandeja.\"},\n  {base:0, alvo:13, selo:\"O CAIXA\",\n   fala:\"Agora a conta deu <b>13 reais</b>. Monte com as pe&#231;as que voc&#234; tem.\"},\n  {base:11, alvo:20, selo:\"O TROCO\", troco:1,\n   fala:\"A compra deu <b>11</b> e ele entregou <b>20</b>. Monte o <b>troco</b> na bandeja.\"}\n]"
+   },
+   "gavetas": [
+    "DINHEIRO",
+    "RODADAS",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "DINHEIRO"
   },
   "calendario": {
-   "exemplo": "{nome:\"MAIO\", dias:31, inicio:4}",
-   "var": "MES"
+   "exemplo": "[\"DOM\",\"SEG\",\"TER\",\"QUA\",\"QUI\",\"SEX\",\"SAB\"]",
+   "exemplos": {
+    "FASES": "[\n {t:\"achar\", alvo:12, selo:\"ACHE O DIA\",\n  enun:\"Hoje &eacute; dia <b>12</b>. Toque no dia <b>12</b> no quadro.\",\n  voz:\"Hoje é dia doze. Toque no dia doze no quadro.\"},\n {t:\"vizinho\", base:12, alvo:13, palavra:\"amanh&atilde;\", selo:\"ONTEM E AMANH&Atilde;\",\n  enun:\"Hoje &eacute; <b>12</b>. Toque no dia de <b>amanh&atilde;</b>.\",\n  voz:\"Hoje é doze. Toque no dia de amanhã.\"},\n {t:\"vizinho\", base:12, alvo:11, palavra:\"ontem\", selo:\"ONTEM E AMANH&Atilde;\",\n  enun:\"Hoje &eacute; <b>12</b>. Toque no dia de <b>ontem</b>.\",\n  voz:\"Hoje é doze. Toque no dia de ontem.\"},\n {t:\"semana\", dia:20, selo:\"QUE DIA DA SEMANA?\",\n  enun:\"Em que dia da semana cai o dia <b>20</b>? Toque no nome, l&aacute; em cima.\",\n  voz:\"Em que dia da semana cai o dia vinte? Toque no nome, lá em cima.\"},\n {t:\"pulos\", de:12, ate:17, selo:\"CONTE OS PULOS\",\n  enun:\"Faltam quantos dias para o dia <b>17</b>? Pule de <b>um em um</b>.\",\n  voz:\"Faltam quantos dias para o dia dezessete? Pule de um em um.\"},\n {t:\"daqui\", de:12, n:3, selo:\"DAQUI A 3 DIAS\",\n  enun:\"A festa &eacute; <b>daqui a 3 dias</b>. D&ecirc; 3 pulos e veja onde cai.\",\n  voz:\"A festa é daqui a três dias. Dê três pulos e veja onde cai.\"},\n {t:\"quantos\", cert:31, ops:[28,29,30,31], selo:\"O M&Ecirc;S INTEIRO\",\n  enun:\"Quantos dias tem este m&ecirc;s? Conte at&eacute; a &uacute;ltima casinha.\",\n  voz:\"Quantos dias tem este mês? Conte até a última casinha.\"}\n]",
+    "MES": "{nome:\"MAIO\", dias:31, inicio:4}",
+    "ORD": "[\"primeira\",\"segunda\",\"terceira\",\"quarta\",\"quinta\",\"sexta\"]",
+    "SEM": "[\"DOM\",\"SEG\",\"TER\",\"QUA\",\"QUI\",\"SEX\",\"SAB\"]",
+    "SEMD": "[\"domingo\",\"segunda-feira\",\"ter&ccedil;a-feira\",\"quarta-feira\",\"quinta-feira\",\n          \"sexta-feira\",\"s&aacute;bado\"]",
+    "SEMH": "[\"DOMINGO\",\"SEGUNDA\",\"TER&Ccedil;A\",\"QUARTA\",\"QUINTA\",\"SEXTA\",\"S&Aacute;BADO\"]",
+    "SEMV": "[\"domingo\",\"segunda-feira\",\"terça-feira\",\"quarta-feira\",\"quinta-feira\",\"sexta-feira\",\"sábado\"]",
+    "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\"]"
+   },
+   "gavetas": [
+    "MES",
+    "SEM",
+    "SEMH",
+    "SEMV",
+    "SEMD",
+    "ORD",
+    "UNM",
+    "FASES"
+   ],
+   "regra": "primeiro vetor",
+   "var": "SEM"
   },
   "camadas-mapa": {
    "exemplo": "[[9.5,16],[15.5,41],[23.5,58],[35.5,83],[47.5,77]]",
+   "exemplos": {
+    "CAMADAS": "[\n {k:\"relevo\", n:\"RELEVO\",\n  novo:\"Apareceram <b>3 morros</b>. Onde tem morro, o ch&#227;o &#233; alto e inclinado.\",\n  monta:function(){\n    var d=el(\"div\",\"cmcam\"), i, m, mo, pc;\n    for(i=0;i<MORROS.length;i++){\n      m=MORROS[i];\n      mo=el(\"i\",\"morro\");\n      mo.style.left=m.l+\"%\"; mo.style.top=m.t+\"%\";\n      mo.style.width=m.w+\"%\"; mo.style.height=m.h+\"%\";\n      d.appendChild(mo);\n      if(m.pico){\n        pc=el(\"i\",\"pico\");\n        pc.style.left=(m.l+m.w*0.3)+\"%\"; pc.style.top=(m.t+m.h*0.06)+\"%\";\n        pc.style.width=(m.w*0.4)+\"%\"; pc.style.height=(m.h*0.22)+\"%\";\n        d.appendChild(pc);\n      }\n    }\n    return d;\n  }},\n {k:\"rios\", n:\"RIOS\",\n  novo:\"Apareceram <b>2 rios</b> e um lago. Rio &#233; &#225;gua que corre sempre no mesmo lugar.\",\n  monta:function(){ return el(\"div\",\"cmcam\",RIOS); }},\n {k:\"cidades\", n:\"CIDADES\",\n  novo:\"Apareceram <b>5 cidades</b> (os quadradinhos). Cada uma &#233; um lugar onde mora gente.\",\n  monta:function(){\n    var d=el(\"div\",\"cmcam\"), i, c;\n    for(i=0;i<CIDADES.length;i++){\n      c=el(\"i\",\"cid\",\"<i></i>\");\n      c.style.left=CIDADES[i][0]+\"%\"; c.style.top=CIDADES[i][1]+\"%\";\n      d.appendChild(c);\n    }\n    return d;\n  }}\n]",
+    "CIDADES": "[[9.5,16],[15.5,41],[23.5,58],[35.5,83],[47.5,77]]",
+    "MORROS": "[\n {l:56,t:6,w:30,h:34,pico:1},\n {l:76,t:36,w:24,h:30,pico:0},\n {l:60,t:54,w:26,h:28,pico:0}\n]",
+    "PERG": "[\n {selo:\"RIO E CIDADE\",\n  pede:[\"rios\",\"cidades\"],\n  p:\"Ligue <b>RIOS</b> e <b>CIDADES</b> juntas. O que d&#225; para ver s&#243; com as duas ligadas?\",\n  c:\"Quase todas as cidades est&#227;o coladas nos rios\",\n  e:[\"As cidades est&#227;o em cima dos morros\",\n     \"As cidades est&#227;o longe da &#225;gua\",\n     \"As cidades est&#227;o todas no canto de cima\"],\n  fecha:\"Gente precisa de &#225;gua todo dia: por isso as cidades nasceram na beira do rio.\",\n  d:[\"Olhe os quadradinhos das cidades e veja o que passa <b>do lado</b> de cada um.\",\n     \"Estou acendendo as duas camadas. Siga o rio com o dedo e conte quantas cidades ele encosta.\",\n     \"&#201; esta: quase todas as cidades est&#227;o <b>coladas nos rios</b>. Toque nela para seguir.\"]},\n {selo:\"MORRO E CIDADE\",\n  pede:[\"relevo\",\"cidades\"],\n  p:\"Agora ligue <b>RELEVO</b> e <b>CIDADES</b>. Onde <b>n&#227;o tem nenhuma</b> cidade?\",\n  c:\"Em cima dos morros\",\n  e:[\"Na beira dos rios\",\n     \"No canto de baixo do mapa\",\n     \"No meio do mapa\"],\n  fecha:\"Morro alto &#233; inclinado e dif&#237;cil de subir: quase ningu&#233;m constr&#243;i casa l&#225; em cima.\",\n  d:[\"Ache as bolhas dos morros e veja se algum quadradinho caiu dentro delas.\",\n     \"Estou acendendo as duas camadas. Passe o dedo por cima de cada morro e procure quadradinho.\",\n     \"&#201; esta: <b>em cima dos morros</b> n&#227;o tem cidade nenhuma. Toque nela para seguir.\"]}\n]"
+   },
+   "gavetas": [
+    "CIDADES",
+    "MORROS",
+    "CAMADAS",
+    "PERG"
+   ],
+   "regra": "primeiro vetor",
    "var": "CIDADES"
   },
   "circuito": {
    "exemplo": "[                                   /* o que já vem ligado */\n  {t:\"h\", x1:38, x2:62, y:YTOP},             /* atrás da lâmpada */\n  {t:\"h\", x1:38, x2:62, y:YBASE},            /* atrás da pilha */\n  {t:\"h\", x1:62, x2:88, y:YBASE, id:\"fbd\"},  /* onde mora o interruptor */\n  {t:\"v\", x:12, y1:YTOP, y2:YBASE},          /* trilho da esquerda */\n  {t:\"v\", x:88, y1:YTOP, y2:YBASE}           /* trilho da direita */\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Ligue as duas pontas do MESMO peda&#231;o tracejado.\",\n  \"Olhe o tracejado: ele mostra exatamente onde falta fio. Toque numa ponta e depois na outra do mesmo tracejado.\",\n  \"A ponta que combina est&#225; com a borda amarela. Toque nela.\"\n]",
+    "FIOS": "[                                   /* o que já vem ligado */\n  {t:\"h\", x1:38, x2:62, y:YTOP},             /* atrás da lâmpada */\n  {t:\"h\", x1:38, x2:62, y:YBASE},            /* atrás da pilha */\n  {t:\"h\", x1:62, x2:88, y:YBASE, id:\"fbd\"},  /* onde mora o interruptor */\n  {t:\"v\", x:12, y1:YTOP, y2:YBASE},          /* trilho da esquerda */\n  {t:\"v\", x:88, y1:YTOP, y2:YBASE}           /* trilho da direita */\n]",
+    "LIGADOS": "{}",
+    "PEDACOS": "[                                /* o que FALTA (as três pontas soltas) */\n  {k:\"g0\", x1:12, x2:38, y:YTOP},\n  {k:\"g1\", x1:62, x2:88, y:YTOP},\n  {k:\"g2\", x1:12, x2:38, y:YBASE}\n]",
+    "PORQUE": "{\n  q:\"Por que a l&#226;mpada apagou quando o interruptor abriu?\",\n  c:\"O caminho ficou aberto: a energia n&#227;o d&#225; a volta\",\n  e:[\"A pilha acabou na hora\",\"A l&#226;mpada queimou\",\"O fio ficou com frio\"],\n  d:[\"Olhe o desenho: o caminho continua inteiro ou tem um buraco?\",\n     \"Com o interruptor aberto sobrou um buraco no caminho. A energia precisa dar a volta INTEIRA.\",\n     \"A resposta certa est&#225; acesa: o caminho ficou aberto.\"]\n}"
+   },
+   "gavetas": [
+    "FIOS",
+    "PEDACOS",
+    "DICAS",
+    "PORQUE",
+    "LIGADOS"
+   ],
+   "regra": "primeiro vetor",
    "var": "FIOS"
   },
   "classificar": {
    "exemplo": "[\n  {k:\"raiz\",  n:\"A RAIZ<br>(embaixo da terra)\"},\n  {k:\"folha\", n:\"A FOLHA<br>(no ar, verde)\"}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Pense onde essa coisa acontece: debaixo do chão ou no ar?\",\n  \"A RAIZ fica na terra: ela puxa a água e segura a planta. A FOLHA fica no ar: ela recebe o sol e faz o alimento.\",\n  \"Olhe a gaveta que está com a borda amarela: é ali que esta ficha mora.\"\n]",
+    "FICHAS": "[\n  {t:\"BEBE A ÁGUA\",     alvo:\"raiz\"},\n  {t:\"SEGURA A PLANTA\", alvo:\"raiz\"},\n  {t:\"PEGA O SOL\",      alvo:\"folha\"},\n  {t:\"FAZ O ALIMENTO\",  alvo:\"folha\"}\n]",
+    "GAVETAS": "[\n  {k:\"raiz\",  n:\"A RAIZ<br>(embaixo da terra)\"},\n  {k:\"folha\", n:\"A FOLHA<br>(no ar, verde)\"}\n]"
+   },
+   "gavetas": [
+    "GAVETAS",
+    "FICHAS",
+    "DICAS"
+   ],
+   "regra": "marca na peca",
    "var": "GAVETAS"
   },
   "comparar": {
    "exemplo": "[\n {a:5,b:3,modo:\"blocos\",selo:\"QUEM TEM MAIS?\",\n  enun:\"Olhe as duas fileiras. <b>Quem tem mais</b>?\",\n  voz:\"Olhe as duas fileiras. Quem tem mais?\"},\n {a:4,b:4,modo:\"blocos\",selo:\"SER&Aacute; QUE EMPATA?\",\n  enun:\"E agora? Olhe bem: <b>quem tem mais</b>?\",\n  voz:\"E agora? Olhe bem: quem tem mais?\"},\n {a:7,b:9,modo:\"blocos\",selo:\"POR POUCO\",\n  enun:\"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?\",\n  voz:\"Estas duas estão quase iguais. Quem tem mais?\"},\n {a:12,b:8,modo:\"numeros\",selo:\"S&Oacute; OS N&Uacute;MEROS\",\n  enun:\"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?\",\n  voz:\"Agora só os números. Qual é o maior?\"}\n]",
+   "exemplos": {
+    "D1": "[\n \"As duas fileiras come&ccedil;am no <b>mesmo lugar</b>. Olhe onde cada uma <b>termina</b>.\",\n \"Corra o dedo pelas duas ao mesmo tempo. A que ainda tem pe&ccedil;a quando a outra acabou &eacute; a que tem <b>mais</b>.\"\n]",
+    "RODS": "[\n {a:5,b:3,modo:\"blocos\",selo:\"QUEM TEM MAIS?\",\n  enun:\"Olhe as duas fileiras. <b>Quem tem mais</b>?\",\n  voz:\"Olhe as duas fileiras. Quem tem mais?\"},\n {a:4,b:4,modo:\"blocos\",selo:\"SER&Aacute; QUE EMPATA?\",\n  enun:\"E agora? Olhe bem: <b>quem tem mais</b>?\",\n  voz:\"E agora? Olhe bem: quem tem mais?\"},\n {a:7,b:9,modo:\"blocos\",selo:\"POR POUCO\",\n  enun:\"Estas duas est&atilde;o quase iguais. <b>Quem tem mais</b>?\",\n  voz:\"Estas duas estão quase iguais. Quem tem mais?\"},\n {a:12,b:8,modo:\"numeros\",selo:\"S&Oacute; OS N&Uacute;MEROS\",\n  enun:\"Agora s&oacute; os n&uacute;meros. <b>Qual &eacute; o maior</b>?\",\n  voz:\"Agora só os números. Qual é o maior?\"}\n]",
+    "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n         \"onze\",\"doze\"]"
+   },
+   "gavetas": [
+    "RODS",
+    "UNM",
+    "D1"
+   ],
+   "regra": "marca na peca",
    "var": "RODS"
   },
   "completar": {
    "exemplo": "[\n  {ante:\"O peixe vive na \",dep:\".\",cer:\"&#225;gua\",out:[\"areia\",\"nuvem\"],\n   dic:\"Pense no lugar onde o peixe <b>nada</b>.\"},\n  {ante:\"A abelha faz o \",dep:\".\",cer:\"mel\",out:[\"leite\",\"p&#227;o\"],\n   dic:\"&#201; docinho e fica guardado na colmeia.\"},\n  {ante:\"A chuva cai da \",dep:\".\",cer:\"nuvem\",out:[\"pedra\",\"janela\"],\n   dic:\"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover.\"}\n]",
+   "exemplos": {
+    "FRASES": "[\n  {ante:\"O peixe vive na \",dep:\".\",cer:\"&#225;gua\",out:[\"areia\",\"nuvem\"],\n   dic:\"Pense no lugar onde o peixe <b>nada</b>.\"},\n  {ante:\"A abelha faz o \",dep:\".\",cer:\"mel\",out:[\"leite\",\"p&#227;o\"],\n   dic:\"&#201; docinho e fica guardado na colmeia.\"},\n  {ante:\"A chuva cai da \",dep:\".\",cer:\"nuvem\",out:[\"pedra\",\"janela\"],\n   dic:\"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover.\"}\n]"
+   },
+   "gavetas": [
+    "FRASES"
+   ],
+   "regra": "primeiro vetor",
    "var": "FRASES"
   },
   "conserte-o-erro": {
-   "exemplo": "[\n {selo:\"O CADERNO DO TÉO\", cab:\"CONTANDO DE 2 EM 2\",\n  bal:\"O T&#233;o contou de <b>2 em 2</b>. Um peda&#231;o ficou errado. Ache e conserte.\",\n  pecas:[\"2\",\"4\",\"6\",\"9\",\"10\"], erro:3, certa:\"8\", ops:[\"8\",\"7\",\"12\"],\n  por:\"Depois do 6, pulando de 2 em 2, vem o <b>8</b>. O T&#233;o pulou 3.\",\n  dicas:[\"Conte baixinho: 2, 4, 6... qual vem depois do 6?\",\n         \"Todos os peda&#231;os pulam de 2 em 2. Procure o que pulou 3.\",\n         \"Era este aqui. Eu marquei para voc&#234;: agora escolha o certo.\"],\n  dicas2:[\"Comece no 6 e conte mais dois: 7, <b>8</b>.\",\n          \"Entre o 6 e o 10 s&#243; cabe um n&#250;mero par. Ele est&#225; piscando.\",\n          \"Era o <b>8</b>. Eu troquei para voc&#234; ver: 6, 8, 10.\"]},\n\n {selo:\"A FRASE DO TÉO\", cab:\"O QUE A ABELHA FAZ\",\n  bal:\"Uma palavra desta frase est&#225; trocada. Ache e conserte.\",\n  pecas:[\"A\",\"ABELHA\",\"FAZ\",\"O\",\"NINHO\"], erro:4, certa:",
+   "exemplo": "[\n {selo:\"O CADERNO DO TÉO\", cab:\"CONTANDO DE 2 EM 2\",\n  bal:\"O T&#233;o contou de <b>2 em 2</b>. Um peda&#231;o ficou errado. Ache e conserte.\",\n  pecas:[\"2\",\"4\",\"6\",\"9\",\"10\"], erro:3, certa:\"8\", ops:[\"8\",\"7\",\"12\"],\n  por:\"Depois do 6, pulando de 2 em 2, vem o <b>8</b>. O T&#233;o pulou 3.\",\n  dicas:[\"Conte baixinho: 2, 4, 6... qual vem depois do 6?\",\n         \"Todos os peda&#231;os pulam de 2 em 2. Procure o que pulou 3.\",\n         \"Era este aqui. Eu marquei para voc&#234;: agora escolha o certo.\"],\n  dicas2:[\"Comece no 6 e conte mais dois: 7, <b>8</b>.\",\n          \"Entre o 6 e o 10 s&#243; cabe um n&#250;mero par. Ele est&#225; piscando.\",\n          \"Era o <b>8</b>. Eu troquei para voc&#234; ver: 6, 8, 10.\"]},\n\n {selo:\"A FRASE DO TÉO\", cab:\"O QUE A ABELHA FAZ\",\n  bal:\"Uma palavra desta frase est&#225; trocada. Ache e conserte.\",\n  pecas:[\"A\",\"ABELHA\",\"FAZ\",\"O\",\"NINHO\"], erro:4, certa:\"MEL\", ops:[\"MEL\",\"LEITE\",\"P&#195;O\"],\n  por:\"Quem faz ninho &#233; o passarinho. A abelha faz o <b>mel</b>.\",\n  dicas:[\"Leia a frase baixinho, do come&#231;o ao fim.\",\n         \"Pense na abelha de verdade: o que ela guarda na colmeia?\",\n         \"Era a &#250;ltima palavra. Eu marquei para voc&#234;.\"],\n  dicas2:[\"&#201; algo do&#231;inho que a gente come no p&#227;o.\",\n          \"N&#227;o vem de vaca nem de forno. Est&#225; piscando.\",\n          \"Era o <b>mel</b>. Eu troquei para voc&#234; ler a frase inteira.\"]},\n\n {selo:\"A CONTA DO TÉO\", cab:\"SOMANDO\",\n  bal:\"O T&#233;o somou e um n&#250;mero n&#227;o bateu. Ache e conserte.\",\n  pecas:[\"10\",\"+\",\"5\",\"=\",\"14\"], erro:4, certa:\"15\", ops:[\"15\",\"16\",\"13\"],\n  por:\"10 mais 5 d&#225; <b>15</b>. O T&#233;o contou um a menos.\",\n  dicas:[\"Comece no 10 e conte mais 5 nos dedos.\",\n         \"Os n&#250;meros da conta est&#227;o certos. O erro est&#225; depois do igual.\",\n         \"Era o resultado. Eu marquei para voc&#234;.\"],\n  dicas2:[\"11, 12, 13, 14, <b>15</b> — cinco dedos a partir do 10.\",\n          \"&#201; um a mais do que o T&#233;o escreveu. Est&#225; piscando.\",\n          \"Era o <b>15</b>. Eu troquei para voc&#234; ver a conta certa.\"]}\n]",
+   "exemplos": {
+    "RODS": "[\n {selo:\"O CADERNO DO TÉO\", cab:\"CONTANDO DE 2 EM 2\",\n  bal:\"O T&#233;o contou de <b>2 em 2</b>. Um peda&#231;o ficou errado. Ache e conserte.\",\n  pecas:[\"2\",\"4\",\"6\",\"9\",\"10\"], erro:3, certa:\"8\", ops:[\"8\",\"7\",\"12\"],\n  por:\"Depois do 6, pulando de 2 em 2, vem o <b>8</b>. O T&#233;o pulou 3.\",\n  dicas:[\"Conte baixinho: 2, 4, 6... qual vem depois do 6?\",\n         \"Todos os peda&#231;os pulam de 2 em 2. Procure o que pulou 3.\",\n         \"Era este aqui. Eu marquei para voc&#234;: agora escolha o certo.\"],\n  dicas2:[\"Comece no 6 e conte mais dois: 7, <b>8</b>.\",\n          \"Entre o 6 e o 10 s&#243; cabe um n&#250;mero par. Ele est&#225; piscando.\",\n          \"Era o <b>8</b>. Eu troquei para voc&#234; ver: 6, 8, 10.\"]},\n\n {selo:\"A FRASE DO TÉO\", cab:\"O QUE A ABELHA FAZ\",\n  bal:\"Uma palavra desta frase est&#225; trocada. Ache e conserte.\",\n  pecas:[\"A\",\"ABELHA\",\"FAZ\",\"O\",\"NINHO\"], erro:4, certa:\"MEL\", ops:[\"MEL\",\"LEITE\",\"P&#195;O\"],\n  por:\"Quem faz ninho &#233; o passarinho. A abelha faz o <b>mel</b>.\",\n  dicas:[\"Leia a frase baixinho, do come&#231;o ao fim.\",\n         \"Pense na abelha de verdade: o que ela guarda na colmeia?\",\n         \"Era a &#250;ltima palavra. Eu marquei para voc&#234;.\"],\n  dicas2:[\"&#201; algo do&#231;inho que a gente come no p&#227;o.\",\n          \"N&#227;o vem de vaca nem de forno. Est&#225; piscando.\",\n          \"Era o <b>mel</b>. Eu troquei para voc&#234; ler a frase inteira.\"]},\n\n {selo:\"A CONTA DO TÉO\", cab:\"SOMANDO\",\n  bal:\"O T&#233;o somou e um n&#250;mero n&#227;o bateu. Ache e conserte.\",\n  pecas:[\"10\",\"+\",\"5\",\"=\",\"14\"], erro:4, certa:\"15\", ops:[\"15\",\"16\",\"13\"],\n  por:\"10 mais 5 d&#225; <b>15</b>. O T&#233;o contou um a menos.\",\n  dicas:[\"Comece no 10 e conte mais 5 nos dedos.\",\n         \"Os n&#250;meros da conta est&#227;o certos. O erro est&#225; depois do igual.\",\n         \"Era o resultado. Eu marquei para voc&#234;.\"],\n  dicas2:[\"11, 12, 13, 14, <b>15</b> — cinco dedos a partir do 10.\",\n          \"&#201; um a mais do que o T&#233;o escreveu. Est&#225; piscando.\",\n          \"Era o <b>15</b>. Eu troquei para voc&#234; ver a conta certa.\"]}\n]"
+   },
+   "gavetas": [
+    "RODS"
+   ],
+   "regra": "marca na peca",
    "var": "RODS"
   },
   "contadores": {
    "exemplo": "[\n {alvo:5, ini:0},\n {alvo:8, ini:3},\n {alvo:6, ini:9}\n]",
+   "exemplos": {
+    "CNT": "[\n {alvo:5, ini:0},\n {alvo:8, ini:3},\n {alvo:6, ini:9}\n]",
+    "NUM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n         \"onze\",\"doze\"]"
+   },
+   "gavetas": [
+    "CNT",
+    "NUM"
+   ],
+   "regra": "marca na peca",
    "var": "CNT"
   },
   "coordenadas": {
    "exemplo": "[\"A\",\"B\",\"C\",\"D\"]",
+   "exemplos": {
+    "LETRAS": "[\"A\",\"B\",\"C\",\"D\"]",
+    "RODADAS": "[\n {tipo:\"casa\", apoio:true,  selo:\"ACHE A CASA\"},\n {tipo:\"casa\", apoio:false, selo:\"ACHE A CASA\"},\n {tipo:\"achafig\",           selo:\"ONDE ELA EST&#193;?\"},\n {tipo:\"lecasa\",            selo:\"LEIA A CASA\"}\n]"
+   },
+   "gavetas": [
+    "LETRAS",
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "LETRAS"
   },
   "criar-desafio": {
    "exemplo": "[\"A\",\"B\",\"C\",\"D\"]",
+   "exemplos": {
+    "COLUNAS": "[\"A\",\"B\",\"C\",\"D\"]",
+    "ESC": "[]",
+    "PISTAS": "[\n  {t:\"As três moedas estão na <b>mesma linha</b>.\",\n   f:function(p){ return p[0].r===p[1].r&&p[1].r===p[2].r; }},\n  {t:\"As três moedas estão na <b>mesma coluna</b>.\",\n   f:function(p){ return p[0].c===p[1].c&&p[1].c===p[2].c; }},\n  {t:\"Cada moeda está numa <b>linha diferente</b>.\",\n   f:function(p){ return p[0].r!==p[1].r&&p[1].r!==p[2].r&&p[0].r!==p[2].r; }},\n  {t:\"Cada moeda está numa <b>coluna diferente</b>.\",\n   f:function(p){ return p[0].c!==p[1].c&&p[1].c!==p[2].c&&p[0].c!==p[2].c; }},\n  {t:\"Pelo menos uma moeda está na <b>metade de cima</b> (linhas 1 e 2).\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r<2) return true; return false; }},\n  {t:\"Pelo menos uma moeda está na <b>metade de baixo</b> (linhas 3 e 4).\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r>=2) return true; return false; }},\n  {t:\"<b>Nenhuma</b> moeda está na coluna A.\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].c===0) return false; return true; }},\n  {t:\"<b>Nenhuma</b> moeda está na linha 1.\",\n   f:function(p){ var i; for(i=0;i<p.length;i++) if(p[i].r===0) return false; return true; }},\n  {t:\"Duas moedas estão <b>grudadas</b>, lado a lado na mesma linha.\",\n   f:function(p){ var i,j; for(i=0;i<p.length;i++) for(j=i+1;j<p.length;j++)\n       if(p[i].r===p[j].r&&Math.abs(p[i].c-p[j].c)===1) return true; return false; }},\n  {t:\"Pelo menos uma moeda está num <b>canto</b> do mapa.\",\n   f:function(p){ var i,c; for(i=0;i<p.length;i++){ c=p[i];\n       if((c.r===0||c.r===LINHAS-1)&&(c.c===0||c.c===COLUNAS.length-1)) return true; } return false; }}\n]"
+   },
+   "gavetas": [
+    "COLUNAS",
+    "PISTAS",
+    "ESC"
+   ],
+   "regra": "marca na peca",
    "var": "COLUNAS"
   },
   "cruzadinha": {
    "exemplo": "[\n {p:\"CHUVA\", ac:\"CHUVA\", r:0, c:0, pLin:0, pCol:1, n:1,\n  d:\"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora.\"},\n {p:\"VENTO\", ac:\"VENTO\", r:0, c:3, pLin:1, pCol:0, n:2,\n  d:\"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore.\"},\n {p:\"SOL\",   ac:\"SOL\",   r:4, c:2, pLin:0, pCol:1, n:3,\n  d:\"A bola de luz que esquenta o dia e some de noite.\"}\n]",
+   "exemplos": {
+    "CRUZ": "[\n {p:\"CHUVA\", ac:\"CHUVA\", r:0, c:0, pLin:0, pCol:1, n:1,\n  d:\"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora.\"},\n {p:\"VENTO\", ac:\"VENTO\", r:0, c:3, pLin:1, pCol:0, n:2,\n  d:\"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore.\"},\n {p:\"SOL\",   ac:\"SOL\",   r:4, c:2, pLin:0, pCol:1, n:3,\n  d:\"A bola de luz que esquenta o dia e some de noite.\"}\n]"
+   },
+   "gavetas": [
+    "CRUZ"
+   ],
+   "regra": "marca na peca",
    "var": "CRUZ"
   },
   "decisao": {
-   "exemplo": "{h:26, umid:30, plantas:3, palha:false, mole:false, fino:false}",
-   "var": "MUNDO"
+   "exemplo": "[]",
+   "exemplos": {
+    "CAPS": "[\n {selo:\"CAPÍTULO 1 — A SEDE\",\n  txt:\"Sol a pino e a terra seca. <b>Quando você rega?</b>\",\n  op:[\n   {t:\"Regar quando o sol baixar\", bom:true,\n    ef:{h:34,umid:45},\n    txt:\"Com o sol fraco, quase toda a água <b>desceu até a raiz</b> antes de virar vapor. Os brotos esticaram.\"},\n   {t:\"Regar agora, com o sol a pino\", bom:false,\n    ef:{h:12,umid:16},\n    txt:\"O sol quente transformou <b>boa parte da água em vapor</b> antes de ela chegar à raiz. Sobrou pouca para os brotos.\"},\n   {t:\"Deixar para regar amanhã\", bom:false,\n    ef:{h:3,umid:-12,mole:true},\n    txt:\"A terra passou o dia inteiro seca e as folhas ficaram <b>moles</b>. Ainda dá para cuidar delas.\"}\n  ]},\n {selo:\"CAPÍTULO 2 — A TERRA NUA\",\n  txt:\"A água some rápido da terra. <b>O que pôr em volta?</b>\",\n  op:[\n   {t:\"Cobrir a terra com palha seca\", bom:true,\n    ef:{h:32,umid:34,palha:true,mole:false},\n    txt:\"A palha faz <b>sombra na terra</b>: a água demora muito mais para evaporar. A umidade subiu e ficou.\"},\n   {t:\"Deixar a terra nua no sol\", bom:false,\n    ef:{h:10,umid:-14},\n    txt:\"Sem nada por cima, o sol <b>puxou a água</b> da terra outra vez.\"},\n   {t:\"Tapar as folhas com um plástico\", bom:false,\n    ef:{h:5,umid:8,mole:true},\n    txt:\"A terra segurou água, mas as folhas ficaram <b>sem luz e sem ar</b> e murcharam um pouco.\"}\n  ]},\n {selo:\"CAPÍTULO 3 — MUITOS BROTOS\",\n  txt:\"Nasceram brotos demais no mesmo buraco. <b>E agora?</b>\",\n  op:[\n   {t:\"Passar alguns para o espaço vazio\", bom:true,\n    ef:{h:30,umid:6,plantas:5,fino:false,mole:false},\n    txt:\"Com espaço, <b>cada planta pega água e luz suficientes</b>. A horta ficou maior e todas cresceram.\"},\n   {t:\"Deixar todos apertados\", bom:false,\n    ef:{h:9,umid:-8,fino:true},\n    txt:\"Apertados, eles <b>disputam a mesma água e a mesma luz</b>. Os caules ficaram fininhos.\"},\n   {t:\"Ficar só com um broto\", bom:false,\n    ef:{h:28,umid:4,plantas:1},\n    txt:\"Esse cresceu bem — mas a horta ficou com <b>uma planta só</b> para colher.\"}\n  ]}\n]",
+    "MUNDO": "{h:26, umid:30, plantas:3, palha:false, mole:false, fino:false}",
+    "POS": "[16,32,50,68,84]"
+   },
+   "gavetas": [
+    "MUNDO",
+    "POS",
+    "CAPS"
+   ],
+   "regra": "primeiro vetor",
+   "var": "brotos"
   },
   "digitar": {
    "exemplo": "[\n  {palavra:\"GATO\",  pista:\"Bicho que mia e gosta de dormir no sol.\",\n   dic:\"Diga a palavra devagar: <b>GA-TO</b>.\"},\n  {palavra:\"PEIXE\", pista:\"Ele nada e vive dentro da &#225;gua.\",\n   dic:\"Comece pelo som <b>PEI</b>.\"},\n  {palavra:\"ESCOLA\",pista:\"Lugar onde a gente estuda e encontra os amigos.\",\n   dic:\"&#201; a palavra <b>ES-CO-LA</b>.\"}\n]",
+   "exemplos": {
+    "PALAVRAS": "[\n  {palavra:\"GATO\",  pista:\"Bicho que mia e gosta de dormir no sol.\",\n   dic:\"Diga a palavra devagar: <b>GA-TO</b>.\"},\n  {palavra:\"PEIXE\", pista:\"Ele nada e vive dentro da &#225;gua.\",\n   dic:\"Comece pelo som <b>PEI</b>.\"},\n  {palavra:\"ESCOLA\",pista:\"Lugar onde a gente estuda e encontra os amigos.\",\n   dic:\"&#201; a palavra <b>ES-CO-LA</b>.\"}\n]"
+   },
+   "gavetas": [
+    "PALAVRAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "PALAVRAS"
   },
   "ditado": {
    "exemplo": "[\n  {id:\"pc_dit1\", txt:\"NUVEM\",\n   dic:\"Diga baixinho, devagar: <b>NU-VEM</b>.\"},\n  {id:\"pc_dit2\", txt:\"JANELA\",\n   dic:\"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os.\"},\n  {id:\"pc_dit3\", txt:\"MAR AZUL\",\n   dic:\"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL.\"}\n]",
+   "exemplos": {
+    "DITADOS": "[\n  {id:\"pc_dit1\", txt:\"NUVEM\",\n   dic:\"Diga baixinho, devagar: <b>NU-VEM</b>.\"},\n  {id:\"pc_dit2\", txt:\"JANELA\",\n   dic:\"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os.\"},\n  {id:\"pc_dit3\", txt:\"MAR AZUL\",\n   dic:\"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL.\"}\n]"
+   },
+   "gavetas": [
+    "DITADOS"
+   ],
+   "regra": "marca na peca",
    "var": "DITADOS"
   },
   "domino": {
    "exemplo": "[\n  {selo:\"O DOMIN&Oacute; DOS N&Uacute;MEROS\", esq:\"pts\", dir:\"num\", semente:2,\n   enun:\"Encaixe cada pe&ccedil;a na ponta que <b>combina</b>. Os pontinhos valem o mesmo que o n&uacute;mero.\",\n   cadeia:[2,5,3,6,4,1]},\n  {selo:\"FIGURA COM PALAVRA\", esq:\"fig\", dir:\"pal\", semente:1,\n   enun:\"Agora a figura encaixa com a <b>palavra</b> dela.\",\n   cadeia:[\"sol\",\"lua\",\"ovo\",\"cruz\",\"seta\"]},\n  {selo:\"DOMIN&Oacute; DE VERDADE\", esq:\"pts\", dir:\"pts\", semente:2,\n   enun:\"Este &eacute; o dom&iacute;n&oacute; de verdade: conte os pontinhos dos <b>dois</b> lados.\",\n   cadeia:[1,4,2,5,3,6]}\n]",
+   "exemplos": {
+    "FIGURA": "{sol:\"fsol\", lua:\"flua\", ovo:\"fovo\", cruz:\"fcruz\", seta:\"fseta\"}",
+    "NUMPAL": "[\"zero\",\"um\",\"dois\",\"tr&ecirc;s\",\"quatro\",\"cinco\",\"seis\"]",
+    "PALAVRA": "{sol:\"SOL\", lua:\"LUA\", ovo:\"OVO\", cruz:\"CRUZ\", seta:\"SETA\"}",
+    "PIPS": "{\n  1:[[50,50]],\n  2:[[30,28],[70,72]],\n  3:[[28,26],[50,50],[72,74]],\n  4:[[30,28],[70,28],[30,72],[70,72]],\n  5:[[30,28],[70,28],[50,50],[30,72],[70,72]],\n  6:[[30,22],[70,22],[30,50],[70,50],[30,78],[70,78]]\n}",
+    "RODADAS": "[\n  {selo:\"O DOMIN&Oacute; DOS N&Uacute;MEROS\", esq:\"pts\", dir:\"num\", semente:2,\n   enun:\"Encaixe cada pe&ccedil;a na ponta que <b>combina</b>. Os pontinhos valem o mesmo que o n&uacute;mero.\",\n   cadeia:[2,5,3,6,4,1]},\n  {selo:\"FIGURA COM PALAVRA\", esq:\"fig\", dir:\"pal\", semente:1,\n   enun:\"Agora a figura encaixa com a <b>palavra</b> dela.\",\n   cadeia:[\"sol\",\"lua\",\"ovo\",\"cruz\",\"seta\"]},\n  {selo:\"DOMIN&Oacute; DE VERDADE\", esq:\"pts\", dir:\"pts\", semente:2,\n   enun:\"Este &eacute; o dom&iacute;n&oacute; de verdade: conte os pontinhos dos <b>dois</b> lados.\",\n   cadeia:[1,4,2,5,3,6]}\n]"
+   },
+   "gavetas": [
+    "RODADAS",
+    "PALAVRA",
+    "FIGURA",
+    "NUMPAL",
+    "PIPS"
+   ],
+   "regra": "marca na peca",
    "var": "RODADAS"
   },
   "ensinar-mascote": {
-   "exemplo": "[\n {sel:\"A PLANTA COM SEDE\",\n  prob:\"A terra da horta est&#225; <b>seca</b> e o Byte n&#227;o sabe o que fazer. <b>Ensine</b> a regra a ele.\",\n  se:\"SE a terra est&#225; seca, ENT&#195;O eu...\",\n  regras:[\n    {t:\"jogo <b>&#193;GUA</b> na terra\", cai:\"&#193;GUA\", ok:1},\n    {t:\"jogo <b>AREIA</b> na terra\", cai:\"AREIA\", ok:0, deixa:\"monte\"},\n    {t:\"jogo <b>PEDRINHAS</b> na terra\", cai:\"PEDRINHAS\", ok:0, deixa:\"monte\"},\n    {t:\"n&#227;o fa&#231;o <b>nada</b> e espero\", cai:\"NADA\", ok:0}\n  ],\n  bom:\"A planta levantou! Sua regra funcionou.\",\n  porque:\"Fiz o que voc&#234; ensinou e ela continua murcha. O que uma planta com <b>sede</b> precisa beber?\",\n  d:[\"Pense no que voc&#234; toma quando est&#225; com sede.\",\n     \"S&#243; uma dessas coisas a planta consegue <b>beber</b>.\",\n     \"A regra da &#193;GUA est&#225; acesa: toque nela para ensinar o Byte.\"]},\n {sel:\"A PLANTA NO ESCURO\",\n  prob:",
+   "exemplo": "[\n {sel:\"A PLANTA COM SEDE\",\n  prob:\"A terra da horta est&#225; <b>seca</b> e o Byte n&#227;o sabe o que fazer. <b>Ensine</b> a regra a ele.\",\n  se:\"SE a terra est&#225; seca, ENT&#195;O eu...\",\n  regras:[\n    {t:\"jogo <b>&#193;GUA</b> na terra\", cai:\"&#193;GUA\", ok:1},\n    {t:\"jogo <b>AREIA</b> na terra\", cai:\"AREIA\", ok:0, deixa:\"monte\"},\n    {t:\"jogo <b>PEDRINHAS</b> na terra\", cai:\"PEDRINHAS\", ok:0, deixa:\"monte\"},\n    {t:\"n&#227;o fa&#231;o <b>nada</b> e espero\", cai:\"NADA\", ok:0}\n  ],\n  bom:\"A planta levantou! Sua regra funcionou.\",\n  porque:\"Fiz o que voc&#234; ensinou e ela continua murcha. O que uma planta com <b>sede</b> precisa beber?\",\n  d:[\"Pense no que voc&#234; toma quando est&#225; com sede.\",\n     \"S&#243; uma dessas coisas a planta consegue <b>beber</b>.\",\n     \"A regra da &#193;GUA est&#225; acesa: toque nela para ensinar o Byte.\"]},\n {sel:\"A PLANTA NO ESCURO\",\n  prob:\"Agora a planta ficou num canto <b>escuro</b> e parou de crescer. Ensine a regra nova.\",\n  se:\"SE a planta est&#225; no escuro, ENT&#195;O eu...\",\n  regras:[\n    {t:\"levo ela para o <b>SOL</b>\", cai:\"PARA O SOL\", ok:1},\n    {t:\"cubro ela com um <b>PANO</b>\", cai:\"UM PANO\", ok:0, deixa:\"pano\"},\n    {t:\"jogo <b>mais &#193;GUA</b> nela\", cai:\"MAIS &#193;GUA\", ok:0, deixa:\"poca\"},\n    {t:\"<b>falo</b> bem alto com ela\", cai:\"UM GRITO\", ok:0}\n  ],\n  bom:\"A luz chegou e ela abriu as folhas!\",\n  porque:\"Fiz o que voc&#234; ensinou e continua tudo escuro. De onde vem a <b>luz</b> que a planta usa?\",\n  d:[\"Pense no que aparece no c&#233;u de manh&#227;.\",\n     \"A folha faz o alimento da planta com a <b>luz</b>.\",\n     \"A regra do SOL est&#225; acesa: toque nela para ensinar o Byte.\"]}\n]",
+   "exemplos": {
+    "LICOES": "[\n {sel:\"A PLANTA COM SEDE\",\n  prob:\"A terra da horta est&#225; <b>seca</b> e o Byte n&#227;o sabe o que fazer. <b>Ensine</b> a regra a ele.\",\n  se:\"SE a terra est&#225; seca, ENT&#195;O eu...\",\n  regras:[\n    {t:\"jogo <b>&#193;GUA</b> na terra\", cai:\"&#193;GUA\", ok:1},\n    {t:\"jogo <b>AREIA</b> na terra\", cai:\"AREIA\", ok:0, deixa:\"monte\"},\n    {t:\"jogo <b>PEDRINHAS</b> na terra\", cai:\"PEDRINHAS\", ok:0, deixa:\"monte\"},\n    {t:\"n&#227;o fa&#231;o <b>nada</b> e espero\", cai:\"NADA\", ok:0}\n  ],\n  bom:\"A planta levantou! Sua regra funcionou.\",\n  porque:\"Fiz o que voc&#234; ensinou e ela continua murcha. O que uma planta com <b>sede</b> precisa beber?\",\n  d:[\"Pense no que voc&#234; toma quando est&#225; com sede.\",\n     \"S&#243; uma dessas coisas a planta consegue <b>beber</b>.\",\n     \"A regra da &#193;GUA est&#225; acesa: toque nela para ensinar o Byte.\"]},\n {sel:\"A PLANTA NO ESCURO\",\n  prob:\"Agora a planta ficou num canto <b>escuro</b> e parou de crescer. Ensine a regra nova.\",\n  se:\"SE a planta est&#225; no escuro, ENT&#195;O eu...\",\n  regras:[\n    {t:\"levo ela para o <b>SOL</b>\", cai:\"PARA O SOL\", ok:1},\n    {t:\"cubro ela com um <b>PANO</b>\", cai:\"UM PANO\", ok:0, deixa:\"pano\"},\n    {t:\"jogo <b>mais &#193;GUA</b> nela\", cai:\"MAIS &#193;GUA\", ok:0, deixa:\"poca\"},\n    {t:\"<b>falo</b> bem alto com ela\", cai:\"UM GRITO\", ok:0}\n  ],\n  bom:\"A luz chegou e ela abriu as folhas!\",\n  porque:\"Fiz o que voc&#234; ensinou e continua tudo escuro. De onde vem a <b>luz</b> que a planta usa?\",\n  d:[\"Pense no que aparece no c&#233;u de manh&#227;.\",\n     \"A folha faz o alimento da planta com a <b>luz</b>.\",\n     \"A regra do SOL est&#225; acesa: toque nela para ensinar o Byte.\"]}\n]"
+   },
+   "gavetas": [
+    "LICOES"
+   ],
+   "regra": "marca na peca",
    "var": "LICOES"
   },
   "escolher": {
-   "exemplo": "[\n {p:\"Qual parte da planta fica <b>embaixo da terra</b> e bebe a água?\",\n  c:\"A RAIZ\", e:[\"A FLOR\",\"A FOLHA\",\"O CAULE\"],\n  d:[\"Ela fica escondida, debaixo do chão.\",\n     \"É a parte que segura a planta no lugar e puxa a água da terra.\",\n     \"É a RAIZ. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é <b>verde e chata</b> e faz o alimento com a luz do sol?\",\n  c:\"A FOLHA\", e:[\"A RAIZ\",\"O CAULE\",\"A FLOR\"],\n  d:[\"Ela fica no ar, virada para o sol.\",\n     \"É verde, fina e cheia de linhas: o sol bate nela o dia inteiro.\",\n     \"É a FOLHA. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é o <b>caminho</b> que leva a água da raiz até as folhas?\",\n  c:\"O CAULE\", e:[\"A FLOR\",\"A SEMENTE\",\"A RAIZ\"],\n  d:[\"Pense num cano em pé, no meio da planta.\",\n     \"É a parte comprida que segura as folhas lá em cima.\",\n     \"É o CAULE. Ele está aceso aí embaixo: t",
+   "exemplo": "[\n {p:\"Qual parte da planta fica <b>embaixo da terra</b> e bebe a água?\",\n  c:\"A RAIZ\", e:[\"A FLOR\",\"A FOLHA\",\"O CAULE\"],\n  d:[\"Ela fica escondida, debaixo do chão.\",\n     \"É a parte que segura a planta no lugar e puxa a água da terra.\",\n     \"É a RAIZ. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é <b>verde e chata</b> e faz o alimento com a luz do sol?\",\n  c:\"A FOLHA\", e:[\"A RAIZ\",\"O CAULE\",\"A FLOR\"],\n  d:[\"Ela fica no ar, virada para o sol.\",\n     \"É verde, fina e cheia de linhas: o sol bate nela o dia inteiro.\",\n     \"É a FOLHA. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é o <b>caminho</b> que leva a água da raiz até as folhas?\",\n  c:\"O CAULE\", e:[\"A FLOR\",\"A SEMENTE\",\"A RAIZ\"],\n  d:[\"Pense num cano em pé, no meio da planta.\",\n     \"É a parte comprida que segura as folhas lá em cima.\",\n     \"É o CAULE. Ele está aceso aí embaixo: toque nele para seguir.\"]}\n]",
+   "exemplos": {
+    "QZ": "[\n {p:\"Qual parte da planta fica <b>embaixo da terra</b> e bebe a água?\",\n  c:\"A RAIZ\", e:[\"A FLOR\",\"A FOLHA\",\"O CAULE\"],\n  d:[\"Ela fica escondida, debaixo do chão.\",\n     \"É a parte que segura a planta no lugar e puxa a água da terra.\",\n     \"É a RAIZ. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é <b>verde e chata</b> e faz o alimento com a luz do sol?\",\n  c:\"A FOLHA\", e:[\"A RAIZ\",\"O CAULE\",\"A FLOR\"],\n  d:[\"Ela fica no ar, virada para o sol.\",\n     \"É verde, fina e cheia de linhas: o sol bate nela o dia inteiro.\",\n     \"É a FOLHA. Ela está acesa aí embaixo: toque nela para seguir.\"]},\n {p:\"Qual parte é o <b>caminho</b> que leva a água da raiz até as folhas?\",\n  c:\"O CAULE\", e:[\"A FLOR\",\"A SEMENTE\",\"A RAIZ\"],\n  d:[\"Pense num cano em pé, no meio da planta.\",\n     \"É a parte comprida que segura as folhas lá em cima.\",\n     \"É o CAULE. Ele está aceso aí embaixo: toque nele para seguir.\"]}\n]"
+   },
+   "gavetas": [
+    "QZ"
+   ],
+   "regra": "marca na peca",
    "var": "QZ"
   },
   "escrever-legenda": {
    "exemplo": "[\n {svg:svgPraca, sel:\"FOTO 1 DE 2\",\n  ped:\"Escreva a legenda desta foto: <b>o que</b> tem e <b>como</b> &#233;.\",\n  apoio:[\"a &#225;rvore\",\"o banco\",\"grande\",\"verde\",\"na pra&#231;a\",\"com sombra\"],\n  comeco:\"A &#225;rvore da pra&#231;a &#233; \",\n  exemplo:\"a arvore grande deu sombra no banco da praca\"},\n {svg:svgJanela, sel:\"FOTO 2 DE 2\",\n  ped:\"Agora esta: conte <b>quem</b> est&#225; ali e <b>o que</b> ele faz.\",\n  apoio:[\"o gato\",\"na janela\",\"laranja\",\"olha a lua\",\"quietinho\",\"de noite\"],\n  comeco:\"O gato da janela \",\n  exemplo:\"o gato laranja olha a lua na janela\"}\n]",
+   "exemplos": {
+    "FOTOS": "[\n {svg:svgPraca, sel:\"FOTO 1 DE 2\",\n  ped:\"Escreva a legenda desta foto: <b>o que</b> tem e <b>como</b> &#233;.\",\n  apoio:[\"a &#225;rvore\",\"o banco\",\"grande\",\"verde\",\"na pra&#231;a\",\"com sombra\"],\n  comeco:\"A &#225;rvore da pra&#231;a &#233; \",\n  exemplo:\"a arvore grande deu sombra no banco da praca\"},\n {svg:svgJanela, sel:\"FOTO 2 DE 2\",\n  ped:\"Agora esta: conte <b>quem</b> est&#225; ali e <b>o que</b> ele faz.\",\n  apoio:[\"o gato\",\"na janela\",\"laranja\",\"olha a lua\",\"quietinho\",\"de noite\"],\n  comeco:\"O gato da janela \",\n  exemplo:\"o gato laranja olha a lua na janela\"}\n]"
+   },
+   "gavetas": [
+    "FOTOS"
+   ],
+   "regra": "primeiro vetor",
    "var": "FOTOS"
   },
   "estimar": {
    "exemplo": "[\n {n:8,  max:20, ini:10, qa:6,  cls:\"\",     seed:17, ancora:0,\n  selo:\"O POTE DE BOT&Otilde;ES\",   coisa:\"bot&otilde;es\",          voz:\"botões\",\n  atalhos:[5,10,15]},\n {n:14, max:30, ini:15, qa:10, cls:\"grao\", seed:53, ancora:1,\n  selo:\"O POTE DE MILHO\",           coisa:\"gr&atilde;os de milho\",  voz:\"grãos\",\n  atalhos:[5,10,20]},\n {n:22, max:40, ini:20, qa:22, cls:\"gude\", seed:91, ancora:1,\n  selo:\"O POTE DE BOLINHAS\",        coisa:\"bolinhas de gude\",       voz:\"bolinhas\",\n  atalhos:[10,20,30]}\n]",
+   "exemplos": {
+    "CENAS": "[\n {n:8,  max:20, ini:10, qa:6,  cls:\"\",     seed:17, ancora:0,\n  selo:\"O POTE DE BOT&Otilde;ES\",   coisa:\"bot&otilde;es\",          voz:\"botões\",\n  atalhos:[5,10,15]},\n {n:14, max:30, ini:15, qa:10, cls:\"grao\", seed:53, ancora:1,\n  selo:\"O POTE DE MILHO\",           coisa:\"gr&atilde;os de milho\",  voz:\"grãos\",\n  atalhos:[5,10,20]},\n {n:22, max:40, ini:20, qa:22, cls:\"gude\", seed:91, ancora:1,\n  selo:\"O POTE DE BOLINHAS\",        coisa:\"bolinhas de gude\",       voz:\"bolinhas\",\n  atalhos:[10,20,30]}\n]",
+    "DZ": "[\"\",\"\",\"vinte\",\"trinta\",\"quarenta\"]",
+    "ESTRAT": "[\n \"Dica de quem estima bem: ache um <b>grupinho de 5</b> e veja quantos \"+\n \"grupinhos cabem no pote.\",\n \"Viu? <b>5, 10, 15...</b> Contar de 5 em 5 com os olhos d&aacute; um palpite bem \"+\n \"mais perto.\",\n \"\"\n]",
+    "UN": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n        \"onze\",\"doze\",\"treze\",\"catorze\",\"quinze\",\"dezesseis\",\"dezessete\",\"dezoito\",\"dezenove\"]"
+   },
+   "gavetas": [
+    "CENAS",
+    "ESTRAT",
+    "UN",
+    "DZ"
+   ],
+   "regra": "marca na peca",
    "var": "CENAS"
   },
   "experimento-justo": {
    "exemplo": "[\n {k:\"luz\",   nome:\"LUZ\",   vals:[\"no sol\",\"na sombra\"]},\n {k:\"agua\",  nome:\"&Aacute;GUA\",  vals:[\"1 copo\",\"3 copos\"]},\n {k:\"terra\", nome:\"TERRA\", vals:[\"terra comum\",\"terra com adubo\"]}\n]",
+   "exemplos": {
+    "CONCL": "{\n luz:\"A planta que ficou <b>na sombra</b> cresceu menos. S&oacute; a luz era diferente: foi a <b>LUZ</b>.\",\n agua:\"A planta com <b>3 copos</b> cresceu mais. S&oacute; a &aacute;gua era diferente: foi a <b>&Aacute;GUA</b>.\",\n terra:\"A planta na <b>terra com adubo</b> cresceu mais. S&oacute; a terra era diferente: foi a <b>TERRA</b>.\"\n}",
+    "EXP": "[\n {alvo:\"luz\",   ini:{luz:0,agua:0,terra:0},\n  p:\"Queremos descobrir se a <b>LUZ</b> muda o tamanho da planta.\"},\n {alvo:\"agua\",  ini:{luz:0,agua:0,terra:0},\n  p:\"Agora a pergunta &eacute; sobre a <b>&Aacute;GUA</b>. Deixe o resto igualzinho.\"},\n {alvo:\"terra\", ini:{luz:1,agua:0,terra:1},\n  p:\"Algu&eacute;m montou este teste sobre a <b>TERRA</b> e mudou coisa demais. Conserte.\"}\n]",
+    "VARS": "[\n {k:\"luz\",   nome:\"LUZ\",   vals:[\"no sol\",\"na sombra\"]},\n {k:\"agua\",  nome:\"&Aacute;GUA\",  vals:[\"1 copo\",\"3 copos\"]},\n {k:\"terra\", nome:\"TERRA\", vals:[\"terra comum\",\"terra com adubo\"]}\n]"
+   },
+   "gavetas": [
+    "VARS",
+    "EXP",
+    "CONCL"
+   ],
+   "regra": "primeiro vetor",
    "var": "VARS"
   },
   "filtro": {
-   "exemplo": "[\n {reg:\"S&#243; passam as palavras com <b>5 letras</b>.\",\n  curta:\"5 letras\",\n  fichas:[{t:\"LIVRO\",ok:true},{t:\"PONTE\",ok:true},{t:\"CHAVE\",ok:true},\n          {t:\"SOL\",ok:false},{t:\"CADERNO\",ok:false},{t:\"MAPA\",ok:false}],\n  d1:\"Conte as letras com o dedo, uma por uma.\",\n  d2:\"Olhe PONTE: P-O-N-T-E. S&#227;o cinco, ent&#227;o essa passa.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"},\n {reg:\"S&#243; passam as palavras que come&#231;am com <b>M</b>.\",\n  curta:\"come&#231;a com M\",\n  fichas:[{t:\"MESA\",ok:true},{t:\"MILHO\",ok:true},{t:\"MARTELO\",ok:true},\n          {t:\"CADEIRA\",ok:false},{t:\"PATO\",ok:false},{t:\"JANELA\",ok:false}],\n  d1:\"Olhe s&#243; a <b>primeira</b> letra de cada ficha.\",\n  d2:\"MILHO come&#231;a com M: essa passa. PATO come&#231;a com P: fica.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"},\n {reg:\"S&#243; passam os nomes de <b>animais</b>.\",\n ",
+   "exemplo": "[\n {reg:\"S&#243; passam as palavras com <b>5 letras</b>.\",\n  curta:\"5 letras\",\n  fichas:[{t:\"LIVRO\",ok:true},{t:\"PONTE\",ok:true},{t:\"CHAVE\",ok:true},\n          {t:\"SOL\",ok:false},{t:\"CADERNO\",ok:false},{t:\"MAPA\",ok:false}],\n  d1:\"Conte as letras com o dedo, uma por uma.\",\n  d2:\"Olhe PONTE: P-O-N-T-E. S&#227;o cinco, ent&#227;o essa passa.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"},\n {reg:\"S&#243; passam as palavras que come&#231;am com <b>M</b>.\",\n  curta:\"come&#231;a com M\",\n  fichas:[{t:\"MESA\",ok:true},{t:\"MILHO\",ok:true},{t:\"MARTELO\",ok:true},\n          {t:\"CADEIRA\",ok:false},{t:\"PATO\",ok:false},{t:\"JANELA\",ok:false}],\n  d1:\"Olhe s&#243; a <b>primeira</b> letra de cada ficha.\",\n  d2:\"MILHO come&#231;a com M: essa passa. PATO come&#231;a com P: fica.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"},\n {reg:\"S&#243; passam os nomes de <b>animais</b>.\",\n  curta:\"&#233; animal\",\n  fichas:[{t:\"TARTARUGA\",ok:true},{t:\"FORMIGA\",ok:true},{t:\"CAVALO\",ok:true},\n          {t:\"PANELA\",ok:false},{t:\"NUVEM\",ok:false},{t:\"TIJOLO\",ok:false}],\n  d1:\"Pergunte a cada ficha: <b>isso nasce, come e anda?</b>\",\n  d2:\"FORMIGA anda e come: passa. PANELA fica parada: n&#227;o passa.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"}\n]",
+   "exemplos": {
+    "PENEIRAS": "[\n {reg:\"S&#243; passam as palavras com <b>5 letras</b>.\",\n  curta:\"5 letras\",\n  fichas:[{t:\"LIVRO\",ok:true},{t:\"PONTE\",ok:true},{t:\"CHAVE\",ok:true},\n          {t:\"SOL\",ok:false},{t:\"CADERNO\",ok:false},{t:\"MAPA\",ok:false}],\n  d1:\"Conte as letras com o dedo, uma por uma.\",\n  d2:\"Olhe PONTE: P-O-N-T-E. S&#227;o cinco, ent&#227;o essa passa.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"},\n {reg:\"S&#243; passam as palavras que come&#231;am com <b>M</b>.\",\n  curta:\"come&#231;a com M\",\n  fichas:[{t:\"MESA\",ok:true},{t:\"MILHO\",ok:true},{t:\"MARTELO\",ok:true},\n          {t:\"CADEIRA\",ok:false},{t:\"PATO\",ok:false},{t:\"JANELA\",ok:false}],\n  d1:\"Olhe s&#243; a <b>primeira</b> letra de cada ficha.\",\n  d2:\"MILHO come&#231;a com M: essa passa. PATO come&#231;a com P: fica.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"},\n {reg:\"S&#243; passam os nomes de <b>animais</b>.\",\n  curta:\"&#233; animal\",\n  fichas:[{t:\"TARTARUGA\",ok:true},{t:\"FORMIGA\",ok:true},{t:\"CAVALO\",ok:true},\n          {t:\"PANELA\",ok:false},{t:\"NUVEM\",ok:false},{t:\"TIJOLO\",ok:false}],\n  d1:\"Pergunte a cada ficha: <b>isso nasce, come e anda?</b>\",\n  d2:\"FORMIGA anda e come: passa. PANELA fica parada: n&#227;o passa.\",\n  d3:\"As que ainda passam est&#227;o com a moldura acesa: \"}\n]"
+   },
+   "gavetas": [
+    "PENEIRAS"
+   ],
+   "regra": "marca na peca",
    "var": "PENEIRAS"
   },
   "forca": {
    "exemplo": "[\n {p:\"LEAO\",   ac:\"LEÃO\",   d:\"O bicho de juba que dorme quase o dia todo.\"},\n {p:\"TUCANO\", ac:\"TUCANO\",      d:\"O p&#225;ssaro do bico grande e colorido da floresta.\"},\n {p:\"JACARE\", ac:\"JACARÉ\", d:\"Vive no rio, tem couro duro e boca bem comprida.\"}\n]",
+   "exemplos": {
+    "FORCAP": "[\n {p:\"LEAO\",   ac:\"LEÃO\",   d:\"O bicho de juba que dorme quase o dia todo.\"},\n {p:\"TUCANO\", ac:\"TUCANO\",      d:\"O p&#225;ssaro do bico grande e colorido da floresta.\"},\n {p:\"JACARE\", ac:\"JACARÉ\", d:\"Vive no rio, tem couro duro e boca bem comprida.\"}\n]"
+   },
+   "gavetas": [
+    "FORCAP"
+   ],
+   "regra": "marca na peca",
    "var": "FORCAP"
   },
   "girar": {
    "exemplo": "[[0,0],[1,0],[2,0],[2,1],[2,2]]",
+   "exemplos": {
+    "ALVOS": "[90,270,180]",
+    "FORMA": "[[0,0],[1,0],[2,0],[2,1],[2,2]]"
+   },
+   "gavetas": [
+    "FORMA",
+    "ALVOS"
+   ],
+   "regra": "primeiro vetor",
    "var": "FORMA"
   },
   "grafico": {
    "exemplo": "[\n  {n:\"Ma&#231;&#227;\",  p:\"ma&#231;&#227;s\",   v:4},\n  {n:\"Pera\",  p:\"peras\",   v:2},\n  {n:\"Uva\",   p:\"uvas\",    v:5}\n]",
+   "exemplos": {
+    "DADOS": "[\n  {n:\"Ma&#231;&#227;\",  p:\"ma&#231;&#227;s\",   v:4},\n  {n:\"Pera\",  p:\"peras\",   v:2},\n  {n:\"Uva\",   p:\"uvas\",    v:5}\n]"
+   },
+   "gavetas": [
+    "DADOS"
+   ],
+   "regra": "primeiro vetor",
    "var": "DADOS"
   },
   "intruso": {
-   "exemplo": "[\n { selo:\"A CESTA DA FEIRA\", tipo:\"texto\",\n   enun:\"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"maca\",n:\"MA&#199;&#195;\"},{k:\"banana\",n:\"BANANA\"},{k:\"uva\",n:\"UVA\"},{k:\"cenoura\",n:\"CENOURA\"}],\n   fora:\"cenoura\", nomeFora:\"CENOURA\",\n   d1:\"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?\",\n   d2:\"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.\",\n   d3:\"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.\",\n   razoes:[\n     {t:\"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.\",ok:1},\n     {t:\"Porque a cenoura &#233; laranja.\",ok:0},\n     {t:\"Porque a cenoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a cenoura a gente come cozida.\",ok:0}],\n   p1:\"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#",
+   "exemplo": "[\n { selo:\"A CESTA DA FEIRA\", tipo:\"texto\",\n   enun:\"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"maca\",n:\"MA&#199;&#195;\"},{k:\"banana\",n:\"BANANA\"},{k:\"uva\",n:\"UVA\"},{k:\"cenoura\",n:\"CENOURA\"}],\n   fora:\"cenoura\", nomeFora:\"CENOURA\",\n   d1:\"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?\",\n   d2:\"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.\",\n   d3:\"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.\",\n   razoes:[\n     {t:\"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.\",ok:1},\n     {t:\"Porque a cenoura &#233; laranja.\",ok:0},\n     {t:\"Porque a cenoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a cenoura a gente come cozida.\",ok:0}],\n   p1:\"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#234;s: o que elas t&#234;m em comum?\",\n   p2:\"Cor e tamanho mudam de uma cenoura para outra. O que n&#227;o muda &#233; o <b>tipo</b> de alimento.\",\n   p3:\"Ma&#231;&#227;, banana e uva s&#227;o <b>frutas</b>. A cenoura &#233; a raiz da planta &#8212; por isso ela &#233; a de fora.\",\n   regra:\"ma&#231;&#227;, banana e uva s&#227;o frutas; cenoura &#233; raiz\" },\n\n { selo:\"AS QUATRO FIGURAS\", tipo:\"forma\",\n   enun:\"Tr&#234;s figuras t&#234;m uma coisa igual. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"quad\",n:\"QUADRADO\",fig:\"inquad\"},{k:\"ret\",n:\"RET&#194;NGULO\",fig:\"inret\"},\n          {k:\"los\",n:\"LOSANGO\",fig:\"inlos\"},{k:\"tri\",n:\"TRI&#194;NGULO\",fig:\"intri\"}],\n   fora:\"tri\", nomeFora:\"TRI&#194;NGULO\",\n   d1:\"<b>Conte os lados</b> de cada figura com o dedo, uma por uma.\",\n   d2:\"Tr&#234;s delas t&#234;m <b>4 lados</b>, mesmo estando viradas de jeitos diferentes.\",\n   d3:\"A de fora &#233; o <b>tri&#226;ngulo</b>: ele tem 3 lados e os outros t&#234;m 4.\",\n   razoes:[\n     {t:\"As outras tr&#234;s t&#234;m 4 lados; o tri&#226;ngulo tem 3.\",ok:1},\n     {t:\"Porque o tri&#226;ngulo tem uma ponta para cima.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo &#233; a figura mais baixa.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo n&#227;o tem todos os lados iguais.\",ok:0}],\n   p1:\"Isso at&#233; pode ser verdade. Mas virar a figura n&#227;o muda o que ela &#233;. O que d&#225; para <b>contar</b> em todas?\",\n   p2:\"Conte os lados de novo: 4, 4, 4 e... quantos no &#250;ltimo?\",\n   p3:\"Quadrado, ret&#226;ngulo e losango t&#234;m <b>4 lados</b>. O tri&#226;ngulo tem 3 &#8212; por isso ele &#233; o de fora.\",\n   regra:\"quadrado, ret&#226;ngulo e losango t&#234;m 4 lados; tri&#226;ngulo tem 3\" },\n\n { selo:\"A FILA DOS N&#218;MEROS\", tipo:\"numero\",\n   enun:\"Tr&#234;s n&#250;meros t&#234;m algo em comum. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"2\",n:\"2\"},{k:\"4\",n:\"4\"},{k:\"6\",n:\"6\"},{k:\"9\",n:\"9\"}],\n   fora:\"9\", nomeFora:\"9\",\n   d1:\"Tente separar cada n&#250;mero em <b>duas partes iguais</b>. Com qual deles n&#227;o d&#225;?\",\n   d2:\"2 s&#227;o 1 e 1; 4 s&#227;o 2 e 2; 6 s&#227;o 3 e 3. Um deles sempre <b>sobra um</b>.\",\n   d3:\"O de fora &#233; o <b>9</b>: ele n&#227;o d&#225; para partir ao meio sem sobrar.\",\n   razoes:[\n     {t:\"Os outros tr&#234;s s&#227;o pares; o 9 &#233; &#237;mpar.\",ok:1},\n     {t:\"Porque o 9 &#233; o maior de todos.\",ok:0},\n     {t:\"Porque o 9 vem depois do 6.\",ok:0},\n     {t:\"Porque o 9 &#233; quase 10.\",ok:0}],\n   p1:\"Isso at&#233; &#233; verdade sobre o 9. Mas separa o grupo? Pense no que d&#225; para <b>dividir no meio</b>.\",\n   p2:\"Troque o 9 pelo 11: ele deixa de ser o maior e continua sendo o de fora. Ent&#227;o o que decide?\",\n   p3:\"2, 4 e 6 s&#227;o <b>pares</b>: partem ao meio sem sobrar. O 9 &#233; &#237;mpar &#8212; por isso ele &#233; o de fora.\",\n   regra:\"2, 4 e 6 s&#227;o pares; 9 &#233; &#237;mpar\" },\n\n { selo:\"A CAIXA DE FERRAMENTAS\", tipo:\"texto\",\n   enun:\"Tr&#234;s servem para a mesma coisa. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"martelo\",n:\"MARTELO\"},{k:\"serrote\",n:\"SERROTE\"},{k:\"alicate\",n:\"ALICATE\"},{k:\"vassoura\",n:\"VASSOURA\"}],\n   fora:\"vassoura\", nomeFora:\"VASSOURA\",\n   d1:\"Pergunte de cada uma: <b>para que ela serve</b>?\",\n   d2:\"Tr&#234;s delas ajudam a <b>construir e consertar</b>. Uma ajuda a cuidar da casa.\",\n   d3:\"A de fora &#233; a <b>vassoura</b>: ela serve para limpar, n&#227;o para consertar.\",\n   razoes:[\n     {t:\"As outras tr&#234;s servem para consertar; a vassoura serve para limpar.\",ok:1},\n     {t:\"Porque a vassoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a vassoura n&#227;o &#233; de metal.\",ok:0},\n     {t:\"Porque a vassoura fica na cozinha.\",ok:0}],\n   p1:\"Isso pode ser verdade. Mas o que junta as outras tr&#234;s &#233; o <b>trabalho</b> que elas fazem.\",\n   p2:\"Uma chave de fenda &#233; pequena e n&#227;o &#233; toda de metal &#8212; e mesmo assim ficaria no grupo. O que decide?\",\n   p3:\"Martelo, serrote e alicate servem para <b>construir e consertar</b>. A vassoura serve para limpar &#8212; por isso ela &#233; a de fora.\",\n   regra:\"martelo, serrote e alicate consertam; vassoura limpa\" }\n]",
+   "exemplos": {
+    "RODADAS": "[\n { selo:\"A CESTA DA FEIRA\", tipo:\"texto\",\n   enun:\"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"maca\",n:\"MA&#199;&#195;\"},{k:\"banana\",n:\"BANANA\"},{k:\"uva\",n:\"UVA\"},{k:\"cenoura\",n:\"CENOURA\"}],\n   fora:\"cenoura\", nomeFora:\"CENOURA\",\n   d1:\"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?\",\n   d2:\"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.\",\n   d3:\"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.\",\n   razoes:[\n     {t:\"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.\",ok:1},\n     {t:\"Porque a cenoura &#233; laranja.\",ok:0},\n     {t:\"Porque a cenoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a cenoura a gente come cozida.\",ok:0}],\n   p1:\"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#234;s: o que elas t&#234;m em comum?\",\n   p2:\"Cor e tamanho mudam de uma cenoura para outra. O que n&#227;o muda &#233; o <b>tipo</b> de alimento.\",\n   p3:\"Ma&#231;&#227;, banana e uva s&#227;o <b>frutas</b>. A cenoura &#233; a raiz da planta &#8212; por isso ela &#233; a de fora.\",\n   regra:\"ma&#231;&#227;, banana e uva s&#227;o frutas; cenoura &#233; raiz\" },\n\n { selo:\"AS QUATRO FIGURAS\", tipo:\"forma\",\n   enun:\"Tr&#234;s figuras t&#234;m uma coisa igual. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"quad\",n:\"QUADRADO\",fig:\"inquad\"},{k:\"ret\",n:\"RET&#194;NGULO\",fig:\"inret\"},\n          {k:\"los\",n:\"LOSANGO\",fig:\"inlos\"},{k:\"tri\",n:\"TRI&#194;NGULO\",fig:\"intri\"}],\n   fora:\"tri\", nomeFora:\"TRI&#194;NGULO\",\n   d1:\"<b>Conte os lados</b> de cada figura com o dedo, uma por uma.\",\n   d2:\"Tr&#234;s delas t&#234;m <b>4 lados</b>, mesmo estando viradas de jeitos diferentes.\",\n   d3:\"A de fora &#233; o <b>tri&#226;ngulo</b>: ele tem 3 lados e os outros t&#234;m 4.\",\n   razoes:[\n     {t:\"As outras tr&#234;s t&#234;m 4 lados; o tri&#226;ngulo tem 3.\",ok:1},\n     {t:\"Porque o tri&#226;ngulo tem uma ponta para cima.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo &#233; a figura mais baixa.\",ok:0},\n     {t:\"Porque o tri&#226;ngulo n&#227;o tem todos os lados iguais.\",ok:0}],\n   p1:\"Isso at&#233; pode ser verdade. Mas virar a figura n&#227;o muda o que ela &#233;. O que d&#225; para <b>contar</b> em todas?\",\n   p2:\"Conte os lados de novo: 4, 4, 4 e... quantos no &#250;ltimo?\",\n   p3:\"Quadrado, ret&#226;ngulo e losango t&#234;m <b>4 lados</b>. O tri&#226;ngulo tem 3 &#8212; por isso ele &#233; o de fora.\",\n   regra:\"quadrado, ret&#226;ngulo e losango t&#234;m 4 lados; tri&#226;ngulo tem 3\" },\n\n { selo:\"A FILA DOS N&#218;MEROS\", tipo:\"numero\",\n   enun:\"Tr&#234;s n&#250;meros t&#234;m algo em comum. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"2\",n:\"2\"},{k:\"4\",n:\"4\"},{k:\"6\",n:\"6\"},{k:\"9\",n:\"9\"}],\n   fora:\"9\", nomeFora:\"9\",\n   d1:\"Tente separar cada n&#250;mero em <b>duas partes iguais</b>. Com qual deles n&#227;o d&#225;?\",\n   d2:\"2 s&#227;o 1 e 1; 4 s&#227;o 2 e 2; 6 s&#227;o 3 e 3. Um deles sempre <b>sobra um</b>.\",\n   d3:\"O de fora &#233; o <b>9</b>: ele n&#227;o d&#225; para partir ao meio sem sobrar.\",\n   razoes:[\n     {t:\"Os outros tr&#234;s s&#227;o pares; o 9 &#233; &#237;mpar.\",ok:1},\n     {t:\"Porque o 9 &#233; o maior de todos.\",ok:0},\n     {t:\"Porque o 9 vem depois do 6.\",ok:0},\n     {t:\"Porque o 9 &#233; quase 10.\",ok:0}],\n   p1:\"Isso at&#233; &#233; verdade sobre o 9. Mas separa o grupo? Pense no que d&#225; para <b>dividir no meio</b>.\",\n   p2:\"Troque o 9 pelo 11: ele deixa de ser o maior e continua sendo o de fora. Ent&#227;o o que decide?\",\n   p3:\"2, 4 e 6 s&#227;o <b>pares</b>: partem ao meio sem sobrar. O 9 &#233; &#237;mpar &#8212; por isso ele &#233; o de fora.\",\n   regra:\"2, 4 e 6 s&#227;o pares; 9 &#233; &#237;mpar\" },\n\n { selo:\"A CAIXA DE FERRAMENTAS\", tipo:\"texto\",\n   enun:\"Tr&#234;s servem para a mesma coisa. <b>Qual n&#227;o pertence?</b>\",\n   itens:[{k:\"martelo\",n:\"MARTELO\"},{k:\"serrote\",n:\"SERROTE\"},{k:\"alicate\",n:\"ALICATE\"},{k:\"vassoura\",n:\"VASSOURA\"}],\n   fora:\"vassoura\", nomeFora:\"VASSOURA\",\n   d1:\"Pergunte de cada uma: <b>para que ela serve</b>?\",\n   d2:\"Tr&#234;s delas ajudam a <b>construir e consertar</b>. Uma ajuda a cuidar da casa.\",\n   d3:\"A de fora &#233; a <b>vassoura</b>: ela serve para limpar, n&#227;o para consertar.\",\n   razoes:[\n     {t:\"As outras tr&#234;s servem para consertar; a vassoura serve para limpar.\",ok:1},\n     {t:\"Porque a vassoura &#233; a mais comprida.\",ok:0},\n     {t:\"Porque a vassoura n&#227;o &#233; de metal.\",ok:0},\n     {t:\"Porque a vassoura fica na cozinha.\",ok:0}],\n   p1:\"Isso pode ser verdade. Mas o que junta as outras tr&#234;s &#233; o <b>trabalho</b> que elas fazem.\",\n   p2:\"Uma chave de fenda &#233; pequena e n&#227;o &#233; toda de metal &#8212; e mesmo assim ficaria no grupo. O que decide?\",\n   p3:\"Martelo, serrote e alicate servem para <b>construir e consertar</b>. A vassoura serve para limpar &#8212; por isso ela &#233; a de fora.\",\n   regra:\"martelo, serrote e alicate consertam; vassoura limpa\" }\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "RODADAS"
   },
   "investigar-fonte": {
    "exemplo": "[\n  {aut:\"Cartaz da prefeitura\",\n   meta:\"3 de março · feito para AVISAR os moradores\",\n   txt:\"“A feira passa para a Praça Nova enquanto a rua for consertada.”\"},\n  {aut:\"Bilhete de dona Alzira, que vende frutas na feira\",\n   meta:\"5 de março · escrito para o filho, no mesmo dia\",\n   txt:\"“Hoje quase ninguém veio. A rua está toda aberta, com máquinas trabalhando nela.”\"},\n  {aut:\"Jornal do bairro\",\n   meta:\"20 de março · escrito para CONTAR a notícia, 17 dias depois\",\n   txt:\"“Moradores contam que a feira mudou porque a Praça Nova é mais bonita.”\"}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Olhe a DATA de cada fonte. Quem escreveu no dia em que a coisa aconteceu?\",\n  \"Duas fontes falam da RUA: o cartaz da prefeitura (3 de março) e o bilhete de dona Alzira (5 de março). O jornal escreveu 17 dias depois, e só de ouvir falar.\",\n  \"A resposta está acesa e marcada “é esta”: a feira mudou por causa da obra na rua.\"\n]",
+    "DICAS2": "[\n  \"A prova precisa falar da OBRA. Procure quem contou o que estava acontecendo NA RUA.\",\n  \"“Quase ninguém veio” é o que ACONTECEU depois da mudança, não o motivo dela. E “é mais bonita” é opinião de quem ouviu falar, 17 dias depois.\",\n  \"As duas provas certas estão acesas e marcadas “é esta”: as que falam da rua consertada.\"\n]",
+    "FONTES": "[\n  {aut:\"Cartaz da prefeitura\",\n   meta:\"3 de março · feito para AVISAR os moradores\",\n   txt:\"“A feira passa para a Praça Nova enquanto a rua for consertada.”\"},\n  {aut:\"Bilhete de dona Alzira, que vende frutas na feira\",\n   meta:\"5 de março · escrito para o filho, no mesmo dia\",\n   txt:\"“Hoje quase ninguém veio. A rua está toda aberta, com máquinas trabalhando nela.”\"},\n  {aut:\"Jornal do bairro\",\n   meta:\"20 de março · escrito para CONTAR a notícia, 17 dias depois\",\n   txt:\"“Moradores contam que a feira mudou porque a Praça Nova é mais bonita.”\"}\n]",
+    "PROVAS": "[\n  {t:\"Cartaz da prefeitura: “enquanto a rua for consertada”.\", ok:1},\n  {t:\"Bilhete de dona Alzira: “a rua está toda aberta, com máquinas”.\", ok:1},\n  {t:\"Jornal do bairro: “a Praça Nova é mais bonita”.\", ok:0},\n  {t:\"Bilhete de dona Alzira: “hoje quase ninguém veio”.\", ok:0}\n]",
+    "VEREDITOS": "[\n  {t:\"A feira mudou porque a rua estava <b>em obra</b>.\", ok:1},\n  {t:\"A feira mudou porque a Praça Nova é mais bonita.\", ok:0},\n  {t:\"A feira mudou porque ninguém queria mais comprar lá.\", ok:0},\n  {t:\"A feira acabou e não existe mais.\", ok:0}\n]"
+   },
+   "gavetas": [
+    "FONTES",
+    "VEREDITOS",
+    "DICAS",
+    "PROVAS",
+    "DICAS2"
+   ],
+   "regra": "marca na peca",
    "var": "FONTES"
   },
   "labirinto": {
    "exemplo": "[\n {selo:\"O CAMINHO DA ESTRELA\",\n  linhas:[\"S..#.\",\"#.#..\",\"....#\",\".#X.F\"]},\n {selo:\"DOIS ESPINHUDOS\",\n  linhas:[\"S.#..\",\".X..#\",\"...X.\",\"#...F\"]},\n {selo:\"OLHE ANTES DE ANDAR\",\n  linhas:[\"S...X\",\"#X#..\",\"....#\",\".#X.F\"]}\n]",
+   "exemplos": {
+    "DICAS": "{\n parede:[\n  \"A parede riscada n&#227;o deixa passar. Ande pelo caminho <b>claro</b>.\",\n  \"A casinha certa est&#225; <b>piscando</b>. Aperte a seta que vai at&#233; ela.\",\n  \"Eu dei um passo por voc&#234;. Agora siga a casinha que <b>pisca</b>.\"],\n borda:[\n  \"Aqui o tabuleiro acaba. Experimente <b>outra seta</b>.\",\n  \"A casinha certa est&#225; <b>piscando</b>. Aperte a seta que vai at&#233; ela.\",\n  \"Eu dei um passo por voc&#234;. Agora siga a casinha que <b>pisca</b>.\"],\n espinhudo:[\n  \"O espinhudo estava ali! O amigo voltou para o come&#231;o. Passe <b>longe</b> dele.\",\n  \"A casinha que <b>pisca</b> passa longe do espinhudo. Aperte a seta que vai at&#233; ela.\",\n  \"Eu dei um passo por voc&#234;, por fora do espinhudo. Agora siga a casinha que <b>pisca</b>.\"]\n}",
+    "DIRS": "[\n {dl:-1,dc:0, cls:\"pcima\",  rot:\"cima\",     lbl:\"para cima\"},\n {dl:0, dc:-1,cls:\"pesq\",   rot:\"esquerda\", lbl:\"para a esquerda\"},\n {dl:1, dc:0, cls:\"pbaixo\", rot:\"baixo\",    lbl:\"para baixo\"},\n {dl:0, dc:1, cls:\"pdir\",   rot:\"direita\",  lbl:\"para a direita\"}\n]",
+    "TRECHOS": "[\n {selo:\"O CAMINHO DA ESTRELA\",\n  linhas:[\"S..#.\",\"#.#..\",\"....#\",\".#X.F\"]},\n {selo:\"DOIS ESPINHUDOS\",\n  linhas:[\"S.#..\",\".X..#\",\"...X.\",\"#...F\"]},\n {selo:\"OLHE ANTES DE ANDAR\",\n  linhas:[\"S...X\",\"#X#..\",\"....#\",\".#X.F\"]}\n]"
+   },
+   "gavetas": [
+    "TRECHOS",
+    "DICAS",
+    "DIRS"
+   ],
+   "regra": "primeiro vetor",
    "var": "TRECHOS"
   },
   "ligar": {
    "exemplo": "[\n  {k:\"p0\", t:\"A RAIZ\",  s:\"Bebe a água da terra\"},\n  {k:\"p1\", t:\"O CAULE\", s:\"Leva a água para cima\"},\n  {k:\"p2\", t:\"A FOLHA\", s:\"Faz o alimento com o sol\"},\n  {k:\"p3\", t:\"A FLOR\",  s:\"Vira fruto e semente\"}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Pense no que essa parte da planta FAZ o dia inteiro.\",\n  \"A raiz puxa a água da terra. O caule é o cano em pé. A folha recebe o sol. A flor vira fruto.\",\n  \"Olhe do outro lado: a resposta certa está com a borda amarela. Toque nela.\"\n]",
+    "FEITOS": "[]",
+    "LIG": "[\n  {k:\"p0\", t:\"A RAIZ\",  s:\"Bebe a água da terra\"},\n  {k:\"p1\", t:\"O CAULE\", s:\"Leva a água para cima\"},\n  {k:\"p2\", t:\"A FOLHA\", s:\"Faz o alimento com o sol\"},\n  {k:\"p3\", t:\"A FLOR\",  s:\"Vira fruto e semente\"}\n]"
+   },
+   "gavetas": [
+    "LIG",
+    "DICAS",
+    "FEITOS"
+   ],
+   "regra": "marca na peca",
    "var": "LIG"
   },
   "ligar-pontos": {
    "exemplo": "[\n {selo:\"A CASINHA ESCONDIDA\", nome:\"uma CASINHA\", voz:\"uma casinha\",\n  pts:[[18,58],[50,26],[82,58],[82,88],[18,88]],\n  d:\"M18 58 L50 26 L82 58 L82 88 L18 88 Z\",\n  cor:\"#f0c078\",\n  extra:'<rect x=\"41\" y=\"64\" width=\"18\" height=\"24\" rx=\"2\" fill=\"#8a5a2b\" stroke=\"#5c3a17\" stroke-width=\"1.4\"/>'+\n        '<circle cx=\"55\" cy=\"76\" r=\"1.8\" fill=\"#ffd54a\"/>'},\n {selo:\"O BICHO DO MAR\", nome:\"um PEIXE\", voz:\"um peixe\",\n  pts:[[14,32],[34,50],[14,68],[44,84],[74,74],[90,50],[74,26],[44,16]],\n  d:\"M14 32 L34 50 L14 68 L44 84 L74 74 L90 50 L74 26 L44 16 Z\",\n  cor:\"#7ec8e3\",\n  extra:'<circle cx=\"74\" cy=\"44\" r=\"4.6\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/>'+\n        '<circle cx=\"75\" cy=\"45\" r=\"2.2\" fill=\"#2b2118\"/>'+\n        '<path d=\"M44 50 Q56 44 68 50\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'}\n]",
+   "exemplos": {
+    "DICAS": "[\n \"Procure o n&#250;mero <b>{n}</b>. Ele &#233; o pr&#243;ximo da fila.\",\n \"O n&#250;mero <b>{n}</b> est&#225; <b>pulsando</b>. Toque nele.\",\n \"Eu liguei este tracinho para voc&#234;. O pr&#243;ximo &#233; o que <b>pulsa</b>.\"\n]",
+    "FEITAS": "[]",
+    "FIGURAS": "[\n {selo:\"A CASINHA ESCONDIDA\", nome:\"uma CASINHA\", voz:\"uma casinha\",\n  pts:[[18,58],[50,26],[82,58],[82,88],[18,88]],\n  d:\"M18 58 L50 26 L82 58 L82 88 L18 88 Z\",\n  cor:\"#f0c078\",\n  extra:'<rect x=\"41\" y=\"64\" width=\"18\" height=\"24\" rx=\"2\" fill=\"#8a5a2b\" stroke=\"#5c3a17\" stroke-width=\"1.4\"/>'+\n        '<circle cx=\"55\" cy=\"76\" r=\"1.8\" fill=\"#ffd54a\"/>'},\n {selo:\"O BICHO DO MAR\", nome:\"um PEIXE\", voz:\"um peixe\",\n  pts:[[14,32],[34,50],[14,68],[44,84],[74,74],[90,50],[74,26],[44,16]],\n  d:\"M14 32 L34 50 L14 68 L44 84 L74 74 L90 50 L74 26 L44 16 Z\",\n  cor:\"#7ec8e3\",\n  extra:'<circle cx=\"74\" cy=\"44\" r=\"4.6\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/>'+\n        '<circle cx=\"75\" cy=\"45\" r=\"2.2\" fill=\"#2b2118\"/>'+\n        '<path d=\"M44 50 Q56 44 68 50\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'}\n]",
+    "NUM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n         \"onze\",\"doze\",\"treze\",\"catorze\",\"quinze\"]"
+   },
+   "gavetas": [
+    "FIGURAS",
+    "DICAS",
+    "NUM",
+    "FEITAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "FIGURAS"
   },
   "linha-do-tempo": {
    "exemplo": "[\n {t:1,n:\"A semente &#233; plantada\"},\n {t:2,n:\"A chuva molha a terra\"},\n {t:3,n:\"A folhinha aparece em cima\"},\n {t:3,n:\"A raiz cresce embaixo\"},\n {t:4,n:\"A planta fica alta\"},\n {t:5,n:\"A flor abre\"}\n]",
+   "exemplos": {
+    "FATOS": "[\n {t:1,n:\"A semente &#233; plantada\"},\n {t:2,n:\"A chuva molha a terra\"},\n {t:3,n:\"A folhinha aparece em cima\"},\n {t:3,n:\"A raiz cresce embaixo\"},\n {t:4,n:\"A planta fica alta\"},\n {t:5,n:\"A flor abre\"}\n]",
+    "ORDEM": "[]"
+   },
+   "gavetas": [
+    "FATOS",
+    "ORDEM"
+   ],
+   "regra": "marca na peca",
    "var": "FATOS"
   },
   "mapa-conceitual": {
    "exemplo": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]",
+   "exemplos": {
+    "LIGS": "[\n {a:\"sol\", b:\"planta\", r:\"d&#225; energia\",\n  ops:[\"d&#225; energia\",\"bebe\",\"mora em\"],\n  por:\"O sol <b>d&#225; energia</b> para a planta crescer.\",\n  dicas:[\"Pense no que o sol manda para a planta o dia inteiro.\",\n         \"N&#227;o &#233; &#225;gua: &#233; luz e calor. A resposta certa est&#225; acesa.\",\n         \"Era <b>d&#225; energia</b>. Eu escrevi na seta para voc&#234;.\"]},\n {a:\"chuva\", b:\"planta\", r:\"d&#225; &#225;gua\",\n  ops:[\"d&#225; &#225;gua\",\"d&#225; energia\",\"foge da\"],\n  por:\"A chuva <b>d&#225; &#225;gua</b>, e a raiz bebe essa &#225;gua.\",\n  dicas:[\"O que cai da nuvem e entra na terra?\",\n         \"Energia quem d&#225; &#233; o sol. A certa est&#225; acesa.\",\n         \"Era <b>d&#225; &#225;gua</b>. Eu escrevi na seta para voc&#234;.\"]},\n {a:\"planta\", b:\"coelho\", r:\"vira comida de\",\n  ops:[\"vira comida de\",\"d&#225; &#225;gua para\",\"ca&#231;a o\"],\n  por:\"O coelho come a planta: a energia do sol chega at&#233; ele.\",\n  dicas:[\"O que o coelho faz com a folha?\",\n         \"Planta n&#227;o ca&#231;a ningu&#233;m. A certa est&#225; acesa.\",\n         \"Era <b>vira comida de</b>. Eu escrevi na seta para voc&#234;.\"]}\n]",
+    "NOS": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]"
+   },
+   "gavetas": [
+    "NOS",
+    "LIGS"
+   ],
+   "regra": "marca na peca",
    "var": "NOS"
   },
   "medir": {
-   "exemplo": "[\n {selo:\"A FITA AZUL\",\n  enun:\"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.\",\n  voz:\"Encoste o zero da régua na ponta da fita azul.\",\n  objs:[{n:\"FITA AZUL\",art:\"a\",nome:\"fita azul\",voz:\"fita azul\",cm:6,cls:\"oazul\",ini:1,ops:[4,5,6,7]}]},\n {selo:\"O PALITO\",\n  enun:\"Agora o palito. Encoste o <b>zero</b> na ponta dele.\",\n  voz:\"Agora o palito. Encoste o zero na ponta dele.\",\n  objs:[{n:\"PALITO\",art:\"o\",nome:\"palito\",voz:\"palito\",cm:4.5,cls:\"opalito\",ini:1.6,ops:[4,4.5,5,5.5]}]},\n {selo:\"DUAS FITAS\",\n  enun:\"Me&ccedil;a as duas fitas, uma de cada vez.\",\n  voz:\"Meça as duas fitas, uma de cada vez.\",\n  objs:[{n:\"VERMELHA\",art:\"a\",nome:\"fita vermelha\",voz:\"fita vermelha\",cm:5,cls:\"overm\",ini:1,ops:[3,4,5,6]},\n        {n:\"VERDE\",art:\"a\",nome:\"fita verde\",voz:\"fita verde\",cm:8,cls:\"overde\",ini:1.6,ops:[6,7,8,9]}],\n  comp:{p:\"Quantos cent&iacute;metros a <b>fita verde</b> tem a m",
+   "exemplo": "[\n {selo:\"A FITA AZUL\",\n  enun:\"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.\",\n  voz:\"Encoste o zero da régua na ponta da fita azul.\",\n  objs:[{n:\"FITA AZUL\",art:\"a\",nome:\"fita azul\",voz:\"fita azul\",cm:6,cls:\"oazul\",ini:1,ops:[4,5,6,7]}]},\n {selo:\"O PALITO\",\n  enun:\"Agora o palito. Encoste o <b>zero</b> na ponta dele.\",\n  voz:\"Agora o palito. Encoste o zero na ponta dele.\",\n  objs:[{n:\"PALITO\",art:\"o\",nome:\"palito\",voz:\"palito\",cm:4.5,cls:\"opalito\",ini:1.6,ops:[4,4.5,5,5.5]}]},\n {selo:\"DUAS FITAS\",\n  enun:\"Me&ccedil;a as duas fitas, uma de cada vez.\",\n  voz:\"Meça as duas fitas, uma de cada vez.\",\n  objs:[{n:\"VERMELHA\",art:\"a\",nome:\"fita vermelha\",voz:\"fita vermelha\",cm:5,cls:\"overm\",ini:1,ops:[3,4,5,6]},\n        {n:\"VERDE\",art:\"a\",nome:\"fita verde\",voz:\"fita verde\",cm:8,cls:\"overde\",ini:1.6,ops:[6,7,8,9]}],\n  comp:{p:\"Quantos cent&iacute;metros a <b>fita verde</b> tem a mais que a <b>fita vermelha</b>?\",\n        voz:\"Quantos centímetros a fita verde tem a mais que a fita vermelha?\",\n        ops:[1,2,3,4],cert:3}}\n]",
+   "exemplos": {
+    "DENC": "[\n \"O <b>zero</b> &eacute; o come&ccedil;o da r&eacute;gua, antes do 1. Ele tem que ficar bem em cima da ponta.\",\n \"Arraste a r&eacute;gua at&eacute; a ponta &#8212; ou <b>toque na ponta</b> e o zero vai at&eacute; l&aacute; sozinho.\",\n \"Deixa comigo desta vez: eu encosto o <b>zero</b> na ponta.\"\n]",
+    "DLER": "[\n \"Siga a <b>linha amarela</b> do fim at&eacute; a r&eacute;gua e veja em que n&uacute;mero ela cai.\",\n \"Conte os cent&iacute;metros a partir do <b>zero</b>: um, dois, tr&ecirc;s...\",\n \"Olhe o n&uacute;mero que est&aacute; <b>aceso</b>: &eacute; ali que a ponta de tr&aacute;s termina.\"\n]",
+    "ROD": "[\n {selo:\"A FITA AZUL\",\n  enun:\"Encoste o <b>zero</b> da r&eacute;gua na ponta da fita azul.\",\n  voz:\"Encoste o zero da régua na ponta da fita azul.\",\n  objs:[{n:\"FITA AZUL\",art:\"a\",nome:\"fita azul\",voz:\"fita azul\",cm:6,cls:\"oazul\",ini:1,ops:[4,5,6,7]}]},\n {selo:\"O PALITO\",\n  enun:\"Agora o palito. Encoste o <b>zero</b> na ponta dele.\",\n  voz:\"Agora o palito. Encoste o zero na ponta dele.\",\n  objs:[{n:\"PALITO\",art:\"o\",nome:\"palito\",voz:\"palito\",cm:4.5,cls:\"opalito\",ini:1.6,ops:[4,4.5,5,5.5]}]},\n {selo:\"DUAS FITAS\",\n  enun:\"Me&ccedil;a as duas fitas, uma de cada vez.\",\n  voz:\"Meça as duas fitas, uma de cada vez.\",\n  objs:[{n:\"VERMELHA\",art:\"a\",nome:\"fita vermelha\",voz:\"fita vermelha\",cm:5,cls:\"overm\",ini:1,ops:[3,4,5,6]},\n        {n:\"VERDE\",art:\"a\",nome:\"fita verde\",voz:\"fita verde\",cm:8,cls:\"overde\",ini:1.6,ops:[6,7,8,9]}],\n  comp:{p:\"Quantos cent&iacute;metros a <b>fita verde</b> tem a mais que a <b>fita vermelha</b>?\",\n        voz:\"Quantos centímetros a fita verde tem a mais que a fita vermelha?\",\n        ops:[1,2,3,4],cert:3}}\n]",
+    "UNM": "[\"zero\",\"um\",\"dois\",\"três\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\n         \"onze\",\"doze\"]"
+   },
+   "gavetas": [
+    "ROD",
+    "DENC",
+    "DLER",
+    "UNM"
+   ],
+   "regra": "marca na peca",
    "var": "ROD"
   },
   "memoria": {
-   "exemplo": "{\n verso:\"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 90' preserveAspectRatio='none'>\"+\n   \"<rect width='120' height='90' fill='#6b4b2a'/>\"+\n   \"<g fill='#805c36'><circle cx='24' cy='20' r='14'/><circle cx='96' cy='24' r='11'/>\"+\n   \"<circle cx='60' cy='58' r='16'/><circle cx='18' cy='72' r='10'/><circle cx='104' cy='70' r='13'/></g>\"+\n   \"<g stroke='#8f6b41' stroke-width='3' fill='none'><path d='M0 45 L120 45'/><path d='M60 0 L60 90'/></g>\"+\n   \"<g fill='#c9a05e'><path d='M60 34 l7 12 -7 12 -7 -12 z'/>\"+\n   \"<circle cx='24' cy='20' r='4'/><circle cx='96' cy='24' r='4'/>\"+\n   \"<circle cx='18' cy='72' r='4'/><circle cx='104' cy='70' r='4'/></g></svg>\"\n}",
-   "var": "ARTE"
+   "exemplo": "[\n {k:\"abelha\", pal:\"ABELHA\",  sen:\"faz o mel\"},\n {k:\"semen\",  pal:\"SEMENTE\", sen:\"vira uma planta\"},\n {k:\"chuva\",  pal:\"CHUVA\",   sen:\"cai da nuvem\"},\n {k:\"ninho\",  pal:\"NINHO\",   sen:\"casa do passarinho\"}\n]",
+   "exemplos": {
+    "PARES": "[\n {k:\"abelha\", pal:\"ABELHA\",  sen:\"faz o mel\"},\n {k:\"semen\",  pal:\"SEMENTE\", sen:\"vira uma planta\"},\n {k:\"chuva\",  pal:\"CHUVA\",   sen:\"cai da nuvem\"},\n {k:\"ninho\",  pal:\"NINHO\",   sen:\"casa do passarinho\"}\n]"
+   },
+   "gavetas": [
+    "PARES"
+   ],
+   "regra": "primeiro vetor",
+   "var": "PARES"
   },
   "misterio": {
    "exemplo": "[\n  {k:\"janela\", nome:\"A janela\", svg:SVG_JANELA,\n   txt:\"A cortina ficou <b>aberta</b>. O sol bateu na planta a semana inteira.\"},\n  {k:\"vaso\", nome:\"O vaso\", svg:SVG_VASO,\n   txt:\"A terra está <b>seca e rachada</b>, até o fundo.\"},\n  {k:\"regador\", nome:\"O regador\", svg:SVG_REGADOR,\n   txt:\"O regador continua <b>cheio até a boca</b>.\"}\n]",
+   "exemplos": {
+    "EVID": "[\n  {t:\"A terra está seca e rachada, até o fundo.\", c:true},\n  {t:\"A cortina ficou aberta e o sol bateu forte.\", c:false,\n   pq:\"Essa conta o que acontecia <b>ao redor</b> da planta. Eu quero a que fala da <b>terra</b>.\"},\n  {t:\"O regador continua cheio até a boca.\", c:false,\n   pq:\"Essa mostra que <b>ninguém regou</b>. Eu quero a que fala da <b>terra</b>.\"}\n]",
+    "EXTRAS": "[\n  \"No calendário da parede: <b>ninguém entrou</b> na sala por 7 dias.\",\n  \"As folhas estão <b>moles e enroladas</b>, sem manchas e sem bichos.\"\n]",
+    "HIP": "[\n  {t:\"A planta ficou <b>sem água</b>.\", c:true},\n  {t:\"A planta recebeu <b>água demais</b>.\", c:false,\n   pq:\"A pista do vaso briga com essa ideia: a terra está seca até o fundo. Água demais deixaria a terra encharcada.\"},\n  {t:\"A planta ficou <b>no escuro</b>.\", c:false,\n   pq:\"A pista da janela briga com essa ideia: a cortina ficou aberta e o sol bateu nela a semana toda.\"}\n]",
+    "PISTAS": "[\n  {k:\"janela\", nome:\"A janela\", svg:SVG_JANELA,\n   txt:\"A cortina ficou <b>aberta</b>. O sol bateu na planta a semana inteira.\"},\n  {k:\"vaso\", nome:\"O vaso\", svg:SVG_VASO,\n   txt:\"A terra está <b>seca e rachada</b>, até o fundo.\"},\n  {k:\"regador\", nome:\"O regador\", svg:SVG_REGADOR,\n   txt:\"O regador continua <b>cheio até a boca</b>.\"}\n]"
+   },
+   "gavetas": [
+    "PISTAS",
+    "EXTRAS",
+    "HIP",
+    "EVID"
+   ],
+   "regra": "primeiro vetor",
    "var": "PISTAS"
   },
   "montar-frase": {
-   "exemplo": "{\n  art:{r:\"o / a\",   d:\"a palavrinha <b>o</b> ou <b>a</b>, que vem antes do nome\"},\n  sub:{r:\"nome\",    d:\"o <b>nome</b> da coisa ou do bicho\"},\n  adj:{r:\"como &#233;\", d:\"<b>como</b> a coisa &#233;\"},\n  ver:{r:\"a&#231;&#227;o\", d:\"a <b>a&#231;&#227;o</b>: o que aconteceu\"},\n  adv:{r:\"quando\",  d:\"<b>quando</b> aconteceu\"}\n}",
-   "var": "CLA"
+   "exemplo": "[\n {w:[\"O\",\"gato\",\"preto\",\"dormiu\"],      c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:true},\n {w:[\"A\",\"flor\",\"amarela\",\"cresceu\"],   c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:false},\n {w:[\"A\",\"turma\",\"jogou\",\"hoje\"],       c:[\"art\",\"sub\",\"ver\",\"adv\"], apoio:false}\n]",
+   "exemplos": {
+    "CLA": "{\n  art:{r:\"o / a\",   d:\"a palavrinha <b>o</b> ou <b>a</b>, que vem antes do nome\"},\n  sub:{r:\"nome\",    d:\"o <b>nome</b> da coisa ou do bicho\"},\n  adj:{r:\"como &#233;\", d:\"<b>como</b> a coisa &#233;\"},\n  ver:{r:\"a&#231;&#227;o\", d:\"a <b>a&#231;&#227;o</b>: o que aconteceu\"},\n  adv:{r:\"quando\",  d:\"<b>quando</b> aconteceu\"}\n}",
+    "FRASES": "[\n {w:[\"O\",\"gato\",\"preto\",\"dormiu\"],      c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:true},\n {w:[\"A\",\"flor\",\"amarela\",\"cresceu\"],   c:[\"art\",\"sub\",\"adj\",\"ver\"], apoio:false},\n {w:[\"A\",\"turma\",\"jogou\",\"hoje\"],       c:[\"art\",\"sub\",\"ver\",\"adv\"], apoio:false}\n]"
+   },
+   "gavetas": [
+    "CLA",
+    "FRASES"
+   ],
+   "regra": "primeiro vetor",
+   "var": "FRASES"
   },
   "morfemas": {
-   "exemplo": "[\n { pista:\"quem trabalha com PEDRA e levanta as paredes\",\n   palavra:\"PEDREIRO\",\n   vagas:[{k:\"v1\",tipo:\"raiz\",rot:\"PALAVRA\"},{k:\"v2\",tipo:\"suf\",rot:\"FIM\"}],\n   pecas:[\n     {t:\"PEDR\", tipo:\"raiz\", k:\"v1\"},\n     {t:\"LIVR\", tipo:\"raiz\", msg:\"LIVREIRO existe, mas é quem vende LIVROS. Esta palavra fala de PEDRA.\"},\n     {t:\"EIRO\", tipo:\"suf\",  k:\"v2\"},\n     {t:\"MENTO\",tipo:\"suf\",  msg:\"-MENTO fala de uma AÇÃO: mover vira movimento. PEDRA não é ação, então PEDRAMENTO não existe.\"},\n     {t:\"INHO\", tipo:\"suf\",  msg:\"-INHO quer dizer PEQUENO: pedrinha é uma pedra pequena. Não é quem trabalha.\"}\n   ]},\n { pista:\"fazer outra vez, DE NOVO\",\n   palavra:\"REFAZER\",\n   vagas:[{k:\"v1\",tipo:\"pre\",rot:\"COMEÇO\"},{k:\"v2\",tipo:\"raiz\",rot:\"PALAVRA\"}],\n   pecas:[\n     {t:\"RE\",   tipo:\"pre\",  k:\"v1\"},\n     {t:\"DES\",  tipo:\"pre\",  msg:\"DESFAZER existe, mas quer dizer o CONTRÁRIO de fazer. Para dizer DE NOVO o",
+   "exemplo": "[\n { pista:\"quem trabalha com PEDRA e levanta as paredes\",\n   palavra:\"PEDREIRO\",\n   vagas:[{k:\"v1\",tipo:\"raiz\",rot:\"PALAVRA\"},{k:\"v2\",tipo:\"suf\",rot:\"FIM\"}],\n   pecas:[\n     {t:\"PEDR\", tipo:\"raiz\", k:\"v1\"},\n     {t:\"LIVR\", tipo:\"raiz\", msg:\"LIVREIRO existe, mas é quem vende LIVROS. Esta palavra fala de PEDRA.\"},\n     {t:\"EIRO\", tipo:\"suf\",  k:\"v2\"},\n     {t:\"MENTO\",tipo:\"suf\",  msg:\"-MENTO fala de uma AÇÃO: mover vira movimento. PEDRA não é ação, então PEDRAMENTO não existe.\"},\n     {t:\"INHO\", tipo:\"suf\",  msg:\"-INHO quer dizer PEQUENO: pedrinha é uma pedra pequena. Não é quem trabalha.\"}\n   ]},\n { pista:\"fazer outra vez, DE NOVO\",\n   palavra:\"REFAZER\",\n   vagas:[{k:\"v1\",tipo:\"pre\",rot:\"COMEÇO\"},{k:\"v2\",tipo:\"raiz\",rot:\"PALAVRA\"}],\n   pecas:[\n     {t:\"RE\",   tipo:\"pre\",  k:\"v1\"},\n     {t:\"DES\",  tipo:\"pre\",  msg:\"DESFAZER existe, mas quer dizer o CONTRÁRIO de fazer. Para dizer DE NOVO o começo é RE-.\"},\n     {t:\"IN\",   tipo:\"pre\",  msg:\"IN- quer dizer NÃO: feliz vira infeliz. INFAZER não existe.\"},\n     {t:\"FAZER\",tipo:\"raiz\", k:\"v2\"},\n     {t:\"FELIZ\",tipo:\"raiz\", msg:\"REFELIZ não existe. A palavra que estamos montando fala de FAZER.\"}\n   ]},\n { pista:\"quem NÃO cuida das suas coisas\",\n   palavra:\"DESCUIDADO\",\n   vagas:[{k:\"v1\",tipo:\"pre\",rot:\"COMEÇO\"},{k:\"v2\",tipo:\"raiz\",rot:\"PALAVRA\"},{k:\"v3\",tipo:\"suf\",rot:\"FIM\"}],\n   pecas:[\n     {t:\"DES\",  tipo:\"pre\",  k:\"v1\"},\n     {t:\"RE\",   tipo:\"pre\",  msg:\"RECUIDADO não existe. RE- é DE NOVO, e aqui a palavra fala de NÃO cuidar.\"},\n     {t:\"CUID\", tipo:\"raiz\", k:\"v2\"},\n     {t:\"ADO\",  tipo:\"suf\",  k:\"v3\"},\n     {t:\"MENTO\",tipo:\"suf\",  msg:\"DESCUIDAMENTO não existe. Quem é assim fica cuidadoso ou descuidADO: o fim é -ADO.\"},\n     {t:\"EIRO\", tipo:\"suf\",  msg:\"-EIRO é quem trabalha com uma coisa: pedra vira pedreiro. DESCUIDEIRO não existe.\"}\n   ]}\n]",
+   "exemplos": {
+    "RODADAS": "[\n { pista:\"quem trabalha com PEDRA e levanta as paredes\",\n   palavra:\"PEDREIRO\",\n   vagas:[{k:\"v1\",tipo:\"raiz\",rot:\"PALAVRA\"},{k:\"v2\",tipo:\"suf\",rot:\"FIM\"}],\n   pecas:[\n     {t:\"PEDR\", tipo:\"raiz\", k:\"v1\"},\n     {t:\"LIVR\", tipo:\"raiz\", msg:\"LIVREIRO existe, mas é quem vende LIVROS. Esta palavra fala de PEDRA.\"},\n     {t:\"EIRO\", tipo:\"suf\",  k:\"v2\"},\n     {t:\"MENTO\",tipo:\"suf\",  msg:\"-MENTO fala de uma AÇÃO: mover vira movimento. PEDRA não é ação, então PEDRAMENTO não existe.\"},\n     {t:\"INHO\", tipo:\"suf\",  msg:\"-INHO quer dizer PEQUENO: pedrinha é uma pedra pequena. Não é quem trabalha.\"}\n   ]},\n { pista:\"fazer outra vez, DE NOVO\",\n   palavra:\"REFAZER\",\n   vagas:[{k:\"v1\",tipo:\"pre\",rot:\"COMEÇO\"},{k:\"v2\",tipo:\"raiz\",rot:\"PALAVRA\"}],\n   pecas:[\n     {t:\"RE\",   tipo:\"pre\",  k:\"v1\"},\n     {t:\"DES\",  tipo:\"pre\",  msg:\"DESFAZER existe, mas quer dizer o CONTRÁRIO de fazer. Para dizer DE NOVO o começo é RE-.\"},\n     {t:\"IN\",   tipo:\"pre\",  msg:\"IN- quer dizer NÃO: feliz vira infeliz. INFAZER não existe.\"},\n     {t:\"FAZER\",tipo:\"raiz\", k:\"v2\"},\n     {t:\"FELIZ\",tipo:\"raiz\", msg:\"REFELIZ não existe. A palavra que estamos montando fala de FAZER.\"}\n   ]},\n { pista:\"quem NÃO cuida das suas coisas\",\n   palavra:\"DESCUIDADO\",\n   vagas:[{k:\"v1\",tipo:\"pre\",rot:\"COMEÇO\"},{k:\"v2\",tipo:\"raiz\",rot:\"PALAVRA\"},{k:\"v3\",tipo:\"suf\",rot:\"FIM\"}],\n   pecas:[\n     {t:\"DES\",  tipo:\"pre\",  k:\"v1\"},\n     {t:\"RE\",   tipo:\"pre\",  msg:\"RECUIDADO não existe. RE- é DE NOVO, e aqui a palavra fala de NÃO cuidar.\"},\n     {t:\"CUID\", tipo:\"raiz\", k:\"v2\"},\n     {t:\"ADO\",  tipo:\"suf\",  k:\"v3\"},\n     {t:\"MENTO\",tipo:\"suf\",  msg:\"DESCUIDAMENTO não existe. Quem é assim fica cuidadoso ou descuidADO: o fim é -ADO.\"},\n     {t:\"EIRO\", tipo:\"suf\",  msg:\"-EIRO é quem trabalha com uma coisa: pedra vira pedreiro. DESCUIDEIRO não existe.\"}\n   ]}\n]",
+    "TIPOMSG": "{\n pre:\"Este pedaço é de COMEÇO: ele mora na primeira vaga, antes da palavra.\",\n raiz:\"Este é o pedaço PALAVRA: ele mora no meio, entre o começo e o fim.\",\n suf:\"Este pedaço é de FIM: ele mora na última vaga, depois da palavra.\"\n}"
+   },
+   "gavetas": [
+    "RODADAS",
+    "TIPOMSG"
+   ],
+   "regra": "marca na peca",
    "var": "RODADAS"
   },
   "mudanca-permanencia": {
    "exemplo": "[\n  {k:\"chao\",  n:\"O CHÃO DA RUA\",  x:0,  y:126, w:300, h:46,  cor:\"#9b8f80\", rad:\"0\"},\n  {k:\"igreja\",n:\"A IGREJA\",       x:6,  y:26,  w:42,  h:100, cor:\"#e8ddc8\", rad:\"21px 21px 3px 3px\"},\n  {k:\"casas\", n:\"AS CASAS\",       x:54, y:82,  w:78,  h:44,  cor:\"#c9945c\", rad:\"4px\"},\n  {k:\"arvore\",n:\"A ÁRVORE\",       x:140,y:58,  w:44,  h:68,  cor:\"#4e8f3a\", rad:\"22px 22px 6px 6px\"},\n  {k:\"poste\", n:\"O POSTE\",        x:198,y:86,  w:9,   h:40,  cor:\"#8a6f4e\", rad:\"3px\"},\n  {k:\"placa\", n:\"A PLACA DA RUA\", x:236,y:88,  w:42,  h:38,  cor:\"#2a52b0\", rad:\"4px\"}\n]",
+   "exemplos": {
+    "ANOS": "[\"1975\",\"1988\",\"2001\",\"2014\",\"hoje\"]",
+    "BASE": "[\n  {k:\"chao\",  n:\"O CHÃO DA RUA\",  x:0,  y:126, w:300, h:46,  cor:\"#9b8f80\", rad:\"0\"},\n  {k:\"igreja\",n:\"A IGREJA\",       x:6,  y:26,  w:42,  h:100, cor:\"#e8ddc8\", rad:\"21px 21px 3px 3px\"},\n  {k:\"casas\", n:\"AS CASAS\",       x:54, y:82,  w:78,  h:44,  cor:\"#c9945c\", rad:\"4px\"},\n  {k:\"arvore\",n:\"A ÁRVORE\",       x:140,y:58,  w:44,  h:68,  cor:\"#4e8f3a\", rad:\"22px 22px 6px 6px\"},\n  {k:\"poste\", n:\"O POSTE\",        x:198,y:86,  w:9,   h:40,  cor:\"#8a6f4e\", rad:\"3px\"},\n  {k:\"placa\", n:\"A PLACA DA RUA\", x:236,y:88,  w:42,  h:38,  cor:\"#2a52b0\", rad:\"4px\"}\n]",
+    "DICAS": "[\n  \"Puxe o tempo de um lado para o outro olhando <b>só</b> essa coisa acesa na cena. Ela continua igual?\",\n  \"Compare o começo e o fim: se a altura, a forma ou o piso ficaram diferentes, é MUDOU. Se está do mesmo jeito, é FICOU.\",\n  \"A caixa certa está com a borda amarela: é ali que esta ficha mora.\"\n]",
+    "PATCH": "{\n  casas:{y:26, h:100, cor:\"#8f9aa8\"},\n  poste:{y:44, h:82,  cor:\"#5f6a75\"},\n  chao :{cor:\"#4a4a50\"}\n}",
+    "PECAS": "{}",
+    "VISTOS": "{}"
+   },
+   "gavetas": [
+    "BASE",
+    "PATCH",
+    "ANOS",
+    "PECAS",
+    "VISTOS",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "BASE"
   },
   "ordenar": {
    "exemplo": "[2,5,9,14,21]",
+   "exemplos": {
+    "ORDEM": "[2,5,9,14,21]"
+   },
+   "gavetas": [
+    "ORDEM"
+   ],
+   "regra": "primeiro vetor",
    "var": "ORDEM"
   },
   "ouvir-achar": {
-   "exemplo": "{\n sol:   {nome:\"SOL\",    voz:\"sol\"},\n casa:  {nome:\"CASA\",   voz:\"casa\"},\n bola:  {nome:\"BOLA\",   voz:\"bola\"},\n peixe: {nome:\"PEIXE\",  voz:\"peixe\"},\n arvore:{nome:\"&#193;RVORE\", voz:\"árvore\", letra:\"A\"},\n flor:  {nome:\"FLOR\",   voz:\"flor\"},\n chave: {nome:\"CHAVE\",  voz:\"chave\"},\n lua:   {nome:\"LUA\",    voz:\"lua\"}\n}",
-   "var": "FIG"
+   "exemplo": "[\n {selo:\"OU&Ccedil;A E ACHE\", alvo:\"sol\", opcoes:[\"sol\",\"casa\",\"bola\",\"peixe\"],\n  rotulo:\"A PALAVRA &Eacute;\", escrito:\"SOL\", fala:\"sol\",\n  enun:\"Ou&#231;a a palavra e toque na <b>figura</b> dela.\",\n  hint:\"Sem som no computador? A palavra est&#225; escrita a&#237; em cima.\",\n  msg:\"Isso! O <b>SOL</b> &#233; este.\",\n  dicas:[\"Aperte <b>Ouvir</b> de novo e diga a palavra junto, bem devagar.\",\n         \"Olhe a <b>letra do come&#231;o</b> de cada nome. A palavra come&#231;a com <b>S</b>.\",\n         \"Esta &#233; a figura da palavra <b>SOL</b>: o sol tem raios em volta.\"]},\n\n {selo:\"OU&Ccedil;A COM CUIDADO\", alvo:\"arvore\", opcoes:[\"arvore\",\"flor\",\"casa\",\"chave\"],\n  rotulo:\"A PALAVRA &Eacute;\", escrito:\"&#193;RVORE\", fala:\"árvore\",\n  enun:\"Agora tem <b>duas</b> figuras do mesmo jardim. Ou&#231;a at&#233; o fim.\",\n  hint:\"&#193;rvore e flor s&#227;o as duas do jardim: o que muda &#233; a palavra.\",\n  msg:\"Isso! <b>&#193;RVORE</b> tem tronco e copa.\",\n  dicas:[\"Ou&#231;a de novo at&#233; o <b>fim</b> da palavra: flor acaba r&#225;pido, &#225;rvore &#233; comprida.\",\n         \"A letra do come&#231;o est&#225; em cada figura. A palavra come&#231;a com <b>A</b>.\",\n         \"Esta &#233; a <b>&#193;RVORE</b>: come&#231;a com A e tem tr&#234;s peda&#231;os: &#225;r-vo-re.\"]},\n\n {selo:\"O SOM DO COME&Ccedil;O\", alvo:\"flor\", opcoes:[\"flor\",\"peixe\",\"lua\",\"bola\"],\n  rotulo:\"O SOM DO COME&Ccedil;O &Eacute;\", escrito:\"F\", fala:\"efe. fffff\",\n  enun:\"Qual figura <b>come&#231;a</b> com este som?\",\n  hint:\"Diga o nome de cada figura em voz alta e escute s&#243; o come&#231;o.\",\n  msg:\"Isso! <b>FLOR</b> come&#231;a com F: fff-lor.\",\n  dicas:[\"Diga o nome de cada figura e pare no <b>primeiro pedacinho</b>: fff, ppp, lll, bbb.\",\n         \"A letra do come&#231;o de cada nome apareceu no canto. Procure o <b>F</b>.\",\n         \"<b>FLOR</b> come&#231;a com o som <b>fff</b>. F de flor, de fada, de faca.\"]}\n]",
+   "exemplos": {
+    "RODADAS": "[\n {selo:\"OU&Ccedil;A E ACHE\", alvo:\"sol\", opcoes:[\"sol\",\"casa\",\"bola\",\"peixe\"],\n  rotulo:\"A PALAVRA &Eacute;\", escrito:\"SOL\", fala:\"sol\",\n  enun:\"Ou&#231;a a palavra e toque na <b>figura</b> dela.\",\n  hint:\"Sem som no computador? A palavra est&#225; escrita a&#237; em cima.\",\n  msg:\"Isso! O <b>SOL</b> &#233; este.\",\n  dicas:[\"Aperte <b>Ouvir</b> de novo e diga a palavra junto, bem devagar.\",\n         \"Olhe a <b>letra do come&#231;o</b> de cada nome. A palavra come&#231;a com <b>S</b>.\",\n         \"Esta &#233; a figura da palavra <b>SOL</b>: o sol tem raios em volta.\"]},\n\n {selo:\"OU&Ccedil;A COM CUIDADO\", alvo:\"arvore\", opcoes:[\"arvore\",\"flor\",\"casa\",\"chave\"],\n  rotulo:\"A PALAVRA &Eacute;\", escrito:\"&#193;RVORE\", fala:\"árvore\",\n  enun:\"Agora tem <b>duas</b> figuras do mesmo jardim. Ou&#231;a at&#233; o fim.\",\n  hint:\"&#193;rvore e flor s&#227;o as duas do jardim: o que muda &#233; a palavra.\",\n  msg:\"Isso! <b>&#193;RVORE</b> tem tronco e copa.\",\n  dicas:[\"Ou&#231;a de novo at&#233; o <b>fim</b> da palavra: flor acaba r&#225;pido, &#225;rvore &#233; comprida.\",\n         \"A letra do come&#231;o est&#225; em cada figura. A palavra come&#231;a com <b>A</b>.\",\n         \"Esta &#233; a <b>&#193;RVORE</b>: come&#231;a com A e tem tr&#234;s peda&#231;os: &#225;r-vo-re.\"]},\n\n {selo:\"O SOM DO COME&Ccedil;O\", alvo:\"flor\", opcoes:[\"flor\",\"peixe\",\"lua\",\"bola\"],\n  rotulo:\"O SOM DO COME&Ccedil;O &Eacute;\", escrito:\"F\", fala:\"efe. fffff\",\n  enun:\"Qual figura <b>come&#231;a</b> com este som?\",\n  hint:\"Diga o nome de cada figura em voz alta e escute s&#243; o come&#231;o.\",\n  msg:\"Isso! <b>FLOR</b> come&#231;a com F: fff-lor.\",\n  dicas:[\"Diga o nome de cada figura e pare no <b>primeiro pedacinho</b>: fff, ppp, lll, bbb.\",\n         \"A letra do come&#231;o de cada nome apareceu no canto. Procure o <b>F</b>.\",\n         \"<b>FLOR</b> come&#231;a com o som <b>fff</b>. F de flor, de fada, de faca.\"]}\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
+   "var": "RODADAS"
   },
   "padrao": {
-   "exemplo": "{\n c:{n:\"C&#205;RCULO\",   cls:\"pdsh pdcirc\",   hz:523.25},\n q:{n:\"QUADRADO\",  cls:\"pdsh pdquad\",   hz:392.00},\n t:{n:\"TRI&#194;NGULO\", cls:\"pdsh pdtri\",    hz:659.25},\n L:{n:\"CLARA\",     cls:\"pdsh pdclara\",  hz:698.46},\n E:{n:\"ESCURA\",    cls:\"pdsh pdescura\", hz:329.63},\n R:{n:\"RISCADA\",   cls:\"pdsh pdriscada\",hz:466.16},\n F:{n:\"FORTE\",     cls:\"pdsh pdfor\",    hz:220.00},\n M:{n:\"M&#201;DIA\",     cls:\"pdsh pdmed\",    hz:329.63},\n f:{n:\"FRACA\",     cls:\"pdsh pdfra\",    hz:523.25}\n}",
-   "var": "PEC"
+   "exemplo": "[\n { selo:\"A FILA DAS FORMAS\", enun:\"Continue a fila. <b>O que vem depois?</b>\",\n   seq:[\"c\",\"q\",\"c\",\"q\",\"c\",\"q\",\"c\"], mostra:4, paleta:[\"c\",\"q\",\"t\"],\n   regra:\"um c&#237;rculo, um quadrado, e come&#231;a de novo\",\n   grupo:2, grupoTxt:\"c&#237;rculo, quadrado\",\n   d1:\"Leia a fila apontando com o dedo, do come&#231;o: c&#237;rculo, quadrado, c&#237;rculo, quadrado...\" },\n { selo:\"CLARA, ESCURA, ESCURA\", enun:\"Agora o grupo &#233; maior. <b>Continue a fila.</b>\",\n   seq:[\"L\",\"E\",\"E\",\"L\",\"E\",\"E\",\"L\",\"E\",\"E\"], mostra:6, paleta:[\"L\",\"E\",\"R\"],\n   regra:\"uma clara, duas escuras\",\n   grupo:3, grupoTxt:\"uma clara e duas escuras\",\n   d1:\"Conte quantas escuras vem depois de cada clara. S&#227;o sempre as mesmas.\" },\n { selo:\"AS BATIDAS DO TAMBOR\", enun:\"Tr&#234;s batidas diferentes se repetem. <b>Continue.</b>\",\n   seq:[\"F\",\"M\",\"f\",\"F\",\"M\",\"f\",\"F\",\"M\",\"f\"], mostra:6, paleta:[\"F\",\"M\",\"f\"],\n   regra:\"forte, m&#233;dia, fraca, e come&#231;a de novo\",\n   grupo:3, grupoTxt:\"forte, m&#233;dia, fraca\",\n   d1:\"Bata na mesa junto com a fila: forte, m&#233;dia, fraca. Depois da fraca, o que volta?\" },\n/* ⚠️ ESTA RODADA NAO TEM GRUPO QUE SE REPETE — ela CRESCE. Antes ela herdava\n   o texto das outras (\"depois dele, tudo recomeça igual\"), que aqui e\n   simplesmente falso: e o mesmo defeito do \"resto de clone\", em miniatura,\n   dentro da propria peca. Por isso ela declara `salto` em vez de `grupo`, e o\n   2o degrau acende as DUAS ultimas casas para mostrar o pulo.            */\n { selo:\"DE QUANTO EM QUANTO?\", enun:\"Aqui o padr&#227;o &#233; um <b>salto</b>. Continue a fila.\",\n   seq:[\"2\",\"4\",\"6\",\"8\",\"10\",\"12\",\"14\"], mostra:4, paleta:[\"9\",\"10\",\"11\",\"12\",\"13\",\"14\"],\n   regra:\"de 2 em 2\",\n   grupo:0, salto:2, grupoTxt:\"o salto de 2 em 2\",\n   d1:\"Olhe o salto de um n&#250;mero para o outro: de 2 para 4, de 4 para 6. Quanto anda cada vez?\" }\n]",
+   "exemplos": {
+    "PEC": "{\n c:{n:\"C&#205;RCULO\",   cls:\"pdsh pdcirc\",   hz:523.25},\n q:{n:\"QUADRADO\",  cls:\"pdsh pdquad\",   hz:392.00},\n t:{n:\"TRI&#194;NGULO\", cls:\"pdsh pdtri\",    hz:659.25},\n L:{n:\"CLARA\",     cls:\"pdsh pdclara\",  hz:698.46},\n E:{n:\"ESCURA\",    cls:\"pdsh pdescura\", hz:329.63},\n R:{n:\"RISCADA\",   cls:\"pdsh pdriscada\",hz:466.16},\n F:{n:\"FORTE\",     cls:\"pdsh pdfor\",    hz:220.00},\n M:{n:\"M&#201;DIA\",     cls:\"pdsh pdmed\",    hz:329.63},\n f:{n:\"FRACA\",     cls:\"pdsh pdfra\",    hz:523.25}\n}",
+    "RODADAS": "[\n { selo:\"A FILA DAS FORMAS\", enun:\"Continue a fila. <b>O que vem depois?</b>\",\n   seq:[\"c\",\"q\",\"c\",\"q\",\"c\",\"q\",\"c\"], mostra:4, paleta:[\"c\",\"q\",\"t\"],\n   regra:\"um c&#237;rculo, um quadrado, e come&#231;a de novo\",\n   grupo:2, grupoTxt:\"c&#237;rculo, quadrado\",\n   d1:\"Leia a fila apontando com o dedo, do come&#231;o: c&#237;rculo, quadrado, c&#237;rculo, quadrado...\" },\n { selo:\"CLARA, ESCURA, ESCURA\", enun:\"Agora o grupo &#233; maior. <b>Continue a fila.</b>\",\n   seq:[\"L\",\"E\",\"E\",\"L\",\"E\",\"E\",\"L\",\"E\",\"E\"], mostra:6, paleta:[\"L\",\"E\",\"R\"],\n   regra:\"uma clara, duas escuras\",\n   grupo:3, grupoTxt:\"uma clara e duas escuras\",\n   d1:\"Conte quantas escuras vem depois de cada clara. S&#227;o sempre as mesmas.\" },\n { selo:\"AS BATIDAS DO TAMBOR\", enun:\"Tr&#234;s batidas diferentes se repetem. <b>Continue.</b>\",\n   seq:[\"F\",\"M\",\"f\",\"F\",\"M\",\"f\",\"F\",\"M\",\"f\"], mostra:6, paleta:[\"F\",\"M\",\"f\"],\n   regra:\"forte, m&#233;dia, fraca, e come&#231;a de novo\",\n   grupo:3, grupoTxt:\"forte, m&#233;dia, fraca\",\n   d1:\"Bata na mesa junto com a fila: forte, m&#233;dia, fraca. Depois da fraca, o que volta?\" },\n/* ⚠️ ESTA RODADA NAO TEM GRUPO QUE SE REPETE — ela CRESCE. Antes ela herdava\n   o texto das outras (\"depois dele, tudo recomeça igual\"), que aqui e\n   simplesmente falso: e o mesmo defeito do \"resto de clone\", em miniatura,\n   dentro da propria peca. Por isso ela declara `salto` em vez de `grupo`, e o\n   2o degrau acende as DUAS ultimas casas para mostrar o pulo.            */\n { selo:\"DE QUANTO EM QUANTO?\", enun:\"Aqui o padr&#227;o &#233; um <b>salto</b>. Continue a fila.\",\n   seq:[\"2\",\"4\",\"6\",\"8\",\"10\",\"12\",\"14\"], mostra:4, paleta:[\"9\",\"10\",\"11\",\"12\",\"13\",\"14\"],\n   regra:\"de 2 em 2\",\n   grupo:0, salto:2, grupoTxt:\"o salto de 2 em 2\",\n   d1:\"Olhe o salto de um n&#250;mero para o outro: de 2 para 4, de 4 para 6. Quanto anda cada vez?\" }\n]"
+   },
+   "gavetas": [
+    "PEC",
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
+   "var": "RODADAS"
   },
   "passo-a-passo": {
-   "exemplo": "[\n {selo:\"A RECEITA DO FEIJ&Atilde;O\", cena:\"canteiro\",\n  enun:\"Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz \"+\n       \"exatamente o que voc&#234; mandar.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"A semente ficou no escurinho, coberta e molhada &#8212; e brotou!\",\n  torto:\"O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.\",\n  passos:[\n   {k:\"cavar\", rot:\"CAVAR\", sub:\"o buraco\", ic:\"pa\", precisa:[], melhor:[],\n    bom:\"Voc&#234; <b>cavou</b> o buraco na terra.\",\n    ruim:\"Voc&#234; <b>cavou</b> o buraco na terra.\"},\n   {k:\"semear\", rot:\"SEMEAR\", sub:\"p&#244;r a semente\", ic:\"sem\", precisa:[\"cavar\"], melhor:[],\n    bom:\"A semente <b>caiu dentro</b> do buraco.\",\n    ruim:\"N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento.\"},\n   ",
+   "exemplo": "[\n {selo:\"A RECEITA DO FEIJ&Atilde;O\", cena:\"canteiro\",\n  enun:\"Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz \"+\n       \"exatamente o que voc&#234; mandar.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"A semente ficou no escurinho, coberta e molhada &#8212; e brotou!\",\n  torto:\"O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.\",\n  passos:[\n   {k:\"cavar\", rot:\"CAVAR\", sub:\"o buraco\", ic:\"pa\", precisa:[], melhor:[],\n    bom:\"Voc&#234; <b>cavou</b> o buraco na terra.\",\n    ruim:\"Voc&#234; <b>cavou</b> o buraco na terra.\"},\n   {k:\"semear\", rot:\"SEMEAR\", sub:\"p&#244;r a semente\", ic:\"sem\", precisa:[\"cavar\"], melhor:[],\n    bom:\"A semente <b>caiu dentro</b> do buraco.\",\n    ruim:\"N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento.\"},\n   {k:\"cobrir\", rot:\"COBRIR\", sub:\"com terra\", ic:\"ter\", precisa:[\"semear\"], melhor:[],\n    bom:\"A terra <b>cobriu</b> a semente. Agora est&#225; no escurinho.\",\n    ruim:\"Voc&#234; cobriu <b>terra com terra</b>: a semente n&#227;o estava l&#225; dentro.\"},\n   {k:\"regar\", rot:\"REGAR\", sub:\"com &#225;gua\", ic:\"agu\", precisa:[\"cobrir\"], melhor:[],\n    bom:\"A &#225;gua <b>molhou</b> a terra por cima da semente.\",\n    ruim:\"A &#225;gua caiu na terra dura e virou <b>po&#231;a</b>: n&#227;o tinha nada plantado.\"}]},\n\n {selo:\"A RECEITA DO SUCO\", cena:\"banc\",\n  enun:\"Agora s&#227;o <b>cinco</b> passos. Um deles n&#227;o trava a receita, mas <b>estraga</b> \"+\n       \"o suco se ficar para depois.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"Suco limpo, coado e geladinho. Que del&#237;cia!\",\n  torto:\"O suco n&#227;o ficou bom. Olhe o copo: ele mostra o que aconteceu.\",\n  passos:[\n   {k:\"lavar\", rot:\"LAVAR\", sub:\"a laranja\", ic:\"lav\", precisa:[], melhor:[],\n    bom:\"A &#225;gua tirou a <b>sujeira</b> da casca.\",\n    ruim:\"A &#225;gua tirou a <b>sujeira</b> da casca.\"},\n   {k:\"cortar\", rot:\"CORTAR\", sub:\"ao meio\", ic:\"cor\", precisa:[], melhor:[\"lavar\"],\n    bom:\"A laranja virou <b>duas metades</b>.\",\n    ruim:\"Cortou! Mas a casca estava <b>suja</b>, e a sujeira entrou junto.\"},\n   {k:\"espremer\", rot:\"ESPREMER\", sub:\"as metades\", ic:\"esp\", precisa:[\"cortar\"], melhor:[],\n    bom:\"O suco <b>escorreu</b> das metades para o pote.\",\n    ruim:\"A laranja <b>inteira</b> n&#227;o solta suco: ela s&#243; rolou na m&#227;o.\"},\n   {k:\"encher\", rot:\"ENCHER\", sub:\"o copo\", ic:\"cop\", precisa:[\"espremer\"], melhor:[],\n    bom:\"O copo <b>encheu</b> de suco.\",\n    ruim:\"N&#227;o tinha suco no pote: o copo ficou <b>vazio</b>.\"},\n   {k:\"beber\", rot:\"BEBER\", sub:\"com canudo\", ic:\"beb\", precisa:[\"encher\"], melhor:[],\n    bom:\"Glup, glup: o copo <b>esvaziou</b>.\",\n    ruim:\"O canudo fez <b>shhh</b> num copo vazio.\"}]}\n]",
+   "exemplos": {
+    "CE": "{}",
+    "EFEITO": "{\n cavar:function(ok){ CE.buraco.className=\"buraco on\"; nota(180,.12,.12,\"sine\",0); },\n semear:function(ok){ CE.sem.className=ok?\"csem on dentro\":\"csem on\"; sPasso(); },\n cobrir:function(ok){\n   CE.monte.className=\"cmonte on\";\n   /* a semente que estava no buraco fica COBERTA — some debaixo da terra. A que\n      ficou por fora continua a vista, que e justamente a cena a ser lida. */\n   if(ok) CE.sem.className=\"csem off\";\n   nota(200,.14,.11,\"sine\",0);\n },\n regar:function(ok){ chuva(ger); if(!ok) CE.poca.className=\"cpoca on\"; nota(620,.10,.10,\"sine\",0); },\n lavar:function(ok){\n   chuva(ger);\n   var i; for(i=0;i<CE.suj.length;i++) CE.suj[i].className=\"bsuj off\";\n   nota(620,.10,.10,\"sine\",0);\n },\n cortar:function(ok){\n   CE.lar.className=\"blar off\"; CE.met.className=\"bmet on\";\n   if(!ok) mundo.sujeira=true;\n   nota(300,.08,.12,\"square\",0);\n },\n espremer:function(ok){\n   if(ok){ CE.psu.className=\"bpsu on\"; nota(520,.14,.11,\"sine\",0); }\n   else { CE.lar.className=\"blar treme\"; sTropeco(); }\n },\n encher:function(ok){\n   if(ok){\n     CE.suco.className=\"bsuco on\";\n     if(mundo.sujeira){ var i; for(i=0;i<CE.pont.length;i++) CE.pont[i].className=\"bpont on\"; }\n     nota(440,.16,.11,\"sine\",0);\n   }else{ sTropeco(); }\n },\n beber:function(ok){\n   CE.can.className=\"bcan on\";\n   if(ok){ CE.suco.className=\"bsuco\"; nota(660,.10,.11,\"triangle\",0); nota(880,.12,.10,\"triangle\",.10); }\n   else { sTropeco(); }\n }\n}",
+    "RECEITAS": "[\n {selo:\"A RECEITA DO FEIJ&Atilde;O\", cena:\"canteiro\",\n  enun:\"Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz \"+\n       \"exatamente o que voc&#234; mandar.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"A semente ficou no escurinho, coberta e molhada &#8212; e brotou!\",\n  torto:\"O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.\",\n  passos:[\n   {k:\"cavar\", rot:\"CAVAR\", sub:\"o buraco\", ic:\"pa\", precisa:[], melhor:[],\n    bom:\"Voc&#234; <b>cavou</b> o buraco na terra.\",\n    ruim:\"Voc&#234; <b>cavou</b> o buraco na terra.\"},\n   {k:\"semear\", rot:\"SEMEAR\", sub:\"p&#244;r a semente\", ic:\"sem\", precisa:[\"cavar\"], melhor:[],\n    bom:\"A semente <b>caiu dentro</b> do buraco.\",\n    ruim:\"N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento.\"},\n   {k:\"cobrir\", rot:\"COBRIR\", sub:\"com terra\", ic:\"ter\", precisa:[\"semear\"], melhor:[],\n    bom:\"A terra <b>cobriu</b> a semente. Agora est&#225; no escurinho.\",\n    ruim:\"Voc&#234; cobriu <b>terra com terra</b>: a semente n&#227;o estava l&#225; dentro.\"},\n   {k:\"regar\", rot:\"REGAR\", sub:\"com &#225;gua\", ic:\"agu\", precisa:[\"cobrir\"], melhor:[],\n    bom:\"A &#225;gua <b>molhou</b> a terra por cima da semente.\",\n    ruim:\"A &#225;gua caiu na terra dura e virou <b>po&#231;a</b>: n&#227;o tinha nada plantado.\"}]},\n\n {selo:\"A RECEITA DO SUCO\", cena:\"banc\",\n  enun:\"Agora s&#227;o <b>cinco</b> passos. Um deles n&#227;o trava a receita, mas <b>estraga</b> \"+\n       \"o suco se ficar para depois.\",\n  hint:\"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.\",\n  bom:\"Suco limpo, coado e geladinho. Que del&#237;cia!\",\n  torto:\"O suco n&#227;o ficou bom. Olhe o copo: ele mostra o que aconteceu.\",\n  passos:[\n   {k:\"lavar\", rot:\"LAVAR\", sub:\"a laranja\", ic:\"lav\", precisa:[], melhor:[],\n    bom:\"A &#225;gua tirou a <b>sujeira</b> da casca.\",\n    ruim:\"A &#225;gua tirou a <b>sujeira</b> da casca.\"},\n   {k:\"cortar\", rot:\"CORTAR\", sub:\"ao meio\", ic:\"cor\", precisa:[], melhor:[\"lavar\"],\n    bom:\"A laranja virou <b>duas metades</b>.\",\n    ruim:\"Cortou! Mas a casca estava <b>suja</b>, e a sujeira entrou junto.\"},\n   {k:\"espremer\", rot:\"ESPREMER\", sub:\"as metades\", ic:\"esp\", precisa:[\"cortar\"], melhor:[],\n    bom:\"O suco <b>escorreu</b> das metades para o pote.\",\n    ruim:\"A laranja <b>inteira</b> n&#227;o solta suco: ela s&#243; rolou na m&#227;o.\"},\n   {k:\"encher\", rot:\"ENCHER\", sub:\"o copo\", ic:\"cop\", precisa:[\"espremer\"], melhor:[],\n    bom:\"O copo <b>encheu</b> de suco.\",\n    ruim:\"N&#227;o tinha suco no pote: o copo ficou <b>vazio</b>.\"},\n   {k:\"beber\", rot:\"BEBER\", sub:\"com canudo\", ic:\"beb\", precisa:[\"encher\"], melhor:[],\n    bom:\"Glup, glup: o copo <b>esvaziou</b>.\",\n    ruim:\"O canudo fez <b>shhh</b> num copo vazio.\"}]}\n]"
+   },
+   "gavetas": [
+    "RECEITAS",
+    "CE",
+    "EFEITO"
+   ],
+   "regra": "primeiro vetor",
    "var": "RECEITAS"
   },
   "pintar": {
    "exemplo": "[\n {t:\"No quintal da \"},{p:\"ESCOLA\"},{t:\" tem um \"},{p:\"GATO\",alvo:1},\n {t:\" dormindo na \"},{p:\"SOMBRA\"},{t:\" fresca. Uma \"},{p:\"ABELHA\",alvo:1},\n {t:\" voa perto da \"},{p:\"FLOR\"},{t:\" amarela. O \"},{p:\"CACHORRO\",alvo:1},\n {t:\" late para o \"},{p:\"PASSARINHO\",alvo:1},{t:\" que canta no \"},{p:\"GALHO\"},{t:\" alto.\"}\n /* ⚠️ nenhuma palavra tocavel encosta em pontuacao: a palavra e um bloco com\n    folga, e o ponto final ficava solto (\"SOMBRA .\") como se fosse erro de\n    digitacao. Palavra tocavel sempre seguida de outra palavra.              */\n]",
+   "exemplos": {
+    "TEXTO": "[\n {t:\"No quintal da \"},{p:\"ESCOLA\"},{t:\" tem um \"},{p:\"GATO\",alvo:1},\n {t:\" dormindo na \"},{p:\"SOMBRA\"},{t:\" fresca. Uma \"},{p:\"ABELHA\",alvo:1},\n {t:\" voa perto da \"},{p:\"FLOR\"},{t:\" amarela. O \"},{p:\"CACHORRO\",alvo:1},\n {t:\" late para o \"},{p:\"PASSARINHO\",alvo:1},{t:\" que canta no \"},{p:\"GALHO\"},{t:\" alto.\"}\n /* ⚠️ nenhuma palavra tocavel encosta em pontuacao: a palavra e um bloco com\n    folga, e o ponto final ficava solto (\"SOMBRA .\") como se fosse erro de\n    digitacao. Palavra tocavel sempre seguida de outra palavra.              */\n]"
+   },
+   "gavetas": [
+    "TEXTO"
+   ],
+   "regra": "primeiro vetor",
    "var": "TEXTO"
   },
   "pintar-desenho": {
-   "exemplo": "[\n {selo:\"O PEIXE DO AQUÁRIO\", nome:\"o peixe\", voz:\"o peixe\",\n  regs:[\n   {k:\"agua\",  n:\"a água\",     d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"cauda\", n:\"o rabo\",          d:\"M64 50 L94 26 L94 74 Z\"},\n   {k:\"barb\",  n:\"a barbatana\",     d:\"M28 34 L44 6 L58 36 Z\"},\n   {k:\"corpo\", n:\"o corpo\",         d:\"M66 50 A26 20 0 1 1 14 50 A26 20 0 1 1 66 50 Z\"}\n  ],\n  tracos:'<circle cx=\"27\" cy=\"44\" r=\"5.2\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/>'+\n         '<circle cx=\"26\" cy=\"45\" r=\"2.4\" fill=\"#2b2118\"/>'+\n         '<path d=\"M16 55 Q22 60 29 57\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<circle cx=\"13\" cy=\"21\" r=\"3.4\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'+\n         '<circle cx=\"24\" cy=\"13\" r=\"2.2\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'},\n {selo:\"A FLOR DO JARDIM\", nome:\"a flor\", voz:\"a flor\",\n  regs:[\n   {k:\"ceu\",     n:\"o céu\",",
+   "exemplo": "[\n {selo:\"O PEIXE DO AQUÁRIO\", nome:\"o peixe\", voz:\"o peixe\",\n  regs:[\n   {k:\"agua\",  n:\"a água\",     d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"cauda\", n:\"o rabo\",          d:\"M64 50 L94 26 L94 74 Z\"},\n   {k:\"barb\",  n:\"a barbatana\",     d:\"M28 34 L44 6 L58 36 Z\"},\n   {k:\"corpo\", n:\"o corpo\",         d:\"M66 50 A26 20 0 1 1 14 50 A26 20 0 1 1 66 50 Z\"}\n  ],\n  tracos:'<circle cx=\"27\" cy=\"44\" r=\"5.2\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/>'+\n         '<circle cx=\"26\" cy=\"45\" r=\"2.4\" fill=\"#2b2118\"/>'+\n         '<path d=\"M16 55 Q22 60 29 57\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<circle cx=\"13\" cy=\"21\" r=\"3.4\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'+\n         '<circle cx=\"24\" cy=\"13\" r=\"2.2\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'},\n {selo:\"A FLOR DO JARDIM\", nome:\"a flor\", voz:\"a flor\",\n  regs:[\n   {k:\"ceu\",     n:\"o céu\",       d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"petalas\", n:\"as pétalas\",\n    d:\"M63 14 A13 13 0 1 1 37 14 A13 13 0 1 1 63 14 Z\"+\n      \"M44 28 A13 13 0 1 1 18 28 A13 13 0 1 1 44 28 Z\"+\n      \"M51 50 A13 13 0 1 1 25 50 A13 13 0 1 1 51 50 Z\"+\n      \"M75 50 A13 13 0 1 1 49 50 A13 13 0 1 1 75 50 Z\"+\n      \"M82 28 A13 13 0 1 1 56 28 A13 13 0 1 1 82 28 Z\"},\n   {k:\"caule\",   n:\"o caule e a folha\",\n    d:\"M44 55 L44 97 L56 97 L56 55 Z\"+\n      \"M56 70 C70 59 85 65 88 76 C77 87 60 85 56 74 Z\"},\n   {k:\"miolo\",   n:\"o miolinho\",   d:\"M62 34 A12 12 0 1 1 38 34 A12 12 0 1 1 62 34 Z\"}\n  ],\n  tracos:'<circle cx=\"45\" cy=\"31\" r=\"1.6\" fill=\"#2b2118\"/>'+\n         '<circle cx=\"55\" cy=\"31\" r=\"1.6\" fill=\"#2b2118\"/>'+\n         '<path d=\"M44 38 Q50 42 56 38\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<path d=\"M0 97 H100\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\"/>'}\n]",
+   "exemplos": {
+    "DESENHOS": "[\n {selo:\"O PEIXE DO AQUÁRIO\", nome:\"o peixe\", voz:\"o peixe\",\n  regs:[\n   {k:\"agua\",  n:\"a água\",     d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"cauda\", n:\"o rabo\",          d:\"M64 50 L94 26 L94 74 Z\"},\n   {k:\"barb\",  n:\"a barbatana\",     d:\"M28 34 L44 6 L58 36 Z\"},\n   {k:\"corpo\", n:\"o corpo\",         d:\"M66 50 A26 20 0 1 1 14 50 A26 20 0 1 1 66 50 Z\"}\n  ],\n  tracos:'<circle cx=\"27\" cy=\"44\" r=\"5.2\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/>'+\n         '<circle cx=\"26\" cy=\"45\" r=\"2.4\" fill=\"#2b2118\"/>'+\n         '<path d=\"M16 55 Q22 60 29 57\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<circle cx=\"13\" cy=\"21\" r=\"3.4\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'+\n         '<circle cx=\"24\" cy=\"13\" r=\"2.2\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'},\n {selo:\"A FLOR DO JARDIM\", nome:\"a flor\", voz:\"a flor\",\n  regs:[\n   {k:\"ceu\",     n:\"o céu\",       d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"petalas\", n:\"as pétalas\",\n    d:\"M63 14 A13 13 0 1 1 37 14 A13 13 0 1 1 63 14 Z\"+\n      \"M44 28 A13 13 0 1 1 18 28 A13 13 0 1 1 44 28 Z\"+\n      \"M51 50 A13 13 0 1 1 25 50 A13 13 0 1 1 51 50 Z\"+\n      \"M75 50 A13 13 0 1 1 49 50 A13 13 0 1 1 75 50 Z\"+\n      \"M82 28 A13 13 0 1 1 56 28 A13 13 0 1 1 82 28 Z\"},\n   {k:\"caule\",   n:\"o caule e a folha\",\n    d:\"M44 55 L44 97 L56 97 L56 55 Z\"+\n      \"M56 70 C70 59 85 65 88 76 C77 87 60 85 56 74 Z\"},\n   {k:\"miolo\",   n:\"o miolinho\",   d:\"M62 34 A12 12 0 1 1 38 34 A12 12 0 1 1 62 34 Z\"}\n  ],\n  tracos:'<circle cx=\"45\" cy=\"31\" r=\"1.6\" fill=\"#2b2118\"/>'+\n         '<circle cx=\"55\" cy=\"31\" r=\"1.6\" fill=\"#2b2118\"/>'+\n         '<path d=\"M44 38 Q50 42 56 38\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<path d=\"M0 97 H100\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\"/>'}\n]",
+    "GALERIA": "[]",
+    "TINTAS": "[\n {c:\"#e2402c\", n:\"Vermelho\", voz:\"vermelho\"},\n {c:\"#f08a1e\", n:\"Laranja\",  voz:\"laranja\"},\n {c:\"#f5cf2b\", n:\"Amarelo\",  voz:\"amarelo\"},\n {c:\"#4aa845\", n:\"Verde\",    voz:\"verde\"},\n {c:\"#3a76c8\", n:\"Azul\",     voz:\"azul\"},\n {c:\"#8a55c7\", n:\"Roxo\",     voz:\"roxo\"},\n {c:\"#ea72a8\", n:\"Rosa\",     voz:\"rosa\"},\n {c:\"#8a5a2b\", n:\"Marrom\",   voz:\"marrom\"}\n]"
+   },
+   "gavetas": [
+    "DESENHOS",
+    "TINTAS",
+    "GALERIA"
+   ],
+   "regra": "primeiro vetor",
    "var": "DESENHOS"
   },
   "prever-observar": {
-   "exemplo": "[\n {sel:\"A MASSINHA\",\n  cena:\"massa\",\n  p:\"A balan&#231;a est&#225; <b>igual</b> dos dois lados. Se eu amassar a massinha e deixar bem CHATA, o que voc&#234; acha que acontece?\",\n  ops:[\"A balan&#231;a vai pender: a massinha fica mais leve\",\n       \"A balan&#231;a vai pender: a massinha fica mais pesada\",\n       \"A balan&#231;a continua IGUAL dos dois lados\"],\n  cert:2,\n  errada:\"Muita gente da sua idade pensa que a massinha chata fica mais <b>leve</b>, porque ela fica maior e mais fina. Vamos olhar.\",\n  botao:\"Amassar a massinha\",\n  viu:\"A balan&#231;a continuou IGUAL: a massinha mudou de forma, mas n&#227;o mudou de quantidade.\",\n  q:\"Por que a balan&#231;a n&#227;o mexeu?\",\n  qc:\"Mudou a FORMA, mas a massinha &#233; a mesma\",\n  qe:[\"Porque massinha chata n&#227;o pesa nada\",\n      \"Porque a balan&#231;a est&#225; presa\",\n      \"Porque tiramos um peda&#231;o da massinha\"],\n  d:[\"Olhe d",
+   "exemplo": "[\n {sel:\"A MASSINHA\",\n  cena:\"massa\",\n  p:\"A balan&#231;a est&#225; <b>igual</b> dos dois lados. Se eu amassar a massinha e deixar bem CHATA, o que voc&#234; acha que acontece?\",\n  ops:[\"A balan&#231;a vai pender: a massinha fica mais leve\",\n       \"A balan&#231;a vai pender: a massinha fica mais pesada\",\n       \"A balan&#231;a continua IGUAL dos dois lados\"],\n  cert:2,\n  errada:\"Muita gente da sua idade pensa que a massinha chata fica mais <b>leve</b>, porque ela fica maior e mais fina. Vamos olhar.\",\n  botao:\"Amassar a massinha\",\n  viu:\"A balan&#231;a continuou IGUAL: a massinha mudou de forma, mas n&#227;o mudou de quantidade.\",\n  q:\"Por que a balan&#231;a n&#227;o mexeu?\",\n  qc:\"Mudou a FORMA, mas a massinha &#233; a mesma\",\n  qe:[\"Porque massinha chata n&#227;o pesa nada\",\n      \"Porque a balan&#231;a est&#225; presa\",\n      \"Porque tiramos um peda&#231;o da massinha\"],\n  d:[\"Olhe de novo: tirei ou coloquei massinha em algum momento?\",\n     \"Nada saiu e nada entrou. S&#243; a forma mudou: de bola virou disco.\",\n     \"A resposta certa est&#225; acesa: mudou a forma, a massinha &#233; a mesma.\"]},\n {sel:\"OS DOIS COPOS\",\n  cena:\"copos\",\n  p:\"Toda a &#225;gua do copo largo vai para o copo alto e fino. Depois disso, o que voc&#234; acha da <b>quantidade</b> de &#225;gua?\",\n  ops:[\"No copo alto fica MAIS &#225;gua\",\n       \"No copo alto fica MENOS &#225;gua\",\n       \"&#201; a MESMA &#225;gua, s&#243; que em outro copo\"],\n  cert:2,\n  errada:\"Muita gente pensa que no copo alto fica <b>mais</b> &#225;gua, porque a &#225;gua sobe bem alto ali dentro. Vamos medir.\",\n  botao:\"Despejar no copo alto\",\n  viu:\"A &#225;gua subiu mais alto, mas s&#227;o os MESMOS 4 copinhos: nada foi tirado nem acrescentado.\",\n  q:\"Por que d&#225; 4 copinhos nos dois?\",\n  qc:\"O copo alto &#233; estreito: a mesma &#225;gua sobe mais\",\n  qe:[\"Porque a &#225;gua cresce quando sobe\",\n      \"Porque o copo alto &#233; mais forte\",\n      \"Porque uma parte da &#225;gua evaporou\"],\n  d:[\"Compare a LARGURA dos dois copos, n&#227;o a altura.\",\n     \"No copo estreito a mesma &#225;gua n&#227;o tem para onde se espalhar: ela sobe.\",\n     \"A resposta certa est&#225; acesa: o copo estreito faz a mesma &#225;gua subir mais.\"]}\n]",
+   "exemplos": {
+    "CASOS": "[\n {sel:\"A MASSINHA\",\n  cena:\"massa\",\n  p:\"A balan&#231;a est&#225; <b>igual</b> dos dois lados. Se eu amassar a massinha e deixar bem CHATA, o que voc&#234; acha que acontece?\",\n  ops:[\"A balan&#231;a vai pender: a massinha fica mais leve\",\n       \"A balan&#231;a vai pender: a massinha fica mais pesada\",\n       \"A balan&#231;a continua IGUAL dos dois lados\"],\n  cert:2,\n  errada:\"Muita gente da sua idade pensa que a massinha chata fica mais <b>leve</b>, porque ela fica maior e mais fina. Vamos olhar.\",\n  botao:\"Amassar a massinha\",\n  viu:\"A balan&#231;a continuou IGUAL: a massinha mudou de forma, mas n&#227;o mudou de quantidade.\",\n  q:\"Por que a balan&#231;a n&#227;o mexeu?\",\n  qc:\"Mudou a FORMA, mas a massinha &#233; a mesma\",\n  qe:[\"Porque massinha chata n&#227;o pesa nada\",\n      \"Porque a balan&#231;a est&#225; presa\",\n      \"Porque tiramos um peda&#231;o da massinha\"],\n  d:[\"Olhe de novo: tirei ou coloquei massinha em algum momento?\",\n     \"Nada saiu e nada entrou. S&#243; a forma mudou: de bola virou disco.\",\n     \"A resposta certa est&#225; acesa: mudou a forma, a massinha &#233; a mesma.\"]},\n {sel:\"OS DOIS COPOS\",\n  cena:\"copos\",\n  p:\"Toda a &#225;gua do copo largo vai para o copo alto e fino. Depois disso, o que voc&#234; acha da <b>quantidade</b> de &#225;gua?\",\n  ops:[\"No copo alto fica MAIS &#225;gua\",\n       \"No copo alto fica MENOS &#225;gua\",\n       \"&#201; a MESMA &#225;gua, s&#243; que em outro copo\"],\n  cert:2,\n  errada:\"Muita gente pensa que no copo alto fica <b>mais</b> &#225;gua, porque a &#225;gua sobe bem alto ali dentro. Vamos medir.\",\n  botao:\"Despejar no copo alto\",\n  viu:\"A &#225;gua subiu mais alto, mas s&#227;o os MESMOS 4 copinhos: nada foi tirado nem acrescentado.\",\n  q:\"Por que d&#225; 4 copinhos nos dois?\",\n  qc:\"O copo alto &#233; estreito: a mesma &#225;gua sobe mais\",\n  qe:[\"Porque a &#225;gua cresce quando sobe\",\n      \"Porque o copo alto &#233; mais forte\",\n      \"Porque uma parte da &#225;gua evaporou\"],\n  d:[\"Compare a LARGURA dos dois copos, n&#227;o a altura.\",\n     \"No copo estreito a mesma &#225;gua n&#227;o tem para onde se espalhar: ela sobe.\",\n     \"A resposta certa est&#225; acesa: o copo estreito faz a mesma &#225;gua subir mais.\"]}\n]",
+    "PENSEI": "[]"
+   },
+   "gavetas": [
+    "CASOS",
+    "PENSEI"
+   ],
+   "regra": "marca na peca",
    "var": "CASOS"
   },
   "quebra-cabeca": {
    "exemplo": "",
+   "exemplos": {},
+   "gavetas": [],
+   "regra": "nenhuma",
    "var": null
   },
   "quem-sou-eu": {
    "exemplo": "[\n {resp:\"PASSARINHO\",\n  pistas:[\"Eu tenho <b>penas</b> e um bico pequeno.\",\n          \"Eu fa&#231;o o meu <b>ninho</b> l&#225; em cima da &#225;rvore.\",\n          \"De manh&#227; bem cedo, eu <b>canto</b> na sua janela.\"],\n  outros:[\"GATO\",\"PEIXE\",\"TARTARUGA\"]},\n {resp:\"LIVRO\",\n  pistas:[\"Eu sou de <b>papel</b> e fico parado na estante.\",\n          \"Eu tenho muitas <b>p&#225;ginas</b> e uma capa dura.\",\n          \"Guardo uma <b>hist&#243;ria inteira</b>, do come&#231;o ao fim.\"],\n  outros:[\"CAIXA\",\"R&#201;GUA\",\"GARRAFA\"]},\n {resp:\"POLVO\",\n  pistas:[\"Eu moro no <b>fundo do mar</b>.\",\n          \"Eu tenho <b>oito bra&#231;os</b> compridos.\",\n          \"Quando me assusto, solto uma <b>tinta escura</b> e sumo.\"],\n  outros:[\"BALEIA\",\"CARANGUEJO\",\"TUBAR&#195;O\"]}\n]",
+   "exemplos": {
+    "MISTERIOS": "[\n {resp:\"PASSARINHO\",\n  pistas:[\"Eu tenho <b>penas</b> e um bico pequeno.\",\n          \"Eu fa&#231;o o meu <b>ninho</b> l&#225; em cima da &#225;rvore.\",\n          \"De manh&#227; bem cedo, eu <b>canto</b> na sua janela.\"],\n  outros:[\"GATO\",\"PEIXE\",\"TARTARUGA\"]},\n {resp:\"LIVRO\",\n  pistas:[\"Eu sou de <b>papel</b> e fico parado na estante.\",\n          \"Eu tenho muitas <b>p&#225;ginas</b> e uma capa dura.\",\n          \"Guardo uma <b>hist&#243;ria inteira</b>, do come&#231;o ao fim.\"],\n  outros:[\"CAIXA\",\"R&#201;GUA\",\"GARRAFA\"]},\n {resp:\"POLVO\",\n  pistas:[\"Eu moro no <b>fundo do mar</b>.\",\n          \"Eu tenho <b>oito bra&#231;os</b> compridos.\",\n          \"Quando me assusto, solto uma <b>tinta escura</b> e sumo.\"],\n  outros:[\"BALEIA\",\"CARANGUEJO\",\"TUBAR&#195;O\"]}\n]"
+   },
+   "gavetas": [
+    "MISTERIOS"
+   ],
+   "regra": "marca na peca",
    "var": "MISTERIOS"
   },
   "relampago": {
    "exemplo": "[\n {p:\"Que parte fica <b>embaixo da terra</b>?\", c:\"A RAIZ\", e:[\"A FLOR\",\"A FOLHA\"]},\n {p:\"Quem faz o alimento com a <b>luz do sol</b>?\", c:\"A FOLHA\", e:[\"A RAIZ\",\"A SEMENTE\"]},\n {p:\"O que a planta <b>bebe</b>?\", c:\"&#193;GUA\", e:[\"AREIA\",\"PEDRA\"]},\n {p:\"De onde nasce a planta?\", c:\"DA SEMENTE\", e:[\"DA PEDRA\",\"DO VENTO\"]},\n {p:\"Que parte &#233; <b>colorida e cheirosa</b>?\", c:\"A FLOR\", e:[\"A RAIZ\",\"O CAULE\"]},\n {p:\"Qual &#233; o caminho da &#225;gua at&#233; as folhas?\", c:\"O CAULE\", e:[\"A FLOR\",\"A TERRA\"]},\n {p:\"O que a planta precisa que vem do c&#233;u?\", c:\"A CHUVA\", e:[\"A NEVE\",\"A FUMA&#199;A\"]},\n {p:\"Onde a semente &#233; plantada?\", c:\"NA TERRA\", e:[\"NA PEDRA\",\"NO VIDRO\"]}\n]",
+   "exemplos": {
+    "RAIO": "[\n {p:\"Que parte fica <b>embaixo da terra</b>?\", c:\"A RAIZ\", e:[\"A FLOR\",\"A FOLHA\"]},\n {p:\"Quem faz o alimento com a <b>luz do sol</b>?\", c:\"A FOLHA\", e:[\"A RAIZ\",\"A SEMENTE\"]},\n {p:\"O que a planta <b>bebe</b>?\", c:\"&#193;GUA\", e:[\"AREIA\",\"PEDRA\"]},\n {p:\"De onde nasce a planta?\", c:\"DA SEMENTE\", e:[\"DA PEDRA\",\"DO VENTO\"]},\n {p:\"Que parte &#233; <b>colorida e cheirosa</b>?\", c:\"A FLOR\", e:[\"A RAIZ\",\"O CAULE\"]},\n {p:\"Qual &#233; o caminho da &#225;gua at&#233; as folhas?\", c:\"O CAULE\", e:[\"A FLOR\",\"A TERRA\"]},\n {p:\"O que a planta precisa que vem do c&#233;u?\", c:\"A CHUVA\", e:[\"A NEVE\",\"A FUMA&#199;A\"]},\n {p:\"Onde a semente &#233; plantada?\", c:\"NA TERRA\", e:[\"NA PEDRA\",\"NO VIDRO\"]}\n]"
+   },
+   "gavetas": [
+    "RAIO"
+   ],
+   "regra": "marca na peca",
    "var": "RAIO"
   },
   "relogio": {
    "exemplo": "[\n  {h:3, m:0,  ih:11, im:0, selo:\"HORA CHEIA\",   apelido:\"3 horas\"},\n  {h:6, m:30, ih:9,  im:0, selo:\"MEIA HORA\",    apelido:\"6 e meia\"},\n  {h:9, m:15, ih:2,  im:0, selo:\"DE 15 EM 15\",  apelido:\"9 e quinze\"}\n]",
+   "exemplos": {
+    "FORMAR": "[\n  {h:3, m:0,  ih:11, im:0, selo:\"HORA CHEIA\",   apelido:\"3 horas\"},\n  {h:6, m:30, ih:9,  im:0, selo:\"MEIA HORA\",    apelido:\"6 e meia\"},\n  {h:9, m:15, ih:2,  im:0, selo:\"DE 15 EM 15\",  apelido:\"9 e quinze\"}\n]",
+    "LER": "[\n  {h:8, m:0,  selo:\"QUE HORAS S&Atilde;O?\",\n   erradas:[\"doze horas\",\"quatro horas\",\"oito e meia\"]},\n  {h:4, m:30, selo:\"OLHE O PEQUENO\",\n   /* \"seis e vinte\" é o erro CLÁSSICO: a criança lê o ponteiro grande como se\n      fosse a hora. O distrator existe para esse engano aparecer e ser tratado\n      pelo andaime, não para enfeitar a lista. */\n   erradas:[\"seis e vinte\",\"quatro horas\",\"cinco e meia\"]},\n  {h:7, m:45, selo:\"E AGORA?\",\n   erradas:[\"nove e trinta e cinco\",\"oito e quarenta e cinco\",\"sete e quinze\"]}\n]",
+    "NOMEH": "[\"doze\",\"uma\",\"duas\",\"tr&ecirc;s\",\"quatro\",\"cinco\",\"seis\",\"sete\",\"oito\",\"nove\",\"dez\",\"onze\",\"doze\"]",
+    "NOMEM": "[\"\",\"cinco\",\"dez\",\"quinze\",\"vinte\",\"vinte e cinco\",\"trinta\",\"trinta e cinco\",\n           \"quarenta\",\"quarenta e cinco\",\"cinquenta\",\"cinquenta e cinco\"]",
+    "ROT": "[\"f\",\"l\",\"f\",\"l\",\"f\",\"l\"]"
+   },
+   "gavetas": [
+    "FORMAR",
+    "LER",
+    "ROT",
+    "NOMEH",
+    "NOMEM"
+   ],
+   "regra": "marca na peca",
    "var": "FORMAR"
   },
   "repartir": {
    "exemplo": "[\n  {un:8,  n:2, nome:\"a <b>metade</b>\",     selo:\"REPARTIR IGUAL\"},\n  {un:12, n:3, nome:\"<b>um ter&#231;o</b>\",     selo:\"REPARTIR IGUAL\"},\n  {un:12, n:4, nome:\"<b>um quarto</b>\",    selo:\"REPARTIR IGUAL\"}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Conte os pratos e corte a fita nesse mesmo tanto de partes.\",\n  \"Olhe o placar: ele diz quantas partes voc&#234; j&#225; tem.\",\n  \"Deixa comigo: eu ajeito o corte e voc&#234; reparte.\"\n]",
+    "RODADAS": "[\n  {un:8,  n:2, nome:\"a <b>metade</b>\",     selo:\"REPARTIR IGUAL\"},\n  {un:12, n:3, nome:\"<b>um ter&#231;o</b>\",     selo:\"REPARTIR IGUAL\"},\n  {un:12, n:4, nome:\"<b>um quarto</b>\",    selo:\"REPARTIR IGUAL\"}\n]"
+   },
+   "gavetas": [
+    "RODADAS",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "RODADAS"
   },
   "reta-numerica": {
    "exemplo": "[\n {selo:\"A RÉGUA DOS PASSOS\", min:0, max:10, alvo:7, tol:1, traco:1, num:[0,5,10],\n  ap1:[2,8], ap2:[1,3,4,6,9],\n  bal:\"Onde fica o <b>7</b>?\",\n  dica:\"Conte os tracinhos a partir do 0: 1, 2, 3...\"},\n {selo:\"A TRILHA DE 100\", min:0, max:100, alvo:60, tol:5, traco:10, num:[0,50,100],\n  ap1:[25,75], ap2:[10,20,30,40,70,80,90],\n  bal:\"Onde fica o <b>60</b>?\",\n  dica:\"O 50 &#233; o meio. O 60 fica um pouquinho depois do meio.\"},\n {selo:\"SÓ AS PONTAS\", min:0, max:100, alvo:25, tol:8, traco:0, num:[0,100],\n  ap1:[50], ap2:[20,40,60,80],\n  bal:\"Onde fica o <b>25</b>?\",\n  dica:\"Ache o meio (50). O 25 &#233; o meio do meio.\"}\n]",
+   "exemplos": {
+    "ERROS": "[]",
+    "RETAS": "[\n {selo:\"A RÉGUA DOS PASSOS\", min:0, max:10, alvo:7, tol:1, traco:1, num:[0,5,10],\n  ap1:[2,8], ap2:[1,3,4,6,9],\n  bal:\"Onde fica o <b>7</b>?\",\n  dica:\"Conte os tracinhos a partir do 0: 1, 2, 3...\"},\n {selo:\"A TRILHA DE 100\", min:0, max:100, alvo:60, tol:5, traco:10, num:[0,50,100],\n  ap1:[25,75], ap2:[10,20,30,40,70,80,90],\n  bal:\"Onde fica o <b>60</b>?\",\n  dica:\"O 50 &#233; o meio. O 60 fica um pouquinho depois do meio.\"},\n {selo:\"SÓ AS PONTAS\", min:0, max:100, alvo:25, tol:8, traco:0, num:[0,100],\n  ap1:[50], ap2:[20,40,60,80],\n  bal:\"Onde fica o <b>25</b>?\",\n  dica:\"Ache o meio (50). O 25 &#233; o meio do meio.\"}\n]"
+   },
+   "gavetas": [
+    "RETAS",
+    "ERROS"
+   ],
+   "regra": "marca na peca",
    "var": "RETAS"
   },
   "rotular": {
-   "exemplo": "[\n { selo:\"AS PLAQUINHAS DO JARDINEIRO\", cena:\"planta\",\n   enun:\"Ponha cada <b>plaquinha</b> na parte certa da planta.\",\n   fecho:\"A planta ficou toda com nome!\",\n   partes:[\n    {k:\"flor\",  n:\"FLOR\",  x:60,y:3, w:38,h:22, tk:[36,15,24],\n     d1:\"A flor &#233; a parte mais colorida da planta. Procure bem <b>em cima</b>.\",\n     d3:\"A <b>flor</b> &#233; a parte colorida, l&#225; no alto da planta.\"},\n    {k:\"folha\", n:\"FOLHA\", x:60,y:33,w:38,h:22, tk:[48,45,12],\n     d1:\"A folha &#233; larga e chata, e sai do <b>lado</b> do caule.\",\n     d3:\"A <b>folha</b> &#233; larga e sai do lado do caule.\"},\n    {k:\"caule\", n:\"CAULE\", x:60,y:56,w:38,h:22, tk:[30,62,30],\n     d1:\"O caule &#233; comprido e fica <b>no meio</b>, ligando tudo.\",\n     d3:\"O <b>caule</b> &#233; o corpo comprido que segura a planta em p&#233;.\"},\n    {k:\"raiz\",  n:\"RAIZ\",  x:60,y:79,w:38,h:20, tk:[36,86,24],\n     d1:\"A raiz mo",
+   "exemplo": "[\n { selo:\"AS PLAQUINHAS DO JARDINEIRO\", cena:\"planta\",\n   enun:\"Ponha cada <b>plaquinha</b> na parte certa da planta.\",\n   fecho:\"A planta ficou toda com nome!\",\n   partes:[\n    {k:\"flor\",  n:\"FLOR\",  x:60,y:3, w:38,h:22, tk:[36,15,24],\n     d1:\"A flor &#233; a parte mais colorida da planta. Procure bem <b>em cima</b>.\",\n     d3:\"A <b>flor</b> &#233; a parte colorida, l&#225; no alto da planta.\"},\n    {k:\"folha\", n:\"FOLHA\", x:60,y:33,w:38,h:22, tk:[48,45,12],\n     d1:\"A folha &#233; larga e chata, e sai do <b>lado</b> do caule.\",\n     d3:\"A <b>folha</b> &#233; larga e sai do lado do caule.\"},\n    {k:\"caule\", n:\"CAULE\", x:60,y:56,w:38,h:22, tk:[30,62,30],\n     d1:\"O caule &#233; comprido e fica <b>no meio</b>, ligando tudo.\",\n     d3:\"O <b>caule</b> &#233; o corpo comprido que segura a planta em p&#233;.\"},\n    {k:\"raiz\",  n:\"RAIZ\",  x:60,y:79,w:38,h:20, tk:[36,86,24],\n     d1:\"A raiz mora <b>dentro da terra</b>. Olhe para baixo.\",\n     d3:\"A <b>raiz</b> fica embaixo da terra e segura a planta.\"}\n   ]},\n { selo:\"O MAPA MUDO\", cena:\"mapa\",\n   enun:\"Este mapa perdeu os nomes. Ponha cada <b>plaquinha</b> no lugar dela.\",\n   fecho:\"Agora d&#225; para ler o mapa!\",\n   partes:[\n    {k:\"titulo\", n:\"T&#205;TULO\", x:16,y:4, w:54,h:16,\n     d1:\"O nome do mapa fica sempre <b>no alto</b>, na faixa de cima.\",\n     d3:\"O <b>t&#237;tulo</b> fica no alto e diz do que o mapa fala.\"},\n    {k:\"rosa\",   n:\"ROSA DOS VENTOS\", x:76,y:5, w:20,h:24,\n     d1:\"Ela parece uma <b>estrela</b> guardada num canto do mapa.\",\n     d3:\"A <b>rosa dos ventos</b> mostra onde fica o norte.\"},\n    {k:\"legenda\",n:\"LEGENDA\", x:4, y:60,w:30,h:34,\n     d1:\"&#201; a <b>caixinha com as cores</b> explicadas, num canto de baixo.\",\n     d3:\"A <b>legenda</b> explica o que cada cor do mapa quer dizer.\"},\n    {k:\"escala\", n:\"ESCALA\", x:52,y:76,w:42,h:16,\n     d1:\"Ela parece uma <b>r&#233;guazinha</b> deitada no p&#233; do mapa.\",\n     d3:\"A <b>escala</b> diz quanto vale, no mapa, uma dist&#226;ncia de verdade.\"}\n   ]}\n]",
+   "exemplos": {
+    "RODADAS": "[\n { selo:\"AS PLAQUINHAS DO JARDINEIRO\", cena:\"planta\",\n   enun:\"Ponha cada <b>plaquinha</b> na parte certa da planta.\",\n   fecho:\"A planta ficou toda com nome!\",\n   partes:[\n    {k:\"flor\",  n:\"FLOR\",  x:60,y:3, w:38,h:22, tk:[36,15,24],\n     d1:\"A flor &#233; a parte mais colorida da planta. Procure bem <b>em cima</b>.\",\n     d3:\"A <b>flor</b> &#233; a parte colorida, l&#225; no alto da planta.\"},\n    {k:\"folha\", n:\"FOLHA\", x:60,y:33,w:38,h:22, tk:[48,45,12],\n     d1:\"A folha &#233; larga e chata, e sai do <b>lado</b> do caule.\",\n     d3:\"A <b>folha</b> &#233; larga e sai do lado do caule.\"},\n    {k:\"caule\", n:\"CAULE\", x:60,y:56,w:38,h:22, tk:[30,62,30],\n     d1:\"O caule &#233; comprido e fica <b>no meio</b>, ligando tudo.\",\n     d3:\"O <b>caule</b> &#233; o corpo comprido que segura a planta em p&#233;.\"},\n    {k:\"raiz\",  n:\"RAIZ\",  x:60,y:79,w:38,h:20, tk:[36,86,24],\n     d1:\"A raiz mora <b>dentro da terra</b>. Olhe para baixo.\",\n     d3:\"A <b>raiz</b> fica embaixo da terra e segura a planta.\"}\n   ]},\n { selo:\"O MAPA MUDO\", cena:\"mapa\",\n   enun:\"Este mapa perdeu os nomes. Ponha cada <b>plaquinha</b> no lugar dela.\",\n   fecho:\"Agora d&#225; para ler o mapa!\",\n   partes:[\n    {k:\"titulo\", n:\"T&#205;TULO\", x:16,y:4, w:54,h:16,\n     d1:\"O nome do mapa fica sempre <b>no alto</b>, na faixa de cima.\",\n     d3:\"O <b>t&#237;tulo</b> fica no alto e diz do que o mapa fala.\"},\n    {k:\"rosa\",   n:\"ROSA DOS VENTOS\", x:76,y:5, w:20,h:24,\n     d1:\"Ela parece uma <b>estrela</b> guardada num canto do mapa.\",\n     d3:\"A <b>rosa dos ventos</b> mostra onde fica o norte.\"},\n    {k:\"legenda\",n:\"LEGENDA\", x:4, y:60,w:30,h:34,\n     d1:\"&#201; a <b>caixinha com as cores</b> explicadas, num canto de baixo.\",\n     d3:\"A <b>legenda</b> explica o que cada cor do mapa quer dizer.\"},\n    {k:\"escala\", n:\"ESCALA\", x:52,y:76,w:42,h:16,\n     d1:\"Ela parece uma <b>r&#233;guazinha</b> deitada no p&#233; do mapa.\",\n     d3:\"A <b>escala</b> diz quanto vale, no mapa, uma dist&#226;ncia de verdade.\"}\n   ]}\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "RODADAS"
   },
   "saltos-na-fita": {
    "exemplo": "[\n  {p:2, ate:12, dic:\"Um salto tem sempre <b>2</b> passinhos. Conte os risquinhos a partir de onde ele est&#225;.\"},\n  {p:5, ate:20, dic:\"Um salto tem sempre <b>5</b> passinhos. Conte de um em um at&#233; cinco.\"},\n  {p:3, ate:15, dic:\"Um salto tem sempre <b>3</b> passinhos. Conte: um, dois, tr&#234;s.\"}\n]",
+   "exemplos": {
+    "FITAS": "[\n  {p:2, ate:12, dic:\"Um salto tem sempre <b>2</b> passinhos. Conte os risquinhos a partir de onde ele est&#225;.\"},\n  {p:5, ate:20, dic:\"Um salto tem sempre <b>5</b> passinhos. Conte de um em um at&#233; cinco.\"},\n  {p:3, ate:15, dic:\"Um salto tem sempre <b>3</b> passinhos. Conte: um, dois, tr&#234;s.\"}\n]"
+   },
+   "gavetas": [
+    "FITAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "FITAS"
   },
   "sete-erros": {
    "exemplo": "[\n {t:\"sol\"},              {t:\"nuvem\"},          {t:\"passaro\"},\n {t:\"arvore\", n:3},      {t:\"casa\", n:2},      {t:\"arvore\", n:2},\n {t:\"flor\"},             {t:\"bola\", esc:1},    {t:\"flor\"}\n]",
+   "exemplos": {
+    "CENA_A": "[\n {t:\"sol\"},              {t:\"nuvem\"},          {t:\"passaro\"},\n {t:\"arvore\", n:3},      {t:\"casa\", n:2},      {t:\"arvore\", n:2},\n {t:\"flor\"},             {t:\"bola\", esc:1},    {t:\"flor\"}\n]",
+    "COL": "[\"da esquerda\",\"do meio\",\"da direita\"]",
+    "LIN": "[\"de cima\",\"do meio\",\"de baixo\"]",
+    "MUDA": "[\n {sp:2, acao:\"sumir\"},\n {sp:3, acao:\"n\",   val:2},\n {sp:4, acao:\"n\",   val:1},\n {sp:7, acao:\"esc\", val:.5},\n {sp:8, acao:\"t\",   val:\"pedra\"}\n]",
+    "POSFRU": "[[14,16],[54,14],[34,40],[62,42]]",
+    "POSJAN": "[[22,46],[60,46]]"
+   },
+   "gavetas": [
+    "CENA_A",
+    "MUDA",
+    "LIN",
+    "COL",
+    "POSFRU",
+    "POSJAN"
+   ],
+   "regra": "primeiro vetor",
    "var": "CENA_A"
   },
   "simetria": {
    "exemplo": "[\n { eixo:\"v\", figura:\"árvore\",\n   /* metade da esquerda: [linha, coluna] */\n   modelo:[[0,2],[1,1],[1,2],[2,0],[2,1],[2,2],[3,2]],\n   fala:\"O espelho está <b>EM PÉ</b>, no meio da grade. Pinte o lado direito igualzinho ao esquerdo.\" },\n { eixo:\"h\", figura:\"laço\",\n   /* metade de cima */\n   modelo:[[0,1],[0,2],[0,3],[0,4],[1,2],[1,3]],\n   fala:\"Agora o espelho está <b>DEITADO</b>. Pinte a parte de baixo igualzinha à de cima.\" }\n]",
+   "exemplos": {
+    "RODADAS": "[\n { eixo:\"v\", figura:\"árvore\",\n   /* metade da esquerda: [linha, coluna] */\n   modelo:[[0,2],[1,1],[1,2],[2,0],[2,1],[2,2],[3,2]],\n   fala:\"O espelho está <b>EM PÉ</b>, no meio da grade. Pinte o lado direito igualzinho ao esquerdo.\" },\n { eixo:\"h\", figura:\"laço\",\n   /* metade de cima */\n   modelo:[[0,1],[0,2],[0,3],[0,4],[1,2],[1,3]],\n   fala:\"Agora o espelho está <b>DEITADO</b>. Pinte a parte de baixo igualzinha à de cima.\" }\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
+   "regra": "marca na peca",
    "var": "RODADAS"
   },
   "simulador": {
    "exemplo": "[]",
+   "exemplos": {
+    "DICAS": "[\n  \"Mexa a chuva <b>devagar</b>, de um em um, e olhe a &#225;gua chegando perto da ponte.\",\n  \"Quando a &#225;gua encosta, o aviso l&#225; embaixo muda e a ponte fica <b>molhada</b>. Em que n&#250;mero isso acontece?\",\n  \"&#201; esta! Toque nela que eu sigo com voc&#234;.\"\n]"
+   },
+   "gavetas": [
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "gotas"
   },
   "sombra": {
    "exemplo": "[\n  {k:\"arvore\",  n:\"&#193;RVORE\",  p:[\"acopa\",\"atron\"]},\n  {k:\"casa\",    n:\"CASA\",         p:[\"ctelh\",\"cpar\"]},\n  {k:\"sorvete\", n:\"SORVETE\",      p:[\"sbola\",\"scasq\"]},\n  {k:\"peixe\",   n:\"PEIXE\",        p:[\"pcorp\",\"pcaud\"]}\n]",
+   "exemplos": {
+    "DICAS": "[\n  \"Olhe o <b>contorno</b> da sombra: o que ela tem em cima e o que ela tem embaixo?\",\n  \"Compare o tamanho: a sombra da &#225;rvore &#233; redonda em cima; a da casa tem <b>bico</b>.\",\n  \"&#201; esta! A sombra certa est&#225; com a borda amarela. Toque nela.\"\n]",
+    "FORMAS": "[\n  {k:\"arvore\",  n:\"&#193;RVORE\",  p:[\"acopa\",\"atron\"]},\n  {k:\"casa\",    n:\"CASA\",         p:[\"ctelh\",\"cpar\"]},\n  {k:\"sorvete\", n:\"SORVETE\",      p:[\"sbola\",\"scasq\"]},\n  {k:\"peixe\",   n:\"PEIXE\",        p:[\"pcorp\",\"pcaud\"]}\n]"
+   },
+   "gavetas": [
+    "FORMAS",
+    "DICAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "FORMAS"
   },
   "tabela": {
    "exemplo": "[\"Bia\",\"Caio\",\"Dani\"]",
+   "exemplos": {
+    "DADOS": "[[3,5,2],\n           [4,1,5],\n           [2,4,6]]",
+    "PERG": "[\n {li:0,co:1,txt:\"Quantos livros a <b>Bia</b> leu na <b>QUA</b>?\",\n  dic:\"Ache primeiro a linha da <b>Bia</b>. Depois desca pela coluna <b>QUA</b>.\",\n  fim:\"A Bia leu <b>5</b> na quarta.\"},\n {li:1,co:2,txt:\"Em que dia o <b>Caio</b> leu <b>5</b> livros?\",\n  dic:\"Ande pela linha do <b>Caio</b> at&#233; achar o <b>5</b>. Depois olhe a etiqueta de cima.\",\n  fim:\"Foi na <b>SEX</b> que o Caio leu 5.\"},\n {li:0,co:2,txt:\"Quem leu <b>2</b> livros na <b>SEX</b>?\",\n  dic:\"Desca pela coluna <b>SEX</b> at&#233; achar o <b>2</b>. Depois olhe a etiqueta da esquerda.\",\n  fim:\"Quem leu 2 na sexta foi a <b>Bia</b>.\"}\n]",
+    "QUANDO": "[\"SEG\",\"QUA\",\"SEX\"]",
+    "QUEM": "[\"Bia\",\"Caio\",\"Dani\"]"
+   },
+   "gavetas": [
+    "QUEM",
+    "QUANDO",
+    "DADOS",
+    "PERG"
+   ],
+   "regra": "primeiro vetor",
    "var": "QUEM"
   },
   "tangram": {
    "exemplo": "[\n {k:\"ponta\",forma:\"tri\",    ang:0,          x:72, y:0,  s:76, nome:\"a ponta lá em cima\"},\n {k:\"corpo\",forma:\"quad\",   ang:0, livre:1, x:68, y:76, s:84, nome:\"o corpo do meio\"},\n {k:\"asaE\", forma:\"trireto\",ang:0,          x:4,  y:96, s:64, nome:\"a asa da esquerda\"},\n {k:\"asaD\", forma:\"trireto\",ang:180,        x:152,y:96, s:64, nome:\"a asa da direita\"}\n]",
+   "exemplos": {
+    "NOMEF": "{tri:\"triângulo de ponta\",quad:\"quadrado\",trireto:\"meio-quadrado\"}",
+    "PECAS": "[\n {id:\"f1\",forma:\"tri\",    ang:180,cor:\"#ff9f43\"},\n {id:\"f2\",forma:\"quad\",   ang:0,  cor:\"#4dabf7\"},\n {id:\"f3\",forma:\"trireto\",ang:90, cor:\"#ffd54a\"},\n {id:\"f4\",forma:\"trireto\",ang:90, cor:\"#a0e57c\"}\n]",
+    "VAGAS": "[\n {k:\"ponta\",forma:\"tri\",    ang:0,          x:72, y:0,  s:76, nome:\"a ponta lá em cima\"},\n {k:\"corpo\",forma:\"quad\",   ang:0, livre:1, x:68, y:76, s:84, nome:\"o corpo do meio\"},\n {k:\"asaE\", forma:\"trireto\",ang:0,          x:4,  y:96, s:64, nome:\"a asa da esquerda\"},\n {k:\"asaD\", forma:\"trireto\",ang:180,        x:152,y:96, s:64, nome:\"a asa da direita\"}\n]"
+   },
+   "gavetas": [
+    "VAGAS",
+    "PECAS",
+    "NOMEF"
+   ],
+   "regra": "marca na peca",
    "var": "VAGAS"
   },
   "teia-alimentar": {
    "exemplo": "[\n  {k:\"c0\", t:\"O GAFANHOTO\", s:\"Come folhas e capim\"},\n  {k:\"c1\", t:\"O SAPO\",      s:\"Come insetos que pulam\"},\n  {k:\"c2\", t:\"A COBRA\",     s:\"Come sapos perto da &#225;gua\"},\n  {k:\"c3\", t:\"O GAVI&#195;O\",   s:\"Pega cobras l&#225; do alto\"}\n]",
+   "exemplos": {
+    "COME": "[\n  {k:\"c0\", t:\"O GAFANHOTO\", s:\"Come folhas e capim\"},\n  {k:\"c1\", t:\"O SAPO\",      s:\"Come insetos que pulam\"},\n  {k:\"c2\", t:\"A COBRA\",     s:\"Come sapos perto da &#225;gua\"},\n  {k:\"c3\", t:\"O GAVI&#195;O\",   s:\"Pega cobras l&#225; do alto\"}\n]",
+    "DICAS": "[\n  \"Pense no tamanho: bicho grande come bicho menor.\",\n  \"O gafanhoto come planta. O sapo come inseto. A cobra pega o sapo. O gavi&#227;o v&#234; tudo do alto.\",\n  \"A resposta certa est&#225; com a borda amarela do outro lado. Toque nela.\"\n]",
+    "ESP": "[\n  {k:\"capim\",  n:\"O CAPIM\"},\n  {k:\"gafa\",   n:\"O GAFANHOTO\"},\n  {k:\"sapo\",   n:\"O SAPO\"},\n  {k:\"cobra\",  n:\"A COBRA\"},\n  {k:\"gaviao\", n:\"O GAVI&#195;O\"}\n]",
+    "FEITOS": "[]",
+    "INICIAL": "{capim:3, gafa:2, sapo:2, cobra:2, gaviao:2}",
+    "LINHAS": "{}",
+    "NIV": "{}",
+    "PALAVRA": "[\"SUMIU\",\"POUCOS\",\"M&#201;DIO\",\"MUITOS\"]",
+    "RODADAS": "[\n  {tira:\"sapo\", nome:\"O SAPO\",\n   passos:[[\"gafa\",3,\"SUBIU\"],[\"capim\",1,\"CAIU\"],[\"cobra\",1,\"CAIU\"],[\"gaviao\",1,\"CAIU\"]],\n   p:\"Sem o sapo, o que aconteceu com os <b>gafanhotos</b>?\",\n   c:\"Ficaram MAIS: ningu&#233;m come eles\",\n   e:[\"Ficaram MENOS\",\"Sumiram de uma vez\",\"Ficou tudo igual\"],\n   d:[\"Olhe a barra do gafanhoto: ela subiu ou desceu?\",\n      \"O sapo era quem comia gafanhoto. Sem ele, sobrou gafanhoto solto no campo.\",\n      \"A resposta certa est&#225; acesa: os gafanhotos ficaram MAIS.\"]},\n  {tira:\"capim\", nome:\"O CAPIM\",\n   passos:[[\"gafa\",0,\"CAIU\"],[\"sapo\",1,\"CAIU\"],[\"cobra\",1,\"CAIU\"],[\"gaviao\",1,\"CAIU\"]],\n   p:\"Sem o capim, <b>quem sentiu falta primeiro</b>?\",\n   c:\"O gafanhoto, que come capim\",\n   e:[\"O gavi&#227;o, que voa alto\",\"A cobra, que fica na &#225;gua\",\"Ningu&#233;m sentiu falta\"],\n   d:[\"Procure quem estava comendo o capim.\",\n      \"A planta &#233; o come&#231;o da teia: quem come planta sente primeiro.\",\n      \"A resposta certa est&#225; acesa: o gafanhoto come capim.\"]}\n]"
+   },
+   "gavetas": [
+    "COME",
+    "DICAS",
+    "ESP",
+    "INICIAL",
+    "PALAVRA",
+    "RODADAS",
+    "FEITOS",
+    "NIV",
+    "LINHAS"
+   ],
+   "regra": "marca na peca",
    "var": "COME"
   },
   "termometro": {
-   "exemplo": "[\n {ped:\"O ch&#225; est&#225; fervendo. Deixe ele <b>MORNO</b>.\",\n  coisa:\"CH&#193;\", alvo:1,\n  paradas:[{r:\"GELADO\",  h:12,c:\"#7ab7ff\",e:.85},\n           {r:\"MORNO\",   h:38,c:\"#ffd54a\",e:.95},\n           {r:\"QUENTE\",  h:66,c:\"#ef9a3a\",e:1.05},\n           {r:\"FERVENDO\",h:94,c:\"#e0503a\",e:1.15}],\n  d1:\"Leia o r&#243;tulo embaixo do controle antes de confirmar.\",\n  d2:\"MORNO fica <b>entre</b> gelado e quente.\"},\n {ped:\"A horta pede <b>BASTANTE</b> &#225;gua &#8212; nem pouca, nem demais.\",\n  coisa:\"&#193;GUA\", alvo:2,\n  paradas:[{r:\"NADA\",    h:6, c:\"#8fa3b8\",e:.6},\n           {r:\"POUCO\",   h:34,c:\"#7ab7ff\",e:.85},\n           {r:\"BASTANTE\",h:68,c:\"#3c9ae0\",e:1.1},\n           {r:\"MUITO\",   h:96,c:\"#1f5fa8\",e:1.3}],\n  d1:\"BASTANTE &#233; mais que pouco, mas ainda n&#227;o &#233; o m&#225;ximo.\",\n  d2:\"Conte as paradas: nada, pouco, <b>bastante</b>, muito.\"},\n {ped:\"Encha o bal&#227;o at&#233",
+   "exemplo": "[\n {ped:\"O ch&#225; est&#225; fervendo. Deixe ele <b>MORNO</b>.\",\n  coisa:\"CH&#193;\", alvo:1,\n  paradas:[{r:\"GELADO\",  h:12,c:\"#7ab7ff\",e:.85},\n           {r:\"MORNO\",   h:38,c:\"#ffd54a\",e:.95},\n           {r:\"QUENTE\",  h:66,c:\"#ef9a3a\",e:1.05},\n           {r:\"FERVENDO\",h:94,c:\"#e0503a\",e:1.15}],\n  d1:\"Leia o r&#243;tulo embaixo do controle antes de confirmar.\",\n  d2:\"MORNO fica <b>entre</b> gelado e quente.\"},\n {ped:\"A horta pede <b>BASTANTE</b> &#225;gua &#8212; nem pouca, nem demais.\",\n  coisa:\"&#193;GUA\", alvo:2,\n  paradas:[{r:\"NADA\",    h:6, c:\"#8fa3b8\",e:.6},\n           {r:\"POUCO\",   h:34,c:\"#7ab7ff\",e:.85},\n           {r:\"BASTANTE\",h:68,c:\"#3c9ae0\",e:1.1},\n           {r:\"MUITO\",   h:96,c:\"#1f5fa8\",e:1.3}],\n  d1:\"BASTANTE &#233; mais que pouco, mas ainda n&#227;o &#233; o m&#225;ximo.\",\n  d2:\"Conte as paradas: nada, pouco, <b>bastante</b>, muito.\"},\n {ped:\"Encha o bal&#227;o at&#233; ficar <b>GRANDE</b> (n&#227;o enorme).\",\n  coisa:\"BAL&#195;O\", alvo:2,\n  paradas:[{r:\"PEQUENO\",h:18,c:\"#c9a8e0\",e:.55},\n           {r:\"NORMAL\", h:44,c:\"#b07ae0\",e:.85},\n           {r:\"GRANDE\", h:72,c:\"#8f4ad0\",e:1.15},\n           {r:\"ENORME\", h:98,c:\"#6a2ab0\",e:1.4}],\n  d1:\"Olhe o tamanho E o r&#243;tulo: os dois contam a mesma coisa.\",\n  d2:\"Depois de GRANDE ainda tem ENORME: n&#227;o &#233; a &#250;ltima parada.\"}\n]",
+   "exemplos": {
+    "ESCALAS": "[\n {ped:\"O ch&#225; est&#225; fervendo. Deixe ele <b>MORNO</b>.\",\n  coisa:\"CH&#193;\", alvo:1,\n  paradas:[{r:\"GELADO\",  h:12,c:\"#7ab7ff\",e:.85},\n           {r:\"MORNO\",   h:38,c:\"#ffd54a\",e:.95},\n           {r:\"QUENTE\",  h:66,c:\"#ef9a3a\",e:1.05},\n           {r:\"FERVENDO\",h:94,c:\"#e0503a\",e:1.15}],\n  d1:\"Leia o r&#243;tulo embaixo do controle antes de confirmar.\",\n  d2:\"MORNO fica <b>entre</b> gelado e quente.\"},\n {ped:\"A horta pede <b>BASTANTE</b> &#225;gua &#8212; nem pouca, nem demais.\",\n  coisa:\"&#193;GUA\", alvo:2,\n  paradas:[{r:\"NADA\",    h:6, c:\"#8fa3b8\",e:.6},\n           {r:\"POUCO\",   h:34,c:\"#7ab7ff\",e:.85},\n           {r:\"BASTANTE\",h:68,c:\"#3c9ae0\",e:1.1},\n           {r:\"MUITO\",   h:96,c:\"#1f5fa8\",e:1.3}],\n  d1:\"BASTANTE &#233; mais que pouco, mas ainda n&#227;o &#233; o m&#225;ximo.\",\n  d2:\"Conte as paradas: nada, pouco, <b>bastante</b>, muito.\"},\n {ped:\"Encha o bal&#227;o at&#233; ficar <b>GRANDE</b> (n&#227;o enorme).\",\n  coisa:\"BAL&#195;O\", alvo:2,\n  paradas:[{r:\"PEQUENO\",h:18,c:\"#c9a8e0\",e:.55},\n           {r:\"NORMAL\", h:44,c:\"#b07ae0\",e:.85},\n           {r:\"GRANDE\", h:72,c:\"#8f4ad0\",e:1.15},\n           {r:\"ENORME\", h:98,c:\"#6a2ab0\",e:1.4}],\n  d1:\"Olhe o tamanho E o r&#243;tulo: os dois contam a mesma coisa.\",\n  d2:\"Depois de GRANDE ainda tem ENORME: n&#227;o &#233; a &#250;ltima parada.\"}\n]"
+   },
+   "gavetas": [
+    "ESCALAS"
+   ],
+   "regra": "marca na peca",
    "var": "ESCALAS"
   },
   "tracar-caminho": {
-   "exemplo": "[\n {selo:\"A VALETA DA HORTA\", liq:\"agua\",\n  enun:\"Cave a valeta com o dedo, da <b>caixa d'&#225;gua</b> at&#233; a <b>horta</b>. A &#225;gua corre atr&#225;s do seu dedo.\",\n  ini:\"CAIXA\", fim:\"HORTA\", bloco:\"pedra\", nbloco:\"pedra\",\n  hint:\"Passe o dedo casa por casa (ou toque uma de cada vez). Para voltar, toque na casa de tr&#225;s.\",\n  msg:\"A &#225;gua chegou! A horta bebeu e as mudas cresceram.\",\n  mapa:[\"I.#..\",\n        \"..#..\",\n        \"#...#\",\n        \"..#..\",\n        \"..#.F\"]},\n {selo:\"O FIO DA LUZ\", liq:\"luz\",\n  enun:\"Agora leve o <b>fio</b> da tomada at&#233; a <b>l&#226;mpada</b>. Onde tem &#225;rvore o fio n&#227;o passa.\",\n  ini:\"TOMADA\", fim:\"L&#194;MPADA\", bloco:\"arvore\", nbloco:\"&#225;rvore\",\n  hint:\"O fio anda de casa em casa, sem pular. Para voltar, toque na casa de tr&#225;s.\",\n  msg:\"A luz acendeu! O fio fechou o caminho inteiro.\",\n  mapa:[\"I..#.\",\n        \"##.#.\",\n   ",
+   "exemplo": "[\n {selo:\"A VALETA DA HORTA\", liq:\"agua\",\n  enun:\"Cave a valeta com o dedo, da <b>caixa d'&#225;gua</b> at&#233; a <b>horta</b>. A &#225;gua corre atr&#225;s do seu dedo.\",\n  ini:\"CAIXA\", fim:\"HORTA\", bloco:\"pedra\", nbloco:\"pedra\",\n  hint:\"Passe o dedo casa por casa (ou toque uma de cada vez). Para voltar, toque na casa de tr&#225;s.\",\n  msg:\"A &#225;gua chegou! A horta bebeu e as mudas cresceram.\",\n  mapa:[\"I.#..\",\n        \"..#..\",\n        \"#...#\",\n        \"..#..\",\n        \"..#.F\"]},\n {selo:\"O FIO DA LUZ\", liq:\"luz\",\n  enun:\"Agora leve o <b>fio</b> da tomada at&#233; a <b>l&#226;mpada</b>. Onde tem &#225;rvore o fio n&#227;o passa.\",\n  ini:\"TOMADA\", fim:\"L&#194;MPADA\", bloco:\"arvore\", nbloco:\"&#225;rvore\",\n  hint:\"O fio anda de casa em casa, sem pular. Para voltar, toque na casa de tr&#225;s.\",\n  msg:\"A luz acendeu! O fio fechou o caminho inteiro.\",\n  mapa:[\"I..#.\",\n        \"##.#.\",\n        \".....\",\n        \".###.\",\n        \"....F\"]}\n]",
+   "exemplos": {
+    "RODADAS": "[\n {selo:\"A VALETA DA HORTA\", liq:\"agua\",\n  enun:\"Cave a valeta com o dedo, da <b>caixa d'&#225;gua</b> at&#233; a <b>horta</b>. A &#225;gua corre atr&#225;s do seu dedo.\",\n  ini:\"CAIXA\", fim:\"HORTA\", bloco:\"pedra\", nbloco:\"pedra\",\n  hint:\"Passe o dedo casa por casa (ou toque uma de cada vez). Para voltar, toque na casa de tr&#225;s.\",\n  msg:\"A &#225;gua chegou! A horta bebeu e as mudas cresceram.\",\n  mapa:[\"I.#..\",\n        \"..#..\",\n        \"#...#\",\n        \"..#..\",\n        \"..#.F\"]},\n {selo:\"O FIO DA LUZ\", liq:\"luz\",\n  enun:\"Agora leve o <b>fio</b> da tomada at&#233; a <b>l&#226;mpada</b>. Onde tem &#225;rvore o fio n&#227;o passa.\",\n  ini:\"TOMADA\", fim:\"L&#194;MPADA\", bloco:\"arvore\", nbloco:\"&#225;rvore\",\n  hint:\"O fio anda de casa em casa, sem pular. Para voltar, toque na casa de tr&#225;s.\",\n  msg:\"A luz acendeu! O fio fechou o caminho inteiro.\",\n  mapa:[\"I..#.\",\n        \"##.#.\",\n        \".....\",\n        \".###.\",\n        \"....F\"]}\n]"
+   },
+   "gavetas": [
+    "RODADAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "RODADAS"
   },
   "tracar-letra": {
-   "exemplo": "[\n {selo:\"A LETRA L\", letra:\"L\", voz:\"éle\", palavra:\"LUA\",\n  enun:\"Comece na bolinha <b>1</b>, que est&#225; piscando, e siga as setinhas.\",\n  hint:\"Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o tra&#231;o espera \"+\n       \"voc&#234; no lugar onde parou.\",\n  msg:\"Voc&#234; escreveu o <b>L</b>! L de LUA.\",\n  tracos:[{pts:[[32,12],[32,46],[32,80],[59,80],[86,80]]}]},\n\n {selo:\"A LETRA C\", letra:\"C\", voz:\"cê\", palavra:\"CASA\",\n  enun:\"Agora uma letra <b>curva</b>. Comece em cima, na bolinha <b>1</b>, e \"+\n       \"d&#234; a volta.\",\n  hint:\"A curva do C vai para tr&#225;s primeiro e depois desce. Siga as setinhas devagar.\",\n  msg:\"Voc&#234; escreveu o <b>C</b>! C de CASA.\",\n  tracos:[{pts:[[75,22],[40,16],[16,50],[40,84],[75,78]]}]},\n\n {selo:\"A LETRA T\", letra:\"T\", voz:\"tê\", palavra:\"TATU\",\n  enun:\"Esta tem <b>dois tra&#231;os</b>: fa&#231;a o <b>1</b>, levante o dedo e \"+\n       ",
+   "exemplo": "[\n {selo:\"A LETRA L\", letra:\"L\", voz:\"éle\", palavra:\"LUA\",\n  enun:\"Comece na bolinha <b>1</b>, que est&#225; piscando, e siga as setinhas.\",\n  hint:\"Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o tra&#231;o espera \"+\n       \"voc&#234; no lugar onde parou.\",\n  msg:\"Voc&#234; escreveu o <b>L</b>! L de LUA.\",\n  tracos:[{pts:[[32,12],[32,46],[32,80],[59,80],[86,80]]}]},\n\n {selo:\"A LETRA C\", letra:\"C\", voz:\"cê\", palavra:\"CASA\",\n  enun:\"Agora uma letra <b>curva</b>. Comece em cima, na bolinha <b>1</b>, e \"+\n       \"d&#234; a volta.\",\n  hint:\"A curva do C vai para tr&#225;s primeiro e depois desce. Siga as setinhas devagar.\",\n  msg:\"Voc&#234; escreveu o <b>C</b>! C de CASA.\",\n  tracos:[{pts:[[75,22],[40,16],[16,50],[40,84],[75,78]]}]},\n\n {selo:\"A LETRA T\", letra:\"T\", voz:\"tê\", palavra:\"TATU\",\n  enun:\"Esta tem <b>dois tra&#231;os</b>: fa&#231;a o <b>1</b>, levante o dedo e \"+\n       \"comece o <b>2</b>.\",\n  hint:\"Primeiro o chapeuzinho, da esquerda para a direita. Depois o pauzinho, de \"+\n       \"cima para baixo.\",\n  msg:\"Voc&#234; escreveu o <b>T</b>! T de TATU.\",\n  tracos:[{pts:[[14,18],[50,18],[86,18]]},\n          {pts:[[50,18],[50,52],[50,86]]}]}\n]",
+   "exemplos": {
+    "LETRAS": "[\n {selo:\"A LETRA L\", letra:\"L\", voz:\"éle\", palavra:\"LUA\",\n  enun:\"Comece na bolinha <b>1</b>, que est&#225; piscando, e siga as setinhas.\",\n  hint:\"Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o tra&#231;o espera \"+\n       \"voc&#234; no lugar onde parou.\",\n  msg:\"Voc&#234; escreveu o <b>L</b>! L de LUA.\",\n  tracos:[{pts:[[32,12],[32,46],[32,80],[59,80],[86,80]]}]},\n\n {selo:\"A LETRA C\", letra:\"C\", voz:\"cê\", palavra:\"CASA\",\n  enun:\"Agora uma letra <b>curva</b>. Comece em cima, na bolinha <b>1</b>, e \"+\n       \"d&#234; a volta.\",\n  hint:\"A curva do C vai para tr&#225;s primeiro e depois desce. Siga as setinhas devagar.\",\n  msg:\"Voc&#234; escreveu o <b>C</b>! C de CASA.\",\n  tracos:[{pts:[[75,22],[40,16],[16,50],[40,84],[75,78]]}]},\n\n {selo:\"A LETRA T\", letra:\"T\", voz:\"tê\", palavra:\"TATU\",\n  enun:\"Esta tem <b>dois tra&#231;os</b>: fa&#231;a o <b>1</b>, levante o dedo e \"+\n       \"comece o <b>2</b>.\",\n  hint:\"Primeiro o chapeuzinho, da esquerda para a direita. Depois o pauzinho, de \"+\n       \"cima para baixo.\",\n  msg:\"Voc&#234; escreveu o <b>T</b>! T de TATU.\",\n  tracos:[{pts:[[14,18],[50,18],[86,18]]},\n          {pts:[[50,18],[50,52],[50,86]]}]}\n]"
+   },
+   "gavetas": [
+    "LETRAS"
+   ],
+   "regra": "primeiro vetor",
    "var": "LETRAS"
   },
   "trilha": {
-   "exemplo": "[\n  {q:\"Quantos pontinhos tem aqui?\",\n   apoio:{tipo:\"pts\",n:4}, mostrar:1,\n   certa:\"4\", erradas:[\"3\",\"5\",\"6\"],\n   dica:\"Toque em cada pontinho enquanto conta: um, dois, tr&ecirc;s...\",\n   dica2:\"Acendi os pontinhos. Toque neles um a um: 1, 2, 3... o <b>&uacute;ltimo</b> n&uacute;mero que voc&ecirc; falar &eacute; a resposta.\",\n   porque:\"S&atilde;o <b>4</b> pontinhos: contando um por um, o &uacute;ltimo n&uacute;mero que voc&ecirc; fala &eacute; quantos tem.\"},\n  {q:\"Qual n&uacute;mero vem <b>depois</b> do 5?\",\n   apoio:{tipo:\"reta\",de:1,ate:8,marca:[5]}, mostrar:1,\n   certa:\"6\", erradas:[\"4\",\"7\",\"5\"],\n   dica:\"Ache o 5 na fita e d&ecirc; <b>um</b> passo para a direita.\",\n   dica2:\"Ponha o dedo no <b>5</b> aceso e escorregue <b>uma</b> casinha para a direita. Que n&uacute;mero est&aacute; ali?\",\n   porque:\"Depois do <b>5</b> vem o <b>6</b>: um passo para a direita na fita.\"},\n  {q:\"Qua",
+   "exemplo": "[\n  {q:\"Quantos pontinhos tem aqui?\",\n   apoio:{tipo:\"pts\",n:4}, mostrar:1,\n   certa:\"4\", erradas:[\"3\",\"5\",\"6\"],\n   dica:\"Toque em cada pontinho enquanto conta: um, dois, tr&ecirc;s...\",\n   dica2:\"Acendi os pontinhos. Toque neles um a um: 1, 2, 3... o <b>&uacute;ltimo</b> n&uacute;mero que voc&ecirc; falar &eacute; a resposta.\",\n   porque:\"S&atilde;o <b>4</b> pontinhos: contando um por um, o &uacute;ltimo n&uacute;mero que voc&ecirc; fala &eacute; quantos tem.\"},\n  {q:\"Qual n&uacute;mero vem <b>depois</b> do 5?\",\n   apoio:{tipo:\"reta\",de:1,ate:8,marca:[5]}, mostrar:1,\n   certa:\"6\", erradas:[\"4\",\"7\",\"5\"],\n   dica:\"Ache o 5 na fita e d&ecirc; <b>um</b> passo para a direita.\",\n   dica2:\"Ponha o dedo no <b>5</b> aceso e escorregue <b>uma</b> casinha para a direita. Que n&uacute;mero est&aacute; ali?\",\n   porque:\"Depois do <b>5</b> vem o <b>6</b>: um passo para a direita na fita.\"},\n  {q:\"Quantos faltam para chegar no 10?\",\n   apoio:{tipo:\"dez\",n:7}, mostrar:1,\n   certa:\"3\", erradas:[\"2\",\"4\",\"17\"],\n   dica:\"Conte as caixinhas <b>vazias</b> da fileira.\",\n   dica2:\"Conte s&oacute; as caixinhas <b>vazias</b>: uma, duas... quantas faltam para encher a fileira de dez?\",\n   porque:\"Sete cheias e <b>3</b> vazias: 7 e mais 3 fecham a caixa de dez.\"},\n  {q:\"3 + 2 = ?\",\n   apoio:{tipo:\"grupos\",a:3,b:2,sinal:\"+\"},\n   certa:\"5\", erradas:[\"4\",\"6\",\"32\"],\n   dica:\"Comece no 3 e conte mais dois: quatro... cinco.\",\n   dica2:\"Conte o primeiro grupinho e <b>continue</b> no segundo, sem come&ccedil;ar do um de novo.\",\n   porque:\"Juntando 3 com 2 ficam <b>5</b> ao todo.\"},\n  {q:\"Qual n&uacute;mero vem <b>antes</b> do 9?\",\n   apoio:{tipo:\"reta\",de:5,ate:12,marca:[9]},\n   certa:\"8\", erradas:[\"10\",\"7\",\"9\"],\n   dica:\"Ache o 9 na fita e d&ecirc; <b>um</b> passo para a esquerda.\",\n   dica2:\"Ponha o dedo no <b>9</b> aceso e escorregue <b>uma</b> casinha para a esquerda.\",\n   porque:\"Antes do <b>9</b> vem o <b>8</b>: um passo para a esquerda na fita.\"},\n  {q:\"6 &#8722; 2 = ?\",\n   apoio:{tipo:\"tira\",n:6,k:2},\n   certa:\"4\", erradas:[\"8\",\"3\",\"5\"],\n   dica:\"Eram 6. Tire 2 (os tracejados) e conte os que <b>sobraram</b>.\",\n   dica2:\"Tape os dois tracejados com o dedo e conte s&oacute; os que <b>sobraram</b> inteiros.\",\n   porque:\"De 6 tirando 2 sobram <b>4</b> &#8212; os pontinhos inteiros da figura.\"},\n  {q:\"Qual &eacute; o <b>dobro</b> de 4?\",\n   apoio:{tipo:\"grupos\",a:4,b:4,sinal:\"+\"},\n   certa:\"8\", erradas:[\"6\",\"4\",\"12\"],\n   dica:\"Dobro &eacute; a mesma quantidade <b>duas vezes</b>: 4 e mais 4.\",\n   dica2:\"S&atilde;o dois grupinhos <b>iguais</b>. Conte o primeiro e continue contando no segundo.\",\n   porque:\"4 e mais 4 d&atilde;o <b>8</b>: isso &eacute; o dobro de 4.\"},\n  {q:\"Contando de 2 em 2: 2, 4, 6... qual vem agora?\",\n   apoio:{tipo:\"reta\",de:1,ate:10,marca:[2,4,6]},\n   certa:\"8\", erradas:[\"7\",\"9\",\"10\"],\n   dica:\"Olhe as casas acesas na fita: elas pulam de <b>duas</b> em duas.\",\n   dica2:\"Do 2 ao 4 s&atilde;o <b>dois</b> pulos de casinha. Fa&ccedil;a mais um pulo desses depois do 6.\",\n   porque:\"2, 4, 6 e <b>8</b>: cada pulo anda duas casas na fita.\"},\n  {q:\"Qual &eacute; o <b>maior</b>: 8 ou 3?\",\n   apoio:{tipo:\"reta\",de:1,ate:10,marca:[3,8]},\n   certa:\"8\", erradas:[\"3\",\"os dois s&atilde;o iguais\",\"5\"],\n   dica:\"Na fita, o maior &eacute; o que est&aacute; mais para a <b>direita</b>.\",\n   dica2:\"As duas casinhas acesas s&atilde;o o 3 e o 8. Qual delas est&aacute; mais para a <b>direita</b>?\",\n   porque:\"O <b>8</b> fica mais para a direita na fita, ent&atilde;o ele &eacute; o maior.\"}\n]",
+   "exemplos": {
+    "CASAS": "[\n  {q:\"Quantos pontinhos tem aqui?\",\n   apoio:{tipo:\"pts\",n:4}, mostrar:1,\n   certa:\"4\", erradas:[\"3\",\"5\",\"6\"],\n   dica:\"Toque em cada pontinho enquanto conta: um, dois, tr&ecirc;s...\",\n   dica2:\"Acendi os pontinhos. Toque neles um a um: 1, 2, 3... o <b>&uacute;ltimo</b> n&uacute;mero que voc&ecirc; falar &eacute; a resposta.\",\n   porque:\"S&atilde;o <b>4</b> pontinhos: contando um por um, o &uacute;ltimo n&uacute;mero que voc&ecirc; fala &eacute; quantos tem.\"},\n  {q:\"Qual n&uacute;mero vem <b>depois</b> do 5?\",\n   apoio:{tipo:\"reta\",de:1,ate:8,marca:[5]}, mostrar:1,\n   certa:\"6\", erradas:[\"4\",\"7\",\"5\"],\n   dica:\"Ache o 5 na fita e d&ecirc; <b>um</b> passo para a direita.\",\n   dica2:\"Ponha o dedo no <b>5</b> aceso e escorregue <b>uma</b> casinha para a direita. Que n&uacute;mero est&aacute; ali?\",\n   porque:\"Depois do <b>5</b> vem o <b>6</b>: um passo para a direita na fita.\"},\n  {q:\"Quantos faltam para chegar no 10?\",\n   apoio:{tipo:\"dez\",n:7}, mostrar:1,\n   certa:\"3\", erradas:[\"2\",\"4\",\"17\"],\n   dica:\"Conte as caixinhas <b>vazias</b> da fileira.\",\n   dica2:\"Conte s&oacute; as caixinhas <b>vazias</b>: uma, duas... quantas faltam para encher a fileira de dez?\",\n   porque:\"Sete cheias e <b>3</b> vazias: 7 e mais 3 fecham a caixa de dez.\"},\n  {q:\"3 + 2 = ?\",\n   apoio:{tipo:\"grupos\",a:3,b:2,sinal:\"+\"},\n   certa:\"5\", erradas:[\"4\",\"6\",\"32\"],\n   dica:\"Comece no 3 e conte mais dois: quatro... cinco.\",\n   dica2:\"Conte o primeiro grupinho e <b>continue</b> no segundo, sem come&ccedil;ar do um de novo.\",\n   porque:\"Juntando 3 com 2 ficam <b>5</b> ao todo.\"},\n  {q:\"Qual n&uacute;mero vem <b>antes</b> do 9?\",\n   apoio:{tipo:\"reta\",de:5,ate:12,marca:[9]},\n   certa:\"8\", erradas:[\"10\",\"7\",\"9\"],\n   dica:\"Ache o 9 na fita e d&ecirc; <b>um</b> passo para a esquerda.\",\n   dica2:\"Ponha o dedo no <b>9</b> aceso e escorregue <b>uma</b> casinha para a esquerda.\",\n   porque:\"Antes do <b>9</b> vem o <b>8</b>: um passo para a esquerda na fita.\"},\n  {q:\"6 &#8722; 2 = ?\",\n   apoio:{tipo:\"tira\",n:6,k:2},\n   certa:\"4\", erradas:[\"8\",\"3\",\"5\"],\n   dica:\"Eram 6. Tire 2 (os tracejados) e conte os que <b>sobraram</b>.\",\n   dica2:\"Tape os dois tracejados com o dedo e conte s&oacute; os que <b>sobraram</b> inteiros.\",\n   porque:\"De 6 tirando 2 sobram <b>4</b> &#8212; os pontinhos inteiros da figura.\"},\n  {q:\"Qual &eacute; o <b>dobro</b> de 4?\",\n   apoio:{tipo:\"grupos\",a:4,b:4,sinal:\"+\"},\n   certa:\"8\", erradas:[\"6\",\"4\",\"12\"],\n   dica:\"Dobro &eacute; a mesma quantidade <b>duas vezes</b>: 4 e mais 4.\",\n   dica2:\"S&atilde;o dois grupinhos <b>iguais</b>. Conte o primeiro e continue contando no segundo.\",\n   porque:\"4 e mais 4 d&atilde;o <b>8</b>: isso &eacute; o dobro de 4.\"},\n  {q:\"Contando de 2 em 2: 2, 4, 6... qual vem agora?\",\n   apoio:{tipo:\"reta\",de:1,ate:10,marca:[2,4,6]},\n   certa:\"8\", erradas:[\"7\",\"9\",\"10\"],\n   dica:\"Olhe as casas acesas na fita: elas pulam de <b>duas</b> em duas.\",\n   dica2:\"Do 2 ao 4 s&atilde;o <b>dois</b> pulos de casinha. Fa&ccedil;a mais um pulo desses depois do 6.\",\n   porque:\"2, 4, 6 e <b>8</b>: cada pulo anda duas casas na fita.\"},\n  {q:\"Qual &eacute; o <b>maior</b>: 8 ou 3?\",\n   apoio:{tipo:\"reta\",de:1,ate:10,marca:[3,8]},\n   certa:\"8\", erradas:[\"3\",\"os dois s&atilde;o iguais\",\"5\"],\n   dica:\"Na fita, o maior &eacute; o que est&aacute; mais para a <b>direita</b>.\",\n   dica2:\"As duas casinhas acesas s&atilde;o o 3 e o 8. Qual delas est&aacute; mais para a <b>direita</b>?\",\n   porque:\"O <b>8</b> fica mais para a direita na fita, ent&atilde;o ele &eacute; o maior.\"}\n]"
+   },
+   "gavetas": [
+    "CASAS"
+   ],
+   "regra": "marca na peca",
    "var": "CASAS"
   }
  }

@@ -133,6 +133,91 @@ def confere(c, mecs):
     return p, avisos
 
 
+# ------------------------------------------------------------ o formato do dado
+def chaves_de(v, fundo=None):
+    u"""todos os nomes de campo que aparecem dentro de uma estrutura."""
+    fundo = set() if fundo is None else fundo
+    if isinstance(v, dict):
+        for k, x in v.items():
+            fundo.add(k)
+            chaves_de(x, fundo)
+    elif isinstance(v, list):
+        for x in v:
+            chaves_de(x, fundo)
+    return fundo
+
+
+def literal(crua):
+    u"""le um literal JS (o exemplo da peca) e devolve o valor, ou None."""
+    if not crua:
+        return None
+    try:
+        import subprocess
+        r = subprocess.run(["node", "-e",
+                            "console.log(JSON.stringify((%s)))" % crua],
+                           capture_output=True, text=True, timeout=15)
+        return json.loads(r.stdout) if r.returncode == 0 and r.stdout.strip() else None
+    except Exception:
+        return None
+
+
+def confere_dados(c, oficina):
+    u"""⭐ CONTEUDO NO FORMATO ERRADO NAO DA ERRO — DA FASE VAZIA.
+
+    Escrevi, num teste, `MUDA` como `{i:1, como:"some"}` quando a peca do "ache
+    o que mudou" espera `{sp:2, acao:"sumir"}`. Nao houve erro de JS, nao houve
+    tela branca: a fase abriu, anunciou **"as duas cenas tem 0 diferencas"** e se
+    deu por concluida sozinha. Uma fase inteira da aula virou fumaca, e nada no
+    caminho reclamou.
+
+    O `pecas.json` guarda o exemplo de cada mecanica, e o exemplo diz quais
+    campos a peca LE. Entao da para conferir de graca: campo que a peca nao
+    conhece e conteudo que ela vai ignorar."""
+    cam = os.path.join(AQUI, "pecas.json")
+    if not os.path.exists(cam):
+        return [], []
+    g = json.load(io.open(cam, encoding="utf-8")).get("gavetas") or {}
+    ruins, avisos = [], []
+    for i, f in enumerate(c["fases"]):
+        mec = f.get("mec")
+        info = g.get(mec)
+        if not info or not f.get("dados"):
+            continue
+        exemplo = literal(info.get("exemplo"))
+        if exemplo is None:
+            continue
+        conhecidas = chaves_de(exemplo)
+        if not conhecidas:
+            continue
+        usadas = chaves_de(f["dados"])
+        estranhas = sorted(usadas - conhecidas)
+        if estranhas:
+            ruins.append(u"fase %d (%s), mecanica '%s': campo(s) que a peca NAO "
+                         u"le: %s. Ela conhece: %s. (o conteudo seria ignorado e "
+                         u"a fase sairia vazia, sem erro nenhum)"
+                         % (i + 1, f.get("id"), mec, ", ".join(estranhas),
+                            ", ".join(sorted(conhecidas))))
+        for chave, val in (f.get("dadosExtra") or {}).items():
+            if chave not in (info.get("gavetas") or []):
+                ruins.append(u"fase %d: 'dadosExtra' fala de '%s', que nao e "
+                             u"gaveta de '%s' (as gavetas sao: %s)"
+                             % (i + 1, chave, mec,
+                                ", ".join(info.get("gavetas") or [])))
+                continue
+            crua = (info.get("exemplos") or {}).get(chave)
+            mod = literal(crua)
+            if mod is None:
+                continue
+            sabe = chaves_de(mod)
+            estranhas = sorted(chaves_de(val) - sabe)
+            if sabe and estranhas:
+                ruins.append(u"fase %d, gaveta '%s' de '%s': campo(s) que a peca "
+                             u"NAO le: %s. Ela conhece: %s"
+                             % (i + 1, chave, mec, ", ".join(estranhas),
+                                ", ".join(sorted(sabe))))
+    return ruins, avisos
+
+
 # ------------------------------------------------------------------ as vozes
 def falas_de(c):
     u"""O falas.json sai do TEXTO DA TELA. É isto que torna impossível a voz
@@ -416,6 +501,9 @@ def main():
     c = json.load(io.open(cam, encoding="utf-8"))
 
     problemas, avisos = confere(c, mecanicas())
+    p2, a2 = confere_dados(c, mecanicas())
+    problemas.extend(p2)
+    avisos.extend(a2)
     print(u"MONTADOR — %s (%s, %d fase(s))"
           % (c.get("titulo", "?"), c.get("ano", "?"), len(c.get("fases", []))))
     for a in avisos:

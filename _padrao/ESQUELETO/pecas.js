@@ -588,6 +588,9 @@ function telaFimAnde(){
 }
 function recomecaAnde(){ lugarAtual=0; telaAnde(); }
     if(f && f.dados) LUGARES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LADOS !== undefined) LADOS = _d.LADOS;
+    }
     telaAnde();
   })();
 };
@@ -943,6 +946,9 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) PARTES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaLugar();
   })();
 };
@@ -1386,7 +1392,11 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
   diz("Peça fechada!");
 }
-    if(f && f.dados) FORMAS = f.dados;
+    if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.FORMAS !== undefined) FORMAS = _d.FORMAS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     telaSombras();
   })();
 };
@@ -2385,6 +2395,9 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaBaseDez();
   })();
 };
@@ -2781,6 +2794,9 @@ function proxima(){
   ri++;
   if(ri>=RODADAS.length){ fimBingo(); return; }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.NUMPAL !== undefined) NUMPAL = _d.NUMPAL;
+    }
     telaBingo();
 }
 
@@ -2815,6 +2831,9 @@ function fimBingo(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.NUMPAL !== undefined) NUMPAL = _d.NUMPAL;
+    }
     telaBingo();
   })();
 };
@@ -3192,6 +3211,13 @@ function telaFim(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) POS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.REF !== undefined) REF = _d.REF;
+      if(_d.SETA !== undefined) SETA = _d.SETA;
+      if(_d.DIRS !== undefined) DIRS = _d.DIRS;
+      if(_d.LUGARES !== undefined) LUGARES = _d.LUGARES;
+      if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
+    }
     telaBussola();
   })();
 };
@@ -3512,6 +3538,9 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) PAL = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.CORP !== undefined) CORP = _d.CORP;
+    }
     pecaCaca();
   })();
 };
@@ -3764,6 +3793,10 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) DINHEIRO = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaCaixa();
   })();
 };
@@ -4389,7 +4422,16 @@ function fimCal(){
   t.appendChild(c); app.appendChild(t);
   diz("Peça fechada!");
 }
-    if(f && f.dados) MES = f.dados;
+    if(f && f.dados) SEM = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.MES !== undefined) MES = _d.MES;
+      if(_d.SEMH !== undefined) SEMH = _d.SEMH;
+      if(_d.SEMV !== undefined) SEMV = _d.SEMV;
+      if(_d.SEMD !== undefined) SEMD = _d.SEMD;
+      if(_d.ORD !== undefined) ORD = _d.ORD;
+      if(_d.UNM !== undefined) UNM = _d.UNM;
+      if(_d.FASES !== undefined) FASES = _d.FASES;
+    }
     telaCal();
   })();
 };
@@ -4780,6 +4822,11 @@ function fim(){
                +'E na sua cidade: ela nasceu perto de qu&#234;?', telaCamadas);
 }
     if(f && f.dados) CIDADES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.MORROS !== undefined) MORROS = _d.MORROS;
+      if(_d.CAMADAS !== undefined) CAMADAS = _d.CAMADAS;
+      if(_d.PERG !== undefined) PERG = _d.PERG;
+    }
     telaCamadas();
   })();
 };
@@ -5244,6 +5291,12 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) FIOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PEDACOS !== undefined) PEDACOS = _d.PEDACOS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.PORQUE !== undefined) PORQUE = _d.PORQUE;
+      if(_d.LIGADOS !== undefined) LIGADOS = _d.LIGADOS;
+    }
     pecaCircuito();
   })();
 };
@@ -5506,6 +5559,10 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) GAVETAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.FICHAS !== undefined) FICHAS = _d.FICHAS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaClassificar();
   })();
 };
@@ -5985,6 +6042,10 @@ function fimComp(){
   diz("Peça fechada!");
 }
     if(f && f.dados) RODS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.UNM !== undefined) UNM = _d.UNM;
+      if(_d.D1 !== undefined) D1 = _d.D1;
+    }
     telaComp();
   })();
 };
@@ -6766,6 +6827,9 @@ function fimContadores(){
   app.appendChild(t);
 }
     if(f && f.dados) CNT = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.NUM !== undefined) NUM = _d.NUM;
+    }
     pecaContadores();
   })();
 };
@@ -7168,6 +7232,9 @@ function telaFim(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) LETRAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
+    }
     telaCoord();
   })();
 };
@@ -7504,6 +7571,10 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) COLUNAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PISTAS !== undefined) PISTAS = _d.PISTAS;
+      if(_d.ESC !== undefined) ESC = _d.ESC;
+    }
     pecaDesafio();
   })();
 };
@@ -8017,7 +8088,12 @@ function parecer(){
   if(MUNDO.h>=60) return "A horta <b>cresceu</b>. Repare no que segura a água na terra.";
   return "A horta <b>brotou</b> e está de pé. Água que vira vapor não chega à raiz.";
 }
-    if(f && f.dados) MUNDO = f.dados;
+    if(f && f.dados) brotos = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.MUNDO !== undefined) MUNDO = _d.MUNDO;
+      if(_d.POS !== undefined) POS = _d.POS;
+      if(_d.CAPS !== undefined) CAPS = _d.CAPS;
+    }
     telaAbertura();
   })();
 };
@@ -9013,6 +9089,12 @@ function proxima(){
   ri++;
   if(ri>=RODADAS.length){ fimDomino(); return; }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PALAVRA !== undefined) PALAVRA = _d.PALAVRA;
+      if(_d.FIGURA !== undefined) FIGURA = _d.FIGURA;
+      if(_d.NUMPAL !== undefined) NUMPAL = _d.NUMPAL;
+      if(_d.PIPS !== undefined) PIPS = _d.PIPS;
+    }
     telaDomino();
 }
 
@@ -9047,6 +9129,12 @@ function fimDomino(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PALAVRA !== undefined) PALAVRA = _d.PALAVRA;
+      if(_d.FIGURA !== undefined) FIGURA = _d.FIGURA;
+      if(_d.NUMPAL !== undefined) NUMPAL = _d.NUMPAL;
+      if(_d.PIPS !== undefined) PIPS = _d.PIPS;
+    }
     telaDomino();
   })();
 };
@@ -10291,6 +10379,11 @@ function fimEstimar(){
   diz("Peça fechada!");
 }
     if(f && f.dados) CENAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ESTRAT !== undefined) ESTRAT = _d.ESTRAT;
+      if(_d.UN !== undefined) UN = _d.UN;
+      if(_d.DZ !== undefined) DZ = _d.DZ;
+    }
     telaOlhada();
   })();
 };
@@ -10627,6 +10720,10 @@ function fimExp(){
   app.appendChild(t);
 }
     if(f && f.dados) VARS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.EXP !== undefined) EXP = _d.EXP;
+      if(_d.CONCL !== undefined) CONCL = _d.CONCL;
+    }
     pecaExperimento();
   })();
 };
@@ -11505,6 +11602,9 @@ function telaFimGirar(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) FORMA = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ALVOS !== undefined) ALVOS = _d.ALVOS;
+    }
     telaGirar();
   })();
 };
@@ -12638,6 +12738,12 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) FONTES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.VEREDITOS !== undefined) VEREDITOS = _d.VEREDITOS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.PROVAS !== undefined) PROVAS = _d.PROVAS;
+      if(_d.DICAS2 !== undefined) DICAS2 = _d.DICAS2;
+    }
     pecaFonte();
   })();
 };
@@ -13042,6 +13148,10 @@ function fimDaPeca(){
   diz("Peça fechada!");
 }
     if(f && f.dados) TRECHOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.DIRS !== undefined) DIRS = _d.DIRS;
+    }
     telaLabirinto();
   })();
 };
@@ -13391,6 +13501,11 @@ function fimDaPeca(){
   diz("Peça fechada!");
 }
     if(f && f.dados) FIGURAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.NUM !== undefined) NUM = _d.NUM;
+      if(_d.FEITAS !== undefined) FEITAS = _d.FEITAS;
+    }
     telaPontos();
   })();
 };
@@ -13709,6 +13824,10 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) LIG = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.FEITOS !== undefined) FEITOS = _d.FEITOS;
+    }
     pecaLigar();
   })();
 };
@@ -14032,6 +14151,9 @@ function telaFimLinha(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) FATOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ORDEM !== undefined) ORDEM = _d.ORDEM;
+    }
     telaLinhaDoTempo();
   })();
 };
@@ -14485,6 +14607,9 @@ function fimMapa(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) NOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LIGS !== undefined) LIGS = _d.LIGS;
+    }
     pecaMapa();
   })();
 };
@@ -15195,6 +15320,11 @@ function fimMedir(){
   diz("Peça fechada!");
 }
     if(f && f.dados) ROD = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DENC !== undefined) DENC = _d.DENC;
+      if(_d.DLER !== undefined) DLER = _d.DLER;
+      if(_d.UNM !== undefined) UNM = _d.UNM;
+    }
     telaMedir();
   })();
 };
@@ -15428,7 +15558,7 @@ function abrePar(k){
 function fim(){
   mostraBanner('<div class="medal">★</div><b>Memória de elefante!</b><br>Você fechou os 4 pares.', pecaMemoria);
 }
-    if(f && f.dados) ARTE = f.dados;
+    if(f && f.dados) PARES = f.dados;
     pecaMemoria();
   })();
 };
@@ -15785,6 +15915,11 @@ function apagaDica(){
   if(d&&d.parentNode) d.parentNode.removeChild(d);
 }
     if(f && f.dados) PISTAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.EXTRAS !== undefined) EXTRAS = _d.EXTRAS;
+      if(_d.HIP !== undefined) HIP = _d.HIP;
+      if(_d.EVID !== undefined) EVID = _d.EVID;
+    }
     telaCaso();
   })();
 };
@@ -16114,7 +16249,10 @@ function telaFimFrase(){
   c.appendChild(b);
   t.appendChild(c); app.appendChild(t);
 }
-    if(f && f.dados) CLA = f.dados;
+    if(f && f.dados) FRASES = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.CLA !== undefined) CLA = _d.CLA;
+    }
     telaFrase();
   })();
 };
@@ -16459,6 +16597,9 @@ function proxima(){
   rod++;
   if(rod>=RODADAS.length){ fimDaPeca(); return; }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.TIPOMSG !== undefined) TIPOMSG = _d.TIPOMSG;
+    }
     pecaMorfemas();
 }
 
@@ -16479,6 +16620,9 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.TIPOMSG !== undefined) TIPOMSG = _d.TIPOMSG;
+    }
     pecaMorfemas();
   })();
 };
@@ -16887,6 +17031,13 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) BASE = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PATCH !== undefined) PATCH = _d.PATCH;
+      if(_d.ANOS !== undefined) ANOS = _d.ANOS;
+      if(_d.PECAS !== undefined) PECAS = _d.PECAS;
+      if(_d.VISTOS !== undefined) VISTOS = _d.VISTOS;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaMudanca();
   })();
 };
@@ -17541,7 +17692,7 @@ function fimOuvir(){
   app.appendChild(t);
   diz("Peça fechada!");
 }
-    if(f && f.dados) FIG = f.dados;
+    if(f && f.dados) RODADAS = f.dados;
     pecaOuvir();
   })();
 };
@@ -17886,7 +18037,10 @@ function regrasTodas(){
   return r;
 }
 function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaPadrao(); }
-    if(f && f.dados) PEC = f.dados;
+    if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PEC !== undefined) PEC = _d.PEC;
+    }
     pecaPadrao();
   })();
 };
@@ -18550,6 +18704,10 @@ function fimReceita(){
 
 document.addEventListener("mouseup",function(){ mouseDown=false; },false);
     if(f && f.dados) RECEITAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.CE !== undefined) CE = _d.CE;
+      if(_d.EFEITO !== undefined) EFEITO = _d.EFEITO;
+    }
     pecaReceita();
   })();
 };
@@ -18920,6 +19078,10 @@ function fimDaPeca(){
   diz("A sua exposição está pronta!");
 }
     if(f && f.dados) DESENHOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.TINTAS !== undefined) TINTAS = _d.TINTAS;
+      if(_d.GALERIA !== undefined) GALERIA = _d.GALERIA;
+    }
     telaPintar();
   })();
 };
@@ -19451,6 +19613,9 @@ function telaComparar(){
   app.appendChild(t);
 }
     if(f && f.dados) CASOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PENSEI !== undefined) PENSEI = _d.PENSEI;
+    }
     pecaPrever();
   })();
 };
@@ -20958,6 +21123,12 @@ function fimRelogio(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) FORMAR = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LER !== undefined) LER = _d.LER;
+      if(_d.ROT !== undefined) ROT = _d.ROT;
+      if(_d.NOMEH !== undefined) NOMEH = _d.NOMEH;
+      if(_d.NOMEM !== undefined) NOMEM = _d.NOMEM;
+    }
     telaFormar();
   })();
 };
@@ -21384,6 +21555,9 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaRepartir();
   })();
 };
@@ -21703,6 +21877,9 @@ function proxima(){
   rodR++;
   if(rodR>=RETAS.length){ fimReta(); return; }
     if(f && f.dados) RETAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ERROS !== undefined) ERROS = _d.ERROS;
+    }
     pecaReta();
 }
 
@@ -21741,9 +21918,15 @@ function fimReta(){
 function recomeca(){
   rodR=0; apoio=0; ERROS=[];
     if(f && f.dados) RETAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ERROS !== undefined) ERROS = _d.ERROS;
+    }
     pecaReta();
 }
     if(f && f.dados) RETAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ERROS !== undefined) ERROS = _d.ERROS;
+    }
     pecaReta();
   })();
 };
@@ -22582,7 +22765,13 @@ function fazCenaB(){
   }
   return b;
 }
-var CENA_B=fazCenaB();
+/* ⚠️ CALCULADO NA HORA DE JOGAR, NAO NA DECLARACAO. Antes era
+   `var CENA_B=fazCenaB();` aqui mesmo — e dentro de uma atividade montada pelo
+   esqueleto o conteudo da fase (`CENA_A`/`MUDA`) so chega DEPOIS desta linha.
+   Resultado: a fase mostrava a cena de EXEMPLO, com os erros de exemplo, sem
+   erro de JS nenhum. Regra: valor derivado do conteudo se calcula quando a
+   peca comeca, nunca quando ela e lida.                                     */
+var CENA_B=null;
 
 /* ---------------------------------------------------------------
    2) A LISTA DO QUE DIFERE NÃO É ESCRITA À MÃO: é comparada.
@@ -22602,7 +22791,7 @@ function tipoDaDif(sp){
   return "mudou o <b>tamanho</b>";
 }
 function listaDifs(){ var i,r=[]; for(i=0;i<9;i++){ if(difEm(i)) r.push(i); } return r; }
-var DIFS=listaDifs();
+var DIFS=null;   /* idem: so na hora de jogar */
 
 var LIN=["de cima","do meio","de baixo"];
 var COL=["da esquerda","do meio","da direita"];
@@ -22678,6 +22867,8 @@ function montaCena(dados,lado){
 var achadas, erros, progI, elCont, elPts, LADO1, LADO2;
 
 function pecaErros(){
+  /* o conteudo desta fase ja chegou: agora sim da para derivar */
+  CENA_B=fazCenaB(); DIFS=listaDifs();
   limpa();
   achadas={}; erros=0;
   LADO1={pts:[],zonas:[]}; LADO2={pts:[],zonas:[]};
@@ -22780,6 +22971,13 @@ function fim(){
                +DIFS.length+' diferen&#231;as.', pecaErros);
 }
     if(f && f.dados) CENA_A = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.MUDA !== undefined) MUDA = _d.MUDA;
+      if(_d.LIN !== undefined) LIN = _d.LIN;
+      if(_d.COL !== undefined) COL = _d.COL;
+      if(_d.POSFRU !== undefined) POSFRU = _d.POSFRU;
+      if(_d.POSJAN !== undefined) POSJAN = _d.POSJAN;
+    }
     pecaErros();
   })();
 };
@@ -23332,6 +23530,9 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) gotas = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaSimulador();
   })();
 };
@@ -23549,6 +23750,9 @@ function fimDaPeca(){
   t.appendChild(c); app.appendChild(t);
 }
     if(f && f.dados) FORMAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+    }
     pecaSombra();
   })();
 };
@@ -23784,6 +23988,11 @@ function telaFimTabela(){
 }
 function recomecaTabela(){ rodadaQ=0; acertosQ=0; telaTabela(); }
     if(f && f.dados) QUEM = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.QUANDO !== undefined) QUANDO = _d.QUANDO;
+      if(_d.DADOS !== undefined) DADOS = _d.DADOS;
+      if(_d.PERG !== undefined) PERG = _d.PERG;
+    }
     telaTabela();
   })();
 };
@@ -24188,6 +24397,10 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) VAGAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.PECAS !== undefined) PECAS = _d.PECAS;
+      if(_d.NOMEF !== undefined) NOMEF = _d.NOMEF;
+    }
     pecaTangram();
   })();
 };
@@ -24690,6 +24903,16 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) COME = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.ESP !== undefined) ESP = _d.ESP;
+      if(_d.INICIAL !== undefined) INICIAL = _d.INICIAL;
+      if(_d.PALAVRA !== undefined) PALAVRA = _d.PALAVRA;
+      if(_d.RODADAS !== undefined) RODADAS = _d.RODADAS;
+      if(_d.FEITOS !== undefined) FEITOS = _d.FEITOS;
+      if(_d.NIV !== undefined) NIV = _d.NIV;
+      if(_d.LINHAS !== undefined) LINHAS = _d.LINHAS;
+    }
     pecaTeia();
   })();
 };
