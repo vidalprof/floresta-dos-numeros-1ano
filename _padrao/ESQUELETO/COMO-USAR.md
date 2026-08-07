@@ -10,9 +10,35 @@ que sobra é o que só se faz uma vez: **o conteúdo**.
 
 ## Os 7 passos
 
-### 1. O conteúdo (é aqui que vai o tempo — ~40 min)
+### 0. O ESBOÇO (3 segundos) — comece SEMPRE por aqui
 
-Escrever `<pasta>/conteudo.json`. Antes disso, o de sempre: BNCC do ano,
+```bash
+python3 _padrao/ESQUELETO/esboco.py <pasta> \
+    --ano "3º ano" --prefixo abc --titulo "..." --mascote nino
+```
+
+Sai um `conteudo.json` com **as 32 fases, 16 mecânicas e todas as gavetas de cada
+uma já no formato certo**, com os textos marcados `«assim»`. Só se troca o que
+está entre `«»`.
+
+**Por que isto existe** (cobrança do Marcos: *"o processo precisa ser mais ágil e
+SEM ERROS"*, e a pergunta certeira: *"por que sai erro se a fábrica entrega tudo
+pronto?"*): a fábrica de peças **não** estava errando — as 74 passam a bancada. O
+erro nascia na **junta entre o conteúdo e a peça**, sempre do mesmo jeito:
+
+| o que eu fazia | o que a criança via |
+|---|---|
+| campo com o nome trocado | a fase anunciava "0 diferenças" e se concluía sozinha |
+| gaveta meia-cheia | as chaves não casavam: nenhuma ficha podia ser posta |
+| palavra de 17 letras numa grade de 8 | 857 erros de JS e a fase sem saída |
+
+Os portões pegam os três — **mas portão avisa depois que se errou**. O esboço faz
+melhor: não deixa errar. E preserva as **chaves de ligação** (`k` ↔ `alvo`), que
+são justamente o que não se pode trocar.
+
+### 1. O conteúdo (é aqui que vai o tempo — ~30 min)
+
+Preencher o que está entre `«»` no `<pasta>/conteudo.json` do esboço. Antes disso, o de sempre: BNCC do ano,
 `_curriculo/blumenau.txt`, `EDUVERSE-FILOSOFIA.md` (o problema primeiro, o
 conceito por último) e o `CATALOGO-DINAMICAS-INTERATIVAS.md` para escolher os
 gestos **por encaixe**, não por lista.
