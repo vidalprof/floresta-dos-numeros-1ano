@@ -56,6 +56,12 @@
     var k = temVoz(txt);
     /* sem voz gravada nao inventa nada: ficar calado e melhor que falar
        outra coisa (foi esse o defeito que o Marcos cobrou tres vezes). */
+    /* ⚠️ SEM ECO: o motor ja le o balao ao abrir a fase e fala. Se o olheiro
+       falar o MESMO texto, o audio reinicia e a crianca ouve o comeco duas
+       vezes — foi o que o Marcos ouviu. O olheiro so entra quando a pergunta
+       MUDA dentro da fase, que e para isso que ele existe. */
+    if(k && k === window.__falouAgora) return;
+    window.__falouAgora = k;
     if(k && typeof falaDaTela === "function") falaDaTela(k);
   }
   if(window.MutationObserver){
@@ -19139,7 +19145,7 @@ function cartao(k){
   o.appendChild(desenho(k));
   var lin=el("div","linha","");
   lin.appendChild(el("span","nom",CATALOGO[k].nome));
-  var z=el("button","oa_zap","");
+  var z=el("button","zap","");
   z.appendChild(el("i","fone",""));
   z.setAttribute("aria-label","Ouvir "+CATALOGO[k].nome);
   /* ⚠️ o alto-falante NAO escolhe: ele so fala. Sem parar o evento aqui, tocar

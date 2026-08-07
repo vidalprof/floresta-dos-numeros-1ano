@@ -446,6 +446,12 @@ FERRAMENTAS = u'''
     var k = temVoz(txt);
     /* sem voz gravada nao inventa nada: ficar calado e melhor que falar
        outra coisa (foi esse o defeito que o Marcos cobrou tres vezes). */
+    /* ⚠️ SEM ECO: o motor ja le o balao ao abrir a fase e fala. Se o olheiro
+       falar o MESMO texto, o audio reinicia e a crianca ouve o comeco duas
+       vezes — foi o que o Marcos ouviu. O olheiro so entra quando a pergunta
+       MUDA dentro da fase, que e para isso que ele existe. */
+    if(k && k === window.__falouAgora) return;
+    window.__falouAgora = k;
     if(k && typeof falaDaTela === "function") falaDaTela(k);
   }
   if(window.MutationObserver){
@@ -531,7 +537,14 @@ def sem_comentario(s):
 # ============================================================
 VOCABULARIO_COMUM = set("""balao selo opt opts hint tela centro prog dica btn
     banner medal pecabox progpeca show ok no sel usada cheia agora acesa pulsa
-    feito certo errado tembalaopeca mec""".split())
+    feito certo errado tembalaopeca mec
+    zap fone tocando""".split())
+# ⚠️ `zap` entrou nesta lista DEPOIS de eu quebrar a atividade com ele: o
+#    alto-falante e do MOTOR (ele cria, estiliza e gerencia pelo `poeZap`). Ao
+#    renomear para `oa_zap`, a peca ficou com um botao que o motor nao reconhece
+#    e o CSS nao pinta — e as 4 respostas voltaram a ficar SEM SOM, que e o
+#    defeito que mais dooi no 1o ano. Renomear e bom; renomear o que e do motor
+#    de proposito e tiro no pe.
 
 
 def classes_do_motor():

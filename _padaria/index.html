@@ -741,8 +741,8 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-ouvir-achar .des{position:relative;width:58px;height:58px;margin:0 auto}
 .mec-ouvir-achar .linha{margin-top:2px;white-space:nowrap}
 .mec-ouvir-achar .nom{display:inline-block;vertical-align:middle;font-size:15px;font-weight:800;letter-spacing:.5px; color:#221a12;max-width:56%;overflow:hidden}
-.mec-ouvir-achar .oa_zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin-left:6px; border:0;border-radius:12px;background:#efe6d2;cursor:pointer;padding:0;line-height:44px}
-.mec-ouvir-achar .oa_zap:active{background:#ded3b8}
+.mec-ouvir-achar .zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin-left:6px; border:0;border-radius:12px;background:#efe6d2;cursor:pointer;padding:0;line-height:44px}
+.mec-ouvir-achar .zap:active{background:#ded3b8}
 .mec-ouvir-achar .jat{position:absolute;left:6px;right:6px;bottom:3px;background:#6b5a44;color:#fff; font-size:11px;font-weight:800;border-radius:8px;padding:2px 0;display:none}
 .mec-ouvir-achar .jat.ver{display:block}
 .mec-ouvir-achar .ini{position:absolute;left:5px;top:5px;width:26px;height:26px;border-radius:8px;background:#3c6ee0; color:#fff;font-size:15px;font-weight:800;line-height:26px;display:none}
@@ -789,7 +789,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-ouvir-achar .solc{left:5px;top:5px;width:36px;height:36px}
 .mec-ouvir-achar .solr{height:46px;margin-top:-23px}
 .mec-ouvir-achar .nom{font-size:13px}
-.mec-ouvir-achar .oa_zap{width:44px;height:44px;line-height:44px;margin-left:4px}
+.mec-ouvir-achar .zap{width:44px;height:44px;line-height:44px;margin-left:4px}
 .mec-ouvir-achar .cont{margin-top:5px;font-size:13px}
 .mec-ouvir-achar .aviso{margin-top:5px;font-size:14px;padding:6px 10px}
 .mec-ouvir-achar .hint{margin-top:4px;font-size:13px}
@@ -805,7 +805,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-ouvir-achar .opt.oaf .des img{width:100%;height:100%;object-fit:contain;display:block}
 .mec-ouvir-achar .opt.oaf .linha{margin:8px 0 0;white-space:normal; display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center}
 .mec-ouvir-achar .opt.oaf .nom{display:inline-block;max-width:none;font-size:19px;line-height:1.15;overflow:visible}
-.mec-ouvir-achar .opt.oaf .oa_zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}@media (max-width:360px){
+.mec-ouvir-achar .opt.oaf .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}@media (max-width:360px){
 .mec-ouvir-achar .opt.oaf .nom{font-size:18px}}
 .mec-ouvir-achar .opts{max-height:none}@media (max-height:560px){
 .mec-ouvir-achar .opts{max-height:56vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -1619,7 +1619,14 @@ function montaFase(i, aoFim){
       txt = txt.replace(/\s+/g, " ").replace(/^ | $/g, "");
       if(txt && typeof temVoz === "function"){
         var k = temVoz(txt);
-        if(k){ falaDaTela(k); return; }
+        /* ⚠️ o olheiro do balao pode ter chegado ANTES de mim (ele dispara na
+           mudanca do DOM, eu num prazo). Se ele ja falou este mesmo texto e o
+           audio esta tocando, eu me calo — senao o audio REINICIA e a crianca
+           ouve o comeco duas vezes. Foi o que o Marcos ouviu como "duas vozes". */
+        if(k){
+          if(window.__falouAgora === k && narr && !narr.paused && !narr.ended) return;
+          window.__falouAgora = k; falaDaTela(k); return;
+        }
         /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
            foi exatamente o defeito. */
         return;
@@ -1754,6 +1761,12 @@ setTimeout(inicia, 0);
     var k = temVoz(txt);
     /* sem voz gravada nao inventa nada: ficar calado e melhor que falar
        outra coisa (foi esse o defeito que o Marcos cobrou tres vezes). */
+    /* ⚠️ SEM ECO: o motor ja le o balao ao abrir a fase e fala. Se o olheiro
+       falar o MESMO texto, o audio reinicia e a crianca ouve o comeco duas
+       vezes — foi o que o Marcos ouviu. O olheiro so entra quando a pergunta
+       MUDA dentro da fase, que e para isso que ele existe. */
+    if(k && k === window.__falouAgora) return;
+    window.__falouAgora = k;
     if(k && typeof falaDaTela === "function") falaDaTela(k);
   }
   if(window.MutationObserver){
@@ -4348,7 +4361,7 @@ function cartao(k){
   o.appendChild(desenho(k));
   var lin=el("div","linha","");
   lin.appendChild(el("span","nom",CATALOGO[k].nome));
-  var z=el("button","oa_zap","");
+  var z=el("button","zap","");
   z.appendChild(el("i","fone",""));
   z.setAttribute("aria-label","Ouvir "+CATALOGO[k].nome);
   /* ⚠️ o alto-falante NAO escolhe: ele so fala. Sem parar o evento aqui, tocar

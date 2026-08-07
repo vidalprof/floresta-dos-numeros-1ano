@@ -1157,7 +1157,14 @@ function montaFase(i, aoFim){
       txt = txt.replace(/\s+/g, " ").replace(/^ | $/g, "");
       if(txt && typeof temVoz === "function"){
         var k = temVoz(txt);
-        if(k){ falaDaTela(k); return; }
+        /* ⚠️ o olheiro do balao pode ter chegado ANTES de mim (ele dispara na
+           mudanca do DOM, eu num prazo). Se ele ja falou este mesmo texto e o
+           audio esta tocando, eu me calo — senao o audio REINICIA e a crianca
+           ouve o comeco duas vezes. Foi o que o Marcos ouviu como "duas vozes". */
+        if(k){
+          if(window.__falouAgora === k && narr && !narr.paused && !narr.ended) return;
+          window.__falouAgora = k; falaDaTela(k); return;
+        }
         /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
            foi exatamente o defeito. */
         return;
