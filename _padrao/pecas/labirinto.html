@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — labirinto (levar o personagem, desviando dos inimigos)</title>
+<!-- ============================================================
+     PEÇA: LABIRINTO — LEVAR O PERSONAGEM ATÉ O QUE ELE PRECISA,
+     DESVIANDO DOS INIMIGOS
+     (copiada do _padrao/pecas/MOLDE.html; a mecânica existe na atividade de
+     PRÉ-ESCOLA `_lote/pr-escola-1/index.html`, e ficou fora do catálogo)
+
+     PARA QUEM É: PRÉ e 1º ano. A criança dessa idade NÃO LÊ. Então:
+     alvo de dedo de 56px, enunciado de uma linha, e nada essencial escrito —
+     o caminho é claro, a parede é escura E RISCADA, o inimigo é espinhudo, o
+     prêmio é uma estrela. Forma antes de cor, sempre.
+
+     O QUE ESTA MECÂNICA ENSINA (e por que ela não é passatempo):
+       · PLANEJAR ANTES DE AGIR — a criança precisa olhar o caminho inteiro
+         antes de apertar a seta. É o começo do pensamento computacional
+         (sequência de passos) sem uma linha de código.
+       · ORIENTAÇÃO ESPACIAL — cima/baixo/esquerda/direita viram gesto, não
+         palavra decorada.
+       · PERSISTÊNCIA SEM MEDO — encostar no bichinho NÃO é castigo: volta ao
+         começo do trecho com um som gentil. Sem vida perdida, sem "fim de
+         jogo", sem a palavra que reprova. Dá para chegar SEMPRE.
+
+     AS DUAS PORTAS DE ENTRADA (regra 3b do padrão da casa):
+       · BOTÕES DE SETA na tela, grandes, para o dedo do tablet;
+       · AS SETAS DO TECLADO DE VERDADE (`document.onkeydown`, e também
+         W/A/S/D) — no PC da escola tem teclado e a criança vai usar.
+       Nunca só uma porta.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA NO INSTANTE do acerto (`travada=true`), nunca no fim da
+         animação — criança toca duas vezes, é o normal dela;
+       · GERAÇÃO (`ger`): todo setTimeout confere se a tela ainda é a dele,
+         senão o relógio de uma rodada velha trava a rodada nova;
+       · O ANDAIME CRESCE NO ERRO MAIS NATURAL: bater na parede, sair do
+         tabuleiro e encostar no bichinho — os TRÊS chamam `ajuda(n)`. O
+         degrau 3 dá um passo sozinho e SÓ DEPOIS escreve a dica (a dica do 3º
+         degrau já foi escrita-e-apagada no mesmo quadro em cinco peças);
+       · ajudante que mexe no DOM começa com `if(!el) return;`;
+       · CAMINHO SEMPRE POSSÍVEL: o próprio código acha o caminho (busca em
+         largura) e publica o próximo passo em `data-qa` — é assim que o
+         auditor-jogador fecha a peça, e é a garantia de que ela tem saída;
+       · funciona no mudo: todo som tem gêmeo visual (a casinha pisca, o
+         bichinho volta, a barra anda).
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.lab{display:inline-block;margin:13px auto 0;padding:5px;border-radius:16px;background:#5b4a33;
+     box-shadow:0 6px 16px rgba(0,0,0,.34)}
+.llin{display:block;font-size:0;line-height:0}
+/* a casinha do labirinto. 52px de lado: 5 colunas cabem nos 296px do celular
+   pequeno (5 x 54 + 10 de moldura = 280). */
+.lcel{display:inline-block;position:relative;width:52px;height:52px;margin:1px;border-radius:8px;
+      vertical-align:top;background:#f6efdd}
+/* ⭐ NADA ESSENCIAL SO NA COR: a parede e escura E RISCADA. Quem nao distingue
+   a cor continua vendo, pelo risco, por onde NAO da para passar. */
+.parede{background:#6d4b2a;
+        background-image:-webkit-repeating-linear-gradient(45deg,rgba(0,0,0,.34) 0,rgba(0,0,0,.34) 5px,rgba(255,255,255,.10) 5px,rgba(255,255,255,.10) 10px);
+        background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.34) 0,rgba(0,0,0,.34) 5px,rgba(255,255,255,.10) 5px,rgba(255,255,255,.10) 10px);
+        -webkit-box-shadow:inset 0 2px 4px rgba(0,0,0,.45);box-shadow:inset 0 2px 4px rgba(0,0,0,.45)}
+/* a casinha que o andaime manda olhar: pisca com ANEL, nao so com cor */
+.pisca{-webkit-animation:piscaC .8s infinite;animation:piscaC .8s infinite}
+@-webkit-keyframes piscaC{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.95)}}
+@keyframes piscaC{0%,100%{box-shadow:0 0 0 0 rgba(255,213,74,0)}50%{box-shadow:0 0 0 5px rgba(255,213,74,.95)}}
+/* ---- O PERSONAGEM (bolinha simpatica com dois olhos e um sorriso) ---- */
+.bicho{position:absolute;left:50%;top:50%;display:block;width:36px;height:36px;margin:-18px 0 0 -18px;
+       border-radius:50% 50% 46% 46%;background:#ffb43d;border:2px solid #8a5a12;font-style:normal}
+.bicho:before{content:"";position:absolute;left:7px;top:11px;width:6px;height:6px;border-radius:50%;
+              background:#2b2118;-webkit-box-shadow:12px 0 0 #2b2118;box-shadow:12px 0 0 #2b2118}
+.bicho:after{content:"";position:absolute;left:10px;top:21px;width:12px;height:5px;
+             border-bottom:2px solid #2b2118;border-radius:0 0 8px 8px}
+.bicho.pula{-webkit-animation:pula .45s;animation:pula .45s}
+@-webkit-keyframes pula{35%{-webkit-transform:translateY(-8px)}}
+@keyframes pula{35%{transform:translateY(-8px)}}
+/* ---- O INIMIGO (espinhudo: a FORMA avisa, nao a cor) ---- */
+.guarda{position:absolute;left:50%;top:50%;display:block;width:38px;height:38px;margin:-19px 0 0 -19px;
+        background:#9b4fd0;font-style:normal;
+        -webkit-clip-path:polygon(50% 0,62% 20%,84% 12%,80% 36%,100% 50%,80% 64%,84% 88%,62% 80%,50% 100%,38% 80%,16% 88%,20% 64%,0 50%,20% 36%,16% 12%,38% 20%);
+        clip-path:polygon(50% 0,62% 20%,84% 12%,80% 36%,100% 50%,80% 64%,84% 88%,62% 80%,50% 100%,38% 80%,16% 88%,20% 64%,0 50%,20% 36%,16% 12%,38% 20%)}
+.guarda:before{content:"";position:absolute;left:11px;top:16px;width:5px;height:7px;border-radius:50%;
+               background:#fff3c9;-webkit-box-shadow:11px 0 0 #fff3c9;box-shadow:11px 0 0 #fff3c9}
+/* ---- O PREMIO (estrela: forma inconfundivel) ---- */
+.prem{position:absolute;left:50%;top:50%;display:block;width:38px;height:38px;margin:-19px 0 0 -19px;
+      background:#ffd54a;font-style:normal;
+      -webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);
+      -webkit-animation:brilha 1.6s infinite;animation:brilha 1.6s infinite}
+@-webkit-keyframes brilha{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.12)}}
+@keyframes brilha{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+/* a marca do comeco do trecho: para onde o bichinho volta */
+.casa{position:absolute;left:8px;top:8px;right:8px;bottom:8px;border:3px dashed #b3903c;
+      border-radius:7px;font-style:normal}
+/* ---- OS BOTOES DE SETA (a porta do DEDO) ----
+   56px de alvo, como manda a regra do pre-escolar. A seta e um TRIANGULO de
+   CSS: nada de emoji, e a forma nao depende de fonte nenhuma. */
+.dpad{margin-top:10px}
+.dlin{display:block;line-height:0}
+.seta{display:inline-block;position:relative;width:62px;height:56px;padding:0;margin:4px 5px;
+      vertical-align:top;min-height:56px}
+.pta{position:absolute;left:50%;top:50%;display:block;width:0;height:0;font-style:normal}
+.pcima{margin:-10px 0 0 -13px;border-left:13px solid transparent;border-right:13px solid transparent;
+       border-bottom:20px solid #33280a}
+.pbaixo{margin:-10px 0 0 -13px;border-left:13px solid transparent;border-right:13px solid transparent;
+        border-top:20px solid #33280a}
+.pesq{margin:-13px 0 0 -10px;border-top:13px solid transparent;border-bottom:13px solid transparent;
+      border-right:20px solid #33280a}
+.pdir{margin:-13px 0 0 -10px;border-top:13px solid transparent;border-bottom:13px solid transparent;
+      border-left:20px solid #33280a}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (projetor, 1024x420 do PC da escola): encolhe o TABULEIRO e as
+   letras — NUNCA os botoes de seta, que sao o alvo do dedo. */
+@media(max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:14px;padding:8px 13px}
+  .balao + *{margin-top:8px}
+  .lab{margin-top:8px}
+  .lcel{width:36px;height:36px}
+  .bicho{width:26px;height:26px;margin:-13px 0 0 -13px}
+  .bicho:before{left:5px;top:8px;width:4px;height:4px;-webkit-box-shadow:9px 0 0 #2b2118;box-shadow:9px 0 0 #2b2118}
+  .bicho:after{left:7px;top:15px;width:9px;height:4px}
+  .guarda,.prem{width:28px;height:28px;margin:-14px 0 0 -14px}
+  .guarda:before{left:8px;top:11px;width:4px;height:5px;-webkit-box-shadow:8px 0 0 #fff3c9;box-shadow:8px 0 0 #fff3c9}
+  .dpad{margin-top:6px}
+  .seta{margin:2px 5px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* OS TRECHOS. Cada um e um tabuleiro de 5 colunas por 4 linhas:
+     S = onde o bichinho comeca   F = a estrela que ele foi buscar
+     # = parede                   X = o bichinho espinhudo (o inimigo)
+     . = caminho livre
+   ⚠️ A ESCADA: no 1o trecho ha UM espinhudo e ele fica LONGE da rota curta;
+   no 2o sao DOIS, e um deles fica bem no meio do caminho mais obvio; no 3o
+   sao TRES e o mais tentador esta ao lado da estrela. A criança sobe de
+   "ande ate la" para "olhe ANTES de andar" — que e o que a mecanica ensina.
+   Trocar esta tabela adapta a peca a qualquer conteudo. */
+var TRECHOS=[
+ {selo:"O CAMINHO DA ESTRELA",
+  linhas:["S..#.","#.#..","....#",".#X.F"]},
+ {selo:"DOIS ESPINHUDOS",
+  linhas:["S.#..",".X..#","...X.","#...F"]},
+ {selo:"OLHE ANTES DE ANDAR",
+  linhas:["S...X","#X#..","....#",".#X.F"]}
+];
+/* o andaime, degrau a degrau. O 3o e o que sempre falta nas pecas: ele DA UM
+   PASSO pela crianca e so DEPOIS escreve a explicacao. */
+var DICAS=[
+ "Ande pelo caminho <b>claro</b>. A parede riscada n&#227;o deixa passar.",
+ "A casinha certa est&#225; <b>piscando</b>. Aperte a seta que vai at&#233; ela.",
+ "Eu dei um passo por voc&#234;. Agora siga a casinha que <b>pisca</b>."
+];
+var DIRS=[
+ {dl:-1,dc:0, cls:"pcima",  rot:"cima",     lbl:"para cima"},
+ {dl:0, dc:-1,cls:"pesq",   rot:"esquerda", lbl:"para a esquerda"},
+ {dl:1, dc:0, cls:"pbaixo", rot:"baixo",    lbl:"para baixo"},
+ {dl:0, dc:1, cls:"pdir",   rot:"direita",  lbl:"para a direita"}
+];
+
+var ti=0;              /* trecho de agora */
+var grade=[];          /* o tabuleiro desta rodada, linha a linha */
+var lin=0, col=0;      /* onde o bichinho esta */
+var iniL=0, iniC=0;    /* onde ele comeca (e para onde volta) */
+var fimL=0, fimC=0;    /* onde esta a estrela */
+var celEls=[];         /* os quadradinhos, na ordem linha x coluna */
+var setaEls=[];        /* os quatro botoes de seta */
+var barraP=null, telaAtual=null;
+var passos=0, tropecos=0, errosSeg=0;
+var ger=0;             /* geracao: mata o setTimeout de uma tela que ja saiu */
+var travada=false;     /* ⚠️ trava NO INSTANTE do acerto — crianca toca 2x */
+
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function nLin(){ return grade.length; }
+function nCol(){ return grade.length?grade[0].length:0; }
+function marca(r,c){ return (grade[r]&&grade[r][c])?grade[r][c]:"#"; }
+function anda(r,c){
+  if(r<0||c<0||r>=nLin()||c>=nCol()) return false;
+  return marca(r,c)!=="#";
+}
+/* seguro = da para pisar E nao tem espinhudo. E o que a busca usa para
+   garantir que existe caminho ate a estrela SEM encostar em ninguem. */
+function seguro(r,c){ return anda(r,c)&&marca(r,c)!=="X"; }
+
+/* A VOZ. Web Speech: se o PC nao tiver voz, a peca continua inteira — tudo o
+   que a voz diz tambem esta desenhado na tela. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.98; u.pitch=1.06;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function sPasso(){ nota(523.25,.05,.10,"triangle",0); }
+function sParede(){ nota(196,.10,.10,"sine",0); }
+/* ⭐ O SOM DA VOLTA E GENTIL DE PROPOSITO. Encostar no espinhudo nao e falta:
+   e um "opa, por aqui nao". Duas notas curtas descendo, sem aspereza. */
+function sVolta(){ nota(392,.16,.12,"triangle",0); nota(294,.20,.11,"triangle",.09); }
+
+/* ---------------------------------------------------------------
+   A BUSCA EM LARGURA. Ela serve a DUAS coisas ao mesmo tempo:
+     1. publicar em `data-qa` qual seta serve AGORA (so o auditor-jogador
+        usa isso — ele nao sabe resolver labirinto, e sem isto reprovaria
+        uma peca que funciona);
+     2. GARANTIR que sempre existe caminho: e a mesma busca que o degrau 3
+        do andaime usa para dar um passo pela crianca.
+   --------------------------------------------------------------- */
+function proximoPasso(){
+  var L=nLin(), C=nCol(), i, j;
+  if(!L||!C) return null;
+  var de=[], fila=[[lin,col]], visto={};
+  visto[lin+"_"+col]=1;
+  var achou=false, k=0;
+  while(k<fila.length&&!achou){
+    var at=fila[k]; k++;
+    for(i=0;i<DIRS.length;i++){
+      var nr=at[0]+DIRS[i].dl, nc=at[1]+DIRS[i].dc;
+      if(!seguro(nr,nc)) continue;
+      if(visto[nr+"_"+nc]) continue;
+      visto[nr+"_"+nc]=1;
+      de[nr+"_"+nc]=at;
+      fila.push([nr,nc]);
+      if(nr===fimL&&nc===fimC){ achou=true; break; }
+    }
+  }
+  if(!achou) return null;
+  var cur=[fimL,fimC];
+  while(true){
+    var pai=de[cur[0]+"_"+cur[1]];
+    if(!pai) return null;
+    if(pai[0]===lin&&pai[1]===col) break;
+    cur=pai;
+  }
+  for(j=0;j<DIRS.length;j++)
+    if(lin+DIRS[j].dl===cur[0]&&col+DIRS[j].dc===cur[1]) return j;
+  return null;
+}
+
+/* ---------------------------------------------------------------
+   A TELA DO TRECHO. Ela se monta UMA vez; depois disso quem muda o
+   tabuleiro e `pintaLab()`, que so troca o conteudo dos quadradinhos.
+   Assim a barra de dica nao e apagada a cada passo.
+   --------------------------------------------------------------- */
+function telaLabirinto(){
+  if(ti>=TRECHOS.length){ fimDaPeca(); return; }
+  ger++; travada=false; errosSeg=0;
+  limpa();
+  var tr=TRECHOS[ti], r, c, linha;
+  grade=[]; celEls=[]; setaEls=[];
+  for(r=0;r<tr.linhas.length;r++){
+    linha=tr.linhas[r].split("");
+    grade.push(linha);
+    for(c=0;c<linha.length;c++){
+      if(linha[c]==="S"){ lin=r; col=c; iniL=r; iniC=c; }
+      if(linha[c]==="F"){ fimL=r; fimC=c; }
+    }
+  }
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(ti*100/TRECHOS.length));
+  barraP=t.getElementsByTagName("i")[0];
+  var ce=el("div","centro");
+  ce.appendChild(el("div","selo",tr.selo));
+  ce.appendChild(el("div","balao","Leve o amigo at&#233; a <b>estrela</b>. Desvie dos espinhudos!"));
+
+  var lb=el("div","lab");
+  for(r=0;r<nLin();r++){
+    var lr=el("div","llin");
+    for(c=0;c<nCol();c++){
+      var q=el("div","lcel");
+      lr.appendChild(q);
+      celEls.push(q);
+    }
+    lb.appendChild(lr);
+  }
+  ce.appendChild(lb);
+
+  /* AS SETAS — a porta do DEDO. Alvo de 56px, como o pre-escolar pede. */
+  var dp=el("div","dpad");
+  var l1=el("div","dlin"), l2=el("div","dlin");
+  setaEls[0]=fazSeta(0); l1.appendChild(setaEls[0]);
+  setaEls[1]=fazSeta(1); l2.appendChild(setaEls[1]);
+  setaEls[2]=fazSeta(2); l2.appendChild(setaEls[2]);
+  setaEls[3]=fazSeta(3); l2.appendChild(setaEls[3]);
+  dp.appendChild(l1); dp.appendChild(l2);
+  ce.appendChild(dp);
+  ce.appendChild(el("div","hint","Aperte as setas na tela <b>ou</b> as setas do teclado. "+
+                    "Trecho "+(ti+1)+" de "+TRECHOS.length+"."));
+  t.appendChild(ce); app.appendChild(t);
+
+  /* AS DUAS PORTAS: no PC da escola tem teclado e a crianca vai usar. */
+  document.onkeydown=teclaLab;
+  pintaLab();
+  diz("Leve o amigo até a estrela. Desvie dos espinhudos!");
+}
+function fazSeta(i){
+  var b=el("button","btn seta","");
+  b.appendChild(el("i","pta "+DIRS[i].cls,""));
+  b.setAttribute("aria-label","Andar "+DIRS[i].lbl);
+  b.onclick=function(){ move(DIRS[i].dl,DIRS[i].dc); };
+  return b;
+}
+/* ⚠️ todo ajudante que mexe no DOM comeca conferindo se o DOM existe: uma
+   funcao dessas, chamada antes do elemento nascer, ja derrubou quatro
+   portoes de uma vez com TypeError. */
+function pintaLab(){
+  if(!celEls.length) return;
+  var r,c,q,m,dica=proximoPasso(),alvo=null;
+  if(dica!==null) alvo=[lin+DIRS[dica].dl, col+DIRS[dica].dc];
+  for(r=0;r<nLin();r++) for(c=0;c<nCol();c++){
+    q=celEls[r*nCol()+c]; if(!q) continue;
+    m=marca(r,c);
+    q.className="lcel"+(m==="#"?" parede":"");
+    q.innerHTML="";
+    if(r===iniL&&c===iniC&&!(r===lin&&c===col)) q.appendChild(el("i","casa",""));
+    if(r===fimL&&c===fimC) q.appendChild(el("i","prem",""));
+    if(m==="X") q.appendChild(el("i","guarda",""));
+    if(r===lin&&c===col) q.appendChild(el("i","bicho",""));
+    /* o piscar so acende a partir do 2o degrau do andaime */
+    if(errosSeg>=2&&alvo&&alvo[0]===r&&alvo[1]===c) q.className+=" pisca";
+  }
+  marcaSetaCerta(dica);
+}
+/* `data-qa` = a seta que serve AGORA. So o auditor-jogador le isso; para a
+   crianca o atributo nao existe (nao muda um pixel na tela). */
+function marcaSetaCerta(dica){
+  var i;
+  if(!setaEls.length) return;
+  for(i=0;i<setaEls.length;i++){
+    if(!setaEls[i]) continue;
+    if(i===dica) setaEls[i].setAttribute("data-qa","1");
+    else setaEls[i].removeAttribute("data-qa");
+  }
+}
+
+/* ---------------------------------------------------------------
+   O PASSO. Um so caminho para as duas portas (dedo e teclado): assim
+   nao existe regra que valha num jeito de jogar e no outro nao.
+   --------------------------------------------------------------- */
+function teclaLab(ev){
+  var e=ev||window.event, k=e.keyCode||e.which;
+  if(k===38||k===87){ move(-1,0); }
+  else if(k===40||k===83){ move(1,0); }
+  else if(k===37||k===65){ move(0,-1); }
+  else if(k===39||k===68){ move(0,1); }
+  else return;
+  if(e.preventDefault) e.preventDefault();
+}
+function move(dl,dc){
+  if(travada||!viva()) return;
+  var nr=lin+dl, nc=col+dc;
+  /* saiu do tabuleiro ou bateu na parede: nao pune, mas o andaime CRESCE */
+  if(nr<0||nc<0||nr>=nLin()||nc>=nCol()||marca(nr,nc)==="#"){
+    sParede();
+    ajuda(errosSeg+1);
+    return;
+  }
+  /* encostou no espinhudo: volta ao comeco do TRECHO. Sem vida perdida, sem
+     fim de jogo, sem a palavra que reprova — e o andaime cresce igual. */
+  if(marca(nr,nc)==="X"){
+    tropecos++;
+    sVolta();
+    lin=iniL; col=iniC;
+    ajuda(errosSeg+1);
+    diz("Opa! Por aqui não. O amigo voltou para o começo.");
+    return;
+  }
+  sPasso();
+  lin=nr; col=nc; passos++; errosSeg=0;
+  apagaDica();
+  pintaLab();
+  if(lin===fimL&&col===fimC) pegou();
+}
+function pegou(){
+  travada=true;                       /* ⚠️ trava NO INSTANTE, nao no fim */
+  document.onkeydown=null;
+  sCerto();
+  if(barraP) barraP.style.width=Math.round((ti+1)*100/TRECHOS.length)+"%";
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    ti++;
+    if(ti<TRECHOS.length)
+      mostraBanner("<b>Pegou a estrela!</b><br>Voc&#234; desviou dos espinhudos.",telaLabirinto);
+    else
+      mostraBanner("<b>Voc&#234; pegou as tr&#234;s estrelas!</b><br>Olhar antes de andar deu certo.",fimDaPeca);
+  },520);
+}
+
+/* ---------------------------------------------------------------
+   O ANDAIME QUE CRESCE. Os TRES caminhos de erro (parede, borda e
+   espinhudo) passam por aqui — e nao por uma frase fixa. A dica fixa
+   num ramo natural de erro ja fez a crianca ler a MESMA frase para
+   sempre, sem nunca chegar aos degraus de piscar e de revelar.
+   --------------------------------------------------------------- */
+function ajuda(n){
+  errosSeg=Math.min(n,DICAS.length);
+  if(errosSeg<3){
+    pintaLab();
+    mostraDica(DICAS[errosSeg-1]);
+    return;
+  }
+  /* ⚠️ 3o DEGRAU: primeiro DA o passo, DEPOIS escreve a dica. Ao contrario,
+     a explicacao e apagada no mesmo quadro em que nasce (defeito que
+     apareceu em cinco pecas do mesmo lote). */
+  passoSozinho();
+  pintaLab();
+  mostraDica(DICAS[2]);
+}
+function passoSozinho(){
+  var d=proximoPasso();
+  if(d===null) return;
+  var nr=lin+DIRS[d].dl, nc=col+DIRS[d].dc;
+  if(!seguro(nr,nc)) return;
+  lin=nr; col=nc; passos++;
+  sPasso();
+  if(lin===fimL&&col===fimC){
+    pintaLab();
+    pegou();
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* ---------------------------------------------------------------
+   A MEDALHA. Parecer em palavras, nunca nota — e nunca a palavra que
+   reprova. Quem tropecou muito ouve que tropecar faz parte.
+   --------------------------------------------------------------- */
+function fimDaPeca(){
+  ger++; travada=false;
+  document.onkeydown=null;
+  limpa();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(tropecos===0) parecer="Voc&#234; passou por <b>todos</b> os espinhudos sem encostar em nenhum.";
+  else if(tropecos<=2) parecer="Voc&#234; encostou <b>"+tropecos+"</b> vez"+(tropecos>1?"es":"")+
+                               " e achou o caminho do mesmo jeito.";
+  else parecer="Voc&#234; voltou ao come&#231;o <b>"+tropecos+"</b> vezes e n&#227;o desistiu. "+
+               "&#201; assim que se aprende um caminho.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ti=0; passos=0; tropecos=0; telaLabirinto(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a LABIRINTO: setas na tela <b>e</b> setas do teclado."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaLabirinto();
+</script>
+</body></html>

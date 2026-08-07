@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — o que vem depois? (continuar o padrão)</title>
+<!-- ============================================================
+     PEÇA: PADRÃO — "O QUE VEM DEPOIS?"
+     Cópia do _padrao/pecas/MOLDE.html: só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ELA É: uma fila começada (formas, cores, batidas, números) e a
+     criança CONTINUA — ela PRODUZ os três próximos, um a um, tirando as peças
+     de uma bandeja. Não escolhe entre três respostas prontas: quem monta a
+     continuação é ela.
+
+     POR QUE PRODUZIR E NÃO ESCOLHER: no quiz de padrão a criança acerta
+     eliminando ("essa é feia, essa é grande demais") sem nunca enxergar a
+     regra. Produzindo, ela precisa dizer, com a mão, qual é a próxima — e
+     depois a peça devolve a regra EM PALAVRAS ("de 2 em 2", "uma clara, duas
+     escuras"), que é o que fica.
+
+     A ESCADA (degraus de verdade, não fases repetidas):
+       1) AB     — duas peças alternando (círculo, quadrado);
+       2) ABB    — o grupo cresce (uma clara, duas escuras);
+       3) ABC    — três peças diferentes no grupo (batida forte, média, fraca);
+       4) CRESCENTE — o padrão deixa de ser repetição e vira REGRA de salto
+          (de 2 em 2). É o degrau que leva do concreto ao simbólico.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · a regra aparece EM PALAVRAS no fim de cada rodada e todas juntas no
+         fim — descobrir sem nomear não vira conhecimento;
+       · o andaime CRESCE e os três degraus têm textos DIFERENTES: (1) pergunta
+         que orienta a leitura, (2) o GRUPO que se repete acende na fila, (3)
+         revela e explica;
+       · a 3ª dica FICA NA TELA: primeiro revela, DEPOIS escreve (invertido, o
+         "acertou" apagava a explicação no mesmo quadro);
+       · trava no instante do acerto (criança toca duas vezes) e todo
+         temporizador guarda a GERAÇÃO da rodada;
+       · nada essencial só na cor: cada peça tem forma/tamanho/textura própria
+         e o nome escrito na bandeja;
+       · a fila é medida em PORCENTAGEM, nunca em px — com px de 40, nove
+         casas não cabem em 320 e a fila quebra a linha;
+       · `data-qa` na peça que serve agora, para o auditor-jogador fechar;
+       · termina numa `.medal`.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ================= CSS DESTA PEÇA (prefixo pd) =================
+   ⚠️ a folga de 13px em cima da fila e OBRIGATORIA: o balao tem sombra e
+   nenhuma margem por baixo, entao o que vem colado nele vira um bloco so
+   (regra 9 do _qa/leiaute.js, cobrada DUAS vezes pelo Marcos).           */
+.pdfila{display:block;width:100%;max-width:430px;margin:13px auto 0;padding:6px 0;font-size:0;
+        white-space:nowrap;border-radius:14px;background:rgba(255,255,255,.10)}
+/* ⚠️ CASA EM PORCENTAGEM, NUNCA EM PX (licao do caca-palavras): com 40px
+   fixos, nove casas nao cabem em 320 e a fila quebra a linha — a crianca
+   perde justamente a coisa que precisa ler de uma vez so.               */
+.pdcx{display:inline-block;vertical-align:middle;height:48px;font-size:13px;
+      border:2px dashed rgba(255,255,255,.5);border-radius:8px;
+      background:rgba(0,0,0,.16);position:relative;text-align:center;padding:0}
+.pdcx.pdfeito{border-style:solid;border-color:rgba(255,255,255,.35);background:rgba(255,255,255,.90)}
+.pdcx.pdnovo{border-color:#59c24b;background:#d6f5c8}
+/* a PROXIMA casa a preencher: contorno inteiro e mais grosso (forma, nao cor) */
+.pdcx.pdvez{border-style:solid;border-width:3px;border-color:#ffd54a;background:rgba(255,213,74,.22)}
+/* o GRUPO que se repete, aceso no 2o degrau do andaime */
+.pdcx.pdgrp{-webkit-box-shadow:inset 0 0 0 3px #3c6ee0;box-shadow:inset 0 0 0 3px #3c6ee0}
+.pdfig{display:block;position:absolute;left:0;right:0;top:50%;margin-top:-13px;height:26px}
+/* --- as pecas desenhadas (forma, tamanho e textura: nunca so a cor) --- */
+.pdsh{display:inline-block;vertical-align:middle}
+.pdcirc{width:24px;height:24px;border-radius:50%;background:#e8a020;border:2px solid #8a5c0f}
+.pdquad{width:24px;height:24px;border-radius:4px;background:#3c6ee0;border:2px solid #1d3f8f}
+.pdtri{width:0;height:0;border-left:13px solid transparent;border-right:13px solid transparent;
+       border-bottom:24px solid #4ea63a}
+.pdclara{width:24px;height:24px;border-radius:50%;background:#fffdf6;border:2px solid #6b543a;
+         background-image:-webkit-radial-gradient(#b9a274 22%,transparent 24%);
+         background-image:radial-gradient(#b9a274 22%,transparent 24%);
+         background-size:7px 7px}
+.pdescura{width:24px;height:24px;border-radius:50%;background:#3a2c07;border:2px solid #1a1408}
+.pdriscada{width:24px;height:24px;border-radius:50%;border:2px solid #6b543a;background:#c9bda6;
+           background-image:-webkit-linear-gradient(45deg,#3a2c07 25%,transparent 25%,transparent 50%,#3a2c07 50%,#3a2c07 75%,transparent 75%);
+           background-image:linear-gradient(45deg,#3a2c07 25%,transparent 25%,transparent 50%,#3a2c07 50%,#3a2c07 75%,transparent 75%);
+           background-size:8px 8px}
+/* as batidas: o TAMANHO e o que muda (nao a cor) — forte, media, fraca */
+.pdfor{width:26px;height:26px;border-radius:50%;background:#c0562f;border:3px solid #6d2c14}
+.pdmed{width:18px;height:18px;border-radius:50%;background:#c0562f;border:3px solid #6d2c14}
+.pdfra{width:11px;height:11px;border-radius:50%;background:#c0562f;border:2px solid #6d2c14}
+.pdnum{display:inline-block;vertical-align:middle;font-size:17px;font-weight:800;color:#221a12}
+.pdcx .pdnum{line-height:26px}
+/* --- a bandeja de onde a crianca TIRA a proxima peca --- */
+.pdband{display:block;text-align:center;margin-top:10px}
+.opt.pdp{display:inline-block;vertical-align:top;width:88px;min-height:80px;max-width:88px;
+         margin:5px 4px;padding:10px 4px 6px;border-radius:14px;font-size:12px;text-align:center}
+.opt.pdp .pdnum{font-size:26px;line-height:34px}
+.pdnome{display:block;margin-top:6px;font-size:11px;font-weight:800;letter-spacing:.3px;color:#3a2c07}
+.opt.pdtreme{-webkit-animation:pdtr .32s;animation:pdtr .32s}
+@-webkit-keyframes pdtr{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes pdtr{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a regra descoberta, em palavras — o coracao da peca. Vai num bloco SO
+   (em vez de uma lista de quatro caixas) porque na janela baixa da escola a
+   lista empurrava o botao "Jogar de novo" para fora da tela. */
+.pdregra{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 13px;margin:13px auto 0;
+         max-width:400px;font-size:15px;font-weight:600;line-height:1.45;text-align:left}
+.pdregra b{color:#1f4f0c}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): some o rodape de apoio; a
+   peca da bandeja NUNCA encolhe abaixo do dedo. */
+@media(max-height:520px){
+  .hint{display:none}
+  .opt.pdp{min-height:70px;padding:6px 4px 4px}
+  .medal{width:64px;height:64px;border-width:4px;font-size:28px;line-height:52px;margin-bottom:8px}
+  .pdregra{font-size:13px;padding:7px 11px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------- AS PEÇAS DO PADRÃO ----------------
+   Cada uma tem FORMA/TAMANHO/TEXTURA propria e um NOME escrito na bandeja:
+   nunca se distingue duas peças só pela cor. O som muda junto (grave/agudo),
+   mas o som é so reforco — a peça funciona no mudo.                        */
+var PEC={
+ c:{n:"C&#205;RCULO",   cls:"pdsh pdcirc",   hz:523.25},
+ q:{n:"QUADRADO",  cls:"pdsh pdquad",   hz:392.00},
+ t:{n:"TRI&#194;NGULO", cls:"pdsh pdtri",    hz:659.25},
+ L:{n:"CLARA",     cls:"pdsh pdclara",  hz:698.46},
+ E:{n:"ESCURA",    cls:"pdsh pdescura", hz:329.63},
+ R:{n:"RISCADA",   cls:"pdsh pdriscada",hz:466.16},
+ F:{n:"FORTE",     cls:"pdsh pdfor",    hz:220.00},
+ M:{n:"M&#201;DIA",     cls:"pdsh pdmed",    hz:329.63},
+ f:{n:"FRACA",     cls:"pdsh pdfra",    hz:523.25}
+};
+
+/* ---------------- A ESCADA: AB -> ABB -> ABC -> CRESCENTE ----------------
+   `seq` e a fila inteira (o que se mostra + o que a crianca produz);
+   `mostra` e quantas casas ja vem prontas. O resto ela monta.             */
+var RODADAS=[
+ { selo:"A FILA DAS FORMAS", enun:"Continue a fila. <b>O que vem depois?</b>",
+   seq:["c","q","c","q","c","q","c"], mostra:4, paleta:["c","q","t"],
+   regra:"um c&#237;rculo, um quadrado, e come&#231;a de novo",
+   grupo:2, grupoTxt:"c&#237;rculo, quadrado",
+   d1:"Leia a fila apontando com o dedo, do come&#231;o: c&#237;rculo, quadrado, c&#237;rculo, quadrado..." },
+ { selo:"CLARA, ESCURA, ESCURA", enun:"Agora o grupo &#233; maior. <b>Continue a fila.</b>",
+   seq:["L","E","E","L","E","E","L","E","E"], mostra:6, paleta:["L","E","R"],
+   regra:"uma clara, duas escuras",
+   grupo:3, grupoTxt:"uma clara e duas escuras",
+   d1:"Conte quantas escuras vem depois de cada clara. S&#227;o sempre as mesmas." },
+ { selo:"AS BATIDAS DO TAMBOR", enun:"Tr&#234;s batidas diferentes se repetem. <b>Continue.</b>",
+   seq:["F","M","f","F","M","f","F","M","f"], mostra:6, paleta:["F","M","f"],
+   regra:"forte, m&#233;dia, fraca, e come&#231;a de novo",
+   grupo:3, grupoTxt:"forte, m&#233;dia, fraca",
+   d1:"Bata na mesa junto com a fila: forte, m&#233;dia, fraca. Depois da fraca, o que volta?" },
+ { selo:"DE QUANTO EM QUANTO?", enun:"Aqui o padr&#227;o &#233; um <b>salto</b>. Continue a fila.",
+   seq:["2","4","6","8","10","12","14"], mostra:4, paleta:["9","10","11","12","13","14"],
+   regra:"de 2 em 2",
+   grupo:0, grupoTxt:"o salto de 2 em 2",
+   d1:"Olhe o salto de um n&#250;mero para o outro: de 2 para 4, de 4 para 6. Quanto anda cada vez?" }
+];
+
+/* ---------------- ESTADO ---------------- */
+var rodada=0, feitos=0, totalGeral=0, descobertas=[];
+var telaAtual=null, barraP=null, filaEl=null, bandEl=null;
+var casas=[], botoes=[], passo=0, errosSeg=0, ger=0, travada=false;
+
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+/* ⚠️ tela antiga continua clicavel embaixo do banner: toda funcao que mexe no
+   estado comeca perguntando se a partida ainda esta de pe. */
+function emJogo(){ return viva()&&!travada; }
+function ehNumero(k){ return /^[0-9]+$/.test(k); }
+function nomeDe(k){ return ehNumero(k)?k:PEC[k].n; }
+function somDe(k){
+  if(ehNumero(k)){ nota(440,.09,.12,"triangle",0); return; }
+  nota(PEC[k].hz,(k==="F")?.22:.12,(k==="f")?.09:.16,"triangle",0);
+}
+/* conta quanto vale o total de casas a produzir, para a barra andar de verdade */
+function contaTotal(){
+  var i,s=0;
+  for(i=0;i<RODADAS.length;i++) s+=RODADAS[i].seq.length-RODADAS[i].mostra;
+  return s;
+}
+
+/* ---------------- desenhar uma peça ---------------- */
+function figDe(k,grande){
+  if(ehNumero(k)) return el("span","pdnum",k);
+  var e=el("span",PEC[k].cls,"");
+  if(grande&&!ehNumero(k)) e.style.transform="scale(1.15)";
+  return e;
+}
+
+/* ---------------- A TELA DA RODADA ---------------- */
+function pecaPadrao(){
+  ger++; limpa();
+  if(!totalGeral) totalGeral=contaTotal();
+  if(rodada<0||rodada>=RODADAS.length) rodada=0;
+  var R=RODADAS[rodada];
+  casas=[]; botoes=[]; passo=R.mostra; errosSeg=0; travada=false;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(feitos*100/totalGeral));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.enun));
+
+  filaEl=el("div","pdfila");
+  var i,cx,larg=(100/R.seq.length);
+  for(i=0;i<R.seq.length;i++){
+    cx=el("div","pdcx");
+    cx.style.width=larg+"%";
+    if(i<R.mostra){
+      cx.className="pdcx pdfeito";
+      cx.appendChild(envolve(R.seq[i]));
+    }
+    casas.push(cx);
+    filaEl.appendChild(cx);
+  }
+  c.appendChild(filaEl);
+
+  bandEl=el("div","pdband");
+  /* ⚠️ a bandeja vai EMBARALHADA: se a peca certa ficasse sempre no mesmo
+     lugar, a crianca aprenderia a posicao e nao o padrao (defeito da Fabrica
+     de Estrelas). */
+  var ordem=baguncar(R.paleta.slice(0));
+  for(i=0;i<ordem.length;i++) bandEl.appendChild(fazBotao(ordem[i]));
+  c.appendChild(bandEl);
+  c.appendChild(el("div","hint","Toque na pe&#231;a que vem agora. Ela entra na casa que est&#225; esperando."));
+  t.appendChild(c); app.appendChild(t);
+  marcaVez();
+}
+/* a figura vai dentro de uma caixinha centrada — assim numero e desenho ficam
+   na mesma altura em toda casa da fila */
+function envolve(k){
+  var w=el("span","pdfig","");
+  w.appendChild(figDe(k,false));
+  return w;
+}
+/* ⚠️ a peca da bandeja nasce com a classe `opt` sozinha e SO DEPOIS ganha a
+   `pdp`. Nao e capricho: o portao das dinamicas (_qa/dinamicas.py) reconhece a
+   familia "escolher" pelo literal `el("div","opt"` — escrito de uma vez como
+   `"opt pdp"`, o portao nao reconhecia nada e devolvia "0 dinamica
+   reconhecida", que e aprovacao VAZIA (pior do que reprovar). */
+function fazBotao(k){
+  var b=el("div","opt","");
+  b.className="opt pdp";
+  b.appendChild(figDe(k,true));
+  if(!ehNumero(k)) b.appendChild(el("span","pdnome",PEC[k].n));
+  b._k=k;
+  b.onclick=function(){ tocaPeca(b); };
+  botoes.push(b);
+  return b;
+}
+
+/* ---------------- a casa da vez + a pista para o auditor ---------------- */
+function marcaVez(){
+  var R=RODADAS[rodada], i;
+  for(i=0;i<casas.length;i++){
+    if(temClasse(casas[i],"pdfeito")||temClasse(casas[i],"pdnovo")) continue;
+    casas[i].className=(i===passo)?"pdcx pdvez":"pdcx";
+  }
+  /* a tela publica em data-qa qual peca serve AGORA — so para o
+     auditor-jogador conseguir fechar a fase (convencao da casa). */
+  for(i=0;i<botoes.length;i++)
+    botoes[i].setAttribute("data-qa",(passo<R.seq.length&&botoes[i]._k===R.seq[passo])?"1":"0");
+}
+
+/* ---------------- a regra da peça ---------------- */
+function tocaPeca(b){
+  if(!emJogo()) return;
+  var R=RODADAS[rodada];
+  if(passo>=R.seq.length) return;
+  somDe(b._k);
+  if(b._k===R.seq[passo]) acerta(b._k); else erra(b);
+}
+function acerta(k){
+  var R=RODADAS[rodada], cx=casas[passo];
+  cx.className="pdcx pdfeito pdnovo";
+  cx.innerHTML="";
+  cx.appendChild(envolve(k));
+  sCerto();
+  passo++; feitos++; errosSeg=0;
+  apagaDica(); apagaGrupo();
+  if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%";
+  /* ⚠️ A TRAVA VAI NO INSTANTE DO ACERTO, nao no fim da animacao: a crianca
+     toca duas vezes, e o segundo toque caia na rodada seguinte com o estado
+     antigo. */
+  if(passo>=R.seq.length){ travada=true; fecha(); return; }
+  marcaVez();
+}
+/* ERRO NÃO PUNE: som grave curto, a peça treme, e o andaime CRESCE. */
+function erra(b){
+  sErro(); errosSeg++;
+  b.className="opt pdp pdtreme";
+  destreme(b);
+  degrau();
+  if(errosSeg===2) acendeGrupo();
+  if(errosSeg>=3){ acendeGrupo(); esperaERevela(); }
+}
+/* O ANDAIME QUE CRESCE — tres degraus, tres textos DIFERENTES:
+   1) pergunta que orienta a leitura da fila (o texto vem da RODADA, nunca
+      escrito a mao aqui — foi assim que a rodada das batidas parou de falar
+      dos circulos da primeira);
+   2) apoio concreto: o GRUPO que se repete acende na fila;
+   3) revela e explica (ver esperaERevela).                                */
+function degrau(){
+  var R=RODADAS[rodada];
+  if(errosSeg===1) mostraDica(R.d1);
+  else if(errosSeg===2) mostraDica("Olhe o peda&#231;o aceso no come&#231;o da fila: <b>"+R.grupoTxt+"</b>. Depois dele, tudo recome&#231;a igual.");
+  else mostraDica("Deixa comigo: eu ponho a pr&#243;xima e te mostro a regra.");
+}
+function acendeGrupo(){
+  var R=RODADAS[rodada], i, ate=R.grupo?R.grupo:R.mostra;
+  for(i=0;i<ate&&i<casas.length;i++)
+    if(temClasse(casas[i],"pdfeito")) casas[i].className="pdcx pdfeito pdgrp";
+}
+function apagaGrupo(){
+  var i;
+  for(i=0;i<casas.length;i++)
+    if(temClasse(casas[i],"pdgrp")) casas[i].className="pdcx pdfeito";
+}
+/* ⚠️ DEFEITO PAGO EM CINCO PEÇAS DE UM LOTE SÓ (ago/2026): no 3º degrau a
+   explicacao era escrita e APAGADA no mesmo quadro, porque `revelar` chamava
+   o "acertou" e o "acertou" limpa a dica. A peca se consertava sozinha e a
+   crianca nao ficava sabendo por que. Ordem certa: espera a dica ser lida,
+   REVELA, e so DEPOIS escreve a explicacao — que fica na tela.            */
+function esperaERevela(){
+  var g=ger, quando=passo;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(passo!==quando) return;                 /* a crianca resolveu sozinha */
+    var R=RODADAS[rodada], k=R.seq[passo];
+    if(k===undefined) return;
+    acerta(k);
+    if(g!==ger||!viva()) return;
+    mostraDica("Eu pus <b>"+nomeDe(k)+"</b>. A regra desta fila &#233;: <b>"+R.regra+"</b>.");
+  },1100);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele mexeria numa tela que ja saiu (e deixaria a tela nova travada). */
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    b.className="opt pdp";
+  },340);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* ---------------- fim da rodada: A REGRA EM PALAVRAS ----------------
+   Descobrir sem NOMEAR nao vira conhecimento. Aqui a fila fecha e a peca
+   devolve, escrito, o que a crianca acabou de fazer com a mao.           */
+function fecha(){
+  var g=ger, R=RODADAS[rodada];
+  if(descobertas.indexOf(R.regra)<0) descobertas.push(R.regra);
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraBanner("Fila completa! Voc&#234; descobriu a regra:<br><b>"+R.regra+"</b>",proximaRodada);
+  },560);
+}
+function proximaRodada(){
+  rodada++;
+  if(rodada>=RODADAS.length) fimDaPeca(); else pecaPadrao();
+}
+
+function fimDaPeca(){
+  ger++; limpa();
+  filaEl=null; bandEl=null; travada=false;
+  if(!totalGeral) totalGeral=contaTotal();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; continuou <b>4 padr&#245;es</b> e descobriu a regra de cada um."));
+  var u=el("ul","pdlista",""), i;
+  var regras=descobertas.length?descobertas:regrasTodas();
+  for(i=0;i<regras.length;i++) u.appendChild(el("li","pditem",regras[i]));
+  c.appendChild(u);
+  c.appendChild(el("div","pdregra","E fica a pergunta: e se o grupo tivesse <b>quatro</b> pe&#231;as? Tente inventar uma fila assim."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a O QUE VEM DEPOIS: a crian&#231;a PRODUZ a continua&#231;&#227;o."));
+  t.appendChild(c); app.appendChild(t);
+}
+function regrasTodas(){
+  var i,r=[];
+  for(i=0;i<RODADAS.length;i++) r.push(RODADAS[i].regra);
+  return r;
+}
+function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaPadrao(); }
+
+pecaPadrao();
+</script>
+</body></html>
