@@ -201,7 +201,7 @@ var DICAS=[
   "Deixa comigo: eu ajeito o corte e voc&#234; reparte."
 ];
 
-var idxR=0, partes=1, etapa=1, mexidas=0, entregues=0, ger=0;
+var idxR=0, partes=1, etapa=1, mexidas=0, entregues=0, ger=0, travada=false;
 var telaAtual=null, barraP=null, elFita=null, elStat=null, elBts=null, elBanco=null, elPratos=null;
 var btCorta=null, btJunta=null, pecas=[], vagas=[], marcada=null;
 /* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
@@ -238,7 +238,7 @@ function todasIguais(a){
 /* ---------------------------------------------------------- a tela */
 function pecaRepartir(){
   ger++; limpa(); soltaSombra();
-  partes=1; etapa=1; mexidas=0; entregues=0; marcada=null; pecas=[]; vagas=[];
+  partes=1; etapa=1; mexidas=0; entregues=0; marcada=null; pecas=[]; vagas=[]; travada=false;
   var r=rodada();
   var t=el("div","tela"); telaAtual=t;
   setProg(t,Math.round(idxR*100/RODADAS.length));
@@ -313,18 +313,22 @@ function desenhaFita(){
 }
 function corta(){
   var r=rodada();
-  if(etapa!==1) return;
+  /* ⚠️ trava depois do acerto: sem isto, um toque a mais durante os 700ms de
+     transicao (confere -> etapaDois) faz a fase avancar com a fita cortada
+     no numero ERRADO de partes — corrida de eventos pega num toque rapido. */
+  if(etapa!==1||travada) return;
   if(partes>=Math.min(MAXP,r.un)){ sErro(); mostraDica("A fita j&#225; est&#225; bem picada. Tente <b>juntar</b> e recomear."); return; }
   partes++; mexidas++; sCorte(); desenhaFita(); confere();
 }
 function junta(){
-  if(etapa!==1) return;
+  if(etapa!==1||travada) return;
   if(partes<=1){ sErro(); return; }
   partes--; mexidas++; sTap(); desenhaFita(); confere();
 }
 function confere(){
   var r=rodada(), g=ger;
   if(partes===r.n&&todasIguais(tamanhos(r.un,partes))){
+    travada=true;
     sCerto(); apagaDica();
     setTimeout(function(){ if(g!==ger||!viva()) return; etapaDois(); },700);
     return;

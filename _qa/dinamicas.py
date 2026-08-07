@@ -187,6 +187,16 @@ def main():
 
     print(u"%s -> %d dinamica(s) reconhecida(s): %s"
           % (alvo, len(usa), ", ".join(usa) if usa else "nenhuma"))
+    # ⚠️ A CURA GERAL DO "PASSOU SEM SER MEDIDO" (ago/2026). Duas vezes hoje uma
+    #    peca saiu com "0 dinamica reconhecida" e foi lida como aprovacao — mas
+    #    zero reconhecida quer dizer que ESTE portao nao olhou nada. Aprovacao
+    #    vazia da confianca falsa, que e pior do que reprovar. Agora ele avisa,
+    #    alto, que a mecanica e nova para ele e precisa de regra.
+    if not usa:
+        avisos.append(u"NENHUMA mecanica reconhecida — este portao NAO mediu nada "
+                      u"neste arquivo. Se ha mecanica aqui, ela e nova para mim: "
+                      u"escreva a regra dela (e a linha no _padrao/DINAMICAS.md) "
+                      u"no MESMO commit, senao o defeito dela nao tem quem pegue.")
     for a in avisos:
         print(u"   aviso: %s" % a)
     if ruins:

@@ -522,19 +522,30 @@ function chegou(){
 /* ---------------------------------------------------------------
    6) O ANDAIME QUE CRESCE (1 método, 2 pisca a casa, 3 abre o resto)
    --------------------------------------------------------------- */
-function ajuda(n){
+/* o nome do traço e o nome do que corre mudam com a rodada — dizer "valeta" e
+   "a água correr" no mapa do FIO DA LUZ é a mesma coisa que resto de clone:
+   não estoura nada e só a criança percebe. */
+function nomeTraco(){ return TEMA.liq==="agua" ? "valeta" : "fio"; }
+function nomeCorre(){ return TEMA.liq==="agua" ? "a &#225;gua correr" : "a luz chegar"; }
+
+function ajuda(n,motivo){
   var p=n%3, pu=passoUtil();
   if(p===1){
-    mostraDica("A "+(TEMA.liq==="agua"?"&#225;gua":"luz")+" n&#227;o passa por dentro da "+TEMA.nbloco
-               +". Ande pela <b>terra</b>, casa por casa.");
+    if(motivo==="pulo")
+      mostraDica("A "+nomeTraco()+" anda de <b>casa em casa</b>, sem pular. "
+                 +"Continue pela casa <b>vizinha</b>.");
+    else
+      mostraDica("A "+(TEMA.liq==="agua"?"&#225;gua":"luz")+" n&#227;o passa por dentro da "+TEMA.nbloco
+                 +". Ande pela <b>terra</b>, casa por casa.");
   }else if(p===2){
     mostraDica(pu.voltar
-      ? "Esta valeta se fechou. Est&#225; piscando a casa de <b>tr&#225;s</b>: toque nela para voltar."
+      ? "Est"+(TEMA.liq==="agua"?"a":"e")+" "+nomeTraco()+" se fechou. Est&#225; piscando a casa de "
+        +"<b>tr&#225;s</b>: toque nela para voltar."
       : "Est&#225; piscando a <b>pr&#243;xima casa</b> que serve. Passe o dedo por ela.");
     if(pu.i>=0){ cels[pu.i].className="cel pisca";
       setTimeout(function(){ pinta(); },2200); }
   }else{
-    mostraDica("Vou abrir o resto do caminho com voc&#234;. Olhe a &#225;gua correr.");
+    mostraDica("Vou abrir o resto do caminho com voc&#234;. Olhe "+nomeCorre()+".");
     abreResto();
   }
 }
