@@ -179,7 +179,13 @@ def main():
                           u"auditor-jogador nao consegue atravessar e dara 'PRESO'.")
 
     # ---------------------------------------------------- PINTAR / LIVRO DE COLORIR
-    if re.search(r'\.tcor\b|\.tinta\b|\.balde\b|paleta', css):
+    # ⚠️ QUASE ACUSEI O INOCENTE (ago/2026, na mesma noite em que consertei tres
+    #    portoes por isso). A regra era `.tcor|.tinta|paleta` — e o "PINTE O MAPA"
+    #    do 3o ano tem paleta, mas e PINTURA COM GABARITO (azul e a agua, verde e a
+    #    mata): ali existe certo e errado, e o som de tropeco e legitimo. O que
+    #    distingue o LIVRO DE COLORIR e o BALDE: so a pintura livre tem balde de
+    #    tinta, porque so nela a crianca escolhe a cor sem resposta certa.
+    if re.search(r'\.balde\b', css):
         usa.append("colorir")
         if not re.search(r'[Rr]ecome|[Ll]impar|[Aa]pagar', js):
             avisos.append(u"colorir: nao achei o RECOMECAR. Criança que se arrepende "
