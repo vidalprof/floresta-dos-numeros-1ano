@@ -166,7 +166,9 @@ def main():
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
 
     # ---------------------------------------------------- LABIRINTO
-    if re.search(r'labirint', css + js, re.I) or re.search(r'\.seta\b', css) and re.search(r'onkeydown', js):
+    # ⚠️ o gatilho `.seta` acusava o 3o ano (a rota do Nico usa setas) de ser um
+    #    labirinto com vida e derrota. Gatilho tem que ser EXPLICITO.
+    if re.search(r'\blabirint', css + js, re.I):
         usa.append("labirinto")
         if "onkeydown" not in js and 'addEventListener("keydown"' not in js:
             ruins.append(u"labirinto: so ha botao na tela. AS DUAS PORTAS — no PC da "
@@ -190,7 +192,12 @@ def main():
         if not re.search(r'[Rr]ecome|[Ll]impar|[Aa]pagar', js):
             avisos.append(u"colorir: nao achei o RECOMECAR. Criança que se arrepende "
                           u"precisa poder voltar sem perder a vontade.")
-        if re.search(r'sErro\(', js):
+        # ⚠️ `sErro` vem DECLARADO no motorzinho do molde em toda peca. So conta
+        #    se for CHAMADO — declarar nao e usar.
+        # a DECLARACAO e `function sErro(){...}`: olhar o que vem ANTES do nome.
+        usos = [m for m in re.finditer(r'\bsErro\s*\(\s*\)', js)
+                if not js[max(0, m.start()-9):m.start()].rstrip().endswith("function")]
+        if usos:
             ruins.append(u"colorir: ha som de tropeco numa peca de CRIACAO. Aqui nao "
                          u"existe certo e errado — e desenho dela.")
 
