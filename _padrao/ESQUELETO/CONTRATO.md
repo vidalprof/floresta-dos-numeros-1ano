@@ -177,3 +177,20 @@ para a próxima não repetir.
   chamada no começo da fase e lia um elemento criado mais abaixo — `TypeError` na
   primeira carga, derrubando quatro portões de uma vez. Todo ajudante que toca no
   DOM começa com `if(!elemento) return;`.
+- **O andaime tem que crescer no erro MAIS NATURAL, não só no previsto.** Numa
+  peça de traçar, o ramo "pulou casa" (tocar direto no destino — o gesto mais
+  natural que existe, *"quero chegar ALI"*) escrevia uma dica FIXA e não chamava
+  o andaime. A criança lia a mesma frase para sempre; os degraus de piscar e de
+  abrir o caminho nunca chegavam nela. **Todo caminho de erro chama `ajuda(n)`.**
+- **Vocabulário de outra rodada é resto de clone em miniatura.** Na 2ª rodada as
+  dicas ainda diziam "a valeta", "olhe a água" — palavras da 1ª. Não estoura
+  nada; só a criança percebe. O nome do que está na tela sai de uma função, nunca
+  escrito à mão em cada dica.
+- **Temporizador de rodada velha trava a tela.** Um `setTimeout` continuava
+  rodando depois da troca de tela e deixava `travado = true` na rodada nova — a
+  tela parava de responder ao dedo, sem erro nenhum no console. Todo temporizador
+  guarda a GERAÇÃO da rodada (`if(ger !== geracaoAtual) return;`).
+- **Opção já tentada não pode se distinguir só pela cor — nem responder com
+  silêncio.** Um retângulo rosa e um `return` seco: quem não distingue cor toca
+  ali para sempre achando que travou. Etiqueta em palavras ("já tentamos") + som
+  de retorno.
