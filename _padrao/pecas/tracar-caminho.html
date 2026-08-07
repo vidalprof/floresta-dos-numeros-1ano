@@ -526,13 +526,14 @@ function chegou(){
    "a água correr" no mapa do FIO DA LUZ é a mesma coisa que resto de clone:
    não estoura nada e só a criança percebe. */
 function nomeTraco(){ return TEMA.liq==="agua" ? "valeta" : "fio"; }
+function artTraco(){ return TEMA.liq==="agua" ? "A" : "O"; }
 function nomeCorre(){ return TEMA.liq==="agua" ? "a &#225;gua correr" : "a luz chegar"; }
 
 function ajuda(n,motivo){
   var p=n%3, pu=passoUtil();
   if(p===1){
     if(motivo==="pulo")
-      mostraDica("A "+nomeTraco()+" anda de <b>casa em casa</b>, sem pular. "
+      mostraDica(artTraco()+" "+nomeTraco()+" anda de <b>casa em casa</b>, sem pular. "
                  +"Continue pela casa <b>vizinha</b>.");
     else
       mostraDica("A "+(TEMA.liq==="agua"?"&#225;gua":"luz")+" n&#227;o passa por dentro da "+TEMA.nbloco
