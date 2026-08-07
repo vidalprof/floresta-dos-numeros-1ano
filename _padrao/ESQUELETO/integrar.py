@@ -271,11 +271,28 @@ MEC["%(nome)s"] = function(f, cen, fim){
       var i = document.createElement("i"); i.style.width = (p || 0) + "%%";
       pr.appendChild(i); t.appendChild(pr);
     }
-    function mostraBanner(msg, cb){ if(typeof festa === "function") festa();
-      /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
-         acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
-         no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(_seguir, 420); }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
     limpa();
 %(corpo)s
   })();
