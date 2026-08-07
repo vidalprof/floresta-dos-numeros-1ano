@@ -187,6 +187,15 @@
         x.className = String(x.className).replace(/\s*pfesta/, ""); }, 620); })(e);
     }
   }
+  /* ⚠️ AQUI MOROU, POR UMA HORA, UM "PROXIMO" GENERICO — e ele foi DESFEITO.
+     A ideia: segurar o `setTimeout` que a peca marca depois do acerto e pendurar
+     o botao no lugar dele. Funciona em teoria e eu nao consegui PROVAR que
+     funciona nas mecanicas de arrastar — o meu teste nao sabe acertar nelas.
+     Deixar no ar um codigo que mexe no RELOGIO das 76 pecas sem medicao seria
+     apostar com a aula do Marcos. A regra da casa vale para mim tambem: nao se
+     entrega o que nao se mediu.
+     O caminho certo e por PECA, uma a uma, cada uma com o seu teste — como foi
+     feito na `ouvir-achar`, onde o botao esta medido e funcionando. */
   new MutationObserver(function(){ setTimeout(olhaAcerto, 60); })
     .observe(app, {childList:true, subtree:true, attributes:true,
                    attributeFilter:["class"]});

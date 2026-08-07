@@ -116,7 +116,8 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
         conclui "PRESO" numa fase que a crianca passa sem dificuldade. Medido:
         com o botao, as rodadas andam 1 -> 2 -> 3 -> fim de fase. O mesmo
         tratamento que o `#bcta` do banner ja tinha. */
-     const px=document.querySelector('.oaprox');
+     /* o Proximo generico da ponte tem prioridade igual ao da peca */
+     const px=document.querySelector('.pxprox,.oaprox');
      if(px&&px.offsetParent!==null){ px.click(); return 1; }
      const bn=document.getElementById('banner');
      if(bn&&bn.className.indexOf('show')>=0){ document.getElementById('bcta').click(); return 1; }

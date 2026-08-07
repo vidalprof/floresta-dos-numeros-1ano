@@ -1,5 +1,17 @@
 /* GERADO por integrar.py — nao editar a mao */
 
+/* ⭐ O BOTAO "PROXIMO" generico (ver o FERRAMENTAS). Mesmo desenho do Broto:
+   azul, grande, com a sombra embaixo que afunda ao apertar. */
+.pxprox{display:block;margin:14px auto 10px;min-height:52px;padding:13px 30px;border:0;
+  border-radius:26px;font-size:19px;font-weight:800;color:#fff;cursor:pointer;
+  background:-webkit-gradient(linear,left top,left bottom,from(#3aa0f5),to(#2472c8));
+  background:linear-gradient(#3aa0f5,#2472c8);box-shadow:0 5px 0 #1a5698;
+  -webkit-animation:pxentra .28s ease;animation:pxentra .28s ease}
+.pxprox:active{-webkit-transform:translateY(4px);transform:translateY(4px);box-shadow:0 1px 0 #1a5698}
+@-webkit-keyframes pxentra{from{-webkit-transform:translateY(10px);opacity:0}}
+@keyframes pxentra{from{transform:translateY(10px);opacity:0}}
+@media (prefers-reduced-motion:reduce){ .pxprox{-webkit-animation:none;animation:none} }
+
 /* ⭐ A FESTA DO ACERTO — o CSS da comemoracao generica (ver o olheiro no
    FERRAMENTAS). Vale para as 76 mecanicas: quem ganha a marca de certo pula, e
    sobem faisquinhas. Cobranca do Marcos: "nao tem a comemoracao quando acerta
