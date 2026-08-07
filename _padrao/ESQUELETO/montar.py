@@ -196,6 +196,21 @@ def confere_dados(c, oficina):
                              u"caca-palavras (max 12 letras): %s"
                              % (i + 1, f.get("id"), ", ".join(longas)))
 
+        # ⚠️ GAVETA MEIA-CHEIA DEIXA A FASE SEM SAIDA. O "separe nas gavetas" tem
+        #    TRES: as gavetas (com as chaves), as fichas (que APONTAM para essas
+        #    chaves) e as dicas. Preenchendo so as gavetas, as chaves deixam de
+        #    casar e nenhuma ficha pode ser posta — a crianca fica presa, e nao ha
+        #    erro de JS nenhum. Foi o auditor-jogador que pegou, travado em 22%.
+        outras = [v for v in (info.get("gavetas") or []) if v != info.get("var")]
+        faltando = [v for v in outras if v not in (f.get("dadosExtra") or {})]
+        if outras and faltando:
+            avisos.append(u"fase %d (%s), mecanica '%s': voce preencheu '%s' mas "
+                          u"deixou %s com o conteudo de EXEMPLO. Se uma gaveta "
+                          u"aponta para a outra (chave/alvo), a fase fica SEM "
+                          u"SAIDA e nada reclama — confira em pecas.json"
+                          % (i + 1, f.get("id"), mec, info.get("var"),
+                             " e ".join("'%s'" % v for v in faltando)))
+
         exemplo = literal(info.get("exemplo"))
         if exemplo is None:
             continue
