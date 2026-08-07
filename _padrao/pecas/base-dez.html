@@ -371,6 +371,10 @@ function acendeSob(x,y){
   elCaixa.className=caixaSob(x,y)?"cam alvo":"cam livre";
 }
 function apagaAceso(){
+  /* ⚠️ soltaSombra() e chamada no INICIO de pecaBaseDez(), antes de elCaixa
+     existir (ela so nasce mais adiante na mesma funcao) — sem esta guarda a
+     1a chamada estoura TypeError e derruba a peca inteira. */
+  if(!elCaixa) return;
   if(naCaixa.length>=10){ elCaixa.className="cam ok"; return; }
   elCaixa.className=marcada?"cam livre":"cam";
 }
