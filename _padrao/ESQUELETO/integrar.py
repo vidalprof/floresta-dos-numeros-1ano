@@ -137,6 +137,15 @@ PONTE = u'''
 /* ==== PECA: %(nome)s ==== */
 MEC["%(nome)s"] = function(f, cen, fim){
   cen.className = cen.className + " mec-%(nome)s";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -152,7 +161,7 @@ MEC["%(nome)s"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 %(corpo)s
   })();
@@ -251,7 +260,25 @@ def confere_contra_motor(js_out):
             if a:
                 locais.add(a)
     resta = chamados - locais - kw - embutidos
-    return (sorted(resta - funcoes - valores), sorted(resta & valores))
+    faltando, colidindo = sorted(resta - funcoes - valores), sorted(resta & valores)
+
+    # ⚠️ A TERCEIRA METADE DA MESMA LICAO: a peca pode declarar um nome que a
+    #    PONTE usa para si. Foi o `fim` da memoria — o `mostraBanner` da ponte
+    #    chamava a peca de volta em laco infinito, SEM ERRO NENHUM. O nome da
+    #    continuacao (`_seguir`) mora fora do fechamento justamente para isto,
+    #    mas se alguem declarar `_seguir` dentro de uma peca, volta tudo.
+    for m in re.finditer(r"/\* ==== PECA: ([\w-]+) ==== \*/(.*?)(?=/\* ==== PECA: |$)",
+                         "".join(js_out), re.S):
+        corpo = sem_comentario(m.group(2))
+        # so o corpo da peca (depois do `limpa();` que abre o fechamento)
+        i = corpo.find("limpa();")
+        corpo = corpo[i:] if i >= 0 else corpo
+        for nome in ("_seguir", "cen", "fim"):
+            if re.search(r"\b(?:var|function)\s+%s\b" % nome, corpo):
+                if nome == "_seguir":
+                    colidindo.append(u"%s declara `_seguir` (o nome da ponte)"
+                                     % m.group(1))
+    return faltando, colidindo
 
 
 def main():

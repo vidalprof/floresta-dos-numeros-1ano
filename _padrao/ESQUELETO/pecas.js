@@ -36,6 +36,15 @@ function nota(f, dur, vol, tipo, atraso){
 /* ==== PECA: achar-na-cena ==== */
 MEC["achar-na-cena"] = function(f, cen, fim){
   cen.className = cen.className + " mec-achar-na-cena";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -51,7 +60,7 @@ MEC["achar-na-cena"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -228,6 +237,15 @@ function fim(){
 /* ==== PECA: andar-ate ==== */
 MEC["andar-ate"] = function(f, cen, fim){
   cen.className = cen.className + " mec-andar-ate";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -243,7 +261,7 @@ MEC["andar-ate"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -499,6 +517,15 @@ function recomecaAnde(){ lugarAtual=0; telaAnde(); }
 /* ==== PECA: arrastar-lugar ==== */
 MEC["arrastar-lugar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-arrastar-lugar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -514,7 +541,7 @@ MEC["arrastar-lugar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -825,6 +852,15 @@ function fimDaPeca(){
 /* ==== PECA: arrastar-sombra ==== */
 MEC["arrastar-sombra"] = function(f, cen, fim){
   cen.className = cen.className + " mec-arrastar-sombra";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -840,7 +876,7 @@ MEC["arrastar-sombra"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -1240,6 +1276,15 @@ function fimDaPeca(){
 /* ==== PECA: autoexplicacao ==== */
 MEC["autoexplicacao"] = function(f, cen, fim){
   cen.className = cen.className + " mec-autoexplicacao";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -1255,7 +1300,7 @@ MEC["autoexplicacao"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -1562,6 +1607,15 @@ function apagaDica(){
 /* ==== PECA: balanca ==== */
 MEC["balanca"] = function(f, cen, fim){
   cen.className = cen.className + " mec-balanca";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -1577,7 +1631,7 @@ MEC["balanca"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -1789,6 +1843,15 @@ function fimBalanca(){
 /* ==== PECA: base-dez ==== */
 MEC["base-dez"] = function(f, cen, fim){
   cen.className = cen.className + " mec-base-dez";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -1804,7 +1867,7 @@ MEC["base-dez"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -2151,6 +2214,15 @@ function fimDaPeca(){
 /* ==== PECA: bingo ==== */
 MEC["bingo"] = function(f, cen, fim){
   cen.className = cen.className + " mec-bingo";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -2166,7 +2238,7 @@ MEC["bingo"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -2552,6 +2624,15 @@ function fimBingo(){
 /* ==== PECA: bussola ==== */
 MEC["bussola"] = function(f, cen, fim){
   cen.className = cen.className + " mec-bussola";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -2567,7 +2648,7 @@ MEC["bussola"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -2900,6 +2981,15 @@ function telaFim(){
 /* ==== PECA: caca-palavras ==== */
 MEC["caca-palavras"] = function(f, cen, fim){
   cen.className = cen.className + " mec-caca-palavras";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -2915,7 +3005,7 @@ MEC["caca-palavras"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -3191,6 +3281,15 @@ function fimDaPeca(){
 /* ==== PECA: caixa-dinheiro ==== */
 MEC["caixa-dinheiro"] = function(f, cen, fim){
   cen.className = cen.className + " mec-caixa-dinheiro";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -3206,7 +3305,7 @@ MEC["caixa-dinheiro"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -3414,6 +3513,15 @@ function fimDaPeca(){
 /* ==== PECA: calendario ==== */
 MEC["calendario"] = function(f, cen, fim){
   cen.className = cen.className + " mec-calendario";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -3429,7 +3537,7 @@ MEC["calendario"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -4011,6 +4119,15 @@ function fimCal(){
 /* ==== PECA: camadas-mapa ==== */
 MEC["camadas-mapa"] = function(f, cen, fim){
   cen.className = cen.className + " mec-camadas-mapa";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -4026,7 +4143,7 @@ MEC["camadas-mapa"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -4372,6 +4489,15 @@ function fim(){
 /* ==== PECA: circuito ==== */
 MEC["circuito"] = function(f, cen, fim){
   cen.className = cen.className + " mec-circuito";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -4387,7 +4513,7 @@ MEC["circuito"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -4807,6 +4933,15 @@ function fimDaPeca(){
 /* ==== PECA: classificar ==== */
 MEC["classificar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-classificar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -4822,7 +4957,7 @@ MEC["classificar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -5040,6 +5175,15 @@ function fimDaPeca(){
 /* ==== PECA: comparar ==== */
 MEC["comparar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-comparar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5055,7 +5199,7 @@ MEC["comparar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -5490,6 +5634,15 @@ function fimComp(){
 /* ==== PECA: completar ==== */
 MEC["completar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-completar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5505,7 +5658,7 @@ MEC["completar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -5642,6 +5795,15 @@ function recomeca(){ rodada=0; telaCompletar(); }
 /* ==== PECA: conserte-o-erro ==== */
 MEC["conserte-o-erro"] = function(f, cen, fim){
   cen.className = cen.className + " mec-conserte-o-erro";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5657,7 +5819,7 @@ MEC["conserte-o-erro"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -5905,6 +6067,15 @@ function fimConserta(){
 /* ==== PECA: contadores ==== */
 MEC["contadores"] = function(f, cen, fim){
   cen.className = cen.className + " mec-contadores";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -5920,7 +6091,7 @@ MEC["contadores"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -6184,6 +6355,15 @@ function fimContadores(){
 /* ==== PECA: coordenadas ==== */
 MEC["coordenadas"] = function(f, cen, fim){
   cen.className = cen.className + " mec-coordenadas";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -6199,7 +6379,7 @@ MEC["coordenadas"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -6557,6 +6737,15 @@ function telaFim(){
 /* ==== PECA: criar-desafio ==== */
 MEC["criar-desafio"] = function(f, cen, fim){
   cen.className = cen.className + " mec-criar-desafio";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -6572,7 +6761,7 @@ MEC["criar-desafio"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -6864,6 +7053,15 @@ function fimDaPeca(){
 /* ==== PECA: cruzadinha ==== */
 MEC["cruzadinha"] = function(f, cen, fim){
   cen.className = cen.className + " mec-cruzadinha";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -6879,7 +7077,7 @@ MEC["cruzadinha"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -7082,6 +7280,15 @@ function fimDaPeca(){
 /* ==== PECA: decisao ==== */
 MEC["decisao"] = function(f, cen, fim){
   cen.className = cen.className + " mec-decisao";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7097,7 +7304,7 @@ MEC["decisao"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -7320,6 +7527,15 @@ function parecer(){
 /* ==== PECA: digitar ==== */
 MEC["digitar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-digitar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7335,7 +7551,7 @@ MEC["digitar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -7507,6 +7723,15 @@ function recomeca(){ rodada=0; telaDigitar(); }
 /* ==== PECA: ditado ==== */
 MEC["ditado"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ditado";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7522,7 +7747,7 @@ MEC["ditado"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -7777,6 +8002,15 @@ function recomeca(){ rodada=0; telaDitado(); }
 /* ==== PECA: domino ==== */
 MEC["domino"] = function(f, cen, fim){
   cen.className = cen.className + " mec-domino";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -7792,7 +8026,7 @@ MEC["domino"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -8262,6 +8496,15 @@ function fimDomino(){
 /* ==== PECA: ensinar-mascote ==== */
 MEC["ensinar-mascote"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ensinar-mascote";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8277,7 +8520,7 @@ MEC["ensinar-mascote"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -8543,6 +8786,15 @@ function telaFimEnsinar(){
 /* ==== PECA: escolher ==== */
 MEC["escolher"] = function(f, cen, fim){
   cen.className = cen.className + " mec-escolher";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8558,7 +8810,7 @@ MEC["escolher"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -8702,6 +8954,15 @@ function fimDaPeca(){
 /* ==== PECA: escrever-legenda ==== */
 MEC["escrever-legenda"] = function(f, cen, fim){
   cen.className = cen.className + " mec-escrever-legenda";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8717,7 +8978,7 @@ MEC["escrever-legenda"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -8960,6 +9221,15 @@ function recomecaLegenda(){ fotoAtual=0; telaLegenda(); }
 /* ==== PECA: estimar ==== */
 MEC["estimar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-estimar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -8975,7 +9245,7 @@ MEC["estimar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -9390,6 +9660,15 @@ function fimEstimar(){
 /* ==== PECA: experimento-justo ==== */
 MEC["experimento-justo"] = function(f, cen, fim){
   cen.className = cen.className + " mec-experimento-justo";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -9405,7 +9684,7 @@ MEC["experimento-justo"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -9697,6 +9976,15 @@ function fimExp(){
 /* ==== PECA: filtro ==== */
 MEC["filtro"] = function(f, cen, fim){
   cen.className = cen.className + " mec-filtro";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -9712,7 +10000,7 @@ MEC["filtro"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -9906,6 +10194,15 @@ function recomecaF(){ pen=0; telaFiltro(); }
 /* ==== PECA: forca ==== */
 MEC["forca"] = function(f, cen, fim){
   cen.className = cen.className + " mec-forca";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -9921,7 +10218,7 @@ MEC["forca"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -10109,6 +10406,15 @@ function fimDaPeca(){
 /* ==== PECA: girar ==== */
 MEC["girar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-girar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10124,7 +10430,7 @@ MEC["girar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -10488,6 +10794,15 @@ function telaFimGirar(){
 /* ==== PECA: grafico ==== */
 MEC["grafico"] = function(f, cen, fim){
   cen.className = cen.className + " mec-grafico";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10503,7 +10818,7 @@ MEC["grafico"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -10914,6 +11229,15 @@ function telaFimGraf(){
 /* ==== PECA: intruso ==== */
 MEC["intruso"] = function(f, cen, fim){
   cen.className = cen.className + " mec-intruso";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -10929,7 +11253,7 @@ MEC["intruso"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -11271,6 +11595,15 @@ function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaIntruso(); }
 /* ==== PECA: investigar-fonte ==== */
 MEC["investigar-fonte"] = function(f, cen, fim){
   cen.className = cen.className + " mec-investigar-fonte";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -11286,7 +11619,7 @@ MEC["investigar-fonte"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -11534,6 +11867,15 @@ function fimDaPeca(){
 /* ==== PECA: labirinto ==== */
 MEC["labirinto"] = function(f, cen, fim){
   cen.className = cen.className + " mec-labirinto";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -11549,7 +11891,7 @@ MEC["labirinto"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -11909,6 +12251,15 @@ function fimDaPeca(){
 /* ==== PECA: ligar-pontos ==== */
 MEC["ligar-pontos"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ligar-pontos";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -11924,7 +12275,7 @@ MEC["ligar-pontos"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -12229,6 +12580,15 @@ function fimDaPeca(){
 /* ==== PECA: ligar ==== */
 MEC["ligar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ligar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -12244,7 +12604,7 @@ MEC["ligar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -12518,6 +12878,15 @@ function fimDaPeca(){
 /* ==== PECA: linha-do-tempo ==== */
 MEC["linha-do-tempo"] = function(f, cen, fim){
   cen.className = cen.className + " mec-linha-do-tempo";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -12533,7 +12902,7 @@ MEC["linha-do-tempo"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -12812,6 +13181,15 @@ function telaFimLinha(){
 /* ==== PECA: mapa-conceitual ==== */
 MEC["mapa-conceitual"] = function(f, cen, fim){
   cen.className = cen.className + " mec-mapa-conceitual";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -12827,7 +13205,7 @@ MEC["mapa-conceitual"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -13236,6 +13614,15 @@ function fimMapa(){
 /* ==== PECA: medir ==== */
 MEC["medir"] = function(f, cen, fim){
   cen.className = cen.className + " mec-medir";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -13251,7 +13638,7 @@ MEC["medir"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -13917,6 +14304,15 @@ function fimMedir(){
 /* ==== PECA: memoria ==== */
 MEC["memoria"] = function(f, cen, fim){
   cen.className = cen.className + " mec-memoria";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -13932,7 +14328,7 @@ MEC["memoria"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -14110,6 +14506,15 @@ function fim(){
 /* ==== PECA: misterio ==== */
 MEC["misterio"] = function(f, cen, fim){
   cen.className = cen.className + " mec-misterio";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -14125,7 +14530,7 @@ MEC["misterio"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -14437,6 +14842,15 @@ function apagaDica(){
 /* ==== PECA: montar-frase ==== */
 MEC["montar-frase"] = function(f, cen, fim){
   cen.className = cen.className + " mec-montar-frase";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -14452,7 +14866,7 @@ MEC["montar-frase"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -14738,6 +15152,15 @@ function telaFimFrase(){
 /* ==== PECA: morfemas ==== */
 MEC["morfemas"] = function(f, cen, fim){
   cen.className = cen.className + " mec-morfemas";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -14753,7 +15176,7 @@ MEC["morfemas"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -15073,6 +15496,15 @@ function fimDaPeca(){
 /* ==== PECA: mudanca-permanencia ==== */
 MEC["mudanca-permanencia"] = function(f, cen, fim){
   cen.className = cen.className + " mec-mudanca-permanencia";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -15088,7 +15520,7 @@ MEC["mudanca-permanencia"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -15452,6 +15884,15 @@ function fimDaPeca(){
 /* ==== PECA: ordenar ==== */
 MEC["ordenar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ordenar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -15467,7 +15908,7 @@ MEC["ordenar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -15689,6 +16130,15 @@ function telaFim(){
 /* ==== PECA: ouvir-achar ==== */
 MEC["ouvir-achar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-ouvir-achar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -15704,7 +16154,7 @@ MEC["ouvir-achar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -16049,6 +16499,15 @@ function fimOuvir(){
 /* ==== PECA: padrao ==== */
 MEC["padrao"] = function(f, cen, fim){
   cen.className = cen.className + " mec-padrao";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -16064,7 +16523,7 @@ MEC["padrao"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -16365,6 +16824,15 @@ function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaPadrao(); }
 /* ==== PECA: passo-a-passo ==== */
 MEC["passo-a-passo"] = function(f, cen, fim){
   cen.className = cen.className + " mec-passo-a-passo";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -16380,7 +16848,7 @@ MEC["passo-a-passo"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -16999,6 +17467,15 @@ document.addEventListener("mouseup",function(){ mouseDown=false; },false);
 /* ==== PECA: pintar-desenho ==== */
 MEC["pintar-desenho"] = function(f, cen, fim){
   cen.className = cen.className + " mec-pintar-desenho";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -17014,7 +17491,7 @@ MEC["pintar-desenho"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -17340,6 +17817,15 @@ function fimDaPeca(){
 /* ==== PECA: pintar ==== */
 MEC["pintar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-pintar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -17355,7 +17841,7 @@ MEC["pintar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -17474,6 +17960,15 @@ function fim(){
 /* ==== PECA: prever-observar ==== */
 MEC["prever-observar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-prever-observar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -17489,7 +17984,7 @@ MEC["prever-observar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -17813,6 +18308,15 @@ function telaComparar(){
 /* ==== PECA: quebra-cabeca ==== */
 MEC["quebra-cabeca"] = function(f, cen, fim){
   cen.className = cen.className + " mec-quebra-cabeca";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -17828,7 +18332,7 @@ MEC["quebra-cabeca"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -18170,6 +18674,15 @@ function telaFim(){
 /* ==== PECA: quem-sou-eu ==== */
 MEC["quem-sou-eu"] = function(f, cen, fim){
   cen.className = cen.className + " mec-quem-sou-eu";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -18185,7 +18698,7 @@ MEC["quem-sou-eu"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -18391,6 +18904,15 @@ function recomecaQ(){ mist=0; ganhas=0; telaQuem(); }
 /* ==== PECA: relampago ==== */
 MEC["relampago"] = function(f, cen, fim){
   cen.className = cen.className + " mec-relampago";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -18406,7 +18928,7 @@ MEC["relampago"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -18643,6 +19165,15 @@ function telaFimRelampago(){
 /* ==== PECA: relogio ==== */
 MEC["relogio"] = function(f, cen, fim){
   cen.className = cen.className + " mec-relogio";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -18658,7 +19189,7 @@ MEC["relogio"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -19204,6 +19735,15 @@ function fimRelogio(){
 /* ==== PECA: repartir ==== */
 MEC["repartir"] = function(f, cen, fim){
   cen.className = cen.className + " mec-repartir";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -19219,7 +19759,7 @@ MEC["repartir"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -19601,6 +20141,15 @@ function fimDaPeca(){
 /* ==== PECA: reta-numerica ==== */
 MEC["reta-numerica"] = function(f, cen, fim){
   cen.className = cen.className + " mec-reta-numerica";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -19616,7 +20165,7 @@ MEC["reta-numerica"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -19932,6 +20481,15 @@ function recomeca(){
 /* ==== PECA: rotular ==== */
 MEC["rotular"] = function(f, cen, fim){
   cen.className = cen.className + " mec-rotular";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -19947,7 +20505,7 @@ MEC["rotular"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -20376,6 +20934,15 @@ function recomeca(){ rodada=0; feitos=0; pecaRotular(); }
 /* ==== PECA: saltos-na-fita ==== */
 MEC["saltos-na-fita"] = function(f, cen, fim){
   cen.className = cen.className + " mec-saltos-na-fita";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -20391,7 +20958,7 @@ MEC["saltos-na-fita"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -20623,6 +21190,15 @@ function recomecaSaltos(){ rodadaF=0; telaSaltos(); }
 /* ==== PECA: sete-erros ==== */
 MEC["sete-erros"] = function(f, cen, fim){
   cen.className = cen.className + " mec-sete-erros";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -20638,7 +21214,7 @@ MEC["sete-erros"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -20881,6 +21457,15 @@ function fim(){
 /* ==== PECA: simetria ==== */
 MEC["simetria"] = function(f, cen, fim){
   cen.className = cen.className + " mec-simetria";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -20896,7 +21481,7 @@ MEC["simetria"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -21106,6 +21691,15 @@ function fimDaPeca(){
 /* ==== PECA: simulador ==== */
 MEC["simulador"] = function(f, cen, fim){
   cen.className = cen.className + " mec-simulador";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21121,7 +21715,7 @@ MEC["simulador"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -21375,6 +21969,15 @@ function fimDaPeca(){
 /* ==== PECA: sombra ==== */
 MEC["sombra"] = function(f, cen, fim){
   cen.className = cen.className + " mec-sombra";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21390,7 +21993,7 @@ MEC["sombra"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -21563,6 +22166,15 @@ function fimDaPeca(){
 /* ==== PECA: tabela ==== */
 MEC["tabela"] = function(f, cen, fim){
   cen.className = cen.className + " mec-tabela";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21578,7 +22190,7 @@ MEC["tabela"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -21769,6 +22381,15 @@ function recomecaTabela(){ rodadaQ=0; acertosQ=0; telaTabela(); }
 /* ==== PECA: tangram ==== */
 MEC["tangram"] = function(f, cen, fim){
   cen.className = cen.className + " mec-tangram";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -21784,7 +22405,7 @@ MEC["tangram"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -22144,6 +22765,15 @@ function fimDaPeca(){
 /* ==== PECA: teia-alimentar ==== */
 MEC["teia-alimentar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-teia-alimentar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22159,7 +22789,7 @@ MEC["teia-alimentar"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -22617,6 +23247,15 @@ function fimDaPeca(){
 /* ==== PECA: termometro ==== */
 MEC["termometro"] = function(f, cen, fim){
   cen.className = cen.className + " mec-termometro";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22632,7 +23271,7 @@ MEC["termometro"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -22848,6 +23487,15 @@ function recomecaT(){ esc=0; telaTermo(); }
 /* ==== PECA: tracar-caminho ==== */
 MEC["tracar-caminho"] = function(f, cen, fim){
   cen.className = cen.className + " mec-tracar-caminho";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -22863,7 +23511,7 @@ MEC["tracar-caminho"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -23278,6 +23926,15 @@ rodada=0;
 /* ==== PECA: tracar-letra ==== */
 MEC["tracar-letra"] = function(f, cen, fim){
   cen.className = cen.className + " mec-tracar-letra";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -23293,7 +23950,7 @@ MEC["tracar-letra"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
@@ -23710,6 +24367,15 @@ document.addEventListener("mouseup",function(){ mouseDown=false; },false);
 /* ==== PECA: trilha ==== */
 MEC["trilha"] = function(f, cen, fim){
   cen.className = cen.className + " mec-trilha";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
   (function(){
     /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
     var app = cen;
@@ -23725,7 +24391,7 @@ MEC["trilha"] = function(f, cen, fim){
       /* ⚠️ o banner do motor e quem leva a fase seguinte: a peca so avisa que
          acabou. Se ela passar um `cb` (a tela de fim dela), ele e IGNORADO —
          no esqueleto quem manda no caminho e o motor.                        */
-      setTimeout(function(){ fim(); }, 420); }
+      setTimeout(_seguir, 420); }
     limpa();
 
 /* ====== A PEÇA COMEÇA AQUI ====== */
