@@ -84,7 +84,13 @@ portao(){
   saida="$("$@" 2>&1)"; local st=$?
   printf '%s\n' "$saida"
   if [ "$st" != "0" ]; then FALHOU=1; fi
-  if printf '%s' "$saida" | grep -qE '\-> *0 |0 fase\(s\)|0 dica\(s\)|0 alvo\(s\)|[Nn]ada a conferir'; then
+  # ⚠️ LICAO PAGA (ago/2026), e a ironia de sempre: ESTE portao, que existe para
+  #    pegar portao cego, passou a acusar INOCENTE. "10 dica(s) conferida(s)"
+  #    contem "0 dica(s)" como pedaco de texto — e o `vozdica`, que tinha medido
+  #    DEZ dicas e aprovado, entrou na lista dos cegos. Portao que acusa o
+  #    inocente ensina a ignorar portao, e a lista dos cegos e justamente a que
+  #    nao pode virar ruido. Agora o zero tem que ser o numero INTEIRO zero.
+  if printf '%s' "$saida" | grep -qE '(^|[^0-9])0 (fase|dica|alvo|texto|palavra|imagem)\(s\)|\-> *0 ([a-z]|$)|[Nn]ada a conferir'; then
     CEGOS="$CEGOS
    · $nome"
   fi
