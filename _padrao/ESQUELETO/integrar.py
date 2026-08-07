@@ -78,11 +78,27 @@ def gaveta(js):
     de verdade (`f.dados`) **sem tocar na peça** — que é o ponto: a peça já foi
     testada, e reescrevê-la é reintroduzir os defeitos que ela custou.
 
-    Devolve o nome da variável, ou None (aí a fase roda com o exemplo dela e o
-    montador avisa em alto e bom som)."""
-    for m in re.finditer(r"^var\s+([A-Za-z_$][\w$]*)\s*=\s*[\[{]", js, re.M):
-        return m.group(1)
-    return None
+    Devolve `(nome, exemplo)` — o exemplo é o valor de exemplo escrito na peça,
+    que vai para o `pecas.json` e é o que responde, sem abrir 74 arquivos, à
+    única pergunta que importa na hora de escrever o conteúdo: *"o que eu ponho
+    em `dados` desta mecânica?"*. Devolve `(None, "")` se a peça não tiver
+    gaveta (aí a fase roda com o exemplo dela e o montador avisa)."""
+    m = re.search(r"^var\s+([A-Za-z_$][\w$]*)\s*=\s*[\[{]", js, re.M)
+    if not m:
+        return None, ""
+    # até o `;` que fecha, contando colchetes — o exemplo pode ter vários níveis
+    k = m.end() - 1
+    p, fim = 0, len(js)
+    while k < len(js):
+        if js[k] in "[{":
+            p += 1
+        elif js[k] in "]}":
+            p -= 1
+            if p == 0:
+                fim = k + 1
+                break
+        k += 1
+    return m.group(1), js[m.end() - 1:fim]
 
 
 def prefixa_css(css, nome):
@@ -181,7 +197,7 @@ def main():
         if not porta:
             sem_porta.append(nome)
             continue
-        gav = gaveta(js)
+        gav, exemplo = gaveta(js)
         # ⭐ AQUI a atividade deixa de ser código: a última linha da peça (a
         #    chamada dela mesma) vira "troque o conteúdo de exemplo pelo desta
         #    fase, DEPOIS comece". A peça não sabe de nada; nada nela mudou.
@@ -192,7 +208,9 @@ def main():
             sem_gaveta.append(nome)
         corpo = re.sub(r"^\s*%s\s*\(\s*\)\s*;\s*$" % re.escape(porta),
                        abre, js, flags=re.M)
-        gavetas[nome] = gav
+        gavetas[nome] = {"var": gav,
+                         # o exemplo cru da peça: é o molde do que vai em `dados`
+                         "exemplo": (exemplo or "")[:900]}
         js_out.append(PONTE % {"nome": nome, "corpo": corpo})
         # o CSS leva a MESMA marca: o montador recorta peça inteira, nunca
         # regra a regra (um `@media{` que perdesse as regras de dentro deixaria
@@ -217,8 +235,14 @@ def main():
     # o mapa das gavetas: é ele que o autor do conteudo.json consulta para saber
     # o formato de `dados` de cada mecânica (sem abrir 74 arquivos)
     io.open(os.path.join(AQUI, "pecas.json"), "w", encoding="utf-8").write(
-        json.dumps({"gavetas": gavetas}, ensure_ascii=False, indent=1,
-                   sort_keys=True))
+        json.dumps({
+            "_leia": u"O FORMATO DE `dados` DE CADA MECANICA. Ao escrever o "
+                     u"conteudo.json, a fase pode trazer um campo `dados` com "
+                     u"o conteudo dela; o formato e o mesmo do `exemplo` aqui, "
+                     u"que e o proprio bloco de exemplo da peca. Sem `dados`, a "
+                     u"fase roda com o exemplo — util para ver a mecanica "
+                     u"funcionando, NUNCA para entregar ao Marcos.",
+            "gavetas": gavetas}, ensure_ascii=False, indent=1, sort_keys=True))
 
     io.open(os.path.join(AQUI, "pecas.js"), "w", encoding="utf-8").write(
         u"/* GERADO por integrar.py — nao editar a mao */\n" + FERRAMENTAS

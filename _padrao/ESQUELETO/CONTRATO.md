@@ -251,3 +251,55 @@ para a próxima não repetir.
   desenhado ao contrário lia como seta para a esquerda; a bola virou placa de
   proibido e depois cruz; a árvore ficou sem tronco. **Nenhum portão vê forma** —
   só olhando o print. Quando a peça virar atividade, a figura é de IA.
+
+---
+
+## 7. LIÇÕES DA PRIMEIRA ATIVIDADE MONTADA (ago/2026)
+
+A primeira atividade que o esqueleto gerou inteira — 32 fases, 16 mecânicas —
+**reprovou na banca**. As quatro coisas que ela ensinou valem para sempre, e as
+quatro são do mesmo parentesco: *o que não dá erro é o que chega na criança.*
+
+- **A marca de recorte tem que ser uma marca que ninguém escreva por acaso.**
+  A marca de peça era `/* ---------- nome ---------- */` — e as próprias peças
+  usam esse traço nos comentários delas. Eram **163 marcas para 74 peças**: o
+  montador partia a peça no primeiro comentário interno e escrevia **meia
+  mecânica** na atividade. E o `node --check` **não veria**, porque a metade
+  fecha as chaves. Marca de máquina se escolhe para não colidir com texto humano.
+
+- **O "resto de clone" mora onde não dá erro.** O motor extraído do Broto
+  continuava carregando `DOM`/`ROTCRI`/`TREINO` (os conceitos dele), o menu do
+  professor com as 17 telas dele, a pré-carga, o alto-falante, o crachá, o nome
+  do mascote, o fundo (cravado no **CSS**, onde nenhum portão de JS olha) e —
+  a pior — a chave do `localStorage` `"jardim_med"`. No GitHub Pages **todas as
+  atividades moram na mesma origem**: duas geradas pelo esqueleto apagariam o
+  progresso uma da outra na mesma tarde. Hoje o extrator **varre o motor pronto**
+  atrás de `jd_` e "Broto" **no código** (comentário não conta: o esqueleto diz
+  de propósito que nasceu do Broto) e **se recusa a escrever** se achar. Uma
+  marca esquecida ali viraria resto de clone em *toda* atividade gerada: uma
+  falha só, multiplicada por todas.
+
+- **Ao colar dois motores, o que falta é o que ninguém declarou.** O integrador
+  trazia só o segundo `<script>` da peça (a mecânica) e deixava o motorzinho do
+  MOLDE para trás. Faltavam exatamente `nota()` e `ac()` — o som. `escolher`
+  passou, `completar` passou, e a **memória morreu no primeiro som de carta
+  virando**. Todo o resto do motorzinho o motor já tinha **com o mesmo nome**, e
+  é por isso que nenhuma peça precisou ser reescrita.
+
+- **O portão que achou tudo isso foi o que JOGOU.** O `node --check` passou, o
+  `_qa/funcoes.py` passou no arquivo certo, o print ficou perfeito. Quem disse
+  "PRESO na fase 3" foi o `_qa/jogador.js`, que joga até a medalha. **Atividade
+  montada não se entrega sem o jogador ter chegado ao fim.**
+
+### O conteúdo de cada mecânica: a GAVETA
+
+Toda peça abre com um bloco de dados de exemplo, e o comentário acima dele diz
+sempre a mesma frase: *"troque APENAS este bloco"*. O integrador acha o nome
+dessa `var` e transforma a última linha da peça na troca do exemplo pelo
+conteúdo **desta fase** (`f.dados`). É o que faz o `conteudo.json` virar
+atividade **sem tocar na peça** — que é o ponto: a peça já foi testada, e
+reescrevê-la é reintroduzir o que ela custou.
+
+O formato de `dados` de cada uma das 74 está em **`pecas.json`**, com o exemplo
+da própria peça ao lado. Fase **sem** `dados` roda com o exemplo — serve para
+ver a mecânica de pé, **nunca** para entregar ao Marcos.
