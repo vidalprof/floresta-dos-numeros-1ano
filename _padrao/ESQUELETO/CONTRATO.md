@@ -556,3 +556,110 @@ caderno.
    abaixo de 560px de altura — e 568 passa raspando por cima. Duas respostas
    ficavam fora da tela no celular pequeno. Conserto: o teto sai da conta da
    tela (`calc`), não de um número escolhido a dedo.
+
+## ⚠️ LIÇÃO PAGA — REGRA DE CSS QUE NÃO EXISTE, E NINGUÉM AVISA (ago/2026)
+
+O Marcos apontou o **mesmo** botão de som **três vezes** — *"não ficou certo"*,
+*"não ficou certo"*, e por fim *"esse botão de som está horrível. **A parte
+preta tem que estar no meio do círculo. Acho que nem precisaria dizer isso**"*.
+Não precisava mesmo. E a cada rodada eu ajustava pixel e ele continuava errado.
+
+### Por que três rodadas
+1. **Eu escrevia CSS para o elemento errado.** Estilei `.zap i`, `.zap b`,
+   `.zap s` — que são os elementos do MOTOR. O botão daquela peça é outro:
+   `<button class="zap"><i class="fone"></i></button>`. Deduzi a marcação de
+   outra peça em vez de abrir o HTML daquela.
+   → **REGRA: antes de escrever CSS para um componente, ABRIR o HTML DELE.**
+2. **Eu media em número, não olhava.** `getBoundingClientRect` dizia "dentro do
+   botão", e estava: a tinta ia de 6 a 27 num círculo de 32. Tecnicamente
+   dentro, visualmente empurrada para o canto. **Encaixar não é centrar.**
+   → **REGRA: acabamento se confere OLHANDO — foto em zoom 3×.** Foi a foto que
+   mostrou o que número nenhum mostrou.
+3. **E a última rodada eu escrevi a regra certa, que simplesmente não existiu.**
+   Ver abaixo — é o defeito mais perigoso dos três, porque é MUDO.
+
+### O defeito mudo: prosa virando seletor
+Escrevi um comentário novo logo abaixo de um comentário que **já tinha
+fechado**. Sobrou o meu `*/`, e o texto virou CSS. O escopador não tem como
+saber o que é prosa: prefixou tudo e gerou
+
+    .mec-ouvir-achar ⚠️ E ELE ERA DESENHADO A BORDA (corpo no `:after`, ... {...}
+
+— seletor inválido, que o navegador descarta **junto com a regra**. A minha
+regra do alto-falante não existia. `node --check` passa, o montador escreve, a
+banca inteira dá 0, e só o desenho é que some.
+
+### O irmão do defeito, que estava escondido no repositório
+O escopador quebrava o CSS **por chave**, sem saber o que era comentário. Então
+um comentário que EXPLICA uma regra — e por isso a CITA, tipo
+`` `.balao + *{margin-top:13px}` `` — traz um par de chaves dentro de si: a
+quebra corta o comentário no meio, a primeira metade some e a **segunda metade
+vira o seletor da regra seguinte**. `.regra` (criar-desafio) e `.if_placar`
+(investigar-fonte) estavam **mortas havia semanas** por causa disso. Ninguém
+tinha visto — porque não dá erro.
+
+### Os dois portões que ficam (`integrar.py`)
+- **Comentário guardado antes da quebra** (`_COMENT` → placeholder → devolvido
+  no fim): comentário nunca mais participa da conta das chaves.
+- **`SELETOR_OK`**: seletor de verdade só tem um punhado de caracteres. Crase,
+  acento, `⚠`, travessão = prosa vazada. O integrador **para e diz a linha**, em
+  vez de escrever um arquivo com regra fantasma dentro. (O `%` está na lista
+  porque `0%`/`50%` dentro de `@keyframes` são seletores de verdade — foi o
+  primeiro falso-positivo que ele deu, e falso-positivo também se conserta.)
+
+### O conserto de fundo: desenho de ícone é SVG, não aritmética de borda
+Os três alto-falantes do app (o do balão, o das respostas, o da peça) eram
+desenhados com **bordas e filhos em `position:absolute`**, com left/top em pixel
+repetidos em **cada quebra de tela** — 6 blocos de conta na mão para um ícone de
+18px. Bastava um sair do lugar e o boneco desmontava.
+
+Agora é **um SVG embutido como `background-image`**: centra-se sozinho pelo
+próprio `viewBox`, não tem coordenada para errar, fica nítido em qualquer zoom,
+e em tela pequena muda **uma linha** (`background-size`). Data URI = continua 1
+arquivo só, sem pedido de rede.
+
+⚠️ **A cor mora DENTRO do SVG**, então `background-color` e `background-image`
+ficam **separados**: usar o atalho `background:` em qualquer regra de estado
+(hover, `.tocando`, variante branca) apagaria o desenho.
+
+E o mesmo glifo serve os três — **dois desenhos diferentes de alto-falante na
+mesma tela é amadorismo**, e era exatamente o que estava no ar (o do balão tinha
+duas ondas, o das respostas uma só).
+
+### Os dois defeitos que o próprio conserto criou (e os portões que ficam)
+
+Trocar o desenho de borda por SVG resolveu o botão — e **abriu duas frestas
+novas**. Ficam registradas porque foram medidas, não supostas:
+
+1. **CÍRCULO VAZIO.** A ponte de estilo do Broto tem
+   `.centro .pecabox .zap{background:rgba(...)}` — o **atalho** `background:`.
+   Ele zera o `background-image` junto, e o botão vira um círculo pastel liso,
+   sem desenho. No cartão da `ouvir-achar` (que tem CSS próprio) o glifo
+   aparecia; em **todas** as fases que passam pela ponte, não. Medido: **48
+   ocorrências** em 128 telas.
+   → Portão **5-B** em `_qa/visual.js`: todo `.zap`/`.zapb` visível precisa ter
+   **imagem de fundo OU filho visível OU pseudo-elemento**. Os três "none" =
+   círculo vazio, e reprova.
+   → E a regra de escrita: **onde há ícone no `background-image`, nunca o
+   atalho `background:`** — `background-color` separado, sempre.
+
+2. **FALSO-POSITIVO no portão do desenho.** Ao desligar os filhos antigos
+   (`i`,`b`,`s`) com `display:none`, a caixa deles passou a ser **0,0** — e o
+   portão 5 acusou "o desenho sai 250px do botão", que é a distância do botão
+   até o canto da tela. **256 falhas**, todas mentira.
+   → Conserto: pular filho com `display:none`. Não dá para usar o `vis()`:
+   elemento de tamanho ZERO que desenha só por `:before`/`:after` é exatamente
+   o caso que o portão existe para pegar. A peneira é só o `display`.
+   → **A regra geral: portão que muda de comportamento quando o CÓDIGO CERTO
+   muda está medindo a coisa errada.** Falso-positivo também se conserta, e no
+   mesmo commit.
+
+### E a barra de 400px para uma letra só
+Na `completar`, quando o pedaço que falta é uma **letra**, as três opções
+empilhadas viravam três tarjas de **400×65** (6,2× mais largas que altas) com um
+"E" perdido no meio — o oposto de *"nada de botões muito esticado, quero tudo
+simétrico"*. Agora, pedaço de até 4 caracteres → `.opts.curtas`, **ladrilhos
+lado a lado** (96×66), que é o gesto certo: comparar três letras de uma olhada,
+não ler três frases. ⚠️ O `flex-direction:row` tem que ser **escrito**: alguma
+folha acima já põe as opções em coluna, e sem isso os ladrilhos ficam bonitos e
+empilhados — que não era o ponto.

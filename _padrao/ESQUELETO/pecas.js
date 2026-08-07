@@ -6918,7 +6918,11 @@ function telaCompletar(){
   c.appendChild(fr);
   lacuna=fr.querySelector(".lac");
   var lista=baguncar([f.cer].concat(f.out)), i, b;
-  var cx=el("div","opts");
+  /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
+     empilhadas. Ver a licao no CSS de `.opts.curtas`. */
+  var curtas=true;
+  for(i=0;i<lista.length;i++){ if(String(lista[i]).length>4) curtas=false; }
+  var cx=el("div","opts"+(curtas?" curtas":""));
   for(i=0;i<lista.length;i++){
     b=el("div","opt",lista[i]);
     b.pedaco=lista[i];
@@ -19377,6 +19381,12 @@ function poeProximo(){
   alvo.innerHTML="";
   var b=document.createElement("button");
   b.className="oaprox"; b.type="button"; b.innerHTML="Pr&#243;ximo &#8594;";
+  /* ⚠️ LICAO PAGA (ago/2026): botao NOVO nasce com `data-qa`, no MESMO commit.
+     Sem isto o auditor nao sabe que ele existe: os robos so tocam no que
+     casa com a lista deles (`.opt`, `.btn`, `[data-qa]`...). O errador ficou
+     preso nesta tela e reprovou a peca dizendo "nao chega na medalha" — e a
+     peca estava certa; quem estava cego era o portao. */
+  b.setAttribute("data-qa","prox");
   b.onclick=function(){ if(alvo.parentNode) alvo.innerHTML=""; segue(0); };
   alvo.appendChild(b);
   try{ b.focus(); }catch(e){}

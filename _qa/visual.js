@@ -231,6 +231,15 @@ const TAMANHOS = [
           const cs = getComputedStyle(bt);
           const redondo = /50%|9999px/.test(cs.borderRadius);
           for (const f of bt.children) {
+            /* ⚠️ LICAO PAGA (ago/2026): filho com `display:none` devolve caixa
+               ZERADA — left/top 0,0 — e o portao acusava "o desenho sai 250px
+               do botao", que e a distancia do botao ate o canto da tela. Deu
+               256 falhas no dia em que os desenhos de borda viraram um SVG e os
+               filhos antigos (`i`,`b`,`s`) foram desligados. Nao da para usar o
+               `vis()` aqui: elemento de tamanho ZERO que desenha so por
+               `:before`/`:after` e exatamente o caso que este portao existe
+               para pegar. Entao a peneira e so o `display`. */
+            if (getComputedStyle(f).display === 'none') continue;
             const rf = f.getBoundingClientRect();
             const px = v => { const n = parseFloat(v); return isNaN(n) ? 0 : n; };
             /* a caixa do filho + a dos dois pseudo-elementos dele */
@@ -257,6 +266,34 @@ const TAMANHOS = [
               break;
             }
           }
+        });
+
+        /* 5-B. BOTAO DE SOM VAZIO (ago/2026) — o irmao do defeito de cima, e
+              mais traicoeiro: o botao esta no lugar certo, do tamanho certo,
+              so que sem DESENHO nenhum dentro. Um circulo pastel liso, que a
+              crianca nao le como "aqui fala".
+              De onde veio: o alto-falante virou um SVG no `background-image`,
+              e qualquer regra que use o ATALHO `background:` (uma ponte de
+              estilo, um `:hover`, um tema) zera o `background-image` junto.
+              Aconteceu na ponte `.centro .pecabox .zap`: no cartao da peca o
+              desenho aparecia e nas fases de `completar` o circulo saia vazio.
+              Como se mede: o botao tem que ter OU imagem de fundo OU um filho
+              visivel. Os dois "none" = circulo vazio. */
+        document.querySelectorAll('.zap, .zapb').forEach(bt => {
+          if (!vis(bt)) return;
+          const s = getComputedStyle(bt);
+          if (s.backgroundImage && s.backgroundImage !== 'none') return;
+          if ((bt.textContent || '').trim()) return;
+          for (const f of bt.children) {
+            const cf = getComputedStyle(f);
+            if (cf.display !== 'none' && cf.visibility !== 'hidden') return;
+          }
+          for (const pe of ['::before', '::after']) {
+            const p = getComputedStyle(bt, pe);
+            if (p && p.content !== 'none' && p.display !== 'none') return;
+          }
+          out.push('botao de som VAZIO .' + String(bt.className).split(' ')[0] +
+                   ' (circulo sem desenho — atalho `background:` apagou o icone?)');
         });
 
         /* 6. TEXTO ESPREMIDO na borda do proprio cartao */

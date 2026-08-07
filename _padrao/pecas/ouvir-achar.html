@@ -99,16 +99,21 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    ⚠️ DEFEITO PEGO NO PRINT (ago/2026): na 1a versao o corpinho ficava do lado
    errado do cone e o desenho virava uma SETA PARA A ESQUERDA — a crianca lia
    "voltar" num botao que fala. Corpo a ESQUERDA, cone abrindo para a DIREITA,
-   e a ondinha de som na frente: ai nao se confunde com seta. */
-.fone{display:inline-block;position:relative;width:0;height:0;vertical-align:middle;
-      border-top:8px solid rgba(0,0,0,0);border-bottom:8px solid rgba(0,0,0,0);
-      border-right:10px solid #33280a;margin:0 15px 0 8px}
-.fone:after{content:"";position:absolute;left:-6px;top:-4px;width:6px;height:8px;background:#33280a}
-.fone:before{content:"";position:absolute;left:14px;top:-7px;width:9px;height:22px;
-             border-right:3px solid #33280a;border-radius:0 60% 60% 0/0 50% 50% 0}
-/* dentro do botao de OUVIR o icone tem texto ao lado: a ondinha precisa de folga
-   ou ela encosta na palavra (defeito visto no print). */
-.obt .fone{margin-right:23px}
+   e a ondinha de som na frente: ai nao se confunde com seta.
+
+   ⚠️ E ELE ERA DESENHADO A BORDA (corpo no `:after`, onda no `:before`, cone
+   numa borda-triangulo) num elemento de tamanho ZERO. Deu defeito duas vezes:
+   a onda escapava do botao (`:before` ia ate 26px num circulo de 30) e, num
+   elemento sem tamanho, o flex centra o PONTO e nao a tinta — o desenho saia
+   torto. Agora e UM SVG embutido: o glifo se centra pelo proprio `viewBox`, o
+   elemento tem tamanho de verdade e fica nitido em qualquer zoom. Data URI =
+   continua 1 arquivo so, sem pedido de rede. O MESMO glifo serve o botao
+   "Ouvir" do enunciado e o alto-falante de cada resposta — dois desenhos
+   diferentes de alto-falante no mesmo app e amadorismo. */
+.fone{display:inline-block;vertical-align:middle;width:22px;height:22px;margin:0 8px 0 4px;
+      background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+      -webkit-background-size:22px 22px;background-size:22px 22px}
+.fone:after,.fone:before{content:none;display:none}
 
 /* AS FIGURAS. Duas colunas no celular; em janela baixa viram quatro numa linha
    so (a altura e o que falta la, nao a largura). */
@@ -351,57 +356,50 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    Regra: nao se muda o TAMANHO de um componente cujo miolo e posicionado em
    pixel absoluto por outro arquivo. Muda-se o que nao mexe na geometria — cor,
    opacidade, sombra. O tamanho volta a ser o do motor. */
-/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos apontou DUAS vezes: *"esse botao de
-   som nao ficou certo"*. Eu tinha mexido so no tamanho e na cor — e o botao
-   ficou desmontado: o circulo ambar em cima, o corpinho preto embaixo dele e a
-   onda sonora como um ")" solto do lado. Fotografando o cartao em 3x deu para
-   ver; medindo em numero eu tinha rodado em circulos.
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — o Marcos apontou este mesmo botao TRES vezes:
+   *"esse botao de som nao ficou certo"*, depois *"esta horrivel"*. Cada rodada
+   eu mexia em pixel e ele continuava errado. O que finalmente mostrou o
+   problema nao foi numero nenhum: foi FOTOGRAFAR o cartao em zoom 3x.
 
-   A CAUSA: o alto-falante e um componente com MIOLO em `position:absolute`
-   (corpo, cone e onda), cujos left/top em PIXEL vivem no motor. Redefinir a
-   caixa dele numa peca — tamanho, posicao, qualquer coisa — desmonta o miolo,
-   porque as pecas de dentro continuam nas coordenadas antigas.
+   E as duas rodadas do meio eu gastei no LUGAR ERRADO — escrevendo regras para
+   `.zap i`, `.zap b`, `.zap s`, que sao os elementos do MOTOR. O botao desta
+   peca e outro: `<button class="zap"><i class="fone"></i></button>`. Eu deduzi
+   a marcacao de outra peca em vez de abrir o HTML desta.
 
-   A REGRA: componente com miolo absoluto se redefine INTEIRO ou nao se
-   redefine. Aqui ele e redefinido inteiro, com os MESMOS numeros do motor —
-   muda so a cor, que e o que a crianca precisava (ele era cinza a 55% e sumia
-   no cartao claro). */
-/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos apontou DUAS vezes: *"esse botao de
-   som nao ficou certo"*. Fotografando o cartao em 3x deu para ver o que numero
-   nenhum me mostrou: o circulo ambar de um lado, o corpo do alto-falante de
-   outro e a onda sonora como um ")" solto FORA do botao.
-
-   ⚠️ E EU PASSEI TRES RODADAS CONSERTANDO O LUGAR ERRADO. Escrevi regras para
-   `.zap i`, `.zap b`, `.zap s` — os elementos que o MOTOR usa. So que o botao
-   desta peca e outro: `<button class="zap"><i class="fone"></i></button>`, e o
-   desenho inteiro sai do `.fone` com `:before` e `:after`. O `:before` mora em
-   `left:14px` e tem 9px de largura mais 3px de borda: termina em 26px, e ainda
-   ha `margin-right:23px` empurrando tudo. Num circulo de 30px, sobra para fora.
-
-   A REGRA: antes de escrever CSS para um componente, ABRIR o HTML DELE. Eu
-   deduzi a marcacao a partir de outra peca e paguei tres rodadas por isso.
-
-   O conserto e o desenho INTEIRO, com o cone e a onda dentro do circulo. */
+   AS DUAS REGRAS QUE FICAM:
+   1. antes de escrever CSS para um componente, ABRIR o HTML DELE;
+   2. acabamento se confere OLHANDO — foto em zoom, nao `getBoundingClientRect`. */
 .opt.oaf .zap{position:relative;display:-webkit-inline-box;display:inline-flex;
   -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
   width:32px;height:32px;border-radius:50%;border:0;padding:0;margin-left:8px;
   vertical-align:middle;cursor:pointer;opacity:1;
   background:rgba(255,210,63,.95);box-shadow:0 2px 0 rgba(150,110,10,.4)}
-/* O desenho do alto-falante e feito de bordas num elemento de tamanho ZERO
-   (`.fone`), com o corpo no `:after` e a onda no `:before`. Elemento de tamanho
-   zero nao se centra com flex — o que o navegador centra e o ponto, e o desenho
-   sai todo para um lado. Por isso a ancora vai em COORDENADA FIXA, e as tres
-   partes foram medidas para caber num circulo de 32px:
-     corpo  x  6..11   ·  cone  x 11..19   ·  onda  x 21..27
-   (o desenho inteiro ocupa 6..27 de 32 — sobra folga dos dois lados). */
-.opt.oaf .zap .fone{position:absolute;left:11px;top:16px;margin:0;
-  border-top:6px solid rgba(0,0,0,0);border-bottom:6px solid rgba(0,0,0,0);
-  border-right:8px solid #3a3020}
-.opt.oaf .zap .fone:after{content:"";position:absolute;left:-5px;top:-3px;
-  width:5px;height:6px;background:#3a3020}
-.opt.oaf .zap .fone:before{content:"";position:absolute;left:10px;top:-6px;
-  width:4px;height:12px;border-right:2px solid #3a3020;
-  border-radius:0 60% 60% 0/0 50% 50% 0}
+/* ⚠️ LICAO PAGA, e a mais cara do dia (ago/2026). O Marcos, com razao: *"esse
+   botao de som esta horrivel. A parte preta tem que estar no meio do circulo.
+   Acho que nem precisaria dizer isso"*. Nao precisava mesmo.
+
+   O desenho vinha de BORDAS num elemento de tamanho ZERO (corpo no `:after`,
+   onda no `:before`, cone numa borda-triangulo). Isso da dois problemas de uma
+   vez: (1) elemento de tamanho zero NAO se centra com flex — o navegador centra
+   o PONTO, e a tinta sai toda para um lado; (2) a tinta e a soma de tres caixas
+   posicionadas na mao, entao "centrar" vira aritmetica de coordenada que erra a
+   cada ajuste. Foram QUATRO rodadas mexendo em pixel e o desenho continuava
+   feio: um quadradao com um espeto, e a onda quase invisivel.
+
+   O conserto que acaba com a familia inteira do defeito: UM SVG embutido como
+   `background-image`. O glifo se centra sozinho pelo proprio `viewBox` (a
+   tinta vai de x=4 a x~15 num quadro de 20, centro ~10 = o centro do quadro),
+   o elemento passa a ter tamanho real (20x20) e o flex do botao o centra de
+   verdade. Sem pseudo-elemento, sem coordenada na mao, e nitido em qualquer
+   zoom por ser vetor. Data URI = continua 1 arquivo so, sem pedido de rede.
+
+   E a licao de metodo, que ja tinha sido paga antes nesta mesma peca: antes de
+   escrever CSS para um componente, ABRIR o HTML DELE — aqui a marcacao e
+   `<button class="zap"><i class="fone"></i></button>`, nao os `.zap i/b/s` que
+   o motor usa. E olhar a FOTO em zoom: fotografar o cartao em 3x mostrou o que
+   numero nenhum me mostrou. */
+.opt.oaf .zap .fone{position:static;width:20px;height:20px;margin:0;
+  -webkit-background-size:20px 20px;background-size:20px 20px}
 @media (prefers-reduced-motion:reduce){
   .oafaisca{display:none}
   .opt.oaf.certa,.oaprox{-webkit-animation:none;animation:none}
@@ -758,6 +756,12 @@ function poeProximo(){
   alvo.innerHTML="";
   var b=document.createElement("button");
   b.className="oaprox"; b.type="button"; b.innerHTML="Pr&#243;ximo &#8594;";
+  /* ⚠️ LICAO PAGA (ago/2026): botao NOVO nasce com `data-qa`, no MESMO commit.
+     Sem isto o auditor nao sabe que ele existe: os robos so tocam no que
+     casa com a lista deles (`.opt`, `.btn`, `[data-qa]`...). O errador ficou
+     preso nesta tela e reprovou a peca dizendo "nao chega na medalha" — e a
+     peca estava certa; quem estava cego era o portao. */
+  b.setAttribute("data-qa","prox");
   b.onclick=function(){ if(alvo.parentNode) alvo.innerHTML=""; segue(0); };
   alvo.appendChild(b);
   try{ b.focus(); }catch(e){}

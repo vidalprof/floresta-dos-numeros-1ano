@@ -195,11 +195,47 @@ def gaveta(js):
     return nome, js[i:f], "primeiro objeto", todas, exemplos
 
 
+# ⚠️ LIÇÃO PAGA (ago/2026) — PROSA VIRANDO SELETOR, e o defeito era MUDO.
+# Escrevi um comentário novo logo abaixo de um comentário que já tinha fechado,
+# então o `*/` do meu ficou sobrando e o texto virou CSS. O escopador não tem
+# como saber o que é prosa: prefixou tudo e gerou
+#     `.mec-ouvir-achar ⚠️ E ELE ERA DESENHADO A BORDA (corpo no `:after`, ... {...}`
+# — seletor inválido, que o navegador DESCARTA junto com a regra seguinte. Ou
+# seja: a minha regra do alto-falante simplesmente não existia. Nada quebrou,
+# nada avisou; só o desenho é que sumiu, e eu só descobri fotografando.
+# O portão: seletor de verdade só tem um punhado de caracteres. Qualquer coisa
+# fora disso (acento, crase, `⚠`, travessão) é prosa vazada — para tudo e diz
+# a linha, em vez de gerar um arquivo com uma regra fantasma dentro.
+# (o `%` está na lista porque `0%`/`50%`/`100%` dentro de `@keyframes` são
+#  seletores de verdade — foi o primeiro falso-positivo que este portão deu.)
+SELETOR_OK = re.compile(r'^[A-Za-z0-9_\-.#>+~*:()\[\]="\'&%\s]*$')
+SELETORES_TORTOS = []
+
+
+# ⚠️ LIÇÃO PAGA (ago/2026) — COMENTÁRIO COM CHAVE DENTRO, o irmão do defeito
+# acima e o que o portão novo encontrou sozinho em DUAS peças já no repositório
+# (`criar-desafio` e `investigar-fonte`). O escopador quebrava o CSS por CHAVE,
+# sem saber o que é comentário. Aí um comentário que EXPLICA uma regra, e por
+# isso cita a regra —  `.balao + *{margin-top:13px}` — traz um par de chaves
+# dentro de si: a quebra corta o comentário no meio, a primeira metade some e a
+# SEGUNDA metade vira o seletor da regra seguinte. Resultado: a regra explicada
+# pelo comentário nunca existiu. Mudo, como sempre; `.regra` e `.if_placar`
+# estavam mortas havia semanas.
+# O conserto: guardar os comentários ANTES de quebrar e devolvê-los depois —
+# assim eles nunca participam da conta das chaves.
+_COMENT = re.compile(r"/\*.*?\*/", re.S)
+_MARCA_COM = re.compile(u"\x00C(\\d+)\x00")
+
+
 def prefixa_css(css, nome):
     u"""`.opt{...}` vira `.mec-escolher .opt{...}` — duas peças não brigam."""
-    fora = []
-    for bloco in re.split(r"(@media[^{]*\{)", css):
-        fora.append(bloco)
+    guardados = []
+
+    def _guarda(m):
+        guardados.append(m.group(0))
+        return u"\x00C%d\x00" % (len(guardados) - 1)
+
+    css = _COMENT.sub(_guarda, css)
     saida, dentro_media = [], 0
     for pedaco in re.finditer(r"([^{}]+)(\{[^{}]*\})|(@media[^{]*\{)|(\})", css, re.S):
         sel, corpo, media, fecha = pedaco.groups()
@@ -208,15 +244,21 @@ def prefixa_css(css, nome):
         elif fecha:
             saida.append("}"); dentro_media = max(0, dentro_media - 1)
         elif sel is not None:
-            s = sel.strip()
-            if not s or s.startswith("@") or s.startswith("/*"):
+            # os comentários que vêm ANTES do seletor saem na frente, inteiros:
+            # se entrassem no seletor virariam `.mec-x \x00C3\x00 .regra`.
+            cab = re.match(u"^((?:\x00C\\d+\x00|\\s)*)", sel)
+            antes, s = sel[:cab.end()], sel[cab.end():].strip()
+            if not s or s.startswith("@"):
                 saida.append(sel + (corpo or ""))
                 continue
+            for x in s.split(","):
+                if not SELETOR_OK.match(x.strip()):
+                    SELETORES_TORTOS.append((nome, " ".join(x.split())[:90]))
             novo = ", ".join(
                 (".mec-%s %s" % (nome, x.strip())) if not x.strip().startswith("@") else x
                 for x in s.split(","))
-            saida.append("\n" + novo + (corpo or ""))
-    return "".join(saida)
+            saida.append(antes + "\n" + novo + (corpo or ""))
+    return _MARCA_COM.sub(lambda m: guardados[int(m.group(1))], "".join(saida))
 
 
 u"""⚠️ LIÇÃO PAGA (a marca que o montador procura): a primeira marca era
@@ -366,8 +408,14 @@ CSS_PONTE = u'''
   -webkit-box-shadow:0 6px 18px rgba(30,50,20,.22);box-shadow:0 6px 18px rgba(30,50,20,.22)}
 .centro .pecabox .selo{background:#7d3fe0;color:#fff;font-size:13px;font-weight:700;
   padding:5px 12px;border-radius:999px}
-.centro .pecabox .zap{width:30px;height:30px;border-radius:50%;background:rgba(58,48,32,.09);
-  border:0;opacity:.62;padding:0}
+/* ⚠️ `background-color`, NUNCA o atalho `background:` — o desenho do
+   alto-falante e um SVG que mora no `background-image` do `.zap` (motor). O
+   atalho zera o `background-image` junto, e o botao fica um circulo VAZIO.
+   Foi exatamente o que aconteceu no dia em que o SVG entrou: no cartao da
+   `ouvir-achar` o desenho aparecia, e nas fases de `completar` — que passam
+   por esta ponte — o circulo saia em branco. */
+.centro .pecabox .zap{width:30px;height:30px;border-radius:50%;
+  background-color:rgba(58,48,32,.09);border:0;opacity:.62;padding:0}
 .centro .pecabox .hint{color:#fffdf6;background:rgba(58,48,32,.55);border-radius:999px;
   padding:6px 14px;display:inline-block;font-size:14px}
 
@@ -986,6 +1034,15 @@ def main():
     if not escrever:
         print(u"  (--escrever para gerar pecas.js e pecas.css)")
         return 0
+
+    # PORTÃO DO CSS VAZADO (ver a lição em `SELETOR_OK`): prosa que virou
+    # seletor apaga a regra dela E a de baixo, sem erro nenhum. Não escrever.
+    if SELETORES_TORTOS:
+        print(u"  ⛔ CSS VAZADO — texto virou seletor (comentário sem abrir/fechar?):")
+        for nome_p, trecho in SELETORES_TORTOS[:8]:
+            print(u"     %s -> %s" % (nome_p, trecho))
+        print(u"     conserte o comentario na peca; nada foi escrito.")
+        return 1
 
     # o mapa das gavetas: é ele que o autor do conteudo.json consulta para saber
     # o formato de `dados` de cada mecânica (sem abrir 74 arquivos)

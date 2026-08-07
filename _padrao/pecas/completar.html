@@ -39,6 +39,24 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
      margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
      box-shadow:0 4px 0 #c9bda6}
+/* ⚠️ LICAO PAGA (ago/2026) — BARRA DE 400px PARA UMA LETRA SO. Regra do
+   Marcos: *"nada de botoes muito esticado, quero tudo simetrico no app"*. Nas
+   fases em que o pedaco que falta e uma LETRA ou uma silaba, as tres opcoes
+   empilhadas viravam tres tarjas de 400x65 (6,2x mais largas que altas) com um
+   "E" perdido no meio — o portao 5b mediu e reprovou.
+   Quando o pedaco e curto, as opcoes viram LADRILHOS lado a lado: proporcao
+   quase quadrada, letra grande, e a criança compara as tres de uma olhada so
+   (que e o gesto certo aqui — escolher entre letras, nao ler tres frases).
+   `margin` em vez de `gap`: PC velho da escola. */
+/* ⚠️ o `flex-direction:row` tem que ser ESCRITO: alguma folha acima ja poe as
+   opcoes em COLUNA, e sem isto os ladrilhos continuam um embaixo do outro —
+   ficam bonitos e empilhados, que nao era o ponto. */
+.opts.curtas{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center}
+.opts.curtas .opt{display:inline-block;width:auto;min-width:96px;max-width:150px;
+  margin:6px 5px;padding:12px 12px;font-size:28px;font-weight:800;letter-spacing:1px}
 .opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
 .opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
 .opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
@@ -149,7 +167,11 @@ function telaCompletar(){
   c.appendChild(fr);
   lacuna=fr.querySelector(".lac");
   var lista=baguncar([f.cer].concat(f.out)), i, b;
-  var cx=el("div","opts");
+  /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
+     empilhadas. Ver a licao no CSS de `.opts.curtas`. */
+  var curtas=true;
+  for(i=0;i<lista.length;i++){ if(String(lista[i]).length>4) curtas=false; }
+  var cx=el("div","opts"+(curtas?" curtas":""));
   for(i=0;i<lista.length;i++){
     b=el("div","opt",lista[i]);
     b.pedaco=lista[i];

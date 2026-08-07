@@ -379,6 +379,22 @@ caça-palavras sem quebrar a linha. Onde der para dar 44, dê.
 - **Clonar o motor**: trocar `IMGS`, `VOZOK`, `DOM`/`ROTCRI`/`TREINO`/`CONCD`,
   prefixo dos áudios, `sw.js`, `manifest.json`, `MASCOTE_NOME` e as 3 camadas.
 - **Arte nunca se copia de outra atividade** — nem os avatares.
+- **Ícone de interface é SVG embutido, nunca desenho de borda.** O alto-falante
+  era feito de bordas e filhos `position:absolute`, com left/top em pixel
+  repetidos em cada quebra de tela: o Marcos apontou o mesmo botão **três
+  vezes** (*"a parte preta tem que estar no meio do círculo. Acho que nem
+  precisaria dizer isso"*). Um `background-image:url("data:image/svg+xml,...")`
+  se centra sozinho pelo `viewBox`, não tem coordenada para errar e é nítido em
+  qualquer zoom. ⚠️ A cor mora dentro do SVG → `background-color` e
+  `background-image` **separados**, senão o atalho `background:` de um `:hover`
+  apaga o desenho. E **um só glifo para o app inteiro**: dois alto-falantes
+  diferentes na mesma tela é amadorismo.
+- **Acabamento se confere OLHANDO, em foto ampliada (3×)** — não em
+  `getBoundingClientRect`. "Dentro do botão" e "no meio do botão" são coisas
+  diferentes, e o número diz que está tudo bem nas duas.
+- **Botão novo nasce com `data-qa` no MESMO commit.** Os robôs só tocam no que
+  casa com a lista deles; botão que eles não enxergam vira "a peça não chega na
+  medalha" — reprovando uma peça que estava certa.
 
 ---
 
