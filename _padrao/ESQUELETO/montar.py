@@ -213,6 +213,77 @@ def arte_de(c):
     return {"pedidos": pedidos, "no_banco": tem, "gerar": falta}
 
 
+# ------------------------------------------------------------------ o HTML
+def escreve_index(pasta, c, falas):
+    u"""motor + SÓ as mecânicas usadas + o conteúdo = a atividade.
+
+    ⚠️ SÓ AS USADAS, e isto não é economia de disco: é o PC da escola. As 74
+    peças juntas dão 913 KB de JS. Uma atividade usa 16 — leva ~1/5 disso. Pôr
+    tudo faria o AMD FX-4300 com 3,5 GB engasgar na abertura, e a criança
+    olharia uma tela branca achando que quebrou."""
+    motor = io.open(os.path.join(AQUI, "motor.html"), encoding="utf-8").read()
+    usadas = []
+    for f in c["fases"]:
+        if f.get("mec") and f["mec"] not in usadas:
+            usadas.append(f["mec"])
+
+    js_pecas = recorta(os.path.join(AQUI, "pecas.js"), usadas)
+    css_pecas = recorta(os.path.join(AQUI, "pecas.css"), usadas)
+
+    pre = c["prefixo"].rstrip("_")
+    dados = [u"\n/* ====== O CONTEUDO DESTA ATIVIDADE (escrito pelo montador) ====== */"]
+    dados.append(u"ABERTURA = {texto:%s, voz:%s};"
+                 % (jstr(c.get("abertura") or ""), jstr(pre + "_abertura")))
+    fases = []
+    for f in c["fases"]:
+        d = dict(f)
+        d["vozIntro"] = "%s_%s_intro" % (pre, f["id"])
+        if f.get("dica"):
+            d["dicaVoz"] = "%s_%s_dica" % (pre, f["id"])
+        fases.append(d)
+    dados.append(u"FASES = " + json.dumps(fases, ensure_ascii=False) + u";")
+    dados.append(u"VOZOK = " + json.dumps(
+        dict((x["id"][3:], 1) for x in falas if x["id"].startswith("op_")),
+        ensure_ascii=False) + u";")
+
+    saida = motor
+    saida = saida.replace(u"</style>", css_pecas + u"\n</style>", 1)
+    saida = saida.replace(u"</script>\n</body>",
+                          js_pecas + u"\n" + u"\n".join(dados) + u"\n</script>\n</body>", 1)
+    saida = saida.replace(u"<title>MOTOR — esqueleto</title>",
+                          u"<title>%s</title>" % c.get("titulo", "Atividade"), 1)
+    io.open(os.path.join(pasta, "index.html"), "w", encoding="utf-8").write(saida)
+
+
+def jstr(s):
+    return json.dumps(s, ensure_ascii=False)
+
+
+def recorta(caminho, nomes):
+    u"""tira do arquivo gerado só os pedaços das mecânicas usadas.
+
+    ⚠️ LIÇÃO PAGA: a marca de peça tem que ser uma marca que NENHUMA peça
+    escreva por acaso. A primeira era `/* ---------- nome ---------- */` e as
+    próprias peças usam esse traço nos comentários delas — 163 marcas para 74
+    peças. O recorte partia a peça no primeiro comentário interno e a atividade
+    saía com meia mecânica: JS quebrado na mão da criança."""
+    if not os.path.exists(caminho) or not nomes:
+        return u""
+    txt = io.open(caminho, encoding="utf-8").read()
+    fora = []
+    for bloco in re.split(r"(?=/\* ==== PECA: )", txt):
+        m = re.match(r"/\* ==== PECA: ([\w-]+) ==== \*/", bloco)
+        if m and m.group(1) in nomes:
+            fora.append(bloco)
+    achadas = set(re.match(r"/\* ==== PECA: ([\w-]+) ==== \*/", b).group(1)
+                  for b in fora)
+    for n in nomes:
+        if n not in achadas:
+            print(u"   AVISO: a mecanica '%s' nao esta em %s — rode "
+                  u"integrar.py --escrever" % (n, os.path.basename(caminho)))
+    return u"".join(fora)
+
+
 # ------------------------------------------------------------------ principal
 def main():
     if len(sys.argv) < 2:
@@ -249,13 +320,12 @@ def main():
         print(u"   (--so-ver: nada foi escrito)")
         return 0
 
+    escreve_index(pasta, c, falas)
     io.open(os.path.join(pasta, "falas.json"), "w", encoding="utf-8").write(
         json.dumps(falas, ensure_ascii=False, indent=1))
     io.open(os.path.join(pasta, "arte.json"), "w", encoding="utf-8").write(
         json.dumps(arte, ensure_ascii=False, indent=1))
-    print(u"   escrito: %s/falas.json e %s/arte.json" % (pasta, pasta))
-    print(u"   ⚠️ o index.html ainda e montado pelo motor (em construcao) — "
-          u"por enquanto este passo entrega a VOZ e a ARTE ja casadas com o texto.")
+    print(u"   escrito: %s/index.html, falas.json e arte.json" % pasta)
     return 0
 
 
