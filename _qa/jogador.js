@@ -50,7 +50,13 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
  });
  await p.evaluate((t)=>{ (window[t]||telaCapa)(); }, process.env.INICIO||'telaCapa');
  let visto=[]; const encaixe=[]; let ultimo='', paradas=0;
- const SEL='#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel'+',.ferr,.vaso,.carta,.zona,.tec,.slot,.mcarta,.gfoto,.pal,.fichaP,.cx,.tlin,.vaga,.relcard,.alim,.rpos,.moeda'+',.pt,.plb,.fs,.errow,.gav,.ficha,.achado,.teclafc'
+ /* ⚠️ LICAO PAGA (ago/2026): o "Proximo" que o Marcos pediu ("tem que ter o
+    botao de proximo como no Broto") PRENDEU o auditor — ele nao sabia clica-lo
+    e dava "PRESO em OUCA E ACHE [4%]" numa fase que a crianca passa sem
+    dificuldade. Botao novo na atividade = seletor novo aqui, no MESMO commit.
+    E o `.oaprox` vem PRIMEIRO na lista: quando ele esta na tela, e ele que faz
+    a fase andar. */
+ const SEL='.oaprox,#bcta,.btn,.opt,.tecl,.lig,.cel,.bandeja,.mcard,.bin,.gbt,.pc,.peca,.dsolto,.marca,.moeda,.linhac,.qcel'+',.ferr,.vaso,.carta,.zona,.tec,.slot,.mcarta,.gfoto,.pal,.fichaP,.cx,.tlin,.vaga,.relcard,.alim,.rpos,.moeda'+',.pt,.plb,.fs,.errow,.gav,.ficha,.achado,.teclafc'
    /* ⚠️ mecanica nova = alvo novo AQUI. A rosa dos ventos (.vento) e a
       paleta de pintar (.tcor/.tinta) nasceram na cartografia e o jogador
       deu "PRESO" numa fase que funcionava: ele simplesmente nao enxergava
@@ -105,6 +111,13 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
      });
    }
    const n=await p.evaluate((sel)=>{
+     /* ⚠️ PRIORIDADE ao "Proximo": quando ele esta na tela, e ELE que faz a
+        rodada andar — clicar em qualquer outra coisa nao muda nada, e o auditor
+        conclui "PRESO" numa fase que a crianca passa sem dificuldade. Medido:
+        com o botao, as rodadas andam 1 -> 2 -> 3 -> fim de fase. O mesmo
+        tratamento que o `#bcta` do banner ja tinha. */
+     const px=document.querySelector('.oaprox');
+     if(px&&px.offsetParent!==null){ px.click(); return 1; }
      const bn=document.getElementById('banner');
      if(bn&&bn.className.indexOf('show')>=0){ document.getElementById('bcta').click(); return 1; }
      /* caca-palavras: clicando ao acaso o jogador NUNCA acha (1a e ultima letra
