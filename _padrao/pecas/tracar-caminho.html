@@ -414,7 +414,7 @@ function entra(i,suave){
   }
   if(!livre(i)){
     if(suave) return;
-    sErro(); erros++; sacode(i); ajuda(erros);
+    sErro(); erros++; sacode(i); ajuda(erros,"bloco");
     return;
   }
   if(!vizinho(cab,i)){
@@ -423,9 +423,13 @@ function entra(i,suave){
     if(meio>=0 && livre(meio) && naTrilha(meio)<0){
       trilha.push(meio); trilha.push(i); passo(i); return;
     }
+    /* ⚠️ DEFEITO ACHADO NO TESTE DE ERRAR DE PROPÓSITO (ago/2026): este ramo
+       escrevia uma dica FIXA e não chamava o andaime. A criança que toca direto
+       na horta (o gesto mais natural que existe: "quero chegar ALI") lia a mesma
+       frase para sempre — o degrau que pisca a casa e o que abre o caminho nunca
+       chegavam nela. Agora o "pulou casa" cresce igual ao "bateu na pedra". */
     if(suave) return;
-    sErro(); erros++; sacode(i);
-    mostraDica("A valeta anda de <b>casa em casa</b>, sem pular. Continue pela casa vizinha.");
+    sErro(); erros++; sacode(i); ajuda(erros,"pulo");
     return;
   }
   trilha.push(i);

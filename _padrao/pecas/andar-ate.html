@@ -356,9 +356,11 @@ function piscaLugar(){
   if(q) q.className="mcel pisca";
 }
 function piscaSeta(){
-  var i;
-  for(i=0;i<setasM.length;i++)
-    setasM[i].className=(setasM[i].getAttribute("data-qa")==="1")?"seta pisca":"seta";
+  var i,ehAProxima;
+  for(i=0;i<setasM.length;i++){
+    ehAProxima=(setasM[i].getAttribute("data-qa")==="1");
+    setasM[i].className=ehAProxima?"seta pisca":"seta";
+  }
 }
 function limpaPiscas(){
   var i;
