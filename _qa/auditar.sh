@@ -234,6 +234,15 @@ wait $PID_LEI || FALHOU=1
 cat "$TMPQ/leiaute.txt"
 
 echo
+echo "--- 5b) DIRETOR DE ARTE (o acabamento esta impecavel?) -"
+# ⚠️ nasceu do que o MARCOS pediu quatro vezes seguidas: "profissional, lindo,
+#    sem erros", "maravilhoso, impecavel", "sempre subir a regua", "crie um
+#    profissional especialista para isso". Os outros portoes medem se FUNCIONA;
+#    este mede se esta BONITO — botao sobre palavra, quadrado branco chapado,
+#    fileira torta, botao esticado, texto espremido. Ver _qa/visual.js.
+portao "5b diretor de arte" node _qa/visual.js "$ARQ" $TELAS
+
+echo
 echo "--- 6) JOGADOR (joga sozinho ate a medalha) --------"
 # ⚠️ este roda SOZINHO, no fim. Ele joga a partida inteira com pausas de 230ms
 # entre os toques; disputando o processador com os outros tres navegadores, a

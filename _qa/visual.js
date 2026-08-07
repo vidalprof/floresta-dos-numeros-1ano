@@ -185,7 +185,36 @@ const TAMANHOS = [
           }
         });
 
-        /* 4. TEXTO ESPREMIDO na borda do proprio cartao */
+        /* 4. BOTAO ESTICADO e FAMILIA TORTA (ordem do Marcos, ago/2026:
+              *"nada de botoes muito esticado, quero tudo simetrico no app,
+              nada desconfigurado saindo da borda"*).
+              Duas medidas:
+                a) proporcao — botao mais de 6x mais largo que alto vira fita, e
+                   fita nao parece botao para uma crianca de 6 anos;
+                b) simetria da familia — irmaos da MESMA classe com alturas
+                   diferentes entre si sao remendo: o olho ve a fileira torta
+                   antes de ler qualquer palavra. */
+        document.querySelectorAll('#app *').forEach(pai => {
+          const fs = [...pai.children].filter(x => vis(x) &&
+            (x.tagName === 'BUTTON' || /opt|btn|pc\b|carta|tecla/.test(String(x.className))));
+          if (fs.length < 2) return;
+          const cls = new Set(fs.map(x => String(x.className).split(' ')[0]));
+          if (cls.size !== 1) return;
+          const hs = fs.map(x => Math.round(x.getBoundingClientRect().height));
+          const ws = fs.map(x => Math.round(x.getBoundingClientRect().width));
+          if (Math.max(...hs) - Math.min(...hs) > 6) {
+            out.push('fileira TORTA: os .' + [...cls][0] + ' tem alturas diferentes (' +
+                     Math.min(...hs) + '..' + Math.max(...hs) + 'px)');
+          }
+          fs.forEach((x, k) => {
+            if (hs[k] > 8 && ws[k] / hs[k] > 6) {
+              out.push('botao ESTICADO .' + [...cls][0] + ' (' + ws[k] + 'x' + hs[k] +
+                       'px, ' + (ws[k] / hs[k]).toFixed(1) + ' vezes mais largo que alto)');
+            }
+          });
+        });
+
+        /* 5. TEXTO ESPREMIDO na borda do proprio cartao */
         document.querySelectorAll('.balao, .opt, .hint, .dica, .selo').forEach(cx => {
           if (!vis(cx)) return;
           const rc = cx.getBoundingClientRect();

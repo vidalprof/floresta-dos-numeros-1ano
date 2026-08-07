@@ -40,10 +40,31 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .balao + *{margin-top:13px}
 .centro{text-align:center}
 .opts{display:block}
-.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
-     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
-     box-shadow:0 4px 0 #c9bda6}
+/* ⭐ FILEIRA RETA E BOTAO VIVO (ordem do Marcos, ago/2026: *"nada de botoes
+   muito esticado, quero tudo simetrico no app"* e *"botoes lindos... quero
+   bonito, animacoes etc"*).
+   ⚠️ MEDIDO pelo Diretor de Arte: as opcoes tinham 55px e 65px na mesma
+   fileira — a que quebrava em duas linhas crescia e a fila ficava torta. O
+   olho ve a fileira desalinhada antes de ler qualquer palavra.
+   Conserto: altura minima que ja cabe DUAS linhas, e o texto centrado na
+   vertical. Uma linha ou duas, o botao e o mesmo tamanho. */
+.opt{display:-webkit-box;display:flex;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center;
+     background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:12px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:62px;max-width:430px;
+     text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+     -webkit-transition:-webkit-transform .12s ease, box-shadow .12s ease;
+     transition:transform .12s ease, box-shadow .12s ease}
+/* o botao RESPONDE ao dedo: sobe um pouco quando a crianca encosta e afunda
+   quando ela aperta. E o retorno que faz o toque parecer de app, nao de pagina */
+.opt:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px);
+     box-shadow:0 6px 0 #c9bda6}
 .opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+@media (prefers-reduced-motion:reduce){
+  .opt{-webkit-transition:none;transition:none}
+  .opt:hover{-webkit-transform:none;transform:none;box-shadow:0 4px 0 #c9bda6}
+}
 .opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
 .opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
 .hint{font-size:14px;opacity:.85;margin-top:10px}
