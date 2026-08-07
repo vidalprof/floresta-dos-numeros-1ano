@@ -301,6 +301,24 @@ MEC["%(nome)s"] = function(f, cen, fim){
 
 
 CSS_PONTE = u'''
+/* ⭐ A FESTA DO ACERTO — o CSS da comemoracao generica (ver o olheiro no
+   FERRAMENTAS). Vale para as 76 mecanicas: quem ganha a marca de certo pula, e
+   sobem faisquinhas. Cobranca do Marcos: "nao tem a comemoracao quando acerta
+   como no Broto". */
+.pfaisca{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;
+  z-index:60;-webkit-animation:pfsobe .95s ease-out forwards;animation:pfsobe .95s ease-out forwards}
+@-webkit-keyframes pfsobe{0%{-webkit-transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1}100%{-webkit-transform:translateY(-58px) scale(1.15);opacity:0}}
+@keyframes pfsobe{0%{transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1}100%{transform:translateY(-58px) scale(1.15);opacity:0}}
+.pfesta{-webkit-animation:pfpula .5s ease;animation:pfpula .5s ease}
+@-webkit-keyframes pfpula{0%,100%{-webkit-transform:scale(1)}40%{-webkit-transform:scale(1.07)}}
+@keyframes pfpula{0%,100%{transform:scale(1)}40%{transform:scale(1.07)}}
+@media (prefers-reduced-motion:reduce){
+  .pfaisca{display:none}
+  .pfesta{-webkit-animation:none;animation:none}
+}
+
 /* ============================================================
    ⭐⭐ O JEITO DO BROTO — o molde visual da casa, para as 76 pecas.
 
@@ -492,6 +510,76 @@ FERRAMENTAS = u'''
     if(alvo) new MutationObserver(function(){ setTimeout(olha, 70); })
       .observe(alvo, {childList:true, subtree:true, characterData:true});
   }
+})();
+
+/* ⭐⭐ A COMEMORACAO DO ACERTO — PARA AS 76 MECANICAS DE UMA VEZ.
+
+   Cobranca do Marcos (ago/2026), testando no celular: *"nao tem a comemoracao
+   quando acerta como no Broto"*. Eu tinha consertado na peca que ele testou —
+   e ele respondeu "com certeza" quando ofereci levar para as outras.
+
+   ⚠️ POR QUE AQUI E NAO EM CADA PECA: sao 76 pecas, cada uma com o seu jeito de
+   marcar o acerto. Consertar uma a uma seria 76 chances de esquecer uma, e a
+   proxima peca nasceria sem festa de novo. Aqui e UM lugar: o olheiro ja
+   observa o `#app` inteiro, entao ele tambem VE o momento em que um elemento
+   ganha a marca de certo — `ok`, `certa`, `acerto`, `feito` — e comemora.
+
+   O que a crianca ve: o alvo PULA e sobem faisquinhas coloridas em volta. Sem
+   imagem, sem biblioteca, some sozinha em 1s. Respeita quem pediu menos
+   animacao (`prefers-reduced-motion`), que e acessibilidade e nao enfeite. */
+(function(){
+  if(!window.MutationObserver) return;
+  var app = document.getElementById("app");
+  if(!app) return;
+  /* ⚠️ cada mecanica chama o acerto pelo SEU nome. Medido nas 11 da Padaria:
+     `ok`/`certa` (escolher, ordenar), `cheia` (vaga preenchida em juntar-silabas
+     e pintar), `par` (memoria). Sem esta lista a festa so aparecia em 5 das 11 —
+     e eu quase reportei "vale para todas".
+     ⚠️ `usada` FICA DE FORA de proposito: em `ouvir-achar` ela marca a opcao JA
+     TENTADA, ou seja, um ERRO. Comemorar erro e pior que nao comemorar. */
+  var MARCA = /(^|\s)(ok|certa|acerto|acertou|feito|cheia|par|casada|encaixou)(\s|$)/;
+  var vistos = "__jaFestejou";
+  var menos = false;
+  try{ menos = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion:reduce)").matches; }catch(e){}
+
+  function faiscas(el){
+    if(menos) return;
+    var r = el.getBoundingClientRect(), i;
+    if(!(r.width > 4)) return;
+    for(i = 0; i < 10; i++){
+      var f = document.createElement("span");
+      f.className = "pfaisca";
+      f.style.left = (r.left + r.width * (0.12 + Math.random() * 0.76)) + "px";
+      f.style.top  = (r.top  + r.height * (0.15 + Math.random() * 0.7)) + "px";
+      f.style.background = ["#ffd23f","#7ed957","#ff9f45","#ffffff"][i % 4];
+      f.style.webkitAnimationDelay = (i * 38) + "ms";
+      f.style.animationDelay = (i * 38) + "ms";
+      document.body.appendChild(f);
+      (function(x){ setTimeout(function(){
+        if(x.parentNode) x.parentNode.removeChild(x); }, 1100); })(f);
+    }
+  }
+
+  function olhaAcerto(){
+    var todos = app.querySelectorAll("*"), i;
+    for(i = 0; i < todos.length; i++){
+      var e = todos[i];
+      if(e[vistos]) continue;
+      if(!MARCA.test(" " + (e.className || "") + " ")) continue;
+      var r = e.getBoundingClientRect();
+      /* so o que a crianca TOCA e ve: alvo de verdade, nao um marcador de 2px */
+      if(r.width < 28 || r.height < 24) continue;
+      e[vistos] = 1;
+      e.className = e.className + " pfesta";
+      faiscas(e);
+      (function(x){ setTimeout(function(){
+        x.className = String(x.className).replace(/\s*pfesta/, ""); }, 620); })(e);
+    }
+  }
+  new MutationObserver(function(){ setTimeout(olhaAcerto, 60); })
+    .observe(app, {childList:true, subtree:true, attributes:true,
+                   attributeFilter:["class"]});
 })();
 /* ==== FERRAMENTAS QUE AS PECAS USAM E O MOTOR NAO TINHA ====
    ⚠️ LICAO PAGA (achada pelo auditor-jogador, na 3a fase): o integrador so
