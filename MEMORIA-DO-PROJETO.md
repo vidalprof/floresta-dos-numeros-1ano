@@ -4700,3 +4700,51 @@ que chega na criança*.
 - **Quem achou tudo isso foi o portão que JOGOU** (`_qa/jogador.js`). O
   `node --check` passou, o print ficou perfeito. **Atividade montada não se
   entrega sem o jogador ter chegado à medalha.**
+
+### 🔊 O ciclo da voz: montar → COLHER → montar
+
+O `falas.json` sai do `conteudo.json`, e isso resolve tudo o que está **escrito**.
+Mas a peça monta frases **em tempo de jogo** — *"Achou as 4 palavras da horta!"* —
+e o montador não tem como adivinhar o número. A saída não é adivinhar: é **jogar
+e anotar**. O `_padrao/ESQUELETO/colher.py` roda o auditor-jogador em modo
+colheita e transforma o que ele viu em `falas.json`.
+
+*Medido na atividade de teste: 116 textos vistos jogando, 61 falas novas; o
+`VOZOK` saiu de 18 para 79.*
+
+⚠️ **O montador PRESERVA o que colheu.** Ele reescrevia o `falas.json` do zero,
+então a terceira etapa apagaria o que a segunda ganhou — e as telas de fecho de
+rodada voltariam a ficar mudas sem ninguém perceber.
+
+### 🎨 A colisão de CSS entre a peça e o motor (custou 2h de medição)
+
+A peça e o motor usam os **mesmos nomes** de classe — é isso que dispensa
+reescrever as 74 peças. O preço: **o que a peça não declara vem do motor**.
+
+- `.tela` no motor é `position:absolute;inset:0` (camada de tela cheia). A tela
+  que a peça cria por dentro da fase virava uma camada solta sem largura.
+- O `.mcartas` do motor tem `gap:10px`; o da peça fecha a conta com 48% + margem
+  1%. O gap entrou de carona e o jogo da memória empilhou as 8 cartas numa
+  coluna de 950px — **4 delas fora da tela de 640px da escola**.
+
+Conserto: a `.pecabox` neutraliza a `.tela` do motor, e a peça declara `gap:0`.
+E o integrador agora **lista as 54 classes que o motor também estiliza** — é ali
+que se olha quando uma conta de largura não fechar.
+
+### 🕵️ Os portões tiveram que APRENDER a atividade montada
+
+Portão que acusa o inocente ensina a ignorar portão. Os quatro que erraram:
+
+| portão | o que ele dizia | por quê |
+|---|---|---|
+| fluxo | "TELA ÓRFÃ" nas 16 mecânicas | numa montada não há corrente de chamadas: o motor lê `FASES` e chama `MEC[...]` |
+| padrão | "82% do gesto *outro*", "16 fases mudas" | o gesto está **escrito** no campo `mec`, não se adivinha do código |
+| dinâmicas | 2 armadilhas que não existiam | as 16 mecânicas moram no mesmo arquivo; a regra tem que olhar o bloco **de cada uma** |
+| voz da pergunta | 16 perguntas sem voz, tendo 79 | quem fala é um **olheiro no balão**, não uma chamada no código |
+
+Nos dois primeiros, o mesmo descuido: o motor **declara** `FASES = []` e
+`VOZOK = {}` vazios e o montador **atribui** os de verdade depois — os portões
+liam a primeira ocorrência. Quando há declaração e atribuição, **vale a maior**.
+
+No último, a saída não foi afrouxar: foi **trocar adivinhação por medição** —
+nasceu o portão `0f2`, que mede jogando (`colher.py --so-ver`).
