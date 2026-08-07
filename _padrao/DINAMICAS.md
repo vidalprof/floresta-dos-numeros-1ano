@@ -126,3 +126,50 @@ conteúdo, nunca reescrever a mecânica.
   peça em cada `@media` — 12 regras que precisam concordar é 12 chances de errar.
 - **A tela de fim tem que mostrar o estado REAL** (inclusive "ninguém
   respondeu"), senão ela vem vazia e nunca é medida.
+
+---
+
+## AS VINTE QUE FALTAVAM NO CATÁLOGO (ago/2026)
+
+A varredura das 74 peças mostrou que **20 mecânicas existiam na oficina e não
+estavam escritas aqui**. Isso é exatamente o defeito que este arquivo existe para
+impedir: mecânica que não está no catálogo é mecânica que eu reescrevo do zero na
+próxima atividade — e reescrever é reintroduzir o que ela já custou.
+
+*Onde mora a versão mais corrigida: `_padrao/pecas/<nome>.html`, todas com a
+bancada em código 0.*
+
+### Para PRÉ e 1º ano (a criança não lê: alvo de 56px, uma linha, nada essencial escrito)
+
+| mecânica | o gesto que ela ensina | a armadilha dela |
+|---|---|---|
+| **arrastar-sombra** | levar o objeto até a silhueta — o par se faz pela FORMA | não confundir com `sombra`: lá se casa por TOQUE, aqui o gesto é ARRASTAR, e o gesto é conteúdo |
+| **labirinto** | levar o personagem ao que ele precisa desviando dos inimigos | encostar no inimigo **não é castigo**: volta ao começo do trecho e segue. Sem vida, sem fim de jogo. E as SETAS DO TECLADO, não só o botão |
+| **ligar-pontos** | a sequência numérica vira gesto: achar o 5 *depois* do 4 numa bagunça | tocar no ponto errado não pune — só não liga |
+| **pintar-desenho** | a única em que a criança **produz** em vez de responder | **não tem certo nem errado**: nenhum som de tropeço, nenhuma marca de recusa. O peixe pode ser roxo. O que se mede é AUTORIA |
+| **ouvir-achar** | o enunciado chega pelo ouvido, a resposta é uma FIGURA | a palavra tem que estar ESCRITA junto: PC de escola sem caixa de som existe, e criança surda também |
+| **tracar-letra** | refazer o movimento da letra, sempre no mesmo sentido | sair da linha **não pune** — som de retorno, nunca de tropeço; o dedo da criança treme. E conferir por POSIÇÃO, não por identidade do elemento |
+| **andar-ate** | dizer o caminho passo a passo — o começo do pensamento computacional | um comando = uma casa, e o boneco **anda** até lá (a transição é o que ensina) |
+
+### Números e medida
+
+| mecânica | o gesto | a armadilha |
+|---|---|---|
+| **base-dez** | a criança **enche** a caixa e é ela quem manda trocar 10 por 1 | o conceito mora na TROCA, e a troca tem que ser VISÍVEL |
+| **comparar** | as duas quantidades lado a lado **antes** do símbolo | inverter essa ordem é o que faz decorar "a boca do jacaré" |
+| **calendario** | "faltam quantos dias?" é um CAMINHO, não uma subtração | um pulo de cada vez, animado — é o pulo que ensina, não a conta |
+| **relogio** | a criança **move os ponteiros** (pedido do professor, com todas as letras) | os dois ponteiros não podem começar sobrepostos: ela não descobre que há dois para mexer |
+| **bingo** | reconhecer sob pressão gostosa — prática de recuperação disfarçada | **não há relógio**: a pressão é da pedra que saiu, não do tempo |
+| **trilha** | o acaso escolhe a pergunta, o que tira o peso do julgamento | o dado não pode mostrar face antes do primeiro lance, e a peça do jogador não tapa a palavra da casa |
+
+### Raciocínio e leitura de mundo
+
+| mecânica | o gesto | a armadilha |
+|---|---|---|
+| **intruso** | achar o que não pertence **e dizer por quê** | sem o segundo passo isto é um quiz: ela acerta por eliminação sem formular o critério. O "por quê" é TOCADO, nunca digitado |
+| **quem-sou-eu** | eliminar candidatos com um atributo por vez | a informação chega em DOSES; a 1ª pista serve para pensar, não para acertar |
+| **domino** | comparar duas pontas com quatro peças — a FORMA corrige, não o adulto | a peça só entra se a ponta bater; "combinar" não pode ser sinônimo de "ser igual" |
+| **passo-a-passo** | o mundo **executa** a sequência dela, na frente dela | **não é ordenar**: ninguém confere nada. Se ela mandou regar antes de plantar, a água cai na terra seca — e é isso que ensina |
+| **circuito** | ligar os fios e a lâmpada **acende de verdade** | traço decorativo perde o efeito inteiro: cada fio ligado tem que mudar o mundo |
+| **camadas-mapa** | ligar/desligar camadas e ver o que só aparece na sobreposição | a resposta não está escrita em lugar nenhum da tela — se estiver, virou quiz com figura |
+| **rotular** | levar o nome ao lugar **espacial** dele na figura | não é classificar: lá o lugar é uma gaveta (categoria), aqui é ONDE na figura |
