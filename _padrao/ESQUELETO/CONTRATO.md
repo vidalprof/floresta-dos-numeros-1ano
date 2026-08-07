@@ -239,3 +239,15 @@ para a próxima não repetir.
   **dois** para mexer. A posição inicial é parte do ensino.
 - **O dado não pode mostrar face antes do primeiro lance** (parece que já rolou),
   e a peça do jogador não pode tapar a palavra escrita na casa.
+- **CONFERIR POR POSIÇÃO, NÃO POR IDENTIDADE DO ELEMENTO.** Ao traçar a letra T,
+  o 2º traço começa **em cima** do ponto do meio do 1º. Conferindo por identidade,
+  a criança tocava no lugar certo e a peça dizia que não era ali. O que importa é
+  ONDE ela tocou, não em qual `<div>`.
+- **Traçar não é responder: sair da linha não pune.** Som de **retorno**, nunca de
+  tropeço — é gesto em treino, e o dedo da criança treme.
+- **"Arrumar" preserva a ordem que ela montou.** Recomeçar do zero apaga o
+  raciocínio dela; **depurar é a metade que ensina**.
+- **Desenho feito de CSS mente com facilidade.** Numa mesma peça: o alto-falante
+  desenhado ao contrário lia como seta para a esquerda; a bola virou placa de
+  proibido e depois cruz; a árvore ficou sem tronco. **Nenhum portão vê forma** —
+  só olhando o print. Quando a peça virar atividade, a figura é de IA.

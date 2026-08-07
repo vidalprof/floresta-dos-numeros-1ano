@@ -165,6 +165,25 @@ def main():
             ruins.append(u"escolher: as opcoes nao sao EMBARALHADAS. Na Fabrica de Estrelas a "
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
 
+    # ---------------------------------------------------- OUVIR E ACHAR
+    if re.search(r'speechSynthesis|ouvir.?achar|btnOuvir', css + js, re.I) and \
+       re.search(r'"opt"|\.fig\b', css + js):
+        usa.append("ouvir e achar")
+        # ⚠️ PC de escola sem caixa de som existe: a peca NAO pode depender do som
+        if not re.search(r'palavra|texto|escrit', js, re.I):
+            ruins.append(u"ouvir e achar: nao achei a palavra ESCRITA junto. A peca "
+                         u"nao pode depender so do som — PC de escola sem caixa de "
+                         u"som existe, e a crianca surda tambem.")
+
+    # ---------------------------------------------------- PASSO A PASSO (a receita)
+    if re.search(r'receita|passo.?a.?passo|\.fita\b', css + js, re.I) and \
+       re.search(r'executa|roda|encena', js, re.I):
+        usa.append("passo a passo")
+        if not re.search(r'[Aa]rrumar|[Cc]onsertar|[Dd]epura', js):
+            avisos.append(u"passo a passo: falta o ARRUMAR que preserva a ordem "
+                          u"montada. Recomecar do zero apaga o raciocinio dela; "
+                          u"depurar e a metade que ensina.")
+
     # ---------------------------------------------------- RELOGIO DE PONTEIROS
     if re.search(r'ponteir|\.mostrador\b|\.horas\b', css + js, re.I):
         usa.append("relogio")
@@ -262,7 +281,12 @@ def main():
     # ---------------------------------------------------- LIGAR PONTOS
     if re.search(r'ligar.?pontos|\.pt\b', css) and re.search(r'proximo|ordem', js, re.I):
         usa.append("ligar pontos")
-        if re.search(r'sErro\(', js):
+        # ⚠️ MESMO DESCUIDO DUAS VEZES NA MESMA NOITE: `sErro` vem DECLARADO no
+        #    motorzinho de toda peca. Eu tinha consertado isso em "colorir" e
+        #    repeti aqui. Declarar nao e usar — e o portao acusou o inocente.
+        usos = [m for m in re.finditer(r'\bsErro\s*\(\s*\)', js)
+                if not js[max(0, m.start()-9):m.start()].rstrip().endswith("function")]
+        if usos:
             avisos.append(u"ligar pontos: tocar no ponto errado nao deve punir — so "
                           u"nao liga.")
 
