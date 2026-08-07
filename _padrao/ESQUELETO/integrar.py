@@ -539,7 +539,21 @@ def sem_comentario(s):
 VOCABULARIO_COMUM = set("""balao selo opt opts hint tela centro prog dica btn
     banner medal pecabox progpeca show ok no sel usada cheia agora acesa pulsa
     feito certo errado tembalaopeca mec
-    zap fone tocando""".split())
+    zap fone tocando
+    pc cam lig par pchip peca qcpc qcvaga mcarta""".split())
+# ⚠️⚠️ A SEGUNDA LICAO DO `zap`, e ela e MAIOR: o vocabulario dos AUDITORES
+#    tambem e contrato. O integrador renomeou `.pc` para `.o_pc` na peca de
+#    ordenar — renomeacao correta, sem colisao nenhuma — e com isso o
+#    auditor-jogador, que procura `.pc` para saber o que arrastar, achou ZERO
+#    pecas e deu "PRESO em EM ORDEM". A tela estava PERFEITA: as prateleiras
+#    1o..5o, as letras D B A E C, tudo desenhado e clicavel. Quem ficou cego
+#    foi o auditor.
+#    Custo real: a banca reprovou uma atividade correta, e eu quase fui
+#    "consertar" uma fase que nao tinha defeito.
+#    Regra: classe pela qual um portao PEGA a atividade nao se renomeia. As
+#    daqui saem de `grep` no _qa/jogador.js e no _qa/errador.js — quando um
+#    auditor novo passar a depender de uma classe, ela entra nesta lista NO
+#    MESMO COMMIT.
 # ⚠️ `zap` entrou nesta lista DEPOIS de eu quebrar a atividade com ele: o
 #    alto-falante e do MOTOR (ele cria, estiliza e gerencia pelo `poeZap`). Ao
 #    renomear para `oa_zap`, a peca ficou com um botao que o motor nao reconhece

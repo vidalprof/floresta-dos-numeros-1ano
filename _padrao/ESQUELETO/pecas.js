@@ -815,7 +815,7 @@ function pecaLugar(){
 }
 
 function fazPeca(p){
-  var b=el("div","al_pc");
+  var b=el("div","pc");
   b.appendChild(desenho(p.k,"dpc"));
   b.appendChild(el("span","pnome",p.n));
   b._k=p.k; b._n=p.n;
@@ -931,9 +931,9 @@ function apagaAceso(){
 function escolhe(b){
   if(!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="al_pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="al_pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueVaga(){
   if(cliqueDeArrasto()) return;
@@ -952,7 +952,7 @@ function acerta(b,v){
   v.className="cam ok";
   v.innerHTML="";
   v.appendChild(desenho(b._k,"dvg"));
-  b.className="al_pc usada";
+  b.className="pc usada";
   marcada=null;
   sCerto();
   postas++; errosSeg=0;
@@ -964,7 +964,7 @@ function acerta(b,v){
    um X vermelho, nunca a palavra "errou". */
 function erra(b){
   sErro(); errosSeg++;
-  b.className="al_pc treme";
+  b.className="pc treme";
   destreme(b);
   mostraDica(DICAS[Math.min(errosSeg,DICAS.length)-1]);
   if(errosSeg===2) piscaCerta(b);
@@ -990,7 +990,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"al_pc sel":"al_pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
   },340);
 }
 function piscaCerta(b){
@@ -1243,7 +1243,7 @@ function telaSombras(){
   diz("Leve cada coisa até a sombra dela.");
 }
 function fazPeca(k){
-  var b=el("div","as_pc");
+  var b=el("div","pc");
   b.appendChild(caixaForma(k,"dpc",0));
   b.appendChild(el("span","pnome",FORMAS[k]?FORMAS[k].n:k));
   b.setAttribute("data-qa",k);
@@ -1367,14 +1367,14 @@ function apagaAceso(){
 function marca(b){
   if(travada||!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="as_pc";
-  b.className="as_pc sel"; marcada=b; apagaAceso();
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  b.className="pc sel"; marcada=b; apagaAceso();
 }
 function escolhe(b){
   if(travada||!b||temClasse(b,"usada")) return;
   var i;
   if(marcada===b){
-    for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="as_pc";
+    for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
     marcada=null; sTap(); apagaAceso(); return;
   }
   marca(b); sTap();
@@ -1405,7 +1405,7 @@ function acerta(b,v){
   v.className="cam ok";
   v.innerHTML="";
   v.appendChild(caixaForma(b._k,"dvg",0));
-  b.className="as_pc usada";
+  b.className="pc usada";
   marcada=null; tropecouEm=null;
   sEncaixa();
   postas++; errosSeg=0;
@@ -1419,7 +1419,7 @@ function acerta(b,v){
    X vermelho, nunca a palavra que reprova. */
 function erra(b){
   sNao(); errosSeg++; tropecouEm=b;
-  b.className="as_pc treme";
+  b.className="pc treme";
   destreme(b);
   mostraDica(DICAS[Math.min(errosSeg,DICAS.length)-1]);
   if(errosSeg>=2) apagaAceso();
@@ -1446,7 +1446,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()||!b) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"as_pc sel":"as_pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
   },340);
 }
 function apagaDica(){
@@ -2303,7 +2303,7 @@ function pecaBaseDez(){
 }
 
 function fazPeca(r){
-  var b=el("div","bd_pc");
+  var b=el("div","pc");
   b.appendChild(el("i",r.pTipo,""));
   b.setAttribute("data-qa","cx");
   b.onclick=cliquePeca;
@@ -2405,9 +2405,9 @@ function apagaAceso(){
 function escolhe(b){
   if(travado||!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="bd_pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="bd_pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueCaixa(){
   if(cliqueDeArrasto()) return;
@@ -2429,7 +2429,7 @@ function poe(b){
     mostraDica("A caixa j&#225; tem <b>10</b>. Aperte <b>Trocar 10 por 1</b> para esvaziar.");
     return;
   }
-  b.className="bd_pc usada";
+  b.className="pc usada";
   marcada=null;
   var v=vagas[naCaixa.length];
   var d=el("i",rodada().pTipo+" cxpc","");
@@ -3942,7 +3942,7 @@ function pecaCaca(){
 
   var lista=el("div","cp_lista"), chips={};
   for(i=0;i<PAL.length;i++){
-    var ch=el("div","cp_pchip "+cor[PAL[i]]);
+    var ch=el("div","pchip "+cor[PAL[i]]);
     ch.innerHTML='<i class="pbola"></i>'+PAL[i];
     chips[PAL[i]]=ch;
     lista.appendChild(ch);
@@ -3996,7 +3996,7 @@ function pecaCaca(){
     })(cels[cs[z]],z*70);}
     sCerto();
     faixa(w);
-    chips[w].className="cp_pchip "+cor[w]+" feito";
+    chips[w].className="pchip "+cor[w]+" feito";
   }
   function confere(){
     var w,z,todas,n;
@@ -5594,8 +5594,8 @@ function fioPronto(g){
 }
 
 function fazPonta(g,lado){
-  var l=el("div","c2_lig pto");
-  l._base="c2_lig pto";
+  var l=el("div","lig pto");
+  l._base="lig pto";
   l._gap=g.k; l._lado=lado;
   l.style.left=(lado==="a"?g.x1:g.x2)+"%";
   l.style.top=g.y+"px";
@@ -5691,8 +5691,8 @@ function toca(l){
 function marca(l){ desmarca(); l.className=l._base+" sel"; marcada=l; }
 
 function desmarca(){
-  var a=app.getElementsByClassName("c2_lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=a[i]._base||"c2_lig";
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=a[i]._base||"lig";
   marcada=null;
 }
 
@@ -5727,7 +5727,7 @@ function juntar(a,b){
 /* 3º erro: acende a outra ponta do mesmo pedaço e DEIXA seguir — é o que
    garante que a peça nunca trava. */
 function revelaPar(l){
-  var a=app.getElementsByClassName("c2_lig"), i;
+  var a=app.getElementsByClassName("lig"), i;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
     if(a[i]!==l&&a[i]._gap===l._gap) a[i].className=a[i]._base+" c2_pisca";
@@ -6039,7 +6039,7 @@ function pecaClassificar(){
 }
 
 function fazFicha(f){
-  var p=el("div","c3_pc",f.t);
+  var p=el("div","pc",f.t);
   /* ficha e gaveta publicam a MESMA chave: e assim que o auditor-jogador
      consegue terminar a fase (e so ele olha para isto). */
   p.setAttribute("data-qa",f.alvo);
@@ -6108,10 +6108,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("c3_pc"), i;
+  var a=app.getElementsByClassName("pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="c3_pc";
-  p.className="c3_pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
   marcada=p;
 }
 
@@ -6132,7 +6132,7 @@ function guarda(p,g){
   if(p.className.indexOf("usada")>=0) return;
   if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
     sCerto();
-    p.className="c3_pc usada";
+    p.className="pc usada";
     p.onclick=null; p.onmousedown=null;
     g.appendChild(p);
     g.className="cam luz";
@@ -9636,7 +9636,7 @@ function fazPonta(lado){
   return v;
 }
 function fazPeca(par){
-  var b=pecaEl(par,"d4_pc");
+  var b=pecaEl(par,"pc");
   b._a=par.a; b._b=par.b;
   b.onclick=cliquePeca;
   b.onmousedown=mouseIni;
@@ -9758,9 +9758,9 @@ function apagaAceso(){
 function escolhe(b){
   if(travada||!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="d4_pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
   if(marcada===b){ marcada=null; sTap(); return; }
-  b.className="d4_pc sel"; marcada=b; sTap();
+  b.className="pc sel"; marcada=b; sTap();
 }
 function cliquePonta(){
   if(travada) return;
@@ -9794,7 +9794,7 @@ function acerta(b,lado){
     if(eMesa) eMesa.insertBefore(novo,camD);
     pontaD=b._b;
   }
-  b.className="d4_pc usada";
+  b.className="pc usada";
   marcada=null;
   postas++; erros=0;
   sPoe();
@@ -9817,7 +9817,7 @@ function acerta(b,lado){
 function erra(b,lado){
   var g=ger;
   sErro(); erros++; usouAjuda=true;
-  b.className="d4_pc treme"; destreme(g,b);
+  b.className="pc treme"; destreme(g,b);
   if(erros===1){
     mostraDica("Esta ponta mostra <b>"+nomeDaChave(lado==="L"?pontaE:pontaD)+
                "</b>. A pe&ccedil;a s&oacute; entra a&iacute; se tiver <b>"+
@@ -9836,7 +9836,7 @@ function erra(b,lado){
 function destreme(g,b){
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"d4_pc sel":"d4_pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
   },340);
 }
 function acendeAsDuasPontas(){
@@ -11750,7 +11750,7 @@ function telaFiltro(){
   /* a bandeja: todas as fichas comecam aqui, embaralhadas */
   var bd=el("div","bandeja"), lista=baguncar(it.fichas.slice(0)), b;
   for(i=0;i<lista.length;i++){
-    b=el("div","f_pc",lista[i].t);
+    b=el("div","pc",lista[i].t);
     /* `data-qa="1"` = "esta serve agora" — SO para o auditor-jogador */
     if(lista[i].ok) b.setAttribute("data-qa","1");
     b.onclick=(function(f){ return function(){ toca(f,this); }; })(lista[i]);
@@ -11791,12 +11791,12 @@ function toca(f,b){
 /* PASSOU: cai pela peneira e vai parar na cesta, na frente da crianca. */
 function passa(b){
   var meu=ger;
-  b.className="f_pc cai";
+  b.className="pc cai";
   b.removeAttribute("data-qa");      /* saiu da lista do auditor */
   sPassa();
   setTimeout(function(){
     if(meu!==ger) return;
-    b.className="f_pc usada";
+    b.className="pc usada";
     b.style.opacity="";
     b.appendChild(el("span","vpas","&#10003;"));
     if(cestaEl) cestaEl.appendChild(b);
@@ -11813,11 +11813,11 @@ function passa(b){
    o app diz O QUE OLHAR e o andaime cresce a cada quique. */
 function quica(b){
   sErro(); sQuica();
-  b.className="f_pc quica";
+  b.className="pc quica";
   var meu=ger;
   setTimeout(function(){
     if(meu!==ger) return;
-    if(b.className.indexOf("usada")<0) b.className="f_pc";
+    if(b.className.indexOf("usada")<0) b.className="pc";
   },520);
   quiques++;
   ajuda(quiques);
@@ -11832,15 +11832,15 @@ function ajuda(n){
   else { mostraDica(it.d3+"<b>"+queFaltam()+"</b>."); acendeQueFaltam(); }
 }
 function queFaltam(){
-  var a=app.getElementsByClassName("f_pc"), i, fora=[];
+  var a=app.getElementsByClassName("pc"), i, fora=[];
   for(i=0;i<a.length;i++)
     if(a[i].getAttribute("data-qa")==="1") fora.push(a[i].firstChild.nodeValue||a[i].innerHTML);
   return fora.join(", ");
 }
 function acendeQueFaltam(){
-  var a=app.getElementsByClassName("f_pc"), i;
+  var a=app.getElementsByClassName("pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].getAttribute("data-qa")==="1") a[i].className="f_pc mostra";
+    if(a[i].getAttribute("data-qa")==="1") a[i].className="pc mostra";
 }
 function apagaDica(){
   var d=document.getElementById("dicaP");
@@ -12677,8 +12677,8 @@ function telaGrafico(){
 
   /* OS BOTOES: a porta de quem nao arrasta */
   var ct=el("div","gctrl");
-  elMenos=el("div","g2_pc","&#8722;<i>DESCER UM</i>");
-  elMais =el("div","g2_pc","+<i>SUBIR UM</i>");
+  elMenos=el("div","pc","&#8722;<i>DESCER UM</i>");
+  elMais =el("div","pc","+<i>SUBIR UM</i>");
   ligaBotao(elMenos,-1); ligaBotao(elMais,1);
   ct.appendChild(elMenos); ct.appendChild(elMais);
   c.appendChild(ct);
@@ -12922,10 +12922,10 @@ function marcaQualServe(){
   if(!elMais||!elMenos) return;
   if(feitos[col]!==undefined||col>=DADOS.length){
     elMais.removeAttribute("data-qa"); elMenos.removeAttribute("data-qa");
-    elMais.className="g2_pc usada"; elMenos.className="g2_pc usada";
+    elMais.className="pc usada"; elMenos.className="pc usada";
     return;
   }
-  elMais.className="g2_pc"; elMenos.className="g2_pc";
+  elMais.className="pc"; elMenos.className="pc";
   elMais.setAttribute("data-qa",(valor<DADOS[col].v)?"1":"0");
   elMenos.setAttribute("data-qa",(valor>DADOS[col].v)?"1":"0");
 }
@@ -15031,7 +15031,7 @@ function pecaLigar(){
 }
 
 function fazPonta(dado,lado,texto){
-  var l=el("div","l2_lig",texto);
+  var l=el("div","lig",texto);
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
@@ -15092,8 +15092,8 @@ function solta(x,y,doDedo){
   if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
   arrastando=false; fimArrasto=agora();
   var alvo=document.elementFromPoint(x,y);
-  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"l2_lig")) alvo=alvo.parentNode;
-  if(alvo&&temClasse(alvo,"l2_lig")&&alvo!==l) juntar(l,alvo);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"lig")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"lig")&&alvo!==l) juntar(l,alvo);
 }
 
 document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
@@ -15122,13 +15122,13 @@ function toca(l){
 
 function marca(l){
   desmarca();
-  l.className="l2_lig sel";
+  l.className="lig sel";
   marcada=l;
 }
 
 function desmarca(){
-  var a=app.getElementsByClassName("l2_lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="l2_lig";
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
   marcada=null;
 }
 
@@ -15138,7 +15138,7 @@ function juntar(a,b){
   if(a._lado===b._lado) return;
   if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
     sCerto();
-    a.className="l2_lig feita"; b.className="l2_lig feita";
+    a.className="lig feita"; b.className="lig feita";
     marcada=null;
     FEITOS.push([a,b]);
     redesenha();
@@ -15164,12 +15164,12 @@ function juntar(a,b){
 /* 3º erro: acende a ponta certa do outro lado e DEIXA seguir — é o que
    garante que a peça nunca trava. A dica diz isso em palavras também.    */
 function revela(l){
-  var a=app.getElementsByClassName("l2_lig"), i, k=l.getAttribute("data-qa");
+  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa");
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="l2_lig l2_pisca";
+    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="lig l2_pisca";
   }
-  l.className="l2_lig sel";
+  l.className="lig sel";
   marcada=l;
 }
 
@@ -15367,7 +15367,7 @@ function telaLinhaDoTempo(){
   var sorteadas=baguncar(FATOS.slice(0));
   for(i=0;i<sorteadas.length;i++){
     f=sorteadas[i];
-    b=el("div","ldt_pc",f.n);
+    b=el("div","pc",f.n);
     b.momento=f.t; b.nome=f.n;
     ligaFicha(b);
     bc.appendChild(b); pecas.push(b);
@@ -15425,7 +15425,7 @@ function pegaEm(b,x,y){
   if(!b||b.className.indexOf("usada")>=0) return;
   pego=b; px0=x; py0=y; moveu=false;
   sTap();
-  b.className="ldt_pc sel";
+  b.className="pc sel";
   somb=el("div","somb",b.nome);
   somb.style.left=(x-66)+"px"; somb.style.top=(y-29)+"px";
   somb.style.display="none";
@@ -15440,7 +15440,7 @@ function soltaEm(x,y){
   var b=pego, arrastou=moveu;
   soltaSombra();
   if(!b) return;
-  if(b.className.indexOf("usada")<0) b.className="ldt_pc";
+  if(b.className.indexOf("usada")<0) b.className="pc";
   if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
   if(naFaixa(x,y)) tocaFicha(b);
 }
@@ -15470,7 +15470,7 @@ function tocaFicha(b){
 function poeNaFaixa(b){
   var cm=camas[vagaAtual];
   cm.className="cam ok"; cm.innerHTML=b.nome;
-  b.className="ldt_pc usada";
+  b.className="pc usada";
   sCerto();
   vagaAtual++; errosSeg=0;
   apagaDica();
@@ -15481,7 +15481,7 @@ function poeNaFaixa(b){
 }
 function erraFicha(b){
   sErro(); errosSeg++;
-  b.className="ldt_pc treme";
+  b.className="pc treme";
   destreme(b);
   ajuda(errosSeg);
 }
@@ -15490,7 +15490,7 @@ function erraFicha(b){
 function destreme(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("usada")<0) b.className="ldt_pc";
+    if(b.className.indexOf("usada")<0) b.className="pc";
   },340);
 }
 function ajuda(n){
@@ -15509,7 +15509,7 @@ function acendeCerta(){
   for(i=0;i<pecas.length;i++){
     b=pecas[i];
     if(b.className.indexOf("usada")>=0) continue;
-    b.className=(b.momento===ORDEM[vagaAtual])?"ldt_pc ldt_pisca":"ldt_pc";
+    b.className=(b.momento===ORDEM[vagaAtual])?"pc ldt_pisca":"pc";
   }
 }
 function revela(){
@@ -16907,7 +16907,7 @@ function pecaMemoria(){
   c.appendChild(elPlacar);
   elPares=el("div","pares","");
   c.appendChild(elPares);
-  c.appendChild(el("div","hint","Toque em duas cartas. Se não formar m2_par, elas voltam."));
+  c.appendChild(el("div","hint","Toque em duas cartas. Se não formar par, elas voltam."));
   t.appendChild(c);
   app.appendChild(t);
   atualiza();
@@ -16919,7 +16919,7 @@ function temTresD(){
 }
 
 function fazCarta(o){
-  var d=el("div","m2_mcarta");
+  var d=el("div","mcarta");
   d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
   var f=el("div","mflip");
   var v=el("div","mface mverso");
@@ -16950,7 +16950,7 @@ function atualiza(){
 
 function tocar(o){
   if(travado) return;
-  if(o.el.className.indexOf("m2_par")>=0){ sTap(); return; }     /* ja fechada */
+  if(o.el.className.indexOf("par")>=0){ sTap(); return; }     /* ja fechada */
   if(virada===o) return;
   /* ⚠️ LICAO PAGA (ago/2026): aqui era `if(...vira...) return;` — carta virada
      nao se toca. So que se sobrar UMA carta de cara para cima que a peca nao
@@ -16965,7 +16965,7 @@ function tocar(o){
     if(!virada){ virada=o; }
     return;
   }
-  o.el.className="m2_mcarta m2_vira";
+  o.el.className="mcarta m2_vira";
   sVira();
   if(!virada){ virada=o; return; }
   tentativas++;
@@ -16974,16 +16974,16 @@ function tocar(o){
   travado=true;
   var a=virada; virada=null;
   setTimeout((function(x,y){ return function(){
-    if(x.el.className.indexOf("m2_par")<0) x.el.className="m2_mcarta";
-    if(y.el.className.indexOf("m2_par")<0) y.el.className="m2_mcarta";
+    if(x.el.className.indexOf("par")<0) x.el.className="mcarta";
+    if(y.el.className.indexOf("par")<0) y.el.className="mcarta";
     travado=false;
     ajuda(tentativas);
   }; })(a,o),900);
 }
 
 function fechaPar(a,b){
-  a.el.className="m2_mcarta m2_vira m2_par";
-  b.el.className="m2_mcarta m2_vira m2_par";
+  a.el.className="mcarta m2_vira par";
+  b.el.className="mcarta m2_vira par";
   a.el.appendChild(el("div","vpar","✓"));
   b.el.appendChild(el("div","vpar","✓"));
   a.el.removeAttribute("data-qa");
@@ -17003,13 +17003,13 @@ function ajuda(n){
   if(!alvo) return;
   if(vez===1){ mostraDica("Leia a carta em voz baixa e pense: <b>quem faz isso?</b>"); }
   else if(vez===2){ mostraDica("Dica: uma das cartas fala de <b>"+alvo.pal.toLowerCase()+"</b>."); }
-  else { mostraDica("Vou abrir este m2_par para você: <b>"+alvo.pal+"</b> — "+alvo.sen+"."); abrePar(alvo.k); }
+  else { mostraDica("Vou abrir este par para você: <b>"+alvo.pal+"</b> — "+alvo.sen+"."); abrePar(alvo.k); }
 }
 function proximoPar(){
   var i,j;
   for(i=0;i<PARES.length;i++){
     for(j=0;j<cartas.length;j++){
-      if(cartas[j].k===PARES[i].k && cartas[j].el.className.indexOf("m2_par")<0) return PARES[i];
+      if(cartas[j].k===PARES[i].k && cartas[j].el.className.indexOf("par")<0) return PARES[i];
     }
   }
   return null;
@@ -17018,7 +17018,7 @@ function abrePar(k){
   var i,a=null,b=null;
   for(i=0;i<cartas.length;i++){ if(cartas[i].k===k){ if(!a) a=cartas[i]; else b=cartas[i]; } }
   if(!a||!b) return;
-  if(virada){ if(virada.el.className.indexOf("m2_par")<0) virada.el.className="m2_mcarta"; virada=null; }
+  if(virada){ if(virada.el.className.indexOf("par")<0) virada.el.className="mcarta"; virada=null; }
   fechaPar(a,b);
 }
 
@@ -17537,7 +17537,7 @@ function telaFrase(){
   for(i=0;i<frase.w.length;i++) ordem.push(i);
   baguncar(ordem);
   for(i=0;i<ordem.length;i++){
-    b=el("div","mf_pc f-"+frase.c[ordem[i]]+" c-"+frase.c[ordem[i]],
+    b=el("div","pc f-"+frase.c[ordem[i]]+" c-"+frase.c[ordem[i]],
          frase.w[ordem[i]]+(frase.apoio
            ? '<i class="eti">'+CLA[frase.c[ordem[i]]].r+'</i>' : ''));
     b.idx=ordem[i];
@@ -17629,7 +17629,7 @@ function naFrase(x,y){
   return false;
 }
 /* a classe base da peca (forma + cor), sem os estados sel/pisca/treme */
-function classeDe(b){ return "mf_pc f-"+frase.c[b.idx]+" c-"+frase.c[b.idx]; }
+function classeDe(b){ return "pc f-"+frase.c[b.idx]+" c-"+frase.c[b.idx]; }
 
 /* ---------- a regra da fase ---------- */
 function tocaFicha(b){
@@ -17941,7 +17941,7 @@ function fazVaga(v){
 }
 
 function fazPeca(o){
-  var p=el("div","m4_pc",o.t);
+  var p=el("div","pc",o.t);
   p._o=o;
   if(o.k) p.setAttribute("data-qa",o.k);   /* so o pedaco CERTO publica a chave */
   /* ⚠️ a marca e do CLIQUE, nao do mousedown: marcar no mousedown fazia o clique
@@ -18012,10 +18012,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("m4_pc"), i;
+  var a=app.getElementsByClassName("pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="m4_pc";
-  p.className="m4_pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
   marcada=p;
 }
 
@@ -18034,7 +18034,7 @@ function encaixa(p,vaga){
   if(o.k!==v.k){ devolve(p,o.msg); return; }
 
   sCerto();
-  p.className="m4_pc usada";
+  p.className="pc usada";
   p.onclick=null; p.onmousedown=null;
   p.removeAttribute("data-qa");
   vaga.appendChild(p);
@@ -18059,11 +18059,11 @@ function encaixa(p,vaga){
 function devolve(p,regra){
   sErro();
   p._err=(p._err||0)+1;
-  p.className="m4_pc volta";
+  p.className="pc volta";
   var pp=p, ge=ger;
   setTimeout(function(){
     if(ge!==ger) return;
-    if(pp.className.indexOf("usada")<0) pp.className="m4_pc";
+    if(pp.className.indexOf("usada")<0) pp.className="pc";
   },360);
   mostraDica("<b>Devolvi o pedaço.</b> "+(regra||"Este pedaço não forma a palavra que a máquina pediu."));
   if(p._err===3) acendeVaga();
@@ -18092,7 +18092,7 @@ function proximaVaga(){
   return null;
 }
 function pecaDaVaga(v){
-  var a=app.getElementsByClassName("m4_pc"), i, k=v._o.k;
+  var a=app.getElementsByClassName("pc"), i, k=v._o.k;
   for(i=0;i<a.length;i++)
     if(a[i].className.indexOf("usada")<0 && a[i]._o && a[i]._o.k===k) return a[i];
   return null;
@@ -18103,7 +18103,7 @@ function desenhaPalavra(){
   if(!elPal) return;
   var R=RODADAS[rod], a=app.getElementsByClassName("cam"), i, s="", pc;
   for(i=0;i<a.length;i++){
-    pc=a[i].getElementsByClassName("m4_pc")[0];
+    pc=a[i].getElementsByClassName("pc")[0];
     if(i>0) s+=" + ";
     s+= pc ? pc._o.t : "<b>___</b>";
   }
@@ -18395,7 +18395,7 @@ function souDedo(){ return agora()-ultimoToque<800; }
 function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
 
 function fazFicha(f){
-  var p=el("div","mp_pc",f.n);
+  var p=el("div","pc",f.n);
   /* ficha e caixa publicam a MESMA chave: é assim que o auditor-jogador
      consegue terminar a fase (e só ele olha para isto). */
   p.setAttribute("data-qa", mudouMesmo(f.k)?"mudou":"ficou");
@@ -18462,10 +18462,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("mp_pc"), i;
+  var a=app.getElementsByClassName("pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="mp_pc";
-  p.className="mp_pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
   marcada=p;
   acende(p._k);
 }
@@ -18508,7 +18508,7 @@ function guarda(p,g){
   if(p.className.indexOf("usada")>=0) return;
   if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
     sCerto();
-    p.className="mp_pc usada";
+    p.className="pc usada";
     p.onclick=null; p.onmousedown=null;
     g.appendChild(p);
     g.className="cam luz";
@@ -18685,7 +18685,7 @@ function telaOrdenar(){
   var sorteadas=baguncar(ORDEM.slice(0));
   for(i=0;i<sorteadas.length;i++){
     n=sorteadas[i];
-    b=el("div","o_pc",""+n);
+    b=el("div","pc",""+n);
     b.num=n;
     ligaFicha(b);
     bc.appendChild(b); pecas.push(b);
@@ -18742,7 +18742,7 @@ function pegaEm(b,x,y){
   if(!b||b.className.indexOf("usada")>=0) return;
   pego=b; px0=x; py0=y; moveu=false;
   sTap();
-  b.className="o_pc sel";
+  b.className="pc sel";
   somb=el("div","somb",""+b.num);
   somb.style.left=(x-26)+"px"; somb.style.top=(y-26)+"px";
   somb.style.display="none";
@@ -18757,7 +18757,7 @@ function soltaEm(x,y){
   var b=pego, arrastou=moveu;
   soltaSombra();
   if(!b) return;
-  if(b.className.indexOf("usada")<0) b.className="o_pc";
+  if(b.className.indexOf("usada")<0) b.className="pc";
   if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
   if(naFila(x,y)) tocaFicha(b);
 }
@@ -18784,7 +18784,7 @@ function tocaFicha(b){
 function poeNaFila(b){
   var cm=camas[vagaAtual];
   cm.className="cam ok"; cm.innerHTML=""+b.num;
-  b.className="o_pc usada";
+  b.className="pc usada";
   sCerto();
   vagaAtual++; errosSeg=0;
   apagaDica();
@@ -18794,7 +18794,7 @@ function poeNaFila(b){
 }
 function erraFicha(b){
   sErro(); errosSeg++;
-  b.className="o_pc treme";
+  b.className="pc treme";
   destreme(b);
   ajuda(errosSeg);
 }
@@ -18803,7 +18803,7 @@ function erraFicha(b){
 function destreme(b){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    if(b.className.indexOf("usada")<0) b.className="o_pc";
+    if(b.className.indexOf("usada")<0) b.className="pc";
   },340);
 }
 function ajuda(n){
@@ -18822,7 +18822,7 @@ function acendeCerta(){
   for(i=0;i<pecas.length;i++){
     b=pecas[i];
     if(b.className.indexOf("usada")>=0) continue;
-    b.className=(b.num===ORDEM[vagaAtual])?"o_pc o_pisca":"o_pc";
+    b.className=(b.num===ORDEM[vagaAtual])?"pc o_pisca":"pc";
   }
 }
 function revela(){
@@ -20007,7 +20007,7 @@ function pinta(){
          peca para a mesa: ele punha e tirava a mesma peca para sempre, numa
          tela que a crianca fecha em quatro toques. `data-qa` e endereco do que
          serve AGORA; peca ja colocada nao serve mais. */
-      cart=el("div","pap_pc usada","");
+      cart=el("div","pc usada","");
       cart.appendChild(icone(p.ic));
       cel.appendChild(el("span","vnum",String(i+1)));
       cel.appendChild(cart);
@@ -20027,7 +20027,7 @@ function pinta(){
   for(i=0;i<R.passos.length;i++){
     p=R.passos[i];
     if(naFita(p.k)>=0) continue;
-    s=el("div","pap_pc"+(sel===p.k?" sel":""),"");
+    s=el("div","pc"+(sel===p.k?" sel":""),"");
     s.setAttribute("data-qa",String(i+1));
     s.appendChild(icone(p.ic));
     s.appendChild(el("span","prot",p.rot));
@@ -23157,7 +23157,7 @@ function etapaDois(){
   reindexa();
 }
 function fazParte(tam){
-  var b=el("div","r3_pc",""+tam);
+  var b=el("div","pc",""+tam);
   b._t=tam;
   b.onclick=cliquePeca;
   b.onmousedown=mouseIni;
@@ -23274,9 +23274,9 @@ function apagaAceso(){
 function escolhe(b){
   if(!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="r3_pc";
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="r3_pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueVaga(){
   if(cliqueDeArrasto()) return;
@@ -23291,7 +23291,7 @@ function cliqueVaga(){
 function poe(b,v){
   if(!b||!v||temClasse(b,"usada")) return;
   if(temClasse(v,"ok")){
-    sErro(); b.className="r3_pc treme"; destreme(b);
+    sErro(); b.className="pc treme"; destreme(b);
     mostraDica("Esse prato j&#225; tem a parte dele. Cada um leva <b>uma</b>.");
     return;
   }
@@ -23299,7 +23299,7 @@ function poe(b,v){
   v.innerHTML="";
   v.appendChild(el("div","r3_posta",""+b._t));
   v.appendChild(el("i","pnome","SERVIDO"));
-  b.className="r3_pc usada";
+  b.className="pc usada";
   marcada=null;
   sCerto();
   entregues++;
@@ -23311,7 +23311,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"r3_pc sel":"r3_pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
   },340);
 }
 
@@ -23956,7 +23956,7 @@ function pecaRotular(){
 }
 
 function fazPlaquinha(p){
-  var b=el("div","r4_pc",p.n);
+  var b=el("div","pc",p.n);
   b._p=p;
   b.setAttribute("data-qa",p.k);
   b.onclick=cliquePlaquinha;
@@ -24071,9 +24071,9 @@ function escolhe(b){
   if(!emJogo()) return;
   if(!b||temClasse(b,"usada")) return;
   var i;
-  for(i=0;i<plaqs.length;i++) if(!temClasse(plaqs[i],"usada")) plaqs[i].className="r4_pc";
+  for(i=0;i<plaqs.length;i++) if(!temClasse(plaqs[i],"usada")) plaqs[i].className="pc";
   if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
-  b.className="r4_pc sel"; marcada=b; sTap(); apagaAceso();
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
 }
 function cliqueVaga(){
   if(!emJogo()) return;
@@ -24098,7 +24098,7 @@ function acerta(b,v){
   v.className="cam ok";
   v.innerHTML="";
   v.appendChild(el("span","rtposto",b._p.n));
-  b.className="r4_pc usada";
+  b.className="pc usada";
   b.removeAttribute("data-qa");
   v.removeAttribute("data-qa");
   marcada=null;
@@ -24115,7 +24115,7 @@ function acerta(b,v){
    Nunca um X vermelho, nunca a palavra que o Marcos proibiu. */
 function erra(b){
   sErro(); errosSeg++;
-  b.className="r4_pc treme";
+  b.className="pc treme";
   destreme(b);
   degrau(b._p);
   if(errosSeg===2) piscaCerta(b._p.k);
@@ -24132,7 +24132,7 @@ function erraSemPlaquinha(v){
     mostraDica("Primeiro toque numa <b>plaquinha</b> l&#225; embaixo. Depois toque no lugar.");
   }else if(errosSeg===2){
     mostraDica("Escolha a plaquinha e a moldura fica <b>mais forte</b>: &#233; ali que ela cabe. "+p.d1);
-    if(alvo){ alvo.className="r4_pc sel"; marcada=alvo; apagaAceso(); }
+    if(alvo){ alvo.className="pc sel"; marcada=alvo; apagaAceso(); }
   }else{
     /* ⚠️ ate a 3a rodada deste caminho a dica repetia a do 2o degrau (medido
        errando de proposito): a crianca lia a mesma frase duas vezes e o
@@ -24177,7 +24177,7 @@ function destreme(b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(!temClasse(b,"usada")) b.className=(marcada===b)?"r4_pc sel":"r4_pc";
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
   },340);
 }
 function piscaCerta(k){
@@ -25551,7 +25551,7 @@ function pecaSombra(){
 }
 
 function fazCartao(f,som){
-  var l=el("div","s3_lig");
+  var l=el("div","lig");
   var cx=el("span","fbox");
   cx.appendChild(desenho(f,som));
   l.appendChild(cx);
@@ -25574,12 +25574,12 @@ function toca(l){
 }
 function marca(l){
   desmarca();
-  l.className="s3_lig sel";
+  l.className="lig sel";
   marcada=l;
 }
 function desmarca(){
-  var a=app.getElementsByClassName("s3_lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="s3_lig";
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
   marcada=null;
 }
 
@@ -25606,7 +25606,7 @@ function junta(a,b){
    `fecha()` sem argumento nenhum e o portao estourava numa peca sadia. */
 function fecha(a,b){
   sCerto();
-  a.className="s3_lig feita pulsa"; b.className="s3_lig feita pulsa";
+  a.className="lig feita pulsa"; b.className="lig feita pulsa";
   a.appendChild(el("span","vok","&#10003;"));
   marcada=null; feitos++;
   apagaDica();
@@ -25614,8 +25614,8 @@ function fecha(a,b){
   var g=ger;
   setTimeout(function(){
     if(g!==ger||!viva()) return;
-    if(temClasse(a,"feita")) a.className="s3_lig feita";
-    if(temClasse(b,"feita")) b.className="s3_lig feita";
+    if(temClasse(a,"feita")) a.className="lig feita";
+    if(temClasse(b,"feita")) b.className="lig feita";
   },1180);
   if(feitos>=FORMAS.length){
     setTimeout(function(){
@@ -25628,12 +25628,12 @@ function fecha(a,b){
 /* 3º erro: a sombra certa acende e a crianca segue. Nunca prende ninguem. */
 function revela(l){
   if(!l) return;
-  var a=app.getElementsByClassName("s3_lig"), i;
+  var a=app.getElementsByClassName("lig"), i;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i]._k===l._k) a[i].className="s3_lig s3_pisca";
+    if(a[i]!==l&&a[i]._k===l._k) a[i].className="lig s3_pisca";
   }
-  l.className="s3_lig sel";
+  l.className="lig sel";
   marcada=l;
 }
 function apagaDica(){
@@ -26108,7 +26108,7 @@ function fazVaga(v){
 
 function fazForma(o){
   if(o.ang0===undefined) o.ang0=o.ang;
-  var p=el("div","t2_pc");
+  var p=el("div","pc");
   p._o=o;
   o._el=p;
   var sp=el("span","pcin",svgForma(o.forma,o.cor,"rgba(0,0,0,.35)",0));
@@ -26198,10 +26198,10 @@ document.addEventListener("touchend",function(ev){
 },false);
 
 function seleciona(p){
-  var a=app.getElementsByClassName("t2_pc"), i;
+  var a=app.getElementsByClassName("pc"), i;
   for(i=0;i<a.length;i++)
-    if(a[i].className.indexOf("usada")<0) a[i].className="t2_pc";
-  p.className="t2_pc sel";
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
   marcada=p;
 }
 
@@ -26210,7 +26210,7 @@ function seleciona(p){
 function girar(){
   if(!marcada||marcada.className.indexOf("usada")>=0) marcada=null;
   if(!marcada){
-    var a=app.getElementsByClassName("t2_pc"), i;
+    var a=app.getElementsByClassName("pc"), i;
     for(i=0;i<a.length;i++) if(a[i].className.indexOf("usada")<0){ seleciona(a[i]); break; }
   }
   if(!marcada) return;
@@ -26241,7 +26241,7 @@ function encaixa(p,vaga){
   }
 
   sEncaixa();
-  p.className="t2_pc usada";
+  p.className="pc usada";
   p.onclick=null; p.onmousedown=null;
   p.removeAttribute("data-qa");
   giraEl(o._sp,v.livre?o.ang:v.ang);
@@ -26266,11 +26266,11 @@ function devolve(p,regra){
   sErro();
   var o=p._o;
   o._err=(o._err||0)+1;
-  p.className="t2_pc volta";
+  p.className="pc volta";
   var pp=p, ge=ger;
   setTimeout(function(){
     if(ge!==ger) return;
-    if(pp.className.indexOf("usada")<0) pp.className="t2_pc sel";
+    if(pp.className.indexOf("usada")<0) pp.className="pc sel";
   },360);
   mostraDica("<b>Devolvi a forma.</b> "+regra);
   var v=vagaDaForma(o);
@@ -26302,7 +26302,7 @@ function vagaDaForma(o){
    fica com o `data-qa="1"` é o botão GIRAR, e o jogador vira a peça como a
    criança faria.                                                             */
 function marcaQA(){
-  var a=app.getElementsByClassName("t2_pc"), i, j, v;
+  var a=app.getElementsByClassName("pc"), i, j, v;
   for(i=0;i<a.length;i++){
     if(a[i].className.indexOf("usada")>=0) continue;
     a[i].removeAttribute("data-qa");
@@ -26515,7 +26515,7 @@ function pecaTeia(){
 }
 
 function fazPonta(dado,lado,texto){
-  var l=el("div","ta_lig",texto);
+  var l=el("div","lig",texto);
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
@@ -26567,8 +26567,8 @@ function solta(x,y,doDedo){
   if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
   arrastando=false; fimArrasto=agora();
   var alvo=document.elementFromPoint(x,y);
-  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"ta_lig")) alvo=alvo.parentNode;
-  if(alvo&&temClasse(alvo,"ta_lig")&&alvo!==l) juntar(l,alvo);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"lig")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"lig")&&alvo!==l) juntar(l,alvo);
 }
 
 document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
@@ -26595,11 +26595,11 @@ function toca(l){
   juntar(marcada,l);
 }
 
-function marca(l){ desmarca(); l.className="ta_lig sel"; marcada=l; }
+function marca(l){ desmarca(); l.className="lig sel"; marcada=l; }
 
 function desmarca(){
-  var a=app.getElementsByClassName("ta_lig"), i;
-  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="ta_lig";
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className="lig";
   marcada=null;
 }
 
@@ -26609,7 +26609,7 @@ function juntar(a,b){
   if(a._lado===b._lado) return;
   if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
     sCerto();
-    a.className="ta_lig feita"; b.className="ta_lig feita";
+    a.className="lig feita"; b.className="lig feita";
     marcada=null;
     FEITOS.push([a,b]);
     redesenha();
@@ -26635,12 +26635,12 @@ function juntar(a,b){
 /* 3º erro: acende a ponta certa do outro lado e DEIXA seguir — é o que
    garante que a peça nunca trava. */
 function revelaPar(l){
-  var a=app.getElementsByClassName("ta_lig"), i, k=l.getAttribute("data-qa");
+  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa");
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")) continue;
-    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="ta_lig ta_pisca";
+    if(a[i]!==l&&a[i].getAttribute("data-qa")===k) a[i].className="lig ta_pisca";
   }
-  l.className="ta_lig sel";
+  l.className="lig sel";
   marcada=l;
 }
 
