@@ -170,7 +170,16 @@ def analisa(js, css, baixo, html=None):
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
 
     # ---------------------------------------------------- OUVIR E ACHAR
-    if re.search(r'speechSynthesis|ouvir.?achar|btnOuvir', css + js, re.I) and \
+    # ⚠️ ACUSOU O INOCENTE (ago/2026, na varredura das 74 pecas): o gatilho era
+    #    `speechSynthesis` + opcoes na tela. So que `speechSynthesis` e a voz de
+    #    reserva do navegador, usada por VARIAS pecas para ler a resposta em voz
+    #    alta — nao e a marca desta mecanica. Cinco pecas casavam, e so UMA era
+    #    de ouvir e achar; as outras quatro levavam a cobranca de "a palavra tem
+    #    que estar escrita junto", que nem se aplica a elas. Duas reprovaram a
+    #    bancada por isso (ensinar-mascote e medir).
+    #    A marca de verdade e a peca TOCAR O ALVO para a crianca procurar: uma
+    #    funcao que toca o que se quer achar (`tocaAlvo`), ou o nome dela.
+    if re.search(r'ouvir.?e.?achar|ouvir-achar|tocaAlvo|pecaOuvir', css + js, re.I) and \
        re.search(r'"opt"|\.fig\b', css + js):
         usa.append("ouvir e achar")
         # ⚠️ PC de escola sem caixa de som existe: a peca NAO pode depender do som
