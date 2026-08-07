@@ -205,3 +205,21 @@ para a próxima não repetir.
   receita certa de cada mecânica**, três vezes seguidas, e conferindo se ainda dá
   para chegar à medalha. É um teste por mecânica, como o `_qa/dinamicas.py`.
   **Mecânica nova = receita nova no errador**, junto com a linha no catálogo.
+- **⚠️ O DEFEITO QUE APARECEU EM 5 DE 6 PEÇAS DO MESMO LOTE:** a dica do 3º
+  degrau — a que EXPLICA a revelação — era escrita e **apagada no mesmo quadro**,
+  porque o "revelar" chamava o "acertou" e o "acertou" limpa a dica. A peça se
+  consertava sozinha e a criança não sabia por quê. **Ordem correta: revela →
+  DEPOIS escreve a dica.** Nenhum portão vê isso: só medindo o texto na tela
+  depois de errar.
+- **A DICA CAÍA ABAIXO DA DOBRA — nas 57 peças de uma vez.** Ela era o último
+  filho do `.centro`; em 320×568 e no monitor 1366×768 da escola ficava 25 a 96 px
+  fora da tela. A criança que errou tinha que ROLAR para achar a ajuda, justo
+  quando está perdida. Agora entra **logo depois do enunciado**, que é onde o olho
+  já está. ⚠️ O portão de leiaute **abre a fase vazia** e por isso nunca mediu
+  isso — medir a tela COM A DICA ABERTA é portão que ainda falta.
+- **Propriedade declarada e nunca lida = escada que não existe.** Uma peça tinha
+  `apoio` em `FRASES[0]`, prometendo um degrau de ajuda na 1ª rodada — e nada no
+  código lia essa propriedade. A escada estava no dado, não no comportamento.
+- **Tela antiga continua clicável embaixo do banner.** Um toque no "+" depois de
+  fechar a última coluna caía num índice que não existe e **matava o resto do JS
+  da partida**. Toda função que mexe no estado começa com `if(!emJogo()) return;`.
