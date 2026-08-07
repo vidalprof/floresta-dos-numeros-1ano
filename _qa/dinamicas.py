@@ -428,6 +428,15 @@ def main():
     #    O `js_de` e o `css_de` ja tiram comentario; o `html` nao tinha quem o
     #    limpasse. Agora tem — e os gatilhos passam a ler so o que a crianca ve
     #    ou o que o codigo faz.
+    # ⚠️ SEGUNDA LICAO, no mesmo dia e por minha causa: eu tirei os comentarios
+    #    do `html` para os gatilhos pararem de ler prosa — e junto foram embora
+    #    as marcas `/* ==== PECA: nome ==== */`, que sao COMENTARIO e sao o que
+    #    separa os blocos de cada mecanica na atividade montada. Resultado: o
+    #    portao voltou a medir o arquivo inteiro de uma vez e acusou a peca de
+    #    PINTAR de tocar som de erro — som que esta noutro bloco, a mil linhas
+    #    dali. Limpeza tem escopo: os gatilhos leem o texto limpo; quem corta os
+    #    blocos le o texto CRU. Guardo os dois.
+    html_cru = html
     html = sem_comentarios(html)
     baixo = html.lower()
 
@@ -436,7 +445,7 @@ def main():
     #    proposito: e assim que o portao para de acusar o que esta escrito em
     #    nota). Entao a divisao por peca se faz no script CRU, e so depois cada
     #    pedaco passa pelo mesmo limpador.
-    cru = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
+    cru = "".join(re.findall(r"<script>(.*?)</script>", html_cru, re.S))
     # ⚠️ e a ULTIMA peca nao pode engolir o que vem depois dela (o conteudo que
     #    o montador escreve: FASES, VOZOK, ID). Sem este corte, a peca da SOMBRA
     #    levou acusacao de forca, de labirinto e de ligar pontos — porque a lista
