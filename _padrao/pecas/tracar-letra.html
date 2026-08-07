@@ -270,6 +270,12 @@ function diz(txt){
   }catch(e){}
 }
 function sPasso(k){ nota(430+k*40,.07,.11,"sine",0); }
+/* ⚠️ AQUI NAO EXISTE SOM DE TROPECO. Traçar e um GESTO em treino, nao uma
+   resposta: o dedo que vai parar longe da bolinha nao errou nada, so ainda nao
+   chegou. O que ele ouve e um som de RETORNO (grave, curto, sem cara de
+   engano) e o que ele ve e a bolinha da vez chamando de novo. Quem cresce e o
+   andaime, nao a bronca. */
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
 function sPronto(){ nota(659.25,.22,.15,"triangle",0); nota(987.77,.28,.13,"triangle",.10); }
 
 function dist(ax,ay,bx,by){ var dx=ax-bx, dy=ay-by; return Math.sqrt(dx*dx+dy*dy); }
@@ -437,9 +443,11 @@ function entra(x,y,deliberado){
     return;
   }
   if(!deliberado) return;
-  /* toque deliberado longe do caminho: o gesto de quem nao entendeu a ordem */
+  /* toque deliberado longe do caminho: o gesto de quem nao entendeu a ordem
+     (tocar direto no fim — "quero chegar ALI"). Nao e castigo: e o andaime
+     subindo um degrau. */
   erros++;
-  sErro();
+  sVolta();
   treme();
   ajuda(erros);
 }
