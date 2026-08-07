@@ -131,26 +131,43 @@
      TENTADA, ou seja, um ERRO. Comemorar erro e pior que nao comemorar. */
   var MARCA = /(^|\s)(ok|certa|acerto|acertou|feito|cheia|par|casada|encaixou)(\s|$)/;
   var vistos = "__jaFestejou";
-  var menos = false;
-  try{ menos = window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion:reduce)").matches; }catch(e){}
+  /* ⚠️ LICAO PAGA: isto era lido UMA VEZ, no carregamento, e guardado. Se o
+     navegador respondesse "reduce" naquele instante — ou se a leitura falhasse
+     — a comemoracao ficava desligada para SEMPRE naquela sessao, sem nenhum
+     sinal. Preferencia do usuario se pergunta NA HORA de usar, nao se congela
+     no boot. */
+  function menosAnimacao(){
+    try{ return !!(window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion:reduce)").matches); }catch(e){ return false; }
+  }
 
+  /* ⭐⭐ A COMEMORACAO E A DO BROTO — a mesma, nao uma parecida.
+     Cobranca do Marcos: *"veja a comemoracao do Broto nos acertos, quero
+     igual, como estavamos fazendo ate agora"*.
+     ⚠️ Eu tinha escrito faisquinhas de CSS. Ficou parecido e nao era igual — e
+     o pior: o confete DE VERDADE ja estava no motor (o canvas `#conf`, o
+     `faisca()`, o `festa()`, o `sCerto()` de tres notas e o `elogio()` falado),
+     herdado do Broto. Faltava so CHAMAR. Reescrever o que ja existe e o erro
+     que o CLONAR-MOTOR.md manda evitar; aqui ele apareceu na forma mais boba,
+     a de imitar em CSS o que ja estava pronto em canvas. */
   function faiscas(el){
-    if(menos) return;
-    var r = el.getBoundingClientRect(), i;
-    if(!(r.width > 4)) return;
-    for(i = 0; i < 10; i++){
-      var f = document.createElement("span");
-      f.className = "pfaisca";
-      f.style.left = (r.left + r.width * (0.12 + Math.random() * 0.76)) + "px";
-      f.style.top  = (r.top  + r.height * (0.15 + Math.random() * 0.7)) + "px";
-      f.style.background = ["#ffd23f","#7ed957","#ff9f45","#ffffff"][i % 4];
-      f.style.webkitAnimationDelay = (i * 38) + "ms";
-      f.style.animationDelay = (i * 38) + "ms";
-      document.body.appendChild(f);
-      (function(x){ setTimeout(function(){
-        if(x.parentNode) x.parentNode.removeChild(x); }, 1100); })(f);
-    }
+    if(menosAnimacao()) return;
+    try{
+      var r = el.getBoundingClientRect();
+      if(!(r.width > 4)) return;
+      var x = r.left + r.width / 2, y = r.top + r.height / 2;
+      /* as mesmas cores e a mesma quantidade do Broto */
+      if(typeof faisca === "function"){
+        faisca(x, y, "#8be05a", 12);
+        faisca(x, y, "#ffd43b", 8);
+      }
+    }catch(e){}
+  }
+
+  /* o som e a voz do acerto, tambem os do Broto */
+  function somDoAcerto(){
+    try{ if(typeof sCerto === "function") sCerto(); }catch(e){}
+    try{ if(typeof elogio === "function") elogio(); }catch(e){}
   }
 
   function olhaAcerto(){
@@ -165,6 +182,7 @@
       e[vistos] = 1;
       e.className = e.className + " pfesta";
       faiscas(e);
+      somDoAcerto();
       (function(x){ setTimeout(function(){
         x.className = String(x.className).replace(/\s*pfesta/, ""); }, 620); })(e);
     }
