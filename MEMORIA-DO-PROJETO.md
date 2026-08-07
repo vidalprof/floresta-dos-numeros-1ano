@@ -4635,3 +4635,68 @@ commita. `git pull` e eu leio aqui.
 Sempre que eu for dizer "não consigo acessar isso", a frase certa é "vou acionar
 o workflow que acessa". Está no topo do `CLAUDE.md` para eu ler no começo de toda
 sessão.
+
+---
+
+## 🦴 O ESQUELETO — atividade deixou de ser código e virou CONTEÚDO (ago/2026)
+
+**Pedido do Marcos:** *"precisamos otimizar o processo a ponto de conseguir
+deixar uma atividade inteira com o esqueleto em minutos e não em horas"* — e,
+para a manhã seguinte: *"eu gostaria de gerar uma atividade e que ela ficasse
+pronta no máximo em 1 hora e meia"*.
+
+**O que fazia levar horas não era o conteúdo: era eu reescrever o motor.** O
+caça-palavras, a memória, o arrastar, o teclado — a cada atividade, do zero. É
+de lá que saíam os defeitos que chegavam nele.
+
+### Como funciona (`_padrao/ESQUELETO/`)
+
+```
+conteudo.json  ──▶  montar.py  ──▶  index.html + falas.json + arte.json
+```
+
+| arquivo | o que faz |
+|---|---|
+| `extrair_motor.py` | tira o motor **do Jardim do Broto** (ordem dele: "nosso modelo é a atividade do Broto"). Não se escreve motor do zero: o do Broto já passou por ele, pela banca e pelas crianças. |
+| `motor.html` | **gerado.** A espinha: capa, crachá, barra, andaime, medição, mascote com lip-sync, boletim, medalha, relatório do professor, senha `1275@`. Não editar à mão. |
+| `integrar.py` | pega as **74 peças** de `_padrao/pecas/` e as vira `MEC["nome"]`, sem reescrever nenhuma. |
+| `pecas.js` / `pecas.css` | **gerados.** Todas as mecânicas juntas (938 KB) — o montador recorta só as usadas. |
+| `pecas.json` | **gerado.** O formato de `dados` de cada mecânica, com o exemplo da própria peça ao lado. É o que se consulta ao escrever conteúdo. |
+| `montar.py` | conteúdo entra, atividade sai. Confere antes: 32 fases, 16 mecânicas (10 até o 2º ano), teto de 40% por gesto, nada de gesto repetido colado, aquecimento no meio. |
+| `CONTRATO.md` | o contrato + as ~35 lições pagas. |
+
+### Os dois ganhos que não são tempo
+
+1. **`falas.json` sai do próprio enunciado.** Fica *impossível* a voz dizer coisa
+   diferente da tela — o defeito que ele cobrou três vezes num dia deixa de
+   existir **por construção**, não por eu lembrar de conferir.
+2. **Não há de onde clonar.** O motor é o mesmo para todas; o conteúdo é novo.
+
+### ⚠️ O que essa primeira montagem custou (e virou portão)
+
+A primeira atividade gerada inteira — 32 fases, 16 mecânicas — **reprovou na
+banca**, e os quatro defeitos eram do mesmo parentesco: *o que não dá erro é o
+que chega na criança*.
+
+- **Resto de clone dentro do próprio esqueleto.** O motor extraído ainda trazia
+  os conceitos do Broto (`DOM`/`ROTCRI`/`TREINO`, com o treino apontando para
+  telas já removidas), o menu do professor com as 17 telas dele, a pré-carga, o
+  alto-falante, o crachá, o nome do mascote, o fundo (cravado no **CSS**) e — a
+  pior — a chave do `localStorage` `"jardim_med"`: no GitHub Pages **todas as
+  atividades moram na mesma origem**, então duas geradas pelo esqueleto
+  apagariam o progresso uma da outra na mesma tarde.
+  → **`extrair_motor.py` agora varre o motor pronto atrás de `jd_` e "Broto" no
+  código e SE RECUSA A ESCREVER se achar.** Uma marca esquecida ali viraria
+  resto de clone em *toda* atividade gerada.
+- **A marca de recorte colidia com os comentários das peças** (163 marcas para
+  74 peças): o montador partia a peça no meio e escrevia **meia mecânica** — e o
+  `node --check` não vê, porque a metade fecha as chaves.
+- **`nota()` e a colisão de tipo do `ac`.** As peças usavam dois ajudantes que o
+  motor não tinha; e o `ac` da peça é uma **função**, o do motor é o **objeto
+  AudioContext** do lip-sync. Nome igual e tipo diferente **não dá erro**: o
+  `var ac=` do motor sobrescreve, e só na hora do som é que morre.
+  → `integrar.py` agora confere as peças contra o motor e reprova nas duas
+  metades (falta e colisão de tipo).
+- **Quem achou tudo isso foi o portão que JOGOU** (`_qa/jogador.js`). O
+  `node --check` passou, o print ficou perfeito. **Atividade montada não se
+  entrega sem o jogador ter chegado à medalha.**
