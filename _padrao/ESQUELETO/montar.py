@@ -103,6 +103,27 @@ def confere(c, mecs):
             avisos.append(u"%s: sem conceito — esta fase nao entra no parecer "
                           u"do professor" % onde)
 
+    # ⭐⭐ O CRIVO DO CURRICULO E DA MESA (ordem do Marcos, ago/2026).
+    #    "é preciso averiguar o currículo de Blumenau e passar pelo crivo do
+    #    pedagogo especialista". Isso estava nos manuais e o esqueleto nao
+    #    cobrava — entao dependia de eu lembrar, e ja se viu no que da.
+    #    Agora: sem a habilidade do curriculo escrita, nao vira HTML.
+    if not c.get("mesa") or u"«" in str(c.get("mesa", "")):
+        p.append(u"falta dizer QUEM SENTOU NA MESA (campo 'mesa'): ate o 5o ano "
+                 u"manda o PEDAGOGO; do 6o ao 9o, o ESPECIALISTA DA DISCIPLINA "
+                 u"(ver _padrao/RECEITA.md)")
+    cur = c.get("curriculo") or {}
+    usados = sorted(set(f.get("conceito") for f in fases if f.get("conceito")))
+    for k in usados:
+        hab = cur.get(k, "")
+        if not hab or u"«" in hab:
+            p.append(u"o objetivo '%s' nao diz que HABILIDADE do curriculo ele "
+                     u"serve. Abra o _curriculo/blumenau.txt, ache a linha do "
+                     u"ano/disciplina e copie — nao resuma de cabeca." % k)
+        elif len(hab) < 25:
+            avisos.append(u"a habilidade de '%s' esta curta demais (%d letras) — "
+                          u"copiada do curriculo ou escrita de memoria?" % (k, len(hab)))
+
     # ⚠️ a regra que o Marcos pediu: variedade contada por GESTO
     if len(vistos) < minimo:
         p.append(u"so %d mecanica(s) diferente(s); o combinado para este ano sao "

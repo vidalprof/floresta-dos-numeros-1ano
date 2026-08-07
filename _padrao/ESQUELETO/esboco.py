@@ -162,8 +162,21 @@ def main():
          "abertura": u"«o problema que faz a criança QUERER saber — o conceito "
                      u"vem por último (EDUVERSE-FILOSOFIA.md)»",
          "fim": u"«o que o mascote diz na medalha, com um gancho de curiosidade»",
+         # ⭐ O CURRICULO ENTRA NO ARQUIVO, NAO NA MINHA MEMORIA (ordem do
+         #    Marcos, ago/2026: "é preciso averiguar o currículo de Blumenau e
+         #    passar pelo crivo do pedagogo especialista"). Estava escrito nos
+         #    manuais e o esqueleto nao cobrava — e regra escrita nao e regra
+         #    cumprida. Agora cada objetivo carrega A HABILIDADE que ele serve,
+         #    copiada do `_curriculo/blumenau.txt`, e o montador RECUSA-SE a
+         #    gerar enquanto estiver por preencher.
+         "mesa": u"«quem sentou na mesa: até o 5º ano manda o PEDAGOGO; do 6º ao "
+                 u"9º, o ESPECIALISTA DA DISCIPLINA (ver _padrao/RECEITA.md)»",
          "conceitos": dict((u"objetivo%d" % (k + 1),
                             u"«nome em linguagem de criança»")
+                           for k in range(len(mecs))),
+         "curriculo": dict((u"objetivo%d" % (k + 1),
+                            u"«a habilidade do currículo de Blumenau/BNCC que "
+                            u"este objetivo serve — copiada, não resumida»")
                            for k in range(len(mecs))),
          "fases": fases}
 
@@ -181,6 +194,8 @@ def main():
     print(u"   %d fases | %d mecanicas | todas as gavetas ja no formato certo"
           % (len(fases), len(mecs)))
     print(u"   agora e trocar so o que esta entre «» — a estrutura ja esta certa")
+    print(u"   ⚠️ ANTES DAS FASES: preencha `mesa` e `curriculo` (o montador cobra).")
+    print(u"      o currículo de Blumenau esta em _curriculo/blumenau.txt (2,1 MB)")
     print(u"   depois: montar.py -> colher.py -> montar.py -> auditar.sh")
     return 0
 
