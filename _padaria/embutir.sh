@@ -83,6 +83,15 @@ arte = json.load(io.open("_padaria/arte.json", encoding="utf-8"))
 for n in arte.get("no_banco") or []:
     for ext in (".png", ".jpg"):
         o = os.path.join("_banco", "img", n + ext)
+        d = os.path.join("_padaria", "img", "pd_" + n + ext)
+        # ⚠️ LICAO PAGA (ago/2026): o banco SOBRESCREVIA a arte que a cartela
+        #    acabara de recortar. O `pd_biscoito` desta padaria virou o
+        #    `dc_biscoito` da Doceria, byte a byte, e o portao "arte propria"
+        #    reprovou — com razao. Banco e para o que FALTA, nunca por cima do
+        #    que ja foi desenhado para esta atividade.
+        if os.path.exists(d):
+            print("  (ja desenhado nesta atividade, banco nao sobrescreve: %s)" % n)
+            break
         if os.path.exists(o):
             shutil.copy(o, os.path.join("_padaria", "img", "pd_" + n + ext))
             print("  -> do banco: %s" % n)

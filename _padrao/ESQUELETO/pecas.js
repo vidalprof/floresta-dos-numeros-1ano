@@ -18029,7 +18029,20 @@ MEC["ouvir-achar"] = function(f, cen, fim){
    1) O BANCO DE FIGURAS. Cada uma tem NOME (o gemeo escrito, que faz a
       peca funcionar no mudo) e um desenho de CSS.
    --------------------------------------------------------------- */
-var FIG={
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e das que so aparecem JOGANDO: este catalogo
+   chamava-se `FIG`, e `FIG` esta na lista de nomes que o integrador considera
+   CONFIGURACAO, nao conteudo. Resultado: em `pecas.json` esta peca aparecia com
+   uma gaveta so (`RODADAS`), como se aceitasse qualquer palavra — e nao aceita:
+   ela so conhece as oito figuras desenhadas em CSS aqui embaixo. Montei uma
+   atividade de padaria com `opcoes:["pd_pao",...]` e a crianca travou na
+   terceira tela com "Cannot read properties of undefined (reading 'letra')".
+   Agora o catalogo TEM nome de conteudo e entra no conteudo.json. */
+/* a figura de verdade vem do MOTOR; aqui na bancada ela nao existe e a peca
+   mostra o nome escrito. Pegar por `window.imgEl` deixa o nome DECLARADO, e o
+   portao "funcao que nao existe" consegue medir. */
+var imgEl = window.imgEl || null;
+
+var CATALOGO={
  sol:   {nome:"SOL",    voz:"sol"},
  casa:  {nome:"CASA",   voz:"casa"},
  bola:  {nome:"BOLA",   voz:"bola"},
@@ -18037,7 +18050,14 @@ var FIG={
  arvore:{nome:"&#193;RVORE", voz:"árvore", letra:"A"},
  flor:  {nome:"FLOR",   voz:"flor"},
  chave: {nome:"CHAVE",  voz:"chave"},
- lua:   {nome:"LUA",    voz:"lua"}
+ lua:   {nome:"LUA",    voz:"lua"},
+ /* ⭐ os dois campos que abrem a peca para conteudo novo (ver `desenho`):
+    `img` = arte de IA (o normal numa atividade de verdade) e
+    `texto` = a propria LETRA em corpo grande (fases de alfabeto).
+    Ficam no exemplo de proposito: e daqui que o montador aprende que a peca
+    LE esses campos. */
+ pao:   {nome:"P&#195;O", voz:"pão", img:"pd_pao", letra:"P"},
+ be:    {nome:"B", voz:"bê", texto:"B", letra:"B"}
 };
 
 /* ---------------------------------------------------------------
@@ -18101,6 +18121,16 @@ function sPing(){ nota(880,.09,.12,"triangle",0); }
    --------------------------------------------------------------- */
 function desenho(k){
   var d=el("div","des",""), i, e;
+  var F=CATALOGO[k]||{};
+  /* ⭐ TRES CAMINHOS, nesta ordem:
+     · `img`   — arte de IA (o normal numa atividade de verdade);
+     · `texto` — a propria LETRA em corpo grande (fases de alfabeto);
+     · senao   — o desenho de CSS das oito figuras de exemplo desta peca. */
+  if(F.img){
+    if(imgEl){ d.appendChild(imgEl(F.img)); return d; }
+    d.appendChild(el("div","destxt", F.nome||k)); return d;
+  }
+  if(F.texto){ d.appendChild(el("div","destxt", F.texto)); return d; }
   if(k==="sol"){
     for(i=0;i<8;i++){
       e=el("i","solr","");
@@ -18140,7 +18170,7 @@ function desenho(k){
 }
 /* a letra do comeco, para o 2o degrau do andaime. Tira o acento (o &Aacute; da
    ARVORE) porque o que a crianca compara e a LETRA, nao o acento. */
-function letraDe(k){ return FIG[k].letra || FIG[k].nome.charAt(0); }
+function letraDe(k){ return CATALOGO[k].letra || CATALOGO[k].nome.charAt(0); }
 
 /* ---------------------------------------------------------------
    4) A TELA
@@ -18201,17 +18231,17 @@ function cartao(k){
   o.appendChild(el("div","ini",letraDe(k)));
   o.appendChild(desenho(k));
   var lin=el("div","linha","");
-  lin.appendChild(el("span","nom",FIG[k].nome));
+  lin.appendChild(el("span","nom",CATALOGO[k].nome));
   var z=el("button","zap","");
   z.appendChild(el("i","fone",""));
-  z.setAttribute("aria-label","Ouvir "+FIG[k].nome);
+  z.setAttribute("aria-label","Ouvir "+CATALOGO[k].nome);
   /* ⚠️ o alto-falante NAO escolhe: ele so fala. Sem parar o evento aqui, tocar
      no alto-falante valia como resposta — e a crianca que so queria conferir o
      nome levava um erro. */
   z.onclick=function(ev){
     var e=ev||window.event;
     if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
-    sPing(); diz(FIG[k].voz);
+    sPing(); diz(CATALOGO[k].voz);
   };
   lin.appendChild(z);
   o.appendChild(lin);
@@ -18358,6 +18388,9 @@ function fimOuvir(){
   diz("Peça fechada!");
 }
     if(f && f.dados) RODADAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.CATALOGO !== undefined) CATALOGO = _d.CATALOGO;
+    }
     pecaOuvir();
   })();
 };

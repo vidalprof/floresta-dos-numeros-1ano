@@ -182,6 +182,29 @@ def chaves_de(v, fundo=None):
     return fundo
 
 
+
+def eh_catalogo(v):
+    u"""⚠️ GAVETA-CATÁLOGO: um dicionário cujas CHAVES são nomes escolhidos por
+    quem escreve o conteúdo (`{pd_pao:{...}, B:{...}}`), e não campos que a peça
+    lê. Comparar essas chaves com as do exemplo NUNCA vai bater — a peça de
+    exemplo tem `sol`, `casa`, `lua`, e a atividade nova tem os nomes DELA.
+
+    Sem esta distinção o montador acusava 29 "campos que a peça não lê" numa
+    gaveta perfeitamente correta. Portão que acusa o inocente ensina a ignorar
+    portão — e aqui ele chegou a IMPEDIR a montagem."""
+    return (isinstance(v, dict) and v and
+            all(isinstance(x, dict) for x in v.values()))
+
+
+def chaves_uteis(v):
+    u"""os campos que importam: num catálogo, os de DENTRO de cada item."""
+    if eh_catalogo(v):
+        fundo = set()
+        for x in v.values():
+            chaves_de(x, fundo)
+        return fundo
+    return chaves_de(v)
+
 def literal(crua):
     u"""le um literal JS (o exemplo da peca) e devolve o valor, ou None."""
     if not crua:
@@ -259,10 +282,10 @@ def confere_dados(c, oficina):
         exemplo = literal(info.get("exemplo"))
         if exemplo is None:
             continue
-        conhecidas = chaves_de(exemplo)
+        conhecidas = chaves_uteis(exemplo)
         if not conhecidas:
             continue
-        usadas = chaves_de(f["dados"])
+        usadas = chaves_uteis(f["dados"])
         estranhas = sorted(usadas - conhecidas)
         if estranhas:
             ruins.append(u"fase %d (%s), mecanica '%s': campo(s) que a peca NAO "
@@ -281,8 +304,8 @@ def confere_dados(c, oficina):
             mod = literal(crua)
             if mod is None:
                 continue
-            sabe = chaves_de(mod)
-            estranhas = sorted(chaves_de(val) - sabe)
+            sabe = chaves_uteis(mod)
+            estranhas = sorted(chaves_uteis(val) - sabe)
             if sabe and estranhas:
                 ruins.append(u"fase %d, gaveta '%s' de '%s': campo(s) que a peca "
                              u"NAO le: %s. Ela conhece: %s"
