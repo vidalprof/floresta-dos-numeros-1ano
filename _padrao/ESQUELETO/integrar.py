@@ -402,14 +402,46 @@ FERRAMENTAS = u'''
    montada existe o mp3, e voz de navegador nunca vai para a crianca (regra da
    casa). O que a peca queria dizer continua sendo dito — pelo olheiro do balao,
    com a voz de verdade. */
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos pegou NO CELULAR, nao no PC:
+   *"tem voz do navegador junto com a voz do Antonio e as vezes os dois falam ao
+   mesmo tempo"*. No meu teste de mesa a medicao dava ZERO chamadas — e dava
+   mesmo. A primeira versao deste guarda fazia
+       window.speechSynthesis.speak = vazio;
+   que e uma atribuicao de propriedade PROPRIA num objeto do navegador. No
+   Chrome de mesa ela cria a sombra e funciona; no celular (e no Safari) o
+   objeto costuma recusar a propriedade nova **em silencio** — sem erro, sem
+   excecao — e o `speak` original continua ali, falando por cima do mp3 do
+   Antonio.
+   Por isso agora sao TRES camadas, e basta uma pegar:
+     1. trocar o `window.speechSynthesis` inteiro por um objeto inerte;
+     2. neutralizar o `speak` no PROTOTIPO (pega quem guardou a referencia);
+     3. deixar o `SpeechSynthesisUtterance` sem texto — sem fala para enfileirar.
+   A licao geral: guarda que depende de UMA atribuicao funcionar nao e guarda.
+   E teste de mesa nao prova celular — o navegador de la e outro bicho. */
 (function(){
-  if(!window.speechSynthesis) return;
   var vazio = function(){};
-  try{
-    window.speechSynthesis.cancel();
-    window.speechSynthesis.speak = vazio;
-    window.speechSynthesis.cancel = vazio;
-  }catch(e){}
+  var inerte = {
+    speak: vazio, cancel: vazio, pause: vazio, resume: vazio,
+    getVoices: function(){ return []; },
+    speaking: false, pending: false, paused: false
+  };
+  /* 1) o objeto inteiro */
+  try{ if(window.speechSynthesis) window.speechSynthesis.cancel(); }catch(e){}
+  try{ Object.defineProperty(window, "speechSynthesis", {
+         configurable: true, get: function(){ return inerte; } }); }catch(e){}
+  /* 2) o prototipo — pega quem guardou a referencia antes de mim */
+  try{ if(window.SpeechSynthesis && window.SpeechSynthesis.prototype){
+         window.SpeechSynthesis.prototype.speak = vazio;
+         window.SpeechSynthesis.prototype.cancel = vazio; } }catch(e){}
+  /* 3) a propria fala nasce vazia */
+  try{ if(window.SpeechSynthesisUtterance){
+         var U = window.SpeechSynthesisUtterance;
+         window.SpeechSynthesisUtterance = function(){ var u = new U(""); u.text = ""; return u; };
+         window.SpeechSynthesisUtterance.prototype = U.prototype; } }catch(e){}
+  /* 4) ultima linha: se ainda assim algo falar, cala na hora */
+  try{ setInterval(function(){
+         try{ if(inerte.speaking) inerte.cancel(); }catch(e){}
+       }, 1500); }catch(e){}
 })();
 
 /* ==== A VOZ DA RODADA ====
