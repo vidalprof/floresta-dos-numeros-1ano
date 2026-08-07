@@ -4813,3 +4813,25 @@ Onde isso vive hoje:
 - `_padrao/ESQUELETO/montar.py` → preserva o que colheu e avisa gaveta meia-cheia;
 - `_padrao/ESQUELETO/provar_conteudo.js` → abre as 32 fases e confere que o que
   está na tela é o conteúdo **daquela** fase.
+
+---
+
+## 📌 JARDIM DO BROTO — 4 achados do pedagogo que FICAM COMO ESTÃO (decisão do Marcos, ago/2026)
+
+Quando o `_qa/pedagogo.py` deixou de ser cego (ver o commit "portao do pedagogo:
+estava CEGO na casa inteira"), ele passou a apontar no Jardim **4 fases em que dá
+para errar e o andaime não cresce**: `telaExperimento`, `telaOrdenar`,
+`telaPrecisa`, `telaMontaPalavra` — cada uma com uma dica só, sem 2º degrau.
+
+Eu ofereci consertar. **Ele respondeu: *"não precisa mexer em atividades
+prontas"*.** Decisão registrada.
+
+**Consequência a NÃO esquecer:** `bash _qa/auditar.sh _jardim/index.html` sai com
+**código 1** por causa disso, e isso é ESPERADO. Não é defeito novo, não é
+regressão, e **não** é para "consertar" numa próxima sessão. Se um dia o Marcos
+pedir a revisão do Jardim, aí sim estes 4 entram na lista.
+
+⚠️ A lição geral: portão que começa a enxergar faz atividade aprovada passar a
+reprovar. Isso é o portão funcionando, não a atividade piorando — e a diferença
+tem que ficar ESCRITA, senão a próxima sessão gasta a manhã do Marcos
+consertando o que ele mandou deixar quieto.
