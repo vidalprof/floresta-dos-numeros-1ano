@@ -56,29 +56,51 @@ const path = require('path');
   await p.goto('file://' + html);
   await p.waitForTimeout(900);
 
-  const n = await p.evaluate(() => (typeof FASES !== 'undefined' ? FASES.length : 0));
+  /* Atividade MONTADA anda pelo `FASES`. Atividade ESCRITA A MAO (o Jardim do
+     Broto, o Circo do Teo) tem uma funcao por tela — entao as telas sao
+     descobertas pelo nome, como o resto da banca ja faz. Sem isto o portao
+     dizia "nao achei as FASES" justo nas atividades premium feitas a mao. */
+  const montada = await p.evaluate(() => typeof FASES !== 'undefined' && typeof montaFase === 'function');
+  const telas = montada ? [] : await p.evaluate(() => {
+    const fora = {telaPainel: 1, telaCapa: 1, telaQuem: 1, telaP: 1};
+    return Object.keys(window).filter(k => /^tela[A-Z]/.test(k) &&
+      typeof window[k] === 'function' && !fora[k]).sort();
+  });
+  const n = montada ? await p.evaluate(() => FASES.length) : telas.length;
   if (!n) {
-    console.log(pasta + ' -> nao achei as FASES. NAO MEDI NADA (isso nao e "passou").');
+    console.log(pasta + ' -> nao achei nem FASES nem telas. NAO MEDI NADA (isso nao e "passou").');
     process.exit(2);
   }
+  console.log(pasta + ' -> ' + (montada ? 'atividade montada' : 'atividade escrita a mao') +
+              ', ' + n + ' tela(s) a medir');
 
   const norm = s => (s || '').replace(/\s+/g, ' ').trim();
   const mudas = [], semVoz = [], semZap = [];
   let zaps = 0, batem = 0;
 
   for (let i = 0; i < n; i++) {
-    await p.evaluate(k => {
-      try { perfil = {nome: 'ANA', fig: ID.pre + '_cr1'}; } catch (e) {}
-      montaFase(k, function () {});
-    }, i);
+    const nome = montada ? ('fase ' + (i + 1)) : telas[i];
+    try {
+      if (montada) {
+        await p.evaluate(k => {
+          try { perfil = {nome: 'ANA', fig: ID.pre + '_cr1'}; } catch (e) {}
+          montaFase(k, function () {});
+        }, i);
+      } else {
+        await p.evaluate(t => {
+          try { if (typeof ALUNO !== 'undefined') ALUNO = 'ANA'; } catch (e) {}
+          window[t]();
+        }, telas[i]);
+      }
+    } catch (e) { continue; }
     await p.waitForTimeout(330);
 
     const r = await p.evaluate(() => {
-      const cx = document.getElementsByClassName('pecabox')[0];
+      const cx = (document.getElementsByClassName('pecabox')[0] || document.querySelector('.tela') || document.body);
       const bs = cx ? cx.getElementsByClassName('balao') : null;
       const balao = (bs && bs.length) ? (bs[0].textContent || '') : '';
       const lista = [];
-      document.querySelectorAll('.pecabox .zap').forEach(z => {
+      document.querySelectorAll('.zap, .zapb').forEach(z => {
         const dono = z.parentNode;
         const t = (dono.textContent || '').replace(/\s+/g, ' ').trim();
         lista.push({txt: t, k: (typeof chaveVoz === 'function' ? chaveVoz(t) : null)});
@@ -87,30 +109,30 @@ const path = require('path');
         balao: balao,
         balaoK: (balao && typeof chaveVoz === 'function') ? chaveVoz(balao.replace(/\s+/g, ' ').trim()) : null,
         zaps: lista,
-        resp: document.querySelectorAll('.pecabox .opt, .pecabox .oaf, .pecabox .carta').length
+        resp: document.querySelectorAll('.opt, .oaf, .carta, .escolha').length
       };
     });
 
     if (r.balao && !porId['op_' + r.balaoK]) {
-      mudas.push('fase ' + (i + 1) + ': "' + norm(r.balao).slice(0, 52) + '"');
+      mudas.push(nome + ': "' + norm(r.balao).slice(0, 52) + '"');
     }
     zaps += r.zaps.length;
     r.zaps.forEach(z => {
       const grav = porId['op_' + z.k];
       if (grav === undefined) {
-        semVoz.push('fase ' + (i + 1) + ': o alto-falante de "' + z.txt.slice(0, 32) + '" nao toca nada');
+        semVoz.push(nome + ': o alto-falante de "' + z.txt.slice(0, 32) + '" nao toca nada');
       } else if (norm(grav) !== norm(z.txt)) {
-        semVoz.push('fase ' + (i + 1) + ': escrito "' + z.txt.slice(0, 28) +
+        semVoz.push(nome + ': escrito "' + z.txt.slice(0, 28) +
                     '" mas gravado "' + norm(grav).slice(0, 28) + '"');
       } else batem++;
     });
     if (!r.zaps.length && r.resp > 1) {
-      semZap.push('fase ' + (i + 1) + ': ' + r.resp + ' resposta(s) tocavel(is), 0 alto-falante');
+      semZap.push(nome + ': ' + r.resp + ' resposta(s) tocavel(is), 0 alto-falante');
     }
   }
   await b.close();
 
-  console.log(pasta + ' -> ' + n + ' fase(s) medida(s) | ' + zaps + ' alto-falante(s)');
+  console.log('   ' + n + ' tela(s) medida(s) | ' + zaps + ' alto-falante(s)');
   console.log('   balao COM gravacao (a fala automatica): ' + (n - mudas.length) + ' de ' + n);
   console.log('   alto-falante que diz o que esta escrito: ' + batem + ' de ' + zaps);
 
