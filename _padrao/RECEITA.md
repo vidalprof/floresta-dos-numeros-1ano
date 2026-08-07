@@ -656,3 +656,50 @@ tarefa. O boletim do fim ganha a única comparação que interessa à criança:
 ⚠️ E o cuidado que a própria pesquisa impõe: produção inicial **não é prova**.
 Ela é silenciosa, curta, e o mascote diz que ninguém precisa acertar — senão
 vira exatamente o que o `EDUVERSE-FILOSOFIA.md` proíbe.
+
+---
+
+## ❤️ POR QUE A CRIANÇA VOLTA — o que a pesquisa diz, e o que vira código
+
+Pedido do Marcos, repetido três vezes: *"o aluno tem que gostar de fazer, ficar
+com o sentimento de QUERO MAIS"*, *"para que eles não sintam que a aula é
+chata"*, *"eu preciso que os estudantes amem fazer minhas atividades, que eles
+aprendam com elas, que achem legal, não chato e cansativo"*.
+
+Fonte: `_pesquisa/web/engajamento-5a8-anos.md` (75 KB — APA "Top 20 Principles",
+UConn KIDS, e estudos sobre curiosidade e mentalidade de crescimento em 5–8
+anos), somada ao `PESQUISA-APPS-AMAR-E-NEUROCIENCIA-2026-07.md`.
+
+**O achado central, e ele é incômodo:** *"avoid using external rewards to
+indicate a job well done or to motivate behavior"*. Estrela, ponto e prêmio
+aleatório **compram** a atenção de hoje e **cobram** a de amanhã — a criança
+passa a fazer pela estrela. O que sustenta é **competência + autonomia**:
+*"promoting intrinsic motivation requires practices that support children's
+fundamental need to feel competent and autonomous"*.
+
+**As cinco coisas que fazem a criança amar, e onde cada uma já vive no motor:**
+
+1. **CURIOSIDADE — a lacuna aberta antes da resposta.** É o previsor número um
+   de desempenho nesta faixa, junto com a meta de domínio. → o Portão 0: o
+   problema vem primeiro, o conceito por último. Uma tela que começa explicando
+   já perdeu.
+2. **COMPETÊNCIA VISÍVEL — "eu consigo, e estou melhorando".** Não é nota: é a
+   barra andando, o boletim que conta os acertos, o parecer em palavras. →
+   `resumoAnimado()`. E é por isso que a **produção inicial** importa: sem ela a
+   criança não vê o quanto cresceu.
+3. **AUTONOMIA — escolhas de verdade.** Escolher o crachá, escolher o que
+   pintar, poder ouvir de novo quantas vezes quiser. Escolha decorativa não
+   conta; a criança percebe.
+4. **PERSONAGEM QUE SE IMPORTA.** A pesquisa mostra crianças respondendo a
+   HISTÓRIAS de personagens que eram ruins numa matéria e melhoraram praticando
+   — é assim que a mentalidade de crescimento entra nesta idade: **pela boca do
+   mascote**, não por sermão. O Fubá pode dizer *"eu também errava isso"*.
+5. **FECHO COM GANCHO.** Termina deixando uma pergunta aberta. É o "quero mais".
+
+**O que NÃO fazer, e que é o caminho fácil:** encher de estrelas, dar prêmio
+aleatório, comparar crianças, ranking. Tudo isso funciona uma semana.
+
+⚠️ **E o cansaço, que é o outro pedido dele.** Cansa: a mesma tela pela terceira
+vez (por isso nenhum gesto acima de 40%); trocar de assunto a cada tela (por
+isso os BLOCOS de objetivo — foi o defeito medido na Padaria, 30 trocas em 32
+fases); enunciado longo; e erro que responde "errou" sem dizer onde olhar.
