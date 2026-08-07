@@ -62,7 +62,8 @@
        MUDA dentro da fase, que e para isso que ele existe. */
     if(k && k === window.__falouAgora) return;
     window.__falouAgora = k;
-    if(k && typeof falaDaTela === "function") falaDaTela(k);
+    /* o arquivo gravado e `op_<conta>.mp3` — ver o mesmo conserto no motor */
+    if(k && typeof falaDaTela === "function") falaDaTela("op_" + k);
   }
   if(window.MutationObserver){
     var alvo = document.getElementById("app");
@@ -2665,7 +2666,11 @@ var figEl = window.imgEl || null;
 function fala(txt){
   if(typeof window.temVoz==="function"){
     var k=window.temVoz(txt);
-    if(k && typeof window.falaDaTela==="function") window.falaDaTela(k);
+    /* ⚠️ o `op_` NAO e enfeite: `temVoz` devolve so a CONTA do texto, e o
+       arquivo gravado chama-se `op_<conta>.mp3`. Sem o prefixo a peca pedia
+       `audio/<conta>.mp3`, que nao existe — e ficava MUDA mesmo com a voz
+       gravada. Mesmo conserto do motor e do olheiro do integrador. */
+    if(k && typeof window.falaDaTela==="function") window.falaDaTela("op_"+k);
     return;
   }
   try{

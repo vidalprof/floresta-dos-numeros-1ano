@@ -68,7 +68,16 @@ const norm = t => (t || '').toLowerCase()
     try { await p.evaluate(n => { window[n](); }, f); } catch (e) {}
     await p.waitForTimeout(380);
     const r = await p.evaluate(() => {
-      const bal = document.querySelector('.tela .balao:not(.pequeno)');
+      /* ⚠️ LICAO PAGA (ago/2026): este portao lia o PRIMEIRO balao da tela e
+         reprovou as 32 fases de uma atividade correta. Numa atividade montada
+         existem dois: o enunciado do conteudo.json e o da peca — e a regra
+         `.centro.tembalaopeca > .balao{display:none}` ESCONDE o enunciado,
+         porque quem manda na tela e a peca. O portao comparava a voz com um
+         texto que a crianca nao ve.
+         Portao tem que medir o que esta NA TELA, nao o que esta no HTML. */
+      const bal = [...document.querySelectorAll('.tela .balao:not(.pequeno)')]
+        .filter(b => getComputedStyle(b).display !== 'none' &&
+                     b.getBoundingClientRect().height > 0)[0] || null;
       return {id: (typeof falaTela !== 'undefined' && falaTela) || window.__t || null,
               txt: bal ? bal.textContent.replace(/\s+/g, ' ').trim() : ''};
     });
