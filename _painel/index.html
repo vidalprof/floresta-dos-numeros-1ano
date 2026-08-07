@@ -90,6 +90,7 @@
     <button class="bt" id="btAtu" onclick="carregar()">&#8635; Atualizar</button>
     <button class="bt sec" id="btAuto" onclick="alternarAuto()">&#9210; Auto: ligado</button>
     <button class="bt gh" onclick="baixarCSV()">&#8681; Baixar CSV</button>
+    <button class="bt sec" onclick="baixarPDF()">&#128196; Baixar PDF (A&rarr;Z)</button>
     <button class="bt del" id="btDel" onclick="apagarSelecionados()">&#128465; Apagar selecionados</button>
   </div>
 
@@ -305,6 +306,133 @@ function baixarCSV(){
   a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(txt);
   a.download = "respostas-lateralidade.csv";
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ============================================================
+   ⭐ FOLHA PARA A PROFESSORA — PDF em ordem alfabética.
+
+   Pedido do Marcos (ago/2026): *"gostaria de baixar um pdf dos dados constantes
+   lá em ordem alfabética para que eu possa enviar a professora"* e, logo
+   depois, *"esse pdf tem que ser uma tabela bem linda e organizada"*.
+
+   ⚠️ POR QUE NÃO ESCREVO O PDF À MÃO (eu tinha começado assim e voltei atrás):
+   dá para montar o arquivo byte a byte, e funciona — mas aqui dentro não há
+   nenhum leitor de PDF instalado, então eu **não teria como VER** o que estou
+   entregando. Dizer "ficou lindo" sem olhar é exatamente o que a casa proíbe.
+   O motor de impressão do próprio Chrome resolve as duas coisas: desenha com
+   CSS (que eu consigo renderizar e conferir aqui) e escreve um PDF A4 de
+   verdade, com texto selecionável e acentuação certa.
+
+   ⚠️ A ORDEM É SEMPRE A→Z, não importa o botão da tela. A folha vai para OUTRA
+   pessoa: ela precisa achar o aluno dela pelo nome, não saber quem terminou
+   primeiro.
+   ⚠️ A tabela repete o cabeçalho em toda página (`thead` + `display:table-header-group`)
+   e nunca parte um aluno ao meio (`page-break-inside:avoid`) — é o que separa
+   uma folha organizada de uma listagem cortada.                              */
+function baixarPDF(){
+  if(!DADOS.length && !confirm("Ainda nao ha nenhuma resposta. Gerar a folha vazia mesmo assim?")){ return; }
+
+  var arr = DADOS.slice(0);
+  arr.sort(function(a,b){
+    return (""+a.nome).localeCompare(""+b.nome, "pt", {sensitivity:"base"});
+  });
+
+  /* resumo honesto: quantos, media e quantos por faixa. Sem ranking, sem
+     "pior aluno" — a folha é de acompanhamento, não de exposição. */
+  var soma = 0, comNota = 0, faixa = {ok:0, med:0, baixa:0}, turmas = {}, i;
+  for(i = 0; i < arr.length; i++){
+    var n = parseInt(arr[i].nota, 10);
+    if(!isNaN(n)){ soma += n; comNota++;
+      if(n >= 8){ faixa.ok++; } else if(n >= 5){ faixa.med++; } else { faixa.baixa++; } }
+    var t = (arr[i].turma || "sem turma");
+    turmas[t] = (turmas[t] || 0) + 1;
+  }
+  var media = comNota ? (soma / comNota).toFixed(1).replace(".", ",") : "&mdash;";
+  var hoje = new Date();
+  var dd = ("0"+hoje.getDate()).slice(-2) + "/" + ("0"+(hoje.getMonth()+1)).slice(-2) +
+           "/" + hoje.getFullYear();
+  var lt = [], k;
+  for(k in turmas){ if(turmas.hasOwnProperty(k)){ lt.push(esc(k) + ": " + turmas[k]); } }
+
+  var linhas = "", j;
+  for(j = 0; j < arr.length; j++){
+    var r = arr[j], nn = parseInt(r.nota, 10);
+    var cls = isNaN(nn) ? "z" : (nn >= 8 ? "a" : (nn >= 5 ? "b" : "c"));
+    linhas += '<tr>' +
+      '<td class="n">' + (j+1) + '</td>' +
+      '<td class="nm">' + esc(r.nome || "&mdash;") + '</td>' +
+      '<td class="tu">' + esc(r.turma || "&mdash;") + '</td>' +
+      '<td class="n"><span class="pl ' + cls + '">' +
+        (r.nota === "" || r.nota == null ? "&mdash;" : esc(r.nota)) + '</span></td>' +
+      '<td class="n ac">' + (r.acertos === "" || r.acertos == null ? "&mdash;" : esc(r.acertos)) + '</td>' +
+      '<td class="dt">' + fmtData(r.data) + '</td>' +
+      '</tr>';
+  }
+
+  var html =
+'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">' +
+'<title>Respostas - Aventura das Direcoes</title><style>' +
+'@page{ size:A4 portrait; margin:14mm 12mm 16mm; }' +
+'*{ box-sizing:border-box; }' +
+'body{ margin:0; font-family:"Segoe UI",Arial,Helvetica,sans-serif; color:#22303f;' +
+'  -webkit-print-color-adjust:exact; print-color-adjust:exact; }' +
+'.cab{ border-bottom:3px solid #1668bf; padding-bottom:10px; margin-bottom:14px; }' +
+'.cab h1{ margin:0 0 2px; font-size:19pt; color:#1668bf; letter-spacing:-.2px; }' +
+'.cab .s{ margin:0; font-size:10pt; color:#5a6b7b; }' +
+'.res{ display:table; width:100%; margin:0 0 14px; border-collapse:separate; border-spacing:6px 0; }' +
+'.res .c{ display:table-cell; width:25%; background:#f3f8fd; border:1px solid #dce8f5;' +
+'  border-radius:8px; padding:8px 10px; text-align:center; }' +
+'.res .c b{ display:block; font-size:16pt; color:#1668bf; line-height:1.1; }' +
+'.res .c span{ font-size:8pt; color:#5a6b7b; text-transform:uppercase; letter-spacing:.04em; }' +
+'table{ width:100%; border-collapse:collapse; font-size:10pt; }' +
+'thead{ display:table-header-group; }' +
+'th{ background:#1668bf; color:#fff; font-size:8.5pt; text-transform:uppercase;' +
+'  letter-spacing:.05em; padding:7px 8px; text-align:left; }' +
+'th:first-child{ border-radius:6px 0 0 0; } th:last-child{ border-radius:0 6px 0 0; }' +
+'td{ padding:6px 8px; border-bottom:1px solid #e6edf5; }' +
+'tr{ page-break-inside:avoid; }' +
+'tbody tr:nth-child(even) td{ background:#f7fafd; }' +
+/* ⚠️ as classes de coluna pintam a COR, e o `th` usa as mesmas classes para
+   ficar alinhado — resultado: no cabecalho azul, TURMA/NOTA/ACERTOS/DATA
+   sairam apagados por cima do branco. Cor so no corpo; o `th` fica branco,
+   sempre. Peguei isto olhando a previa, nao lendo o codigo.               */
+'td.n{ color:#7a8794; } .n{ text-align:center; width:34px; }' +
+'.nm{ font-weight:600; }' +
+'td.tu{ color:#3b6ea5; } .tu{ width:64px; text-align:center; font-weight:600; }' +
+'.ac{ width:70px; }' +
+'td.dt{ color:#5a6b7b; font-size:9pt; } .dt{ width:120px; white-space:nowrap; }' +
+'th, th.n, th.tu, th.ac, th.dt{ color:#fff; }' +
+'.pl{ display:inline-block; min-width:30px; padding:2px 8px; border-radius:20px;' +
+'  font-weight:bold; font-size:9.5pt; }' +
+'.pl.a{ background:#e6f6ea; color:#1c7a34; } .pl.b{ background:#fff4e0; color:#9a6108; }' +
+'.pl.c{ background:#fdeaea; color:#a82f2f; } .pl.z{ background:#eef2f6; color:#7a8794; }' +
+'.rod{ margin-top:14px; padding-top:8px; border-top:1px solid #e6edf5;' +
+'  font-size:8pt; color:#8a97a4; text-align:center; }' +
+'.vaz{ text-align:center; padding:28px; color:#7a8794; }' +
+'</style></head><body>' +
+'<div class="cab"><h1>Aventura das Dire&ccedil;&otilde;es</h1>' +
+'<p class="s">Lateralidade &nbsp;&middot;&nbsp; respostas em <b>ordem alfab&eacute;tica</b>' +
+' &nbsp;&middot;&nbsp; gerado em ' + dd + '</p></div>' +
+'<div class="res">' +
+  '<div class="c"><b>' + arr.length + '</b><span>respostas</span></div>' +
+  '<div class="c"><b>' + media + '</b><span>m&eacute;dia</span></div>' +
+  '<div class="c"><b>' + faixa.ok + '</b><span>nota 8 ou +</span></div>' +
+  '<div class="c"><b>' + faixa.baixa + '</b><span>abaixo de 5</span></div>' +
+'</div>' +
+'<table><thead><tr><th class="n">#</th><th>Nome</th><th class="tu">Turma</th>' +
+'<th class="n">Nota</th><th class="n">Acertos</th><th>Data e hora</th></tr></thead>' +
+'<tbody>' + (linhas || '<tr><td class="vaz" colspan="6">Nenhuma resposta registrada at&eacute; agora.</td></tr>') +
+'</tbody></table>' +
+'<p class="rod">' + (lt.length ? 'Turmas &mdash; ' + lt.join(' &nbsp;&middot;&nbsp; ') + '<br>' : '') +
+'Painel de Respostas &mdash; E.B.M. Vidal Ramos</p>' +
+'</body></html>';
+
+  var w = window.open("", "_blank");
+  if(!w){ alert("O navegador bloqueou a janela. Libere as janelas para este site e tente de novo."); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+  /* espera o desenho ficar pronto antes de chamar a impressao, senao sai folha
+     em branco em maquina lenta (o PC da escola e lento) */
+  setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 400);
 }
 
 carregar();
