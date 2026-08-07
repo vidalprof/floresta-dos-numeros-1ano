@@ -665,9 +665,18 @@ function poeZap(elm){
   if(elm.__zaptxt===txt) return;
   elm.__zaptxt=txt;
   var velho=elm.getElementsByClassName("zap")[0];
-  if(velho&&velho.parentNode) velho.parentNode.removeChild(velho);
   var k=temVoz(txt);
+  /* ⚠️⚠️ LICAO PAGA (ago/2026), e a que mais dooi no 1o ano: este ajudante
+     APAGAVA o alto-falante que a PECA ja tinha posto, e so colocava o dele se
+     houvesse mp3 para aquele texto. Nas respostas que sao NOME DE FIGURA (BOLO,
+     PAO, MEL) nao ha gravacao — entao ele apagava e nao repunha NADA. A crianca
+     que ainda nao le ficava sem nenhum jeito de ouvir as respostas, e a fase
+     virava loteria: exatamente o que o Marcos cobrou com todas as letras
+     (*"os sons e as dicas sao fundamentais, estao se alfabetizando"*).
+     Agora: sem gravacao, o botao da PECA fica onde esta (ela sabe falar o que
+     mostra). So substituo quando eu tenho algo melhor a oferecer. */
   if(!k) return;
+  if(velho&&velho.parentNode) velho.parentNode.removeChild(velho);
   var bt=document.createElement("button");
   bt.className="zap"; bt.type="button";
   bt.setAttribute("aria-label","Ouvir esta resposta");
