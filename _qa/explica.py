@@ -133,7 +133,8 @@ def campo_contado(corpo):
             continue
         # tem que MARCAR o conjunto e SUBIR um contador: e isso que faz dele
         # "quantos diferentes", e nao um simples "ja vi este"
-        if re.search(re.escape(conj) + r"\[[^\]]*\]\s*=", resto) and "++" in resto:
+        # (o MIOLO vale aqui tambem — a marcacao repete a chave com colchete)
+        if re.search(re.escape(conj) + r"\[" + MIOLO + r"\]\s*=", resto) and "++" in resto:
             return campo
     return None
 

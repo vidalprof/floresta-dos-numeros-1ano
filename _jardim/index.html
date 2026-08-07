@@ -1707,6 +1707,13 @@ function telaPrato(){
   cen.appendChild(el("div","selo","MONTE O SEU PRATO"));
   var bal=el("div","balao","Cada comida do prato tem que vir de uma <b>parte diferente</b> da planta.");
   cen.appendChild(bal);
+  /* ⭐ A INTRO FALA AQUI, junto com o enunciado que ela lê — e não no fim da
+     função. Não é capricho: o `repinta()` mais abaixo tem `falaDaTela(...)`, e
+     o portão 0h (`_qa/vozintro.py`) lê a ORDEM DO ARQUIVO. Com a intro no fim,
+     ele via "a intro entra depois de uma pergunta" e acusava a fase de calar a
+     narração de abertura. Ele estava certo em desconfiar: a única leitura
+     segura de "quem fala quando a tela abre" é a primeira fala do arquivo. */
+  falar("jd_prato_intro");
   var prato=el("div","pratao"); cen.appendChild(prato);
   var marcas=el("div","pmarcas"); cen.appendChild(marcas);
   var box=el("div","comida"),i,cards=[],chips={};
@@ -1758,19 +1765,27 @@ function telaPrato(){
          precisa saber, e o que faz o andaime crescer. */
       err++;
       var rr=repetidas();
-      bal.innerHTML="O prato encheu e ainda faltam partes. Toque numa comida <b>do prato</b> para tirar e p&#245;r outra."; falaDaTela("jd_prato_troca");
       pulsa(rr.length?rr:noPrato); sErro();
+      /* ⭐ UMA VOZ POR VEZ. O andaime faz o que é VISUAL (dica escrita, acender
+         as partes que faltam, revelar a carta) e só DEPOIS a fase escreve o
+         balão e fala — assim a narração que toca é sempre a que está escrita.
+         Na primeira versão deste conserto o `falar` da dica entrava por cima do
+         `falaDaTela` do balão: a tela dizia uma coisa e a voz dizia outra, que é
+         exatamente o defeito que os portões 0f/0g existem para pegar. */
       ajudaJd(err,{dica:PRATODICA,
         concreto:function(){ var f=faltantes(),z2;
-          for(z2=0;z2<f.length;z2++) acendeJd(chips[f[z2].k]);
-          falar("jd_prato_ajuda2"); },
+          for(z2=0;z2<f.length;z2++) acendeJd(chips[f[z2].k]); },
         revelar:function(){ var f=faltantes(),rr2=repetidas(),z2;
           if(rr2.length) pulsa([rr2[0]]);
           if(f.length) for(z2=0;z2<cards.length;z2++)
             if(cards[z2].it.parte===f[0].k&&cards[z2].d.className.indexOf("posto")<0){
-              acendeJd(cards[z2].d); break; }
-          falar("jd_prato_ajuda3"); }});
-      if(err===1) falar("jd_prato_dica");
+              acendeJd(cards[z2].d); break; } }});
+      if(err===1){
+        bal.innerHTML="O prato encheu e ainda faltam partes. Toque numa comida <b>do prato</b> para tirar e p&#244;r outra."; falaDaTela("jd_prato_troca"); }
+      else if(err===2){
+        bal.innerHTML="Olhe as partes que est&#227;o piscando: elas ainda faltam no seu prato."; falaDaTela("jd_prato_ajuda2"); }
+      else {
+        bal.innerHTML="Toque na comida que est&#225; piscando no prato para tirar. Depois toque na que acendeu embaixo."; falaDaTela("jd_prato_ajuda3"); }
       return; }
     pulsa(null);
     if(reac){ bal.innerHTML=reac.txt; falaDaTela(reac.voz); return; }
@@ -1793,7 +1808,7 @@ function telaPrato(){
       var z; for(z=0;z<noPrato.length;z++) if(noPrato[z].card===d){ tira(noPrato[z]); return; }
       if(noPrato.length>=MAXPRATO){ sErro(); prato.className="pratao cheio";
         setTimeout(function(){ prato.className="pratao"; },520);
-        bal.innerHTML="O prato est&#225; cheio. Toque numa comida <b>do prato</b> para tirar e p&#245;r esta no lugar."; falaDaTela("jd_prato_cheio");
+        bal.innerHTML="O prato est&#225; cheio. Toque numa comida <b>do prato</b> para tirar e p&#244;r esta no lugar."; falaDaTela("jd_prato_cheio");
         pulsa(repetidas().length?repetidas():noPrato);
         return; }
       /* ⭐ ESSA PARTE JÁ ESTÁ NO PRATO? A criança sabe NA HORA, com voz, e sem
@@ -1818,7 +1833,6 @@ function telaPrato(){
   cen.appendChild(el("div","hint","Cada comida vem de uma parte da planta. Tocou numa comida do prato, ela volta."));
   t.appendChild(cen);app.appendChild(t);
   montaBarra("jd_prato_dica",PRATODICA);
-  falar("jd_prato_intro");
 }
 
 /* ---------- BOLETIM ANIMADO DO FIM (para a CRIANCA ver) ----------

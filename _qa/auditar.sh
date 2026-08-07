@@ -148,6 +148,8 @@ echo "--- 0i) VOZ SEM MP3 (a fase ficou muda de vez?) -"
 portao "0i voz sem mp3" python3 _qa/vozfalta.py "$ARQ"
 echo "--- 0j) VOZ DA DICA (a dica fala o que esta escrito?) -"
 portao "0j voz da dica" python3 _qa/vozdica.py "$ARQ"
+echo "--- 0k) A FASE DIZ O QUE ELA QUER? (regra escondida no enunciado) -"
+portao "0k explica a regra" python3 _qa/explica.py "$ARQ"
 
 echo
 echo "--- 1b) FUNCAO QUE NAO EXISTE (estoura na mao da crianca?) -"
