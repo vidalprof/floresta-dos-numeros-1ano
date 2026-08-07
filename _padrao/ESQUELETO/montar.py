@@ -427,6 +427,26 @@ def main():
         return 1
 
     falas = falas_de(c)
+    # ⚠️ A COLHEITA NAO PODE SER APAGADA. O `colher.py` joga a atividade e anota
+    #    as frases que so existem em tempo de jogo ("Achou as 4 palavras da
+    #    horta!") — coisas que o conteudo.json nao tem como saber. Se o montador
+    #    reescrevesse o falas.json do zero, o ciclo
+    #        montar -> colher -> montar
+    #    apagaria na terceira etapa o que ganhou na segunda, e as telas de fecho
+    #    de rodada voltariam a ficar mudas sem ninguem perceber.
+    guardadas = []
+    antigo = os.path.join(pasta, "falas.json")
+    if os.path.exists(antigo):
+        try:
+            ids = set(f["id"] for f in falas)
+            for f in json.load(io.open(antigo, encoding="utf-8")):
+                if f.get("id") not in ids:
+                    guardadas.append(f)
+        except Exception:
+            pass
+    falas.extend(guardadas)
+    if guardadas:
+        print(u"   %d fala(s) colhida(s) em jogo preservada(s)" % len(guardadas))
     arte = arte_de(c)
     print(u"   escada ok | %d fala(s) a gravar | %d figura(s): %d ja no banco, "
           u"%d a gerar" % (len(falas), len(arte["pedidos"]),

@@ -54,6 +54,24 @@ python3 _padrao/ESQUELETO/montar.py <pasta>
 Saem três arquivos: `index.html` (a atividade), `falas.json` (o que gravar) e
 `arte.json` (o que desenhar, já dizendo **o que o banco resolve**).
 
+### 2b. Colher as falas que só existem jogando (~3 min) — **não é opcional**
+
+```bash
+python3 _padrao/ESQUELETO/colher.py <pasta>   # joga a atividade e anota
+python3 _padrao/ESQUELETO/montar.py  <pasta>  # e monta de novo
+```
+
+O `falas.json` sai do `conteudo.json`, e isso resolve tudo o que está **escrito**.
+Mas a peça monta frases **em tempo de jogo** — *"Achou as 4 palavras da horta!"*
+— e o montador não tem como adivinhar o número, que vem do próprio jogo. A saída
+não é adivinhar: é **jogar e anotar**. O auditor-jogador já atravessa a atividade
+inteira; o `colher.py` transforma a colheita dele em `falas.json`.
+
+Sem este passo, as telas de fecho de rodada ficam **mudas** e a criança que ainda
+não lê perde justamente o retorno do acerto. O portão `0f` cobra isso.
+
+*Medido na atividade de teste: 61 falas que só apareceram jogando.*
+
 ### 3. A arte (~15 min de espera)
 
 `arte.json` diz o que falta. **Antes de gerar, o portão do custo:**
