@@ -40,7 +40,7 @@ sys.path.insert(0, AQUI)
 from montar import chave_voz, eh_fala, texto_limpo  # noqa: E402
 
 
-def joga_e_anota(pasta, voltas=3):
+def joga_e_anota(pasta, voltas=6, secas=2):
     u"""roda o auditor-jogador em modo colheita e devolve o que ele viu.
 
     ⚠️ UMA PASSADA NAO BASTA, e a segunda colheita provou: sobraram justamente
@@ -49,14 +49,20 @@ def joga_e_anota(pasta, voltas=3):
     sorte o jogador nao erra o bastante. E e a crianca que erra quem MAIS precisa
     da voz: sem isso, quem esta perdida e justamente quem fica sem ajuda falada.
 
-    Entao ele joga de novo ate uma partida inteira nao trazer NADA de novo. Nao
-    e "rodei uma vez e deu": e "rodei mais uma vez inteira e nao apareceu mais
-    nada"."""
+    Entao ele joga de novo ate DUAS partidas inteiras nao trazerem nada de novo.
+    Nao e "rodei uma vez e deu": e "rodei mais duas vezes inteiras e nao apareceu
+    mais nada".
+
+    ⚠️ E por que DUAS: as dicas do andaime SORTEIAM qual par revelar ("uma das
+    cartas fala de chuva", "...de abelha"). Cada partida trazia uma frase nova, e
+    uma unica rodada seca podia ser so falta de sorte. Duas seguidas ja e sinal
+    de que o baralho de frases acabou. O teto de 6 partidas existe para a
+    entrega nao ficar refem de um sorteio infeliz."""
     saco = os.path.join(pasta, "_colheita.json")
     if os.path.exists(saco):
         os.remove(saco)
     amb = dict(os.environ, COLHEITA=saco)
-    d, antes = {}, -1
+    d, antes, seco = {}, -1, 0
     for volta in range(voltas):
         r = subprocess.run(["node", os.path.join(RAIZ, "_qa", "jogador.js"),
                             os.path.join(pasta, "index.html")],
@@ -71,8 +77,13 @@ def joga_e_anota(pasta, voltas=3):
         d = json.load(io.open(saco, encoding="utf-8"))
         agora = len(d.get("op") or {}) + len(d.get("bal") or {})
         if agora == antes:
-            print(u"   uma partida inteira sem nada novo — colheita fechada")
-            break
+            seco += 1
+            if seco >= secas:
+                print(u"   %d partidas inteiras sem nada novo — colheita fechada"
+                      % secas)
+                break
+        else:
+            seco = 0
         antes = agora
     os.remove(saco)
     # `op` sao as respostas tocaveis; `bal` sao os enunciados/baloes
