@@ -111,6 +111,18 @@ def main():
     for k in sorted(cur):
         d = por.get(k)
         nome = conc.get(k) or k
+        # ⭐ o objetivo "livre" e o FECHO SEM COBRANCA (decisao do Marcos,
+        #    ago/2026: o fim tem que ser divertido e do tema). Ele nao ensina
+        #    habilidade nenhuma de proposito, entao cobrar dele 3 fases e 2
+        #    gestos seria o portao obrigando a inchar a brincadeira. So confiro
+        #    que ele NAO virou a maior parte da atividade.
+        if k == "livre":
+            n = d["n"] if d else 0
+            if n and len(fases) and n * 100.0 / len(fases) > 20.0:
+                problemas.append(u"as fases LIVRES (sem cobranca) sao %d%% da atividade — "
+                                 u"o fecho e o fecho, nao a atividade inteira."
+                                 % round(n * 100.0 / len(fases)))
+            continue
         if not d:
             problemas.append(u"o objetivo '%s' (%s) NAO TEM NENHUMA FASE — foi pedido "
                              u"e ficou de fora." % (k, nome))
@@ -123,7 +135,7 @@ def main():
             problemas.append(u"o objetivo '%s' (%s) e treinado por UM GESTO so (%s). "
                              u"Quem nao entende por esse caminho nao tem outro."
                              % (k, nome, ", ".join(sorted(d["mecs"]))))
-        if maior and d["n"] * 2 < maior:
+        if maior and d["n"] * 2 < maior and k != "livre":
             problemas.append(u"o objetivo '%s' (%s) ficou com %d fase(s) contra %d do "
                              u"mais servido — menos da metade. Foi essa a desproporcao "
                              u"que o Marcos pegou (silabas fartas, alfabeto magro)."

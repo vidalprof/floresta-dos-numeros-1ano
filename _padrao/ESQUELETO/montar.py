@@ -222,7 +222,17 @@ def confere_dados(c, oficina):
         #    chaves) e as dicas. Preenchendo so as gavetas, as chaves deixam de
         #    casar e nenhuma ficha pode ser posta — a crianca fica presa, e nao ha
         #    erro de JS nenhum. Foi o auditor-jogador que pegou, travado em 22%.
-        outras = [v for v in (info.get("gavetas") or []) if v != info.get("var")]
+        # ⚠️ AVISO QUE GRITA A TOA ENSINA A IGNORAR AVISO (ago/2026). Nem toda
+        #    gaveta e CONTEUDO: `NUM` e a tabela dos nomes dos numeros, `FEITAS`
+        #    e `GALERIA` sao ESTADO (nascem vazias e a peca preenche jogando),
+        #    `TINTAS` e a paleta, `DIRS`/`LIN`/`COL`/`ROT`/`NOMEH`/`NOMEM` sao
+        #    rotulos fixos do motorzinho. Deixar essas no exemplo e o CERTO — e
+        #    mesmo assim eu levava quatro avisos numa montagem so, o que faz a
+        #    gente parar de ler os avisos que importam.
+        ESTADO = set("NUM FEITAS GALERIA TINTAS DIRS LIN COL ROT NOMEH NOMEM "
+                     "CORES PALETA POSFRU POSJAN".split())
+        outras = [v for v in (info.get("gavetas") or [])
+                  if v != info.get("var") and v not in ESTADO]
         faltando = [v for v in outras if v not in (f.get("dadosExtra") or {})]
         if outras and faltando:
             avisos.append(u"fase %d (%s), mecanica '%s': voce preencheu '%s' mas "
