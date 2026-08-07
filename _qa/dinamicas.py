@@ -174,7 +174,9 @@ def main():
                           u"visivel e ter encaixe com tolerancia.")
 
     # ---------------------------------------------------- CALENDARIO
-    if re.search(r'calendari|\.diac\b|\.mes\b', css + js, re.I):
+    # o gatilho pelo NOME do arquivo falha: a peca se chama calendario mas nao usa
+    # a palavra por dentro. As marcas de verdade sao a semana e os pulos.
+    if re.search(r'"semana"|\.semana\b', css + js) and re.search(r'"pulos"|\.dia\b|\.diac\b', css + js):
         usa.append("calendario")
         if not re.search(r'pulo|salto|conta', js, re.I):
             avisos.append(u"calendario: contar de um dia a outro tem que ser um PULO "
