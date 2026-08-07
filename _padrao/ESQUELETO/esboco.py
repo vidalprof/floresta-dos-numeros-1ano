@@ -108,6 +108,7 @@ def main():
     titulo = op("--titulo", u"«Título da atividade»")
     mascote = op("--mascote", "mascote")
     mecs = op("--mecs", "").split(",") if op("--mecs") else LEQUE
+    quantas = int(op("--fases", "32"))
 
     g = json.load(io.open(os.path.join(AQUI, "pecas.json"),
                           encoding="utf-8"))["gavetas"]
@@ -116,14 +117,18 @@ def main():
         print(u"mecanica(s) que nao existem na oficina: %s" % ", ".join(faltam))
         return 2
 
+    # ⚠️ o numero de fases MANDA, nao o tamanho do leque. Antes eram sempre duas
+    #    voltas do leque: com 12 mecanicas saiam 24 fases, e o combinado sao 32.
+    #    Agora o leque gira ate completar — e girando ele nunca repete colado.
+    ordem = [mecs[i % len(mecs)] for i in range(quantas)]
     fases, avisos = [], []
-    for volta in range(2):                    # 32 fases = o leque, duas vezes
-        for k, m in enumerate(mecs):
-            i = volta * len(mecs) + k
+    if True:
+        for i, m in enumerate(ordem):
+            k = i % len(mecs)
             info = g[m]
             ident = "f%02d" % (i + 1)
             selo = SELOS.get(m, m.upper())
-            if i == len(mecs) - 1:            # o AQUECIMENTO cai no meio
+            if i == quantas // 2 - 1:         # o AQUECIMENTO cai no MEIO
                 ident, selo = "aquecimento", "AQUECIMENTO"
             f = {"id": ident, "mec": m, "selo": selo,
                  "enunciado": u"«o que a criança tem que fazer aqui»",
