@@ -33,7 +33,9 @@ Uso:  python3 _qa/pedagogo.py _mapa/index.html
 Sai com 1 se a escada estiver quebrada.
 """
 import io
+import json
 import re
+import subprocess
 import sys
 
 SIMBOLICO = r'_sim_|"campo"|teclafc|tecladofc|cquad|\bslot\b|letrafc|type="text"'
@@ -43,8 +45,19 @@ FIGURAL = r'cenaImg\(|imgEl\(|moldurafoto|"janela"|objcena'
 #    onde a ajuda DESTRUIRIA a fase. O Desafio Relampago e de VELOCIDADE: dica no
 #    meio dele acaba com o que ele treina (evocacao rapida). Exigir andaime ali
 #    seria o portao brigando com a didatica em vez de defende-la.
-SEM_ERRO = ("mPalpite", "mCaca", "mLupa", "mEnsinar", "mAquecimento", "mFim",
-            "mVento", "mVoo", "mEscala", "mExpo", "mDesenhe", "mRelampago")
+# ⚠️ era uma lista de NOMES EXATOS, todos do estilo `m*` de UMA atividade. No
+#    Jardim as mesmas fases se chamam `telaAquecimento`, `telaRelampagoJd`,
+#    `telaMemoria`, `telaEnsinar` — e o portao cobrava andaime justamente das
+#    fases onde andaime estraga o que se treina. Agora casa pelo ASSUNTO do
+#    nome, que e o que importa, e nao pela grafia de uma atividade so.
+SEM_ERRO_PALAVRAS = ("palpite", "caca", "lupa", "ensinar", "aquec", "fim",
+                     "vento", "voo", "escala", "expo", "desenh", "relampago",
+                     "memoria", "pintar", "galeria", "prever")
+
+
+def sem_erro(nome):
+    n = nome.lower()
+    return any(p in n for p in SEM_ERRO_PALAVRAS)
 
 
 def args_quotes(txt, i):
@@ -79,7 +92,8 @@ def args_quotes(txt, i):
 
 def corpos(js):
     out = {}
-    for m in re.finditer(r"^function\s+(m\w+)\s*\(", js, re.M):
+    # ⚠️ era so `m\w+` — e por isso o Jardim (telaXxx) era invisivel para ele.
+    for m in re.finditer(r"^function\s+((?:m|tela|peca|fase)[A-Z_]\w*)\s*\(", js, re.M):
         j = js.find("{", m.end())
         k = j
         p = 0
@@ -95,27 +109,119 @@ def corpos(js):
     return out
 
 
+# ⚠️⚠️ LICAO PAGA (ago/2026): ESTE PORTAO ESTAVA CEGO NA CASA INTEIRA.
+#
+# Ele so sabia ler UM formato de atividade: fases chamadas `mAlgumaCoisa` e a
+# corrente comecando numa fase com nome FIXO no codigo, `mPalpite` — o nome de
+# uma fase da Doceria. Resultado: no Jardim do Broto (fases `telaXxx`) e em toda
+# atividade MONTADA pelo esqueleto (fases que sao DADOS, nem funcao existe) ele
+# imprimia "nao consegui ler a cadeia de fases. Nada a conferir." e saia com
+# codigo 0. A banca lia aquilo e seguia em frente.
+#
+# E o que ele mede e o que o Marcos mais cobra: o simbolo depois do figural, o
+# andaime que cresce, o aquecimento no meio, o problema antes do conceito. Ou
+# seja: a escada didatica das atividades da casa nao estava sendo medida por
+# ninguem — nem no Jardim, que esta no ar.
+#
+# Agora ele le os TRES formatos, e quem descobre onde a corrente comeca e a
+# propria corrente (a fase que ninguem aponta), nao um nome escrito aqui dentro.
+NOME_FASE = re.compile(r"^(m|tela|peca|fase)[A-Z_]\w*$")
+
+
 def cadeia(cs):
-    prox = {}
+    prox, apontado = {}, set()
     for f, c in cs.items():
-        for pad, idx in [(r'fechaFase\(', 4), (r'mostraBanner\(', 1)]:
+        for pad, idx in [(r'fechaFase\(', 4), (r'mostraBanner\(', 1),
+                         (r'depoisDaFala\(', 2)]:
             achou = False
             for m in re.finditer(pad, c):
                 a = args_quotes(c, m.end() - 1)
                 if len(a) > idx:
                     nome = a[idx].strip()
-                    if re.match(r"^m\w+$", nome):
+                    if NOME_FASE.match(nome) and nome in cs:
                         prox.setdefault(f, nome)
+                        apontado.add(nome)
                         achou = True
                         break
             if achou:
                 break
-    ordem, cur, vis = [], "mPalpite", set()
+
+    # o comeco e a fase que ninguem aponta (e que aponta alguem). Se houver mais
+    # de uma, vale a que estiver primeiro no arquivo — a ordem em que foi escrita.
+    fases = [f for f in cs if NOME_FASE.match(f)]
+    raizes = [f for f in fases if f in prox and f not in apontado]
+    inicio = raizes[0] if raizes else ("mPalpite" if "mPalpite" in cs else
+                                       (fases[0] if fases else None))
+
+    ordem, cur, vis = [], inicio, set()
     while cur and cur not in vis:
         ordem.append(cur)
         vis.add(cur)
         cur = prox.get(cur)
     return ordem
+
+
+def cadeia_mestre(js, cs):
+    u"""⭐ O JARDIM (e os irmaos dele) publicam a ordem REAL das fases num array
+    `FASES_MESTRE` — e usam um ajudante generico (`mostraBanner(cfg.msg, cfg.prox)`)
+    para andar. Seguir a corrente pelos ARGUMENTOS so achava 5 das 17 fases, e
+    com uma cadeia curta o portao acusava o AQUECIMENTO de estar "em 100% do
+    caminho" quando ele esta no meio dos 17. Portao que acusa o inocente ensina
+    a ignorar portao — entao aqui ele le a ordem onde ela esta escrita."""
+    m = re.search(r"FASES_MESTRE\s*=\s*(\[[\s\S]*?\]);", js)
+    if not m:
+        return []
+    nomes = re.findall(r'\[\s*"([A-Za-z_$][\w$]*)"', m.group(1))
+    return [n for n in nomes if n in cs]
+
+
+def cadeia_montada(html):
+    u"""⭐ ATIVIDADE MONTADA: as fases nao sao funcoes, sao DADOS (`var FASES=[...]`).
+
+    A escada didatica esta la do mesmo jeito — so que escrita em outro lugar.
+    Aqui cada fase vira um "corpo" de mentira, com o texto que a crianca ve
+    (selo, enunciado, dica, conceito) e o conteudo da gaveta. As mesmas quatro
+    perguntas do portao passam a valer, sem regra nova nenhuma."""
+    # ⚠️ o montador declara `var FASES = [];` no topo e ATRIBUI o conteudo la
+    #    embaixo (`FASES = [...]`). Procurando so por `var FASES` eu achava a
+    #    declaracao VAZIA e concluia "nao consegui ler" — com as 32 fases logo
+    #    ali. Pego todas as atribuicoes e fico com a maior.
+    achados = re.findall(r"(?:var\s+)?FASES\s*=\s*(\[[\s\S]*?\]);\s*\n", html)
+    if not achados:
+        return [], {}
+    crua = max(achados, key=len)
+    if len(crua) < 20:
+        return [], {}
+    m = type("M", (), {"group": lambda self, i: crua})()
+    try:
+        r = subprocess.run(["node", "-e",
+                            "console.log(JSON.stringify(%s))" % m.group(1)],
+                           capture_output=True, text=True, timeout=30)
+        fases = json.loads(r.stdout) if r.returncode == 0 else None
+    except Exception:
+        fases = None
+    if not fases:
+        return [], {}
+
+    ordem, cs = [], {}
+    for i, f in enumerate(fases):
+        nome = f.get("id") or ("fase%02d" % (i + 1))
+        ordem.append(nome)
+        pedacos = [f.get("selo") or "", f.get("enunciado") or "",
+                   f.get("dica") or "", f.get("conceito") or "",
+                   f.get("mec") or ""]
+        try:
+            pedacos.append(json.dumps(f.get("dados"), ensure_ascii=False))
+            pedacos.append(json.dumps(f.get("dadosExtra"), ensure_ascii=False))
+        except Exception:
+            pass
+        corpo = "\n".join(p for p in pedacos if p)
+        # a dica do conteudo.json E o 1o degrau do andaime; o motor poe os
+        # outros dois. Escrevo isso na lingua que o portao ja sabe ler.
+        if f.get("dica"):
+            corpo += '\nmostraDica("%s")\nconsolo()\n' % re.sub(r'["\n]', " ", f["dica"])[:40]
+        cs[nome] = corpo
+    return ordem, cs
 
 
 def main():
@@ -126,8 +232,24 @@ def main():
     html = io.open(alvo, encoding="utf-8").read()
     js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
     js = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), js, flags=re.S)
-    cs = corpos(js)
-    ordem = cadeia(cs)
+    # ⭐ atividade MONTADA primeiro: la as fases sao dados, nao funcoes
+    ordem, cs = cadeia_montada(html)
+    if len(ordem) < 3:
+        cs = corpos(js)
+        ordem = cadeia_mestre(js, cs) or cadeia(cs)
+    # ⚠️⚠️ A REGRA QUE FALTAVA, e que custou uma acusacao falsa: CADEIA CURTA NAO
+    #    SE JULGA. Com 5 das 17 fases do Jardim na mao, este portao disse que o
+    #    AQUECIMENTO estava "em 100% do caminho" — ele esta em 35%, no meio, como
+    #    manda. A conta estava certa; o material e que estava pela metade.
+    #    Agora, se o arquivo tem muito mais fase do que a corrente que eu
+    #    consegui seguir, eu me declaro CEGO em vez de dar veredito.
+    quantas = len(re.findall(r"^function\s+(?:m|tela|peca|fase)[A-Z_]\w*\s*\(",
+                             js, re.M))
+    if 0 < len(ordem) < 8 and quantas >= len(ordem) * 2:
+        print(u"%s -> so consegui seguir %d fase(s) de ~%d que existem no arquivo. "
+              u"Cadeia pela metade NAO se julga (a conta sairia errada). "
+              u"Nada a conferir." % (alvo, len(ordem), quantas))
+        return 0
     if len(ordem) < 3:
         print(u"%s -> nao consegui ler a cadeia de fases. Nada a conferir." % alvo)
         return 0
@@ -151,7 +273,7 @@ def main():
     # 2. o andaime cresce
     sem_andaime = []
     for f in ordem:
-        if f in SEM_ERRO:
+        if sem_erro(f):
             continue
         c = cs.get(f, "")
         if "sErro" not in c and "err++" not in c:
@@ -159,6 +281,17 @@ def main():
         degraus = set()
         for m in re.finditer(r'mostraDica\("([^"]{0,40})', c):
             degraus.add(m.group(1)[:24])
+        # ⚠️ ACUSACAO DE INOCENTE, medida no Jardim do Broto (ago/2026): ele
+        #    reprovava 14 das 17 fases por "andaime que nao cresce", e o andaime
+        #    esta la — so que num AJUDANTE. O Jardim chama `ajudaJd(err, {dica,
+        #    apoio, revelar})`, e cada chave dessas E um degrau. Contar so
+        #    `mostraDica("...")` literal era medir o estilo de escrita, nao a
+        #    didatica. Toda casa tem o seu ajudante; o portao conta as CHAVES.
+        for m in re.finditer(r'ajuda\w*\(\s*\w+\s*,\s*\{([^}]{0,600})', c):
+            for k in re.findall(r"(\w+)\s*:", m.group(1)):
+                if k in ("dica", "apoio", "revelar", "concreto", "mostrar",
+                         "pista", "acender", "piscar"):
+                    degraus.add("ajuda:" + k)
         if "consolo()" in c:
             degraus.add("__consolo__")
         for m in re.finditer(r'fb\.innerHTML\s*=\s*"?([^";]{0,24})', c):
