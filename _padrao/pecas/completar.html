@@ -55,8 +55,50 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   -webkit-box-orient:horizontal;-webkit-box-direction:normal;
   -webkit-flex-direction:row;flex-direction:row;
   -webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center}
-.opts.curtas .opt{display:inline-block;width:auto;min-width:96px;max-width:150px;
-  margin:6px 5px;padding:12px 12px;font-size:28px;font-weight:800;letter-spacing:1px}
+/* O LADRILHO DE LETRA — cobranca do Marcos (ago/2026): *"esses botoes com a
+   letra podem ser mais bonitos... uma cor que combine mais com o tema,
+   ajustados para nao ficarem largos ou compridos, somente o necessario, mais
+   intuitivo para o estudante"*.
+   O que ficou, e o porque de cada escolha:
+   · QUADRADO de verdade (mesma largura e altura) — "nem largo nem comprido"
+     nao se resolve no olho, se resolve travando os dois lados no mesmo numero;
+   · a LETRA e a estrela: grande, centrada, e a unica coisa que se le de longe;
+   · o alto-falante desce para BAIXO da letra, pequeno — ele e necessario (o
+     pilar SONORA: no 1o ano tem quem ainda nao le), mas nao disputa a atencao;
+   · cor de PADARIA: creme de massa com borda de casca dourada. O branco chapado
+     do cartao generico nao combinava com a prateleira de pao atras;
+   · a base mais grossa e a sombra dao volume de FICHA — a crianca ve que aquilo
+     e uma peca para pegar, nao um campo de formulario. */
+.opts.curtas .opt{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  width:88px;min-width:88px;max-width:88px;height:88px;min-height:88px;
+  margin:7px 6px;padding:6px 4px;border-radius:22px;
+  font-size:36px;font-weight:800;letter-spacing:1px;line-height:1;color:#4a3a10;
+  background:#fff3d9;
+  background-image:-webkit-linear-gradient(top,#fffaf0,#ffeac6);
+  background-image:linear-gradient(#fffaf0,#ffeac6);
+  border:2px solid #eed9ab;border-bottom:6px solid #d7ab63;
+  -webkit-box-shadow:0 5px 12px rgba(90,60,10,.16);box-shadow:0 5px 12px rgba(90,60,10,.16)}
+/* ⚠️ `background-color`, nunca o atalho `background:` — o desenho do
+   alto-falante e um SVG que mora no `background-image`, e o atalho apagaria o
+   icone deixando um circulo vazio (defeito ja medido em 48 telas). */
+.opts.curtas .opt .zap{margin:5px 0 0;width:27px;height:27px;opacity:.95;
+  background-color:#f6e0ae;-webkit-flex:none;flex:none}
+/* ⚠️ o acerto/erro PRECISA de regra propria aqui: a ponte de estilo pinta
+   `.opt.ok` com a mesma forca (0,4,0) e, num empate, ganha quem vem depois —
+   que passou a ser este bloco. Sem estas duas linhas o ladrilho ficaria creme
+   mesmo depois do acerto, e a crianca nao veria que acertou. */
+.opts.curtas .opt.ok{background-image:none;background:#ddf5c6;
+  border-color:#8fcb6a;border-bottom-color:#6da84a}
+.opts.curtas .opt.no{background-image:none;background:#ffe1d9;
+  border-color:#eaa392;border-bottom-color:#c87a68}
+@media (max-width:359px){
+  .opts.curtas .opt{width:78px;min-width:78px;max-width:78px;height:78px;min-height:78px;
+    font-size:31px;margin:6px 4px}
+}
 .opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
 .opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
 .opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
