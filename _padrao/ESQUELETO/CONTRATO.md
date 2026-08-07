@@ -230,3 +230,12 @@ para a próxima não repetir.
   texto. Quem lê isso é uma criança aprendendo a ler.
 - **"A ponta está no meio" não quer dizer nada para ela.** Virou "está entre o
   zero e o 1". Toda frase de ajuda tem que apontar para algo que ela VÊ na tela.
+- **A DICA NÃO PODE MENTIR.** Na trilha, o 2º degrau dizia *"deixei um apoio na
+  tela"* mesmo nas casas em que o apoio **já estava lá desde o começo**. A criança
+  procurava uma novidade que não existia. Dica que descreve algo que não mudou é
+  pior que dica nenhuma — ela manda procurar no lugar errado.
+- **Peças que nascem uma em cima da outra escondem a mecânica.** No relógio os
+  dois ponteiros começavam sobrepostos às 12:00 e a criança não descobria que há
+  **dois** para mexer. A posição inicial é parte do ensino.
+- **O dado não pode mostrar face antes do primeiro lance** (parece que já rolou),
+  e a peça do jogador não pode tapar a palavra escrita na casa.

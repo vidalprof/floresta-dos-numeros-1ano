@@ -165,6 +165,39 @@ def main():
             ruins.append(u"escolher: as opcoes nao sao EMBARALHADAS. Na Fabrica de Estrelas a "
                          u"certa era sempre a 1a e a crianca aprendeu a posicao, nao o conteudo.")
 
+    # ---------------------------------------------------- RELOGIO DE PONTEIROS
+    if re.search(r'ponteir|\.mostrador\b|\.horas\b', css + js, re.I):
+        usa.append("relogio")
+        if not re.search(r'5|cinco', js):
+            avisos.append(u"relogio: nao achei o encaixe de 5 em 5 minutos. Dedo de "
+                          u"crianca nao tem precisao de minuto.")
+        if not re.search(r'peq|pequeno|hora.*prop|prop.*hora', js, re.I):
+            avisos.append(u"relogio: o ponteiro PEQUENO tem que andar junto, "
+                          u"proporcional — e isso que ensina que as 3h30 ele fica "
+                          u"ENTRE o 3 e o 4.")
+
+    # ---------------------------------------------------- DOMINO
+    if re.search(r'\bdomino\b|\.pdom\b|\.corrente\b', css + js, re.I):
+        usa.append("domino")
+        avisos.append(u"domino: a corrente tem que ser montada de antemao, com semente "
+                      u"no meio — senao sobra peca que nao encaixa em lugar nenhum e a "
+                      u"crianca fica presa sem culpa.")
+
+    # ---------------------------------------------------- BINGO
+    if re.search(r'\bbingo\b|\.cartela\b|\.pedra\b', css + js, re.I):
+        usa.append("bingo")
+        ruins_bingo = not re.search(r'nao tenho|n&#227;o tenho|naoTenho', html, re.I)
+        if ruins_bingo:
+            avisos.append(u"bingo: falta o botao 'nao esta na minha cartela'. Sem ele a "
+                          u"crianca so pode acertar tocando, e o jogo vira loteria.")
+
+    # ---------------------------------------------------- TRILHA COM DADO
+    if re.search(r'\btrilha\b|\.peao\b|\.dado\b|\.casa\b', css + js, re.I):
+        usa.append("trilha")
+        if re.search(r'setTimeout\([^)]*rola|rolaAuto|autoRola', js):
+            ruins.append(u"trilha: o dado rola SOZINHO. Rolar e o gesto da crianca — "
+                         u"e a espera dela que faz a graca.")
+
     # ---------------------------------------------------- MEDIR COM A REGUA
     if re.search(r'\bregua\b|\.regua', css + js, re.I):
         usa.append("medir")
