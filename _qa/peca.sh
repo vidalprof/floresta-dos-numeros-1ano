@@ -82,7 +82,20 @@ tail -4 "$TMPQ/j.txt"
 grep -q "PRESO" "$TMPQ/j.txt" && { echo "  !! a peca TRAVA — a crianca fica presa"; FALHOU=1; }
 grep -q "ERROS JS: nenhum" "$TMPQ/j.txt" || { echo "  !! houve erro de JS durante a partida"; FALHOU=1; }
 
-echo; echo "==================================================="
+echo; echo
+echo "--- 9) ERRADOR (erra de proposito: da para seguir?) -"
+# ⭐ O portao do ANDAIME: erra tres vezes de proposito e confere que a ajuda
+#    CRESCE (dica -> apoio concreto -> revela) e que a medalha continua
+#    alcancavel. E o unico que mede a promessa central da casa: errar nao pune,
+#    e ninguem fica preso. Sai 2 quando nao tem receita para a peca — e isso
+#    NAO e aprovacao, e "nao sei medir esta".
+node _qa/errador.js "$ARQ" > "$TMPQ/errador.txt" 2>&1; _ERR=$?
+tail -6 "$TMPQ/errador.txt"
+if [ "$_ERR" = "2" ]; then
+  echo "  ⚠️ SEM RECEITA — este portao NAO mediu o andaime desta peca."
+elif [ "$_ERR" != "0" ]; then FALHOU=1; fi
+
+echo "==================================================="
 if [ "$FALHOU" = "0" ]; then
   echo " PECA PRONTA — pode entrar no catalogo (_padrao/DINAMICAS.md)."
 else

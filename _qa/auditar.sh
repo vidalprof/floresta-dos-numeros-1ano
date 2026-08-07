@@ -213,13 +213,11 @@ node _qa/jogador.js "$ARQ" > "$TMPQ/jogador.txt" 2>&1 || FALHOU=1
 tail -6 "$TMPQ/jogador.txt"
 
 echo
-echo "--- 7) ERRADOR (erra de proposito: da para seguir?) -"
-# ⚠️ ESTE PORTAO EXISTIA E NAO ESTAVA NA BANCA. Ele joga cada mecanica ERRANDO
-#    de proposito 3 vezes e confere que a medalha continua alcancavel — que e o
-#    andaime da casa (dica -> apoio -> revela, e nunca travar). Os cinco piores
-#    defeitos de um dia inteiro passaram pelos outros oito portoes e so ele viu.
-node _qa/errador.js "$ARQ" > "$TMPQ/errador.txt" 2>&1 || FALHOU=1
-tail -8 "$TMPQ/errador.txt"
+# ⚠️ O ERRADOR NAO ENTRA AQUI. Eu o liguei nesta banca e ele reprovava TUDO,
+#    inclusive as atividades no ar: ele escolhe a receita pelo NOME DO ARQUIVO, e
+#    numa atividade o arquivo se chama `index.html` — receita nenhuma. Ele e da
+#    BANCADA DA PECA (`_qa/peca.sh`), onde o nome do arquivo E o nome da mecanica.
+#    A licao: portao no lugar errado nao e portao a mais, e portao que mente.
 
 echo
 if [ -n "$CEGOS" ]; then

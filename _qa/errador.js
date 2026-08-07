@@ -65,6 +65,21 @@ const RECEITA={
    await p.waitForTimeout(400);
  }
  console.log('ARQUIVO: '+arq);
+ /* ⚠️⚠️ LICAO PAGA (ago/2026), e das que quase estragou a banca inteira: este
+    portao so sabe jogar UMA PECA — ele escolhe a receita pelo NOME DO ARQUIVO
+    (`_padrao/pecas/memoria.html` -> RECEITA['memoria']). Eu o liguei na banca da
+    ATIVIDADE, cujo arquivo se chama `index.html`: nao ha receita com esse nome,
+    `p.evaluate(undefined)` nao faz nada, e ele imprimia "erro 1 (undefined) ->
+    (sem dica)" e "chegou na MEDALHA: NAO" para TODA atividade — inclusive o
+    Jardim do Broto, que esta no ar e tem o andaime certo. Se eu o tivesse
+    deixado bloquear, ele reprovaria tudo, sempre, por nao saber medir.
+    Portao sem receita nao "reprova": ele DIZ que nao sabe. */
+ if(typeof RECEITA[nome]!=='function'){
+   console.log('  ✋ NAO SEI JOGAR "'+nome+'": nao tenho receita para esta peca.');
+   console.log('     Este portao e da BANCADA DA PECA (_qa/peca.sh), nao da banca');
+   console.log('     da atividade. Receita nova = uma entrada em RECEITA{}.');
+   await b.close(); process.exit(2);
+ }
  const dicas=[];
  for(let n=1;n<=3;n++){
    const q=await p.evaluate(RECEITA[nome]);
@@ -89,6 +104,16 @@ const RECEITA={
    fim=await p.evaluate(()=>!!document.querySelector('.medal'));
  }
  console.log('  chegou na MEDALHA depois de errar: '+(fim?'SIM':'NAO'));
- console.log('  ERROS JS: '+(jse.length?jse.join(' | '):'nenhum'));
+ /* o barulho do file:// nao conta: service worker so existe em http(s) */
+ const reais=jse.filter(e=>!/ServiceWorker|protocol of the current origin/i.test(e));
+ console.log('  ERROS JS: '+(reais.length?reais.join(' | '):'nenhum'));
  await b.close();
+ /* ⚠️⚠️ LICAO PAGA, e das piores: este portao NAO TINHA `process.exit`. Ele
+    imprimia "chegou na MEDALHA depois de errar: NAO" e saia com codigo ZERO —
+    ou seja, RELATAVA A FALHA E A BANCA APROVAVA POR CIMA. Portao que nao reprova
+    nao e portao, e comentario. E este e justamente o que existe para garantir o
+    andaime da casa: errar tres vezes e AINDA ASSIM conseguir seguir.
+    A regra que fica: todo portao novo precisa de um teste que o veja REPROVAR.
+    So ver "passou" nao prova nada — pode ser que ele nunca reprove. */
+ process.exit((fim && !reais.length) ? 0 : 1);
 })();
