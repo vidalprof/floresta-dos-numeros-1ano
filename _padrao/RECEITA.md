@@ -597,3 +597,62 @@ a mais.
 **Medido por `_qa/pedagogo.py` (portão 0a)**, que é o portão da escada. O
 `_qa/progressao.py` (portão 3b) continua existindo e continua útil, mas ele é da
 BARRA. Quando o Marcos falar em progressão, é o **0a** que responde.
+
+---
+
+## 📚 O QUE JÁ PESQUISAMOS — o índice, para nunca refazer (ago/2026)
+
+Cobrança do Marcos: *"lembre-se que fizemos pesquisas profundas sobre educação e
+os grandes pensadores do passado e atuais e neurociência também, com ênfase em
+ensino-aprendizagem"*. Ele está certo — **já está tudo pesquisado**, e eu quase
+mandei buscar de novo. Conferido: **8 documentos, 17 pensadores**.
+
+| Onde | O que responde |
+|---|---|
+| `MODELO-APRENDIZAGEM-EDUCAVERSO.md` | o modelo da casa, de ponta a ponta |
+| `PEDAGOGIA-VYGOTSKY-DINAMICAS-2026-07.md` | zona de desenvolvimento próximo → o andaime que cresce |
+| `PEDAGOGIA-APRENDIZAGEM-CONCRETA-2026-07.md` | Bruner/CPA → concreto, figural, simbólico |
+| `PESQUISA-APPS-AMAR-E-NEUROCIENCIA-2026-07.md` | o "quero mais": curiosidade, recompensa, atenção |
+| `AUDITORIA-APRENDIZAGEM-E-DINAMICAS-2026-07.md` | o que de fato ensina em cada dinâmica |
+| `PESQUISA-FORMATOS-APRENDIZAGEM-REAL-2026-07.md` | formatos que produzem aprendizagem, não sensação dela |
+| `PESQUISA-DIFERENCIAL-E-MECANICAS-2026-07.md` | o "pensar fora da caixa" com lastro |
+| `PRINCIPIOS-ENCANTAMENTO.md` | por que a criança quer voltar |
+
+**Pensadores já destilados:** Mayer, Bruner, Vygotsky, Bjork, Deci & Ryan,
+Sweller, Roediger, Piaget, Loewenstein, Hattie, Dewey, Ausubel, Willingham.
+
+⚠️ **Regra:** antes de pedir pesquisa nova, abrir esta tabela. Pesquisa repetida
+gasta tempo do Marcos e ainda faz parecer que a casa esqueceu o que sabe.
+
+---
+
+## 🪜 A SEQUÊNCIA DIDÁTICA — a forma da atividade (pesquisa nova, ago/2026)
+
+`_pesquisa/web/sequencia-didatica-e-progressao.md`. Era o que faltava nos 17
+pensadores: **Dolz & Schneuwly**, e a estrutura brasileira de sequência
+didática. E ela muda o formato da nossa atividade, não só o discurso.
+
+**As quatro etapas, e onde cada uma cai nas nossas 32 fases:**
+
+1. **Apresentação da situação** — o mundo precisa da criança. É a abertura, e já
+   fazemos: *"as etiquetas da padaria caíram!"*.
+2. **PRODUÇÃO INICIAL** — a criança TENTA antes de ser ensinada. *"as produções
+   dos alunos servirão de base para a organização dos módulos e como fonte de
+   comparação com a última produção"*. **Isto nos falta**, e é o que dá sentido
+   ao resto: sem a tentativa inicial não há o que comparar no fim, e o "Treinar o
+   que faltou" adivinha em vez de saber.
+3. **Módulos** — as fases que ensinam, uma dificuldade por módulo. É o miolo que
+   já temos.
+4. **Produção final** — a criança refaz o que tentou na etapa 2, e **vê o
+   próprio crescimento**. Hoje o nosso fecho é livre e divertido (o que é certo);
+   o que falta é ele RETOMAR a produção inicial.
+
+**A regra que fica, para toda atividade nova:** a fase 2 é uma **tentativa sem
+cobrança** do que a atividade inteira vai ensinar — sem dica, sem erro marcado,
+só medida em silêncio pelo `reg()`. E a penúltima fase repete aquela mesma
+tarefa. O boletim do fim ganha a única comparação que interessa à criança:
+**"olha o que você já sabia e o que você sabe agora"**.
+
+⚠️ E o cuidado que a própria pesquisa impõe: produção inicial **não é prova**.
+Ela é silenciosa, curta, e o mascote diz que ninguém precisa acertar — senão
+vira exatamente o que o `EDUVERSE-FILOSOFIA.md` proíbe.
