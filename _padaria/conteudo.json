@@ -29,6 +29,179 @@
  },
  "fases": [
   {
+   "id": "f04",
+   "mec": "ordenar",
+   "selo": "EM ORDEM",
+   "enunciado": "O Fubá guarda os pães em gavetas com letras. Ponha na ordem do alfabeto.",
+   "dica": "Cante o alfabeto baixinho: A, B, C... qual vem primeiro?",
+   "conceito": "objetivo1",
+   "dados": [
+    "A",
+    "B",
+    "C",
+    "D",
+    "E"
+   ],
+   "dadosExtra": {
+    "ORDTXT": {
+     "selo": "O ALFABETO",
+     "balao": "Ponha as letras <b>na ordem do alfabeto</b>.",
+     "hint": "Toque na letra ou arraste até a prateleira."
+    }
+   }
+  },
+  {
+   "id": "f10",
+   "mec": "ligar-pontos",
+   "selo": "LIGUE AS LETRAS",
+   "enunciado": "Ligue as letras na ordem do alfabeto e veja o que aparece.",
+   "dica": "Depois do A vem o B. Cante o alfabeto baixinho enquanto procura.",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "selo": "O PÃOZINHO ESCONDIDO",
+     "nome": "um PÃOZINHO",
+     "voz": "um pãozinho",
+     "pts": [
+      [
+       20,
+       58
+      ],
+      [
+       32,
+       36
+      ],
+      [
+       52,
+       28
+      ],
+      [
+       74,
+       36
+      ],
+      [
+       86,
+       58
+      ],
+      [
+       74,
+       80
+      ],
+      [
+       52,
+       86
+      ],
+      [
+       30,
+       80
+      ]
+     ],
+     "d": "M20 58 L32 36 L52 28 L74 36 L86 58 L74 80 L52 86 L30 80 Z",
+     "cor": "#e2a75a",
+     "extra": "<path d=\"M38 52 L64 46\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M40 62 L66 56\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/>"
+    },
+    {
+     "selo": "O QUE A MIGA ASSOU",
+     "nome": "um CROISSANT",
+     "voz": "um croissant",
+     "pts": [
+      [
+       16,
+       66
+      ],
+      [
+       26,
+       44
+      ],
+      [
+       46,
+       32
+      ],
+      [
+       68,
+       34
+      ],
+      [
+       84,
+       50
+      ],
+      [
+       76,
+       70
+      ],
+      [
+       54,
+       78
+      ],
+      [
+       32,
+       76
+      ]
+     ],
+     "d": "M16 66 L26 44 L46 32 L68 34 L84 50 L76 70 L54 78 L32 76 Z",
+     "cor": "#f0c078",
+     "extra": "<circle cx=\"50\" cy=\"56\" r=\"3\" fill=\"#8a5a2b\"/>"
+    }
+   ],
+   "dadosExtra": {
+    "ROTULOS": [
+     "A",
+     "B",
+     "C",
+     "D",
+     "E",
+     "F",
+     "G",
+     "H"
+    ],
+    "DICAS": [
+     "Procure a letra que vem <b>depois</b> da última que você ligou.",
+     "Cante o alfabeto baixinho: A, B, C, D... a próxima está piscando.",
+     "Eu liguei uma para você. Agora siga a que está piscando."
+    ]
+   }
+  },
+  {
+   "id": "f12",
+   "mec": "completar",
+   "selo": "COMPLETE",
+   "enunciado": "Uma letra caiu da prateleira. Qual está faltando?",
+   "dica": "Diga as letras em voz alta, na ordem, e pare onde o buraco está.",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "ante": "A, B, ",
+     "dep": ", D",
+     "cer": "C",
+     "out": [
+      "E",
+      "Z"
+     ],
+     "dic": "Cante: A, B... qual vem depois do B?"
+    },
+    {
+     "ante": "D, E, ",
+     "dep": ", G",
+     "cer": "F",
+     "out": [
+      "H",
+      "B"
+     ],
+     "dic": "Cante do A até o E e continue mais uma."
+    },
+    {
+     "ante": "H, I, ",
+     "dep": ", L",
+     "cer": "J",
+     "out": [
+      "K",
+      "M"
+     ],
+     "dic": "Depois do I vem o J. Cante para conferir."
+    }
+   ]
+  },
+  {
    "id": "f01",
    "mec": "ouvir-achar",
    "selo": "OUÇA E ACHE",
@@ -268,136 +441,163 @@
    }
   },
   {
-   "id": "f02",
-   "mec": "bater-silabas",
-   "selo": "BATA OS PEDAÇOS",
-   "enunciado": "Diga o nome do doce e bata uma vez para cada pedaço.",
-   "dica": "Ponha a mão no queixo: ele desce a cada pedaço da palavra.",
-   "conceito": "objetivo4",
+   "id": "f08",
+   "mec": "tracar-letra",
+   "selo": "ESCREVA A LETRA",
+   "enunciado": "Agora escreva a letra com o dedo, seguindo as bolinhas.",
+   "dica": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
+   "conceito": "objetivo2",
    "dados": [
     {
-     "pal": "PÃO",
-     "sil": [
-      "PÃO"
-     ],
-     "fig": "pd_pao",
-     "d": [
-      "Cuidado com esta: diga <b>PÃO</b>. Quantos pedaços a boca faz?",
-      "Escute: a palavra tem UM golpe só. Bata junto comigo.",
-      "É <b>1</b> pedaço só: PÃO. A batida já está aí: toque em Pronto."
+     "selo": "A LETRA P",
+     "letra": "P",
+     "voz": "pê",
+     "palavra": "PÃO",
+     "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
+     "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.",
+     "msg": "Você escreveu o <b>P</b>! P de PÃO.",
+     "tracos": [
+      {
+       "pts": [
+        [
+         32,
+         12
+        ],
+        [
+         32,
+         46
+        ],
+        [
+         32,
+         84
+        ]
+       ]
+      },
+      {
+       "pts": [
+        [
+         32,
+         12
+        ],
+        [
+         62,
+         20
+        ],
+        [
+         62,
+         40
+        ],
+        [
+         32,
+         48
+        ]
+       ]
+      }
      ]
     },
     {
-     "pal": "BOLO",
-     "sil": [
-      "BO",
-      "LO"
-     ],
-     "fig": "pd_bolo",
-     "d": [
-      "Diga <b>BOLO</b> bem devagar e bata uma vez para cada pedaço.",
-      "Escute: eu vou bater junto com a palavra. Conte comigo.",
-      "São <b>2</b> pedaços: BO-LO. As batidas já estão aí: toque em Pronto."
+     "selo": "A LETRA B",
+     "letra": "B",
+     "voz": "bê",
+     "palavra": "BOLO",
+     "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
+     "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.",
+     "msg": "Você escreveu o <b>B</b>! B de BOLO.",
+     "tracos": [
+      {
+       "pts": [
+        [
+         30,
+         12
+        ],
+        [
+         30,
+         48
+        ],
+        [
+         30,
+         84
+        ]
+       ]
+      },
+      {
+       "pts": [
+        [
+         30,
+         12
+        ],
+        [
+         60,
+         20
+        ],
+        [
+         60,
+         40
+        ],
+        [
+         30,
+         48
+        ]
+       ]
+      },
+      {
+       "pts": [
+        [
+         30,
+         48
+        ],
+        [
+         64,
+         56
+        ],
+        [
+         64,
+         78
+        ],
+        [
+         30,
+         84
+        ]
+       ]
+      }
      ]
     },
     {
-     "pal": "BOLACHA",
-     "sil": [
-      "BO",
-      "LA",
-      "CHA"
-     ],
-     "fig": "pd_bolacha",
-     "d": [
-      "Esta é mais comprida. Diga devagar: BO-LA-CHA.",
-      "Escute: eu bato junto com a palavra. Conte as batidas.",
-      "São <b>3</b> pedaços: BO-LA-CHA. As batidas já estão aí: toque em Pronto."
+     "selo": "A LETRA M",
+     "letra": "M",
+     "voz": "eme",
+     "palavra": "MEL",
+     "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
+     "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.",
+     "msg": "Você escreveu o <b>M</b>! M de MEL.",
+     "tracos": [
+      {
+       "pts": [
+        [
+         18,
+         84
+        ],
+        [
+         18,
+         14
+        ],
+        [
+         50,
+         52
+        ],
+        [
+         82,
+         14
+        ],
+        [
+         82,
+         84
+        ]
+       ]
+      }
      ]
     }
    ]
-  },
-  {
-   "id": "f03",
-   "mec": "juntar-silabas",
-   "selo": "JUNTE OS PEDAÇOS",
-   "enunciado": "Junte os pedaços e forme o nome da figura.",
-   "dica": "Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?",
-   "conceito": "objetivo5",
-   "dados": [
-    {
-     "pal": "BOLO",
-     "sil": [
-      "BO",
-      "LO"
-     ],
-     "fig": "pd_bolo",
-     "iscas": [
-      "MA",
-      "PE"
-     ],
-     "d": [
-      "Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?",
-      "Começa com o som <b>BO</b>. Ele está pulsando aí embaixo.",
-      "É o <b>BO</b>. Ele está aceso: toque nele para seguir."
-     ]
-    },
-    {
-     "pal": "MASSA",
-     "sil": [
-      "MAS",
-      "SA"
-     ],
-     "fig": "pd_massa",
-     "iscas": [
-      "LO",
-      "PE"
-     ],
-     "d": [
-      "Fale bem devagar: MAS-SA. Qual vem primeiro?",
-      "O primeiro pedaço é <b>MAS</b>.",
-      "É o <b>MAS</b>. Ele está aceso: toque nele."
-     ]
-    },
-    {
-     "pal": "QUEIJO",
-     "sil": [
-      "QUEI",
-      "JO"
-     ],
-     "fig": "pd_queijo",
-     "iscas": [
-      "BO",
-      "LA"
-     ],
-     "d": [
-      "Diga QUEI-JO devagar, escutando o começo.",
-      "O primeiro pedaço é <b>QUEI</b>.",
-      "É o <b>QUEI</b>. Ele está aceso: toque nele."
-     ]
-    }
-   ]
-  },
-  {
-   "id": "f04",
-   "mec": "ordenar",
-   "selo": "EM ORDEM",
-   "enunciado": "O Fubá guarda os pães em gavetas com letras. Ponha na ordem do alfabeto.",
-   "dica": "Cante o alfabeto baixinho: A, B, C... qual vem primeiro?",
-   "conceito": "objetivo1",
-   "dados": [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E"
-   ],
-   "dadosExtra": {
-    "ORDTXT": {
-     "selo": "O ALFABETO",
-     "balao": "Ponha as letras <b>na ordem do alfabeto</b>.",
-     "hint": "Toque na letra ou arraste até a prateleira."
-    }
-   }
   },
   {
    "id": "f05",
@@ -682,6 +882,137 @@
    }
   },
   {
+   "id": "f11",
+   "mec": "memoria",
+   "selo": "MEMÓRIA DOS COMEÇOS",
+   "enunciado": "Ache a palavra e o pedaço com que ela começa.",
+   "dica": "Diga a palavra da carta em voz alta e escute só o começo dela.",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "k": "bo",
+     "pal": "BOLO",
+     "sen": "começa com BO"
+    },
+    {
+     "k": "ma",
+     "pal": "MALA",
+     "sen": "começa com MA"
+    },
+    {
+     "k": "pa",
+     "pal": "PATO",
+     "sen": "começa com PA"
+    },
+    {
+     "k": "me",
+     "pal": "MEL",
+     "sen": "começa com ME"
+    }
+   ]
+  },
+  {
+   "id": "f14",
+   "mec": "escolher",
+   "selo": "ESCOLHA",
+   "enunciado": "Agora preste atenção no som das palavras.",
+   "dica": "Diga as duas palavras em voz alta, uma depois da outra, e compare.",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "p": "Qual palavra começa com o mesmo som de <b>BOLO</b>?",
+     "c": "BOLACHA",
+     "e": [
+      "MALA",
+      "QUEIJO",
+      "SAPATO"
+     ],
+     "d": [
+      "Diga BOLO devagar e escute só o começo: BO.",
+      "Procure outra que também comece com o som <b>BO</b>.",
+      "É BOLACHA: BO-LO e BO-LA-CHA. Ela está acesa: toque nela."
+     ]
+    },
+    {
+     "p": "Qual palavra termina com o mesmo som de <b>PATO</b>?",
+     "c": "SAPATO",
+     "e": [
+      "PÃO",
+      "MEL",
+      "MASSA"
+     ],
+     "d": [
+      "Diga PATO e escute o <b>fim</b>: TO.",
+      "Procure outra que acabe com TO.",
+      "É SAPATO: PA-TO e SA-PA-TO. Ela está acesa: toque nela."
+     ]
+    },
+    {
+     "p": "Qual palavra tem <b>um pedaço só</b>?",
+     "c": "MEL",
+     "e": [
+      "BOLO",
+      "MALA",
+      "QUEIJO"
+     ],
+     "d": [
+      "Bata cada palavra: quantos golpes?",
+      "Três delas têm dois pedaços. Uma tem um golpe só.",
+      "É MEL. Ela está acesa: toque nela."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f02",
+   "mec": "bater-silabas",
+   "selo": "BATA OS PEDAÇOS",
+   "enunciado": "Diga o nome do doce e bata uma vez para cada pedaço.",
+   "dica": "Ponha a mão no queixo: ele desce a cada pedaço da palavra.",
+   "conceito": "objetivo4",
+   "dados": [
+    {
+     "pal": "PÃO",
+     "sil": [
+      "PÃO"
+     ],
+     "fig": "pd_pao",
+     "d": [
+      "Cuidado com esta: diga <b>PÃO</b>. Quantos pedaços a boca faz?",
+      "Escute: a palavra tem UM golpe só. Bata junto comigo.",
+      "É <b>1</b> pedaço só: PÃO. A batida já está aí: toque em Pronto."
+     ]
+    },
+    {
+     "pal": "BOLO",
+     "sil": [
+      "BO",
+      "LO"
+     ],
+     "fig": "pd_bolo",
+     "d": [
+      "Diga <b>BOLO</b> bem devagar e bata uma vez para cada pedaço.",
+      "Escute: eu vou bater junto com a palavra. Conte comigo.",
+      "São <b>2</b> pedaços: BO-LO. As batidas já estão aí: toque em Pronto."
+     ]
+    },
+    {
+     "pal": "BOLACHA",
+     "sil": [
+      "BO",
+      "LA",
+      "CHA"
+     ],
+     "fig": "pd_bolacha",
+     "d": [
+      "Esta é mais comprida. Diga devagar: BO-LA-CHA.",
+      "Escute: eu bato junto com a palavra. Conte as batidas.",
+      "São <b>3</b> pedaços: BO-LA-CHA. As batidas já estão aí: toque em Pronto."
+     ]
+    }
+   ]
+  },
+  {
    "id": "f07",
    "mec": "bater-silabas",
    "selo": "BATA OS PEDAÇOS",
@@ -731,160 +1062,111 @@
    ]
   },
   {
-   "id": "f08",
-   "mec": "tracar-letra",
-   "selo": "ESCREVA A LETRA",
-   "enunciado": "Agora escreva a letra com o dedo, seguindo as bolinhas.",
-   "dica": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
-   "conceito": "objetivo2",
+   "id": "f13",
+   "mec": "bater-silabas",
+   "selo": "BATA OS PEDAÇOS",
+   "enunciado": "Bata os pedaços destas palavras da padaria.",
+   "dica": "Se ficar em dúvida, bata devagar e conte no dedo.",
+   "conceito": "objetivo4",
    "dados": [
     {
-     "selo": "A LETRA P",
-     "letra": "P",
-     "voz": "pê",
-     "palavra": "PÃO",
-     "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
-     "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.",
-     "msg": "Você escreveu o <b>P</b>! P de PÃO.",
-     "tracos": [
-      {
-       "pts": [
-        [
-         32,
-         12
-        ],
-        [
-         32,
-         46
-        ],
-        [
-         32,
-         84
-        ]
-       ]
-      },
-      {
-       "pts": [
-        [
-         32,
-         12
-        ],
-        [
-         62,
-         20
-        ],
-        [
-         62,
-         40
-        ],
-        [
-         32,
-         48
-        ]
-       ]
-      }
+     "pal": "MALA",
+     "sil": [
+      "MA",
+      "LA"
+     ],
+     "fig": "pd_mala",
+     "d": [
+      "Diga MA-LA devagar.",
+      "Escute: dois golpes. Bata comigo.",
+      "São <b>2</b> pedaços: MA-LA. As batidas já estão aí: toque em Pronto."
      ]
     },
     {
-     "selo": "A LETRA B",
-     "letra": "B",
-     "voz": "bê",
-     "palavra": "BOLO",
-     "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
-     "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.",
-     "msg": "Você escreveu o <b>B</b>! B de BOLO.",
-     "tracos": [
-      {
-       "pts": [
-        [
-         30,
-         12
-        ],
-        [
-         30,
-         48
-        ],
-        [
-         30,
-         84
-        ]
-       ]
-      },
-      {
-       "pts": [
-        [
-         30,
-         12
-        ],
-        [
-         60,
-         20
-        ],
-        [
-         60,
-         40
-        ],
-        [
-         30,
-         48
-        ]
-       ]
-      },
-      {
-       "pts": [
-        [
-         30,
-         48
-        ],
-        [
-         64,
-         56
-        ],
-        [
-         64,
-         78
-        ],
-        [
-         30,
-         84
-        ]
-       ]
-      }
+     "pal": "SAL",
+     "sil": [
+      "SAL"
+     ],
+     "fig": "pd_sal",
+     "d": [
+      "Diga <b>SAL</b>. Quantos golpes?",
+      "Escute: um golpe só. Bata comigo.",
+      "É <b>1</b> pedaço: SAL. A batida já está aí: toque em Pronto."
      ]
     },
     {
-     "selo": "A LETRA M",
-     "letra": "M",
-     "voz": "eme",
-     "palavra": "MEL",
-     "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.",
-     "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.",
-     "msg": "Você escreveu o <b>M</b>! M de MEL.",
-     "tracos": [
-      {
-       "pts": [
-        [
-         18,
-         84
-        ],
-        [
-         18,
-         14
-        ],
-        [
-         50,
-         52
-        ],
-        [
-         82,
-         14
-        ],
-        [
-         82,
-         84
-        ]
-       ]
-      }
+     "pal": "SAPATO",
+     "sil": [
+      "SA",
+      "PA",
+      "TO"
+     ],
+     "fig": "pd_sapato",
+     "d": [
+      "Diga SA-PA-TO bem devagar.",
+      "Escute: são três golpes. Conte comigo.",
+      "São <b>3</b> pedaços: SA-PA-TO. As batidas já estão aí: toque em Pronto."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f03",
+   "mec": "juntar-silabas",
+   "selo": "JUNTE OS PEDAÇOS",
+   "enunciado": "Junte os pedaços e forme o nome da figura.",
+   "dica": "Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?",
+   "conceito": "objetivo5",
+   "dados": [
+    {
+     "pal": "BOLO",
+     "sil": [
+      "BO",
+      "LO"
+     ],
+     "fig": "pd_bolo",
+     "iscas": [
+      "MA",
+      "PE"
+     ],
+     "d": [
+      "Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?",
+      "Começa com o som <b>BO</b>. Ele está pulsando aí embaixo.",
+      "É o <b>BO</b>. Ele está aceso: toque nele para seguir."
+     ]
+    },
+    {
+     "pal": "MASSA",
+     "sil": [
+      "MAS",
+      "SA"
+     ],
+     "fig": "pd_massa",
+     "iscas": [
+      "LO",
+      "PE"
+     ],
+     "d": [
+      "Fale bem devagar: MAS-SA. Qual vem primeiro?",
+      "O primeiro pedaço é <b>MAS</b>.",
+      "É o <b>MAS</b>. Ele está aceso: toque nele."
+     ]
+    },
+    {
+     "pal": "QUEIJO",
+     "sil": [
+      "QUEI",
+      "JO"
+     ],
+     "fig": "pd_queijo",
+     "iscas": [
+      "BO",
+      "LA"
+     ],
+     "d": [
+      "Diga QUEI-JO devagar, escutando o começo.",
+      "O primeiro pedaço é <b>QUEI</b>.",
+      "É o <b>QUEI</b>. Ele está aceso: toque nele."
      ]
     }
    ]
@@ -948,288 +1230,6 @@
       "Diga MA-MÃO devagar.",
       "O primeiro pedaço é <b>MA</b>, o mesmo de MALA.",
       "É o <b>MA</b>. Ele está aceso: toque nele."
-     ]
-    }
-   ]
-  },
-  {
-   "id": "f10",
-   "mec": "ligar-pontos",
-   "selo": "LIGUE AS LETRAS",
-   "enunciado": "Ligue as letras na ordem do alfabeto e veja o que aparece.",
-   "dica": "Depois do A vem o B. Cante o alfabeto baixinho enquanto procura.",
-   "conceito": "objetivo1",
-   "dados": [
-    {
-     "selo": "O PÃOZINHO ESCONDIDO",
-     "nome": "um PÃOZINHO",
-     "voz": "um pãozinho",
-     "pts": [
-      [
-       20,
-       58
-      ],
-      [
-       32,
-       36
-      ],
-      [
-       52,
-       28
-      ],
-      [
-       74,
-       36
-      ],
-      [
-       86,
-       58
-      ],
-      [
-       74,
-       80
-      ],
-      [
-       52,
-       86
-      ],
-      [
-       30,
-       80
-      ]
-     ],
-     "d": "M20 58 L32 36 L52 28 L74 36 L86 58 L74 80 L52 86 L30 80 Z",
-     "cor": "#e2a75a",
-     "extra": "<path d=\"M38 52 L64 46\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M40 62 L66 56\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/>"
-    },
-    {
-     "selo": "O QUE A MIGA ASSOU",
-     "nome": "um CROISSANT",
-     "voz": "um croissant",
-     "pts": [
-      [
-       16,
-       66
-      ],
-      [
-       26,
-       44
-      ],
-      [
-       46,
-       32
-      ],
-      [
-       68,
-       34
-      ],
-      [
-       84,
-       50
-      ],
-      [
-       76,
-       70
-      ],
-      [
-       54,
-       78
-      ],
-      [
-       32,
-       76
-      ]
-     ],
-     "d": "M16 66 L26 44 L46 32 L68 34 L84 50 L76 70 L54 78 L32 76 Z",
-     "cor": "#f0c078",
-     "extra": "<circle cx=\"50\" cy=\"56\" r=\"3\" fill=\"#8a5a2b\"/>"
-    }
-   ],
-   "dadosExtra": {
-    "ROTULOS": [
-     "A",
-     "B",
-     "C",
-     "D",
-     "E",
-     "F",
-     "G",
-     "H"
-    ],
-    "DICAS": [
-     "Procure a letra que vem <b>depois</b> da última que você ligou.",
-     "Cante o alfabeto baixinho: A, B, C, D... a próxima está piscando.",
-     "Eu liguei uma para você. Agora siga a que está piscando."
-    ]
-   }
-  },
-  {
-   "id": "f11",
-   "mec": "memoria",
-   "selo": "MEMÓRIA DOS COMEÇOS",
-   "enunciado": "Ache a palavra e o pedaço com que ela começa.",
-   "dica": "Diga a palavra da carta em voz alta e escute só o começo dela.",
-   "conceito": "objetivo3",
-   "dados": [
-    {
-     "k": "bo",
-     "pal": "BOLO",
-     "sen": "começa com BO"
-    },
-    {
-     "k": "ma",
-     "pal": "MALA",
-     "sen": "começa com MA"
-    },
-    {
-     "k": "pa",
-     "pal": "PATO",
-     "sen": "começa com PA"
-    },
-    {
-     "k": "me",
-     "pal": "MEL",
-     "sen": "começa com ME"
-    }
-   ]
-  },
-  {
-   "id": "f12",
-   "mec": "completar",
-   "selo": "COMPLETE",
-   "enunciado": "Uma letra caiu da prateleira. Qual está faltando?",
-   "dica": "Diga as letras em voz alta, na ordem, e pare onde o buraco está.",
-   "conceito": "objetivo1",
-   "dados": [
-    {
-     "ante": "A, B, ",
-     "dep": ", D",
-     "cer": "C",
-     "out": [
-      "E",
-      "Z"
-     ],
-     "dic": "Cante: A, B... qual vem depois do B?"
-    },
-    {
-     "ante": "D, E, ",
-     "dep": ", G",
-     "cer": "F",
-     "out": [
-      "H",
-      "B"
-     ],
-     "dic": "Cante do A até o E e continue mais uma."
-    },
-    {
-     "ante": "H, I, ",
-     "dep": ", L",
-     "cer": "J",
-     "out": [
-      "K",
-      "M"
-     ],
-     "dic": "Depois do I vem o J. Cante para conferir."
-    }
-   ]
-  },
-  {
-   "id": "f13",
-   "mec": "bater-silabas",
-   "selo": "BATA OS PEDAÇOS",
-   "enunciado": "Bata os pedaços destas palavras da padaria.",
-   "dica": "Se ficar em dúvida, bata devagar e conte no dedo.",
-   "conceito": "objetivo4",
-   "dados": [
-    {
-     "pal": "MALA",
-     "sil": [
-      "MA",
-      "LA"
-     ],
-     "fig": "pd_mala",
-     "d": [
-      "Diga MA-LA devagar.",
-      "Escute: dois golpes. Bata comigo.",
-      "São <b>2</b> pedaços: MA-LA. As batidas já estão aí: toque em Pronto."
-     ]
-    },
-    {
-     "pal": "SAL",
-     "sil": [
-      "SAL"
-     ],
-     "fig": "pd_sal",
-     "d": [
-      "Diga <b>SAL</b>. Quantos golpes?",
-      "Escute: um golpe só. Bata comigo.",
-      "É <b>1</b> pedaço: SAL. A batida já está aí: toque em Pronto."
-     ]
-    },
-    {
-     "pal": "SAPATO",
-     "sil": [
-      "SA",
-      "PA",
-      "TO"
-     ],
-     "fig": "pd_sapato",
-     "d": [
-      "Diga SA-PA-TO bem devagar.",
-      "Escute: são três golpes. Conte comigo.",
-      "São <b>3</b> pedaços: SA-PA-TO. As batidas já estão aí: toque em Pronto."
-     ]
-    }
-   ]
-  },
-  {
-   "id": "f14",
-   "mec": "escolher",
-   "selo": "ESCOLHA",
-   "enunciado": "Agora preste atenção no som das palavras.",
-   "dica": "Diga as duas palavras em voz alta, uma depois da outra, e compare.",
-   "conceito": "objetivo3",
-   "dados": [
-    {
-     "p": "Qual palavra começa com o mesmo som de <b>BOLO</b>?",
-     "c": "BOLACHA",
-     "e": [
-      "MALA",
-      "QUEIJO",
-      "SAPATO"
-     ],
-     "d": [
-      "Diga BOLO devagar e escute só o começo: BO.",
-      "Procure outra que também comece com o som <b>BO</b>.",
-      "É BOLACHA: BO-LO e BO-LA-CHA. Ela está acesa: toque nela."
-     ]
-    },
-    {
-     "p": "Qual palavra termina com o mesmo som de <b>PATO</b>?",
-     "c": "SAPATO",
-     "e": [
-      "PÃO",
-      "MEL",
-      "MASSA"
-     ],
-     "d": [
-      "Diga PATO e escute o <b>fim</b>: TO.",
-      "Procure outra que acabe com TO.",
-      "É SAPATO: PA-TO e SA-PA-TO. Ela está acesa: toque nela."
-     ]
-    },
-    {
-     "p": "Qual palavra tem <b>um pedaço só</b>?",
-     "c": "MEL",
-     "e": [
-      "BOLO",
-      "MALA",
-      "QUEIJO"
-     ],
-     "d": [
-      "Bata cada palavra: quantos golpes?",
-      "Três delas têm dois pedaços. Uma tem um golpe só.",
-      "É MEL. Ela está acesa: toque nela."
      ]
     }
    ]
@@ -1361,6 +1361,97 @@
     "H",
     "I",
     "J"
+   ],
+   "dadosExtra": {
+    "ORDTXT": {
+     "selo": "O ALFABETO",
+     "balao": "Ponha as letras <b>na ordem do alfabeto</b>.",
+     "hint": "Toque na letra ou arraste até a prateleira."
+    }
+   }
+  },
+  {
+   "id": "f24",
+   "mec": "ligar-pontos",
+   "selo": "LIGUE AS LETRAS",
+   "enunciado": "Ligue as letras na ordem e descubra o que o Fubá assou hoje.",
+   "dica": "Depois do I vem o J. Cante o alfabeto baixinho enquanto procura.",
+   "conceito": "objetivo1",
+   "dados": [
+    {
+     "selo": "O DOCE ESCONDIDO",
+     "nome": "um BOLO",
+     "voz": "um bolo",
+     "pts": [
+      [
+       22,
+       80
+      ],
+      [
+       22,
+       54
+      ],
+      [
+       34,
+       40
+      ],
+      [
+       50,
+       34
+      ],
+      [
+       66,
+       40
+      ],
+      [
+       78,
+       54
+      ],
+      [
+       78,
+       80
+      ],
+      [
+       50,
+       88
+      ]
+     ],
+     "d": "M22 80 L22 54 L34 40 L50 34 L66 40 L78 54 L78 80 L50 88 Z",
+     "cor": "#f2b8c6",
+     "extra": "<rect x=\"46\" y=\"14\" width=\"8\" height=\"20\" rx=\"3\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/><path d=\"M50 8 q6 6 0 8 q-6 -2 0 -8Z\" fill=\"#ffd54a\"/>"
+    }
+   ],
+   "dadosExtra": {
+    "ROTULOS": [
+     "I",
+     "J",
+     "K",
+     "L",
+     "M",
+     "N",
+     "O",
+     "P"
+    ],
+    "DICAS": [
+     "Procure a letra que vem <b>depois</b> da última que você ligou.",
+     "Cante o alfabeto até chegar perto: ...H, I, J, K...",
+     "Eu liguei uma para você. Agora siga a que está piscando."
+    ]
+   }
+  },
+  {
+   "id": "f29",
+   "mec": "ordenar",
+   "selo": "EM ORDEM",
+   "enunciado": "As últimas gavetas da padaria. Ponha na ordem.",
+   "dica": "Cante o alfabeto até o fim: ...U, V, W, X, Y, Z.",
+   "conceito": "objetivo1",
+   "dados": [
+    "V",
+    "W",
+    "X",
+    "Y",
+    "Z"
    ],
    "dadosExtra": {
     "ORDTXT": {
@@ -1504,302 +1595,6 @@
      ]
     }
    ]
-  },
-  {
-   "id": "f19",
-   "mec": "classificar",
-   "selo": "SEPARE",
-   "enunciado": "Agora separe pelo som do <b>fim</b> da palavra.",
-   "dica": "Diga a palavra inteira e escute só o último pedaço.",
-   "conceito": "objetivo3",
-   "dados": [
-    {
-     "k": "lo",
-     "n": "TERMINA EM <b>LO</b><br>(como BOLO)"
-    },
-    {
-     "k": "to",
-     "n": "TERMINA EM <b>TO</b><br>(como PATO)"
-    }
-   ],
-   "dadosExtra": {
-    "FICHAS": [
-     {
-      "t": "BOLO",
-      "alvo": "lo"
-     },
-     {
-      "t": "BOLINHO",
-      "alvo": "lo"
-     },
-     {
-      "t": "PATO",
-      "alvo": "to"
-     },
-     {
-      "t": "BISCOITO",
-      "alvo": "to"
-     }
-    ],
-    "DICAS": [
-     "Fale a palavra até o fim e segure o último pedaço.",
-     "BO-LO acaba em LO. PA-TO acaba em TO.",
-     "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."
-    ]
-   }
-  },
-  {
-   "id": "f20",
-   "mec": "juntar-silabas",
-   "selo": "JUNTE OS PEDAÇOS",
-   "enunciado": "Cuidado: agora tem pedaço parecido na bandeja.",
-   "dica": "Escute o pedaço inteiro, não só a primeira letrinha.",
-   "conceito": "objetivo5",
-   "dados": [
-    {
-     "pal": "BOLINHO",
-     "sil": [
-      "BO",
-      "LI",
-      "NHO"
-     ],
-     "fig": "pd_bolinho",
-     "iscas": [
-      "LA",
-      "BA"
-     ],
-     "d": [
-      "Diga BO-LI-NHO devagar.",
-      "O primeiro pedaço é <b>BO</b>. Depois vem LI.",
-      "É o <b>BO</b>. Ele está aceso: toque nele."
-     ]
-    },
-    {
-     "pal": "LEITE",
-     "sil": [
-      "LEI",
-      "TE"
-     ],
-     "fig": "pd_leite",
-     "iscas": [
-      "LA",
-      "TO"
-     ],
-     "d": [
-      "Diga LEI-TE devagar.",
-      "O primeiro pedaço é <b>LEI</b>, não é LA.",
-      "É o <b>LEI</b>. Ele está aceso: toque nele."
-     ]
-    },
-    {
-     "pal": "AÇÚCAR",
-     "sil": [
-      "A",
-      "ÇÚ",
-      "CAR"
-     ],
-     "fig": "pd_acucar",
-     "iscas": [
-      "SA",
-      "BO"
-     ],
-     "d": [
-      "Diga A-ÇÚ-CAR bem devagar.",
-      "Começa com a letra <b>A</b> sozinha.",
-      "É o <b>A</b>. Ele está aceso: toque nele."
-     ]
-    }
-   ]
-  },
-  {
-   "id": "f21",
-   "mec": "bater-silabas",
-   "selo": "BATA OS PEDAÇOS",
-   "enunciado": "Estas são mais compridas. Bata com calma.",
-   "dica": "Bata devagar: um golpe para cada pedaço, sem correr.",
-   "conceito": "objetivo4",
-   "dados": [
-    {
-     "pal": "BOLINHO",
-     "sil": [
-      "BO",
-      "LI",
-      "NHO"
-     ],
-     "fig": "pd_bolinho",
-     "d": [
-      "Diga BO-LI-NHO devagar.",
-      "Escute: três golpes. Bata comigo.",
-      "São <b>3</b> pedaços: BO-LI-NHO. As batidas já estão aí: toque em Pronto."
-     ]
-    },
-    {
-     "pal": "LEITE",
-     "sil": [
-      "LEI",
-      "TE"
-     ],
-     "fig": "pd_leite",
-     "d": [
-      "Diga LEI-TE devagar.",
-      "Escute: dois golpes. Bata comigo.",
-      "São <b>2</b> pedaços: LEI-TE. As batidas já estão aí: toque em Pronto."
-     ]
-    },
-    {
-     "pal": "AÇÚCAR",
-     "sil": [
-      "A",
-      "ÇÚ",
-      "CAR"
-     ],
-     "fig": "pd_acucar",
-     "d": [
-      "Diga A-ÇÚ-CAR bem devagar.",
-      "Escute: são três golpes. Conte comigo.",
-      "São <b>3</b> pedaços: A-ÇÚ-CAR. As batidas já estão aí: toque em Pronto."
-     ]
-    }
-   ]
-  },
-  {
-   "id": "f22",
-   "mec": "memoria",
-   "selo": "MEMÓRIA DOS PEDAÇOS",
-   "enunciado": "Ache o pedaço que começa cada palavra.",
-   "dica": "Vire uma carta, diga o que está escrito e procure o par dela.",
-   "conceito": "objetivo5",
-   "dados": [
-    {
-     "k": "qu",
-     "pal": "QUEIJO",
-     "sen": "começa com QUEI"
-    },
-    {
-     "k": "bi",
-     "pal": "BISCOITO",
-     "sen": "começa com BIS"
-    },
-    {
-     "k": "le",
-     "pal": "LEITE",
-     "sen": "começa com LEI"
-    },
-    {
-     "k": "sa",
-     "pal": "SAPATO",
-     "sen": "começa com SA"
-    }
-   ]
-  },
-  {
-   "id": "f23",
-   "mec": "completar",
-   "selo": "COMPLETE",
-   "enunciado": "Um pedaço caiu da palavra. Qual é?",
-   "dica": "Diga a palavra inteira em voz alta e escute o buraco.",
-   "conceito": "objetivo4",
-   "dados": [
-    {
-     "ante": "BO-",
-     "dep": "-CHA",
-     "cer": "LA",
-     "out": [
-      "MA",
-      "TO"
-     ],
-     "dic": "Diga BO-LA-CHA devagar e pare no meio."
-    },
-    {
-     "ante": "BIS-",
-     "dep": "-TO",
-     "cer": "COI",
-     "out": [
-      "CA",
-      "LI"
-     ],
-     "dic": "Diga BIS-COI-TO devagar."
-    },
-    {
-     "ante": "SA-",
-     "dep": "-TO",
-     "cer": "PA",
-     "out": [
-      "MA",
-      "LO"
-     ],
-     "dic": "Diga SA-PA-TO devagar e escute o meio."
-    }
-   ]
-  },
-  {
-   "id": "f24",
-   "mec": "ligar-pontos",
-   "selo": "LIGUE AS LETRAS",
-   "enunciado": "Ligue as letras na ordem e descubra o que o Fubá assou hoje.",
-   "dica": "Depois do I vem o J. Cante o alfabeto baixinho enquanto procura.",
-   "conceito": "objetivo1",
-   "dados": [
-    {
-     "selo": "O DOCE ESCONDIDO",
-     "nome": "um BOLO",
-     "voz": "um bolo",
-     "pts": [
-      [
-       22,
-       80
-      ],
-      [
-       22,
-       54
-      ],
-      [
-       34,
-       40
-      ],
-      [
-       50,
-       34
-      ],
-      [
-       66,
-       40
-      ],
-      [
-       78,
-       54
-      ],
-      [
-       78,
-       80
-      ],
-      [
-       50,
-       88
-      ]
-     ],
-     "d": "M22 80 L22 54 L34 40 L50 34 L66 40 L78 54 L78 80 L50 88 Z",
-     "cor": "#f2b8c6",
-     "extra": "<rect x=\"46\" y=\"14\" width=\"8\" height=\"20\" rx=\"3\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/><path d=\"M50 8 q6 6 0 8 q-6 -2 0 -8Z\" fill=\"#ffd54a\"/>"
-    }
-   ],
-   "dadosExtra": {
-    "ROTULOS": [
-     "I",
-     "J",
-     "K",
-     "L",
-     "M",
-     "N",
-     "O",
-     "P"
-    ],
-    "DICAS": [
-     "Procure a letra que vem <b>depois</b> da última que você ligou.",
-     "Cante o alfabeto até chegar perto: ...H, I, J, K...",
-     "Eu liguei uma para você. Agora siga a que está piscando."
-    ]
-   }
   },
   {
    "id": "f25",
@@ -2041,112 +1836,6 @@
    }
   },
   {
-   "id": "f26",
-   "mec": "classificar",
-   "selo": "SEPARE",
-   "enunciado": "Separe pelas batidas: uma bandeja para cada tamanho.",
-   "dica": "Bata a palavra antes de escolher a bandeja.",
-   "conceito": "objetivo3",
-   "dados": [
-    {
-     "k": "dois",
-     "n": "<b>2</b> PEDAÇOS<br>(como BO-LO)"
-    },
-    {
-     "k": "tres",
-     "n": "<b>3</b> PEDAÇOS<br>(como BO-LA-CHA)"
-    }
-   ],
-   "dadosExtra": {
-    "FICHAS": [
-     {
-      "t": "QUEIJO",
-      "alvo": "dois"
-     },
-     {
-      "t": "LEITE",
-      "alvo": "dois"
-     },
-     {
-      "t": "BISCOITO",
-      "alvo": "tres"
-     },
-     {
-      "t": "BOLINHO",
-      "alvo": "tres"
-     }
-    ],
-    "DICAS": [
-     "Bata a palavra com a mão antes de decidir.",
-     "QUEI-JO tem 2. BIS-COI-TO tem 3.",
-     "Olhe a bandeja com a borda amarela: é ali que esta ficha mora."
-    ]
-   }
-  },
-  {
-   "id": "f27",
-   "mec": "juntar-silabas",
-   "selo": "JUNTE OS PEDAÇOS",
-   "enunciado": "A última encomenda do dia. Junte com atenção.",
-   "dica": "Fale a palavra devagar, pedaço por pedaço, antes de tocar.",
-   "conceito": "objetivo5",
-   "dados": [
-    {
-     "pal": "MAMÃO",
-     "sil": [
-      "MA",
-      "MÃO"
-     ],
-     "fig": "pd_mamao",
-     "iscas": [
-      "BO",
-      "LEI"
-     ],
-     "d": [
-      "Diga MA-MÃO devagar.",
-      "O primeiro pedaço é <b>MA</b>.",
-      "É o <b>MA</b>. Ele está aceso: toque nele."
-     ]
-    },
-    {
-     "pal": "BISCOITO",
-     "sil": [
-      "BIS",
-      "COI",
-      "TO"
-     ],
-     "fig": "pd_biscoito",
-     "iscas": [
-      "BO",
-      "SA"
-     ],
-     "d": [
-      "Diga BIS-COI-TO bem devagar.",
-      "O primeiro pedaço é <b>BIS</b>.",
-      "É o <b>BIS</b>. Ele está aceso: toque nele."
-     ]
-    },
-    {
-     "pal": "BOLACHA",
-     "sil": [
-      "BO",
-      "LA",
-      "CHA"
-     ],
-     "fig": "pd_bolacha",
-     "iscas": [
-      "BI",
-      "MA"
-     ],
-     "d": [
-      "Diga BO-LA-CHA devagar. Cuidado: tem pedaço parecido.",
-      "O primeiro é <b>BO</b>, não é BI.",
-      "É o <b>BO</b>. Ele está aceso: toque nele."
-     ]
-    }
-   ]
-  },
-  {
    "id": "f28",
    "mec": "tracar-letra",
    "selo": "ESCREVA A LETRA",
@@ -2314,25 +2003,46 @@
    ]
   },
   {
-   "id": "f29",
-   "mec": "ordenar",
-   "selo": "EM ORDEM",
-   "enunciado": "As últimas gavetas da padaria. Ponha na ordem.",
-   "dica": "Cante o alfabeto até o fim: ...U, V, W, X, Y, Z.",
-   "conceito": "objetivo1",
+   "id": "f19",
+   "mec": "classificar",
+   "selo": "SEPARE",
+   "enunciado": "Agora separe pelo som do <b>fim</b> da palavra.",
+   "dica": "Diga a palavra inteira e escute só o último pedaço.",
+   "conceito": "objetivo3",
    "dados": [
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z"
+    {
+     "k": "lo",
+     "n": "TERMINA EM <b>LO</b><br>(como BOLO)"
+    },
+    {
+     "k": "to",
+     "n": "TERMINA EM <b>TO</b><br>(como PATO)"
+    }
    ],
    "dadosExtra": {
-    "ORDTXT": {
-     "selo": "O ALFABETO",
-     "balao": "Ponha as letras <b>na ordem do alfabeto</b>.",
-     "hint": "Toque na letra ou arraste até a prateleira."
-    }
+    "FICHAS": [
+     {
+      "t": "BOLO",
+      "alvo": "lo"
+     },
+     {
+      "t": "BOLINHO",
+      "alvo": "lo"
+     },
+     {
+      "t": "PATO",
+      "alvo": "to"
+     },
+     {
+      "t": "BISCOITO",
+      "alvo": "to"
+     }
+    ],
+    "DICAS": [
+     "Fale a palavra até o fim e segure o último pedaço.",
+     "BO-LO acaba em LO. PA-TO acaba em TO.",
+     "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."
+    ]
    }
   },
   {
@@ -2383,6 +2093,296 @@
       "Lembre da bandeja: BO + LO deu o quê?",
       "Os pedaços correram um até o outro e viraram uma palavra.",
       "É JUNTA OS PEDAÇOS. A resposta está acesa: toque nela."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f26",
+   "mec": "classificar",
+   "selo": "SEPARE",
+   "enunciado": "Separe pelas batidas: uma bandeja para cada tamanho.",
+   "dica": "Bata a palavra antes de escolher a bandeja.",
+   "conceito": "objetivo3",
+   "dados": [
+    {
+     "k": "dois",
+     "n": "<b>2</b> PEDAÇOS<br>(como BO-LO)"
+    },
+    {
+     "k": "tres",
+     "n": "<b>3</b> PEDAÇOS<br>(como BO-LA-CHA)"
+    }
+   ],
+   "dadosExtra": {
+    "FICHAS": [
+     {
+      "t": "QUEIJO",
+      "alvo": "dois"
+     },
+     {
+      "t": "LEITE",
+      "alvo": "dois"
+     },
+     {
+      "t": "BISCOITO",
+      "alvo": "tres"
+     },
+     {
+      "t": "BOLINHO",
+      "alvo": "tres"
+     }
+    ],
+    "DICAS": [
+     "Bata a palavra com a mão antes de decidir.",
+     "QUEI-JO tem 2. BIS-COI-TO tem 3.",
+     "Olhe a bandeja com a borda amarela: é ali que esta ficha mora."
+    ]
+   }
+  },
+  {
+   "id": "f21",
+   "mec": "bater-silabas",
+   "selo": "BATA OS PEDAÇOS",
+   "enunciado": "Estas são mais compridas. Bata com calma.",
+   "dica": "Bata devagar: um golpe para cada pedaço, sem correr.",
+   "conceito": "objetivo4",
+   "dados": [
+    {
+     "pal": "BOLINHO",
+     "sil": [
+      "BO",
+      "LI",
+      "NHO"
+     ],
+     "fig": "pd_bolinho",
+     "d": [
+      "Diga BO-LI-NHO devagar.",
+      "Escute: três golpes. Bata comigo.",
+      "São <b>3</b> pedaços: BO-LI-NHO. As batidas já estão aí: toque em Pronto."
+     ]
+    },
+    {
+     "pal": "LEITE",
+     "sil": [
+      "LEI",
+      "TE"
+     ],
+     "fig": "pd_leite",
+     "d": [
+      "Diga LEI-TE devagar.",
+      "Escute: dois golpes. Bata comigo.",
+      "São <b>2</b> pedaços: LEI-TE. As batidas já estão aí: toque em Pronto."
+     ]
+    },
+    {
+     "pal": "AÇÚCAR",
+     "sil": [
+      "A",
+      "ÇÚ",
+      "CAR"
+     ],
+     "fig": "pd_acucar",
+     "d": [
+      "Diga A-ÇÚ-CAR bem devagar.",
+      "Escute: são três golpes. Conte comigo.",
+      "São <b>3</b> pedaços: A-ÇÚ-CAR. As batidas já estão aí: toque em Pronto."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f23",
+   "mec": "completar",
+   "selo": "COMPLETE",
+   "enunciado": "Um pedaço caiu da palavra. Qual é?",
+   "dica": "Diga a palavra inteira em voz alta e escute o buraco.",
+   "conceito": "objetivo4",
+   "dados": [
+    {
+     "ante": "BO-",
+     "dep": "-CHA",
+     "cer": "LA",
+     "out": [
+      "MA",
+      "TO"
+     ],
+     "dic": "Diga BO-LA-CHA devagar e pare no meio."
+    },
+    {
+     "ante": "BIS-",
+     "dep": "-TO",
+     "cer": "COI",
+     "out": [
+      "CA",
+      "LI"
+     ],
+     "dic": "Diga BIS-COI-TO devagar."
+    },
+    {
+     "ante": "SA-",
+     "dep": "-TO",
+     "cer": "PA",
+     "out": [
+      "MA",
+      "LO"
+     ],
+     "dic": "Diga SA-PA-TO devagar e escute o meio."
+    }
+   ]
+  },
+  {
+   "id": "f20",
+   "mec": "juntar-silabas",
+   "selo": "JUNTE OS PEDAÇOS",
+   "enunciado": "Cuidado: agora tem pedaço parecido na bandeja.",
+   "dica": "Escute o pedaço inteiro, não só a primeira letrinha.",
+   "conceito": "objetivo5",
+   "dados": [
+    {
+     "pal": "BOLINHO",
+     "sil": [
+      "BO",
+      "LI",
+      "NHO"
+     ],
+     "fig": "pd_bolinho",
+     "iscas": [
+      "LA",
+      "BA"
+     ],
+     "d": [
+      "Diga BO-LI-NHO devagar.",
+      "O primeiro pedaço é <b>BO</b>. Depois vem LI.",
+      "É o <b>BO</b>. Ele está aceso: toque nele."
+     ]
+    },
+    {
+     "pal": "LEITE",
+     "sil": [
+      "LEI",
+      "TE"
+     ],
+     "fig": "pd_leite",
+     "iscas": [
+      "LA",
+      "TO"
+     ],
+     "d": [
+      "Diga LEI-TE devagar.",
+      "O primeiro pedaço é <b>LEI</b>, não é LA.",
+      "É o <b>LEI</b>. Ele está aceso: toque nele."
+     ]
+    },
+    {
+     "pal": "AÇÚCAR",
+     "sil": [
+      "A",
+      "ÇÚ",
+      "CAR"
+     ],
+     "fig": "pd_acucar",
+     "iscas": [
+      "SA",
+      "BO"
+     ],
+     "d": [
+      "Diga A-ÇÚ-CAR bem devagar.",
+      "Começa com a letra <b>A</b> sozinha.",
+      "É o <b>A</b>. Ele está aceso: toque nele."
+     ]
+    }
+   ]
+  },
+  {
+   "id": "f22",
+   "mec": "memoria",
+   "selo": "MEMÓRIA DOS PEDAÇOS",
+   "enunciado": "Ache o pedaço que começa cada palavra.",
+   "dica": "Vire uma carta, diga o que está escrito e procure o par dela.",
+   "conceito": "objetivo5",
+   "dados": [
+    {
+     "k": "qu",
+     "pal": "QUEIJO",
+     "sen": "começa com QUEI"
+    },
+    {
+     "k": "bi",
+     "pal": "BISCOITO",
+     "sen": "começa com BIS"
+    },
+    {
+     "k": "le",
+     "pal": "LEITE",
+     "sen": "começa com LEI"
+    },
+    {
+     "k": "sa",
+     "pal": "SAPATO",
+     "sen": "começa com SA"
+    }
+   ]
+  },
+  {
+   "id": "f27",
+   "mec": "juntar-silabas",
+   "selo": "JUNTE OS PEDAÇOS",
+   "enunciado": "A última encomenda do dia. Junte com atenção.",
+   "dica": "Fale a palavra devagar, pedaço por pedaço, antes de tocar.",
+   "conceito": "objetivo5",
+   "dados": [
+    {
+     "pal": "MAMÃO",
+     "sil": [
+      "MA",
+      "MÃO"
+     ],
+     "fig": "pd_mamao",
+     "iscas": [
+      "BO",
+      "LEI"
+     ],
+     "d": [
+      "Diga MA-MÃO devagar.",
+      "O primeiro pedaço é <b>MA</b>.",
+      "É o <b>MA</b>. Ele está aceso: toque nele."
+     ]
+    },
+    {
+     "pal": "BISCOITO",
+     "sil": [
+      "BIS",
+      "COI",
+      "TO"
+     ],
+     "fig": "pd_biscoito",
+     "iscas": [
+      "BO",
+      "SA"
+     ],
+     "d": [
+      "Diga BIS-COI-TO bem devagar.",
+      "O primeiro pedaço é <b>BIS</b>.",
+      "É o <b>BIS</b>. Ele está aceso: toque nele."
+     ]
+    },
+    {
+     "pal": "BOLACHA",
+     "sil": [
+      "BO",
+      "LA",
+      "CHA"
+     ],
+     "fig": "pd_bolacha",
+     "iscas": [
+      "BI",
+      "MA"
+     ],
+     "d": [
+      "Diga BO-LA-CHA devagar. Cuidado: tem pedaço parecido.",
+      "O primeiro é <b>BO</b>, não é BI.",
+      "É o <b>BO</b>. Ele está aceso: toque nele."
      ]
     }
    ]

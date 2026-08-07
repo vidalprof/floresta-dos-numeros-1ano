@@ -188,10 +188,10 @@ def cadeia_montada(html):
     #    ali. Pego todas as atribuicoes e fico com a maior.
     achados = re.findall(r"(?:var\s+)?FASES\s*=\s*(\[[\s\S]*?\]);\s*\n", html)
     if not achados:
-        return [], {}
+        return [], {}, []
     crua = max(achados, key=len)
     if len(crua) < 20:
-        return [], {}
+        return [], {}, []
     m = type("M", (), {"group": lambda self, i: crua})()
     try:
         r = subprocess.run(["node", "-e",
@@ -201,7 +201,7 @@ def cadeia_montada(html):
     except Exception:
         fases = None
     if not fases:
-        return [], {}
+        return [], {}, []
 
     ordem, cs = [], {}
     for i, f in enumerate(fases):
@@ -221,7 +221,7 @@ def cadeia_montada(html):
         if f.get("dica"):
             corpo += '\nmostraDica("%s")\nconsolo()\n' % re.sub(r'["\n]', " ", f["dica"])[:40]
         cs[nome] = corpo
-    return ordem, cs
+    return ordem, cs, fases
 
 
 def main():
@@ -233,7 +233,7 @@ def main():
     js = "".join(re.findall(r"<script>(.*?)</script>", html, re.S))
     js = re.sub(r"/\*.*?\*/", lambda m: "\n" * m.group(0).count("\n"), js, flags=re.S)
     # ⭐ atividade MONTADA primeiro: la as fases sao dados, nao funcoes
-    ordem, cs = cadeia_montada(html)
+    ordem, cs, fases_montadas = cadeia_montada(html)
     if len(ordem) < 3:
         cs = corpos(js)
         ordem = cadeia_mestre(js, cs) or cadeia(cs)
@@ -255,6 +255,71 @@ def main():
         return 0
 
     problemas = []
+
+    # 0. UM DEGRAU POR VEZ — a progressao DIDATICA (correcao do Marcos, ago/2026:
+    #    "quando eu falo em progressao eu falo progressao didatica").
+    #
+    #    Entre duas fases seguidas muda UMA coisa: ou o CONTEUDO (o objetivo) ou
+    #    o GESTO (a mecanica). Nunca as duas. Fase que troca as duas nao e um
+    #    degrau: e uma atividade nova comecando do zero, e a crianca de 6 anos
+    #    perde as duas ancoras ao mesmo tempo — nao sabe o que esta aprendendo
+    #    nem o que tem que fazer com a mao.
+    #
+    #    ⚠️ o AQUECIMENTO e o FECHO LIVRE ficam de fora de proposito: o
+    #    aquecimento retoma conteudo antigo com gesto novo por desenho (revisao
+    #    espacada), e o fecho nao ensina habilidade nenhuma.
+    duplo, vistas = [], set()
+    if fases_montadas:
+        ant = None
+        for f in fases_montadas:
+            if (f.get("conceito") or "") == "livre" or "aquec" in (f.get("id") or ""):
+                ant = None
+                continue
+            if ant is not None:
+                mudou_conc = (f.get("conceito") or "") != (ant.get("conceito") or "")
+                # ⚠️ a primeira versao disto reprovou 27 das 32 passagens — e
+                #    estava errada. Trocar de mecanica entre fases e o PADRAO DA
+                #    CASA (nenhum gesto acima de 40%, para a crianca nao cansar):
+                #    um portao que briga com outra regra da casa e portao mal
+                #    escrito. O que de fato machuca e mais estreito: o gesto
+                #    ESTREAR junto com o conteudo novo. Mecanica que a crianca ja
+                #    conhece e ancora, mesmo sendo diferente da fase anterior.
+                estreia = (f.get("mec") or "") not in vistas
+                # ⚠️ SEGUNDA correcao da mesma regra, e a que faltava: no COMECO
+                #    da atividade TODO gesto e estreia — a crianca ainda nao tem
+                #    repertorio nenhum, entao nao existe gesto conhecido em que
+                #    ancorar. Cobrar isso da fase 2 e cobrar o impossivel, e
+                #    portao que cobra o impossivel vira ruido que se aprende a
+                #    ignorar. A regra so vale depois que ha repertorio: tres
+                #    gestos ja vistos. Antes disso, estrear e o unico caminho.
+                if mudou_conc and estreia and len(vistas) >= 3:
+                    duplo.append((ant.get("id"), f.get("id"),
+                                  ant.get("mec"), f.get("mec")))
+            vistas.add(f.get("mec") or "")
+            ant = f
+    # ⚠️ AVISO ou REPROVACAO? Depende do que esta na mao de quem monta.
+    #    Reordenar as fases resolve PARTE disto; o resto depende do CONTEUDO —
+    #    se cada objetivo so tem mecanicas proprias, nao existe gesto conhecido
+    #    para abrir o bloco, e nenhuma ordem conserta. Cobrar reprovacao de algo
+    #    que a ordem nao resolve seria portao mandando reescrever a atividade
+    #    inteira. Entao: acima de metade das viradas, e defeito de escada e
+    #    reprova; abaixo disso, e recado para quem escreve o conteudo.
+    viradas = max(1, sum(1 for i in range(1, len(fases_montadas))
+                         if (fases_montadas[i].get("conceito") or "") !=
+                            (fases_montadas[i - 1].get("conceito") or "")))
+    if len(duplo) > viradas // 2:
+        problemas.append(
+            u"%d fase(s) estreiam um GESTO NOVO no mesmo passo em que o CONTEUDO muda "
+            u"(ex.: %s -> %s, gesto '%s' visto pela primeira vez com objetivo novo). "
+            u"A crianca perde as duas ancoras juntas: nao sabe o que esta aprendendo "
+            u"nem o que fazer com a mao. Ensine o gesto num conteudo ja conhecido "
+            u"antes de usa-lo para ensinar conteudo novo."
+            % (len(duplo), duplo[0][0], duplo[0][1], duplo[0][3]))
+
+    elif duplo:
+        print(u"   aviso: %d gesto(s) estreiam junto com conteudo novo (ex.: %s). "
+              u"Resolve-se no CONTEUDO: uma fase de ponte que use o gesto novo "
+              u"num objetivo que a crianca ja domina." % (len(duplo), duplo[0][1]))
 
     # 1. concreto -> figural -> simbolico
     prim_fig = prim_sim = None
