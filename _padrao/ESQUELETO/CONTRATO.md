@@ -850,3 +850,32 @@ prova nada.
 - **arte e voz da `_prova30`**: ela é esqueleto, e gerar 11 imagens + ~270
   vozes para uma aferição descartável é dinheiro fora (ver a seção da prova);
 - **o portão do PROFESSOR**: é o Marcos, e nenhum script substitui.
+
+## 🕵️ QUEM VIGIA O VIGIA — `bash _qa/provar_portoes.sh`
+
+Esta semana **três portões estavam cegos ao mesmo tempo, e os três aprovavam**
+(`imagens`, `funcoes`, `promessa`). A conclusão é desconfortável e virou este
+arquivo:
+
+> **Um portão que aprova não prova nada enquanto não se mostrar que ele
+> REPROVA o defeito que ele existe para pegar.** Código 0 sem isso é
+> confiança, não medida.
+
+Para cada portão, o script planta o defeito **histórico** — o que chegou até o
+Marcos de verdade — e exige código ≠ 0. E, onde já houve falso-positivo,
+planta também o caso **certo** e exige código 0: *portão que grita à toa ensina
+a ignorar portão.*
+
+Hoje prova 5 casos: função inexistente · chamada protegida por `typeof` ·
+promessa sem ação · citação em comentário · prefixo de outra atividade.
+**Portão novo entra aqui no mesmo commit** — senão ele nasce sem prova.
+
+### As duas coisas que ele já ensinou, na estreia
+1. **Um dos meus fixtures nasceu errado e o portão estava certo.** Pus `.opt` +
+   opções no arquivo de mentira, e o `dinamicas` reconheceu um QUIZ de verdade
+   e cobrou o embaralhamento — cobrança legítima. **Antes de acusar um portão,
+   conferir se o defeito plantado é mesmo o que se quer medir.**
+2. **O `clone` pulava a conferência de prefixo EM SILÊNCIO** quando não achava
+   o prefixo da atividade (pasta sem `img/`, ou com menos de 4 arquivos). E
+   "pulei" calado some no meio de um relatório de 30 portões e vira "passou".
+   Agora ele diz **"NÃO MEDI"** — a mesma regra dos outros três.

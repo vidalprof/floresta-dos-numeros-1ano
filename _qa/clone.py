@@ -230,6 +230,15 @@ def prefixo_de(pasta_):
 
 
 meu = prefixo_de(pasta)
+# ⚠️ LICAO PAGA (ago/2026): quando o prefixo nao da para descobrir (pasta sem
+#    `img/`, ou com menos de 4 arquivos), esta conferencia era simplesmente
+#    PULADA — em silencio. E "pulei" em silencio some no meio de um relatorio
+#    de 30 portoes e vira "passou". Esta semana tres portoes estavam cegos e os
+#    tres aprovavam; a regra da casa e que portao que nao mede DIZ que nao
+#    mediu. Aqui ele diz.
+if not meu:
+    print("   prefixo: NAO MEDI (nao achei o prefixo desta atividade — "
+          "a pasta tem `img/` com pelo menos 4 arquivos?)")
 if meu:
     raiz = os.path.dirname(os.path.abspath(pasta)) or "."
     alheios = {}
