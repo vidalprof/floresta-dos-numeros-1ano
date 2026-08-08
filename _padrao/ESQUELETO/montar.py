@@ -818,6 +818,19 @@ def escreve_index(pasta, c, falas):
     else:
         print(u"   vitrine: NAO (a atividade nao tem figura de produto nas fases)")
 
+    # ⚠️⚠️ RESTO DE CLONE NA TELA FINAL (ago/2026) — e o pior lugar possivel,
+    #    porque e a ultima coisa que a crianca le. O motor trazia CRAVADO do
+    #    Jardim do Broto: *"Jardineiro Mestre!"* e *"voce cuidou da planta do
+    #    comeco ao fim"*. Na Padaria das Letras a crianca terminava a aula
+    #    sendo chamada de jardineira. O texto de fim JA existia no
+    #    conteudo.json (com o gancho de curiosidade e tudo) e era simplesmente
+    #    ignorado. Agora o fim tambem e DADO.
+    fim_txt = c.get("fim") or u"Você conseguiu!"
+    fim_tit = c.get("fimTitulo") or ((c.get("titulo") or u"Campeão") + u"!")
+    fim_cra = c.get("fimCracha") or fim_tit.rstrip(u"!")
+    dados.append(u"FIM = {titulo:%s, texto:%s, cracha:%s};"
+                 % (jstr(fim_tit), jstr(fim_txt), jstr(fim_cra)))
+
     dados.append(u"ABERTURA = {texto:%s, voz:%s};"
                  % (jstr(c.get("abertura") or ""), jstr(pre + "_abertura")))
     fases = []

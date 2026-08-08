@@ -17,7 +17,13 @@ body{font-family:"Fredoka",ui-rounded,"Segoe UI",system-ui,Arial,sans-serif;colo
 #bg{position:fixed;inset:0;z-index:0;background:#cdeeff center/cover no-repeat;background-image:none}
 #ceu{position:fixed;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
 #app{position:fixed;inset:0;z-index:2}
-.tela{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;padding:calc(40px + env(safe-area-inset-top)) 16px calc(104px + env(safe-area-inset-bottom));-webkit-animation:fade .45s;animation:fade .45s}
+.tela{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;display:-webkit-box;display:flex;-webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;-webkit-box-align:center;align-items:center;padding:calc(40px + env(safe-area-inset-top)) 16px calc(104px + env(safe-area-inset-bottom));-webkit-animation:assadeira .38s cubic-bezier(.2,.9,.3,1);animation:assadeira .38s cubic-bezier(.2,.9,.3,1)}
+/* ⭐ A TRANSICAO DE ASSADEIRA: a tela nova entra deslizando de baixo, como a
+   bandeja que sai do forno. Corte seco parece prototipo; 0,38s de transicao
+   parece produto — e e o unico enfeite da lista que custa CSS e mais nada.
+   Curta de proposito: acima de ~0,45s a crianca sente que esta esperando. */
+@-webkit-keyframes assadeira{from{opacity:0;-webkit-transform:translateY(22px)}to{opacity:1;-webkit-transform:none}}
+@keyframes assadeira{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
 @-webkit-keyframes fade{from{opacity:0}to{opacity:1}}@keyframes fade{from{opacity:0}to{opacity:1}}
 .balao{position:relative;max-width:430px;background:rgba(255,253,246,.95);border:0;border-radius:22px;padding:13px 18px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
   -webkit-box-shadow:0 6px 18px rgba(30,50,20,.22);box-shadow:0 6px 18px rgba(30,50,20,.22)}
@@ -502,6 +508,7 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .jsFig img,.bsFig img,.oaFig img,.figrod img{
   -webkit-animation:figflutua 3.6s ease-in-out infinite;animation:figflutua 3.6s ease-in-out infinite}
 @media (prefers-reduced-motion: reduce){
+  .tela{-webkit-animation:fade .3s;animation:fade .3s}
   .pecabox img,.jsFig img,.bsFig img,.oaFig img,.figrod img{
     -webkit-animation:none !important;animation:none !important}
   /* o mascote para de bobear/pensar/festejar, mas a INCLINACAO do "estou
@@ -825,6 +832,7 @@ function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";
    contagem anda junto — a crianca ve a vitrine enchendo do mesmo jeito, com
    peca de tamanho que da para reconhecer. */
 var VITRINE=[];
+var FIM={titulo:"Muito bem!",texto:"Voce chegou ao fim.",cracha:"Campeao"};
 function poeVitrine(t, feitas){
   if(!VITRINE.length) return;
   var v=el("div","vitrine"), i, ini=0, fim=VITRINE.length;
@@ -1098,9 +1106,13 @@ function crachaEl(funcao){
 
 function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div","centro");
   var m=imgEl("med_"+ID.pre,"medal"); c.appendChild(m); segredoRelatorio(m);
-  c.appendChild(el("h1","","Jardineiro Mestre!"));
-  c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", v":"V")+"oc&#234; cuidou da planta do come&#231;o ao fim."));
-  c.appendChild(crachaEl("Jardineiro Mestre"));
+  /* ⚠️ LICAO PAGA: aqui era texto CRAVADO do Jardim ("Jardineiro Mestre!",
+     "voce cuidou da planta"), entao TODA atividade montada terminava chamando
+     a crianca de jardineira. E o pior lugar para um resto de clone: e a
+     ultima coisa que ela le. Agora sai do conteudo.json, como tudo mais. */
+  c.appendChild(el("h1","",FIM.titulo));
+  c.appendChild(el("div","sub",(perfil.nome?perfil.nome+", ":"")+FIM.texto));
+  c.appendChild(crachaEl(FIM.cracha));
   resumoAnimado(c);
   if(fracos().length){
     var bt=el("button","btntreino","Treinar o que faltou<small>s&#243; as partes que voc&#234; quer melhorar</small>");
