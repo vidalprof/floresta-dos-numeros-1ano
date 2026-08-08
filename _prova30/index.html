@@ -604,6 +604,36 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .centro .pecabox .hint{color:#fffdf6;background:rgba(58,48,32,.55);border-radius:999px;
   padding:6px 14px;display:inline-block;font-size:14px}
 
+/* ⭐⭐ TEXTO SOLTO SOBRE O FUNDO TEM QUE TER PLACA (medido, ago/2026)
+   Pedido do Marcos: *"sempre verificar se nao ha um contraste nas cores, para
+   que nao aconteca de a crianca nao conseguir enxergar"*.
+
+   O defeito e de PARENTESCO, nao de descuido: na bancada a peca roda sobre um
+   fundo LISO e escuro (#2b2118), e ali o creme e o amarelo dela passam
+   folgado. Dentro da atividade o mesmo texto cai sobre a FOTO — a madeira da
+   padaria, o ceu do observatorio — e a razao despenca. Medido na Padaria
+   depois que o portao do contraste passou a enxergar as fases: 45 textos
+   abaixo do minimo, o pior a 1,95:1 ("A PALAVRA E / PAO" em cima da estante).
+   Nenhum deles aparecia antes, porque o portao so media as telas de nome.
+
+   A regra da casa: rotulo, contador e frase que ficam DIRETO sobre o fundo
+   ganham uma placa escura translucida — o cartao ja tem a dele. A lista cresce
+   quando o portao achar um caso novo (agora ele acha).                        */
+.centro .pecabox .cont,.centro .pecabox .palv,.centro .pecabox .palvr,
+.centro .pecabox .bsVazio,.centro .pecabox .csDiz,.centro .pecabox .csConta,
+.centro .pecabox .csEsc,.centro .pecabox .frase,.centro .pecabox .m2_placar{
+  display:inline-block;background:rgba(38,28,20,.78);color:#fdf7ec;
+  border-radius:14px;padding:5px 14px;opacity:1}
+/* a vaga de arrastar tambem: a placa escura faz o numero aparecer E marca melhor
+   o lugar onde a peca entra. */
+.centro .pecabox .cam{background:rgba(38,28,20,.62);color:#fdf7ec}
+/* ⚠️ O BOTAO CLARO DA PECA (o "Recomecar" do pintar) — 1,24:1 medido, creme
+   sobre creme. `.btn` e vocabulario COMUM: a regra da peca nao e prefixada e
+   quem manda na cor e o tema da atividade, que pinta a letra de creme para a
+   madeira escura. So que `.bclaro` troca o fundo para bege e a letra creme
+   some. Quem muda o FUNDO tem que mudar a LETRA junto. */
+.centro .pecabox .bclaro{color:#3a2a12;text-shadow:0 1px 0 rgba(255,245,220,.55)}
+
 /* ⭐ O MEDALHAO: no Broto a figura da rodada e GRANDE, redonda e centrada — a
    arte e a estrela da tela, nao um selinho no canto do cartao. */
 .centro .pecabox .medalhao{width:168px;height:168px;margin:12px auto 4px;border-radius:50%;
