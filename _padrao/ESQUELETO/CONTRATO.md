@@ -723,3 +723,36 @@ traçar. Carimbo = já feito. Vidro = vitrine. A criança olha e sabe o que é
 **antes de ler** — e no 1º ano isso é a diferença entre entender e chutar.
 ⚠️ Metal, massa e vidro **nunca carregam letra**: a leitura neles foi medida e
 é fraca. São superfície, e superfície não é resposta.
+
+## ⚠️ LIÇÃO PAGA — A PEÇA NOVA E OS TRÊS TROPEÇOS DA ESTREIA (ago/2026)
+
+Escrever a peça das **caixas de som** (Elkonin) foi fácil; fazê-la ENTRAR na
+casa custou três defeitos, e os três são de família conhecida. Ficam aqui como
+a lista de conferência de toda peça nova.
+
+**1. COLISÃO DE NOME DE CLASSE.** As caixas nasceram como `.cx` — e `.cx` já é
+a **caixa de largar** na ponte de estilo (`.centro .pecabox .opt,.pc,.ficha,.cx`),
+que pinta cartão branco. Na bancada ficou perfeita; **dentro da atividade
+montada as caixinhas saíram brancas**. Colisão de nome não dá erro: dá um
+visual errado que só aparece quando a peça entra na atividade.
+→ **Nome de classe de peça nova se confere ANTES, contra a ponte e o motor.**
+
+**2. RENOMEAR CEGA O AUDITOR.** Troquei para `.csb` e o portão do jogador
+passou a dizer *"PRESO — a peça TRAVA"*. A peça estava perfeita; cego era o
+auditor, que só toca no que casa com a lista de seletores dele.
+→ **Classe nova = seletor novo no `_qa/jogador.js`, no MESMO commit.** E entra
+também no `VOCABULARIO_COMUM` do `integrar.py`, senão a renomeação automática
+a troca e cega o auditor de novo.
+
+**3. BONITA NO ESCURO, INVISÍVEL NA ATIVIDADE.** A caixa vazia era um contorno
+claro com 8% de fundo. Na bancada (fundo escuro liso) ficava ótima; sobre a
+foto da padaria as prateleiras apareciam através dela e a **caixinha sumia**.
+→ **Caixa vazia é o convite da peça: precisa de CORPO próprio**, que não
+dependa do que há atrás. Peça se olha nos dois lugares — sozinha e montada.
+
+### E o defeito que a própria correção criou
+Ao pôr rolagem no `escolher` (resposta presa atrás da barra), a opção parou de
+esticar na vertical e caiu para 62px: **400×62 = 6,5×**, acima do teto de 6 do
+diretor de arte. Consertado pelo lado da **largura** (360px), não da altura —
+engordar o botão roubaria justamente a altura que faltava na tela baixa.
+→ **Toda correção de leiaute se remede no portão do acabamento, sempre.**

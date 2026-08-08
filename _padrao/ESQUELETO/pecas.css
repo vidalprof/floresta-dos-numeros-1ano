@@ -714,7 +714,7 @@
 
 .mec-bater-silabas .bs_bsFig img{width:100%;height:100%;object-fit:contain}
 
-.mec-bater-silabas .bs_bsFig .semfig{font-size:13px;color:#6b5c46;padding:8px;text-align:center;font-weight:600}
+.mec-bater-silabas .bs_bsFig .semfig{font-size:15px;color:#2f2718;padding:8px;text-align:center;font-weight:800;letter-spacing:.5px}
 
 .mec-bater-silabas .bsBatidas{min-height:62px;margin:14px auto 4px;max-width:430px; display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center; -webkit-box-align:center;align-items:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
 
@@ -1085,6 +1085,70 @@
 .mec-caixa-dinheiro .balcao{min-height:62px}
 
 .mec-caixa-dinheiro .hint{display:none}}
+/* ==== PECA: caixas-de-som ==== */
+
+
+.mec-caixas-de-som .csPal{margin:10px auto 0;max-width:430px}
+
+.mec-caixas-de-som .csFig{width:82px;height:82px;margin:0 auto;display:block}
+
+.mec-caixas-de-som .csFig img{width:100%;height:100%;object-fit:contain}
+
+.mec-caixas-de-som .csEsc{font-size:30px;font-weight:800;letter-spacing:2px;color:#ffd54a;line-height:1.1;margin-top:4px}
+
+.mec-caixas-de-som .csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:#f0e6d4;opacity:.9}
+
+.mec-caixas-de-som .csCx{display:block;margin:14px auto 0;font-size:0;max-width:430px}
+
+.mec-caixas-de-som .csb{display:inline-block;vertical-align:top;width:62px;height:62px;margin:0 4px; border:3px dashed #b9a67f;border-radius:14px;background:rgba(255,253,246,.88); cursor:pointer;position:relative;-webkit-transition:background .2s,border-color .2s; transition:background .2s,border-color .2s}
+
+.mec-caixas-de-som .csb.cheia{background:#dff3d2;border-style:solid;border-color:#6da84a}
+
+.mec-caixas-de-som .csb .fic{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px; border-radius:50%;background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45); -webkit-animation:csEntra .28s cubic-bezier(.2,1.5,.4,1);animation:csEntra .28s cubic-bezier(.2,1.5,.4,1)}
+
+.mec-caixas-de-som from{-webkit-transform:scale(.2);opacity:0}
+
+.mec-caixas-de-som to{-webkit-transform:scale(1);opacity:1}
+
+.mec-caixas-de-som from{transform:scale(.2);opacity:0}
+
+.mec-caixas-de-som to{transform:scale(1);opacity:1}
+
+.mec-caixas-de-som .csb.alvo{border-color:#e0a92a;background:#fff3d2}
+
+.mec-caixas-de-som .csb.treme{-webkit-animation:csTreme .32s;animation:csTreme .32s}
+
+.mec-caixas-de-som 0%, .mec-caixas-de-som 100%{-webkit-transform:translateX(0)}
+
+.mec-caixas-de-som 25%{-webkit-transform:translateX(-5px)}
+
+.mec-caixas-de-som 75%{-webkit-transform:translateX(5px)}
+
+.mec-caixas-de-som 0%, .mec-caixas-de-som 100%{transform:translateX(0)}
+
+.mec-caixas-de-som 25%{transform:translateX(-5px)}
+
+.mec-caixas-de-som 75%{transform:translateX(5px)}
+
+.mec-caixas-de-som .csb .let{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:24px;font-weight:800; color:#2b2118;line-height:1;-webkit-animation:csEntra .3s;animation:csEntra .3s}
+
+.mec-caixas-de-som .csFic{display:block;margin:12px auto 0;font-size:0;min-height:44px}
+
+.mec-caixas-de-som .fichaq{display:inline-block;width:38px;height:38px;margin:3px;border-radius:50%; background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45);cursor:pointer; vertical-align:middle}
+
+.mec-caixas-de-som .fichaq.sel{-webkit-box-shadow:0 0 0 4px rgba(255,213,74,.5),inset 0 -3px 0 rgba(160,120,10,.45); box-shadow:0 0 0 4px rgba(255,213,74,.5),inset 0 -3px 0 rgba(160,120,10,.45)}
+
+.mec-caixas-de-som .fichaq.gasta{visibility:hidden}
+
+.mec-caixas-de-som .fant{position:fixed;z-index:50;width:38px;height:38px;border-radius:50%;background:#ffd54a; pointer-events:none;opacity:.9}
+
+.mec-caixas-de-som .csConta{display:block;font-size:14px;font-weight:700;color:#f0e6d4;margin-top:10px}
+
+.mec-caixas-de-som .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
+
+.mec-caixas-de-som .medal:before{content:"\2605"}@media (prefers-reduced-motion:reduce){
+
+.mec-caixas-de-som .csb .fic, .mec-caixas-de-som .csb .let, .mec-caixas-de-som .csb.treme{-webkit-animation:none;animation:none}}
 /* ==== PECA: calendario ==== */
 
 
@@ -2131,6 +2195,10 @@
 /* ==== PECA: escolher ==== */
 
 
+.mec-escolher .opts{display:block;max-height:calc(100vh - 260px);overflow-y:auto; -webkit-overflow-scrolling:touch}
+
+.mec-escolher .opts .opt{max-width:360px}
+
 .mec-escolher .opt{display:-webkit-box;display:flex; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center; background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:12px 16px; margin:9px auto;font-size:16px;font-weight:600;min-height:62px;max-width:430px; text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6; -webkit-transition:-webkit-transform .12s ease, box-shadow .12s ease; transition:transform .12s ease, box-shadow .12s ease}
 
 .mec-escolher .opt:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px); box-shadow:0 6px 0 #c9bda6}@media (prefers-reduced-motion:reduce){
@@ -2822,7 +2890,7 @@
 
 .mec-juntar-silabas .js_jsFig img{width:100%;height:100%;object-fit:contain}
 
-.mec-juntar-silabas .js_jsFig .semfig{font-size:13px;color:#6b5c46;padding:8px;text-align:center;font-weight:600}
+.mec-juntar-silabas .js_jsFig .semfig{font-size:15px;color:#2f2718;padding:8px;text-align:center;font-weight:800;letter-spacing:.5px}
 
 .mec-juntar-silabas .jsPronta{font-size:34px;font-weight:800;color:#ffd54a;margin-top:8px;letter-spacing:2px}
 

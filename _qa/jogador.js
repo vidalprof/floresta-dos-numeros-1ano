@@ -62,6 +62,13 @@ const {chromium}=require('/opt/node22/lib/node_modules/playwright/index.js');
       deu "PRESO" numa fase que funcionava: ele simplesmente nao enxergava
       onde tocar. Toda dinamica nova entra nesta lista no mesmo commit. */
    +',.vento,.tcor,.tinta,.palvo,.qcpc,.qcvaga,.seta'
+   /* ⚠️ LICAO PAGA, e a MESMA de sempre (ago/2026): peca nova com CLASSE nova
+      = seletor novo AQUI, no mesmo commit. As `caixas-de-som` nasceram com a
+      classe `.cx` e o jogador as via; renomeei para `.csb` (porque `.cx` colide
+      com a caixa de largar da ponte de estilo) e o portao passou a dizer
+      "PRESO — a peca TRAVA". A peca estava perfeita: cego era o auditor.
+      `.fichaq` entra junto — e por ela que se pega a ficha antes de empurrar. */
+   +',.csb,.fichaq'
    /* Terra dos Papagaios (ago/2026): o marca-texto (`.pal`, a palavra dentro
       do paragrafo) e a lupa do mapa antigo (`.lupamira`) repetiram a mesma
       historia — fases que funcionam, auditor cego, "PRESO". A lista e o

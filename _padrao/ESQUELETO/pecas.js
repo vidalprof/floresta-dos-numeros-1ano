@@ -4487,6 +4487,323 @@ function fimDaPeca(){
   })();
 };
 
+/* ==== PECA: caixas-de-som ==== */
+MEC["caixas-de-som"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-caixas-de-som";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ⭐ A GAVETA DE CONTEÚDO — troque APENAS este bloco.
+   Cada rodada é uma palavra. `sons` é o que a criança EMPURRA (um por som);
+   `letras` é o que aparece DEPOIS, dentro das caixas, ligando som e escrita.
+   ⚠️ `letras` pode ter mais de uma letra por caixa (o "CH" de CHÁ é UM som e
+   DUAS letras) — é justamente isso que a peça mostra no fim, e é por isso que
+   ela não pode ser feita contando letras. */
+var PALAVRAS=[
+  {pal:"PÃO",  img:"", sons:3, letras:["P","Ã","O"],
+   dicas:["Diga PÃO bem devagar e conte no dedo: quantos pedacinhos de som?",
+          "P... Ã... O. São três sons, então são três caixinhas.",
+          "Comece pela primeira caixinha, à esquerda: ela está acesa."]},
+  {pal:"MEL",  img:"", sons:3, letras:["M","E","L"],
+   dicas:["Diga MEL bem devagar e escute cada som.",
+          "M... E... L. Três sons, três caixinhas.",
+          "A próxima caixinha está acesa: empurre a ficha para ela."]},
+  {pal:"SAL",  img:"", sons:3, letras:["S","A","L"],
+   dicas:["Fale SAL devagar, alongando cada som.",
+          "S... A... L. Conte comigo: são três.",
+          "É esta caixinha acesa que espera a ficha agora."]}
+];
+var ENUN="Diga a palavra devagar e empurre <b>uma ficha</b> para cada som.";
+
+var rodada=0, posta=0, erros=0, ger=0, travada=false;
+var marcada=null, pegou=null, fantasma=null, x0=0, y0=0, arrastando=false;
+var ultimoToque=0, fimArrasto=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+function pecaCaixas(){
+  posta=0; erros=0; travada=false; marcada=null; pegou=null; arrastando=false; ger++;
+  var r=PALAVRAS[rodada];
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(rodada*100/PALAVRAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CAIXAS DE SOM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* a palavra: figura (se houver) + ESCRITA. O gemeo visual do som. */
+  var pv=el("div","csPal");
+  if(r.img){ var f=el("div","csFig"); var im=el("img"); im.src="img/"+r.img+".png"; im.alt="";
+             f.appendChild(im); pv.appendChild(f); }
+  pv.appendChild(el("div","csDiz","DIGA A PALAVRA"));
+  pv.appendChild(el("div","csEsc", r.pal));
+  c.appendChild(pv);
+
+  /* as caixas, uma por som */
+  var cxs=el("div","csCx"), i, b;
+  for(i=0;i<r.sons;i++){
+    b=el("div","csb","");
+    b.idx=i;
+    b.onclick=fazToqueCaixa(b);
+    cxs.appendChild(b);
+  }
+  c.appendChild(cxs);
+
+  /* o estoque de fichas: uma por som */
+  var fs=el("div","csFic");
+  for(i=0;i<r.sons;i++){
+    var q=el("div","fichaq","");
+    q.onclick=fazToqueFicha(q);
+    q.onmousedown=fazPega(q);
+    q.addEventListener("touchstart",fazToca(q),false);
+    fs.appendChild(q);
+  }
+  c.appendChild(fs);
+
+  c.appendChild(el("div","csConta","0 de "+r.sons+" sons"));
+  c.appendChild(el("div","hint","Toque na caixinha (ou arraste a ficha at&#233; ela). Sempre da esquerda para a direita."));
+  t.appendChild(c);
+  app.appendChild(t);
+  marcaProxima();
+}
+
+/* ⚠️ `data-qa` diz qual caixa serve AGORA — e SÓ o auditor-jogador olha para
+   isto. A criança não vê nada: se ela visse, a ordem deixaria de ser o
+   conteúdo e viraria "siga a marca". */
+function marcaProxima(){
+  var cx=app.getElementsByClassName("csb"), i;
+  for(i=0;i<cx.length;i++) cx[i].setAttribute("data-qa", i===posta ? "1" : "0");
+}
+function contaNaTela(){
+  var d=app.getElementsByClassName("csConta")[0];
+  if(d) d.innerHTML = posta+" de "+PALAVRAS[rodada].sons+" sons";
+}
+function proximaFichaLivre(){
+  var q=app.getElementsByClassName("fichaq"), i;
+  for(i=0;i<q.length;i++) if(q[i].className.indexOf("gasta")<0) return q[i];
+  return null;
+}
+
+/* ---- as DUAS PORTAS: tocar a caixa, ou arrastar a ficha até ela ---------- */
+function fazToqueFicha(q){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;      /* este clique e o rabo do arrasto */
+    if(q.className.indexOf("gasta")>=0) return;
+    sTap();
+    var todas=app.getElementsByClassName("fichaq"), i;
+    for(i=0;i<todas.length;i++)
+      if(todas[i].className.indexOf("gasta")<0) todas[i].className="fichaq";
+    q.className="fichaq sel"; marcada=q;
+  };
+}
+function fazToqueCaixa(b){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;
+    /* ⭐ tocar a caixa SEM ter escolhido ficha já empurra a próxima: no 1º ano
+       exigir dois toques onde um basta é atrito puro. A ficha marcada continua
+       valendo para quem gosta de escolher primeiro. */
+    poe(b, marcada || proximaFichaLivre());
+  };
+}
+function fazPega(q){
+  return function(ev){
+    if(souDedo()) return;              /* mouse FANTASMA do celular: ignora */
+    comeca(q, ev.clientX, ev.clientY);
+  };
+}
+function fazToca(q){
+  /* ⚠️ NUNCA `preventDefault` aqui — mata o toque no celular. Ele mora no
+     touchmove, e só enquanto há ficha na mão. */
+  return function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(q, d.clientX, d.clientY);
+  };
+}
+function comeca(q,x,y){
+  if(travada) return;
+  if(q.className.indexOf("gasta")>=0) return;
+  pegou=q; x0=x; y0=y; arrastando=false;
+}
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant","");
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-19)+"px";
+  fantasma.style.top=(y-19)+"px";
+}
+function solta(x,y){
+  if(fantasma&&fantasma.parentNode) fantasma.parentNode.removeChild(fantasma);
+  fantasma=null;
+  if(!pegou){ arrastando=false; return; }
+  var q=pegou; pegou=null;
+  if(!arrastando) return;
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y), i;
+  while(alvo && alvo!==document.body){
+    if(alvo.className && String(alvo.className).indexOf("csb")===0){ poe(alvo,q); return; }
+    alvo=alvo.parentNode;
+  }
+}
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  if(!pegou) return;
+  ev.preventDefault();
+  var d=ev.touches[0]; move(d.clientX,d.clientY);
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+/* ---- o coração: a ficha entra na caixa CERTA, na ORDEM certa ------------- */
+function poe(b,q){
+  if(travada||!b||!q) return;
+  if(b.className.indexOf("cheia")>=0) return;
+  var r=PALAVRAS[rodada], ge=ger;
+
+  if(b.idx!==posta){
+    /* ORDEM ERRADA: não é "erro de sistema", é o conteúdo da peça. */
+    sErro();
+    b.className="csb treme";
+    setTimeout(function(){ if(ge!==ger) return;
+      if(b.className.indexOf("cheia")<0) b.className="csb"; },340);
+    erros++;
+    mostraDica(r.dicas[Math.min(erros,r.dicas.length)-1]);
+    if(erros>=3) revela();
+    return;
+  }
+
+  sTap();
+  q.className="fichaq gasta";
+  marcada=null;
+  b.className="csb cheia";
+  b.appendChild(el("div","fic",""));
+  posta++;
+  contaNaTela();
+  marcaProxima();
+
+  if(posta>=r.sons){
+    travada=true;
+    /* ⭐ AGORA, e só agora, as LETRAS aparecem: primeiro o som, depois a letra.
+       É este o degrau que liga o que ela ouve ao que ela vai escrever. */
+    setTimeout(function(){
+      if(ge!==ger) return;
+      var cx=app.getElementsByClassName("csb"), i;
+      for(i=0;i<cx.length;i++){
+        var f=cx[i].getElementsByClassName("fic")[0];
+        if(f&&f.parentNode) f.parentNode.removeChild(f);
+        cx[i].appendChild(el("div","let", (r.letras&&r.letras[i]) || ""));
+      }
+      sCerto();
+      setTimeout(function(){
+        if(ge!==ger) return;
+        rodada++;
+        if(rodada>=PALAVRAS.length) mostraBanner("Voc&#234; ouviu todos os sons!", fimDaPeca);
+        else mostraBanner("Isso! <b>"+r.pal+"</b> tem "+r.sons+" sons.", pecaCaixas);
+      },1400);
+    },380);
+  }
+}
+
+/* 3º erro: acende a próxima caixa e DEIXA seguir — é o que garante que a peça
+   nunca trava. A informação também vai escrita na dica (nada só na cor). */
+function revela(){
+  var cx=app.getElementsByClassName("csb"), i;
+  for(i=0;i<cx.length;i++)
+    if(cx[i].className.indexOf("cheia")<0)
+      cx[i].className = (i===posta) ? "csb alvo" : "csb";
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; empurrou uma ficha para <b>cada som</b>. &#201; assim que a palavra vira escrita!"));
+  t.appendChild(c); app.appendChild(t);
+}
+    if(f && f.dados) PALAVRAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
+    pecaCaixas();
+  })();
+};
+
 /* ==== PECA: calendario ==== */
 MEC["calendario"] = function(f, cen, fim){
   cen.className = cen.className + " mec-calendario";

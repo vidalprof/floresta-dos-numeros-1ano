@@ -48,6 +48,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
    raspando por cima). */
 .opts{display:block;max-height:calc(100vh - 260px);overflow-y:auto;
       -webkit-overflow-scrolling:touch}
+/* ⚠️ E O DEFEITO QUE A PROPRIA CORRECAO CRIOU, medido no mesmo dia: com a
+   rolagem, a opcao parou de esticar na vertical e caiu para 62px de altura —
+   400x62 = 6,5 vezes mais larga que alta, acima do teto de 6 do portao do
+   diretor de arte ("nada de botoes muito esticado", regra do Marcos).
+   Conserto pelo lado da LARGURA, nao da altura: estreitar mantem a tela baixa
+   respirando, enquanto engordar o botao roubaria justamente a altura que
+   faltava. 360/62 = 5,8. */
+.opts .opt{max-width:360px}
 /* ⭐ FILEIRA RETA E BOTAO VIVO (ordem do Marcos, ago/2026: *"nada de botoes
    muito esticado, quero tudo simetrico no app"* e *"botoes lindos... quero
    bonito, animacoes etc"*).

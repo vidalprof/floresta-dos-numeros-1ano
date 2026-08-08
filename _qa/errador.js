@@ -14,7 +14,7 @@ const RECEITA={
     empurrar a ficha para uma caixa que nao e a proxima (data-qa="0"), que e
     exatamente o que a crianca faz quando ainda nao percebeu que som tem ordem. */
  'caixas-de-som':()=>{
-   var cx=[].slice.call(document.querySelectorAll('.cx'))
+   var cx=[].slice.call(document.querySelectorAll('.csb'))
      .filter(function(e){ return e.getAttribute('data-qa')==='0' &&
        e.className.indexOf('cheia')<0; });
    if(!cx.length) return null;

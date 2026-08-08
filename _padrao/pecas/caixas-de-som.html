@@ -81,26 +81,37 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .csEsc{font-size:30px;font-weight:800;letter-spacing:2px;color:#ffd54a;line-height:1.1;margin-top:4px}
 .csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:#f0e6d4;opacity:.9}
 
-/* AS CAIXAS: uma por som, lado a lado, sempre da esquerda para a direita. */
+/* AS CAIXAS: uma por som, lado a lado, sempre da esquerda para a direita.
+   ⚠️ LICAO PAGA (ago/2026): elas nasceram como `.cx` e as caixinhas sairam
+   BRANCAS dentro da atividade montada — `.cx` ja e o nome da CAIXA DE LARGAR
+   na ponte de estilo (`.centro .pecabox .opt,.pc,.ficha,.cx`), que pinta
+   cartao. Colisao de nome nao da erro: da um visual errado que so aparece
+   quando a peca entra na atividade, nunca na bancada. Nome de classe de peca
+   nova: confira antes contra a ponte e contra o motor. */
 .csCx{display:block;margin:14px auto 0;font-size:0;max-width:430px}
-.cx{display:inline-block;vertical-align:top;width:62px;height:62px;margin:0 4px;
-    border:3px dashed rgba(255,255,255,.45);border-radius:14px;background:rgba(255,255,255,.08);
+/* ⚠️ LICAO PAGA (ago/2026): a caixa vazia era so um contorno claro com fundo
+   de 8% — na bancada (fundo escuro liso) ficava otima, e DENTRO da atividade,
+   sobre a foto da padaria, as prateleiras apareciam atraves dela e a caixinha
+   sumia. Caixa VAZIA e o convite da peca: ela precisa de CORPO proprio, que
+   nao dependa do que ha atras. */
+.csb{display:inline-block;vertical-align:top;width:62px;height:62px;margin:0 4px;
+    border:3px dashed #b9a67f;border-radius:14px;background:rgba(255,253,246,.88);
     cursor:pointer;position:relative;-webkit-transition:background .2s,border-color .2s;
     transition:background .2s,border-color .2s}
 /* a caixa CHEIA: a ficha dentro dela. Nada de letra aqui — som nao e letra. */
-.cx.cheia{background:rgba(143,224,122,.20);border-style:solid;border-color:#8fe07a}
-.cx .fic{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;
+.csb.cheia{background:#dff3d2;border-style:solid;border-color:#6da84a}
+.csb .fic{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;
          border-radius:50%;background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45);
          -webkit-animation:csEntra .28s cubic-bezier(.2,1.5,.4,1);animation:csEntra .28s cubic-bezier(.2,1.5,.4,1)}
 @-webkit-keyframes csEntra{from{-webkit-transform:scale(.2);opacity:0}to{-webkit-transform:scale(1);opacity:1}}
 @keyframes csEntra{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
 /* a proxima caixa, revelada no 3o erro: acende E ganha a marca ESCRITA */
-.cx.alvo{border-color:#ffd54a;background:rgba(255,213,74,.22)}
-.cx.treme{-webkit-animation:csTreme .32s;animation:csTreme .32s}
+.csb.alvo{border-color:#e0a92a;background:#fff3d2}
+.csb.treme{-webkit-animation:csTreme .32s;animation:csTreme .32s}
 @-webkit-keyframes csTreme{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
 @keyframes csTreme{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 /* a LETRA so aparece no fim: primeiro o som, depois a letra. */
-.cx .let{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:24px;font-weight:800;
+.csb .let{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:24px;font-weight:800;
          color:#2b2118;line-height:1;-webkit-animation:csEntra .3s;animation:csEntra .3s}
 
 /* AS FICHAS que ainda nao foram empurradas: o estoque. */
@@ -121,7 +132,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
        font-size:44px;line-height:92px;text-align:center;font-weight:800}
 .medal:before{content:"\2605"}
 @media (prefers-reduced-motion:reduce){
-  .cx .fic,.cx .let,.cx.treme{-webkit-animation:none;animation:none}
+  .csb .fic,.csb .let,.csb.treme{-webkit-animation:none;animation:none}
 }
 </style></head>
 <body>
@@ -211,7 +222,7 @@ function pecaCaixas(){
   /* as caixas, uma por som */
   var cxs=el("div","csCx"), i, b;
   for(i=0;i<r.sons;i++){
-    b=el("div","cx","");
+    b=el("div","csb","");
     b.idx=i;
     b.onclick=fazToqueCaixa(b);
     cxs.appendChild(b);
@@ -240,7 +251,7 @@ function pecaCaixas(){
    isto. A criança não vê nada: se ela visse, a ordem deixaria de ser o
    conteúdo e viraria "siga a marca". */
 function marcaProxima(){
-  var cx=app.getElementsByClassName("cx"), i;
+  var cx=app.getElementsByClassName("csb"), i;
   for(i=0;i<cx.length;i++) cx[i].setAttribute("data-qa", i===posta ? "1" : "0");
 }
 function contaNaTela(){
@@ -316,7 +327,7 @@ function solta(x,y){
   arrastando=false; fimArrasto=agora();
   var alvo=document.elementFromPoint(x,y), i;
   while(alvo && alvo!==document.body){
-    if(alvo.className && String(alvo.className).indexOf("cx")===0){ poe(alvo,q); return; }
+    if(alvo.className && String(alvo.className).indexOf("csb")===0){ poe(alvo,q); return; }
     alvo=alvo.parentNode;
   }
 }
@@ -342,9 +353,9 @@ function poe(b,q){
   if(b.idx!==posta){
     /* ORDEM ERRADA: não é "erro de sistema", é o conteúdo da peça. */
     sErro();
-    b.className="cx treme";
+    b.className="csb treme";
     setTimeout(function(){ if(ge!==ger) return;
-      if(b.className.indexOf("cheia")<0) b.className="cx"; },340);
+      if(b.className.indexOf("cheia")<0) b.className="csb"; },340);
     erros++;
     mostraDica(r.dicas[Math.min(erros,r.dicas.length)-1]);
     if(erros>=3) revela();
@@ -354,7 +365,7 @@ function poe(b,q){
   sTap();
   q.className="fichaq gasta";
   marcada=null;
-  b.className="cx cheia";
+  b.className="csb cheia";
   b.appendChild(el("div","fic",""));
   posta++;
   contaNaTela();
@@ -366,7 +377,7 @@ function poe(b,q){
        É este o degrau que liga o que ela ouve ao que ela vai escrever. */
     setTimeout(function(){
       if(ge!==ger) return;
-      var cx=app.getElementsByClassName("cx"), i;
+      var cx=app.getElementsByClassName("csb"), i;
       for(i=0;i<cx.length;i++){
         var f=cx[i].getElementsByClassName("fic")[0];
         if(f&&f.parentNode) f.parentNode.removeChild(f);
@@ -386,10 +397,10 @@ function poe(b,q){
 /* 3º erro: acende a próxima caixa e DEIXA seguir — é o que garante que a peça
    nunca trava. A informação também vai escrita na dica (nada só na cor). */
 function revela(){
-  var cx=app.getElementsByClassName("cx"), i;
+  var cx=app.getElementsByClassName("csb"), i;
   for(i=0;i<cx.length;i++)
     if(cx[i].className.indexOf("cheia")<0)
-      cx[i].className = (i===posta) ? "cx alvo" : "cx";
+      cx[i].className = (i===posta) ? "csb alvo" : "csb";
 }
 
 function fimDaPeca(){

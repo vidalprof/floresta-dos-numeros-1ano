@@ -764,7 +764,8 @@ VOCABULARIO_COMUM = set("""balao selo opt opts hint tela centro prog dica btn
     banner medal pecabox progpeca show ok no sel usada cheia agora acesa pulsa
     feito certo errado tembalaopeca mec
     zap fone tocando
-    pc cam lig par pchip peca qcpc qcvaga mcarta""".split())
+    pc cam lig par pchip peca qcpc qcvaga mcarta
+    csb fichaq""".split())
 # ⚠️⚠️ A SEGUNDA LICAO DO `zap`, e ela e MAIOR: o vocabulario dos AUDITORES
 #    tambem e contrato. O integrador renomeou `.pc` para `.o_pc` na peca de
 #    ordenar — renomeacao correta, sem colisao nenhuma — e com isso o
