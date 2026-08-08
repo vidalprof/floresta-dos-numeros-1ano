@@ -696,6 +696,70 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-bater-silabas .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
 .mec-bater-silabas .medal:before{content:"\2605"}
+/* ==== PECA: caixas-de-som ==== */
+
+
+.mec-caixas-de-som .csPal{margin:10px auto 0;max-width:430px}
+
+.mec-caixas-de-som .csFig{width:82px;height:82px;margin:0 auto;display:block}
+
+.mec-caixas-de-som .csFig img{width:100%;height:100%;object-fit:contain}
+
+.mec-caixas-de-som .csEsc{font-size:30px;font-weight:800;letter-spacing:2px;color:#ffd54a;line-height:1.1;margin-top:4px}
+
+.mec-caixas-de-som .csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:#f0e6d4;opacity:.9}
+
+.mec-caixas-de-som .csCx{display:block;margin:14px auto 0;font-size:0;max-width:430px}
+
+.mec-caixas-de-som .csb{display:inline-block;vertical-align:top;width:62px;height:62px;margin:0 4px; border:3px dashed #b9a67f;border-radius:14px;background:rgba(255,253,246,.88); cursor:pointer;position:relative;-webkit-transition:background .2s,border-color .2s; transition:background .2s,border-color .2s}
+
+.mec-caixas-de-som .csb.cheia{background:#dff3d2;border-style:solid;border-color:#6da84a}
+
+.mec-caixas-de-som .csb .fic{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px; border-radius:50%;background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45); -webkit-animation:csEntra .28s cubic-bezier(.2,1.5,.4,1);animation:csEntra .28s cubic-bezier(.2,1.5,.4,1)}
+
+.mec-caixas-de-som from{-webkit-transform:scale(.2);opacity:0}
+
+.mec-caixas-de-som to{-webkit-transform:scale(1);opacity:1}
+
+.mec-caixas-de-som from{transform:scale(.2);opacity:0}
+
+.mec-caixas-de-som to{transform:scale(1);opacity:1}
+
+.mec-caixas-de-som .csb.alvo{border-color:#e0a92a;background:#fff3d2}
+
+.mec-caixas-de-som .csb.treme{-webkit-animation:csTreme .32s;animation:csTreme .32s}
+
+.mec-caixas-de-som 0%, .mec-caixas-de-som 100%{-webkit-transform:translateX(0)}
+
+.mec-caixas-de-som 25%{-webkit-transform:translateX(-5px)}
+
+.mec-caixas-de-som 75%{-webkit-transform:translateX(5px)}
+
+.mec-caixas-de-som 0%, .mec-caixas-de-som 100%{transform:translateX(0)}
+
+.mec-caixas-de-som 25%{transform:translateX(-5px)}
+
+.mec-caixas-de-som 75%{transform:translateX(5px)}
+
+.mec-caixas-de-som .csb .let{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:24px;font-weight:800; color:#2b2118;line-height:1;-webkit-animation:csEntra .3s;animation:csEntra .3s}
+
+.mec-caixas-de-som .csFic{display:block;margin:12px auto 0;font-size:0;min-height:44px}
+
+.mec-caixas-de-som .fichaq{display:inline-block;width:38px;height:38px;margin:3px;border-radius:50%; background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45);cursor:pointer; vertical-align:middle}
+
+.mec-caixas-de-som .fichaq.sel{-webkit-box-shadow:0 0 0 4px rgba(255,213,74,.5),inset 0 -3px 0 rgba(160,120,10,.45); box-shadow:0 0 0 4px rgba(255,213,74,.5),inset 0 -3px 0 rgba(160,120,10,.45)}
+
+.mec-caixas-de-som .fichaq.gasta{visibility:hidden}
+
+.mec-caixas-de-som .fant{position:fixed;z-index:50;width:38px;height:38px;border-radius:50%;background:#ffd54a; pointer-events:none;opacity:.9}
+
+.mec-caixas-de-som .csConta{display:block;font-size:14px;font-weight:700;color:#f0e6d4;margin-top:10px}
+
+.mec-caixas-de-som .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
+
+.mec-caixas-de-som .medal:before{content:"\2605"}@media (prefers-reduced-motion:reduce){
+
+.mec-caixas-de-som .csb .fic, .mec-caixas-de-som .csb .let, .mec-caixas-de-som .csb.treme{-webkit-animation:none;animation:none}}
 /* ==== PECA: classificar ==== */
 
 
@@ -768,6 +832,44 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-completar 75%{transform:translateX(6px)}
 
 .mec-completar .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%; background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center; box-shadow:0 6px 0 #c9a52f}
+/* ==== PECA: digitar ==== */
+
+
+.mec-digitar .vagas{display:block;text-align:center;margin:13px auto 12px}
+
+.mec-digitar .vaga{display:inline-block;vertical-align:top;width:44px;height:50px;line-height:44px;margin:0 2px; border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10); color:#f4efe6;font-size:24px;font-weight:800;text-align:center}
+
+.mec-digitar .vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12}
+
+.mec-digitar .d2_letras{display:block;text-align:center;margin-top:6px}
+
+.mec-digitar .tecl{display:inline-block;width:46px;height:46px;line-height:46px;margin:4px 3px; background:#fffdf6;color:#221a12;border:0;border-radius:12px;font-size:22px;font-weight:800; text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+
+.mec-digitar .tecl:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+
+.mec-digitar .tecl.usada{visibility:hidden;pointer-events:none}
+
+.mec-digitar .tecl.d2_pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+
+.mec-digitar .tecl.treme{-webkit-animation:treme .32s;animation:treme .32s}
+
+.mec-digitar 0%, .mec-digitar 100%{box-shadow:0 4px 0 #c9bda6}
+
+.mec-digitar 50%{box-shadow:0 0 0 5px #ffd54a}
+
+.mec-digitar 0%, .mec-digitar 100%{box-shadow:0 4px 0 #c9bda6}
+
+.mec-digitar 50%{box-shadow:0 0 0 5px #ffd54a}
+
+.mec-digitar 25%{-webkit-transform:translateX(-6px)}
+
+.mec-digitar 75%{-webkit-transform:translateX(6px)}
+
+.mec-digitar 25%{transform:translateX(-6px)}
+
+.mec-digitar 75%{transform:translateX(6px)}
+
+.mec-digitar .medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%; background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center; box-shadow:0 6px 0 #c9a52f}
 /* ==== PECA: escolher ==== */
 
 
@@ -790,6 +892,62 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mec-escolher .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
 
 .mec-escolher .medal:before{content:"\2605"}
+/* ==== PECA: intruso ==== */
+
+
+.mec-intruso .opts .opt{max-width:360px;min-height:62px}
+
+.mec-intruso .opt.incoisa{padding:11px 14px;font-size:17px;font-weight:800;letter-spacing:.3px;text-align:left}
+
+.mec-intruso .opt.inrazao{padding:11px 14px;font-size:15px;font-weight:600;line-height:1.35;text-align:left}
+
+.mec-intruso .innome{display:inline-block;vertical-align:middle}
+
+.mec-intruso .innum{font-size:24px;font-weight:800}
+
+.mec-intruso .opt.injat{background:#eee5da;box-shadow:0 2px 0 #c9bda6;opacity:.9}
+
+.mec-intruso .inmarca{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:9px; background:#f0d3ca;color:#5a2418;font-size:12px;font-weight:800; letter-spacing:.3px;vertical-align:middle}
+
+.mec-intruso .inmarca.inok{background:#1f6b12;color:#fff}
+
+.mec-intruso .opt.intreme{-webkit-animation:intr .32s;animation:intr .32s}
+
+.mec-intruso 25%{-webkit-transform:translateX(-6px)}
+
+.mec-intruso 75%{-webkit-transform:translateX(6px)}
+
+.mec-intruso 25%{transform:translateX(-6px)}
+
+.mec-intruso 75%{transform:translateX(6px)}
+
+.mec-intruso .infig{display:inline-block;vertical-align:middle;margin-right:12px}
+
+.mec-intruso .inquad{width:34px;height:34px;background:#3c6ee0;border:2px solid #1d3f8f;border-radius:4px}
+
+.mec-intruso .inret{width:48px;height:26px;background:#3c6ee0;border:2px solid #1d3f8f;border-radius:4px}
+
+.mec-intruso .inlos{width:30px;height:30px;background:#3c6ee0;border:2px solid #1d3f8f; -webkit-transform:rotate(45deg);transform:rotate(45deg)}
+
+.mec-intruso .intri{width:0;height:0;border-left:20px solid transparent;border-right:20px solid transparent; border-bottom:34px solid #3c6ee0}
+
+.mec-intruso .inregra{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 13px;margin:13px auto 0; max-width:400px;font-size:15px;font-weight:600;line-height:1.45;text-align:left}
+
+.mec-intruso .inregra b{color:#1f4f0c}
+
+.mec-intruso .medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a; border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608; font-size:44px;line-height:92px;text-align:center;font-weight:800}
+
+.mec-intruso .medal:before{content:"\2605"}@media(max-height:520px){
+
+.mec-intruso .hint{display:none}
+
+.mec-intruso .opt.incoisa{padding:9px 13px;margin:6px auto}
+
+.mec-intruso .opt.inrazao{padding:8px 13px;margin:6px auto;font-size:14px}
+
+.mec-intruso .medal{width:64px;height:64px;border-width:4px;font-size:28px;line-height:52px;margin-bottom:8px}
+
+.mec-intruso .inregra{font-size:13px;padding:7px 11px}}
 /* ==== PECA: juntar-silabas ==== */
 
 
@@ -3189,6 +3347,323 @@ function fimDaPeca(){
   })();
 };
 
+/* ==== PECA: caixas-de-som ==== */
+MEC["caixas-de-som"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-caixas-de-som";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ⭐ A GAVETA DE CONTEÚDO — troque APENAS este bloco.
+   Cada rodada é uma palavra. `sons` é o que a criança EMPURRA (um por som);
+   `letras` é o que aparece DEPOIS, dentro das caixas, ligando som e escrita.
+   ⚠️ `letras` pode ter mais de uma letra por caixa (o "CH" de CHÁ é UM som e
+   DUAS letras) — é justamente isso que a peça mostra no fim, e é por isso que
+   ela não pode ser feita contando letras. */
+var PALAVRAS=[
+  {pal:"PÃO",  img:"", sons:3, letras:["P","Ã","O"],
+   dicas:["Diga PÃO bem devagar e conte no dedo: quantos pedacinhos de som?",
+          "P... Ã... O. São três sons, então são três caixinhas.",
+          "Comece pela primeira caixinha, à esquerda: ela está acesa."]},
+  {pal:"MEL",  img:"", sons:3, letras:["M","E","L"],
+   dicas:["Diga MEL bem devagar e escute cada som.",
+          "M... E... L. Três sons, três caixinhas.",
+          "A próxima caixinha está acesa: empurre a ficha para ela."]},
+  {pal:"SAL",  img:"", sons:3, letras:["S","A","L"],
+   dicas:["Fale SAL devagar, alongando cada som.",
+          "S... A... L. Conte comigo: são três.",
+          "É esta caixinha acesa que espera a ficha agora."]}
+];
+var ENUN="Diga a palavra devagar e empurre <b>uma ficha</b> para cada som.";
+
+var rodada=0, posta=0, erros=0, ger=0, travada=false;
+var marcada=null, pegou=null, fantasma=null, x0=0, y0=0, arrastando=false;
+var ultimoToque=0, fimArrasto=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+function pecaCaixas(){
+  posta=0; erros=0; travada=false; marcada=null; pegou=null; arrastando=false; ger++;
+  var r=PALAVRAS[rodada];
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(rodada*100/PALAVRAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CAIXAS DE SOM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* a palavra: figura (se houver) + ESCRITA. O gemeo visual do som. */
+  var pv=el("div","csPal");
+  if(r.img){ var f=el("div","csFig"); var im=el("img"); im.src="img/"+r.img+".png"; im.alt="";
+             f.appendChild(im); pv.appendChild(f); }
+  pv.appendChild(el("div","csDiz","DIGA A PALAVRA"));
+  pv.appendChild(el("div","csEsc", r.pal));
+  c.appendChild(pv);
+
+  /* as caixas, uma por som */
+  var cxs=el("div","csCx"), i, b;
+  for(i=0;i<r.sons;i++){
+    b=el("div","csb","");
+    b.idx=i;
+    b.onclick=fazToqueCaixa(b);
+    cxs.appendChild(b);
+  }
+  c.appendChild(cxs);
+
+  /* o estoque de fichas: uma por som */
+  var fs=el("div","csFic");
+  for(i=0;i<r.sons;i++){
+    var q=el("div","fichaq","");
+    q.onclick=fazToqueFicha(q);
+    q.onmousedown=fazPega(q);
+    q.addEventListener("touchstart",fazToca(q),false);
+    fs.appendChild(q);
+  }
+  c.appendChild(fs);
+
+  c.appendChild(el("div","csConta","0 de "+r.sons+" sons"));
+  c.appendChild(el("div","hint","Toque na caixinha (ou arraste a ficha at&#233; ela). Sempre da esquerda para a direita."));
+  t.appendChild(c);
+  app.appendChild(t);
+  marcaProxima();
+}
+
+/* ⚠️ `data-qa` diz qual caixa serve AGORA — e SÓ o auditor-jogador olha para
+   isto. A criança não vê nada: se ela visse, a ordem deixaria de ser o
+   conteúdo e viraria "siga a marca". */
+function marcaProxima(){
+  var cx=app.getElementsByClassName("csb"), i;
+  for(i=0;i<cx.length;i++) cx[i].setAttribute("data-qa", i===posta ? "1" : "0");
+}
+function contaNaTela(){
+  var d=app.getElementsByClassName("csConta")[0];
+  if(d) d.innerHTML = posta+" de "+PALAVRAS[rodada].sons+" sons";
+}
+function proximaFichaLivre(){
+  var q=app.getElementsByClassName("fichaq"), i;
+  for(i=0;i<q.length;i++) if(q[i].className.indexOf("gasta")<0) return q[i];
+  return null;
+}
+
+/* ---- as DUAS PORTAS: tocar a caixa, ou arrastar a ficha até ela ---------- */
+function fazToqueFicha(q){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;      /* este clique e o rabo do arrasto */
+    if(q.className.indexOf("gasta")>=0) return;
+    sTap();
+    var todas=app.getElementsByClassName("fichaq"), i;
+    for(i=0;i<todas.length;i++)
+      if(todas[i].className.indexOf("gasta")<0) todas[i].className="fichaq";
+    q.className="fichaq sel"; marcada=q;
+  };
+}
+function fazToqueCaixa(b){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;
+    /* ⭐ tocar a caixa SEM ter escolhido ficha já empurra a próxima: no 1º ano
+       exigir dois toques onde um basta é atrito puro. A ficha marcada continua
+       valendo para quem gosta de escolher primeiro. */
+    poe(b, marcada || proximaFichaLivre());
+  };
+}
+function fazPega(q){
+  return function(ev){
+    if(souDedo()) return;              /* mouse FANTASMA do celular: ignora */
+    comeca(q, ev.clientX, ev.clientY);
+  };
+}
+function fazToca(q){
+  /* ⚠️ NUNCA `preventDefault` aqui — mata o toque no celular. Ele mora no
+     touchmove, e só enquanto há ficha na mão. */
+  return function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(q, d.clientX, d.clientY);
+  };
+}
+function comeca(q,x,y){
+  if(travada) return;
+  if(q.className.indexOf("gasta")>=0) return;
+  pegou=q; x0=x; y0=y; arrastando=false;
+}
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant","");
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-19)+"px";
+  fantasma.style.top=(y-19)+"px";
+}
+function solta(x,y){
+  if(fantasma&&fantasma.parentNode) fantasma.parentNode.removeChild(fantasma);
+  fantasma=null;
+  if(!pegou){ arrastando=false; return; }
+  var q=pegou; pegou=null;
+  if(!arrastando) return;
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y), i;
+  while(alvo && alvo!==document.body){
+    if(alvo.className && String(alvo.className).indexOf("csb")===0){ poe(alvo,q); return; }
+    alvo=alvo.parentNode;
+  }
+}
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  if(!pegou) return;
+  ev.preventDefault();
+  var d=ev.touches[0]; move(d.clientX,d.clientY);
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+/* ---- o coração: a ficha entra na caixa CERTA, na ORDEM certa ------------- */
+function poe(b,q){
+  if(travada||!b||!q) return;
+  if(b.className.indexOf("cheia")>=0) return;
+  var r=PALAVRAS[rodada], ge=ger;
+
+  if(b.idx!==posta){
+    /* ORDEM ERRADA: não é "erro de sistema", é o conteúdo da peça. */
+    sErro();
+    b.className="csb treme";
+    setTimeout(function(){ if(ge!==ger) return;
+      if(b.className.indexOf("cheia")<0) b.className="csb"; },340);
+    erros++;
+    mostraDica(r.dicas[Math.min(erros,r.dicas.length)-1]);
+    if(erros>=3) revela();
+    return;
+  }
+
+  sTap();
+  q.className="fichaq gasta";
+  marcada=null;
+  b.className="csb cheia";
+  b.appendChild(el("div","fic",""));
+  posta++;
+  contaNaTela();
+  marcaProxima();
+
+  if(posta>=r.sons){
+    travada=true;
+    /* ⭐ AGORA, e só agora, as LETRAS aparecem: primeiro o som, depois a letra.
+       É este o degrau que liga o que ela ouve ao que ela vai escrever. */
+    setTimeout(function(){
+      if(ge!==ger) return;
+      var cx=app.getElementsByClassName("csb"), i;
+      for(i=0;i<cx.length;i++){
+        var f=cx[i].getElementsByClassName("fic")[0];
+        if(f&&f.parentNode) f.parentNode.removeChild(f);
+        cx[i].appendChild(el("div","let", (r.letras&&r.letras[i]) || ""));
+      }
+      sCerto();
+      setTimeout(function(){
+        if(ge!==ger) return;
+        rodada++;
+        if(rodada>=PALAVRAS.length) mostraBanner("Voc&#234; ouviu todos os sons!", fimDaPeca);
+        else mostraBanner("Isso! <b>"+r.pal+"</b> tem "+r.sons+" sons.", pecaCaixas);
+      },1400);
+    },380);
+  }
+}
+
+/* 3º erro: acende a próxima caixa e DEIXA seguir — é o que garante que a peça
+   nunca trava. A informação também vai escrita na dica (nada só na cor). */
+function revela(){
+  var cx=app.getElementsByClassName("csb"), i;
+  for(i=0;i<cx.length;i++)
+    if(cx[i].className.indexOf("cheia")<0)
+      cx[i].className = (i===posta) ? "csb alvo" : "csb";
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; empurrou uma ficha para <b>cada som</b>. &#201; assim que a palavra vira escrita!"));
+  t.appendChild(c); app.appendChild(t);
+}
+    if(f && f.dados) PALAVRAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
+    }
+    pecaCaixas();
+  })();
+};
+
 /* ==== PECA: classificar ==== */
 MEC["classificar"] = function(f, cen, fim){
   cen.className = cen.className + " mec-classificar";
@@ -3736,6 +4211,242 @@ function recomeca(){ rodada=0; telaCompletar(); }
   })();
 };
 
+/* ==== PECA: digitar ==== */
+MEC["digitar"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-digitar";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* MONTE A PALAVRA — teclado na tela, letra por letra, na ordem.
+   ⚠️ `pal` vai SEM ACENTO de proposito: o teclado da crianca nao tem tecla de
+   acento, entao palavra acentuada aqui viraria erro garantido. A pista pode
+   ter acento a vontade — ela e lida, nao digitada. */
+var PALAVRAS=[
+  {palavra:"GATO",  pista:"Bicho que mia e gosta de dormir no sol.",
+   dic:"Diga a palavra devagar: <b>GA-TO</b>."},
+  {palavra:"PEIXE", pista:"Ele nada e vive dentro da &#225;gua.",
+   dic:"Comece pelo som <b>PEI</b>."},
+  {palavra:"ESCOLA",pista:"Lugar onde a gente estuda e encontra os amigos.",
+   dic:"&#201; a palavra <b>ES-CO-LA</b>."}
+];
+var LETRAS="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+var rodada=0, pos=0, errosSeg=0, telaAtual=null, barraP=null;
+var palavra="", vagas=[], teclas=[];
+
+function telaDigitar(){
+  limpa();
+  pos=0; errosSeg=0; vagas=[]; teclas=[];
+  var r=PALAVRAS[rodada];
+  palavra=r.palavra;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/PALAVRAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro"), i, v, b;
+  c.appendChild(el("div","selo","PALAVRA "+(rodada+1)+" DE "+PALAVRAS.length));
+  c.appendChild(el("div","balao","<b>"+r.pista+"</b><br>Monte a palavra, letra por letra."));
+  var cx=el("div","vagas");
+  for(i=0;i<palavra.length;i++){ v=el("div","vaga",""); cx.appendChild(v); vagas.push(v); }
+  c.appendChild(cx);
+  /* o teclado da tela: as letras DESTA palavra, embaralhadas. `data-qa` na
+     caixa e so para o auditor-jogador; a crianca nao ve nada. */
+  var tec=el("div","d2_letras");
+  tec.setAttribute("data-qa",palavra);
+  var soltas=baguncar(palavra.split(""));
+  for(i=0;i<soltas.length;i++){
+    b=el("div","tecl",soltas[i]);
+    b.letra=soltas[i];
+    b.onclick=toqueTecla;
+    tec.appendChild(b); teclas.push(b);
+  }
+  c.appendChild(tec);
+  c.appendChild(el("div","hint","Toque nas d2_letras <b>ou</b> use o teclado do computador."));
+  t.appendChild(c); app.appendChild(t);
+  /* PORTA 2: o teclado de verdade. Vale a mesma regra do toque. */
+  document.onkeydown=teclaReal;
+}
+
+/* ---------- as DUAS portas de entrada da mesma letra ---------- */
+function toqueTecla(){
+  if(this.className.indexOf("usada")>=0) return;
+  sTap();
+  usaLetra(this.letra,this);
+}
+/* ⚠️ o guarda `!telaAtual.parentNode` aqui e o que impede o teclado de ficar
+   preso na fase anterior quando a tela ja trocou. */
+function teclaReal(ev){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  var k=ev.key||"";
+  if(!k&&(ev.keyCode||ev.which)) k=String.fromCharCode(ev.keyCode||ev.which);
+  k=String(k).toUpperCase();
+  if(k.length!==1||LETRAS.indexOf(k)<0) return;
+  sTap();
+  usaLetra(k,achaTecla(k));
+}
+function achaTecla(k){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].letra===k&&teclas[i].className.indexOf("usada")<0) return teclas[i];
+  return null;
+}
+
+/* ---------- a regra da fase ---------- */
+function usaLetra(k,bot){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  if(pos>=palavra.length) return;
+  if(k===palavra.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
+}
+function poeLetra(k,bot){
+  vagas[pos].className="vaga cheia";
+  vagas[pos].innerHTML=k;
+  if(bot) bot.className="tecl usada";
+  pos++; errosSeg=0;
+  apagaDica();
+  limpaPisca();
+  sCerto();
+  if(barraP) barraP.style.width=Math.round((rodada*palavra.length+pos)*100/(PALAVRAS.length*palavra.length))+"%";
+  if(pos>=palavra.length) fechaRodada();
+}
+function erraLetra(bot){
+  sErro(); errosSeg++;
+  if(bot){ bot.className="tecl treme"; destreme(bot); }
+  ajuda(errosSeg);
+}
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("usada")<0) b.className="tecl";
+  },340);
+}
+/* o andaime CRESCE: dica -> a letra da vez pisca -> revelar e seguir.
+   Nunca X, nunca "errou", nunca fica travado. */
+function ajuda(n){
+  if(n===1){
+    mostraDica(PALAVRAS[rodada].dic);
+  }else if(n===2){
+    mostraDica("A letra que vem agora est&#225; <b>piscando</b>.");
+    acendeCerta();
+  }else{
+    mostraDica("Era esta! Eu coloco e voc&#234; segue.");
+    revela();
+  }
+}
+function acendeCerta(){
+  var k=palavra.charAt(pos), b=achaTecla(k);
+  limpaPisca();
+  if(b) b.className="tecl d2_pisca";
+}
+function limpaPisca(){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].className.indexOf("d2_pisca")>=0) teclas[i].className="tecl";
+}
+function revela(){
+  var k=palavra.charAt(pos);
+  poeLetra(k,achaTecla(k));
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* ⚠️ o temporizador da rodada continua correndo depois que a tela sai. Sem o
+   guarda `!telaAtual.parentNode` ele montaria a rodada seguinte por cima de
+   outra tela — e o `onkeydown` ficaria preso na fase anterior. */
+function fechaRodada(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    proxima();
+  },900);
+}
+function proxima(){
+  rodada++;
+  if(rodada<PALAVRAS.length){ telaDigitar(); return; }
+  document.onkeydown=null;
+  mostraBanner("Voc&#234; montou as tr&#234;s palavras!",telaFim);
+}
+
+function telaFim(){
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; montou <b>letra por letra</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; telaDigitar(); }
+    if(f && f.dados) PALAVRAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LETRAS !== undefined) LETRAS = _d.LETRAS;
+    }
+    telaDigitar();
+  })();
+};
+
 /* ==== PECA: escolher ==== */
 MEC["escolher"] = function(f, cen, fim){
   cen.className = cen.className + " mec-escolher";
@@ -3938,6 +4649,409 @@ function fimDaPeca(){
 }
     if(f && f.dados) QZ = f.dados;
     pecaEscolher();
+  })();
+};
+
+/* ==== PECA: intruso ==== */
+MEC["intruso"] = function(f, cen, fim){
+  cen.className = cen.className + " mec-intruso";
+  /* ⚠️⚠️ LICAO PAGA, e a mais silenciosa de todas: a peca da MEMORIA declara a
+     PROPRIA `function fim()`. Como o corpo dela entra dentro do fechamento, esse
+     `fim` SOMBREAVA o parametro da ponte — e o `mostraBanner` daqui, que devia
+     levar a fase seguinte, chamava a peca de volta. Laco infinito, sem erro de
+     JS nenhum: o jogador so ficava PRESO, com todos os pares ja fechados e a
+     medalha da peca na tela. Por isso a continuacao mora AQUI FORA, com um nome
+     que o integrador confere que nenhuma peca usa (ver `confere_contra_motor`).
+     E ela so dispara UMA vez: peca que chama o banner duas vezes pularia fase. */
+  var _seguir = function(){ if(_seguir.ja) return; _seguir.ja = 1; fim(); };
+  /* recolhe o enunciado da fase assim que a peca puser o balao dela (ver CSS) */
+  setTimeout(function(){
+    var b = cen.getElementsByClassName("pecabox")[0];
+    if(b && b.getElementsByClassName("balao").length)
+      cen.className = cen.className + " tembalaopeca";
+  }, 120);
+  (function(){
+    /* a peca acha que esta sozinha; estes ajudantes fazem o meio de campo */
+    var app = cen;
+    /* o `ac()` DESTA peca: destrava o som (o motor chama isso de `arma()`) e
+       devolve o AudioContext do motor. Fica local, dentro do fechamento, para
+       nao brigar com o `var ac` do motor — que e o objeto, nao a funcao. */
+    function ac(){ if(typeof arma === "function") arma(); return window.ac; }
+    function limpa(){ var g = cen.getElementsByClassName("pecabox")[0];
+      if(g) g.innerHTML = ""; else { g = document.createElement("div");
+      g.className = "pecabox"; cen.appendChild(g); } app = g; }
+    /* ⚠️ LICAO PAGA: este ajudante era um VAZIO — "quem manda na barra e o
+       motor". So que o caca-palavras faz `setProg(t,0)` e depois PEGA A BARRA
+       DE VOLTA (`t.getElementsByTagName("i")[0]`) para mostrar quantas palavras
+       ja achou. Com o vazio, ele pegava `undefined` e estourava no primeiro
+       toque: 446 erros de JS numa partida. Regra: o ajudante da ponte tem que
+       FAZER o que o de verdade faz — nao pode so nao atrapalhar.
+       A barra da PECA e a de dentro da fase (5 palavras achadas de 8); a do
+       MOTOR e a da atividade (fase 4 de 32). As duas informam coisas
+       diferentes, entao as duas ficam — a de dentro, menorzinha (ver CSS). */
+    function setProg(t, p){
+      if(!t || !t.appendChild) return;
+      var pr = document.createElement("div"); pr.className = "prog progpeca";
+      var i = document.createElement("i"); i.style.width = (p || 0) + "%";
+      pr.appendChild(i); t.appendChild(pr);
+    }
+    /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos JOGANDO: *"esta passando de
+       fase sem aquele botao azul que aparecia com a palavra proximo... tem que
+       ser parecida com a atividade do Broto"*.
+
+       Esta ponte comemorava e PULAVA para a fase seguinte sozinha, 420ms
+       depois. A crianca terminava uma fase e era JOGADA na outra: sem a tela de
+       parabens, sem o mascote dizendo o que ela conseguiu, sem o botao para ela
+       decidir quando seguir. No Broto — que e o modelo — cada fase fecha com o
+       banner e a crianca TOCA para continuar. Era o fecho de toda fase de toda
+       atividade montada que estava faltando.
+
+       Agora a ponte chama o banner DE VERDADE do motor (`window.mostraBanner`,
+       que a funcao local aqui dentro sombreia) e entrega o `_seguir` como o
+       botao. A peca continua so avisando que acabou; quem manda no caminho
+       segue sendo o motor — mas com a comemoracao no meio. */
+    function mostraBanner(msg, cb){
+      if(typeof festa === "function") festa();
+      if(typeof window.mostraBanner === "function"){
+        window.mostraBanner(msg || "Muito bem!", _seguir); return;
+      }
+      setTimeout(_seguir, 420);
+    }
+    limpa();
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------- O CONTEÚDO ----------------
+   `itens` = as quatro coisas (a de fora é `fora`).
+   `razoes` = as três justificativas; `ok:1` é a que separa o grupo, e as
+   outras duas são VERDADES sobre o intruso que NÃO separam o grupo (é o que
+   faz o segundo passo valer alguma coisa).
+   `d1..d3` = os degraus do andaime no passo ACHAR;
+   `p1..p3` = os degraus do andaime no passo POR QUÊ;
+   `regra`  = a frase que a criança leva embora.                            */
+var RODADAS=[
+ { selo:"A CESTA DA FEIRA", tipo:"texto",
+   enun:"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"maca",n:"MA&#199;&#195;"},{k:"banana",n:"BANANA"},{k:"uva",n:"UVA"},{k:"cenoura",n:"CENOURA"}],
+   fora:"cenoura", nomeFora:"CENOURA",
+   d1:"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?",
+   d2:"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.",
+   d3:"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.",
+   razoes:[
+     {t:"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.",ok:1},
+     {t:"Porque a cenoura &#233; laranja.",ok:0},
+     {t:"Porque a cenoura &#233; a mais comprida.",ok:0},
+     {t:"Porque a cenoura a gente come cozida.",ok:0}],
+   p1:"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#234;s: o que elas t&#234;m em comum?",
+   p2:"Cor e tamanho mudam de uma cenoura para outra. O que n&#227;o muda &#233; o <b>tipo</b> de alimento.",
+   p3:"Ma&#231;&#227;, banana e uva s&#227;o <b>frutas</b>. A cenoura &#233; a raiz da planta &#8212; por isso ela &#233; a de fora.",
+   regra:"ma&#231;&#227;, banana e uva s&#227;o frutas; cenoura &#233; raiz" },
+
+ { selo:"AS QUATRO FIGURAS", tipo:"forma",
+   enun:"Tr&#234;s figuras t&#234;m uma coisa igual. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"quad",n:"QUADRADO",fig:"inquad"},{k:"ret",n:"RET&#194;NGULO",fig:"inret"},
+          {k:"los",n:"LOSANGO",fig:"inlos"},{k:"tri",n:"TRI&#194;NGULO",fig:"intri"}],
+   fora:"tri", nomeFora:"TRI&#194;NGULO",
+   d1:"<b>Conte os lados</b> de cada figura com o dedo, uma por uma.",
+   d2:"Tr&#234;s delas t&#234;m <b>4 lados</b>, mesmo estando viradas de jeitos diferentes.",
+   d3:"A de fora &#233; o <b>tri&#226;ngulo</b>: ele tem 3 lados e os outros t&#234;m 4.",
+   razoes:[
+     {t:"As outras tr&#234;s t&#234;m 4 lados; o tri&#226;ngulo tem 3.",ok:1},
+     {t:"Porque o tri&#226;ngulo tem uma ponta para cima.",ok:0},
+     {t:"Porque o tri&#226;ngulo &#233; a figura mais baixa.",ok:0},
+     {t:"Porque o tri&#226;ngulo n&#227;o tem todos os lados iguais.",ok:0}],
+   p1:"Isso at&#233; pode ser verdade. Mas virar a figura n&#227;o muda o que ela &#233;. O que d&#225; para <b>contar</b> em todas?",
+   p2:"Conte os lados de novo: 4, 4, 4 e... quantos no &#250;ltimo?",
+   p3:"Quadrado, ret&#226;ngulo e losango t&#234;m <b>4 lados</b>. O tri&#226;ngulo tem 3 &#8212; por isso ele &#233; o de fora.",
+   regra:"quadrado, ret&#226;ngulo e losango t&#234;m 4 lados; tri&#226;ngulo tem 3" },
+
+ { selo:"A FILA DOS N&#218;MEROS", tipo:"numero",
+   enun:"Tr&#234;s n&#250;meros t&#234;m algo em comum. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"2",n:"2"},{k:"4",n:"4"},{k:"6",n:"6"},{k:"9",n:"9"}],
+   fora:"9", nomeFora:"9",
+   d1:"Tente separar cada n&#250;mero em <b>duas partes iguais</b>. Com qual deles n&#227;o d&#225;?",
+   d2:"2 s&#227;o 1 e 1; 4 s&#227;o 2 e 2; 6 s&#227;o 3 e 3. Um deles sempre <b>sobra um</b>.",
+   d3:"O de fora &#233; o <b>9</b>: ele n&#227;o d&#225; para partir ao meio sem sobrar.",
+   razoes:[
+     {t:"Os outros tr&#234;s s&#227;o pares; o 9 &#233; &#237;mpar.",ok:1},
+     {t:"Porque o 9 &#233; o maior de todos.",ok:0},
+     {t:"Porque o 9 vem depois do 6.",ok:0},
+     {t:"Porque o 9 &#233; quase 10.",ok:0}],
+   p1:"Isso at&#233; &#233; verdade sobre o 9. Mas separa o grupo? Pense no que d&#225; para <b>dividir no meio</b>.",
+   p2:"Troque o 9 pelo 11: ele deixa de ser o maior e continua sendo o de fora. Ent&#227;o o que decide?",
+   p3:"2, 4 e 6 s&#227;o <b>pares</b>: partem ao meio sem sobrar. O 9 &#233; &#237;mpar &#8212; por isso ele &#233; o de fora.",
+   regra:"2, 4 e 6 s&#227;o pares; 9 &#233; &#237;mpar" },
+
+ { selo:"A CAIXA DE FERRAMENTAS", tipo:"texto",
+   enun:"Tr&#234;s servem para a mesma coisa. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"martelo",n:"MARTELO"},{k:"serrote",n:"SERROTE"},{k:"alicate",n:"ALICATE"},{k:"vassoura",n:"VASSOURA"}],
+   fora:"vassoura", nomeFora:"VASSOURA",
+   d1:"Pergunte de cada uma: <b>para que ela serve</b>?",
+   d2:"Tr&#234;s delas ajudam a <b>construir e consertar</b>. Uma ajuda a cuidar da casa.",
+   d3:"A de fora &#233; a <b>vassoura</b>: ela serve para limpar, n&#227;o para consertar.",
+   razoes:[
+     {t:"As outras tr&#234;s servem para consertar; a vassoura serve para limpar.",ok:1},
+     {t:"Porque a vassoura &#233; a mais comprida.",ok:0},
+     {t:"Porque a vassoura n&#227;o &#233; de metal.",ok:0},
+     {t:"Porque a vassoura fica na cozinha.",ok:0}],
+   p1:"Isso pode ser verdade. Mas o que junta as outras tr&#234;s &#233; o <b>trabalho</b> que elas fazem.",
+   p2:"Uma chave de fenda &#233; pequena e n&#227;o &#233; toda de metal &#8212; e mesmo assim ficaria no grupo. O que decide?",
+   p3:"Martelo, serrote e alicate servem para <b>construir e consertar</b>. A vassoura serve para limpar &#8212; por isso ela &#233; a de fora.",
+   regra:"martelo, serrote e alicate consertam; vassoura limpa" }
+];
+
+/* ---------------- ESTADO ---------------- */
+var rodada=0, feitos=0, totalGeral=8, descobertas=[];
+var telaAtual=null, barraP=null, ger=0, travada=false, errosSeg=0;
+var caixas=[], areaBotao=null;
+
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+/* ⚠️ tela antiga continua clicavel embaixo do banner: toda funcao que mexe no
+   estado comeca perguntando se a partida ainda esta de pe. */
+function emJogo(){ return viva()&&!travada; }
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele mexeria numa tela que ja saiu (e deixaria a tela nova travada). */
+function destreme(b,base){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(b,"injat")&&!temClasse(b,"ok")) b.className=base;
+  },340);
+}
+/* ⭐ A REDE DAS ERRADAS QUE ACABAM (licao do CONTRATO, secao 6): "um quiz com
+   2 distratores faz a crianca eliminar tudo antes do 3o erro — o degrau
+   REVELAR vira codigo morto". Aqui cada passo tem TRES erradas, entao os tres
+   degraus acontecem de verdade; mas se alguem trocar o conteudo por um com
+   menos opcoes, esta conta avisa e o revelar entra na hora, em vez de deixar
+   uma tela com uma opcao so e nada acontecendo.                            */
+function sobramErradas(){
+  var i,n=0;
+  for(i=0;i<caixas.length;i++)
+    if(!temClasse(caixas[i],"injat")&&!temClasse(caixas[i],"ok")&&
+       caixas[i].getAttribute("data-qa")==="0") n++;
+  return n;
+}
+/* o botao que a crianca toca para seguir. Ele existe para que a EXPLICACAO
+   fique na tela o tempo que ela quiser — a tela nao troca sozinha. */
+function poeBotao(txt,cb){
+  if(!areaBotao) return;
+  areaBotao.innerHTML="";
+  var b=el("button","btn",txt);
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ if(viva()) cb(); };
+  areaBotao.appendChild(b);
+}
+
+/* ================= PASSO 1: ACHAR O INTRUSO ================= */
+function pecaIntruso(){
+  ger++; limpa();
+  if(rodada<0||rodada>=RODADAS.length) rodada=0;
+  var R=RODADAS[rodada];
+  caixas=[]; errosSeg=0; travada=false;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(feitos*100/totalGeral));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.enun));
+  var box=el("div","opts"), i;
+  /* ⚠️ EMBARALHADAS: na Fabrica de Estrelas a certa era sempre a 1a e a
+     crianca aprendeu a POSICAO, nao o conteudo. */
+  var ordem=baguncar(R.itens.slice(0));
+  for(i=0;i<ordem.length;i++) box.appendChild(fazCoisa(ordem[i],R));
+  c.appendChild(box);
+  areaBotao=el("div","opts");
+  c.appendChild(areaBotao);
+  c.appendChild(el("div","hint","Toque na que n&#227;o combina com as outras tr&#234;s."));
+  t.appendChild(c); app.appendChild(t);
+}
+function fazCoisa(o,R){
+  var b=el("div","opt","");
+  b.className="opt incoisa";
+  if(o.fig) b.appendChild(el("span","infig "+o.fig,""));
+  b.appendChild(el("span",(R.tipo==="numero")?"innome innum":"innome",o.n));
+  b._o=o;
+  /* a tela publica em data-qa a resposta que serve AGORA — so para o
+     auditor-jogador conseguir fechar a fase (convencao da casa). */
+  b.setAttribute("data-qa",(o.k===R.fora)?"1":"0");
+  b.onclick=function(){ tocaCoisa(b); };
+  caixas.push(b);
+  return b;
+}
+function tocaCoisa(b){
+  if(!viva()) return;
+  if(travada){ sTap(); return; }        /* rodada ja resolvida: responde, nao emudece */
+  var R=RODADAS[rodada];
+  /* ⚠️ JA TENTADA: responde com SOM e com PALAVRAS, nunca com silencio. */
+  if(temClasse(b,"injat")){
+    sTap();
+    mostraDica("Nesta n&#243;s j&#225; tentamos. Olhe as outras <b>tr&#234;s</b>.");
+    return;
+  }
+  if(b._o.k===R.fora){ achou(b,false); return; }
+  sErro(); errosSeg++;
+  b.className="opt incoisa injat";
+  b.appendChild(el("span","inmarca","j&#225; tentamos"));
+  b.setAttribute("data-qa","0");
+  destreme(b,"opt incoisa injat");
+  if(errosSeg===1) mostraDica(R.d1);
+  else if(errosSeg===2) mostraDica(R.d2);
+  if(errosSeg>=3){ mostraDica("Deixa comigo: eu mostro qual &#233; a de fora e explico."); esperaERevela1(1100); }
+  else if(sobramErradas()===0) esperaERevela1(2600);   /* a rede: erradas acabaram antes */
+}
+/* ⚠️ DEFEITO PAGO EM CINCO PEÇAS DE UM LOTE SÓ (ago/2026): no 3º degrau a
+   explicacao era escrita e APAGADA no mesmo quadro, porque o "revelar" trocava
+   de tela. Ordem certa: espera a dica ser lida, REVELA, escreve a explicacao
+   DEPOIS — e a tela so troca quando a crianca toca em "Continuar".        */
+function esperaERevela1(atraso){
+  var g=ger, R=RODADAS[rodada];
+  setTimeout(function(){
+    if(g!==ger||!viva()||travada) return;
+    var i,alvo=null;
+    for(i=0;i<caixas.length;i++) if(caixas[i]._o.k===R.fora) alvo=caixas[i];
+    if(!alvo) return;
+    achou(alvo,true);
+    if(g!==ger||!viva()) return;
+    mostraDica(R.d3);
+  },atraso||1100);
+}
+function achou(b,revelado){
+  var R=RODADAS[rodada];
+  /* ⚠️ A TRAVA VAI NO INSTANTE DO ACERTO, nao no fim da animacao: a crianca
+     toca duas vezes, e o segundo toque caia na tela seguinte com o estado
+     antigo. */
+  travada=true;
+  b.className="opt incoisa ok";
+  b.appendChild(el("span","inmarca inok","a de fora"));
+  b.setAttribute("data-qa","0");
+  var i;
+  for(i=0;i<caixas.length;i++) if(caixas[i]!==b) caixas[i].setAttribute("data-qa","0");
+  if(!revelado){ sCerto(); apagaDica(); feitos++; if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%"; }
+  poeBotao("E por qu&#234;?",telaPorque);
+}
+
+/* ================= PASSO 2: POR QUÊ? =================
+   ⚠️ ESTE PASSO É A PEÇA. Sem ele, achar o intruso é um quiz: a criança
+   elimina pela aparência e ninguém fica sabendo se ela viu a categoria. Aqui
+   ela TOCA na razão — nunca digita, porque escrever mediria a escrita e
+   calaria quem pensa certo e escreve devagar.                             */
+function telaPorque(){
+  ger++; limpa();
+  if(rodada<0||rodada>=RODADAS.length) rodada=0;
+  var R=RODADAS[rodada];
+  caixas=[]; errosSeg=0; travada=false;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(feitos*100/totalGeral));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","POR QU&#202;?"));
+  c.appendChild(el("div","balao","<b>"+R.nomeFora+"</b> &#233; a de fora. E <b>por qu&#234;</b> ela n&#227;o pertence ao grupo?"));
+  var box=el("div","opts"), i;
+  var ordem=baguncar(R.razoes.slice(0));
+  for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));
+  c.appendChild(box);
+  areaBotao=el("div","opts");
+  c.appendChild(areaBotao);
+  c.appendChild(el("div","hint","Tr&#234;s destas at&#233; s&#227;o verdade. S&#243; uma explica o <b>grupo</b>."));
+  t.appendChild(c); app.appendChild(t);
+}
+function fazRazao(r){
+  var b=el("div","opt","");
+  b.className="opt inrazao";
+  b.innerHTML=r.t;
+  b._r=r;
+  b.setAttribute("data-qa",r.ok?"1":"0");
+  b.onclick=function(){ tocaRazao(b); };
+  caixas.push(b);
+  return b;
+}
+function tocaRazao(b){
+  if(!viva()) return;
+  if(travada){ sTap(); return; }        /* rodada ja resolvida: responde, nao emudece */
+  var R=RODADAS[rodada];
+  if(temClasse(b,"injat")){
+    sTap();
+    mostraDica("Nesta n&#243;s j&#225; tentamos. Leia as outras com calma.");
+    return;
+  }
+  if(b._r.ok){ fechaRazao(b,false); return; }
+  sErro(); errosSeg++;
+  b.className="opt inrazao injat";
+  b.appendChild(el("span","inmarca","j&#225; tentamos"));
+  b.setAttribute("data-qa","0");
+  destreme(b,"opt inrazao injat");
+  if(errosSeg===1) mostraDica(R.p1);
+  else if(errosSeg===2) mostraDica(R.p2);
+  if(errosSeg>=3){ mostraDica("Deixa comigo: eu marco a raz&#227;o certa e explico."); esperaERevela2(1100); }
+  else if(sobramErradas()===0) esperaERevela2(2600);   /* a rede: erradas acabaram antes */
+}
+function esperaERevela2(atraso){
+  var g=ger, R=RODADAS[rodada];
+  setTimeout(function(){
+    if(g!==ger||!viva()||travada) return;
+    var i,alvo=null;
+    for(i=0;i<caixas.length;i++) if(caixas[i]._r.ok) alvo=caixas[i];
+    if(!alvo) return;
+    fechaRazao(alvo,true);
+    if(g!==ger||!viva()) return;
+    mostraDica(R.p3);
+  },atraso||1100);
+}
+function fechaRazao(b,revelado){
+  var R=RODADAS[rodada];
+  travada=true;
+  b.className="opt inrazao ok";
+  b.appendChild(el("span","inmarca inok","&#233; esta"));
+  b.setAttribute("data-qa","0");
+  var i;
+  for(i=0;i<caixas.length;i++) if(caixas[i]!==b) caixas[i].setAttribute("data-qa","0");
+  if(descobertas.indexOf(R.regra)<0) descobertas.push(R.regra);
+  if(!revelado){
+    sCerto(); apagaDica();
+    feitos++; if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%";
+    mostraDica(R.p3);
+  }
+  poeBotao("Continuar",proximaRodada);
+}
+function proximaRodada(){
+  rodada++;
+  if(rodada>=RODADAS.length) fimDaPeca(); else pecaIntruso();
+}
+
+function fimDaPeca(){
+  ger++; limpa();
+  areaBotao=null; travada=false; caixas=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  /* FECHO COM GANCHO: a peca termina deixando uma pergunta aberta. */
+  c.appendChild(el("div","balao","Voc&#234; achou <b>4 intrusos</b> e disse por qu&#234;. Agora invente um: tr&#234;s coisas da sua casa e uma de fora."));
+  var i, regras=descobertas.length?descobertas:regrasTodas(), txt="O que separou cada grupo:";
+  for(i=0;i<regras.length;i++) txt+="<br>&#8226; <b>"+regras[i]+"</b>";
+  c.appendChild(el("div","inregra",txt));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a O INTRUSO: achar e dizer POR QU&#202;."));
+  t.appendChild(c); app.appendChild(t);
+}
+function regrasTodas(){
+  var i,r=[];
+  for(i=0;i<RODADAS.length;i++) r.push(RODADAS[i].regra);
+  return r;
+}
+function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaIntruso(); }
+    if(f && f.dados) RODADAS = f.dados;
+    pecaIntruso();
   })();
 };
 
@@ -6579,12 +7693,12 @@ document.addEventListener("mouseup",function(){ mouseDown=false; },false);
 
 
 /* ====== O CONTEUDO DESTA ATIVIDADE (escrito pelo montador) ====== */
-ROTULOS = {"objetivo1": "O alfabeto tem uma ordem", "objetivo2": "Cada letra guarda um som", "objetivo3": "Palavras que começam igual", "objetivo4": "Bater os pedaços da palavra", "objetivo5": "Juntar os pedaços e ler", "livre": "Brincar na padaria"};
+ROTULOS = {"objetivo1": "O alfabeto tem uma ordem", "objetivo2": "Cada letra guarda um som", "objetivo3": "Palavras que começam igual", "objetivo4": "Bater os pedaços da palavra", "objetivo5": "Juntar os pedaços e ler", "livre": "Brincar na padaria", "objetivo6": "Palavras que terminam igual", "objetivo7": "Cada som ganha um lugar"};
 IMGS = ["pd_fuba_feliz", "pd_fuba_fala", "pd_fuba_pisca", "pd_cr1", "pd_cr2", "pd_cr3", "pd_cr4", "pd_cr5", "pd_cr6", "med_pd"];
-VITRINE = ["pd_pao", "pd_pao", "pd_bolacha", "pd_bolo", "pd_mel", "pd_pao", "pd_bolacha", "pd_mala", "pd_sapato", "pd_pao", "pd_bolo", "pd_mel", "pd_bolacha", "pd_mala", "pd_sapato", "pd_queijo", "pd_bolinho", "pd_mamao", "pd_pao", "pd_bolacha", "pd_pao", "pd_bolo", "pd_bolo", "pd_mel", "pd_queijo", "pd_bolinho", "pd_mala", "pd_bolinho", "pd_sapato", "pd_mamao", "pd_queijo", "pd_bolinho"];
+VITRINE = ["pd_pao", "pd_pao", "pd_bolacha", "pd_bolo", "pd_mel", "pd_pao", "pd_bolacha", "pd_mala", "pd_sapato", "pd_pao", "pd_bolo", "pd_mel", "pd_bolacha", "pd_mala", "pd_sapato", "pd_queijo", "pd_bolinho", "pd_pao", "pd_mamao", "pd_pao", "pd_pao", "pd_bolacha", "pd_bolo", "pd_bolo", "pd_queijo", "pd_bolinho", "pd_bolo", "pd_bolinho", "pd_mel", "pd_mamao", "pd_mala", "pd_sapato"];
 FIM = {titulo:"Padeiro das Letras!", texto:"Você salvou a padaria! Agora todo doce tem o nome certo na etiqueta. Sabe o que o Fubá vai assar amanhã? Uma palavra que você ainda não sabe ler.", cracha:"Padeiro das Letras"};
 ABERTURA = {texto:"Socorro! O vento entrou na padaria do Fubá e derrubou todas as etiquetas. Ninguém sabe mais que doce é qual, e a fila já está na porta. Você me ajuda a descobrir os nomes?", voz:"pd_abertura"};
-FASES = [{"id": "f01", "mec": "ouvir-achar", "selo": "OUÇA E ACHE", "enunciado": "As etiquetas da padaria caíram! Ouça e ache o doce certo.", "dica": "Aperte <b>Ouvir</b> e diga a palavra junto com o Fubá, bem devagar.", "conceito": "objetivo2", "dados": [{"selo": "OUÇA E ACHE", "alvo": "pd_pao", "opcoes": ["pd_pao", "pd_bolo", "pd_mel", "pd_queijo"], "rotulo": "A PALAVRA É", "escrito": "PÃO", "fala": "pão", "enun": "Ouça a palavra e toque na <b>figura</b> dela.", "hint": "Sem som no computador? A palavra está escrita aí em cima.", "msg": "Isso! O <b>PÃO</b> é este.", "dicas": ["Aperte <b>Ouvir</b> de novo e diga a palavra junto.", "Olhe a letra do começo. A palavra começa com <b>P</b>.", "É esta a figura do PÃO. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "pd_bolo", "opcoes": ["pd_bolo", "pd_pao", "pd_leite", "pd_ovo"], "rotulo": "A PALAVRA É", "escrito": "BOLO", "fala": "bolo", "enun": "Ouça a palavra e toque na <b>figura</b> dela.", "hint": "Sem som no computador? A palavra está escrita aí em cima.", "msg": "Isso! O <b>BOLO</b> é este.", "dicas": ["Ouça de novo e repita devagar: BO-LO.", "Começa com <b>B</b>, a mesma letra de BOCA.", "É este o BOLO. Ele está aceso: toque nele."]}, {"selo": "OUÇA E ACHE", "alvo": "pd_mel", "opcoes": ["pd_mel", "pd_sal", "pd_pao", "pd_bolo"], "rotulo": "A PALAVRA É", "escrito": "MEL", "fala": "mel", "enun": "Ouça a palavra e toque na <b>figura</b> dela.", "hint": "Sem som no computador? A palavra está escrita aí em cima.", "msg": "Isso! O <b>MEL</b> é este.", "dicas": ["Ouça de novo. A palavra é curtinha, tem um golpe só.", "Começa com <b>M</b>, o som de MÃE.", "É este o MEL. Ele está aceso: toque nele."]}], "dadosExtra": {"CATALOGO": {"pd_pao": {"nome": "PÃO", "voz": "pão", "img": "pd_pao", "letra": "P"}, "pd_bolo": {"nome": "BOLO", "voz": "bolo", "img": "pd_bolo", "letra": "B"}, "pd_mel": {"nome": "MEL", "voz": "mel", "img": "pd_mel", "letra": "M"}, "pd_queijo": {"nome": "QUEIJO", "voz": "queijo", "img": "pd_queijo", "letra": "Q"}, "pd_leite": {"nome": "LEITE", "voz": "leite", "img": "pd_leite", "letra": "L"}, "pd_ovo": {"nome": "OVO", "voz": "ovo", "img": "pd_mamao", "letra": "O"}, "pd_sal": {"nome": "SAL", "voz": "sal", "img": "pd_sal", "letra": "S"}, "B": {"nome": "B", "voz": "bê", "texto": "B", "letra": "B"}, "D": {"nome": "D", "voz": "dê", "texto": "D", "letra": "D"}, "P": {"nome": "P", "voz": "pê", "texto": "P", "letra": "P"}, "M": {"nome": "M", "voz": "eme", "texto": "M", "letra": "M"}, "N": {"nome": "N", "voz": "ene", "texto": "N", "letra": "N"}, "W": {"nome": "W", "voz": "dábliu", "texto": "W", "letra": "W"}, "A": {"nome": "A", "voz": "á", "texto": "A", "letra": "A"}, "R": {"nome": "R", "voz": "erre", "texto": "R", "letra": "R"}, "F": {"nome": "F", "voz": "efe", "texto": "F", "letra": "F"}, "Q": {"nome": "Q", "voz": "quê", "texto": "Q", "letra": "Q"}, "G": {"nome": "G", "voz": "gê", "texto": "G", "letra": "G"}, "O": {"nome": "O", "voz": "ó", "texto": "O", "letra": "O"}, "C": {"nome": "C", "voz": "cê", "texto": "C", "letra": "C"}, "L": {"nome": "L", "voz": "éle", "texto": "L", "letra": "L"}, "I": {"nome": "I", "voz": "i", "texto": "I", "letra": "I"}, "T": {"nome": "T", "voz": "tê", "texto": "T", "letra": "T"}, "E": {"nome": "E", "voz": "é", "texto": "E", "letra": "E"}, "S": {"nome": "S", "voz": "esse", "texto": "S", "letra": "S"}, "Z": {"nome": "Z", "voz": "zê", "texto": "Z", "letra": "Z"}, "X": {"nome": "X", "voz": "xis", "texto": "X", "letra": "X"}}}, "vozIntro": "pd_f01_intro", "dicaVoz": "pd_f01_dica"}, {"id": "f04", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "O Fubá guarda os pães em gavetas com letras. Ponha na ordem do alfabeto.", "dica": "Cante o alfabeto baixinho: A, B, C... qual vem primeiro?", "conceito": "objetivo1", "dados": ["A", "B", "C", "D", "E"], "dadosExtra": {"ORDTXT": {"selo": "O ALFABETO", "balao": "Ponha as letras <b>na ordem do alfabeto</b>.", "hint": "Toque na letra ou arraste até a prateleira."}}, "vozIntro": "pd_f04_intro", "dicaVoz": "pd_f04_dica"}, {"id": "f10", "mec": "ligar-pontos", "selo": "LIGUE AS LETRAS", "enunciado": "Ligue as letras na ordem do alfabeto e veja o que aparece.", "dica": "Depois do A vem o B. Cante o alfabeto baixinho enquanto procura.", "conceito": "objetivo1", "dados": [{"selo": "O PÃOZINHO ESCONDIDO", "nome": "um PÃOZINHO", "voz": "um pãozinho", "pts": [[20, 58], [32, 36], [52, 28], [74, 36], [86, 58], [74, 80], [52, 86], [30, 80]], "d": "M20 58 L32 36 L52 28 L74 36 L86 58 L74 80 L52 86 L30 80 Z", "cor": "#e2a75a", "extra": "<path d=\"M38 52 L64 46\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M40 62 L66 56\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/>"}, {"selo": "O QUE A MIGA ASSOU", "nome": "um CROISSANT", "voz": "um croissant", "pts": [[16, 66], [26, 44], [46, 32], [68, 34], [84, 50], [76, 70], [54, 78], [32, 76]], "d": "M16 66 L26 44 L46 32 L68 34 L84 50 L76 70 L54 78 L32 76 Z", "cor": "#f0c078", "extra": "<circle cx=\"50\" cy=\"56\" r=\"3\" fill=\"#8a5a2b\"/>"}], "dadosExtra": {"ROTULOS": ["A", "B", "C", "D", "E", "F", "G", "H"], "DICAS": ["Procure a letra que vem <b>depois</b> da última que você ligou.", "Cante o alfabeto baixinho: A, B, C, D... a próxima está piscando.", "Eu liguei uma para você. Agora siga a que está piscando."]}, "vozIntro": "pd_f10_intro", "dicaVoz": "pd_f10_dica"}, {"id": "f12", "mec": "completar", "selo": "COMPLETE", "enunciado": "Uma letra caiu da prateleira. Qual está faltando?", "dica": "Diga as letras em voz alta, na ordem, e pare onde o buraco está.", "conceito": "objetivo1", "dados": [{"ante": "A, B, ", "dep": ", D", "cer": "C", "out": ["E", "Z"], "dic": "Cante: A, B... qual vem depois do B?"}, {"ante": "D, E, ", "dep": ", G", "cer": "F", "out": ["H", "B"], "dic": "Cante do A até o E e continue mais uma."}, {"ante": "H, I, ", "dep": ", L", "cer": "J", "out": ["K", "M"], "dic": "Depois do I vem o J. Cante para conferir."}], "vozIntro": "pd_f12_intro", "dicaVoz": "pd_f12_dica"}, {"id": "f08", "mec": "tracar-letra", "selo": "ESCREVA A LETRA", "enunciado": "Agora escreva a letra com o dedo, seguindo as bolinhas.", "dica": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "conceito": "objetivo2", "dados": [{"selo": "A LETRA P", "letra": "P", "voz": "pê", "palavra": "PÃO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>P</b>! P de PÃO.", "tracos": [{"pts": [[32, 12], [32, 46], [32, 84]]}, {"pts": [[32, 12], [62, 20], [62, 40], [32, 48]]}]}, {"selo": "A LETRA B", "letra": "B", "voz": "bê", "palavra": "BOLO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>B</b>! B de BOLO.", "tracos": [{"pts": [[30, 12], [30, 48], [30, 84]]}, {"pts": [[30, 12], [60, 20], [60, 40], [30, 48]]}, {"pts": [[30, 48], [64, 56], [64, 78], [30, 84]]}]}, {"selo": "A LETRA M", "letra": "M", "voz": "eme", "palavra": "MEL", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>M</b>! M de MEL.", "tracos": [{"pts": [[18, 84], [18, 14], [50, 52], [82, 14], [82, 84]]}]}], "vozIntro": "pd_f08_intro", "dicaVoz": "pd_f08_dica"}, {"id": "f05", "mec": "ouvir-achar", "selo": "OUÇA E ACHE", "enunciado": "O Fubá vai falar o nome de uma letra. Toque nela.", "dica": "Aperte <b>Ouvir</b> de novo e repita o nome da letra em voz alta.", "conceito": "objetivo2", "dados": [{"selo": "OUÇA E ACHE", "alvo": "B", "opcoes": ["B", "D", "P", "M"], "rotulo": "A LETRA É", "escrito": "B", "fala": "bê", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! Esta é a letra <b>B</b>.", "dicas": ["Ouça de novo: <b>bê</b>.", "É a letra de BOLO, que você já achou lá atrás.", "É esta. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "M", "opcoes": ["M", "N", "W", "A"], "rotulo": "A LETRA É", "escrito": "M", "fala": "eme", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! Esta é a letra <b>M</b>.", "dicas": ["Ouça de novo: <b>eme</b>.", "É a letra de MEL e de MÃE.", "É esta. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "P", "opcoes": ["P", "B", "R", "F"], "rotulo": "A LETRA É", "escrito": "P", "fala": "pê", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! Esta é a letra <b>P</b>.", "dicas": ["Ouça de novo: <b>pê</b>.", "É a letra de PÃO.", "É esta. Ela está acesa: toque nela."]}], "dadosExtra": {"CATALOGO": {"pd_pao": {"nome": "PÃO", "voz": "pão", "img": "pd_pao", "letra": "P"}, "pd_bolo": {"nome": "BOLO", "voz": "bolo", "img": "pd_bolo", "letra": "B"}, "pd_mel": {"nome": "MEL", "voz": "mel", "img": "pd_mel", "letra": "M"}, "pd_queijo": {"nome": "QUEIJO", "voz": "queijo", "img": "pd_queijo", "letra": "Q"}, "pd_leite": {"nome": "LEITE", "voz": "leite", "img": "pd_leite", "letra": "L"}, "pd_ovo": {"nome": "OVO", "voz": "ovo", "img": "pd_mamao", "letra": "O"}, "pd_sal": {"nome": "SAL", "voz": "sal", "img": "pd_sal", "letra": "S"}, "B": {"nome": "B", "voz": "bê", "texto": "B", "letra": "B"}, "D": {"nome": "D", "voz": "dê", "texto": "D", "letra": "D"}, "P": {"nome": "P", "voz": "pê", "texto": "P", "letra": "P"}, "M": {"nome": "M", "voz": "eme", "texto": "M", "letra": "M"}, "N": {"nome": "N", "voz": "ene", "texto": "N", "letra": "N"}, "W": {"nome": "W", "voz": "dábliu", "texto": "W", "letra": "W"}, "A": {"nome": "A", "voz": "á", "texto": "A", "letra": "A"}, "R": {"nome": "R", "voz": "erre", "texto": "R", "letra": "R"}, "F": {"nome": "F", "voz": "efe", "texto": "F", "letra": "F"}, "Q": {"nome": "Q", "voz": "quê", "texto": "Q", "letra": "Q"}, "G": {"nome": "G", "voz": "gê", "texto": "G", "letra": "G"}, "O": {"nome": "O", "voz": "ó", "texto": "O", "letra": "O"}, "C": {"nome": "C", "voz": "cê", "texto": "C", "letra": "C"}, "L": {"nome": "L", "voz": "éle", "texto": "L", "letra": "L"}, "I": {"nome": "I", "voz": "i", "texto": "I", "letra": "I"}, "T": {"nome": "T", "voz": "tê", "texto": "T", "letra": "T"}, "E": {"nome": "E", "voz": "é", "texto": "E", "letra": "E"}, "S": {"nome": "S", "voz": "esse", "texto": "S", "letra": "S"}, "Z": {"nome": "Z", "voz": "zê", "texto": "Z", "letra": "Z"}, "X": {"nome": "X", "voz": "xis", "texto": "X", "letra": "X"}}}, "vozIntro": "pd_f05_intro", "dicaVoz": "pd_f05_dica"}, {"id": "f06", "mec": "classificar", "selo": "SEPARE", "enunciado": "O Fubá separa os doces pelo som do começo. Ponha cada um na gaveta certa.", "dica": "Diga o nome devagar e escute só o <b>começo</b>: é BO ou é MA?", "conceito": "objetivo3", "dados": [{"k": "bo", "n": "COMEÇA COM <b>BO</b><br>(como BOLO)"}, {"k": "ma", "n": "COMEÇA COM <b>MA</b><br>(como MALA)"}], "dadosExtra": {"FICHAS": [{"t": "BOLACHA", "alvo": "bo", "img": "pd_bolacha"}, {"t": "BOLINHO", "alvo": "bo", "img": "pd_bolinho"}, {"t": "MAMÃO", "alvo": "ma", "img": "pd_mamao"}, {"t": "MASSA", "alvo": "ma", "img": "pd_massa"}], "DICAS": ["Fale a palavra bem devagar e pare no primeiro pedaço.", "BO-LA-CHA começa igual a BO-LO. MA-MÃO começa igual a MA-LA.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Cada doce começa com um som. Toque no doce e depois na gaveta do som dele."}, "vozIntro": "pd_f06_intro", "dicaVoz": "pd_f06_dica"}, {"id": "f11", "mec": "memoria", "selo": "MEMÓRIA DOS COMEÇOS", "enunciado": "Ache a palavra e o pedaço com que ela começa.", "dica": "Diga a palavra da carta em voz alta e escute só o começo dela.", "conceito": "objetivo3", "dados": [{"k": "bo", "pal": "BOLO", "sen": "começa com BO"}, {"k": "ma", "pal": "MALA", "sen": "começa com MA"}, {"k": "pa", "pal": "PATO", "sen": "começa com PA"}, {"k": "me", "pal": "MEL", "sen": "começa com ME"}], "vozIntro": "pd_f11_intro", "dicaVoz": "pd_f11_dica"}, {"id": "f14", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Agora preste atenção no som das palavras.", "dica": "Diga as duas palavras em voz alta, uma depois da outra, e compare.", "conceito": "objetivo3", "dados": [{"p": "Qual palavra começa com o mesmo som de <b>BOLO</b>?", "c": "BOLACHA", "e": ["MALA", "QUEIJO", "SAPATO"], "d": ["Diga BOLO devagar e escute só o começo: BO.", "Procure outra que também comece com o som <b>BO</b>.", "É BOLACHA: BO-LO e BO-LA-CHA. Ela está acesa: toque nela."]}, {"p": "Qual palavra termina com o mesmo som de <b>PATO</b>?", "c": "SAPATO", "e": ["PÃO", "MEL", "MASSA"], "d": ["Diga PATO e escute o <b>fim</b>: TO.", "Procure outra que acabe com TO.", "É SAPATO: PA-TO e SA-PA-TO. Ela está acesa: toque nela."]}, {"p": "Qual palavra tem <b>um pedaço só</b>?", "c": "MEL", "e": ["BOLO", "MALA", "QUEIJO"], "d": ["Bata cada palavra: quantos golpes?", "Três delas têm dois pedaços. Uma tem um golpe só.", "É MEL. Ela está acesa: toque nela."]}], "vozIntro": "pd_f14_intro", "dicaVoz": "pd_f14_dica"}, {"id": "f02", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Diga o nome do doce e bata uma vez para cada pedaço.", "dica": "Ponha a mão no queixo: ele desce a cada pedaço da palavra.", "conceito": "objetivo4", "dados": [{"pal": "PÃO", "sil": ["PÃO"], "fig": "pd_pao", "d": ["Cuidado com esta: diga <b>PÃO</b>. Quantos pedaços a boca faz?", "Escute: a palavra tem UM golpe só. Bata junto comigo.", "É <b>1</b> pedaço só: PÃO. A batida já está aí: toque em Pronto."]}, {"pal": "BOLO", "sil": ["BO", "LO"], "fig": "pd_bolo", "d": ["Diga <b>BOLO</b> bem devagar e bata uma vez para cada pedaço.", "Escute: eu vou bater junto com a palavra. Conte comigo.", "São <b>2</b> pedaços: BO-LO. As batidas já estão aí: toque em Pronto."]}, {"pal": "BOLACHA", "sil": ["BO", "LA", "CHA"], "fig": "pd_bolacha", "d": ["Esta é mais comprida. Diga devagar: BO-LA-CHA.", "Escute: eu bato junto com a palavra. Conte as batidas.", "São <b>3</b> pedaços: BO-LA-CHA. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f02_intro", "dicaVoz": "pd_f02_dica"}, {"id": "f03", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Junte os pedaços e forme o nome da figura.", "dica": "Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?", "conceito": "objetivo5", "dados": [{"pal": "BOLO", "sil": ["BO", "LO"], "fig": "pd_bolo", "iscas": ["MA", "PE"], "d": ["Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?", "Começa com o som <b>BO</b>. Ele está pulsando aí embaixo.", "É o <b>BO</b>. Ele está aceso: toque nele para seguir."]}, {"pal": "MASSA", "sil": ["MAS", "SA"], "fig": "pd_massa", "iscas": ["LO", "PE"], "d": ["Fale bem devagar: MAS-SA. Qual vem primeiro?", "O primeiro pedaço é <b>MAS</b>.", "É o <b>MAS</b>. Ele está aceso: toque nele."]}, {"pal": "QUEIJO", "sil": ["QUEI", "JO"], "fig": "pd_queijo", "iscas": ["BO", "LA"], "d": ["Diga QUEI-JO devagar, escutando o começo.", "O primeiro pedaço é <b>QUEI</b>.", "É o <b>QUEI</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f03_intro", "dicaVoz": "pd_f03_dica"}, {"id": "f07", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Mais nomes da padaria. Bata uma vez para cada pedaço.", "dica": "Bata devagar, um golpe por vez, e conte junto.", "conceito": "objetivo4", "dados": [{"pal": "MEL", "sil": ["MEL"], "fig": "pd_mel", "d": ["Diga <b>MEL</b>. Quantos golpes a boca faz?", "Escute: um golpe só. Bata junto comigo.", "É <b>1</b> pedaço: MEL. A batida já está aí: toque em Pronto."]}, {"pal": "QUEIJO", "sil": ["QUEI", "JO"], "fig": "pd_queijo", "d": ["Diga QUEI-JO bem devagar.", "Escute o ritmo: são dois golpes. Bata comigo.", "São <b>2</b> pedaços: QUEI-JO. As batidas já estão aí: toque em Pronto."]}, {"pal": "BISCOITO", "sil": ["BIS", "COI", "TO"], "fig": "pd_biscoito", "d": ["Esta é comprida: BIS-COI-TO. Diga devagar.", "Escute: eu bato junto. Conte as batidas.", "São <b>3</b> pedaços: BIS-COI-TO. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f07_intro", "dicaVoz": "pd_f07_dica"}, {"id": "f09", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Estas têm três pedaços. Junte na ordem certa.", "dica": "Diga a palavra devagar e escute o pedaço do começo.", "conceito": "objetivo5", "dados": [{"pal": "BOLACHA", "sil": ["BO", "LA", "CHA"], "fig": "pd_bolacha", "iscas": ["MA", "TO"], "d": ["Diga BO-LA-CHA devagar. Qual pedaço vem primeiro?", "O primeiro é <b>BO</b>, o mesmo de BOLO.", "É o <b>BO</b>. Ele está aceso: toque nele."]}, {"pal": "BISCOITO", "sil": ["BIS", "COI", "TO"], "fig": "pd_biscoito", "iscas": ["LA", "PE"], "d": ["Fale BIS-COI-TO bem devagar.", "O primeiro pedaço é <b>BIS</b>.", "É o <b>BIS</b>. Ele está aceso: toque nele."]}, {"pal": "MAMÃO", "sil": ["MA", "MÃO"], "fig": "pd_mamao", "iscas": ["BO", "QUEI"], "d": ["Diga MA-MÃO devagar.", "O primeiro pedaço é <b>MA</b>, o mesmo de MALA.", "É o <b>MA</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f09_intro", "dicaVoz": "pd_f09_dica"}, {"id": "f13", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Bata os pedaços destas palavras da padaria.", "dica": "Se ficar em dúvida, bata devagar e conte no dedo.", "conceito": "objetivo4", "dados": [{"pal": "MALA", "sil": ["MA", "LA"], "fig": "pd_mala", "d": ["Diga MA-LA devagar.", "Escute: dois golpes. Bata comigo.", "São <b>2</b> pedaços: MA-LA. As batidas já estão aí: toque em Pronto."]}, {"pal": "SAL", "sil": ["SAL"], "fig": "pd_sal", "d": ["Diga <b>SAL</b>. Quantos golpes?", "Escute: um golpe só. Bata comigo.", "É <b>1</b> pedaço: SAL. A batida já está aí: toque em Pronto."]}, {"pal": "SAPATO", "sil": ["SA", "PA", "TO"], "fig": "pd_sapato", "d": ["Diga SA-PA-TO bem devagar.", "Escute: são três golpes. Conte comigo.", "São <b>3</b> pedaços: SA-PA-TO. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f13_intro", "dicaVoz": "pd_f13_dica"}, {"id": "f15", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Monte o nome do que está na figura.", "dica": "Fale a palavra devagar e ache o pedaço do começo.", "conceito": "objetivo5", "dados": [{"pal": "SAPATO", "sil": ["SA", "PA", "TO"], "fig": "pd_sapato", "iscas": ["BO", "MA"], "d": ["Diga SA-PA-TO devagar. Qual vem primeiro?", "O primeiro pedaço é <b>SA</b>.", "É o <b>SA</b>. Ele está aceso: toque nele."]}, {"pal": "PATO", "sil": ["PA", "TO"], "fig": "pd_pato", "iscas": ["LO", "SA"], "d": ["Ponha a mão no queixo e diga: PA-TO.", "O primeiro pedaço é <b>PA</b>, o mesmo de PAI.", "É o <b>PA</b>. Ele está aceso: toque nele."]}, {"pal": "MALA", "sil": ["MA", "LA"], "fig": "pd_mala", "iscas": ["BO", "TE"], "d": ["Fale a palavra devagar e escute o começo.", "O primeiro pedaço é <b>MA</b>, como em MÃE.", "É o <b>MA</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f15_intro", "dicaVoz": "pd_f15_dica"}, {"id": "aquecimento", "mec": "escolher", "selo": "AQUECIMENTO", "enunciado": "Vamos lembrar o que você já descobriu na padaria.", "dica": "Pense no que você fez lá atrás: as letras, os sons e os pedaços.", "conceito": "objetivo2", "dados": [{"p": "A letra <b>P</b> aparece no começo de qual palavra?", "c": "PÃO", "e": ["BOLO", "MEL", "MALA"], "d": ["Diga cada palavra e escute a primeira letrinha.", "O som é <b>pê</b>, o mesmo do começo de PAI.", "É PÃO. Ele está aceso: toque nele."]}, {"p": "Depois do <b>C</b>, qual letra vem no alfabeto?", "c": "D", "e": ["B", "F", "A"], "d": ["Cante baixinho: A, B, C...", "Depois do C vem a letra <b>dê</b>.", "É o D. Ele está aceso: toque nele."]}, {"p": "Quantos pedaços tem a palavra <b>BOLACHA</b>?", "c": "3", "e": ["1", "2", "4"], "d": ["Bata a palavra: BO-LA-CHA.", "Conte as batidas no dedo.", "São 3. O número está aceso: toque nele."]}], "vozIntro": "pd_aquecimento_intro", "dicaVoz": "pd_aquecimento_dica"}, {"id": "f17", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "Mais gavetas embaralhadas. Ponha na ordem do alfabeto.", "dica": "Cante o alfabeto do A até chegar nestas letras.", "conceito": "objetivo1", "dados": ["F", "G", "H", "I", "J"], "dadosExtra": {"ORDTXT": {"selo": "O ALFABETO", "balao": "Ponha as letras <b>na ordem do alfabeto</b>.", "hint": "Toque na letra ou arraste até a prateleira."}}, "vozIntro": "pd_f17_intro", "dicaVoz": "pd_f17_dica"}, {"id": "f24", "mec": "ligar-pontos", "selo": "LIGUE AS LETRAS", "enunciado": "Ligue as letras na ordem e descubra o que o Fubá assou hoje.", "dica": "Depois do I vem o J. Cante o alfabeto baixinho enquanto procura.", "conceito": "objetivo1", "dados": [{"selo": "O DOCE ESCONDIDO", "nome": "um BOLO", "voz": "um bolo", "pts": [[22, 80], [22, 54], [34, 40], [50, 34], [66, 40], [78, 54], [78, 80], [50, 88]], "d": "M22 80 L22 54 L34 40 L50 34 L66 40 L78 54 L78 80 L50 88 Z", "cor": "#f2b8c6", "extra": "<rect x=\"46\" y=\"14\" width=\"8\" height=\"20\" rx=\"3\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/><path d=\"M50 8 q6 6 0 8 q-6 -2 0 -8Z\" fill=\"#ffd54a\"/>"}], "dadosExtra": {"ROTULOS": ["I", "J", "K", "L", "M", "N", "O", "P"], "DICAS": ["Procure a letra que vem <b>depois</b> da última que você ligou.", "Cante o alfabeto até chegar perto: ...H, I, J, K...", "Eu liguei uma para você. Agora siga a que está piscando."]}, "vozIntro": "pd_f24_intro", "dicaVoz": "pd_f24_dica"}, {"id": "f29", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "As últimas gavetas da padaria. Ponha na ordem.", "dica": "Cante o alfabeto até o fim: ...U, V, W, X, Y, Z.", "conceito": "objetivo1", "dados": ["V", "W", "X", "Y", "Z"], "dadosExtra": {"ORDTXT": {"selo": "O ALFABETO", "balao": "Ponha as letras <b>na ordem do alfabeto</b>.", "hint": "Toque na letra ou arraste até a prateleira."}}, "vozIntro": "pd_f29_intro", "dicaVoz": "pd_f29_dica"}, {"id": "f18", "mec": "tracar-letra", "selo": "ESCREVA A LETRA", "enunciado": "Escreva com o dedo as letras dos doces.", "dica": "Comece na bolinha <b>1</b> e siga as setinhas, sem pressa.", "conceito": "objetivo2", "dados": [{"selo": "A LETRA L", "letra": "L", "voz": "éle", "palavra": "LEITE", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>L</b>! L de LEITE.", "tracos": [{"pts": [[32, 12], [32, 46], [32, 80], [59, 80], [86, 80]]}]}, {"selo": "A LETRA A", "letra": "A", "voz": "á", "palavra": "AÇÚCAR", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>A</b>! A de AÇÚCAR.", "tracos": [{"pts": [[18, 84], [50, 14], [82, 84]]}, {"pts": [[30, 58], [70, 58]]}]}, {"selo": "A LETRA O", "letra": "O", "voz": "ó", "palavra": "OVO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>O</b>! O de OVO.", "tracos": [{"pts": [[50, 12], [20, 32], [14, 52], [20, 72], [50, 86], [80, 72], [86, 52], [80, 32], [50, 12]]}]}], "vozIntro": "pd_f18_intro", "dicaVoz": "pd_f18_dica"}, {"id": "f25", "mec": "ouvir-achar", "selo": "OUÇA E ACHE", "enunciado": "Ouça a palavra e toque na <b>letra</b> com que ela começa.", "dica": "Diga a palavra e segure a primeira letrinha: BBBBolo.", "conceito": "objetivo2", "dados": [{"selo": "OUÇA E ACHE", "alvo": "Q", "opcoes": ["Q", "G", "O", "C"], "rotulo": "A LETRA É", "escrito": "Q", "fala": "queijo", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! QUEIJO começa com <b>Q</b>.", "dicas": ["Ouça de novo e diga: QUEI-JO.", "O som do começo é <b>quê</b>.", "É esta a letra. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "L", "opcoes": ["L", "I", "T", "E"], "rotulo": "A LETRA É", "escrito": "L", "fala": "leite", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! LEITE começa com <b>L</b>.", "dicas": ["Ouça de novo e diga: LEI-TE.", "O som do começo é <b>éle</b>.", "É esta a letra. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "S", "opcoes": ["S", "C", "Z", "X"], "rotulo": "A LETRA É", "escrito": "S", "fala": "sal", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! SAL começa com <b>S</b>.", "dicas": ["Ouça de novo e diga: SSSSAL.", "O som do começo é o da cobrinha: <b>esse</b>.", "É esta a letra. Ela está acesa: toque nela."]}], "dadosExtra": {"CATALOGO": {"pd_pao": {"nome": "PÃO", "voz": "pão", "img": "pd_pao", "letra": "P"}, "pd_bolo": {"nome": "BOLO", "voz": "bolo", "img": "pd_bolo", "letra": "B"}, "pd_mel": {"nome": "MEL", "voz": "mel", "img": "pd_mel", "letra": "M"}, "pd_queijo": {"nome": "QUEIJO", "voz": "queijo", "img": "pd_queijo", "letra": "Q"}, "pd_leite": {"nome": "LEITE", "voz": "leite", "img": "pd_leite", "letra": "L"}, "pd_ovo": {"nome": "OVO", "voz": "ovo", "img": "pd_mamao", "letra": "O"}, "pd_sal": {"nome": "SAL", "voz": "sal", "img": "pd_sal", "letra": "S"}, "B": {"nome": "B", "voz": "bê", "texto": "B", "letra": "B"}, "D": {"nome": "D", "voz": "dê", "texto": "D", "letra": "D"}, "P": {"nome": "P", "voz": "pê", "texto": "P", "letra": "P"}, "M": {"nome": "M", "voz": "eme", "texto": "M", "letra": "M"}, "N": {"nome": "N", "voz": "ene", "texto": "N", "letra": "N"}, "W": {"nome": "W", "voz": "dábliu", "texto": "W", "letra": "W"}, "A": {"nome": "A", "voz": "á", "texto": "A", "letra": "A"}, "R": {"nome": "R", "voz": "erre", "texto": "R", "letra": "R"}, "F": {"nome": "F", "voz": "efe", "texto": "F", "letra": "F"}, "Q": {"nome": "Q", "voz": "quê", "texto": "Q", "letra": "Q"}, "G": {"nome": "G", "voz": "gê", "texto": "G", "letra": "G"}, "O": {"nome": "O", "voz": "ó", "texto": "O", "letra": "O"}, "C": {"nome": "C", "voz": "cê", "texto": "C", "letra": "C"}, "L": {"nome": "L", "voz": "éle", "texto": "L", "letra": "L"}, "I": {"nome": "I", "voz": "i", "texto": "I", "letra": "I"}, "T": {"nome": "T", "voz": "tê", "texto": "T", "letra": "T"}, "E": {"nome": "E", "voz": "é", "texto": "E", "letra": "E"}, "S": {"nome": "S", "voz": "esse", "texto": "S", "letra": "S"}, "Z": {"nome": "Z", "voz": "zê", "texto": "Z", "letra": "Z"}, "X": {"nome": "X", "voz": "xis", "texto": "X", "letra": "X"}}}, "vozIntro": "pd_f25_intro", "dicaVoz": "pd_f25_dica"}, {"id": "f28", "mec": "tracar-letra", "selo": "ESCREVA A LETRA", "enunciado": "Escreva as últimas letras da placa da padaria.", "dica": "Siga as bolinhas na ordem, com calma.", "conceito": "objetivo2", "dados": [{"selo": "A LETRA S", "letra": "S", "voz": "esse", "palavra": "SAL", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>S</b>! S de SAL.", "tracos": [{"pts": [[78, 24], [52, 14], [26, 24], [30, 44], [54, 52], [76, 60], [74, 80], [48, 88], [24, 78]]}]}, {"selo": "A LETRA Q", "letra": "Q", "voz": "quê", "palavra": "QUEIJO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>Q</b>! Q de QUEIJO.", "tracos": [{"pts": [[50, 12], [20, 32], [14, 52], [20, 72], [50, 86], [80, 72], [86, 52], [80, 32], [50, 12]]}, {"pts": [[62, 68], [84, 90]]}]}, {"selo": "A LETRA T", "letra": "T", "voz": "tê", "palavra": "TORTA", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>T</b>! T de TORTA.", "tracos": [{"pts": [[16, 16], [50, 16], [84, 16]]}, {"pts": [[50, 16], [50, 50], [50, 86]]}]}], "vozIntro": "pd_f28_intro", "dicaVoz": "pd_f28_dica"}, {"id": "f19", "mec": "classificar", "selo": "SEPARE", "enunciado": "Agora separe pelo som do <b>fim</b> da palavra.", "dica": "Diga a palavra inteira e escute só o último pedaço.", "conceito": "objetivo3", "dados": [{"k": "lo", "n": "TERMINA EM <b>LO</b><br>(como BOLO)"}, {"k": "to", "n": "TERMINA EM <b>TO</b><br>(como PATO)"}], "dadosExtra": {"FICHAS": [{"t": "BOLO", "alvo": "lo", "img": "pd_bolo"}, {"t": "BOLINHO", "alvo": "lo", "img": "pd_bolinho"}, {"t": "PATO", "alvo": "to", "img": "pd_pato"}, {"t": "BISCOITO", "alvo": "to", "img": "pd_biscoito"}], "DICAS": ["Fale a palavra até o fim e segure o último pedaço.", "BO-LO acaba em LO. PA-TO acaba em TO.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Agora olhe o FIM da palavra. Toque no doce e depois na gaveta certa."}, "vozIntro": "pd_f19_intro", "dicaVoz": "pd_f19_dica"}, {"id": "f30", "mec": "escolher", "selo": "ESCOLHA", "enunciado": "Última encomenda: pense bem antes de responder.", "dica": "Diga as palavras em voz alta e compare os pedaços.", "conceito": "objetivo3", "dados": [{"p": "Quais palavras começam com o <b>mesmo pedaço</b>?", "c": "BOLO e BOLACHA", "e": ["MEL e MALA", "PATO e QUEIJO", "SAL e LEITE"], "d": ["Diga os pares em voz alta e escute só o começo.", "Procure duas que comecem com <b>BO</b>.", "São BOLO e BOLACHA. A resposta está acesa: toque nela."]}, {"p": "O que a letra guarda dentro dela?", "c": "UM SOM", "e": ["UM DESENHO", "UM NÚMERO", "UMA COR"], "d": ["Pense: quando você viu o <b>B</b>, o que o Fubá falou?", "Cada letra que você achou tinha um som: bê, eme, pê.", "É UM SOM. A resposta está acesa: toque nela."]}, {"p": "Para escrever uma palavra, o que a gente faz?", "c": "JUNTA OS PEDAÇOS", "e": ["DESENHA A FIGURA", "CONTA OS DEDOS", "CANTA UMA MÚSICA"], "d": ["Lembre da bandeja: BO + LO deu o quê?", "Os pedaços correram um até o outro e viraram uma palavra.", "É JUNTA OS PEDAÇOS. A resposta está acesa: toque nela."]}], "vozIntro": "pd_f30_intro", "dicaVoz": "pd_f30_dica"}, {"id": "f26", "mec": "classificar", "selo": "SEPARE", "enunciado": "Separe pelas batidas: uma bandeja para cada tamanho.", "dica": "Bata a palavra antes de escolher a bandeja.", "conceito": "objetivo3", "dados": [{"k": "dois", "n": "<b>2</b> PEDAÇOS<br>(como BO-LO)"}, {"k": "tres", "n": "<b>3</b> PEDAÇOS<br>(como BO-LA-CHA)"}], "dadosExtra": {"FICHAS": [{"t": "QUEIJO", "alvo": "dois", "img": "pd_queijo"}, {"t": "LEITE", "alvo": "dois", "img": "pd_leite"}, {"t": "BISCOITO", "alvo": "tres", "img": "pd_biscoito"}, {"t": "BOLINHO", "alvo": "tres", "img": "pd_bolinho"}], "DICAS": ["Bata a palavra com a mão antes de decidir.", "QUEI-JO tem 2. BIS-COI-TO tem 3.", "Olhe a bandeja com a borda amarela: é ali que esta ficha mora."], "ENUN": "Conte as batidas do nome. Toque no doce e depois na bandeja do tamanho dele."}, "vozIntro": "pd_f26_intro", "dicaVoz": "pd_f26_dica"}, {"id": "f21", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Estas são mais compridas. Bata com calma.", "dica": "Bata devagar: um golpe para cada pedaço, sem correr.", "conceito": "objetivo4", "dados": [{"pal": "BOLINHO", "sil": ["BO", "LI", "NHO"], "fig": "pd_bolinho", "d": ["Diga BO-LI-NHO devagar.", "Escute: três golpes. Bata comigo.", "São <b>3</b> pedaços: BO-LI-NHO. As batidas já estão aí: toque em Pronto."]}, {"pal": "LEITE", "sil": ["LEI", "TE"], "fig": "pd_leite", "d": ["Diga LEI-TE devagar.", "Escute: dois golpes. Bata comigo.", "São <b>2</b> pedaços: LEI-TE. As batidas já estão aí: toque em Pronto."]}, {"pal": "AÇÚCAR", "sil": ["A", "ÇÚ", "CAR"], "fig": "pd_acucar", "d": ["Diga A-ÇÚ-CAR bem devagar.", "Escute: são três golpes. Conte comigo.", "São <b>3</b> pedaços: A-ÇÚ-CAR. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f21_intro", "dicaVoz": "pd_f21_dica"}, {"id": "f23", "mec": "completar", "selo": "COMPLETE", "enunciado": "Um pedaço caiu da palavra. Qual é?", "dica": "Diga a palavra inteira em voz alta e escute o buraco.", "conceito": "objetivo4", "dados": [{"ante": "BO-", "dep": "-CHA", "cer": "LA", "out": ["MA", "TO"], "dic": "Diga BO-LA-CHA devagar e pare no meio."}, {"ante": "BIS-", "dep": "-TO", "cer": "COI", "out": ["CA", "LI"], "dic": "Diga BIS-COI-TO devagar."}, {"ante": "SA-", "dep": "-TO", "cer": "PA", "out": ["MA", "LO"], "dic": "Diga SA-PA-TO devagar e escute o meio."}], "vozIntro": "pd_f23_intro", "dicaVoz": "pd_f23_dica"}, {"id": "f20", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Cuidado: agora tem pedaço parecido na bandeja.", "dica": "Escute o pedaço inteiro, não só a primeira letrinha.", "conceito": "objetivo5", "dados": [{"pal": "BOLINHO", "sil": ["BO", "LI", "NHO"], "fig": "pd_bolinho", "iscas": ["LA", "BA"], "d": ["Diga BO-LI-NHO devagar.", "O primeiro pedaço é <b>BO</b>. Depois vem LI.", "É o <b>BO</b>. Ele está aceso: toque nele."]}, {"pal": "LEITE", "sil": ["LEI", "TE"], "fig": "pd_leite", "iscas": ["LA", "TO"], "d": ["Diga LEI-TE devagar.", "O primeiro pedaço é <b>LEI</b>, não é LA.", "É o <b>LEI</b>. Ele está aceso: toque nele."]}, {"pal": "AÇÚCAR", "sil": ["A", "ÇÚ", "CAR"], "fig": "pd_acucar", "iscas": ["SA", "BO"], "d": ["Diga A-ÇÚ-CAR bem devagar.", "Começa com a letra <b>A</b> sozinha.", "É o <b>A</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f20_intro", "dicaVoz": "pd_f20_dica"}, {"id": "f22", "mec": "memoria", "selo": "MEMÓRIA DOS PEDAÇOS", "enunciado": "Ache o pedaço que começa cada palavra.", "dica": "Vire uma carta, diga o que está escrito e procure o par dela.", "conceito": "objetivo5", "dados": [{"k": "qu", "pal": "QUEIJO", "sen": "começa com QUEI"}, {"k": "bi", "pal": "BISCOITO", "sen": "começa com BIS"}, {"k": "le", "pal": "LEITE", "sen": "começa com LEI"}, {"k": "sa", "pal": "SAPATO", "sen": "começa com SA"}], "vozIntro": "pd_f22_intro", "dicaVoz": "pd_f22_dica"}, {"id": "f27", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "A última encomenda do dia. Junte com atenção.", "dica": "Fale a palavra devagar, pedaço por pedaço, antes de tocar.", "conceito": "objetivo5", "dados": [{"pal": "MAMÃO", "sil": ["MA", "MÃO"], "fig": "pd_mamao", "iscas": ["BO", "LEI"], "d": ["Diga MA-MÃO devagar.", "O primeiro pedaço é <b>MA</b>.", "É o <b>MA</b>. Ele está aceso: toque nele."]}, {"pal": "BISCOITO", "sil": ["BIS", "COI", "TO"], "fig": "pd_biscoito", "iscas": ["BO", "SA"], "d": ["Diga BIS-COI-TO bem devagar.", "O primeiro pedaço é <b>BIS</b>.", "É o <b>BIS</b>. Ele está aceso: toque nele."]}, {"pal": "BOLACHA", "sil": ["BO", "LA", "CHA"], "fig": "pd_bolacha", "iscas": ["BI", "MA"], "d": ["Diga BO-LA-CHA devagar. Cuidado: tem pedaço parecido.", "O primeiro é <b>BO</b>, não é BI.", "É o <b>BO</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f27_intro", "dicaVoz": "pd_f27_dica"}, {"id": "f31", "mec": "pintar-desenho", "selo": "PINTE A PADARIA", "enunciado": "O dia acabou! Pinte a placa da padaria do jeito que você quiser.", "dica": "Escolha uma cor e toque no lugar que você quer pintar. Pode trocar quantas vezes quiser.", "conceito": "livre", "dados": [{"selo": "A PLACA DA PADARIA", "nome": "a placa", "voz": "a placa da padaria", "regs": [{"k": "ceu", "n": "o fundo", "d": "M0 0 H100 V100 H0 Z"}, {"k": "placa", "n": "a placa", "d": "M10 26 H90 V70 H10 Z"}, {"k": "toldo", "n": "o toldo", "d": "M6 26 L18 10 H82 L94 26 Z"}, {"k": "pao", "n": "o pãozinho", "d": "M34 78 C34 70 42 66 50 66 C58 66 66 70 66 78 C66 86 58 90 50 90 C42 90 34 86 34 78 Z"}], "tracos": "<path d=\"M24 44 H76\" stroke=\"#2b2118\" stroke-width=\"1.6\" fill=\"none\"/><path d=\"M24 56 H60\" stroke=\"#2b2118\" stroke-width=\"1.6\" fill=\"none\"/><path d=\"M42 74 L58 72\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/>"}, {"selo": "O BOLO DA MIGA", "nome": "o bolo", "voz": "o bolo do Fubá", "regs": [{"k": "mesa", "n": "a mesa", "d": "M0 0 H100 V100 H0 Z"}, {"k": "base", "n": "o bolo", "d": "M20 82 V54 H80 V82 Z"}, {"k": "cober", "n": "a cobertura", "d": "M20 54 C28 46 36 58 44 50 C52 44 60 56 68 50 C74 46 78 52 80 54 Z"}, {"k": "vela", "n": "a velinha", "d": "M46 30 H54 V50 H46 Z"}], "tracos": "<path d=\"M50 18 q7 8 0 12 q-7 -3 0 -12Z\" fill=\"#ffd54a\" stroke=\"#2b2118\" stroke-width=\"1\"/><path d=\"M0 82 H100\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\"/>"}], "vozIntro": "pd_f31_intro", "dicaVoz": "pd_f31_dica"}, {"id": "f32", "mec": "ligar-pontos", "selo": "LIGUE E DESCUBRA", "enunciado": "Uma última surpresa do Fubá: ligue as letras e veja o que aparece.", "dica": "É só seguir o alfabeto. Não tem pressa e não tem erro.", "conceito": "livre", "dados": [{"selo": "A SURPRESA DA MIGA", "nome": "um CORAÇÃO", "voz": "um coração", "pts": [[50, 86], [24, 62], [16, 42], [26, 26], [42, 26], [50, 38], [58, 26], [74, 26], [84, 42], [76, 62]], "d": "M50 86 L24 62 L16 42 L26 26 L42 26 L50 38 L58 26 L74 26 L84 42 L76 62 Z", "cor": "#f28ba0", "extra": "<circle cx=\"38\" cy=\"46\" r=\"2.4\" fill=\"#fffdf6\"/>"}], "dadosExtra": {"ROTULOS": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"], "DICAS": ["Procure a letra que vem <b>depois</b> da última.", "Cante o alfabeto baixinho: A, B, C...", "Eu liguei uma para você. Siga a que está piscando."]}, "vozIntro": "pd_f32_intro", "dicaVoz": "pd_f32_dica"}];
-VOZOK = {"1iy1ayv": 1, "18sfgas": 1, "1mlrkx1": 1, "1n0d5p2": 1, "377imf": 1, "qlqbul": 1, "h1nakb": 1, "kr05nh": 1, "1sue2hy": 1, "1p51bpu": 1, "pq55n3": 1, "1lmr9e3": 1, "ykeiwh": 1, "1gmvssn": 1, "4ire75": 1, "1gokh1y": 1, "vzls8g": 1, "377cw3": 1, "qnb3q1": 1, "ai81dk": 1, "1lzknbn": 1, "1izuq02": 1, "3t3p": 1, "3t3b": 1, "3t3m": 1, "6n9vbm": 1, "3t3q": 1, "4ecv6g": 1, "3t3l": 1, "377f09": 1, "3t3o": 1, "377htx": 1, "3t3s": 1, "3t3d": 1, "3t3n": 1, "3t3w": 1, "3t3a": 1, "3t3r": 1, "3t3f": 1, "3t3g": 1, "3t3c": 1, "3t3i": 1, "3t3t": 1, "3t3e": 1, "3t3z": 1, "3t3x": 1, "xnyhzm": 1, "10mrp3z": 1, "awg8o6": 1, "jz1khi": 1, "1m2qiwh": 1, "1ebe428": 1, "11ik8dl": 1, "18n8x4t": 1, "1q3g71y": 1, "3t3h": 1, "3inb12": 1, "157rdki": 1, "6rbl6z": 1, "45bn34": 1, "uro5cm": 1, "47fwcm": 1, "27i82j": 1, "4a9kpa": 1, "3t3j": 1, "3t3k": 1, "lp2io9": 1, "32yory": 1, "1f2gf15": 1, "rmfpvq": 1, "1ui4742": 1, "32york": 1, "nfyxww": 1, "32yorv": 1, "1yuow2g": 1, "32yovb": 1, "1kb32w8": 1, "uyw7vw": 1, "11z1wv7": 1, "1bgwc34": 1, "bmxq7q": 1, "1xkjd0b": 1, "11z1x5a": 1, "3t5azf": 1, "kyr6bj": 1, "11z1x81": 1, "1bgwnum": 1, "17xn1eo": 1, "1k8onzg": 1, "11io1eg": 1, "119mywf": 1, "119tdzk": 1, "4ezdiq": 1, "4ezfp6": 1, "t4egua": 1, "1pdhwhq": 1, "1t5zox6": 1, "ty5pf7": 1, "1shmoqp": 1, "ykmo5c": 1, "1shmp0e": 1, "ykozjt": 1, "1shmp35": 1, "1shmp0i": 1, "gufrel": 1, "7jzer1": 1, "6zjjyu": 1, "tbpqsd": 1, "13a0ej8": 1, "lvzjux": 1, "b5o07m": 1, "1x5u6yf": 1, "16zmli0": 1, "uozuyk": 1, "1313u0r": 1, "robc2a": 1, "7nppzg": 1, "qh1xnx": 1, "18847x3": 1, "1kky22d": 1, "3ho46": 1, "3hodc": 1, "1p8a69g": 1, "1xdhchg": 1, "7rnqa5": 1, "3hocy": 1, "3774k1": 1, "1b5644i": 1, "hvvhlp": 1, "17t6xsw": 1, "r1xsex": 1, "3hodv": 1, "3hogq": 1, "kwquq1": 1, "9v0orb": 1, "wlccqf": 1, "377csm": 1, "3hojd": 1, "1lndtwt": 1, "qgk0t2": 1, "byu1j7": 1, "1shxx10": 1, "ykq7p5": 1, "3hobi": 1, "xex847": 1, "13v7xbq": 1, "2ilpvr": 1, "44vhkh": 1, "1xxr3rd": 1, "1m48anf": 1, "1p6v21c": 1, "1g4p776": 1, "4tmz9q": 1, "14sp3fl": 1, "3773r7": 1, "3774qo": 1, "3hoko": 1, "bjolys": 1, "3upe11": 1, "419ypl": 1, "131j5zf": 1, "1hn9w47": 1, "1tp2u44": 1, "1ey6tl0": 1, "zz537z": 1, "bylr8g": 1, "1vkleq9": 1, "377g3o": 1, "1lndof7": 1, "1y70mgs": 1, "1pf5hhs": 1, "88mim9": 1, "18snljn": 1, "5mij0q": 1, "b0nssz": 1, "1ia76ik": 1, "r9j96k": 1, "6ul789": 1, "r7fijx": 1, "3hogm": 1, "1nih4cg": 1, "13dgc0o": 1, "n8dgj1": 1, "jg5po7": 1, "1evooyt": 1, "133uj7a": 1, "1t0g18n": 1, "18spwy4": 1, "mpe9yu": 1, "1t4mwfm": 1, "10mj9xg": 1, "3hoke": 1, "hh7pno": 1, "qad6j5": 1, "q3f0rc": 1, "o7387r": 1, "g6gf4": 1, "1lidep2": 1, "421x5k": 1, "1j90dic": 1, "1eqghrw": 1, "1nhjk5z": 1, "1rj6yi2": 1, "orxlox": 1, "1vp229": 1, "1y07bs7": 1, "1vtlkp3": 1, "e3ygab": 1, "dloh9g": 1, "y3345j": 1, "3t3v": 1, "3t3y": 1, "32yoru": 1, "zsgmnf": 1, "32yorj": 1, "1xn9bst": 1, "u7tcwq": 1, "32yorx": 1, "klitua": 1, "xl3twb": 1, "1dm9jiw": 1, "1ot5maf": 1, "z6f1sk": 1, "12g0ows": 1, "1xidav2": 1, "1ovpqu9": 1, "1c0neb4": 1, "f84l4n": 1, "r86l8r": 1, "32yos1": 1, "1q5diw6": 1, "32yorz": 1, "twk7xr": 1, "32yos2": 1, "4k84j3": 1, "16j3pgy": 1, "18dcfsd": 1, "7q4vr1": 1, "1qoax6y": 1, "19txgp9": 1, "1on1pov": 1, "1fm6l2x": 1, "7vxztv": 1, "nxkbhn": 1, "1fm3km5": 1, "alvgxh": 1, "teyuyc": 1, "3m165h": 1, "wrt0ml": 1, "etm4lp": 1, "xim9tu": 1, "fcfj7w": 1, "12tja0y": 1, "1pwxfjp": 1, "hv5a1r": 1, "gzvx70": 1, "is1bng": 1, "j9y38r": 1, "18560za": 1, "1wd4n6b": 1, "bmmijg": 1, "l0jyol": 1, "i3vi5u": 1, "1ufui66": 1, "167whvu": 1, "1yhpici": 1, "1kt97av": 1, "fon7k": 1, "3hod6": 1, "377dt6": 1, "1b5cj7n": 1, "1r8j2pz": 1, "ft81af": 1, "im0vui": 1, "377c1r": 1, "1arfx8i": 1, "nhg4ic": 1, "3hrly": 1, "3774e3": 1, "1bwlb6v": 1, "12uxhwo": 1, "drwguf": 1, "3773ur": 1, "yj9f26": 1, "10thay": 1, "ykedzk": 1, "375vhx": 1, "3ho4p": 1, "18uu69k": 1, "377hs6": 1, "1kmij9n": 1, "3ho3s": 1, "1o11xcy": 1, "1emqsgu": 1, "1ejniod": 1, "u7jng4": 1, "2nvqic": 1, "1esbzj8": 1, "1w9j34e": 1, "1w9jbey": 1, "1shmp5w": 1, "133ue5s": 1, "yga1ik": 1, "3ho40": 1, "1omn4f8": 1, "8org6b": 1, "ptu6hq": 1, "zw6pc7": 1, "1elki7k": 1, "1v36kn8": 1, "10e9w24": 1, "1evbp12": 1, "12m1y43": 1, "dec0f2": 1, "5cqh6m": 1, "1u7snfn": 1, "3olisg": 1, "48qsa9": 1, "1tnqioc": 1, "ay4ucn": 1, "1pdv4ml": 1, "1ha1lmu": 1, "3ev05p": 1, "1p0rw7r": 1, "19nfku": 1, "1yy40yt": 1, "4ac2f7": 1, "be9i7t": 1, "ir9yb5": 1, "1l6g2o1": 1, "1e3fptx": 1, "u0ea9s": 1, "1v8u0y8": 1, "16hxo4n": 1, "1hll87c": 1, "1g1z74o": 1, "l1fi9q": 1, "t90h3f": 1, "jhvbp5": 1, "1y81sr6": 1, "1u5n5gf": 1, "3ys7iy": 1, "1licgms": 1, "1matn8a": 1, "yhnxll": 1};
+FASES = [{"id": "f01", "mec": "ouvir-achar", "selo": "OUÇA E ACHE", "enunciado": "As etiquetas da padaria caíram! Ouça e ache o doce certo.", "dica": "Aperte <b>Ouvir</b> e diga a palavra junto com o Fubá, bem devagar.", "conceito": "objetivo2", "dados": [{"selo": "OUÇA E ACHE", "alvo": "pd_pao", "opcoes": ["pd_pao", "pd_bolo", "pd_mel", "pd_queijo"], "rotulo": "A PALAVRA É", "escrito": "PÃO", "fala": "pão", "enun": "Ouça a palavra e toque na <b>figura</b> dela.", "hint": "Sem som no computador? A palavra está escrita aí em cima.", "msg": "Isso! O <b>PÃO</b> é este.", "dicas": ["Aperte <b>Ouvir</b> de novo e diga a palavra junto.", "Olhe a letra do começo. A palavra começa com <b>P</b>.", "É esta a figura do PÃO. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "pd_bolo", "opcoes": ["pd_bolo", "pd_pao", "pd_leite", "pd_ovo"], "rotulo": "A PALAVRA É", "escrito": "BOLO", "fala": "bolo", "enun": "Ouça a palavra e toque na <b>figura</b> dela.", "hint": "Sem som no computador? A palavra está escrita aí em cima.", "msg": "Isso! O <b>BOLO</b> é este.", "dicas": ["Ouça de novo e repita devagar: BO-LO.", "Começa com <b>B</b>, a mesma letra de BOCA.", "É este o BOLO. Ele está aceso: toque nele."]}, {"selo": "OUÇA E ACHE", "alvo": "pd_mel", "opcoes": ["pd_mel", "pd_sal", "pd_pao", "pd_bolo"], "rotulo": "A PALAVRA É", "escrito": "MEL", "fala": "mel", "enun": "Ouça a palavra e toque na <b>figura</b> dela.", "hint": "Sem som no computador? A palavra está escrita aí em cima.", "msg": "Isso! O <b>MEL</b> é este.", "dicas": ["Ouça de novo. A palavra é curtinha, tem um golpe só.", "Começa com <b>M</b>, o som de MÃE.", "É este o MEL. Ele está aceso: toque nele."]}], "dadosExtra": {"CATALOGO": {"pd_pao": {"nome": "PÃO", "voz": "pão", "img": "pd_pao", "letra": "P"}, "pd_bolo": {"nome": "BOLO", "voz": "bolo", "img": "pd_bolo", "letra": "B"}, "pd_mel": {"nome": "MEL", "voz": "mel", "img": "pd_mel", "letra": "M"}, "pd_queijo": {"nome": "QUEIJO", "voz": "queijo", "img": "pd_queijo", "letra": "Q"}, "pd_leite": {"nome": "LEITE", "voz": "leite", "img": "pd_leite", "letra": "L"}, "pd_ovo": {"nome": "OVO", "voz": "ovo", "img": "pd_mamao", "letra": "O"}, "pd_sal": {"nome": "SAL", "voz": "sal", "img": "pd_sal", "letra": "S"}, "B": {"nome": "B", "voz": "bê", "texto": "B", "letra": "B"}, "D": {"nome": "D", "voz": "dê", "texto": "D", "letra": "D"}, "P": {"nome": "P", "voz": "pê", "texto": "P", "letra": "P"}, "M": {"nome": "M", "voz": "eme", "texto": "M", "letra": "M"}, "N": {"nome": "N", "voz": "ene", "texto": "N", "letra": "N"}, "W": {"nome": "W", "voz": "dábliu", "texto": "W", "letra": "W"}, "A": {"nome": "A", "voz": "á", "texto": "A", "letra": "A"}, "R": {"nome": "R", "voz": "erre", "texto": "R", "letra": "R"}, "F": {"nome": "F", "voz": "efe", "texto": "F", "letra": "F"}, "Q": {"nome": "Q", "voz": "quê", "texto": "Q", "letra": "Q"}, "G": {"nome": "G", "voz": "gê", "texto": "G", "letra": "G"}, "O": {"nome": "O", "voz": "ó", "texto": "O", "letra": "O"}, "C": {"nome": "C", "voz": "cê", "texto": "C", "letra": "C"}, "L": {"nome": "L", "voz": "éle", "texto": "L", "letra": "L"}, "I": {"nome": "I", "voz": "i", "texto": "I", "letra": "I"}, "T": {"nome": "T", "voz": "tê", "texto": "T", "letra": "T"}, "E": {"nome": "E", "voz": "é", "texto": "E", "letra": "E"}, "S": {"nome": "S", "voz": "esse", "texto": "S", "letra": "S"}, "Z": {"nome": "Z", "voz": "zê", "texto": "Z", "letra": "Z"}, "X": {"nome": "X", "voz": "xis", "texto": "X", "letra": "X"}}}, "vozIntro": "pd_f01_intro", "dicaVoz": "pd_f01_dica"}, {"id": "f04", "mec": "ordenar", "selo": "EM ORDEM", "enunciado": "O Fubá guarda os pães em gavetas com letras. Ponha na ordem do alfabeto.", "dica": "Cante o alfabeto baixinho: A, B, C... qual vem primeiro?", "conceito": "objetivo1", "dados": ["A", "B", "C", "D", "E"], "dadosExtra": {"ORDTXT": {"selo": "O ALFABETO", "balao": "Ponha as letras <b>na ordem do alfabeto</b>.", "hint": "Toque na letra ou arraste até a prateleira."}}, "vozIntro": "pd_f04_intro", "dicaVoz": "pd_f04_dica"}, {"mec": "intruso", "selo": "QUAL NÃO RIMA?", "enunciado": "Três palavras terminam com o mesmo som. Ache a que não combina.", "dica": "Diga as quatro em voz alta e escute só o <b>fim</b> de cada uma.", "conceito": "objetivo6", "dados": [{"selo": "QUAL NÃO RIMA?", "tipo": "texto", "enun": "Três destas terminam igual. <b>Qual não rima?</b>", "itens": [{"k": "pao", "n": "PÃO"}, {"k": "mao", "n": "MÃO"}, {"k": "chao", "n": "CHÃO"}, {"k": "bolo", "n": "BOLO"}], "fora": "bolo", "nomeFora": "BOLO", "d1": "Fale as quatro devagar e pare no <b>finalzinho</b> de cada uma.", "d2": "PÃO, MÃO e CHÃO terminam com o mesmo som: <b>ÃO</b>. Procure a que termina diferente.", "d3": "A de fora é <b>BOLO</b>: ela termina em <b>O</b>, e as outras três em <b>ÃO</b>.", "razoes": [{"t": "As outras três terminam com o som <b>ÃO</b>.", "ok": 1}, {"t": "Porque BOLO é doce.", "ok": 0}, {"t": "Porque BOLO é a menor palavra.", "ok": 0}]}, {"selo": "QUAL NÃO RIMA?", "tipo": "texto", "enun": "Três destas terminam igual. <b>Qual não rima?</b>", "itens": [{"k": "mel", "n": "MEL"}, {"k": "papel", "n": "PAPEL"}, {"k": "anel", "n": "ANEL"}, {"k": "sal", "n": "SAL"}], "fora": "sal", "nomeFora": "SAL", "d1": "Escute o <b>fim</b> de cada palavra, não o começo.", "d2": "MEL, PAPEL e ANEL terminam com <b>EL</b>. Procure a que termina diferente.", "d3": "A de fora é <b>SAL</b>: ela termina em <b>AL</b>, e as outras três em <b>EL</b>.", "razoes": [{"t": "As outras três terminam com o som <b>EL</b>.", "ok": 1}, {"t": "Porque SAL não é doce.", "ok": 0}, {"t": "Porque SAL tem três letras.", "ok": 0}]}], "id": "f03", "vozIntro": "pd_f03_intro", "dicaVoz": "pd_f03_dica"}, {"id": "f12", "mec": "completar", "selo": "COMPLETE", "enunciado": "Uma letra caiu da prateleira. Qual está faltando?", "dica": "Diga as letras em voz alta, na ordem, e pare onde o buraco está.", "conceito": "objetivo1", "dados": [{"ante": "A, B, ", "dep": ", D", "cer": "C", "out": ["E", "Z"], "dic": "Cante: A, B... qual vem depois do B?"}, {"ante": "D, E, ", "dep": ", G", "cer": "F", "out": ["H", "B"], "dic": "Cante do A até o E e continue mais uma."}, {"ante": "H, I, ", "dep": ", L", "cer": "J", "out": ["K", "M"], "dic": "Depois do I vem o J. Cante para conferir."}], "vozIntro": "pd_f12_intro", "dicaVoz": "pd_f12_dica"}, {"id": "f08", "mec": "tracar-letra", "selo": "ESCREVA A LETRA", "enunciado": "Agora escreva a letra com o dedo, seguindo as bolinhas.", "dica": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "conceito": "objetivo2", "dados": [{"selo": "A LETRA P", "letra": "P", "voz": "pê", "palavra": "PÃO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>P</b>! P de PÃO.", "tracos": [{"pts": [[32, 12], [32, 46], [32, 84]]}, {"pts": [[32, 12], [62, 20], [62, 40], [32, 48]]}]}, {"selo": "A LETRA B", "letra": "B", "voz": "bê", "palavra": "BOLO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>B</b>! B de BOLO.", "tracos": [{"pts": [[30, 12], [30, 48], [30, 84]]}, {"pts": [[30, 12], [60, 20], [60, 40], [30, 48]]}, {"pts": [[30, 48], [64, 56], [64, 78], [30, 84]]}]}, {"selo": "A LETRA M", "letra": "M", "voz": "eme", "palavra": "MEL", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>M</b>! M de MEL.", "tracos": [{"pts": [[18, 84], [18, 14], [50, 52], [82, 14], [82, 84]]}]}], "vozIntro": "pd_f08_intro", "dicaVoz": "pd_f08_dica"}, {"id": "f05", "mec": "ouvir-achar", "selo": "OUÇA E ACHE", "enunciado": "O Fubá vai falar o nome de uma letra. Toque nela.", "dica": "Aperte <b>Ouvir</b> de novo e repita o nome da letra em voz alta.", "conceito": "objetivo2", "dados": [{"selo": "OUÇA E ACHE", "alvo": "B", "opcoes": ["B", "D", "P", "M"], "rotulo": "A LETRA É", "escrito": "B", "fala": "bê", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! Esta é a letra <b>B</b>.", "dicas": ["Ouça de novo: <b>bê</b>.", "É a letra de BOLO, que você já achou lá atrás.", "É esta. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "M", "opcoes": ["M", "N", "W", "A"], "rotulo": "A LETRA É", "escrito": "M", "fala": "eme", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! Esta é a letra <b>M</b>.", "dicas": ["Ouça de novo: <b>eme</b>.", "É a letra de MEL e de MÃE.", "É esta. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "P", "opcoes": ["P", "B", "R", "F"], "rotulo": "A LETRA É", "escrito": "P", "fala": "pê", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! Esta é a letra <b>P</b>.", "dicas": ["Ouça de novo: <b>pê</b>.", "É a letra de PÃO.", "É esta. Ela está acesa: toque nela."]}], "dadosExtra": {"CATALOGO": {"pd_pao": {"nome": "PÃO", "voz": "pão", "img": "pd_pao", "letra": "P"}, "pd_bolo": {"nome": "BOLO", "voz": "bolo", "img": "pd_bolo", "letra": "B"}, "pd_mel": {"nome": "MEL", "voz": "mel", "img": "pd_mel", "letra": "M"}, "pd_queijo": {"nome": "QUEIJO", "voz": "queijo", "img": "pd_queijo", "letra": "Q"}, "pd_leite": {"nome": "LEITE", "voz": "leite", "img": "pd_leite", "letra": "L"}, "pd_ovo": {"nome": "OVO", "voz": "ovo", "img": "pd_mamao", "letra": "O"}, "pd_sal": {"nome": "SAL", "voz": "sal", "img": "pd_sal", "letra": "S"}, "B": {"nome": "B", "voz": "bê", "texto": "B", "letra": "B"}, "D": {"nome": "D", "voz": "dê", "texto": "D", "letra": "D"}, "P": {"nome": "P", "voz": "pê", "texto": "P", "letra": "P"}, "M": {"nome": "M", "voz": "eme", "texto": "M", "letra": "M"}, "N": {"nome": "N", "voz": "ene", "texto": "N", "letra": "N"}, "W": {"nome": "W", "voz": "dábliu", "texto": "W", "letra": "W"}, "A": {"nome": "A", "voz": "á", "texto": "A", "letra": "A"}, "R": {"nome": "R", "voz": "erre", "texto": "R", "letra": "R"}, "F": {"nome": "F", "voz": "efe", "texto": "F", "letra": "F"}, "Q": {"nome": "Q", "voz": "quê", "texto": "Q", "letra": "Q"}, "G": {"nome": "G", "voz": "gê", "texto": "G", "letra": "G"}, "O": {"nome": "O", "voz": "ó", "texto": "O", "letra": "O"}, "C": {"nome": "C", "voz": "cê", "texto": "C", "letra": "C"}, "L": {"nome": "L", "voz": "éle", "texto": "L", "letra": "L"}, "I": {"nome": "I", "voz": "i", "texto": "I", "letra": "I"}, "T": {"nome": "T", "voz": "tê", "texto": "T", "letra": "T"}, "E": {"nome": "E", "voz": "é", "texto": "E", "letra": "E"}, "S": {"nome": "S", "voz": "esse", "texto": "S", "letra": "S"}, "Z": {"nome": "Z", "voz": "zê", "texto": "Z", "letra": "Z"}, "X": {"nome": "X", "voz": "xis", "texto": "X", "letra": "X"}}}, "vozIntro": "pd_f05_intro", "dicaVoz": "pd_f05_dica"}, {"id": "f06", "mec": "classificar", "selo": "SEPARE", "enunciado": "O Fubá separa os doces pelo som do começo. Ponha cada um na gaveta certa.", "dica": "Diga o nome devagar e escute só o <b>começo</b>: é BO ou é MA?", "conceito": "objetivo3", "dados": [{"k": "bo", "n": "COMEÇA COM <b>BO</b><br>(como BOLO)"}, {"k": "ma", "n": "COMEÇA COM <b>MA</b><br>(como MALA)"}], "dadosExtra": {"FICHAS": [{"t": "BOLACHA", "alvo": "bo", "img": "pd_bolacha"}, {"t": "BOLINHO", "alvo": "bo", "img": "pd_bolinho"}, {"t": "MAMÃO", "alvo": "ma", "img": "pd_mamao"}, {"t": "MASSA", "alvo": "ma", "img": "pd_massa"}], "DICAS": ["Fale a palavra bem devagar e pare no primeiro pedaço.", "BO-LA-CHA começa igual a BO-LO. MA-MÃO começa igual a MA-LA.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Cada doce começa com um som. Toque no doce e depois na gaveta do som dele."}, "vozIntro": "pd_f06_intro", "dicaVoz": "pd_f06_dica"}, {"id": "f11", "mec": "memoria", "selo": "MEMÓRIA DOS COMEÇOS", "enunciado": "Ache a palavra e o pedaço com que ela começa.", "dica": "Diga a palavra da carta em voz alta e escute só o começo dela.", "conceito": "objetivo3", "dados": [{"k": "bo", "pal": "BOLO", "sen": "começa com BO"}, {"k": "ma", "pal": "MALA", "sen": "começa com MA"}, {"k": "pa", "pal": "PATO", "sen": "começa com PA"}, {"k": "me", "pal": "MEL", "sen": "começa com ME"}], "vozIntro": "pd_f11_intro", "dicaVoz": "pd_f11_dica"}, {"id": "f09", "mec": "escolher", "selo": "ACHE A RIMA", "enunciado": "Ache a palavra que termina com o mesmo som.", "dica": "Diga as duas em voz alta e compare só o <b>fim</b>.", "conceito": "objetivo6", "dados": [{"p": "Qual palavra rima com <b>PÃO</b>?", "c": "MÃO", "e": ["BOLO", "MEL"], "d": ["Diga PÃO e depois cada uma das outras, bem devagar.", "Escute só o finalzinho: qual termina em <b>ÃO</b>?", "É <b>MÃO</b>: PÃO e MÃO terminam igual."]}, {"p": "Qual palavra rima com <b>MEL</b>?", "c": "PAPEL", "e": ["MASSA", "PATO"], "d": ["Fale MEL e depois as outras, devagar.", "Compare só o fim: qual termina em <b>EL</b>?", "É <b>PAPEL</b>: MEL e PAPEL terminam igual."]}, {"p": "Qual palavra rima com <b>GATO</b>?", "c": "SAPATO", "e": ["QUEIJO", "BOLO"], "d": ["Diga GATO e depois cada uma das outras.", "O fim é o que importa: qual termina em <b>ATO</b>?", "É <b>SAPATO</b>: GATO e SAPATO terminam igual."]}], "vozIntro": "pd_f09_intro", "dicaVoz": "pd_f09_dica"}, {"id": "f02", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Diga o nome do doce e bata uma vez para cada pedaço.", "dica": "Ponha a mão no queixo: ele desce a cada pedaço da palavra.", "conceito": "objetivo4", "dados": [{"pal": "PÃO", "sil": ["PÃO"], "fig": "pd_pao", "d": ["Cuidado com esta: diga <b>PÃO</b>. Quantos pedaços a boca faz?", "Escute: a palavra tem UM golpe só. Bata junto comigo.", "É <b>1</b> pedaço só: PÃO. A batida já está aí: toque em Pronto."]}, {"pal": "BOLO", "sil": ["BO", "LO"], "fig": "pd_bolo", "d": ["Diga <b>BOLO</b> bem devagar e bata uma vez para cada pedaço.", "Escute: eu vou bater junto com a palavra. Conte comigo.", "São <b>2</b> pedaços: BO-LO. As batidas já estão aí: toque em Pronto."]}, {"pal": "BOLACHA", "sil": ["BO", "LA", "CHA"], "fig": "pd_bolacha", "d": ["Esta é mais comprida. Diga devagar: BO-LA-CHA.", "Escute: eu bato junto com a palavra. Conte as batidas.", "São <b>3</b> pedaços: BO-LA-CHA. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f02_intro", "dicaVoz": "pd_f02_dica"}, {"id": "f03", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Junte os pedaços e forme o nome da figura.", "dica": "Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?", "conceito": "objetivo5", "dados": [{"pal": "BOLO", "sil": ["BO", "LO"], "fig": "pd_bolo", "iscas": ["MA", "PE"], "d": ["Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?", "Começa com o som <b>BO</b>. Ele está pulsando aí embaixo.", "É o <b>BO</b>. Ele está aceso: toque nele para seguir."]}, {"pal": "MASSA", "sil": ["MAS", "SA"], "fig": "pd_massa", "iscas": ["LO", "PE"], "d": ["Fale bem devagar: MAS-SA. Qual vem primeiro?", "O primeiro pedaço é <b>MAS</b>.", "É o <b>MAS</b>. Ele está aceso: toque nele."]}, {"pal": "QUEIJO", "sil": ["QUEI", "JO"], "fig": "pd_queijo", "iscas": ["BO", "LA"], "d": ["Diga QUEI-JO devagar, escutando o começo.", "O primeiro pedaço é <b>QUEI</b>.", "É o <b>QUEI</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f03_intro", "dicaVoz": "pd_f03_dica"}, {"id": "f07", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Mais nomes da padaria. Bata uma vez para cada pedaço.", "dica": "Bata devagar, um golpe por vez, e conte junto.", "conceito": "objetivo4", "dados": [{"pal": "MEL", "sil": ["MEL"], "fig": "pd_mel", "d": ["Diga <b>MEL</b>. Quantos golpes a boca faz?", "Escute: um golpe só. Bata junto comigo.", "É <b>1</b> pedaço: MEL. A batida já está aí: toque em Pronto."]}, {"pal": "QUEIJO", "sil": ["QUEI", "JO"], "fig": "pd_queijo", "d": ["Diga QUEI-JO bem devagar.", "Escute o ritmo: são dois golpes. Bata comigo.", "São <b>2</b> pedaços: QUEI-JO. As batidas já estão aí: toque em Pronto."]}, {"pal": "BISCOITO", "sil": ["BIS", "COI", "TO"], "fig": "pd_biscoito", "d": ["Esta é comprida: BIS-COI-TO. Diga devagar.", "Escute: eu bato junto. Conte as batidas.", "São <b>3</b> pedaços: BIS-COI-TO. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f07_intro", "dicaVoz": "pd_f07_dica"}, {"id": "f09", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Estas têm três pedaços. Junte na ordem certa.", "dica": "Diga a palavra devagar e escute o pedaço do começo.", "conceito": "objetivo5", "dados": [{"pal": "BOLACHA", "sil": ["BO", "LA", "CHA"], "fig": "pd_bolacha", "iscas": ["MA", "TO"], "d": ["Diga BO-LA-CHA devagar. Qual pedaço vem primeiro?", "O primeiro é <b>BO</b>, o mesmo de BOLO.", "É o <b>BO</b>. Ele está aceso: toque nele."]}, {"pal": "BISCOITO", "sil": ["BIS", "COI", "TO"], "fig": "pd_biscoito", "iscas": ["LA", "PE"], "d": ["Fale BIS-COI-TO bem devagar.", "O primeiro pedaço é <b>BIS</b>.", "É o <b>BIS</b>. Ele está aceso: toque nele."]}, {"pal": "MAMÃO", "sil": ["MA", "MÃO"], "fig": "pd_mamao", "iscas": ["BO", "QUEI"], "d": ["Diga MA-MÃO devagar.", "O primeiro pedaço é <b>MA</b>, o mesmo de MALA.", "É o <b>MA</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f09_intro", "dicaVoz": "pd_f09_dica"}, {"id": "f13", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Bata os pedaços destas palavras da padaria.", "dica": "Se ficar em dúvida, bata devagar e conte no dedo.", "conceito": "objetivo4", "dados": [{"pal": "MALA", "sil": ["MA", "LA"], "fig": "pd_mala", "d": ["Diga MA-LA devagar.", "Escute: dois golpes. Bata comigo.", "São <b>2</b> pedaços: MA-LA. As batidas já estão aí: toque em Pronto."]}, {"pal": "SAL", "sil": ["SAL"], "fig": "pd_sal", "d": ["Diga <b>SAL</b>. Quantos golpes?", "Escute: um golpe só. Bata comigo.", "É <b>1</b> pedaço: SAL. A batida já está aí: toque em Pronto."]}, {"pal": "SAPATO", "sil": ["SA", "PA", "TO"], "fig": "pd_sapato", "d": ["Diga SA-PA-TO bem devagar.", "Escute: são três golpes. Conte comigo.", "São <b>3</b> pedaços: SA-PA-TO. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f13_intro", "dicaVoz": "pd_f13_dica"}, {"id": "f15", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Monte o nome do que está na figura.", "dica": "Fale a palavra devagar e ache o pedaço do começo.", "conceito": "objetivo5", "dados": [{"pal": "SAPATO", "sil": ["SA", "PA", "TO"], "fig": "pd_sapato", "iscas": ["BO", "MA"], "d": ["Diga SA-PA-TO devagar. Qual vem primeiro?", "O primeiro pedaço é <b>SA</b>.", "É o <b>SA</b>. Ele está aceso: toque nele."]}, {"pal": "PATO", "sil": ["PA", "TO"], "fig": "pd_pato", "iscas": ["LO", "SA"], "d": ["Ponha a mão no queixo e diga: PA-TO.", "O primeiro pedaço é <b>PA</b>, o mesmo de PAI.", "É o <b>PA</b>. Ele está aceso: toque nele."]}, {"pal": "MALA", "sil": ["MA", "LA"], "fig": "pd_mala", "iscas": ["BO", "TE"], "d": ["Fale a palavra devagar e escute o começo.", "O primeiro pedaço é <b>MA</b>, como em MÃE.", "É o <b>MA</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f15_intro", "dicaVoz": "pd_f15_dica"}, {"id": "aquecimento", "mec": "escolher", "selo": "AQUECIMENTO", "enunciado": "Vamos lembrar o que você já descobriu na padaria.", "dica": "Pense no que você fez lá atrás: as letras, os sons e os pedaços.", "conceito": "objetivo2", "dados": [{"p": "A letra <b>P</b> aparece no começo de qual palavra?", "c": "PÃO", "e": ["BOLO", "MEL", "MALA"], "d": ["Diga cada palavra e escute a primeira letrinha.", "O som é <b>pê</b>, o mesmo do começo de PAI.", "É PÃO. Ele está aceso: toque nele."]}, {"p": "Depois do <b>C</b>, qual letra vem no alfabeto?", "c": "D", "e": ["B", "F", "A"], "d": ["Cante baixinho: A, B, C...", "Depois do C vem a letra <b>dê</b>.", "É o D. Ele está aceso: toque nele."]}, {"p": "Quantos pedaços tem a palavra <b>BOLACHA</b>?", "c": "3", "e": ["1", "2", "4"], "d": ["Bata a palavra: BO-LA-CHA.", "Conte as batidas no dedo.", "São 3. O número está aceso: toque nele."]}], "vozIntro": "pd_aquecimento_intro", "dicaVoz": "pd_aquecimento_dica"}, {"mec": "intruso", "selo": "QUAL NÃO RIMA?", "enunciado": "De novo o fim da palavra. Ache a que não combina com as outras.", "dica": "Diga as quatro devagar e compare só o <b>último pedaço</b>.", "conceito": "objetivo6", "dados": [{"selo": "QUAL NÃO RIMA?", "tipo": "texto", "enun": "Três destas terminam igual. <b>Qual não rima?</b>", "itens": [{"k": "massa", "n": "MASSA"}, {"k": "taca", "n": "TAÇA"}, {"k": "praca", "n": "PRAÇA"}, {"k": "leite", "n": "LEITE"}], "fora": "leite", "nomeFora": "LEITE", "d1": "Fale as quatro e escute o <b>finalzinho</b>.", "d2": "MASSA, TAÇA e PRAÇA terminam com o som <b>AÇA/ASSA</b>. Procure a que termina diferente.", "d3": "A de fora é <b>LEITE</b>: ela termina em <b>ITE</b>.", "razoes": [{"t": "As outras três terminam com o mesmo som.", "ok": 1}, {"t": "Porque LEITE é líquido.", "ok": 0}, {"t": "Porque LEITE é branco.", "ok": 0}]}, {"selo": "QUAL NÃO RIMA?", "tipo": "texto", "enun": "Três destas terminam igual. <b>Qual não rima?</b>", "itens": [{"k": "pato", "n": "PATO"}, {"k": "gato", "n": "GATO"}, {"k": "sapato", "n": "SAPATO"}, {"k": "queijo", "n": "QUEIJO"}], "fora": "queijo", "nomeFora": "QUEIJO", "d1": "O fim da palavra é o que importa aqui.", "d2": "PATO, GATO e SAPATO terminam com <b>ATO</b>. Procure a que termina diferente.", "d3": "A de fora é <b>QUEIJO</b>: ela termina em <b>EIJO</b>.", "razoes": [{"t": "As outras três terminam com o som <b>ATO</b>.", "ok": 1}, {"t": "Porque QUEIJO se come.", "ok": 0}, {"t": "Porque QUEIJO tem seis letras.", "ok": 0}]}], "id": "f17", "vozIntro": "pd_f17_intro", "dicaVoz": "pd_f17_dica"}, {"mec": "caixas-de-som", "selo": "CAIXAS DE SOM", "enunciado": "Agora o som mais miudinho: cada som ganha uma caixinha.", "dica": "Fale bem devagar e conte no dedo: quantos pedacinhos de som você ouve?", "conceito": "objetivo7", "dados": [{"pal": "PÃO", "img": "pd_pao", "sons": 3, "letras": ["P", "Ã", "O"], "dicas": ["Diga P-Ã-O bem devagar e conte no dedo.", "P... Ã... O. São três sons, então são três caixinhas.", "Comece pela primeira caixinha, à esquerda: ela está acesa."]}, {"pal": "MEL", "img": "pd_mel", "sons": 3, "letras": ["M", "E", "L"], "dicas": ["Diga MEL bem devagar e escute cada som.", "M... E... L. Três sons, três caixinhas.", "A próxima caixinha está acesa: empurre a ficha para ela."]}, {"pal": "SAL", "img": "pd_sal", "sons": 3, "letras": ["S", "A", "L"], "dicas": ["Fale SAL devagar, alongando cada som.", "S... A... L. Conte comigo: são três.", "É esta caixinha acesa que espera a ficha agora."]}], "dadosExtra": {"ENUN": "Diga a palavra devagar e empurre <b>uma ficha</b> para cada som."}, "id": "f18", "vozIntro": "pd_f18_intro", "dicaVoz": "pd_f18_dica"}, {"id": "f19", "mec": "digitar", "selo": "ESCREVA O QUE OUVE", "enunciado": "Agora escreva a palavra, um som de cada vez.", "dica": "Diga a palavra devagar e escreva o som que você ouvir primeiro.", "conceito": "objetivo7", "dados": [{"palavra": "PAO", "pista": "O Fubá assa este todo dia de manhã.", "dic": "Diga devagar: <b>P-Ã-O</b>."}, {"palavra": "MEL", "pista": "Doce e grudento, vem da abelha.", "dic": "Diga devagar: <b>M-E-L</b>."}, {"palavra": "SAL", "pista": "Sem ele o pão fica sem gosto.", "dic": "Diga devagar: <b>S-A-L</b>."}], "vozIntro": "pd_f19_intro", "dicaVoz": "pd_f19_dica"}, {"id": "f18", "mec": "tracar-letra", "selo": "ESCREVA A LETRA", "enunciado": "Escreva com o dedo as letras dos doces.", "dica": "Comece na bolinha <b>1</b> e siga as setinhas, sem pressa.", "conceito": "objetivo2", "dados": [{"selo": "A LETRA L", "letra": "L", "voz": "éle", "palavra": "LEITE", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>L</b>! L de LEITE.", "tracos": [{"pts": [[32, 12], [32, 46], [32, 80], [59, 80], [86, 80]]}]}, {"selo": "A LETRA A", "letra": "A", "voz": "á", "palavra": "AÇÚCAR", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>A</b>! A de AÇÚCAR.", "tracos": [{"pts": [[18, 84], [50, 14], [82, 84]]}, {"pts": [[30, 58], [70, 58]]}]}, {"selo": "A LETRA O", "letra": "O", "voz": "ó", "palavra": "OVO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>O</b>! O de OVO.", "tracos": [{"pts": [[50, 12], [20, 32], [14, 52], [20, 72], [50, 86], [80, 72], [86, 52], [80, 32], [50, 12]]}]}], "vozIntro": "pd_f18_intro", "dicaVoz": "pd_f18_dica"}, {"id": "f25", "mec": "ouvir-achar", "selo": "OUÇA E ACHE", "enunciado": "Ouça a palavra e toque na <b>letra</b> com que ela começa.", "dica": "Diga a palavra e segure a primeira letrinha: BBBBolo.", "conceito": "objetivo7", "dados": [{"selo": "OUÇA E ACHE", "alvo": "Q", "opcoes": ["Q", "G", "O", "C"], "rotulo": "A LETRA É", "escrito": "Q", "fala": "queijo", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! QUEIJO começa com <b>Q</b>.", "dicas": ["Ouça de novo e diga: QUEI-JO.", "O som do começo é <b>quê</b>.", "É esta a letra. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "L", "opcoes": ["L", "I", "T", "E"], "rotulo": "A LETRA É", "escrito": "L", "fala": "leite", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! LEITE começa com <b>L</b>.", "dicas": ["Ouça de novo e diga: LEI-TE.", "O som do começo é <b>éle</b>.", "É esta a letra. Ela está acesa: toque nela."]}, {"selo": "OUÇA E ACHE", "alvo": "S", "opcoes": ["S", "C", "Z", "X"], "rotulo": "A LETRA É", "escrito": "S", "fala": "sal", "enun": "Ouça e toque na <b>letra</b> que o Fubá falou.", "hint": "Sem som no computador? A letra está escrita aí em cima.", "msg": "Isso! SAL começa com <b>S</b>.", "dicas": ["Ouça de novo e diga: SSSSAL.", "O som do começo é o da cobrinha: <b>esse</b>.", "É esta a letra. Ela está acesa: toque nela."]}], "dadosExtra": {"CATALOGO": {"pd_pao": {"nome": "PÃO", "voz": "pão", "img": "pd_pao", "letra": "P"}, "pd_bolo": {"nome": "BOLO", "voz": "bolo", "img": "pd_bolo", "letra": "B"}, "pd_mel": {"nome": "MEL", "voz": "mel", "img": "pd_mel", "letra": "M"}, "pd_queijo": {"nome": "QUEIJO", "voz": "queijo", "img": "pd_queijo", "letra": "Q"}, "pd_leite": {"nome": "LEITE", "voz": "leite", "img": "pd_leite", "letra": "L"}, "pd_ovo": {"nome": "OVO", "voz": "ovo", "img": "pd_mamao", "letra": "O"}, "pd_sal": {"nome": "SAL", "voz": "sal", "img": "pd_sal", "letra": "S"}, "B": {"nome": "B", "voz": "bê", "texto": "B", "letra": "B"}, "D": {"nome": "D", "voz": "dê", "texto": "D", "letra": "D"}, "P": {"nome": "P", "voz": "pê", "texto": "P", "letra": "P"}, "M": {"nome": "M", "voz": "eme", "texto": "M", "letra": "M"}, "N": {"nome": "N", "voz": "ene", "texto": "N", "letra": "N"}, "W": {"nome": "W", "voz": "dábliu", "texto": "W", "letra": "W"}, "A": {"nome": "A", "voz": "á", "texto": "A", "letra": "A"}, "R": {"nome": "R", "voz": "erre", "texto": "R", "letra": "R"}, "F": {"nome": "F", "voz": "efe", "texto": "F", "letra": "F"}, "Q": {"nome": "Q", "voz": "quê", "texto": "Q", "letra": "Q"}, "G": {"nome": "G", "voz": "gê", "texto": "G", "letra": "G"}, "O": {"nome": "O", "voz": "ó", "texto": "O", "letra": "O"}, "C": {"nome": "C", "voz": "cê", "texto": "C", "letra": "C"}, "L": {"nome": "L", "voz": "éle", "texto": "L", "letra": "L"}, "I": {"nome": "I", "voz": "i", "texto": "I", "letra": "I"}, "T": {"nome": "T", "voz": "tê", "texto": "T", "letra": "T"}, "E": {"nome": "E", "voz": "é", "texto": "E", "letra": "E"}, "S": {"nome": "S", "voz": "esse", "texto": "S", "letra": "S"}, "Z": {"nome": "Z", "voz": "zê", "texto": "Z", "letra": "Z"}, "X": {"nome": "X", "voz": "xis", "texto": "X", "letra": "X"}}}, "vozIntro": "pd_f25_intro", "dicaVoz": "pd_f25_dica"}, {"id": "f28", "mec": "tracar-letra", "selo": "ESCREVA A LETRA", "enunciado": "Escreva as últimas letras da placa da padaria.", "dica": "Siga as bolinhas na ordem, com calma.", "conceito": "objetivo2", "dados": [{"selo": "A LETRA S", "letra": "S", "voz": "esse", "palavra": "SAL", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>S</b>! S de SAL.", "tracos": [{"pts": [[78, 24], [52, 14], [26, 24], [30, 44], [54, 52], [76, 60], [74, 80], [48, 88], [24, 78]]}]}, {"selo": "A LETRA Q", "letra": "Q", "voz": "quê", "palavra": "QUEIJO", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>Q</b>! Q de QUEIJO.", "tracos": [{"pts": [[50, 12], [20, 32], [14, 52], [20, 72], [50, 86], [80, 72], [86, 52], [80, 32], [50, 12]]}, {"pts": [[62, 68], [84, 90]]}]}, {"selo": "A LETRA T", "letra": "T", "voz": "tê", "palavra": "TORTA", "enun": "Comece na bolinha <b>1</b>, que está piscando, e siga as setinhas.", "hint": "Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o traço espera você no lugar onde parou.", "msg": "Você escreveu o <b>T</b>! T de TORTA.", "tracos": [{"pts": [[16, 16], [50, 16], [84, 16]]}, {"pts": [[50, 16], [50, 50], [50, 86]]}]}], "vozIntro": "pd_f28_intro", "dicaVoz": "pd_f28_dica"}, {"id": "f19", "mec": "classificar", "selo": "SEPARE", "enunciado": "Agora separe pelo som do <b>fim</b> da palavra.", "dica": "Diga a palavra inteira e escute só o último pedaço.", "conceito": "objetivo3", "dados": [{"k": "lo", "n": "TERMINA EM <b>LO</b><br>(como BOLO)"}, {"k": "to", "n": "TERMINA EM <b>TO</b><br>(como PATO)"}], "dadosExtra": {"FICHAS": [{"t": "BOLO", "alvo": "lo", "img": "pd_bolo"}, {"t": "BOLINHO", "alvo": "lo", "img": "pd_bolinho"}, {"t": "PATO", "alvo": "to", "img": "pd_pato"}, {"t": "BISCOITO", "alvo": "to", "img": "pd_biscoito"}], "DICAS": ["Fale a palavra até o fim e segure o último pedaço.", "BO-LO acaba em LO. PA-TO acaba em TO.", "Olhe a gaveta com a borda amarela: é ali que esta ficha mora."], "ENUN": "Agora olhe o FIM da palavra. Toque no doce e depois na gaveta certa."}, "vozIntro": "pd_f19_intro", "dicaVoz": "pd_f19_dica"}, {"mec": "caixas-de-som", "selo": "CAIXAS DE SOM", "enunciado": "Última encomenda de sons: agora as palavras têm mais pedacinhos.", "dica": "Não conte as letras — conte os <b>sons</b> que a sua boca faz.", "conceito": "objetivo7", "dados": [{"pal": "BOLO", "img": "pd_bolo", "sons": 4, "letras": ["B", "O", "L", "O"], "dicas": ["Diga B-O-L-O devagar, parando em cada som.", "B... O... L... O. São quatro sons.", "A caixinha acesa é a que espera a ficha agora."]}, {"pal": "LEITE", "img": "pd_leite", "sons": 4, "letras": ["L", "EI", "T", "E"], "dicas": ["Fale LEITE devagar e escute cada pedacinho.", "L... EI... T... E. O <b>EI</b> é um som só, mesmo tendo duas letras.", "Empurre a ficha para a caixinha acesa."]}, {"pal": "QUEIJO", "img": "pd_queijo", "sons": 4, "letras": ["QU", "EI", "J", "O"], "dicas": ["Diga QUEIJO devagar: quantos sons a boca faz?", "QU... EI... J... O. O <b>QU</b> é um som só, com duas letras.", "Siga pela caixinha acesa."]}], "dadosExtra": {"ENUN": "Diga a palavra devagar e empurre <b>uma ficha</b> para cada som."}, "id": "f24", "vozIntro": "pd_f24_intro", "dicaVoz": "pd_f24_dica"}, {"id": "f26", "mec": "classificar", "selo": "SEPARE", "enunciado": "Separe pelas batidas: uma bandeja para cada tamanho.", "dica": "Bata a palavra antes de escolher a bandeja.", "conceito": "objetivo3", "dados": [{"k": "dois", "n": "<b>2</b> PEDAÇOS<br>(como BO-LO)"}, {"k": "tres", "n": "<b>3</b> PEDAÇOS<br>(como BO-LA-CHA)"}], "dadosExtra": {"FICHAS": [{"t": "QUEIJO", "alvo": "dois", "img": "pd_queijo"}, {"t": "LEITE", "alvo": "dois", "img": "pd_leite"}, {"t": "BISCOITO", "alvo": "tres", "img": "pd_biscoito"}, {"t": "BOLINHO", "alvo": "tres", "img": "pd_bolinho"}], "DICAS": ["Bata a palavra com a mão antes de decidir.", "QUEI-JO tem 2. BIS-COI-TO tem 3.", "Olhe a bandeja com a borda amarela: é ali que esta ficha mora."], "ENUN": "Conte as batidas do nome. Toque no doce e depois na bandeja do tamanho dele."}, "vozIntro": "pd_f26_intro", "dicaVoz": "pd_f26_dica"}, {"id": "f21", "mec": "bater-silabas", "selo": "BATA OS PEDAÇOS", "enunciado": "Estas são mais compridas. Bata com calma.", "dica": "Bata devagar: um golpe para cada pedaço, sem correr.", "conceito": "objetivo4", "dados": [{"pal": "BOLINHO", "sil": ["BO", "LI", "NHO"], "fig": "pd_bolinho", "d": ["Diga BO-LI-NHO devagar.", "Escute: três golpes. Bata comigo.", "São <b>3</b> pedaços: BO-LI-NHO. As batidas já estão aí: toque em Pronto."]}, {"pal": "LEITE", "sil": ["LEI", "TE"], "fig": "pd_leite", "d": ["Diga LEI-TE devagar.", "Escute: dois golpes. Bata comigo.", "São <b>2</b> pedaços: LEI-TE. As batidas já estão aí: toque em Pronto."]}, {"pal": "AÇÚCAR", "sil": ["A", "ÇÚ", "CAR"], "fig": "pd_acucar", "d": ["Diga A-ÇÚ-CAR bem devagar.", "Escute: são três golpes. Conte comigo.", "São <b>3</b> pedaços: A-ÇÚ-CAR. As batidas já estão aí: toque em Pronto."]}], "vozIntro": "pd_f21_intro", "dicaVoz": "pd_f21_dica"}, {"id": "f23", "mec": "completar", "selo": "COMPLETE", "enunciado": "Um pedaço caiu da palavra. Qual é?", "dica": "Diga a palavra inteira em voz alta e escute o buraco.", "conceito": "objetivo4", "dados": [{"ante": "BO-", "dep": "-CHA", "cer": "LA", "out": ["MA", "TO"], "dic": "Diga BO-LA-CHA devagar e pare no meio."}, {"ante": "BIS-", "dep": "-TO", "cer": "COI", "out": ["CA", "LI"], "dic": "Diga BIS-COI-TO devagar."}, {"ante": "SA-", "dep": "-TO", "cer": "PA", "out": ["MA", "LO"], "dic": "Diga SA-PA-TO devagar e escute o meio."}], "vozIntro": "pd_f23_intro", "dicaVoz": "pd_f23_dica"}, {"id": "f20", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "Cuidado: agora tem pedaço parecido na bandeja.", "dica": "Escute o pedaço inteiro, não só a primeira letrinha.", "conceito": "objetivo5", "dados": [{"pal": "BOLINHO", "sil": ["BO", "LI", "NHO"], "fig": "pd_bolinho", "iscas": ["LA", "BA"], "d": ["Diga BO-LI-NHO devagar.", "O primeiro pedaço é <b>BO</b>. Depois vem LI.", "É o <b>BO</b>. Ele está aceso: toque nele."]}, {"pal": "LEITE", "sil": ["LEI", "TE"], "fig": "pd_leite", "iscas": ["LA", "TO"], "d": ["Diga LEI-TE devagar.", "O primeiro pedaço é <b>LEI</b>, não é LA.", "É o <b>LEI</b>. Ele está aceso: toque nele."]}, {"pal": "AÇÚCAR", "sil": ["A", "ÇÚ", "CAR"], "fig": "pd_acucar", "iscas": ["SA", "BO"], "d": ["Diga A-ÇÚ-CAR bem devagar.", "Começa com a letra <b>A</b> sozinha.", "É o <b>A</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f20_intro", "dicaVoz": "pd_f20_dica"}, {"id": "f22", "mec": "memoria", "selo": "MEMÓRIA DOS PEDAÇOS", "enunciado": "Ache o pedaço que começa cada palavra.", "dica": "Vire uma carta, diga o que está escrito e procure o par dela.", "conceito": "objetivo5", "dados": [{"k": "qu", "pal": "QUEIJO", "sen": "começa com QUEI"}, {"k": "bi", "pal": "BISCOITO", "sen": "começa com BIS"}, {"k": "le", "pal": "LEITE", "sen": "começa com LEI"}, {"k": "sa", "pal": "SAPATO", "sen": "começa com SA"}], "vozIntro": "pd_f22_intro", "dicaVoz": "pd_f22_dica"}, {"id": "f27", "mec": "juntar-silabas", "selo": "JUNTE OS PEDAÇOS", "enunciado": "A última encomenda do dia. Junte com atenção.", "dica": "Fale a palavra devagar, pedaço por pedaço, antes de tocar.", "conceito": "objetivo5", "dados": [{"pal": "MAMÃO", "sil": ["MA", "MÃO"], "fig": "pd_mamao", "iscas": ["BO", "LEI"], "d": ["Diga MA-MÃO devagar.", "O primeiro pedaço é <b>MA</b>.", "É o <b>MA</b>. Ele está aceso: toque nele."]}, {"pal": "BISCOITO", "sil": ["BIS", "COI", "TO"], "fig": "pd_biscoito", "iscas": ["BO", "SA"], "d": ["Diga BIS-COI-TO bem devagar.", "O primeiro pedaço é <b>BIS</b>.", "É o <b>BIS</b>. Ele está aceso: toque nele."]}, {"pal": "BOLACHA", "sil": ["BO", "LA", "CHA"], "fig": "pd_bolacha", "iscas": ["BI", "MA"], "d": ["Diga BO-LA-CHA devagar. Cuidado: tem pedaço parecido.", "O primeiro é <b>BO</b>, não é BI.", "É o <b>BO</b>. Ele está aceso: toque nele."]}], "vozIntro": "pd_f27_intro", "dicaVoz": "pd_f27_dica"}, {"id": "f31", "mec": "pintar-desenho", "selo": "PINTE A PADARIA", "enunciado": "O dia acabou! Pinte a placa da padaria do jeito que você quiser.", "dica": "Escolha uma cor e toque no lugar que você quer pintar. Pode trocar quantas vezes quiser.", "conceito": "livre", "dados": [{"selo": "A PLACA DA PADARIA", "nome": "a placa", "voz": "a placa da padaria", "regs": [{"k": "ceu", "n": "o fundo", "d": "M0 0 H100 V100 H0 Z"}, {"k": "placa", "n": "a placa", "d": "M10 26 H90 V70 H10 Z"}, {"k": "toldo", "n": "o toldo", "d": "M6 26 L18 10 H82 L94 26 Z"}, {"k": "pao", "n": "o pãozinho", "d": "M34 78 C34 70 42 66 50 66 C58 66 66 70 66 78 C66 86 58 90 50 90 C42 90 34 86 34 78 Z"}], "tracos": "<path d=\"M24 44 H76\" stroke=\"#2b2118\" stroke-width=\"1.6\" fill=\"none\"/><path d=\"M24 56 H60\" stroke=\"#2b2118\" stroke-width=\"1.6\" fill=\"none\"/><path d=\"M42 74 L58 72\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\" stroke-linecap=\"round\"/>"}, {"selo": "O BOLO DA MIGA", "nome": "o bolo", "voz": "o bolo do Fubá", "regs": [{"k": "mesa", "n": "a mesa", "d": "M0 0 H100 V100 H0 Z"}, {"k": "base", "n": "o bolo", "d": "M20 82 V54 H80 V82 Z"}, {"k": "cober", "n": "a cobertura", "d": "M20 54 C28 46 36 58 44 50 C52 44 60 56 68 50 C74 46 78 52 80 54 Z"}, {"k": "vela", "n": "a velinha", "d": "M46 30 H54 V50 H46 Z"}], "tracos": "<path d=\"M50 18 q7 8 0 12 q-7 -3 0 -12Z\" fill=\"#ffd54a\" stroke=\"#2b2118\" stroke-width=\"1\"/><path d=\"M0 82 H100\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\"/>"}], "vozIntro": "pd_f31_intro", "dicaVoz": "pd_f31_dica"}, {"id": "f32", "mec": "ligar-pontos", "selo": "LIGUE E DESCUBRA", "enunciado": "Uma última surpresa do Fubá: ligue as letras e veja o que aparece.", "dica": "É só seguir o alfabeto. Não tem pressa e não tem erro.", "conceito": "objetivo1", "dados": [{"selo": "A SURPRESA DA MIGA", "nome": "um CORAÇÃO", "voz": "um coração", "pts": [[50, 86], [24, 62], [16, 42], [26, 26], [42, 26], [50, 38], [58, 26], [74, 26], [84, 42], [76, 62]], "d": "M50 86 L24 62 L16 42 L26 26 L42 26 L50 38 L58 26 L74 26 L84 42 L76 62 Z", "cor": "#f28ba0", "extra": "<circle cx=\"38\" cy=\"46\" r=\"2.4\" fill=\"#fffdf6\"/>"}], "dadosExtra": {"ROTULOS": ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"], "DICAS": ["Procure a letra que vem <b>depois</b> da última.", "Cante o alfabeto baixinho: A, B, C...", "Eu liguei uma para você. Siga a que está piscando."]}, "vozIntro": "pd_f32_intro", "dicaVoz": "pd_f32_dica"}];
+VOZOK = {"1iy1ayv": 1, "18sfgas": 1, "1mlrkx1": 1, "1n0d5p2": 1, "377imf": 1, "qlqbul": 1, "h1nakb": 1, "kr05nh": 1, "1sue2hy": 1, "1p51bpu": 1, "pq55n3": 1, "1lmr9e3": 1, "ykeiwh": 1, "1gmvssn": 1, "4ire75": 1, "1gokh1y": 1, "vzls8g": 1, "377cw3": 1, "qnb3q1": 1, "ai81dk": 1, "1lzknbn": 1, "1izuq02": 1, "3t3p": 1, "3t3b": 1, "3t3m": 1, "6n9vbm": 1, "3t3q": 1, "4ecv6g": 1, "3t3l": 1, "377f09": 1, "3t3o": 1, "377htx": 1, "3t3s": 1, "3t3d": 1, "3t3n": 1, "3t3w": 1, "3t3a": 1, "3t3r": 1, "3t3f": 1, "3t3g": 1, "3t3c": 1, "3t3i": 1, "3t3t": 1, "3t3e": 1, "3t3z": 1, "3t3x": 1, "xnyhzm": 1, "10mrp3z": 1, "awg8o6": 1, "2sz1j4": 1, "8e83vo": 1, "377g3o": 1, "ykf7s2": 1, "1t8ma92": 1, "6t821": 1, "6zh0dd": 1, "1t23to4": 1, "ed8yov": 1, "1lvsyfh": 1, "4h3m0n": 1, "ykdq5h": 1, "1cvj3dh": 1, "1kn4sn5": 1, "fetn76": 1, "1t20vpv": 1, "15j6ptf": 1, "mky42r": 1, "45bn34": 1, "uro5cm": 1, "47fwcm": 1, "3t3h": 1, "27i82j": 1, "4a9kpa": 1, "3t3j": 1, "3t3k": 1, "lp2io9": 1, "32yory": 1, "1f2gf15": 1, "rmfpvq": 1, "1ui4742": 1, "32york": 1, "nfyxww": 1, "32yorv": 1, "1yuow2g": 1, "32yovb": 1, "1kb32w8": 1, "uyw7vw": 1, "11z1wv7": 1, "1bgwc34": 1, "bmxq7q": 1, "1xkjd0b": 1, "11z1x5a": 1, "3t5azf": 1, "kyr6bj": 1, "11z1x81": 1, "1bgwnum": 1, "17xn1eo": 1, "1k8onzg": 1, "11io1eg": 1, "119mywf": 1, "119tdzk": 1, "4ezdiq": 1, "4ezfp6": 1, "t4egua": 1, "1pdhwhq": 1, "1t5zox6": 1, "ty5pf7": 1, "1shmoqp": 1, "ykmo5c": 1, "1shmp0e": 1, "ykozjt": 1, "1shmp35": 1, "1shmp0i": 1, "3gk42w": 1, "xgdy4v": 1, "2qvyj9": 1, "llgtt6": 1, "3geuxw": 1, "j1ckiy": 1, "7vlq7w": 1, "1ks30": 1, "16w6xsh": 1, "v1b42m": 1, "1qo9joh": 1, "1b1nv0l": 1, "qh1xnx": 1, "18847x3": 1, "1kky22d": 1, "3ho46": 1, "3hodc": 1, "1p8a69g": 1, "1xdhchg": 1, "7rnqa5": 1, "3hocy": 1, "3774k1": 1, "1b5644i": 1, "hvvhlp": 1, "17t6xsw": 1, "r1xsex": 1, "3hodv": 1, "3hogq": 1, "kwquq1": 1, "9v0orb": 1, "wlccqf": 1, "377csm": 1, "3hojd": 1, "1lndtwt": 1, "qgk0t2": 1, "byu1j7": 1, "1shxx10": 1, "ykq7p5": 1, "3hobi": 1, "xex847": 1, "13v7xbq": 1, "2ilpvr": 1, "44vhkh": 1, "1xxr3rd": 1, "1m48anf": 1, "1p6v21c": 1, "1g4p776": 1, "4tmz9q": 1, "14sp3fl": 1, "3773r7": 1, "3774qo": 1, "3hoko": 1, "bjolys": 1, "3upe11": 1, "419ypl": 1, "131j5zf": 1, "1hn9w47": 1, "1tp2u44": 1, "1ey6tl0": 1, "zz537z": 1, "bylr8g": 1, "1vkleq9": 1, "1lndof7": 1, "1y70mgs": 1, "1pf5hhs": 1, "88mim9": 1, "18snljn": 1, "5mij0q": 1, "b0nssz": 1, "1ia76ik": 1, "r9j96k": 1, "6ul789": 1, "r7fijx": 1, "7jzer1": 1, "3hogm": 1, "1nih4cg": 1, "13dgc0o": 1, "n8dgj1": 1, "jg5po7": 1, "1evooyt": 1, "133uj7a": 1, "1t0g18n": 1, "18spwy4": 1, "mpe9yu": 1, "1t4mwfm": 1, "10mj9xg": 1, "3hoke": 1, "hh7pno": 1, "qad6j5": 1, "q3f0rc": 1, "o7387r": 1, "g6gf4": 1, "1lidep2": 1, "421x5k": 1, "1j90dic": 1, "1eqghrw": 1, "1nhjk5z": 1, "1rj6yi2": 1, "orxlox": 1, "1vp229": 1, "1y07bs7": 1, "yks5du": 1, "4hgg40": 1, "183ssay": 1, "lu0dtn": 1, "1bqy9u9": 1, "my0kar": 1, "1qvwopy": 1, "5fjh8g": 1, "yki1zk": 1, "10jn9mh": 1, "17gybor": 1, "18ty3n4": 1, "fxckxy": 1, "1itahzs": 1, "ef74ch": 1, "3t6w": 1, "1rbajd5": 1, "1jh8gav": 1, "1hrgiez": 1, "1hq27kq": 1, "23yz0g": 1, "1hivl2r": 1, "1njmlmk": 1, "1rex7ce": 1, "3nggho": 1, "op3d7t": 1, "377fb9": 1, "1171tql": 1, "uholyw": 1, "1id3vch": 1, "sh34tw": 1, "1480eub": 1, "wcswae": 1, "32yoru": 1, "zsgmnf": 1, "32yorj": 1, "1xn9bst": 1, "u7tcwq": 1, "32yorx": 1, "klitua": 1, "xl3twb": 1, "1dm9jiw": 1, "1ot5maf": 1, "z6f1sk": 1, "12g0ows": 1, "1xidav2": 1, "1ovpqu9": 1, "1c0neb4": 1, "f84l4n": 1, "r86l8r": 1, "32yos1": 1, "1q5diw6": 1, "32yorz": 1, "twk7xr": 1, "32yos2": 1, "4k84j3": 1, "16j3pgy": 1, "18dcfsd": 1, "7q4vr1": 1, "1qoax6y": 1, "19txgp9": 1, "1on1pov": 1, "1n8af74": 1, "1scxfkf": 1, "xmk8oh": 1, "3ho6r": 1, "kxaewq": 1, "hx06y6": 1, "sgq8ye": 1, "3hoi3": 1, "1yeys2n": 1, "4qifz8": 1, "1cmamaj": 1, "i3vi5u": 1, "1ufui66": 1, "167whvu": 1, "1yhpici": 1, "1kt97av": 1, "fon7k": 1, "3hod6": 1, "377dt6": 1, "1b5cj7n": 1, "1r8j2pz": 1, "ft81af": 1, "im0vui": 1, "377c1r": 1, "1arfx8i": 1, "nhg4ic": 1, "3hrly": 1, "3774e3": 1, "1bwlb6v": 1, "12uxhwo": 1, "drwguf": 1, "3773ur": 1, "yj9f26": 1, "10thay": 1, "ykedzk": 1, "375vhx": 1, "3ho4p": 1, "18uu69k": 1, "377hs6": 1, "1kmij9n": 1, "3ho3s": 1, "1o11xcy": 1, "1emqsgu": 1, "1ejniod": 1, "u7jng4": 1, "2nvqic": 1, "1esbzj8": 1, "1w9j34e": 1, "1w9jbey": 1, "1shmp5w": 1, "133ue5s": 1, "yga1ik": 1, "3ho40": 1, "1omn4f8": 1, "8org6b": 1, "ptu6hq": 1, "zw6pc7": 1, "1elki7k": 1, "1v36kn8": 1, "10e9w24": 1, "1evbp12": 1, "12m1y43": 1, "dec0f2": 1, "5cqh6m": 1, "1u7snfn": 1, "3olisg": 1, "48qsa9": 1, "1tnqioc": 1, "ay4ucn": 1, "1pdv4ml": 1, "1ha1lmu": 1, "3ev05p": 1, "1p0rw7r": 1, "19nfku": 1, "1yy40yt": 1, "4ac2f7": 1, "be9i7t": 1, "ir9yb5": 1, "1l6g2o1": 1, "1e3fptx": 1, "pqtinp": 1, "u0ea9s": 1, "1v8u0y8": 1, "1ih8zjc": 1, "17uqi43": 1, "1gy5r9z": 1, "1fxj6tl": 1, "18qcc73": 1, "40rdno": 1, "3x3mbc": 1, "12g13rf": 1, "124tcxx": 1, "16hxo4n": 1, "1hll87c": 1, "1g1z74o": 1, "l1fi9q": 1, "t90h3f": 1, "jhvbp5": 1, "1y81sr6": 1, "jz1khi": 1, "1m2qiwh": 1, "1ebe428": 1, "11ik8dl": 1, "18n8x4t": 1, "1q3g71y": 1, "3inb12": 1, "157rdki": 1, "6rbl6z": 1, "gufrel": 1, "6zjjyu": 1, "tbpqsd": 1, "13a0ej8": 1, "lvzjux": 1, "b5o07m": 1, "1x5u6yf": 1, "16zmli0": 1, "uozuyk": 1, "1313u0r": 1, "robc2a": 1, "7nppzg": 1, "1vtlkp3": 1, "e3ygab": 1, "dloh9g": 1, "y3345j": 1, "3t3v": 1, "3t3y": 1, "1fm6l2x": 1, "7vxztv": 1, "nxkbhn": 1, "1fm3km5": 1, "alvgxh": 1, "teyuyc": 1, "3m165h": 1, "wrt0ml": 1, "etm4lp": 1, "xim9tu": 1, "fcfj7w": 1, "12tja0y": 1, "1pwxfjp": 1, "hv5a1r": 1, "gzvx70": 1, "is1bng": 1, "j9y38r": 1, "18560za": 1, "1wd4n6b": 1, "bmmijg": 1, "l0jyol": 1, "1u5n5gf": 1, "3ys7iy": 1, "1licgms": 1, "1matn8a": 1, "yhnxll": 1};
 </script>
 </body></html>

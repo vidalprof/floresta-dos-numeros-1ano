@@ -17,7 +17,9 @@
   "objetivo3": "Palavras que começam igual",
   "objetivo4": "Bater os pedaços da palavra",
   "objetivo5": "Juntar os pedaços e ler",
-  "livre": "Brincar na padaria"
+  "livre": "Brincar na padaria",
+  "objetivo6": "Palavras que terminam igual",
+  "objetivo7": "Cada som ganha um lugar"
  },
  "curriculo": {
   "objetivo1": "Blumenau, 1º ano, Língua Portuguesa — Todos os campos de atuação · Análise linguística/semiótica (alfabetização) · objeto de conhecimento: Conhecimento do alfabeto do português do Brasil — HABILIDADE: “Nomear as letras do alfabeto e ordená-las.” Conceitos/conteúdos: ordem alfabética.",
@@ -25,7 +27,9 @@
   "objetivo3": "Blumenau, 1º ano, Língua Portuguesa — Todos os campos de atuação · Análise linguística/semiótica (alfabetização) · objeto de conhecimento: Construção do sistema alfabético — HABILIDADE: “Comparar palavras, identificando semelhanças e diferenças entre sons de sílabas iniciais, mediais e finais.” Conceitos/conteúdos: fonema/grafema, separação silábica, palavra.",
   "objetivo4": "Blumenau, 1º ano, Língua Portuguesa — Todos os campos de atuação · Análise linguística/semiótica (alfabetização) · objeto de conhecimento: Construção do sistema alfabético e da ortografia — HABILIDADE: “Segmentar oralmente palavras em sílabas.” Conceitos/conteúdos: sílabas, separação de sílabas, segmentação de palavras, relação grafema/fonema.",
   "objetivo5": "Blumenau, 1º ano, Língua Portuguesa — Campo artístico-literário · Análise linguística/semiótica (alfabetização) · objeto de conhecimento: Construção do sistema alfabético e da ortografia — HABILIDADE: “Relacionar elementos sonoros (sílabas, fonemas, partes de palavras) com sua representação escrita.” Conceitos/conteúdos: alfabeto, fonema/grafema, sílaba.",
-  "livre": "SEM COBRANÇA — fases de fecho, para a criança brincar com o material que ela acabou de aprender. Não avaliam nada e não valem como cobertura de habilidade (decisão do Marcos, ago/2026: o fim tem que ser divertido e do tema)."
+  "livre": "SEM COBRANÇA — fases de fecho, para a criança brincar com o material que ela acabou de aprender. Não avaliam nada e não valem como cobertura de habilidade (decisão do Marcos, ago/2026: o fim tem que ser divertido e do tema).",
+  "objetivo6": "Blumenau, 1º ano, Língua Portuguesa — Todos os campos de atuação · Análise linguística/semiótica (alfabetização) · objeto de conhecimento: Consciência fonológica — HABILIDADE: “Reconhecer e comparar palavras que rimam, identificando semelhanças e diferenças entre os sons finais das palavras.”",
+  "objetivo7": "Blumenau, 1º ano, Língua Portuguesa — Todos os campos de atuação · Análise linguística/semiótica (alfabetização) · objeto de conhecimento: Construção do sistema alfabético — HABILIDADE: “Segmentar oralmente palavras em sílabas e fonemas, relacionando os sons às letras que os representam na escrita.”"
  },
  "fases": [
   {
@@ -290,115 +294,98 @@
    }
   },
   {
-   "id": "f10",
-   "mec": "ligar-pontos",
-   "selo": "LIGUE AS LETRAS",
-   "enunciado": "Ligue as letras na ordem do alfabeto e veja o que aparece.",
-   "dica": "Depois do A vem o B. Cante o alfabeto baixinho enquanto procura.",
-   "conceito": "objetivo1",
+   "mec": "intruso",
+   "selo": "QUAL NÃO RIMA?",
+   "enunciado": "Três palavras terminam com o mesmo som. Ache a que não combina.",
+   "dica": "Diga as quatro em voz alta e escute só o <b>fim</b> de cada uma.",
+   "conceito": "objetivo6",
    "dados": [
     {
-     "selo": "O PÃOZINHO ESCONDIDO",
-     "nome": "um PÃOZINHO",
-     "voz": "um pãozinho",
-     "pts": [
-      [
-       20,
-       58
-      ],
-      [
-       32,
-       36
-      ],
-      [
-       52,
-       28
-      ],
-      [
-       74,
-       36
-      ],
-      [
-       86,
-       58
-      ],
-      [
-       74,
-       80
-      ],
-      [
-       52,
-       86
-      ],
-      [
-       30,
-       80
-      ]
+     "selo": "QUAL NÃO RIMA?",
+     "tipo": "texto",
+     "enun": "Três destas terminam igual. <b>Qual não rima?</b>",
+     "itens": [
+      {
+       "k": "pao",
+       "n": "PÃO"
+      },
+      {
+       "k": "mao",
+       "n": "MÃO"
+      },
+      {
+       "k": "chao",
+       "n": "CHÃO"
+      },
+      {
+       "k": "bolo",
+       "n": "BOLO"
+      }
      ],
-     "d": "M20 58 L32 36 L52 28 L74 36 L86 58 L74 80 L52 86 L30 80 Z",
-     "cor": "#e2a75a",
-     "extra": "<path d=\"M38 52 L64 46\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/><path d=\"M40 62 L66 56\" stroke=\"#8a5a2b\" stroke-width=\"2.2\" fill=\"none\" stroke-linecap=\"round\"/>"
+     "fora": "bolo",
+     "nomeFora": "BOLO",
+     "d1": "Fale as quatro devagar e pare no <b>finalzinho</b> de cada uma.",
+     "d2": "PÃO, MÃO e CHÃO terminam com o mesmo som: <b>ÃO</b>. Procure a que termina diferente.",
+     "d3": "A de fora é <b>BOLO</b>: ela termina em <b>O</b>, e as outras três em <b>ÃO</b>.",
+     "razoes": [
+      {
+       "t": "As outras três terminam com o som <b>ÃO</b>.",
+       "ok": 1
+      },
+      {
+       "t": "Porque BOLO é doce.",
+       "ok": 0
+      },
+      {
+       "t": "Porque BOLO é a menor palavra.",
+       "ok": 0
+      }
+     ]
     },
     {
-     "selo": "O QUE A MIGA ASSOU",
-     "nome": "um CROISSANT",
-     "voz": "um croissant",
-     "pts": [
-      [
-       16,
-       66
-      ],
-      [
-       26,
-       44
-      ],
-      [
-       46,
-       32
-      ],
-      [
-       68,
-       34
-      ],
-      [
-       84,
-       50
-      ],
-      [
-       76,
-       70
-      ],
-      [
-       54,
-       78
-      ],
-      [
-       32,
-       76
-      ]
+     "selo": "QUAL NÃO RIMA?",
+     "tipo": "texto",
+     "enun": "Três destas terminam igual. <b>Qual não rima?</b>",
+     "itens": [
+      {
+       "k": "mel",
+       "n": "MEL"
+      },
+      {
+       "k": "papel",
+       "n": "PAPEL"
+      },
+      {
+       "k": "anel",
+       "n": "ANEL"
+      },
+      {
+       "k": "sal",
+       "n": "SAL"
+      }
      ],
-     "d": "M16 66 L26 44 L46 32 L68 34 L84 50 L76 70 L54 78 L32 76 Z",
-     "cor": "#f0c078",
-     "extra": "<circle cx=\"50\" cy=\"56\" r=\"3\" fill=\"#8a5a2b\"/>"
+     "fora": "sal",
+     "nomeFora": "SAL",
+     "d1": "Escute o <b>fim</b> de cada palavra, não o começo.",
+     "d2": "MEL, PAPEL e ANEL terminam com <b>EL</b>. Procure a que termina diferente.",
+     "d3": "A de fora é <b>SAL</b>: ela termina em <b>AL</b>, e as outras três em <b>EL</b>.",
+     "razoes": [
+      {
+       "t": "As outras três terminam com o som <b>EL</b>.",
+       "ok": 1
+      },
+      {
+       "t": "Porque SAL não é doce.",
+       "ok": 0
+      },
+      {
+       "t": "Porque SAL tem três letras.",
+       "ok": 0
+      }
+     ]
     }
    ],
-   "dadosExtra": {
-    "ROTULOS": [
-     "A",
-     "B",
-     "C",
-     "D",
-     "E",
-     "F",
-     "G",
-     "H"
-    ],
-    "DICAS": [
-     "Procure a letra que vem <b>depois</b> da última que você ligou.",
-     "Cante o alfabeto baixinho: A, B, C, D... a próxima está piscando.",
-     "Eu liguei uma para você. Agora siga a que está piscando."
-    ]
-   }
+   "id": "f03"
   },
   {
    "id": "f12",
@@ -917,53 +904,50 @@
    ]
   },
   {
-   "id": "f14",
+   "id": "f09",
    "mec": "escolher",
-   "selo": "ESCOLHA",
-   "enunciado": "Agora preste atenção no som das palavras.",
-   "dica": "Diga as duas palavras em voz alta, uma depois da outra, e compare.",
-   "conceito": "objetivo3",
+   "selo": "ACHE A RIMA",
+   "enunciado": "Ache a palavra que termina com o mesmo som.",
+   "dica": "Diga as duas em voz alta e compare só o <b>fim</b>.",
+   "conceito": "objetivo6",
    "dados": [
     {
-     "p": "Qual palavra começa com o mesmo som de <b>BOLO</b>?",
-     "c": "BOLACHA",
-     "e": [
-      "MALA",
-      "QUEIJO",
-      "SAPATO"
-     ],
-     "d": [
-      "Diga BOLO devagar e escute só o começo: BO.",
-      "Procure outra que também comece com o som <b>BO</b>.",
-      "É BOLACHA: BO-LO e BO-LA-CHA. Ela está acesa: toque nela."
-     ]
-    },
-    {
-     "p": "Qual palavra termina com o mesmo som de <b>PATO</b>?",
-     "c": "SAPATO",
-     "e": [
-      "PÃO",
-      "MEL",
-      "MASSA"
-     ],
-     "d": [
-      "Diga PATO e escute o <b>fim</b>: TO.",
-      "Procure outra que acabe com TO.",
-      "É SAPATO: PA-TO e SA-PA-TO. Ela está acesa: toque nela."
-     ]
-    },
-    {
-     "p": "Qual palavra tem <b>um pedaço só</b>?",
-     "c": "MEL",
+     "p": "Qual palavra rima com <b>PÃO</b>?",
+     "c": "MÃO",
      "e": [
       "BOLO",
-      "MALA",
-      "QUEIJO"
+      "MEL"
      ],
      "d": [
-      "Bata cada palavra: quantos golpes?",
-      "Três delas têm dois pedaços. Uma tem um golpe só.",
-      "É MEL. Ela está acesa: toque nela."
+      "Diga PÃO e depois cada uma das outras, bem devagar.",
+      "Escute só o finalzinho: qual termina em <b>ÃO</b>?",
+      "É <b>MÃO</b>: PÃO e MÃO terminam igual."
+     ]
+    },
+    {
+     "p": "Qual palavra rima com <b>MEL</b>?",
+     "c": "PAPEL",
+     "e": [
+      "MASSA",
+      "PATO"
+     ],
+     "d": [
+      "Fale MEL e depois as outras, devagar.",
+      "Compare só o fim: qual termina em <b>EL</b>?",
+      "É <b>PAPEL</b>: MEL e PAPEL terminam igual."
+     ]
+    },
+    {
+     "p": "Qual palavra rima com <b>GATO</b>?",
+     "c": "SAPATO",
+     "e": [
+      "QUEIJO",
+      "BOLO"
+     ],
+     "d": [
+      "Diga GATO e depois cada uma das outras.",
+      "O fim é o que importa: qual termina em <b>ATO</b>?",
+      "É <b>SAPATO</b>: GATO e SAPATO terminam igual."
      ]
     }
    ]
@@ -1354,117 +1338,181 @@
    ]
   },
   {
-   "id": "f17",
-   "mec": "ordenar",
-   "selo": "EM ORDEM",
-   "enunciado": "Mais gavetas embaralhadas. Ponha na ordem do alfabeto.",
-   "dica": "Cante o alfabeto do A até chegar nestas letras.",
-   "conceito": "objetivo1",
-   "dados": [
-    "F",
-    "G",
-    "H",
-    "I",
-    "J"
-   ],
-   "dadosExtra": {
-    "ORDTXT": {
-     "selo": "O ALFABETO",
-     "balao": "Ponha as letras <b>na ordem do alfabeto</b>.",
-     "hint": "Toque na letra ou arraste até a prateleira."
-    }
-   }
-  },
-  {
-   "id": "f24",
-   "mec": "ligar-pontos",
-   "selo": "LIGUE AS LETRAS",
-   "enunciado": "Ligue as letras na ordem e descubra o que o Fubá assou hoje.",
-   "dica": "Depois do I vem o J. Cante o alfabeto baixinho enquanto procura.",
-   "conceito": "objetivo1",
+   "mec": "intruso",
+   "selo": "QUAL NÃO RIMA?",
+   "enunciado": "De novo o fim da palavra. Ache a que não combina com as outras.",
+   "dica": "Diga as quatro devagar e compare só o <b>último pedaço</b>.",
+   "conceito": "objetivo6",
    "dados": [
     {
-     "selo": "O DOCE ESCONDIDO",
-     "nome": "um BOLO",
-     "voz": "um bolo",
-     "pts": [
-      [
-       22,
-       80
-      ],
-      [
-       22,
-       54
-      ],
-      [
-       34,
-       40
-      ],
-      [
-       50,
-       34
-      ],
-      [
-       66,
-       40
-      ],
-      [
-       78,
-       54
-      ],
-      [
-       78,
-       80
-      ],
-      [
-       50,
-       88
-      ]
+     "selo": "QUAL NÃO RIMA?",
+     "tipo": "texto",
+     "enun": "Três destas terminam igual. <b>Qual não rima?</b>",
+     "itens": [
+      {
+       "k": "massa",
+       "n": "MASSA"
+      },
+      {
+       "k": "taca",
+       "n": "TAÇA"
+      },
+      {
+       "k": "praca",
+       "n": "PRAÇA"
+      },
+      {
+       "k": "leite",
+       "n": "LEITE"
+      }
      ],
-     "d": "M22 80 L22 54 L34 40 L50 34 L66 40 L78 54 L78 80 L50 88 Z",
-     "cor": "#f2b8c6",
-     "extra": "<rect x=\"46\" y=\"14\" width=\"8\" height=\"20\" rx=\"3\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/><path d=\"M50 8 q6 6 0 8 q-6 -2 0 -8Z\" fill=\"#ffd54a\"/>"
+     "fora": "leite",
+     "nomeFora": "LEITE",
+     "d1": "Fale as quatro e escute o <b>finalzinho</b>.",
+     "d2": "MASSA, TAÇA e PRAÇA terminam com o som <b>AÇA/ASSA</b>. Procure a que termina diferente.",
+     "d3": "A de fora é <b>LEITE</b>: ela termina em <b>ITE</b>.",
+     "razoes": [
+      {
+       "t": "As outras três terminam com o mesmo som.",
+       "ok": 1
+      },
+      {
+       "t": "Porque LEITE é líquido.",
+       "ok": 0
+      },
+      {
+       "t": "Porque LEITE é branco.",
+       "ok": 0
+      }
+     ]
+    },
+    {
+     "selo": "QUAL NÃO RIMA?",
+     "tipo": "texto",
+     "enun": "Três destas terminam igual. <b>Qual não rima?</b>",
+     "itens": [
+      {
+       "k": "pato",
+       "n": "PATO"
+      },
+      {
+       "k": "gato",
+       "n": "GATO"
+      },
+      {
+       "k": "sapato",
+       "n": "SAPATO"
+      },
+      {
+       "k": "queijo",
+       "n": "QUEIJO"
+      }
+     ],
+     "fora": "queijo",
+     "nomeFora": "QUEIJO",
+     "d1": "O fim da palavra é o que importa aqui.",
+     "d2": "PATO, GATO e SAPATO terminam com <b>ATO</b>. Procure a que termina diferente.",
+     "d3": "A de fora é <b>QUEIJO</b>: ela termina em <b>EIJO</b>.",
+     "razoes": [
+      {
+       "t": "As outras três terminam com o som <b>ATO</b>.",
+       "ok": 1
+      },
+      {
+       "t": "Porque QUEIJO se come.",
+       "ok": 0
+      },
+      {
+       "t": "Porque QUEIJO tem seis letras.",
+       "ok": 0
+      }
+     ]
     }
    ],
-   "dadosExtra": {
-    "ROTULOS": [
-     "I",
-     "J",
-     "K",
-     "L",
-     "M",
-     "N",
-     "O",
-     "P"
-    ],
-    "DICAS": [
-     "Procure a letra que vem <b>depois</b> da última que você ligou.",
-     "Cante o alfabeto até chegar perto: ...H, I, J, K...",
-     "Eu liguei uma para você. Agora siga a que está piscando."
-    ]
-   }
+   "id": "f17"
   },
   {
-   "id": "f29",
-   "mec": "ordenar",
-   "selo": "EM ORDEM",
-   "enunciado": "As últimas gavetas da padaria. Ponha na ordem.",
-   "dica": "Cante o alfabeto até o fim: ...U, V, W, X, Y, Z.",
-   "conceito": "objetivo1",
+   "mec": "caixas-de-som",
+   "selo": "CAIXAS DE SOM",
+   "enunciado": "Agora o som mais miudinho: cada som ganha uma caixinha.",
+   "dica": "Fale bem devagar e conte no dedo: quantos pedacinhos de som você ouve?",
+   "conceito": "objetivo7",
    "dados": [
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z"
+    {
+     "pal": "PÃO",
+     "img": "pd_pao",
+     "sons": 3,
+     "letras": [
+      "P",
+      "Ã",
+      "O"
+     ],
+     "dicas": [
+      "Diga P-Ã-O bem devagar e conte no dedo.",
+      "P... Ã... O. São três sons, então são três caixinhas.",
+      "Comece pela primeira caixinha, à esquerda: ela está acesa."
+     ]
+    },
+    {
+     "pal": "MEL",
+     "img": "pd_mel",
+     "sons": 3,
+     "letras": [
+      "M",
+      "E",
+      "L"
+     ],
+     "dicas": [
+      "Diga MEL bem devagar e escute cada som.",
+      "M... E... L. Três sons, três caixinhas.",
+      "A próxima caixinha está acesa: empurre a ficha para ela."
+     ]
+    },
+    {
+     "pal": "SAL",
+     "img": "pd_sal",
+     "sons": 3,
+     "letras": [
+      "S",
+      "A",
+      "L"
+     ],
+     "dicas": [
+      "Fale SAL devagar, alongando cada som.",
+      "S... A... L. Conte comigo: são três.",
+      "É esta caixinha acesa que espera a ficha agora."
+     ]
+    }
    ],
    "dadosExtra": {
-    "ORDTXT": {
-     "selo": "O ALFABETO",
-     "balao": "Ponha as letras <b>na ordem do alfabeto</b>.",
-     "hint": "Toque na letra ou arraste até a prateleira."
+    "ENUN": "Diga a palavra devagar e empurre <b>uma ficha</b> para cada som."
+   },
+   "id": "f18"
+  },
+  {
+   "id": "f19",
+   "mec": "digitar",
+   "selo": "ESCREVA O QUE OUVE",
+   "enunciado": "Agora escreva a palavra, um som de cada vez.",
+   "dica": "Diga a palavra devagar e escreva o som que você ouvir primeiro.",
+   "conceito": "objetivo7",
+   "dados": [
+    {
+     "palavra": "PAO",
+     "pista": "O Fubá assa este todo dia de manhã.",
+     "dic": "Diga devagar: <b>P-Ã-O</b>."
+    },
+    {
+     "palavra": "MEL",
+     "pista": "Doce e grudento, vem da abelha.",
+     "dic": "Diga devagar: <b>M-E-L</b>."
+    },
+    {
+     "palavra": "SAL",
+     "pista": "Sem ele o pão fica sem gosto.",
+     "dic": "Diga devagar: <b>S-A-L</b>."
     }
-   }
+   ]
   },
   {
    "id": "f18",
@@ -1607,7 +1655,7 @@
    "selo": "OUÇA E ACHE",
    "enunciado": "Ouça a palavra e toque na <b>letra</b> com que ela começa.",
    "dica": "Diga a palavra e segure a primeira letrinha: BBBBolo.",
-   "conceito": "objetivo2",
+   "conceito": "objetivo7",
    "dados": [
     {
      "selo": "OUÇA E ACHE",
@@ -2056,56 +2104,65 @@
    }
   },
   {
-   "id": "f30",
-   "mec": "escolher",
-   "selo": "ESCOLHA",
-   "enunciado": "Última encomenda: pense bem antes de responder.",
-   "dica": "Diga as palavras em voz alta e compare os pedaços.",
-   "conceito": "objetivo3",
+   "mec": "caixas-de-som",
+   "selo": "CAIXAS DE SOM",
+   "enunciado": "Última encomenda de sons: agora as palavras têm mais pedacinhos.",
+   "dica": "Não conte as letras — conte os <b>sons</b> que a sua boca faz.",
+   "conceito": "objetivo7",
    "dados": [
     {
-     "p": "Quais palavras começam com o <b>mesmo pedaço</b>?",
-     "c": "BOLO e BOLACHA",
-     "e": [
-      "MEL e MALA",
-      "PATO e QUEIJO",
-      "SAL e LEITE"
+     "pal": "BOLO",
+     "img": "pd_bolo",
+     "sons": 4,
+     "letras": [
+      "B",
+      "O",
+      "L",
+      "O"
      ],
-     "d": [
-      "Diga os pares em voz alta e escute só o começo.",
-      "Procure duas que comecem com <b>BO</b>.",
-      "São BOLO e BOLACHA. A resposta está acesa: toque nela."
+     "dicas": [
+      "Diga B-O-L-O devagar, parando em cada som.",
+      "B... O... L... O. São quatro sons.",
+      "A caixinha acesa é a que espera a ficha agora."
      ]
     },
     {
-     "p": "O que a letra guarda dentro dela?",
-     "c": "UM SOM",
-     "e": [
-      "UM DESENHO",
-      "UM NÚMERO",
-      "UMA COR"
+     "pal": "LEITE",
+     "img": "pd_leite",
+     "sons": 4,
+     "letras": [
+      "L",
+      "EI",
+      "T",
+      "E"
      ],
-     "d": [
-      "Pense: quando você viu o <b>B</b>, o que o Fubá falou?",
-      "Cada letra que você achou tinha um som: bê, eme, pê.",
-      "É UM SOM. A resposta está acesa: toque nela."
+     "dicas": [
+      "Fale LEITE devagar e escute cada pedacinho.",
+      "L... EI... T... E. O <b>EI</b> é um som só, mesmo tendo duas letras.",
+      "Empurre a ficha para a caixinha acesa."
      ]
     },
     {
-     "p": "Para escrever uma palavra, o que a gente faz?",
-     "c": "JUNTA OS PEDAÇOS",
-     "e": [
-      "DESENHA A FIGURA",
-      "CONTA OS DEDOS",
-      "CANTA UMA MÚSICA"
+     "pal": "QUEIJO",
+     "img": "pd_queijo",
+     "sons": 4,
+     "letras": [
+      "QU",
+      "EI",
+      "J",
+      "O"
      ],
-     "d": [
-      "Lembre da bandeja: BO + LO deu o quê?",
-      "Os pedaços correram um até o outro e viraram uma palavra.",
-      "É JUNTA OS PEDAÇOS. A resposta está acesa: toque nela."
+     "dicas": [
+      "Diga QUEIJO devagar: quantos sons a boca faz?",
+      "QU... EI... J... O. O <b>QU</b> é um som só, com duas letras.",
+      "Siga pela caixinha acesa."
      ]
     }
-   ]
+   ],
+   "dadosExtra": {
+    "ENUN": "Diga a palavra devagar e empurre <b>uma ficha</b> para cada som."
+   },
+   "id": "f24"
   },
   {
    "id": "f26",
@@ -2474,7 +2531,7 @@
    "selo": "LIGUE E DESCUBRA",
    "enunciado": "Uma última surpresa do Fubá: ligue as letras e veja o que aparece.",
    "dica": "É só seguir o alfabeto. Não tem pressa e não tem erro.",
-   "conceito": "livre",
+   "conceito": "objetivo1",
    "dados": [
     {
      "selo": "A SURPRESA DA MIGA",

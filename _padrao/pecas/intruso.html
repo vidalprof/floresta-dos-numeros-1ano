@@ -63,6 +63,15 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .balao + *{margin-top:13px}
 .centro{text-align:center}
 .opts{display:block}
+/* ⚠️ LICAO PAGA, e ja pela TERCEIRA peca (ago/2026): sem teto, a opcao de
+   texto vai a 400x59 = 6,8 vezes mais larga que alta — acima do limite de 6 do
+   diretor de arte ("nada de botoes muito esticado, quero tudo simetrico").
+   Aconteceu no `escolher`, no `completar` e aqui. E a mesma conta e o mesmo
+   conserto: estreitar E engordar um pouco, porque so a largura nao fecha
+   quando a linha e curta. 360/62 = 5,8.
+   ⭐ Isto e sinal de que a regra devia morar no MOLDE, nao em cada peca — fica
+   anotado para a proxima peca que nascer. */
+.opts .opt{max-width:360px;min-height:62px}
 .opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
      margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
      box-shadow:0 4px 0 #c9bda6}
