@@ -200,9 +200,18 @@ const TAMANHOS = [
           if (fs.length < 2) return;
           const cls = new Set(fs.map(x => String(x.className).split(' ')[0]));
           if (cls.size !== 1) return;
+          /* ⚠️ LICAO PAGA (ago/2026): a regra da FILEIRA torta media TODOS os
+             irmaos, inclusive os EMPILHADOS um sobre o outro. Numa lista
+             vertical, altura diferente e natural — a opcao com mais texto
+             ocupa duas linhas, e isso nao e remendo nenhum. O proprio nome da
+             regra diz "fileira": ela so vale para quem esta LADO A LADO.
+             Medido: 12 acusacoes numa atividade recem-esbocada, todas de lista
+             empilhada. Portao que acusa o inocente ensina a ignorar portao. */
+          const rs = fs.map(x => x.getBoundingClientRect());
+          const emFila = rs.every(r => Math.abs(r.top - rs[0].top) < 8);
           const hs = fs.map(x => Math.round(x.getBoundingClientRect().height));
           const ws = fs.map(x => Math.round(x.getBoundingClientRect().width));
-          if (Math.max(...hs) - Math.min(...hs) > 6) {
+          if (emFila && Math.max(...hs) - Math.min(...hs) > 6) {
             out.push('fileira TORTA: os .' + [...cls][0] + ' tem alturas diferentes (' +
                      Math.min(...hs) + '..' + Math.max(...hs) + 'px)');
           }

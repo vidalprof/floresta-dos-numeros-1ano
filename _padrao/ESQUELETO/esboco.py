@@ -121,6 +121,21 @@ def main():
     #    voltas do leque: com 12 mecanicas saiam 24 fases, e o combinado sao 32.
     #    Agora o leque gira ate completar — e girando ele nunca repete colado.
     ordem = [mecs[i % len(mecs)] for i in range(quantas)]
+
+    # ⚠️⚠️ LICAO PAGA (ago/2026) — O ESBOCO NASCIA REPROVADO PELA PROPRIA BANCA.
+    #    O objetivo saia do INDICE DA MECANICA (`k = i % len(mecs)`): com 16
+    #    mecanicas e 32 fases, cada objetivo ficava com exatamente DUAS fases —
+    #    e as duas da MESMA mecanica, porque o leque gira no mesmo passo. Ou
+    #    seja, o pior arranjo possivel: 2 fases (o minimo da casa e 3) e UM
+    #    gesto so ("quem nao entende por esse caminho nao tem outro").
+    #    Medido: 32 problemas de cobertura numa atividade recem-esbocada, sem
+    #    ninguem ter escrito uma linha. O professor perderia a manha
+    #    consertando uma estrutura que nao foi ele que montou.
+    #    O conserto: objetivo por BLOCO de fases consecutivas. Como o leque
+    #    gira, um bloco de 4 traz 4 mecanicas DIFERENTES — 4 fases e 4 gestos
+    #    por objetivo, com folga sobre o minimo.
+    POR_OBJETIVO = 4
+    nobj = max(1, (quantas + POR_OBJETIVO - 1) // POR_OBJETIVO)
     fases, avisos = [], []
     if True:
         for i, m in enumerate(ordem):
@@ -133,7 +148,7 @@ def main():
             f = {"id": ident, "mec": m, "selo": selo,
                  "enunciado": u"«o que a criança tem que fazer aqui»",
                  "dica": u"«o 1º degrau do andaime: onde olhar»",
-                 "conceito": u"objetivo%d" % (k + 1)}
+                 "conceito": u"objetivo%d" % (min(i // POR_OBJETIVO, nobj - 1) + 1)}
             # ⭐ TODAS as gavetas desta mecânica, já com a estrutura certa
             principal = info.get("var")
             ex = literal(info.get("exemplo"))
@@ -173,11 +188,11 @@ def main():
                  u"9º, o ESPECIALISTA DA DISCIPLINA (ver _padrao/RECEITA.md)»",
          "conceitos": dict((u"objetivo%d" % (k + 1),
                             u"«nome em linguagem de criança»")
-                           for k in range(len(mecs))),
+                           for k in range(nobj)),
          "curriculo": dict((u"objetivo%d" % (k + 1),
                             u"«a habilidade do currículo de Blumenau/BNCC que "
                             u"este objetivo serve — copiada, não resumida»")
-                           for k in range(len(mecs))),
+                           for k in range(nobj)),
          "fases": fases}
 
     if not os.path.isdir(pasta):
