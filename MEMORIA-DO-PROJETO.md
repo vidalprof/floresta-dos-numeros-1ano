@@ -4899,3 +4899,56 @@ existiram neste repositório"*. Existem os dois, com 1605 e 4837 linhas.
 > algo "não existe", conferir o `pwd` — e refazer a busca da RAIZ. É a mesma
 > família do aviso que já está no `CLAUDE.md` sobre a cópia local atrasada:
 > **"não existe" quase sempre é "eu estava olhando no lugar errado"**.
+
+---
+
+## 💰 O CAMINHO GRÁTIS DE IMAGEM — e a conta que realmente resolve (ago/2026)
+
+Cobrança do Marcos: *"tem alguma alternativa ao Gemini? Pois estou gastando
+bastante com as imagens nas atividades"*.
+
+**O que eu medi antes de responder:** o Gemini custa **R$0,20 por chamada** e
+cada atividade tem **35 a 54 figuras** (Padaria 35, Naveg 36, Jardim 44, Mapa
+54) → **R$7 a R$11 por atividade** quando o lote inteiro vai para lá, que é o
+que o `finalizar.yml` faz.
+
+### A descoberta que muda o problema
+O Gemini **não estava sendo pago pela imagem** — o Pollinations desenha de
+graça. Estava sendo pago pelo **RECORTE**, o fundo transparente que a peça
+precisa para assentar na cena. E recorte **não precisa de modelo pago**: o
+`rembg` roda dentro do próprio runner do Actions, de graça.
+
+### O que ficou pronto
+`gerar-imagens.yml` ganhou o input **`lote`** (um JSON `[{nome,prompt,grupo}]`):
+desenha no Pollinations → tira o fundo com `rembg` → apaga os **cacos** do
+recorte (mancha abaixo de 8% da principal; não é "fica só a maior", porque o
+mexedor do mel e a vela do bolo são partes legítimas separadas) → apara no bbox
+→ commita. **Custo R$ 0,00.**
+
+⚠️ **Mora dentro do `gerar-imagens.yml` de propósito:** o GitHub só aceita
+`workflow_dispatch` de arquivo que **já existe na branch padrão**. Um workflow
+novo criado na branch de trabalho devolve **404** ao ser acionado — testado. Sem
+`lote`, o workflow segue funcionando exatamente como antes.
+
+### O veredito honesto da primeira prova (as mesmas 6 peças da Padaria)
+O recorte saiu limpo, mas a **arte ficou pior e de outra família**: o pão
+francês virou pão de forma, o mexedor do mel caiu fora do pote, o bolo perdeu a
+vela e os confeitos, e o estilo não bate com o barro fosco quente da Padaria.
+Misturar os dois numa atividade se vê na hora.
+
+### ⭐ A conta que realmente resolve: **CARTELA**
+| Jeito | 35 figuras |
+|---|---|
+| Gemini uma a uma (como estava indo) | ~R$7,00 |
+| **Gemini em cartela (9 por chamada)** | **~R$0,80** — R$0,02 a peça |
+| Pollinations grátis | R$0,00, com a qualidade acima |
+
+**Corta quase 90% do gasto sem perder nada da qualidade.** O portão
+`_qa/cartela.py` já existe e reprova lote com 3+ peças indo uma a uma — ele não
+foi respeitado na cartografia (45 imagens uma a uma, ~R$9,00 onde R$1,60
+bastava). **Rodar o portão do custo antes de acionar qualquer geração.**
+
+**A divisão de trabalho que fica:** cena/fundo/cenário → Pollinations (grátis,
+imagem grande, sem recorte); peça que a criança olha de perto → Gemini **em
+cartela**; edição de imagem base (as 3 camadas do mascote) → Gemini, 2 ou 3
+chamadas, porque **nada de graça edita**.
