@@ -128,6 +128,37 @@ molde 360px 62px > "$T/v_bom.html"
 pega "visual   · opcao esticada (fita)"   PEGA  node _qa/visual.js "$T/v_ruim.html"
 pega "visual   · opcao no molde do motor" DEIXA node _qa/visual.js "$T/v_bom.html"
 
+# ---------- 6) IMAGENS: a figura que a crianca nao ve ----------
+# ESTE e o portao que comecou tudo: rodava cego (dependia de `srcDe`, que nunca
+# existiu no motor) e imprimia "imagens ok" enquanto duas poses do mascote
+# davam 404. Agora ele tem prova — nos tres caminhos que ele confere:
+# a pre-carga (IMGS), o <img> da tela e o fundo por CSS.
+mkdir -p "$T/_fig/img"
+# um PNG 1x1 de verdade, para o caso CERTO ter o que carregar
+python3 - "$T/_fig/img/pd_pao.png" <<'PY'
+import base64,sys
+open(sys.argv[1],"wb").write(base64.b64decode(
+ "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=="))
+PY
+fig(){ # fig(<nome-na-pre-carga>, <src-do-img>, <fundo-css>)
+cat <<H
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><style>
+#app{width:300px;height:200px;background-image:url("$3");background-size:cover}
+</style></head><body><div id="app"><img src="$2" alt="pao"></div><script>
+var IMGS=["$1"];
+function telaCapa(){ document.getElementById("app").innerHTML='<img src="$2" alt="pao">'; }
+</script></body></html>
+H
+}
+fig pd_pao      img/pd_pao.png    img/pd_pao.png    > "$T/_fig/bom.html"
+fig pd_naoexiste img/pd_pao.png   img/pd_pao.png    > "$T/_fig/ruim_pre.html"
+fig pd_pao      img/pd_sumiu.png  img/pd_pao.png    > "$T/_fig/ruim_img.html"
+fig pd_pao      img/pd_pao.png    img/pd_fundo.png  > "$T/_fig/ruim_css.html"
+pega "imagens  · pre-carga com 404"      PEGA  node _qa/imagens.js "$T/_fig/ruim_pre.html" telaCapa
+pega "imagens  · <img> que nao carrega"  PEGA  node _qa/imagens.js "$T/_fig/ruim_img.html" telaCapa
+pega "imagens  · fundo CSS que nao vem"  PEGA  node _qa/imagens.js "$T/_fig/ruim_css.html" telaCapa
+pega "imagens  · tudo no lugar"          DEIXA node _qa/imagens.js "$T/_fig/bom.html"      telaCapa
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."

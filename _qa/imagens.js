@@ -91,15 +91,42 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
     },t);
     if(!ok){ console.log("  (pulei "+t+": nao e funcao)"); continue; }
     await p.waitForTimeout(900);
-    const ruins=await p.evaluate(()=>{
+    /* ⚠️ LICAO PAGA (ago/2026) — O MEIO-PORTAO. Aqui havia um comentario
+       dizendo "fundo por CSS tambem some sem avisar" e, LOGO ABAIXO, uma
+       linha `const todos=document.querySelectorAll("#app *")` que nao era
+       usada para nada. Isto e pior que nao ter a conferencia: quem le o
+       arquivo (eu, semana que vem) ve o comentario e acredita que o fundo
+       esta medido. Conferencia pela metade e cegueira com alibi.
+       Agora ela existe de verdade: `background-image:url(...)` que nao carrega
+       reprova igual a um <img> quebrado — a crianca perde a mesa da padaria,
+       o ceu do observatorio, o verso da carta. */
+    const ruins=await p.evaluate(async()=>{
       const fora=[];
       const ims=document.querySelectorAll("img");
       for(let i=0;i<ims.length;i++){
         const im=ims[i];
         if(im.complete && im.naturalWidth===0) fora.push(im.getAttribute("src")||"(sem src)");
       }
-      /* fundo por CSS tambem some sem avisar */
-      const todos=document.querySelectorAll("#app *");
+      /* fundo por CSS: junta os endereços de todo mundo que esta na tela e
+         tenta carregar cada um uma vez so (Set), inclusive o <body>. */
+      const ends=new Set();
+      const todos=[document.body].concat([].slice.call(document.querySelectorAll("#app *, #app")));
+      for(let i=0;i<todos.length;i++){
+        const bi=getComputedStyle(todos[i]).backgroundImage;
+        if(!bi||bi==="none") continue;
+        const m=bi.match(/url\((['"]?)([^'")]+)\1\)/g)||[];
+        for(let j=0;j<m.length;j++){
+          const u=m[j].replace(/^url\((['"]?)/,"").replace(/(['"]?)\)$/,"");
+          if(/^data:/.test(u)) continue;          /* SVG embutido nao tem como faltar */
+          ends.add(u);
+        }
+      }
+      await Promise.all([...ends].map(u=>new Promise(ok=>{
+        const im=new Image();
+        im.onload=()=>ok(); im.onerror=()=>{ fora.push("fundo CSS: "+u); ok(); };
+        im.src=u;
+        if(im.complete){ if(!im.naturalWidth) fora.push("fundo CSS: "+u); ok(); }
+      })));
       return fora;
     });
     for(const s of ruins) anota(s,t);
