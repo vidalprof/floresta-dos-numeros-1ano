@@ -74,6 +74,18 @@ function fase1(){ ajuda(2, {dica:"olhe bem"}); }
 </script></body></html>
 H
 pega "promessa · voz promete, tela nao cumpre" PEGA python3 _qa/promessa.py "$T/p_ruim.html"
+# e o caso certo: o degrau 2 mostra mesmo o apoio concreto
+cat > "$T/p_bom.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+window.ajuda = function(n, ops){
+  ops = ops || {};
+  if(n === 1){ if(ops.dica) mostraDica(ops.dica); }
+  else if(n === 2){ falar("dc_ajuda2"); if(ops.concreto) ops.concreto(); }
+};
+function fase1(){ ajuda(2, {dica:"olhe bem", concreto:function(){ mostraApoio(); }}); }
+</script></body></html>
+H
+pega "promessa · a tela cumpre o prometido" DEIXA python3 _qa/promessa.py "$T/p_bom.html"
 
 # ---------- 3) DINAMICAS: prosa em comentario nao pode virar gatilho ----------
 # ⚠️ o fixture do `dinamicas` nasceu ERRADO e o portao estava certo: eu tinha
@@ -90,6 +102,25 @@ function pecaX(){ var o=document.createElement("div"); o.className="caixinha"; }
 </script></body></html>
 H
 pega "dinamicas· citacao em comentario"  DEIXA python3 _qa/dinamicas.py "$T/d_bom.html"
+# e o defeito de verdade dele: quiz com as opcoes SEMPRE na mesma ordem — a
+# crianca decora a posicao em vez do conteudo (armadilha registrada no
+# `_padrao/DINAMICAS.md`).
+cat > "$T/d_ruim.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+.opts{display:block}.opt{display:block;min-height:48px}
+</style></head><body><script>
+function quiz(f,cen,fim){
+  var ops=f.opcoes, box=el("div","opts"), i;
+  for(i=0;i<ops.length;i++){
+    var o=el("div","opt",ops[i].n);
+    o.onclick=function(){ if(this.certo){ sCerto(); fim(); } else { sErro(); ajuda(1); } };
+    box.appendChild(o);
+  }
+  cen.appendChild(box);
+}
+</script></body></html>
+H
+pega "dinamicas· quiz sem embaralhar"     PEGA  python3 _qa/dinamicas.py "$T/d_ruim.html"
 
 # ---------- 4) CLONE: resto de outra atividade ----------
 # ⚠️ o `clone` descobre o prefixo pelos ARQUIVOS de `img/` — um HTML solto nao
@@ -105,6 +136,14 @@ var IMGS = ["pd_pao","jd_broto_feliz"];
 </script></body></html>
 H
 pega "clone    · prefixo de outra atividade" PEGA python3 _qa/clone.py "$T/_ativ/index.html"
+# e o caso certo: so o prefixo da propria pasta
+cat > "$T/_ativ/limpo.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+var ID = {pre:"pd", mascote:"fuba"};
+var IMGS = ["pd_pao","pd_bolo","pd_mel"];
+</script></body></html>
+H
+pega "clone    · so a arte da propria pasta" DEIXA python3 _qa/clone.py "$T/_ativ/limpo.html"
 
 # ---------- 5) VISUAL: botao esticado (a opcao que virou fita) ----------
 # Este e o defeito que eu consertei TRES vezes na mao (escolher, completar,
