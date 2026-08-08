@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Opcoes de botao 2 — A Padaria das Letras</title>
+<!-- SEGUNDA CARTELA: mais seis acabamentos, bem diferentes da primeira folha.
+     Mesmo tamanho real (88x88) e mesmo fundo real. Arquivo de APRESENTACAO,
+     apagado depois que o Marcos escolher. -->
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;
+  background:#2b2118 url("img/pd_fundo.jpg") center/cover fixed}
+.folha{max-width:412px;margin:0 auto;padding:14px 10px 24px}
+.tit{background:rgba(58,48,32,.82);color:#ffe9a8;font-weight:800;font-size:15px;
+  border-radius:999px;padding:7px 14px;text-align:center;margin:0 auto 14px;max-width:330px}
+.grupo{background:rgba(255,253,246,.30);border-radius:20px;padding:9px 8px 12px;margin-bottom:14px}
+.nome{color:#fffdf6;font-size:13px;font-weight:800;letter-spacing:.6px;text-align:center;
+  text-shadow:0 1px 3px rgba(0,0,0,.55);margin-bottom:8px}
+.linha{display:flex;flex-wrap:wrap;justify-content:center}
+.b{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:88px;height:88px;margin:0 6px;border-radius:22px;
+  font-size:36px;font-weight:800;line-height:1;letter-spacing:1px;cursor:pointer;border:0}
+.fone{width:27px;height:27px;margin-top:5px;border-radius:50%;
+  background-repeat:no-repeat;background-position:center center;background-size:17px 17px}
+
+/* G — LOUSA DA PADARIA (a ardosia do cardapio, letra de giz) */
+.g{background-image:linear-gradient(#3c4a3f,#2d3a31);color:#fffdf6;
+  border:4px solid #a9723f;border-bottom:7px solid #6d4720;border-radius:12px;
+  box-shadow:0 6px 14px rgba(20,25,20,.42);
+  text-shadow:0 0 5px rgba(255,255,255,.35),0 1px 0 rgba(0,0,0,.4)}
+.g .fone{background-color:rgba(255,253,246,.20);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23fffdf6' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%23fffdf6' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+
+/* H — BANDEJA DE METAL (aluminio escovado, letra em baixo-relevo) */
+.h{background-image:linear-gradient(115deg,#d9dde2 0%,#f4f6f8 22%,#c3c9d0 46%,#eef1f4 70%,#c9cfd6 100%);
+  color:#6d757e;border:2px solid #eff2f5;border-bottom:6px solid #98a0a9;border-radius:18px;
+  box-shadow:0 5px 12px rgba(40,50,60,.30);
+  text-shadow:0 1px 0 rgba(255,255,255,.95),0 -1px 0 rgba(80,90,100,.55)}
+.h .fone{background-color:rgba(90,100,110,.16);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%235d666f' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%235d666f' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+
+/* I — MASSA CARIMBADA (bolinha de massa com a letra afundada) */
+.i{background-image:radial-gradient(circle at 34% 28%,#fff8ea,#f0dcb6 62%,#e2c894);
+  color:#a98552;border:0;border-radius:34px;
+  box-shadow:0 5px 12px rgba(90,60,10,.22),inset 0 -4px 8px rgba(160,120,60,.35),
+             inset 0 4px 8px rgba(255,255,255,.75);
+  text-shadow:0 2px 0 rgba(255,252,242,.95),0 -1px 1px rgba(120,85,35,.55)}
+.i .fone{background-color:rgba(150,110,50,.18);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23906b34' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%23906b34' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+
+/* J — BALA COLORIDA (uma cor por peca, com brilho de vidro) */
+.j{color:#fffdf6;border:0;border-radius:26px;
+  box-shadow:0 5px 12px rgba(40,25,10,.30);text-shadow:0 2px 3px rgba(0,0,0,.35)}
+.j:after{content:""}
+.j1{background-image:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,0) 46%),
+   linear-gradient(#e8607c,#c33b58);border-bottom:6px solid #96263e}
+.j2{background-image:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,0) 46%),
+   linear-gradient(#4fb489,#2f8f68);border-bottom:6px solid #206b4c}
+.j3{background-image:linear-gradient(rgba(255,255,255,.45),rgba(255,255,255,0) 46%),
+   linear-gradient(#5e93de,#3a6dbb);border-bottom:6px solid #2a5091}
+.j .fone{background-color:rgba(255,255,255,.28);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%23ffffff' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+
+/* K — CARIMBO DE PADEIRO (redondo, com a borda serrilhada do cortador) */
+.k{background-image:linear-gradient(#fff6e2,#f2dcb4);color:#8a3b22;
+  border-radius:50%;border:3px dashed #c98a5c;
+  box-shadow:0 5px 12px rgba(90,50,20,.26),inset 0 0 0 4px rgba(255,255,255,.65)}
+.k .fone{background-color:rgba(138,59,34,.14);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%238a3b22' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%238a3b22' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+
+/* L — TOLDO LISTRADO (as listras da frente da padaria) */
+.l{background-image:linear-gradient(#fffaf0,#fffaf0),
+   repeating-linear-gradient(90deg,#e05a4e 0 11px,#fffaf0 11px 22px);
+  background-clip:content-box,border-box;background-origin:content-box,border-box;
+  background-repeat:no-repeat,repeat;
+  color:#a3322a;border:0;border-top:13px solid rgba(0,0,0,0);
+  border-bottom:8px solid rgba(0,0,0,0);border-radius:20px;padding:0 8px;
+  box-shadow:0 5px 12px rgba(90,35,25,.26)}
+.l .fone{background-color:rgba(163,50,42,.13);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23a3322a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%23a3322a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+</style></head>
+<body>
+<div class="folha">
+  <div class="tit">MAIS SEIS — tamanho real, fundo real</div>
+
+  <div class="grupo"><div class="nome">G · LOUSA DA PADARIA (giz)</div>
+    <div class="linha">
+      <div class="b g">P<i class="fone"></i></div>
+      <div class="b g">B<i class="fone"></i></div>
+      <div class="b g">M<i class="fone"></i></div>
+    </div></div>
+
+  <div class="grupo"><div class="nome">H · BANDEJA DE METAL</div>
+    <div class="linha">
+      <div class="b h">P<i class="fone"></i></div>
+      <div class="b h">B<i class="fone"></i></div>
+      <div class="b h">M<i class="fone"></i></div>
+    </div></div>
+
+  <div class="grupo"><div class="nome">I · MASSA CARIMBADA</div>
+    <div class="linha">
+      <div class="b i">P<i class="fone"></i></div>
+      <div class="b i">B<i class="fone"></i></div>
+      <div class="b i">M<i class="fone"></i></div>
+    </div></div>
+
+  <div class="grupo"><div class="nome">J · BALA COLORIDA</div>
+    <div class="linha">
+      <div class="b j j1">P<i class="fone"></i></div>
+      <div class="b j j2">B<i class="fone"></i></div>
+      <div class="b j j3">M<i class="fone"></i></div>
+    </div></div>
+
+  <div class="grupo"><div class="nome">K · CARIMBO DE PADEIRO</div>
+    <div class="linha">
+      <div class="b k">P<i class="fone"></i></div>
+      <div class="b k">B<i class="fone"></i></div>
+      <div class="b k">M<i class="fone"></i></div>
+    </div></div>
+
+  <div class="grupo"><div class="nome">L · TOLDO LISTRADO</div>
+    <div class="linha">
+      <div class="b l">P<i class="fone"></i></div>
+      <div class="b l">B<i class="fone"></i></div>
+      <div class="b l">M<i class="fone"></i></div>
+    </div></div>
+</div>
+</body></html>
