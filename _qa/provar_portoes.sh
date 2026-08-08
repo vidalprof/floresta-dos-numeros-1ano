@@ -464,6 +464,37 @@ PYX
 pega "padrao   · um gesto so (10 de 10)"  PEGA  python3 _qa/padrao.py "$T/pd_ruim.html"
 pega "padrao   · leque da _prova30"       DEIXA python3 _qa/padrao.py _prova30/index.html
 
+# ---------- 20) EXPLICA: a fase exige um atributo e nao diz qual ----------
+# Palavras do Marcos, no "Monte o seu prato": *"mesmo colocando os cinco
+# alimentos que se pede, nao passa a fase"*. A regra da fase estava certa (5
+# PARTES diferentes da planta); o enunciado e que nao dizia "parte" — e 82% das
+# crianças que faziam o que a tela parecia pedir ficavam paradas.
+mkdir -p "$T/_exp" "$T/_expb"
+prato(){ # prato(<enunciado>)
+cat <<H
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function telaPrato(){
+  limpa();
+  var b = el("div","balao","$1");
+  falar("jd_prato_intro");
+  function conta(){
+    var vis={}, n=0, z;
+    for(z=0;z<noPrato.length;z++){
+      if(!vis[noPrato[z].it.parte]){ vis[noPrato[z].it.parte]=1; n++; }
+    }
+    if(n>=5) fim();
+  }
+}
+</script></body></html>
+H
+}
+prato "Monte o seu prato com 5 alimentos." > "$T/_exp/index.html"
+prato "Ponha no prato 5 partes diferentes da planta." > "$T/_expb/index.html"
+echo '[{"id":"jd_prato_intro","texto":"Monte o seu prato com cinco alimentos."}]' > "$T/_exp/falas.json"
+echo '[{"id":"jd_prato_intro","texto":"Ponha no prato cinco partes diferentes da planta."}]' > "$T/_expb/falas.json"
+pega "explica · exige atributo sem dizer"  PEGA  python3 _qa/explica.py "$T/_exp/index.html"
+pega "explica · enunciado e voz explicam"  DEIXA python3 _qa/explica.py "$T/_expb/index.html"
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."

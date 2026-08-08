@@ -866,7 +866,7 @@ Marcos de verdade — e exige código ≠ 0. E, onde já houve falso-positivo,
 planta também o caso **certo** e exige código 0: *portão que grita à toa ensina
 a ignorar portão.*
 
-Hoje prova **38 casos em 16 portões**: `funcoes` (função inexistente · chamada
+Hoje prova **42 casos em 18 portões**: `funcoes` (função inexistente · chamada
 protegida por `typeof`) · `promessa` (voz promete e a tela não cumpre) ·
 `dinamicas` (citação em comentário não é gatilho) · `clone` (prefixo de outra
 atividade) · `visual` (opção esticada · opção no molde do motor) · `imagens`
