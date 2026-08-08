@@ -159,6 +159,83 @@ pega "imagens  · <img> que nao carrega"  PEGA  node _qa/imagens.js "$T/_fig/rui
 pega "imagens  · fundo CSS que nao vem"  PEGA  node _qa/imagens.js "$T/_fig/ruim_css.html" telaCapa
 pega "imagens  · tudo no lugar"          DEIXA node _qa/imagens.js "$T/_fig/bom.html"      telaCapa
 
+# ---------- 7) PROGRESSAO: a barra que anda para tras ----------
+# Defeito medido em TRES atividades no ar (Legenda 68%->48%, Redacao 50%->46%,
+# Doceria 92%->91%): fase inserida depois, ninguem renumerou as vizinhas.
+barra(){ # barra(<prog da 1a>, <prog da 2a>)
+cat <<H
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function faseA(){ limpa(); var t=el("div","tela"); setProg(t,$1); mostraBanner("boa!", faseB); }
+function faseB(){ limpa(); var t=el("div","tela"); setProg(t,$2); }
+</script></body></html>
+H
+}
+barra 68 48 > "$T/b_ruim.html"
+barra 48 68 > "$T/b_bom.html"
+pega "progress.· barra volta para tras" PEGA  python3 _qa/progressao.py "$T/b_ruim.html"
+pega "progress.· barra so avanca"       DEIXA python3 _qa/progressao.py "$T/b_bom.html"
+
+# ---------- 8) TELA VAZIA: o fundo falando sozinho ----------
+# Palavras do Marcos: *"quando conclui, fica so a tela de fundo e falando, fica
+# feio"*. Eram 23 fases com o mesmo molde.
+cat > "$T/tv_ruim.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function passo(){
+  limpa();
+  if(idx>=LISTA.length){
+    depoisDaFala("pd_revela",13000,function(){ mostraBanner("Muito bem!", proxima); });
+    return;
+  }
+}
+</script></body></html>
+H
+cat > "$T/tv_bom.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function passo(){
+  limpa();
+  if(idx>=LISTA.length){
+    fechaFase("A PADARIA","Voce leu todas as placas!","pd_revela",13000,proxima,60);
+    return;
+  }
+}
+</script></body></html>
+H
+pega "telavazia· fundo falando sozinho" PEGA  python3 _qa/telavazia.py "$T/tv_ruim.html"
+pega "telavazia· fecho com fechaFase"   DEIXA python3 _qa/telavazia.py "$T/tv_bom.html"
+
+# ---------- 9) CLASSES: classe que so existe dentro de @media ----------
+# Foi o `.pchip` do caca-palavras: na tela normal a lista virou texto solto.
+# O caso CERTO tem o comentario que ja derrubou este portao (um comentario de
+# CSS terminando com a palavra @media engolia a regra de baixo).
+cat > "$T/c_ruim.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+.tela{display:block}
+@media (max-width:400px){ .pchip{display:inline-block;padding:4px 8px} }
+</style></head><body><script>
+function desenha(){ var x=el("div","pchip","MASSA"); }
+</script></body></html>
+H
+cat > "$T/c_bom.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"><style>
+.tela{display:block}
+/* a lista de palavras achadas; encolhe no celular, ver o @media */
+.pchip{display:inline-block;padding:4px 8px}
+@media (max-width:400px){ .pchip{padding:3px 6px} }
+</style></head><body><script>
+function desenha(){ var x=el("div","pchip","MASSA"); }
+</script></body></html>
+H
+pega "classes  · so dentro de @media"   PEGA  python3 _qa/classes.py "$T/c_ruim.html"
+pega "classes  · comentario com @media" DEIXA python3 _qa/classes.py "$T/c_bom.html"
+
+# ---------- 10) FALAS: a palavra que a voz erra ----------
+# O Marcos OUVIU "complite" duas vezes (Redacao e Doceria). A voz so da para
+# conferir depois de publicada — este portao pega antes de gravar.
+echo '[{"id":"pd_f01","texto":"Complete a palavra com a letra que falta."}]' > "$T/fl_ruim.json"
+echo '[{"id":"pd_f01","texto":"Preencha a palavra com a letra que falta."}]' > "$T/fl_bom.json"
+pega "falas    · palavra que a voz erra" PEGA  python3 _qa/falas.py "$T/fl_ruim.json"
+pega "falas    · texto ja trocado"       DEIXA python3 _qa/falas.py "$T/fl_bom.json"
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."

@@ -866,9 +866,14 @@ Marcos de verdade — e exige código ≠ 0. E, onde já houve falso-positivo,
 planta também o caso **certo** e exige código 0: *portão que grita à toa ensina
 a ignorar portão.*
 
-Hoje prova 7 casos: função inexistente · chamada protegida por `typeof` ·
-promessa sem ação · citação em comentário · prefixo de outra atividade ·
-opção esticada (fita) · opção no molde do motor.
+Hoje prova **19 casos em 8 portões**: `funcoes` (função inexistente · chamada
+protegida por `typeof`) · `promessa` (voz promete e a tela não cumpre) ·
+`dinamicas` (citação em comentário não é gatilho) · `clone` (prefixo de outra
+atividade) · `visual` (opção esticada · opção no molde do motor) · `imagens`
+(pré-carga com 404 · `<img>` quebrado · fundo CSS que não vem · tudo no lugar) ·
+`progressao` (barra que volta · barra que só avança) · `telavazia` (fundo
+falando sozinho · fecho com `fechaFase`) · `classes` (só dentro de `@media` ·
+comentário com a palavra `@media`) · `falas` ("Complete" → *complite*).
 **Portão novo entra aqui no mesmo commit** — senão ele nasce sem prova.
 
 ### As duas coisas que ele já ensinou, na estreia
