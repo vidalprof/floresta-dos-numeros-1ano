@@ -186,10 +186,33 @@
   background:linear-gradient(115deg,#dde1e6 0%,#f6f8fa 22%,#c9ced5 46%,#f0f3f6 70%,#ced4da 100%);
   border:3px solid #eff2f5;border-bottom-width:6px;border-bottom-color:#98a0a9;
   -webkit-box-shadow:0 5px 12px rgba(40,50,60,.28);box-shadow:0 5px 12px rgba(40,50,60,.28)}
+/* ⭐ A GAVETA ENTREABERTA (modelo B da cartela, ago/2026). O `.cam` deixa de
+   ser uma chapa de metal lisa e vira a frente de uma gaveta do armario da
+   padaria: PUXADOR embaixo e a FRESTA ESCURA em cima. A fresta e o que faz o
+   trabalho: gaveta aberta e um convite que a crianca de 6 anos entende sem ler
+   nada — antes ela via um retangulo e tinha de deduzir que ali "cabe coisa".
+   ⚠️ o texto continua escuro sobre a etiqueta clara (`.gtit`), nunca sobre a
+   madeira: madeira com letra clara ja reprovou no contraste uma vez hoje. */
+.mec-classificar .cam{position:relative;
+  background:-webkit-linear-gradient(top,#9d6837,#7d4f27);
+  background:linear-gradient(#9d6837,#7d4f27);
+  border:2px solid #c68f56;border-bottom:8px solid #5f3c1c;
+  border-radius:12px 12px 7px 7px;padding-bottom:30px;
+  -webkit-box-shadow:0 6px 14px rgba(40,22,5,.40);box-shadow:0 6px 14px rgba(40,22,5,.40)}
+/* o puxador de madeira clara */
+.mec-classificar .cam:before{content:"";position:absolute;left:50%;margin-left:-19px;bottom:9px;
+  width:38px;height:9px;border-radius:5px;
+  background:-webkit-linear-gradient(top,#f0d5a8,#c9a161);
+  background:linear-gradient(#f0d5a8,#c9a161);
+  -webkit-box-shadow:0 2px 0 rgba(60,32,10,.5);box-shadow:0 2px 0 rgba(60,32,10,.5)}
+/* a fresta escura: "cabe aqui dentro" */
+.mec-classificar .cam:after{content:"";position:absolute;left:6px;right:6px;top:0;height:8px;
+  background:rgba(20,10,2,.55);border-radius:0 0 7px 7px}
+
 /* a gaveta ACESA e a REVELADA continuam gritando: estado manda mais que
    identidade, e sem isto a crianca perde o unico aviso de "e aqui". */
-.mec-classificar .cam.luz{border-color:#6fbf58;background:#e6f7de}
-.mec-classificar .cam.alvo{border-color:#e0a92a;background:#fff3d2}
+.mec-classificar .cam.luz{border-color:#6fbf58;background:#e6f7de;background-image:none}
+.mec-classificar .cam.alvo{border-color:#e0a92a;background:#fff3d2;background-image:none}
 /* o rotulo: etiqueta de papel presa na bandeja, no lugar do azul */
 .mec-classificar .gtit{
   background:-webkit-linear-gradient(top,#efdcbb,#e2caa1);

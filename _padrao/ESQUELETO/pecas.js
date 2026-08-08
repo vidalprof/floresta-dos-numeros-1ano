@@ -6115,11 +6115,16 @@ var GAVETAS=[
   {k:"raiz",  n:"A RAIZ<br>(embaixo da terra)"},
   {k:"folha", n:"A FOLHA<br>(no ar, verde)"}
 ];
+/* `img` e OPCIONAL e vai VAZIO no exemplo de proposito: e assim que o montador
+   aprende que o campo existe (ele confere os campos da fase contra este bloco).
+   Com figura, a ficha mostra o desenho em cima da palavra — no 1o ano tem quem
+   ainda nao le. Sem figura, continua so a palavra, e nenhuma atividade antiga
+   quebra. */
 var FICHAS=[
-  {t:"BEBE A ÁGUA",     alvo:"raiz"},
-  {t:"SEGURA A PLANTA", alvo:"raiz"},
-  {t:"PEGA O SOL",      alvo:"folha"},
-  {t:"FAZ O ALIMENTO",  alvo:"folha"}
+  {t:"BEBE A ÁGUA",     alvo:"raiz",  img:""},
+  {t:"SEGURA A PLANTA", alvo:"raiz",  img:""},
+  {t:"PEGA O SOL",      alvo:"folha", img:""},
+  {t:"FAZ O ALIMENTO",  alvo:"folha", img:""}
 ];
 /* ⚠️⚠️ RESTO DE CLONE CRAVADO NA PECA (ago/2026) — o pior tipo, porque nao da
    erro nenhum e viaja para TODA atividade que usar esta mecanica.
@@ -6138,6 +6143,8 @@ var DICAS=[
 ];
 
 var feitos=0;          /* fichas ja guardadas */
+var fila=[], vez=0;    /* a esteira: a ordem das fichas e em qual estamos */
+var passo=null;        /* o rodape "doce 2 de 6 - ja guardados: ..." */
 var marcada=null;      /* a ficha escolhida pelo toque simples */
 var barraP=null;       /* a barrinha de progresso, para andar sem refazer a tela */
 var ger=0;             /* geracao da tela: mata setTimeout de fase que ja saiu */
@@ -6162,24 +6169,55 @@ function pecaClassificar(){
   c.appendChild(el("div","selo","ONDE CADA UMA MORA?"));
   c.appendChild(el("div","balao",ENUN));
 
-  var band=el("div","bandeja"), i;
-  var ordem=[];
-  for(i=0;i<FICHAS.length;i++) ordem.push(FICHAS[i]);
-  baguncar(ordem);
-  for(i=0;i<ordem.length;i++) band.appendChild(fazFicha(ordem[i]));
+  /* ⭐ A ESTEIRA — UMA FICHA POR VEZ (decisao do Marcos, ago/2026: *"pode ficar
+     mais bonita, intuitiva, moderna e profissional"*, e ele deixou a escolha
+     comigo). Antes a crianca encarava SEIS coisas de uma vez: quatro fichas,
+     duas gavetas e o enunciado. Agora vem UMA ficha, grande, e so ha duas
+     escolhas — uma ideia por tela (carga cognitiva, Sweller). Ela erra menos
+     por confusao e mais por CONTEUDO, que e o erro que ensina.
+     ⚠️ o gesto de ARRASTAR nao se perde: a ficha unica continua arrastavel, e
+     o toque-toque continua valendo. Trocar a mecanica para "escolher" teria
+     estreitado o leque que o `_qa/padrao.py` mede. */
+  fila=[]; vez=0;
+  var i;
+  for(i=0;i<FICHAS.length;i++) fila.push(FICHAS[i]);
+  baguncar(fila);
+  var band=el("div","bandeja"); band.id="esteira";
   c.appendChild(band);
 
   var gs=el("div","gavs");
   for(i=0;i<GAVETAS.length;i++) gs.appendChild(fazGaveta(GAVETAS[i]));
   c.appendChild(gs);
 
+  passo=el("div","passo","");
+  c.appendChild(passo);
   c.appendChild(el("div","hint","Toque na ficha e depois na gaveta. Também dá para arrastar com o dedo ou com o mouse."));
   t.appendChild(c);
   app.appendChild(t);
+  poeAVez();
+}
+
+/* poe na esteira a ficha da vez. Fase acabada = esteira vazia. */
+function poeAVez(){
+  var e=document.getElementById("esteira");
+  if(!e) return;
+  e.innerHTML="";
+  if(vez<fila.length) e.appendChild(fazFicha(fila[vez]));
+  if(passo){
+    var ja=[], i;
+    for(i=0;i<vez;i++) ja.push(fila[i].t);
+    passo.innerHTML = (vez<fila.length ? ("doce "+(vez+1)+" de "+fila.length) : "todos guardados")
+      + (ja.length ? (" &middot; j&aacute; guardados: "+ja.join(", ")) : "");
+  }
 }
 
 function fazFicha(f){
-  var p=el("div","pc",f.t);
+  /* ⭐ a FIGURA junto da palavra: no 1o ano tem quem ainda nao le, e a ficha
+     so com texto ("BOLACHA") virava adivinhacao. Se a fase nao trouxer figura,
+     a ficha continua so com a palavra — nenhuma atividade antiga quebra. */
+  var p=el("div","pc","");
+  if(f.img){ var im=el("img","pcfig"); im.src="img/"+f.img+".png"; im.alt=""; p.appendChild(im); }
+  p.appendChild(el("b","pctxt",f.t));
   /* ficha e gaveta publicam a MESMA chave: e assim que o auditor-jogador
      consegue terminar a fase (e so ele olha para isto). */
   p.setAttribute("data-qa",f.alvo);
@@ -6282,6 +6320,9 @@ function guarda(p,g){
     g.className="cam luz";
     marcada=null;
     feitos++;
+    vez++;
+    var geP=ger;
+    setTimeout(function(){ if(geP===ger) poeAVez(); },300);
     if(barraP) barraP.style.width=Math.round(feitos*100/FICHAS.length)+"%";
     var gg=g, ge=ger;
     setTimeout(function(){ if(ge!==ger) return; if(gg.className.indexOf("luz")>=0) gg.className="cam"; },500);

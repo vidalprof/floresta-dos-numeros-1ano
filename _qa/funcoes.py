@@ -55,6 +55,9 @@ def limpa(s):
         i += 1
     return "".join(fora)
 
+# ⚠️ a lista de PROTEGIDAS tem de sair do texto CRU: o `limpa()` apaga as
+# strings, e é dentro de uma string que mora o `"function"` do guarda.
+JS_CRU = js
 js = limpa(js)
 
 # ---- o que o arquivo declara
@@ -82,7 +85,16 @@ console document window navigator localStorage sessionStorage location history s
 # ---- o que é chamado (ignora metodo: algo.metodo() )
 chamadas = set(re.findall(r"(?<![\w$.])([A-Za-z_$][\w$]*)\s*\(", js))
 
-faltando = sorted(c for c in chamadas - declara - GLOBAIS)
+# ⚠️ LICAO PAGA (ago/2026): a PECA roda sozinha na bancada, mas dentro da
+# atividade ela ganha os ajudantes do MOTOR (sPega, sPoe, mascoteFesteja...).
+# A casa ja tem o idioma certo para isso — `if(typeof sPega==="function")
+# sPega();` —, so que este portao contava a chamada e reprovava a peca por
+# "funcao que nao existe". Chamada PROTEGIDA por `typeof` nao estoura na mao
+# da crianca: e exatamente o contrario, e o cuidado de quem sabe que ela pode
+# faltar. Entao ela nao conta.
+protegidas = set(re.findall(
+    r'typeof\s+([A-Za-z_$][\w$]*)\s*[!=]==?\s*["\']function["\']', JS_CRU))
+faltando = sorted(c for c in chamadas - declara - GLOBAIS - protegidas)
 
 print("%s -> %d nomes chamados, %d declarados" % (arq, len(chamadas), len(declara)))
 if not faltando:
