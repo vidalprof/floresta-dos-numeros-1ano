@@ -45,5 +45,58 @@ print("   mesa + %d objetivo(s) do curriculo preenchidos (afericao)" % len(cur))
 PY
 
 python3 _padrao/ESQUELETO/montar.py _prova30 || exit 1
-echo "--- a banca ---"
-bash _qa/auditar.sh _prova30/index.html
+
+# ============================================================
+#  ⚠️ POR QUE AQUI NAO RODA A BANCA INTEIRA — e a licao que custou uma rodada.
+#  Rodei `auditar.sh` na `_prova30` e ela REPROVOU. Fui ver: 11 figuras que nao
+#  existem, 6 fases mudas, 14 alto-falantes sem gravacao. Tudo VERDADE, e tudo
+#  esperado: a `_prova30` e um ESQUELETO — nunca teve arte gerada nem voz
+#  gravada, e os textos sao os «...» do esboco.
+#  A banca esta certa em reprovar (atividade sem arte e sem voz nao vai para
+#  crianca nenhuma). Errado seria eu gerar 11 imagens e ~270 vozes para uma
+#  afericao descartavel: dinheiro e uma corrida de workflow jogados fora, e
+#  contra a regra da cartela.
+#  Entao a prova mede o que ELA existe para medir: a ESTRUTURA. Os portoes de
+#  arte e de voz ficam de fora, e ficam de fora DITOS — portao pulado em
+#  silencio e o comeco de toda aprovacao vazia.
+# ============================================================
+ARQ=_prova30/index.html
+falhou=0
+rodar(){ # rodar "<nome>" <comando...>
+  local nome="$1"; shift
+  if "$@" > /tmp/pe_gate.txt 2>&1; then
+    echo "   ok   $nome"
+  else
+    echo "   FALHOU  $nome"; sed -n '1,6p' /tmp/pe_gate.txt | sed 's/^/        /'
+    falhou=1
+  fi
+}
+echo "--- OS PORTOES DE ESTRUTURA (arte e voz ficam de fora, ver acima) ---"
+rodar "engenheiro (o codigo roda)"      bash -c "python3 - <<'P'
+import io,re,subprocess,sys
+s=io.open('$ARQ',encoding='utf-8').read()
+js='\n'.join(re.findall(r'<script>(.*?)</script>', s, re.S))
+io.open('/tmp/pe.js','w',encoding='utf-8').write(js)
+sys.exit(subprocess.call(['node','--check','/tmp/pe.js']))
+P"
+rodar "funcao que nao existe"           python3 _qa/funcoes.py   "$ARQ"
+rodar "pedagogo (a escada sobe?)"       python3 _qa/pedagogo.py  "$ARQ"
+rodar "padrao da casa"                  python3 _qa/padrao.py    "$ARQ"
+rodar "dinamicas (armadilhas)"          python3 _qa/dinamicas.py "$ARQ"
+rodar "cobertura por objetivo"          python3 _qa/cobertura.py "$ARQ"
+rodar "resto de clone"                  python3 _qa/clone.py     "$ARQ"
+rodar "promessa"                        python3 _qa/promessa.py  "$ARQ"
+rodar "fluxo (da para chegar ao fim?)"  python3 _qa/fluxo.py     "$ARQ" telaCapa
+rodar "classes sem estilo"              python3 _qa/classes.py   "$ARQ"
+rodar "progressao (a barra so anda?)"   python3 _qa/progressao.py "$ARQ"
+rodar "diretor de arte (acabamento)"    node   _qa/visual.js     "$ARQ"
+rodar "jogador (joga sozinho)"          node   _qa/jogador.js    "$ARQ"
+
+echo "-----------------------------------------------------------"
+if [ "$falhou" = "0" ]; then
+  echo " ESTEIRA OK — do nada ao index.html, e a ESTRUTURA passa nos 13 portoes."
+  echo " (arte e voz nao foram medidas: a _prova30 nao tem nem uma nem outra)"
+else
+  echo " ESTEIRA COM DEFEITO — conserte antes de montar atividade nova."
+fi
+exit "$falhou"

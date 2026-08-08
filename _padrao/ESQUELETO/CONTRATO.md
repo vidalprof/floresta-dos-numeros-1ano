@@ -792,3 +792,40 @@ toca a voz de erro) e o `mostraDica()` — que **escreve** a promessa na tela.
 conferir um por um: ou a atividade realmente não tem aquilo — e aí se diz —, ou
 o portão deixou de enxergar. Esta semana foram **três** portões cegos
 (`imagens`, `funcoes`, `promessa`); os três aprovavam.
+
+## ✅ A ESTEIRA TEM AFERIÇÃO — e ela achou dois defeitos no primeiro uso
+
+`bash _padrao/ESQUELETO/provar_esteira.sh` faz o caminho inteiro **do nada**:
+esboço → preenche `mesa` e currículo → monta → **13 portões de estrutura**.
+Sai **código 0**. É o que transforma o "1h30" de promessa em medida.
+
+**Por que ela vale mais que testar numa atividade real:** junta as **16
+mecânicas** num arquivo só, nenhuma passando de 6% das 32 fases. É o **pior
+caso** para o motor, e a única situação em que uma peça brigando com outra
+aparece. Rodar depois de mexer no motor, no montador ou numa peça.
+
+### ⚠️ Por que ela NÃO roda a banca inteira — a lição que custou uma rodada
+Rodei `auditar.sh` na `_prova30` e ela reprovou: 11 figuras que não existem, 6
+fases mudas, 14 alto-falantes sem gravação. **Tudo verdade, e tudo esperado** —
+a `_prova30` é um esqueleto: nunca teve arte gerada nem voz, e os textos são os
+`«...»` do esboço.
+
+A banca está **certa** em reprovar (atividade sem arte e sem voz não vai para
+criança nenhuma). Errado seria eu gerar 11 imagens e ~270 vozes para uma
+aferição descartável — dinheiro e uma corrida de workflow jogados fora, contra
+a regra da cartela.
+
+Então a prova mede **o que ela existe para medir: a estrutura**. E os portões
+de arte e voz ficam de fora **ditos em voz alta** no relatório — *portão pulado
+em silêncio é o começo de toda aprovação vazia*.
+
+### Os dois defeitos que ela achou de cara
+1. **O esboço nascia reprovado**: 32 problemas de cobertura numa atividade
+   recém-criada. O objetivo saía do índice da mecânica, então cada um ficava com
+   2 fases da MESMA mecânica — 1 gesto só. O professor perderia a manhã
+   consertando uma estrutura que não foi ele que montou.
+2. **A opção comprida do `completar`** ia a 400×55 = **7,3×**. A regra do teto
+   já valia para o ladrilho de letra; a opção de texto tinha escapado.
+
+E um **falso-positivo** do diretor de arte: a "fileira torta" media todos os
+irmãos, inclusive os **empilhados**, onde altura diferente é natural.
