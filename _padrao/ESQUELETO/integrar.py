@@ -175,11 +175,28 @@ def gaveta(js):
     #    o estado do jogo em minuscula (`cels`, `vagas`, `sombras`). Sem este
     #    corte, o autor do conteudo receberia uma lista com o estado interno da
     #    peca no meio — e mexer nele nao e trocar conteudo, e quebrar a peca.
-    todas = [a[0] for a in achados if a[0].upper() == a[0]]
+    # ⚠️ LICAO PAGA (ago/2026): a busca so enxergava `var X = [` e `var X = {`.
+    #    So que CONTEUDO tambem e TEXTO — o enunciado da peça, por exemplo. O
+    #    `classificar` trazia o balao cravado no corpo ("Cada ficha conta uma
+    #    tarefa da PLANTA", resto do Jardim do Broto) e viajava assim para toda
+    #    atividade que usasse a mecanica; ao mover o texto para uma gaveta
+    #    `var ENUN="..."`, o montador respondeu "ENUN nao e gaveta". Nao era
+    #    mesmo: o detector nao sabia ler texto.
+    #    Gaveta de TEXTO nunca e a principal (a principal e a lista de rodadas)
+    #    — ela entra so na lista das OUTRAS, que e quem o `dadosExtra` preenche.
+    textos = []
+    for m in re.finditer(r"^var\s+([A-Z][A-Z0-9_$]*)\s*=\s*(\"[^\"\n]*\"|'[^'\n]*')\s*;",
+                         js, re.M):
+        if m.group(1) in NAO_E_CONTEUDO:
+            continue
+        textos.append((m.group(1), m.group(2)))
+    todas = [a[0] for a in achados if a[0].upper() == a[0]] + [t[0] for t in textos]
     # o exemplo de CADA gaveta, nao so o da principal: e o que permite conferir
     # o formato do `dadosExtra` (foi por falta disso que um `MUDA` no formato
     # errado passou e a fase saiu com ZERO diferencas, dando-se por concluida)
     exemplos = dict((n, js[i:f]) for n, i, f, _t in achados if n.upper() == n)
+    for n, v in textos:
+        exemplos[n] = v
     if not achados:
         return None, "", "nenhuma", [], {}
 

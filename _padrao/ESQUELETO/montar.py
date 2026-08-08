@@ -739,8 +739,21 @@ def escreve_index(pasta, c, falas):
                                                ensure_ascii=False))
     # a pré-carga: o mascote em 3 camadas, os crachás, a medalha e a arte das
     # fases — nunca a lista da atividade de origem
-    imgs = ["%s_%s_%s" % (pre, mascote, x) for x in
-            ("feliz", "fala", "pisca", "pensa", "festa")]
+    # ⚠️ LICAO PAGA (ago/2026): esta lista pedia CINCO poses do mascote, mas a
+    # regra da casa so exige TRES (parada, fala, pisca — as outras duas teriam
+    # de ser EDICAO da parada, e nem sempre existem). Resultado: `_pensa` e
+    # `_festa` entravam na pre-carga, davam 404 e a crianca via o pedido de uma
+    # figura que nunca foi desenhada. Agora: as tres obrigatorias sempre; as
+    # duas opcionais so se o arquivo ESTIVER na pasta.
+    # E a licao maior: "pensar" e "comemorar" nao precisam de desenho novo —
+    # sao MOVIMENTO da pose parada (ver `.mascote.pensando`/`.festejando` no
+    # tema). Desenho novo do mascote sai fora do personagem com facilidade
+    # assustadora; movimento nao tem como sair.
+    imgs = ["%s_%s_%s" % (pre, mascote, x) for x in ("feliz", "fala", "pisca")]
+    for extra in ("pensa", "festa"):
+        nome_extra = "%s_%s_%s" % (pre, mascote, extra)
+        if os.path.exists(os.path.join(pasta, "img", nome_extra + ".png")):
+            imgs.append(nome_extra)
     imgs += ["%s_cr%d" % (pre, i + 1) for i in range(int(c.get("crachas", 6)))]
     imgs.append("med_" + pre)
     for f in c["fases"]:
@@ -755,6 +768,55 @@ def escreve_index(pasta, c, falas):
             vistas.add(x)
             limpa.append(x)
     dados.append(u"IMGS = %s;" % json.dumps(limpa, ensure_ascii=False))
+
+    # ⭐ A VITRINE QUE ENCHE: uma figura por fase, tirada da PROPRIA fase — o
+    #    doce que a crianca acabou de ver e o que entra atras do vidro. Fase sem
+    #    figura (traçar, ligar pontos) pega emprestada a figura de outra fase,
+    #    girando a lista: a vitrine tem que ter uma vaga por fase, senao ela
+    #    para de contar a historia certa.
+    #    ⚠️ so entra figura de PRODUTO: mascote, crachá e medalha ficam de fora
+    #    (vitrine de padaria com a cara do padeiro dentro nao e vitrine).
+    fora = set(["med_" + pre] + ["%s_%s_%s" % (pre, mascote, x)
+                                 for x in ("feliz", "fala", "pisca", "pensa", "festa")]
+               + ["%s_cr%d" % (pre, i + 1) for i in range(int(c.get("crachas", 6)))])
+    # ⚠️ a figura NAO mora num campo fixo: cada mecanica guarda a dela do seu
+    #    jeito, dentro da gaveta `dados` (a `ouvir-achar` poe o nome cru em
+    #    `alvo`/`opcoes`, outras usam `img`, outras aninham mais fundo). Um
+    #    `f.get("itens")` so acha as que ja conheco — e foi assim que a vitrine
+    #    nasceu vazia na primeira tentativa. Entao: varrer a fase INTEIRA atras
+    #    de nome de figura que EXISTA na pasta. O disco e a verdade.
+    def figura_da_fase(no, achado):
+        if achado[0]:
+            return
+        if isinstance(no, dict):
+            for v in no.values():
+                figura_da_fase(v, achado)
+        elif isinstance(no, list):
+            for v in no:
+                figura_da_fase(v, achado)
+        elif isinstance(no, basestring if str is bytes else str):
+            if (no.startswith(pre + "_") and no not in fora
+                    and os.path.exists(os.path.join(pasta, "img", no + ".png"))):
+                achado[0] = no
+
+    por_fase, sobra = [], []
+    for f in c["fases"]:
+        achado = [None]
+        figura_da_fase(f, achado)
+        achou = achado[0]
+        por_fase.append(achou)
+        if achou and achou not in sobra:
+            sobra.append(achou)
+    if sobra:
+        giro = 0
+        for i, x in enumerate(por_fase):
+            if not x:
+                por_fase[i] = sobra[giro % len(sobra)]; giro += 1
+        dados.append(u"VITRINE = %s;" % json.dumps(por_fase, ensure_ascii=False))
+        print(u"   vitrine: %d vaga(s), %d figura(s) diferentes"
+              % (len(por_fase), len(sobra)))
+    else:
+        print(u"   vitrine: NAO (a atividade nao tem figura de produto nas fases)")
 
     dados.append(u"ABERTURA = {texto:%s, voz:%s};"
                  % (jstr(c.get("abertura") or ""), jstr(pre + "_abertura")))
@@ -784,7 +846,22 @@ def escreve_index(pasta, c, falas):
     if not quantos:
         print(u"   AVISO: nao achei o `var ID` de fabrica no motor — "
               u"rode extrair_motor.py de novo")
-    saida = saida.replace(u"</style>", css_pecas + u"\n</style>", 1)
+    # ⭐ O TEMA DA ATIVIDADE — `<pasta>/tema.css`, se existir.
+    #    Entra por ULTIMO de proposito: e a camada que da IDENTIDADE (a lousa da
+    #    padaria, a bandeja de metal, o toldo listrado) e por isso tem que
+    #    ganhar do motor e das peças no empate de especificidade.
+    #    ⚠️ POR QUE NAO NO MOTOR: o acabamento e da ATIVIDADE, nao do esqueleto.
+    #    Pintar a madeira da padaria no `.btn` do motor pintaria TODA atividade
+    #    futura de padaria — inclusive a de ciencias do 6o ano. O motor fica
+    #    neutro; quem tem cara e a atividade.
+    tema = os.path.join(pasta, "tema.css")
+    css_tema = u""
+    if os.path.exists(tema):
+        css_tema = (u"\n/* ==== TEMA DA ATIVIDADE (%s/tema.css) ==== */\n"
+                    % os.path.basename(pasta.rstrip("/"))) + \
+                   io.open(tema, encoding="utf-8").read()
+        print(u"   tema proprio: tema.css (%d KB)" % (len(css_tema) // 1024))
+    saida = saida.replace(u"</style>", css_pecas + css_tema + u"\n</style>", 1)
     saida = saida.replace(u"</script>\n</body>",
                           js_pecas + u"\n" + u"\n".join(dados) + u"\n</script>\n</body>", 1)
     saida = saida.replace(u"<title>MOTOR — esqueleto</title>",

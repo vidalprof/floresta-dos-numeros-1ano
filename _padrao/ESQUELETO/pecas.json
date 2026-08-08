@@ -137,11 +137,13 @@
    "exemplo": "[\"MILHO\",\"ALFACE\",\"TOMATE\",\"CENOURA\",\"FEIJAO\"]",
    "exemplos": {
     "CORP": "[\"p1\",\"p2\",\"p3\",\"p4\",\"p5\"]",
+    "LETRAS": "\"ABCDEFGHIJLMNOPRSTUVZ\"",
     "PAL": "[\"MILHO\",\"ALFACE\",\"TOMATE\",\"CENOURA\",\"FEIJAO\"]"
    },
    "gavetas": [
     "PAL",
-    "CORP"
+    "CORP",
+    "LETRAS"
    ],
    "regra": "marca na peca",
    "var": "PAL"
@@ -226,13 +228,15 @@
    "exemplo": "[\n  {k:\"raiz\",  n:\"A RAIZ<br>(embaixo da terra)\"},\n  {k:\"folha\", n:\"A FOLHA<br>(no ar, verde)\"}\n]",
    "exemplos": {
     "DICAS": "[\n  \"Pense onde essa coisa acontece: debaixo do chão ou no ar?\",\n  \"A RAIZ fica na terra: ela puxa a água e segura a planta. A FOLHA fica no ar: ela recebe o sol e faz o alimento.\",\n  \"Olhe a gaveta que está com a borda amarela: é ali que esta ficha mora.\"\n]",
+    "ENUN": "\"Cada ficha vai numa gaveta. Toque na ficha e depois na gaveta certa.\"",
     "FICHAS": "[\n  {t:\"BEBE A ÁGUA\",     alvo:\"raiz\"},\n  {t:\"SEGURA A PLANTA\", alvo:\"raiz\"},\n  {t:\"PEGA O SOL\",      alvo:\"folha\"},\n  {t:\"FAZ O ALIMENTO\",  alvo:\"folha\"}\n]",
     "GAVETAS": "[\n  {k:\"raiz\",  n:\"A RAIZ<br>(embaixo da terra)\"},\n  {k:\"folha\", n:\"A FOLHA<br>(no ar, verde)\"}\n]"
    },
    "gavetas": [
     "GAVETAS",
     "FICHAS",
-    "DICAS"
+    "DICAS",
+    "ENUN"
    ],
    "regra": "marca na peca",
    "var": "GAVETAS"
@@ -318,10 +322,12 @@
   "cruzadinha": {
    "exemplo": "[\n {p:\"CHUVA\", ac:\"CHUVA\", r:0, c:0, pLin:0, pCol:1, n:1,\n  d:\"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora.\"},\n {p:\"VENTO\", ac:\"VENTO\", r:0, c:3, pLin:1, pCol:0, n:2,\n  d:\"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore.\"},\n {p:\"SOL\",   ac:\"SOL\",   r:4, c:2, pLin:0, pCol:1, n:3,\n  d:\"A bola de luz que esquenta o dia e some de noite.\"}\n]",
    "exemplos": {
+    "BANCO": "\"ABCEHILMNORSTUV\"",
     "CRUZ": "[\n {p:\"CHUVA\", ac:\"CHUVA\", r:0, c:0, pLin:0, pCol:1, n:1,\n  d:\"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora.\"},\n {p:\"VENTO\", ac:\"VENTO\", r:0, c:3, pLin:1, pCol:0, n:2,\n  d:\"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore.\"},\n {p:\"SOL\",   ac:\"SOL\",   r:4, c:2, pLin:0, pCol:1, n:3,\n  d:\"A bola de luz que esquenta o dia e some de noite.\"}\n]"
    },
    "gavetas": [
-    "CRUZ"
+    "CRUZ",
+    "BANCO"
    ],
    "regra": "marca na peca",
    "var": "CRUZ"
@@ -344,10 +350,12 @@
   "digitar": {
    "exemplo": "[\n  {palavra:\"GATO\",  pista:\"Bicho que mia e gosta de dormir no sol.\",\n   dic:\"Diga a palavra devagar: <b>GA-TO</b>.\"},\n  {palavra:\"PEIXE\", pista:\"Ele nada e vive dentro da &#225;gua.\",\n   dic:\"Comece pelo som <b>PEI</b>.\"},\n  {palavra:\"ESCOLA\",pista:\"Lugar onde a gente estuda e encontra os amigos.\",\n   dic:\"&#201; a palavra <b>ES-CO-LA</b>.\"}\n]",
    "exemplos": {
+    "LETRAS": "\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"",
     "PALAVRAS": "[\n  {palavra:\"GATO\",  pista:\"Bicho que mia e gosta de dormir no sol.\",\n   dic:\"Diga a palavra devagar: <b>GA-TO</b>.\"},\n  {palavra:\"PEIXE\", pista:\"Ele nada e vive dentro da &#225;gua.\",\n   dic:\"Comece pelo som <b>PEI</b>.\"},\n  {palavra:\"ESCOLA\",pista:\"Lugar onde a gente estuda e encontra os amigos.\",\n   dic:\"&#201; a palavra <b>ES-CO-LA</b>.\"}\n]"
    },
    "gavetas": [
-    "PALAVRAS"
+    "PALAVRAS",
+    "LETRAS"
    ],
    "regra": "primeiro vetor",
    "var": "PALAVRAS"
@@ -355,10 +363,16 @@
   "ditado": {
    "exemplo": "[\n  {id:\"pc_dit1\", txt:\"NUVEM\",\n   dic:\"Diga baixinho, devagar: <b>NU-VEM</b>.\"},\n  {id:\"pc_dit2\", txt:\"JANELA\",\n   dic:\"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os.\"},\n  {id:\"pc_dit3\", txt:\"MAR AZUL\",\n   dic:\"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL.\"}\n]",
    "exemplos": {
-    "DITADOS": "[\n  {id:\"pc_dit1\", txt:\"NUVEM\",\n   dic:\"Diga baixinho, devagar: <b>NU-VEM</b>.\"},\n  {id:\"pc_dit2\", txt:\"JANELA\",\n   dic:\"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os.\"},\n  {id:\"pc_dit3\", txt:\"MAR AZUL\",\n   dic:\"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL.\"}\n]"
+    "ALFA": "\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"",
+    "DITADOS": "[\n  {id:\"pc_dit1\", txt:\"NUVEM\",\n   dic:\"Diga baixinho, devagar: <b>NU-VEM</b>.\"},\n  {id:\"pc_dit2\", txt:\"JANELA\",\n   dic:\"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os.\"},\n  {id:\"pc_dit3\", txt:\"MAR AZUL\",\n   dic:\"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL.\"}\n]",
+    "ESPERA": "\"&#9679; &#9679; &#9679;\"",
+    "SOBRA": "\"BKPQTWXFGH\""
    },
    "gavetas": [
-    "DITADOS"
+    "DITADOS",
+    "ALFA",
+    "SOBRA",
+    "ESPERA"
    ],
    "regra": "marca na peca",
    "var": "DITADOS"
@@ -461,10 +475,12 @@
   "forca": {
    "exemplo": "[\n {p:\"LEAO\",   ac:\"LEÃO\",   d:\"O bicho de juba que dorme quase o dia todo.\"},\n {p:\"TUCANO\", ac:\"TUCANO\",      d:\"O p&#225;ssaro do bico grande e colorido da floresta.\"},\n {p:\"JACARE\", ac:\"JACARÉ\", d:\"Vive no rio, tem couro duro e boca bem comprida.\"}\n]",
    "exemplos": {
+    "ALFA": "\"ABCDEFGHIJKLMNOPQRSTUVWXYZ\"",
     "FORCAP": "[\n {p:\"LEAO\",   ac:\"LEÃO\",   d:\"O bicho de juba que dorme quase o dia todo.\"},\n {p:\"TUCANO\", ac:\"TUCANO\",      d:\"O p&#225;ssaro do bico grande e colorido da floresta.\"},\n {p:\"JACARE\", ac:\"JACARÉ\", d:\"Vive no rio, tem couro duro e boca bem comprida.\"}\n]"
    },
    "gavetas": [
-    "FORCAP"
+    "FORCAP",
+    "ALFA"
    ],
    "regra": "marca na peca",
    "var": "FORCAP"
@@ -510,6 +526,7 @@
     "DICAS": "[\n  \"Olhe a DATA de cada fonte. Quem escreveu no dia em que a coisa aconteceu?\",\n  \"Duas fontes falam da RUA: o cartaz da prefeitura (3 de março) e o bilhete de dona Alzira (5 de março). O jornal escreveu 17 dias depois, e só de ouvir falar.\",\n  \"A resposta está acesa e marcada “é esta”: a feira mudou por causa da obra na rua.\"\n]",
     "DICAS2": "[\n  \"A prova precisa falar da OBRA. Procure quem contou o que estava acontecendo NA RUA.\",\n  \"“Quase ninguém veio” é o que ACONTECEU depois da mudança, não o motivo dela. E “é mais bonita” é opinião de quem ouviu falar, 17 dias depois.\",\n  \"As duas provas certas estão acesas e marcadas “é esta”: as que falam da rua consertada.\"\n]",
     "FONTES": "[\n  {aut:\"Cartaz da prefeitura\",\n   meta:\"3 de março · feito para AVISAR os moradores\",\n   txt:\"“A feira passa para a Praça Nova enquanto a rua for consertada.”\"},\n  {aut:\"Bilhete de dona Alzira, que vende frutas na feira\",\n   meta:\"5 de março · escrito para o filho, no mesmo dia\",\n   txt:\"“Hoje quase ninguém veio. A rua está toda aberta, com máquinas trabalhando nela.”\"},\n  {aut:\"Jornal do bairro\",\n   meta:\"20 de março · escrito para CONTAR a notícia, 17 dias depois\",\n   txt:\"“Moradores contam que a feira mudou porque a Praça Nova é mais bonita.”\"}\n]",
+    "PERGUNTA": "\"Por que a feira mudou de lugar?\"",
     "PROVAS": "[\n  {t:\"Cartaz da prefeitura: “enquanto a rua for consertada”.\", ok:1},\n  {t:\"Bilhete de dona Alzira: “a rua está toda aberta, com máquinas”.\", ok:1},\n  {t:\"Jornal do bairro: “a Praça Nova é mais bonita”.\", ok:0},\n  {t:\"Bilhete de dona Alzira: “hoje quase ninguém veio”.\", ok:0}\n]",
     "VEREDITOS": "[\n  {t:\"A feira mudou porque a rua estava <b>em obra</b>.\", ok:1},\n  {t:\"A feira mudou porque a Praça Nova é mais bonita.\", ok:0},\n  {t:\"A feira mudou porque ninguém queria mais comprar lá.\", ok:0},\n  {t:\"A feira acabou e não existe mais.\", ok:0}\n]"
    },
@@ -518,7 +535,8 @@
     "VEREDITOS",
     "DICAS",
     "PROVAS",
-    "DICAS2"
+    "DICAS2",
+    "PERGUNTA"
    ],
    "regra": "marca na peca",
    "var": "FONTES"
@@ -600,11 +618,13 @@
    "exemplo": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]",
    "exemplos": {
     "LIGS": "[\n {a:\"sol\", b:\"planta\", r:\"d&#225; energia\",\n  ops:[\"d&#225; energia\",\"bebe\",\"mora em\"],\n  por:\"O sol <b>d&#225; energia</b> para a planta crescer.\",\n  dicas:[\"Pense no que o sol manda para a planta o dia inteiro.\",\n         \"N&#227;o &#233; &#225;gua: &#233; luz e calor. A resposta certa est&#225; acesa.\",\n         \"Era <b>d&#225; energia</b>. Eu escrevi na seta para voc&#234;.\"]},\n {a:\"chuva\", b:\"planta\", r:\"d&#225; &#225;gua\",\n  ops:[\"d&#225; &#225;gua\",\"d&#225; energia\",\"foge da\"],\n  por:\"A chuva <b>d&#225; &#225;gua</b>, e a raiz bebe essa &#225;gua.\",\n  dicas:[\"O que cai da nuvem e entra na terra?\",\n         \"Energia quem d&#225; &#233; o sol. A certa est&#225; acesa.\",\n         \"Era <b>d&#225; &#225;gua</b>. Eu escrevi na seta para voc&#234;.\"]},\n {a:\"planta\", b:\"coelho\", r:\"vira comida de\",\n  ops:[\"vira comida de\",\"d&#225; &#225;gua para\",\"ca&#231;a o\"],\n  por:\"O coelho come a planta: a energia do sol chega at&#233; ele.\",\n  dicas:[\"O que o coelho faz com a folha?\",\n         \"Planta n&#227;o ca&#231;a ningu&#233;m. A certa est&#225; acesa.\",\n         \"Era <b>vira comida de</b>. Eu escrevi na seta para voc&#234;.\"]}\n]",
-    "NOS": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]"
+    "NOS": "[\n {k:\"sol\",    n:\"O SOL\",    px:4,  py:1},\n {k:\"chuva\",  n:\"A CHUVA\",  px:60, py:1},\n {k:\"planta\", n:\"A PLANTA\", px:24, py:40},\n {k:\"coelho\", n:\"O COELHO\", px:58, py:80}\n]",
+    "SVGNS": "\"http://www.w3.org/2000/svg\""
    },
    "gavetas": [
     "NOS",
-    "LIGS"
+    "LIGS",
+    "SVGNS"
    ],
    "regra": "marca na peca",
    "var": "NOS"
@@ -758,10 +778,12 @@
   "pintar": {
    "exemplo": "[\n {t:\"No quintal da \"},{p:\"ESCOLA\"},{t:\" tem um \"},{p:\"GATO\",alvo:1},\n {t:\" dormindo na \"},{p:\"SOMBRA\"},{t:\" fresca. Uma \"},{p:\"ABELHA\",alvo:1},\n {t:\" voa perto da \"},{p:\"FLOR\"},{t:\" amarela. O \"},{p:\"CACHORRO\",alvo:1},\n {t:\" late para o \"},{p:\"PASSARINHO\",alvo:1},{t:\" que canta no \"},{p:\"GALHO\"},{t:\" alto.\"}\n /* ⚠️ nenhuma palavra tocavel encosta em pontuacao: a palavra e um bloco com\n    folga, e o ponto final ficava solto (\"SOMBRA .\") como se fosse erro de\n    digitacao. Palavra tocavel sempre seguida de outra palavra.              */\n]",
    "exemplos": {
+    "CATEG": "\"os ANIMAIS\"",
     "TEXTO": "[\n {t:\"No quintal da \"},{p:\"ESCOLA\"},{t:\" tem um \"},{p:\"GATO\",alvo:1},\n {t:\" dormindo na \"},{p:\"SOMBRA\"},{t:\" fresca. Uma \"},{p:\"ABELHA\",alvo:1},\n {t:\" voa perto da \"},{p:\"FLOR\"},{t:\" amarela. O \"},{p:\"CACHORRO\",alvo:1},\n {t:\" late para o \"},{p:\"PASSARINHO\",alvo:1},{t:\" que canta no \"},{p:\"GALHO\"},{t:\" alto.\"}\n /* ⚠️ nenhuma palavra tocavel encosta em pontuacao: a palavra e um bloco com\n    folga, e o ponto final ficava solto (\"SOMBRA .\") como se fosse erro de\n    digitacao. Palavra tocavel sempre seguida de outra palavra.              */\n]"
    },
    "gavetas": [
-    "TEXTO"
+    "TEXTO",
+    "CATEG"
    ],
    "regra": "primeiro vetor",
    "var": "TEXTO"
@@ -771,12 +793,14 @@
    "exemplos": {
     "DESENHOS": "[\n {selo:\"O PEIXE DO AQUÁRIO\", nome:\"o peixe\", voz:\"o peixe\",\n  regs:[\n   {k:\"agua\",  n:\"a água\",     d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"cauda\", n:\"o rabo\",          d:\"M64 50 L94 26 L94 74 Z\"},\n   {k:\"barb\",  n:\"a barbatana\",     d:\"M28 34 L44 6 L58 36 Z\"},\n   {k:\"corpo\", n:\"o corpo\",         d:\"M66 50 A26 20 0 1 1 14 50 A26 20 0 1 1 66 50 Z\"}\n  ],\n  tracos:'<circle cx=\"27\" cy=\"44\" r=\"5.2\" fill=\"#fffdf6\" stroke=\"#2b2118\" stroke-width=\"1.2\"/>'+\n         '<circle cx=\"26\" cy=\"45\" r=\"2.4\" fill=\"#2b2118\"/>'+\n         '<path d=\"M16 55 Q22 60 29 57\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<circle cx=\"13\" cy=\"21\" r=\"3.4\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'+\n         '<circle cx=\"24\" cy=\"13\" r=\"2.2\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1\"/>'},\n {selo:\"A FLOR DO JARDIM\", nome:\"a flor\", voz:\"a flor\",\n  regs:[\n   {k:\"ceu\",     n:\"o céu\",       d:\"M0 0 H100 V100 H0 Z\"},\n   {k:\"petalas\", n:\"as pétalas\",\n    d:\"M63 14 A13 13 0 1 1 37 14 A13 13 0 1 1 63 14 Z\"+\n      \"M44 28 A13 13 0 1 1 18 28 A13 13 0 1 1 44 28 Z\"+\n      \"M51 50 A13 13 0 1 1 25 50 A13 13 0 1 1 51 50 Z\"+\n      \"M75 50 A13 13 0 1 1 49 50 A13 13 0 1 1 75 50 Z\"+\n      \"M82 28 A13 13 0 1 1 56 28 A13 13 0 1 1 82 28 Z\"},\n   {k:\"caule\",   n:\"o caule e a folha\",\n    d:\"M44 55 L44 97 L56 97 L56 55 Z\"+\n      \"M56 70 C70 59 85 65 88 76 C77 87 60 85 56 74 Z\"},\n   {k:\"miolo\",   n:\"o miolinho\",   d:\"M62 34 A12 12 0 1 1 38 34 A12 12 0 1 1 62 34 Z\"}\n  ],\n  tracos:'<circle cx=\"45\" cy=\"31\" r=\"1.6\" fill=\"#2b2118\"/>'+\n         '<circle cx=\"55\" cy=\"31\" r=\"1.6\" fill=\"#2b2118\"/>'+\n         '<path d=\"M44 38 Q50 42 56 38\" fill=\"none\" stroke=\"#2b2118\" stroke-width=\"1.2\" stroke-linecap=\"round\"/>'+\n         '<path d=\"M0 97 H100\" stroke=\"#2b2118\" stroke-width=\"1.4\" fill=\"none\"/>'}\n]",
     "GALERIA": "[]",
+    "PAPEL": "\"#fffdf6\"",
     "TINTAS": "[\n {c:\"#e2402c\", n:\"Vermelho\", voz:\"vermelho\"},\n {c:\"#f08a1e\", n:\"Laranja\",  voz:\"laranja\"},\n {c:\"#f5cf2b\", n:\"Amarelo\",  voz:\"amarelo\"},\n {c:\"#4aa845\", n:\"Verde\",    voz:\"verde\"},\n {c:\"#3a76c8\", n:\"Azul\",     voz:\"azul\"},\n {c:\"#8a55c7\", n:\"Roxo\",     voz:\"roxo\"},\n {c:\"#ea72a8\", n:\"Rosa\",     voz:\"rosa\"},\n {c:\"#8a5a2b\", n:\"Marrom\",   voz:\"marrom\"}\n]"
    },
    "gavetas": [
     "DESENHOS",
     "TINTAS",
-    "GALERIA"
+    "GALERIA",
+    "PAPEL"
    ],
    "regra": "primeiro vetor",
    "var": "DESENHOS"

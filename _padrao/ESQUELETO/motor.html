@@ -40,6 +40,21 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .broto{position:relative;width:150px;height:150px;-webkit-filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));filter:drop-shadow(0 8px 10px rgba(0,0,0,.22));-webkit-animation:bob 2.8s ease-in-out infinite;animation:bob 2.8s ease-in-out infinite}
 .broto.gg{width:190px;height:190px}
 .broto.pq{width:104px;height:104px}
+/* ⭐ PENSAR e COMEMORAR sao MOVIMENTO da pose parada, nunca desenho novo.
+   ⚠️ LICAO PAGA (ago/2026): o montador pedia cinco poses (`_pensa`, `_festa`
+   alem das tres); as duas extras davam 404 e, quando mandei o Gemini EDITAR a
+   pose parada para cria-las, voltaram dois personagens completamente
+   diferentes — o Fuba e um ratinho padeiro em 3D e vieram dois meninos humanos
+   em 2D. Desenho novo do mascote sai fora do personagem com uma facilidade
+   assustadora; movimento nao tem como sair, porque e o MESMO desenho.
+   `pensando`: inclina e desacelera — o corpo dela diz "estou esperando voce",
+   sem tirar a vez da crianca. `festejando`: pulinho curto e animado. */
+.broto.pensando{-webkit-animation:pensa 2.6s ease-in-out infinite;animation:pensa 2.6s ease-in-out infinite}
+.broto.festejando{-webkit-animation:festeja .5s ease-out 3;animation:festeja .5s ease-out 3}
+@-webkit-keyframes pensa{0%,100%{-webkit-transform:rotate(-7deg) translateY(0)}50%{-webkit-transform:rotate(-9deg) translateY(-3px)}}
+@keyframes pensa{0%,100%{transform:rotate(-7deg) translateY(0)}50%{transform:rotate(-9deg) translateY(-3px)}}
+@-webkit-keyframes festeja{0%{-webkit-transform:translateY(0) scale(1)}35%{-webkit-transform:translateY(-22px) scale(1.07)}70%{-webkit-transform:translateY(0) scale(.97)}100%{-webkit-transform:translateY(0) scale(1)}}
+@keyframes festeja{0%{transform:translateY(0) scale(1)}35%{transform:translateY(-22px) scale(1.07)}70%{transform:translateY(0) scale(.97)}100%{transform:translateY(0) scale(1)}}
 .broto .lay{position:absolute;left:0;top:0;width:100%;height:100%;object-fit:contain}
 .broto .fala,.broto .pisca{opacity:0}
 @-webkit-keyframes bob{0%,100%{-webkit-transform:translateY(0) rotate(-1.5deg)}50%{-webkit-transform:translateY(-8px) rotate(1.5deg)}}
@@ -54,6 +69,43 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 @-webkit-keyframes beat{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.04)}}@keyframes beat{0%,100%{transform:scale(1)}50%{transform:scale(1.04)}}
 .prog{position:absolute;top:calc(12px + env(safe-area-inset-top));left:16px;right:16px;height:14px;background:rgba(255,255,255,.55);border-radius:999px;overflow:hidden;z-index:3;-webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,.15);box-shadow:inset 0 1px 3px rgba(0,0,0,.15)}
 .prog>i{position:absolute;left:0;top:0;bottom:0;background:-webkit-linear-gradient(top,#8be05a,var(--verde));background:linear-gradient(#8be05a,var(--verde));border-radius:999px;-webkit-transition:width .5s cubic-bezier(.2,.8,.3,1);transition:width .5s cubic-bezier(.2,.8,.3,1)}
+/* ⭐ A VITRINE QUE ENCHE — o progresso que a crianca de 6 anos LE.
+   Pesquisa que sustenta: competencia visivel (Deci & Ryan) e o impulso de
+   COLECAO. Barra de porcentagem a crianca de 1o ano nao le; vitrine enchendo
+   ela le de longe, e quer completar. A cada fase vencida entra um doce atras
+   do vidro; no fim a vitrine esta cheia, e aquilo e a foto do dia dela.
+   O acabamento e o VIDRO FOSCO da cartela — nao e imitacao de vitrine, e a
+   vitrine. (Dos doze acabamentos, este era o unico que nao servia para
+   resposta justamente porque a leitura depende do fundo; como superficie, isso
+   deixa de ser defeito e vira a qualidade dele.)
+   ⚠️ ela SUBSTITUI a barra fina: dois indicadores de progresso na mesma tela
+   e ruido, e a altura util no PC da escola e de ~640px. */
+.vitrine{position:absolute;top:calc(8px + env(safe-area-inset-top));left:12px;right:12px;
+  height:44px;z-index:3;border-radius:14px;padding:4px 8px;
+  background:rgba(255,253,246,.42);
+  -webkit-backdrop-filter:blur(7px);backdrop-filter:blur(7px);
+  border:2px solid rgba(255,255,255,.7);border-bottom:5px solid rgba(215,171,99,.8);
+  -webkit-box-shadow:0 4px 12px rgba(60,45,15,.24);box-shadow:0 4px 12px rgba(60,45,15,.24);
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:justify;justify-content:space-between;
+  overflow:hidden}
+.vitrine .vg{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;height:100%;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  min-width:0}
+.vitrine .vg img{max-width:100%;max-height:32px;object-fit:contain;
+  opacity:0;-webkit-transform:scale(.4) translateY(8px);transform:scale(.4) translateY(8px);
+  -webkit-transition:opacity .45s,-webkit-transform .45s cubic-bezier(.2,1.5,.4,1);
+  transition:opacity .45s,transform .45s cubic-bezier(.2,1.5,.4,1)}
+/* a prateleira vazia: um risquinho, para a crianca ver QUANTO falta */
+.vitrine .vg:after{content:"";width:12px;height:3px;border-radius:2px;
+  background:rgba(120,90,40,.22);margin-top:16px;margin-left:-100%}
+.vitrine .vg.posto img{opacity:1;-webkit-transform:none;transform:none}
+.vitrine .vg.posto:after{opacity:0}
+@media (max-height:620px){ .vitrine{height:36px} .vitrine .vg img{max-height:26px} }
+@media (prefers-reduced-motion: reduce){
+  .vitrine .vg img{-webkit-transition:none;transition:none}
+}
 /* barra de baixo: ouvir + dica */
 .barra{position:fixed;left:0;right:0;bottom:calc(10px + env(safe-area-inset-bottom));z-index:12;display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;gap:12px;pointer-events:none}
 .barra>*{pointer-events:auto}
@@ -452,6 +504,11 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 @media (prefers-reduced-motion: reduce){
   .pecabox img,.jsFig img,.bsFig img,.oaFig img,.figrod img{
     -webkit-animation:none !important;animation:none !important}
+  /* o mascote para de bobear/pensar/festejar, mas a INCLINACAO do "estou
+     esperando voce" fica — ela e informacao, nao enfeite. */
+  .broto,.broto.festejando{-webkit-animation:none !important;animation:none !important}
+  .broto.pensando{-webkit-animation:none !important;animation:none !important;
+    -webkit-transform:rotate(-7deg);transform:rotate(-7deg)}
 }
 </style></head>
 <body>
@@ -637,6 +694,61 @@ function brotoEl(tam){
   brotoAtual={el:d,base:base,fala:fala,pisca:pisca};
   return d;
 }
+/* ============================================================
+   ⭐ O MASCOTE QUE PERCEBE A CRIANCA
+   Pesquisa que sustenta: feedback imediato e ESPECIFICO e o que mais move
+   aprendizagem (Hattie); e o andaime tem que chegar quando ela trava, nao
+   quando ela erra — errar tres vezes para so entao receber ajuda ensina que
+   pedir ajuda custa caro.
+   Como funciona: a cada fase o relogio zera; QUALQUER toque zera de novo. Oito
+   segundos sem tocar em nada = ela nao esta pensando, esta perdida. Ai o
+   mascote se INCLINA (o corpo dele diz "estou aqui") e a dica aparece — sem
+   tirar a vez dela, sem responder por ela, sem som que assuste.
+   ⚠️ 8s foi escolhido para o 1o ano: menos que isso interrompe quem esta
+   pensando de verdade; muito mais e desistencia.
+   ============================================================ */
+var PARADA_MS=8000, _paradaT=null;
+/* ⚠️ `brotoAtual` sobrevive ao `limpa()`: ele continua apontando para o
+   mascote da tela ANTERIOR, que ja saiu do documento. Pintar uma classe num
+   no solto nao da erro nenhum e nao aparece na tela — foi o que o teste
+   mediu (`.broto.pensando` = 0 com a inclinacao "aplicada"). Entao, antes de
+   mexer, conferir que ele ainda esta no documento. */
+function brotoVivo(){
+  if(!brotoAtual||!brotoAtual.el) return false;
+  if(!brotoAtual.el.parentNode||!document.body.contains(brotoAtual.el)){
+    brotoAtual=null; return false;
+  }
+  return true;
+}
+function mascotePensa(liga){
+  if(!brotoVivo()) return;
+  var c=brotoAtual.el.className.replace(/\s*pensando/,"");
+  brotoAtual.el.className = liga ? (c+" pensando") : c;
+}
+function mascoteFesteja(){
+  if(!brotoVivo()) return;
+  mascotePensa(false);
+  var e=brotoAtual.el, c=e.className.replace(/\s*festejando/,"");
+  e.className=c;
+  /* forcar o navegador a recomecar a animacao: sem esta leitura ele reaproveita
+     a anterior e o pulinho so acontece na primeira vez. */
+  void e.offsetWidth;
+  e.className=c+" festejando";
+}
+function acordaParada(){
+  mascotePensa(false);
+  if(_paradaT){ clearTimeout(_paradaT); _paradaT=null; }
+  _paradaT=setTimeout(function(){
+    mascotePensa(true);
+    /* a dica que JA existe na fase — nao se inventa texto aqui, senao o
+       mascote promete o que a fase nao tem (defeito ja pego pelo Marcos). */
+    if(typeof mostraDica==="function" && dicaTexto) mostraDica(dicaTexto);
+  }, PARADA_MS);
+}
+function paraDeVigiar(){ mascotePensa(false); if(_paradaT){clearTimeout(_paradaT);_paradaT=null;} }
+/* qualquer toque da crianca conta como "ela esta aqui" */
+document.addEventListener("pointerdown", function(){ if(_paradaT) acordaParada(); }, true);
+document.addEventListener("keydown", function(){ if(_paradaT) acordaParada(); }, true);
 function tiraDica(){ var d=document.getElementById("dicabox"); if(d&&d.parentNode) d.parentNode.removeChild(d); }
 function limpa(){ telaNarrou=false;
   /* ⚠️⚠️ LICAO PAGA (ago/2026), pega pelo Marcos com a turma jogando:
@@ -693,7 +805,28 @@ function mostraDica(txt){
   setTimeout(function(){ if(b.parentNode)b.parentNode.removeChild(b); },7000);
 }
 function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
-function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+/* ⭐ A VITRINE: uma vaga por fase; as ja vencidas ganham o doce.
+   ⚠️ com MUITAS fases as vagas ficariam finas demais para se ver (32 fases em
+   388px = 12px por vaga). Acima de 14 fases ela mostra so as ULTIMAS 14 e a
+   contagem anda junto — a crianca ve a vitrine enchendo do mesmo jeito, com
+   peca de tamanho que da para reconhecer. */
+var VITRINE=[];
+function poeVitrine(t, feitas){
+  if(!VITRINE.length) return;
+  var v=el("div","vitrine"), i, ini=0, fim=VITRINE.length;
+  /* ⚠️ a janela termina PERTO da fase de agora, nao comeca nela: comecando em
+     `feitas` a crianca via so as vagas VAZIAS a frente e a vitrine parecia
+     nunca encher (medido: 14 vagas, 0 doces, na fase 7). Assim ela ve os
+     ultimos ~10 que ja conquistou e uns poucos que faltam. */
+  if(fim>14){ ini=Math.max(0, Math.min(feitas-10, fim-14)); fim=ini+14; }
+  for(i=ini;i<fim;i++){
+    var g=el("div","vg"+(i<feitas?" posto":""));
+    g.appendChild(imgEl(VITRINE[i]));
+    v.appendChild(g);
+  }
+  t.appendChild(v);
+}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();bcta.onclick=function(){arma();banner.className="banner";cb();};}
 function elogio(){ var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2"); }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============
@@ -963,7 +1096,7 @@ function telaFim(){limpa();var t=el("div","tela");setProg(t,100);var c=el("div",
 
   var b=el("button","btn amarelo","Jogar de novo");b.onclick=function(){arma();sTap();telaCapa();};c.appendChild(b);
 
-  t.appendChild(c);app.appendChild(t);sFesta();festa();
+  t.appendChild(c);app.appendChild(t);sFesta();festa();mascoteFesteja();
   salvaEstado();
   montaBarra(null,null);
   falar(ID.pre+"_fim");}
@@ -1184,10 +1317,14 @@ function montaFase(i, aoFim){
      estourava lendo `.selo` de `undefined`. Quatro portoes cegos de uma vez,
      e a atividade "passava" por nao ter sido medida. Fase que nao existe leva
      ao fim, nunca a uma tela morta. */
-  if(!(i >= 0) || i >= FASES.length || !FASES[i]){ telaFim(); return; }
+  if(!(i >= 0) || i >= FASES.length || !FASES[i]){ paraDeVigiar(); telaFim(); return; }
   var f = FASES[i];
   limpa();
-  var t = el("div","tela"); setProg(t, progDaFase(i));
+  /* o relogio do "esta parada?" zera a cada fase (ver `acordaParada`) */
+  acordaParada();
+  var t = el("div","tela");
+  /* a vitrine SUBSTITUI a barra fina quando a atividade tem figuras para ela */
+  if(VITRINE.length) poeVitrine(t, i); else setProg(t, progDaFase(i));
   var cen = el("div","centro");
   if(f.selo) cen.appendChild(el("div","selo", f.selo));
   if(f.enunciado) cen.appendChild(el("div","balao", f.enunciado));

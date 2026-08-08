@@ -152,6 +152,16 @@ var FICHAS=[
   {t:"PEGA O SOL",      alvo:"folha"},
   {t:"FAZ O ALIMENTO",  alvo:"folha"}
 ];
+/* ⚠️⚠️ RESTO DE CLONE CRAVADO NA PECA (ago/2026) — o pior tipo, porque nao da
+   erro nenhum e viaja para TODA atividade que usar esta mecanica.
+   O balao desta peca dizia, em texto fixo: *"Cada ficha conta uma TAREFA DA
+   PLANTA. Guarde a ficha na parte que faz essa tarefa."* — enunciado do Jardim
+   do Broto, de onde a peca foi clonada. Na Padaria das Letras a crianca lia
+   sobre planta enquanto separava BOLACHA e MAMAO. Eu so vi porque fotografei a
+   tela; nenhum portao pega texto que esta certo em portugues.
+   A REGRA: enunciado e CONTEUDO, entao mora na gaveta — nunca no corpo da
+   peca. O texto abaixo e so o exemplo, e e neutro de proposito. */
+var ENUN="Cada ficha vai numa gaveta. Toque na ficha e depois na gaveta certa.";
 var DICAS=[
   "Pense onde essa coisa acontece: debaixo do chão ou no ar?",
   "A RAIZ fica na terra: ela puxa a água e segura a planta. A FOLHA fica no ar: ela recebe o sol e faz o alimento.",
@@ -181,7 +191,7 @@ function pecaClassificar(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","ONDE CADA UMA MORA?"));
-  c.appendChild(el("div","balao","Cada ficha conta uma <b>tarefa</b> da planta. Guarde a ficha na parte que faz essa tarefa."));
+  c.appendChild(el("div","balao",ENUN));
 
   var band=el("div","bandeja"), i;
   var ordem=[];

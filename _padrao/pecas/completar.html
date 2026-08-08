@@ -211,9 +211,15 @@ function telaCompletar(){
   var lista=baguncar([f.cer].concat(f.out)), i, b;
   /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
      empilhadas. Ver a licao no CSS de `.opts.curtas`. */
-  var curtas=true;
-  for(i=0;i<lista.length;i++){ if(String(lista[i]).length>4) curtas=false; }
-  var cx=el("div","opts"+(curtas?" curtas":""));
+  var curtas=true, soLetra=true;
+  for(i=0;i<lista.length;i++){
+    if(String(lista[i]).length>4) curtas=false;
+    if(String(lista[i]).length>1) soLetra=false;
+  }
+  /* ⭐ `letra` ou `silaba`: e o TEMA da atividade que pinta cada um (lousa para
+     a letra, biscoito para o pedaco). A peca so DIZ o que aquilo e — ela nao
+     escolhe cor nenhuma, senao a mecanica ficaria presa a uma atividade. */
+  var cx=el("div","opts"+(curtas?(soLetra?" curtas letra":" curtas silaba"):""));
   for(i=0;i<lista.length;i++){
     b=el("div","opt",lista[i]);
     b.pedaco=lista[i];

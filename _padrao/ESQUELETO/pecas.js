@@ -4208,6 +4208,7 @@ function fimDaPeca(){
     if(f && f.dados) PAL = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.CORP !== undefined) CORP = _d.CORP;
+      if(_d.LETRAS !== undefined) LETRAS = _d.LETRAS;
     }
     pecaCaca();
   })();
@@ -6120,6 +6121,16 @@ var FICHAS=[
   {t:"PEGA O SOL",      alvo:"folha"},
   {t:"FAZ O ALIMENTO",  alvo:"folha"}
 ];
+/* ⚠️⚠️ RESTO DE CLONE CRAVADO NA PECA (ago/2026) — o pior tipo, porque nao da
+   erro nenhum e viaja para TODA atividade que usar esta mecanica.
+   O balao desta peca dizia, em texto fixo: *"Cada ficha conta uma TAREFA DA
+   PLANTA. Guarde a ficha na parte que faz essa tarefa."* — enunciado do Jardim
+   do Broto, de onde a peca foi clonada. Na Padaria das Letras a crianca lia
+   sobre planta enquanto separava BOLACHA e MAMAO. Eu so vi porque fotografei a
+   tela; nenhum portao pega texto que esta certo em portugues.
+   A REGRA: enunciado e CONTEUDO, entao mora na gaveta — nunca no corpo da
+   peca. O texto abaixo e so o exemplo, e e neutro de proposito. */
+var ENUN="Cada ficha vai numa gaveta. Toque na ficha e depois na gaveta certa.";
 var DICAS=[
   "Pense onde essa coisa acontece: debaixo do chão ou no ar?",
   "A RAIZ fica na terra: ela puxa a água e segura a planta. A FOLHA fica no ar: ela recebe o sol e faz o alimento.",
@@ -6149,7 +6160,7 @@ function pecaClassificar(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","ONDE CADA UMA MORA?"));
-  c.appendChild(el("div","balao","Cada ficha conta uma <b>tarefa</b> da planta. Guarde a ficha na parte que faz essa tarefa."));
+  c.appendChild(el("div","balao",ENUN));
 
   var band=el("div","bandeja"), i;
   var ordem=[];
@@ -6315,6 +6326,7 @@ function fimDaPeca(){
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.FICHAS !== undefined) FICHAS = _d.FICHAS;
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
+      if(_d.ENUN !== undefined) ENUN = _d.ENUN;
     }
     pecaClassificar();
   })();
@@ -6920,9 +6932,15 @@ function telaCompletar(){
   var lista=baguncar([f.cer].concat(f.out)), i, b;
   /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
      empilhadas. Ver a licao no CSS de `.opts.curtas`. */
-  var curtas=true;
-  for(i=0;i<lista.length;i++){ if(String(lista[i]).length>4) curtas=false; }
-  var cx=el("div","opts"+(curtas?" curtas":""));
+  var curtas=true, soLetra=true;
+  for(i=0;i<lista.length;i++){
+    if(String(lista[i]).length>4) curtas=false;
+    if(String(lista[i]).length>1) soLetra=false;
+  }
+  /* ⭐ `letra` ou `silaba`: e o TEMA da atividade que pinta cada um (lousa para
+     a letra, biscoito para o pedaco). A peca so DIZ o que aquilo e — ela nao
+     escolhe cor nenhuma, senao a mecanica ficaria presa a uma atividade. */
+  var cx=el("div","opts"+(curtas?(soLetra?" curtas letra":" curtas silaba"):""));
   for(i=0;i<lista.length;i++){
     b=el("div","opt",lista[i]);
     b.pedaco=lista[i];
@@ -8698,6 +8716,9 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) CRUZ = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.BANCO !== undefined) BANCO = _d.BANCO;
+    }
     pecaCruzadinha();
   })();
 };
@@ -9220,6 +9241,9 @@ function telaFim(){
 }
 function recomeca(){ rodada=0; telaDigitar(); }
     if(f && f.dados) PALAVRAS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.LETRAS !== undefined) LETRAS = _d.LETRAS;
+    }
     telaDigitar();
   })();
 };
@@ -9536,6 +9560,11 @@ function telaFimDitado(){
 }
 function recomeca(){ rodada=0; telaDitado(); }
     if(f && f.dados) DITADOS = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ALFA !== undefined) ALFA = _d.ALFA;
+      if(_d.SOBRA !== undefined) SOBRA = _d.SOBRA;
+      if(_d.ESPERA !== undefined) ESPERA = _d.ESPERA;
+    }
     telaDitado();
   })();
 };
@@ -12257,6 +12286,9 @@ function fimDaPeca(){
   app.appendChild(t);
 }
     if(f && f.dados) FORCAP = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.ALFA !== undefined) ALFA = _d.ALFA;
+    }
     pecaForca();
   })();
 };
@@ -13874,6 +13906,7 @@ function fimDaPeca(){
       if(_d.DICAS !== undefined) DICAS = _d.DICAS;
       if(_d.PROVAS !== undefined) PROVAS = _d.PROVAS;
       if(_d.DICAS2 !== undefined) DICAS2 = _d.DICAS2;
+      if(_d.PERGUNTA !== undefined) PERGUNTA = _d.PERGUNTA;
     }
     pecaFonte();
   })();
@@ -16175,6 +16208,7 @@ function fimMapa(){
     if(f && f.dados) NOS = f.dados;
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.LIGS !== undefined) LIGS = _d.LIGS;
+      if(_d.SVGNS !== undefined) SVGNS = _d.SVGNS;
     }
     pecaMapa();
   })();
@@ -20938,6 +20972,7 @@ function fimDaPeca(){
     if(f && f.dadosExtra){ var _d = f.dadosExtra;
       if(_d.TINTAS !== undefined) TINTAS = _d.TINTAS;
       if(_d.GALERIA !== undefined) GALERIA = _d.GALERIA;
+      if(_d.PAPEL !== undefined) PAPEL = _d.PAPEL;
     }
     telaPintar();
   })();
@@ -21119,6 +21154,9 @@ function fim(){
   mostraBanner('<div class="medal">★</div><b>Marcou tudo!</b><br>Você achou os 4 animais do texto.', pecaPintar);
 }
     if(f && f.dados) TEXTO = f.dados;
+    if(f && f.dadosExtra){ var _d = f.dadosExtra;
+      if(_d.CATEG !== undefined) CATEG = _d.CATEG;
+    }
     pecaPintar();
   })();
 };

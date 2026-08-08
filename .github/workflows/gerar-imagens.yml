@@ -109,7 +109,16 @@ jobs:
               key=os.environ.get("GEMINI_API_KEY","").strip()
               if not key: raise SystemExit("::error::GEMINI_API_KEY vazio")
               parts=[{"text": prompt}]
-              if base and os.path.exists(base):
+              # ⚠️ LICAO PAGA (ago/2026): a condicao era so `if base and
+              # os.path.exists(base)`. Se o caminho estivesse errado, o `base`
+              # era IGNORADO EM SILENCIO e o Gemini gerava do ZERO — e voltava
+              # um personagem completamente diferente com cara de sucesso.
+              # Aconteceu com o Fuba: pedi para EDITAR o ratinho padeiro e
+              # vieram dois meninos humanos. Pedido de edicao com base ausente
+              # e ERRO, nunca "gera do zero".
+              if base:
+                  if not os.path.exists(base):
+                      raise SystemExit("::error::EDICAO pedida mas a base nao existe: %s"%base)
                   data=base64.b64encode(open(base,"rb").read()).decode()
                   parts.append({"inline_data":{"mime_type":"image/png","data":data}})
                   print("editando imagem base:", base)
