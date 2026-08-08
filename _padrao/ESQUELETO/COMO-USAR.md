@@ -168,3 +168,34 @@ Os dois **se recusam a escrever** se acharem defeito: o extrator, se sobrar
 marca do Broto no código; o integrador, se as peças chamarem nome que o motor
 não tem — ou que ele tem com **outro tipo** (foi o caso do `ac`, e não dá erro
 nenhum até a criança tocar).
+
+---
+
+## ✅ A ESTEIRA MEDIDA DE PONTA A PONTA — `_prova30` (ago/2026)
+
+O "1h30" deixou de ser promessa: existe uma atividade de **aferição** que sai
+do NADA e passa pela banca. É ela que prova a esteira quando se mexe no motor,
+no montador ou numa peça.
+
+```bash
+python3 _padrao/ESQUELETO/esboco.py _prova30 \
+    --ano "3º ano" --prefixo pv --titulo "A Prova do Esqueleto" --mascote nino
+# preencher `mesa` e `curriculo`  (o montador COBRA — ver abaixo)
+python3 _padrao/ESQUELETO/montar.py _prova30
+bash _qa/auditar.sh _prova30/index.html
+```
+
+**O que ela mede, e que nenhuma atividade real mede tão bem:** as **16
+mecânicas** aparecem juntas, nenhuma passando de **6%** das 32 fases. É o pior
+caso para o motor — se alguma peça briga com outra, é aqui que aparece.
+
+⚠️ **`_prova30` NÃO é conteúdo para criança** e o `mesa` dela diz isso com
+todas as letras. Os textos são os `«...»` do esboço. Ela existe para ser
+**rodada**, não publicada — nunca entra na Fábrica nem no hub.
+
+### O montador recusou a primeira tentativa — e isso é o sistema funcionando
+Sem `mesa` (quem sentou na mesa pedagógica) e sem a **habilidade do currículo
+de Blumenau** em cada objetivo, ele **não escreve o HTML**. É o crivo do
+pedagogo virando **portão** em vez de lembrança. O trabalho que sobra é o que
+deveria ser: escolher o tema, escrever os enunciados e **copiar** as
+habilidades do currículo — não resumir de cabeça.
