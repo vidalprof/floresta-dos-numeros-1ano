@@ -39,6 +39,12 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
      margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
      box-shadow:0 4px 0 #c9bda6}
+/* ⚠️ E A MESMA REGRA VALE PARA A OPCAO COMPRIDA (medido na prova de esteira,
+   ago/2026): sem teto, a opcao de texto ia a 400x55 = 7,3 vezes mais larga que
+   alta — acima do teto de 6 do diretor de arte. Aqui o conserto precisa dos
+   DOIS lados: estreitar (360) e engordar um pouco (62), porque so a largura
+   nao fecha a conta quando a linha e curta. 360/62 = 5,8. */
+.opts .opt{max-width:360px;min-height:62px}
 /* ⚠️ LICAO PAGA (ago/2026) — BARRA DE 400px PARA UMA LETRA SO. Regra do
    Marcos: *"nada de botoes muito esticado, quero tudo simetrico no app"*. Nas
    fases em que o pedaco que falta e uma LETRA ou uma silaba, as tres opcoes
