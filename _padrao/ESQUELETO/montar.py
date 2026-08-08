@@ -32,6 +32,7 @@ Uso:
   python3 _padrao/ESQUELETO/montar.py <pasta>          # monta a atividade
   python3 _padrao/ESQUELETO/montar.py <pasta> --so-ver # só confere, não escreve
 """
+import collections
 import io
 import json
 import os
@@ -83,6 +84,23 @@ def confere(c, mecs):
     ano = str(c.get("ano", "")).lower()
     pequeno = any(x in ano for x in ("pre", "pré", "1", "2"))
     minimo = 10 if pequeno else 16
+
+    # ⚠️⚠️ LICAO PAGA (ago/2026) — ID REPETIDO, e o defeito e MUDO.
+    #    Ao trocar 6 fases da Padaria eu escrevi os `id` novos de cabeça
+    #    (`f03`, `f09`, `f18`, `f19`) sem conferir se ja existiam. Existiam. E
+    #    o `id` e a CHAVE DA VOZ: `pd_f03_dica`. Duas fases com o mesmo id
+    #    disputam o mesmo mp3 — a que grava por ultimo ganha, e a outra passa a
+    #    FALAR A DICA DA VIZINHA. Nada quebra: o arquivo existe, o audio toca,
+    #    e a crianca ouve uma dica que nao tem nada a ver com a tela dela.
+    #    Quem pegou foi o portao 0j (voz da dica), depois de gravar 83 vozes —
+    #    ou seja, tarde e caro. Aqui e barato: o montador ve antes de gerar.
+    ids = [f.get("id") for f in fases if f.get("id")]
+    for k, q in sorted(collections.Counter(ids).items()):
+        if q > 1:
+            onde = [str(i + 1) for i, f in enumerate(fases) if f.get("id") == k]
+            p.append(u"o id '%s' esta em %d fases (%s). O id e a CHAVE DA VOZ "
+                     u"(`<pre>_%s_dica`): repetido, uma fase fala a dica da outra."
+                     % (k, q, ", ".join(onde), k))
 
     vistos, ordem = {}, []
     for i, f in enumerate(fases):
