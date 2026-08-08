@@ -236,6 +236,72 @@ echo '[{"id":"pd_f01","texto":"Preencha a palavra com a letra que falta."}]' > "
 pega "falas    · palavra que a voz erra" PEGA  python3 _qa/falas.py "$T/fl_ruim.json"
 pega "falas    · texto ja trocado"       DEIXA python3 _qa/falas.py "$T/fl_bom.json"
 
+# ---------- 11) FLUXO: a crianca presa e a tela orfa ----------
+# Aconteceu no gLigar (ago/2026): `mostraBanner(..., gLigar)` em vez de
+# `gBanca` — a fase voltava para si mesma e a missao inteira de Generos ficou
+# inalcancavel atras dela.
+cat > "$T/fx_ruim.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function telaCapa(){ limpa(); mostraBanner("vamos!", gLigar); }
+function gLigar(){ limpa(); mostraBanner("boa!", gLigar); }
+function gBanca(){ limpa(); mostraBanner("fim", telaCapa); }
+</script></body></html>
+H
+cat > "$T/fx_bom.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function telaCapa(){ limpa(); mostraBanner("vamos!", gLigar); }
+function gLigar(){ limpa(); mostraBanner("boa!", gBanca); }
+function gBanca(){ limpa(); mostraBanner("fim", telaCapa); }
+</script></body></html>
+H
+pega "fluxo    · presa em si + orfa"   PEGA  python3 _qa/fluxo.py "$T/fx_ruim.html" telaCapa
+pega "fluxo    · caminho ate o fim"    DEIXA python3 _qa/fluxo.py "$T/fx_bom.html"  telaCapa
+
+# ---------- 12) CONTRASTE: o texto que some no fundo ----------
+# Pedido do Marcos: *"sempre verificar se nao ha um contraste nas cores, para
+# que nao aconteca de a crianca nao conseguir enxergar"*. Ele mede o PIXEL
+# atras do texto, nao o CSS — por isso o fixture pinta o fundo de verdade.
+cor(){ # cor(<cor do texto>)
+cat <<H
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><style>
+body{margin:0;background:#fdf6e3}
+#app{padding:24px}
+.balao{background:#fdf6e3;color:$1;font-size:17px;font-weight:600;padding:14px}
+</style></head><body><div id="app"></div><script>
+function telaCapa(){ document.getElementById("app").innerHTML=
+  '<div class="balao">Escolha a placa que tem o som do P.</div>'; }
+telaCapa();
+</script></body></html>
+H
+}
+cor "#f6efdc" > "$T/k_ruim.html"     # creme sobre creme: 1,1:1 — a crianca nao le
+cor "#241c0c" > "$T/k_bom.html"      # marrom escuro sobre creme
+pega "contraste· texto que some no fundo" PEGA  node _qa/contraste.js "$T/k_ruim.html" telaCapa
+pega "contraste· texto legivel"           DEIXA node _qa/contraste.js "$T/k_bom.html"  telaCapa
+
+# ---------- 13) LEIAUTE: o alvo pequeno demais para o dedo ----------
+# Regra da casa: alvo de toque >= 44px (>= 40 dentro de grade). Abaixo disso a
+# crianca de 6 anos erra o botao e culpa a si mesma.
+alvo(){ # alvo(<altura>)
+cat <<H
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><style>
+body{margin:0;background:#2b2118}
+#app{padding:16px}
+.opts{display:flex;flex-direction:column;align-items:center;gap:10px;max-width:360px}
+.opt{width:100%;background:#fffdf6;color:#221a12;border-radius:16px;text-align:center;
+     font-size:15px;height:$1;line-height:$1}
+</style></head><body><div id="app"></div><script>
+function telaCapa(){ document.getElementById("app").innerHTML=
+  '<div class="opts"><div class="opt">massa</div><div class="opt">forno</div></div>'; }
+telaCapa();
+</script></body></html>
+H
+}
+alvo 26px > "$T/a_ruim.html"
+alvo 62px > "$T/a_bom.html"
+pega "leiaute  · alvo pequeno para o dedo" PEGA  node _qa/leiaute.js "$T/a_ruim.html" telaCapa
+pega "leiaute  · alvo do tamanho da casa"  DEIXA node _qa/leiaute.js "$T/a_bom.html"  telaCapa
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
