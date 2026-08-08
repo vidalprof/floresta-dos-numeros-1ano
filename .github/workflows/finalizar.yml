@@ -37,19 +37,88 @@ jobs:
           sparse-checkout: |
             /_novo/
             /_gerar_imagens.json
+            /_qa/
+            /_padrao/
           sparse-checkout-cone-mode: false
-      - name: Gerar imagens do _gerar_imagens.json (Gemini)
+
+      # 💰 O PORTAO DO CUSTO RODA ANTES DE GASTAR (ago/2026)
+      #
+      # Cobranca do Marcos: *"estou gastando bastante com as imagens nas
+      # atividades"*. O portao `_qa/cartela.py` ja existia — e mesmo assim a
+      # cartografia saiu com 45 imagens uma a uma (~R$9,00 onde R$1,60 bastava),
+      # porque ele dependia de EU lembrar de rodar. Portao que depende de memoria
+      # nao e portao; e lembrete.
+      #
+      # Agora ele roda aqui, no caminho do dinheiro, e PARA o lote. Para passar
+      # por cima (peca que de verdade nao da para agrupar), o commit leva
+      # `[custo-ok]` na mensagem — assim a excecao fica escrita na historia do
+      # repositorio, em vez de virar habito silencioso.
+      - name: Portao do custo (cartela)
+        run: |
+          set +e
+          python3 _qa/cartela.py _gerar_imagens.json
+          cod=$?
+          set -e
+          if [ "$cod" != "0" ]; then
+            if echo "${{ github.event.head_commit.message }}" | grep -q "\[custo-ok\]"; then
+              echo "::warning::o portao do custo reprovou, mas o commit traz [custo-ok] — seguindo."
+            else
+              echo "::error::LOTE CARO. Agrupe em cartela (python3 _padrao/cartela.py plano) ou repita o commit com [custo-ok]."
+              exit 1
+            fi
+          fi
+
+      - name: Gerar imagens do _gerar_imagens.json (Gemini nas pecas, GRATIS nas cenas)
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           python3 - <<'PY'
-          import os, json, base64, time, urllib.request
+          import os, json, base64, time, sys, urllib.parse, urllib.request
           key=os.environ["GEMINI_API_KEY"].strip()
           itens=json.load(open("_gerar_imagens.json",encoding="utf-8"))
           os.makedirs("_novo", exist_ok=True)
           modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
-          ok=0
+
+          # 💰 CENA NAO SE PAGA. Medido na prova de ago/2026: o Pollinations vai
+          # BEM em cena, fundo e cenario — imagem grande, sem recorte — e vai mal
+          # na peca que a crianca olha de perto (pediram um pao frances e veio um
+          # rocambole; pediram uma garrafa de leite e vieram duas cerejas de
+          # brinde). Entao a divisao e essa, e ela e automatica: cena pelo caminho
+          # gratis, peca no Gemini.
+          sys.path.insert(0, "_padrao")
+          try:
+              from cartela import e_cena          # UM CEREBRO SO (o mesmo do portao)
+          except Exception:
+              def e_cena(it):
+                  g=(it.get("grupo") or "").lower(); n=(it.get("nome") or "").lower()
+                  return "cena" in g or "fundo" in g or "cenario" in g or "fundo" in n
+
+          def pollinations(prompt, w=1280, h=768):
+              motores=["flux","turbo","flux-realism",""]
+              base="https://image.pollinations.ai/prompt/%s?width=%d&height=%d&nologo=true"%(
+                  urllib.parse.quote(prompt), w, h)
+              ultimo=None
+              for tent,espera in enumerate([8,20,45,0]):
+                  mot=motores[min(tent,len(motores)-1)]
+                  try:
+                      req=urllib.request.Request(base+("&model="+mot if mot else ""),
+                                                 headers={"User-Agent":"Mozilla/5.0"})
+                      d=urllib.request.urlopen(req, timeout=180).read()
+                      if d and len(d)>4000: return d
+                      ultimo="resposta vazia"
+                  except Exception as e:
+                      ultimo=str(e)[:120]
+                  if espera: time.sleep(espera)
+              print("::warning::Pollinations falhou (%s) — esta cena vai no Gemini"%ultimo)
+              return None
+
+          ok=0; pagas=0; gratis=0
           for it in itens:
+              if e_cena(it):
+                  bruto=pollinations(it["prompt"])
+                  if bruto:
+                      open("_novo/%s.png"%it["nome"],"wb").write(bruto)
+                      ok+=1; gratis+=1; print("GRATIS", it["nome"], len(bruto)); continue
               # base opcional por item: EDITA a imagem-ancora (mantem o personagem/estilo)
               parts=[{"text":it["prompt"]}]
               b=(it.get("base") or "").strip()
@@ -79,11 +148,22 @@ jobs:
                   print("  ...esperando %ds antes de tentar de novo (%s)"%(espera,it["nome"]))
                   time.sleep(espera)
               if img:
-                  open("_novo/%s.png"%it["nome"],"wb").write(img); ok+=1; print("OK",it["nome"],len(img))
+                  open("_novo/%s.png"%it["nome"],"wb").write(img); ok+=1; pagas+=1
+                  print("OK (pago)",it["nome"],len(img))
               else: print("::error::falhou",it["nome"])
               # respiro entre imagens: e o que segura o 429 num lote grande
               time.sleep(4)
-          print(">>> %d de %d imagens"%(ok,len(itens)))
+          # 💰 A CONTA APARECE. O gasto so vira habito quando ninguem o ve; entao
+          #    toda corrida diz quanto custou e quanto ficou de fora da conta.
+          print(">>> %d de %d imagens | %d GRATIS (cena) | %d pagas = R$ %.2f"
+                %(ok, len(itens), gratis, pagas, pagas*0.20))
+          resumo=os.environ.get("GITHUB_STEP_SUMMARY")
+          if resumo:
+              with open(resumo,"a",encoding="utf-8") as s:
+                  s.write("### Lote de imagens\n\n")
+                  s.write("- %d de %d sairam\n"%(ok,len(itens)))
+                  s.write("- **%d gratis** (cena, Pollinations)\n"%gratis)
+                  s.write("- **%d pagas** (Gemini) = **R$ %.2f**\n"%(pagas, pagas*0.20))
           if ok==0: raise SystemExit(1)
           PY
       # ⚡ COMMITA O QUE DEU CERTO, mesmo que alguma imagem tenha falhado.

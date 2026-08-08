@@ -508,6 +508,28 @@ H
 pega "imagens  · nao mediu nada = reprova"   PEGA node _qa/imagens.js   "$T/nada.html" telaCapa
 pega "contraste· nao mediu nada = reprova"   PEGA node _qa/contraste.js "$T/nada.html" telaCapa
 
+# ---------- 22) CARTELA: o portao do DINHEIRO ----------
+# Cobranca do Marcos (ago/2026): *"estou gastando bastante com as imagens nas
+# atividades"*. A cartografia saiu com 45 pecas geradas uma a uma — ~R$9,00 onde
+# R$1,60 bastava. Este portao mede o lote ANTES de gastar; agora ele tambem roda
+# sozinho dentro do `finalizar.yml`, no caminho do dinheiro.
+python3 - "$T/ct_ruim.json" "$T/ct_bom.json" <<'PYX'
+import io, json, sys
+pecas = [{"nome": "pd_%s" % n, "prompt": "one %s, clay 3D, isolated on white"  % n}
+         for n in ("pao", "bolo", "mel", "leite", "queijo")]
+io.open(sys.argv[1], "w", encoding="utf-8").write(json.dumps(pecas, ensure_ascii=False))
+# o jeito certo: as cinco pecas numa CARTELA so, mais uma cena larga (de graca)
+# e as duas camadas do mascote, que TEM que ser edicao (nao entram na cartela).
+bom = [{"nome": "cart_pd1", "grupo": "cartela",
+        "prompt": "A SHEET of 9 separate objects in a 3x3 grid on pure black"},
+       {"nome": "pd_fundo", "prompt": "the bakery, wide image, warm light"},
+       {"nome": "pd_fuba_fala", "base": "_padaria/img/pd_fuba_feliz.png",
+        "prompt": "same mouse, mouth open"}]
+io.open(sys.argv[2], "w", encoding="utf-8").write(json.dumps(bom, ensure_ascii=False))
+PYX
+pega "cartela  · 5 pecas indo uma a uma" PEGA  python3 _qa/cartela.py "$T/ct_ruim.json"
+pega "cartela  · cartela + cena + edicao" DEIXA python3 _qa/cartela.py "$T/ct_bom.json"
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
