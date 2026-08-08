@@ -4952,3 +4952,25 @@ bastava). **Rodar o portão do custo antes de acionar qualquer geração.**
 imagem grande, sem recorte); peça que a criança olha de perto → Gemini **em
 cartela**; edição de imagem base (as 3 camadas do mascote) → Gemini, 2 ou 3
 chamadas, porque **nada de graça edita**.
+
+### A segunda rodada (prompt afinado) — e o veredito final
+Refiz as mesmas 6 peças com prompt curto no jeito do `flux` (243 caracteres no
+lugar de 470). **Não fechou a distância:** o estilo chegou mais perto do barro
+fosco, mas o objeto piorou — o pão virou rocambole fatiado, o queijo virou um
+losango sem furos, o bolo ganhou velas com cara de cogumelo e, ao lado da
+garrafa de leite, o motor **desenhou duas cerejas que ninguém pediu**.
+
+E aqui está a distinção que importa: **isso não é defeito de recorte, é defeito
+de geração.** O `rembg` fez o trabalho dele; o Pollinations é que não respeita
+"um objeto só". Nenhum ajuste de recorte conserta isso.
+
+O apagador de cacos **foi medido aqui, na mão** (não dá para confiar em código
+de workflow que nunca se viu rodar): no leite da v1 ele apagou a mancha solta —
+6,6% dos pixels — e no mel **não tocou no mexedor**, que é parte legítima
+separada. A cereja da v2 tem 8% da mancha principal e ficou de fora do corte por
+um fio; **não vou afrouxar o limite**, porque o que está do outro lado dele é o
+mexedor do mel.
+
+**Veredito:** o caminho grátis fica para **cena, fundo e cenário** (imagem
+grande, sem recorte, onde ele vai bem). Peça que a criança olha de perto
+continua no Gemini — **em cartela**, R$0,02 cada.
