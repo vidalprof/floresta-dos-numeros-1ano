@@ -114,7 +114,7 @@ jobs:
         run: |
           python3 -m pip install --quiet --upgrade pip
           # rembg tira o fundo; onnxruntime e o motor dele; pillow apara a sobra
-          python3 -m pip install --quiet "rembg[cpu]" pillow
+          python3 -m pip install --quiet "rembg[cpu]" pillow numpy
 
       - name: Desenhar e recortar o lote (GRATIS)
         if: inputs.lote != ''
@@ -175,6 +175,53 @@ jobs:
           from rembg import remove, new_session
           sessao=new_session("u2net")
 
+          def so_a_figura(img):
+              u"""tira os CACOS que o recorte deixa soltos em volta.
+
+              ⚠️ Defeito que o Marcos viu na primeira prova (ago/2026): ao lado da
+              garrafa de leite ficou um caroco solto — um pedaco de fundo que o
+              recorte achou que era objeto. Numa peca que a crianca arrasta, esse
+              caco vira uma sujeira flutuando na tela.
+
+              A regra NAO e "fica so a maior mancha": ha peca com parte legitima
+              separada (o mexedor ao lado do pote de mel, a vela do bolo). Entao
+              some so o que for MUITO menor que a mancha principal — abaixo de 8%
+              da area dela e caco, nao e parte.
+              """
+              import numpy as np
+              a = np.array(img.split()[-1])
+              # trabalha reduzido: 1024x1024 varrido em Python puro seria lento
+              passo = max(1, max(a.shape)//256)
+              m = (a[::passo, ::passo] > 24)
+              alt, lar = m.shape
+              marca = np.zeros(m.shape, dtype=np.int32)
+              areas, atual = {}, 0
+              for y0 in range(alt):
+                  for x0 in range(lar):
+                      if not m[y0][x0] or marca[y0][x0]: continue
+                      atual += 1; pilha=[(y0,x0)]; marca[y0][x0]=atual; n=0
+                      while pilha:
+                          y,x = pilha.pop(); n += 1
+                          for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                              yy,xx = y+dy, x+dx
+                              if 0<=yy<alt and 0<=xx<lar and m[yy][xx] and not marca[yy][xx]:
+                                  marca[yy][xx]=atual; pilha.append((yy,xx))
+                      areas[atual]=n
+              if len(areas) <= 1: return img, 0
+              maior = max(areas.values())
+              cacos = set(k for k,v in areas.items() if v < maior*0.08)
+              if not cacos: return img, 0
+              fora = np.isin(marca, list(cacos))
+              # devolve a mascara ao tamanho real e apaga os cacos
+              grande = np.kron(fora, np.ones((passo,passo), dtype=bool))[:a.shape[0], :a.shape[1]]
+              if grande.shape != a.shape:
+                  g2 = np.zeros(a.shape, dtype=bool)
+                  g2[:grande.shape[0], :grande.shape[1]] = grande
+                  grande = g2
+              a[grande] = 0
+              img.putalpha(Image.fromarray(a))
+              return img, len(cacos)
+
           feitos, falhas = [], []
           for it in lote:
               nome=re.sub(r"[^A-Za-z0-9_-]","_", (it.get("nome") or "").strip())
@@ -190,6 +237,8 @@ jobs:
                       print("   cena (sem recorte) -> %s"%saida)
                   else:
                       img=Image.open(io.BytesIO(remove(bruto, session=sessao))).convert("RGBA")
+                      img, cacos = so_a_figura(img)
+                      if cacos: print("   %d caco(s) do recorte apagado(s)"%cacos)
                       bb=img.getbbox()
                       # ⚠️ recorte que apagou TUDO nao e recorte, e peca perdida.
                       #    Melhor gritar do que commitar um PNG vazio — foi um
