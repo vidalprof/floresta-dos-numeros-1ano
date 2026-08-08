@@ -10,6 +10,17 @@ const RECEITA={
  /* ESCOLHER: a mecanica mais comum da casa e estava sem receita — ou seja, o
     andaime dela nunca tinha sido MEDIDO. A peca marca so a certa com
     data-qa="1"; errada e qualquer outra que ainda nao foi tentada. */
+ /* CAIXAS DE SOM (Elkonin): a ordem E o conteudo. Errar de proposito e
+    empurrar a ficha para uma caixa que nao e a proxima (data-qa="0"), que e
+    exatamente o que a crianca faz quando ainda nao percebeu que som tem ordem. */
+ 'caixas-de-som':()=>{
+   var cx=[].slice.call(document.querySelectorAll('.cx'))
+     .filter(function(e){ return e.getAttribute('data-qa')==='0' &&
+       e.className.indexOf('cheia')<0; });
+   if(!cx.length) return null;
+   cx[cx.length-1].click();
+   return 'empurrou a ficha para a caixa fora de ordem';
+ },
  'escolher':()=>{
    var op=[].slice.call(document.querySelectorAll('.opt'))
      .filter(function(e){ return e.getAttribute('data-qa')!=='1' &&

@@ -175,3 +175,33 @@ bancada em código 0.*
 | **circuito** | ligar os fios e a lâmpada **acende de verdade** | traço decorativo perde o efeito inteiro: cada fio ligado tem que mudar o mundo |
 | **camadas-mapa** | ligar/desligar camadas e ver o que só aparece na sobreposição | a resposta não está escrita em lugar nenhum da tela — se estiver, virou quiz com figura |
 | **rotular** | levar o nome ao lugar **espacial** dele na figura | não é classificar: lá o lugar é uma gaveta (categoria), aqui é ONDE na figura |
+
+## 🔊 A PEÇA QUE FALTAVA — CAIXAS DE SOM (Elkonin), ago/2026
+
+Nasceu de uma pergunta do Marcos: *"essas eram as melhores dinâmicas para essa
+atividade?"*. Fui medir e achei o buraco: **A Padaria das Letras parava na
+sílaba**. Bater sílabas, juntar sílabas, som do começo — e nenhuma fase de som
+**isolado**. Só que a consciência **fonêmica** é o preditor mais forte de
+leitura no 1º ano; a silábica vem antes e sozinha não abre a leitura. A oficina
+não tinha a mecânica: a atividade não tinha como chegar lá nem que quisesse.
+
+| peça | o gesto | a armadilha que ela fecha |
+|---|---|---|
+| **caixas-de-som** | uma caixinha por SOM; a criança diz a palavra devagar e **empurra uma ficha** para cada som | **a letra não pode aparecer durante o preenchimento** — isso viraria ditado, que é outra coisa e vem depois. Primeiro o som; a letra só no fim |
+
+**O que ela ensina, nesta ordem** (é o coração da peça):
+1. diz a palavra devagar e empurra **uma ficha por som**;
+2. as caixas enchem da **esquerda para a direita** — som tem ordem, e é a mesma
+   ordem da escrita: é aqui que nasce a direcionalidade;
+3. **só depois** de fechar a palavra as letras aparecem dentro das caixas.
+
+**Duas coisas que fazem diferença e não são óbvias:**
+- **`letras` não é uma por caixa.** O "CH" de CHÁ é **um som e duas letras** —
+  é justamente isso que a peça mostra no fim, e é por isso que ela **não pode
+  ser feita contando letras**.
+- **Tocar a caixa já empurra a próxima ficha.** No 1º ano, exigir dois toques
+  onde um basta é atrito puro. Quem gosta de escolher a ficha primeiro
+  continua podendo — e dá para arrastar.
+
+**Medida na bancada:** código 0 nos 9 portões, com o errador medindo o andaime
+(3 dicas distintas e crescentes, chega à medalha depois de errar).

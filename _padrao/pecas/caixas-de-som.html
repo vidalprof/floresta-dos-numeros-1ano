@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — caixas de som (Elkonin)</title>
+<!-- ============================================================
+     PEÇA: CAIXAS DE SOM — uma ficha para cada SOM da palavra.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     POR QUE ELA EXISTE — e por que ela faltava:
+     medindo A Padaria das Letras (ago/2026) achei o buraco: a atividade inteira
+     parava na SÍLABA. Bater sílabas, juntar sílabas, som do começo — e nada de
+     som ISOLADO. Só que a consciência FONÊMICA é o preditor mais forte de
+     leitura no 1º ano; a silábica vem antes e sozinha não abre a leitura.
+     A mecânica canônica para isso são as CAIXAS DE ELKONIN: uma caixinha por
+     som, e a criança empurra uma ficha para cada som que ouve, dizendo a
+     palavra bem devagar. Não existia na oficina — a atividade não tinha como
+     chegar lá nem que quisesse.
+
+     O QUE ELA ENSINA, NESTA ORDEM (é o coração da peça):
+       1. a criança diz a palavra devagar e EMPURRA uma ficha por som;
+       2. as caixas enchem da ESQUERDA para a DIREITA — som tem ordem, e essa
+          ordem é a mesma da escrita (é aqui que nasce a direcionalidade);
+       3. só DEPOIS de fechar a palavra as LETRAS aparecem dentro das caixas.
+          Primeiro o som, depois a letra — nunca o contrário. É o degrau que
+          liga o que ela ouve ao que ela vai escrever.
+
+     ⚠️ A REGRA QUE MANDA AQUI: FUNCIONA NO MUDO.
+     A palavra aparece SEMPRE ESCRITA e (quando a fase traz) com a FIGURA. PC de
+     escola sem caixa de som existe, e criança surda também. Quem tem som ouve e
+     empurra; quem não tem, lê e empurra.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · CAIXA FORA DE ORDEM: tocar a 3ª caixa antes da 1ª não "dá erro" e some
+         — ela treme, o som é de retorno e a dica diz por onde começar. Ordem é
+         o conteúdo, não uma regra de sistema.
+       · SOM NÃO É LETRA: nada de mostrar a letra durante o preenchimento. Isso
+         transformaria a peça num ditado, que é outra coisa e vem depois.
+       · NUNCA TRAVA: no 3º erro a próxima caixa acende e a peça deixa seguir.
+       · TEMPORIZADOR DE RODADA VELHA: todo setTimeout guarda a GERAÇÃO.
+       · DUAS PORTAS: tocar a caixa põe a próxima ficha; e dá para ARRASTAR a
+         ficha até ela. No PC da escola tem mouse; no celular, dedo.
+       · ALVO GRANDE: caixa de 62px — dedo de criança de 6 anos com folga.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; nada essencial só na cor; funciona no mudo; publica
+     data-qa; termina em .medal.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A PALAVRA: figura (quando houver) + a palavra ESCRITA. É o gêmeo visual do
+   som — é ela que faz a peça funcionar no PC sem caixa de som. */
+.csPal{margin:10px auto 0;max-width:430px}
+.csFig{width:82px;height:82px;margin:0 auto;display:block}
+.csFig img{width:100%;height:100%;object-fit:contain}
+.csEsc{font-size:30px;font-weight:800;letter-spacing:2px;color:#ffd54a;line-height:1.1;margin-top:4px}
+.csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:#f0e6d4;opacity:.9}
+
+/* AS CAIXAS: uma por som, lado a lado, sempre da esquerda para a direita. */
+.csCx{display:block;margin:14px auto 0;font-size:0;max-width:430px}
+.cx{display:inline-block;vertical-align:top;width:62px;height:62px;margin:0 4px;
+    border:3px dashed rgba(255,255,255,.45);border-radius:14px;background:rgba(255,255,255,.08);
+    cursor:pointer;position:relative;-webkit-transition:background .2s,border-color .2s;
+    transition:background .2s,border-color .2s}
+/* a caixa CHEIA: a ficha dentro dela. Nada de letra aqui — som nao e letra. */
+.cx.cheia{background:rgba(143,224,122,.20);border-style:solid;border-color:#8fe07a}
+.cx .fic{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;
+         border-radius:50%;background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45);
+         -webkit-animation:csEntra .28s cubic-bezier(.2,1.5,.4,1);animation:csEntra .28s cubic-bezier(.2,1.5,.4,1)}
+@-webkit-keyframes csEntra{from{-webkit-transform:scale(.2);opacity:0}to{-webkit-transform:scale(1);opacity:1}}
+@keyframes csEntra{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+/* a proxima caixa, revelada no 3o erro: acende E ganha a marca ESCRITA */
+.cx.alvo{border-color:#ffd54a;background:rgba(255,213,74,.22)}
+.cx.treme{-webkit-animation:csTreme .32s;animation:csTreme .32s}
+@-webkit-keyframes csTreme{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes csTreme{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* a LETRA so aparece no fim: primeiro o som, depois a letra. */
+.cx .let{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:24px;font-weight:800;
+         color:#2b2118;line-height:1;-webkit-animation:csEntra .3s;animation:csEntra .3s}
+
+/* AS FICHAS que ainda nao foram empurradas: o estoque. */
+.csFic{display:block;margin:12px auto 0;font-size:0;min-height:44px}
+.fichaq{display:inline-block;width:38px;height:38px;margin:3px;border-radius:50%;
+        background:#ffd54a;box-shadow:inset 0 -3px 0 rgba(160,120,10,.45);cursor:pointer;
+        vertical-align:middle}
+.fichaq.sel{-webkit-box-shadow:0 0 0 4px rgba(255,213,74,.5),inset 0 -3px 0 rgba(160,120,10,.45);
+            box-shadow:0 0 0 4px rgba(255,213,74,.5),inset 0 -3px 0 rgba(160,120,10,.45)}
+.fichaq.gasta{visibility:hidden}
+/* o fantasma do arrasto */
+.fant{position:fixed;z-index:50;width:38px;height:38px;border-radius:50%;background:#ffd54a;
+      pointer-events:none;opacity:.9}
+/* etiqueta em PALAVRAS, nunca so a cor */
+.csConta{display:block;font-size:14px;font-weight:700;color:#f0e6d4;margin-top:10px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (prefers-reduced-motion:reduce){
+  .cx .fic,.cx .let,.cx.treme{-webkit-animation:none;animation:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ⭐ A GAVETA DE CONTEÚDO — troque APENAS este bloco.
+   Cada rodada é uma palavra. `sons` é o que a criança EMPURRA (um por som);
+   `letras` é o que aparece DEPOIS, dentro das caixas, ligando som e escrita.
+   ⚠️ `letras` pode ter mais de uma letra por caixa (o "CH" de CHÁ é UM som e
+   DUAS letras) — é justamente isso que a peça mostra no fim, e é por isso que
+   ela não pode ser feita contando letras. */
+var PALAVRAS=[
+  {pal:"PÃO",  img:"", sons:3, letras:["P","Ã","O"],
+   dicas:["Diga PÃO bem devagar e conte no dedo: quantos pedacinhos de som?",
+          "P... Ã... O. São três sons, então são três caixinhas.",
+          "Comece pela primeira caixinha, à esquerda: ela está acesa."]},
+  {pal:"MEL",  img:"", sons:3, letras:["M","E","L"],
+   dicas:["Diga MEL bem devagar e escute cada som.",
+          "M... E... L. Três sons, três caixinhas.",
+          "A próxima caixinha está acesa: empurre a ficha para ela."]},
+  {pal:"SAL",  img:"", sons:3, letras:["S","A","L"],
+   dicas:["Fale SAL devagar, alongando cada som.",
+          "S... A... L. Conte comigo: são três.",
+          "É esta caixinha acesa que espera a ficha agora."]}
+];
+var ENUN="Diga a palavra devagar e empurre <b>uma ficha</b> para cada som.";
+
+var rodada=0, posta=0, erros=0, ger=0, travada=false;
+var marcada=null, pegou=null, fantasma=null, x0=0, y0=0, arrastando=false;
+var ultimoToque=0, fimArrasto=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+function pecaCaixas(){
+  posta=0; erros=0; travada=false; marcada=null; pegou=null; arrastando=false; ger++;
+  var r=PALAVRAS[rodada];
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(rodada*100/PALAVRAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CAIXAS DE SOM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* a palavra: figura (se houver) + ESCRITA. O gemeo visual do som. */
+  var pv=el("div","csPal");
+  if(r.img){ var f=el("div","csFig"); var im=el("img"); im.src="img/"+r.img+".png"; im.alt="";
+             f.appendChild(im); pv.appendChild(f); }
+  pv.appendChild(el("div","csDiz","DIGA A PALAVRA"));
+  pv.appendChild(el("div","csEsc", r.pal));
+  c.appendChild(pv);
+
+  /* as caixas, uma por som */
+  var cxs=el("div","csCx"), i, b;
+  for(i=0;i<r.sons;i++){
+    b=el("div","cx","");
+    b.idx=i;
+    b.onclick=fazToqueCaixa(b);
+    cxs.appendChild(b);
+  }
+  c.appendChild(cxs);
+
+  /* o estoque de fichas: uma por som */
+  var fs=el("div","csFic");
+  for(i=0;i<r.sons;i++){
+    var q=el("div","fichaq","");
+    q.onclick=fazToqueFicha(q);
+    q.onmousedown=fazPega(q);
+    q.addEventListener("touchstart",fazToca(q),false);
+    fs.appendChild(q);
+  }
+  c.appendChild(fs);
+
+  c.appendChild(el("div","csConta","0 de "+r.sons+" sons"));
+  c.appendChild(el("div","hint","Toque na caixinha (ou arraste a ficha at&#233; ela). Sempre da esquerda para a direita."));
+  t.appendChild(c);
+  app.appendChild(t);
+  marcaProxima();
+}
+
+/* ⚠️ `data-qa` diz qual caixa serve AGORA — e SÓ o auditor-jogador olha para
+   isto. A criança não vê nada: se ela visse, a ordem deixaria de ser o
+   conteúdo e viraria "siga a marca". */
+function marcaProxima(){
+  var cx=app.getElementsByClassName("cx"), i;
+  for(i=0;i<cx.length;i++) cx[i].setAttribute("data-qa", i===posta ? "1" : "0");
+}
+function contaNaTela(){
+  var d=app.getElementsByClassName("csConta")[0];
+  if(d) d.innerHTML = posta+" de "+PALAVRAS[rodada].sons+" sons";
+}
+function proximaFichaLivre(){
+  var q=app.getElementsByClassName("fichaq"), i;
+  for(i=0;i<q.length;i++) if(q[i].className.indexOf("gasta")<0) return q[i];
+  return null;
+}
+
+/* ---- as DUAS PORTAS: tocar a caixa, ou arrastar a ficha até ela ---------- */
+function fazToqueFicha(q){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;      /* este clique e o rabo do arrasto */
+    if(q.className.indexOf("gasta")>=0) return;
+    sTap();
+    var todas=app.getElementsByClassName("fichaq"), i;
+    for(i=0;i<todas.length;i++)
+      if(todas[i].className.indexOf("gasta")<0) todas[i].className="fichaq";
+    q.className="fichaq sel"; marcada=q;
+  };
+}
+function fazToqueCaixa(b){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;
+    /* ⭐ tocar a caixa SEM ter escolhido ficha já empurra a próxima: no 1º ano
+       exigir dois toques onde um basta é atrito puro. A ficha marcada continua
+       valendo para quem gosta de escolher primeiro. */
+    poe(b, marcada || proximaFichaLivre());
+  };
+}
+function fazPega(q){
+  return function(ev){
+    if(souDedo()) return;              /* mouse FANTASMA do celular: ignora */
+    comeca(q, ev.clientX, ev.clientY);
+  };
+}
+function fazToca(q){
+  /* ⚠️ NUNCA `preventDefault` aqui — mata o toque no celular. Ele mora no
+     touchmove, e só enquanto há ficha na mão. */
+  return function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(q, d.clientX, d.clientY);
+  };
+}
+function comeca(q,x,y){
+  if(travada) return;
+  if(q.className.indexOf("gasta")>=0) return;
+  pegou=q; x0=x; y0=y; arrastando=false;
+}
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant","");
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-19)+"px";
+  fantasma.style.top=(y-19)+"px";
+}
+function solta(x,y){
+  if(fantasma&&fantasma.parentNode) fantasma.parentNode.removeChild(fantasma);
+  fantasma=null;
+  if(!pegou){ arrastando=false; return; }
+  var q=pegou; pegou=null;
+  if(!arrastando) return;
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y), i;
+  while(alvo && alvo!==document.body){
+    if(alvo.className && String(alvo.className).indexOf("cx")===0){ poe(alvo,q); return; }
+    alvo=alvo.parentNode;
+  }
+}
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  if(!pegou) return;
+  ev.preventDefault();
+  var d=ev.touches[0]; move(d.clientX,d.clientY);
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+/* ---- o coração: a ficha entra na caixa CERTA, na ORDEM certa ------------- */
+function poe(b,q){
+  if(travada||!b||!q) return;
+  if(b.className.indexOf("cheia")>=0) return;
+  var r=PALAVRAS[rodada], ge=ger;
+
+  if(b.idx!==posta){
+    /* ORDEM ERRADA: não é "erro de sistema", é o conteúdo da peça. */
+    sErro();
+    b.className="cx treme";
+    setTimeout(function(){ if(ge!==ger) return;
+      if(b.className.indexOf("cheia")<0) b.className="cx"; },340);
+    erros++;
+    mostraDica(r.dicas[Math.min(erros,r.dicas.length)-1]);
+    if(erros>=3) revela();
+    return;
+  }
+
+  sTap();
+  q.className="fichaq gasta";
+  marcada=null;
+  b.className="cx cheia";
+  b.appendChild(el("div","fic",""));
+  posta++;
+  contaNaTela();
+  marcaProxima();
+
+  if(posta>=r.sons){
+    travada=true;
+    /* ⭐ AGORA, e só agora, as LETRAS aparecem: primeiro o som, depois a letra.
+       É este o degrau que liga o que ela ouve ao que ela vai escrever. */
+    setTimeout(function(){
+      if(ge!==ger) return;
+      var cx=app.getElementsByClassName("cx"), i;
+      for(i=0;i<cx.length;i++){
+        var f=cx[i].getElementsByClassName("fic")[0];
+        if(f&&f.parentNode) f.parentNode.removeChild(f);
+        cx[i].appendChild(el("div","let", (r.letras&&r.letras[i]) || ""));
+      }
+      sCerto();
+      setTimeout(function(){
+        if(ge!==ger) return;
+        rodada++;
+        if(rodada>=PALAVRAS.length) mostraBanner("Voc&#234; ouviu todos os sons!", fimDaPeca);
+        else mostraBanner("Isso! <b>"+r.pal+"</b> tem "+r.sons+" sons.", pecaCaixas);
+      },1400);
+    },380);
+  }
+}
+
+/* 3º erro: acende a próxima caixa e DEIXA seguir — é o que garante que a peça
+   nunca trava. A informação também vai escrita na dica (nada só na cor). */
+function revela(){
+  var cx=app.getElementsByClassName("cx"), i;
+  for(i=0;i<cx.length;i++)
+    if(cx[i].className.indexOf("cheia")<0)
+      cx[i].className = (i===posta) ? "cx alvo" : "cx";
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; empurrou uma ficha para <b>cada som</b>. &#201; assim que a palavra vira escrita!"));
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaCaixas();
+</script>
+</body></html>
