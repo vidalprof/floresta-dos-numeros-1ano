@@ -444,6 +444,26 @@ H
 pega "vozintro· intro por cima da pergunta" PEGA  python3 _qa/vozintro.py "$T/vi_ruim.html"
 pega "vozintro· introEPergunta + onclick"   DEIXA python3 _qa/vozintro.py "$T/vi_bom.html"
 
+# ---------- 19) PADRAO DA CASA: o leque de gestos ----------
+# Cobranca do Marcos na Legenda do Clique: *"tem muita dinamica parecida...
+# temos um leque bem grande de interatividade"*. La eram 8 das 19 fases com o
+# MESMO gesto. A regua: nenhum gesto acima de 40%, minimo de 4 gestos, e
+# nenhuma fase muda.
+# ⚠️ o caso CERTO aqui e uma atividade DE VERDADE (a _prova30, montada pela
+#    esteira). Fixture de mentira nao prova que o portao funciona no que ele
+#    vai medir amanha.
+python3 - "$T/pd_ruim.html" <<'PYX'
+import io, json, sys
+fases = [{"id": "f%02d" % i, "mec": "escolher", "selo": "PASSO",
+          "enunciado": "Qual e?", "vozIntro": "pd_f%02d" % i} for i in range(1, 11)]
+io.open(sys.argv[1], "w", encoding="utf-8").write(
+    '<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>\n'
+    'var FASES = ' + json.dumps(fases, ensure_ascii=False) + ';\n'
+    '</script></body></html>\n')
+PYX
+pega "padrao   · um gesto so (10 de 10)"  PEGA  python3 _qa/padrao.py "$T/pd_ruim.html"
+pega "padrao   · leque da _prova30"       DEIXA python3 _qa/padrao.py _prova30/index.html
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
