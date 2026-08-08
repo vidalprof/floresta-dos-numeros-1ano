@@ -1659,6 +1659,20 @@ function sCerto(){ tom(659,0.12,"sine",0.2); tom(880,0.14,"sine",0.2,0.09); tom(
 function sErro(){ tom(200,0.18,"sawtooth",0.12); tom(150,0.24,"sawtooth",0.12,0.08); }
 function sFesta(){ var n=[523,659,784,1046,1318],i; for(i=0;i<n.length;i++) tom(n[i],0.3,"triangle",0.18,i*0.085); }
 function sAgua(){ tom(900,0.18,"sine",0.08); tom(650,0.2,"sine",0.08,0.05); }
+/* ⭐ O SOM DO GESTO — o que faz o app PARECER profissional.
+   Aplicativo bom se reconhece pelo som antes do desenho: hoje o motor so tinha
+   acerto e erro, que sao veredito. Falta o som do que a MAO faz. Sao tres, de
+   proposito curtos (<=0,16s) e baixos (<=0,12): som que dura vira barulho, e a
+   crianca fica com a atividade uma aula inteira.
+     sPega  — a peca sai do lugar (o dedo pegou)
+     sPoe   — a peca encaixa (grave curto: peso caindo na bandeja)
+     sVira  — carta virando / tela mudando (um sopro rapido)
+   ⚠️ Nada aqui e arquivo: e o mesmo oscilador que ja existia. Custo zero,
+   nada para baixar, funciona no PC velho da escola. E some junto com o mudo,
+   porque passa pelo mesmo `ac`. */
+function sPega(){ tom(760,0.06,"sine",0.10); }
+function sPoe(){ tom(300,0.09,"triangle",0.12); tom(190,0.13,"sine",0.10,0.045); }
+function sVira(){ tom(1100,0.05,"sine",0.07); tom(1500,0.06,"sine",0.05,0.035); }
 /* ============ NARRAÇÃO + LIP-SYNC ============ */
 var narr=document.getElementById("narr");
 var anaNode=null,anaBuf=null,anaOk=false,anaTent=false,bocaAlvo=0,bocaSuave=0,falaTimer=0,falaAtual="",falaTela="",telaNarrou=false,falandoCb=null;
@@ -3334,6 +3348,9 @@ function seleciona(p){
   for(i=0;i<a.length;i++)
     if(a[i].className.indexOf("usada")<0) a[i].className="pc";
   p.className="pc sel";
+  /* ⭐ o SOM DO GESTO: a ficha saiu do lugar. Curto e baixo — a crianca fica
+     uma aula inteira aqui, e som que dura vira barulho. */
+  if(typeof sPega==="function") sPega();
   marcada=p;
 }
 
@@ -3353,6 +3370,7 @@ function guarda(p,g){
   if(!p||!g) return;
   if(p.className.indexOf("usada")>=0) return;
   if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    if(typeof sPoe==="function") sPoe();   /* o peso caindo na bandeja */
     sCerto();
     p.className="pc usada";
     p.onclick=null; p.onmousedown=null;

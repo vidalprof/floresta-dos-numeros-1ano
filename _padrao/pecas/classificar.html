@@ -283,6 +283,9 @@ function seleciona(p){
   for(i=0;i<a.length;i++)
     if(a[i].className.indexOf("usada")<0) a[i].className="pc";
   p.className="pc sel";
+  /* ⭐ o SOM DO GESTO: a ficha saiu do lugar. Curto e baixo — a crianca fica
+     uma aula inteira aqui, e som que dura vira barulho. */
+  if(typeof sPega==="function") sPega();
   marcada=p;
 }
 
@@ -302,6 +305,7 @@ function guarda(p,g){
   if(!p||!g) return;
   if(p.className.indexOf("usada")>=0) return;
   if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    if(typeof sPoe==="function") sPoe();   /* o peso caindo na bandeja */
     sCerto();
     p.className="pc usada";
     p.onclick=null; p.onmousedown=null;

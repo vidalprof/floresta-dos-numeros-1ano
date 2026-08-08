@@ -663,3 +663,63 @@ lado a lado** (96×66), que é o gesto certo: comparar três letras de uma olhad
 não ler três frases. ⚠️ O `flex-direction:row` tem que ser **escrito**: alguma
 folha acima já põe as opções em coluna, e sem isso os ladrilhos ficam bonitos e
 empilhados — que não era o ponto.
+
+## ⚠️ LIÇÃO PAGA — TRÊS DEFEITOS QUE SÓ O OLHO PEGOU (ago/2026)
+
+A banca inteira dava **código 0** e a atividade tinha três defeitos que a
+criança veria na primeira aula. Nenhum deles é bug: são conteúdo errado, e
+conteúdo errado passa por qualquer portão que meça código.
+
+### 1. "Cada ficha conta uma tarefa da PLANTA"
+Enunciado do Jardim do Broto **cravado no corpo** da peça `classificar`. Na
+Padaria das Letras a criança lia sobre planta enquanto separava BOLACHA e
+MAMÃO. Está certo em português, não dá erro, e **viajava para toda atividade
+que usasse a mecânica**.
+→ **Enunciado é CONTEÚDO, então mora na gaveta — nunca no corpo da peça.**
+→ E a gaveta só sabia ler `var X = [` e `var X = {`: **texto também é
+conteúdo**. O detector aprendeu a ler texto (só MAIÚSCULA, e nunca como gaveta
+principal — a principal é a lista de rodadas).
+
+### 2. O mascote pedia cinco poses e a casa só desenha três
+`_pensa` e `_festa` entravam na pré-carga e davam **404**. Pior: quando mandei
+o Gemini **editar** a pose parada para criá-las, voltaram **dois personagens
+completamente diferentes** — o Fubá é um ratinho padeiro em 3D e vieram dois
+meninos humanos em 2D.
+→ **Pensar e comemorar são MOVIMENTO da pose parada, não desenho novo.**
+Desenho novo do mascote sai fora do personagem com uma facilidade assustadora;
+movimento não tem como sair, porque é o mesmo desenho. (`.broto.pensando` e
+`.broto.festejando` no motor.)
+→ E a pré-carga só pede as duas opcionais **se o arquivo estiver na pasta**.
+
+### 3. O gerador ignorava a base em silêncio
+`gerar-imagens.yml` fazia `if base and os.path.exists(base)`. Caminho errado =
+o `base` era **descartado sem avisar** e o Gemini gerava do zero, devolvendo um
+personagem novo com cara de sucesso.
+→ **Edição com base ausente é ERRO**, nunca "gera do zero".
+
+### E o portão que rodava cego
+`_qa/imagens.js` guardava `if(typeof srcDe!=="function") return [];` — e
+`srcDe` **nunca existiu** no motor (o caminho é montado inline). A condição era
+sempre verdadeira, a lista voltava vazia, e o portão imprimia "imagens ok".
+→ **Portão que não mede não aprova**: agora diz "NÃO MEDI" e sai com código 2.
+→ E a regra que fica: **quando um portão passa, perguntar *o que* ele mediu.**
+Os três defeitos acima estavam na tela; eu só os vi porque fotografei.
+
+## 🎨 O GANCHO DE TEMA — `<pasta>/tema.css`
+
+O acabamento é da **atividade**, não do esqueleto. Pintar a madeira da padaria
+no `.btn` do motor pintaria toda atividade futura — inclusive a de ciências do
+6º ano. Então: se existir `<pasta>/tema.css`, o montador o injeta **por último**
+no `<style>`, onde ele ganha do motor e das peças no empate de especificidade.
+
+**A peça diz o que a coisa É; o tema diz como ela se PARECE.** A `completar`
+marca `.opts.curtas.letra` ou `.silaba`; quem pinta de lousa ou de biscoito é o
+tema. Sem essa separação a mecânica ficaria presa a uma atividade.
+
+E a regra do Marcos que o tema serve: **cada acabamento com um papel fixo**,
+nunca doze peles para o mesmo botão. Madeira = ação. Toldo = título. Azulejo =
+balão. Lousa = letra. Biscoito = pedaço. Metal = bandeja. Massa = folha de
+traçar. Carimbo = já feito. Vidro = vitrine. A criança olha e sabe o que é
+**antes de ler** — e no 1º ano isso é a diferença entre entender e chutar.
+⚠️ Metal, massa e vidro **nunca carregam letra**: a leitura neles foi medida e
+é fraca. São superfície, e superfície não é resposta.
