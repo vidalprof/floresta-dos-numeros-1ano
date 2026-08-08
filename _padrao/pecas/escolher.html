@@ -39,7 +39,15 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
 .balao b{color:#1f6b12}
 .balao + *{margin-top:13px}
 .centro{text-align:center}
-.opts{display:block}
+/* ⚠️ LICAO PAGA (ago/2026) — RESPOSTA PRESA ATRAS DA BARRA, em "janela baixa".
+   A barra fixa de baixo (Ouvir/Dica) cobre ~104px, e sem rolagem a ultima
+   opcao ficava debaixo dela: a crianca via a resposta e nao conseguia tocar.
+   E o mesmo defeito que a `ouvir-achar` ja tinha pago — por isso o teto sai da
+   CONTA DA TELA (`calc`), nunca de um numero escolhido a dedo: vao magico e
+   sempre origem de defeito (a lista so rolava abaixo de 560px, e 568 passava
+   raspando por cima). */
+.opts{display:block;max-height:calc(100vh - 260px);overflow-y:auto;
+      -webkit-overflow-scrolling:touch}
 /* ⭐ FILEIRA RETA E BOTAO VIVO (ordem do Marcos, ago/2026: *"nada de botoes
    muito esticado, quero tudo simetrico no app"* e *"botoes lindos... quero
    bonito, animacoes etc"*).

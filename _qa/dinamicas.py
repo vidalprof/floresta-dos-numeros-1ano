@@ -68,7 +68,25 @@ def js_de(html):
 
 
 def css_de(html):
-    return "".join(re.findall(r"<style>(.*?)</style>", html, re.S))
+    u"""⚠️⚠️ LICAO PAGA (ago/2026) — A TERCEIRA VEZ NA MESMA FAMILIA, e desta vez
+    o comentario do proprio codigo mentia: dizia que *"o `js_de` e o `css_de` ja
+    tiram comentario"*. O `js_de` tirava; o `css_de` NAO.
+
+    O preco: eu escrevi, num comentario CSS da peca `escolher`, que aquele
+    defeito *"e o mesmo que a `ouvir-achar` ja tinha pago"* — e o gatilho de
+    "ouvir e achar" casou com a minha PROSA. A peca `escolher`, que nao toca
+    som nenhum, passou a ser acusada de depender do som e a bancada reprovou.
+
+    A regra, agora escrita nos dois lugares: **portao que le prosa mede prosa**.
+    Gatilho casa com o que a peca FAZ, nunca com o que alguem escreveu
+    explicando o que ela faz.
+
+    ⚠️ A marca `/* ==== PECA: nome ==== */` fica: e comentario, mas e ESTRUTURA
+    — e ela que separa os blocos de cada mecanica na atividade montada (lição
+    ja paga logo abaixo, no `main`)."""
+    css = "".join(re.findall(r"<style>(.*?)</style>", html, re.S))
+    return re.sub(r"/\*(?!\s*====\s*PECA:).*?\*/",
+                  lambda m: "\n" * m.group(0).count("\n"), css, flags=re.S)
 
 
 def analisa(js, css, baixo, html=None):

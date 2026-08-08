@@ -84,7 +84,11 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
   -webkit-box-pack:center;justify-content:center;overflow:hidden}
 .bsFig img{width:100%;height:100%;object-fit:contain}
-.bsFig .semfig{font-size:13px;color:#6b5c46;padding:8px;text-align:center;font-weight:600}
+/* ⚠️ LICAO PAGA (ago/2026): a palavra de reserva (quando a fase nao traz
+   figura) era #6b5c46 sobre o fundo claro da caixa — 2,22:1, quando o
+   minimo e 4,5. E o pior: e JUSTAMENTE o caso em que a palavra e a unica
+   coisa na tela, porque a figura faltou. Escurecida ate passar. */
+.bsFig .semfig{font-size:15px;color:#2f2718;padding:8px;text-align:center;font-weight:800;letter-spacing:.5px}
 /* a LINHA DAS BATIDAS: ela nasce VAZIA. Desenhar os lugares certos daria a
    resposta — a criança contaria as casinhas em vez dos pedaços da palavra. */
 .bsBatidas{min-height:62px;margin:14px auto 4px;max-width:430px;

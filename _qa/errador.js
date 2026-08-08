@@ -7,6 +7,18 @@ const RECEITA={
     tres erros, o andaime cresceu e a crianca CONSEGUE seguir. Sem esta receita
     o portao dizia "nao sei jogar esta peca" e a bancada reprovava por falta de
     medicao, que e o certo: portao que nao mede nao aprova. */
+ /* ESCOLHER: a mecanica mais comum da casa e estava sem receita — ou seja, o
+    andaime dela nunca tinha sido MEDIDO. A peca marca so a certa com
+    data-qa="1"; errada e qualquer outra que ainda nao foi tentada. */
+ 'escolher':()=>{
+   var op=[].slice.call(document.querySelectorAll('.opt'))
+     .filter(function(e){ return e.getAttribute('data-qa')!=='1' &&
+       e.className.indexOf('ok')<0 && e.className.indexOf('no')<0 &&
+       e.className.indexOf('fora')<0; });
+   if(!op.length) return null;
+   op[0].click();
+   return 'clicou a opcao errada "'+(op[0].textContent||'').replace(/\s+/g,' ').trim().slice(0,24)+'"';
+ },
  'ouvir-achar':()=>{
    var op=[].slice.call(document.querySelectorAll('.opt'))
      .filter(function(e){ return e.getAttribute('data-qa')==='0' &&
