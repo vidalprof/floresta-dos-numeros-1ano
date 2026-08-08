@@ -89,15 +89,27 @@ def fecha(s, i, ab, fe):
 
 
 # ---------- 1) achar os ajudantes: function nome(n, ops){ ... } ----------
+# ⚠️⚠️ LICAO PAGA (ago/2026) — ESTE PORTAO RODAVA CEGO EM TODA ATIVIDADE
+# MONTADA, e a propria banca avisava ("mediu ZERO") sem que eu conferisse.
+# Ele procurava a forma do Broto — `function ajuda(n,ops){` —, uma DECLARACAO.
+# So que o esqueleto escreve `window.ajuda = function(n, ops){`, uma
+# ATRIBUICAO: a expressao regular nunca casava e o portao dizia "nada a
+# conferir" com a maior calma. Mesma familia do `srcDe` no portao das imagens:
+# o auditor procurando a forma de UMA atividade em vez do que o codigo FAZ.
+# E a "fala" tambem mudou de nome: no esqueleto quem promete e o `consolo()`
+# (que toca a voz de erro) e o `mostraDica()` (que ESCREVE a promessa na tela).
+# Promessa escrita e promessa igual — a crianca le e espera.
+FALAS = ("falar(", "consolo(", "mostraDica(")
 ajudantes = []
-for m in re.finditer(r"function\s+(\w+)\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\{", js):
-    nome, _pn, ops = m.group(1), m.group(2), m.group(3)
+for m in re.finditer(r"(?:function\s+(\w+)|(?:window\.)?(\w+)\s*=\s*function)"
+                     r"\s*\(\s*(\w+)\s*,\s*(\w+)\s*\)\s*\{", js):
+    nome, ops = (m.group(1) or m.group(2)), m.group(4)
     ab = js.index("{", m.end() - 1)
     fim = fecha(js, ab, "{", "}")
     if fim < 0:
         continue
     corpo = js[ab + 1:fim]
-    if "falar(" not in corpo or (ops + ".") not in corpo:
+    if not any(f in corpo for f in FALAS) or (ops + ".") not in corpo:
         continue
     ajudantes.append((nome, ops, corpo))
 

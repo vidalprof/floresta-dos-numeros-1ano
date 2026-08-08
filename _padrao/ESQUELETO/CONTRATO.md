@@ -756,3 +756,39 @@ esticar na vertical e caiu para 62px: **400×62 = 6,5×**, acima do teto de 6 do
 diretor de arte. Consertado pelo lado da **largura** (360px), não da altura —
 engordar o botão roubaria justamente a altura que faltava na tela baixa.
 → **Toda correção de leiaute se remede no portão do acabamento, sempre.**
+
+## ⚠️ LIÇÃO PAGA — O TERCEIRO PORTÃO CEGO, E A BANCA JÁ AVISAVA (ago/2026)
+
+A banca termina com uma lista: **"PORTÕES QUE RODARAM CEGOS (mediram ZERO)"**,
+e embaixo a frase *"aprovação vazia dá confiança falsa"*. Eu li essa lista
+várias vezes esta semana e **nunca fui conferir**. Fui, e dos três:
+
+- **0c (pergunta ambígua)** e **0k (explica a regra)** eram zero **legítimo** —
+  a Padaria não tem fase de "ache na cena" nem fase que fecha por atributo
+  distinto. Não há o que medir, e dizer isso é honesto.
+- **1d (promessa)** estava **CEGO** — e em *toda* atividade montada.
+
+### O que ele não via
+O portão procurava a forma do Broto — `function ajuda(n,ops){`, uma
+**declaração**. O esqueleto escreve `window.ajuda = function(n, ops){`, uma
+**atribuição**. A expressão regular nunca casava, e ele imprimia "nada a
+conferir" com a maior calma. **Mesma família do `srcDe`** no portão das
+imagens: o auditor procurando a forma de UMA atividade em vez do que o código
+FAZ.
+
+E a "fala" também mudou de nome: no esqueleto quem promete é o `consolo()` (que
+toca a voz de erro) e o `mostraDica()` — que **escreve** a promessa na tela.
+**Promessa escrita é promessa igual:** a criança lê e espera.
+
+### Medido dos dois lados, que é o que faz o conserto valer
+- na Padaria: **0 → 5 ajudantes** encontrados, e aprova (nenhuma fala de ajuda
+  sem a ação correspondente);
+- num arquivo com o defeito histórico do Bento plantado de propósito (*"deixa eu
+  pôr os brinquedos na mesa"* com `ops.concreto` opcional): **reprova**, e diz a
+  linha e a chave que falta.
+
+### A regra que fica
+**A lista de "rodaram cegos" é tarefa, não rodapé.** Toda vez que ela aparecer,
+conferir um por um: ou a atividade realmente não tem aquilo — e aí se diz —, ou
+o portão deixou de enxergar. Esta semana foram **três** portões cegos
+(`imagens`, `funcoes`, `promessa`); os três aprovavam.
