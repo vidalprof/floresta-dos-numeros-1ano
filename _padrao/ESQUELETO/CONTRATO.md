@@ -829,3 +829,24 @@ em silêncio é o começo de toda aprovação vazia*.
 
 E um **falso-positivo** do diretor de arte: a "fileira torta" media todos os
 irmãos, inclusive os **empilhados**, onde altura diferente é natural.
+
+## 📋 O ESTADO MEDIDO (ago/2026) — o que está provado, e com que número
+
+Escrito aqui porque *"passou"* sem número é opinião. Tudo abaixo foi medido
+**depois** da última mudança de cada um.
+
+| o quê | como se remede | resultado |
+|---|---|---|
+| **a esteira, do nada ao HTML** | `bash _padrao/ESQUELETO/provar_esteira.sh` | **0** — 13 portões de estrutura |
+| **A Padaria das Letras** | `bash _qa/auditar.sh _padaria/index.html` | **0** — banca inteira |
+| **as peças da oficina** | `bash _qa/peca.sh _padrao/pecas/<x>.html` | **77 de 77** |
+
+⚠️ **Banca que rodou ANTES da mudança não vale para depois dela.** Rodei a da
+Padaria de novo só porque o `completar` mudou; e rodei a esteira de novo só
+porque o container reiniciou. Aferição que só passou antes do reinício não
+prova nada.
+
+### O que continua fora da medição — e por quê
+- **arte e voz da `_prova30`**: ela é esqueleto, e gerar 11 imagens + ~270
+  vozes para uma aferição descartável é dinheiro fora (ver a seção da prova);
+- **o portão do PROFESSOR**: é o Marcos, e nenhum script substitui.
