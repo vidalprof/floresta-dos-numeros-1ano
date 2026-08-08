@@ -302,6 +302,60 @@ alvo 62px > "$T/a_bom.html"
 pega "leiaute  · alvo pequeno para o dedo" PEGA  node _qa/leiaute.js "$T/a_ruim.html" telaCapa
 pega "leiaute  · alvo do tamanho da casa"  DEIXA node _qa/leiaute.js "$T/a_bom.html"  telaCapa
 
+# ---------- 14) VOZFALTA: o texto escrito e o mp3 que ninguem gravou ----------
+# Palavras do Marcos: *"na cruzadinha do 3º ano os audios e o botao 'ouvir de
+# novo' nao funcionam"*. O 404 do mp3 e SILENCIOSO: o motor segue em frente e a
+# fase inteira fica muda para quem ainda nao le.
+mkdir -p "$T/_voz/audio" "$T/_vozb/audio"
+for d in _voz _vozb; do
+cat > "$T/$d/index.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function fase1(){ falaDaTela("pd_f01"); }
+</script></body></html>
+H
+echo '[{"id":"pd_f01","texto":"Escolha a placa que comeca com P."}]' > "$T/$d/falas.json"
+done
+: > "$T/_vozb/audio/pd_f01.mp3"          # o certo: a voz foi gravada
+pega "vozfalta· texto escrito, mp3 ausente" PEGA  python3 _qa/vozfalta.py "$T/_voz/index.html"
+pega "vozfalta· voz gravada"                DEIXA python3 _qa/vozfalta.py "$T/_vozb/index.html"
+
+# ---------- 15) VOZDICA: a dica falada nao e a dica escrita ----------
+# Pedido do Marcos: *"o som que e falado tem que ser o mesmo do texto"*. Ja
+# aconteceu de a dica dizer "de cima voce ve o telhado" numa tela sem telhado.
+mkdir -p "$T/_dic" "$T/_dicb"
+for d in _dic _dicb; do
+cat > "$T/$d/index.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function fase1(){ montaBarra("pd_d01","Olhe a primeira letra da palavra."); }
+</script></body></html>
+H
+done
+echo '[{"id":"pd_d01","texto":"De cima voce ve o telhado, nunca a porta."}]' > "$T/_dic/falas.json"
+echo '[{"id":"pd_d01","texto":"Olhe a primeira letra da palavra."}]'        > "$T/_dicb/falas.json"
+pega "vozdica · a voz diz outra coisa"  PEGA  python3 _qa/vozdica.py "$T/_dic/index.html"
+pega "vozdica · voz igual ao escrito"   DEIXA python3 _qa/vozdica.py "$T/_dicb/index.html"
+
+# ---------- 16) ARTE PROPRIA: o avatar emprestado ----------
+# O Marcos pegou no olho: os avatares do Observatorio do Orbi eram os brotinhos
+# verdes do Jardim, no meio de um ceu estrelado. Clonar o MOTOR e obrigatorio;
+# clonar a ARTE e proibido.
+# ⚠️ este portao varre as pastas irmas a partir do diretorio ATUAL — por isso o
+#    fixture roda com o cwd DENTRO da area de teste, senao ele compararia com as
+#    atividades de verdade do repositorio.
+RAIZ="$PWD"
+mkdir -p "$T/_uma/img" "$T/_outraA/img" "$T/_soa/img"
+: > "$T/_uma/index.html"; : > "$T/_outraA/index.html"; : > "$T/_soa/index.html"
+python3 - "$T/_uma/img/av1.png" "$T/_outraA/img/broto.png" "$T/_soa/img/av1.png" <<'PY'
+import base64,sys
+mesmo = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==")
+outro = base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==")
+open(sys.argv[1],"wb").write(mesmo)   # _uma  : avatar
+open(sys.argv[2],"wb").write(mesmo)   # _outraA: MESMOS bytes = copiado
+open(sys.argv[3],"wb").write(outro)   # _soa  : arte propria
+PY
+pega "arte     · avatar copiado de outra"  PEGA  bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _uma'  _ "$T" "$RAIZ"
+pega "arte     · arte propria"             DEIXA bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _soa'  _ "$T" "$RAIZ"
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
