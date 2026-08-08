@@ -119,8 +119,17 @@ h1{font-size:34px;font-weight:700;color:#fff;margin:6px 0 2px;text-align:center;
 .mini.dica{background:-webkit-linear-gradient(top,#ffe9a3,#ffd43b);background:linear-gradient(#ffe9a3,#ffd43b);color:#6a4b00}
 .mini.tocando{-webkit-animation:beat .9s ease-in-out infinite;animation:beat .9s ease-in-out infinite}
 /* PREVER (POE) */
-.opts{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:10px;margin-top:14px;width:100%;max-width:400px}
-.opt{background:rgba(255,253,246,.96);border:2px solid var(--linha);border-bottom-width:5px;border-radius:18px;padding:14px 16px;font-size:16px;font-weight:600;cursor:pointer;text-align:center;-webkit-box-shadow:0 5px 12px rgba(30,50,20,.16);box-shadow:0 5px 12px rgba(30,50,20,.16)}
+/* ⚠️ LICAO PAGA TRES VEZES (ago/2026) — A OPCAO ESTICADA. Regra do Marcos:
+   *"nada de botoes muito esticado, quero tudo simetrico no app"*. O molde
+   antigo era 400px de largura sem piso de altura: uma opcao de uma linha
+   media 400x55 = 7,3 vezes mais larga que alta, acima do teto de 6 do portao
+   do diretor de arte (`_qa/visual.js`, regra 4). O conserto foi feito TRES
+   vezes, na mao, dentro de `escolher`, `completar` e `intruso` — e a quarta
+   peca com opcoes repetiria o defeito de novo. Por isso a conta mora AQUI, no
+   motor, e nao em cada peca: 360 / 62 = 5,8. As pecas mantem a regra delas
+   porque tambem rodam SOZINHAS, fora do motor. */
+.opts{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column;gap:10px;margin-top:14px;width:100%;max-width:360px}
+.opt{background:rgba(255,253,246,.96);border:2px solid var(--linha);border-bottom-width:5px;border-radius:18px;padding:14px 16px;min-height:62px;font-size:16px;font-weight:600;cursor:pointer;text-align:center;-webkit-box-shadow:0 5px 12px rgba(30,50,20,.16);box-shadow:0 5px 12px rgba(30,50,20,.16)}
 .opt:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
 .opt.ok{border-color:var(--verde);background:#eafce0}
 .opt.no{border-color:var(--coral);background:#ffece9}

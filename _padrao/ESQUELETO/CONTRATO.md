@@ -866,8 +866,9 @@ Marcos de verdade — e exige código ≠ 0. E, onde já houve falso-positivo,
 planta também o caso **certo** e exige código 0: *portão que grita à toa ensina
 a ignorar portão.*
 
-Hoje prova 5 casos: função inexistente · chamada protegida por `typeof` ·
-promessa sem ação · citação em comentário · prefixo de outra atividade.
+Hoje prova 7 casos: função inexistente · chamada protegida por `typeof` ·
+promessa sem ação · citação em comentário · prefixo de outra atividade ·
+opção esticada (fita) · opção no molde do motor.
 **Portão novo entra aqui no mesmo commit** — senão ele nasce sem prova.
 
 ### As duas coisas que ele já ensinou, na estreia
@@ -879,3 +880,28 @@ promessa sem ação · citação em comentário · prefixo de outra atividade.
    o prefixo da atividade (pasta sem `img/`, ou com menos de 4 arquivos). E
    "pulei" calado some no meio de um relatório de 30 portões e vira "passou".
    Agora ele diz **"NÃO MEDI"** — a mesma regra dos outros três.
+
+---
+
+## 📏 A CONTA MORA NO MOTOR, NÃO EM CADA PEÇA — a opção esticada (ago/2026)
+
+Regra do Marcos: *"nada de botões muito esticados, quero tudo simétrico no
+app"*. O teto do diretor de arte (`_qa/visual.js`, regra 4) é **6 vezes mais
+largo que alto**.
+
+O molde antigo do motor era `.opts{max-width:400px}` + `.opt` **sem piso de
+altura**: uma opção de uma linha media `400×55` = **7,3**. Consertei isso
+**três vezes, na mão** — dentro de `escolher`, `completar` e `intruso` — cada
+uma com o seu comentário explicando a mesma conta. A quarta peça com opções
+repetiria o defeito, porque nada no motor a impedia.
+
+**O que fica:** a conta subiu para o motor —
+`.opts{max-width:360px}` + `.opt{min-height:62px}` → **360/62 = 5,8**.
+As peças mantêm a regra delas porque também rodam **sozinhas**, fora do motor;
+ali a duplicação não é remendo, é o preço de a peça ser autossuficiente.
+
+**A lição, em uma linha:** *quando eu me pego consertando a MESMA conta pela
+terceira vez em arquivos diferentes, o lugar dela não é o arquivo — é o
+molde.* Medido: esteira 13/13 e leiaute 6 tamanhos × 38 telas seguem em 0 com
+a opção mais alta, e o `provar_portoes.sh` ganhou os dois casos (a fita
+reprova, o molde do motor passa).

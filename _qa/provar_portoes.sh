@@ -106,6 +106,28 @@ var IMGS = ["pd_pao","jd_broto_feliz"];
 H
 pega "clone    · prefixo de outra atividade" PEGA python3 _qa/clone.py "$T/_ativ/index.html"
 
+# ---------- 5) VISUAL: botao esticado (a opcao que virou fita) ----------
+# Este e o defeito que eu consertei TRES vezes na mao (escolher, completar,
+# intruso) antes de a conta subir para o motor: opcao de 400x55 = 7,3 vezes
+# mais larga que alta. O teto do diretor de arte e 6.
+molde(){ # molde(<largura>, <altura-minima>) -> html de tres opcoes empilhadas
+cat <<H
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><style>
+body{margin:0;background:#2b2118;font-family:Arial,sans-serif}
+#app{max-width:520px;margin:0 auto;padding:12px}
+.opts{display:flex;flex-direction:column;align-items:center;gap:10px;width:100%;max-width:$1}
+.opt{width:100%;background:#fffdf6;color:#221a12;border:2px solid #6b5a3a;border-radius:18px;
+     padding:14px 16px;min-height:$2;font-size:16px;font-weight:600;text-align:center}
+</style></head><body><div id="app"><div class="opts">
+<div class="opt">massa</div><div class="opt">forno</div><div class="opt">farinha</div>
+</div></div></body></html>
+H
+}
+molde 400px 0   > "$T/v_ruim.html"
+molde 360px 62px > "$T/v_bom.html"
+pega "visual   · opcao esticada (fita)"   PEGA  node _qa/visual.js "$T/v_ruim.html"
+pega "visual   · opcao no molde do motor" DEIXA node _qa/visual.js "$T/v_bom.html"
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
