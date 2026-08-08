@@ -866,7 +866,7 @@ Marcos de verdade — e exige código ≠ 0. E, onde já houve falso-positivo,
 planta também o caso **certo** e exige código 0: *portão que grita à toa ensina
 a ignorar portão.*
 
-Hoje prova **42 casos em 18 portões**: `funcoes` (função inexistente · chamada
+Hoje prova **46 casos em 18 portões**: `funcoes` (função inexistente · chamada
 protegida por `typeof`) · `promessa` (voz promete e a tela não cumpre) ·
 `dinamicas` (citação em comentário não é gatilho) · `clone` (prefixo de outra
 atividade) · `visual` (opção esticada · opção no molde do motor) · `imagens`
@@ -946,3 +946,47 @@ O meu primeiro fixture escrevia `n<b>a ponte</b>` — que não é como ninguém
 escreve — e por isso quase me fez concluir que o portão estava certo. Antes de
 acusar (ou absolver) um portão, conferir o defeito plantado contra uma
 atividade de verdade.
+
+---
+
+## 🕶️ "35 TELAS" QUANDO SE MEDIU 10 — o portão cego pela METADE (ago/2026)
+
+Este é o achado mais caro da noite, e ele estava impresso no relatório da banca
+o tempo todo — eu é que lia o rodapé e não o meio.
+
+O relatório da Padaria dizia, no fim: **"imagens conferidas em 35 telas"**. Vinte
+linhas acima, **vinte e cinco** vezes seguidas: `(pulei pecaEscolher: não é
+função)`. Ou seja: mediu **dez**. O mesmo valia para o portão do **contraste** —
+o portão que o Marcos pediu com todas as letras (*"sempre verificar se não há um
+contraste nas cores, para que não aconteça de a criança não conseguir
+enxergar"*).
+
+**Por que:** numa atividade montada pelo esqueleto as fases **não são funções
+globais** — são fechamentos dentro de `MEC["nome"]`, e quem as desenha é o motor
+(`montaFase(i)`). O detector de telas da banca procura `function nome(){ …
+limpa() … }`, então ele *lista* os nomes que moram dentro das peças e não
+consegue chamar **nenhum**. Tudo o que a criança vê depois da capa ficava fora
+da conta.
+
+**O conserto tem duas partes, e as duas importam:**
+1. medir as fases pelo caminho de verdade — `montaFase(i)` para cada fase da
+   lista `FASES`, que é exatamente como a criança as vê;
+2. **contar e dizer o número.** "35 telas" quando se mediu 10 é o mesmo pecado
+   do portão que roda cego: número que consola. Agora o rodapé diz
+   `42 tela(s) (10 por nome + 32 fase(s) pelo motor)` — e, se não medir nada,
+   **reprova** com "NÃO MEDI NENHUMA TELA — isto não é 'passou'".
+
+### O que apareceu quando o portão abriu os olhos
+**45 textos abaixo do mínimo WCAG na Padaria**, o pior a **1,95:1** ("A PALAVRA
+É / PÃO" escrito direto sobre a estante). Nenhum era descuido: é um defeito de
+**parentesco**. Na bancada a peça roda sobre um fundo LISO e escuro (`#2b2118`),
+e ali o creme e o amarelo dela passam folgado; dentro da atividade o mesmo texto
+cai sobre a **FOTO** — a madeira da padaria, o céu do observatório — e a razão
+despenca.
+
+**A regra que fica, na PONTE (vale para as 77 peças):** *rótulo, contador e
+frase que ficam direto sobre o fundo ganham uma placa escura translúcida* — o
+cartão já tem a dele. E: *quem muda o FUNDO de um botão tem que mudar a LETRA
+junto* (o `.bclaro` do pintar ficou creme sobre creme, 1,24:1).
+
+Medido depois do conserto: **421 textos em 42 telas, contraste 0**.

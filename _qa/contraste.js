@@ -56,14 +56,45 @@ function parseCor(s){
   const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'contraste-'));
   let reprovados=[], total=0;
 
-  for(const tela of telas){
+  /* ⚠️ LICAO PAGA (ago/2026) — O MESMO BURACO DO `imagens.js`, e este e o
+     portao que o Marcos pediu com todas as letras (*"sempre verificar se nao
+     ha um contraste nas cores, para que nao aconteca de a crianca nao
+     conseguir enxergar"*). Numa atividade montada pelo esqueleto as fases nao
+     sao funcoes globais — sao fechamentos dentro de `MEC["nome"]`, desenhados
+     pelo motor (`montaFase(i)`). O detector de telas da banca lista os nomes
+     que vivem DENTRO das pecas e nenhum deles existe no `window`: na Padaria
+     eram 25 "pulei" para 10 telas medidas, e o rodape ainda dizia "35 telas".
+     Agora as fases entram pelo caminho de verdade, e o rodape diz quantas
+     foram medidas mesmo. */
+  await p.goto(url); await p.waitForTimeout(400);
+  const nfases=await p.evaluate(()=>
+    (typeof montaFase==="function" && typeof FASES!=="undefined") ? FASES.length : 0);
+  const alvos=telas.map(t=>({nome:t}));
+  for(let i=0;i<nfases;i++) alvos.push({fase:i});
+  let puladas=0, abertas=0;
+
+  for(const alvo of alvos){
+    const tela = (alvo.nome!==undefined) ? alvo.nome : ("fase"+alvo.fase);
     await p.goto(url);
     await p.waitForTimeout(500);
-    await p.evaluate(()=>{ window.falar=function(){}; window.depoisDaFala=function(i,m,cb){setTimeout(cb,80);}; });
-    if(tela!=="telaCapa"){
+    await p.evaluate(()=>{ window.falar=function(){}; window.falaDaTela=function(){};
+                           window.depoisDaFala=function(i,m,cb){setTimeout(cb,80);}; });
+    if(alvo.fase!==undefined){
+      const ok=await p.evaluate(i=>{ try{ montaFase(i,function(){}); return true; }
+                                     catch(e){ return false; } },alvo.fase);
+      if(!ok){ puladas++; continue; }
+    } else if(tela!=="telaCapa"){
       const ok=await p.evaluate(t=>{ if(typeof window[t]!=="function") return false; window[t](); return true; },tela);
-      if(!ok){ console.log("  (pulei "+tela+": nao e funcao)"); continue; }
-    } else { await p.evaluate(()=>telaCapa()); }
+      if(!ok){ puladas++; continue; }
+    } else {
+      /* ⚠️ ate aqui a capa era chamada SEM conferir se existe: num arquivo que
+         nao tem `telaCapa` o `evaluate` estourava e o portao morria com um
+         rastro de erro em vez de dizer "nao consegui medir". */
+      const ok=await p.evaluate(()=>{ if(typeof telaCapa!=="function") return false;
+                                      telaCapa(); return true; });
+      if(!ok){ puladas++; continue; }
+    }
+    abertas++;
     await p.waitForTimeout(900);
 
     /* 1) lista os textos visiveis + cor computada + tamanho */
@@ -170,7 +201,11 @@ function parseCor(s){
   }
   await b.close();
 
-  console.log(arquivo+" -> "+total+" textos medidos em "+telas.length+" tela(s)");
+  console.log(arquivo+" -> "+total+" textos medidos em "+abertas+" tela(s)"+
+    (nfases?" ("+(abertas-nfases>0?abertas-nfases:0)+" por nome + "+nfases+" fase(s) pelo motor)":""));
+  if(puladas) console.log("  ("+puladas+" nome(s) da lista nao sao funcao global — "+
+    "sao fases dentro das pecas, medidas acima pelo motor)");
+  if(!abertas){ console.log("  NAO MEDI NENHUMA TELA — isto nao e 'passou'."); process.exit(1); }
   if(!reprovados.length){ console.log("  contraste ok: nenhum texto abaixo do minimo WCAG"); process.exit(0); }
   reprovados.sort((a,b)=>a.r-b.r);
   console.log("  "+reprovados.length+" TEXTO(S) COM CONTRASTE BAIXO (a crianca pode nao enxergar):");

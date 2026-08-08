@@ -82,14 +82,29 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
   }
   for(const s of (pre.ruins||[])) anota(s,"pre-carga (IMGS)");
 
-  /* 2) tela por tela: o que esta na tela carregou? */
+  /* 2) tela por tela: o que esta na tela carregou?
+     ⚠️ LICAO PAGA (ago/2026) — "PULEI" REPETIDO 25 VEZES E UM PORTAO CEGO
+     PELA METADE. Na Padaria a banca imprimia "imagens conferidas em 35 telas"
+     e, logo acima, VINTE E CINCO linhas "(pulei pecaEscolher: nao e funcao)".
+     Ou seja: mediu DEZ. O motivo e estrutural — numa atividade montada pelo
+     esqueleto as fases nao sao funcoes globais, sao fechamentos dentro de
+     `MEC["nome"]`, e quem as desenha e o motor (`montaFase(i)`). O detector de
+     telas da banca so acha `function nome(){...limpa()...}`, entao lista os
+     nomes que existem DENTRO das pecas e nao consegue chamar nenhum.
+     O conserto tem duas partes, e as duas importam:
+       1. medir as fases pelo caminho de verdade — `montaFase(i)` para cada
+          fase da lista FASES, que e como a crianca as ve;
+       2. CONTAR o que foi medido e dizer o numero. "35 telas" quando se mediu
+          10 e o mesmo pecado do portao que roda cego: numero que consola. */
+  let medidas=0, puladas=0;
   for(const t of telas){
     await p.goto(url); await p.waitForTimeout(280);
     const ok=await p.evaluate(t=>{
       window.falar=function(){}; window.depoisDaFala=function(i,m,cb){setTimeout(cb,60);};
       if(typeof window[t]!=="function") return false; window[t](); return true;
     },t);
-    if(!ok){ console.log("  (pulei "+t+": nao e funcao)"); continue; }
+    if(!ok){ puladas++; continue; }
+    medidas++;
     await p.waitForTimeout(900);
     /* ⚠️ LICAO PAGA (ago/2026) — O MEIO-PORTAO. Aqui havia um comentario
        dizendo "fundo por CSS tambem some sem avisar" e, LOGO ABAIXO, uma
@@ -100,7 +115,46 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
        Agora ela existe de verdade: `background-image:url(...)` que nao carrega
        reprova igual a um <img> quebrado — a crianca perde a mesa da padaria,
        o ceu do observatorio, o verso da carta. */
-    const ruins=await p.evaluate(async()=>{
+    const ruins=await mede();
+    for(const s of ruins) anota(s,t);
+  }
+
+  /* 2b) AS FASES, pelo caminho de verdade: quem desenha a fase numa atividade
+     montada e o motor. Sem isto, tudo o que a crianca ve DEPOIS da capa fica
+     fora da conta. */
+  let fases=0;
+  const temMotor=await p.evaluate(()=>
+    typeof montaFase==="function" && typeof FASES!=="undefined" ? FASES.length : 0);
+  for(let i=0;i<temMotor;i++){
+    await p.goto(url); await p.waitForTimeout(260);
+    const ok=await p.evaluate(i=>{
+      window.falar=function(){}; window.falaDaTela=function(){};
+      window.depoisDaFala=function(id,ms,cb){setTimeout(cb,20);};
+      try{ montaFase(i,function(){}); return true; }catch(e){ return false; }
+    },i);
+    if(!ok) continue;
+    fases++;
+    await p.waitForTimeout(700);
+    const ruins=await mede();
+    const nome=await p.evaluate(i=>(FASES[i]&&(FASES[i].id||FASES[i].selo))||("fase "+i),i);
+    for(const s of ruins) anota(s,"fase "+nome);
+  }
+  await b.close();
+
+  const total=medidas+fases;
+  console.log(arquivo+" -> imagens conferidas em "+total+" tela(s) ("+medidas+
+    " por nome"+(fases?" + "+fases+" fase(s) pelo motor":"")+") + a pre-carga");
+  if(puladas) console.log("  ("+puladas+" nome(s) da lista nao sao funcao global — "+
+    "sao fases dentro das pecas, medidas acima pelo motor)");
+  if(!total){ console.log("  NAO MEDI NENHUMA TELA — isto nao e 'passou'."); process.exit(1); }
+  if(!quebradas.size){ console.log("  imagens ok: toda figura da atividade carrega"); process.exit(0); }
+  console.log("  "+quebradas.size+" IMAGEM(NS) QUE NAO CARREGA(M) (a crianca ve um quadradinho vazio):");
+  for(const [src,onde] of quebradas)
+    console.log("   "+src+"  ->  "+[...onde].slice(0,4).join(", ")+([...onde].length>4?" ...":""));
+  process.exit(1);
+
+  async function mede(){
+    return p.evaluate(async()=>{
       const fora=[];
       const ims=document.querySelectorAll("img");
       for(let i=0;i<ims.length;i++){
@@ -129,14 +183,5 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
       })));
       return fora;
     });
-    for(const s of ruins) anota(s,t);
   }
-  await b.close();
-
-  console.log(arquivo+" -> imagens conferidas em "+telas.length+" tela(s) + a pre-carga");
-  if(!quebradas.size){ console.log("  imagens ok: toda figura da atividade carrega"); process.exit(0); }
-  console.log("  "+quebradas.size+" IMAGEM(NS) QUE NAO CARREGA(M) (a crianca ve um quadradinho vazio):");
-  for(const [src,onde] of quebradas)
-    console.log("   "+src+"  ->  "+[...onde].slice(0,4).join(", ")+([...onde].length>4?" ...":""));
-  process.exit(1);
 })();

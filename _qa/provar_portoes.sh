@@ -495,6 +495,19 @@ echo '[{"id":"jd_prato_intro","texto":"Ponha no prato cinco partes diferentes da
 pega "explica · exige atributo sem dizer"  PEGA  python3 _qa/explica.py "$T/_exp/index.html"
 pega "explica · enunciado e voz explicam"  DEIXA python3 _qa/explica.py "$T/_expb/index.html"
 
+# ---------- 21) "NAO MEDI" NAO E "PASSOU" ----------
+# A regra da casa, escrita depois de tres portoes cegos no mesmo dia: portao
+# que nao conseguiu medir REPROVA e diz isso. Zero tela medida com codigo 0 e
+# o jeito mais silencioso de mentir.
+cat > "$T/nada.html" <<'H'
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"></head>
+<body><div id="app"></div><script>
+var x = 1;   /* nem telaCapa, nem montaFase, nem FASES: nada para abrir */
+</script></body></html>
+H
+pega "imagens  · nao mediu nada = reprova"   PEGA node _qa/imagens.js   "$T/nada.html" telaCapa
+pega "contraste· nao mediu nada = reprova"   PEGA node _qa/contraste.js "$T/nada.html" telaCapa
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
