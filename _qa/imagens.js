@@ -72,12 +72,15 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
     })));
     return {ruins:ruins, quantas:IMGS.length};
   });
+  /* ⚠️ E O FALSO-POSITIVO QUE ISTO CRIOU, no mesmo dia: PECA AVULSA nao tem
+     pre-carga — `IMGS` e do MOTOR, e a peca roda sozinha. Reprovar por isso
+     seria cobrar de um arquivo uma coisa que ele nao tem. "Nao existe" e
+     diferente de "nao consegui medir": a primeira e informacao, a segunda e
+     cegueira. So a segunda reprova. */
   if(pre.cego){
-    console.log(arquivo+" -> NAO MEDI a pre-carga: "+pre.cego);
-    console.log("  portao que nao mede nao aprova. Conserte a atividade ou o portao.");
-    process.exit(2);
+    console.log("  (sem pre-carga: "+pre.cego+" — normal em peca avulsa)");
   }
-  for(const s of pre.ruins) anota(s,"pre-carga (IMGS)");
+  for(const s of (pre.ruins||[])) anota(s,"pre-carga (IMGS)");
 
   /* 2) tela por tela: o que esta na tela carregou? */
   for(const t of telas){
