@@ -42,9 +42,20 @@ import re
 import sys
 
 # artigo definido singular = "aquela, a única"
-DEF = re.compile(r"\b(?:o|a)\s+<b>", re.I)
+#
+# ⚠️ LICAO PAGA NA PROVA DOS PORTOES (ago/2026): a regra só enxergava o artigo
+#    SOLTO ("a <b>ponte</b>"), que é como o `_mapa` escreve. Só que a frase mais
+#    natural do mundo para uma criança é a CONTRAÍDA — *"Toque na <b>ponte</b>"*,
+#    *"Ache o telhado da <b>escola</b>"* — e ali o "a" está grudado no "n"/"d",
+#    sem fronteira de palavra antes dele. Resultado: o portão que existe para
+#    pegar a pergunta ambígua ficava cego justamente na forma que eu mais
+#    escrevo. Achado plantando o defeito num arquivo de mentira, que é para isso
+#    que a prova dos portões serve.
+DEF = re.compile(r"(?:^|[\s\"'>(])(?:[nd]?[oa]|ao|à)\s+<b>", re.I)
 # indefinido / coletivo / plural = pode haver várias
-IND = re.compile(r"\b(?:um|uma|algum|alguma|uns|umas|os|as)\s+<b>|"
+# (inclui as contraídas do indefinido: "num", "numa", "dum", "duma")
+IND = re.compile(r"\b(?:[nd]?um|[nd]?uma|algum|alguma|uns|umas|os|as|dois|duas|"
+                 r"varios|varias|cada|todos|todas)\s+<b>|"
                  r"<b>[^<]*</b>\s*(?:em volta|do bairro|da cidade)", re.I)
 
 

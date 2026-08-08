@@ -866,7 +866,7 @@ Marcos de verdade — e exige código ≠ 0. E, onde já houve falso-positivo,
 planta também o caso **certo** e exige código 0: *portão que grita à toa ensina
 a ignorar portão.*
 
-Hoje prova **31 casos em 14 portões**: `funcoes` (função inexistente · chamada
+Hoje prova **35 casos em 16 portões**: `funcoes` (função inexistente · chamada
 protegida por `typeof`) · `promessa` (voz promete e a tela não cumpre) ·
 `dinamicas` (citação em comentário não é gatilho) · `clone` (prefixo de outra
 atividade) · `visual` (opção esticada · opção no molde do motor) · `imagens`
@@ -876,7 +876,8 @@ falando sozinho · fecho com `fechaFase`) · `classes` (só dentro de `@media` �
 comentário com a palavra `@media`) · `falas` ("Complete" → *complite*) ·
 `fluxo` (tela presa em si mesma + órfã) · `contraste` (creme sobre creme) ·
 `leiaute` (alvo de 26px) · `vozfalta` (texto escrito e mp3 que ninguém gravou) ·
-`vozdica` (a voz diz outra coisa) · `arte_propria` (o avatar emprestado).
+`vozdica` (a voz diz outra coisa) · `arte_propria` (o avatar emprestado) ·
+`ambiguo` ("a ponte" havendo duas) · `vozintro` (a intro que cala a pergunta).
 **Portão novo entra aqui no mesmo commit** — senão ele nasce sem prova.
 
 ### As duas coisas que ele já ensinou, na estreia
@@ -913,3 +914,35 @@ terceira vez em arquivos diferentes, o lugar dela não é o arquivo — é o
 molde.* Medido: esteira 13/13 e leiaute 6 tamanhos × 38 telas seguem em 0 com
 a opção mais alta, e o `provar_portoes.sh` ganhou os dois casos (a fita
 reprova, o molde do motor passa).
+
+---
+
+## 🔎 A PROVA ACHOU UM PORTÃO CEGO — o artigo contraído (ago/2026)
+
+Esta é a primeira vez que o `provar_portoes.sh` paga o preço dele sozinho, sem
+o Marcos ter de ver o defeito primeiro.
+
+O portão da **pergunta ambígua** existe por causa de uma cobrança dele: *"a
+mesma coisa a ponte, fica confuso porque tem DUAS pontes"*, e o recado que
+fecha, **"esses erros não podem passar"**. A regra dele é boa: pergunta no
+definido singular (*a ponte*) declarando **duas zonas** é a própria tela
+confessando que há duas na figura.
+
+**O que ele não via:** a regra procurava o artigo **solto** — `a <b>ponte</b>`,
+que é como o `_mapa` escreve. Só que a frase mais natural para uma criança é a
+**contraída**: *"Toque **na** `<b>`ponte`</b>`"*, *"o telhado **da** `<b>`escola`</b>`"*.
+Ali o "a" está grudado no "n"/"d" e **não tem fronteira de palavra antes dele**,
+então o `\b` do regex não casava. O portão ficava cego justamente na forma que
+eu mais escrevo.
+
+**Conserto:** `(?:[nd]?[oa]|ao|à)\s+<b>` no definido, e as contraídas do
+indefinido (`num`, `numa`, `dum`, `duma`) mais os coletivos (`dois`, `duas`,
+`vários`, `cada`, `todos`) no lado que **libera** — porque quem grita à toa
+ensina a ignorar portão. Medido nas três atividades que têm "ache na cena"
+(`_mapa`, `_naveg`, `_padaria`): nenhuma virou alarme falso.
+
+**A lição:** *plantar o defeito no formato REAL, não no formato que eu imagino.*
+O meu primeiro fixture escrevia `n<b>a ponte</b>` — que não é como ninguém
+escreve — e por isso quase me fez concluir que o portão estava certo. Antes de
+acusar (ou absolver) um portão, conferir o defeito plantado contra uma
+atividade de verdade.

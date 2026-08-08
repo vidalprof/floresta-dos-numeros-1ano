@@ -356,6 +356,55 @@ PY
 pega "arte     · avatar copiado de outra"  PEGA  bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _uma'  _ "$T" "$RAIZ"
 pega "arte     · arte propria"             DEIXA bash -c 'cd "$1" && python3 "$2/_qa/arte_propria.py" _soa'  _ "$T" "$RAIZ"
 
+# ---------- 17) AMBIGUO: "a ponte" quando ha DUAS pontes ----------
+# Palavras do Marcos: *"fica confuso porque tem DUAS pontes"* — e o recado que
+# fecha: *"esses erros nao podem passar"*. Artigo definido singular declarando
+# duas zonas e a propria tela confessando que ha duas.
+cat > "$T/am_ruim.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+var ACHE = [
+  { q:"a <b>ponte</b>", z:[{x:120,y:80},{x:260,y:150}] },
+  { q:"Toque na <b>igreja</b>", z:[{x:40,y:40},{x:90,y:70}] }
+];
+</script></body></html>
+H
+cat > "$T/am_bom.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+var ACHE = [
+  { q:"uma <b>ponte</b>", z:[{x:120,y:80},{x:260,y:150}] },
+  { q:"o <b>rio</b>", unico:1, z:[{x:10,y:20},{x:60,y:90}] }
+];
+</script></body></html>
+H
+pega "ambiguo · 'a ponte' com duas pontes" PEGA  python3 _qa/ambiguo.py "$T/am_ruim.html"
+pega "ambiguo · 'uma ponte' com duas"      DEIXA python3 _qa/ambiguo.py "$T/am_bom.html"
+
+# ---------- 18) VOZINTRO: a intro que cala a primeira pergunta ----------
+# O Marcos achou UMA fase (*"no mapa do bairro o simbolo escola nao e falado"*).
+# Quando fui medir, eram 27 — sempre a PRIMEIRA rodada.
+# ⚠️ o caso CERTO tem o `falaDaTela` dentro de um onclick, que foi o falso
+#    alarme pago: ordem de arquivo nao e ordem de tempo.
+cat > "$T/vi_ruim.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function passo(){
+  var t=el("div","tela");
+  falaDaTela("pd_q0");
+  if(idx===0) falar("pd_intro");
+}
+</script></body></html>
+H
+cat > "$T/vi_bom.html" <<'H'
+<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
+function passo(){
+  var t=el("div","tela");
+  if(idx===0) introEPergunta("pd_q0"); else falaDaTela("pd_q0");
+  t.onclick=function(){ falaDaTela("pd_q0"); };
+}
+</script></body></html>
+H
+pega "vozintro· intro por cima da pergunta" PEGA  python3 _qa/vozintro.py "$T/vi_ruim.html"
+pega "vozintro· introEPergunta + onclick"   DEIXA python3 _qa/vozintro.py "$T/vi_bom.html"
+
 echo "-----------------------------------------------------------"
 if [ "$falhou" = "0" ]; then
   echo " OS PORTOES PROVAM O QUE DIZEM — cada um reprovou o seu defeito."
