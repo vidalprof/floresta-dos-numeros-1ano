@@ -46,20 +46,38 @@ const CROMO='/opt/pw-browsers/chromium-1194/chrome-linux/chrome';
         Elas nem chegam ao DOM na abertura, entao so este teste as alcanca. */
   await p.goto(url);
   await p.waitForTimeout(500);
+  /* ⚠️ LICAO PAGA (ago/2026) — ESTE PORTAO RODOU CEGO E EU SO DESCOBRI OLHANDO.
+     A linha era `if(typeof IMGS==="undefined"||typeof srcDe!=="function")
+     return [];`. So que `srcDe` NUNCA EXISTIU no motor — o caminho da figura e
+     montado inline (`"img/"+nome+".png"`, ver `precarrega`). Ou seja: a
+     condicao era sempre verdadeira, o teste devolvia lista VAZIA e o portao
+     imprimia "imagens ok" com a maior tranquilidade. Duas poses do mascote
+     (`_fuba_pensa` e `_fuba_festa`) davam 404 na cara da crianca e a banca
+     inteira aprovava.
+     Duas correcoes, e as duas importam:
+       1. montar o caminho do mesmo jeito que o motor monta;
+       2. se NAO der para medir, dizer "NAO MEDI" e reprovar — nunca devolver
+          vazio, que o chamador le como "esta tudo certo". */
   const pre=await p.evaluate(async()=>{
-    if(typeof IMGS==="undefined"||typeof srcDe!=="function") return [];
+    if(typeof IMGS==="undefined") return {cego:"a atividade nao publica IMGS"};
+    const src = (typeof srcDe==="function") ? srcDe : (n=>"img/"+n+".png");
     const ruins=[];
     await Promise.all(IMGS.map(n=>new Promise(ok=>{
       const im=new Image();
       im.onload=()=>ok();
-      im.onerror=()=>{ ruins.push(srcDe(n)); ok(); };
-      im.src=srcDe(n);
+      im.onerror=()=>{ ruins.push(src(n)); ok(); };
+      im.src=src(n);
       /* imagem que ja veio do cache nao dispara evento */
-      if(im.complete){ if(!im.naturalWidth) ruins.push(srcDe(n)); ok(); }
+      if(im.complete){ if(!im.naturalWidth) ruins.push(src(n)); ok(); }
     })));
-    return ruins;
+    return {ruins:ruins, quantas:IMGS.length};
   });
-  for(const s of pre) anota(s,"pre-carga (IMGS)");
+  if(pre.cego){
+    console.log(arquivo+" -> NAO MEDI a pre-carga: "+pre.cego);
+    console.log("  portao que nao mede nao aprova. Conserte a atividade ou o portao.");
+    process.exit(2);
+  }
+  for(const s of pre.ruins) anota(s,"pre-carga (IMGS)");
 
   /* 2) tela por tela: o que esta na tela carregou? */
   for(const t of telas){
