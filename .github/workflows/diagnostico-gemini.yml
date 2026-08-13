@@ -1,0 +1,57 @@
+name: Diagnostico do Gemini (a chave, o projeto e a cota)
+
+# ⚠️ NASCEU DE UM DIAGNOSTICO ERRADO MEU (ago/2026). Eu tinha anotado na memoria
+# "o Gemini esta sem cota" depois de um 429. O Marcos entao mostrou que ha
+# R$ 52,03 de credito no AI Studio — ou seja, a minha conclusao estava certa no
+# sintoma e errada na CAUSA. Adivinhar de fora nao resolve: quem sabe o que
+# esta acontecendo e a propria API.
+#
+# Este workflow pergunta tres coisas, e NUNCA imprime a chave:
+#   1. a chave e valida? (lista os modelos — isso e de graca)
+#   2. o TEXTO funciona? (nivel gratuito costuma permitir)
+#   3. a IMAGEM funciona? (e onde da 429) — e imprime o erro inteiro, que
+#      costuma dizer QUAL cota estourou e de qual projeto.
+# Com isso da para separar as tres causas possiveis: chave invalida, projeto sem
+# faturamento, ou cota do modelo de imagem.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diagnostico:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Perguntar a API
+        env:
+          K: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          set +e
+          if [ -z "$K" ]; then echo "::error::o secret GEMINI_API_KEY esta VAZIO"; exit 1; fi
+          echo "a chave tem ${#K} caracteres e comeca com ${K:0:4}… (o resto nunca aparece)"
+          echo ""
+          echo "=== 1) A CHAVE E VALIDA? (listar modelos) ==="
+          R=$(curl -s -w "\nHTTP:%{http_code}" "https://generativelanguage.googleapis.com/v1beta/models?key=$K")
+          echo "$R" | tail -1
+          echo "modelos que ela enxerga: $(echo "$R" | grep -o '"name"' | wc -l)"
+          echo "tem modelo de IMAGEM na lista? $(echo "$R" | grep -c 'flash-image')"
+          echo ""
+          echo "=== 2) O TEXTO FUNCIONA? ==="
+          curl -s -w "\nHTTP:%{http_code}\n" \
+            -H 'Content-Type: application/json' \
+            -d '{"contents":[{"parts":[{"text":"responda apenas: ok"}]}]}' \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$K" \
+            | tail -4
+          echo ""
+          echo "=== 3) A IMAGEM FUNCIONA? (e o erro INTEIRO) ==="
+          curl -s -w "\nHTTP:%{http_code}\n" \
+            -H 'Content-Type: application/json' \
+            -d '{"contents":[{"parts":[{"text":"a small wooden triangle, white background"}]}]}' \
+            "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=$K" \
+            | head -40
+          echo ""
+          echo "=== COMO LER ==="
+          echo "· 1 deu 200 e 2 deu 200, mas 3 deu 429  -> a chave e boa; o que falta e"
+          echo "  PLANO PAGO para o modelo de IMAGEM no projeto DESTA chave."
+          echo "· 1 deu 400/403 -> a chave e invalida ou de outro projeto."
+          echo "· o erro do item 3 costuma trazer o NUMERO DO PROJETO: e nesse projeto"
+          echo "  que o credito precisa estar, nao noutro."
