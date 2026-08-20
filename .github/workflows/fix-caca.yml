@@ -1,0 +1,39 @@
+name: Fix caca (caca-palavras facil 1o ano)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (branch de trabalho: Trem + motor)
+        uses: actions/checkout@v4
+        with:
+          ref: claude/vc-nao-funcionando-0pya0w
+          fetch-depth: 1
+          sparse-checkout: |
+            _trem
+            _padrao/ESQUELETO
+          sparse-checkout-cone-mode: true
+
+      - name: Aplica o patch (caca FACIL)
+        run: |
+          echo "IyAtKi0gY29kaW5nOiB1dGYtOCAtKi0KaW1wb3J0IGlvCiMgLS0tLSAxKSBwZWNhcy5qczogbW9kbyBGQUNJTCBuYSBjYWNhLXBhbGF2cmFzIChzbyBkZWl0YWRhIGUgZW0gcGUpIC0tLS0KcGogPSAiX3BhZHJhby9FU1FVRUxFVE8vcGVjYXMuanMiCmogPSBpby5vcGVuKHBqLCBlbmNvZGluZz0idXRmLTgiKS5yZWFkKCkKcjEgPSAoJ3ZhciBESUZJQ0lMPSIiOyAvKlRFQ05JQ0EqLycsICd2YXIgRElGSUNJTD0iIjsgLypURUNOSUNBKi9cbnZhciBGQUNJTD0iIjsgLypURUNOSUNBKi8gIC8qIDFvIGFubzogc28gZGVpdGFkYSBlIGVtIHBlICovJykKcjIgPSAoJyAgICAgIDogW1swLDFdLFsxLDBdLFsxLDFdLFsxLC0xXV07ICAgLyogZGVpdGFkYSwgZW0gcGUgZSBhcyBEVUFTIGRpYWdvbmFpcyAqLycsCiAgICAgICcgICAgICA6IChGQUNJTCA/IFtbMCwxXSxbMSwwXV0gOiBbWzAsMV0sWzEsMF0sWzEsMV0sWzEsLTFdXSk7ICAgLyogRkFDSUwoMW8gYW5vKT1zbyBkZWl0YWRhIGUgZW0gcGUsIHNlbSBkaWFnb25hbCBuZW0gcmV2ZXJzbzsgcGFkcmFvPSsyIGRpYWdvbmFpcyAqLycpCnIzID0gKCcgICAgICBpZihfZC5ESUZJQ0lMICE9PSB1bmRlZmluZWQpIERJRklDSUwgPSBfZC5ESUZJQ0lMOycsCiAgICAgICcgICAgICBpZihfZC5ESUZJQ0lMICE9PSB1bmRlZmluZWQpIERJRklDSUwgPSBfZC5ESUZJQ0lMO1xuICAgICAgaWYoX2QuRkFDSUwgIT09IHVuZGVmaW5lZCkgRkFDSUwgPSBfZC5GQUNJTDsnKQpuaiA9IDAKZm9yIGEsIGIgaW4gKHIxLCByMiwgcjMpOgogICAgaWYgYSBpbiBqOiBqID0gai5yZXBsYWNlKGEsIGIsIDEpOyBuaiArPSAxCiAgICBlbHNlOiBwcmludCgiUEVDQVMgTkFPIEFDSE9VOiIsIGFbOjUwXSkKaW8ub3BlbihwaiwgInciLCBlbmNvZGluZz0idXRmLTgiKS53cml0ZShqKQojIC0tLS0gMikgYnVpbGRfY29udGV1ZG8gZjI0OiBsaWdhIEZBQ0lMIC0tLS0KcGIgPSAiX3RyZW0vYnVpbGRfY29udGV1ZG8ucHkiCnQgPSBpby5vcGVuKHBiLCBlbmNvZGluZz0idXRmLTgiKS5yZWFkKCkKcmIgPSAoJyAgICAgICJESUZJQ0lMIjoiIixcbiAgICAgICJDT1JQIjpbInAxIiwicDIiLCJwMyIsInA0Il19KScsCiAgICAgICcgICAgICAiRElGSUNJTCI6IiIsIkZBQ0lMIjpUcnVlLFxuICAgICAgIkNPUlAiOlsicDEiLCJwMiIsInAzIiwicDQiXX0pJykKbmIgPSAwCmlmIHJiWzBdIGluIHQ6IHQgPSB0LnJlcGxhY2UocmJbMF0sIHJiWzFdLCAxKTsgbmIgKz0gMQplbHNlOiBwcmludCgiQkMgTkFPIEFDSE9VIERJRklDSUwvQ09SUCIpCmlvLm9wZW4ocGIsICJ3IiwgZW5jb2Rpbmc9InV0Zi04Iikud3JpdGUodCkKcHJpbnQoInBlY2FzIHN1YnM6IiwgbmosICJkZSAzIHwgYnVpbGRfY29udGV1ZG8gc3ViczoiLCBuYiwgImRlIDEiKQo=" | base64 -d > /tmp/p.py
+          cat /tmp/p.py
+          python3 /tmp/p.py
+          python3 -c "import ast; ast.parse(open('_trem/build_conteudo.py').read()); print('bc ast OK')"
+          node --check _padrao/ESQUELETO/pecas.js && echo "pecas.js OK"
+
+      - name: Commit
+        run: |
+          git config user.name "Patch CI"
+          git config user.email "patch@users.noreply.github.com"
+          git add -A _trem _padrao/ESQUELETO
+          if git diff --cached --quiet; then echo "nada mudou"; else
+            git commit -m "[patch] Trem: caca-palavras FACIL (so deitada e em pe, 1o ano)"
+            git push origin HEAD:claude/vc-nao-funcionando-0pya0w
+          fi
