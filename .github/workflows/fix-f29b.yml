@@ -1,0 +1,39 @@
+name: Fix f29b (reinsere pintar Coru no build_conteudo)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (branch de trabalho, so o Trem)
+        uses: actions/checkout@v4
+        with:
+          ref: claude/vc-nao-funcionando-0pya0w
+          fetch-depth: 1
+          sparse-checkout: |
+            _trem
+          sparse-checkout-cone-mode: true
+
+      - name: Reinsere f29b se faltar (idempotente)
+        run: |
+          echo "IyAtKi0gY29kaW5nOiB1dGYtOCAtKi0KaW1wb3J0IGlvCnAgPSAiX3RyZW0vYnVpbGRfY29udGV1ZG8ucHkiCnQgPSBpby5vcGVuKHAsIGVuY29kaW5nPSJ1dGYtOCIpLnJlYWQoKQppZiAnaWQ9ImYyOWIiJyBub3QgaW4gdDoKICAgIGJsb2NvID0gKAogICAgICAnIyBmMjliIOKAlCBQSU5UQVI6IGNvbG9yaXIgbyBtYXF1aW5pc3RhIENvcnUgKHBhdXNhIGNyaWF0aXZhLCBvYmozKVxuJwogICAgICAnYWRkX3BpbnRhcihpZD0iZjI5YiIsIG1lYz0icGludGFyLWNhbnZhcyIsIHNlbG89IkhPUkEgREUgUElOVEFSIiwgY29uY2VpdG89Im9iamV0aXZvMyIsXG4nCiAgICAgICcgICAgZW51bmNpYWRvPSI8Yj5QaW50ZTwvYj4gbyBDb3J1LCBvIG1hcXVpbmlzdGEgZG8gdHJlbS4iLFxuJwogICAgICAnICAgIGRpY2E9IkVzY29saGEgYXMgY29yZXMgZSB0b3F1ZSBkZW50cm8gZG8gZGVzZW5obyBkbyBDb3J1LiIsXG4nCiAgICAgICcgICAgZGFkb3M9W3sic2VsbyI6IlBJTlRFIE8gQ09SVSIsIm5vbWUiOiJvIG1hcXVpbmlzdGEgQ29ydSIsInZveiI6Im8gbWFxdWluaXN0YSBDb3J1IixcbicKICAgICAgJyAgICAgICAgICAgICJpbWciOiJ0cl9waW50YXJfY29ydSJ9XSlcblxuJwogICAgKQogICAgYWx2byA9ICIjIGYzMCDigJQgUVVFQlJBLUNBQkXDh0EiCiAgICBpZiBhbHZvIGluIHQ6CiAgICAgICAgdCA9IHQucmVwbGFjZShhbHZvLCBibG9jbyArIGFsdm8sIDEpCiAgICAgICAgaW8ub3BlbihwLCAidyIsIGVuY29kaW5nPSJ1dGYtOCIpLndyaXRlKHQpCiAgICAgICAgcHJpbnQoImYyOWIgaW5zZXJpZG8gYW50ZXMgZGUgZjMwIikKICAgIGVsc2U6CiAgICAgICAgcHJpbnQoIkFMVk8gZjMwIG5hbyBhY2hhZG8g4oCUIG5hbyBpbnNlcmkiKQplbHNlOgogICAgcHJpbnQoImYyOWIgamEgZXhpc3RlIikK" | base64 -d > /tmp/patch_f29b.py
+          python3 /tmp/patch_f29b.py
+          python3 -c "import ast; ast.parse(open('_trem/build_conteudo.py').read()); print('build_conteudo ast OK')"
+          grep -c 'id="f29b"' _trem/build_conteudo.py
+
+      - name: Commit na branch de trabalho
+        run: |
+          git config user.name "Fix CI"
+          git config user.email "fix@users.noreply.github.com"
+          git add _trem/build_conteudo.py
+          if git diff --cached --quiet; then
+            echo "nada mudou (f29b ja estava)"
+          else
+            git commit -m "[fix] Trem: reinsere f29b (pintar Coru) perdida em reenvio manual"
+            git push origin HEAD:claude/vc-nao-funcionando-0pya0w
+          fi
