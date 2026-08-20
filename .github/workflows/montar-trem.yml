@@ -1,0 +1,65 @@
+name: Montar Trem (build no CI)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  montar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout (esparso — so o Trem e o motor)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout: |
+            _trem
+            _padrao/ESQUELETO
+          sparse-checkout-cone-mode: true
+
+      - name: Consertar build_conteudo.py + montar
+        run: |
+          python3 - <<'PY'
+          import io
+          p = "_trem/build_conteudo.py"
+          t = io.open(p, encoding="utf-8").read()
+          t = t.replace(
+            'enunciado="Toque em cada <b>vagão</b> e ouça a letra e a figura dela.",',
+            'enunciado="Toque em cada <b>letra</b> e ouça o nome dela e a figura.",')
+          t = t.replace(
+            'enunciado="Toque nos <b>vagões</b> que faltam, de N até Z.",\n    dica="Toque em cada vagão para ouvir a letra e a figura.",',
+            'enunciado="Toque nas <b>letras</b> para completar o alfabeto, de N até Z.",\n    dica="Toque em cada letra para ouvir o nome dela e a figura.",')
+          t = t.replace(
+            'enunciado="O trem ficou pronto! Toque nos <b>vagões</b> e ouça o que você aprendeu.",',
+            'enunciado="O trem ficou pronto! Toque nas <b>letras</b> e ouça o que você aprendeu.",')
+          if "_pint  = [f for f in fases" not in t:
+              t = t.replace(
+                'c["fases"] = fases',
+                '_pint  = [f for f in fases if f.get("mec") == "pintar-canvas"]\n'
+                '_resto = [f for f in fases if f.get("mec") != "pintar-canvas"]\n'
+                'if len(_pint) >= 3 and len(_resto) >= 2:\n'
+                '    fases = _resto[:-2] + [_pint[0], _resto[-2], _pint[1], _resto[-1], _pint[2]]\n'
+                'else:\n'
+                '    fases = _resto + _pint\n'
+                'c["fases"] = fases')
+          io.open(p, "w", encoding="utf-8").write(t)
+          print("build_conteudo.py consertado (batch 1)")
+          PY
+          python3 _trem/build_conteudo.py
+          python3 _padrao/ESQUELETO/montar.py _trem || true
+          echo "---- index gerado ----"
+          ls -la _trem/index.html
+
+      - name: Commit do rebuild
+        run: |
+          git config user.name "Montador CI"
+          git config user.email "montador@users.noreply.github.com"
+          git add _trem/build_conteudo.py _trem/index.html _trem/conteudo.json _trem/falas.json _trem/arte.json
+          if git diff --cached --quiet; then
+            echo "nada mudou"
+          else
+            git commit -m "[montar] Trem: batch 1 — enunciados (letra), pintar no fim, tema.css compacta; rebuild no CI"
+            git push
+          fi
