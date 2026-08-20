@@ -1,0 +1,38 @@
+name: Coru Trem (recorta feliz + pisca novos)
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  coru:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout (Trem)"
+        uses: actions/checkout@v4
+        with:
+          ref: claude/vc-nao-funcionando-0pya0w
+          fetch-depth: 1
+          sparse-checkout: |
+            _trem
+          sparse-checkout-cone-mode: true
+
+      - name: "Instala PIL numpy scipy"
+        run: python3 -m pip install --quiet Pillow numpy scipy
+
+      - name: "Recorta o Coru novo"
+        run: |
+          echo "IyAtKi0gY29kaW5nOiB1dGYtOCAtKi0KaW1wb3J0IG9zLCBudW1weSBhcyBucApmcm9tIFBJTCBpbXBvcnQgSW1hZ2UsIEltYWdlRHJhdwpmcm9tIHNjaXB5IGltcG9ydCBuZGltYWdlClRSRU09Il90cmVtIjsgSU1HPW9zLnBhdGguam9pbihUUkVNLCJpbWciKTsgb3MubWFrZWRpcnMoSU1HLGV4aXN0X29rPVRydWUpCmRlZiBiZ190cmFuc3AocmdiKToKICAgIGE9bnAuYXNhcnJheShyZ2IpLmFzdHlwZShucC5pbnQxNik7IGJnPWEubWF4KGF4aXM9Mik8NjAKICAgIGxibCxuPW5kaW1hZ2UubGFiZWwoYmcpCiAgICBpZiBuOgogICAgICAgIGJvcmRhPXNldChsYmxbMCw6XSl8c2V0KGxibFstMSw6XSl8c2V0KGxibFs6LDBdKXxzZXQobGJsWzosLTFdKTsgYm9yZGEuZGlzY2FyZCgwKQogICAgICAgIGZ1bmRvPW5wLmlzaW4obGJsLGxpc3QoYm9yZGEpKQogICAgZWxzZTogZnVuZG89bnAuemVyb3MoYmcuc2hhcGUsYm9vbCkKICAgIGFsPW5wLndoZXJlKGZ1bmRvLDAsMjU1KS5hc3R5cGUobnAudWludDgpCiAgICByZXR1cm4gSW1hZ2UuZnJvbWFycmF5KG5wLmRzdGFjayhbbnAuYXNhcnJheShyZ2IpLmFzdHlwZShucC51aW50OCksYWxdKSwiUkdCQSIpCmRlZiBhdXRvY3JvcChpbSxwYWQ9OCk6CiAgICBiYj1pbS5nZXRiYm94KCkKICAgIGlmIG5vdCBiYjogcmV0dXJuIGltCiAgICBsLHQscixiPWJiOyByZXR1cm4gaW0uY3JvcCgobWF4KDAsbC1wYWQpLG1heCgwLHQtcGFkKSxtaW4oaW0ud2lkdGgscitwYWQpLG1pbihpbS5oZWlnaHQsYitwYWQpKSkKZGVmIHJleihpbSxoPTI2MCk6CiAgICByZXR1cm4gaW0gaWYgaW0uaGVpZ2h0PD1oIGVsc2UgaW0ucmVzaXplKChpbnQoaW0ud2lkdGgqaC9pbS5oZWlnaHQpLGgpLEltYWdlLkxBTkNaT1MpCmZlbGl6PXJleihhdXRvY3JvcChiZ190cmFuc3AoSW1hZ2Uub3BlbihUUkVNKyIvSU1HXzMxODAuanBlZyIpLmNvbnZlcnQoIlJHQiIpKSkpCnBpc2NhPXJleihhdXRvY3JvcChiZ190cmFuc3AoSW1hZ2Uub3BlbihUUkVNKyIvSU1HXzMxNzkuanBlZyIpLmNvbnZlcnQoIlJHQiIpKSkpCmZlbGl6LnNhdmUoSU1HKyIvdHJfY29ydV9mZWxpei5wbmciLG9wdGltaXplPVRydWUpCmZlbGl6LnNhdmUoSU1HKyIvdHJfY29ydV9mYWxhLnBuZyIsb3B0aW1pemU9VHJ1ZSkKcGlzY2Euc2F2ZShJTUcrIi90cl9jb3J1X3Bpc2NhLnBuZyIsb3B0aW1pemU9VHJ1ZSkKY2VsbD0zMDA7IG1vbnQ9SW1hZ2UubmV3KCJSR0JBIiwoY2VsbCoyLGNlbGwrMjYpLCgyMzUsMjM1LDI0MCwyNTUpKQpmb3IgaSxnIGluIGVudW1lcmF0ZShbZmVsaXoscGlzY2FdKToKICAgIHQ9Zy5jb3B5KCk7IHQudGh1bWJuYWlsKChjZWxsLTIwLGNlbGwtMjApLEltYWdlLkxBTkNaT1MpCiAgICBtb250LmFscGhhX2NvbXBvc2l0ZSh0LChpKmNlbGwrKGNlbGwtdC53aWR0aCkvLzIsKGNlbGwtMjAtdC5oZWlnaHQpLy8yKzgpKQpkPUltYWdlRHJhdy5EcmF3KG1vbnQpOyBkLnRleHQoKDEwLGNlbGwrNCksImZlbGl6ICgzMTgwLCBhYmVydG9zKSIsZmlsbD0oMzAsMzAsNTAsMjU1KSk7IGQudGV4dCgoY2VsbCsxMCxjZWxsKzQpLCJwaXNjYSAoMzE3OSwgZmVjaGFkb3MpIixmaWxsPSgzMCwzMCw1MCwyNTUpKQptb250LmNvbnZlcnQoIlJHQiIpLnNhdmUoVFJFTSsiL19jb3J1X2NoZWNrLnBuZyIpCnByaW50KCJmZWxpeiIsIGZlbGl6LnNpemUsICJwaXNjYSIsIHBpc2NhLnNpemUsICItPiB0cl9jb3J1X2ZlbGl6L2ZhbGEvcGlzY2EgKyBfY29ydV9jaGVjay5wbmciKQo=" | base64 -d > /tmp/coru.py
+          python3 /tmp/coru.py
+
+      - name: "Commit"
+        run: |
+          git config user.name "Coru CI"
+          git config user.email "coru@users.noreply.github.com"
+          git add -A _trem/img/tr_coru_feliz.png _trem/img/tr_coru_fala.png _trem/img/tr_coru_pisca.png _trem/_coru_check.png
+          if git diff --cached --quiet; then echo "nada mudou"; else
+            git commit -m "[coru] Trem: mascote novo (feliz + pisca) das fotos IMG_3180/3179"
+            git push origin HEAD:claude/vc-nao-funcionando-0pya0w
+          fi
