@@ -5164,10 +5164,13 @@ function contaComigo(){
     diz(nomeNum(i+1));
     sConta();
     i++;
-    /* ⚠️ Marcos (ago/2026): contar/acender MAIS DEVAGAR e PAUSADO — a crianca
-       precisa acompanhar cada semente e ouvir o numero inteiro antes do proximo.
-       520ms corria demais; 950ms dá o respiro. */
-    setTimeout(passo,950);
+    /* ⚠️ Marcos (ago/2026, DUAS vezes): contar/acender MAIS DEVAGAR e PAUSADO — a
+       crianca precisa CONTAR JUNTO, apontando cada semente e ouvindo o numero
+       inteiro antes do proximo. 520ms corria demais; 950ms ainda corria; 1300ms
+       é o ritmo de quem conta em voz alta com a turma (~1 número por segundo e
+       um respiro). Se um dia a voz gravada de contagem ficar mais longa que
+       isto, subir junto — o compasso é a fala, não o número na tela. */
+    setTimeout(passo,1300);
   };
   passo();
 }
