@@ -2969,7 +2969,9 @@ MEC["base-dez"] = function(f, cen, fim){
    "solto" agora é a DEZENA, e o grupo de dez vira a CENTENA. Trocar esta
    tabela adapta a peça (milhar, dúzia, dinheiro) sem tocar no resto.      */
 var RODADAS=[
-  {selo:"CAIXA DE 10", soltos:13, pTipo:"dsuni", tTipo:"dsdez", vale:1, valeT:10,
+  /* `pImg` (opcional) = arte da UNIDADE (fruta do banco). Sem ela, o quadradinho
+     abstrato de sempre. Vai vazio no exemplo só para o montador conhecer o campo. */
+  {selo:"CAIXA DE 10", soltos:13, pTipo:"dsuni", pImg:"", tTipo:"dsdez", vale:1, valeT:10,
    nomeP:"soltos", nomeT:"caixa de 10", nomeTs:"caixas de 10",
    fala:"Cada <b>10 soltos</b> viram <b>1 caixa</b>. Encha a caixa e troque."},
   {selo:"CAIXOTE DE 100", soltos:12, pTipo:"dsdez", tTipo:"dscem", vale:10, valeT:100,
@@ -3055,9 +3057,17 @@ function pecaBaseDez(){
   atualiza();
 }
 
+/* ⭐ VISUAL DA UNIDADE (Marcos, ago/2026: "não entendi a caixa de 10, está feia,
+   use o banco de imagens"). Se a rodada traz `pImg`, a unidade é a FRUTA de
+   verdade (arte do banco) em vez do quadradinho abstrato — a criança agrupa
+   laranjas de verdade. Sem `pImg`, continua o bloco de base-dez de sempre. */
+function pecaVisual(r){
+  if(r&&r.pImg){ var im=el("div","dsfoto",""); im.style.backgroundImage="url(\"img/"+r.pImg+".png\")"; return im; }
+  return el("i",r.pTipo,"");
+}
 function fazPeca(r){
   var b=el("div","pc");
-  b.appendChild(el("i",r.pTipo,""));
+  b.appendChild(pecaVisual(r));
   b.setAttribute("data-qa","cx");
   b.onclick=cliquePeca;
   b.onmousedown=mouseIni;
@@ -3115,7 +3125,7 @@ function moveEm(x,y){
     if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
     moveu=true; sTap(); escolhe(pego);
     somb=el("div","somb");
-    somb.appendChild(el("i",rodada().pTipo,""));
+    somb.appendChild(pecaVisual(rodada()));
     document.body.appendChild(somb);
   }
   somb.style.left=(x-26)+"px"; somb.style.top=(y-21)+"px";
