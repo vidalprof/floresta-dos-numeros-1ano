@@ -1438,7 +1438,39 @@ var IMGS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
-var AC=window.AudioContext||window.webkitAudioContext, ac=AC?new AC():null;
+/* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
+   travam"). `new AudioContext()` roda no CARREGAMENTO e ESTOURA em alguns PCs —
+   quando o navegador já está no limite de 6 contextos de hardware (outras abas,
+   extensões) ele lança "number of hardware contexts reached maximum". Sem
+   try/catch, e no TOPO do script, esse erro derruba TODO o resto: a atividade
+   nem monta, e é exatamente "aleatório e só em algumas máquinas" (depende do que
+   o navegador tem aberto). Protegido: sem som, mas a atividade abre e joga. */
+var AC=window.AudioContext||window.webkitAudioContext, ac=null;
+try{ if(AC) ac=new AC(); }catch(e){ ac=null; }
+/* ⚠️⚠️ REDE DE SEGURANÇA (Marcos, ago/2026: "trava em alguma fase, aleatório, só
+   em algumas máquinas — inconsistência nos códigos talvez"). Sem um `onerror`
+   global, QUALQUER exceção não tratada num clique/timer (um elemento nulo por
+   corrida de tempo, uma API que aquele navegador não tem) deixava a fase PRESA,
+   sem avançar e sem aviso. Agora um erro não tratado mostra um botão de RESGATE
+   "Continuar" que pula para a próxima fase — a criança nunca fica travada. Não
+   engole o erro (o console continua vendo), só evita o congelamento. */
+window.onerror=function(msg,url,lin,col,err){
+  try{
+    if(document.getElementById("resgateErro")) return false;   /* já tem um */
+    if(typeof IFASE!=="number" || !(IFASE>=0)) return false;    /* fora de fase: não faz nada */
+    var b=document.createElement("button");
+    b.id="resgateErro"; b.className="btn amarelo";
+    b.style.cssText="position:fixed;left:50%;bottom:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:99999";
+    b.innerHTML="Continuar ▶";
+    b.onclick=function(){
+      try{ var n=document.getElementById("resgateErro"); if(n&&n.parentNode) n.parentNode.removeChild(n); }catch(e){}
+      try{ arma(); }catch(e){}
+      try{ abreFase(IFASE+1); }catch(e){}
+    };
+    document.body.appendChild(b);
+  }catch(e){}
+  return false;
+};
 function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} ligaAnalisador(); }
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
@@ -1486,6 +1518,47 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    2º item em diante. Cobrança do Marcos: *"o som que é falado tem que ser o
    mesmo do texto"*.                                                          */
 function falaDaTela(id){ telaNarrou=false; falar(id); }
+/* ⭐⭐ A NARRACAO DE CADA RODADA — PADRAO DA CASA (Marcos, ago/2026: *"na fase
+   escolha só a primeira fase dela fala automaticamente o enunciado, as outras
+   não, isso deveria ser padrão"*). O motor narrava o balao UMA vez, ao abrir a
+   fase. Mas as pecas de varias rodadas (escolher, completar, digitar...) trocam
+   o TEXTO do balao a cada pergunta e ficavam MUDAS da 2a rodada em diante — a
+   crianca que nao le perdia a instrucao. Agora o mesmo olheiro do balao roda a
+   CADA mudanca de texto e narra a rodada nova, com dois guardas contra repetir:
+     · so fala quando o TEXTO mudou desde a ultima narracao (`__balaoNarrado`) —
+       senao clicar numa opcao (que muda o DOM, nao o balao) re-narrava o
+       enunciado a cada toque;
+     · nao reinicia o audio que ja esta tocando o mesmo texto (o guarda do `k`).
+   Fonte unica: `montaFase` (ao abrir) e o MutationObserver (nas rodadas) chamam
+   ESTA funcao. */
+var __balaoNarrado="";
+function narraBalao(force){
+  if(ID.narrar==="manual") return;
+  if(!app) return;
+  var cx=document.getElementsByClassName("pecabox")[0];
+  /* a narracao-de-rodada (observer, force=false) so vale DENTRO de uma fase (ha
+     pecabox); capa/boletim/relatorio tem balao proprio e nao entram aqui. */
+  if(!force && !cx) return;
+  var bs=cx?cx.getElementsByClassName("balao"):(app?app.getElementsByClassName("balao"):null);
+  var txt=(bs&&bs.length)?(bs[0].textContent||""):"";
+  txt=txt.replace(/\s+/g," ").replace(/^ | $/g,"");
+  if(!txt) return;
+  if(!force && txt===__balaoNarrado) return;   /* mesmo balao: nao repete */
+  __balaoNarrado=txt;
+  if(typeof temVoz==="function"){
+    var k=temVoz(txt);
+    if(k){
+      /* nao reinicia o audio que ja esta tocando este mesmo texto */
+      if(window.__falouAgora===k && narr && !narr.paused && !narr.ended) return;
+      window.__falouAgora=k; falaDaTela("op_"+k); return;
+    }
+    /* sem gravacao para o que esta escrito: fica calado (falar outra coisa foi
+       exatamente o defeito). So no 1o desenho cai no vozIntro da fase. */
+    if(force){ try{ if(window.__faseVozIntro) falar(window.__faseVozIntro); }catch(_e){} }
+    return;
+  }
+  if(force){ try{ if(window.__faseVozIntro) falar(window.__faseVozIntro); }catch(_e){} }
+}
 function falar(id,cb){
   /* o mesmo guarda do `tocaVoz`, pelo mesmo motivo e no mesmo dia: os dois
      tocadores nao se conhecem, entao a conta de "ja disse isso agora" tem que
@@ -1521,6 +1594,19 @@ function falar(id,cb){
   var p=narr.play(); if(p&&p["catch"]){ p["catch"](function(){ fimFala(); }); }
   if(btnOuvir) btnOuvir.className="mini tocando";
   iniciaBoca();
+  /* ⭐ WATCHDOG DA VOZ (Marcos, ago/2026: máquinas que travam "em alguma fase").
+     Se o áudio emperra (rede filtrada da escola: `play()` resolve mas o `ended`
+     nunca vem), o `cb` de quem esperava a voz para AVANÇAR nunca chegava e a fase
+     congelava. Aqui um teto de 10s FORÇA o fim da fala se ela não terminou nem
+     foi substituída por outra — o `cb` sempre dispara, nenhuma fase trava por
+     voz. (O `depoisDaFala` já tinha o dele; agora vale para todo `falar+cb`.) */
+  (function(seq){ setTimeout(function(){
+    if(seq===_seqId && falandoCb && !(narr&&narr.ended)){
+      try{ narr.pause(); }catch(e){}   /* destrava o `_vozTocando`/a fila de vozes */
+      try{ fimFala(); }catch(e){}
+      try{ if(typeof _puxaFila==="function") _puxaFila(); }catch(e){}
+    }
+  }, 10000); })(_seqId);
 }
 /* ⭐ toca os pedacos de uma fala bilingue, um apos o outro (encadeado pelo
    `ended` do `narr`, via `falandoCb`). O `_seqId` aborta se uma fala nova
@@ -1650,7 +1736,15 @@ function centroTela(elm){var r=elm.getBoundingClientRect();return [r.left+r.widt
 /* ============ MEDIÇÃO INVISÍVEL + DOMÍNIO ============ */
 var MED={ini:(new Date()).getTime(),ev:[],dicas:0,toques:0,pre:null,pos:null};
 
-var CONC={luz_agua:"Luz e água para viver",sequencia:"Como a planta cresce",necessidades:"Do que a planta precisa",partes:"Partes da planta",funcoes:"Função de cada parte"};
+/* ⚠️⚠️ RESTO DE CLONE MEDIDO (Marcos, ago/2026: *"verificar se o relatório está
+   dando informações certas"*). Aqui morava `{luz_agua:"Luz e água...",partes:
+   "Partes da planta",...}` — os conceitos do JARDIM. O relatório iterava ESTE
+   dicionário, então TODA atividade mostrava objetivos de PLANTA, e como as fases
+   registram sob os conceitos DELAS (objetivo1/2/3...), o domínio saía 0% em tudo.
+   Os rótulos verdadeiros vêm do montador em `ROTULOS` (a partir de
+   `conteudo["conceitos"]`). O relatório agora itera ROTULOS; este objeto fica
+   VAZIO só como reserva de builds antigos. */
+var CONC={};
 function reg(conc,ok,tent){
   MED.ev.push({c:conc,ok:ok?1:0,t:tent||1,ms:(new Date()).getTime()-MED.ini});
   var p=DOM[conc]||0.3; DOM[conc]= ok ? p+(1-p)*0.35 : p*0.62;
@@ -2178,7 +2272,10 @@ function poeVozes(){
 }
 (function(){
   var pend=0;
-  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta(); },60); }
+  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta();
+    /* ⭐ narra a RODADA nova: so dispara quando o TEXTO do balao mudou (guarda
+       dentro de narraBalao), entao tocar numa opcao nao re-narra o enunciado. */
+    try{ narraBalao(false); }catch(_e){} },60); }
   if(window.MutationObserver){
     var mo=new MutationObserver(agenda);
     mo.observe(app,{childList:true,subtree:true,characterData:true});
@@ -2505,6 +2602,7 @@ function treinarFracos(){
   FILATREINO=fila; proximoTreino();
 }
 function pct(x){ return Math.round(x*100)+"%"; }
+function _temChaves(o){ if(!o) return false; for(var _k in o){ if(o.hasOwnProperty(_k)) return true; } return false; }
 function telaPainel(){
   try{ narr.pause(); }catch(e){}
   /* ⚠️ LICAO PAGA (Museu, ago/2026): o painel do professor e um overlay opaco
@@ -2522,9 +2620,13 @@ function telaPainel(){
   h+="<div><b>Aluno(a):</b> "+(perfil.nome||"(sem nome)")+" &#183; <b>Tempo:</b> ~"+mins+" min &#183; <b>Dicas usadas:</b> "+MED.dicas+"</div>";
   h+="<div class='bloco'><b>Acertos:</b> "+acc+" de "+tot+" ("+(tot?Math.round(acc*100/tot):0)+"%)</div>";
   h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th><th>Parecer</th></tr>";
+  /* itera os conceitos REAIS da atividade (ROTULOS, do montador). Reserva ao
+     CONC/ROTCRI para builds sem ROTULOS. */
+  var _rot=(typeof ROTULOS!=="undefined"&&ROTULOS&&_temChaves(ROTULOS))?ROTULOS
+          :((typeof ROTCRI!=="undefined"&&ROTCRI&&_temChaves(ROTCRI))?ROTCRI:CONC);
   var k,ndom=0,nconc=0;
-  for(k in CONC){ if(CONC.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
-    h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
+  for(k in _rot){ if(_rot.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
+    h+="<tr><td>"+_rot[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var ganho="não medido";
@@ -2651,40 +2753,12 @@ function montaFase(i, aoFim){
      Agora ele ESPERA a peca desenhar, LE o balao de verdade e fala a gravacao
      DAQUELE texto. So cai no `vozIntro` quando a peca nao escreveu balao
      nenhum — ai o enunciado da fase e mesmo o que esta na tela. */
+  /* ⚠️ o `op_`/temVoz e a dedup contra "duas vozes" agora moram em `narraBalao`
+     (fonte unica): aqui so zeramos o rastreador e disparamos a 1a narracao.
+     O MESMO `narraBalao` roda a cada rodada nova pelo MutationObserver. */
+  __balaoNarrado = "";
   if(ID.narrar !== "manual"){
-    setTimeout(function(){
-      var cx = document.getElementsByClassName("pecabox")[0];
-      var bs = cx ? cx.getElementsByClassName("balao") : null;
-      var txt = (bs && bs.length) ? (bs[0].textContent || "") : "";
-      txt = txt.replace(/\s+/g, " ").replace(/^ | $/g, "");
-      /* ⚠️ NOTA (ago/2026): tentei por um alto-falante DENTRO do balao do
-         enunciado (pedido do Marcos). O portao de leiaute (_qa/leiaute.js, regra
-         "botao sobre texto") trata a regiao do balao como TEXTO e reprova o zap
-         em QUALQUER posicao dentro dele — inline, no fim, absoluto no vao. Como o
-         enunciado JA e narrado sozinho ao abrir a fase E ja tem o botao "Ouvir
-         de novo" (o botao de som, em toda fase), o caminho confiavel e esse.
-         Se um dia quisermos o icone COLADO na frase, o portao precisa aprender a
-         diferenca entre "zap no vao reservado" e "zap sobre a letra" primeiro. */
-      if(txt && typeof temVoz === "function"){
-        var k = temVoz(txt);
-        /* ⚠️ o olheiro do balao pode ter chegado ANTES de mim (ele dispara na
-           mudanca do DOM, eu num prazo). Se ele ja falou este mesmo texto e o
-           audio esta tocando, eu me calo — senao o audio REINICIA e a crianca
-           ouve o comeco duas vezes. Foi o que o Marcos ouviu como "duas vozes". */
-        if(k){
-          if(window.__falouAgora === k && narr && !narr.paused && !narr.ended) return;
-          /* ⚠️ o `op_` NAO e enfeite: o `temVoz` devolve so a CONTA do texto,
-             e o arquivo gravado chama-se `op_<conta>.mp3` (mesma convencao das
-             respostas tocaveis). Sem o prefixo, o motor pedia `audio/<conta>.mp3`,
-             que nao existe — e a fase ficava MUDA mesmo com a voz gravada. */
-          window.__falouAgora = k; falaDaTela("op_" + k); return;
-        }
-        /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
-           foi exatamente o defeito. */
-        return;
-      }
-      if(f.vozIntro) falar(f.vozIntro);
-    }, 260);
+    setTimeout(function(){ narraBalao(true); }, 260);
   }
 
   var m = MEC[f.mec];
@@ -3998,7 +4072,21 @@ function fazGaveta(g){
      gaveta e a FIGURA do dinheiro — grande, CENTRALIZADA e levemente
      transparente (~20%) — moeda numa, cedula na outra. A crianca reconhece
      pelo desenho e, se precisar, toca no alto-falante e OUVE o nome. */
-  if(g.img){ var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w); }
+  /* ⚠️⚠️ LICAO PAGA (Marcos, sólidos, ago/2026: *"as imagens quase
+     desaparecendo... precisa ficar mais claro para o estudante o que tem que
+     fazer"*). Toda gaveta com figura recebia SO a marca d'agua a 12% e, com
+     `rot:false`, NEM o nome — a gaveta ficava um fantasma sem rótulo. Isso serve
+     ao dinheiro (moeda/nota, 1o ano, ficha tambem é imagem), mas NAO ao caso em
+     que a GAVETA é o conceito que a crianca esta aprendendo (o sólido). Agora:
+       · `rot:true`  -> figura NITIDA no topo + NOME em faixa (modo "aprender a
+                        categoria": a identidade da gaveta tem que estar clara);
+       · `rot:false` + img -> marca d'agua fraca (legado dinheiro), inalterado;
+       · sem img -> só o nome. */
+  if(g.img && g.rot){
+    d.appendChild(figura(g.img,"gfig"));            /* figura nitida, 66px */
+  }else if(g.img){
+    var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w);
+  }
   /* ⚠️ LICAO PAGA (Teatro das Palavras, 5o ano, ago/2026): a gaveta SO mostrava
      a figura (regra do 1o ano, que nao le). Numa atividade de texto — separar
      PRONOME PESSOAL x DEMONSTRATIVO — as gavetas nao tem figura (img:"") e
@@ -4351,6 +4439,20 @@ function telaCompletar(){
   var fr=el("div","frase",f.ante+'<span class="lac">_____</span>'+f.dep);
   c.appendChild(fr);
   lacuna=fr.querySelector(".lac");
+  /* ⭐ NARRA O PROBLEMA depois do enunciado (Marcos, ago/2026: "na fase quanto
+     falta deveria ter o áudio onde conta o problema, depois do enunciado"). Usa a
+     voz GRAVADA da casa (a conta já está no falas.json); o `falar` do motor
+     enfileira depois do enunciado. Se não houver gravação, fica calado — nunca
+     voz-robô. Guardado por `typeof` para a bancada solta não estourar. */
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var _tir=function(s){ return String(s||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").replace(/^ | $/g,""); };
+      var _fa=_tir(f.ante), _fad=_tir(f.ante+" "+f.dep);
+      var _fk=temVoz(_fa)||temVoz(_fad);
+      var _tela=t;
+      if(_fk) setTimeout(function(){ if(_tela&&_tela.parentNode) falar("op_"+_fk); }, 520);
+    }
+  }catch(_e){}
   /* ⚠️ o embaralhado tem que acontecer com os pedaços JÁ normalizados: senão a
      comparação com a certa mudaria de forma (texto x objeto) no meio do
      caminho. É a armadilha da mecânica: na Fábrica de Estrelas a certa era
@@ -5016,7 +5118,11 @@ MEC["ligar"] = function(f, cen, fim){
    `ver`. Aqui ele nao entrega a resposta de graca: a crianca ainda tem de
    escolher a ponta e fazer o gesto ate o outro lado.                       */
 var LIG=[
-  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra"},
+  /* `g` (opcional) = GRUPO para muitos-para-um: pontas com o mesmo `g` casam
+     entre si (o cubo liga a qualquer "fica firme"). Vazio/ausente = par exato
+     por `k`, como sempre. Aqui fica "" só para o montador saber que o campo
+     existe. */
+  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra", g:""},
   {k:"p1", t:"O CAULE", s:"Leva a água para cima"},
   {k:"p2", t:"A FOLHA", s:"Faz o alimento com o sol"},
   {k:"p3", t:"A FLOR",  s:"Vira fruto e semente"}
@@ -5133,6 +5239,7 @@ function fazPonta(dado,lado,texto){
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
+  if(dado.g) l.setAttribute("data-g",dado.g);   /* grupo p/ muitos-para-um (ver casa()) */
   l._lado=lado;
   l._ver=!!dado.ver;   /* ⭐ modo facil pedido na gaveta (ver acima) */
   l.onclick=function(){
@@ -5253,10 +5360,10 @@ function desmarca(){
    de vez, e a peça continua deixando a crianca fechar o par com a mao.    */
 function mostraDestino(l,nivel){
   if(!l||temClasse(l,"feita")) return;
-  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa"), alvo=null;
+  var a=app.getElementsByClassName("lig"), i, alvo=null;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")||a[i]===l) continue;
-    if(a[i]._lado!==l._lado&&a[i].getAttribute("data-qa")===k){ alvo=a[i]; break; }
+    if(casa(l,a[i])){ alvo=a[i]; break; }   /* aponta para um destino AINDA válido (par exato OU grupo) */
   }
   if(!alvo) return;
   destDe=l; destAlvo=alvo; destNivel=nivel;
@@ -5271,11 +5378,26 @@ function apagaDestino(){
   redesenha();   /* a linha fantasma some junto */
 }
 
+/* ⭐ MUITOS-PARA-UM (Marcos, ago/2026: *"tanto o quadrado quanto a pirâmide
+   ficam firmes, então ao clicar com qualquer um em qualquer que diga que fica
+   firme do outro lado seria interessante funcionar"*). Duas pontas casam quando
+   têm a MESMA chave `k` (o par exato de sempre) OU quando compartilham um GRUPO
+   (`data-g`): assim o cubo liga a QUALQUER destino "fica firme", e a pirâmide ao
+   outro — sem precisar acertar o gênero da frase. Compatível: gaveta sem `g`
+   segue casando só por `k`. Os alvos se consomem (`feita`), então N sólidos do
+   grupo preenchem os N destinos do grupo em qualquer ordem. */
+function casa(a,b){
+  if(a._lado===b._lado) return false;
+  var ka=a.getAttribute("data-qa"), kb=b.getAttribute("data-qa");
+  if(ka!==null&&ka===kb) return true;
+  var ga=a.getAttribute("data-g"), gb=b.getAttribute("data-g");
+  return !!(ga&&gb&&ga===gb);
+}
 function juntar(a,b){
   if(!a||!b||a===b) return;
   if(temClasse(a,"feita")||temClasse(b,"feita")) return;
   if(a._lado===b._lado) return;
-  if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
+  if(casa(a,b)){
     sCerto();
     a.className="lig feita"; b.className="lig feita";
     marcada=null;

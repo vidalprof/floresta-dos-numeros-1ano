@@ -963,7 +963,39 @@ var IMGS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
-var AC=window.AudioContext||window.webkitAudioContext, ac=AC?new AC():null;
+/* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
+   travam"). `new AudioContext()` roda no CARREGAMENTO e ESTOURA em alguns PCs —
+   quando o navegador já está no limite de 6 contextos de hardware (outras abas,
+   extensões) ele lança "number of hardware contexts reached maximum". Sem
+   try/catch, e no TOPO do script, esse erro derruba TODO o resto: a atividade
+   nem monta, e é exatamente "aleatório e só em algumas máquinas" (depende do que
+   o navegador tem aberto). Protegido: sem som, mas a atividade abre e joga. */
+var AC=window.AudioContext||window.webkitAudioContext, ac=null;
+try{ if(AC) ac=new AC(); }catch(e){ ac=null; }
+/* ⚠️⚠️ REDE DE SEGURANÇA (Marcos, ago/2026: "trava em alguma fase, aleatório, só
+   em algumas máquinas — inconsistência nos códigos talvez"). Sem um `onerror`
+   global, QUALQUER exceção não tratada num clique/timer (um elemento nulo por
+   corrida de tempo, uma API que aquele navegador não tem) deixava a fase PRESA,
+   sem avançar e sem aviso. Agora um erro não tratado mostra um botão de RESGATE
+   "Continuar" que pula para a próxima fase — a criança nunca fica travada. Não
+   engole o erro (o console continua vendo), só evita o congelamento. */
+window.onerror=function(msg,url,lin,col,err){
+  try{
+    if(document.getElementById("resgateErro")) return false;   /* já tem um */
+    if(typeof IFASE!=="number" || !(IFASE>=0)) return false;    /* fora de fase: não faz nada */
+    var b=document.createElement("button");
+    b.id="resgateErro"; b.className="btn amarelo";
+    b.style.cssText="position:fixed;left:50%;bottom:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:99999";
+    b.innerHTML="Continuar ▶";
+    b.onclick=function(){
+      try{ var n=document.getElementById("resgateErro"); if(n&&n.parentNode) n.parentNode.removeChild(n); }catch(e){}
+      try{ arma(); }catch(e){}
+      try{ abreFase(IFASE+1); }catch(e){}
+    };
+    document.body.appendChild(b);
+  }catch(e){}
+  return false;
+};
 function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} ligaAnalisador(); }
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
@@ -1087,6 +1119,19 @@ function falar(id,cb){
   var p=narr.play(); if(p&&p["catch"]){ p["catch"](function(){ fimFala(); }); }
   if(btnOuvir) btnOuvir.className="mini tocando";
   iniciaBoca();
+  /* ⭐ WATCHDOG DA VOZ (Marcos, ago/2026: máquinas que travam "em alguma fase").
+     Se o áudio emperra (rede filtrada da escola: `play()` resolve mas o `ended`
+     nunca vem), o `cb` de quem esperava a voz para AVANÇAR nunca chegava e a fase
+     congelava. Aqui um teto de 10s FORÇA o fim da fala se ela não terminou nem
+     foi substituída por outra — o `cb` sempre dispara, nenhuma fase trava por
+     voz. (O `depoisDaFala` já tinha o dele; agora vale para todo `falar+cb`.) */
+  (function(seq){ setTimeout(function(){
+    if(seq===_seqId && falandoCb && !(narr&&narr.ended)){
+      try{ narr.pause(); }catch(e){}   /* destrava o `_vozTocando`/a fila de vozes */
+      try{ fimFala(); }catch(e){}
+      try{ if(typeof _puxaFila==="function") _puxaFila(); }catch(e){}
+    }
+  }, 10000); })(_seqId);
 }
 /* ⭐ toca os pedacos de uma fala bilingue, um apos o outro (encadeado pelo
    `ended` do `narr`, via `falandoCb`). O `_seqId` aborta se uma fala nova

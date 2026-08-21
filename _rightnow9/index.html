@@ -1759,7 +1759,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-memoria .mfig img{width:100%;height:100%;object-fit:contain}
 
-.mec-memoria .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px; background:#fff;border:3px solid #efe7d3;-webkit-box-shadow:0 3px 9px rgba(30,40,20,.22); box-shadow:0 3px 9px rgba(30,40,20,.22);overflow:hidden}
+.mec-memoria .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px; background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none;overflow:visible}
 
 .mec-memoria .mfig.mfoto img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 
@@ -2196,6 +2196,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-quem-sou-eu .opts{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:10px;max-width:min(720px,calc(100vw - 14px));margin:10px auto 0}
 
 .mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 92px;flex:1 1 92px;min-width:86px;max-width:200px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
+
+.mec-quem-sou-eu .opts + .btn{margin-top:22px}
 /* ==== PECA: relampago ==== */
 
 
@@ -2286,7 +2288,39 @@ var IMGS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
-var AC=window.AudioContext||window.webkitAudioContext, ac=AC?new AC():null;
+/* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
+   travam"). `new AudioContext()` roda no CARREGAMENTO e ESTOURA em alguns PCs —
+   quando o navegador já está no limite de 6 contextos de hardware (outras abas,
+   extensões) ele lança "number of hardware contexts reached maximum". Sem
+   try/catch, e no TOPO do script, esse erro derruba TODO o resto: a atividade
+   nem monta, e é exatamente "aleatório e só em algumas máquinas" (depende do que
+   o navegador tem aberto). Protegido: sem som, mas a atividade abre e joga. */
+var AC=window.AudioContext||window.webkitAudioContext, ac=null;
+try{ if(AC) ac=new AC(); }catch(e){ ac=null; }
+/* ⚠️⚠️ REDE DE SEGURANÇA (Marcos, ago/2026: "trava em alguma fase, aleatório, só
+   em algumas máquinas — inconsistência nos códigos talvez"). Sem um `onerror`
+   global, QUALQUER exceção não tratada num clique/timer (um elemento nulo por
+   corrida de tempo, uma API que aquele navegador não tem) deixava a fase PRESA,
+   sem avançar e sem aviso. Agora um erro não tratado mostra um botão de RESGATE
+   "Continuar" que pula para a próxima fase — a criança nunca fica travada. Não
+   engole o erro (o console continua vendo), só evita o congelamento. */
+window.onerror=function(msg,url,lin,col,err){
+  try{
+    if(document.getElementById("resgateErro")) return false;   /* já tem um */
+    if(typeof IFASE!=="number" || !(IFASE>=0)) return false;    /* fora de fase: não faz nada */
+    var b=document.createElement("button");
+    b.id="resgateErro"; b.className="btn amarelo";
+    b.style.cssText="position:fixed;left:50%;bottom:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:99999";
+    b.innerHTML="Continuar ▶";
+    b.onclick=function(){
+      try{ var n=document.getElementById("resgateErro"); if(n&&n.parentNode) n.parentNode.removeChild(n); }catch(e){}
+      try{ arma(); }catch(e){}
+      try{ abreFase(IFASE+1); }catch(e){}
+    };
+    document.body.appendChild(b);
+  }catch(e){}
+  return false;
+};
 function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} ligaAnalisador(); }
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
@@ -2334,6 +2368,47 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    2º item em diante. Cobrança do Marcos: *"o som que é falado tem que ser o
    mesmo do texto"*.                                                          */
 function falaDaTela(id){ telaNarrou=false; falar(id); }
+/* ⭐⭐ A NARRACAO DE CADA RODADA — PADRAO DA CASA (Marcos, ago/2026: *"na fase
+   escolha só a primeira fase dela fala automaticamente o enunciado, as outras
+   não, isso deveria ser padrão"*). O motor narrava o balao UMA vez, ao abrir a
+   fase. Mas as pecas de varias rodadas (escolher, completar, digitar...) trocam
+   o TEXTO do balao a cada pergunta e ficavam MUDAS da 2a rodada em diante — a
+   crianca que nao le perdia a instrucao. Agora o mesmo olheiro do balao roda a
+   CADA mudanca de texto e narra a rodada nova, com dois guardas contra repetir:
+     · so fala quando o TEXTO mudou desde a ultima narracao (`__balaoNarrado`) —
+       senao clicar numa opcao (que muda o DOM, nao o balao) re-narrava o
+       enunciado a cada toque;
+     · nao reinicia o audio que ja esta tocando o mesmo texto (o guarda do `k`).
+   Fonte unica: `montaFase` (ao abrir) e o MutationObserver (nas rodadas) chamam
+   ESTA funcao. */
+var __balaoNarrado="";
+function narraBalao(force){
+  if(ID.narrar==="manual") return;
+  if(!app) return;
+  var cx=document.getElementsByClassName("pecabox")[0];
+  /* a narracao-de-rodada (observer, force=false) so vale DENTRO de uma fase (ha
+     pecabox); capa/boletim/relatorio tem balao proprio e nao entram aqui. */
+  if(!force && !cx) return;
+  var bs=cx?cx.getElementsByClassName("balao"):(app?app.getElementsByClassName("balao"):null);
+  var txt=(bs&&bs.length)?(bs[0].textContent||""):"";
+  txt=txt.replace(/\s+/g," ").replace(/^ | $/g,"");
+  if(!txt) return;
+  if(!force && txt===__balaoNarrado) return;   /* mesmo balao: nao repete */
+  __balaoNarrado=txt;
+  if(typeof temVoz==="function"){
+    var k=temVoz(txt);
+    if(k){
+      /* nao reinicia o audio que ja esta tocando este mesmo texto */
+      if(window.__falouAgora===k && narr && !narr.paused && !narr.ended) return;
+      window.__falouAgora=k; falaDaTela("op_"+k); return;
+    }
+    /* sem gravacao para o que esta escrito: fica calado (falar outra coisa foi
+       exatamente o defeito). So no 1o desenho cai no vozIntro da fase. */
+    if(force){ try{ if(window.__faseVozIntro) falar(window.__faseVozIntro); }catch(_e){} }
+    return;
+  }
+  if(force){ try{ if(window.__faseVozIntro) falar(window.__faseVozIntro); }catch(_e){} }
+}
 function falar(id,cb){
   /* o mesmo guarda do `tocaVoz`, pelo mesmo motivo e no mesmo dia: os dois
      tocadores nao se conhecem, entao a conta de "ja disse isso agora" tem que
@@ -2369,6 +2444,19 @@ function falar(id,cb){
   var p=narr.play(); if(p&&p["catch"]){ p["catch"](function(){ fimFala(); }); }
   if(btnOuvir) btnOuvir.className="mini tocando";
   iniciaBoca();
+  /* ⭐ WATCHDOG DA VOZ (Marcos, ago/2026: máquinas que travam "em alguma fase").
+     Se o áudio emperra (rede filtrada da escola: `play()` resolve mas o `ended`
+     nunca vem), o `cb` de quem esperava a voz para AVANÇAR nunca chegava e a fase
+     congelava. Aqui um teto de 10s FORÇA o fim da fala se ela não terminou nem
+     foi substituída por outra — o `cb` sempre dispara, nenhuma fase trava por
+     voz. (O `depoisDaFala` já tinha o dele; agora vale para todo `falar+cb`.) */
+  (function(seq){ setTimeout(function(){
+    if(seq===_seqId && falandoCb && !(narr&&narr.ended)){
+      try{ narr.pause(); }catch(e){}   /* destrava o `_vozTocando`/a fila de vozes */
+      try{ fimFala(); }catch(e){}
+      try{ if(typeof _puxaFila==="function") _puxaFila(); }catch(e){}
+    }
+  }, 10000); })(_seqId);
 }
 /* ⭐ toca os pedacos de uma fala bilingue, um apos o outro (encadeado pelo
    `ended` do `narr`, via `falandoCb`). O `_seqId` aborta se uma fala nova
@@ -2498,7 +2586,15 @@ function centroTela(elm){var r=elm.getBoundingClientRect();return [r.left+r.widt
 /* ============ MEDIÇÃO INVISÍVEL + DOMÍNIO ============ */
 var MED={ini:(new Date()).getTime(),ev:[],dicas:0,toques:0,pre:null,pos:null};
 
-var CONC={luz_agua:"Luz e água para viver",sequencia:"Como a planta cresce",necessidades:"Do que a planta precisa",partes:"Partes da planta",funcoes:"Função de cada parte"};
+/* ⚠️⚠️ RESTO DE CLONE MEDIDO (Marcos, ago/2026: *"verificar se o relatório está
+   dando informações certas"*). Aqui morava `{luz_agua:"Luz e água...",partes:
+   "Partes da planta",...}` — os conceitos do JARDIM. O relatório iterava ESTE
+   dicionário, então TODA atividade mostrava objetivos de PLANTA, e como as fases
+   registram sob os conceitos DELAS (objetivo1/2/3...), o domínio saía 0% em tudo.
+   Os rótulos verdadeiros vêm do montador em `ROTULOS` (a partir de
+   `conteudo["conceitos"]`). O relatório agora itera ROTULOS; este objeto fica
+   VAZIO só como reserva de builds antigos. */
+var CONC={};
 function reg(conc,ok,tent){
   MED.ev.push({c:conc,ok:ok?1:0,t:tent||1,ms:(new Date()).getTime()-MED.ini});
   var p=DOM[conc]||0.3; DOM[conc]= ok ? p+(1-p)*0.35 : p*0.62;
@@ -3026,7 +3122,10 @@ function poeVozes(){
 }
 (function(){
   var pend=0;
-  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta(); },60); }
+  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta();
+    /* ⭐ narra a RODADA nova: so dispara quando o TEXTO do balao mudou (guarda
+       dentro de narraBalao), entao tocar numa opcao nao re-narra o enunciado. */
+    try{ narraBalao(false); }catch(_e){} },60); }
   if(window.MutationObserver){
     var mo=new MutationObserver(agenda);
     mo.observe(app,{childList:true,subtree:true,characterData:true});
@@ -3353,6 +3452,7 @@ function treinarFracos(){
   FILATREINO=fila; proximoTreino();
 }
 function pct(x){ return Math.round(x*100)+"%"; }
+function _temChaves(o){ if(!o) return false; for(var _k in o){ if(o.hasOwnProperty(_k)) return true; } return false; }
 function telaPainel(){
   try{ narr.pause(); }catch(e){}
   /* ⚠️ LICAO PAGA (Museu, ago/2026): o painel do professor e um overlay opaco
@@ -3370,9 +3470,13 @@ function telaPainel(){
   h+="<div><b>Aluno(a):</b> "+(perfil.nome||"(sem nome)")+" &#183; <b>Tempo:</b> ~"+mins+" min &#183; <b>Dicas usadas:</b> "+MED.dicas+"</div>";
   h+="<div class='bloco'><b>Acertos:</b> "+acc+" de "+tot+" ("+(tot?Math.round(acc*100/tot):0)+"%)</div>";
   h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th><th>Parecer</th></tr>";
+  /* itera os conceitos REAIS da atividade (ROTULOS, do montador). Reserva ao
+     CONC/ROTCRI para builds sem ROTULOS. */
+  var _rot=(typeof ROTULOS!=="undefined"&&ROTULOS&&_temChaves(ROTULOS))?ROTULOS
+          :((typeof ROTCRI!=="undefined"&&ROTCRI&&_temChaves(ROTCRI))?ROTCRI:CONC);
   var k,ndom=0,nconc=0;
-  for(k in CONC){ if(CONC.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
-    h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
+  for(k in _rot){ if(_rot.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
+    h+="<tr><td>"+_rot[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var ganho="não medido";
@@ -3499,40 +3603,12 @@ function montaFase(i, aoFim){
      Agora ele ESPERA a peca desenhar, LE o balao de verdade e fala a gravacao
      DAQUELE texto. So cai no `vozIntro` quando a peca nao escreveu balao
      nenhum — ai o enunciado da fase e mesmo o que esta na tela. */
+  /* ⚠️ o `op_`/temVoz e a dedup contra "duas vozes" agora moram em `narraBalao`
+     (fonte unica): aqui so zeramos o rastreador e disparamos a 1a narracao.
+     O MESMO `narraBalao` roda a cada rodada nova pelo MutationObserver. */
+  __balaoNarrado = "";
   if(ID.narrar !== "manual"){
-    setTimeout(function(){
-      var cx = document.getElementsByClassName("pecabox")[0];
-      var bs = cx ? cx.getElementsByClassName("balao") : null;
-      var txt = (bs && bs.length) ? (bs[0].textContent || "") : "";
-      txt = txt.replace(/\s+/g, " ").replace(/^ | $/g, "");
-      /* ⚠️ NOTA (ago/2026): tentei por um alto-falante DENTRO do balao do
-         enunciado (pedido do Marcos). O portao de leiaute (_qa/leiaute.js, regra
-         "botao sobre texto") trata a regiao do balao como TEXTO e reprova o zap
-         em QUALQUER posicao dentro dele — inline, no fim, absoluto no vao. Como o
-         enunciado JA e narrado sozinho ao abrir a fase E ja tem o botao "Ouvir
-         de novo" (o botao de som, em toda fase), o caminho confiavel e esse.
-         Se um dia quisermos o icone COLADO na frase, o portao precisa aprender a
-         diferenca entre "zap no vao reservado" e "zap sobre a letra" primeiro. */
-      if(txt && typeof temVoz === "function"){
-        var k = temVoz(txt);
-        /* ⚠️ o olheiro do balao pode ter chegado ANTES de mim (ele dispara na
-           mudanca do DOM, eu num prazo). Se ele ja falou este mesmo texto e o
-           audio esta tocando, eu me calo — senao o audio REINICIA e a crianca
-           ouve o comeco duas vezes. Foi o que o Marcos ouviu como "duas vozes". */
-        if(k){
-          if(window.__falouAgora === k && narr && !narr.paused && !narr.ended) return;
-          /* ⚠️ o `op_` NAO e enfeite: o `temVoz` devolve so a CONTA do texto,
-             e o arquivo gravado chama-se `op_<conta>.mp3` (mesma convencao das
-             respostas tocaveis). Sem o prefixo, o motor pedia `audio/<conta>.mp3`,
-             que nao existe — e a fase ficava MUDA mesmo com a voz gravada. */
-          window.__falouAgora = k; falaDaTela("op_" + k); return;
-        }
-        /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
-           foi exatamente o defeito. */
-        return;
-      }
-      if(f.vozIntro) falar(f.vozIntro);
-    }, 260);
+    setTimeout(function(){ narraBalao(true); }, 260);
   }
 
   var m = MEC[f.mec];
@@ -4846,7 +4922,21 @@ function fazGaveta(g){
      gaveta e a FIGURA do dinheiro — grande, CENTRALIZADA e levemente
      transparente (~20%) — moeda numa, cedula na outra. A crianca reconhece
      pelo desenho e, se precisar, toca no alto-falante e OUVE o nome. */
-  if(g.img){ var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w); }
+  /* ⚠️⚠️ LICAO PAGA (Marcos, sólidos, ago/2026: *"as imagens quase
+     desaparecendo... precisa ficar mais claro para o estudante o que tem que
+     fazer"*). Toda gaveta com figura recebia SO a marca d'agua a 12% e, com
+     `rot:false`, NEM o nome — a gaveta ficava um fantasma sem rótulo. Isso serve
+     ao dinheiro (moeda/nota, 1o ano, ficha tambem é imagem), mas NAO ao caso em
+     que a GAVETA é o conceito que a crianca esta aprendendo (o sólido). Agora:
+       · `rot:true`  -> figura NITIDA no topo + NOME em faixa (modo "aprender a
+                        categoria": a identidade da gaveta tem que estar clara);
+       · `rot:false` + img -> marca d'agua fraca (legado dinheiro), inalterado;
+       · sem img -> só o nome. */
+  if(g.img && g.rot){
+    d.appendChild(figura(g.img,"gfig"));            /* figura nitida, 66px */
+  }else if(g.img){
+    var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w);
+  }
   /* ⚠️ LICAO PAGA (Teatro das Palavras, 5o ano, ago/2026): a gaveta SO mostrava
      a figura (regra do 1o ano, que nao le). Numa atividade de texto — separar
      PRONOME PESSOAL x DEMONSTRATIVO — as gavetas nao tem figura (img:"") e
@@ -5199,6 +5289,20 @@ function telaCompletar(){
   var fr=el("div","frase",f.ante+'<span class="lac">_____</span>'+f.dep);
   c.appendChild(fr);
   lacuna=fr.querySelector(".lac");
+  /* ⭐ NARRA O PROBLEMA depois do enunciado (Marcos, ago/2026: "na fase quanto
+     falta deveria ter o áudio onde conta o problema, depois do enunciado"). Usa a
+     voz GRAVADA da casa (a conta já está no falas.json); o `falar` do motor
+     enfileira depois do enunciado. Se não houver gravação, fica calado — nunca
+     voz-robô. Guardado por `typeof` para a bancada solta não estourar. */
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var _tir=function(s){ return String(s||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").replace(/^ | $/g,""); };
+      var _fa=_tir(f.ante), _fad=_tir(f.ante+" "+f.dep);
+      var _fk=temVoz(_fa)||temVoz(_fad);
+      var _tela=t;
+      if(_fk) setTimeout(function(){ if(_tela&&_tela.parentNode) falar("op_"+_fk); }, 520);
+    }
+  }catch(_e){}
   /* ⚠️ o embaralhado tem que acontecer com os pedaços JÁ normalizados: senão a
      comparação com a certa mudaria de forma (texto x objeto) no meio do
      caminho. É a armadilha da mecânica: na Fábrica de Estrelas a certa era
@@ -7830,6 +7934,10 @@ MEC["intruso"] = function(f, cen, fim){
 var RODADAS= /*TECNICA*/[
  { selo:"A CESTA DA FEIRA", tipo:"texto",
    enun:"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>",
+   /* `enunPorque` (opcional) = o balão do passo POR QUÊ, já dizendo o que a de
+      fora NÃO faz igual às outras. Sem ele, a reserva genérica pergunta o porquê
+      sem a fórmula estranha "é a de fora". Aqui fica de exemplo. */
+   enunPorque:"O que a <b>cenoura</b> tem de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.",
    itens:[{k:"maca",n:"MA&#199;&#195;",img:""},{k:"banana",n:"BANANA",img:""},
           {k:"uva",n:"UVA",img:""},{k:"cenoura",n:"CENOURA",img:""}],
    fora:"cenoura", nomeFora:"CENOURA",
@@ -8109,7 +8217,13 @@ function telaPorque(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","POR QU&#202;?"));
-  c.appendChild(el("div","balao","<b>"+R.nomeFora+"</b> &#233; a de fora. E <b>por qu&#234;</b> ela n&#227;o pertence ao grupo?"));
+  /* ⚠️ LIÇÃO PAGA (Marcos, ago/2026): "esse é a de fora e pq não pertence ao
+     grupo fica muito estranho — melhor dizer O QUE O OBJETO NÃO FAZ e por que
+     não pertence". Cada rodada pode trazer `enunPorque` já dizendo o que a de
+     fora não faz igual às outras ("O cubo NÃO rola como os outros..."). Sem
+     esse campo, a reserva genérica pergunta o porquê sem a fórmula estranha. */
+  c.appendChild(el("div","balao", R.enunPorque ||
+    ("O que a <b>"+R.nomeFora+"</b> faz de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.")));
   var box=el("div","opts"), i;
   var ordem=baguncar(R.razoes.slice(0));
   for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));
@@ -8351,7 +8465,11 @@ MEC["ligar"] = function(f, cen, fim){
    `ver`. Aqui ele nao entrega a resposta de graca: a crianca ainda tem de
    escolher a ponta e fazer o gesto ate o outro lado.                       */
 var LIG=[
-  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra"},
+  /* `g` (opcional) = GRUPO para muitos-para-um: pontas com o mesmo `g` casam
+     entre si (o cubo liga a qualquer "fica firme"). Vazio/ausente = par exato
+     por `k`, como sempre. Aqui fica "" só para o montador saber que o campo
+     existe. */
+  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra", g:""},
   {k:"p1", t:"O CAULE", s:"Leva a água para cima"},
   {k:"p2", t:"A FOLHA", s:"Faz o alimento com o sol"},
   {k:"p3", t:"A FLOR",  s:"Vira fruto e semente"}
@@ -8468,6 +8586,7 @@ function fazPonta(dado,lado,texto){
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
+  if(dado.g) l.setAttribute("data-g",dado.g);   /* grupo p/ muitos-para-um (ver casa()) */
   l._lado=lado;
   l._ver=!!dado.ver;   /* ⭐ modo facil pedido na gaveta (ver acima) */
   l.onclick=function(){
@@ -8588,10 +8707,10 @@ function desmarca(){
    de vez, e a peça continua deixando a crianca fechar o par com a mao.    */
 function mostraDestino(l,nivel){
   if(!l||temClasse(l,"feita")) return;
-  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa"), alvo=null;
+  var a=app.getElementsByClassName("lig"), i, alvo=null;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")||a[i]===l) continue;
-    if(a[i]._lado!==l._lado&&a[i].getAttribute("data-qa")===k){ alvo=a[i]; break; }
+    if(casa(l,a[i])){ alvo=a[i]; break; }   /* aponta para um destino AINDA válido (par exato OU grupo) */
   }
   if(!alvo) return;
   destDe=l; destAlvo=alvo; destNivel=nivel;
@@ -8606,11 +8725,26 @@ function apagaDestino(){
   redesenha();   /* a linha fantasma some junto */
 }
 
+/* ⭐ MUITOS-PARA-UM (Marcos, ago/2026: *"tanto o quadrado quanto a pirâmide
+   ficam firmes, então ao clicar com qualquer um em qualquer que diga que fica
+   firme do outro lado seria interessante funcionar"*). Duas pontas casam quando
+   têm a MESMA chave `k` (o par exato de sempre) OU quando compartilham um GRUPO
+   (`data-g`): assim o cubo liga a QUALQUER destino "fica firme", e a pirâmide ao
+   outro — sem precisar acertar o gênero da frase. Compatível: gaveta sem `g`
+   segue casando só por `k`. Os alvos se consomem (`feita`), então N sólidos do
+   grupo preenchem os N destinos do grupo em qualquer ordem. */
+function casa(a,b){
+  if(a._lado===b._lado) return false;
+  var ka=a.getAttribute("data-qa"), kb=b.getAttribute("data-qa");
+  if(ka!==null&&ka===kb) return true;
+  var ga=a.getAttribute("data-g"), gb=b.getAttribute("data-g");
+  return !!(ga&&gb&&ga===gb);
+}
 function juntar(a,b){
   if(!a||!b||a===b) return;
   if(temClasse(a,"feita")||temClasse(b,"feita")) return;
   if(a._lado===b._lado) return;
-  if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
+  if(casa(a,b)){
     sCerto();
     a.className="lig feita"; b.className="lig feita";
     marcada=null;
@@ -11158,7 +11292,7 @@ FIM = {titulo:"RIGHT NOW - Flagra na Cidade!", texto:"A edi&#231;&#227;o fechou 
 ABERTURA = {texto:"O jornal <b>RIGHT NOW</b> s&#243; conta o que est&#225; acontecendo <b>agora</b>, neste instante. O Pixel saiu &#224; rua e voltou com um monte de <b>fotos</b>... mas as <b>legendas sumiram</b>! Sem elas, ningu&#233;m sabe o que cada pessoa <b>est&#225; fazendo</b>. <b>Vem me ajudar</b> a fechar a edi&#231;&#227;o de hoje?", voz:"rn_abertura"};
 FASES = [{"id": "f01", "mec": "escolher", "selo": "WHAT IS HAPPENING NOW?", "enunciado": "Look at the photo. What is the person doing <b>right now</b>?", "dica": "A a&#231;&#227;o est&#225; acontecendo AGORA: o verbo termina em <b>-ing</b>.", "conceito": "objetivo1", "dados": [{"img": "rn_cooking", "p": "What is she doing right now?", "c": "She is cooking.", "e": ["She is sleeping.", "She is reading.", "She is running."], "d": ["Olhe as m&#227;os dela e a panela no fog&#227;o.", "Cozinhar em ingl&#234;s &#233; <b>to cook</b> &#8594; cook<b>ing</b>."]}, {"img": "rn_riding", "p": "What is she doing right now?", "c": "She is riding a bike.", "e": ["She is cooking.", "She is dancing.", "She is swimming."], "d": ["Ela est&#225; em cima de quê?", "Andar de bicicleta &#233; <b>to ride a bike</b> &#8594; rid<b>ing</b>."]}, {"img": "rn_playing_football", "p": "What are they doing right now?", "c": "They are playing football.", "e": ["They are eating.", "They are painting.", "They are singing."], "d": ["S&#227;o dois meninos e uma bola.", "São <b>eles</b>: use <b>are</b> + play<b>ing</b>."]}, {"img": "rn_playing_guitar", "p": "What is he doing right now?", "c": "He is playing the guitar.", "e": ["He is watching TV.", "He is writing.", "He is jumping."], "d": ["Olhe o instrumento nas m&#227;os dele.", "Tocar viol&#227;o &#233; <b>to play the guitar</b>."]}], "dadosExtra": {"TITULO": "WHAT IS HAPPENING NOW?", "FECHO": "You can read what is happening now!"}, "vozIntro": "rn_f01_intro", "dicaVoz": "rn_f01_dica"}, {"id": "f02", "mec": "ligar", "selo": "MAKE IT -ING", "enunciado": "Ligue cada verbo com a forma <b>-ing</b> dele.", "dica": "A maioria s&#243; ganha <b>-ing</b>. Alguns dobram a letra ou perdem o <b>e</b>.", "conceito": "objetivo1", "dados": [{"k": "cook", "t": "cook", "s": "cooking"}, {"k": "play", "t": "play", "s": "playing"}, {"k": "run", "t": "run", "s": "running"}, {"k": "dance", "t": "dance", "s": "dancing"}, {"k": "sit", "t": "sit", "s": "sitting"}, {"k": "write", "t": "write", "s": "writing"}], "dadosExtra": {"ENUN": "Ligue cada verbo com a forma <b>-ing</b> dele.", "DICAS": ["O normal &#233; s&#243; colar <b>-ing</b>: play &#8594; playing.", "Verbo curto com uma vogal dobra a &#250;ltima letra: run &#8594; ru<b>nn</b>ing, sit &#8594; si<b>tt</b>ing.", "Verbo que acaba em <b>e</b> perde o <b>e</b>: write &#8594; writ<b>ing</b>, dance &#8594; danc<b>ing</b>."], "FECHO": "You know how to build the -ing form!", "FEITOS": []}, "vozIntro": "rn_f02_intro", "dicaVoz": "rn_f02_dica"}, {"id": "f03", "mec": "completar", "selo": "FINISH THE CAPTION", "enunciado": "Toque no peda&#231;o que <b>falta</b> na legenda da foto.", "dica": "Olhe a foto e pense no que a pessoa est&#225; fazendo.", "conceito": "objetivo1", "dados": [{"img": "rn_reading", "ante": "He is ", "dep": " a newspaper.", "cer": "reading", "out": ["eating", "washing"], "dic": "Ele segura um jornal e olha para ele."}, {"img": "rn_dancing", "ante": "She is ", "dep": ".", "cer": "dancing", "out": ["sleeping", "cooking"], "dic": "Ela se mexe com a m&#250;sica."}, {"img": "rn_painting", "ante": "He is ", "dep": " the wall.", "cer": "painting", "out": ["reading", "driving"], "dic": "Ele tem um rolo de tinta na m&#227;o."}, {"img": "rn_washing", "ante": "She is ", "dep": " her hands.", "cer": "washing", "out": ["drawing", "riding"], "dic": "Tem &#225;gua e sab&#227;o na pia."}], "dadosExtra": {"ENUN": "Toque no peda&#231;o que <b>falta</b> na legenda.", "DEPOIS": "Leia a legenda inteira antes de escolher.", "FECHO": "Every caption is finished!"}, "vozIntro": "rn_f03_intro", "dicaVoz": "rn_f03_dica"}, {"id": "f04", "mec": "montar-frase", "selo": "BUILD THE SENTENCE", "enunciado": "Monte a frase em ingl&#234;s na <b>ordem certa</b>: pessoa + <b>am/is/are</b> + verbo-ing.", "dica": "Comece por <b>quem</b> faz a a&#231;&#227;o, depois am/is/are, depois o verbo-ing.", "conceito": "objetivo1", "dados": [{"img": "rn_cooking", "w": ["She", "is", "cooking"], "c": ["suj", "be", "ving"], "apoio": true}, {"img": "rn_playing_football", "w": ["They", "are", "playing", "football"], "c": ["suj", "be", "ving", "comp"], "apoio": false}, {"img": "rn_reading", "w": ["He", "is", "reading", "a newspaper"], "c": ["suj", "be", "ving", "comp"], "apoio": false}], "dadosExtra": {"CLA": {"suj": {"r": "quem", "d": "<b>quem</b> faz: I, you, he, she, it, we, they"}, "be": {"r": "am/is/are", "d": "o verbo <b>be</b>: am, is ou are"}, "ving": {"r": "a&#231;&#227;o -ing", "d": "o verbo com <b>-ing</b>"}, "comp": {"r": "o resto", "d": "o <b>complemento</b> da frase"}}, "FORMAS": ["suj", "be", "ving", "comp"]}, "vozIntro": "rn_f04_intro", "dicaVoz": "rn_f04_dica"}, {"id": "f05", "mec": "memoria", "selo": "MATCH THE PHOTO", "enunciado": "Ache o par: a <b>foto</b> e a <b>legenda</b> certa.", "dica": "Vire duas cartas. A foto combina com a frase que a descreve.", "conceito": "objetivo2", "dados": [{"k": "cook", "pal": "COOKING", "img": "rn_cooking", "sen": "She is cooking."}, {"k": "bike", "pal": "RIDING", "img": "rn_riding", "sen": "She is riding a bike."}, {"k": "foot", "pal": "PLAYING", "img": "rn_playing_football", "sen": "They are playing football."}, {"k": "tv", "pal": "WATCHING", "img": "rn_watching", "sen": "He is watching TV."}], "vozIntro": "rn_f05_intro", "dicaVoz": "rn_f05_dica"}, {"id": "f06", "mec": "conserte-o-erro", "selo": "FIX THE CAPTION", "enunciado": "Uma palavra da legenda est&#225; <b>errada</b>. Ache e conserte.", "dica": "Confira o <b>be</b> (am/is/are) e o <b>-ing</b> do verbo.", "conceito": "objetivo2", "dados": [{"img": "", "selo": "FLAGRA 1", "cab": "IS OR ARE?", "bal": "Uma palavra est&#225; errada. Ache e conserte.", "pecas": ["She", "are", "cooking"], "erro": 1, "certa": "is", "ops": ["is", "am", "be"], "por": "'She' &#233; uma pessoa: usa <b>is</b>, n&#227;o 'are'.", "dicas": ["Leia a frase inteira baixinho.", "Quem &#233; o sujeito? <b>She</b>.", "Era a 2&#170; palavra. Marquei para voc&#234;."], "dicas2": ["'She' pede <b>is</b>.", "Uma pessoa (he/she/it) &#8594; is.", "Era o <b>is</b>: She is cooking."]}, {"selo": "FLAGRA 2", "cab": "WHERE IS THE -ING?", "bal": "Falta o -ing no verbo. Ache a palavra errada.", "pecas": ["They", "are", "play"], "erro": 2, "certa": "playing", "ops": ["playing", "plays", "played"], "por": "No Present Continuous o verbo termina em <b>-ing</b>.", "dicas": ["O be j&#225; est&#225; certo (are). Olhe o verbo.", "A a&#231;&#227;o est&#225; acontecendo agora: precisa de -ing.", "Era a 3&#170; palavra. Marquei para voc&#234;."], "dicas2": ["play + ing = <b>playing</b>.", "Agora, acontecendo: -ing.", "Era <b>playing</b>: They are playing."]}, {"selo": "FLAGRA 3", "cab": "AM, IS OR ARE?", "bal": "Ache o be errado e conserte.", "pecas": ["I", "is", "reading"], "erro": 1, "certa": "am", "ops": ["am", "are", "is"], "por": "'I' sempre usa <b>am</b>.", "dicas": ["Quem &#233; o sujeito? <b>I</b>.", "S&#243; o I usa um be especial.", "Era a 2&#170; palavra. Marquei para voc&#234;."], "dicas2": ["I + <b>am</b>.", "N&#227;o &#233; is nem are; &#233; am.", "Era <b>am</b>: I am reading."]}], "vozIntro": "rn_f06_intro", "dicaVoz": "rn_f06_dica"}, {"id": "f07", "mec": "classificar", "selo": "AM / IS / ARE", "enunciado": "Cada sujeito usa um verbo <b>be</b>. Toque na ficha e depois na gaveta certa.", "dica": "I &#8594; am. He, she, it &#8594; is. You, we, they &#8594; are.", "conceito": "objetivo2", "dados": [{"k": "am", "n": "am", "img": ""}, {"k": "is", "n": "is", "img": ""}, {"k": "are", "n": "are", "img": ""}], "dadosExtra": {"ENUN": "Cada sujeito vai na gaveta do seu <b>be</b>. Toque na ficha e depois na gaveta.", "DICAS": ["S&#243; o <b>I</b> usa <b>am</b>.", "Uma pessoa/coisa (he, she, it, the dog) usa <b>is</b>.", "Mais de um (you, we, they, the kids) usa <b>are</b>."], "FICHAS": [{"t": "I", "alvo": "am", "img": ""}, {"t": "He", "alvo": "is", "img": ""}, {"t": "She", "alvo": "is", "img": ""}, {"t": "The dog", "alvo": "is", "img": ""}, {"t": "You", "alvo": "are", "img": ""}, {"t": "We", "alvo": "are", "img": ""}, {"t": "They", "alvo": "are", "img": ""}, {"t": "The kids", "alvo": "are", "img": ""}]}, "vozIntro": "rn_f07_intro", "dicaVoz": "rn_f07_dica"}, {"id": "f08", "mec": "digitar", "selo": "TYPE THE ACTION", "enunciado": "Monte a palavra que diz o que a pessoa est&#225; fazendo.", "dica": "Diga o verbo devagar e escreva letra por letra.", "conceito": "objetivo2", "dados": [{"img": "rn_playing_guitar", "palavra": "PLAYING", "pista": "He is ___ the guitar.", "dic": "to play &#8594; play + ing."}, {"img": "rn_listening", "palavra": "LISTENING", "pista": "She is ___ to music.", "dic": "to listen &#8594; listen + ing."}, {"img": "rn_carrying", "palavra": "CARRYING", "pista": "He is ___ a heavy box.", "dic": "to carry &#8594; carry + ing."}], "dadosExtra": {"ENUN": "Monte a palavra, letra por letra.", "FECHO": "You typed every action!", "LETRAS": "ABCDEFGHIJKLMNOPQRSTUVWXYZ"}, "vozIntro": "rn_f08_intro", "dicaVoz": "rn_f08_dica"}, {"id": "f09", "mec": "escrever-legenda", "selo": "WRITE THE CAPTION", "enunciado": "Escreva a legenda da foto: <b>quem + is/are + verbo-ing</b>.", "dica": "Use os apoios embaixo se precisar. Comece pelo <b>quem</b>.", "conceito": "objetivo3", "dados": [{"img": "rn_cooking", "sel": "FOTO 1 DE 3", "ped": "O que ela est&#225; fazendo?", "apoio": ["She", "is", "cooking", "in the kitchen"], "comeco": "She is ", "exemplo": "she is cooking in the kitchen"}, {"img": "rn_riding", "sel": "FOTO 2 DE 3", "ped": "O que ela est&#225; fazendo?", "apoio": ["She", "is", "riding", "a bike"], "comeco": "She is ", "exemplo": "she is riding a bike"}, {"img": "rn_playing_football", "sel": "FOTO 3 DE 3", "ped": "O que eles est&#227;o fazendo?", "apoio": ["They", "are", "playing", "football"], "comeco": "They are ", "exemplo": "they are playing football"}], "vozIntro": "rn_f09_intro", "dicaVoz": "rn_f09_dica"}, {"id": "f11", "mec": "intruso", "selo": "THE ODD SENTENCE", "enunciado": "Tr&#234;s frases est&#227;o no Present Continuous. Ache a que <b>n&#227;o est&#225;</b>.", "dica": "Present Continuous = be (am/is/are) + verbo-ing.", "conceito": "objetivo3", "dados": [{"selo": "ROUND 1", "tipo": "texto", "enun": "Tr&#234;s frases est&#227;o no Present Continuous. <b>Qual n&#227;o est&#225;?</b>", "itens": [{"k": "a", "n": "She is cooking.", "img": ""}, {"k": "b", "n": "They are playing.", "img": ""}, {"k": "c", "n": "He reads a book.", "img": ""}, {"k": "d", "n": "I am running.", "img": ""}], "fora": "c", "nomeFora": "He reads a book.", "d1": "Procure o <b>be</b> (am/is/are) + verbo com <b>-ing</b>.", "d2": "Tr&#234;s t&#234;m be + -ing. Uma n&#227;o tem.", "d3": "'He reads a book' n&#227;o tem be nem -ing &#8212; &#233; Simple Present.", "razoes": [{"t": "N&#227;o tem be + verbo-ing.", "ok": 1}, {"t": "Porque &#233; a frase mais curta.", "ok": 0}, {"t": "Porque fala de outra pessoa.", "ok": 0}, {"t": "Porque come&#231;a diferente.", "ok": 0}], "p1": "Olhe a ESTRUTURA da frase, n&#227;o o assunto.", "p2": "Todas as outras t&#234;m be + verbo-ing.", "p3": "'He reads a book' n&#227;o tem be nem -ing &#8212; &#233; Simple Present.", "regra": "present continuous tem be + verbo-ing"}, {"selo": "ROUND 2", "tipo": "texto", "enun": "Tr&#234;s frases est&#227;o no Present Continuous. <b>Qual n&#227;o est&#225;?</b>", "itens": [{"k": "a", "n": "We are singing.", "img": ""}, {"k": "b", "n": "She likes pizza.", "img": ""}, {"k": "c", "n": "He is dancing.", "img": ""}, {"k": "d", "n": "They are swimming.", "img": ""}], "fora": "b", "nomeFora": "She likes pizza.", "d1": "Procure o <b>be</b> (am/is/are) + verbo com <b>-ing</b>.", "d2": "Tr&#234;s t&#234;m be + -ing. Uma n&#227;o tem.", "d3": "'She likes pizza' n&#227;o tem be nem -ing &#8212; &#233; Simple Present.", "razoes": [{"t": "N&#227;o tem be + verbo-ing.", "ok": 1}, {"t": "Porque &#233; a frase mais curta.", "ok": 0}, {"t": "Porque fala de outra pessoa.", "ok": 0}, {"t": "Porque come&#231;a diferente.", "ok": 0}], "p1": "Olhe a ESTRUTURA da frase, n&#227;o o assunto.", "p2": "Todas as outras t&#234;m be + verbo-ing.", "p3": "'She likes pizza' n&#227;o tem be nem -ing &#8212; &#233; Simple Present.", "regra": "present continuous tem be + verbo-ing"}, {"selo": "ROUND 3", "tipo": "texto", "enun": "Tr&#234;s frases est&#227;o no Present Continuous. <b>Qual n&#227;o est&#225;?</b>", "itens": [{"k": "a", "n": "I am writing.", "img": ""}, {"k": "b", "n": "You are listening.", "img": ""}, {"k": "c", "n": "It is raining.", "img": ""}, {"k": "d", "n": "We play every day.", "img": ""}], "fora": "d", "nomeFora": "We play every day.", "d1": "Procure o <b>be</b> (am/is/are) + verbo com <b>-ing</b>.", "d2": "Tr&#234;s t&#234;m be + -ing. Uma n&#227;o tem.", "d3": "'We play every day' fala de rotina (Simple Present), n&#227;o de agora.", "razoes": [{"t": "N&#227;o tem be + verbo-ing.", "ok": 1}, {"t": "Porque &#233; a frase mais curta.", "ok": 0}, {"t": "Porque fala de outra pessoa.", "ok": 0}, {"t": "Porque come&#231;a diferente.", "ok": 0}], "p1": "Olhe a ESTRUTURA da frase, n&#227;o o assunto.", "p2": "Todas as outras t&#234;m be + verbo-ing.", "p3": "'We play every day' fala de rotina (Simple Present), n&#227;o de agora.", "regra": "present continuous tem be + verbo-ing"}], "vozIntro": "rn_f11_intro", "dicaVoz": "rn_f11_dica"}, {"id": "f12", "mec": "relampago", "selo": "SPEED ROUND", "enunciado": "R&#225;pido! Escolha o <b>be</b> certo (am, is ou are).", "dica": "I &#8594; am. He/she/it &#8594; is. You/we/they &#8594; are.", "conceito": "objetivo3", "dados": [{"p": "She ___ dancing.", "c": "is", "e": ["are", "am"]}, {"p": "They ___ running.", "c": "are", "e": ["is", "am"]}, {"p": "I ___ reading.", "c": "am", "e": ["is", "are"]}, {"p": "He ___ sleeping.", "c": "is", "e": ["are", "am"]}, {"p": "We ___ singing.", "c": "are", "e": ["is", "am"]}, {"p": "The dog ___ eating.", "c": "is", "e": ["are", "am"]}, {"p": "You ___ writing.", "c": "are", "e": ["is", "am"]}, {"p": "It ___ raining.", "c": "is", "e": ["are", "am"]}, {"p": "He ___ reading.", "c": "is", "e": ["are", "am"]}, {"p": "We ___ swimming.", "c": "are", "e": ["is", "am"]}], "vozIntro": "rn_f12_intro", "dicaVoz": "rn_f12_dica"}, {"id": "aquecimento", "mec": "ouvir-achar", "selo": "LISTEN AND FIND", "enunciado": "Ou&#231;a a frase e toque na <b>foto</b> certa.", "dica": "Aperte <b>Ouvir</b> e repita baixinho. Procure a a&#231;&#227;o.", "conceito": "objetivo3", "dados": [{"selo": "LISTEN 1", "alvo": "cook", "opcoes": ["cook", "wash", "paint", "danca"], "rotulo": "THE SENTENCE IS", "escrito": "She is cooking.", "fala": "She is cooking.", "enun": "Ou&#231;a a frase e toque na <b>foto</b> certa.", "hint": "Sem som? Toque em <b>Ver a frase</b>.", "msg": "Yes! She is cooking.", "dicas": ["Aperte Ouvir e escute at&#233; o fim.", "Preste aten&#231;&#227;o no verbo-ing.", "Esta &#233; a foto certa."]}, {"selo": "LISTEN 2", "alvo": "jornal", "opcoes": ["jornal", "tv", "listen", "guitar"], "rotulo": "THE SENTENCE IS", "escrito": "He is reading a newspaper.", "fala": "He is reading a newspaper.", "enun": "Ou&#231;a a frase e toque na <b>foto</b> certa.", "hint": "Sem som? Toque em <b>Ver a frase</b>.", "msg": "Yes! He is reading a newspaper.", "dicas": ["Aperte Ouvir e escute at&#233; o fim.", "Preste aten&#231;&#227;o no verbo-ing.", "Esta &#233; a foto certa."]}, {"selo": "LISTEN 3", "alvo": "foot", "opcoes": ["foot", "bike", "danca", "cook"], "rotulo": "THE SENTENCE IS", "escrito": "They are playing football.", "fala": "They are playing football.", "enun": "Ou&#231;a a frase e toque na <b>foto</b> certa.", "hint": "Sem som? Toque em <b>Ver a frase</b>.", "msg": "Yes! They are playing football.", "dicas": ["Aperte Ouvir e escute at&#233; o fim.", "Preste aten&#231;&#227;o no verbo-ing.", "Esta &#233; a foto certa."]}, {"selo": "LISTEN 4", "alvo": "bike", "opcoes": ["bike", "foot", "guitar", "wash"], "rotulo": "THE SENTENCE IS", "escrito": "She is riding a bike.", "fala": "She is riding a bike.", "enun": "Ou&#231;a a frase e toque na <b>foto</b> certa.", "hint": "Sem som? Toque em <b>Ver a frase</b>.", "msg": "Yes! She is riding a bike.", "dicas": ["Aperte Ouvir e escute at&#233; o fim.", "Preste aten&#231;&#227;o no verbo-ing.", "Esta &#233; a foto certa."]}, {"selo": "LISTEN 5", "alvo": "listen", "opcoes": ["listen", "tv", "jornal", "paint"], "rotulo": "THE SENTENCE IS", "escrito": "He is listening to music.", "fala": "He is listening to music.", "enun": "Ou&#231;a a frase e toque na <b>foto</b> certa.", "hint": "Sem som? Toque em <b>Ver a frase</b>.", "msg": "Yes! He is listening to music.", "dicas": ["Aperte Ouvir e escute at&#233; o fim.", "Preste aten&#231;&#227;o no verbo-ing.", "Esta &#233; a foto certa."]}], "dadosExtra": {"CATALOGO": {"cook": {"nome": "She is cooking.", "voz": "She is cooking.", "img": "rn_cooking"}, "bike": {"nome": "She is riding a bike.", "voz": "She is riding a bike.", "img": "rn_riding"}, "tv": {"nome": "He is watching TV.", "voz": "He is watching TV.", "img": "rn_watching"}, "foot": {"nome": "They are playing football.", "voz": "They are playing football.", "img": "rn_playing_football"}, "danca": {"nome": "She is dancing.", "voz": "She is dancing.", "img": "rn_dancing"}, "jornal": {"nome": "He is reading a newspaper.", "voz": "He is reading a newspaper.", "img": "rn_reading"}, "wash": {"nome": "She is washing the dishes.", "voz": "She is washing the dishes.", "img": "rn_washing"}, "listen": {"nome": "He is listening to music.", "voz": "He is listening to music.", "img": "rn_listening"}, "paint": {"nome": "She is painting.", "voz": "She is painting.", "img": "rn_painting"}, "guitar": {"nome": "He is playing the guitar.", "voz": "He is playing the guitar.", "img": "rn_playing_guitar"}}, "TEXTOS": {"ouvir": "HEAR IT", "ouvirDica": "Pode apertar quantas vezes quiser.", "ouvirLeitor": "Ouvir a frase de novo"}, "ESCONDER": "sim"}, "vozIntro": "rn_aquecimento_intro", "dicaVoz": "rn_aquecimento_dica"}, {"id": "f13", "mec": "quem-sou-eu", "selo": "WHAT AM I DOING?", "enunciado": "Leia as pistas e descubra <b>o que a pessoa est&#225; fazendo</b>.", "dica": "Cada pista mostra um peda&#231;o da cena. Junte tudo.", "conceito": "objetivo4", "dados": [{"resp": "COOKING", "pistas": ["I am in the <b>kitchen</b>.", "I am using a <b>pot</b> and a spoon.", "Something smells good — lunch is almost ready!"], "outros": ["READING", "SWIMMING", "SLEEPING"]}, {"resp": "PLAYING FOOTBALL", "pistas": ["I am on the <b>field</b> with my friends.", "I am kicking a <b>ball</b>.", "Goal! Everybody is cheering."], "outros": ["DANCING", "PAINTING", "WRITING"]}, {"resp": "LISTENING TO MUSIC", "pistas": ["I have <b>headphones</b> on my ears.", "My head is moving to the beat.", "I can't hear you — the song is too good!"], "outros": ["WATCHING TV", "RUNNING", "COOKING"]}, {"resp": "RIDING A BIKE", "pistas": ["I am <b>outside</b>, on the street.", "I am on two <b>wheels</b>.", "The wind is on my face — so fast!"], "outros": ["RUNNING", "WASHING", "READING"]}], "vozIntro": "rn_f13_intro", "dicaVoz": "rn_f13_dica"}, {"id": "f14", "mec": "caca-palavras", "selo": "FIND THE -ING VERBS", "enunciado": "Ache no quadro as palavras que terminam em <b>-ing</b>.", "dica": "As palavras est&#227;o em p&#233; ou deitadas. Toque na 1&#170; e na &#250;ltima letra.", "conceito": "objetivo4", "dados": ["COOKING", "READING", "PLAYING", "DANCING", "RUNNING", "WRITING", "SWIMMING", "SHOPPING"], "dadosExtra": {"CORP": ["p1", "p2", "p3", "p4", "p5"], "LETRAS": "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "TITULO": "-ING VERBS", "MODO": "lista", "DIFICIL": "sim"}, "vozIntro": "rn_f14_intro", "dicaVoz": "rn_f14_dica"}, {"id": "f15", "mec": "cruzadinha", "selo": "CROSSWORD: -ING", "enunciado": "Preencha a cruzadinha com <b>verbos-ing</b>. Leia as dicas.", "dica": "Cada dica descreve uma a&#231;&#227;o que est&#225; acontecendo agora.", "conceito": "objetivo4", "dados": [{"p": "RIDING", "ac": "RIDING", "r": 6, "c": 0, "pLin": 0, "pCol": 1, "n": 1, "d": "She is doing this on two wheels."}, {"p": "PLAYING", "ac": "PLAYING", "r": 2, "c": 1, "pLin": 1, "pCol": 0, "n": 2, "d": "He is doing this with a ball, on the field."}, {"p": "WRITING", "ac": "WRITING", "r": 2, "c": 3, "pLin": 1, "pCol": 0, "n": 3, "d": "He is doing this with a pen."}, {"p": "DANCING", "ac": "DANCING", "r": 0, "c": 5, "pLin": 1, "pCol": 0, "n": 4, "d": "She is doing this to the music."}, {"p": "READING", "ac": "READING", "r": 0, "c": 2, "pLin": 0, "pCol": 1, "n": 5, "d": "He is doing this with a book."}], "dadosExtra": {"BANCO": "ACDEGILNPRTWY"}, "vozIntro": "rn_f15_intro", "dicaVoz": "rn_f15_dica"}, {"id": "f16", "mec": "forca", "selo": "HANGMAN: -ING", "enunciado": "Descubra o verbo-ing, letra por letra, antes do boneco terminar.", "dica": "Leia a pista e comece pelas <b>vogais</b>.", "conceito": "objetivo4", "dadosExtra": {"ALFA": "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "FORCA_FIG": "pista"}, "dados": [{"p": "COOKING", "ac": "COOKING", "d": "She is doing this in the kitchen."}, {"p": "READING", "ac": "READING", "d": "He is doing this with a newspaper."}, {"p": "DANCING", "ac": "DANCING", "d": "She is doing this to the music."}, {"p": "SWIMMING", "ac": "SWIMMING", "d": "She is doing this in the pool."}, {"p": "RUNNING", "ac": "RUNNING", "d": "She is doing this fast, in the park."}, {"p": "WRITING", "ac": "WRITING", "d": "He is doing this with a pen."}], "vozIntro": "rn_f16_intro", "dicaVoz": "rn_f16_dica"}, {"id": "f17", "mec": "escolher", "selo": "YES, NO OR ASK?", "enunciado": "Escolha a frase <b>certa</b> em ingl&#234;s.", "dica": "Negativa: is/are + <b>not</b>. Pergunta: come&#231;a com Is/Are.", "conceito": "objetivo5", "dados": [{"p": "Qual &#233; a <b>negativa</b> de 'She is cooking'?", "c": "She is not cooking.", "e": ["She not cooking.", "She is cooking not.", "Is she cooking?"], "d": ["Negativa = be + <b>not</b>.", "'She is' + not + cooking &#8594; She is not cooking."]}, {"p": "Qual &#233; a <b>pergunta</b> de 'They are playing'?", "c": "Are they playing?", "e": ["They are playing?", "Are playing they?", "They playing are?"], "d": ["Pergunta come&#231;a com o <b>be</b>.", "Are + they + playing? &#8594; Are they playing?"]}, {"p": "Escolha a negativa <b>certa</b>:", "c": "They aren't running.", "e": ["They isn't running.", "They aren't run.", "They not running."], "d": ["'They' usa <b>aren't</b> (are + not).", "E o verbo continua com -ing: running."]}, {"p": "Qual &#233; a <b>negativa</b> de 'He is running'?", "c": "He is not running.", "e": ["He not running.", "He is running not.", "Is he running?"], "d": ["Negativa = be + <b>not</b>.", "'He is' + not + running &#8594; He is not running."]}, {"p": "Qual &#233; a <b>pergunta</b> de 'She is dancing'?", "c": "Is she dancing?", "e": ["She is dancing?", "Is dancing she?", "She dancing is?"], "d": ["Pergunta come&#231;a com o <b>be</b>.", "Is + she + dancing? &#8594; Is she dancing?"]}], "dadosExtra": {"TITULO": "YES, NO OR ASK?", "FECHO": "You can say it, deny it and ask it!"}, "vozIntro": "rn_f17_intro", "dicaVoz": "rn_f17_dica"}, {"id": "f18", "mec": "ligar", "selo": "QUESTION & ANSWER", "enunciado": "Ligue cada <b>pergunta</b> com a <b>resposta curta</b> certa.", "dica": "Yes/No + o mesmo be da pergunta (is/are).", "conceito": "objetivo5", "dados": [{"k": "a", "t": "Is she cooking?", "s": "Yes, she is."}, {"k": "b", "t": "Are they playing?", "s": "Yes, they are."}, {"k": "c", "t": "Is he sleeping?", "s": "No, he isn't."}, {"k": "d", "t": "Are you reading?", "s": "Yes, I am."}, {"k": "e", "t": "Is he writing?", "s": "Yes, he is."}, {"k": "f", "t": "Are they swimming?", "s": "No, they aren't."}], "dadosExtra": {"ENUN": "Ligue a pergunta com a resposta curta.", "DICAS": ["A resposta usa o <b>mesmo be</b> da pergunta.", "Is she...? &#8594; she <b>is</b>. Are they...? &#8594; they <b>are</b>.", "'Are you...?' se responde com <b>I am</b>."], "FECHO": "Great answers!", "FEITOS": []}, "vozIntro": "rn_f18_intro", "dicaVoz": "rn_f18_dica"}, {"id": "f19", "mec": "completar", "selo": "FINISH THE QUESTION", "enunciado": "Toque no verbo certo para <b>come&#231;ar a pergunta</b>.", "dica": "he/she/it come&#231;a com <b>Is</b>; you/we/they com <b>Are</b>.", "conceito": "objetivo5", "dados": [{"img": "rn_playing_football", "ante": "", "dep": " they playing football?", "cer": "Are", "out": ["Is", "Am"], "dic": "'they' pede <b>Are</b>."}, {"img": "rn_playing_guitar", "ante": "", "dep": " he playing the guitar?", "cer": "Is", "out": ["Are", "Am"], "dic": "'he' pede <b>Is</b>."}, {"img": "rn_listening", "ante": "", "dep": " she listening to music?", "cer": "Is", "out": ["Are", "Am"], "dic": "'she' pede <b>Is</b>."}], "dadosExtra": {"ENUN": "Toque no be que abre a pergunta.", "DEPOIS": "Leia a pergunta inteira antes.", "FECHO": "Every question is ready!"}, "vozIntro": "rn_f19_intro", "dicaVoz": "rn_f19_dica"}, {"id": "f20", "mec": "montar-frase", "selo": "BUILD THE QUESTION", "enunciado": "Monte a <b>pergunta</b> em ingl&#234;s: comece pelo <b>be</b> (Is/Are), depois a pessoa e o verbo-ing.", "dica": "Pergunta come&#231;a com o <b>be</b>: Is/Are + pessoa + verbo-ing.", "conceito": "objetivo5", "dados": [{"img": "rn_cooking", "w": ["Is", "she", "cooking"], "c": ["be", "suj", "ving"], "apoio": true}, {"img": "rn_playing_football", "w": ["Are", "they", "playing"], "c": ["be", "suj", "ving"], "apoio": false}, {"img": "rn_riding", "w": ["Is", "she", "riding", "a bike"], "c": ["be", "suj", "ving", "comp"], "apoio": false}], "dadosExtra": {"CLA": {"suj": {"r": "quem", "d": "<b>quem</b> faz: I, you, he, she, it, we, they"}, "be": {"r": "am/is/are", "d": "o verbo <b>be</b>: am, is ou are"}, "ving": {"r": "a&#231;&#227;o -ing", "d": "o verbo com <b>-ing</b>"}, "comp": {"r": "o resto", "d": "o <b>complemento</b> da frase"}}, "FORMAS": ["be", "suj", "ving", "comp"]}, "vozIntro": "rn_f20_intro", "dicaVoz": "rn_f20_dica"}];
 AMBI = "poeira";
-VOZOK = {"1ey7xqv": 1, "lzkdyx": 1, "1beggrq": 1, "15pukp": 1, "1vdqk40": 1, "132p7qx": 1, "197akvy": 1, "1i8fo20": 1, "t62qr": 1, "6nzore": 1, "6d5ao8": 1, "4ii8bh": 1, "2pj48d": 1, "1bynqks": 1, "1fdhvh9": 1, "rtp8ov": 1, "9umkhg": 1, "pno3xi": 1, "hrfaov": 1, "1vb0j8k": 1, "19myfst": 1, "1lne1yz": 1, "1f378cg": 1, "1atqwk6": 1, "1hcbthc": 1, "131w7s7": 1, "sd9pnm": 1, "ifcfgv": 1, "ykfapd": 1, "1movpn3": 1, "ykp8bf": 1, "1e0qbp5": 1, "377hi2": 1, "rs2s7a": 1, "48mjj4": 1, "1yypgxl": 1, "377i1h": 1, "15hqv9j": 1, "4mehcg": 1, "1pi71ex": 1, "1eclzje": 1, "1f9bd70": 1, "1u71jul": 1, "1rwbcav": 1, "1vtjq5f": 1, "4bhhbi": 1, "1ecexl5": 1, "h5vq3j": 1, "1xizfbx": 1, "1eow986": 1, "mmnxjv": 1, "7onc9t": 1, "2q5dp8": 1, "277b3n": 1, "sn8utg": 1, "2rsqn": 1, "aukok8": 1, "x8vrl0": 1, "17nsyww": 1, "aoy3sh": 1, "722w02": 1, "lg1rnx": 1, "1up9q1s": 1, "qa9pac": 1, "5jdghx": 1, "ykq7p9": 1, "1th3nl2": 1, "1kpotl1": 1, "1lwc9qd": 1, "12svn1m": 1, "1xhopa4": 1, "1etpbwh": 1, "5hoj9p": 1, "13nq14q": 1, "cyjab": 1, "au06op": 1, "1m5y3og": 1, "377i05": 1, "37734t": 1, "3hoap": 1, "3ho37": 1, "3ho3w": 1, "q9xceh": 1, "b62526": 1, "16bmpyd": 1, "c05nhj": 1, "5oofx7": 1, "y2abc8": 1, "1avi01i": 1, "cyjac": 1, "w87udj": 1, "10bh892": 1, "yks7z3": 1, "4hbqy6": 1, "5tjl38": 1, "ala74y": 1, "18bb8dm": 1, "nm6j0d": 1, "1imey14": 1, "qepvtv": 1, "161x0i9": 1, "1k18k0v": 1, "cyjad": 1, "mqvthv": 1, "kuglen": 1, "3t3i": 1, "1laxmst": 1, "1xw8tri": 1, "1snem5l": 1, "1ravbdh": 1, "tdzpdu": 1, "hsxi2s": 1, "4rm8xv": 1, "1g5pew": 1, "e0aice": 1, "bvkbfh": 1, "3ho9e": 1, "1puylwg": 1, "377n8i": 1, "3hon5": 1, "1gipsi9": 1, "1qfyhra": 1, "142byil": 1, "1am1042": 1, "1gixqcw": 1, "3hzrrj": 1, "65yu78": 1, "e5ayn4": 1, "a28dxv": 1, "iiexrf": 1, "u4ir6": 1, "7qyi2y": 1, "16ohsro": 1, "l8r8sj": 1, "exe06h": 1, "8e9b57": 1, "1tni4td": 1, "3sni8q": 1, "91k47g": 1, "1kqa84s": 1, "2plvi0": 1, "1i7y307": 1, "1nki7vi": 1, "o17p1a": 1, "iapuzw": 1, "b9np2x": 1, "19hns63": 1, "nthlwr": 1, "l8mzhp": 1, "2aai39": 1, "ls04qx": 1, "1s5elpw": 1, "16vwdg3": 1, "197gw02": 1, "8bqk7l": 1, "1is1wp": 1, "o838iu": 1, "o1agla": 1, "o17p1b": 1, "1857vo6": 1, "1al8x95": 1, "82j6kw": 1, "3hkmeo": 1, "16ctb7r": 1, "o17p1c": 1, "9l6b2": 1, "1k31gk5": 1, "1q1oelw": 1, "1e9twjy": 1, "17nnxa9": 1, "40cjc4": 1, "w13r7v": 1, "xyu0cz": 1, "wr4juc": 1, "hi07gb": 1, "60pder": 1, "88pz01": 1, "tlmlud": 1, "uuknvb": 1, "16tqifr": 1, "1ldjjad": 1, "ykudmg": 1, "4h3gdd": 1, "48mjj0": 1, "6zepvb": 1, "1n51i2i": 1, "1vtux39": 1, "2ki2cr": 1, "1njyyg0": 1, "189x5kd": 1, "13zmioh": 1, "1ldjjae": 1, "207tyj": 1, "36lul0": 1, "6d4mp": 1, "123dhv0": 1, "1lvhdem": 1, "1ldjjaf": 1, "ykhlwd": 1, "ykedts": 1, "1vqrm4e": 1, "1ldjjag": 1, "1wyx3ne": 1, "1ldjjah": 1, "1445hf1": 1, "69x38f": 1, "xq0doh": 1, "v04b1l": 1, "goek5e": 1, "17stbhp": 1, "vkxgpj": 1, "377i1a": 1, "1rofl4": 1, "1xrp27b": 1, "6dugnw": 1, "rbkj0w": 1, "3vimy4": 1, "ae3ed5": 1, "1j8u38m": 1, "8eyno1": 1, "mit3km": 1, "n1wyrx": 1, "1ehfg6v": 1, "7d0tdo": 1, "1ogz4as": 1, "fzvf5q": 1, "ifar8o": 1, "1isz1bd": 1, "393lt7": 1, "1u1ilpp": 1, "10a2t2q": 1, "1bz1k6v": 1, "1yyh04r": 1, "oplmo5": 1, "11lsvod": 1, "xux38t": 1, "s9q4gy": 1, "1ogfyd2": 1, "qgo3av": 1, "1hpldfu": 1, "3ufv94": 1, "1c9gsr1": 1, "qnv2ga": 1, "1r6eppq": 1, "wvooiy": 1, "f50oga": 1, "1dbwg6a": 1, "x321jr": 1, "fcptj8": 1, "4h9juy": 1, "b9np3e": 1, "1j8xxl6": 1, "zyxeiy": 1, "lvrfoa": 1, "e8ghtj": 1, "1dp9na5": 1, "16rgkjz": 1, "lc0jn7": 1, "f9ixpf": 1, "1y0rmdb": 1, "z0o3d6": 1, "h0s3t7": 1, "cj72kx": 1, "1gckzce": 1, "1s156ky": 1, "11jqkxa": 1, "1qkoa0e": 1, "1sbqrgf": 1, "16wv08e": 1, "1szqf78": 1, "t62r8": 1, "xdywz8": 1, "6xfg1g": 1, "1r6btnv": 1, "6dk7j2": 1, "tbmkmf": 1, "1m6zu4": 1, "222f9e": 1, "utlazo": 1, "n80ve6": 1, "gp4a37": 1, "1hyqvev": 1, "130ruep": 1, "5qudix": 1, "1rl21kx": 1, "1bdzedz": 1, "15p2wu8": 1, "jl1tkg": 1, "aa9pcj": 1, "clii7h": 1, "admf8c": 1, "uedkhx": 1, "7d9iq9": 1, "1fwx86q": 1, "1pm96p4": 1, "xpx62d": 1, "19n5ftd": 1, "1rff7lo": 1, "17ud9a2": 1, "1v8u0y8": 1, "k1nt3v": 1, "14yehap": 1, "1ih8zjc": 1, "1bdbizs": 1, "1uzgvic": 1, "1gkxhu6": 1, "uukxe4": 1, "1thiku9": 1, "10bmhpl": 1, "yqzdtt": 1, "178lvnv": 1};
+VOZOK = {"1ey7xqv": 1, "lzkdyx": 1, "1beggrq": 1, "15pukp": 1, "1vdqk40": 1, "132p7qx": 1, "197akvy": 1, "1i8fo20": 1, "t62qr": 1, "6nzore": 1, "6d5ao8": 1, "4ii8bh": 1, "2pj48d": 1, "1bynqks": 1, "1fdhvh9": 1, "rtp8ov": 1, "9umkhg": 1, "pno3xi": 1, "hrfaov": 1, "1vb0j8k": 1, "19myfst": 1, "1lne1yz": 1, "1f378cg": 1, "1atqwk6": 1, "1hcbthc": 1, "131w7s7": 1, "sd9pnm": 1, "ifcfgv": 1, "ykfapd": 1, "1movpn3": 1, "ykp8bf": 1, "1e0qbp5": 1, "377hi2": 1, "rs2s7a": 1, "48mjj4": 1, "1yypgxl": 1, "377i1h": 1, "15hqv9j": 1, "4mehcg": 1, "1pi71ex": 1, "1eclzje": 1, "1f9bd70": 1, "1u71jul": 1, "1rwbcav": 1, "1vtjq5f": 1, "4bhhbi": 1, "1ecexl5": 1, "h5vq3j": 1, "1xizfbx": 1, "1eow986": 1, "mmnxjv": 1, "7onc9t": 1, "2q5dp8": 1, "277b3n": 1, "sn8utg": 1, "2rsqn": 1, "aukok8": 1, "x8vrl0": 1, "17nsyww": 1, "aoy3sh": 1, "722w02": 1, "lg1rnx": 1, "1up9q1s": 1, "qa9pac": 1, "5jdghx": 1, "ykq7p9": 1, "1th3nl2": 1, "1kpotl1": 1, "1lwc9qd": 1, "12svn1m": 1, "1xhopa4": 1, "1etpbwh": 1, "5hoj9p": 1, "13nq14q": 1, "cyjab": 1, "au06op": 1, "1m5y3og": 1, "377i05": 1, "37734t": 1, "3hoap": 1, "3ho37": 1, "3ho3w": 1, "q9xceh": 1, "b62526": 1, "16bmpyd": 1, "c05nhj": 1, "5oofx7": 1, "y2abc8": 1, "1avi01i": 1, "cyjac": 1, "w87udj": 1, "10bh892": 1, "yks7z3": 1, "4hbqy6": 1, "5tjl38": 1, "ala74y": 1, "18bb8dm": 1, "nm6j0d": 1, "1imey14": 1, "qepvtv": 1, "161x0i9": 1, "1k18k0v": 1, "cyjad": 1, "mqvthv": 1, "kuglen": 1, "3t3i": 1, "1laxmst": 1, "1xw8tri": 1, "1snem5l": 1, "1ravbdh": 1, "tdzpdu": 1, "hsxi2s": 1, "4rm8xv": 1, "1g5pew": 1, "e0aice": 1, "bvkbfh": 1, "3ho9e": 1, "1puylwg": 1, "377n8i": 1, "3hon5": 1, "1gipsi9": 1, "1qfyhra": 1, "142byil": 1, "1am1042": 1, "1gixqcw": 1, "3hzrrj": 1, "65yu78": 1, "e5ayn4": 1, "a28dxv": 1, "iiexrf": 1, "u4ir6": 1, "7qyi2y": 1, "16ohsro": 1, "l8r8sj": 1, "exe06h": 1, "8e9b57": 1, "1tni4td": 1, "3sni8q": 1, "91k47g": 1, "1kqa84s": 1, "2plvi0": 1, "1i7y307": 1, "1nki7vi": 1, "o17p1a": 1, "iapuzw": 1, "b9np2x": 1, "19hns63": 1, "nthlwr": 1, "l8mzhp": 1, "2aai39": 1, "ls04qx": 1, "1s5elpw": 1, "16vwdg3": 1, "197gw02": 1, "8bqk7l": 1, "1is1wp": 1, "o838iu": 1, "o1agla": 1, "o17p1b": 1, "1857vo6": 1, "1al8x95": 1, "82j6kw": 1, "3hkmeo": 1, "16ctb7r": 1, "o17p1c": 1, "9l6b2": 1, "1k31gk5": 1, "1q1oelw": 1, "1e9twjy": 1, "17nnxa9": 1, "40cjc4": 1, "w13r7v": 1, "xyu0cz": 1, "wr4juc": 1, "hi07gb": 1, "60pder": 1, "88pz01": 1, "tlmlud": 1, "uuknvb": 1, "16tqifr": 1, "1ldjjad": 1, "ykudmg": 1, "4h3gdd": 1, "48mjj0": 1, "6zepvb": 1, "1n51i2i": 1, "1vtux39": 1, "2ki2cr": 1, "1njyyg0": 1, "189x5kd": 1, "13zmioh": 1, "1ldjjae": 1, "207tyj": 1, "36lul0": 1, "6d4mp": 1, "123dhv0": 1, "1lvhdem": 1, "1ldjjaf": 1, "ykhlwd": 1, "ykedts": 1, "1vqrm4e": 1, "1ldjjag": 1, "1wyx3ne": 1, "1ldjjah": 1, "1445hf1": 1, "69x38f": 1, "xq0doh": 1, "v04b1l": 1, "goek5e": 1, "17stbhp": 1, "vkxgpj": 1, "377i1a": 1, "1rofl4": 1, "1xrp27b": 1, "6dugnw": 1, "rbkj0w": 1, "3vimy4": 1, "ae3ed5": 1, "1j8u38m": 1, "8eyno1": 1, "mit3km": 1, "n1wyrx": 1, "1ehfg6v": 1, "7d0tdo": 1, "1ogz4as": 1, "fzvf5q": 1, "ifar8o": 1, "1isz1bd": 1, "393lt7": 1, "1u1ilpp": 1, "10a2t2q": 1, "1bz1k6v": 1, "1yyh04r": 1, "oplmo5": 1, "11lsvod": 1, "xux38t": 1, "s9q4gy": 1, "1ogfyd2": 1, "qgo3av": 1, "1hpldfu": 1, "3ufv94": 1, "1c9gsr1": 1, "qnv2ga": 1, "1r6eppq": 1, "wvooiy": 1, "f50oga": 1, "1dbwg6a": 1, "x321jr": 1, "fcptj8": 1, "4h9juy": 1, "b9np3e": 1, "1j8xxl6": 1, "zyxeiy": 1, "lvrfoa": 1, "e8ghtj": 1, "1dp9na5": 1, "16rgkjz": 1, "lc0jn7": 1, "f9ixpf": 1, "1y0rmdb": 1, "z0o3d6": 1, "h0s3t7": 1, "cj72kx": 1, "1gckzce": 1, "1s156ky": 1, "11jqkxa": 1, "1qkoa0e": 1, "1sbqrgf": 1, "16wv08e": 1, "1szqf78": 1, "t62r8": 1, "xdywz8": 1, "6xfg1g": 1, "1r6btnv": 1, "6dk7j2": 1, "tbmkmf": 1, "1m6zu4": 1, "222f9e": 1, "utlazo": 1, "n80ve6": 1, "gp4a37": 1, "1hyqvev": 1, "130ruep": 1, "5qudix": 1, "1rl21kx": 1, "1bdzedz": 1, "15p2wu8": 1, "jl1tkg": 1, "aa9pcj": 1, "clii7h": 1, "admf8c": 1, "uedkhx": 1, "7d9iq9": 1, "1fwx86q": 1, "1pm96p4": 1, "xpx62d": 1, "19n5ftd": 1, "1rff7lo": 1, "17ud9a2": 1, "1v8u0y8": 1, "k1nt3v": 1, "14yehap": 1, "1ih8zjc": 1, "1bdbizs": 1, "1uzgvic": 1, "10bmhpl": 1, "yqzdtt": 1, "178lvnv": 1, "1gkxhu6": 1, "uukxe4": 1, "1thiku9": 1};
 RELBNCC = "";
 </script>
 </body></html>

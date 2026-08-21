@@ -1285,7 +1285,7 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-memoria .mfig img{width:100%;height:100%;object-fit:contain}
 
-.mec-memoria .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px; background:#fff;border:3px solid #efe7d3;-webkit-box-shadow:0 3px 9px rgba(30,40,20,.22); box-shadow:0 3px 9px rgba(30,40,20,.22);overflow:hidden}
+.mec-memoria .mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px; background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none;overflow:visible}
 
 .mec-memoria .mfig.mfoto img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
 
@@ -1426,6 +1426,8 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-quem-sou-eu .opts{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:10px;max-width:min(720px,calc(100vw - 14px));margin:10px auto 0}
 
 .mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 92px;flex:1 1 92px;min-width:86px;max-width:200px;margin:0;width:auto;font-size:14.5px;padding:10px 8px}
+
+.mec-quem-sou-eu .opts + .btn{margin-top:22px}
 /* ==== PECA: raios-x ==== */
 @-webkit-keyframes kf-raios-x-rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
   50%{box-shadow:0 0 0 7px rgba(255,213,74,.95),0 0 0 12px rgba(0,0,0,.30)}}@keyframes kf-raios-x-rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
@@ -1593,7 +1595,39 @@ var IMGS=[];
 var IMG={};function precarrega(){var i;for(i=0;i<IMGS.length;i++){var im=new Image();im.src="img/"+IMGS[i]+".png";IMG[IMGS[i]]=im;}}
 function imgEl(nome,cls){var e=document.createElement("img");if(cls)e.className=cls;e.src="img/"+nome+".png";e.alt="";e.draggable=false;return e;}
 /* ============ SOM (efeitos) ============ */
-var AC=window.AudioContext||window.webkitAudioContext, ac=AC?new AC():null;
+/* ⚠️⚠️ LICAO PAGA (Marcos, ago/2026: "algumas máquinas às vezes ALEATORIAMENTE
+   travam"). `new AudioContext()` roda no CARREGAMENTO e ESTOURA em alguns PCs —
+   quando o navegador já está no limite de 6 contextos de hardware (outras abas,
+   extensões) ele lança "number of hardware contexts reached maximum". Sem
+   try/catch, e no TOPO do script, esse erro derruba TODO o resto: a atividade
+   nem monta, e é exatamente "aleatório e só em algumas máquinas" (depende do que
+   o navegador tem aberto). Protegido: sem som, mas a atividade abre e joga. */
+var AC=window.AudioContext||window.webkitAudioContext, ac=null;
+try{ if(AC) ac=new AC(); }catch(e){ ac=null; }
+/* ⚠️⚠️ REDE DE SEGURANÇA (Marcos, ago/2026: "trava em alguma fase, aleatório, só
+   em algumas máquinas — inconsistência nos códigos talvez"). Sem um `onerror`
+   global, QUALQUER exceção não tratada num clique/timer (um elemento nulo por
+   corrida de tempo, uma API que aquele navegador não tem) deixava a fase PRESA,
+   sem avançar e sem aviso. Agora um erro não tratado mostra um botão de RESGATE
+   "Continuar" que pula para a próxima fase — a criança nunca fica travada. Não
+   engole o erro (o console continua vendo), só evita o congelamento. */
+window.onerror=function(msg,url,lin,col,err){
+  try{
+    if(document.getElementById("resgateErro")) return false;   /* já tem um */
+    if(typeof IFASE!=="number" || !(IFASE>=0)) return false;    /* fora de fase: não faz nada */
+    var b=document.createElement("button");
+    b.id="resgateErro"; b.className="btn amarelo";
+    b.style.cssText="position:fixed;left:50%;bottom:14px;-webkit-transform:translateX(-50%);transform:translateX(-50%);z-index:99999";
+    b.innerHTML="Continuar ▶";
+    b.onclick=function(){
+      try{ var n=document.getElementById("resgateErro"); if(n&&n.parentNode) n.parentNode.removeChild(n); }catch(e){}
+      try{ arma(); }catch(e){}
+      try{ abreFase(IFASE+1); }catch(e){}
+    };
+    document.body.appendChild(b);
+  }catch(e){}
+  return false;
+};
 function arma(){ if(ac&&ac.state==="suspended"){try{ac.resume();}catch(e){}} ligaAnalisador(); }
 function tom(f,d,tp,v,w){ if(!ac)return; try{var o=ac.createOscillator(),g=ac.createGain();o.type=tp||"sine";o.frequency.value=f;o.connect(g);g.connect(ac.destination);var t=ac.currentTime+(w||0);g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(v||0.2,t+0.01);g.gain.exponentialRampToValueAtTime(0.0001,t+d);o.start(t);o.stop(t+d+0.03);}catch(e){} }
 function sTap(){ tom(500,0.07,"triangle",0.12); }
@@ -1641,6 +1675,47 @@ function ehSecundaria(id){ return /_cur_|_dica$|_acerto\d|_erro\d/.test(id||"");
    2º item em diante. Cobrança do Marcos: *"o som que é falado tem que ser o
    mesmo do texto"*.                                                          */
 function falaDaTela(id){ telaNarrou=false; falar(id); }
+/* ⭐⭐ A NARRACAO DE CADA RODADA — PADRAO DA CASA (Marcos, ago/2026: *"na fase
+   escolha só a primeira fase dela fala automaticamente o enunciado, as outras
+   não, isso deveria ser padrão"*). O motor narrava o balao UMA vez, ao abrir a
+   fase. Mas as pecas de varias rodadas (escolher, completar, digitar...) trocam
+   o TEXTO do balao a cada pergunta e ficavam MUDAS da 2a rodada em diante — a
+   crianca que nao le perdia a instrucao. Agora o mesmo olheiro do balao roda a
+   CADA mudanca de texto e narra a rodada nova, com dois guardas contra repetir:
+     · so fala quando o TEXTO mudou desde a ultima narracao (`__balaoNarrado`) —
+       senao clicar numa opcao (que muda o DOM, nao o balao) re-narrava o
+       enunciado a cada toque;
+     · nao reinicia o audio que ja esta tocando o mesmo texto (o guarda do `k`).
+   Fonte unica: `montaFase` (ao abrir) e o MutationObserver (nas rodadas) chamam
+   ESTA funcao. */
+var __balaoNarrado="";
+function narraBalao(force){
+  if(ID.narrar==="manual") return;
+  if(!app) return;
+  var cx=document.getElementsByClassName("pecabox")[0];
+  /* a narracao-de-rodada (observer, force=false) so vale DENTRO de uma fase (ha
+     pecabox); capa/boletim/relatorio tem balao proprio e nao entram aqui. */
+  if(!force && !cx) return;
+  var bs=cx?cx.getElementsByClassName("balao"):(app?app.getElementsByClassName("balao"):null);
+  var txt=(bs&&bs.length)?(bs[0].textContent||""):"";
+  txt=txt.replace(/\s+/g," ").replace(/^ | $/g,"");
+  if(!txt) return;
+  if(!force && txt===__balaoNarrado) return;   /* mesmo balao: nao repete */
+  __balaoNarrado=txt;
+  if(typeof temVoz==="function"){
+    var k=temVoz(txt);
+    if(k){
+      /* nao reinicia o audio que ja esta tocando este mesmo texto */
+      if(window.__falouAgora===k && narr && !narr.paused && !narr.ended) return;
+      window.__falouAgora=k; falaDaTela("op_"+k); return;
+    }
+    /* sem gravacao para o que esta escrito: fica calado (falar outra coisa foi
+       exatamente o defeito). So no 1o desenho cai no vozIntro da fase. */
+    if(force){ try{ if(window.__faseVozIntro) falar(window.__faseVozIntro); }catch(_e){} }
+    return;
+  }
+  if(force){ try{ if(window.__faseVozIntro) falar(window.__faseVozIntro); }catch(_e){} }
+}
 function falar(id,cb){
   /* o mesmo guarda do `tocaVoz`, pelo mesmo motivo e no mesmo dia: os dois
      tocadores nao se conhecem, entao a conta de "ja disse isso agora" tem que
@@ -1676,6 +1751,19 @@ function falar(id,cb){
   var p=narr.play(); if(p&&p["catch"]){ p["catch"](function(){ fimFala(); }); }
   if(btnOuvir) btnOuvir.className="mini tocando";
   iniciaBoca();
+  /* ⭐ WATCHDOG DA VOZ (Marcos, ago/2026: máquinas que travam "em alguma fase").
+     Se o áudio emperra (rede filtrada da escola: `play()` resolve mas o `ended`
+     nunca vem), o `cb` de quem esperava a voz para AVANÇAR nunca chegava e a fase
+     congelava. Aqui um teto de 10s FORÇA o fim da fala se ela não terminou nem
+     foi substituída por outra — o `cb` sempre dispara, nenhuma fase trava por
+     voz. (O `depoisDaFala` já tinha o dele; agora vale para todo `falar+cb`.) */
+  (function(seq){ setTimeout(function(){
+    if(seq===_seqId && falandoCb && !(narr&&narr.ended)){
+      try{ narr.pause(); }catch(e){}   /* destrava o `_vozTocando`/a fila de vozes */
+      try{ fimFala(); }catch(e){}
+      try{ if(typeof _puxaFila==="function") _puxaFila(); }catch(e){}
+    }
+  }, 10000); })(_seqId);
 }
 /* ⭐ toca os pedacos de uma fala bilingue, um apos o outro (encadeado pelo
    `ended` do `narr`, via `falandoCb`). O `_seqId` aborta se uma fala nova
@@ -1805,7 +1893,15 @@ function centroTela(elm){var r=elm.getBoundingClientRect();return [r.left+r.widt
 /* ============ MEDIÇÃO INVISÍVEL + DOMÍNIO ============ */
 var MED={ini:(new Date()).getTime(),ev:[],dicas:0,toques:0,pre:null,pos:null};
 
-var CONC={luz_agua:"Luz e água para viver",sequencia:"Como a planta cresce",necessidades:"Do que a planta precisa",partes:"Partes da planta",funcoes:"Função de cada parte"};
+/* ⚠️⚠️ RESTO DE CLONE MEDIDO (Marcos, ago/2026: *"verificar se o relatório está
+   dando informações certas"*). Aqui morava `{luz_agua:"Luz e água...",partes:
+   "Partes da planta",...}` — os conceitos do JARDIM. O relatório iterava ESTE
+   dicionário, então TODA atividade mostrava objetivos de PLANTA, e como as fases
+   registram sob os conceitos DELAS (objetivo1/2/3...), o domínio saía 0% em tudo.
+   Os rótulos verdadeiros vêm do montador em `ROTULOS` (a partir de
+   `conteudo["conceitos"]`). O relatório agora itera ROTULOS; este objeto fica
+   VAZIO só como reserva de builds antigos. */
+var CONC={};
 function reg(conc,ok,tent){
   MED.ev.push({c:conc,ok:ok?1:0,t:tent||1,ms:(new Date()).getTime()-MED.ini});
   var p=DOM[conc]||0.3; DOM[conc]= ok ? p+(1-p)*0.35 : p*0.62;
@@ -2333,7 +2429,10 @@ function poeVozes(){
 }
 (function(){
   var pend=0;
-  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta(); },60); }
+  function agenda(){ if(pend) return; pend=setTimeout(function(){ pend=0; poeVozes(); poeVozPergunta();
+    /* ⭐ narra a RODADA nova: so dispara quando o TEXTO do balao mudou (guarda
+       dentro de narraBalao), entao tocar numa opcao nao re-narra o enunciado. */
+    try{ narraBalao(false); }catch(_e){} },60); }
   if(window.MutationObserver){
     var mo=new MutationObserver(agenda);
     mo.observe(app,{childList:true,subtree:true,characterData:true});
@@ -2660,6 +2759,7 @@ function treinarFracos(){
   FILATREINO=fila; proximoTreino();
 }
 function pct(x){ return Math.round(x*100)+"%"; }
+function _temChaves(o){ if(!o) return false; for(var _k in o){ if(o.hasOwnProperty(_k)) return true; } return false; }
 function telaPainel(){
   try{ narr.pause(); }catch(e){}
   /* ⚠️ LICAO PAGA (Museu, ago/2026): o painel do professor e um overlay opaco
@@ -2677,9 +2777,13 @@ function telaPainel(){
   h+="<div><b>Aluno(a):</b> "+(perfil.nome||"(sem nome)")+" &#183; <b>Tempo:</b> ~"+mins+" min &#183; <b>Dicas usadas:</b> "+MED.dicas+"</div>";
   h+="<div class='bloco'><b>Acertos:</b> "+acc+" de "+tot+" ("+(tot?Math.round(acc*100/tot):0)+"%)</div>";
   h+="<table><tr><th>O que foi medido</th><th>Dom&#237;nio</th><th>Parecer</th></tr>";
+  /* itera os conceitos REAIS da atividade (ROTULOS, do montador). Reserva ao
+     CONC/ROTCRI para builds sem ROTULOS. */
+  var _rot=(typeof ROTULOS!=="undefined"&&ROTULOS&&_temChaves(ROTULOS))?ROTULOS
+          :((typeof ROTCRI!=="undefined"&&ROTCRI&&_temChaves(ROTCRI))?ROTCRI:CONC);
   var k,ndom=0,nconc=0;
-  for(k in CONC){ if(CONC.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
-    h+="<tr><td>"+CONC[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
+  for(k in _rot){ if(_rot.hasOwnProperty(k)){ var pr=parecerDe(DOM[k]||0); nconc++; if((DOM[k]||0)>=0.75) ndom++;
+    h+="<tr><td>"+_rot[k]+"</td><td>"+pct(DOM[k]||0)+"</td><td class='"+pr[1]+"'>"+pr[0]+"</td></tr>"; } }
   h+="</table>";
   h+="<div class='resumo'>Resumo da aula: dominou <b>"+ndom+"</b> de <b>"+nconc+"</b> objetivos. "+(ndom===nconc?"Pode seguir para o pr&#243;ximo conte&#250;do.":(ndom>=nconc/2?"Vale retomar os itens marcados em amarelo e vermelho.":"Recomendo repetir a atividade antes de avan&#231;ar."))+"</div>";
   var ganho="não medido";
@@ -2806,40 +2910,12 @@ function montaFase(i, aoFim){
      Agora ele ESPERA a peca desenhar, LE o balao de verdade e fala a gravacao
      DAQUELE texto. So cai no `vozIntro` quando a peca nao escreveu balao
      nenhum — ai o enunciado da fase e mesmo o que esta na tela. */
+  /* ⚠️ o `op_`/temVoz e a dedup contra "duas vozes" agora moram em `narraBalao`
+     (fonte unica): aqui so zeramos o rastreador e disparamos a 1a narracao.
+     O MESMO `narraBalao` roda a cada rodada nova pelo MutationObserver. */
+  __balaoNarrado = "";
   if(ID.narrar !== "manual"){
-    setTimeout(function(){
-      var cx = document.getElementsByClassName("pecabox")[0];
-      var bs = cx ? cx.getElementsByClassName("balao") : null;
-      var txt = (bs && bs.length) ? (bs[0].textContent || "") : "";
-      txt = txt.replace(/\s+/g, " ").replace(/^ | $/g, "");
-      /* ⚠️ NOTA (ago/2026): tentei por um alto-falante DENTRO do balao do
-         enunciado (pedido do Marcos). O portao de leiaute (_qa/leiaute.js, regra
-         "botao sobre texto") trata a regiao do balao como TEXTO e reprova o zap
-         em QUALQUER posicao dentro dele — inline, no fim, absoluto no vao. Como o
-         enunciado JA e narrado sozinho ao abrir a fase E ja tem o botao "Ouvir
-         de novo" (o botao de som, em toda fase), o caminho confiavel e esse.
-         Se um dia quisermos o icone COLADO na frase, o portao precisa aprender a
-         diferenca entre "zap no vao reservado" e "zap sobre a letra" primeiro. */
-      if(txt && typeof temVoz === "function"){
-        var k = temVoz(txt);
-        /* ⚠️ o olheiro do balao pode ter chegado ANTES de mim (ele dispara na
-           mudanca do DOM, eu num prazo). Se ele ja falou este mesmo texto e o
-           audio esta tocando, eu me calo — senao o audio REINICIA e a crianca
-           ouve o comeco duas vezes. Foi o que o Marcos ouviu como "duas vozes". */
-        if(k){
-          if(window.__falouAgora === k && narr && !narr.paused && !narr.ended) return;
-          /* ⚠️ o `op_` NAO e enfeite: o `temVoz` devolve so a CONTA do texto,
-             e o arquivo gravado chama-se `op_<conta>.mp3` (mesma convencao das
-             respostas tocaveis). Sem o prefixo, o motor pedia `audio/<conta>.mp3`,
-             que nao existe — e a fase ficava MUDA mesmo com a voz gravada. */
-          window.__falouAgora = k; falaDaTela("op_" + k); return;
-        }
-        /* sem gravacao para o que esta escrito: fica CALADO. Falar outra coisa
-           foi exatamente o defeito. */
-        return;
-      }
-      if(f.vozIntro) falar(f.vozIntro);
-    }, 260);
+    setTimeout(function(){ narraBalao(true); }, 260);
   }
 
   var m = MEC[f.mec];
@@ -4153,7 +4229,21 @@ function fazGaveta(g){
      gaveta e a FIGURA do dinheiro — grande, CENTRALIZADA e levemente
      transparente (~20%) — moeda numa, cedula na outra. A crianca reconhece
      pelo desenho e, se precisar, toca no alto-falante e OUVE o nome. */
-  if(g.img){ var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w); }
+  /* ⚠️⚠️ LICAO PAGA (Marcos, sólidos, ago/2026: *"as imagens quase
+     desaparecendo... precisa ficar mais claro para o estudante o que tem que
+     fazer"*). Toda gaveta com figura recebia SO a marca d'agua a 12% e, com
+     `rot:false`, NEM o nome — a gaveta ficava um fantasma sem rótulo. Isso serve
+     ao dinheiro (moeda/nota, 1o ano, ficha tambem é imagem), mas NAO ao caso em
+     que a GAVETA é o conceito que a crianca esta aprendendo (o sólido). Agora:
+       · `rot:true`  -> figura NITIDA no topo + NOME em faixa (modo "aprender a
+                        categoria": a identidade da gaveta tem que estar clara);
+       · `rot:false` + img -> marca d'agua fraca (legado dinheiro), inalterado;
+       · sem img -> só o nome. */
+  if(g.img && g.rot){
+    d.appendChild(figura(g.img,"gfig"));            /* figura nitida, 66px */
+  }else if(g.img){
+    var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w);
+  }
   /* ⚠️ LICAO PAGA (Teatro das Palavras, 5o ano, ago/2026): a gaveta SO mostrava
      a figura (regra do 1o ano, que nao le). Numa atividade de texto — separar
      PRONOME PESSOAL x DEMONSTRATIVO — as gavetas nao tem figura (img:"") e
@@ -4799,6 +4889,10 @@ MEC["intruso"] = function(f, cen, fim){
 var RODADAS= /*TECNICA*/[
  { selo:"A CESTA DA FEIRA", tipo:"texto",
    enun:"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>",
+   /* `enunPorque` (opcional) = o balão do passo POR QUÊ, já dizendo o que a de
+      fora NÃO faz igual às outras. Sem ele, a reserva genérica pergunta o porquê
+      sem a fórmula estranha "é a de fora". Aqui fica de exemplo. */
+   enunPorque:"O que a <b>cenoura</b> tem de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.",
    itens:[{k:"maca",n:"MA&#199;&#195;",img:""},{k:"banana",n:"BANANA",img:""},
           {k:"uva",n:"UVA",img:""},{k:"cenoura",n:"CENOURA",img:""}],
    fora:"cenoura", nomeFora:"CENOURA",
@@ -5078,7 +5172,13 @@ function telaPorque(){
   barraP=t.querySelector(".prog i");
   var c=el("div","centro");
   c.appendChild(el("div","selo","POR QU&#202;?"));
-  c.appendChild(el("div","balao","<b>"+R.nomeFora+"</b> &#233; a de fora. E <b>por qu&#234;</b> ela n&#227;o pertence ao grupo?"));
+  /* ⚠️ LIÇÃO PAGA (Marcos, ago/2026): "esse é a de fora e pq não pertence ao
+     grupo fica muito estranho — melhor dizer O QUE O OBJETO NÃO FAZ e por que
+     não pertence". Cada rodada pode trazer `enunPorque` já dizendo o que a de
+     fora não faz igual às outras ("O cubo NÃO rola como os outros..."). Sem
+     esse campo, a reserva genérica pergunta o porquê sem a fórmula estranha. */
+  c.appendChild(el("div","balao", R.enunPorque ||
+    ("O que a <b>"+R.nomeFora+"</b> faz de <b>diferente</b> das outras tr&#234;s? Toque na raz&#227;o certa.")));
   var box=el("div","opts"), i;
   var ordem=baguncar(R.razoes.slice(0));
   for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));
@@ -5320,7 +5420,11 @@ MEC["ligar"] = function(f, cen, fim){
    `ver`. Aqui ele nao entrega a resposta de graca: a crianca ainda tem de
    escolher a ponta e fazer o gesto ate o outro lado.                       */
 var LIG=[
-  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra"},
+  /* `g` (opcional) = GRUPO para muitos-para-um: pontas com o mesmo `g` casam
+     entre si (o cubo liga a qualquer "fica firme"). Vazio/ausente = par exato
+     por `k`, como sempre. Aqui fica "" só para o montador saber que o campo
+     existe. */
+  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra", g:""},
   {k:"p1", t:"O CAULE", s:"Leva a água para cima"},
   {k:"p2", t:"A FOLHA", s:"Faz o alimento com o sol"},
   {k:"p3", t:"A FLOR",  s:"Vira fruto e semente"}
@@ -5437,6 +5541,7 @@ function fazPonta(dado,lado,texto){
   /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
      consegue fechar a fase. A criança não vê diferença nenhuma. */
   l.setAttribute("data-qa",dado.k);
+  if(dado.g) l.setAttribute("data-g",dado.g);   /* grupo p/ muitos-para-um (ver casa()) */
   l._lado=lado;
   l._ver=!!dado.ver;   /* ⭐ modo facil pedido na gaveta (ver acima) */
   l.onclick=function(){
@@ -5557,10 +5662,10 @@ function desmarca(){
    de vez, e a peça continua deixando a crianca fechar o par com a mao.    */
 function mostraDestino(l,nivel){
   if(!l||temClasse(l,"feita")) return;
-  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa"), alvo=null;
+  var a=app.getElementsByClassName("lig"), i, alvo=null;
   for(i=0;i<a.length;i++){
     if(temClasse(a[i],"feita")||a[i]===l) continue;
-    if(a[i]._lado!==l._lado&&a[i].getAttribute("data-qa")===k){ alvo=a[i]; break; }
+    if(casa(l,a[i])){ alvo=a[i]; break; }   /* aponta para um destino AINDA válido (par exato OU grupo) */
   }
   if(!alvo) return;
   destDe=l; destAlvo=alvo; destNivel=nivel;
@@ -5575,11 +5680,26 @@ function apagaDestino(){
   redesenha();   /* a linha fantasma some junto */
 }
 
+/* ⭐ MUITOS-PARA-UM (Marcos, ago/2026: *"tanto o quadrado quanto a pirâmide
+   ficam firmes, então ao clicar com qualquer um em qualquer que diga que fica
+   firme do outro lado seria interessante funcionar"*). Duas pontas casam quando
+   têm a MESMA chave `k` (o par exato de sempre) OU quando compartilham um GRUPO
+   (`data-g`): assim o cubo liga a QUALQUER destino "fica firme", e a pirâmide ao
+   outro — sem precisar acertar o gênero da frase. Compatível: gaveta sem `g`
+   segue casando só por `k`. Os alvos se consomem (`feita`), então N sólidos do
+   grupo preenchem os N destinos do grupo em qualquer ordem. */
+function casa(a,b){
+  if(a._lado===b._lado) return false;
+  var ka=a.getAttribute("data-qa"), kb=b.getAttribute("data-qa");
+  if(ka!==null&&ka===kb) return true;
+  var ga=a.getAttribute("data-g"), gb=b.getAttribute("data-g");
+  return !!(ga&&gb&&ga===gb);
+}
 function juntar(a,b){
   if(!a||!b||a===b) return;
   if(temClasse(a,"feita")||temClasse(b,"feita")) return;
   if(a._lado===b._lado) return;
-  if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
+  if(casa(a,b)){
     sCerto();
     a.className="lig feita"; b.className="lig feita";
     marcada=null;
@@ -7177,7 +7297,7 @@ FIM = {titulo:"O Museu Vivo dos Bichos!", texto:"Você virou um cientista dos bi
 ABERTURA = {texto:"Bem-vindo ao Museu Vivo dos Bichos! Eu sou o Professor Tato. Vamos descobrir os grupos dos animais?", voz:"mv_abertura"};
 FASES = [{"id": "f01", "mec": "vitrine", "selo": "VITRINE", "enunciado": "Conheça os grupos dos animais no museu.", "dica": "Toque em Próximo para ver o próximo grupo.", "conceito": "objetivo2", "dados": [{"img": "mv_cachorro", "nome": "CACHORRO", "grupo": "MAMÍFERO", "info": "Tem pelos e mama quando bebê.", "voz": "O cachorro é um mamífero. Tem pelos e mama quando bebê."}, {"img": "mv_gato", "nome": "GATO", "grupo": "MAMÍFERO", "info": "Tem pelos e faz miau.", "voz": "O gato é um mamífero. Tem pelos e faz miau."}, {"img": "mv_morcego", "nome": "MORCEGO", "grupo": "MAMÍFERO", "info": "Mamífero que voa, tem pelos.", "voz": "O morcego é um mamífero. Mamífero que voa, tem pelos."}, {"img": "mv_baleia", "nome": "BALEIA", "grupo": "MAMÍFERO", "info": "Vive no mar mas respira ar.", "voz": "A baleia é um mamífero. Vive no mar mas respira ar."}, {"img": "mv_onca", "nome": "ONÇA", "grupo": "MAMÍFERO", "info": "Tem pelos com pintas.", "voz": "A onça é um mamífero. Tem pelos com pintas."}, {"img": "mv_macaco", "nome": "MACACO", "grupo": "MAMÍFERO", "info": "Tem pelos e sobe nas árvores.", "voz": "O macaco é um mamífero. Tem pelos e sobe nas árvores."}, {"img": "mv_tucano", "nome": "TUCANO", "grupo": "AVE", "info": "Tem penas e um bico grande.", "voz": "O tucano é uma ave. Tem penas e um bico grande."}, {"img": "mv_arara", "nome": "ARARA", "grupo": "AVE", "info": "Tem penas coloridas.", "voz": "A arara é uma ave. Tem penas coloridas."}, {"img": "mv_coruja", "nome": "CORUJA", "grupo": "AVE", "info": "Tem penas e voa de noite.", "voz": "A coruja é uma ave. Tem penas e voa de noite."}, {"img": "mv_pinguim", "nome": "PINGUIM", "grupo": "AVE", "info": "Tem penas mas não voa.", "voz": "O pinguim é uma ave. Tem penas mas não voa."}, {"img": "mv_beija_flor", "nome": "BEIJA-FLOR", "grupo": "AVE", "info": "Tem penas e bate as asas rápido.", "voz": "O beija-flor é uma ave. Tem penas e bate as asas rápido."}, {"img": "mv_galinha", "nome": "GALINHA", "grupo": "AVE", "info": "Tem penas e bota ovos.", "voz": "A galinha é uma ave. Tem penas e bota ovos."}, {"img": "mv_jacare", "nome": "JACARÉ", "grupo": "RÉPTIL", "info": "Tem escamas duras.", "voz": "O jacaré é um réptil. Tem escamas duras."}, {"img": "mv_jiboia", "nome": "JIBOIA", "grupo": "RÉPTIL", "info": "Tem escamas duras e rasteja.", "voz": "A jiboia é um réptil. Tem escamas duras e rasteja."}, {"img": "mv_tartaruga", "nome": "TARTARUGA", "grupo": "RÉPTIL", "info": "Tem casco e escamas.", "voz": "A tartaruga é um réptil. Tem casco e escamas."}, {"img": "mv_lagarto", "nome": "LAGARTO", "grupo": "RÉPTIL", "info": "Tem escamas e quatro patas.", "voz": "O lagarto é um réptil. Tem escamas e quatro patas."}, {"img": "mv_camaleao", "nome": "CAMALEÃO", "grupo": "RÉPTIL", "info": "Tem escamas e muda de cor.", "voz": "O camaleão é um réptil. Tem escamas e muda de cor."}, {"img": "mv_sapo", "nome": "SAPO", "grupo": "ANFÍBIO", "info": "Pele úmida, vive na água e na terra.", "voz": "O sapo é um anfíbio. Pele úmida, vive na água e na terra."}, {"img": "mv_perereca", "nome": "PERERECA", "grupo": "ANFÍBIO", "info": "Pele lisa e pula alto.", "voz": "A perereca é um anfíbio. Pele lisa e pula alto."}, {"img": "mv_ra", "nome": "RÃ", "grupo": "ANFÍBIO", "info": "Pele úmida e nada bem.", "voz": "A rã é um anfíbio. Pele úmida e nada bem."}, {"img": "mv_salamandra", "nome": "SALAMANDRA", "grupo": "ANFÍBIO", "info": "Pele lisa e rabo comprido.", "voz": "A salamandra é um anfíbio. Pele lisa e rabo comprido."}, {"img": "mv_dourado", "nome": "DOURADO", "grupo": "PEIXE", "info": "Tem escamas e nadadeiras.", "voz": "O dourado é um peixe. Tem escamas e nadadeiras."}, {"img": "mv_tubarao", "nome": "TUBARÃO", "grupo": "PEIXE", "info": "Peixe grande com nadadeiras.", "voz": "O tubarão é um peixe. Peixe grande com nadadeiras."}, {"img": "mv_cavalo_marinho", "nome": "CAVALO-MARINHO", "grupo": "PEIXE", "info": "Peixe pequeno que fica em pé.", "voz": "O cavalo-marinho é um peixe. Peixe pequeno que fica em pé."}, {"img": "mv_peixe_palhaco", "nome": "PEIXE-PALHAÇO", "grupo": "PEIXE", "info": "Peixe laranja e branco.", "voz": "O peixe-palhaço é um peixe. Peixe laranja e branco."}, {"img": "mv_arraia", "nome": "ARRAIA", "grupo": "PEIXE", "info": "Peixe chato e largo.", "voz": "A arraia é um peixe. Peixe chato e largo."}, {"img": "mv_borboleta", "nome": "BORBOLETA", "grupo": "INVERTEBRADO", "info": "Asas coloridas, seis patas.", "voz": "A borboleta é um invertebrado. Asas coloridas, seis patas."}, {"img": "mv_joaninha", "nome": "JOANINHA", "grupo": "INVERTEBRADO", "info": "Besouro vermelho com pintas.", "voz": "A joaninha é um invertebrado. Besouro vermelho com pintas."}, {"img": "mv_abelha", "nome": "ABELHA", "grupo": "INVERTEBRADO", "info": "Faz mel, tem seis patas.", "voz": "A abelha é um invertebrado. Faz mel, tem seis patas."}, {"img": "mv_aranha", "nome": "ARANHA", "grupo": "INVERTEBRADO", "info": "Tece teia, oito patas.", "voz": "A aranha é um invertebrado. Tece teia, oito patas."}, {"img": "mv_caracol", "nome": "CARACOL", "grupo": "INVERTEBRADO", "info": "Corpo mole com concha.", "voz": "O caracol é um invertebrado. Corpo mole com concha."}, {"img": "mv_minhoca", "nome": "MINHOCA", "grupo": "INVERTEBRADO", "info": "Corpo mole, vive na terra.", "voz": "A minhoca é um invertebrado. Corpo mole, vive na terra."}, {"img": "mv_caranguejo", "nome": "CARANGUEJO", "grupo": "INVERTEBRADO", "info": "Tem casca dura e pinças.", "voz": "O caranguejo é um invertebrado. Tem casca dura e pinças."}, {"img": "mv_polvo", "nome": "POLVO", "grupo": "INVERTEBRADO", "info": "Corpo mole com oito braços.", "voz": "O polvo é um invertebrado. Corpo mole com oito braços."}], "vozIntro": "mv_f01_intro", "dicaVoz": "mv_f01_dica"}, {"id": "f02", "mec": "classificar", "selo": "SEPARE", "enunciado": "É <b>vertebrado</b> ou <b>invertebrado</b>? Guarde na gaveta.", "dica": "Vertebrado tem coluna (osso). Invertebrado não tem.", "conceito": "objetivo1", "dados": [{"k": "vert", "n": "VERTEBRADO<br>(tem coluna)", "img": "mv_cachorro", "voz": "vertebrado", "rot": true}, {"k": "inv", "n": "INVERTEBRADO<br>(não tem osso)", "img": "mv_borboleta", "voz": "invertebrado", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_cachorro", "alvo": "vert", "t": "CACHORRO"}, {"img": "mv_borboleta", "alvo": "inv", "t": "BORBOLETA"}, {"img": "mv_tucano", "alvo": "vert", "t": "TUCANO"}, {"img": "mv_aranha", "alvo": "inv", "t": "ARANHA"}, {"img": "mv_jacare", "alvo": "vert", "t": "JACARÉ"}, {"img": "mv_caracol", "alvo": "inv", "t": "CARACOL"}], "DICAS": ["Pense: dá para sentir uma coluna de ossos nas costas dele?", "Vertebrado tem esqueleto por dentro; invertebrado é molinho ou tem casca por fora.", "Olhe a gaveta que acendeu: é ali que esta ficha mora."], "ENUN": "É <b>vertebrado</b> ou <b>invertebrado</b>? Guarde na gaveta."}, "vozIntro": "mv_f02_intro", "dicaVoz": "mv_f02_dica"}, {"id": "f03", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "enunciado": "Descubra <b>quem está falando</b>. Cada pista nova conta mais.", "dica": "Cada pista fala de uma característica do corpo.", "conceito": "objetivo4", "dados": [{"resp": "MAMÍFERO", "pistas": ["Eu tenho <b>pelos</b> no corpo.", "Quando bebê, eu <b>mamo</b> o leite da mãe.", "Cachorro, gato e onça são do meu grupo."], "outros": ["AVE", "RÉPTIL", "PEIXE"]}], "dadosExtra": {}, "vozIntro": "mv_f03_intro", "dicaVoz": "mv_f03_dica"}, {"id": "f04", "mec": "classificar", "selo": "SEPARE", "enunciado": "É <b>vertebrado</b> ou <b>invertebrado</b>? Guarde na gaveta.", "dica": "Vertebrado tem coluna (osso). Invertebrado não tem.", "conceito": "objetivo1", "dados": [{"k": "vert", "n": "VERTEBRADO<br>(tem coluna)", "img": "mv_cachorro", "voz": "vertebrado", "rot": true}, {"k": "inv", "n": "INVERTEBRADO<br>(não tem osso)", "img": "mv_borboleta", "voz": "invertebrado", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_baleia", "alvo": "vert", "t": "BALEIA"}, {"img": "mv_abelha", "alvo": "inv", "t": "ABELHA"}, {"img": "mv_sapo", "alvo": "vert", "t": "SAPO"}, {"img": "mv_polvo", "alvo": "inv", "t": "POLVO"}, {"img": "mv_dourado", "alvo": "vert", "t": "DOURADO"}, {"img": "mv_minhoca", "alvo": "inv", "t": "MINHOCA"}], "DICAS": ["Pense: dá para sentir uma coluna de ossos nas costas dele?", "Vertebrado tem esqueleto por dentro; invertebrado é molinho ou tem casca por fora.", "Olhe a gaveta que acendeu: é ali que esta ficha mora."], "ENUN": "É <b>vertebrado</b> ou <b>invertebrado</b>? Guarde na gaveta."}, "vozIntro": "mv_f04_intro", "dicaVoz": "mv_f04_dica"}, {"id": "f05", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada bicho/grupo à sua <b>característica</b>.", "dica": "Pense no que aquele grupo tem no corpo.", "conceito": "objetivo2", "dados": [{"k": "p0", "t": "MAMÍFERO", "s": "Tem pelos e mama quando bebê"}, {"k": "p1", "t": "AVE", "s": "Tem penas e bico"}, {"k": "p2", "t": "RÉPTIL", "s": "Tem escamas secas e rasteja"}, {"k": "p3", "t": "ANFÍBIO", "s": "Tem pele úmida (água e terra)"}, {"k": "p4", "t": "PEIXE", "s": "Vive na água, tem nadadeiras"}], "dadosExtra": {"ENUN": "Ligue cada bicho/grupo à sua <b>característica</b>.", "FECHO": "Você ligou tudo certo!", "DICAS": ["Pense no que aquele grupo tem no corpo.", "Pelos=mamífero, penas=ave, escamas=réptil, pele úmida=anfíbio, nadadeira=peixe.", "Siga a linha que acendeu e toque na resposta certa."]}, "vozIntro": "mv_f05_intro", "dicaVoz": "mv_f05_dica"}, {"id": "f06", "mec": "classificar", "selo": "SEPARE", "enunciado": "É <b>vertebrado</b> ou <b>invertebrado</b>? Guarde na gaveta.", "dica": "Vertebrado tem coluna (osso). Invertebrado não tem.", "conceito": "objetivo1", "dados": [{"k": "vert", "n": "VERTEBRADO<br>(tem coluna)", "img": "mv_cachorro", "voz": "vertebrado", "rot": true}, {"k": "inv", "n": "INVERTEBRADO<br>(não tem osso)", "img": "mv_borboleta", "voz": "invertebrado", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_gato", "alvo": "vert", "t": "GATO"}, {"img": "mv_joaninha", "alvo": "inv", "t": "JOANINHA"}, {"img": "mv_coruja", "alvo": "vert", "t": "CORUJA"}, {"img": "mv_caranguejo", "alvo": "inv", "t": "CARANGUEJO"}, {"img": "mv_lagarto", "alvo": "vert", "t": "LAGARTO"}, {"img": "mv_polvo", "alvo": "inv", "t": "POLVO"}], "DICAS": ["Pense: dá para sentir uma coluna de ossos nas costas dele?", "Vertebrado tem esqueleto por dentro; invertebrado é molinho ou tem casca por fora.", "Olhe a gaveta que acendeu: é ali que esta ficha mora."], "ENUN": "É <b>vertebrado</b> ou <b>invertebrado</b>? Guarde na gaveta."}, "vozIntro": "mv_f06_intro", "dicaVoz": "mv_f06_dica"}, {"id": "f07", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "enunciado": "Descubra <b>quem está falando</b>. Cada pista nova conta mais.", "dica": "Cada pista fala de uma característica do corpo.", "conceito": "objetivo4", "dados": [{"resp": "AVE", "pistas": ["Eu tenho <b>penas</b> e um <b>bico</b>.", "A maioria de nós <b>voa</b>.", "Eu boto <b>ovos</b> no ninho."], "outros": ["MAMÍFERO", "ANFÍBIO", "INVERTEBRADO"]}], "dadosExtra": {}, "vozIntro": "mv_f07_intro", "dicaVoz": "mv_f07_dica"}, {"id": "f08", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada bicho/grupo à sua <b>característica</b>.", "dica": "Pense no que aquele grupo tem no corpo.", "conceito": "objetivo2", "dados": [{"k": "p0", "t": "PELOS", "s": "Do mamífero"}, {"k": "p1", "t": "PENAS", "s": "Da ave"}, {"k": "p2", "t": "ESCAMAS SECAS", "s": "Do réptil"}, {"k": "p3", "t": "PELE ÚMIDA", "s": "Do anfíbio"}, {"k": "p4", "t": "NADADEIRAS", "s": "Do peixe"}], "dadosExtra": {"ENUN": "Ligue cada bicho/grupo à sua <b>característica</b>.", "FECHO": "Você ligou tudo certo!", "DICAS": ["Pense no que aquele grupo tem no corpo.", "Pelos=mamífero, penas=ave, escamas=réptil, pele úmida=anfíbio, nadadeira=peixe.", "Siga a linha que acendeu e toque na resposta certa."]}, "vozIntro": "mv_f08_intro", "dicaVoz": "mv_f08_dica"}, {"id": "f09", "mec": "classificar", "selo": "GRUPOS", "enunciado": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa.", "dica": "Pelos→mamífero, penas→ave, escamas secas→réptil, pele úmida→anfíbio, escamas na água→peixe.", "conceito": "objetivo2", "dados": [{"k": "mamiferos", "n": "MAMÍFERO", "img": "mv_cachorro", "voz": "mamífero", "rot": true}, {"k": "aves", "n": "AVE", "img": "mv_tucano", "voz": "ave", "rot": true}, {"k": "repteis", "n": "RÉPTIL", "img": "mv_jacare", "voz": "réptil", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_cachorro", "alvo": "mamiferos", "t": "CACHORRO"}, {"img": "mv_tucano", "alvo": "aves", "t": "TUCANO"}, {"img": "mv_jacare", "alvo": "repteis", "t": "JACARÉ"}, {"img": "mv_onca", "alvo": "mamiferos", "t": "ONÇA"}, {"img": "mv_arara", "alvo": "aves", "t": "ARARA"}, {"img": "mv_jiboia", "alvo": "repteis", "t": "JIBOIA"}], "DICAS": ["Olhe a pele do bicho: tem pelo, pena, escama ou é úmida?", "Pelos=mamífero; penas=ave; escamas secas=réptil; pele úmida=anfíbio; vive só na água com nadadeira=peixe.", "A gaveta certa acendeu — toque nela."], "ENUN": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa."}, "vozIntro": "mv_f09_intro", "dicaVoz": "mv_f09_dica"}, {"id": "f10", "mec": "raios-x", "selo": "RAIO-X", "enunciado": "Descubra se o bicho tem <b>esqueleto por dentro</b>.", "dica": "Vertebrado tem coluna; invertebrado não tem osso.", "conceito": "objetivo1", "dados": [{"k": "mv_cachorro", "cima": "mv_cachorro_rx", "baixo": "mv_cachorro_xray", "borrado": false, "p": "Passe o raio-X: <b>CACHORRO</b> tem osso por dentro?", "c": "TEM COLUNA (vertebrado)", "e": ["NÃO TEM OSSO (invertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Procure uma linha de ossos no meio das costas (a coluna).", "Tem coluna: é VERTEBRADO."]}, {"k": "mv_borboleta", "cima": "mv_borboleta_rx", "baixo": "mv_vazio", "borrado": false, "p": "Passe o raio-X: <b>BORBOLETA</b> tem osso por dentro?", "c": "NÃO TEM OSSO (invertebrado)", "e": ["TEM COLUNA (vertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Passe a janelinha pelo corpo todo: não aparece nenhum osso.", "Não tem osso por dentro: é INVERTEBRADO."]}], "dadosExtra": {"RXTXT": "Leve a janelinha do raio-X pelo bicho e descubra se ele tem osso por dentro."}, "vozIntro": "mv_f10_intro", "dicaVoz": "mv_f10_dica"}, {"id": "f11", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "enunciado": "Descubra <b>quem está falando</b>. Cada pista nova conta mais.", "dica": "Cada pista fala de uma característica do corpo.", "conceito": "objetivo4", "dados": [{"resp": "RÉPTIL", "pistas": ["Eu tenho <b>escamas secas</b>.", "Eu gosto de me esquentar no <b>sol</b>.", "Jacaré, cobra e tartaruga são do meu grupo."], "outros": ["ANFÍBIO", "AVE", "PEIXE"]}], "dadosExtra": {}, "vozIntro": "mv_f11_intro", "dicaVoz": "mv_f11_dica"}, {"id": "f12", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada bicho/grupo à sua <b>característica</b>.", "dica": "Pense no que aquele grupo tem no corpo.", "conceito": "objetivo3", "dados": [{"k": "p0", "t": "CACHORRO", "s": "Mamífero"}, {"k": "p1", "t": "TUCANO", "s": "Ave"}, {"k": "p2", "t": "COBRA", "s": "Réptil"}, {"k": "p3", "t": "RÃ", "s": "Anfíbio"}, {"k": "p4", "t": "DOURADO", "s": "Peixe"}], "dadosExtra": {"ENUN": "Ligue cada bicho/grupo à sua <b>característica</b>.", "FECHO": "Você ligou tudo certo!", "DICAS": ["Pense no que aquele grupo tem no corpo.", "Pelos=mamífero, penas=ave, escamas=réptil, pele úmida=anfíbio, nadadeira=peixe.", "Siga a linha que acendeu e toque na resposta certa."]}, "vozIntro": "mv_f12_intro", "dicaVoz": "mv_f12_dica"}, {"id": "f13", "mec": "intruso", "selo": "ACHE O INTRUSO", "enunciado": "Três destes são <b>MAMÍFEROS</b>. Qual é o intruso?", "dica": "Olhe a pele e o corpo: qual é de outro grupo?", "conceito": "objetivo4", "dados": [{"selo": "MAMÍFEROS", "tipo": "figura", "enun": "Três destes são <b>MAMÍFEROS</b>. Qual é o intruso?", "itens": [{"k": "mv_cachorro", "n": "CACHORRO", "img": "mv_cachorro"}, {"k": "mv_gato", "n": "GATO", "img": "mv_gato"}, {"k": "mv_onca", "n": "ONÇA", "img": "mv_onca"}, {"k": "mv_tucano", "n": "TUCANO", "img": "mv_tucano"}], "fora": "mv_tucano", "nomeFora": "TUCANO", "d1": "Pense no grupo: pelos? penas? escamas? pele úmida?", "d2": "Três combinam. Um é de outro grupo — procure a pele diferente.", "d3": "O intruso é <b>TUCANO</b>.", "razoes": [{"t": "As outras três são mamíferos (têm pelos); o tucano é ave (tem penas).", "ok": 1}, {"t": "Porque ele é o maior do grupo.", "ok": 0}, {"t": "Porque ele tem uma cor diferente.", "ok": 0}, {"t": "Porque ele é o mais bonito.", "ok": 0}], "p1": "O que você olhou pode ser verdade. Mas veja as OUTRAS três: o que elas têm em comum?", "p2": "Cor e tamanho mudam de um bicho para outro. O que conta é o <b>grupo</b> (a pele e o corpo).", "p3": "As outras três são mamíferos (têm pelos); o tucano é ave (tem penas).", "regra": "As outras três são mamíferos (têm pelos); o tucano é ave (tem penas)."}], "dadosExtra": {}, "vozIntro": "mv_f13_intro", "dicaVoz": "mv_f13_dica"}, {"id": "f14", "mec": "classificar", "selo": "GRUPOS", "enunciado": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa.", "dica": "Pelos→mamífero, penas→ave, escamas secas→réptil, pele úmida→anfíbio, escamas na água→peixe.", "conceito": "objetivo2", "dados": [{"k": "repteis", "n": "RÉPTIL", "img": "mv_jacare", "voz": "réptil", "rot": true}, {"k": "anfibios", "n": "ANFÍBIO", "img": "mv_sapo", "voz": "anfíbio", "rot": true}, {"k": "peixes", "n": "PEIXE", "img": "mv_dourado", "voz": "peixe", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_tartaruga", "alvo": "repteis", "t": "TARTARUGA"}, {"img": "mv_sapo", "alvo": "anfibios", "t": "SAPO"}, {"img": "mv_dourado", "alvo": "peixes", "t": "DOURADO"}, {"img": "mv_camaleao", "alvo": "repteis", "t": "CAMALEÃO"}, {"img": "mv_ra", "alvo": "anfibios", "t": "RÃ"}, {"img": "mv_tubarao", "alvo": "peixes", "t": "TUBARÃO"}], "DICAS": ["Olhe a pele do bicho: tem pelo, pena, escama ou é úmida?", "Pelos=mamífero; penas=ave; escamas secas=réptil; pele úmida=anfíbio; vive só na água com nadadeira=peixe.", "A gaveta certa acendeu — toque nela."], "ENUN": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa."}, "vozIntro": "mv_f14_intro", "dicaVoz": "mv_f14_dica"}, {"id": "f15", "mec": "raios-x", "selo": "RAIO-X", "enunciado": "Descubra se o bicho tem <b>esqueleto por dentro</b>.", "dica": "Vertebrado tem coluna; invertebrado não tem osso.", "conceito": "objetivo1", "dados": [{"k": "mv_peixe_palhaco", "cima": "mv_peixe_palhaco_rx", "baixo": "mv_peixe_palhaco_xray", "borrado": false, "p": "Passe o raio-X: <b>PEIXE-PALHAÇO</b> tem osso por dentro?", "c": "TEM COLUNA (vertebrado)", "e": ["NÃO TEM OSSO (invertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Procure uma linha de ossos no meio das costas (a coluna).", "Tem coluna: é VERTEBRADO."]}, {"k": "mv_caracol", "cima": "mv_caracol_rx", "baixo": "mv_vazio", "borrado": false, "p": "Passe o raio-X: <b>CARACOL</b> tem osso por dentro?", "c": "NÃO TEM OSSO (invertebrado)", "e": ["TEM COLUNA (vertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Passe a janelinha pelo corpo todo: não aparece nenhum osso.", "Não tem osso por dentro: é INVERTEBRADO."]}], "dadosExtra": {"RXTXT": "Leve a janelinha do raio-X pelo bicho e descubra se ele tem osso por dentro."}, "vozIntro": "mv_f15_intro", "dicaVoz": "mv_f15_dica"}, {"id": "f16aquec", "mec": "classificar", "selo": "AQUECIMENTO", "aquecimento": true, "enunciado": "<b>Aquecimento!</b> Lembra? É vertebrado ou invertebrado?", "dica": "Vertebrado tem coluna (osso). Invertebrado não tem.", "conceito": "objetivo1", "dados": [{"k": "vert", "n": "VERTEBRADO<br>(tem coluna)", "img": "mv_cachorro", "voz": "vertebrado", "rot": true}, {"k": "inv", "n": "INVERTEBRADO<br>(não tem osso)", "img": "mv_borboleta", "voz": "invertebrado", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_onca", "alvo": "vert", "t": "ONÇA"}, {"img": "mv_joaninha", "alvo": "inv", "t": "JOANINHA"}, {"img": "mv_arara", "alvo": "vert", "t": "ARARA"}, {"img": "mv_caracol", "alvo": "inv", "t": "CARACOL"}], "ENUN": "Toque no bicho e depois na gaveta certa.", "DICAS": ["Pense: dá para sentir uma coluna de ossos nas costas dele?", "Vertebrado tem esqueleto por dentro; invertebrado é molinho ou tem casca.", "Olhe a gaveta que acendeu: é ali que esta ficha mora."]}, "vozIntro": "mv_f16aquec_intro", "dicaVoz": "mv_f16aquec_dica"}, {"id": "f17", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "enunciado": "Descubra <b>quem está falando</b>. Cada pista nova conta mais.", "dica": "Cada pista fala de uma característica do corpo.", "conceito": "objetivo4", "dados": [{"resp": "ANFÍBIO", "pistas": ["Minha pele é <b>úmida e lisa</b>.", "Eu vivo na <b>água E na terra</b>.", "Quando filhote (girino) eu moro na água."], "outros": ["RÉPTIL", "PEIXE", "MAMÍFERO"]}], "dadosExtra": {}, "vozIntro": "mv_f17_intro", "dicaVoz": "mv_f17_dica"}, {"id": "f18", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada bicho/grupo à sua <b>característica</b>.", "dica": "Pense no que aquele grupo tem no corpo.", "conceito": "objetivo1", "dados": [{"k": "p0", "t": "ABELHA", "s": "Faz mel (invertebrado)"}, {"k": "p1", "t": "ARANHA", "s": "Tece teia (invertebrado)"}, {"k": "p2", "t": "CARACOL", "s": "Tem concha (invertebrado)"}, {"k": "p3", "t": "POLVO", "s": "Oito braços (invertebrado)"}], "dadosExtra": {"ENUN": "Ligue cada bicho/grupo à sua <b>característica</b>.", "FECHO": "Você ligou tudo certo!", "DICAS": ["Pense no que aquele grupo tem no corpo.", "Pelos=mamífero, penas=ave, escamas=réptil, pele úmida=anfíbio, nadadeira=peixe.", "Siga a linha que acendeu e toque na resposta certa."]}, "vozIntro": "mv_f18_intro", "dicaVoz": "mv_f18_dica"}, {"id": "f19", "mec": "digitar", "selo": "ESCREVA", "enunciado": "Que bicho é este? <b>Escreva o nome</b>.", "dica": "Diga o nome devagar e escreva letra por letra.", "conceito": "objetivo3", "dados": [{"img": "mv_cachorro", "palavra": "CACHORRO", "pista": "Mamífero que late e abana o rabo.", "dic": "Comece pelo primeiro som de <b>CACHORRO</b>."}, {"img": "mv_tucano", "palavra": "TUCANO", "pista": "Ave de bico grande e colorido.", "dic": "Comece pelo primeiro som de <b>TUCANO</b>."}, {"img": "mv_sapo", "palavra": "SAPO", "pista": "Anfíbio de pele úmida que pula.", "dic": "Comece pelo primeiro som de <b>SAPO</b>."}], "dadosExtra": {"ENUN": "Que bicho é este? <b>Escreva o nome</b>.", "FECHO": "Você escreveu todos os nomes!"}, "vozIntro": "mv_f19_intro", "dicaVoz": "mv_f19_dica"}, {"id": "f20", "mec": "intruso", "selo": "ACHE O INTRUSO", "enunciado": "Três destes são <b>AVES</b>. Qual é o intruso?", "dica": "Olhe a pele e o corpo: qual é de outro grupo?", "conceito": "objetivo4", "dados": [{"selo": "AVES", "tipo": "figura", "enun": "Três destes são <b>AVES</b>. Qual é o intruso?", "itens": [{"k": "mv_arara", "n": "ARARA", "img": "mv_arara"}, {"k": "mv_coruja", "n": "CORUJA", "img": "mv_coruja"}, {"k": "mv_galinha", "n": "GALINHA", "img": "mv_galinha"}, {"k": "mv_jacare", "n": "JACARÉ", "img": "mv_jacare"}], "fora": "mv_jacare", "nomeFora": "JACARÉ", "d1": "Pense no grupo: pelos? penas? escamas? pele úmida?", "d2": "Três combinam. Um é de outro grupo — procure a pele diferente.", "d3": "O intruso é <b>JACARÉ</b>.", "razoes": [{"t": "As outras três são aves (têm penas); o jacaré é réptil (tem escamas).", "ok": 1}, {"t": "Porque ele é o maior do grupo.", "ok": 0}, {"t": "Porque ele tem uma cor diferente.", "ok": 0}, {"t": "Porque ele é o mais bonito.", "ok": 0}], "p1": "O que você olhou pode ser verdade. Mas veja as OUTRAS três: o que elas têm em comum?", "p2": "Cor e tamanho mudam de um bicho para outro. O que conta é o <b>grupo</b> (a pele e o corpo).", "p3": "As outras três são aves (têm penas); o jacaré é réptil (tem escamas).", "regra": "As outras três são aves (têm penas); o jacaré é réptil (tem escamas)."}], "dadosExtra": {}, "vozIntro": "mv_f20_intro", "dicaVoz": "mv_f20_dica"}, {"id": "f21", "mec": "classificar", "selo": "GRUPOS", "enunciado": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa.", "dica": "Pelos→mamífero, penas→ave, escamas secas→réptil, pele úmida→anfíbio, escamas na água→peixe.", "conceito": "objetivo2", "dados": [{"k": "mamiferos", "n": "MAMÍFERO", "img": "mv_cachorro", "voz": "mamífero", "rot": true}, {"k": "aves", "n": "AVE", "img": "mv_tucano", "voz": "ave", "rot": true}, {"k": "peixes", "n": "PEIXE", "img": "mv_dourado", "voz": "peixe", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_morcego", "alvo": "mamiferos", "t": "MORCEGO"}, {"img": "mv_coruja", "alvo": "aves", "t": "CORUJA"}, {"img": "mv_arraia", "alvo": "peixes", "t": "ARRAIA"}, {"img": "mv_macaco", "alvo": "mamiferos", "t": "MACACO"}, {"img": "mv_pinguim", "alvo": "aves", "t": "PINGUIM"}, {"img": "mv_cavalo_marinho", "alvo": "peixes", "t": "CAVALO-MARINHO"}], "DICAS": ["Olhe a pele do bicho: tem pelo, pena, escama ou é úmida?", "Pelos=mamífero; penas=ave; escamas secas=réptil; pele úmida=anfíbio; vive só na água com nadadeira=peixe.", "A gaveta certa acendeu — toque nela."], "ENUN": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa."}, "vozIntro": "mv_f21_intro", "dicaVoz": "mv_f21_dica"}, {"id": "f22", "mec": "raios-x", "selo": "RAIO-X", "enunciado": "Descubra se o bicho tem <b>esqueleto por dentro</b>.", "dica": "Vertebrado tem coluna; invertebrado não tem osso.", "conceito": "objetivo1", "dados": [{"k": "mv_tucano", "cima": "mv_tucano_rx", "baixo": "mv_tucano_xray", "borrado": false, "p": "Passe o raio-X: <b>TUCANO</b> tem osso por dentro?", "c": "TEM COLUNA (vertebrado)", "e": ["NÃO TEM OSSO (invertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Procure uma linha de ossos no meio das costas (a coluna).", "Tem coluna: é VERTEBRADO."]}, {"k": "mv_aranha", "cima": "mv_aranha_rx", "baixo": "mv_vazio", "borrado": false, "p": "Passe o raio-X: <b>ARANHA</b> tem osso por dentro?", "c": "NÃO TEM OSSO (invertebrado)", "e": ["TEM COLUNA (vertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Passe a janelinha pelo corpo todo: não aparece nenhum osso.", "Não tem osso por dentro: é INVERTEBRADO."]}], "dadosExtra": {"RXTXT": "Leve a janelinha do raio-X pelo bicho e descubra se ele tem osso por dentro."}, "vozIntro": "mv_f22_intro", "dicaVoz": "mv_f22_dica"}, {"id": "f23", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "enunciado": "Descubra <b>quem está falando</b>. Cada pista nova conta mais.", "dica": "Cada pista fala de uma característica do corpo.", "conceito": "objetivo4", "dados": [{"resp": "PEIXE", "pistas": ["Eu tenho <b>escamas</b> e <b>nadadeiras</b>.", "Eu respiro por <b>guelras</b>, dentro da água.", "Eu nunca saio da água."], "outros": ["ANFÍBIO", "RÉPTIL", "AVE"]}], "dadosExtra": {}, "vozIntro": "mv_f23_intro", "dicaVoz": "mv_f23_dica"}, {"id": "f24", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada bicho/grupo à sua <b>característica</b>.", "dica": "Pense no que aquele grupo tem no corpo.", "conceito": "objetivo2", "dados": [{"k": "p0", "t": "BALEIA", "s": "Mamífero do mar"}, {"k": "p1", "t": "PINGUIM", "s": "Ave que não voa"}, {"k": "p2", "t": "TARTARUGA", "s": "Réptil de casco"}, {"k": "p3", "t": "SALAMANDRA", "s": "Anfíbio de rabo"}], "dadosExtra": {"ENUN": "Ligue cada bicho/grupo à sua <b>característica</b>.", "FECHO": "Você ligou tudo certo!", "DICAS": ["Pense no que aquele grupo tem no corpo.", "Pelos=mamífero, penas=ave, escamas=réptil, pele úmida=anfíbio, nadadeira=peixe.", "Siga a linha que acendeu e toque na resposta certa."]}, "vozIntro": "mv_f24_intro", "dicaVoz": "mv_f24_dica"}, {"id": "f25", "mec": "digitar", "selo": "ESCREVA", "enunciado": "Que bicho é este? <b>Escreva o nome</b>.", "dica": "Diga o nome devagar e escreva letra por letra.", "conceito": "objetivo3", "dados": [{"img": "mv_arara", "palavra": "ARARA", "pista": "Ave azul que fala e voa.", "dic": "Comece pelo primeiro som de <b>ARARA</b>."}, {"img": "mv_jacare", "palavra": "JACARE", "pista": "Réptil de escamas que vive no rio.", "dic": "Comece pelo primeiro som de <b>JACARE</b>."}, {"img": "mv_abelha", "palavra": "ABELHA", "pista": "Invertebrado que faz mel.", "dic": "Comece pelo primeiro som de <b>ABELHA</b>."}], "dadosExtra": {"ENUN": "Que bicho é este? <b>Escreva o nome</b>.", "FECHO": "Você escreveu todos os nomes!"}, "vozIntro": "mv_f25_intro", "dicaVoz": "mv_f25_dica"}, {"id": "f26", "mec": "intruso", "selo": "ACHE O INTRUSO", "enunciado": "Três destes são <b>RÉPTEIS</b>. Qual é o intruso?", "dica": "Olhe a pele e o corpo: qual é de outro grupo?", "conceito": "objetivo4", "dados": [{"selo": "RÉPTEIS", "tipo": "figura", "enun": "Três destes são <b>RÉPTEIS</b>. Qual é o intruso?", "itens": [{"k": "mv_jiboia", "n": "JIBOIA", "img": "mv_jiboia"}, {"k": "mv_lagarto", "n": "LAGARTO", "img": "mv_lagarto"}, {"k": "mv_camaleao", "n": "CAMALEÃO", "img": "mv_camaleao"}, {"k": "mv_sapo", "n": "SAPO", "img": "mv_sapo"}], "fora": "mv_sapo", "nomeFora": "SAPO", "d1": "Pense no grupo: pelos? penas? escamas? pele úmida?", "d2": "Três combinam. Um é de outro grupo — procure a pele diferente.", "d3": "O intruso é <b>SAPO</b>.", "razoes": [{"t": "As outras três são répteis (escamas secas); o sapo é anfíbio (pele úmida).", "ok": 1}, {"t": "Porque ele é o maior do grupo.", "ok": 0}, {"t": "Porque ele tem uma cor diferente.", "ok": 0}, {"t": "Porque ele é o mais bonito.", "ok": 0}], "p1": "O que você olhou pode ser verdade. Mas veja as OUTRAS três: o que elas têm em comum?", "p2": "Cor e tamanho mudam de um bicho para outro. O que conta é o <b>grupo</b> (a pele e o corpo).", "p3": "As outras três são répteis (escamas secas); o sapo é anfíbio (pele úmida).", "regra": "As outras três são répteis (escamas secas); o sapo é anfíbio (pele úmida)."}], "dadosExtra": {}, "vozIntro": "mv_f26_intro", "dicaVoz": "mv_f26_dica"}, {"id": "f27", "mec": "caca-palavras", "selo": "CAÇA-PALAVRAS", "enunciado": "Ache os <b>grupos</b> dos vertebrados.", "dica": "Procure de pé e deitado.", "conceito": "objetivo2", "dados": ["MAMIFERO", "AVE", "REPTIL", "ANFIBIO", "PEIXE"], "dadosExtra": {"TITULO": "OS BICHOS ESCONDIDOS"}, "vozIntro": "mv_f27_intro", "dicaVoz": "mv_f27_dica"}, {"id": "f28", "mec": "memoria", "selo": "MEMÓRIA", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas e guarde onde cada uma está.", "conceito": "objetivo3", "dados": [{"k": "cao", "pal": "CACHORRO", "fig": "mv_cachorro", "sen": "mamífero", "figsen": "mv_cachorro"}, {"k": "tuc", "pal": "TUCANO", "fig": "mv_tucano", "sen": "ave", "figsen": "mv_tucano"}, {"k": "jac", "pal": "JACARÉ", "fig": "mv_jacare", "sen": "réptil", "figsen": "mv_jacare"}, {"k": "sap", "pal": "SAPO", "fig": "mv_sapo", "sen": "anfíbio", "figsen": "mv_sapo"}], "dadosExtra": {}, "vozIntro": "mv_f28_intro", "dicaVoz": "mv_f28_dica"}, {"id": "f29", "mec": "classificar", "selo": "GRUPOS", "enunciado": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa.", "dica": "Pelos→mamífero, penas→ave, escamas secas→réptil, pele úmida→anfíbio, escamas na água→peixe.", "conceito": "objetivo2", "dados": [{"k": "mamiferos", "n": "MAMÍFERO", "img": "mv_cachorro", "voz": "mamífero", "rot": true}, {"k": "anfibios", "n": "ANFÍBIO", "img": "mv_sapo", "voz": "anfíbio", "rot": true}, {"k": "repteis", "n": "RÉPTIL", "img": "mv_jacare", "voz": "réptil", "rot": true}], "dadosExtra": {"FICHAS": [{"img": "mv_onca", "alvo": "mamiferos", "t": "ONÇA"}, {"img": "mv_perereca", "alvo": "anfibios", "t": "PERERECA"}, {"img": "mv_jacare", "alvo": "repteis", "t": "JACARÉ"}, {"img": "mv_cachorro", "alvo": "mamiferos", "t": "CACHORRO"}, {"img": "mv_salamandra", "alvo": "anfibios", "t": "SALAMANDRA"}, {"img": "mv_jiboia", "alvo": "repteis", "t": "JIBOIA"}], "DICAS": ["Olhe a pele do bicho: tem pelo, pena, escama ou é úmida?", "Pelos=mamífero; penas=ave; escamas secas=réptil; pele úmida=anfíbio; vive só na água com nadadeira=peixe.", "A gaveta certa acendeu — toque nela."], "ENUN": "Cada bicho no seu <b>grupo</b>. Toque no bicho e na gaveta certa."}, "vozIntro": "mv_f29_intro", "dicaVoz": "mv_f29_dica"}, {"id": "f30", "mec": "raios-x", "selo": "RAIO-X", "enunciado": "Descubra se o bicho tem <b>esqueleto por dentro</b>.", "dica": "Vertebrado tem coluna; invertebrado não tem osso.", "conceito": "objetivo1", "dados": [{"k": "mv_jacare", "cima": "mv_jacare_rx", "baixo": "mv_jacare_xray", "borrado": false, "p": "Passe o raio-X: <b>JACARÉ</b> tem osso por dentro?", "c": "TEM COLUNA (vertebrado)", "e": ["NÃO TEM OSSO (invertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Procure uma linha de ossos no meio das costas (a coluna).", "Tem coluna: é VERTEBRADO."]}, {"k": "mv_polvo", "cima": "mv_polvo_rx", "baixo": "mv_vazio", "borrado": false, "p": "Passe o raio-X: <b>POLVO</b> tem osso por dentro?", "c": "NÃO TEM OSSO (invertebrado)", "e": ["TEM COLUNA (vertebrado)"], "d": ["Leve a janelinha bem devagar pelo meio do bicho.", "Passe a janelinha pelo corpo todo: não aparece nenhum osso.", "Não tem osso por dentro: é INVERTEBRADO."]}], "dadosExtra": {"RXTXT": "Leve a janelinha do raio-X pelo bicho e descubra se ele tem osso por dentro."}, "vozIntro": "mv_f30_intro", "dicaVoz": "mv_f30_dica"}, {"id": "f31", "mec": "quem-sou-eu", "selo": "QUEM SOU EU?", "enunciado": "Descubra <b>quem está falando</b>. Cada pista nova conta mais.", "dica": "Cada pista fala de uma característica do corpo.", "conceito": "objetivo4", "dados": [{"resp": "INVERTEBRADO", "pistas": ["Eu <b>não tenho osso</b> por dentro.", "Alguns de nós têm <b>casca</b> por fora ou são <b>molinhos</b>.", "Abelha, aranha e caracol são do meu grupo."], "outros": ["MAMÍFERO", "AVE", "PEIXE"]}], "dadosExtra": {}, "vozIntro": "mv_f31_intro", "dicaVoz": "mv_f31_dica"}, {"id": "f32", "mec": "ligar", "selo": "LIGUE", "enunciado": "Ligue cada bicho/grupo à sua <b>característica</b>.", "dica": "Pense no que aquele grupo tem no corpo.", "conceito": "objetivo1", "dados": [{"k": "p0", "t": "VERTEBRADO", "s": "Tem coluna (osso por dentro)"}, {"k": "p1", "t": "INVERTEBRADO", "s": "Não tem osso; é mole ou tem casca"}], "dadosExtra": {"ENUN": "Ligue cada bicho/grupo à sua <b>característica</b>.", "FECHO": "Você ligou tudo certo!", "DICAS": ["Pense no que aquele grupo tem no corpo.", "Pelos=mamífero, penas=ave, escamas=réptil, pele úmida=anfíbio, nadadeira=peixe.", "Siga a linha que acendeu e toque na resposta certa."]}, "vozIntro": "mv_f32_intro", "dicaVoz": "mv_f32_dica"}, {"id": "f33", "mec": "digitar", "selo": "ESCREVA", "enunciado": "Que bicho é este? <b>Escreva o nome</b>.", "dica": "Diga o nome devagar e escreva letra por letra.", "conceito": "objetivo3", "dados": [{"img": "mv_tartaruga", "palavra": "TARTARUGA", "pista": "Réptil de casco duro.", "dic": "Comece pelo primeiro som de <b>TARTARUGA</b>."}, {"img": "mv_coruja", "palavra": "CORUJA", "pista": "Ave que voa de noite.", "dic": "Comece pelo primeiro som de <b>CORUJA</b>."}, {"img": "mv_gato", "palavra": "GATO", "pista": "Mamífero que faz miau.", "dic": "Comece pelo primeiro som de <b>GATO</b>."}], "dadosExtra": {"ENUN": "Que bicho é este? <b>Escreva o nome</b>.", "FECHO": "Você escreveu todos os nomes!"}, "vozIntro": "mv_f33_intro", "dicaVoz": "mv_f33_dica"}, {"id": "f34", "mec": "intruso", "selo": "ACHE O INTRUSO", "enunciado": "Três destes são <b>INVERTEBRADOS</b>. Qual é o intruso?", "dica": "Olhe a pele e o corpo: qual é de outro grupo?", "conceito": "objetivo4", "dados": [{"selo": "INVERTEBRADOS", "tipo": "figura", "enun": "Três destes são <b>INVERTEBRADOS</b>. Qual é o intruso?", "itens": [{"k": "mv_abelha", "n": "ABELHA", "img": "mv_abelha"}, {"k": "mv_aranha", "n": "ARANHA", "img": "mv_aranha"}, {"k": "mv_polvo", "n": "POLVO", "img": "mv_polvo"}, {"k": "mv_baleia", "n": "BALEIA", "img": "mv_baleia"}], "fora": "mv_baleia", "nomeFora": "BALEIA", "d1": "Pense no grupo: pelos? penas? escamas? pele úmida?", "d2": "Três combinam. Um é de outro grupo — procure a pele diferente.", "d3": "O intruso é <b>BALEIA</b>.", "razoes": [{"t": "As outras três são invertebrados (sem osso); a baleia é vertebrado.", "ok": 1}, {"t": "Porque ele é o maior do grupo.", "ok": 0}, {"t": "Porque ele tem uma cor diferente.", "ok": 0}, {"t": "Porque ele é o mais bonito.", "ok": 0}], "p1": "O que você olhou pode ser verdade. Mas veja as OUTRAS três: o que elas têm em comum?", "p2": "Cor e tamanho mudam de um bicho para outro. O que conta é o <b>grupo</b> (a pele e o corpo).", "p3": "As outras três são invertebrados (sem osso); a baleia é vertebrado.", "regra": "As outras três são invertebrados (sem osso); a baleia é vertebrado."}], "dadosExtra": {}, "vozIntro": "mv_f34_intro", "dicaVoz": "mv_f34_dica"}, {"id": "f35", "mec": "caca-palavras", "selo": "CAÇA-PALAVRAS", "enunciado": "Ache os <b>bichos</b> escondidos.", "dica": "As palavras não viram de cabeça para baixo.", "conceito": "objetivo3", "dados": ["ABELHA", "ARANHA", "CARACOL", "POLVO", "MINHOCA"], "dadosExtra": {"TITULO": "OS BICHOS ESCONDIDOS"}, "vozIntro": "mv_f35_intro", "dicaVoz": "mv_f35_dica"}, {"id": "f36", "mec": "memoria", "selo": "MEMÓRIA", "enunciado": "Ache a <b>palavra</b> e o <b>desenho que combina</b>.", "dica": "Vire duas e guarde onde cada uma está.", "conceito": "objetivo4", "dados": [{"k": "abe", "pal": "ABELHA", "fig": "mv_abelha", "sen": "invertebrado", "figsen": "mv_abelha"}, {"k": "dou", "pal": "DOURADO", "fig": "mv_dourado", "sen": "peixe", "figsen": "mv_dourado"}, {"k": "ara", "pal": "ARARA", "fig": "mv_arara", "sen": "ave", "figsen": "mv_arara"}, {"k": "onc", "pal": "ONÇA", "fig": "mv_onca", "sen": "mamífero", "figsen": "mv_onca"}], "dadosExtra": {}, "vozIntro": "mv_f36_intro", "dicaVoz": "mv_f36_dica"}];
 AMBI = "poeira";
-VOZOK = {"1vab3zq": 1, "3xevp4": 1, "1ir0rc5": 1, "yki1zk": 1, "cjrqdq": 1, "1db6xat": 1, "1n8jy5t": 1, "10mv9f1": 1, "pj140l": 1, "1vkwqtf": 1, "4rkt9w": 1, "4qrs1s": 1, "ykolnu": 1, "gxv2qy": 1, "6p2yil": 1, "3nwjgp": 1, "1tm0qy6": 1, "12wym4u": 1, "8l4kfj": 1, "vhdg85": 1, "1dax66s": 1, "46v370": 1, "1knuyds": 1, "ll6ffy": 1, "1wi8ell": 1, "1e0pjr7": 1, "1q370wu": 1, "1cbmr5q": 1, "14u9vmf": 1, "wuxh05": 1, "rhz37k": 1, "13973jg": 1, "248uz0": 1, "1rz18ft": 1, "17fgvc2": 1, "dw3ky5": 1, "1q04r3": 1, "1o5769h": 1, "zvapyz": 1, "1vn0yb": 1, "1swy1qc": 1, "1ztlog": 1, "17fyoc0": 1, "n9k1ac": 1, "1t7wkql": 1, "sln6bz": 1, "1d76034": 1, "eit49i": 1, "2l6nyy": 1, "13bsr5b": 1, "1kwqdfk": 1, "ykramw": 1, "19v77lf": 1, "me5gbu": 1, "k4l5ws": 1, "1v02op5": 1, "14e6ti": 1, "3hom2": 1, "1cul9jv": 1, "7fu0ue": 1, "1j6o0p": 1, "wladpk": 1, "1mxp22a": 1, "95208j": 1, "x8jddz": 1, "nozt7c": 1, "1y95bn9": 1, "18fm3gq": 1, "1yoy3p9": 1, "144rp7a": 1, "nrg4lw": 1, "1k4ppig": 1, "9nx2q1": 1, "1bxni69": 1, "14oshew": 1, "1v9qktx": 1, "1h2x07r": 1, "m9vxp8": 1, "cvl88v": 1, "1g0mjsk": 1, "1fs1831": 1, "16nm6dp": 1, "qeh5gi": 1, "14vgnc9": 1, "1uy64ki": 1, "1e0xle9": 1, "zoe165": 1, "1v9dsc0": 1, "19xj49j": 1, "2w56td": 1, "1doktne": 1, "ptzt9q": 1, "1m59uy8": 1, "1ja1ih0": 1, "50eg8m": 1, "1oc6lhw": 1, "mivi04": 1, "ewr17r": 1, "749xhv": 1, "4hebat": 1, "12qcp5n": 1, "15pkumw": 1, "1m1j4ss": 1, "4r2f0z": 1, "tik1id": 1, "15jo22y": 1, "1inpnt1": 1, "1crkes8": 1, "1796xfz": 1, "1bwru1d": 1, "lkyijd": 1, "1yjcqni": 1, "wcpjyy": 1, "58zpv5": 1, "37738h": 1, "9kpxvd": 1, "4h6jj4": 1, "4a9oq": 1, "uialac": 1, "ct90jq": 1, "f86toh": 1, "x7vdp4": 1, "hzx3u2": 1, "1hh0zqa": 1, "d5n9jl": 1, "kmo6x2": 1, "1imtdq2": 1, "nifiw6": 1, "11r58sm": 1, "1ghwam1": 1, "p3ox0h": 1, "4h6lu0": 1, "ai1pu4": 1, "4h6n5o": 1, "1wtvqhy": 1, "1orgr9t": 1, "17m2soc": 1, "nzkg3k": 1, "1z66ms": 1, "y00pjl": 1, "xhnsvn": 1, "1m3hjhf": 1, "23nzu9": 1, "1157p9u": 1, "1jq5f4h": 1, "amamc1": 1, "1lf64y4": 1, "u96uh1": 1, "um4wmi": 1, "1397tu": 1, "1blwbw": 1, "v1q09m": 1, "b44fml": 1, "2rcs8y": 1, "ri0aed": 1, "1o8xi2f": 1, "y49913": 1, "1bcbak": 1, "487mz0": 1, "1wig30": 1, "nj3crs": 1, "1wlr776": 1, "1ip2u9h": 1, "17p56y1": 1, "18sw0gq": 1, "epp2s5": 1, "jghl3c": 1, "90zy6q": 1, "ma3xl1": 1, "kruwye": 1, "4w9sis": 1, "gm21ed": 1, "paowqq": 1, "1d7r4wv": 1, "1kqvlde": 1, "1heol9s": 1, "ku5dfn": 1, "7yfdzu": 1, "ti4ntr": 1, "1etvde5": 1, "1fi3904": 1, "17fvmbn": 1, "r6ir8f": 1, "z3ii1y": 1, "hg5gl4": 1, "1ronxio": 1, "1kqbnpd": 1, "1lq3z7": 1, "kp7zyf": 1, "ykdwvo": 1, "s7b6ls": 1, "u9ezgp": 1, "seoxjo": 1, "1ylqxd6": 1, "dvzc5n": 1, "247a1": 1, "1yaqm9c": 1, "2mnsnl": 1, "kl3zl8": 1, "15txvg2": 1, "5zr48b": 1, "17so2xa": 1, "1li40ol": 1, "e01fqt": 1, "1q04nf": 1, "1wg0iqh": 1, "40f5qs": 1, "1oh8htu": 1, "pkjft7": 1, "vvbqhx": 1, "1uxcou9": 1, "3j4982": 1, "1c0zae0": 1, "izraad": 1, "6zipmd": 1, "f5d5fh": 1, "158mnze": 1, "naprey": 1, "1r1pknk": 1, "d8qafg": 1, "11bk8cr": 1, "1vyl3bh": 1, "1tbzz1b": 1, "1xmgkg5": 1, "sa00c3": 1, "fneabd": 1, "bhbvoo": 1, "5xiktu": 1, "sltu3j": 1, "1khuqbd": 1, "lfwv99": 1, "1wywvmh": 1, "1mtid9": 1, "1y2vm28": 1, "1ih8zjc": 1, "1uzgvic": 1, "c7dggy": 1, "q1fv42": 1, "o024uj": 1, "19uuie": 1, "yqzdtt": 1, "1m8zdwi": 1, "pa1md8": 1, "hy9p44": 1, "3cc88r": 1, "1wr26et": 1, "jnyu05": 1, "18gdm57": 1, "1etmsut": 1, "1nyhnml": 1, "1er9kw4": 1, "1lup7oe": 1, "13qhjf2": 1, "1320csu": 1, "1bv978o": 1, "a0prs1": 1, "u2do3j": 1, "12d689l": 1, "1u6qax4": 1, "onp9js": 1, "1jxg4uq": 1, "so94y": 1, "qwngie": 1, "q0cx4g": 1, "nl182g": 1, "1piywed": 1, "128v69y": 1, "eyrg5j": 1, "1qprs08": 1, "1ymta9l": 1, "1mwvh6u": 1, "pr7pte": 1, "1xpe3fq": 1, "oyv826": 1, "1qcaos1": 1, "1mmxger": 1, "1my5469": 1, "1ni2wa3": 1, "1qcigjq": 1, "1t3jl3p": 1, "1n3hx9v": 1, "fa3mo2": 1, "15w9ucp": 1, "1tb3eb9": 1};
+VOZOK = {"1vab3zq": 1, "3xevp4": 1, "1ir0rc5": 1, "yki1zk": 1, "cjrqdq": 1, "1db6xat": 1, "1n8jy5t": 1, "10mv9f1": 1, "pj140l": 1, "1vkwqtf": 1, "4rkt9w": 1, "4qrs1s": 1, "ykolnu": 1, "gxv2qy": 1, "6p2yil": 1, "3nwjgp": 1, "1tm0qy6": 1, "12wym4u": 1, "8l4kfj": 1, "vhdg85": 1, "1dax66s": 1, "46v370": 1, "1knuyds": 1, "ll6ffy": 1, "1wi8ell": 1, "1e0pjr7": 1, "1q370wu": 1, "1cbmr5q": 1, "14u9vmf": 1, "wuxh05": 1, "rhz37k": 1, "13973jg": 1, "248uz0": 1, "1rz18ft": 1, "17fgvc2": 1, "dw3ky5": 1, "1q04r3": 1, "1o5769h": 1, "zvapyz": 1, "1vn0yb": 1, "1swy1qc": 1, "1ztlog": 1, "17fyoc0": 1, "n9k1ac": 1, "1t7wkql": 1, "sln6bz": 1, "1d76034": 1, "eit49i": 1, "2l6nyy": 1, "13bsr5b": 1, "1kwqdfk": 1, "ykramw": 1, "19v77lf": 1, "me5gbu": 1, "k4l5ws": 1, "1v02op5": 1, "14e6ti": 1, "3hom2": 1, "1cul9jv": 1, "7fu0ue": 1, "1j6o0p": 1, "wladpk": 1, "1mxp22a": 1, "95208j": 1, "x8jddz": 1, "nozt7c": 1, "1y95bn9": 1, "18fm3gq": 1, "1yoy3p9": 1, "144rp7a": 1, "nrg4lw": 1, "1k4ppig": 1, "9nx2q1": 1, "1bxni69": 1, "14oshew": 1, "1v9qktx": 1, "1h2x07r": 1, "m9vxp8": 1, "cvl88v": 1, "1g0mjsk": 1, "1fs1831": 1, "16nm6dp": 1, "qeh5gi": 1, "14vgnc9": 1, "1uy64ki": 1, "1e0xle9": 1, "zoe165": 1, "1v9dsc0": 1, "19xj49j": 1, "2w56td": 1, "1doktne": 1, "ptzt9q": 1, "1m59uy8": 1, "1ja1ih0": 1, "50eg8m": 1, "1oc6lhw": 1, "mivi04": 1, "ewr17r": 1, "749xhv": 1, "4hebat": 1, "12qcp5n": 1, "15pkumw": 1, "1m1j4ss": 1, "4r2f0z": 1, "tik1id": 1, "15jo22y": 1, "1inpnt1": 1, "1crkes8": 1, "1796xfz": 1, "1bwru1d": 1, "lkyijd": 1, "1yjcqni": 1, "wcpjyy": 1, "58zpv5": 1, "37738h": 1, "9kpxvd": 1, "4h6jj4": 1, "4a9oq": 1, "uialac": 1, "ct90jq": 1, "f86toh": 1, "x7vdp4": 1, "hzx3u2": 1, "1hh0zqa": 1, "d5n9jl": 1, "kmo6x2": 1, "1imtdq2": 1, "nifiw6": 1, "11r58sm": 1, "1ghwam1": 1, "p3ox0h": 1, "4h6lu0": 1, "ai1pu4": 1, "4h6n5o": 1, "1wtvqhy": 1, "1orgr9t": 1, "17m2soc": 1, "nzkg3k": 1, "1z66ms": 1, "y00pjl": 1, "xhnsvn": 1, "1m3hjhf": 1, "23nzu9": 1, "1157p9u": 1, "1jq5f4h": 1, "amamc1": 1, "1lf64y4": 1, "u96uh1": 1, "um4wmi": 1, "1397tu": 1, "1blwbw": 1, "v1q09m": 1, "b44fml": 1, "2rcs8y": 1, "ri0aed": 1, "1o8xi2f": 1, "y49913": 1, "1bcbak": 1, "487mz0": 1, "1wig30": 1, "nj3crs": 1, "1wlr776": 1, "1ip2u9h": 1, "17p56y1": 1, "18sw0gq": 1, "epp2s5": 1, "jghl3c": 1, "90zy6q": 1, "ma3xl1": 1, "kruwye": 1, "4w9sis": 1, "gm21ed": 1, "paowqq": 1, "1d7r4wv": 1, "1kqvlde": 1, "1heol9s": 1, "ku5dfn": 1, "7yfdzu": 1, "ti4ntr": 1, "1etvde5": 1, "1fi3904": 1, "17fvmbn": 1, "r6ir8f": 1, "z3ii1y": 1, "hg5gl4": 1, "1ronxio": 1, "1kqbnpd": 1, "1lq3z7": 1, "kp7zyf": 1, "ykdwvo": 1, "s7b6ls": 1, "u9ezgp": 1, "seoxjo": 1, "1ylqxd6": 1, "dvzc5n": 1, "247a1": 1, "1yaqm9c": 1, "2mnsnl": 1, "kl3zl8": 1, "15txvg2": 1, "5zr48b": 1, "17so2xa": 1, "1li40ol": 1, "e01fqt": 1, "1q04nf": 1, "1wg0iqh": 1, "40f5qs": 1, "1oh8htu": 1, "pkjft7": 1, "vvbqhx": 1, "1uxcou9": 1, "3j4982": 1, "1c0zae0": 1, "izraad": 1, "6zipmd": 1, "f5d5fh": 1, "158mnze": 1, "naprey": 1, "1r1pknk": 1, "d8qafg": 1, "11bk8cr": 1, "1vyl3bh": 1, "1tbzz1b": 1, "1xmgkg5": 1, "sa00c3": 1, "fneabd": 1, "bhbvoo": 1, "5xiktu": 1, "sltu3j": 1, "1khuqbd": 1, "lfwv99": 1, "1wywvmh": 1, "1mtid9": 1, "1y2vm28": 1, "1ih8zjc": 1, "1uzgvic": 1, "yqzdtt": 1, "1m8zdwi": 1, "pa1md8": 1, "hy9p44": 1, "3cc88r": 1, "1wr26et": 1, "jnyu05": 1, "18gdm57": 1, "1etmsut": 1, "1nyhnml": 1, "1er9kw4": 1, "1lup7oe": 1, "13qhjf2": 1, "1320csu": 1, "1bv978o": 1, "a0prs1": 1, "u2do3j": 1, "12d689l": 1, "1u6qax4": 1, "onp9js": 1, "1jxg4uq": 1, "so94y": 1, "qwngie": 1, "q0cx4g": 1, "nl182g": 1, "1piywed": 1, "128v69y": 1, "eyrg5j": 1, "1qprs08": 1, "1ymta9l": 1, "1mwvh6u": 1, "pr7pte": 1, "1xpe3fq": 1, "oyv826": 1, "1qcaos1": 1, "1mmxger": 1, "1my5469": 1, "1ni2wa3": 1, "1qcigjq": 1, "1t3jl3p": 1, "1n3hx9v": 1, "fa3mo2": 1, "15w9ucp": 1, "1tb3eb9": 1, "c7dggy": 1, "q1fv42": 1, "o024uj": 1, "19uuie": 1};
 RELBNCC = "";
 </script>
 </body></html>
