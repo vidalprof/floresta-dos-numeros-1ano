@@ -276,6 +276,25 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
      -o-object-fit:contain;object-fit:contain;object-position:center;
      -webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.30));filter:drop-shadow(0 4px 6px rgba(0,0,0,.30))}
 @media (prefers-reduced-motion:reduce){ .opfig:before{-webkit-animation:none;animation:none;display:none} }
+/* ===== ⭐ PADRAO DA CASA (Marcos, ago/2026: "opcoes na horizontal; imagens sem
+   fundo, sem borda, so dentro do vidro com brilho; torne padrao, fica mais
+   bonito"). Vem por ULTIMO e casa a especificidade das regras acima para vencer
+   por ordem de fonte. O vidro e o brilho continuam sendo o `.opt` e o
+   `.opfig:before`; aqui a figura fica LIMPA e as opcoes viram uma LINHA. ===== */
+.opts,.opts.comfigs{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch;
+  gap:16px;max-width:min(600px,calc(100vw - 20px));margin:12px auto 0;
+  max-height:none;overflow:visible;padding:0}
+.opts .opt,.opts.comfigs .opt{-webkit-box-flex:1;-webkit-flex:1 1 140px;flex:1 1 140px;
+  min-width:132px;max-width:210px;width:auto;margin:0;font-size:15px;
+  white-space:normal;word-break:normal;overflow-wrap:normal}
+.opt.comfig{min-height:0}
+.opfig{background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none;
+  -webkit-backdrop-filter:none;backdrop-filter:none;width:96px;height:96px;padding:2px}
+.opfig img{-webkit-filter:none;filter:none}
 /* SÓ IMAGEM (SOIMG): esconde a palavra e centra o alto-falante sob a moldura */
 .opts.soimg .optxt{display:none}
 .opts.soimg .oplin{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin-top:0}

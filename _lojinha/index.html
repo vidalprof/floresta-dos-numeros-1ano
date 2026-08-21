@@ -1371,6 +1371,16 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 
 .mec-escolher .opfig:before{-webkit-animation:none;animation:none;display:none}}
 
+.mec-escolher .opts, .mec-escolher .opts.comfigs{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:16px;max-width:min(600px,calc(100vw - 20px));margin:12px auto 0; max-height:none;overflow:visible;padding:0}
+
+.mec-escolher .opts .opt, .mec-escolher .opts.comfigs .opt{-webkit-box-flex:1;-webkit-flex:1 1 140px;flex:1 1 140px; min-width:132px;max-width:210px;width:auto;margin:0;font-size:15px; white-space:normal;word-break:normal;overflow-wrap:normal}
+
+.mec-escolher .opt.comfig{min-height:0}
+
+.mec-escolher .opfig{background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none; -webkit-backdrop-filter:none;backdrop-filter:none;width:96px;height:96px;padding:2px}
+
+.mec-escolher .opfig img{-webkit-filter:none;filter:none}
+
 .mec-escolher .opts.soimg .optxt{display:none}
 
 .mec-escolher .opts.soimg .oplin{-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin-top:0}
@@ -2303,7 +2313,18 @@ function mostraBanner(msg,cb){
      nao entende literal de regex e perde a conta das aspas, fazendo os enunciados
      seguintes vazarem como "funcao que nao existe". String o portao limpa certo. */
   if(msg) msg = String(msg).replace(new RegExp("<div[^>]*medal[^>]*>[\\s\\S]*?</div>", "gi"), "");
-  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();
+  /* ⚠️ LICAO PAGA (Marcos, ago/2026): "as vezes aparece o botao Proximo, eu
+     clico e nao faz nada". O onclick fazia `arma();...;cb();` TUDO SEM GUARDA:
+     se `cb` fosse indefinido, ou `cb()` estourasse (fase seguinte com problema),
+     ou `arma()` tropecasse num PC, o clique MORRIA no meio e a fase nao andava —
+     de forma intermitente, so em algumas maquinas/fases. Agora cada passo tem
+     guarda e o AVANCO (cb) roda de todo jeito. */
+  bcta.onclick=function(){
+    try{ arma(); }catch(e){}
+    banner.className="banner";
+    try{ if(typeof cb==="function") cb(); }catch(e){}
+  };}
 function elogio(){ var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2"); }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============
@@ -2489,7 +2510,13 @@ function poeZap(elm){
   };
   elm.appendChild(bt);
 }
-var ZAPSEL=".opt,.lig,.pc,.bin";
+/* ⚠️ `.ptxt` (Solidos, ago/2026 — Marcos: "a pista tem que ter audio"): na peca
+   QUEM SOU EU a pista chega escrita mas MUDA. A voz de cada pista JA existe
+   (op_<hash>, o montador grava tudo do `dados`); faltava so o alto-falante. O
+   motor poe o botao sozinho em todo elemento do ZAPSEL cujo TEXTO tenha voz —
+   entao basta a pista entrar aqui. Vai no `.ptxt` (so o texto da pista), nao no
+   `.pista` inteiro, senao o "PISTA 1" entraria no hash e a voz nao casaria. */
+var ZAPSEL=".opt,.lig,.pc,.bin,.ptxt";
 /* ⭐ o alto-falante do ENUNCIADO: toca de novo a MESMA narracao da tela.
    Vale para todo balao de pergunta; os baloezinhos de apoio (.pequeno, .porque)
    ficam de fora para nao encher a tela de botao.                            */

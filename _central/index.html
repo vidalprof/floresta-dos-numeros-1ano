@@ -1243,9 +1243,9 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 /* ==== PECA: digitar ==== */
 
 
-.mec-digitar .dgfig{width:104px;height:104px;margin:13px auto 4px; display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center}
+.mec-digitar .dgfig{min-width:150px;max-width:230px;margin:13px auto 4px;padding:14px 18px; background:rgba(255,255,255,.16); -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1); border:1px solid rgba(255,255,255,.5);border-radius:20px; -webkit-box-shadow:0 6px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.6); box-shadow:0 6px 20px rgba(0,0,0,.20),inset 0 1px 0 rgba(255,255,255,.6); display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center}
 
-.mec-digitar .dgfig img{max-width:100%;max-height:100%; -o-object-fit:contain;object-position:center;object-fit:contain; background:#fff;padding:6px;border-radius:12px; -webkit-box-shadow:0 4px 12px rgba(30,40,20,.26);box-shadow:0 4px 12px rgba(30,40,20,.26)}
+.mec-digitar .dgfig img{width:128px;height:128px;max-width:100%; -o-object-fit:contain;object-position:center;object-fit:contain; background:transparent;padding:0;border:0;border-radius:0; -webkit-box-shadow:none;box-shadow:none}
 
 .mec-digitar .dglin{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-align:center;align-items:center; -webkit-box-pack:center;justify-content:center; margin:10px auto 0;max-width:430px}
 
@@ -1346,6 +1346,16 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-escolher .opfig img{position:relative;z-index:1;max-width:100%;max-height:100%; -o-object-fit:contain;object-fit:contain;object-position:center; -webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.30));filter:drop-shadow(0 4px 6px rgba(0,0,0,.30))}@media (prefers-reduced-motion:reduce){
 
 .mec-escolher .opfig:before{-webkit-animation:none;animation:none;display:none}}
+
+.mec-escolher .opts, .mec-escolher .opts.comfigs{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:16px;max-width:min(600px,calc(100vw - 20px));margin:12px auto 0; max-height:none;overflow:visible;padding:0}
+
+.mec-escolher .opts .opt, .mec-escolher .opts.comfigs .opt{-webkit-box-flex:1;-webkit-flex:1 1 140px;flex:1 1 140px; min-width:132px;max-width:210px;width:auto;margin:0;font-size:15px; white-space:normal;word-break:normal;overflow-wrap:normal}
+
+.mec-escolher .opt.comfig{min-height:0}
+
+.mec-escolher .opfig{background:transparent;border:0;-webkit-box-shadow:none;box-shadow:none; -webkit-backdrop-filter:none;backdrop-filter:none;width:96px;height:96px;padding:2px}
+
+.mec-escolher .opfig img{-webkit-filter:none;filter:none}
 
 .mec-escolher .opts.soimg .optxt{display:none}
 
@@ -1976,6 +1986,10 @@ h1{font-size:clamp(22px,6.4vw,34px);font-weight:700;color:#fff;margin:6px auto 2
 .mec-quem-sou-eu .opt{font-size:14px;min-height:44px;padding:10px 6px;margin:4px 1%}
 
 .mec-quem-sou-eu .hint{display:none}}
+
+.mec-quem-sou-eu .opts{display:-webkit-box;display:-webkit-flex;display:flex; -webkit-box-orient:horizontal;-webkit-box-direction:normal; -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap; -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center; -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch; gap:12px;max-width:min(560px,calc(100vw - 20px));margin:10px auto 0}
+
+.mec-quem-sou-eu .opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 130px;flex:1 1 130px;min-width:120px;max-width:220px;margin:0;width:auto}
 /* ==== PECA: raios-x ==== */
 @-webkit-keyframes kf-raios-x-rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
   50%{box-shadow:0 0 0 7px rgba(255,213,74,.95),0 0 0 12px rgba(0,0,0,.30)}}@keyframes kf-raios-x-rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
@@ -2636,7 +2650,18 @@ function mostraBanner(msg,cb){
      nao entende literal de regex e perde a conta das aspas, fazendo os enunciados
      seguintes vazarem como "funcao que nao existe". String o portao limpa certo. */
   if(msg) msg = String(msg).replace(new RegExp("<div[^>]*medal[^>]*>[\\s\\S]*?</div>", "gi"), "");
-  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();bcta.onclick=function(){arma();banner.className="banner";cb();};}
+  bmsg.innerHTML=msg;banner.className="banner bom show";festa();sCerto();paraDeVigiar();mascoteFesteja();
+  /* ⚠️ LICAO PAGA (Marcos, ago/2026): "as vezes aparece o botao Proximo, eu
+     clico e nao faz nada". O onclick fazia `arma();...;cb();` TUDO SEM GUARDA:
+     se `cb` fosse indefinido, ou `cb()` estourasse (fase seguinte com problema),
+     ou `arma()` tropecasse num PC, o clique MORRIA no meio e a fase nao andava —
+     de forma intermitente, so em algumas maquinas/fases. Agora cada passo tem
+     guarda e o AVANCO (cb) roda de todo jeito. */
+  bcta.onclick=function(){
+    try{ arma(); }catch(e){}
+    banner.className="banner";
+    try{ if(typeof cb==="function") cb(); }catch(e){}
+  };}
 function elogio(){ var n=[ID.pre+"_acerto1",ID.pre+"_acerto2",ID.pre+"_acerto3"]; falar(n[Math.floor(Math.random()*3)]); }
 function consolo(){ falar(Math.random()<0.5?ID.pre+"_erro1":ID.pre+"_erro2"); }
 /* ============ ALTO-FALANTE POR RESPOSTA (acessibilidade) ============

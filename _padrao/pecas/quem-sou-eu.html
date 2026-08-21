@@ -151,6 +151,14 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#
   .opt{font-size:14px;min-height:44px;padding:10px 6px;margin:4px 1%}
   .hint{display:none}
 }
+/* ===== ⭐ PADRAO DA CASA (Marcos, ago/2026): opcoes na HORIZONTAL. ===== */
+.opts{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch;
+  gap:12px;max-width:min(560px,calc(100vw - 20px));margin:10px auto 0}
+.opts .opt{-webkit-box-flex:1;-webkit-flex:1 1 130px;flex:1 1 130px;min-width:120px;max-width:220px;margin:0;width:auto}
 </style></head>
 <body>
 <div id="app"></div>
