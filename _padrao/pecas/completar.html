@@ -479,6 +479,20 @@ function telaCompletar(){
   var fr=el("div","frase",f.ante+'<span class="lac">_____</span>'+f.dep);
   c.appendChild(fr);
   lacuna=fr.querySelector(".lac");
+  /* ⭐ NARRA O PROBLEMA depois do enunciado (Marcos, ago/2026: "na fase quanto
+     falta deveria ter o áudio onde conta o problema, depois do enunciado"). Usa a
+     voz GRAVADA da casa (a conta já está no falas.json); o `falar` do motor
+     enfileira depois do enunciado. Se não houver gravação, fica calado — nunca
+     voz-robô. Guardado por `typeof` para a bancada solta não estourar. */
+  try{
+    if(typeof temVoz==="function" && typeof falar==="function"){
+      var _tir=function(s){ return String(s||"").replace(/<[^>]*>/g," ").replace(/\s+/g," ").replace(/^ | $/g,""); };
+      var _fa=_tir(f.ante), _fad=_tir(f.ante+" "+f.dep);
+      var _fk=temVoz(_fa)||temVoz(_fad);
+      var _tela=t;
+      if(_fk) setTimeout(function(){ if(_tela&&_tela.parentNode) falar("op_"+_fk); }, 520);
+    }
+  }catch(_e){}
   /* ⚠️ o embaralhado tem que acontecer com os pedaços JÁ normalizados: senão a
      comparação com a certa mudaria de forma (texto x objeto) no meio do
      caminho. É a armadilha da mecânica: na Fábrica de Estrelas a certa era
