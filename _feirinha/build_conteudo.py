@@ -200,14 +200,18 @@ add(id=u"f08", mec=u"completar", selo=u"QUANTO FALTA", conceito=u"objetivo2",
                 u"FECHO":u"Você completou!"})
 
 # ---------- SEPARAR (objetivo3) ----------
+# ⭐ resultados VARIADOS (Marcos: "estão sempre dando 3"): 6, 5 e 4 — nunca o mesmo;
+#   3 rodadas, frutas variadas. (A peça escolher já embaralha as opções na tela.)
 add(id=u"f09", mec=u"escolher", selo=u"SEPARAR", conceito=u"objetivo3",
-    enunciado=u"Você tinha <b>7</b> uvas e separou <b>4</b> num pratinho. Quantas sobraram no cacho?",
-    dica=u"Tire as 4 e veja quantas ficam.",
+    enunciado=u"Você tinha <b>8</b> uvas e separou <b>2</b> num pratinho. Quantas sobraram no cacho?",
+    dica=u"Tire as que separou e veja quantas ficam.",
     dados=[
-      esc(u"fe_uva", u"Tinha <b>7</b> uvas e separou <b>4</b>. Quantas sobraram?",
-          3, [4,2,5], [u"Comece do 7 e volte 4.", u"7... 6, 5, 4, 3.", u"Sobraram <b>3</b> uvas. Toque para seguir."]),
-      esc(u"fe_tomate", u"Tinha <b>9</b> tomates e separou <b>6</b> para o molho. Quantos sobraram?",
-          3, [4,2,5], [u"Comece do 9 e volte 6.", u"9... 8, 7, 6, 5, 4, 3.", u"Sobraram <b>3</b> tomates. Toque para seguir."]),
+      esc(u"fe_uva", u"Tinha <b>8</b> uvas e separou <b>2</b>. Quantas sobraram?",
+          6, [5,7,4], [u"Comece do 8 e volte 2.", u"8... 7, 6.", u"Sobraram <b>6</b> uvas. Toque para seguir."]),
+      esc(u"fe_tomate", u"Tinha <b>9</b> tomates e separou <b>4</b> para o molho. Quantos sobraram?",
+          5, [6,4,3], [u"Comece do 9 e volte 4.", u"9... 8, 7, 6, 5.", u"Sobraram <b>5</b> tomates. Toque para seguir."]),
+      esc(u"fe_laranja", u"Tinha <b>7</b> laranjas e separou <b>3</b> na cesta. Quantas sobraram?",
+          4, [3,5,6], [u"Comece do 7 e volte 3.", u"7... 6, 5, 4.", u"Sobraram <b>4</b> laranjas. Toque para seguir."]),
     ],
     dadosExtra={u"TITULO":u"QUANTAS SOBRARAM", u"FECHO":u"Você separou certinho!"})
 
