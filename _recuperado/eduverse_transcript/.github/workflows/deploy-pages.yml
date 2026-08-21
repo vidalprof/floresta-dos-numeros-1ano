@@ -1,0 +1,59 @@
+name: Diagnostico e deploy do Pages
+
+# Verifica o estado real do GitHub Pages de um repositorio de destino
+# (ultimo commit, arquivos no ar, status do build) e forca um novo deploy
+# a partir da branch main. Usa o PAGES_TOKEN (precisa de Pages: write).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de destino (ex: mundo-das-atividades)"
+        required: true
+        type: string
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Diagnosticar e forcar deploy do Pages
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          set +e
+          echo "=== ULTIMO COMMIT NA MAIN ==="
+          gh api "repos/$OWNER/$DEST/commits/main" \
+            --jq '.sha[0:7] + "  " + .commit.author.date + "  " + .commit.message' 2>&1 | head -3
+
+          echo ""
+          echo "=== ARQUIVOS DA ATIVIDADE 8 ANO NO REPO ==="
+          gh api "repos/$OWNER/$DEST/contents/atividades/ingles-relative-pronouns-8ano" \
+            --jq '.[].name' 2>&1 | head
+
+          echo ""
+          echo "=== index.html DO REPO MENCIONA aventureiros:8ano e no-cache? ==="
+          gh api "repos/$OWNER/$DEST/contents/index.html" -H "Accept: application/vnd.github.raw" 2>/dev/null \
+            | grep -o 'aventureiros:8ano\|no-cache\|Relative Pronouns' | sort | uniq -c
+
+          echo ""
+          echo "=== CONFIG DO PAGES ==="
+          gh api "repos/$OWNER/$DEST/pages" \
+            --jq '"build_type=" + (.build_type // "?") + "  source=" + ((.source.branch // "?") + ":" + (.source.path // "?")) + "  status=" + (.status // "?") + "  url=" + (.html_url // "?")' 2>&1 | head -3
+
+          echo ""
+          echo "=== ULTIMO BUILD DO PAGES (status/erro) ==="
+          gh api "repos/$OWNER/$DEST/pages/builds/latest" \
+            --jq '"status=" + (.status // "?") + "  erro=" + ((.error.message) // "nenhum") + "  commit=" + (.commit[0:7] // "?") + "  em=" + (.created_at // "?")' 2>&1 | head -3
+
+          echo ""
+          echo "=== GARANTINDO DEPLOY A PARTIR DA MAIN (build_type=legacy) ==="
+          gh api -X PUT "repos/$OWNER/$DEST/pages" \
+            -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" 2>&1 | head -c 300
+          echo ""
+
+          echo "=== FORCANDO NOVO BUILD DO PAGES ==="
+          gh api -X POST "repos/$OWNER/$DEST/pages/builds" \
+            --jq '"build disparado: status=" + (.status // "?")' 2>&1 | head -3
+          echo "=== FIM ==="

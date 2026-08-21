@@ -1,0 +1,40 @@
+name: Diagnostico do token
+
+on:
+  workflow_dispatch:
+
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testar o que o PAGES_TOKEN consegue fazer
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+        run: |
+          set +e
+          echo "=== QUEM E O TOKEN ==="
+          gh api user --jq '.login' 2>&1 | sed 's/^/login: /'
+
+          echo "=== ACESSO DE LEITURA ==="
+          for REPO in floresta-dos-numeros-1ano Sistemasolar3ano; do
+            OUT=$(gh api "repos/vidalprof/$REPO" --jq '.full_name' 2>&1)
+            echo "leitura $REPO: $OUT"
+          done
+
+          echo "=== TESTE REAL DE ESCRITA (em floresta) ==="
+          PUTOUT=$(gh api -X PUT "repos/vidalprof/floresta-dos-numeros-1ano/contents/_diag_token.txt" \
+            -f message="diagnostico de escrita do token" \
+            -f content="$(printf 'ok' | base64)" 2>&1)
+          if printf '%s' "$PUTOUT" | grep -q '"sha"'; then
+            echo "ESCRITA: SIM - o token TEM permissao de gravar (Contents: write OK)"
+            SHA=$(printf '%s' "$PUTOUT" | python3 -c "import sys,json; print(json.load(sys.stdin)['content']['sha'])" 2>/dev/null)
+            if [ -n "$SHA" ]; then
+              gh api -X DELETE "repos/vidalprof/floresta-dos-numeros-1ano/contents/_diag_token.txt" \
+                -f message="remove arquivo de diagnostico" -f sha="$SHA" >/dev/null 2>&1
+              echo "(arquivo de teste removido)"
+            fi
+          else
+            echo "ESCRITA: NAO - o token NAO consegue gravar."
+            echo "DETALHE: $(printf '%s' "$PUTOUT" | tr '\n' ' ' | head -c 300)"
+          fi
+          echo "=== FIM ==="

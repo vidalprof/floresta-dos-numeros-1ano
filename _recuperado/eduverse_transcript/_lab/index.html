@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel do Laboratório</title>
+<style>
+*{margin:0;padding:0;-webkit-box-sizing:border-box;box-sizing:border-box;}
+html,body{width:100%;height:100%;overflow:hidden;background:#0e1524;font-family:'Segoe UI',Arial,sans-serif;}
+#espera{position:fixed;left:0;top:0;right:0;bottom:0;z-index:2;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;text-align:center;color:#eaf2ff;
+  background:#0e1524;background:-webkit-radial-gradient(50% 30%,#1b2a4d,#0b1120 80%);background:radial-gradient(120% 90% at 50% 25%,#1b2a4d,#0b1120 80%);}
+#espera h1{font-size:34px;margin-bottom:10px;}
+#espera p{font-size:17px;color:#9fb2d6;max-width:560px;padding:0 16px;line-height:1.5;}
+.ico{font-size:64px;margin-bottom:14px;-webkit-animation:pisca 1.6s ease-in-out infinite;animation:pisca 1.6s ease-in-out infinite;}
+@-webkit-keyframes pisca{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes pisca{0%,100%{opacity:.5}50%{opacity:1}}
+#status{position:fixed;left:10px;bottom:10px;z-index:5;font-size:12px;color:#7f93bd;}
+#pt{display:inline-block;width:9px;height:9px;border-radius:50%;background:#e05a5a;margin-right:6px;vertical-align:middle;}
+#pt.on{background:#3ad07a;}
+#quadro{position:fixed;left:0;top:0;width:100%;height:100%;z-index:3;border:0;display:none;background:#fff;}
+#rodape{position:fixed;right:10px;bottom:10px;z-index:5;font-size:12px;color:#7f93bd;}
+#bloqueio{position:fixed;left:0;top:0;right:0;bottom:0;z-index:4;display:none;
+  -webkit-box-orient:vertical;-webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;text-align:center;color:#fff;
+  background:#12203a;background:-webkit-linear-gradient(top,#1a2c50,#0b1120);background:linear-gradient(to bottom,#1a2c50,#0b1120);}
+#bloqueio h1{font-size:40px;}#bloqueio p{color:#9fb2d6;font-size:18px;margin-top:8px;}
+#novaAba{position:fixed;left:0;top:0;right:0;bottom:0;z-index:6;display:none;text-align:center;color:#eaf2ff;
+  background:#0e1524;background:-webkit-radial-gradient(50% 30%,#1b2a4d,#0b1120 80%);background:radial-gradient(120% 90% at 50% 25%,#1b2a4d,#0b1120 80%);}
+#novaAba .inner{position:absolute;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);width:92%;max-width:560px;}
+#novaAba h1{font-size:27px;margin-bottom:8px;}
+#btnNova:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
+</style>
+</head>
+<body>
+  <div id="espera">
+    <div class="ico">&#128225;</div>
+    <h1>Aguardando o professor&hellip;</h1>
+    <p id="txtEspera">Esta tela vai abrir a atividade sozinha quando o professor enviar. Pode deixar assim.</p>
+    <div id="setpc" style="display:none;margin-top:18px;">
+      <div style="font-size:15px;color:#cfe0ff;margin-bottom:8px;">Qual o n&uacute;mero deste computador?</div>
+      <input id="inpc" type="text" inputmode="numeric" placeholder="ex.: 01" style="font-size:20px;text-align:center;width:120px;padding:10px;border-radius:10px;border:2px solid #33477e;background:#0c1730;color:#fff;">
+      <button id="okpc" style="font-size:18px;font-weight:bold;padding:11px 18px;margin-left:8px;border:0;border-radius:10px;background:#35d27e;color:#04240f;cursor:pointer;">OK</button>
+    </div>
+  </div>
+  <div id="bloqueio"><div class="ico" style="font-size:56px;">&#9995;</div><h1>Aula pausada</h1><p>Aguarde o professor.</p></div>
+  <div id="novaAba"><div class="inner">
+    <div class="ico" style="font-size:60px;">&#128279;</div>
+    <h1>O professor enviou um site</h1>
+    <p style="font-size:16px;color:#9fb2d6;margin:0 auto 22px;max-width:520px;line-height:1.5;">Toque no bot&atilde;o para abrir. Quando quiser, o professor traz voc&ecirc; de volta.</p>
+    <button id="btnNova" style="font-size:24px;font-weight:bold;padding:16px 42px;border:0;border-radius:14px;background:#35d27e;color:#04240f;cursor:pointer;">Abrir &#10142;</button>
+  </div></div>
+  <iframe id="quadro" allow="fullscreen; autoplay; microphone" allowfullscreen></iframe>
+  <div id="status"><span id="pt"></span><span id="stx">conectando&hellip;</span></div>
+  <div id="rodape"></div>
+
+<script>
+(function(){
+  "use strict";
+  function $(id){ return document.getElementById(id); }
+  /* le parametro da URL. Tolera "&amp;" (& codificado ao copiar de paginas) e ";" no lugar de "&". */
+  function par(n){ try{ var s=(location.search||"").replace(/&amp;/gi,"&").replace(/;/g,"&"); var m=s.match(new RegExp("[?&]"+n+"=([^&]+)")); return m?decodeURIComponent(m[1]):""; }catch(e){ return ""; } }
+  function ls(k,v){ try{ if(v===undefined) return localStorage.getItem(k); localStorage.setItem(k,v); }catch(e){ return null; } }
+  /* cookie: sobrevive onde o localStorage as vezes e bloqueado/limpo (NAO mexe na URL) */
+  function ck(k,v){ try{ if(v===undefined){ var m=document.cookie.match(new RegExp("(?:^|; )"+k+"=([^;]*)")); return m?decodeURIComponent(m[1]):null; } document.cookie=k+"="+encodeURIComponent(v)+"; max-age=31536000; path=/"; return v; }catch(e){ return null; } }
+
+  var SALA=par("sala")||ck("labsala")||ls("labsala")||"sala1"; ls("labsala",SALA); ck("labsala",SALA);
+  /* CANAL PADRAO = banco do Google (Firebase). Passa no firewall da escola e nao precisa
+     configurar nada nas maquinas. Pode ser trocado por ?db= na URL ou no controle, se quiser. */
+  var DB_PADRAO="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+  var DB=par("db")||ck("labdb")||ls("labdb")||DB_PADRAO;  if(par("db")){ ls("labdb",DB); ck("labdb",DB); }
+  /* MARCA DE RESET: troque este valor p/ forcar TODAS as maquinas a perguntar o numero
+     de novo UMA vez (na proxima abertura). Depois que o professor digitar, nao pergunta mais. */
+  var RESET_PC="r2026-07-10a";
+  function verPC(){ return ck("labpc_ver")||ls("labpc_ver")||""; }
+  /* PC: grava em cookie + localStorage + a marca. "manual" = numero digitado no "trocar numero".
+     O numero MANUAL sempre vence o pc= da URL, senao a homepage (que tem pc=01 fixo) sobrescreveria
+     o numero digitado a cada abertura. NAO altera a barra de endereco. */
+  function salvarPC(v, manual){ PC=v; ls("labpc",v); ck("labpc",v); ls("labpc_ver",RESET_PC); ck("labpc_ver",RESET_PC);
+    if(manual){ ls("labpc_manual","1"); ck("labpc_manual","1"); } }
+  var urlPC=par("pc");
+  var savedPC=ck("labpc")||ls("labpc")||"";
+  var manualPC=(ck("labpc_manual")||ls("labpc_manual"))?true:false;
+  var PC;
+  if(manualPC && savedPC){ PC=savedPC; }             /* numero digitado pelo professor vence a URL */
+  else {
+    PC=urlPC||savedPC||"";
+    if(!urlPC && PC && verPC()!==RESET_PC){ PC=""; } /* reset unico (so p/ nao-manual e sem pc= na URL) */
+  }
+  if(PC){ salvarPC(PC, manualPC); }
+
+  function norm(x){ return (""+x).replace(/^\s+|\s+$/g,"").replace(/^0+(?=\d)/,"").toLowerCase(); }
+  function pintaRodape(){
+    $("rodape").innerHTML="Sala: <b>"+SALA+"</b>"+(PC?(" &middot; PC <b>"+PC+"</b>"):" &middot; PC <b>sem n&uacute;mero</b>")
+      +' &middot; <a href="#" id="trocarpc" style="color:#8fb6ff;text-decoration:underline;">trocar n&uacute;mero</a>';
+    var tp=$("trocarpc"); if(tp){ tp.onclick=function(e){ if(e&&e.preventDefault)e.preventDefault(); abrirSetPc(); return false; }; }
+  }
+  function abrirSetPc(){
+    /* volta p/ a tela de espera e mostra o campo do numero (funciona a qualquer momento) */
+    quadro.style.display="none"; try{ quadro.src="about:blank"; }catch(e){} bloqueio.style.display="none"; espera.style.display="flex";
+    _urlAtual="";
+    $("inpc").value=PC||"";
+    $("setpc").style.display="block";
+    try{ $("inpc").focus(); $("inpc").select(); }catch(e){}
+  }
+  $("okpc").onclick=function(){ var v=($("inpc").value||"").replace(/[^\w-]/g,""); if(!v) return; salvarPC(v, true); $("setpc").style.display="none"; pintaRodape(); };
+  pintaRodape();
+  if(!PC){ $("setpc").style.display="block"; }
+  var pt=$("pt"), stx=$("stx");
+  var quadro=$("quadro"), espera=$("espera"), bloqueio=$("bloqueio");
+  function conectado(ok){ pt.className=ok?"on":""; stx.innerHTML=ok?"conectado":"reconectando…"; }
+
+
+  function agora(){ try{ return (new Date()).getTime(); }catch(e){ return 0; } }
+  function host(u){ try{ var m=(""+u).match(/^https?:\/\/([^\/?#]+)/i); return m?m[1].replace(/^www\./,""):(""+u).slice(0,26); }catch(e){ return ""; } }
+  /* ==== status p/ o painel de presenca do professor (poucos bytes de vez em quando) ==== */
+  var _estado="aguardando", _rotulo="";
+  function reportar(){ if(!DB||!PC){ return; } var body=JSON.stringify({e:_estado,r:_rotulo,ts:agora()});
+    var x=new XMLHttpRequest(); try{ x.open("PUT", DB.replace(/\/+$/,"")+"/labstatus/"+encodeURIComponent(SALA)+"/"+encodeURIComponent(PC)+".json", true); }catch(e){ return; }
+    x.setRequestHeader("Content-Type","application/json"); try{ x.send(body); }catch(e){} }
+  function setEstado(e,r){ _estado=e; _rotulo=r||""; reportar(); }
+
+  /* ==== nova aba: abre QUALQUER site (Google/YouTube/teimosos) numa aba nova, com 1 toque do
+     aluno; a nossa tela continua viva, entao o professor traz de volta pelo controle. ==== */
+  var _janelaAluno=null, _novaUrl="";
+  function fecharNova(){ if(_janelaAluno){ try{ if(!_janelaAluno.closed){ _janelaAluno.close(); } }catch(e){} _janelaAluno=null; } }
+  function pedirNovaAba(url){ fecharNova(); _novaUrl=url;
+    quadro.style.display="none"; try{ quadro.src="about:blank"; }catch(e){} espera.style.display="none"; bloqueio.style.display="none";
+    $("novaAba").style.display="block"; setEstado("aguardando",""); }
+
+  function tela(modo){
+    _urlAtual=""; fecharNova(); $("novaAba").style.display="none";
+    if(modo==="voltar"){ quadro.style.display="none"; quadro.src="about:blank"; bloqueio.style.display="none"; espera.style.display="flex"; setEstado("aguardando",""); return; }
+    if(modo==="bloquear"){ quadro.style.display="none"; quadro.src="about:blank"; espera.style.display="none"; bloqueio.style.display="flex"; setEstado("pausada",""); return; }
+  }
+  var _urlAtual="";
+  function abrir(url){ fecharNova(); $("novaAba").style.display="none"; espera.style.display="none"; bloqueio.style.display="none"; quadro.style.display="block"; if(_urlAtual!==url){ _urlAtual=url; quadro.src=url; } setEstado("atividade", host(url)); }
+  /* tela cheia (sai da pagina, sem retorno remoto) - mantido p/ compatibilidade */
+  function abrirCheia(url){ try{ window.top.location.href=url; }catch(e){ try{ location.href=url; }catch(e2){} } }
+
+  /* lembra o ultimo comando aplicado (em cookie+localStorage) p/ NAO repetir ao recarregar
+     nem ao voltar de um site em tela cheia. */
+  /* dedup do comando SO na memoria (nao persiste): assim, ao recarregar, a maquina
+     REABRE sozinha a atividade que estiver no canal (auto-retomar). O modo "nova aba"
+     nao navega p/ fora, entao nao precisa mais do truque de persistir. */
+  var ultimoId=null;
+  function setUltimo(id){ ultimoId=id; }
+  function aplica(cmd){
+    if(!cmd) return;
+    if(cmd.id && cmd.id===ultimoId) return;
+    /* checa alvo: "todos" ou lista de PCs (ex "01,05") */
+    var alvo=(cmd.alvo||"todos");
+    if(alvo!=="todos"){
+      var achou=false, arr=(""+alvo).split(","), i;
+      for(i=0;i<arr.length;i++){ if(norm(arr[i])===norm(PC) && PC){ achou=true; } }
+      if(!achou){ setUltimo(cmd.id); return; }  /* nao e p/ este PC */
+    }
+    setUltimo(cmd.id);
+    if(cmd.acao==="abrir" && cmd.url){ abrir(cmd.url); }
+    else if(cmd.acao==="nova_aba" && cmd.url){ pedirNovaAba(cmd.url); }
+    else if(cmd.acao==="cheia" && cmd.url){ abrirCheia(cmd.url); }
+    else if(cmd.acao==="voltar"){ tela("voltar"); }
+    else if(cmd.acao==="bloquear"){ tela("bloquear"); }
+  }
+
+  function endpoint(){
+    if(DB){ return DB.replace(/\/+$/,"")+"/lab/"+SALA+".json"; }          /* Firebase */
+    return "https://ntfy.sh/vidalprofLab_"+SALA+"/json?poll=1&since=20s";  /* ntfy (padrao) */
+  }
+  function poll(){
+    var xhr=new XMLHttpRequest();
+    try{ xhr.open("GET",endpoint(),true); }catch(e){ conectado(false); return agenda(); }
+    xhr.timeout=8000;
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState!==4) return;
+      if(xhr.status>=200 && xhr.status<300){
+        conectado(true);
+        if(DB){ try{ var d=JSON.parse(xhr.responseText||"null"); if(d) aplica(d); }catch(e){} }
+        else {
+          var linhas=(xhr.responseText||"").split("\n"),i;
+          for(i=0;i<linhas.length;i++){ var ln=linhas[i].replace(/^\s+|\s+$/g,""); if(!ln) continue;
+            try{ var ev=JSON.parse(ln); if(ev && ev.event==="message" && ev.message){ aplica(JSON.parse(ev.message)); } }catch(e){}
+          }
+        }
+      } else { conectado(false); }
+      agenda();
+    };
+    xhr.ontimeout=function(){ conectado(false); agenda(); };
+    xhr.onerror=function(){ conectado(false); agenda(); };
+    try{ xhr.send(); }catch(e){ conectado(false); agenda(); }
+  }
+  var t=null; function agenda(){ if(t)clearTimeout(t); t=setTimeout(poll,2500); }
+
+  /* botao "Abrir" da nova aba: precisa do TOQUE do aluno (o navegador bloqueia aba nova sem gesto) */
+  $("btnNova").onclick=function(){ if(!_novaUrl){ return; }
+    try{ _janelaAluno=window.open(_novaUrl,"labtab"); }catch(e){ _janelaAluno=null; }
+    $("novaAba").style.display="none"; espera.style.display="flex"; setEstado("novaaba", host(_novaUrl)); };
+  /* avisa o status ao professor de vez em quando (leve) */
+  if(typeof setInterval!=="undefined"){ setInterval(reportar, 8000); }
+  reportar();
+  poll();
+})();
+</script>
+</body>
+</html>

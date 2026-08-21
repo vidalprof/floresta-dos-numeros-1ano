@@ -1,0 +1,77 @@
+name: Fabrica de Sites
+
+# Cria um repositorio novo, publica o HTML e liga o GitHub Pages.
+# Acionado manualmente (ou pelo assistente) informando o nome do repo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Nome do novo repositorio (ex: tabuada-divertida)"
+        required: true
+        type: string
+      source_dir:
+        description: "Pasta deste repo que contem o index.html a publicar"
+        required: false
+        default: "_novo"
+        type: string
+
+jobs:
+  criar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Criar repositorio, publicar e ligar Pages
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          NAME: ${{ inputs.repo_name }}
+          SRC: ${{ inputs.source_dir }}
+        run: |
+          set -euo pipefail
+
+          if [ ! -f "$SRC/index.html" ]; then
+            echo "::error::Nao encontrei $SRC/index.html neste repositorio."
+            exit 1
+          fi
+
+          echo "Criando repositorio publico $OWNER/$NAME ..."
+          gh repo create "$OWNER/$NAME" --public \
+            --description "Publicado automaticamente pela Fabrica de Sites" \
+            || echo "Repositorio ja existe; vou apenas atualizar o conteudo."
+
+          # Monta o conteudo a publicar
+          work="$(mktemp -d)"
+          cp "$SRC/index.html" "$work/index.html"
+          : > "$work/.nojekyll"
+
+          cd "$work"
+          git init -q
+          git checkout -q -b main
+          git add -A
+          git -c user.name="Fabrica de Sites" \
+              -c user.email="fabrica@users.noreply.github.com" \
+              commit -qm "Publica site via Fabrica de Sites"
+          git push -q --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$NAME.git" main
+
+          echo "Ligando o GitHub Pages (deploy a partir da branch main)..."
+          gh api -X POST "repos/$OWNER/$NAME/pages" \
+            -f "source[branch]=main" -f "source[path]=/" \
+            || gh api -X PUT "repos/$OWNER/$NAME/pages" \
+                 -f "source[branch]=main" -f "source[path]=/" \
+            || echo "Pages talvez ja estivesse ligado."
+
+          URL="https://$OWNER.github.io/$NAME/"
+          {
+            echo "## Site publicado com sucesso"
+            echo ""
+            echo "**Repositorio:** https://github.com/$OWNER/$NAME"
+            echo ""
+            echo "**Link do site:** $URL"
+            echo ""
+            echo "_Pode levar 1 a 2 minutos para ficar no ar na primeira vez._"
+          } >> "$GITHUB_STEP_SUMMARY"
+          echo "site_url=$URL" >> "$GITHUB_OUTPUT"

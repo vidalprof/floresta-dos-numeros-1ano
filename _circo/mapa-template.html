@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Mapa — O Grande Circo do Teo</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;min-height:100%;}
+body{font-family:"Segoe UI",Verdana,sans-serif;background:#2a1550;
+  background:-webkit-radial-gradient(50% 0%,#3a1d6b,#1e1140 60%,#120a2a);
+  background:radial-gradient(120% 90% at 50% 0%,#3a1d6b,#1e1140 60%,#120a2a);
+  color:#ffe9c9;overflow-x:hidden;-webkit-user-select:none;user-select:none;}
+#fundo{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+.luz{position:absolute;border-radius:50%;background:#ffd23f;opacity:.5;
+  -webkit-box-shadow:0 0 12px 4px rgba(255,210,63,.5);box-shadow:0 0 12px 4px rgba(255,210,63,.5);
+  -webkit-animation:pisca 3.2s ease-in-out infinite;animation:pisca 3.2s ease-in-out infinite;}
+@-webkit-keyframes pisca{0%,100%{opacity:.2;}50%{opacity:.8;}}
+@keyframes pisca{0%,100%{opacity:.2;}50%{opacity:.8;}}
+#wrap{position:relative;z-index:2;max-width:520px;margin:0 auto;padding:8px 12px 40px;}
+@media (min-width:700px){#wrap{max-width:680px;}}
+.topbar{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  background:-webkit-linear-gradient(#2a1c52,#20153f);background:linear-gradient(#2a1c52,#20153f);
+  border:2px solid rgba(255,210,63,.4);border-radius:16px;padding:8px 12px;margin-bottom:10px;
+  -webkit-box-shadow:0 6px 18px rgba(0,0,0,.4);box-shadow:0 6px 18px rgba(0,0,0,.4);}
+.emblema{width:42px;height:42px;border-radius:50%;-webkit-box-flex:0;flex:0 0 auto;margin-right:10px;
+  background:-webkit-linear-gradient(#ffe27a,#ffbe1f);background:linear-gradient(#ffe27a,#ffbe1f);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  font-size:22px;border:2px solid #b8801a;}
+.tbmeio{-webkit-box-flex:1;flex:1;}
+.tbnivel{font-size:13px;color:#ffd23f;font-weight:bold;}
+.xptrilho{height:10px;background:rgba(0,0,0,.35);border-radius:6px;overflow:hidden;margin-top:3px;border:1px solid rgba(255,210,63,.3);}
+.xpbarra{height:100%;width:12%;background:-webkit-linear-gradient(left,#ff8a3d,#ffd23f);background:linear-gradient(to right,#ff8a3d,#ffd23f);}
+.tbpts{font-size:12px;color:#e6c9ff;margin-top:2px;}
+.card{background:-webkit-linear-gradient(#2a1c52,#20153f);background:linear-gradient(#2a1c52,#20153f);
+  border:2px solid rgba(255,210,63,.4);border-radius:22px;padding:14px;text-align:center;margin-bottom:10px;
+  -webkit-box-shadow:0 10px 30px rgba(0,0,0,.45);box-shadow:0 10px 30px rgba(0,0,0,.45);}
+.card h2{font-size:20px;color:#ffd23f;text-shadow:0 2px 0 #7c1f1b;}
+.guia{font-size:13px;color:#ffe9c9;margin:6px 4px;line-height:1.4;}
+.progtxt{font-size:12px;color:#e6c9ff;margin-top:4px;}
+.progbar{height:12px;background:rgba(0,0,0,.35);border-radius:8px;overflow:hidden;margin:6px auto 2px;max-width:280px;border:1px solid rgba(255,210,63,.3);}
+.progbar i{display:block;height:100%;width:0%;background:-webkit-linear-gradient(left,#ff5a4d,#ffd23f);background:linear-gradient(to right,#ff5a4d,#ffd23f);}
+.somzin{width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;font-size:18px;color:#5a2410;margin-top:6px;
+  background:-webkit-linear-gradient(#ffe27a,#ffc21f);background:linear-gradient(#ffe27a,#ffc21f);-webkit-box-shadow:0 3px 0 #b8801a;box-shadow:0 3px 0 #b8801a;}
+.mascbox{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;margin:8px 0;}
+.mascbox img{height:70px;width:auto;margin-right:8px;-webkit-box-flex:0;flex:0 0 auto;}
+.balao{background:#fff3d6;color:#5a2a12;border-radius:16px;padding:10px 12px;font-size:13px;line-height:1.4;text-align:left;
+  -webkit-box-shadow:0 4px 0 rgba(0,0,0,.18);box-shadow:0 4px 0 rgba(0,0,0,.18);}
+.trilha{position:relative;margin:6px 0;}
+.linhap{display:-webkit-box;display:flex;}
+.linhap.esq{-webkit-box-pack:start;justify-content:flex-start;}
+.linhap.centro{-webkit-box-pack:center;justify-content:center;}
+.linhap.dir{-webkit-box-pack:end;justify-content:flex-end;}
+.no{width:132px;text-align:center;}
+.aqui{display:inline-block;background:#ffd23f;color:#5a2410;font-size:11px;font-weight:bold;padding:2px 9px;border-radius:10px;margin-bottom:3px;
+  -webkit-animation:pulsa 1.3s ease-in-out infinite;animation:pulsa 1.3s ease-in-out infinite;}
+.nofig{width:92px;height:92px;margin:0 auto;position:relative;border-radius:50%;background:rgba(255,255,255,.06);
+  border:3px solid rgba(255,210,63,.5);display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;}
+.nofig img{max-height:76px;width:auto;display:block;}
+.no.atual .nofig{border-color:#ffd23f;-webkit-filter:drop-shadow(0 0 11px rgba(255,210,63,.95));filter:drop-shadow(0 0 11px rgba(255,210,63,.95));
+  -webkit-animation:glow 1.5s ease-in-out infinite;animation:glow 1.5s ease-in-out infinite;}
+@-webkit-keyframes glow{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.06);}}
+@keyframes glow{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+.no.trav .nofig img{-webkit-filter:grayscale(1) brightness(.62);filter:grayscale(1) brightness(.62);}
+.no.trav .nofig{border-color:rgba(160,160,190,.35);background:rgba(255,255,255,.03);}
+.no.feita .nofig{border-color:#ffd23f;}
+.cadeado{position:absolute;top:-4px;right:6px;font-size:22px;}
+.check{position:absolute;top:-6px;right:2px;font-size:20px;color:#4dff9e;}
+.nonome{font-size:12.5px;color:#ffe9c9;margin-top:5px;line-height:1.15;font-weight:bold;}
+.no.trav .nonome{color:#b7a9d0;}
+.conector{width:0;height:20px;border-left:3px dotted rgba(255,210,63,.45);margin:2px auto;}
+.trofeubox{text-align:center;margin:6px 0 2px;}
+.trofeuimg{height:120px;width:auto;-webkit-filter:grayscale(1) brightness(.6);filter:grayscale(1) brightness(.6);}
+.trofnome{font-size:13px;color:#b7a9d0;font-weight:bold;margin-top:2px;}
+.btn{display:block;width:auto;max-width:300px;margin:12px auto 0;border:none;cursor:pointer;font-family:inherit;font-weight:bold;font-size:15px;color:#5a2410;
+  padding:12px 22px;border-radius:14px;background:-webkit-linear-gradient(#ffe27a,#ffc21f);background:linear-gradient(#ffe27a,#ffc21f);-webkit-box-shadow:0 5px 0 #b8801a;box-shadow:0 5px 0 #b8801a;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.05);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.05);}}
+</style>
+</head>
+<body>
+<div id="fundo"></div>
+<div id="wrap">
+  <div class="topbar">
+    <div class="emblema">&#11088;</div>
+    <div class="tbmeio"><div class="tbnivel">Aprendiz de Palhaço</div>
+      <div class="xptrilho"><div class="xpbarra"></div></div>
+      <div class="tbpts">0 pontos</div></div>
+  </div>
+  <div class="card">
+    <h2>A aventura do Léo!</h2>
+    <div class="progbar"><i style="width:0%"></i></div>
+    <div class="progtxt">Coleção: 0 de 11 paradas</div>
+    <div class="guia">Siga a trilha do picadeiro! Complete cada parada para abrir a próxima. 🎪</div>
+    <button class="somzin">&#128266;</button>
+    <div class="mascbox"><img src="{{MASC_explicando}}" alt="Teo">
+      <div class="balao">Bem-vindo ao circo, Léo! Uma ventania bagunçou tudo. Vamos arrumar parada por parada até o grande espetáculo. Comece pela primeira!</div></div>
+  </div>
+  <div class="trilha" id="trilha"></div>
+  <div class="conector"></div>
+  <div class="trofeubox">
+    <img class="trofeuimg" src="{{TROFEU}}" alt="Troféu"><div class="cadeado" style="position:static;font-size:20px;">&#128274;</div>
+    <div class="trofnome">Grande Espetáculo Final</div>
+  </div>
+  <button class="btn">&#127941; Minhas Medalhas</button>
+</div>
+<script>
+function $(id){return document.getElementById(id);}
+(function(){var f=$("fundo"),i,e;for(i=0;i<12;i++){e=document.createElement("div");e.className="luz";
+  var s=4+((i*31)%6);e.style.width=s+"px";e.style.height=s+"px";e.style.left=((i*71)%100)+"%";e.style.top=((i*23)%70)+"%";
+  e.style.webkitAnimationDelay=((i%9)*0.3)+"s";e.style.animationDelay=((i%9)*0.3)+"s";f.appendChild(e);}})();
+var PARADAS=[
+ {n:"Balões Coloridos",c:"{{COMP_palhaco}}"},
+ {n:"Contando no Picadeiro",c:"{{COMP_foca}}"},
+ {n:"Formas da Festa",c:"{{COMP_elefante}}"},
+ {n:"Ligar à Sombra",c:"{{COMP_leao}}"},
+ {n:"Caminho das Luzes",c:"{{COMP_macaco}}"},
+ {n:"Vogais do Circo",c:"{{COMP_arara}}"},
+ {n:"Qual é o Diferente?",c:"{{COMP_ponei}}"},
+ {n:"Quebra-Cabeça do Circo",c:"{{COMP_cachorro}}"},
+ {n:"Memória do Circo",c:"{{COMP_elefante}}"},
+ {n:"Caça aos 7 Erros",c:"{{COMP_macaco}}"},
+ {n:"Quebra-Cabeça 2",c:"{{COMP_leao}}"}
+];
+var lados=["esq","centro","dir"];
+var t=$("trilha"),i,html="";
+for(i=0;i<PARADAS.length;i++){
+  var lado=lados[i%3];
+  var estado=(i===0)?"atual":"trav";
+  html+='<div class="linhap '+lado+'"><div class="no '+estado+'">';
+  if(i===0){html+='<div class="aqui">você está aqui!</div>';}
+  html+='<div class="nofig"><img src="'+PARADAS[i].c+'" alt="">';
+  if(estado==="trav"){html+='<div class="cadeado">&#128274;</div>';}
+  html+='</div><div class="nonome">'+PARADAS[i].n+'</div></div></div>';
+  if(i<PARADAS.length-1){html+='<div class="conector"></div>';}
+}
+t.innerHTML=html;
+</script>
+</body>
+</html>

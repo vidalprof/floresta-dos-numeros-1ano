@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — saltos na fita</title>
+<!-- ============================================================
+     PEÇA: SALTOS NA FITA (contagem salteada na reta numérica)
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ESTA MECÂNICA ENSINA: o SALTO, não o resultado. Contar de 2 em 2 não
+     é "somar 2" de cabeça: é ver que o mesmo pulo se repete e que o caminho
+     inteiro é feito de pedaços iguais. Por isso a criança não digita o total —
+     ela toca onde o salto CAI, e o arco fica desenhado na fita como prova.
+
+     A ARMADILHA PRINCIPAL (a que fez esta peça existir):
+       · SE O SALTO NÃO FOR VISÍVEL, VIRA SÓ SOMAR. Aqui o pulador anda de uma
+         casa à outra com hop de verdade (translateY no meio do caminho) e
+         DEIXA UM ARCO desenhado, com o "+2" escrito em cima. No fim da fita a
+         criança vê seis arcos iguais — é a figura do conceito.
+
+     As outras armadilhas, todas já pagas em atividade de verdade:
+       · MARCA GRANDE: 48x66px cada. Uma fita de 0 a 20 em 296px daria marcas de
+         14px — dedo de criança não acerta. Aqui a FITA ROLA de lado (como uma
+         fita de verdade) e ela segue o pulador sozinha, em vez de encolher o
+         alvo. Quem encolhe é a distância, nunca o alvo.
+       · O NÚMERO SÓ NOS PONTOS DO SALTO: marcar 0..20 inteiro polui; os
+         passinhos do meio ficam como risquinhos, que é o que se conta.
+       · ERRO NÃO PUNE: a marca errada treme e volta ao normal; o andaime cresce
+         (dica -> os passinhos do salto acendem um a um -> a marca certa pisca ->
+         o pulador vai sozinho). Nunca X, nunca "errou", nunca trava.
+       · `data-qa` na marca que serve AGORA (só para o auditor-jogador) e
+         atualizado a cada salto — sem isso ele clica ao acaso numa fita de 21
+         casas e reprova uma fase que a criança fecha.
+       · O PULADOR E O ARCO SÃO `pointer-events:none`: se ficassem no caminho do
+         dedo, o auditor de leiaute acusaria "botão sobre botão" e, pior, a
+         criança tocaria na marca e nada aconteceria.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: SALTOS NA FITA ----------------
+   ⚠️ a margem PROPRIA em cima e obrigatoria: a regra `.balao + *` do motorzinho
+   tem a mesma forca e perde por vir ANTES no arquivo — sem isto a fita nasce
+   COLADA no enunciado (regra 9 do _qa/leiaute.js).                          */
+.fitabox{margin:14px auto 0;overflow-x:auto;overflow-y:hidden;
+         -webkit-overflow-scrolling:touch;padding-bottom:4px}
+.fita{position:relative;height:132px;white-space:nowrap;font-size:0;padding:0 8px}
+/* o trilho: a fita de verdade, por baixo das marcas */
+.trilho{position:absolute;left:0;right:0;bottom:38px;height:7px;border-radius:7px;
+        background:#8a7355}
+/* cada casa da fita — ALVO GRANDE (48x66 medidos), nunca encolhe */
+.marca{display:inline-block;position:relative;width:48px;height:110px;margin:0;padding:0;
+       vertical-align:bottom;cursor:pointer;background:none;border:0}
+.risco{position:absolute;left:50%;bottom:34px;width:5px;height:18px;margin-left:-2px;
+       border-radius:3px;background:#c9bda6}
+.numr{position:absolute;left:0;right:0;bottom:4px;font-size:15px;font-weight:800;
+      color:var(--texto,#f4efe6);text-align:center;line-height:20px}
+/* a casa onde o pulador ja caiu: acende com FORMA (bolinha cheia) + cor + numero */
+.marca.caiu .risco{background:#6bd23f;height:26px;width:9px;margin-left:-4px}
+.marca.caiu .numr{color:#d6f5c8}
+/* passinho contado pelo andaime: pisca um a um */
+.marca.conta .risco{background:#ffd54a;height:24px}
+.marca.acende .risco{background:#ffd54a;-webkit-animation:bate .7s infinite;animation:bate .7s infinite}
+.marca.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes bate{0%,100%{height:18px}50%{height:34px}}
+@keyframes bate{0%,100%{height:18px}50%{height:34px}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* O PULADOR — anda de casa em casa e SOBE no meio do caminho (o salto).
+   pointer-events:none para nunca roubar o dedo da crianca.                  */
+.pulador{position:absolute;bottom:40px;left:0;width:46px;height:46px;margin-left:-23px;
+         pointer-events:none;z-index:3;
+         -webkit-transition:left .5s;transition:left .5s;
+         -webkit-transform:translateY(0);transform:translateY(0)}
+.pulador svg{width:46px;height:46px;display:block}
+.pulador.pula{-webkit-animation:hop .5s;animation:hop .5s}
+@-webkit-keyframes hop{0%{-webkit-transform:translateY(0)}45%{-webkit-transform:translateY(-46px)}100%{-webkit-transform:translateY(0)}}
+@keyframes hop{0%{transform:translateY(0)}45%{transform:translateY(-46px)}100%{transform:translateY(0)}}
+/* O ARCO — a prova de que o salto aconteceu. Fica desenhado na fita. */
+.arco{position:absolute;bottom:44px;height:40px;border:4px solid #ffd54a;border-bottom:0;
+      border-radius:50% 50% 0 0/100% 100% 0 0;pointer-events:none;z-index:2;
+      -webkit-transform-origin:left bottom;transform-origin:left bottom;
+      -webkit-animation:abre .5s;animation:abre .5s}
+@-webkit-keyframes abre{0%{opacity:0;-webkit-transform:scaleX(.15)}100%{opacity:1;-webkit-transform:scaleX(1)}}
+@keyframes abre{0%{opacity:0;transform:scaleX(.15)}100%{opacity:1;transform:scaleX(1)}}
+.arcon{position:absolute;left:0;right:0;top:-21px;text-align:center;font-size:15px;
+       font-weight:800;color:#ffd54a;line-height:18px}
+.placar{margin-top:12px;font-size:17px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
+.placar b{color:#ffd54a}
+.conta{margin-top:10px;background:#fffdf6;color:#221a12;border-radius:14px;padding:10px 12px;
+       font-size:16px;font-weight:700;max-width:430px;margin-left:auto;margin-right:auto}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* tela baixa: encolhe a LETRA e a altura da fita, nunca a largura do alvo */
+@media (max-height:470px){.fita{height:112px}.marca{height:96px}.numr{font-size:14px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- O CONTEUDO ----
+   Tres fitas, do salto menor para o maior. O `ate` sempre cai em cima de um
+   salto certinho (12 = 6 saltos de 2), senao a ultima casa fica inalcancavel. */
+var FITAS=[
+  {p:2, ate:12, dic:"Um salto tem sempre <b>2</b> passinhos. Conte os risquinhos a partir de onde ele est&#225;."},
+  {p:5, ate:20, dic:"Um salto tem sempre <b>5</b> passinhos. Conte de um em um at&#233; cinco."},
+  {p:3, ate:15, dic:"Um salto tem sempre <b>3</b> passinhos. Conte: um, dois, tr&#234;s."}
+];
+var CASA=48;              /* largura de cada casa, em px — igual ao CSS */
+var rodadaF=0, ondeEsta=0, errosF=0, fechada=false;
+var marcasF=[], fitaEl=null, boxEl=null, puladorEl=null, contaEl=null, placarEl=null, barraF=null, telaF=null;
+
+/* desenho do pulador: bicho simples de SVG, sem arquivo externo */
+function svgPulador(){
+  return "<svg viewBox='0 0 46 46' xmlns='http://www.w3.org/2000/svg'>"+
+    "<ellipse cx='23' cy='40' rx='14' ry='4' fill='rgba(0,0,0,.30)'/>"+
+    "<ellipse cx='23' cy='26' rx='15' ry='13' fill='#6bd23f'/>"+
+    "<ellipse cx='23' cy='30' rx='9' ry='7' fill='#a8e87f'/>"+
+    "<circle cx='16' cy='17' r='6' fill='#6bd23f'/><circle cx='30' cy='17' r='6' fill='#6bd23f'/>"+
+    "<circle cx='16' cy='17' r='3' fill='#22301a'/><circle cx='30' cy='17' r='3' fill='#22301a'/>"+
+    "<circle cx='17' cy='16' r='1.1' fill='#fff'/><circle cx='31' cy='16' r='1.1' fill='#fff'/>"+
+    "<path d='M18 31 q5 4 10 0' stroke='#22301a' stroke-width='2' fill='none' stroke-linecap='round'/>"+
+    "<path d='M9 34 q-4 4 1 5' stroke='#4ea62c' stroke-width='4' fill='none' stroke-linecap='round'/>"+
+    "<path d='M37 34 q4 4 -1 5' stroke='#4ea62c' stroke-width='4' fill='none' stroke-linecap='round'/></svg>";
+}
+
+/* sons proprios desta mecanica: o pulo e o passinho contado */
+function sPulo(){ nota(392,.09,.13,"triangle",0); nota(659.25,.13,.13,"triangle",.07); }
+function sPasso(n){ nota(440+((n||0)%5)*60,.05,.10,"square",0); }
+
+function telaSaltos(){
+  limpa();
+  var f=FITAS[rodadaF];
+  ondeEsta=0; errosF=0; fechada=false; marcasF=[];
+  var t=el("div","tela"); telaF=t;
+  setProg(t,Math.round(rodadaF*100/FITAS.length));
+  barraF=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","FITA "+(rodadaF+1)+" DE "+FITAS.length));
+  c.appendChild(el("div","balao","O Salta pula de <b>"+f.p+" em "+f.p+"</b>. Toque na casa onde ele <b>cai agora</b>."));
+
+  boxEl=el("div","fitabox");
+  fitaEl=el("div","fita");
+  fitaEl.style.width=(f.ate+1)*CASA+16+"px";
+  fitaEl.appendChild(el("div","trilho"));
+  var i;
+  for(i=0;i<=f.ate;i++) fitaEl.appendChild(fazCasa(i,f));
+  puladorEl=el("div","pulador",svgPulador());
+  fitaEl.appendChild(puladorEl);
+  boxEl.appendChild(fitaEl);
+  c.appendChild(boxEl);
+
+  placarEl=el("div","placar","saltos: <b>0</b>");
+  c.appendChild(placarEl);
+  contaEl=el("div","conta","");
+  contaEl.style.display="none";
+  c.appendChild(contaEl);
+  c.appendChild(el("div","hint","Arraste a fita para o lado para ver o caminho inteiro."));
+  t.appendChild(c); app.appendChild(t);
+  poePulador();
+  marcaAlvo();
+}
+
+function fazCasa(v,f){
+  var m=el("div","marca");
+  m._v=v;
+  m.appendChild(el("i","risco"));
+  if(v%f.p===0) m.appendChild(el("b","numr",""+v));
+  m.onclick=function(){ toqueCasa(v,m); };
+  marcasF.push(m);
+  return m;
+}
+
+/* posiciona o pulador MEDINDO a casa (conta por porcentagem erra por causa do
+   padding da fita e da borda de cada marca) */
+function poePulador(){
+  var m=marcasF[ondeEsta];
+  if(!m||!puladorEl) return;
+  puladorEl.style.left=(m.offsetLeft+m.offsetWidth/2)+"px";
+  segueOlho();
+}
+/* a fita ROLA sozinha para o pulador nunca sumir do lado de fora */
+function segueOlho(){
+  if(!boxEl||!marcasF[ondeEsta]) return;
+  var m=marcasF[ondeEsta];
+  var meio=m.offsetLeft+m.offsetWidth/2-boxEl.clientWidth/2;
+  if(meio<0) meio=0;
+  boxEl.scrollLeft=meio;
+}
+
+/* a casa que serve AGORA — so para o auditor-jogador (a crianca nao ve nada) */
+function marcaAlvo(){
+  var f=FITAS[rodadaF], i, certa=ondeEsta+f.p;
+  for(i=0;i<marcasF.length;i++)
+    marcasF[i].setAttribute("data-qa", i===certa?"1":"0");
+}
+
+function toqueCasa(v,m){
+  if(fechada) return;
+  var f=FITAS[rodadaF];
+  if(v===ondeEsta+f.p){ pula(v,m); return; }
+  sErro(); errosF++;
+  m.className="marca treme";
+  destremeCasa(m);
+  andaime(errosF);
+}
+function destremeCasa(m){
+  setTimeout(function(){
+    if(!telaF||!telaF.parentNode) return;
+    if(m.className.indexOf("caiu")<0) m.className="marca";
+  },340);
+}
+
+function pula(v,m){
+  var f=FITAS[rodadaF], de=ondeEsta;
+  ondeEsta=v;
+  sPulo();
+  apagaDicaF();
+  limpaAjuda();
+  m.className="marca caiu";
+  if(m.getElementsByTagName("b").length===0) m.appendChild(el("b","numr",""+v));
+  desenhaArco(de,v,f.p);
+  if(puladorEl){
+    puladorEl.className="pulador pula";
+    setTimeout(voltaPose,520);
+  }
+  poePulador();
+  marcaAlvo();
+  var quantos=Math.round(ondeEsta/f.p);
+  if(placarEl) placarEl.innerHTML="saltos: <b>"+quantos+"</b>";
+  if(barraF) barraF.style.width=Math.round((rodadaF+ondeEsta/f.ate)*100/FITAS.length)+"%";
+  if(ondeEsta>=f.ate) fechaFita(quantos,f);
+}
+function voltaPose(){
+  if(puladorEl) puladorEl.className="pulador";
+}
+
+/* O ARCO: a figura do conceito. Nasce do centro de uma casa e morre no centro
+   da outra, com o tamanho do salto escrito em cima. */
+function desenhaArco(de,ate,p){
+  if(!fitaEl||!marcasF[de]||!marcasF[ate]) return;
+  var a=marcasF[de], b=marcasF[ate];
+  var x1=a.offsetLeft+a.offsetWidth/2, x2=b.offsetLeft+b.offsetWidth/2;
+  var arc=el("div","arco","");
+  arc.style.left=x1+"px";
+  arc.style.width=(x2-x1)+"px";
+  arc.appendChild(el("div","arcon","+"+p));
+  fitaEl.appendChild(arc);
+}
+
+function fechaFita(quantos,f){
+  fechada=true;
+  sCerto();
+  if(contaEl){
+    contaEl.style.display="block";
+    contaEl.innerHTML=quantos+" saltos de "+f.p+" &#8594; chegou no <b>"+f.ate+"</b>";
+  }
+  setTimeout(proximaFita,1700);
+}
+function proximaFita(){
+  if(!telaF||!telaF.parentNode) return;
+  rodadaF++;
+  if(rodadaF<FITAS.length){ telaSaltos(); return; }
+  mostraBanner("Todo salto era do mesmo tamanho — por isso d&#225; para <b>contar de "+FITAS[0].p+" em "+FITAS[0].p+"</b> sem contar de um em um!",telaFimSaltos);
+}
+
+/* ---- O ANDAIME QUE CRESCE ----
+   1) dica; 2) os passinhos do salto acendem um a um; 3) a casa certa pisca;
+   4) o pulador vai sozinho. Nunca X, nunca "errou", nunca preso.           */
+function andaime(n){
+  var f=FITAS[rodadaF];
+  if(n===1){ mostraDica(f.dic); return; }
+  if(n===2){ mostraDica("Vou contar os passinhos com voc&#234;."); contaPassinhos(); return; }
+  if(n===3){ mostraDica("&#201; nesta casa que ele cai. Toque nela!"); acendeCerta(); return; }
+  mostraDica("Eu levo o Salta at&#233; l&#225; e voc&#234; continua.");
+  var certa=ondeEsta+f.p;
+  if(marcasF[certa]) pula(certa,marcasF[certa]);
+}
+function contaPassinhos(){
+  var f=FITAS[rodadaF], k;
+  for(k=1;k<=f.p;k++) acendePasso(ondeEsta+k,k);
+}
+function acendePasso(idx,k){
+  setTimeout(function(){
+    if(!telaF||!telaF.parentNode) return;
+    var m=marcasF[idx];
+    if(!m||m.className.indexOf("caiu")>=0) return;
+    m.className="marca conta";
+    sPasso(k);
+  },k*330);
+}
+function acendeCerta(){
+  var f=FITAS[rodadaF], m=marcasF[ondeEsta+f.p];
+  if(m&&m.className.indexOf("caiu")<0) m.className="marca acende";
+}
+function limpaAjuda(){
+  var i;
+  for(i=0;i<marcasF.length;i++)
+    if(marcasF[i].className==="marca conta"||marcasF[i].className==="marca acende")
+      marcasF[i].className="marca";
+}
+function apagaDicaF(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+function telaFimSaltos(){
+  limpa();
+  var t=el("div","tela"); telaF=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; atravessou tr&#234;s fitas <b>saltando de tantos em tantos</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomecaSaltos;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaSaltos(){ rodadaF=0; telaSaltos(); }
+
+telaSaltos();
+</script>
+</body></html>

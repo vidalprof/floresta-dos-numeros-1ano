@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — qual não pertence? (o intruso)</title>
+<!-- ============================================================
+     PEÇA: O INTRUSO — "QUAL NÃO PERTENCE?"
+     Cópia do _padrao/pecas/MOLDE.html: só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ELA É: quatro coisas, três da mesma família e uma de fora. A criança
+     acha a de fora — e DEPOIS tem que dizer POR QUÊ, tocando na razão.
+
+     ⚠️ O SEGUNDO PASSO É A PEÇA INTEIRA. Sem ele isto é um quiz: a criança
+     acerta por eliminação ("essa é diferente") sem nunca formular o critério, e
+     o professor não fica sabendo se ela viu a categoria ou o tamanho da letra.
+     O "por quê" é tocado, NUNCA digitado — no 1º/2º ano escrever a justificativa
+     mede a escrita, não o raciocínio, e a criança que pensa certo se cala.
+
+     ⚠️ O DISTRATOR TEM QUE SER PLAUSÍVEL. "Porque a cenoura é laranja" é
+     VERDADE — e é exatamente por isso que serve: obriga a separar "o que é
+     verdade sobre ela" de "o que separa o grupo". Distrator absurdo transforma
+     as quatro razões em uma só.
+
+     A ESCADA (degraus de verdade): categoria concreta (frutas) -> propriedade
+     da figura (quantos lados) -> propriedade do número (par/ímpar) -> para que
+     serve (função). Concreto -> figural -> simbólico -> abstrato.
+
+     ⭐⭐ MAIS VISUAL E MAIS SONORA (ordem do Marcos, ago/2026: *"as dinâmicas
+     interativas têm que ser mais VISUAIS e SONORAS para os pequenos"*). No 1º
+     ano a criança ainda não lê, e quatro tarjas de texto empilhadas são, para
+     ela, quatro tarjas iguais. O que mudou — e o que degrada sozinho:
+       · as quatro coisas viram CARTÕES, duas por linha, com a FIGURA em cima
+         da palavra: `img` (arte de IA da atividade, 72px) ou `fig` (a forma
+         desenhada em CSS, para a rodada em que o conteúdo É a forma — e essas
+         cresceram de 34px para ~56px). Sem nenhum dos dois, o cartão fica só
+         com a palavra e nenhuma atividade antiga quebra;
+       · ALTO-FALANTE (`.zap`, 46px) em TODA resposta — nos quatro cartões e nas
+         quatro razões (frase comprida sem voz faz quem lê devagar escolher pelo
+         tamanho da linha). Ele só FALA: o `stopPropagation` garante que ouvir
+         não custa uma tentativa;
+       · toda ajuda do andaime é ESCRITA E DITA no mesmo gesto (`ajuda()`), nos
+         dois passos — quem errou é justamente quem pode não conseguir ler a
+         dica. A voz sai por `diz(...)`, protegido por `typeof`, porque quem
+         toca a voz de verdade é a ponte do integrador (nunca
+         `speechSynthesis`: ver `_qa/vozrobo.py`);
+       · o número da rodada dos números virou a figura dela: 40px;
+       · acabamento: canto redondo, sombra macia, destaque suave ao passar o
+         mouse/dedo, e a etiqueta "já tentamos" virou faixa embaixo da palavra.
+         Nada que pisque; movimento desligado por `prefers-reduced-motion`.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · opção já tentada NÃO se distingue só pela cor e NÃO responde com
+         silêncio: ganha a etiqueta em palavras "já tentamos" e som de retorno —
+         quem não distingue cor tocava ali para sempre achando que travou;
+       · o andaime cresce nos DOIS passos, com textos diferentes em cada degrau;
+       · a 3ª dica FICA NA TELA: revela primeiro, escreve a explicação DEPOIS, e
+         a rodada só anda quando a criança toca em "Continuar" — antes a tela
+         seguinte apagava a explicação no mesmo quadro;
+       · trava no instante do acerto (criança toca duas vezes) e todo
+         temporizador guarda a GERAÇÃO da rodada;
+       · TRÊS distratores em cada passo (nunca dois): com dois, a criança
+         elimina tudo antes do 3º erro e o degrau "revelar" vira código morto —
+         e ainda sobra uma tela com uma opção só. Há também a REDE
+         (`sobramErradas`) para quando o conteúdo for trocado por um menor;
+       · as quatro coisas e as quatro razões vão EMBARALHADAS (na Fábrica de
+         Estrelas a certa era sempre a 1ª e a criança aprendeu a posição);
+       · NENHUMA razão vem em negrito: quando só a certa tinha `<b>`, o próprio
+         estilo apontava a resposta — a criança acertava sem ler. Todas iguais;
+       · `data-qa` na resposta que serve agora, para o auditor-jogador fechar;
+       · termina numa `.medal`.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+/* ⚠️ LICAO PAGA, MEDIDA NA BANCADA (ago/2026): na "janela baixa" (1024x420, que
+   e o monitor da escola com a barra do navegador aberta) a tela POR QUE? tem
+   selo + balao + QUATRO razoes compridas + botao + hint — e a ultima razao
+   ficava PRESA ATRAS da barra de baixo, sem rolagem nenhuma. A crianca nao
+   via que existia uma quarta opcao; e justamente ali que mora a resposta em
+   metade das rodadas.
+   O conserto e o mesmo da peca `escolher` (copiar, nao reescrever): a lista
+   rola por dentro, com o vao saindo de uma CONTA da tela (`calc`) e nunca de
+   um numero escolhido a dedo — vao magico e sempre origem de defeito. */
+.opts{display:block;max-height:calc(100vh - 250px);overflow-y:auto;
+      -webkit-overflow-scrolling:touch}
+/* ⚠️ LICAO PAGA, e ja pela TERCEIRA peca (ago/2026): sem teto, a opcao de
+   texto vai a 400x59 = 6,8 vezes mais larga que alta — acima do limite de 6 do
+   diretor de arte ("nada de botoes muito esticado, quero tudo simetrico").
+   Aconteceu no `escolher`, no `completar` e aqui. E a mesma conta e o mesmo
+   conserto: estreitar E engordar um pouco, porque so a largura nao fecha
+   quando a linha e curta. 360/62 = 5,8.
+   ⭐ Isto e sinal de que a regra devia morar no MOLDE, nao em cada peca — fica
+   anotado para a proxima peca que nascer. */
+.opts .opt{max-width:360px;min-height:62px}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ================= CSS DESTA PEÇA (prefixo in) ================= */
+/* ⭐⭐ AS QUATRO COISAS SÃO CARTÕES, DUAS POR LINHA (ordem do Marcos, ago/2026:
+   *"as dinâmicas interativas têm que ser mais VISUAIS e SONORAS para os
+   pequenos"*). Antes eram quatro tarjas de texto empilhadas — e, para quem
+   ainda não lê, quatro tarjas iguais. Em cartão a FIGURA vem em cima da
+   palavra, o alvo fica bem maior que o dedo e as quatro se comparam de um
+   olhar só, que é justamente o que esta mecânica pede. */
+/* `font-size:0` no berço: mata o espacinho que o navegador põe entre dois
+   inline-block e que empurraria o 2º cartão para a linha de baixo. */
+.opts.incoisas{font-size:0}
+/* ⚠️ VIDRO FOSCO, nao quadrado branco: a opcao COM FIGURA herda o creme
+   opaco do `.opt` e vira uma placa branca atras do desenho recortado (o
+   portao 5b mede e reprova). So a opcao com figura precisa disto — a de
+   texto puro continua com o cartao cheio. */
+.opts .opt.incoisa{background:rgba(255,253,246,.88);
+  display:inline-block;vertical-align:top;width:48%;max-width:212px;
+  margin:5px 1%;padding:10px 8px 8px;text-align:center;font-size:17px;font-weight:800;
+  letter-spacing:.3px;min-height:98px;border-radius:18px;
+  -webkit-box-shadow:0 5px 0 #c9bda6,0 8px 16px rgba(0,0,0,.26);
+  box-shadow:0 5px 0 #c9bda6,0 8px 16px rgba(0,0,0,.26);
+  -webkit-transition:-webkit-transform .13s ease;transition:transform .13s ease}
+/* o destaque de quem passa o mouse/dedo: sobe um pouquinho. Nada que pisque. */
+.opt.incoisa:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+.opt.incoisa.injat:hover,.opt.incoisa.ok:hover{-webkit-transform:none;transform:none}
+.opt.inrazao{padding:11px 60px 11px 14px;font-size:15px;font-weight:600;line-height:1.35;
+  text-align:left;position:relative;border-radius:16px}
+.innome{display:block;line-height:1.2}
+/* o número é a figura da rodada dos números: grande de propósito */
+.innum{font-size:40px;font-weight:800;line-height:1.1}
+/* ⭐ A MOLDURA DA FIGURA: altura fixa para os quatro cartões ficarem do MESMO
+   tamanho mesmo quando um desenho é mais alto que o outro (fila desalinhada
+   sugere, sozinha, que um deles é diferente — e a resposta não pode vazar pelo
+   leiaute). */
+.infigbox{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;height:78px;margin-bottom:4px}
+/* figura de IA da fase (campo `img`, opcional): grande, nunca menor que 64px */
+.inimg{display:block;width:72px;height:72px;object-fit:contain}
+/* ⚠️ OPÇÃO JÁ TENTADA: nunca só a cor. Ela ganha a ETIQUETA "já tentamos" (a
+   forma e a palavra), fica mais apagada E continua respondendo ao toque com
+   som — o silencio faz a crianca achar que a tela travou. */
+.opt.injat{background:#eee5da;-webkit-box-shadow:0 2px 0 #c9bda6;box-shadow:0 2px 0 #c9bda6;opacity:.9}
+.inmarca{display:inline-block;margin-left:8px;padding:2px 8px;border-radius:9px;
+         background:#f0d3ca;color:#5a2418;font-size:12px;font-weight:800;
+         letter-spacing:.3px;vertical-align:middle}
+/* no cartão a etiqueta vira uma faixa embaixo da palavra */
+.opt.incoisa .inmarca{display:block;margin:6px auto 0;max-width:140px}
+.inmarca.inok{background:#1f6b12;color:#fff}
+.opt.intreme{-webkit-animation:intr .32s;animation:intr .32s}
+@-webkit-keyframes intr{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes intr{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* ⭐ O ALTO-FALANTE de cada resposta (pilar SONORA da casa: "o alto-falante nas
+   respostas também, para ajudar os alunos que não sabem ler"). Ele NÃO escolhe:
+   só fala — o `stopPropagation` no clique existe para que ouvir não custe uma
+   tentativa. Alvo de 46px, acima do mínimo de 44. */
+.zap{display:-webkit-inline-box;display:inline-flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;width:46px;height:46px;padding:0;border:0;
+  border-radius:50%;background-color:#ffd54a;cursor:pointer;vertical-align:middle;
+  -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f}
+.zap:active{-webkit-transform:translateY(3px);transform:translateY(3px);
+  -webkit-box-shadow:0 1px 0 #c9a52f;box-shadow:0 1px 0 #c9a52f}
+.opt.incoisa .zap{margin-top:7px}
+.opt.inrazao .zap{position:absolute;right:8px;top:50%;margin-top:-23px}
+/* ⚠️ o glifo é UM SVG embutido (lição paga na peça ouvir-achar: desenho feito de
+   bordas em elemento de tamanho zero não se centra e fica feio em qualquer
+   zoom). Vetor, 1 arquivo só, nenhum pedido de rede. */
+.fone{display:block;width:24px;height:24px;
+  background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+  -webkit-background-size:24px 24px;background-size:24px 24px}
+/* --- as figuras da rodada das formas (mesma cor de proposito: quem separa o
+       grupo e a FORMA, nao a cor). Cresceram para caber o olhar de longe: no
+       tamanho antigo (34px) a criança do fundo da sala não contava os lados. */
+.infig{display:inline-block;vertical-align:middle}
+.inquad{width:58px;height:58px;background:#3c6ee0;border:2px solid #1d3f8f;border-radius:6px}
+.inret{width:78px;height:44px;background:#3c6ee0;border:2px solid #1d3f8f;border-radius:6px}
+.inlos{width:52px;height:52px;background:#3c6ee0;border:2px solid #1d3f8f;
+       -webkit-transform:rotate(45deg);transform:rotate(45deg)}
+.intri{width:0;height:0;border-left:32px solid transparent;border-right:32px solid transparent;
+       border-bottom:56px solid #3c6ee0}
+@media (prefers-reduced-motion:reduce){
+  .opt.intreme{-webkit-animation:none;animation:none}
+  .opt.incoisa,.opt.incoisa:hover{-webkit-transition:none;transition:none;
+    -webkit-transform:none;transform:none}
+}
+/* o bloco da regra descoberta, em palavras */
+.inregra{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 13px;margin:13px auto 0;
+         max-width:400px;font-size:15px;font-weight:600;line-height:1.45;text-align:left}
+.inregra b{color:#1f4f0c}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): tudo que se toca continua
+   grande; o que encolhe e a folga e o rodape de apoio. */
+@media(max-height:520px){
+  .hint{display:none}
+  /* ⚠️ nada de `margin:auto` aqui: os cartões são inline-block em duas colunas
+     e margem automática vira ZERO neles — a linha se desmontava. Encolhe a
+     folga e o DESENHO; o que se toca continua grande. */
+  .opts .opt.incoisa{padding:7px 6px 6px;margin:4px 1%;min-height:82px}
+  .infigbox{height:58px;margin-bottom:2px}
+  .inimg{width:54px;height:54px}
+  .inquad{width:44px;height:44px}
+  .inret{width:60px;height:34px}
+  .inlos{width:40px;height:40px}
+  .intri{border-left-width:24px;border-right-width:24px;border-bottom-width:42px}
+  .innum{font-size:30px}
+  .opt.inrazao{padding:8px 56px 8px 13px;margin:6px auto;font-size:14px}
+  .medal{width:64px;height:64px;border-width:4px;font-size:28px;line-height:52px;margin-bottom:8px}
+  .inregra{font-size:13px;padding:7px 11px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------- O CONTEÚDO ----------------
+   `itens` = as quatro coisas (a de fora é `fora`).
+   Cada item aceita, além do nome, DOIS campos de figura — os dois OPCIONAIS:
+     · `img` = a arte de IA da atividade ("cenoura" -> img/cenoura.png). É o
+       normal numa fase de verdade: no 1º ano tem quem ainda não lê, e quatro
+       palavras soltas viram adivinhação. Vai VAZIO no exemplo de propósito (a
+       peça avulsa não tem pasta de imagens), e é assim que o montador aprende
+       que o campo existe;
+     · `fig` = uma forma desenhada em CSS, para a rodada em que o conteúdo É a
+       forma (quadrado, losango...) e não há o que ilustrar.
+   Sem nenhum dos dois o cartão fica só com a palavra e a peça continua
+   inteira — nenhuma atividade antiga quebra.
+   `razoes` = as três justificativas; `ok:1` é a que separa o grupo, e as
+   outras duas são VERDADES sobre o intruso que NÃO separam o grupo (é o que
+   faz o segundo passo valer alguma coisa).
+   `d1..d3` = os degraus do andaime no passo ACHAR;
+   `p1..p3` = os degraus do andaime no passo POR QUÊ;
+   `regra`  = a frase que a criança leva embora.                            */
+var RODADAS= /*TECNICA*/[
+ { selo:"A CESTA DA FEIRA", tipo:"texto",
+   enun:"Tr&#234;s destas s&#227;o da mesma fam&#237;lia. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"maca",n:"MA&#199;&#195;",img:""},{k:"banana",n:"BANANA",img:""},
+          {k:"uva",n:"UVA",img:""},{k:"cenoura",n:"CENOURA",img:""}],
+   fora:"cenoura", nomeFora:"CENOURA",
+   d1:"Pense em <b>onde cada uma cresce</b>. Alguma delas cresce debaixo da terra?",
+   d2:"Tr&#234;s delas nascem da flor de uma planta e a gente chama de <b>fruta</b>. Procure a que n&#227;o &#233;.",
+   d3:"A de fora &#233; a <b>cenoura</b>: as outras tr&#234;s s&#227;o frutas.",
+   razoes:[
+     {t:"As outras tr&#234;s s&#227;o frutas; a cenoura &#233; raiz.",ok:1},
+     {t:"Porque a cenoura &#233; laranja.",ok:0},
+     {t:"Porque a cenoura &#233; a mais comprida.",ok:0},
+     {t:"Porque a cenoura a gente come cozida.",ok:0}],
+   p1:"O que voc&#234; tocou at&#233; pode ser verdade. Mas olhe as OUTRAS tr&#234;s: o que elas t&#234;m em comum?",
+   p2:"Cor e tamanho mudam de uma cenoura para outra. O que n&#227;o muda &#233; o <b>tipo</b> de alimento.",
+   p3:"Ma&#231;&#227;, banana e uva s&#227;o <b>frutas</b>. A cenoura &#233; a raiz da planta &#8212; por isso ela &#233; a de fora.",
+   regra:"ma&#231;&#227;, banana e uva s&#227;o frutas; cenoura &#233; raiz" },
+
+ { selo:"AS QUATRO FIGURAS", tipo:"forma",
+   enun:"Tr&#234;s figuras t&#234;m uma coisa igual. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"quad",n:"QUADRADO",fig:"inquad"},{k:"ret",n:"RET&#194;NGULO",fig:"inret"},
+          {k:"los",n:"LOSANGO",fig:"inlos"},{k:"tri",n:"TRI&#194;NGULO",fig:"intri"}],
+   fora:"tri", nomeFora:"TRI&#194;NGULO",
+   d1:"<b>Conte os lados</b> de cada figura com o dedo, uma por uma.",
+   d2:"Tr&#234;s delas t&#234;m <b>4 lados</b>, mesmo estando viradas de jeitos diferentes.",
+   d3:"A de fora &#233; o <b>tri&#226;ngulo</b>: ele tem 3 lados e os outros t&#234;m 4.",
+   razoes:[
+     {t:"As outras tr&#234;s t&#234;m 4 lados; o tri&#226;ngulo tem 3.",ok:1},
+     {t:"Porque o tri&#226;ngulo tem uma ponta para cima.",ok:0},
+     {t:"Porque o tri&#226;ngulo &#233; a figura mais baixa.",ok:0},
+     {t:"Porque o tri&#226;ngulo n&#227;o tem todos os lados iguais.",ok:0}],
+   p1:"Isso at&#233; pode ser verdade. Mas virar a figura n&#227;o muda o que ela &#233;. O que d&#225; para <b>contar</b> em todas?",
+   p2:"Conte os lados de novo: 4, 4, 4 e... quantos no &#250;ltimo?",
+   p3:"Quadrado, ret&#226;ngulo e losango t&#234;m <b>4 lados</b>. O tri&#226;ngulo tem 3 &#8212; por isso ele &#233; o de fora.",
+   regra:"quadrado, ret&#226;ngulo e losango t&#234;m 4 lados; tri&#226;ngulo tem 3" },
+
+ { selo:"A FILA DOS N&#218;MEROS", tipo:"numero",
+   enun:"Tr&#234;s n&#250;meros t&#234;m algo em comum. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"2",n:"2"},{k:"4",n:"4"},{k:"6",n:"6"},{k:"9",n:"9"}],
+   fora:"9", nomeFora:"9",
+   d1:"Tente separar cada n&#250;mero em <b>duas partes iguais</b>. Com qual deles n&#227;o d&#225;?",
+   d2:"2 s&#227;o 1 e 1; 4 s&#227;o 2 e 2; 6 s&#227;o 3 e 3. Um deles sempre <b>sobra um</b>.",
+   d3:"O de fora &#233; o <b>9</b>: ele n&#227;o d&#225; para partir ao meio sem sobrar.",
+   razoes:[
+     {t:"Os outros tr&#234;s s&#227;o pares; o 9 &#233; &#237;mpar.",ok:1},
+     {t:"Porque o 9 &#233; o maior de todos.",ok:0},
+     {t:"Porque o 9 vem depois do 6.",ok:0},
+     {t:"Porque o 9 &#233; quase 10.",ok:0}],
+   p1:"Isso at&#233; &#233; verdade sobre o 9. Mas separa o grupo? Pense no que d&#225; para <b>dividir no meio</b>.",
+   p2:"Troque o 9 pelo 11: ele deixa de ser o maior e continua sendo o de fora. Ent&#227;o o que decide?",
+   p3:"2, 4 e 6 s&#227;o <b>pares</b>: partem ao meio sem sobrar. O 9 &#233; &#237;mpar &#8212; por isso ele &#233; o de fora.",
+   regra:"2, 4 e 6 s&#227;o pares; 9 &#233; &#237;mpar" },
+
+ { selo:"A CAIXA DE FERRAMENTAS", tipo:"texto",
+   enun:"Tr&#234;s servem para a mesma coisa. <b>Qual n&#227;o pertence?</b>",
+   itens:[{k:"martelo",n:"MARTELO"},{k:"serrote",n:"SERROTE"},{k:"alicate",n:"ALICATE"},{k:"vassoura",n:"VASSOURA"}],
+   fora:"vassoura", nomeFora:"VASSOURA",
+   d1:"Pergunte de cada uma: <b>para que ela serve</b>?",
+   d2:"Tr&#234;s delas ajudam a <b>construir e consertar</b>. Uma ajuda a cuidar da casa.",
+   d3:"A de fora &#233; a <b>vassoura</b>: ela serve para limpar, n&#227;o para consertar.",
+   razoes:[
+     {t:"As outras tr&#234;s servem para consertar; a vassoura serve para limpar.",ok:1},
+     {t:"Porque a vassoura &#233; a mais comprida.",ok:0},
+     {t:"Porque a vassoura n&#227;o &#233; de metal.",ok:0},
+     {t:"Porque a vassoura fica na cozinha.",ok:0}],
+   p1:"Isso pode ser verdade. Mas o que junta as outras tr&#234;s &#233; o <b>trabalho</b> que elas fazem.",
+   p2:"Uma chave de fenda &#233; pequena e n&#227;o &#233; toda de metal &#8212; e mesmo assim ficaria no grupo. O que decide?",
+   p3:"Martelo, serrote e alicate servem para <b>construir e consertar</b>. A vassoura serve para limpar &#8212; por isso ela &#233; a de fora.",
+   regra:"martelo, serrote e alicate consertam; vassoura limpa" }
+];
+
+/* ---------------- ESTADO ---------------- */
+var rodada=0, feitos=0, totalGeral=8, descobertas=[];
+var telaAtual=null, barraP=null, ger=0, travada=false, errosSeg=0;
+var caixas=[], areaBotao=null;
+
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+/* ⭐⭐ A VOZ (pilar SONORA). Quem toca a voz DE VERDADE é a ponte do integrador
+   (`_padrao/ESQUELETO/integrar.py`), que injeta um `var diz = function(txt)`
+   ligado às gravações da casa (Edge TTS) ANTES do corpo da peça. Aqui a peça só
+   PEDE — e pede protegida por `typeof`, porque na bancada, sozinha, não há
+   gravação nenhuma e nada pode estourar.
+   ⚠️ NUNCA chamar `speechSynthesis` daqui: a voz-robô do navegador briga com a
+   voz da casa (dois falando junto, defeito que o Marcos já ouviu) e o portão
+   `_qa/vozrobo.py` reprova. Tudo o que a voz diz está TAMBÉM escrito na tela,
+   então PC sem caixa de som continua jogando a peça inteira. */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  var t=semTag(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* a FIGURA. `img` chega como o NOME do arquivo ("cenoura" -> img/cenoura.png),
+   que é a convenção da casa; um endereço pronto ("/" ou "data:") também serve. */
+function figura(nome,cls){
+  var s=String(nome), im=el("img",cls);
+  im.src=(s.indexOf("/")>=0||s.indexOf("data:")===0)?s:("img/"+s+".png");
+  im.alt="";
+  return im;
+}
+/* o alto-falante de uma resposta: só fala, nunca escolhe. */
+function fazZap(txt){
+  var z=el("button","zap","");
+  z.setAttribute("type","button");
+  z.setAttribute("aria-label","Ouvir "+semTag(txt));
+  z.appendChild(el("i","fone",""));
+  z.onclick=function(ev){
+    var e2=ev||window.event;
+    if(e2&&e2.stopPropagation) e2.stopPropagation(); else if(e2) e2.cancelBubble=true;
+    sTap(); fala(txt);
+  };
+  return z;
+}
+/* a ajuda ESCRITA e DITA no mesmo gesto: quem errou é justamente quem pode não
+   conseguir ler a dica. */
+function ajuda(txt){ mostraDica(txt); fala(txt); }
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+/* ⚠️ tela antiga continua clicavel embaixo do banner: toda funcao que mexe no
+   estado comeca perguntando se a partida ainda esta de pe. */
+function emJogo(){ return viva()&&!travada; }
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele mexeria numa tela que ja saiu (e deixaria a tela nova travada). */
+function destreme(b,base){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(b,"injat")&&!temClasse(b,"ok")) b.className=base;
+  },340);
+}
+/* ⭐ A REDE DAS ERRADAS QUE ACABAM (licao do CONTRATO, secao 6): "um quiz com
+   2 distratores faz a crianca eliminar tudo antes do 3o erro — o degrau
+   REVELAR vira codigo morto". Aqui cada passo tem TRES erradas, entao os tres
+   degraus acontecem de verdade; mas se alguem trocar o conteudo por um com
+   menos opcoes, esta conta avisa e o revelar entra na hora, em vez de deixar
+   uma tela com uma opcao so e nada acontecendo.                            */
+function sobramErradas(){
+  var i,n=0;
+  for(i=0;i<caixas.length;i++)
+    if(!temClasse(caixas[i],"injat")&&!temClasse(caixas[i],"ok")&&
+       caixas[i].getAttribute("data-qa")==="0") n++;
+  return n;
+}
+/* o botao que a crianca toca para seguir. Ele existe para que a EXPLICACAO
+   fique na tela o tempo que ela quiser — a tela nao troca sozinha. */
+function poeBotao(txt,cb){
+  if(!areaBotao) return;
+  areaBotao.innerHTML="";
+  var b=el("button","btn",txt);
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ if(viva()) cb(); };
+  areaBotao.appendChild(b);
+}
+
+/* ================= PASSO 1: ACHAR O INTRUSO ================= */
+function pecaIntruso(){
+  ger++; limpa();
+  if(rodada<0||rodada>=RODADAS.length) rodada=0;
+  var R=RODADAS[rodada];
+  caixas=[]; errosSeg=0; travada=false;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(feitos*100/totalGeral));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.enun));
+  var box=el("div","opts incoisas"), i;
+  /* ⚠️ EMBARALHADAS: na Fabrica de Estrelas a certa era sempre a 1a e a
+     crianca aprendeu a POSICAO, nao o conteudo. */
+  var ordem=baguncar(R.itens.slice(0));
+  for(i=0;i<ordem.length;i++) box.appendChild(fazCoisa(ordem[i],R));
+  c.appendChild(box);
+  areaBotao=el("div","opts");
+  c.appendChild(areaBotao);
+  c.appendChild(el("div","hint","Toque na que n&#227;o combina com as outras tr&#234;s."));
+  t.appendChild(c); app.appendChild(t);
+}
+function fazCoisa(o,R){
+  var b=el("div","opt","");
+  b.className="opt incoisa";
+  /* ⭐ A FIGURA VEM EM CIMA DA PALAVRA. Três caminhos, nesta ordem:
+       · `img`  — arte de IA da atividade (o normal numa fase de verdade);
+       · `fig`  — a forma desenhada em CSS (a rodada das figuras geométricas,
+                  onde o conteúdo É a forma e não há o que ilustrar);
+       · nada   — só a palavra, e a peça continua inteira: nenhuma atividade
+                  antiga quebra por não trazer figura. */
+  if(o.img||o.fig){
+    var cx=el("div","infigbox","");
+    if(o.img) cx.appendChild(figura(o.img,"inimg"));
+    else cx.appendChild(el("span","infig "+o.fig,""));
+    b.appendChild(cx);
+  }
+  b.appendChild(el("span",(R.tipo==="numero")?"innome innum":"innome",o.n));
+  /* o alto-falante: a criança ouve o nome quantas vezes quiser sem gastar
+     tentativa — sem isso, quem não lê escolhe pelo desenho e a fase vira sorte */
+  b.appendChild(fazZap(o.n));
+  b._o=o;
+  /* a tela publica em data-qa a resposta que serve AGORA — so para o
+     auditor-jogador conseguir fechar a fase (convencao da casa). */
+  b.setAttribute("data-qa",(o.k===R.fora)?"1":"0");
+  b.onclick=function(){ tocaCoisa(b); };
+  caixas.push(b);
+  return b;
+}
+function tocaCoisa(b){
+  if(!viva()) return;
+  if(travada){ sTap(); return; }        /* rodada ja resolvida: responde, nao emudece */
+  var R=RODADAS[rodada];
+  /* ⚠️ JA TENTADA: responde com SOM e com PALAVRAS, nunca com silencio. */
+  if(temClasse(b,"injat")){
+    sTap();
+    ajuda("Nesta n&#243;s j&#225; tentamos. Olhe as outras <b>tr&#234;s</b>.");
+    return;
+  }
+  if(b._o.k===R.fora){ achou(b,false); return; }
+  sErro(); errosSeg++;
+  b.className="opt incoisa injat";
+  b.appendChild(el("span","inmarca","j&#225; tentamos"));
+  b.setAttribute("data-qa","0");
+  destreme(b,"opt incoisa injat");
+  if(errosSeg===1) ajuda(R.d1);
+  else if(errosSeg===2) ajuda(R.d2);
+  if(errosSeg>=3){ ajuda("Deixa comigo: eu mostro qual &#233; a diferente e explico."); esperaERevela1(1100); }
+  else if(sobramErradas()===0) esperaERevela1(2600);   /* a rede: erradas acabaram antes */
+}
+/* ⚠️ DEFEITO PAGO EM CINCO PEÇAS DE UM LOTE SÓ (ago/2026): no 3º degrau a
+   explicacao era escrita e APAGADA no mesmo quadro, porque o "revelar" trocava
+   de tela. Ordem certa: espera a dica ser lida, REVELA, escreve a explicacao
+   DEPOIS — e a tela so troca quando a crianca toca em "Continuar".        */
+function esperaERevela1(atraso){
+  var g=ger, R=RODADAS[rodada];
+  setTimeout(function(){
+    if(g!==ger||!viva()||travada) return;
+    var i,alvo=null;
+    for(i=0;i<caixas.length;i++) if(caixas[i]._o.k===R.fora) alvo=caixas[i];
+    if(!alvo) return;
+    achou(alvo,true);
+    if(g!==ger||!viva()) return;
+    ajuda(R.d3);
+  },atraso||1100);
+}
+function achou(b,revelado){
+  var R=RODADAS[rodada];
+  /* ⚠️ A TRAVA VAI NO INSTANTE DO ACERTO, nao no fim da animacao: a crianca
+     toca duas vezes, e o segundo toque caia na tela seguinte com o estado
+     antigo. */
+  travada=true;
+  b.className="opt incoisa ok";
+  b.appendChild(el("span","inmarca inok","a diferente"));
+  b.setAttribute("data-qa","0");
+  var i;
+  for(i=0;i<caixas.length;i++) if(caixas[i]!==b) caixas[i].setAttribute("data-qa","0");
+  if(!revelado){ sCerto(); apagaDica(); feitos++; if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%"; }
+  poeBotao("E por qu&#234;?",telaPorque);
+}
+
+/* ================= PASSO 2: POR QUÊ? =================
+   ⚠️ ESTE PASSO É A PEÇA. Sem ele, achar o intruso é um quiz: a criança
+   elimina pela aparência e ninguém fica sabendo se ela viu a categoria. Aqui
+   ela TOCA na razão — nunca digita, porque escrever mediria a escrita e
+   calaria quem pensa certo e escreve devagar.                             */
+function telaPorque(){
+  ger++; limpa();
+  if(rodada<0||rodada>=RODADAS.length) rodada=0;
+  var R=RODADAS[rodada];
+  caixas=[]; errosSeg=0; travada=false;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(feitos*100/totalGeral));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","POR QU&#202;?"));
+  c.appendChild(el("div","balao","<b>"+R.nomeFora+"</b> &#233; a de fora. E <b>por qu&#234;</b> ela n&#227;o pertence ao grupo?"));
+  var box=el("div","opts"), i;
+  var ordem=baguncar(R.razoes.slice(0));
+  for(i=0;i<ordem.length;i++) box.appendChild(fazRazao(ordem[i]));
+  c.appendChild(box);
+  areaBotao=el("div","opts");
+  c.appendChild(areaBotao);
+  c.appendChild(el("div","hint","Tr&#234;s destas at&#233; s&#227;o verdade. S&#243; uma explica o <b>grupo</b>."));
+  t.appendChild(c); app.appendChild(t);
+}
+function fazRazao(r){
+  var b=el("div","opt","");
+  b.className="opt inrazao";
+  b.innerHTML=r.t;
+  /* razão é frase COMPRIDA: sem alto-falante, quem lê devagar escolhe pelo
+     tamanho da linha. O botão fica na direita, fora do texto. */
+  b.appendChild(fazZap(r.t));
+  b._r=r;
+  b.setAttribute("data-qa",r.ok?"1":"0");
+  b.onclick=function(){ tocaRazao(b); };
+  caixas.push(b);
+  return b;
+}
+function tocaRazao(b){
+  if(!viva()) return;
+  if(travada){ sTap(); return; }        /* rodada ja resolvida: responde, nao emudece */
+  var R=RODADAS[rodada];
+  if(temClasse(b,"injat")){
+    sTap();
+    ajuda("Nesta n&#243;s j&#225; tentamos. Leia as outras com calma.");
+    return;
+  }
+  if(b._r.ok){ fechaRazao(b,false); return; }
+  sErro(); errosSeg++;
+  b.className="opt inrazao injat";
+  b.appendChild(el("span","inmarca","j&#225; tentamos"));
+  b.setAttribute("data-qa","0");
+  destreme(b,"opt inrazao injat");
+  if(errosSeg===1) ajuda(R.p1);
+  else if(errosSeg===2) ajuda(R.p2);
+  if(errosSeg>=3){ ajuda("Deixa comigo: eu marco a raz&#227;o certa e explico."); esperaERevela2(1100); }
+  else if(sobramErradas()===0) esperaERevela2(2600);   /* a rede: erradas acabaram antes */
+}
+function esperaERevela2(atraso){
+  var g=ger, R=RODADAS[rodada];
+  setTimeout(function(){
+    if(g!==ger||!viva()||travada) return;
+    var i,alvo=null;
+    for(i=0;i<caixas.length;i++) if(caixas[i]._r.ok) alvo=caixas[i];
+    if(!alvo) return;
+    fechaRazao(alvo,true);
+    if(g!==ger||!viva()) return;
+    ajuda(R.p3);
+  },atraso||1100);
+}
+function fechaRazao(b,revelado){
+  var R=RODADAS[rodada];
+  travada=true;
+  b.className="opt inrazao ok";
+  b.appendChild(el("span","inmarca inok","&#233; esta"));
+  b.setAttribute("data-qa","0");
+  var i;
+  for(i=0;i<caixas.length;i++) if(caixas[i]!==b) caixas[i].setAttribute("data-qa","0");
+  if(descobertas.indexOf(R.regra)<0) descobertas.push(R.regra);
+  if(!revelado){
+    sCerto(); apagaDica();
+    feitos++; if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%";
+    ajuda(R.p3);
+  }
+  poeBotao("Continuar",proximaRodada);
+}
+function proximaRodada(){
+  rodada++;
+  if(rodada>=RODADAS.length) fimDaPeca(); else pecaIntruso();
+}
+
+function fimDaPeca(){
+  ger++; limpa();
+  areaBotao=null; travada=false; caixas=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  /* FECHO COM GANCHO: a peca termina deixando uma pergunta aberta. */
+  c.appendChild(el("div","balao","Voc&#234; achou <b>4 intrusos</b> e disse por qu&#234;. Agora invente um: tr&#234;s coisas da sua casa e uma diferente."));
+  var i, regras=descobertas.length?descobertas:regrasTodas(), txt="O que separou cada grupo:";
+  for(i=0;i<regras.length;i++) txt+="<br>&#8226; <b>"+regras[i]+"</b>";
+  c.appendChild(el("div","inregra",txt));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a O INTRUSO: achar e dizer POR QU&#202;."));
+  t.appendChild(c); app.appendChild(t);
+}
+function regrasTodas(){
+  var i,r=[];
+  for(i=0;i<RODADAS.length;i++) r.push(RODADAS[i].regra);
+  return r;
+}
+function recomeca(){ rodada=0; feitos=0; descobertas=[]; pecaIntruso(); }
+
+pecaIntruso();
+</script>
+</body></html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — montar a frase (peças por classe de palavra)</title>
+<!-- ============================================================
+     PEÇA: MONTAR A FRASE COM PEÇAS POR CLASSE DE PALAVRA
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     POR QUE ESTA PEÇA EXISTE: numa lista de palavras a criança decora o nome
+     das classes; aqui ela MONTA a frase e a estrutura fica VISÍVEL — cada
+     classe tem uma FORMA de encaixe própria (a vaga tem a mesma silhueta da
+     peça). O gesto é o conceito: o "nome" não entra no lugar da "ação".
+
+     ⭐ NADA ESSENCIAL SÓ NA COR (regra da casa): cada classe tem, ao mesmo
+     tempo, FORMA (silhueta da peça e da vaga), COR e ETIQUETA escrita
+     ("nome", "ação", "como é", "quando"). Quem não distingue a cor continua
+     jogando pela forma e pela palavra.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (_padrao/DINAMICAS.md, linha "Arrastar"):
+       · A FRASE CABE NA TELA SEM ROLAR — se a linha da frase rola, a estrutura
+         (que é o conteúdo!) some da vista e a peça perde o sentido. Por isso
+         vaga fluida, `flex-wrap` e no máximo 5 vagas;
+       · TRÊS CAMINHOS: mouse, dedo (arrasto real) e TOQUE SIMPLES;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+       · guarda contra o clique de mouse FANTASMA que o celular dispara depois
+         do toque (`ultimoToque`). Defeito pego DUAS vezes pelo Marcos;
+       · nunca trava: no 3º erro a peça é revelada e a frase anda;
+       · `data-qa` publicado (a peça que serve AGORA e a vaga da vez = "1") e
+         RETIRADO quando a rodada fecha — senão o auditor-jogador fica batendo
+         na peça que sobrou.
+     ============================================================ -->
+<style>
+/* ⭐ A FOTO DA PERGUNTA — o estímulo, não o enfeite (mesma peça de moldura
+   que a `escolher`; a lição da altura está escrita lá por extenso). A criança
+   OLHA a cena e só depois lê o que se pergunta sobre ela. */
+/* ⭐ MOLDURA DE VIDRO — PADRAO DA CASA (ver CONTRATO.md "MOLDURA DE VIDRO: O
+   PADRAO"): largura fixa + imagem 100% (a moldura cola na imagem, borda fina),
+   vidro fosco com brilho, sem cartao branco. */
+.qfig{position:relative;width:186px;max-width:70vw;margin:2px auto 12px;padding:5px;
+     border-radius:16px;overflow:hidden;text-align:center;
+     background:rgba(255,255,255,.12);
+     -webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);
+     border:1px solid rgba(255,255,255,.5);
+     box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
+.qfig:before{content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;z-index:2;pointer-events:none;
+     background:-webkit-linear-gradient(305deg,transparent,rgba(255,255,255,.5),transparent);
+     background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+     -webkit-transform:rotate(8deg);transform:rotate(8deg);
+     -webkit-animation:mfshine 3.6s ease-in-out infinite;animation:mfshine 3.6s ease-in-out infinite}
+@-webkit-keyframes mfshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+@keyframes mfshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+.qfig img{position:relative;z-index:1;width:100%;height:auto;display:block;
+     margin:0 auto;border-radius:12px;-o-object-fit:contain;object-fit:contain;object-position:center;
+     -webkit-filter:drop-shadow(0 6px 9px rgba(0,0,0,.32));filter:drop-shadow(0 6px 9px rgba(0,0,0,.32))}
+@media (max-height:560px){ .qfig{width:140px;padding:4px} }
+@media (min-height:760px){ .qfig{width:200px} }
+@media (prefers-reduced-motion:reduce){ .qfig:before{-webkit-animation:none;animation:none;display:none} }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: MONTAR A FRASE ----------------
+   ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos).                          */
+.frase{display:block;text-align:center;margin:13px auto 6px;line-height:0}
+/* ⚠️ TEXTO SOLTO NO FUNDO DA ATIVIDADE (ago/2026). Este pedaco nao mora
+   dentro de cartao nenhum: cai direto no fundo, que pode ser um galpao
+   escuro, um ceu claro ou uma FOTO de rua com meio-tom. Sem mesa
+   propria a razao de contraste vira loteria — medido de 1,1:1 a 2,9:1
+   na atividade de ortografia. Ele leva a mesa dele junto. */
+.legenda{font-size:12px;opacity:.95;margin:0 0 8px;line-height:1.3;color:#fffdf6;background:rgba(46,38,26,.86);border-radius:12px;padding:4px 12px;display:inline-block}
+/* a VAGA tem a MESMA silhueta da peca que serve nela: a crianca ve o encaixe
+   antes de ler qualquer coisa (forma, nao so cor). */
+.cam{display:inline-block;vertical-align:top;min-width:80px;height:54px;margin:4px 3px;
+     border:3px dashed #a08e73;background:rgba(255,255,255,.10);color:#f0e9dd;
+     font-size:12px;font-weight:700;line-height:1.15;padding:8px 6px 0;text-align:center;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;}
+.cam.agora{border-color:#ffd54a}
+/* cheia = borda INTEIRA + a palavra dentro: forma, nao so cor */
+.cam.ok{border-style:solid;border-color:#59c24b;color:var(--texto,#221a12);font-size:17px;font-weight:800;
+        line-height:38px;padding:0 8px}
+.banco{display:block;text-align:center;margin-top:2px;line-height:0}
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — QUEM PINTA A PROPRIA MESA TEM QUE ESCOLHER A
+   PROPRIA TINTA. Estas pecas tem fundo CLARO proprio (verde, laranja, azul,
+   lilas pastel) e o texto vinha de `var(--texto)`. Numa atividade de tema
+   ESCURO o token e creme: creme sobre pastel deu 1,07:1 — a palavra some
+   dentro da propria peca, e a fase e justamente montar a frase com elas.
+   O `_qa/cor_fixa.py` nao viu porque ele procura cor CRAVADA; aqui o defeito
+   e o contrario, cor NENHUMA. Regra: elemento que pinta fundo claro proprio
+   crava a tinta escura junto — ele nao depende do tema, ele TRAZ o tema dele. */
+.pc{display:inline-block;vertical-align:top;border:3px solid rgba(0,0,0,.14);
+    /* a mesa e a tinta ANDAM JUNTAS nesta regra: a cor de cada forma vem
+       depois (`.pc.f-nome`), mas a peca nunca fica sem fundo — e assim o
+       `_qa/cor_fixa.py` tambem enxerga que a tinta escura tem mesa. */
+    background:#f4efe6;color:#221a12;
+    min-width:80px;height:54px;margin:5px 3px;padding:6px 8px 0;font-size:17px;font-weight:800;
+    line-height:1.1;text-align:center;cursor:pointer;box-shadow:0 4px 0 rgba(0,0,0,.28)}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.28)}
+.pc.sel{box-shadow:0 0 0 4px #ffd54a}
+.pc.usada{visibility:hidden;pointer-events:none}
+.pc.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+.pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.28)}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 rgba(0,0,0,.28)}50%{box-shadow:0 0 0 5px #ffd54a}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a etiqueta escrita da classe (o que salva quem nao distingue cor) */
+/* a etiqueta so existe DENTRO da peca (ver `telaFrase`): escrever o seletor
+   com o pai deixa isso explicito no CSS e mostra ao `_qa/cor_fixa.py` que a
+   tinta escura tem a mesa clara do `.pc` embaixo dela. */
+/* ⚠️ CLASSE-MARCA, sem estilo de proposito: ela existe so para o portao do
+   diretor de arte saber que os cantos diferentes aqui sao a mecanica. O
+   `_qa/classes.py` cobra regra base para toda classe usada no JS — e ele
+   esta certo em cobrar: classe sem regra costuma ser nome errado. Entao a
+   marca ganha uma regra que nao muda nada e diz o que ela e. */
+.formas-de-proposito{display:block}
+.pc .eti{display:block;font-size:10px;font-weight:700;letter-spacing:.4px;opacity:.85;margin-top:2px;color:#221a12}
+/* a sombra que segue o dedo/o mouse durante o arrasto. pointer-events:none
+   para nao roubar o hit-test de quem esta embaixo. */
+.somb{position:fixed;min-width:80px;height:54px;padding:6px 8px 0;text-align:center;
+      color:var(--texto,#221a12);font-size:17px;font-weight:800;line-height:1.1;pointer-events:none;z-index:60;
+      box-shadow:0 8px 18px rgba(0,0,0,.45)}
+
+/* ====== AS FORMAS DE CADA CLASSE ======
+   Vem DEPOIS de .pc/.cam/.somb de proposito: mesma forca de seletor, quem
+   vem por ultimo vence. Assim a MESMA silhueta serve a peca, a vaga e a
+   sombra do arrasto, sem repetir regra.                                   */
+.f-art{border-radius:999px}                    /* pastilha  — o / a        */
+.f-sub{border-radius:6px}                      /* tijolo    — nome         */
+.f-adj{border-radius:22px 6px 22px 6px}        /* folha     — como e       */
+.f-ver{border-radius:6px 26px 26px 6px}        /* seta      — acao         */
+.f-adv{border-radius:26px 26px 6px 6px}        /* arco      — quando       */
+.c-art{background:#e6d9f6}
+.c-sub{background:#cfe3ff}
+.c-adj{background:#d6f0cd}
+.c-ver{background:#ffe0bd}
+.c-adv{background:#ffeeb0}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* tela baixa: encolhe a LETRA e a folga, nunca o alvo do dedo */
+@media (max-height:470px){.legenda{margin-bottom:4px}.pc{margin:3px 3px}.cam{margin:3px 3px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — DECLARACAO NO <script> ERRADO.
+   O integrador leva para a atividade **o SEGUNDO <script>** da peca (o
+   primeiro e o motorzinho da bancada, que o motor de verdade ja tem).
+   Eu declarei o `figEl` la em cima, junto do `el()`, e ele simplesmente
+   nao viajou: dentro da atividade a fase estourava com "figEl is not
+   defined" e o jogador ficava PRESO. Na bancada passava, porque la o
+   arquivo inteiro roda. Tudo o que a MECANICA usa mora no segundo. */
+var figEl = window.imgEl || null;
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* MONTAR A FRASE — a crianca encaixa as palavras nas vagas, da esquerda para a
+   direita. Cada CLASSE tem forma, cor e etiqueta proprias; a vaga tem a
+   silhueta da peca que serve nela.
+
+   Trocar `FRASES` ja adapta a peca a outro conteudo. A unica regra: a frase
+   precisa ter UMA ordem certa e caber em ate 5 vagas (senao a linha da frase
+   rola e a estrutura, que e o conteudo, some da vista).                     */
+var CLA={
+  art:{r:"o / a",   d:"a palavrinha <b>o</b> ou <b>a</b>, que vem antes do nome"},
+  sub:{r:"nome",    d:"o <b>nome</b> da coisa ou do bicho"},
+  adj:{r:"como &#233;", d:"<b>como</b> a coisa &#233;"},
+  ver:{r:"a&#231;&#227;o", d:"a <b>a&#231;&#227;o</b>: o que aconteceu"},
+  adv:{r:"quando",  d:"<b>quando</b> aconteceu"}
+};
+var FRASES=[
+ {img:"", w:["O","gato","preto","dormiu"],      c:["art","sub","adj","ver"], apoio:true},
+ {w:["A","flor","amarela","cresceu"],   c:["art","sub","adj","ver"], apoio:false},
+ {w:["A","turma","jogou","hoje"],       c:["art","sub","ver","adv"], apoio:false}
+];
+
+var rodada=0, vagaAtual=0, errosSeg=0, telaAtual=null, barraP=null;
+var pecas=[], camas=[], frase=null;
+/* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
+   toque. Sem esta marca de tempo a peca era acionada duas vezes (o toque
+   colocava e o fantasma tentava colocar de novo). */
+var ultimoToque=0, ultimaSolta=0, pego=null, somb=null, px0=0, py0=0, moveu=false;
+
+function telaFrase(){
+  limpa(); document.onkeydown=null; soltaSombra();
+  if(rodada>=FRASES.length) rodada=0;
+  frase=FRASES[rodada];
+  vagaAtual=0; errosSeg=0; pecas=[]; camas=[];
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/FRASES.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MONTE A FRASE "+(rodada+1)+"/"+FRASES.length));
+  if(frase&&frase.img&&figEl){ var _qf=el("div","qfig",""); _qf.appendChild(figEl(frase.img));
+                       c.appendChild(_qf); }
+  c.appendChild(el("div","balao","Cada vaga tem uma <b>forma</b>. Ponha a palavra que encaixa."));
+
+  /* AS VAGAS: cada uma com a silhueta e a etiqueta da classe que serve nela */
+  /* ⚠️ a marca `formas-de-proposito` diz ao portao do diretor de arte que os
+     cantos DIFERENTES aqui sao a mecanica, nao descuido: cada vaga tem o
+     feitio da classe de palavra que ela pede, e a crianca acerta OLHANDO o
+     encaixe. Sem a marca, o portao mandava apagar justamente o que ensina. */
+  var f=el("div","frase formas-de-proposito"), i, cm;
+  for(i=0;i<frase.c.length;i++){
+    cm=el("div","cam f-"+formaDe(frase.c[i]),CLA[frase.c[i]].r);
+    f.appendChild(cm); camas.push(cm);
+  }
+  c.appendChild(f);
+  /* A ESCADA (o `apoio` da rodada): na 1a rodada a peca vem com a ETIQUETA da
+     classe escrita nela — a crianca casa etiqueta com etiqueta e entende a
+     regra do jogo. Da 2a em diante a etiqueta SAI: sobram a forma e a cor, e
+     ela precisa decidir sozinha o que aquela palavra e. Mesma mecanica, um
+     degrau acima — e nada essencial fica so na cor, porque cada classe tem a
+     SUA forma (`.f-*`) e a vaga continua dizendo o nome dela por escrito. */
+  c.appendChild(el("div","legenda", frase.apoio
+    ? "Forma e cor mostram a classe; o nome dela est&#225; escrito na vaga e na pe&#231;a."
+    : "Agora as pe&#231;as v&#234;m <b>sem etiqueta</b>: use a forma, a cor e o nome da vaga."));
+
+  /* AS PECAS: as mesmas palavras, bagunçadas */
+  var bc=el("div","banco formas-de-proposito"), ordem=[], b;
+  for(i=0;i<frase.w.length;i++) ordem.push(i);
+  baguncar(ordem);
+  for(i=0;i<ordem.length;i++){
+    b=el("div","pc f-"+formaDe(frase.c[ordem[i]])+" c-"+formaDe(frase.c[ordem[i]]),
+         frase.w[ordem[i]]+(frase.apoio
+           ? '<i class="eti">'+CLA[frase.c[ordem[i]]].r+'</i>' : ''));
+    b.idx=ordem[i];
+    ligaFicha(b);
+    bc.appendChild(b); pecas.push(b);
+  }
+  c.appendChild(bc);
+  c.appendChild(el("div","hint","Toque na palavra ou arraste at&#233; a vaga."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQualServe();
+}
+
+/* ---------- as TRES portas de entrada da mesma peca ---------- */
+/* ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart mata o
+   toque no celular (armadilha registrada no _padrao/DINAMICAS.md). */
+function ligaFicha(b){
+  b.onclick=cliqueFicha;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+}
+function cliqueFicha(){
+  if(Date.now()-ultimoToque<700) return;   /* clique FANTASMA depois do toque */
+  if(Date.now()-ultimaSolta<700) return;   /* o clique que fecha um ARRASTO */
+  tocaFicha(this);
+}
+function mouseIni(ev){
+  if(Date.now()-ultimoToque<700) return;
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=Date.now();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();   /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=Date.now();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) tocaFicha(alvo);   /* toque simples: vale como clique */
+}
+function moveMouse(ev){ if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------- o arrasto de verdade (mouse e dedo usam o mesmo caminho) ---- */
+function pegaEm(b,x,y){
+  if(!b||b.className.indexOf("usada")>=0) return;
+  pego=b; px0=x; py0=y; moveu=false;
+  sTap();
+  b.className=classeDe(b)+" sel";
+  somb=el("div","somb f-"+formaDe(frase.c[b.idx])+" c-"+formaDe(frase.c[b.idx]),frase.w[b.idx]);
+  somb.style.left=(x-40)+"px"; somb.style.top=(y-27)+"px";
+  somb.style.display="none";
+  document.body.appendChild(somb);
+}
+function moveEm(x,y){
+  if(!pego||!somb) return;
+  if(!moveu&&(Math.abs(x-px0)>8||Math.abs(y-py0)>8)){ moveu=true; somb.style.display="block"; }
+  if(moveu){ somb.style.left=(x-40)+"px"; somb.style.top=(y-27)+"px"; }
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b) return;
+  if(b.className.indexOf("usada")<0) b.className=classeDe(b);
+  if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
+  /* ⚠️⚠️ LICAO PAGA (ago/2026) — O ARRASTO DE MOUSE CONTAVA DOIS ERROS.
+     Depois de um arrasto com MOUSE o navegador ainda dispara um `click` na
+     peca, e o `cliqueFicha` chamava `tocaFicha` de novo: um arrasto errado
+     valia DOIS erros. O andaime, que devia crescer devagar (dica -> apoio ->
+     revelar), pulava um degrau — no segundo arrasto errado a peca ja ENTREGAVA
+     a resposta. Na escola e mouse que a crianca usa, entao isso acontecia
+     sempre, com todas.
+     O guarda `ultimoToque` que ja existia protege do fantasma do TOQUE, nao
+     deste. Aqui marco a hora da SOLTA; o clique que vem logo atras dela e o
+     mesmo gesto, e nao conta de novo. */
+  ultimaSolta = Date.now();
+  if(naFrase(x,y)) tocaFicha(b);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+}
+function naFrase(x,y){
+  var e=document.elementFromPoint(x,y), n=0, cl;
+  while(e&&n<6){
+    cl=" "+String(e.className||"")+" ";
+    if(cl.indexOf(" cam ")>=0||cl.indexOf(" frase ")>=0) return true;
+    e=e.parentNode; n++;
+  }
+  return false;
+}
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — A FORMA SUMIA QUANDO O NOME DA CATEGORIA ERA
+   OUTRO. As cinco formas moram no CSS com os nomes do exemplo (`f-art`,
+   `f-sub`, `f-ver`...). O 9o ano de ingles chama as categorias de `quem`,
+   `aju`, `acao` e `onde` — nomes certos para a atividade dele, e nomes que o
+   CSS nao conhece. Resultado: as pecas saiam TODAS iguais, sem forma e sem
+   cor, e a mecanica inteira ("cada vaga tem uma FORMA") virava texto solto.
+   Nao havia erro, e o `_qa/classes.py` nao ve: a classe e montada em tempo de
+   execucao a partir do conteudo.
+   Conserto: a peca nao usa mais o nome como classe. Ela distribui as cinco
+   formas que TEM entre as categorias que a rodada trouxer, na ordem em que
+   aparecem. Qualquer atividade pode nomear as categorias como quiser. */
+var FORMAS=["art","sub","adj","ver","adv"]; /*TECNICA*/
+function formaDe(k){
+  var i, ordem=[];
+  for(i=0;i<frase.c.length;i++)
+    if(ordem.indexOf(frase.c[i])<0) ordem.push(frase.c[i]);
+  i=ordem.indexOf(k);
+  return FORMAS[(i<0?0:i)%FORMAS.length];
+}
+/* a classe base da peca (forma + cor), sem os estados sel/pisca/treme */
+function classeDe(b){ var f=formaDe(frase.c[b.idx]); return "pc f-"+f+" c-"+f; }
+
+/* ---------- a regra da fase ---------- */
+function tocaFicha(b){
+  if(!b||b.className.indexOf("usada")>=0) return;
+  if(vagaAtual>=frase.w.length) return;
+  if(b.idx===vagaAtual) poeNaFrase(b); else erraFicha(b);
+}
+function poeNaFrase(b){
+  var cm=camas[vagaAtual];
+  cm.className="cam f-"+formaDe(frase.c[vagaAtual])+" c-"+formaDe(frase.c[vagaAtual])+" ok";
+  cm.innerHTML=frase.w[vagaAtual];
+  b.className=classeDe(b)+" usada";
+  sCerto();
+  vagaAtual++; errosSeg=0;
+  apagaDica();
+  if(barraP) barraP.style.width=
+    Math.round((rodada+vagaAtual/frase.w.length)*100/FRASES.length)+"%";
+  marcaQualServe();
+  if(vagaAtual>=frase.w.length) fechaRodada();
+}
+function erraFicha(b){
+  sErro(); errosSeg++;
+  b.className=classeDe(b)+" treme";
+  destreme(b);
+  ajuda(errosSeg);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda
+   `!telaAtual.parentNode` ele mexeria numa tela que ja saiu. */
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("usada")<0) b.className=classeDe(b);
+  },340);
+}
+/* O ANDAIME QUE CRESCE — dica, apoio concreto, e por fim revela e segue.
+   Erro nunca vira X vermelho nem a palavra "errou": a peca treme e a ajuda
+   aumenta.                                                                */
+/* ⚠️ A ORDEM DO 3o DEGRAU E O CONSERTO (defeito medido ago/2026): a dica saia
+   ANTES do `revela()`, e o `poeNaFrase()` de dentro dele chama `apagaDica()` —
+   a fala que EXPLICA a revelacao aparecia e sumia no mesmo quadro. A crianca
+   via a palavra entrar sozinha na frase sem entender de onde veio. Revela-se
+   primeiro; a dica vem depois e fica na tela. */
+function ajuda(n){
+  var k=frase.c[vagaAtual], palavra=frase.w[vagaAtual];
+  if(n===1){
+    mostraDica("Esta vaga pede "+CLA[k].d+".");
+  }else if(n===2){
+    mostraDica("Olhe a <b>forma</b> da vaga: a pe&#231;a que encaixa est&#225; <b>piscando</b>.");
+    acendeCerta();
+  }else{
+    revela();
+    mostraDica("Era esta: <b>"+palavra+"</b>. Eu coloquei, e a pr&#243;xima &#233; sua.");
+  }
+}
+function acendeCerta(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(b.className.indexOf("usada")>=0) continue;
+    b.className=classeDe(b)+((b.idx===vagaAtual)?" pisca":"");
+  }
+}
+function revela(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(b.className.indexOf("usada")<0&&b.idx===vagaAtual){ poeNaFrase(b); return; }
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* data-qa: a peca que serve AGORA e a vaga da vez ficam com "1". E so para o
+   auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho.
+   ⚠️ quando a rodada fecha, o data-qa SAI de todas: senao o jogador fica
+   batendo eternamente numa peca que nao serve mais para nada.             */
+function marcaQualServe(){
+  var i,b,fim=(vagaAtual>=frase.w.length);
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(fim){ b.removeAttribute("data-qa"); continue; }
+    b.setAttribute("data-qa",(b.className.indexOf("usada")<0&&b.idx===vagaAtual)?"1":"0");
+  }
+  for(i=0;i<camas.length;i++){
+    if(fim){ camas[i].removeAttribute("data-qa"); camas[i].className=
+      camas[i].className.replace(" agora",""); continue; }
+    camas[i].setAttribute("data-qa",(i===vagaAtual)?"1":"0");
+    if(i===vagaAtual&&camas[i].className.indexOf("ok")<0&&camas[i].className.indexOf("agora")<0)
+      camas[i].className+=" agora";
+    if(i!==vagaAtual) camas[i].className=camas[i].className.replace(" agora","");
+  }
+}
+function fechaRodada(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    var i,txt="";
+    for(i=0;i<frase.w.length;i++) txt+=(i?" ":"")+frase.w[i];
+    rodada++;
+    mostraBanner("Frase montada: <b>"+txt+".</b>",
+                 (rodada<FRASES.length)?telaFrase:telaFimFrase);
+  },420);
+}
+
+/* O CONCEITO VEM POR ULTIMO (Portao 0 da filosofia): so agora, depois de a
+   crianca ter montado tres frases, a peca nomeia o que ela fez.            */
+function telaFimFrase(){
+  limpa(); document.onkeydown=null; soltaSombra();
+  rodada=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Toda frase tem <b>pe&#231;as de tipos diferentes</b>: "+
+    "o <b>nome</b>, a <b>a&#231;&#227;o</b>, o <b>como &#233;</b>. Cada uma com a sua forma."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaFrase;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaFrase();
+</script>
+</body></html>

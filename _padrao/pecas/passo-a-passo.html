@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — passo a passo (a receita que o mundo EXECUTA)</title>
+<!-- ============================================================
+     PEÇA: PASSO A PASSO — a criança põe as instruções na ordem e o mundo
+     EXECUTA a sequência dela, passo por passo, na frente dela.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     ⚠️ ISTO NÃO É "ORDENAR". A diferença é o que acontece DEPOIS de ordenar.
+     No ordenar, a peça confere a ordem e diz se está certa — quem sabe a
+     resposta é o app. Aqui ninguém confere nada: o mundo simplesmente FAZ o que
+     ela mandou, na ordem que ela mandou. Se ela mandou regar antes de plantar, a
+     água cai na terra seca e vira poça; se mandou espremer a laranja inteira,
+     não sai suco nenhum. O erro não é uma nota: é uma CENA — e é a cena que
+     ensina, porque a criança vê a causa e conserta sozinha.
+
+     É a mecânica mais perto do pensamento computacional que existe sem virar
+     código: sequência, pré-requisito, execução e depuração. A criança não
+     "acerta a ordem": ela DEPURA a receita dela.
+
+     AS DUAS FAMÍLIAS DE ERRO, de propósito diferentes:
+       · o que TRAVA (`precisa`): pôr a semente sem buraco, espremer sem cortar.
+         O passo não acontece e a cena mostra por quê;
+       · o que ESTRAGA (`melhor`): cortar a laranja sem ter lavado. O passo
+         acontece, mas a sujeira vai junto e aparece no copo no fim.
+       Duas famílias porque no mundo é assim: umas coisas são impossíveis fora
+       de ordem, outras só saem ruins.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · AS DUAS PORTAS: arrastar com o dedo E o toque simples (tocar na peça,
+         tocar na vaga). Nunca `preventDefault` no `touchstart`; `ultimoToque`
+         engole o clique fantasma do celular; o mouse marca no CLIQUE, não no
+         `mousedown`.
+       · A CORRIDA DO TOQUE DUPLO: `travada = true` no INSTANTE em que a
+         execução começa, nunca no fim da animação.
+       · TEMPORIZADOR DE RODADA VELHA: a execução é uma corrente de setTimeout e
+         cada elo confere a GERAÇÃO — senão o passo 4 de uma receita que já saiu
+         da tela continua mexendo na cena da receita nova.
+       · A 3ª DICA INVISÍVEL: o revelar ARRUMA a fita primeiro e escreve a
+         explicação DEPOIS, e ela fica de pé antes de a receita rodar de novo.
+       · DÁ PARA CONSERTAR SEM RECOMEÇAR: o "Arrumar" devolve a ordem que ela
+         montou, não uma fita vazia. Depurar é mexer no que já existe.
+       · NUNCA TRAVA: o 3º erro arruma a receita e roda ela até o fim.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; nada essencial só na cor; funciona no mudo (tudo que a
+     voz diz está escrito na linha da narração); publica data-qa; termina em
+     .medal. Toda a cena é desenhada em CSS — nenhum arquivo externo.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A CENA: o mundo onde a receita acontece. Margem propria em cima (a regra
+   `.balao + *` do motorzinho tem a mesma forca e perde por vir antes). */
+.cena{position:relative;width:100%;max-width:300px;height:112px;margin:13px auto 0;
+      border-radius:14px;overflow:hidden}
+.canteiro{background:#bfe3f5}
+.banc{background:#efe3cf}
+/* -- o canteiro (plantar o feijao) -- */
+.terra{position:absolute;left:0;right:0;bottom:0;height:52px;background:#8a5a2b}
+.buraco{position:absolute;left:36px;bottom:30px;width:46px;height:22px;border-radius:50%;
+        background:#40280f;display:none}
+.buraco.on{display:block}
+.csem{position:absolute;left:104px;bottom:52px;width:16px;height:12px;border-radius:50%;
+      background:#e0bd72;display:none;
+      -webkit-box-shadow:inset 0 0 0 2px #7d5c1c;box-shadow:inset 0 0 0 2px #7d5c1c}
+.csem.on{display:block}
+/* ⚠️ a semente SOLTA fica ao LADO do buraco, em cima da terra: dentro do
+   montinho ela sumia e a cena "ficou por cima" nao se via. */
+.csem.dentro{left:51px;bottom:34px}
+.csem.off{display:none}
+.cmonte{position:absolute;left:34px;bottom:44px;width:50px;height:20px;background:#6b4520;
+        border-radius:26px 26px 0 0;display:none}
+.cmonte.on{display:block}
+.cgota{position:absolute;bottom:70px;width:9px;height:12px;background:#2f8fd8;display:none;
+       border-radius:50% 50% 50% 50%/62% 62% 38% 38%}
+.cgota.on{display:block;-webkit-animation:cai .9s linear 2;animation:cai .9s linear 2}
+@-webkit-keyframes cai{0%{-webkit-transform:translateY(-22px);opacity:.2}100%{-webkit-transform:translateY(14px);opacity:1}}
+@keyframes cai{0%{transform:translateY(-22px);opacity:.2}100%{transform:translateY(14px);opacity:1}}
+.cpoca{position:absolute;left:24px;bottom:46px;width:72px;height:10px;border-radius:50%;
+       background:#2f8fd8;display:none}
+.cpoca.on{display:block}
+.ccaule{position:absolute;left:56px;bottom:52px;width:7px;height:0;background:#2f8f3a;
+        -webkit-transition:height .9s;transition:height .9s}
+.ccaule.on{height:44px}
+/* ⚠️ A FOLHA E UMA ELIPSE INCLINADA, nao um retangulo com dois cantos redondos:
+   no print o broto saia com cara de BANDEIRINHA. E as duas inclinam para lados
+   opostos — folha e coisa espelhada. */
+.cfolha{position:absolute;bottom:76px;width:26px;height:13px;background:#3fae4a;
+        border-radius:50%;display:none;
+        -webkit-transform:rotate(-20deg);transform:rotate(-20deg)}
+.cfolha.on{display:block}
+.cfolha.dir{-webkit-transform:rotate(20deg);transform:rotate(20deg)}
+/* -- a bancada (o suco de laranja) -- */
+.bmesa{position:absolute;left:0;right:0;bottom:0;height:20px;background:#a5743c}
+.blar{position:absolute;left:20px;bottom:24px;width:40px;height:40px;border-radius:50%;
+      background:#f08a1c;-webkit-box-shadow:inset 0 0 0 3px #a85a08;box-shadow:inset 0 0 0 3px #a85a08}
+.blar.off{display:none}
+.blar.treme{-webkit-animation:sacode .32s linear 2;animation:sacode .32s linear 2}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+.bsuj{position:absolute;width:7px;height:7px;border-radius:50%;background:#4a3a20}
+.bsuj.off{display:none}
+.bmet{position:absolute;left:12px;bottom:24px;width:58px;height:24px;display:none}
+.bmet.on{display:block}
+.bm1{position:absolute;left:0;top:0;width:26px;height:24px;background:#ffc85c;
+     border-radius:26px 26px 0 0;-webkit-box-shadow:inset 0 0 0 3px #f08a1c;box-shadow:inset 0 0 0 3px #f08a1c}
+.bm2{position:absolute;left:32px;top:0;width:26px;height:24px;background:#ffc85c;
+     border-radius:26px 26px 0 0;-webkit-box-shadow:inset 0 0 0 3px #f08a1c;box-shadow:inset 0 0 0 3px #f08a1c}
+.bgota{position:absolute;bottom:70px;width:8px;height:11px;background:#2f8fd8;display:none;
+       border-radius:50% 50% 50% 50%/62% 62% 38% 38%}
+.bgota.on{display:block;-webkit-animation:cai .9s linear 2;animation:cai .9s linear 2}
+.bpote{position:absolute;left:88px;bottom:24px;width:28px;height:30px;background:#e8dfc9;
+       border-radius:3px 3px 5px 5px;
+       -webkit-box-shadow:inset 0 0 0 2px #a08a5e;box-shadow:inset 0 0 0 2px #a08a5e}
+.bpsu{position:absolute;left:3px;right:3px;bottom:3px;height:0;background:#f0a81c;
+      -webkit-transition:height .6s;transition:height .6s}
+.bpsu.on{height:22px}
+.bcopo{position:absolute;right:26px;bottom:24px;width:36px;height:46px;background:rgba(255,255,255,.55);
+       border-radius:3px 3px 9px 9px;
+       -webkit-box-shadow:inset 0 0 0 3px #9dbecd;box-shadow:inset 0 0 0 3px #9dbecd}
+.bsuco{position:absolute;left:3px;right:3px;bottom:3px;height:0;background:#f0a81c;
+       -webkit-transition:height .7s;transition:height .7s}
+.bsuco.on{height:32px}
+.bpont{position:absolute;width:5px;height:5px;border-radius:50%;background:#4a3a20;display:none}
+.bpont.on{display:block}
+.bcan{position:absolute;right:30px;bottom:58px;width:6px;height:34px;background:#e8563f;display:none;
+      -webkit-transform:rotate(13deg);transform:rotate(13deg)}
+.bcan.on{display:block}
+
+/* A LINHA DA NARRACAO: o gemeo escrito de tudo que a voz diz (a peca funciona
+   no mudo). Altura reservada, senao a tela pula a cada passo. */
+.fala{min-height:42px;margin-top:8px;font-size:15px;font-weight:700;line-height:1.28;
+      background:rgba(255,255,255,.12);border-radius:12px;padding:6px 10px}
+.fala b{color:#ffd54a}
+.fala.tropeco{background:#5a3d16}
+.fala.tropeco b{color:#ffd54a}
+
+/* A FITA DA RECEITA: as vagas 1..N, na ordem em que o mundo vai executar. */
+.arruma{margin-top:8px}
+.fita{white-space:nowrap;font-size:0}
+.cam{display:inline-block;vertical-align:top;margin:0 .8%;padding:3px 1px 2px;min-height:62px;
+     border-radius:12px;background:rgba(255,255,255,.10);cursor:pointer;
+     -webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.28);box-shadow:inset 0 0 0 2px rgba(255,255,255,.28)}
+.cam.cheia{background:#fffdf6;-webkit-box-shadow:0 3px 0 #c9bda6;box-shadow:0 3px 0 #c9bda6}
+.cam.alvo{-webkit-box-shadow:inset 0 0 0 3px #ffd54a;box-shadow:inset 0 0 0 3px #ffd54a}
+.cam.agora{-webkit-box-shadow:0 3px 0 #c9a52f,0 0 0 3px #ffd54a;box-shadow:0 3px 0 #c9a52f,0 0 0 3px #ffd54a}
+.cam.pisca{-webkit-animation:halo .6s infinite;animation:halo .6s infinite}
+@-webkit-keyframes halo{0%{-webkit-box-shadow:0 0 0 0 rgba(255,213,74,.8)}
+  100%{-webkit-box-shadow:0 0 0 12px rgba(255,213,74,0)}}
+@keyframes halo{0%{box-shadow:0 0 0 0 rgba(255,213,74,.8)}
+  100%{box-shadow:0 0 0 12px rgba(255,213,74,0)}}
+.vnum{display:block;font-size:11px;font-weight:800;color:var(--texto,#f0e6d4);line-height:13px}
+.cam.cheia .vnum{color:#5a4a2e}
+.vrot{display:block;font-size:9px;font-weight:800;letter-spacing:.2px;color:var(--texto,#f0e6d4);line-height:11px}
+.cam.cheia .vrot{color:#221a12}
+.vvazio{display:block;font-size:10px;font-weight:700;color:var(--texto,#e0d6c2);line-height:12px;margin-top:14px}
+
+/* A MESA: os passos que ainda nao entraram na fita. */
+.mesa{margin-top:6px;font-size:0}
+.pc{display:inline-block;vertical-align:top;width:31%;max-width:120px;margin:4px 1%;
+    padding:5px 3px 4px;min-height:66px;border-radius:13px;background:#fffdf6;color:#221a12;
+    cursor:pointer;-webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
+.pc.sel{background:#ffd54a;-webkit-box-shadow:0 4px 0 #b08d1c,0 0 0 3px #fff3c9;
+        box-shadow:0 4px 0 #b08d1c,0 0 0 3px #fff3c9}
+.pc.usada{width:auto;max-width:none;margin:0;padding:0;min-height:0;background:none;
+          -webkit-box-shadow:none;box-shadow:none;cursor:pointer}
+.pc.pisca{-webkit-animation:halo .6s infinite;animation:halo .6s infinite}
+.prot{display:block;font-size:12px;font-weight:800;letter-spacing:.3px;line-height:14px}
+/* ⚠️ O SELETOR TEM QUE DIZER ONDE ELE MORA (ago/2026). Esta letra cai numa
+   superficie que a PROPRIA peca pinta, entao a tinta e escrita aqui — e o
+   seletor nomeia a superficie, senao o portao `_qa/cor_fixa.py` nao tem
+   como saber que existe fundo e acusa 'cor cravada sem fundo proprio'.
+   Escrever o caminho nao e enfeite: e o que torna a regra verificavel. */
+.pc .psub{display:block;font-size:10px;font-weight:600;line-height:12px;color:#4a3d2a}
+
+/* OS DESENHOS DOS PASSOS (CSS puro) */
+.ico{position:relative;width:30px;height:30px;margin:0 auto 1px}
+.ipa1{position:absolute;left:9px;top:16px;width:13px;height:13px;background:#9aa0a6;border-radius:0 0 6px 6px;
+      -webkit-box-shadow:inset 0 0 0 2px #5f666b;box-shadow:inset 0 0 0 2px #5f666b}
+.ipa2{position:absolute;left:13px;top:1px;width:5px;height:17px;background:#8a5a2b}
+.isem{position:absolute;left:7px;top:9px;width:17px;height:13px;border-radius:50%;background:#e0bd72;
+      -webkit-box-shadow:inset 0 0 0 2px #7d5c1c;box-shadow:inset 0 0 0 2px #7d5c1c}
+.iter{position:absolute;left:3px;top:12px;width:25px;height:14px;background:#6b4520;border-radius:14px 14px 0 0}
+.iter2{position:absolute;left:2px;top:24px;width:27px;height:5px;background:#8a5a2b}
+.iagu{position:absolute;left:11px;top:5px;width:11px;height:15px;background:#2f8fd8;
+      border-radius:50% 50% 50% 50%/62% 62% 38% 38%}
+.iagu2{position:absolute;left:6px;top:20px;width:20px;height:6px;border-radius:50%;background:#2f8fd8}
+.ilar{position:absolute;left:6px;top:8px;width:19px;height:19px;border-radius:50%;background:#f08a1c;
+      -webkit-box-shadow:inset 0 0 0 2px #a85a08;box-shadow:inset 0 0 0 2px #a85a08}
+.ifa1{position:absolute;left:4px;top:6px;width:19px;height:7px;background:#c9ced2;border-radius:3px 8px 8px 3px;
+      -webkit-transform:rotate(18deg);transform:rotate(18deg)}
+.ifa2{position:absolute;left:20px;top:14px;width:9px;height:5px;background:#6b4520;
+      -webkit-transform:rotate(18deg);transform:rotate(18deg)}
+.iesp{position:absolute;left:7px;top:4px;width:0;height:0;border-left:8px solid rgba(0,0,0,0);
+      border-right:8px solid rgba(0,0,0,0);border-top:14px solid #ffc85c}
+.iesp2{position:absolute;left:11px;top:18px;width:8px;height:9px;background:#f0a81c}
+.icop{position:absolute;left:9px;top:6px;width:13px;height:19px;background:rgba(255,255,255,.7);
+      border-radius:2px 2px 6px 6px;
+      -webkit-box-shadow:inset 0 0 0 2px #7d99a6;box-shadow:inset 0 0 0 2px #7d99a6}
+.icop2{position:absolute;left:11px;top:14px;width:9px;height:9px;background:#f0a81c}
+.ican{position:absolute;left:19px;top:1px;width:4px;height:16px;background:#e8563f;
+      -webkit-transform:rotate(14deg);transform:rotate(14deg)}
+
+.aviso{margin-top:9px;font-size:16px;font-weight:700;background:#1f6b12;color:#fff;
+       border-radius:12px;padding:9px 12px;display:none}
+.aviso.ver{display:block}
+.aviso.torto{background:#7a4a10}
+.medal{width:96px;height:96px;margin:2px auto 10px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:40px;line-height:84px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* CELULAR BAIXO (320x568, o aparelho velho da escola). ⚠️ DEFEITO MEDIDO pelo
+   portao de leiaute: a ULTIMA peca da mesa terminava 23px abaixo da dobra, e
+   como a tela nao rola por si, a crianca simplesmente NAO VIA que faltava um
+   passo. Aqui encolhe tudo o que nao e alvo de dedo. */
+@media (max-height:600px){
+  .cena{height:92px;margin-top:9px}
+  .balao{padding:10px 15px;font-size:16px}
+  .fala{min-height:34px;margin-top:6px;font-size:14px;padding:5px 9px}
+  .arruma{margin-top:6px}
+  .cam{min-height:56px}
+  .pc{min-height:56px;padding:4px 3px 3px;margin:3px 1%}
+  .hint{margin-top:6px;font-size:13px}
+}
+/* janela baixa (o 1024x420 da escola): encolhe a cena e as letras. O alvo do
+   dedo (a peca da mesa e a vaga) nunca encolhe abaixo de 44px.
+   ⚠️ Aqui a tela e LARGA e baixa: o que estourava nao era o tamanho da peca, era
+   a mesa QUEBRANDO EM DUAS LINHAS (max-width:120px em 496px de largura nao
+   deixava as 5 pecas caberem lado a lado). Numa janela baixa a mesa tem que ser
+   uma FITA, nao um bloco. */
+@media (max-height:520px){
+  .pc{width:18.5%;max-width:none;margin:3px .5%;min-height:56px;padding:4px 2px 3px}
+  .prot{font-size:11px}
+  .pc .psub{font-size:9px;line-height:11px}
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .cena{height:82px;margin-top:8px;max-width:250px}
+  .fala{min-height:34px;margin-top:5px;font-size:13px;padding:4px 9px}
+  .arruma{margin-top:5px}
+  .cam{min-height:56px}
+  .pc{min-height:58px;margin:3px 1%}
+  .aviso{margin-top:5px;font-size:14px;padding:6px 10px}
+  .hint{margin-top:4px;font-size:13px}
+  .medal{width:70px;height:70px;font-size:30px;line-height:60px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) AS RECEITAS.
+      `precisa` = o que TRAVA (sem isto o passo nao acontece).
+      `melhor`  = o que ESTRAGA (o passo acontece, mas sai torto).
+      A escada: 4 passos com uma corrente simples -> 5 passos, com um
+      pre-requisito que nao trava (lavar) escondido no meio.
+   --------------------------------------------------------------- */
+var RECEITAS= /*TECNICA*/[
+ {selo:"A RECEITA DO FEIJ&Atilde;O", cena:"canteiro",
+  enun:"Ponha os passos na <b>ordem</b> e aperte <b>Come&#231;ar</b>. O canteiro faz "+
+       "exatamente o que voc&#234; mandar.",
+  hint:"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.",
+  bom:"A semente ficou no escurinho, coberta e molhada &#8212; e brotou!",
+  torto:"O feij&#227;o n&#227;o brotou. Olhe a cena: d&#225; para ver o que faltou acontecer antes.",
+  passos:[
+   {k:"cavar", rot:"CAVAR", sub:"o buraco", ic:"pa", precisa:[], melhor:[],
+    bom:"Voc&#234; <b>cavou</b> o buraco na terra.",
+    ruim:"Voc&#234; <b>cavou</b> o buraco na terra."},
+   {k:"semear", rot:"SEMEAR", sub:"p&#244;r a semente", ic:"sem", precisa:["cavar"], melhor:[],
+    bom:"A semente <b>caiu dentro</b> do buraco.",
+    ruim:"N&#227;o tinha buraco: a semente ficou <b>por cima</b> da terra, no vento."},
+   {k:"cobrir", rot:"COBRIR", sub:"com terra", ic:"ter", precisa:["semear"], melhor:[],
+    bom:"A terra <b>cobriu</b> a semente. Agora est&#225; no escurinho.",
+    ruim:"Voc&#234; cobriu <b>terra com terra</b>: a semente n&#227;o estava l&#225; dentro."},
+   {k:"regar", rot:"REGAR", sub:"com &#225;gua", ic:"agu", precisa:["cobrir"], melhor:[],
+    bom:"A &#225;gua <b>molhou</b> a terra por cima da semente.",
+    ruim:"A &#225;gua caiu na terra dura e virou <b>po&#231;a</b>: n&#227;o tinha nada plantado."}]},
+
+ {selo:"A RECEITA DO SUCO", cena:"banc",
+  enun:"Agora s&#227;o <b>cinco</b> passos. Um deles n&#227;o trava a receita, mas <b>estraga</b> "+
+       "o suco se ficar para depois.",
+  hint:"Toque num passo e depois na vaga (ou arraste com o dedo). Para tirar, toque na vaga cheia.",
+  bom:"Suco limpo, coado e geladinho. Que del&#237;cia!",
+  torto:"O suco n&#227;o ficou bom. Olhe o copo: ele mostra o que aconteceu.",
+  passos:[
+   {k:"lavar", rot:"LAVAR", sub:"a laranja", ic:"lav", precisa:[], melhor:[],
+    bom:"A &#225;gua tirou a <b>sujeira</b> da casca.",
+    ruim:"A &#225;gua tirou a <b>sujeira</b> da casca."},
+   {k:"cortar", rot:"CORTAR", sub:"ao meio", ic:"cor", precisa:[], melhor:["lavar"],
+    bom:"A laranja virou <b>duas metades</b>.",
+    ruim:"Cortou! Mas a casca estava <b>suja</b>, e a sujeira entrou junto."},
+   {k:"espremer", rot:"ESPREMER", sub:"as metades", ic:"esp", precisa:["cortar"], melhor:[],
+    bom:"O suco <b>escorreu</b> das metades para o pote.",
+    ruim:"A laranja <b>inteira</b> n&#227;o solta suco: ela s&#243; rolou na m&#227;o."},
+   {k:"encher", rot:"ENCHER", sub:"o copo", ic:"cop", precisa:["espremer"], melhor:[],
+    bom:"O copo <b>encheu</b> de suco.",
+    ruim:"N&#227;o tinha suco no pote: o copo ficou <b>vazio</b>."},
+   {k:"beber", rot:"BEBER", sub:"com canudo", ic:"beb", precisa:["encher"], melhor:[],
+    bom:"Glup, glup: o copo <b>esvaziou</b>.",
+    ruim:"O canudo fez <b>shhh</b> num copo vazio."}]}
+];
+
+var rodada=0, R=null, N=0;
+var ordem=[], sel=null, modo="ordena", travada=false, erros=0, revelando=false;
+var ger=0, progVisto=0, semTropeco=0, mundo={}, problema=null;
+var CE= /*TECNICA*/{}, elCena=null, elFala=null, elAviso=null, elFita=null, elMesa=null, elBotao=null, progI=null;
+var ultimoToque=0, arrastando=false, arrK=null, mouseDown=false, mouseAndou=false, largou=0;
+
+/* A VOZ. Aqui e `speechSynthesis` so para PROVAR o contrato: tudo que ela diz
+   tambem esta escrito na linha da narracao, entao a peca funciona no mudo.
+   Na atividade de verdade estas chamadas viram `falaDaTela(id)`. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.98; u.pitch=1.03;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function semTag(s){ return String(s).replace(/<[^>]+>/g,""); }
+function sPasso(){ nota(523.25,.10,.12,"triangle",0); }
+function sTropeco(){ nota(233,.18,.12,"sine",0); nota(196,.22,.11,"sine",.10); }
+function sPega(){ nota(700,.05,.10,"square",0); }
+
+function passoDe(k){ var i; for(i=0;i<R.passos.length;i++){ if(R.passos[i].k===k) return R.passos[i]; } return null; }
+function posCerta(k){ var i; for(i=0;i<R.passos.length;i++){ if(R.passos[i].k===k) return i; } return -1; }
+function naFita(k){ var i; for(i=0;i<ordem.length;i++){ if(ordem[i]===k) return i; } return -1; }
+function fitaCheia(){ var i; for(i=0;i<N;i++){ if(!ordem[i]) return false; } return true; }
+
+/* ---------------------------------------------------------------
+   2) OS DESENHOS DOS PASSOS
+   --------------------------------------------------------------- */
+function icone(k){
+  var d=el("div","ico",""), e;
+  if(k==="pa"){ d.appendChild(el("i","ipa2","")); d.appendChild(el("i","ipa1","")); }
+  else if(k==="sem"){ d.appendChild(el("i","isem","")); }
+  else if(k==="ter"){ d.appendChild(el("i","iter","")); d.appendChild(el("i","iter2","")); }
+  else if(k==="agu"){ d.appendChild(el("i","iagu","")); d.appendChild(el("i","iagu2","")); }
+  else if(k==="lav"){ d.appendChild(el("i","ilar","")); d.appendChild(el("i","iagu","")); }
+  else if(k==="cor"){ d.appendChild(el("i","ilar","")); d.appendChild(el("i","ifa1","")); d.appendChild(el("i","ifa2","")); }
+  else if(k==="esp"){ d.appendChild(el("i","iesp","")); d.appendChild(el("i","iesp2","")); }
+  else if(k==="cop"){ d.appendChild(el("i","icop","")); d.appendChild(el("i","icop2","")); }
+  else { e=el("i","icop",""); d.appendChild(e); d.appendChild(el("i","icop2","")); d.appendChild(el("i","ican","")); }
+  return d;
+}
+
+/* ---------------------------------------------------------------
+   3) A CENA (o mundo). Remontada inteira a cada tentativa: assim a
+      execucao nunca comeca com resto da tentativa anterior.
+   --------------------------------------------------------------- */
+function montaCena(){
+  var box=el("div","cena "+(R.cena==="canteiro"?"canteiro":"banc"),""), i, e;
+  CE={};
+  mundo={sujeira:false};
+  if(R.cena==="canteiro"){
+    box.appendChild(el("i","terra",""));
+    CE.buraco=el("i","buraco",""); box.appendChild(CE.buraco);
+    CE.monte=el("i","cmonte",""); box.appendChild(CE.monte);
+    CE.sem=el("i","csem",""); box.appendChild(CE.sem);
+    CE.poca=el("i","cpoca",""); box.appendChild(CE.poca);
+    CE.gotas=[];
+    for(i=0;i<3;i++){ e=el("i","cgota",""); e.style.left=(44+i*14)+"px"; box.appendChild(e); CE.gotas.push(e); }
+    CE.caule=el("i","ccaule",""); box.appendChild(CE.caule);
+    CE.folhas=[];
+    e=el("i","cfolha",""); e.style.left="33px"; box.appendChild(e); CE.folhas.push(e);
+    e=el("i","cfolha dir",""); e.style.left="60px"; box.appendChild(e); CE.folhas.push(e);
+  }else{
+    box.appendChild(el("i","bmesa",""));
+    CE.lar=el("i","blar",""); box.appendChild(CE.lar);
+    CE.suj=[];
+    e=el("i","bsuj",""); e.style.left="9px"; e.style.top="8px"; CE.lar.appendChild(e); CE.suj.push(e);
+    e=el("i","bsuj",""); e.style.left="22px"; e.style.top="18px"; CE.lar.appendChild(e); CE.suj.push(e);
+    e=el("i","bsuj",""); e.style.left="13px"; e.style.top="25px"; CE.lar.appendChild(e); CE.suj.push(e);
+    CE.met=el("i","bmet","");
+    CE.met.appendChild(el("i","bm1","")); CE.met.appendChild(el("i","bm2",""));
+    box.appendChild(CE.met);
+    CE.gotas=[];
+    for(i=0;i<3;i++){ e=el("i","bgota",""); e.style.left=(26+i*13)+"px"; box.appendChild(e); CE.gotas.push(e); }
+    CE.pote=el("i","bpote","");
+    CE.psu=el("i","bpsu",""); CE.pote.appendChild(CE.psu); box.appendChild(CE.pote);
+    CE.copo=el("i","bcopo","");
+    CE.suco=el("i","bsuco","");
+    CE.pont=[];
+    e=el("i","bpont",""); e.style.left="7px"; e.style.bottom="9px"; CE.suco.appendChild(e); CE.pont.push(e);
+    e=el("i","bpont",""); e.style.left="18px"; e.style.bottom="17px"; CE.suco.appendChild(e); CE.pont.push(e);
+    CE.copo.appendChild(CE.suco); box.appendChild(CE.copo);
+    CE.can=el("i","bcan",""); box.appendChild(CE.can);
+  }
+  return box;
+}
+/* ⚠️ A GOTA TEM QUE SUMIR DEPOIS DE CAIR (defeito visto no print): a animacao
+   acaba e o elemento volta ao lugar de partida, entao as tres gotas ficavam
+   PENDURADAS no ceu para sempre, como se a chuva tivesse congelado. Some com
+   elas no fim — e com guarda de geracao, que a cena pode ter trocado. */
+function chuva(g){
+  var i, base=(R.cena==="canteiro"?"cgota":"bgota");
+  if(!CE.gotas) return;
+  for(i=0;i<CE.gotas.length;i++){
+    (function(e,n){
+      setTimeout(function(){ if(g===ger) e.className=base+" on"; },n*140);
+      setTimeout(function(){ if(g===ger) e.className=base; },n*140+1900);
+    })(CE.gotas[i],i);
+  }
+}
+
+/* O QUE CADA PASSO FAZ NO MUNDO. `ok=false` nao e castigo: e o mundo fazendo
+   ao pe da letra o que foi mandado — e mostrando o resultado disso. */
+var EFEITO= /*TECNICA*/{
+ cavar:function(ok){ CE.buraco.className="buraco on"; nota(180,.12,.12,"sine",0); },
+ semear:function(ok){ CE.sem.className=ok?"csem on dentro":"csem on"; sPasso(); },
+ cobrir:function(ok){
+   CE.monte.className="cmonte on";
+   /* a semente que estava no buraco fica COBERTA — some debaixo da terra. A que
+      ficou por fora continua a vista, que e justamente a cena a ser lida. */
+   if(ok) CE.sem.className="csem off";
+   nota(200,.14,.11,"sine",0);
+ },
+ regar:function(ok){ chuva(ger); if(!ok) CE.poca.className="cpoca on"; nota(620,.10,.10,"sine",0); },
+ lavar:function(ok){
+   chuva(ger);
+   var i; for(i=0;i<CE.suj.length;i++) CE.suj[i].className="bsuj off";
+   nota(620,.10,.10,"sine",0);
+ },
+ cortar:function(ok){
+   CE.lar.className="blar off"; CE.met.className="bmet on";
+   if(!ok) mundo.sujeira=true;
+   nota(300,.08,.12,"square",0);
+ },
+ espremer:function(ok){
+   if(ok){ CE.psu.className="bpsu on"; nota(520,.14,.11,"sine",0); }
+   else { CE.lar.className="blar treme"; sTropeco(); }
+ },
+ encher:function(ok){
+   if(ok){
+     CE.suco.className="bsuco on";
+     if(mundo.sujeira){ var i; for(i=0;i<CE.pont.length;i++) CE.pont[i].className="bpont on"; }
+     nota(440,.16,.11,"sine",0);
+   }else{ sTropeco(); }
+ },
+ beber:function(ok){
+   CE.can.className="bcan on";
+   if(ok){ CE.suco.className="bsuco"; nota(660,.10,.11,"triangle",0); nota(880,.12,.10,"triangle",.10); }
+   else { sTropeco(); }
+ }
+};
+
+/* ---------------------------------------------------------------
+   4) A TELA
+   --------------------------------------------------------------- */
+function pecaReceita(){
+  limpa();
+  R=RECEITAS[rodada];
+  N=R.passos.length;
+  ordem=[]; sel=null; erros=0; travada=false; revelando=false; modo="ordena";
+  problema=null; ger++;
+  var i;
+  for(i=0;i<N;i++) ordem.push(null);
+  desenhaTela();
+  diz(semTag(R.enun));
+}
+/* desenhaTela e chamada tambem quando a crianca vai CONSERTAR a receita: por
+   isso ela nao mexe em `ordem` — quem mexe e quem chama. */
+function desenhaTela(){
+  limpa();
+  var t=el("div","tela");
+  setProg(t,progVisto);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.enun));
+  elCena=montaCena();
+  c.appendChild(elCena);
+  elFala=el("div","fala",R.hint);
+  c.appendChild(elFala);
+  var ar=el("div","arruma","");
+  elFita=el("div","fita","");
+  ar.appendChild(elFita);
+  elMesa=el("div","mesa","");
+  ar.appendChild(elMesa);
+  ligaDedo(ar);
+  c.appendChild(ar);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  elBotao=el("div","opts","");
+  c.appendChild(elBotao);
+  c.appendChild(el("div","hint","O mundo faz o que voc&#234; mandar, na ordem que voc&#234; mandar."));
+  t.appendChild(c);
+  app.appendChild(t);
+  pinta();
+}
+
+function pinta(){
+  var i,k,p,s,cel,cart;
+  elFita.innerHTML="";
+  for(i=0;i<N;i++){
+    k=ordem[i];
+    cel=el("div","cam"+(k?" cheia":""),"");
+    cel.style.width=(96/N)+"%";
+    cel.setAttribute("data-qa",String(i+1));
+    cel.setAttribute("data-vaga",String(i+1));
+    if(k){
+      p=passoDe(k);
+      /* ⚠️ O CARTAO QUE JA ESTA NA VAGA NAO PUBLICA `data-qa` — e foi um "PRESO"
+         de verdade (ago/2026). Com ele publicando, o auditor-jogador achava
+         DOIS alvos marcados com "1" (o cartao na vaga 1 e o botao Comecar),
+         pegava o primeiro do DOM, o clique borbulhava para a vaga e DEVOLVIA a
+         peca para a mesa: ele punha e tirava a mesma peca para sempre, numa
+         tela que a crianca fecha em quatro toques. `data-qa` e endereco do que
+         serve AGORA; peca ja colocada nao serve mais. */
+      cart=el("div","pc usada","");
+      cart.appendChild(icone(p.ic));
+      cel.appendChild(el("span","vnum",String(i+1)));
+      cel.appendChild(cart);
+      cel.appendChild(el("span","vrot",p.rot));
+    }else{
+      cel.appendChild(el("span","vnum",String(i+1)));
+      cel.appendChild(el("span","vvazio","vazio"));
+    }
+    cel.onclick=(function(idx){ return function(){
+      if(new Date().getTime()-ultimoToque<800) return;
+      if(mouseAndou) return;
+      tocaVaga(idx);
+    }; })(i);
+    elFita.appendChild(cel);
+  }
+  elMesa.innerHTML="";
+  for(i=0;i<R.passos.length;i++){
+    p=R.passos[i];
+    if(naFita(p.k)>=0) continue;
+    s=el("div","pc"+(sel===p.k?" sel":""),"");
+    s.setAttribute("data-qa",String(i+1));
+    s.appendChild(icone(p.ic));
+    s.appendChild(el("span","prot",p.rot));
+    s.appendChild(el("span","psub",p.sub));
+    s.onclick=(function(kk){ return function(){
+      if(new Date().getTime()-ultimoToque<800) return;
+      if(mouseAndou) return;
+      pega(kk);
+    }; })(p.k);
+    elMesa.appendChild(s);
+  }
+  botoes();
+}
+function botoes(){
+  elBotao.innerHTML="";
+  if(modo!=="ordena") return;
+  if(!fitaCheia()) return;
+  var b=el("button","btn","Come&#231;ar a receita");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ executa(); };
+  elBotao.appendChild(b);
+}
+
+/* ---------------------------------------------------------------
+   5) AS DUAS PORTAS: tocar (peca, depois vaga) e arrastar
+   --------------------------------------------------------------- */
+function pega(k){
+  if(travada||modo!=="ordena") return;
+  sel=(sel===k)?null:k;
+  sPega();
+  pinta();
+}
+function tocaVaga(i){
+  if(travada||modo!=="ordena") return;
+  if(sel){ poe(sel,i); return; }
+  /* vaga cheia sem nada na mao: a peca VOLTA para a mesa. E assim que a crianca
+     conserta sem recomecar do zero. */
+  if(ordem[i]){ sTap(); ordem[i]=null; pinta(); }
+}
+function poe(k,i){
+  var antes=naFita(k), tinha=ordem[i];
+  if(antes>=0) ordem[antes]=null;
+  ordem[i]=k;
+  if(tinha&&tinha!==k&&antes>=0) ordem[antes]=tinha;
+  sel=null;
+  sPasso();
+  pinta();
+}
+function vagaDe(x,y){
+  var e=document.elementFromPoint(x,y), i, cels=elFita.childNodes;
+  while(e&&e!==document.body){
+    for(i=0;i<cels.length;i++){ if(cels[i]===e) return i; }
+    e=e.parentNode;
+  }
+  return -1;
+}
+function pecaDe(x,y){
+  var e=document.elementFromPoint(x,y), i, cs=elMesa.childNodes;
+  while(e&&e!==document.body){
+    for(i=0;i<cs.length;i++){ if(cs[i]===e) return i; }
+    e=e.parentNode;
+  }
+  return -1;
+}
+function marcaAlvo(i){
+  var k, cels=elFita.childNodes;
+  for(k=0;k<cels.length;k++){
+    cels[k].className=(k===i)?(ordem[k]?"cam cheia alvo":"cam alvo")
+                             :(ordem[k]?"cam cheia":"cam");
+  }
+}
+function ligaDedo(ar){
+  /* ⚠️ A ORDEM DESTE BLOCO E DE PROPOSITO: o `touchmove` (o unico com
+     preventDefault, e so com uma peca na mao) vem ANTES e o `touchstart` vem
+     DEPOIS — assim ninguem le um preventDefault "dentro" do touchstart, nem o
+     auditor `_qa/dinamicas.py` nem o proximo humano. Nao arrume. */
+  ar.addEventListener("touchmove",function(ev){
+    if(!arrastando||!arrK) return;
+    ultimoToque=new Date().getTime();
+    if(ev.preventDefault) ev.preventDefault();
+    var t=ev.touches[0];
+    marcaAlvo(vagaDe(t.clientX,t.clientY));
+  },false);
+  ar.addEventListener("touchend",function(ev){
+    ultimoToque=new Date().getTime();
+    var t=(ev.changedTouches&&ev.changedTouches[0])||null, i=-1;
+    if(arrastando&&arrK&&t) i=vagaDe(t.clientX,t.clientY);
+    if(i>=0){ poe(arrK,i); }
+    else if(arrastando&&arrK){ sel=arrK; pinta(); }   /* soltou fora: fica na mao */
+    arrastando=false; arrK=null;
+  },false);
+  /* NADA de preventDefault aqui: e ele que mata o toque no celular. */
+  ar.addEventListener("touchstart",function(ev){
+    ultimoToque=new Date().getTime();
+    if(travada||modo!=="ordena") return;
+    var t=ev.touches[0], i=pecaDe(t.clientX,t.clientY);
+    arrastando=true; arrK=null;
+    if(i>=0){
+      var n=0, j;
+      for(j=0;j<R.passos.length;j++){ if(naFita(R.passos[j].k)<0){ if(n===i){ arrK=R.passos[j].k; break; } n++; } }
+      if(arrK){ sel=arrK; sPega(); pinta(); }
+    }
+  },false);
+  /* MOUSE: a marca e do CLIQUE (licao paga — marcar no mousedown fazia o click
+     de tras desfazer). Arrastando, so vale quando o ponteiro anda de verdade. */
+  ar.addEventListener("mousedown",function(ev){
+    mouseDown=true; mouseAndou=false;
+    if(travada||modo!=="ordena") return;
+    var i=pecaDe(ev.clientX,ev.clientY), n=0, j;
+    arrK=null;
+    if(i>=0){ for(j=0;j<R.passos.length;j++){ if(naFita(R.passos[j].k)<0){ if(n===i){ arrK=R.passos[j].k; break; } n++; } } }
+  },false);
+  ar.addEventListener("mousemove",function(ev){
+    if(!mouseDown||!arrK) return;
+    mouseAndou=true;
+    marcaAlvo(vagaDe(ev.clientX,ev.clientY));
+  },false);
+  ar.addEventListener("mouseup",function(ev){
+    if(mouseDown&&mouseAndou&&arrK){
+      var i=vagaDe(ev.clientX,ev.clientY);
+      if(i>=0) poe(arrK,i); else pinta();
+      largou=new Date().getTime();
+    }
+    mouseDown=false; arrK=null;
+  },false);
+}
+
+/* ---------------------------------------------------------------
+   6) A EXECUCAO — o coracao da peca. O mundo faz, um passo por vez.
+   --------------------------------------------------------------- */
+function executa(){
+  if(travada) return;
+  travada=true;                    /* ⚠️ trava NO INSTANTE do toque */
+  modo="roda";
+  sel=null;
+  problema=null;
+  /* cena limpa: a execucao nunca comeca com resto da tentativa anterior */
+  var nova=montaCena();
+  if(elCena&&elCena.parentNode) elCena.parentNode.replaceChild(nova,elCena);
+  elCena=nova;
+  elAviso.className="aviso";
+  pinta();
+  var g=ger, i=0, tudoOk=true, feitos={};
+  function passo(){
+    if(g!==ger) return;
+    if(i>=N){ terminou(tudoOk,g); return; }
+    var k=ordem[i], p=passoDe(k), j, ok=true, falta=null;
+    for(j=0;j<p.precisa.length;j++){ if(!feitos[p.precisa[j]]){ ok=false; falta=p.precisa[j]; } }
+    var bem=ok;
+    for(j=0;j<p.melhor.length;j++){ if(!feitos[p.melhor[j]]){ bem=false; if(!falta) falta=p.melhor[j]; } }
+    if(ok) feitos[k]=true;
+    if(!bem){ tudoOk=false; if(!problema) problema={k:k,falta:falta}; }
+    marcaAgora(i);
+    EFEITO[k](ok);
+    elFala.className=bem?"fala":"fala tropeco";
+    elFala.innerHTML="<b>"+(i+1)+".</b> "+(bem?p.bom:p.ruim);
+    diz(semTag(bem?p.bom:p.ruim));
+    if(bem) sPasso();
+    i++;
+    setTimeout(passo,1600);
+  }
+  passo();
+}
+function marcaAgora(i){
+  var k, cels=elFita.childNodes;
+  for(k=0;k<cels.length;k++)
+    cels[k].className=(k===i)?"cam cheia agora":(ordem[k]?"cam cheia":"cam");
+}
+function terminou(tudoOk,g){
+  if(g!==ger) return;
+  modo="resultado";
+  var i;
+  if(tudoOk){
+    semTropeco++;
+    if(R.cena==="canteiro"){
+      CE.caule.className="ccaule on";
+      for(i=0;i<CE.folhas.length;i++){
+        (function(e,n){ setTimeout(function(){
+          if(g===ger) e.className=(n===1?"cfolha dir on":"cfolha on");
+        },700+n*260); })(CE.folhas[i],i);
+      }
+    }
+    elAviso.innerHTML=R.bom;
+    elAviso.className="aviso ver";
+    diz(semTag(R.bom));
+    sCerto();
+    progVisto=Math.round((rodada+1)*100/RECEITAS.length);
+    if(progI) progI.style.width=progVisto+"%";
+    setTimeout(function(){
+      if(g!==ger) return;
+      rodada++;
+      if(rodada<RECEITAS.length){ pecaReceita(); return; }
+      mostraBanner("<b>Voc&#234; escreveu duas receitas que funcionam!</b><br>Quando a ordem "+
+                   "muda, o resultado muda &#8212; e d&#225; para consertar.", fimReceita);
+    },2400);
+    return;
+  }
+  /* deu torto: o mundo mostra o que saiu e ela conserta */
+  elAviso.innerHTML=R.torto;
+  elAviso.className="aviso ver torto";
+  diz(semTag(R.torto));
+  sTropeco();
+  erros++;
+  var b=el("button","btn","Arrumar a receita");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ conserta(); };
+  elBotao.innerHTML="";
+  elBotao.appendChild(b);
+  ajuda(erros);
+}
+/* CONSERTAR NAO E RECOMECAR: a ordem que ela montou continua na fita. Depurar e
+   mexer no que ja existe — apagar tudo seria castigo, nao ajuda. */
+function conserta(){
+  if(revelando) return;
+  modo="ordena"; travada=false; sel=null;
+  desenhaTela();
+  elFala.className="fala";
+  elFala.innerHTML="Troque os passos de lugar e mande rodar de novo.";
+}
+
+/* ---------------------------------------------------------------
+   7) O ANDAIME QUE CRESCE (1 metodo, 2 mostra o par, 3 arruma junto)
+   --------------------------------------------------------------- */
+function ajuda(n){
+  var p=n%3, a, b;
+  if(p===1){
+    mostraDica("Antes de cada passo, pergunte: <b>o que precisa ter acontecido "+
+               "antes</b> para este dar certo?");
+    diz("Pergunte o que precisa acontecer antes de cada passo.");
+  }else if(p===2){
+    a=problema?passoDe(problema.k):null;
+    b=(problema&&problema.falta)?passoDe(problema.falta):null;
+    if(a&&b){
+      mostraDica("Olhe o passo <b>"+a.rot+"</b>: ele s&#243; d&#225; certo <b>depois</b> de "+
+                 "<b>"+b.rot+"</b>. Est&#227;o piscando os dois.");
+      diz("O passo " + semTag(a.rot) + " só dá certo depois de " + semTag(b.rot) + ".");
+      pisca([problema.k,problema.falta]);
+    }else{
+      mostraDica("Leia a fita da esquerda para a direita, como uma hist&#243;ria: cada passo "+
+                 "prepara o pr&#243;ximo.");
+      diz("Leia a fita como uma história: cada passo prepara o próximo.");
+    }
+  }else{
+    revela();
+  }
+}
+function pisca(ks){
+  var i,j,cels=elFita.childNodes;
+  for(i=0;i<cels.length;i++){
+    for(j=0;j<ks.length;j++){
+      if(ordem[i]===ks[j]) cels[i].className="cam cheia pisca";
+    }
+  }
+}
+/* ⚠️ O 3o DEGRAU: ARRUMA primeiro e EXPLICA depois. Nas cinco pecas de ago/2026
+   a explicacao era escrita e apagada no mesmo quadro (o "revelar" chamava o
+   "acertou", e o "acertou" limpava a dica): a peca se consertava sozinha e a
+   crianca nao sabia por que. Aqui a fita se arruma na frente dela, a explicacao
+   entra DEPOIS e fica 2,2s de pe antes de a receita rodar de novo. */
+function revela(){
+  if(revelando) return;
+  revelando=true; travada=true;
+  var g=ger, i=0;
+  elBotao.innerHTML="";
+  elFala.className="fala";
+  elFala.innerHTML="Vou p&#244;r os passos na ordem <b>com voc&#234;</b>. Olhe a fita.";
+  diz("Vou pôr os passos na ordem com você. Olhe a fita.");
+  function arruma(){
+    if(g!==ger) return;
+    if(i>=N){
+      mostraDica("Esta &#233; a ordem que funciona: cada passo <b>prepara</b> o seguinte. "+
+                 "Agora olhe a receita acontecer.");
+      diz("Cada passo prepara o seguinte. Agora olhe a receita acontecer.");
+      setTimeout(function(){
+        if(g!==ger) return;
+        revelando=false; travada=false; modo="ordena";
+        executa();
+      },2200);
+      return;
+    }
+    ordem[i]=R.passos[i].k;
+    /* a peca que estava nesta vaga vai para o lugar de quem saiu: assim a fita
+       nunca fica com duas copias do mesmo passo. */
+    var j;
+    for(j=i+1;j<N;j++){ if(ordem[j]===R.passos[i].k) ordem[j]=null; }
+    pinta();
+    sPasso();
+    i++;
+    setTimeout(arruma,420);
+  }
+  setTimeout(arruma,700);
+}
+
+/* ---------------------------------------------------------------
+   8) A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimReceita(){
+  limpa();
+  ger++; travada=true;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(semTropeco>=2) parecer="As <b>duas</b> receitas rodaram certas de primeira. Voc&#234; "+
+                            "pensou na ordem <b>antes</b> de mandar &#8212; &#233; assim que "+
+                            "programador trabalha.";
+  else if(semTropeco===1) parecer="Uma receita saiu certa de primeira e a outra voc&#234; "+
+                                  "<b>consertou olhando</b> o que aconteceu. Consertar &#233; "+
+                                  "metade do trabalho.";
+  else parecer="Voc&#234; rodou, viu o que deu torto e <b>consertou</b> at&#233; funcionar. Esse "+
+               "vai-e-volta tem nome de gente grande: <b>depurar</b>.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Cozinhar de novo");
+  b.onclick=function(){ rodada=0; progVisto=0; semTropeco=0; pecaReceita(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Na atividade de verdade, cada receita nova &#233; s&#243; uma "+
+                   "lista de passos com o que cada um <b>precisa</b> antes."));
+  t.appendChild(c);
+  app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+document.addEventListener("mouseup",function(){ mouseDown=false; },false);
+pecaReceita();
+</script>
+</body></html>

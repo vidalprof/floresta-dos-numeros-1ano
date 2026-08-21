@@ -1,0 +1,37 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt — Quebra-Cabeça 2 (cena de circo NOVA)</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:19px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
+  textarea{width:100%;box-sizing:border-box;min-height:300px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+</style>
+<header>
+  <h1>&#129513; Quebra-Cabe&ccedil;a 2 &mdash; cena de circo NOVA</h1>
+  <p>Cena deitada, cheia e colorida (vai virar 6 pe&ccedil;as, 2&times;3). Gere e suba no <b>_imagens/</b>.</p>
+</header>
+<div class="nota">
+  Pra montar quebra-cabe&ccedil;a, o segredo &eacute; a cena ser <b>bem cheia e espalhada</b>: cada peda&ccedil;o precisa ter alguma coisa (bicho, bal&atilde;o, bandeirinha) &mdash; <b>evitar c&eacute;u vazio grande</b>, sen&atilde;o a pe&ccedil;a fica &quot;s&oacute; azul&quot; e a crian&ccedil;a n&atilde;o sabe onde vai. Precisa ser <b>diferente</b> das cenas que j&aacute; usamos (capa e ca&ccedil;a-erros).
+</div>
+<div class="card">
+  <h2>Cartela &mdash; Cena de circo cheia (para quebra-cabe&ccedil;a)</h2>
+  <textarea id="p" readonly>Ilustração de uma CENA de circo ALEGRE e CHEIA para crianças pequenas, em retângulo DEITADO (paisagem 3:2), preenchendo TODO o quadro de ponta a ponta. Uma cena de ESPETÁCULO/desfile de circo, DIFERENTE de uma tenda vista de fora.
+
+Encha a cena com elementos GRANDES e coloridos ESPALHADOS por igual em todo o quadro (esquerda, centro e direita; em cima e embaixo), sem deixar áreas grandes vazias:
+- Um palhacinho fofo no centro fazendo malabares com bolinhas coloridas.
+- Um elefantinho e um leãozinho, um de cada lado.
+- Bandeirinhas de circo atravessando o topo de uma ponta à outra.
+- Vários balões coloridos subindo pelos cantos.
+- Argolas, uma bola de circo listrada e estrelas espalhadas.
+- Holofotes/luzes coloridas ao fundo, chão de picadeiro com listras.
+
+Fundo PREENCHIDO e colorido (cortina de circo ou luzes) — SEM grandes manchas de céu liso vazio. Cartoon flat infantil, cores vivas, CONTORNO PRETO GROSSO. Cena inteira preenchendo o quadro, elementos bem distribuídos. SEM texto, sem letras, sem números.</textarea>
+  <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
+</div>

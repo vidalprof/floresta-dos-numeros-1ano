@@ -1,0 +1,104 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel — Viagem pelo Brasil (Notas)</title>
+<style>
+*{box-sizing:border-box;font-family:"Segoe UI",Arial,sans-serif;}
+body{margin:0;background:#0f2740;color:#eaf1f8;}
+.wrap{max-width:960px;margin:0 auto;padding:16px 14px 60px;}
+h1{font-size:23px;color:#ffd98a;margin:8px 0 2px;}
+.sub{color:#9db6cf;font-size:14px;margin:0 0 12px;}
+.trava{max-width:340px;margin:60px auto;background:#16334f;border:2px solid #2b567e;border-radius:16px;padding:22px 18px;text-align:center;}
+.trava input{font-size:18px;padding:11px 12px;border-radius:12px;border:2px solid #2b567e;width:80%;text-align:center;background:#0f2740;color:#eaf1f8;}
+.bt{font-family:inherit;font-size:15px;font-weight:bold;border:none;border-radius:12px;padding:10px 16px;margin:4px 4px;cursor:pointer;color:#0f2740;background:#ffd98a;}
+.bt.sec{background:#2b567e;color:#eaf1f8;}
+.bt.on{background:#5ec26a;color:#08240f;}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0;}
+.stat{display:inline-block;background:#16334f;border:1px solid #2b567e;border-radius:12px;padding:8px 12px;margin:3px 4px;font-size:14px;}
+.stat b{color:#ffd98a;font-size:18px;}
+table{width:100%;border-collapse:collapse;margin-top:8px;background:#122c46;border-radius:12px;overflow:hidden;}
+th,td{padding:9px 8px;text-align:left;font-size:14px;border-bottom:1px solid #22456a;}
+th{background:#1c3d5e;color:#cfe0f0;cursor:pointer;}
+td.num{text-align:center;font-variant-numeric:tabular-nums;}
+.pill{display:inline-block;min-width:42px;text-align:center;border-radius:10px;padding:3px 8px;font-weight:bold;color:#08240f;}
+tr:hover td{background:#173553;}
+.mut{color:#8fa8c2;font-size:13px;}
+select{font-size:14px;padding:6px 8px;border-radius:10px;border:2px solid #2b567e;background:#0f2740;color:#eaf1f8;}
+</style>
+<div id="root"></div>
+<script>
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var SLUG="interdisciplinar-hist-geo-3ano";
+var SENHA="1275";          /* atalho do professor (nao e seguranca, so um portao) */
+var dados=[], ordem="chegada", filtroTurma="", timer=null;
+function $(id){return document.getElementById(id);}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+function telaTrava(){
+  $("root").innerHTML='<div class="wrap"><div class="trava"><h1>Painel do Professor</h1>'+
+   '<p class="sub">Viagem pelo Brasil &middot; História e Geografia &middot; 3º ano</p>'+
+   '<input id="s" type="password" placeholder="senha" onkeydown="if(event.keyCode===13)destravar()">'+
+   '<div><button class="bt" onclick="destravar()">Entrar</button></div></div></div>';
+}
+function destravar(){ if($("s").value===SENHA){ telaPainel(); carregar(); if(!timer)timer=setInterval(carregar,10000);} else { $("s").value=""; $("s").placeholder="senha errada"; } }
+
+function telaPainel(){
+  $("root").innerHTML='<div class="wrap"><h1>&#127758; Viagem pelo Brasil — Notas</h1>'+
+   '<p class="sub">História e Geografia &middot; 3º ano &middot; a lista atualiza sozinha a cada 10 segundos.</p>'+
+   '<div class="bar">Ordenar: '+
+     '<button class="bt sec" id="o_chegada" onclick="setOrdem(\'chegada\')">Chegada</button>'+
+     '<button class="bt sec" id="o_nome" onclick="setOrdem(\'nome\')">Nome A→Z</button>'+
+     '<button class="bt sec" id="o_nota" onclick="setOrdem(\'nota\')">Maior nota</button>'+
+     ' &nbsp;Turma: <select id="fturma" onchange="filtroTurma=this.value;pintar()"><option value="">todas</option><option>3º A</option><option>3º B</option><option>3º C</option><option>3º D</option></select>'+
+     ' &nbsp;<button class="bt" onclick="baixarCSV()">Baixar CSV</button>'+
+     '<button class="bt sec" onclick="window.print()">Imprimir / PDF</button>'+
+     '<button class="bt sec" onclick="carregar()">Atualizar</button></div>'+
+   '<div id="stats"></div><div id="tabela"><p class="mut">Carregando…</p></div></div>';
+  setOrdem(ordem);
+}
+function setOrdem(o){ ordem=o; ["chegada","nome","nota"].forEach(function(k){var b=$("o_"+k);if(b)b.className="bt "+(k===o?"on":"sec");}); pintar(); }
+
+function carregar(){
+  try{
+    var x=new XMLHttpRequest();
+    x.open("GET",FIREBASE_DB+"/provas/"+SLUG+".json",true);
+    x.onreadystatechange=function(){ if(x.readyState===4){
+      var d=[]; try{ var o=JSON.parse(x.responseText||"null"); if(o){ for(var k in o){ if(o.hasOwnProperty(k)){ var r=o[k]||{}; r._k=k; d.push(r); } } } }catch(e){}
+      dados=d; pintar();
+    }};
+    x.send();
+  }catch(e){}
+}
+function corNota(n){ n=parseFloat(n)||0; if(n>=8.5)return "#8ee79a"; if(n>=6)return "#ffe08a"; return "#ffb0a6"; }
+function pintar(){
+  if(!$("tabela"))return;
+  var lista=dados.slice();
+  if(filtroTurma){ lista=lista.filter(function(r){return (r.turma||"")===filtroTurma;}); }
+  if(ordem==="nome"){ lista.sort(function(a,b){return (""+(a.nome||"")).localeCompare(""+(b.nome||""),"pt");}); }
+  else if(ordem==="nota"){ lista.sort(function(a,b){return (parseFloat(b.nota)||0)-(parseFloat(a.nota)||0);}); }
+  else { lista.sort(function(a,b){return (""+(a.data||"")).localeCompare(""+(b.data||""));}); }
+  /* stats */
+  var n=lista.length, soma=0, i; for(i=0;i<lista.length;i++){ soma+=parseFloat(lista[i].nota)||0; }
+  var media=n?(soma/n):0;
+  $("stats").innerHTML='<span class="stat">Provas: <b>'+n+'</b></span>'+
+    '<span class="stat">Média da turma: <b>'+(n?media.toFixed(1):"—")+'</b></span>';
+  if(!n){ $("tabela").innerHTML='<p class="mut">Nenhuma prova enviada ainda. Assim que um aluno terminar, a nota aparece aqui.</p>'; return; }
+  var h='<table><tr><th>#</th><th>Nome</th><th>Turma</th><th>Nota</th><th>Acertos</th><th>Quando</th></tr>';
+  for(i=0;i<lista.length;i++){ var r=lista[i];
+    h+='<tr><td class="num">'+(i+1)+'</td><td>'+esc(r.nome||"—")+'</td><td>'+esc(r.turma||"—")+'</td>'+
+       '<td class="num"><span class="pill" style="background:'+corNota(r.nota)+'">'+esc((r.nota===0||r.nota)?r.nota:"—")+'</span></td>'+
+       '<td class="num">'+esc(r.acertos||"—")+'</td><td class="mut">'+esc(r.data||"")+'</td></tr>';
+  }
+  h+='</table>';
+  $("tabela").innerHTML=h;
+}
+function baixarCSV(){
+  var lista=dados.slice(); if(filtroTurma){ lista=lista.filter(function(r){return (r.turma||"")===filtroTurma;}); }
+  lista.sort(function(a,b){return (""+(a.nome||"")).localeCompare(""+(b.nome||""),"pt");});
+  function cel(v){ v=""+(v==null?"":v); if(/^[=+\-@\t\r]/.test(v))v="'"+v; if(/[",;\n]/.test(v))v='"'+v.replace(/"/g,'""')+'"'; return v; }
+  var lin=["Nome;Turma;Nota;Acertos;Quando"],i;
+  for(i=0;i<lista.length;i++){ var r=lista[i]; lin.push([cel(r.nome),cel(r.turma),cel(r.nota),cel(r.acertos),cel(r.data)].join(";")); }
+  var blob=new Blob(["﻿"+lin.join("\r\n")],{type:"text/csv;charset=utf-8;"});
+  var a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="viagem-brasil-notas.csv"; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+telaTrava();
+</script>

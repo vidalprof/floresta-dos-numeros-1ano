@@ -1,0 +1,32 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt — Figuras do Ligar-Pontos (Circo)</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:19px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
+  textarea{width:100%;box-sizing:border-box;min-height:230px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+</style>
+<header>
+  <h1>&#127914; Figuras novas do Ligar-Pontos</h1>
+  <p>1 cartela com 2 ícones de circo (cartola + gravata-borboleta). Gere e suba no <b>_imagens/</b>.</p>
+</header>
+<div class="nota">
+  Objetos que <b>ainda não aparecem</b> na atividade. Contorno <b>grosso, fechado e simples</b> (pra eu extrair os 10 pontos), <b>fundo branco puro</b>, <b>sem sombra</b>, <b>sem texto</b>.
+</div>
+<div class="card">
+  <h2>Cartela &mdash; Cartola + Gravata-borboleta</h2>
+  <textarea id="p" readonly>Gere uma CARTELA (folha única) com dois objetos de circo DIFERENTES, lado a lado, bem separados:
+
+1) Uma CARTOLA (chapéu alto de mágico/apresentador de circo), preta com uma faixa vermelha, vista de frente.
+2) Uma GRAVATA-BORBOLETA de circo, vermelha com bolinhas brancas, vista de frente.
+
+Estilo: cartoon flat infantil, cores vivas, contorno preto GROSSO e fechado em volta de cada objeto, fundo BRANCO PURO #FFFFFF liso (sem textura, sem moldura, sem cartão). SEM sombras (nem projetada nem de contato embaixo). Sem texto, sem letras, sem números. Cada objeto inteiro, sólido, com silhueta bem definida e simples, separados por bastante espaço branco, sem sobreposição.</textarea>
+  <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
+</div>

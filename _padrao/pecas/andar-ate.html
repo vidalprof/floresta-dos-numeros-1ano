@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ande até o lugar</title>
+<!-- ============================================================
+     PEÇA: ANDE ATÉ O LUGAR (dar ordens de direção, casa por casa)
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ESTA MECÂNICA ENSINA: a criança não APONTA o destino — ela DIZ O
+     CAMINHO, um passo por vez, e o boneco obedece. É o gesto de comandar (o
+     começo do pensamento computacional) e o de se orientar num mapa: onde eu
+     estou, onde é o lugar, para que lado eu vou primeiro.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · UM COMANDO = UMA CASA, e o boneco ANDA até lá (transição de .3s + o
+         passo). Se ele teleportasse, a criança não veria a ordem virando
+         movimento — que é a coisa toda.
+       · O CAMINHO ERRADO NÃO PUNE: andar para o lado errado é permitido, não
+         faz som de erro, não tira nada. Só não chega. As casas por onde ele
+         passou ficam marcadas (a trilha), então o caminho torto vira uma coisa
+         que se OLHA e se corrige — nunca um castigo.
+       · SÓ A BORDA DO MAPA AVISA: quando o comando levaria para fora, o boneco
+         dá uma trombadinha e volta. É limite do mundo, não erro dela.
+       · O ANDAIME CRESCE COM O TEMPO PERDIDO (passos além do mínimo), não com
+         "erros": dica -> o lugar pisca -> a seta que aproxima pisca. Nunca X,
+         nunca "errou", nunca preso.
+       · NADA ESSENCIAL SÓ NA COR: cada seta tem a FLECHA e o NOME do lado
+         ("para cima"), e a trilha tem a pegada, não só um tom diferente.
+       · `data-qa` na seta que aproxima AGORA, atualizado a cada passo (só para
+         o auditor-jogador). Sem isso ele anda ao acaso num tabuleiro de 25
+         casas e reprova uma fase que a criança fecha.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: ANDE ATÉ O LUGAR ----------------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o mapa nasce COLADO no
+   enunciado (regra 9 do _qa/leiaute.js).                                     */
+.mapa{position:relative;margin:14px auto 0;max-width:304px;width:100%;
+      background:#43341f;border-radius:14px;padding:5px}
+.mlin{display:-webkit-box;display:-webkit-flex;display:flex;width:100%}
+.mcel{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;height:52px;margin:1px;border-radius:7px;
+      background:#6f9152;position:relative;overflow:hidden}
+/* a TRILHA: por onde ele ja passou. Cor + pegada (forma), nunca so cor. */
+.mcel.trilha{background:#8f7a4a}
+.mcel.trilha:after{content:"";position:absolute;left:50%;top:50%;width:12px;height:12px;
+                   margin:-6px 0 0 -6px;border-radius:50%;background:rgba(255,255,255,.55)}
+.mcel.pisca{-webkit-animation:acende 1s infinite;animation:acende 1s infinite}
+@-webkit-keyframes acende{0%,100%{box-shadow:inset 0 0 0 0 #ffd54a}50%{box-shadow:inset 0 0 0 5px #ffd54a}}
+@keyframes acende{0%,100%{box-shadow:inset 0 0 0 0 #ffd54a}50%{box-shadow:inset 0 0 0 5px #ffd54a}}
+.lugarsvg{position:absolute;left:0;top:0;right:0;bottom:0}
+.lugarsvg svg{width:100%;height:100%;display:block}
+/* O BONECO: anda de casa em casa (transicao) e da o passinho (animacao).
+   pointer-events:none para nunca roubar o dedo da crianca.                  */
+.andarino{position:absolute;left:0;top:0;width:52px;height:52px;pointer-events:none;z-index:3;
+          -webkit-transition:left .3s,top .3s;transition:left .3s,top .3s}
+.corpoand{width:100%;height:100%}
+.corpoand svg{width:100%;height:100%;display:block}
+.andarino.esq .corpoand{-webkit-transform:scaleX(-1);transform:scaleX(-1)}
+.andarino.anda .corpoand{-webkit-animation:passo .3s;animation:passo .3s}
+.andarino.bate .corpoand{-webkit-animation:trombada .3s;animation:trombada .3s}
+@-webkit-keyframes passo{0%{-webkit-transform:translateY(0)}45%{-webkit-transform:translateY(-9px)}100%{-webkit-transform:translateY(0)}}
+@keyframes passo{0%{transform:translateY(0)}45%{transform:translateY(-9px)}100%{transform:translateY(0)}}
+@-webkit-keyframes trombada{30%{-webkit-transform:scale(.88)}70%{-webkit-transform:scale(1.04)}}
+@keyframes trombada{30%{transform:scale(.88)}70%{transform:scale(1.04)}}
+.chegou{position:absolute;left:0;right:0;top:-4px;font-size:13px;font-weight:800;color:#123d09}
+.passos{margin-top:9px;font-size:16px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:6px 12px;display:inline-block;}
+.passos b{color:#ffd54a}
+/* AS SETAS — o comando. Flecha + nome do lado (nada essencial so na cor). */
+.setas{margin:9px auto 0;max-width:340px;width:100%;
+       display:-webkit-box;display:-webkit-flex;display:flex}
+.seta{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;margin:0 3px;min-height:58px;
+      background:#fffdf6;color:#221a12;border:0;border-radius:14px;cursor:pointer;
+      box-shadow:0 4px 0 #c9bda6;padding:5px 2px 4px}
+.seta:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.setaf{display:block;font-size:20px;font-weight:800;line-height:22px}
+.setan{display:block;font-size:12px;font-weight:700;line-height:14px}
+.seta.pisca{-webkit-animation:chama .8s infinite;animation:chama .8s infinite}
+@-webkit-keyframes chama{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes chama{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+/* tela baixa (projetor, janela curta): encolhe a CASA, nunca a seta */
+@media (max-height:470px){
+  .balao{font-size:15px;padding:9px 14px}
+  .mcel{height:38px}
+  .andarino{width:38px;height:38px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — DECLARACAO NO <script> ERRADO.
+   O integrador leva para a atividade **o SEGUNDO <script>** da peca (o
+   primeiro e o motorzinho da bancada, que o motor de verdade ja tem).
+   Eu declarei o `figEl` la em cima, junto do `el()`, e ele simplesmente
+   nao viajou: dentro da atividade a fase estourava com "figEl is not
+   defined" e o jogador ficava PRESO. Na bancada passava, porque la o
+   arquivo inteiro roda. Tudo o que a MECANICA usa mora no segundo. */
+var figEl = window.imgEl || null;
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- OS LUGARES DO MAPA ----
+   Tudo desenhado em SVG aqui dentro (a peca roda sozinha, sem arquivo
+   externo). Numa atividade de verdade entra a arte de IA no lugar.
+   A escada e progressiva: 1 direcao -> 2 direcoes perto -> 2 direcoes longe. */
+function svgHorta(){
+  return "<svg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'>"+
+   "<rect width='40' height='40' fill='#8fae63'/>"+
+   "<g fill='#4a7a2a'><rect x='6' y='24' width='28' height='4' rx='2'/>"+
+   "<rect x='6' y='31' width='28' height='4' rx='2'/></g>"+
+   "<g fill='#2f7a1f'><circle cx='12' cy='16' r='5'/><circle cx='22' cy='13' r='6'/><circle cx='31' cy='17' r='5'/></g>"+
+   "<g fill='#e8534a'><circle cx='12' cy='16' r='2'/><circle cx='22' cy='12' r='2'/><circle cx='31' cy='17' r='2'/></g></svg>";
+}
+function svgEscola(){
+  return "<svg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'>"+
+   "<rect width='40' height='40' fill='#8fae63'/>"+
+   "<rect x='7' y='16' width='26' height='19' fill='#f2e6cd'/>"+
+   "<path d='M5 17 L20 7 L35 17z' fill='#c0563f'/>"+
+   "<rect x='18' y='24' width='7' height='11' fill='#7a5230'/>"+
+   "<rect x='10' y='20' width='6' height='6' fill='#7fb6e0'/>"+
+   "<rect x='27' y='20' width='6' height='6' fill='#7fb6e0'/>"+
+   "<rect x='19' y='3' width='2' height='6' fill='#7a5230'/>"+
+   "<path d='M21 3 l7 2 -7 2z' fill='#ffd54a'/></svg>";
+}
+function svgPonte(){
+  return "<svg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'>"+
+   "<rect width='40' height='40' fill='#8fae63'/>"+
+   "<rect y='22' width='40' height='13' fill='#5aa0d0'/>"+
+   "<path d='M2 24 q18 -18 36 0' stroke='#b4794a' stroke-width='5' fill='none'/>"+
+   "<rect x='2' y='22' width='4' height='11' fill='#8a5a33'/>"+
+   "<rect x='34' y='22' width='4' height='11' fill='#8a5a33'/>"+
+   "<g stroke='#d9e6ff' stroke-width='2'><path d='M6 30 h7'/><path d='M27 33 h8'/></g></svg>";
+}
+function svgAndarino(){
+  return "<svg viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'>"+
+   "<ellipse cx='26' cy='45' rx='12' ry='3.5' fill='rgba(0,0,0,.30)'/>"+
+   "<rect x='19' y='27' width='14' height='15' rx='5' fill='#3c6ee0'/>"+
+   "<rect x='21' y='40' width='4' height='5' rx='2' fill='#33280a'/>"+
+   "<rect x='27' y='40' width='4' height='5' rx='2' fill='#33280a'/>"+
+   "<circle cx='26' cy='19' r='10' fill='#ffd9a8'/>"+
+   "<path d='M14 15 q12 -11 24 0z' fill='#c0563f'/>"+
+   "<rect x='12' y='14' width='28' height='3' rx='1.5' fill='#c0563f'/>"+
+   "<circle cx='22' cy='19' r='1.8' fill='#22301a'/><circle cx='30' cy='19' r='1.8' fill='#22301a'/>"+
+   "<path d='M22 24 q4 3 8 0' stroke='#22301a' stroke-width='1.8' fill='none' stroke-linecap='round'/>"+
+   "<rect x='33' y='28' width='4' height='11' rx='2' fill='#ffd9a8'/></svg>";
+}
+
+var LUGARES=[
+ {nome:"a horta",   arte:svgHorta,  alvo:{l:4,c:3},
+  dic:"A horta est&#225; na <b>mesma fileira</b> dele. S&#243; falta andar para o lado."},
+ {nome:"a escola",  arte:svgEscola, alvo:{l:2,c:2},
+  dic:"Primeiro <b>suba</b> as fileiras, depois ande para o <b>lado</b>."},
+ {nome:"o mirante", arte:svgPonte,  alvo:{l:0,c:4},
+  dic:"Ele est&#225; embaixo &#224; esquerda e o lugar est&#225; l&#225; em cima &#224; direita."}
+];
+var LADOS=[["▲","para cima",-1,0],["▼","para baixo",1,0],
+           ["◀","esquerda",0,-1],["▶","direita",0,1]];
+var NM=5;                                   /* o mapa e 5 x 5 */
+
+var lugarAtual=0, ondeL=4, ondeC=0, passosD=0, chegouD=false, ajudaD=0;
+var celsM=[], setasM=[], bonecoM=null, passosEl=null, telaA=null, barraA=null;
+
+function sPasso(){ nota(392,.05,.09,"square",0); }
+function sBate(){ nota(180,.10,.09,"sine",0); }
+
+function telaAnde(){
+  limpa();
+  var g=LUGARES[lugarAtual];
+  ondeL=4; ondeC=0; passosD=0; chegouD=false; ajudaD=0; celsM=[]; setasM=[];
+  var t=el("div","tela"); telaA=t;
+  setProg(t,Math.round(lugarAtual*100/LUGARES.length));
+  barraA=t.querySelector(".prog i");
+  var c=el("div","centro"), i, j;
+  c.appendChild(el("div","selo","LUGAR "+(lugarAtual+1)+" DE "+LUGARES.length));
+  c.appendChild(el("div","balao","Diga o caminho at&#233; <b>"+g.nome+"</b>, um passo por vez."));
+
+  var mapa=el("div","mapa");
+  for(i=0;i<NM;i++){
+    var lin=el("div","mlin");
+    celsM.push([]);
+    for(j=0;j<NM;j++){
+      var q=el("div","mcel");
+      /* a arte do lugar: `img` (arte de IA) na frente, `arte` (funcao) so na
+         bancada. Ver a licao gemea na peca `escrever-legenda`. */
+      if(i===g.alvo.l&&j===g.alvo.c){
+        var _lg=el("div","lugarsvg","");
+        if(g.img&&figEl){ _lg.appendChild(figEl(g.img)); }
+        else if(typeof g.arte==="function"){ _lg.innerHTML=g.arte(); }
+        q.appendChild(_lg);
+      }
+      lin.appendChild(q); celsM[i].push(q);
+    }
+    mapa.appendChild(lin);
+  }
+  bonecoM=el("div","andarino");
+  bonecoM.appendChild(el("div","corpoand",svgAndarino()));
+  mapa.appendChild(bonecoM);
+  c.appendChild(mapa);
+
+  passosEl=el("div","passos","passos dados: <b>0</b>");
+  c.appendChild(passosEl);
+
+  var box=el("div","setas");
+  for(i=0;i<LADOS.length;i++) box.appendChild(fazSeta(LADOS[i]));
+  c.appendChild(box);
+  c.appendChild(el("div","hint","Cada toque d&#225; <b>um</b> passo. Errar o lado n&#227;o tira nada: &#233; s&#243; voltar."));
+  t.appendChild(c); app.appendChild(t);
+  poeBoneco(false);
+  marcaSetas();
+}
+
+function fazSeta(d){
+  var b=el("div","seta",'<i class="setaf">'+d[0]+'</i><i class="setan">'+d[1]+'</i>');
+  b._dl=d[2]; b._dc=d[3];
+  b.onclick=function(){ anda(d[2],d[3],b); };
+  setasM.push(b);
+  return b;
+}
+
+/* posiciona o boneco MEDINDO a casa (conta por porcentagem erra por causa do
+   padding do mapa e da margem de cada casa) */
+function poeBoneco(comPasso){
+  var q=celsM[ondeL]&&celsM[ondeL][ondeC];
+  if(!q||!bonecoM) return;
+  bonecoM.style.left=q.offsetLeft+"px";
+  bonecoM.style.top=q.offsetTop+"px";
+  bonecoM.style.width=q.offsetWidth+"px";
+  bonecoM.style.height=q.offsetHeight+"px";
+  if(comPasso){
+    bonecoM.className=(bonecoM.className.indexOf("esq")>=0)?"andarino esq anda":"andarino anda";
+    setTimeout(paraPasso,330);
+  }
+}
+function paraPasso(){
+  if(!bonecoM) return;
+  bonecoM.className=(bonecoM.className.indexOf("esq")>=0)?"andarino esq":"andarino";
+}
+
+/* ---- O COMANDO: um toque = UMA casa ---- */
+function anda(dl,dc,bot){
+  if(chegouD) return;
+  var g=LUGARES[lugarAtual];
+  var nl=ondeL+dl, nc=ondeC+dc;
+  if(nl<0||nl>=NM||nc<0||nc>=NM){ trombada(); return; }
+  /* vira para o lado de andar (so a figura, o comando e o mesmo) */
+  if(dc<0) bonecoM.className="andarino esq";
+  else if(dc>0) bonecoM.className="andarino";
+  marcaTrilha();
+  ondeL=nl; ondeC=nc; passosD++;
+  sPasso();
+  poeBoneco(true);
+  if(passosEl) passosEl.innerHTML="passos dados: <b>"+passosD+"</b>";
+  marcaSetas();
+  if(barraA) barraA.style.width=Math.round((lugarAtual+Math.min(1,passosD/(minimo()+passosD||1)))*100/LUGARES.length)+"%";
+  if(ondeL===g.alvo.l&&ondeC===g.alvo.c){ chega(); return; }
+  socorro();
+}
+/* a casa de onde ele saiu fica marcada: o caminho torto vira coisa de OLHAR */
+function marcaTrilha(){
+  var g=LUGARES[lugarAtual], q=celsM[ondeL][ondeC];
+  if(!q) return;
+  if(ondeL===g.alvo.l&&ondeC===g.alvo.c) return;
+  if(q.className.indexOf("trilha")<0) q.className="mcel trilha";
+}
+function trombada(){
+  sBate();
+  if(bonecoM){
+    bonecoM.className=(bonecoM.className.indexOf("esq")>=0)?"andarino esq bate":"andarino bate";
+    setTimeout(paraPasso,320);
+  }
+  mostraDica("Por a&#237; ele sai do mapa. Escolha outro lado.");
+}
+
+/* quantos passos bastam, daqui at&#233; o lugar */
+function minimo(){
+  var g=LUGARES[lugarAtual];
+  return Math.abs(g.alvo.l-ondeL)+Math.abs(g.alvo.c-ondeC);
+}
+/* a seta que APROXIMA agora — so para o auditor-jogador */
+function marcaSetas(){
+  var g=LUGARES[lugarAtual], i, d;
+  for(i=0;i<setasM.length;i++){
+    d=setasM[i];
+    var perto=((d._dl<0&&g.alvo.l<ondeL)||(d._dl>0&&g.alvo.l>ondeL)||
+               (d._dc<0&&g.alvo.c<ondeC)||(d._dc>0&&g.alvo.c>ondeC));
+    d.setAttribute("data-qa",perto?"1":"0");
+  }
+}
+
+/* ---- O ANDAIME: cresce com o caminho perdido, nao com "erro" ---- */
+function socorro(){
+  var g=LUGARES[lugarAtual], sobra=passosD-(Math.abs(g.alvo.l-4)+Math.abs(g.alvo.c-0));
+  if(sobra===4&&ajudaD<1){ ajudaD=1; mostraDica(g.dic); return; }
+  if(sobra===8&&ajudaD<2){ ajudaD=2;
+    mostraDica("O lugar est&#225; <b>piscando</b> no mapa. Olhe para onde ele fica.");
+    piscaLugar(); return; }
+  if(sobra>=12&&ajudaD<3){ ajudaD=3;
+    mostraDica("A seta que <b>aproxima</b> est&#225; piscando. Pode tocar nela.");
+    piscaSeta(); }
+}
+function piscaLugar(){
+  var g=LUGARES[lugarAtual], q=celsM[g.alvo.l][g.alvo.c];
+  if(q) q.className="mcel pisca";
+}
+function piscaSeta(){
+  var i,ehAProxima;
+  for(i=0;i<setasM.length;i++){
+    ehAProxima=(setasM[i].getAttribute("data-qa")==="1");
+    setasM[i].className=ehAProxima?"seta pisca":"seta";
+  }
+}
+function limpaPiscas(){
+  var i;
+  for(i=0;i<setasM.length;i++) setasM[i].className="seta";
+}
+
+function chega(){
+  chegouD=true;
+  limpaPiscas();
+  sCerto();
+  var g=LUGARES[lugarAtual], q=celsM[g.alvo.l][g.alvo.c];
+  if(q){ q.className="mcel"; q.appendChild(el("div","chegou","CHEGOU")); }
+  if(barraA) barraA.style.width=Math.round((lugarAtual+1)*100/LUGARES.length)+"%";
+  apagaDicaA();
+  if(passosEl) passosEl.innerHTML="chegou em <b>"+passosD+"</b> passos!";
+  setTimeout(proximoLugar,1500);
+}
+function proximoLugar(){
+  if(!telaA||!telaA.parentNode) return;
+  lugarAtual++;
+  if(lugarAtual<LUGARES.length){ telaAnde(); return; }
+  mostraBanner("Voc&#234; guiou o caminho inteiro <b>dizendo para que lado ir</b> — passo por passo!",telaFimAnde);
+}
+function apagaDicaA(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+function telaFimAnde(){
+  limpa();
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Tr&#234;s lugares, tr&#234;s caminhos — todos <b>comandados por voc&#234;</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomecaAnde;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaAnde(){ lugarAtual=0; telaAnde(); }
+
+telaAnde();
+</script>
+</body></html>

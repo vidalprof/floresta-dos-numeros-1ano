@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ouvir e achar (o som chama, a figura responde)</title>
+<!-- ============================================================
+     PEÇA: OUVIR E ACHAR — toca a palavra, a criança acha a figura.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     POR QUE ELA EXISTE:
+     no pré e no 1º ano a criança ainda não lê — ela OUVE. Esta é a mecânica que
+     deixa a atividade inteira acessível a quem ainda soletra: o enunciado chega
+     pelo ouvido e a resposta é uma FIGURA, não uma frase. E é também a porta da
+     consciência fonológica: da palavra inteira (rodada 1 e 2) para o SOM DO
+     COMEÇO (rodada 3), que é o degrau que abre a leitura.
+
+     ⚠️ A REGRA QUE MANDA AQUI: ELA TEM QUE FUNCIONAR NO MUDO.
+     PC de escola sem caixa de som existe, e é a regra da casa que todo som tenha
+     gêmeo visual. Então a palavra da vez aparece SEMPRE ESCRITA, em letra
+     grande, ao lado do botão de ouvir; e cada figura tem o nome escrito embaixo.
+     Quem tem som ouve e acha; quem não tem, lê e acha; quem não lê nem ouve,
+     ainda tem o alto-falante de cada resposta. Nenhuma criança fica de fora.
+
+     ⚠️⚠️ A VOZ AQUI É SEMPRE GRAVADA — NUNCA a voz-robô do navegador.
+     Lição paga (ago/2026), e foi o Marcos quem ouviu, com a atividade na mão:
+     *"onde tenho que ouvir a palavra não funciona; o enunciado funciona, os
+     sons das opções funcionam"*. Só o botão MAIS IMPORTANTE da fase era mudo.
+     A causa: esta peça falava por `speechSynthesis`, e a ponte do integrador
+     DESLIGA essa voz de propósito (ele tinha pegado antes duas vozes falando
+     ao mesmo tempo). O guarda estava certo; errada estava a peça.
+     Agora a peça não declara voz nenhuma: ela CHAMA o `diz(...)` que a ponte
+     injeta, que toca o MP3 gravado (`entregar.yml` + `falas.json`, e
+     `op_<chave>.mp3` + `VOZOK` no alto-falante de cada resposta). Na bancada
+     `diz` não existe e a peça fica em silêncio — e continua inteira, porque
+     tudo o que a voz diz está ESCRITO na tela. Medido por `_qa/vozrobo.py`.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · EXATAMENTE 3 DISTRATORES. Com 2, a criança elimina tudo antes do 3º erro
+         e o degrau "revelar" vira código morto; com 5, o andaime nunca chega.
+       · OPÇÃO JÁ TENTADA não se distingue só pela cor nem responde com silêncio:
+         ganha a etiqueta em PALAVRAS ("já tentamos") e um som de retorno.
+       · A CORRIDA DO TOQUE DUPLO: `travada = true` no INSTANTE do acerto, nunca
+         no fim da animação — criança toca duas vezes, é o normal dela.
+       · A 3ª DICA INVISÍVEL: o revelar acende a certa e SÓ DEPOIS escreve a
+         explicação, que fica 2,2s de pé. Nas cinco peças de ago/2026 ela era
+         escrita e apagada no mesmo quadro.
+       · TEMPORIZADOR DE RODADA VELHA: todo setTimeout guarda a GERAÇÃO.
+       · OPÇÕES EMBARALHADAS: na Fábrica de Estrelas a certa era sempre a 1ª e a
+         criança aprendeu a posição, não o conteúdo.
+       · NUNCA TRAVA: o 3º erro resolve a rodada sozinho.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; nada essencial só na cor; funciona no mudo; publica
+     data-qa; termina em .medal. Toda figura é desenhada em CSS — sem arquivo
+     externo, porque a peça tem que rodar sozinha em qualquer lugar.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A CAIXA DE SOM: o botao de ouvir E a palavra ESCRITA, lado a lado. A palavra
+   escrita nao e enfeite — e o gemeo visual do som, o que faz a peca funcionar
+   no PC sem caixa de som. */
+.somcard{max-width:430px;margin:13px auto 0;background:rgba(255,255,255,.12);border-radius:22px;
+         padding:14px 12px 12px;text-align:center;
+         -webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.14);
+         box-shadow:inset 0 0 0 2px rgba(255,255,255,.14)}
+/* ⭐⭐ O BOTAO OUVIR — o alvo MAIS IMPORTANTE da fase, e ele era o menor da tela.
+   Ordem do Marcos (ago/2026): *"as dinamicas interativas tem que ser mais
+   VISUAIS e SONORAS para os pequenos"*. No 1o ano a crianca nao le o rotulo:
+   ela reconhece o BOTAO GRANDE que faz barulho. Antes ele tinha 46px de altura
+   e 96px de largura, encostado a esquerda da palavra escrita, do tamanho de um
+   botao de apoio — quando ele e a fase inteira.
+   Agora: linha propria, 64px de altura, ate 320px de largura, o alto-falante
+   desenhado do lado do rotulo, e o PULSO que sai dele. O pulso nao e enfeite:
+   e o que diz "aqui sai som" para quem nao le. Ele mora no `box-shadow`, que
+   nao ocupa espaco nenhum no leiaute e por isso nao empurra nada. */
+.obt{position:relative;display:block;margin:0 auto 20px;background:#ffd54a;color:#33280a;border:0;
+     border-radius:999px;width:100%;max-width:320px;min-height:64px;padding:0 22px;font-size:20px;
+     font-weight:800;letter-spacing:.5px;cursor:pointer;
+     -webkit-box-shadow:0 5px 0 #c9a52f;box-shadow:0 5px 0 #c9a52f;
+     -webkit-animation:oapulso 2.6s ease-out infinite;animation:oapulso 2.6s ease-out infinite}
+.obt:active{-webkit-transform:translateY(4px);transform:translateY(4px);
+     -webkit-box-shadow:0 1px 0 #c9a52f;box-shadow:0 1px 0 #c9a52f;
+     -webkit-animation:none;animation:none}
+/* enquanto a voz toca o botao acende e para de pulsar: a crianca ve o som */
+.obt.tocando{background:#ffe89c;-webkit-animation:none;animation:none}
+@-webkit-keyframes oapulso{
+  0%{-webkit-box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,.5)}
+  70%{-webkit-box-shadow:0 5px 0 #c9a52f,0 0 0 15px rgba(255,213,74,0)}
+  100%{-webkit-box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,0)}}
+@keyframes oapulso{
+  0%{box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,.5)}
+  70%{box-shadow:0 5px 0 #c9a52f,0 0 0 15px rgba(255,213,74,0)}
+  100%{box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,0)}}
+.obt .fone{width:30px;height:30px;margin:0 10px 0 0;
+     -webkit-background-size:30px 30px;background-size:30px 30px}
+.palvbox{display:block;text-align:center}
+.palvr{font-size:12px;font-weight:800;letter-spacing:.7px;color:var(--texto,#f0e6d4)}
+.palv{display:block;font-size:32px;line-height:1.1;font-weight:800;color:#ffd54a;letter-spacing:1px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
+/* nivel dificil: a frase oculta e o botao de apoio "Ver a frase" */
+.palv.oculto{letter-spacing:4px;opacity:.85}
+/* ⚠️ fundo SOLIDO (nao vidro translucido): sobre o vidro a razao caia a 3.77:1 e
+   o portao de contraste (4) reprovou. Escuro chapado = ~13:1. */
+.vfrase{margin-top:7px;background:#2b2118;color:#f4efe6;border:0;
+  border-radius:12px;padding:8px 16px;font-size:13px;font-weight:700;min-height:40px;cursor:pointer}
+.vfrase:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+/* O ALTO-FALANTE DESENHADO (nada de emoji).
+   ⚠️ DEFEITO PEGO NO PRINT (ago/2026): na 1a versao o corpinho ficava do lado
+   errado do cone e o desenho virava uma SETA PARA A ESQUERDA — a crianca lia
+   "voltar" num botao que fala. Corpo a ESQUERDA, cone abrindo para a DIREITA,
+   e a ondinha de som na frente: ai nao se confunde com seta.
+
+   ⚠️ E ELE ERA DESENHADO A BORDA (corpo no `:after`, onda no `:before`, cone
+   numa borda-triangulo) num elemento de tamanho ZERO. Deu defeito duas vezes:
+   a onda escapava do botao (`:before` ia ate 26px num circulo de 30) e, num
+   elemento sem tamanho, o flex centra o PONTO e nao a tinta — o desenho saia
+   torto. Agora e UM SVG embutido: o glifo se centra pelo proprio `viewBox`, o
+   elemento tem tamanho de verdade e fica nitido em qualquer zoom. Data URI =
+   continua 1 arquivo so, sem pedido de rede. O MESMO glifo serve o botao
+   "Ouvir" do enunciado e o alto-falante de cada resposta — dois desenhos
+   diferentes de alto-falante no mesmo app e amadorismo. */
+.fone{display:inline-block;vertical-align:middle;width:22px;height:22px;margin:0 8px 0 4px;
+      background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+      -webkit-background-size:22px 22px;background-size:22px 22px}
+.fone:after,.fone:before{content:none;display:none}
+
+/* ⚠️ AS REGRAS `.fig` SAIRAM DAQUI (ago/2026), e a saida faz parte do conserto.
+   `.fig` e o nome que o MOTOR usa para a figurinha do CRACHA: enquanto a peca
+   tambem tinha esse nome, cada troca de estado (`"opt fig usada"`) puxava o
+   cartao para o molde do cracha dentro da atividade montada. Agora o cartao e
+   `.opt.oaf` do inicio ao fim, e o nome perigoso nao existe mais no arquivo.
+   Quem faz o mesmo trabalho: `.opt.oaf`, `.opt.oaf.certa`, `.opt.oaf.usada`. */
+.destxt{font-size:46px;font-weight:800;color:var(--texto,#2b2118);line-height:1}
+.des img{width:100%;height:100%;object-fit:contain}
+.des{position:relative;width:58px;height:58px;margin:0 auto}
+/* ⚠️⚠️ DEFEITO PEGO NA FOTO (ago/2026) — e ele estava no ar, calado.
+   Os oito desenhos de CSS sao feitos de pecinhas `position:absolute` com
+   left/top em pixel, TODAS medidas para uma caixa de 58x58 (o `.des` original).
+   Quando o cartao passou a ter a figura grande, o `.des` virou `width:100%` —
+   uns 174px — e as pecinhas continuaram nos mesmos pixels: o miolo do sol
+   ficou encostado no canto de cima e os raios (que saem de `left:50%`) foram
+   parar no meio da largura NOVA. O sol partiu ao meio. Mesma coisa na casa, na
+   bola e no peixe. Nenhum erro, nenhum portao acusando: so a figura errada.
+   O conserto e dar de volta aos desenhos a caixa para a qual eles foram
+   feitos: `.descss` tem 58x58 SEMPRE, e quem cresce e a ESCALA, que leva as
+   pecinhas juntas. Regra que fica: desenho posicionado em pixel nao se
+   redimensiona mexendo no pai — se redimensiona por `transform`. */
+.descss{position:relative;width:58px;height:58px;margin:0 auto}
+.linha{margin-top:2px;white-space:nowrap}
+.nom{display:inline-block;vertical-align:middle;font-size:15px;font-weight:800;letter-spacing:.5px;
+     color:var(--texto,#221a12);max-width:56%;overflow:hidden}
+/* alto-falante de CADA resposta (pilar SONORA: no pre/1o ano tem quem nao le,
+   e sem a voz a escolha vira loteria) */
+.zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin-left:6px;
+     border:0;border-radius:12px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:44px}
+.zap:active{background-color:#ded3b8}
+/* ETIQUETA EM PALAVRAS, nunca so a cor: quem nao distingue cor precisa LER que
+   ali ja se tentou. */
+.jat{position:absolute;left:6px;right:6px;bottom:3px;background:#6b5a44;color:#fff;
+     font-size:11px;font-weight:800;border-radius:8px;padding:2px 0;display:none}
+.jat.ver{display:block}
+/* APOIO CONCRETO do 2o degrau: a letra do comeco de cada nome, para comparar */
+.ini{position:absolute;left:5px;top:5px;width:26px;height:26px;border-radius:8px;background:#3c6ee0;
+     color:#fff;font-size:15px;font-weight:800;line-height:26px;display:none}
+.ini.ver{display:block}
+/* o "certa" do cartao mora em `.opt.oaf.certa` / `.opt.oaf.ok`, mais abaixo */
+
+/* ---- OS DESENHOS (CSS puro: nenhum arquivo externo) ---- */
+.solc{position:absolute;left:9px;top:9px;width:40px;height:40px;border-radius:50%;background:#ffd54a;
+      z-index:2;-webkit-box-shadow:inset 0 0 0 3px #a8710c;box-shadow:inset 0 0 0 3px #a8710c}
+.solr{position:absolute;left:50%;top:50%;width:6px;height:58px;margin:-29px 0 0 -3px;border-radius:3px;
+      background:#e09400}
+.cpar{position:absolute;left:8px;top:26px;width:42px;height:30px;background:#e0c9a0;
+      -webkit-box-shadow:inset 0 0 0 3px #8a6a45;box-shadow:inset 0 0 0 3px #8a6a45}
+.ctel{position:absolute;left:1px;top:4px;width:0;height:0;border-left:28px solid rgba(0,0,0,0);
+      border-right:28px solid rgba(0,0,0,0);border-bottom:23px solid #b1483a}
+.cpor{position:absolute;left:23px;top:38px;width:13px;height:18px;background:#6b4b2a;border-radius:3px 3px 0 0}
+.bcir{position:absolute;left:4px;top:4px;width:50px;height:50px;border-radius:50%;background:#e8563f;
+      overflow:hidden;-webkit-box-shadow:inset 0 0 0 3px #8c2c1c;box-shadow:inset 0 0 0 3px #8c2c1c}
+/* ⚠️ DEFEITO PEGO NO PRINT, DUAS VEZES: com UMA faixa branca larga no meio a
+   bola virava placa de PROIBIDO; so com a cruz, virou uma CRUZ. O que le como
+   bola sao as quatro linhas da bola de basquete — a cruz MAIS as duas curvas
+   dos lados. Desenho de figura tem que ser CONFERIDO no print, nunca no
+   codigo: no codigo os tres desenhos eram "um circulo com listras". */
+.bfai{position:absolute;left:-2px;top:23px;width:54px;height:5px;background:#fffdf6}
+.bfa2{position:absolute;left:23px;top:-2px;width:5px;height:54px;background:#fffdf6}
+.bcu1{position:absolute;left:-15px;top:-3px;width:40px;height:56px;border-radius:50%;
+      border-right:5px solid #fffdf6}
+.bcu2{position:absolute;left:26px;top:-3px;width:40px;height:56px;border-radius:50%;
+      border-left:5px solid #fffdf6}
+.pcor{position:absolute;left:14px;top:16px;width:40px;height:27px;border-radius:50%;background:#3f8fa8;
+      -webkit-box-shadow:inset 0 0 0 3px #1c5162;box-shadow:inset 0 0 0 3px #1c5162}
+.prab{position:absolute;left:1px;top:19px;width:0;height:0;border-top:10px solid rgba(0,0,0,0);
+      border-bottom:10px solid rgba(0,0,0,0);border-right:15px solid #3f8fa8}
+.polh{position:absolute;left:43px;top:23px;width:7px;height:7px;border-radius:50%;background:#0d2b33}
+.atro{position:absolute;left:23px;top:30px;width:13px;height:28px;background:#6b4b2a;border-radius:2px}
+.acop{position:absolute;left:5px;top:0;width:48px;height:39px;border-radius:50%;background:#2f8f3a;
+      -webkit-box-shadow:inset 0 0 0 3px #1c5c22;box-shadow:inset 0 0 0 3px #1c5c22}
+.fcau{position:absolute;left:26px;top:30px;width:6px;height:27px;background:#2f8f3a}
+.fpet{position:absolute;left:29px;top:24px;width:15px;height:24px;margin-left:-7px;border-radius:50%;
+      background:#e05c9e;-webkit-transform-origin:50% 0;transform-origin:50% 0;
+      -webkit-box-shadow:inset 0 0 0 2px #9c2f66;box-shadow:inset 0 0 0 2px #9c2f66}
+.fmio{position:absolute;left:20px;top:15px;width:18px;height:18px;border-radius:50%;background:#ffd54a;
+      z-index:2;-webkit-box-shadow:inset 0 0 0 2px #a8710c;box-shadow:inset 0 0 0 2px #a8710c}
+.kcab{position:absolute;left:2px;top:17px;width:25px;height:25px;border-radius:50%;
+      -webkit-box-shadow:inset 0 0 0 7px #c9a52f;box-shadow:inset 0 0 0 7px #c9a52f}
+.khas{position:absolute;left:25px;top:26px;width:31px;height:8px;background:#c9a52f;border-radius:2px}
+.kden{position:absolute;top:34px;width:7px;height:10px;background:#c9a52f}
+.lua{position:absolute;left:8px;top:6px;width:42px;height:42px;border-radius:50%;
+     -webkit-box-shadow:15px 7px 0 0 #ffe9a8;box-shadow:15px 7px 0 0 #ffe9a8}
+
+.cont{margin-top:10px;font-size:15px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
+.cont b{color:#ffd54a}
+.aviso{margin-top:8px;font-size:16px;font-weight:700;background:#1f6b12;color:#fff;
+       border-radius:12px;padding:9px 12px;display:none}
+.aviso.ver{display:block}
+.medal{width:96px;height:96px;margin:2px auto 10px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:40px;line-height:84px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa (o 1024x420 da escola): as quatro figuras numa linha so. A que
+   encolhe e a FIGURA e a letra — o alvo do dedo continua acima de 44px. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:8px 13px}
+  .balao + *{margin-top:8px}
+  .somcard{margin-top:8px;padding:8px 8px 6px}
+  /* ⚠️ em janela baixa encolhe a LETRA e a folga, NUNCA o alvo: 48px continua
+     acima dos 44px que o dedo de 6 anos precisa. */
+  .obt{min-height:48px;font-size:16px;margin-bottom:12px}
+  .obt .fone{width:24px;height:24px;-webkit-background-size:24px 24px;background-size:24px 24px}
+  .palv{font-size:24px}
+  .nom{font-size:13px}
+  .zap{width:44px;height:44px;line-height:44px;margin-left:4px}
+  .cont{margin-top:5px;font-size:13px}
+  .aviso{margin-top:5px;font-size:14px;padding:6px 10px}
+  .hint{margin-top:4px;font-size:13px}
+  .medal{width:70px;height:70px;font-size:30px;line-height:60px}
+}
+
+/* ⭐⭐ O CARTAO DA FIGURA — refeito (cobranca do Marcos, ago/2026: *"o dizer da
+   figura fica fora do quadrado branco, ficou feio, isso teria que ficar mais
+   profissional, com uma moldura, ou sem fundo somente a imagem sem fundo e seu
+   nome embaixo"*).
+
+   O que estava errado: esta peca nasceu com figuras DESENHADAS EM CSS, de 46px.
+   Quando ela passou a aceitar ARTE DE IA, o cartao nao acompanhou — a figura
+   ficou perdida num canto, o nome caiu PARA FORA da borda branca e os cartoes
+   encostaram na esquerda com um vazio enorme a direita.
+
+   O molde agora: cartao centrado e largo, com MOLDURA propria em volta da
+   figura (fundo creme, borda suave), a figura GRANDE dentro dela, e o nome
+   LOGO ABAIXO, dentro do cartao. O alto-falante fica a direita, no meio. */
+/* ⭐ NO JEITO DO BROTO: cartao quadrado, figura GRANDE em cima e o nome
+   EMBAIXO, dentro do cartao — nunca pendurado para fora. Dois por linha. */
+/* ⚠️ LICAO PAGA (ago/2026): o MOTOR tem `.opts{flex-direction:column}` (vem do
+   Broto, onde as respostas sao uma lista). Esta regra aqui define `display` e
+   `flex-wrap`, mas eu NAO tinha escrito a DIRECAO — e especificidade vale por
+   PROPRIEDADE: a coluna do motor continuava mandando, e os cartoes ficavam
+   empilhados por mais que a largura coubesse dois. Medido no navegador
+   (`display:flex, wrap:wrap, largura 179px, pai 380px`) — deduzir nao resolveu,
+   MEDIR resolveu. Toda regra de flex que disputa com o motor escreve a direcao. */
+.opts{display:-webkit-box;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:start;align-items:flex-start;
+  gap:10px;max-width:412px;margin:12px auto 0}
+/* ⭐ VIDRO FOSCO — escolha do Marcos entre tres opcoes que eu mostrei (ago/2026).
+   Cartao creme TRANSLUCIDO: o cenario da padaria aparece desfocado por tras, em
+   vez de ser tapado por um quadrado branco chapado. E o acabamento de app que
+   ele pediu.
+   ⚠️ eu tinha avisado que o desfoque nao funcionaria no PC da escola. ESTAVA
+   ERRADO: `backdrop-filter` existe no Chrome desde a 76 e a escola tem a 109
+   (e o Firefox desde a 103). Corrigido antes de virar lenda.
+   Mesmo assim ha queda: sem desfoque o cartao continua legivel, porque o creme
+   translucido e a borda clara ja separam a figura do fundo. */
+/* ⚠️⚠️ LICAO PAGA E MEDIDA (ago/2026), e ela estava SEGURA POR UM FIO: a letra
+   do comeco (`.ini`) e a etiqueta "ja tentamos" (`.jat`) sao `position:absolute`
+   e nasceram para viver dentro do `.fig`, que tinha `position:relative`. O
+   cartao novo (`.opt.oaf`) NAO declarava posicao nenhuma — e mesmo assim as duas
+   caiam no lugar certo. Medido no navegador para descobrir por que: quem estava
+   segurando era o `backdrop-filter` do vidro fosco, que cria bloco de
+   contencao sem ninguem pedir. Ou seja: num navegador sem desfoque (Firefox
+   antigo, PC com aceleracao desligada) a letra do andaime e o "ja tentamos"
+   voariam para o CANTO DA PAGINA — e so no 2o erro, que e onde ninguem olha.
+   Efeito visual segurando estrutura e acidente, nao projeto: a posicao agora
+   esta escrita. */
+/* ⚠️ min-height 0 deixava a fileira TORTA (ago/2026): legenda de 2 linhas
+   ('They are playing football') deixava a carta mais alta que a vizinha de 1
+   linha. Piso fixo iguala as cartas da mesma fileira. */
+.opt.oaf{position:relative;display:block;width:47%;max-width:190px;margin:0;padding:12px 8px 10px;
+  text-align:center;min-height:196px;
+  background:rgba(255,248,232,.55);
+  -webkit-backdrop-filter:blur(6px) saturate(1.05);backdrop-filter:blur(6px) saturate(1.05);
+  border:2px solid rgba(255,255,255,.78);border-bottom-width:5px;border-radius:22px;
+  -webkit-box-shadow:0 8px 18px rgba(40,25,10,.28);box-shadow:0 8px 18px rgba(40,25,10,.28)}
+.opt.oaf .des img{-webkit-filter:drop-shadow(0 5px 7px rgba(40,25,10,.3));
+  filter:drop-shadow(0 5px 7px rgba(40,25,10,.3))}
+.opt.oaf .nom{color:#3a3020;text-shadow:0 1px 0 rgba(255,255,255,.6)}
+.opt.oaf.ok{background:rgba(214,245,200,.75);border-color:#5bbf3a}
+.opt.oaf.no{background:rgba(255,224,218,.75);border-color:#ff7a6b}
+/* ⭐ O CARTAO RESPONDE AO DEDO. Sem isto o toque na figura nao acusava nada
+   ate a resposta ser julgada — e no 1o ano meio segundo de silencio ja e "nao
+   funcionou", e a crianca toca de novo. */
+.opt.oaf:active{-webkit-transform:translateY(3px);transform:translateY(3px);
+  -webkit-box-shadow:0 3px 8px rgba(40,25,10,.28);box-shadow:0 3px 8px rgba(40,25,10,.28)}
+/* ⚠️⚠️ LICAO PAGA, A MESMA DE `acertou` E EU A REPETI EM OUTROS DOIS LUGARES
+   (ago/2026): trocar o className inteiro por "opt fig usada" e uma ATRIBUICAO, e ela apaga o
+   `oaf`, e o cartao ja tentado perdia a moldura de vidro da casa e voltava ao
+   molde velho (`.fig`, que ainda por cima e o nome do cracha no motor). Classe
+   de ESTADO se ACRESCENTA. `.usada` agora tem o estado dela AQUI, no cartao
+   certo. */
+.opt.oaf.usada{background:rgba(230,221,203,.75);border-color:rgba(255,255,255,.5);
+  -webkit-box-shadow:0 4px 10px rgba(40,25,10,.22);box-shadow:0 4px 10px rgba(40,25,10,.22)}
+.opt.oaf.usada .des{opacity:.55}
+/* ⭐ SEM FIGURA, SO A PALAVRA (e nunca a lua por engano). Quando a fase traz
+   uma chave que nao tem `img` nem desenho proprio, o cartao nao inventa um
+   desenho: ele fica com a PALAVRA em corpo grande, que e o gemeo escrito de
+   sempre. Ver o comentario do `desenho()`. */
+.opt.oaf.oafso{padding:18px 8px 14px}
+.opt.oaf.oafso .nom{font-size:26px;line-height:1.1}
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e a que explica TODOS os defeitos visuais desta
+   peca de uma vez: a opcao se chamava `.fig` — e `.fig` e o nome que o MOTOR usa
+   para a figurinha do CRACHA (82x82, quadrada, fundo branco). Numa atividade
+   montada as duas viviam no mesmo documento, e o cracha do Broto atropelava a
+   resposta: 82px cravados, o quadrado branco que o Marcos estranhou, o nome
+   expulso para fora e o alto-falante sumido.
+   Nao era o meu CSS: era COLISAO DE NOME com o motor — a mesma familia do `ac`
+   funcao x objeto que ja tinha custado a peca da memoria.
+   Achado com `CSS.getMatchedStylesForNode` (CDP), listando TODAS as regras que
+   casavam com o elemento. Adivinhar nao resolveu tres vezes; medir resolveu na
+   primeira.
+   ⚠️ REGRA: peca nao usa nome de classe curto e generico (`fig`, `cel`, `pc`).
+   O integrador ja confere isso (`classes_que_vazam`) — e este caso mostra que o
+   aviso dele precisa virar REPROVACAO quando a colisao muda tamanho.
+
+   E, junto, a forma: UMA so (cobranca do Marcos: *"nao entendi os quadrados se
+   tem o circulo... ficou feio"*). A figura SEM FUNDO em cima, o nome embaixo. (cobranca do Marcos, ago/2026: *"nao entendi os quadrados se
+   tem o circulo... esse fundo branco e esses quadrados e circulos ficou feio"*).
+   Ele estava certo: eu tinha um cartao branco arredondado E um circulo branco
+   dentro dele. Duas formas competindo, e a figura espremida no meio.
+   Agora e uma so: a figura SEM FUNDO em cima, o nome embaixo. */
+/* ⭐ A FIGURA MANDA NO CARTAO — piso de 64px, e aqui ela tem 104. Quem escolhe
+   pela figura e a crianca que ainda nao le; figura pequena a devolve para o
+   texto, que e justamente o que ela nao consegue. */
+.opt.oaf .des{position:relative;width:100%;height:104px;min-height:64px;margin:0 auto}
+/* ⭐ moldura de foto branca (impecavel, ago/2026): o branco/recorte da IA vira
+   "foto no papel", nunca branco solto sobre o cartao. */
+.opt.oaf .des img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;
+  background:#fff;border-radius:10px;border:2px solid #fff;
+  -webkit-box-shadow:0 2px 6px rgba(30,40,20,.22);box-shadow:0 2px 6px rgba(30,40,20,.22)}
+/* o desenho de CSS mantem os 58x58 dele e CRESCE por escala, centrado */
+.opt.oaf .descss{position:absolute;left:50%;top:50%;margin:-29px 0 0 -29px;
+  -webkit-transform:scale(1.7);transform:scale(1.7)}
+/* a LETRA em corpo grande (fases de alfabeto) centrada na mesma caixa */
+.opt.oaf .destxt{font-size:58px;line-height:104px;color:#3a3020}
+/* ⚠️ a linha ENVOLVE (`flex-wrap`): em celular estreito o nome comprido mais o
+   alto-falante de 44px nao cabem lado a lado, e sem envolver um dos dois
+   vazava para fora do cartao. Envolvendo, o alto-falante desce e continua
+   inteiro — nunca encolhe abaixo do dedo. */
+.opt.oaf .linha{margin:8px 0 0;white-space:normal;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap}
+/* ⚠️ a legenda em 2 linhas com ALTURA RESERVA FIXA: nomes curtos ("She is
+   painting.") e longos ("She is washing the dishes.") passam a ocupar o MESMO
+   espaco — senao os cartoes saem com alturas diferentes e o portao 5b acusa
+   "fileira torta" (medido: 196..211px na fase 12). */
+.opt.oaf .nom{display:-webkit-box;max-width:none;font-size:19px;line-height:1.15;
+  overflow:hidden;-webkit-line-clamp:2;-webkit-box-orient:vertical;height:2.3em}
+.opt.oaf .zap{-webkit-box-flex:0;flex:0 0 auto;margin-left:10px}
+@media (max-width:360px){
+  .opt.oaf .nom{font-size:16px}
+}
+/* janela baixa (o monitor da escola, 1024x420): encolhe a moldura, nunca some
+   com a opcao — resposta que a crianca nao ve e resposta que nao existe. */
+/* ⚠️ e a lista ROLA: em janela baixa a 4a opcao ficava presa atras da barra de
+   baixo. Resposta que a crianca nao alcanca e resposta que nao existe. */
+/* ⚠️⚠️ LICAO PAGA (ago/2026), medida na bancada da peca: em CELULAR PEQUENO
+   (320x568) DUAS das quatro respostas ficavam fora da tela, e nao havia rolagem
+   nenhuma para alcanca-las. A regra de rolar existia, mas so abaixo de 560px de
+   altura — e 568 passa raspando por cima do vao. Resposta que a crianca nao
+   alcanca e resposta que nao existe, e o vao magico e que estava errado: 568,
+   667, 740, cada aparelho de escola cai num lugar.
+   Agora a lista rola SEMPRE que nao couber, em qualquer altura: o teto sai da
+   conta da tela (`calc`), nao de um numero escolhido a dedo. Em tela alta o
+   teto e maior que o conteudo e a rolagem nem aparece. */
+/* ⚠️ E O NUMERO DO `calc` E MEDIDO, NAO CHUTADO (ago/2026). Ele era 260px, da
+   epoca em que o botao de ouvir era um botaozinho de 46px deitado ao lado da
+   palavra. Quando o botao virou o alvo GRANDE que a fase merece, o cabecalho
+   cresceu ~40px e duas respostas passaram a ficar penduradas atras da borda de
+   baixo em 360x640 e 1366x640 — medido pelo portao de leiaute, nao deduzido.
+   336px e a conta do cabecalho de hoje (barra + selo + balao + caixa de som).
+   Regra que fica: quem mexe na ALTURA do cabecalho refaz este numero e roda o
+   portao nos seis tamanhos. */
+.opts{max-height:calc(100vh - 336px);min-height:118px;
+  overflow-y:auto;-webkit-overflow-scrolling:touch}
+@media (max-height:560px){
+  .opt.oaf{margin:5px auto;padding:5px 9px}
+  .opt.oaf .nom{font-size:17px}
+}
+/* janela baixa de verdade (o 1024x420 do projetor da escola): as quatro
+   figuras numa linha so, e a lista volta a caber sem rolar. */
+@media (max-height:520px){
+  .opts{max-height:calc(100vh - 250px)}
+  .opt.oaf{width:23%}
+  .opt.oaf .des{height:64px}
+  .opt.oaf .descss{-webkit-transform:scale(1.05);transform:scale(1.05)}
+  .opt.oaf .destxt{font-size:38px;line-height:64px}
+}
+/* em tela estreita a FIGURA encolhe antes da carta: assim cabem as duas linhas
+   e a crianca continua vendo o desenho inteiro. */
+@media (max-width:360px){
+  .opt.oaf .des{height:84px}
+  .opt.oaf .descss{-webkit-transform:scale(1.35);transform:scale(1.35)}
+  .opt.oaf .destxt{font-size:46px;line-height:84px}
+  .opt.oaf{padding:9px 6px 8px}
+}
+/* ⭐ A FESTA DO ACERTO e o BOTAO PROXIMO (cobrancas do Marcos, ago/2026) */
+.oafaisca{position:fixed;width:9px;height:9px;border-radius:50%;pointer-events:none;z-index:60;
+  -webkit-animation:oafsobe .95s ease-out forwards;animation:oafsobe .95s ease-out forwards}
+@-webkit-keyframes oafsobe{0%{-webkit-transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1}100%{-webkit-transform:translateY(-58px) scale(1.15);opacity:0}}
+@keyframes oafsobe{0%{transform:translateY(0) scale(.4);opacity:0}
+  25%{opacity:1}100%{transform:translateY(-58px) scale(1.15);opacity:0}}
+.opt.oaf.certa{-webkit-animation:oafpula .5s ease;animation:oafpula .5s ease}
+@-webkit-keyframes oafpula{0%,100%{-webkit-transform:scale(1)}40%{-webkit-transform:scale(1.07)}}
+@keyframes oafpula{0%,100%{transform:scale(1)}40%{transform:scale(1.07)}}
+.oaprox{display:block;margin:14px auto 10px;/* ⚠️ os 84px de baixo NAO sao
+  enfeite: a barra fixa ("Ouvir de novo"/"Dica") tem ~70px e tapava o Proximo
+  pela metade — visto na foto do celular. Botao que a crianca nao alcanca e
+  botao que nao existe. */min-height:52px;padding:13px 30px;border:0;
+  border-radius:26px;font-size:19px;font-weight:800;color:#fff;cursor:pointer;
+  background:-webkit-gradient(linear,left top,left bottom,from(#3aa0f5),to(#2472c8));
+  background:linear-gradient(#3aa0f5,#2472c8);box-shadow:0 5px 0 #1a5698;
+  -webkit-animation:oafentra .28s ease;animation:oafentra .28s ease}
+.oaprox:active{-webkit-transform:translateY(4px);transform:translateY(4px);box-shadow:0 1px 0 #1a5698}
+@-webkit-keyframes oafentra{from{-webkit-transform:translateY(10px);opacity:0}}
+@keyframes oafentra{from{transform:translateY(10px);opacity:0}}
+/* o ALTO-FALANTE da resposta: bem visivel e dentro do cartao. Estava com 0.62 de
+   opacidade e pendurado no canto — o Marcos: "o botao de som esta fora do
+   quadrado, esta feio". */
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos apontou DUAS vezes: "esse botao de som
+   nao ficou certo". Eu tinha aumentado o botao de 30 para 34px para ele ficar
+   mais visivel — e as PECAS DE DENTRO (o corpinho do alto-falante e as ondas)
+   sao posicionadas em pixel ABSOLUTO pelo motor, para 30px. Com a caixa maior
+   elas ficaram para fora: medido, o corpo terminava 6px ABAIXO do botao, e a
+   onda sonora aparecia como um ")" solto ao lado do circulo.
+   Regra: nao se muda o TAMANHO de um componente cujo miolo e posicionado em
+   pixel absoluto por outro arquivo. Muda-se o que nao mexe na geometria — cor,
+   opacidade, sombra. O tamanho volta a ser o do motor. */
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — o Marcos apontou este mesmo botao TRES vezes:
+   *"esse botao de som nao ficou certo"*, depois *"esta horrivel"*. Cada rodada
+   eu mexia em pixel e ele continuava errado. O que finalmente mostrou o
+   problema nao foi numero nenhum: foi FOTOGRAFAR o cartao em zoom 3x.
+
+   E as duas rodadas do meio eu gastei no LUGAR ERRADO — escrevendo regras para
+   `.zap i`, `.zap b`, `.zap s`, que sao os elementos do MOTOR. O botao desta
+   peca e outro: `<button class="zap"><i class="fone"></i></button>`. Eu deduzi
+   a marcacao de outra peca em vez de abrir o HTML desta.
+
+   AS DUAS REGRAS QUE FICAM:
+   1. antes de escrever CSS para um componente, ABRIR o HTML DELE;
+   2. acabamento se confere OLHANDO — foto em zoom, nao `getBoundingClientRect`. */
+/* ⚠️ E O TAMANHO: 32px era menor que o dedo (a pesquisa pede 44px ate o 2o
+   ano, e o portao de leiaute reprova abaixo de 40 no que e RESPOSTA). Este
+   botao e o que salva quem nao le — se ele e dificil de acertar, a crianca
+   desiste dele e a fase vira loteria de novo. Aumentar era proibido enquanto o
+   miolo do desenho era posicionado em pixel absoluto; com o glifo em SVG de
+   fundo, que se centra sozinho pelo `viewBox`, o tamanho voltou a ser livre. */
+.opt.oaf .zap{position:relative;display:-webkit-inline-box;display:inline-flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+  width:44px;height:44px;border-radius:50%;border:0;padding:0;margin-left:8px;
+  vertical-align:middle;cursor:pointer;opacity:1;
+  background-color:rgba(255,210,63,.95);box-shadow:0 2px 0 rgba(150,110,10,.4)}
+.opt.oaf .zap:active{-webkit-transform:translateY(2px);transform:translateY(2px);
+  background-color:rgba(255,190,40,.98)}
+/* ⚠️ LICAO PAGA, e a mais cara do dia (ago/2026). O Marcos, com razao: *"esse
+   botao de som esta horrivel. A parte preta tem que estar no meio do circulo.
+   Acho que nem precisaria dizer isso"*. Nao precisava mesmo.
+
+   O desenho vinha de BORDAS num elemento de tamanho ZERO (corpo no `:after`,
+   onda no `:before`, cone numa borda-triangulo). Isso da dois problemas de uma
+   vez: (1) elemento de tamanho zero NAO se centra com flex — o navegador centra
+   o PONTO, e a tinta sai toda para um lado; (2) a tinta e a soma de tres caixas
+   posicionadas na mao, entao "centrar" vira aritmetica de coordenada que erra a
+   cada ajuste. Foram QUATRO rodadas mexendo em pixel e o desenho continuava
+   feio: um quadradao com um espeto, e a onda quase invisivel.
+
+   O conserto que acaba com a familia inteira do defeito: UM SVG embutido como
+   `background-image`. O glifo se centra sozinho pelo proprio `viewBox` (a
+   tinta vai de x=4 a x~15 num quadro de 20, centro ~10 = o centro do quadro),
+   o elemento passa a ter tamanho real (20x20) e o flex do botao o centra de
+   verdade. Sem pseudo-elemento, sem coordenada na mao, e nitido em qualquer
+   zoom por ser vetor. Data URI = continua 1 arquivo so, sem pedido de rede.
+
+   E a licao de metodo, que ja tinha sido paga antes nesta mesma peca: antes de
+   escrever CSS para um componente, ABRIR o HTML DELE — aqui a marcacao e
+   `<button class="zap"><i class="fone"></i></button>`, nao os `.zap i/b/s` que
+   o motor usa. E olhar a FOTO em zoom: fotografar o cartao em 3x mostrou o que
+   numero nenhum me mostrou. */
+.opt.oaf .zap .fone{position:static;width:26px;height:26px;margin:0;
+  -webkit-background-size:26px 26px;background-size:26px 26px}
+@media (prefers-reduced-motion:reduce){
+  .oafaisca{display:none}
+  .opt.oaf.certa,.oaprox,.obt{-webkit-animation:none;animation:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) O BANCO DE FIGURAS. Cada uma tem NOME (o gemeo escrito, que faz a
+      peca funcionar no mudo) e um desenho de CSS.
+   --------------------------------------------------------------- */
+/* ⚠️⚠️ LICAO PAGA (ago/2026), e das que so aparecem JOGANDO: este catalogo
+   chamava-se `FIG`, e `FIG` esta na lista de nomes que o integrador considera
+   CONFIGURACAO, nao conteudo. Resultado: em `pecas.json` esta peca aparecia com
+   uma gaveta so (`RODADAS`), como se aceitasse qualquer palavra — e nao aceita:
+   ela so conhece as oito figuras desenhadas em CSS aqui embaixo. Montei uma
+   atividade de padaria com `opcoes:["pd_pao",...]` e a crianca travou na
+   terceira tela com "Cannot read properties of undefined (reading 'letra')".
+   Agora o catalogo TEM nome de conteudo e entra no conteudo.json. */
+/* a figura de verdade vem do MOTOR; aqui na bancada ela nao existe e a peca
+   mostra o nome escrito. Pegar por `window.imgEl` deixa o nome DECLARADO, e o
+   portao "funcao que nao existe" consegue medir. */
+var imgEl = window.imgEl || null;
+
+/* ⭐ OS ROTULOS QUE A CRIANCA VE — conteudo, nao texto cravado no corpo.
+   Regra da casa: enunciado e rotulo sao CONTEUDO, e conteudo mora nas
+   variaveis do topo, onde o montador troca sem abrir o codigo da peca.
+   O `ouvir` e o rotulo do botao grande; o `ouvirDica` e a linha que explica,
+   em palavras de crianca, que da para apertar quantas vezes quiser. */
+var TEXTOS={
+  ouvir:"OUVIR A PALAVRA",
+  ouvirDica:"Pode apertar quantas vezes quiser.",
+  ouvirLeitor:"Ouvir a palavra de novo"
+};
+
+/* ⭐ NIVEL DIFICIL — AUDICAO DE VERDADE (pedido do Marcos, RIGHT NOW 9o ano,
+   ago/2026: "listening and find esta muito facil para o 9 ano"). Estava facil
+   porque a frase aparecia ESCRITA na tela: a crianca lia e combinava, sem ouvir.
+   Com `ESCONDER="sim"` (via dadosExtra), a frase nasce OCULTA — a fase fala
+   sozinha ao abrir e a crianca acha pela ORELHA. Fica um botao "Ver a frase" de
+   apoio (quem esta sem som revela; e uma acao deliberada, nao o padrao), entao a
+   acessibilidade continua de pe. Vazio (padrao) = como sempre foi (turmas
+   menores, que precisam do gemeo escrito). E STRING (o integrador so liga strings
+   ao dadosExtra). */
+var ESCONDER=""; /*TECNICA*/
+
+var CATALOGO={
+ sol:   {nome:"SOL",    voz:"sol"},
+ casa:  {nome:"CASA",   voz:"casa"},
+ bola:  {nome:"BOLA",   voz:"bola"},
+ peixe: {nome:"PEIXE",  voz:"peixe"},
+ arvore:{nome:"&#193;RVORE", voz:"árvore", letra:"A"},
+ flor:  {nome:"FLOR",   voz:"flor"},
+ chave: {nome:"CHAVE",  voz:"chave"},
+ lua:   {nome:"LUA",    voz:"lua"},
+ /* ⭐ os dois campos que abrem a peca para conteudo novo (ver `desenho`):
+    `img` = arte de IA (o normal numa atividade de verdade) e
+    `texto` = a propria LETRA em corpo grande (fases de alfabeto).
+    Ficam no exemplo de proposito: e daqui que o montador aprende que a peca
+    LE esses campos. */
+ pao:   {nome:"P&#195;O", voz:"pão", img:"pd_pao", letra:"P"},
+ be:    {nome:"B", voz:"bê", texto:"B", letra:"B"}
+};
+
+/* ---------------------------------------------------------------
+   2) AS RODADAS. SEMPRE 3 DISTRATORES: com 2 a crianca elimina tudo antes
+      do 3o erro (o degrau "revelar" nunca acontece) e com 5 o andaime
+      nunca chega nela.
+      A escada:  palavra inteira -> palavra inteira com duas figuras da
+      mesma familia (arvore/flor) -> o SOM DO COMECO, que e simbolico.
+   --------------------------------------------------------------- */
+var RODADAS=[
+ {selo:"OU&Ccedil;A E ACHE", alvo:"sol", opcoes:["sol","casa","bola","peixe"],
+  rotulo:"A PALAVRA &Eacute;", escrito:"SOL", fala:"sol",
+  enun:"Ou&#231;a a palavra e toque na <b>figura</b> dela.",
+  hint:"Sem som no computador? A palavra est&#225; escrita a&#237; em cima.",
+  msg:"Isso! O <b>SOL</b> &#233; este.",
+  dicas:["Aperte <b>Ouvir</b> de novo e diga a palavra junto, bem devagar.",
+         "Olhe a <b>letra do come&#231;o</b> de cada nome. A palavra come&#231;a com <b>S</b>.",
+         "Esta &#233; a figura da palavra <b>SOL</b>: o sol tem raios em volta."]},
+
+ {selo:"OU&Ccedil;A COM CUIDADO", alvo:"arvore", opcoes:["arvore","flor","casa","chave"],
+  rotulo:"A PALAVRA &Eacute;", escrito:"&#193;RVORE", fala:"árvore",
+  enun:"Agora tem <b>duas</b> figuras do mesmo jardim. Ou&#231;a at&#233; o fim.",
+  hint:"&#193;rvore e flor s&#227;o as duas do jardim: o que muda &#233; a palavra.",
+  msg:"Isso! <b>&#193;RVORE</b> tem tronco e copa.",
+  dicas:["Ou&#231;a de novo at&#233; o <b>fim</b> da palavra: flor acaba r&#225;pido, &#225;rvore &#233; comprida.",
+         "A letra do come&#231;o est&#225; em cada figura. A palavra come&#231;a com <b>A</b>.",
+         "Esta &#233; a <b>&#193;RVORE</b>: come&#231;a com A e tem tr&#234;s peda&#231;os: &#225;r-vo-re."]},
+
+ {selo:"O SOM DO COME&Ccedil;O", alvo:"flor", opcoes:["flor","peixe","lua","bola"],
+  rotulo:"O SOM DO COME&Ccedil;O &Eacute;", escrito:"F", fala:"efe. fffff",
+  enun:"Qual figura <b>come&#231;a</b> com este som?",
+  hint:"Diga o nome de cada figura em voz alta e escute s&#243; o come&#231;o.",
+  msg:"Isso! <b>FLOR</b> come&#231;a com F: fff-lor.",
+  dicas:["Diga o nome de cada figura e pare no <b>primeiro pedacinho</b>: fff, ppp, lll, bbb.",
+         "A letra do come&#231;o de cada nome apareceu no canto. Procure o <b>F</b>.",
+         "<b>FLOR</b> come&#231;a com o som <b>fff</b>. F de flor, de fada, de faca."]}
+];
+
+var rodada=0, R=null, erros=0, travada=false, revelando=false;
+var ger=0, progVisto=0, acertosDePrimeira=0;
+var elAviso=null, elCont=null, progI=null, cartoes=[];
+
+/* ⚠️⚠️ A VOZ — E ELA E SEMPRE GRAVADA.
+   Esta funcao NAO fala: ela entrega o texto ao `diz(...)` que a ponte do
+   integrador injeta antes do corpo da peca, e que toca o MP3 da casa (Edge
+   TTS). Nao ha voz-robo do navegador aqui, e nao pode haver: a ponte desliga a voz
+   do navegador em tres camadas, e foi assim que o botao OUVIR desta peca ficou
+   MUDO na mao do Marcos, no meio de tudo o mais funcionando. O portao
+   `_qa/vozrobo.py` mede isso agora.
+   A guarda `typeof diz==="function"` e obrigatoria: na bancada a peca roda
+   sozinha, sem ponte e sem gravacao, e chamar direto estouraria na 1a tela.
+   As etiquetas saem do texto porque a chave da voz e feita do TEXTO VISIVEL —
+   "<b>SOL</b>" e "SOL" tem que dar na mesma gravacao. */
+/* ⚠️⚠️ DEFEITO PEGO NA BANCADA, simulando a ponte (ago/2026), e ele teria
+   chegado MUDO na crianca: o texto da peca vem com ENTIDADE de HTML
+   ("Ou&#231;a a palavra", "at&#233;", "Voc&#234;"). Tirar so as etiquetas com
+   uma expressao deixava a entidade crua, e a CHAVE DA GRAVACAO e feita do
+   TEXTO: "Ou&#231;a..." nunca bate com o mp3 gravado para "Ouca...". Resultado
+   seria o de sempre — botao que nao fala, sem erro nenhum no console.
+   O jeito honesto de virar entidade em letra e deixar o NAVEGADOR ler: um
+   elemento solto, `innerHTML` de um lado e `textContent` do outro. De quebra
+   ele tira as etiquetas sozinho, sem expressao para errar. */
+function textoDe(html){
+  var d=document.createElement("div");
+  d.innerHTML=String(html);
+  var t=d.textContent||d.innerText||"";
+  return t.replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  if(!txt) return;
+  var t=textoDe(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* ⭐ A SEGUNDA VOZ ESPERA A PRIMEIRA. O enunciado e a palavra tocam na mesma
+   tela, um atras do outro; com relogio fixo a palavra entrava POR CIMA do
+   enunciado e a crianca perdia os dois (e o mesmo defeito que o portao
+   `vozintro.py` pegou em 27 fases da atividade grande). Aqui a peca olha o
+   tocador do motor e so segue quando ele cala. Na bancada nao ha tocador
+   nenhum: cai no relogio, e nada e cortado porque nada esta tocando. */
+function falaEmSeguida(txt,espera){
+  var g=ger, gasto=0;
+  /* ⚠️ LICAO PAGA (ago/2026, ingles 9o ano): esta voz atrasada espera o motor
+     calar e tenta por ATE 9s. Se a crianca (ou o auditor) troca de FASE nesse
+     meio, o `ger` da PECA nao muda — quem trocou foi o MOTOR — e a fala
+     disparava numa fase seguinte, junto com o elogio dela (a banca voz-dupla
+     pegou "She is cooking." caindo na fase 13, que nem tem essa frase). Guardo
+     tambem a FASE do motor: mudou de fase, a voz da fase anterior morre. */
+  var _if=(typeof IFASE!=="undefined")?IFASE:null;
+  function som(){ try{ return document.getElementById("vz")||document.getElementById("narr"); }catch(e){ return null; } }
+  function tenta(){
+    if(g!==ger) return;
+    if(_if!==null && typeof IFASE!=="undefined" && IFASE!==_if) return;
+    var s=som();
+    if(s&&!s.paused&&!s.ended&&gasto<9000){ gasto+=240; setTimeout(tenta,240); return; }
+    fala(txt);
+  }
+  setTimeout(tenta,espera||900);
+}
+function sVolta(){ nota(392,.10,.11,"sine",0); nota(294,.12,.10,"sine",.08); }
+function sPing(){ nota(880,.09,.12,"triangle",0); }
+
+/* ---------------------------------------------------------------
+   3) OS DESENHOS — CSS puro, nenhum arquivo externo
+   --------------------------------------------------------------- */
+/* as OITO figuras que ESTA peca sabe desenhar em CSS. Fora desta lista ela nao
+   inventa desenho nenhum — ver o fim de `desenho()`.
+   ⚠️ o nome e `ARTE` de proposito: o integrador tem uma lista de nomes que sao
+   ARTE ou CONFIGURACAO e que NAO viram gaveta de conteudo no `pecas.json`.
+   Batizada `TEMDESENHO`, esta lista aparecia para o montador como se fosse
+   conteudo da fase — e nao e: e o que a peca sabe pintar. (O caso inverso ja
+   custou caro aqui: o CATALOGO chamava-se `FIG` e sumiu do conteudo, que e
+   justamente onde ele PRECISA estar.) */
+var ARTE={sol:1,casa:1,bola:1,peixe:1,arvore:1,flor:1,chave:1,lua:1};
+
+function desenho(k){
+  var d=el("div","des",""), i, e;
+  var F=CATALOGO[k]||{};
+  /* ⭐ TRES CAMINHOS, nesta ordem:
+     · `img`   — arte de IA (o normal numa atividade de verdade);
+     · `texto` — a propria LETRA em corpo grande (fases de alfabeto);
+     · senao   — o desenho de CSS das oito figuras de exemplo desta peca.
+     ⚠️ E UM QUARTO, QUE FALTAVA E DAVA DEFEITO MUDO: chave que nao e nenhuma
+     das tres. O `else` do fim desenhava a LUA — entao uma fase nova com
+     `opcoes:["pao","bolo","leite"]` e sem `img` mostrava TRES LUAS iguais, sem
+     erro nenhum no console. Agora a peca devolve `null` e o cartao fica so com
+     a PALAVRA, em corpo grande (`.oafso`), que e o gemeo escrito de sempre.
+     Nenhuma atividade antiga muda: as oito figuras continuam desenhadas. */
+  if(F.img){
+    if(imgEl){ d.appendChild(imgEl(F.img)); return d; }
+    /* na bancada nao existe a pasta `img/`: apontar para um arquivo que nao
+       existe poe um QUADRADINHO VAZIO na tela — pior que figura nenhuma, e o
+       portao `_qa/imagens.js` reprova com razao. Sem a arte, vale a palavra. */
+    return null;
+  }
+  if(F.texto){ d.appendChild(el("div","destxt", F.texto)); return d; }
+  if(!ARTE[k]) return null;
+  /* ⚠️ as pecinhas abaixo tem left/top em PIXEL, medidos para 58x58. Elas vao
+     TODAS dentro do `.descss`, que tem exatamente esse tamanho — e e o CSS que
+     amplia a caixa inteira por escala, sem desmontar o desenho. */
+  var caixa=d;              /* o `.des`, que e o lugar no cartao */
+  d=el("div","descss","");  /* e a caixa de 58x58 onde os pixels fazem sentido */
+  caixa.appendChild(d);
+  if(k==="sol"){
+    for(i=0;i<8;i++){
+      e=el("i","solr","");
+      e.style.webkitTransform="rotate("+(i*45)+"deg)";
+      e.style.transform="rotate("+(i*45)+"deg)";
+      d.appendChild(e);
+    }
+    d.appendChild(el("i","solc",""));
+  }else if(k==="casa"){
+    d.appendChild(el("i","ctel","")); d.appendChild(el("i","cpar","")); d.appendChild(el("i","cpor",""));
+  }else if(k==="bola"){
+    e=el("i","bcir","");
+    e.appendChild(el("i","bfai","")); e.appendChild(el("i","bfa2",""));
+    e.appendChild(el("i","bcu1","")); e.appendChild(el("i","bcu2",""));
+    d.appendChild(e);
+  }else if(k==="peixe"){
+    d.appendChild(el("i","prab","")); d.appendChild(el("i","pcor","")); d.appendChild(el("i","polh",""));
+  }else if(k==="arvore"){
+    d.appendChild(el("i","atro","")); d.appendChild(el("i","acop",""));
+  }else if(k==="flor"){
+    d.appendChild(el("i","fcau",""));
+    for(i=0;i<5;i++){
+      e=el("i","fpet","");
+      e.style.webkitTransform="rotate("+(i*72)+"deg)";
+      e.style.transform="rotate("+(i*72)+"deg)";
+      d.appendChild(e);
+    }
+    d.appendChild(el("i","fmio",""));
+  }else if(k==="chave"){
+    d.appendChild(el("i","kcab","")); d.appendChild(el("i","khas",""));
+    e=el("i","kden",""); e.style.left="40px"; d.appendChild(e);
+    e=el("i","kden",""); e.style.left="50px"; d.appendChild(e);
+  }else{
+    d.appendChild(el("i","lua",""));
+  }
+  return caixa;             /* devolve o `.des`, com o desenho montado dentro */
+}
+/* a letra do comeco, para o 2o degrau do andaime. Tira o acento (o &Aacute; da
+   ARVORE) porque o que a crianca compara e a LETRA, nao o acento. */
+/* ⚠️ le por `||{}`: chave desconhecida nao pode ESTOURAR na mao da crianca.
+   Ja aconteceu — "Cannot read properties of undefined (reading 'letra')" na
+   terceira tela de uma padaria montada. A peca nunca trava. */
+function letraDe(k){ var F=CATALOGO[k]||{}; return F.letra || String(F.nome||k).charAt(0); }
+function fichaDe(k){ var F=CATALOGO[k]||{}; return {nome:F.nome||String(k).toUpperCase(), voz:F.voz||k}; }
+
+/* ---------------------------------------------------------------
+   4) A TELA
+   --------------------------------------------------------------- */
+function pecaOuvir(){
+  limpa();
+  R=RODADAS[rodada];
+  erros=0; travada=false; revelando=false; cartoes=[]; ger++;
+  var t=el("div","tela");
+  setProg(t,progVisto);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",R.enun));
+
+  /* ⭐ A CAIXA DE SOM: o botao GRANDE de ouvir em cima, a palavra ESCRITA
+     embaixo (o gemeo visual, que faz a peca funcionar no PC sem caixa de som).
+     O botao vem PRIMEIRO de proposito: e por ele que a fase comeca. */
+  var sc=el("div","somcard","");
+  var bo=el("button","obt","");
+  bo.type="button";
+  bo.appendChild(el("i","fone",""));
+  bo.appendChild(document.createTextNode(TEXTOS.ouvir));
+  bo.setAttribute("aria-label",TEXTOS.ouvirLeitor);
+  bo.onclick=function(){ tocaAlvo(); };
+  sc.appendChild(bo);
+  var pb=el("div","palvbox","");
+  pb.appendChild(el("div","palvr",R.rotulo));
+  if(ESCONDER){
+    /* ⭐ AUDICAO DE VERDADE: a frase nasce OCULTA (so o alto-falante e "..."). A
+       crianca acha pela orelha. O "Ver a frase" e apoio para quem esta sem som —
+       acao deliberada, nao o padrao — entao a acessibilidade continua de pe. */
+    var mask=el("div","palv oculto","&#128266; &#8230;");
+    pb.appendChild(mask);
+    var rev=el("button","vfrase","Ver a frase");
+    rev.type="button";
+    rev.onclick=function(ev){ var e=ev||window.event; if(e&&e.stopPropagation)e.stopPropagation();
+      mask.className="palv"; mask.innerHTML=R.escrito; rev.style.display="none"; };
+    pb.appendChild(rev);
+  } else {
+    pb.appendChild(el("div","palv",R.escrito));
+  }
+  sc.appendChild(pb);
+  c.appendChild(sc);
+
+  /* AS FIGURAS, embaralhadas (na Fabrica de Estrelas a certa era sempre a 1a e
+     a crianca aprendeu a POSICAO, nao o conteudo) */
+  var box=el("div","opts",""), lista=baguncar(R.opcoes.slice(0)), i;
+  for(i=0;i<lista.length;i++) box.appendChild(cartao(lista[i]));
+  c.appendChild(box);
+
+  elCont=el("div","cont","Figura <b>"+(rodada+1)+"</b> de <b>"+RODADAS.length+"</b>");
+  c.appendChild(elCont);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  c.appendChild(el("div","hint",R.hint+" "+TEXTOS.ouvirDica));
+  t.appendChild(c);
+  app.appendChild(t);
+  /* ⭐⭐ A FASE FALA SOZINHA AO ABRIR. No 1o ano a crianca nao sabe que existe
+     um botao para apertar: se a tela nasce calada, ela olha e espera. Primeiro
+     o enunciado; assim que ele cala, a PALAVRA — e o botao acende junto, para
+     ela aprender de onde veio o som e poder repetir sozinha. */
+  fala(R.enun);
+  falaEmSeguida(R.fala,1100);
+  var g=ger;
+  setTimeout(function(){ if(g===ger) acendeOuvir(); },1100);
+}
+/* o botao pisca junto com a palavra: e assim que a crianca liga o som ao lugar
+   onde ele se repete. Some sozinho — nao e estado, e um aceno. */
+function acendeOuvir(){
+  var b=app.getElementsByClassName("obt")[0];
+  if(!b) return;
+  var g=ger;
+  b.className="obt tocando";
+  setTimeout(function(){ if(g!==ger) return;
+    var x=app.getElementsByClassName("obt")[0]; if(x) x.className="obt"; },900);
+}
+
+function cartao(k){
+  /* ⚠️ a classe sai em DUAS partes de proposito. O portao `_qa/dinamicas.py`
+     reconhece a familia "escolher" pelo literal `el("div","opt"` — escrito
+     com a classe composta ja no `el` (opt mais outra) ele nao reconhece nada, e
+     "0 dinamica reconhecida" e
+     aprovacao VAZIA: o portao passa sem ter medido a armadilha desta mecanica
+     (as opcoes embaralhadas). Esta peca E um escolher, entao ela se apresenta
+     como um. */
+  var o=el("div","opt","");
+  o.className="opt oaf";
+  /* ⭐ QUEM SABE O QUE A VOZ DEVE DIZER E A PECA. O motor monta a chave do
+     alto-falante a partir do TEXTO da resposta — e aqui dentro ha a letra
+     inicial (andaime) e a moldura, entao o texto lido saia "PPAO" em vez de
+     "PAO" e a voz nao era encontrada. Declarar e mais honesto do que fazer o
+     motor adivinhar. (Defeito que o Marcos ouviu: "os botoes de som nao estao
+     funcionando... somente o som do enunciado".) */
+  var F=fichaDe(k);
+  o.setAttribute("data-voz", F.nome);
+  o.appendChild(el("div","ini",letraDe(k)));
+  /* ⭐ a FIGURA. Quando a fase nao tem figura para esta chave, `desenho()`
+     devolve `null` e o cartao passa a ser SO A PALAVRA, em corpo grande — em
+     vez de mostrar um desenho emprestado que nao e daquela palavra. */
+  var dz=desenho(k);
+  if(dz) o.appendChild(dz);
+  else o.className=o.className+" oafso";
+  var lin=el("div","linha","");
+  lin.appendChild(el("span","nom",F.nome));
+  var z=el("button","zap","");
+  z.type="button";
+  z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label","Ouvir "+F.nome);
+  /* ⚠️ o alto-falante NAO escolhe: ele so fala. Sem parar o evento aqui, tocar
+     no alto-falante valia como resposta — e a crianca que so queria conferir o
+     nome levava um erro. */
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    /* ⚠️ a voz da RESPOSTA sai do NOME que esta escrito no cartao, nao de um
+       apelido: a chave da gravacao (`op_<chave>.mp3`) e feita do texto visivel,
+       e foi por um apelido diferente que os alto-falantes ficaram mudos na
+       Padaria. `voz` continua servindo a fase que precise de outra pronuncia. */
+    sPing(); fala(F.voz||F.nome);
+  };
+  lin.appendChild(z);
+  o.appendChild(lin);
+  o.appendChild(el("div","jat","j&#225; tentamos"));
+  o.setAttribute("data-qa", k===R.alvo ? "1" : "0");
+  o.onclick=function(){ escolhe(k,o); };
+  cartoes.push({k:k,el:o,tentada:false});
+  return o;
+}
+function achaCartao(k){ var i; for(i=0;i<cartoes.length;i++){ if(cartoes[i].k===k) return cartoes[i]; } return null; }
+
+/* ⭐ REPETIR E DIREITO DA CRIANCA: este botao pode ser apertado quantas vezes
+   ela quiser, sem custo, sem contar como tentativa e sem tirar o andaime. Quem
+   ainda nao segura a palavra na cabeca precisa ouvir tres, quatro vezes — e e
+   escutando de novo que ela aprende a escutar. */
+function tocaAlvo(){
+  sPing();
+  fala(R.fala);
+  acendeOuvir();
+}
+
+/* ---------------------------------------------------------------
+   5) A ESCOLHA
+   --------------------------------------------------------------- */
+function escolhe(k,o){
+  if(travada||revelando) return;
+  var c=achaCartao(k);
+  if(c&&c.tentada){
+    /* ⚠️ opcao ja tentada nao responde com SILENCIO nem se distingue so pela
+       cor: som de retorno + a etiqueta em palavras que ja esta na tela. */
+    sVolta();
+    mostraDica("Nesta a gente <b>j&#225; tentou</b>. Escute de novo e escolha outra figura.");
+    return;
+  }
+  if(k===R.alvo){ acertou(o); return; }
+  errouUma(c,o);
+}
+function acertou(o){
+  travada=true;                     /* ⚠️ trava NO INSTANTE do toque */
+  if(erros===0) acertosDePrimeira++;
+  /* ⚠️⚠️ LICAO PAGA (ago/2026), e o Marcos viu no celular: aqui estava
+     uma ATRIBUICAO ao className (o cartao inteiro trocado por "opt fig certa"),
+     que APAGA as outras classes.
+     A classe `oaf` (o cartao de vidro fosco) ia embora junto, e o cartao certo
+     perdia a moldura da casa bem no momento em que a crianca olha para ele.
+     Classe de ESTADO se ACRESCENTA; nunca se troca o crachá inteiro. */
+  if(o.className.indexOf("certa")<0) o.className=o.className+" certa ok";
+  sCerto();
+  /* ⭐ A COMEMORACAO, que o Marcos cobrou: *"nao tem a comemoracao quando acerta
+     como no Broto"*. Antes era so um texto verde. Agora o cartao PULA, a festa
+     toca e o restante da tela recua — a crianca sabe que acertou sem ler. */
+  chuvinha(o);
+  if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
+  fala(R.msg);
+  /* ⭐ E O BOTAO PROXIMO, como no Broto: *"tem que ter o botao de proximo"*.
+     Quem manda no ritmo e a crianca, nao um relogio de 1,6s — ela quer olhar a
+     figura certa, ouvir de novo, e so entao seguir. */
+  poeProximo();
+}
+
+/* faisquinhas em volta do cartao certo — CSS puro, sem imagem e sem biblioteca,
+   e some sozinha. Respeita quem pediu menos animacao. */
+function chuvinha(o){
+  try{
+    if(window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches) return;
+    var i,r=o.getBoundingClientRect();
+    for(i=0;i<10;i++){
+      var f=document.createElement("span");
+      f.className="oafaisca";
+      f.style.left=(r.left+r.width*(0.15+Math.random()*0.7))+"px";
+      f.style.top=(r.top+r.height*(0.2+Math.random()*0.6))+"px";
+      f.style.background=["#ffd23f","#7ed957","#ff9f45","#fff"][i%4];
+      f.style.webkitAnimationDelay=(i*40)+"ms";
+      f.style.animationDelay=(i*40)+"ms";
+      document.body.appendChild(f);
+      (function(el){ setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); },1100); })(f);
+    }
+  }catch(e){}
+}
+
+function poeProximo(){
+  var alvo=document.getElementById("navOA");
+  if(!alvo){
+    alvo=el("div",""); alvo.id="navOA";
+    /* ⚠️ o Proximo entra LOGO DEPOIS do "Isso! ..." — nao no fim da tela. No
+       fim ele caia atras da barra fixa de baixo (visto na foto do celular), e
+       botao que a crianca nao alcanca e botao que nao existe. Aqui ele nasce
+       na altura em que o olho dela ja esta: no elogio do acerto. */
+    if(elAviso&&elAviso.parentNode) elAviso.parentNode.insertBefore(alvo, elAviso.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(alvo);
+  }
+  alvo.innerHTML="";
+  var b=document.createElement("button");
+  b.className="oaprox"; b.type="button"; b.innerHTML="Pr&#243;ximo &#8594;";
+  /* ⚠️ LICAO PAGA (ago/2026): botao NOVO nasce com `data-qa`, no MESMO commit.
+     Sem isto o auditor nao sabe que ele existe: os robos so tocam no que
+     casa com a lista deles (`.opt`, `.btn`, `[data-qa]`...). O errador ficou
+     preso nesta tela e reprovou a peca dizendo "nao chega na medalha" — e a
+     peca estava certa; quem estava cego era o portao. */
+  b.setAttribute("data-qa","prox");
+  b.onclick=function(){ if(alvo.parentNode) alvo.innerHTML=""; segue(0); };
+  alvo.appendChild(b);
+  try{ b.focus(); }catch(e){}
+}
+function errouUma(c,o){
+  if(c){ c.tentada=true; }
+  /* ⚠️⚠️ A MESMA LICAO DO `acertou`, e eu a tinha repetido AQUI e no `revela`:
+     trocar o className inteiro e ATRIBUICAO — apaga o `oaf` (o cartao de
+     vidro da casa) e ainda traz de volta o `.fig`, que e o nome do CRACHA no
+     motor. Resultado dentro da atividade montada: o cartao ja tentado mudava
+     de tamanho e de moldura no meio da fase. Estado se ACRESCENTA. */
+  if(o.className.indexOf("usada")<0) o.className=o.className+" usada";
+  var j=o.getElementsByClassName("jat")[0];
+  if(j) j.className="jat ver";
+  o.setAttribute("data-qa","2");
+  erros++;
+  sErro();
+  ajuda(erros);
+}
+
+/* ---------------------------------------------------------------
+   6) O ANDAIME QUE CRESCE (1 metodo, 2 apoio concreto, 3 revela)
+   --------------------------------------------------------------- */
+function ajuda(n){
+  var p=n%3;
+  if(p===1){
+    mostraDica(R.dicas[0]);
+    fala(R.dicas[0]);
+  }else if(p===2){
+    mostraDica(R.dicas[1]);
+    fala(R.dicas[1]);
+    mostraIniciais();
+  }else{
+    revela();
+  }
+}
+/* APOIO CONCRETO: a letra do comeco aparece em cada figura. Nao e a resposta —
+   e a ferramenta com que se acha a resposta. */
+function mostraIniciais(){
+  var i,e;
+  for(i=0;i<cartoes.length;i++){
+    e=cartoes[i].el.getElementsByClassName("ini")[0];
+    if(e) e.className="ini ver";
+  }
+}
+/* ⚠️ O 3o DEGRAU: acende a certa PRIMEIRO e escreve a explicacao DEPOIS. Nas
+   cinco pecas de ago/2026 o "revelar" chamava o "acertou", e o "acertou"
+   apagava a barra de dica no mesmo quadro: a peca se consertava sozinha e a
+   crianca nunca lia por que. Aqui a dica fica 2,2s de pe antes de a tela virar. */
+function revela(){
+  if(revelando) return;
+  revelando=true; travada=true;
+  var g=ger, c=achaCartao(R.alvo);
+  if(c&&c.el.className.indexOf("certa")<0) c.el.className=c.el.className+" certa ok";
+  mostraIniciais();
+  sPing(); sCerto();
+  mostraDica(R.dicas[2]);
+  fala(R.dicas[2]);
+  if(elAviso){ elAviso.innerHTML=R.msg; elAviso.className="aviso ver"; }
+  setTimeout(function(){
+    if(g!==ger) return;
+    revelando=false;
+    segue(0);
+  },2200);
+}
+
+/* ---------------------------------------------------------------
+   7) O QUE VEM DEPOIS
+   --------------------------------------------------------------- */
+function segue(espera){
+  var g=ger;
+  travada=true;
+  progVisto=Math.round((rodada+1)*100/RODADAS.length);
+  if(progI) progI.style.width=progVisto+"%";
+  setTimeout(function(){
+    if(g!==ger) return;
+    rodada++;
+    if(rodada<RODADAS.length){ pecaOuvir(); return; }
+    mostraBanner("<b>Voc&#234; achou as tr&#234;s pelo som!</b><br>Ouvir com cuidado &#233; o "+
+                 "come&#231;o de ler.", fimOuvir);
+  }, espera||600);
+}
+
+/* ---------------------------------------------------------------
+   8) A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimOuvir(){
+  limpa();
+  ger++; travada=true;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(acertosDePrimeira>=3) parecer="Voc&#234; achou as <b>3</b> de primeira, s&#243; escutando. "+
+                                   "Seu ouvido est&#225; afiado!";
+  else if(acertosDePrimeira===2) parecer="Voc&#234; achou <b>2</b> de primeira. Na outra, escutar de "+
+                                          "novo resolveu &#8212; e isso tamb&#233;m &#233; saber ouvir.";
+  else if(acertosDePrimeira===1) parecer="Voc&#234; achou <b>1</b> de primeira e foi at&#233; o fim nas "+
+                                          "outras. Ouvir com cuidado se aprende ouvindo de novo.";
+  else parecer="Voc&#234; foi at&#233; o fim das <b>3</b>, escutando de novo cada vez. &#201; "+
+               "exatamente assim que o ouvido aprende.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Ouvir de novo tudo");
+  b.onclick=function(){ rodada=0; progVisto=0; acertosDePrimeira=0; pecaOuvir(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Na atividade de verdade a voz &#233; MP3 gravado, e cada "+
+                   "figura tem o alto-falante dela."));
+  t.appendChild(c);
+  app.appendChild(t);
+  /* o que a crianca precisa OUVIR no fim e o parecer dela, nao um "acabou". */
+  fala(parecer);
+}
+
+pecaOuvir();
+</script>
+</body></html>

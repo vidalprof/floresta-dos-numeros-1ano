@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — caça-palavras</title>
+<!-- ============================================================
+     PEÇA: CAÇA-PALAVRAS  (copiada do _padrao/pecas/MOLDE.html)
+
+     AS ARMADILHAS DESTA MECÂNICA (DINAMICAS.md), uma a uma, e onde cada
+     uma está fechada aqui dentro:
+
+     1) CÉLULA EM PORCENTAGEM, NUNCA px FIXO.
+        Com largura fixa em px cabem 10 células numa grade de 9 e a palavra
+        QUEBRA A LINHA — foi o defeito que o professor cobrou com todas as
+        letras ("TROCA e o A em outra linha"). Aqui a célula recebe
+        `q.style.width=(100/N)+"%"` e o `box-sizing:border-box` global, então
+        a grade fecha em N colunas em QUALQUER largura de tela.
+
+     2) A GRADE FICA CHEIA DE LETRAS, SEM BURACO.
+        Toda casa que sobrou depois das palavras recebe uma letra sorteada.
+        Buraco na grade entrega onde a palavra está e estraga a caçada.
+
+     3) AS QUATRO DIREÇÕES, INCLUINDO A DIAGONAL — E O ENUNCIADO AVISA.
+        Diagonal é o que faz a criança VARRER a grade em vez de ler só linha
+        e coluna. Mas diagonal sem aviso é criança desistindo: por isso a
+        palavra "diagonal" está no enunciado E na dica.
+
+     4) CÉLULA CONQUISTADA TRAVA.
+        Letra que já é de uma palavra achada não desmarca mais — senão a
+        criança desmancha sem querer o que já ganhou.
+
+     5) CONFERIR `mark` **OU** `ok`.
+        Palavra que CRUZA outra tem letras já marcadas pela palavra anterior.
+        Conferindo só `mark`, a palavra cruzada NUNCA fechava.
+
+     6) `data-qa` NA GRADE (JSON com r, c, n, h, dl, dc).
+        É por ele que o auditor-jogador consegue jogar; sem isso ele dá
+        "PRESO" numa fase que funciona.
+
+     7) ANDAIME QUE CRESCE PELO TEMPO PARADO, NÃO PELO ERRO.
+        Aqui não existe "errar": a criança marca e desmarca. O que existe é
+        EMPACAR calado — e é aí que ela desiste. Então o relógio dá a dica.
+
+     8) ⭐ O MODO "DEFINIÇÕES" (ago/2026, copiado do EdiLIM — ver
+        `_pesquisa/EDILIM-DINAMICAS.md`, "MELHORAR AS NOSSAS OLHANDO AS DELAS").
+        Mostrando a LISTA das palavras, a criança procura um DESENHO DE LETRAS:
+        ela nem precisa saber o que a palavra quer dizer. Dando a DEFINIÇÃO no
+        lugar ("vira pipoca quando estoura na panela"), ela primeiro PENSA na
+        palavra e só depois procura — a mesma grade vira conteúdo.
+        · `MODO="lista"` (PADRÃO) = exatamente o de sempre, nada muda;
+        · `MODO="definicoes"` = os chips trazem a pista, com ALTO-FALANTE (quem
+          lê devagar ouve), e a palavra achada **se revela** no chip.
+        ⚠️ A pista é texto comprido: a lista ganha altura própria com rolagem
+        (`.lista.ldef`) para a GRADE nunca sair da tela — é a mesma regra que o
+        `_qa/leiaute.js` mede (o que rola por dentro continua alcançável).
+        ⚠️ Palavra sem pista em `PALDEF` cai sozinha no chip normal: a peça
+        nunca nasce muda nem quebrada.
+
+     Regras da casa que valem para toda peça: ES5 puro, um arquivo só, alvo
+     de toque grande, nada essencial só na cor (a palavra achada ganha risco
+     e ✔ no chip, além da cor), funciona no mudo, nunca trava.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* a LISTA de palavras a procurar. Cada chip tem a bolinha da COR daquela
+   palavra (a mesma que acende na grade) — e, quando fecha, ganha risco e o
+   sinal de ✔: nada essencial fica so na cor. */
+.lista{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       margin-top:13px}
+.pchip{background:#fffdf6;color:#221a12;border-radius:999px;padding:5px 12px;margin:3px;
+       font-size:14px;font-weight:700;box-shadow:0 3px 8px rgba(0,0,0,.24)}
+/* ⭐ PALAVRA ACHADA = COR DELA + RISCO (pedido do Marcos, ago/2026: "palavras
+   coloridas ao encontrar a palavra e riscar do banco"). Cada palavra fica com a
+   SUA cor no banco (a mesma que acende na grade), riscada e com ✔ — o banco vira
+   um placar colorido do que ja caiu. O risco garante o pilar "nada so na cor". */
+.pchip.feito{text-decoration:line-through;-webkit-transform:scale(1);transform:scale(1);
+             -webkit-animation:pchipok .5s ease;animation:pchipok .5s ease}
+.pchip.feito:after{content:"\2714";margin-left:6px;text-decoration:none;display:inline-block;font-weight:900}
+.pchip.p1.feito{background:#d7e7f3;color:#1b4a72;box-shadow:0 3px 10px rgba(42,110,168,.4)}
+.pchip.p2.feito{background:#daf0d0;color:#1f5010;box-shadow:0 3px 10px rgba(46,122,28,.4)}
+.pchip.p3.feito{background:#f3e2d0;color:#733711;box-shadow:0 3px 10px rgba(168,83,26,.4)}
+.pchip.p4.feito{background:#e7ddf3;color:#492a6e;box-shadow:0 3px 10px rgba(107,63,160,.4)}
+.pchip.p5.feito{background:#f3d5e6;color:#731f49;box-shadow:0 3px 10px rgba(168,48,107,.4)}
+@-webkit-keyframes pchipok{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.22)}100%{-webkit-transform:scale(1)}}
+@keyframes pchipok{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+.pbola{display:inline-block;width:11px;height:11px;border-radius:50%;background:#8b7f6a;
+       margin-right:7px;vertical-align:middle}
+.pchip.p1 .pbola{background:#2a6ea8} .pchip.p2 .pbola{background:#2e7a1c}
+.pchip.p3 .pbola{background:#a8531a} .pchip.p4 .pbola{background:#6b3fa0}
+.pchip.p5 .pbola{background:#a8306b}
+/* ⭐ MODO DEFINIÇÕES: o chip deixa de ser uma etiqueta e vira uma LINHA DE
+   PISTA (texto comprido + alto-falante). A lista ganha altura própria e rola
+   por dentro: assim a grade — que é a resposta — nunca é empurrada para fora
+   da tela (regra 3 do `_qa/leiaute.js`). */
+.lista.ldef{display:block;max-width:440px;margin:10px auto 0;max-height:216px;
+            overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:left}
+.pchip.pdef{display:block;margin:6px 2px;padding:7px 11px;font-size:14px;font-weight:600;
+            line-height:1.28;text-align:left}
+.plin{display:-webkit-box;display:-webkit-flex;display:flex;
+      -webkit-box-align:center;-webkit-align-items:center;align-items:center}
+.ptxt{-webkit-box-flex:1;-webkit-flex:1 1 auto;flex:1 1 auto}
+/* a palavra só se revela quando ela acha (display:none, nunca visibility) */
+.pnome{display:none}
+.pchip.pdef.feito{text-decoration:none}
+.pchip.pdef.feito .ptxt{text-decoration:line-through}
+.pchip.pdef.feito .pnome{display:block;margin-top:5px;font-size:17px;font-weight:800;
+                         letter-spacing:1.5px;text-decoration:none}
+/* o ✔ anda COM a palavra revelada (senão ele cai sozinho numa linha embaixo) */
+.pchip.pdef.feito:after{display:none}
+.pchip.pdef.feito .pnome:after{content:"\2714";margin-left:10px;display:inline-block}
+/* ⭐ O ALTO-FALANTE (pilar SONORA da casa). É o MESMO glifo do motor: SVG
+   embutido que se centra sozinho pelo `viewBox`, sem coordenada na mão.
+   ⚠️ `background-color` e `background-image` SEPARADOS, nunca o atalho
+   `background:` — o desenho mora dentro do SVG e o atalho de um `:hover` o
+   apagaria, deixando um círculo vazio. */
+.zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none;
+     width:46px;height:46px;min-width:46px;margin-left:8px;padding:0;border:0;
+     border-radius:50%;cursor:pointer;
+     background-color:#efe6d2;
+     background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
+     background-repeat:no-repeat;background-position:center center;
+     -webkit-background-size:24px 24px;background-size:24px 24px;
+     -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:#ded3b8}
+.zap:active,.zap.tocando{background-color:#ffd54a}
+/* A GRADE. `display:flex` + `flex-wrap` + celula em (100/N)% = N colunas
+   sempre, em qualquer largura. NUNCA px fixo aqui.                        */
+.grade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       width:100%;max-width:400px;margin:8px auto 0;background:#4a3a2a;border:2px solid #6b5540;
+       border-radius:14px;padding:5px}
+.cel{height:38px;line-height:38px;text-align:center;font-size:17px;font-weight:800;cursor:pointer;
+     background:#fffdf6;color:#221a12;border:1px solid #e0d6c2;border-radius:6px}
+.cel.mark{background:#ffd54a;color:#33280a;border-color:#c9a52f}
+.cel.ok{background:#2e7a1c;color:#fff;border-color:#1f5010;cursor:default}
+.cel.ok.p1{background:#2a6ea8;border-color:#1b4a72} .cel.ok.p2{background:#2e7a1c;border-color:#1f5010}
+.cel.ok.p3{background:#a8531a;border-color:#733711} .cel.ok.p4{background:#6b3fa0;border-color:#492a6e}
+.cel.ok.p5{background:#a8306b;border-color:#731f49}
+.cel.pisca{-webkit-animation:pis .8s infinite;animation:pis .8s infinite}
+@-webkit-keyframes pis{50%{background:#ffe9a8;-webkit-box-shadow:0 0 0 3px #ffd54a}}
+@keyframes pis{50%{background:#ffe9a8;box-shadow:0 0 0 3px #ffd54a}}
+/* a faixa de "achou!" — comemoracao curta, sem tapar o dedo da crianca */
+.achouf{position:fixed;left:0;right:0;top:38%;text-align:center;font-size:30px;font-weight:800;
+        color:var(--texto,#fff);text-shadow:0 3px 10px rgba(0,0,0,.6);pointer-events:none;
+        -webkit-animation:sobe 1.2s ease-out;animation:sobe 1.2s ease-out}
+/* ⭐ CONFETE (pedido do Marcos, ago/2026: "confete de comemoracao, quero bem
+   lindo"). Papelzinho de DOM puro (ES5), cai do alto, gira e some. Nada de
+   biblioteca: peca e um arquivo so. `pointer-events:none` = nunca tapa o dedo. */
+.cft{position:fixed;top:-12vh;z-index:60;border-radius:2px;pointer-events:none;
+     -webkit-animation:cai linear forwards;animation:cai linear forwards}
+@-webkit-keyframes cai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1}
+  100%{-webkit-transform:translateY(118vh) rotate(600deg);opacity:.85}}
+@keyframes cai{0%{transform:translateY(0) rotate(0);opacity:1}
+  100%{transform:translateY(118vh) rotate(600deg);opacity:.85}}
+@-webkit-keyframes sobe{0%{opacity:0;-webkit-transform:scale(.6)}30%{opacity:1;-webkit-transform:scale(1.1)}100%{opacity:0;-webkit-transform:translateY(-40px)}}
+@keyframes sobe{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-40px)}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS, nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* TELA ESTREITA: encolhe a LETRA e a altura da celula, nunca o numero de
+   colunas — a palavra continua inteira na mesma linha. */
+@media (max-width:400px){
+  .cel{height:34px;line-height:34px;font-size:15px}
+  .pchip{font-size:13px;padding:4px 10px}
+}
+/* A LISTA DE PISTAS ENCOLHE ANTES DA GRADE. Em tela curta o que a criança
+   precisa ver inteiro é a GRADE; a pista continua alcançável rolando dentro
+   da própria caixa (e o alto-falante lê para quem não quiser ler). */
+@media (max-height:700px){ .lista.ldef{max-height:132px} }
+@media (max-height:660px){ .lista.ldef{max-height:78px} .pchip.pdef{font-size:13px;margin:5px 2px} }
+/* JANELA BAIXA (projetor, PC com barras): a grade INTEIRA precisa continuar
+   dentro da tela, senao a crianca nao ve as ultimas linhas. */
+@media (max-height:470px){
+  .prog{margin:4px 0 6px}
+  .selo{font-size:11px;padding:3px 10px;margin-bottom:5px}
+  .balao{font-size:13px;padding:7px 11px}
+  .balao + *{margin-top:6px}
+  .lista{margin-top:6px}
+  .pchip{font-size:12px;padding:3px 9px}
+  .grade{margin-top:6px;max-width:330px}
+  .cel{height:31px;line-height:31px;font-size:14px}
+  .hint{font-size:12px;margin-top:6px}
+  .lista.ldef{max-height:44px;margin-top:8px}
+  .pchip.pdef{font-size:12px;margin:4px 2px;padding:5px 9px}
+  .zap{width:44px;height:44px;min-width:44px;margin-left:6px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function sPing(){nota(880,.09,.12,"triangle",0);}
+function festa(){sCerto();confete(46,true);}
+/* ⭐ o confete: `n` papelzinhos; `forte` = chuva do topo da tela (fim da peca);
+   fraco = jorro curto perto do meio (uma palavra achada). */
+function confete(n,forte){
+  var cores=["#f6c23a","#3c6ee0","#2e7a1c","#a8306b","#a8531a","#6b3fa0","#ffd54a"];
+  var i,d,tam,dur,atr;
+  n=n||16;
+  for(i=0;i<n;i++){
+    d=document.createElement("i"); d.className="cft";
+    tam=6+Math.floor(Math.random()*8);
+    d.style.width=tam+"px"; d.style.height=(Math.round(tam*0.55)+3)+"px";
+    d.style.background=cores[i%cores.length];
+    d.style.left=(Math.random()*100)+"vw";
+    d.style.top=(forte?-12:26+Math.random()*16)+"vh";
+    dur=(forte?1.7:1.1)+Math.random()*0.9;
+    d.style.webkitAnimationDuration=dur+"s"; d.style.animationDuration=dur+"s";
+    atr=Math.random()*(forte?0.35:0.12);
+    d.style.webkitAnimationDelay=atr+"s"; d.style.animationDelay=atr+"s";
+    document.body.appendChild(d);
+    (function(node,vida){setTimeout(function(){if(node.parentNode)node.parentNode.removeChild(node);},vida*1000+400);})(d,dur+atr);
+  }
+}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (a horta da escola, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS esta lista. Palavras curtas, sem acento e sem
+   Ç: o quadro de letras não tem tecla de acento e a criança compara letra a
+   letra — MAÇÃ na grade viraria MACA e ela acharia que está errada.        */
+var PAL=["MILHO","ALFACE","TOMATE","CENOURA","FEIJAO"];
+var CORP=["p1","p2","p3","p4","p5"]; /*TECNICA*/
+var LADO=8;                 /* a grade tem LADO x LADO casas */
+var LETRAS="ABCDEFGHIJLMNOPRSTUVZ"; /*TECNICA*/
+
+/* ⭐ OS DOIS CAMPOS NOVOS (OPCIONAIS) — o modo do EdiLIM, ago/2026.
+   · `MODO` = "lista" (PADRÃO, o de sempre) ou "definicoes".
+   · `PALDEF` = a pista de cada palavra. Só é usada quando MODO="definicoes";
+     palavra que não estiver aqui volta a aparecer escrita, como antes.
+   ⚠️ A pista fala do MUNDO da criança e nunca contém a própria palavra
+   (senão ela copia a letra em vez de pensar). Curta: uma linha.            */
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — O TEMA DO EXEMPLO CRAVADO NA PECA. Esta peca
+   nasceu com a horta da escola, e o assunto ficou ESCRITO em quatro lugares do
+   codigo: o selo "CACA-PALAVRAS DA HORTA", o pedido ("ache as 5 palavras DA
+   HORTA"), a comemoracao e a tela de fim. Toda atividade que usasse a mecanica
+   levava a horta junto — a Central de Entregas, que e sobre generos textuais,
+   comemorava "achou as 5 palavras da horta!". O `_qa/clone.py` nao pega isto:
+   ele procura PREFIXO de outra pasta, e "horta" nao e prefixo, e palavra.
+   Conserto: as frases ficaram NEUTRAS (nao precisam do assunto para fazer
+   sentido) e o titulo virou gaveta. Frase que nao cita o tema nunca mente. */
+var TITULO="CA&#199;A-PALAVRAS";
+var MODO="lista"; /*TECNICA*/
+/* ⭐ NIVEL DIFICIL (pedido do Marcos, RIGHT NOW 9o ano, ago/2026: "o caca
+   palavras e pra ser mais dificil, palavras na diagonal etc"). Ligado por
+   conteudo (`"DIFICIL":true` no dadosExtra). Com ele, as palavras entram nas
+   OITO direcoes — inclusive de TRAS PRA FRENTE e de BAIXO PRA CIMA — e a grade
+   ganha uma folga a mais de letras. Desligado (padrao), continua as 4 direcoes
+   de sempre (turmas menores). ⚠️ e STRING (nao booleano): o integrador so liga
+   ao `dadosExtra` os vars de texto/lista. Vazio = facil; "sim" = dificil. */
+var DIFICIL=""; /*TECNICA*/
+var PALDEF={
+  "MILHO":"Amarelinho, em fileiras na espiga &#8212; vira pipoca na panela.",
+  "ALFACE":"A folha verdinha que a gente lava para a salada.",
+  "TOMATE":"Vermelho e redondo, vai no molho do macarr&#227;o.",
+  "CENOURA":"Comprida e laranja, cresce debaixo da terra.",
+  "FEIJAO":"Preto ou marrom, mora numa vagem e vai com arroz."
+};
+
+var ger=0;                  /* geracao da tela: mata timer de fase que ja saiu */
+var relogio=0;              /* o relogio do andaime */
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Dentro da atividade montada a ponte do
+   integrador injeta o `diz` que toca o mp3 da casa (Edge TTS). Sozinha, na
+   bancada, a peça fica calada de propósito — voz-robô do navegador nunca vai
+   para a criança (portão `_qa/vozrobo.py`). Por isso a guarda `typeof`.
+   Tudo o que a voz diz também está ESCRITO na tela: no mudo não falta nada. */
+function voz(txt){
+  if(!txt) return;
+  var t=String(txt).replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){
+    return String.fromCharCode(Number(n)); });
+  if(typeof diz==="function") diz(t);
+}
+/* a pista daquela palavra (vazia = a palavra volta a aparecer escrita) */
+function pistaDe(w){ return (PALDEF&&PALDEF[w])?PALDEF[w]:""; }
+/* ⭐ O ALTO-FALANTE DA PISTA — o apoio de quem ainda lê devagar. Ele só FALA:
+   o evento para nele para que tocar no botão não conte como toque na lista. */
+function fazZap(txt){
+  var z=el("button","zap","");
+  z.type="button";
+  z.setAttribute("aria-label","Ouvir a pista");
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sPing(); voz(txt);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  return z;
+}
+
+function pecaCaca(){
+  ger++;
+  if(relogio){ clearInterval(relogio); relogio=0; }
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  var barraP=t.getElementsByTagName("i")[0];
+  /* ⚠️ LICAO PAGA: a grade era SEMPRE LADO x LADO. Palavra maior que o lado
+     nunca cabia; `sorteia()` devolvia false as 60 tentativas, a peca seguia com
+     a grade incompleta e estourava no primeiro toque — 857 erros de JS numa
+     partida, e a crianca presa numa fase sem saida. A grade existe para caber
+     as palavras: agora ela CRESCE ate a maior delas. */
+  var maior = 0, _z;
+  for(_z = 0; _z < PAL.length; _z++)
+    if(PAL[_z].length > maior) maior = PAL[_z].length;
+  var N = Math.max(LADO, maior + 1), g=[], posicoes={}, onde={}, cor={}, achadas={}, cels={};
+  var i,j,k,p;
+
+  for(i=0;i<PAL.length;i++) cor[PAL[i]]=CORP[i%CORP.length];
+
+  /* --- 1) sortear a grade ------------------------------------------------
+     `cabe` deixa a palavra passar POR CIMA de outra quando a letra bate: e
+     assim que nascem os cruzamentos, que sao a graca do caca-palavras (e a
+     armadilha nº 5: as letras do cruzamento ja vem marcadas).            */
+  function cabe(w,li,co,dl,dc){
+    var z,y,x;
+    for(z=0;z<w.length;z++){
+      y=li+dl*z; x=co+dc*z;
+      if(y<0||y>=N||x<0||x>=N) return false;
+      if(g[y][x]&&g[y][x]!==w.charAt(z)) return false;
+    }
+    return true;
+  }
+  function poe(w,li,co,dl,dc){
+    var z,cs=[];
+    for(z=0;z<w.length;z++){
+      g[li+dl*z][co+dc*z]=w.charAt(z);
+      cs.push((li+dl*z)+"_"+(co+dc*z));
+    }
+    posicoes[w]=cs;
+    onde[w]={r:li,c:co,n:w.length,h:(dl===0),dl:dl,dc:dc};
+  }
+  function zera(){
+    var a,b2;
+    g=[]; posicoes={}; onde={};
+    for(a=0;a<N;a++){ g[a]=[]; for(b2=0;b2<N;b2++) g[a][b2]=""; }
+  }
+  /* a palavra CRUZA outra? (passa por uma casa que ja tem letra) */
+  function cruza(w,li,co,dl,dc){
+    var z;
+    for(z=0;z<w.length;z++) if(g[li+dl*z][co+dc*z]) return true;
+    return false;
+  }
+  /* ⚠️ DEFEITO PEGO NO TESTE À MÃO (e que portão nenhum via): sorteando a
+     direção A CADA palavra, saía grade em que NENHUMA palavra estava na
+     diagonal — e o enunciado, esse, prometia diagonal sempre. A criança
+     varre a diagonal à toa, e "a atividade mentiu" é pior que diagonal
+     nenhuma. Agora as quatro direções são um PLANO embaralhado: com cinco
+     palavras, as quatro direções entram sempre, a diagonal inclusive.
+
+     E, entre todas as casas onde a palavra cabe, prefere as que CRUZAM outra
+     palavra — cruzamento é o que faz um caça-palavras de verdade (e é o que
+     exercita a armadilha nº 5: as letras do cruzamento já vêm marcadas). */
+  function sorteia(){
+    var w,dl,dc,li,co,vagas,comCruz,esc,z;
+    /* 4 direcoes (padrao) ou as 8 (DIFICIL): as 4 de sempre + as REVERSAS
+       (de tras pra frente, de baixo pra cima e as diagonais que sobem). */
+    var dirs = DIFICIL
+      ? [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]]
+      : [[0,1],[1,0],[1,1],[1,-1]];   /* deitada, em pe e as DUAS diagonais */
+    var plano=[];
+    zera();
+    for(z=0;z<PAL.length;z++) plano.push(dirs[z%dirs.length]);
+    baguncar(plano);
+    for(w=0;w<PAL.length;w++){
+      dl=plano[w][0]; dc=plano[w][1];
+      vagas=[]; comCruz=[];
+      for(li=0;li<N;li++) for(co=0;co<N;co++){
+        if(!cabe(PAL[w],li,co,dl,dc)) continue;
+        vagas.push([li,co]);
+        if(cruza(PAL[w],li,co,dl,dc)) comCruz.push([li,co]);
+      }
+      /* a 1a palavra nao tem quem cruzar; da 2a em diante, cruzar vem antes */
+      if(comCruz.length&&w>0) esc=comCruz[Math.floor(Math.random()*comCruz.length)];
+      else if(vagas.length) esc=vagas[Math.floor(Math.random()*vagas.length)];
+      else return false;
+      poe(PAL[w],esc[0],esc[1],dl,dc);
+    }
+    return true;
+  }
+  function faltaAlguma(){
+    var z;
+    for(z=0;z<PAL.length;z++) if(!onde[PAL[z]]) return true;
+    return false;
+  }
+  var voltas=0;
+  while(!sorteia()&&voltas<60) voltas++;
+  if(faltaAlguma()){
+    /* rede de seguranca: se o sorteio nao fechou (praticamente impossivel,
+       mas palavra comprida demais para a grade fecharia aqui), monta deitado,
+       uma palavra por linha. A peca NUNCA nasce quebrada.                */
+    zera();
+    for(i=0;i<PAL.length;i++) poe(PAL[i],i%N,0,0,1);
+  }
+  /* ⭐ O ENUNCIADO DIZ A VERDADE SOBRE ESTA GRADE.
+     Não é frase decorada: ele é montado a partir de onde as palavras
+     REALMENTE ficaram. Prometer diagonal numa grade sem diagonal é pôr a
+     criança para varrer o que não existe — e é o tipo de mentira que
+     nenhum portão vê, porque o código está "funcionando".              */
+  /* ⚠️ a orientacao NAO olha o sinal: uma palavra de tras pra frente ainda e
+     "deitada", de baixo pra cima ainda e "em pe". Senao o difícil (com reversas)
+     esconderia "deitadas" do enunciado e ele mentiria por omissao. */
+  function temOrient(tipo){
+    var w,o;
+    for(w in onde){ if(!onde.hasOwnProperty(w)) continue; o=onde[w];
+      if(tipo==="h" && o.dl===0) return true;
+      if(tipo==="v" && o.dc===0) return true;
+      if(tipo==="d" && o.dl!==0 && o.dc!==0) return true;
+    }
+    return false;
+  }
+  var jeitos=[];
+  if(temOrient("h")) jeitos.push("deitadas");
+  if(temOrient("v")) jeitos.push("em p&#233;");
+  var temDiag=temOrient("d");
+  var comoEstao = jeitos.join(", ") + (temDiag ? (jeitos.length?" ou na <b>diagonal</b>":"na <b>diagonal</b>") : "");
+  if(DIFICIL) comoEstao += " &#8212; e algumas de <b>tr&#225;s pra frente</b>";
+  /* --- 2) a grade fica CHEIA: toda casa vazia ganha uma letra sorteada --- */
+  for(i=0;i<N;i++) for(j=0;j<N;j++)
+    if(!g[i][j]) g[i][j]=LETRAS.charAt(Math.floor(Math.random()*LETRAS.length));
+
+  /* --- 3) a tela --------------------------------------------------------- */
+  var porDef=(MODO==="definicoes");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",TITULO));
+  /* ⚠️ o balao principal e o enunciado (narrado pelo motor); a instrucao com o
+     numero de palavras vira hint (nao precisa de voz, e o numero varia). */
+  var _enun=(typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:(porDef
+     ? "Leia cada <b>pista</b>, pense na palavra e ache ela na grade."
+     : "Ache as palavras na grade.");
+  var bal=el("div","balao", _enun);
+  c.appendChild(bal);
+  c.appendChild(el("div","hint", porDef
+     ? "Elas est&#227;o "+comoEstao+"."
+     : "S&#227;o <b>"+PAL.length+"</b>, "+comoEstao+"."));
+
+  /* ⭐ A LISTA — de palavras (padrão) ou de PISTAS (modo definições). */
+  var lista=el("div","lista"+(porDef?" ldef":"")), chips={};
+  for(i=0;i<PAL.length;i++){(function(w){
+    var ch, lin, nm, pista=porDef?pistaDe(w):"";
+    if(pista){
+      ch=el("div","pchip pdef "+cor[w]);
+      lin=el("div","plin","");
+      lin.appendChild(el("i","pbola",""));
+      lin.appendChild(el("span","ptxt",pista));
+      lin.appendChild(fazZap(pista));
+      ch.appendChild(lin);
+      /* a palavra vem junto desde o começo, mas escondida no CSS: quando ela
+         acha, o chip a REVELA — é a recompensa de ter pensado na pista. */
+      nm=el("div","pnome",w);
+      ch.appendChild(nm);
+    } else {
+      ch=el("div","pchip "+cor[w]);
+      ch.innerHTML='<i class="pbola"></i>'+w;
+    }
+    /* ⭐ data-qa NO CHIP: no modo definições o texto visível é a PISTA, então o
+       auditor-jogador não tem como saber de que palavra é aquele chip — e dava
+       "PRESO" numa fase que a criança fecha. A palavra vai aqui, só para ele;
+       a criança não vê diferença nenhuma. */
+    ch.setAttribute("data-qa",w);
+    chips[w]=ch;
+    lista.appendChild(ch);
+  })(PAL[i]);}
+  c.appendChild(lista);
+
+  var grade=el("div","grade");
+  /* ⭐ data-qa: onde cada palavra ficou (r, c, tamanho, deitada?, e o PASSO
+     dl/dc, que e o que ensina a diagonal ao auditor). Existe SO para o
+     auditor-jogador; a crianca nao ve diferenca nenhuma.                 */
+  grade.setAttribute("data-qa",JSON.stringify(onde));
+  for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
+    var q=el("div","cel",g[y][x]);
+    /* ⭐ A ARMADILHA Nº 1: porcentagem, nunca px. */
+    q.style.width=(100/N)+"%";
+    cels[y+"_"+x]=q;
+    q.onclick=function(){
+      if(q.className.indexOf("ok")>=0){ sTap(); confere(); return; }  /* TRAVA */
+      q.className = q.className.indexOf("mark")>=0 ? "cel" : "cel mark";
+      sTap();
+      confere();
+    };
+    grade.appendChild(q);
+  })(i,j);}
+  c.appendChild(grade);
+  c.appendChild(el("div","hint", porDef
+    ? "Toque no alto-falante para OUVIR a pista. Depois toque em cada letra da palavra na grade."
+    : "Toque em cada letra da palavra. Tocou errado? Toque de novo para tirar."));
+  t.appendChild(c);
+  app.appendChild(t);
+
+  /* --- 4) conferir: `mark` OU `ok` (armadilha nº 5) ---------------------- */
+  function pega(id){
+    var cl=cels[id].className;
+    return cl.indexOf("mark")>=0||cl.indexOf("ok")>=0;
+  }
+  function quantas(){
+    var n=0,w;
+    for(w in achadas) if(achadas.hasOwnProperty(w)) n++;
+    return n;
+  }
+  function faixa(w){
+    var f=el("div","achouf",w+"!");
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1200);
+  }
+  function comemora(w){
+    /* cinto de seguranca: palavra sem lugar na grade nao pode virar estouro */
+    var cs=posicoes[w],z;
+    if(!cs) return;
+    for(z=0;z<cs.length;z++){(function(q,atraso){
+      setTimeout(function(){ q.className="cel ok "+cor[w]; },atraso);
+    })(cels[cs[z]],z*70);}
+    sCerto();
+    confete(14);          /* ⭐ jorro curto a cada palavra achada */
+    faixa(w);
+    /* ⭐ no modo definições o chip GUARDA a classe `pdef` — é ela que revela a
+       palavra por baixo da pista. Perder a classe aqui apagaria a recompensa. */
+    chips[w].className=(chips[w].className.indexOf("pdef")>=0?"pchip pdef ":"pchip ")+cor[w]+" feito";
+    voz(w);
+  }
+  function confere(){
+    var w,z,todas,n;
+    for(w in posicoes){
+      if(!posicoes.hasOwnProperty(w)||achadas[w]) continue;
+      todas=true;
+      for(z=0;z<posicoes[w].length;z++) if(!pega(posicoes[w][z])) todas=false;
+      if(todas){
+        achadas[w]=1;
+        comemora(w);
+        relogioAjuda();
+      }
+    }
+    n=quantas();
+    barraP.style.width=Math.round(n*100/PAL.length)+"%";
+    if(n>0&&n<PAL.length) bal.innerHTML="J&#225; achou <b>"+n+"</b> de <b>"+PAL.length+"</b>! Faltam as outras.";
+    if(n>=PAL.length){
+      if(relogio){ clearInterval(relogio); relogio=0; }
+      bal.innerHTML="Achou as <b>"+PAL.length+"</b> palavras!";
+      var meu=ger;
+      setTimeout(function(){
+        if(meu!==ger) return;
+        mostraBanner("Voc&#234; varreu a grade inteira &#8212; at&#233; a <b>diagonal</b>!",fimDaPeca);
+      },900);
+    }
+  }
+
+  /* --- 5) o andaime CRESCE pelo TEMPO PARADO (armadilha nº 7) ------------ */
+  function proxima(){
+    var z;
+    for(z=0;z<PAL.length;z++) if(!achadas[PAL[z]]) return PAL[z];
+    return null;
+  }
+  function direcaoDe(w){
+    var o=onde[w];
+    if(!o) return "";
+    if(o.dl===0) return "deitada";
+    if(o.dc===0) return "em p&#233;";
+    return "na <b>diagonal</b>";
+  }
+  /* ⭐ O ANDAIME CRESCE, e no modo definições ele ganha um degrau A MAIS:
+     primeiro a peça REPETE a pista (a criança ainda pode descobrir a palavra
+     sozinha — é o que a fase ensina), só depois entrega a palavra e por último
+     acende a letra. Entregar a palavra de cara desmancharia a atividade
+     inteira. No modo lista continua exatamente como sempre foi: dois degraus. */
+  function degrau1(w){
+    var pista=porDef?pistaDe(w):"";
+    if(pista){
+      mostraDica("A pista que falta: <b>"+pista+"</b>");
+      voz(pista);
+      return false;                 /* ainda há degrau depois deste */
+    }
+    mostraDica("Procure a palavra <b>"+w+"</b> &#8212; ela est&#225; "+direcaoDe(w)+".");
+    return false;
+  }
+  function degrau2(w){
+    mostraDica("&#201; a palavra <b>"+w+"</b> &#8212; ela est&#225; "+direcaoDe(w)+".");
+    voz("A palavra e "+w);
+    return false;
+  }
+  function degrau3(w){
+    var c0=posicoes[w][0];
+    if(cels[c0]&&cels[c0].className.indexOf("ok")<0)
+      cels[c0].className=cels[c0].className+" pisca";
+    mostraDica("A palavra <b>"+w+"</b> come&#231;a na letra que est&#225; <b>piscando</b>.");
+    return true;                    /* último degrau: o relógio pode parar */
+  }
+  function relogioAjuda(){
+    var nivel=0, meu=ger;
+    var passos = porDef ? [degrau1,degrau2,degrau3] : [degrau1,degrau3];
+    if(relogio) clearInterval(relogio);
+    relogio=setInterval(function(){
+      if(meu!==ger){ clearInterval(relogio); relogio=0; return; }
+      var w=proxima();
+      if(!w){ clearInterval(relogio); relogio=0; return; }
+      var ultimo = passos[nivel](w);
+      nivel++;
+      if(ultimo||nivel>=passos.length){ clearInterval(relogio); relogio=0; }
+    },20000);
+  }
+  relogioAjuda();
+}
+
+function fimDaPeca(){
+  ger++;
+  if(relogio){ clearInterval(relogio); relogio=0; }
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; achou as "+PAL.length+" palavras."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaCaca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a CA&#199;A-PALAVRAS: grade em porcentagem, quatro dire&#231;&#245;es, letra conquistada travada."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaCaca();
+</script>
+</body></html>

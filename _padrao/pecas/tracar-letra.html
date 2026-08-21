@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — traçar a letra (formar a letra com o dedo)</title>
+<!-- ============================================================
+     PEÇA: TRAÇAR A LETRA — formar a letra com o dedo, seguindo o caminho.
+     (copiada do _padrao/pecas/MOLDE.html; irmã de `tracar-caminho.html`, que é
+     outra coisa: lá o traço é uma CAUSA no mundo, aqui o traço é a ESCRITA.)
+
+     POR QUE ELA EXISTE:
+     é assim que se aprende a escrever. A criança de pré/1º ano não copia uma
+     letra olhando: ela precisa REFAZER O MOVIMENTO, sempre no mesmo sentido,
+     começando sempre no mesmo lugar. Por isso a peça tem o que a folha de
+     caligrafia tem — a LETRA FANTASMA por baixo, o ponto de partida numerado
+     que PISCA, a setinha que ANDA na direção do movimento e o rastro que fica
+     marcado — e nada do que a prova tem.
+
+     ⭐⭐ O QUE MUDOU EM AGO/2026 (ordem do Marcos, com todas as letras):
+       *"as dinâmicas interativas têm que ser mais VISUAIS e SONORAS para os
+       pequenos"* e, sobre o traçado: *"tem que ser mais profissional, mais
+       bonito, o estudante pode clicar nos pontos ou passar o mouse"*.
+       O que entrou por causa disso:
+       · A LETRA FANTASMA (`.fant`) — a letra inteira desenhada por baixo, em
+         faixa larga cor de areia, feita DOS MESMOS PONTOS do caminho. É o que
+         dá a cara de caderno de caligrafia: a criança vê a LETRA, não uma
+         constelação de bolinhas. Quando a letra fecha, o fantasma ACENDE em
+         azul — a recompensa visual é a própria letra pronta.
+       · PONTOS NUMERADOS DE VERDADE (1, 2, 3, 4…), em ordem contínua na letra
+         inteira. Antes só a primeira bolinha de cada traço tinha número, e a
+         criança que não lê não tinha por onde saber a ordem.
+       · A SETINHA ANDA (`.fsetabox` + `.fsp`): o triângulo desliza no sentido
+         do movimento em vez de ficar parado apontando. Direção é MOVIMENTO;
+         seta parada é ícone, seta que anda é instrução.
+       · PASSAR O MOUSE JÁ TRAÇA — pedido literal dele. `mousemove` sem botão
+         apertado também anda pelas bolinhas. Não é atalho: é a mesma
+         tolerância do dedo, e continua sem punir quem passa longe.
+       · A FIGURA DA PALAVRA (campo `img`, OPCIONAL). Quando a fase traz `img`,
+         o desenho da palavra aparece na tarja embaixo da folha, ao lado de
+         "L de LUA" e do alto-falante. Sem `img`, a tarja mostra só a palavra —
+         nenhuma atividade antiga quebra.
+       · ALTO-FALANTE TOCÁVEL (`.zap`, o MESMO glifo de SVG do resto da casa)
+         para repetir o nome e o som da letra quantas vezes ela quiser.
+
+     ⭐🔊 A VOZ, E A REGRA DE PRONÚNCIA DO MARCOS (ago/2026):
+       *"o é tem que ser dito somente E, e nas quais não rima tem que dizer bem
+       certinho o som ex: EL"*. Quem grava é o Edge TTS por workflow — então a
+       pronúncia se resolve ESCREVENDO o texto da fala do jeito certo, e não
+       com truque de código. Por isso o campo `voz` do L deixou de ser "éle"
+       (que a voz lê "élê", com uma sílaba inventada no fim) e passou a ser
+       **"EL"**. O campo novo `som` guarda a âncora — **"EL de LUA"** —, que é
+       como a professora ensina e a única forma que a voz nunca erra.
+       ⚠️ NUNCA chamar `speechSynthesis` direto: quem fala é `diz(texto)`, que
+       a ponte do integrador reaponta para o MP3 gravado (portão _qa/vozrobo.py).
+
+     AS TRÊS DECISÕES QUE FAZEM ELA FUNCIONAR (e que quase todo mundo erra):
+       · TOLERÂNCIA GENEROSA. O dedo de criança não é preciso. O que conta não é
+         o pixel: é a DISTÂNCIA até a próxima bolinha (13% do lado da folha, uns
+         39px de raio). E o alvo é enorme: 56px de bolinha (46px em janela baixa).
+       · SAIR DA LINHA NÃO PUNE. Arrastando, quem se afasta simplesmente não
+         avança: o rastro PARA, e ela recomeça do ponto onde parou. Não existe
+         som de tropeço, nem contagem de erro, para quem está tentando o gesto.
+         Erro só existe no TOQUE DELIBERADO longe do caminho — que é o gesto de
+         quem não entendeu (tocar direto no fim), e esse chama o andaime.
+       · O CAMINHO É UM DADO, não um desenho. Cada letra é uma lista de traços,
+         cada traço uma lista de pontos em % da folha. Trocar a letra (ou pôr um
+         NÚMERO: o 7 seria `{pts:[[14,18],[50,18],[86,18],[44,86]]}`) é mexer só
+         no bloco LETRAS — a letra fantasma, as setas e o rastro saem sozinhos
+         desses mesmos pontos.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular). Ele só
+         existe no `touchmove`, e só com o dedo em cima do papel.
+       · CLIQUE FANTASMA do celular: `ultimoToque` engole o clique sintético.
+       · O mouse não marca no `mousedown` (o `click` de trás desfazia); marca no
+         CLIQUE, e o arrasto só marca quando anda de verdade.
+       · PONTO COMPARTILHADO (o T começa o 2º traço em cima do 1º): a conferência
+         é por POSIÇÃO, nunca por identidade do elemento — senão a criança toca
+         no lugar certo e a peça diz que não é ali.
+       · TEMPORIZADOR DE RODADA VELHA: todo setTimeout guarda a GERAÇÃO.
+       · A 3ª DICA INVISÍVEL: o revelar acontece PRIMEIRO e a explicação vem
+         DEPOIS, e fica de pé 2,4s — senão ela é escrita e apagada no mesmo
+         quadro e a criança nunca lê o que a peça acabou de fazer por ela.
+       · NUNCA TRAVA: quem ficar parado 13 segundos ganha o próximo degrau do
+         andaime sozinho, e o 3º degrau desenha a letra até o fim.
+       · A LETRA FANTASMA É SVG, NÃO TEXTO. Letra de texto em cor clara é
+         justamente o que o portão do contraste reprova (e com razão: texto
+         apagado não se lê). Como faixa desenhada ela é FORMA, não palavra —
+         e ainda serve a qualquer letra nova sem ninguém desenhar nada.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; nada essencial só na cor; funciona no mudo; publica
+     data-qa; termina em .medal.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A FOLHA. Duas caixas de proposito: a de fora LIMITA a largura, a de dentro e
+   que vira QUADRADO (padding-bottom:100% conta a largura do PAI, entao sem a
+   caixa de fora a folha sairia esticada em tela larga).
+   ⚠️ margem PROPRIA em cima: `.balao + *` tem a mesma forca e vem antes no
+   arquivo — sem isto a folha nasce colada no enunciado. */
+.folhabox{width:100%;max-width:300px;margin:13px auto 0}
+/* moldura por box-shadow (e nao border) para o quadro do padding bater com o
+   retangulo medido: e nele que a conta do dedo em % acontece.
+   ⭐ a SOMBRA SUAVE por fora (0 8px 20px) e o que tira a cara de "retangulo
+   colado na tela" e da a de folha pousada em cima da mesa. */
+.folha{position:relative;width:100%;height:0;padding-bottom:100%;overflow:hidden;
+       border-radius:18px;cursor:pointer;background:#fffdf6;
+       background:-webkit-repeating-linear-gradient(top,#fffdf6,#fffdf6 33px,#f0e7d2 33px,#f0e7d2 35px);
+       background:repeating-linear-gradient(180deg,#fffdf6,#fffdf6 33px,#f0e7d2 33px,#f0e7d2 35px);
+       -webkit-box-shadow:inset 0 0 0 4px #c9bda6,0 8px 20px rgba(0,0,0,.34);
+       box-shadow:inset 0 0 0 4px #c9bda6,0 8px 20px rgba(0,0,0,.34);
+       -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.folha.brilha{-webkit-box-shadow:inset 0 0 0 4px #59c24b,0 0 22px 5px rgba(89,194,75,.55);
+              box-shadow:inset 0 0 0 4px #59c24b,0 0 22px 5px rgba(89,194,75,.55);
+              -webkit-animation:pronto .5s ease 1;animation:pronto .5s ease 1}
+@-webkit-keyframes pronto{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.035)}
+  100%{-webkit-transform:scale(1)}}
+@keyframes pronto{0%{transform:scale(1)}45%{transform:scale(1.035)}100%{transform:scale(1)}}
+/* ⭐ A LETRA FANTASMA. E a MESMA lista de pontos do caminho, desenhada como uma
+   faixa larga por baixo de tudo: a crianca ve a LETRA, e nao um punhado de
+   bolinhas soltas. Ela e SVG (forma), nunca texto — texto claro e o que o
+   portao do contraste reprova, e com razao. */
+.fant{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none;z-index:0}
+.fant svg{display:block;width:100%;height:100%}
+.fant path{fill:none;stroke:#ecdfc0;stroke-width:16;stroke-linecap:round;stroke-linejoin:round;
+           -webkit-transition:stroke .45s;transition:stroke .45s}
+/* letra fechada: o fantasma ACENDE. A recompensa e a propria letra pronta. */
+.fant.fantok path{stroke:#c3d9f7}
+/* O CAMINHO. Pedaco por fazer = tracejado FINO; pedaco feito = faixa GROSSA e
+   cheia. A diferenca e de espessura e de forma, nao so de cor. */
+/* ⚠️ MEDIDO NA BANCADA (ago/2026): com o fantasma por baixo, o tracejado em
+   #bfae8c SUMIA dentro dele — a folha ficava com uma faixa lisa e a crianca
+   perdia justamente o "por onde a mao anda". A cor do tracejado desceu para
+   #a08c66 e a do fantasma subiu para #ecdfc0: a faixa e o fundo, o pontilhado
+   e o caminho. Fantasma e trilha precisam de contraste ENTRE SI. */
+.seg{position:absolute;height:13px;margin-top:-6px;border-radius:7px;
+     background:#a08c66;
+     background:-webkit-repeating-linear-gradient(left,#a08c66,#a08c66 9px,rgba(0,0,0,0) 9px,rgba(0,0,0,0) 16px);
+     background:repeating-linear-gradient(90deg,#a08c66,#a08c66 9px,rgba(0,0,0,0) 9px,rgba(0,0,0,0) 16px);
+     -webkit-transform-origin:0 50%;transform-origin:0 50%;z-index:1}
+.seg.on{height:19px;margin-top:-9px;background:#3c6ee0;
+        -webkit-box-shadow:0 0 0 2px rgba(255,255,255,.7);box-shadow:0 0 0 2px rgba(255,255,255,.7)}
+/* ⭐ o pedaco que ACABOU de ser conquistado da um estalo curto: e o "ficou
+   marcado" que a crianca precisa ver para saber que aquele pedaco e dela. */
+.seg.novo{-webkit-animation:risca .38s ease 1;animation:risca .38s ease 1}
+@-webkit-keyframes risca{0%{-webkit-transform:scaleY(.35)}55%{-webkit-transform:scaleY(1.5)}
+  100%{-webkit-transform:scaleY(1)}}
+@keyframes risca{0%{transform:scaleY(.35)}55%{transform:scaleY(1.5)}100%{transform:scaleY(1)}}
+/* A SETINHA DA DIREÇÃO. A caixa gira junto com o pedaco; o triangulo de dentro
+   ANDA no sentido do movimento — direcao e movimento, seta parada e so icone. */
+.fsetabox{position:absolute;width:0;height:0;z-index:3;
+          -webkit-transform-origin:0 50%;transform-origin:0 50%}
+.fsp{position:absolute;width:0;height:0;margin:-10px 0 0 -7px;
+     border-left:14px solid #7d6a47;
+     border-top:10px solid rgba(0,0,0,0);border-bottom:10px solid rgba(0,0,0,0)}
+/* pedaco ja conquistado: a seta continua contando a DIRECAO (nao some), mas
+   passa a branca por cima do rastro azul — some a sujeira, fica a informacao. */
+.fsetabox.feita .fsp{border-left-color:rgba(255,255,255,.9)}
+.fsetabox.viva .fsp{border-left-color:#1f6b12;
+     -webkit-animation:setanda 1.1s infinite;animation:setanda 1.1s infinite}
+@-webkit-keyframes setanda{0%{-webkit-transform:translateX(-7px);opacity:.35}
+  45%{opacity:1}100%{-webkit-transform:translateX(9px);opacity:.2}}
+@keyframes setanda{0%{transform:translateX(-7px);opacity:.35}
+  45%{opacity:1}100%{transform:translateX(9px);opacity:.2}}
+/* AS BOLINHAS. 56px de alvo (o dedo de 5 anos), NUMERADAS na ordem da mao. */
+.pt{color:#241d12;position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;
+    background:#fffdf6;color:#3a2c07;font-size:19px;font-weight:800;font-style:normal;
+    line-height:56px;text-align:center;cursor:pointer;z-index:2;
+    -webkit-box-shadow:inset 0 0 0 4px #b9ab8c;box-shadow:inset 0 0 0 4px #b9ab8c}
+.pt.feito{background:#8fe07a;color:#12300a;
+          -webkit-box-shadow:inset 0 0 0 4px #2f7a1c;box-shadow:inset 0 0 0 4px #2f7a1c}
+/* a proxima PISCA (halo que cresce, nunca opacidade: texto piscando some no
+   print do portao de contraste e a crianca perde o numero do traco) */
+.pt.prox{background:#ffd54a;color:#33280a;z-index:4;
+         -webkit-animation:halo 1.1s infinite;animation:halo 1.1s infinite}
+.pt.forte{-webkit-animation:halo .55s infinite;animation:halo .55s infinite}
+@-webkit-keyframes halo{
+  0%{-webkit-box-shadow:inset 0 0 0 5px #8a5a10,0 0 0 0 rgba(255,213,74,.75)}
+  100%{-webkit-box-shadow:inset 0 0 0 5px #8a5a10,0 0 0 14px rgba(255,213,74,0)}}
+@keyframes halo{
+  0%{box-shadow:inset 0 0 0 5px #8a5a10,0 0 0 0 rgba(255,213,74,.75)}
+  100%{box-shadow:inset 0 0 0 5px #8a5a10,0 0 0 14px rgba(255,213,74,0)}}
+.pt.treme{-webkit-animation:sacode .32s linear 1;animation:sacode .32s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+/* ⭐ A TARJA DA PALAVRA — o apoio de FIGURA. Fica embaixo da folha: a figura da
+   palavra (quando a fase traz `img`), a ancora escrita ("L de LUA") e o
+   alto-falante para ouvir de novo quantas vezes quiser. */
+.palavra{display:inline-block;margin-top:10px;background:#fffdf6;border-radius:18px;
+         padding:5px 9px;white-space:nowrap;
+         -webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
+.pfig{display:inline-block;vertical-align:middle;width:46px;height:46px;margin-right:7px;
+      overflow:hidden;border-radius:11px;background:#f3ecdc}
+.pfig img{display:block;width:100%;height:100%;object-fit:contain}
+/* ⚠️ tinta de ladrilho se escreve, e o seletor nomeia a superficie (mesma
+   licao das outras cinco pecas, ago/2026): `var(--texto)` e a tinta do
+   FUNDO DA ATIVIDADE, e aqui a letra cai no cartao que a peca pinta. */
+.palavra .ptxt{display:inline-block;vertical-align:middle;color:#221a12;font-size:17px;font-weight:800;
+      letter-spacing:.4px}
+/* alto-falante: o MESMO glifo de SVG do resto da casa. Dois desenhos de
+   alto-falante no mesmo app e amadorismo — e desenho feito de bordas sai
+   torto (licao paga TRES vezes com o Marcos). */
+.zap{display:inline-block;vertical-align:middle;width:44px;height:44px;margin-left:7px;
+     border:0;border-radius:13px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:44px}
+.zap:active{background-color:#ded3b8}
+.fone{display:inline-block;vertical-align:middle;width:22px;height:22px;
+      background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+      -webkit-background-size:22px 22px;background-size:22px 22px}
+.cont{margin-top:10px;font-size:16px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
+.cont b{color:#ffd54a}
+.aviso{margin-top:8px;font-size:16px;font-weight:700;background:#1f6b12;color:#fff;
+       border-radius:12px;padding:9px 12px;display:none}
+.aviso.ver{display:block}
+.medal{width:96px;height:96px;margin:2px auto 10px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:40px;line-height:84px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* PC de tela cheia: a folha cresce, que e onde o gesto acontece. */
+@media (min-height:700px){
+  .folhabox{max-width:320px}
+}
+/* janela media (o 1366x640 com as barras): a folha encolhe antes de a tarja da
+   palavra empurrar alguma coisa para fora. */
+@media (max-height:660px){
+  .folhabox{max-width:238px}
+  .palavra{margin-top:7px}
+  .cont{margin-top:7px;font-size:15px}
+}
+/* janela baixa (o monitor 1024x420 da escola, o projetor): a folha encolhe e a
+   bolinha vai a 46px — continua acima dos 44px do dedo. Nunca menos. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:8px 13px}
+  .balao + *{margin-top:8px}
+  .folhabox{max-width:190px;margin-top:8px}
+  .pt{width:46px;height:46px;margin:-23px 0 0 -23px;font-size:16px;line-height:46px}
+  .seg{height:10px;margin-top:-5px}
+  .seg.on{height:15px;margin-top:-7px}
+  .palavra{margin-top:5px;padding:3px 7px}
+  .pfig{width:38px;height:38px;margin-right:5px}
+  .palavra .ptxt{font-size:15px}
+  .cont{margin-top:5px;font-size:14px}
+  .aviso{margin-top:5px;font-size:14px;padding:6px 10px}
+  .hint{display:none}
+  .medal{width:70px;height:70px;font-size:30px;line-height:60px}
+}
+@media (prefers-reduced-motion:reduce){
+  .fsetabox.viva .fsp,.seg.novo,.folha.brilha{-webkit-animation:none;animation:none}
+}
+
+/* ⚠️ LICAO PAGA (ago/2026): o numero do ponto herdava `--texto` do MOTOR
+   (#3a3020) e caia sobre o laranja do tema da atividade — 4,37:1, abaixo
+   dos 4,5 que a casa exige. Na bancada nao aparecia: la o fundo e escuro.
+   Cor escrita com o peso do CONTEINER, para ganhar de qualquer variante. */
+.folha .pt,.folha .pt.prox,.folha .pt.vez,.folha .pnum{color:#241d12}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) AS LETRAS — O CONTEUDO DA PECA (o montador confere a fase contra
+      este bloco; os NOMES dos campos nao mudam).
+
+      selo    · a plaquinha azul do alto
+      letra   · a letra escrita (aparece no contador e na mensagem)
+      voz     · O NOME DA LETRA, escrito do jeito que a VOZ acerta.
+                ⭐ Regra do Marcos (ago/2026): *"o é tem que ser dito somente E,
+                e nas quais não rima tem que dizer bem certinho o som ex: EL"*.
+                Por isso "EL", e nao "éle" (que a voz le "élê").
+      som     · (novo, opcional) A ANCORA: "EL de LUA". E o que a professora
+                diz e o que o alto-falante repete. Sem ele a peca fala so o nome.
+      palavra · a palavra da letra (LUA, CASA, TATU)
+      img     · (novo, OPCIONAL) o nome da figura da palavra. Dentro de uma
+                atividade quem a resolve e o motor (`imgEl`); aqui na bancada
+                nao ha pasta de imagens, entao a tarja mostra so a palavra —
+                e por isso NENHUMA atividade antiga quebra por falta deste campo.
+      enun    · o enunciado (uma linha; e ele que a voz diz ao abrir)
+      hint    · o rodape de apoio
+      msg     · a faixa verde de "ficou pronta"
+      tracos  · a LISTA DE TRACOS; cada traco, uma lista de pontos em % da
+                folha (0..100), na ORDEM em que a mao anda.
+
+      A escada:  L = um traco com um canto  ->  C = um traco CURVO
+                 ->  T = DOIS tracos (a crianca levanta o dedo).
+      Maiuscula primeiro, que e por onde se comeca a escrever.
+      Um NUMERO entra do mesmo jeito: o 7 seria
+      {pts:[[14,18],[50,18],[86,18],[44,86]]}.
+   --------------------------------------------------------------- */
+var LETRAS=[
+ {selo:"A LETRA L", letra:"L", voz:"EL", som:"EL de LUA", palavra:"LUA", img:"lua",
+  enun:"Comece na bolinha <b>1</b>, que est&#225; piscando, e siga as setinhas.",
+  hint:"Passe o dedo pelas bolinhas, na ordem. Se sair da linha, o tra&#231;o espera "+
+       "voc&#234; no lugar onde parou.",
+  msg:"Voc&#234; escreveu o <b>L</b>! L de LUA.",
+  tracos:[{pts:[[32,12],[32,46],[32,80],[59,80],[86,80]]}]},
+
+ {selo:"A LETRA C", letra:"C", voz:"C&#202;", som:"C&#202; de CASA", palavra:"CASA", img:"casa",
+  enun:"Agora uma letra <b>curva</b>. Comece em cima, na bolinha <b>1</b>, e "+
+       "d&#234; a volta.",
+  hint:"A curva do C vai para tr&#225;s primeiro e depois desce. Siga as setinhas devagar.",
+  msg:"Voc&#234; escreveu o <b>C</b>! C de CASA.",
+  tracos:[{pts:[[75,22],[40,16],[16,50],[40,84],[75,78]]}]},
+
+ {selo:"A LETRA T", letra:"T", voz:"T&#202;", som:"T&#202; de TATU", palavra:"TATU", img:"tatu",
+  enun:"Esta tem <b>dois tra&#231;os</b>: v&#225; do <b>1</b> ao <b>3</b>, levante o "+
+       "dedo e comece no <b>4</b>.",
+  hint:"Primeiro o chapeuzinho, da esquerda para a direita. Depois o pauzinho, de "+
+       "cima para baixo.",
+  msg:"Voc&#234; escreveu o <b>T</b>! T de TATU.",
+  tracos:[{pts:[[14,18],[50,18],[86,18]]},
+          {pts:[[50,18],[50,52],[50,86]]}]}
+];
+
+/* tolerancia do dedo, em % do lado da folha. 13% de 300px = 39px de RAIO —
+   quase 80px de diametro para acertar uma bolinha. E de proposito: dedo de
+   crianca de 5 anos nao mira, arrasta. */
+var TOL=13;
+
+var rodada=0, LT=null, tr=0, ip=0, erros=0, travado=false, revelando=false;
+var ger=0, progVisto=0, marcaProg=0, relogio=null, feitasTudo=0;
+var pontos=[], segsEl=[], setasEl=[], fantEl=null;
+var elFolha=null, elCont=null, elAviso=null, progI=null;
+var ultimoToque=0, arrastando=false, mouseDown=false, mouseAndou=false;
+var moveu=false, avancouNoGesto=false, toqueX=0, toqueY=0;
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela nao existe, e a tarja mostra so a palavra escrita. Pegar por
+   `window.imgEl` (e nao `typeof imgEl`) e de proposito: assim o nome fica
+   DECLARADO, o portao "funcao que nao existe" consegue medir, e o dia em que o
+   motor trocar o nome dessa ferramenta a peca avisa em vez de sumir a figura. */
+var figEl = window.imgEl || null;
+
+/* A VOZ. Web Speech so para PROVAR o contrato quando a peca roda SOZINHA na
+   bancada: se o PC nao tiver voz, a peca continua inteira, porque tudo que a voz
+   diz tambem esta escrito na tela. Dentro de uma atividade esta funcao e
+   SUBSTITUIDA pela ponte do integrador, que toca o MP3 gravado pelo Edge TTS —
+   e e por isso que a peca nunca chama `speechSynthesis` fora daqui (portao
+   _qa/vozrobo.py: toda voz que a crianca ouve e gravada). */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.95; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* ⭐ TODA fala da peca passa por aqui, com o guarda. Dentro da atividade quem
+   responde e a ponte (voz gravada); na bancada, a declaracao acima. */
+function fala(txt){ if(typeof diz==="function") diz(txt); }
+/* o nome + o som da letra, do jeito que a professora diz */
+function falaLetra(){
+  if(!LT) return;
+  fala(LT.som ? (LT.voz+". "+LT.som+".") : (LT.voz+"."));
+}
+function sPasso(k){ nota(430+k*40,.07,.11,"sine",0); }
+/* ⚠️ AQUI NAO EXISTE SOM DE TROPECO. Traçar e um GESTO em treino, nao uma
+   resposta: o dedo que vai parar longe da bolinha nao errou nada, so ainda nao
+   chegou. O que ele ouve e um som de RETORNO (grave, curto, sem cara de
+   engano) e o que ele ve e a bolinha da vez chamando de novo. Quem cresce e o
+   andaime, nao a bronca. */
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+function sPronto(){ nota(659.25,.22,.15,"triangle",0); nota(987.77,.28,.13,"triangle",.10); }
+
+function dist(ax,ay,bx,by){ var dx=ax-bx, dy=ay-by; return Math.sqrt(dx*dx+dy*dy); }
+function esperado(){ if(!LT||tr>=LT.tracos.length) return null; return LT.tracos[tr].pts[ip]; }
+function feitoPonto(t,i){ return (t<tr)||(t===tr&&i<ip); }
+function totalPontos(){ var i,n=0; for(i=0;i<LT.tracos.length;i++) n+=LT.tracos[i].pts.length; return n; }
+function faltamPontos(){ var i,n=0; for(i=0;i<pontos.length;i++){ if(!feitoPonto(pontos[i].t,pontos[i].i)) n++; } return n; }
+
+/* ---------------------------------------------------------------
+   2) A LETRA FANTASMA — sai dos MESMOS pontos do caminho.
+      Um `<path>` por traco: "M x y L x y L x y ...", faixa larga com ponta e
+      canto redondos. Trocar a letra la em cima muda o fantasma junto, sem
+      ninguem desenhar nada.
+   --------------------------------------------------------------- */
+function ar(n){ return Math.round(n*100)/100; }
+/* ⚠️ POR QUE CURVA, E NAO LINHA RETA (medido na bancada, ago/2026): ligando os
+   5 pontos do C com retas o fantasma saia um ZIGUEZAGUE — a crianca via um
+   polígono, nao um C, que e o contrário do que a letra fantasma existe para
+   fazer. A suavizacao e Catmull-Rom (cada ponto vira uma cubica cujo rumo e a
+   direcao dos VIZINHOS), e ela nao inventa nada: passa exatamente por todos os
+   pontos do caminho. No L ela arredonda de leve o canto — que e como a mao de
+   uma crianca vira mesmo o canto do L. O maior afastamento medido entre a
+   linha reta do tracejado e o meio da curva foi de 4,5 unidades, dentro da
+   metade da faixa (8): o pontilhado nunca sai de dentro do fantasma. */
+function curvaD(ps){
+  var i,p0,p1,p2,p3,d;
+  if(ps.length<2) return "";
+  d="M "+ps[0][0]+" "+ps[0][1];
+  if(ps.length===2) return d+" L "+ps[1][0]+" "+ps[1][1];
+  for(i=0;i<ps.length-1;i++){
+    p0=ps[i-1]||ps[i]; p1=ps[i]; p2=ps[i+1]; p3=ps[i+2]||ps[i+1];
+    d+=" C "+ar(p1[0]+(p2[0]-p0[0])/6)+" "+ar(p1[1]+(p2[1]-p0[1])/6)+
+       " "+ar(p2[0]-(p3[0]-p1[0])/6)+" "+ar(p2[1]-(p3[1]-p1[1])/6)+
+       " "+p2[0]+" "+p2[1];
+  }
+  return d;
+}
+function fantasmaSVG(letra){
+  var a,todo="";
+  for(a=0;a<letra.tracos.length;a++)
+    todo+='<path d="'+curvaD(letra.tracos[a].pts)+'"></path>';
+  /* preserveAspectRatio="none" garante que 1 unidade do viewBox = 1% da folha,
+     que e exatamente a conta que o dedo faz em `pctDe`. */
+  return '<svg viewBox="0 0 100 100" preserveAspectRatio="none">'+todo+'</svg>';
+}
+
+/* ---------------------------------------------------------------
+   3) A TELA
+   --------------------------------------------------------------- */
+function pecaLetra(){
+  limpa();
+  LT=LETRAS[rodada];
+  tr=0; ip=0; erros=0; travado=false; revelando=false;
+  pontos=[]; segsEl=[]; setasEl=[]; ger++; marcaProg++;
+  arrastando=false; mouseDown=false; mouseAndou=false; moveu=false; avancouNoGesto=false;
+
+  var t=el("div","tela");
+  setProg(t,progVisto);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",LT.selo));
+  c.appendChild(el("div","balao",LT.enun));
+
+  var box=el("div","folhabox"), f=el("div","folha");
+  elFolha=f;
+  var a,i,ps,p,q,s,sb,st,d,ang,len,seq=0;
+  /* a letra fantasma, por baixo de tudo */
+  fantEl=el("div","fant",fantasmaSVG(LT));
+  f.appendChild(fantEl);
+  /* os pedacos do caminho (e a setinha que anda no meio de cada um) */
+  for(a=0;a<LT.tracos.length;a++){
+    ps=LT.tracos[a].pts;
+    for(i=1;i<ps.length;i++){
+      p=ps[i-1]; q=ps[i];
+      len=dist(p[0],p[1],q[0],q[1]);
+      ang=Math.atan2(q[1]-p[1],q[0]-p[0])*180/Math.PI;
+      s=el("i","seg","");
+      s.style.left=p[0]+"%"; s.style.top=p[1]+"%"; s.style.width=len+"%";
+      s.style.webkitTransform="rotate("+ang+"deg)";
+      s.style.transform="rotate("+ang+"deg)";
+      f.appendChild(s);
+      segsEl.push({t:a,i:i,el:s,on:false});
+      /* a caixa gira; o triangulo de dentro e que anda no sentido do gesto */
+      sb=el("i","fsetabox","");
+      sb.style.left=((p[0]+q[0])/2)+"%"; sb.style.top=((p[1]+q[1])/2)+"%";
+      sb.style.webkitTransform="rotate("+ang+"deg)";
+      sb.style.transform="rotate("+ang+"deg)";
+      st=el("i","fsp","");
+      sb.appendChild(st);
+      f.appendChild(sb);
+      setasEl.push({t:a,i:i,el:sb});
+    }
+  }
+  /* as bolinhas por cima, NUMERADAS na ordem em que a mao anda (1, 2, 3...).
+     A numeracao e continua na letra inteira: no T, o 2o traco comeca no 4 —
+     e o buraco entre o 3 e o 4 e justamente o "levante o dedo". */
+  for(a=0;a<LT.tracos.length;a++){
+    ps=LT.tracos[a].pts;
+    for(i=0;i<ps.length;i++){
+      seq++;
+      d=el("i","pt", String(seq));
+      d.style.left=ps[i][0]+"%"; d.style.top=ps[i][1]+"%";
+      /* ⚠️ A CONFERENCIA E POR POSICAO, NUNCA POR IDENTIDADE. No T o 2o traco
+         comeca EM CIMA do ponto do meio do 1o: sao dois elementos no mesmo
+         lugar. Se o toque valesse pelo elemento, a crianca tocaria no lugar
+         certo e a peca diria que nao era ali. */
+      d.onclick=(function(px,py){ return function(ev){
+        var e=ev||window.event;
+        if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+        if(new Date().getTime()-ultimoToque<800) return;   /* clique fantasma */
+        if(mouseAndou) return;                             /* fim de arrasto */
+        entra(px,py,true);
+      }; })(ps[i][0],ps[i][1]);
+      f.appendChild(d);
+      pontos.push({t:a,i:i,seq:seq,x:ps[i][0],y:ps[i][1],el:d});
+    }
+  }
+  ligaDedo(f);
+  box.appendChild(f);
+  c.appendChild(box);
+  c.appendChild(tarjaPalavra());
+
+  elCont=el("div","cont","");
+  c.appendChild(elCont);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  c.appendChild(el("div","hint",LT.hint));
+  t.appendChild(c);
+  app.appendChild(t);
+  pinta();
+  agendaAjuda();
+  /* a fase abre falando: o enunciado, o NOME e o SOM da letra. No 1o ano nada
+     essencial fica so escrito. */
+  fala("Vamos escrever a letra "+LT.voz+". "+(LT.som?LT.som+". ":"")+
+       "Comece na bolinha número 1, que está piscando.");
+}
+
+/* ⭐ A TARJA DA PALAVRA: figura (quando houver), a ancora escrita e o
+   alto-falante. Ela e o apoio de quem ainda nao le — e o alto-falante e o
+   unico jeito de a crianca repetir o som quantas vezes quiser. */
+function tarjaPalavra(){
+  var w=el("div","palavra",""), fg, z;
+  if(LT.img&&figEl){
+    fg=el("span","pfig","");
+    fg.appendChild(figEl(LT.img));
+    w.appendChild(fg);
+  }
+  w.appendChild(el("b","ptxt",LT.letra+" de "+LT.palavra));
+  z=el("button","zap","");
+  z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label","Ouvir a letra "+LT.letra+" e a palavra "+LT.palavra);
+  /* ⭐ data-voz = EXATAMENTE o que falaLetra() diz, para o portao _qa/fala_o_escrito
+     casar a gravacao pelo texto REAL (senao ele usa o texto visivel "A de ABELHA",
+     que difere do falado "Á. Á de ABELHA." e acusa alto-falante sem voz). */
+  z.setAttribute("data-voz", LT.som ? (LT.voz+". "+LT.som+".") : (LT.voz+"."));
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    sTap(); falaLetra();
+  };
+  w.appendChild(z);
+  return w;
+}
+
+/* ---------------------------------------------------------------
+   4) O DEDO — as portas: arrastar, tocar, clicar e PASSAR O MOUSE
+   --------------------------------------------------------------- */
+function pctDe(x,y){
+  if(!elFolha) return null;
+  var r=elFolha.getBoundingClientRect();
+  if(!r.width||!r.height) return null;
+  return [ (x-r.left)/r.width*100, (y-r.top)/r.height*100 ];
+}
+function ligaDedo(f){
+  /* ⚠️ A ORDEM DESTE BLOCO E DE PROPOSITO: o `touchmove` (o unico com
+     preventDefault, e so com o dedo em cima do papel) vem ANTES, e o
+     `touchstart` vem DEPOIS. Assim ninguem — nem o auditor `_qa/dinamicas.py`,
+     que le o trecho logo abaixo do touchstart, nem o proximo humano que abrir
+     este arquivo — le um preventDefault "dentro" do touchstart. Nao arrume. */
+  f.addEventListener("touchmove",function(ev){
+    if(!arrastando) return;
+    ultimoToque=new Date().getTime();
+    moveu=true;
+    /* so aqui: segura a rolagem da pagina para o traco nao escapar no meio */
+    if(ev.preventDefault) ev.preventDefault();
+    var t2=ev.touches[0], c=pctDe(t2.clientX,t2.clientY);
+    if(c) entra(c[0],c[1],false);
+  },false);
+  f.addEventListener("touchend",function(){
+    ultimoToque=new Date().getTime();
+    /* dedo que POUSOU e saiu sem andar e um TOQUE, e toque e deliberado: e o
+       gesto de quem aponta o fim ("quero chegar ALI"). So ai o andaime cresce.
+       Quem ARRASTOU e se perdeu no meio nao e cobrado de nada. */
+    if(arrastando&&!moveu&&!avancouNoGesto) entra(toqueX,toqueY,true);
+    arrastando=false;
+  },false);
+  /* NADA de preventDefault aqui: e ele que mata o toque no celular. */
+  f.addEventListener("touchstart",function(ev){
+    ultimoToque=new Date().getTime();
+    arrastando=true; moveu=false; avancouNoGesto=false;
+    var t2=ev.touches[0], c=pctDe(t2.clientX,t2.clientY);
+    if(c){ toqueX=c[0]; toqueY=c[1]; entra(c[0],c[1],false); }
+  },false);
+  /* MOUSE: a marca e do CLIQUE (licao paga — marcar no mousedown fazia o click
+     de tras desmarcar). Arrastando, so anda quando o ponteiro anda de verdade. */
+  f.addEventListener("mousedown",function(){ mouseDown=true; mouseAndou=false; },false);
+  /* ⭐ PASSAR O MOUSE TAMBEM TRACA (pedido do Marcos, ago/2026: *"o estudante
+     pode clicar nos pontos ou passar o mouse"*). No PC da escola o mouse e a
+     mao da crianca: exigir segurar o botao enquanto se contorna uma curva e
+     dificuldade de FERRAMENTA, nao de letra. Passar por cima e sempre um gesto
+     NAO deliberado — quem passa longe nao e cobrado de nada. */
+  f.addEventListener("mousemove",function(ev){
+    if(mouseDown) mouseAndou=true;
+    /* o celular dispara um mousemove FANTASMA logo depois do toque */
+    if(new Date().getTime()-ultimoToque<800) return;
+    var c=pctDe(ev.clientX,ev.clientY);
+    if(c) entra(c[0],c[1],false);
+  },false);
+  f.onclick=function(ev){
+    var e=ev||window.event;
+    if(new Date().getTime()-ultimoToque<800) return;
+    if(mouseAndou) return;
+    /* clique sintetico (o auditor-jogador) chega sem coordenada: quem responde
+       por ele e o onclick da propria bolinha, que sabe onde ela esta. */
+    if(!e.clientX&&!e.clientY) return;
+    var c=pctDe(e.clientX,e.clientY);
+    if(c) entra(c[0],c[1],true);
+  };
+}
+
+/* entra(x,y,deliberado): o coracao.
+   `deliberado` = foi um TOQUE/CLIQUE, nao um arrasto nem um passar de mouse.
+   Arrastando longe da linha nao acontece nada (o rastro para e espera);
+   tocando longe, o andaime cresce. */
+function entra(x,y,deliberado){
+  if(travado||revelando) return;
+  var e=esperado(), passos=0;
+  while(e && dist(x,y,e[0],e[1])<=TOL && passos<3){
+    ip++;
+    if(ip>=LT.tracos[tr].pts.length){ tr++; ip=0; }
+    sPasso(passos+faltamPontos()%4);
+    passos++;
+    e=esperado();
+  }
+  if(passos){
+    avancouNoGesto=true; marcaProg++;
+    pinta();
+    agendaAjuda();
+    if(!esperado()) completou(false);
+    return;
+  }
+  if(!deliberado) return;
+  /* toque deliberado longe do caminho: o gesto de quem nao entendeu a ordem
+     (tocar direto no fim — "quero chegar ALI"). Nao e castigo: e o andaime
+     subindo um degrau. */
+  erros++;
+  sVolta();
+  treme();
+  ajuda(erros);
+}
+function treme(){
+  var ex=pontoEsperado(), g=ger;
+  if(!ex) return;
+  ex.el.className="pt treme";
+  setTimeout(function(){ if(g===ger) pinta(); },380);
+}
+function pontoEsperado(){
+  var i;
+  for(i=0;i<pontos.length;i++){ if(pontos[i].t===tr&&pontos[i].i===ip) return pontos[i]; }
+  return null;
+}
+
+/* ---------------------------------------------------------------
+   5) A PINTURA — tudo sai do DADO (tr/ip), nunca de remendo
+   --------------------------------------------------------------- */
+function pinta(){
+  var i,o,cl,ex,agora,n=pontos.length,z;
+  for(i=0;i<n;i++){
+    o=pontos[i]; cl="pt";
+    /* ⚠️ PONTO COMPARTILHADO E EMPILHAMENTO (defeito visto na bancada, ago/2026,
+       com a numeracao continua): no T o ponto 4 nasce EM CIMA do ponto 2 — sao
+       o mesmo lugar. Como o 4 entra depois no DOM, a folha abria mostrando "4"
+       onde a crianca precisava ler "2", e a ordem que a peca inteira ensina
+       aparecia errada logo na primeira olhada. A pilha agora sai do DADO: o
+       ponto da VEZ por cima de tudo, depois os que ainda faltam (o mais cedo
+       na frente) e, por ultimo, os ja feitos. */
+    z=2;
+    if(feitoPonto(o.t,o.i)){ cl+=" feito"; }
+    else if(o.t===tr&&o.i===ip){ cl+=(erros>0&&erros%3===2)?" prox forte":" prox"; z=60; }
+    else { z=3+(n-o.seq); }
+    o.el.style.zIndex=z;
+    o.el.className=cl;
+    o.el.removeAttribute("data-qa");
+  }
+  for(i=0;i<segsEl.length;i++){
+    o=segsEl[i];
+    agora=feitoPonto(o.t,o.i);
+    /* o pedaco que ACABOU de virar rastro ganha o estalo curto; os que ja
+       estavam marcados ficam quietos (senao a letra inteira pisca a cada
+       passo, que e o oposto de "olhe o que voce acabou de fazer"). */
+    o.el.className=agora?(o.on?"seg on":"seg on novo"):"seg";
+    o.on=agora;
+  }
+  for(i=0;i<setasEl.length;i++){
+    o=setasEl[i];
+    o.el.className=(o.t===tr&&o.i===ip)?"fsetabox viva"
+                   :(feitoPonto(o.t,o.i)?"fsetabox feita":"fsetabox");
+  }
+  /* data-qa: so para o auditor-jogador — a bolinha que serve AGORA. Ele nao
+     sabe arrastar; sem isto reprovaria uma peca que a crianca fecha. */
+  ex=pontoEsperado();
+  if(ex&&!travado) ex.el.setAttribute("data-qa","1");
+
+  var falta=faltamPontos();
+  if(elCont){
+    elCont.innerHTML = falta
+      ? ("Tra&#231;o <b>"+(tr+1)+"</b> de <b>"+LT.tracos.length+"</b> &#8212; faltam <b>"+
+         falta+"</b> "+(falta===1?"bolinha":"bolinhas"))
+      : ("A letra <b>"+LT.letra+"</b> ficou pronta!");
+  }
+  var feitas=totalPontos()-falta;
+  var p=Math.round((rodada+feitas/totalPontos())*100/LETRAS.length);
+  if(p>progVisto) progVisto=p;
+  if(progI) progI.style.width=progVisto+"%";
+}
+
+/* ---------------------------------------------------------------
+   6) O FIM DA LETRA
+   --------------------------------------------------------------- */
+function completou(revelado){
+  travado=true;
+  if(relogio){ clearTimeout(relogio); relogio=null; }
+  pinta();
+  if(elFolha) elFolha.className="folha brilha";
+  /* ⭐ a recompensa visual e a PROPRIA LETRA: o fantasma acende inteiro. */
+  if(fantEl) fantEl.className="fant fantok";
+  if(elAviso){ elAviso.innerHTML=LT.msg; elAviso.className="aviso ver"; }
+  feitasTudo++;
+  sPronto(); sCerto();
+  fala("Ficou pronto! "+(LT.som?LT.som:LT.letra+" de "+LT.palavra)+".");
+  var g=ger;
+  /* revelado = a peca desenhou por ela: da MAIS tempo, porque a explicacao do
+     3o degrau esta na tela e precisa ser lida antes de a tela trocar. */
+  setTimeout(function(){
+    if(g!==ger) return;
+    rodada++;
+    if(rodada<LETRAS.length){ pecaLetra(); return; }
+    mostraBanner("<b>Voc&#234; tra&#231;ou as tr&#234;s letras!</b><br>Come&#231;ar no lugar "+
+                 "certo e seguir a setinha &#233; o segredo da letra bonita.", fimLetra);
+  }, revelado?2600:1800);
+}
+
+/* ---------------------------------------------------------------
+   7) O ANDAIME QUE CRESCE (1 metodo, 2 pisca forte, 3 desenha junto)
+   --------------------------------------------------------------- */
+function ajuda(n){
+  var p=n%3, ex=pontoEsperado();
+  if(p===1){
+    mostraDica("O tra&#231;o anda <b>de bolinha em bolinha</b>, sem pular. Comece na que "+
+               "est&#225; <b>piscando</b> e siga a <b>setinha</b>.");
+    fala("O traço anda de bolinha em bolinha. Comece na que está piscando.");
+  }else if(p===2){
+    mostraDica("Est&#225; piscando <b>bem forte</b> a bolinha da vez. Ponha o dedo nela e "+
+               "arraste at&#233; a pr&#243;xima, sem levantar.");
+    fala("Ponha o dedo na bolinha que está piscando forte.");
+    if(ex){ pinta(); }
+  }else{
+    revela();
+  }
+}
+/* ⚠️ O 3o DEGRAU: revela PRIMEIRO, explica DEPOIS. Nas cinco pecas do lote de
+   ago/2026 a explicacao era escrita e apagada no MESMO quadro (o "revelar"
+   chamava o "acertou", e o "acertou" limpava a dica): a peca se consertava
+   sozinha e a crianca nao sabia por que. Aqui a dica de abertura avisa que a
+   peca vai desenhar; quando o traco chega ao fim, a EXPLICACAO entra e fica
+   2,6s de pe antes de a tela trocar. */
+function revela(){
+  if(revelando||travado) return;
+  revelando=true;
+  var g=ger;
+  mostraDica("Vou tra&#231;ar <b>junto com voc&#234;</b>. Olhe o dedo do come&#231;o at&#233; o fim.");
+  fala("Vou traçar junto com você. Olhe o caminho.");
+  function anda(){
+    if(g!==ger) return;
+    if(!esperado()){
+      revelando=false;
+      completou(true);
+      mostraDica("Viu? O <b>"+LT.letra+"</b> come&#231;a na bolinha <b>1</b> e vai sempre no "+
+                 "sentido da <b>setinha</b>. Da pr&#243;xima vez voc&#234; faz esse caminho.");
+      return;
+    }
+    ip++;
+    if(ip>=LT.tracos[tr].pts.length){ tr++; ip=0; }
+    sPasso(2);
+    pinta();
+    setTimeout(anda,280);
+  }
+  setTimeout(anda,420);
+}
+
+/* O RELOGIO DA AJUDA: quem fica parado nao pode ficar sozinho. Guarda a GERACAO
+   e a marca de progresso — senao o relogio de uma letra que ja saiu da tela
+   continua chamando o andaime na letra nova. */
+function agendaAjuda(){
+  var g=ger, m=marcaProg;
+  if(relogio){ clearTimeout(relogio); relogio=null; }
+  relogio=setTimeout(function(){
+    if(g!==ger||travado||revelando) return;
+    if(m!==marcaProg) return;
+    erros++;
+    ajuda(erros);
+    agendaAjuda();
+  },13000);
+}
+
+/* ---------------------------------------------------------------
+   8) A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimLetra(){
+  limpa();
+  ger++; travado=true;
+  if(relogio){ clearTimeout(relogio); relogio=null; }
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; tra&#231;ou <b>L</b>, <b>C</b> e <b>T</b> com o dedo, "+
+                   "cada uma come&#231;ando no lugar certo. &#201; assim que a m&#227;o aprende a "+
+                   "escrever: pelo <b>movimento</b>, n&#227;o pelo desenho parado."));
+  var b=el("button","btn","Tra&#231;ar de novo");
+  b.onclick=function(){ rodada=0; progVisto=0; feitasTudo=0; pecaLetra(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Na atividade de verdade, a pr&#243;xima letra sai do "+
+                   "conteudo.json: bastam os pontos do caminho."));
+  t.appendChild(c);
+  app.appendChild(t);
+  fala("Peça fechada!");
+}
+
+document.addEventListener("mouseup",function(){ mouseDown=false; },false);
+pecaLetra();
+</script>
+</body></html>

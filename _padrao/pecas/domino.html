@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — dominó (encaixar pela ponta que combina)</title>
+<!-- ============================================================
+     PEÇA: DOMINÓ — SÓ ENCAIXA SE A PONTA BATER
+     (copiada do _padrao/pecas/MOLDE.html; padrão de qualidade: estimar.html)
+
+     POR QUE ELA EXISTE:
+     no quiz a criança compara UMA coisa com quatro respostas. No dominó ela
+     compara DUAS pontas com QUATRO peças de duas metades cada — e a regra do
+     jogo não deixa passar: a peça só entra se a ponta bater. A correção não
+     vem de um adulto nem de um "não é bem assim": vem da FORMA da peça. É a
+     mesma coisa que faz o quebra-cabeça ensinar sem falar.
+
+     E o mais importante: o que "combina" NÃO é o que é igual. Cinco pontinhos
+     combinam com o algarismo 5; a figura da lua combina com a palavra LUA.
+     Encaixar duas representações da MESMA ideia é exatamente o que a criança
+     precisa aprender a fazer — e aqui isso é o gesto, não o enunciado.
+
+     A ESCADA (3 rodadas):
+       1. pontinhos <-> algarismo   (concreto encontra símbolo)
+       2. figura <-> palavra        (a mesma mecânica noutro conteúdo)
+       3. pontinhos <-> pontinhos   (o dominó clássico: contar dos DOIS lados)
+
+     O QUE FAZ ESTA MECÂNICA VALER:
+       · A CORRENTE É SEMPRE FECHÁVEL. As peças saem de uma corrente montada de
+         antemão e a semente fica no MEIO: em todo momento existe pelo menos uma
+         peça que encaixa, e nenhuma peça encaixa num lugar que trave o resto.
+         Dominó sorteado ao acaso deixa a criança com a mão cheia e nenhum
+         lugar para pôr — e ela conclui que errou, quando quem errou foi o
+         sorteio.
+       · TRÊS CAMINHOS: arrastar com o mouse, arrastar com o dedo e TOQUE
+         SIMPLES (tocar a peça, depois tocar a ponta). No celular da escola nem
+         toda criança consegue arrastar.
+       · A PONTA ACENDE quando a peça passa por cima — qualquer ponta, não só a
+         certa: acender só a certa seria entregar a resposta.
+       · Nada essencial só na cor: a ponta aberta tem contorno TRACEJADO e um
+         sinal de "+"; a peça escolhida ganha anel e sombra.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · nunca `preventDefault` no `touchstart` (mata o toque no celular): ele
+         mora só no `touchmove`, e só depois que o dedo ANDOU;
+       · guarda `ultimoToque` contra o clique/mouse FANTASMA do celular;
+       · TRAVA no instante do acerto (`travada=true`), nunca no fim da animação;
+       · GERAÇÃO (`ger`) em todo setTimeout: temporizador de rodada velha já
+         deixou tela travada sem erro nenhum no console;
+       · o 3º degrau REVELA e SÓ DEPOIS escreve a dica — e a dica FICA na tela
+         até a criança tocar em "Entendi!";
+       · TODO caminho de erro chama o andaime, inclusive tocar na ponta sem ter
+         escolhido peça nenhuma;
+       · o vocabulário das dicas sai de `nomeDaChave()`, nunca escrito à mão em
+         cada rodada (é assim que "resto da rodada anterior" não nasce);
+       · todo ajudante que toca no DOM começa com `if(!elemento) return;`.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A MESA: a corrente cresce e QUEBRA A LINHA, como um domino de verdade na
+   mesa. Nada de rolagem lateral — em 320px uma corrente de 5 pecas nao cabe
+   numa linha so, e barra de rolagem horizontal e o jeito mais rapido de
+   esconder a ponta que a crianca precisa ver.
+   ⚠️ a folga de 12px em cima e obrigatoria: o balao tem sombra e nenhuma
+   margem por baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes). */
+.mesa{margin:12px auto 0;padding:8px 4px;border-radius:16px;max-width:470px;
+      background:rgba(255,255,255,.08);line-height:0}
+.dpe{display:inline-block;vertical-align:middle;width:94px;height:44px;margin:3px 2px;
+     border-radius:8px;background:#fffdf6;box-shadow:0 3px 0 #c9bda6;
+     -webkit-user-select:none;user-select:none}
+.dpe.nova{-webkit-animation:pousa .35s;animation:pousa .35s}
+/* a PONTA ABERTA: contorno tracejado + sinal de "+" (forma, nao so cor) */
+.cam{display:inline-block;vertical-align:middle;width:52px;height:44px;margin:3px 2px;
+     border-radius:8px;border:3px dashed #c9bda6;background:rgba(22,24,30,.82);
+     color:#f4efe6;font-size:20px;font-weight:800;line-height:38px;cursor:pointer}
+.cam.alvo{border-style:solid;border-color:#ffd54a;background:rgba(255,213,74,.45);
+          color:#33280a;box-shadow:0 0 0 4px rgba(255,213,74,.45)}
+.cam.pisca{-webkit-animation:pisca .8s infinite;animation:pisca .8s infinite}
+/* A MAO: as pecas soltas da crianca */
+.banco{margin-top:8px;line-height:0}
+.pc{display:inline-block;vertical-align:middle;width:120px;height:60px;margin:5px 4px;
+    border-radius:12px;background:#fffdf6;background:-webkit-linear-gradient(#fffef9,#f5eede);background:linear-gradient(#fffef9,#f5eede);
+    border:1px solid #e6dcc4;cursor:pointer;
+    box-shadow:0 5px 0 #c9bda6,inset 0 1px 0 #fff;
+    -webkit-user-select:none;user-select:none}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+.pc.usada{display:none}
+.pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
+/* AS DUAS METADES, com o risco do meio (a marca do domino) */
+/* ⭐ meia-peca CENTRALIZA texto e imagem (flex nos dois eixos) — Marcos, ago/2026.
+   filhos absolutos (pontinhos/figura CSS) ignoram o flex; numero e moeda centram. */
+.dme{position:relative;display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+     -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+     vertical-align:top;width:50%;height:100%;text-align:center}
+.dme.dir{border-left:2px solid #e6dcc4}
+/* ⚠️ TINTA DE LADRILHO SE ESCREVE (ago/2026). `var(--texto)` e a tinta DA
+   ATIVIDADE, feita para o fundo dela; aqui a letra cai numa superficie que
+   a PROPRIA peca pinta (a celula creme / a pedra / a barra colorida). Numa
+   atividade de tema claro isso virou creme sobre creme — medido 1,13:1. A
+   reserva do `var()` nao salva: ela so vale quando o token NAO EXISTE. */
+/* ⚠️ O SELETOR TEM QUE DIZER ONDE ELE MORA (ago/2026). Esta letra cai numa
+   superficie que a PROPRIA peca pinta, entao a tinta e escrita aqui — e o
+   seletor nomeia a superficie, senao o portao `_qa/cor_fixa.py` nao tem
+   como saber que existe fundo e acusa 'cor cravada sem fundo proprio'.
+   Escrever o caminho nao e enfeite: e o que torna a regra verificavel. */
+.pc .dme .dnum{display:inline-block;font-style:normal;font-weight:800;color:#221a12;font-size:19px;line-height:44px}
+.pc .dme .dpal{display:inline-block;font-style:normal;font-weight:800;color:#221a12;font-size:12px;
+      letter-spacing:.5px;line-height:44px}
+.pc .dnum{font-size:28px;line-height:58px}
+.pc .dpal{font-size:15px;line-height:58px}
+/* os pontinhos: e o lado CONCRETO do domino */
+.dpip{position:absolute;width:15%;height:15%;border-radius:50%;background:#221a12;
+      -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
+/* as figuras da 2a rodada, todas desenhadas com CSS (nenhuma imagem externa) */
+.dfig{position:absolute;left:50%;top:50%;width:56%;height:56%;font-style:normal;
+      -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
+/* ⭐ a moeda/nota do DOMINO DO DINHEIRO: centralizada na meia-peca, contida */
+.dmoeda{display:block;width:auto;max-width:88%;max-height:82%;
+      -o-object-fit:contain;object-fit:contain;
+      -webkit-filter:drop-shadow(0 1px 2px rgba(0,0,0,.28));filter:drop-shadow(0 1px 2px rgba(0,0,0,.28))}
+.fsol{border-radius:50%;background:#e8a020;box-shadow:0 0 0 3px rgba(232,160,32,.35)}
+.flua{border-radius:50%;background:#3c6ee0;
+       -webkit-box-shadow:inset -7px -1px 0 0 #fffdf6;box-shadow:inset -7px -1px 0 0 #fffdf6}
+.fovo{border-radius:50% 50% 50% 50%/60% 60% 40% 40%;background:#c9a05a;width:44%}
+.fcruz{background:#c0562f;
+       -webkit-clip-path:polygon(36% 0,64% 0,64% 36%,100% 36%,100% 64%,64% 64%,64% 100%,36% 100%,36% 64%,0 64%,0 36%,36% 36%);
+       clip-path:polygon(36% 0,64% 0,64% 36%,100% 36%,100% 64%,64% 64%,64% 100%,36% 100%,36% 64%,0 64%,0 36%,36% 36%)}
+.fseta{background:#1f6b12;
+       -webkit-clip-path:polygon(0 34%,58% 34%,58% 8%,100% 50%,58% 92%,58% 66%,0 66%);
+       clip-path:polygon(0 34%,58% 34%,58% 8%,100% 50%,58% 92%,58% 66%,0 66%)}
+/* a sombra que segue o dedo. pointer-events:none para nao roubar o hit-test de
+   quem esta embaixo (senao a ponta nunca acenderia). */
+.somb{position:fixed;width:116px;height:58px;pointer-events:none;z-index:60;border-radius:10px;
+      background:#fff3c9;-webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));
+      filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+.zona{margin-top:8px}
+@-webkit-keyframes pisca{0%,100%{opacity:1}50%{opacity:.4}}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.4}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@-webkit-keyframes pousa{0%{-webkit-transform:scale(.6);opacity:0}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes pousa{0%{transform:scale(.6);opacity:0}100%{transform:scale(1);opacity:1}}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* JANELA BAIXA (1024x420 = o monitor da escola). Encolhe a LARGURA das pecas,
+   nunca a altura: o alvo do dedo continua com 44px. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:13px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{font-size:12.5px;padding:7px 11px;margin-top:9px}
+  .mesa{margin-top:8px;padding:5px 3px}
+  .dpe{width:80px;margin:2px 2px}
+  .cam{width:46px;margin:2px 2px}
+  .banco{margin-top:5px}
+  .pc{width:98px;height:52px;margin:4px 3px}
+  .pc .dnum{line-height:52px;font-size:24px}
+  .pc .dpal{line-height:52px;font-size:14px}
+  .zona{margin-top:5px}
+  .btn{min-height:44px;padding:10px 20px;font-size:15px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (6 a 8 anos). Para reusar a peça, troque SÓ a tabela
+   RODADAS.
+   COMO A CORRENTE É MONTADA (e por que ela NUNCA fica impossível):
+   `cadeia` é a corrente pronta, chave por chave. A peça `i` é o par
+   (cadeia[i], cadeia[i+1]) — ou seja, as peças já nascem encaixando umas nas
+   outras. A `semente` fica no MEIO e vai para a mesa no começo; o que sobra é
+   um pedaço à esquerda e um pedaço à direita, e só o vizinho imediato de cada
+   ponta encaixa. Resultado: em todo momento existe pelo menos uma jogada, e
+   nenhuma jogada trava o resto. Dominó com peças sorteadas ao acaso deixa a
+   criança com a mão cheia e nenhum lugar para pôr.
+   ⚠️ as chaves de uma mesma corrente não se repetem: se o 5 aparecesse em dois
+   lugares, uma peça distante encaixaria numa ponta e quebraria a solução —
+   a criança faria uma jogada legítima e a peça diria que não dá.
+   `esq`/`dir` = como cada metade se MOSTRA. Nas rodadas 1 e 2 as duas metades
+   de um encaixe usam representações DIFERENTES (pontinhos com algarismo,
+   figura com palavra): é isso que faz a criança traduzir, em vez de comparar
+   dois desenhos iguais. */
+var RODADAS=[
+  /* ⭐ `esq/dir:"dinheiro"` + `imgs` (valor->figura): a meia mostra a moeda/nota
+     e casa com o numero igual. Declaro `imgs` aqui (vazio) para o montador saber
+     que a peca le esse campo; a rodada de dinheiro mora na atividade (a Lojinha). */
+  {selo:"O DOMIN&Oacute; DOS N&Uacute;MEROS", esq:"pts", dir:"num", semente:2, imgs:{},
+   enun:"Encaixe cada pe&ccedil;a na ponta que <b>combina</b>. Os pontinhos valem o mesmo que o n&uacute;mero.",
+   cadeia:[2,5,3,6,4,1]},
+  {selo:"FIGURA COM PALAVRA", esq:"fig", dir:"pal", semente:1,
+   enun:"Agora a figura encaixa com a <b>palavra</b> dela.",
+   cadeia:["sol","lua","ovo","cruz","seta"]},
+  {selo:"DOMIN&Oacute; DE VERDADE", esq:"pts", dir:"pts", semente:2,
+   enun:"Este &eacute; o dom&iacute;n&oacute; de verdade: conte os pontinhos dos <b>dois</b> lados.",
+   cadeia:[1,4,2,5,3,6]}
+];
+var PALAVRA={sol:"SOL", lua:"LUA", ovo:"OVO", cruz:"CRUZ", seta:"SETA"};
+var FIGURA={sol:"fsol", lua:"flua", ovo:"fovo", cruz:"fcruz", seta:"fseta"};
+var NUMPAL=["zero","um","dois","tr&ecirc;s","quatro","cinco","seis"];
+/* as caras do dado, em porcentagem da metade: e o desenho que a crianca ja
+   conhece do dado e do domino de casa. */
+var PIPS={
+  1:[[50,50]],
+  2:[[30,28],[70,72]],
+  3:[[28,26],[50,50],[72,74]],
+  4:[[30,28],[70,28],[30,72],[70,72]],
+  5:[[30,28],[70,28],[50,50],[30,72],[70,72]],
+  6:[[30,22],[70,22],[30,50],[70,50],[30,78],[70,78]]
+};
+
+var ri=0;             /* rodada de agora */
+var pecas=[];         /* as peças da mão (elementos) */
+var pontaE=null, pontaD=null;   /* as chaves das duas pontas abertas */
+var postas=0, aPor=0;
+var marcada=null;     /* a peça escolhida pelo toque simples */
+var erros=0;          /* erros DESTA rodada: é o degrau do andaime */
+var usouAjuda=false;  /* a rodada inteira, não só a jogada */
+var dePrimeira=0;     /* rodadas fechadas sem ajuda nenhuma: vira o parecer */
+var revelando=false;  /* o 3º degrau está em cena: o banner espera a explicação */
+var ger=0;            /* geração: mata o setTimeout de uma tela que já saiu */
+var travada=false;    /* ⚠️ trava NO INSTANTE do acerto — criança toca duas vezes */
+var eMesa=null, eBanco=null, eZona=null, barraP=null;
+var camE=null, camD=null;
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles desmarcavam a peça
+   que a criança tinha acabado de escolher. Defeito já pego DUAS vezes. */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return !!(eMesa&&eMesa.parentNode); }
+function cena(){ return RODADAS[ri]||RODADAS[0]; }
+function sPoe(){ nota(392,.09,.13,"triangle",0); nota(523.25,.12,.12,"triangle",.06); }
+function sPasso(){ nota(659.25,.05,.10,"triangle",0); }
+/* ⚠️ O VOCABULÁRIO DAS DICAS SAI DAQUI, SEMPRE. Nenhuma dica escreve "cinco"
+   nem "a lua" à mão: numa peça anterior a 2ª rodada ainda dizia palavras da
+   1ª, e isso não estoura nada — só a criança percebe. */
+function nomeDaChave(k){
+  if(typeof k==="number") return NUMPAL[k]||(""+k);
+  return String(PALAVRA[k]||k).toLowerCase();
+}
+
+/* ---------- desenhar uma metade e uma peça ---------- */
+function meiaEl(k,tipo,lado){
+  var d=el("div","dme"+(lado==="dir"?" dir":"")), i, p, pip;
+  if(tipo==="num"){ d.appendChild(el("i","dnum",""+k)); }
+  else if(tipo==="pal"){ d.appendChild(el("i","dpal",PALAVRA[k]||String(k))); }
+  /* ⭐ DOMINO DO DINHEIRO (1º ano): a meia mostra a MOEDA/NOTA e casa com o
+     NUMERO igual (valor). `imgs` (valor->figura) vem na rodada; casa por valor,
+     como pontinhos<->numero. */
+  else if(tipo==="dinheiro"){
+    var ie=cena().imgs||{};
+    if(ie[k]){ p=el("img","dmoeda"); p.src="img/"+ie[k]+".png"; p.alt=""; d.appendChild(p); }
+    else d.appendChild(el("i","dnum",""+k));
+  }
+  else if(tipo==="fig"){
+    p=el("i","dfig","");
+    p.className="dfig "+(FIGURA[k]||"fsol");
+    d.appendChild(p);
+  }else{
+    pip=PIPS[k]||PIPS[1];
+    for(i=0;i<pip.length;i++){
+      p=el("i","dpip","");
+      p.style.left=pip[i][0]+"%"; p.style.top=pip[i][1]+"%";
+      d.appendChild(p);
+    }
+  }
+  return d;
+}
+function pecaEl(par,classe){
+  var c=cena();
+  var b=el("div",classe);
+  b.appendChild(meiaEl(par.a,c.esq,"esq"));
+  b.appendChild(meiaEl(par.b,c.dir,"dir"));
+  return b;
+}
+
+/* ---------- montar a rodada ---------- */
+function montaPares(){
+  var c=cena(), i, todos=[];
+  for(i=0;i<c.cadeia.length-1;i++) todos.push({a:c.cadeia[i], b:c.cadeia[i+1], i:i});
+  return todos;
+}
+
+/* ---------------------------------------------------------------
+   TELA 1 — A RODADA DO DOMINÓ.
+   --------------------------------------------------------------- */
+function telaDomino(){
+  limpa(); soltaSombra();
+  ger++; travada=false; erros=0; usouAjuda=false; revelando=false; marcada=null; pecas=[];
+  var g=ger, c=cena(), i;
+  /* ⚠️ LICAO PAGA (Lojinha, ago/2026, o Marcos: "trava e nao aparece nada" na
+     2a fase de domino). `semente` e o INDICE da peca-semente em `todos` (que tem
+     cadeia.length-1 pares). Um dado com semente FORA da faixa (ex.: semente 5 numa
+     cadeia de 4 = so 3 pares) fazia `todos[5]=undefined` e a fase inteira estourava
+     em branco. Agora o indice e GRAMPEADO na faixa valida — a fase nunca mais some
+     por um numero errado no conteudo. */
+  var todos=montaPares();
+  var _si=c.semente|0; if(_si<0||_si>=todos.length) _si=Math.floor(todos.length/2);
+  var sem=todos[_si];
+  var mao=[];
+  for(i=0;i<todos.length;i++) if(i!==_si) mao.push(todos[i]);
+  baguncar(mao);
+  aPor=mao.length; postas=0;
+  pontaE=sem.a; pontaD=sem.b;
+
+  var t=el("div","tela");
+  setProg(t,Math.round((ri*100)/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var cx=el("div","centro");
+  cx.appendChild(el("div","selo",c.selo));
+  cx.appendChild(el("div","balao",c.enun));
+
+  eMesa=el("div","mesa","");
+  camE=fazPonta("L");
+  camD=fazPonta("R");
+  eMesa.appendChild(camE);
+  eMesa.appendChild(pecaEl(sem,"dpe"));
+  eMesa.appendChild(camD);
+  cx.appendChild(eMesa);
+
+  eBanco=el("div","banco","");
+  for(i=0;i<mao.length;i++) eBanco.appendChild(fazPeca(mao[i]));
+  cx.appendChild(eBanco);
+
+  eZona=el("div","zona","");
+  cx.appendChild(eZona);
+  cx.appendChild(el("div","hint","Arraste a pe&ccedil;a at&eacute; a ponta, ou toque na pe&ccedil;a "+
+                    "e depois na ponta."));
+  t.appendChild(cx); app.appendChild(t);
+  marcaQA();
+}
+function fazPonta(lado){
+  var v=el("div","cam","+");
+  v._lado=lado;
+  v.onclick=cliquePonta;
+  return v;
+}
+function fazPeca(par){
+  var b=pecaEl(par,"pc");
+  b._a=par.a; b._b=par.b;
+  b.onclick=cliquePeca;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+  pecas.push(b);
+  return b;
+}
+/* ⚠️ data-qa é SÓ para o auditor-jogador: ele não sabe arrastar. A peça publica
+   a PONTA onde ela cabe agora ("L" ou "R") e a ponta publica a mesma letra —
+   é assim que ele consegue fechar a peça sozinho. Peça que não cabe em ponta
+   nenhuma não publica nada, senão ele tocaria nela para sempre. */
+function marcaQA(){
+  var i, b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(temClasse(b,"usada")){ b.removeAttribute("data-qa"); continue; }
+    if(b._b===pontaE) b.setAttribute("data-qa","L");
+    else if(b._a===pontaD) b.setAttribute("data-qa","R");
+    else b.removeAttribute("data-qa");
+  }
+  if(camE) camE.setAttribute("data-qa","L");
+  if(camD) camD.setAttribute("data-qa","R");
+}
+
+/* ---------- as TRÊS portas de entrada ----------
+   ⚠️ os tratadores de toque são FUNÇÕES COM NOME de propósito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular é a
+   armadilha nº 1 desta família). Ele mora só no `touchmove`, e só depois que o
+   dedo ANDOU de verdade. */
+function cliquePeca(){
+  if(cliqueDeArrasto()) return;   /* este clique é o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: já tratado no touchend */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(souDedo()) return;
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu&&ev.preventDefault) ev.preventDefault();  /* só no MEIO do arrasto */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) escolhe(alvo);    /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(souDedo()) return; if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+function pegaEm(b,x,y){
+  if(travada||!b||temClasse(b,"usada")) return;
+  pego=b; px0=x; py0=y; moveu=false;
+}
+function moveEm(x,y){
+  if(!pego||travada) return;
+  if(!moveu){
+    if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
+    moveu=true;
+    sTap();
+    escolhe(pego);
+    somb=el("div","somb","");
+    somb.appendChild(meiaEl(pego._a,cena().esq,"esq"));
+    somb.appendChild(meiaEl(pego._b,cena().dir,"dir"));
+    document.body.appendChild(somb);
+  }
+  if(somb){ somb.style.left=(x-58)+"px"; somb.style.top=(y-29)+"px"; }
+  acendePontaSob(x,y);
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b||!arrastou) return;
+  fimArrasto=agora();
+  var v=pontaSob(x,y);
+  if(v) poe(b,v);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  apagaAceso();
+}
+/* quem está embaixo do dedo? sobe até 5 pais porque o dedo pode cair no "+"
+   que está DENTRO da ponta. */
+function pontaSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&e.nodeType===1&&n<5){
+    if(temClasse(e,"cam")) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+/* ⭐ A PONTA ACENDE QUANDO A PEÇA PASSA POR CIMA. Acende QUALQUER ponta que
+   esteja embaixo do dedo — acender só a certa seria entregar a resposta. */
+function acendePontaSob(x,y){
+  var v=pontaSob(x,y);
+  if(camE) camE.className=(camE===v)?"cam alvo":"cam";
+  if(camD) camD.className=(camD===v)?"cam alvo":"cam";
+}
+function apagaAceso(){
+  if(camE) camE.className="cam";
+  if(camD) camD.className="cam";
+}
+
+/* ---------- o toque simples ---------- */
+function escolhe(b){
+  if(travada||!b||temClasse(b,"usada")) return;
+  var i;
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  if(marcada===b){ marcada=null; sTap(); return; }
+  b.className="pc sel"; marcada=b; sTap();
+}
+function cliquePonta(){
+  if(travada) return;
+  if(cliqueDeArrasto()) return;
+  if(souDedo()&&!marcada) return;
+  if(!marcada){
+    /* TODO caminho de erro chama o andaime — inclusive este, que é o mais
+       comum de todos: a criança toca no lugar antes de escolher a peça. */
+    sTap();
+    mostraDica("Primeiro toque numa <b>pe&ccedil;a</b> da sua m&atilde;o. Depois toque na ponta.");
+    return;
+  }
+  poe(marcada,this);
+}
+
+/* ---------- a regra do dominó: só encaixa se a ponta bater ---------- */
+function cabe(b,lado){
+  if(lado==="L") return b._b===pontaE;
+  return b._a===pontaD;
+}
+function poe(b,v){
+  if(travada||!b||!v||temClasse(b,"usada")) return;
+  if(cabe(b,v._lado)) acerta(b,v._lado); else erra(b,v._lado);
+}
+function acerta(b,lado){
+  var g=ger, novo=pecaEl({a:b._a,b:b._b},"dpe nova");
+  if(lado==="L"){
+    if(eMesa) eMesa.insertBefore(novo,camE.nextSibling);
+    pontaE=b._a;
+  }else{
+    if(eMesa) eMesa.insertBefore(novo,camD);
+    pontaD=b._b;
+  }
+  b.className="pc usada";
+  marcada=null;
+  postas++; erros=0;
+  sPoe();
+  apagaDica(); apagaAceso(); marcaQA();
+  if(barraP) barraP.style.width=Math.round(((ri+postas/aPor)*100)/RODADAS.length)+"%";
+  if(postas>=aPor){
+    travada=true;               /* ⚠️ trava NO INSTANTE do fecho, não no fim da animação */
+    if(!usouAjuda) dePrimeira++;
+    /* ⚠️ quando a última peça entra pelo 3º degrau, o banner tem que ESPERAR a
+       explicação aparecer — senão a criança recebe a festa antes de ler por
+       que a peça encaixou, que é justamente o que o degrau existe para
+       ensinar. */
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      mostraBanner("<b>A corrente fechou!</b> Todas as pontas combinam.", proxima);
+    },revelando?1150:460);
+  }
+}
+/* ERRO NÃO PUNE: som grave curto, a peça treme e o andaime CRESCE. */
+function erra(b,lado){
+  var g=ger;
+  sErro(); erros++; usouAjuda=true;
+  b.className="pc treme"; destreme(g,b);
+  if(erros===1){
+    mostraDica("Esta ponta mostra <b>"+nomeDaChave(lado==="L"?pontaE:pontaD)+
+               "</b>. A pe&ccedil;a s&oacute; entra a&iacute; se tiver <b>"+
+               nomeDaChave(lado==="L"?pontaE:pontaD)+"</b> tamb&eacute;m.");
+    return;
+  }
+  if(erros===2){
+    acendeAsDuasPontas();
+    mostraDica("Olhe as <b>duas</b> pontas: uma &eacute; <b>"+nomeDaChave(pontaE)+
+               "</b> e a outra &eacute; <b>"+nomeDaChave(pontaD)+
+               "</b>. Procure na sua m&atilde;o uma metade com uma dessas duas.");
+    return;
+  }
+  esperaERevela(g);
+}
+function destreme(g,b){
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+  },340);
+}
+function acendeAsDuasPontas(){
+  if(!camE||!camD) return;
+  camE.className="cam pisca"; camD.className="cam pisca";
+}
+function achaQueCabe(){
+  var i;
+  for(i=0;i<pecas.length;i++){
+    if(temClasse(pecas[i],"usada")) continue;
+    if(cabe(pecas[i],"L")) return {b:pecas[i],lado:"L"};
+    if(cabe(pecas[i],"R")) return {b:pecas[i],lado:"R"};
+  }
+  return null;
+}
+/* ⚠️ 3º DEGRAU: REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica FICA na tela até
+   a criança tocar em "Entendi!". Em cinco peças de um lote a explicação do 3º
+   degrau era escrita e apagada no mesmo quadro, porque o "revelar" chamava o
+   "acertou" e o "acertou" limpava a barra de dica: a peça se consertava
+   sozinha e a criança não sabia por quê. Nenhum portão vê isso — só medindo o
+   texto na tela depois de errar. */
+function esperaERevela(g){
+  travada=true;
+  var achou=achaQueCabe();
+  if(!achou){                 /* rede: nunca trava, mesmo se algo saísse do previsto */
+    travada=false;
+    mostraDica("Vamos olhar as pontas juntos: <b>"+nomeDaChave(pontaE)+"</b> e <b>"+
+               nomeDaChave(pontaD)+"</b>.");
+    return;
+  }
+  var chave=(achou.lado==="L")?pontaE:pontaD;
+  var fim=(postas+1>=aPor);
+  travada=false; revelando=true;
+  acerta(achou.b,achou.lado);   /* REVELA primeiro */
+  travada=true;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraDica("Deixa comigo: esta pe&ccedil;a tinha <b>"+nomeDaChave(chave)+
+               "</b> e a ponta pedia <b>"+nomeDaChave(chave)+"</b>. Por isso ela encaixou.");
+    if(!fim) botaoSegue(g);     /* e SÓ DEPOIS escreve a explicação */
+  },560);
+}
+function botaoSegue(g){
+  if(!eZona) return;
+  var b=el("button","btn","Entendi!");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){
+    if(g!==ger) return;
+    sTap();
+    if(b.parentNode) b.parentNode.removeChild(b);
+    travada=false; revelando=false;
+    apagaDica(); apagaAceso(); marcaQA();
+  };
+  eZona.appendChild(b);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function proxima(){
+  ri++;
+  /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
+     da esteira só avança de fase pelo mostraBanner; chamar fimDomino() direto
+     prendia a criança na tela de fim dentro da atividade montada. */
+  if(ri>=RODADAS.length){ mostraBanner("<b>Voc&#234; ligou todas as pe&#231;as!</b>", fimDomino); return; }
+  telaDomino();
+}
+
+/* ---------------------------------------------------------------
+   TELA 2 — A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimDomino(){
+  limpa(); soltaSombra();
+  ger++; travada=false;
+  eMesa=null; eBanco=null; eZona=null; camE=null; camD=null;
+  pecas=[]; marcada=null;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(dePrimeira>=RODADAS.length)
+    parecer="Voc&ecirc; fechou as <b>"+RODADAS.length+"</b> correntes sem precisar de ajuda "+
+            "nenhuma. Voc&ecirc; olha as duas pontas antes de escolher &#8212; &eacute; assim que se joga.";
+  else if(dePrimeira>0)
+    parecer="Voc&ecirc; fechou <b>"+dePrimeira+"</b> corrente(s) sozinho e usou a ajuda nas outras. "+
+            "Duas coisas combinam quando dizem a <b>mesma</b> quantidade.";
+  else
+    parecer="Voc&ecirc; fechou <b>"+RODADAS.length+"</b> correntes. Duas coisas combinam quando "+
+            "dizem a <b>mesma</b> quantidade &#8212; mesmo escritas de jeitos diferentes.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; dePrimeira=0; telaDomino(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &eacute; a pe&ccedil;a DOMIN&Oacute;: mouse, dedo e toque simples."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+telaDomino();
+</script>
+</body></html>

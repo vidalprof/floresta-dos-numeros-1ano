@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — relógio (aprender as horas MOVENDO os ponteiros)</title>
+<!-- ============================================================
+     PEÇA: RELÓGIO — A CRIANÇA MOVE OS PONTEIROS
+     (copiada do _padrao/pecas/MOLDE.html; padrão de qualidade: estimar.html)
+
+     PEDIDO COM TODAS AS LETRAS pelo professor: aprender as horas MOVENDO OS
+     PONTEIROS, não escolhendo entre quatro relógios prontos.
+
+     POR QUE ISSO MUDA TUDO:
+     num quiz de relógio a criança acerta por eliminação e continua sem saber
+     por que às 3h30 o ponteiro pequeno está ENTRE o 3 e o 4. Quando ela mesma
+     arrasta o ponteiro grande de 0 até 30, o pequeno anda junto DEBAIXO DO
+     DEDO DELA — e o "entre o 3 e o 4" deixa de ser regra decorada e vira uma
+     coisa que ela viu acontecer. O gesto É o conceito.
+
+     AS REGRAS QUE FAZEM A MECÂNICA VALER (e que quase todo mundo erra):
+       · O PONTEIRO GRUDA NO DEDO e ENCAIXA DE 5 EM 5 MINUTOS. Dedo de criança
+         não tem precisão de minuto: sem o encaixe ela para em 3h27 e desiste.
+       · O PONTEIRO PEQUENO ANDA JUNTO, PROPORCIONAL. É o coração da peça.
+       · O DEDO NÃO PRECISA ACERTAR O PONTEIRO: o alvo de arrasto é o RELÓGIO
+         INTEIRO (196 px). Quem decide qual ponteiro foi pego é a distância até
+         a ponta de cada um. Botãozinho de 20 px na ponta do ponteiro é o
+         defeito clássico desta mecânica.
+       · TAMBÉM TEM BOTÃO: -1h / -5 / +5 / +1h, alvo de 56 px. Arrasto circular
+         é difícil para dedo pequeno, e no PC da escola ainda tem o TECLADO DE
+         VERDADE (setas e Enter). Três portas, sempre.
+       · O RETORNO É IMEDIATO: enquanto ela mexe, a hora aparece em números E
+         em palavras embaixo. É o retorno imediato que ensina, não a correção.
+       · A ESCADA: horas cheias -> meia hora -> de 15 em 15. E cada degrau vem
+         em par (FORMAR a hora, depois LER a hora), porque produzir e
+         interpretar são duas habilidades diferentes.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA NO INSTANTE DO TOQUE (`travada=true`), nunca no fim da animação.
+       · GERAÇÃO (`ger`): todo setTimeout confere se a tela ainda é a dele.
+       · O 3º DEGRAU DO ANDAIME REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica
+         FICA na tela até a criança tocar em "Entendi!". (Em cinco peças de um
+         lote a dica era escrita e apagada no mesmo quadro.)
+       · TODO caminho de erro chama `ajuda(n)` — inclusive o mais natural, que
+         aqui é confirmar com a hora certa e os minutos errados.
+       · Vocabulário sai SEMPRE dos dados da rodada (`textoDaHora`), nunca
+         escrito à mão em cada dica: é assim que "resto da rodada anterior" não
+         nasce.
+       · Todo ajudante que toca no DOM começa com `if(!elemento) return;`.
+       · Nada essencial só na cor: o ponteiro das horas é CURTO E GROSSO e o dos
+         minutos COMPRIDO E FINO; a hora aparece escrita em números e palavras.
+       · Funciona no mudo: todo som tem gêmeo visual.
+
+     ⭐⭐ OS DOIS MODOS (ago/2026) — a lição do EdiLIM
+     ------------------------------------------------------------
+     O `_pesquisa/EDILIM-DINAMICAS.md` mostrou que a página *Reloj* do EdiLIM
+     tem DOIS modos — mover os ponteiros **ou escrever a hora** — e que é assim
+     que ele tira "mais de 50 atividades" de ~40 páginas. A nossa sabia fazer
+     uma coisa só.
+
+       · "ponteiros" (PADRÃO, o comportamento de sempre) — FORMAR movendo os
+         ponteiros, alternado com LER entre quatro respostas;
+       · "escrever" — a criança LÊ o relógio e DIGITA a hora, em números.
+
+     **O padrão não mudou**, então nenhuma atividade antiga muda de
+     comportamento. `MODO="escrever"` troca cada passo de FORMAR por um de
+     ESCREVER (o par produzir/interpretar continua de pé); quem quiser
+     misturar escreve o roteiro na mão, pondo `"e"` dentro do `ROT`.
+
+     POR QUE ESCREVER É OUTRO GESTO, e não a mesma tela com outro nome:
+     mover o ponteiro é o gesto ANALÓGICO (o pequeno anda junto, e é isso que
+     ensina o "entre o 3 e o 4"); digitar 03:30 é a passagem para o SÍMBOLO —
+     o mesmo degrau do concreto para o simbólico, com a mão da criança
+     produzindo em vez de escolhendo. E é onde a escrita da hora com dois
+     algarismos ("3 horas é 03") deixa de ser regra decorada.
+
+     ⚠️ AS ARMADILHAS DO MODO NOVO, todas fechadas aqui:
+       · o `document.onkeydown` fica preso na tela seguinte se ninguém o
+         desligar — ele é zerado no começo de TODA tela e no fim da peça;
+       · os números do teclado da tela E as teclas de verdade (0-9, apagar com
+         Backspace, conferir com Enter): as DUAS portas, sempre;
+       · a leitura em números embaixo do relógio (`rdig`) é DESLIGADA aqui —
+         ela diria a resposta antes da pergunta;
+       · o `data-qa` anda: marca o algarismo que falta e passa para o
+         "Está pronto!" quando os quatro estiverem escritos.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* O RELOGIO. Ele inteiro e o alvo do arrasto (196px): quem decide qual
+   ponteiro foi pego e a distancia ate a PONTA de cada um, calculada no JS.
+   Botaozinho de 20px na ponta do ponteiro e o defeito classico da mecanica —
+   dedo de crianca nao acerta, e ela conclui que "nao funciona".
+   ⚠️ a folga de 12px em cima e obrigatoria: o balao tem sombra e nenhuma
+   margem por baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes). */
+.relo{position:relative;width:196px;height:196px;margin:12px auto 0;border-radius:50%;
+      background:#fffdf6;border:7px solid #b3903c;cursor:pointer;
+      box-shadow:0 6px 16px rgba(0,0,0,.35);
+      -webkit-user-select:none;user-select:none}
+.pegando{cursor:move}
+/* ⚠️ O NUMERO FICA POR CIMA DOS PONTEIROS. Na primeira versao o "12" sumia
+   embaixo da argola do ponteiro justo as 12 horas — e o mostrador so e util se
+   TODOS os numeros forem legiveis o tempo todo. Numero pequeno em cima do
+   ponteiro incomoda menos do que numero que nao existe. */
+/* ⚠️ O SELETOR TEM QUE DIZER ONDE ELE MORA (ago/2026). Esta letra cai numa
+   superficie que a PROPRIA peca pinta, entao a tinta e escrita aqui — e o
+   seletor nomeia a superficie, senao o portao `_qa/cor_fixa.py` nao tem
+   como saber que existe fundo e acusa 'cor cravada sem fundo proprio'.
+   Escrever o caminho nao e enfeite: e o que torna a regra verificavel. */
+.relo .rnum{position:absolute;z-index:4;width:26px;height:26px;margin:-13px 0 0 -13px;line-height:26px;
+      text-align:center;font-style:normal;font-size:15px;font-weight:800;color:#221a12}
+/* os traquinhos de 5 em 5: e onde o ponteiro ENCAIXA. Mostrar o encaixe evita
+   que a crianca tente parar no minuto 27 e ache que a peca esta quebrada. */
+.rtick{position:absolute;width:4px;height:4px;margin:-2px 0 0 -2px;border-radius:50%;background:#c9bda6}
+.rmao{position:absolute;z-index:2;left:50%;bottom:50%;
+      -webkit-transform-origin:50% 100%;transform-origin:50% 100%;
+      -webkit-transition:-webkit-transform .16s;transition:transform .16s}
+/* ⚠️ NADA ESSENCIAL SO NA COR: o das HORAS e CURTO E GROSSO, o dos MINUTOS
+   COMPRIDO E FINO. Quem nao distingue vermelho de azul continua distinguindo
+   os dois ponteiros pela forma. */
+.rhora{width:15px;margin-left:-7.5px;height:29%;background:#c0562f;border-radius:8px 8px 3px 3px}
+.rmin{width:9px;margin-left:-4.5px;height:41%;background:#3c6ee0;border-radius:5px 5px 3px 3px}
+/* a argola: e a AFORDANCIA ("da para pegar aqui"), nao o alvo. O alvo e o
+   relogio inteiro. */
+.rgrab{position:absolute;left:50%;top:-16px;width:52px;height:52px;margin-left:-26px;
+       border-radius:50%;background:rgba(255,213,74,.20);border:3px solid #a8801c}
+.rpino{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;
+       border-radius:50%;background:#33280a}
+/* O PONTEIRO FANTASMA — 2o degrau do andaime. Apoio CONCRETO: em vez de
+   repetir a frase, mostra onde o ponteiro tem que chegar. Tracejado (forma),
+   nao so cor. */
+.rfant{position:absolute;left:50%;bottom:50%;border-radius:6px;
+       -webkit-transform-origin:50% 100%;transform-origin:50% 100%;
+       background:rgba(89,194,75,.35);border:2px dashed #1f6b12}
+.rfhora{width:15px;margin-left:-7.5px;height:29%}
+.rfmin{width:9px;margin-left:-4.5px;height:41%}
+.pisca{-webkit-animation:pisca .8s infinite;animation:pisca .8s infinite}
+.treme{-webkit-animation:treme .34s;animation:treme .34s}
+@-webkit-keyframes pisca{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.35}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* O RETORNO IMEDIATO: numeros E palavras, mudando enquanto o dedo anda. */
+/* ⚠️ ELE SE CHAMAVA MOSTRADOR E NAO TINHA MOSTRADOR (ago/2026): o `.rdig`
+   nao pintava fundo nenhum, entao o amarelo do numero ficava direto no fundo
+   da atividade — 1,14:1 sobre papel claro. Um relogio digital de verdade tem a
+   janelinha escura; dando a janelinha, o amarelo volta para casa e a hora
+   passa a ser legivel em qualquer atividade. */
+.rdig{margin-top:8px;font-size:14px;font-weight:800;letter-spacing:.5px;color:#f0e6d4;
+      background:rgba(28,24,16,.9);border-radius:12px;padding:6px 14px;
+      display:inline-block}
+.rdig b{display:block;font-size:30px;line-height:1.12;color:#ffd54a}
+/* ⚠️ TEXTO QUE CAI NO FUNDO DA ATIVIDADE SEGUE O TEMA (ago/2026, portao
+   `_qa/tema_claro.js`). Este creme-alaranjado foi escolhido olhando o fundo
+   ESCURO da bancada; numa atividade de papel claro ele da 1,08:1 e some.
+   Quem nao pinta o proprio fundo nao escolhe a cor: quem escolhe e o tema. */
+.rtexto{font-size:15px;font-weight:700;color:var(--texto,#ffd8a8);margin-top:1px}
+.rbts{margin-top:8px}
+/* ⚠️ OS QUATRO BOTOES TEM QUE CABER NUMA LINHA SO. Com os rotulos por extenso
+   ("-1 hora") eles quebravam para uma segunda linha em 320px e empurravam o
+   "Esta pronto!" PARA FORA DA TELA — o portao de leiaute pegou. Agora o sinal
+   vai grande em cima e a unidade pequena embaixo, dentro do mesmo alvo de
+   56px: cabe na linha e continua legivel para quem esta aprendendo a ler. */
+.tecl{display:inline-block;background:#fffdf6;color:#221a12;border:0;border-radius:14px;
+      min-width:62px;min-height:56px;line-height:1;padding:9px 5px 7px;margin:4px 4px;
+      font-size:17px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.tecl b{display:block;font-size:19px;line-height:22px}
+.tecl i{display:block;font-style:normal;font-size:11px;line-height:13px;letter-spacing:.4px}
+.tecl.on{background:#ffd54a;box-shadow:0 4px 0 #b08d1c}
+.rzona{margin-top:8px}
+/* opcoes em DUAS COLUNAS: com 4 opcoes empilhadas a ultima caia fora da tela
+   na janela de 420px de altura (o monitor da escola). */
+.oph{display:inline-block;width:46%;max-width:200px;margin:5px 1.5%;vertical-align:top;
+     padding:11px 7px;font-size:15px;min-height:52px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+
+/* ================= O MODO "ESCREVER" =================
+   ⚠️ toda classe daqui tem REGRA BASE fora de @media: classe que só existe
+   dentro de um @media fica sem estilo na tela normal (portão _qa/classes.py). */
+/* o relógio do modo escrever não se mexe: ele é a PERGUNTA. Encolhe um pouco
+   para caber, com o teclado de números inteiro embaixo dele em 320px. */
+.relo.relofix{width:158px;height:158px;cursor:default}
+/* o VISOR: dois algarismos da hora, dois pontos, dois dos minutos. A caixa
+   vazia tem contorno TRACEJADO e a cheia contorno inteiro — forma, não só cor. */
+.redisp{display:-webkit-box;display:-webkit-flex;display:flex;
+        -webkit-box-align:center;align-items:center;
+        -webkit-box-pack:center;justify-content:center;margin:9px auto 0}
+.recx{display:inline-block;width:40px;height:50px;line-height:44px;margin:0 2px;
+      border:3px dashed #a08e73;border-radius:11px;background:rgba(255,255,255,.10);
+      color:#f4efe6;font-size:25px;font-weight:800;text-align:center;
+      -webkit-transition:-webkit-transform .16s ease;transition:transform .16s ease}
+.recx.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12}
+.recx.pisca{border-style:solid;border-color:#e8a020;background:rgba(255,213,74,.30)}
+/* ⚠️ o AMARELO da casa e cor de DESTAQUE sobre fundo escuro; sobre papel
+   claro ele da 1,14:1. Aqui o numero e a informacao principal (a hora que a
+   crianca esta montando), entao ele leva a mesa dele: um mostrador escuro,
+   que e o que um relogio digital tem de verdade. */
+.redois{display:inline-block;width:16px;text-align:center;font-size:26px;font-weight:800;
+        color:#ffd54a;line-height:44px;background:rgba(28,24,16,.9);border-radius:6px}
+.rerot{display:block;text-align:center;font-size:11.5px;font-weight:800;letter-spacing:.6px;
+       color:var(--texto,#ffd8a8);margin-top:3px}
+/* o teclado de NÚMEROS. ⚠️ ele leva TAMBÉM a classe `.tecl`, de propósito: é
+   por ela que o portão de leiaute mede o alvo em seis tamanhos de tela. Botão
+   com classe que nenhum portão conhece é botão que ninguém mede — foi assim
+   que alvos pequenos chegaram à criança antes. O `.tecn` só encolhe a tecla de
+   quatro dígitos para caber o teclado inteiro: por isso repõe `min-width` e
+   `min-height`, senão o piso do `.tecl` mandaria e o teclado quebraria a linha
+   em 320px, empurrando o "Está pronto!" para fora da tela. */
+.tecn{display:inline-block;width:52px;min-width:52px;height:52px;min-height:52px;
+      line-height:52px;margin:4px 3px;padding:0;
+      background:#fffdf6;color:#221a12;border:0;border-radius:13px;font-size:24px;font-weight:800;
+      text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+      -webkit-transition:-webkit-transform .12s ease;transition:transform .12s ease}
+.tecn:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* ⚠️ o 2º degrau ACENDE — não pisca com `@keyframes`: o integrador prefixa o
+   CSS da peça e engole os keyframes dela, e o apoio virava código morto dentro
+   da atividade, justo para quem já tinha errado duas vezes. */
+.tecn.on{background:#fff7d6;color:#33280a;
+      -webkit-box-shadow:0 0 0 5px #ffd54a,0 4px 0 #c9a52f;
+      box-shadow:0 0 0 5px #ffd54a,0 4px 0 #c9a52f;
+      -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.reapg{display:inline-block;min-width:96px;height:52px;line-height:52px;margin:4px 3px;padding:0 12px;
+       background:#e9d9b4;color:#33280a;border:0;border-radius:13px;font-size:15px;font-weight:800;
+       text-align:center;cursor:pointer;box-shadow:0 4px 0 #b39c6d}
+.reapg:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #b39c6d}
+.retec{display:block;text-align:center;margin-top:5px}
+/* ⭐ O ALTO-FALANTE (pilar SONORA): um SVG embutido que se centra sozinho pelo
+   `viewBox`. `background-color` e `background-image` SEPARADOS — o atalho
+   `background:` de um `:hover` apagaria o glifo. */
+.zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none;
+     width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0;
+     border-radius:50%;cursor:pointer;
+     background-color:#efe6d2;
+     background-repeat:no-repeat;background-position:center center;
+     background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
+     -webkit-background-size:24px 24px;background-size:24px 24px;
+     -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:#ded3b8}
+.zap:active,.zap.tocando{background-color:#ffd54a}
+@media (prefers-reduced-motion:reduce){
+  .tecn,.recx{-webkit-transition:none;transition:none}
+}
+/* CELULAR ESTREITO (320px). O relogio encolhe para que os quatro botoes e o
+   "Esta pronto!" continuem dentro da tela sem rolagem. */
+@media (max-width:359px){
+  .relo{width:176px;height:176px}
+  .relo.relofix{width:146px;height:146px}
+  .tecl{min-width:58px;margin:4px 3px}
+  /* ⚠️ MEDIDO, nao estimado (ago/2026): com a tecla de 48px de largura o
+     teclado caia em TRES fileiras e o "Esta pronto!" ficava meio fora da tela
+     em 320x568 — o portao de leiaute reprovou. Com 44px de largura (a altura
+     continua 48, e o piso da casa e 40) cabem seis por fileira, o "Apagar"
+     sobe para a segunda, e o botao de confirmar volta para dentro. */
+  .tecn{width:44px;min-width:44px;height:48px;min-height:48px;line-height:48px;
+        margin:3px 2px;font-size:21px}
+  .reapg{min-width:84px;height:48px;line-height:48px;margin:3px 2px;padding:0 8px;font-size:14px}
+  .recx{width:36px;height:46px;line-height:40px;font-size:22px}
+}
+/* JANELA BAIXA (1024x420 = o monitor da escola). Encolhe o relogio e as
+   letras, NUNCA os botoes — e sobra espaco para a barra de dica, que so
+   aparece depois do erro (o portao de leiaute abre a fase sem ela). */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:13px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{font-size:12.5px;padding:7px 11px;margin-top:9px}
+  .relo{width:124px;height:124px;border-width:5px;margin-top:8px}
+  .relo.relofix{width:96px;height:96px}
+  .redisp{margin-top:3px}
+  .recx{width:34px;height:42px;line-height:36px;font-size:21px}
+  .redois{line-height:36px;font-size:22px}
+  .rerot{margin-top:1px;font-size:10.5px}
+  .retec{margin-top:0}
+  .tecn{width:46px;min-width:46px;height:46px;min-height:46px;line-height:46px;
+        margin:2px 2px;font-size:21px}
+  .reapg{min-width:84px;height:46px;line-height:46px;margin:2px 2px;font-size:14px}
+  .relo .rnum{width:20px;height:20px;margin:-10px 0 0 -10px;line-height:20px;font-size:11px}
+  .rgrab{width:42px;height:42px;margin-left:-21px;top:-12px;border-width:2px}
+  .rpino{width:13px;height:13px;margin:-6.5px 0 0 -6.5px}
+  .rdig{margin-top:4px;font-size:12px}
+  .rdig b{font-size:20px}
+  .rtexto{font-size:13px}
+  .rbts{margin-top:4px}
+  .tecl{min-height:46px;line-height:46px;min-width:58px;margin:2px 3px;font-size:15px}
+  .rzona{margin-top:6px}
+  .btn{min-height:44px;padding:10px 20px;font-size:15px}
+  .oph{min-height:44px;padding:8px 6px;font-size:13px;margin:4px 1.5%}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (6 a 8 anos). Para reusar a peça, troque SÓ estas
+   três tabelas.
+   ⚠️ A ESCADA sobe em DOIS eixos ao mesmo tempo:
+     - dificuldade da hora: cheia -> meia -> de 15 em 15;
+     - tipo de tarefa: FORMAR (produzir) e depois LER (interpretar).
+   Formar e ler são habilidades diferentes: quem forma 3h00 ainda pode não ler
+   4h30. Por isso as rodadas vêm em par, e a mesma dificuldade aparece nas duas
+   formas antes de subir o degrau.
+   `ih`/`im` = onde os ponteiros COMEÇAM. Nunca no lugar da resposta, nunca tão
+   longe que a criança canse antes de chegar — e ⚠️ NUNCA um em cima do outro
+   (às 12:00 o pequeno desaparece debaixo do grande, e a criança não descobre
+   que há DOIS ponteiros para mexer). */
+var FORMAR=[
+  {h:3, m:0,  ih:11, im:0, selo:"HORA CHEIA",   apelido:"3 horas"},
+  {h:6, m:30, ih:9,  im:0, selo:"MEIA HORA",    apelido:"6 e meia"},
+  {h:9, m:15, ih:2,  im:0, selo:"DE 15 EM 15",  apelido:"9 e quinze"}
+];
+var LER=[
+  {h:8, m:0,  selo:"QUE HORAS S&Atilde;O?",
+   erradas:["doze horas","quatro horas","oito e meia"]},
+  {h:4, m:30, selo:"OLHE O PEQUENO",
+   /* "seis e vinte" é o erro CLÁSSICO: a criança lê o ponteiro grande como se
+      fosse a hora. O distrator existe para esse engano aparecer e ser tratado
+      pelo andaime, não para enfeitar a lista. */
+   erradas:["seis e vinte","quatro horas","cinco e meia"]},
+  {h:7, m:45, selo:"E AGORA?",
+   erradas:["nove e trinta e cinco","oito e quarenta e cinco","sete e quinze"]}
+];
+/* ⭐ MODO "ESCREVER": a criança LÊ o relógio e DIGITA a hora.
+   `erro` é o engano CLÁSSICO daquela hora, escrito em números — é o que a
+   dica do 2º degrau usa para falar do que ela fez, e não de uma regra solta.
+   ⚠️ o vocabulário continua saindo do `textoDaHora`, nunca escrito à mão. */
+var ESCREVER=[
+  {h:2, m:0,  selo:"ESCREVA A HORA",  erro:"20:00"},
+  {h:5, m:30, selo:"E OS MINUTOS?",   erro:"06:30"},
+  {h:10,m:45, selo:"AGORA A DIF&Iacute;CIL", erro:"09:45"}
+];
+/* ⭐⭐ O MODO — o campo que multiplica a peça (lição do EdiLIM).
+   "ponteiros" (PADRÃO, o comportamento de sempre) · "escrever".
+   Ele não substitui o `ROT`: ele o TRADUZ. Com "escrever", todo passo de
+   FORMAR vira um de ESCREVER e o par produzir/interpretar continua de pé.
+   Quem quiser misturar os três gestos escreve direto no `ROT` (ex.:
+   ["f","l","e","l","f","e"]) — o `MODO` é o atalho, o `ROT` é o controle fino. */
+var MODO="ponteiros"; /*TECNICA*/
+/* o par FORMAR/LER, alternado */
+var ROT=["f","l","f","l","f","l"]; /*TECNICA*/
+/* o roteiro que a peça de fato joga (o `ROT` já traduzido pelo `MODO`).
+   ⚠️ calculado no carregamento e NÃO dentro de uma tela: os auditores da
+   bancada abrem cada tela sozinha, e uma delas lendo um plano vazio derrubaria
+   a medição toda com um erro que a criança nunca veria. */
+var PLANO=montaPlano();
+function montaPlano(){
+  var i,p=[];
+  for(i=0;i<ROT.length;i++) p.push((MODO==="escrever"&&ROT[i]==="f")?"e":ROT[i]);
+  return p;
+}
+var NOMEH=["doze","uma","duas","tr&ecirc;s","quatro","cinco","seis","sete","oito","nove","dez","onze","doze"]; /*TECNICA*/
+/* ⚠️ os minutos VÃO POR EXTENSO. Enquanto era "doze e 5", a criança que ainda
+   soletra lia "doze e cinco" numa tela e via "5" na outra — e a peça é
+   justamente sobre juntar o número com a palavra. */
+var NOMEM=["","cinco","dez","quinze","vinte","vinte e cinco","trinta","trinta e cinco", /*TECNICA*/
+           "quarenta","quarenta e cinco","cinquenta","cinquenta e cinco"];
+
+var pos=0;            /* onde estamos no roteiro */
+var fi=0, li=0, ei=0; /* rodada de FORMAR / de LER / de ESCREVER (vêm de `pos`) */
+var telaTipo="f";     /* que tela está no ar: manda no `data-qa` e na leitura */
+var escrito="";       /* os algarismos já digitados no modo "escrever" */
+var caixas=[], eApaga=null;
+var hh=12, mm=0;      /* a hora que o relógio mostra AGORA (hh de 1 a 12) */
+var ger=0;            /* geração: mata o setTimeout de uma tela que já saiu */
+var travada=false;    /* ⚠️ trava NO INSTANTE do toque — criança toca duas vezes */
+var erros=0;          /* erros DESTA rodada: é o degrau do andaime */
+var dePrimeira=0;     /* rodadas resolvidas sem ajuda: vira o parecer do fim */
+var eRelo=null, eHora=null, eMin=null, eDig=null, eTexto=null, eZona=null, eOk=null;
+var teclas=[], opcoes=[];
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles atrapalhavam o
+   arrasto que a criança acabara de fazer. Defeito já pego DUAS vezes. */
+var ultimoToque=0, pego=null, moveuP=false, fimArrasto=0, maoPega="min";
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function viva(){ return !!(eRelo&&eRelo.parentNode); }
+function sTic(){ nota(1046.5,.02,.08,"square",0); }
+function sPasso(){ nota(659.25,.05,.10,"triangle",0); }
+
+/* ---------- as contas da hora ---------- */
+function tot(h,m){ return ((((h%12)*60+m)%720)+720)%720; }
+function setTotal(t){
+  t=((t%720)+720)%720;
+  var h=Math.floor(t/60); if(h===0) h=12;
+  hh=h; mm=t%60;
+}
+function digital(h,m){ return h+":"+(m<10?"0"+m:""+m); }
+/* ⚠️ O VOCABULÁRIO SAI DAQUI, SEMPRE. Nenhuma dica escreve "seis e meia" à
+   mão: na 2ª rodada de outra peça as frases ainda diziam palavras da 1ª, e
+   isso não estoura nada — só a criança percebe. */
+function textoDaHora(h,m){
+  var nh=NOMEH[h%12===0?12:h%12];
+  if(m===0)  return nh+(h===1?" hora":" horas");
+  if(m===30) return nh+" e meia";
+  if(m%5===0) return nh+" e "+NOMEM[m/5];
+  return nh+" e "+m;
+}
+/* para que n&uacute;mero do mostrador o ponteiro GRANDE aponta */
+function numeroDoMinuto(m){ var n=Math.round(m/5); return n===0?12:n; }
+function idxDe(tipo){ var i,n=0; for(i=0;i<pos;i++) if(PLANO[i]===tipo) n++; return n; }
+function cenaF(){ return FORMAR[fi%FORMAR.length]||FORMAR[0]; }
+function cenaL(){ return LER[li%LER.length]||LER[0]; }
+function cenaE(){ return ESCREVER[ei%ESCREVER.length]||ESCREVER[0]; }
+function marcaPos(){ fi=idxDe("f"); li=idxDe("l"); ei=idxDe("e"); }
+/* ⭐⭐ A VOZ É GRAVADA, SEMPRE (pilar SONORA). Quem toca a voz de verdade é a
+   ponte do integrador, que injeta um `var diz = function(txt)` ligado nas
+   gravações da casa (Edge TTS) ANTES do corpo da peça. Aqui a peça só PEDE, e
+   pede protegida por `typeof`: sozinha na bancada não há gravação nenhuma e
+   nada pode estourar.
+   ⚠️ NUNCA `speechSynthesis` daqui — a voz-robô do navegador briga com a voz
+   da casa (dois falando junto, defeito que o Marcos já ouviu) e o portão
+   `_qa/vozrobo.py` reprova. Tudo o que a voz diz está TAMBÉM escrito na tela. */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  var t=semTag(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* o alto-falante TOCÁVEL (46px de alvo). `type=button`, e o evento para NELE:
+   tocar o som nunca pode contar como resposta. */
+function fazZap(txt,rot){
+  var z=el("button","zap","");
+  z.setAttribute("type","button");
+  z.setAttribute("aria-label","Ouvir "+(rot||"de novo"));
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sTap(); fala(typeof txt==="function"?txt():txt);
+    z.className="zap tocando";
+    zapVolta(z);
+    return false;
+  };
+  return z;
+}
+function zapVolta(z){
+  var g=ger;
+  setTimeout(function(){ if(g!==ger) return; z.className="zap"; },900);
+}
+
+/* ---------- desenhar o relógio ---------- */
+/* o relógio do modo "escrever" não se mexe: ele é a PERGUNTA. Uma função só
+   para a classe, porque três lugares a repõem depois do tremor e do arrasto —
+   e um deles esquecido devolveria o relógio grande no meio da tela pequena. */
+function classeRelo(){ return (telaTipo==="e")?"relo relofix":"relo"; }
+function montaRelogio(h,m,mexivel){
+  var r=el("div",classeRelo()), i, a, e;
+  for(i=0;i<12;i++){
+    a=i*30*Math.PI/180;
+    e=el("i","rtick","");
+    e.style.left=(50+Math.sin(a)*47)+"%";
+    e.style.top=(50-Math.cos(a)*47)+"%";
+    r.appendChild(e);
+  }
+  for(i=1;i<=12;i++){
+    a=i*30*Math.PI/180;
+    e=el("i","rnum",""+i);
+    e.style.left=(50+Math.sin(a)*37)+"%";
+    e.style.top=(50-Math.cos(a)*37)+"%";
+    r.appendChild(e);
+  }
+  eHora=el("b","rmao rhora","");
+  eMin=el("b","rmao rmin","");
+  if(mexivel){
+    eHora.appendChild(el("u","rgrab",""));
+    eMin.appendChild(el("u","rgrab",""));
+  }
+  r.appendChild(eHora); r.appendChild(eMin);
+  r.appendChild(el("s","rpino",""));
+  eRelo=r;
+  hh=h; mm=m;
+  poeMao();
+  if(mexivel) ligaArrasto(r);
+  return r;
+}
+/* ⚠️ ajudante que toca no DOM começa sempre com a saída: uma função de
+   limpeza chamada antes de o elemento existir derrubou quatro portões de uma
+   vez com TypeError. */
+function poeMao(){
+  if(!eHora||!eMin) return;
+  var ah=(((hh%12)*60+mm))*0.5, am=mm*6;
+  eHora.style.webkitTransform="rotate("+ah+"deg)";
+  eHora.style.transform="rotate("+ah+"deg)";
+  eMin.style.webkitTransform="rotate("+am+"deg)";
+  eMin.style.transform="rotate("+am+"deg)";
+  mostraLeitura();
+  marcaQA();
+}
+function mostraLeitura(){
+  if(!eDig) return;
+  eDig.innerHTML="AGORA O REL&Oacute;GIO MARCA<b>"+digital(hh,mm)+"</b>";
+  if(eTexto) eTexto.innerHTML=textoDaHora(hh,mm);
+}
+
+/* ---------- as TRÊS portas: arrastar, botão e teclado ----------
+   ⚠️ os tratadores de toque são FUNÇÕES COM NOME de propósito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular é a
+   armadilha nº 1 desta família). Ele mora só no `touchmove`, e só depois que o
+   dedo ANDOU de verdade. */
+function ligaArrasto(r){
+  r.onmousedown=mouseIni;
+  r.addEventListener("touchstart",toqueIni,false);
+  r.addEventListener("touchmove",toqueMeio,false);
+  r.addEventListener("touchend",toqueFim,false);
+}
+function mouseIni(ev){
+  if(souDedo()) return;      /* mouse FANTASMA do celular: ignora */
+  pegaEm(ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveuP&&ev.preventDefault) ev.preventDefault();  /* só no MEIO do arrasto */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  soltaMao();
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(){ if(souDedo()) return; if(pego) soltaMao(); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ⭐ O DEDO NÃO PRECISA ACERTAR O PONTEIRO. O alvo é o relógio inteiro; quem
+   decide qual ponteiro foi pego é a distância até a PONTA de cada um. */
+function pegaEm(x,y){
+  if(travada||!eRelo||!eRelo.parentNode) return;
+  var r=eRelo.getBoundingClientRect();
+  var cx=r.left+r.width/2, cy=r.top+r.height/2, lado=r.width;
+  var am=mm*6*Math.PI/180, ah=((hh%12)*60+mm)*0.5*Math.PI/180;
+  var mx=cx+Math.sin(am)*lado*0.41, my=cy-Math.cos(am)*lado*0.41;
+  var ox=cx+Math.sin(ah)*lado*0.29, oy=cy-Math.cos(ah)*lado*0.29;
+  var dm=(x-mx)*(x-mx)+(y-my)*(y-my), dh=(x-ox)*(x-ox)+(y-oy)*(y-oy);
+  maoPega=(dm<=dh)?"min":"hora";
+  pego=1; moveuP=false;
+}
+function moveEm(x,y){
+  if(!pego||!eRelo||!eRelo.parentNode||travada) return;
+  var r=eRelo.getBoundingClientRect();
+  var dx=x-(r.left+r.width/2), dy=y-(r.top+r.height/2);
+  if(Math.abs(dx)+Math.abs(dy)<14) return;   /* perto do pino: sem ângulo confiável */
+  if(!moveuP){ moveuP=true; sTap(); eRelo.className="relo pegando"; }
+  var a=Math.atan2(dx,-dy)*180/Math.PI; if(a<0) a+=360;
+  if(maoPega==="min") giraMinuto(a); else giraHora(a);
+}
+function soltaMao(){
+  if(moveuP) fimArrasto=agora();
+  pego=null; moveuP=false;
+  if(eRelo&&eRelo.parentNode) eRelo.className=classeRelo();
+}
+/* ⭐ ENCAIXA DE 5 EM 5, E O PONTEIRO PEQUENO ANDA JUNTO. A virada do 55 para o
+   0 (e a volta) sobe/desce a HORA — é assim que a criança descobre sozinha que
+   uma volta do grande é uma hora do pequeno. */
+function giraMinuto(a){
+  var novo=(Math.round(a/30)*5)%60, ant=mm;
+  if(novo!==ant){
+    if(ant>=45&&novo<=15) hh=(hh%12)+1;
+    else if(ant<=15&&novo>=45) hh=((hh+10)%12)+1;
+    mm=novo; sTic(); poeMao();
+  }
+}
+function giraHora(a){
+  var h=Math.round(a/30-mm/60);
+  h=((h%12)+12)%12; if(h===0) h=12;
+  if(h!==hh){ hh=h; sTic(); poeMao(); }
+}
+function mexeMin(d){ if(travada) return; setTotal(tot(hh,mm)+d); sTic(); poeMao(); }
+function mexeHora(d){ if(travada) return; setTotal(tot(hh,mm)+d*60); sTic(); poeMao(); }
+
+/* ⚠️ data-qa é SÓ para o auditor-jogador: ele não sabe arrastar ponteiro, e
+   sem isto reprovaria uma tela que funciona. A marca anda: fica sempre no
+   botão que APROXIMA da hora pedida, e passa para o "Está pronto!" quando o
+   relógio já está certo. Uma marca por vez, nunca duas. */
+function marcaQA(){
+  var i, alvo, d;
+  /* ⚠️ no modo "escrever" quem responde é o TECLADO DE NÚMEROS: a marca é
+     outra, e sem este desvio ela apontaria para o botão de mexer o ponteiro,
+     que ali nem existe. Uma tela, um jeito de marcar. */
+  if(telaTipo==="e"){ marcaQAescrever(); return; }
+  if(!teclas.length) return;
+  for(i=0;i<teclas.length;i++) teclas[i].removeAttribute("data-qa");
+  if(eOk) eOk.removeAttribute("data-qa");
+  alvo=tot(cenaF().h,cenaF().m);
+  d=((alvo-tot(hh,mm))+720)%720;
+  if(d===0){ if(eOk) eOk.setAttribute("data-qa","1"); return; }
+  var chave;
+  if(d<=360) chave=(d>=60)?"+h":"+m";
+  else chave=((720-d)>=60)?"-h":"-m";
+  for(i=0;i<teclas.length;i++) if(teclas[i]._k===chave){ teclas[i].setAttribute("data-qa","1"); return; }
+}
+
+/* ---------------------------------------------------------------
+   TELA 1 — FORMAR A HORA. A criança move os ponteiros até chegar na
+   hora pedida. É a tela que o professor pediu com todas as letras.
+   --------------------------------------------------------------- */
+function telaFormar(){
+  limpa();
+  ger++; travada=false; erros=0; teclas=[]; opcoes=[]; eOk=null;
+  pego=null; moveuP=false;
+  telaTipo="f"; marcaPos();
+  document.onkeydown=null;
+  var g=ger, c0=cenaF();
+  var t=el("div","tela");
+  setProg(t,Math.round(pos*100/PLANO.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",c0.selo));
+  c.appendChild(el("div","balao","Mova os ponteiros e deixe o rel&oacute;gio em <b>"+
+                   c0.apelido+"</b>."));
+  c.appendChild(montaRelogio(c0.ih,c0.im,true));
+
+  eDig=el("div","rdig","");
+  c.appendChild(eDig);
+  eTexto=el("div","rtexto","");
+  c.appendChild(eTexto);
+
+  var bts=el("div","rbts",""), i;
+  var DEF=[{k:"-h",r:"<b>&#8722;1</b><i>hora</i>"},{k:"-m",r:"<b>&#8722;5</b><i>min</i>"},
+           {k:"+m",r:"<b>+5</b><i>min</i>"},{k:"+h",r:"<b>+1</b><i>hora</i>"}];
+  for(i=0;i<DEF.length;i++) bts.appendChild(fazTecla(DEF[i].k,DEF[i].r));
+  c.appendChild(bts);
+
+  eZona=el("div","rzona","");
+  eOk=el("button","btn","Est&aacute; pronto!");
+  eOk.onclick=function(){ confereFormar(g); };
+  eZona.appendChild(eOk);
+  c.appendChild(eZona);
+  c.appendChild(el("div","hint","Arraste um ponteiro, use os bot&otilde;es "+
+                   "ou as setas do teclado. Depois aperte Enter."));
+  t.appendChild(c); app.appendChild(t);
+  mostraLeitura(); marcaQA();
+  /* AS DUAS PORTAS: no PC da escola tem teclado e a criança vai usar. */
+  document.onkeydown=function(ev){
+    var e=ev||window.event, k=e.keyCode||e.which;
+    if(travada) return;
+    if(k===37){ mexeMin(-5); }
+    else if(k===39){ mexeMin(5); }
+    else if(k===38){ mexeHora(1); }
+    else if(k===40){ mexeHora(-1); }
+    else if(k===13||k===32){ confereFormar(g); }
+    else return;
+    if(e.preventDefault) e.preventDefault();
+  };
+}
+function fazTecla(k,rot){
+  var b=el("div","tecl",rot);
+  b._k=k;
+  b.onclick=function(){
+    if(travada) return;
+    if(k==="+h") mexeHora(1);
+    else if(k==="-h") mexeHora(-1);
+    else if(k==="+m") mexeMin(5);
+    else mexeMin(-5);
+  };
+  teclas.push(b);
+  return b;
+}
+function confereFormar(g){
+  if(g!==ger||travada) return;
+  var c0=cenaF();
+  if(tot(hh,mm)===tot(c0.h,c0.m)){ acertaFormar(g); return; }
+  erraFormar(g);
+}
+function acertaFormar(g){
+  travada=true;                      /* ⚠️ trava ANTES de qualquer animação */
+  document.onkeydown=null;
+  if(erros===0) dePrimeira++;
+  sCerto();
+  var c0=cenaF();
+  mostraBanner("<b>&Eacute; isso!</b> O rel&oacute;gio est&aacute; em "+
+               textoDaHora(c0.h,c0.m)+".", proximo);
+}
+/* ERRO NÃO PUNE: som grave curto, o relógio treme e o andaime CRESCE.
+   ⚠️ TODO caminho de erro chama o andaime — inclusive o mais natural desta
+   mecânica, que é acertar a hora e deixar os minutos para trás. Numa peça de
+   traçar, o erro mais natural escrevia uma dica FIXA e a criança lia a mesma
+   frase para sempre. */
+function erraFormar(g){
+  if(g!==ger) return;
+  sErro(); erros++;
+  if(eRelo){ eRelo.className="relo treme"; destreme(g); }
+  if(erros===1){ mostraDica(dicaFormar1()); return; }
+  if(erros===2){ poeFantasma(); mostraDica(dicaFormar2()); return; }
+  revelaFormar(g);
+}
+function dicaFormar1(){
+  var c0=cenaF();
+  if(hh!==c0.h)
+    return "O ponteiro <b>pequeno e gordo</b> mostra a HORA. "+
+           "Ele precisa chegar no <b>"+c0.h+"</b>.";
+  return "A hora j&aacute; est&aacute; certa! Agora o ponteiro <b>comprido e fino</b>, "+
+         "que mostra os minutos.";
+}
+function dicaFormar2(){
+  var c0=cenaF();
+  return "Deixei o <b>ponteiro fantasma</b> no lugar certo &#8212; encoste os seus nele. "+
+         "Em <b>"+textoDaHora(c0.h,c0.m)+"</b>, o comprido fica no <b>"+
+         numeroDoMinuto(c0.m)+"</b>.";
+}
+/* 2º degrau: APOIO CONCRETO. Repetir a frase mais alto não é degrau; mostrar
+   ONDE o ponteiro tem que chegar, é. */
+function poeFantasma(){
+  if(!eRelo||document.getElementById("fantH")) return;
+  var c0=cenaF();
+  var fh=el("b","rfant rfhora",""), fm=el("b","rfant rfmin","");
+  fh.id="fantH";
+  var ah=(((c0.h%12)*60+c0.m))*0.5, am=c0.m*6;
+  fh.style.webkitTransform="rotate("+ah+"deg)"; fh.style.transform="rotate("+ah+"deg)";
+  fm.style.webkitTransform="rotate("+am+"deg)"; fm.style.transform="rotate("+am+"deg)";
+  eRelo.insertBefore(fm,eRelo.firstChild);
+  eRelo.insertBefore(fh,eRelo.firstChild);
+}
+/* ⚠️ 3º DEGRAU: REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica FICA na tela até
+   a criança tocar em "Entendi!". Em cinco peças de um lote a explicação do 3º
+   degrau era escrita e apagada no mesmo quadro, porque o "revelar" chamava o
+   "acertou" e o "acertou" limpava a barra de dica. A criança se via corrigida
+   sem saber por quê. Nenhum portão vê isso: só medindo o texto na tela depois
+   de errar. */
+function revelaFormar(g){
+  travada=true;
+  document.onkeydown=null;
+  poeFantasma();
+  var c0=cenaF();
+  setTotal(tot(c0.h,c0.m));
+  poeMao();
+  sPasso();
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraDica("Pronto: o <b>pequeno</b> no "+c0.h+" e o <b>comprido</b> no "+
+               numeroDoMinuto(c0.m)+". Isso &eacute; <b>"+textoDaHora(c0.h,c0.m)+"</b>.");
+    botaoSegue(g,"Entendi!");
+  },820);
+}
+function destreme(g){
+  setTimeout(function(){
+    if(g!==ger||!eRelo||!eRelo.parentNode) return;
+    eRelo.className=classeRelo();
+  },360);
+}
+/* o botão que garante que a explicação do 3º degrau FOI LIDA: nada some
+   sozinho, a criança é quem manda seguir. */
+function botaoSegue(g,txt){
+  var i;
+  for(i=0;i<teclas.length;i++) teclas[i].removeAttribute("data-qa");
+  for(i=0;i<opcoes.length;i++) opcoes[i].removeAttribute("data-qa");
+  if(eOk&&eOk.parentNode) eOk.parentNode.removeChild(eOk);
+  eOk=null;
+  if(!eZona) return;
+  var b=el("button","btn",txt);
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ if(g!==ger) return; sTap(); proximo(); };
+  eZona.appendChild(b);
+}
+
+/* ---------------------------------------------------------------
+   TELA 1-B — ESCREVER A HORA (modo "escrever", lição do EdiLIM).
+   A criança LÊ o relógio e DIGITA a hora. É o mesmo conteúdo do
+   FORMAR com outro gesto: lá ela produz movendo o ponteiro
+   (analógico), aqui ela produz escrevendo o símbolo — o degrau do
+   concreto para o simbólico, com a mão dela nos dois.
+   ⚠️ a leitura em números (`eDig`/`eTexto`) fica DESLIGADA: aqui ela
+   diria a resposta antes de a criança pensar.
+   --------------------------------------------------------------- */
+function telaEscrever(){
+  limpa();
+  ger++; travada=false; erros=0; teclas=[]; opcoes=[]; eOk=null;
+  eDig=null; eTexto=null;
+  pego=null; moveuP=false;
+  escrito=""; caixas=[]; eApaga=null;
+  telaTipo="e"; marcaPos();
+  document.onkeydown=null;
+  var g=ger, c0=cenaE(), i, cx;
+  var t=el("div","tela");
+  setProg(t,Math.round(pos*100/PLANO.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",c0.selo));
+  var enun="Olhe o rel&oacute;gio e <b>escreva</b> a hora que ele est&aacute; marcando.";
+  c.appendChild(el("div","balao",enun));
+  c.appendChild(montaRelogio(c0.h,c0.m,false));
+
+  /* O VISOR: dois algarismos da hora, dois pontos, dois dos minutos — e o
+     alto-falante ao lado, que repete a pergunta para quem ainda não lê. */
+  var disp=el("div","redisp","");
+  for(i=0;i<4;i++){
+    if(i===2) disp.appendChild(el("i","redois",":"));
+    cx=el("div","recx","");
+    disp.appendChild(cx); caixas.push(cx);
+  }
+  disp.appendChild(fazZap(enun,"a pergunta"));
+  c.appendChild(disp);
+  c.appendChild(el("div","rerot","HORA  &#183;  MINUTOS"));
+
+  /* O TECLADO DE NÚMEROS (1ª porta). Começa no 1 e termina no 0, como o
+     teclado do telefone e o do micro-ondas — é a ordem que a criança já viu. */
+  var tec=el("div","retec","");
+  for(i=1;i<=9;i++) tec.appendChild(fazTeclaNum(""+i));
+  tec.appendChild(fazTeclaNum("0"));
+  eApaga=el("button","reapg","Apagar");
+  eApaga.setAttribute("type","button");
+  eApaga.onclick=function(){ if(travada) return; sTap(); apagaAlgarismo(); };
+  tec.appendChild(eApaga);
+  c.appendChild(tec);
+
+  eZona=el("div","rzona","");
+  eOk=el("button","btn","Est&aacute; pronto!");
+  eOk.onclick=function(){ confereEscrever(g); };
+  eZona.appendChild(eOk);
+  c.appendChild(eZona);
+  c.appendChild(el("div","hint","Toque nos n&uacute;meros <b>ou</b> use o teclado do "+
+                   "computador. Apagar volta um; Enter confere."));
+  t.appendChild(c); app.appendChild(t);
+  mostraVisor(); marcaQA();
+  /* AS DUAS PORTAS: no PC da escola tem teclado e a criança vai digitar. */
+  document.onkeydown=function(ev){
+    var e=ev||window.event, k=e.keyCode||e.which;
+    if(travada||telaTipo!=="e"||!viva()) return;
+    if(k>=48&&k<=57) poeAlgarismo(String.fromCharCode(k));
+    else if(k>=96&&k<=105) poeAlgarismo(String.fromCharCode(k-48));  /* teclado numérico */
+    else if(k===8||k===46) apagaAlgarismo();
+    else if(k===13||k===32) confereEscrever(g);
+    else return;
+    if(e.preventDefault) e.preventDefault();
+  };
+  fala(enun);
+}
+function fazTeclaNum(d){
+  /* ⚠️ DUAS classes: `.tecl` é a que os portões conhecem (é assim que o alvo é
+     medido em seis tamanhos de tela), `.tecn` é só o tamanho desta tecla. */
+  var b=el("div","tecl tecn",d);
+  b._d=d;
+  b.onclick=function(){ if(travada) return; sTap(); poeAlgarismo(d); };
+  teclas.push(b);
+  return b;
+}
+function poeAlgarismo(d){
+  if(travada||escrito.length>=4) return;
+  escrito+=d;
+  sTic(); mostraVisor(); marcaQA();
+}
+function apagaAlgarismo(){
+  if(travada||!escrito.length) return;
+  escrito=escrito.substring(0,escrito.length-1);
+  sTic(); mostraVisor(); marcaQA();
+}
+/* o visor mostra o que ela escreveu, algarismo a algarismo, e a caixa da VEZ
+   fica acesa: retorno imediato, que é o que ensina — não a correção no fim. */
+function mostraVisor(){
+  var i;
+  if(!caixas.length) return;
+  for(i=0;i<caixas.length;i++){
+    if(i<escrito.length){ caixas[i].innerHTML=escrito.charAt(i); caixas[i].className="recx cheia"; }
+    else { caixas[i].innerHTML=""; caixas[i].className=(i===escrito.length)?"recx pisca":"recx"; }
+  }
+}
+function horaEscrita(){ return parseInt(escrito.substring(0,2),10); }
+function minEscrito(){ return parseInt(escrito.substring(2,4),10); }
+/* ⚠️ `data-qa` é SÓ para o auditor-jogador: ele não sabe ler um relógio. A
+   marca ANDA — fica no algarismo que falta e passa para o "Está pronto!"
+   quando os quatro estiverem escritos. Uma marca por vez, nunca duas. */
+function marcaQAescrever(){
+  var i, alvo, d=null;
+  for(i=0;i<teclas.length;i++) teclas[i].removeAttribute("data-qa");
+  if(eOk) eOk.removeAttribute("data-qa");
+  var c0=cenaE();
+  alvo=(c0.h<10?"0":"")+c0.h+(c0.m<10?"0":"")+c0.m;
+  if(escrito.length>=4||escrito!==alvo.substring(0,escrito.length)){
+    if(eOk) eOk.setAttribute("data-qa","1");
+    return;
+  }
+  d=alvo.charAt(escrito.length);
+  for(i=0;i<teclas.length;i++) if(teclas[i]._d===d){ teclas[i].setAttribute("data-qa","1"); return; }
+}
+function confereEscrever(g){
+  if(g!==ger||travada) return;
+  var c0=cenaE();
+  if(escrito.length===4&&tot(horaEscrita()===0?12:horaEscrita(),minEscrito())===tot(c0.h,c0.m)){
+    acertaEscrever(g); return;
+  }
+  erraEscrever(g);
+}
+function acertaEscrever(g){
+  travada=true;                      /* ⚠️ trava ANTES de qualquer animação */
+  document.onkeydown=null;
+  if(erros===0) dePrimeira++;
+  sCerto();
+  var c0=cenaE();
+  mostraBanner("<b>&Eacute; isso!</b> "+escrito.substring(0,2)+":"+escrito.substring(2,4)+
+               " &#233; "+textoDaHora(c0.h,c0.m)+".", proximo);
+}
+/* ERRO NÃO PUNE: som grave curto, o relógio treme e o andaime CRESCE.
+   ⚠️ TODO caminho de erro chama o andaime — inclusive o mais natural desta
+   tela, que é apertar "Está pronto!" com o visor pela metade. */
+function erraEscrever(g){
+  if(g!==ger) return;
+  sErro(); erros++;
+  if(eRelo){ eRelo.className=classeRelo()+" treme"; destreme(g); }
+  if(erros===1){ mostraDica(dicaEscrever1()); return; }
+  if(erros===2){ apoioEscrever(); return; }
+  revelaEscrever(g);
+}
+/* 1º degrau: a PERGUNTA que orienta o olhar — e ela muda com o que a criança
+   fez, nunca é uma frase fixa (frase fixa é eco, não andaime). */
+function dicaEscrever1(){
+  var c0=cenaE();
+  if(escrito.length<4)
+    return "Faltam algarismos: s&#227;o <b>dois para a hora</b> e <b>dois para os "+
+           "minutos</b>. Se a hora tiver um n&#250;mero s&#243;, escreva um <b>zero</b> na frente.";
+  if((horaEscrita()===0?12:horaEscrita())!==c0.h)
+    return "Olhe o ponteiro <b>pequeno e gordo</b>: ele diz a HORA, e ela ainda "+
+           "n&#227;o est&#227; certa no visor.";
+  return "A hora est&#225; certa! Agora conte os minutos no ponteiro <b>comprido e "+
+         "fino</b>, de cinco em cinco.";
+}
+/* 2º degrau: APOIO CONCRETO — "mostro UM, você faz o resto". A peça escreve a
+   HORA (o ponteiro pequeno pisca junto) e a criança escreve os minutos. Repetir
+   a frase mais alto não é degrau; entregar tudo também não. */
+function apoioEscrever(){
+  var c0=cenaE();
+  if(eHora) eHora.className="rmao rhora pisca";
+  escrito=(c0.h<10?"0":"")+c0.h;
+  mostraVisor(); marcaQA();
+  mostraDica("Eu escrevi a <b>hora</b> para voc&#234; &#8212; o pequeno est&#225; "+
+             ondeEstaOPequeno(c0)+". Agora escreva s&#243; os <b>minutos</b>, "+
+             "olhando o ponteiro comprido.");
+}
+/* ⚠️ 3º DEGRAU: REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica FICA na tela até
+   a criança tocar em "Entendi!". Em cinco peças de um lote a explicação do 3º
+   degrau era escrita e apagada no mesmo quadro. */
+function revelaEscrever(g){
+  travada=true;
+  document.onkeydown=null;
+  var c0=cenaE();
+  if(eHora) eHora.className="rmao rhora pisca";
+  escrito=(c0.h<10?"0":"")+c0.h+(c0.m<10?"0":"")+c0.m;
+  mostraVisor();
+  sPasso();
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraDica("Escreve-se <b>"+escrito.substring(0,2)+":"+escrito.substring(2,4)+
+               "</b>: o pequeno "+ondeEstaOPequeno(c0)+" e o comprido no <b>"+
+               numeroDoMinuto(c0.m)+"</b>. Isso &#233; <b>"+textoDaHora(c0.h,c0.m)+"</b>.");
+    botaoSegue(g,"Entendi!");
+  },820);
+}
+
+/* ---------------------------------------------------------------
+   TELA 2 — LER A HORA. Formar e ler são habilidades diferentes: a
+   criança que monta 3h00 ainda pode ler 4h30 como "seis e vinte".
+   --------------------------------------------------------------- */
+function telaLer(){
+  limpa();
+  ger++; travada=false; erros=0; teclas=[]; opcoes=[]; eOk=null;
+  eDig=null; eTexto=null;
+  pego=null; moveuP=false;
+  telaTipo="l"; marcaPos();
+  document.onkeydown=null;
+  var g=ger, c0=cenaL();
+  var t=el("div","tela");
+  setProg(t,Math.round(pos*100/PLANO.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",c0.selo));
+  c.appendChild(el("div","balao","Que horas este rel&oacute;gio est&aacute; marcando?"));
+  c.appendChild(montaRelogio(c0.h,c0.m,false));
+
+  eZona=el("div","rzona","");
+  /* OPÇÕES EMBARALHADAS: na Fábrica de Estrelas a certa era sempre a 1ª e a
+     criança aprendeu a POSIÇÃO, não o conteúdo.
+     3 distratores de propósito: com 2, a criança elimina tudo antes do 3º erro
+     e o degrau "revelar" vira código morto. */
+  var lista=[{txt:textoDaHora(c0.h,c0.m),ok:1}], i;
+  for(i=0;i<c0.erradas.length;i++) lista.push({txt:c0.erradas[i],ok:0});
+  baguncar(lista);
+  for(i=0;i<lista.length;i++) eZona.appendChild(fazOpcao(lista[i],g));
+  c.appendChild(eZona);
+  c.appendChild(el("div","hint","Comece pelo ponteiro pequeno: ele diz a hora."));
+  t.appendChild(c); app.appendChild(t);
+}
+function fazOpcao(o,g){
+  var b=el("div","opt oph",o.txt);
+  b._ok=o.ok;
+  if(o.ok) b.setAttribute("data-qa","1");
+  b.onclick=function(){ escolheu(b,g); };
+  opcoes.push(b);
+  return b;
+}
+function escolheu(b,g){
+  if(g!==ger||travada) return;
+  if((" "+b.className+" ").indexOf(" no ")>=0){
+    /* opção já tentada: etiqueta em PALAVRAS e som de retorno. Um retângulo
+       rosa e um `return` seco faz quem não distingue cor tocar ali para
+       sempre achando que travou. */
+    sTap(); mostraDica("Nessa a gente j&aacute; tentou. Tente uma das outras."); return;
+  }
+  if(b._ok){ acertaLer(b,g); return; }
+  erraLer(b,g);
+}
+function acertaLer(b,g){
+  travada=true;                      /* ⚠️ trava NO INSTANTE do toque */
+  b.className="opt oph ok";
+  if(erros===0) dePrimeira++;
+  sCerto();
+  var c0=cenaL();
+  mostraBanner("<b>Isso mesmo!</b> "+textoDaHora(c0.h,c0.m)+".", proximo);
+}
+function erraLer(b,g){
+  sErro(); erros++;
+  b.className="opt oph no";
+  b.removeAttribute("data-qa");
+  var c0=cenaL(), i, sobrou=0;
+  for(i=0;i<opcoes.length;i++)
+    if(!opcoes[i]._ok&&(" "+opcoes[i].className+" ").indexOf(" no ")<0) sobrou++;
+  if(erros===1){
+    mostraDica("Comece pelo ponteiro <b>pequeno e gordo</b>: ele diz a HORA. "+
+               "O comprido s&oacute; diz os minutos.");
+    return;
+  }
+  /* a REDE: se as erradas acabarem antes do 3º erro, revela na hora em vez de
+     deixar uma tela com uma opção só. */
+  if(erros===2&&sobrou>0){
+    if(eHora) eHora.className="rmao rhora pisca";
+    mostraDica("Olhe: o pequeno est&aacute; "+ondeEstaOPequeno(c0)+
+               ", ent&atilde;o a hora &eacute; <b>"+c0.h+"</b>. Agora conte os minutos no comprido.");
+    return;
+  }
+  revelaLer(g);
+}
+function ondeEstaOPequeno(c0){
+  if(c0.m===0) return "bem no <b>"+c0.h+"</b>";
+  return "entre o <b>"+c0.h+"</b> e o <b>"+(c0.h===12?1:c0.h+1)+"</b>";
+}
+/* ⚠️ revela -> DEPOIS a dica; e a dica fica de pé até a criança seguir. */
+function revelaLer(g){
+  travada=true;
+  var c0=cenaL(), i;
+  for(i=0;i<opcoes.length;i++){
+    opcoes[i].removeAttribute("data-qa");
+    if(opcoes[i]._ok) opcoes[i].className="opt oph ok";
+  }
+  if(eHora) eHora.className="rmao rhora pisca";
+  sPasso();
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraDica("A resposta est&aacute; acesa: o pequeno "+ondeEstaOPequeno(c0)+
+               " e o comprido no <b>"+numeroDoMinuto(c0.m)+"</b> &#8212; isso &eacute; <b>"+
+               textoDaHora(c0.h,c0.m)+"</b>.");
+    botaoSegue(g,"Entendi!");
+  },700);
+}
+
+/* ---------- andar no roteiro ---------- */
+function proximo(){
+  pos++;
+  /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
+     da esteira só avança de fase pelo mostraBanner; chamar fimRelogio() direto
+     prendia a criança na tela de fim dentro da atividade montada. */
+  if(pos>=PLANO.length){ mostraBanner("<b>Voc&#234; leu todas as horas!</b>", fimRelogio); return; }
+  if(PLANO[pos]==="e") telaEscrever();
+  else if(PLANO[pos]==="f") telaFormar();
+  else telaLer();
+}
+
+/* ---------------------------------------------------------------
+   TELA 3 — A MEDALHA. Parecer em palavras, nunca nota, e nunca a
+   palavra que reprova.
+   --------------------------------------------------------------- */
+function fimRelogio(){
+  limpa();
+  ger++; travada=false;
+  eRelo=null; eHora=null; eMin=null; eDig=null; eTexto=null; eZona=null; eOk=null;
+  teclas=[]; opcoes=[]; caixas=[]; eApaga=null; escrito=""; telaTipo="f";
+  document.onkeydown=null;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(dePrimeira>=5) parecer="Voc&ecirc; acertou <b>"+dePrimeira+"</b> de 6 sem nenhuma ajuda. "+
+                            "Os ponteiros j&aacute; obedecem a voc&ecirc;!";
+  else if(dePrimeira>=3) parecer="Voc&ecirc; resolveu <b>"+dePrimeira+"</b> de 6 sozinho e usou a "+
+                                 "ajuda nas outras. &Eacute; assim que se aprende.";
+  else parecer="Voc&ecirc; formou e leu <b>6</b> horas diferentes. Cada vez que o ponteiro "+
+               "grande d&aacute; uma volta, o pequeno anda uma hora.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pos=0; dePrimeira=0; comecaPeca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Olhe o rel&oacute;gio da sala agora. Onde est&aacute; o ponteiro pequeno?"));
+  t.appendChild(c); app.appendChild(t);
+}
+
+/* a peça começa pelo PRIMEIRO passo do roteiro já traduzido pelo `MODO` — e
+   não por `telaFormar()` na unha: com `MODO="escrever"` o primeiro passo é
+   outro, e começar sempre pela mesma tela seria o modo novo nunca acontecer. */
+function comecaPeca(){
+  if(PLANO[0]==="e"){ telaEscrever(); return; }
+  if(PLANO[0]==="l"){ telaLer(); return; }
+  telaFormar();
+}
+comecaPeca();
+</script>
+</body></html>

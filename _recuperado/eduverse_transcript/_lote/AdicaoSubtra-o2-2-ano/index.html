@@ -1,0 +1,44 @@
+  /* ===== CACA-NUMEROS ===== */
+  .cn-alvo { font-size: 20px; font-weight: bold; color: #0d4f86; margin: 8px 0; }
+  .cn-alvo b { color: #b9770e; }
+  .cn-grade { display: inline-block; margin: 10px auto; padding: 8px; border-radius: 16px; background: -webkit-gradient(linear,left top,left bottom,from(#eafaf0),to(#d3f0dd)); background: linear-gradient(to bottom,#eafaf0,#d3f0dd); box-shadow: 0 4px 0 #b7dfc6; }
+  .cn-linha { display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; }
+  .cn-cel { width: 40px; height: 40px; margin: 3px; border-radius: 10px; cursor: pointer; background: #fff; box-shadow: 0 3px 0 #cfe6d8; color: #14402a; font-size: 18px; font-weight: bold; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+  .cn-cel:active { -webkit-transform: translateY(2px); transform: translateY(2px); }
+  .cn-cel.ok { background: -webkit-gradient(linear,left top,left bottom,from(#a8e6bd),to(#4fc47a)); background: linear-gradient(to bottom,#a8e6bd,#4fc47a); color: #0a3a1f; box-shadow: 0 3px 0 #2e8a4f; cursor: default; -webkit-animation: cnpop 0.4s ease; animation: cnpop 0.4s ease; }
+  .cn-cel.errado { -webkit-animation: cntreme 0.4s ease; animation: cntreme 0.4s ease; }
+  @-webkit-keyframes cnpop { 0%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.18);}100%{-webkit-transform:scale(1);} }
+  @keyframes cnpop { 0%{transform:scale(1);}50%{transform:scale(1.18);}100%{transform:scale(1);} }
+  @-webkit-keyframes cntreme { 0%,100%{-webkit-transform:translateX(0);}25%{-webkit-transform:translateX(-4px);}75%{-webkit-transform:translateX(4px);} }
+  @keyframes cntreme { 0%,100%{transform:translateX(0);}25%{transform:translateX(-4px);}75%{transform:translateX(4px);} }
+  /* ===== FORCA DOS NUMEROS ===== */
+  .fc-conta { font-size: 30px; font-weight: bold; color: #0d4f86; margin: 6px 0; }
+  .fc-slots { font-size: 34px; font-weight: bold; letter-spacing: 6px; color: #b9770e; margin: 8px 0; min-height: 40px; }
+  .fc-slot { display: inline-block; min-width: 30px; border-bottom: 4px solid #b9770e; margin: 0 4px; }
+  .fc-nozes { display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; margin: 10px 0; }
+  .fc-noz { font-size: 26px; margin: 0 3px; -webkit-transition: opacity 0.3s, -webkit-transform 0.3s; transition: opacity 0.3s, transform 0.3s; }
+  .fc-noz.foi { opacity: 0.2; -webkit-transform: translateY(10px) rotate(20deg); transform: translateY(10px) rotate(20deg); }
+  .fc-teclas { display: -webkit-box; display: flex; flex-wrap: wrap; -webkit-box-pack: center; justify-content: center; max-width: 320px; margin: 10px auto; }
+  .fc-tecla { width: 52px; height: 52px; margin: 5px; border-radius: 12px; cursor: pointer; background: -webkit-gradient(linear,left top,left bottom,from(#54a0e0),to(#1c6fb3)); background: linear-gradient(to bottom,#54a0e0,#1c6fb3); box-shadow: 0 4px 0 #0d4f86; color: #fff; font-size: 22px; font-weight: bold; display: -webkit-box; display: flex; -webkit-box-pack: center; justify-content: center; -webkit-box-align: center; align-items: center; }
+  .fc-tecla:active { -webkit-transform: translateY(2px); transform: translateY(2px); }
+  .fc-tecla.usada { background: #cfd8e0; box-shadow: 0 4px 0 #a5b2bd; color: #8595a3; cursor: default; }
+  .tito-img { -webkit-animation: titopop .5s ease both, floatie2 3s ease-in-out .5s infinite; animation: titopop .5s ease both, floatie2 3s ease-in-out .5s infinite; }
+  .comp-img { -webkit-animation: compbal 2.6s ease-in-out infinite; animation: compbal 2.6s ease-in-out infinite; }
+  @-webkit-keyframes compbal { 0%,100%{-webkit-transform:translateY(0) rotate(-4deg);}50%{-webkit-transform:translateY(-4px) rotate(4deg);} }
+  @keyframes compbal { 0%,100%{transform:translateY(0) rotate(-4deg);}50%{transform:translateY(-4px) rotate(4deg);} }
+  @-webkit-keyframes titopop { 0%{-webkit-transform:scale(0.6);opacity:0;}70%{-webkit-transform:scale(1.06);}100%{-webkit-transform:scale(1);opacity:1;} }
+  @keyframes titopop { 0%{transform:scale(0.6);opacity:0;}70%{transform:scale(1.06);}100%{transform:scale(1);opacity:1;} }
+</style>
+</head>
+<body>
+<script>(function(){var META="__aulaInicio",DUR=55*60*1000;function n(){return new Date().getTime();}function td(){for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&k!==META)return true;}return false;}function c(){var t=localStorage.getItem(META);if(t&&(n()-parseInt(t,10))>DUR){try{localStorage.clear();}catch(e){}location.reload();return;}if(!t&&td()){try{localStorage.setItem(META,""+n());}catch(e){}}}c();setInterval(c,30000);})();</script>
+<div id="ceu"></div>
+<div class="topbar">
+  <h1>🔢 Mundo dos Números</h1>
+  <span class="stats"><span class="lvl-topo" id="lvlTopo"></span><button id="btnSom" onclick="toggleSom()" class="btn-som">🔊</button> <span class="star">★</span> <b id="score">0</b></span>
+</div>
+<div class="wrap">
+  <div class="card" id="card"></div>
+</div>
+<script>
+var OBJ={

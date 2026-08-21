@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — letras escondidas</title>
+<!-- ============================================================
+     PEÇA: LETRAS ESCONDIDAS — a palavra vem com buraco e a criança leva a
+     letra certa até ele.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     DE ONDE ELA VEM: da pesquisa nas dinâmicas do EdiLIM
+     (`_pesquisa/EDILIM-DINAMICAS.md`, achada nº 2). O manual oficial descreve
+     as páginas *Ortografía* e *Letras* assim: o autor escreve a palavra com o
+     buraco marcado (`C_AS_A`, `_barco`), pode pôr FIGURA e SOM, até três
+     palavras por tela, e — o detalhe que aperta a dificuldade — pode pôr
+     LETRAS A MAIS na bandeja, que não servem para nada.
+
+     POR QUE ELA EXISTE AQUI: é, letra por letra, a mecânica da atividade de
+     **M antes de P e B** (5º ano): `ca_po`, `bo_ba`, `ta_bém`, com M e N na
+     bandeja e a criança escolhendo. Nenhuma das peças da oficina fazia isso —
+     a `completar` escolhe um PEDAÇO que fecha a frase, a `juntar-silabas`
+     junta sílabas, a `digitar` soletra a palavra inteira. Aqui a palavra já
+     está quase escrita e o que falta é UMA letra dentro dela: é o gesto da
+     regra ortográfica, e é por isso que ele não se troca por outro.
+
+     ⭐ O QUE A CASA ACRESCENTA AO EDILIM (e não é enfeite):
+       · **buraco grande e óbvio**, e a letra ENTRA nele — ela corre da bandeja
+         até o buraco e assenta com um pop curto. É o gesto que diz "esta letra
+         mora aqui dentro", que o EdiLIM resolve só trocando o texto;
+       · **alto-falante que diz a palavra INTEIRA** (`.zap`). No 1º ano tem quem
+         não lê; no 5º ano ouvir "cam-po" é justamente o que revela o som nasal
+         que a regra explica. O botão não gasta tentativa e pode ser repetido;
+       · **a letra é dita ao ser PEGA** — a criança escolhe pelo som, não pelo
+         desenho da letra;
+       · **andaime que cresce**, três degraus: dica que faz pensar → as letras
+         que não servem SOMEM da bandeja (é o "ver destino" do EdiLIM virado em
+         andaime: em vez de o professor escolher, a peça facilita sozinha) → a
+         letra certa acende, com a marca ESCRITA junto, e a criança segue;
+       · **as duas portas de entrada** (regra do CLAUDE.md): arrastar, tocar
+         **e** o teclado de verdade (`document.onkeydown`). No PC da escola tem
+         teclado e a criança vai digitar — e aqui digitar é o gesto natural,
+         porque o que falta é uma LETRA.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · **a letra certa NUNCA é escrita à mão**: ela sai da palavra (`pal`) na
+         posição do `_` do molde (`esc`). Se um dia o conteúdo mudar, a resposta
+         muda junto — resposta escrita à parte é resposta que um dia mente;
+       · a bandeja vai SEMPRE embaralhada (`baguncar`): sem isso a criança
+         aprende a POSIÇÃO, não a letra (defeito pago na Fábrica de Estrelas);
+       · letra usada SAI da bandeja (`display:none`, nunca `visibility:hidden`
+         — o retângulo invisível continua ocupando lugar e ainda é medido pelo
+         portão como "resposta fora da tela");
+       · erro NÃO pune: som grave e curto de retorno, tremor de dois tempos, e
+         a ajuda cresce. Nunca X, nunca "errou", nunca trava;
+       · o `setTimeout` da rodada continua correndo depois do `limpa()` — daí o
+         guarda de geração (`ger`), que também impede o `onkeydown` de uma
+         rodada morta de se reinstalar POR CIMA da rodada seguinte (defeito já
+         pago no "monte a palavra" do Jardim);
+       · **nunca `preventDefault` no `touchstart`** (mata o toque) e guarda
+         `ultimoToque` contra o evento de mouse FANTASMA que o celular dispara
+         depois do dedo — este a casa já pagou DUAS vezes;
+       · nada essencial só na cor: a letra acesa ganha a marca escrita "esta";
+       · sem `@keyframes`: o integrador prefixa o CSS da peça com `.mec-<nome>`
+         e os keyframes DELA se perdem no caminho — animação que existe no
+         arquivo e não existe na atividade é defeito mudo. Tudo por transição;
+       · `data-qa="1"` na letra que serve AGORA (só para o auditor-jogador).
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* o CARTÃO da palavra: figura (quando houver) e a palavra lado a lado. Em tela
+   estreita ele QUEBRA sozinho e a figura vai para cima — nada de coordenada na
+   mão, que é de onde nascem os leiautes que só funcionam num tamanho. */
+.leCartao{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  margin:13px auto 0;max-width:430px}
+/* a FIGURA da palavra (campo `img`, OPCIONAL). Sozinha na bancada ela não
+   existe — o motor é quem sabe onde mora a pasta `img/` —, e a peça continua
+   inteira: a palavra já está quase escrita na tela. */
+.leFig{width:104px;height:104px;margin:0 10px 0 0;border-radius:18px;
+  background:rgba(255,248,232,.55);border:2px solid rgba(255,255,255,.78);
+  border-bottom-width:5px;overflow:hidden;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center}
+/* ⚠️ `contain`, NUNCA `cover`: proporção que não bate corta o topo do desenho,
+   e figura cortada é o mesmo que figura errada (regra 10 do _qa/leiaute.js). */
+.leFig img{max-width:100%;max-height:100%;-o-object-fit:contain;object-fit:contain}
+
+/* A PALAVRA: uma casinha por letra. As letras que já estão lá são só desenho;
+   o buraco é o único lugar que responde ao dedo. */
+.lePal{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:center;align-items:center}
+/* ⚠️ TEXTO SOLTO NO FUNDO DA ATIVIDADE (ago/2026). Este pedaco nao mora
+   dentro de cartao nenhum: cai direto no fundo, que pode ser um galpao
+   escuro, um ceu claro ou uma FOTO de rua com meio-tom. Sem mesa
+   propria a razao de contraste vira loteria — medido de 1,1:1 a 2,9:1
+   na atividade de ortografia. Ele leva a mesa dele junto. */
+.leCel{width:40px;height:56px;line-height:56px;margin:2px 3px;text-align:center;
+  font-size:31px;font-weight:800;letter-spacing:0;color:#fffdf6;
+  background:rgba(46,38,26,.86);border-radius:10px}
+/* ⭐ O BURACO — grande e óbvio de propósito. Ele é mais alto e mais claro que a
+   letra do lado justamente para a criança ver, sem ninguém explicar, ONDE falta
+   alguma coisa. Tracejado = "ainda está vazio"; sólido e dourado = "cheio". */
+.leBuraco{width:50px;height:56px;line-height:50px;margin:2px 3px;text-align:center;
+  font-size:31px;font-weight:800;color:#fffdf6;border-radius:14px;
+  border:3px dashed rgba(255,255,255,.55);background:rgba(255,255,255,.09);
+  -webkit-transition:-webkit-transform .18s ease,background-color .2s,border-color .2s;
+  transition:transform .18s ease,background-color .2s,border-color .2s}
+/* o buraco DA VEZ: quando há mais de um (CA_PEO_ATO), a criança precisa saber
+   qual está sendo pedido agora. Borda amarela + a seta escrita embaixo. */
+.leBuraco.agora{border-color:#ffd54a;background:rgba(255,213,74,.18)}
+/* ⭐ O ENCAIXE: a letra assenta e o buraco dá um pop curto. Duas classes e uma
+   transição — sem `@keyframes`, que o integrador engole. */
+.leBuraco.cheia{border-style:solid;border-color:#e8b761;color:#4a3608;
+  background:#f6d79a;
+  -webkit-transform:scale(1.12);transform:scale(1.12)}
+.leBuraco.cheia.pousa{-webkit-transform:none;transform:none}
+/* a marca de "é aqui agora", escrita — nada essencial só na cor */
+.leSeta{font-size:12px;font-weight:800;color:#ffd54a;letter-spacing:.5px;margin-top:2px}
+
+/* O ALTO-FALANTE DA PALAVRA (pilar SONORA da casa). Ele não gasta tentativa e
+   pode ser tocado quantas vezes a criança quiser: no 1º ano é ele que diz qual
+   é a palavra, e no 5º ano é ele que faz ouvir o som nasal antes do P e do B. */
+.leOuvir{margin:10px auto 0;text-align:center}
+.zap{display:inline-block;vertical-align:middle;width:48px;height:48px;margin:0 5px;
+  border:0;border-radius:14px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:48px;
+  -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:#e6d9bd}
+.zap:active,.zap.tocando{background-color:#ffd54a}
+/* ⚠️ O ALTO-FALANTE É UM SVG EMBUTIDO, nunca desenho de borda (§5 da RECEITA: o
+   Marcos apontou o mesmo botão TRÊS vezes quando ele era feito de bordas com
+   `left/top` em pixel). O glifo se centra sozinho pelo `viewBox`. A cor mora
+   DENTRO do SVG, então `background-color` e `background-image` vão separados —
+   o atalho `background:` de um `:hover` apagaria o desenho.
+   ⚠️ e nada de `url(#id)` aqui dentro: no data-URI o `#` vira `%23` e o portão
+   das imagens acusa arquivo faltando. */
+.fone{display:inline-block;vertical-align:middle;width:24px;height:24px;
+  background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+  -webkit-background-size:24px 24px;background-size:24px 24px}
+/* ⚠️ CONTRASTE: o "a palavra" caía p/ 3.52:1 (texto escuro sobre o dourado do
+   card, min 4.5, portao _qa/contraste). Agora ele mora numa PÍLULA creme própria
+   (texto escuro sobre creme ~15:1), auto-contida em qualquer fundo. */
+.leOuvirTxt{display:inline-block;vertical-align:middle;font-size:14px;font-weight:700;
+  margin-left:6px;color:#231a0e;background:#fffdf6;border-radius:9px;padding:3px 9px}
+
+/* A BANDEJA DE LETRAS — as que servem e as que não servem (as "letras a mais"
+   do EdiLIM). Ladrilho quase quadrado: a LETRA é a estrela e a criança compara
+   as opções de uma olhada só. */
+.leBandeja{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;
+  margin:12px auto 0;max-width:430px}
+.leLetra{position:relative;width:66px;height:66px;margin:5px 5px;padding:0;border:0;
+  border-radius:18px;font-size:32px;font-weight:800;line-height:1;color:#4a3a10;cursor:pointer;
+  background:#fff3d9;
+  background-image:-webkit-linear-gradient(top,#fffaf0,#ffeac6);
+  background-image:linear-gradient(#fffaf0,#ffeac6);
+  border-bottom:5px solid #d7ab63;
+  -webkit-box-shadow:0 5px 12px rgba(90,60,10,.18);box-shadow:0 5px 12px rgba(90,60,10,.18);
+  -webkit-transition:-webkit-transform .3s cubic-bezier(.3,1.1,.5,1),opacity .2s;
+  transition:transform .3s cubic-bezier(.3,1.1,.5,1),opacity .2s}
+.leLetra:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+.leLetra:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+/* ⭐ A CORRIDA ATÉ O BURACO: a letra sai da bandeja e vai até o lugar dela. É
+   esse trajeto que diz "esta letra mora ali dentro". */
+.leLetra.voa{-webkit-transform:translate(0,0) scale(.9);transform:translate(0,0) scale(.9);
+  -webkit-box-shadow:none;box-shadow:none}
+/* ⚠️ letra usada some de verdade (`display:none`). `visibility:hidden` deixaria
+   um buraco na bandeja E seria medido pelo portão como resposta fora da tela. */
+.leLetra.usada{display:none}
+/* as letras que não servem, tiradas pelo 2º degrau do andaime */
+.leLetra.some{display:none}
+/* 3º degrau: a certa acende. A cor é o extra; quem informa é a marca ESCRITA. */
+.leLetra.acesa{-webkit-box-shadow:0 0 0 4px #ffd54a,0 5px 12px rgba(90,60,10,.18);
+  box-shadow:0 0 0 4px #ffd54a,0 5px 12px rgba(90,60,10,.18)}
+.leMarca{position:absolute;left:0;right:0;bottom:-3px;font-size:11px;font-weight:800;
+  color:#1f6b12;letter-spacing:.5px}
+/* o tremor do erro, em DUAS classes e transição (keyframes se perdem na
+   integração — lição paga na `completar`) */
+.leLetra.treme{-webkit-transform:translateX(-7px);transform:translateX(-7px)}
+.leLetra.treme2{-webkit-transform:translateX(7px);transform:translateX(7px)}
+/* a palavra fechada, dita e escrita por inteiro */
+.lePronta{font-size:27px;font-weight:800;color:#ffd54a;margin-top:10px;letter-spacing:2px}
+
+/* ⚠️ TELA BAIXA (o monitor 1024x420 da escola e o celular deitado): encolhe o
+   que é DECORAÇÃO. O alvo de dedo não desce de 56px e nenhum texto some. */
+@media (max-height:600px){
+  .leFig{width:74px;height:74px}
+  .leCartao{margin-top:10px}
+  .leCel{height:46px;line-height:46px;font-size:27px}
+  .leBuraco{height:46px;line-height:40px;font-size:27px}
+  .leOuvir{margin-top:6px}
+  .leBandeja{margin-top:8px}
+  .leLetra{width:60px;height:60px;font-size:29px;margin:4px 4px}
+  .lePronta{font-size:23px;margin-top:6px}
+}
+/* ⚠️ CELULAR PEQUENO (320px): com o ladrilho em 66px cabiam três por linha e a
+   bandeja virava duas fileiras. Em 58px cabem quatro — e o alvo continua bem
+   acima dos 44px que a pesquisa pede para quem ainda não lê. */
+@media (max-width:400px){
+  .leCel{width:34px;margin:2px 2px;font-size:27px}
+  .leBuraco{width:44px;margin:2px 2px;font-size:27px}
+  .leLetra{width:58px;height:58px;font-size:28px;margin:5px 3px}
+  .leFig{width:88px;height:88px;margin:0 auto 8px}
+}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+  background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+  box-shadow:0 6px 0 #c9a52f}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (5º ano, M antes de P e B). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco de dados.
+   · pal   — a palavra INTEIRA, do jeito certo. É ela que o alto-falante diz e é
+             dela que sai a resposta de cada buraco;
+   · esc   — o MOLDE, como no EdiLIM: a mesma palavra com `_` onde falta letra
+             (`CA_PO`, `C_AS_A`, `_barco`). Pode haver mais de um buraco.
+             ⚠️ `esc` e `pal` têm que ter o MESMO tamanho, letra a letra — é o
+             alinhamento entre os dois que diz qual letra some. A resposta NUNCA
+             se escreve à parte: escrita à parte, um dia o conteúdo muda e ela
+             fica mentindo;
+   · extra — as LETRAS A MAIS. É o recurso do EdiLIM para apertar a dificuldade:
+             elas não servem para nada, e o 2º degrau do andaime tira de cena
+             todas MENOS A PRIMEIRA. Por isso escreva em primeiro lugar a que a
+             criança confunde de verdade (em M antes de P e B, o `N`): é com ela
+             que a escolha fica cara a cara no degrau do meio.
+             ⚠️ escreva pelo menos DUAS. Com uma só, o 2º degrau limpa a bandeja
+             inteira, a resposta fica dada e o 3º degrau vira código morto;
+   · img   — o nome da arte de IA, sem a pasta e sem o `.png` (OPCIONAL). Sem
+             ela a peça continua inteira: a palavra já está quase escrita;
+   · voz   — o que o alto-falante diz, quando é diferente do escrito (OPCIONAL);
+   · d     — os TRÊS degraus do andaime: dica que faz pensar -> tirar as que não
+             servem -> acender a certa e deixar seguir.                        */
+var PALAVRAS=[
+ {pal:"CAMPO", esc:"CA_PO", extra:["N","L"], img:"le_campo", voz:"campo",
+  d:["Diga a palavra devagar e escute o nariz: <b>cam-po</b>. Que letra falta antes do P?",
+     "Deixei só duas na bandeja. Escute de novo: <b>cam-po</b>. Qual delas está aí?",
+     "É o <b>M</b>: antes de P e de B vem M. Ele está aceso — toque nele para seguir."]},
+ {pal:"BOMBA", esc:"BO_BA", extra:["N","T"], img:"le_bomba", voz:"bomba",
+  d:["Ouça a palavra de novo e repare no que vem antes do <b>B</b>.",
+     "Ficaram duas. Antes de B a letra é a mesma que você usou antes do P.",
+     "É o <b>M</b>, porque vem antes do B. Ele está aceso — toque nele para seguir."]},
+ {pal:"TAMBÉM", esc:"TA_BÉM", extra:["N","R"], img:"le_tambem", voz:"também",
+  d:["Esta palavra tem M no fim. E antes do <b>B</b>, o que será que vai?",
+     "Ficaram duas. Olhe a letra que vem DEPOIS do buraco: é ela que manda.",
+     "É o <b>M</b>: quem manda é o B que vem depois. Ele está aceso — toque nele."]},
+ {pal:"PONTE", esc:"PO_TE", extra:["M","C"], img:"le_ponte", voz:"ponte",
+  d:["Cuidado: aqui depois do buraco vem <b>T</b>, e não P nem B. Qual letra vai?",
+     "Ficaram duas. A regra do M vale só antes de P e de B — antes de T é a outra.",
+     "É o <b>N</b>: antes de T, e de quase todas as outras, vai N. Ele está aceso."]},
+ {pal:"BOMBOM", esc:"BO_BO_", extra:["N","P"], img:"le_bombom", voz:"bombom",
+  d:["Esta tem DOIS buracos. Comece pelo primeiro: o que vem antes do B?",
+     "Ficaram duas. Repare que os dois buracos vêm antes da mesma letra.",
+     "É o <b>M</b> nos dois lugares: antes de B vai M. Ele está aceso — toque nele."]}
+];
+
+/* ⭐ O TEXTO DA PEÇA TAMBÉM É CONTEÚDO (regra da casa, paga na `ordenar`).
+   O enunciado estava CRAVADO no corpo de várias peças — e numa atividade
+   montada o balão da peça é a única instrução que a criança vê. Enunciado no
+   corpo = enunciado errado no dia em que a mecânica servir outra palavra. */
+var LETXT={selo:"A LETRA QUE FALTA",
+           balao:"Ache a <b>letra certa</b> que falta na palavra.",
+           hint:"Toque na letra, arraste, ou digite no teclado.",
+           ouvir:"a palavra",
+           fecho:"Você fechou todas as palavras!"};
+
+var ri=0;        /* palavra da vez */
+var posto=0;     /* qual buraco está sendo pedido agora */
+var err=0;       /* erros DESTA palavra (o andaime cresce com ele) */
+var ger=0;       /* geração da tela: mata setTimeout (e teclado) de rodada que já saiu */
+var cels=[];     /* as casinhas da palavra da vez */
+var furos=[];    /* só os buracos, na ordem */
+var fichas=[];   /* os ladrilhos da bandeja */
+var telaAtual=null, barraP=null;
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela não existe, e a peça segue inteira — que é o próprio contrato:
+   `img` é OPCIONAL. Pegar por `window.imgEl` (e não `typeof imgEl`) é de
+   propósito: assim o nome fica DECLARADO, o portão "função que não existe"
+   consegue medir, e no dia em que o motor trocar o nome dessa ferramenta a peça
+   avisa em vez de sumir com a figura. */
+var figEl = window.imgEl || null;
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Quem fala é o motor: a ponte do integrador
+   (`_padrao/ESQUELETO/integrar.py`) injeta um `diz(txt)` que toca o MP3 do Edge
+   TTS — a voz da casa. Aqui NUNCA se chama `speechSynthesis`: a voz do
+   navegador não existe no PC da escola e falha CALADA (foi assim que o botão
+   mais importante de uma fase ficou mudo, e quem ouviu foi o Marcos). O portão
+   `_qa/vozrobo.py` mede isso.
+   Sozinha na bancada a peça fica sem voz — e isso é de propósito: tudo o que a
+   voz diz também está escrito na tela, então ela continua inteira no mudo. */
+var _vozTxt="", _vozQuando=0;
+function voz(txt){
+  if(!txt) return;
+  var t=String(txt).replace(/<[^>]+>/g,""), agora=(new Date()).getTime();
+  /* SEM ECO: a mesma letra é dita ao ser pega e a palavra volta a ser dita ao
+     fechar. Tocar o mesmo mp3 de novo o REINICIA, e a criança ouve picado. */
+  if(t===_vozTxt && agora-_vozQuando<900) return;
+  _vozTxt=t; _vozQuando=agora;
+  if(typeof diz==="function") diz(t);
+}
+/* ⚠️ A DICA FALADA ESPERA meio segundo: a criança acabou de ouvir a letra que
+   pegou, e falar por cima corta justamente a voz que ela pediu. */
+function dizDica(txt){
+  var meu=ger;
+  setTimeout(function(){ if(meu!==ger) return; voz(txt); },520);
+}
+function sEncaixe(){ nota(660,.06,.11,"square",0); nota(990,.12,.12,"triangle",.05); }
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+
+/* ⭐ AS CASINHAS DA PALAVRA — e a regra de ouro desta peça:
+   a letra que falta SAI DA PALAVRA, na posição do `_` do molde. Nunca se
+   escreve a resposta à parte; resposta escrita à parte é resposta que um dia
+   mente, porque o conteúdo muda e ela fica onde estava. */
+function celulasDe(r){
+  var esc=String(r.esc||r.pal||""), pal=String(r.pal||""), out=[], i, c;
+  for(i=0;i<esc.length;i++){
+    c=esc.charAt(i);
+    if(c==="_") out.push({buraco:true, letra:(pal.charAt(i)||"?").toUpperCase()});
+    else out.push({buraco:false, letra:c});
+  }
+  return out;
+}
+
+function pecaLetras(){
+  var r=PALAVRAS[ri];
+  if(!r){ fimDaPeca(); return; }
+  err=0; posto=0; ger++;
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(ri*100/PALAVRAS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo", LETXT.selo||"A LETRA QUE FALTA"));
+  c.appendChild(el("div","balao", LETXT.balao||"Leve a <b>letra certa</b> at&#233; o buraco."));
+
+  /* o cartão: figura (quando houver) + a palavra com o buraco */
+  var cart=el("div","leCartao");
+  if(figEl && r.img){ var g=el("div","leFig"); g.appendChild(figEl(r.img)); cart.appendChild(g); }
+  cels=celulasDe(r); furos=[];
+  var linha=el("div","lePal"), i, cel;
+  for(i=0;i<cels.length;i++){
+    if(cels[i].buraco){
+      cel=el("div","leBuraco"+(furos.length===0?" agora":""),"");
+      cel.id="leb"+furos.length;
+      cels[i].no=cel; furos.push(cels[i]);
+    }else{
+      cel=el("div","leCel", cels[i].letra);
+    }
+    linha.appendChild(cel);
+  }
+  cart.appendChild(linha);
+  c.appendChild(cart);
+
+  c.appendChild(ouvido(r));
+
+  /* a BANDEJA: uma letra por buraco + as letras a mais, SEMPRE embaralhadas.
+     ⚠️ embaralhar é a armadilha número um desta família: sem isso a criança
+     aprende a POSIÇÃO e não a letra. */
+  var lista=[], z;
+  for(z=0;z<furos.length;z++) lista.push({L:furos[z].letra, ok:1, ord:-1});
+  /* `ord` guarda a ordem em que o autor escreveu as letras a mais: é ela que
+     decide qual delas FICA DE PÉ no 2º degrau do andaime (ver `tiraAsQue...`) */
+  for(z=0;z<(r.extra||[]).length;z++)
+    lista.push({L:String(r.extra[z]).toUpperCase(), ok:0, ord:z});
+  baguncar(lista);
+  var band=el("div","leBandeja"); fichas=[];
+  for(z=0;z<lista.length;z++) band.appendChild(fazLetra(lista[z]));
+  c.appendChild(band);
+
+  c.appendChild(el("div","hint", LETXT.hint||"Toque na letra, arraste, ou digite no teclado."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQA();
+  ligaTeclado();
+  voz(LETXT.balao||"");
+}
+
+/* ⭐ O ALTO-FALANTE DA PALAVRA. No 1º ano é ele que diz QUAL palavra é; no 5º é
+   ele que faz a criança ouvir o som nasal antes do P e do B — que é o conteúdo
+   da regra. Ele NÃO gasta tentativa e não escolhe nada.
+   ⚠️ `data-voz` DECLARA o que a voz diz: o motor usa esse atributo em vez de
+   adivinhar pelo texto do botão (senão tentaria gravar "a palavra"). */
+function ouvido(r){
+  var box=el("div","leOuvir");
+  var z=el("button","zap","");
+  z.type="button";
+  z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label","Ouvir a palavra");
+  z.setAttribute("data-voz", r.voz||r.pal);
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    sTap(); voz(r.voz||r.pal);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  box.appendChild(z);
+  box.appendChild(el("span","leOuvirTxt", LETXT.ouvir||"a palavra"));
+  return box;
+}
+
+/* ⚠️⚠️ LIÇÃO PAGA NA PRÓPRIA BANCADA (ago/2026), e o portão não pegaria nunca:
+   o estado do ladrilho morava na STRING `className`, e cada quem escrevia a sua
+   por cima. O tremor do erro (`destreme`, 110ms e 240ms depois) reescrevia
+   `className="leLetra"` — e nesses 240ms o 2º degrau do andaime já tinha
+   escondido as letras que não servem. Resultado: a criança errava, a peça dizia
+   "tirei as letras que não servem", e um quarto de segundo depois elas VOLTAVAM
+   para a bandeja. A tela contradizia a própria ajuda, e nenhum portão vê isso —
+   o app funciona inteiro assim.
+   Agora o estado é FLAG (`_usada`, `_some`, `_acesa`) e a roupa se escreve num
+   lugar só. Quem quiser um estado passageiro (o tremor) o pede como `extra`. */
+function veste(b, extra){
+  var c="leLetra";
+  if(b._usada) c+=" usada";
+  if(b._some)  c+=" some";
+  if(b._acesa) c+=" acesa";
+  if(extra)    c+=" "+extra;
+  b.className=c;
+}
+function fora(b){ return b._usada||b._some; }
+
+function fazLetra(item){
+  var b=el("button","leLetra", item.L);
+  b.type="button";
+  b._L=item.L; b._ok=item.ok; b._ord=item.ord;
+  arrastavel(b);
+  b.onclick=function(){
+    /* ⚠️ o guarda do MOUSE FANTASMA: no celular o navegador dispara eventos de
+       mouse DEPOIS do toque, e sem isto eles refazem o gesto que já aconteceu.
+       Defeito já pego DUAS vezes na casa. */
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    escolheu(b);
+  };
+  fichas.push(b);
+  return b;
+}
+
+/* ⭐ PEGOU A LETRA: som na hora e a LETRA DITA. A criança escolhe pelo som, não
+   pelo desenho — e é ouvindo "M" na mão dela que a letra vira som. */
+function pegou(b){
+  if(!b || fora(b)) return;
+  sTap(); voz(b._L);
+}
+
+function buracoDaVez(){ return furos[posto]||null; }
+
+function escolheu(b){
+  if(!b || fora(b)) return;
+  if(!telaAtual || !telaAtual.parentNode) return;
+  var alvo=buracoDaVez();
+  if(!alvo) return;
+  if(b._L===alvo.letra) encaixa(b, alvo);
+  else errou(b);
+}
+
+/* ⭐ A CORRIDA E O ENCAIXE — o coração da peça. A letra sai da bandeja, corre
+   até o buraco e só depois de chegar é que ela vira parte da palavra. */
+function encaixa(b, alvo){
+  var meu=ger, vaga=alvo.no;
+  var a=b.getBoundingClientRect(), v=vaga.getBoundingClientRect();
+  b.style.webkitTransform="translate("+(v.left-a.left+(v.width-a.width)/2)+"px,"
+    +(v.top-a.top+(v.height-a.height)/2)+"px) scale(.9)";
+  b.style.transform=b.style.webkitTransform;
+  veste(b,"voa");
+  sEncaixe(); voz(b._L);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    b._usada=1; veste(b);
+    vaga.innerHTML=alvo.letra;
+    vaga.className="leBuraco cheia";
+    /* o pop do assentamento: cresce e POUSA de volta (transição, não keyframes) */
+    setTimeout(function(){ if(meu!==ger) return; vaga.className="leBuraco cheia pousa"; },40);
+    posto++;
+    var prox=document.getElementById("leb"+posto);
+    if(prox) prox.className="leBuraco agora";
+    marcaQA();
+    if(posto>=furos.length) fechaPalavra();
+  },320);
+}
+
+function errou(b){
+  err++; sErro(); sVolta();
+  if(b){
+    veste(b,"treme");
+    destreme(b);
+  }
+  ajuda(err);
+}
+/* o tremor em DUAS classes e transição: esquerda -> direita -> parado. Sem
+   `@keyframes`, que se perdem quando o integrador prefixa o CSS da peça.
+   ⚠️ e ele repõe a roupa pelo `veste`, nunca por uma string escrita aqui: foi
+   assim que ele apagava o 2º degrau do andaime (ver a lição em `veste`). */
+function destreme(b){
+  var meu=ger;
+  setTimeout(function(){ if(meu!==ger) return; if(!fora(b)) veste(b,"treme2"); },110);
+  setTimeout(function(){ if(meu!==ger) return; if(!fora(b)) veste(b); },240);
+}
+
+function fechaPalavra(){
+  var meu=ger, r=PALAVRAS[ri];
+  sCerto(); festa();
+  var c=app.querySelector(".centro");
+  if(c) c.appendChild(el("div","lePronta", r.pal));
+  apagaDica();
+  if(barraP) barraP.style.width=Math.round((ri+1)*100/PALAVRAS.length)+"%";
+  /* a palavra fecha dita POR INTEIRO: é ouvindo a palavra pronta que a criança
+     confere que a letra que ela pôs é a que faltava. */
+  voz(r.voz||r.pal);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    if(!telaAtual||!telaAtual.parentNode) return;
+    ri++;
+    if(ri<PALAVRAS.length){ pecaLetras(); return; }
+    document.onkeydown=null;
+    mostraBanner(LETXT.fecho||"Voc&#234; fechou todas as palavras!", fimDaPeca);
+  },1500);
+}
+
+/* ⭐ O ANDAIME QUE CRESCE — e que nunca deixa a criança presa.
+   1º erro: a dica que faz PENSAR (o som, a letra que vem depois do buraco);
+   2º erro: as letras que NÃO SERVEM somem da bandeja (apoio concreto: é o "ver
+            destino" do EdiLIM virado em ajuda automática — serve para quem
+            ainda não lê, porque não depende de ler nada);
+   3º erro: a letra certa ACENDE, ganha a marca escrita, e a criança segue.
+            Aqui a casa é explícita (RECEITA §1): o 3º degrau revela e deixa
+            passar — a criança travada perde a aula inteira, e isso pesa mais. */
+function ajuda(n){
+  var d=(PALAVRAS[ri]&&PALAVRAS[ri].d)||[], txt;
+  if(n===1){
+    txt=d[0]||"Diga a palavra devagar e escute o que falta.";
+    mostraDica(txt); dizDica(txt);
+  }else if(n===2){
+    txt=d[1]||"Tirei as letras que n&#227;o servem.";
+    mostraDica(txt); dizDica(txt);
+    tiraAsQueNaoServem();
+  }else{
+    /* revela PRIMEIRO, escreve a dica DEPOIS — senão a fase se conserta
+       sozinha e a criança não sabe por quê (lição paga em 5 de 6 peças) */
+    acendeACerta();
+    txt=d[2]||"&#201; esta! Ela est&#225; acesa: toque nela para seguir.";
+    setTimeout(function(){ mostraDica(txt); },60);
+    dizDica(txt);
+  }
+}
+/* ⭐ O 2º DEGRAU — e a lição que ele custou, medida na própria bancada.
+   A primeira versão tirava TODAS as letras a mais de uma vez. Ficava só a
+   certa: bonito de ver, e errado por dois motivos. Primeiro, a criança que
+   errou duas vezes recebia a RESPOSTA em vez de ajuda — o degrau 2 virava o
+   degrau 3 e o andaime encolhia de três para dois. Segundo, e é o que os
+   portões da casa já sabem: com nenhuma opção errada de pé, o 3º degrau nunca
+   acontece — vira CÓDIGO MORTO (é a mesma regra que o `_qa/dinamicas.py` cobra
+   da mecânica `escolher`, palavra por palavra).
+   O que ele faz agora: some com as que não ajudam e **deixa de pé UMA** — a
+   PRIMEIRA `extra` escrita na gaveta. Em M antes de P e B isso estreita a
+   escolha justamente para o par que a criança confunde de verdade (M e N), que
+   é onde a regra mora. Se só houver uma letra a mais, ela some também: aí não
+   há par nenhum a comparar, e prender a criança seria pior. */
+function tiraAsQueNaoServem(){
+  var i, b, vivas=[];
+  for(i=0;i<fichas.length;i++){
+    b=fichas[i];
+    if(!b._ok && !fora(b)) vivas.push(b);
+  }
+  /* a que FICA é a primeira da gaveta (ordem de `extra`), não a primeira da
+     bandeja — a bandeja está embaralhada de propósito */
+  vivas.sort(function(x,y){ return x._ord-y._ord; });
+  for(i=(vivas.length>1?1:0); i<vivas.length; i++){ vivas[i]._some=1; veste(vivas[i]); }
+  marcaQA();
+}
+function acendeACerta(){
+  var alvo=buracoDaVez(), i, b;
+  if(!alvo) return;
+  for(i=0;i<fichas.length;i++){
+    b=fichas[i];
+    if(fora(b)) continue;
+    if(b._L===alvo.letra && !b._acesa){
+      b._acesa=1;
+      veste(b);
+      b.appendChild(el("span","leMarca","esta"));
+      return;
+    }
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* `data-qa="1"` na letra que serve AGORA: é assim que o auditor-jogador
+   atravessa a peça. Só para ele — a criança nunca vê isto. */
+function marcaQA(){
+  var alvo=buracoDaVez(), i, b, serve;
+  for(i=0;i<fichas.length;i++){
+    b=fichas[i];
+    serve = alvo && b._L===alvo.letra && !fora(b);
+    b.setAttribute("data-qa", serve?"1":"0");
+  }
+}
+
+/* ⭐⭐ A SEGUNDA PORTA DE ENTRADA — O TECLADO DE VERDADE (regra do CLAUDE.md:
+   *"seria interessante se o aluno além de teclar no teclado virtual funcionasse
+   se ele tocasse no teclado de verdade, as duas opções"*). No PC da escola tem
+   teclado, e aqui digitar é o gesto NATURAL: o que falta é uma letra.
+   ⚠️ o guarda de geração: o `onkeydown` de uma rodada que já saiu da tela se
+   reinstalava POR CIMA da seguinte — defeito pago no "monte a palavra". */
+function ligaTeclado(){
+  var meu=ger;
+  document.onkeydown=function(ev){
+    if(meu!==ger) return;
+    if(!telaAtual||!telaAtual.parentNode) return;
+    var e=ev||window.event;
+    if(e.ctrlKey||e.altKey||e.metaKey) return;
+    var k=e.key;
+    if(!k && e.keyCode) k=String.fromCharCode(e.keyCode);
+    if(!k || k.length!==1) return;
+    k=k.toUpperCase();
+    if(!/[A-ZÀ-Ü]/.test(k)) return;
+    if(e.preventDefault) e.preventDefault();
+    var alvo=buracoDaVez(), i, b, achou=null;
+    if(!alvo) return;
+    for(i=0;i<fichas.length;i++){
+      b=fichas[i];
+      if(fora(b)) continue;
+      if(b._L===k){ achou=b; break; }
+    }
+    /* letra que nem está na bandeja: também é uma tentativa — a ajuda cresce
+       do mesmo jeito, e a criança não fica batendo no teclado sem resposta. */
+    if(!achou){ errou(null); return; }
+    pegou(achou);
+    escolheu(achou);
+  };
+}
+
+/* ⭐ A TERCEIRA PORTA: o ARRASTO (mouse e dedo). Soltar em cima do buraco vale o
+   mesmo que tocar. Aqui o arrasto não é enfeite — levar a letra até dentro do
+   buraco é a própria ideia de "esta letra mora nesta palavra".
+   ⚠️ NUNCA `preventDefault` no `touchstart`: mata o toque simples. */
+function arrastavel(b){
+  var mx=0,my=0,arr=false,mv=null,up=null;
+  /* ⚠️⚠️ LIÇÃO PAGA NA BANCADA (ago/2026): o arrasto com MOUSE não chegava nunca.
+     Os `onmousemove`/`onmouseup` moravam no PRÓPRIO ladrilho — e o mouse sai de
+     cima dele no primeiro centímetro: disparava `onmouseleave`, o gesto era
+     cancelado e a letra voltava. Com o dedo funcionava (o toque continua indo
+     para o elemento onde começou), então o defeito era invisível no celular e
+     total no PC da escola, que é justamente onde há mouse.
+     Enquanto o gesto dura, quem escuta é o DOCUMENTO. */
+  function ligaDoc(){
+    desligaDoc();
+    mv=function(e){ if(!b.parentNode){ desligaDoc(); return; } move(e.clientX,e.clientY); };
+    up=function(e){ desligaDoc(); solta(e.clientX,e.clientY); };
+    document.addEventListener("mousemove",mv,false);
+    document.addEventListener("mouseup",up,false);
+  }
+  function desligaDoc(){
+    if(mv) document.removeEventListener("mousemove",mv,false);
+    if(up) document.removeEventListener("mouseup",up,false);
+    mv=null; up=null;
+  }
+  function comeca(x,y,ev){
+    if(fora(b)) return;
+    pegou(b);
+    arr=true; mx=x; my=y;
+    b.style.zIndex="30"; b.style.position="relative";
+    if(ev&&ev.type==="mousedown"&&ev.preventDefault) ev.preventDefault();
+  }
+  function move(x,y){
+    if(!arr) return;
+    b.style.webkitTransform="translate("+(x-mx)+"px,"+(y-my)+"px)";
+    b.style.transform=b.style.webkitTransform;
+  }
+  function limpaEstilo(){
+    b.style.webkitTransform=""; b.style.transform=""; b.style.zIndex="";
+  }
+  function noBuraco(x,y){
+    var v=document.getElementById("leb"+posto);
+    if(!v) return false;
+    var q=v.getBoundingClientRect();
+    /* margem generosa: dedo de criança não acerta o pixel */
+    return x>q.left-32&&x<q.right+32&&y>q.top-32&&y<q.bottom+32;
+  }
+  function solta(x,y){
+    if(!arr) return;
+    arr=false; limpaEstilo();
+    /* soltou em cima do buraco = a mesma coisa que tocar na letra. Soltou fora,
+       o clique do próprio botão resolve (é o toque simples) — e aí aqui só toca
+       o som de RETORNO, nunca o de tropeço: o gesto está em treino. */
+    if(noBuraco(x,y)){ escolheu(b); return; }
+    sVolta();
+  }
+  b.onmousedown=function(e){
+    /* o mesmo guarda do fantasma: depois do dedo, o celular ainda dispara um
+       `mousedown` — sem isto ele recomeçaria o gesto que já terminou. */
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    comeca(e.clientX,e.clientY,e); ligaDoc();
+  };
+  b.addEventListener("touchstart",function(e){
+    var t=e.touches[0]; b._ultimoToque=(new Date()).getTime();
+    comeca(t.clientX,t.clientY,null);
+  },false);
+  b.addEventListener("touchmove",function(e){
+    var t=e.touches[0]; move(t.clientX,t.clientY);
+    if(arr&&e.preventDefault) e.preventDefault();
+  },false);
+  b.addEventListener("touchend",function(e){
+    var t=(e.changedTouches&&e.changedTouches[0])||{clientX:-999,clientY:-999};
+    b._ultimoToque=(new Date()).getTime();
+    /* soltou longe do buraco? então foi TOQUE simples, e toque simples vale */
+    if(!noBuraco(t.clientX,t.clientY)){ arr=false; limpaEstilo(); escolheu(b); return; }
+    solta(t.clientX,t.clientY);
+  },false);
+}
+
+function fimDaPeca(){
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; achou a letra que faltava em <b>"
+    +PALAVRAS.length+" palavras</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ ri=0; pecaLetras(); }
+
+pecaLetras();
+</script>
+</body></html>

@@ -1,0 +1,118 @@
+name: Build EducaVerso App (Plano A)
+
+# Constroi o projeto PROFISSIONAL (Phaser+TS+Vite) que vive em educaverso-app/
+# e publica o resultado (dist) num repositorio SEPARADO 'educaverso-app'.
+# NAO mexe no modelo leve atual (EducaVerso/atividades continuam intactos).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repo de destino do app"
+        required: false
+        default: "educaverso-app"
+        type: string
+      boot:
+        description: "Flag de boot injetada no index (ex.: fabrica -> abre a Fabrica direto)"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Instalar e construir (Vite)
+        working-directory: educaverso-app
+        run: |
+          npm install
+          npm run build
+          echo "== conteudo de dist =="
+          ls -la dist
+
+      - name: QA visual (screenshot headless do jogo rodando)
+        run: |
+          cd educaverso-app/dist
+          python3 -m http.server 8099 > /dev/null 2>&1 &
+          sleep 2
+          google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1024,768 --hide-scrollbars \
+            --virtual-time-budget=10000 --screenshot="$GITHUB_WORKSPACE/qa-inicio.png" "http://127.0.0.1:8099/?qa=inicio" || true
+          google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1024,768 --hide-scrollbars \
+            --virtual-time-budget=12000 --screenshot="$GITHUB_WORKSPACE/qa-missao.png" "http://127.0.0.1:8099/?qa=missao" || true
+          google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1024,768 --hide-scrollbars \
+            --virtual-time-budget=12000 --screenshot="$GITHUB_WORKSPACE/qa-montador.png" "http://127.0.0.1:8099/?montador=1" || true
+          google-chrome --headless=new --no-sandbox --disable-gpu --window-size=1024,768 --hide-scrollbars \
+            --virtual-time-budget=12000 --screenshot="$GITHUB_WORKSPACE/qa-mecanica.png" "http://127.0.0.1:8099/?montador=1&mec=1" || true
+
+      - name: Commit dos screenshots de QA (p/ auditoria)
+        run: |
+          mkdir -p _qa
+          cp qa-inicio.png _qa/app-qa-inicio.png 2>/dev/null || true
+          cp qa-missao.png _qa/app-qa-missao.png 2>/dev/null || true
+          cp qa-montador.png _qa/app-qa-montador.png 2>/dev/null || true
+          cp qa-mecanica.png _qa/app-qa-mecanica.png 2>/dev/null || true
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _qa/ || true
+          if git diff --cached --quiet; then echo "sem screenshots novos"; exit 0; fi
+          git commit -m "qa: screenshots do app (headless)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+      - name: Publicar dist no repo separado + ligar Pages
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          NAME: ${{ inputs.repo_name }}
+          BOOT: ${{ inputs.boot }}
+        run: |
+          set -euo pipefail
+          gh repo create "$OWNER/$NAME" --public \
+            --description "EducaVerso App (Plano A: Phaser+TS+Vite) - build automatico" \
+            || echo "repo ja existe; vou apenas atualizar."
+          work="$(mktemp -d)"
+          cp -r educaverso-app/dist/. "$work/"
+          : > "$work/.nojekyll"
+          # flag de boot (ex.: 'fabrica'): o link do repo abre direto nessa tela
+          if [ -n "$BOOT" ]; then
+            sed -i "s|<head>|<head><script>window.__BOOT='$BOOT'</script>|" "$work/index.html"
+            grep -q "__BOOT" "$work/index.html" || { echo "::error::falha ao injetar o boot"; exit 1; }
+          fi
+          # ⚠️ LIÇÃO PAGA (2026-07-20): NUNCA incluir arquivo .github/workflows/ no
+          # publish — o PAGES_TOKEN não tem o escopo "workflow" e o GitHub REJEITA
+          # o push inteiro ("refusing to allow a PAT to create workflow"). O deploy
+          # fica no Pages LEGADO (source main), que funciona.
+          cd "$work"
+          git init -q
+          git checkout -q -b main
+          git add -A
+          git -c user.name="EducaVerso Build" -c user.email="build@users.noreply.github.com" \
+              commit -qm "build do app (Plano A)"
+          git push -q --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$NAME.git" main
+          gh api -X POST "repos/$OWNER/$NAME/pages" -f "source[branch]=main" -f "source[path]=/" \
+            || gh api -X PUT "repos/$OWNER/$NAME/pages" -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" \
+            || echo "Pages talvez ja estivesse ligado."
+          # forca um build novo (nao esperar o evento de push, que ja atrasou em incidente)
+          gh api -X POST "repos/$OWNER/$NAME/pages/builds" || true
+          URL="https://$OWNER.github.io/$NAME/"
+          {
+            echo "## App (Plano A) publicado"
+            echo ""
+            echo "**Link:** $URL"
+            echo "_1a vez pode levar 1-2 min._"
+          } >> "$GITHUB_STEP_SUMMARY"

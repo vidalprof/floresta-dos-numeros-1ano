@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — jogo dos erros (duas cenas quase iguais)</title>
+<!-- ============================================================
+     PEÇA: JOGO DOS ERROS — duas cenas quase iguais, lado a lado.
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A ARMADILHA MAIOR DESTA MECÂNICA (e por que ela é diferente de tudo):
+     as duas cenas TÊM que nascer do MESMO dado. Quando a cena 2 é desenhada
+     à mão "quase igual" à cena 1, aparece diferença que não estava na lista
+     (uma flor 2px mais para a direita, uma cor de sombra) — a criança acha a
+     diferença DE VERDADE, toca nela, e o app responde que ela errou. É o pior
+     defeito possível: pune quem observou melhor.
+
+     Como esta peça fecha isso, por construção:
+       · existe UM único dado (CENA_A: nove lugares, cada um com um objeto);
+       · CENA_B é uma CÓPIA de CENA_A com as MUDANÇAS aplicadas por cima;
+       · as duas cenas são desenhadas pela MESMA função (`desenha`);
+       · a lista do que difere não é escrita à mão: é COMPARADA dos dois dados
+         (`difEm`). Logo é impossível existir diferença fora da lista, e é
+         impossível a lista apontar para onde não há diferença.
+
+     AS OUTRAS ARMADILHAS FECHADAS AQUI:
+       · ALVO GRANDE, nunca o pixel: o toque cai numa CÉLULA da grade 3x3 (a
+         mesma grade que posiciona os objetos) — 47px no celular pequeno, 83px
+         no PC. Zona e figura são a mesma região por construção.
+       · TOCA NOS DOIS LADOS: a diferença vale tocando na cena 1 OU na cena 2 —
+         a criança que achou não precisa adivinhar em qual das duas o app quer.
+       · MOSTRA QUANTAS FALTAM (número + bolinhas + barra), senão a criança não
+         sabe se já acabou.
+       · NADA SÓ NA COR: achou = círculo com "V" + risco na bolinha + texto.
+         E NENHUMA das diferenças é de cor (são: sumiu, quantidade, tamanho,
+         virou outra coisa) — quem não distingue cor joga igual.
+       · NUNCA TRAVA: o andaime cresce a cada erro (1 dica de método, 2 pisca o
+         lugar, 3 revela) e no terceiro ele resolve uma sozinho.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; funciona no mudo; publica data-qa; termina em .medal.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- AS DUAS CENAS LADO A LADO ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o quadro nasce COLADO no
+   enunciado (defeito que o Marcos ja cobrou duas vezes).                    */
+.duo{max-width:430px;width:100%;margin:13px auto 0;
+     display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between}
+.lado{width:48.5%}
+.rot{display:block;background:#3c6ee0;color:#fff;font-size:12px;font-weight:800;letter-spacing:.5px;
+     border-radius:12px;padding:5px 0;margin-bottom:5px}
+.cena{position:relative;width:100%;padding-bottom:100%;border-radius:14px;overflow:hidden;
+      border:3px solid #6b4b2a;background:#9ad6f2}
+.chao{position:absolute;left:0;right:0;bottom:0;height:34%;background:#5fa83e;border-top:4px solid #4a8c30}
+
+/* ---------- OS NOVE LUGARES (a mesma grade que recebe o toque) ---------- */
+.pto{position:absolute;width:33.333%;height:33.333%}
+/* ⭐ o brinquedo por imagem dentro do lugar da grade (modo loja de brinquedos) */
+.fimg{position:absolute;-o-object-fit:contain;object-fit:contain;
+      -webkit-filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+/* sol */
+.fsol{position:absolute;left:20%;top:16%;width:60%;height:60%;border-radius:50%;background:#ffd54a;
+      border:3px solid #d9a71f}
+/* nuvem (duas bolotas) */
+.fnu1{position:absolute;left:8%;top:32%;width:56%;height:34%;border-radius:20px;background:#fffdf6}
+.fnu2{position:absolute;left:42%;top:22%;width:44%;height:40%;border-radius:20px;background:#fffdf6}
+/* passarinho */
+.fpco{position:absolute;left:18%;top:34%;width:54%;height:34%;border-radius:50%;background:#3c6ee0;
+      border:3px solid #24468f}
+.fpaz{position:absolute;left:30%;top:40%;width:30%;height:18%;border-radius:50%;background:#24468f}
+.fpbi{position:absolute;left:68%;top:42%;width:18%;height:12%;background:#ffd54a}
+/* arvore */
+.ftro{position:absolute;left:44%;top:52%;width:14%;height:40%;background:#7a5327;border-radius:3px}
+.fcop{position:absolute;left:12%;top:10%;width:76%;height:56%;border-radius:50%;background:#3f8f2e;
+      border:3px solid #2f6f22}
+.ffru{position:absolute;width:15%;height:15%;border-radius:50%;background:#d63b2a;
+      border:2px solid #8e2318}
+/* casa */
+.fpar{position:absolute;left:14%;top:38%;width:72%;height:54%;background:#e8dcc2;
+      border:3px solid #9c8a68}
+.fteto{position:absolute;left:6%;top:16%;width:88%;height:24%;background:#b8452f;
+       border-radius:6px 6px 0 0}
+.fpor{position:absolute;left:42%;top:62%;width:20%;height:30%;background:#7a5327}
+.fjan{position:absolute;width:18%;height:18%;background:#9ad6f2;border:2px solid #4a3218}
+/* flor */
+.fcau{position:absolute;left:47%;top:48%;width:8%;height:44%;background:#2f6f22}
+.fpet{position:absolute;left:24%;top:16%;width:52%;height:38%;border-radius:50%;background:#e86ea8;
+      border:3px solid #b34a7d}
+.fmio{position:absolute;left:40%;top:26%;width:20%;height:18%;border-radius:50%;background:#ffd54a}
+/* bola */
+.fbol{position:absolute;border-radius:50%;background:#f2913b;border:3px solid #b3611c}
+.fbli{position:absolute;left:0;top:42%;width:100%;height:16%;background:#b3611c}
+/* pedra */
+.fped{position:absolute;left:18%;top:44%;width:64%;height:42%;background:#9aa0a6;
+      border:3px solid #6d7378;border-radius:50% 40% 45% 55%}
+
+/* ---------- A CAMADA QUE RECEBE O TOQUE ---------- */
+.gradecena{position:absolute;left:0;top:0;right:0;bottom:0}
+.zona{position:absolute;width:33.333%;height:33.333%;background:transparent;cursor:pointer}
+.zona:active{background:rgba(255,255,255,.3)}
+.zona.pisca{background:rgba(255,255,255,.5);border:3px dashed #fffdf6;
+  -webkit-animation:bate .6s linear 4;animation:bate .6s linear 4}
+@-webkit-keyframes bate{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+@keyframes bate{0%{opacity:.2}50%{opacity:1}100%{opacity:.2}}
+.zona.treme{-webkit-animation:sacode .32s linear 1;animation:sacode .32s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+/* achou = circulo + "V" + o texto que conta (nunca so a cor) */
+.vok{position:absolute;left:50%;top:50%;margin-left:-19px;margin-top:-19px;width:38px;height:38px;
+     border-radius:50%;background:#1f6b12;border:3px solid #fffdf6;color:#fff;font-size:20px;
+     font-weight:800;line-height:32px;text-align:center;
+     -webkit-animation:cresce .35s ease-out 1;animation:cresce .35s ease-out 1}
+@-webkit-keyframes cresce{0%{-webkit-transform:scale(.2)}100%{-webkit-transform:scale(1)}}
+@keyframes cresce{0%{transform:scale(.2)}100%{transform:scale(1)}}
+
+/* ---------- placar ---------- */
+.cont{margin-top:12px;font-size:17px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
+.cont b{color:#ffd54a}
+.pares{margin-top:8px}
+.ppt{display:inline-block;width:26px;height:26px;border-radius:50%;margin:0 4px;
+     background:rgba(255,255,255,.16);border:3px dashed rgba(255,255,255,.45)}
+.ppt.on{background:#59c24b;border:3px solid #d6f5c8}
+/* tela baixa (projetor/janela): o quadro encolhe, mas a celula continua
+   maior que 44px — o dedo da crianca nao encolhe junto com a janela. */
+@media (max-height:470px){.duo{max-width:300px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) O DADO ÚNICO. Nove lugares (grade 3x3). Cada lugar tem um objeto
+   ou nada. `n` = quantidade (frutas, janelas); `esc` = tamanho.
+   --------------------------------------------------------------- */
+var GC=3, GL=3;
+var CENA_A=[
+ {t:"sol"},              {t:"nuvem"},          {t:"passaro"},
+ {t:"arvore", n:3},      {t:"casa", n:2},      {t:"arvore", n:2},
+ {t:"flor"},             {t:"bola", esc:1},    {t:"flor"}
+];
+/* as MUDANÇAS que a cena 2 recebe por cima. Nenhuma é de cor:
+   sumir, quantidade, tamanho e "virou outra coisa" — quem não distingue
+   cor joga exatamente igual. */
+var MUDA=[
+ {sp:2, acao:"sumir"},
+ {sp:3, acao:"n",   val:2},
+ {sp:4, acao:"n",   val:1},
+ {sp:7, acao:"esc", val:.5},
+ {sp:8, acao:"t",   val:"pedra"}
+];
+
+function copiaObj(o){ if(!o) return null;
+  return {t:o.t, n:o.n, esc:o.esc, img:o.img}; }
+function fazCenaB(){
+  var b=[], i, m, o;
+  for(i=0;i<CENA_A.length;i++) b.push(copiaObj(CENA_A[i]));
+  for(i=0;i<MUDA.length;i++){
+    m=MUDA[i]; o=b[m.sp];
+    if(m.acao==="sumir"){ b[m.sp]=null; }
+    else if(o){ o[m.acao]=m.val; }
+  }
+  return b;
+}
+/* ⚠️ CALCULADO NA HORA DE JOGAR, NAO NA DECLARACAO. Antes era
+   `var CENA_B=fazCenaB();` aqui mesmo — e dentro de uma atividade montada pelo
+   esqueleto o conteudo da fase (`CENA_A`/`MUDA`) so chega DEPOIS desta linha.
+   Resultado: a fase mostrava a cena de EXEMPLO, com os erros de exemplo, sem
+   erro de JS nenhum. Regra: valor derivado do conteudo se calcula quando a
+   peca comeca, nunca quando ela e lida.                                     */
+var CENA_B=null;
+
+/* ---------------------------------------------------------------
+   2) A LISTA DO QUE DIFERE NÃO É ESCRITA À MÃO: é comparada.
+   `naZona(sp)` responde a pergunta honesta desta mecânica — este lugar
+   da tela é uma diferença? Não há ponto, nem raio, nem distância.
+   --------------------------------------------------------------- */
+function serial(o){ if(!o) return "-";
+  return (o.img||o.t)+"/"+(o.n===undefined?"-":o.n)+"/"+(o.esc===undefined?1:o.esc); }
+function difEm(sp){ return serial(CENA_A[sp])!==serial(CENA_B[sp]); }
+function naZona(sp){ return difEm(sp); }
+function tipoDaDif(sp){
+  var a=CENA_A[sp], b=CENA_B[sp];
+  if(a&&!b) return "alguma coisa <b>sumiu</b>";
+  if(!a&&b) return "<b>apareceu</b> alguma coisa";
+  if((a.img||a.t)!==(b.img||b.t)) return "uma coisa <b>virou outra</b>";
+  if(a.n!==b.n) return "mudou a <b>quantidade</b>";
+  return "mudou o <b>tamanho</b>";
+}
+function listaDifs(){ var i,r=[]; for(i=0;i<9;i++){ if(difEm(i)) r.push(i); } return r; }
+var DIFS=null;   /* idem: so na hora de jogar */
+
+var LIN=["de cima","do meio","de baixo"]; /*TECNICA*/
+var COL=["da esquerda","do meio","da direita"]; /*TECNICA*/
+function ondeFica(sp){ return "linha <b>"+LIN[Math.floor(sp/GC)]+"</b>, coluna <b>"+COL[sp%GC]+"</b>"; }
+
+/* ---------------------------------------------------------------
+   3) O DESENHO. A MESMA função desenha as duas cenas — por isso é
+   impossível nascer uma diferença que não esteja no dado.
+   --------------------------------------------------------------- */
+var POSFRU=[[14,16],[54,14],[34,40],[62,42]]; /*TECNICA*/
+var POSJAN=[[22,46],[60,46]]; /*TECNICA*/
+function desenhaObj(o){
+  var s="", i, p, d;
+  if(!o) return "";
+  /* ⭐ OBJETO POR IMAGEM (pedido do Marcos, ago/2026): quando o lugar traz `img`
+     (um brinquedo lb_*), desenha a FOTO em vez das formas CSS. O `esc` muda o
+     tamanho (uma das diferenças possíveis). O tema fica coerente (loja de
+     brinquedos) e as diferenças continuam EXATAS (mesma função, mesmo dado). */
+  if(o.img){ var e=(o.esc===undefined?1:o.esc); var w=Math.round(78*e); if(w>96)w=96;
+    return '<img class="fimg" src="img/'+o.img+'.png" alt="" style="width:'+w+'%;height:'+w+'%;left:'+(50-w/2)+'%;top:'+(50-w/2)+'%">'; }
+  if(o.t==="sol")   return '<i class="fsol"></i>';
+  if(o.t==="nuvem") return '<i class="fnu1"></i><i class="fnu2"></i>';
+  if(o.t==="passaro") return '<i class="fpco"></i><i class="fpaz"></i><i class="fpbi"></i>';
+  if(o.t==="pedra") return '<i class="fped"></i>';
+  if(o.t==="flor")  return '<i class="fcau"></i><i class="fpet"></i><i class="fmio"></i>';
+  if(o.t==="arvore"){
+    s='<i class="ftro"></i><i class="fcop"></i>';
+    for(i=0;i<(o.n||0)&&i<POSFRU.length;i++){
+      p=POSFRU[i];
+      s+='<i class="ffru" style="left:'+p[0]+'%;top:'+p[1]+'%"></i>';
+    }
+    return s;
+  }
+  if(o.t==="casa"){
+    s='<i class="fteto"></i><i class="fpar"></i><i class="fpor"></i>';
+    for(i=0;i<(o.n||0)&&i<POSJAN.length;i++){
+      p=POSJAN[i];
+      s+='<i class="fjan" style="left:'+p[0]+'%;top:'+p[1]+'%"></i>';
+    }
+    return s;
+  }
+  if(o.t==="bola"){
+    d=Math.round(50*(o.esc===undefined?1:o.esc));
+    s='<i class="fbol" style="left:'+(50-d/2)+'%;top:'+(74-d)+'%;width:'+d+'%;height:'+d+'%">'
+      +'<i class="fbli"></i></i>';
+    return s;
+  }
+  return "";
+}
+
+function montaCena(dados,lado){
+  var cena=el("div","cena"), i, pt;
+  cena.appendChild(el("div","chao"));
+  for(i=0;i<9;i++){
+    pt=el("div","pto",desenhaObj(dados[i]));
+    pt.style.left=((i%GC)*100/GC)+"%";
+    pt.style.top=(Math.floor(i/GC)*100/GL)+"%";
+    cena.appendChild(pt);
+    lado.pts[i]=pt;
+  }
+  /* a camada do dedo: uma célula por lugar da MESMA grade */
+  var g=el("div","gradecena");
+  for(i=0;i<9;i++){
+    var z=el("div","zona");
+    z.style.left=((i%GC)*100/GC)+"%";
+    z.style.top=(Math.floor(i/GC)*100/GL)+"%";
+    if(naZona(i)) z.setAttribute("data-qa","1");   /* só para o auditor */
+    z.onclick=(function(sp,cel){ return function(){ tocar(sp,cel); }; })(i,z);
+    g.appendChild(z);
+    lado.zonas[i]=z;
+  }
+  cena.appendChild(g);
+  return cena;
+}
+
+/* ---------------------------------------------------------------
+   4) A PEÇA
+   --------------------------------------------------------------- */
+var achadas, erros, progI, elCont, elPts, LADO1, LADO2;
+
+function pecaErros(){
+  /* o conteudo desta fase ja chegou: agora sim da para derivar */
+  CENA_B=fazCenaB(); DIFS=listaDifs();
+  limpa();
+  achadas={}; erros=0;
+  LADO1={pts:[],zonas:[]}; LADO2={pts:[],zonas:[]};
+  var t=el("div","tela");
+  setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","OS DOIS QUADROS"));
+  // ⚠️ LICAO PAGA (Lojinha, ago/2026): o balao NAO pode trazer o numero por
+  //    concatenacao (`"+DIFS.length+"`). O montador so grava voz de balao que e
+  //    frase COMPLETA e LITERAL; com o numero no meio, a string quebra, o
+  //    balaoes_das_pecas pega so um pedaco sem ponto e descarta — a fase ficava
+  //    MUDA (o portao 0f2 pegou). O numero ja aparece no contador "Faltam N
+  //    diferencas" logo abaixo; aqui o balao e frase fixa, gravavel.
+  c.appendChild(el("div","balao","Ache as diferen&#231;as entre as duas cenas. Toque em cada uma que voc&#234; achar."));
+
+  var duo=el("div","duo");
+  var l1=el("div","lado"); l1.appendChild(el("div","rot","CENA 1"));
+  l1.appendChild(montaCena(CENA_A,LADO1));
+  var l2=el("div","lado"); l2.appendChild(el("div","rot","CENA 2"));
+  l2.appendChild(montaCena(CENA_B,LADO2));
+  duo.appendChild(l1); duo.appendChild(l2);
+  c.appendChild(duo);
+
+  elCont=el("div","cont","");
+  c.appendChild(elCont);
+  elPts=el("div","pares","");
+  c.appendChild(elPts);
+  c.appendChild(el("div","hint","Vale tocar na cena 1 ou na cena 2 — o que importa &#233; o lugar."));
+  t.appendChild(c);
+  app.appendChild(t);
+  atualiza();
+}
+
+function quantasFaltam(){ var i,n=0; for(i=0;i<DIFS.length;i++){ if(!achadas[DIFS[i]]) n++; } return n; }
+function proximaDif(){ var i; for(i=0;i<DIFS.length;i++){ if(!achadas[DIFS[i]]) return DIFS[i]; } return -1; }
+
+function atualiza(){
+  var n=quantasFaltam(), i, p;
+  elCont.innerHTML = n>0
+    ? ("Faltam <b>"+n+"</b> "+(n===1?"diferen&#231;a":"diferen&#231;as"))
+    : "Voc&#234; achou <b>todas</b>!";
+  elPts.innerHTML="";
+  for(i=0;i<DIFS.length;i++){
+    p=el("span","ppt");
+    if(achadas[DIFS[i]]) p.className="ppt on";
+    elPts.appendChild(p);
+  }
+  if(progI) progI.style.width=Math.round((DIFS.length-n)*100/DIFS.length)+"%";
+}
+
+function tocar(sp,cel){
+  if(naZona(sp)){
+    if(achadas[sp]){ sTap(); return; }             /* já achada: nunca pune */
+    achar(sp);
+    return;
+  }
+  /* aqui não havia diferença: o app devolve, não castiga */
+  sErro(); erros++;
+  cel.className="zona treme";
+  setTimeout((function(z){ return function(){ if(z.className.indexOf("pisca")<0) z.className="zona"; }; })(cel),400);
+  ajuda(erros);
+}
+
+function achar(sp){
+  if(achadas[sp]) return;
+  achadas[sp]=1;
+  sCerto();
+  marca(LADO1,sp); marca(LADO2,sp);
+  atualiza();
+  if(quantasFaltam()===0) setTimeout(fim,700);
+}
+function marca(lado,sp){
+  lado.pts[sp].appendChild(el("div","vok","&#10003;"));
+  lado.zonas[sp].removeAttribute("data-qa");
+  lado.zonas[sp].className="zona";
+}
+
+/* O ANDAIME QUE CRESCE — 1) método, 2) o lugar piscando, 3) resolve uma.
+   Nunca X, nunca "errou", e no terceiro erro a peça não tem como travar. */
+function ajuda(n){
+  var alvo=proximaDif();
+  if(alvo<0) return;
+  var p=n%3;
+  if(p===1){
+    mostraDica("Compare <b>um peda&#231;o de cada vez</b>: primeiro a linha de cima das duas cenas, depois a do meio.");
+  }else if(p===2){
+    mostraDica("Uma diferen&#231;a que falta est&#225; na "+ondeFica(alvo)+". Est&#225; piscando nas duas cenas.");
+    pisca(alvo);
+  }else{
+    mostraDica("Nesta parte "+tipoDaDif(alvo)+". Vou marcar esta e voc&#234; acha as outras.");
+    achar(alvo);
+  }
+}
+function pisca(sp){
+  LADO1.zonas[sp].className="zona pisca";
+  LADO2.zonas[sp].className="zona pisca";
+  setTimeout((function(a,b){ return function(){
+    if(a.className.indexOf("pisca")>=0) a.className="zona";
+    if(b.className.indexOf("pisca")>=0) b.className="zona";
+  }; })(LADO1.zonas[sp],LADO2.zonas[sp]),2400);
+}
+
+function fim(){
+  mostraBanner('<div class="medal">&#9733;</div><b>Olho de detetive!</b><br>Voc&#234; achou as '
+               +DIFS.length+' diferen&#231;as.', pecaErros);
+}
+
+pecaErros();
+</script>
+</body></html>

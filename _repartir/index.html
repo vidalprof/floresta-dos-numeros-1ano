@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>A Festa da Vila — Repartir Justo</title>
+<!--
+  EDUCAVERSO — motor "REPARTIR JUSTO" num MUNDO 2D top-down (fração como divisão, 5º ano).
+  Personagem anda pela vila; a festa só começa se as 4 famílias comerem IGUAL.
+  LEIS: a criança PRODUZ (corta e reparte, não escolhe alternativa); CORTE por TOQUE no
+  bolo (SEM popup, SEM menu de números — cada toque = um corte, pedaços se igualam sozinhos);
+  o MUNDO julga por consequência (bichinho triste, festa apagada), nunca um balão-gabarito;
+  o mentor só PERGUNTA; concreto primeiro (o nome "3/4" só no fim); errar devolve sem punição;
+  o inteiro é sempre do mesmo tamanho (toda família tem a MESMA moldura de prato).
+  Tudo por TOQUE (nada de arrastar). Autossuficiente, leve p/ PC fraco + celular.
+  Matemática EXATA em frações (num/den) — sem erro de ponto flutuante.
+-->
+<style>
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif}
+  #mundo{
+    position:fixed; inset:0; overflow:hidden; touch-action:none; user-select:none; -webkit-user-select:none;
+    background:#6db24a;
+    background:
+      radial-gradient(circle at 18% 22%, #7cc457 0 34px, transparent 35px),
+      radial-gradient(circle at 82% 30%, #7cc457 0 30px, transparent 31px),
+      radial-gradient(circle at 40% 80%, #7cc457 0 40px, transparent 41px),
+      linear-gradient(160deg,#6fb84c,#5aa244);
+    color:#3a2a12;
+  }
+  /* caminho de terra até a mesa */
+  #trilha{position:absolute; left:50%; top:52%; transform:translateX(-50%); width:24%; height:52%;
+    background:linear-gradient(#caa06a,#b98f57); border-radius:40px 40px 0 0; opacity:.85}
+  .arv{position:absolute; font-size:34px; filter:drop-shadow(0 3px 1px #0003)}
+  .flor{position:absolute; font-size:17px; opacity:.9}
+
+  /* MESA da festa */
+  #mesa{position:absolute; left:50%; top:44%; transform:translate(-50%,-50%);
+    width:min(58%,340px); height:min(30%,150px);
+    background:radial-gradient(ellipse at 50% 35%,#a9713e,#7a4b22);
+    border:4px solid #5f3717; border-radius:50%; box-shadow:0 10px 0 #4c2c12, inset 0 6px 12px #0003}
+  #bolos{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); display:flex; gap:9px}
+  .bolo{position:relative; width:74px; height:30px; display:flex; cursor:pointer; touch-action:manipulation;
+    filter:drop-shadow(0 3px 2px #0004)}
+  .fatia{flex:1 1 0; margin:0 1px; border-radius:5px;
+    background:linear-gradient(180deg,#ffe6b0,#ffc266); border:1px solid #d89a3c;
+    box-shadow:inset 0 3px 0 rgba(255,255,255,.4)}
+  .fatia::before{content:""; position:absolute; top:3px; width:4px; height:4px; border-radius:50%;
+    background:#e0556a; box-shadow:0 0 0 0 #0000}
+  .bolo .dica{position:absolute; left:50%; top:-16px; transform:translateX(-50%); white-space:nowrap;
+    font-size:9px; font-weight:800; color:#fff; text-shadow:0 1px 2px #000; opacity:.85}
+
+  /* FAMÍLIAS (bichinhos) ao redor da mesa */
+  .familia{position:absolute; transform:translate(-50%,-50%); width:96px; text-align:center; cursor:pointer;
+    touch-action:manipulation}
+  .familia .bicho{font-size:34px; line-height:1; transition:transform .15s; filter:drop-shadow(0 2px 1px #0003)}
+  .familia.feliz .bicho{transform:scale(1.12)}
+  .familia .prato{margin:2px auto 0; width:70px; height:16px; border-radius:5px;
+    background:rgba(255,255,255,.45); border:2px dashed #ffffffcc; display:flex; overflow:hidden}
+  .familia .prato .pc{height:100%; background:linear-gradient(180deg,#ffe6b0,#ffc266); border-right:1px solid #d89a3c}
+  .familia .nome{font-size:10px; font-weight:800; color:#fff; text-shadow:0 1px 2px #000; margin-top:1px}
+
+  /* MENTOR + balão */
+  #gato{position:absolute; left:50%; top:9%; transform:translateX(-50%); text-align:center; cursor:pointer}
+  #gato .g{font-size:34px; filter:drop-shadow(0 2px 1px #0003)}
+  #gato .lbl{font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 2px #000;background:#0006;border-radius:6px;padding:0 4px}
+  #balao{position:fixed; left:50%; top:2%; transform:translateX(-50%); max-width:90%; width:max-content;
+    background:#fff; color:#123a7a; border-radius:14px; padding:9px 13px; font:600 14px system-ui; text-align:center;
+    box-shadow:0 4px 14px #0006; z-index:40}
+  #balao b{color:#c8641e}
+
+  /* HERÓI (anda por toque) */
+  #heroi{position:absolute; left:50%; top:86%; width:30px; height:34px; transform:translate(-50%,-50%);
+    transition:left 1.2s linear, top 1.2s linear; z-index:20; pointer-events:none; text-align:center}
+  #heroi .p{font-size:30px; filter:drop-shadow(0 3px 2px #0004); display:inline-block; animation:bob .6s infinite ease-in-out}
+  @keyframes bob{50%{transform:translateY(-3px)}}
+
+  /* AÇÕES */
+  #acoes{position:fixed; left:0; right:0; bottom:0; display:flex; gap:8px; padding:8px; z-index:45}
+  .btn{flex:1; border:0; border-radius:12px; padding:13px; font-size:15px; font-weight:800; cursor:pointer}
+  .btn.servir{background:#57e08a; color:#0b2350; box-shadow:0 4px 0 #2e9c5b}
+  .btn.reset{flex:0 0 40%; background:#e7d7bf; color:#5b3a12; box-shadow:0 4px 0 #b79b74}
+  .btn:active{transform:translateY(2px); box-shadow:none}
+
+  /* FESTA (vitória) */
+  #festa{position:fixed; inset:0; z-index:80; display:none; align-items:center; justify-content:center;
+    background:rgba(20,10,35,.82); padding:18px; text-align:center; color:#fff3e6}
+  #festa .card{background:linear-gradient(160deg,#3d2456,#221436); border:2px solid #ffd76a; border-radius:18px;
+    padding:22px 18px; max-width:400px; box-shadow:0 10px 40px #0008}
+  #festa h2{font-size:24px; color:#ffd76a; margin:.1em 0}
+  #festa .fr{font-size:44px; font-weight:900; color:#57e08a; margin:6px 0}
+  #festa p{font-size:15px; line-height:1.4}
+  #festa .btn{margin-top:12px; width:100%}
+  .confete{position:fixed; top:-14px; width:9px; height:14px; z-index:82; pointer-events:none}
+</style>
+</head>
+<body>
+<div id="mundo">
+  <div id="trilha"></div>
+  <div class="arv" style="left:8%;top:14%">🌳</div>
+  <div class="arv" style="left:88%;top:18%">🌳</div>
+  <div class="arv" style="left:12%;top:74%">🌲</div>
+  <div class="arv" style="left:86%;top:70%">🌲</div>
+  <div class="flor" style="left:26%;top:66%">🌼</div>
+  <div class="flor" style="left:70%;top:60%">🌷</div>
+  <div class="flor" style="left:60%;top:88%">🌻</div>
+
+  <div id="gato"><div class="g">🐱</div><div class="lbl">Byte</div></div>
+  <div id="mesa"></div>
+  <div id="bolos"></div>
+
+  <!-- famílias posicionadas ao redor da mesa -->
+  <div class="familia" data-f="0" style="left:20%;top:30%"></div>
+  <div class="familia" data-f="1" style="left:80%;top:30%"></div>
+  <div class="familia" data-f="2" style="left:20%;top:64%"></div>
+  <div class="familia" data-f="3" style="left:80%;top:64%"></div>
+
+  <div id="heroi"><span class="p">🧑‍🍳</span></div>
+</div>
+
+<div id="balao"></div>
+<div id="acoes">
+  <button class="btn reset" id="btnReset">↺ Recomeçar</button>
+  <button class="btn servir" id="btnServir">🔔 Servir a festa!</button>
+</div>
+
+<div id="festa">
+  <div class="card">
+    <div style="font-size:40px">🎊🐱🎊</div>
+    <h2>A festa começou!</h2>
+    <p>Cada família ficou com o <b>mesmo tanto</b>. Isso tem um nome:</p>
+    <div class="fr">3/4</div>
+    <p><b>três quartos</b> — você repartiu <b>justo</b>! 👏</p>
+    <button class="btn servir" id="btnDeNovo">Jogar de novo</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var NFAM=4, NBOLOS=3, NMAX=8;
+  var FAM=[
+    {nome:"Coelho", ok:"🐰", triste:"🐰"},
+    {nome:"Urso",   ok:"🐻", triste:"🐻"},
+    {nome:"Gato",   ok:"🐱", triste:"🐱"},
+    {nome:"Raposa", ok:"🦊", triste:"🦊"}
+  ];
+  var bolos, pratos;   // bolos:[{n,given}]  pratos:[[{num,den,cake}]]
+
+  function reset(){
+    bolos=[]; for(var i=0;i<NBOLOS;i++) bolos.push({n:1,given:0});
+    pratos=[[],[],[],[]];
+    document.getElementById('festa').style.display='none';
+    dizer('Temos <b>3 bolos</b> e <b>4 famílias</b>. Será que dá um bolo inteiro pra cada? 🤔 Toque numa família pra servir!');
+    // herói anda até a mesa
+    andarPara(50,74);
+    render();
+  }
+
+  // ---- fração exata ----
+  function mdc(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a||1;}
+  function red(f){var g=mdc(f.num,f.den);return {num:f.num/g,den:f.den/g};}
+  function add(a,b){return red({num:a.num*b.den+b.num*a.den, den:a.den*b.den});}
+  function eq(a,b){return a.num*b.den===b.num*a.den;}
+  function totalPrato(fi){var s={num:0,den:1}; pratos[fi].forEach(function(p){s=add(s,{num:p.num,den:p.den});}); return red(s);}
+  function texto(f){
+    if(f.num===0) return '';
+    if(f.num<f.den) return f.num+'/'+f.den;
+    if(f.num%f.den===0) return (f.num/f.den)+' inteiro'+((f.num/f.den)>1?'s':'');
+    return Math.floor(f.num/f.den)+' e '+(f.num%f.den)+'/'+f.den;
+  }
+  // menor pedaço solto (prefere pedaço cortado a bolo inteiro): maior den entre bolos com fatia solta
+  function menorSolto(){
+    var alvo=-1, den=-1;
+    for(var i=0;i<NBOLOS;i++){ if(bolos[i].n-bolos[i].given>0 && bolos[i].n>den){ den=bolos[i].n; alvo=i; } }
+    return alvo;
+  }
+  function distribuidoTudo(){ return bolos.every(function(b){return b.given===b.n;}); }
+
+  // ---- ações ----
+  function cortar(ci){
+    if(bolos[ci].given>0){ dizer('Traga os pedaços desse bolo de volta (toque no pedaço no prato) pra cortar de novo. 🙂'); return; }
+    bolos[ci].n = bolos[ci].n % NMAX + 1;   // cicla 1..8; cada toque = mais um corte, pedaços se igualam
+    render();
+  }
+  function darPeca(fi){
+    var ci=menorSolto();
+    if(ci<0){ dizer('Já repartiu tudo! Toque em <b>Servir a festa</b> — ou tire pedaços pra ajustar.'); return; }
+    bolos[ci].given++;
+    pratos[fi].push({num:1,den:bolos[ci].n,cake:ci});
+    render();
+  }
+  function tirarPeca(fi){
+    var p=pratos[fi].pop(); if(!p) return;
+    bolos[p.cake].given--;
+    render();
+  }
+  function servir(){
+    if(!distribuidoTudo()){ dizer('Ainda tem <b>bolo pra repartir</b>. Sirva TODAS as famílias primeiro. 🙂','🐱'); return; }
+    var tot=[]; for(var i=0;i<NFAM;i++) tot.push(totalPrato(i));
+    var justo=tot.every(function(t){return eq(t,tot[0]);});
+    if(justo){ vitoria(tot[0]); return; }
+    // injusto: acha quem tem MENOS (consequência visível, sem punição)
+    var iMin=0; for(var j=1;j<NFAM;j++){ if(tot[j].num*tot[iMin].den < tot[iMin].num*tot[j].den) iMin=j; }
+    marcaTriste(iMin);
+    dizer('A família <b>'+FAM[iMin].nome+'</b> ficou com <b>menos</b> e não sorriu. Repartir justo = todos com o <b>mesmo</b> tanto. Que tal cortar igual e dar a mesma quantidade a cada um?','🐱');
+  }
+
+  // ---- render ----
+  var elBolos=document.getElementById('bolos');
+  function render(){
+    // bolos na mesa
+    elBolos.innerHTML='';
+    for(var ci=0; ci<NBOLOS; ci++){ (function(ci){
+      var b=bolos[ci], soltas=b.n-b.given;
+      var d=document.createElement('div'); d.className='bolo';
+      for(var k=0;k<soltas;k++){ var f=document.createElement('div'); f.className='fatia'; d.appendChild(f); }
+      if(soltas===0){ d.style.opacity=.35; }
+      var dica=document.createElement('div'); dica.className='dica';
+      dica.textContent = b.n===1 ? 'toque p/ cortar' : ('cortado em '+b.n);
+      d.appendChild(dica);
+      d.onclick=function(e){ e.stopPropagation(); cortar(ci); };
+      elBolos.appendChild(d);
+    })(ci); }
+    // famílias
+    document.querySelectorAll('.familia').forEach(function(c){
+      var fi=+c.dataset.f, fam=FAM[fi];
+      c.classList.remove('feliz');
+      c.innerHTML='<div class="bicho">'+fam.ok+'</div>';
+      var pr=document.createElement('div'); pr.className='prato';
+      pratos[fi].forEach(function(p,idx){
+        var pc=document.createElement('div'); pc.className='pc';
+        pc.style.width=(p.num/p.den*100)+'%';
+        pc.onclick=function(e){ e.stopPropagation(); tirarPeca(fi); };
+        pr.appendChild(pc);
+      });
+      c.appendChild(pr);
+      var nm=document.createElement('div'); nm.className='nome'; nm.textContent='Família '+fam.nome;
+      c.appendChild(nm);
+      c.querySelector('.bicho').onclick=function(e){ e.stopPropagation(); andarParaFamilia(fi); darPeca(fi); };
+    });
+    ;(window).__estado={bolos:bolos,pratos:pratos};   // QA lê
+  }
+  function marcaTriste(fi){
+    var c=document.querySelector('.familia[data-f="'+fi+'"]');
+    c.classList.add('feliz'); // usa o "pulo" só como destaque negativo momentâneo
+    var b=c.querySelector('.bicho'); if(b){ b.style.transform='translateY(3px) scale(.9)'; b.textContent='😟'; }
+  }
+
+  // ---- herói anda por toque ----
+  var heroi=document.getElementById('heroi');
+  function andarPara(xp,yp){ heroi.style.left=xp+'%'; heroi.style.top=yp+'%'; }
+  function andarParaFamilia(fi){
+    var c=document.querySelector('.familia[data-f="'+fi+'"]');
+    var x=parseFloat(c.style.left), y=parseFloat(c.style.top);
+    andarPara(x, y+8);
+  }
+  document.getElementById('mundo').addEventListener('pointerdown', function(ev){
+    var xp=ev.clientX/window.innerWidth*100, yp=ev.clientY/window.innerHeight*100;
+    andarPara(xp,yp);
+  });
+
+  // ---- mentor / vitória ----
+  var balao=document.getElementById('balao'), gato=document.getElementById('gato');
+  function dizer(html,emoji){ balao.innerHTML=html; gato.querySelector('.g').textContent=emoji||'🐱'; }
+  function vitoria(f){
+    document.querySelector('#festa .fr').textContent=texto(f);
+    document.querySelectorAll('.familia').forEach(function(c){ c.classList.add('feliz'); var b=c.querySelector('.bicho'); if(b){ b.style.transform=''; b.textContent=FAM[+c.dataset.f].ok; } });
+    dizer('🎉 <b>Perfeito!</b> Cada família ficou com <b>'+texto(f)+'</b>. Isso é <b>três quartos</b>!','😸');
+    document.getElementById('festa').style.display='flex';
+    confete();
+  }
+  function confete(){
+    var cor=['#ffd76a','#57e08a','#7ec8ff','#ff8fae','#c58cff'];
+    for(var i=0;i<24;i++){ (function(i){
+      var c=document.createElement('div'); c.className='confete';
+      c.style.left=(i*4.2)+'vw'; c.style.background=cor[i%cor.length];
+      document.body.appendChild(c);
+      var top=-14, vy=2+(i%5)*0.6, t=0;
+      var tm=setInterval(function(){ t++; top+=vy; c.style.top=top+'px';
+        if(top>window.innerHeight+20||t>240){ clearInterval(tm); c.remove(); } },16);
+    })(i); }
+  }
+
+  gato.onclick=function(e){ e.stopPropagation(); servir(); };
+  document.getElementById('btnServir').onclick=servir;
+  document.getElementById('btnReset').onclick=reset;
+  document.getElementById('btnDeNovo').onclick=reset;
+
+  reset();
+})();
+</script>
+</body>
+</html>

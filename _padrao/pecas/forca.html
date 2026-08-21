@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — forca</title>
+<!-- ============================================================
+     PEÇA: FORCA  (copiada do _padrao/pecas/MOLDE.html)
+
+     Onde ela serve (DINAMICAS.md): "onde a PALAVRA é o conteúdo". A criança
+     não escolhe entre opções: ela tem que ir buscar a palavra letra a letra,
+     que é o gesto que fixa a grafia.
+
+     ⚠️ SEM BONECO ENFORCADO. Não combina com criança de 8 anos e é punição
+     desenhada. Aqui o medidor de erro são BALÕES que vão embora — some um
+     balão, o número escrito cai junto ("Faltam 5"), então funciona também
+     para quem não distingue as cores.
+
+     AS ARMADILHAS DESTA MECÂNICA e onde cada uma está fechada:
+
+     1) A PALAVRA A ADIVINHAR VAI **SEM ACENTO**; A DA FAIXA VAI **COM**.
+        Cobrança do professor: *"na palavra bussola está sem acento né? favor
+        corrigir"*. O teclado não tem tecla de acento — a criança digita
+        J-A-C-A-R-E. Pedir uma tecla que não existe trava a peça; mostrar
+        JACARE na comemoração ensinaria a escrita errada. Por isso são dois
+        campos: `p` (o que se digita) e `ac` (o que aparece quando fecha).
+
+     2) LETRA USADA SAI DO ALCANCE. Sem isso a criança — e o auditor — toca
+        na mesma letra para sempre. Aqui a tecla usada muda de cor, ganha
+        risco quando não estava na palavra, perde o `data-qa` e recebe
+        `pointer-events:none`.
+
+     3) AS DUAS PORTAS: teclado na tela **E** `document.onkeydown`.
+        ⚠️ quem instala o `onkeydown` global tem que DESINSTALAR ao sair da
+        tela, senão a fase morta responde por cima da fase seguinte.
+
+     4) COMEMORAR AO FECHAR: som, as casinhas acendem e a palavra CERTA (com
+        acento) sobe na faixa.
+
+     5) NUNCA TRAVA: acabaram os 6 balões, a palavra aparece inteira, sem
+        nenhuma bronca, e a peça segue para a próxima. Erro não pune: nunca
+        X vermelho, nunca a palavra "errou".
+
+     6) O AUDITOR PRECISA CONSEGUIR JOGAR: as teclas que estão na palavra
+        publicam `data-qa="1"` (e perdem a marca ao serem usadas).
+
+     7) ⭐ A FIGURA COMO PRÊMIO (ago/2026, copiado do EdiLIM — ver
+        `_pesquisa/EDILIM-DINAMICAS.md`, "MELHORAR AS NOSSAS OLHANDO AS DELAS").
+        O EdiLIM tem, na palavra secreta, a opção *"não mostrar a imagem: a
+        imagem aparece quando o usuário descobre a palavra"*. É uma troca
+        pedagógica de verdade: com a figura à vista, a criança adivinha pelo
+        DESENHO e a escrita fica de enfeite; tapada, a figura vira a
+        RECOMPENSA de ter pensado na palavra — e o fecho ganha um motivo para
+        comemorar.
+        · `fig` no item (OPCIONAL) = a arte da palavra. Item sem `fig` fica
+          exatamente como sempre foi: só a pista escrita.
+        · `FORCA_FIG="pista"` (PADRÃO) = a figura aparece desde o começo;
+        · `FORCA_FIG="premio"` = fica tapada e se revela ao fechar a palavra.
+        ⚠️ A tampa DIZ por escrito que a figura está guardada — segredo que a
+        criança não entende é só uma caixa azul no meio da tela.
+        ⚠️ Acabaram os 6 balões? A figura se revela TAMBÉM (junto com a palavra
+        inteira). Erro não pune: quem não descobriu continua conhecendo o
+        bicho — do contrário a "recompensa" viraria castigo.
+
+     8) ⭐ ALTO-FALANTE NA PISTA (pilar SONORA). No 3º/4º ano ainda tem quem
+        soletra: a pista escrita sozinha exclui exatamente quem mais precisa da
+        forca. O botão fala a PISTA e, depois de a palavra fechar, fala a
+        PALAVRA CERTA (com acento).
+
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* A LINHA DA PISTA: o texto e, do lado, o alto-falante que fala a pista (e,
+   quando a palavra fecha, fala a palavra certa). Fica DENTRO do balão para não
+   roubar altura da tela — em janela baixa cada pixel conta.                  */
+.fclin{display:-webkit-box;display:-webkit-flex;display:flex;
+       -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.fcpista{-webkit-box-flex:0;-webkit-flex:0 1 auto;flex:0 1 auto;text-align:center}
+/* ⭐ O ALTO-FALANTE (pilar SONORA da casa). O MESMO glifo do motor: SVG
+   embutido, que se centra sozinho pelo `viewBox`, sem coordenada na mão.
+   ⚠️ `background-color` e `background-image` SEPARADOS, nunca o atalho
+   `background:` — a cor do desenho mora DENTRO do SVG, e o atalho num
+   `:hover` apagaria o ícone deixando um círculo vazio. */
+.zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none;
+     width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0;
+     border-radius:50%;cursor:pointer;
+     background-color:#efe6d2;
+     background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
+     background-repeat:no-repeat;background-position:center center;
+     -webkit-background-size:24px 24px;background-size:24px 24px;
+     -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:#ded3b8}
+.zap:active,.zap.tocando{background-color:#ffd54a}
+/* A FIGURA DA PALAVRA (só existe se o item tiver `fig`) e a TAMPA que a
+   esconde no modo prêmio. A caixa guarda a proporção 4:3 pelo padding, então
+   nada estica em tela nenhuma. */
+.fcfig{position:relative;width:100%;max-width:190px;margin:11px auto 0;border-radius:16px;
+       background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+       border:1px solid rgba(255,255,255,.34);overflow:hidden;box-shadow:0 4px 0 rgba(201,189,166,.5)}
+.fcimg{position:relative;width:100%;height:0;padding-bottom:75%;
+       background-repeat:no-repeat;background-position:center center;
+       -webkit-background-size:contain;background-size:contain}
+/* quando a arte vem do motor (um <img> de verdade), ela preenche a mesma
+   caixa sem esticar: proporção guardada pelo padding, `contain` no desenho */
+.fcimg img{position:absolute;left:0;top:0;width:100%;height:100%;
+           object-fit:contain;-o-object-fit:contain}
+.fctampa{position:absolute;left:0;top:0;right:0;bottom:0;background:#3c6ee0;color:#fff;
+         padding:8px 10px;font-size:14px;font-weight:700;line-height:1.2;text-align:center;
+         -webkit-transition:opacity .5s;transition:opacity .5s}
+.fctampa b{display:block;font-size:30px;line-height:1.15}
+/* ⭐ TAPADA (modo prêmio): enquanto a figura está guardada ela NÃO ocupa o
+   lugar de uma figura — vira uma FAIXA de uma linha só. Uma caixa grande e
+   azul no meio da tela roubaria a altura do teclado justo em quem tem tela
+   pequena, e não mostraria nada em troca. */
+.fcfig.tapada{max-width:300px;box-shadow:none;background:transparent}
+.fcfig.tapada .fcimg{display:none}
+.fcfig.tapada .fctampa{position:static;border-radius:16px;font-size:13px;padding:9px 12px}
+.fcfig.tapada .fctampa b{display:inline-block;font-size:18px;margin-right:7px;line-height:1}
+/* revelada: a tampa sai do caminho de vez (nunca só transparente, senão ela
+   continua tapando o dedo e o leitor de tela) */
+.fcfig.aberta .fctampa{opacity:0;visibility:hidden}
+.fcfig.aberta{-webkit-animation:pul .5s;animation:pul .5s}
+/* AS CASINHAS DA PALAVRA */
+.casas{margin-top:13px;text-align:center}
+.letrafc{display:inline-block;width:38px;height:44px;line-height:40px;margin:3px;border-radius:8px;
+         background:#fffdf6;color:#221a12;font-size:22px;font-weight:800;
+         border-bottom:4px solid #c9bda6;vertical-align:middle}
+.letrafc.achada{background:#d6f5c8;border-bottom-color:#7cb464}
+.letrafc.fechou{background:#2e7a1c;color:#fff;border-bottom-color:#1f5010;
+                -webkit-animation:pul .5s;animation:pul .5s}
+.letrafc.dada{background:#fff0bd;border-bottom-color:#c9a52f}
+@-webkit-keyframes pul{50%{-webkit-transform:scale(1.2)}}
+@keyframes pul{50%{transform:scale(1.2)}}
+/* OS BALÕES = as tentativas que sobram. O número escrito anda junto, então a
+   informação NUNCA fica só na cor nem só na figura.                        */
+.chances{margin-top:8px;font-size:15px;font-weight:700}
+.chance{display:inline-block;width:20px;height:20px;border-radius:50% 50% 45% 45%;
+        background:#f6c23a;border:2px solid #fff3c9;margin:0 3px;vertical-align:middle}
+.chance.foi{background:transparent;border-style:dashed;border-color:#9c8f7a}
+/* ⚠️ LICAO PAGA (ago/2026): usava var(--texto) e, num tema de texto ESCURO
+   sobre o fundo marrom da atividade, caia 2,4:1. Mesa escura propria: texto
+   claro sobre pilula escura le em qualquer fundo/tema. */
+.ctx{display:inline-block;margin-top:6px;color:#f4efe6;
+     background:rgba(24,20,14,.62);padding:3px 10px;border-radius:9px}
+/* O TECLADO NA TELA (alfabeto inteiro). O teclado DE VERDADE responde igual. */
+.teclado{margin-top:10px;display:-webkit-box;display:-webkit-flex;display:flex;
+         -webkit-flex-wrap:wrap;flex-wrap:wrap;
+         -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.tecl{width:44px;height:46px;line-height:46px;margin:2px;border:0;border-radius:11px;
+      background:#fffdf6;color:#221a12;font-size:19px;font-weight:800;cursor:pointer;
+      box-shadow:0 3px 0 #c9bda6}
+.tecl:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #c9bda6}
+/* ⭐ LETRA USADA SAI DO ALCANCE (armadilha nº 2). Nada de opacidade: cor
+   propria, para o contraste continuar medido e aprovado.                   */
+.tecl.usada{background:#5c5245;color:#e6e1d8;box-shadow:none;cursor:default;pointer-events:none}
+.tecl.usada.certa{background:#2e7a1c;color:#fff}
+.tecl.usada.fora{text-decoration:line-through}
+/* a faixa com a palavra CERTA (com acento) quando ela fecha.
+   ⚠️ `alta` = quando ha FIGURA na tela, a faixa sobe: no lugar de sempre ela
+   caia bem em cima do desenho que acabou de ser revelado — o premio tapado
+   pelo proprio anuncio do premio. */
+.achouf{position:fixed;left:0;right:0;top:34%;text-align:center;font-size:32px;font-weight:800;
+        color:var(--texto,#fff);text-shadow:0 3px 10px rgba(0,0,0,.6);pointer-events:none;
+        -webkit-animation:sobe 1.4s ease-out;animation:sobe 1.4s ease-out}
+@-webkit-keyframes sobe{0%{opacity:0;-webkit-transform:scale(.6)}30%{opacity:1;-webkit-transform:scale(1.1)}100%{opacity:0;-webkit-transform:translateY(-40px)}}
+@keyframes sobe{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-40px)}}
+.achouf.alta{top:13%}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS, nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* CELULAR PEQUENO: quem precisa caber inteiro na tela e o TECLADO — e ele tem
+   cinco fileiras a 320px. Entao a figura encolhe (continua reconhecivel), o
+   enunciado aperta um pouco e as folgas diminuem. Nada disso vale para o PC. */
+@media (max-width:400px){
+  .letrafc{width:34px;height:42px;line-height:38px;font-size:20px;margin:2px}
+  .balao{font-size:15px;padding:10px 12px}
+  .fcfig{max-width:78px;margin-top:6px}
+  .fcfig.tapada{max-width:290px}
+  .casas{margin-top:7px}
+  .chances{margin-top:3px}
+  .teclado{margin-top:5px}
+  /* ⚠️ LICAO PAGA (ago/2026): o comentario acima jurava que "o TECLADO precisa
+     caber", mas a regra nunca encolhia `.tecl` — so `.letrafc` (as casas). No
+     celular pequeno (320x568) as duas ultimas teclas ficavam ATRAS da barra de
+     baixo, sem rolagem (banca leiaute). Encolho o teclado ao piso de toque
+     (40px, o minimo da casa) e aperto as folgas: a 5a fileira sobe acima da
+     barra. */
+  .tecl{width:40px;height:40px;line-height:40px;font-size:18px;margin:2px}
+}
+/* JANELA LARGA E BAIXA (1024x420, projetor): aqui nao ha altura para nada, mas
+   SOBRA largura dos dois lados do app. A figura sai da coluna e fica ao lado,
+   como a ilustracao na margem de um livro — assim ela continua GRANDE e nao
+   empurra o teclado para fora da tela. */
+@media (min-width:860px) and (max-height:520px){
+  .fcfig{position:fixed;left:14px;top:62px;width:200px;max-width:200px;margin:0}
+  .fcfig.tapada{position:static;width:100%;max-width:300px;margin:9px auto 0}
+}
+/* JANELA BAIXA (projetor, PC com barras): casinhas e teclado INTEIROS na tela. */
+@media (max-height:470px){
+  .prog{margin:4px 0 6px}
+  .selo{font-size:11px;padding:3px 10px;margin-bottom:5px}
+  .balao{font-size:13px;padding:7px 11px}
+  .balao + *{margin-top:8px}
+  .casas{margin-top:8px}
+  .letrafc{width:32px;height:38px;line-height:34px;font-size:18px;margin:2px}
+  .chances{margin-top:5px;font-size:13px}
+  .teclado{margin-top:7px}
+  .tecl{height:42px;line-height:42px;font-size:17px}
+  .hint{font-size:12px;margin-top:6px}
+  /* JANELA BAIXA: a figura encolhe ANTES do teclado e das casinhas — quem
+     precisa caber inteiro na tela é o que a criança toca. (Em janela LARGA e
+     baixa ela nem fica na coluna: vai para a margem, na regra acima.) */
+  .fcfig{max-width:104px;margin-top:6px}
+  .fcfig.tapada .fctampa{font-size:12px;padding:6px 9px}
+  .fcfig.tapada .fctampa b{font-size:16px}
+  .zap{width:44px;height:44px;min-width:44px;margin-left:7px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function sPop(n){nota(440+(n||0)*70,.06,.12,"triangle",0);}
+function sPing(){nota(880,.09,.12,"triangle",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (bichos do Brasil, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS esta lista.
+
+   ⚠️ `p`  = a palavra que a criança DIGITA — sempre SEM acento e sem Ç.
+   ⚠️ `ac` = a palavra como ela se escreve DE VERDADE — é esta que sobe na
+             faixa quando a criança fecha. Errado seria ensinar "JACARE".  */
+/* ⚠️ `fig` (OPCIONAL, ago/2026) = a ARTE da palavra. Numa atividade de verdade
+      aqui entra a arte de IA (o motor monta com `imgEl`, e basta o NOME sem a
+      pasta e sem o `.png`); na bancada vai um SVG embutido, para a peça rodar
+      sozinha e para o modo poder ser MEDIDO. Item sem `fig` = a peça de sempre,
+      só com a pista escrita. */
+var ARTE={
+ LEAO:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>"+
+  "<circle cx='100' cy='76' r='60' fill='#c8802f'/>"+
+  "<circle cx='52' cy='44' r='15' fill='#a9661f'/><circle cx='148' cy='44' r='15' fill='#a9661f'/>"+
+  "<circle cx='100' cy='78' r='43' fill='#f2c078'/>"+
+  "<circle cx='84' cy='70' r='5' fill='#3a2b1c'/><circle cx='116' cy='70' r='5' fill='#3a2b1c'/>"+
+  "<path d='M100 90 L91 82 h18 z' fill='#8a4b2a'/>"+
+  "<g stroke='#8a4b2a' stroke-width='3' fill='none' stroke-linecap='round'>"+
+   "<path d='M100 90 v7'/><path d='M100 97 q-11 9 -19 1'/><path d='M100 97 q11 9 19 1'/></g>"+
+  "<g stroke='#a9661f' stroke-width='2' stroke-linecap='round'>"+
+   "<path d='M74 92 L54 88'/><path d='M74 98 L55 100'/>"+
+   "<path d='M126 92 L146 88'/><path d='M126 98 L145 100'/></g></svg>",
+ TUCANO:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>"+
+  "<rect x='30' y='120' width='140' height='10' rx='5' fill='#8a5a34'/>"+
+  "<path d='M58 96 L24 122 L54 114 Z' fill='#2b2b2b'/>"+
+  "<ellipse cx='92' cy='82' rx='40' ry='36' fill='#2b2b2b'/>"+
+  "<ellipse cx='84' cy='92' rx='23' ry='22' fill='#ffe08a'/>"+
+  "<path d='M124 62 q52 4 44 26 q-14 14 -44 4 z' fill='#f4941f'/>"+
+  "<path d='M124 74 q40 2 44 14' stroke='#c96f12' stroke-width='3' fill='none'/>"+
+  "<circle cx='110' cy='58' r='8' fill='#fffdf6'/><circle cx='110' cy='58' r='4' fill='#1a1a1a'/>"+
+  "<g stroke='#f4941f' stroke-width='4' stroke-linecap='round'>"+
+   "<path d='M86 116 v6'/><path d='M100 116 v6'/></g></svg>",
+ JACARE:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150'>"+
+  "<rect x='0' y='108' width='200' height='42' fill='#7ec8e3'/>"+
+  "<path d='M16 108 q4 -22 34 -26 l104 -4 q30 2 32 14 q2 12 -18 14 l-152 2 z' fill='#4e8f3a'/>"+
+  "<path d='M20 110 l150 -3 q14 3 2 9 l-140 2 z' fill='#3f7a2e'/>"+
+  "<g fill='#fffdf6'><path d='M40 104 l6 -8 l6 8 z'/><path d='M62 103 l6 -8 l6 8 z'/>"+
+   "<path d='M84 102 l6 -8 l6 8 z'/><path d='M106 101 l6 -8 l6 8 z'/></g>"+
+  "<ellipse cx='150' cy='74' rx='13' ry='11' fill='#4e8f3a'/>"+
+  "<circle cx='150' cy='74' r='6' fill='#f6f1d8'/><circle cx='150' cy='74' r='3' fill='#1a1a1a'/>"+
+  "<g fill='#3f7a2e'><path d='M96 82 l8 -12 l8 12 z'/><path d='M116 80 l8 -12 l8 12 z'/></g></svg>"
+};
+var FORCAP=[
+ {p:"LEAO",   ac:"LEÃO",   d:"O bicho de juba que dorme quase o dia todo.", fig:ARTE.LEAO},
+ {p:"TUCANO", ac:"TUCANO",      d:"O p&#225;ssaro do bico grande e colorido da floresta.", fig:ARTE.TUCANO},
+ {p:"JACARE", ac:"JACARÉ", d:"Vive no rio, tem couro duro e boca bem comprida.", fig:ARTE.JACARE}
+];
+/* ⭐ O MODO DA FIGURA (opcional — o de hoje continua o PADRÃO):
+   · "pista"  = a figura aparece junto com a pista, desde o começo;
+   · "premio" = fica tapada e só se revela quando a palavra é descoberta.   */
+var FORCA_FIG="pista"; /*TECNICA*/
+var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; /*TECNICA*/
+var MAXE=6;      /* seis baloes: erro tem que caber, senao a peca vira prova */
+
+var ger=0;       /* geracao da tela: mata setTimeout de fase que ja saiu */
+var idx=0;       /* palavra da vez */
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Dentro da atividade montada a ponte do
+   integrador injeta o `diz` que toca o mp3 da casa (Edge TTS); sozinha, na
+   bancada, a peça fica calada de propósito — voz-robô do navegador nunca vai
+   para a criança (portão `_qa/vozrobo.py`). Daí a guarda `typeof`.
+   O que a voz fala é EXATAMENTE o que está escrito ao lado do botão. */
+function voz(txt){
+  if(!txt) return;
+  var t=String(txt).replace(/<[^>]+>/g,"").replace(/&#(\d+);/g,function(m,n){
+    return String.fromCharCode(Number(n)); });
+  if(typeof diz==="function") diz(t);
+}
+/* ⚠️ A FIGURA vem do MOTOR quando é arte de IA (`imgEl` sabe onde mora a pasta
+   `img/`). Pegar por `window.imgEl` — e não por `typeof imgEl` — deixa o nome
+   DECLARADO, e o portão "função que não existe" consegue medir. */
+var figEl = window.imgEl || null;
+/* a caixa da figura: SVG embutido (bancada) ou a arte de IA (atividade).
+   Figura que não existe NÃO vai para a tela: quadradinho vazio é pior que
+   figura nenhuma. */
+function caixaFig(f){
+  var cx,im,s;
+  if(!f) return null;
+  s=String(f);
+  cx=el("div","fcfig","");
+  im=el("div","fcimg","");
+  if(s.charAt(0)==="<"){                  /* SVG embutido: a bancada */
+    im.style.backgroundImage="url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s)+"\")";
+  }else if(s.indexOf("data:")===0||s.indexOf("/")>=0){
+    im.style.backgroundImage="url(\""+s+"\")";
+  }else if(figEl){                        /* a arte de IA da atividade */
+    im.appendChild(figEl(s));
+  }else return null;                      /* sem motor e sem desenho: nada */
+  cx.appendChild(im);
+  return cx;
+}
+/* ⭐ O ALTO-FALANTE. Ele recebe um OBJETO (`{t:texto, rot:rótulo}`) e não uma
+   string: assim, quando a palavra fecha e a pista vira a palavra certa, o
+   MESMO botão passa a falar a palavra — sem botão novo e sem ficar dizendo a
+   pista de uma palavra que a criança já descobriu.
+   ⚠️ o evento para nele: tocar no botão nunca pode contar como letra. */
+function fazZap(alvo){
+  var z=el("button","zap","");
+  z.type="button";
+  z.setAttribute("aria-label","Ouvir "+alvo.rot);
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sPing(); voz(alvo.t);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  return z;
+}
+
+function pecaForca(){
+  ger++;
+  var meu=ger;
+  limpa();
+  document.onkeydown=null;
+  if(idx>=FORCAP.length){ fimDaPeca(); return; }
+
+  var it=FORCAP[idx], pal=it.p;
+  var achou={}, erros=0, fim=false, caixas=[], teclas={}, i;
+  var t=el("div","tela");
+  setProg(t, Math.round(idx*100/FORCAP.length));
+  var barraP=t.getElementsByTagName("i")[0];
+
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","A PALAVRA ESCONDIDA"));
+  /* ⭐ A PISTA E O ALTO-FALANTE MORAM DENTRO DO BALÃO. O texto fica num
+     <span> próprio porque a peça REESCREVE a pista ao fechar a palavra —
+     trocando o innerHTML do balão inteiro, o botão de ouvir sumiria junto. */
+  var bal=el("div","balao","");
+  var pistaEl=el("span","fcpista",it.d);
+  var linha=el("div","fclin","");
+  var falado={t:it.d, rot:"a pista"};
+  var zapBtn=fazZap(falado);
+  linha.appendChild(pistaEl);
+  linha.appendChild(zapBtn);
+  bal.appendChild(linha);
+  c.appendChild(bal);
+
+  /* ⭐ A FIGURA (só quando o item tem `fig`). No modo "premio" ela nasce
+     TAPADA, e a tampa diz por escrito que a figura está guardada. */
+  var cxFig=caixaFig(it.fig), tampa=null;
+  if(cxFig){
+    if(FORCA_FIG==="premio"){
+      cxFig.className="fcfig tapada";
+      tampa=el("div","fctampa","<b>?</b>Uma figura est&#225; guardada aqui. Descubra a palavra para ver!");
+      cxFig.appendChild(tampa);
+    }
+    c.appendChild(cxFig);
+  }
+
+  /* as casinhas da palavra */
+  var casas=el("div","casas");
+  for(i=0;i<pal.length;i++){
+    var q=el("div","letrafc","");
+    casas.appendChild(q);
+    caixas.push(q);
+  }
+  c.appendChild(casas);
+
+  /* os balões que sobram + o número escrito (nunca só a cor, nunca só a figura) */
+  var chan=el("div","chances");
+  var bolas=[];
+  for(i=0;i<MAXE;i++){ var bo=el("i","chance",""); chan.appendChild(bo); bolas.push(bo); }
+  var ctx=el("b","ctx","Voc&#234; tem "+MAXE+" tentativas.");
+  chan.appendChild(ctx);
+  c.appendChild(chan);
+
+  var tec=el("div","teclado");
+  for(i=0;i<ALFA.length;i++){(function(L){
+    var b=el("button","tecl",L);
+    /* ⭐ data-qa="1" = "esta letra está na palavra". Existe SÓ para o
+       auditor-jogador; a criança não vê diferença nenhuma. */
+    b.setAttribute("data-qa", pal.indexOf(L)>=0 ? "1" : "0");
+    b.onclick=function(){ ac(); tenta(L,b); };
+    teclas[L]=b;
+    tec.appendChild(b);
+  })(ALFA.charAt(i));}
+  c.appendChild(tec);
+  c.appendChild(el("div","hint","Toque nas letras ou use o teclado do computador. O alto-falante diz a pista. A palavra vai sem acento."));
+  t.appendChild(c);
+  app.appendChild(t);
+
+  /* ⭐ AS DUAS PORTAS: teclado na tela E teclado de verdade.
+     ⚠️ o guarda `!t.parentNode` impede que uma tela que já saiu continue
+     respondendo por cima da tela seguinte.                                */
+  document.onkeydown=function(ev){
+    if(!t.parentNode){ document.onkeydown=null; return; }
+    var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+    if(!/^[A-Z]$/.test(L)) return;
+    ac();
+    if(teclas[L]&&teclas[L].className.indexOf("usada")<0) tenta(L,teclas[L]);
+  };
+
+  function mostra(){
+    var z,todas=true,n=0;
+    for(z=0;z<pal.length;z++){
+      if(achou[pal.charAt(z)]){
+        caixas[z].innerHTML=pal.charAt(z);
+        if(caixas[z].className.indexOf("achada")<0) caixas[z].className="letrafc achada";
+        n++;
+      } else todas=false;
+    }
+    barraP.style.width=Math.round((idx*100+n*100/pal.length)/FORCAP.length)+"%";
+    return todas;
+  }
+  function faixa(txt){
+    var f=el("div","achouf"+(cxFig?" alta":""),txt+"!");
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1400);
+  }
+  function segue(ms){
+    setTimeout(function(){
+      if(meu!==ger) return;
+      idx++;
+      if(idx<FORCAP.length) pecaForca();
+      else mostraBanner("Voc&#234; descobriu as <b>"+FORCAP.length+"</b> palavras, letra por letra!",fimDaPeca);
+    },ms);
+  }
+  /* ⭐ A REVELAÇÃO DA FIGURA (o prêmio). Serve para os dois fins: quando ela
+     descobre (é festa) e quando os balões acabam (aí é consolo, não castigo —
+     a criança fica conhecendo o bicho de qualquer jeito). E o alto-falante
+     passa a falar a PALAVRA CERTA, com acento. */
+  function revelaFig(){
+    if(cxFig&&cxFig.className.indexOf("aberta")<0) cxFig.className="fcfig aberta";
+  }
+  function trocaFalado(txt,rot){
+    falado.t=txt; falado.rot=rot;
+    if(zapBtn) zapBtn.setAttribute("aria-label","Ouvir "+rot);
+  }
+  function fecha(){
+    var z, msg="&#201; <b>"+(it.ac||pal)+"</b> mesmo! Olhe como ela se escreve.";
+    fim=true;
+    document.onkeydown=null;
+    for(z=0;z<caixas.length;z++) caixas[z].className="letrafc fechou";
+    sCerto();
+    faixa(it.ac||pal);
+    revelaFig();
+    pistaEl.innerHTML=msg;
+    trocaFalado(it.ac||pal,"a palavra");
+    voz(msg);
+    segue(cxFig?2400:1900);   /* com figura, o prêmio precisa de tempo na tela */
+  }
+  function entrega(){
+    /* ⭐ NUNCA TRAVA: acabaram os balões, a palavra aparece inteira e a peça
+       segue. Sem bronca, sem X vermelho, sem a palavra "errou".          */
+    var z;
+    fim=true;
+    document.onkeydown=null;
+    for(z=0;z<pal.length;z++){
+      achou[pal.charAt(z)]=1;
+      caixas[z].innerHTML=pal.charAt(z);
+      caixas[z].className="letrafc dada";
+    }
+    barraP.style.width=Math.round((idx+1)*100/FORCAP.length)+"%";
+    var msg="Era <b>"+(it.ac||pal)+"</b>. Olhe bem para ela &#8212; a pr&#243;xima voc&#234; pega.";
+    revelaFig();
+    pistaEl.innerHTML=msg;
+    trocaFalado(it.ac||pal,"a palavra");
+    voz(msg);
+    mostraDica("Dica de quem joga bem: comece sempre pelas vogais A, E, I, O, U.");
+    segue(3000);
+  }
+  function tenta(L,b){
+    if(fim) return;
+    if(b.className.indexOf("usada")>=0){ sTap(); return; }
+    /* ⭐ ARMADILHA Nº 2: a letra usada sai do alcance E perde o data-qa */
+    b.setAttribute("data-qa","0");
+    if(pal.indexOf(L)>=0){
+      achou[L]=1;
+      b.className="tecl usada certa";
+      sPop(pal.indexOf(L)+1);
+      if(mostra()) fecha();
+    } else {
+      erros++;
+      b.className="tecl usada fora";
+      sErro();
+      if(bolas[MAXE-erros]) bolas[MAXE-erros].className="chance foi";
+      /* ⚠️ "Faltam 0 tentativas" é o tipo de frase que soa como bronca. No
+         último balão a peça muda de tom: ela vai MOSTRAR a palavra, e isso
+         é ajuda, não castigo. */
+      ctx.innerHTML = (MAXE-erros)>1 ? "Faltam <b>"+(MAXE-erros)+"</b> tentativas."
+                    : ((MAXE-erros)===1 ? "Falta <b>1</b> tentativa."
+                                        : "Vamos olhar a palavra <b>juntos</b>.");
+      if(erros===2) mostraDica("Tente as <b>vogais</b> que ainda faltam: A, E, I, O, U.");
+      if(erros===4) mostraDica("A palavra come&#231;a com <b>"+pal.charAt(0)+"</b>.");
+      if(erros>=MAXE) entrega();
+    }
+  }
+  mostra();
+}
+
+function fimDaPeca(){
+  ger++;
+  document.onkeydown=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; descobriu as "+FORCAP.length+" palavras escondidas."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ idx=0; pecaForca(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a FORCA: palavra sem acento para digitar, com acento na festa, letra usada fora do alcance."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaForca();
+</script>
+</body></html>

@@ -1,0 +1,46 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt — 11 Medalhas do Circo (cartela única)</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:19px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
+  textarea{width:100%;box-sizing:border-box;min-height:360px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+</style>
+<header>
+  <h1>&#127941; 11 Medalhas do Circo &mdash; cartela &uacute;nica</h1>
+  <p>Uma folha com as 11 medalhas douradas, bem separadas. Gere e suba no <b>_imagens/</b>.</p>
+</header>
+<div class="nota">
+  <b>Sem texto nem n&uacute;meros dentro das medalhas</b> (letra/n&uacute;mero em imagem sai torto) &mdash; s&oacute; o <b>s&iacute;mbolo desenhado</b> no centro. O n&uacute;mero 1 a 11 eu ponho por c&oacute;digo depois. Se a folha sair muito cheia/embolada, a gente divide em duas.
+</div>
+<div class="card">
+  <h2>Cartela &mdash; 11 medalh&otilde;es dourados</h2>
+  <textarea id="p" readonly>Gere uma CARTELA (folha única) com 11 MEDALHAS de circo iguais no estilo, organizadas numa GRADE bem espaçada (por exemplo 3 colunas), cada medalha SEPARADA das outras com espaço em branco entre elas.
+
+Cada medalha é um MEDALHÃO DOURADO redondo (ouro brilhante, borda serrilhada tipo moeda) com uma FITA/LAÇO colorido de circo no topo. No CENTRO de cada uma, um SÍMBOLO DESENHADO diferente (sem nenhuma letra e sem nenhum número):
+
+1) um cacho de BALÕES coloridos
+2) três ARGOLAS de circo empilhadas
+3) as três FORMAS juntas: um círculo, um quadrado e um triângulo
+4) um HOLOFOTE de circo aceso (luz saindo)
+5) uma LÂMPADA acesa brilhando
+6) um LIVRINHO aberto
+7) uma LUPA
+8) uma PEÇA de quebra-cabeça
+9) duas CARTAS de baralho (um par)
+10) um BINÓCULO
+11) quatro PEÇAS de quebra-cabeça montadas (2 por 2)
+
+Todas DOURADAS e no mesmo tamanho, com o símbolo bem grande e claro no centro. Fundo BRANCO PURO #FFFFFF (sem cenário, sem moldura, sem cartão atrás). Cartoon flat infantil, cores vivas, CONTORNO PRETO GROSSO em cada medalha. SEM sombras. SEM texto, SEM letras, SEM números em lugar nenhum.</textarea>
+  <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
+</div>
+<div class="nota">
+  Ordem das medalhas = ordem das paradas: 1 Bal&otilde;es &middot; 2 Contando &middot; 3 Formas &middot; 4 Sombra &middot; 5 Luzes &middot; 6 Vogais &middot; 7 Diferente &middot; 8 Quebra-Cabe&ccedil;a &middot; 9 Mem&oacute;ria &middot; 10 Ca&ccedil;a aos 7 Erros &middot; 11 Quebra-Cabe&ccedil;a 2.
+</div>

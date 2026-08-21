@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — classificar em gavetas</title>
+<!-- ============================================================
+     PEÇA: CLASSIFICAR EM GAVETAS (copiada do _padrao/pecas/MOLDE.html)
+
+     As armadilhas desta mecânica (DINAMICAS.md, linhas "Classificar" e
+     "Arrastar") — cada uma já custou caro:
+       · TRÊS CAMINHOS: mouse, dedo (touch) e TOQUE SIMPLES (tocar na ficha e
+         depois na gaveta). Defeito pego DUAS vezes pelo Marcos;
+       · NUNCA `preventDefault` no `touchstart` — isso MATA o toque no celular.
+         O preventDefault vive no `touchmove` (e só enquanto há ficha na mão);
+       · guarda contra o evento de mouse FANTASMA que o celular dispara depois
+         do toque (var `ultimoToque`, com carimbo de tempo) — sem ele o mouse
+         fantasma DESMARCA a ficha que a criança acabou de escolher;
+       · o enunciado não usa termo que a criança não conhece;
+       · a explicação espera o áudio (aqui não há voz: a peça é o motor cru).
+
+     ⭐⭐ MAIS VISUAL E MAIS SONORA (ordem do Marcos, ago/2026: *"na fase do
+     separe pode ser mais bonito e profissional"* + *"as dinâmicas interativas
+     têm que ser mais VISUAIS e SONORAS para os pequenos"*). No 1º ano a criança
+     ainda não lê: ficha só com palavra é adivinhação, e tela muda é loteria.
+     O que a peça passou a fazer — e o que degrada sozinho:
+       · FIGURA em cima da palavra, dentro de uma moldura de tamanho fixo, com
+         78px de desenho (mínimo da casa: 64). Campo `img` da ficha;
+       · a GAVETA também aceita `img` (figura em cima do nome). Sem o campo,
+         ficha e gaveta continuam só com a palavra e NENHUMA atividade antiga
+         quebra — é a regra de degradar;
+       · ALTO-FALANTE (`.zap`, 54px) ao lado da ficha da vez: a criança repete
+         a palavra quantas vezes quiser sem gastar tentativa. Fica FORA da
+         ficha de propósito — dentro, o dedo que quer ouvir arrastaria a ficha;
+       · a peça CHAMA `diz(...)` em três momentos — a ficha da vez chega
+         falando o próprio nome, a gaveta tocada sem ficha na mão diz o nome
+         dela, e a dica do erro é dita junto com o que está escrito. Sempre
+         protegido por `typeof`, porque quem toca a voz de verdade é a ponte do
+         integrador (nunca `speechSynthesis`: ver `_qa/vozrobo.py`);
+       · som no gesto certo: pegar (sPega/sTap), encaixar (sPoe + sCerto) e o
+         grave curto do erro (sErro);
+       · acabamento: canto redondo, sombra macia por baixo do degrau, destaque
+         suave ao passar o mouse/dedo e uma animação de 0,3s quando a ficha
+         chega e de 0,34s quando ela cai na gaveta. Nada que pisque, e tudo
+         desligado por `prefers-reduced-motion`.
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor
+     (a gaveta certa acende E ganha a ficha escrita dentro), funciona no mudo,
+     erro com sErro() + andaime que cresce, `data-qa` para o auditor-jogador
+     (a ficha e a gaveta publicam a MESMA chave) e nunca trava.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⭐ A ESTEIRA: a ficha da vez vem GRANDE e sozinha, com a FIGURA em cima da
+   palavra e o alto-falante do lado. Altura minima fixa para a tela nao pular
+   quando a ficha troca. */
+/* a AREA da ficha da vez: container limpo (a propria carta de vidro ja e bonita;
+   o tracejado dava cara de "solte aqui", mas a crianca arrasta DAQUI para a
+   gaveta, entao so atrapalhava). */
+.bandeja{background:none;border:0;
+  border-radius:20px;padding:8px 8px;min-height:150px;margin:10px 0 2px;
+  display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:center;align-items:center}
+/* A FICHA (.pc). min-height 48px = alvo de dedo de crianca com folga.
+   O acabamento: canto bem redondo, o degrau de baixo (a sombra dura, que da o
+   volume de botao) e uma sombra macia por baixo dele, que descola a ficha do
+   fundo escuro sem escurecer o texto. */
+/* ⚠️ VIDRO FOSCO, nao quadrado branco (regra do diretor de arte). Com a
+   figura recortada por cima, um retangulo creme OPACO vira uma placa
+   branca atras do desenho — o portao 5b mede e reprova. Baixando um
+   pouco a opacidade o cartao continua claro (a tinta escura segue
+   legivel) e a figura passa a assentar na cena em vez de flutuar. */
+.pc{display:inline-block;vertical-align:middle;background:rgba(255,253,246,.88);color:#221a12;border:0;
+    border-radius:18px;padding:12px 14px;margin:5px 4px;font-size:15px;font-weight:700;
+    min-height:48px;min-width:96px;cursor:pointer;
+    box-shadow:0 5px 0 #c9bda6,0 8px 16px rgba(0,0,0,.26);
+    -webkit-user-select:none;user-select:none;
+    -webkit-transition:-webkit-transform .13s ease;transition:transform .13s ease}
+/* o destaque de quem passa o mouse/dedo: SOBE um pouquinho. Nada que pisque. */
+.pc:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+/* escolhida: nao e SO a cor — ganha borda grossa e sobe um degrau */
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 5px 0 #c9a52f,0 9px 18px rgba(0,0,0,.3);
+        -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.pc.usada{background:#d6f5c8;box-shadow:0 3px 0 #7cb464;cursor:default;opacity:.95}
+.pc.usada:hover{-webkit-transform:none;transform:none}
+/* ⭐ a ficha CAINDO na gaveta: um pulinho curto de 0,34s, sem piscar. E o
+   feedback de "guardei" que a crianca ve mesmo sem ouvir o som. */
+.clcai{-webkit-animation:clcaiu .34s ease;animation:clcaiu .34s ease}
+@-webkit-keyframes clcaiu{from{opacity:.35;-webkit-transform:translateY(-16px) scale(1.08)}}
+@keyframes clcaiu{from{opacity:.35;transform:translateY(-16px) scale(1.08)}}
+/* o FANTASMA que segue o dedo/mouse durante o arrasto */
+.fant{position:fixed;z-index:60;pointer-events:none;background:#fff3c9;color:#221a12;
+      border-radius:14px;padding:12px 14px;font-size:15px;font-weight:700;
+      box-shadow:0 8px 18px rgba(0,0,0,.45)}
+/* as GAVETAS, lado a lado */
+/* ⭐ AS DUAS GAVETAS, LADO A LADO, IGUAIS E SEPARADAS (pedido do Marcos, 1º ano:
+   "dois quadrados grandes, iguais, alinhados, um pouco separados, de vidro").
+   Flex garante largura igual e o mesmo topo; o `gap` dá o respiro entre elas. */
+/* ⚠️ width:100% e align-self:stretch OBRIGATORIOS: o pai (.centro) e flex-column
+   com align-items:center, entao sem isto o .gavs vira shrink-to-fit e, quando a
+   gaveta nao tem texto (so figura), colapsa numa barra fina (medido: 56px). */
+.gavs{display:-webkit-box;display:-webkit-flex;display:flex;width:100%;
+  -webkit-align-self:stretch;align-self:stretch;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-box-align:stretch;-webkit-align-items:stretch;align-items:stretch;
+  -webkit-column-gap:26px;column-gap:26px;gap:26px;margin-top:12px;max-width:440px;
+  margin-left:auto;margin-right:auto}
+/* ⭐ A FICHA DA VEZ — carta HORIZONTAL e LARGA, de VIDRO FOSCO (pedido do Marcos,
+   ago/2026: "a de cima mais larga na horizontal e de vidro, mais bonita"):
+   imagem + valor + alto-falante lado a lado. A crianca clica OU arrasta ela ate
+   a gaveta. */
+.bandeja .pc{width:auto;min-width:264px;max-width:340px;min-height:118px;margin:0;
+  padding:12px 20px;
+  display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;
+  -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-column-gap:16px;column-gap:16px;gap:16px;font-size:22px;
+  /* ⚠️ LICAO PAGA (Teatro, ago/2026): o vidro fosco a .32/.15 ficava lindo sobre
+     o fundo CLARO da Lojinha, mas sobre o palco ESCURO do Teatro o texto escuro
+     caia a 2.76:1 (portao de contraste, piso 3). Vidro mais CLARO (.66/.5) le em
+     qualquer fundo e continua de vidro. */
+  background:-webkit-linear-gradient(top,rgba(255,255,255,.66),rgba(255,255,255,.5));
+  background:linear-gradient(180deg,rgba(255,255,255,.66),rgba(255,255,255,.5));
+  -webkit-backdrop-filter:blur(10px) saturate(1.1);backdrop-filter:blur(10px) saturate(1.1);
+  border:2px solid rgba(255,255,255,.65);border-radius:22px;
+  -webkit-box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.7);
+  box-shadow:0 8px 20px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.7);
+  -webkit-animation:clchega .3s ease;animation:clchega .3s ease}
+/* na ficha da vez a moldura nao e um quadrado creme: a propria carta de vidro
+   ja e a moldura, e a figura (grande) assenta nela, centralizada. */
+.bandeja .pcmold{width:88px;height:88px;background:transparent;-webkit-box-shadow:none;box-shadow:none;margin:0}
+.bandeja .pcfig{width:86px;height:86px}
+/* ⚠️ o `.pc` e quem pinta o vidro claro (rgba(255,253,246,.88)); o cor_fixa so
+   perdoa cor escura quando um ancestral NOMEADO no seletor pinta fundo, entao o
+   seletor tem que citar `.pc` (senao acusa "cor escura sem fundo proprio"). */
+.bandeja .pc .pctxt{margin-top:0;color:#20303f;text-shadow:0 1px 0 rgba(255,255,255,.5)}
+@-webkit-keyframes clchega{from{opacity:0;-webkit-transform:translateY(12px) scale(.93)}}
+@keyframes clchega{from{opacity:0;transform:translateY(12px) scale(.93)}}
+/* ⭐ A MOLDURA DA FIGURA: um quadro claro atras do desenho. Ele existe por dois
+   motivos — o desenho de fundo transparente ganha um chao para nao "flutuar" no
+   papel, e a moldura mantem o MESMO tamanho de ficha para ficha, entao a esteira
+   nao pula quando uma figura e mais alta que a outra. */
+.pcmold{position:relative;width:92px;height:92px;border-radius:22px;background:#f4ecd8;
+  -webkit-box-shadow:inset 0 2px 6px rgba(0,0,0,.12);box-shadow:inset 0 2px 6px rgba(0,0,0,.12);
+  margin-bottom:6px;display:-webkit-box;display:flex;
+  -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center}
+/* figura GRANDE: no 1o ano ela e a resposta, nao um enfeite (minimo 64px) */
+.pcfig{width:78px;height:78px;object-fit:contain;display:block}
+.pctxt{display:block;font-weight:800;letter-spacing:.5px;margin-top:2px;line-height:1.15}
+/* dentro da gaveta a ficha guardada encolhe: ali ela e RECIBO do que ja foi
+   feito, e quem precisa de espaco e a proxima ficha da esteira. */
+.cam .pcmold{width:48px;height:48px;border-radius:14px;margin-bottom:3px}
+.cam .pcfig{width:40px;height:40px}
+.cam .pc{font-size:12px;padding:7px 9px;min-width:0;border-radius:14px}
+/* ⭐ O ALTO-FALANTE da ficha da vez (pilar SONORA): no 1o ano tem quem ainda
+   nao le, e sem a voz a ficha vira adivinhacao. Fica ao LADO da ficha, nunca
+   dentro dela — dentro, o dedo que quer ouvir arrastaria a ficha sem querer. */
+.zap{display:-webkit-inline-box;display:inline-flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;width:54px;height:54px;margin-left:10px;
+  padding:0;border:0;border-radius:50%;background-color:#ffd54a;cursor:pointer;
+  -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f;vertical-align:middle}
+.zap:active{-webkit-transform:translateY(3px);transform:translateY(3px);
+  -webkit-box-shadow:0 1px 0 #c9a52f;box-shadow:0 1px 0 #c9a52f}
+/* ⚠️ o glifo do alto-falante e UM SVG embutido (licao paga na peca ouvir-achar:
+   desenho feito de bordas em elemento de tamanho zero nao se centra e fica
+   feio em qualquer zoom). Vetor, 1 arquivo so, nenhum pedido de rede. */
+.fone{display:block;width:26px;height:26px;
+  background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+  -webkit-background-size:26px 26px;background-size:26px 26px}
+/* o rodape que conta a historia da fase: quantos faltam e o que ja foi */
+/* ⚠️ ESTE TEXTO CARREGA A MESA DELE (ago/2026). Ele nao fica sobre o fundo
+   da atividade: fica sobre uma FAIXA COLORIDA do tema, que muda de
+   atividade para atividade. Cor fixa clara morria na Padaria; seguir o
+   `--texto` morria de novo, agora escuro sobre o marrom da faixa. A saida
+   e a terceira, e e a que o proprio portao recomenda: pintar o fundo
+   junto. Com mesa propria ele e legivel em qualquer tema. */
+.passo{display:block;text-align:center;font-size:11.5px;font-weight:700;
+  margin-top:8px;text-shadow:0 1px 3px rgba(0,0,0,.6);line-height:1.3;background:rgba(18,16,12,.62);border-radius:10px;padding:4px 10px;display:inline-block;color:#f7f3ea}
+/* GAVETA DE VIDRO: iguais (flex:1), grandes (min-height 172), com brilho e
+   desfoque de vidro. As duas ficam do mesmo tamanho e alinhadas pelo flex. */
+/* ⚠️ base do flex NAO pode ser 0 aqui: a gaveta ficou SEM texto (so figura, que
+   e absoluta), entao sem uma base ela colapsa numa barra fina. Base 40% + grow/
+   shrink cabe tanto p/ 2 gavetas (~50% cada) quanto p/ 3 (~33% cada). */
+.cam{position:relative;overflow:hidden;
+     -webkit-box-flex:1;-webkit-flex:1 1 40%;flex:1 1 40%;width:auto;font-size:15px;
+     -webkit-box-sizing:border-box;box-sizing:border-box;
+     background:rgba(255,255,255,.18);
+     background:-webkit-linear-gradient(top,rgba(255,255,255,.26),rgba(255,255,255,.12));
+     background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,.12));
+     -webkit-backdrop-filter:blur(10px) saturate(1.15);backdrop-filter:blur(10px) saturate(1.15);
+     border:2px solid rgba(255,255,255,.6);border-radius:22px;
+     -webkit-box-shadow:0 10px 22px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.75);
+     box-shadow:0 10px 22px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.75);
+     padding:14px 8px 16px;min-height:182px;cursor:pointer;
+     -webkit-transition:background .18s,border-color .18s,-webkit-transform .12s;
+     transition:background .18s,border-color .18s,transform .12s}
+.cam:hover{border-color:rgba(255,255,255,.85);-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+.cam.luz{border-color:#8fe07a;background:rgba(143,224,122,.22);
+  -webkit-animation:clbate .42s ease;animation:clbate .42s ease}
+@-webkit-keyframes clbate{40%{-webkit-transform:scale(1.035)}}
+@keyframes clbate{40%{transform:scale(1.035)}}
+/* gaveta revelada no 3o erro: borda grossa + a palavra na dica. Nunca so cor. */
+.cam.alvo{border-color:#ffd54a;background:rgba(255,213,74,.20)}
+/* ⭐ a FIGURA da gaveta (campo `img` do objeto da gaveta, opcional): quem nao le
+   reconhece a gaveta pelo desenho. Sem figura, a gaveta continua so com o
+   nome — nenhuma atividade antiga quebra. */
+.gfig{display:block;width:66px;height:66px;object-fit:contain;margin:0 auto 5px;position:relative;z-index:1}
+/* cabecalho da gaveta: o nome + o alto-falante lado a lado (nunca um em cima do
+   outro — o portao leiaute reprova botao sobre botao/texto). */
+.ghead{position:relative;z-index:2;display:-webkit-box;display:-webkit-flex;display:flex;
+   -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+   -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+   gap:6px;margin-bottom:6px}
+.gtit{-webkit-box-flex:0;-webkit-flex:0 1 auto;flex:0 1 auto;display:block;background:#3c6ee0;color:#fff;
+      font-size:13px;font-weight:800;border-radius:12px;padding:7px 8px;line-height:1.2}
+/* ⭐ MARCA D'AGUA DA GAVETA (pedido do Marcos, 1o ano): a crianca NAO LE
+   "moeda"/"nota", entao a gaveta tras uma figura grande e quase transparente —
+   moeda de um lado, cedula do outro — e ela reconhece pelo desenho. Fica ATRAS
+   das fichas guardadas (z-index 0) e nao rouba o toque (pointer-events:none). */
+/* ⚠️ a opacidade fica no CONTAINER, nao na img: a img tem a animacao `figentra`
+   (fade-in do motor) que termina em opacity:1 e sobrescreveria o valor estatico
+   dela. No container o efeito e garantido (medido na Lojinha, ago/2026). */
+.gwater{position:absolute;left:0;right:0;top:10px;bottom:10px;z-index:0;opacity:.12;
+   display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+   -webkit-box-pack:center;justify-content:center;pointer-events:none}
+/* imagem CENTRALIZADA e BEM FRACA (80% de transparencia; pedido do Marcos: "so
+   pra ser uma referencia, nao pode aparecer tao otica"). Quem diz o que e a
+   gaveta e o alto-falante; a figura fraca so ajuda a lembrar. */
+.gwater img{width:88%;max-width:168px;max-height:100%;-o-object-fit:contain;object-fit:contain}
+/* ⭐ ROTULO DE TEXTO da gaveta (quando NAO ha figura — atividade de texto, ex.:
+   PRONOME PESSOAL x DEMONSTRATIVO). Branco sobre uma pilula ESCURA PROPRIA.
+   ⚠️ LICAO PAGA (Lojinha, ago/2026): a gaveta e um vidro CLARO (rgba branca);
+   sobre o fundo escuro da loja a crianca via branco-sobre-escuro e passava. Numa
+   atividade de tema CLARO o mesmo branco caia para 1,18:1 — sumia. O texto nao
+   pode apostar no fundo da atividade: carrega a mesa escura DELE (rgba(18,22,12,.80)
+   -> >=4,5:1 com branco em qualquer tema). */
+.cam .gnome{position:relative;z-index:1;color:#fff;font-weight:800;font-size:18px;line-height:1.25;
+   text-align:center;padding:8px 12px;border-radius:14px;background:rgba(18,22,12,.80);
+   text-shadow:0 1px 4px rgba(0,0,0,.55)}
+/* ⭐ gaveta com figura fraca + NOME (classificar em GRUPOS): a faixa do nome
+   fica EMBAIXO, larga, longe do alto-falante do topo (senao o botao tapa a
+   palavra — portao do diretor de arte). Fonte fluida cabe "INVERTEBRADO" em
+   gaveta estreita (3 por tela) sem cortar. */
+.cam.temrot{-webkit-box-pack:end;-webkit-justify-content:flex-end;justify-content:flex-end;
+   display:-webkit-box;display:-webkit-flex;display:flex;
+   -webkit-box-orient:vertical;-webkit-box-direction:normal;
+   -webkit-flex-direction:column;flex-direction:column}
+.cam.temrot .gnome{margin-top:auto;font-size:clamp(12px,3.4vw,16px);padding:7px 8px;word-break:break-word}
+.cam .pc{position:relative;z-index:1}
+/* ⭐ ALTO-FALANTE DA GAVETA (pilar SONORA): quem nao le toca aqui e OUVE
+   "moeda" ou "nota". Fica no alto da gaveta e NAO deixa a ficha cair (para o
+   clique antes de virar "guardar na gaveta"). */
+.gzap{position:absolute;top:8px;right:8px;z-index:2;width:38px;height:38px;
+   padding:0;border:0;border-radius:50%;background-color:#ffd54a;cursor:pointer;
+   display:-webkit-inline-box;display:inline-flex;-webkit-box-align:center;align-items:center;
+   -webkit-box-pack:center;justify-content:center;
+   -webkit-box-shadow:0 3px 0 #c9a52f;box-shadow:0 3px 0 #c9a52f}
+.gzap:active{-webkit-transform:translateY(2px);transform:translateY(2px);
+   -webkit-box-shadow:0 1px 0 #c9a52f;box-shadow:0 1px 0 #c9a52f}
+.gzap .fone{width:22px;height:22px;-webkit-background-size:22px 22px;background-size:22px 22px}
+/* quem pediu menos movimento no sistema recebe menos movimento aqui */
+@media (prefers-reduced-motion:reduce){
+  .clcai,.bandeja .pc,.cam.luz{-webkit-animation:none;animation:none}
+  .pc,.pc:hover{-webkit-transition:none;transition:none}
+}
+/* tela baixa (o monitor da escola com as barras abertas): o que se TOCA
+   continua grande; encolhe a folga e a moldura, nunca o alvo. */
+@media(max-height:520px){
+  .hint{display:none}
+  .bandeja{min-height:132px;padding:6px}
+  .bandeja .pc{min-height:124px;width:142px}
+  .pcmold{width:70px;height:70px;border-radius:18px;margin-bottom:4px}
+  .pcfig{width:64px;height:64px}
+  .cam{min-height:116px}
+  .gfig{width:54px;height:54px}
+}
+/* ⚠️ LICAO PAGA (Museu, ago/2026): CELULAR ESTREITO (320px de LARGURA, nao de
+   altura). A ficha da vez tinha `min-width:264px` fixo — pensado para as duas
+   gavetas largas do 1o ano — e o `.bandeja` estourava na horizontal a 320px
+   MESMO com 2 gavetas. E, quando uma atividade usa 3 gavetas (classificar em
+   GRUPOS), as gavetas apertadas encolhiam a figura para 45px (o portao de
+   encaixe reprovava "PEQUENA DEMAIS"). Numa largura estreita a ficha vira
+   FLUIDA e as gavetas ganham menos folga, sem nunca encolher o alvo de toque. */
+@media(max-width:360px){
+  .bandeja{padding:6px 2px}
+  .bandeja .pc{min-width:0;width:100%;max-width:100%;-webkit-box-sizing:border-box;box-sizing:border-box;
+    font-size:18px;-webkit-column-gap:8px;column-gap:8px;gap:8px;padding:10px 10px}
+  .bandeja .pc .pctxt{white-space:normal;word-break:break-word}
+  .bandeja .pcmold{width:66px;height:66px}
+  .bandeja .pcfig{width:64px;height:64px}
+  .gavs{-webkit-column-gap:8px;column-gap:8px;gap:8px;max-width:100%;padding:0 2px;
+    -webkit-box-sizing:border-box;box-sizing:border-box}
+  .cam{padding:12px 4px 14px}
+  .gfig{width:54px;height:54px}
+  .gtit{font-size:11.5px;padding:6px 5px}
+}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (partes da planta, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS este bloco: as gavetas, as fichas e as três
+   dicas (dica -> apoio concreto -> revela). Duas ou três gavetas; mais que
+   isso a criança não segura na cabeça de uma vez.                          */
+/* `img` da GAVETA e OPCIONAL (vai vazio no exemplo de proposito, para o
+   montador aprender que o campo existe): com figura, a gaveta mostra o desenho
+   EM CIMA do nome — quem ainda nao le reconhece a gaveta pelo desenho. Sem
+   figura, fica so o nome, e nenhuma atividade antiga quebra. */
+/* `rot` (opcional): com `img` E `rot:true` a gaveta mostra a figura fraca ATRAS
+   e o NOME escrito na frente (classificar em grupos, onde o nome e o conteudo).
+   `voz` (opcional): o que o alto-falante da gaveta fala (default = o nome). */
+var GAVETAS=[
+  {k:"raiz",  n:"A RAIZ<br>(embaixo da terra)", img:"", voz:"raiz",  rot:false},
+  {k:"folha", n:"A FOLHA<br>(no ar, verde)",    img:"", voz:"folha", rot:false}
+];
+/* `img` e OPCIONAL e vai VAZIO no exemplo de proposito: e assim que o montador
+   aprende que o campo existe (ele confere os campos da fase contra este bloco).
+   Com figura, a ficha mostra o desenho em cima da palavra — no 1o ano tem quem
+   ainda nao le. Sem figura, continua so a palavra, e nenhuma atividade antiga
+   quebra. */
+var FICHAS=[
+  {t:"BEBE A ÁGUA",     alvo:"raiz",  img:""},
+  {t:"SEGURA A PLANTA", alvo:"raiz",  img:""},
+  {t:"PEGA O SOL",      alvo:"folha", img:""},
+  {t:"FAZ O ALIMENTO",  alvo:"folha", img:""}
+];
+/* ⚠️⚠️ RESTO DE CLONE CRAVADO NA PECA (ago/2026) — o pior tipo, porque nao da
+   erro nenhum e viaja para TODA atividade que usar esta mecanica.
+   O balao desta peca dizia, em texto fixo: *"Cada ficha conta uma TAREFA DA
+   PLANTA. Guarde a ficha na parte que faz essa tarefa."* — enunciado do Jardim
+   do Broto, de onde a peca foi clonada. Na Padaria das Letras a crianca lia
+   sobre planta enquanto separava BOLACHA e MAMAO. Eu so vi porque fotografei a
+   tela; nenhum portao pega texto que esta certo em portugues.
+   A REGRA: enunciado e CONTEUDO, entao mora na gaveta — nunca no corpo da
+   peca. O texto abaixo e so o exemplo, e e neutro de proposito. */
+var ENUN="Cada ficha vai numa gaveta. Toque na ficha e depois na gaveta certa.";
+var DICAS=[
+  "Pense onde essa coisa acontece: debaixo do chão ou no ar?",
+  "A RAIZ fica na terra: ela puxa a água e segura a planta. A FOLHA fica no ar: ela recebe o sol e faz o alimento.",
+  "Olhe a gaveta que está com a borda amarela: é ali que esta ficha mora."
+];
+
+var feitos=0;          /* fichas ja guardadas */
+var fila=[], vez=0;    /* a esteira: a ordem das fichas e em qual estamos */
+var passo=null;        /* o rodape "doce 2 de 6 - ja guardados: ..." */
+var marcada=null;      /* a ficha escolhida pelo toque simples */
+var barraP=null;       /* a barrinha de progresso, para andar sem refazer a tela */
+var ger=0;             /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a ficha que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.  */
+var ultimoToque=0;
+var pegou=null, fantasma=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+/* ⭐⭐ A VOZ (pilar SONORA). Quem toca a voz DE VERDADE e a ponte do integrador
+   (`_padrao/ESQUELETO/integrar.py`), que injeta um `var diz = function(txt)`
+   ligado nas gravacoes da casa (Edge TTS) ANTES do corpo da peca. Aqui a peca
+   so PEDE — e pede protegida por `typeof`, porque na bancada, sozinha, nao ha
+   gravacao nenhuma e nada pode estourar.
+   ⚠️ NUNCA chamar `speechSynthesis` daqui: a voz-robo do navegador briga com a
+   voz da casa (dois falando junto, defeito que o Marcos ja ouviu) e o portao
+   `_qa/vozrobo.py` reprova. Tudo o que a voz diz esta TAMBEM escrito na tela,
+   entao PC sem caixa de som continua jogando a peca inteira. */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  var t=semTag(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* a FIGURA. `img` chega como o NOME do arquivo ("raiz" -> img/raiz.png), que e
+   a convencao da casa; um endereco pronto (com "/" ou "data:") tambem serve. */
+function figura(nome,cls){
+  var s=String(nome), im=el("img",cls);
+  im.src=(s.indexOf("/")>=0||s.indexOf("data:")===0)?s:("img/"+s+".png");
+  im.alt="";
+  return im;
+}
+
+function pecaClassificar(){
+  feitos=0; marcada=null; pegou=null; arrastando=false; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","ONDE CADA UMA MORA?"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* ⭐ A ESTEIRA — UMA FICHA POR VEZ (decisao do Marcos, ago/2026: *"pode ficar
+     mais bonita, intuitiva, moderna e profissional"*, e ele deixou a escolha
+     comigo). Antes a crianca encarava SEIS coisas de uma vez: quatro fichas,
+     duas gavetas e o enunciado. Agora vem UMA ficha, grande, e so ha duas
+     escolhas — uma ideia por tela (carga cognitiva, Sweller). Ela erra menos
+     por confusao e mais por CONTEUDO, que e o erro que ensina.
+     ⚠️ o gesto de ARRASTAR nao se perde: a ficha unica continua arrastavel, e
+     o toque-toque continua valendo. Trocar a mecanica para "escolher" teria
+     estreitado o leque que o `_qa/padrao.py` mede. */
+  fila=[]; vez=0;
+  var i;
+  for(i=0;i<FICHAS.length;i++) fila.push(FICHAS[i]);
+  baguncar(fila);
+  var band=el("div","bandeja"); band.id="esteira";
+  c.appendChild(band);
+
+  var gs=el("div","gavs");
+  for(i=0;i<GAVETAS.length;i++) gs.appendChild(fazGaveta(GAVETAS[i]));
+  c.appendChild(gs);
+
+  passo=el("div","passo","");
+  c.appendChild(passo);
+  /* ⚠️ POUCO TEXTO para os pequenos (regra do Marcos, ago/2026: "eles nao leem
+     ainda, nao adianta muito texto explicativo"). No modo so-imagem a dica fica
+     curtinha; quem carrega a instrucao e a NARRACAO e o alto-falante, nao a
+     frase. Nas turmas que ja leem, a dica completa (as duas portas de entrada). */
+  var _soImg=true, _hi; for(_hi=0;_hi<FICHAS.length;_hi++){ if(FICHAS[_hi].pal||FICHAS[_hi].sen){ _soImg=false; break; } }
+  c.appendChild(el("div","hint", _soImg
+    ? "Toque na ficha e leve at&#233; a gaveta."
+    : "Toque na ficha e depois na gaveta. Tamb&#233;m d&#225; para arrastar com o dedo ou com o mouse. No alto-falante amarelo d&#225; para ouvir a palavra de novo."));
+  t.appendChild(c);
+  app.appendChild(t);
+  poeAVez();
+}
+
+/* poe na esteira a ficha da vez. Fase acabada = esteira vazia. */
+function poeAVez(){
+  var e=document.getElementById("esteira");
+  if(!e) return;
+  e.innerHTML="";
+  if(vez<fila.length){
+    var f=fila[vez];
+    /* ⭐ o alto-falante fica DENTRO da carta da vez (imagem + valor + som, na
+       horizontal). ⚠️ tem que ser FILHO do `.pc`: se ficar como irmao, o motor
+       (poeVozes/poeZap) nao o enxerga e ADICIONA um segundo — dois alto-falantes
+       na mesma ficha (defeito medido na Lojinha, ago/2026). Dentro do `.pc` o
+       motor reaproveita este e so troca a fiacao. */
+    var fichaEl=fazFicha(f);
+    fichaEl.appendChild(fazZap(f));
+    e.appendChild(fichaEl);
+    /* e a ficha JA CHEGA falando o proprio nome — e o que substitui a leitura
+       para quem ainda nao le (a figura mostra, a voz diz, a palavra fica). */
+    fala(f.t);
+  }
+  if(passo){
+    var ja=[], i;
+    for(i=0;i<vez;i++) ja.push(fila[i].t);
+    /* ⚠️ RESTO DE CLONE que morava aqui (ago/2026): o rodape dizia "doce 2 de
+       6" — palavra da Doceria, de onde este contador veio. Numa fase de plantas
+       a crianca lia "doce 1 de 4". Contador e da PECA, entao a palavra dele tem
+       que ser neutra. */
+    passo.innerHTML = (vez<fila.length ? ("ficha "+(vez+1)+" de "+fila.length) : "todas guardadas")
+      + (ja.length ? (" &middot; j&aacute; guardadas: "+ja.join(", ")) : "");
+  }
+}
+
+/* o alto-falante da ficha da vez. E BOTAO de verdade (54px, bem acima dos 44
+   minimos) e nao responde como resposta: so fala. */
+function fazZap(f){
+  var z=el("button","zap","");
+  z.setAttribute("type","button");
+  z.setAttribute("aria-label","Ouvir a palavra");
+  z.appendChild(el("i","fone",""));
+  z.onclick=function(ev){
+    var e2=ev||window.event;
+    if(e2&&e2.stopPropagation) e2.stopPropagation(); else if(e2) e2.cancelBubble=true;
+    sTap(); fala(f.t);
+  };
+  return z;
+}
+
+function fazFicha(f){
+  /* ⭐ a FIGURA junto da palavra: no 1o ano tem quem ainda nao le, e a ficha
+     so com texto ("BOLACHA") virava adivinhacao. Se a fase nao trouxer figura,
+     a ficha continua so com a palavra — nenhuma atividade antiga quebra. */
+  var p=el("div","pc","");
+  if(f.img){
+    var mo=el("div","pcmold","");
+    mo.appendChild(figura(f.img,"pcfig"));
+    p.appendChild(mo);
+  }
+  p.appendChild(el("b","pctxt",f.t));
+  /* ficha e gaveta publicam a MESMA chave: e assim que o auditor-jogador
+     consegue terminar a fase (e so ele olha para isto). */
+  p.setAttribute("data-qa",f.alvo);
+  p.onclick=function(){
+    if(cliqueDeArrasto()) return;          /* este clique e o rabo do arrasto */
+    if(p.className.indexOf("usada")>=0) return;
+    seleciona(p);                          /* o som de pegar sai la dentro */
+  };
+  p.onmousedown=function(ev){
+    if(souDedo()) return;                  /* mouse FANTASMA do celular: ignora */
+    comeca(p,ev.clientX,ev.clientY);
+  };
+  p.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(p,d.clientX,d.clientY);
+  },false);
+  return p;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, la embaixo, e so enquanto ha ficha na mao.        */
+function comeca(p,x,y){
+  if(p.className.indexOf("usada")>=0) return;
+  pegou=p; x0=x; y0=y; arrastando=false;
+  seleciona(p);
+}
+
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant",pegou.innerHTML);
+    document.body.appendChild(fantasma);
+  }
+  fantasma.style.left=(x-52)+"px";
+  fantasma.style.top=(y-24)+"px";
+}
+
+function solta(x,y){
+  if(!pegou) return;
+  var p=pegou; pegou=null;
+  if(fantasma&&fantasma.parentNode){ fantasma.parentNode.removeChild(fantasma); }
+  fantasma=null;
+  if(!arrastando) return;                  /* foi so um toque: a selecao ja valeu */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")<0) alvo=alvo.parentNode;
+  if(alvo&&alvo.nodeType===1&&String(alvo.className).indexOf("cam")>=0) guarda(p,alvo);
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();      /* so aqui, e so com ficha na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+function seleciona(p){
+  var a=app.getElementsByClassName("pc"), i;
+  for(i=0;i<a.length;i++)
+    if(a[i].className.indexOf("usada")<0) a[i].className="pc";
+  p.className="pc sel";
+  /* ⭐ o SOM DO GESTO: a ficha saiu do lugar. Curto e baixo — a crianca fica
+     uma aula inteira aqui, e som que dura vira barulho. Vale para os TRES
+     caminhos (mouse, dedo e toque simples), porque todos passam por aqui. */
+  if(typeof sPega==="function") sPega(); else sTap();
+  marcada=p;
+}
+
+function fazGaveta(g){
+  var d=el("div","cam");
+  if(g.img && g.rot) d.className="cam temrot";   /* figura fraca + NOME em faixa embaixo */
+  d.setAttribute("data-qa",g.k);
+  /* ⭐ SEM TEXTO na gaveta (pedido do Marcos, 1o ano nao le): a identidade da
+     gaveta e a FIGURA do dinheiro — grande, CENTRALIZADA e levemente
+     transparente (~20%) — moeda numa, cedula na outra. A crianca reconhece
+     pelo desenho e, se precisar, toca no alto-falante e OUVE o nome. */
+  if(g.img){ var w=el("div","gwater"); w.appendChild(figura(g.img,"")); d.appendChild(w); }
+  /* ⚠️ LICAO PAGA (Teatro das Palavras, 5o ano, ago/2026): a gaveta SO mostrava
+     a figura (regra do 1o ano, que nao le). Numa atividade de texto — separar
+     PRONOME PESSOAL x DEMONSTRATIVO — as gavetas nao tem figura (img:"") e
+     ficavam DUAS CAIXAS PRETAS VAZIAS: a crianca nao sabia qual era qual. Quando
+     nao ha figura, a gaveta mostra o NOME escrito. Gaveta com figura (Lojinha)
+     nao muda: continua so a figura + alto-falante.
+     ⚠️⚠️ LICAO PAGA (Museu, 3o ano, ago/2026): CLASSIFICAR EM GRUPOS. A gaveta
+     "MAMIFERO/AVE/REPTIL" e o proprio conteudo que a crianca esta aprendendo — o
+     NOME tem que estar VISIVEL, nao adianta so a marca d'agua a 12% (um cachorro
+     apagado nao diz "mamifero" para quem esta descobrindo o que e mamifero). Com
+     `rot:true` a gaveta mostra a figura fraca ATRAS e o rotulo escrito NA FRENTE.
+     Sem `rot` (Lojinha 1o ano) continua so a figura, exatamente como antes. */
+  if(!g.img || g.rot){ d.appendChild(el("div","gnome", g.n)); }
+  /* alto-falante: toca e OUVE o nome da gaveta ("moeda"/"nota"). No canto, sem
+     texto por perto (nao ha o que sobrepor). Para o clique (senao viraria
+     "guardar a ficha aqui"). */
+  var vz=el("button","gzap"); vz.setAttribute("aria-label","Ouvir");
+  vz.appendChild(el("span","fone"));
+  vz.setAttribute("data-voz", g.voz || semTag(g.n));
+  vz.onclick=function(ev){ if(ev){ if(ev.stopPropagation)ev.stopPropagation(); }
+    sTap(); fala(g.voz || semTag(g.n)); };
+  d.appendChild(vz);
+  d.onclick=function(){
+    if(cliqueDeArrasto()) return;
+    if(!marcada){
+      /* ⭐ tocou na gaveta sem ficha na mao: em vez de nao acontecer nada, a
+         gaveta DIZ o proprio nome. A crianca que ainda nao le descobre o que
+         esta escrito ali sem precisar acertar nada. */
+      sTap(); fala(g.n);
+      mostraDica("Primeiro toque na ficha lá de cima. Depois toque na gaveta.");
+      return;
+    }
+    guarda(marcada,d);
+  };
+  return d;
+}
+
+function guarda(p,g){
+  if(!p||!g) return;
+  if(p.className.indexOf("usada")>=0) return;
+  if(g.getAttribute("data-qa")===p.getAttribute("data-qa")){
+    if(typeof sPoe==="function") sPoe();   /* o peso caindo na bandeja */
+    sCerto();
+    /* ⭐ a ficha CAI na gaveta com um pulinho curto (0,34s) e a gaveta responde
+       com uma batidinha: o encaixe se VE, nao so se ouve. */
+    p.className="pc usada clcai";
+    p.onclick=null; p.onmousedown=null;
+    g.appendChild(p);
+    g.className="cam luz";
+    marcada=null;
+    feitos++;
+    vez++;
+    var geP=ger;
+    setTimeout(function(){ if(geP===ger) poeAVez(); },300);
+    if(barraP) barraP.style.width=Math.round(feitos*100/FICHAS.length)+"%";
+    var gg=g, ge=ger;
+    setTimeout(function(){ if(ge!==ger) return; if(gg.className.indexOf("luz")>=0) gg.className="cam"; },500);
+    if(feitos>=FICHAS.length){
+      setTimeout(function(){
+        if(ge!==ger) return;
+        mostraBanner("Você guardou todas as tarefas no lugar certo!", fimDaPeca);
+      },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, a ficha volta para a mão e o andaime CRESCE. */
+  sErro();
+  p._err=(p._err||0)+1;
+  var dtx=DICAS[Math.min(p._err,DICAS.length)-1];
+  mostraDica(dtx);
+  /* ⭐ a AJUDA TAMBEM E FALADA: quem errou e justamente quem pode nao conseguir
+     ler a dica. Escrita para quem le, dita para quem ainda nao le. */
+  fala(dtx);
+  if(p._err>=3) revela(p);
+}
+
+/* 3º erro: acende a gaveta certa e DEIXA seguir — é o que garante que a peça
+   nunca trava. A informação também vai escrita na dica (nada só na cor).   */
+function revela(p){
+  var a=app.getElementsByClassName("cam"), i, k=p.getAttribute("data-qa");
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")===k) a[i].className="cam alvo";
+    else a[i].className="cam";
+  }
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Todas as "+FICHAS.length+" fichas estão na gaveta certa."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaClassificar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça CLASSIFICAR: mouse, dedo e toque simples, os três."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaClassificar();
+</script>
+</body></html>

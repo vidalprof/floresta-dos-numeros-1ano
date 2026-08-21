@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Teste — 3D fofo (arredondado, com sombra)</title>
+<style>
+  html,body{margin:0;height:100%;overflow:hidden;background:linear-gradient(#cdeeff,#eef9ff);font-family:system-ui,Arial;touch-action:none}
+  canvas{display:block}
+  #fps{position:fixed;left:10px;top:10px;z-index:9;background:rgba(10,25,40,.6);color:#8ef2b0;font:800 13px monospace;padding:5px 9px;border-radius:8px;pointer-events:none}
+  #cont{position:fixed;left:50%;top:12px;transform:translateX(-50%);z-index:9;background:rgba(120,72,20,.92);color:#ffe9b0;font:800 19px system-ui;padding:7px 15px;border-radius:12px;border:2px solid #ffd27a;pointer-events:none}
+  #hint{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);z-index:9;background:rgba(255,255,255,.92);color:#173a52;font:600 13px system-ui;padding:8px 14px;border-radius:12px;pointer-events:none;text-align:center;max-width:88vw}
+</style>
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+</head><body>
+<div id="fps">FPS: --</div>
+<div id="cont">🥥 0</div>
+<div id="hint">Arraste pra girar a câmera • WASD/setas pra andar • toque nos cocos</div>
+<script type="module">
+import * as THREE from 'three';
+let W=innerWidth,H=innerHeight,RQ=0.9;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0xbfe9ff);
+scene.fog=new THREE.Fog(0xbfe9ff,26,60);
+const camera=new THREE.PerspectiveCamera(45,W/H,0.1,200);
+const renderer=new THREE.WebGLRenderer({antialias:true,powerPreference:'low-power'});
+renderer.setPixelRatio(1);
+renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+function resize(){W=innerWidth;H=innerHeight;camera.aspect=W/H;camera.updateProjectionMatrix();
+  renderer.domElement.style.width=W+'px';renderer.domElement.style.height=H+'px';renderer.setSize(Math.round(W*RQ),Math.round(H*RQ),false);}
+resize();addEventListener('resize',resize);
+
+// ---------- LUZ (o segredo do "fofo de verdade": luz macia + sombra) ----------
+scene.add(new THREE.HemisphereLight(0xffffff,0x89c47a,0.85));
+const sun=new THREE.DirectionalLight(0xfff2d0,1.05);
+sun.position.set(14,22,9);sun.castShadow=true;
+sun.shadow.mapSize.set(1024,1024);sun.shadow.bias=-0.0006;
+const sc=sun.shadow.camera;sc.left=-14;sc.right=14;sc.top=14;sc.bottom=-14;sc.near=1;sc.far=60;
+scene.add(sun);scene.add(sun.target);
+
+// ---------- helpers ----------
+function mat(c){return new THREE.MeshLambertMaterial({color:c});}
+function mk(geo,c,cast,rec){const m=new THREE.Mesh(geo,mat(c));if(cast)m.castShadow=true;if(rec)m.receiveShadow=true;return m;}
+const R=6;
+
+// ---------- ilha (areia + grama arredondadas) + água ----------
+const world=new THREE.Group();scene.add(world);
+const areia=mk(new THREE.CylinderGeometry(R+0.7,R+0.2,1.0,44),0xf1dca0,false,true);areia.position.y=-0.5;world.add(areia);
+const grama=mk(new THREE.CylinderGeometry(R-0.3,R-0.1,0.7,44),0x8ed36b,false,true);grama.position.y=0.05;world.add(grama);
+// pedrinhas fofas (baixo-poli arredondado)
+for(const[px,pz,s,c]of[[3.4,-2.2,0.5,0x9aa3ad],[-3.6,2.0,0.42,0xaab0b8],[1.2,3.6,0.36,0x99a0a8]]){
+  const r=mk(new THREE.IcosahedronGeometry(s,0),c,true,false);r.position.set(px,0.5,pz);r.rotation.set(1,0.6,0.3);world.add(r);}
+// água
+const agua=mk(new THREE.CircleGeometry(60,48),0x66c5e8,false,false);agua.rotation.x=-Math.PI/2;agua.position.y=-0.85;agua.material.transparent=true;agua.material.opacity=0.96;scene.add(agua);
+// espuma clarinha na beira
+const foam=mk(new THREE.TorusGeometry(R+0.55,0.28,10,48),0xdff6ff,false,false);foam.rotation.x=-Math.PI/2;foam.position.y=-0.5;scene.add(foam);
+
+// ---------- palmeira fofa ----------
+function palmeira(px,pz){const g=new THREE.Group();
+  const tr=mk(new THREE.CylinderGeometry(0.28,0.42,3.4,10),0x9a6b3f,true,false);tr.position.y=1.7;tr.rotation.z=0.12;g.add(tr);
+  for(let i=0;i<6;i++){const l=mk(new THREE.SphereGeometry(1.0,10,8),i%2?0x6fc26a:0x5fb35c,true,false);
+    const a=i/6*6.28;l.position.set(Math.cos(a)*1.1,3.5+Math.sin(i)*0.15,Math.sin(a)*1.1);l.scale.set(1,0.55,1);g.add(l);}
+  const top=mk(new THREE.SphereGeometry(0.9,10,8),0x6fc26a,true,false);top.position.set(0.3,3.9,0);top.scale.set(1,0.6,1);g.add(top);
+  g.position.set(px,0.4,pz);world.add(g);return g;}
+palmeira(-3.2,-2.6);palmeira(3.0,2.8);
+
+// ---------- barco fofo (parece barco: casco curvo + vela) ----------
+function barco(px,pz){const g=new THREE.Group();
+  const casco=mk(new THREE.CapsuleGeometry(0.72,1.7,8,16),0xb06a3a,true,false);casco.rotation.x=Math.PI/2;casco.scale.set(1.15,1.0,0.9);casco.position.y=0.15;g.add(casco);
+  const borda=mk(new THREE.TorusGeometry(0.9,0.13,10,26),0x8a5230,true,false);borda.rotation.x=Math.PI/2;borda.scale.set(1.15,1.55,1);borda.position.y=0.5;g.add(borda);
+  const dentro=mk(new THREE.CapsuleGeometry(0.5,1.5,6,12),0x6b4020,false,false);dentro.rotation.x=Math.PI/2;dentro.scale.set(1.1,1,0.85);dentro.position.y=0.45;g.add(dentro);
+  const mastro=mk(new THREE.CylinderGeometry(0.07,0.09,2.6,8),0x7a5230,true,false);mastro.position.set(0,1.55,0);g.add(mastro);
+  const vela=mk(new THREE.BoxGeometry(0.08,1.3,1.15),0xfbf3e0,true,false);vela.position.set(0.03,1.7,0.12);g.add(vela);
+  const bandeira=mk(new THREE.ConeGeometry(0.13,0.4,3),0xe25a4a,true,false);bandeira.position.set(0,2.85,0);bandeira.rotation.z=-Math.PI/2;g.add(bandeira);
+  g.position.set(px,-0.15,pz);g.scale.setScalar(0.9);g.rotation.y=0.5;world.add(g);g.userData.by=-0.15;return g;}
+const meuBarco=barco(-1.2,4.9);
+
+// ---------- personagem fofo e ARREDONDADO ----------
+function heroi(){const g=new THREE.Group();const teal=0x59c6e0,dark=0x3f9fbf,red=0xe25a4a;
+  const corpo=mk(new THREE.CapsuleGeometry(0.5,0.55,8,16),teal,true,false);corpo.position.y=0.95;g.add(corpo);
+  const barriga=mk(new THREE.SphereGeometry(0.34,14,12),0xd9f4fb,true,false);barriga.position.set(0,0.9,0.34);barriga.scale.set(1,1.15,0.5);g.add(barriga);
+  const cabeca=mk(new THREE.SphereGeometry(0.56,18,16),teal,true,false);cabeca.position.y=1.75;g.add(cabeca);
+  const olhoL=mk(new THREE.SphereGeometry(0.15,12,10),0xffffff,false,false);olhoL.position.set(-0.2,1.82,0.46);g.add(olhoL);
+  const olhoR=olhoL.clone();olhoR.position.x=0.2;g.add(olhoR);
+  const pupL=mk(new THREE.SphereGeometry(0.07,10,8),0x21303a,false,false);pupL.position.set(-0.2,1.82,0.58);g.add(pupL);
+  const pupR=pupL.clone();pupR.position.x=0.2;g.add(pupR);
+  const patch=mk(new THREE.CircleGeometry(0.17,16),0x14141a,false,false);patch.position.set(0.22,1.9,0.53);patch.rotation.y=0;g.add(patch);
+  const banda=mk(new THREE.TorusGeometry(0.5,0.12,10,20),red,true,false);banda.position.set(0,2.05,0);banda.rotation.x=1.35;g.add(banda);
+  const bico=mk(new THREE.ConeGeometry(0.14,0.3,10),0xf2b23a,true,false);bico.position.set(0,1.66,0.56);bico.rotation.x=Math.PI/2;g.add(bico);
+  const braL=mk(new THREE.CapsuleGeometry(0.14,0.3,6,12),teal,true,false);braL.position.set(-0.6,1.0,0);braL.rotation.z=0.4;g.add(braL);
+  const braR=braL.clone();braR.position.x=0.6;braR.rotation.z=-0.4;g.add(braR);
+  const perL=mk(new THREE.CapsuleGeometry(0.16,0.28,6,12),dark,true,false);perL.position.set(-0.24,0.35,0);g.add(perL);
+  const perR=perL.clone();perR.position.x=0.24;g.add(perR);
+  g.position.set(0,0,0);world.add(g);
+  return {g,perL,perR,braL,braR};}
+const V=heroi();const hero=V.g;
+// sombra de contato extra (mancha macia) — reforça o "pé no chão"
+const blob=mk(new THREE.CircleGeometry(0.6,20),0x2e6b3a,false,false);blob.material.transparent=true;blob.material.opacity=0.22;blob.rotation.x=-Math.PI/2;scene.add(blob);
+
+// ---------- cocos fofos (esferas com casca + tufo) ----------
+const cocos=[];
+function coco(px,pz){const g=new THREE.Group();
+  const c=mk(new THREE.SphereGeometry(0.42,16,14),0x8a5a2a,true,false);g.add(c);
+  const base=mk(new THREE.SphereGeometry(0.3,12,10),0x5f3a1a,false,false);base.position.y=-0.18;base.scale.set(1,0.6,1);g.add(base);
+  for(const[ex,ey]of[[-0.13,0.05],[0.13,0.05],[0,-0.12]]){const o=mk(new THREE.SphereGeometry(0.05,8,6),0x2a1a0e,false,false);o.position.set(ex,ey,0.38);g.add(o);}
+  const tufo=mk(new THREE.ConeGeometry(0.12,0.22,7),0x4a2e18,true,false);tufo.position.y=0.42;g.add(tufo);
+  g.position.set(px,0.55,pz);g.userData={by:0.55,ph:Math.random()*6.28,done:false};world.add(g);cocos.push(g);return g;}
+for(const[px,pz]of[[2.6,-0.6],[-1.4,-3.2],[3.2,1.6],[-3.4,0.6],[0.8,3.0],[1.9,-2.8]])coco(px,pz);
+
+// ---------- interação ----------
+let camAngle=0.7,camElev=0.62;const camDist=15;
+const keys={};addEventListener('keydown',e=>keys[e.key.toLowerCase()]=true);addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
+const vpos={x:0,z:0};
+let contados=0;const contEl=document.getElementById('cont');
+const conf=[];
+function confete(x,y,z){for(let i=0;i<14;i++){const c=mk(new THREE.BoxGeometry(0.12,0.12,0.12),[0xffd24a,0x59c6e0,0xe25a4a,0x8ed36b][i%4],false,false);
+  c.position.set(x,y,z);const a=Math.random()*6.28;c.userData={vx:Math.cos(a)*2.5,vz:Math.sin(a)*2.5,vy:4+Math.random()*2,life:1.0};scene.add(c);conf.push(c);}}
+const ray=new THREE.Raycaster(),ndc=new THREE.Vector2();
+function pegaCoco(g){if(g.userData.done)return;g.userData.done=true;g.userData.pop=1;contados++;contEl.textContent='🥥 '+contados;confete(g.position.x,g.position.y+0.4,g.position.z);}
+let dragging=false,lx=0,ly=0,moved=0;
+renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;lx=e.clientX;ly=e.clientY;moved=0;});
+addEventListener('pointermove',e=>{if(!dragging)return;const dx=e.clientX-lx,dy=e.clientY-ly;lx=e.clientX;ly=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);
+  camAngle-=dx*0.008;camElev=Math.min(1.4,Math.max(0.3,camElev+dy*0.006));});
+addEventListener('pointerup',e=>{if(dragging&&moved<8){ndc.x=(e.clientX/W)*2-1;ndc.y=-(e.clientY/H)*2+1;ray.setFromCamera(ndc,camera);
+  const hit=ray.intersectObjects(cocos.filter(c=>!c.userData.done),true);if(hit.length){let o=hit[0].object;while(o.parent&&!o.userData.by)o=o.parent;pegaCoco(o);}}dragging=false;});
+
+// ---------- loop ----------
+let t=0,frames=0,acc=0,last=performance.now();const fpsEl=document.getElementById('fps');
+function loop(){const now=performance.now(),dt=Math.min(0.05,(now-last)/1000);t+=dt;
+  const cs=Math.sin(camAngle),cc=Math.cos(camAngle);let dx=0,dz=0;
+  if(keys['arrowup']||keys['w']){dx-=cs;dz-=cc;}if(keys['arrowdown']||keys['s']){dx+=cs;dz+=cc;}
+  if(keys['arrowleft']||keys['a']){dx-=cc;dz+=cs;}if(keys['arrowright']||keys['d']){dx+=cc;dz-=cs;}
+  const moving=dx||dz;
+  if(moving){const n=Math.hypot(dx,dz);dx/=n;dz/=n;const nx=vpos.x+dx*4*dt,nz=vpos.z+dz*4*dt;if(Math.hypot(nx,nz)<R-1.0){vpos.x=nx;vpos.z=nz;}
+    hero.rotation.y=Math.atan2(dx,dz);const ph=t*9;V.perL.rotation.x=Math.sin(ph)*0.6;V.perR.rotation.x=-Math.sin(ph)*0.6;V.braL.rotation.x=-Math.sin(ph)*0.5;V.braR.rotation.x=Math.sin(ph)*0.5;}
+  else{V.perL.rotation.x*=0.8;V.perR.rotation.x*=0.8;V.braL.rotation.x*=0.8;V.braR.rotation.x*=0.8;}
+  hero.position.set(vpos.x,0.42+(moving?Math.abs(Math.sin(t*9))*0.08:Math.sin(t*2.2)*0.03),vpos.z);
+  blob.position.set(vpos.x,-0.28,vpos.z);
+  // pega coco por proximidade
+  for(const g of cocos){if(!g.userData.done&&Math.hypot(g.position.x-vpos.x,g.position.z-vpos.z)<1.1)pegaCoco(g);}
+  // cocos respiram / pop
+  for(const g of cocos){if(g.userData.pop>0){g.userData.pop-=dt*2;g.rotation.y+=dt*8;g.position.y=g.userData.by+Math.sin((1-g.userData.pop)*Math.PI)*1.0;if(g.userData.pop<=0)g.visible=false;}
+    else if(!g.userData.done){g.position.y=g.userData.by+Math.sin(t*2+g.userData.ph)*0.06;}}
+  // barco balança, água brilha, palmeira balança
+  meuBarco.position.y=meuBarco.userData.by+Math.sin(t*1.3)*0.06;meuBarco.rotation.z=Math.sin(t*1.1)*0.03;
+  agua.material.opacity=0.9+0.06*Math.sin(t*1.4);
+  // confete
+  for(let i=conf.length-1;i>=0;i--){const c=conf[i],u=c.userData;c.position.x+=u.vx*dt;c.position.z+=u.vz*dt;c.position.y+=u.vy*dt;u.vy-=12*dt;c.rotation.x+=dt*8;c.rotation.y+=dt*6;u.life-=dt;
+    if(u.life<=0){scene.remove(c);conf.splice(i,1);}}
+  const hd=Math.cos(camElev)*camDist,vy=Math.sin(camElev)*camDist;
+  camera.position.set(vpos.x+cs*hd,1.5+vy,vpos.z+cc*hd);camera.lookAt(vpos.x,1.2,vpos.z);
+  sun.target.position.set(vpos.x,0,vpos.z);
+  renderer.render(scene,camera);
+  frames++;acc+=now-last;last=now;
+  if(acc>=500){const fps=Math.round(frames*1000/acc);fpsEl.textContent='FPS: '+fps;frames=0;acc=0;window.__fps=fps;
+    if(fps<22&&renderer.shadowMap.enabled){renderer.shadowMap.enabled=false;scene.traverse(o=>{if(o.material)o.material.needsUpdate=true;});}   // PC fraco: desliga sombra sozinho
+    else if(fps<20&&RQ>0.6){RQ=0.6;resize();}}
+  requestAnimationFrame(loop);}
+loop();window.__ready=true;
+window.__pega=(i)=>{const c=cocos[i];if(c)pegaCoco(c);};
+</script>
+</body></html>

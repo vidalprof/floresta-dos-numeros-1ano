@@ -1,0 +1,30 @@
+  for(var i=0;i<ORDEM.length;i++){ var ch=ORDEM[i], f=FASES[ch], aberta=liberada(ch), feito=concluidas[ch]===true;
+    var estado=feito?'done':(aberta?'atual':'lock'), lado=(i%2===0)?'esq':'dir';
+    var an=ANIMAIS[ch];
+    var click=aberta?' onclick="iniciarFase(\''+ch+'\')"':' onclick="avisarBloqueio()"';
+    var ehAtual=(aberta && !feito);
+    html+='<div class="trilha-linha '+lado+'">';
+    /* o lugar da floresta */
+    html+='<div class="lugar '+estado+'"'+click+'>';
+    /* cenario do lugar */
+    var _cen=CENARIO[ch]; var _cimg=(_cen&&CENIMG[_cen])?CENIMG[_cen]:'';
+    if(_cimg) html+='<img class="lugar-cenario float-suave-f" src="'+_cimg+'" alt="">';
+    /* animal companheiro do lugar */
+    html+='<span class="lugar-animal bob-suave-f">'+(an?svgAnimal(an.tipo,40):'')+'</span>';
+    /* marca: estrela recuperada, número, ou cadeado */
+    if(feito) html+='<span class="lugar-estrela">'+svgEmo("estrela")+'</span>';
+    else if(aberta) html+='<span class="lugar-num">'+(i+1)+'</span>';
+    else html+='<span class="lugar-lock">'+svgEmo("cadeado")+'</span>';
+    html+='<div class="lugar-nome">'+f.titulo+'</div>';
+    html+='</div>';
+    /* mascote andando: fica na fase atual */
+    if(ehAtual && !MASCOTE_POSTA){ html+='<span class="bit-andando">'+mascote(56,"feliz")+'<span class="bit-aqui">você está aqui!</span></span>'; MASCOTE_POSTA=true; }
+    html+='</div>';
+    if(i<ORDEM.length-1) html+='<div class="trilha-caminho '+(feito?'feito':'')+'"></div>';
+  }
+  /* fim da trilha: a grande árvore */
+  var tb=(feitas===ORDEM.length)?' style="-webkit-animation:tesourobrilha 1s ease infinite;animation:tesourobrilha 1s ease infinite"':'';
+  html+='<div class="trilha-linha centro"><div class="lugar-final"'+tb+'><span style="font-size:50px">'+(feitas===ORDEM.length?''+svgEmo("arvore")+'':''+svgEmo("trofeu")+'')+'</span><div class="lugar-nome">'+(feitas===ORDEM.length?'Floresta Salva!':'Diploma!')+'</div></div></div></div>';
+  html+='<div class="extras">';
+  if(ERROS.length>0) html+='<button class="ext-btn treino" onclick="iniciarTreino()">'+svgEmo("musc")+' Treinar erros ('+ERROS.length+')</button>';
+  html+='<button class="ext-btn" onclick="telaAdesivos()">'+svgEmo("medalha")+' Medalhas</button>';

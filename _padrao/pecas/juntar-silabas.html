@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — juntar sílabas</title>
+<!-- ============================================================
+     PEÇA: JUNTAR AS SÍLABAS — as partes DESLIZAM e viram uma palavra só.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     PARA QUEM É: 1º ano (e pré). A criança NÃO LÊ: alvo de dedo grande, uma
+     linha de enunciado, figura em vez de palavra escrita, e tudo falado.
+
+     POR QUE ELA EXISTE — e por que não é "montar a palavra com letras":
+     juntar sílabas (BO + LO = BOLO) é o degrau que abre a leitura, e é outro
+     gesto. A Ilha das Letras (1º ano, já no ar) monta a palavra LETRA POR
+     LETRA; nenhuma das 74 peças da oficina juntava SÍLABAS.
+
+     ⭐ O QUE A PESQUISA MANDOU (Reading Rockets, ago/2026 — ver
+        `_pesquisa/REGRAS-INTERATIVIDADE.md`):
+       · **som CONTÍNUO, não picado.** O estudo citado — *"Connected Phonation
+         Is More Effective than Segmented Phonation for Teaching Beginning
+         Readers to Decode Unfamiliar Words"* — mostra que "ssssuuunnn" ensina
+         mais que "s‑u‑n". Aqui: cada sílaba é dita ao ser posta, mas ao fechar
+         a palavra ela é dita **inteira e de uma vez**, nunca em duas batidas.
+       · **a metáfora é o ESCORREGADOR:** *"have the sounds slide together to
+         form a word"*. Por isso a peça não "encaixa": ela **DESLIZA** — a
+         sílaba escolhida corre até a forma, e é essa corrida que ensina.
+       · **começar pela unidade grande e descer** (frase → palavra → sílaba →
+         fonema): no 1º ano a sílaba é o degrau certo, o fonema vem depois.
+       · **figura em vez de palavra escrita** para os menores.
+
+     ⭐ MAIS VISUAL E MAIS SONORA (ordem do Marcos, ago/2026: *"as dinâmicas
+        interativas têm que ser mais VISUAIS e SONORAS para os pequenos"*). O
+        que entrou, e por quê:
+       · **a figura** (`img`, e o `fig` antigo continua valendo) fica ao lado da
+         palavra que está sendo montada — é ela que diz QUAL palavra é, porque a
+         criança não lê. Sem figura a peça mostra a palavra escrita e não quebra;
+       · **peça de encaixe de verdade:** o pedaço tem PINO e a vaga tem
+         ENTALHE, com sombra e um pop curto ao assentar. A criança vê que
+         aquilo se encaixa ali sem ninguém explicar;
+       · **dois alto-falantes**, e eles não gastam tentativa: um diz a palavra
+         INTEIRA, o outro diz os PEDAÇOS pausados. Ela repete quantas vezes
+         quiser — no 1º ano ouvir de novo é o gesto de estudar;
+       · **a sílaba é dita ao ser PEGA.** É o coração: a criança escolhe pelo
+         SOM, e é ouvindo "BO" na mão dela que a sílaba deixa de ser desenho;
+       · ⚠️ **a voz é GRAVADA, sempre** (`diz`, a ponte do integrador). Nada de
+         `speechSynthesis`: no PC da escola ela falha CALADA — o portão
+         `_qa/vozrobo.py` mede isso;
+       · **a pausa das sílabas mora no TEXTO** (`lento:"BO... LO"`), porque quem
+         grava é o Edge TTS. Ordem dele: *"na hora que fala as sílabas deve ser
+         pausado e bem claro"*.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · a ordem importa e é a primeira coisa que se erra: a peça sempre
+         embaralha as sílabas na bandeja, então nunca dá para acertar pela
+         POSIÇÃO (é o mesmo defeito da Fábrica de Estrelas, onde a certa era
+         sempre a primeira);
+       · erro NÃO pune: a sílaba volta deslizando, com som de retorno (não de
+         tropeço) — o gesto está em treino;
+       · o andaime CRESCE: 1 erro → a dica; 2 erros → a sílaba certa PULSA;
+         3 erros → ela acende e fica sendo a única que responde. Nunca trava;
+       · `data-qa="1"` na sílaba que serve AGORA — é assim que o auditor-jogador
+         atravessa (e é só para ele);
+       · nada essencial só na cor: a sílaba certa PULSA e ganha a marca escrita.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* a FORMA onde a palavra se monta: uma bandeja de padaria com os lugares */
+.jsForma{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  gap:10px;margin:14px auto 6px;max-width:430px;min-height:96px;-webkit-box-align:center;align-items:center}
+/* ⭐ O SOQUETE. A vaga tem o ENTALHE (o buraquinho da esquerda) e a sílaba tem o
+   PINO (o botãozinho da direita): a criança vê, sem ninguém explicar, que
+   aquilo se ENCAIXA ali. Desenho de CSS puro — é interface, não ilustração
+   (a regra "interação dinâmica usa arte de IA" vale para a FIGURA da palavra,
+   que aqui é gerada e entra no `.jsFig`). */
+.jsVaga{position:relative;width:104px;height:88px;border-radius:18px;
+  border:3px dashed rgba(255,255,255,.45);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;font-size:30px;font-weight:800;color:#f4efe6;
+  background:rgba(255,255,255,.06)}
+.jsVaga:before{content:"";position:absolute;left:-9px;top:50%;margin-top:-9px;
+  width:18px;height:18px;border-radius:50%;background:#2b2118;
+  -webkit-box-shadow:inset 0 2px 3px rgba(0,0,0,.55);box-shadow:inset 0 2px 3px rgba(0,0,0,.55)}
+.jsVaga.cheia{border-style:solid;border-color:#e8b761;color:#4a3608;
+  background:#f6d79a;
+  background:-webkit-gradient(linear,left top,left bottom,from(#fbe6b6),to(#eec87f));
+  background:linear-gradient(#fbe6b6,#eec87f);
+  -webkit-box-shadow:0 5px 0 #c99b45;box-shadow:0 5px 0 #c99b45;
+  -webkit-animation:jsPop .3s ease;animation:jsPop .3s ease}
+/* o pino da vaga cheia: as duas metades da palavra ficam ligadas uma na outra */
+.jsVaga.cheia:after{content:"";position:absolute;right:-9px;top:50%;margin-top:-9px;
+  width:18px;height:18px;border-radius:50%;background:#eec87f;
+  -webkit-box-shadow:0 3px 0 #c99b45;box-shadow:0 3px 0 #c99b45}
+.jsVaga.agora{border-color:#ffd54a}
+@-webkit-keyframes jsPop{0%{-webkit-transform:scale(.82)}60%{-webkit-transform:scale(1.07)}100%{-webkit-transform:scale(1)}}
+@keyframes jsPop{0%{transform:scale(.82)}60%{transform:scale(1.07)}100%{transform:scale(1)}}
+/* a BANDEJA de sílabas: os pedaços de massa que a criança escolhe */
+.jsMassa{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:12px;margin:12px auto 0;max-width:430px}
+.jsSil{position:relative;min-width:104px;min-height:72px;border-radius:18px;color:#221a12;
+  background:#fffdf6;
+  background:-webkit-gradient(linear,left top,left bottom,from(#fffdf6),to(#f2e6cb));
+  background:linear-gradient(#fffdf6,#f2e6cb);
+  font-size:28px;font-weight:800;cursor:pointer;border:0;padding:8px 14px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-shadow:inset 0 2px 0 rgba(255,255,255,.95),0 5px 0 #c9bda6,0 9px 14px rgba(0,0,0,.26);
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.95),0 5px 0 #c9bda6,0 9px 14px rgba(0,0,0,.26);
+  -webkit-transition:-webkit-transform .38s cubic-bezier(.3,1.2,.5,1),opacity .3s;
+  transition:transform .38s cubic-bezier(.3,1.2,.5,1),opacity .3s}
+/* o PINO do pedaço — é ele que dá a cara de peça de encaixe */
+.jsSil:after{content:"";position:absolute;right:-9px;top:50%;margin-top:-9px;
+  width:18px;height:18px;border-radius:50%;background:#f2e6cb;
+  -webkit-box-shadow:0 3px 0 #c9bda6;box-shadow:0 3px 0 #c9bda6}
+/* destaque de quem está com o dedo/o mouse em cima (nada essencial mora aqui:
+   é só o "este está na sua mão") */
+.jsSil:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px)}
+.jsSil:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+.jsSil.usada{opacity:0;pointer-events:none}
+/* ⭐ O DESLIZE: a pesquisa pede que as partes ESCORREGUEM uma até a outra.
+   A sílaba escolhida corre da bandeja até a forma — e e essa corrida que
+   ensina que duas coisas viram UMA. Sem ela isto seria só um encaixe. */
+.jsSil.desliza{-webkit-transform:translate(var(--dx),var(--dy)) scale(.92);
+  transform:translate(var(--dx),var(--dy)) scale(.92)}
+.jsSil.pulsa{-webkit-animation:jsPul 1s infinite;animation:jsPul 1s infinite}
+.jsSil.acesa{-webkit-box-shadow:0 0 0 4px #ffd54a,0 5px 0 #c9bda6;
+  box-shadow:0 0 0 4px #ffd54a,0 5px 0 #c9bda6}
+@-webkit-keyframes jsPul{0%,100%{-webkit-transform:scale(1)}50%{-webkit-transform:scale(1.09)}}
+@keyframes jsPul{0%,100%{transform:scale(1)}50%{transform:scale(1.09)}}
+/* a marca escrita: nada essencial só na cor (serve no mudo e para quem não
+   distingue verde de vermelho) */
+.jsMarca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+  border-radius:9px;padding:2px 8px;margin-left:7px;vertical-align:middle}
+/* a figura da palavra: é ela que diz QUAL palavra montar (a criança não lê) */
+.jsFig{width:150px;height:150px;margin:13px auto 0;border-radius:22px;background:rgba(255,248,232,.55);-webkit-backdrop-filter:blur(6px) saturate(1.05);backdrop-filter:blur(6px) saturate(1.05);border:2px solid rgba(255,255,255,.78);border-bottom-width:5px;-webkit-box-shadow:0 8px 18px rgba(40,25,10,.28);box-shadow:0 8px 18px rgba(40,25,10,.28);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;overflow:hidden}
+.jsFig img{width:100%;height:100%;object-fit:contain}
+/* ⚠️ LICAO PAGA (ago/2026): a palavra de reserva (quando a fase nao traz
+   figura) era #6b5c46 sobre o fundo claro da caixa — 2,22:1, quando o
+   minimo e 4,5. E o pior: e JUSTAMENTE o caso em que a palavra e a unica
+   coisa na tela, porque a figura faltou. Escurecida ate passar. */
+.jsFig .semfig{font-size:15px;color:#2f2718;padding:8px;text-align:center;font-weight:800;letter-spacing:.5px}
+.jsPronta{font-size:34px;font-weight:800;color:#ffd54a;margin-top:8px;letter-spacing:2px}
+/* ⭐⭐ OS DOIS BOTÕES DE OUVIR — o pilar SONORA desta peça.
+   No 1º ano a criança não lê: a figura diz QUAL palavra é, mas quem confirma é
+   a VOZ. Um botão diz a palavra inteira (é assim que ela fecha, e é o que a
+   pesquisa manda: som contínuo); o outro diz os PEDAÇOS, pausados. Ela repete
+   quantas vezes quiser, sem gastar tentativa e sem levar erro por isso. */
+.jsOuvir{margin:9px auto 0;text-align:center}
+.zap{display:inline-block;vertical-align:middle;width:48px;height:48px;margin:0 5px;
+     border:0;border-radius:14px;background-color:#efe6d2;cursor:pointer;padding:0;line-height:48px}
+.zap:hover{background-color:#e6d9bd}
+.zap:active{background-color:#ded3b8}
+/* ⚠️ O ALTO-FALANTE É UM SVG EMBUTIDO, nunca desenho de borda (§5 da RECEITA:
+   o Marcos apontou o mesmo botão TRÊS vezes quando ele era feito de bordas com
+   `left/top` em pixel). O glifo se centra sozinho pelo `viewBox`. E a cor mora
+   DENTRO do SVG, então `background-color` e `background-image` vão separados —
+   o atalho `background:` de um `:hover` apagaria o desenho. */
+.fone{display:inline-block;vertical-align:middle;width:24px;height:24px;
+      background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+      -webkit-background-size:24px 24px;background-size:24px 24px}
+/* o botão dos PEDAÇOS vem com a palavra escrita: quem já lê entende na hora, e
+   quem não lê aprende que aquele desenho fala. Alvo de 48px, como o outro. */
+.jsLento{display:inline-block;vertical-align:middle;min-height:48px;margin:0 5px;
+  padding:6px 14px;border:0;border-radius:14px;background-color:#efe6d2;color:#33280a;
+  font-size:14px;font-weight:800;cursor:pointer}
+.jsLento:hover{background-color:#e6d9bd}
+.jsLento:active{background-color:#ded3b8}
+.jsLento .fone{margin-right:6px}
+/* ⚠️ TELA BAIXA (o monitor 1024x420 da escola e o celular deitado): a figura
+   encolhe em vez de empurrar a bandeja para fora da vista. O que some é
+   tamanho de DECORAÇÃO — o alvo de dedo nunca desce de 44px, e nada de texto
+   some. Medido: a bandeja terminava 176px abaixo da dobra; com isto ela sobe
+   e a criança vê os pedaços sem procurar. */
+@media (max-height:560px){
+  .jsFig{width:80px;height:80px;margin-top:6px;border-radius:16px}
+  .jsFig .semfig{font-size:13px}
+  .jsForma{min-height:72px;margin:10px auto 4px}
+  .jsVaga{width:88px;height:66px;font-size:26px}
+  .jsOuvir{margin-top:6px}
+  .zap{width:46px;height:46px;line-height:46px}
+  .jsLento{min-height:46px}
+  .jsMassa{margin-top:8px;gap:10px}
+  .jsSil{min-width:88px;min-height:58px;font-size:24px;padding:6px 12px}
+}
+/* ⚠️ CELULAR PEQUENO (320px): com o pedaço em 104px cabiam DOIS por linha, e a
+   bandeja virava três fileiras. Em 88px cabem três — uma fileira a menos, e o
+   alvo continua bem acima dos 44px. */
+@media (max-width:400px){
+  .jsFig{width:104px;height:104px}
+  .jsForma{gap:8px;min-height:84px;margin:10px auto 4px}
+  .jsVaga{width:88px;height:80px}
+  .jsMassa{gap:10px}
+  .jsSil{min-width:88px;min-height:64px;font-size:25px;padding:8px 10px}
+}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+  border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+  font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (padaria, 1º ano). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco de dados.
+   · pal   — a palavra inteira (é ela que a voz diz de UMA VEZ no fim)
+   · sil   — as sílabas NA ORDEM certa
+   · img   — o nome da figura (img/<img>.png). A criança não lê: é a figura
+             que diz qual palavra montar. ⚠️ `fig` é o MESMO campo, com o nome
+             antigo: as fases já escritas (a Padaria) usam `fig`, e por isso os
+             dois continuam valendo — a peça lê `img` primeiro e cai no `fig`.
+             Sem nenhum dos dois a peça mostra a palavra escrita e não quebra.
+   · iscas — sílabas erradas que entram na bandeja junto (2 bastam no 1º ano)
+   · d     — os TRÊS degraus do andaime: dica -> apoio concreto -> revela
+   · lento — OPCIONAL. A palavra dita em pedaços, com a pausa escrita no
+             TEXTO ("BO... LO"). Ordem do Marcos (ago/2026): *"na hora que fala
+             as sílabas deve ser pausado e bem claro"* — e quem grava é o Edge
+             TTS, então a pausa só existe se estiver escrita. Sem este campo a
+             peça toca as sílabas uma a uma, com respiro entre elas.           */
+var SILABAS=[
+ {pal:"BOLO", sil:["BO","LO"], img:"pd_bolo", iscas:["MA","PE"], lento:"BO... LO",
+  d:["Diga a palavra devagar: qual pedaço a boca fala PRIMEIRO?",
+     "A palavra começa com o som <b>BO</b>. Ele está pulsando aí embaixo.",
+     "É o <b>BO</b>. Ele está aceso: toque nele para seguir."]},
+ {pal:"MALA", sil:["MA","LA"], img:"pd_mala", iscas:["BO","TE"], lento:"MA... LA",
+  d:["Fale a palavra bem devagar e escute o começo.",
+     "O primeiro pedaço é <b>MA</b>, como em MÃE.",
+     "É o <b>MA</b>. Ele está aceso: toque nele para seguir."]},
+ {pal:"PATO", sil:["PA","TO"], fig:"pd_pato", iscas:["LO","SA"], lento:"PA... TO",
+  d:["Ponha a mão no queixo e diga: PA-TO. Qual vem primeiro?",
+     "O primeiro pedaço é <b>PA</b>, o mesmo de PAI.",
+     "É o <b>PA</b>. Ele está aceso: toque nele para seguir."]},
+ {pal:"SAPATO", sil:["SA","PA","TO"], img:"pd_sapato", iscas:["MA","LO"], lento:"SA... PA... TO",
+  d:["Esta tem TRÊS pedaços. Diga devagar: SA-PA-TO.",
+     "Comece pelo <b>SA</b>, que é o som que abre a palavra.",
+     "É o <b>SA</b>. Ele está aceso: toque nele para seguir."]}
+];
+
+/* ⭐ O TEXTO DA PEÇA TAMBÉM É CONTEÚDO (regra da casa, paga na `ordenar`).
+   O enunciado estava CRAVADO no corpo — e numa atividade montada o balão da
+   peça é a única instrução que a criança vê. Enunciado no corpo = enunciado
+   errado no dia em que a mecânica servir outra palavra. Agora ele mora aqui. */
+var SILTXT={selo:"JUNTE AS S&#205;LABAS",
+            balao:"Junte as s&#237;labas e forme a palavra da <b>figura</b>.",
+            hint:"Toque na s&#237;laba certa. Ela escorrega at&#233; o lugar.",
+            ouvir:"a palavra",
+            pedacos:"em s&#237;labas"};
+
+var ri=0;        /* rodada de agora */
+var posto=0;     /* quantas sílabas já estão na forma */
+var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
+var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela não existe, e a peça mostra a palavra escrita no lugar. Pegar por
+   `window.imgEl` (e não `typeof imgEl`) é de propósito: assim o nome fica
+   DECLARADO, o portão "função que não existe" consegue medir, e um dia que o
+   motor trocar o nome dessa ferramenta a peça avisa em vez de sumir a figura. */
+var figEl = window.imgEl || null;
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Quem fala é o motor: a ponte do integrador
+   (`_padrao/ESQUELETO/integrar.py`) injeta um `diz(txt)` que toca o MP3 do Edge
+   TTS — a voz da casa. Aqui NUNCA se chama `speechSynthesis`: a voz do
+   navegador não existe no PC da escola e falha CALADA (foi assim que o botão
+   mais importante de uma fase ficou mudo, e quem ouviu foi o Marcos). O portão
+   `_qa/vozrobo.py` mede isso.
+   Sozinha na bancada a peça fica sem voz — e isso é de propósito: tudo o que a
+   voz diz também está escrito e desenhado na tela, então a peça continua
+   inteira no mudo. */
+var _vozTxt="", _vozQuando=0;
+function voz(txt){
+  if(!txt) return;
+  var t=String(txt).replace(/<[^>]+>/g,""), agora=(new Date()).getTime();
+  /* ⚠️ SEM ECO: a mesma sílaba é dita ao ser PEGA e volta a ser dita ao
+     ENCAIXAR, 380ms depois. Tocar o mesmo mp3 de novo o REINICIA — a criança
+     ouve "BO-BO" picado, que é justamente o contrário do que a fase ensina.
+     Repetição do mesmo texto dentro de 1s não fala de novo. */
+  if(t===_vozTxt && agora-_vozQuando<1000) return;
+  _vozTxt=t; _vozQuando=agora;
+  if(typeof diz==="function") diz(t);
+}
+/* ⭐ AS SÍLABAS, PAUSADAS E BEM CLARAS (ordem do Marcos, ago/2026).
+   Dois caminhos, nesta ordem: se a fase escreveu o `lento` ("BO... LO"), a
+   pausa já está no texto e é o Edge TTS que a grava — é o melhor som. Se não
+   escreveu, a peça toca uma sílaba de cada vez, com respiro entre elas: cada
+   sílaba tem gravação própria (ela está no `sil`), então nunca sai mudo.
+   ⚠️ Isto é o OPOSTO do fecho da palavra: lá ela é dita de UMA VEZ (*Connected
+   Phonation Is More Effective than Segmented Phonation*). Aqui a criança está
+   ESCUTANDO os pedaços de propósito, porque foi ela quem pediu. */
+function pedacos(r){
+  var meu=ger, i;
+  if(r.lento){ voz(r.lento); return; }
+  for(i=0;i<r.sil.length;i++){
+    (function(s,n){
+      setTimeout(function(){ if(meu!==ger) return; voz(s); }, n*950);
+    })(r.sil[i], i);
+  }
+}
+/* a figura da palavra: `img` é o nome da casa, `fig` é o antigo — os dois valem */
+function figDe(r){ return r.img || r.fig || ""; }
+function sDesliza(){ nota(520,.09,.10,"triangle",0); nota(700,.10,.10,"triangle",.06); }
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+
+function pecaJuntar(){
+  var r=SILABAS[ri];
+  if(!r){ fimDaPeca(); return; }
+  err=0; posto=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/SILABAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",SILTXT.selo||"JUNTE OS PEDA&#199;OS"));
+  c.appendChild(el("div","balao",SILTXT.balao||"Junte as s&#237;labas e forme a palavra da <b>figura</b>."));
+
+  /* a FIGURA diz qual palavra é — a criança de 6 anos não lê */
+  var fg=el("div","jsFig");
+  if(figEl && figDe(r)){ fg.appendChild(figEl(figDe(r))); }
+  else { fg.appendChild(el("div","semfig", r.pal)); }
+  c.appendChild(fg);
+  c.appendChild(ouvidos(r));
+
+  /* a FORMA: um lugar por sílaba */
+  var forma=el("div","jsForma"), i;
+  for(i=0;i<r.sil.length;i++){
+    var v=el("div","jsVaga"+(i===0?" agora":""));
+    v.id="jsv"+i;
+    forma.appendChild(v);
+  }
+  c.appendChild(forma);
+
+  /* a BANDEJA: as sílabas certas + as iscas, SEMPRE embaralhadas.
+     ⚠️ embaralhar é a armadilha número um desta família: sem isso a criança
+     aprende a POSIÇÃO e não o som. */
+  var lista=[], z;
+  for(z=0;z<r.sil.length;z++) lista.push({s:r.sil[z], ok:1});
+  for(z=0;z<(r.iscas||[]).length;z++) lista.push({s:r.iscas[z], ok:0});
+  baguncar(lista);
+  var band=el("div","jsMassa");
+  for(z=0;z<lista.length;z++) band.appendChild(fazSilaba(lista[z], r));
+  c.appendChild(band);
+
+  c.appendChild(el("div","hint",SILTXT.hint||"Toque na s&#237;laba certa. Ela escorrega at&#233; o lugar."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQA(r);
+  voz(SILTXT.balao||"");
+}
+
+/* ⭐ OS DOIS ALTO-FALANTES da palavra que está sendo montada.
+   ⚠️ `data-voz` DECLARA o que a voz diz — o motor usa esse atributo em vez de
+   adivinhar pelo texto do botão (senão ele tentaria gravar "a palavra"). */
+function ouvidos(r){
+  var box=el("div","jsOuvir");
+  var z=el("button","zap","");
+  z.type="button";
+  z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label","Ouvir a palavra");
+  z.setAttribute("data-voz", r.pal);
+  z.onclick=function(){ sTap(); voz(r.pal); };
+  box.appendChild(z);
+  var p=el("button","jsLento","");
+  p.type="button";
+  p.appendChild(el("i","fone",""));
+  p.appendChild(el("span",null,SILTXT.pedacos||"em peda&#231;os"));
+  p.setAttribute("aria-label","Ouvir a palavra em pedaços");
+  p.setAttribute("data-voz", r.lento || r.sil.join("... "));
+  p.onclick=function(){ sTap(); pedacos(r); };
+  box.appendChild(p);
+  return box;
+}
+
+function fazSilaba(item, r){
+  var b=el("button","jsSil", item.s);
+  b.type="button";
+  b._sil=item.s;
+  /* ⭐ AS TRÊS PORTAS (ordem do Marcos, ago/2026: *"nas atividades de clicar,
+     quando for possível, pode ser de arrastar também"*). Aqui o arrastar não é
+     só uma porta a mais: ARRASTAR **É** O DESLIZE que a pesquisa pede — a
+     criança faz com a mão o que o conceito diz (duas partes que correm uma até
+     a outra e viram uma só). Toque, clique e arrasto, os três.
+     ⚠️ o guarda do MOUSE FANTASMA: no celular o navegador dispara eventos de
+     mouse DEPOIS do toque, e sem este guarda eles desfaziam o gesto. Defeito já
+     pego duas vezes na casa. */
+  arrastavel(b, r);
+  b.onclick=function(){
+    if(b._ultimoToque && (new Date()).getTime()-b._ultimoToque<700) return;
+    if(b.className.indexOf("usada")>=0) return;
+    var esperada=r.sil[posto];
+    if(item.s===esperada && b.className.indexOf("usada")<0){
+      deslizaAte(b, document.getElementById("jsv"+posto), r);
+    } else {
+      /* ⚠️ ERRO NÃO PUNE: a peça devolve o pedaço com som GRAVE E CURTO, de
+         retorno, nunca de tropeço. O gesto está em treino, e no 1º ano errar a
+         ordem é o normal. */
+      err++; sErro(); sVolta();
+      b.className="jsSil";
+      ajuda(err, r);
+    }
+  };
+  return b;
+}
+
+/* ⭐ PEGOU O PEDAÇO: som na hora e a SÍLABA DITA. É o coração da fase — a
+   criança de 6 anos escolhe pelo SOM, não pela letra, e é ouvindo "BO" na mão
+   dela que a sílaba deixa de ser desenho e vira som. Vale para o dedo e para o
+   mouse; o clique seco do auditor não passa por aqui, e não precisa. */
+function pegou(b){
+  if(!b || b.className.indexOf("usada")>=0) return;
+  sTap(); voz(b._sil);
+}
+
+/* o ARRASTO: mouse e dedo. Solta em cima da forma = a mesma coisa que tocar. */
+function arrastavel(b, r){
+  var mx=0,my=0,arr=false;
+  function comeca(x,y,ev){
+    if(b.className.indexOf("usada")>=0) return;
+    pegou(b);
+    arr=true; mx=x; my=y;
+    b.style.zIndex="30"; b.style.position="relative";
+    if(ev&&ev.type==="mousedown"&&ev.preventDefault) ev.preventDefault();
+  }
+  function move(x,y){
+    if(!arr) return;
+    b.style.webkitTransform="translate("+(x-mx)+"px,"+(y-my)+"px)";
+    b.style.transform="translate("+(x-mx)+"px,"+(y-my)+"px)";
+  }
+  function solta(x,y){
+    if(!arr) return;
+    arr=false;
+    b.style.webkitTransform=""; b.style.transform=""; b.style.zIndex="";
+    var v=document.getElementById("jsv"+posto);
+    if(v){
+      var q=v.getBoundingClientRect();
+      /* margem generosa: dedo de 6 anos nao acerta o pixel */
+      if(x>q.left-30&&x<q.right+30&&y>q.top-30&&y<q.bottom+30){ b.onclick(); return; }
+    }
+    sVolta();
+  }
+  b.onmousedown=function(e){ comeca(e.clientX,e.clientY,e); };
+  b.onmousemove=function(e){ move(e.clientX,e.clientY); };
+  b.onmouseup  =function(e){ solta(e.clientX,e.clientY); };
+  b.onmouseleave=function(e){ if(arr) solta(e.clientX,e.clientY); };
+  /* ⚠️ NUNCA `preventDefault` no touchstart: mata o toque simples. */
+  b.addEventListener("touchstart",function(e){
+    var t=e.touches[0]; b._ultimoToque=(new Date()).getTime(); comeca(t.clientX,t.clientY,null);
+  },false);
+  b.addEventListener("touchmove",function(e){
+    var t=e.touches[0]; move(t.clientX,t.clientY);
+    if(arr&&e.preventDefault) e.preventDefault();
+  },false);
+  b.addEventListener("touchend",function(e){
+    var t=(e.changedTouches&&e.changedTouches[0])||{clientX:0,clientY:0};
+    b._ultimoToque=(new Date()).getTime();
+    var q=document.getElementById("jsv"+posto);
+    /* soltou longe da forma? entao foi TOQUE simples, e toque simples tambem vale */
+    if(q){ var g=q.getBoundingClientRect();
+      if(!(t.clientX>g.left-30&&t.clientX<g.right+30&&t.clientY>g.top-30&&t.clientY<g.bottom+30)){
+        arr=false; b.style.webkitTransform=""; b.style.transform="";
+        b.onclick(); return; } }
+    solta(t.clientX,t.clientY);
+  },false);
+}
+
+/* ⭐ O DESLIZE — o coração da peça (Reading Rockets: "have the sounds slide
+   together to form a word"). A sílaba corre da bandeja até o lugar dela, e só
+   depois de chegar é que ela vira parte da palavra. */
+function deslizaAte(b, vaga, r){
+  var meu=ger;
+  var a=b.getBoundingClientRect(), v=vaga.getBoundingClientRect();
+  b.style.setProperty("--dx",(v.left-a.left+(v.width-a.width)/2)+"px");
+  b.style.setProperty("--dy",(v.top-a.top+(v.height-a.height)/2)+"px");
+  b.className="jsSil desliza";
+  sDesliza();
+  voz(b._sil);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    b.className="jsSil usada";
+    vaga.innerHTML=b._sil;
+    vaga.className="jsVaga cheia";
+    posto++;
+    var prox=document.getElementById("jsv"+posto);
+    if(prox) prox.className="jsVaga agora";
+    marcaQA(r);
+    if(posto>=r.sil.length) fechaPalavra(r);
+  },380);
+}
+
+function fechaPalavra(r){
+  var meu=ger;
+  sCerto(); festa();
+  var c=app.querySelector(".centro");
+  var p=el("div","jsPronta", r.pal);
+  c.appendChild(p);
+  /* ⭐⭐ O SOM CONTÍNUO. A pesquisa é explícita: "Connected Phonation Is More
+     Effective than Segmented Phonation". A palavra fecha dita de UMA VEZ —
+     nunca "BO... LO". É aqui que a criança ouve que dois pedaços viraram um. */
+  voz(r.pal);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    ri++;
+    if(ri>=SILABAS.length) fimDaPeca(); else pecaJuntar();
+  },1400);
+}
+
+/* o ANDAIME que cresce — e que nunca deixa a criança presa */
+function ajuda(n, r){
+  var d=r.d||[], txt;
+  if(n===1){ txt=d[0]||"Diga a palavra devagar."; mostraDica(txt); dizDica(txt); }
+  else if(n===2){ txt=d[1]||"Escute o come&#231;o da palavra.";
+    mostraDica(txt); dizDica(txt);
+    pisca(r, false); }
+  else if(n>=3){
+    /* revela PRIMEIRO, escreve a dica DEPOIS — senão a fase se conserta
+       sozinha e a criança não sabe por quê (lição paga em 5 de 6 peças) */
+    pisca(r, true);
+    txt=d[2]||"Toque no peda&#231;o aceso.";
+    setTimeout(function(){ mostraDica(txt); },60);
+    dizDica(txt);
+  }
+}
+/* ⚠️ A DICA FALADA ESPERA (regra da casa, pilar SONORA): a criança acabou de
+   ouvir a sílaba que pegou. Falar a dica no mesmo instante CORTA aquela voz —
+   e é justamente a voz que ela pediu ao tocar. Meio segundo depois, a sílaba já
+   terminou e a ajuda entra limpa. O guarda de geração mata o temporizador de
+   uma rodada que já saiu da tela. */
+function dizDica(txt){
+  var meu=ger;
+  setTimeout(function(){ if(meu!==ger) return; voz(txt); },520);
+}
+function pisca(r, acende){
+  var bs=app.getElementsByClassName("jsSil"), i, alvo=r.sil[posto];
+  for(i=0;i<bs.length;i++){
+    if(bs[i].className.indexOf("usada")>=0) continue;
+    if(bs[i]._sil===alvo){
+      bs[i].className="jsSil "+(acende?"acesa pulsa":"pulsa");
+      if(acende && bs[i].getElementsByClassName("jsMarca").length===0){
+        var m=el("span","jsMarca","este"); bs[i].appendChild(m);
+      }
+    }
+  }
+}
+
+/* `data-qa="1"` na sílaba que serve AGORA: é assim que o auditor-jogador
+   atravessa a peça. Só para ele — a criança nunca vê isto. */
+function marcaQA(r){
+  var bs=app.getElementsByClassName("jsSil"), i, alvo=r.sil[posto];
+  for(i=0;i<bs.length;i++)
+    bs[i].setAttribute("data-qa",
+      (bs[i].className.indexOf("usada")<0 && bs[i]._sil===alvo) ? "1" : "0");
+}
+
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; juntou <b>"+SILABAS.length+" palavras</b>! Cada uma feita de peda&#231;os."));
+  t.appendChild(c); app.appendChild(t);
+  mostraBanner("<b>Padeiro de palavras!</b><br>Voc&#234; juntou os peda&#231;os.", pecaJuntar);
+}
+
+pecaJuntar();
+</script>
+</body></html>

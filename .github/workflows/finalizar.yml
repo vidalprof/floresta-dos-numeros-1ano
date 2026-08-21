@@ -1,0 +1,340 @@
+name: Finalizar (medalha/publicar por push, sem MCP)
+
+# Plano B quando a conexao MCP nao esta disponivel: jobs acionados por PUSH
+# nesta branch, controlados por marcadores na mensagem do commit:
+#   [medalha]  -> gera _novo/med_receita.png no Gemini e commita
+#   [publicar] -> republica _pub_confeitaria em confeitaria-da-divisao
+#                 (historico limpo), forca build do Pages, espera o resultado
+#                 e grava _status/confeitaria.txt neste repo (git pull p/ ler).
+# Os commits feitos pelos proprios jobs NAO carregam marcadores -> sem loop.
+
+on:
+  push:
+    branches: [ "claude/github-pages-deploy-wbb7dy", "claude/vc-nao-funcionando-0pya0w" ]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: finalizar-confeitaria
+  cancel-in-progress: false
+
+jobs:
+  imagens:
+    if: contains(github.event.head_commit.message, '[imagens]')
+    runs-on: ubuntu-latest
+    steps:
+      # ⚡ SO A PASTA QUE INTERESSA. O repositorio tem ~1 GB de imagem e audio de
+      # TODAS as atividades: mesmo com fetch-depth 1, baixar a arvore inteira
+      # levava minutos. Com sparse-checkout o checkout cai para segundos.
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          # ⚠️ LICAO PAGA (ago/2026): em modo CONE (o padrao) o sparse-checkout
+          #    so entende PASTAS — o arquivo solto _gerar_imagens.json nao vinha,
+          #    e o lote inteiro falhava sem dizer por que. Com cone-mode:false os
+          #    padroes de arquivo funcionam.
+          sparse-checkout: |
+            /_novo/
+            /_gerar_imagens.json
+            /_qa/
+            /_padrao/
+          sparse-checkout-cone-mode: false
+
+      # 💰 O PORTAO DO CUSTO RODA ANTES DE GASTAR (ago/2026)
+      #
+      # Cobranca do Marcos: *"estou gastando bastante com as imagens nas
+      # atividades"*. O portao `_qa/cartela.py` ja existia — e mesmo assim a
+      # cartografia saiu com 45 imagens uma a uma (~R$9,00 onde R$1,60 bastava),
+      # porque ele dependia de EU lembrar de rodar. Portao que depende de memoria
+      # nao e portao; e lembrete.
+      #
+      # Agora ele roda aqui, no caminho do dinheiro, e PARA o lote. Para passar
+      # por cima (peca que de verdade nao da para agrupar), o commit leva
+      # `[custo-ok]` na mensagem — assim a excecao fica escrita na historia do
+      # repositorio, em vez de virar habito silencioso.
+      - name: Portao do custo (cartela)
+        run: |
+          set +e
+          python3 _qa/cartela.py _gerar_imagens.json
+          cod=$?
+          set -e
+          if [ "$cod" != "0" ]; then
+            if echo "${{ github.event.head_commit.message }}" | grep -q "\[custo-ok\]"; then
+              echo "::warning::o portao do custo reprovou, mas o commit traz [custo-ok] — seguindo."
+            else
+              echo "::error::LOTE CARO. Agrupe em cartela (python3 _padrao/cartela.py plano) ou repita o commit com [custo-ok]."
+              exit 1
+            fi
+          fi
+
+      - name: Gerar imagens do _gerar_imagens.json (Gemini nas pecas, GRATIS nas cenas)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, time, sys, urllib.parse, urllib.request
+          key=os.environ["GEMINI_API_KEY"].strip()
+          itens=json.load(open("_gerar_imagens.json",encoding="utf-8"))
+          os.makedirs("_novo", exist_ok=True)
+          modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
+
+          # 💰 CENA NAO SE PAGA. Medido na prova de ago/2026: o Pollinations vai
+          # BEM em cena, fundo e cenario — imagem grande, sem recorte — e vai mal
+          # na peca que a crianca olha de perto (pediram um pao frances e veio um
+          # rocambole; pediram uma garrafa de leite e vieram duas cerejas de
+          # brinde). Entao a divisao e essa, e ela e automatica: cena pelo caminho
+          # gratis, peca no Gemini.
+          sys.path.insert(0, "_padrao")
+          try:
+              from cartela import e_cena          # UM CEREBRO SO (o mesmo do portao)
+          except Exception:
+              def e_cena(it):
+                  # ⚠️ LICAO PAGA (ago/2026): o lote decidia o motor SOZINHO, pelo
+                  #    grupo, e nao havia como pedir o contrario. No dia em que o
+                  #    Gemini passou a devolver manchas (quatro ovos errados e tres
+                  #    cartelas inuteis), a unica saida era mentir no campo `grupo`
+                  #    para enganar o roteador. Agora o pedido pode DIZER o motor:
+                  #    `"modelo":"pollinations"` manda para o gratuito, ponto.
+                  if (it.get("modelo") or "").lower() in ("pollinations","gratis"):
+                      return True
+                  g=(it.get("grupo") or "").lower(); n=(it.get("nome") or "").lower()
+                  return "cena" in g or "fundo" in g or "cenario" in g or "fundo" in n
+
+          def pollinations(prompt, w=1280, h=768):
+              motores=["flux","turbo","flux-realism",""]
+              base="https://image.pollinations.ai/prompt/%s?width=%d&height=%d&nologo=true"%(
+                  urllib.parse.quote(prompt), w, h)
+              ultimo=None
+              for tent,espera in enumerate([8,20,45,0]):
+                  mot=motores[min(tent,len(motores)-1)]
+                  try:
+                      req=urllib.request.Request(base+("&model="+mot if mot else ""),
+                                                 headers={"User-Agent":"Mozilla/5.0"})
+                      d=urllib.request.urlopen(req, timeout=180).read()
+                      if d and len(d)>4000: return d
+                      ultimo="resposta vazia"
+                  except Exception as e:
+                      ultimo=str(e)[:120]
+                  if espera: time.sleep(espera)
+              print("::warning::Pollinations falhou (%s) — esta cena vai no Gemini"%ultimo)
+              return None
+
+          ok=0; pagas=0; gratis=0
+          for it in itens:
+              if e_cena(it):
+                  bruto=pollinations(it["prompt"])
+                  if bruto:
+                      open("_novo/%s.png"%it["nome"],"wb").write(bruto)
+                      ok+=1; gratis+=1; print("GRATIS", it["nome"], len(bruto)); continue
+              # base opcional por item: EDITA a imagem-ancora (mantem o personagem/estilo)
+              parts=[{"text":it["prompt"]}]
+              b=(it.get("base") or "").strip()
+              if b and os.path.exists(b):
+                  parts.append({"inline_data":{"mime_type":"image/png","data":base64.b64encode(open(b,"rb").read()).decode()}})
+                  print("editando base:", b, "->", it["nome"])
+              body={"contents":[{"parts":parts}]}
+              img=None
+              for tent in range(3):
+                  for m in modelos:
+                      url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(m,key)
+                      req=urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type":"application/json"})
+                      try: d=json.loads(urllib.request.urlopen(req, timeout=180).read())
+                      except Exception as e: print("erro",m,str(e)[:150]); continue
+                      for c in d.get("candidates",[]) or []:
+                          for p in (c.get("content",{}) or {}).get("parts",[]) or []:
+                              inl=p.get("inlineData") or p.get("inline_data")
+                              if inl and inl.get("data"): img=base64.b64decode(inl["data"])
+                      if img: break
+                  if img: break
+                  # ⚠️ LICAO PAGA (ago/2026): depois de um lote grande o Gemini
+                  # devolve 429 "Too Many Requests" — e o antigo `sleep(6)` nao
+                  # dava tempo nenhum, entao as 3 tentativas queimavam em
+                  # segundos e o lote inteiro se perdia. Limite de taxa quer
+                  # ESPERA de verdade.
+                  espera=[20,60,90][min(tent,2)]
+                  print("  ...esperando %ds antes de tentar de novo (%s)"%(espera,it["nome"]))
+                  time.sleep(espera)
+              if img:
+                  open("_novo/%s.png"%it["nome"],"wb").write(img); ok+=1; pagas+=1
+                  print("OK (pago)",it["nome"],len(img))
+              else: print("::error::falhou",it["nome"])
+              # respiro entre imagens: e o que segura o 429 num lote grande
+              time.sleep(4)
+          # 💰 A CONTA APARECE. O gasto so vira habito quando ninguem o ve; entao
+          #    toda corrida diz quanto custou e quanto ficou de fora da conta.
+          print(">>> %d de %d imagens | %d GRATIS (cena) | %d pagas = R$ %.2f"
+                %(ok, len(itens), gratis, pagas, pagas*0.20))
+          resumo=os.environ.get("GITHUB_STEP_SUMMARY")
+          if resumo:
+              with open(resumo,"a",encoding="utf-8") as s:
+                  s.write("### Lote de imagens\n\n")
+                  s.write("- %d de %d sairam\n"%(ok,len(itens)))
+                  s.write("- **%d gratis** (cena, Pollinations)\n"%gratis)
+                  s.write("- **%d pagas** (Gemini) = **R$ %.2f**\n"%(pagas, pagas*0.20))
+          if ok==0: raise SystemExit(1)
+          PY
+      # ⚡ COMMITA O QUE DEU CERTO, mesmo que alguma imagem tenha falhado.
+      #    Antes, uma imagem ruim no fim do lote jogava fora todas as boas.
+      - name: Commit
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/
+          git diff --cached --quiet && exit 0
+          git commit -m "imagens: gera lote (gemini, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+  medalha:
+    if: contains(github.event.head_commit.message, '[medalha]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Gerar medalha no Gemini (3 tentativas)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, time, urllib.request, urllib.error
+          key=os.environ["GEMINI_API_KEY"].strip()
+          prompt=("Medalha redonda dourada infantil estilo cartoon 3D fofo, fita azul, "
+                  "no centro um livro de receitas aberto mostrando APENAS DESENHOS: um ovo e um bolinho. "
+                  "PROIBIDO qualquer letra, palavra ou numero na imagem (paginas do livro so com desenhos). "
+                  "Brilho suave, fundo totalmente branco liso para recorte")
+          os.makedirs("_novo", exist_ok=True)
+          body={"contents":[{"parts":[{"text":prompt}]}]}
+          modelos=["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]
+          img=None
+          for tent in range(3):
+              for m in modelos:
+                  url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(m,key)
+                  req=urllib.request.Request(url, data=json.dumps(body).encode(), headers={"Content-Type":"application/json"})
+                  try:
+                      d=json.loads(urllib.request.urlopen(req, timeout=180).read())
+                  except Exception as e:
+                      print("tentativa %d %s: %s"%(tent+1,m,str(e)[:200])); continue
+                  for c in d.get("candidates",[]) or []:
+                      for p in (c.get("content",{}) or {}).get("parts",[]) or []:
+                          inl=p.get("inlineData") or p.get("inline_data")
+                          if inl and inl.get("data"): img=base64.b64decode(inl["data"])
+                  if img: print("gerada com",m); break
+              if img: break
+              time.sleep(8)
+          if not img: raise SystemExit("::error::sem imagem apos 3 tentativas")
+          open("_novo/med_receita.png","wb").write(img)
+          print("OK ->_novo/med_receita.png (%d bytes)"%len(img))
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/med_receita.png
+          git diff --cached --quiet && exit 0
+          git commit -m "imagem: gera med_receita (gemini, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+  audio:
+    if: contains(github.event.head_commit.message, '[audio]')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Instalar edge-tts
+        run: pip3 install --quiet edge-tts
+      - name: Gerar falas do _lote_falas.json (voz Antonio)
+        run: |
+          python3 - <<'PY'
+          import os, re, json, subprocess, tempfile
+          itens=json.load(open("_lote_falas.json",encoding="utf-8"))
+          os.makedirs("_audio", exist_ok=True)
+          ok=0; fail=0
+          for it in itens:
+              idn=re.sub(r'[^A-Za-z0-9_-]','_', it.get("id") or "fala")
+              out=tempfile.NamedTemporaryFile(suffix=".mp3", delete=False); out.close()
+              r=subprocess.run(["edge-tts","--voice","pt-BR-AntonioNeural","--text",it["texto"],"--write-media",out.name],
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+              if r.returncode!=0 or os.path.getsize(out.name)<800:
+                  print("::error::falhou", idn, r.stderr.decode("utf-8","ignore")[:200]); fail+=1; continue
+              open("_audio/%s.mp3"%idn,"wb").write(open(out.name,"rb").read())
+              os.remove(out.name); ok+=1; print("OK", idn)
+          print("== %d ok, %d falha =="%(ok,fail))
+          if ok==0: raise SystemExit(1)
+          PY
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _audio/
+          git diff --cached --quiet && exit 0
+          git commit -m "audio: gera vozes (male, via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done
+
+  publicar:
+    if: contains(github.event.head_commit.message, '[publicar]')
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+      OWNER: vidalprof
+      DEST: confeitaria-da-divisao
+      SRC: _pub_confeitaria
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - name: Republicar com historico limpo
+        run: |
+          set -euo pipefail
+          test -f "$SRC/index.html" || { echo "::error::sem $SRC/index.html"; exit 1; }
+          work="$(mktemp -d)"
+          cp -r "$SRC/." "$work/"
+          : > "$work/.nojekyll"
+          cd "$work"
+          git init -q && git checkout -q -b main
+          git config user.name "Republicador"
+          git config user.email "republicador@users.noreply.github.com"
+          git add -A && git commit -qm "Republica site (historico limpo)"
+          git push -q --force "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" main
+          echo "push OK"
+      - name: Forcar build do Pages e esperar resultado
+        run: |
+          set +e
+          gh api -X PUT "repos/$OWNER/$DEST/pages" -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" >/dev/null 2>&1
+          gh api -X POST "repos/$OWNER/$DEST/pages/builds" >/dev/null 2>&1
+          st="desconhecido"; erro=""
+          for i in $(seq 1 14); do
+            sleep 12
+            resp=$(gh api "repos/$OWNER/$DEST/pages/builds/latest" 2>/dev/null)
+            st=$(echo "$resp" | python3 -c "import sys,json;d=json.load(sys.stdin);print(d.get('status') or '?')" 2>/dev/null)
+            erro=$(echo "$resp" | python3 -c "import sys,json;d=json.load(sys.stdin);print((d.get('error') or {}).get('message') or '')" 2>/dev/null)
+            echo "poll $i: $st $erro"
+            [ "$st" = "built" ] && break
+            [ "$st" = "errored" ] && break
+          done
+          mkdir -p _status
+          sha=$(gh api "repos/$OWNER/$DEST/commits/main" --jq '.sha[0:7]' 2>/dev/null)
+          echo "build=$st erro=${erro:-nenhum} commit=$sha em=$(date -u +%Y-%m-%dT%H:%M:%SZ)" > _status/confeitaria.txt
+          cat _status/confeitaria.txt
+      - name: Gravar status neste repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _status/confeitaria.txt
+          git diff --cached --quiet && exit 0
+          git commit -m "status: publicacao confeitaria (via finalizar)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

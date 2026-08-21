@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — termômetro (deslizar numa escala qualitativa)</title>
+<!-- ============================================================
+     PEÇA: TERMÔMETRO — DESLIZAR NUMA ESCALA QUALITATIVA
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+     Vem do "TERMÔMETRO DO GRAU": frio→quente, pouco→muito, pequeno→enorme.
+
+     O QUE ESTA MECÂNICA ENSINA (e por que não é um quiz de três opções):
+       · grau não é escolha, é POSIÇÃO NUMA ESCALA: a criança sente que entre
+         MORNO e QUENTE existe uma vizinhança, e que o passo tem direção;
+       · o mundo responde ENQUANTO ela desliza (o mercúrio sobe, a coisa muda
+         de tamanho e de cor) — é o gesto que ensina, não o acerto no fim;
+       · serve para todo par de opostos: quantidade, tamanho, temperatura,
+         intensidade, e o grau da palavra (normal → aumentativo).
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · PASSO DISCRETO (`step=1`): escala contínua deixa a criança "entre duas
+         paradas", sem saber o que respondeu;
+       · RÓTULO EM CADA PARADA, e o da vez escrito GRANDE — nunca só a cor. Um
+         termômetro que só muda de azul para vermelho não diz nada a quem não
+         distingue as duas;
+       · AS DUAS PORTAS: além de arrastar o controle, há os botões MENOS e MAIS
+         (alvo grande). No PC da escola o mouse arrasta; no tablet velho, não;
+       · o botão de confirmar é SEPARADO do deslizar: sem ele a fase se fecharia
+         sozinha quando a criança apenas PASSASSE pela resposta certa;
+       · o andaime cresce e a peça NUNCA trava: 1º = leia o rótulo; 2º = a
+         direção escrita (mais para a direita/esquerda, com a seta); 3º = a peça
+         leva o controle até a parada certa e segue;
+       · `data-qa` no controle com a parada esperada, para o auditor-jogador
+         conseguir percorrer a escala e fechar a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA (TERMÔMETRO) ====== */
+/* ⚠️ a folga de cima e obrigatoria: o balao tem sombra e nenhuma margem por
+   baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js). */
+/* O PALCO: o termometro a esquerda e a coisa que reage a direita */
+.palco{max-width:430px;margin:13px auto 0;height:150px;position:relative;
+       background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.22);border-radius:18px}
+/* O TERMOMETRO — tubo com bulbo; o mercurio sobe com a parada */
+.tubo{position:absolute;left:22px;bottom:16px;width:30px;height:112px;border-radius:16px;
+      background:rgba(255,255,255,.16);border:3px solid #f4efe6;overflow:hidden}
+.merc{position:absolute;left:0;right:0;bottom:0;height:12%;background:#7ab7ff;
+      -webkit-transition:height .35s,background .35s;transition:height .35s,background .35s}
+.bulbo{position:absolute;left:14px;bottom:4px;width:46px;height:46px;border-radius:50%;
+       background:#7ab7ff;border:3px solid #f4efe6;
+       -webkit-transition:background .35s;transition:background .35s}
+/* A COISA QUE REAGE — muda de tamanho E de cor, e leva a palavra dentro */
+.coisa{position:absolute;right:16px;top:50%;width:92px;height:92px;margin-top:-46px;border-radius:50%;
+       background:#7ab7ff;color:#14212e;font-size:14px;font-weight:800;line-height:92px;text-align:center;
+       border:4px solid rgba(255,255,255,.75);
+       -webkit-transition:-webkit-transform .35s,background .35s;transition:transform .35s,background .35s}
+/* A PALAVRA DA PARADA, grande: o que vale e o rotulo, nunca a cor sozinha */
+.grau{max-width:430px;margin:10px auto 0;background:#fffdf6;color:#221a12;border-radius:16px;
+      padding:10px 12px;font-size:22px;font-weight:800;letter-spacing:1px}
+/* O CONTROLE. Passo discreto: nunca deixa a crianca "entre duas paradas". */
+.linhac{max-width:430px;margin:10px auto 0;text-align:center;font-size:0}
+.escala{-webkit-appearance:none;appearance:none;width:60%;height:26px;margin:0 6px;
+        vertical-align:middle;background:transparent;cursor:pointer}
+.escala::-webkit-slider-runnable-track{height:16px;border-radius:10px;
+  background:-webkit-linear-gradient(left,#7ab7ff,#ffd54a,#ef7a3a);
+  background:linear-gradient(to right,#7ab7ff,#ffd54a,#ef7a3a);border:2px solid #f4efe6}
+.escala::-moz-range-track{height:16px;border-radius:10px;background:#c9bda6;border:2px solid #f4efe6}
+.escala::-webkit-slider-thumb{-webkit-appearance:none;width:40px;height:40px;margin-top:-14px;
+  border-radius:50%;background:#fffdf6;border:4px solid #3c6ee0;box-shadow:0 3px 0 #22406f}
+.escala::-moz-range-thumb{width:40px;height:40px;border-radius:50%;background:#fffdf6;
+  border:4px solid #3c6ee0}
+/* A SEGUNDA PORTA: quem nao consegue arrastar anda de parada em parada */
+.gbt{display:inline-block;vertical-align:middle;width:52px;height:52px;line-height:46px;
+     background:#fffdf6;color:#221a12;border:0;border-radius:16px;font-size:26px;font-weight:800;
+     text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;-webkit-user-select:none;user-select:none}
+.gbt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* OS ROTULOS DE TODAS AS PARADAS — a escala inteira fica legivel de uma vez */
+.rots{max-width:430px;margin:8px auto 0;font-size:0}
+.rot{display:inline-block;width:25%;font-size:12px;font-weight:700;line-height:1.2;
+     color:var(--texto,#e6dfd2);padding:6px 2px;border-top:3px solid rgba(255,255,255,.28)}
+/* a parada da vez: caixa clara + negrito. Forma, nao so cor. */
+.rot.aqui{background:#fff3c9;color:#3a2c07;font-weight:800;border-top:3px solid #ffd54a;
+          border-radius:0 0 10px 10px}
+/* a parada revelada no 3o erro fica com moldura tracejada + a palavra na dica */
+.rot.alvo{border-top:3px dashed #8fe07a;color:#d6f5c8}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* ⚠️ TELA BAIXA (janela de 420px de altura — o "PC 1366 com barras" e o
+   projetor). Aqui a peca tem MUITA coisa empilhada: palco + palavra grande +
+   controle + rotulos + confirmar. Sem este bloco o botao "E este!" caia para
+   FORA da tela e a crianca via a escala sem saber que havia o que confirmar
+   (foi exatamente o que o _qa/leiaute.js acusou na primeira medicao).
+   A regra: encolhe o PALCO e as LETRAS; os alvos de toque continuam grandes. */
+@media (max-height:470px){
+  #app{padding-top:4px;padding-bottom:8px}
+  .balao{font-size:14px;padding:8px 12px;line-height:1.25}
+  .palco{height:84px;margin-top:8px}
+  .tubo{height:56px;width:22px;left:16px;bottom:12px}
+  .bulbo{width:34px;height:34px;left:10px;bottom:2px}
+  .coisa{width:54px;height:54px;margin-top:-27px;line-height:54px;font-size:11px;right:12px}
+  .grau{font-size:16px;padding:5px 10px;margin-top:6px}
+  .linhac{margin-top:6px}
+  .gbt{width:48px;height:48px;line-height:42px;font-size:22px}
+  .rots{margin-top:4px}
+  .rot{font-size:10px;padding:3px 2px}
+  .hint{margin-top:6px;font-size:13px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* TERMÔMETRO — deslizar numa escala qualitativa e parar no grau pedido.
+
+   O CONTEÚDO É SÓ EXEMPLO (8 a 10 anos). Ao levar a peça para uma atividade,
+   troque APENAS este bloco: as escalas, as paradas (rótulo + altura + cor +
+   tamanho) e as falas do andaime.
+   ⚠️ Toda parada precisa de RÓTULO: é a palavra que ensina o grau. Cor e
+   tamanho são reforço, nunca a informação sozinha.
+   ⚠️ Quatro paradas é o teto para 8-10 anos: com seis, as vizinhas ficam
+   indistinguíveis e a fase vira sorte.                                     */
+var ESCALAS=[
+ {ped:"O ch&#225; est&#225; fervendo. Deixe ele <b>MORNO</b>.",
+  coisa:"CH&#193;", alvo:1,
+  paradas:[{r:"GELADO",  h:12,c:"#7ab7ff",e:.85},
+           {r:"MORNO",   h:38,c:"#ffd54a",e:.95},
+           {r:"QUENTE",  h:66,c:"#ef9a3a",e:1.05},
+           {r:"FERVENDO",h:94,c:"#e0503a",e:1.15}],
+  d1:"Leia o r&#243;tulo embaixo do controle antes de confirmar.",
+  d2:"MORNO fica <b>entre</b> gelado e quente."},
+ {ped:"A horta pede <b>BASTANTE</b> &#225;gua &#8212; nem pouca, nem demais.",
+  coisa:"&#193;GUA", alvo:2,
+  paradas:[{r:"NADA",    h:6, c:"#8fa3b8",e:.6},
+           {r:"POUCO",   h:34,c:"#7ab7ff",e:.85},
+           {r:"BASTANTE",h:68,c:"#3c9ae0",e:1.1},
+           {r:"MUITO",   h:96,c:"#1f5fa8",e:1.3}],
+  d1:"BASTANTE &#233; mais que pouco, mas ainda n&#227;o &#233; o m&#225;ximo.",
+  d2:"Conte as paradas: nada, pouco, <b>bastante</b>, muito."},
+ {ped:"Encha o bal&#227;o at&#233; ficar <b>GRANDE</b> (n&#227;o enorme).",
+  coisa:"BAL&#195;O", alvo:2,
+  paradas:[{r:"PEQUENO",h:18,c:"#c9a8e0",e:.55},
+           {r:"NORMAL", h:44,c:"#b07ae0",e:.85},
+           {r:"GRANDE", h:72,c:"#8f4ad0",e:1.15},
+           {r:"ENORME", h:98,c:"#6a2ab0",e:1.4}],
+  d1:"Olhe o tamanho E o r&#243;tulo: os dois contam a mesma coisa.",
+  d2:"Depois de GRANDE ainda tem ENORME: n&#227;o &#233; a &#250;ltima parada."}
+];
+
+var esc=0, atual=0, errosT=0, gerT=0, travadoT=false;
+var barraT=null, mercEl=null, bulboEl=null, coisaEl=null, grauEl=null,
+    faixaEl=null, rotsEl=null;
+
+/* som proprio da escala: o passo sobe de tom junto com o grau — quem esta no
+   mudo tem o mesmo aviso escrito no rotulo. */
+function sPasso(n){ nota(300+n*95,.06,.12,"triangle",0); }
+
+function telaTermo(){
+  limpa();
+  gerT++;
+  errosT=0; travadoT=false;
+  var it=ESCALAS[esc], i;
+  atual=0;
+  var t=el("div","tela");
+  setProg(t,Math.round(esc*100/ESCALAS.length));
+  barraT=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","TERM&#212;METRO "+(esc+1)+" DE "+ESCALAS.length));
+  c.appendChild(el("div","balao",it.ped+"<br>Deslize at&#233; chegar l&#225;."));
+
+  /* o palco: o termometro que sobe + a coisa que reage */
+  var palco=el("div","palco","");
+  var tubo=el("div","tubo","");
+  mercEl=el("div","merc","");
+  tubo.appendChild(mercEl);
+  palco.appendChild(tubo);
+  bulboEl=el("div","bulbo","");
+  palco.appendChild(bulboEl);
+  coisaEl=el("div","coisa",it.coisa);
+  palco.appendChild(coisaEl);
+  c.appendChild(palco);
+
+  /* a palavra da parada, grande: e ela que ensina o grau */
+  grauEl=el("div","grau","");
+  c.appendChild(grauEl);
+
+  /* o controle + as DUAS PORTAS (arrastar OU andar de parada em parada) */
+  var linha=el("div","linhac","");
+  var menos=el("div","gbt","&#8722;");
+  menos.onclick=function(){ mudaPara(atual-1); };
+  linha.appendChild(menos);
+  faixaEl=document.createElement("input");
+  faixaEl.type="range"; faixaEl.min="0"; faixaEl.max=""+(it.paradas.length-1);
+  faixaEl.step="1"; faixaEl.value="0"; faixaEl.className="escala";
+  faixaEl.setAttribute("aria-label","grau na escala");
+  /* a parada esperada — SO para o auditor-jogador percorrer a escala */
+  faixaEl.setAttribute("data-qa",""+it.alvo);
+  faixaEl.oninput=function(){ mudaPara(parseInt(faixaEl.value,10)); };
+  faixaEl.onchange=faixaEl.oninput;
+  linha.appendChild(faixaEl);
+  var mais=el("div","gbt","+");
+  mais.onclick=function(){ mudaPara(atual+1); };
+  linha.appendChild(mais);
+  c.appendChild(linha);
+
+  /* os rotulos de TODAS as paradas: a escala inteira legivel de uma vez */
+  rotsEl=el("div","rots","");
+  for(i=0;i<it.paradas.length;i++) rotsEl.appendChild(el("span","rot",it.paradas[i].r));
+  c.appendChild(rotsEl);
+
+  /* confirmar e SEPARADO de deslizar: senao a fase se fecharia sozinha quando
+     a crianca apenas PASSASSE pela resposta certa. */
+  var ok=el("button","btn","&#201; este!");
+  ok.onclick=confirma;
+  c.appendChild(ok);
+  c.appendChild(el("div","hint","Arraste o bot&#227;o <b>ou</b> use o menos e o mais."));
+  t.appendChild(c); app.appendChild(t);
+  pinta(0);
+}
+
+function pinta(n){
+  var it=ESCALAS[esc], p=it.paradas[n], i, a;
+  atual=n;
+  if(faixaEl) faixaEl.value=""+n;
+  if(mercEl){ mercEl.style.height=p.h+"%"; mercEl.style.background=p.c; }
+  if(bulboEl) bulboEl.style.background=p.c;
+  if(coisaEl){
+    coisaEl.style.background=p.c;
+    coisaEl.style.webkitTransform="scale("+p.e+")";
+    coisaEl.style.transform="scale("+p.e+")";
+  }
+  if(grauEl) grauEl.innerHTML=p.r;
+  if(rotsEl){
+    a=rotsEl.getElementsByTagName("span");
+    for(i=0;i<a.length;i++)
+      a[i].className=(i===n)?"rot aqui":(a[i].className.indexOf("alvo")>=0?"rot alvo":"rot");
+  }
+}
+function mudaPara(n){
+  if(travadoT) return;
+  var it=ESCALAS[esc];
+  if(n<0) n=0;
+  if(n>it.paradas.length-1) n=it.paradas.length-1;
+  if(n===atual&&faixaEl&&parseInt(faixaEl.value,10)===n) return;
+  pinta(n);
+  sPasso(n);
+}
+
+/* ⚠️ `travadoT`: entre acertar e a escala seguinte montar passam 800ms, e
+   nesse meio-tempo cabe outro toque (dedo de crianca repete; o auditor tambem).
+   Sem o trinco a peca pulava uma escala inteira. */
+function confirma(){
+  if(travadoT) return;
+  var it=ESCALAS[esc];
+  if(atual===it.alvo){
+    sCerto();
+    if(barraT) barraT.style.width=Math.round((esc+1)*100/ESCALAS.length)+"%";
+    fechaEscala();
+    return;
+  }
+  sErro();
+  errosT++;
+  ajudaT(errosT);
+}
+
+/* o andaime CRESCE: leia o rotulo -> a direcao escrita -> a peca leva o
+   controle ate a parada certa e segue. Nunca X, nunca "errou". */
+function ajudaT(n){
+  var it=ESCALAS[esc];
+  if(n===1){ mostraDica(it.d1); return; }
+  if(n===2){
+    mostraDica(it.d2+" Daqui, ande para a <b>"+
+      (atual<it.alvo?"direita &#8594;":"esquerda &#8592;")+"</b>.");
+    return;
+  }
+  mostraDica("A parada certa &#233; <b>"+it.paradas[it.alvo].r+"</b>. Eu levo o controle at&#233; l&#225;.");
+  var a=rotsEl?rotsEl.getElementsByTagName("span"):null;
+  if(a&&a[it.alvo]) a[it.alvo].className="rot alvo";
+  pinta(it.alvo);
+  sPasso(it.alvo);
+  var meu=gerT;
+  setTimeout(function(){
+    if(meu!==gerT) return;
+    sCerto();
+    if(barraT) barraT.style.width=Math.round((esc+1)*100/ESCALAS.length)+"%";
+    fechaEscala();
+  },900);
+}
+
+/* ⚠️ o temporizador continua correndo depois que a tela sai: o guarda `gerT`
+   impede que ele monte a escala seguinte por cima de outra tela. */
+function fechaEscala(){
+  var meu=gerT;
+  travadoT=true;                /* ninguem mais mexe nesta rodada */
+  gerT++;
+  setTimeout(function(){
+    if(meu+1!==gerT) return;
+    esc++;
+    if(esc<ESCALAS.length){ telaTermo(); return; }
+    mostraBanner("Voc&#234; achou o grau certo nas tr&#234;s escalas!",telaFimTermo);
+  },800);
+}
+
+function telaFimTermo(){
+  limpa(); gerT++;
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Grau n&#227;o &#233; s&#243; sim ou n&#227;o: &#233; <b>posi&#231;&#227;o na escala</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomecaT;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a TERM&#212;METRO: passo discreto e r&#243;tulo em cada parada."));
+  t.appendChild(c); app.appendChild(t);
+}
+function recomecaT(){ esc=0; telaTermo(); }
+
+telaTermo();
+</script>
+</body></html>

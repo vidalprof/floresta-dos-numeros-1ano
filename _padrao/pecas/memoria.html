@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — jogo da memória (par conceitual com figura e voz)</title>
+<!-- ============================================================
+     PEÇA: JOGO DA MEMÓRIA — PAR CONCEITUAL (palavra <-> significado)
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     POR QUE PAR CONCEITUAL E NÃO IGUAL<->IGUAL: memória de figuras iguais treina
+     só a posição no tabuleiro — some o conteúdo. Aqui a criança só fecha o par se
+     ENTENDER: "ABELHA" casa com "faz o mel". O gesto continua sendo memória; o
+     que está sendo lembrado passa a ser o sentido.
+
+     ⭐⭐ A REFORMA DO 1º ANO (cobrança do Marcos, ago/2026, jogando a Padaria das
+     Letras): *"memória dos começos ficou meio difícil para o 1º ano; jogo da
+     memória tem que ser fantástico, com apoio visual e sonoro para os pequenos"*.
+
+     O DEFEITO, em uma linha: a peça pedia DUAS LEITURAS por par — ler "ABELHA"
+     numa carta e ler "faz o mel" na outra. No 1º ano tem quem ainda soletra; para
+     essa criança o jogo não era difícil, era IMPOSSÍVEL, e virava loteria de
+     posição. Os três apoios que entraram:
+
+       1. FIGURA EM TODA CARTA. Cada carta agora mostra um DESENHO junto com o
+          texto. E — isto é o coração — o desenho da carta-palavra e o da
+          carta-sentido são DIFERENTES: ABELHA traz a abelha, "faz o mel" traz o
+          pote de mel. Quem não lê casa abelha com mel PENSANDO, não comparando
+          dois desenhos iguais. O conteúdo continua sendo o sentido; só o caminho
+          até ele deixou de exigir alfabetização.
+       2. VOZ EM TODA CARTA. Tocar a carta VIRA e FALA o que está escrito nela, e
+          cada carta virada ganha o ALTO-FALANTE da casa (`.zap` + `data-voz`)
+          para ouvir de novo quantas vezes quiser. É a voz gravada do motor
+          (`diz` é reapontado pela ponte do integrador) — nunca a voz-robô do
+          navegador, que a casa desligou de propósito.
+       3. A ESPIADA. O tabuleiro NASCE de cara para cima por 2,6 s e depois vira
+          sozinho, na frente da criança. É o andaime clássico da memória para os
+          pequenos: ela não precisa adivinhar do zero, precisa LEMBRAR — que é o
+          que a fase treina. Sem isso, as 4 ou 5 primeiras tentativas de um
+          tabuleiro de 8 cartas são puro acaso, e acaso não ensina nem diverte.
+
+     ⭐ E O ANDAIME PASSOU A CRESCER MAIS CEDO: era a cada 6 tentativas sem par,
+     agora é a cada 4. A conta não é gosto: são 8 cartas, e uma criança de 6 anos
+     segura ~3 coisas na memória de trabalho ao mesmo tempo. Varrer o tabuleiro
+     inteiro custa umas 6 a 8 tentativas — ou seja, com o degrau em 6 a ajuda só
+     chegava DEPOIS de a criança já ter se perdido uma vez inteira. Em 4 ela
+     chega no meio da primeira varredura, que é quando ainda dá para aproveitar.
+     E os três degraus foram refeitos para quem NÃO LÊ: o 1º é só VOZ (a peça diz
+     a palavra), o 2º ABRE UMA CARTA e a deixa escolhida (só falta achar o par
+     dela), o 3º abre o par inteiro. Nenhum degrau depende de ler uma frase.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (regra permanente do Marcos, ago/2026 —
+     "quando fizer jogo da memória faça cartas maiores, registre para sempre"):
+       · CARTA FLUIDA E GRANDE: .mcarta{width:48%;max-width:210px;min-height:...}
+         dentro de .mcartas{max-width:430px;width:100%}. O piso medido pelo
+         _qa/leiaute.js é 130x88px — px fixo reprova em tela de 320.
+       · EM TELA BAIXA ENCOLHE A LETRA E A FIGURA, NUNCA A CARTA (@media max-height).
+       · VIRADA 3D DE VERDADE (rotateY + preserve-3d) com QUEDA para troca-de-face
+         onde não há 3D — carta que troca de face sem girar perde metade da graça,
+         mas é melhor que carta que some.
+       · VERSO DE ARTE, nunca retângulo liso (aqui um SVG embutido; na atividade
+         de verdade entra a arte de IA no lugar) + BRILHO CORRENDO pelo verso,
+         que é o que chama a criança para tocar.
+       · SOM PRÓPRIO DE VIRAR E DE FORMAR PAR (não reusar o "ding" de acerto).
+       · PAR QUE ACERTA PULSA E ACENDE + "✓" (nada essencial só na cor).
+       · PLACAR DE PARES e a BARRA ANDANDO — sem isso a criança não vê progresso
+         e o auditor-jogador acha que a tela travou.
+       · NUNCA TRAVA: a cada 4 tentativas sem par o andaime cresce; na terceira
+         vez ele abre um par sozinho.
+       · O ALTO-FALANTE NÃO JOGA: ele só fala. Sem `stopPropagation` ali, tocar
+         no som contava como jogada — e a criança que só queria conferir o nome
+         levava um par errado.
+       · O ALTO-FALANTE DA CARTA VIRADA PARA BAIXO NÃO EXISTE (`display:none`):
+         com `visibility` ele continuaria no leiaute, atrás do verso, e o portão
+         `_qa/leiaute.js` (regra 5, o teste do dedo) leria "botão sobre botão".
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- O TABULEIRO ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o tabuleiro nasce COLADO
+   no enunciado (defeito que o Marcos ja cobrou duas vezes).                  */
+/* ⚠️ `gap:0` DECLARADO de proposito: dentro de uma atividade montada, o motor
+   tambem tem uma regra `.mcartas` (com `gap:10px`), e o que a peca NAO declara
+   vem de la. Com o gap somado a conta de 48% + margem 1%, duas cartas passavam
+   de 100% e o tabuleiro empilhava numa coluna so — 4 das 8 cartas fora da tela
+   de 640px da escola. Aqui a peca fecha a propria conta.                    */
+.mcartas{max-width:430px;width:100%;margin:13px auto 0;gap:0;
+         display:-webkit-box;display:-webkit-flex;display:flex;
+         -webkit-flex-wrap:wrap;flex-wrap:wrap;
+         -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+/* CARTA FLUIDA E GRANDE — nunca px fixo (piso do auditor: 130x88) */
+/* ⭐ REGRA DA CASA (Marcos, ago/2026): no PC largo o tabuleiro abre em TRES
+   colunas, para caber sem rolar. Fica na PECA, e nao so no motor, porque a
+   regra da peca ganha por especificidade dentro da atividade montada.      */
+@media (min-width:760px){ .mcartas{max-width:680px} }
+/* ⭐ min-height subiu de 100 para 128: a carta agora carrega FIGURA + palavra +
+   alto-falante. Continua FLUIDA (48% da largura) — quem cresceu foi so a
+   altura, que e o que a figura pediu. Piso do auditor: 130x88.             */
+.mcarta{width:48%;max-width:210px;min-height:158px;margin:5px 1%;position:relative;cursor:pointer;
+        -webkit-perspective:900px;perspective:900px}
+.mflip{position:absolute;left:0;top:0;right:0;bottom:0;
+       -webkit-transform-style:preserve-3d;transform-style:preserve-3d;
+       -webkit-transition:-webkit-transform .45s;transition:transform .45s}
+.mcarta.vira .mflip{-webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mface{position:absolute;left:0;top:0;right:0;bottom:0;border-radius:16px;overflow:hidden;
+       -webkit-backface-visibility:hidden;backface-visibility:hidden;
+       display:-webkit-box;display:-webkit-flex;display:flex;
+       -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+       -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+       text-align:center;padding:8px}
+.mverso{background:#6b4b2a;background-size:cover;background-position:center;
+        border:3px solid #4a3218;box-shadow:0 4px 0 #3a2712}
+/* BRILHO CORRENDO — o convite para tocar */
+.mverso:after{content:"";position:absolute;top:-40%;left:-60%;width:40%;height:180%;
+  background:-webkit-linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.42),rgba(255,255,255,0));
+  background:linear-gradient(rgba(255,255,255,0),rgba(255,255,255,.42),rgba(255,255,255,0));
+  -webkit-transform:rotate(18deg);transform:rotate(18deg);
+  -webkit-animation:brilha 2.6s linear infinite;animation:brilha 2.6s linear infinite}
+@-webkit-keyframes brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}
+@keyframes brilha{0%{left:-60%}55%{left:120%}100%{left:120%}}
+/* a face da frente so EXISTE para a crianca depois que ela vira a carta */
+.mfrente{background:#fffdf6;color:#221a12;border:3px solid #c9bda6;visibility:hidden;
+         -webkit-transform:rotateY(180deg);transform:rotateY(180deg)}
+.mcarta.vira .mfrente{visibility:visible}
+/* o miolo da frente: figura em cima, palavra embaixo */
+.mcnt{display:block;width:100%}
+/* ⭐ A FIGURA — o apoio visual do 1o ano. Na atividade de verdade o item traz
+   `img:"<nome>"` e entra a ARTE DE IA pelo motor (`imgEl`); aqui, sem motor,
+   entra o desenho SVG embutido da propria peca. Nunca fica sem nada.       */
+.mfig{width:52px;height:52px;margin:0 auto 4px;background-repeat:no-repeat;
+      background-position:center center;-webkit-background-size:contain;background-size:contain}
+.mfig img{width:100%;height:100%;object-fit:contain}
+/* ⭐ FOTO GRANDE EMOLDURADA (ago/2026, pedido do Marcos: "cartas nao podem ficar
+   muito pequenas" + "na moldura"). Quando o par usa ARTE DE IA (`img`), a foto
+   deixa de ser um &#237;cone de 52px e vira uma FOTO que preenche a carta, com uma
+   mata branca (estilo foto instant&#226;nea da c&#226;mera do mascote). A mata resolve de
+   uma vez os tr&#234;s formatos que a IA devolve &#8212; cena cheia, figura em fundo branco
+   e recorte transparente &#8212; porque todas passam a parecer "foto no papel branco". */
+.mfig.mfoto{width:100%;height:104px;margin:0 auto 6px;border-radius:12px;
+  background:#fff;border:3px solid #efe7d3;-webkit-box-shadow:0 3px 9px rgba(30,40,20,.22);
+  box-shadow:0 3px 9px rgba(30,40,20,.22);overflow:hidden}
+.mfig.mfoto img{width:100%;height:100%;object-fit:contain;object-position:center;display:block}
+.mtxt{font-size:16px;font-weight:800;line-height:1.2}
+/* ⭐ palavra SOZINHA (par nome×imagem): sem figura em cima, ela ocupa a carta
+   inteira, centrada e MAIOR — e a carta-nome do jogo da memoria dos solidos. */
+.mtxt.mso{font-size:22px;letter-spacing:.5px;display:-webkit-box;display:flex;
+  -webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;
+  min-height:64px;text-align:center}
+.mtxt.mso .meti{display:none}
+.mtxt.msent{font-size:14px;font-weight:600;padding:0 2px}
+.meti{display:block;font-size:11px;font-weight:700;letter-spacing:.5px;color:#33526f;margin-bottom:2px}
+/* ⭐ A CARTA-LEGENDA (o par de texto). ⚠️ LICAO PAGA (Marcos, ago/2026):
+   *"no ache a palavra e o desenho que combina parece que faltaram algumas
+   imagens"*. A carta de FRASE nascia sem figura (de proposito — figura igual dos
+   dois lados vira "ache as gemeas" e a crianca para de LER) e por isso parecia
+   quebrada. Agora ela e uma LEGENDA DE JORNAL de verdade — combina com o RIGHT
+   NOW: papel creme, aspas grandes, a frase em italico com destaque. Deixa de
+   parecer defeito e vira parte do tema; e o par continua exigindo leitura. */
+.mcarta.tsen .mfig{display:none}
+.mcarta.tsen .mfrente{background:-webkit-linear-gradient(top,#fffdf7,#f4ecd8);
+  background:linear-gradient(#fffdf7,#f4ecd8);color:#241c12;}
+.mcarta.tsen .mcnt{position:relative;padding:18px 8px 6px}
+.mcarta.tsen .mcnt:before{content:"\201C";position:absolute;top:-4px;left:9px;
+  font-family:Georgia,"Times New Roman",serif;font-size:52px;line-height:1;
+  color:rgba(60,110,224,.26)}
+.mcarta.tsen .meti{color:#7a4a06}
+.mcarta.tsen .mtxt.msent{font-style:italic;font-size:15px;font-weight:700;}
+/* ⭐ carta tsen em MODO IMAGEM (par de figuras, 1º ano): ela NAO e legenda, e a
+   propria figura — mostra a imagem, tira a aspa e o creme de legenda. */
+.mcarta.tsen.mfoto .mfig{display:block}
+.mcarta.tsen.mfoto .mcnt{padding:0}
+.mcarta.tsen.mfoto .mcnt:before{content:none}
+.mcarta.tsen.mfoto .mfrente{background:#fffdf6}
+/* ⭐ O ALTO-FALANTE DA CARTA (pilar SONORO). Canto de CIMA A ESQUERDA porque o
+   "V" do par fechado mora no canto de cima a direita — dois selos no mesmo
+   canto se cobrem. */
+.zap{position:absolute;left:5px;top:5px;width:34px;height:34px;border:0;border-radius:50%;
+     padding:0;margin:0;cursor:pointer;background-color:rgba(255,210,63,.95);
+     box-shadow:0 2px 0 rgba(150,110,10,.4);
+     display:none;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+     -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+/* ⚠️ SO EXISTE COM A CARTA VIRADA. Com `visibility` ele continuaria ocupando
+   lugar atras do verso e o portao do leiaute (teste do dedo) acusaria "botao
+   sobre botao" nas 8 cartas. `display:none` tira do leiaute de verdade.   */
+.mcarta.vira .zap{display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex}
+.zap:active{background-color:#f0c02a}
+/* o glifo do alto-falante e UM SVG (nunca borda de elemento sem tamanho: ele
+   nao se centra e sai torto — licao paga tres vezes no `ouvir-achar`) */
+.fone{display:block;width:20px;height:20px;
+      background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+      -webkit-background-size:20px 20px;background-size:20px 20px}
+/* PAR FECHADO: acende, pulsa e ganha o "V" (forma + cor + som) */
+.mcarta.par .mfrente{background-color:#d6f5c8;border:3px solid #1f6b12}
+/* ⚠️ LICAO PAGA (ago/2026): a carta fechada saiu BRANCO SOBRE VERDE CLARO
+   (1,77:1) dentro da atividade — e passou na bancada, porque ali o fundo e
+   escuro liso e o motor nao esta junto. O motor tambem estiliza `.mcarta` e
+   as classes de acerto; a cor do texto vinha de la. Cor escrita AQUI, com o
+   peso da peca, e o problema morre nos dois cenarios. */
+.mcarta.par .mfrente,.mcarta.par .mtxt,.mcarta.par .meti{color:#173a12}
+.mcarta.par{-webkit-animation:pulsa .7s ease-out 2;animation:pulsa .7s ease-out 2}
+@-webkit-keyframes pulsa{0%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.07)}100%{-webkit-transform:scale(1)}}
+@keyframes pulsa{0%{transform:scale(1)}45%{transform:scale(1.07)}100%{transform:scale(1)}}
+/* o confete caindo (par formado / vitoria) */
+@-webkit-keyframes mcai{0%{-webkit-transform:translateY(0) rotate(0);opacity:1}100%{-webkit-transform:translateY(104vh) rotate(720deg);opacity:.4}}
+@keyframes mcai{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(104vh) rotate(720deg);opacity:.4}}
+.vpar{position:absolute;right:5px;top:5px;width:30px;height:30px;border-radius:50%;
+      background:#1f6b12;color:#fff;font-size:17px;font-weight:800;line-height:30px;text-align:center}
+/* QUEDA (Chrome antigo sem 3D): troca de face, sem girar */
+.sem3d .mflip{-webkit-transition:none;transition:none;
+              -webkit-transform:none !important;transform:none !important}
+.sem3d .mfrente{-webkit-transform:none;transform:none;display:none}
+.sem3d .mcarta.vira .mfrente{display:-webkit-box;display:-webkit-flex;display:flex;visibility:visible}
+.sem3d .mcarta.vira .mverso{display:none}
+
+.placar{margin-top:12px;font-size:17px;font-weight:700}
+.placar b{color:#ffd54a}
+.pares{margin-top:8px}
+.ppt{display:inline-block;width:26px;height:26px;border-radius:50%;margin:0 4px;
+     background:rgba(255,255,255,.16);border:3px dashed rgba(255,255,255,.45)}
+.ppt.on{background:#59c24b;border:3px solid #d6f5c8}
+/* tela baixa: encolhe a LETRA E A FIGURA, NUNCA a carta */
+@media (max-height:470px){
+  .mtxt{font-size:14px}.mtxt.msent{font-size:12px}
+  .mfig{width:40px;height:40px}
+  .mcarta{min-height:112px}
+}
+@media (prefers-reduced-motion:reduce){
+  .mverso:after{-webkit-animation:none;animation:none}
+  .mcarta.par{-webkit-animation:none;animation:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+/* ⭐ CONFETE DE VERDADE (ago/2026, pedido do Marcos: memoria "fantastica, com
+   confetes, luz passando nas cartas, moderna"). O `festa()` so tocava som.
+   Agora chove confete colorido: um estouro pequeno a cada PAR e um grande na
+   vitoria. Sem depend&#234;ncia — DOM puro, se limpa sozinho. */
+function confete(n){
+  var cores=["#ff5252","#ffd54a","#59c24b","#3c9bff","#c58bf0","#ff9f43","#26d0b0"];
+  var box=document.createElement("div");
+  box.style.cssText="position:fixed;left:0;top:0;right:0;bottom:0;pointer-events:none;z-index:9999;overflow:hidden";
+  var i,N=n||36;
+  for(i=0;i<N;i++){
+    var p=document.createElement("i"),c=cores[i%cores.length];
+    var L=Math.random()*100, dur=1.1+Math.random()*1.2, del=Math.random()*.25, sz=6+Math.random()*8;
+    p.style.cssText="position:absolute;top:-16px;left:"+L+"%;width:"+sz+"px;height:"+(sz*0.6)+
+      "px;background:"+c+";border-radius:2px;opacity:.96;"+
+      "-webkit-animation:mcai "+dur+"s "+del+"s ease-in forwards;animation:mcai "+dur+"s "+del+"s ease-in forwards";
+    box.appendChild(p);
+  }
+  document.body.appendChild(box);
+  setTimeout(function(){ if(box.parentNode) box.parentNode.removeChild(box); }, 2700);
+}
+function festa(){sCerto();confete(60);}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- ARTE: O VERSO E OS DESENHOS DAS CARTAS ----
+   Numa atividade de verdade cada item do conteudo traz `img:"<nome>"` e entra a
+   ARTE DE IA da atividade (regra da casa: interacao dinamica usa arte gerada,
+   nunca desenho de CSS). Estes SVGs embutidos existem para a PECA rodar sozinha,
+   sem nenhum arquivo externo — e para nunca haver carta sem figura, que e o
+   apoio de que o 1o ano depende.
+   ⚠️ `ARTE` esta na lista NAO_E_CONTEUDO do integrador de proposito: se ela
+   fosse a gaveta, injetar o conteudo da fase trocaria o DESENHO DO VERSO pelos
+   pares da atividade — sem erro de JS nenhum, e com o jogo quebrado.       */
+var ARTE={
+ verso:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 90' preserveAspectRatio='none'>"+
+   "<rect width='120' height='90' fill='#6b4b2a'/>"+
+   "<g fill='#805c36'><circle cx='24' cy='20' r='14'/><circle cx='96' cy='24' r='11'/>"+
+   "<circle cx='60' cy='58' r='16'/><circle cx='18' cy='72' r='10'/><circle cx='104' cy='70' r='13'/></g>"+
+   "<g stroke='#8f6b41' stroke-width='3' fill='none'><path d='M0 45 L120 45'/><path d='M60 0 L60 90'/></g>"+
+   "<g fill='#c9a05e'><path d='M60 34 l7 12 -7 12 -7 -12 z'/>"+
+   "<circle cx='24' cy='20' r='4'/><circle cx='96' cy='24' r='4'/>"+
+   "<circle cx='18' cy='72' r='4'/><circle cx='104' cy='70' r='4'/></g></svg>",
+
+ /* ⚠️ LICAO PAGA (ago/2026), e o portao a pegou no mesmo dia: esta abelha
+    nasceu com as listras dentro de um `<clipPath>` e um `clip-path='url(#cb)'`.
+    Dentro do data-URI o `#` vira `%23`, entao o CSS final da carta continha um
+    `url(%23cb)` — e o `_qa/imagens.js`, que varre os fundos atras de figura que
+    nao carrega, leu aquilo como um ARQUIVO faltando e reprovou. Nao havia
+    imagem quebrada nenhuma; havia uma referencia interna do SVG parecendo uma.
+    A regra que fica: SVG embutido em data-URI nao usa `url(#...)` — nem clip,
+    nem mascara, nem gradiente por referencia. Desenha-se com forma fechada.
+    (Aqui: as listras sao retangulos ja calculados para caber dentro da elipse
+    do corpo — no ponto mais largo a meia-altura da elipse e 13, e nenhuma
+    listra passa disso na coluna em que esta.) */
+ abelha:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<g fill='#d9ecfb' stroke='#5b7f9e' stroke-width='2'>"+
+   "<ellipse cx='26' cy='20' rx='10' ry='6' transform='rotate(-28 26 20)'/>"+
+   "<ellipse cx='43' cy='20' rx='10' ry='6' transform='rotate(28 43 20)'/></g>"+
+   "<ellipse cx='34' cy='38' rx='18' ry='13' fill='#f5b301'/>"+
+   "<g fill='#3a2b12'><rect x='27' y='26.5' width='6' height='23' rx='3'/>"+
+   "<rect x='37' y='27.5' width='6' height='21' rx='3'/>"+
+   "<rect x='45' y='32' width='4' height='12' rx='2'/></g>"+
+   "<ellipse cx='34' cy='38' rx='18' ry='13' fill='none' stroke='#7a5a06' stroke-width='2.5'/>"+
+   "<circle cx='15' cy='34' r='7.5' fill='#3a2b12'/><circle cx='13' cy='32' r='2' fill='#fffdf6'/>"+
+   "<g stroke='#3a2b12' stroke-width='2' fill='none' stroke-linecap='round'>"+
+   "<path d='M12 27 L8 20'/><path d='M18 26 L20 19'/></g></svg>",
+
+ mel:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<path d='M16 26 h32 v22 a6 6 0 0 1 -6 6 h-20 a6 6 0 0 1 -6 -6 z' fill='#f6d98a' stroke='#8a6a1a' stroke-width='2.5'/>"+
+   "<path d='M16 34 h32 v14 a6 6 0 0 1 -6 6 h-20 a6 6 0 0 1 -6 -6 z' fill='#e8a317'/>"+
+   "<rect x='12' y='16' width='40' height='10' rx='4' fill='#c2410c' stroke='#7a2c08' stroke-width='2'/>"+
+   "<rect x='22' y='36' width='20' height='11' rx='3' fill='#fffdf6' stroke='#8a6a1a' stroke-width='1.6'/>"+
+   "<g fill='#8a6a1a'><circle cx='28' cy='41.5' r='2'/><circle cx='32' cy='41.5' r='2'/>"+
+   "<circle cx='36' cy='41.5' r='2'/></g>"+
+   "<path d='M16 26 h32' fill='none' stroke='#8a6a1a' stroke-width='2.5'/></svg>",
+
+ semente:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<ellipse cx='32' cy='34' rx='13' ry='19' fill='#a9713c' stroke='#5e3c17' stroke-width='2.5'/>"+
+   "<path d='M32 17 q8 17 0 34' fill='none' stroke='#5e3c17' stroke-width='2'/>"+
+   "<ellipse cx='26' cy='27' rx='3.5' ry='5.5' fill='#cf9a63' transform='rotate(-18 26 27)'/></svg>",
+
+ broto:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<rect x='5' y='46' width='54' height='13' rx='5' fill='#7a5230'/>"+
+   "<path d='M32 50 V24' fill='none' stroke='#1f6b12' stroke-width='4' stroke-linecap='round'/>"+
+   "<path d='M32 36 q-15 -1 -18 -12 q15 -2 18 12 z' fill='#59c24b' stroke='#1f6b12' stroke-width='2'/>"+
+   "<path d='M32 30 q15 -2 18 -13 q-15 -1 -18 13 z' fill='#59c24b' stroke='#1f6b12' stroke-width='2'/></svg>",
+
+ chuva:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<path d='M17 34 a10 10 0 0 1 19 -6 a9 9 0 0 1 10 6 a8 8 0 0 1 -1 12 H18 a8 8 0 0 1 -1 -12 z'"+
+   " fill='#d5dde7' stroke='#5b6b7d' stroke-width='2.5'/>"+
+   "<g fill='#2f7fd6' stroke='#1a5698' stroke-width='1.6'>"+
+   "<path d='M22 50 c3 5 4 7 4 9 a4 4 0 0 1 -8 0 c0 -2 1 -4 4 -9 z'/>"+
+   "<path d='M34 52 c3 5 4 7 4 9 a4 4 0 0 1 -8 0 c0 -2 1 -4 4 -9 z'/>"+
+   "<path d='M46 50 c3 5 4 7 4 9 a4 4 0 0 1 -8 0 c0 -2 1 -4 4 -9 z'/></g></svg>",
+
+ poca:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<rect x='3' y='38' width='58' height='21' rx='6' fill='#7a5230'/>"+
+   "<ellipse cx='32' cy='44' rx='21' ry='7' fill='#2f7fd6' stroke='#1a5698' stroke-width='2'/>"+
+   "<ellipse cx='32' cy='43' rx='11' ry='3.5' fill='none' stroke='#8fc7f5' stroke-width='2'/>"+
+   "<path d='M32 8 c5 10 7 13 7 16 a7 7 0 0 1 -14 0 c0 -3 2 -6 7 -16 z' fill='#2f7fd6' stroke='#1a5698' stroke-width='2'/>"+
+   "<g fill='#a9713c'><circle cx='10' cy='52' r='3'/><circle cx='55' cy='53' r='3'/></g></svg>",
+
+ /* ⚠️ os OVOS entram ANTES do fundo do ninho e a boca do ninho e uma curva
+    que MERGULHA no meio (`q26 14 52 0`) — sem isso o desenho lia como uma
+    tigela com creme: os ovos ficavam escondidos atras da borda reta.       */
+ ninho:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<path d='M5 34 q27 -16 54 0' fill='none' stroke='#8a5a2a' stroke-width='5' stroke-linecap='round'/>"+
+   "<g fill='#fffdf6' stroke='#a89878' stroke-width='2'>"+
+   "<ellipse cx='21' cy='33' rx='7' ry='8.5'/><ellipse cx='43' cy='33' rx='7' ry='8.5'/>"+
+   "<ellipse cx='32' cy='29' rx='7' ry='8.5'/></g>"+
+   "<path d='M6 36 q26 14 52 0 q-5 21 -26 21 q-21 0 -26 -21 z' fill='#a9713c' stroke='#5e3c17' stroke-width='2.5'/>"+
+   "<g fill='none' stroke='#7a5230' stroke-width='2' stroke-linecap='round'>"+
+   "<path d='M14 44 q10 5 20 2'/><path d='M32 52 q10 -2 16 -8'/></g></svg>",
+
+ passaro:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'>"+
+   "<ellipse cx='28' cy='36' rx='17' ry='13' fill='#3c8ee0' stroke='#1a5698' stroke-width='2.5'/>"+
+   "<circle cx='43' cy='23' r='10' fill='#3c8ee0' stroke='#1a5698' stroke-width='2.5'/>"+
+   "<circle cx='46' cy='21' r='2.3' fill='#12283f'/>"+
+   "<path d='M52 25 l10 3 l-10 4 z' fill='#f5b301' stroke='#8a6a1a' stroke-width='1.6'/>"+
+   "<path d='M22 33 q11 -4 17 7 q-11 6 -17 -7 z' fill='#a9d4f7' stroke='#1a5698' stroke-width='2'/>"+
+   "<path d='M13 40 l-11 5 l11 4 z' fill='#2472c8' stroke='#1a5698' stroke-width='2'/>"+
+   "<g stroke='#f5b301' stroke-width='3' stroke-linecap='round'><path d='M25 48 V56'/><path d='M33 48 V56'/></g></svg>"
+};
+function imgSvg(nome){ return "url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(ARTE[nome])+"\")"; }
+var VERSO = imgSvg("verso");   /* o verso e IMAGEM, nunca cor lisa */
+
+/* ---- O CONTEUDO: troque APENAS este bloco ----
+   Par CONCEITUAL (palavra <-> significado), agora com FIGURA dos dois lados.
+   ⭐ A REGRA DE OURO DO CONTEUDO: `fig` e `figsen` tem que ser desenhos
+   DIFERENTES um do outro (a abelha e o pote de mel), nunca o mesmo desenho nas
+   duas cartas. Figura igual dos dois lados transforma o jogo em "ache as duas
+   iguais" e o sentido some — que e exatamente o que esta peca existe para
+   evitar. Diferentes, a crianca que ainda nao le PENSA para casar.
+   Numa atividade de verdade acrescente `img` e `imgsen` com o nome da ARTE DE
+   IA (`{img:"pl_abelha", imgsen:"pl_mel"}`) — a peca prefere a arte gerada e so
+   cai no desenho embutido se ela nao existir.
+   E `voz`/`vozsen` so quando a voz precisar dizer algo diferente do que esta
+   escrito (o texto da carta e o padrao).                                    */
+var PARES=[
+ {k:"abelha", pal:"ABELHA",  fig:"abelha",  sen:"faz o mel",          figsen:"mel"},
+ {k:"semen",  pal:"SEMENTE", fig:"semente", sen:"vira uma planta",    figsen:"broto"},
+ {k:"chuva",  pal:"CHUVA",   fig:"chuva",   sen:"molha a terra",      figsen:"poca"},
+ {k:"ninho",  pal:"NINHO",   fig:"ninho",   sen:"casa do passarinho", figsen:"passaro"}
+];
+
+/* ⭐ O DEGRAU DO ANDAIME, em tentativas sem par. Era 6; para o 1o ano e 4 —
+   a justificativa esta no cabecalho do arquivo (8 cartas, memoria de trabalho
+   de ~3 itens: em 6 a ajuda so chegava depois da crianca ja ter se perdido). */
+var PASSO_AJUDA=4;
+/* quanto tempo as duas cartas erradas FICAM de cara para cima antes de voltar.
+   Era 900ms — pouco para quem tem 6 anos e ainda esta aprendendo a olhar duas
+   figuras e guardar as duas. 1400ms e o tempo de olhar uma e depois a outra. */
+var TEMPO_VOLTA=1400;
+/* a ESPIADA de abertura: o tabuleiro nasce aberto e vira sozinho. */
+var TEMPO_ESPIADA=2600;
+
+var cartas, virada, travado, feitos, tentativas, progI, elPlacar, elPares, elHint, ger=0;
+
+function sVira(){ nota(300,.05,.13,"square",0); nota(520,.06,.10,"square",.045); }
+function sPar(){ nota(659.25,.16,.16,"triangle",0); nota(880,.22,.15,"triangle",.09); }
+function sPing(){ nota(880,.09,.12,"triangle",0); }
+
+/* ⭐⭐ A VOZ DA CARTA. Numa atividade montada, a PONTE do integrador reaponta
+   este `diz` para a VOZ GRAVADA da casa (Edge TTS, `temVoz`/`tocaVoz`) — e a
+   voz-robo do navegador esta desligada de proposito em tres camadas, porque o
+   Marcos ja ouviu as duas falando juntas. Aqui, na peca avulsa, ela e o unico
+   recurso que existe para se ouvir alguma coisa; e por isso que ela fica em
+   ULTIMO lugar, depois de tentar a gravada.                                 */
+function diz(txt){
+  try{
+    var k=(typeof temVoz==="function") ? temVoz(txt) : null;
+    if(k && typeof tocaVoz==="function"){ tocaVoz(k); return; }
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.85; u.pitch=1.05;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function pecaMemoria(){
+  limpa();
+  ger++;
+  virada=null; travado=true; feitos=0; tentativas=0;
+  var t=el("div","tela");
+  setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MEM&Oacute;RIA DOS PARES"));
+  /* ⚠️ o balao NAO muda durante a fase: o olheiro do integrador narra o balao
+     toda vez que ele muda, e trocar o texto para avisar da espiada faria a voz
+     falar duas coisas seguidas. O aviso da espiada vai no `.hint`.          */
+  /* balão conforme o modo: par de imagens (1º ano) x palavra×significado */
+  var soImg=true, _pi;
+  for(_pi=0;_pi<PARES.length;_pi++){ if(PARES[_pi].pal||PARES[_pi].sen){ soImg=false; break; } }
+  c.appendChild(el("div","balao", soImg
+    ? "Ache as <b>figuras iguais</b>."
+    : "Ache a <b>palavra</b> e o <b>desenho que combina</b>."));
+
+  /* monta as 8 cartas: metade palavra, metade significado.
+     Cada uma leva a SUA figura — as duas do par sao desenhos diferentes. */
+  cartas=[];
+  var i;
+  for(i=0;i<PARES.length;i++){
+    cartas.push({k:PARES[i].k,tipo:"pal",txt:PARES[i].pal,
+                 fig:PARES[i].fig,img:PARES[i].img,voz:PARES[i].voz||PARES[i].pal});
+    cartas.push({k:PARES[i].k,tipo:"sen",txt:PARES[i].sen,
+                 fig:PARES[i].figsen,img:PARES[i].imgsen,voz:PARES[i].vozsen||PARES[i].sen});
+  }
+  baguncar(cartas);
+
+  var mesa=el("div","mcartas");
+  /* QUEDA: sem 3D no navegador, a carta troca de face em vez de girar */
+  if(!temTresD()) mesa.className="mcartas sem3d";
+  for(i=0;i<cartas.length;i++){ mesa.appendChild(fazCarta(cartas[i])); }
+  c.appendChild(mesa);
+
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  elPares=el("div","pares","");
+  c.appendChild(elPares);
+  elHint=el("div","hint","Olhe bem! As cartas v&atilde;o virar.");
+  c.appendChild(elHint);
+  t.appendChild(c);
+  app.appendChild(t);
+  atualiza();
+  espiada();
+}
+
+function temTresD(){
+  var s=document.body.style;
+  return ("transformStyle" in s)||("webkitTransformStyle" in s)||("MozTransformStyle" in s);
+}
+
+/* ⭐ A ESPIADA. As cartas NASCEM com a classe `vira` (ver `fazCarta`), ou seja,
+   a primeira pintura ja sai de cara para cima — sem animacao no meio, que e o
+   que deixava o auditor de contraste fotografar uma carta girando. Depois de
+   TEMPO_ESPIADA elas viram, e AI a animacao acontece na frente da crianca.
+   Enquanto isso `travado` esta ligado: toque nenhum conta.                  */
+function espiada(){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger) return;                       /* a fase ja foi trocada */
+    var i;
+    for(i=0;i<cartas.length;i++){
+      if(cartas[i].el.className.indexOf("par")<0) cartas[i].el.className="mcarta";
+    }
+    travado=false;
+    if(elHint) elHint.innerHTML="Toque em duas cartas. Se n&atilde;o formar par, elas voltam.";
+  },TEMPO_ESPIADA);
+}
+
+/* a figura da carta: arte de IA quando a atividade a tem, senao o desenho
+   embutido da peca. Nunca fica vazia — e ela o apoio de quem nao le. */
+function figuraDe(o){
+  var d=el("div","mfig","");
+  if(o.img && typeof imgEl==="function"){ d.className="mfig mfoto"; d.appendChild(imgEl(o.img)); return d; }
+  if(o.fig && ARTE[o.fig]) d.style.backgroundImage=imgSvg(o.fig);
+  return d;
+}
+
+function fazCarta(o){
+  /* nasce VIRADA por causa da espiada; `espiada()` a devolve para baixo.
+     ⭐ tpal = carta com FOTO+palavra; tsen = carta-LEGENDA (so a frase). O tipo
+     vira classe para a legenda ganhar cara de legenda de jornal (ver CSS) em
+     vez de parecer "imagem faltando" (o Marcos pegou, ago/2026). */
+  var d=el("div","mcarta vira "+(o.tipo==="pal"?"tpal":"tsen"));
+  d.setAttribute("data-qa",o.k);          /* para o auditor conferir os pares */
+  /* ⭐ QUEM SABE O QUE A VOZ DEVE DIZER E A PECA (mesma licao do `ouvir-achar`):
+     o motor montaria a chave a partir do texto visivel, e aqui dentro ha a
+     etiqueta ("PALAVRA") junto — a conta sairia errada e a voz, muda.      */
+  d.setAttribute("data-voz",o.voz);
+  var f=el("div","mflip");
+  var v=el("div","mface mverso");
+  v.style.backgroundImage=VERSO;
+  var fr=el("div","mface mfrente");
+  var cnt=el("div","mcnt","");
+  /* ⭐ NOME × IMAGEM (pedido do Marcos, ago/2026, Cidade dos Sólidos): o par
+     pode ser a PALAVRA numa carta e a IMAGEM na outra. Entao a figura so entra
+     quando a carta REALMENTE tem figura (img de IA ou desenho embutido); a
+     carta so-palavra fica LIMPA, sem caixa de figura vazia (era "imagem
+     faltando"). As memorias palavra×significado seguem iguais (tem os dois). */
+  var temFig=(o.img && typeof imgEl==="function")||(o.fig && ARTE[o.fig]);
+  if(temFig) cnt.appendChild(figuraDe(o));
+  if(o.txt){
+    var et=(o.tipo==="pal")?"PALAVRA":"QUER DIZER";
+    var tx=el("div",(o.tipo==="pal")?"mtxt":"mtxt msent",
+              '<i class="meti">'+et+'</i>'+o.txt);
+    if(!temFig) tx.className+=" mso";   /* palavra sozinha: centra na carta */
+    cnt.appendChild(tx);
+  }else if(temFig){
+    d.className+=" mfoto";   /* carta só-imagem: o CSS dá mais espaço à figura */
+  }
+  fr.appendChild(cnt);
+  /* O ALTO-FALANTE: so aparece com a carta virada (CSS), e NAO joga. */
+  var z=el("button","zap","");
+  z.appendChild(el("i","fone",""));
+  /* ⚠️ LICAO PAGA (ago/2026): sem `data-voz` o motor descobre o que falar
+     LENDO a tela — e a carta tem o rotulo ("PALAVRA") coladinho no valor
+     ("MALA"). O alto-falante pedia a gravacao de "PALAVRAMALA", que nunca
+     existiu. A peca sabe o que quer dizer: ela tem que DECLARAR. */
+  z.setAttribute("data-voz", o.voz);
+  z.setAttribute("aria-label","Ouvir "+o.txt);
+  z.onclick=(function(carta){ return function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    sPing(); diz(carta.voz);
+  }; })(o);
+  fr.appendChild(z);
+  f.appendChild(v); f.appendChild(fr);
+  d.appendChild(f);
+  o.el=d;
+  d.onclick=(function(carta){ return function(){ tocar(carta); }; })(o);
+  return d;
+}
+
+function atualiza(){
+  var i,p;
+  elPlacar.innerHTML="Pares: <b>"+feitos+"</b> de <b>"+PARES.length+"</b>";
+  elPares.innerHTML="";
+  for(i=0;i<PARES.length;i++){
+    p=el("span","ppt");
+    if(i<feitos) p.className="ppt on";
+    elPares.appendChild(p);
+  }
+  if(progI) progI.style.width=Math.round(feitos*100/PARES.length)+"%";
+}
+
+function tocar(o){
+  if(travado) return;
+  /* carta ja fechada: nao joga mais, mas CONTINUA FALANDO — quem nao le usa as
+     cartas ja ganhas para conferir o que aprendeu. */
+  if(o.el.className.indexOf("par")>=0){ sTap(); diz(o.voz); return; }
+  if(virada===o) return;
+  /* ⚠️ LICAO PAGA (ago/2026): aqui era `if(...vira...) return;` — carta virada
+     nao se toca. So que se sobrar UMA carta de cara para cima que a peca nao
+     esta mais seguindo em `virada` (qualquer descompasso entre o desenho e a
+     memoria do jogo), ela vira uma carta MORTA: nunca mais aceita toque, e a
+     fase nao fecha NUNCA. A crianca fica com dois quadradinhos na tela sem
+     conseguir juntar o ultimo par. Foi assim que o auditor-jogador ficou preso
+     com 3 de 4 pares fechados.
+     Agora a carta orfa e ADOTADA: se esta virada e ninguem a segura, ela passa
+     a ser a carta da vez. Nao ha estado do qual a crianca nao consiga sair.  */
+  if(o.el.className.indexOf("vira")>=0){
+    if(!virada){ virada=o; }
+    return;
+  }
+  o.el.className="mcarta vira";
+  sVira();
+  diz(o.voz);                 /* ⭐ tocar a carta FALA o que esta escrito nela */
+  if(!virada){ virada=o; return; }
+  tentativas++;
+  if(virada.k===o.k){ fechaPar(virada,o); virada=null; return; }
+  /* nao formou par: as duas voltam. Erro NUNCA pune — so devolve. */
+  travado=true;
+  var a=virada; virada=null;
+  var g=ger;
+  setTimeout((function(x,y){ return function(){
+    if(g!==ger) return;                       /* a fase ja foi trocada */
+    if(x.el.className.indexOf("par")<0) x.el.className="mcarta";
+    if(y.el.className.indexOf("par")<0) y.el.className="mcarta";
+    travado=false;
+    ajuda(tentativas);
+  }; })(a,o),TEMPO_VOLTA);
+}
+
+function fechaPar(a,b){
+  a.el.className="mcarta vira par";
+  b.el.className="mcarta vira par";
+  a.el.appendChild(el("div","vpar","&#10003;"));
+  b.el.appendChild(el("div","vpar","&#10003;"));
+  a.el.removeAttribute("data-qa");
+  b.el.removeAttribute("data-qa");
+  sPar();
+  confete(20);        /* ⭐ estouro pequeno a cada par (a festa grande fica no fim) */
+  feitos++;
+  atualiza();
+  if(feitos===PARES.length) setTimeout(fim,800);
+}
+
+/* ⭐⭐ O ANDAIME QUE CRESCE — e que NAO DEPENDE DE LER.
+   A cada PASSO_AJUDA tentativas sem par ele ajuda mais:
+     1a vez — a peca FALA a palavra de um par que ainda falta (so ouvido);
+     2a vez — ela ABRE uma carta e a deixa escolhida: so falta achar o par dela;
+     3a vez — abre o par inteiro.
+   ⚠️ o texto da dica existe para o professor e para quem ja le; o que faz o
+   degrau funcionar para o 1o ano e a VOZ e a CARTA ABERTA, nunca a frase. */
+function ajuda(n){
+  if(n%PASSO_AJUDA!==0) return;
+  var vez=n/PASSO_AJUDA, alvo=proximoPar();
+  if(!alvo) return;
+  /* ⚠️ LICAO PAGA (Lojinha, ago/2026): no modo SO-IMAGEM (1o ano) a carta nao
+     tem `pal`/`sen` — as dicas montavam "Abri uma para voce: undefined". A
+     carta tem `voz` ("1 real"): use-a como rotulo falado; e sem `pal` a frase
+     nao cita rotulo nenhum. */
+  var soI = !(alvo.pal || alvo.sen);
+  var rot = alvo.pal || alvo.voz || "";
+  var rot2 = alvo.sen || alvo.vozsen || rot;
+  if(vez===1){
+    if(soI){ mostraDica("Ou&ccedil;a: <b>"+rot+"</b>. Ache a <b>figura igual</b>."); }
+    else   { mostraDica("Ou&ccedil;a: <b>"+rot+"</b>. Ache o desenho que combina."); }
+    diz(rot);
+  }else if(vez===2){
+    if(soI){ mostraDica("Abri uma para voc&ecirc;. Ache a <b>figura igual</b>."); }
+    else   { mostraDica("Abri uma para voc&ecirc;: <b>"+rot+"</b>. Ache o par dela."); }
+    abreUma(alvo.k);
+  }else{
+    if(soI){ mostraDica("Vou abrir este <b>par de figuras iguais</b>."); }
+    else   { mostraDica("Vou abrir este par: <b>"+rot+"</b> &mdash; "+rot2+"."); }
+    abrePar(alvo.k);
+  }
+}
+function proximoPar(){
+  var i,j;
+  for(i=0;i<PARES.length;i++){
+    for(j=0;j<cartas.length;j++){
+      if(cartas[j].k===PARES[i].k && cartas[j].el.className.indexOf("par")<0) return PARES[i];
+    }
+  }
+  return null;
+}
+/* 2o degrau: abre UMA carta do par e a deixa como a carta da vez. A crianca sai
+   de "dois desconhecidos" para "um alvo so" — que e o que a memoria dela
+   aguenta. Reusa o estado normal do jogo (`virada`), entao nao ha caminho
+   novo por onde a peca possa travar. */
+function abreUma(k){
+  var i,a=null;
+  for(i=0;i<cartas.length;i++){
+    if(cartas[i].k===k && cartas[i].el.className.indexOf("par")<0){ a=cartas[i]; break; }
+  }
+  if(!a) return;
+  if(virada && virada!==a && virada.el.className.indexOf("par")<0) virada.el.className="mcarta";
+  a.el.className="mcarta vira";
+  virada=a;
+  sVira(); diz(a.voz);
+}
+function abrePar(k){
+  var i,a=null,b=null;
+  for(i=0;i<cartas.length;i++){ if(cartas[i].k===k){ if(!a) a=cartas[i]; else b=cartas[i]; } }
+  if(!a||!b) return;
+  if(virada){ if(virada.el.className.indexOf("par")<0) virada.el.className="mcarta"; virada=null; }
+  fechaPar(a,b);
+}
+
+function fim(){
+  mostraBanner('<div class="medal">&#9733;</div><b>Mem&oacute;ria de elefante!</b><br>Voc&ecirc; fechou os '
+               +PARES.length+' pares.', pecaMemoria);
+}
+
+pecaMemoria();
+</script>
+</body></html>

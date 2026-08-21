@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — cruzadinha</title>
+<!-- ============================================================
+     PEÇA: CRUZADINHA  (copiada do _padrao/pecas/MOLDE.html)
+
+     O que a mecânica ensina (DINAMICAS.md): "definição -> palavra: recuperar
+     o termo pelo SENTIDO". Não é ditado: a criança lê o significado e tem que
+     ir buscar a palavra na cabeça — que é o gesto que fixa vocabulário.
+
+     AS ARMADILHAS DESTA MECÂNICA e onde cada uma está fechada aqui:
+
+     1) AS DUAS PORTAS — teclado na tela **E** `document.onkeydown`.
+        Palavras do professor: *"seria interessante se o aluno além de teclar
+        no teclado virtual funcionasse se ele tocasse no teclado de verdade,
+        as duas opções"*. No PC da escola tem teclado e a criança vai digitar;
+        no celular, não tem. Nunca só uma porta.
+        ⚠️ `document.onkeydown` é GLOBAL: quem instala tem que DESINSTALAR ao
+        sair da tela, senão a fase morta continua respondendo por cima da
+        fase seguinte.
+
+     2) ALVO >= 40px. Tecla pequena, dedo de criança de 8 anos: ela erra a
+        letra e acha que errou a palavra. Aqui a tecla tem 44 x 46 e a célula
+        da grade nunca fica menor que 30 (medido pelo `_qa/leiaute.js`).
+
+     3) COMEMORAR CADA PALAVRA FECHADA (pedido do professor: *"na cruzadinha
+        seria legal uma comemoração ao achar as palavras"*). Fechar a 1ª de 3
+        e não acontecer nada é o que faz a criança largar no meio.
+
+     4) NUNCA TRAVA. Errou 4 vezes na mesma letra? A letra entra sozinha e o
+        jogo segue. Erro não pune: som grave curto, a tecla balança, e o
+        andaime CRESCE (aviso -> a letra em si). Nunca X vermelho, nunca a
+        palavra "errou".
+
+     5) O AUDITOR PRECISA CONSEGUIR JOGAR: a tecla que serve AGORA publica
+        `data-qa="1"`. Sem isso ele bate ao acaso em 15 teclas e dá "PRESO"
+        numa peça que funciona.
+
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* A GRADE da cruzadinha. Mesma regra de todo quadro de letras da casa: a
+   célula vai em PORCENTAGEM (JS: `(100/N)%`), nunca em px fixo, senão numa
+   tela estreita cabe uma coluna a mais e a palavra quebra a linha.        */
+.grade{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+       width:100%;max-width:340px;margin:13px auto 0;padding:5px;
+       background:#4a3a2a;border:2px solid #6b5540;border-radius:14px}
+.cruz{text-align:center}
+.cel{position:relative;height:38px;line-height:38px;text-align:center;font-size:20px;font-weight:800;
+     background:#fffdf6;color:#221a12;border:1px solid #e0d6c2;border-radius:6px}
+/* casa fechada: NÃO é resposta, é o desenho da cruzadinha. Fica escura e sem
+   borda clara para a criança ver de longe onde dá para escrever.          */
+.cel.vazia{background:transparent;border-color:transparent;color:transparent}
+.cel.ativa{background:#ffd54a;color:#33280a;border-color:#c9a52f}
+.cel.cheio{background:#fff0bd;color:#33280a;border-color:#c9a52f}
+.cel.pronta{background:#2e7a1c;color:#fff;border-color:#1f5010}
+.cel.pulsa{-webkit-animation:pul .5s;animation:pul .5s}
+@-webkit-keyframes pul{50%{-webkit-transform:scale(1.18)}}
+@keyframes pul{50%{transform:scale(1.18)}}
+/* o numerinho da palavra, no cantinho da 1a casa (1, 2, 3) */
+/* ⚠️ TINTA DE LADRILHO SE ESCREVE (ago/2026). `var(--texto)` e a tinta DA
+   ATIVIDADE, feita para o fundo dela; aqui a letra cai numa superficie que
+   a PROPRIA peca pinta (a celula creme / a pedra / a barra colorida). Numa
+   atividade de tema claro isso virou creme sobre creme — medido 1,13:1. A
+   reserva do `var()` nao salva: ela so vale quando o token NAO EXISTE. */
+/* ⚠️ O SELETOR TEM QUE DIZER ONDE ELE MORA (ago/2026). Esta letra cai numa
+   superficie que a PROPRIA peca pinta, entao a tinta e escrita aqui — e o
+   seletor nomeia a superficie, senao o portao `_qa/cor_fixa.py` nao tem
+   como saber que existe fundo e acusa 'cor cravada sem fundo proprio'.
+   Escrever o caminho nao e enfeite: e o que torna a regra verificavel. */
+.cel .num{position:absolute;top:0;left:3px;font-size:11px;font-weight:800;color:#4a3a2a;line-height:14px}
+/* O TECLADO NA TELA. Banco de letras: só as letras que servem nesta
+   cruzadinha, em ordem alfabética. O teclado DE VERDADE aceita qualquer
+   letra — as duas portas continuam abertas.                              */
+.teclado{margin-top:10px;display:-webkit-box;display:-webkit-flex;display:flex;
+         -webkit-flex-wrap:wrap;flex-wrap:wrap;
+         -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.tecl{width:44px;height:46px;line-height:46px;margin:2px;border:0;border-radius:11px;
+      background:#fffdf6;color:#221a12;font-size:19px;font-weight:800;cursor:pointer;
+      box-shadow:0 3px 0 #c9bda6}
+.tecl:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 1px 0 #c9bda6}
+.tecl.no{background:#f7d9d2;-webkit-animation:bal .35s;animation:bal .35s}
+@-webkit-keyframes bal{25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes bal{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* a faixa de comemoracao da palavra fechada (armadilha nº 3) */
+.achouf{position:fixed;left:0;right:0;top:36%;text-align:center;font-size:30px;font-weight:800;
+        color:var(--texto,#fff);text-shadow:0 3px 10px rgba(0,0,0,.6);pointer-events:none;
+        -webkit-animation:sobe 1.3s ease-out;animation:sobe 1.3s ease-out}
+@-webkit-keyframes sobe{0%{opacity:0;-webkit-transform:scale(.6)}30%{opacity:1;-webkit-transform:scale(1.1)}100%{opacity:0;-webkit-transform:translateY(-40px)}}
+@keyframes sobe{0%{opacity:0;transform:scale(.6)}30%{opacity:1;transform:scale(1.1)}100%{opacity:0;transform:translateY(-40px)}}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS, nao e emoji. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (max-width:400px){
+  .cel{height:34px;line-height:34px;font-size:18px}
+}
+/* JANELA BAIXA (projetor, PC com barras): grade e teclado INTEIROS na tela. */
+@media (max-height:470px){
+  .prog{margin:4px 0 6px}
+  .selo{font-size:11px;padding:3px 10px;margin-bottom:5px}
+  .balao{font-size:13px;padding:7px 11px}
+  .balao + *{margin-top:8px}
+  .grade{margin-top:8px;max-width:300px}
+  .cel{height:31px;line-height:31px;font-size:17px}
+  .teclado{margin-top:7px}
+  .tecl{height:42px;line-height:42px;font-size:17px}
+  .hint{font-size:12px;margin-top:6px}
+}
+.pista{margin:8px auto 0;max-width:430px;background:rgba(255,253,246,.96);color:#221a12;border-radius:14px;padding:9px 14px;font-size:16px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.22)}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function sPop(n){nota(440+(n||0)*70,.06,.12,"triangle",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (o tempo lá fora, 8 anos). Ao copiar a peça para
+   uma atividade, troque APENAS este bloco: o tamanho da grade, as palavras
+   com onde elas começam e para onde vão, as definições e o banco de letras.
+
+   ⚠️ PALAVRA SEM ACENTO E SEM Ç: o banco de letras não tem tecla de acento.
+   Se a resposta certa tiver acento, escreva a palavra sem acento aqui e
+   mostre a forma CERTA na comemoração (campo `ac`) — como faz a forca.   */
+var LADO=5;
+var CRUZ=[
+ {p:"CHUVA", ac:"CHUVA", r:0, c:0, pLin:0, pCol:1, n:1,
+  d:"&#193;gua que cai do c&#233;u e molha tudo l&#225; fora."},
+ {p:"VENTO", ac:"VENTO", r:0, c:3, pLin:1, pCol:0, n:2,
+  d:"Voc&#234; n&#227;o v&#234;, mas ele balan&#231;a as folhas da &#225;rvore."},
+ {p:"SOL",   ac:"SOL",   r:4, c:2, pLin:0, pCol:1, n:3,
+  d:"A bola de luz que esquenta o dia e some de noite."}
+];
+var BANCO="ABCEHILMNORSTUV";   /* as letras das respostas + alguns vizinhos */
+
+var ger=0;      /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+function pecaCruzadinha(){
+  ger++;
+  limpa();
+  document.onkeydown=null;
+  var t=el("div","tela");
+  setProg(t,0);
+  var barraP=t.getElementsByTagName("i")[0];
+  /* ⚠️ LICAO PAGA (ago/2026, ingles 9o ano): a grade era fixa em `LADO` (o 5x5
+     do exemplo). Numa atividade montada com palavras mais espalhadas (DANCING
+     ate a linha 7, RUNNING na coluna 5), tudo que caia FORA do 5x5 sumia — o
+     Marcos viu "so 2 palavras" numa cruzadinha de 3. A grade agora se AJUSTA ao
+     alcance real das palavras (nunca menor que LADO), entao nenhuma transborda. */
+  var N=LADO, i, j, k;
+  for(i=0;i<CRUZ.length;i++){
+    var _endR=CRUZ[i].r + CRUZ[i].pLin*(CRUZ[i].p.length-1);
+    var _endC=CRUZ[i].c + CRUZ[i].pCol*(CRUZ[i].p.length-1);
+    if(_endR+1>N) N=_endR+1;
+    if(_endC+1>N) N=_endC+1;
+  }
+  var cels={}, teclas={}, dono={}, idx=0, pos=0, err=0, fim=false;
+
+  /* quantas letras a cruzadinha inteira tem (para a barra andar a cada letra) */
+  var totalL=0, feitas=0;
+  for(i=0;i<CRUZ.length;i++) totalL+=CRUZ[i].p.length;
+
+  /* `pLin`/`pCol` = o passo da palavra (1,0 = em pé; 0,1 = deitada). Nomes
+     próprios de propósito: são a assinatura de UMA casa da cruzadinha, não a
+     posição publicada em `data-qa` que o quadro de letras usa.            */
+  function chave(w,z){ return (w.r+w.pLin*z)+"_"+(w.c+w.pCol*z); }
+  /* dono = as casas que existem na cruzadinha (o resto e casa fechada) */
+  for(i=0;i<CRUZ.length;i++)
+    for(j=0;j<CRUZ[i].p.length;j++) dono[chave(CRUZ[i],j)]=1;
+
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CRUZADINHA DO TEMPO"));
+  /* ⚠️ o balao MOSTRA o enunciado (narrado pelo motor); a DICA da vez vai para
+     um elemento proprio (.pista), senao a tela de abertura fica muda — o balao
+     era sobrescrito pela dica, que nao tem gravacao (gate fala_o_escrito). */
+  var bal=el("div","balao", (typeof window!=="undefined"&&window.__faseEnun)?window.__faseEnun:"Preencha a cruzadinha. Leia as dicas.");
+  c.appendChild(bal);
+  var pista=el("div","pista","");
+  c.appendChild(pista);
+
+  var grade=el("div","grade cruz");
+  for(i=0;i<N;i++) for(j=0;j<N;j++){(function(y,x){
+    var id=y+"_"+x;
+    var q=el("div", dono[id] ? "cel" : "cel vazia", "");
+    /* ⭐ porcentagem, nunca px: a grade fecha em N colunas em qualquer tela */
+    q.style.width=(100/N)+"%";
+    cels[id]=q;
+    grade.appendChild(q);
+  })(i,j);}
+  /* o numerinho de cada palavra na primeira casa dela */
+  for(i=0;i<CRUZ.length;i++){
+    var q0=cels[chave(CRUZ[i],0)];
+    if(q0) q0.appendChild(el("i","num",""+CRUZ[i].n));
+  }
+  c.appendChild(grade);
+
+  var tec=el("div","teclado");
+  for(i=0;i<BANCO.length;i++){(function(L){
+    var b=el("button","tecl",L);
+    b.onclick=function(){ ac(); poeLetra(L,b); };
+    teclas[L]=b;
+    tec.appendChild(b);
+  })(BANCO.charAt(i));}
+  c.appendChild(tec);
+  c.appendChild(el("div","hint","Toque nas letras ou use o teclado do computador."));
+  t.appendChild(c);
+  app.appendChild(t);
+
+  /* ⭐ AS DUAS PORTAS: teclado na tela E teclado de verdade.
+     ⚠️ o guarda `!t.parentNode` — se um setTimeout de uma tela que ja saiu
+     reinstalar isto, ele para aqui em vez de responder por cima da tela
+     seguinte (defeito conhecido do "monte a palavra").                    */
+  document.onkeydown=function(ev){
+    if(!t.parentNode){ document.onkeydown=null; return; }
+    var L=String.fromCharCode(ev.keyCode||ev.which||0).toUpperCase();
+    if(!/^[A-Z]$/.test(L)) return;
+    ac();
+    poeLetra(L,teclas[L]||null);
+  };
+
+  /* --- escrever a palavra da vez ---------------------------------------- */
+  function ativa(){
+    var w=CRUZ[idx], z, q;
+    for(z=0;z<w.p.length;z++){
+      q=cels[chave(w,z)];
+      if(!q) continue;
+      if(q.className.indexOf("pronta")<0)
+        q.className = z<pos ? "cel cheio" : (z===pos ? "cel ativa" : "cel");
+    }
+    pista.innerHTML="<b>"+w.n+".</b> "+w.d;
+    marcaQA();
+  }
+  /* data-qa="1" na tecla que serve AGORA — so para o auditor-jogador */
+  function marcaQA(){
+    var L, alvo=(!fim&&idx<CRUZ.length&&pos<CRUZ[idx].p.length)?CRUZ[idx].p.charAt(pos):"";
+    for(L in teclas) if(teclas.hasOwnProperty(L))
+      teclas[L].setAttribute("data-qa", L===alvo ? "1" : "0");
+  }
+  function escreve(L){
+    var w=CRUZ[idx], q=cels[chave(w,pos)];
+    if(q){
+      q.innerHTML=L;
+      if(pos===0) q.appendChild(el("i","num",""+w.n));
+      q.className="cel cheio pulsa";
+    }
+    pos++; feitas++;
+    barraP.style.width=Math.round(feitas*100/totalL)+"%";
+    sPop(pos);
+    if(pos>=w.p.length) fechaPalavra();
+    else ativa();
+  }
+  function fechaPalavra(){
+    var w=CRUZ[idx], z, q;
+    for(z=0;z<w.p.length;z++){
+      q=cels[chave(w,z)];
+      if(q) q.className="cel pronta pulsa";
+    }
+    sCerto();
+    faixa(w.ac||w.p);
+    pista.innerHTML="<b>"+(w.ac||w.p)+"</b> &#8212; era essa mesmo!";
+    marcaQA();
+    var meu=ger;
+    setTimeout(function(){
+      if(meu!==ger) return;
+      idx++; pos=0; err=0;
+      var d=document.getElementById("dicaP");
+      if(d&&d.parentNode) d.parentNode.removeChild(d);
+      if(idx<CRUZ.length) ativa();
+      else {
+        fim=true;
+        document.onkeydown=null;
+        marcaQA();
+        mostraBanner("Cruzadinha fechada! Voc&#234; achou as <b>"+CRUZ.length+"</b> palavras do tempo.",fimDaPeca);
+      }
+    },1500);
+  }
+  function faixa(txt){
+    var f=el("div","achouf",txt+"!");
+    document.body.appendChild(f);
+    setTimeout(function(){ if(f.parentNode) f.parentNode.removeChild(f); },1300);
+  }
+  function poeLetra(L,b){
+    if(fim||idx>=CRUZ.length) return;
+    var w=CRUZ[idx];
+    if(pos>=w.p.length) return;
+    if(L===w.p.charAt(pos)){ escreve(L); return; }
+    /* ERRO: não pune. Som grave curto, a tecla balança, e o andaime CRESCE.
+       Nunca X vermelho, nunca a palavra "errou".                          */
+    sErro();
+    err++;
+    if(b){
+      b.className="tecl no";
+      (function(bb){ setTimeout(function(){ if(bb) bb.className="tecl"; },420); })(b);
+    }
+    if(err===1) mostraDica("Quase! Leia a dica de novo e pense na palavra inteira.");
+    else if(err===2) mostraDica("A palavra come&#231;a com <b>"+w.p.charAt(0)+"</b> e tem <b>"+w.p.length+"</b> letras.");
+    else if(err===3) mostraDica("A pr&#243;xima letra &#233; <b>"+w.p.charAt(pos)+"</b>. Ache ela no teclado.");
+    else {
+      /* 4º erro: a letra entra sozinha. A peça NUNCA trava. */
+      mostraDica("Deixa que eu ponho o <b>"+w.p.charAt(pos)+"</b> para voc&#234; &#8212; e seguimos juntos.");
+      escreve(w.p.charAt(pos));
+    }
+  }
+  ativa();
+}
+
+function fimDaPeca(){
+  ger++;
+  document.onkeydown=null;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; leu as "+CRUZ.length+" dicas e achou as palavras."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaCruzadinha(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a CRUZADINHA: as duas portas do teclado, alvo grande, festa a cada palavra."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaCruzadinha();
+</script>
+</body></html>

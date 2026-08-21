@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b4a6b">
+<!-- evita cache do navegador: um F5 simples ja traz a versao mais nova -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Ilhas do Saber - E.B.M. Vidal Ramos</title>
+<style>
+  /* ===== Base / compatibilidade ===== */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", Verdana, Geneva, sans-serif;
+    color: #fff;
+    background-color: #1b5a8a; /* fallback p/ navegador antigo */
+    background: -webkit-gradient(linear, left top, left bottom, from(#7ec9f2), color-stop(0.45,#3a9bd4), color-stop(0.7,#1f6fae), to(#0e4d7a));
+    background: -webkit-linear-gradient(top, #7ec9f2, #3a9bd4 45%, #1f6fae 70%, #0e4d7a);
+    background: linear-gradient(to bottom, #7ec9f2, #3a9bd4 45%, #1f6fae 70%, #0e4d7a);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== Mar ===== */
+  #mar {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 38%;
+    background-color: #0d6ea0;
+    background: -webkit-linear-gradient(top, rgba(70,180,225,0.55), #0c5e90 60%, #073f63);
+    background: linear-gradient(to bottom, rgba(70,180,225,0.55), #0c5e90 60%, #073f63);
+    z-index: 0; pointer-events: none;
+  }
+  #mar .brilho {
+    position: absolute; top: 8%; left: 0; width: 100%; height: 22px;
+    background: rgba(255,255,255,0.18);
+    -webkit-animation: ondular 5s ease-in-out infinite; animation: ondular 5s ease-in-out infinite;
+  }
+  @-webkit-keyframes ondular { 0%,100%{opacity:.25;} 50%{opacity:.55;} }
+  @keyframes ondular { 0%,100%{opacity:.25;} 50%{opacity:.55;} }
+
+  /* ===== Nuvens ===== */
+  .nuvem {
+    position: fixed; top: 12%; z-index: 1; pointer-events: none;
+    width: 120px; height: 42px; background: #fff; border-radius: 40px;
+    opacity: .85; -webkit-box-shadow: 0 0 0 #fff; box-shadow: 0 0 0 #fff;
+  }
+  .nuvem:before, .nuvem:after {
+    content: ""; position: absolute; background: #fff; border-radius: 50%;
+  }
+  .nuvem:before { width: 56px; height: 56px; top: -24px; left: 18px; }
+  .nuvem:after  { width: 40px; height: 40px; top: -16px; left: 60px; }
+  .n1 { top: 10%; -webkit-animation: passa 38s linear infinite; animation: passa 38s linear infinite; }
+  .n2 { top: 20%; -webkit-transform: scale(.7); transform: scale(.7); -webkit-animation: passa 52s linear infinite; animation: passa 52s linear infinite; -webkit-animation-delay: -10s; animation-delay: -10s; }
+  .n3 { top: 6%;  -webkit-transform: scale(1.2); transform: scale(1.2); -webkit-animation: passa 64s linear infinite; animation: passa 64s linear infinite; -webkit-animation-delay: -28s; animation-delay: -28s; }
+  @-webkit-keyframes passa { from{left:-160px;} to{left:110%;} }
+  @keyframes passa { from{left:-160px;} to{left:110%;} }
+
+  /* ===== Layout geral ===== */
+  .conteudo { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 14px 14px 60px; text-align: center; }
+
+  header.topo { margin: 6px 0 2px; }
+  .placa {
+    display: inline-block; padding: 12px 26px; border-radius: 18px;
+    background-color: #c98a3a;
+    background: -webkit-linear-gradient(top, #e8b15a, #b97a2e);
+    background: linear-gradient(to bottom, #e8b15a, #b97a2e);
+    border: 4px solid #7d4f1d;
+    -webkit-box-shadow: 0 6px 0 #6b4419, 0 10px 18px rgba(0,0,0,.35);
+    box-shadow: 0 6px 0 #6b4419, 0 10px 18px rgba(0,0,0,.35);
+  }
+  .placa h1 { margin: 0; font-size: 30px; color: #fff; text-shadow: 0 2px 0 #7d4f1d, 0 0 10px rgba(0,0,0,.3); letter-spacing: .5px; }
+  .placa .escola { display:block; margin-top: 2px; font-size: 14px; color: #fff4dd; letter-spacing: 1px; }
+
+  .intro { max-width: 640px; margin: 16px auto 6px; font-size: 17px; color: #eef7ff; text-shadow: 0 1px 4px rgba(0,0,0,.4); line-height: 1.45; }
+
+  /* ===== Ilhas ===== */
+  .ilhas { margin-top: 10px; font-size: 0; /* tira espaço entre inline-block */ }
+  .ilha {
+    display: inline-block; vertical-align: top; width: 31%; min-width: 230px;
+    margin: 10px 1%; padding: 6px; border: 0; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 16px; text-align: center; color: #fff;
+    -webkit-transition: -webkit-transform .2s ease; transition: transform .2s ease;
+  }
+  .ilha .flutua {
+    -webkit-animation: flutua 5.5s ease-in-out infinite; animation: flutua 5.5s ease-in-out infinite;
+  }
+  .ilha.b .flutua { -webkit-animation-delay: -1.8s; animation-delay: -1.8s; }
+  .ilha.c .flutua { -webkit-animation-delay: -3.4s; animation-delay: -3.4s; }
+  @-webkit-keyframes flutua { 0%,100%{-webkit-transform:translateY(0);} 50%{-webkit-transform:translateY(-14px);} }
+  @keyframes flutua { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+  .ilha svg, .ilha img { width: 100%; height: auto; display: block; -webkit-filter: drop-shadow(0 8px 9px rgba(0,0,0,.28)); filter: drop-shadow(0 8px 9px rgba(0,0,0,.28)); }
+  .fase-mascote { width: 150px; height: auto; display: block; margin: 4px auto 0; -webkit-animation: flutua 4s ease-in-out infinite; animation: flutua 4s ease-in-out infinite; -webkit-filter: drop-shadow(0 6px 8px rgba(0,0,0,.3)); filter: drop-shadow(0 6px 8px rgba(0,0,0,.3)); }
+  .ilha:hover .flutua, .ilha:focus .flutua { -webkit-transform: translateY(-6px) scale(1.05); transform: translateY(-6px) scale(1.05); }
+  .ilha:focus { outline: none; }
+
+  .rotulo {
+    display: inline-block; margin-top: 8px; padding: 8px 16px; border-radius: 999px;
+    background-color: rgba(0,0,0,.42);
+    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,.3); box-shadow: 0 3px 10px rgba(0,0,0,.3);
+  }
+  .rotulo b { display: block; font-size: 18px; }
+  .rotulo span { display: block; font-size: 13px; color: #ffe9b8; margin-top: 2px; }
+
+  /* ===== Som / narracao ===== */
+  .btn-som { position: fixed; top: 10px; right: 12px; z-index: 6; width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; font-size: 22px; color: #fff; background-color: rgba(0,0,0,.45); -webkit-box-shadow: 0 3px 10px rgba(0,0,0,.35); box-shadow: 0 3px 10px rgba(0,0,0,.35); }
+  .btn-ouvir { display: inline-block; margin: 8px 0 0; padding: 9px 20px; border: 0; border-radius: 999px; cursor: pointer; font-family: inherit; font-size: 15px; font-weight: bold; color: #2a1c00; background-color: #ffc04d; background: -webkit-linear-gradient(top,#ffd97a,#ffb43c); background: linear-gradient(to bottom,#ffd97a,#ffb43c); -webkit-box-shadow: 0 3px 8px rgba(0,0,0,.3); box-shadow: 0 3px 8px rgba(0,0,0,.3); -webkit-animation: pulsa 1.2s ease-in-out infinite; animation: pulsa 1.2s ease-in-out infinite; }
+  @-webkit-keyframes pulsa { 0%,100%{ -webkit-transform: scale(1);} 50%{ -webkit-transform: scale(1.09);} }
+  @keyframes pulsa { 0%,100%{ transform: scale(1); box-shadow: 0 3px 8px rgba(0,0,0,.3);} 50%{ transform: scale(1.09); box-shadow: 0 0 0 7px rgba(255,210,90,.35), 0 3px 8px rgba(0,0,0,.3);} }
+
+  /* ===== Telas (mapa / turmas / atividades) ===== */
+  .tela { display: none; }
+  .tela.ativa { display: block; -webkit-animation: aparece .4s ease both; animation: aparece .4s ease both; }
+  @-webkit-keyframes aparece { from{opacity:0; -webkit-transform:translateY(12px);} to{opacity:1; -webkit-transform:none;} }
+  @keyframes aparece { from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+
+  .voltar {
+    display: inline-block; margin: 10px 0 4px; padding: 9px 18px; cursor: pointer;
+    font-family: inherit; font-size: 15px; color: #fff; border: 0; border-radius: 999px;
+    background-color: #114e77; background: -webkit-linear-gradient(top,#2f7fb0,#114e77); background: linear-gradient(to bottom,#2f7fb0,#114e77);
+    -webkit-box-shadow: 0 4px 10px rgba(0,0,0,.3); box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  }
+  .voltar:hover { background: -webkit-linear-gradient(top,#3a92c7,#155a89); background: linear-gradient(to bottom,#3a92c7,#155a89); }
+
+  .titulo-fase { font-size: 26px; margin: 8px 0 2px; text-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  .sub-fase { font-size: 15px; color: #ffe9b8; margin: 0 0 8px; }
+
+  /* cards de turma / atividade */
+  .cards { font-size: 0; margin-top: 8px; }
+  .card {
+    display: inline-block; vertical-align: top; width: 31%; min-width: 200px; margin: 14px 1% 18px;
+    padding: 60px 4px 4px; cursor: pointer; border: 0; font-family: inherit; color: #fff; text-align: center;
+    background: transparent;
+    -webkit-transition: -webkit-transform .15s ease; transition: transform .15s ease;
+  }
+  .card:hover .ilhota-wrap, .card:focus .ilhota-wrap { -webkit-transform: translateY(-6px) scale(1.05); transform: translateY(-6px) scale(1.05); }
+  .card:focus { outline: none; }
+  .card .bolha {
+    width: 96px; height: 96px; margin: 0 auto 8px; border-radius: 50%;
+    background-color: rgba(255,217,122,.95); line-height: 96px; font-size: 42px; color: #6b4419;
+    -webkit-box-shadow: 0 6px 14px rgba(0,0,0,.3); box-shadow: 0 6px 14px rgba(0,0,0,.3);
+    -webkit-animation: flutua 5s ease-in-out infinite; animation: flutua 5s ease-in-out infinite;
+  }
+  .ilhota-wrap { position: relative; width: 100%; max-width: 240px; height: 185px; margin: 0 auto 6px;
+    -webkit-animation: flutua 5s ease-in-out infinite; animation: flutua 5s ease-in-out infinite; }
+  .cards .card:nth-child(2) .ilhota-wrap, .cards .card:nth-child(2) .bolha { -webkit-animation-delay: -1.6s; animation-delay: -1.6s; }
+  .cards .card:nth-child(3) .ilhota-wrap, .cards .card:nth-child(3) .bolha { -webkit-animation-delay: -3.1s; animation-delay: -3.1s; }
+  .cards .card:nth-child(4) .ilhota-wrap, .cards .card:nth-child(4) .bolha { -webkit-animation-delay: -2.3s; animation-delay: -2.3s; }
+  .ilhota-img { position: absolute; left: 0; bottom: 0; width: 100%; height: 100%; -o-object-fit: contain; object-fit: contain; -o-object-position: center bottom; object-position: center bottom; display: block; -webkit-filter: drop-shadow(0 8px 9px rgba(0,0,0,.32)); filter: drop-shadow(0 8px 9px rgba(0,0,0,.32)); }
+  .mascote-pos { position: absolute; left: 50%; bottom: 22%; width: 36%; -webkit-transform: translateX(-50%); transform: translateX(-50%); }
+  .mascote-pos img { width: 100%; display: block; -webkit-filter: drop-shadow(0 4px 5px rgba(0,0,0,.32)); filter: drop-shadow(0 4px 5px rgba(0,0,0,.32)); }
+  .rotulo-turma { display: inline-block; margin-top: 2px; padding: 7px 18px; border-radius: 999px;
+    background-color: rgba(0,0,0,.42); -webkit-box-shadow: 0 3px 10px rgba(0,0,0,.3); box-shadow: 0 3px 10px rgba(0,0,0,.3); }
+  .rotulo-turma b { font-size: 18px; display: block; }
+  .rotulo-turma span { display: block; font-size: 12px; color: #ffe9b8; margin-top: 1px; }
+
+  /* ===== Cards = moldura de MADEIRA + OURO (imagem única reaproveitada = leve) ===== */
+  .atividade {
+    display: block; /* fallback p/ navegador antigo */
+    display: -webkit-box; display: -webkit-flex; display: flex;
+    -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+    position: relative; overflow: visible; width: 96%; max-width: 580px; margin: 22px auto;
+    min-height: 250px; padding: 44px 150px 44px 156px; text-align: left; text-decoration: none; color: #ffe9c6;
+    background: url(img/moldura-madeira.png) center center no-repeat; -webkit-background-size: 100% 100%; background-size: 100% 100%;
+    -webkit-filter: drop-shadow(0 9px 15px rgba(0,0,0,.4)); filter: drop-shadow(0 9px 15px rgba(0,0,0,.4));
+    -webkit-transition: -webkit-transform .15s ease; transition: transform .15s ease; }
+  @supports (aspect-ratio: 1) { .atividade { aspect-ratio: 760 / 339; min-height: 0; } }
+  .atividade:hover { -webkit-transform: translateY(-4px) scale(1.015); transform: translateY(-4px) scale(1.015); }
+  /* mascote saltando no painel de madeira */
+  .atividade .ativ-ic { position: absolute; left: 40px; top: 50%; margin-top: -58px; z-index: 3; width: 116px; height: 116px; line-height: 116px; text-align: center; font-size: 40px; border-radius: 50%; }
+  .atividade .ativ-masc { width: 116px; height: 116px; -o-object-fit: contain; object-fit: contain; display: block;
+    -webkit-filter: drop-shadow(0 5px 5px rgba(60,35,5,.55)); filter: drop-shadow(0 5px 5px rgba(60,35,5,.55));
+    -webkit-animation: bob 4s ease-in-out infinite; animation: bob 4s ease-in-out infinite; }
+  @-webkit-keyframes bob { 0%,100%{ -webkit-transform: translateY(0) rotate(0); } 50%{ -webkit-transform: translateY(-6px) rotate(-2deg); } }
+  @keyframes bob { 0%,100%{ transform: translateY(0) rotate(0); } 50%{ transform: translateY(-6px) rotate(-2deg); } }
+  /* titulo/desc claros na madeira */
+  .atividade .ativ-info { -webkit-box-flex: 1; -webkit-flex: 1 1 auto; flex: 1 1 auto; min-width: 0; position: relative; z-index: 2; display: inline-block; vertical-align: middle; }
+  .atividade .ativ-info b { display: block; font-size: 20px; line-height: 1.15; letter-spacing: .2px; color: #ffe9c6; text-shadow: 0 2px 2px rgba(0,0,0,.55); }
+  .atividade .ativ-info span { display: block; font-size: 13px; margin-top: 4px; color: #f0d3a8; text-shadow: 0 1px 2px rgba(0,0,0,.55); }
+  /* JOGAR = botao vermelho que contrasta com o ouro */
+  .atividade .ativ-play { position: absolute; right: 40px; top: 50%; margin-top: -19px; z-index: 3; padding: 11px 17px; border-radius: 999px; font-weight: bold; font-size: 14px; letter-spacing: .5px; color: #fff8ec;
+    background: -webkit-linear-gradient(top,#e0603f,#b0221a); background: linear-gradient(to bottom,#e0603f,#b0221a); border: 2px solid #7c1410; text-shadow: 0 1px 1px rgba(0,0,0,.5);
+    -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 4px 8px rgba(0,0,0,.4); box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 4px 8px rgba(0,0,0,.4); }
+  .vazio { margin: 22px auto; max-width: 480px; color: #fff; background: rgba(255,255,255,.12); border: 2px dashed rgba(255,255,255,.55); border-radius: 20px; padding: 24px 18px; font-size: 17px; -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.15); box-shadow: inset 0 1px 0 rgba(255,255,255,.15); }
+  .vazio b { font-size: 22px; }
+  @media (max-width: 520px) {
+    .atividade { display: block; aspect-ratio: auto; min-height: 0; padding: 26px 18px 22px 112px; }
+    .atividade .ativ-ic { left: 14px; width: 90px; height: 90px; margin-top: -45px; }
+    .atividade .ativ-masc { width: 90px; height: 90px; }
+    .atividade .ativ-play { position: static; display: inline-block; margin: 12px 0 0; }
+  }
+
+  footer { margin-top: 26px; font-size: 12px; color: rgba(255,255,255,.8); }
+
+  /* ===== Premium (camada extra; degrada com seguranca em PC antigo) ===== */
+  #sol { position: fixed; top: -150px; left: 50%; width: 520px; height: 520px; margin-left: -260px; z-index: 0; pointer-events: none;
+    background: -webkit-radial-gradient(center, rgba(255,246,205,.55), rgba(255,232,150,.18) 45%, rgba(255,232,150,0) 70%);
+    background: radial-gradient(circle at center, rgba(255,246,205,.55), rgba(255,232,150,.18) 45%, rgba(255,232,150,0) 70%); }
+  #vinheta { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; pointer-events: none;
+    background: -webkit-radial-gradient(center, rgba(0,0,0,0) 56%, rgba(0,0,0,.26));
+    background: radial-gradient(circle at center, rgba(0,0,0,0) 56%, rgba(0,0,0,.26)); }
+
+  /* placa do titulo com brilho dourado */
+  .placa { border-color: #8a5a22;
+    background: -webkit-linear-gradient(top, #ffdf8e, #e8b15a 45%, #b97a2e);
+    background: linear-gradient(to bottom, #ffdf8e, #e8b15a 45%, #b97a2e);
+    -webkit-box-shadow: inset 0 0 0 3px #ffe9af, 0 7px 0 #6b4419, 0 14px 26px rgba(0,0,0,.4);
+    box-shadow: inset 0 0 0 3px #ffe9af, 0 7px 0 #6b4419, 0 14px 26px rgba(0,0,0,.4); }
+  .placa h1 { font-size: 32px; }
+
+  /* introducao num painel suave (mais legivel e elegante) */
+  .intro { background: rgba(7,40,66,.34); border: 1px solid rgba(255,255,255,.18); border-radius: 16px;
+    padding: 12px 18px; -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+
+  /* rotulos com moldura dourada */
+  .rotulo, .rotulo-turma {
+    background: -webkit-linear-gradient(top, rgba(20,60,95,.92), rgba(8,38,63,.92));
+    background: linear-gradient(to bottom, rgba(20,60,95,.92), rgba(8,38,63,.92));
+    border: 2px solid rgba(255,216,128,.8);
+    -webkit-box-shadow: 0 4px 12px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15); }
+  .rotulo b, .rotulo-turma b { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+
+  /* titulo da fase com realce dourado embaixo */
+  .titulo-fase:after { content: ""; display: block; width: 120px; height: 4px; margin: 8px auto 0; border-radius: 999px;
+    background: -webkit-linear-gradient(left, rgba(255,216,128,0), #ffd67a, rgba(255,216,128,0));
+    background: linear-gradient(to right, rgba(255,216,128,0), #ffd67a, rgba(255,216,128,0)); }
+
+  /* sol um pouco maior e mais luminoso */
+  #sol { width: 560px; height: 560px; margin-left: -280px; }
+
+  /* gaivotas planando no ceu */
+  .gaivota { position: fixed; z-index: 1; pointer-events: none; width: 20px; height: 12px; opacity: .8; }
+  .gaivota:before, .gaivota:after { content: ""; position: absolute; top: 0; width: 13px; height: 13px; border-top: 3px solid #fff; border-radius: 50%; }
+  .gaivota:before { left: -8px; -webkit-transform: rotate(18deg); transform: rotate(18deg); }
+  .gaivota:after  { right: -8px; -webkit-transform: rotate(-18deg); transform: rotate(-18deg); }
+  .g1 { top: 7%;  -webkit-animation: voa 34s linear infinite; animation: voa 34s linear infinite; }
+  .g2 { top: 11%; -webkit-transform: scale(.78); transform: scale(.78); -webkit-animation: voa 48s linear infinite; animation: voa 48s linear infinite; -webkit-animation-delay: -16s; animation-delay: -16s; }
+  @-webkit-keyframes voa { from{ left: -40px; } to{ left: 108%; } }
+  @keyframes voa { from{ left: -40px; } to{ left: 108%; } }
+
+  /* bolhinhas subindo do mar */
+  .bolhas { position: fixed; left: 0; right: 0; bottom: 0; height: 40%; z-index: 1; pointer-events: none; overflow: hidden; }
+  .bsobe { position: absolute; bottom: -24px; width: 12px; height: 12px; border-radius: 50%;
+    background: -webkit-radial-gradient(30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.12) 65%, rgba(255,255,255,0));
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.12) 65%, rgba(255,255,255,0));
+    -webkit-animation: sobe 11s linear infinite; animation: sobe 11s linear infinite; }
+  @-webkit-keyframes sobe { 0%{ -webkit-transform: translateY(0) scale(.5); opacity: 0; } 12%{ opacity: .7; } 100%{ -webkit-transform: translateY(-300px) scale(1); opacity: 0; } }
+  @keyframes sobe { 0%{ transform: translateY(0) scale(.5); opacity: 0; } 12%{ opacity: .7; } 100%{ transform: translateY(-300px) scale(1); opacity: 0; } }
+  .bb1 { left: 8%;  -webkit-animation-delay: -1s;   animation-delay: -1s; }
+  .bb2 { left: 22%; width: 8px; height: 8px; -webkit-animation-delay: -4s; animation-delay: -4s; }
+  .bb3 { left: 41%; -webkit-animation-delay: -7s;   animation-delay: -7s; }
+  .bb4 { left: 58%; width: 9px; height: 9px; -webkit-animation-delay: -2.5s; animation-delay: -2.5s; }
+  .bb5 { left: 73%; -webkit-animation-delay: -6s;   animation-delay: -6s; }
+  .bb6 { left: 89%; width: 7px; height: 7px; -webkit-animation-delay: -3.5s; animation-delay: -3.5s; }
+
+  /* placa do titulo com brilho deslizante */
+  .placa { position: relative; overflow: hidden; }
+  .placa:after { content: ""; position: absolute; top: 0; left: -60%; width: 32%; height: 100%; pointer-events: none;
+    -webkit-transform: skewX(-22deg); transform: skewX(-22deg);
+    background: -webkit-linear-gradient(left, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+    -webkit-animation: brilha 5s ease-in-out infinite; animation: brilha 5s ease-in-out infinite; }
+
+  /* botoes com acabamento premium */
+  .voltar { border: 1px solid rgba(255,255,255,.22); }
+  .btn-ouvir { border: 2px solid #fff3cf; }
+  .btn-som { border: 2px solid rgba(255,255,255,.35);
+    background: -webkit-linear-gradient(top, rgba(40,90,130,.7), rgba(0,0,0,.5));
+    background: linear-gradient(to bottom, rgba(40,90,130,.7), rgba(0,0,0,.5)); }
+
+  /* ===== Responsivo ===== */
+  @media (max-width: 720px) {
+    .placa h1 { font-size: 22px; }
+    .intro { font-size: 15px; }
+    .ilha { width: 46%; min-width: 0; }
+    .card { width: 44%; min-width: 0; margin: 20px 2% 14px; }
+  }
+  @media (max-width: 460px) {
+    .ilha { width: 92%; }
+    .card { width: 92%; }
+  }
+</style>
+</head>
+<body>
+  <button id="btnSom" class="btn-som" type="button" onclick="toggleSom()" aria-label="Ligar ou desligar o som">🔊</button>
+  <div id="sol"></div>
+  <div id="mar"><div class="brilho"></div></div>
+  <div class="nuvem n1"></div>
+  <div class="nuvem n2"></div>
+  <div class="nuvem n3"></div>
+  <div class="gaivota g1"></div>
+  <div class="gaivota g2"></div>
+  <div class="bolhas">
+    <span class="bsobe bb1"></span><span class="bsobe bb2"></span><span class="bsobe bb3"></span>
+    <span class="bsobe bb4"></span><span class="bsobe bb5"></span><span class="bsobe bb6"></span>
+  </div>
+  <div id="vinheta"></div>
+
+  <div class="conteudo">
+    <header class="topo">
+      <div class="placa">
+        <h1>🏝️ Ilhas do Saber</h1>
+        <span class="escola">E.B.M. VIDAL RAMOS</span>
+      </div>
+    </header>
+
+    <!-- ===================== TELA: MAPA ===================== -->
+    <div id="tela-mapa" class="tela ativa">
+      <p class="intro">Bem-vindo(a), explorador(a)! 🧭 Escolha a sua <b>ilha</b> e comece a aventura das atividades.</p>
+      <div><button class="btn-ouvir" type="button" onclick="ouvirIntro()">🔊 Ouvir instruções</button></div>
+
+      <div class="ilhas">
+        <!-- ILHA 1 - TESOURO -->
+        <button class="ilha a" type="button" onmouseenter="hoverIlha('tesouro')" onclick="abrirFase('tesouro')" aria-label="Ilha do Tesouro"><span class="flutua"><img src="img/ilha-tesouro.png" alt="Ilha do Tesouro"></span>
+          <span class="rotulo"><b>Ilha do Tesouro</b><span>Pré • 1º • 2º ano</span></span>
+        </button>
+
+        <!-- ILHA 2 - EXPLORADORES -->
+        <button class="ilha b" type="button" onmouseenter="hoverIlha('exploradores')" onclick="abrirFase('exploradores')" aria-label="Ilha dos Exploradores"><span class="flutua"><img src="img/ilha-exploradores.png" alt="Ilha dos Exploradores"></span>
+          <span class="rotulo"><b>Ilha dos Exploradores</b><span>3º • 4º • 5º ano</span></span>
+        </button>
+
+        <!-- ILHA 3 - AVENTUREIROS -->
+        <button class="ilha c" type="button" onmouseenter="hoverIlha('aventureiros')" onclick="abrirFase('aventureiros')" aria-label="Ilha dos Aventureiros"><span class="flutua"><img src="img/ilha-aventureiros.png" alt="Ilha dos Aventureiros"></span>
+          <span class="rotulo"><b>Ilha dos Aventureiros</b><span>6º • 7º • 8º • 9º ano</span></span>
+        </button>
+      </div>
+      <footer>Toque na ilha da sua turma 🌟</footer>
+    </div>
+
+    <!-- ===================== TELA: TURMAS ===================== -->
+    <div id="tela-turmas" class="tela">
+      <button class="voltar" type="button" onclick="irMapa()">← Voltar ao mapa</button>
+      <img id="turmas-mascote" class="fase-mascote" src="" alt="">
+      <h2 class="titulo-fase" id="turmas-titulo">Ilha</h2>
+      <p class="sub-fase" id="turmas-sub">Escolha a sua turma</p>
+      <div class="cards" id="turmas-lista"></div>
+    </div>
+
+    <!-- ===================== TELA: ATIVIDADES ===================== -->
+    <div id="tela-atividades" class="tela">
+      <button class="voltar" type="button" onclick="voltarTurmas()">← Voltar às turmas</button>
+      <h2 class="titulo-fase" id="ativ-titulo">Turma</h2>
+      <p class="sub-fase">Escolha uma atividade para jogar</p>
+      <div id="ativ-lista"></div>
+    </div>
+  </div>
+
+<script>
+/* ===== Dados do Mundo das Atividades ===== */
+var MUNDO = {
+  tesouro: {
+    nome: "Ilha do Tesouro", sub: "Pré, 1º e 2º ano", emoji: "🐢",
+    turmas: [
+      { id: "pre",  nome: "Pré",     mascote: "🐚", arte: true },
+      { id: "1ano", nome: "1º Ano",  mascote: "🐢", arte: true },
+      { id: "2ano", nome: "2º Ano",  mascote: "⭐", arte: true }
+    ]
+  },
+  exploradores: {
+    nome: "Ilha dos Exploradores", sub: "3º, 4º e 5º ano", emoji: "🦜",
+    turmas: [
+      { id: "3ano", nome: "3º Ano", mascote: "🧭", arte: true },
+      { id: "4ano", nome: "4º Ano", mascote: "🦜", arte: true },
+      { id: "5ano", nome: "5º Ano", mascote: "🌿", arte: true }
+    ]
+  },
+  aventureiros: {
+    nome: "Ilha dos Aventureiros", sub: "6º ao 9º ano", emoji: "🐲",
+    turmas: [
+      { id: "6ano", nome: "6º Ano", mascote: "🔥", arte: true },
+      { id: "7ano", nome: "7º Ano", mascote: "🐲", arte: true },
+      { id: "8ano", nome: "8º Ano", mascote: "💎", arte: true },
+      { id: "9ano", nome: "9º Ano", mascote: "⚔️", arte: true }
+    ]
+  }
+};
+
+/* Atividades por turma (chave = "fase:turma").
+   PORTAL LEVE: cada atividade mora no SEU proprio repositorio; aqui fica so o
+   card + o link para o site dela. Assim o hub nunca fica pesado (escala sem
+   limite). Para adicionar: extrai o mascote (~50KB) e poe o link do site. */
+var ATIVIDADES = {
+  "exploradores:3ano": [
+    { titulo: "O Observatório do Órbi", desc: "O Sol, a Terra, a Lua e os oito planetas — com fotos de verdade", ic: "🔭",
+      mascote: "img/ativ-observatorio-do-orbi.png", link: "https://vidalprof.github.io/observatorio-do-orbi/" },
+    { titulo: "Vila da Tabuada", desc: "RPG da multiplicação e divisão: reparta a carga do Tião em grupos iguais", ic: "🧺",
+      mascote: "img/ativ-vila-tabuada.png", link: "https://vidalprof.github.io/vila-tabuada/" },
+    { titulo: "Aventura no Espaço — Sistema Solar", desc: "Explore os planetas do Sistema Solar", ic: "🪐",
+      mascote: "img/ativ-sistema-solar-3ano.png", link: "https://vidalprof.github.io/Sistemasolar3ano/" }
+  ],
+  "exploradores:4ano": [
+    { titulo: "A Fábrica de Brinquedos do Bento", desc: "Multiplicação de verdade: grupos, fileiras, tabelas e contas grandes por partes", ic: "🚀",
+      mascote: "img/ativ-fabrica-do-bento.png", link: "https://vidalprof.github.io/fabrica-do-bento/" },
+    { titulo: "A Fazendinha do Teco", desc: "Tabuada, multiplicação e divisão na fazenda com o Teco", ic: "🐔",
+      mascote: "img/ativ-fazendinha-do-teco.png", link: "https://vidalprof.github.io/fazendinha-do-teco/" }
+  ],
+  "exploradores:5ano": [
+    { titulo: "Cidade do Dinheiro — Sistema Monetário", desc: "Aprenda a usar o dinheiro brincando", ic: "💰",
+      mascote: "img/ativ-sistema-monetario-5ano.png", link: "https://vidalprof.github.io/sistemamonetario2-5ano/" }
+  ],
+  "aventureiros:6ano": [
+    { titulo: "Mundo das Palavras — Substantivos e Adjetivos", desc: "Classes de palavras de um jeito divertido", ic: "📚",
+      mascote: "img/ativ-mundo-das-palavras-6ano.png", link: "https://vidalprof.github.io/classesdepalavras6-/" },
+    { titulo: "Climas do Mundo — A Volta ao Mundo de Nimbo", desc: "Viaje pelos climas do planeta com o Nimbo", ic: "🌦️",
+      mascote: "img/ativ-climas-do-mundo-6ano.png", link: "https://vidalprof.github.io/climas-do-mundo-6ano/" }
+  ],
+  "aventureiros:8ano": [
+    { titulo: "Relative Pronouns — Connecting Ideas!", desc: "Pronomes relativos em inglês de um jeito divertido", ic: "🦉",
+      mascote: "img/ativ-ingles-relative-pronouns-8ano.png", link: "https://vidalprof.github.io/InglesRelativePronouns8/" }
+  ],
+  "tesouro:pre": [
+    { titulo: "O Grande Circo do Teo", desc: "Cores, números, formas, vogais, memória e jogos no circo do Teo", ic: "🎪",
+      mascote: "img/ativ-circo-do-teo.png", link: "https://vidalprof.github.io/circo-do-teo/" },
+    { titulo: "Mundo Mágico — Brincar e Aprender!", desc: "Aventuras e brincadeiras para a pré-escola", ic: "🌈",
+      mascote: "img/ativ-mundo-magico-pre.png", link: "https://vidalprof.github.io/pr-escola-1/" },
+    { titulo: "Poli e o Tesouro do Mar", desc: "Aventura no fundo do mar: números, vogais, formas e memória", ic: "🐙",
+      mascote: "img/ativ-poli-tesouro-do-mar.png", link: "https://vidalprof.github.io/poli-tesouro-do-mar/" }
+  ],
+  "tesouro:1ano": [
+    { titulo: "Ilha das Letras — Aventura do Alfabeto", desc: "Aprenda a sequência do alfabeto brincando", ic: "🔤",
+      mascote: "img/ativ-ilha-das-letras-1ano.png", link: "https://vidalprof.github.io/alfbetosequencia1-/" },
+    { titulo: "A Floresta dos Números", desc: "Aventura de contagem e números", ic: "🌳",
+      mascote: "img/ativ-floresta-dos-numeros.png", link: "https://vidalprof.github.io/floresta-dos-numeros-1ano/" }
+  ],
+  "tesouro:2ano": [
+    { titulo: "Mundo dos Números — Juntar e Tirar!", desc: "Adição e subtração de um jeito divertido", ic: "🔢",
+      mascote: "img/ativ-mundo-dos-numeros-2ano.png", link: "https://vidalprof.github.io/AdicaoSubtra-o2-2-ano/" },
+    { titulo: "Caça-Letras — A Aventura das Palavras", desc: "Ortografia e sílaba tônica de um jeito divertido", ic: "📖",
+      mascote: "img/ativ-caca-letras-2ano.png", link: "https://vidalprof.github.io/ortografia2-/" },
+    { titulo: "A Vila do Miau", desc: "Leitura e escrita com o gatinho bibliotecário", ic: "🐱",
+      mascote: "img/ativ-vila-dos-livros-miau.png", link: "https://vidalprof.github.io/vila-dos-livros-miau/" }
+  ]
+};
+
+/* ===== Navegação ===== */
+var faseAtual = null, turmaAtual = null;
+/* tom da plaquinha de aluminio por ilha */
+var TOM = { tesouro: "ouro", exploradores: "prata", aventureiros: "bronze" };
+
+/* ===== Som e narracao (extra; degrada com seguranca) ===== */
+var somAtivo = true, _ac = null, vozPT = null;
+function getAC(){ if(!_ac){ var C = window.AudioContext || window.webkitAudioContext; if(C){ try{ _ac = new C(); }catch(e){} } } return _ac; }
+function som(tipo){
+  if(!somAtivo) return;
+  var ac = getAC(); if(!ac) return;
+  try{
+    if(ac.state === "suspended" && ac.resume){ ac.resume(); }
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.connect(g); g.connect(ac.destination); o.type = "sine";
+    var t = ac.currentTime, sobe = (tipo !== "voltar");
+    o.frequency.setValueAtTime(sobe ? 620 : 520, t);
+    o.frequency.exponentialRampToValueAtTime(sobe ? 980 : 300, t + 0.12);
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.22, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.22);
+    o.start(t); o.stop(t + 0.24);
+  }catch(e){}
+}
+function carregaVozes(){
+  if(!("speechSynthesis" in window)) return;
+  var vs = window.speechSynthesis.getVoices();
+  for(var i=0;i<vs.length;i++){ if(vs[i].lang && vs[i].lang.toLowerCase().indexOf("pt")===0){ vozPT = vs[i]; break; } }
+}
+if("speechSynthesis" in window){ carregaVozes(); window.speechSynthesis.onvoiceschanged = carregaVozes; }
+function falar(txt){
+  if(!somAtivo || !("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.resume();
+    var u = new SpeechSynthesisUtterance(txt);
+    u.lang = "pt-BR"; if(vozPT) u.voice = vozPT; u.rate = 0.98; u.pitch = 1.12;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function toggleSom(){
+  somAtivo = !somAtivo;
+  document.getElementById("btnSom").innerHTML = somAtivo ? "\uD83D\uDD0A" : "\uD83D\uDD07";
+  if(!somAtivo && "speechSynthesis" in window){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+  if(somAtivo) som("clique");
+}
+var _falou = false;
+function falarIntro(){
+  som("clique");
+  if(!somAtivo || !("speechSynthesis" in window)) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u = new SpeechSynthesisUtterance("Olá, exploradores! Bem-vindos às Ilhas do Saber. Toque na ilha da sua turma para começar a aventura!");
+    u.lang = "pt-BR"; if(vozPT) u.voice = vozPT; u.rate = 0.98; u.pitch = 1.12;
+    u.onstart = function(){ _falou = true; };
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+function ouvirIntro(){ falarIntro(); }
+function hoverIlha(faseId){ var f = MUNDO[faseId]; if(f){ falar(f.nome + ". " + f.sub + "."); } }
+function hoverAtiv(el){ var t = (el && el.getAttribute) ? el.getAttribute("data-t") : ""; if(t){ falar("Atividade: " + t); } }
+function hoverTurma(turmaId){ var f = MUNDO[faseAtual]; if(!f) return; var nm = turmaId; for(var i=0;i<f.turmas.length;i++){ if(f.turmas[i].id===turmaId){ nm = f.turmas[i].nome; } } falar("Aqui é a ilha do " + nm + "."); }
+/* tenta narrar sozinho ao abrir */
+var _armado = false;
+function _destrava(){
+  if(_armado) return;
+  _armado = true;
+  try{ var ac = getAC(); if(ac && ac.state === "suspended" && ac.resume){ ac.resume(); } }catch(e){}
+  /* "acorda" a fala: alguns navegadores so liberam apos um speak() dentro do gesto */
+  try{ if("speechSynthesis" in window){ window.speechSynthesis.resume(); } }catch(e){}
+  if(!_falou){ falarIntro(); }
+}
+if(window.addEventListener){
+  /* tentativa automatica ao abrir (funciona se o navegador permitir) */
+  window.addEventListener("load", function(){ setTimeout(function(){ try{ falarIntro(); }catch(e){} }, 450); });
+  /* a 1a interacao da crianca (qualquer toque/clique/tecla) destrava tudo:
+     o navegador exige UM gesto antes de liberar som — regra de seguranca */
+  /* inclui movimento do mouse: em muitos navegadores ja libera a voz no
+     1o hover; em outros (Chrome novo) o 1o clique/toque garante */
+  var _eventos = ["pointerdown","mousedown","touchstart","click","keydown","mouseover","mousemove","pointermove"];
+  var _primeiro = function(){
+    for(var _e=0; _e<_eventos.length; _e++){ document.removeEventListener(_eventos[_e], _primeiro, true); }
+    _destrava();
+  };
+  for(var _e=0; _e<_eventos.length; _e++){ document.addEventListener(_eventos[_e], _primeiro, true); }
+}
+
+function mostrar(idTela) {
+  var telas = document.getElementsByClassName("tela");
+  for (var i = 0; i < telas.length; i++) {
+    telas[i].className = telas[i].className.replace(" ativa", "");
+  }
+  var alvo = document.getElementById(idTela);
+  alvo.className = alvo.className + " ativa";
+  if (window.scrollTo) window.scrollTo(0, 0);
+}
+
+function irMapa() { som("voltar"); mostrar("tela-mapa"); }
+
+function abrirFase(faseId) {
+  faseAtual = faseId;
+  var fase = MUNDO[faseId];
+  som("clique"); falar(fase.nome + ". Escolha a sua turma!");
+  var mEl = document.getElementById("turmas-mascote"); mEl.src = "img/mascote-" + faseId + ".png"; mEl.alt = fase.nome;
+  document.getElementById("turmas-titulo").innerHTML = fase.emoji + " " + fase.nome;
+  document.getElementById("turmas-sub").innerHTML = fase.sub + " — escolha a sua turma";
+  var html = "";
+  for (var i = 0; i < fase.turmas.length; i++) {
+    var t = fase.turmas[i];
+    if (t.arte) {
+      html += '<button class="card" type="button" onmouseenter="hoverTurma(\'' + t.id + '\')" onclick="abrirTurma(\'' + t.id + '\')">' +
+                '<div class="ilhota-wrap">' +
+                  '<img class="ilhota-img" src="img/ilhota-' + t.id + '.png" alt="">' +
+                  '<span class="mascote-pos"><img src="img/mascote-' + t.id + '.png" alt=""></span>' +
+                '</div>' +
+                '<span class="rotulo-turma"><b>' + t.nome + '</b><span>ver atividades</span></span>' +
+              '</button>';
+    } else {
+      html += '<button class="card" type="button" onmouseenter="hoverTurma(\'' + t.id + '\')" onclick="abrirTurma(\'' + t.id + '\')">' +
+                '<div class="bolha">' + t.mascote + '</div>' +
+                '<span class="rotulo-turma"><b>' + t.nome + '</b><span>ver atividades</span></span>' +
+              '</button>';
+    }
+  }
+  document.getElementById("turmas-lista").innerHTML = html;
+  mostrar("tela-turmas");
+}
+
+function voltarTurmas() { abrirFase(faseAtual); }
+
+function abrirTurma(turmaId) {
+  turmaAtual = turmaId;
+  var fase = MUNDO[faseAtual];
+  var nomeTurma = turmaId;
+  for (var i = 0; i < fase.turmas.length; i++) { if (fase.turmas[i].id === turmaId) nomeTurma = fase.turmas[i].nome; }
+  som("clique"); falar(nomeTurma + ". Escolha uma atividade!");
+  document.getElementById("ativ-titulo").innerHTML = fase.emoji + " " + nomeTurma + " — " + fase.nome;
+
+  var lista = ATIVIDADES[faseAtual + ":" + turmaId];
+  var html = "";
+  if (lista && lista.length) {
+    for (var j = 0; j < lista.length; j++) {
+      var a = lista[j];
+      var masc = a.mascote ? a.mascote : ("img/mascote-" + turmaId + ".png");
+      var tom = TOM[faseAtual] || "prata";
+      html += '<a class="atividade tag-' + tom + '" href="' + a.link + '" target="_blank" rel="noopener" data-t="' + a.titulo + '" onmouseenter="hoverAtiv(this)" onclick="som(\'clique\')">' +
+                '<span class="ativ-ic masc">' +
+                  '<img class="ativ-masc" src="' + masc + '" alt="" onerror="this.onerror=null;var p=this.parentNode;p.className=\'ativ-ic\';p.innerHTML=\'' + a.ic + '\';">' +
+                '</span>' +
+                '<span class="ativ-info"><b>' + a.titulo + '</b><span>' + a.desc + '</span></span>' +
+                '<span class="ativ-play">▶ JOGAR</span>' +
+              '</a>';
+    }
+  } else {
+    html = '<div class="vazio">🚧 <b>Em breve!</b><br>O professor vai adicionar atividades nesta turma. Volte logo! 😊</div>';
+  }
+  document.getElementById("ativ-lista").innerHTML = html;
+  mostrar("tela-atividades");
+}
+</script>
+</body>
+</html>

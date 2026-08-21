@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — trilha (rola o dado, anda as casas, a casa traz o desafio)</title>
+<!-- ============================================================
+     PEÇA: TRILHA COM DADO — O ACASO ESCOLHE, A CRIANÇA RESPONDE
+     (copiada do _padrao/pecas/MOLDE.html; padrão de qualidade: estimar.html)
+
+     POR QUE ELA EXISTE:
+     numa lista de exercícios a criança sabe quantos faltam e quanto falta doer.
+     Na trilha ela sabe onde ESTÁ e o quanto já andou — e o próximo desafio não
+     é "o exercício 6", é "a casa em que o dado me pôs". O acaso do dado tira o
+     peso do julgamento: quem escolheu a pergunta foi o dado, não um adulto
+     medindo a criança. É a mesma pergunta, e ela responde outra coisa.
+
+     ⭐ O DADO É ROLADO POR TOQUE, NUNCA SOZINHO. Rolar é o gesto de quem está
+     jogando; se o app rola, a criança vira plateia. Por isso o dado é o maior
+     alvo da tela (76 px), sacode enquanto rola e mostra a face parada no fim.
+
+     ⭐ O PEÃO ANDA CASA POR CASA, VISIVELMENTE (uma casa a cada 300 ms), com um
+     tiquinho a cada passo. Se ele TELETRANSPORTA, a criança não conta nada — e
+     contar as casas é metade do que a trilha ensina. Andar devagar aqui não é
+     enfeite: é o conteúdo.
+
+     O QUE FAZ ESTA MECÂNICA VALER:
+       · o peão NUNCA passa da chegada (o último lance encaixa), senão a criança
+         fica "presa" a uma casa do fim esperando o número exato;
+       · cada casa tem o SEU desafio, com apoio concreto próprio (pontinhos,
+         fita numérica, caixa de dez) — concreto -> figural -> simbólico;
+       · 4 opções, ou seja 3 distratores: com 2, a criança elimina tudo antes do
+         3º erro e o degrau "revelar" vira código morto;
+       · nada essencial só na cor: a casa visitada ganha marca, a casa de agora
+         ganha o PEÃO (uma forma), a chegada tem desenho próprio;
+       · funciona no mudo: o resultado do dado aparece escrito ("Saiu 2!").
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA no instante do toque no dado (`travada=true`), nunca no fim da
+         animação — criança toca duas vezes, e dois lances ao mesmo tempo
+         punham o peão em duas casas;
+       · GERAÇÃO (`ger`) em TODO setTimeout: o passo do peão de uma rodada velha
+         continuava correndo depois da troca de tela e deixava a tela travada
+         sem erro nenhum no console;
+       · o 3º degrau REVELA e SÓ DEPOIS escreve a dica, que FICA na tela até a
+         criança tocar em "Entendi!";
+       · opção já tentada responde com PALAVRAS e som, nunca com silêncio;
+       · todo ajudante que toca no DOM começa com `if(!elemento) return;`.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* O TABULEIRO. As casas quebram a linha sozinhas: em 320px cabem 5 por fila,
+   no PC da escola a trilha inteira fica numa fila so.
+   ⚠️ a folga de 12px em cima e obrigatoria: o balao tem sombra e nenhuma
+   margem por baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes).
+   ⚠️ o padding de cima abre espaco para o PEAO, que POUSA ACIMA da casa — sem
+   ele o peao da primeira fila era cortado pela borda de cima. */
+.tboard{margin:12px auto 0;padding:34px 0 2px;max-width:400px;line-height:0}
+.tcasa{display:inline-block;position:relative;vertical-align:top;width:52px;height:52px;margin:3px;
+       border-radius:50%;background:#fffdf6;color:#221a12;font-size:18px;font-weight:800;
+       line-height:52px;text-align:center;box-shadow:0 3px 0 #c9bda6}
+.tcasa.saida{background:#3c6ee0;color:#fff;font-size:12px;letter-spacing:.5px}
+.tcasa.chegada{background:#59c24b;color:#0f2c07;font-size:15px;letter-spacing:.5px}
+/* casa ja visitada: fundo E carimbo (nunca so a cor) */
+.tcasa.feita{background:#d6f5c8;color:#183a0e}
+.tcasa.feita:after{content:"\2713";position:absolute;right:2px;bottom:-2px;font-size:15px;
+                   line-height:16px;color:#1f6b12}
+.tcasa.aqui{box-shadow:0 0 0 4px #ffd54a,0 3px 0 #c9a52f}
+/* O PEAO: uma FORMA, nao uma cor — quem nao distingue cor continua vendo onde
+   esta o seu boneco. */
+/* ⚠️ o peao POUSA ACIMA da casa, nunca em cima do nome dela: na primeira
+   versao ele tapava a palavra "SAIDA" e a crianca nao lia onde estava. */
+.tpeao{position:absolute;left:50%;top:-34px;width:24px;height:30px;margin-left:-12px;
+       background:#c0562f;border:2px solid #7d3d1a;border-radius:12px 12px 5px 5px}
+.tpeao:before{content:"";position:absolute;left:50%;top:-9px;width:14px;height:14px;margin-left:-7px;
+              border-radius:50%;background:#c0562f;border:2px solid #7d3d1a}
+/* O DADO: o maior alvo da tela, e SO ele rola a rodada. */
+.dado{position:relative;display:block;width:76px;height:76px;padding:0;margin:10px auto 0;
+      border-radius:16px;background:#fffdf6;border:0;cursor:pointer;box-shadow:0 5px 0 #c9bda6}
+.dado:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 2px 0 #c9bda6}
+.dado.rolando{-webkit-animation:sacode .1s infinite;animation:sacode .1s infinite}
+.dpip{position:absolute;width:15%;height:15%;border-radius:50%;background:#221a12;
+      -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
+/* ⚠️ tinta de ladrilho se escreve, e o seletor nomeia a superficie (mesma
+   licao das outras cinco pecas, ago/2026): `var(--texto)` e a tinta do
+   FUNDO DA ATIVIDADE, e aqui a letra cai no cartao que a peca pinta. */
+.dado .dqm{position:absolute;left:0;right:0;top:50%;margin-top:-21px;font-style:normal;
+     font-size:42px;line-height:42px;font-weight:800;color:#221a12}
+.drot{font-size:14px;font-weight:800;color:#ffd8a8;margin-top:6px;min-height:20px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;display:inline-block;}
+/* O APOIO CONCRETO: pontinhos, fita numerica e caixa de dez. Sao os mesmos
+   materiais que a crianca usa na mesa da sala. */
+.desapoio{margin-top:12px;line-height:0}
+/* o apoio ACESO e o 2o degrau do andaime: moldura e pulso, para o olho da
+   crianca ir para la sem que ninguem precise dizer "olhe ali". */
+.aceso{padding:6px 4px;border-radius:14px;background:rgba(255,213,74,.20);
+       box-shadow:0 0 0 3px rgba(255,213,74,.55);
+       -webkit-animation:pisca 1s infinite;animation:pisca 1s infinite}
+@-webkit-keyframes pisca{0%,100%{opacity:1}50%{opacity:.55}}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.55}}
+.apt{display:inline-block;width:20px;height:20px;margin:3px;border-radius:50%;
+     background:#ffd54a;border:2px solid #a8801c;vertical-align:middle}
+.apt.fora{background:transparent;border-style:dashed;border-color:#c9bda6}
+.asin{display:inline-block;font-style:normal;font-size:22px;font-weight:800;color:var(--texto,#f4efe6);
+      margin:0 6px;line-height:24px;vertical-align:middle}
+.acx{display:inline-block;width:22px;height:22px;margin:2px;border-radius:4px;
+     border:2px solid #c9bda6;background:transparent;vertical-align:middle}
+.acx.cheia{background:#ffd54a;border-color:#a8801c}
+.acel{display:inline-block;min-width:26px;height:26px;margin:2px;border-radius:6px;
+      background:rgba(255,255,255,.16);color:#f4efe6;font-style:normal;font-size:14px;
+      font-weight:800;line-height:26px;text-align:center;vertical-align:middle}
+.acel.marca{background:#ffd54a;color:#33280a}
+/* opcoes em DUAS COLUNAS: com 4 empilhadas a ultima caia fora da tela na
+   janela de 420px de altura (o monitor da escola). */
+.oph{display:inline-block;width:46%;max-width:200px;margin:5px 1.5%;vertical-align:top;
+     padding:11px 7px;font-size:16px;min-height:52px}
+.zona{margin-top:8px}
+@-webkit-keyframes sacode{0%,100%{-webkit-transform:rotate(-7deg)}50%{-webkit-transform:rotate(7deg)}}
+@keyframes sacode{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(7deg)}}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* JANELA BAIXA (1024x420 = o monitor da escola). Encolhe as letras e o
+   tabuleiro; o DADO e as opcoes continuam alvos grandes. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:13px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{font-size:12.5px;padding:7px 11px;margin-top:9px}
+  .tboard{margin-top:8px;padding-top:28px}
+  .tcasa{width:44px;height:44px;line-height:44px;font-size:16px;margin:2px}
+  .tcasa.saida,.tcasa.chegada{font-size:10px}
+  .tpeao{width:20px;height:26px;margin-left:-10px;top:-30px}
+  .dado{width:64px;height:64px;margin-top:6px}
+  .dado .dqm{margin-top:-18px;font-size:36px;line-height:36px}
+  .drot{margin-top:3px;font-size:12px;min-height:16px}
+  .desapoio{margin-top:9px}
+  .apt{width:16px;height:16px;margin:2px}
+  .acx{width:18px;height:18px}
+  .acel{min-width:22px;height:22px;line-height:22px;font-size:12px}
+  .oph{min-height:44px;padding:8px 6px;font-size:14px;margin:4px 1.5%}
+  .zona{margin-top:5px}
+  .btn{min-height:44px;padding:10px 20px;font-size:15px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (6 a 8 anos). Para reusar a peça, troque SÓ a tabela
+   CASAS: cada casa é um desafio com o apoio concreto DELA.
+   ⚠️ A ESCADA sobe pela trilha: as primeiras casas mostram o apoio DE CARA
+   (`mostrar:1` — pontinhos, fita numérica, caixa de dez) e as últimas guardam o
+   apoio para o 2º degrau do andaime. Concreto -> figural -> simbólico, na
+   ordem em que o peão anda.
+   ⚠️ 4 opções = 3 distratores. Com 2 a criança elimina tudo antes do 3º erro e
+   o degrau "revelar" nunca chega a acontecer: código morto que ninguém vê. */
+var CASAS=[
+  {q:"Quantos pontinhos tem aqui?",
+   apoio:{tipo:"pts",n:4}, mostrar:1,
+   certa:"4", erradas:["3","5","6"],
+   dica:"Toque em cada pontinho enquanto conta: um, dois, tr&ecirc;s...",
+   dica2:"Acendi os pontinhos. Toque neles um a um: 1, 2, 3... o <b>&uacute;ltimo</b> n&uacute;mero que voc&ecirc; falar &eacute; a resposta.",
+   porque:"S&atilde;o <b>4</b> pontinhos: contando um por um, o &uacute;ltimo n&uacute;mero que voc&ecirc; fala &eacute; quantos tem."},
+  {q:"Qual n&uacute;mero vem <b>depois</b> do 5?",
+   apoio:{tipo:"reta",de:1,ate:8,marca:[5]}, mostrar:1,
+   certa:"6", erradas:["4","7","5"],
+   dica:"Ache o 5 na fita e d&ecirc; <b>um</b> passo para a direita.",
+   dica2:"Ponha o dedo no <b>5</b> aceso e escorregue <b>uma</b> casinha para a direita. Que n&uacute;mero est&aacute; ali?",
+   porque:"Depois do <b>5</b> vem o <b>6</b>: um passo para a direita na fita."},
+  {q:"Quantos faltam para chegar no 10?",
+   apoio:{tipo:"dez",n:7}, mostrar:1,
+   certa:"3", erradas:["2","4","17"],
+   dica:"Conte as caixinhas <b>vazias</b> da fileira.",
+   dica2:"Conte s&oacute; as caixinhas <b>vazias</b>: uma, duas... quantas faltam para encher a fileira de dez?",
+   porque:"Sete cheias e <b>3</b> vazias: 7 e mais 3 fecham a caixa de dez."},
+  {q:"3 + 2 = ?",
+   apoio:{tipo:"grupos",a:3,b:2,sinal:"+"},
+   certa:"5", erradas:["4","6","32"],
+   dica:"Comece no 3 e conte mais dois: quatro... cinco.",
+   dica2:"Conte o primeiro grupinho e <b>continue</b> no segundo, sem come&ccedil;ar do um de novo.",
+   porque:"Juntando 3 com 2 ficam <b>5</b> ao todo."},
+  {q:"Qual n&uacute;mero vem <b>antes</b> do 9?",
+   apoio:{tipo:"reta",de:5,ate:12,marca:[9]},
+   certa:"8", erradas:["10","7","9"],
+   dica:"Ache o 9 na fita e d&ecirc; <b>um</b> passo para a esquerda.",
+   dica2:"Ponha o dedo no <b>9</b> aceso e escorregue <b>uma</b> casinha para a esquerda.",
+   porque:"Antes do <b>9</b> vem o <b>8</b>: um passo para a esquerda na fita."},
+  {q:"6 &#8722; 2 = ?",
+   apoio:{tipo:"tira",n:6,k:2},
+   certa:"4", erradas:["8","3","5"],
+   dica:"Eram 6. Tire 2 (os tracejados) e conte os que <b>sobraram</b>.",
+   dica2:"Tape os dois tracejados com o dedo e conte s&oacute; os que <b>sobraram</b> inteiros.",
+   porque:"De 6 tirando 2 sobram <b>4</b> &#8212; os pontinhos inteiros da figura."},
+  {q:"Qual &eacute; o <b>dobro</b> de 4?",
+   apoio:{tipo:"grupos",a:4,b:4,sinal:"+"},
+   certa:"8", erradas:["6","4","12"],
+   dica:"Dobro &eacute; a mesma quantidade <b>duas vezes</b>: 4 e mais 4.",
+   dica2:"S&atilde;o dois grupinhos <b>iguais</b>. Conte o primeiro e continue contando no segundo.",
+   porque:"4 e mais 4 d&atilde;o <b>8</b>: isso &eacute; o dobro de 4."},
+  {q:"Contando de 2 em 2: 2, 4, 6... qual vem agora?",
+   apoio:{tipo:"reta",de:1,ate:10,marca:[2,4,6]},
+   certa:"8", erradas:["7","9","10"],
+   dica:"Olhe as casas acesas na fita: elas pulam de <b>duas</b> em duas.",
+   dica2:"Do 2 ao 4 s&atilde;o <b>dois</b> pulos de casinha. Fa&ccedil;a mais um pulo desses depois do 6.",
+   porque:"2, 4, 6 e <b>8</b>: cada pulo anda duas casas na fita."},
+  {q:"Qual &eacute; o <b>maior</b>: 8 ou 3?",
+   apoio:{tipo:"reta",de:1,ate:10,marca:[3,8]},
+   certa:"8", erradas:["3","os dois s&atilde;o iguais","5"],
+   dica:"Na fita, o maior &eacute; o que est&aacute; mais para a <b>direita</b>.",
+   dica2:"As duas casinhas acesas s&atilde;o o 3 e o 8. Qual delas est&aacute; mais para a <b>direita</b>?",
+   porque:"O <b>8</b> fica mais para a direita na fita, ent&atilde;o ele &eacute; o maior."}
+];
+var NCASAS=CASAS.length+1;   /* a última é a CHEGADA, sem desafio */
+
+var casa=0;           /* onde o peão está (0 = SAÍDA) */
+var desafioAtual=1;   /* a casa cujo desafio está na tela */
+var dado=0;           /* o que saiu no último lance */
+var dePrimeira=0, respondidas=0;
+var erros=0;          /* erros DESTE desafio: é o degrau do andaime */
+var ger=0;            /* geração: mata o setTimeout de uma tela que já saiu */
+var travada=false;    /* ⚠️ trava NO INSTANTE do toque — criança toca duas vezes */
+var eDado=null, eRot=null, eZona=null, eBoard=null, barraP=null;
+var opcoes=[];
+
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function vivaB(){ return !!(eBoard&&eBoard.parentNode); }
+function vivaD(){ return !!(eZona&&eZona.parentNode); }
+function desafio(){ return CASAS[Math.min(Math.max(desafioAtual,1),CASAS.length)-1]; }
+function sPasso(){ nota(659.25,.05,.10,"triangle",0); }
+function sRola(){ nota(240,.03,.09,"square",0); }
+function sPousa(){ nota(392,.10,.13,"triangle",0); nota(587.33,.14,.12,"triangle",.07); }
+
+/* ---------- o apoio concreto (os materiais da mesa da sala) ---------- */
+function apoioEl(ap){
+  var d=el("div","desapoio",""), i, e;
+  if(!ap) return d;
+  if(ap.tipo==="pts"){
+    for(i=0;i<ap.n;i++) d.appendChild(el("i","apt",""));
+  }else if(ap.tipo==="tira"){
+    /* os tirados ficam TRACEJADOS (forma), nunca só apagados de cor */
+    for(i=0;i<ap.n;i++){
+      e=el("i","apt","");
+      if(i>=ap.n-ap.k) e.className="apt fora";
+      d.appendChild(e);
+    }
+  }else if(ap.tipo==="grupos"){
+    for(i=0;i<ap.a;i++) d.appendChild(el("i","apt",""));
+    d.appendChild(el("i","asin",ap.sinal));
+    for(i=0;i<ap.b;i++) d.appendChild(el("i","apt",""));
+  }else if(ap.tipo==="dez"){
+    for(i=0;i<10;i++){
+      e=el("i","acx","");
+      if(i<ap.n) e.className="acx cheia";
+      d.appendChild(e);
+    }
+  }else if(ap.tipo==="reta"){
+    for(i=ap.de;i<=ap.ate;i++){
+      e=el("i","acel",""+i);
+      if(temNaLista(ap.marca,i)) e.className="acel marca";
+      d.appendChild(e);
+    }
+  }
+  return d;
+}
+function temNaLista(lista,v){
+  var i;
+  if(!lista) return false;
+  for(i=0;i<lista.length;i++) if(lista[i]===v) return true;
+  return false;
+}
+
+/* ---------------------------------------------------------------
+   TELA 1 — O TABULEIRO E O DADO.
+   --------------------------------------------------------------- */
+function telaTrilha(){
+  limpa();
+  ger++; travada=false; opcoes=[];
+  var g=ger, i, c;
+  var t=el("div","tela");
+  setProg(t,Math.round(casa*100/NCASAS));
+  barraP=t.querySelector(".prog i");
+  var cx=el("div","centro");
+  cx.appendChild(el("div","selo","A TRILHA DOS N&Uacute;MEROS"));
+  cx.appendChild(el("div","balao",casa===0
+    ? "Toque no <b>dado</b> para come&ccedil;ar a viagem."
+    : "Voc&ecirc; est&aacute; na casa <b>"+casa+"</b>. Toque no <b>dado</b> para andar de novo."));
+
+  eBoard=el("div","tboard","");
+  for(i=0;i<=NCASAS;i++){
+    c=el("div","tcasa",i===0?"SA&Iacute;DA":(i===NCASAS?"FIM":""+i));
+    if(i===0) c.className="tcasa saida";
+    else if(i===NCASAS) c.className="tcasa chegada";
+    else if(i<casa) c.className="tcasa feita";
+    c._i=i;
+    eBoard.appendChild(c);
+  }
+  cx.appendChild(eBoard);
+  poePeao();
+
+  eDado=el("button","btn dado","");
+  eDado.setAttribute("aria-label","Rolar o dado");
+  eDado.setAttribute("data-qa","1");
+  eDado.onclick=function(){ rolaDado(g); };
+  cx.appendChild(eDado);
+  pintaDado(dado);
+  eRot=el("div","drot", casa===0?"O dado escolhe quantas casas voc&ecirc; anda."
+                                :"Toque no dado quando quiser.");
+  cx.appendChild(eRot);
+  cx.appendChild(el("div","hint","Cada casa em que voc&ecirc; parar traz um desafio. "+
+                    "A chegada &eacute; a casa "+NCASAS+"."));
+  t.appendChild(cx); app.appendChild(t);
+}
+/* ⚠️ todo ajudante que toca no DOM começa com a saída: uma função chamada antes
+   de o elemento existir derrubou quatro portões de uma vez com TypeError. */
+function poePeao(){
+  if(!eBoard) return;
+  var velho=eBoard.getElementsByClassName("tpeao")[0];
+  if(velho&&velho.parentNode) velho.parentNode.removeChild(velho);
+  var i, cs=eBoard.getElementsByClassName("tcasa");
+  for(i=0;i<cs.length;i++){
+    if(cs[i]._i<casa&&cs[i]._i>0&&cs[i]._i<NCASAS) cs[i].className="tcasa feita";
+    if(cs[i]._i===casa){
+      cs[i].className=cs[i].className+" aqui";
+      cs[i].appendChild(el("div","tpeao",""));
+    }
+  }
+}
+function pintaDado(n){
+  if(!eDado) return;
+  var PIP={1:[[50,50]],2:[[30,30],[70,70]],3:[[28,26],[50,50],[72,74]]};
+  var p=PIP[n], i, e;
+  /* ⚠️ antes do 1º lance o dado mostra "?", nunca uma face: com uma face
+     desenhada a criança acha que ele JÁ rolou e fica esperando o peão andar. */
+  if(!p){ eDado.innerHTML=""; eDado.appendChild(el("i","dqm","?")); return; }
+  eDado.innerHTML="";
+  for(i=0;i<p.length;i++){
+    e=el("i","dpip","");
+    e.style.left=p[i][0]+"%"; e.style.top=p[i][1]+"%";
+    eDado.appendChild(e);
+  }
+}
+
+/* ---------- ⭐ ROLAR: SÓ POR TOQUE, NUNCA SOZINHO ---------- */
+function rolaDado(g){
+  if(g!==ger||travada) return;
+  travada=true;                    /* ⚠️ trava NO INSTANTE do toque */
+  if(eDado){ eDado.className="btn dado rolando"; eDado.removeAttribute("data-qa"); }
+  if(eRot) eRot.innerHTML="Rolando...";
+  var giros=0;
+  var sacode=function(){
+    if(g!==ger) return;            /* ⚠️ rodada velha: some sem mexer na tela nova */
+    giros++;
+    pintaDado(1+Math.floor(Math.random()*3));
+    sRola();
+    if(giros<7){ setTimeout(sacode,95); return; }
+    dado=1+Math.floor(Math.random()*3);
+    pintaDado(dado);
+    if(eDado) eDado.className="btn dado";
+    sPousa();
+    if(eRot) eRot.innerHTML="Saiu <b>"+dado+"</b>! Ande "+dado+" casa"+(dado>1?"s":"")+".";
+    setTimeout(function(){ if(g!==ger) return; anda(g); },520);
+  };
+  sacode();
+}
+/* ⭐ O PEÃO ANDA CASA POR CASA, VISIVELMENTE. Teletransporte economiza 900 ms e
+   apaga metade do que a trilha ensina, que é contar as casas andando. */
+function anda(g){
+  if(g!==ger) return;
+  var alvo=casa+dado;
+  if(alvo>NCASAS) alvo=NCASAS;     /* nunca passa da chegada */
+  var passo=function(){
+    if(g!==ger||!vivaB()) return;
+    if(casa>=alvo){ parou(g); return; }
+    casa++;
+    poePeao(); sPasso();
+    if(barraP) barraP.style.width=Math.round(casa*100/NCASAS)+"%";
+    setTimeout(passo,300);
+  };
+  setTimeout(passo,140);
+}
+function parou(g){
+  if(g!==ger) return;
+  if(casa>=NCASAS){
+    mostraBanner("<b>Voc&ecirc; chegou!</b> A trilha inteira, casa por casa.", fimTrilha);
+    return;
+  }
+  desafioAtual=casa;
+  setTimeout(function(){ if(g!==ger) return; telaDesafio(); },380);
+}
+
+/* ---------------------------------------------------------------
+   TELA 2 — O DESAFIO DA CASA ONDE O PEÃO PAROU.
+   --------------------------------------------------------------- */
+function telaDesafio(){
+  limpa();
+  ger++; travada=false; erros=0; opcoes=[];
+  eBoard=null; eDado=null; eRot=null;
+  var g=ger, d=desafio(), i;
+  var t=el("div","tela");
+  setProg(t,Math.round(casa*100/NCASAS));
+  var cx=el("div","centro");
+  cx.appendChild(el("div","selo","CASA "+Math.min(Math.max(desafioAtual,1),CASAS.length)));
+  cx.appendChild(el("div","balao",d.q));
+  /* o apoio das primeiras casas aparece DE CARA; nas últimas ele é o 2º degrau
+     do andaime. É a escada andando junto com o peão. */
+  var ap=apoioEl(d.mostrar?d.apoio:null);
+  ap.id="apoioP";
+  cx.appendChild(ap);
+
+  eZona=el("div","zona","");
+  /* OPÇÕES EMBARALHADAS: na Fábrica de Estrelas a certa era sempre a 1ª e a
+     criança aprendeu a POSIÇÃO, não o conteúdo. */
+  var lista=[{txt:d.certa,ok:1}];
+  for(i=0;i<d.erradas.length;i++) lista.push({txt:d.erradas[i],ok:0});
+  baguncar(lista);
+  for(i=0;i<lista.length;i++) eZona.appendChild(fazOpcao(lista[i],g));
+  cx.appendChild(eZona);
+  cx.appendChild(el("div","hint","Casa "+casa+" de "+NCASAS+". Responda para poder rolar o dado de novo."));
+  t.appendChild(cx); app.appendChild(t);
+}
+function fazOpcao(o,g){
+  var b=el("div","opt oph",o.txt);
+  b._ok=o.ok;
+  if(o.ok) b.setAttribute("data-qa","1");
+  b.onclick=function(){ escolheu(b,g); };
+  opcoes.push(b);
+  return b;
+}
+function escolheu(b,g){
+  if(g!==ger||travada) return;
+  /* opção já tentada: etiqueta em PALAVRAS e som de retorno. Um retângulo rosa
+     e um `return` seco faz quem não distingue cor tocar ali para sempre
+     achando que travou. */
+  if(temClasse(b,"no")){
+    sTap();
+    mostraDica("Nessa a gente <b>j&aacute; tentou</b>. Olhe as outras com calma.");
+    return;
+  }
+  if(b._ok){ acerta(b,g); return; }
+  erra(b,g);
+}
+function acerta(b,g){
+  travada=true;                    /* ⚠️ trava NO INSTANTE do toque */
+  b.className="opt oph ok";
+  respondidas++;
+  if(erros===0) dePrimeira++;
+  sCerto();
+  var d=desafio();
+  setTimeout(function(){
+    if(g!==ger||!vivaD()) return;
+    mostraBanner("<b>Boa!</b> "+d.porque, voltaAoTabuleiro);
+  },420);
+}
+/* ERRO NÃO PUNE: som grave curto, a opção fica marcada como tentada e o
+   andaime CRESCE. Nunca um X vermelho, nunca a palavra que reprova. */
+function erra(b,g){
+  sErro(); erros++;
+  b.className="opt oph no";
+  b.removeAttribute("data-qa");
+  var d=desafio(), i, sobrou=0;
+  for(i=0;i<opcoes.length;i++)
+    if(!opcoes[i]._ok&&!temClasse(opcoes[i],"no")) sobrou++;
+  if(erros===1){ mostraDica(d.dica); return; }
+  /* a REDE: se as erradas acabarem antes do 3º erro, revela na hora em vez de
+     deixar uma tela com uma opção só. */
+  if(erros===2&&sobrou>0){
+    /* ⚠️ o 2º degrau tem que CRESCER de verdade. A primeira versão dizia
+       "deixei um apoio na tela" — e nas casas em que o apoio já estava lá desde
+       o começo isso era MENTIRA: a criança procurava uma novidade que não
+       existia. Agora ele acende o apoio (que pode ou não ser novo) e diz, passo
+       a passo, O QUE FAZER com ele. */
+    mostraApoio();
+    mostraDica(d.dica2);
+    return;
+  }
+  esperaERevela(g);
+}
+function mostraApoio(){
+  var velho=document.getElementById("apoioP");
+  if(!velho||!velho.parentNode) return;
+  var d=desafio(), novo=apoioEl(d.apoio);
+  novo.id="apoioP";
+  novo.className="desapoio aceso";
+  velho.parentNode.replaceChild(novo,velho);
+}
+/* ⚠️ 3º DEGRAU: REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica FICA na tela até a
+   criança tocar em "Entendi!". Em cinco peças de um lote a explicação do 3º
+   degrau era escrita e apagada no mesmo quadro, porque o "revelar" chamava o
+   "acertou" e o "acertou" limpava a barra de dica: a peça se consertava sozinha
+   e a criança não sabia por quê. Nenhum portão vê isso — só medindo o texto na
+   tela depois de errar. */
+function esperaERevela(g){
+  travada=true;
+  var d=desafio(), i;
+  mostraApoio();
+  for(i=0;i<opcoes.length;i++){
+    opcoes[i].removeAttribute("data-qa");
+    if(opcoes[i]._ok) opcoes[i].className="opt oph ok";
+  }
+  sPasso();
+  setTimeout(function(){
+    if(g!==ger||!vivaD()) return;
+    mostraDica("A resposta acesa &eacute; a certa. "+d.porque);
+    botaoSegue(g);                 /* e SÓ DEPOIS a explicação */
+  },700);
+}
+function botaoSegue(g){
+  if(!eZona) return;
+  var b=el("button","btn","Entendi!");
+  b.style.marginTop="10px";
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){
+    if(g!==ger) return;
+    sTap(); respondidas++;
+    voltaAoTabuleiro();
+  };
+  eZona.appendChild(b);
+}
+function voltaAoTabuleiro(){
+  if(casa>=NCASAS){ fimTrilha(); return; }
+  telaTrilha();
+}
+
+/* ---------------------------------------------------------------
+   TELA 3 — A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimTrilha(){
+  limpa();
+  ger++; travada=false;
+  eBoard=null; eDado=null; eRot=null; eZona=null; opcoes=[];
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(respondidas===0)
+    parecer="Voc&ecirc; atravessou a trilha inteira &#8212; <b>"+NCASAS+"</b> casas, "+
+            "uma por uma, contando cada passo.";
+  else if(dePrimeira>=respondidas)
+    parecer="Voc&ecirc; chegou ao fim e resolveu <b>"+dePrimeira+"</b> desafio(s) de primeira. "+
+            "O dado escolheu as casas; quem resolveu foi voc&ecirc;.";
+  else
+    parecer="Voc&ecirc; chegou ao fim! Resolveu <b>"+dePrimeira+"</b> de <b>"+respondidas+
+            "</b> desafio(s) sem ajuda &#8212; e nos outros voc&ecirc; foi at&eacute; o fim junto comigo.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){
+    casa=0; dado=0; dePrimeira=0; respondidas=0; desafioAtual=1;
+    telaTrilha();
+  };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Da pr&oacute;xima vez, tente adivinhar em que casa "+
+                   "voc&ecirc; vai parar antes de rolar o dado."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+telaTrilha();
+</script>
+</body></html>

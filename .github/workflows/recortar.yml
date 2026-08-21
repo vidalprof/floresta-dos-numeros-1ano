@@ -1,0 +1,91 @@
+name: Recortar imagens (rembg premium)
+
+# Tira o fundo de figuras que JA EXISTEM no repo, com o rembg + alpha-matting
+# (borda suave, recorte premium). Nao gera imagem nova — so limpa o fundo. Roda
+# no runner do GitHub (tem internet p/ baixar o modelo u2net) e commita as
+# transparentes de volta na MESMA branch. Pular: *_xray (arte por luminancia),
+# *_rx (derivada/alinhada), mascote (mv_tato*, camadas editadas), vazio/fundo.
+
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: "Pasta com as imagens (ex.: _museu/img)"
+        required: true
+        default: "_museu/img"
+        type: string
+      glob:
+        description: "Padrao dos arquivos"
+        required: false
+        default: "mv_*.png"
+        type: string
+
+jobs:
+  recortar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout (so a pasta que interessa)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          ref: ${{ github.ref_name }}
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /${{ inputs.pasta }}/
+
+      - name: Ferramentas do recorte
+        run: |
+          python3 -m pip install --quiet --upgrade pip
+          python3 -m pip install --quiet "rembg[cpu]" pillow numpy
+
+      - name: Recortar
+        env:
+          PASTA: ${{ inputs.pasta }}
+          GLOB: ${{ inputs.glob }}
+        run: |
+          python3 - <<'PY'
+          import os, glob, io
+          from rembg import remove, new_session
+          from PIL import Image
+          pasta=os.environ["PASTA"]; padrao=os.environ["GLOB"]
+          sessao=new_session("u2net")
+          PULAR=("_xray.png","_rx.png")
+          PULAR_NOME=("mv_vazio.png","mv_fundo.png")
+          feitos=0; pulados=0
+          for p in sorted(glob.glob(os.path.join(pasta,padrao))):
+              bn=os.path.basename(p)
+              if bn.endswith(PULAR) or bn in PULAR_NOME or bn.startswith("mv_tato"):
+                  pulados+=1; continue
+              bruto=open(p,"rb").read()
+              # alpha_matting = borda premium (fio de cabelo, antena, ventosa)
+              out=remove(bruto, session=sessao, alpha_matting=True,
+                         alpha_matting_foreground_threshold=250,
+                         alpha_matting_background_threshold=10,
+                         alpha_matting_erode_size=2)
+              im=Image.open(io.BytesIO(out)).convert("RGBA")
+              # apara a moldura transparente (bbox do conteudo) p/ nao inflar
+              bb=im.getbbox()
+              if bb: im=im.crop(bb)
+              im.save(p)
+              feitos+=1
+              print("recortado:", bn, im.size)
+          print("FEITOS=%d PULADOS=%d" % (feitos,pulados))
+          with open(os.environ["GITHUB_STEP_SUMMARY"],"a") as s:
+              s.write("## Recorte premium (rembg)\n\n- pasta: `%s`\n- recortadas: **%d**\n- puladas: %d\n" % (pasta,feitos,pulados))
+          PY
+
+      - name: Commitar
+        run: |
+          git config user.name "Recortador"
+          git config user.email "recortador@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nenhuma mudanca."
+          else
+            git commit -m "recorte premium (rembg): fundo transparente nas figuras de ${{ inputs.pasta }}"
+            for k in 1 2 3 4; do
+              git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+            done
+          fi

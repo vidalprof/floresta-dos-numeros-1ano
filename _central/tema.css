@@ -1,0 +1,53 @@
+/* ============================================================
+   TEMA — A CENTRAL DE ENTREGAS (6º ano)
+
+   Entra por ÚLTIMO no `<style>` (ver `montar.py`), então ganha do motor e das
+   peças no empate de especificidade. É a camada de IDENTIDADE.
+
+   ⚠️⚠️ POR QUE ESTE TEMA É ESCURO — e a decisão não é gosto, é medição.
+   A banca achou **57 textos com contraste abaixo do mínimo** nesta atividade,
+   e o padrão era um só: peças com texto CLARO (creme, amarelo-pálido) caindo
+   sobre o azul-céu `#bfe9ff` que o motor pinta por padrão. Razão 1,00:1 —
+   literalmente invisível.
+
+   A causa é estrutural e já está escrita no CONTRATO: a bancada roda a peça
+   sobre fundo ESCURO liso, então uma peça de texto claro passa lá e morre aqui.
+   Enquanto a bancada não testar sobre o fundo real, a atividade tem que
+   escolher um lado — e a Central escolhe o escuro, que é o lado onde as peças
+   já foram desenhadas.
+
+   ⭐ E o escuro é o que a HISTÓRIA pede: a Central trabalha à noite, a esteira
+   parou de madrugada, as lâmpadas são as únicas acesas. Fundo azul-céu numa
+   central noturna seria errado mesmo que enxergasse.
+
+   ⚠️ O que este arquivo NÃO faz: consertar a peça. Ele resolve ESTA atividade.
+   O conserto de verdade é a bancada rodar sobre o fundo real, e isso está
+   anotado como dívida.
+   ============================================================ */
+
+/* ---- a base: a noite da Central ---- */
+body{background:#1d2330}
+#bg{background:#1d2330}
+/* o céu animado do motor não faz sentido dentro de um galpão */
+#ceu{opacity:.18}
+
+/* ---- o texto da casa passa a ser claro ---- */
+:root{--texto:#f2efe6}
+
+/* ---- os cartões continuam claros, e o texto DELES continua escuro ----
+   (é o contraste que já funciona: creme com tinta escura em cima) */
+.balao{background:rgba(255,253,246,.97);color:#1b2330}
+.opt,.pc,.cam,.carta{color:#1b2330}
+
+/* ---- o que era claro-sobre-claro agora tem fundo próprio ----
+   Em vez de escurecer o texto peça por peça (o que quebraria as peças noutras
+   atividades), dou a eles a MESA escura que eles esperavam. */
+.fcab,.ftxt,.fmeta,.pergunta,.hint,.passo,.rxdica{color:#f2efe6}
+.fonte,.fcaixa,.rxbox{background:rgba(20,26,38,.92);border-radius:14px;padding:10px 12px}
+
+/* ---- o selo e a barra na cor da Central ---- */
+/* ⚠️ o laranja da Central era #c9622f e dava 4,19:1 com o texto branco — a um
+   passo dos 4,5 exigidos. Escurecido ate passar: o tom continua sendo o mesmo
+   tijolo, so que com peso suficiente para a letra branca. */
+.selo{background:#9e4419}
+.prog i{background:#7fb069}

@@ -1,0 +1,161 @@
+/* ===== O Trem do Alfabeto — tema da fase de pintar =====
+   Pedido do Marcos (ago/2026): a área de pintar é grande demais e força barra de
+   rolagem (as cores ficam cortadas embaixo). Aqui a fase fica COMPACTA e o
+   quadrado do desenho é BRANCO SÓLIDO (não transparente sobre o vagão do trem),
+   com as cores logo abaixo, sem rolar. */
+
+/* a tela nunca some (fade + reduce-motion) */
+.tela{opacity:1 !important}
+
+/* FUNDO DO TREM MAIS VISÍVEL (pedido do Marcos, ago/2026): o cenário do interior
+   do trem é lindo e ele quer vê-lo bem. Tiro o blur/escurecimento global; os
+   cartões/balão têm fundo próprio e continuam legíveis por cima. */
+#bg{-webkit-filter:none;filter:none;opacity:1}
+
+/* cartão da fase de pintar OPACO e colado no conteúdo (o quadrado branco se destaca) */
+.centro.mec-pintar-canvas, .mec-pintar-canvas .centro{
+  background:#fffdf6;padding:8px 10px 10px;max-width:520px;margin:0 auto}
+
+/* enunciado curto; a dica ("escolha uma cor...") é narrada e mora no botão Dica */
+.mec-pintar-canvas .balao{font-size:15px;padding:6px 12px;margin:0 auto 4px;max-width:380px}
+.mec-pintar-canvas .dica{display:none}
+
+/* ⭐ O QUADRADO: BRANCO SÓLIDO e limitado pela ALTURA da tela p/ não rolar */
+.mec-pintar-canvas .pintawrap{max-width:min(340px,42vh);margin:4px auto;
+  background:#fff;border-radius:14px;box-shadow:0 6px 18px rgba(30,30,60,.25)}
+.mec-pintar-canvas .pintatela{background:#fff !important}
+
+/* cores logo abaixo, generosas */
+.mec-pintar-canvas .paleta{margin:6px auto 2px;max-width:360px}
+.mec-pintar-canvas .tcor{width:42px;height:42px;margin:3px}
+.mec-pintar-canvas .pc_ferr{margin:4px 0}
+.mec-pintar-canvas .acoes{margin-top:6px}
+.mec-pintar-canvas .btn{min-height:46px;padding:10px 22px;font-size:16px}
+
+@media (max-height:620px){
+  .mec-pintar-canvas .pintawrap{max-width:min(300px,38vh)}
+  .mec-pintar-canvas .tcor{width:38px;height:38px;margin:2px}
+}
+
+/* ===== ITENS 7 + 15: "que letra" premium + opções na HORIZONTAL (1º ano) =====
+   As opções de TEXTO (letras e palavras curtas — NÃO as com figura) viram
+   PLAQUINHAS DE MADEIRA GRAVADA: compactas, em grade 2x2, letra grande. */
+.mec-escolher .opts:not(.comfigs){
+  display:-ms-grid;display:grid;
+  -ms-grid-columns:1fr 12px 1fr;grid-template-columns:1fr 1fr;
+  grid-gap:12px;gap:12px;
+  max-width:300px;margin:10px auto 0;box-sizing:border-box;
+  max-height:calc(100vh - 250px);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.mec-escolher .opts:not(.comfigs) .opt{
+  box-sizing:border-box;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -webkit-flex-direction:column;flex-direction:column;
+  width:auto;min-width:0;max-width:none;min-height:80px;
+  margin:0;padding:9px 6px;border-radius:20px;overflow:hidden;
+  font-size:30px;font-weight:800;letter-spacing:1px;line-height:1;color:#4a3a10;
+  background:#fff3d9;
+  background-image:-webkit-linear-gradient(top,#fffaf0,#ffe6bd);
+  background-image:linear-gradient(#fffaf0,#ffe6bd);
+  border:2px solid #eed9ab;border-bottom:6px solid #d7ab63;
+  -webkit-box-shadow:0 5px 12px rgba(90,60,10,.16);box-shadow:0 5px 12px rgba(90,60,10,.16)}
+.mec-escolher .opts:not(.comfigs) .opt .oplin{
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -webkit-flex-direction:column;flex-direction:column}
+.mec-escolher .opts:not(.comfigs) .opt .optxt{line-height:1}
+.mec-escolher .opts:not(.comfigs) .opt .zap{
+  margin:7px 0 0;width:30px;height:30px;min-width:30px;-webkit-flex:none;flex:none;
+  opacity:.95;background-color:#f6e0ae;
+  -webkit-background-size:18px 18px;background-size:18px 18px}
+.mec-escolher .opts:not(.comfigs) .opt.ok{
+  background-image:none;background:#ddf5c6;
+  border-color:#8fcb6a;border-bottom-color:#6da84a}
+.mec-escolher .opts:not(.comfigs) .opt.no{
+  background-image:none;background:#ffe1d9;
+  border-color:#eaa392;border-bottom-color:#c87a68}
+@media (max-width:359px){
+  .mec-escolher .opts:not(.comfigs) .opt{min-height:70px;font-size:26px}
+}
+@media (max-height:640px){
+  .mec-escolher .opts:not(.comfigs){max-height:calc(100vh - 210px);gap:8px}
+  .mec-escolher .opts:not(.comfigs) .opt{min-height:58px;font-size:24px;padding:6px}
+  .mec-escolher .opts:not(.comfigs) .opt .zap{margin-top:4px;width:26px;height:26px;min-width:26px}
+}
+@media (max-height:520px){
+  .mec-escolher .opts:not(.comfigs) .opt{min-height:48px;font-size:21px}
+  .mec-escolher .opts:not(.comfigs) .opt .zap{display:none}
+}
+
+/* ===== ITEM 3 + 19: fase "começa com" (SOIMG) — UMA moldura de vidro só =====
+   A imagem (agora transparente) flutua dentro do cartão de vidro, sem fundo e
+   sem borda interna; as 4 opções ficam numa LINHA. */
+.mec-escolher .opts.soimg{
+  -webkit-flex-wrap:nowrap;flex-wrap:nowrap;
+  width:100%;max-width:404px;margin:10px auto 0;padding:0 4px;box-sizing:border-box}
+.mec-escolher .opts.soimg .opt{
+  box-sizing:border-box;
+  width:auto;min-width:0;max-width:none;
+  -webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;
+  margin:3px;min-height:0;padding:6px 4px}
+.mec-escolher .opts.soimg .opfig{
+  width:auto;height:auto;min-height:64px;padding:0;margin:0 auto;
+  background:none !important;border:none !important;box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;backdrop-filter:none !important;
+  border-radius:0;overflow:visible}
+.mec-escolher .opts.soimg .opfig:before{display:none !important}
+.mec-escolher .opts.soimg .opfig img{
+  max-width:100%;max-height:78px;
+  -webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.28));filter:drop-shadow(0 3px 5px rgba(0,0,0,.28))}
+@media (max-height:560px){
+  .mec-escolher .opts.soimg .opfig img{max-height:60px}
+}
+
+/* ===== "QUEM SOU EU" — opções na HORIZONTAL (pedido do Marcos, ago/2026) =====
+   Eram cartões a 47% que empilhavam altos. Viram PLAQUINHAS compactas lado a
+   lado (2x2 baixinho), no mesmo estilo premium do "que letra". */
+.mec-quem-sou-eu .opts{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center;
+  max-width:420px;margin:10px auto 0}
+.mec-quem-sou-eu .opt{
+  box-sizing:border-box;width:46%;max-width:190px;min-height:52px;margin:5px 2%;
+  padding:10px 8px;border-radius:16px;font-size:16px;font-weight:800;color:#4a3a10;
+  background:#fff3d9;background-image:-webkit-linear-gradient(top,#fffaf0,#ffe6bd);
+  background-image:linear-gradient(#fffaf0,#ffe6bd);
+  border:2px solid #eed9ab;border-bottom:5px solid #d7ab63;
+  -webkit-box-shadow:0 4px 10px rgba(90,60,10,.16);box-shadow:0 4px 10px rgba(90,60,10,.16)}
+.mec-quem-sou-eu .opt.ok{background-image:none;background:#ddf5c6;border-color:#8fcb6a;border-bottom-color:#6da84a}
+.mec-quem-sou-eu .opt.fora{background:#e6e0d4;color:#5d5548;box-shadow:none;opacity:.7}
+@media (max-width:359px){.mec-quem-sou-eu .opt{font-size:14px;min-height:46px}}
+
+/* ===== MOLDURA DE VIDRO NAS FIGURAS — "em todas as telas" (Marcos, ago/2026) =====
+   As figuras agora são transparentes (sem fundo). Aqui elas ganham a MESMA
+   moldura de vidro fosco com brilho deslizante da fase "começa com", nas demais
+   telas com figura: escrever, letra que falta, montar sílaba, bater sílaba.
+   Leve, com fallback (fundo antes do blur) para PCs antigos. */
+.mec-digitar .dgfig, .mec-letras-escondidas .leFig,
+.mec-juntar-silabas .js_jsFig, .mec-bater-silabas .bs_bsFig{
+  position:relative;overflow:hidden;padding:8px;margin-left:auto;margin-right:auto;
+  border-radius:16px;background:rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);
+  border:1px solid rgba(255,255,255,.55);
+  -webkit-box-shadow:0 10px 26px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);
+  box-shadow:0 10px 26px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5)}
+/* brilho que passa (usa ::after pra não pisar em ::before já existente) */
+.mec-digitar .dgfig:after, .mec-letras-escondidas .leFig:after,
+.mec-juntar-silabas .js_jsFig:after, .mec-bater-silabas .bs_bsFig:after{
+  content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;z-index:2;pointer-events:none;
+  background:-webkit-linear-gradient(285deg,transparent,rgba(255,255,255,.5),transparent);
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+  -webkit-transform:rotate(8deg);transform:rotate(8deg);
+  -webkit-animation:kf-vidro-trem 3.8s ease-in-out infinite;animation:kf-vidro-trem 3.8s ease-in-out infinite}
+@-webkit-keyframes kf-vidro-trem{0%,62%{left:-45%}100%{left:120%}}
+@keyframes kf-vidro-trem{0%,62%{left:-45%}100%{left:120%}}
+@media (prefers-reduced-motion:reduce){
+  .mec-digitar .dgfig:after,.mec-letras-escondidas .leFig:after,
+  .mec-juntar-silabas .js_jsFig:after,.mec-bater-silabas .bs_bsFig:after{-webkit-animation:none;animation:none;display:none}
+}
+/* a figura transparente ganha profundidade (sombra) e fica acima do brilho */
+.mec-digitar .dgfig img, .mec-letras-escondidas .leFig img,
+.mec-juntar-silabas .js_jsFig img, .mec-bater-silabas .bs_bsFig img,
+.mec-escolher .qfig img, .mec-vitrine .qfig img, .mec-memoria .mfig img{
+  position:relative;z-index:1;
+  -webkit-filter:drop-shadow(0 4px 6px rgba(0,0,0,.30));filter:drop-shadow(0 4px 6px rgba(0,0,0,.30))}

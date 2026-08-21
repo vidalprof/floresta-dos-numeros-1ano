@@ -1,0 +1,64 @@
+name: Republicar limpo (reseta historico)
+
+# Republica um repositorio de destino com UM UNICO commit (historico novo),
+# jogando fora todo o peso acumulado em versoes antigas do .git. Util quando o
+# build do Pages comeca a falhar ("Page build failed") por historico inchado.
+# Usa o PAGES_TOKEN (precisa de Contents: write e Pages: write).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio de destino (ex: mundo-das-atividades)"
+        required: true
+        type: string
+      source_dir:
+        description: "Pasta deste repo com o conteudo a publicar"
+        required: false
+        default: "_site"
+        type: string
+
+jobs:
+  republicar:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout deste repositorio
+        uses: actions/checkout@v4
+
+      - name: Force-push de historico novo (1 commit) para o destino
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+          SRC: ${{ inputs.source_dir }}
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SRC/index.html" ]; then
+            echo "::error::Nao encontrei $SRC/index.html neste repositorio."
+            exit 1
+          fi
+          work="$(mktemp -d)"
+          cp -r "$SRC/." "$work/"
+          : > "$work/.nojekyll"
+          cd "$work"
+          git init -q
+          git checkout -q -b main
+          git config user.name "Republicador"
+          git config user.email "republicador@users.noreply.github.com"
+          git add -A
+          git commit -qm "Republica site (historico limpo)"
+          echo "Force-push (historico novo) para $OWNER/$DEST ..."
+          git push -q --force \
+            "https://x-access-token:${GH_TOKEN}@github.com/$OWNER/$DEST.git" main
+
+          echo "Garantindo Pages a partir da main e forcando build ..."
+          gh api -X PUT "repos/$OWNER/$DEST/pages" \
+            -f "build_type=legacy" -f "source[branch]=main" -f "source[path]=/" 2>&1 | head -c 200 || true
+          echo ""
+          gh api -X POST "repos/$OWNER/$DEST/pages/builds" \
+            --jq '"build disparado: status=" + (.status // "?")' 2>&1 | head -3 || true
+          {
+            echo "## Republicado com historico limpo"
+            echo ""
+            echo "Destino: **$OWNER/$DEST** — link: https://$OWNER.github.io/$DEST/"
+          } >> "$GITHUB_STEP_SUMMARY"

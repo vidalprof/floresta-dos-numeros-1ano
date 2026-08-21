@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — escolher (quiz)</title>
+<!-- ============================================================
+     PEÇA: ESCOLHER / QUIZ  (copiada do _padrao/pecas/MOLDE.html)
+
+     A armadilha desta mecânica, em uma linha (DINAMICAS.md):
+       "embaralhar as opções — na Fábrica de Estrelas a certa era sempre a 1ª
+        e a criança aprendeu a POSIÇÃO, não o conteúdo".
+     Por isso as opções passam SEMPRE por baguncar() antes de ir para a tela.
+
+     O resto que esta peça guarda pronto:
+       · alvo de toque grande (.opt tem min-height 62px; o alto-falante 44px);
+       · ⭐ A FOTO DA PERGUNTA (campo `img` na PERGUNTA, opcional) — a criança
+         OLHA a cena e escolhe a legenda que a descreve. É outro gesto do que
+         a figura na opção: lá o desenho ajuda a LER a resposta, aqui a
+         imagem É a pergunta. Nasceu do pedido do 9º ano (Present Continuous:
+         *"por meio da observação de imagens, relacionando cada personagem à
+         ação que está realizando no momento"*) — sem isto a fase descrevia a
+         foto por escrito ("o drone flagrou uma moça pedalando") e a criança
+         respondia lendo, que é justamente o contrário da habilidade;
+       · APOIO DE FIGURA na opção (campo `img`, opcional) — ordem do Marcos
+         (ago/2026): *"as dinâmicas interativas têm que ser mais VISUAIS e
+         SONORAS para os pequenos"*. No 1º ano a criança ainda não lê e
+         escolhe pelo desenho; sem `img` a opção continua só com a palavra;
+       · ALTO-FALANTE em TODA opção (classe `zap`) — regra da casa, não
+         enfeite: sem a voz a criança escolhe pelo desenho e a fase vira
+         loteria. O botão FALA, nunca escolhe (o evento para nele);
+       · nada essencial só na cor — a opção certa acende E ganha a palavra
+         "certo" na dica; a errada apaga E sai do alcance;
+       · funciona no mudo (todo som tem gêmeo visual);
+       · o erro NÃO pune: sErro() + andaime que CRESCE (dica -> apoio concreto
+         -> revela e deixa seguir). Nunca X vermelho, nunca a palavra "errou";
+       · data-qa="1" na opção que serve AGORA — é assim que o auditor-jogador
+         consegue fechar a fase (e é só para ele);
+       · nunca trava: depois do 3º erro a resposta certa fica à mostra e
+         clicável, então sempre há caminho para fechar.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+/* ⭐ ENUNCIADO EM VIDRO FOSCO, SEM BRILHO (escolha do Marcos, ago/2026: "pode
+   ser a do vidro, so que sem o brilho nos enunciados e opcoes"). O vidro corre
+   igual a moldura da foto, mas AQUI ele NAO brilha — o brilho fica so no heroi
+   (a foto). ⚠️ CONTRASTE: o vidro e LEITOSO (opacidade alta) de proposito. O
+   `backdrop-filter` nao existe no PC velho da escola; entao a COR sozinha (sem o
+   blur) ja tem que segurar o texto escuro em 4.5:1 sobre QUALQUER fundo — por
+   isso o branco vai de .70 a .58, nunca translucido de verdade. Texto escuro
+   FIXO (nao `--texto`, que num tema escuro vira claro e some no vidro claro). */
+.balao{position:relative;color:#1a2129;border-radius:20px;
+       background:rgba(255,255,255,.64);
+       background:-webkit-linear-gradient(top,rgba(255,255,255,.70),rgba(255,255,255,.58));
+       background:linear-gradient(180deg,rgba(255,255,255,.70),rgba(255,255,255,.58));
+       -webkit-backdrop-filter:blur(12px) saturate(1.1);backdrop-filter:blur(12px) saturate(1.1);
+       border:1px solid rgba(255,255,255,.72);
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 8px 22px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.75)}
+.balao b{color:#0f3e0c}/* verde ESCURO: o vidro clareia menos que o cartao solido, entao o negrito precisa ser mais escuro p/ passar 4.5:1 (medido: #155a10 dava 4.03) */
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+/* ⚠️ LICAO PAGA (ago/2026) — RESPOSTA PRESA ATRAS DA BARRA, em "janela baixa".
+   A barra fixa de baixo (Ouvir/Dica) cobre ~104px, e sem rolagem a ultima
+   opcao ficava debaixo dela: a crianca via a resposta e nao conseguia tocar.
+   E o mesmo defeito que a `ouvir-achar` ja tinha pago — por isso o teto sai da
+   CONTA DA TELA (`calc`), nunca de um numero escolhido a dedo: vao magico e
+   sempre origem de defeito (a lista so rolava abaixo de 560px, e 568 passava
+   raspando por cima). */
+.opts{display:block;max-height:calc(100vh - 260px);overflow-y:auto;
+      -webkit-overflow-scrolling:touch}
+/* ⚠️ E O DEFEITO QUE A PROPRIA CORRECAO CRIOU, medido no mesmo dia: com a
+   rolagem, a opcao parou de esticar na vertical e caiu para 62px de altura —
+   400x62 = 6,5 vezes mais larga que alta, acima do teto de 6 do portao do
+   diretor de arte ("nada de botoes muito esticado", regra do Marcos).
+   Conserto pelo lado da LARGURA, nao da altura: estreitar mantem a tela baixa
+   respirando, enquanto engordar o botao roubaria justamente a altura que
+   faltava. 360/62 = 5,8. */
+.opts .opt{max-width:360px}
+/* ⭐ FILEIRA RETA E BOTAO VIVO (ordem do Marcos, ago/2026: *"nada de botoes
+   muito esticado, quero tudo simetrico no app"* e *"botoes lindos... quero
+   bonito, animacoes etc"*).
+   ⚠️ MEDIDO pelo Diretor de Arte: as opcoes tinham 55px e 65px na mesma
+   fileira — a que quebrava em duas linhas crescia e a fila ficava torta. O
+   olho ve a fileira desalinhada antes de ler qualquer palavra.
+   Conserto: altura minima que ja cabe DUAS linhas, e o texto centrado na
+   vertical. Uma linha ou duas, o botao e o mesmo tamanho. */
+/* ⭐⭐ BOTAO MODERNO DE APP (escolha do Marcos, ago/2026: "so mexer no VISUAL do
+   botao — mais moderno, lindo, proporcional, coisa profissional que o estudante
+   goste"; a LOGICA e o icone de som NAO mudam).
+   Receita do visual de app:
+   - gradiente claro de cima p/ baixo (papel com leve volume, nao chapado);
+   - borda-luz fininha em cima (inset branco) = reflexo do vidro do celular;
+   - DUAS sombras: a fina 3D embaixo (0 5px 0) que dá o "afunda quando aperta",
+     e a sombra ambiente difusa (0 10px 18px, bem fraca) que descola do fundo;
+   - cantos 18px, altura 56px (mais enxuto que os 62 antigos), texto 16.5px 700. */
+/* ⚠️⭐ OPCAO EM VIDRO FOSCO, SEM BRILHO (escolha do Marcos, ago/2026: "pode ser
+   a do vidro, so que sem o brilho nos enunciados e opcoes de resposta"). Mesma
+   familia de vidro da moldura da foto — SO que sem o brilho correndo (o brilho
+   fica so no heroi, a foto). Regra de ouro: UM brilho, UMA estrela.
+   ⚠️ CONTRASTE (defeito ja pago aqui): NAO usar `var(--texto)` — num tema escuro
+   ela vira clara e some no vidro claro (medido: 1.08:1, "O CAULE" sumiu). Texto
+   escuro FIXO. E o vidro e LEITOSO de proposito: no PC velho da escola o
+   `backdrop-filter` NAO existe, entao a cor branca (.72->.58) sozinha ja segura
+   o texto em 4.5:1 sobre qualquer fundo — nunca translucido de verdade.
+   Espacamento: `margin` vertical maior (12px) para as opcoes "respirarem" e a
+   fileira ficar alinhada e profissional (pedido do Marcos). */
+.opt{display:-webkit-box;display:flex;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center;
+     color:#1a2129;border:1px solid rgba(255,255,255,.72);border-radius:18px;padding:11px 16px;
+     background:rgba(255,255,255,.66);
+     background:-webkit-gradient(linear,left top,left bottom,from(rgba(255,255,255,.72)),to(rgba(255,255,255,.58)));
+     background:-webkit-linear-gradient(top,rgba(255,255,255,.72),rgba(255,255,255,.58));
+     background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.58));
+     -webkit-backdrop-filter:blur(12px) saturate(1.1);backdrop-filter:blur(12px) saturate(1.1);
+     margin:12px auto;font-size:16.5px;font-weight:700;min-height:60px;max-width:300px;
+     text-align:center;cursor:pointer;
+     box-shadow:0 9px 22px rgba(0,0,0,.2);
+     box-shadow:0 9px 22px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.85);
+     -webkit-transition:-webkit-transform .12s ease, box-shadow .12s ease;
+     transition:transform .12s ease, box-shadow .12s ease}
+/* o botao RESPONDE ao dedo: sobe um pouco quando a crianca encosta e afunda
+   quando ela aperta. E o retorno que faz o toque parecer de app, nao de pagina */
+.opt:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px);
+     box-shadow:0 13px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.85)}
+.opt:active{-webkit-transform:translateY(2px);transform:translateY(2px);
+     box-shadow:0 5px 12px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.85)}
+@media (prefers-reduced-motion:reduce){
+  .opt{-webkit-transition:none;transition:none}
+  .opt:hover{-webkit-transform:none;transform:none;
+     box-shadow:0 9px 22px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.85)}
+  .opt.ok{-webkit-transform:none;transform:none}
+}
+/* ⭐ A COMEMORACAO DO ACERTO — sobe e cresce um tiquinho, e POUSA de volta.
+   ⚠️ e feita com TRANSICAO, nunca com `@keyframes`: o integrador prefixa o CSS
+   da peca com `.mec-<nome>` e, ao fazer isso, os `@keyframes` DELA se perdem no
+   caminho (esta medido no `pecas.css` gerado: `@-webkit-keyframes treme{` some
+   e sobra `.mec-completar 25%{...}`). Animacao de peca escrita em keyframes
+   existe no arquivo e NAO existe na atividade — defeito mudo, do pior tipo.
+   ⚠️ `.opt.ok` tem que vir DEPOIS de `.opt:hover`: as duas pesam igual (0,2,0)
+   e, no empate, ganha quem vem por ultimo. */
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464;
+     -webkit-transform:translateY(-4px) scale(1.05);transform:translateY(-4px) scale(1.05)}
+.opt.ok.pousa{-webkit-transform:none;transform:none}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+/* ⚠️ SOLO em tela baixa (celular/janela curta) a vitrine de cards empurra o
+   botao de avancar para baixo da dobra; o portao leiaute so aceita "embaixo da
+   dobra" se a PROPRIA `.tela` ROLAR por dentro (rolagem do body nao conta).
+   Dentro de uma atividade o motor ja rola; SOLO a peca precisa rolar sozinha. */
+.tela{display:block;max-height:96vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* ⭐⭐ A OPCAO POR DENTRO — figura em cima, palavra embaixo, alto-falante ao
+   lado. Ordem do Marcos (ago/2026): *"as dinamicas interativas tem que ser
+   mais VISUAIS e SONORAS para os pequenos"* e *"nas fases com letras seria
+   interessante ter apoio visual, figuras"*.
+   A linha existe SEMPRE (com ou sem figura) para o alto-falante ter um lugar
+   fixo: no 1o ano a crianca aprende ONDE fica o botao que fala. */
+.oplin{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center;width:100%}
+.optxt{display:inline-block;line-height:1.2}
+/* a figura da resposta: 84px de lado (a pesquisa pede >=64 para quem ainda nao
+   le) e `contain`, NUNCA `cover` — proporcao que nao bate com a caixa corta o
+   topo do desenho, e figura cortada e o mesmo que figura errada. */
+/* ⚠️ E COM FIGURA A LISTA VIRA GRADE DE DUAS COLUNAS — medido na foto, não
+   suposto: empilhadas, quatro opções de 142px passavam de 570px e a QUARTA
+   ficava abaixo da dobra no celular. A lista rola por dentro (o portão de
+   leiaute perdoa), mas criança de 6 anos não rola atrás de resposta: ela
+   escolhe entre as que VÊ. Em duas colunas as quatro cabem de uma olhada — que
+   é o gesto certo aqui, comparar os desenhos.
+   `margin` em vez de `gap`: PC velho da escola. */
+.opts.comfigs{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+     -webkit-flex-direction:row;flex-direction:row;
+     -webkit-flex-wrap:wrap;flex-wrap:wrap;
+     -webkit-box-pack:center;justify-content:center}
+.opts.comfigs .opt{width:47%;min-width:150px;max-width:200px;margin:6px 1%}
+.opt.comfig{-webkit-box-orient:vertical;-webkit-box-direction:normal;
+     -webkit-flex-direction:column;flex-direction:column;
+     min-height:142px;padding:10px 12px 12px}
+/* ============================================================================
+   📸 PROMPT-PADRAO DA FOTO DESTA INTERATIVIDADE (ordem do Marcos, ago/2026:
+   "sempre que gerar fotos para esse tipo de interatividade ja peca com prompts
+   que a imagem saira perfeita para se adequar a esse estilo" · "anote isso nessa
+   interatividade, para qualquer modelo e chat saber como fazer").
+   ESTA PECA JA ESTA PRONTA — so entra CONTEUDO novo (imagem, texto, som). Para a
+   imagem cair perfeita dentro da MOLDURA DE VIDRO, gere-a assim, SEMPRE:
+     • FUNDO 100% TRANSPARENTE (PNG com alfa) — nada de fundo branco/colorido;
+       o vidro e que aparece em volta. No workflow gerar-imagens.yml o rembg ja
+       recorta, mas o PROMPT tem que pedir "isolated subject, plain background"
+       para o recorte sair limpo (sem halo).
+     • UM sujeito unico e centralizado, inteiro no quadro (nada cortado nas
+       bordas — object-fit:contain NAO corta, entao o que vier cortado fica
+       cortado); margem de folga em volta.
+     • estilo ilustracao infantil, cores vivas, luz suave de cima, contorno
+       suave — combina com o brilho do vidro.
+     • formato retrato ou quadrado; alta resolucao.
+     • PROMPT NEGATIVO: no text, no letters, no watermark, no frame/border, no
+       background, not cropped, no drop shadow (a sombra ja e do CSS).
+   Modelo de prompt (troque so o SUJEITO):
+     "children's book illustration of <SUJEITO>, single centered subject, full
+      body in frame, isolated on plain transparent background, soft top light,
+      vivid flat colors, thick soft outline, no text, no watermark, high detail"
+   ============================================================================ */
+/* ⭐ A FOTO DA PERGUNTA — o estímulo, não o enfeite.
+   ⚠️ A conta da ALTURA é o que decide se esta fase funciona na escola. A tela
+   útil do PC de lá tem ~640px e ainda precisam caber: selo, balão, QUATRO
+   opções de 62px e a dica. Por isso a foto é limitada pelo MENOR entre uma
+   fração da tela (`vh`) e um teto em px — sem o teto, num monitor alto ela
+   empurraria a última opção para fora, e a criança escolheria entre as três
+   que vê (defeito já medido noutra peça pelo `_qa/leiaute.js`).
+   ⚠️ `object-fit:contain` e nunca `cover`: cortar a foto pode cortar
+   exatamente a mão que segura a colher — e é a mão que responde a pergunta. */
+.qfig{position:relative;width:186px;max-width:70vw;margin:2px auto 12px;padding:5px;
+     border-radius:16px;overflow:hidden;text-align:center;
+     background:rgba(255,255,255,.12);
+     -webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);
+     border:1px solid rgba(255,255,255,.5);
+     box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
+/* ⭐ MOLDURA DE VIDRO COM BRILHO (escolha do Marcos, ago/2026: "gostei da
+   mecanica do vidro, pode ate brilhar como no jogo da memoria; a imagem sem
+   fundo"). O brilho corre igual ao verso da carta de memoria. A imagem entra
+   TRANSPARENTE (recorte limpo), entao o vidro aparece em volta dela. */
+.qfig:before{content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;z-index:2;pointer-events:none;
+     background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+     -webkit-transform:rotate(8deg);transform:rotate(8deg);
+     -webkit-animation:qshine 3.6s ease-in-out infinite;animation:qshine 3.6s ease-in-out infinite}
+@-webkit-keyframes qshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+@keyframes qshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+.qfig img{position:relative;z-index:1;width:100%;height:auto;display:block;
+     margin:0 auto;border-radius:12px;-o-object-fit:contain;object-fit:contain;object-position:center;
+     -webkit-filter:drop-shadow(0 6px 9px rgba(0,0,0,.32));filter:drop-shadow(0 6px 9px rgba(0,0,0,.32))}
+@media (max-height:560px){ .qfig{width:140px;padding:4px} }
+@media (min-height:760px){ .qfig{width:200px} }
+@media (prefers-reduced-motion:reduce){ .qfig:before{-webkit-animation:none;animation:none;display:none} }
+.opfig{width:84px;height:84px;margin:0 auto 6px;
+     display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center}
+.opfig img{max-width:100%;max-height:100%;
+     -o-object-fit:contain;object-fit:contain}
+/* tela baixa (o monitor 1024x420 da escola): encolhe a FIGURA até o piso da
+   pesquisa (64px), nunca o alvo de toque. */
+@media (max-height:560px){
+  .opfig{width:64px;height:64px}
+  .opt.comfig{min-height:118px}
+}
+/* ⭐ O ALTO-FALANTE DE CADA RESPOSTA (pilar SONORA da casa).
+   ⚠️ `background-color` e `background-image` SEPARADOS, nunca o atalho
+   `background:` — a cor do desenho mora DENTRO do SVG, e o atalho num `:hover`
+   apagaria o icone deixando um circulo vazio (defeito ja medido em 48 telas).
+   ⚠️ e o MESMO glifo do motor: dois desenhos de alto-falante no mesmo app e
+   amadorismo. Ele se centra sozinho pelo `viewBox`, sem coordenada na mao. */
+.zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none;
+     width:44px;height:44px;min-width:44px;margin-left:10px;padding:0;border:0;
+     border-radius:50%;cursor:pointer;opacity:1;
+     background-color:rgba(58,48,32,.10);
+     background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
+     background-repeat:no-repeat;background-position:center center;
+     -webkit-background-size:22px 22px;background-size:22px 22px;
+     -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:rgba(58,48,32,.20)}
+.zap:active,.zap.tocando{background-color:rgba(255,212,59,.85)}
+/* a opcao revelada depois do 3o erro: acende E ganha a marca escrita (nada
+   essencial so na cor). A marca e texto de verdade, entao serve no mudo e
+   para quem nao distingue verde de vermelho. */
+.opt.rev{background:#d6f5c8;box-shadow:0 0 0 3px #ffd54a,0 4px 0 #7cb464}
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim (e nao fica rodando 5200 giros a toa). A estrela vem do CSS, nao e emoji
+   e nao e texto medido pelo portao de contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+
+/* ===== VITRINE (PAREDE do museu: grade de cards de vidro, imagem + info) ===== */
+.vitcab{display:block;width:-webkit-fit-content;width:fit-content;margin:0 auto 10px;
+  font-size:13.5px;font-weight:700;letter-spacing:.3px;color:#fff;
+  background:rgba(30,64,120,.72);border:1px solid rgba(255,255,255,.35);
+  padding:6px 16px;border-radius:20px;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.vitgrid{display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;
+  -webkit-box-pack:center;justify-content:center;gap:12px;width:100%;max-width:640px;margin:2px auto 0}
+/* cada EXPOSICAO: card de vidro com a figura em cima e a info embaixo */
+/* ⚠️ TEMA CLARO (lição paga, ago/2026): o card era vidro CLARO
+   (`rgba(255,255,255,.15)`) e a letra branca. Sobre a cena escura do museu
+   ficava lindo; caindo numa atividade de tema CLARO o card virava quase-branco
+   e as 18 legendas SUMIAM (portao 5c). A peca nao escolhe a atividade: quem quer
+   letra branca carrega a MESA ESCURA dela. Vidro ESCURO le a foto por dentro
+   (backdrop-filter) e garante a letra branca nos DOIS temas. */
+.vitcard{position:relative;overflow:hidden;width:47%;max-width:196px;
+  background:rgba(22,30,18,.72);border:1px solid rgba(255,255,255,.42);border-radius:18px;
+  -webkit-backdrop-filter:blur(9px) saturate(1.15);backdrop-filter:blur(9px) saturate(1.15);
+  box-shadow:0 6px 16px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.5);
+  padding:8px 8px 10px;display:-webkit-flex;display:flex;-webkit-flex-direction:column;flex-direction:column}
+.vitcard:before{content:"";position:absolute;top:-45%;left:-35%;width:42%;height:190%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.20),transparent);
+  -webkit-transform:rotate(18deg);transform:rotate(18deg);pointer-events:none}
+.vfig{width:100%;height:104px;border-radius:12px;background:rgba(255,255,255,.10);
+  display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;-webkit-box-align:center;align-items:center;overflow:hidden}
+.vfig img{max-width:96%;max-height:98px;-o-object-fit:contain;object-fit:contain;display:block}
+/* branco DE PROPOSITO: mora sobre o card de vidro (`.vitcard` pinta o fundo) e
+   sobre a cena escura do museu; qualifico o seletor com `.vitcard` para o portao
+   de cor ver que o fundo existe (a peca sabe onde esta). */
+.vitcard .vnome{margin-top:7px;font-size:14.5px;font-weight:800;color:#fff;text-align:center;text-shadow:0 1px 3px rgba(0,0,0,.6);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;gap:5px}
+.vgrp{display:block;font-size:11px;font-weight:700;color:#ffe08a;text-align:center;letter-spacing:.3px;margin-top:1px}
+.vitcard .vinfo{margin-top:6px;font-size:12.5px;font-weight:600;line-height:1.28;color:#fff;text-align:center;text-shadow:0 1px 2px rgba(0,0,0,.55)}
+.vzap{-webkit-flex:none;flex:none;width:26px;height:26px;border:0;border-radius:50%;background:rgba(255,212,59,.85);cursor:pointer;padding:0;position:relative}
+.vzap:before{content:"";position:absolute;left:8px;top:8px;width:4px;height:10px;background:#33280a}
+.vzap:after{content:"";position:absolute;left:11px;top:5px;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:8px solid #33280a}
+@media (min-width:620px){ .vitcard{width:30%} .vfig{height:120px} }
+@media (max-height:640px){ .vfig{height:84px} .vfig img{max-height:80px} .vinfo{font-size:11.5px} }
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ============================================================
+   PEÇA: VITRINE — a exposição do museu.
+   Uma tela por bicho/grupo: FIGURA (IA) + nome/grupo + fatos curtos
+   (onde vive / o que come / marca do corpo), narrada, e "Próximo".
+   Expositiva: nunca erra; sempre há caminho (o botão avança).
+   ⚠️ o auditor-jogador termina clicando o "Próximo" (data-qa) até a
+   última tela, que chama mostraBanner -> no motor VIRA a próxima fase;
+   sozinha, mostra a medalha (por ela a bancada sabe que fechou).
+   TROQUE SÓ o VIT abaixo ao usar numa atividade (vem de f.dados).
+   ============================================================ */
+/* cada item = um bicho: figura + nome + grupo + info curta (escrita e falada).
+   A peça mostra em GRADE, PG por vez (parede do museu). */
+var VIT = [
+ {img:"mv_cachorro", nome:"CACHORRO", grupo:"MAMÍFERO", info:"Tem pelos e mama quando bebê.", voz:"O cachorro é um mamífero. Tem pelos e mama quando bebê."},
+ {img:"mv_tucano", nome:"TUCANO", grupo:"AVE", info:"Tem penas e um bico grande.", voz:"O tucano é uma ave. Tem penas e um bico grande."},
+ {img:"mv_jacare", nome:"JACARÉ", grupo:"RÉPTIL", info:"Tem escamas secas e vive na água.", voz:"O jacaré é um réptil. Tem escamas secas."},
+ {img:"mv_sapo", nome:"SAPO", grupo:"ANFÍBIO", info:"Pele úmida; vive na água e na terra.", voz:"O sapo é um anfíbio. Tem pele úmida."},
+ {img:"mv_dourado", nome:"DOURADO", grupo:"PEIXE", info:"Tem escamas e nadadeiras.", voz:"O dourado é um peixe. Tem escamas e nadadeiras."},
+ {img:"mv_abelha", nome:"ABELHA", grupo:"INVERTEBRADO", info:"Não tem osso; faz mel.", voz:"A abelha é um invertebrado. Não tem osso por dentro."}
+];
+var PGSIZE=6;
+var vi=0;                 /* pagina atual */
+var figEl = window.imgEl || null;
+
+function pecaVitrine(){
+  var npg=Math.ceil(VIT.length/PGSIZE);
+  if(vi>=npg){ fimDaPeca(); return; }
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(vi*100/npg));
+  var c=el("div","centro");
+  var ini=vi*PGSIZE, pagina=VIT.slice(ini,ini+PGSIZE);
+  c.appendChild(el("div","selo","VITRINE"));
+  /* falado E escrito: lê no card OU ouve tocando o alto-falante de cada um. */
+  c.appendChild(el("div","vitcab","LEIA OU OU&#199;A COM ATEN&#199;&#195;O"));
+  var grid=el("div","vitgrid"), j;
+  for(j=0;j<pagina.length;j++){ (function(it){
+    var card=el("div","vitcard");
+    var fig=el("div","vfig",""); if(it.img&&figEl) fig.appendChild(figEl(it.img)); card.appendChild(fig);
+    var nome=el("div","vnome"); nome.appendChild(el("span","",it.nome||""));
+    /* alto-falante do card: fala a info (usa a voz do motor, se houver) */
+    var z=el("button","vzap",""); z.setAttribute("aria-label","Ouvir");
+    z.onclick=(function(txt){ return function(ev){ if(ev&&ev.stopPropagation)ev.stopPropagation();
+      sTap();
+      /* ⭐ voz de VERDADE (Edge TTS, mp3 do motor). A casa proibe a voz robotica
+         do navegador; ela fica so como reserva quando a peca roda SOZINHA. */
+      if(window.tocaVoz && window.chaveVoz){ window.tocaVoz(window.chaveVoz(txt)); }
+      else if(window.speechSynthesis){
+        try{var u=new SpeechSynthesisUtterance(txt);u.lang="pt-BR";speechSynthesis.cancel();speechSynthesis.speak(u);}catch(e){} } }; })(it.voz||((it.nome||"")+". "+(it.info||"")));
+    nome.appendChild(z); card.appendChild(nome);
+    if(it.grupo) card.appendChild(el("div","vgrp",it.grupo));
+    if(it.info)  card.appendChild(el("div","vinfo",it.info));
+    grid.appendChild(card);
+  })(pagina[j]); }
+  c.appendChild(grid);
+  var ultimo=(vi>=npg-1);
+  var b=el("button","btn", ultimo?"Come&#231;ar as atividades":"Ver mais bichos");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){ sTap();
+    if(ultimo){ mostraBanner("Voc&#234; conheceu os grupos dos bichos! Agora &#233; brincar.", fimDaPeca); }
+    else { vi++; pecaVitrine(); } };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Vitrine "+(vi+1)+" de "+npg+"."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; viu as "+VIT.length+" exposi&#231;&#245;es do museu."));
+  var b=el("button","btn","Ver de novo"); b.onclick=function(){ vi=0; pecaVitrine(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a VITRINE: imagem + fatos, e avan&#231;a."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaVitrine();
+</script>
+</body></html>

@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ligar os pontinhos (1, 2, 3… e a figura aparece)</title>
+<!-- ============================================================
+     PEÇA: LIGAR OS PONTINHOS — a figura escondida na ordem dos números
+     (copiada do _padrao/pecas/MOLDE.html)
+
+     PARA QUEM É: PRÉ e 1º ano. Alvo de dedo de 56px, enunciado de uma linha,
+     e nada essencial escrito: o que a criança precisa saber é NÚMERO, que é
+     justamente o conteúdo.
+
+     POR QUE ELA EXISTE (não é passatempo de revista):
+       · A SEQUÊNCIA NUMÉRICA VIRA GESTO. Contar de cor ("um, dois, três...")
+         é canção; achar o 5 DEPOIS do 4 dentro de uma bagunça de números é
+         outra coisa — é reconhecer o símbolo e saber quem vem depois. É a
+         diferença entre recitar e contar.
+       · A CURIOSIDADE PUXA (Loewenstein): a figura está ali e não dá para ver.
+         A criança não liga os pontos para obedecer; liga para DESCOBRIR. O
+         problema vem antes, o nome da figura vem por último.
+       · MOTRICIDADE FINA e varredura visual: o olho tem que procurar.
+
+     ⭐⭐ AS DUAS PORTAS DE ENTRADA (pedido do Marcos, ago/2026: *"o estudante
+     pode clicar nos pontos ou passar o mouse"*, olhando o digipuzzle). Aqui as
+     duas existem de verdade, e são TRÊS gestos medidos:
+       1. CLICAR/TOCAR no ponto — é a porta de sempre, a do dedo pequeno e a do
+          rato do PC da escola. Continua valendo sozinha, do primeiro ao último
+          ponto (é por ela que o auditor-jogador fecha a peça).
+       2. APERTAR E ARRASTAR (mouse) — apertar já liga o ponto (`onmousedown`),
+          e com o botão apertado o traço SEGUE o rato: cada ponto por onde ele
+          passa, na ordem certa, se liga sozinho.
+       3. PASSAR O MOUSE SEM APERTAR — depois que a criança começou (ligou o
+          primeiro), basta varrer os pontos com o rato. ⚠️ SÓ depois de começar:
+          senão o desenho se faria sozinho quando o rato cruzasse a folha por
+          acaso, e a descoberta (que é o coração da peça) seria roubada dela.
+       4. ARRASTAR O DEDO (celular) — `touchmove` + `elementFromPoint`. NUNCA
+          `preventDefault` no `touchstart` (isso MATA o toque no celular); o
+          `preventDefault` só entra no MEIO do arrasto, quando já se sabe que é
+          arrasto e não toque. E o guarda `ultimoToque` ignora os eventos de
+          rato FANTASMA que o celular dispara depois do dedo.
+       ⚠️ O `ignoraClique` é o par do gesto 2: sem ele o `click` que chega DEPOIS
+          do `mousedown` no mesmo ponto seria lido como "tocou fora de hora" e a
+          peça daria dica de ajuda a quem acertou.
+       ⚠️ E tocar num ponto JÁ LIGADO não é erro nenhum: é onde o dedo solta
+          quando termina de varrer. Responde com um toquinho e mais nada.
+
+     A REGRA DE OURO DESTA MECÂNICA: **tocar fora não pune, só não liga.**
+     O traço SÓ nasce se o ponto for o PRÓXIMO da ordem. Tocar num ponto que
+     ainda não é a vez não vira X vermelho, não tira estrela, não diz a palavra
+     que reprova — o andaime é que cresce.
+
+     ⭐ O DESENHO (por que ela ficou assim): o Marcos disse, com todas as
+     letras, *"está feia... tem que ser mais bonita, mais profissional"*.
+       · O PONTO É UM ALVO: anel de mira + disco com o número + eco que se abre
+         no ponto da vez (a "mira" que chama o dedo). O ponto ligado ENCOLHE e
+         fica verde — forma primeiro, cor só de reforço.
+       · O TRAÇO CRESCE: cada ligação desenha um segmento que nasce do ponto
+         anterior e corre até o novo (`stroke-dashoffset`), com halo dourado por
+         baixo. Traço que aparece de uma vez não tem a sensação de riscar.
+       · LINHA-GUIA ELÁSTICA: enquanto a criança procura, um fio pontilhado sai
+         do último ponto e segue o dedo/rato. É o que o digipuzzle não tem e
+         que faz o gesto parecer desenho, não clique.
+       · A FOLHA É PAPEL: creme com luz no meio, moldura dourada, sombra.
+       · A REVELAÇÃO: a luz acende ATRÁS da figura, um brilho corre pela folha,
+         faíscas estouram e o nome chega numa fita — e só então.
+       ⚠️ TUDO O QUE INFORMA TEM ESTADO PARADO. O integrador da fábrica prefixa
+         o CSS da peça e, ao fazer isso, PERDE os blocos `@keyframes`. Então
+         nenhuma informação pode depender de animação: o ponto da vez já se vê
+         parado (anel inteiro, disco maior), a animação é só o convite.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA NO INSTANTE em que o último ponto liga (`travada=true`) — a
+         criança toca duas vezes, e o segundo toque pulava a figura;
+       · GERAÇÃO (`ger`): todo setTimeout confere se a tela ainda é a dele;
+       · O ANDAIME CRESCE NO ERRO MAIS NATURAL — tocar num ponto que ainda não
+         é a vez (o gesto de quem ainda não achou o número) chama `ajuda(n)`.
+         Nada de frase fixa: 1º diz qual número procurar, 2º o ponto certo
+         PULSA, 3º a peça liga aquele traço sozinha e SÓ DEPOIS explica;
+       · ajudante que mexe no DOM começa com `if(!el) return;`;
+       · nada essencial só na cor: o ponto ligado ganha O TRAÇO (forma) e
+         encolhe, o ponto da vez tem anel inteiro (forma) e o número continua
+         escrito;
+       · funciona no mudo: cada ligação desenha a linha à vista e o contador
+         de pontinhos anda;
+       · nunca trava: no 3º toque sem sorte a peça liga o traço por ela;
+       · `data-qa` publicado no ponto da vez, para o auditor-jogador fechar.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+/* A FOLHA DE PAPEL. Fundo solido primeiro (PC velho), gradiente depois. */
+/* ⚠️ max-width 288: no celular pequeno (320px) sobram 296px dentro do #app, e
+   a folha PRECISA ficar quadrada — o desenho e os pontinhos usam a mesma
+   caixa. Passar de 296 aqui deforma a figura no celular velho da escola. */
+.folha{position:relative;width:100%;max-width:288px;height:288px;margin:13px auto 0;
+       background:#f7ebd2;
+       background:-webkit-radial-gradient(50% 34%,circle,#fffdf5 0%,#f7ebd2 58%,#e9d7b0 100%);
+       background:radial-gradient(circle at 50% 34%,#fffdf5 0%,#f7ebd2 58%,#e9d7b0 100%);
+       /* a textura de papel pontilhado, por cima da luz do meio (folha de
+          caderno de desenho). Quem nao entender duas camadas fica so com a
+          luz, que ja e a regra acima. */
+       background-image:radial-gradient(rgba(150,110,40,.14) 1px,transparent 1.4px),
+                        radial-gradient(circle at 50% 34%,#fffdf5 0%,#f7ebd2 58%,#e9d7b0 100%);
+       background-size:15px 15px,100% 100%;
+       border:3px solid #c8a13f;border-radius:18px;overflow:hidden;
+       -webkit-user-select:none;user-select:none;
+       -webkit-box-shadow:0 10px 22px rgba(0,0,0,.42),inset 0 0 0 2px rgba(255,255,255,.7),inset 0 0 30px rgba(150,110,40,.2);
+       box-shadow:0 10px 22px rgba(0,0,0,.42),inset 0 0 0 2px rgba(255,255,255,.7),inset 0 0 30px rgba(150,110,40,.2)}
+/* a luz que acende ATRAS da figura, so no fim. Transicao (nao animacao):
+   o integrador perde os @keyframes, e esta luz nao pode se perder junto. */
+.lpluz{position:absolute;left:0;top:0;right:0;bottom:0;opacity:0;pointer-events:none;
+       background:-webkit-radial-gradient(50% 52%,circle,rgba(255,214,110,.9) 0%,rgba(255,214,110,0) 64%);
+       background:radial-gradient(circle at 50% 52%,rgba(255,214,110,.9) 0%,rgba(255,214,110,0) 64%);
+       -webkit-transition:opacity .7s;transition:opacity .7s}
+.pronta .lpluz{opacity:1}
+.pronta .pt{color:var(--texto,#241d12);opacity:.34;pointer-events:none}
+/* na revelacao o halo do traco recua para a figura brilhar sozinha — mas o
+   fio CONTINUA la: e o desenho que a crianca fez, nao um andaime a esconder */
+.pronta .fioh{opacity:.35}
+.fextra{pointer-events:none}
+/* a camada do desenho: nunca pega o dedo (senao roubava o toque dos pontos) */
+.linhas{position:absolute;left:0;top:0;right:0;bottom:0;pointer-events:none}
+.linhas svg{display:block;width:100%;height:100%}
+/* a figura escondida: existe desde o comeco, mas so ACENDE no fim */
+.figc{fill:none;stroke:none;opacity:0;-webkit-transition:opacity .6s;transition:opacity .6s}
+.figc.viva{opacity:1;-webkit-animation:acende 1.1s;animation:acende 1.1s}
+@-webkit-keyframes acende{0%{opacity:0}45%{opacity:1}62%{opacity:.55}100%{opacity:1}}
+@keyframes acende{0%{opacity:0}45%{opacity:1}62%{opacity:.55}100%{opacity:1}}
+.fios{pointer-events:none}
+/* O TRACO SAO DUAS LINHAS: halo dourado por baixo, fio de tinta por cima.
+   Ele CRESCE do ponto anterior ate o novo (stroke-dashoffset), que e o que da
+   a sensacao de riscar — traco que aparece de uma vez nao tem gesto nenhum. */
+.fioh{fill:none;stroke:rgba(240,176,40,.55);stroke-width:5.4;stroke-linecap:round;
+      -webkit-transition:stroke-dashoffset .3s linear;transition:stroke-dashoffset .3s linear}
+.fio{fill:none;stroke:#2f5fd0;stroke-width:2.7;stroke-linecap:round;stroke-linejoin:round;
+     -webkit-transition:stroke-dashoffset .3s linear;transition:stroke-dashoffset .3s linear}
+/* a linha-guia elastica: sai do ultimo ponto ligado e segue o dedo/rato */
+.guia{fill:none;stroke:rgba(47,95,208,.5);stroke-width:1.8;stroke-linecap:round;
+      stroke-dasharray:2.4 3.2;opacity:0;-webkit-transition:opacity .2s;transition:opacity .2s}
+.guia.viva{opacity:1}
+/* a camada de "tocou fora": responde com um toquinho e nao acontece mais nada */
+.fora{position:absolute;left:0;top:0;right:0;bottom:0;cursor:pointer}
+/* o contador de pontinhos: funciona no mudo e conta de novo (sem cor nenhuma) */
+.lpconta{position:absolute;left:9px;top:9px;background:#fffdf6;color:#4a3712;
+         border:2px solid rgba(140,104,34,.55);border-radius:12px;padding:3px 9px;
+         font-size:13px;font-weight:800;pointer-events:none;
+         -webkit-box-shadow:0 2px 4px rgba(0,0,0,.18);box-shadow:0 2px 4px rgba(0,0,0,.18)}
+/* ---- OS PONTINHOS. Alvo de dedo de 56px; o ALVO DE MIRA e desenhado dentro,
+        em tres camadas que nunca pegam o dedo (so a caixa de 56px pega). ---- */
+.pt{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;cursor:pointer;
+    background:none;border:0;-webkit-user-select:none;user-select:none;
+    -ms-touch-action:manipulation;touch-action:manipulation;
+    -webkit-transition:opacity .5s;transition:opacity .5s}
+/* o ECO: o circulo que se abre chamando o dedo (so no ponto da vez) */
+.peco{position:absolute;left:50%;top:50%;width:54px;height:54px;margin:-27px 0 0 -27px;
+      border-radius:50%;border:3px solid rgba(240,176,40,0);pointer-events:none}
+/* o ANEL de mira: tracejado enquanto espera, inteiro quando e a vez */
+.paro{position:absolute;left:50%;top:50%;width:48px;height:48px;margin:-24px 0 0 -24px;
+      border-radius:50%;border:2px dashed rgba(140,104,34,.45);
+      background:rgba(255,255,255,.34);pointer-events:none;
+      -webkit-transition:.22s;transition:.22s}
+/* o DISCO com o numero */
+.pnum{color:#241d12;position:absolute;left:50%;top:50%;width:38px;height:38px;margin:-19px 0 0 -19px;
+      border-radius:50%;background:#fffdf6;color:#2f2410;border:2px solid #8a6a24;
+      font-size:19px;font-weight:800;line-height:34px;text-align:center;pointer-events:none;
+      -webkit-box-shadow:0 2px 4px rgba(0,0,0,.3);box-shadow:0 2px 4px rgba(0,0,0,.3);
+      -webkit-transition:.22s;transition:.22s}
+/* ⭐ O PONTO DA VEZ. Parado ele JA SE VE (anel inteiro, disco maior): a
+   animacao e so o convite, nunca a informacao. */
+.pt.vez .pnum{background:#fff3c9;border-color:#a8791a;
+              -webkit-transform:scale(1.1);transform:scale(1.1)}
+.pt.vez .paro{border-style:solid;border-color:rgba(240,176,40,.9);background:rgba(255,213,74,.22)}
+.pt.vez .peco{border-color:rgba(240,176,40,.5);
+              -webkit-animation:lpEco 1.5s infinite;animation:lpEco 1.5s infinite}
+@-webkit-keyframes lpEco{0%{-webkit-transform:scale(.72);opacity:.9}
+                         70%{-webkit-transform:scale(1.3);opacity:0}
+                         100%{-webkit-transform:scale(1.3);opacity:0}}
+@keyframes lpEco{0%{transform:scale(.72);opacity:.9}
+                 70%{transform:scale(1.3);opacity:0}
+                 100%{transform:scale(1.3);opacity:0}}
+/* ⭐ NADA ESSENCIAL SO NA COR: o ponto ja ligado tem o TRACO chegando nele
+   (forma) e ENCOLHE; o da vez tem o anel inteiro. Cor e so o reforco. */
+.pt.feito .pnum{background:#d9f2c6;border-color:#3f7d2a;color:#183a0e;font-size:14px;
+                width:26px;height:26px;line-height:22px;margin:-13px 0 0 -13px;
+                -webkit-transform:none;transform:none}
+.pt.feito .paro{opacity:0}
+.pt.feito .peco{border-color:transparent}
+/* o ANDAIME do 2o degrau: o ponto certo PULSA de verdade */
+.pt.prox .pnum{background:#ffd54a;border-color:#7a5406;
+               -webkit-animation:lpPulsa .8s infinite;animation:lpPulsa .8s infinite}
+@-webkit-keyframes lpPulsa{0%,100%{box-shadow:0 2px 4px rgba(0,0,0,.3)}
+                           50%{box-shadow:0 0 0 9px rgba(255,213,74,.55)}}
+@keyframes lpPulsa{0%,100%{box-shadow:0 2px 4px rgba(0,0,0,.3)}
+                   50%{box-shadow:0 0 0 9px rgba(255,213,74,.55)}}
+.pt.treme{-webkit-animation:tremeP .34s;animation:tremeP .34s}
+@-webkit-keyframes tremeP{25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes tremeP{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* ---- A FESTA DA REVELACAO (enfeite puro: some sozinha, e se o integrador
+        levar os @keyframes embora nao falta informacao nenhuma) ---- */
+.lpbri{position:absolute;left:-40%;top:0;width:34%;height:100%;pointer-events:none;
+       background:-webkit-linear-gradient(left,rgba(255,255,255,0),rgba(255,255,255,.85),rgba(255,255,255,0));
+       background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.85),rgba(255,255,255,0));
+       -webkit-transform:skewX(-18deg);transform:skewX(-18deg);
+       -webkit-animation:lpBri 1s ease-out;animation:lpBri 1s ease-out}
+@-webkit-keyframes lpBri{0%{left:-40%}100%{left:110%}}
+@keyframes lpBri{0%{left:-40%}100%{left:110%}}
+.lpfai{position:absolute;width:12px;height:12px;margin:-6px 0 0 -6px;pointer-events:none;
+       background:#ffe89a;border-radius:3px;
+       -webkit-transform:rotate(45deg);transform:rotate(45deg);
+       -webkit-animation:lpFai 1.1s ease-out;animation:lpFai 1.1s ease-out}
+@-webkit-keyframes lpFai{0%{-webkit-transform:rotate(45deg) scale(0);opacity:0}
+                         30%{-webkit-transform:rotate(45deg) scale(1.15);opacity:1}
+                         100%{-webkit-transform:rotate(45deg) scale(.2);opacity:0}}
+@keyframes lpFai{0%{transform:rotate(45deg) scale(0);opacity:0}
+                 30%{transform:rotate(45deg) scale(1.15);opacity:1}
+                 100%{transform:rotate(45deg) scale(.2);opacity:0}}
+/* o nome da figura so aparece DEPOIS que ela acende: o conceito por ultimo */
+.revela{margin-top:11px;min-height:32px;line-height:0}
+.lpfita{display:inline-block;background:#f0b429;
+        background:-webkit-linear-gradient(top,#ffe07a,#f0b429);
+        background:linear-gradient(#ffe07a,#f0b429);
+        color:#3a2a08;font-size:19px;font-weight:800;line-height:1.2;padding:8px 20px;
+        border-radius:16px;
+        -webkit-box-shadow:0 4px 0 #b98a17,0 8px 16px rgba(0,0,0,.35);
+        box-shadow:0 4px 0 #b98a17,0 8px 16px rgba(0,0,0,.35)}
+/* ---- A GALERIA DO FIM ---- */
+.galeria{margin-top:10px;line-height:0}
+.mini{display:inline-block;position:relative;width:104px;height:104px;margin:5px;
+      background:#f7ebd2;
+      background:-webkit-radial-gradient(50% 34%,circle,#fffdf5 0%,#f7ebd2 58%,#e9d7b0 100%);
+      background:radial-gradient(circle at 50% 34%,#fffdf5 0%,#f7ebd2 58%,#e9d7b0 100%);
+      border:3px solid #c8a13f;border-radius:12px;overflow:hidden;vertical-align:top}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* janela baixa: encolhe a FOLHA e, so entao, o pontinho — nunca ao contrario.
+   ⚠️ o pontinho tem que encolher JUNTO com a folha: em 212px de folha, um
+   ponto de 56px vira 26% do desenho e dois vizinhos se encavalam. */
+@media(max-height:660px){
+  .folha{max-width:252px;height:252px}
+  .mini{width:88px;height:88px}
+  .balao{font-size:15px;padding:10px 14px}
+}
+@media(max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:14px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .folha{max-width:212px;height:212px;margin-top:8px}
+  .pt{width:48px;height:48px;margin:-24px 0 0 -24px}
+  .pnum{width:32px;height:32px;margin:-16px 0 0 -16px;font-size:16px;line-height:28px}
+  .paro{width:42px;height:42px;margin:-21px 0 0 -21px}
+  .peco{width:46px;height:46px;margin:-23px 0 0 -23px}
+  .lpconta{left:6px;top:6px;font-size:12px;padding:2px 7px}
+  .revela{margin-top:6px;min-height:26px}
+  .lpfita{font-size:16px;padding:6px 15px}
+  .medal{width:76px;height:76px;font-size:32px;line-height:66px;margin-bottom:8px}
+  .mini{width:74px;height:74px}
+  .hint{display:none}
+}
+
+/* ⚠️ LICAO PAGA (ago/2026): o numero do ponto herdava `--texto` do MOTOR
+   (#3a3020) e caia sobre o laranja do tema da atividade — 4,37:1, abaixo
+   dos 4,5 que a casa exige. Na bancada nao aparecia: la o fundo e escuro.
+   Cor escrita com o peso do CONTEINER, para ganhar de qualquer variante. */
+.folha .pt,.folha .pt.prox,.folha .pt.vez,.folha .pnum{color:#241d12}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* AS FIGURAS — troque APENAS este bloco para mudar o conteúdo.
+   `pts` sao os pontinhos em PORCENTAGEM da folha (nunca em px: assim a folha
+   encolhe junto com a tela e o desenho continua inteiro).
+   `d` e o contorno que ACENDE no fim, e `extra` sao os detalhes que aparecem
+   junto com ela (a porta, a vela, o olho) — nada disso e tocavel.
+   ⚠️ A ESCADA: 5 pontos (a criança conta até 5 sem apoio) -> 7 -> 8, e no
+   peixe os números ficam espalhados de verdade, sem seguir o relógio — é aí
+   que ela precisa PROCURAR o símbolo, não só continuar o movimento.
+   ⚠️ E OS PONTOS NÃO PODEM SE ENCOSTAR: o vizinho mais próximo tem que estar
+   a mais de 27% da folha, senão dois alvos de 56px se sobrepõem e a criança
+   mira num e toca no outro. (Medido: casinha 30, barco 28,8, peixe 26,9 —
+   e em folha de 212px o ponto encolhe para 48px justamente por isso.) */
+var FIGURAS=[
+ {selo:"A CASINHA ESCONDIDA", nome:"uma CASINHA", voz:"uma casinha",
+  pts:[[18,58],[50,26],[82,58],[82,88],[18,88]],
+  d:"M18 58 L50 26 L82 58 L82 88 L18 88 Z",
+  cor:"#f0c078",
+  extra:'<path d="M18 58 L50 26 L82 58 Z" fill="rgba(120,60,20,.2)"/>'+
+        '<rect x="42" y="66" width="16" height="22" rx="2" fill="#8a5a2b" stroke="#5c3a17" stroke-width="1.2"/>'+
+        '<circle cx="55.5" cy="78" r="1.5" fill="#ffd54a"/>'+
+        '<rect x="24" y="64" width="13" height="13" rx="1.5" fill="#cfe9f5" stroke="#5c3a17" stroke-width="1.2"/>'+
+        '<path d="M30.5 64 L30.5 77 M24 70.5 L37 70.5" stroke="#5c3a17" stroke-width="1" fill="none"/>'+
+        '<rect x="64" y="64" width="13" height="13" rx="1.5" fill="#cfe9f5" stroke="#5c3a17" stroke-width="1.2"/>'+
+        '<path d="M70.5 64 L70.5 77 M64 70.5 L77 70.5" stroke="#5c3a17" stroke-width="1" fill="none"/>'},
+ {selo:"O QUE NAVEGA", nome:"um BARCO", voz:"um barco",
+  pts:[[56,12],[26,38],[56,60],[88,60],[76,88],[28,88],[12,64]],
+  d:"M56 12 L26 38 L56 60 L88 60 L76 88 L28 88 L12 64 Z",
+  cor:"#9fc8ea",
+  extra:'<path d="M56 60 L88 60 L76 88 L28 88 L12 64 Z" fill="#c1682f" stroke="#3a2410" stroke-width="1.3"/>'+
+        '<path d="M56 12 L26 38 L56 60 Z" fill="#fffdf6" stroke="#3a2410" stroke-width="1.3"/>'+
+        '<rect x="54.6" y="12" width="2.8" height="48" fill="#7a5326"/>'+
+        '<path d="M58 12 L72 16.5 L58 21 Z" fill="#e04b3a"/>'+
+        '<circle cx="44" cy="72" r="3.4" fill="#cfe9f5" stroke="#3a2410" stroke-width="1"/>'+
+        '<circle cx="60" cy="72" r="3.4" fill="#cfe9f5" stroke="#3a2410" stroke-width="1"/>'+
+        '<path d="M6 93 Q16 89 26 93 T46 93 T66 93 T86 93" fill="none" stroke="#4a8ec7" stroke-width="1.8" stroke-linecap="round"/>'},
+ {selo:"O BICHO DO MAR", nome:"um PEIXE", voz:"um peixe",
+  pts:[[12,28],[32,50],[12,72],[46,86],[74,74],[88,50],[74,26],[46,14]],
+  d:"M12 28 L32 50 L12 72 L46 86 L74 74 L88 50 L74 26 L46 14 Z",
+  cor:"#7ec8e3",
+  extra:'<path d="M44 68 Q56 84 68 68 Z" fill="#3f93bd" stroke="rgba(43,33,24,.45)" stroke-width="1"/>'+
+        '<path d="M56 24 Q49 50 56 76" fill="none" stroke="rgba(43,33,24,.4)" stroke-width="1.4" stroke-linecap="round"/>'+
+        '<path d="M64 40 Q68 46 64 52" fill="none" stroke="rgba(43,33,24,.22)" stroke-width="1" stroke-linecap="round"/>'+
+        '<path d="M64 56 Q68 62 64 68" fill="none" stroke="rgba(43,33,24,.22)" stroke-width="1" stroke-linecap="round"/>'+
+        '<circle cx="70" cy="40" r="5.2" fill="#fffdf6" stroke="#2b2118" stroke-width="1.2"/>'+
+        '<circle cx="71.4" cy="41" r="2.4" fill="#2b2118"/>'+
+        '<circle cx="69.4" cy="39" r="1.1" fill="#fffdf6"/>'+
+        '<path d="M81 54 Q84 57 87 53" fill="none" stroke="#2b2118" stroke-width="1.4" stroke-linecap="round"/>'}
+];
+/* O ANDAIME. O 3o degrau LIGA o traco pela crianca e so DEPOIS escreve a
+   explicacao — na ordem contraria a dica nasce e morre no mesmo quadro. */
+var DICAS=[
+ "Procure o n&#250;mero <b>{n}</b>. Ele &#233; o pr&#243;ximo da fila.",
+ "O n&#250;mero <b>{n}</b> est&#225; <b>pulsando</b>. Toque nele.",
+ "Eu liguei este tracinho para voc&#234;. O pr&#243;ximo &#233; o que <b>pulsa</b>."
+];
+/* ⭐ A SEQUENCIA NAO PRECISA SER DE NUMEROS (ago/2026, atividade do 1o ano).
+   A peca nasceu para contar (1,2,3...), mas o que ela ENSINA e "achar o que vem
+   DEPOIS numa bagunca" — e isso serve igual para o ALFABETO, que e a primeira
+   coisa que a professora do 1o ano pediu. O rotulo do ponto era o numero cru
+   (`i+1`) e a voz saia de NUM[]: as duas coisas presas a contagem.
+   Agora a gaveta ROTULOS manda. Vazia, e a contagem de sempre; preenchida com
+   ["A","B","C"...], os pontos viram letras e a voz diz o NOME da letra.
+   ⚠️ o `data-qa` e a conferencia continuam sendo por POSICAO — trocar o rotulo
+   nao mexe em quem esta certo, so no que a crianca ve e ouve. */
+var ROTULOS=[];
+function rotuloDe(n){ return ROTULOS.length ? (ROTULOS[n-1]||(""+n)) : (""+n); }
+var NUM=["zero","um","dois","três","quatro","cinco","seis","sete","oito","nove","dez", /*TECNICA*/
+         "onze","doze","treze","catorze","quinze"];
+
+var nsvg="http://www.w3.org/2000/svg";
+var fi=0;              /* figura de agora */
+var proximo=1;         /* o numero que a peca espera AGORA */
+var ptEls=[];          /* os pontinhos, na ordem 1..N */
+var folhaEl=null, fiosEl=null, guiaEl=null, figEl=null, contaEl=null;
+var revelaEl=null, telaAtual=null, barraP=null;
+var FEITAS=[];         /* as figuras que ja acenderam, para a galeria do fim */ /*TECNICA*/
+var errosSeg=0;
+var ger=0;             /* geracao: mata o setTimeout de uma tela que ja saiu */
+var travada=false;     /* ⚠️ trava NO INSTANTE em que o ultimo ponto liga */
+var apertado=false;    /* botao do rato apertado = modo arrastar */
+var ultimoToque=0;     /* guarda contra o evento de rato FANTASMA do celular */
+var ignoraClique=null; /* o ponto que acabou de ligar no `mousedown` */
+
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+function figura(){ return FIGURAS[fi]||FIGURAS[0]; }
+function nomeNum(n){ return ROTULOS.length ? ("letra "+rotuloDe(n)) : (NUM[n]||(""+n)); }
+
+/* A VOZ. Se o PC nao tiver voz a peca continua inteira: todo numero que ela
+   fala tambem esta escrito dentro do pontinho. */
+function diz(txt){
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.98; u.pitch=1.06;
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+/* o traco sobe de tom a cada ligacao: a escada se OUVE, nao so se ve */
+function sLiga(i,total){ nota(392+ (i*(392/Math.max(total,1))), .10, .13, "triangle", 0); }
+function sNaoLiga(){ nota(330,.09,.09,"sine",0); }
+function sToque(){ nota(760,.010,.06,"square",0); }
+function sRevela(){ nota(523.25,.5,.16,"triangle",0); nota(659.25,.5,.15,"triangle",.09);
+                    nota(783.99,.55,.14,"triangle",.18); nota(1046.5,.6,.12,"triangle",.27); }
+
+/* o rato apertado = modo arrastar (o traco segue quem arrasta) */
+document.addEventListener("mousedown",function(){apertado=true;},false);
+document.addEventListener("mouseup",function(){apertado=false;},false);
+
+/* ---------------------------------------------------------------
+   O TRAÇO. Cada segmento nasce no ponto anterior e CRESCE até o
+   novo. Duas linhas: o halo dourado por baixo e o fio por cima.
+   --------------------------------------------------------------- */
+function linhaSVG(cls,x1,y1,x2,y2){
+  var e=document.createElementNS(nsvg,"line");
+  e.setAttribute("class",cls);
+  e.setAttribute("x1",x1); e.setAttribute("y1",y1);
+  e.setAttribute("x2",x2); e.setAttribute("y2",y2);
+  return e;
+}
+function traco(g,fg,a,b,anima){
+  if(!g||!fg.pts[a]||!fg.pts[b]) return;
+  var x1=fg.pts[a][0], y1=fg.pts[a][1], x2=fg.pts[b][0], y2=fg.pts[b][1];
+  var comp=Math.sqrt((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1));
+  var h=linhaSVG("fioh",x1,y1,x2,y2), c=linhaSVG("fio",x1,y1,x2,y2);
+  g.appendChild(h); g.appendChild(c);
+  if(!anima) return;
+  h.setAttribute("stroke-dasharray",comp); h.setAttribute("stroke-dashoffset",comp);
+  c.setAttribute("stroke-dasharray",comp); c.setAttribute("stroke-dashoffset",comp);
+  var g0=ger;
+  /* ⚠️ o quadro seguinte, senao o navegador junta os dois valores num so e a
+     transicao nao acontece — o traco apareceria de uma vez. */
+  setTimeout(function(){
+    if(g0!==ger) return;
+    h.setAttribute("stroke-dashoffset","0"); c.setAttribute("stroke-dashoffset","0");
+  },20);
+}
+/* ⚠️⚠️ LICAO PAGA AQUI MESMO (ago/2026, no redesenho): isto era
+   `svg.innerHTML += fg.extra` — e `innerHTML+=` REESCREVE todos os filhos, ou
+   seja, DESTROI os elementos vivos e cria copias. Os dois ultimos tracos (o
+   que fecha a figura) tinham acabado de nascer com `stroke-dashoffset` cheio,
+   esperando o quadro seguinte para correr: o `setTimeout` acordava e mexia nos
+   elementos ANTIGOS, ja jogados fora. Resultado: a casinha revelava sem o chao
+   e sem a parede da esquerda — e nenhum portao viu, porque JS nao deu erro, a
+   figura apareceu e o print ficou "quase certo".
+   Agora o enfeite entra num `<g>` NOVO: ninguem e destruido. */
+function acendeFigura(q,pth,fg){
+  if(!q||!pth) return;
+  pth.style.fill=fg.cor; pth.style.stroke="#2b2118"; pth.style.strokeWidth="1.6";
+  pth.setAttribute("class","figc viva");
+  var sv=pth.parentNode;
+  if(sv&&fg.extra){
+    var gex=document.createElementNS(nsvg,"g");
+    gex.setAttribute("class","fextra");
+    gex.innerHTML=fg.extra;
+    sv.appendChild(gex);
+  }
+  if(q.className.indexOf("pronta")<0) q.className=q.className+" pronta";
+}
+/* enfeite puro da revelacao: some sozinho em 1,6s */
+function brilho(q){
+  if(!q) return;
+  var b=el("div","lpbri"), g0=ger;
+  q.appendChild(b);
+  setTimeout(function(){ if(g0===ger&&b.parentNode) b.parentNode.removeChild(b); },1200);
+}
+function faiscas(q,n){
+  if(!q) return;
+  var i, f, guarda=[], g0=ger;
+  for(i=0;i<n;i++){
+    f=el("span","lpfai");
+    f.style.left=(18+Math.random()*64)+"%";
+    f.style.top=(14+Math.random()*68)+"%";
+    f.style.webkitAnimationDelay=(Math.random()*.45)+"s";
+    f.style.animationDelay=(Math.random()*.45)+"s";
+    q.appendChild(f); guarda.push(f);
+  }
+  setTimeout(function(){
+    var k;
+    if(g0!==ger) return;
+    for(k=0;k<guarda.length;k++) if(guarda[k].parentNode) guarda[k].parentNode.removeChild(guarda[k]);
+  },1600);
+}
+
+/* ---------------------------------------------------------------
+   A FOLHA. A MESMA funcao monta a folha grande e a miniatura da
+   galeria — o que a crianca ve no fim e o que ela mesma ligou.
+   --------------------------------------------------------------- */
+function montaFolha(fg,ligados,classe,vivo){
+  var q=el("div",classe), i, p;
+  var lin=el("div","linhas");
+  /* ⚠️ `preserveAspectRatio="none"` NAO e enfeite: os pontinhos sao
+     posicionados em % da FOLHA e o desenho vive no viewBox. Se um dia a folha
+     nascer mais larga que alta (uma coluna estreita dentro de uma atividade
+     montada), o desenho ficaria centralizado com tarja e os tracos passariam
+     LONGE dos pontinhos. Esticado, os dois usam sempre a mesma caixa. */
+  lin.innerHTML='<svg viewBox="0 0 100 100" preserveAspectRatio="none">'+
+                '<path class="figc" d="'+fg.d+'"></path>'+
+                '<g class="fios"></g>'+
+                '<line class="guia" x1="0" y1="0" x2="0" y2="0"></line>'+
+                '</svg>';
+  var pth=lin.getElementsByTagName("path")[0];
+  var gf=lin.getElementsByTagName("g")[0];
+  var gui=lin.getElementsByTagName("line")[0];
+  q.appendChild(el("div","lpluz"));   /* a luz vai ATRAS das linhas */
+  q.appendChild(lin);
+  for(i=1;i<ligados&&i<fg.pts.length;i++) traco(gf,fg,i-1,i,0);
+  if(ligados>=fg.pts.length){
+    traco(gf,fg,fg.pts.length-1,0,0);
+    acendeFigura(q,pth,fg);
+  }
+  if(vivo){
+    figEl=pth; fiosEl=gf; guiaEl=gui; folhaEl=q;
+    /* a camada do "tocou fora": responde com um toquinho e nao acontece mais
+       nada. Fica ABAIXO dos pontinhos, entao nunca rouba o toque deles. */
+    var fr=el("div","fora","");
+    fr.onclick=tocouFora;
+    q.appendChild(fr);
+    ptEls=[];
+    for(i=0;i<fg.pts.length;i++){
+      p=el("div","pt");
+      p.style.left=fg.pts[i][0]+"%";
+      p.style.top=fg.pts[i][1]+"%";
+      p.setAttribute("aria-label","Ponto "+(i+1));
+      p.appendChild(el("i","peco"));
+      p.appendChild(el("i","paro"));
+      p.appendChild(el("b","pnum",rotuloDe(i+1)));
+      p._n=i+1;
+      p.onclick=tocouPonto;         /* porta 1: clicar / tocar */
+      p.onmousedown=apertouPonto;   /* porta 2: apertar e arrastar */
+      p.onmouseover=passouPonto;    /* porta 3: passar o mouse por cima */
+      q.appendChild(p);
+      ptEls.push(p);
+    }
+    /* porta 4 (celular): arrastar o dedo pela folha */
+    q.onmousemove=moveuMouse;
+    q.onmouseleave=saiuMouse;
+    q.ontouchstart=comecouToque;
+    q.ontouchmove=arrastouDedo;
+    q.ontouchend=soltouDedo;
+  }
+  return q;
+}
+
+/* ---------------------------------------------------------------
+   A TELA DA FIGURA. Uma folha e nada mais: nem botao, nem placar.
+   O que empurra a crianca e a curiosidade de ver o que aparece.
+   --------------------------------------------------------------- */
+function telaPontos(){
+  if(fi>=FIGURAS.length){ fimDaPeca(); return; }
+  ger++; travada=false; proximo=1; errosSeg=0; ignoraClique=null;
+  limpa();
+  var fg=FIGURAS[fi];
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(fi*100/FIGURAS.length));
+  barraP=t.getElementsByTagName("i")[0];
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",fg.selo));
+  c.appendChild(el("div","balao","Ligue os pontinhos na ordem: <b>1, 2, 3</b>... e veja o que aparece!"));
+  var f=montaFolha(fg,0,"folha",1);
+  contaEl=el("div","lpconta","0 de "+fg.pts.length);
+  f.appendChild(contaEl);
+  c.appendChild(f);
+  revelaEl=el("div","revela","");
+  c.appendChild(revelaEl);
+  c.appendChild(el("div","hint","Toque no <b>1</b> — depois v&#225; passando o dedo (ou o mouse) "+
+                   "pelos outros. Figura "+(fi+1)+" de "+FIGURAS.length+"."));
+  t.appendChild(c); app.appendChild(t);
+  marcaProximo();
+  diz("Ligue os pontinhos. Comece no um!");
+}
+
+/* ---------------------------------------------------------------
+   AS PORTAS DE ENTRADA. Só liga se for o PRÓXIMO da ordem; tocar
+   num ponto que ainda não é a vez não pune — mas faz o andaime
+   crescer, porque quem faz isso é justamente quem ainda não achou
+   o número.
+   --------------------------------------------------------------- */
+function podeLigar(p){ return !travada && !!viva() && !!p && p._n===proximo; }
+/* ⚠️ o celular dispara mousedown/mouseover/click FANTASMA depois do dedo: sem
+   esta marca de tempo o mesmo gesto era contado duas vezes. */
+function ehFantasma(){ return (new Date()).getTime()-ultimoToque<800; }
+
+function tocouPonto(){
+  var p=this;
+  if(travada||!p||!viva()) return;
+  /* o clique que vem logo depois do `mousedown` que JA ligou este ponto */
+  if(p===ignoraClique){ ignoraClique=null; return; }
+  if(p._n===proximo){ liga(p); return; }
+  /* ponto JA LIGADO: e onde o dedo solta quando termina de varrer. Nao e erro
+     nenhum — responde ao dedo e mais nada. */
+  if(p._n<proximo){ sToque(); return; }
+  /* ainda nao e a vez: NAO LIGA, e nao acontece mais nada de ruim. Uma
+     etiqueta em palavras (a barra de dica) explica o que falta — nunca um
+     retangulo colorido e um silencio, que faz a crianca achar que travou. */
+  sNaoLiga();
+  p.className="pt treme";
+  destreme(p);
+  ajuda(errosSeg+1);
+}
+/* PORTA 2: apertar ja liga (no PC o traco nasce no instante do clique) e
+   comeca o arrasto a partir deste ponto. */
+function apertouPonto(){
+  if(ehFantasma()||!podeLigar(this)) return;
+  ignoraClique=this;
+  liga(this);
+}
+/* PORTA 3: passar o mouse por cima. SO depois que a crianca comecou (ou com o
+   botao apertado) — senao o desenho se faria sozinho quando o rato cruzasse a
+   folha por acaso, e a descoberta seria roubada dela. */
+function passouPonto(){
+  if(ehFantasma()||!podeLigar(this)) return;
+  if(proximo>1||apertado) liga(this);
+}
+/* PORTA 4: o dedo arrastando pela folha. ⚠️ NUNCA `preventDefault` no
+   `touchstart` (mata o toque); so no MEIO do arrasto, quando ja se sabe que e
+   arrasto e nao toque. */
+function comecouToque(){ ultimoToque=(new Date()).getTime(); }
+function arrastouDedo(ev){
+  ultimoToque=(new Date()).getTime();
+  if(travada||!viva()) return;
+  var t=ev.touches&&ev.touches[0];
+  if(!t) return;
+  moveGuia(t.clientX,t.clientY);
+  var p=pontoEm(t.clientX,t.clientY);
+  if(p&&podeLigar(p)){ liga(p); if(ev.preventDefault) ev.preventDefault(); return; }
+  if(proximo>1&&ev.preventDefault) ev.preventDefault();
+}
+function soltouDedo(){ ultimoToque=(new Date()).getTime(); escondeGuia(); }
+function pontoEm(x,y){
+  var e=document.elementFromPoint(x,y);
+  while(e&&e!==document.body){
+    if(e._n) return e;
+    e=e.parentNode;
+  }
+  return null;
+}
+/* tocar fora dos pontinhos: responde ao dedo (a crianca precisa saber que a
+   tela ouviu) e nao acontece mais nada. Sem dica, sem andaime, sem som de
+   tropeco — tocar fora nao e tentativa, e exploracao. */
+function tocouFora(){
+  if(travada||!viva()) return;
+  sToque();
+}
+
+/* ---------------------------------------------------------------
+   A LINHA-GUIA ELÁSTICA: sai do último ponto ligado e segue o
+   dedo/rato enquanto a criança procura o próximo.
+   --------------------------------------------------------------- */
+function moveuMouse(ev){
+  if(ehFantasma()) return;
+  moveGuia(ev.clientX,ev.clientY);
+}
+function saiuMouse(){ escondeGuia(); }
+function moveGuia(cx,cy){
+  var fg=figura();
+  if(travada||!guiaEl||!folhaEl||proximo<2||proximo>fg.pts.length){ escondeGuia(); return; }
+  var r=folhaEl.getBoundingClientRect();
+  if(!r.width||!r.height) return;
+  var a=fg.pts[proximo-2];
+  guiaEl.setAttribute("x1",a[0]);
+  guiaEl.setAttribute("y1",a[1]);
+  guiaEl.setAttribute("x2",((cx-r.left)*100/r.width).toFixed(1));
+  guiaEl.setAttribute("y2",((cy-r.top)*100/r.height).toFixed(1));
+  guiaEl.setAttribute("class","guia viva");
+}
+function escondeGuia(){ if(guiaEl) guiaEl.setAttribute("class","guia"); }
+
+/* ---------------------------------------------------------------
+   LIGAR: o traço cresce, o contador anda, a barra sobe.
+   --------------------------------------------------------------- */
+function liga(p){
+  var fg=figura(), n=p._n;
+  proximo=n+1;
+  errosSeg=0;
+  p.className="pt feito";
+  if(n>1) traco(fiosEl,fg,n-2,n-1,1);
+  if(n>=fg.pts.length) traco(fiosEl,fg,fg.pts.length-1,0,1);
+  sLiga(n,fg.pts.length);
+  apagaDica();
+  escondeGuia();
+  if(barraP) barraP.style.width=
+    Math.round((fi+n/fg.pts.length)*100/FIGURAS.length)+"%";
+  if(proximo>fg.pts.length){ atualizaConta(); fecha(); return; }
+  marcaProximo();
+  diz(nomeNum(proximo));
+}
+/* ⚠️ todo ajudante que mexe no DOM comeca conferindo se o DOM existe: uma
+   funcao dessas, chamada antes do elemento nascer, ja derrubou quatro
+   portoes de uma vez com TypeError. */
+function atualizaConta(){
+  if(!contaEl) return;
+  var fg=figura();
+  contaEl.innerHTML=Math.min(proximo-1,fg.pts.length)+" de "+fg.pts.length;
+}
+/* `data-qa` = o pontinho da vez, so para o auditor-jogador. Para a crianca o
+   atributo nao existe (nao muda um pixel na tela). O PULSAR forte, esse sim,
+   so comeca no 2o degrau do andaime — o anel inteiro ja marca a vez antes. */
+function marcaProximo(){
+  var i, p;
+  if(!ptEls.length) return;
+  for(i=0;i<ptEls.length;i++){
+    p=ptEls[i];
+    if(!p) continue;
+    if(p._n===proximo){
+      p.setAttribute("data-qa","1");
+      p.className=(errosSeg>=2)?"pt vez prox":"pt vez";
+    }else{
+      p.removeAttribute("data-qa");
+      p.className=(p._n<proximo)?"pt feito":"pt";
+    }
+  }
+  atualizaConta();
+}
+function destreme(p){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()||!p) return;
+    if(p._n<proximo) p.className="pt feito";
+    else if(p._n===proximo) p.className=(errosSeg>=2)?"pt vez prox":"pt vez";
+    else p.className="pt";
+  },340);
+}
+
+/* ---------------------------------------------------------------
+   O ANDAIME QUE CRESCE. Sempre com o NÚMERO da vez dentro da frase
+   (o nome do que está na tela sai de uma função, nunca escrito à
+   mão em cada dica — é assim que não sobra vocabulário de outra
+   rodada).
+   --------------------------------------------------------------- */
+function ajuda(n){
+  errosSeg=Math.min(n,DICAS.length);
+  if(errosSeg<3){
+    marcaProximo();
+    mostraDica(DICAS[errosSeg-1].replace("{n}",""+proximo));
+    if(errosSeg===2) diz(ROTULOS.length ? ("Procure a " + nomeNum(proximo) + ".") : ("Procure o número " + nomeNum(proximo) + "."));
+    return;
+  }
+  /* ⚠️ 3o DEGRAU: primeiro LIGA o tracinho, DEPOIS escreve a dica. Ao
+     contrario, a explicacao e apagada no mesmo quadro em que nasce (defeito
+     que apareceu em cinco pecas do mesmo lote). */
+  var alvo=ptEls[proximo-1];
+  if(alvo) liga(alvo);
+  if(!travada){
+    errosSeg=3;
+    marcaProximo();
+    mostraDica(DICAS[2]);
+  }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* ---------------------------------------------------------------
+   A FIGURA ACENDE INTEIRA. A luz sobe atrás dela, o brilho corre,
+   as faíscas estouram — e o nome vem AGORA, não antes: o conceito
+   por último é a lei da casa.
+   --------------------------------------------------------------- */
+function fecha(){
+  travada=true;                        /* ⚠️ trava NO INSTANTE, nao no fim */
+  var fg=figura(), g=ger, i;
+  for(i=0;i<ptEls.length;i++) if(ptEls[i]) ptEls[i].removeAttribute("data-qa");
+  escondeGuia();
+  FEITAS.push(fi);
+  /* ⚠️ a REVELACAO espera o ultimo traco CHEGAR (o traco leva .3s para correr).
+     Acender a figura no mesmo quadro em que o traco nasce come justamente o
+     gesto que a crianca acabou de fazer — e era assim que os dois ultimos
+     tracos da figura nunca eram vistos. */
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(folhaEl&&figEl){
+      acendeFigura(folhaEl,figEl,fg);
+      brilho(folhaEl);
+      faiscas(folhaEl,9);
+    }
+    if(revelaEl) revelaEl.innerHTML='<span class="lpfita">&#201; '+fg.nome+'!</span>';
+    sRevela();
+    diz("É " + fg.voz + "!");
+  },380);
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    fi++;
+    var msg="<b>A figura apareceu!</b><br>Voc&#234; ligou tudo na ordem certa.";
+    if(fi<FIGURAS.length) mostraBanner(msg,telaPontos);
+    else mostraBanner(msg,fimDaPeca);
+  },2100);
+}
+
+/* ---------------------------------------------------------------
+   A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimDaPeca(){
+  ger++; travada=false;
+  limpa();
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,100);
+  var c=el("div","centro"), i;
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; achou <b>"+(FEITAS.length||FIGURAS.length)+
+                   "</b> figura(s) seguindo os n&#250;meros na ordem."));
+  var gal=el("div","galeria");
+  for(i=0;i<FIGURAS.length;i++) gal.appendChild(montaFolha(FIGURAS[i],FIGURAS[i].pts.length,"mini",0));
+  c.appendChild(gal);
+  var b=el("button","btn","Jogar de novo");
+  b.style.marginTop="10px";
+  b.onclick=function(){ fi=0; FEITAS=[]; telaPontos(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a LIGAR OS PONTINHOS: a ordem dos n&#250;meros vira desenho."));
+  t.appendChild(c); app.appendChild(t);
+  diz("Peça fechada!");
+}
+
+telaPontos();
+</script>
+</body></html>

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — linha do tempo</title>
+<!-- ============================================================
+     PEÇA: LINHA DO TEMPO (antes / depois / ao mesmo tempo)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O que ela ensina: SERIAÇÃO no tempo. Não é "ordenar uma lista": é
+     descobrir o que veio ANTES, o que veio DEPOIS — e que duas coisas
+     podem acontecer AO MESMO TEMPO (a folhinha aparece em cima
+     enquanto a raiz cresce embaixo). Esse terceiro caso é o que
+     separa uma linha do tempo de uma fila.
+
+     Armadilhas desta mecânica (_padrao/DINAMICAS.md, linhas "Ordenar /
+     linha do tempo" e "Arrastar") — cada uma já paga em atividade real:
+       · a faixa que rola precisa de `overflow-x` PRÓPRIO. Sem isso ela
+         empurra a PÁGINA para o lado e o enunciado sai da tela;
+       · TRÊS caminhos: mouse, dedo (arrasto real) e TOQUE SIMPLES;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+       · guarda `ultimoToque` contra o evento de mouse FANTASMA que o
+         celular dispara depois do toque. Defeito pego DUAS vezes;
+       · nunca trava: no 3º erro a peça é revelada e a fila anda;
+       · `data-qa` publicado (a ficha que serve AGORA = "1" e a vaga da
+         vez = "1") para o auditor-jogador conseguir terminar.
+
+     ⚠️ CONTEÚDO: numa atividade de verdade a ordem dos fatos é conferida
+     por ESPECIALISTA — nenhum portão pega data histórica errada.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:6px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: LINHA DO TEMPO ---------------- */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.pontas{display:block;margin:13px 0 3px;font-size:12px;font-weight:800;letter-spacing:.6px;
+        color:#ffd54a;text-align:center;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 8px;}
+.pontas i{font-style:normal;display:inline-block;padding:0 10px}
+/* ⭐ A ARMADILHA-MOR DESTA MECANICA: a rolagem lateral e DA FAIXA, nunca da
+   pagina. `overflow-x:auto` + `max-width:100%` prendem o excesso aqui dentro;
+   `overflow-y:hidden` deixa o portao de leiaute saber que o que sai pelo lado
+   esta ESCONDIDO (e nao "botao em cima de botao"). */
+.faixa{position:relative;max-width:100%;overflow-x:auto;overflow-y:hidden;
+       -webkit-overflow-scrolling:touch;background:rgba(255,255,255,.07);
+       border-radius:16px;padding:6px 0 4px}
+.trilho{display:inline-block;white-space:nowrap;padding:0 8px}
+.vagabox{display:inline-block;vertical-align:top;width:112px;margin:0 3px;white-space:normal}
+.cam{width:100%;height:62px;border:3px dashed #a08e73;border-radius:14px;
+     background:rgba(255,255,255,.10);color:#f4efe6;font-size:13px;font-weight:700;
+     line-height:1.2;padding:6px 5px;text-align:center;overflow:hidden;background:rgba(22,24,30,.82);color:#f4efe6;display:inline-block;}
+/* certo = borda INTEIRA + a ficha escrita dentro: forma e texto, nao so cor
+   (funciona no mudo e para quem nao distingue verde) */
+.cam.ok{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12;font-weight:800}
+.mom{margin-top:3px;font-size:10px;font-weight:700;color:var(--texto,#f4efe6);line-height:1.25}
+/* ⚠️ o "3o MOMENTO" mora num <span> PROPRIO de proposito: se ele ficasse solto
+   dentro do .mom, o retangulo do texto engoliria a etiqueta amarela de baixo e o
+   portao do contraste mediria letra clara sobre AMARELO (1,23:1) num texto que
+   esta perfeito sobre o fundo escuro. Rotulo e etiqueta = duas caixas. */
+.momt{display:block}
+.junto{display:block;font-style:normal;background:#ffd54a;color:#33280a;border-radius:8px;
+       margin-top:3px;padding:2px 4px;font-size:10px;font-weight:800}
+.banco{display:block;text-align:center;margin-top:8px}
+.pc{display:inline-block;vertical-align:top;background:#fffdf6;color:#221a12;border:0;
+    border-radius:14px;width:132px;min-height:52px;margin:4px 4px;padding:7px 8px;
+    font-size:14px;font-weight:700;line-height:1.2;text-align:center;cursor:pointer;
+    box-shadow:0 4px 0 #c9bda6}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#ffeeb0;box-shadow:0 4px 0 #c9a52f}
+/* ⚠️ a ficha usada SAI do fluxo (display:none), nao fica invisivel no lugar:
+   com ficha de 132px o `visibility:hidden` deixava buracos enormes no banco e
+   a crianca via uma bagunca de espacos vazios. E, de quebra, ficha invisivel
+   continua com retangulo — o portao do leiaute a media como 'resposta' e o
+   auditor-jogador ainda a enxergava para clicar. */
+.pc.usada{display:none;pointer-events:none}
+.pc.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+.pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a sombra que segue o dedo/o mouse durante o arrasto. pointer-events:none
+   para nao roubar o hit-test de quem esta embaixo. */
+.somb{position:fixed;width:132px;min-height:52px;padding:7px 8px;text-align:center;border-radius:14px;
+      background:#fffdf6;color:#221a12;font-size:14px;font-weight:700;line-height:1.2;
+      pointer-events:none;z-index:60;box-shadow:0 8px 18px rgba(0,0,0,.45)}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (a vida de uma planta, 8 anos). Ao copiar a peça
+   para uma atividade, troque APENAS este bloco: cada fato tem um NOME e um
+   MOMENTO (`t`). Dois fatos com o MESMO `t` acontecem AO MESMO TEMPO — é o
+   caso que transforma a fila numa linha do tempo de verdade.
+   ⚠️ A ordem tem que ser conferida por quem sabe do assunto: portão nenhum
+   pega "a chuva veio antes da semente". */
+var FATOS=[
+ {t:1,n:"A semente &#233; plantada"},
+ {t:2,n:"A chuva molha a terra"},
+ {t:3,n:"A folhinha aparece em cima"},
+ {t:3,n:"A raiz cresce embaixo"},
+ {t:4,n:"A planta fica alta"},
+ {t:5,n:"A flor abre"}
+];
+
+var ORDEM=[];              /* os momentos, na ordem das vagas: [1,2,3,3,4,5] */
+var vagaAtual=0, errosSeg=0, telaAtual=null, barraP=null;
+var pecas=[], camas=[];
+/* ⚠️ o guarda do MOUSE FANTASMA: o celular dispara mousedown/click DEPOIS do
+   toque. Sem esta marca de tempo a ficha era acionada duas vezes (o toque
+   colocava e o fantasma tentava colocar de novo). */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false;
+
+function montaOrdem(){
+  var a=FATOS.slice(0), i;
+  a.sort(function(x,y){return x.t-y.t;});
+  ORDEM=[];
+  for(i=0;i<a.length;i++) ORDEM.push(a[i].t);
+}
+function quantosNoMomento(t){
+  var i,n=0;
+  for(i=0;i<ORDEM.length;i++) if(ORDEM[i]===t) n++;
+  return n;
+}
+
+function telaLinhaDoTempo(){
+  limpa(); document.onkeydown=null; soltaSombra();
+  montaOrdem();
+  vagaAtual=0; errosSeg=0; pecas=[]; camas=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","LINHA DO TEMPO"));
+  c.appendChild(el("div","balao",
+    "Ponha a hist&#243;ria da planta na faixa: o que veio <b>antes</b> e o que veio <b>depois</b>."));
+  c.appendChild(el("div","pontas","<i>&#9664; ANTES</i><i>DEPOIS &#9654;</i>"));
+
+  /* a FAIXA: rolagem lateral propria, nunca da pagina */
+  var fx=el("div","faixa"); fx.id="faixaP";
+  var tr=el("div","trilho");
+  var i,vb,cm,mo,txt;
+  for(i=0;i<ORDEM.length;i++){
+    vb=el("div","vagabox");
+    cm=el("div","cam","?");
+    txt='<span class="momt">'+ORDEM[i]+"&#186; MOMENTO</span>";
+    if(quantosNoMomento(ORDEM[i])>1) txt+='<i class="junto">AO MESMO TEMPO</i>';
+    mo=el("div","mom",txt);
+    vb.appendChild(cm); vb.appendChild(mo);
+    tr.appendChild(vb); camas.push(cm);
+  }
+  fx.appendChild(tr); c.appendChild(fx);
+
+  /* o banco de fichas, embaralhado */
+  var bc=el("div","banco"), b, f;
+  var sorteadas=baguncar(FATOS.slice(0));
+  for(i=0;i<sorteadas.length;i++){
+    f=sorteadas[i];
+    b=el("div","pc",f.n);
+    b.momento=f.t; b.nome=f.n;
+    ligaFicha(b);
+    bc.appendChild(b); pecas.push(b);
+  }
+  c.appendChild(bc);
+  c.appendChild(el("div","hint",
+    "Toque no acontecimento ou arraste at&#233; a faixa. A faixa anda para o lado."));
+  t.appendChild(c); app.appendChild(t);
+  marcaQualServe();
+}
+
+/* ---------- as TRES portas de entrada da mesma ficha ---------- */
+/* ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart mata o
+   toque no celular (armadilha registrada no _padrao/DINAMICAS.md). */
+function ligaFicha(b){
+  b.onclick=cliqueFicha;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+}
+function cliqueFicha(){
+  if(Date.now()-ultimoToque<700) return;   /* clique FANTASMA depois do toque */
+  tocaFicha(this);
+}
+function mouseIni(ev){
+  if(Date.now()-ultimoToque<700) return;
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=Date.now();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();   /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=Date.now();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) tocaFicha(alvo);   /* toque simples: vale como clique */
+}
+function moveMouse(ev){ if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------- o arrasto de verdade (mouse e dedo usam o mesmo caminho) ---- */
+function pegaEm(b,x,y){
+  if(!b||b.className.indexOf("usada")>=0) return;
+  pego=b; px0=x; py0=y; moveu=false;
+  sTap();
+  b.className="pc sel";
+  somb=el("div","somb",b.nome);
+  somb.style.left=(x-66)+"px"; somb.style.top=(y-29)+"px";
+  somb.style.display="none";
+  document.body.appendChild(somb);
+}
+function moveEm(x,y){
+  if(!pego||!somb) return;
+  if(!moveu&&(Math.abs(x-px0)>8||Math.abs(y-py0)>8)){ moveu=true; somb.style.display="block"; }
+  if(moveu){ somb.style.left=(x-66)+"px"; somb.style.top=(y-29)+"px"; }
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b) return;
+  if(b.className.indexOf("usada")<0) b.className="pc";
+  if(!arrastou) return;            /* nao arrastou: quem resolve e o clique */
+  if(naFaixa(x,y)) tocaFicha(b);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+}
+function naFaixa(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&n<6){
+    var cl=" "+String(e.className||"")+" ";
+    if(cl.indexOf(" cam ")>=0||cl.indexOf(" faixa ")>=0||cl.indexOf(" trilho ")>=0||
+       cl.indexOf(" vagabox ")>=0) return true;
+    e=e.parentNode; n++;
+  }
+  return false;
+}
+
+/* ---------- a regra da fase ---------- */
+/* serve na vaga da vez quem tem o MESMO momento dela — e por isso que dois
+   fatos "ao mesmo tempo" cabem nas duas vagas irmas, em qualquer ordem. */
+function tocaFicha(b){
+  if(!b||b.className.indexOf("usada")>=0) return;
+  if(vagaAtual>=ORDEM.length) return;
+  if(b.momento===ORDEM[vagaAtual]) poeNaFaixa(b); else erraFicha(b);
+}
+function poeNaFaixa(b){
+  var cm=camas[vagaAtual];
+  cm.className="cam ok"; cm.innerHTML=b.nome;
+  b.className="pc usada";
+  sCerto();
+  vagaAtual++; errosSeg=0;
+  apagaDica();
+  if(barraP) barraP.style.width=Math.round(vagaAtual*100/ORDEM.length)+"%";
+  marcaQualServe();
+  rolaAteAVaga();
+  if(vagaAtual>=ORDEM.length) fechaFase();
+}
+function erraFicha(b){
+  sErro(); errosSeg++;
+  b.className="pc treme";
+  destreme(b);
+  ajuda(errosSeg);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda
+   `!telaAtual.parentNode` ele mexeria numa tela que ja saiu. */
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("usada")<0) b.className="pc";
+  },340);
+}
+function ajuda(n){
+  if(n===1){
+    mostraDica("Pergunte: o que precisa acontecer <b>antes</b> de todo o resto?");
+  }else if(n===2){
+    mostraDica("O que vem <b>logo depois</b> do que j&#225; est&#225; na faixa est&#225; piscando.");
+    acendeCerta();
+  }else{
+    mostraDica("Era este! Eu coloco e voc&#234; segue de onde parou.");
+    seguraDica(4000);   /* poe a peca APAGA a dica: segura para dar tempo de ler */
+    revela();
+  }
+}
+function acendeCerta(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(b.className.indexOf("usada")>=0) continue;
+    b.className=(b.momento===ORDEM[vagaAtual])?"pc pisca":"pc";
+  }
+}
+function revela(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    if(b.className.indexOf("usada")<0&&b.momento===ORDEM[vagaAtual]){ poeNaFaixa(b); return; }
+  }
+}
+/* ⚠️ LICAO PAGA, MEDIDA NA BANCADA (ago/2026) — A EXPLICACAO QUE SUMIA NO
+   MESMO INSTANTE. No 3o tropeco o andaime revela: escreve *"Era este! Eu
+   coloco e voce segue de onde parou"* e poe a peca na faixa. So que POR a peca
+   passa pelo caminho do acerto, que chama `apagaDica()` — entao a frase
+   aparecia e sumia no mesmo pisco. A crianca que mais precisava de explicacao
+   era justamente a unica que nao conseguia ler a dela.
+   (Quem mediu foi o `_qa/errador.js`: erro 2 e erro 3 voltaram "(sem dica)".
+   O primeiro impulso foi dizer que o portao estava errado; o portao estava
+   certo — a frase existia por 300ms.)
+   Agora a revelacao SEGURA a dica por 4 segundos: tempo de ler, e depois ela
+   sai sozinha para nao ficar entulhando a tela. */
+var dicaPresaAte = 0;
+function seguraDica(ms){ dicaPresaAte = (new Date()).getTime() + (ms||4000); }
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(!d||!d.parentNode) return;
+  var falta = dicaPresaAte - (new Date()).getTime();
+  if(falta > 0){ setTimeout(apagaDica, falta + 30); return; }
+  d.parentNode.removeChild(d);
+}
+/* a faixa anda sozinha ate a vaga da vez: sem isso a crianca preenche as tres
+   primeiras e acha que acabou, porque as outras estao fora do campo de visao. */
+function rolaAteAVaga(){
+  var fx=document.getElementById("faixaP");
+  if(!fx||vagaAtual>=camas.length) return;
+  var vb=camas[vagaAtual].parentNode, alvo;
+  if(!vb) return;
+  alvo=vb.offsetLeft-Math.round(fx.clientWidth/2)+Math.round(vb.offsetWidth/2);
+  if(alvo<0) alvo=0;
+  fx.scrollLeft=alvo;
+}
+/* data-qa: a ficha que serve AGORA e a vaga da vez ficam com "1". E so para o
+   auditor-jogador (_qa/jogador.js) conseguir terminar a peca sozinho. */
+function marcaQualServe(){
+  var i,b;
+  for(i=0;i<pecas.length;i++){
+    b=pecas[i];
+    b.setAttribute("data-qa",(b.className.indexOf("usada")<0&&vagaAtual<ORDEM.length&&
+                              b.momento===ORDEM[vagaAtual])?"1":"0");
+  }
+  for(i=0;i<camas.length;i++) camas[i].setAttribute("data-qa",(i===vagaAtual)?"1":"0");
+}
+function fechaFase(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    mostraBanner("A hist&#243;ria ficou em ordem, do come&#231;o ao fim!",telaFimLinha);
+  },420);
+}
+
+function telaFimLinha(){
+  limpa(); document.onkeydown=null; soltaSombra();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao",
+    "Voc&#234; achou o que veio <b>antes</b>, o que veio <b>depois</b> e as duas coisas que aconteceram <b>ao mesmo tempo</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaLinhaDoTempo;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a LINHA DO TEMPO: faixa que rola sozinha, tr&#234;s caminhos de toque."));
+  t.appendChild(c); app.appendChild(t);
+}
+telaLinhaDoTempo();
+</script>
+</body></html>

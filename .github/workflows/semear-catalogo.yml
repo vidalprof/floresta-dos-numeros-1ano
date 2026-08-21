@@ -1,0 +1,88 @@
+name: Semear Catalogo (mundos + paradas no Firebase)
+
+# Grava o CATALOGO que o EduMundo lê (/catalogo/mundos). A "Fabrica" fará isso
+# ao publicar cada atividade; por ora semeia o mundo Ilha Pirata (7 paradas).
+# apiKey do Firebase Web e PUBLICO por design (passado por input, nao commitado).
+
+on:
+  workflow_dispatch:
+    inputs:
+      api_key:
+        description: "apiKey do Firebase Web (publico por design)"
+        required: true
+        type: string
+      database_url:
+        description: "URL do Realtime Database"
+        required: false
+        default: "https://educaverso-73b1a-default-rtdb.firebaseio.com"
+        type: string
+      base_atividades:
+        description: "URL base dos jogos (deixe vazio p/ 'em breve')"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  semear:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login anonimo + gravar catalogo
+        env:
+          API_KEY: ${{ inputs.api_key }}
+          DB_URL: ${{ inputs.database_url }}
+          BASE: ${{ inputs.base_atividades }}
+        run: |
+          python3 - <<'PY'
+          import os, json, urllib.request, urllib.error
+          key=os.environ.get("API_KEY","").strip()
+          db=os.environ.get("DB_URL","").strip().rstrip("/")
+          base=os.environ.get("BASE","").strip().rstrip("/")
+          if not key: raise SystemExit("::error::api_key vazio")
+
+          def post(url,obj):
+              d=json.dumps(obj).encode(); req=urllib.request.Request(url,data=d,headers={"Content-Type":"application/json"},method="POST")
+              with urllib.request.urlopen(req,timeout=30) as r: return json.loads(r.read().decode())
+          def put(url,obj):
+              d=json.dumps(obj).encode(); req=urllib.request.Request(url,data=d,headers={"Content-Type":"application/json"},method="PUT")
+              with urllib.request.urlopen(req,timeout=30) as r: return r.read().decode()
+
+          print(">> login anonimo...")
+          auth=post("https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=%s"%key,{"returnSecureToken":True})
+          tok=auth["idToken"]; print("   ok")
+
+          # 1a parada (fogueira) aponta pro jogo publicado; as demais ficam "em breve"
+          # ate serem construidas. base_atividades default aponta pro navio-pirata.
+          jogo = (base+"/navio-pirata/") if base else ""
+          def parada(t,m,o,x,y,link=""):
+              return {"titulo":t,"mascote":m,"ordem":o,"x":x,"y":y,"link":link,"soon":(link=="")}
+
+          mundo = {
+            "nome":"Ilha do Tesouro","emoji":"🏴‍☠️","tema":"pirata","cor":"#1f8a70","ordem":1,
+            "paradas":{
+              "fogueira":  parada("A Fogueira","🔥",1,18,72, jogo),   # <- jogavel (numeros)
+              "poco":      parada("O Poço","🪣",2,34,50),
+              "palmeiral": parada("O Palmeiral","🌴",3,50,68),
+              "gruta":     parada("A Gruta","🦇",4,62,40),
+              "praia":     parada("Praia do X","❌",5,44,26),
+              "barracao":  parada("O Barracão","🛖",6,74,62),
+              "cais":      parada("O Navio","⛵",7,86,34)
+            }
+          }
+          print(">> gravando /catalogo/mundos/ilha-pirata ...")
+          put("%s/catalogo/mundos/ilha-pirata.json?auth=%s"%(db,tok), mundo)
+          print("   ok - catalogo semeado.")
+
+          # turma-mestra de TESTE (aluninhos ficticios) -> abrir educaverso/?t=teste
+          print(">> criando a turma-mestra 'teste' ...")
+          turma = {"nome":"Turma Teste","criada_em":"2026-07-17","alunos":{
+            "ana":  {"nome":"Ana","avatar":"🦊"},
+            "bento":{"nome":"Bento","avatar":"🚀"},
+            "clara":{"nome":"Clara","avatar":"🦉"}
+          }}
+          put("%s/turmas/teste.json?auth=%s"%(db,tok), turma)
+          print("   ok - turma 'teste' criada.")
+          print("")
+          print("===== TUDO SEMEADO =====")
+          print("Aluno (teste): https://vidalprof.github.io/educaverso/?t=teste")
+          print("1a parada 'A Fogueira' -> "+(jogo or "(sem jogo; passe base_atividades)"))
+          PY

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — mapa conceitual (setas com nome)</title>
+<!-- ============================================================
+     PEÇA: MAPA CONCEITUAL CONSTRUÍDO (arrastar conceitos + traçar setas COM NOME)
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     DE ONDE ELA VEM: `_pesquisa/REGRAS-INTERATIVIDADE.md`, bloco (B), item 14 —
+     "a evidência mais forte de todas as mecânicas novas (d ≈ 0,63–0,66);
+     CONSTRUIR vale muito mais que copiar". A casa nunca tinha montado.
+
+     POR QUE ENSINA (e por que a SETA TEM NOME): ligar duas caixas com um risco
+     mudo não prova nada — a criança liga "sol" e "planta" por vizinhança. O que
+     mede compreensão é a PROPOSIÇÃO: sol —dá energia→ planta. É o nome da seta
+     que obriga a dizer QUAL é a relação, e é por isso que ele não é enfeite:
+     é o conteúdo. A seta também tem DIREÇÃO: "a planta vira comida do coelho"
+     não é a mesma coisa que o contrário, e a peça cobra isso com carinho
+     ("Quase! A seta começa em A PLANTA").
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRÊS CAMINHOS no arrasto: mouse, dedo e TOQUE SIMPLES. Aqui os gestos
+         são dois e separados de propósito: ARRASTAR arruma o mapa (as setas
+         acompanham em tempo real), TOCAR-e-TOCAR liga. Um gesto só para as duas
+         coisas confunde — e no celular quase sempre vira arrasto sem querer.
+       · NUNCA `preventDefault` no `touchstart` (mata o toque no celular); ele
+         mora no `touchmove` e só enquanto há peça na mão.
+       · GUARDA DO MOUSE FANTASMA (`ultimoToque`): o celular dispara
+         mousedown/mouseup/click FALSOS depois do toque, e eles desmarcavam o
+         conceito que a criança tinha acabado de escolher. Defeito pego DUAS
+         vezes pelo Marcos, em duas peças diferentes.
+       · AS LINHAS SÃO SVG e são REDESENHADAS a cada quadro do arrasto — linha
+         que fica para trás do conceito é o defeito clássico desta mecânica.
+       · O NOME DA SETA É HTML, não <text> de SVG: o auditor de contraste lê a
+         cor computada (`color`) e o SVG pinta com `fill` — ele mediria a cor
+         errada e reprovaria (ou aprovaria) um rótulo que ninguém enxerga.
+       · NUNCA TRAVA: no 3º nome errado a peça revela e a seta se fecha sozinha.
+       · `data-qa` com UM alvo de cada vez (conceito de saída → conceito de
+         chegada → nome certo), senão o auditor-jogador não fecha a peça.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: MAPA CONCEITUAL ----------------
+   ⚠️ margem propria de 13px: `.balao + *` tem a mesma forca que `.mapa` e perde
+   por vir antes no arquivo (regra 9 do _qa/leiaute.js, cobrada duas vezes). */
+.mapa{position:relative;max-width:430px;height:240px;margin:13px auto 0;border-radius:16px;
+      background:rgba(255,255,255,.09);border:2px solid rgba(255,255,255,.20);overflow:hidden}
+.setas{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+/* ⚠️ o NOME da seta fica ACIMA dos conceitos (z-index maior que o `.noco`):
+   numa janela baixa os conceitos chegam perto e o rotulo sumia atras deles —
+   "dá águ[a]", "vira comi[da de]". O nome da seta e CONTEUDO, nao enfeite:
+   melhor ele passar por cima de uma caixa do que ficar pela metade. */
+.rots{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:5}
+/* o NOME da seta: HTML, nunca <text> de SVG (o auditor de contraste le `color`,
+   e o SVG pinta com `fill` — ele mediria a cor errada). */
+.rot{position:absolute;background:#fffdf6;color:#221a12;font-size:12px;font-weight:800;
+     padding:3px 7px;border-radius:9px;white-space:nowrap;
+     -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);
+     box-shadow:0 2px 6px rgba(0,0,0,.35)}
+/* O CONCEITO: alvo grande (46px de altura) e arrastavel.
+   ⚠️ ele leva TAMBEM a classe `.ficha`, que nao e enfeite: e o nome que o
+   auditor-jogador (_qa/jogador.js) procura. A lista de alvos dele e fixa; peca
+   com classe so minha e peca que ele NAO ENXERGA — e ele reprova com "PRESO"
+   uma tela que funciona (foi exatamente o que aconteceu na 1a rodada desta
+   peca). Toda mecanica nova tem de vestir uma classe que ele ja conhece.  */
+.ficha{-webkit-user-select:none;-moz-user-select:none;user-select:none}
+.noco{position:absolute;width:34%;min-height:46px;padding:8px 4px;border-radius:14px;
+      background:#fffdf6;color:#221a12;font-size:15px;font-weight:800;line-height:1.2;
+      text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;z-index:3}
+/* ESCOLHIDO: anel + triangulo de "sai daqui" — forma E cor, nunca so a cor */
+.noco.sel{background:#ffeeb0;box-shadow:0 0 0 4px #ffd54a}
+.noco.sel:after{content:"\25B6";position:absolute;right:-9px;top:50%;margin-top:-9px;
+                font-size:15px;color:#ffd54a;line-height:18px}
+/* o PAINEL ja nasce com altura: assim nada PULA quando os nomes entram */
+.painel{display:block;min-height:66px;margin-top:10px}
+.paviso{font-size:15px;font-weight:700;color:var(--texto,#f4efe6);padding:6px 4px}
+.painel .opt{display:inline-block;width:auto;max-width:none;margin:5px 4px;padding:12px 13px;
+             font-size:15px;min-height:48px;vertical-align:middle}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (a janela do PC da escola): encolhe o TABULEIRO, nunca o alvo de
+   toque — e os conceitos se reacomodam sozinhos, porque a posicao deles e em
+   PORCENTAGEM e ainda leva um teto (ver `arruma`). */
+@media (max-height:560px){.mapa{height:190px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (uma teia de vida bem curta, 8 a 10 anos). Ao copiar
+   a peça troque APENAS este bloco. As regras do conteúdo:
+     1. no máximo 5 conceitos e 4 setas — mapa grande estoura a carga cognitiva;
+     2. cada seta tem UMA relação certa e nomes distratores PLAUSÍVEIS;
+     3. a direção importa: escreva sempre de quem AGE para quem RECEBE;
+     4. `por` explica a proposição em uma frase — é o fecho de cada seta.    */
+var NOS= /*TECNICA*/ [
+ {k:"sol",    n:"O SOL",    px:4,  py:1},
+ {k:"chuva",  n:"A CHUVA",  px:60, py:1},
+ {k:"planta", n:"A PLANTA", px:24, py:40},
+ {k:"coelho", n:"O COELHO", px:58, py:80}
+];
+var LIGS= /*TECNICA*/ [
+ {a:"sol", b:"planta", r:"d&#225; energia",
+  ops:["d&#225; energia","bebe","mora em"],
+  por:"O sol <b>d&#225; energia</b> para a planta crescer.",
+  dicas:["Pense no que o sol manda para a planta o dia inteiro.",
+         "N&#227;o &#233; &#225;gua: &#233; luz e calor. A resposta certa est&#225; acesa.",
+         "Era <b>d&#225; energia</b>. Eu escrevi na seta para voc&#234;."]},
+ {a:"chuva", b:"planta", r:"d&#225; &#225;gua",
+  ops:["d&#225; &#225;gua","d&#225; energia","foge da"],
+  por:"A chuva <b>d&#225; &#225;gua</b>, e a raiz bebe essa &#225;gua.",
+  dicas:["O que cai da nuvem e entra na terra?",
+         "Energia quem d&#225; &#233; o sol. A certa est&#225; acesa.",
+         "Era <b>d&#225; &#225;gua</b>. Eu escrevi na seta para voc&#234;."]},
+ {a:"planta", b:"coelho", r:"vira comida de",
+  ops:["vira comida de","d&#225; &#225;gua para","ca&#231;a o"],
+  por:"O coelho come a planta: a energia do sol chega at&#233; ele.",
+  dicas:["O que o coelho faz com a folha?",
+         "Planta n&#227;o ca&#231;a ningu&#233;m. A certa est&#225; acesa.",
+         "Era <b>vira comida de</b>. Eu escrevi na seta para voc&#234;."]}
+];
+
+var SVGNS= /*TECNICA*/ "http://www.w3.org/2000/svg";
+function svgEl(t){ return document.createElementNS(SVGNS,t); }
+
+var mapa=null, svg=null, camadaR=null, painel=null, barraP=null, telaA=null;
+var sel=null;          /* conceito escolhido, esperando o segundo */
+var rotulando=null;    /* a seta que est&#225; sendo batizada */
+var botoes=[];         /* os nomes possiveis, na vez de batizar */
+var feitas=0, ger=0;
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA: o celular dispara mousedown/mouseup/click
+   FALSOS logo depois do toque. Sem este carimbo eles desmarcavam o conceito
+   que a crianca acabara de escolher. Defeito pego DUAS vezes pelo Marcos.  */
+var ultimoToque=0, fimArrasto=0;
+var pegou=null, x0=0, y0=0, ox=0, oy=0, arrastando=false;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function noDe(k){ var i; for(i=0;i<NOS.length;i++) if(NOS[i].k===k) return NOS[i]; return null; }
+function nomeDe(k){ var n=noDe(k); return n?n.n:""; }
+
+function pecaMapa(){
+  limpa(); apagaDica(); ger++;
+  sel=null; rotulando=null; botoes=[]; feitas=0; pegou=null; arrastando=false;
+  var i;
+  for(i=0;i<LIGS.length;i++){ LIGS[i].feito=false; LIGS[i]._e=0; }
+
+  var t=el("div","tela"); telaA=t;
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","O MAPA DA VIDA"));
+  c.appendChild(el("div","balao","Ligue os conceitos e <b>d&#234; nome</b> a cada seta."));
+
+  mapa=el("div","mapa");
+  svg=svgEl("svg");
+  svg.setAttribute("class","setas");
+  mapa.appendChild(svg);
+  camadaR=el("div","rots");
+  mapa.appendChild(camadaR);
+  for(i=0;i<NOS.length;i++){
+    NOS[i].el=el("div","noco ficha",NOS[i].n);
+    NOS[i].el._no=NOS[i];
+    ligaNo(NOS[i]);
+    mapa.appendChild(NOS[i].el);
+  }
+  c.appendChild(mapa);
+
+  painel=el("div","painel");
+  c.appendChild(painel);
+  c.appendChild(el("div","hint","Toque em um conceito e depois no outro. Arraste para arrumar o mapa."));
+  t.appendChild(c); app.appendChild(t);
+
+  /* so DEPOIS de estar na tela da para medir o tabuleiro e p&#244;r cada conceito
+     no lugar em pixels — e a partir dai o arrasto e as setas usam pixel.   */
+  arruma();
+  dizPainel(avisoPadrao());
+  redesenha();
+  marcaVez();
+}
+
+function arruma(){
+  var r=mapa.getBoundingClientRect(), i, no, h;
+  for(i=0;i<NOS.length;i++){
+    no=NOS[i];
+    h=no.el.offsetHeight||46;
+    no.x=Math.round(r.width*no.px/100);
+    no.y=Math.round(r.height*no.py/100);
+    /* ⚠️ TETO: numa janela baixa o tabuleiro encolhe e o ultimo conceito
+       escorregava para FORA (o `overflow:hidden` cortava o coelho pela
+       metade). A porcentagem sozinha nao basta — a altura do conceito nao
+       encolhe junto, porque 44px e o piso do dedo da crianca. */
+    if(no.y>r.height-h-2) no.y=Math.round(r.height-h-2);
+    if(no.y<0) no.y=0;
+    poe(no);
+  }
+}
+function poe(no){ no.el.style.left=no.x+"px"; no.el.style.top=no.y+"px"; }
+
+/* ---------- as TRÊS portas de entrada do mesmo conceito ----------
+   ⚠️ o `touchstart` recebe uma funcao COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto dele. preventDefault no touchstart MATA o toque
+   no celular (armadilha registrada no _padrao/DINAMICAS.md).             */
+function ligaNo(no){
+  var e=no.el;
+  e.onclick=cliqueNo;
+  e.onmousedown=mouseNo;
+  e.addEventListener("touchstart",toqueNo,false);
+}
+function cliqueNo(){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no touchend */
+  toca(this._no);
+}
+function mouseNo(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  comeca(this._no,ev.clientX,ev.clientY);
+}
+function toqueNo(ev){
+  ultimoToque=agora();
+  var d=ev.touches[0]; if(!d) return;
+  comeca(this._no,d.clientX,d.clientY);
+}
+/* ⚠️ NUNCA `preventDefault` no touchstart acima. Ele mora no touchmove, e so
+   enquanto ha conceito na mao. */
+function comeca(no,x,y){
+  if(!no) return;
+  pegou=no; x0=x; y0=y; arrastando=false;
+  ox=x-no.x; oy=y-no.y;
+}
+function move(x,y){
+  if(!pegou||!mapa) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    pegou.el.style.zIndex="6";
+  }
+  var r=mapa.getBoundingClientRect();
+  var w=pegou.el.offsetWidth, h=pegou.el.offsetHeight;
+  var nx=x-ox, ny=y-oy;
+  if(nx<0) nx=0; if(ny<0) ny=0;
+  if(nx>r.width-w) nx=r.width-w;
+  if(ny>r.height-h) ny=r.height-h;
+  pegou.x=Math.round(nx); pegou.y=Math.round(ny);
+  poe(pegou);
+  redesenha();               /* as setas acompanham o dedo, quadro a quadro */
+}
+function solta(doDedo){
+  if(!pegou) return;
+  var no=pegou; pegou=null;
+  no.el.style.zIndex="3";
+  if(!arrastando){ if(doDedo) toca(no); return; }   /* foi so um toque */
+  arrastando=false; fimArrasto=agora();
+  redesenha();
+}
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(){ if(souDedo()) return; solta(false); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0]; if(!d) return;
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();   /* so aqui, e so com conceito na mao */
+},{passive:false});
+document.addEventListener("touchend",function(){
+  ultimoToque=agora();
+  solta(true);
+},false);
+
+/* ---------- ligar: toque simples de um e depois do outro ---------- */
+function toca(no){
+  if(!no) return;
+  if(rotulando){ sTap(); return; }        /* esta batizando uma seta */
+  if(!sel){ sel=no; pinta(); sTap(); dizPainel("Agora toque em <b>quem recebe</b>."); marcaVez(); return; }
+  if(sel===no){ sel=null; pinta(); sTap(); dizPainel(avisoPadrao()); marcaVez(); return; }
+  var L=achaLig(sel.k,no.k), V=achaLig(no.k,sel.k);
+  if(L){ abreRotulo(L); return; }
+  /* ERRO NAO PUNE: diz o que olhar e deixa o novo conceito na mao. */
+  sErro();
+  if(V) dizPainel("Quase! Esta seta come&#231;a em <b>"+nomeDe(V.a)+"</b>. Toque nele primeiro.");
+  else  dizPainel("Esses dois n&#227;o se ligam direto nesta hist&#243;ria. Tente outro par.");
+  sel=no; pinta(); marcaVez();
+}
+function achaLig(a,b){
+  var i;
+  for(i=0;i<LIGS.length;i++) if(!LIGS[i].feito&&LIGS[i].a===a&&LIGS[i].b===b) return LIGS[i];
+  return null;
+}
+function pinta(){
+  var i;
+  for(i=0;i<NOS.length;i++) NOS[i].el.className=(NOS[i]===sel)?"noco ficha sel":"noco ficha";
+}
+
+/* ---------- batizar a seta: e AQUI que a mecanica ensina ---------- */
+function abreRotulo(L){
+  rotulando=L;
+  sTap();
+  redesenha();                 /* desenha a seta provisoria, tracejada */
+  var lista=[], i, o;
+  for(i=0;i<L.ops.length;i++) lista.push(L.ops[i]);
+  /* EMBARALHADOS: com o certo sempre no mesmo lugar a crianca aprende a
+     posicao, nao a relacao (defeito da Fabrica de Estrelas). */
+  baguncar(lista);
+  painel.innerHTML="";
+  painel.appendChild(el("div","paviso","O que "+nomeDe(L.a)+" faz com "+nomeDe(L.b)+"?"));
+  botoes=[];
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++){
+    o=el("div","opt",lista[i]);
+    o._t=lista[i];
+    o.onclick=(function(x){ return function(){ escolheNome(x); }; })(o);
+    cx.appendChild(o); botoes.push(o);
+  }
+  painel.appendChild(cx);
+  marcaVez();
+}
+
+function escolheNome(o){
+  if(!rotulando){ sTap(); return; }
+  var L=rotulando;
+  if(o._t===L.r){ fechaSeta(L); return; }
+  sErro();
+  L._e++;
+  o.className="opt no";
+  devolve(o);
+  /* ⚠️ A ORDEM DO 3o DEGRAU E O CONSERTO (defeito medido ago/2026): a dica saia
+     ANTES do `fechaSeta()`, que chama `apagaDica()` — a fala que EXPLICA a
+     revelacao ("era `da agua`, eu escrevi na seta para voce") aparecia e sumia
+     no mesmo quadro. A seta ganhava nome sozinha e a crianca nao sabia por
+     que. Revela-se primeiro; a dica vem depois e fica ao lado do "porque". */
+  if(L._e>=3){ fechaSeta(L); mostraDica(L.dicas[2]); return; }
+  mostraDica(L.dicas[L._e-1]);
+  if(L._e===2) acendeCerto(L);
+}
+function acendeCerto(L){
+  var i;
+  for(i=0;i<botoes.length;i++) if(botoes[i]._t===L.r) botoes[i].className="opt ok";
+}
+
+function fechaSeta(L){
+  L.feito=true;
+  L.rot=L.r;
+  rotulando=null; botoes=[]; sel=null;
+  feitas++;
+  sCerto();
+  pinta();
+  redesenha();
+  apagaDica();
+  if(barraP) barraP.style.width=Math.round(feitas*100/LIGS.length)+"%";
+  painel.innerHTML="";
+  painel.appendChild(el("div","paviso",L.por));
+  marcaVez();
+  if(feitas>=LIGS.length){
+    var g=ger;
+    setTimeout(function(){
+      if(g!==ger||!telaA||!telaA.parentNode) return;
+      mostraBanner("Seu mapa est&#225; de p&#233;! Cada seta tem um nome — e um <b>porqu&#234;</b>.", fimMapa);
+    },780);
+  }
+}
+
+/* ---------- as SETAS (SVG que acompanha o arrasto) ---------- */
+function centroDe(no){
+  return {x:no.x+no.el.offsetWidth/2, y:no.y+no.el.offsetHeight/2,
+          w:no.el.offsetWidth, h:no.el.offsetHeight};
+}
+/* o ponto onde a linha ENCOSTA na borda da caixa: sem isto a ponta da seta
+   fica escondida embaixo do conceito e parece que nao ligou. */
+function naBorda(A,B){
+  var dx=B.x-A.x, dy=B.y-A.y;
+  if(!dx&&!dy) return {x:A.x,y:A.y};
+  var sx=dx?((A.w/2+3)/Math.abs(dx)):1e9;
+  var sy=dy?((A.h/2+3)/Math.abs(dy)):1e9;
+  var s=Math.min(sx,sy);
+  return {x:A.x+dx*s, y:A.y+dy*s};
+}
+function traca(a,b,viva){
+  var A=centroDe(a), B=centroDe(b);
+  var p1=naBorda(A,B), p2=naBorda(B,A);
+  var ln=svgEl("line");
+  ln.setAttribute("x1",p1.x); ln.setAttribute("y1",p1.y);
+  ln.setAttribute("x2",p2.x); ln.setAttribute("y2",p2.y);
+  /* cor E tracejado: quem nao distingue amarelo de creme ve pela forma */
+  ln.setAttribute("stroke",viva?"#fff3c9":"#ffd54a");
+  ln.setAttribute("stroke-width",viva?"4":"5");
+  ln.setAttribute("stroke-linecap","round");
+  if(viva) ln.setAttribute("stroke-dasharray","8,6");
+  svg.appendChild(ln);
+  ponta(p1,p2,viva?"#fff3c9":"#ffd54a");
+  /* ⚠️ O NOME NÃO FICA EM CIMA DA SETA. Na 1a montagem ele pousava no meio da
+     linha e TAPAVA a seta inteira — e a seta e metade do conteudo (ela diz o
+     SENTIDO da relacao). Agora o rotulo sai 16px na perpendicular: fica ao
+     lado da seta, e as duas coisas se leem juntas. */
+  var dx=p2.x-p1.x, dy=p2.y-p1.y, d=Math.sqrt(dx*dx+dy*dy)||1;
+  return {x:(p1.x+p2.x)/2-dy/d*16, y:(p1.y+p2.y)/2+dx/d*16};
+}
+/* a cabeca da seta e um triangulo calculado na mao: `marker-end` muda de
+   comportamento entre navegadores velhos e some sem avisar. */
+function ponta(p1,p2,cor){
+  var dx=p2.x-p1.x, dy=p2.y-p1.y, d=Math.sqrt(dx*dx+dy*dy);
+  if(d<1) return;
+  var ux=dx/d, uy=dy/d, L=13, W=6;
+  var bx=p2.x-ux*L, by=p2.y-uy*L;
+  var pg=svgEl("polygon");
+  pg.setAttribute("points",
+    p2.x+","+p2.y+" "+(bx-uy*W)+","+(by+ux*W)+" "+(bx+uy*W)+","+(by-ux*W));
+  pg.setAttribute("fill",cor);
+  svg.appendChild(pg);
+}
+function redesenha(){
+  if(!svg) return;
+  while(svg.firstChild) svg.removeChild(svg.firstChild);
+  camadaR.innerHTML="";
+  var i,L;
+  for(i=0;i<LIGS.length;i++){
+    L=LIGS[i];
+    if(!L.feito) continue;
+    poeRotulo(traca(noDe(L.a),noDe(L.b),false),L.rot);
+  }
+  if(rotulando) poeRotulo(traca(noDe(rotulando.a),noDe(rotulando.b),true),"...?");
+}
+/* o rotulo nao pode sair pela borda do tabuleiro (`overflow:hidden` cortaria
+   o nome da seta ao meio) — dai o teto e o piso de 46px. */
+function poeRotulo(m,txt){
+  var w=mapa.clientWidth, x=m.x, y=m.y, r=el("div","rot",txt);
+  if(x<46) x=46; if(x>w-46) x=w-46;
+  if(y<12) y=12; if(y>mapa.clientHeight-12) y=mapa.clientHeight-12;
+  r.style.left=x+"px"; r.style.top=y+"px";
+  camadaR.appendChild(r);
+}
+
+/* ---------- os ajudantes ---------- */
+function avisoPadrao(){
+  var falta=LIGS.length-feitas;
+  return "Faltam <b>"+falta+"</b> seta(s) para o mapa ficar de p&#233;.";
+}
+function dizPainel(txt){
+  if(!painel) return;
+  painel.innerHTML="";
+  painel.appendChild(el("div","paviso",txt));
+}
+function devolve(o){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    if(o.className.indexOf("ok")<0) o.className="opt";
+  },700);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* data-qa: UM alvo de cada vez, e so para o auditor-jogador (_qa/jogador.js):
+   conceito de saida -> conceito de chegada -> nome certo da seta. Dois "1" ao
+   mesmo tempo fariam o jogador tocar para sempre no que vem antes no DOM.  */
+function marcaVez(){
+  var i, alvo=null;
+  for(i=0;i<LIGS.length;i++) if(!LIGS[i].feito){ alvo=LIGS[i]; break; }
+  for(i=0;i<NOS.length;i++) NOS[i].el.setAttribute("data-qa","0");
+  for(i=0;i<botoes.length;i++) botoes[i].setAttribute("data-qa","0");
+  if(rotulando){
+    for(i=0;i<botoes.length;i++)
+      if(botoes[i]._t===rotulando.r) botoes[i].setAttribute("data-qa","1");
+    return;
+  }
+  if(!alvo) return;
+  if(sel&&sel.k===alvo.a) noDe(alvo.b).el.setAttribute("data-qa","1");
+  else noDe(alvo.a).el.setAttribute("data-qa","1");
+}
+
+function fimMapa(){
+  limpa(); apagaDica(); ger++;
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CARTÓGRAFO DE IDEIAS"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; n&#227;o ligou caixas: voc&#234; escreveu <b>tr&#234;s frases</b> com setas."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=pecaMapa;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaMapa();
+</script>
+</body></html>

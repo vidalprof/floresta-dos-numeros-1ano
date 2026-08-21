@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — conserte o erro (exemplo errôneo)</title>
+<!-- ============================================================
+     PEÇA: CONSERTE O ERRO (exemplo errôneo)
+     Cópia do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     DE ONDE ELA VEM: `_pesquisa/REGRAS-INTERATIVIDADE.md`, bloco (B), item 1 —
+     "Conserte o erro (exemplo errôneo): a criança recebe a solução JÁ FEITA com
+     um erro plantado e tem de achar e corrigir". Nível 1: aprendizado forte,
+     custo quase zero. A casa nunca tinha montado.
+
+     POR QUE ENSINA: a criança sai do papel de quem RESPONDE e entra no papel de
+     quem CONFERE. Para achar o erro ela tem de rodar o procedimento inteiro na
+     cabeça (2, 4, 6... quanto pula?) — é recuperação, não reconhecimento. E o
+     erro plantado é justamente a concepção errada que ela mesma tem: ao nomear
+     o erro do Téo, ela nomeia o próprio.
+
+     AS DUAS ETAPAS (é isto que separa esta peça de um quiz):
+       1) ACHAR  — ela toca no pedaço que está errado (produção: ninguém aponta);
+       2) CONSERTAR — só então aparecem as opções, e ela escolhe o certo.
+     Trocar a ordem viraria quiz: com as opções à vista, a resposta se lê nelas.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · O ERRO PLANTADO É PLAUSÍVEL — é o erro que a criança de 8 a 10 anos
+         comete de verdade (pulou 3 em vez de 2; trocou "mel" por "ninho";
+         contou um a menos). Erro absurdo (2, 4, 6, 500) não ensina nada: ela
+         acha pelo estranhamento, sem rodar o procedimento.
+       · O ERRO DELA NÃO VIRA X VERMELHO: tocar num pedaço certo devolve um
+         tremidinho, som grave curto e uma DICA que cresce — nunca "errou".
+       · NUNCA TRAVA: no 3º toque errado a peça marca sozinha o pedaço errado;
+         no 3º conserto errado ela acende a opção certa. A fase sempre fecha.
+       · O "POR QUÊ" FECHA A RODADA (autoexplicação induzida, g ≈ 0,55): o
+         banner não diz só "parabéns", diz o que estava errado e por quê.
+       · ALVO GRANDE: todo pedaço tem no mínimo 52px de lado, mesmo o "A" e o
+         "+", que são os menores textos possíveis.
+       · `data-qa` publicado no pedaço errado (etapa 1) e na opção certa
+         (etapa 2), UM DE CADA VEZ — sem isso o auditor-jogador não fecha a
+         peça e reprova o que funciona.
+     ============================================================ -->
+<style>
+/* ⭐ A FOTO DA PERGUNTA — o estímulo, não o enfeite (mesma peça de moldura
+   que a `escolher`; a lição da altura está escrita lá por extenso). A criança
+   OLHA a cena e só depois lê o que se pergunta sobre ela. */
+/* ⭐ MOLDURA DE VIDRO — PADRAO DA CASA (ver CONTRATO.md "MOLDURA DE VIDRO: O
+   PADRAO"): largura fixa + imagem 100% (a moldura cola na imagem, borda fina),
+   vidro fosco com brilho, sem cartao branco. */
+.qfig{position:relative;width:186px;max-width:70vw;margin:2px auto 12px;padding:5px;
+     border-radius:16px;overflow:hidden;text-align:center;
+     background:rgba(255,255,255,.12);
+     -webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);
+     border:1px solid rgba(255,255,255,.5);
+     box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
+.qfig:before{content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;z-index:2;pointer-events:none;
+     background:-webkit-linear-gradient(305deg,transparent,rgba(255,255,255,.5),transparent);
+     background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+     -webkit-transform:rotate(8deg);transform:rotate(8deg);
+     -webkit-animation:ceshine 3.6s ease-in-out infinite;animation:ceshine 3.6s ease-in-out infinite}
+@-webkit-keyframes ceshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+@keyframes ceshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+.qfig img{position:relative;z-index:1;width:100%;height:auto;display:block;
+     margin:0 auto;border-radius:12px;-o-object-fit:contain;object-fit:contain;object-position:center;
+     -webkit-filter:drop-shadow(0 6px 9px rgba(0,0,0,.32));filter:drop-shadow(0 6px 9px rgba(0,0,0,.32))}
+@media (max-height:560px){ .qfig{width:140px;padding:4px} }
+@media (min-height:760px){ .qfig{width:200px} }
+@media (prefers-reduced-motion:reduce){ .qfig:before{-webkit-animation:none;animation:none;display:none} }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ---------------- A PEÇA: CONSERTE O ERRO ----------------
+   ⚠️ a folga de 13px em cima e OBRIGATORIA: `.balao + *` tem a MESMA forca que
+   `.cadr` e perde por vir antes no arquivo. Sem a margem propria o caderno
+   nasce colado no enunciado (regra 9 do _qa/leiaute.js, cobrada duas vezes). */
+/* ⚠️ LICAO PAGA (ago/2026, atividade de ingles): o cartao era translucido
+   (rgba .10) e, sobre um fundo ESCURO de atividade, o `.cadt` (que usa
+   var(--texto)) caia escuro sobre marrom = 1,95:1. Cartao OPACO creme resolve
+   de vez: o texto escuro do tema sempre le, seja qual for o fundo atras. */
+.cadr{max-width:430px;margin:13px auto 0;padding:10px 8px 12px;border-radius:16px;
+      background:rgba(255,253,246,.93);border:3px solid #a08e73;color:#3a2c1a;}
+.cadt{font-size:13px;font-weight:700;letter-spacing:.5px;margin-bottom:8px;}
+.fila{display:block;text-align:center}
+/* PEDAÇO DA RESPOSTA JA FEITA — alvo grande de proposito: ate o "A" e o "+"
+   tem 52px, que e o dedo da crianca, nao o tamanho da letra. */
+.pt{display:inline-block;vertical-align:middle;position:relative;min-width:52px;min-height:52px;
+    padding:9px 11px;margin:4px 3px;line-height:34px;border-radius:14px;
+    background:#fffdf6;color:#221a12;font-size:19px;font-weight:800;cursor:pointer;
+    box-shadow:0 4px 0 #c9bda6}
+.pt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* ACHOU: borda tracejada + "?" (forma e sinal, nunca so a cor) */
+.pt.achei{background:#ffeeb0;box-shadow:0 0 0 4px #ffd54a;border:3px dashed #8a6b14;line-height:28px}
+/* CONSERTADO: fundo claro + "V" — de novo, cor E sinal */
+.pt.novo{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.pt.treme{-webkit-animation:treme .32s;animation:treme .32s}
+.pt.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+.bdg{position:absolute;right:-6px;top:-8px;min-width:24px;height:24px;line-height:24px;
+     border-radius:12px;font-size:13px;font-weight:800;font-style:normal;padding:0 5px}
+.bdg.b1{background:#ffd54a;color:#33280a}
+.bdg.b2{background:#1f6b12;color:#fff}
+/* a caixa das opcoes ja nasce no lugar: assim nada PULA quando elas entram */
+.escolha{display:block;min-height:6px;margin-top:6px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — DECLARACAO NO <script> ERRADO.
+   O integrador leva para a atividade **o SEGUNDO <script>** da peca (o
+   primeiro e o motorzinho da bancada, que o motor de verdade ja tem).
+   Eu declarei o `figEl` la em cima, junto do `el()`, e ele simplesmente
+   nao viajou: dentro da atividade a fase estourava com "figEl is not
+   defined" e o jogador ficava PRESO. Na bancada passava, porque la o
+   arquivo inteiro roda. Tudo o que a MECANICA usa mora no segundo. */
+var figEl = window.imgEl || null;
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (neutro, 8 a 10 anos). Ao copiar a peça para uma
+   atividade troque APENAS este bloco. As três regras do conteúdo:
+     1. o erro é UM só e é PLAUSÍVEL — o erro que a criança comete de verdade;
+     2. as opções de conserto também são plausíveis (nada de 2, 4, 6, 500);
+     3. `por` explica o PORQUÊ em uma frase — é o fecho da rodada.          */
+var RODS=[
+ {img:"", selo:"O CADERNO DO TÉO", cab:"CONTANDO DE 2 EM 2",
+  bal:"O T&#233;o contou de <b>2 em 2</b>. Um peda&#231;o ficou errado. Ache e conserte.",
+  pecas:["2","4","6","9","10"], erro:3, certa:"8", ops:["8","7","12"],
+  por:"Depois do 6, pulando de 2 em 2, vem o <b>8</b>. O T&#233;o pulou 3.",
+  dicas:["Conte baixinho: 2, 4, 6... qual vem depois do 6?",
+         "Todos os peda&#231;os pulam de 2 em 2. Procure o que pulou 3.",
+         "Era este aqui. Eu marquei para voc&#234;: agora escolha o certo."],
+  dicas2:["Comece no 6 e conte mais dois: 7, <b>8</b>.",
+          "Entre o 6 e o 10 s&#243; cabe um n&#250;mero par. Ele est&#225; piscando.",
+          "Era o <b>8</b>. Eu troquei para voc&#234; ver: 6, 8, 10."]},
+
+ {selo:"A FRASE DO TÉO", cab:"O QUE A ABELHA FAZ",
+  bal:"Uma palavra desta frase est&#225; trocada. Ache e conserte.",
+  pecas:["A","ABELHA","FAZ","O","NINHO"], erro:4, certa:"MEL", ops:["MEL","LEITE","P&#195;O"],
+  por:"Quem faz ninho &#233; o passarinho. A abelha faz o <b>mel</b>.",
+  dicas:["Leia a frase baixinho, do come&#231;o ao fim.",
+         "Pense na abelha de verdade: o que ela guarda na colmeia?",
+         "Era a &#250;ltima palavra. Eu marquei para voc&#234;."],
+  dicas2:["&#201; algo do&#231;inho que a gente come no p&#227;o.",
+          "N&#227;o vem de vaca nem de forno. Est&#225; piscando.",
+          "Era o <b>mel</b>. Eu troquei para voc&#234; ler a frase inteira."]},
+
+ {selo:"A CONTA DO TÉO", cab:"SOMANDO",
+  bal:"O T&#233;o somou e um n&#250;mero n&#227;o bateu. Ache e conserte.",
+  pecas:["10","+","5","=","14"], erro:4, certa:"15", ops:["15","16","13"],
+  por:"10 mais 5 d&#225; <b>15</b>. O T&#233;o contou um a menos.",
+  dicas:["Comece no 10 e conte mais 5 nos dedos.",
+         "Os n&#250;meros da conta est&#227;o certos. O erro est&#225; depois do igual.",
+         "Era o resultado. Eu marquei para voc&#234;."],
+  dicas2:["11, 12, 13, 14, <b>15</b> — cinco dedos a partir do 10.",
+          "&#201; um a mais do que o T&#233;o escreveu. Est&#225; piscando.",
+          "Era o <b>15</b>. Eu troquei para voc&#234; ver a conta certa."]}
+];
+
+var rod=0;            /* rodada da vez */
+var etapa="achar";    /* achar -> trocar -> pronto */
+var errosA=0, errosT=0;
+var pecas=[], opcoes=[], elHint=null, elEsc=null, barraP=null, telaA=null, ger=0;
+
+/* som proprio de "achei o erro": nao e o acerto da fase, e um passo dentro dela.
+   Reusar o sCerto aqui faria a crianca achar que ja terminou.               */
+function sAchou(){ nota(659.25,.10,.15,"triangle",0); nota(880,.13,.14,"triangle",.075); }
+
+function pecaConserta(){
+  rod=0; ger++;
+  limpa();
+  desenha();
+}
+
+function desenha(){
+  limpa(); apagaDica(); ger++;
+  etapa="achar"; errosA=0; errosT=0; pecas=[]; opcoes=[];
+  var R=RODS[rod], i, b;
+  var t=el("div","tela"); telaA=t;
+  setProg(t,Math.round(rod*100/RODS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  if(R.img&&figEl){ var _qf=el("div","qfig",""); _qf.appendChild(figEl(R.img));
+                    c.appendChild(_qf); }
+  c.appendChild(el("div","balao",R.bal));
+
+  /* o "caderno do colega": a resposta JA FEITA, com o erro dentro */
+  var q=el("div","cadr");
+  q.appendChild(el("div","cadt",R.cab));
+  var f=el("div","fila");
+  for(i=0;i<R.pecas.length;i++){
+    b=el("span","pt",R.pecas[i]);
+    b._i=i;
+    b.onclick=(function(x){ return function(){ tocaPeca(x); }; })(b);
+    f.appendChild(b); pecas.push(b);
+  }
+  q.appendChild(f);
+  c.appendChild(q);
+
+  elEsc=el("div","escolha","");
+  c.appendChild(elEsc);
+  elHint=el("div","hint","Toque no peda&#231;o que est&#225; <b>errado</b>.");
+  c.appendChild(elHint);
+  t.appendChild(c); app.appendChild(t);
+  marcaVez();
+}
+
+/* ---------------- ETAPA 1: ACHAR O ERRO ---------------- */
+function tocaPeca(b){
+  if(etapa!=="achar"){ sTap(); return; }
+  var R=RODS[rod];
+  if(b._i===R.erro){ achou(b); return; }
+  /* ERRO NAO PUNE: tremidinha, som grave curto e o andaime CRESCE. */
+  sErro(); errosA++;
+  b.className="pt treme";
+  destreme(b);
+  ajudaAchar(errosA);
+}
+
+function achou(b){
+  sAchou();
+  b.className="pt achei";
+  b.appendChild(el("i","bdg b1","?"));
+  etapa="trocar";
+  apagaDica();
+  elHint.innerHTML="Agora escolha o peda&#231;o <b>certo</b> para o lugar.";
+  montaOpcoes();
+  marcaVez();
+}
+
+/* ⚠️ A ORDEM AQUI E O CONSERTO (defeito medido ago/2026): antes a dica saia
+   PRIMEIRO e o `achou()` logo atras chamava `apagaDica()` — a fala do 3o
+   degrau, justamente a que EXPLICA ("era este aqui, eu marquei para voce"),
+   aparecia e sumia no mesmo quadro. A crianca via a peca se marcar sozinha
+   sem entender por que. Revela-se PRIMEIRO, e a dica vem DEPOIS, para ficar
+   na tela enquanto ela escolhe o conserto. */
+function ajudaAchar(n){
+  var R=RODS[rod];
+  /* 3o toque errado: a peca marca sozinha e SEGUE. Nunca trava. */
+  if(n>=3){ achou(pecas[R.erro]); mostraDica(R.dicas[2]); return; }
+  mostraDica(R.dicas[n-1]);
+}
+
+/* ---------------- ETAPA 2: CONSERTAR ---------------- */
+function montaOpcoes(){
+  var R=RODS[rod], i, o, lista=[];
+  for(i=0;i<R.ops.length;i++) lista.push(R.ops[i]);
+  /* EMBARALHADAS: com a certa sempre na 1a posicao a crianca aprende o lugar,
+     nao o conteudo (defeito da Fabrica de Estrelas). */
+  baguncar(lista);
+  var cx=el("div","opts");
+  for(i=0;i<lista.length;i++){
+    o=el("div","opt",lista[i]);
+    o._t=lista[i];
+    o.onclick=(function(x){ return function(){ escolhe(x); }; })(o);
+    cx.appendChild(o); opcoes.push(o);
+  }
+  elEsc.innerHTML="";
+  elEsc.appendChild(cx);
+}
+
+function escolhe(o){
+  if(etapa!=="trocar"){ sTap(); return; }
+  var R=RODS[rod];
+  if(o._t===R.certa){ conserta(o._t); return; }
+  sErro(); errosT++;
+  o.className="opt no";
+  devolve(o);
+  ajudaTrocar(errosT);
+}
+
+function ajudaTrocar(n){
+  var R=RODS[rod], i;
+  /* revela e SEGUE — a peca nunca trava. A dica vem DEPOIS do conserto (ver a
+     nota em `ajudaAchar`), senao o `apagaDica()` de dentro do `conserta()` a
+     engolia no mesmo quadro. */
+  if(n>=3){ conserta(R.certa); mostraDica(R.dicas2[2]); return; }
+  mostraDica(R.dicas2[n-1]);
+  if(n===2){                       /* apoio concreto: a certa acende */
+    for(i=0;i<opcoes.length;i++)
+      if(opcoes[i]._t===R.certa) opcoes[i].className="opt ok";
+  }
+}
+
+function conserta(txt){
+  var R=RODS[rod], b=pecas[R.erro];
+  b.innerHTML=txt;
+  b.className="pt novo";
+  b.appendChild(el("i","bdg b2","✓"));
+  sCerto();
+  etapa="pronto";
+  marcaVez();
+  apagaDica();
+  elHint.innerHTML="Consertado!";
+  if(barraP) barraP.style.width=Math.round((rod+1)*100/RODS.length)+"%";
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    /* o FECHO EXPLICA (autoexplicacao induzida): nao basta "parabens", tem de
+       dizer o que estava errado e por que. E o que fica depois da rodada. */
+    mostraBanner("Consertado! "+R.por, proxima);
+  },700);
+}
+
+function proxima(){
+  rod++;
+  if(rod>=RODS.length){ fimConserta(); return; }
+  desenha();
+}
+
+/* ---------------- os ajudantes ---------------- */
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda de
+   geracao ele mexeria numa tela que ja saiu da frente da crianca. */
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    if(b.className.indexOf("achei")<0&&b.className.indexOf("novo")<0) b.className="pt";
+  },340);
+}
+function devolve(o){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!telaA||!telaA.parentNode) return;
+    if(o.className.indexOf("ok")<0) o.className="opt";
+  },700);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+
+/* data-qa: UM alvo de cada vez, e so para o auditor-jogador (_qa/jogador.js).
+   Na etapa 1 e o peda&#231;o errado; na etapa 2 e a opcao certa. Dois "1" ao
+   mesmo tempo fariam o jogador tocar no da frente para sempre.            */
+function marcaVez(){
+  var R=RODS[rod], i;
+  for(i=0;i<pecas.length;i++)
+    pecas[i].setAttribute("data-qa",(etapa==="achar"&&i===R.erro)?"1":"0");
+  for(i=0;i<opcoes.length;i++)
+    opcoes[i].setAttribute("data-qa",(etapa==="trocar"&&opcoes[i]._t===R.certa)?"1":"0");
+}
+
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — O BECO, e este era o gemeo do `relampago`.
+   Esta tela e chamada DIRETO quando as rodadas acabam, entao ela APARECE
+   dentro da atividade — e o botao dela so sabia voltar para `pecaConserta`, o
+   comeco da propria fase. A crianca fechava a fase e ficava presa refazendo a
+   mesma, para sempre. O integrador tem a ponte que desvia, mas ela so alcanca
+   quem chama `fimDaPeca()`.
+   Agora sao DUAS telas: esta, que a crianca ve e que segue em frente, e a de
+   bancada logo abaixo, com o "jogar de novo" — a unica que o integrador troca.
+   Medido pelo `_qa/beco.py`. */
+function fimConserta(){
+  limpa(); apagaDica(); ger++;
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CONFERENTE DE PRIMEIRA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; achou e consertou <b>3 erros</b>. Quem confere aprende duas vezes."));
+  var b=el("button","btn","Continuar &#187;");
+  b.onclick=function(){ fimDaPeca(); };
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+
+/* o fim NA BANCADA: dentro da atividade o integrador aponta isto para a
+   proxima fase, e a tela abaixo nunca chega a existir. */
+function fimDaPeca(){
+  limpa(); apagaDica(); ger++;
+  var t=el("div","tela"); telaA=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Esta &#233; a pe&#231;a <b>CONSERTE O ERRO</b>."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=pecaConserta;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaConserta();
+</script>
+</body></html>

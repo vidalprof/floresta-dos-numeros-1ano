@@ -1,0 +1,460 @@
+name: Gerar imagem (Pollinations gratis / Gemini) e salvar
+
+# Gera/edita imagem e salva em _novo/<nome>.png (commit na branch que rodou).
+# - modelo=pollinations (GRATIS): texto -> imagem (URL image.pollinations.ai).
+# - modelo=gemini: usa GEMINI_API_KEY (secret). Pode EDITAR uma imagem base
+#   (input `base` = caminho no repo, ex.: _novo/nino_base.png) -> mantem o
+#   personagem e muda so o que o prompt pedir (ex.: boca aberta / pernas juntas).
+#
+# Roda no GitHub Actions (internet liberada).
+#
+# ============================================================
+# 💰 O LOTE GRATIS (input `lote`) — a alternativa ao Gemini
+#
+# Cobranca do Marcos (ago/2026): *"tem alguma alternativa ao Gemini? Pois estou
+# gastando bastante com as imagens nas atividades"*.
+#
+# A conta que ele sentiu, medida: o Gemini custa R$0,20 por chamada (registrado
+# no MANUAL-MESTRE) e cada atividade tem de 35 a 54 figuras — R$7 a R$11 por
+# atividade quando o lote inteiro passa por la, que era o que o `finalizar.yml`
+# fazia.
+#
+# So que o Gemini nao estava sendo pago pela IMAGEM: o Pollinations desenha de
+# graca. Estava sendo pago pelo RECORTE — o fundo transparente que a peca
+# precisa para assentar na cena. E recorte NAO precisa de modelo pago: o `rembg`
+# roda dentro do proprio runner, de graca, e faz o mesmo servico.
+#
+# Entao, com `lote=<arquivo.json>`, este workflow faz o caminho barato inteiro
+# numa corrida so: desenha no Pollinations -> tira o fundo com o rembg -> apara
+# a sobra (bbox, que e o que faz a peca assentar) -> commita. Custo R$ 0,00.
+#
+# ⚠️ O QUE ELE NAO FAZ, e por isso o Gemini continua existindo: **editar uma
+#    imagem base**. As tres camadas do mascote (parada / falando / piscando) TEM
+#    que ser edicao da MESMA pose, senao o boneco treme (ver `_qa/mascote.py`).
+#    Isso segue com `modelo=gemini` + `base=...`: sao 2 ou 3 chamadas por
+#    atividade, nao 25.
+#
+# ⚠️ POR QUE ISTO MORA AQUI, e nao num workflow novo: o GitHub so aceita
+#    `workflow_dispatch` de arquivo que ja existe na branch PADRAO. Um
+#    `recorte-lote.yml` novo, criado na branch de trabalho, devolve 404 ao ser
+#    acionado — testado (ago/2026). Enquanto a branch nao for para a `main`, o
+#    caminho que funciona e crescer um workflow que ja esta la.
+# ============================================================
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Descricao da imagem (ou da EDICAO, se houver base)"
+        required: true
+        type: string
+      nome:
+        description: "Nome do arquivo de saida (sem extensao) -> _novo/<nome>.png"
+        required: false
+        default: "imagem"
+        type: string
+      base:
+        description: "Imagem base p/ EDITAR (caminho no repo, ex: _novo/nino_base.png). Vazio = gera do zero."
+        required: false
+        default: ""
+        type: string
+      modelo:
+        description: "pollinations (GRATIS - PADRAO) | gemini (pago, so recorte limpo)"
+        required: false
+        default: "pollinations"
+        type: string
+      w:
+        description: "largura (pollinations)"
+        required: false
+        default: "768"
+        type: string
+      h:
+        description: "altura (pollinations)"
+        required: false
+        default: "1024"
+        type: string
+      lote:
+        description: "LOTE GRATIS: caminho de um JSON [{nome,prompt,grupo}] (vazio = uma imagem so)"
+        required: false
+        default: ""
+        type: string
+      dest:
+        description: "(lote) pasta de saida — _novo ou _prova_recorte"
+        required: false
+        default: "_novo"
+        type: string
+      nomes:
+        description: "(lote) so estes nomes, separados por virgula (vazio = todos)"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      # ⚡ SO A PASTA QUE INTERESSA. O repositorio tem ~1 GB de imagem e audio de
+      # TODAS as atividades: mesmo com fetch-depth 1, baixar a arvore inteira
+      # levava minutos. Com sparse-checkout o checkout cai para segundos.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*.json
+            /_novo/
+            /_prova_recorte/
+
+      # ⚠️ LICAO PAGA (ago/2026): o checkout esparso so trazia `/_novo/` e
+      #    `/_prova_recorte/`. Mandei um lote com `dest=_letreiro/img` — as 24
+      #    imagens foram desenhadas, recortadas e o `git add` as IGNOROU, porque
+      #    o caminho estava fora das regras de esparsidade. A corrida terminou
+      #    verde e nao veio nada; passei duas horas achando que a fila estava
+      #    lenta. Quem escolhe o destino e o input, entao o destino tem que
+      #    entrar no checkout — nao adianta a lista ser fixa.
+      - name: Deixar o destino visivel no checkout esparso
+        if: inputs.dest != '' || inputs.lote != ''
+        run: |
+          # o DESTINO das imagens
+          [ -n "${{ inputs.dest }}" ] && { git sparse-checkout add "${{ inputs.dest }}" 2>/dev/null || git sparse-checkout disable; }
+          # ⚠️ LICAO PAGA (ago/2026): o LOTE pode morar FORA de /_novo (ex.:
+          #    `_rightnow9/_lote.json`). O `/*.json` do checkout esparso so pega
+          #    JSON na RAIZ, entao o arquivo do lote ficava invisivel e a corrida
+          #    morria em "nao achei o arquivo do lote" — duas vezes, ago/2026.
+          #    A pasta do lote tambem tem que entrar no checkout.
+          if [ -n "${{ inputs.lote }}" ]; then
+            LDIR="$(dirname "${{ inputs.lote }}")"
+            [ "$LDIR" != "." ] && { git sparse-checkout add "$LDIR" 2>/dev/null || git sparse-checkout disable; }
+          fi
+          git sparse-checkout list 2>/dev/null | head -20 || echo "(esparsidade desligada)"
+          echo "--- lote existe agora? ---"; ls -la "${{ inputs.lote }}" 2>/dev/null || echo "(ainda nao)"
+
+      # ---------- O LOTE GRATIS (so quando `lote` vem preenchido) ----------
+      - name: Ferramentas do recorte
+        if: inputs.lote != ''
+        run: |
+          python3 -m pip install --quiet --upgrade pip
+          # rembg tira o fundo; onnxruntime e o motor dele; pillow apara a sobra
+          python3 -m pip install --quiet "rembg[cpu]" pillow numpy
+
+      - name: Desenhar e recortar o lote (GRATIS)
+        if: inputs.lote != ''
+        env:
+          LOTE: ${{ inputs.lote }}
+          DEST: ${{ inputs.dest }}
+          NOMES: ${{ inputs.nomes }}
+          W: ${{ inputs.w }}
+          H: ${{ inputs.h }}
+        run: |
+          python3 - <<'PY'
+          import io, json, os, re, time, urllib.parse, urllib.request
+          from PIL import Image
+
+          arq  = os.environ.get("LOTE","").strip()
+          dest = re.sub(r"[^A-Za-z0-9_/-]","", os.environ.get("DEST","_novo").strip() or "_novo")
+          filtro = [n.strip() for n in os.environ.get("NOMES","").split(",") if n.strip()]
+          W = os.environ.get("W","1024"); H = os.environ.get("H","1024")
+          os.makedirs(dest, exist_ok=True)
+
+          if not os.path.exists(arq):
+              raise SystemExit("::error::nao achei o arquivo do lote: %s"%arq)
+          lote = json.load(io.open(arq, encoding="utf-8"))
+          if isinstance(lote, dict):
+              lote = lote.get("pecas") or lote.get("gerar") or []
+          if filtro:
+              lote = [x for x in lote if x.get("nome") in filtro]
+          if not lote:
+              raise SystemExit("::error::lote vazio (o filtro `nomes` bate com alguma coisa?)")
+
+          def desenha(prompt):
+              # o Pollinations e gratis e as vezes solu&ccedil;a: insiste e troca de motor
+              motores=["flux","turbo","flux-realism",""]
+              base_url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true"%(
+                  urllib.parse.quote(prompt), W, H)
+              ultimo=None
+              for tent,espera in enumerate([8,20,45,0]):
+                  mot=motores[min(tent,len(motores)-1)]
+                  url=base_url+("&model="+mot if mot else "")
+                  try:
+                      req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
+                      dados=urllib.request.urlopen(req, timeout=180).read()
+                      if dados and len(dados)>4000: return dados
+                      ultimo="resposta vazia (%d bytes)"%len(dados or b"")
+                  except Exception as e:
+                      ultimo=str(e)[:150]
+                  print("  pollinations [%s] tentativa %d: %s"%(mot or "padrao", tent+1, ultimo))
+                  if espera: time.sleep(espera)
+              raise RuntimeError("Pollinations nao devolveu imagem: %s"%ultimo)
+
+          # a CENA (fundo, cenario) fica com o fundo dela; a PECA e que precisa
+          # de recorte. O campo `grupo` do lote ja diz qual e qual.
+          def e_cena(it):
+              g=(it.get("grupo") or "").lower(); n=(it.get("nome") or "").lower()
+              return ("cena" in g or "fundo" in g or "cenario" in g
+                      or n.endswith("_fundo") or "fundo" in n)
+
+          from rembg import remove, new_session
+          sessao=new_session("u2net")
+
+          def so_a_figura(img):
+              u"""tira os CACOS que o recorte deixa soltos em volta.
+
+              ⚠️ Defeito que o Marcos viu na primeira prova (ago/2026): ao lado da
+              garrafa de leite ficou um caroco solto — um pedaco de fundo que o
+              recorte achou que era objeto. Numa peca que a crianca arrasta, esse
+              caco vira uma sujeira flutuando na tela.
+
+              A regra NAO e "fica so a maior mancha": ha peca com parte legitima
+              separada (o mexedor ao lado do pote de mel, a vela do bolo). Entao
+              some so o que for MUITO menor que a mancha principal — abaixo de 8%
+              da area dela e caco, nao e parte.
+              """
+              import numpy as np
+              a = np.array(img.split()[-1])
+              # trabalha reduzido: 1024x1024 varrido em Python puro seria lento
+              passo = max(1, max(a.shape)//256)
+              m = (a[::passo, ::passo] > 24)
+              alt, lar = m.shape
+              marca = np.zeros(m.shape, dtype=np.int32)
+              areas, atual = {}, 0
+              for y0 in range(alt):
+                  for x0 in range(lar):
+                      if not m[y0][x0] or marca[y0][x0]: continue
+                      atual += 1; pilha=[(y0,x0)]; marca[y0][x0]=atual; n=0
+                      while pilha:
+                          y,x = pilha.pop(); n += 1
+                          for dy,dx in ((1,0),(-1,0),(0,1),(0,-1)):
+                              yy,xx = y+dy, x+dx
+                              if 0<=yy<alt and 0<=xx<lar and m[yy][xx] and not marca[yy][xx]:
+                                  marca[yy][xx]=atual; pilha.append((yy,xx))
+                      areas[atual]=n
+              if len(areas) <= 1: return img, 0
+              maior = max(areas.values())
+              cacos = set(k for k,v in areas.items() if v < maior*0.08)
+              if not cacos: return img, 0
+              fora = np.isin(marca, list(cacos))
+              # devolve a mascara ao tamanho real e apaga os cacos
+              grande = np.kron(fora, np.ones((passo,passo), dtype=bool))[:a.shape[0], :a.shape[1]]
+              if grande.shape != a.shape:
+                  g2 = np.zeros(a.shape, dtype=bool)
+                  g2[:grande.shape[0], :grande.shape[1]] = grande
+                  grande = g2
+              a[grande] = 0
+              img.putalpha(Image.fromarray(a))
+              return img, len(cacos)
+
+          feitos, falhas = [], []
+          for it in lote:
+              nome=re.sub(r"[^A-Za-z0-9_-]","_", (it.get("nome") or "").strip())
+              prompt=(it.get("prompt") or "").strip()
+              if not nome or not prompt:
+                  falhas.append("%s: sem nome ou sem prompt"%(nome or "?")); continue
+              print("== %s"%nome)
+              try:
+                  bruto=desenha(prompt)
+                  saida=os.path.join(dest, nome+".png")
+                  if e_cena(it):
+                      Image.open(io.BytesIO(bruto)).convert("RGB").save(saida, optimize=True)
+                      print("   cena (sem recorte) -> %s"%saida)
+                  else:
+                      img=Image.open(io.BytesIO(remove(bruto, session=sessao))).convert("RGBA")
+                      img, cacos = so_a_figura(img)
+                      if cacos: print("   %d caco(s) do recorte apagado(s)"%cacos)
+                      bb=img.getbbox()
+                      # ⚠️ recorte que apagou TUDO nao e recorte, e peca perdida.
+                      #    Melhor gritar do que commitar um PNG vazio — foi um
+                      #    quadradinho vazio desses que o Marcos pegou no jogo da
+                      #    memoria.
+                      if not bb or (bb[2]-bb[0])<40 or (bb[3]-bb[1])<40:
+                          falhas.append("%s: o recorte comeu a figura inteira"%nome); continue
+                      img.crop(bb).save(saida, optimize=True)
+                      print("   recortado -> %s (%dx%d)"%(saida, bb[2]-bb[0], bb[3]-bb[1]))
+                  feitos.append(nome)
+              except Exception as e:
+                  falhas.append("%s: %s"%(nome, str(e)[:140]))
+
+          print("\n%d feita(s), %d falha(s)"%(len(feitos), len(falhas)))
+          for f in falhas: print("::warning::%s"%f)
+          resumo=os.environ.get("GITHUB_STEP_SUMMARY")
+          if resumo:
+              with io.open(resumo,"a",encoding="utf-8") as s:
+                  s.write(u"### Lote GRATIS (Pollinations + rembg)\n\n")
+                  s.write(u"- feitas: %d -> `%s`\n"%(len(feitos), dest))
+                  s.write(u"- falhas: %d\n"%len(falhas))
+                  for f in falhas: s.write(u"  - %s\n"%f)
+                  s.write(u"\n**custo: R$ 0,00** (nenhuma chamada paga)\n")
+          # ⚡ O RECADO BARATO DE VOLTA (o mesmo do entregar.yml). Sem ele, saber
+          #    o que aconteceu custa uma consulta de 55 mil caracteres a API —
+          #    e a regra da casa proibe justamente isso. 200 bytes commitados
+          #    dizem tudo: quantas sairam, quais falharam e para onde foram.
+          os.makedirs("_status", exist_ok=True)
+          io.open("_status/imagens-%s.json" % re.sub(r"[^A-Za-z0-9]+","_",arq),
+                  "w", encoding="utf-8").write(
+              json.dumps({"lote": arq, "dest": dest, "feitas": len(feitos),
+                          "falhas": falhas[:12]}, ensure_ascii=False))
+          if not feitos:
+              raise SystemExit("::error::nenhuma imagem saiu")
+          PY
+
+      - name: Gerar imagem
+        if: inputs.lote == ''
+        env:
+          PROMPT: ${{ inputs.prompt }}
+          NOME: ${{ inputs.nome }}
+          BASE: ${{ inputs.base }}
+          MODELO: ${{ inputs.modelo }}
+          W: ${{ inputs.w }}
+          H: ${{ inputs.h }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, time, re, json, base64, urllib.request, urllib.parse, urllib.error
+          modelo=(os.environ.get("MODELO","pollinations").strip() or "pollinations").lower()
+          if modelo in ("free","gratis","grátis","poli"): modelo="pollinations"
+          prompt=os.environ["PROMPT"]
+          nome=re.sub(r'[^A-Za-z0-9_-]','_', os.environ.get("NOME","imagem").strip() or "imagem")
+          base=os.environ.get("BASE","").strip()
+          os.makedirs("_novo", exist_ok=True)
+          out="_novo/%s.png"%nome
+
+          # ⚠️ LICAO PAGA (ago/2026) — O REGISTRO MENTIA SOBRE QUEM DESENHOU.
+          # Pedi tres cartelas com `modelo=gemini`, vieram tres imagens ruins e
+          # eu escrevi "o Gemini nao entendeu o prompt". Nao dava para saber:
+          # quando o Gemini falha este workflow CAI PARA O POLLINATIONS de
+          # proposito (para nao parar a producao) e mesmo assim o commit dizia
+          # "(gemini)", porque a mensagem vinha do INPUT e nao do que aconteceu.
+          # Diagnostico em cima de registro falso e chute caro. Agora quem
+          # desenhou fica escrito no arquivo AO LADO da imagem e na mensagem do
+          # commit — e eu leio isso com um `git log`, de graca.
+          def salvar(b, quem=None):
+              open(out,"wb").write(b)
+              quem = quem or modelo
+              open("_novo/%s.origem.txt"%nome,"w").write(quem+"\n")
+              print("OK -> %s (%d bytes, DESENHADO POR: %s)"%(out, len(b), quem))
+
+          def pollinations():
+              # ⚠️ o Pollinations e gratis e as vezes devolve 500 do proprio
+              # servidor. Sem repetir, uma soluco dele parava a producao — foi o
+              # que aconteceu na cartografia (ago/2026). Agora insiste.
+              # o Pollinations tem varios motores; quando um cai, o outro costuma
+              # atender. Tentar so o "flux" era pedir para parar a producao.
+              motores=["flux","turbo","flux-realism",""]
+              base_url="https://image.pollinations.ai/prompt/%s?width=%s&height=%s&nologo=true"%(
+                  urllib.parse.quote(prompt), os.environ.get("W","768"), os.environ.get("H","1024"))
+              ultimo=None
+              for tent,espera in enumerate([8,20,45,0]):
+                  mot=motores[min(tent,len(motores)-1)]
+                  url=base_url+("&model="+mot if mot else "")
+                  try:
+                      req=urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
+                      dados=urllib.request.urlopen(req, timeout=180).read()
+                      if dados and len(dados)>4000: return dados
+                      ultimo="resposta vazia (%d bytes)"%len(dados or b"")
+                  except Exception as e:
+                      ultimo=str(e)[:150]
+                  print("pollinations [%s] (tentativa %d): %s"%(mot or "padrao", tent+1, ultimo))
+                  if espera: time.sleep(espera)
+              raise RuntimeError("Pollinations nao devolveu imagem: %s"%ultimo)
+
+          def gemini():
+              key=os.environ.get("GEMINI_API_KEY","").strip()
+              if not key: raise SystemExit("::error::GEMINI_API_KEY vazio")
+              parts=[{"text": prompt}]
+              # ⚠️ LICAO PAGA (ago/2026): a condicao era so `if base and
+              # os.path.exists(base)`. Se o caminho estivesse errado, o `base`
+              # era IGNORADO EM SILENCIO e o Gemini gerava do ZERO — e voltava
+              # um personagem completamente diferente com cara de sucesso.
+              # Aconteceu com o Fuba: pedi para EDITAR o ratinho padeiro e
+              # vieram dois meninos humanos. Pedido de edicao com base ausente
+              # e ERRO, nunca "gera do zero".
+              if base:
+                  if not os.path.exists(base):
+                      raise SystemExit("::error::EDICAO pedida mas a base nao existe: %s"%base)
+                  data=base64.b64encode(open(base,"rb").read()).decode()
+                  parts.append({"inline_data":{"mime_type":"image/png","data":data}})
+                  print("editando imagem base:", base)
+              body={"contents":[{"parts":parts}]}
+              # ⚠️ LICAO PAGA (ago/2026): o Gemini devolveu 503 "high demand" e o
+              # workflow MORREU na hora — parou a producao por uma soluco de
+              # minutos do servidor. 503/429/500 sao TEMPORARIOS: agora ele
+              # insiste (5s, 15s, 40s) antes de desistir do modelo.
+              # ⚠️ o porque de cada modelo, guardado para SAIR do runner. O log
+              # do Actions eu so leio pagando chamada de API; o commit eu leio
+              # de graca. Sem isto o registro dizia so "nao retornou imagem" e
+              # eu nao sabia se era chave, cota, HTTP ou recusa do modelo.
+              porques=[]
+              for modelo_img in ["gemini-2.5-flash-image","gemini-2.5-flash-image-preview","gemini-2.0-flash-preview-image-generation"]:
+                  url="https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s"%(modelo_img,key)
+                  raw=None
+                  for tentativa,espera in enumerate([5,15,40,0]):
+                      req=urllib.request.Request(url, data=json.dumps(body).encode("utf-8"),
+                                                 headers={"Content-Type":"application/json"})
+                      try:
+                          raw=urllib.request.urlopen(req, timeout=180).read()
+                          break
+                      except urllib.error.HTTPError as e:
+                          corpo=e.read().decode("utf-8","ignore")[:200]
+                          print("modelo %s (tentativa %d) -> HTTP %s: %s"%(modelo_img, tentativa+1, e.code, corpo))
+                          porques.append("%s HTTP %s %s"%(modelo_img, e.code, corpo[:120]))
+                          if e.code in (429,500,502,503,504) and espera:
+                              time.sleep(espera); continue
+                          break
+                      except Exception as e:
+                          print("modelo %s (tentativa %d) -> %s"%(modelo_img, tentativa+1, e))
+                          if espera: time.sleep(espera); continue
+                          break
+                  if raw is None:
+                      continue
+                  d=json.loads(raw)
+                  for c in d.get("candidates",[]) or []:
+                      for p in (c.get("content",{}) or {}).get("parts",[]) or []:
+                          inl=p.get("inlineData") or p.get("inline_data")
+                          if inl and inl.get("data"):
+                              print("imagem gerada com", modelo_img)
+                              return base64.b64decode(inl["data"])
+                  print("modelo %s: sem imagem na resposta: %s"%(modelo_img, json.dumps(d)[:300]))
+                  porques.append("%s sem imagem: %s"%(modelo_img, json.dumps(d)[:160]))
+              raise RuntimeError("Gemini nao retornou imagem | " + " || ".join(porques[:3]))
+
+          if modelo=="gemini":
+              try:
+                  salvar(gemini())
+              except Exception as e:
+                  # ⚡ NUNCA PARAR A PRODUCAO POR CAUSA DO GEMINI. Se ele estiver
+                  # fora do ar, a imagem sai pelo Pollinations (gratis) e o
+                  # trabalho segue; depois da para refazer so essa imagem.
+                  # Edicao de imagem base o Pollinations nao faz — ai sim para.
+                  if base and os.path.exists(base):
+                      raise SystemExit("::error::Gemini fora do ar e esta era uma EDICAO de imagem base (o Pollinations nao edita): %s"%e)
+                  # ⚠️ o MOTIVO junto: sem ele o registro so diz "falhou" e eu
+                  # fico adivinhando se e credito, chave, cota ou nome de modelo.
+                  motivo=re.sub(r"\s+"," ",str(e))[:300]
+                  print("::warning::Gemini falhou (%s). Caindo para o Pollinations (gratis)."%motivo)
+                  salvar(pollinations(), "pollinations (o gemini falhou: %s)"%motivo)
+          else:
+              salvar(pollinations(), "pollinations")
+          PY
+
+      - name: Commit da imagem
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _novo/ || true
+          git add _status/ || true
+          git add "${{ inputs.dest }}" || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          NOME="${{ inputs.nome }}"
+          if [ -n "${{ inputs.lote }}" ]; then
+            MSG="imagem: gera $NOME (lote GRATIS: pollinations + recorte)"
+          else
+            QUEM="$(cat "_novo/$NOME.origem.txt" 2>/dev/null || echo "${{ inputs.modelo }} (nao registrado)")"
+            MSG="imagem: gera $NOME [desenhado por: $QUEM]"
+          fi
+          git commit -m "$MSG"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

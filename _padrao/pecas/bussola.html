@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — bússola (Norte, Sul, Leste e Oeste no mapinha)</title>
+<!-- ============================================================
+     PEÇA: BÚSSOLA — ORIENTAR-SE NUM MAPINHA (Norte/Sul/Leste/Oeste)
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     O QUE ELA ENSINA: orientação. A criança de 8 anos já sabe "perto" e
+     "longe"; o que ela ainda não tem é um sistema de referência que valha para
+     todo mundo. A peça faz a ponte pelo corpo dela ("o lado da sua direita") e
+     só então nomeia (LESTE) — concreto, depois figural, depois símbolo.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+
+     · ⭐ REFERÊNCIA EXPLÍCITA. "Fica a leste" não quer dizer nada para quem
+       nunca viu a palavra. Toda pergunta traz o corpo junto: NORTE = o lado de
+       CIMA do mapa, SUL = o de BAIXO, LESTE = o lado da sua DIREITA, OESTE = o
+       da sua ESQUERDA. A rosa dos ventos fica desenhada em volta do mapinha o
+       tempo todo — não é dica, é a régua.
+
+     · ⭐ A RESPOSTA CERTA VEM DA POSIÇÃO REAL NO MAPINHA, CALCULADA. Nada de
+       "a escola é o leste" escrito à mão: os quatro lugares são embaralhados a
+       cada rodada e caem nas casas `{dr,dc}` do mapa; a direção sai daí por
+       `dirDe(dr,dc)`. O desenho e a resposta são a MESMA informação, então não
+       existe onde eles divergirem. E a peça confere isso sozinha ao montar
+       (`confereMapa()`) — promessa não medida é promessa que quebra.
+
+     · NADA ESSENCIAL SÓ NA COR: cada direção tem a SETA junto do nome (▲ ▼ ▶ ◀),
+       no mapa e nos botões; o acerto ganha "✓" além do verde.
+
+     · TOQUE DUPLO NÃO CONTA DOIS ACERTOS (defeito que o auditor-jogador pegou
+       na peça irmã das coordenadas: a barra chegou a 175%). Tranca `travado`
+       entre o acerto e a rodada seguinte.
+
+     · ⚠️ ARMADILHA NOVA, PAGA AQUI (ago/2026): `elemento.dir` É PROPRIEDADE
+       RESERVADA DO HTML (direção do texto: ltr/rtl/auto). Guardar a direção da
+       rosa dos ventos em `botao.dir = "NORTE"` parecia natural e o navegador
+       ENGOLIA o valor em silêncio — `botao.dir` voltava vazio, nenhuma resposta
+       era aceita e a peça travava de vez na 3ª rodada. Nada disso dá erro de
+       JS: o `node --check` passa, o print fica perfeito e só o auditor-jogador
+       viu ("PRESO"). Guardar SEMPRE num nome que o HTML não usa — aqui `rumo`.
+       A mesma regra vale para `id`, `title`, `lang`, `align`, `name`, `type`.
+
+     · ANDAIME QUE CRESCE, a peça nunca trava: referência -> a seta daquele lado
+       pisca no mapa -> a resposta certa é aceita junto com a criança.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- O MAPINHA ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o mapa nasce COLADO
+   no enunciado (defeito ja cobrado duas vezes).
+   O padding em volta e onde mora a ROSA DOS VENTOS.                         */
+.bmapa{position:relative;max-width:334px;width:100%;margin:13px auto 0;padding:25px 31px;
+       background:#20303a;border-radius:16px;border:2px solid #46606e}
+.bgrade{display:block;width:100%}
+.blin{display:-webkit-box;display:-webkit-flex;display:flex;width:100%}
+.bcel{width:33.33%;height:62px;margin:1px;border-radius:8px;background:#43733a;
+      border:1px solid #35602d;-webkit-flex:none;flex:none}
+.bcentro{width:33.33%;height:62px;margin:1px;border-radius:8px;background:#3c6ee0;color:#fff;
+         border:2px solid #dbe6ff;font-size:11px;font-weight:800;letter-spacing:.4px;
+         padding-top:3px;-webkit-flex:none;flex:none}
+.pt{width:33.33%;height:62px;margin:1px;border-radius:8px;background:#fffdf6;color:#221a12;
+    border:2px solid #c9bda6;cursor:pointer;font-size:11px;font-weight:800;letter-spacing:.3px;
+    padding-top:3px;position:relative;-webkit-flex:none;flex:none}
+.pt.ok{background:#d6f5c8;border:3px solid #1f6b12}
+.ptfig{width:30px;height:26px;margin:0 auto;background-repeat:no-repeat;
+       background-position:center;background-size:contain}
+.ptn{display:block;line-height:1.1}
+/* a ROSA DOS VENTOS em volta do mapa: e a regua, fica sempre a vista */
+.rosa{position:absolute;color:#ffd54a;font-size:13px;font-weight:800;letter-spacing:.5px;
+      text-align:center;line-height:1.05}
+.rosa.pisca{-webkit-animation:pisc .6s ease-in-out infinite alternate;
+            animation:pisc .6s ease-in-out infinite alternate}
+@-webkit-keyframes pisc{from{color:#ffd54a}to{color:var(--texto,#fff8e2)}}
+@keyframes pisc{from{color:#ffd54a}to{color:#fff8e2}}
+/* os botoes de direcao (3a e 4a rodadas) */
+.ventos{max-width:340px;margin:11px auto 0;
+        display:-webkit-box;display:-webkit-flex;display:flex;
+        -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.vento{width:23%;min-height:54px;margin:0 1.2%;border-radius:13px;background:#ffd54a;color:#33280a;
+       border:0;font-size:12px;font-weight:800;padding:7px 2px;cursor:pointer;line-height:1.25;
+       -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f;-webkit-flex:none;flex:none}
+.vento.ok{background:#d6f5c8;-webkit-box-shadow:0 4px 0 #7cb464;box-shadow:0 4px 0 #7cb464}
+.vento.no{background:#f7d9d2;-webkit-box-shadow:0 4px 0 #c08c80;box-shadow:0 4px 0 #c08c80}
+.seta{display:block;font-style:normal;font-size:15px}
+.treme{-webkit-animation:trem .3s;animation:trem .3s}
+@-webkit-keyframes trem{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes trem{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* o "V" do acerto: forma + cor, nunca so cor */
+.vok{position:absolute;right:3px;top:1px;font-size:17px;font-weight:800;color:#1f6b12;line-height:1}
+.placar{margin-top:10px;font-size:15px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:6px 12px;display:inline-block;}
+.placar b{color:#ffd54a}
+@media (max-height:520px){
+  .bcel,.bcentro,.pt{height:52px}
+  .bmapa{padding:22px 31px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---- as quatro casas do mapa em volta de quem olha ----
+   dr = linha (negativo = para cima), dc = coluna (positivo = para a direita).
+   ⭐ E DAQUI que sai a resposta certa: a direcao NUNCA e escrita a mao.      */
+var POS=[{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:1},{dr:0,dc:-1}];
+function dirDe(p){
+  if(p.dr<0) return "NORTE";
+  if(p.dr>0) return "SUL";
+  if(p.dc>0) return "LESTE";
+  return "OESTE";
+}
+/* a referencia no CORPO da crianca — o que faz a palavra querer dizer algo */
+var REF= /*TECNICA*/ {NORTE:"o lado de <b>cima</b> do mapa",
+         SUL:"o lado de <b>baixo</b> do mapa",
+         LESTE:"o lado da sua <b>direita</b>",
+         OESTE:"o lado da sua <b>esquerda</b>"};
+var SETA= /*TECNICA*/ {NORTE:"&#9650;",SUL:"&#9660;",LESTE:"&#9654;",OESTE:"&#9664;"};
+var DIRS=["NORTE","SUL","LESTE","OESTE"]; /*TECNICA*/
+
+/* ---- os lugares (SVG embutido: a peca roda sozinha, sem arquivo) ---- */
+var ARTE={
+ escola:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'>"+
+   "<rect x='6' y='17' width='24' height='15' fill='#f0d9a8' stroke='#7a5a2e' stroke-width='2'/>"+
+   "<path d='M4 17 L18 7 L32 17 Z' fill='#c4553a' stroke='#7a3225' stroke-width='2' stroke-linejoin='round'/>"+
+   "<rect x='15' y='24' width='6' height='8' fill='#7a5a2e'/>"+
+   "<rect x='17' y='1' width='2' height='7' fill='#7a5a2e'/>"+
+   "<path d='M19 1 L28 3 L19 6 Z' fill='#3c6ee0'/></svg>",
+ padaria:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'>"+
+   "<ellipse cx='18' cy='20' rx='14' ry='9' fill='#e0a458' stroke='#8a5a2a' stroke-width='2'/>"+
+   "<g stroke='#8a5a2a' stroke-width='2' stroke-linecap='round'>"+
+   "<path d='M11 16 L14 23'/><path d='M18 15 L21 22'/><path d='M25 16 L27 22'/></g></svg>",
+ parque:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'>"+
+   "<rect x='16' y='20' width='5' height='12' fill='#8a5a34'/>"+
+   "<circle cx='18' cy='14' r='11' fill='#2f7a30'/>"+
+   "<circle cx='9' cy='20' r='7' fill='#3f9a3d'/><circle cx='27' cy='20' r='6' fill='#3f9a3d'/></svg>",
+ mercado:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'>"+
+   "<path d='M7 14 h22 l2 18 h-26 Z' fill='#4fa3c9' stroke='#124b63' stroke-width='2' stroke-linejoin='round'/>"+
+   "<path d='M13 15 a5 5 0 0 1 10 0' fill='none' stroke='#124b63' stroke-width='2.5'/></svg>",
+ praca:"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'>"+
+   "<path d='M18 34 C10 22 5 18 5 13 A13 13 0 0 1 31 13 C31 18 26 22 18 34 Z' "+
+   "fill='#e8433f' stroke='#7d1a17' stroke-width='2'/>"+
+   "<circle cx='18' cy='13' r='5' fill='#fff3e6'/></svg>"
+};
+function urlArte(k){ return "url(\"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(ARTE[k])+"\")"; }
+/* o ARTIGO vai junto do nome: sem ele o enunciado sai "em que direcao fica
+   MERCADO?", que nao e portugues e trava a leitura de quem ainda soletra. */
+var LUGARES=[{k:"escola",n:"ESCOLA",art:"a"},{k:"padaria",n:"PADARIA",art:"a"},
+             {k:"parque",n:"PARQUE",art:"o"},{k:"mercado",n:"MERCADO",art:"o"}];
+
+/* ---- as 4 rodadas: primeiro o lugar pela direcao, depois a direcao pelo lugar ---- */
+var RODADAS= /*TECNICA*/ [
+ {tipo:"achalugar", ref:true,  selo:"ACHE O LUGAR"},
+ {tipo:"achalugar", ref:false, selo:"ACHE O LUGAR"},
+ {tipo:"achadir",   ref:true,  selo:"QUE DIRE&#199;&#195;O?"},
+ {tipo:"achadir",   ref:false, selo:"QUE DIRE&#199;&#195;O?"}
+];
+
+var telaAtual=null, barraP=null, rodada=0, errosSeg=0, travado=false,
+    mapa=[], botoes=[], rosas={}, alvoDir="", alvoLugar=null, elPlacar=null, elMapa=null;
+
+function sPasso(){ nota(660,.05,.11,"square",0); }
+
+/* embaralha os lugares nas quatro casas. A direcao de cada um passa a ser a
+   posicao DELE no mapa — a mesma informacao que a crianca ve desenhada.     */
+function sorteiaMapa(){
+  var l=baguncar(LUGARES.slice(0)), i, out=[];
+  for(i=0;i<POS.length;i++)
+    out.push({lugar:l[i],pos:POS[i],dir:dirDe(POS[i])});
+  return out;
+}
+/* ⚠️ PROMESSA MEDIDA: cada lugar tem que estar desenhado na casa que a direcao
+   dele descreve, e as quatro direcoes tem que aparecer uma vez cada. Se um dia
+   alguem inverter dr/dc, a peca avisa em vez de mentir para a crianca.      */
+function confereMapa(){
+  var i, vistas="";
+  for(i=0;i<mapa.length;i++){
+    if(mapa[i].dir!==dirDe(mapa[i].pos)) return false;
+    if(vistas.indexOf(mapa[i].dir)>=0) return false;
+    vistas+=mapa[i].dir+" ";
+  }
+  return mapa.length===4;
+}
+function lugarNaDir(d){
+  var i;
+  for(i=0;i<mapa.length;i++) if(mapa[i].dir===d) return mapa[i];
+  return null;
+}
+
+function telaBussola(){
+  limpa();
+  rodada=0;
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",RODADAS[0].selo));
+  var bal=el("div","balao",""); bal.id="balaoP";
+  c.appendChild(bal);
+  elMapa=el("div","bmapa");
+  c.appendChild(elMapa);
+  var v=el("div","ventos",""); v.id="ventos";
+  c.appendChild(v);
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  c.appendChild(el("div","hint","No mapa o <b>norte</b> fica em cima e o <b>sul</b> embaixo. "+
+    "O <b>leste</b> &#233; o lado da sua direita; o <b>oeste</b>, o da sua esquerda."));
+  t.appendChild(c); app.appendChild(t);
+  novaRodada();
+}
+
+/* ---------- desenhar o mapinha a partir de `mapa` ---------- */
+function montaMapa(){
+  var g=el("div","bgrade"), dr, dc, lin, item, e, i;
+  elMapa.innerHTML="";
+  for(dr=-1;dr<=1;dr++){
+    lin=el("div","blin");
+    for(dc=-1;dc<=1;dc++){
+      if(dr===0&&dc===0){
+        e=el("div","bcentro",'<div class="ptfig"></div><span class="ptn">PRA&#199;A</span>');
+        e.querySelector(".ptfig").style.backgroundImage=urlArte("praca");
+        lin.appendChild(e); continue;
+      }
+      item=null;
+      for(i=0;i<mapa.length;i++) if(mapa[i].pos.dr===dr&&mapa[i].pos.dc===dc) item=mapa[i];
+      if(!item){ lin.appendChild(el("div","bcel","")); continue; }
+      e=el("div","pt",'<div class="ptfig"></div><span class="ptn">'+item.lugar.n+"</span>");
+      e.querySelector(".ptfig").style.backgroundImage=urlArte(item.lugar.k);
+      e.rumo=item.dir;
+      e.onclick=cliqueLugar;
+      item.el=e;
+      lin.appendChild(e);
+    }
+    g.appendChild(lin);
+  }
+  elMapa.appendChild(g);
+  /* A ROSA DOS VENTOS em volta do mapa. Cada lado leva a SETA junto da letra —
+     assim a direcao se le pela FORMA, nao so pela palavra, e a crianca que
+     ainda soletra enxerga para onde e.                                      */
+  rosas={};
+  poeRosa("NORTE",{left:"50%",top:"5px",marginLeft:"-15px",width:"30px"},SETA.NORTE+" N");
+  poeRosa("SUL",  {left:"50%",bottom:"5px",marginLeft:"-15px",width:"30px"},SETA.SUL+" S");
+  poeRosa("OESTE",{left:"3px",top:"50%",marginTop:"-14px",width:"26px"},SETA.OESTE+"<br>O");
+  poeRosa("LESTE",{right:"3px",top:"50%",marginTop:"-14px",width:"26px"},SETA.LESTE+"<br>L");
+}
+function poeRosa(d,estilo,html){
+  var r=el("div","rosa",html), k;
+  for(k in estilo) if(estilo.hasOwnProperty(k)) r.style[k]=estilo[k];
+  elMapa.appendChild(r);
+  rosas[d]=r;
+}
+
+/* ---------- cada rodada ---------- */
+function novaRodada(){
+  var r=RODADAS[rodada], bal=document.getElementById("balaoP"),
+      vs=document.getElementById("ventos"), sel=app.querySelector(".selo"), item;
+  errosSeg=0; travado=false;
+  apagaDica();
+  sel.innerHTML=r.selo;
+  vs.innerHTML="";
+  botoes=[];
+  mapa=sorteiaMapa();
+  if(!confereMapa()) mapa=sorteiaMapa();   /* rede de seguranca */
+  montaMapa();
+  if(r.tipo==="achalugar"){
+    alvoDir=DIRS[Math.floor(Math.random()*DIRS.length)];
+    alvoLugar=lugarNaDir(alvoDir);
+    bal.innerHTML="Voc&#234; est&#225; na <b>pra&#231;a</b>. Toque no lugar que fica ao <b>"+alvoDir+"</b>"+
+                  (r.ref?(" &#8212; "+REF[alvoDir]):"")+".";
+  }else{
+    item=mapa[Math.floor(Math.random()*mapa.length)];
+    alvoLugar=item; alvoDir=item.dir;
+    bal.innerHTML="Da <b>pra&#231;a</b>, em que dire&#231;&#227;o fica "+item.lugar.art+
+                  " <b>"+item.lugar.n+"</b>?"+
+                  (r.ref?" Pense de que lado do mapa esse lugar est&#225;.":"");
+    montaBotoes();
+  }
+  marcaQualServe();
+  atualiza();
+}
+function montaBotoes(){
+  var vs=document.getElementById("ventos"), i, b;
+  for(i=0;i<DIRS.length;i++){
+    b=el("button","vento",'<i class="seta">'+SETA[DIRS[i]]+"</i>"+DIRS[i]);
+    b.rumo=DIRS[i];
+    b.onclick=cliqueVento;
+    vs.appendChild(b); botoes.push(b);
+  }
+}
+
+function cliqueLugar(){
+  if(travado) return;
+  if(RODADAS[rodada].tipo!=="achalugar"){
+    mostraDica("Nesta rodada a resposta est&#225; nos bot&#245;es de <b>dire&#231;&#227;o</b>, embaixo do mapa.");
+    sTap(); return;
+  }
+  if(this.rumo===alvoDir){
+    this.className="pt ok";
+    this.appendChild(el("i","vok","&#10003;"));
+    acerta();
+  }else{
+    sErro(); errosSeg++;
+    this.className="pt treme";
+    destreme(this,"pt");
+    ajuda(errosSeg);
+  }
+}
+function cliqueVento(){
+  if(travado) return;
+  if(this.rumo===alvoDir){
+    this.className="vento ok";
+    acerta();
+  }else{
+    sErro(); errosSeg++;
+    this.className="vento no treme";
+    ajuda(errosSeg);
+  }
+}
+function acerta(){
+  if(travado) return;
+  travado=true;                 /* fecha a rodada: toque duplo nao conta 2x */
+  sCerto();
+  apagaDica();
+  piscaRosa(alvoDir);
+  rodada++;
+  desmarcaTudo();
+  atualiza();
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(rodada>=RODADAS.length){
+      mostraBanner("Voc&#234; se orientou pelo <b>norte</b>, <b>sul</b>, <b>leste</b> e <b>oeste</b>!",telaFim);
+    }else{
+      sPasso(); novaRodada();
+    }
+  },950);
+}
+function atualiza(){
+  var feitas=Math.min(rodada,RODADAS.length);
+  if(elPlacar) elPlacar.innerHTML="Dire&#231;&#245;es certas: <b>"+feitas+"</b> de <b>"+RODADAS.length+"</b>";
+  /* a barra nunca passa de 100% nem anda para tras (portao da progressao) */
+  if(barraP) barraP.style.width=Math.round(feitas*100/RODADAS.length)+"%";
+}
+function piscaRosa(d){
+  var k;
+  for(k in rosas) if(rosas.hasOwnProperty(k)) rosas[k].className=(k===d)?"rosa pisca":"rosa";
+}
+function destreme(e,base){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(e.className.indexOf("ok")<0) e.className=base;
+  },320);
+}
+
+/* O ANDAIME QUE CRESCE — a peca nunca trava */
+function ajuda(n){
+  if(n===1){
+    mostraDica("<b>"+alvoDir+"</b> &#233; "+REF[alvoDir]+".");
+  }else if(n===2){
+    mostraDica("Olhe a seta <b>"+SETA[alvoDir]+"</b> piscando na beirada do mapa: &#233; para aquele lado.");
+    piscaRosa(alvoDir);
+  }else{
+    mostraDica("&#201; para c&#225;: <b>"+alvoDir+"</b>, "+REF[alvoDir]+". Vamos juntos.");
+    piscaRosa(alvoDir);
+    esperaERevela();
+  }
+}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): no 3º degrau a dica sumia no MESMO
+   instante em que aparecia — `revela()` chama `acerta()`, que chama
+   `apagaDica()`. A resposta acendia sozinha e a criança não lia explicação
+   nenhuma. Agora o revelar ESPERA a dica ser lida. Os guardas (`rodada`,
+   `travado`, a tela ainda no ar) existem porque a criança pode acertar
+   sozinha durante essa espera. */
+function esperaERevela(){
+  var r=rodada;
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(rodada!==r||travado) return;
+    revela();
+  },1100);
+}
+function revela(){
+  var i;
+  if(RODADAS[rodada].tipo==="achalugar"){
+    if(alvoLugar&&alvoLugar.el&&alvoLugar.el.className.indexOf("ok")<0){
+      alvoLugar.el.className="pt ok";
+      alvoLugar.el.appendChild(el("i","vok","&#10003;"));
+    }
+    acerta(); return;
+  }
+  for(i=0;i<botoes.length;i++)
+    if(botoes[i].rumo===alvoDir){ botoes[i].className="vento ok"; acerta(); return; }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* data-qa: so para o auditor-jogador (_qa/jogador.js) conseguir terminar a
+   peca sozinho, e para ele parar de tocar na resposta ja aceita. */
+function marcaQualServe(){
+  var i, achaLugar=(RODADAS[rodada].tipo==="achalugar");
+  for(i=0;i<mapa.length;i++)
+    if(mapa[i].el) mapa[i].el.setAttribute("data-qa",(achaLugar&&mapa[i].dir===alvoDir)?"1":"0");
+  for(i=0;i<botoes.length;i++)
+    botoes[i].setAttribute("data-qa",(!achaLugar&&botoes[i].rumo===alvoDir)?"1":"0");
+}
+function desmarcaTudo(){
+  var i;
+  for(i=0;i<mapa.length;i++) if(mapa[i].el) mapa[i].el.setAttribute("data-qa","0");
+  for(i=0;i<botoes.length;i++) botoes[i].setAttribute("data-qa","0");
+}
+
+function telaFim(){
+  limpa();
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","&#9733;"));
+  c.appendChild(el("div","balao","Agora voc&#234; sabe dizer para que <b>lado</b> fica cada lugar."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=telaBussola;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+telaBussola();
+</script>
+</body></html>

@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — bater as sílabas</title>
+<!-- ============================================================
+     PEÇA: BATER AS SÍLABAS — a criança BATE uma vez para cada pedaço.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     PARA QUEM É: 1º ano (e pré). Não se lê nada aqui: é a FIGURA que diz a
+     palavra, e a resposta é um GESTO — bater.
+
+     POR QUE ELA EXISTE — e por que ela é a irmã da `juntar-silabas`:
+     juntar é SÍNTESE (BO + LO = BOLO); bater é ANÁLISE (BOLO = BO + LO). São
+     as duas metades da consciência silábica, e a pesquisa é explícita em pedir
+     as DUAS. Nenhuma das 74 peças da oficina fazia a segunda.
+
+     ⭐ O QUE A PESQUISA MANDOU (Reading Rockets, ago/2026 — ver
+        `_pesquisa/REGRAS-INTERATIVIDADE.md`):
+       · **bater palma / mão no queixo** é a atividade canônica de separar
+         sílabas: o corpo marca o ritmo antes de a cabeça contar. Aqui o gesto
+         é o mesmo — bater — e cada batida vira uma marca na tela;
+       · **da unidade grande para a pequena** (palavra → sílaba → fonema): no
+         1º ano a sílaba é o degrau, e é por ela que se começa;
+       · **aqui a fala É picada, ao contrário da peça de juntar.** Não é
+         contradição: separar exige ouvir os pedaços separados; juntar exige o
+         som contínuo. Cada peça fala do jeito da habilidade que ela treina.
+
+     ⭐⭐ O QUE O MARCOS PEGOU JOGANDO A PADARIA DAS LETRAS (ago/2026), e o que
+        mudou aqui. Foram QUATRO recados de uma vez, e os quatro são do mesmo
+        parentesco: **a peça pedia à criança do 1º ano coisas que só chegavam
+        por ESCRITO.** O gesto (bater) sempre esteve certo — a entrada é que
+        estava acima do ano.
+
+        1. *"melhor ter apoio visual, essa fase está adequada para o 1º ano?"*
+           → **avaliação honesta:** o GESTO é do 1º ano (bater sílabas é a
+           tarefa canônica da consciência silábica, e vem até do pré). O que
+           NÃO estava era o caminho de entrada: tudo o que dizia à criança o
+           que fazer era texto — o enunciado, as três dicas do andaime, o
+           rótulo do tambor, o aviso da linha vazia. Quem não lê (que é o 1º
+           ano inteiro em março) só tinha a figura, e ela sozinha não diz nem
+           a palavra ("é bolo ou é torta?") nem o que é um "pedaço". Faltava
+           ainda o mais básico: **não havia como OUVIR a palavra**. Consertado
+           abaixo, item por item.
+        2. *"tem que ter apoio sonoro também"* → agora a criança tem **três**
+           sons de apoio, e nenhum deles entrega a conta:
+             · o botão **OUVIR**, ao lado da figura, do começo ao fim: diz a
+               palavra INTEIRA. Tira a dúvida do nome sem dizer quantos
+               pedaços tem (é justamente o que a fase mede);
+             · **o andaime agora FALA.** As três dicas eram só texto na tela —
+               para quem não lê, andaime invisível. Cada degrau é dito em voz
+               alta (`fala(soTexto(...))`);
+             · no 2º degrau a peça **bate junto E diz os pedaços**, no ritmo.
+        3. *"quando o aluno bate seria legal aparecer a própria figura
+           pequenina, a cada batida"* → cada batida agora nasce como uma
+           **miniatura da figura da palavra** (`figEl(r.fig)`), e não mais um
+           disco amarelo. Pedagogicamente é mais do que enfeite: a marca deixa
+           de ser um símbolo abstrato e vira um OBJETO contável — "dois bolos"
+           é contagem de 1º ano; "dois discos" é abstração. E amarra a batida
+           à palavra, que é o vínculo que a fase treina.
+        4. *"na hora que fala as sílabas deve ser pausado e bem claro"* → ver
+           o bloco **A VOZ PICADA** lá embaixo. A pausa passou a ser ESCRITA
+           no texto da fala (`voz:"bo... lo"`), que é o único jeito de o Edge
+           TTS pausar de verdade.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · **não mostrar quantos lugares tem.** Se a tela desenhasse 3 casinhas,
+         a criança contaria as casinhas e não os pedaços da palavra — a resposta
+         estaria dada. Por isso as batidas NASCEM do dedo dela, uma a uma;
+       · dá para **Apagar** e recomeçar: contar errado no meio não pune;
+       · o andaime CRESCE: 1 erro → a dica; 2 erros → a peça BATE o ritmo em voz
+         alta (apoio pelo ouvido, sem escrever nada); 3 erros → revela os
+         pedaços escritos e já deixa as batidas postas. Nunca trava;
+       · erro devolve som de RETORNO, nunca de tropeço, e nunca a palavra
+         "errou";
+       · **as duas portas** (regra do Marcos, ago/2026): dá para bater com o
+         dedo E com a BARRA DE ESPAÇO do teclado de verdade; Enter é o Pronto.
+         No PC da escola tem teclado, e a criança vai usar;
+       · `data-qa` diz ao auditor-jogador o que serve AGORA — só para ele.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A LINHA DE CIMA: a figura e, do lado dela, o alto-falante.
+   ⚠️ o alto-falante fica NA MESMA LINHA de propósito. Embaixo da figura ele
+   custaria ~92px de altura, e esta peça ja e das mais altas da oficina (figura
+   + linha das batidas + tambor + Apagar/Pronto). No monitor 1024x420 da escola
+   isso empurraria o "Pronto" para fora da primeira olhada. Ao lado, sai de
+   graça: 150 + 12 + 92 = 254px, cabe ate no celular de 320. */
+.bsTopo{margin:13px auto 0;max-width:430px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center}
+/* O ALTO-FALANTE DA PALAVRA (pilar SONORA; pedido do Marcos, ago/2026: *"tem
+   que ter apoio sonoro também"*). Ele diz a palavra INTEIRA — nunca picada:
+   picar e a resposta da fase, e quem pica e o andaime, mais tarde.
+   Alvo de 92x92: e o segundo maior da tela, so perde para o tambor. */
+.bsOuvir{-webkit-box-flex:0;-ms-flex:0 0 auto;flex:0 0 auto;margin-left:12px;
+  width:92px;min-height:92px;border:0;border-radius:22px;background:#ffd54a;color:#33280a;
+  font-size:14px;font-weight:800;letter-spacing:.6px;padding:8px 6px;cursor:pointer;
+  -webkit-box-shadow:0 5px 0 #c9a52f;box-shadow:0 5px 0 #c9a52f}
+.bsOuvir:active{-webkit-transform:translateY(4px);transform:translateY(4px);
+  -webkit-box-shadow:0 1px 0 #c9a52f;box-shadow:0 1px 0 #c9a52f}
+.bsOuvir.tocando{background:#ffe9a3}
+/* ⚠️ O GLIFO E UM SVG EMBUTIDO, e e o MESMO desenho da `ouvir-achar` — dois
+   alto-falantes diferentes no mesmo app e amadorismo, e a licao paga la (quatro
+   rodadas do Marcos: *"esse botao de som esta horrivel"*) foi que desenho feito
+   de BORDA em elemento sem tamanho nao se centra. O SVG se centra sozinho pelo
+   viewBox. Corpo a ESQUERDA e cone abrindo para a DIREITA: ao contrario ele
+   vira uma seta de "voltar". */
+.bsFone{display:block;width:34px;height:34px;margin:0 auto 5px;
+  background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+  -webkit-background-size:34px 34px;background-size:34px 34px}
+/* a figura da palavra: é ela que diz O QUE bater (a criança não lê) */
+.bsFig{width:150px;height:150px;margin:0;border-radius:22px;background:rgba(255,248,232,.55);-webkit-backdrop-filter:blur(6px) saturate(1.05);backdrop-filter:blur(6px) saturate(1.05);border:2px solid rgba(255,255,255,.78);border-bottom-width:5px;-webkit-box-shadow:0 8px 18px rgba(40,25,10,.28);box-shadow:0 8px 18px rgba(40,25,10,.28);
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;overflow:hidden}
+.bsFig img{width:100%;height:100%;object-fit:contain}
+/* ⚠️ LICAO PAGA (ago/2026): a palavra de reserva (quando a fase nao traz
+   figura) era #6b5c46 sobre o fundo claro da caixa — 2,22:1, quando o
+   minimo e 4,5. E o pior: e JUSTAMENTE o caso em que a palavra e a unica
+   coisa na tela, porque a figura faltou. Escurecida ate passar. */
+.bsFig .semfig{font-size:15px;color:#2f2718;padding:8px;text-align:center;font-weight:800;letter-spacing:.5px}
+/* a figura PULSA a cada batida: causa e efeito na mesma piscada — "bati, e a
+   palavra respondeu". No 1º ano o feedback tem que ser imediato e visível
+   (Hattie), e a criança não le "voce bateu 2 vezes". */
+.bsFig.pulsa{-webkit-animation:bsPulsa .34s;animation:bsPulsa .34s}
+@-webkit-keyframes bsPulsa{50%{-webkit-transform:scale(1.06)}}
+@keyframes bsPulsa{50%{transform:scale(1.06)}}
+/* a LINHA DAS BATIDAS: ela nasce VAZIA. Desenhar os lugares certos daria a
+   resposta — a criança contaria as casinhas em vez dos pedaços da palavra.
+   ⭐ o TRILHO tracejado (ago/2026) e apoio visual que NAO entrega a conta: diz
+   ONDE olhar antes de a primeira batida existir, sem dizer QUANTAS cabem — e
+   uma moldura só, não uma fileira de casinhas. */
+.bsBatidas{min-height:66px;margin:14px auto 4px;max-width:430px;padding:5px 8px;
+  border:3px dashed rgba(255,255,255,.26);border-radius:22px;
+  display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-box-align:center;align-items:center;-webkit-flex-wrap:wrap;flex-wrap:wrap}
+/* ⭐ CADA BATIDA E A PROPRIA FIGURA, PEQUENINA (pedido do Marcos, ago/2026:
+   *"quando o aluno bate seria legal aparecer a própria figura pequenina, a
+   cada batida"*). Nao e enfeite: disco amarelo e simbolo abstrato, e a criança
+   de 6 anos conta OBJETOS. "Dois bolos" ela conta; "duas marcas" ela precisa
+   traduzir primeiro. E amarra a batida a palavra, que e o vinculo da fase.
+   O fundo amarelo fica por baixo: na bancada (e em fase sem figura) ele
+   continua sendo a marca de antes, entao a peça nunca fica sem resposta. */
+.bsBatida{width:54px;height:54px;margin:4px;border-radius:50%;background:#ffd54a;
+  overflow:hidden;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f;
+  -webkit-animation:bsPop .28s;animation:bsPop .28s}
+.bsBatida img{width:84%;height:84%;object-fit:contain}
+.bsBatida.eco{background:#f6c23a;-webkit-transform:scale(1.18);transform:scale(1.18)}
+@-webkit-keyframes bsPop{0%{-webkit-transform:scale(.2);opacity:0}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes bsPop{0%{transform:scale(.2);opacity:0}100%{transform:scale(1);opacity:1}}
+.bsVazio{font-size:15px;color:var(--texto,#e6dcc9);opacity:.8;font-weight:600}
+/* o TAMBOR: o alvo mais fácil de acertar da tela inteira (dedo de 6 anos) */
+.bsBater{display:block;width:200px;max-width:86%;min-height:86px;margin:6px auto 0;
+  border:0;border-radius:26px;background:#e8734a;color:#fff;font-size:24px;font-weight:800;
+  letter-spacing:1px;cursor:pointer;-webkit-box-shadow:0 6px 0 #a94f31;box-shadow:0 6px 0 #a94f31}
+.bsBater:active{-webkit-transform:translateY(4px);transform:translateY(4px);
+  -webkit-box-shadow:0 2px 0 #a94f31;box-shadow:0 2px 0 #a94f31}
+.bsBater.bate{-webkit-animation:bsBat .18s;animation:bsBat .18s}
+@-webkit-keyframes bsBat{50%{-webkit-transform:scale(.94)}}
+@keyframes bsBat{50%{transform:scale(.94)}}
+/* a fileira de baixo: Apagar (sem punição) e Pronto (fechar a resposta) */
+.bsLinha{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  gap:10px;margin:12px auto 0;max-width:430px}
+.bsLimpa{border:0;border-radius:16px;background:#f2ece0;color:#3a2c07;font-size:16px;
+  font-weight:700;min-height:48px;padding:12px 20px;cursor:pointer;
+  -webkit-box-shadow:0 4px 0 #c9bda6;box-shadow:0 4px 0 #c9bda6}
+.bsPronto{border:0;border-radius:16px;background:#59c24b;color:#12300c;font-size:17px;
+  font-weight:800;min-height:48px;padding:12px 26px;cursor:pointer;
+  -webkit-box-shadow:0 4px 0 #3a8730;box-shadow:0 4px 0 #3a8730}
+.bsPronto:active,.bsLimpa:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+/* os PEDAÇOS ESCRITOS: só aparecem no acerto (ou no 3º erro, para revelar) */
+.bsSilabas{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;gap:8px;margin:12px auto 0;max-width:430px}
+.bsSil{min-width:78px;min-height:56px;border-radius:16px;background:#f6d79a;color:#4a3608;
+  font-size:26px;font-weight:800;padding:8px 12px;
+  display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  -webkit-box-shadow:0 4px 0 #c99b45;box-shadow:0 4px 0 #c99b45}
+.bsSil.toca{background:#ffd54a;-webkit-transform:scale(1.12);transform:scale(1.12)}
+.bsMarca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+  border-radius:9px;padding:2px 8px;margin-left:7px;vertical-align:middle}
+/* ⚠️ mesa propria, pelo mesmo motivo do `.passo` e do `.dgpista`: este aviso
+   cai sobre a faixa colorida do tema (marrom na Padaria), e ali nem a cor
+   clara fixa nem o `--texto` servem — um morre num tema, o outro no outro.
+   Com fundo proprio ele e legivel em qualquer atividade. */
+.bsTeclado{font-size:13px;color:#f7f3ea;opacity:1;margin-top:10px;background:rgba(18,16,12,.62);border-radius:10px;padding:4px 10px;display:inline-block}
+/* ⚠️ JANELA BAIXA (o monitor 1024x420 da escola, o projetor, o PC com barras).
+   Medido depois de acrescentar o alto-falante e o trilho: no 1024x420 o TAMBOR
+   nascia com o topo em ~410px, ou seja, a criança abria a fase e não via o
+   botão que responde — parecia que só havia a figura. Aqui a tela encolhe o que
+   é moldura (figura, respiro, letra) e nunca o que é alvo: o tambor continua
+   com 68px e o Apagar/Pronto com 46, bem acima do mínimo do dedo. */
+@media (max-height:520px){
+  .prog{margin:4px 0 6px}
+  .selo{font-size:11px;padding:3px 10px;margin-bottom:5px}
+  .balao{font-size:14px;padding:8px 12px}
+  .balao + *{margin-top:7px}
+  .bsTopo{margin-top:7px}
+  .bsFig{width:106px;height:106px;border-radius:16px}
+  .bsOuvir{width:78px;min-height:78px;font-size:13px;margin-left:10px}
+  .bsFone{width:28px;height:28px;-webkit-background-size:28px 28px;background-size:28px 28px}
+  .bsBatidas{min-height:54px;margin:8px auto 2px;padding:3px 6px}
+  .bsBatida{width:44px;height:44px;margin:3px}
+  .bsBater{min-height:68px;font-size:21px;margin-top:2px}
+  .bsLinha{margin-top:8px}
+  .bsLimpa,.bsPronto{min-height:46px;padding:10px 18px}
+  .bsSil{min-width:64px;min-height:46px;font-size:22px}
+  .bsTeclado{margin-top:6px;font-size:12px}
+}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+  border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+  font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (padaria, 1º ano). Ao copiar a peça para uma
+   atividade, troque APENAS este bloco de dados.
+   · pal — a palavra inteira (é ela que o botão OUVIR diz, e a voz repete no fim)
+   · sil — as sílabas NA ORDEM: é o número delas que a criança tem que bater
+   · voz — A MESMA PALAVRA PICADA, com a pausa ESCRITA (ver abaixo)
+   · fig — o nome da figura (img/<fig>.png); a criança não lê
+   · d   — os TRÊS degraus do andaime: dica -> ritmo no ouvido -> revela
+
+   ⭐⭐ A VOZ PICADA — POR QUE `voz:"bo... lo"` E NÃO `"BO-LO"`
+   Recado do Marcos (ago/2026): *"na hora que fala as sílabas deve ser pausado
+   e bem claro"*. Ele estava ouvindo dois defeitos ao mesmo tempo:
+
+   (a) NÃO PAUSAVA. A voz da casa é GRAVADA (Edge TTS, pelo `entregar.yml`, a
+       partir do texto escrito no `falas.json`) — não dá para mandar a voz
+       "falar devagar" em tempo de jogo, só dá para ESCREVER a pausa. E TTS
+       lê pontuação como prosódia: **as reticências geram um silêncio real**
+       entre os blocos e reiniciam a entonação de cada um, então "bo... lo"
+       sai em dois golpes separados em vez de "bolo" colado. Escolhi
+       reticências e não vírgula (a pausa da vírgula é curta demais para a
+       criança contar em cima dela) e não ponto final (o ponto derruba a
+       entonação, e a palavra picada tem que soar como pergunta em aberto, não
+       como frase encerrada). O HÍFEN — "BO-LO" — não pausa NADA: para o TTS
+       ele é só um separador de palavra composta.
+   (b) NÃO ERA CLARO. Em CAIXA ALTA a voz tende a SOLETRAR o nome das letras
+       ("BO" vira "bê-ó") — é a mesma armadilha já registrada no
+       `_qa/falas.py` (*"o E tem que ser dito somente 'e'"*). Por isso o campo
+       `voz` vai em **minúsculas**: a regra da casa é escrever a fala como a
+       voz tem que DIZER, não como se escreve na tela.
+
+   ⚠️ E o `voz` é um CAMPO do conteúdo, não um `join` feito no ato, porque
+   quem manda gravar é o montador (`falas_dos_dados` desce o `dados` e grava
+   cada frase que a criança ouve). Texto que só existe em tempo de jogo não
+   tem gravação — e ficaria mudo justamente na parte que o Marcos apontou.
+   Sem o campo, a peça cai no plano B: fala pedaço por pedaço, mais devagar. */
+var BATIDAS=[
+ {pal:"BOLO", sil:["BO","LO"], voz:"bo... lo", fig:"pd_bolo",
+  d:["Diga <b>BOLO</b> bem devagar e bata uma vez para cada peda&#231;o.",
+     "Escute: eu vou bater junto com a palavra. Conte comigo.",
+     "S&#227;o <b>2</b> peda&#231;os: bo... lo. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"MALA", sil:["MA","LA"], voz:"ma... la", fig:"pd_mala",
+  d:["Ponha a m&#227;o no queixo e diga MALA. O queixo desce a cada peda&#231;o.",
+     "Escute o ritmo da palavra e conte as batidas.",
+     "S&#227;o <b>2</b> peda&#231;os: ma... la. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ {pal:"SAPATO", sil:["SA","PA","TO"], voz:"sa... pa... to", fig:"pd_sapato",
+  d:["Esta &#233; mais comprida. Diga devagar: sa... pa... to.",
+     "Escute: eu bato junto com a palavra. Conte as batidas.",
+     "S&#227;o <b>3</b> peda&#231;os: sa... pa... to. As batidas j&#225; est&#227;o a&#237;: toque em Pronto."]},
+ /* ⚠️ a de UM pedaço só NÃO leva `voz`: não há pausa para escrever, e uma
+    palavra curta toda em minúscula o montador descarta como se fosse nome de
+    variável (`eh_fala` barra "pão", aceita "PÃO"). Sem `voz`, a peça usa a
+    própria sílaba — que o montador já gravou. */
+ {pal:"PAO", sil:["PAO"], fig:"pd_pao",
+  d:["Cuidado com esta: diga <b>P&#195;O</b>. Quantos peda&#231;os a boca faz?",
+     "Escute: a palavra tem UM golpe s&#243;. Bata junto comigo.",
+     "&#201; <b>1</b> peda&#231;o s&#243;: p&#227;o. A batida j&#225; est&#225; a&#237;: toque em Pronto."]}
+];
+
+var ri=0;        /* rodada de agora */
+var bat=0;       /* quantas batidas a criança já deu */
+var err=0;       /* erros DESTA rodada (o andaime cresce com ele) */
+var ger=0;       /* geração da tela: mata setTimeout de rodada que já saiu */
+/* ⚠️ geração do APOIO PELO OUVIDO. O `ger` só troca quando a RODADA troca, e o
+   eco do 2º degrau vive DENTRO de uma rodada: se a criança errar de novo antes
+   de o eco terminar, os golpes atrasados falavam por cima da revelação — duas
+   vozes ao mesmo tempo, e a segunda corta a primeira no motor. Erro novo cala
+   o eco velho. */
+var eco=0;
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui na
+   bancada ela não existe, e a peça mostra a palavra escrita no lugar. Pegar por
+   `window.imgEl` (e não `typeof imgEl`) é de propósito: assim o nome fica
+   DECLARADO e o portão "função que não existe" consegue medir. */
+var figEl = window.imgEl || null;
+
+/* ⚠️ A VOZ. Dentro de uma atividade montada quem fala é o MOTOR, com o mp3 do
+   Edge TTS. Se não houver gravação para aquele texto, a peça fica CALADA — voz
+   de navegador nunca vai para a criança. Sozinha, na bancada, aí sim ela usa a
+   voz do navegador, só para não se testar no mudo. */
+/* ⚠️ O TEXTO QUE A VOZ PROCURA TEM QUE SER O TEXTO QUE A CRIANÇA VÊ.
+   As dicas do andaime vêm com marcação e entidade (`<b>2</b>`, `&#231;`), e a
+   conta da voz (`temVoz`) é o sha do texto LIMPO — o mesmo `texto_limpo` que o
+   montador aplica antes de mandar gravar. Passar a string crua daria um sha
+   diferente do arquivo gravado, e a dica falada seria silêncio: o defeito mudo
+   de sempre. O navegador decodifica melhor que qualquer regex: joga no
+   innerHTML de uma caixa solta e lê o textContent. */
+var _cxTxt=document.createElement("div");
+function soTexto(h){
+  _cxTxt.innerHTML=h||"";
+  return (_cxTxt.textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+
+function fala(txt){
+  txt=soTexto(txt);
+  if(typeof window.temVoz==="function"){
+    var k=window.temVoz(txt);
+    /* ⚠️ o `op_` NAO e enfeite: `temVoz` devolve so a CONTA do texto, e o
+       arquivo gravado chama-se `op_<conta>.mp3`. Sem o prefixo a peca pedia
+       `audio/<conta>.mp3`, que nao existe — e ficava MUDA mesmo com a voz
+       gravada. Mesmo conserto do motor e do olheiro do integrador. */
+    if(k && typeof window.falaDaTela==="function") window.falaDaTela("op_"+k);
+    return;
+  }
+  try{
+    if(!window.speechSynthesis||!window.SpeechSynthesisUtterance) return;
+    var u=new SpeechSynthesisUtterance(txt);
+    u.lang="pt-BR"; u.rate=.85; u.pitch=1.05;
+    window.speechSynthesis.cancel(); window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+function sBatida(){ nota(196,.10,.20,"sine",0); nota(660,.02,.09,"square",0); }
+function sVolta(){ nota(392,.10,.10,"sine",0); nota(294,.12,.09,"sine",.07); }
+
+/* ⏱️ O COMPASSO. Era 520ms, e 520ms é o erro que o Marcos ouviu: a gravação de
+   uma sílaba dura ~0,5s COM o silêncio de entrada, e o motor corta o áudio
+   anterior ao começar o próximo (`falar()` faz `narr.pause()`). Resultado: a
+   voz falava por cima de si mesma e saía picotada, "bo-lo" atropelado. Com 820
+   cada pedaço termina e ainda sobra silêncio — que é o que a criança usa para
+   contar. Devagar aqui não é lentidão: é o tempo de a contagem acontecer. */
+var PASSO=820;
+
+/* a palavra PICADA, do jeito que a voz vai dizer (ver o bloco A VOZ PICADA) */
+function pedacos(r){ return r.voz || r.sil.join("... "); }
+
+/* ⭐ Diz a palavra picada em UMA gravação só, quando ela existe — é a forma
+   pausada e clara que o Marcos pediu, e a única que não corre risco de ser
+   cortada no meio. Devolve `true` se conseguiu; nesse caso o `ritmo` acende as
+   sílabas em silêncio, senão as duas vozes brigariam pelo mesmo alto-falante.
+   Sem a gravação (bancada, ou conteúdo antigo sem o campo `voz`), devolve
+   `false` e o plano B assume: pedaço por pedaço, no compasso de 820ms. */
+function dizPedacos(r){
+  var txt=pedacos(r);
+  if(typeof window.temVoz==="function" && window.temVoz(soTexto(txt))){ fala(txt); return true; }
+  return false;
+}
+
+/* uma piscada de vida a cada golpe: o tambor afunda e a figura pulsa junto.
+   É o "aconteceu alguma coisa" que a criança de 6 anos precisa ver, já que ela
+   não lê nenhum aviso na tela. */
+function piscaBatida(){
+  var bt=document.getElementById("bsBt"), fg=document.getElementById("bsFg");
+  if(bt){ bt.className="bsBater bate";
+    setTimeout(function(){ if(bt) bt.className="bsBater"; },200); }
+  if(fg){ fg.className="bsFig pulsa";
+    setTimeout(function(){ if(fg) fg.className="bsFig"; },360); }
+}
+
+function pecaBater(){
+  var r=BATIDAS[ri];
+  if(!r){ fimDaPeca(); return; }
+  err=0; bat=0; ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(ri*100/BATIDAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","BATA OS PEDA&#199;OS"));
+  c.appendChild(el("div","balao","Diga a palavra da <b>figura</b> e bata uma vez para cada peda&#231;o."));
+
+  var topo=el("div","bsTopo");
+  var fg=el("div","bsFig");
+  fg.id="bsFg";
+  if(figEl){ fg.appendChild(figEl(r.fig)); }
+  else { fg.appendChild(el("div","semfig", r.pal)); }
+  topo.appendChild(fg);
+
+  /* ⭐ O ALTO-FALANTE DA PALAVRA (apoio sonoro pedido pelo Marcos, ago/2026).
+     Ele diz a palavra INTEIRA, nunca picada: saber QUE doce é aquele desenho é
+     pré-requisito da fase; saber em quantos pedaços ele se parte É a fase. Sem
+     este botão, a criança que não reconhecia o desenho — ou que chamava o bolo
+     de "torta" — não tinha porta de entrada nenhuma, e a fase virava sorte. */
+  var bo=el("button","bsOuvir");
+  bo.type="button"; bo.id="bsOu";
+  bo.setAttribute("aria-label","Ouvir a palavra da figura");
+  bo.appendChild(el("i","bsFone",""));
+  bo.appendChild(document.createTextNode("OUVIR"));
+  bo.onclick=function(){
+    bo.className="bsOuvir tocando";
+    setTimeout(function(){ if(bo) bo.className="bsOuvir"; },700);
+    fala(r.pal);
+  };
+  topo.appendChild(bo);
+  c.appendChild(topo);
+
+  /* a linha nasce VAZIA — quem faz as marcas é o dedo da criança */
+  var bx=el("div","bsBatidas");
+  bx.id="bsBx";
+  bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui"));
+  c.appendChild(bx);
+
+  var bt=el("button","bsBater","BATER");
+  bt.type="button"; bt.id="bsBt";
+  bt.onclick=function(){ bate(r); };
+  c.appendChild(bt);
+
+  var ln=el("div","bsLinha");
+  var lp=el("button","bsLimpa","Apagar"); lp.type="button";
+  lp.onclick=function(){ zera(r); };
+  var pr=el("button","bsPronto","Pronto"); pr.type="button"; pr.id="bsPr";
+  pr.onclick=function(){ confere(r); };
+  ln.appendChild(lp); ln.appendChild(pr);
+  c.appendChild(ln);
+
+  c.appendChild(el("div","bsTeclado",
+    "Tamb&#233;m d&#225; para bater com a <b>barra de espa&#231;o</b> e responder com <b>Enter</b>."));
+
+  t.appendChild(c); app.appendChild(t);
+  marcaQA(r);
+  fala("Diga a palavra da figura e bata uma vez para cada pedaço.");
+}
+
+/* ⭐ A MARCA DE UMA BATIDA — a própria figura, pequenina (pedido do Marcos).
+   Fica numa função só porque quem faz marca é o dedo da criança (`bate`) E o
+   3º degrau do andaime (`revela`): duas marcas diferentes na mesma tela seria
+   exatamente o tipo de resto que a criança nota e a gente não. */
+function marcaDeBatida(r, cls){
+  var m=el("div", cls||"bsBatida", "");
+  if(figEl) m.appendChild(figEl(r.fig));
+  return m;
+}
+
+function bate(r){
+  var bx=document.getElementById("bsBx");
+  if(!bx) return;
+  if(bat===0) bx.innerHTML="";
+  bat++;
+  bx.appendChild(marcaDeBatida(r));
+  piscaBatida();
+  sBatida();
+  marcaQA(r);
+}
+
+function zera(r){
+  var bx=document.getElementById("bsBx");
+  bat=0;
+  if(bx){ bx.innerHTML=""; bx.appendChild(el("span","bsVazio","suas batidas aparecem aqui")); }
+  sTap();
+  marcaQA(r);
+}
+
+function confere(r){
+  if(bat===r.sil.length){ acerta(r); return; }
+  /* ⚠️ ERRO NÃO PUNE: som de RETORNO, as batidas se apagam e o andaime cresce.
+     Contar errado no 1º ano é o normal — é justamente o que está em treino. */
+  err++; sVolta();
+  zera(r);
+  ajuda(err, r);
+}
+
+function acerta(r){
+  var meu=ger;
+  sCerto(); festa();
+  var c=app.querySelector(".centro");
+  /* ⭐ AQUI A FALA É PICADA, de propósito: esta peça treina SEPARAR (a irmã
+     `juntar-silabas` faz o contrário, e por isso lá o som é contínuo). Cada
+     pedaço acende no ritmo da batida, e só no fim a palavra volta inteira —
+     para a criança ouvir que os pedaços eram dela o tempo todo. */
+  var cx=el("div","bsSilabas"), i;
+  for(i=0;i<r.sil.length;i++){
+    var s=el("div","bsSil", r.sil[i]);
+    s.id="bss"+i;
+    cx.appendChild(s);
+  }
+  c.appendChild(cx);
+  /* a gravação inteira ("bo... lo") começa AGORA e corre por cima da animação;
+     por isso o `ritmo` acende as sílabas MUDO quando ela existe. */
+  var inteiro=dizPedacos(r);
+  ritmo(r, 0, meu, function(){
+    if(meu!==ger) return;
+    /* a palavra volta JUNTA no fim — "os pedaços eram dela o tempo todo".
+       O respiro extra quando a gravação picada tocou existe para ela não ser
+       cortada na última sílaba: quem começa a falar corta quem estava falando. */
+    setTimeout(function(){
+      if(meu!==ger) return;
+      fala(r.pal);
+      setTimeout(function(){
+        if(meu!==ger) return;
+        ri++;
+        if(ri>=BATIDAS.length) fimDaPeca(); else pecaBater();
+      },1500);
+    }, inteiro?340:0);
+  }, inteiro);
+}
+
+/* toca o ritmo da palavra: um golpe por sílaba, com a sílaba acesa junto.
+   `mudo` = a voz já está dizendo a palavra picada de uma vez só; aqui fica só
+   o que se VÊ e o tambor. */
+function ritmo(r, i, meu, aoFim, mudo){
+  if(meu!==ger) return;
+  if(i>=r.sil.length){ if(aoFim) aoFim(); return; }
+  var s=document.getElementById("bss"+i);
+  if(s) s.className="bsSil toca";
+  sBatida();
+  if(!mudo) fala(r.sil[i]);
+  setTimeout(function(){
+    if(meu!==ger) return;
+    if(s) s.className="bsSil";
+    ritmo(r, i+1, meu, aoFim, mudo);
+  },PASSO);
+}
+
+/* o ANDAIME que cresce — e que nunca deixa a criança presa.
+   ⭐⭐ E QUE AGORA FALA (recado do Marcos, ago/2026: *"tem que ter apoio sonoro
+   também"*). As três dicas eram só texto amarelo na tela — para a criança do
+   1º ano que ainda não lê, isso é andaime INVISÍVEL: ela errava, a tela
+   escrevia a ajuda, e ela continuava sem ajuda nenhuma. Cada degrau agora é
+   dito em voz alta com a gravação da própria dica (o montador já grava todo
+   texto que sai do `dados`, então não há o que acrescentar no conteúdo). */
+function ajuda(n, r){
+  var d=r.d||[];
+  eco++; var meuEco=eco;   /* cala o eco do erro anterior, se ainda estiver batendo */
+  if(n===1){
+    var d1=d[0]||"Diga a palavra devagar e bata em cada peda&#231;o.";
+    mostraDica(d1); fala(d1);
+  }
+  else if(n===2){
+    var d2=d[1]||"Escute o ritmo da palavra.";
+    mostraDica(d2); fala(d2);
+    /* apoio pelo OUVIDO — ainda sem escrever a resposta. Espera a dica falada
+       terminar: duas vozes ao mesmo tempo não é apoio, é barulho (e a segunda
+       cortaria a primeira, que é como o motor troca de áudio). */
+    setTimeout(function(){
+      if(meuEco!==eco) return;
+      ecoDoRitmo(r, meuEco);
+    }, 2600);
+  }
+  else if(n>=3){
+    /* revela PRIMEIRO, escreve a dica DEPOIS — senão a fase se conserta
+       sozinha e a criança não sabe por quê (lição paga em 5 de 6 peças) */
+    revela(r);
+    var d3=d[2]||"As batidas j&#225; est&#227;o a&#237;: toque em Pronto.";
+    setTimeout(function(){ mostraDica(d3); fala(d3); },60);
+  }
+}
+
+/* 2º degrau: a peça BATE junto e DIZ os pedaços, sem escrever a resposta.
+   ⚠️ antes daqui só saía o golpe do tambor. Percussão sozinha marca o compasso
+   mas não diz O QUE está sendo partido — e este é justamente o degrau de quem
+   não lê, então ele tem que ser completo pelo ouvido: golpe + pedaço dito +
+   figura pulsando. */
+function ecoDoRitmo(r, meuEco){
+  var meu=ger, i, inteiro=dizPedacos(r);
+  for(i=0;i<r.sil.length;i++){
+    (function(k){
+      setTimeout(function(){
+        if(meu!==ger || meuEco!==eco) return;
+        sBatida();
+        piscaBatida();
+        if(!inteiro) fala(r.sil[k]);
+      }, 260+k*PASSO);
+    })(i);
+  }
+}
+
+/* 3º degrau: revela os pedaços E já põe as batidas — a criança só confirma */
+function revela(r){
+  var bx=document.getElementById("bsBx"), c=app.querySelector(".centro"), i;
+  if(!bx||!c) return;
+  bx.innerHTML="";
+  for(i=0;i<r.sil.length;i++) bx.appendChild(marcaDeBatida(r,"bsBatida eco"));
+  bat=r.sil.length;
+  if(!document.getElementById("bsRev")){
+    var cx=el("div","bsSilabas"); cx.id="bsRev";
+    for(i=0;i<r.sil.length;i++) cx.appendChild(el("div","bsSil", r.sil[i]));
+    var m=el("span","bsMarca","estes"); cx.appendChild(m);
+    c.insertBefore(cx, bx);
+  }
+  marcaQA(r);
+}
+
+/* ⭐ AS DUAS PORTAS (regra do Marcos, ago/2026): no PC da escola tem teclado de
+   verdade, e a criança vai usar. Espaço = bater; Enter = Pronto; Backspace =
+   apagar. O toque continua sendo o caminho principal — isto é um caminho A
+   MAIS, nunca o único. */
+document.onkeydown=function(e){
+  var r=BATIDAS[ri];
+  if(!r||!document.getElementById("bsBt")) return;
+  /* ⚠️ quem está com o dedo no alto-falante quer OUVIR, não bater. Sem esta
+     saída, a criança que chegou no botão pelo Tab apertava Espaço para ouvir
+     a palavra e o `preventDefault` daqui embaixo engolia o clique — ela batia
+     sem querer e ainda ficava sem a voz. */
+  var alvo=e.target||e.srcElement;
+  if(alvo && alvo.id==="bsOu") return;
+  var k=e.keyCode||e.which;
+  if(k===32){ bate(r); if(e.preventDefault) e.preventDefault(); }
+  else if(k===13){ confere(r); if(e.preventDefault) e.preventDefault(); }
+  else if(k===8){ zera(r); if(e.preventDefault) e.preventDefault(); }
+};
+
+/* `data-qa` diz ao auditor-jogador o que serve AGORA: bater enquanto faltam
+   batidas, Pronto quando a conta fecha. Só para ele — a criança nunca vê. */
+function marcaQA(r){
+  var bt=document.getElementById("bsBt"), pr=document.getElementById("bsPr");
+  var falta = bat < r.sil.length;
+  if(bt) bt.setAttribute("data-qa", falta ? "1" : "0");
+  if(pr) pr.setAttribute("data-qa", falta ? "0" : "1");
+}
+
+function fimDaPeca(){
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; separou <b>"+BATIDAS.length+" palavras</b> em peda&#231;os!"));
+  t.appendChild(c); app.appendChild(t);
+  mostraBanner("<b>Que ouvido bom!</b><br>Voc&#234; achou os peda&#231;os das palavras.", pecaBater);
+}
+
+pecaBater();
+</script>
+</body></html>

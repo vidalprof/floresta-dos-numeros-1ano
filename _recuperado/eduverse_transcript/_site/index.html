@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1b4a6b">
+<!-- evita cache do navegador: um F5 simples ja traz a versao mais nova -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Ilhas do Saber - E.B.M. Vidal Ramos</title>
+<style>
+  /* ===== Base / compatibilidade ===== */
+  * { box-sizing: border-box; -webkit-tap-highlight-color: rgba(0,0,0,0); }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Trebuchet MS", "Segoe UI", Verdana, Geneva, sans-serif;
+    color: #fff;
+    background-color: #1b5a8a; /* fallback p/ navegador antigo */
+    background: -webkit-gradient(linear, left top, left bottom, from(#7ec9f2), color-stop(0.45,#3a9bd4), color-stop(0.7,#1f6fae), to(#0e4d7a));
+    background: -webkit-linear-gradient(top, #7ec9f2, #3a9bd4 45%, #1f6fae 70%, #0e4d7a);
+    background: linear-gradient(to bottom, #7ec9f2, #3a9bd4 45%, #1f6fae 70%, #0e4d7a);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== Mar ===== */
+  #mar {
+    position: fixed; left: 0; right: 0; bottom: 0; height: 38%;
+    background-color: #0d6ea0;
+    background: -webkit-linear-gradient(top, rgba(70,180,225,0.55), #0c5e90 60%, #073f63);
+    background: linear-gradient(to bottom, rgba(70,180,225,0.55), #0c5e90 60%, #073f63);
+    z-index: 0; pointer-events: none;
+  }
+  #mar .brilho {
+    position: absolute; top: 8%; left: 0; width: 100%; height: 22px;
+    background: rgba(255,255,255,0.18);
+    -webkit-animation: ondular 5s ease-in-out infinite; animation: ondular 5s ease-in-out infinite;
+  }
+  @-webkit-keyframes ondular { 0%,100%{opacity:.25;} 50%{opacity:.55;} }
+  @keyframes ondular { 0%,100%{opacity:.25;} 50%{opacity:.55;} }
+
+  /* ===== Nuvens ===== */
+  .nuvem {
+    position: fixed; top: 12%; z-index: 1; pointer-events: none;
+    width: 120px; height: 42px; background: #fff; border-radius: 40px;
+    opacity: .85; -webkit-box-shadow: 0 0 0 #fff; box-shadow: 0 0 0 #fff;
+  }
+  .nuvem:before, .nuvem:after {
+    content: ""; position: absolute; background: #fff; border-radius: 50%;
+  }
+  .nuvem:before { width: 56px; height: 56px; top: -24px; left: 18px; }
+  .nuvem:after  { width: 40px; height: 40px; top: -16px; left: 60px; }
+  .n1 { top: 10%; -webkit-animation: passa 38s linear infinite; animation: passa 38s linear infinite; }
+  .n2 { top: 20%; -webkit-transform: scale(.7); transform: scale(.7); -webkit-animation: passa 52s linear infinite; animation: passa 52s linear infinite; -webkit-animation-delay: -10s; animation-delay: -10s; }
+  .n3 { top: 6%;  -webkit-transform: scale(1.2); transform: scale(1.2); -webkit-animation: passa 64s linear infinite; animation: passa 64s linear infinite; -webkit-animation-delay: -28s; animation-delay: -28s; }
+  @-webkit-keyframes passa { from{left:-160px;} to{left:110%;} }
+  @keyframes passa { from{left:-160px;} to{left:110%;} }
+
+  /* ===== Layout geral ===== */
+  .conteudo { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 14px 14px 60px; text-align: center; }
+
+  header.topo { margin: 6px 0 2px; }
+  .placa {
+    display: inline-block; padding: 12px 26px; border-radius: 18px;
+    background-color: #c98a3a;
+    background: -webkit-linear-gradient(top, #e8b15a, #b97a2e);
+    background: linear-gradient(to bottom, #e8b15a, #b97a2e);
+    border: 4px solid #7d4f1d;
+    -webkit-box-shadow: 0 6px 0 #6b4419, 0 10px 18px rgba(0,0,0,.35);
+    box-shadow: 0 6px 0 #6b4419, 0 10px 18px rgba(0,0,0,.35);
+  }
+  .placa h1 { margin: 0; font-size: 30px; color: #fff; text-shadow: 0 2px 0 #7d4f1d, 0 0 10px rgba(0,0,0,.3); letter-spacing: .5px; }
+  .placa .escola { display:block; margin-top: 2px; font-size: 14px; color: #fff4dd; letter-spacing: 1px; }
+
+  .intro { max-width: 640px; margin: 16px auto 6px; font-size: 17px; color: #eef7ff; text-shadow: 0 1px 4px rgba(0,0,0,.4); line-height: 1.45; }
+
+  /* ===== Ilhas ===== */
+  .ilhas { margin-top: 10px; font-size: 0; /* tira espaço entre inline-block */ }
+  .ilha {
+    display: inline-block; vertical-align: top; width: 31%; min-width: 230px;
+    margin: 10px 1%; padding: 6px; border: 0; background: transparent; cursor: pointer;
+    font-family: inherit; font-size: 16px; text-align: center; color: #fff;
+    -webkit-transition: -webkit-transform .2s ease; transition: transform .2s ease;
+  }
+  .ilha .flutua {
+    -webkit-animation: flutua 5.5s ease-in-out infinite; animation: flutua 5.5s ease-in-out infinite;
+  }
+  .ilha.b .flutua { -webkit-animation-delay: -1.8s; animation-delay: -1.8s; }
+  .ilha.c .flutua { -webkit-animation-delay: -3.4s; animation-delay: -3.4s; }
+  @-webkit-keyframes flutua { 0%,100%{-webkit-transform:translateY(0);} 50%{-webkit-transform:translateY(-14px);} }
+  @keyframes flutua { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-14px);} }
+  .ilha svg { width: 100%; height: auto; display: block; }
+  .ilha:hover .flutua, .ilha:focus .flutua { -webkit-transform: translateY(-6px) scale(1.05); transform: translateY(-6px) scale(1.05); }
+  .ilha:focus { outline: none; }
+
+  .rotulo {
+    display: inline-block; margin-top: 8px; padding: 8px 16px; border-radius: 999px;
+    background-color: rgba(0,0,0,.42);
+    -webkit-box-shadow: 0 3px 10px rgba(0,0,0,.3); box-shadow: 0 3px 10px rgba(0,0,0,.3);
+  }
+  .rotulo b { display: block; font-size: 18px; }
+  .rotulo span { display: block; font-size: 13px; color: #ffe9b8; margin-top: 2px; }
+
+  /* ===== Telas (mapa / turmas / atividades) ===== */
+  .tela { display: none; }
+  .tela.ativa { display: block; -webkit-animation: aparece .4s ease both; animation: aparece .4s ease both; }
+  @-webkit-keyframes aparece { from{opacity:0; -webkit-transform:translateY(12px);} to{opacity:1; -webkit-transform:none;} }
+  @keyframes aparece { from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:none;} }
+
+  .voltar {
+    display: inline-block; margin: 10px 0 4px; padding: 9px 18px; cursor: pointer;
+    font-family: inherit; font-size: 15px; color: #fff; border: 0; border-radius: 999px;
+    background-color: #114e77; background: -webkit-linear-gradient(top,#2f7fb0,#114e77); background: linear-gradient(to bottom,#2f7fb0,#114e77);
+    -webkit-box-shadow: 0 4px 10px rgba(0,0,0,.3); box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  }
+  .voltar:hover { background: -webkit-linear-gradient(top,#3a92c7,#155a89); background: linear-gradient(to bottom,#3a92c7,#155a89); }
+
+  .titulo-fase { font-size: 26px; margin: 8px 0 2px; text-shadow: 0 2px 8px rgba(0,0,0,.45); }
+  .sub-fase { font-size: 15px; color: #ffe9b8; margin: 0 0 8px; }
+
+  /* cards de turma / atividade */
+  .cards { font-size: 0; margin-top: 8px; }
+  .card {
+    display: inline-block; vertical-align: top; width: 30%; min-width: 200px; margin: 10px 1%;
+    padding: 16px 12px; cursor: pointer; border: 0; font-family: inherit; color: #243; text-align: center;
+    background-color: #fff; border-radius: 18px;
+    -webkit-box-shadow: 0 6px 16px rgba(0,0,0,.28); box-shadow: 0 6px 16px rgba(0,0,0,.28);
+    -webkit-transition: -webkit-transform .15s ease; transition: transform .15s ease;
+  }
+  .card:hover, .card:focus { -webkit-transform: translateY(-5px); transform: translateY(-5px); outline: none; }
+  .card .bolha {
+    width: 76px; height: 76px; margin: 0 auto 10px; border-radius: 50%;
+    background-color: #ffd97a; line-height: 76px; font-size: 30px; color: #6b4419;
+    -webkit-box-shadow: inset 0 -4px 0 rgba(0,0,0,.12); box-shadow: inset 0 -4px 0 rgba(0,0,0,.12);
+  }
+  .card b { font-size: 20px; display: block; }
+  .card small { display:block; color:#777; margin-top:4px; font-size: 12px; }
+
+  .atividade {
+    display:block; width: 92%; max-width: 520px; margin: 10px auto; padding: 16px 18px;
+    text-align: left; text-decoration: none; color: #243; background:#fff; border-radius: 16px;
+    -webkit-box-shadow: 0 5px 14px rgba(0,0,0,.25); box-shadow: 0 5px 14px rgba(0,0,0,.25);
+    -webkit-transition:-webkit-transform .15s ease; transition: transform .15s ease;
+  }
+  .atividade:hover { -webkit-transform: scale(1.02); transform: scale(1.02); }
+  .atividade .ic { font-size: 30px; margin-right: 10px; vertical-align: middle; }
+  .atividade b { font-size: 18px; }
+  .atividade span { display:block; color:#777; font-size:13px; margin-top:2px; }
+  .vazio { margin: 18px auto; max-width: 460px; background: rgba(255,255,255,.14); border: 2px dashed rgba(255,255,255,.5); border-radius: 16px; padding: 18px; font-size: 16px; }
+
+  footer { margin-top: 26px; font-size: 12px; color: rgba(255,255,255,.8); }
+
+  /* ===== Premium (camada extra; degrada com seguranca em PC antigo) ===== */
+  #sol { position: fixed; top: -150px; left: 50%; width: 520px; height: 520px; margin-left: -260px; z-index: 0; pointer-events: none;
+    background: -webkit-radial-gradient(center, rgba(255,246,205,.55), rgba(255,232,150,.18) 45%, rgba(255,232,150,0) 70%);
+    background: radial-gradient(circle at center, rgba(255,246,205,.55), rgba(255,232,150,.18) 45%, rgba(255,232,150,0) 70%); }
+  #vinheta { position: fixed; left: 0; top: 0; right: 0; bottom: 0; z-index: 1; pointer-events: none;
+    background: -webkit-radial-gradient(center, rgba(0,0,0,0) 56%, rgba(0,0,0,.26));
+    background: radial-gradient(circle at center, rgba(0,0,0,0) 56%, rgba(0,0,0,.26)); }
+
+  /* placa do titulo com brilho dourado */
+  .placa { border-color: #8a5a22;
+    background: -webkit-linear-gradient(top, #ffdf8e, #e8b15a 45%, #b97a2e);
+    background: linear-gradient(to bottom, #ffdf8e, #e8b15a 45%, #b97a2e);
+    -webkit-box-shadow: inset 0 0 0 3px #ffe9af, 0 7px 0 #6b4419, 0 14px 26px rgba(0,0,0,.4);
+    box-shadow: inset 0 0 0 3px #ffe9af, 0 7px 0 #6b4419, 0 14px 26px rgba(0,0,0,.4); }
+  .placa h1 { font-size: 32px; }
+
+  /* introducao num painel suave (mais legivel e elegante) */
+  .intro { background: rgba(7,40,66,.34); border: 1px solid rgba(255,255,255,.18); border-radius: 16px;
+    padding: 12px 18px; -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.18); }
+
+  /* rotulos com moldura dourada */
+  .rotulo, .rotulo-turma {
+    background: -webkit-linear-gradient(top, rgba(20,60,95,.92), rgba(8,38,63,.92));
+    background: linear-gradient(to bottom, rgba(20,60,95,.92), rgba(8,38,63,.92));
+    border: 2px solid rgba(255,216,128,.8);
+    -webkit-box-shadow: 0 4px 12px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15);
+    box-shadow: 0 4px 12px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.15); }
+  .rotulo b, .rotulo-turma b { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+
+  /* titulo da fase com realce dourado embaixo */
+  .titulo-fase:after { content: ""; display: block; width: 120px; height: 4px; margin: 8px auto 0; border-radius: 999px;
+    background: -webkit-linear-gradient(left, rgba(255,216,128,0), #ffd67a, rgba(255,216,128,0));
+    background: linear-gradient(to right, rgba(255,216,128,0), #ffd67a, rgba(255,216,128,0)); }
+
+  /* sol um pouco maior e mais luminoso */
+  #sol { width: 560px; height: 560px; margin-left: -280px; }
+
+  /* gaivotas planando no ceu */
+  .gaivota { position: fixed; z-index: 1; pointer-events: none; width: 20px; height: 12px; opacity: .8; }
+  .gaivota:before, .gaivota:after { content: ""; position: absolute; top: 0; width: 13px; height: 13px; border-top: 3px solid #fff; border-radius: 50%; }
+  .gaivota:before { left: -8px; -webkit-transform: rotate(18deg); transform: rotate(18deg); }
+  .gaivota:after  { right: -8px; -webkit-transform: rotate(-18deg); transform: rotate(-18deg); }
+  .g1 { top: 7%;  -webkit-animation: voa 34s linear infinite; animation: voa 34s linear infinite; }
+  .g2 { top: 11%; -webkit-transform: scale(.78); transform: scale(.78); -webkit-animation: voa 48s linear infinite; animation: voa 48s linear infinite; -webkit-animation-delay: -16s; animation-delay: -16s; }
+  @-webkit-keyframes voa { from{ left: -40px; } to{ left: 108%; } }
+  @keyframes voa { from{ left: -40px; } to{ left: 108%; } }
+
+  /* bolhinhas subindo do mar */
+  .bolhas { position: fixed; left: 0; right: 0; bottom: 0; height: 40%; z-index: 1; pointer-events: none; overflow: hidden; }
+  .bsobe { position: absolute; bottom: -24px; width: 12px; height: 12px; border-radius: 50%;
+    background: -webkit-radial-gradient(30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.12) 65%, rgba(255,255,255,0));
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.95), rgba(255,255,255,.12) 65%, rgba(255,255,255,0));
+    -webkit-animation: sobe 11s linear infinite; animation: sobe 11s linear infinite; }
+  @-webkit-keyframes sobe { 0%{ -webkit-transform: translateY(0) scale(.5); opacity: 0; } 12%{ opacity: .7; } 100%{ -webkit-transform: translateY(-300px) scale(1); opacity: 0; } }
+  @keyframes sobe { 0%{ transform: translateY(0) scale(.5); opacity: 0; } 12%{ opacity: .7; } 100%{ transform: translateY(-300px) scale(1); opacity: 0; } }
+  .bb1 { left: 8%;  -webkit-animation-delay: -1s;   animation-delay: -1s; }
+  .bb2 { left: 22%; width: 8px; height: 8px; -webkit-animation-delay: -4s; animation-delay: -4s; }
+  .bb3 { left: 41%; -webkit-animation-delay: -7s;   animation-delay: -7s; }
+  .bb4 { left: 58%; width: 9px; height: 9px; -webkit-animation-delay: -2.5s; animation-delay: -2.5s; }
+  .bb5 { left: 73%; -webkit-animation-delay: -6s;   animation-delay: -6s; }
+  .bb6 { left: 89%; width: 7px; height: 7px; -webkit-animation-delay: -3.5s; animation-delay: -3.5s; }
+
+  /* placa do titulo com brilho deslizante */
+  .placa { position: relative; overflow: hidden; }
+  .placa:after { content: ""; position: absolute; top: 0; left: -60%; width: 32%; height: 100%; pointer-events: none;
+    -webkit-transform: skewX(-22deg); transform: skewX(-22deg);
+    background: -webkit-linear-gradient(left, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,.45), rgba(255,255,255,0));
+    -webkit-animation: brilha 5s ease-in-out infinite; animation: brilha 5s ease-in-out infinite; }
+
+  /* botoes com acabamento premium */
+  .voltar { border: 1px solid rgba(255,255,255,.22); }
+  .btn-ouvir { border: 2px solid #fff3cf; }
+  .btn-som { border: 2px solid rgba(255,255,255,.35);
+    background: -webkit-linear-gradient(top, rgba(40,90,130,.7), rgba(0,0,0,.5));
+    background: linear-gradient(to bottom, rgba(40,90,130,.7), rgba(0,0,0,.5)); }
+
+  /* ===== Responsivo ===== */
+  @media (max-width: 720px) {
+    .placa h1 { font-size: 22px; }
+    .intro { font-size: 15px; }
+    .ilha { width: 46%; min-width: 0; }
+    .card { width: 45%; min-width: 0; }
+  }
+  @media (max-width: 460px) {
+    .ilha { width: 92%; }
+    .card { width: 92%; }
+  }
+</style>
+</head>
+<body>
+  <div id="mar"><div class="brilho"></div></div>
+  <div class="nuvem n1"></div>
+  <div class="nuvem n2"></div>
+  <div class="nuvem n3"></div>
+
+  <div class="conteudo">
+    <header class="topo">
+      <div class="placa">
+        <h1>🏝️ Ilhas do Saber</h1>
+        <span class="escola">E.B.M. VIDAL RAMOS</span>
+      </div>
+    </header>
+
+    <!-- ===================== TELA: MAPA ===================== -->
+    <div id="tela-mapa" class="tela ativa">
+      <p class="intro">Bem-vindo(a), explorador(a)! 🧭 Escolha a sua <b>ilha</b> e comece a aventura das atividades.</p>
+
+      <div class="ilhas">
+        <!-- ILHA 1 - TESOURO -->
+        <button class="ilha a" type="button" onclick="abrirFase('tesouro')" aria-label="Ilha do Tesouro">
+          <span class="flutua">
+            <svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img">
+              <ellipse cx="120" cy="186" rx="74" ry="12" fill="rgba(0,0,0,0.18)"/>
+              <path d="M52 96 L188 96 L172 150 Q120 178 68 150 Z" fill="#7a5230"/>
+              <path d="M52 96 L188 96 L181 120 Q120 138 59 120 Z" fill="#8c6238"/>
+              <ellipse cx="120" cy="96" rx="70" ry="26" fill="#e9c97a"/>
+              <path d="M50 96 Q120 70 190 96 Q120 86 50 96 Z" fill="#4cc4e0"/>
+              <!-- palmeira -->
+              <rect x="86" y="40" width="9" height="44" rx="4" fill="#8a5a2b"/>
+              <path d="M90 40 Q66 30 54 40 Q74 34 90 46 Z" fill="#3fae54"/>
+              <path d="M90 40 Q116 28 130 40 Q108 34 90 46 Z" fill="#46bd5b"/>
+              <path d="M90 40 Q72 22 60 18 Q82 24 92 42 Z" fill="#34a049"/>
+              <circle cx="90" cy="40" r="5" fill="#caa24a"/>
+              <!-- baú -->
+              <rect x="122" y="64" width="46" height="26" rx="4" fill="#7d4f1d"/>
+              <path d="M122 64 Q145 50 168 64 Z" fill="#925d22"/>
+              <rect x="122" y="74" width="46" height="6" fill="#d8a23a"/>
+              <rect x="141" y="70" width="8" height="14" rx="2" fill="#ffd97a"/>
+              <circle cx="170" cy="92" r="4" fill="#f4d35e"/>
+              <circle cx="112" cy="92" r="4" fill="#7ad0ff"/>
+              <circle cx="128" cy="95" r="3" fill="#ff8fb3"/>
+            </svg>
+          </span>
+          <span class="rotulo"><b>Ilha do Tesouro</b><span>Pré • 1º • 2º ano</span></span>
+        </button>
+
+        <!-- ILHA 2 - EXPLORADORES -->
+        <button class="ilha b" type="button" onclick="abrirFase('exploradores')" aria-label="Ilha dos Exploradores">
+          <span class="flutua">
+            <svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img">
+              <ellipse cx="120" cy="186" rx="74" ry="12" fill="rgba(0,0,0,0.18)"/>
+              <path d="M52 100 L188 100 L172 152 Q120 180 68 152 Z" fill="#6b4a2a"/>
+              <ellipse cx="120" cy="100" rx="70" ry="26" fill="#5bbf4e"/>
+              <ellipse cx="120" cy="96" rx="70" ry="20" fill="#69cf58"/>
+              <!-- montanha -->
+              <path d="M96 40 L132 40 L150 96 L78 96 Z" fill="#8a8f99"/>
+              <path d="M114 40 L132 40 L150 96 L120 96 Z" fill="#727783"/>
+              <path d="M108 44 L120 44 L116 96 L104 96 Z" fill="#bfe6ff"/>
+              <!-- bussola -->
+              <circle cx="92" cy="84" r="15" fill="#caa24a"/>
+              <circle cx="92" cy="84" r="11" fill="#fff7e0"/>
+              <path d="M92 76 L96 84 L92 92 L88 84 Z" fill="#d23b3b"/>
+              <!-- arvore -->
+              <rect x="150" y="74" width="7" height="20" fill="#7a5230"/>
+              <circle cx="153" cy="72" r="13" fill="#3fae54"/>
+            </svg>
+          </span>
+          <span class="rotulo"><b>Ilha dos Exploradores</b><span>3º • 4º • 5º ano</span></span>
+        </button>
+
+        <!-- ILHA 3 - AVENTUREIROS -->
+        <button class="ilha c" type="button" onclick="abrirFase('aventureiros')" aria-label="Ilha dos Aventureiros">
+          <span class="flutua">
+            <svg viewBox="0 0 240 200" xmlns="http://www.w3.org/2000/svg" role="img">
+              <ellipse cx="120" cy="186" rx="74" ry="12" fill="rgba(0,0,0,0.18)"/>
+              <path d="M52 100 L188 100 L172 152 Q120 180 68 152 Z" fill="#3c3340"/>
+              <ellipse cx="120" cy="100" rx="70" ry="24" fill="#574a5e"/>
+              <!-- vulcao -->
+              <path d="M90 44 L130 44 L154 98 L66 98 Z" fill="#4a3f52"/>
+              <path d="M112 44 L130 44 L154 98 L122 98 Z" fill="#3a3144"/>
+              <path d="M96 50 Q110 70 124 50 Q120 78 110 78 Q100 78 96 50 Z" fill="#ff8a2b"/>
+              <circle cx="110" cy="40" r="8" fill="#ff5a3c"/>
+              <circle cx="98" cy="34" r="5" fill="#ffb13c"/>
+              <!-- cristais -->
+              <path d="M150 78 L156 64 L162 78 L156 92 Z" fill="#7ad0ff"/>
+              <path d="M66 80 L72 68 L78 80 L72 92 Z" fill="#ff7ad0"/>
+              <path d="M140 86 L145 76 L150 86 L145 96 Z" fill="#b48cff"/>
+            </svg>
+          </span>
+          <span class="rotulo"><b>Ilha dos Aventureiros</b><span>6º • 7º • 8º • 9º ano</span></span>
+        </button>
+      </div>
+      <footer>Toque na ilha da sua turma 🌟</footer>
+    </div>
+
+    <!-- ===================== TELA: TURMAS ===================== -->
+    <div id="tela-turmas" class="tela">
+      <button class="voltar" type="button" onclick="irMapa()">← Voltar ao mapa</button>
+      <h2 class="titulo-fase" id="turmas-titulo">Ilha</h2>
+      <p class="sub-fase" id="turmas-sub">Escolha a sua turma</p>
+      <div class="cards" id="turmas-lista"></div>
+    </div>
+
+    <!-- ===================== TELA: ATIVIDADES ===================== -->
+    <div id="tela-atividades" class="tela">
+      <button class="voltar" type="button" onclick="voltarTurmas()">← Voltar às turmas</button>
+      <h2 class="titulo-fase" id="ativ-titulo">Turma</h2>
+      <p class="sub-fase">Escolha uma atividade para jogar</p>
+      <div id="ativ-lista"></div>
+    </div>
+  </div>
+
+<script>
+/* ===== Dados do Mundo das Atividades ===== */
+var MUNDO = {
+  tesouro: {
+    nome: "Ilha do Tesouro", sub: "Pré, 1º e 2º ano", emoji: "🐢",
+    turmas: [
+      { id: "pre",  nome: "Pré",     mascote: "🐚" },
+      { id: "1ano", nome: "1º Ano",  mascote: "🐢" },
+      { id: "2ano", nome: "2º Ano",  mascote: "⭐" }
+    ]
+  },
+  exploradores: {
+    nome: "Ilha dos Exploradores", sub: "3º, 4º e 5º ano", emoji: "🦜",
+    turmas: [
+      { id: "3ano", nome: "3º Ano", mascote: "🧭" },
+      { id: "4ano", nome: "4º Ano", mascote: "🦜" },
+      { id: "5ano", nome: "5º Ano", mascote: "🌿" }
+    ]
+  },
+  aventureiros: {
+    nome: "Ilha dos Aventureiros", sub: "6º ao 9º ano", emoji: "🐲",
+    turmas: [
+      { id: "6ano", nome: "6º Ano", mascote: "🔥" },
+      { id: "7ano", nome: "7º Ano", mascote: "🐲" },
+      { id: "8ano", nome: "8º Ano", mascote: "💎" },
+      { id: "9ano", nome: "9º Ano", mascote: "⚔️" }
+    ]
+  }
+};
+
+/* Atividades por turma (chave = "fase:turma"). Exemplo real ligado: */
+var ATIVIDADES = {
+  "tesouro:1ano": [
+    { titulo: "A Floresta dos Números", desc: "Aventura de contagem e números", ic: "🌳",
+      link: "https://vidalprof.github.io/floresta-dos-numeros-1ano/" }
+  ]
+};
+
+/* ===== Navegação ===== */
+var faseAtual = null, turmaAtual = null;
+/* tom da plaquinha de aluminio por ilha */
+var TOM = { tesouro: "ouro", exploradores: "prata", aventureiros: "bronze" };
+
+function mostrar(idTela) {
+  var telas = document.getElementsByClassName("tela");
+  for (var i = 0; i < telas.length; i++) {
+    telas[i].className = telas[i].className.replace(" ativa", "");
+  }
+  var alvo = document.getElementById(idTela);
+  alvo.className = alvo.className + " ativa";
+  if (window.scrollTo) window.scrollTo(0, 0);
+}
+
+function irMapa() { mostrar("tela-mapa"); }
+
+function abrirFase(faseId) {
+  faseAtual = faseId;
+  var fase = MUNDO[faseId];
+  document.getElementById("turmas-titulo").innerHTML = fase.emoji + " " + fase.nome;
+  document.getElementById("turmas-sub").innerHTML = fase.sub + " — escolha a sua turma";
+  var html = "";
+  for (var i = 0; i < fase.turmas.length; i++) {
+    var t = fase.turmas[i];
+    html += '<button class="card" type="button" onclick="abrirTurma(\'' + t.id + '\')">' +
+              '<div class="bolha">' + t.mascote + '</div>' +
+              '<b>' + t.nome + '</b><small>ver atividades</small>' +
+            '</button>';
+  }
+  document.getElementById("turmas-lista").innerHTML = html;
+  mostrar("tela-turmas");
+}
+
+function voltarTurmas() { abrirFase(faseAtual); }
+
+function abrirTurma(turmaId) {
+  turmaAtual = turmaId;
+  var fase = MUNDO[faseAtual];
+  var nomeTurma = turmaId;
+  for (var i = 0; i < fase.turmas.length; i++) { if (fase.turmas[i].id === turmaId) nomeTurma = fase.turmas[i].nome; }
+  document.getElementById("ativ-titulo").innerHTML = fase.emoji + " " + nomeTurma + " — " + fase.nome;
+
+  var lista = ATIVIDADES[faseAtual + ":" + turmaId];
+  var html = "";
+  if (lista && lista.length) {
+    for (var j = 0; j < lista.length; j++) {
+      var a = lista[j];
+      html += '<a class="atividade" href="' + a.link + '" target="_blank" rel="noopener">' +
+                '<span class="ic">' + a.ic + '</span>' +
+                '<b>' + a.titulo + '</b><span>' + a.desc + '</span>' +
+              '</a>';
+    }
+  } else {
+    html = '<div class="vazio">🚧 <b>Em breve!</b><br>A professora vai adicionar atividades nesta turma. Volte logo! 😊</div>';
+  }
+  document.getElementById("ativ-lista").innerHTML = html;
+  mostrar("tela-atividades");
+}
+</script>
+</body>
+</html>

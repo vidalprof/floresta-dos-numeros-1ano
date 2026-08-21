@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — as plaquinhas (rotular a figura)</title>
+<!-- ============================================================
+     PEÇA: ROTULAR — AS PLAQUINHAS
+     Cópia do _padrao/pecas/MOLDE.html: só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O QUE ELA É: a figura já está montada e INTEIRA; o que falta é o NOME de
+     cada parte. A criança leva a plaquinha até o lugar dela — a raiz embaixo da
+     terra, a folha no lado do caule, o título no alto do mapa.
+
+     POR QUE NÃO É "CLASSIFICAR": em classificar o lugar é uma GAVETA (uma
+     categoria); aqui o lugar é ESPACIAL — o acerto é saber ONDE, na figura,
+     aquela parte fica. Trocar as duas coisas foi o que fez, na Fábrica, uma
+     fase de partes da planta virar um quiz de gavetas: a criança acertava sem
+     nunca olhar o desenho.
+     Vem de "AS PLAQUINHAS DO JARDINEIRO" (_jardim) e "O MAPA MUDO" (_mapa),
+     reescrita limpa, com prefixo próprio (`rt`) para não carregar resto de
+     clone de nenhuma das duas.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA (cada uma já paga em atividade real):
+       · TRÊS CAMINHOS: arrastar com o mouse, arrastar com o dedo e TOQUE
+         SIMPLES (tocar a plaquinha e depois o lugar). No celular da escola nem
+         toda criança consegue arrastar;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque. Ele mora só no
+         `touchmove`, e só depois que o dedo ANDOU de verdade;
+       · guarda `ultimoToque` contra o clique/mouse FANTASMA que o celular
+         dispara depois do toque (ele desmarcava a plaquinha escolhida —
+         defeito pego DUAS vezes pelo Marcos);
+       · O ANDAIME CRESCE EM TODO CAMINHO DE ERRO, inclusive no mais natural
+         (tocar direto no lugar sem pegar plaquinha nenhuma);
+       · A 3ª DICA FICA NA TELA: primeiro REVELA, DEPOIS escreve a explicação —
+         invertido, `acerta()` apagava a dica no mesmo quadro e a criança via a
+         peça pular sozinha sem saber por quê;
+       · trava no instante do acerto (a criança toca duas vezes; é o normal
+         dela) e todo temporizador guarda a GERAÇÃO da rodada;
+       · o vocabulário das dicas sai dos DADOS da parte, nunca escrito à mão —
+         é assim que a 2ª rodada (o mapa) não fala das folhas da 1ª;
+       · `data-qa` com a MESMA chave na plaquinha e no lugar: é por ele que o
+         auditor-jogador consegue fechar a peça sozinho;
+       · termina numa `.medal`.
+
+     ⭐⭐ OS QUATRO MODOS (ago/2026) — a lição do EdiLIM
+     ------------------------------------------------------------
+     Achado do `_pesquisa/EDILIM-DINAMICAS.md`: o EdiLIM tira "mais de 50
+     atividades" de ~40 páginas porque quase toda página dele tem MODOS — e a
+     página "Etiquetas" dele tem SEIS. As nossas peças sabiam fazer UMA coisa
+     cada; modo na peça que já existe multiplica o leque sem escrever peça
+     nova, e mexe direto no número que o `_qa/padrao.py` mede (nenhum gesto
+     acima de 40% da atividade).
+
+     O modo vem da GAVETA DE CONTEÚDO (`var MODO`, ou o campo `modo` da
+     rodada, que manda mais). **O padrão é `"arrastar"` — o comportamento de
+     hoje —, então nenhuma atividade antiga muda de comportamento.**
+
+       · "arrastar" (PADRÃO) — leva a plaquinha até o ponto da figura;
+       · "escrever"  — a parte da figura ACENDE e a criança digita o nome dela,
+                       nas DUAS portas: teclado na tela e `document.onkeydown`;
+       · "mostrar"   — não há resposta certa: a criança toca no ponto e ele
+                       CONTA o que é. É a página expositiva, a "parada" antes
+                       da fase que cobra (e é onde o conceito aparece por
+                       último, como manda o Portão 0);
+       · "hover"     — o nome aparece E É FALADO ao PASSAR O MOUSE por cima,
+                       sem clicar. ⚠️ No celular não existe passar o mouse: o
+                       TOQUE faz a mesma coisa, senão a fase fica inacessível
+                       no telefone — e a metade da escola joga no telefone.
+
+     ⚠️ ARMADILHAS QUE OS MODOS NOVOS TROUXERAM (e que já estão fechadas):
+       · o mouse FANTASMA do celular dispara `mouseover` depois do dedo — o
+         guarda `ultimoToque` vale para o hover também, não só para o arrasto;
+       · `document.onkeydown` fica preso na fase seguinte se ninguém o
+         desligar: ele é zerado no começo de TODA tela e no fim da peça;
+       · a palavra a digitar vai SEM ACENTO (o teclado da criança não tem
+         tecla de acento) — daí o campo opcional `esc` e o `semAcento()`;
+       · no modo "mostrar" não existe erro, então não existe andaime: o que
+         não pode existir é TRAVA — tocar de novo num ponto já visto responde
+         com a voz, nunca com silêncio.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ================= CSS DESTA PEÇA (prefixo rt) =================
+   ⚠️ a folga de 13px em cima da cena e OBRIGATORIA: o balao tem sombra e
+   nenhuma margem por baixo, entao o que vem colado nele vira um bloco so
+   (regra 9 do _qa/leiaute.js, cobrada DUAS vezes pelo Marcos).            */
+.rtcena{position:relative;width:100%;max-width:330px;height:200px;margin:13px auto 4px;
+        border-radius:14px;overflow:hidden;background:#bfe4f2;
+        background:-webkit-linear-gradient(top,#a9dcf0 0%,#dff1f8 62%);
+        background:linear-gradient(to bottom,#a9dcf0 0%,#dff1f8 62%);
+        box-shadow:0 5px 14px rgba(0,0,0,.3)}
+.rtcena.rtpapel{background:#f3e6c8;
+        background:-webkit-linear-gradient(top,#f7edd6 0%,#ecdcb6 100%);
+        background:linear-gradient(to bottom,#f7edd6 0%,#ecdcb6 100%)}
+/* o desenho e so DESENHO: entra antes das vagas no DOM para que o dedo
+   encontre sempre a VAGA por cima, nunca a figura.                        */
+.rtdz{position:absolute}
+/* --- a planta --- */
+.rtterra{left:0;top:70%;width:100%;height:30%;background:#8a5a2b;
+         background:-webkit-linear-gradient(top,#9a6633 0%,#734a22 100%);
+         background:linear-gradient(to bottom,#9a6633 0%,#734a22 100%)}
+.rtcaule{left:26%;top:24%;width:4%;height:48%;background:#3f8f2e;border-radius:3px}
+.rtfe{left:8%;top:32%;width:19%;height:11%;background:#4ea63a;border-radius:50% 50% 50% 10%}
+.rtfd{left:29%;top:44%;width:19%;height:11%;background:#4ea63a;border-radius:50% 50% 10% 50%}
+.rtflor{left:20%;top:6%;width:16%;height:20%;background:#e8556f;border-radius:50%}
+.rtmiolo{position:absolute;left:26%;top:26%;width:48%;height:48%;background:#ffd54a;border-radius:50%}
+.rtraiz{left:20%;top:70%;width:16%;height:22%}
+.rtrz{position:absolute;top:0;width:3px;height:100%;background:#5e3d18;border-radius:2px}
+.rtrz1{left:14%;-webkit-transform:rotate(18deg);transform:rotate(18deg)}
+.rtrz2{left:48%}
+.rtrz3{left:82%;-webkit-transform:rotate(-18deg);transform:rotate(-18deg)}
+/* --- o mapa --- */
+.rtilha{left:22%;top:26%;width:52%;height:44%;background:#8fbf63;
+        border-radius:46% 54% 38% 62%;border:2px solid #6d9a48}
+.rtrio{left:38%;top:32%;width:5%;height:33%;background:#5aa8d8;border-radius:3px;
+       -webkit-transform:rotate(12deg);transform:rotate(12deg)}
+.rttit{left:16%;top:4%;width:54%;height:16%;background:#fffdf6;border:2px solid #b9a274;border-radius:6px}
+.rtlin{position:absolute;left:10%;top:30%;width:80%;height:12%;background:#9b8a63;border-radius:2px}
+.rtlin2{top:58%;width:52%}
+.rtbus{left:76%;top:5%;width:20%;height:24%;background:#fffdf6;border:2px solid #b9a274;border-radius:50%}
+.rtestrela{position:absolute;left:20%;top:10%;width:60%;height:80%;background:#3c6ee0;
+           -webkit-clip-path:polygon(50% 0,62% 40%,100% 50%,62% 60%,50% 100%,38% 60%,0 50%,38% 40%);
+           clip-path:polygon(50% 0,62% 40%,100% 50%,62% 60%,50% 100%,38% 60%,0 50%,38% 40%)}
+.rtleg{left:4%;top:60%;width:30%;height:34%;background:#fffdf6;border:2px solid #b9a274;border-radius:6px}
+.rtq{position:absolute;left:12%;width:26%;height:20%;border-radius:3px}
+.rtq1{top:14%;background:#8fbf63}
+.rtq2{top:40%;background:#5aa8d8}
+.rtq3{top:66%;background:#c98a3a}
+.rtesc{left:52%;top:76%;width:42%;height:16%;background:#fffdf6;border:2px solid #b9a274;border-radius:4px}
+.rtden{position:absolute;left:8%;top:52%;width:84%;height:26%;background:transparent;
+       background-image:-webkit-linear-gradient(left,#3a2c07 50%,transparent 50%);
+       background-image:linear-gradient(to right,#3a2c07 50%,transparent 50%);
+       background-size:22% 100%}
+/* --- a HASTE da plaquinha: liga o lugar a parte da figura ---
+   fundo claro com contorno escuro para aparecer tanto no ceu quanto na terra */
+.rttick{position:absolute;height:4px;border-radius:3px;background:rgba(255,255,255,.9);
+        box-shadow:0 0 0 1px rgba(0,0,0,.45)}
+/* --- O LUGAR (a vaga da plaquinha) ---
+   vazia: contorno TRACEJADO (forma, nao cor). Cheia: contorno inteiro e a
+   plaquinha escrita dentro. `alvo` = a plaquinha esta passando por cima.  */
+.cam{position:absolute;border:3px dashed #4a3a20;border-radius:10px;
+     background:rgba(255,255,255,.42);cursor:pointer}
+.cam.livre{border-color:#1d1608;background:rgba(255,255,255,.66)}
+.cam.alvo{border-style:solid;border-color:#e8a020;background:rgba(255,213,74,.72);
+          box-shadow:0 0 0 4px rgba(255,213,74,.55)}
+.cam.ok{border-style:solid;border-color:#1f6b12;background:#fffdf6;cursor:default;
+        box-shadow:0 3px 0 rgba(0,0,0,.25)}
+.rtposto{display:block;padding:0 3px;font-size:13px;font-weight:800;letter-spacing:.3px;
+         color:var(--texto,#1a1408);line-height:1.15}
+/* --- a bandeja das plaquinhas soltas --- */
+.rtbanco{display:block;text-align:center;margin-top:6px}
+.pc{display:inline-block;vertical-align:top;background:#fffdf6;color:#221a12;border:0;
+    border-radius:12px;min-width:80px;min-height:46px;margin:5px 4px;padding:6px 8px;cursor:pointer;
+    font-size:14px;font-weight:800;letter-spacing:.3px;line-height:1.2;
+    box-shadow:0 4px 0 #c9bda6;-webkit-user-select:none;user-select:none}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+.pc.usada{visibility:hidden;pointer-events:none}
+.pc.treme{-webkit-animation:rttreme .32s;animation:rttreme .32s}
+@-webkit-keyframes rttreme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes rttreme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a plaquinha que segue o dedo/o mouse. pointer-events:none para nao roubar
+   o hit-test de quem esta embaixo (senao a vaga nunca acenderia).          */
+.rtsomb{position:fixed;background:#fff3c9;color:#221a12;border-radius:12px;padding:8px 10px;
+        font-size:14px;font-weight:800;pointer-events:none;z-index:60;
+        box-shadow:0 6px 10px rgba(0,0,0,.5)}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+.rtlista{list-style:none;margin:10px auto 0;padding:0;max-width:400px;text-align:left}
+/* ⚠️ LICAO PAGA: a mesa era branca TRANSLUCIDA (rgba(255,255,255,.12)). No fundo
+   escuro DESTA pagina ela segurava o texto quase-branco; numa atividade de TEMA
+   CLARO os 12% de branco somem no papel e o texto (1.05:1) desaparece. Mesa de
+   texto claro tem que ser ESCURA e opaca o bastante para valer nos dois temas. */
+.rtitem{background:rgba(22,24,30,.82);border-radius:12px;padding:8px 12px;margin:6px 0;
+        font-size:14px;font-weight:600;color:#f4efe6}
+
+/* ================= OS MODOS NOVOS (escrever · mostrar · hover) =================
+   ⚠️ tudo aqui tem REGRA BASE fora de @media: classe que so existe dentro de
+   um @media fica sem estilo na tela normal (portao `_qa/classes.py`).       */
+/* o LUGAR DA VEZ no modo "escrever": e a pergunta da tela em forma de figura.
+   Aro grosso e fundo quente — forma, nunca so cor.                          */
+.cam.vez{border-style:solid;border-color:#e8a020;background:rgba(255,213,74,.72);
+         box-shadow:0 0 0 5px rgba(255,213,74,.55)}
+/* a cena encolhe no modo escrever: embaixo dela ainda vem o quadro das letras
+   e o teclado inteiro, e no celular de 320px isso nao cabe de outro jeito.  */
+.rtcena.rtmini{height:150px}
+/* A LINHA QUE FALA: o texto da vez e, ao lado, o alto-falante. Serve aos tres
+   modos novos — a pergunta (escrever), a explicacao (mostrar) e o nome que
+   acabou de aparecer (hover). */
+.rtfala{display:-webkit-box;display:-webkit-flex;display:flex;
+        -webkit-box-align:center;align-items:center;
+        -webkit-box-pack:center;justify-content:center;
+        margin:10px auto 0;max-width:440px;min-height:50px;
+        background:rgba(255,253,246,.96);color:#221a12;border-radius:16px;padding:8px 10px;
+        box-shadow:0 4px 12px rgba(0,0,0,.26)}
+.rtfalat{display:inline-block;font-size:15px;font-weight:700;line-height:1.28;
+         color:var(--texto,#221a12);text-align:center}
+.rtfalat b{color:#1f6b12}
+/* ⭐ O ALTO-FALANTE (pilar SONORA). Um SVG embutido, que se centra sozinho
+   pelo `viewBox` — desenho feito de bordas nao se centra e o Marcos apontou o
+   mesmo botao tres vezes. `background-color` e `background-image` SEPARADOS:
+   o atalho `background:` de um `:hover` apagaria o glifo. 46px = alvo grande. */
+.zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none;
+     width:46px;height:46px;min-width:46px;margin-left:10px;padding:0;border:0;
+     border-radius:50%;cursor:pointer;
+     background-color:#efe6d2;
+     background-repeat:no-repeat;background-position:center center;
+     background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
+     -webkit-background-size:24px 24px;background-size:24px 24px;
+     -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:#ded3b8}
+.zap:active,.zap.tocando{background-color:#ffd54a}
+/* as VAGAS DAS LETRAS e o TECLADO do modo "escrever" (moldes da peca digitar,
+   que ja passaram pela bancada). Vaga vazia = contorno tracejado; cheia =
+   contorno inteiro com a letra dentro (forma, nao so cor). */
+.vagas{display:block;text-align:center;margin:11px auto 8px}
+.vaga{display:inline-block;vertical-align:top;width:42px;height:48px;line-height:42px;margin:0 2px;
+      border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10);
+      color:#f4efe6;font-size:23px;font-weight:800;text-align:center;
+      -webkit-transition:-webkit-transform .16s ease;transition:transform .16s ease}
+.vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12;
+      -webkit-transform:scale(1.12);transform:scale(1.12)}
+.vaga.cheia.pousa{-webkit-transform:none;transform:none}
+.letras{display:block;text-align:center;margin-top:2px}
+.tecl{display:inline-block;width:52px;height:52px;line-height:52px;margin:5px 3px;
+      background:#fffdf6;color:#221a12;border:0;border-radius:13px;font-size:25px;font-weight:800;
+      text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+      -webkit-transition:-webkit-transform .12s ease, box-shadow .12s ease;
+      transition:transform .12s ease, box-shadow .12s ease}
+.tecl:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* letra ja usada SAI DO ALCANCE (do dedo e do auditor) mas guarda o lugar,
+   para o teclado nao pular embaixo do dedo da crianca. */
+.tecl.usada{visibility:hidden;pointer-events:none}
+/* ⚠️ o 2o degrau ACENDE a tecla — nao pisca. O integrador prefixa o CSS da
+   peca e ENGOLE os `@keyframes` dela: o pisca virava codigo morto DENTRO da
+   atividade, justo para quem ja tinha errado duas vezes. Aro amarelo, fundo
+   claro e um degrau a mais de altura: forma, e funciona nos dois mundos.   */
+.tecl.pisca{background:#fff7d6;color:#33280a;
+      -webkit-box-shadow:0 0 0 5px #ffd54a,0 4px 0 #c9a52f;
+      box-shadow:0 0 0 5px #ffd54a,0 4px 0 #c9a52f;
+      -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+/* o tremor do erro, pela mesma razao, e TRANSICAO e nao animacao */
+.tecl.treme{-webkit-transform:translateX(-7px);transform:translateX(-7px)}
+.tecl.treme2{-webkit-transform:translateX(7px);transform:translateX(7px)}
+@media (prefers-reduced-motion:reduce){
+  .tecl,.vaga{-webkit-transition:none;transition:none}
+  .vaga.cheia{-webkit-transform:none;transform:none}
+}
+/* celular estreito: o teclado tem que caber sem empurrar a ultima fileira
+   para fora da tela (o portao de leiaute mede isso em 320px). */
+@media(max-width:359px){
+  .rtcena.rtmini{height:142px}
+  .tecl{width:48px;height:48px;line-height:48px;margin:4px 2px;font-size:22px}
+  .vaga{width:38px;height:44px;line-height:38px;font-size:21px}
+}
+/* tela baixa (projetor, janela do PC da escola): a cena encolhe para que NADA
+   que se toca saia da area visivel; a plaquinha NUNCA encolhe. */
+@media(max-height:520px){
+  .rtcena{height:150px}
+  .rtcena.rtmini{height:112px}
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:13px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{font-size:12.5px;padding:7px 11px;margin-top:9px}
+  .rtfala{margin-top:6px;min-height:46px;padding:6px 9px}
+  .rtfalat{font-size:13px}
+  .vagas{margin:7px auto 4px}
+  .vaga{width:38px;height:42px;line-height:36px;font-size:20px}
+  .tecl{width:46px;height:46px;line-height:46px;margin:3px 2px;font-size:21px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------- O CONTEÚDO ----------------
+   Duas rodadas, e a segunda é um DEGRAU ACIMA: na planta a criança já conhece
+   as partes de vista; no mapa ela precisa reconhecer o que cada elemento FAZ.
+   Trocar esta tabela adapta a peça a qualquer figura — as partes do corpo, as
+   peças de uma máquina, os cômodos de uma planta baixa.
+
+   Cada parte traz: a chave (`k`), o nome da plaquinha (`n`), o retângulo do
+   lugar em PORCENTAGEM da cena (nunca px: assim a figura encolhe junto com a
+   tela e o lugar continua certo), a haste opcional (`tk`=[esq,topo,larg]) e as
+   PALAVRAS das duas dicas. ⚠️ As palavras moram AQUI, com a parte: foi assim
+   que a 2ª rodada parou de falar das folhas da 1ª (resto de clone em
+   miniatura). */
+
+/* ⭐⭐ O MODO — o campo que multiplica a peça (lição do EdiLIM).
+   "arrastar" (PADRÃO, o comportamento de sempre) · "escrever" · "mostrar" ·
+   "hover". Trocar aqui troca a peça inteira; e cada rodada pode mandar mais
+   que este valor, pondo `modo:"..."` dentro dela — é assim que uma atividade
+   usa a MESMA peça três vezes sem que a criança sinta a mesma tela. */
+var MODO="arrastar"; /*TECNICA*/
+
+/* CAMPOS OPCIONAIS que os modos novos leem (nenhum é obrigatório — sem eles a
+   peça deduz sozinha, e nenhuma atividade antiga muda):
+     · `esc`  = a palavra a DIGITAR no modo "escrever". Vai SEM ACENTO e sem
+                espaço, porque o teclado da criança não tem tecla de acento
+                (sem o campo, a peça tira os acentos de `n` e fica com a
+                primeira palavra: "ROSA DOS VENTOS" -> "ROSA");
+     · `info` = o que o ponto CONTA no modo "mostrar" (sem ele, vale a `d3`,
+                que já é a explicação escrita para a criança);
+     · `voz`  = o que o alto-falante diz no lugar do nome escrito, quando os
+                dois são diferentes.
+   E na rodada: `modo`, `enunEscrever`, `enunMostrar`, `enunHover`. */
+var RODADAS=[
+ { selo:"AS PLAQUINHAS DO JARDINEIRO", cena:"planta",
+   enun:"Ponha cada <b>plaquinha</b> na parte certa da planta.",
+   fecho:"A planta ficou toda com nome!",
+   partes:[
+    {k:"flor",  n:"FLOR",  esc:"FLOR",  x:60,y:3, w:38,h:22, tk:[36,15,24],
+     d1:"A flor &#233; a parte mais colorida da planta. Procure bem <b>em cima</b>.",
+     d3:"A <b>flor</b> &#233; a parte colorida, l&#225; no alto da planta.",
+     info:"Eu sou a <b>flor</b>. &#201; em mim que nasce a semente da planta nova."},
+    {k:"folha", n:"FOLHA", esc:"FOLHA", x:60,y:33,w:38,h:22, tk:[48,45,12],
+     d1:"A folha &#233; larga e chata, e sai do <b>lado</b> do caule.",
+     d3:"A <b>folha</b> &#233; larga e sai do lado do caule.",
+     info:"Eu sou a <b>folha</b>. Eu pego a luz do sol e fa&#231;o comida para a planta."},
+    {k:"caule", n:"CAULE", esc:"CAULE", x:60,y:56,w:38,h:22, tk:[30,62,30],
+     d1:"O caule &#233; comprido e fica <b>no meio</b>, ligando tudo.",
+     d3:"O <b>caule</b> &#233; o corpo comprido que segura a planta em p&#233;.",
+     info:"Eu sou o <b>caule</b>. Eu seguro a planta em p&#233; e levo a &#225;gua para cima."},
+    {k:"raiz",  n:"RAIZ",  esc:"RAIZ",  x:60,y:79,w:38,h:20, tk:[36,86,24],
+     d1:"A raiz mora <b>dentro da terra</b>. Olhe para baixo.",
+     d3:"A <b>raiz</b> fica embaixo da terra e segura a planta.",
+     info:"Eu sou a <b>raiz</b>. Eu bebo a &#225;gua da terra e seguro a planta no ch&#227;o."}
+   ]},
+ { selo:"O MAPA MUDO", cena:"mapa",
+   enun:"Este mapa perdeu os nomes. Ponha cada <b>plaquinha</b> no lugar dela.",
+   fecho:"Agora d&#225; para ler o mapa!",
+   partes:[
+    {k:"titulo", n:"T&#205;TULO", esc:"TITULO", voz:"t&#237;tulo", x:16,y:4, w:54,h:16,
+     d1:"O nome do mapa fica sempre <b>no alto</b>, na faixa de cima.",
+     d3:"O <b>t&#237;tulo</b> fica no alto e diz do que o mapa fala.",
+     info:"Eu sou o <b>t&#237;tulo</b>. Eu digo, em uma linha, do que este mapa fala."},
+    {k:"rosa",   n:"ROSA DOS VENTOS", esc:"ROSA", x:76,y:5, w:20,h:24,
+     d1:"Ela parece uma <b>estrela</b> guardada num canto do mapa.",
+     d3:"A <b>rosa dos ventos</b> mostra onde fica o norte.",
+     info:"Eu sou a <b>rosa dos ventos</b>. Eu mostro para que lado fica o norte."},
+    {k:"legenda",n:"LEGENDA", esc:"LEGENDA", x:4, y:60,w:30,h:34,
+     d1:"&#201; a <b>caixinha com as cores</b> explicadas, num canto de baixo.",
+     d3:"A <b>legenda</b> explica o que cada cor do mapa quer dizer.",
+     info:"Eu sou a <b>legenda</b>. Eu conto o que cada cor do mapa quer dizer."},
+    {k:"escala", n:"ESCALA", esc:"ESCALA", x:52,y:76,w:42,h:16,
+     d1:"Ela parece uma <b>r&#233;guazinha</b> deitada no p&#233; do mapa.",
+     d3:"A <b>escala</b> diz quanto vale, no mapa, uma dist&#226;ncia de verdade.",
+     info:"Eu sou a <b>escala</b>. Eu digo quanto vale, no ch&#227;o de verdade, "+
+          "um peda&#231;o deste mapa."}
+   ]}
+];
+
+/* ---------------- ESTADO ---------------- */
+var rodada=0, feitos=0, totalGeral=8;
+var telaAtual=null, barraP=null, cenaEl=null;
+var vagas={}, plaqs=[], postas=0, errosSeg=0, marcada=null, ger=0, travada=false;
+/* estado dos MODOS NOVOS. `modoAtual` e decidido em cada rodada; o resto so
+   existe no modo "escrever" (a palavra da vez, as vagas de letra e o teclado)
+   e na linha que fala (usada pelos tres modos novos). */
+var modoAtual="arrastar", falaEl=null;
+var alvoP=null, palavra="", posL=0, vagasL=[], teclas=[], letrasEl=null, vagasBox=null;
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles desmarcavam a
+   plaquinha que a crianca tinha acabado de escolher. Pego DUAS vezes.     */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+/* ⚠️ tela antiga continua clicavel embaixo do banner: toda funcao que mexe no
+   estado comeca perguntando se a partida ainda esta de pe. */
+function emJogo(){ return viva()&&!travada; }
+
+/* ---------------- A VOZ E OS MODOS ----------------
+   ⭐⭐ A VOZ E GRAVADA, SEMPRE (pilar SONORA). Quem toca a voz de verdade e a
+   ponte do integrador (`_padrao/ESQUELETO/integrar.py`), que injeta um
+   `var diz = function(txt)` ligado nas gravacoes da casa (Edge TTS) ANTES do
+   corpo da peca. Aqui a peca so PEDE — e pede protegida por `typeof`, porque
+   na bancada, sozinha, nao ha gravacao nenhuma e nada pode estourar.
+   ⚠️ NUNCA chamar `speechSynthesis` daqui: a voz-robo do navegador briga com
+   a voz da casa (dois falando ao mesmo tempo, defeito que o Marcos ja ouviu) e
+   o portao `_qa/vozrobo.py` reprova. Tudo o que a voz diz esta TAMBEM escrito
+   na tela, entao PC de escola sem caixa de som joga a peca inteira.        */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  var t=semTag(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* o alto-falante TOCAVEL: 46px de alvo, `type=button` para nunca enviar nada,
+   e o evento para NELE (tocar o som nunca pode contar como resposta). Aceita
+   um texto ou uma funcao que devolve o texto da vez. */
+function fazZap(txt,rot){
+  var z=el("button","zap","");
+  z.setAttribute("type","button");
+  z.setAttribute("aria-label","Ouvir "+(rot||"de novo"));
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sTap(); fala(typeof txt==="function"?txt():txt);
+    z.className="zap tocando";
+    zapVolta(z);
+    return false;
+  };
+  return z;
+}
+function zapVolta(z){
+  var g=ger;
+  setTimeout(function(){ if(g!==ger) return; z.className="zap"; },900);
+}
+/* qual modo manda nesta rodada: o campo da RODADA vem primeiro, o `MODO` do
+   topo depois, e o padrao e o comportamento de sempre. Nome desconhecido cai
+   em "arrastar" — gaveta com erro de digitacao nunca deixa a peca sem gesto. */
+function modoDaRodada(R){
+  var m=(R&&R.modo)||MODO||"arrastar";
+  if(m!=="escrever"&&m!=="mostrar"&&m!=="hover") m="arrastar";
+  return m;
+}
+function enunDaRodada(R){
+  if(modoAtual==="escrever")
+    return R.enunEscrever||"Olhe a parte <b>acesa</b> da figura e escreva o nome dela.";
+  if(modoAtual==="mostrar")
+    return R.enunMostrar||"Toque em cada parte e descubra <b>o que ela faz</b>.";
+  if(modoAtual==="hover")
+    return R.enunHover||"Passe o mouse <b>ou o dedo</b> por cada parte para ver o nome.";
+  return R.enun;
+}
+/* ⚠️ A PALAVRA A DIGITAR VAI SEM ACENTO: o teclado da crianca nao tem tecla de
+   acento, entao "T&#205;TULO" viraria erro garantido. O campo `esc` manda; sem
+   ele a peca tira os acentos do nome e fica com a PRIMEIRA palavra ("ROSA DOS
+   VENTOS" -> "ROSA"), que e a que ela consegue montar. */
+var ACENTOS={"Á":"A","À":"A","Â":"A","Ã":"A","Ä":"A",
+             "É":"E","È":"E","Ê":"E","Í":"I","Ì":"I",
+             "Ó":"O","Ò":"O","Ô":"O","Õ":"O",
+             "Ú":"U","Ü":"U","Ç":"C"};
+function semAcento(s){
+  var i,o="",c;
+  for(i=0;i<s.length;i++){ c=s.charAt(i); o+=(ACENTOS[c]||c); }
+  return o;
+}
+function palavraDe(p){
+  var t;
+  if(p&&p.esc) return semAcento(String(p.esc).toUpperCase());
+  t=semAcento(semTag(p?p.n:"").toUpperCase()).replace(/[^A-Z ]/g,"");
+  if(t.indexOf(" ")>=0) t=t.split(" ")[0];
+  return t;
+}
+function vozDaParte(p){ return (p&&p.voz)?p.voz:semTag(p?p.n:""); }
+
+/* ---------------- O DESENHO ---------------- */
+function desenhaPlanta(c){
+  c.appendChild(el("div","rtdz rtterra",""));
+  c.appendChild(el("div","rtdz rtcaule",""));
+  c.appendChild(el("div","rtdz rtfe",""));
+  c.appendChild(el("div","rtdz rtfd",""));
+  var f=el("div","rtdz rtflor","");
+  f.appendChild(el("div","rtmiolo",""));
+  c.appendChild(f);
+  var r=el("div","rtdz rtraiz","");
+  r.appendChild(el("div","rtrz rtrz1",""));
+  r.appendChild(el("div","rtrz rtrz2",""));
+  r.appendChild(el("div","rtrz rtrz3",""));
+  c.appendChild(r);
+}
+function desenhaMapa(c){
+  c.appendChild(el("div","rtdz rtilha",""));
+  c.appendChild(el("div","rtdz rtrio",""));
+  var t=el("div","rtdz rttit","");
+  t.appendChild(el("div","rtlin",""));
+  t.appendChild(el("div","rtlin rtlin2",""));
+  c.appendChild(t);
+  var b=el("div","rtdz rtbus","");
+  b.appendChild(el("div","rtestrela",""));
+  c.appendChild(b);
+  var g=el("div","rtdz rtleg","");
+  g.appendChild(el("div","rtq rtq1",""));
+  g.appendChild(el("div","rtq rtq2",""));
+  g.appendChild(el("div","rtq rtq3",""));
+  c.appendChild(g);
+  var s=el("div","rtdz rtesc","");
+  s.appendChild(el("div","rtden",""));
+  c.appendChild(s);
+}
+
+/* ---------------- A TELA DA RODADA ----------------
+   ⭐ UMA porta de entrada para os quatro modos: a cena e as vagas sao as
+   mesmas, e so o que vem DEPOIS da figura muda. E de proposito que nao ha uma
+   funcao de tela por modo — os auditores da bancada abrem cada funcao que
+   chama `limpa()` e a medem sozinha; uma por modo viraria quatro telas que
+   ninguem chama pelo caminho de verdade. Aqui o modo se troca na gaveta e a
+   MESMA tela e medida no modo escolhido. */
+function pecaRotular(){
+  ger++; limpa(); soltaSombra();
+  document.onkeydown=null;      /* ⚠️ senao o teclado fica preso na fase anterior */
+  if(rodada<0||rodada>=RODADAS.length) rodada=0;
+  var R=RODADAS[rodada];
+  modoAtual=modoDaRodada(R);
+  vagas={}; plaqs=[]; postas=0; errosSeg=0; marcada=null; travada=false;
+  alvoP=null; palavra=""; posL=0; vagasL=[]; teclas=[];
+  letrasEl=null; vagasBox=null; falaEl=null;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(feitos*100/totalGeral));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",R.selo));
+  c.appendChild(el("div","balao",enunDaRodada(R)));
+
+  cenaEl=el("div",(R.cena==="mapa")?"rtcena rtpapel":"rtcena");
+  /* no modo escrever a cena encolhe: embaixo dela ainda vem o quadro das
+     letras e o teclado inteiro, e em 320px isso nao cabe de outro jeito. */
+  if(modoAtual==="escrever") cenaEl.className=cenaEl.className+" rtmini";
+  if(R.cena==="mapa") desenhaMapa(cenaEl); else desenhaPlanta(cenaEl);
+  var i,p,v,h;
+  for(i=0;i<R.partes.length;i++){
+    p=R.partes[i];
+    if(p.tk){
+      h=el("div","rttick","");
+      h.style.left=p.tk[0]+"%"; h.style.top=p.tk[1]+"%"; h.style.width=p.tk[2]+"%";
+      cenaEl.appendChild(h);
+    }
+  }
+  for(i=0;i<R.partes.length;i++){
+    p=R.partes[i];
+    v=el("div","cam");
+    v.style.left=p.x+"%"; v.style.top=p.y+"%";
+    v.style.width=p.w+"%"; v.style.height=p.h+"%";
+    /* a MESMA chave na plaquinha e no lugar: e assim que o auditor-jogador
+       (_qa/jogador.js) consegue fechar a peca sozinho.
+       ⚠️ no modo "escrever" quem responde e o TECLADO, entao a vaga NAO
+       publica chave nenhuma — senao o auditor ficaria tocando na figura para
+       sempre, e a crianca teimosa junto com ele. */
+    if(modoAtual!=="escrever") v.setAttribute("data-qa",p.k);
+    v._p=p;
+    v.onclick=cliqueVaga;
+    /* ⭐ PORTA DO HOVER: passar o mouse por cima ja mostra e ja FALA. O guarda
+       do dedo mora dentro de `passouPonto` — o celular dispara `mouseover`
+       FANTASMA depois do toque, e sem ele o mesmo ponto era lido duas vezes. */
+    if(modoAtual==="hover"){
+      v.onmouseover=passouPonto;
+      v.addEventListener("touchstart",marcaToque,false);
+    }
+    cenaEl.appendChild(v);
+    vagas[p.k]=v;
+  }
+  c.appendChild(cenaEl);
+
+  if(modoAtual==="arrastar"){
+    var bc=el("div","rtbanco");
+    var ordem=baguncar(R.partes.slice(0));
+    for(i=0;i<ordem.length;i++) bc.appendChild(fazPlaquinha(ordem[i]));
+    c.appendChild(bc);
+    c.appendChild(el("div","hint","Arraste com o dedo ou com o mouse &#8212; ou toque na plaquinha e depois no lugar."));
+  }else{
+    montaLinhaFala(c);
+    if(modoAtual==="escrever"){
+      vagasBox=el("div","vagas",""); c.appendChild(vagasBox);
+      letrasEl=el("div","letras",""); c.appendChild(letrasEl);
+      c.appendChild(el("div","hint","Toque nas letras <b>ou</b> use o teclado do computador."));
+    }else if(modoAtual==="mostrar"){
+      c.appendChild(el("div","hint","Toque em uma parte por vez. Ningu&#233;m erra aqui: aqui a gente descobre."));
+    }else{
+      c.appendChild(el("div","hint","No computador basta passar o mouse. No celular, toque."));
+    }
+  }
+  t.appendChild(c); app.appendChild(t);
+
+  if(modoAtual==="escrever"){
+    document.onkeydown=teclaReal;   /* a 2a porta: o teclado de verdade */
+    comecaPalavra();
+  }else{
+    fala(enunDaRodada(R));
+  }
+}
+
+/* a linha que FALA: o texto da vez e, ao lado, o alto-falante tocavel. Os tres
+   modos novos usam a mesma linha — a pergunta (escrever), a explicacao da
+   parte (mostrar) e o nome que acabou de aparecer (hover). */
+function montaLinhaFala(c){
+  var lin=el("div","rtfala","");
+  falaEl=el("span","rtfalat","");
+  falaEl.innerHTML=textoInicial();
+  lin.appendChild(falaEl);
+  lin.appendChild(fazZap(textoDaLinha,"de novo"));
+  c.appendChild(lin);
+}
+function textoInicial(){
+  if(modoAtual==="escrever") return "Que parte da figura est&#225; <b>acesa</b>?";
+  if(modoAtual==="mostrar")  return "Toque numa parte da figura e ela conta quem &#233;.";
+  return "Passe por cima de uma parte e o nome dela aparece.";
+}
+function textoDaLinha(){ return falaEl?falaEl.innerHTML:""; }
+
+function fazPlaquinha(p){
+  var b=el("div","pc",p.n);
+  b._p=p;
+  b.setAttribute("data-qa",p.k);
+  b.onclick=cliquePlaquinha;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+  plaqs.push(b);
+  return b;
+}
+
+/* ---------------- AS TRÊS PORTAS DE ENTRADA ----------------
+   ⚠️ os tratadores de toque sao FUNCOES COM NOME de proposito: assim nenhum
+   `preventDefault` fica perto do `touchstart` (matar o toque no celular e a
+   armadilha nº1 desta mecanica). Ele mora so no `touchmove`, e so depois que
+   o dedo ANDOU de verdade. */
+function cliquePlaquinha(){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no touchend */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();  /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) escolhe(alvo);    /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(souDedo()) return; if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------------- o arrasto de verdade (mouse e dedo pelo mesmo caminho) --- */
+function pegaEm(b,x,y){
+  if(!emJogo()) return;
+  if(!b||temClasse(b,"usada")) return;
+  pego=b; px0=x; py0=y; moveu=false;
+}
+function moveEm(x,y){
+  if(!pego) return;
+  if(!moveu){
+    if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
+    moveu=true;
+    sTap();
+    escolhe(pego);
+    somb=el("div","rtsomb",pego._p.n);
+    document.body.appendChild(somb);
+  }
+  somb.style.left=(x-34)+"px"; somb.style.top=(y-40)+"px";
+  acendeVagaSob(x,y);
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b||!arrastou) return;
+  fimArrasto=agora();
+  var v=vagaSob(x,y);
+  if(v) poe(b,v);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  apagaAceso();
+}
+/* quem esta embaixo do dedo? sobe ate 6 pais porque o dedo pode cair num
+   desenho que esta DENTRO do lugar. */
+function vagaSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&e.nodeType===1&&n<6){
+    if(temClasse(e,"cam")&&!temClasse(e,"ok")) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+/* ⭐ O LUGAR ACENDE QUANDO A PLAQUINHA PASSA POR CIMA. Acende QUALQUER lugar
+   que esteja embaixo do dedo — acender so o certo seria entregar a resposta. */
+function acendeVagaSob(x,y){
+  var v=vagaSob(x,y), k;
+  for(k in vagas){
+    if(!vagas.hasOwnProperty(k)) continue;
+    if(temClasse(vagas[k],"ok")) continue;
+    vagas[k].className=(vagas[k]===v)?"cam alvo":"cam livre";
+  }
+}
+function apagaAceso(){
+  var k;
+  /* ⚠️ so o modo de arrastar acende e apaga vaga. Nos outros o aceso significa
+     outra coisa (no "escrever" e a PERGUNTA da tela), e apagar aqui deixaria a
+     crianca sem saber de qual parte a tela esta falando. */
+  if(modoAtual!=="arrastar") return;
+  for(k in vagas){
+    if(!vagas.hasOwnProperty(k)) continue;
+    if(temClasse(vagas[k],"ok")) continue;
+    vagas[k].className=marcada?"cam livre":"cam";
+  }
+}
+
+/* ---------------- o toque simples: plaquinha, depois o lugar ---------------- */
+function escolhe(b){
+  if(!emJogo()) return;
+  if(!b||temClasse(b,"usada")) return;
+  var i;
+  for(i=0;i<plaqs.length;i++) if(!temClasse(plaqs[i],"usada")) plaqs[i].className="pc";
+  if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
+  b.className="pc sel"; marcada=b; sTap(); apagaAceso();
+}
+function cliqueVaga(){
+  if(!emJogo()) return;
+  /* ⭐ OS MODOS NOVOS ENTRAM AQUI. No "mostrar" e no "hover" o toque REVELA (e
+     o toque e o unico caminho do celular, onde passar o mouse nao existe). No
+     "escrever" quem responde e o teclado, e tocar na figura so repete a
+     pergunta — nunca fica em silencio, que e o que faz a crianca achar que
+     travou. */
+  if(modoAtual==="mostrar"||modoAtual==="hover"){ revelaPonto(this,true); return; }
+  if(modoAtual==="escrever"){ tocaFiguraEscrevendo(this); return; }
+  if(cliqueDeArrasto()) return;
+  if(souDedo()&&!marcada) return;
+  if(temClasse(this,"ok")) return;
+  /* ⚠️ O CAMINHO DE ERRO MAIS NATURAL: tocar direto no lugar, sem pegar
+     plaquinha nenhuma ("quero POR o nome ALI"). Antes isso soltava uma frase
+     fixa e o andaime nunca crescia — a crianca lia a mesma linha para sempre.
+     Agora ele conta como erro e chama o mesmo andaime dos outros caminhos. */
+  if(!marcada){ erraSemPlaquinha(this); return; }
+  poe(marcada,this);
+}
+
+/* ================= MODO "MOSTRAR" E MODO "HOVER" =================
+   Os dois revelam a mesma coisa e mudam o GESTO: no "mostrar" a crianca TOCA e
+   a parte conta o que faz (pagina expositiva, sem resposta certa — e a parada
+   antes da fase que cobra); no "hover" basta PASSAR POR CIMA e o nome aparece
+   e e falado. ⚠️ No celular nao existe passar o mouse: por isso o toque faz a
+   mesma coisa, senao a fase ficaria inacessivel no telefone.               */
+function marcaToque(){ ultimoToque=agora(); }
+function passouPonto(){
+  /* ⚠️ o celular dispara `mouseover` FANTASMA logo depois do dedo: sem este
+     guarda o mesmo ponto era lido duas vezes, uma por cima da outra. */
+  if(souDedo()) return;
+  revelaPonto(this,false);
+}
+function revelaPonto(v,tocou){
+  if(!emJogo()||!v||!v._p) return;
+  var p=v._p;
+  if(temClasse(v,"ok")){
+    /* parte JA descoberta: nunca ficar em silencio — repete o que ela e. Sem
+       isto a crianca toca, nada acontece, e ela conclui que a tela travou. */
+    if(tocou){ sTap(); escreveLinha(p); fala(textoDaParte(p)); }
+    else escreveLinha(p);
+    return;
+  }
+  v.className="cam ok";
+  v.innerHTML="";
+  v.appendChild(el("span","rtposto",p.n));
+  v.removeAttribute("data-qa");
+  sCerto();
+  postas++; feitos++;
+  if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%";
+  escreveLinha(p);
+  fala(textoDaParte(p));
+  if(postas>=RODADAS[rodada].partes.length){ travada=true; fecha(); }
+}
+/* no "mostrar" a parte CONTA o que faz (o `info`, com a `d3` de reserva); no
+   "hover" o que a crianca quer e o NOME, curto, que ela vai varrendo. */
+function textoDaParte(p){
+  if(modoAtual==="mostrar") return semTag(p.info||p.d3);
+  return vozDaParte(p);
+}
+function escreveLinha(p){
+  if(!falaEl) return;
+  falaEl.innerHTML=(modoAtual==="mostrar")?(p.info||p.d3):("&#201; a <b>"+p.n+"</b>.");
+}
+
+/* ================= MODO "ESCREVER" =================
+   A parte ACENDE na figura (a pergunta e a propria figura) e a crianca DIGITA
+   o nome dela. Nas DUAS portas: o teclado da tela e o `document.onkeydown` —
+   no PC da escola tem teclado e a crianca vai digitar; no celular, nao tem. */
+var LETRASAZ="ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+function comecaPalavra(){
+  var R=RODADAS[rodada], i, p=null;
+  for(i=0;i<R.partes.length;i++)
+    if(!temClasse(vagas[R.partes[i].k],"ok")){ p=R.partes[i]; break; }
+  if(!p) return;
+  alvoP=p; palavra=palavraDe(p); posL=0; errosSeg=0;
+  vagasL=[]; teclas=[];
+  var v=vagas[p.k];
+  if(v&&!temClasse(v,"ok")) v.className="cam vez";
+  if(falaEl) falaEl.innerHTML="Que parte da figura est&#225; <b>acesa</b>? Escreva o nome dela.";
+  if(vagasBox){
+    vagasBox.innerHTML="";
+    for(i=0;i<palavra.length;i++){ var vg=el("div","vaga",""); vagasBox.appendChild(vg); vagasL.push(vg); }
+  }
+  if(letrasEl){
+    letrasEl.innerHTML="";
+    /* `data-qa` com a palavra da vez: e por ele que o auditor-jogador consegue
+       montar a palavra sozinho (a mesma convencao da peca `digitar`). ⚠️ so
+       TECLAS entram aqui dentro — o auditor percorre os filhos. */
+    letrasEl.setAttribute("data-qa",palavra);
+    var soltas=baguncar(palavra.split(""));
+    for(i=0;i<soltas.length;i++){
+      var b=el("div","tecl",soltas[i]);
+      b.letra=soltas[i];
+      b.onclick=toqueTecla;
+      letrasEl.appendChild(b); teclas.push(b);
+    }
+  }
+  fala("Que parte da figura está acesa? Escreva o nome dela.");
+}
+/* tocar na figura enquanto se escreve: nao e erro, e procura. Responde ao dedo
+   e reacende o lugar da vez — nunca silencio. */
+function tocaFiguraEscrevendo(v){
+  sTap();
+  if(v&&v._p&&alvoP&&v._p.k===alvoP.k){ fala(semTag(alvoP.d1)); return; }
+  if(alvoP&&vagas[alvoP.k]&&!temClasse(vagas[alvoP.k],"ok")) vagas[alvoP.k].className="cam vez";
+}
+/* ⭐ a tecla DIZ A PROPRIA LETRA ao ser tocada: e o gesto de alfabetizacao —
+   a crianca ouve o som enquanto escreve. */
+function toqueTecla(){
+  if(temClasse(this,"usada")) return;
+  sTap(); fala(this.letra);
+  usaLetra(this.letra,this);
+}
+/* ⚠️ o guarda `viva()` aqui e o que impede o teclado de responder por uma tela
+   que ja saiu. E o modo tambem: fora do "escrever" nao ha o que digitar. */
+function teclaReal(ev){
+  var e=ev||window.event, k;
+  if(!emJogo()||modoAtual!=="escrever") return;
+  k=e.key||"";
+  if(!k&&(e.keyCode||e.which)) k=String.fromCharCode(e.keyCode||e.which);
+  k=semAcento(String(k).toUpperCase());
+  if(k.length!==1||LETRASAZ.indexOf(k)<0) return;
+  sTap(); fala(k);
+  usaLetra(k,achaTecla(k));
+  if(e.preventDefault) e.preventDefault();
+}
+function achaTecla(k){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].letra===k&&!temClasse(teclas[i],"usada")) return teclas[i];
+  return null;
+}
+function usaLetra(k,bot){
+  if(!emJogo()||modoAtual!=="escrever") return;
+  if(!palavra||posL>=palavra.length) return;
+  if(k===palavra.charAt(posL)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
+}
+function poeLetra(k,bot){
+  if(!vagasL[posL]) return;
+  vagasL[posL].className="vaga cheia";
+  vagasL[posL].innerHTML=k;
+  pousaVaga(vagasL[posL]);
+  if(bot) bot.className="tecl usada";
+  posL++; errosSeg=0;
+  limpaPisca();
+  apagaDica();
+  sTap();
+  if(posL>=palavra.length) fechaPalavra();
+}
+function pousaVaga(v){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(temClasse(v,"cheia")&&!temClasse(v,"pousa")) v.className="vaga cheia pousa";
+  },170);
+}
+function erraLetra(bot){
+  sErro(); errosSeg++;
+  if(bot){ bot.className="tecl treme"; destremeTecla(bot); }
+  ajudaEscrever(errosSeg);
+}
+/* o tremor e feito com DUAS classes e transicao, nao com `@keyframes`: os
+   keyframes da peca se perdem quando o integrador prefixa o CSS dela, e o erro
+   deixava de responder DENTRO da atividade — que e onde a crianca esta. */
+function destremeTecla(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()||temClasse(b,"usada")) return;
+    b.className="tecl treme2";
+  },110);
+  setTimeout(function(){
+    if(g!==ger||!viva()||temClasse(b,"usada")) return;
+    b.className="tecl";
+  },240);
+}
+/* O ANDAIME QUE CRESCE — tres degraus, tres TEXTOS diferentes:
+   1) a pista da propria parte (o que ela e, olhando a figura acesa);
+   2) apoio concreto: a letra da vez ACENDE no teclado;
+   3) mostro UMA letra e voce segue — a mao que escreve continua sendo a dela. */
+function ajudaEscrever(n){
+  if(n===1){
+    mostraDica(alvoP?alvoP.d1:"Olhe bem a parte acesa da figura.");
+    if(alvoP) fala(semTag(alvoP.d1));
+  }else if(n===2){
+    mostraDica("A letra que vem agora est&#225; <b>acesa</b> no teclado.");
+    acendeCerta();
+  }else{
+    mostraDica("Era esta! Eu ponho a letra e voc&#234; segue.");
+    seguraDica(4000);
+    revelaLetra();
+  }
+}
+function acendeCerta(){
+  var b=achaTecla(palavra.charAt(posL));
+  limpaPisca();
+  if(b) b.className="tecl pisca";
+}
+function limpaPisca(){
+  var i;
+  for(i=0;i<teclas.length;i++) if(temClasse(teclas[i],"pisca")) teclas[i].className="tecl";
+}
+function revelaLetra(){
+  var k=palavra.charAt(posL);
+  poeLetra(k,achaTecla(k));
+}
+/* ⚠️ LICAO PAGA EM CINCO PECAS DE UM LOTE SO: o 3o degrau escreve a explicacao
+   e o proprio "revelar" a APAGAVA no mesmo quadro (poe a letra -> apaga a
+   dica). A frase aparecia e sumia no pisco, justo para quem mais precisava
+   dela. A dica fica presa por um tempo e sai sozinha depois. */
+var dicaPresaAte=0;
+function seguraDica(ms){ dicaPresaAte=agora()+(ms||4000); }
+/* a palavra fechou: o nome vai para o LUGAR dela na figura — e e ai que a
+   crianca ve que escrever e por o nome no lugar, o mesmo conceito do modo de
+   arrastar, com outro gesto. */
+function fechaPalavra(){
+  var p=alvoP, v=p?vagas[p.k]:null, g=ger;
+  if(!p||!v) return;
+  travada=true;                      /* ⚠️ trava no INSTANTE, nunca no fim da animacao */
+  sCerto();
+  v.className="cam ok";
+  v.innerHTML="";
+  v.appendChild(el("span","rtposto",p.n));
+  postas++; feitos++;
+  if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%";
+  if(falaEl) falaEl.innerHTML="&#201; a <b>"+p.n+"</b>, no lugar dela.";
+  fala(vozDaParte(p));
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(postas>=RODADAS[rodada].partes.length){ fecha(); return; }
+    travada=false;
+    comecaPalavra();
+  },820);
+}
+
+/* ---------------- a regra da peça ---------------- */
+function poe(b,v){
+  if(!emJogo()) return;
+  if(!b||!v||temClasse(b,"usada")||temClasse(v,"ok")) return;
+  if(b._p.k===v._p.k) acerta(b,v); else erra(b);
+}
+function acerta(b,v){
+  v.className="cam ok";
+  v.innerHTML="";
+  v.appendChild(el("span","rtposto",b._p.n));
+  b.className="pc usada";
+  b.removeAttribute("data-qa");
+  v.removeAttribute("data-qa");
+  marcada=null;
+  sCerto();
+  postas++; feitos++; errosSeg=0;
+  apagaDica(); apagaAceso();
+  if(barraP) barraP.style.width=Math.round(feitos*100/totalGeral)+"%";
+  /* ⚠️ A TRAVA VAI NO INSTANTE DO ACERTO, nao no fim da animacao: a crianca
+     toca duas vezes, e o segundo toque caia na rodada seguinte com o estado
+     antigo. */
+  if(postas>=RODADAS[rodada].partes.length){ travada=true; fecha(); }
+}
+/* ERRO NÃO PUNE: som grave curto, a plaquinha treme, e o andaime CRESCE.
+   Nunca um X vermelho, nunca a palavra que o Marcos proibiu. */
+function erra(b){
+  sErro(); errosSeg++;
+  b.className="pc treme";
+  destreme(b);
+  degrau(b._p);
+  if(errosSeg===2) piscaCerta(b._p.k);
+  if(errosSeg>=3){ piscaCerta(b._p.k); esperaERevela(b); }
+}
+/* tocou no lugar sem plaquinha na mao: o mesmo andaime, com a fala do passo
+   que falta. A parte usada nas dicas e a DO LUGAR tocado — assim a ajuda fala
+   do que a crianca esta olhando. */
+function erraSemPlaquinha(v){
+  sErro(); errosSeg++;
+  var p=v._p, i, alvo=null;
+  for(i=0;i<plaqs.length;i++) if(!temClasse(plaqs[i],"usada")&&plaqs[i]._p.k===p.k) alvo=plaqs[i];
+  if(errosSeg===1){
+    mostraDica("Primeiro toque numa <b>plaquinha</b> l&#225; embaixo. Depois toque no lugar.");
+  }else if(errosSeg===2){
+    mostraDica("Escolha a plaquinha e a moldura fica <b>mais forte</b>: &#233; ali que ela cabe. "+p.d1);
+    if(alvo){ alvo.className="pc sel"; marcada=alvo; apagaAceso(); }
+  }else{
+    /* ⚠️ ate a 3a rodada deste caminho a dica repetia a do 2o degrau (medido
+       errando de proposito): a crianca lia a mesma frase duas vezes e o
+       andaime parecia parado. Todo degrau escreve o TEXTO DELE. */
+    if(alvo){
+      mostraDica("Deixa comigo: eu ponho <b>"+p.n+"</b> no lugar e te mostro por qu&#234;.");
+      piscaCerta(p.k); esperaERevela(alvo);
+    }else{
+      mostraDica("Toque numa plaquinha da bandeja para come&#231;ar: elas est&#227;o logo abaixo da figura.");
+    }
+  }
+}
+/* O ANDAIME QUE CRESCE — tres degraus, tres textos DIFERENTES:
+   1) pergunta que orienta o olhar (as palavras vem da propria parte);
+   2) apoio concreto: o lugar certo PISCA e a dica diz o que procurar;
+   3) revela e explica (ver esperaERevela).                                */
+function degrau(p){
+  if(errosSeg===1) mostraDica(p.d1);
+  else if(errosSeg===2) mostraDica("Olhe bem: o lugar de <b>"+p.n+"</b> est&#225; aceso na figura. Leve a plaquinha at&#233; l&#225;.");
+  else mostraDica("Deixa comigo: eu ponho <b>"+p.n+"</b> no lugar e te mostro por qu&#234;.");
+}
+/* ⚠️ DEFEITO PAGO EM CINCO PEÇAS DE UM LOTE SÓ (ago/2026): no 3º degrau a
+   explicacao era escrita e APAGADA no mesmo quadro, porque `revela()` chama
+   `acerta()` e `acerta()` limpa a dica. A peca se consertava sozinha e a
+   crianca nao ficava sabendo por que. Ordem certa: espera a dica ser lida,
+   REVELA, e so DEPOIS escreve a explicacao — que fica na tela.            */
+function esperaERevela(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!b||temClasse(b,"usada")) return;
+    var p=b._p, v=vagas[p.k];
+    if(!v||temClasse(v,"ok")) return;
+    acerta(b,v);
+    if(g!==ger||!viva()) return;
+    mostraDica(p.d3);
+  },1100);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele mexeria numa tela que ja saiu (e deixaria a tela nova travada). */
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+  },340);
+}
+function piscaCerta(k){
+  var v=vagas[k];
+  if(v&&!temClasse(v,"ok")) v.className="cam alvo";
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(!d||!d.parentNode) return;
+  /* a dica do 3o degrau fica PRESA um tempo: quem acabou de ser socorrido
+     precisa poder ler a explicacao antes de ela sumir. */
+  var falta=dicaPresaAte-agora();
+  if(falta>0){ setTimeout(apagaDica,falta+30); return; }
+  d.parentNode.removeChild(d);
+}
+function fecha(){
+  var g=ger, R=RODADAS[rodada];
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraBanner(R.fecho,proximaRodada);
+  },520);
+}
+function proximaRodada(){
+  rodada++;
+  if(rodada>=RODADAS.length) fimDaPeca(); else pecaRotular();
+}
+
+function fimDaPeca(){
+  ger++; limpa(); soltaSombra();
+  document.onkeydown=null;
+  cenaEl=null; marcada=null; travada=false;
+  falaEl=null; letrasEl=null; vagasBox=null; alvoP=null; teclas=[]; vagasL=[];
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; deu nome a <b>8 partes</b>: as da planta e as do mapa."));
+  var u=el("ul","rtlista","");
+  u.appendChild(el("li","rtitem","Na planta, o lugar conta a hist&#243;ria: raiz embaixo, flor em cima."));
+  u.appendChild(el("li","rtitem","No mapa, cada canto tem o seu ajudante: t&#237;tulo, rosa dos ventos, legenda e escala."));
+  c.appendChild(u);
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a AS PLAQUINHAS: arrastar, escrever, "+
+                   "mostrar e passar por cima &#8212; quatro gestos na mesma figura."));
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; feitos=0; pecaRotular(); }
+
+pecaRotular();
+</script>
+</body></html>

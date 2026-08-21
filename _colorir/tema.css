@@ -1,0 +1,41 @@
+/* ===== O Ateliê de Cores da Rai — tema da fase de pintar =====
+   Pedidos do Marcos (ago/2026): "não quero barra de rolagem; só o quadrado no
+   meio com desenho e cores; não pode ficar pequeno; não consigo ver, fica
+   transparente". Três consertos: (1) o quadrado é BRANCO SÓLIDO e grande;
+   (2) o cartão é opaco (o desenho não fica sobre a cena do ateliê); (3) com
+   "reduzir movimento" a tela não pode sumir. */
+
+/* ⭐ BUG DO TRANSPARENTE: a .tela entra com fade-in (opacity:0 -> 1). Com
+   prefers-reduced-motion a animação é desligada e a tela ficava em opacity:0 —
+   invisível. Forço a tela visível (o fade é só enfeite). */
+.tela{opacity:1 !important}
+
+/* o cenário do ateliê fica SUAVE atrás — não compete com o desenho */
+#bg{-webkit-filter:blur(5px) brightness(.9) saturate(.9);
+  filter:blur(5px) brightness(.9) saturate(.9)}
+
+/* cartão da fase OPACO (creme liso), colado no conteúdo */
+.centro.mec-pintar-canvas, .mec-pintar-canvas .centro{
+  background:#fffdf6;padding:8px 10px 10px;max-width:520px;margin:0 auto}
+
+/* enunciado curto; a dica ("escolha uma cor...") é narrada e mora no botão Dica */
+.mec-pintar-canvas .balao{font-size:15px;padding:6px 12px;margin:0 auto 4px;max-width:380px}
+.mec-pintar-canvas .dica{display:none}
+
+/* ⭐ O QUADRADO: BRANCO SÓLIDO e GRANDE (não pode ficar pequeno) — limitado pela
+   altura da tela só o suficiente para não rolar */
+.mec-pintar-canvas .pintawrap{max-width:min(380px,46vh);margin:4px auto;
+  background:#fff;border-radius:14px}
+.mec-pintar-canvas .pintatela{background:#fff !important}
+
+/* cores logo abaixo, generosas */
+.mec-pintar-canvas .paleta{margin:6px auto 2px;max-width:360px}
+.mec-pintar-canvas .tcor{width:44px;height:44px;margin:3px}
+.mec-pintar-canvas .pc_ferr{margin:4px 0}
+.mec-pintar-canvas .acoes{margin-top:6px}
+.mec-pintar-canvas .btn{min-height:46px;padding:10px 22px;font-size:16px}
+
+@media (max-height:620px){
+  .mec-pintar-canvas .pintawrap{max-width:min(320px,40vh)}
+  .mec-pintar-canvas .tcor{width:40px;height:40px;margin:2px}
+}

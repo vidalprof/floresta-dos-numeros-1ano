@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — completar a lacuna</title>
+<!-- ============================================================
+     PEÇA: COMPLETAR A LACUNA (escolher o pedaço que fecha a frase)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     Armadilhas desta mecânica (_padrao/DINAMICAS.md, linhas "Completar
+     lacuna" e "Escolher / quiz"):
+       · as opções vão EMBARALHADAS (`baguncar`) — na Fábrica de Estrelas a
+         certa era sempre a 1ª e a criança aprendeu a POSIÇÃO, não o conteúdo;
+       · APOIO DE FIGURA no pedaço (campo `img`, opcional) e ALTO-FALANTE em
+         TODO pedaço tocável (classe `zap`) — ordem do Marcos (ago/2026):
+         *"as dinâmicas interativas têm que ser mais VISUAIS e SONORAS para os
+         pequenos"* e *"nas fases com letras seria interessante ter apoio
+         visual, figuras"*. Sem `img` a opção continua só com a palavra;
+       · a lacuna se enche com a palavra escolhida: a criança LÊ a frase
+         inteira depois de acertar (é aí que a frase ensina, não no acerto);
+       · o erro não pune — `sErro()` + andaime que cresce (dica → riscar uma
+         que não serve → revelar e seguir). Nunca X nem "errou";
+       · em fase de várias rodadas o `setTimeout` continua correndo depois do
+         `limpa()`: por isso o guarda `if(!telaAtual.parentNode) return;`;
+       · `data-qa="1"` na resposta que serve AGORA, para o auditor-jogador
+         conseguir terminar a peça sozinho.
+     ============================================================ -->
+<style>
+/* ⭐ A FOTO DA PERGUNTA — o estímulo, não o enfeite (mesma peça de moldura
+   que a `escolher`; a lição da altura está escrita lá por extenso). A criança
+   OLHA a cena e só depois lê o que se pergunta sobre ela. */
+/* ⭐ MOLDURA DE VIDRO COM BRILHO, SEM FUNDO BRANCO (modelo da fase 1 escolher,
+   escolha do Marcos ago/2026: "botoes e configuracoes das imagens como na fase 1"
+   + "moldura de vidro sem fundo branco na imagem"). O vidro corre igual ao verso
+   da carta de memoria; a imagem entra sem o cartao branco atras. */
+/* ⚠️ A MOLDURA ABRACA A IMAGEM (pedido do Marcos, ago/2026: "a moldura nao precisa
+   ser tao grande com a imagem pequena; proporcional"). `fit-content` faz o vidro
+   encolher ate o tamanho da imagem + uma borda fina — nada de vidro vazio em volta.
+   O teto em % evita que fique enorme num monitor largo. */
+/* BORDA FINA E PADRAO (decisao do Marcos, ago/2026: "a borda de vidro pode ser
+   menor e padrao nesse tipo de atividade"). 6px = moldura discreta, so o
+   suficiente para o vidro aparecer em volta da imagem. */
+.qfig{position:relative;width:186px;max-width:70vw;
+     margin:2px auto 12px;padding:5px;
+     border-radius:16px;overflow:hidden;text-align:center;
+     background:rgba(255,255,255,.12);
+     -webkit-backdrop-filter:blur(9px) saturate(1.1);backdrop-filter:blur(9px) saturate(1.1);
+     border:1px solid rgba(255,255,255,.5);
+     box-shadow:0 12px 30px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.5)}
+.qfig:before{content:"";position:absolute;top:-60%;left:-45%;width:55%;height:220%;z-index:2;pointer-events:none;
+     background:-webkit-linear-gradient(305deg,transparent,rgba(255,255,255,.5),transparent);
+     background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+     -webkit-transform:rotate(8deg);transform:rotate(8deg);
+     -webkit-animation:cqshine 3.6s ease-in-out infinite;animation:cqshine 3.6s ease-in-out infinite}
+@-webkit-keyframes cqshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+@keyframes cqshine{0%{left:-45%}55%{left:120%}100%{left:120%}}
+/* ⚠️ a imagem define a largura pela ALTURA (`width:auto`), NUNCA `max-width:100%`
+   do pai: com o pai em fit-content, o `max-width:100%` fazia a moldura usar a
+   largura NATURAL do PNG (grande), a imagem encolhia pela altura e sobrava vidro
+   (medido: gap de 20px com padding de 4). Agora a moldura cola na imagem. */
+/* ⚠️ LARGURA EXPLICITA na imagem: o `fit-content` da moldura usa a largura
+   NATURAL (grande) do PNG e batia no teto, sobrando vidro. Com `width` fixo a
+   moldura COLA na imagem (o box da img passa a valer a largura fixa, nao a
+   intrinseca). `height:auto` mantem a proporcao (nao corta). */
+.qfig img{position:relative;z-index:1;width:100%;height:auto;display:block;
+     margin:0 auto;border-radius:12px;
+     -o-object-fit:contain;object-fit:contain;object-position:center;
+     -webkit-filter:drop-shadow(0 6px 9px rgba(0,0,0,.32));filter:drop-shadow(0 6px 9px rgba(0,0,0,.32))}
+@media (max-height:560px){ .qfig{width:140px;padding:4px} }
+@media (min-height:760px){ .qfig{width:200px} }
+@media (prefers-reduced-motion:reduce){ .qfig:before{-webkit-animation:none;animation:none;display:none} }
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+/* ⭐ BOTAO DE VIDRO FOSCO (modelo da fase 1 escolher): texto escuro fixo, vidro
+   leitoso (opacidade alta segura o contraste sem backdrop-filter no PC velho). */
+.opt{display:block;color:#1a2129;border:1px solid rgba(255,255,255,.72);border-radius:18px;padding:13px 16px;
+     background:rgba(255,255,255,.66);
+     background:-webkit-linear-gradient(top,rgba(255,255,255,.72),rgba(255,255,255,.58));
+     background:linear-gradient(180deg,rgba(255,255,255,.72),rgba(255,255,255,.58));
+     -webkit-backdrop-filter:blur(12px) saturate(1.1);backdrop-filter:blur(12px) saturate(1.1);
+     margin:11px auto;font-size:16px;font-weight:700;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 9px 22px rgba(0,0,0,.2);
+     box-shadow:0 9px 22px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.85);
+     -webkit-transition:-webkit-transform .16s ease, box-shadow .16s ease;
+     transition:transform .16s ease, box-shadow .16s ease}
+/* o botao RESPONDE ao dedo: sobe quando a crianca encosta e afunda quando ela
+   aperta. E o retorno que faz o toque parecer de app, nao de pagina. */
+.opt:hover{-webkit-transform:translateY(-2px);transform:translateY(-2px);
+     box-shadow:0 13px 28px rgba(0,0,0,.24),inset 0 1px 0 rgba(255,255,255,.85)}
+/* ⚠️ E A MESMA REGRA VALE PARA A OPCAO COMPRIDA (medido na prova de esteira,
+   ago/2026): sem teto, a opcao de texto ia a 400x55 = 7,3 vezes mais larga que
+   alta — acima do teto de 6 do diretor de arte. Aqui o conserto precisa dos
+   DOIS lados: estreitar (360) e engordar um pouco (62), porque so a largura
+   nao fecha a conta quando a linha e curta. 360/62 = 5,8. */
+.opts .opt{max-width:360px;min-height:62px}
+/* ⚠️ LICAO PAGA (ago/2026) — BARRA DE 400px PARA UMA LETRA SO. Regra do
+   Marcos: *"nada de botoes muito esticado, quero tudo simetrico no app"*. Nas
+   fases em que o pedaco que falta e uma LETRA ou uma silaba, as tres opcoes
+   empilhadas viravam tres tarjas de 400x65 (6,2x mais largas que altas) com um
+   "E" perdido no meio — o portao 5b mediu e reprovou.
+   Quando o pedaco e curto, as opcoes viram LADRILHOS lado a lado: proporcao
+   quase quadrada, letra grande, e a criança compara as tres de uma olhada so
+   (que e o gesto certo aqui — escolher entre letras, nao ler tres frases).
+   `margin` em vez de `gap`: PC velho da escola. */
+/* ⚠️ o `flex-direction:row` tem que ser ESCRITO: alguma folha acima ja poe as
+   opcoes em COLUNA, e sem isto os ladrilhos continuam um embaixo do outro —
+   ficam bonitos e empilhados, que nao era o ponto. */
+.opts.curtas{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+  -webkit-flex-direction:row;flex-direction:row;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;justify-content:center}
+/* O LADRILHO DE LETRA — cobranca do Marcos (ago/2026): *"esses botoes com a
+   letra podem ser mais bonitos... uma cor que combine mais com o tema,
+   ajustados para nao ficarem largos ou compridos, somente o necessario, mais
+   intuitivo para o estudante"*.
+   O que ficou, e o porque de cada escolha:
+   · QUADRADO de verdade (mesma largura e altura) — "nem largo nem comprido"
+     nao se resolve no olho, se resolve travando os dois lados no mesmo numero;
+   · a LETRA e a estrela: grande, centrada, e a unica coisa que se le de longe;
+   · o alto-falante desce para BAIXO da letra, pequeno — ele e necessario (o
+     pilar SONORA: no 1o ano tem quem ainda nao le), mas nao disputa a atencao;
+   · cor de PADARIA: creme de massa com borda de casca dourada. O branco chapado
+     do cartao generico nao combinava com a prateleira de pao atras;
+   · a base mais grossa e a sombra dao volume de FICHA — a crianca ve que aquilo
+     e uma peca para pegar, nao um campo de formulario. */
+.opts.curtas .opt{display:-webkit-box;display:-webkit-flex;display:flex;
+  -webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -webkit-flex-direction:column;flex-direction:column;
+  -webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;
+  width:96px;min-width:96px;max-width:96px;height:96px;min-height:96px;
+  margin:7px 6px;padding:6px 4px;border-radius:22px;
+  font-size:36px;font-weight:800;letter-spacing:1px;line-height:1;color:#4a3a10;
+  background:#fff3d9;
+  background-image:-webkit-linear-gradient(top,#fffaf0,#ffeac6);
+  background-image:linear-gradient(#fffaf0,#ffeac6);
+  border:2px solid #eed9ab;border-bottom:6px solid #d7ab63;
+  -webkit-box-shadow:0 5px 12px rgba(90,60,10,.16);box-shadow:0 5px 12px rgba(90,60,10,.16)}
+/* ⚠️ `background-color`, nunca o atalho `background:` — o desenho do
+   alto-falante e um SVG que mora no `background-image`, e o atalho apagaria o
+   icone deixando um circulo vazio (defeito ja medido em 48 telas). */
+/* ⚠️ ESTA REGRA EXISTIA E NAO PINTAVA NADA (medido em ago/2026): o CSS do
+   alto-falante do ladrilho estava escrito desde o dia do redesenho, e a peca
+   NUNCA criava o botao. Ou seja, o pilar SONORA da casa — *"o alto-falante nas
+   respostas tambem, para ajudar os alunos que nao sabem ler"* — estava so no
+   comentario. Agora o botao nasce junto com o ladrilho (ver `fazZap`), e por
+   isso o quadrado cresceu de 88 para 96: a letra continua grande e o
+   alto-falante cabe embaixo dela sem apertar. */
+.opts.curtas .opt .zap{margin:5px 0 0;width:32px;height:32px;min-width:32px;
+  opacity:.95;background-color:#f6e0ae;-webkit-flex:none;flex:none;
+  -webkit-background-size:19px 19px;background-size:19px 19px}
+/* ⭐ no ladrilho o alto-falante desce para BAIXO da letra (regra do Marcos: a
+   LETRA e a estrela; o alto-falante e necessario — no 1o ano tem quem ainda
+   nao le — mas nao disputa a atencao). */
+.opts.curtas .opt .oplin{-webkit-box-orient:vertical;-webkit-box-direction:normal;
+  -webkit-flex-direction:column;flex-direction:column}
+/* ⚠️ o acerto/erro PRECISA de regra propria aqui: a ponte de estilo pinta
+   `.opt.ok` com a mesma forca (0,4,0) e, num empate, ganha quem vem depois —
+   que passou a ser este bloco. Sem estas duas linhas o ladrilho ficaria creme
+   mesmo depois do acerto, e a crianca nao veria que acertou. */
+.opts.curtas .opt.ok{background-image:none;background:#ddf5c6;
+  border-color:#8fcb6a;border-bottom-color:#6da84a}
+.opts.curtas .opt.no{background-image:none;background:#ffe1d9;
+  border-color:#eaa392;border-bottom-color:#c87a68}
+@media (max-width:359px){
+  .opts.curtas .opt{width:86px;min-width:86px;max-width:86px;height:86px;min-height:86px;
+    font-size:31px;margin:6px 4px}
+  .opts.curtas .opt .zap{width:28px;height:28px;min-width:28px;
+    -webkit-background-size:17px 17px;background-size:17px 17px}
+}
+.opt:active{-webkit-transform:translateY(2px);transform:translateY(2px);box-shadow:0 5px 12px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.85)}
+@media (prefers-reduced-motion:reduce){
+  .opt{-webkit-transition:none;transition:none}
+  .opt:hover{-webkit-transform:none;transform:none;box-shadow:0 9px 22px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.85)}
+  .opt.ok{-webkit-transform:none;transform:none}
+}
+/* ⭐ A COMEMORACAO DO ACERTO — sobe e cresce um tiquinho, e POUSA de volta.
+   ⚠️ TRANSICAO, nunca `@keyframes`: o integrador prefixa o CSS da peca com
+   `.mec-<nome>` e, ao fazer isso, os `@keyframes` DELA se perdem (esta medido
+   no `pecas.css` gerado — o `@-webkit-keyframes treme{` some e sobra
+   `.mec-completar 25%{...}`). Animacao de peca em keyframes existe no arquivo
+   e NAO existe na atividade: defeito mudo, do pior tipo.
+   ⚠️ `.opt.ok` depois de `.opt:hover`: as duas pesam igual e ganha a ultima. */
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464;
+     -webkit-transform:translateY(-4px) scale(1.05);transform:translateY(-4px) scale(1.05)}
+.opt.ok.pousa{-webkit-transform:none;transform:none}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+/* ⭐ SELO VERDE "certo" no botao certo (modelo da fase 1 escolher): o acerto nao
+   fica so na cor — ganha uma marca ESCRITA, que serve para quem ainda le pouco e
+   para quem nao distingue verde de vermelho. */
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: COMPLETAR A LACUNA ---------------- */
+/* ⚠️ os 13px de folga em cima sao obrigatorios: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+/* ⚠️ era branco translucido + texto quase-branco: sumia no tema claro (1.06:1).
+   Texto segue o TEMA (var(--texto)) e a mesa e um cinza neutro que vale nos
+   dois temas — a lacuna (.lac) ja tem contraste proprio. */
+.frase{margin:13px auto 12px;max-width:430px;background:rgba(127,127,127,.14);
+       border:2px solid rgba(127,127,127,.30);border-radius:16px;padding:12px 14px;
+       font-size:18px;font-weight:600;line-height:1.5;color:var(--texto);text-align:center}
+.lac{display:inline-block;min-width:96px;background:#fff3c9;color:#3a2c07;border-radius:8px;
+     border:2px dashed #a58a33;padding:1px 8px 6px;line-height:1.1;font-weight:800;letter-spacing:1px}
+/* cheia = a lacuna fechada. Muda a BORDA e a letra, nao so a cor. */
+.lac.cheia{background:#d6f5c8;color:#1c3d0e;border:2px solid #4f9a34;letter-spacing:0}
+/* riscada = a opcao que o andaime tirou do caminho: risco (forma), nao so cor */
+.opt.fora{text-decoration:line-through;opacity:.6}
+/* ⚠️ O TREMOR DO ERRO ERA CODIGO MORTO NA ATIVIDADE (medido em ago/2026 no
+   `pecas.css` gerado): ele vinha de `@keyframes`, e o escopador do integrador
+   engole os keyframes da peca — a regra `.opt.treme` sobrevivia apontando para
+   uma animacao que nao existia mais. Aqui o tremor e feito com DUAS CLASSES e
+   transicao: `treme` joga para a esquerda, `treme2` para a direita, e a peca
+   tira as duas. Sem biblioteca, sem keyframes, e funciona nos dois mundos. */
+.opt.treme{-webkit-transform:translateX(-7px);transform:translateX(-7px)}
+.opt.treme2{-webkit-transform:translateX(7px);transform:translateX(7px)}
+/* ⭐⭐ A OPCAO POR DENTRO — figura em cima, palavra embaixo, alto-falante ao
+   lado. A linha existe SEMPRE (com ou sem figura) para o alto-falante ter um
+   lugar fixo: no 1o ano a crianca aprende ONDE fica o botao que fala. */
+.oplin{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center;width:100%}
+.optxt{display:inline-block;line-height:1.2}
+/* com figura a lista vira GRADE de duas colunas: as opcoes cabem numa olhada
+   so, que e o gesto certo aqui (comparar os desenhos). Empilhadas, tres
+   opcoes de 142px empurram a ultima para baixo da dobra — e crianca de 6 anos
+   nao rola atras de resposta: ela escolhe entre as que VE. */
+.opts.comfigs{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-orient:horizontal;-webkit-box-direction:normal;
+     -webkit-flex-direction:row;flex-direction:row;
+     -webkit-flex-wrap:wrap;flex-wrap:wrap;
+     -webkit-box-pack:center;justify-content:center;
+     max-height:calc(100vh - 300px);overflow-y:auto;
+     -webkit-overflow-scrolling:touch}
+.opts.comfigs .opt{width:47%;min-width:150px;max-width:200px;margin:6px 1%;min-height:142px}
+.opt.comfig{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-orient:vertical;-webkit-box-direction:normal;
+     -webkit-flex-direction:column;flex-direction:column;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center;padding:10px 12px 12px}
+/* a figura: 84px de lado (a pesquisa pede >=64 para quem ainda nao le) e
+   `contain`, NUNCA `cover` — proporcao que nao bate corta o topo do desenho, e
+   figura cortada e o mesmo que figura errada. */
+.opfig{width:84px;height:84px;margin:0 auto 6px;
+     display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;align-items:center;
+     -webkit-box-pack:center;justify-content:center}
+.opfig img{max-width:100%;max-height:100%;
+     -o-object-fit:contain;object-fit:contain}
+@media (max-height:560px){
+  .opfig{width:64px;height:64px}
+  .opts.comfigs .opt{min-height:118px}
+}
+/* ⚠️ LICAO PAGA NA PROPRIA BANCADA (ago/2026): com o alto-falante de 44px
+   dentro, cada tarja passou de ~62 para ~88px de altura, e em TELA BAIXA (o
+   monitor 1024x420 da escola, o celular 320x568) a ULTIMA resposta ficou presa
+   abaixo da dobra — o portao 7 mediu e reprovou. Deixar rolando seria pior:
+   crianca de 6 anos nao rola atras de resposta, ela escolhe entre as que VE.
+   Em tela baixa as opcoes viram GRADE de duas colunas e cabem numa olhada.
+   ⚠️ `inline-flex` + `text-align:center` em vez de trocar o `.opts` para flex:
+   assim o ladrilho (`.opts.curtas`, especificidade maior) e a grade com figura
+   (`.opts.comfigs`) continuam mandando na regra deles. */
+@media (max-height:600px){
+  .opts{text-align:center}
+  .opts .opt{display:-webkit-inline-box;display:-webkit-inline-flex;display:inline-flex;
+    -webkit-box-align:center;align-items:center;
+    -webkit-box-pack:center;justify-content:center;
+    vertical-align:top;width:47%;min-width:128px;max-width:200px;margin:6px 1%}
+}
+/* ⭐ O ALTO-FALANTE DE CADA RESPOSTA (pilar SONORA da casa).
+   ⚠️ `background-color` e `background-image` SEPARADOS, nunca o atalho
+   `background:` — a cor do desenho mora DENTRO do SVG, e o atalho num `:hover`
+   apagaria o icone deixando um circulo vazio.
+   ⚠️ e o MESMO glifo do motor: dois desenhos de alto-falante no mesmo app e
+   amadorismo. Ele se centra sozinho pelo `viewBox`, sem coordenada na mao. */
+.zap{display:inline-block;vertical-align:middle;-webkit-flex:none;flex:none;
+     width:44px;height:44px;min-width:44px;margin-left:10px;padding:0;border:0;
+     border-radius:50%;cursor:pointer;opacity:1;
+     background-color:rgba(58,48,32,.10);
+     background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E");
+     background-repeat:no-repeat;background-position:center center;
+     -webkit-background-size:22px 22px;background-size:22px 22px;
+     -webkit-transition:background-color .15s;transition:background-color .15s}
+.zap:hover{background-color:rgba(58,48,32,.20)}
+.zap:active,.zap.tocando{background-color:rgba(255,212,59,.85)}
+.medal{width:96px;height:96px;line-height:96px;margin:6px auto 0;border-radius:50%;
+       background:#ffd54a;color:#33280a;font-size:20px;font-weight:800;text-align:center;
+       box-shadow:0 6px 0 #c9a52f}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* COMPLETAR A LACUNA — a frase quase pronta e o pedaco que falta.
+   Conteudo curto e neutro (8 anos). Trocar `FRASES` adapta a peca:
+   ante = o que vem antes da lacuna · dep = o que vem depois ·
+   cer = o pedaco certo · out = os distratores (plausiveis, nunca bobos) ·
+   dic = a dica do 1o erro. */
+/* ⭐ CADA PEDAÇO PODE SER PALAVRA **OU** PALAVRA COM FIGURA (ago/2026):
+     "mel"                                   <- como sempre foi
+     {t:"mel", img:"pd_mel", voz:"mel"}      <- com apoio visual
+   · `t`   = o pedaço que entra na lacuna (obrigatório);
+   · `img` = o nome da arte de IA, sem a pasta e sem o `.png` (OPCIONAL);
+   · `voz` = o que o alto-falante diz, quando é diferente do escrito (OPCIONAL).
+   Sem `img` nada muda: nenhuma atividade que já usa esta peça quebra.      */
+var ENUN="Toque no peda&#231;o que <b>falta</b> na frase.";
+var DEPOIS="Leia a frase inteira antes de escolher.";
+var FECHO="Voc&#234; fechou todas as frases!";
+var FRASES=[
+  {img:"", ante:"O peixe vive na ",dep:".",cer:"&#225;gua",out:["areia","nuvem"],
+   dic:"Pense no lugar onde o peixe <b>nada</b>."},
+  {ante:"A abelha faz o ",dep:".",cer:"mel",out:["leite","p&#227;o"],
+   dic:"&#201; docinho e fica guardado na colmeia."},
+  {ante:"A chuva cai da ",dep:".",cer:"nuvem",out:["pedra","janela"],
+   dic:"Olhe para o <b>c&#233;u</b> antes de come&#231;ar a chover."}
+];
+var rodada=0, errosSeg=0, respondida=false, telaAtual=null, barraP=null;
+var lacuna=null, botoes=[];
+
+/* ⚠️ A FIGURA vem do MOTOR (`imgEl`, que sabe onde mora a pasta `img/`). Aqui
+   na bancada ela não existe, e o pedaço fica só com a palavra — que é o próprio
+   contrato: `img` é OPCIONAL. Pegar por `window.imgEl` (e não `typeof imgEl`)
+   deixa o nome DECLARADO, e o portão "função que não existe" consegue medir. */
+var figEl = window.imgEl || null;
+
+/* ⚠️⚠️ A VOZ É GRAVADA, SEMPRE. Dentro da atividade montada a ponte do
+   integrador REAPONTA este `diz` para o mp3 da casa (Edge TTS). Sozinha, na
+   bancada, a peça fica calada de propósito: voz-robô do navegador nunca vai
+   para a criança (portão `_qa/vozrobo.py`). */
+function diz(txt){
+  if(!txt) return;
+  if(typeof window.temVoz!=="function"||typeof window.tocaVoz!=="function") return;
+  var k=window.temVoz(txt);
+  if(k) window.tocaVoz(k);
+}
+function sPing(){ nota(880,.09,.12,"triangle",0); }
+
+/* um pedaço pode ser PALAVRA ou {t,img,voz} — aqui os dois viram a mesma
+   coisa, para o resto da peça não precisar saber a diferença. */
+function pedacoDe(x){
+  if(x&&typeof x==="object")
+    return {t:x.t||"", img:x.img||null, voz:x.voz||x.t||""};
+  return {t:String(x), img:null, voz:String(x)};
+}
+/* ⚠️ o tamanho do pedaço se mede no que a CRIANÇA vê, não no que está escrito
+   no arquivo: "&#225;gua" tem 9 caracteres e 4 letras. Era por isso que uma
+   fase de letras acentuadas nunca virava ladrilho — caía na tarja comprida. */
+function tamanho(s){
+  return String(s).replace(/&#\d+;/g,"x").replace(/&[a-z]+;/g,"x")
+                  .replace(/<[^>]*>/g,"").length;
+}
+
+/* ⭐ O ALTO-FALANTE DE CADA PEDAÇO.
+   ⚠️ ele NÃO escolhe: só fala. Sem parar o evento aqui, tocar no alto-falante
+   valia como resposta — e a criança que só queria conferir a palavra levava um
+   erro. Defeito já pago em atividade de verdade. */
+function fazZap(txt,rot){
+  var z=el("button","zap","");
+  z.type="button";
+  z.setAttribute("aria-label","Ouvir "+(rot||txt));
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    if(e.preventDefault) e.preventDefault();
+    sPing(); diz(txt);
+    z.className="zap tocando";
+    setTimeout(function(){ z.className="zap"; },900);
+    return false;
+  };
+  return z;
+}
+
+/* ⚠️ trocar a roupa do pedaço SEM perder a `comfig`: quem manda na altura do
+   pedaço com figura é ela, e um `className="opt ok"` cru derrubava a figura
+   para o tamanho do pedaço sem desenho — a tela pulava no acerto. */
+function veste(b,estado){
+  var fig=(b.className.indexOf("comfig")>=0)?" comfig":"";
+  b.className="opt"+fig+(estado?" "+estado:"");
+  /* ⭐ selo verde "certo" no botao certo (modelo da fase 1): marca ESCRITA, nao
+     so cor. So no acerto, e uma vez. */
+  if(estado==="ok" && b.getElementsByClassName("marca").length===0)
+    b.appendChild(el("span","marca","certo"));
+}
+
+/* ⭐ a comemoração curta do acerto: o pedaço sobe e cresce, e POUSA de volta.
+   Duas transições, sem biblioteca e sem `@keyframes` (ver a lição no CSS). */
+function festeja(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("ok")>=0&&b.className.indexOf("pousa")<0)
+      b.className=b.className+" pousa";
+  },230);
+}
+
+function telaCompletar(){
+  limpa(); document.onkeydown=null;
+  errosSeg=0; respondida=false; botoes=[];
+  var f=FRASES[rodada];
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/FRASES.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","FRASE "+(rodada+1)+" DE "+FRASES.length));
+  if(f&&f.img&&figEl){ var _qf=el("div","qfig",""); _qf.appendChild(figEl(f.img));
+                       c.appendChild(_qf); }
+  c.appendChild(el("div","balao",ENUN));
+  var fr=el("div","frase",f.ante+'<span class="lac">_____</span>'+f.dep);
+  c.appendChild(fr);
+  lacuna=fr.querySelector(".lac");
+  /* ⚠️ o embaralhado tem que acontecer com os pedaços JÁ normalizados: senão a
+     comparação com a certa mudaria de forma (texto x objeto) no meio do
+     caminho. É a armadilha da mecânica: na Fábrica de Estrelas a certa era
+     sempre a 1ª e a criança aprendeu a POSIÇÃO, não o conteúdo. */
+  var certo=pedacoDe(f.cer), lista=[certo], i, b, p;
+  for(i=0;i<f.out.length;i++) lista.push(pedacoDe(f.out[i]));
+  baguncar(lista);
+  /* pedaco curto (letra, silaba) -> ladrilhos lado a lado em vez de tarjas
+     empilhadas. Ver a licao no CSS de `.opts.curtas`. */
+  var curtas=true, soLetra=true, temfig=false;
+  for(i=0;i<lista.length;i++){
+    if(tamanho(lista[i].t)>4) curtas=false;
+    if(tamanho(lista[i].t)>1) soLetra=false;
+    if(lista[i].img&&figEl) temfig=true;
+  }
+  /* figura manda mais que ladrilho: o quadrado de 96px existe para a LETRA
+     sozinha; com desenho, o pedaço vira cartão de duas colunas. */
+  if(temfig){ curtas=false; soLetra=false; }
+  /* ⭐ `letra` ou `silaba`: e o TEMA da atividade que pinta cada um (lousa para
+     a letra, biscoito para o pedaco). A peca so DIZ o que aquilo e — ela nao
+     escolhe cor nenhuma, senao a mecanica ficaria presa a uma atividade. */
+  var cx=el("div","opts"+(curtas?(soLetra?" curtas letra":" curtas silaba"):"")
+                        +(temfig?" comfigs":""));
+  for(i=0;i<lista.length;i++){
+    p=lista[i];
+    b=el("div","opt"+(p.img&&figEl?" comfig":""),"");
+    /* ⭐ o motor monta a chave da voz a partir do TEXTO da resposta — e aqui
+       dentro há figura, alto-falante e, depois do acerto, o carimbo. DECLARAR
+       o que a voz deve dizer é mais honesto do que fazer o motor adivinhar. */
+    b.setAttribute("data-voz",p.voz);
+    if(p.img&&figEl){ var g=el("div","opfig",""); g.appendChild(figEl(p.img)); b.appendChild(g); }
+    var ln=el("div","oplin","");
+    ln.appendChild(el("span","optxt",p.t));
+    ln.appendChild(fazZap(p.voz,p.t));
+    b.appendChild(ln);
+    b.pedaco=p.t;
+    b.certa=(p===certo);
+    /* data-qa: a resposta que serve AGORA. E so para o auditor-jogador
+       (_qa/jogador.js) conseguir fechar a rodada; a crianca nao ve nada. */
+    b.setAttribute("data-qa",b.certa?"1":"0");
+    b.onclick=escolheu;
+    cx.appendChild(b); botoes.push(b);
+  }
+  c.appendChild(cx);
+  c.appendChild(el("div","hint",DEPOIS));
+  t.appendChild(c); app.appendChild(t);
+}
+
+function escolheu(){
+  if(respondida) return;
+  sTap();
+  if(this.certa) acertou(this); else errou(this);
+}
+/* ⚠️ o temporizador da rodada continua correndo depois que a tela sai: sem o
+   guarda `!telaAtual.parentNode` ele montaria a rodada por cima da tela
+   seguinte. Armadilha registrada no _padrao/DINAMICAS.md. */
+function acertou(b){
+  respondida=true;
+  veste(b,"ok");
+  festeja(b);
+  lacuna.className="lac cheia";
+  lacuna.innerHTML=b.pedaco;
+  sCerto(); apagaDica();
+  if(barraP) barraP.style.width=Math.round((rodada+1)*100/FRASES.length)+"%";
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    proxima();
+  },1050);
+}
+function errou(b){
+  sErro(); errosSeg++;
+  veste(b,"no treme");
+  destreme(b);
+  ajuda(errosSeg);
+}
+/* ⚠️ o tremor e feito com DUAS classes e transicao, nao com `@keyframes` — os
+   keyframes da peca se perdem quando o integrador prefixa o CSS dela (medido
+   no `pecas.css`), e o erro deixava de responder DENTRO da atividade, que e
+   justamente onde a crianca esta. Esquerda -> direita -> parado. */
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("ok")<0&&b.className.indexOf("fora")<0) veste(b,"no treme2");
+  },110);
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("ok")<0&&b.className.indexOf("fora")<0) veste(b,"no");
+  },240);
+}
+/* o andaime CRESCE: dica -> tirar uma do caminho -> revelar e seguir.
+   Nunca X, nunca "errou", nunca fica travado. */
+function ajuda(n){
+  if(n===1){
+    mostraDica(FRASES[rodada].dic);
+  }else if(n===2){
+    mostraDica("Risquei uma que <b>n&#227;o serve</b>. Ficou mais f&#225;cil escolher.");
+    riscaUmaErrada();
+  }else{
+    mostraDica("Era esta! Leia a frase inteira comigo.");
+    revela();
+  }
+}
+function riscaUmaErrada(){
+  var i,b;
+  for(i=0;i<botoes.length;i++){
+    b=botoes[i];
+    if(!b.certa&&b.className.indexOf("fora")<0){ veste(b,"fora"); return; }
+  }
+}
+function revela(){
+  var i;
+  for(i=0;i<botoes.length;i++) if(botoes[i].certa){ acertou(botoes[i]); return; }
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function proxima(){
+  rodada++;
+  if(rodada<FRASES.length){ telaCompletar(); return; }
+  mostraBanner(FECHO,telaFim);
+}
+
+function telaFim(){
+  limpa(); document.onkeydown=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PRONTO"));
+  c.appendChild(el("div","medal","MEDALHA"));
+  c.appendChild(el("div","balao","Voc&#234; completou <b>todas</b> as frases."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; telaCompletar(); }
+telaCompletar();
+</script>
+</body></html>

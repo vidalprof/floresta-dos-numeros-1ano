@@ -1,0 +1,400 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Viagem pelo Brasil — Prova de História e Geografia</title>
+<style>
+/* ===== Prova interdisciplinar História + Geografia — 3º ano =====
+   Tema: DIÁRIO DE VIAGEM / PAPIRO. Papel envelhecido em toda questão,
+   opções como etiquetas de papel (com alto-falante), passaporte de progresso.
+   Compatível com PC antigo (prefixos -webkit-, fallback antes de gradiente). */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;min-height:100%;}
+body{
+  font-family:"Segoe UI",Verdana,Geneva,sans-serif;color:#3a2a15;
+  background:#e7d9b6;
+  background:-webkit-linear-gradient(top,#cfe4f2 0%,#e8ddbe 55%,#e3cf9f 100%);
+  background:linear-gradient(to bottom,#cfe4f2 0%,#e8ddbe 55%,#e3cf9f 100%);
+  min-height:100vh;-webkit-text-size-adjust:100%;
+}
+/* fundo temático (a imagem gerada pv_fundo.png), suave atrás de tudo; se faltar, fica o gradiente */
+#fundo{position:fixed;inset:0;z-index:-1;background:url("img/pv_fundo.png") center bottom no-repeat;background-size:cover;opacity:.32;}
+/* #app é a "tela" que rola por dentro: em telas baixas a criança rola e alcança
+   tudo; o padding-bottom deixa o conteúdo sempre ACIMA da barrinha de voz. */
+#app{max-width:820px;margin:0 auto;padding:12px 16px 40px;min-height:100vh;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+
+/* ---- o PAPIRO: a folha de diário onde tudo é escrito ---- */
+.card{position:relative;color:#3a2a15;
+  background:#f6ead0;
+  background:
+    -webkit-radial-gradient(120% 12% at 8% 4%, rgba(120,85,40,.06), rgba(120,85,40,0) 40%),
+    -webkit-radial-gradient(120% 12% at 96% 90%, rgba(120,85,40,.07), rgba(120,85,40,0) 42%),
+    -webkit-linear-gradient(top,#f8efd9,#efe0bd);
+  background:
+    radial-gradient(120% 12% at 8% 4%, rgba(120,85,40,.06), rgba(120,85,40,0) 40%),
+    radial-gradient(120% 12% at 96% 90%, rgba(120,85,40,.07), rgba(120,85,40,0) 42%),
+    linear-gradient(to bottom,#f8efd9,#efe0bd);
+  border:3px solid #caa257;border-radius:16px;padding:12px 16px 12px;margin:6px 0 4px;text-align:center;
+  -webkit-box-shadow:0 10px 26px rgba(70,50,20,.28), inset 0 0 0 2px #fbf4e2, inset 0 0 34px rgba(150,110,55,.14);
+  box-shadow:0 10px 26px rgba(70,50,20,.28), inset 0 0 0 2px #fbf4e2, inset 0 0 34px rgba(150,110,55,.14);
+  -webkit-animation:aparece .35s ease-out;animation:aparece .35s ease-out;}
+/* fitas de canto (washi tape) para dar cara de diário colado */
+.card:before,.card:after{content:"";position:absolute;top:-9px;width:64px;height:20px;background:rgba(210,170,90,.55);
+  -webkit-box-shadow:0 1px 3px rgba(0,0,0,.15);box-shadow:0 1px 3px rgba(0,0,0,.15);}
+.card:before{left:22px;-webkit-transform:rotate(-5deg);transform:rotate(-5deg);}
+.card:after{right:22px;-webkit-transform:rotate(5deg);transform:rotate(5deg);}
+@-webkit-keyframes aparece{from{opacity:0;-webkit-transform:translateY(12px);}to{opacity:1;-webkit-transform:none;}}
+@keyframes aparece{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:none;}}
+
+h1{font-family:Georgia,"Times New Roman",serif;font-size:26px;margin:2px 0 0;color:#8a5a12;text-shadow:0 1px 0 #fbeecd;}
+h2{font-family:Georgia,serif;font-size:18px;margin:1px 0 2px;color:#5a4a2a;}
+p{font-size:17px;line-height:1.3;margin:5px 4px;}
+.grande{font-size:16px;font-weight:bold;color:#5a4a2a;margin:5px 4px;}
+img{max-width:100%;}
+
+/* ---- PASSAPORTE: progresso premium (carimbos que preenchem) ---- */
+#trilha{display:block;text-align:center;margin:2px 0 4px;font-size:16px;color:#6b4f2e;font-weight:bold;}
+#passa{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+  -webkit-flex-wrap:nowrap;flex-wrap:nowrap;gap:3px;margin:2px auto 8px;max-width:330px;}
+.selo{-webkit-flex:none;flex:none;width:24px;height:24px;line-height:20px;text-align:center;border-radius:50%;
+  border:2px dashed #c3a05a;background:#f3e7c8;color:#5a3f16;font-size:12px;font-weight:bold;}
+.selo.feito{border-style:solid;border-color:#3f9a4d;background:#dff3d6;color:#2e7d3a;}
+.selo.agora{border-style:solid;border-color:#e07a1f;background:#fff4e2;color:#8a4708;
+  -webkit-box-shadow:0 0 0 3px rgba(224,122,31,.18);box-shadow:0 0 0 3px rgba(224,122,31,.18);
+  -webkit-animation:pulsa 1.4s ease-in-out infinite;animation:pulsa 1.4s ease-in-out infinite;}
+@-webkit-keyframes pulsa{0%,100%{-webkit-transform:scale(1);}50%{-webkit-transform:scale(1.12);}}
+@keyframes pulsa{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+
+/* mascote */
+.masc-capa{height:62px;margin:0 auto;-webkit-animation:balanca 2.6s ease-in-out infinite;animation:balanca 2.6s ease-in-out infinite;}
+/* na CAPA as duas colunas (nome+turma | explorador) ficam lado a lado em tela
+   larga p/ não precisar de rolagem; em tela estreita empilham (flex-wrap). */
+.formrow{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;-webkit-align-items:flex-start;align-items:flex-start;margin:2px auto 0;gap:2px 22px;}
+.fcol{-webkit-box-flex:1;-webkit-flex:1 1 280px;flex:1 1 280px;max-width:360px;}
+@-webkit-keyframes balanca{0%,100%{-webkit-transform:rotate(-3deg);}50%{-webkit-transform:rotate(3deg);}}
+@keyframes balanca{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+.guia{position:absolute;right:8px;top:8px;height:60px;pointer-events:none;-webkit-filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+/* chip da disciplina = carimbo de tinta */
+.disc{display:inline-block;font-size:13px;font-weight:bold;letter-spacing:.6px;border-radius:6px;padding:5px 12px;margin:2px 0 8px;
+  -webkit-transform:rotate(-2deg);transform:rotate(-2deg);}
+.disc.geo{background:transparent;color:#1668bf;border:2px solid #1668bf;}
+.disc.hist{background:transparent;color:#b5330a;border:2px solid #b5330a;}
+
+/* foto da questão (colada como polaroid no diário) */
+.qfig{display:block;max-height:158px;margin:2px auto 8px;padding:6px 6px 8px;background:#fffdf6;border:1px solid #e4d3a6;
+  -webkit-box-shadow:0 4px 10px rgba(70,50,20,.24);box-shadow:0 4px 10px rgba(70,50,20,.24);
+  -webkit-transform:rotate(-1.4deg);transform:rotate(-1.4deg);border-radius:3px;}
+
+/* pergunta escrita à mão no papel */
+.pergunta{font-family:Georgia,serif;font-size:21px;font-weight:bold;color:#3f2d16;line-height:1.32;margin:2px 8px 10px;}
+
+/* opções = ETIQUETAS de papel, cada uma com alto-falante */
+.opcoes{margin-top:2px;}
+.opc{position:relative;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  width:94%;max-width:456px;margin:9px auto;padding:13px 12px;border:2px solid #d8bd83;border-radius:12px;cursor:pointer;text-align:left;
+  font-family:Georgia,serif;font-size:19px;font-weight:bold;color:#3a2a15;background:#f3e6c4;
+  -webkit-box-shadow:0 4px 0 #cfb488;box-shadow:0 4px 0 #cfb488;}
+.opc:active{-webkit-transform:translateY(3px);transform:translateY(3px);-webkit-box-shadow:0 1px 0 #cfb488;box-shadow:0 1px 0 #cfb488;}
+.opc .let{-webkit-flex:none;flex:none;width:38px;height:38px;line-height:38px;text-align:center;border-radius:50%;background:#3fa34d;color:#fff;font-size:20px;margin-right:11px;font-family:"Segoe UI",sans-serif;
+  -webkit-box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);box-shadow:inset 0 -2px 0 rgba(0,0,0,.15);}
+.opc.c1 .let{background:#2b8ae0;} .opc.c2 .let{background:#e0781f;} .opc.c3 .let{background:#8a63d2;}
+.opc .otx{-webkit-box-flex:1;-webkit-flex:1;flex:1;padding-right:6px;}
+.ospk{-webkit-flex:none;flex:none;width:40px;height:40px;border-radius:50%;border:2px solid #b98f4a;background:#fffaef;color:#8a5a12;
+  font-size:18px;line-height:34px;text-align:center;cursor:pointer;padding:0;margin-left:4px;font-family:"Segoe UI",sans-serif;}
+.ospk:active{background:#f2e2bf;}
+
+/* botões e campos */
+.btn{display:inline-block;font-family:inherit;font-size:22px;font-weight:bold;border:none;border-radius:16px;padding:16px 26px;margin:8px 6px;cursor:pointer;color:#fff;background:#3fa34d;-webkit-box-shadow:0 5px 0 #2e7d3a;box-shadow:0 5px 0 #2e7d3a;}
+.btn:active{-webkit-transform:translateY(3px);transform:translateY(3px);}
+input{font-family:inherit;font-size:19px;padding:10px 10px;border:3px solid #cdb079;border-radius:14px;width:84%;max-width:320px;margin:4px auto;display:block;text-align:center;color:#3a2a15;background:#fffaef;}
+label{font-size:16px;font-weight:bold;color:#6b4f2e;display:block;margin-top:5px;}
+.turmas{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 2px;}
+.tbox{margin:6px;min-width:80px;padding:13px 10px;border:3px solid #cdb079;border-radius:16px;background:#fffaef;color:#6b4f2e;font-weight:bold;font-size:18px;cursor:pointer;font-family:inherit;-webkit-box-shadow:0 4px 0 #ddc79b;box-shadow:0 4px 0 #ddc79b;}
+.tbox.on{background:#3fa34d;color:#fff;border-color:#2e7d3a;-webkit-box-shadow:0 4px 0 #2e7d3a;box-shadow:0 4px 0 #2e7d3a;}
+.tbox:active{-webkit-transform:translateY(2px);transform:translateY(2px);}
+#btnOuvir{background:#fff4e2;border:3px solid #e07a1f;color:#9a4e08;border-radius:16px;font-size:18px;font-weight:bold;padding:9px 16px;cursor:pointer;font-family:inherit;margin:4px auto 8px;}
+#btnHist{background:#fff4e2;border:3px solid #e07a1f;color:#9a4e08;border-radius:16px;font-size:18px;font-weight:bold;padding:9px 16px;cursor:pointer;font-family:inherit;margin-top:4px;-webkit-animation:pulsa 1.6s ease-in-out infinite;animation:pulsa 1.6s ease-in-out infinite;}
+.mini{font-size:14px;color:#5f4d2e;}
+.papiro{max-height:220px;margin:6px auto;}
+/* ---- escolha do explorador (avatar) ---- */
+.avs{display:-webkit-box;display:-webkit-flex;display:flex;-webkit-flex-wrap:wrap;flex-wrap:wrap;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;margin:4px auto 6px;max-width:560px;}
+.avbox{width:74px;height:74px;margin:5px;border-radius:50%;border:3px solid #cdb079;background:#fffaef;cursor:pointer;overflow:hidden;padding:0;
+  -webkit-box-shadow:0 3px 0 #ddc79b;box-shadow:0 3px 0 #ddc79b;}
+.avbox.on{border-color:#2e7d3a;-webkit-box-shadow:0 3px 0 #2e7d3a;box-shadow:0 3px 0 #2e7d3a;-webkit-transform:translateY(-2px);transform:translateY(-2px);}
+.avbox img{width:100%;height:100%;display:block;object-fit:cover;}
+/* na tela de pergunta, o topo do papiro guarda a faixa do crachá (esq) e do guia (dir) */
+.qcard{padding-top:56px;}
+/* ---- crachá do explorador durante as questões ---- */
+.cracha{position:absolute;left:8px;top:8px;display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;
+  background:#fffaef;border:2px solid #d8bd83;border-radius:20px;padding:2px 10px 2px 2px;-webkit-box-shadow:0 2px 5px rgba(0,0,0,.15);box-shadow:0 2px 5px rgba(0,0,0,.15);}
+.cracha .cav{width:32px;height:32px;border-radius:50%;overflow:hidden;background:#e0cfa0;-webkit-flex:none;flex:none;margin-right:6px;}
+.cracha .cav img{width:100%;height:100%;object-fit:cover;display:block;}
+.cracha .cnm{font-size:13px;font-weight:bold;color:#5a4a2a;max-width:104px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* ---- MEDALHA final ---- */
+.medalha{position:relative;width:172px;height:196px;margin:6px auto 2px;-webkit-animation:pop .55s ease-out;animation:pop .55s ease-out;}
+@-webkit-keyframes pop{0%{-webkit-transform:scale(0) rotate(-18deg);}70%{-webkit-transform:scale(1.12);}100%{-webkit-transform:scale(1);}}
+@keyframes pop{0%{transform:scale(0) rotate(-18deg);}70%{transform:scale(1.12);}100%{transform:scale(1);}}
+.medalha .fita{position:absolute;top:0;left:50%;width:26px;height:74px;background:#c0392b;-webkit-box-shadow:inset 0 0 0 2px rgba(0,0,0,.08);box-shadow:inset 0 0 0 2px rgba(0,0,0,.08);}
+.medalha .fita.e{-webkit-transform:translateX(-26px) rotate(13deg);transform:translateX(-26px) rotate(13deg);}
+.medalha .fita.d{-webkit-transform:translateX(0) rotate(-13deg);transform:translateX(0) rotate(-13deg);}
+.medalha .disco{position:absolute;left:50%;top:52px;margin-left:-72px;width:144px;height:144px;border-radius:50%;overflow:hidden;
+  background:#f6bf31;background:-webkit-radial-gradient(36% 30%,circle,#fff0a8,#f6bf31 62%,#d68a00);background:radial-gradient(circle at 36% 30%,#fff0a8,#f6bf31 62%,#d68a00);
+  border:7px solid #ffd94a;-webkit-box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);box-shadow:0 8px 18px rgba(120,90,0,.4),inset 0 0 18px rgba(255,255,255,.5);
+  display:-webkit-box;display:-webkit-flex;display:flex;-webkit-box-align:center;-webkit-align-items:center;align-items:center;-webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;}
+.medalha .estrela{position:absolute;width:74px;height:74px;background:#fff6cf;-webkit-clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);clip-path:polygon(50% 0,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%);}
+.medalha .mav{position:relative;width:118px;height:118px;border-radius:50%;object-fit:cover;}
+#barra{position:fixed;right:8px;bottom:8px;z-index:9999;}
+#barra .cv-bt{-webkit-appearance:none;appearance:none;width:46px;height:46px;border:3px solid #8a5a12;border-radius:50%;background:#fffaef;color:#8a5a12;font-size:20px;line-height:40px;text-align:center;cursor:pointer;padding:0;margin-left:6px;-webkit-box-shadow:0 2px 6px rgba(0,0,0,.25);box-shadow:0 2px 6px rgba(0,0,0,.25);}
+</style>
+
+<div id="fundo"></div>
+<div id="app" class="tela"></div>
+<div id="barra">
+  <button id="btnMudo" class="cv-bt" onclick="alternarMudo()"></button>
+  <button class="cv-bt" onclick="repetirUltima()" title="Ouvir de novo">&#8635;</button>
+</div>
+
+<script>
+/* ====== CONFIG ====== */
+var TURMAS=["3º A","3º B","3º C","3º D"];
+/* avatares (a criança escolhe o seu explorador — estilo das nossas atividades).
+   img = arte gerada pelo Marcos; enquanto não sobe, cai no disco colorido (cor). */
+var AVATARES=[
+ {id:"pv_av1.png", cor:"#3fa34d"},{id:"pv_av2.png", cor:"#2b8ae0"},
+ {id:"pv_av3.png", cor:"#e0781f"},{id:"pv_av4.png", cor:"#8a63d2"},
+ {id:"pv_av5.png", cor:"#d64b7a"},{id:"pv_av6.png", cor:"#e0a41f"}
+];
+var SLUG="interdisciplinar-hist-geo-3ano";   /* caminho no Firebase: /provas/<SLUG> */
+var FIREBASE_DB="https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var URL_PLANILHA="";
+var HISTORIA="Olá! Eu sou o Arinho, a arara-azul guia. Vamos fazer uma viagem pelo Brasil! Pelo caminho a gente vai ver os meios de transporte que levam as pessoas de um lugar a outro, e também vai conhecer os povos originários, que já viviam aqui muito antes de todo mundo. Eu vou ler cada pergunta e cada resposta em voz alta, e você escolhe a resposta certa. Agora escreva o seu nome, escolha a sua turma e toque em começar!";
+var _histTocada=false;
+
+/* ====== As 10 questões (História + Geografia) — resposta 100% controlada aqui ======
+   img = foto da questão (opcional): se o arquivo existir em img/, aparece; se não, some. */
+var QUESTOES=[
+ {disc:"geo", img:"pv_q1.png", pergunta:"Qual destes é um meio de transporte público?",
+  opcoes:["Árvore","Ônibus","Rio","Casa"], correta:1,
+  fala:"Pergunta um, de Geografia. Qual destes é um meio de transporte público? Letra A: árvore. Letra B: ônibus. Letra C: rio. Letra D: casa."},
+
+ {disc:"geo", img:"pv_q2.png", pergunta:"Qual meio de transporte é usado para viajar pelo ar?",
+  opcoes:["Bicicleta","Barco","Avião","Trem"], correta:2,
+  fala:"Pergunta dois, de Geografia. Qual meio de transporte é usado para viajar pelo ar? Letra A: bicicleta. Letra B: barco. Letra C: avião. Letra D: trem."},
+
+ {disc:"geo", img:"pv_q3.png", pergunta:"Qual meio de transporte anda sobre trilhos?",
+  opcoes:["Carro","Trem","Avião","Barco"], correta:1,
+  fala:"Pergunta três, de Geografia. Qual meio de transporte anda sobre trilhos? Letra A: carro. Letra B: trem. Letra C: avião. Letra D: barco."},
+
+ {disc:"hist", img:"pv_q4.png", pergunta:"Os povos originários são:",
+  opcoes:["Pessoas que chegaram há pouco tempo ao Brasil.",
+          "Os povos que já viviam no Brasil antes da chegada dos europeus.",
+          "Apenas pessoas que vivem nas cidades.",
+          "Pessoas que trabalham nas fábricas."], correta:1,
+  fala:"Pergunta quatro, de História. Os povos originários são: Letra A: pessoas que chegaram há pouco tempo ao Brasil. Letra B: os povos que já viviam no Brasil antes da chegada dos europeus. Letra C: apenas pessoas que vivem nas cidades. Letra D: pessoas que trabalham nas fábricas."},
+
+ {disc:"hist", img:"pv_q5.png", pergunta:"Os povos indígenas fazem parte dos:",
+  opcoes:["Povos estrangeiros.","Povos modernos.","Povos originários do Brasil.","Povos europeus."], correta:2,
+  fala:"Pergunta cinco, de História. Os povos indígenas fazem parte dos: Letra A: povos estrangeiros. Letra B: povos modernos. Letra C: povos originários do Brasil. Letra D: povos europeus."},
+
+ {disc:"hist", img:"pv_q6.png", pergunta:"Onde vivem muitas comunidades indígenas?",
+  opcoes:["Apenas em prédios.","Em aldeias e também em cidades.","Somente em shopping centers.","Apenas em apartamentos."], correta:1,
+  fala:"Pergunta seis, de História. Onde vivem muitas comunidades indígenas? Letra A: apenas em prédios. Letra B: em aldeias e também em cidades. Letra C: somente em shopping centers. Letra D: apenas em apartamentos."},
+
+ {disc:"hist", img:"pv_q7.png", pergunta:"O que é importante para muitas comunidades indígenas?",
+  opcoes:["Destruir a natureza.","Cuidar da natureza e dos recursos naturais.","Jogar lixo nos rios.","Desperdiçar água."], correta:1,
+  fala:"Pergunta sete, de História. O que é importante para muitas comunidades indígenas? Letra A: destruir a natureza. Letra B: cuidar da natureza e dos recursos naturais. Letra C: jogar lixo nos rios. Letra D: desperdiçar água."},
+
+ {disc:"hist", img:"pv_q8.png", pergunta:"Qual alimento costuma ser cultivado por comunidades indígenas?",
+  opcoes:["Mandioca.","Chocolate industrializado.","Refrigerante.","Bala."], correta:0,
+  fala:"Pergunta oito, de História. Qual alimento costuma ser cultivado por comunidades indígenas? Letra A: mandioca. Letra B: chocolate industrializado. Letra C: refrigerante. Letra D: bala."},
+
+ {disc:"hist", img:"pv_q9.png", pergunta:"Uma atividade feita por muitos povos indígenas é:",
+  opcoes:["Pesca.","Fabricação de carros.","Construção de aviões.","Produção de celulares."], correta:0,
+  fala:"Pergunta nove, de História. Uma atividade feita por muitos povos indígenas é: Letra A: pesca. Letra B: fabricação de carros. Letra C: construção de aviões. Letra D: produção de celulares."},
+
+ {disc:"hist", img:"pv_q10.png", pergunta:"Devemos respeitar os povos indígenas porque:",
+  opcoes:["Eles não fazem parte da história do Brasil.",
+          "Eles têm culturas, costumes, línguas e conhecimentos importantes.",
+          "Todos têm os mesmos costumes.",
+          "A cultura deles não é importante."], correta:1,
+  fala:"Pergunta dez, a última, de História. Devemos respeitar os povos indígenas porque: Letra A: eles não fazem parte da história do Brasil. Letra B: eles têm culturas, costumes, línguas e conhecimentos importantes. Letra C: todos têm os mesmos costumes. Letra D: a cultura deles não é importante."}
+];
+
+/* ====== estado ====== */
+var atual=0, respostas=[], nomeAluno="", turmaAluno="", enviado=false, turmaSel="", avatarSel="", avatarAluno="";
+var i; for(i=0;i<QUESTOES.length;i++){respostas.push(-1);}
+function $(id){return document.getElementById(id);}
+function esc(s){return (""+s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ====== VOZ (arquivos audio/v<hash>.mp3, voz Antonio) ====== */
+var VOZ_MUDA=false; try{VOZ_MUDA=(localStorage.getItem("provahg_mudo")==="1");}catch(e){}
+var _falaAudio=null, _ultimaFala="";
+function _chaveVoz(t){var s=(""+t).replace(/\s+/g," ").replace(/^\s+|\s+$/g,"");var h=5381,i;for(i=0;i<s.length;i++){h=((h*33)+s.charCodeAt(i))>>>0;}return h===0?"v0":("v"+h.toString(36));}
+function pararFala(){if(_falaAudio){try{_falaAudio.pause();_falaAudio.src="";}catch(e){}_falaAudio=null;}}
+var _actx=null;
+function somToque(){
+  if(VOZ_MUDA){return;}
+  try{
+    if(!_actx){var AC=window.AudioContext||window.webkitAudioContext;if(!AC){return;}_actx=new AC();}
+    if(_actx.state==="suspended"&&_actx.resume){_actx.resume();}
+    var t=_actx.currentTime,o=_actx.createOscillator(),g=_actx.createGain();
+    o.type="triangle";o.frequency.setValueAtTime(520,t);o.frequency.exponentialRampToValueAtTime(760,t+0.10);
+    g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.16,t+0.012);g.gain.exponentialRampToValueAtTime(0.0001,t+0.16);
+    o.connect(g);g.connect(_actx.destination);o.start(t);o.stop(t+0.18);
+  }catch(e){}
+}
+function falar(texto,_forcar){
+  _ultimaFala=texto;
+  if(VOZ_MUDA&&!_forcar){return;}
+  pararFala();
+  try{var a=new Audio("audio/"+_chaveVoz(texto)+".mp3");_falaAudio=a;a.play();}catch(e){}
+}
+function ouvirOpc(idx){ pararFala(); falar(QUESTOES[atual].opcoes[idx],true); }
+function repetirUltima(){if(_ultimaFala){pararFala();falar(_ultimaFala,true);}}
+function alternarMudo(){VOZ_MUDA=!VOZ_MUDA;try{localStorage.setItem("provahg_mudo",VOZ_MUDA?"1":"0");}catch(e){}if(VOZ_MUDA){pararFala();}attMudo();}
+function attMudo(){var b=$("btnMudo");if(b){b.innerHTML=VOZ_MUDA?"🔇":"🔊";b.title=VOZ_MUDA?"Voz desligada":"Voz ligada";}}
+
+/* ====== TELAS ====== */
+function telaCapa(){
+  var h='';
+  h+='<div class="card">';
+  h+='<img class="masc-capa" src="img/pv_guia_feliz.png" alt="Arinho, a arara guia" onerror="this.style.display=\'none\'">';
+  h+='<h1>Viagem pelo Brasil</h1>';
+  h+='<h2>História e Geografia &middot; 3º ano</h2>';
+  h+='<p class="grande">Eu sou o Arinho! Leio cada pergunta e resposta em voz alta. É só ouvir e escolher.</p>';
+  h+='<button id="btnHist" onclick="ouvirHistoria()">&#128266; Ouvir o Arinho</button>';
+  h+='<div class="formrow">';
+  h+='<div class="fcol">';
+  h+='<label>Qual é o seu nome?</label>';
+  h+='<input id="cNome" maxlength="26" placeholder="Escreva o seu nome">';
+  h+='<label>Qual é a sua turma?</label><div class="turmas">';
+  var i;for(i=0;i<TURMAS.length;i++){h+='<button type="button" class="tbox" onclick="selTurma(this,\''+TURMAS[i]+'\')">'+TURMAS[i]+'</button>';}
+  h+='</div></div>';
+  h+='<div class="fcol">';
+  h+='<label>Escolha o seu explorador!</label><div class="avs">';
+  for(i=0;i<AVATARES.length;i++){var a=AVATARES[i];
+    h+='<button type="button" class="avbox" style="background:'+a.cor+'" onclick="selAvatar(this,\''+a.id+'\')">'+
+       '<img src="img/'+a.id+'" alt="Explorador '+(i+1)+'" onerror="this.style.display=\'none\'"></button>';}
+  h+='</div></div>';
+  h+='</div>';
+  h+='<div><button class="btn" onclick="comecar()">Começar a prova!</button></div>';
+  h+='<p class="mini">Toque no botão de som a qualquer momento para ouvir de novo.</p>';
+  h+='</div>';
+  $("app").innerHTML=h; _ultimaFala=HISTORIA;
+}
+function ouvirHistoria(){_histTocada=true;falar(HISTORIA,true);}
+function selTurma(el,t){turmaSel=t;var bs=document.getElementsByClassName("tbox"),i;for(i=0;i<bs.length;i++){bs[i].className="tbox";}el.className="tbox on";}
+function selAvatar(el,id){avatarSel=id;var bs=document.getElementsByClassName("avbox"),i;for(i=0;i<bs.length;i++){bs[i].className="avbox";}el.className="avbox on";somToque();}
+function comecar(){
+  _histTocada=true;
+  var n=$("cNome").value.replace(/^\s+|\s+$/g,"");
+  if(n.length<2){falar("Escreva o seu nome para começar!",true);$("cNome").focus();return;}
+  if(!turmaSel){falar("Escolha a sua turma para começar!",true);return;}
+  if(!avatarSel){falar("Escolha o seu explorador para começar!",true);return;}
+  pararFala();nomeAluno=n;turmaAluno=turmaSel;avatarAluno=avatarSel;atual=0;telaPergunta();
+}
+function crachaHTML(){
+  return '<div class="cracha"><span class="cav">'+
+    (avatarAluno?'<img src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'')+
+    '</span><span class="cnm">'+esc(nomeAluno)+'</span></div>';
+}
+
+function passaporte(){
+  var h='<div id="passa">',i;
+  for(i=0;i<QUESTOES.length;i++){
+    var st=(i<atual?"feito":(i===atual?"agora":""));
+    h+='<span class="selo '+st+'">'+(i<atual?"&#10003;":(i+1))+'</span>';
+  }
+  return h+'</div>';
+}
+function telaPergunta(){
+  var q=QUESTOES[atual],h='';
+  h+='<div id="trilha">&#129517; Carimbo '+(atual+1)+' de '+QUESTOES.length+'</div>';
+  h+=passaporte();
+  h+='<div class="card qcard">';
+  h+=crachaHTML();
+  h+='<img class="guia" src="img/pv_guia_feliz.png" alt="Arinho" onerror="this.style.display=\'none\'">';
+  h+='<span class="disc '+q.disc+'">'+(q.disc==="geo"?"GEOGRAFIA":"HISTÓRIA")+'</span>';
+  if(q.img){h+='<img class="qfig" src="img/'+q.img+'" alt="" onerror="this.style.display=\'none\'">';}
+  h+='<p class="pergunta">'+esc(q.pergunta)+'</p>';
+  h+='<button id="btnOuvir" onclick="repetirUltima()">&#128266; Ouvir a pergunta</button>';
+  h+='<div class="opcoes">';
+  var letras=["A","B","C","D"],i;
+  for(i=0;i<q.opcoes.length;i++){
+    h+='<div class="opc c'+i+'" role="button" tabindex="0" onclick="responder('+i+')">'+
+       '<span class="let">'+letras[i]+'</span>'+
+       '<span class="otx">'+esc(q.opcoes[i])+'</span>'+
+       '<button class="ospk" title="Ouvir esta resposta" onclick="event.stopPropagation();ouvirOpc('+i+')">&#128266;</button>'+
+       '</div>';
+  }
+  h+='</div></div>';
+  $("app").innerHTML=h;
+  falar(q.fala);
+}
+function responder(idx){
+  somToque();respostas[atual]=idx;pararFala();atual++;
+  if(atual>=QUESTOES.length){telaFinal();}
+  else{
+    var frases=["Próxima pergunta!","Vamos continuar!","Muito bem, siga em frente!","Continue, viajante!"];
+    falar(frases[atual%frases.length]);setTimeout(telaPergunta,60);
+  }
+}
+function calcularAcertos(){var a=0,i;for(i=0;i<QUESTOES.length;i++){if(respostas[i]===QUESTOES[i].correta){a++;}}return a;}
+
+function medalhaHTML(){
+  return '<div class="medalha"><span class="fita e"></span><span class="fita d"></span>'+
+    '<div class="disco"><span class="estrela"></span>'+
+    (avatarAluno?'<img class="mav" src="img/'+avatarAluno+'" alt="" onerror="this.style.display=\'none\'">':'')+
+    '</div></div>';
+}
+function telaFinal(){
+  var ac=calcularAcertos();confete();
+  var h='';
+  h+='<div class="card">';
+  h+='<h1>Missão cumprida!</h1>';
+  h+=medalhaHTML();
+  h+='<h2>'+esc(nomeAluno)+', você concluiu a viagem!</h2>';
+  h+='<p class="grande">Você viajou pela História e pela Geografia do Brasil. Parabéns, explorador!</p>';
+  h+='<p id="statusenvio"></p></div>';
+  $("app").innerHTML=h;
+  falar("Parabéns! Missão cumprida! Você concluiu a sua viagem pela história e pela geografia do Brasil, explorador!");
+  enviarResultado(ac);
+}
+
+/* ====== ENVIO (Firebase), SEM mostrar nota ao aluno ====== */
+function enviarResultado(ac){
+  if(enviado){return;}enviado=true;
+  var letras="",i;for(i=0;i<QUESTOES.length;i++){letras+=(respostas[i]<0?"-":String(respostas[i]));}
+  var quando=new Date().toLocaleString("pt-BR");
+  var nota10=QUESTOES.length?Math.round(ac/QUESTOES.length*100)/10:0;
+  var reg={nome:nomeAluno,turma:turmaAluno,nota:nota10,acertos:ac+"/"+QUESTOES.length,respostas:letras,data:quando};
+  try{
+    var chave=(nomeAluno+"_"+turmaAluno+"_"+Date.now()).replace(/[^A-Za-z0-9_]/g,"_");
+    var x=new XMLHttpRequest();
+    x.open("PUT",FIREBASE_DB+"/provas/"+SLUG+"/"+chave+".json",true);
+    x.setRequestHeader("Content-Type","application/json");
+    x.send(JSON.stringify(reg));
+  }catch(e){}
+  if(URL_PLANILHA){try{
+    var dados="nome="+encodeURIComponent(nomeAluno)+"&turma="+encodeURIComponent(turmaAluno)+"&nota="+encodeURIComponent(nota10)+"&acertos="+encodeURIComponent(ac+"/"+QUESTOES.length)+"&respostas="+encodeURIComponent(letras)+"&data="+encodeURIComponent(quando);
+    var y=new XMLHttpRequest();y.open("POST",URL_PLANILHA,true);y.setRequestHeader("Content-Type","application/x-www-form-urlencoded");y.send(dados);
+  }catch(e){}}
+}
+
+/* ====== confete leve ====== */
+function confete(){try{
+  var c=document.createElement("canvas");c.style.position="fixed";c.style.left=0;c.style.top=0;c.style.pointerEvents="none";c.style.zIndex=9998;
+  c.width=window.innerWidth;c.height=window.innerHeight;document.body.appendChild(c);
+  var x=c.getContext("2d"),ps=[],i,cores=["#e0781f","#3fa34d","#2b8ae0","#8a63d2","#ffd23f"];
+  for(i=0;i<80;i++){ps.push({x:Math.random()*c.width,y:-20-Math.random()*c.height,r:6+Math.random()*6,vy:2+Math.random()*3,co:cores[i%cores.length],vx:-1.5+Math.random()*3});}
+  var t=0,tot=140;function loop(){x.clearRect(0,0,c.width,c.height);var k;for(k=0;k<ps.length;k++){var p=ps[k];p.y+=p.vy;p.x+=p.vx;x.fillStyle=p.co;x.fillRect(p.x,p.y,p.r,p.r);}t++;if(t<tot){requestAnimationFrame(loop);}else{if(c.parentNode){c.parentNode.removeChild(c);}}}loop();
+}catch(e){}}
+
+/* ====== boot ====== */
+function boot(){attMudo();telaCapa();}
+document.addEventListener("click",function(){
+  if(_histTocada){return;}
+  if(!document.getElementById("cNome")){return;}
+  _histTocada=true;falar(HISTORIA,true);
+},false);
+boot();
+</script>

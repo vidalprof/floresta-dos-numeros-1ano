@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ligar duas colunas</title>
+<!-- ============================================================
+     PEÇA: LIGAR DUAS COLUNAS (copiada do _padrao/pecas/MOLDE.html)
+
+     As armadilhas desta mecânica (DINAMICAS.md, linhas "Ligar colunas" e
+     "Arrastar"):
+       · nunca mais que ~6 pares — acima disso vira jogo da memória disfarçado
+         (aqui são 4);
+       · a linha precisa de `touchmove`: ela SEGUE o dedo enquanto a criança
+         puxa, senão o gesto não tem resposta nenhuma;
+       · alto-falante nos DOIS lados (na atividade o motor põe sozinho nas
+         classes .lig — por isso os dois lados usam .lig);
+       · TRÊS CAMINHOS: mouse, dedo (touch) e TOQUE SIMPLES (tocar de um lado
+         e depois do outro). Defeito pego DUAS vezes pelo Marcos;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+         ele mora no `touchmove`, e só enquanto há ponta na mão;
+       · guarda contra o evento de mouse FANTASMA do celular (`ultimoToque`);
+       · ⭐ VER DESTINO (EdiLIM, ago/2026): no 2º erro da MESMA ponta o outro
+         lado passa a se mostrar — contorno TRACEJADO que pulsa devagar mais
+         uma LINHA TRACEJADA fantasma indo até ele; no 3º erro acende de vez
+         e a ponta fica escolhida, bastando tocar na acesa (nunca trava). É
+         andaime que cresce SEM UMA PALAVRA ESCRITA (serve a quem não lê) e
+         entra JUNTO com a dica de texto, nunca no lugar dela. O campo
+         opcional `ver:1` na gaveta liga isso desde o 1º toque (modo fácil).
+
+     Mais o que o contrato cobra: alvo >= 44px, nada essencial só na cor (o par
+     feito ganha a LINHA desenhada, não só uma cor), funciona no mudo, erro com
+     sErro() + andaime que cresce, `data-qa` (os DOIS lados publicam a mesma
+     chave — é assim que o auditor-jogador fecha a fase) e nunca trava.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA ====== */
+/* a caixa das duas colunas. `position:relative` porque a camada das linhas
+   se apoia nela; `font-size:0` mata o espaco entre os inline-block.        */
+/* ⚠️ LARGURA DO QUADRO (defeito-raiz pago ago/2026): a `.centro` do motor e flex
+   com `align-items:center`, entao um filho SEM largura ENCOLHE para o conteudo.
+   Sem `width:100%` a `.ligbox` ficava em ~196px, os cartoes em ~86px e a palavra
+   estourava. Com largura cheia, os 44% das colunas viram ~180px e sobra folga. */
+.ligbox{position:relative;font-size:0;margin:13px auto 0;width:94%;max-width:360px}
+/* ⚠️ VAO CENTRAL MAIOR (pedido do Marcos, ago/2026: "os botoes precisam ficar
+   mais distanciados para as linhas aparecerem melhor, e alinhados"). Colunas de
+   44% com 12% de vao no meio: a linha de ligacao fica mais LONGA e visivel do
+   que com o vao de 4% antigo. 44+44+12 = 100. */
+/* colunas LARGAS (pedido do Marcos, ago/2026: "botoes mais largos para o texto
+   caber junto com o icone do som"): 45% + 45% + 10% de vao. O vao de 10% ja
+   deixa a linha de ligacao aparecer, e a distincao dos lados vem agora do VIDRO
+   (claro x escuro), nao mais da largura. */
+.lcol{display:inline-block;vertical-align:top;width:44%;font-size:15px}
+.lesq{margin-right:12%}
+.ldir{margin-right:0}
+/* ⚠️⭐ ITEM EM FLEX, ALTURA IGUAL DOS DOIS LADOS (defeito pago aqui, ago/2026):
+   o item era `display:block`, entao o alto-falante `.fone` do motor QUEBRAVA para
+   a 2a linha nas palavras longas (a coluna -ing) e SO aquela coluna ficava mais
+   alta → as duas colunas desalinhavam e a linha de ligacao saia torta. Agora e
+   FLEX em linha: palavra + som SEMPRE na mesma linha, e `min-height` fixo mantem
+   os dois lados na MESMA altura de fileira, alinhados. `margin-bottom` maior
+   (16px) para as opcoes respirarem e a linha caber com folga. */
+/* palavra e alto-falante LADO A LADO (preferencia do Marcos). ⚠️ o `.zap` vazava
+   4-5px do cartao estreito (portao 1h vaza.js, atividade montada): a cura foi
+   um alto-falante MENOR e mais justo AQUI (34px, margem 3), que cabe sem sair —
+   e o texto pode encolher a fonte na tela estreita para nunca encostar. */
+.lig{display:-webkit-box;display:-webkit-flex;display:flex;
+     -webkit-box-align:center;-webkit-align-items:center;align-items:center;
+     -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center;
+     width:100%;height:70px;min-height:70px;-webkit-box-sizing:border-box;box-sizing:border-box;
+     background:#fffdf6;color:#221a12;border:0;
+     border-radius:14px;padding:10px 6px;margin-bottom:16px;font-size:15px;font-weight:700;
+     line-height:1.2;cursor:pointer;box-shadow:0 4px 0 #c9bda6;
+     -webkit-user-select:none;user-select:none}
+/* alto-falante compacto e junto: cabe ao lado da palavra sem vazar */
+.lig .zap{-webkit-flex:none;flex:none;width:34px;height:34px;min-width:34px;margin-left:3px;
+     -webkit-background-size:19px 19px;background-size:19px 19px}
+/* ⚠️ LICAO PAGA (ago/2026, portao 1h vaza): no celular pequeno o alto-falante
+   (.zap 34px) escapava ~7px do card .lig. Aqui ele encolhe para caber. */
+@media (max-width:380px){ .lig{font-size:13px}
+  .lig .zap{width:28px;height:28px;min-width:28px;margin-left:2px;background-size:16px 16px} }
+/* ⭐ FIGURA na ponta (1º ano precisa de ajuda visual em toda fase): quando a
+   gaveta traz `img`, o lado esquerdo mostra a imagem (a cédula/moeda) em vez de
+   texto. `contain` para a nota larga e a moeda redonda caberem sem esticar. */
+.ligfig{display:block;margin:0 auto;height:auto;width:auto;max-height:54px;max-width:94%;
+     -o-object-fit:contain;object-fit:contain}
+@media (max-height:560px){ .ligfig{max-height:40px} }
+/* ⚠️ JANELA BAIXA (o monitor 1024x420 da escola): o espacamento folgado nao cabe
+   e as 2 ultimas fileiras ficavam presas atras da barra (medido pelo leiaute.js).
+   Aqui encolhe a altura e o respiro — o alinhamento das colunas continua igual. */
+@media (max-height:560px){
+  .lig{height:52px;min-height:52px;margin-bottom:8px;padding:8px 8px;font-size:14px}
+}
+/* ⭐ VIDRO CLARO x VIDRO ESCURO (escolha do Marcos, ago/2026: "de vidro mesmo,
+   um lado um pouco mais claro e os outros escuros"). A distincao dos dois lados
+   vem do TOM do vidro, nao de cor. ⚠️ CONTRASTE (regra da casa): o vidro claro e
+   leitoso o bastante p/ texto ESCURO passar sem backdrop-filter; o vidro escuro
+   e OPACO o bastante p/ texto CLARO passar mesmo sobre a parte clara do fundo.
+   ⚠️ Vem ANTES das classes de estado (.sel/.feita) p/ o destaque do par ganhar. */
+.lesq .lig{color:#1a2129;border:1px solid rgba(255,255,255,.7);
+     background:rgba(255,255,255,.66);
+     background:-webkit-linear-gradient(top,rgba(255,255,255,.74),rgba(255,255,255,.6));
+     background:linear-gradient(180deg,rgba(255,255,255,.74),rgba(255,255,255,.6));
+     -webkit-backdrop-filter:blur(11px) saturate(1.1);backdrop-filter:blur(11px) saturate(1.1);
+     box-shadow:0 8px 18px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.85)}
+.ldir .lig{color:#f4efe6;border:1px solid rgba(255,255,255,.2);
+     background:rgba(30,34,45,.74);
+     background:-webkit-linear-gradient(top,rgba(38,43,56,.78),rgba(24,27,36,.72));
+     background:linear-gradient(180deg,rgba(38,43,56,.78),rgba(24,27,36,.72));
+     -webkit-backdrop-filter:blur(11px) saturate(1.1);backdrop-filter:blur(11px) saturate(1.1);
+     box-shadow:0 8px 18px rgba(0,0,0,.34),inset 0 1px 0 rgba(255,255,255,.14)}
+/* alto-falante da coluna ESCURA: glifo BRANCO (o mesmo do motor p/ fundo escuro),
+   senao o desenho escuro some no vidro escuro. */
+.ldir .lig .zap{background-color:rgba(255,255,255,.22);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%23ffffff' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%23ffffff' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+/* escolhido: NAO e so a cor — ganha borda grossa e sobe um degrau */
+/* ⚠️ o escolhido tem fundo CLARO (amarelo) — na coluna de vidro ESCURO o texto e
+   claro, entao aqui ele PRECISA voltar a escuro, senao some no amarelo. */
+.lig.sel{background:#fff3c9;color:#221a12;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f;
+         -webkit-transform:translateY(-3px);transform:translateY(-3px)}
+.lig.sel .zap{background-color:rgba(58,48,32,.12);
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E")}
+/* par fechado: alem da cor, fica a LINHA desenhada ligando os dois */
+/* ⭐ PAR ENCONTRADO SE DESTACA DOS DEMAIS (pedido do Marcos, ago/2026): alem da
+   cor verde, ganha ANEL DOURADO e um leve zoom, para saltar sobre o vidro claro
+   E o escuro. Texto escuro fixo (o fundo vira verde claro nos dois lados). */
+.lig.feita{background:#cdf3bd !important;color:#123a10 !important;border-color:#ffd54a !important;
+  box-shadow:0 0 0 4px #ffd54a,0 10px 20px rgba(0,0,0,.3) !important;cursor:default;
+  -webkit-transform:scale(1.04);transform:scale(1.04)}
+/* no par fechado o fundo e claro -> alto-falante volta ao glifo ESCURO (senao o
+   branco da coluna escura sumiria no verde claro). */
+.lig.feita .zap{background-color:rgba(58,48,32,.12) !important;
+  background-image:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%233a3020' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%233a3020' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") !important}
+/* ⭐ VER DESTINO — a ideia veio do EdiLIM (pesquisa ago/2026: quase toda pagina
+   dele deixa o AUTOR mostrar ou esconder a area de destino). Aqui ficou melhor
+   que o original: em vez de o professor decidir de antemao, o destino aparece
+   SOZINHO quando a crianca erra. Andaime que cresce sem UMA PALAVRA escrita —
+   serve a quem ainda nao le.
+   ⚠️ NADA ESSENCIAL SO NA COR: o nivel 1 e um contorno TRACEJADO que pulsa
+   devagar MAIS uma LINHA TRACEJADA fantasma mostrando para onde a ligacao vai;
+   o nivel 2 fecha o contorno e a linha vira inteira. Traco e forma, nao so
+   amarelo.                                                                  */
+/* ⚠️ O QUE PULSA É O CONTORNO, NUNCA O CARTÃO — lição paga nesta mudança: a
+   primeira versão animava a `opacity` do `.lig` e, na metade do ciclo, o
+   cartão BRANCO virava cinza sobre o fundo escuro e o texto preto dentro dele
+   perdia contraste (fotografei e vi). Andaime não pode apagar a resposta que
+   veio ajudar a ler. Aqui quem respira é o `outline-offset`, geometria pura:
+   o tracejado se aproxima e se afasta, e nem a cor nem a leitura mudam.   */
+.lig.dest{outline:3px dashed #ffd54a;outline-offset:-3px;
+          -webkit-animation:destp 2.4s ease-in-out infinite;animation:destp 2.4s ease-in-out infinite}
+.lig.destf{background:#fff3c9;outline:4px solid #ffd54a;outline-offset:-3px;
+           box-shadow:0 0 0 4px rgba(255,213,74,.5),0 4px 0 #c9a52f;
+           -webkit-animation:none;animation:none}
+@-webkit-keyframes destp{0%,100%{outline-offset:-3px}50%{outline-offset:-8px}}
+@keyframes destp{0%,100%{outline-offset:-3px}50%{outline-offset:-8px}}
+/* a LINHA FANTASMA: mostra o CAMINHO ate o destino, nao so o ponto de
+   chegada. E a mesma linha de sempre, so que picotada — quando a crianca
+   fecha o par, a linha cheia toma o lugar dela e o gesto fica explicado.
+   O picote vem de gradiente repetido (e nao de `dashed`) porque assim o
+   traco tem o mesmo tamanho em qualquer distancia entre as colunas.      */
+.linha.fan{background:#ffd54a;
+  background:-webkit-repeating-linear-gradient(left,#ffd54a 0,#ffd54a 7px,rgba(255,213,74,0) 7px,rgba(255,213,74,0) 13px);
+  background:repeating-linear-gradient(to right,#ffd54a 0,#ffd54a 7px,rgba(255,213,74,0) 7px,rgba(255,213,74,0) 13px);
+  -webkit-animation:destl 2.4s ease-in-out infinite;animation:destl 2.4s ease-in-out infinite}
+.linha.fanf{background:#ffd54a;height:8px;margin-top:-4px;
+            -webkit-animation:none;animation:none}
+@-webkit-keyframes destl{0%,100%{opacity:.55}50%{opacity:1}}
+@keyframes destl{0%,100%{opacity:.55}50%{opacity:1}}
+/* a camada das linhas fica POR CIMA, mas sem receber o dedo — senao ela
+   roubaria o toque do item que esta embaixo (botao sobre botao).           */
+.linhas{position:absolute;left:0;top:0;right:0;bottom:0;z-index:5;pointer-events:none}
+.linha{position:absolute;height:6px;margin-top:-3px;border-radius:6px;background:#8fe07a;
+       -webkit-transform-origin:0 50%;transform-origin:0 50%}
+.linha.viva{background:#ffd54a}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (partes da planta, 8 anos). Ao copiar a peça para
+   uma atividade troque APENAS este bloco: no máximo 6 pares, texto curto dos
+   dois lados, e as três dicas (dica -> apoio concreto -> revela).          */
+/* ⭐ CAMPO OPCIONAL `ver` — "VER DESTINO DESDE O COMECO" (EdiLIM, ago/2026).
+   Sem ele nada muda: o destino so aparece a partir do 2o erro. Com `ver:1`
+   num par, basta a crianca TOCAR nessa ponta para o outro lado se mostrar
+   (contorno tracejado + linha fantasma) — e o modo facil, para a 1a fase de
+   uma atividade ou para turma que ainda nao le. Campo NOVO e opcional:
+   nenhuma atividade antiga muda de comportamento, porque nenhuma escreve
+   `ver`. Aqui ele nao entrega a resposta de graca: a crianca ainda tem de
+   escolher a ponta e fazer o gesto ate o outro lado.                       */
+var LIG=[
+  {k:"p0", t:"A RAIZ",  s:"Bebe a água da terra"},
+  {k:"p1", t:"O CAULE", s:"Leva a água para cima"},
+  {k:"p2", t:"A FOLHA", s:"Faz o alimento com o sol"},
+  {k:"p3", t:"A FLOR",  s:"Vira fruto e semente"}
+];
+/* ⚠️⚠️ LICAO PAGA (ago/2026) — O TEMA DO EXEMPLO CRAVADO NA PECA, de novo.
+   Esta peca nasceu com as partes da planta, e o pedido ficou ESCRITO no codigo:
+   "Ligue cada parte DA PLANTA com o trabalho que ela faz". A atividade de
+   ingles do 9o ano, que liga PESSOA a ACAO, mandava a crianca ligar partes de
+   planta. Nao ha erro, nao ha tela torta: so um enunciado que fala de outra
+   aula. Gemeo do "achou as 5 palavras da horta" no caca-palavras.
+   Regra que fica: TODO texto que a crianca le mora numa GAVETA. Assim o aviso
+   de "gaveta com conteudo de exemplo", que ja existe, cobre a familia inteira. */
+var ENUN="Ligue cada peça com o <b>par</b> dela.";
+var FECHO="Você ligou todos os pares!";
+var DICAS=[
+  "Pense no que essa parte da planta FAZ o dia inteiro.",
+  "A raiz puxa a água da terra. O caule é o cano em pé. A folha recebe o sol. A flor vira fruto. Siga a linha tracejada que apareceu.",
+  "Olhe do outro lado: a resposta certa está acesa, no fim da linha. Toque nela."
+];
+
+var caixaL=null;     /* a .ligbox — as linhas sao medidas a partir dela */
+var camadaL=null;    /* a .linhas, onde as linhas moram */
+var barraP=null;     /* a barrinha, para andar sem refazer a tela */
+var FEITOS=[];       /* pares ja fechados, para redesenhar as linhas */ /*TECNICA*/
+var marcada=null;    /* a ponta escolhida pelo toque simples */
+var ger=0;           /* geracao da tela: mata setTimeout de fase que ja saiu */
+
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mousemove/mouseup
+   FALSOS logo depois do toque; sem este carimbo eles desmarcavam a ponta que a
+   criança tinha acabado de escolher. Defeito pego DUAS vezes pelo Marcos.  */
+var ultimoToque=0;
+var pegou=null, linhaViva=null, x0=0, y0=0, arrastando=false, fimArrasto=0;
+/* ⭐ o estado do VER DESTINO: de qual ponta ele saiu (`destDe`), qual ponta do
+   OUTRO lado esta se mostrando (`destAlvo`) e com que forca (1 = tracejado que
+   pulsa, 2 = aceso de vez). O destino de ERRO pertence a ponta que errou: se a
+   crianca escolhe outra ponta, ele sai — senao a tela fica cheia de pistas
+   velhas apontando para lugar nenhum.                                       */
+var destDe=null, destAlvo=null, destNivel=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+/* ---------- a ajuda é ESCRITA e DITA ----------
+   Quem lê ganha as duas coisas; quem não lê ganha pelo menos a voz. O `diz`
+   é do motor da atividade (voz GRAVADA, Edge TTS) e não existe na peça
+   solta — por isso a guarda. ⚠️ NUNCA a voz-robô do navegador direto: ela
+   do navegador está desligada de propósito e o `_qa/vozrobo.py` reprova.  */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  var t=semTag(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* o andaime de TEXTO continua igual — o "ver destino" entra JUNTO com ele,
+   nunca no lugar dele. */
+function ajuda(txt){ mostraDica(txt); fala(txt); }
+
+function pecaLigar(){
+  FEITOS=[]; marcada=null; pegou=null; arrastando=false; ger++;
+  destDe=null; destAlvo=null; destNivel=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CADA PARTE, SEU TRABALHO"));
+  c.appendChild(el("div","balao",ENUN));
+
+  caixaL=el("div","ligbox");
+  camadaL=el("div","linhas");
+  caixaL.appendChild(camadaL);
+
+  var esq=el("div","lcol lesq"), dir=el("div","lcol ldir"), i;
+  var lista=[];
+  for(i=0;i<LIG.length;i++) lista.push(LIG[i]);
+  /* o lado direito vai EMBARALHADO: senao a criança liga pela posição
+     (linha 1 com linha 1) e não pelo sentido. */
+  var sort=[];
+  for(i=0;i<LIG.length;i++) sort.push(LIG[i]);
+  baguncar(sort);
+  for(i=0;i<lista.length;i++) esq.appendChild(fazPonta(lista[i],"e",lista[i].t));
+  for(i=0;i<sort.length;i++)  dir.appendChild(fazPonta(sort[i],"d",sort[i].s));
+  caixaL.appendChild(esq);
+  caixaL.appendChild(dir);
+  c.appendChild(caixaL);
+
+  c.appendChild(el("div","hint","Toque de um lado e depois do outro. Também dá para puxar com o dedo ou com o mouse."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+function fazPonta(dado,lado,texto){
+  var l=el("div","lig","");
+  /* ⭐ FIGURA opcional no lado ESQUERDO. Se a gaveta trouxer `img`, a ponta
+     mostra a imagem (ex.: a cédula de 10 reais) e o alto-falante do motor fala
+     o que a gaveta declara em `voz` (a imagem sozinha não tem texto para o
+     alto-falante ler — sem `voz` ele ficaria mudo). Sem `img`, nada muda: as
+     ligar de texto × texto seguem exatamente iguais (compatível). */
+  if(lado==="e" && dado.img){
+    var im=el("img","ligfig"); im.src="img/"+dado.img+".png"; im.alt="";
+    l.appendChild(im);
+    if(dado.voz) l.setAttribute("data-voz",dado.voz);
+  }else{
+    l.innerHTML=(texto===undefined||texto===null)?"":texto;
+  }
+  /* os DOIS lados publicam a MESMA chave: é assim que o auditor-jogador
+     consegue fechar a fase. A criança não vê diferença nenhuma. */
+  l.setAttribute("data-qa",dado.k);
+  l._lado=lado;
+  l._ver=!!dado.ver;   /* ⭐ modo facil pedido na gaveta (ver acima) */
+  l.onclick=function(){
+    if(cliqueDeArrasto()) return;            /* este clique e o rabo do arrasto */
+    if(souDedo()) return;                    /* o CLIQUE FANTASMA do dedo: ja tratado no touchend */
+    toca(l);
+  };
+  l.onmousedown=function(ev){
+    if(souDedo()) return;                    /* mouse FANTASMA do celular: ignora */
+    comeca(l,ev.clientX,ev.clientY);
+  };
+  l.addEventListener("touchstart",function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(l,d.clientX,d.clientY);
+  },false);
+  return l;
+}
+
+/* ⚠️ NUNCA `preventDefault` no touchstart acima — mata o toque no celular.
+   Ele mora no touchmove, mais abaixo, e só enquanto há ponta na mão.       */
+/* ⚠️ LIÇÃO: aqui NÃO se marca a ponta. Marcar no mousedown fazia o `click`
+   que vem logo depois cair em "já estava marcada" e DESMARCAR — com o mouse
+   a criança clicava e nada acontecia. A marca é do clique (que serve ao
+   mouse, ao dedo e ao toque simples); o arrasto marca só quando anda mesmo. */
+function comeca(l,x,y){
+  if(temClasse(l,"feita")) return;
+  pegou=l; x0=x; y0=y; arrastando=false;
+}
+
+function move(x,y){
+  if(!pegou||!caixaL) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    marca(pegou);
+  }
+  var b=caixaL.getBoundingClientRect();
+  if(linhaViva&&linhaViva.parentNode) linhaViva.parentNode.removeChild(linhaViva);
+  var p=ponto(pegou);
+  linhaViva=traca(p.x,p.y,x-b.left,y-b.top,"viva");
+}
+
+/* ⚠️ DEFEITO PAGO NESTA PEÇA (medido com dedo de verdade, ago/2026): o celular
+   dispara mousedown/mouseup e um CLIQUE fantasma logo depois do toque. Como
+   tocar duas vezes na mesma ponta DESMARCA (e tem que desmarcar mesmo), o
+   clique fantasma apagava a escolha que a criança acabara de fazer — ela
+   tocava e nada ficava marcado. Cura: quem veio do DEDO resolve tudo aqui no
+   `touchend` (`doDedo`), e o clique que vier atrás é engolido pelo souDedo().
+   O mouse de verdade continua entrando pelo `click`, como sempre.          */
+function solta(x,y,doDedo){
+  if(!pegou) return;
+  var l=pegou; pegou=null;
+  if(linhaViva&&linhaViva.parentNode) linhaViva.parentNode.removeChild(linhaViva);
+  linhaViva=null;
+  if(!arrastando){ if(doDedo) toca(l); return; }   /* foi so um toque do dedo */
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y);
+  while(alvo&&alvo.nodeType===1&&!temClasse(alvo,"lig")) alvo=alvo.parentNode;
+  if(alvo&&temClasse(alvo,"lig")&&alvo!==l) juntar(l,alvo);
+}
+
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY,false); };
+document.addEventListener("touchmove",function(ev){
+  ultimoToque=agora();
+  if(!pegou) return;
+  var d=ev.touches[0];
+  move(d.clientX,d.clientY);
+  if(arrastando) ev.preventDefault();        /* so aqui, e so com ponta na mao */
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY,true);
+},false);
+
+/* ---- o TOQUE SIMPLES: escolhe de um lado, escolhe do outro ---- */
+function toca(l){
+  if(temClasse(l,"feita")) return;
+  if(!marcada){ sTap(); marca(l); aoEscolher(l); return; }
+  if(marcada===l){ sTap(); desmarca(); return; }
+  if(marcada._lado===l._lado){ sTap(); marca(l); aoEscolher(l); return; }   /* mesmo lado: troca */
+  juntar(marcada,l);
+}
+/* ⭐ escolheu uma ponta: no modo facil (`ver:1`) o destino aparece na hora,
+   sem precisar errar. Fora dele, escolher OUTRA ponta apaga o destino que
+   tinha nascido do erro — pista velha aponta para lugar nenhum.           */
+function aoEscolher(l){
+  if(l&&l._ver){ mostraDestino(l,1); return; }
+  if(destDe&&destDe!==l) apagaDestino();
+}
+
+function marca(l){
+  desmarca();
+  l.className="lig sel";
+  marcada=l;
+}
+
+/* ⚠️ LICAO DESTA MUDANCA: `desmarca()` reescrevia a classe de TODAS as pontas,
+   entao qualquer marca de "ver destino" era apagada no toque seguinte — e o
+   andaime sumia justo depois de aparecer. Agora a repintura passa pelo
+   `classeLig`, que e o unico lugar que sabe quem esta se mostrando.        */
+function classeLig(l,base){
+  if(destAlvo&&l===destAlvo) return base+(destNivel>=2?" destf":" dest");
+  return base;
+}
+
+function desmarca(){
+  var a=app.getElementsByClassName("lig"), i;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")) a[i].className=classeLig(a[i],"lig");
+  marcada=null;
+}
+
+/* ⭐ VER DESTINO: a ponta certa do OUTRO lado passa a se mostrar, e uma LINHA
+   TRACEJADA sai da ponta escolhida ate ela — o caminho inteiro, nao so o
+   ponto de chegada. Nivel 1 (2o erro) pulsa devagar; nivel 2 (3o erro) acende
+   de vez, e a peça continua deixando a crianca fechar o par com a mao.    */
+function mostraDestino(l,nivel){
+  if(!l||temClasse(l,"feita")) return;
+  var a=app.getElementsByClassName("lig"), i, k=l.getAttribute("data-qa"), alvo=null;
+  for(i=0;i<a.length;i++){
+    if(temClasse(a[i],"feita")||a[i]===l) continue;
+    if(a[i]._lado!==l._lado&&a[i].getAttribute("data-qa")===k){ alvo=a[i]; break; }
+  }
+  if(!alvo) return;
+  destDe=l; destAlvo=alvo; destNivel=nivel;
+  for(i=0;i<a.length;i++) if(!temClasse(a[i],"feita")&&a[i]!==marcada)
+    a[i].className=classeLig(a[i],"lig");
+  redesenha();
+}
+function apagaDestino(){
+  var velho=destAlvo;
+  destDe=null; destAlvo=null; destNivel=0;
+  if(velho&&!temClasse(velho,"feita")&&velho!==marcada) velho.className="lig";
+  redesenha();   /* a linha fantasma some junto */
+}
+
+function juntar(a,b){
+  if(!a||!b||a===b) return;
+  if(temClasse(a,"feita")||temClasse(b,"feita")) return;
+  if(a._lado===b._lado) return;
+  if(a.getAttribute("data-qa")===b.getAttribute("data-qa")){
+    sCerto();
+    a.className="lig feita"; b.className="lig feita";
+    marcada=null;
+    if(destDe===a||destDe===b||destAlvo===a||destAlvo===b){
+      destDe=null; destAlvo=null; destNivel=0;
+    }
+    FEITOS.push([a,b]);
+    redesenha();
+    if(barraP) barraP.style.width=Math.round(FEITOS.length*100/LIG.length)+"%";
+    if(FEITOS.length>=LIG.length){
+      var ge=ger;
+      setTimeout(function(){
+        if(ge!==ger) return;
+        mostraBanner(FECHO, fimDaPeca);
+      },520);
+    }
+    return;
+  }
+  /* ERRO: não pune. Som grave curto, as pontas voltam e o andaime CRESCE. */
+  sErro();
+  a._err=(a._err||0)+1;
+  /* o andaime de TEXTO (escrito + dito) continua sendo o mesmo de sempre... */
+  ajuda(DICAS[Math.min(a._err,DICAS.length)-1]);
+  var guardar=a;
+  desmarca();
+  /* ...e o VER DESTINO entra JUNTO com ele, nunca no lugar dele: no 2º erro
+     da mesma ponta o outro lado se mostra discreto (tracejado que pulsa +
+     linha fantasma), no 3º ele acende de vez.                             */
+  if(guardar._err===2) mostraDestino(guardar,1);
+  if(guardar._err>=3) revela(guardar);
+}
+
+/* 3º erro: acende a ponta certa do outro lado e DEIXA seguir — é o que
+   garante que a peça nunca trava. A dica diz isso em palavras também.    */
+function revela(l){
+  mostraDestino(l,2);
+  if(!destAlvo) return;
+  marca(l);          /* a ponta fica escolhida: basta tocar na acesa */
+}
+
+/* ---- as linhas ---- */
+function ponto(l){
+  var r=l.getBoundingClientRect(), b=caixaL.getBoundingClientRect();
+  var x=(l._lado==="e") ? (r.right-b.left) : (r.left-b.left);
+  return {x:x, y:r.top+r.height/2-b.top};
+}
+
+function traca(x1,y1,x2,y2,extra){
+  var dx=x2-x1, dy=y2-y1, comp=Math.sqrt(dx*dx+dy*dy);
+  var ang=Math.atan2(dy,dx)*180/Math.PI;
+  var ln=el("div","linha");
+  /* ⚠️ o `extra` era IGNORADO — a funcao escrevia "linha viva" na marra, e por
+     isso todo pedido de linha diferente (a fantasma do ver destino) saia com
+     a cara da linha do arrasto. Agora ela usa o que lhe pedem.            */
+  if(extra) ln.className="linha "+extra;
+  ln.style.left=x1+"px"; ln.style.top=y1+"px"; ln.style.width=comp+"px";
+  ln.style.webkitTransform="rotate("+ang+"deg)";
+  ln.style.transform="rotate("+ang+"deg)";
+  camadaL.appendChild(ln);
+  return ln;
+}
+
+function redesenha(){
+  if(!camadaL) return;
+  camadaL.innerHTML="";
+  linhaViva=null;
+  var i,p1,p2;
+  for(i=0;i<FEITOS.length;i++){
+    p1=ponto(FEITOS[i][0]); p2=ponto(FEITOS[i][1]);
+    traca(p1.x,p1.y,p2.x,p2.y,"");
+  }
+  /* ⭐ a LINHA FANTASMA do ver destino: entra por ultimo, por cima das feitas */
+  if(destDe&&destAlvo&&!temClasse(destDe,"feita")&&!temClasse(destAlvo,"feita")){
+    p1=ponto(destDe); p2=ponto(destAlvo);
+    traca(p1.x,p1.y,p2.x,p2.y,(destNivel>=2)?"fanf":"fan");
+  }
+}
+/* a tela do PC vira ao contrario e as linhas ficariam tortas: redesenha */
+window.onresize=function(){ redesenha(); };
+
+function fimDaPeca(){
+  ger++;
+  caixaL=null; camadaL=null; linhaViva=null; marcada=null; pegou=null;
+  destDe=null; destAlvo=null; destNivel=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você fechou os "+LIG.length+" pares."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaLigar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça LIGAR: mouse, dedo e toque simples, os três."));
+  t.appendChild(c);
+  app.appendChild(t);
+}
+
+pecaLigar();
+</script>
+</body></html>

@@ -1,0 +1,87 @@
+name: Excluir um repositorio (IRREVERSIVEL)
+
+# Apaga um repositorio inteiro do usuario. NAO TEM VOLTA.
+# Antes de apagar, salva o index.html do destino em _recuperado/<repo>-index.html
+# neste repositorio, para que nada se perca por engano.
+# Usa o PAGES_TOKEN (precisa de Administration: Read and write).
+
+on:
+  workflow_dispatch:
+    inputs:
+      repo_name:
+        description: "Repositorio a EXCLUIR (ex: banca-do-pingo)"
+        required: true
+        type: string
+      confirmar:
+        description: "Digite EXCLUIR (em maiusculas) para confirmar"
+        required: true
+        type: string
+
+jobs:
+  excluir:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout deste repositorio
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Conferir a confirmacao
+        env:
+          OK: ${{ inputs.confirmar }}
+        run: |
+          if [ "$OK" != "EXCLUIR" ]; then
+            echo "Confirmacao errada. Nada foi apagado."
+            exit 1
+          fi
+          echo "Confirmacao aceita."
+
+      - name: Guardar uma copia do index.html antes de apagar
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          set +e
+          mkdir -p _recuperado
+          gh api "repos/$OWNER/$DEST/contents/index.html" \
+            -H "Accept: application/vnd.github.raw" > "_recuperado/$DEST-index.html" 2>/dev/null
+          if [ -s "_recuperado/$DEST-index.html" ]; then
+            echo "copia guardada: _recuperado/$DEST-index.html ($(wc -c < "_recuperado/$DEST-index.html") bytes)"
+          else
+            rm -f "_recuperado/$DEST-index.html"
+            echo "sem index.html para guardar (segue assim mesmo)"
+          fi
+
+      - name: Commitar a copia
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add _recuperado || true
+          git diff --cached --quiet && echo "nada novo para commitar" || \
+            git commit -m "backup do ${{ inputs.repo_name }} antes de excluir"
+          git pull --rebase origin "${GITHUB_REF_NAME}" || true
+          git push origin "HEAD:${GITHUB_REF_NAME}" || true
+
+      - name: Excluir o repositorio
+        env:
+          GH_TOKEN: ${{ secrets.PAGES_TOKEN }}
+          OWNER: vidalprof
+          DEST: ${{ inputs.repo_name }}
+        run: |
+          set -e
+          echo "=== ANTES: o repositorio existe? ==="
+          gh api "repos/$OWNER/$DEST" --jq '.full_name + "  (criado em " + .created_at + ")"'
+          echo ""
+          echo "=== APAGANDO $OWNER/$DEST ==="
+          gh api -X DELETE "repos/$OWNER/$DEST"
+          echo "comando enviado."
+          echo ""
+          echo "=== DEPOIS: confirmando que sumiu ==="
+          if gh api "repos/$OWNER/$DEST" >/dev/null 2>&1; then
+            echo "ATENCAO: o repositorio AINDA EXISTE. Confira se o PAGES_TOKEN tem Administration: Read and write."
+            exit 1
+          fi
+          echo "EXCLUIDO: $OWNER/$DEST nao existe mais."

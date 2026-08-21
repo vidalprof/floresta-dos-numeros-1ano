@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ditado (a voz dita, a criança escreve)</title>
+<!-- ============================================================
+     PEÇA: DITADO — A VOZ DITA E A CRIANÇA ESCREVE
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+     Vem do "DITADO DO EDITOR": a frase chega pelo OUVIDO e sai pela mão.
+
+     O QUE ESTA MECÂNICA TEM DE PRÓPRIO (e por que não é o "monte a palavra"):
+       · a criança NÃO vê a palavra escrita em lugar nenhum — ela só ouve. É a
+         única fase em que ortografia e escuta trabalham juntas;
+       · o botão de ouvir é GRANDE e pode ser apertado quantas vezes ela quiser:
+         ditado aqui não é prova de memória;
+       · a frase pode ter DUAS palavras (o espaço já vem posto, para o espaço
+         não virar mais um erro possível).
+
+     ⚠️ COMO A PEÇA RODA SOZINHA (e o que muda na atividade de verdade):
+     não há arquivo de áudio dentro de uma peça, então aqui o ditado chega
+     ESCRITO por 2,2 s e some. Na atividade real esse texto NÃO aparece: no
+     lugar dele vai o gancho `falaDaTela(id)`, que está marcado, comentado, na
+     linha certa dentro de `dita()`. Trocar uma linha e apagar outra.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · AS DUAS PORTAS: teclado na tela **e** `document.onkeydown`. No PC da
+         escola tem teclado e a criança vai digitar; no celular, não tem;
+       · a frase vai SEM ACENTO — o teclado da criança não tem tecla de acento,
+         e palavra acentuada aqui viraria erro garantido;
+       · a letra usada SAI DO ALCANCE (`.tecl.usada`), guardando o lugar dela
+         para o teclado não pular embaixo do dedo;
+       · ⚠️ o `setTimeout` que troca de rodada (e o que esconde a voz) continua
+         correndo depois que a tela sai: sem o guarda `!telaAtual.parentNode`
+         ele reinstala o `onkeydown` POR CIMA da tela seguinte e o teclado fica
+         preso na fase anterior;
+       · `data-qa` com as letras da vez em `.letras`, para o auditor-jogador
+         conseguir terminar a peça sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ====== CSS DESTA PEÇA (DITADO) ====== */
+/* ⚠️ os 13px de folga em cima do que vem depois do balao sao obrigatorios: o
+   balao tem sombra e nenhuma margem por baixo (regra 9 do _qa/leiaute.js). */
+/* A CAIXA DA VOZ — o alto-falante desenhado em CSS. Enquanto "fala", ela
+   pulsa E muda o texto: quem esta no mudo ve o mesmo que quem ouve. */
+.voz{position:relative;max-width:430px;margin:12px auto 0;padding:14px 16px 14px 62px;
+     min-height:64px;background:#173a5e;color:#eaf3ff;border:3px solid #3c6ee0;border-radius:18px;
+     font-size:20px;font-weight:800;letter-spacing:1px;text-align:center;line-height:1.3}
+.voz:before{content:"";position:absolute;left:16px;top:50%;margin-top:-15px;width:0;height:0;
+            border-top:15px solid transparent;border-bottom:15px solid transparent;
+            border-right:20px solid #eaf3ff}
+.voz:after{content:"";position:absolute;left:38px;top:50%;margin-top:-13px;width:26px;height:26px;
+           border:3px solid #eaf3ff;border-left-color:transparent;border-bottom-color:transparent;
+           border-radius:50%;-webkit-transform:rotate(45deg);transform:rotate(45deg)}
+.voz.falando{background:#1f6b12;border-color:#8fe07a;
+             -webkit-animation:vozpulsa .9s ease-in-out infinite;animation:vozpulsa .9s ease-in-out infinite}
+@-webkit-keyframes vozpulsa{0%,100%{box-shadow:0 0 0 0 rgba(143,224,122,.55)}50%{box-shadow:0 0 0 9px rgba(143,224,122,0)}}
+@keyframes vozpulsa{0%,100%{box-shadow:0 0 0 0 rgba(143,224,122,.55)}50%{box-shadow:0 0 0 9px rgba(143,224,122,0)}}
+/* AS VAGAS (uma por letra). O espaco entre as palavras ja vem posto. */
+.vagas{display:block;text-align:center;margin:13px auto 4px}
+.vaga{display:inline-block;vertical-align:top;width:42px;height:50px;line-height:44px;margin:0 2px 6px;
+      border:3px dashed #a08e73;border-radius:12px;background:rgba(255,255,255,.10);
+      color:#f4efe6;font-size:24px;font-weight:800;text-align:center}
+/* cheia = borda INTEIRA + a letra dentro: forma, nao so cor */
+.vaga.cheia{border-style:solid;border-color:#59c24b;background:#fffdf6;color:#221a12}
+.vaga.dae{border-color:#ffd54a;background:rgba(255,213,74,.22)}
+.espaco{display:inline-block;width:22px;height:50px;vertical-align:top}
+.espaco:after{content:"";display:block;margin:38px auto 0;width:14px;height:4px;
+              background:rgba(255,255,255,.45);border-radius:3px}
+/* O TECLADO DA TELA */
+.letras{display:block;text-align:center;margin-top:8px}
+.tecl{display:inline-block;width:46px;height:46px;line-height:46px;margin:4px 3px;
+      background:#fffdf6;color:#221a12;border:0;border-radius:12px;font-size:22px;font-weight:800;
+      text-align:center;cursor:pointer;box-shadow:0 4px 0 #c9bda6}
+.tecl:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* letra ja usada SAI DO ALCANCE (some do dedo e do auditor), mas guarda o
+   lugar dela para o teclado nao pular embaixo do dedo da crianca */
+.tecl.usada{visibility:hidden;pointer-events:none}
+.tecl.pisca{-webkit-animation:piscat .7s infinite;animation:piscat .7s infinite}
+.tecl.treme{-webkit-animation:tremet .32s;animation:tremet .32s}
+@-webkit-keyframes piscat{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes piscat{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@-webkit-keyframes tremet{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes tremet{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* quantas letras faltam — sem contador a crianca nao sabe onde parou */
+/* ⚠️ TEXTO SOLTO NO FUNDO DA ATIVIDADE (ago/2026): sem mesa propria a
+   razao de contraste vira loteria — este saiu 1,69:1 sobre a foto de
+   rua. Ele leva a mesa dele junto. */
+.conta{margin-top:8px;font-size:15px;font-weight:700;color:#ffe9a8;background:rgba(46,38,26,.86);border-radius:999px;padding:3px 12px;display:inline-block}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* DITADO — a voz dita, a criança escreve.
+
+   O CONTEÚDO É SÓ EXEMPLO (8 a 10 anos). Ao levar a peça para uma atividade,
+   troque APENAS este bloco: os `id` de voz (com o prefixo da atividade), as
+   frases e as três dicas do andaime.
+   ⚠️ A frase vai SEM ACENTO de propósito: o teclado da criança não tem tecla
+   de acento, então palavra acentuada aqui viraria erro garantido. A dica pode
+   ter acento à vontade — ela é lida, não digitada.                          */
+var DITADOS=[
+  {id:"pc_dit1", txt:"NUVEM",
+   dic:"Diga baixinho, devagar: <b>NU-VEM</b>."},
+  {id:"pc_dit2", txt:"JANELA",
+   dic:"Diga baixinho: <b>JA-NE-LA</b>. S&#227;o tr&#234;s peda&#231;os."},
+  {id:"pc_dit3", txt:"MAR AZUL",
+   dic:"S&#227;o <b>duas</b> palavras: primeiro MAR, depois AZUL."}
+];
+var ALFA="ABCDEFGHIJKLMNOPQRSTUVWXYZ"; /*TECNICA*/
+var SOBRA="BKPQTWXFGH";        /* de onde saem as letras que NAO servem */
+var ESPERA="&#9679; &#9679; &#9679;";   /* a caixa da voz calada */
+
+var rodada=0, pos=0, errosSeg=0, ger=0;
+var telaAtual=null, barraP=null, vozEl=null, contaEl=null;
+var letras="", vagas=[], teclas=[];
+
+/* som proprio do ditado: um "toc" de maquina de escrever a cada letra posta */
+function sTecla(){ nota(220,.035,.12,"square",0); nota(660,.03,.07,"square",.03); }
+
+function telaDitado(){
+  limpa();
+  ger++;
+  pos=0; errosSeg=0; vagas=[]; teclas=[];
+  var it=DITADOS[rodada];
+  letras=it.txt.replace(/ /g,"");
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t,Math.round(rodada*100/DITADOS.length));
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro"), i, v, b;
+  c.appendChild(el("div","selo","DITADO "+(rodada+1)+" DE "+DITADOS.length));
+  c.appendChild(el("div","balao","Ou&#231;a e <b>escreva</b> do jeitinho que voc&#234; ouviu."));
+
+  /* o botao de ouvir e GRANDE e pode ser apertado quantas vezes ela quiser:
+     ditado nao e prova de memoria. */
+  b=el("button","btn","Ouvir de novo");
+  b.onclick=function(){ sTap(); dita(); };
+  c.appendChild(b);
+
+  vozEl=el("div","voz",ESPERA);
+  c.appendChild(vozEl);
+
+  /* as vagas: uma por letra, com o espaco entre as palavras JA POSTO — assim o
+     espaco nao vira mais um erro possivel para quem esta aprendendo a escrever */
+  var cx=el("div","vagas");
+  for(i=0;i<it.txt.length;i++){
+    if(it.txt.charAt(i)===" "){ cx.appendChild(el("div","espaco","")); continue; }
+    v=el("div","vaga",""); cx.appendChild(v); vagas.push(v);
+  }
+  c.appendChild(cx);
+
+  /* o teclado da tela: as letras DESTA frase mais tres que nao servem,
+     embaralhadas. O `data-qa` e so para o auditor-jogador; a crianca nao ve. */
+  var tec=el("div","letras");
+  tec.setAttribute("data-qa",letras);
+  var banco=letras.split(""), sobra=letrasQueNaoServem(3), k;
+  for(k=0;k<sobra.length;k++) banco.push(sobra[k]);
+  baguncar(banco);
+  for(i=0;i<banco.length;i++){
+    b=el("div","tecl",banco[i]);
+    b.letra=banco[i];
+    b.onclick=toqueTecla;
+    tec.appendChild(b); teclas.push(b);
+  }
+  c.appendChild(tec);
+
+  contaEl=el("div","conta","");
+  c.appendChild(contaEl);
+  c.appendChild(el("div","hint","Toque nas letras <b>ou</b> use o teclado do computador."));
+  t.appendChild(c); app.appendChild(t);
+
+  /* PORTA 2: o teclado de verdade. Vale a mesma regra do toque. */
+  document.onkeydown=teclaReal;
+  marcaVaga(); atualizaConta();
+  dita();
+}
+
+function letrasQueNaoServem(quantas){
+  var fora=[], i, L;
+  for(i=0;i<SOBRA.length&&fora.length<quantas;i++){
+    L=SOBRA.charAt(i);
+    if(letras.indexOf(L)<0) fora.push(L);
+  }
+  return fora;
+}
+
+/* ---------- A VOZ ----------
+   ⚠️ NA ATIVIDADE DE VERDADE esta funcao tem UMA linha: a de baixo, comentada.
+   O texto NAO aparece — a crianca so ouve, e por isso e ditado:
+
+       falaDaTela(DITADOS[rodada].id);
+
+   Aqui, como a peca roda sozinha e nao existe arquivo de audio dentro dela, o
+   ditado chega ESCRITO por 2,2s e some. A crianca (e o auditor) continua tendo
+   de escrever depois que o texto sai da tela.                               */
+function dita(){
+  if(!telaAtual||!telaAtual.parentNode||!vozEl) return;
+  var meu=++ger;
+  vozEl.className="voz falando";
+  vozEl.innerHTML=DITADOS[rodada].txt;
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode||meu!==ger) return;
+    vozEl.className="voz";
+    vozEl.innerHTML=ESPERA;
+  },2200);
+}
+
+/* ---------- as DUAS portas de entrada da mesma letra ---------- */
+function toqueTecla(){
+  if(this.className.indexOf("usada")>=0) return;
+  sTap();
+  usaLetra(this.letra,this);
+}
+/* ⚠️ o guarda `!telaAtual.parentNode` aqui e o que impede o teclado de ficar
+   preso na fase anterior quando a tela ja trocou. */
+function teclaReal(ev){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  var k=ev.key||"";
+  if(!k&&(ev.keyCode||ev.which)) k=String.fromCharCode(ev.keyCode||ev.which);
+  k=String(k).toUpperCase();
+  if(k.length!==1||ALFA.indexOf(k)<0) return;
+  usaLetra(k,achaTecla(k));
+}
+function achaTecla(k){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].letra===k&&teclas[i].className.indexOf("usada")<0) return teclas[i];
+  return null;
+}
+
+/* ---------- a regra da fase ---------- */
+function usaLetra(k,bot){
+  if(!telaAtual||!telaAtual.parentNode) return;
+  if(pos>=letras.length) return;
+  if(k===letras.charAt(pos)) poeLetra(k,bot||achaTecla(k)); else erraLetra(bot);
+}
+function poeLetra(k,bot){
+  vagas[pos].className="vaga cheia";
+  vagas[pos].innerHTML=k;
+  if(bot) bot.className="tecl usada";
+  pos++; errosSeg=0;
+  apagaDica(); limpaPisca(); marcaVaga(); atualizaConta();
+  sTecla();
+  if(barraP) barraP.style.width=
+    Math.round((rodada+pos/letras.length)*100/DITADOS.length)+"%";
+  if(pos>=letras.length){ sCerto(); fechaRodada(); }
+}
+function erraLetra(bot){
+  sErro(); errosSeg++;
+  if(bot){ bot.className="tecl treme"; destreme(bot); }
+  ajuda(errosSeg);
+}
+function destreme(b){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    if(b.className.indexOf("usada")<0) b.className="tecl";
+  },340);
+}
+/* o andaime CRESCE: ouvir de novo -> a letra da vez pisca -> revelar e seguir.
+   Nunca X, nunca a palavra "errou", nunca fica travado. */
+function ajuda(n){
+  if(n===1){
+    mostraDica("Vou ditar de novo, com calma. "+DITADOS[rodada].dic);
+    dita();
+  }else if(n===2){
+    mostraDica("A letra que vem agora est&#225; <b>piscando</b> no teclado.");
+    acendeCerta();
+  }else{
+    mostraDica("Era esta! Eu ponho e voc&#234; segue.");
+    revela();
+  }
+}
+function acendeCerta(){
+  var b=achaTecla(letras.charAt(pos));
+  limpaPisca();
+  if(b) b.className="tecl pisca";
+}
+function limpaPisca(){
+  var i;
+  for(i=0;i<teclas.length;i++)
+    if(teclas[i].className.indexOf("pisca")>=0) teclas[i].className="tecl";
+}
+function revela(){
+  var k=letras.charAt(pos);
+  poeLetra(k,achaTecla(k));
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+/* a vaga da vez fica marcada (borda + fundo), para a crianca saber ONDE esta
+   escrevendo. Nao e so cor: a borda muda de tracejada para grossa amarela. */
+function marcaVaga(){
+  var i;
+  for(i=0;i<vagas.length;i++)
+    if(vagas[i].className.indexOf("cheia")<0)
+      vagas[i].className=(i===pos)?"vaga dae":"vaga";
+}
+function atualizaConta(){
+  if(!contaEl) return;
+  var falta=letras.length-pos;
+  contaEl.innerHTML=falta? ("Faltam <b>"+falta+"</b> letra(s).") : "Tudo escrito!";
+}
+
+/* ⚠️ o temporizador da rodada continua correndo depois que a tela sai. Sem o
+   guarda `!telaAtual.parentNode` ele montaria a rodada seguinte por cima de
+   outra tela — e o `onkeydown` ficaria preso na fase anterior. */
+function fechaRodada(){
+  setTimeout(function(){
+    if(!telaAtual||!telaAtual.parentNode) return;
+    proxima();
+  },900);
+}
+function proxima(){
+  rodada++;
+  if(rodada<DITADOS.length){ telaDitado(); return; }
+  document.onkeydown=null;
+  mostraBanner("Voc&#234; ouviu e escreveu as tr&#234;s!",fimDaPeca);
+}
+
+/* ---------- o fim NA BANCADA (dentro da atividade o integrador troca) ------
+   ⚠️ LICAO PAGA (ago/2026), a mesma da `ensinar-mascote`: esta tela tinha
+   nome PROPRIO e era chamada direto. A ponte do integrador so troca quem se
+   chama `fimDaPeca` — entao, dentro da atividade, a crianca terminava e caia
+   AQUI, num "Jogar de novo" que a prendia na mesma fase. O nome e o
+   contrato. (E o comentario nao repete a frase do selo: o `_qa/beco.py`
+   procura essa frase no codigo vivo.) */
+function fimDaPeca(){
+  limpa();
+  document.onkeydown=null;
+  telaAtual=null;
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; escreveu <b>ouvindo</b>, letra por letra."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=recomeca;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a DITADO: teclado da tela e teclado de verdade, os dois."));
+  t.appendChild(c); app.appendChild(t);
+}
+function recomeca(){ rodada=0; telaDitado(); }
+
+telaDitado();
+</script>
+</body></html>

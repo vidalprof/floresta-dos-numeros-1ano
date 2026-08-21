@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Ilha dos Passos — EducaVerso</title>
+<style>
+* { margin:0; padding:0; -webkit-box-sizing:border-box; box-sizing:border-box; }
+html,body{ height:100%; }
+body{ font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif; color:#fff; background:#07101f; text-align:center; -webkit-tap-highlight-color:transparent; }
+#palco{ position:relative; max-width:900px; margin:0 auto; }
+canvas{ display:block; width:100%; height:auto; }
+.barra{ background:#0e1c38; padding:10px 8px 14px; }
+.dica{ font-size:15px; color:#cfe0ff; padding:2px 8px 8px; min-height:22px; }
+.passos{ min-height:50px; background:#081426; border:2px dashed #2c3f6d; border-radius:12px; margin:0 8px 10px; padding:7px;
+  display:-webkit-box; display:-webkit-flex; display:flex; -webkit-flex-wrap:wrap; flex-wrap:wrap; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; -webkit-box-align:center; align-items:center; }
+.passos .vazio{ color:#6d7fb0; font-size:14px; padding:8px; }
+.chip{ width:36px; height:36px; margin:3px; background:#ffd25a; color:#12183a; border-radius:9px; font-size:21px; font-weight:900; line-height:36px; }
+.botoes{ display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-pack:center; -webkit-justify-content:center; justify-content:center; -webkit-flex-wrap:wrap; flex-wrap:wrap; }
+.seta{ width:56px; height:56px; margin:5px; font-size:27px; font-weight:900; color:#12183a; background:#eaf1ff; border:0; border-radius:14px; cursor:pointer; -webkit-box-shadow:0 5px 0 #9fb0da; box-shadow:0 5px 0 #9fb0da; }
+.seta:active{ -webkit-transform:translateY(4px); transform:translateY(4px); -webkit-box-shadow:0 1px 0 #9fb0da; box-shadow:0 1px 0 #9fb0da; }
+.acao{ cursor:pointer; border:0; border-radius:14px; font-size:17px; font-weight:800; padding:13px 20px; margin:6px; }
+.jogar{ background:#57e08a; color:#0b2350; -webkit-box-shadow:0 5px 0 #2e9c5b; box-shadow:0 5px 0 #2e9c5b; }
+.limpar{ background:#2c3f6d; color:#eaf1ff; }
+.ouvir{ background:#ffcf5a; color:#3a2a00; }
+.acao:active{ -webkit-transform:translateY(3px); transform:translateY(3px); }
+.tela{ position:absolute; left:0; top:0; right:0; bottom:0; background:rgba(4,10,22,.82);
+  display:-webkit-box; display:-webkit-flex; display:flex; -webkit-box-orient:vertical; -webkit-box-direction:normal; -webkit-flex-direction:column; flex-direction:column; -webkit-box-align:center; align-items:center; -webkit-box-pack:center; justify-content:center; padding:18px; }
+.balao{ background:#fff; color:#123a7a; border-radius:20px; padding:20px 22px; max-width:470px; -webkit-box-shadow:0 12px 30px rgba(0,0,0,.5); box-shadow:0 12px 30px rgba(0,0,0,.5); }
+.balao .em{ font-size:50px; } .balao h2{ font-size:22px; margin:8px 0; } .balao p{ font-size:16px; line-height:1.5; color:#3a4d78; }
+.balao .concl{ color:#c06a1a; font-weight:800; }
+.passoIco{ font-size:26px; letter-spacing:4px; margin:8px 0; }
+.hidden{ display:none !important; }
+</style>
+</head>
+<body>
+<div id="palco">
+  <canvas id="c" width="900" height="560"></canvas>
+  <div class="barra">
+    <div class="dica" id="dica">Monte os passos e toque em <b>Jogar</b>. 🧭</div>
+    <div class="passos" id="passos"><span class="vazio">seus passos aparecem aqui…</span></div>
+    <div class="botoes">
+      <button class="seta" data-dir="cima">↑</button>
+      <button class="seta" data-dir="baixo">↓</button>
+      <button class="seta" data-dir="esq">←</button>
+      <button class="seta" data-dir="dir">→</button>
+    </div>
+    <div class="botoes">
+      <button class="acao jogar" id="btnJogar">▶ Jogar</button>
+      <button class="acao limpar" id="btnLimpar">↺ Limpar</button>
+      <button class="acao ouvir" id="btnOuvir">🔊 Ouvir</button>
+    </div>
+  </div>
+
+  <!-- CONCEITO (só no modo abertura) -->
+  <div class="tela hidden" id="telaConceito">
+    <div class="balao">
+      <div class="em">🧭</div>
+      <h2>O que a gente vai fazer?</h2>
+      <p>Você vai montar uma <b>sequência de passos</b>, na ordem certinha, para o seu amiguinho fazer uma tarefa.</p>
+      <div class="passoIco">→ ↑ → ↑</div>
+      <p>Uma sequência de passos assim tem um nome: <b class="concl">ALGORITMO</b>. Bora praticar?</p>
+      <button class="acao jogar" id="btnConceitoOk" style="margin-top:10px">Bora! 🚀</button>
+    </div>
+  </div>
+
+  <!-- INTRO (papagaio) -->
+  <div class="tela" id="telaIntro">
+    <div class="balao">
+      <div class="em">🦜</div>
+      <h2>Louro precisa de ajuda!</h2>
+      <p>"Crá! Bem-vindo à ilha! O <b>baú do tesouro</b> ficou lá na ponta da praia e o seu amiguinho não sabe o caminho. Monta os <b>passos</b> pra ele chegar — e cuidado com as <b>poças d'água</b>!"</p>
+      <button class="acao jogar" id="btnComecar" style="margin-top:10px">Vamos! 🧭</button>
+    </div>
+  </div>
+
+  <!-- VITÓRIA -->
+  <div class="tela hidden" id="telaWin">
+    <div class="balao">
+      <div class="em">🏆</div>
+      <h2>Chegou no baú!</h2>
+      <p>Você guiou seu amigo até o tesouro com os passos certos.</p>
+      <p class="concl">Isso que você fez tem um nome: chama-se <b>ALGORITMO</b>! 🎉</p>
+      <button class="acao jogar" id="btnDeNovo" style="margin-top:10px">Jogar de novo 🔁</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var cv=document.getElementById("c"), x=cv.getContext("2d"), W=900,H=560;
+  var $=function(id){ return document.getElementById(id); };
+  var MODO=(/[?&]modo=abertura/.test(location.search))?"abertura":"fim";
+
+  /* ---------- SOM (Web Audio) ---------- */
+  var AC=null;
+  function ac(){ if(!AC){ try{ AC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){} } return AC; }
+  function beep(freq,dur,tipo,vol){ var a=ac(); if(!a)return; try{ var o=a.createOscillator(),g=a.createGain();
+    o.type=tipo||"sine"; o.frequency.value=freq; g.gain.value=vol||0.09; o.connect(g); g.connect(a.destination);
+    var t=a.currentTime; o.start(t); g.gain.setValueAtTime(g.gain.value,t); g.gain.exponentialRampToValueAtTime(0.0001,t+dur); o.stop(t+dur); }catch(e){} }
+  function somPasso(){ beep(520,0.09,"square",0.06); }
+  function somSplash(){ beep(180,0.25,"sawtooth",0.10); setTimeout(function(){beep(120,0.3,"sawtooth",0.08);},60); }
+  function somWin(){ [523,659,784,1047].forEach(function(f,i){ setTimeout(function(){beep(f,0.18,"triangle",0.10);}, i*130); }); }
+  function somTap(){ beep(700,0.05,"sine",0.05); }
+
+  /* ---------- VOZ (Web Speech) ---------- */
+  function fala(t){ try{ if(!("speechSynthesis" in window))return; var u=new SpeechSynthesisUtterance(t); u.lang="pt-BR"; u.rate=0.98; u.pitch=1.08; window.speechSynthesis.cancel(); window.speechSynthesis.speak(u); }catch(e){} }
+
+  /* ---------- GRADE (na praia, marcada com pegadas) ---------- */
+  var COLS=6, ROWS=3, CELL=100, GX=(W-COLS*CELL)/2, GY=250;
+  var START={c:0,r:2}, GOAL={c:5,r:0};
+  var AGUA=[ {c:2,r:2},{c:3,r:1},{c:4,r:2} ];
+  function ehAgua(c,r){ for(var i=0;i<AGUA.length;i++){ if(AGUA[i].c===c&&AGUA[i].r===r)return true; } return false; }
+  function ccx(c){ return GX+c*CELL+CELL/2; }
+  function ccy(r){ return GY+r*CELL+CELL/2; }
+
+  var SEQ=[], pos={c:START.c,r:START.r}, rodando=false, fase="intro";
+  var dispX=ccx(START.c), dispY=ccy(START.r), face=1;
+  var DIRS={cima:{dc:0,dr:-1,s:"↑"}, baixo:{dc:0,dr:1,s:"↓"}, esq:{dc:-1,dr:0,s:"←"}, dir:{dc:1,dr:0,s:"→"}};
+
+  /* estrelas + vaga-lumes */
+  var STARS=[], FIRE=[]; (function(){ var s=11; function rr(){ s=(s*1103515245+12345)&0x7fffffff; return s/0x7fffffff; }
+    for(var i=0;i<80;i++) STARS.push([rr()*W, rr()*230*0.95, rr()*1.3+0.3, rr()]);
+    for(var j=0;j<8;j++) FIRE.push([120+rr()*660, 300+rr()*220, rr()*6.28, 0.5+rr()]); })();
+
+  /* ---------- DESENHO ---------- */
+  function cena(t){
+    var sky=x.createLinearGradient(0,0,0,250); sky.addColorStop(0,"#0a1030"); sky.addColorStop(1,"#1b3a63");
+    x.fillStyle=sky; x.fillRect(0,0,W,250);
+    for(var i=0;i<STARS.length;i++){ var st=STARS[i]; x.globalAlpha=0.35+0.6*Math.abs(Math.sin(t*0.001+st[3]*6)); x.fillStyle="#eaf2ff"; x.beginPath(); x.arc(st[0],st[1],st[2],0,7); x.fill(); }
+    x.globalAlpha=1;
+    var mg=x.createRadialGradient(770,60,6,770,60,110); mg.addColorStop(0,"rgba(230,240,255,.5)"); mg.addColorStop(1,"rgba(230,240,255,0)");
+    x.fillStyle=mg; x.beginPath(); x.arc(770,60,110,0,7); x.fill();
+    x.fillStyle="#f2f6ff"; x.beginPath(); x.arc(770,60,30,0,7); x.fill();
+    /* mar */
+    var sea=x.createLinearGradient(0,200,0,270); sea.addColorStop(0,"#12365f"); sea.addColorStop(1,"#0c2444");
+    x.fillStyle=sea; x.fillRect(0,200,W,66);
+    x.save(); x.globalCompositeOperation="lighter"; var rf=x.createLinearGradient(0,204,0,262); rf.addColorStop(0,"rgba(210,228,255,.22)"); rf.addColorStop(1,"rgba(210,228,255,0)"); x.fillStyle=rf; x.fillRect(742,204,56,58); x.restore();
+    /* areia */
+    var sand=x.createLinearGradient(0,250,0,H); sand.addColorStop(0,"#2f2a24"); sand.addColorStop(1,"#201d18");
+    x.fillStyle=sand; x.fillRect(0,244,W,H);
+    x.strokeStyle="rgba(200,225,255,.28)"; x.lineWidth=3; x.beginPath(); x.moveTo(0,250); x.lineTo(W,250); x.stroke();
+
+    /* luz da fogueira/tocha na areia */
+    luz(150,470,240,"rgba(255,150,60,.55)",0.6);
+    luz(60,470,150,"rgba(255,180,80,.5)",0.5);
+
+    /* pegadas da grade (marcam onde dá pra pisar) */
+    for(var c=0;c<COLS;c++) for(var r=0;r<ROWS;r++){
+      if(ehAgua(c,r)){ var px=ccx(c),py=ccy(r);
+        var wg=x.createRadialGradient(px,py,3,px,py,44); wg.addColorStop(0,"#2f6f9e"); wg.addColorStop(1,"#173f60");
+        x.fillStyle=wg; x.beginPath(); x.ellipse(px,py,42,26,0,0,7); x.fill();
+        x.strokeStyle="rgba(200,230,255,.3)"; x.lineWidth=2; x.beginPath(); x.ellipse(px,py,42,26,0,0,7); x.stroke();
+      } else {
+        x.fillStyle="rgba(255,240,210,.10)"; x.beginPath(); x.ellipse(ccx(c),ccy(r),20,10,0,0,7); x.fill();
+      }
+    }
+    /* baú */
+    var bx=ccx(GOAL.c), by=ccy(GOAL.r);
+    var glow=x.createRadialGradient(bx,by,4,bx,by,60); glow.addColorStop(0,"rgba(255,200,90,.5)"); glow.addColorStop(1,"rgba(255,200,90,0)");
+    x.fillStyle=glow; x.beginPath(); x.arc(bx,by,60,0,7); x.fill(); bau(bx,by,t);
+
+    palmeira(96,250,t);   /* palmeira + papagaio pousado */
+    tocha(60,470,t);
+    fogueira(150,468,t);
+
+    /* vaga-lumes */
+    for(var f=0;f<FIRE.length;f++){ var ff=FIRE[f]; var fx=ff[0]+Math.sin(t*0.001*ff[3]+ff[2])*18, fy=ff[1]+Math.cos(t*0.0013*ff[3]+ff[2])*12;
+      var g2=x.createRadialGradient(fx,fy,0,fx,fy,8); g2.addColorStop(0,"rgba(210,255,150,.9)"); g2.addColorStop(1,"rgba(210,255,150,0)");
+      x.fillStyle=g2; x.beginPath(); x.arc(fx,fy,8,0,7); x.fill(); }
+
+    verso(dispX,dispY,t);
+  }
+  function luz(px,py,rad,cor,al){ x.save(); x.globalCompositeOperation="lighter"; var g=x.createRadialGradient(px,py,4,px,py,rad); g.addColorStop(0,cor); g.addColorStop(1,"rgba(0,0,0,0)"); x.globalAlpha=al; x.fillStyle=g; x.beginPath(); x.arc(px,py,rad,0,7); x.fill(); x.restore(); }
+  function bau(bx,by,t){ var b=Math.sin(t*0.004)*2;
+    x.fillStyle="#7a4a1e"; rr(bx-28,by-4+b,56,30,7); x.fill();
+    x.fillStyle="#9a6a2e"; x.beginPath(); x.moveTo(bx-28,by-4+b); x.quadraticCurveTo(bx,by-30+b,bx+28,by-4+b); x.fill();
+    x.fillStyle="#ffd25a"; x.fillRect(bx-4,by+b,8,12);
+    x.strokeStyle="#5a340f"; x.lineWidth=3; x.beginPath(); x.moveTo(bx-28,by+7+b); x.lineTo(bx+28,by+7+b); x.stroke(); }
+  function rr(px,py,w,h,r){ x.beginPath(); x.moveTo(px+r,py); x.arcTo(px+w,py,px+w,py+h,r); x.arcTo(px+w,py+h,px,py+h,r); x.arcTo(px,py+h,px,py,r); x.arcTo(px,py,px+w,py,r); x.closePath(); }
+  function palmeira(bx,by,t){
+    var sway=Math.sin(t*0.0012)*4;
+    x.fillStyle="#2a2320"; x.beginPath(); x.moveTo(bx-8,by); x.quadraticCurveTo(bx-20,by-112,bx+8+sway,by-186); x.lineTo(bx+22+sway,by-184); x.quadraticCurveTo(bx-2,by-112,bx+8,by); x.closePath(); x.fill();
+    var tx=bx+14+sway,ty=by-188, ang=[-2.7,-1.8,-0.8,0.2,1.2,2.2];
+    for(var k=0;k<ang.length;k++){ var a=ang[k]+Math.sin(t*0.0016+k)*0.05, ex=tx+Math.cos(a)*118, ey=ty+Math.sin(a)*70+8, m1x=tx+Math.cos(a)*60, m1y=ty+Math.sin(a)*30-26;
+      x.fillStyle="#233016"; x.beginPath(); x.moveTo(tx,ty); x.quadraticCurveTo(m1x,m1y,ex,ey); x.quadraticCurveTo(m1x+7,m1y+14,tx+5,ty+5); x.closePath(); x.fill();
+      x.strokeStyle="rgba(150,180,220,.4)"; x.lineWidth=2; x.beginPath(); x.moveTo(tx,ty); x.quadraticCurveTo(m1x,m1y,ex,ey); x.stroke(); }
+    /* papagaio pousado (bicho voador: pode balançar) */
+    var py2=ty+6+Math.sin(t*0.005)*2;
+    x.fillStyle="#2fae4e"; x.beginPath(); x.ellipse(tx+6,py2,10,13,0,0,7); x.fill();
+    x.fillStyle="#ffd25a"; x.beginPath(); x.ellipse(tx+6,py2+5,7,7,0,0,7); x.fill();
+    x.fillStyle="#e23b3b"; x.beginPath(); x.arc(tx+6,py2-8,6,0,7); x.fill();
+    x.fillStyle="#fff"; x.beginPath(); x.arc(tx+8,py2-9,2.4,0,7); x.fill(); x.fillStyle="#111"; x.beginPath(); x.arc(tx+9,py2-9,1.2,0,7); x.fill();
+    x.fillStyle="#ffae2e"; x.beginPath(); x.moveTo(tx+11,py2-7); x.lineTo(tx+17,py2-5); x.lineTo(tx+11,py2-3); x.fill();
+  }
+  function tocha(lx,ly,t){ x.strokeStyle="#3a2a1c"; x.lineWidth=8; x.lineCap="round"; x.beginPath(); x.moveTo(lx,ly+40); x.lineTo(lx-6,ly-46); x.stroke();
+    var tx=lx-6,ty=ly-46,fl=6+Math.sin(t*0.02)*3; x.save(); x.globalCompositeOperation="lighter";
+    x.fillStyle="#ff7a1f"; x.beginPath(); x.moveTo(tx,ty-26-fl); x.quadraticCurveTo(tx-10,ty-6,tx,ty+2); x.quadraticCurveTo(tx+10,ty-6,tx,ty-26-fl); x.fill();
+    x.fillStyle="#ffe08a"; x.beginPath(); x.moveTo(tx,ty-16); x.quadraticCurveTo(tx-5,ty-4,tx,ty); x.quadraticCurveTo(tx+5,ty-4,tx,ty-16); x.fill(); x.restore(); }
+  function fogueira(fx,fy,t){ x.fillStyle="#3a3d4a"; for(var p=0;p<7;p++){ var a=p/7*6.28; x.beginPath(); x.ellipse(fx+Math.cos(a)*42,fy+Math.sin(a)*18+8,11,7,0,0,7); x.fill(); }
+    x.strokeStyle="#3a2a1c"; x.lineWidth=9; x.lineCap="round"; x.beginPath(); x.moveTo(fx-24,fy+12); x.lineTo(fx+20,fy-2); x.stroke(); x.beginPath(); x.moveTo(fx+24,fy+12); x.lineTo(fx-20,fy-2); x.stroke();
+    var fl=Math.sin(t*0.02)*6; x.save(); x.globalCompositeOperation="lighter";
+    function ch(w,h,col){ x.fillStyle=col; x.beginPath(); x.moveTo(fx,fy-40-h); x.quadraticCurveTo(fx-w,fy-12,fx-w*0.4,fy+2); x.quadraticCurveTo(fx,fy-6,fx+w*0.4,fy+2); x.quadraticCurveTo(fx+w,fy-12,fx,fy-40-h); x.fill(); }
+    ch(30,8+fl,"#ff6a1f"); ch(21,20+fl,"#ffb02e"); ch(11,28+fl,"#ffe98a"); x.restore(); }
+  function verso(px,py,t){ var resp=Math.sin(t*0.004)*1.4, c="#ff9b57", b="#ffe6cf", olho="#20305e";
+    x.fillStyle="rgba(0,0,0,.4)"; x.beginPath(); x.ellipse(px,py+32,24,7,0,0,7); x.fill();
+    var ry=32+resp, rx=26;
+    x.fillStyle=c; x.beginPath(); x.moveTo(px-18,py-18); x.lineTo(px-22,py-40); x.lineTo(px-5,py-28); x.closePath(); x.fill();
+    x.beginPath(); x.moveTo(px+18,py-18); x.lineTo(px+22,py-40); x.lineTo(px+5,py-28); x.closePath(); x.fill();
+    x.fillStyle=c; x.beginPath(); x.ellipse(px,py,rx,ry,0,0,7); x.fill();
+    x.fillStyle=b; x.beginPath(); x.ellipse(px,py+ry*0.32,rx*0.6,ry*0.5,0,0,7); x.fill();
+    var ex=9*face; x.fillStyle="#fff"; x.beginPath(); x.arc(px-9,py-8,6.5,0,7); x.arc(px+9,py-8,6.5,0,7); x.fill();
+    x.fillStyle=olho; x.beginPath(); x.arc(px-9+ex*0.2,py-7,3.3,0,7); x.arc(px+9+ex*0.2,py-7,3.3,0,7); x.fill();
+    x.fillStyle="rgba(255,143,176,.5)"; x.beginPath(); x.arc(px-15,py+2,3,0,7); x.arc(px+15,py+2,3,0,7); x.fill();
+    x.strokeStyle=olho; x.lineWidth=2; x.beginPath(); x.moveTo(px-4,py+4); x.quadraticCurveTo(px,py+8,px+4,py+4); x.stroke(); }
+
+  var tempo=0;
+  function loop(){ tempo+=16; if(!rodando){ dispX+=(ccx(pos.c)-dispX)*0.22; dispY+=(ccy(pos.r)-dispY)*0.22; } cena(tempo); requestAnimationFrame(loop); }
+
+  /* ---------- passos ---------- */
+  function renderPassos(){ if(!SEQ.length){ $("passos").innerHTML='<span class="vazio">seus passos aparecem aqui…</span>'; return; }
+    var h="",i; for(i=0;i<SEQ.length;i++) h+='<span class="chip">'+DIRS[SEQ[i]].s+'</span>'; $("passos").innerHTML=h; }
+  function addPasso(d){ if(rodando||fase!=="jogar")return; if(SEQ.length>=12)return; SEQ.push(d); somTap(); renderPassos(); }
+  function limpar(){ if(rodando)return; SEQ=[]; pos={c:START.c,r:START.r}; renderPassos(); $("dica").innerHTML="Monte os passos e toque em <b>Jogar</b>. 🧭"; }
+
+  function jogar(){ if(rodando||!SEQ.length)return; rodando=true; pos={c:START.c,r:START.r}; dispX=ccx(pos.c); dispY=ccy(pos.r);
+    var i=0; var timer=setInterval(function(){ if(i>=SEQ.length){ clearInterval(timer); fim(); return; }
+      var d=DIRS[SEQ[i]]; i++; if(d.dc>0)face=1; if(d.dc<0)face=-1;
+      var nc=pos.c+d.dc, nr=pos.r+d.dr;
+      if(nc<0||nc>=COLS||nr<0||nr>=ROWS){ return; }
+      pos.c=nc; pos.r=nr; somPasso(); mover(ccx(nc),ccy(nr));
+      if(ehAgua(nc,nr)){ clearInterval(timer); setTimeout(splash,340); }
+    },640); }
+  function mover(tx,ty){ var sx=dispX,sy=dispY,k=0; var m=setInterval(function(){ k+=0.14; if(k>=1){k=1;clearInterval(m);} dispX=sx+(tx-sx)*k; dispY=sy+(ty-sy)*k; },16); }
+  function splash(){ rodando=false; somSplash(); fala("Ops! Caiu na água. Ajusta os passos e tenta de novo."); $("dica").innerHTML="💦 Caiu na poça! Ajusta os passos e tenta de novo."; pos={c:START.c,r:START.r}; }
+  function fim(){ if(pos.c===GOAL.c&&pos.r===GOAL.r){ setTimeout(function(){ somWin(); fala("Você conseguiu! Você montou uma sequência de passos que levou seu amigo até o tesouro. Isso chama-se algoritmo!"); $("telaWin").className="tela"; },350); }
+    else { rodando=false; fala("Quase! Ele parou fora do baú. Ajusta os passos."); $("dica").innerHTML="Quase! Ele parou fora do baú. Ajusta os passos. 🙂"; } }
+
+  function narraIntro(){ fala("Crá! Bem-vindo à ilha! O baú do tesouro ficou lá na ponta da praia e o seu amiguinho não sabe o caminho. Monta os passos pra ele chegar, e cuidado com as poças d'água!"); }
+
+  /* ---------- fluxo ---------- */
+  document.addEventListener("click", function(ev){ var el=ev.target; if(el.getAttribute&&el.getAttribute("data-dir")) addPasso(el.getAttribute("data-dir")); });
+  $("btnJogar").onclick=jogar;
+  $("btnLimpar").onclick=limpar;
+  $("btnOuvir").onclick=function(){ ac(); if(fase==="jogar") narraIntro(); };
+  $("btnComecar").onclick=function(){ ac(); $("telaIntro").className="tela hidden"; fase="jogar"; narraIntro(); };
+  $("btnConceitoOk").onclick=function(){ ac(); $("telaConceito").className="tela hidden"; fala("Você vai montar uma sequência de passos, na ordem certinha. Isso é um algoritmo. Bora!"); };
+  $("btnDeNovo").onclick=function(){ $("telaWin").className="tela hidden"; limpar(); };
+
+  /* modo abertura: mostra o conceito ANTES do papagaio */
+  if(MODO==="abertura"){ $("telaConceito").className="tela"; $("telaIntro").className="tela hidden";
+    $("btnConceitoOk").onclick=function(){ ac(); $("telaConceito").className="tela hidden"; $("telaIntro").className="tela"; fala("Você vai montar uma sequência de passos, na ordem certinha. Isso é um algoritmo!"); }; }
+
+  renderPassos(); loop();
+})();
+</script>
+</body>
+</html>

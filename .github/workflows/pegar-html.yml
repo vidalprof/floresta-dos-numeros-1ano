@@ -1,0 +1,76 @@
+name: Pegar HTML cru de uma URL
+
+# ⚠️ O pesquisar.yml extrai TEXTO LIMPO (readability) e descarta o JS — inutil
+#    para atividades antigas que sao 100% JS. Este pega o HTML BRUTO (e ate
+#    segue 1 nivel de <script src> e <iframe>), para eu LER a logica dos
+#    exercicios. Roda na internet do GitHub (datacenter); se o servidor bloquear
+#    IP de datacenter, ate aqui falha — ai e barreira de rede, nao "quebrado".
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL da pagina a baixar (HTML cru)"
+        required: true
+      nome:
+        description: "Nome do arquivo de saida (sem extensao)"
+        required: false
+        default: "pagina"
+
+jobs:
+  pegar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - name: Baixar HTML bruto (+ scripts e iframes de 1o nivel)
+        env:
+          URL: ${{ inputs.url }}
+          NOME: ${{ inputs.nome }}
+        run: |
+          set -e
+          UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
+          mkdir -p _pesquisa/html
+          OUT="_pesquisa/html/${NOME}.html"
+          echo "==> baixando $URL"
+          if curl -L -A "$UA" --max-time 120 -sS "$URL" -o "$OUT"; then
+            echo "baixou $(wc -c < "$OUT") bytes"
+          else
+            echo "FALHOU curl (bloqueio de IP/servidor)"; echo "<!-- FALHOU: bloqueio de rede -->" > "$OUT"
+          fi
+          # segue scripts e iframes de 1o nivel, na MESMA pasta da URL
+          BASE="$(dirname "$URL")"
+          python3 - "$OUT" "$BASE" "$UA" <<'PY'
+          import re, sys, subprocess, os, urllib.parse
+          out, base, ua = sys.argv[1], sys.argv[2], sys.argv[3]
+          try:
+              html = open(out, encoding="utf-8", errors="replace").read()
+          except Exception:
+              html = ""
+          alvos = re.findall(r'(?:src)\s*=\s*["\']([^"\']+\.(?:js|html?))["\']', html, re.I)
+          vistos, extra = set(), []
+          for a in alvos:
+              if a in vistos: continue
+              vistos.add(a)
+              url = a if a.startswith("http") else urllib.parse.urljoin(base + "/", a)
+              nome = re.sub(r'[^A-Za-z0-9_.-]+', '_', a)[-60:]
+              dest = os.path.join("_pesquisa", "html", "assets_" + nome)
+              try:
+                  subprocess.run(["curl", "-L", "-A", ua, "--max-time", "60", "-sS", url, "-o", dest], check=False)
+                  extra.append(dest)
+              except Exception:
+                  pass
+          print("assets seguidos:", len(extra))
+          PY
+          ls -la _pesquisa/html/
+
+      - name: Commitar
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add _pesquisa/html/ || true
+          git commit -m "html cru: ${{ inputs.nome }}" || echo "nada a commitar"
+          git pull --rebase --autostash origin "${{ github.ref_name }}" || true
+          git push origin "HEAD:${{ github.ref_name }}"

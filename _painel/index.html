@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel de Respostas &mdash; Aventura das Direcoes</title>
+<style>
+  * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    color:#233; background:#eef4fb;
+    background:-webkit-linear-gradient(top,#eaf3ff,#f3fbf1);
+    background:linear-gradient(180deg,#eaf3ff,#f3fbf1);
+    min-height:100vh;
+  }
+  .wrap{ max-width:920px; margin:0 auto; padding:18px 14px 40px; }
+  header{ text-align:center; padding:14px 8px 6px; }
+  h1{ font-size:24px; margin:0 0 2px; color:#e07b12; }
+  .sub{ color:#3b6ea5; font-weight:bold; margin:0 0 12px; font-size:15px; }
+  .barra{
+    display:-webkit-box; display:-webkit-flex; display:flex;
+    -webkit-flex-wrap:wrap; flex-wrap:wrap;
+    -webkit-align-items:center; align-items:center;
+    -webkit-justify-content:center; justify-content:center;
+    margin:0 0 14px;
+  }
+  .barra > *{ margin:4px; }
+  .tot{
+    background:#fff; border:2px solid #d6e4f2; border-radius:14px;
+    padding:8px 16px; font-weight:bold; color:#2b5f9e;
+  }
+  .tot b{ font-size:20px; color:#e07b12; }
+  .bt{
+    -webkit-appearance:none; appearance:none; cursor:pointer;
+    border:0; border-radius:14px; padding:9px 16px;
+    font-size:15px; font-weight:bold; color:#fff; background:#2f8f43;
+  }
+  .bt.sec{ background:#1668bf; }
+  .bt.gh{ background:#5a6b7b; }
+  .bt.del{ background:#c0392b; }
+  th.chk, td.chk{ width:34px; text-align:center; }
+  td.chk input, th.chk input{ width:20px; height:20px; cursor:pointer; }
+  tr.marc td{ background:#fdeaea !important; }
+  .status{ text-align:center; color:#5a6b7b; font-size:13px; margin:6px 0 12px; min-height:16px; }
+  .toggle{ display:-webkit-box; display:-webkit-flex; display:flex; -webkit-justify-content:center; justify-content:center; margin:0 0 12px; }
+  .toggle button{
+    -webkit-appearance:none; appearance:none; cursor:pointer;
+    border:2px solid #cdd9e6; background:#fff; color:#3b6ea5; font-weight:bold;
+    padding:7px 14px; font-size:14px;
+  }
+  .toggle button:first-child{ border-radius:12px 0 0 12px; }
+  .toggle button:last-child{ border-radius:0 12px 12px 0; border-left:0; }
+  .toggle button.on{ background:#1668bf; color:#fff; border-color:#1668bf; }
+  .card{
+    background:#fff; border-radius:16px; overflow:hidden;
+    -webkit-box-shadow:0 6px 18px rgba(40,80,140,.12); box-shadow:0 6px 18px rgba(40,80,140,.12);
+  }
+  .tblwrap{ width:100%; overflow-x:auto; }
+  table{ border-collapse:collapse; width:100%; font-size:15px; }
+  th,td{ padding:10px 12px; text-align:left; border-bottom:1px solid #eef2f6; white-space:nowrap; }
+  th{ background:#f3f8fd; color:#2b5f9e; font-size:13px; text-transform:uppercase; letter-spacing:.02em; }
+  td.num, th.num{ text-align:center; font-variant-numeric:tabular-nums; }
+  tr:last-child td{ border-bottom:0; }
+  tr:nth-child(even) td{ background:#fafcff; }
+  .pill{ display:inline-block; min-width:34px; text-align:center; padding:3px 10px; border-radius:20px; font-weight:bold; font-size:14px; }
+  .p-ok{ background:#e6f6ea; color:#1c7a34; }
+  .p-med{ background:#fff4e0; color:#b5730a; }
+  .p-baixa{ background:#fdeaea; color:#b53535; }
+  .vazio{ text-align:center; padding:34px 16px; color:#7a8794; }
+  .aviso{
+    background:#fff6e6; border:2px solid #f2d79a; color:#8a5a12;
+    border-radius:14px; padding:12px 14px; margin:12px 0; font-size:14px; line-height:1.5;
+  }
+  .aviso b{ color:#a8480d; }
+  .pe{ text-align:center; color:#8a97a4; font-size:12px; margin:16px 0 0; }
+  code{ background:#eef2f6; padding:1px 6px; border-radius:6px; font-size:13px; }
+  /* ---- trava de entrada ---- */
+  .trava{ position:fixed; left:0; top:0; right:0; bottom:0; z-index:50;
+    background:#eaf3ff; display:-webkit-box; display:-webkit-flex; display:flex;
+    -webkit-align-items:center; align-items:center;
+    -webkit-justify-content:center; justify-content:center; padding:16px; }
+  .travacx{ background:#fff; border-radius:18px; padding:26px 24px; max-width:380px; width:100%;
+    text-align:center; -webkit-box-shadow:0 8px 26px rgba(40,80,140,.18); box-shadow:0 8px 26px rgba(40,80,140,.18); }
+  .travacx h2{ margin:0 0 6px; font-size:20px; color:#1668bf; }
+  .travacx p{ margin:0 0 14px; font-size:14px; color:#5a6b7b; line-height:1.45; }
+  .travacx input{ width:100%; padding:12px 14px; font-size:17px; text-align:center;
+    border:2px solid #cdd9e6; border-radius:12px; margin:0 0 12px; }
+  .travacx input:focus{ outline:0; border-color:#1668bf; }
+  .travacx .bt{ width:100%; padding:12px; font-size:16px; }
+  .erro{ color:#b53535 !important; font-weight:bold; min-height:18px; margin:10px 0 0 !important; }
+</style>
+</head>
+<body>
+
+<!-- ⭐ TRAVA DE ENTRADA (senha do Marcos). Ver o comentario grande no JS:
+     isto guarda a TELA, nao os dados. A tranca de verdade e a regra do
+     Firebase — enquanto /provas estiver com leitura aberta, quem souber o
+     endereco do banco le tudo sem passar por aqui. -->
+<div id="trava" class="trava">
+  <div class="travacx">
+    <h2>&#128274; Painel de Respostas</h2>
+    <p>Esta p&aacute;gina mostra <b>nome e nota de aluno</b>. Digite a senha do professor.</p>
+    <input id="senha" type="password" autocomplete="off" placeholder="senha" onkeydown="if(event.keyCode===13)destravar()">
+    <button class="bt" onclick="destravar()">Entrar</button>
+    <p class="erro" id="erroSenha"></p>
+  </div>
+</div>
+
+<div class="wrap" id="painel" style="display:none">
+  <header>
+    <h1>&#128203; Painel de Respostas</h1>
+    <p class="sub">Aventura das Dire&ccedil;&otilde;es &mdash; lateralidade 2&ordm; ano</p>
+  </header>
+
+  <div class="barra">
+    <span class="tot">Respostas: <b id="tot">&mdash;</b></span>
+    <button class="bt" id="btAtu" onclick="carregar()">&#8635; Atualizar</button>
+    <button class="bt sec" id="btAuto" onclick="alternarAuto()">&#9210; Auto: ligado</button>
+    <button class="bt gh" onclick="baixarCSV()">&#8681; Baixar CSV</button>
+    <button class="bt sec" onclick="baixarPDF()">&#128196; Baixar PDF (A&rarr;Z)</button>
+    <button class="bt del" id="btDel" onclick="apagarSelecionados()">&#128465; Apagar selecionados</button>
+  </div>
+
+  <div class="toggle">
+    <button id="tgChegada" class="on" onclick="setOrdem('chegada')">Ordem de chegada</button>
+    <button id="tgAz" onclick="setOrdem('az')">Ordem A&rarr;Z</button>
+  </div>
+
+  <p class="status" id="status">Carregando&hellip;</p>
+
+  <div id="avisoPerm" class="aviso" style="display:none">
+    <b>Sem permiss&atilde;o de leitura no Firebase.</b> Para este painel enxergar as
+    respostas, abra o <b>Console do Firebase</b> &rarr; Realtime Database &rarr;
+    <b>Regras</b> e deixe a leitura liberada nesse caminho (ex.: <code>".read": true</code>
+    em <code>/provas</code>). A grava&ccedil;&atilde;o da prova j&aacute; funciona &mdash; s&oacute; a leitura do painel precisa disso.
+  </div>
+
+  <div class="card">
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="chk"><input type="checkbox" id="selTodos" onclick="selecionarTodos(this.checked)" title="Selecionar tudo"></th>
+            <th class="num">#</th>
+            <th>Nome</th>
+            <th>Turma</th>
+            <th class="num">Nota</th>
+            <th class="num">Acertos</th>
+            <th>Data e hora</th>
+          </tr>
+        </thead>
+        <tbody id="corpo">
+          <tr><td colspan="7" class="vazio">Carregando&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="pe">Atualiza sozinho a cada 10 s. &nbsp;&middot;&nbsp; A nota <b>n&atilde;o</b> aparece para o aluno &mdash; s&oacute; aqui.</p>
+</div>
+
+<script>
+/* ===== Config ===== */
+var FIREBASE_DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var CAMINHO     = "/provas/lateralidade-3ano";
+
+/* ===== Estado ===== */
+var DADOS = [];      /* lista normalizada (cada item guarda .key do Firebase) */
+var ORDEM = "chegada";
+var AUTO  = true;
+var timer = null;
+var SEL   = {};      /* keys marcados p/ apagar (persistem entre atualizacoes) */
+
+function $(id){ return document.getElementById(id); }
+
+function pill(nota){
+  var n = parseInt(nota, 10); if(isNaN(n)){ n = 0; }
+  var cls = (n >= 8) ? "p-ok" : (n >= 5 ? "p-med" : "p-baixa");
+  return '<span class="pill '+cls+'">'+ (nota===""||nota==null?"&mdash;":nota) +'</span>';
+}
+
+function fmtData(d){
+  if(!d){ return "&mdash;"; }
+  var s = ""+d;
+  /* ISO -> dd/mm hh:mm */
+  var m = s.match(/(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if(m){ return m[3]+"/"+m[2]+" &agrave;s "+m[4]+":"+m[5]; }
+  return s;
+}
+
+function esc(t){
+  return (""+ (t==null?"":t) )
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function ordenar(lista){
+  var arr = lista.slice(0);
+  if(ORDEM === "az"){
+    arr.sort(function(a,b){
+      return (""+a.nome).localeCompare(""+b.nome, "pt", {sensitivity:"base"});
+    });
+  }else{
+    arr.sort(function(a,b){ return (""+a.data).localeCompare(""+b.data); });
+  }
+  return arr;
+}
+
+function pintar(){
+  var arr = ordenar(DADOS), i, h = "";
+  $("tot").innerHTML = DADOS.length;
+  if(!arr.length){
+    $("corpo").innerHTML = '<tr><td colspan="7" class="vazio">Ainda n&atilde;o chegou nenhuma resposta. Assim que um aluno terminar, aparece aqui.</td></tr>';
+    return;
+  }
+  for(i=0; i<arr.length; i++){
+    var r = arr[i];
+    var mk = SEL[r.key] ? " checked" : "";
+    h += '<tr'+(SEL[r.key]?' class="marc"':'')+'>'+
+      '<td class="chk"><input type="checkbox" class="sel" value="'+esc(r.key)+'" onclick="toggleSel(this)"'+mk+'></td>'+
+      '<td class="num">'+(i+1)+'</td>'+
+      '<td>'+esc(r.nome)+'</td>'+
+      '<td>'+esc(r.turma)+'</td>'+
+      '<td class="num">'+pill(r.nota)+'</td>'+
+      '<td class="num">'+esc(r.acertos)+'</td>'+
+      '<td>'+fmtData(r.data)+'</td>'+
+      '</tr>';
+  }
+  $("corpo").innerHTML = h;
+}
+function toggleSel(cb){
+  if(cb.checked){ SEL[cb.value] = true; } else { delete SEL[cb.value]; }
+  var tr = cb; while(tr && tr.tagName !== "TR"){ tr = tr.parentNode; }
+  if(tr){ tr.className = cb.checked ? "marc" : ""; }
+}
+function selecionarTodos(on){
+  var cbs = document.getElementsByClassName("sel"), i;
+  for(i=0;i<cbs.length;i++){ cbs[i].checked = on; toggleSel(cbs[i]); }
+}
+function apagarSelecionados(){
+  var keys = [], k;
+  for(k in SEL){ if(SEL.hasOwnProperty(k)){ keys.push(k); } }
+  if(!keys.length){ alert("Marque as respostas que quer apagar (a caixinha na primeira coluna)."); return; }
+  if(!confirm("Apagar "+keys.length+" resposta(s) marcada(s)? Isto não tem volta.")){ return; }
+  $("status").innerHTML = "Apagando "+keys.length+" resposta(s)&hellip;";
+  var restantes = keys.length, erros = 0;
+  var i2; for(i2=0;i2<keys.length;i2++){
+    (function(key){
+      var x = new XMLHttpRequest();
+      x.open("DELETE", FIREBASE_DB + CAMINHO + "/" + key + ".json", true);
+      x.onreadystatechange = function(){
+        if(x.readyState !== 4){ return; }
+        if(!(x.status>=200 && x.status<300)){ erros++; }
+        delete SEL[key];
+        restantes--;
+        if(restantes===0){
+          var st=$("selTodos"); if(st){ st.checked=false; }
+          $("status").innerHTML = erros ? ("Apagadas com "+erros+" erro(s). Veja abaixo.") : "Respostas apagadas!";
+          carregar();
+        }
+      };
+      try{ x.send(); }catch(e){ erros++; restantes--; }
+    })(keys[i2]);
+  }
+}
+
+function carregar(){
+  $("status").innerHTML = "Buscando respostas&hellip;";
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", FIREBASE_DB + CAMINHO + ".json", true);
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState !== 4){ return; }
+    if(xhr.status === 200){
+      $("avisoPerm").style.display = "none";
+      var obj = null;
+      try{ obj = JSON.parse(xhr.responseText); }catch(e){ obj = null; }
+      var lista = [], k;
+      if(obj){
+        for(k in obj){
+          if(!obj.hasOwnProperty(k)){ continue; }
+          if(k.charAt(0) === "_"){ continue; } /* ignora chaves de teste _... */
+          var v = obj[k] || {};
+          lista.push({
+            key:    k,
+            nome:   v.nome || "",
+            turma:  v.turma || "",
+            nota:   (v.nota==null?"":v.nota),
+            acertos:(v.acertos==null?"":v.acertos),
+            data:   v.data || ""
+          });
+        }
+      }
+      DADOS = lista;
+      pintar();
+      var agora = new Date();
+      $("status").innerHTML = "Atualizado &agrave;s " +
+        ("0"+agora.getHours()).slice(-2)+":"+("0"+agora.getMinutes()).slice(-2)+":"+("0"+agora.getSeconds()).slice(-2);
+    }else if(xhr.status === 401 || xhr.status === 403){
+      $("avisoPerm").style.display = "block";
+      $("status").innerHTML = "Sem permiss&atilde;o de leitura (veja o aviso acima).";
+    }else{
+      $("status").innerHTML = "N&atilde;o consegui buscar agora (c&oacute;digo "+xhr.status+"). Tento de novo no pr&oacute;ximo ciclo.";
+    }
+  };
+  try{ xhr.send(); }catch(e){ $("status").innerHTML = "Erro de conex&atilde;o."; }
+}
+
+function setOrdem(o){
+  ORDEM = o;
+  $("tgChegada").className = (o==="chegada") ? "on" : "";
+  $("tgAz").className = (o==="az") ? "on" : "";
+  pintar();
+}
+
+function alternarAuto(){
+  AUTO = !AUTO;
+  $("btAuto").innerHTML = "&#9210; Auto: " + (AUTO ? "ligado" : "desligado");
+  agendar();
+}
+
+function agendar(){
+  if(timer){ clearInterval(timer); timer = null; }
+  if(AUTO){ timer = setInterval(carregar, 10000); }
+}
+
+function baixarCSV(){
+  var arr = ordenar(DADOS), i, linhas = ["Nome;Turma;Nota;Acertos;Data e hora"];
+  for(i=0; i<arr.length; i++){
+    var r = arr[i];
+    linhas.push([r.nome, r.turma, r.nota, r.acertos, r.data].join(";"));
+  }
+  var txt = "﻿" + linhas.join("\r\n");
+  var a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(txt);
+  a.download = "respostas-lateralidade.csv";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+/* ============================================================
+   ⭐ FOLHA PARA A PROFESSORA — PDF em ordem alfabética.
+
+   Pedido do Marcos (ago/2026): *"gostaria de baixar um pdf dos dados constantes
+   lá em ordem alfabética para que eu possa enviar a professora"* e, logo
+   depois, *"esse pdf tem que ser uma tabela bem linda e organizada"*.
+
+   ⚠️ POR QUE NÃO ESCREVO O PDF À MÃO (eu tinha começado assim e voltei atrás):
+   dá para montar o arquivo byte a byte, e funciona — mas aqui dentro não há
+   nenhum leitor de PDF instalado, então eu **não teria como VER** o que estou
+   entregando. Dizer "ficou lindo" sem olhar é exatamente o que a casa proíbe.
+   O motor de impressão do próprio Chrome resolve as duas coisas: desenha com
+   CSS (que eu consigo renderizar e conferir aqui) e escreve um PDF A4 de
+   verdade, com texto selecionável e acentuação certa.
+
+   ⚠️ A ORDEM É SEMPRE A→Z, não importa o botão da tela. A folha vai para OUTRA
+   pessoa: ela precisa achar o aluno dela pelo nome, não saber quem terminou
+   primeiro.
+   ⚠️ A tabela repete o cabeçalho em toda página (`thead` + `display:table-header-group`)
+   e nunca parte um aluno ao meio (`page-break-inside:avoid`) — é o que separa
+   uma folha organizada de uma listagem cortada.                              */
+function baixarPDF(){
+  if(!DADOS.length && !confirm("Ainda nao ha nenhuma resposta. Gerar a folha vazia mesmo assim?")){ return; }
+
+  var arr = DADOS.slice(0);
+  arr.sort(function(a,b){
+    return (""+a.nome).localeCompare(""+b.nome, "pt", {sensitivity:"base"});
+  });
+
+  /* resumo honesto: quantos, media e quantos por faixa. Sem ranking, sem
+     "pior aluno" — a folha é de acompanhamento, não de exposição. */
+  var soma = 0, comNota = 0, faixa = {ok:0, med:0, baixa:0}, turmas = {}, i;
+  for(i = 0; i < arr.length; i++){
+    var n = parseInt(arr[i].nota, 10);
+    if(!isNaN(n)){ soma += n; comNota++;
+      if(n >= 8){ faixa.ok++; } else if(n >= 5){ faixa.med++; } else { faixa.baixa++; } }
+    var t = (arr[i].turma || "sem turma");
+    turmas[t] = (turmas[t] || 0) + 1;
+  }
+  var media = comNota ? (soma / comNota).toFixed(1).replace(".", ",") : "&mdash;";
+  var hoje = new Date();
+  var dd = ("0"+hoje.getDate()).slice(-2) + "/" + ("0"+(hoje.getMonth()+1)).slice(-2) +
+           "/" + hoje.getFullYear();
+  var lt = [], k;
+  for(k in turmas){ if(turmas.hasOwnProperty(k)){ lt.push(esc(k) + ": " + turmas[k]); } }
+
+  var linhas = "", j;
+  for(j = 0; j < arr.length; j++){
+    var r = arr[j], nn = parseInt(r.nota, 10);
+    var cls = isNaN(nn) ? "z" : (nn >= 8 ? "a" : (nn >= 5 ? "b" : "c"));
+    linhas += '<tr>' +
+      '<td class="n">' + (j+1) + '</td>' +
+      /* ⚠️ o travessao e ENTIDADE, entao nao pode passar pelo esc(): o esc troca o
+         "&" e a folha imprimia o texto cru "&mdash;" no lugar do traco. Peguei
+         isto comparando a folha com o banco, campo por campo — leitura de codigo
+         nao pegaria. */
+      '<td class="nm">' + (r.nome ? esc(r.nome) : "&mdash;") + '</td>' +
+      '<td class="tu">' + (r.turma ? esc(r.turma) : "&mdash;") + '</td>' +
+      '<td class="n"><span class="pl ' + cls + '">' +
+        (r.nota === "" || r.nota == null ? "&mdash;" : esc(r.nota)) + '</span></td>' +
+      '<td class="n ac">' + (r.acertos === "" || r.acertos == null ? "&mdash;" : esc(r.acertos)) + '</td>' +
+      '<td class="dt">' + fmtData(r.data) + '</td>' +
+      '</tr>';
+  }
+
+  var html =
+'<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8">' +
+'<title>Respostas - Aventura das Direcoes</title><style>' +
+'@page{ size:A4 portrait; margin:14mm 12mm 16mm; }' +
+'*{ box-sizing:border-box; }' +
+'body{ margin:0; font-family:"Segoe UI",Arial,Helvetica,sans-serif; color:#22303f;' +
+'  -webkit-print-color-adjust:exact; print-color-adjust:exact; }' +
+'.cab{ border-bottom:3px solid #1668bf; padding-bottom:10px; margin-bottom:14px; }' +
+'.cab h1{ margin:0 0 2px; font-size:19pt; color:#1668bf; letter-spacing:-.2px; }' +
+'.cab .s{ margin:0; font-size:10pt; color:#5a6b7b; }' +
+'.res{ display:table; width:100%; margin:0 0 14px; border-collapse:separate; border-spacing:6px 0; }' +
+'.res .c{ display:table-cell; width:25%; background:#f3f8fd; border:1px solid #dce8f5;' +
+'  border-radius:8px; padding:8px 10px; text-align:center; }' +
+'.res .c b{ display:block; font-size:16pt; color:#1668bf; line-height:1.1; }' +
+'.res .c span{ font-size:8pt; color:#5a6b7b; text-transform:uppercase; letter-spacing:.04em; }' +
+'table{ width:100%; border-collapse:collapse; font-size:10pt; }' +
+'thead{ display:table-header-group; }' +
+'th{ background:#1668bf; color:#fff; font-size:8.5pt; text-transform:uppercase;' +
+'  letter-spacing:.05em; padding:7px 8px; text-align:left; }' +
+'th:first-child{ border-radius:6px 0 0 0; } th:last-child{ border-radius:0 6px 0 0; }' +
+'td{ padding:6px 8px; border-bottom:1px solid #e6edf5; }' +
+'tr{ page-break-inside:avoid; }' +
+'tbody tr:nth-child(even) td{ background:#f7fafd; }' +
+/* ⚠️ as classes de coluna pintam a COR, e o `th` usa as mesmas classes para
+   ficar alinhado — resultado: no cabecalho azul, TURMA/NOTA/ACERTOS/DATA
+   sairam apagados por cima do branco. Cor so no corpo; o `th` fica branco,
+   sempre. Peguei isto olhando a previa, nao lendo o codigo.               */
+'td.n{ color:#7a8794; } .n{ text-align:center; width:34px; }' +
+'.nm{ font-weight:600; }' +
+'td.tu{ color:#3b6ea5; } .tu{ width:64px; text-align:center; font-weight:600; }' +
+'.ac{ width:70px; }' +
+'td.dt{ color:#5a6b7b; font-size:9pt; } .dt{ width:120px; white-space:nowrap; }' +
+'th, th.n, th.tu, th.ac, th.dt{ color:#fff; }' +
+'.pl{ display:inline-block; min-width:30px; padding:2px 8px; border-radius:20px;' +
+'  font-weight:bold; font-size:9.5pt; }' +
+'.pl.a{ background:#e6f6ea; color:#1c7a34; } .pl.b{ background:#fff4e0; color:#9a6108; }' +
+'.pl.c{ background:#fdeaea; color:#a82f2f; } .pl.z{ background:#eef2f6; color:#7a8794; }' +
+'.rod{ margin-top:14px; padding-top:8px; border-top:1px solid #e6edf5;' +
+'  font-size:8pt; color:#8a97a4; text-align:center; }' +
+'.vaz{ text-align:center; padding:28px; color:#7a8794; }' +
+'</style></head><body>' +
+'<div class="cab"><h1>Aventura das Dire&ccedil;&otilde;es</h1>' +
+'<p class="s">Lateralidade &nbsp;&middot;&nbsp; respostas em <b>ordem alfab&eacute;tica</b>' +
+' &nbsp;&middot;&nbsp; gerado em ' + dd + '</p></div>' +
+'<div class="res">' +
+  '<div class="c"><b>' + arr.length + '</b><span>respostas</span></div>' +
+  '<div class="c"><b>' + media + '</b><span>m&eacute;dia</span></div>' +
+  '<div class="c"><b>' + faixa.ok + '</b><span>nota 8 ou +</span></div>' +
+  '<div class="c"><b>' + faixa.baixa + '</b><span>abaixo de 5</span></div>' +
+'</div>' +
+'<table><thead><tr><th class="n">#</th><th>Nome</th><th class="tu">Turma</th>' +
+'<th class="n">Nota</th><th class="n">Acertos</th><th>Data e hora</th></tr></thead>' +
+'<tbody>' + (linhas || '<tr><td class="vaz" colspan="6">Nenhuma resposta registrada at&eacute; agora.</td></tr>') +
+'</tbody></table>' +
+'<p class="rod">' + (lt.length ? 'Turmas &mdash; ' + lt.join(' &nbsp;&middot;&nbsp; ') + '<br>' : '') +
+'Painel de Respostas &mdash; E.B.M. Vidal Ramos</p>' +
+'</body></html>';
+
+  var w = window.open("", "_blank");
+  if(!w){ alert("O navegador bloqueou a janela. Libere as janelas para este site e tente de novo."); return; }
+  w.document.open(); w.document.write(html); w.document.close();
+  /* espera o desenho ficar pronto antes de chamar a impressao, senao sai folha
+     em branco em maquina lenta (o PC da escola e lento) */
+  setTimeout(function(){ try{ w.focus(); w.print(); }catch(e){} }, 400);
+}
+
+/* ============================================================
+   🔒 A TRAVA DE ENTRADA — e o que ela é, com todas as letras.
+
+   Pedido do Marcos (ago/2026): *"bota a senha 1275@"* — a mesma senha mestra
+   que ele já usa nas atividades.
+
+   ⚠️ O QUE ELA FAZ: esconde a TELA de quem chega pelo endereço sem saber a
+   senha. Isso resolve o caso real — o link publicado, que alguém acha ou
+   recebe encaminhado.
+
+   ⚠️ O QUE ELA **NÃO** FAZ, e eu não vou fingir que faz: ela não protege os
+   DADOS. A senha vive no código-fonte desta página (guardo só a conta dela,
+   não o texto, o que atrapalha o curioso e não segura o determinado), e as
+   respostas continuam num banco cujo caminho `/provas` está com **leitura
+   aberta** — quem souber o endereço do Firebase lê tudo sem passar por aqui.
+
+   A TRANCA DE VERDADE é a regra do Realtime Database: exigir autenticação em
+   `/provas`. Aí a página precisaria entrar com conta, como faz a Agenda. Isso
+   é meia hora de trabalho e uma decisão do Marcos — está anotado para quando
+   ele quiser.                                                                */
+function contaDaSenha(s){
+  var h = 5381, i;
+  for(i = 0; i < s.length; i++){ h = ((h * 33) ^ s.charCodeAt(i)) & 0xFFFFFFFF; }
+  return h;
+}
+var SENHA_CONTA = 114614020;   /* a conta de "1275@" — o texto não fica escrito */
+
+function destravar(){
+  var v = $("senha") ? $("senha").value : "";
+  if(contaDaSenha(v) === SENHA_CONTA){
+    try{ window.sessionStorage.setItem("painel_ok", "1"); }catch(e){}
+    abrirPainel();
+    return;
+  }
+  $("erroSenha").innerHTML = "Senha incorreta.";
+  if($("senha")){ $("senha").value = ""; $("senha").focus(); }
+}
+
+function abrirPainel(){
+  $("trava").style.display = "none";
+  $("painel").style.display = "";
+  carregar();
+  agendar();
+}
+
+/* já entrou nesta sessão do navegador? não pede de novo (ele vai atualizar a
+   página várias vezes durante a aula). Fechou o navegador, pede outra vez. */
+var jaEntrou = false;
+try{ jaEntrou = (window.sessionStorage.getItem("painel_ok") === "1"); }catch(e){}
+if(jaEntrou){ abrirPainel(); }
+else if($("senha")){ $("senha").focus(); }
+</script>
+</body>
+</html>

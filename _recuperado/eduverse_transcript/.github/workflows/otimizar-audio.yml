@@ -1,0 +1,53 @@
+name: Otimizar (recomprimir) audios _audio/
+
+# Recomprime todos os MP3 de _audio/ para bitrate baixo mono (voz fica boa,
+# arquivo bem menor) — p/ embutir muitas falas sem o HTML ficar gigante.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bitrate:
+        description: "bitrate alvo (ex: 24k, 32k)"
+        required: false
+        default: "24k"
+        type: string
+      padrao:
+        description: "quais arquivos (glob), ex: _audio/v*.mp3 ou _audio/*.mp3"
+        required: false
+        default: "_audio/v*.mp3"
+        type: string
+
+jobs:
+  otimizar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Instalar ffmpeg
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
+      - name: Recomprimir
+        env:
+          BR: ${{ inputs.bitrate }}
+          PAD: ${{ inputs.padrao }}
+        run: |
+          shopt -s nullglob
+          antes=$(du -sh _audio/ 2>/dev/null | cut -f1)
+          n=0
+          for f in $PAD; do
+            ffmpeg -y -loglevel error -i "$f" -ac 1 -ar 22050 -b:a "${BR:-24k}" "$f.tmp.mp3" && mv "$f.tmp.mp3" "$f" && n=$((n+1))
+          done
+          depois=$(du -sh _audio/ 2>/dev/null | cut -f1)
+          echo "recomprimidos: $n | _audio antes=$antes depois=$depois"
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _audio/ || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "audio: recomprime _audio (${{ inputs.bitrate }} mono)"
+          for k in 1 2 3 4 5 6; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

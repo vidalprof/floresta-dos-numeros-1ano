@@ -1,0 +1,33 @@
+/* ===== A Feirinha da Dona Coruja — tema (contraste WCAG, portão 4) =====
+   Injetado por ÚLTIMO → vence a cascata do motor/peça. Conserta os contrastes
+   que a banca (contraste_fundo.py) pegou. */
+
+/* Rótulos sobre o caixote/régua de MADEIRA: a peça previa texto CREME
+   (var(--texto,#f4efe6)), mas o motor sobrescreve --texto para escuro e some no
+   marrom. Força o creme (alto contraste sobre a madeira). */
+.cxrot, .mrot, .numr{
+  color:#fff3df !important;
+  text-shadow:0 1px 2px rgba(25,12,0,.6) !important}
+
+/* Prateleira do base-dez: o marrom-claro do fundo (188,107,66) não dá contraste
+   nem com creme nem com escuro. Escurece o fundo → creme passa folgado (~13:1). */
+.prat{
+  background:#3a2410 !important;
+  background-image:none !important;
+  border-color:#5a3a1a !important}
+.prat, .prat *{
+  color:#fff3df !important}
+/* legendas .span do comparar sobre bloco marrom — creme. */
+.mec-comparar .span, .mec-comparar .cxrot, .mec-comparar .mrot{
+  color:#fff3df !important}
+
+/* Botões DENTRO das peças de matemática: vinham em AMARELO com texto branco (o
+   motor pinta o texto de branco) → razão 1.4. Uniformiza como o botão da casa:
+   VERDE com texto branco (razão ~5:1). Não toca no botão do motor (capa/próximo). */
+.mec-contadores .btn, .mec-saltos-na-fita .btn, .mec-reta-numerica .btn,
+.mec-base-dez .btn, .mec-repartir .btn, .mec-estimar .btn, .mec-comparar .btn,
+.mec-completar .btn, .mec-memoria .btn, .mec-escolher .btn{
+  background:#3a7d1c !important;
+  background-image:none !important;
+  color:#ffffff !important;
+  text-shadow:0 1px 2px rgba(0,0,0,.35) !important}

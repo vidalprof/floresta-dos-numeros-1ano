@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Espacial — Estação Órbita</title>
+<style>
+/* ====== BASE / RESET ====== */
+* { -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #eaf2ff;
+  background-color: #070a1c; /* fallback sólido ANTES do gradiente */
+  background: #070a1c -webkit-radial-gradient(50% 0%, ellipse, #1b2a63 0%, #0d1338 45%, #070a1c 100%);
+  background: #070a1c -o-radial-gradient(50% 0%, ellipse, #1b2a63 0%, #0d1338 45%, #070a1c 100%);
+  background: #070a1c radial-gradient(ellipse at 50% 0%, #1b2a63 0%, #0d1338 45%, #070a1c 100%);
+  min-height: 100vh;
+  padding: 18px 12px 30px 12px;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* estrelas de fundo (pontos via box-shadow, sem imagem) */
+.stars {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  overflow: hidden;
+  z-index: 0;
+  pointer-events: none;
+}
+.stars span {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #ffffff;
+  border-radius: 50%;
+  opacity: .8;
+  -webkit-animation: twinkle 3s infinite ease-in-out;
+  animation: twinkle 3s infinite ease-in-out;
+}
+.s1{top:8%;left:12%}.s2{top:16%;left:80%}.s3{top:26%;left:30%;width:3px;height:3px}
+.s4{top:33%;left:66%}.s5{top:44%;left:8%}.s6{top:52%;left:90%;width:3px;height:3px}
+.s7{top:64%;left:22%}.s8{top:72%;left:74%}.s9{top:82%;left:44%}.s10{top:88%;left:88%}
+.s11{top:12%;left:50%}.s12{top:60%;left:54%}
+.s2,.s6,.s10{-webkit-animation-delay:.7s;animation-delay:.7s}
+.s3,.s7,.s11{-webkit-animation-delay:1.4s;animation-delay:1.4s}
+.s4,.s8,.s12{-webkit-animation-delay:2.1s;animation-delay:2.1s}
+@-webkit-keyframes twinkle{0%,100%{opacity:.25;-webkit-transform:scale(.7)}50%{opacity:1;-webkit-transform:scale(1.2)}}
+@keyframes twinkle{0%,100%{opacity:.25;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
+
+/* ====== CARD ====== */
+.wrap {
+  position: relative;
+  z-index: 1;
+  max-width: 430px;
+  margin: 0 auto;
+  -webkit-animation: rise .5s ease-out both;
+  animation: rise .5s ease-out both;
+}
+@-webkit-keyframes rise{from{opacity:0;-webkit-transform:translateY(22px)}to{opacity:1;-webkit-transform:translateY(0)}}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:translateY(0)}}
+
+.card {
+  position: relative;
+  border-radius: 26px;
+  padding: 22px 20px 24px 20px;
+  border: 1px solid #3a4a86;
+  background-color: #101a44; /* fallback sólido */
+  background: #101a44 -webkit-linear-gradient(top, #16235c 0%, #0e153c 100%);
+  background: #101a44 -o-linear-gradient(top, #16235c 0%, #0e153c 100%);
+  background: #101a44 linear-gradient(to bottom, #16235c 0%, #0e153c 100%);
+  -webkit-box-shadow: 0 18px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+  box-shadow: 0 18px 44px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.08);
+  overflow: hidden;
+}
+/* linha de luz superior estilo painel */
+.card:before {
+  content: "";
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background-color: #ff8a3c;
+  background: -webkit-linear-gradient(left, #22d3ee 0%, #ff8a3c 55%, #ffd36b 100%);
+  background: -o-linear-gradient(left, #22d3ee 0%, #ff8a3c 55%, #ffd36b 100%);
+  background: linear-gradient(to right, #22d3ee 0%, #ff8a3c 55%, #ffd36b 100%);
+}
+
+/* ====== EYEBROW / SELO ====== */
+.eyebrow {
+  display: block;
+  text-align: center;
+  margin: 4px auto 12px auto;
+  padding: 6px 14px;
+  max-width: 260px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #bfeafc;
+  border: 1px solid #2f6f8a;
+  border-radius: 999px;
+  background-color: rgba(34,211,238,.10);
+}
+.eyebrow b { color: #ffd36b; letter-spacing: 2px; }
+
+/* ====== TÍTULO ====== */
+.title {
+  text-align: center;
+  margin: 0 0 4px 0;
+  font-size: 34px;
+  line-height: 1.02;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: .5px;
+  text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 0 22px rgba(120,180,255,.45);
+}
+.title .accent {
+  display: block;
+  font-size: 40px;
+  color: #ffb256;
+  background-color: transparent;
+  background: -webkit-linear-gradient(top, #ffd88a 0%, #ff8a3c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  text-align: center;
+  margin: 6px 0 14px 0;
+  font-size: 14px;
+  color: #a9bbe6;
+  letter-spacing: .4px;
+}
+
+/* ====== MEDALHÃO / MASCOTE ====== */
+.medal {
+  width: 200px; height: 200px;
+  margin: 4px auto 14px auto;
+  position: relative;
+  border-radius: 50%;
+  padding: 8px;
+  background-color: #0b1440; /* fallback */
+  background: -webkit-radial-gradient(50% 40%, circle, #24336f 0%, #0b1440 75%);
+  background: -o-radial-gradient(50% 40%, circle, #24336f 0%, #0b1440 75%);
+  background: radial-gradient(circle at 50% 40%, #24336f 0%, #0b1440 75%);
+  border: 3px solid #3f56a8;
+  -webkit-box-shadow: 0 0 0 6px rgba(34,211,238,.10), 0 10px 26px rgba(0,0,0,.5), inset 0 2px 10px rgba(255,255,255,.10);
+  box-shadow: 0 0 0 6px rgba(34,211,238,.10), 0 10px 26px rgba(0,0,0,.5), inset 0 2px 10px rgba(255,255,255,.10);
+}
+.medal svg { display: block; width: 100%; height: 100%; }
+.floaty {
+  -webkit-animation: floaty 4s ease-in-out infinite;
+  animation: floaty 4s ease-in-out infinite;
+}
+@-webkit-keyframes floaty{0%,100%{-webkit-transform:translateY(0)}50%{-webkit-transform:translateY(-6px)}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+
+/* ====== HISTÓRIA ====== */
+.story {
+  text-align: center;
+  margin: 2px 8px 18px 8px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: #d7e2ff;
+}
+.story b { color: #ffd36b; }
+
+/* ====== CAMPO DE NOME ====== */
+.field { margin: 0 2px 14px 2px; }
+.field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #8fd7ee;
+  margin: 0 0 6px 4px;
+}
+.field .box {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+  border-radius: 14px;
+  border: 2px solid #33468f;
+  background-color: #0a1236;
+  padding: 2px 4px 2px 12px;
+  -webkit-box-shadow: inset 0 2px 8px rgba(0,0,0,.5);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.5);
+}
+.field .box .ic {
+  font-size: 18px;
+  margin-right: 6px;
+  color: #ffb256;
+}
+.field input {
+  -webkit-box-flex: 1;
+  -webkit-flex: 1 1 auto;
+  flex: 1 1 auto;
+  width: 10px; /* base pequena; flex cresce. evita overflow em flex */
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #ffffff;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 16px;
+  padding: 12px 6px;
+}
+.field input::-webkit-input-placeholder { color: #6c7fb5; }
+.field input::-moz-placeholder { color: #6c7fb5; }
+
+/* ====== BOTÃO ====== */
+.cta {
+  display: block;
+  width: 100%;
+  border: 0;
+  cursor: pointer;
+  border-radius: 16px;
+  padding: 17px 18px;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #3a1500;
+  background-color: #ff8a3c; /* fallback */
+  background: -webkit-linear-gradient(top, #ffd36b 0%, #ff8a3c 55%, #f2701f 100%);
+  background: -o-linear-gradient(top, #ffd36b 0%, #ff8a3c 55%, #f2701f 100%);
+  background: linear-gradient(to bottom, #ffd36b 0%, #ff8a3c 55%, #f2701f 100%);
+  -webkit-box-shadow: 0 8px 0 #b8500f, 0 14px 22px rgba(242,112,31,.45), inset 0 2px 0 rgba(255,255,255,.55);
+  box-shadow: 0 8px 0 #b8500f, 0 14px 22px rgba(242,112,31,.45), inset 0 2px 0 rgba(255,255,255,.55);
+  -webkit-transition: -webkit-transform .12s ease, box-shadow .12s ease;
+  -o-transition: transform .12s ease, box-shadow .12s ease;
+  transition: transform .12s ease, box-shadow .12s ease;
+  -webkit-animation: pulse 2.2s ease-in-out infinite;
+  animation: pulse 2.2s ease-in-out infinite;
+}
+.cta:hover { -webkit-transform: translateY(-1px); -ms-transform: translateY(-1px); transform: translateY(-1px); }
+.cta:active {
+  -webkit-transform: translateY(6px);
+  -ms-transform: translateY(6px);
+  transform: translateY(6px);
+  -webkit-box-shadow: 0 2px 0 #b8500f, 0 6px 12px rgba(242,112,31,.4), inset 0 2px 0 rgba(255,255,255,.5);
+  box-shadow: 0 2px 0 #b8500f, 0 6px 12px rgba(242,112,31,.4), inset 0 2px 0 rgba(255,255,255,.5);
+}
+@-webkit-keyframes pulse{0%,100%{-webkit-box-shadow:0 8px 0 #b8500f,0 14px 22px rgba(242,112,31,.45),inset 0 2px 0 rgba(255,255,255,.55)}50%{-webkit-box-shadow:0 8px 0 #b8500f,0 14px 30px rgba(255,170,80,.75),inset 0 2px 0 rgba(255,255,255,.55)}}
+@keyframes pulse{0%,100%{box-shadow:0 8px 0 #b8500f,0 14px 22px rgba(242,112,31,.45),inset 0 2px 0 rgba(255,255,255,.55)}50%{box-shadow:0 8px 0 #b8500f,0 14px 30px rgba(255,170,80,.75),inset 0 2px 0 rgba(255,255,255,.55)}}
+.cta .rk { font-size: 20px; }
+
+.voice {
+  display: block;
+  width: 100%;
+  margin: 10px 0 0 0;
+  border: 1px solid #33468f;
+  background-color: rgba(34,211,238,.08);
+  color: #bfeafc;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* ====== TRILHA / RODAPÉ ====== */
+.trail-label {
+  text-align: center;
+  margin: 22px 0 12px 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #7f93c8;
+}
+.trail {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  align-items: flex-start;
+  position: relative;
+  padding: 0 6px;
+}
+.trail:before {
+  content: "";
+  position: absolute;
+  top: 27px; left: 40px; right: 40px; height: 3px;
+  background-color: #33468f;
+  background: -webkit-linear-gradient(left, #22d3ee, #ff8a3c);
+  background: -o-linear-gradient(left, #22d3ee, #ff8a3c);
+  background: linear-gradient(to right, #22d3ee, #ff8a3c);
+  border-radius: 3px;
+  z-index: 0;
+}
+.stop {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  width: 33%;
+}
+.stop .dot {
+  width: 54px; height: 54px;
+  margin: 0 auto 6px auto;
+  border-radius: 50%;
+  border: 2px solid #4a63c0;
+  background-color: #16235c; /* fallback */
+  background: -webkit-radial-gradient(50% 35%, circle, #2b3f8f 0%, #10184a 80%);
+  background: -o-radial-gradient(50% 35%, circle, #2b3f8f 0%, #10184a 80%);
+  background: radial-gradient(circle at 50% 35%, #2b3f8f 0%, #10184a 80%);
+  color: #ffffff;
+  font-size: 22px;
+  font-weight: 800;
+  line-height: 50px;
+  -webkit-box-shadow: 0 6px 14px rgba(0,0,0,.45), inset 0 2px 5px rgba(255,255,255,.15);
+  box-shadow: 0 6px 14px rgba(0,0,0,.45), inset 0 2px 5px rgba(255,255,255,.15);
+}
+.stop .nm {
+  display: block;
+  font-size: 11px;
+  color: #b8c6ee;
+  line-height: 1.3;
+}
+.stop .em { display: block; font-size: 15px; margin-bottom: 1px; }
+
+.footnote {
+  text-align: center;
+  margin: 18px 0 0 0;
+  font-size: 11px;
+  color: #6a7cae;
+  letter-spacing: .5px;
+}
+</style>
+</head>
+<body>
+
+<div class="stars">
+  <span class="s1"></span><span class="s2"></span><span class="s3"></span>
+  <span class="s4"></span><span class="s5"></span><span class="s6"></span>
+  <span class="s7"></span><span class="s8"></span><span class="s9"></span>
+  <span class="s10"></span><span class="s11"></span><span class="s12"></span>
+</div>
+
+<div class="wrap">
+  <div class="card">
+
+    <!-- 1. SELO / EYEBROW -->
+    <span class="eyebrow">Coleção <b>Exploradores do Cosmos</b></span>
+
+    <!-- 2. TÍTULO + SUBTÍTULO -->
+    <h1 class="title">MISSÃO<span class="accent">ESPACIAL</span></h1>
+    <p class="subtitle">Estação Órbita &#9733; Matemática &amp; Ciências</p>
+
+    <!-- 3. MASCOTE EM SVG (astronauta na vigia) -->
+    <div class="medal">
+      <svg class="floaty" viewBox="0 0 200 200" width="200" height="200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Astronauta olhando pela vigia da nave">
+        <defs>
+          <radialGradient id="space" cx="50%" cy="42%" r="60%">
+            <stop offset="0%" stop-color="#243a86"/>
+            <stop offset="60%" stop-color="#101a4e"/>
+            <stop offset="100%" stop-color="#060a24"/>
+          </radialGradient>
+          <linearGradient id="visor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#7fe9ff"/>
+            <stop offset="55%" stop-color="#2a6fd6"/>
+            <stop offset="100%" stop-color="#123a8a"/>
+          </linearGradient>
+          <linearGradient id="planet" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#ffd36b"/>
+            <stop offset="100%" stop-color="#ff7a2f"/>
+          </linearGradient>
+          <linearGradient id="ring" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#22d3ee"/>
+            <stop offset="100%" stop-color="#8f7bff"/>
+          </linearGradient>
+        </defs>
+
+        <!-- interior espacial da vigia -->
+        <circle cx="100" cy="100" r="94" fill="url(#space)"/>
+        <!-- estrelinhas dentro -->
+        <circle cx="46" cy="44" r="2.2" fill="#ffffff"/>
+        <circle cx="150" cy="52" r="1.8" fill="#cfe6ff"/>
+        <circle cx="160" cy="120" r="2.4" fill="#ffffff"/>
+        <circle cx="40" cy="120" r="1.7" fill="#cfe6ff"/>
+        <circle cx="120" cy="30" r="1.6" fill="#ffffff"/>
+
+        <!-- planeta anelado ao fundo -->
+        <g>
+          <circle cx="150" cy="66" r="20" fill="url(#planet)"/>
+          <ellipse cx="150" cy="66" rx="30" ry="9" fill="none" stroke="url(#ring)" stroke-width="4" opacity="0.9" transform="rotate(-18 150 66)"/>
+          <circle cx="144" cy="60" r="4" fill="#ffe6a8" opacity=".7"/>
+        </g>
+
+        <!-- ASTRONAUTA -->
+        <g>
+          <!-- corpo/traje -->
+          <path d="M62 200 Q62 150 100 150 Q138 150 138 200 Z" fill="#f2f6ff"/>
+          <path d="M62 200 Q62 150 100 150 Q138 150 138 200 Z" fill="none" stroke="#cdd8f0" stroke-width="2"/>
+          <!-- painel peito -->
+          <rect x="88" y="164" width="24" height="15" rx="3" fill="#1c2a63"/>
+          <circle cx="94" cy="171" r="2" fill="#22d3ee"/>
+          <circle cx="101" cy="171" r="2" fill="#ffd36b"/>
+          <circle cx="108" cy="171" r="2" fill="#ff7a2f"/>
+          <!-- capacete -->
+          <circle cx="100" cy="112" r="42" fill="#ffffff"/>
+          <circle cx="100" cy="112" r="42" fill="none" stroke="#cdd8f0" stroke-width="2"/>
+          <!-- visor -->
+          <circle cx="100" cy="112" r="32" fill="url(#visor)"/>
+          <path d="M78 100 Q100 86 122 100" fill="none" stroke="#bfefff" stroke-width="3" stroke-linecap="round" opacity=".8"/>
+          <!-- carinha refletida -->
+          <circle cx="90" cy="112" r="4.5" fill="#0a2350"/>
+          <circle cx="110" cy="112" r="4.5" fill="#0a2350"/>
+          <circle cx="88.5" cy="110.5" r="1.4" fill="#ffffff"/>
+          <circle cx="108.5" cy="110.5" r="1.4" fill="#ffffff"/>
+          <path d="M92 124 Q100 131 108 124" fill="none" stroke="#0a2350" stroke-width="3" stroke-linecap="round"/>
+          <circle cx="83" cy="122" r="3.5" fill="#ff9bb0" opacity=".55"/>
+          <circle cx="117" cy="122" r="3.5" fill="#ff9bb0" opacity=".55"/>
+          <!-- antena -->
+          <line x1="100" y1="70" x2="100" y2="58" stroke="#cdd8f0" stroke-width="3"/>
+          <circle cx="100" cy="55" r="4" fill="#ff7a2f"/>
+        </g>
+      </svg>
+    </div>
+
+    <!-- 4. HISTÓRIA / ENREDO -->
+    <p class="story">A nave <b>Órbita&nbsp;7</b> precisa de um novo comandante!
+      Resolva os desafios de cada planeta e leve a tripulação de volta pra casa. &#10024;</p>
+
+    <!-- 5. CAMPO NOME -->
+    <div class="field">
+      <label for="nome">Nome do comandante</label>
+      <div class="box">
+        <span class="ic">&#9998;</span>
+        <input id="nome" type="text" placeholder="Digite seu nome..." autocomplete="off">
+      </div>
+    </div>
+
+    <!-- 6. BOTÃO -->
+    <button type="button" class="cta"><span class="rk">&#128640;</span>&nbsp; Iniciar Missão</button>
+    <button type="button" class="voice">&#128266; Ouvir instruções</button>
+
+    <!-- 7. TRILHA -->
+    <p class="trail-label">Sua rota pelo espaço</p>
+    <div class="trail">
+      <div class="stop">
+        <div class="dot">1</div>
+        <span class="nm"><span class="em">&#9733;</span>Decolagem</span>
+      </div>
+      <div class="stop">
+        <div class="dot">2</div>
+        <span class="nm"><span class="em">&#10024;</span>Cinturão<br>de Asteroides</span>
+      </div>
+      <div class="stop">
+        <div class="dot">3</div>
+        <span class="nm"><span class="em">&#127942;</span>Planeta<br>Final</span>
+      </div>
+    </div>
+
+    <p class="footnote">E.B.M. Vidal Ramos &#9733; Ilhas do Saber</p>
+
+  </div>
+</div>
+
+</body>
+</html>

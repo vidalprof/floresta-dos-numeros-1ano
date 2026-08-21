@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>O Grimório Encantado</title>
+<style>
+* { -webkit-box-sizing: border-box; box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Georgia', 'Times New Roman', serif;
+  background: #1a0f2b;
+  background: -webkit-radial-gradient(top, #2c1a4d 0%, #1a0f2b 55%, #0d0718 100%);
+  background: -o-radial-gradient(top, #2c1a4d 0%, #1a0f2b 55%, #0d0718 100%);
+  background: radial-gradient(ellipse at top, #2c1a4d 0%, #1a0f2b 55%, #0d0718 100%);
+  min-height: 100%;
+  padding: 18px 12px 30px 12px;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* faíscas de fundo */
+.ceu { position: relative; max-width: 430px; margin: 0 auto; }
+.faisca {
+  position: absolute; color: #ffe9a8; font-size: 13px; opacity: .6;
+  -webkit-animation: pisca 3.4s ease-in-out infinite;
+  animation: pisca 3.4s ease-in-out infinite;
+}
+.f1 { top: -6px; left: 8%; }
+.f2 { top: 40px; right: 6%; font-size: 17px; -webkit-animation-delay: .8s; animation-delay: .8s; }
+.f3 { top: 150px; left: 3%; font-size: 11px; -webkit-animation-delay: 1.6s; animation-delay: 1.6s; }
+.f4 { top: 260px; right: 4%; -webkit-animation-delay: 2.2s; animation-delay: 2.2s; }
+@-webkit-keyframes pisca { 0%,100%{ opacity:.15; -webkit-transform:scale(.7);} 50%{ opacity:.9; -webkit-transform:scale(1.15);} }
+@keyframes pisca { 0%,100%{ opacity:.15; transform:scale(.7);} 50%{ opacity:.9; transform:scale(1.15);} }
+
+/* CARD = capa do livro iluminado */
+.card {
+  position: relative;
+  max-width: 430px;
+  margin: 0 auto;
+  background: #3a2417;
+  background: -webkit-linear-gradient(top, #4a2f1d 0%, #33200f 100%);
+  background: -o-linear-gradient(top, #4a2f1d 0%, #33200f 100%);
+  background: linear-gradient(to bottom, #4a2f1d 0%, #33200f 100%);
+  border: 3px solid #b8892b;
+  border-radius: 14px;
+  padding: 8px;
+  -webkit-box-shadow: 0 18px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,225,150,.25) inset;
+  box-shadow: 0 18px 40px rgba(0,0,0,.6), 0 0 0 1px rgba(255,225,150,.25) inset;
+  overflow: hidden;
+}
+/* moldura dourada entrelaçada interna */
+.pergaminho {
+  position: relative;
+  border: 2px solid #d9a441;
+  border-radius: 9px;
+  background: #f4e6c8;
+  background: -webkit-linear-gradient(top, #fbf1d8 0%, #efdcb4 100%);
+  background: -o-linear-gradient(top, #fbf1d8 0%, #efdcb4 100%);
+  background: linear-gradient(to bottom, #fbf1d8 0%, #efdcb4 100%);
+  padding: 16px 16px 18px 16px;
+  -webkit-box-shadow: 0 0 22px rgba(90,50,10,.35) inset;
+  box-shadow: 0 0 22px rgba(90,50,10,.35) inset;
+  text-align: center;
+}
+/* cantos ornamentais dourados */
+.canto { position: absolute; width: 34px; height: 34px; }
+.canto svg { display: block; width: 100%; height: 100%; }
+.c-tl { top: -1px; left: -1px; }
+.c-tr { top: -1px; right: -1px; -webkit-transform: scaleX(-1); transform: scaleX(-1); }
+.c-bl { bottom: -1px; left: -1px; -webkit-transform: scaleY(-1); transform: scaleY(-1); }
+.c-br { bottom: -1px; right: -1px; -webkit-transform: scale(-1,-1); transform: scale(-1,-1); }
+
+/* eyebrow / selo */
+.selo {
+  display: inline-block;
+  font-family: 'Georgia', serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #6b4a12;
+  background: #f0d998;
+  background: -webkit-linear-gradient(top, #ffedb8, #e6c473);
+  background: linear-gradient(to bottom, #ffedb8, #e6c473);
+  border: 1px solid #b8892b;
+  border-radius: 20px;
+  padding: 4px 14px;
+  margin: 2px 0 8px 0;
+  -webkit-box-shadow: 0 1px 0 #fff6da inset, 0 2px 4px rgba(0,0,0,.2);
+  box-shadow: 0 1px 0 #fff6da inset, 0 2px 4px rgba(0,0,0,.2);
+}
+.selo b { color: #7a2350; }
+
+/* título com capitular */
+.titulo {
+  margin: 2px 0 0 0;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 33px;
+  line-height: 1.05;
+  font-weight: bold;
+  color: #4a1f5e;
+  text-shadow: 0 1px 0 #fff8e6, 0 2px 3px rgba(120,70,20,.25);
+}
+.cap {
+  color: #8a1c3d;
+  font-size: 30px;
+  vertical-align: baseline;
+}
+.subt {
+  margin: 6px 0 4px 0;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #6b4a12;
+}
+.filete {
+  width: 62%; height: 12px; margin: 8px auto 4px auto;
+}
+.filete svg { display: block; width: 100%; height: 100%; }
+
+/* mascote em medalhão */
+.medalhao {
+  position: relative;
+  width: 150px; height: 150px;
+  margin: 6px auto 4px auto;
+  border-radius: 50%;
+  background: #2b1740;
+  background: -webkit-radial-gradient(#3d2159, #1c1030);
+  background: radial-gradient(#3d2159, #1c1030);
+  border: 4px solid #d9a441;
+  -webkit-box-shadow: 0 0 0 2px #7a521a, 0 6px 16px rgba(0,0,0,.45), 0 0 18px rgba(255,210,120,.35);
+  box-shadow: 0 0 0 2px #7a521a, 0 6px 16px rgba(0,0,0,.45), 0 0 18px rgba(255,210,120,.35);
+  overflow: hidden;
+  -webkit-animation: flutua 4s ease-in-out infinite;
+  animation: flutua 4s ease-in-out infinite;
+}
+.medalhao svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+@-webkit-keyframes flutua { 0%,100%{ -webkit-transform: translateY(0);} 50%{ -webkit-transform: translateY(-6px);} }
+@keyframes flutua { 0%,100%{ transform: translateY(0);} 50%{ transform: translateY(-6px);} }
+
+/* história */
+.historia {
+  font-family: 'Georgia', serif;
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: #4a3312;
+  margin: 8px 6px 12px 6px;
+}
+.historia .g { color: #8a1c3d; font-weight: bold; }
+
+/* campo nome */
+.campo-rot {
+  display: block;
+  text-align: left;
+  font-size: 12px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #6b4a12;
+  margin: 0 2px 4px 4px;
+}
+.campo {
+  width: 100%;
+  font-family: 'Georgia', serif;
+  font-size: 16px;
+  color: #3a260c;
+  padding: 11px 14px;
+  border: 2px solid #c39a45;
+  border-radius: 10px;
+  background: #fffaec;
+  -webkit-box-shadow: 0 2px 5px rgba(90,50,10,.18) inset;
+  box-shadow: 0 2px 5px rgba(90,50,10,.18) inset;
+  outline: none;
+  margin-bottom: 14px;
+}
+.campo:focus { border-color: #8a1c3d; }
+
+/* botão começar */
+.botao {
+  display: block;
+  width: 100%;
+  cursor: pointer;
+  font-family: 'Georgia', serif;
+  font-size: 19px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  color: #3a260c;
+  text-shadow: 0 1px 0 #ffefb8;
+  padding: 15px 10px;
+  border: 2px solid #a06a12;
+  border-radius: 12px;
+  background: #e6b53c;
+  background: -webkit-linear-gradient(top, #ffe38a 0%, #e6a92e 50%, #c98a1c 100%);
+  background: -o-linear-gradient(top, #ffe38a 0%, #e6a92e 50%, #c98a1c 100%);
+  background: linear-gradient(to bottom, #ffe38a 0%, #e6a92e 50%, #c98a1c 100%);
+  -webkit-box-shadow: 0 1px 0 #fff6cf inset, 0 -3px 6px rgba(120,70,0,.3) inset, 0 6px 0 #8a5c10, 0 10px 16px rgba(0,0,0,.35);
+  box-shadow: 0 1px 0 #fff6cf inset, 0 -3px 6px rgba(120,70,0,.3) inset, 0 6px 0 #8a5c10, 0 10px 16px rgba(0,0,0,.35);
+  -webkit-transition: -webkit-transform .08s ease, -webkit-box-shadow .08s ease;
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.botao:active {
+  -webkit-transform: translateY(4px);
+  transform: translateY(4px);
+  -webkit-box-shadow: 0 1px 0 #fff6cf inset, 0 2px 0 #8a5c10, 0 4px 8px rgba(0,0,0,.35);
+  box-shadow: 0 1px 0 #fff6cf inset, 0 2px 0 #8a5c10, 0 4px 8px rgba(0,0,0,.35);
+}
+.som {
+  margin: 10px 0 2px 0;
+  font-size: 13px;
+  font-style: italic;
+  color: #7a5518;
+}
+
+/* trilha com 3 paradas */
+.trilha {
+  margin: 14px 2px 0 2px;
+  padding-top: 12px;
+  border-top: 1px dashed #c39a45;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-box-pack: justify;
+  -webkit-justify-content: space-between;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -webkit-align-items: center;
+  align-items: center;
+}
+.parada { text-align: center; width: 30%; }
+.moeda {
+  width: 44px; height: 44px; line-height: 40px;
+  margin: 0 auto 5px auto;
+  font-family: 'Georgia', serif;
+  font-size: 20px; font-weight: bold;
+  color: #4a2f08;
+  text-shadow: 0 1px 0 #fff2c4;
+  border: 2px solid #a06a12;
+  border-radius: 50%;
+  background: #edc659;
+  background: -webkit-radial-gradient(#ffe89a, #d3a02e);
+  background: radial-gradient(#ffe89a, #d3a02e);
+  -webkit-box-shadow: 0 3px 6px rgba(0,0,0,.3), 0 1px 0 #fff4cc inset;
+  box-shadow: 0 3px 6px rgba(0,0,0,.3), 0 1px 0 #fff4cc inset;
+}
+.parada.travada .moeda {
+  color: #6b5a3a;
+  background: #cdbd94;
+  background: -webkit-radial-gradient(#e3d6b0, #b7a577);
+  background: radial-gradient(#e3d6b0, #b7a577);
+  border-color: #8f7c4e;
+}
+.parada b { display: block; font-size: 11px; color: #6b4a12; font-weight: normal; letter-spacing: .5px; }
+.tracin { color: #c39a45; font-size: 18px; padding-bottom: 22px; }
+
+.rodape { margin-top: 12px; font-size: 10.5px; color: #8a6a3a; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<div class="ceu">
+  <span class="faisca f1">&#10022;</span>
+  <span class="faisca f2">&#10024;</span>
+  <span class="faisca f3">&#11088;</span>
+  <span class="faisca f4">&#10022;</span>
+
+  <div class="card">
+    <div class="pergaminho">
+
+      <!-- cantos ornamentais -->
+      <span class="canto c-tl">
+        <svg viewBox="0 0 34 34"><path d="M2 32 L2 6 Q2 2 6 2 L32 2" fill="none" stroke="#c98f1e" stroke-width="2.5"/><path d="M8 8 Q8 8 20 8 Q8 8 8 20" fill="none" stroke="#8a1c3d" stroke-width="2"/><circle cx="8" cy="8" r="2.4" fill="#8a1c3d"/></svg>
+      </span>
+      <span class="canto c-tr">
+        <svg viewBox="0 0 34 34"><path d="M2 32 L2 6 Q2 2 6 2 L32 2" fill="none" stroke="#c98f1e" stroke-width="2.5"/><path d="M8 8 Q8 8 20 8 Q8 8 8 20" fill="none" stroke="#2f6b4a" stroke-width="2"/><circle cx="8" cy="8" r="2.4" fill="#2f6b4a"/></svg>
+      </span>
+      <span class="canto c-bl">
+        <svg viewBox="0 0 34 34"><path d="M2 32 L2 6 Q2 2 6 2 L32 2" fill="none" stroke="#c98f1e" stroke-width="2.5"/><path d="M8 8 Q8 8 20 8 Q8 8 8 20" fill="none" stroke="#2f4a8a" stroke-width="2"/><circle cx="8" cy="8" r="2.4" fill="#2f4a8a"/></svg>
+      </span>
+      <span class="canto c-br">
+        <svg viewBox="0 0 34 34"><path d="M2 32 L2 6 Q2 2 6 2 L32 2" fill="none" stroke="#c98f1e" stroke-width="2.5"/><path d="M8 8 Q8 8 20 8 Q8 8 8 20" fill="none" stroke="#8a1c3d" stroke-width="2"/><circle cx="8" cy="8" r="2.4" fill="#8a1c3d"/></svg>
+      </span>
+
+      <!-- 1. selo -->
+      <span class="selo">Coleção <b>Contos de Luz</b></span>
+
+      <!-- 2. título + subtítulo -->
+      <h1 class="titulo"><span class="cap">O</span> Grimório<br>Encantado</h1>
+      <div class="filete">
+        <svg viewBox="0 0 200 12" preserveAspectRatio="none"><path d="M100 6 m-70 0 q35 -9 70 0 q35 9 70 0" fill="none" stroke="#c98f1e" stroke-width="2"/><circle cx="100" cy="6" r="3" fill="#8a1c3d"/><circle cx="30" cy="6" r="2" fill="#c98f1e"/><circle cx="170" cy="6" r="2" fill="#c98f1e"/></svg>
+      </div>
+      <p class="subt">Onde cada palavra acende uma estrela</p>
+
+      <!-- 3. mascote SVG em medalhão -->
+      <div class="medalhao">
+        <svg viewBox="0 0 150 150">
+          <defs>
+            <radialGradient id="glow" cx="50%" cy="38%" r="65%">
+              <stop offset="0%" stop-color="#5a3a7a"/>
+              <stop offset="100%" stop-color="#1c1030"/>
+            </radialGradient>
+          </defs>
+          <rect width="150" height="150" fill="url(#glow)"/>
+          <g opacity="0.5">
+            <path d="M75 75 L75 0 L110 8 Z" fill="#3a5a9a"/>
+            <path d="M75 75 L110 8 L145 55 Z" fill="#2f6b52"/>
+            <path d="M75 75 L145 55 L138 120 Z" fill="#7a2350"/>
+            <path d="M75 75 L0 60 L8 12 Z" fill="#6a3a7a"/>
+          </g>
+          <g fill="#ffe9a8">
+            <path d="M30 30 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2 z"/>
+            <path d="M120 40 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5 z"/>
+            <path d="M112 108 l1.5 4 4 1.5 -4 1.5 -1.5 4 -1.5 -4 -4 -1.5 4 -1.5 z"/>
+          </g>
+          <path d="M75 118 C55 106 40 108 34 110 L34 58 C40 56 56 54 75 66 Z" fill="#7a2350" stroke="#d9a441" stroke-width="2.5"/>
+          <path d="M75 118 C95 106 110 108 116 110 L116 58 C110 56 94 54 75 66 Z" fill="#2f4a8a" stroke="#d9a441" stroke-width="2.5"/>
+          <path d="M75 66 L75 118" stroke="#f4e6c8" stroke-width="4"/>
+          <path d="M46 66 q29 -8 29 2 M46 76 q29 -8 29 2 M46 86 q29 -8 29 2" stroke="#f0dcb4" stroke-width="1.6" fill="none" opacity=".8"/>
+          <path d="M104 66 q-29 -8 -29 2 M104 76 q-29 -8 -29 2 M104 86 q-29 -8 -29 2" stroke="#f0dcb4" stroke-width="1.6" fill="none" opacity=".8"/>
+          <circle cx="63" cy="86" r="3.6" fill="#3a260c"/>
+          <circle cx="87" cy="86" r="3.6" fill="#3a260c"/>
+          <circle cx="64.2" cy="84.8" r="1.1" fill="#fff"/>
+          <circle cx="88.2" cy="84.8" r="1.1" fill="#fff"/>
+          <path d="M66 96 q9 8 18 0" fill="none" stroke="#8a1c3d" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="57" cy="93" r="3" fill="#e88aa0" opacity=".6"/>
+          <circle cx="93" cy="93" r="3" fill="#e88aa0" opacity=".6"/>
+          <path d="M75 60 l2 6 6 2 -6 2 -2 6 -2 -6 -6 -2 6 -2 z" fill="#ffe9a8"/>
+          <rect x="72.5" y="118" width="5" height="16" fill="#d9a441"/>
+          <path d="M72.5 134 l2.5 4 2.5 -4 z" fill="#c98f1e"/>
+        </svg>
+      </div>
+
+      <!-- 4. história -->
+      <p class="historia">O velho livro despertou e suas palavras fugiram para o céu! Ajude o <span class="g">Grimório</span> a reunir as letras perdidas e devolver a magia a cada página.</p>
+
+      <!-- 5. campo nome -->
+      <label class="campo-rot" for="nome">Escreva teu nome, jovem leitor(a):</label>
+      <input class="campo" id="nome" type="text" placeholder="Ex.: Helena, Miguel...">
+
+      <!-- 6. botão -->
+      <button type="button" class="botao">Abrir o Grimório &#9654;</button>
+      <p class="som">&#128266; Toque para ouvir a primeira página</p>
+
+      <!-- 7. trilha 3 paradas -->
+      <div class="trilha">
+        <div class="parada">
+          <div class="moeda">1</div>
+          <b>As Letras</b>
+        </div>
+        <span class="tracin">&#10022;</span>
+        <div class="parada travada">
+          <div class="moeda">2</div>
+          <b>As Palavras</b>
+        </div>
+        <span class="tracin">&#10022;</span>
+        <div class="parada travada">
+          <div class="moeda">3</div>
+          <b>O Feitiço</b>
+        </div>
+      </div>
+
+      <p class="rodape">&#10024; E.B.M. VIDAL RAMOS &#183; ERA UMA VEZ... &#10024;</p>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

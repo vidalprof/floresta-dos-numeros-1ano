@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — arrastar até o lugar</title>
+<!-- ============================================================
+     PEÇA: ARRASTAR ATÉ O LUGAR (levar cada parte ao SEU lugar na figura)
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     A diferença para a peça ORDENAR: lá o lugar é uma FILA (a ordem é o
+     conteúdo); aqui o lugar é uma POSIÇÃO NA FIGURA — o telhado em cima, a
+     porta embaixo, a janela na parede. O gesto É o conceito espacial.
+     A figura é desenhada com divs (nenhuma imagem externa), então a peça
+     roda sozinha: numa atividade de verdade, a figura vira arte de IA e as
+     vagas continuam iguais.
+
+     Armadilhas desta mecânica (_padrao/DINAMICAS.md, linha "Arrastar"),
+     cada uma já paga em atividade de verdade:
+       · TRÊS caminhos: mouse, dedo (arrasto real) e TOQUE SIMPLES
+         (tocar a peça e depois tocar o lugar) — no celular da escola nem
+         toda criança consegue arrastar;
+       · NUNCA `preventDefault` no `touchstart` — mata o toque no celular.
+         Aqui ele mora só no `touchmove`, e só depois que o dedo ANDOU;
+       · guarda contra o evento de mouse FANTASMA que o celular dispara
+         depois do toque (`ultimoToque`): sem ele o clique fantasma
+         desmarcava a peça que a criança acabara de escolher. Defeito pego
+         DUAS vezes pelo Marcos;
+       · a VAGA ACENDE quando a peça passa por cima (afordância): a criança
+         precisa saber onde pode soltar ANTES de soltar. Acende a vaga que
+         está embaixo do dedo — qualquer uma, não só a certa: acender só a
+         certa seria entregar a resposta;
+       · ⭐ VER DESTINO (EdiLIM, ago/2026): no 2º erro da MESMA peça o lugar
+         dela passa a se mostrar — contorno tracejado que pulsa devagar + a
+         SOMBRA da peça desenhada dentro da vaga; no 3º erro acende de vez.
+         É andaime que cresce SEM UMA PALAVRA ESCRITA (serve a quem não lê) e
+         entra JUNTO com a dica de texto, nunca no lugar dela. O campo
+         opcional `ver:1` na gaveta liga a sombra desde o começo (modo fácil);
+       · nunca trava: no 3º erro a peça vai sozinha para o lugar dela;
+       · erro não vira X vermelho nem a palavra "errou" — som grave curto,
+         a peça treme e o andaime CRESCE;
+       · `data-qa` publicado na peça E na vaga (a mesma chave nos dois), que
+         é como o auditor-jogador consegue terminar sozinho.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* ⚠️ a folga de 13px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.casa{position:relative;width:100%;max-width:260px;height:170px;margin:13px auto 4px;
+      border-radius:14px;overflow:hidden;background:#8fc4de;
+      background:-webkit-linear-gradient(top,#9ed3ea 0%,#cfeaf5 68%);
+      background:linear-gradient(to bottom,#9ed3ea 0%,#cfeaf5 68%);
+      box-shadow:0 5px 14px rgba(0,0,0,.3)}
+/* o chao e a parede sao DESENHO, nao alvo: entram antes das vagas no DOM
+   para que o dedo sempre encontre a VAGA por cima, nunca a parede.        */
+.grama{position:absolute;left:0;right:0;bottom:0;height:10px;background:#5aa04a}
+.parede{position:absolute;left:26.9%;top:45.9%;width:47.7%;height:48.2%;background:#f0dcb4;
+        border:3px solid #b99a6a;border-radius:4px}
+/* A VAGA. Vazia: contorno tracejado (forma, nao cor). Cheia: contorno
+   inteiro + o desenho dentro. `alvo` = a peca esta passando por cima.     */
+.cam{position:absolute;border:3px dashed #6b543a;border-radius:10px;
+     background:rgba(255,255,255,.28);cursor:pointer}
+.cam.livre{border-color:#33280a;background:rgba(255,255,255,.5)}
+/* ⭐ VER DESTINO — a ideia veio do EdiLIM (pesquisa ago/2026: quase toda pagina
+   dele deixa o AUTOR mostrar ou esconder a area de destino). Aqui ficou melhor
+   que o original: em vez de o professor decidir de antemao, o lugar certo se
+   mostra SOZINHO quando a crianca erra. E andaime que cresce sem UMA PALAVRA
+   escrita — serve exatamente para quem ainda nao le, que e o 1o ano em marco.
+   ⚠️ NADA ESSENCIAL SO NA COR: o nivel 1 e um contorno TRACEJADO que pulsa
+   devagar + a SOMBRA da peca (silhueta preta) desenhada dentro da vaga; o
+   nivel 2 e contorno INTEIRO e grosso, e a sombra fica mais escura. Quem nao
+   distingue amarelo de branco reconhece pelo TRACO e pela FORMA.
+   Entram ANTES do `.alvo` de proposito: quando o dedo passa por cima, o
+   "pode soltar aqui" e que tem de ganhar a tela.                            */
+.cam.dest{border-style:dashed;border-width:3px;border-color:#ffd54a;
+          background:rgba(255,213,74,.20);
+          -webkit-animation:destp 2.4s ease-in-out infinite;animation:destp 2.4s ease-in-out infinite}
+.cam.destf{border-style:solid;border-width:4px;border-color:#ffd54a;
+           background:rgba(255,213,74,.42);box-shadow:0 0 0 4px rgba(255,213,74,.45);
+           -webkit-animation:none;animation:none}
+@-webkit-keyframes destp{0%,100%{opacity:.62}50%{opacity:1}}
+@keyframes destp{0%,100%{opacity:.62}50%{opacity:1}}
+/* a SOMBRA DA PECA no lugar dela: o MESMO desenho da peca, achatado em preto
+   pelo filtro. Nao e figura nova nenhuma — e a propria peca virada sombra. */
+.camfan{position:absolute;left:8%;top:8%;right:8%;bottom:8%;pointer-events:none;
+        opacity:.30;-webkit-filter:brightness(0);filter:brightness(0)}
+.camfan.forte{opacity:.52}
+.cam.alvo{border-style:solid;border-color:#e8a020;background:rgba(255,213,74,.55);
+          box-shadow:0 0 0 4px rgba(255,213,74,.55)}
+.cam.ok{border-style:solid;border-color:#59c24b;background:transparent;box-shadow:none;cursor:default}
+/* a bandeja das pecas soltas */
+.banco{display:block;text-align:center;margin-top:6px}
+.pc{display:inline-block;vertical-align:top;background:#fffdf6;color:#221a12;border:0;
+    border-radius:14px;width:74px;height:70px;margin:5px 4px;padding:4px 3px 2px;cursor:pointer;
+    box-shadow:0 4px 0 #c9bda6;-webkit-user-select:none;user-select:none}
+.pc:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.pc.sel{background:#fff3c9;box-shadow:0 0 0 4px #ffd54a,0 4px 0 #c9a52f}
+.pc.usada{visibility:hidden;pointer-events:none}
+.pc.pisca{-webkit-animation:pisca .7s infinite;animation:pisca .7s infinite}
+.pc.treme{-webkit-animation:treme .32s;animation:treme .32s}
+.pnome{display:block;font-size:11px;font-weight:800;letter-spacing:.3px;line-height:1.1;margin-top:2px}
+@-webkit-keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@keyframes pisca{0%,100%{box-shadow:0 4px 0 #c9bda6}50%{box-shadow:0 0 0 5px #ffd54a}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+/* a sombra que segue o dedo/o mouse. pointer-events:none para nao roubar o
+   hit-test de quem esta embaixo (senao a vaga nunca acenderia).           */
+.somb{position:fixed;width:64px;height:48px;pointer-events:none;z-index:60;
+      -webkit-filter:drop-shadow(0 6px 8px rgba(0,0,0,.5));filter:drop-shadow(0 6px 8px rgba(0,0,0,.5))}
+/* ---- O DESENHO (o mesmo em cima da peca e dentro da vaga) ----
+   tudo em PORCENTAGEM: assim a MESMA funcao serve a peca pequena da
+   bandeja e a vaga grande da figura, sem redesenhar nada.                 */
+.fig{position:relative;display:block;width:100%;height:100%}
+/* ⚠️ a miniatura da bandeja e QUADRADA de proposito. Com ela ocupando toda a
+   largura do cartao (68x38) o sol virava um OVO e a janela um retangulo — a
+   crianca via na bandeja uma forma e na figura outra. Nenhum portao pega
+   isso: geometria certa, alvo grande, contraste ok, e o desenho errado. */
+.dpc{width:38px;height:38px;margin:0 auto}
+.dvg{height:100%}
+.pt{position:absolute}
+.ptelh{left:0;top:6%;width:100%;height:88%;background:#c0562f;
+       -webkit-clip-path:polygon(50% 0,100% 100%,0 100%);clip-path:polygon(50% 0,100% 100%,0 100%)}
+.pport{left:24%;top:6%;width:52%;height:94%;background:#8a5a2b;border:3px solid #63401f;
+       border-radius:40% 40% 0 0}
+.pmaca{left:60%;top:50%;width:8px;height:8px;border-radius:50%;background:#ffd54a}
+.pjan{left:10%;top:10%;width:80%;height:80%;background:#a9dcf0;border:4px solid #6b4a2f;
+      background-image:-webkit-linear-gradient(#6b4a2f,#6b4a2f),-webkit-linear-gradient(#6b4a2f,#6b4a2f);
+      background-image:linear-gradient(#6b4a2f,#6b4a2f),linear-gradient(#6b4a2f,#6b4a2f);
+      background-size:100% 4px,4px 100%;background-position:center,center;background-repeat:no-repeat}
+.psol{left:12%;top:12%;width:76%;height:76%;border-radius:50%;background:#ffd54a;
+      box-shadow:0 0 0 4px rgba(255,213,74,.5)}
+/* a medalha fecha a peca: e por ela que o auditor-jogador sabe que chegou ao
+   fim. A estrela vem do CSS — nao e emoji e nao entra na conta do contraste. */
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* tela baixa (projetor, janela do PC da escola): tudo encolhe junto para que
+   NADA que se toca saia da area visivel. */
+@media(max-height:500px){
+  .pc{width:70px;height:64px}
+  .dpc{width:34px;height:34px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ⚠️ O ASSUNTO DO EXEMPLO NAO PODE MORAR NO BALAO (licao ago/2026): a
+   crianca de outra atividade lia a historia de outra aula. O texto vira
+   GAVETA, com um padrao neutro que serve a qualquer conteudo — e assim o
+   aviso de "gaveta com conteudo de exemplo" passa a cobrir este caso. */
+var ENUN="Leve cada pe&#231;a ao <b>lugar dela</b> no desenho.";
+
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* LEVAR CADA PEÇA AO SEU LUGAR — a criança monta uma casinha: o telhado em
+   cima, a janela na parede, a porta no chão, o sol no céu. Conteúdo neutro
+   de propósito: trocar a tabela PARTES (chave, nome, e o retângulo da vaga
+   dentro da figura) adapta a peça a qualquer conteúdo — as partes do corpo,
+   as partes da planta, as peças de um mapa. */
+/* o retangulo da vaga vai em PORCENTAGEM da figura (nunca em px): assim a
+   casinha encolhe junto com a tela e a vaga continua no lugar certo. Nos
+   260x170 da tela normal isso da, em pixel: sol 44x44, telhado 152x50,
+   janela 46x44, porta 48x66 — todos acima dos 44px de alvo de dedo. */
+/* ⭐ CAMPO OPCIONAL `ver` — "VER DESTINO DESDE O COMECO" (EdiLIM, ago/2026).
+   Sem ele a peca se comporta como sempre: o destino so aparece no 2o erro.
+   Com `ver:1` numa parte, a sombra dela ja fica na vaga assim que a crianca
+   PEGA aquela peca — e o modo facil, para a 1a fase de uma atividade ou para
+   turma que ainda nao le. Campo NOVO e opcional: nenhuma atividade antiga
+   muda de comportamento, porque nenhuma delas escreve `ver`.               */
+var PARTES=[
+  {k:"sol",     n:"SOL",     x:0.8,  y:1.2,  w:16.9, h:25.9},
+  {k:"telhado", n:"TELHADO", x:21.5, y:15.3, w:58.5, h:29.4},
+  {k:"janela",  n:"JANELA",  x:30.8, y:51.8, w:17.7, h:25.9},
+  {k:"porta",   n:"PORTA",   x:53.1, y:55.3, w:18.5, h:38.8}
+];
+var DICAS=[
+  "Olhe o desenho: cada parte tem UM lugar. Onde fica o telhado de uma casa?",
+  "Olhe a figura: apareceu a <b>sombra</b> desta pe&#231;a no lugar dela. Leve a pe&#231;a at&#233; a sombra.",
+  "Deixa comigo: eu ponho esta e voc&#234; continua."
+];
+
+var telaAtual=null, barraP=null, casaEl=null;
+var vagas={}, pecas=[], postas=0, errosSeg=0, marcada=null, ger=0;
+/* ⭐ o estado do VER DESTINO: qual vaga esta se mostrando, com que forca
+   (1 = tracejado que pulsa, 2 = aceso de vez) e se veio de ERRO ou do modo
+   facil (`ver`). O de erro pertence a peca que errou; se a crianca troca de
+   peca, ele sai — senao a figura fica cheia de pistas velhas.              */
+var destK=null, destNivel=0, destErro=false;
+/* ⭐ O GUARDA DO MOUSE FANTASMA. O celular dispara mousedown/mouseup e um
+   CLIQUE falsos logo depois do toque; sem este carimbo eles desmarcavam a
+   peça que a criança tinha acabado de escolher. Pego DUAS vezes.        */
+var ultimoToque=0, pego=null, somb=null, px0=0, py0=0, moveu=false, fimArrasto=0;
+
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return telaAtual&&telaAtual.parentNode; }
+
+/* ---------- a ajuda é ESCRITA e DITA ----------
+   Quem lê ganha as duas coisas; quem não lê ganha pelo menos a voz. O `diz`
+   é do motor da atividade (voz GRAVADA, Edge TTS) e não existe na peça
+   solta — por isso a guarda. ⚠️ NUNCA a voz-robô do navegador direto: ela
+   do navegador está desligada de propósito e o portão `_qa/vozrobo.py`
+   reprova quem a chama.                                                    */
+function semTag(t){
+  var d=document.createElement("div");
+  d.innerHTML=String(t===undefined||t===null?"":t).replace(/<br\s*\/?>/gi," ");
+  return (d.textContent||d.innerText||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  var t=semTag(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* o andaime de TEXTO continua igual — o "ver destino" entra JUNTO com ele,
+   nunca no lugar dele. */
+function ajuda(txt){ mostraDica(txt); fala(txt); }
+
+/* ---------- o desenho, em porcentagem (serve na peça e na vaga) ---------- */
+function desenho(tipo,tam){
+  var d=el("div","fig "+tam);
+  if(tipo==="telhado"){ d.appendChild(el("div","pt ptelh","")); }
+  else if(tipo==="porta"){ d.appendChild(el("div","pt pport","")); d.appendChild(el("div","pt pmaca","")); }
+  else if(tipo==="janela"){ d.appendChild(el("div","pt pjan","")); }
+  else { d.appendChild(el("div","pt psol","")); }
+  return d;
+}
+
+/* ---------- a tela ---------- */
+function pecaLugar(){
+  ger++; limpa(); soltaSombra();
+  vagas={}; pecas=[]; postas=0; errosSeg=0; marcada=null;
+  destK=null; destNivel=0; destErro=false;
+  var t=el("div","tela"); telaAtual=t; setProg(t,0);
+  barraP=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CADA PE&#199;A, SEU LUGAR"));
+  c.appendChild(el("div","balao",ENUN));
+
+  casaEl=el("div","casa");
+  casaEl.appendChild(el("div","grama",""));
+  casaEl.appendChild(el("div","parede",""));
+  var i,p,v;
+  for(i=0;i<PARTES.length;i++){
+    p=PARTES[i];
+    v=el("div","cam");
+    v.style.left=p.x+"%"; v.style.top=p.y+"%";
+    v.style.width=p.w+"%"; v.style.height=p.h+"%";
+    /* a MESMA chave na peça e na vaga: é assim que o auditor-jogador
+       (_qa/jogador.js) consegue fechar a peça sozinho. */
+    v.setAttribute("data-qa",p.k);
+    v._k=p.k;
+    /* ⭐ modo facil pedido na gaveta: esta vaga ja nasce mostrando a sombra */
+    v._verf=!!p.ver;
+    v.onclick=cliqueVaga;
+    casaEl.appendChild(v);
+    vagas[p.k]=v;
+  }
+  c.appendChild(casaEl);
+
+  var bc=el("div","banco");
+  var ordem=baguncar(PARTES.slice(0));
+  for(i=0;i<ordem.length;i++) bc.appendChild(fazPeca(ordem[i]));
+  c.appendChild(bc);
+  c.appendChild(el("div","hint","Arraste com o dedo ou com o mouse &#8212; ou toque na pe&#231;a e depois no lugar."));
+  t.appendChild(c); app.appendChild(t);
+  pintaVagas(null);   /* deixa as vagas do modo facil ja com a sombra */
+}
+
+function fazPeca(p){
+  var b=el("div","pc");
+  b.appendChild(desenho(p.k,"dpc"));
+  b.appendChild(el("span","pnome",p.n));
+  b._k=p.k; b._n=p.n;
+  b.setAttribute("data-qa",p.k);
+  b.onclick=cliquePeca;
+  b.onmousedown=mouseIni;
+  b.addEventListener("touchstart",toqueIni,false);
+  b.addEventListener("touchmove",toqueMeio,false);
+  b.addEventListener("touchend",toqueFim,false);
+  pecas.push(b);
+  return b;
+}
+
+/* ---------- as TRÊS portas de entrada ----------
+   ⚠️ os tratadores de toque sao FUNCOES COM NOME de proposito: assim
+   nenhum `preventDefault` fica perto do `touchstart` (matar o toque no
+   celular e a armadilha nº1 desta mecanica). Ele mora so no `touchmove`,
+   e so depois que o dedo ANDOU de verdade. */
+function cliquePeca(){
+  if(cliqueDeArrasto()) return;   /* este clique e o rabo do arrasto */
+  if(souDedo()) return;           /* clique FANTASMA do dedo: ja tratado no touchend */
+  escolhe(this);
+}
+function mouseIni(ev){
+  if(souDedo()) return;           /* mouse FANTASMA do celular: ignora */
+  pegaEm(this,ev.clientX,ev.clientY);
+}
+function toqueIni(ev){
+  ultimoToque=agora();
+  var to=ev.touches[0]; if(!to) return;
+  pegaEm(this,to.clientX,to.clientY);
+}
+function toqueMeio(ev){
+  ultimoToque=agora();
+  if(!pego) return;
+  var to=ev.touches[0]; if(!to) return;
+  moveEm(to.clientX,to.clientY);
+  if(moveu) ev.preventDefault();  /* so no MEIO do arrasto, nunca no comeco */
+}
+function toqueFim(ev){
+  ultimoToque=agora();
+  var to=ev.changedTouches[0], arrastou=moveu, alvo=this;
+  if(to) soltaEm(to.clientX,to.clientY); else soltaSombra();
+  if(!arrastou) escolhe(alvo);    /* toque simples: vale como escolher */
+}
+function moveMouse(ev){ if(souDedo()) return; if(pego) moveEm(ev.clientX,ev.clientY); }
+function soltaMouse(ev){ if(souDedo()) return; if(pego) soltaEm(ev.clientX,ev.clientY); }
+document.onmousemove=moveMouse;
+document.onmouseup=soltaMouse;
+
+/* ---------- o arrasto de verdade (mouse e dedo pelo mesmo caminho) ------- */
+function pegaEm(b,x,y){
+  if(!b||temClasse(b,"usada")) return;
+  pego=b; px0=x; py0=y; moveu=false;
+}
+function moveEm(x,y){
+  if(!pego) return;
+  if(!moveu){
+    if(Math.abs(x-px0)+Math.abs(y-py0)<10) return;
+    moveu=true;
+    sTap();
+    escolhe(pego);
+    somb=el("div","somb");
+    somb.appendChild(desenho(pego._k,"dvg"));
+    document.body.appendChild(somb);
+  }
+  somb.style.left=(x-32)+"px"; somb.style.top=(y-24)+"px";
+  acendeVagaSob(x,y);
+}
+function soltaEm(x,y){
+  var b=pego, arrastou=moveu;
+  soltaSombra();
+  if(!b||!arrastou) return;
+  fimArrasto=agora();
+  var v=vagaSob(x,y);
+  if(v) poe(b,v);
+}
+function soltaSombra(){
+  if(somb&&somb.parentNode) somb.parentNode.removeChild(somb);
+  somb=null; pego=null; moveu=false;
+  apagaAceso();
+}
+/* quem esta embaixo do dedo? sobe ate 6 pais porque o dedo pode cair no
+   desenho que esta DENTRO da vaga. */
+function vagaSob(x,y){
+  var e=document.elementFromPoint(x,y), n=0;
+  while(e&&e.nodeType===1&&n<6){
+    if(temClasse(e,"cam")&&!temClasse(e,"ok")) return e;
+    e=e.parentNode; n++;
+  }
+  return null;
+}
+/* ⭐ A VAGA ACENDE QUANDO A PEÇA PASSA POR CIMA. Acende QUALQUER vaga que
+   esteja embaixo do dedo — acender so a certa seria entregar a resposta.  */
+function acendeVagaSob(x,y){ pintaVagas(vagaSob(x,y)); }
+function apagaAceso(){ pintaVagas(null); }
+/* ⭐ O UNICO LUGAR QUE DECIDE A CARA DAS VAGAS.
+   ⚠️ LICAO DESTA MUDANCA: o acender/apagar do arrasto reescrevia a classe da
+   vaga inteira, entao qualquer marca de "ver destino" pintada noutro lugar
+   era apagada no primeiro movimento do dedo. Com um pintor so, o destino
+   sobrevive ao arrasto — e o "pode soltar aqui" (`alvo`) continua ganhando a
+   tela enquanto o dedo esta em cima, que e o que a crianca precisa ver.   */
+function pintaVagas(sob){
+  var k,v,nivel,base;
+  for(k in vagas){
+    if(!vagas.hasOwnProperty(k)) continue;
+    v=vagas[k];
+    if(temClasse(v,"ok")) continue;
+    nivel=v._verf?1:0;
+    if(destK===k&&destNivel>nivel) nivel=destNivel;
+    base=(v===sob)?"cam alvo":(marcada?"cam livre":"cam");
+    v.className=base+(nivel>=2?" destf":(nivel===1?" dest":""));
+    fantasma(v,nivel);
+  }
+}
+/* a SOMBRA DA PECA dentro da vaga: o mesmo desenho, achatado em preto pelo
+   CSS. Nao ha figura nova nenhuma — e a propria peca virada sombra, e por
+   isso a crianca a reconhece pela FORMA, nao pela cor.                    */
+function fantasma(v,nivel){
+  var f=v.getElementsByClassName("camfan")[0];
+  if(!nivel){ if(f&&f.parentNode) f.parentNode.removeChild(f); return; }
+  if(!f){ f=el("div","camfan"); f.appendChild(desenho(v._k,"dvg")); v.appendChild(f); }
+  f.className=(nivel>=2)?"camfan forte":"camfan";
+}
+/* ⭐ VER DESTINO: o lugar da peça passa a se mostrar. Nivel 1 = tracejado que
+   pulsa devagar + sombra discreta (2o erro). Nivel 2 = aceso de vez (3o erro),
+   e a peça DEIXA SEGUIR logo depois — nunca trava.                        */
+function mostraDestino(b,nivel){
+  var v=b?vagas[b._k]:null;
+  if(!v||temClasse(v,"ok")) return;
+  destK=b._k; destNivel=nivel; destErro=true;
+  pintaVagas(null);
+}
+/* o destino de ERRO pertence a peça que errou: trocando de peça, ele sai. */
+function limpaDestinoDe(b){
+  if(!destK) return;
+  if(b&&destK===b._k) return;
+  destK=null; destNivel=0; destErro=false;
+}
+
+/* ---------- o toque simples: escolhe a peça, depois toca no lugar ------- */
+function escolhe(b){
+  if(!b||temClasse(b,"usada")) return;
+  var i;
+  for(i=0;i<pecas.length;i++) if(!temClasse(pecas[i],"usada")) pecas[i].className="pc";
+  if(marcada===b){ marcada=null; sTap(); apagaAceso(); return; }
+  b.className="pc sel"; marcada=b; sTap();
+  limpaDestinoDe(b);
+  apagaAceso();
+}
+function cliqueVaga(){
+  if(cliqueDeArrasto()) return;
+  if(souDedo()&&!marcada) return;
+  if(temClasse(this,"ok")) return;
+  if(!marcada){ ajuda("Primeiro toque numa <b>pe&#231;a</b> l&#225; embaixo. Depois toque no lugar."); return; }
+  poe(marcada,this);
+}
+
+/* ---------- a regra da peça ---------- */
+function poe(b,v){
+  if(!b||!v||temClasse(b,"usada")||temClasse(v,"ok")) return;
+  if(b._k===v._k) acerta(b,v); else erra(b);
+}
+function acerta(b,v){
+  v.className="cam ok";
+  v.innerHTML="";
+  v.appendChild(desenho(b._k,"dvg"));
+  b.className="pc usada";
+  marcada=null;
+  sCerto();
+  postas++; errosSeg=0;
+  if(destK===v._k){ destK=null; destNivel=0; destErro=false; }
+  apagaDica(); apagaAceso();
+  if(barraP) barraP.style.width=Math.round(postas*100/PARTES.length)+"%";
+  if(postas>=PARTES.length) fecha();
+}
+/* ERRO NÃO PUNE: som grave curto, a peça treme, e o andaime CRESCE. Nunca
+   um X vermelho, nunca a palavra "errou". */
+function erra(b){
+  sErro(); errosSeg++;
+  b.className="pc treme";
+  destreme(b);
+  /* o andaime de TEXTO (escrito + dito) continua sendo o mesmo de sempre... */
+  ajuda(DICAS[Math.min(errosSeg,DICAS.length)-1]);
+  /* ...e o VER DESTINO entra JUNTO com ele, nunca no lugar dele: no 2o erro
+     o lugar certo se mostra discreto (tracejado que pulsa + sombra), no 3o
+     ele acende de vez e a peça vai sozinha logo depois.                    */
+  if(errosSeg===2) mostraDestino(b,1);
+  if(errosSeg>=3){ mostraDestino(b,2); esperaERevela(b); }
+}
+/* ⚠️ DEFEITO PAGO NA BANCADA (ago/2026): no 3º degrau a dica sumia no MESMO
+   instante em que aparecia — `revela()` chama `acerta()`, que chama
+   `apagaDica()`. A peça pulava sozinha para o lugar e a criança não lia
+   explicação nenhuma. Agora o revelar ESPERA a dica ser lida (e o lugar
+   certo fica aceso durante a espera). Os guardas de geração e de peça já
+   posta existem porque a criança pode resolver sozinha nesse meio-tempo. */
+function esperaERevela(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!b||temClasse(b,"usada")) return;
+    revela(b);
+  },1000);
+}
+/* ⚠️ o temporizador continua correndo depois do limpa(): sem o guarda da
+   geracao ele mexeria numa tela que ja saiu. */
+function destreme(b){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(b,"usada")) b.className=(marcada===b)?"pc sel":"pc";
+  },340);
+}
+/* 3º erro: a peça vai sozinha para o lugar dela e a fase ANDA. É isto que
+   garante que a criança nunca fica presa. */
+function revela(b){
+  var v=vagas[b._k];
+  if(v&&!temClasse(v,"ok")) acerta(b,v);
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function fecha(){
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    mostraBanner("A casinha ficou pronta! Cada pe&#231;a no lugar dela.",fimDaPeca);
+  },480);
+}
+
+function fimDaPeca(){
+  ger++; limpa(); soltaSombra();
+  casaEl=null; marcada=null;
+  var t=el("div","tela"); telaAtual=t; setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Voc&#234; p&#244;s as <b>4 partes</b> no lugar certo."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=pecaLugar;
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a ARRASTAR AT&#201; O LUGAR: mouse, dedo e toque simples."));
+  t.appendChild(c); app.appendChild(t);
+}
+pecaLugar();
+</script>
+</body></html>

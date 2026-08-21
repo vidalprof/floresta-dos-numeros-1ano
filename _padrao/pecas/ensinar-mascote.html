@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — ensinar o mascote</title>
+<!-- ============================================================
+     PEÇA: ENSINAR O MASCOTE
+     Cópia do MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" mudou.
+
+     O que ela ensina (metacognição): a REGRA que a criança ensina É o
+     modelo mental dela, posto para fora. Enquanto ela só responde, o
+     modelo fica escondido; quando ela ENSINA, o modelo aparece na tela
+     e pode ser testado.
+
+     ⭐ A ALMA DA MECÂNICA (_padrao/DINAMICAS.md, linha "Ensinar o
+     mascote"): **o mascote AGE com a regra ensinada e ERRA VISIVELMENTE**
+     se a regra estava errada. Sem esse erro encenado isto vira quiz
+     fantasiado — a criança escolhe, alguém diz "não é essa" e nada
+     acontece no mundo. Aqui o Byte vai até a planta e despeja AREIA
+     porque foi isso que ele aprendeu; a planta continua murcha e é a
+     PLANTA que responde, não um juiz invisível.
+
+     Armadilhas fechadas neste arquivo:
+       · o enunciado MUDA por rodada -> a voz muda junto (`falaDaTela`
+         é chamado na mesma hora em que o texto troca, inclusive quando
+         é só a fala do Byte que muda);
+       · o mascote PERGUNTA, nunca entrega a resposta ("o que será que
+         uma planta com sede precisa?" — nunca "era água");
+       · erro não vira X vermelho nem a palavra "errou": a opção sai do
+         alcance com a marca escrita "não funcionou";
+       · nunca trava: o andaime cresce (dica -> apoio -> revela) e, se
+         só sobrar uma opção, ela é revelada na hora;
+       · `data-qa="1"` na regra que serve AGORA, só para o auditor.
+
+     ⚠️ ARTE: numa atividade de verdade o Byte e a planta são ARTE DE IA
+     (regra da casa: interação dinâmica usa imagem gerada, o CSS anima só
+     o que se mexe). Aqui, na peça solta, o boneco é CSS de propósito —
+     ela é o ESQUELETO da mecânica, não a ilustração final.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+/* ⚠️ BOTAO ESTICADO (portao 5b; ordem do Marcos: "nada de botoes muito
+   esticado, quero tudo simetrico"). As regras que a crianca escolhe sao
+   frases curtas, e a barra saia 346x53 — 6,5 vezes mais larga que alta.
+   Estreitar e engordar um pouco fecha a conta sem apertar a leitura. */
+.opts .opt{max-width:360px;min-height:62px}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:11px 14px;
+     margin:7px auto;font-size:15px;font-weight:600;min-height:46px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:6px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:10px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+/* ---------------- A PEÇA: ENSINAR O MASCOTE ---------------- */
+/* ⚠️ a folga de 12px em cima e OBRIGATORIA: o balao tem sombra e nenhuma
+   margem por baixo, entao o que vem colado nele vira um bloco so (regra 9 do
+   _qa/leiaute.js, cobrada DUAS vezes pelo Marcos). */
+.palco{display:block;margin:12px auto 0;max-width:430px}
+.cena{position:relative;height:150px;border-radius:16px;overflow:hidden;background:#8fc6e6}
+/* ⚠️ o MIOLO da cena tem geometria fixa (150px de altura) e ele inteiro
+   ENCOLHE por `scale` quando a janela e baixa. A alternativa — reescrever a
+   posicao do Byte, do vaso, do caule e do monte dentro de cada @media — e
+   onde nascem os defeitos de "o boneco cortado pela metade": sao doze regras
+   que precisam concordar entre si. Uma escala so nao tem como discordar. */
+.cenain{position:absolute;left:0;top:0;width:100%;height:150px}
+.chao{position:absolute;left:0;right:0;bottom:0;height:44px;background:#6b4a2a}
+/* o BYTE em CSS (na atividade de verdade entra a arte de IA no lugar) */
+.byteb{position:absolute;left:10px;bottom:44px;width:62px;height:70px;
+       -webkit-transition:left .9s;transition:left .9s}
+.bcabeca{position:absolute;left:9px;top:0;width:44px;height:36px;border-radius:12px;
+         background:#cfd8e3;border:3px solid #46586b}
+.bolho{position:absolute;top:12px;width:10px;height:10px;border-radius:50%;background:#1b2a3a}
+.bolho.esq{left:16px}
+.bolho.dir{left:34px}
+.bcorpo{position:absolute;left:14px;top:36px;width:34px;height:34px;border-radius:10px;
+        background:#7fa7c9;border:3px solid #46586b}
+/* o vaso e a planta: e a PLANTA que responde a regra ensinada */
+.pote{position:absolute;right:36px;bottom:44px;width:58px;height:36px;background:#c1663a;
+      border-radius:4px 4px 12px 12px}
+.caule{position:absolute;right:60px;bottom:78px;width:9px;height:52px;background:#3f8f34;
+       border-radius:5px;-webkit-transform-origin:50% 100%;transform-origin:50% 100%;
+       -webkit-transform:rotate(52deg);transform:rotate(52deg);
+       -webkit-transition:-webkit-transform .8s;transition:transform .8s}
+.caule.viva{-webkit-transform:rotate(0deg);transform:rotate(0deg)}
+.folha{position:absolute;left:-13px;top:6px;width:26px;height:13px;border-radius:13px 2px 13px 2px;
+       background:#57b447}
+.folha.dois{left:-2px;top:26px;width:24px;height:12px}
+/* o que o Byte despeja: o nome vai ESCRITO (nada essencial so na cor) */
+.jorro{position:absolute;right:44px;bottom:92px;background:#fffdf6;color:#221a12;font-size:11px;
+       font-weight:800;border-radius:9px;padding:3px 7px;box-shadow:0 3px 8px rgba(0,0,0,.3)}
+.monte{position:absolute;right:26px;bottom:36px;width:78px;height:20px;border-radius:12px 12px 0 0;
+       background:#d9c48a;border:2px solid #b9a267}
+/* o que sobra de cada regra errada: o pano por cima da planta, a poca de agua
+   no chao. Cada uma e uma coisa DIFERENTE na cena — monte de areia servindo
+   para tudo era mentira visual. */
+.pano{position:absolute;right:30px;bottom:44px;width:74px;height:66px;border-radius:12px;
+      background:#8d6fb4;border:2px solid #6b5090}
+.poca{position:absolute;right:18px;bottom:36px;width:92px;height:14px;border-radius:50%;
+      background:#5aa9d6;border:2px solid #3f88b4}
+/* o sol fica no ALTO E NO MEIO: encostado na direita ele caia em cima da
+   planta e as duas coisas viravam uma mancha so. */
+.sol{position:absolute;left:50%;margin-left:-17px;top:8px;width:34px;height:34px;border-radius:50%;
+     background:#ffd54a;border:3px solid #f3b21f}
+.sol.apagado{background:#5b6470;border-color:#3d434c}
+.nuvem{position:absolute;left:0;right:0;top:0;bottom:0;background:rgba(20,24,32,.55)}
+/* a fala do Byte: ele PERGUNTA. Nunca entrega a resposta. */
+.bytefala{background:#173a5e;color:#eaf3ff;border:2px solid #7fb2e8;border-radius:14px;
+          padding:10px 13px;margin-top:8px;font-size:15px;font-weight:600;line-height:1.3}
+.marca{display:inline-block;background:#1f6b12;color:#fff;font-size:12px;font-weight:800;
+       border-radius:9px;padding:2px 8px;margin-left:8px;vertical-align:middle}
+.marca.fria{background:#6b5a2a}
+.opt.rev{background:#d6f5c8;box-shadow:0 0 0 3px #ffd54a,0 4px 0 #7cb464}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* ⚠️ TELA BAIXA (PC da escola com barras, projetor, celular pequeno). A cena
+   + a fala do Byte + QUATRO regras nao cabem empilhadas em 420px de altura, e
+   resposta que sai da tela e o pior defeito do leiaute: a crianca acha que
+   acabou. Entao, quando a janela e baixa, o palco vira DUAS COLUNAS (cena ao
+   lado da fala) e as folgas encolhem. A regra continua com 44px de alvo — o
+   que encolhe e o espaco morto, nunca o que o dedo procura. */
+@media (max-height:640px){
+  .palco{display:-webkit-box;display:-ms-flexbox;display:flex;
+         -webkit-box-align:center;-ms-flex-align:center;align-items:center;margin-top:10px}
+  .cena{width:53%;height:104px;margin-right:8px;-ms-flex:none;-webkit-box-flex:0;flex:none}
+  .cenain{width:144%;-webkit-transform:scale(.693);transform:scale(.693);
+          -webkit-transform-origin:0 0;transform-origin:0 0}
+  .bytefala{width:47%;margin-top:0;font-size:13px;padding:8px 10px;-ms-flex:none;-webkit-box-flex:0;flex:none}
+  .balao{font-size:15px;padding:10px 14px}
+  /* ⚠️ SEM O `.opts` NA FRENTE ISTO NAO VALIA NADA (ago/2026). Mais acima o
+     arquivo tem `.opts .opt{min-height:62px}` — duas classes, que ganham de
+     `.opt` sozinho por especificidade. A regra da janela baixa existia, estava
+     escrita certa e o navegador a IGNORAVA em silencio: as quatro regras
+     continuavam com 62px e a ultima caia fora da tela. Regra de encolher tem
+     que nascer com a MESMA forca da regra que ela conserta. */
+  /* ⚠️ ENCOLHER SO A ALTURA DEIXA O BOTAO ESTICADO (portao 5b, ratio > 6).
+     Baixando para 44px de altura e mantendo 360 de largura, a barra ficava
+     6,5 vezes mais larga que alta — justo o que o Marcos reprovou ("quero
+     tudo simetrico"). Em janela baixa a altura e cara e a largura e de
+     graca: quem encolhe a altura tem que estreitar junto. */
+  .opts .opt{min-height:44px;padding:8px 12px;margin:5px auto;font-size:14px;max-width:280px}
+  .selo{margin-bottom:6px}
+  .hint{font-size:12px;margin-top:4px}
+}
+@media (max-height:470px){
+  .cena{height:82px}
+  .cenain{width:183%;-webkit-transform:scale(.546);transform:scale(.546)}
+  .bytefala{font-size:12px;padding:6px 9px}
+  .opts .opt{margin:4px auto;min-height:42px}
+  .palco{margin-top:8px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+/* ⚠️ o FECHO cita o mascote e o cenario do exemplo (o Byte e a planta). Fora
+   desta bancada o mascote tem outro nome e a atividade outro assunto — entao a
+   frase vira gaveta, com um padrao que serve a qualquer atividade. Mesma
+   licao do "achou as 5 palavras da horta". */
+var FECHO="Voc&#234; ensinou o rob&#244; passo a passo. Quando a regra estava "
+          "torta, ele <b>fez assim mesmo</b> &#8212; e o resultado contou a verdade.";
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+/* ⭐ VOZ POR RODADA. Nas atividades quem fala e o motor (Edge TTS); aqui a peca
+   usa a voz do proprio navegador so para PROVAR o contrato: toda vez que o
+   texto da tela troca — inclusive quando e so a fala do Byte — a voz troca na
+   MESMA hora. Enunciado que muda calado foi defeito real. */
+function falaDaTela(id){
+  var e=document.getElementById(id);
+  if(!e) return;
+  try{
+    if(!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(String(e.textContent||"").replace(/\s+/g," "));
+    u.lang="pt-BR"; u.rate=.96;
+    speechSynthesis.speak(u);
+  }catch(err){}
+}
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (cuidar de uma planta, 8 anos). Ao copiar a peça
+   para uma atividade, troque APENAS este bloco. Cada rodada precisa de:
+     · `prob`  = o PROBLEMA que o Byte não sabe resolver (o enunciado);
+     · `regras`= o que dá para ensinar a ele. UMA funciona; as outras
+                 ele executa mesmo assim, e o mundo mostra que não deu certo;
+     · `age`   = o que aparece na cena quando ele obedece à regra;
+     · `porque`= o que o Byte PERGUNTA depois de errar (pergunta, não resposta);
+     · `d`     = as três falas do andaime (dica -> apoio concreto -> revela).
+   ⚠️ Toda regra tem que ser EXECUTÁVEL na cena. Regra que o Byte não consegue
+   encenar vira texto de quiz — e aí a mecânica morre. */
+var LICOES=[
+ {sel:"A PLANTA COM SEDE",
+  prob:"A terra da horta est&#225; <b>seca</b> e o Byte n&#227;o sabe o que fazer. <b>Ensine</b> a regra a ele.",
+  se:"SE a terra est&#225; seca, ENT&#195;O eu...",
+  regras:[
+    {t:"jogo <b>&#193;GUA</b> na terra", cai:"&#193;GUA", ok:1},
+    {t:"jogo <b>AREIA</b> na terra", cai:"AREIA", ok:0, deixa:"monte"},
+    {t:"jogo <b>PEDRINHAS</b> na terra", cai:"PEDRINHAS", ok:0, deixa:"monte"},
+    {t:"n&#227;o fa&#231;o <b>nada</b> e espero", cai:"NADA", ok:0}
+  ],
+  bom:"A planta levantou! Sua regra funcionou.",
+  porque:"Fiz o que voc&#234; ensinou e ela continua murcha. O que uma planta com <b>sede</b> precisa beber?",
+  d:["Pense no que voc&#234; toma quando est&#225; com sede.",
+     "S&#243; uma dessas coisas a planta consegue <b>beber</b>.",
+     "A regra da &#193;GUA est&#225; acesa: toque nela para ensinar o Byte."]},
+ {sel:"A PLANTA NO ESCURO",
+  prob:"Agora a planta ficou num canto <b>escuro</b> e parou de crescer. Ensine a regra nova.",
+  se:"SE a planta est&#225; no escuro, ENT&#195;O eu...",
+  regras:[
+    {t:"levo ela para o <b>SOL</b>", cai:"PARA O SOL", ok:1},
+    {t:"cubro ela com um <b>PANO</b>", cai:"UM PANO", ok:0, deixa:"pano"},
+    {t:"jogo <b>mais &#193;GUA</b> nela", cai:"MAIS &#193;GUA", ok:0, deixa:"poca"},
+    {t:"<b>falo</b> bem alto com ela", cai:"UM GRITO", ok:0}
+  ],
+  bom:"A luz chegou e ela abriu as folhas!",
+  porque:"Fiz o que voc&#234; ensinou e continua tudo escuro. De onde vem a <b>luz</b> que a planta usa?",
+  d:["Pense no que aparece no c&#233;u de manh&#227;.",
+     "A folha faz o alimento da planta com a <b>luz</b>.",
+     "A regra do SOL est&#225; acesa: toque nela para ensinar o Byte."]}
+];
+
+var li=0;        /* rodada de agora */
+var err=0;       /* erros DESTA rodada — o andaime cresce com eles */
+var ger=0;       /* geracao da tela: mata setTimeout de fase que ja saiu */
+var ocupado=0;   /* o Byte esta agindo: nao aceita nova regra no meio */
+
+/* ⚠️ LICAO PAGA (ago/2026, achada pelo `_qa/vozigual.js` na atividade do 5º ano):
+   `falaDaTela` quer dizer DUAS coisas diferentes nos dois mundos —
+     · na BANCADA (o motorzinho aqui de cima) o argumento e o ID DO ELEMENTO, e
+       ela le o texto dali e fala pelo navegador;
+     · na ATIVIDADE quem atende e o motor, e o argumento e o NOME DA GRAVACAO.
+   Chamando `dizTela("balaoP")` a peca soava perfeita na bancada e, na
+   atividade, mandava o motor procurar `audio/balaoP.mp3` — que nao existe. O
+   enunciado ficava MUDO e o alto-falante nao repetia nada: exatamente a crianca
+   que ainda nao le ficando sem instrucao. Aqui a peca pergunta em que mundo
+   esta (`temVoz` so existe na atividade) e fala do jeito DAQUELE mundo.      */
+function dizTela(id){
+  var e=document.getElementById(id); if(!e) return;
+  var t=String(e.textContent||"").replace(/\s+/g," ").replace(/^ | $/g,"");
+  if(typeof temVoz==="function"){                 /* atividade: voz gravada */
+    var k=t?temVoz(t):null;
+    if(k && typeof falaDaTela==="function") falaDaTela("op_"+k);
+    return;
+  }
+  if(typeof falaDaTela==="function") falaDaTela(id);   /* bancada: navegador */
+}
+
+function telaEnsinar(){
+  var f=LICOES[li];
+  if(!f){ fimDaPeca(); return; }
+  err=0; ger++; ocupado=0;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,Math.round(li*100/LICOES.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",f.sel));
+  var bl=el("div","balao",f.prob); bl.id="balaoP";
+  c.appendChild(bl);
+  /* o palco: a cena e a fala do Byte. Em tela BAIXA eles viram duas colunas
+     (ver o @media do CSS) — empilhados, as quatro regras saiam da tela. */
+  var pal=el("div","palco");
+  pal.appendChild(montaCena(li));
+  var fa=el("div","bytefala","<b>"+f.se+"</b> Qual regra eu sigo?");
+  fa.id="falaByte";
+  pal.appendChild(fa);
+  c.appendChild(pal);
+  var box=el("div","opts"), i;
+  var lista=baguncar(f.regras.slice(0));   /* ⭐ nunca na mesma ordem */
+  for(i=0;i<lista.length;i++) box.appendChild(fazRegra(lista[i]));
+  c.appendChild(box);
+  c.appendChild(el("div","hint","Regra "+(li+1)+" de "+LICOES.length+". Toque na que voc&#234; quer ensinar."));
+  t.appendChild(c);
+  app.appendChild(t);
+  /* ⭐ o enunciado mudou -> a voz muda na MESMA hora */
+  dizTela("balaoP");
+}
+
+/* a cena: o Byte, o chao, o vaso e a planta murcha. A rodada 2 comeca no
+   escuro (a nuvem por cima), porque o problema dela e a falta de luz. */
+function montaCena(qual){
+  var fora=el("div","cena");
+  var ce=el("div","cenain"); ce.id="cenaP";   /* o miolo que escala */
+  fora.appendChild(ce);
+  var sol=el("div","sol"+(qual===1?" apagado":""));
+  ce.appendChild(sol);
+  var by=el("div","byteb"); by.id="byteP";
+  by.appendChild(el("div","bcabeca",
+    '<span class="bolho esq"></span><span class="bolho dir"></span>'));
+  by.appendChild(el("div","bcorpo",""));
+  ce.appendChild(by);
+  var po=el("div","pote","");
+  ce.appendChild(po);
+  var ca=el("div","caule",'<span class="folha"></span><span class="folha dois"></span>');
+  ca.id="cauleP";
+  ce.appendChild(ca);
+  ce.appendChild(el("div","chao",""));
+  if(qual===1){ var nu=el("div","nuvem",""); nu.id="nuvemP"; ce.appendChild(nu); }
+  return fora;
+}
+
+function fazRegra(r){
+  var o=el("div","opt",r.t);
+  /* data-qa="1" = "esta serve AGORA". Existe SÓ para o auditor-jogador
+     conseguir terminar a peça; a criança não vê diferença nenhuma. */
+  if(r.ok) o.setAttribute("data-qa","1");
+  o.onclick=function(){ ensina(o,r); };
+  return o;
+}
+
+/* ---------- o coração da mecânica: ele AGE com a regra ensinada ---------- */
+function ensina(o,r){
+  if(ocupado) return;
+  if(o.className.indexOf("no")>=0) return;   /* regra ja descartada */
+  ocupado=1; sTap();
+  limpaCena();          /* tira a sujeira da tentativa anterior */
+  trancaTudo();
+  var g=ger;
+  var fa=document.getElementById("falaByte");
+  var f0=LICOES[li];
+  if(fa){ fa.innerHTML="Entendi! <b>"+semTag(f0.se)+" "+semTag(r.t)+".</b> Vou fazer!"; dizTela("falaByte"); }
+  /* 1) ele ANDA at&#233; a planta */
+  setTimeout(function(){
+    if(g!==ger) return;
+    var by=document.getElementById("byteP");
+    if(by) by.style.left="150px";   /* ele vai ate a planta e FICA la */
+  },420);
+  /* 2) ele DESPEJA o que aprendeu — com o nome escrito */
+  setTimeout(function(){
+    if(g!==ger) return;
+    mostraJorro(r.cai);
+  },1250);
+  /* 3) o MUNDO responde: e aqui que o erro fica visivel */
+  setTimeout(function(){
+    if(g!==ger) return;
+    if(r.ok) deuCerto(o); else naoFuncionou(o,r);
+  },2150);
+}
+function semTag(s){ return String(s).replace(/<[^>]*>/g,""); }
+function mostraJorro(txt){
+  var ce=document.getElementById("cenaP");
+  if(!ce) return;
+  var j=el("div","jorro",txt); j.id="jorroP";
+  ce.appendChild(j);
+}
+
+function deuCerto(o){
+  var f=LICOES[li], ca=document.getElementById("cauleP"),
+      nu=document.getElementById("nuvemP"), fa=document.getElementById("falaByte"),
+      so=document.getElementById("cenaP");
+  sCerto();
+  if(ca) ca.className="caule viva";
+  if(nu&&nu.parentNode) nu.parentNode.removeChild(nu);
+  if(so){ var s=so.getElementsByClassName("sol")[0]; if(s) s.className="sol"; }
+  o.className="opt ok";
+  if(o.innerHTML.indexOf("marca")<0) o.innerHTML=o.innerHTML+'<span class="marca">funcionou</span>';
+  if(fa){ fa.innerHTML=f.bom; dizTela("falaByte"); }
+  var g=ger;
+  setTimeout(function(){
+    if(g!==ger) return;
+    li++;
+    if(li<LICOES.length) mostraBanner("O Byte aprendeu a regra e ela <b>funcionou</b>!",telaEnsinar);
+    else mostraBanner("O Byte aprendeu as duas regras com voc&#234;!",fimDaPeca);
+  },1200);
+}
+
+/* ⭐ O ERRO ENCENADO. Ele nao "recusa" a regra: ele OBEDECE, e o mundo mostra
+   que nao deu certo. Nenhum X vermelho, nenhuma palavra "errou" — a planta
+   continua murcha e o Byte PERGUNTA. */
+function naoFuncionou(o,r){
+  var f=LICOES[li], fa=document.getElementById("falaByte"),
+      ce=document.getElementById("cenaP");
+  sErro();
+  /* o que a regra DEIXA na cena. Regra que nao despeja nada (esperar, falar
+     alto) nao deixa nada mesmo — e o proprio "nada aconteceu" e a resposta. */
+  if(ce&&r.deixa){
+    var resto=el("div",r.deixa,""), nu=document.getElementById("nuvemP");
+    /* o resto entra ANTES da nuvem: no escuro, tudo o que esta na cena tem
+       que ficar no escuro tambem — pano aceso dentro do quarto escuro parecia
+       um adesivo colado por cima da tela. */
+    if(nu&&nu.parentNode===ce) ce.insertBefore(resto,nu); else ce.appendChild(resto);
+  }
+  o.className="opt no";
+  o.onclick=null;
+  if(o.innerHTML.indexOf("marca")<0) o.innerHTML=o.innerHTML+'<span class="marca fria">n&#227;o funcionou</span>';
+  err++;
+  if(fa){ fa.innerHTML=f.porque; dizTela("falaByte"); }
+  /* rede de seguranca: se as regras erradas acabaram, revela na hora — a
+     crianca nao pode ficar olhando uma tela sem saida. */
+  var acabou=(sobramErradas()===0);
+  mostraDica(acabou?f.d[f.d.length-1]:f.d[Math.min(err,f.d.length)-1]);
+  if(err>=3||acabou) revela();
+  ocupado=0;
+  destrancaTudo();
+  /* ⚠️ NAO limpar a cena aqui. O que ele despejou e o monte que ficou SAO a
+     prova do erro — se sumissem junto com a pergunta dele, a crianca leria
+     "continua murcha" olhando para uma cena limpa, e a mecanica voltaria a
+     ser um quiz. A limpeza acontece na tentativa SEGUINTE. */
+}
+function limpaCena(){
+  var j=document.getElementById("jorroP");
+  if(j&&j.parentNode) j.parentNode.removeChild(j);
+  var ce=document.getElementById("cenaP"), i, k, m, RESTO=["monte","pano","poca"];
+  if(ce) for(i=0;i<RESTO.length;i++){
+    k=ce.getElementsByClassName(RESTO[i]);
+    while(k.length){ m=k[0]; m.parentNode.removeChild(m); }
+  }
+}
+function sobramErradas(){
+  var a=app.getElementsByClassName("opt"), i, n=0;
+  for(i=0;i<a.length;i++)
+    if(a[i].getAttribute("data-qa")!=="1"&&a[i].className.indexOf("no")<0) n++;
+  return n;
+}
+/* 3º erro: acende a regra que funciona e DEIXA SEGUIR. É o degrau que garante
+   que a peça nunca trava — sempre existe caminho para fechar. */
+function revela(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++){
+    if(a[i].getAttribute("data-qa")==="1"&&a[i].className.indexOf("no")<0){
+      a[i].className="opt rev";
+      if(a[i].innerHTML.indexOf("marca")<0)
+        a[i].innerHTML=a[i].innerHTML+'<span class="marca">ensine esta</span>';
+    }
+  }
+}
+function trancaTudo(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].style.opacity=".65";
+}
+function destrancaTudo(){
+  var a=app.getElementsByClassName("opt"), i;
+  for(i=0;i<a.length;i++) a[i].style.opacity="1";
+}
+
+/* ---------- o fim NA BANCADA (dentro da atividade o integrador troca) ------
+   ⚠️ LICAO PAGA (ago/2026): esta tela tinha nome PROPRIO e era chamada
+   direto. A ponte do integrador so troca quem se chama `fimDaPeca`, entao
+   dentro da atividade a crianca terminava as regras e caia AQUI: o selo de
+   bancada e um "Jogar de novo" que a prendia nesta fase.
+   (⚠️ e o comentario nao repete a frase do selo: o portao `_qa/beco.py`
+   procura essa frase no codigo VIVO, e citar o defeito por extenso fazia o
+   portao acusar o proprio aviso. Comentario tambem e texto.)
+   Quem fecha a peca tem que se chamar `fimDaPeca` — o nome e o contrato. */
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&#199;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var bl=el("div","balao",
+    FECHO);
+  bl.id="balaoP";
+  c.appendChild(bl);
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ li=0; telaEnsinar(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta &#233; a pe&#231;a ENSINAR O MASCOTE: ele age com a regra e erra &#224; vista."));
+  t.appendChild(c);
+  app.appendChild(t);
+  dizTela("balaoP");
+}
+telaEnsinar();
+</script>
+</body></html>

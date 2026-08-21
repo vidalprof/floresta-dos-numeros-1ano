@@ -1,0 +1,46 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prompt — 5 Emblemas de Patente (circo)</title>
+<style>
+  body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#1a1030;color:#f3ecff}
+  header{background:#3a1d6b;padding:18px 16px;text-align:center;border-bottom:3px solid #ffd23f}
+  header h1{margin:0;font-size:19px;color:#ffd23f}
+  header p{margin:6px 0 0;font-size:13px;opacity:.9}
+  .card{background:#241542;margin:14px;border-radius:14px;padding:14px;border:1px solid #4a2f80}
+  .card h2{margin:0 0 8px;font-size:16px;color:#ffd23f}
+  textarea{width:100%;box-sizing:border-box;min-height:320px;background:#140c26;color:#e8e0ff;border:1px solid #4a2f80;border-radius:10px;padding:10px;font-size:13px;line-height:1.45;resize:vertical}
+  button{margin-top:8px;background:#ffd23f;color:#2a1550;border:0;border-radius:10px;padding:11px 18px;font-size:15px;font-weight:700;cursor:pointer;-webkit-appearance:none}
+  button:active{-webkit-transform:scale(.97);transform:scale(.97)}
+  .ok{background:#7CFC9A}
+  .nota{margin:14px;padding:12px;background:#2a1550;border-radius:12px;font-size:13px;line-height:1.5;border:1px dashed #ffd23f}
+  table{width:calc(100% - 28px);margin:0 14px 14px;border-collapse:collapse;font-size:13px}
+  td,th{border:1px solid #4a2f80;padding:6px 8px;text-align:left}
+  th{color:#ffd23f}
+</style>
+<header>
+  <h1>&#11088; 5 Emblemas de Patente &mdash; circo</h1>
+  <p>Do mais simples ao mais glorioso. Gere e suba no <b>_imagens/</b>.</p>
+</header>
+<div class="nota">
+  S&atilde;o os emblemas de N&Iacute;VEL (aparecem no topo). <b>Sem texto/n&uacute;mero</b> na imagem &mdash; o nome da patente entra por c&oacute;digo. Fundo <b>branco puro, sem ret&acirc;ngulo</b>, bem separados pra eu recortar cada um.
+</div>
+<div class="card">
+  <h2>Cartela &mdash; 5 emblemas escalonados</h2>
+  <textarea id="p" readonly>Gere uma CARTELA (folha única) com 5 EMBLEMAS de circo (patentes/insígnias), lado a lado numa fileira, bem separados com bastante espaço branco entre eles (vou recortar cada um). São 5 níveis que ficam cada vez MAIS grandiosos, da esquerda (mais simples) para a direita (mais glorioso):
+
+1) uma ESTRELA de BRONZE simples, com uma bordinha.
+2) uma ESTRELA de PRATA com uma fitinha colorida embaixo.
+3) uma ESTRELA de OURO com um laço/fita de circo.
+4) uma ESTRELA de OURO dentro de uma coroa de louros (ramos verdes), mais enfeitada.
+5) uma ESTRELA de OURO GRANDE com coroa de louros E uma coroinha dourada em cima, brilhando (a mais gloriosa de todas).
+
+Todos no MESMO estilo, em formato de EMBLEMA/medalhão redondo, tema circo, tamanho parecido. Cada um FLUTUANDO no fundo BRANCO PURO #FFFFFF (sem cenário, sem chão, SEM retângulo/moldura/cartão). Cartoon flat infantil, cores vivas, CONTORNO PRETO GROSSO. SEM sombras. SEM texto, SEM letras, SEM números.</textarea>
+  <br><button id="b" onclick="var t=document.getElementById('p');t.select();try{document.execCommand('copy');}catch(e){}var b=document.getElementById('b');b.textContent='Copiado! ✓';b.className='ok';setTimeout(function(){b.textContent='Copiar prompt';b.className='';},1400);">Copiar prompt</button>
+</div>
+<table>
+  <tr><th>N&iacute;vel</th><th>Nome</th><th>XP</th></tr>
+  <tr><td>1</td><td>Aprendiz de Palha&ccedil;o</td><td>0</td></tr>
+  <tr><td>2</td><td>Explorador do Circo</td><td>60</td></tr>
+  <tr><td>3</td><td>Artista do Picadeiro</td><td>150</td></tr>
+  <tr><td>4</td><td>Mestre do Circo</td><td>260</td></tr>
+  <tr><td>5</td><td>Estrela do Circo</td><td>400</td></tr>
+</table>

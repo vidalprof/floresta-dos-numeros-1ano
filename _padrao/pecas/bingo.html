@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — bingo (a pedra sai, a criança acha na cartela)</title>
+<!-- ============================================================
+     PEÇA: BINGO — RECONHECER SOB PRESSÃO GOSTOSA
+     (copiada do _padrao/pecas/MOLDE.html; padrão de qualidade: estimar.html)
+
+     POR QUE ELA EXISTE:
+     ler um número na prova é uma coisa; RECONHECER o número no meio de seis,
+     depressa, porque a pedra acabou de sair, é outra. O bingo é a prática de
+     recuperação (Roediger) disfarçada de brincadeira: a mesma cartela é varrida
+     dezenas de vezes numa rodada, e cada varredura é uma busca ativa na
+     memória, não uma leitura passiva.
+
+     E a "pressão" aqui é gostosa de propósito: NÃO há relógio, não há perder.
+     O que puxa é a pedra seguinte — o clássico "só mais uma".
+
+     A ESCADA (3 rodadas) — a mesma cartela de algarismos, a pedra mudando:
+       1. a pedra é o ALGARISMO   (reconhecer o símbolo)
+       2. a pedra são PONTINHOS   (traduzir quantidade -> símbolo)
+       3. a pedra é a PALAVRA     (ler o nome do número)
+     Serve igual para palavra, sílaba, figura ou som: troca-se o que a pedra
+     mostra, a mecânica é a mesma.
+
+     ⭐ O SORTEIO NUNCA DEIXA A CARTELA IMPOSSÍVEL DE FECHAR.
+     Este é O defeito do bingo feito às pressas: sorteia-se de um saco grande e
+     a criança fica esperando um número que talvez nem saia, até desistir. Aqui
+     o saco é montado A PARTIR DA CARTELA (as 6 casas + algumas de fora,
+     embaralhadas): todas as casas SAEM, sempre. E há a rede: se o saco acabar
+     com casa por marcar, ele se recompõe com o que falta.
+
+     O QUE FAZ ESTA MECÂNICA VALER:
+       · "NÃO ESTÁ NA MINHA CARTELA" É UMA RESPOSTA DE VERDADE, e vale ponto
+         igual. Sem esse botão, bingo vira "ache o que sempre está lá", e a
+         criança para de conferir: só procura até achar. Ter que decidir "tem ou
+         não tem" é o que obriga a varrer a cartela INTEIRA.
+       · Alvo de 56 px na casa da cartela (dedo de criança na pressa).
+       · Nada essencial só na cor: a casa marcada ganha carimbo (um visto) e
+         contorno, além do fundo.
+       · Funciona no mudo: cada som tem gêmeo visual.
+       · Duas portas no PC: além do toque, o TECLADO DE VERDADE — o algarismo
+         que saiu marca a casa dele, Enter tira a pedra, "N" diz que não tem.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAVA no instante do toque (`travada=true`), nunca no fim da animação;
+       · GERAÇÃO (`ger`) em todo setTimeout;
+       · casa JÁ MARCADA responde com PALAVRAS e som, nunca com silêncio (um
+         retângulo e um `return` seco faz quem não distingue cor tocar ali para
+         sempre achando que travou);
+       · o 3º degrau REVELA e SÓ DEPOIS escreve a dica, que FICA na tela até a
+         criança tocar em "Entendi!";
+       · TODO caminho de erro chama o andaime — inclusive dizer "não tenho"
+         quando tem, que é o erro mais natural desta mecânica;
+       · o vocabulário das dicas sai de `nomeDoNumero()`, nunca escrito à mão.
+     ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106).
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A PEDRA. Redonda e grande porque e o centro da atencao: e ela que a crianca
+   olha antes de varrer a cartela.
+   ⚠️ a folga de 12px em cima e obrigatoria: o balao tem sombra e nenhuma
+   margem por baixo (regra 9 do _qa/leiaute.js, cobrada DUAS vezes). */
+.saco{margin:12px auto 0}
+.pedra{position:relative;width:92px;height:92px;margin:0 auto;border-radius:50%;
+       background:#ffd54a;border:5px solid #fff3c9;box-shadow:0 5px 14px rgba(0,0,0,.35);
+       color:#33280a;font-weight:800}
+/* sem pedra na mesa: contorno tracejado (FORMA, nao so cor) e um "?" */
+.pedra.vazia{background:rgba(255,255,255,.10);border-style:dashed;border-color:#c9bda6;color:#f4efe6}
+.pfig{position:absolute;left:8%;top:8%;width:84%;height:84%;-o-object-fit:contain;object-fit:contain;-webkit-filter:drop-shadow(0 2px 3px rgba(0,0,0,.28));filter:drop-shadow(0 2px 3px rgba(0,0,0,.28))}
+.pnum{position:absolute;left:0;right:0;top:50%;margin-top:-24px;font-size:46px;line-height:48px;
+      font-style:normal;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;display:inline-block;}
+.ppal{position:absolute;left:0;right:0;top:50%;margin-top:-11px;font-size:17px;line-height:22px;
+      letter-spacing:.5px;font-style:normal}
+.pgrid{position:absolute;left:50%;top:50%;width:66%;line-height:0;
+       -webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%)}
+.pdot{display:inline-block;width:26%;height:0;padding-bottom:26%;margin:3.5%;
+      border-radius:50%;background:#3a2c07}
+.prot{font-size:13px;font-weight:700;color:#ffd8a8;margin-top:5px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;display:inline-block;}
+/* O APOIO CONCRETO do 2o degrau: a MESMA pedra dita de tres jeitos. */
+.trad{max-width:300px;margin:7px auto 0;padding:6px 10px;border-radius:12px;
+      font-size:15px;font-weight:800;color:#f4efe6;line-height:1.2;background:rgba(22,24,30,.82);color:#f4efe6;display:inline-block;}
+.trad i{display:inline-block;width:9px;height:9px;margin:0 2px;border-radius:50%;
+        background:#ffd54a;vertical-align:middle}
+.trad b{color:#ffd54a}
+/* A CARTELA: 3 colunas, casa de 56px (alvo de dedo de crianca na pressa). */
+.bcartela{max-width:306px;margin:9px auto 0;line-height:0}
+/* como era (quadrado creme), so com o numero CENTRALIZADO na horizontal
+   (text-align:center) — pedido do Marcos, ago/2026. */
+.bin{display:inline-block;position:relative;width:31.3%;height:56px;margin:3px 1%;
+     border-radius:12px;background:#fffdf6;color:#221a12;border:0;cursor:pointer;
+     font-size:26px;font-weight:800;line-height:56px;text-align:center;box-shadow:0 4px 0 #c9bda6;
+     -webkit-user-select:none;user-select:none}
+.bin:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+/* MARCADA = fundo + CONTORNO + CARIMBO (nunca so a cor) */
+.bin.marcada{background:#d6f5c8;box-shadow:0 0 0 3px #1f6b12,0 4px 0 #7cb464;color:#183a0e}
+.bin.marcada:after{content:"\2713";position:absolute;right:5px;top:-2px;
+                   font-size:19px;line-height:22px;color:#1f6b12}
+.bin.pisca{-webkit-animation:pisca .8s infinite;animation:pisca .8s infinite}
+.bin.treme{-webkit-animation:treme .32s;animation:treme .32s}
+.zona{margin-top:9px}
+.bbt{padding:13px 18px;font-size:16px;margin:0 3px}
+.bbt.pisca{-webkit-animation:pisca .8s infinite;animation:pisca .8s infinite}
+@-webkit-keyframes pisca{0%,100%{opacity:1}50%{opacity:.42}}
+@keyframes pisca{0%,100%{opacity:1}50%{opacity:.42}}
+@-webkit-keyframes treme{25%{-webkit-transform:translateX(-6px)}75%{-webkit-transform:translateX(6px)}}
+@keyframes treme{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+/* JANELA BAIXA (1024x420 = o monitor da escola). Encolhe a PEDRA e as letras;
+   a casa da cartela CONTINUA com 56px — ela e o alvo do dedo. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px;padding:4px 12px}
+  .balao{font-size:13px;padding:7px 13px}
+  .balao + *{margin-top:8px}
+  .dica{font-size:12.5px;padding:7px 11px;margin-top:9px}
+  .saco{margin-top:8px}
+  .pedra{width:66px;height:66px;border-width:4px}
+  .pnum{margin-top:-17px;font-size:32px;line-height:34px}
+  .ppal{margin-top:-8px;font-size:12px;line-height:16px}
+  .prot{margin-top:3px;font-size:12px}
+  .trad{margin-top:4px;font-size:13px;padding:4px 8px}
+  .bcartela{margin-top:6px}
+  .bin{margin:2px 1%}
+  .zona{margin-top:6px}
+  .bbt{padding:10px 14px;font-size:14px;min-height:44px}
+  .hint{display:none}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* O CONTEÚDO É SÓ EXEMPLO (5 a 8 anos). Para reusar a peça, troque SÓ a tabela
+   RODADAS: `tipo` diz o que a PEDRA mostra (algarismo, pontinhos ou palavra) e
+   a cartela continua a mesma. Trocando o `tipo` por sílaba, figura ou som, a
+   mecânica não muda em nada.
+   ⚠️ os números ficam de 1 a 9 de propósito: assim a tecla do teclado de
+   verdade é o PRÓPRIO número que saiu, e a segunda porta de entrada fica óbvia
+   ("digite o que saiu"), sem inventar código nenhum para a criança decorar. */
+var RODADAS=[
+  /* ⭐ `tipo:"dinheiro"` + `imgs` (valor->figura): a pedra e a moeda/nota e a
+     crianca acha o VALOR na cartela. Declaro `imgs` aqui (vazio, sem carregar
+     figura na bancada) para o montador saber que a peca le esse campo; a
+     rodada de dinheiro de verdade mora na atividade (ex.: a Lojinha). */
+  {selo:"BINGO DOS N&Uacute;MEROS", tipo:"num", imgs:{},
+   enun:"Tire a pedra e ache o <b>mesmo n&uacute;mero</b> na sua cartela.",
+   cartela:[3,7,5,9,2,6], fora:[1,4]},
+  {selo:"BINGO DOS PONTINHOS", tipo:"pts",
+   enun:"Agora a pedra vem com <b>pontinhos</b>. Conte e ache o n&uacute;mero na cartela.",
+   cartela:[4,8,2,6,9,1], fora:[3,7]},
+  {selo:"BINGO DAS PALAVRAS", tipo:"pal",
+   enun:"Agora a pedra vem <b>escrita</b>. Leia e ache o n&uacute;mero na cartela.",
+   cartela:[5,2,8,3,7,4], fora:[6,9]}
+];
+var NUMPAL=["zero","um","dois","tr&ecirc;s","quatro","cinco","seis","sete","oito","nove"];
+
+var ri=0;             /* rodada de agora */
+var celulas=[];       /* as casas da cartela (elementos) */
+var sorteio=[], si=-1;
+var pedra=null;       /* o valor da pedra na mesa (null = nenhuma) */
+var marcadas=0;
+var erros=0;          /* erros DESTA pedra: é o degrau do andaime */
+var usouAjuda=false;  /* a rodada inteira */
+var dePrimeira=0;     /* cartelas fechadas sem ajuda nenhuma: vira o parecer */
+var ger=0;            /* geração: mata o setTimeout de uma tela que já saiu */
+var travada=false;    /* ⚠️ trava NO INSTANTE do toque — criança toca duas vezes */
+var ePedra=null, eRot=null, eZona=null, eTrad=null, barraP=null;
+
+function temClasse(e,c){
+  if(!e||e.nodeType!==1) return false;
+  return (" "+String(e.className)+" ").indexOf(" "+c+" ")>=0;
+}
+function viva(){ return !!(ePedra&&ePedra.parentNode); }
+function cena(){ return RODADAS[ri]||RODADAS[0]; }
+function sPedra(){ nota(392,.10,.13,"triangle",0); nota(587.33,.14,.12,"triangle",.07); }
+function sMarca(){ nota(659.25,.07,.12,"triangle",0); nota(880,.10,.10,"triangle",.05); }
+/* ⚠️ O VOCABULÁRIO DAS DICAS SAI DAQUI, SEMPRE. Nenhuma dica escreve "sete" à
+   mão: numa peça anterior a 2ª rodada ainda dizia palavras da 1ª, e isso não
+   estoura nada — só a criança percebe. */
+function nomeDoNumero(n){ return NUMPAL[n]||(""+n); }
+function temNaCartela(v){
+  var i;
+  for(i=0;i<celulas.length;i++) if(celulas[i]._v===v) return celulas[i];
+  return null;
+}
+function casaDe(v){
+  var c=temNaCartela(v);
+  return (c&&!temClasse(c,"marcada"))?c:null;
+}
+
+/* ---------- desenhar a pedra ---------- */
+function pintaPedra(){
+  if(!ePedra) return;
+  var c=cena(), i, g, d;
+  ePedra.innerHTML="";
+  if(pedra===null){
+    ePedra.className="pedra vazia";
+    ePedra.appendChild(el("i","pnum","?"));
+    if(eRot) eRot.innerHTML="Nenhuma pedra na mesa ainda.";
+    return;
+  }
+  ePedra.className="pedra";
+  if(c.tipo==="num") ePedra.appendChild(el("i","pnum",""+pedra));
+  else if(c.tipo==="pal") ePedra.appendChild(el("i","ppal",String(NUMPAL[pedra]).toUpperCase()));
+  /* ⭐ BINGO DO DINHEIRO (1º ano): a pedra e a MOEDA/NOTA (figura); a crianca le
+     o valor nela e acha o NUMERO na cartela (objetivo "ler o valor"). `imgs`
+     mapeia valor->figura; a `pedra` continua sendo o numero, entao sorteio,
+     cartela e o apoio (`nomeDoNumero`) seguem iguais. */
+  else if(c.tipo==="dinheiro" && c.imgs && c.imgs[pedra]){
+    var fim=el("img","pfig"); fim.src="img/"+c.imgs[pedra]+".png"; fim.alt=""; ePedra.appendChild(fim);
+  }
+  else{
+    g=el("div","pgrid","");
+    for(i=0;i<pedra;i++){ d=el("i","pdot",""); g.appendChild(d); }
+    ePedra.appendChild(g);
+  }
+  if(eRot) eRot.innerHTML="Pedra <b>"+(si+1)+"</b> de "+sorteio.length+
+                          " &#8212; faltam <b>"+(celulas.length-marcadas)+"</b> casas.";
+}
+/* o APOIO CONCRETO do 2º degrau: a mesma pedra dita de TRÊS jeitos. Repetir a
+   frase mais alto não é degrau; mostrar a tradução, é. */
+function mostraTraducao(){
+  if(!eTrad||pedra===null) return;
+  eTrad.innerHTML="Esta pedra vale <b>"+pedra+"</b> &#8212; "+nomeDoNumero(pedra)+
+                  " pontinhos:"+repetePonto(pedra);
+}
+function repetePonto(n){
+  var s="",i;
+  for(i=0;i<n;i++) s+="<i></i>";
+  return s;
+}
+
+/* ---------------------------------------------------------------
+   TELA 1 — A CARTELA E O SAQUINHO.
+   --------------------------------------------------------------- */
+function telaBingo(){
+  limpa();
+  ger++; travada=false; erros=0; usouAjuda=false; marcadas=0; pedra=null; si=-1;
+  celulas=[];
+  var g=ger, c=cena(), i;
+  /* ⭐ O SACO SAI DA CARTELA. Todas as casas estão lá dentro: a cartela SEMPRE
+     fecha. As de fora existem só para o "não está na minha cartela" ser uma
+     decisão de verdade. */
+  sorteio=baguncar(c.cartela.concat(c.fora).slice(0));
+
+  var t=el("div","tela");
+  setProg(t,Math.round(ri*100/RODADAS.length));
+  barraP=t.querySelector(".prog i");
+  var cx=el("div","centro");
+  cx.appendChild(el("div","selo",c.selo));
+  cx.appendChild(el("div","balao",c.enun));
+
+  var saco=el("div","saco","");
+  ePedra=el("div","pedra vazia","");
+  saco.appendChild(ePedra);
+  eRot=el("div","prot","");
+  saco.appendChild(eRot);
+  eTrad=el("div","trad","");
+  eTrad.style.display="none";
+  saco.appendChild(eTrad);
+  cx.appendChild(saco);
+
+  var cart=el("div","bcartela","");
+  for(i=0;i<c.cartela.length;i++) cart.appendChild(fazCasa(c.cartela[i]));
+  cx.appendChild(cart);
+
+  eZona=el("div","zona","");
+  cx.appendChild(eZona);
+  cx.appendChild(el("div","hint","Toque na casa, ou digite no teclado o n&uacute;mero que saiu. "+
+                    "Enter tira a pedra."));
+  t.appendChild(cx); app.appendChild(t);
+  pintaPedra(); montaBotao(g);
+  /* AS DUAS PORTAS: no PC da escola tem teclado e a criança vai usar. */
+  document.onkeydown=function(ev){
+    var e=ev||window.event, k=e.keyCode||e.which, alvo;
+    if(travada) return;
+    if(k===13||k===32){ tiraPedra(g); }
+    else if(k===78||k===110){ naoTenho(g); }        /* N de "não tenho" */
+    else if(k>=49&&k<=57){ tocaValor(k-48); }     /* 1..9 do teclado */
+    else if(k>=97&&k<=105){ tocaValor(k-96); }    /* 1..9 do teclado numérico */
+    else return;
+    if(e.preventDefault) e.preventDefault();
+  };
+}
+function fazCasa(v){
+  var b=el("div","bin",""+v);
+  b._v=v;
+  b.onclick=function(){ cliqueCasa(b); };
+  celulas.push(b);
+  return b;
+}
+function tocaValor(v){
+  var c=temNaCartela(v);
+  if(!c) return;
+  cliqueCasa(c);
+}
+/* ⚠️ data-qa é SÓ para o auditor-jogador. Uma marca por vez, nunca duas:
+   ou a casa que serve AGORA, ou o botão que serve AGORA. */
+function marcaQA(){
+  var i, bt=document.getElementById("naotem"), tira=document.getElementById("tirar");
+  for(i=0;i<celulas.length;i++) celulas[i].removeAttribute("data-qa");
+  if(bt) bt.removeAttribute("data-qa");
+  if(tira) tira.removeAttribute("data-qa");
+  if(pedra===null){ if(tira) tira.setAttribute("data-qa","1"); return; }
+  var c=casaDe(pedra);
+  if(c){ c.setAttribute("data-qa","1"); return; }
+  if(bt) bt.setAttribute("data-qa","1");
+}
+/* um botão de cada vez: com a pedra na mesa "tirar" não faz sentido, e sem
+   pedra "não tenho" não faz sentido. Botão que não serve agora é armadilha. */
+function montaBotao(g){
+  if(!eZona) return;
+  eZona.innerHTML="";
+  var b;
+  if(pedra===null){
+    b=el("button","btn bbt","Tirar a pedra");
+    b.id="tirar";
+    b.onclick=function(){ tiraPedra(g); };
+  }else{
+    b=el("button","btn bbt","N&atilde;o est&aacute; na minha cartela");
+    b.id="naotem";
+    b.onclick=function(){ naoTenho(g); };
+  }
+  eZona.appendChild(b);
+  marcaQA();
+}
+
+/* ---------- tirar a pedra ---------- */
+function tiraPedra(g){
+  if(g!==ger||travada||pedra!==null) return;
+  si++;
+  /* ⚠️ A REDE: o saco não pode acabar com casa por marcar. Por construção isso
+     não acontece, mas peça que depende de "não acontece" é peça que trava um
+     dia. Se acabar, o saco se recompõe com o que falta. */
+  if(si>=sorteio.length){
+    var i, falta=[];
+    for(i=0;i<celulas.length;i++) if(!temClasse(celulas[i],"marcada")) falta.push(celulas[i]._v);
+    if(!falta.length){ si=sorteio.length-1; return; }
+    sorteio=sorteio.concat(baguncar(falta));
+  }
+  pedra=sorteio[si]; erros=0;
+  sPedra();
+  escondeTraducao(); apagaDica();
+  pintaPedra(); montaBotao(g);
+}
+function escondeTraducao(){
+  if(!eTrad) return;
+  eTrad.style.display="none"; eTrad.innerHTML="";
+}
+
+/* ---------- responder ---------- */
+function cliqueCasa(c){
+  if(travada||!c) return;
+  if(pedra===null){
+    sTap();
+    mostraDica("Primeiro <b>tire uma pedra</b>. Depois procure ela na cartela.");
+    return;
+  }
+  /* casa JÁ MARCADA responde com PALAVRAS e som — nunca com silêncio. */
+  if(temClasse(c,"marcada")){
+    sTap();
+    mostraDica("Essa casa a gente <b>j&aacute; marcou</b>. Olhe a pedra de agora.");
+    return;
+  }
+  if(c._v===pedra){ acerta(c); return; }
+  erra(c);
+}
+function naoTenho(g){
+  if(g!==ger||travada) return;
+  if(pedra===null){
+    sTap();
+    mostraDica("Primeiro <b>tire uma pedra</b> para poder conferir.");
+    return;
+  }
+  if(casaDe(pedra)){ erra(null); return; }   /* o erro mais natural desta mecânica */
+  sMarca();
+  erros=0;
+  pedra=null;
+  escondeTraducao(); apagaDica();
+  pintaPedra(); montaBotao(g);
+}
+function acerta(c){
+  var g=ger;
+  travada=true;                    /* ⚠️ trava NO INSTANTE do toque */
+  c.className="bin marcada";
+  marcadas++; erros=0;
+  sMarca();
+  escondeTraducao(); apagaDica();
+  if(barraP) barraP.style.width=
+    Math.round(((ri+marcadas/celulas.length)*100)/RODADAS.length)+"%";
+  if(marcadas>=celulas.length){
+    if(!usouAjuda) dePrimeira++;
+    setTimeout(function(){
+      if(g!==ger||!viva()) return;
+      mostraBanner("<b>BINGO!</b> Voc&ecirc; fechou a cartela inteira.", proxima);
+    },520);
+    return;
+  }
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    travada=false;
+    pedra=null;
+    pintaPedra(); montaBotao(g);
+  },430);
+}
+/* ERRO NÃO PUNE: som grave curto, a casa treme e o andaime CRESCE.
+   `c` nulo = o erro veio do botão "não está na minha cartela". */
+function erra(c){
+  var g=ger;
+  sErro(); erros++; usouAjuda=true;
+  if(c){ c.className="bin treme"; destreme(g,c); }
+  if(erros===1){
+    /* o 1º degrau fala do erro QUE ACONTECEU. Dizer "não tenho" tendo é um
+       engano diferente de tocar na casa errada, e ouvir a frase genérica nos
+       dois casos é o que faz a criança achar que o app não está olhando. */
+    if(c) mostraDica("Vamos com calma: passe o dedo pela cartela <b>casa por casa</b>, "+
+                     "comparando cada uma com a pedra.");
+    else  mostraDica("Confira mais uma vez antes de dizer que n&atilde;o tem: olhe "+
+                     "<b>todas</b> as casas, at&eacute; as de baixo.");
+    return;
+  }
+  if(erros===2){
+    if(eTrad){ eTrad.style.display=""; mostraTraducao(); }
+    mostraDica("Olhe o apoio embaixo da pedra: ela vale <b>"+nomeDoNumero(pedra)+
+               "</b>. Agora procure esse n&uacute;mero na cartela.");
+    return;
+  }
+  esperaERevela(g);
+}
+function destreme(g,c){
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(!temClasse(c,"marcada")) c.className="bin";
+  },340);
+}
+/* ⚠️ 3º DEGRAU: REVELA E SÓ DEPOIS ESCREVE A DICA — e a dica FICA na tela até
+   a criança tocar em "Entendi!". Em cinco peças de um lote a explicação do 3º
+   degrau era escrita e apagada no mesmo quadro, porque o "revelar" chamava o
+   "acertou" e o "acertou" limpava a barra de dica: a peça se consertava sozinha
+   e a criança não sabia por quê. Nenhum portão vê isso — só medindo o texto na
+   tela depois de errar. */
+function esperaERevela(g){
+  travada=true;
+  var c=casaDe(pedra), bt=document.getElementById("naotem"), val=pedra;
+  if(c) c.className="bin pisca";                 /* REVELA primeiro */
+  else if(bt) bt.className="btn bbt pisca";
+  setTimeout(function(){
+    if(g!==ger||!viva()) return;
+    if(c) mostraDica("Achei para voc&ecirc;: a casa que est&aacute; piscando &eacute; o <b>"+val+
+                     "</b>, o mesmo valor da pedra. Toque em Entendi que eu marco.");
+    else  mostraDica("Desta vez a pedra vale <b>"+nomeDoNumero(val)+
+                     "</b> e esse n&uacute;mero <b>n&atilde;o</b> est&aacute; na sua cartela. "+
+                     "O bot&atilde;o que pisca &eacute; a resposta certa.");
+    botaoSegue(g,c);                             /* e SÓ DEPOIS a explicação */
+  },620);
+}
+function botaoSegue(g,c){
+  if(!eZona) return;
+  var b=el("button","btn","Entendi!");
+  b.setAttribute("data-qa","1");
+  b.onclick=function(){
+    if(g!==ger) return;
+    sTap();
+    travada=false;
+    if(c){ acerta(c); return; }
+    var bt=document.getElementById("naotem");
+    if(bt) bt.className="btn bbt";
+    naoTenho(g);
+  };
+  eZona.appendChild(b);
+  var i;
+  for(i=0;i<celulas.length;i++) celulas[i].removeAttribute("data-qa");
+  var nt=document.getElementById("naotem");
+  if(nt) nt.removeAttribute("data-qa");
+}
+function apagaDica(){
+  var d=document.getElementById("dicaP");
+  if(d&&d.parentNode) d.parentNode.removeChild(d);
+}
+function proxima(){
+  ri++;
+  /* fecha PELO banner (ver CONTRATO "peça que fecha na mão é um beco"): a ponte
+     da esteira só avança de fase pelo mostraBanner; chamar fimBingo() direto
+     prendia a criança na tela de fim dentro da atividade montada. */
+  if(ri>=RODADAS.length){ mostraBanner("<b>Bingo!</b> Voc&#234; fechou a cartela.", fimBingo); return; }
+  telaBingo();
+}
+
+/* ---------------------------------------------------------------
+   TELA 2 — A MEDALHA. Parecer em palavras, nunca nota.
+   --------------------------------------------------------------- */
+function fimBingo(){
+  limpa();
+  ger++; travada=false;
+  ePedra=null; eRot=null; eZona=null; eTrad=null; celulas=[];
+  document.onkeydown=null;
+  var t=el("div","tela");
+  setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PE&Ccedil;A FECHADA"));
+  c.appendChild(el("div","medal",""));
+  var parecer;
+  if(dePrimeira>=RODADAS.length)
+    parecer="Voc&ecirc; fechou as <b>"+RODADAS.length+"</b> cartelas sem precisar de ajuda. "+
+            "Voc&ecirc; reconhece o n&uacute;mero de longe!";
+  else if(dePrimeira>0)
+    parecer="Voc&ecirc; fechou <b>"+dePrimeira+"</b> cartela(s) sozinho e usou a ajuda nas outras. "+
+            "Cada pedra que sai treina o seu olho mais um pouquinho.";
+  else
+    parecer="Voc&ecirc; fechou <b>"+RODADAS.length+"</b> cartelas. O mesmo n&uacute;mero aparece de "+
+            "muitos jeitos: em algarismo, em pontinhos e escrito.";
+  c.appendChild(el("div","balao",parecer));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ ri=0; dePrimeira=0; telaBingo(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Quantas pedras precisaram sair at&eacute; a sua cartela fechar?"));
+  t.appendChild(c); app.appendChild(t);
+}
+
+telaBingo();
+</script>
+</body></html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — pintar no canvas (balde de tinta, livro de colorir)</title>
+<!-- ============================================================
+     PEÇA: PINTAR NO CANVAS — O BALDE DE TINTA
+     (o pintar do "O Grande Circo do Teo", trazido para o esqueleto —
+      pedido do Marcos, ago/2026: "aproveite o pintar do circo do teo
+      como está lá, só coloque aqui")
+
+     PARA QUEM É: PRÉ e 1º ano. A criança não lê: alvo de dedo grande,
+     enunciado de uma linha, e a cor escolhida se anuncia por VOZ.
+
+     ⚠️ ESTA PEÇA NÃO TEM CERTO NEM ERRADO — E ISSO É O PONTO.
+     A criança PRODUZ em vez de responder. Nenhum som de tropeço, nenhuma
+     marca de recusa: o pião pode ser roxo. O que a peça devolve é AUTORIA
+     (Deci & Ryan): escolher a cor é a primeira decisão que a escola devolve
+     para a criança pequena.
+
+     COMO FUNCIONA (igual ao circo): um CANVAS mostra um desenho de linha
+     (uma imagem `img/<img>.png`); tocar dentro de uma área faz o BALDE
+     preencher aquela região com a cor escolhida, PARANDO nas linhas pretas
+     (flood fill). É por isso que serve para QUALQUER arte de IA: basta ser
+     um contorno preto sobre branco.
+
+     ⚠️ A DIFERENÇA PARA `pintar-desenho.html` (vetor/SVG): lá as regiões são
+     `<path>` que a peça mesma desenha; aqui o desenho é uma IMAGEM e o
+     preenchimento é por pixel. O Marcos pediu ESTE (o do circo) porque a
+     figura é arte de IA de verdade, não vetor.
+
+     ⚠️ RESERVA PARA A BANCADA: rodando SOZINHA (peca.sh) não há pasta `img/`;
+     por isso o exemplo tem `img:""` e a peça DESENHA um contorno de reserva
+     no próprio canvas (`desenhaReserva`) — assim o balde tem o que pintar e
+     o teste não roda cego. Dentro da atividade, o `img` da fase aponta para
+     a arte de verdade.
+     ============================================================ -->
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+/* ⚠️ LICAO PAGA (Lojinha, ago/2026): `html,body{height:100%}` + `display:flex`
+   TRAVAVA a altura do body em 100vh, entao o #app transbordava PARA FORA sem a
+   pagina rolar — os botoes "Limpar/Pronto" ficavam abaixo da dobra e SEM
+   ROLAGEM (portao leiaute reprovou em 5 tamanhos). Sem altura fixa, o body
+   cresce com o conteudo e a pagina rola normal. */
+body{font-family:"Segoe UI",system-ui,Arial,sans-serif;background:#fbe9c8;color:#3a3020;
+  -webkit-text-size-adjust:100%;display:flex;align-items:flex-start;justify-content:center}
+#app{width:100%;max-width:560px;padding:10px}
+/* ⚠️ LICAO PAGA (Lojinha, ago/2026): na tela baixa (1024x420, o monitor da
+   escola) o canvas + paleta + botoes NAO cabem juntos — e o portao leiaute so
+   aceita "embaixo da dobra" se a PROPRIA `.tela` (ou um pai ate #app) ROLAR por
+   dentro. Rolagem do body nao conta. Por isso a `.tela` tem teto de altura e
+   `overflow-y:auto`: quando nao cabe, ela rola e o "Pronto" fica alcancavel. */
+.tela{-webkit-animation:aparece .4s ease;animation:aparece .4s ease;
+  max-height:96vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+@-webkit-keyframes aparece{from{opacity:0;transform:translateY(8px)}}
+@keyframes aparece{from{opacity:0;transform:translateY(8px)}}
+.centro{background:#fff8ea;border:2px solid #e6dcc6;border-bottom-width:5px;border-radius:20px;
+  padding:14px 12px 16px;text-align:center;-webkit-box-shadow:0 6px 16px rgba(30,50,20,.16);box-shadow:0 6px 16px rgba(30,50,20,.16)}
+.prog{height:12px;background:#efe2c6;border-radius:8px;overflow:hidden;margin-bottom:10px}
+.prog i{display:block;height:100%;background:linear-gradient(#f5b83a,#e78a1e);border-radius:8px}
+.selo{display:inline-block;background:#4a2f80;color:#ffe;font-weight:800;letter-spacing:.5px;
+  font-size:13px;padding:5px 14px;border-radius:20px;margin-bottom:8px}
+.balao{background:#fff;border:2px solid #e6dcc6;border-radius:16px;padding:10px 14px;
+  font-size:18px;font-weight:600;margin:0 auto 8px;max-width:440px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:9px 13px;font-size:15px;
+  max-width:440px;margin:0 auto 10px}
+/* o canvas é limitado TAMBÉM pela altura da tela, para os botões nunca caírem
+   fora da dobra em janela baixa (o monitor da escola é 1024x420). */
+.pintawrap{position:relative;width:100%;max-width:420px;margin:6px auto}
+@media(min-aspect-ratio:1/1){ .pintawrap{max-width:min(420px,52vh)} }
+.pintatela{display:block;width:100%;height:auto;background:#fff;border-radius:14px;border:3px solid #ffd23f;
+  -ms-touch-action:none;touch-action:none;cursor:crosshair;
+  -webkit-box-shadow:0 3px 8px rgba(0,0,0,.28);box-shadow:0 3px 8px rgba(0,0,0,.28)}
+.paleta{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;
+  -webkit-flex-wrap:wrap;flex-wrap:wrap;margin:8px auto 4px;max-width:440px}
+.tcor{width:48px;height:48px;margin:4px;border-radius:50%;border:3px solid #fff;cursor:pointer;
+  -webkit-box-shadow:0 2px 5px rgba(0,0,0,.3);box-shadow:0 2px 5px rgba(0,0,0,.3)}
+.tcor.sel{border-color:#3a2f80;transform:scale(1.12);-webkit-transform:scale(1.12)}
+.ferr{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;gap:8px;margin:6px 0}
+.cnome{font-weight:700;font-size:16px;min-width:96px}
+/* ⚠️ LICAO PAGA (Lojinha, ago/2026): o `.fone` PRECISA de `background-size`
+   explicito. Sem ele, o SVG data-URI (que so tem viewBox, sem width/height) nao
+   desenha no tamanho do `<i>` e o circulo do alto-falante fica VAZIO — o portao
+   5b (Diretor de Arte) reprovou em 4 tamanhos. O padrao aprovado (classificar)
+   e este: fone 26x26 com background-size 26px. */
+.zap{display:-webkit-inline-box;display:inline-flex;-webkit-box-align:center;align-items:center;
+  -webkit-box-pack:center;justify-content:center;width:52px;height:52px;padding:0;border:0;
+  border-radius:50%;background-color:#ffd54a;cursor:pointer;-webkit-box-shadow:0 4px 0 #c9a52f;box-shadow:0 4px 0 #c9a52f}
+.zap:active{-webkit-transform:translateY(3px);transform:translateY(3px)}
+.zap .fone{display:block;width:26px;height:26px;
+  background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+  -webkit-background-size:26px 26px;background-size:26px 26px}
+.acoes{display:-webkit-box;display:flex;-webkit-box-pack:center;justify-content:center;gap:10px;margin-top:8px}
+/* ⚠️ LICAO PAGA (Lojinha pintar, ago/2026): o azul do botao subia ate #3aa0f5
+   e o branco em cima dava 3.57:1 (o portao 5c pede 4.5). Escureci o gradiente
+   (topo #2472c8 = 4.86:1 com branco); a mistura amostrada fica ainda mais escura,
+   entao passa com folga nos dois temas. */
+.btn{min-height:52px;padding:12px 26px;border:0;border-radius:26px;font-size:18px;font-weight:800;color:#fff;cursor:pointer;
+  background:linear-gradient(#2472c8,#155296);box-shadow:0 5px 0 #103d70}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #103d70}
+.btn.bmenor{font-size:16px;padding:11px 20px;min-height:48px}
+.btn.bclaro{background:linear-gradient(#f4e6c4,#e6d3a3);color:#5a4420;box-shadow:0 5px 0 #b79a5f}
+.banner{position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(20,10,40,.72);
+  display:none;align-items:center;justify-content:center;flex-direction:column;text-align:center;z-index:50}
+.banner.show{display:-webkit-box;display:flex}
+#bmsg{background:#fff8ea;border-radius:20px;padding:22px 26px;max-width:340px;font-size:20px;font-weight:700;color:#3a3020}
+.medal{width:84px;height:84px;border-radius:50%;background:radial-gradient(circle at 40% 35%,#ffe27a,#e39b1a);
+  line-height:84px;font-size:38px;margin:0 auto 10px}
+@media(max-height:520px){
+  .balao{font-size:16px;padding:8px 12px}
+  .pintawrap{max-width:300px}
+  .tcor{width:42px;height:42px;margin:3px}
+}
+@media(prefers-reduced-motion:reduce){ .tela{-webkit-animation:none;animation:none} }
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+function diz(txt){try{if(!window.speechSynthesis||!window.SpeechSynthesisUtterance)return;
+  var u=new SpeechSynthesisUtterance(txt);u.lang="pt-BR";u.rate=.95;u.pitch=1.05;
+  window.speechSynthesis.cancel();window.speechSynthesis.speak(u);}catch(e){}}
+function fala(txt){ if(typeof diz==="function") diz(txt); }
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ⚠️ LICAO PAGA (Lojinha, ago/2026): DENTRO da atividade o motor NAO inclui o
+   scaffold (o 1o <script>) — so o corpo da peca entra, embrulhado pela ponte.
+   A ponte da `diz`, mas NAO da `fala`. Se a peca chamar `fala` sem defini-la
+   AQUI, estoura "fala is not defined" na partida (o portao do jogador pegou).
+   Por isso `fala` mora no CORPO, como na pintar-desenho. */
+function fala(txt){ if(typeof diz==="function") diz(txt); }
+
+/* A GAVETA DE CONTEÚDO: a lista de desenhos para colorir. Cada um tem o selo, o
+   nome (como o balão fala), a voz e o `img` (o arquivo do contorno em img/).
+   ⚠️ o `img` do EXEMPLO fica VAZIO de propósito — na bancada não há pasta img/,
+   então a peça cai no contorno de reserva. Na atividade o montador troca esta
+   lista pelo `dados` da fase, com o `img` de verdade. */
+var PINTAR=[
+ {selo:"HORA DE PINTAR", nome:"o brinquedo", voz:"o brinquedo", img:""}
+];
+
+/* A PALETA. As dez tintas que a criança pequena nomeia sozinha. */
+var TINTAS=[ /*TECNICA*/
+ {c:"#e53935", n:"vermelho"},{c:"#fb8c00", n:"laranja"},{c:"#fdd835", n:"amarelo"},
+ {c:"#43a047", n:"verde"},  {c:"#1e88e5", n:"azul"},   {c:"#8e24aa", n:"roxo"},
+ {c:"#ec407a", n:"rosa"},   {c:"#8d6e63", n:"marrom"}, {c:"#333333", n:"preto"},
+ {c:"#ffffff", n:"branco"}
+];
+
+var di=0;                 /* desenho de agora */
+var CW=600, CH=600;       /* tamanho interno do canvas */
+var _cor="#e53935", _corNome="vermelho", _ctx=null, _img=null;
+var telaAtual=null;
+
+function pintarCanvas(){
+  if(di>=PINTAR.length){ mostraBanner('<div class="medal">&#9733;</div><b>Que lindo!</b><br>Você pintou do seu jeito!'); return; }
+  limpa();
+  var d0=PINTAR[di], i;
+  var t=el("div","tela"); telaAtual=t;
+  setProg(t, Math.round(di*100/PINTAR.length));
+  var c=el("div","centro");
+  /* ⚠️ LICAO PAGA (Lojinha pintar, ago/2026): a peca montava o PROPRIO `.selo`,
+     mas o motor ja poe a mesma plaquinha em cima (vem do conteudo.json). Como
+     esta peca monta uma `.tela` inteira (nao vive dentro de `.pecabox`), a regra
+     `.pecabox .selo{display:none}` nao a alcancava — saiam DUAS "HORA DE PINTAR",
+     uma embaixo da outra, comendo a tela da crianca. Selo e do motor; a peca so
+     poe o balao (a instrucao da rodada). */
+  c.appendChild(el("div","balao","Pinte "+(d0.nome||"o desenho")+" do jeito que <b>voc&#234;</b> quiser."));
+  c.appendChild(el("div","dica","&#128161; Escolha uma cor e toque no desenho. Pode trocar quantas vezes quiser."));
+
+  var wrap=el("div","pintawrap");
+  var cv=el("canvas","pintatela"); cv.id="pintatela"; cv.width=CW; cv.height=CH;
+  wrap.appendChild(cv); c.appendChild(wrap);
+
+  var pl=el("div","paleta");
+  for(i=0;i<TINTAS.length;i++) pl.appendChild(fazCor(i));
+  c.appendChild(pl);
+
+  var f=el("div","ferr");
+  var nomeEl=el("span","cnome", nomeDaCor(_cor)); nomeEl.id="cnome";
+  var z=el("button","zap",""); z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label","Ouvir de novo");
+  z.onclick=function(){ sTap(); fala("Pinte "+(d0.voz||"o desenho")+" do jeito que você quiser."); };
+  f.appendChild(nomeEl); f.appendChild(z);
+  c.appendChild(f);
+
+  var ac2=el("div","acoes");
+  var bl=el("button","btn bmenor bclaro","&#128260; Limpar");
+  bl.setAttribute("aria-label","Apagar tudo e pintar de novo");
+  bl.onclick=limpar;
+  var bp=el("button","btn bmenor","Pronto!");
+  bp.setAttribute("data-qa","1");
+  bp.setAttribute("aria-label","Terminei de pintar");
+  bp.onclick=pronto;
+  ac2.appendChild(bl); ac2.appendChild(bp);
+  c.appendChild(ac2);
+
+  t.appendChild(c); app.appendChild(t);
+
+  _ctx=cv.getContext("2d");
+  _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0,CW,CH);
+  if(d0.img){
+    _img=new Image();
+    _img.onload=function(){ if(_ctx){ _ctx.drawImage(_img,0,0,CW,CH); } };
+    _img.src="img/"+d0.img+".png";
+  }else{
+    _img=null; desenhaReserva(_ctx);
+  }
+  instalar(cv);
+  marcaCorSel();
+  fala("Pinte "+(d0.voz||"o desenho")+" do jeito que você quiser.");
+}
+
+/* o contorno de reserva: um pião de brinquedo, só linhas pretas, com regiões
+   fechadas para o balde ter o que preencher (só entra quando não há imagem). */
+function desenhaReserva(ctx){
+  ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,CW,CH);
+  ctx.strokeStyle="#222222"; ctx.lineWidth=6; ctx.lineJoin="round"; ctx.lineCap="round";
+  ctx.beginPath();
+  ctx.moveTo(170,250); ctx.quadraticCurveTo(300,120,430,250);
+  ctx.lineTo(430,285); ctx.lineTo(300,500); ctx.lineTo(170,285); ctx.closePath(); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(178,262); ctx.lineTo(422,262); ctx.stroke();
+  ctx.beginPath(); ctx.rect(276,150,48,66); ctx.stroke();
+}
+
+function fazCor(i){
+  var b=el("div","tcor",""); b.style.background=TINTAS[i].c;
+  b.setAttribute("aria-label","Tinta "+TINTAS[i].n);
+  b._i=i; b.onclick=function(){ escolherCor(this._i); };
+  return b;
+}
+function nomeDaCor(hex){ var i; for(i=0;i<TINTAS.length;i++) if(TINTAS[i].c===hex) return TINTAS[i].n; return "uma cor"; }
+function marcaCorSel(){
+  var b=document.getElementsByClassName("tcor"),i;
+  for(i=0;i<b.length;i++){ b[i].className=b[i].className.replace(/\s*sel\b/g,""); if(TINTAS[b[i]._i].c===_cor) b[i].className+=" sel"; }
+}
+function escolherCor(i){ sTap(); _cor=TINTAS[i].c; _corNome=TINTAS[i].n;
+  var ne=document.getElementById("cnome"); if(ne) ne.innerHTML=_corNome;
+  marcaCorSel(); fala(_corNome); }
+
+function pintaPos(cv,ev){var r=cv.getBoundingClientRect(),cx,cy;
+  if(ev.touches&&ev.touches.length){cx=ev.touches[0].clientX;cy=ev.touches[0].clientY;}
+  else if(ev.changedTouches&&ev.changedTouches.length){cx=ev.changedTouches[0].clientX;cy=ev.changedTouches[0].clientY;}
+  else{cx=ev.clientX;cy=ev.clientY;}
+  return {x:(cx-r.left)/r.width*cv.width, y:(cy-r.top)/r.height*cv.height};}
+/* ⚠️ o `touch-action:none` do canvas ja barra a rolagem enquanto pinta, entao
+   NAO se usa preventDefault no touchstart (regra da casa: preventDefault no
+   touchstart mata o toque). E o `ultimoToque` ignora o mousedown FANTASMA que
+   o celular dispara logo depois do dedo (senao pinta duas vezes). */
+var _ultimoToque=0;
+function instalar(cv){
+  function pinta(ev){ var p=pintaPos(cv,ev); baldePintar(Math.round(p.x),Math.round(p.y)); }
+  cv.ontouchstart=function(ev){ _ultimoToque=Date.now(); pinta(ev); };
+  cv.onmousedown=function(ev){ if(Date.now()-_ultimoToque<700) return; pinta(ev); };
+}
+function hexRgb(h){h=(""+h).replace("#","");if(h.length===3){h=h.charAt(0)+h.charAt(0)+h.charAt(1)+h.charAt(1)+h.charAt(2)+h.charAt(2);}
+  return [parseInt(h.substring(0,2),16),parseInt(h.substring(2,4),16),parseInt(h.substring(4,6),16)];}
+/* O BALDE: flood fill parando nas linhas pretas (igual ao circo). */
+function baldePintar(sx,sy){ if(!_ctx)return; if(sx<0||sy<0||sx>=CW||sy>=CH)return;
+  var nc=hexRgb(_cor),W=CW,H=CH;
+  var img,d;
+  try{ img=_ctx.getImageData(0,0,W,H); d=img.data; }catch(e){ return; }
+  var si=(sy*W+sx)*4, tr=d[si], tg=d[si+1], tb=d[si+2];
+  if((tr+tg+tb)<330) return;                          /* tocou numa linha preta */
+  if(tr===nc[0]&&tg===nc[1]&&tb===nc[2]) return;      /* ja esta dessa cor */
+  var stack=[sy*W+sx], pintou=false;
+  while(stack.length){ var idx=stack.pop(), i=idx*4; var r=d[i],g=d[i+1],b=d[i+2];
+    if((r+g+b)<360) continue;                          /* barreira: linha */
+    if(Math.abs(r-tr)>60||Math.abs(g-tg)>60||Math.abs(b-tb)>60) continue;
+    d[i]=nc[0];d[i+1]=nc[1];d[i+2]=nc[2];d[i+3]=255;pintou=true;
+    var x=idx%W, y=(idx-x)/W;
+    if(x+1<W)stack.push(idx+1); if(x-1>=0)stack.push(idx-1);
+    if(y+1<H)stack.push(idx+W); if(y-1>=0)stack.push(idx-W);
+  }
+  if(pintou){ _ctx.putImageData(img,0,0); nota(600+Math.min(di,8)*40,.09,.12,"triangle",0); }
+}
+function limpar(){ sTap(); if(_ctx){ _ctx.fillStyle="#ffffff"; _ctx.fillRect(0,0,CW,CH);
+  if(_img&&_img.complete){ _ctx.drawImage(_img,0,0,CW,CH); } else if(!(_img)){ desenhaReserva(_ctx); } }
+  fala("Limpei o desenho! Pode pintar de novo."); }
+function pronto(){ sTap(); di++; pintarCanvas(); }
+
+pintarCanvas();
+</script>
+</body></html>

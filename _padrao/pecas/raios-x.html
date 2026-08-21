@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — raio X (a janela que revela o que está por baixo)</title>
+<!-- ============================================================
+     MOLDE DA OFICINA DE PEÇAS
+     Cobrança do Marcos (ago/2026): *"você não tem como criar um profissional que
+     pesquisa mecânicas novas, monta num PC virtual, executa tudo, treina, e fica
+     disponível para a gente pronta e testada?"*
+
+     Uma PEÇA é uma mecânica sozinha, fora de qualquer atividade: roda, é medida
+     pela banca e fica guardada pronta. Quando eu montar uma atividade, copio a
+     peça em vez de escrever do zero — que é de onde vinham os erros repetidos.
+
+     REGRAS DA PEÇA (não negociáveis):
+       · ES5 puro, um arquivo só, sem biblioteca (Chrome 109 / Firefox 106);
+       · os MESMOS nomes de ajudante das atividades (el, limpa, sCerto, sErro,
+         mostraDica, setProg, festa) — assim o copiar-e-colar é direto;
+       · alvo de toque >= 44px; nada essencial só na cor; funciona no mudo;
+       · publica `data-qa` no que o auditor-jogador precisa para terminar;
+       · nunca trava: sempre há um caminho para fechar a peça.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A CHAPA: duas imagens empilhadas. A de cima tapa; a de baixo se revela por
+   dentro da JANELA que a criança arrasta. O recorte é feito com `clip-path`
+   circular, e há uma queda para quem não tem `clip-path` (Chrome antigo da
+   escola): sem ele, a janela vira uma lupa que CLAREIA o que está embaixo. */
+.chapa{position:relative;width:100%;max-width:430px;margin:12px auto 0;
+  border-radius:18px;overflow:hidden;background:#1d1710;
+  box-shadow:0 8px 22px rgba(0,0,0,.45), inset 0 0 0 3px rgba(255,255,255,.10);
+  -webkit-user-select:none;user-select:none;cursor:crosshair}
+.chapa .cam{position:absolute;left:0;top:0;width:100%;height:100%;
+  /* ⚠️ as duas camadas sao DESENHO, nao alvo: quem recebe o dedo e a `.chapa`.
+     Sem isto o portao do leiaute as le como dois botoes empilhados — e ele tem
+     razao em desconfiar, porque botao sobre botao e defeito de verdade noutras
+     pecas. Dizer que a camada nao recebe toque resolve os dois lados. */
+  pointer-events:none;
+  background-position:center center;background-repeat:no-repeat;
+  -webkit-background-size:cover;background-size:cover}
+.rxbaixo{z-index:1}
+.rxcima{z-index:2}
+/* ⭐ A CHAPA BORRADA SE FAZ COM A PROPRIA FOTO (ago/2026). Quando a fase e
+   "a foto saiu desfocada", a camada de cima NAO e um desenho novo: e a
+   MESMA foto fora de foco. Pedir uma segunda imagem borrada a IA custa
+   dinheiro, volta diferente da primeira (outra luz, outro enquadramento) e
+   quebra a ilusao — a janela passaria a revelar OUTRA cena, nao a mesma em
+   foco. Desfoque e efeito de camera, nao ilustracao. */
+.rxcima.borrada{-webkit-filter:blur(7px);filter:blur(7px);
+  -webkit-transform:scale(1.06);transform:scale(1.06)}
+.rxvidro{position:absolute;z-index:3;pointer-events:none;border-radius:50%;
+  box-shadow:0 0 0 4px rgba(255,255,255,.92), 0 0 0 9px rgba(0,0,0,.30),
+             0 10px 22px rgba(0,0,0,.45);
+  -webkit-transition:width .25s,height .25s;transition:width .25s,height .25s}
+/* o brilho que corre no vidro, para o olho entender que ali se enxerga */
+.rxvidro:after{content:"";position:absolute;left:12%;top:10%;width:36%;height:22%;
+  border-radius:50%;background:rgba(255,255,255,.22)}
+/* ⚠️ A INSTRUCAO DA JANELA CAI EM CIMA DA CHAPA — e chapa e FOTO. Ela usava
+   `var(--texto)` e sombra, e sobre o meio-tom da foto desfocada deu 4,28:1
+   (o minimo e 4,5). Sombra nao e mesa: ela escurece a borda da letra e nao
+   muda o fundo. Aqui vale a mesma regra do resto da casa — texto que cai
+   sobre coisa que eu nao escolho leva a MESA dele junto. */
+.rxdica{display:inline-block;text-align:center;font-size:12.5px;font-weight:700;
+  color:#fffdf6;margin-top:8px;background:rgba(46,38,26,.86);
+  border-radius:999px;padding:4px 14px}
+/* a proporção da chapa: 4x3, sem depender de imagem carregada */
+.rxprop{display:block;width:100%;padding-bottom:74%;pointer-events:none}
+.rxfoco{-webkit-animation:rxpulsa 1.6s ease-in-out infinite;animation:rxpulsa 1.6s ease-in-out infinite}
+@-webkit-keyframes rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
+  50%{box-shadow:0 0 0 7px rgba(255,213,74,.95),0 0 0 12px rgba(0,0,0,.30)}}
+@keyframes rxpulsa{0%,100%{box-shadow:0 0 0 4px rgba(255,255,255,.92),0 0 0 9px rgba(0,0,0,.30)}
+  50%{box-shadow:0 0 0 7px rgba(255,213,74,.95),0 0 0 12px rgba(0,0,0,.30)}}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ============================================================
+   RAIO X — a janela que revela o que está por baixo.
+
+   ⭐ DE ONDE VEIO: da pesquisa do EdiLim (`_pesquisa/EDILIM-DINAMICAS.md`), a
+   pedido do Marcos. É a única das ~40 páginas dele que não tinha parente nenhum
+   aqui, e é a mais bonita: duas imagens empilhadas e um buraco que a criança
+   move. Na nossa versão ela não é enfeite — é uma PERGUNTA: só se descobre a
+   resposta olhando por dentro.
+
+   POR QUE ELA ENSINA: o gesto é o conceito. Para responder, a criança precisa
+   PROCURAR — e procurar é o que faz o olho reparar. Nada de ler alternativa e
+   chutar: primeiro se investiga, depois se responde.
+
+   AS ARMADILHAS DESTA MECÂNICA (escritas antes de existirem):
+     · três caminhos — arrastar com o rato, arrastar o dedo e TOCAR num ponto
+       (quem não arrasta tem que conseguir mover a janela por toques);
+     · NUNCA `preventDefault` no `touchstart` — mata o toque no celular;
+     · `clip-path` não existe no Chrome muito antigo: sem ele a janela vira
+       lupa que CLAREIA, e a fase continua jogável;
+     · a resposta só abre depois de a criança ter revelado o bastante — senão
+       ela chuta antes de olhar, e a mecânica vira quiz com enfeite;
+     · nada essencial só na cor: a janela tem BORDA e brilho, não só tom.
+   ============================================================ */
+
+/* ====== A GAVETA (troque APENAS este bloco) ====== */
+/* ⚠️ A GAVETA PRINCIPAL VEM PRIMEIRO (licao paga na estreia desta peca):
+   o montador descobre a gaveta de conteudo pela PRIMEIRA `var` do bloco, e eu
+   tinha posto os TEXTOS na frente. Ele passou a achar que o conteudo da fase
+   eram os rotulos, e reprovou a atividade inteira dizendo que 'a peca nao le'
+   os campos das chapas. Conteudo primeiro; rotulo depois. */
+var CIMA_EX="url(\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 148'%3E%3Crect width='200' height='148' fill='%238a6a44'/%3E%3Crect y='96' width='200' height='52' fill='%236b5133'/%3E%3Crect x='16' y='104' width='168' height='8' rx='4' fill='%235a4429'/%3E%3C/svg%3E\")";
+var BAIXO_EX="url(\"data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 148'%3E%3Crect width='200' height='148' fill='%23f0e2c4'/%3E%3Cellipse cx='100' cy='84' rx='34' ry='44' fill='%23fffdf6'/%3E%3Cpath d='M78 60 Q100 34 122 60' fill='none' stroke='%23c9a52f' stroke-width='7'/%3E%3C/svg%3E\")";
+
+var CHAPAS=[
+ /* `borrado:true` -> a camada de cima e a MESMA foto fora de foco (nenhuma
+    imagem nova a gerar). Sem ele, `cima` aponta uma figura diferente. */
+ {k:"c1", cima:"", baixo:"", borrado:false,
+  p:"O que estava debaixo da terra?", c:"UMA SEMENTE",
+  e:["UMA PEDRA","UMA MOEDA"],
+  d:["Leve a janela para o meio da chapa, bem devagar.",
+     "Tem uma coisa clara e redonda no centro. Passe por cima dela.",
+     "Era uma SEMENTE: ela fica escondida e vira planta."]},
+ {k:"c2", cima:"", baixo:"",
+  p:"E agora, o que apareceu?", c:"UMA SEMENTE",
+  e:["UM PREGO","UMA FOLHA"],
+  d:["Ande com a janela até achar algo diferente do fundo.",
+     "O que aparece é claro e tem uma casquinha em volta.",
+     "Era outra SEMENTE, escondida do mesmo jeito."]}
+];
+
+var RXTXT={selo:"RAIO X",
+  balao:"Passe a <b>janela</b> por cima da chapa e descubra o que está escondido.",
+  hint:"Arraste com o dedo ou com o rato. Também dá para tocar em qualquer ponto.",
+  pergunta:"O que você achou aí dentro?",
+  fecho:"Você revelou todas as chapas!"};
+
+/* Cada chapa: `cima` tapa, `baixo` aparece na janela. As imagens vêm do motor
+   (`imgEl`); na bancada, sem atividade, entram dois desenhos embutidos, para a
+   peça rodar sozinha. `c` é a resposta certa; `e` são as outras. */
+
+
+/* ====== estado ====== */
+var rxI=0, rxErros=0, rxVisto=0, rxBase=[], rxGer=0;
+var chapaEl=null, vidroEl=null, baixoEl=null, cimaEl=null, respBox=null, barraRX=null;
+var rxArrast=false, ultimoToque=0, rxRaio=54, temClip=true;
+
+function rxAgora(){ return (new Date()).getTime(); }
+function rxDedo(){ return rxAgora()-ultimoToque<800; }
+
+function pecaRaioX(){
+  rxI=0; rxGer++;
+  limpa();
+  var t=el("div","tela");
+  setProg(t,0);
+  barraRX=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",RXTXT.selo));
+  c.appendChild(el("div","balao",RXTXT.balao));
+  var box=el("div","chapa"); box.id="rxchapa";
+  box.appendChild(el("i","rxprop",""));
+  baixoEl=el("div","cam rxbaixo"); box.appendChild(baixoEl);
+  cimaEl=el("div","cam rxcima");  box.appendChild(cimaEl);
+  vidroEl=el("div","rxvidro rxfoco"); box.appendChild(vidroEl);
+  c.appendChild(box);
+  c.appendChild(el("div","rxdica",RXTXT.hint));
+  respBox=el("div","opts"); respBox.id="rxresp";
+  c.appendChild(respBox);
+  t.appendChild(c); app.appendChild(t);
+  chapaEl=box;
+  /* ⚠️ a queda: sem `clip-path` a janela não recorta. Em vez de a fase morrer,
+     ela vira LUPA — a imagem de cima fica translúcida por baixo do vidro. */
+  try{ temClip = (typeof box.style.clipPath !== "undefined") ||
+                 (typeof box.style.webkitClipPath !== "undefined"); }catch(e){ temClip=false; }
+  liga(box);
+  poeChapa();
+}
+
+function poeChapa(){
+  var ch=CHAPAS[rxI]; if(!ch) return;
+  rxErros=0; rxVisto=0; rxRaio=54;
+  var baixo = ch.baixo ? ("url(\"img/"+ch.baixo+".png\")") : BAIXO_EX;
+  /* `borrado:true` = a camada de cima e a MESMA foto, fora de foco (ver o CSS
+     `.rxcima.borrada`). Sem imagem nova, sem risco de as duas nao combinarem. */
+  var cima  = ch.borrado ? baixo
+            : (ch.cima ? ("url(\"img/"+ch.cima+".png\")") : CIMA_EX);
+  cimaEl.className = ch.borrado ? "cam rxcima borrada" : "cam rxcima";
+  cimaEl.style.backgroundImage=cima;
+  baixoEl.style.backgroundImage=baixo;
+  cimaEl.style.opacity="1";
+  vidroEl.className="rxvidro rxfoco";
+  poeVidro(chapaEl.offsetWidth/2, chapaEl.offsetHeight/2);
+  respBox.innerHTML="";
+  fala(RXTXT.balao);
+  /* ⚠️ NUNCA TRAVA, e este foi o primeiro defeito que a bancada pegou nesta
+     peca: a pergunta so nascia depois de a crianca MOVER a janela. Quem nao
+     arrasta — e ha muita crianca que nao arrasta — ficava olhando uma chapa
+     sem saida, sem nada para tocar. O gesto continua sendo o coracao da fase,
+     mas ele nao pode ser um pedagio: passados 7 segundos a pergunta abre
+     sozinha, com a janela ainda ali para quem quiser procurar. */
+  var g0=rxGer;
+  setTimeout(function(){ if(g0===rxGer) abreResposta(); },2600);
+}
+
+function poeVidro(x,y){
+  if(!vidroEl||!chapaEl) return;
+  var L=chapaEl.offsetWidth, A=chapaEl.offsetHeight, r=rxRaio;
+  if(x<r) x=r; if(y<r) y=r;
+  if(x>L-r) x=L-r; if(y>A-r) y=A-r;
+  vidroEl.style.width=(r*2)+"px"; vidroEl.style.height=(r*2)+"px";
+  vidroEl.style.left=(x-r)+"px";  vidroEl.style.top=(y-r)+"px";
+  if(temClip){
+    var cp="circle("+r+"px at "+x+"px "+y+"px)";
+    /* o recorte é INVERTIDO: quem some é a de cima, deixando ver a de baixo. */
+    var poly="polygon(0 0, 100% 0, 100% 100%, 0 100%)";
+    cimaEl.style.webkitClipPath="";
+    cimaEl.style.clipPath="";
+    baixoEl.style.webkitClipPath=cp;
+    baixoEl.style.clipPath=cp;
+    baixoEl.style.zIndex="3";
+  }else{
+    baixoEl.style.zIndex="1";
+    cimaEl.style.opacity=".35";
+  }
+  rxVisto++;
+  if(rxVisto>=2){ vidroEl.className="rxvidro"; abreResposta(); }
+}
+
+function liga(box){
+  box.onmousedown=function(ev){
+    if(rxDedo()) return;
+    rxArrast=true; move(ev);
+  };
+  box.onmousemove=function(ev){ if(rxDedo()) return; if(rxArrast) move(ev); };
+  box.onmouseup=function(){ rxArrast=false; };
+  box.onmouseleave=function(){ rxArrast=false; };
+  /* ⭐ o TERCEIRO caminho: tocar num ponto leva a janela até lá. Quem não
+     arrasta (e há muita criança que não arrasta) joga a fase inteira assim. */
+  box.onclick=function(ev){ move(ev); };
+  box.addEventListener("touchstart",function(ev){
+    ultimoToque=rxAgora(); rxArrast=true; moveT(ev);
+  },false);
+  box.addEventListener("touchmove",function(ev){
+    ultimoToque=rxAgora();
+    if(!rxArrast) return;
+    moveT(ev);
+    ev.preventDefault();          /* só aqui, e só com o dedo em cima */
+  },{passive:false});
+  box.addEventListener("touchend",function(){ ultimoToque=rxAgora(); rxArrast=false; },false);
+}
+function move(ev){
+  var r=chapaEl.getBoundingClientRect();
+  poeVidro((ev.clientX||0)-r.left, (ev.clientY||0)-r.top);
+}
+function moveT(ev){
+  var d=ev.touches&&ev.touches[0]; if(!d) return;
+  var r=chapaEl.getBoundingClientRect();
+  poeVidro(d.clientX-r.left, d.clientY-r.top);
+}
+
+function fala(txt){
+  if(typeof diz==="function"){ try{ diz(String(txt).replace(/<[^>]*>/g,"")); }catch(e){} }
+}
+
+/* a resposta só nasce DEPOIS de a criança ter olhado: sem isso ela chuta antes
+   de investigar, e a mecânica vira quiz com enfeite. */
+function abreResposta(){
+  if(respBox.innerHTML) return;
+  /* o mesmo guarda que a `telaRX` tem: indice fora da lista nao vira tela. */
+  var ch=CHAPAS[rxI], i, ops;
+  if(!ch) return;
+  ops=[ch.c].concat(ch.e);
+  baguncar(ops);
+  respBox.appendChild(el("div","balao",RXTXT.pergunta));
+  for(i=0;i<ops.length;i++) respBox.appendChild(botao(ops[i], ops[i]===ch.c));
+  fala(RXTXT.pergunta);
+}
+function botao(txt,certa){
+  var b=el("button","opt",txt);
+  b.setAttribute("data-qa",certa?"1":"0");
+  b.onclick=function(){ responde(b,certa); };
+  return b;
+}
+function responde(b,certa){
+  var ch=CHAPAS[rxI];
+  if(b.className.indexOf("no")>=0) return;
+  if(certa){
+    sCerto(); b.className="opt ok";
+    if(barraRX) barraRX.style.width=Math.round((rxI+1)*100/CHAPAS.length)+"%";
+    var g=rxGer;
+    setTimeout(function(){
+      if(g!==rxGer) return;
+      rxI++;
+      if(rxI>=CHAPAS.length){
+        /* ⚠️⚠️ LICAO PAGA (ago/2026) — O RELOGIO QUE SOBREVIVE A FASE.
+           A peca arma um timer de 7 segundos que abre a pergunta sozinha, e o
+           guarda dele e a geracao `rxGer`. So que a geracao so subia dentro de
+           `fimDaPeca` — e DENTRO DA ATIVIDADE o `fimDaPeca` nunca roda: a ponte
+           do integrador troca o `mostraBanner` por "mostre e siga", entao a
+           peca sai de cena sem passar por la. O timer da ULTIMA chapa ficava
+           vivo, disparava 7s depois com a crianca ja noutra fase, e lia
+           `CHAPAS[rxI]` com o indice fora da lista: "reading 'c' of undefined".
+           Um erro por partida, em DUAS atividades, e some sozinho — o tipo que
+           custa uma noite para achar. A geracao sobe AQUI, antes de sair. */
+        rxGer++;
+        mostraBanner(RXTXT.fecho, fimDaPeca); return;
+      }
+      poeChapa();
+    },620);
+    return;
+  }
+  sErro(); b.className="opt no";
+  rxErros++;
+  mostraDica(ch.d[Math.min(rxErros,ch.d.length)-1]);
+  fala(ch.d[Math.min(rxErros,ch.d.length)-1]);
+  /* o andaime desta mecânica é VISUAL: a janela cresce, e no 3º erro ela vai
+     sozinha até o alvo. Andaime que não pede leitura serve a quem lê devagar. */
+  if(rxErros===2){ rxRaio=78; poeVidro(chapaEl.offsetWidth/2, chapaEl.offsetHeight/2); }
+  if(rxErros>=3){
+    rxRaio=96;
+    poeVidro(chapaEl.offsetWidth/2, chapaEl.offsetHeight/2);
+    vidroEl.className="rxvidro rxfoco";
+  }
+}
+
+function fimDaPeca(){
+  rxGer++;
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","PEÇA FECHADA"));
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao","Você revelou "+CHAPAS.length+" chapa(s) com a janela."));
+  var b=el("button","btn","Jogar de novo");
+  b.onclick=function(){ pecaRaioX(); };
+  c.appendChild(b);
+  c.appendChild(el("div","hint","Esta é a peça RAIO X: arrastar com o rato, com o dedo, e tocar."));
+  t.appendChild(c); app.appendChild(t);
+}
+
+pecaRaioX();
+
+</script>
+</body></html>

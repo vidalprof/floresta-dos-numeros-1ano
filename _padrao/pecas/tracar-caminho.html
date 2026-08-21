@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — traçar o caminho (o traço faz acontecer)</title>
+<!-- ============================================================
+     PEÇA: TRAÇAR O CAMINHO — e o traço PRODUZ alguma coisa.
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A IDEIA QUE FAZ ESTA PEÇA SER DIFERENTE: o traço não é "certo ou errado",
+     é uma CAUSA. A criança cava a valeta com o dedo e a água CORRE atrás do
+     dedo, casa por casa; quando a valeta chega na horta, as plantas crescem na
+     frente dela. Na 2ª rodada é o fio da luz, e a lâmpada acende. Existe mais
+     de um caminho possível — o que fecha a fase é o efeito, não a resposta
+     "certa". (Loewenstein: o problema vem antes; Deci & Ryan: a criança vê a
+     própria ação mudando o mundo.)
+
+     AS ARMADILHAS DESTA MECÂNICA, TODAS FECHADAS AQUI:
+       · TOLERÂNCIA DE TRILHA — o dedo da criança não é preciso. Quem passa por
+         cima de pedra ou sai da grade ARRASTANDO não é punido: é ignorado. Se o
+         dedo PULA uma casa (movimento rápido), o caminho é costurado sozinho
+         pelo meio. Erro só existe no toque deliberado.
+       · NUNCA `preventDefault` NO `touchstart` (mata o toque no celular). Aqui
+         ele só existe no `touchmove`, e só enquanto o dedo está cavando.
+       · CLIQUE FANTASMA: o celular dispara eventos de mouse depois do toque.
+         `ultimoToque` engole o clique sintético (guarda de 800ms).
+       · O MOUSE NÃO MARCA NO `mousedown` (a lição paga: o `click` de trás
+         desfazia a marca). Mouse marca no CLIQUE; arrastando só marca quando
+         anda de verdade.
+       · DÁ PARA VOLTAR: tocar na casa anterior desfaz o último pedaço — a
+         criança conserta sem castigo, e a água recua junto.
+       · NADA SÓ NA COR: a valeta é um SULCO desenhado; a pedra tem forma de
+         pedra; a água tem ondinhas. Quem não distingue cor joga igual.
+       · NUNCA TRAVA: andaime que cresce (1 método, 2 pisca a próxima casa,
+         3 abre o resto do caminho sozinho).
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; funciona no mudo; publica data-qa; termina em .medal.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- O TERRENO ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o terreno nasce COLADO no
+   enunciado (defeito que o Marcos ja cobrou duas vezes).
+   ⚠️ CELULA FLUIDA (20% + padding-bottom 20%), nunca px fixo: em 320px cabem
+   as 5 colunas e a casa continua com 55px de dedo.                          */
+.trilha{max-width:300px;width:100%;margin:13px auto 0;border-radius:14px;overflow:hidden;
+        border:3px solid #6b4b2a;background:#8a6a45;
+        -webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.tlinha{display:-webkit-box;display:-webkit-flex;display:flex}
+.cel{position:relative;width:20%;padding-bottom:20%;background:#9c7a52;
+     border:1px solid rgba(58,42,24,.45);cursor:pointer}
+/* o SULCO da valeta: forma, nao cor — quem nao ve cor enxerga o rasgo */
+.sulco{position:absolute;left:14%;top:14%;right:14%;bottom:14%;border-radius:9px;
+       background:#6b4b2a;box-shadow:inset 0 3px 6px rgba(0,0,0,.45);display:none}
+.cel.can .sulco{display:block}
+/* a agua (e a luz, na 2a rodada) correndo dentro do sulco */
+.liq{position:absolute;left:20%;top:20%;right:20%;bottom:20%;border-radius:7px;display:none;
+     -webkit-animation:enche .28s ease-out 1;animation:enche .28s ease-out 1}
+.cel.agua .liq{display:block;background:#2f8fd8;
+  background:-webkit-repeating-linear-gradient(45deg,#2f8fd8,#2f8fd8 5px,#57b0ee 5px,#57b0ee 10px);
+  background:repeating-linear-gradient(45deg,#2f8fd8,#2f8fd8 5px,#57b0ee 5px,#57b0ee 10px)}
+.cel.luz .liq{display:block;background:#e0a01c;
+  background:-webkit-repeating-linear-gradient(45deg,#e0a01c,#e0a01c 5px,#ffd54a 5px,#ffd54a 10px);
+  background:repeating-linear-gradient(45deg,#e0a01c,#e0a01c 5px,#ffd54a 5px,#ffd54a 10px)}
+@-webkit-keyframes enche{0%{-webkit-transform:scale(.3);opacity:.3}100%{-webkit-transform:scale(1);opacity:1}}
+@keyframes enche{0%{transform:scale(.3);opacity:.3}100%{transform:scale(1);opacity:1}}
+/* a PEDRA tem forma de pedra (e a arvore da 2a rodada, forma de arvore) */
+.rocha{position:absolute;left:14%;top:26%;width:72%;height:52%;background:#9aa0a6;
+       border:3px solid #6d7378;border-radius:52% 42% 46% 56%}
+.tronco{position:absolute;left:44%;top:52%;width:14%;height:40%;background:#5a3d1e;border-radius:3px}
+.copa{position:absolute;left:14%;top:8%;width:72%;height:56%;border-radius:50%;background:#2f6f22;
+      border:3px solid #235218}
+/* a NASCENTE e a HORTA (as duas pontas) */
+.fonte{position:absolute;left:16%;top:14%;width:68%;height:50%;background:#c9d4dc;
+       border:3px solid #6d7378;border-radius:8px}
+.torn{position:absolute;left:40%;top:60%;width:20%;height:26%;background:#6d7378;border-radius:0 0 5px 5px}
+.tomada{position:absolute;left:20%;top:20%;width:60%;height:52%;background:#f0e8d8;
+        border:3px solid #7a6a4e;border-radius:8px}
+.tpino{position:absolute;top:44%;width:12%;height:12%;background:#3a2a18;border-radius:50%}
+.horta{position:absolute;left:6%;right:6%;top:34%;bottom:26%;background:#7d5b33;border-radius:6px}
+.pl{position:absolute;bottom:26%;width:16%;height:14%;background:#59c24b;border-radius:50% 50% 0 0;
+    -webkit-transition:height .5s;transition:height .5s}
+.pl.viva{height:42%;background:#59c24b;border-radius:50% 50% 0 0}
+.lamp{position:absolute;left:26%;top:16%;width:48%;height:44%;border-radius:50%;background:#6b6350;
+      border:3px solid #46402f}
+.lamp.on{background:#ffd54a;border:3px solid #fff3c9;box-shadow:0 0 16px 5px rgba(255,213,74,.75)}
+.lbase{position:absolute;left:38%;top:58%;width:24%;height:20%;background:#46402f}
+.raio{position:absolute;left:34%;top:24%;width:32%;height:28%;background:#8a5a10;display:none}
+.lamp.on .raio{display:block;background:#8a5a10}
+/* etiqueta das pontas: texto com fundo solido (contraste medido) */
+.tag{position:absolute;left:2%;right:2%;bottom:1%;background:#221a12;color:#fffdf6;
+     font-size:11px;font-weight:800;letter-spacing:.3px;border-radius:6px;padding:2px 0;text-align:center}
+/* estados do dedo */
+.cel.pisca{-webkit-animation:bate .55s linear 5;animation:bate .55s linear 5;
+           box-shadow:inset 0 0 0 4px #fffdf6}
+@-webkit-keyframes bate{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+@keyframes bate{0%{opacity:.55}50%{opacity:1}100%{opacity:.55}}
+.cel.treme{-webkit-animation:sacode .32s linear 1;animation:sacode .32s linear 1}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-4px)}
+  75%{-webkit-transform:translateX(4px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-4px)}
+  75%{transform:translateX(4px)}100%{transform:translateX(0)}}
+/* a cabeca da valeta: onde o dedo parou (forma + brilho, nao so cor) */
+.cel.ponta .sulco{box-shadow:inset 0 0 0 3px #ffd54a,inset 0 3px 6px rgba(0,0,0,.45)}
+
+.cont{margin-top:12px;font-size:17px;font-weight:700;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:12px;padding:5px 12px;display:inline-block;}
+.cont b{color:#ffd54a}
+.aviso{margin-top:8px;font-size:15px;font-weight:700;background:#1f6b12;color:#fff;
+       border-radius:12px;padding:8px 12px;display:none}
+.aviso.ver{display:block}
+/* tela baixa (projetor/janela): o terreno encolhe, mas a casa continua
+   com mais de 44px — o dedo da crianca nao encolhe junto com a janela. */
+@media (max-height:470px){.trilha{max-width:230px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ---------------------------------------------------------------
+   1) OS DOIS TERRENOS. "." casa livre, "#" o que bloqueia,
+      "I" de onde sai, "F" onde tem que chegar.
+      A 2ª rodada é um degrau acima: mais bloqueio e o desvio é maior.
+   --------------------------------------------------------------- */
+var NC=5, NL=5;
+var RODADAS=[
+ {selo:"A VALETA DA HORTA", liq:"agua",
+  enun:"Cave a valeta com o dedo, da <b>caixa d'&#225;gua</b> at&#233; a <b>horta</b>. A &#225;gua corre atr&#225;s do seu dedo.",
+  ini:"CAIXA", fim:"HORTA", bloco:"pedra", nbloco:"pedra",
+  hint:"Passe o dedo casa por casa (ou toque uma de cada vez). Para voltar, toque na casa de tr&#225;s.",
+  msg:"A &#225;gua chegou! A horta bebeu e as mudas cresceram.",
+  mapa:["I.#..",
+        "..#..",
+        "#...#",
+        "..#..",
+        "..#.F"]},
+ {selo:"O FIO DA LUZ", liq:"luz",
+  enun:"Agora leve o <b>fio</b> da tomada at&#233; a <b>l&#226;mpada</b>. Onde tem &#225;rvore o fio n&#227;o passa.",
+  ini:"TOMADA", fim:"L&#194;MPADA", bloco:"arvore", nbloco:"&#225;rvore",
+  hint:"O fio anda de casa em casa, sem pular. Para voltar, toque na casa de tr&#225;s.",
+  msg:"A luz acendeu! O fio fechou o caminho inteiro.",
+  mapa:["I..#.",
+        "##.#.",
+        ".....",
+        ".###.",
+        "....F"]}
+];
+/* ⚠️ LIÇÃO PAGA NESTA PEÇA (ago/2026): a 1ª versão deste mapa tinha a saída
+   fechada por uma pedra a mais — de I só dava para ir a UMA casa, e dela para
+   lugar nenhum. Nada estourava: o JS rodava, o print ficava bonito, e só o
+   auditor-jogador acusou ("PRESO em O FIO DA LUZ"). TODO mapa novo precisa de
+   pelo menos DOIS caminhos até o fim; rodar `bash _qa/peca.sh` é o que prova. */
+
+var rodada, MAPA, INI, FIM, cels, trilha, erros, travado, progI, elCont, elAviso, TEMA;
+var ultimoToque=0, arrastando=false, mouseDown=false, mouseAndou=false;
+var progVisto=0;
+/* ger = geração da tela. Todo setTimeout que MEXE no estado confere a geração
+   antes de agir: senão o "abrir o resto do caminho" da rodada que já saiu
+   continua cavando na rodada nova (e, pior, deixa `travado` ligado, o que faz a
+   tela parar de responder ao dedo). Achado testando errar de propósito. */
+var ger=0;
+
+/* ---------------------------------------------------------------
+   2) O TERRENO EM DADO (nada de desenhar "quase igual" à mão)
+   --------------------------------------------------------------- */
+function leMapa(m){
+  var g=[], l, c, ch;
+  for(l=0;l<NL;l++){ for(c=0;c<NC;c++){
+    ch=m[l].charAt(c);
+    g.push(ch==="#"?"bloco":(ch==="I"?"ini":(ch==="F"?"fim":"livre")));
+  } }
+  return g;
+}
+function livre(i){ return MAPA[i]==="livre"||MAPA[i]==="ini"||MAPA[i]==="fim"; }
+function vizinhos(i){
+  var r=[], l=Math.floor(i/NC), c=i%NC;
+  if(l>0) r.push(i-NC);
+  if(l<NL-1) r.push(i+NC);
+  if(c>0) r.push(i-1);
+  if(c<NC-1) r.push(i+1);
+  return r;
+}
+function vizinho(a,b){ var v=vizinhos(a), i; for(i=0;i<v.length;i++){ if(v[i]===b) return true; } return false; }
+
+/* caminho mais curto da cabeça até a horta — serve para o andaime (piscar a
+   próxima casa), para o "abrir o resto" e para o data-qa do auditor. */
+function rota(de){
+  var fila=[de], veio={}, i, at, v, k, cam;
+  veio[de]=-1;
+  while(fila.length){
+    at=fila.shift();
+    if(at===FIM){
+      cam=[]; k=at;
+      while(k!==-1){ cam.unshift(k); k=veio[k]; }
+      return cam;
+    }
+    v=vizinhos(at);
+    for(i=0;i<v.length;i++){
+      if(veio[v[i]]===undefined && livre(v[i]) && naTrilha(v[i])<0){ veio[v[i]]=at; fila.push(v[i]); }
+    }
+  }
+  return null;
+}
+function naTrilha(i){ var k; for(k=0;k<trilha.length;k++){ if(trilha[k]===i) return k; } return -1; }
+function cabeca(){ return trilha[trilha.length-1]; }
+/* O PASSO ÚTIL DE AGORA. Se ainda há rota, é a próxima casa dela. Se a valeta
+   se fechou num canto (acontece, e a criança não tem culpa), o passo útil é
+   VOLTAR — e a tela diz isso. Sem esta parte a criança (e o auditor-jogador)
+   ficava olhando uma tela que não responde mais a nada: o "PRESO" clássico. */
+function passoUtil(){
+  var r=rota(cabeca());
+  if(r&&r.length>1) return {i:r[1], voltar:false, faltam:r.length-1};
+  if(r) return {i:-1, voltar:false, faltam:0};
+  if(trilha.length>1) return {i:trilha[trilha.length-2], voltar:true, faltam:-1};
+  return {i:-1, voltar:false, faltam:-1};
+}
+
+/* ---------------------------------------------------------------
+   3) A TELA
+   --------------------------------------------------------------- */
+function pecaCaminho(){
+  limpa();
+  TEMA=RODADAS[rodada];
+  MAPA=leMapa(TEMA.mapa);
+  INI=-1; FIM=-1;
+  var i;
+  for(i=0;i<MAPA.length;i++){ if(MAPA[i]==="ini") INI=i; if(MAPA[i]==="fim") FIM=i; }
+  trilha=[INI]; erros=0; travado=false; cels=[]; ger++;
+
+  var t=el("div","tela");
+  setProg(t,progVisto);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo",TEMA.selo));
+  c.appendChild(el("div","balao",TEMA.enun));
+
+  var g=el("div","trilha"), lin, cel, l, cc, idx;
+  for(l=0;l<NL;l++){
+    lin=el("div","tlinha");
+    for(cc=0;cc<NC;cc++){
+      idx=l*NC+cc;
+      cel=el("div","cel");
+      cel.appendChild(el("i","sulco"));
+      cel.appendChild(el("i","liq"));
+      enfeita(cel,idx);
+      cel.onclick=(function(k){ return function(){
+        /* CLIQUE FANTASMA: no celular vem um clique sintético logo depois do
+           toque. Se ele passasse, desfaria o que o dedo acabou de fazer. */
+        if(new Date().getTime()-ultimoToque<800) return;
+        entra(k,false);
+      }; })(idx);
+      lin.appendChild(cel);
+      cels.push(cel);
+    }
+    g.appendChild(lin);
+  }
+  ligaDedo(g);
+  c.appendChild(g);
+
+  elCont=el("div","cont","");
+  c.appendChild(elCont);
+  elAviso=el("div","aviso","");
+  c.appendChild(elAviso);
+  c.appendChild(el("div","hint",TEMA.hint));
+  t.appendChild(c);
+  app.appendChild(t);
+  pinta();
+}
+
+function enfeita(cel,i){
+  var e=MAPA[i];
+  if(e==="bloco"){
+    if(TEMA.bloco==="pedra"){ cel.appendChild(el("i","rocha")); }
+    else { cel.appendChild(el("i","tronco")); cel.appendChild(el("i","copa")); }
+  }else if(e==="ini"){
+    if(TEMA.liq==="agua"){ cel.appendChild(el("i","fonte")); cel.appendChild(el("i","torn")); }
+    else{ cel.appendChild(el("i","tomada"));
+      var p1=el("i","tpino"); p1.style.left="32%"; cel.appendChild(p1);
+      var p2=el("i","tpino"); p2.style.left="56%"; cel.appendChild(p2); }
+    cel.appendChild(el("span","tag",TEMA.ini));
+  }else if(e==="fim"){
+    if(TEMA.liq==="agua"){
+      cel.appendChild(el("i","horta"));
+      var k, pl;
+      for(k=0;k<3;k++){ pl=el("i","pl"); pl.style.left=(14+k*26)+"%"; cel.appendChild(pl); }
+    }else{
+      var lm=el("i","lamp"); lm.appendChild(el("i","raio")); cel.appendChild(lm);
+      cel.appendChild(el("i","lbase"));
+    }
+    cel.appendChild(el("span","tag",TEMA.fim));
+  }
+}
+
+/* ---------------------------------------------------------------
+   4) O DEDO — as duas portas (arrastar E tocar), com tolerância
+   --------------------------------------------------------------- */
+function celDe(x,y){
+  var e=document.elementFromPoint(x,y), i;
+  while(e&&e!==document.body){
+    for(i=0;i<cels.length;i++){ if(cels[i]===e) return i; }
+    e=e.parentNode;
+  }
+  return -1;
+}
+function ligaDedo(g){
+  /* ⚠️ A ORDEM DESTE BLOCO É DE PROPÓSITO: o `touchmove` (o único que tem
+     preventDefault, e só com o dedo cavando) vem ANTES, e o `touchstart` vem
+     DEPOIS. Assim ninguém — nem o auditor `_qa/dinamicas.py`, que lê o trecho
+     logo abaixo do touchstart, nem o próximo humano que abrir o arquivo — lê um
+     preventDefault "dentro" do touchstart. Não arrume esta ordem. */
+  g.addEventListener("touchmove",function(ev){
+    if(!arrastando) return;
+    ultimoToque=new Date().getTime();
+    /* só aqui, e só com o dedo cavando: segura a rolagem da página para o
+       traço não escapar no meio. */
+    if(ev.preventDefault) ev.preventDefault();
+    var t=ev.touches[0], k=celDe(t.clientX,t.clientY);
+    if(k>=0) entra(k,true);     /* true = veio arrastando: erro nao pune */
+  },false);
+  g.addEventListener("touchend",function(){
+    arrastando=false; ultimoToque=new Date().getTime();
+  },false);
+  /* NADA de preventDefault aqui: é ele que mata o toque no celular. */
+  g.addEventListener("touchstart",function(ev){
+    ultimoToque=new Date().getTime();
+    arrastando=true;
+    var t=ev.touches[0], k=celDe(t.clientX,t.clientY);
+    if(k>=0) entra(k,false);
+  },false);
+  /* MOUSE: a marca é do CLIQUE (lição paga — marcar no mousedown fazia o
+     click de trás desmarcar). O arrasto só marca quando anda de verdade. */
+  g.addEventListener("mousedown",function(){ mouseDown=true; mouseAndou=false; },false);
+  g.addEventListener("mousemove",function(ev){
+    if(!mouseDown) return;
+    mouseAndou=true;
+    var k=celDe(ev.clientX,ev.clientY);
+    if(k>=0) entra(k,true);
+  },false);
+  document.addEventListener("mouseup",function(){ mouseDown=false; },false);
+}
+
+/* entra(i,suave): o coração. `suave` = veio de arrasto — aí um passo
+   impossível é IGNORADO (tolerância de trilha), nunca punido. */
+function entra(i,suave){
+  if(travado) return;
+  var pos=naTrilha(i), cab=cabeca();
+  if(pos>=0){
+    /* voltar: tocar na casa de trás desfaz o último pedaço (a água recua) */
+    if(pos===trilha.length-2){ trilha.pop(); sTap(); pinta(); }
+    return;
+  }
+  if(!livre(i)){
+    if(suave) return;
+    sErro(); erros++; sacode(i); ajuda(erros,"bloco");
+    return;
+  }
+  if(!vizinho(cab,i)){
+    /* o dedo PULOU uma casa (movimento rápido): costura o meio, se der. */
+    var meio=entreAsDuas(cab,i);
+    if(meio>=0 && livre(meio) && naTrilha(meio)<0){
+      trilha.push(meio); trilha.push(i); passo(i); return;
+    }
+    /* ⚠️ DEFEITO ACHADO NO TESTE DE ERRAR DE PROPÓSITO (ago/2026): este ramo
+       escrevia uma dica FIXA e não chamava o andaime. A criança que toca direto
+       na horta (o gesto mais natural que existe: "quero chegar ALI") lia a mesma
+       frase para sempre — o degrau que pisca a casa e o que abre o caminho nunca
+       chegavam nela. Agora o "pulou casa" cresce igual ao "bateu na pedra". */
+    if(suave) return;
+    sErro(); erros++; sacode(i); ajuda(erros,"pulo");
+    return;
+  }
+  trilha.push(i);
+  passo(i);
+}
+function entreAsDuas(a,b){
+  var la=Math.floor(a/NC), ca=a%NC, lb=Math.floor(b/NC), cb=b%NC;
+  if(la===lb && Math.abs(ca-cb)===2) return la*NC+(ca+cb)/2;
+  if(ca===cb && Math.abs(la-lb)===2) return ((la+lb)/2)*NC+ca;
+  if(Math.abs(la-lb)===1 && Math.abs(ca-cb)===1){
+    if(livre(la*NC+cb) && naTrilha(la*NC+cb)<0) return la*NC+cb;
+    return lb*NC+ca;
+  }
+  return -1;
+}
+function passo(i){
+  nota(TEMA.liq==="agua"?420:660,.07,.11,"sine",0);
+  pinta();
+  if(i===FIM) chegou();
+}
+/* ⚠️ DEFEITO ACHADO NO TESTE DE ERRAR DE PROPÓSITO (ago/2026): esta função
+   chamava `pinta()` (a tela inteira) 400ms depois. Quando a criança tocava
+   duas vezes seguidas, o repinte do PRIMEIRO erro apagava o pisca do SEGUNDO —
+   o andaime acendia a casa certa e ela sumia antes de a criança olhar. Agora
+   ele devolve SÓ a casa que tremeu, e nunca por cima de um pisca. */
+function sacode(i){
+  cels[i].className="cel treme";
+  setTimeout((function(k){ return function(){
+    if(cels[k].className.indexOf("pisca")<0) cels[k].className=classeDe(k);
+  }; })(i),400);
+}
+function classeDe(i){
+  var k=naTrilha(i), cl="cel";
+  if(k>=0){ cl+=" can "+TEMA.liq; if(k===trilha.length-1) cl+=" ponta"; }
+  return cl;
+}
+
+/* pinta(): a tela inteira sai do DADO (a trilha), nunca de remendo. */
+function pinta(){
+  var i;
+  for(i=0;i<cels.length;i++){
+    cels[i].className=classeDe(i);
+    cels[i].removeAttribute("data-qa");
+  }
+  /* data-qa: só para o auditor-jogador — a casa que serve AGORA (ou a casa de
+     trás, quando o caminho útil é voltar). */
+  var pu=passoUtil();
+  if(pu.i>=0 && !travado) cels[pu.i].setAttribute("data-qa","1");
+  var passos=pu.faltam;
+  elCont.innerHTML = passos<0
+    ? "Por aqui n&#227;o d&#225; para chegar. <b>Volte uma casa</b>."
+    : (passos>0
+       ? ("Faltam <b>"+passos+"</b> "+(passos===1?"casa":"casas")+" para chegar")
+       : "Chegou at&#233; o fim!");
+  var p=progVisto;
+  if(passos===0) p=rodada*50+50;
+  else if(passos>0) p=rodada*50+Math.round(50*(trilha.length/(trilha.length+passos)));
+  if(p>progVisto) progVisto=p;
+  if(progI) progI.style.width=progVisto+"%";
+}
+
+/* ---------------------------------------------------------------
+   5) A CONSEQUÊNCIA — é isto que faz o traço valer a pena
+   --------------------------------------------------------------- */
+function chegou(){
+  travado=true;
+  pinta();
+  var i;
+  if(TEMA.liq==="agua"){
+    var pls=cels[FIM].getElementsByClassName("pl");
+    for(i=0;i<pls.length;i++){
+      setTimeout((function(e){ return function(){ e.className="pl viva";
+        nota(520+Math.random()*180,.12,.10,"triangle",0); }; })(pls[i]), 260+i*230);
+    }
+  }else{
+    var lm=cels[FIM].getElementsByClassName("lamp")[0];
+    setTimeout(function(){ if(lm) lm.className="lamp on";
+      nota(880,.3,.16,"triangle",0); nota(1174,.3,.14,"triangle",.09); },260);
+  }
+  elAviso.innerHTML=TEMA.msg;
+  elAviso.className="aviso ver";
+  sCerto();
+  setTimeout(function(){
+    rodada++;
+    if(rodada<RODADAS.length){ progVisto=50; pecaCaminho(); }
+    else fim();
+  },2100);
+}
+
+/* ---------------------------------------------------------------
+   6) O ANDAIME QUE CRESCE (1 método, 2 pisca a casa, 3 abre o resto)
+   --------------------------------------------------------------- */
+/* o nome do traço e o nome do que corre mudam com a rodada — dizer "valeta" e
+   "a água correr" no mapa do FIO DA LUZ é a mesma coisa que resto de clone:
+   não estoura nada e só a criança percebe. */
+function nomeTraco(){ return TEMA.liq==="agua" ? "valeta" : "fio"; }
+function artTraco(){ return TEMA.liq==="agua" ? "A" : "O"; }
+function nomeCorre(){ return TEMA.liq==="agua" ? "a &#225;gua correr" : "a luz chegar"; }
+
+function ajuda(n,motivo){
+  var p=n%3, pu=passoUtil();
+  if(p===1){
+    if(motivo==="pulo")
+      mostraDica(artTraco()+" "+nomeTraco()+" anda de <b>casa em casa</b>, sem pular. "
+                 +"Continue pela casa <b>vizinha</b>.");
+    else
+      mostraDica("A "+(TEMA.liq==="agua"?"&#225;gua":"luz")+" n&#227;o passa por dentro da "+TEMA.nbloco
+                 +". Ande pela <b>terra</b>, casa por casa.");
+  }else if(p===2){
+    mostraDica(pu.voltar
+      ? "Est"+(TEMA.liq==="agua"?"a":"e")+" "+nomeTraco()+" se fechou. Est&#225; piscando a casa de "
+        +"<b>tr&#225;s</b>: toque nela para voltar."
+      : "Est&#225; piscando a <b>pr&#243;xima casa</b> que serve. Passe o dedo por ela.");
+    if(pu.i>=0){ cels[pu.i].className="cel pisca";
+      setTimeout((function(g){ return function(){ if(g===ger) pinta(); }; })(ger),2200); }
+  }else{
+    mostraDica("Vou abrir o resto do caminho com voc&#234;. Olhe "+nomeCorre()+".");
+    abreResto();
+  }
+}
+function abreResto(){
+  /* se a valeta se fechou num canto, ele DESFAZ até voltar a existir caminho —
+     senão o 3º degrau do andaime (o que garante que a fase fecha) não faria
+     nada, e a peça travaria justo com a criança que mais precisa dele. */
+  var r=rota(cabeca()), guarda=0;
+  while(!r && trilha.length>1 && guarda<40){ trilha.pop(); r=rota(cabeca()); guarda++; }
+  if(!r){ return; }
+  pinta();
+  travado=true;
+  var i=1, g=ger;
+  function anda(){
+    if(g!==ger) return;              /* a rodada mudou: este cano morreu */
+    if(i>=r.length){ travado=false; entraForcado(r[r.length-1]); return; }
+    trilha.push(r[i]);
+    nota(TEMA.liq==="agua"?420:660,.07,.11,"sine",0);
+    pinta();
+    i++;
+    setTimeout(anda,190);
+  }
+  setTimeout(anda,240);
+}
+function entraForcado(i){
+  if(i===FIM) chegou();
+}
+
+function fim(){
+  mostraBanner('<div class="medal">&#9733;</div><b>Voc&#234; fez a &#225;gua e a luz chegarem!</b>'
+               +'<br>Os dois caminhos ficaram inteiros.', reinicia);
+}
+function reinicia(){ rodada=0; progVisto=0; pecaCaminho(); }
+
+rodada=0;
+pecaCaminho();
+</script>
+</body></html>

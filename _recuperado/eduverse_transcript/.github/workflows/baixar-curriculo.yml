@@ -1,0 +1,57 @@
+name: Baixar curriculo (PDF -> texto)
+
+# Baixa um PDF (ex.: Curriculo de Blumenau) nos servidores do GitHub (internet
+# liberada), extrai o texto com poppler e salva em _curriculo/<nome>.txt na branch.
+# O PDF pesado NAO e commitado (so o texto).
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: "URL do PDF"
+        required: true
+        default: "https://www.blumenau.sc.gov.br/downloads/semed/curriculo_educacao_basica_sistema_municipal_ensino.pdf"
+        type: string
+      nome:
+        description: "Nome do arquivo de saida (sem extensao)"
+        required: false
+        default: "blumenau"
+        type: string
+
+jobs:
+  baixar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Baixar e extrair texto
+        env:
+          URL: ${{ inputs.url }}
+          NOME: ${{ inputs.nome }}
+        run: |
+          set -e
+          sudo apt-get update -y && sudo apt-get install -y poppler-utils
+          mkdir -p _curriculo
+          nome="$(echo "$NOME" | tr -cd 'A-Za-z0-9_-')"; [ -z "$nome" ] && nome="curriculo"
+          echo "Baixando $URL ..."
+          curl -L -A "Mozilla/5.0" --max-time 180 "$URL" -o /tmp/doc.pdf
+          echo "=== tamanho do PDF ==="; ls -la /tmp/doc.pdf
+          echo "=== info ==="; pdfinfo /tmp/doc.pdf | grep -E "Pages|File size" || true
+          pdftotext -layout /tmp/doc.pdf "_curriculo/${nome}.txt" || pdftotext /tmp/doc.pdf "_curriculo/${nome}.txt"
+          echo "=== texto extraido ==="; wc -l -c "_curriculo/${nome}.txt"
+          echo "=== amostra (primeiras 40 linhas) ==="; sed -n '1,40p' "_curriculo/${nome}.txt" || true
+
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add _curriculo/ || true
+          if git diff --cached --quiet; then echo "sem mudancas"; exit 0; fi
+          git commit -m "curriculo: extrai texto do PDF (${{ inputs.nome }})"
+          for k in 1 2 3 4 5; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" || true
+            git push origin "HEAD:${GITHUB_REF_NAME}" && break || sleep $((k*3))
+          done

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Painel de Respostas &mdash; Aventura das Direcoes</title>
+<style>
+  * { -webkit-box-sizing:border-box; -moz-box-sizing:border-box; box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    color:#233; background:#eef4fb;
+    background:-webkit-linear-gradient(top,#eaf3ff,#f3fbf1);
+    background:linear-gradient(180deg,#eaf3ff,#f3fbf1);
+    min-height:100vh;
+  }
+  .wrap{ max-width:920px; margin:0 auto; padding:18px 14px 40px; }
+  header{ text-align:center; padding:14px 8px 6px; }
+  h1{ font-size:24px; margin:0 0 2px; color:#e07b12; }
+  .sub{ color:#3b6ea5; font-weight:bold; margin:0 0 12px; font-size:15px; }
+  .barra{
+    display:-webkit-box; display:-webkit-flex; display:flex;
+    -webkit-flex-wrap:wrap; flex-wrap:wrap;
+    -webkit-align-items:center; align-items:center;
+    -webkit-justify-content:center; justify-content:center;
+    margin:0 0 14px;
+  }
+  .barra > *{ margin:4px; }
+  .tot{
+    background:#fff; border:2px solid #d6e4f2; border-radius:14px;
+    padding:8px 16px; font-weight:bold; color:#2b5f9e;
+  }
+  .tot b{ font-size:20px; color:#e07b12; }
+  .bt{
+    -webkit-appearance:none; appearance:none; cursor:pointer;
+    border:0; border-radius:14px; padding:9px 16px;
+    font-size:15px; font-weight:bold; color:#fff; background:#2f8f43;
+  }
+  .bt.sec{ background:#1668bf; }
+  .bt.gh{ background:#5a6b7b; }
+  .bt.del{ background:#c0392b; }
+  th.chk, td.chk{ width:34px; text-align:center; }
+  td.chk input, th.chk input{ width:20px; height:20px; cursor:pointer; }
+  tr.marc td{ background:#fdeaea !important; }
+  .status{ text-align:center; color:#5a6b7b; font-size:13px; margin:6px 0 12px; min-height:16px; }
+  .toggle{ display:-webkit-box; display:-webkit-flex; display:flex; -webkit-justify-content:center; justify-content:center; margin:0 0 12px; }
+  .toggle button{
+    -webkit-appearance:none; appearance:none; cursor:pointer;
+    border:2px solid #cdd9e6; background:#fff; color:#3b6ea5; font-weight:bold;
+    padding:7px 14px; font-size:14px;
+  }
+  .toggle button:first-child{ border-radius:12px 0 0 12px; }
+  .toggle button:last-child{ border-radius:0 12px 12px 0; border-left:0; }
+  .toggle button.on{ background:#1668bf; color:#fff; border-color:#1668bf; }
+  .card{
+    background:#fff; border-radius:16px; overflow:hidden;
+    -webkit-box-shadow:0 6px 18px rgba(40,80,140,.12); box-shadow:0 6px 18px rgba(40,80,140,.12);
+  }
+  .tblwrap{ width:100%; overflow-x:auto; }
+  table{ border-collapse:collapse; width:100%; font-size:15px; }
+  th,td{ padding:10px 12px; text-align:left; border-bottom:1px solid #eef2f6; white-space:nowrap; }
+  th{ background:#f3f8fd; color:#2b5f9e; font-size:13px; text-transform:uppercase; letter-spacing:.02em; }
+  td.num, th.num{ text-align:center; font-variant-numeric:tabular-nums; }
+  tr:last-child td{ border-bottom:0; }
+  tr:nth-child(even) td{ background:#fafcff; }
+  .pill{ display:inline-block; min-width:34px; text-align:center; padding:3px 10px; border-radius:20px; font-weight:bold; font-size:14px; }
+  .p-ok{ background:#e6f6ea; color:#1c7a34; }
+  .p-med{ background:#fff4e0; color:#b5730a; }
+  .p-baixa{ background:#fdeaea; color:#b53535; }
+  .vazio{ text-align:center; padding:34px 16px; color:#7a8794; }
+  .aviso{
+    background:#fff6e6; border:2px solid #f2d79a; color:#8a5a12;
+    border-radius:14px; padding:12px 14px; margin:12px 0; font-size:14px; line-height:1.5;
+  }
+  .aviso b{ color:#a8480d; }
+  .pe{ text-align:center; color:#8a97a4; font-size:12px; margin:16px 0 0; }
+  code{ background:#eef2f6; padding:1px 6px; border-radius:6px; font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>&#128203; Painel de Respostas</h1>
+    <p class="sub">Aventura das Dire&ccedil;&otilde;es &mdash; lateralidade 2&ordm; ano</p>
+  </header>
+
+  <div class="barra">
+    <span class="tot">Respostas: <b id="tot">&mdash;</b></span>
+    <button class="bt" id="btAtu" onclick="carregar()">&#8635; Atualizar</button>
+    <button class="bt sec" id="btAuto" onclick="alternarAuto()">&#9210; Auto: ligado</button>
+    <button class="bt gh" onclick="baixarCSV()">&#8681; Baixar CSV</button>
+    <button class="bt del" id="btDel" onclick="apagarSelecionados()">&#128465; Apagar selecionados</button>
+  </div>
+
+  <div class="toggle">
+    <button id="tgChegada" class="on" onclick="setOrdem('chegada')">Ordem de chegada</button>
+    <button id="tgAz" onclick="setOrdem('az')">Ordem A&rarr;Z</button>
+  </div>
+
+  <p class="status" id="status">Carregando&hellip;</p>
+
+  <div id="avisoPerm" class="aviso" style="display:none">
+    <b>Sem permiss&atilde;o de leitura no Firebase.</b> Para este painel enxergar as
+    respostas, abra o <b>Console do Firebase</b> &rarr; Realtime Database &rarr;
+    <b>Regras</b> e deixe a leitura liberada nesse caminho (ex.: <code>".read": true</code>
+    em <code>/provas</code>). A grava&ccedil;&atilde;o da prova j&aacute; funciona &mdash; s&oacute; a leitura do painel precisa disso.
+  </div>
+
+  <div class="card">
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="chk"><input type="checkbox" id="selTodos" onclick="selecionarTodos(this.checked)" title="Selecionar tudo"></th>
+            <th class="num">#</th>
+            <th>Nome</th>
+            <th>Turma</th>
+            <th class="num">Nota</th>
+            <th class="num">Acertos</th>
+            <th>Data e hora</th>
+          </tr>
+        </thead>
+        <tbody id="corpo">
+          <tr><td colspan="7" class="vazio">Carregando&hellip;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <p class="pe">Atualiza sozinho a cada 10 s. &nbsp;&middot;&nbsp; A nota <b>n&atilde;o</b> aparece para o aluno &mdash; s&oacute; aqui.</p>
+</div>
+
+<script>
+/* ===== Config ===== */
+var FIREBASE_DB = "https://atividades-educativas-16860-default-rtdb.firebaseio.com";
+var CAMINHO     = "/provas/lateralidade-3ano";
+
+/* ===== Estado ===== */
+var DADOS = [];      /* lista normalizada (cada item guarda .key do Firebase) */
+var ORDEM = "chegada";
+var AUTO  = true;
+var timer = null;
+var SEL   = {};      /* keys marcados p/ apagar (persistem entre atualizacoes) */
+
+function $(id){ return document.getElementById(id); }
+
+function pill(nota){
+  var n = parseInt(nota, 10); if(isNaN(n)){ n = 0; }
+  var cls = (n >= 8) ? "p-ok" : (n >= 5 ? "p-med" : "p-baixa");
+  return '<span class="pill '+cls+'">'+ (nota===""||nota==null?"&mdash;":nota) +'</span>';
+}
+
+function fmtData(d){
+  if(!d){ return "&mdash;"; }
+  var s = ""+d;
+  /* ISO -> dd/mm hh:mm */
+  var m = s.match(/(\d{4})-(\d{2})-(\d{2})[T ](\d{2}):(\d{2})/);
+  if(m){ return m[3]+"/"+m[2]+" &agrave;s "+m[4]+":"+m[5]; }
+  return s;
+}
+
+function esc(t){
+  return (""+ (t==null?"":t) )
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+
+function ordenar(lista){
+  var arr = lista.slice(0);
+  if(ORDEM === "az"){
+    arr.sort(function(a,b){
+      return (""+a.nome).localeCompare(""+b.nome, "pt", {sensitivity:"base"});
+    });
+  }else{
+    arr.sort(function(a,b){ return (""+a.data).localeCompare(""+b.data); });
+  }
+  return arr;
+}
+
+function pintar(){
+  var arr = ordenar(DADOS), i, h = "";
+  $("tot").innerHTML = DADOS.length;
+  if(!arr.length){
+    $("corpo").innerHTML = '<tr><td colspan="7" class="vazio">Ainda n&atilde;o chegou nenhuma resposta. Assim que um aluno terminar, aparece aqui.</td></tr>';
+    return;
+  }
+  for(i=0; i<arr.length; i++){
+    var r = arr[i];
+    var mk = SEL[r.key] ? " checked" : "";
+    h += '<tr'+(SEL[r.key]?' class="marc"':'')+'>'+
+      '<td class="chk"><input type="checkbox" class="sel" value="'+esc(r.key)+'" onclick="toggleSel(this)"'+mk+'></td>'+
+      '<td class="num">'+(i+1)+'</td>'+
+      '<td>'+esc(r.nome)+'</td>'+
+      '<td>'+esc(r.turma)+'</td>'+
+      '<td class="num">'+pill(r.nota)+'</td>'+
+      '<td class="num">'+esc(r.acertos)+'</td>'+
+      '<td>'+fmtData(r.data)+'</td>'+
+      '</tr>';
+  }
+  $("corpo").innerHTML = h;
+}
+function toggleSel(cb){
+  if(cb.checked){ SEL[cb.value] = true; } else { delete SEL[cb.value]; }
+  var tr = cb; while(tr && tr.tagName !== "TR"){ tr = tr.parentNode; }
+  if(tr){ tr.className = cb.checked ? "marc" : ""; }
+}
+function selecionarTodos(on){
+  var cbs = document.getElementsByClassName("sel"), i;
+  for(i=0;i<cbs.length;i++){ cbs[i].checked = on; toggleSel(cbs[i]); }
+}
+function apagarSelecionados(){
+  var keys = [], k;
+  for(k in SEL){ if(SEL.hasOwnProperty(k)){ keys.push(k); } }
+  if(!keys.length){ alert("Marque as respostas que quer apagar (a caixinha na primeira coluna)."); return; }
+  if(!confirm("Apagar "+keys.length+" resposta(s) marcada(s)? Isto não tem volta.")){ return; }
+  $("status").innerHTML = "Apagando "+keys.length+" resposta(s)&hellip;";
+  var restantes = keys.length, erros = 0;
+  var i2; for(i2=0;i2<keys.length;i2++){
+    (function(key){
+      var x = new XMLHttpRequest();
+      x.open("DELETE", FIREBASE_DB + CAMINHO + "/" + key + ".json", true);
+      x.onreadystatechange = function(){
+        if(x.readyState !== 4){ return; }
+        if(!(x.status>=200 && x.status<300)){ erros++; }
+        delete SEL[key];
+        restantes--;
+        if(restantes===0){
+          var st=$("selTodos"); if(st){ st.checked=false; }
+          $("status").innerHTML = erros ? ("Apagadas com "+erros+" erro(s). Veja abaixo.") : "Respostas apagadas!";
+          carregar();
+        }
+      };
+      try{ x.send(); }catch(e){ erros++; restantes--; }
+    })(keys[i2]);
+  }
+}
+
+function carregar(){
+  $("status").innerHTML = "Buscando respostas&hellip;";
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET", FIREBASE_DB + CAMINHO + ".json", true);
+  xhr.onreadystatechange = function(){
+    if(xhr.readyState !== 4){ return; }
+    if(xhr.status === 200){
+      $("avisoPerm").style.display = "none";
+      var obj = null;
+      try{ obj = JSON.parse(xhr.responseText); }catch(e){ obj = null; }
+      var lista = [], k;
+      if(obj){
+        for(k in obj){
+          if(!obj.hasOwnProperty(k)){ continue; }
+          if(k.charAt(0) === "_"){ continue; } /* ignora chaves de teste _... */
+          var v = obj[k] || {};
+          lista.push({
+            key:    k,
+            nome:   v.nome || "",
+            turma:  v.turma || "",
+            nota:   (v.nota==null?"":v.nota),
+            acertos:(v.acertos==null?"":v.acertos),
+            data:   v.data || ""
+          });
+        }
+      }
+      DADOS = lista;
+      pintar();
+      var agora = new Date();
+      $("status").innerHTML = "Atualizado &agrave;s " +
+        ("0"+agora.getHours()).slice(-2)+":"+("0"+agora.getMinutes()).slice(-2)+":"+("0"+agora.getSeconds()).slice(-2);
+    }else if(xhr.status === 401 || xhr.status === 403){
+      $("avisoPerm").style.display = "block";
+      $("status").innerHTML = "Sem permiss&atilde;o de leitura (veja o aviso acima).";
+    }else{
+      $("status").innerHTML = "N&atilde;o consegui buscar agora (c&oacute;digo "+xhr.status+"). Tento de novo no pr&oacute;ximo ciclo.";
+    }
+  };
+  try{ xhr.send(); }catch(e){ $("status").innerHTML = "Erro de conex&atilde;o."; }
+}
+
+function setOrdem(o){
+  ORDEM = o;
+  $("tgChegada").className = (o==="chegada") ? "on" : "";
+  $("tgAz").className = (o==="az") ? "on" : "";
+  pintar();
+}
+
+function alternarAuto(){
+  AUTO = !AUTO;
+  $("btAuto").innerHTML = "&#9210; Auto: " + (AUTO ? "ligado" : "desligado");
+  agendar();
+}
+
+function agendar(){
+  if(timer){ clearInterval(timer); timer = null; }
+  if(AUTO){ timer = setInterval(carregar, 10000); }
+}
+
+function baixarCSV(){
+  var arr = ordenar(DADOS), i, linhas = ["Nome;Turma;Nota;Acertos;Data e hora"];
+  for(i=0; i<arr.length; i++){
+    var r = arr[i];
+    linhas.push([r.nome, r.turma, r.nota, r.acertos, r.data].join(";"));
+  }
+  var txt = "﻿" + linhas.join("\r\n");
+  var a = document.createElement("a");
+  a.href = "data:text/csv;charset=utf-8," + encodeURIComponent(txt);
+  a.download = "respostas-lateralidade.csv";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+carregar();
+agendar();
+</script>
+</body>
+</html>

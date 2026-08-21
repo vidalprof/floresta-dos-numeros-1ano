@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — pintar (marca-texto)</title>
+<!-- ============================================================
+     PEÇA: PINTAR / MARCA-TEXTO (o traço É a classificação)
+     Copiada do _padrao/pecas/MOLDE.html — só o bloco "A PEÇA COMEÇA AQUI" muda.
+
+     A MECÂNICA: a criança passa o marca-texto nas palavras de UMA categoria
+     dentro de um parágrafo. Não é "escolher a resposta certa": é decidir, palavra
+     por palavra, se aquela pertence à categoria — por isso o traço é o próprio
+     ato de classificar (DINAMICAS.md, linha "Pintar / marca-texto").
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · TRAÇO CORRENDO, não "ficou amarelo de repente": o realce cresce da
+         esquerda para a direita (background-size 0% -> 100%), que é o gesto do
+         marca-texto de verdade. Sem isso a criança não vê que ELA pintou.
+       · BARRA DE QUANTAS FALTAM: a mecânica não tem fim visível sozinha — sem o
+         placar a criança não sabe se acabou, e o auditor-jogador não vê a tela
+         andar (a barra de progresso é parte da assinatura de estado dele).
+       · NADA ESSENCIAL SÓ NA COR: pintada = realce + negrito + traço grosso
+         embaixo + o "✓" ao lado. Daltônico e tela em preto e branco também leem.
+       · ALVO GRANDE: palavra com padding, >= 44px de altura — dentro de um texto
+         corrido as palavras nascem pequenas demais para dedo de criança.
+       · NUNCA TRAVA: a cada 3 toques errados o andaime cresce (dica -> pisca a
+         palavra -> pinta uma sozinha).
+
+     Numa atividade de verdade, o texto e a categoria vêm do conteudo.json; a voz
+     lê o parágrafo inteiro antes de a criança começar.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.opts{display:block}
+.opt{display:block;background:#fffdf6;color:#221a12;border:0;border-radius:16px;padding:13px 16px;
+     margin:9px auto;font-size:16px;font-weight:600;min-height:48px;max-width:430px;cursor:pointer;
+     box-shadow:0 4px 0 #c9bda6}
+.opt:active{-webkit-transform:translateY(3px);transform:translateY(3px);box-shadow:0 1px 0 #c9bda6}
+.opt.ok{background:#d6f5c8;box-shadow:0 4px 0 #7cb464}
+.opt.no{background:#f7d9d2;box-shadow:0 4px 0 #c08c80}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+/* ⚠️ o banner escondido nao pode contar como "resposta fora da tela": ele nao
+   existe para a crianca ainda. `visibility` tira do alcance do dedo e do
+   leitor de tela — so `bottom:-260px` deixava o botao clicavel no escuro. */
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+.medal{width:74px;height:74px;border-radius:50%;margin:0 auto 8px;background:#ffd54a;
+       border:4px solid #fff3c9;color:#5a4408;font-size:34px;line-height:66px;text-align:center}
+
+/* ---------- O PAPEL COM O TEXTO ----------
+   ⚠️ margem PROPRIA em cima: a regra `.balao + *` do motorzinho tem a mesma
+   forca e perde por vir ANTES no arquivo — sem isto o papel nasce COLADO no
+   enunciado (defeito que o Marcos ja cobrou duas vezes).                     */
+.papel{background:#fffdf6;color:#221a12;border-radius:18px;padding:12px 12px 14px;margin:13px auto 0;
+       max-width:430px;text-align:left;font-size:17px;line-height:2.4;
+       box-shadow:0 4px 0 #c9bda6}
+/* a palavra tocavel: alvo grande de verdade (>= 44px de altura) */
+.pal{display:inline-block;padding:9px 7px;margin:0;border-radius:9px;cursor:pointer;font-weight:600;
+     line-height:1.55;color:#221a12;border-bottom:4px solid transparent;
+     background-color:transparent;
+     background-image:-webkit-linear-gradient(#ffe14a,#ffe14a);
+     background-image:linear-gradient(#ffe14a,#ffe14a);
+     background-repeat:no-repeat;background-position:left center;background-size:0% 100%;
+     -webkit-transition:background-size .38s ease-out;transition:background-size .38s ease-out}
+.pal:active{background-color:#efe7d4}
+/* PINTADA = realce + negrito + traco grosso + o "V". Nunca so a cor. */
+.pal.pintada{background-size:100% 100%;font-weight:800;border-bottom:4px solid #14500c;cursor:default}
+.vmini{color:#14500c;font-size:12px;font-weight:800;margin-left:3px}
+.pal.errada{-webkit-animation:sacode .32s linear 1;animation:sacode .32s linear 1}
+.pal.pisca{-webkit-animation:bate .55s linear 4;animation:bate .55s linear 4;
+           box-shadow:0 0 0 3px #3c6ee0}
+@-webkit-keyframes sacode{0%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}
+  75%{-webkit-transform:translateX(5px)}100%{-webkit-transform:translateX(0)}}
+@keyframes sacode{0%{transform:translateX(0)}25%{transform:translateX(-5px)}
+  75%{transform:translateX(5px)}100%{transform:translateX(0)}}
+@-webkit-keyframes bate{0%{opacity:1}50%{opacity:.45}100%{opacity:1}}
+@keyframes bate{0%{opacity:1}50%{opacity:.45}100%{opacity:1}}
+
+/* ---------- A BARRA DE QUANTAS FALTAM ---------- */
+.barrap{margin:12px auto 0;max-width:430px;display:-webkit-box;display:-webkit-flex;display:flex;
+        -webkit-box-pack:center;-webkit-justify-content:center;justify-content:center}
+.seg{-webkit-box-flex:1;-webkit-flex:1 1 0;flex:1 1 0;max-width:96px;height:44px;margin:0 3px;
+     border-radius:12px;background:rgba(255,255,255,.16);border:3px dashed rgba(255,255,255,.45);
+     color:#f4efe6;font-size:20px;font-weight:800;line-height:38px;text-align:center}
+.seg.on{background:#59c24b;border:3px solid #d6f5c8;color:#0e2f06}
+/* ⚠️ TEXTO SOLTO NO FUNDO DA ATIVIDADE (ago/2026). Este pedaco nao mora
+   dentro de cartao nenhum: cai direto no fundo, que pode ser um galpao
+   escuro, um ceu claro ou uma FOTO de rua com meio-tom. Sem mesa
+   propria a razao de contraste vira loteria — medido de 1,1:1 a 2,9:1
+   na atividade de ortografia. Ele leva a mesa dele junto. */
+.placar{margin-top:10px;font-size:17px;font-weight:700;color:#fffdf6;background:rgba(46,38,26,.86);border-radius:999px;padding:4px 14px;display:inline-block}
+.placar b{color:#ffd54a}
+.carimbo{display:inline-block;margin-top:10px;padding:8px 16px;border-radius:14px;
+         background:#d6f5c8;color:#123d08;font-weight:800;font-size:16px;
+         border:3px solid #7cb464;min-height:44px;line-height:26px}
+@media (max-height:470px){.papel{line-height:2.1;font-size:16px}}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+/* ⚠️ A DICA TEM QUE CABER NA TELA (ago/2026). Ela era o ULTIMO filho do
+   `.centro`, e em janela apertada (320x568 e 1024x420 — o monitor da escola)
+   caia 25 a 96 px ABAIXO DA DOBRA: a crianca que errou precisava ROLAR para ler
+   a ajuda, justo no momento em que esta perdida. Agora ela entra LOGO DEPOIS do
+   enunciado, que e onde o olho ja esta. Defeito estrutural: valia para as 57
+   pecas de uma vez. */
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+/* som: os numeros vieram da pesquisa (PESQUISA-SOM-E-GAMEFEEL). "ding" e
+   sintetizado — MP3 chega atrasado e mata a sensacao de causa-efeito. */
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+/* O TEXTO: cada pedaco e ou texto solto (t) ou uma PALAVRA TOCAVEL (p).
+   `alvo:1` = pertence a categoria pedida (aqui: ANIMAIS). As outras palavras
+   tocaveis sao distratores plausiveis — coisas do mesmo quintal que NAO sao
+   animais. Sem distrator a crianca acerta pintando tudo.                     */
+var CATEG="os ANIMAIS";
+var TEXTO=[
+ {t:"No quintal da "},{p:"ESCOLA"},{t:" tem um "},{p:"GATO",alvo:1},
+ {t:" dormindo na "},{p:"SOMBRA"},{t:" fresca. Uma "},{p:"ABELHA",alvo:1},
+ {t:" voa perto da "},{p:"FLOR"},{t:" amarela. O "},{p:"CACHORRO",alvo:1},
+ {t:" late para o "},{p:"PASSARINHO",alvo:1},{t:" que canta no "},{p:"GALHO"},{t:" alto."}
+ /* ⚠️ nenhuma palavra tocavel encosta em pontuacao: a palavra e um bloco com
+    folga, e o ponto final ficava solto ("SOMBRA .") como se fosse erro de
+    digitacao. Palavra tocavel sempre seguida de outra palavra.              */
+];
+
+var alvos, pintadas, erros, progI, elPlacar, elBarra, elCarimbo;
+
+function sRisco(){ nota(180,.13,.10,"sawtooth",0); nota(330,.10,.08,"sawtooth",.05); }
+
+function pecaPintar(){
+  limpa();
+  pintadas=0; erros=0; alvos=[];
+  var t=el("div","tela");
+  setProg(t,0);
+  progI=t.querySelector(".prog i");
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","MARCA-TEXTO"));
+  c.appendChild(el("div","balao","Passe o marca-texto em <b>"+CATEG+"</b> do texto."));
+
+  var pap=el("div","papel"), i, o, s;
+  for(i=0;i<TEXTO.length;i++){
+    o=TEXTO[i];
+    if(o.t!==undefined){ pap.appendChild(document.createTextNode(o.t)); continue; }
+    s=el("span","pal",o.p);
+    s.setAttribute("data-alvo",o.alvo?"1":"0");
+    if(o.alvo){ s.setAttribute("data-qa","1"); alvos.push(s); }
+    s.onclick=(function(sp,ehAlvo){ return function(){ tocar(sp,ehAlvo); }; })(s,!!o.alvo);
+    pap.appendChild(s);
+  }
+  c.appendChild(pap);
+
+  elBarra=el("div","barrap");
+  c.appendChild(elBarra);
+  elPlacar=el("div","placar","");
+  c.appendChild(elPlacar);
+  elCarimbo=el("div","carimbo","Falta pintar");
+  c.appendChild(elCarimbo);
+  c.appendChild(el("div","hint","Toque na palavra para passar o marca-texto. Se errar, eu te ajudo."));
+  t.appendChild(c);
+  app.appendChild(t);
+  atualiza();
+}
+
+function atualiza(){
+  var i,s;
+  elBarra.innerHTML="";
+  for(i=0;i<alvos.length;i++){
+    s=el("div","seg",i<pintadas?"✓":"");
+    if(i<pintadas) s.className="seg on";
+    elBarra.appendChild(s);
+  }
+  elPlacar.innerHTML="Pintadas <b>"+pintadas+"</b> de <b>"+alvos.length+"</b>";
+  elCarimbo.innerHTML = pintadas===alvos.length ? "Texto todo marcado!"
+    : ("Faltam "+(alvos.length-pintadas)+" palavra"+((alvos.length-pintadas)===1?"":"s"));
+  if(progI) progI.style.width=Math.round(pintadas*100/alvos.length)+"%";
+}
+
+function pinta(sp){
+  if(sp.className.indexOf("pintada")>=0) return;
+  sp.className="pal pintada";
+  sp.removeAttribute("data-qa");
+  sp.innerHTML=sp.textContent+'<sup class="vmini">✓</sup>';
+  sRisco();
+  pintadas++;
+  atualiza();
+  if(pintadas===alvos.length){ setTimeout(fim,650); }
+}
+
+function tocar(sp,ehAlvo){
+  if(sp.className.indexOf("pintada")>=0){ sTap(); return; }   /* ja pintada: nunca pune */
+  if(ehAlvo){ pinta(sp); return; }
+  sErro(); erros++;
+  sp.className="pal errada";
+  setTimeout((function(x){ return function(){ if(x.className.indexOf("pintada")<0) x.className="pal"; }; })(sp),380);
+  ajuda(erros);
+}
+
+/* O ANDAIME QUE CRESCE — o erro responde na hora e diz O QUE OLHAR; no 3o toque
+   errado ele pinta uma sozinho, entao a peca nao tem como travar. */
+function ajuda(n){
+  var alvo=proximaPalavra();
+  if(!alvo) return;
+  var p=n%3;
+  if(p===1){ mostraDica("Essa palavra não é um bicho. Procure quem <b>respira e se mexe</b>."); }
+  else if(p===2){ mostraDica("Está piscando uma que é bicho. Toque nela."); piscaP(alvo); }
+  else { mostraDica("Vou pintar <b>"+alvo.textContent+"</b> para você. Agora ache as outras."); pinta(alvo); }
+}
+function proximaPalavra(){ var i; for(i=0;i<alvos.length;i++){ if(alvos[i].className.indexOf("pintada")<0) return alvos[i]; } return null; }
+function piscaP(sp){
+  if(sp.className.indexOf("pintada")>=0) return;
+  sp.className="pal pisca";
+  setTimeout((function(x){ return function(){ if(x.className.indexOf("pintada")<0) x.className="pal"; }; })(sp),2200);
+}
+
+/* ⚠️ LICAO PAGA (ago/2026, varredura da bancada): o banner final chamava
+   `pecaPintar` (REINICIA a peca) e nao tinha a `div.medal` — o jogador-robo
+   pintava tudo, reiniciava, pintava tudo... nunca via a medalha terminal e
+   estourava no timeout (124). O padrao da casa (ver pintar-canvas): o fecho
+   avulso mostra a MEDALHA e NAO reinicia. Dentro da atividade montada, o motor
+   tira a `div.medal` do banner (nao vira quadradao) e segue para a proxima fase. */
+function fim(){
+  mostraBanner('<div class="medal">&#9733;</div><b>Marcou tudo!</b><br>Você achou tudo o que o texto pedia.');
+}
+
+pecaPintar();
+</script>
+</body></html>

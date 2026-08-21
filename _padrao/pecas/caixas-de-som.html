@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="pt-BR"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>PEÇA — caixas de som (Elkonin)</title>
+<!-- ============================================================
+     PEÇA: CAIXAS DE SOM — uma ficha para cada SOM da palavra.
+     (copiada do _padrao/pecas/MOLDE.html; só o bloco "A PEÇA COMEÇA AQUI" muda)
+
+     POR QUE ELA EXISTE — e por que ela faltava:
+     medindo A Padaria das Letras (ago/2026) achei o buraco: a atividade inteira
+     parava na SÍLABA. Bater sílabas, juntar sílabas, som do começo — e nada de
+     som ISOLADO. Só que a consciência FONÊMICA é o preditor mais forte de
+     leitura no 1º ano; a silábica vem antes e sozinha não abre a leitura.
+     A mecânica canônica para isso são as CAIXAS DE ELKONIN: uma caixinha por
+     som, e a criança empurra uma ficha para cada som que ouve, dizendo a
+     palavra bem devagar. Não existia na oficina — a atividade não tinha como
+     chegar lá nem que quisesse.
+
+     O QUE ELA ENSINA, NESTA ORDEM (é o coração da peça):
+       1. a criança diz a palavra devagar e EMPURRA uma ficha por som;
+       2. as caixas enchem da ESQUERDA para a DIREITA — som tem ordem, e essa
+          ordem é a mesma da escrita (é aqui que nasce a direcionalidade);
+       3. só DEPOIS de fechar a palavra as LETRAS aparecem dentro das caixas.
+          Primeiro o som, depois a letra — nunca o contrário. É o degrau que
+          liga o que ela ouve ao que ela vai escrever.
+
+     ⚠️ A REGRA QUE MANDA AQUI: FUNCIONA NO MUDO.
+     A palavra aparece SEMPRE ESCRITA e (quando a fase traz) com a FIGURA. PC de
+     escola sem caixa de som existe, e criança surda também. Quem tem som ouve e
+     empurra; quem não tem, lê e empurra.
+
+     ⚠️⚠️ E A REGRA GÊMEA, QUE ESTA PEÇA NÃO CUMPRIA: **toda voz é GRAVADA**.
+     Ela nascera MUDA — nenhuma voz, em nenhuma tela — numa mecânica chamada
+     "caixas de SOM", cujo enunciado manda DIZER a palavra devagar. Agora ela
+     fala sozinha ao abrir, tem o botão grande **OUVIR A PALAVRA** (repetível
+     quantas vezes a criança quiser) e o alto-falante da palavra escrita, que a
+     diz BEM DEVAGAR — que é justamente o gesto que a peça ensina.
+     A voz nunca é `speechSynthesis`: a peça chama o `diz(...)` que a ponte do
+     integrador injeta, e que toca o MP3 da casa. Medido por `_qa/vozrobo.py`.
+
+     AS ARMADILHAS QUE ESTA PEÇA FECHA:
+       · CAIXA FORA DE ORDEM: tocar a 3ª caixa antes da 1ª não "dá erro" e some
+         — ela treme, o som é de retorno e a dica diz por onde começar. Ordem é
+         o conteúdo, não uma regra de sistema.
+       · SOM NÃO É LETRA: nada de mostrar a letra durante o preenchimento. Isso
+         transformaria a peça num ditado, que é outra coisa e vem depois.
+       · NUNCA TRAVA: no 3º erro a próxima caixa acende e a peça deixa seguir.
+       · FASE MUDA: a tela nasce falando (o enunciado, e logo depois a palavra).
+         Criança de 6 anos não sabe que existe um botão para apertar — se a tela
+         nasce calada, ela olha e espera até alguém falar por ela.
+       · VOZ POR CIMA DE VOZ: a segunda fala ESPERA a primeira acabar
+         (`falaEmSeguida`), nunca um relógio fixo.
+       · ALVO PEQUENO: a ficha tinha 38px; agora 46px. Ela é o objeto que se
+         ARRASTA, e alvo pequeno em arrasto erra duas vezes — ao pegar e ao
+         largar. Caixa de 66px.
+       · TEMPORIZADOR DE RODADA VELHA: todo setTimeout guarda a GERAÇÃO.
+       · DUAS PORTAS: tocar a caixa põe a próxima ficha; e dá para ARRASTAR a
+         ficha até ela. No PC da escola tem mouse; no celular, dedo.
+       · ENTIDADE DE HTML CHEGANDO NA VOZ: a chave da gravação sai do TEXTO, e
+         "Ou&#231;a" nunca bate com o mp3 de "Ouça". Quem decodifica é o
+         navegador (`textoDe`), nunca uma expressão escrita à mão.
+
+     REGRAS DA PEÇA: ES5 puro, 1 arquivo, sem biblioteca (Chrome 109/Firefox
+     106); alvo >= 44px; nada essencial só na cor; funciona no mudo; publica
+     data-qa; termina em .medal.
+     ============================================================ -->
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+/* ⚠️ A BANCADA TAMBEM DECLARA O TEMA (ago/2026). As pecas passaram a usar
+   `var(--texto)` para seguir a atividade em que caem — mas aqui, sozinha,
+   nao havia quem definisse o token, e a cor de reserva escura caia no fundo
+   escuro da propria bancada: 1,06:1. O molde define o token que combina com
+   o fundo DELE; a atividade redefine com o dela. */
+:root{--texto:#f4efe6}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:#2b2118;color:#f4efe6}
+#app{max-width:520px;margin:0 auto;padding:10px 12px 28px}
+.prog{height:9px;background:rgba(255,255,255,.16);border-radius:9px;overflow:hidden;margin:6px 0 12px}
+.prog i{display:block;height:100%;background:#59c24b;width:0;-webkit-transition:width .5s;transition:width .5s}
+.selo{display:inline-block;background:#3c6ee0;color:#fff;font-weight:700;font-size:13px;
+      letter-spacing:.4px;padding:6px 14px;border-radius:20px;margin:0 auto 10px;display:block;
+      width:-webkit-fit-content;width:fit-content}
+.balao{position:relative;background:rgba(255,253,246,.96);color:#221a12;border-radius:20px;
+       padding:13px 17px;font-size:17px;font-weight:600;text-align:center;line-height:1.35;
+       box-shadow:0 5px 16px rgba(0,0,0,.28)}
+.balao b{color:#1f6b12}
+.balao + *{margin-top:13px}
+.centro{text-align:center}
+.hint{font-size:14px;opacity:.85;margin-top:10px}
+.dica{background:#fff3c9;color:#3a2c07;border-radius:14px;padding:10px 14px;margin-top:12px;
+      font-size:15px;font-weight:600}
+.tela{display:block}
+.banner{position:fixed;left:0;right:0;bottom:-260px;background:#1f6b12;color:#fff;text-align:center;
+        padding:18px 16px 22px;border-radius:22px 22px 0 0;visibility:hidden;
+        -webkit-transition:bottom .35s;transition:bottom .35s}
+.banner.show{bottom:0;visibility:visible}
+.btn{background:#ffd54a;color:#33280a;border:0;border-radius:16px;padding:13px 26px;font-size:17px;
+     font-weight:800;min-height:48px;cursor:pointer;box-shadow:0 4px 0 #c9a52f}
+
+/* ====== CSS DESTA PEÇA ====== */
+/* A PALAVRA: figura (quando houver) + a palavra ESCRITA. É o gêmeo visual do
+   som — é ela que faz a peça funcionar no PC sem caixa de som. */
+.csPal{margin:10px auto 0;max-width:430px;background:rgba(255,255,255,.12);border-radius:22px;
+       padding:12px 12px 10px;
+       -webkit-box-shadow:inset 0 0 0 2px rgba(255,255,255,.14);
+       box-shadow:inset 0 0 0 2px rgba(255,255,255,.14)}
+/* ⭐ A FIGURA CRESCEU (82 -> 104px). Ordem do Marcos (ago/2026): *"as dinamicas
+   interativas tem que ser mais VISUAIS e SONORAS para os pequenos"*. No 1o ano
+   a figura NAO e enfeite: e ela que diz de que palavra se esta falando para
+   quem ainda nao le. Piso da casa: 64px — aqui sao 104. */
+.csFig{width:104px;height:104px;min-height:64px;margin:0 auto 4px;display:block;position:relative}
+.csFig img{width:100%;height:100%;object-fit:contain;
+       -webkit-filter:drop-shadow(0 5px 7px rgba(0,0,0,.35));
+       filter:drop-shadow(0 5px 7px rgba(0,0,0,.35))}
+.csEsc{display:inline-block;vertical-align:middle;font-size:34px;font-weight:800;letter-spacing:2px;
+       color:#ffd54a;line-height:1.1;margin-top:2px;background:rgba(22,24,30,.82);color:#f4efe6;border-radius:10px;padding:4px 10px;}
+.csDiz{font-size:13px;font-weight:700;letter-spacing:.6px;color:var(--texto,#f0e6d4);opacity:.9}
+/* a linha da palavra escrita: o texto e o alto-falante dela, lado a lado e
+   centrados. Envolve (`flex-wrap`) para o botao nunca precisar encolher. */
+.csLin{display:-webkit-box;display:flex;-webkit-box-align:center;align-items:center;
+       -webkit-box-pack:center;justify-content:center;
+       -webkit-flex-wrap:wrap;flex-wrap:wrap;margin-top:2px}
+/* ⭐⭐ O BOTAO OUVIR — grande, obvio e apertavel quantas vezes ela quiser.
+   Esta peca nasceu MUDA: nem uma voz, em nenhuma tela. Numa mecanica cujo nome
+   e "caixas de SOM", e cujo enunciado manda DIZER a palavra devagar, isso
+   deixava a fase inteira dependendo de a professora falar por ela.
+   O pulso mora no `box-shadow` de proposito: nao ocupa espaco no leiaute,
+   entao nao empurra nada e nao tapa texto nenhum. */
+.csOuvir{position:relative;display:block;margin:8px auto 10px;background:#ffd54a;color:#33280a;
+       border:0;border-radius:999px;width:100%;max-width:300px;min-height:60px;padding:0 20px;
+       font-size:19px;font-weight:800;letter-spacing:.5px;cursor:pointer;
+       -webkit-box-shadow:0 5px 0 #c9a52f;box-shadow:0 5px 0 #c9a52f;
+       -webkit-animation:csPulso 2.6s ease-out infinite;animation:csPulso 2.6s ease-out infinite}
+.csOuvir:active{-webkit-transform:translateY(4px);transform:translateY(4px);
+       -webkit-box-shadow:0 1px 0 #c9a52f;box-shadow:0 1px 0 #c9a52f;
+       -webkit-animation:none;animation:none}
+.csOuvir.tocando{background:#ffe89c;-webkit-animation:none;animation:none}
+@-webkit-keyframes csPulso{
+  0%{-webkit-box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,.5)}
+  70%{-webkit-box-shadow:0 5px 0 #c9a52f,0 0 0 15px rgba(255,213,74,0)}
+  100%{-webkit-box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,0)}}
+@keyframes csPulso{
+  0%{box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,.5)}
+  70%{box-shadow:0 5px 0 #c9a52f,0 0 0 15px rgba(255,213,74,0)}
+  100%{box-shadow:0 5px 0 #c9a52f,0 0 0 0 rgba(255,213,74,0)}}
+/* ⭐ O ALTO-FALANTE DA PALAVRA ESCRITA (pilar SONORA): ele diz a palavra BEM
+   DEVAGAR, que e exatamente o gesto que esta mecanica pede — o botao grande diz
+   a palavra inteira, este aqui a estica. Sao dois sons diferentes de proposito.
+   O desenho e o MESMO glifo de alto-falante do resto da casa, em SVG embutido:
+   ele se centra sozinho pelo `viewBox` e fica nitido em qualquer zoom. Dois
+   desenhos diferentes de alto-falante no mesmo app e amadorismo. */
+.zap{display:-webkit-inline-box;display:inline-flex;vertical-align:middle;
+     -webkit-box-align:center;align-items:center;-webkit-box-pack:center;justify-content:center;
+     width:46px;height:46px;margin-left:10px;border:0;border-radius:50%;padding:0;cursor:pointer;
+     background-color:rgba(255,210,63,.95);
+     -webkit-box-shadow:0 2px 0 rgba(150,110,10,.45);box-shadow:0 2px 0 rgba(150,110,10,.45)}
+.zap:active{-webkit-transform:translateY(2px);transform:translateY(2px);background-color:rgba(255,190,40,.98)}
+.fone{display:inline-block;vertical-align:middle;width:26px;height:26px;margin:0 10px 0 0;
+     background:url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3E%3Cpath fill='%2333280a' d='M4 7.6h3.1L11 3.9v12.2L7.1 12.4H4z'/%3E%3Cpath fill='none' stroke='%2333280a' stroke-width='1.7' stroke-linecap='round' d='M13.3 7.1a4.2 4.2 0 0 1 0 5.8'/%3E%3C/svg%3E") center center no-repeat;
+     -webkit-background-size:26px 26px;background-size:26px 26px}
+.zap .fone{margin:0}
+
+/* AS CAIXAS: uma por som, lado a lado, sempre da esquerda para a direita.
+   ⚠️ LICAO PAGA (ago/2026): elas nasceram como `.cx` e as caixinhas sairam
+   BRANCAS dentro da atividade montada — `.cx` ja e o nome da CAIXA DE LARGAR
+   na ponte de estilo (`.centro .pecabox .opt,.pc,.ficha,.cx`), que pinta
+   cartao. Colisao de nome nao da erro: da um visual errado que so aparece
+   quando a peca entra na atividade, nunca na bancada. Nome de classe de peca
+   nova: confira antes contra a ponte e contra o motor. */
+.csCx{display:block;margin:14px auto 0;font-size:0;max-width:430px}
+/* ⚠️ LICAO PAGA (ago/2026): a caixa vazia era so um contorno claro com fundo
+   de 8% — na bancada (fundo escuro liso) ficava otima, e DENTRO da atividade,
+   sobre a foto da padaria, as prateleiras apareciam atraves dela e a caixinha
+   sumia. Caixa VAZIA e o convite da peca: ela precisa de CORPO proprio, que
+   nao dependa do que ha atras. */
+.csb{display:inline-block;vertical-align:top;width:66px;height:66px;margin:0 5px;
+    border:3px dashed #b9a67f;border-radius:16px;background:rgba(255,253,246,.9);
+    cursor:pointer;position:relative;-webkit-transition:background .2s,border-color .2s;
+    transition:background .2s,border-color .2s;
+    -webkit-box-shadow:0 5px 12px rgba(0,0,0,.28);box-shadow:0 5px 12px rgba(0,0,0,.28)}
+/* o dedo tem que sentir que encostou: a caixa afunda ao toque */
+.csb:active{-webkit-transform:translateY(3px);transform:translateY(3px);
+    -webkit-box-shadow:0 2px 6px rgba(0,0,0,.28);box-shadow:0 2px 6px rgba(0,0,0,.28)}
+/* a caixa CHEIA: a ficha dentro dela. Nada de letra aqui — som nao e letra. */
+.csb.cheia{background:#dff3d2;border-style:solid;border-color:#6da84a}
+.csb .fic{position:absolute;left:50%;top:50%;width:38px;height:38px;margin:-19px 0 0 -19px;
+         border-radius:50%;background:#ffd54a;
+         -webkit-box-shadow:inset 0 -4px 0 rgba(160,120,10,.45),0 2px 5px rgba(0,0,0,.25);
+         box-shadow:inset 0 -4px 0 rgba(160,120,10,.45),0 2px 5px rgba(0,0,0,.25);
+         -webkit-animation:csEntra .28s cubic-bezier(.2,1.5,.4,1);animation:csEntra .28s cubic-bezier(.2,1.5,.4,1)}
+/* ⭐ A FESTA DO ACERTO — quando a palavra fecha, as caixinhas pulam UMA APOS A
+   OUTRA, da esquerda para a direita: a mesma ordem que a peca inteira ensina.
+   O atraso de cada uma e posto no JS, para nao depender de quantos sons a fase
+   tem. Animacao curta, sem biblioteca, e some sozinha. */
+.csb.festa{-webkit-animation:csPula .5s ease;animation:csPula .5s ease}
+@-webkit-keyframes csPula{0%,100%{-webkit-transform:scale(1)}45%{-webkit-transform:scale(1.16)}}
+@keyframes csPula{0%,100%{transform:scale(1)}45%{transform:scale(1.16)}}
+@-webkit-keyframes csEntra{from{-webkit-transform:scale(.2);opacity:0}to{-webkit-transform:scale(1);opacity:1}}
+@keyframes csEntra{from{transform:scale(.2);opacity:0}to{transform:scale(1);opacity:1}}
+/* a proxima caixa, revelada no 3o erro: acende E ganha a marca ESCRITA */
+.csb.alvo{border-color:#e0a92a;background:#fff3d2}
+.csb.treme{-webkit-animation:csTreme .32s;animation:csTreme .32s}
+@-webkit-keyframes csTreme{0%,100%{-webkit-transform:translateX(0)}25%{-webkit-transform:translateX(-5px)}75%{-webkit-transform:translateX(5px)}}
+@keyframes csTreme{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+/* a LETRA so aparece no fim: primeiro o som, depois a letra. */
+.csb .let{position:absolute;left:0;right:0;top:50%;margin-top:-13px;font-size:24px;font-weight:800;
+         color:#2b2118;line-height:1;-webkit-animation:csEntra .3s;animation:csEntra .3s}
+
+/* AS FICHAS que ainda nao foram empurradas: o estoque. */
+.csFic{display:block;margin:12px auto 0;font-size:0;min-height:46px}
+/* ⚠️ A FICHA TINHA 38px — abaixo do dedo de uma crianca de 6 anos (a pesquisa
+   pede 44px ate o 2o ano, e esta e a peca do 1o). E ela e o objeto que a
+   crianca ARRASTA: alvo pequeno em gesto de arrasto erra duas vezes, na hora
+   de pegar e na hora de largar. Agora sao 46px. */
+.fichaq{display:inline-block;width:46px;height:46px;margin:4px;border-radius:50%;
+        background:#ffd54a;cursor:pointer;vertical-align:middle;
+        -webkit-box-shadow:inset 0 -4px 0 rgba(160,120,10,.45),0 3px 7px rgba(0,0,0,.28);
+        box-shadow:inset 0 -4px 0 rgba(160,120,10,.45),0 3px 7px rgba(0,0,0,.28)}
+.fichaq:active{-webkit-transform:translateY(2px);transform:translateY(2px)}
+.fichaq.sel{-webkit-box-shadow:0 0 0 5px rgba(255,213,74,.55),inset 0 -4px 0 rgba(160,120,10,.45);
+            box-shadow:0 0 0 5px rgba(255,213,74,.55),inset 0 -4px 0 rgba(160,120,10,.45)}
+.fichaq.gasta{visibility:hidden}
+/* o fantasma do arrasto */
+.fant{position:fixed;z-index:50;width:46px;height:46px;border-radius:50%;background:#ffd54a;
+      pointer-events:none;opacity:.9;
+      -webkit-box-shadow:inset 0 -4px 0 rgba(160,120,10,.45);
+      box-shadow:inset 0 -4px 0 rgba(160,120,10,.45)}
+/* etiqueta em PALAVRAS, nunca so a cor */
+.csConta{display:block;font-size:14px;font-weight:700;color:var(--texto,#f0e6d4);margin-top:10px}
+.medal{width:104px;height:104px;margin:2px auto 12px;border-radius:50%;background:#f6c23a;
+       border:6px solid #fff3c9;box-shadow:0 6px 16px rgba(0,0,0,.35);color:#4a3608;
+       font-size:44px;line-height:92px;text-align:center;font-weight:800}
+.medal:before{content:"\2605"}
+@media (prefers-reduced-motion:reduce){
+  .csb .fic,.csb .let,.csb.treme,.csb.festa,.csOuvir{-webkit-animation:none;animation:none}
+}
+/* celular estreito: as caixinhas e as fichas encolhem, MAS NUNCA abaixo dos
+   44px do dedo — quem encolhe primeiro e a folga entre elas. */
+@media (max-width:360px){
+  .csFig{width:88px;height:88px}
+  .csEsc{font-size:29px}
+  .csb{width:54px;height:54px;margin:0 3px}
+  .csb .fic{width:32px;height:32px;margin:-16px 0 0 -16px}
+  .csb .let{font-size:21px}
+  .fichaq{width:44px;height:44px;margin:3px}
+}
+/* janela baixa (o 1024x420 do projetor da escola): encolhe a ALTURA do
+   cabecalho, nunca o alvo. */
+@media (max-height:520px){
+  .prog{margin:4px 0 8px}
+  .selo{margin-bottom:6px}
+  .balao{font-size:14px;padding:8px 13px}
+  .balao + *{margin-top:8px}
+  .csPal{margin-top:6px;padding:8px 10px 6px}
+  .csFig{width:64px;height:64px;margin-bottom:2px}
+  .csOuvir{min-height:48px;font-size:16px;margin:6px auto 6px}
+  .csOuvir .fone{width:22px;height:22px;-webkit-background-size:22px 22px;background-size:22px 22px}
+  .csEsc{font-size:26px}
+  .csCx{margin-top:8px}
+  .csFic{margin-top:8px}
+  .csConta{margin-top:6px}
+  .hint{margin-top:5px;font-size:13px}
+  .medal{width:70px;height:70px;font-size:30px;line-height:60px}
+}
+</style></head>
+<body>
+<div id="app"></div>
+<div id="banner" class="banner"><div id="bmsg"></div><button id="bcta" class="btn" style="margin-top:12px">Continuar</button></div>
+<script>
+/* ====== MOTORZINHO DA PEÇA (os mesmos nomes das atividades) ====== */
+var app=document.getElementById("app"), banner=document.getElementById("banner"),
+    bmsg=document.getElementById("bmsg"), bcta=document.getElementById("bcta");
+function el(t,c,h){var e=document.createElement(t);if(c)e.className=c;if(h!==undefined&&h!==null)e.innerHTML=h;return e;}
+function limpa(){app.innerHTML="";}
+function setProg(t,p){var pr=el("div","prog");var i=el("i");i.style.width=p+"%";pr.appendChild(i);t.appendChild(pr);}
+function mostraDica(txt){var d=document.getElementById("dicaP");
+  if(!d){ d=el("div","dica"); d.id="dicaP";
+    var b=app.getElementsByClassName("balao")[0];
+    if(b&&b.parentNode) b.parentNode.insertBefore(d,b.nextSibling);
+    else (app.querySelector(".centro")||app).appendChild(d);
+  } d.innerHTML=txt;}
+function mostraBanner(msg,cb){bmsg.innerHTML=msg;banner.className="banner show";festa();
+  bcta.onclick=function(){banner.className="banner";if(cb)cb();};}
+function baguncar(a){var i,j,x;for(i=a.length-1;i>0;i--){j=Math.floor(Math.random()*(i+1));x=a[i];a[i]=a[j];a[j]=x;}return a;}
+var AC=null;
+function ac(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();
+  if(AC.state==="suspended")AC.resume();}catch(e){}return AC;}
+function nota(f,dur,vol,tipo,atraso){var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain(),t=c.currentTime+(atraso||0);
+  o.type=tipo||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(vol||.18,t+.014);
+  g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+  o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+dur+.02);}
+function sCerto(){nota(523.25,.35,.18,"triangle",0);nota(659.25,.35,.16,"triangle",.055);nota(783.99,.35,.15,"triangle",.11);}
+function sErro(){nota(300,.14,.12,"sine",0);nota(318,.14,.12,"sine",0);}
+function sTap(){nota(880,.012,.10,"square",0);}
+function festa(){sCerto();}
+document.addEventListener("pointerdown",function(){ac();},false);
+</script>
+<script>
+/* ====== A PEÇA COMEÇA AQUI ====== */
+
+/* ⭐ A GAVETA DE CONTEÚDO — troque APENAS este bloco.
+   Cada rodada é uma palavra. `sons` é o que a criança EMPURRA (um por som);
+   `letras` é o que aparece DEPOIS, dentro das caixas, ligando som e escrita.
+   ⚠️ `letras` pode ter mais de uma letra por caixa (o "CH" de CHÁ é UM som e
+   DUAS letras) — é justamente isso que a peça mostra no fim, e é por isso que
+   ela não pode ser feita contando letras. */
+var PALAVRAS=[
+  {pal:"PÃO",  img:"", sons:3, letras:["P","Ã","O"],
+   dicas:["Diga PÃO bem devagar e conte no dedo: quantos pedacinhos de som?",
+          "P... Ã... O. São três sons, então são três caixinhas.",
+          "Comece pela primeira caixinha, à esquerda: ela está acesa."]},
+  {pal:"MEL",  img:"", sons:3, letras:["M","E","L"],
+   dicas:["Diga MEL bem devagar e escute cada som.",
+          "M... E... L. Três sons, três caixinhas.",
+          "A próxima caixinha está acesa: empurre a ficha para ela."]},
+  {pal:"SAL",  img:"", sons:3, letras:["S","A","L"],
+   dicas:["Fale SAL devagar, alongando cada som.",
+          "S... A... L. Conte comigo: são três.",
+          "É esta caixinha acesa que espera a ficha agora."]}
+];
+var ENUN="Diga a palavra devagar e empurre <b>uma ficha</b> para cada som.";
+/* ⭐ OS ROTULOS QUE A CRIANCA VE E OUVE — conteudo, nao texto cravado no corpo.
+   O montador troca aqui em cima, sem abrir o codigo da peca. */
+var TEXTOS={
+  ouvir:"OUVIR A PALAVRA",
+  ouvirLeitor:"Ouvir a palavra inteira",
+  devagar:"DIGA A PALAVRA DEVAGAR",
+  devagarLeitor:"Ouvir a palavra bem devagar",
+  ajuda:"Toque na caixinha (ou arraste a ficha at&#233; ela). Sempre da esquerda para a direita. Pode ouvir quantas vezes quiser.",
+  certo:"Isso! <b>%P%</b> tem %N% sons.",
+  fim:"Voc&#234; ouviu todos os sons!",
+  medalha:"Voc&#234; empurrou uma ficha para <b>cada som</b>. &#201; assim que a palavra vira escrita!"
+};
+
+/* a figura de verdade vem do MOTOR; aqui na bancada ela nao existe. Pegar por
+   `window.imgEl` deixa o nome DECLARADO, e o portao "funcao que nao existe"
+   consegue medir. */
+var imgEl = window.imgEl || null;
+
+var rodada=0, posta=0, erros=0, ger=0, travada=false;
+var marcada=null, pegou=null, fantasma=null, x0=0, y0=0, arrastando=false;
+var ultimoToque=0, fimArrasto=0;
+function agora(){ return (new Date()).getTime(); }
+function souDedo(){ return agora()-ultimoToque<800; }
+function cliqueDeArrasto(){ return agora()-fimArrasto<350; }
+
+/* ---------------------------------------------------------------
+   ⚠️⚠️ A VOZ — E ELA E SEMPRE GRAVADA (e esta peca nasceu MUDA)
+   Lição paga (ago/2026), com a atividade na mao do Marcos: numa fase de OUVIR,
+   o botao principal nao falava nada, porque a peca usava a voz-robo do
+   navegador (a voz-robo) — e a ponte do integrador DESLIGA essa voz de
+   proposito, depois que ele pegou duas vozes falando ao mesmo tempo. Falha
+   calada: nenhum erro, nenhum aviso, so silencio no botao mais importante.
+   Esta peca aqui era pior: nao tinha voz NENHUMA, em tela nenhuma — numa
+   mecanica chamada "caixas de SOM", cujo enunciado manda DIZER a palavra.
+   A regra da casa, agora medida por `_qa/vozrobo.py`: toda voz que a crianca
+   ouve e GRAVADA. A peca nao declara voz: ela chama o `diz(...)` que a ponte
+   injeta, que toca o MP3 da casa (Edge TTS, via `falas.json`/`entregar.yml`).
+   A guarda `typeof diz==="function"` e obrigatoria — na bancada a peca roda
+   sozinha, sem ponte, e chamar direto estouraria na primeira tela.
+   --------------------------------------------------------------- */
+/* ⚠️⚠️ DEFEITO PEGO NA BANCADA, simulando a ponte (ago/2026), e ele teria
+   chegado MUDO na crianca: o texto da peca vem com ENTIDADE de HTML
+   ("Ou&#231;a a palavra", "at&#233;", "Voc&#234;"). Tirar so as etiquetas com
+   uma expressao deixava a entidade crua, e a CHAVE DA GRAVACAO e feita do
+   TEXTO: "Ou&#231;a..." nunca bate com o mp3 gravado para "Ouca...". Resultado
+   seria o de sempre — botao que nao fala, sem erro nenhum no console.
+   O jeito honesto de virar entidade em letra e deixar o NAVEGADOR ler: um
+   elemento solto, `innerHTML` de um lado e `textContent` do outro. De quebra
+   ele tira as etiquetas sozinho, sem expressao para errar. */
+function textoDe(html){
+  var d=document.createElement("div");
+  d.innerHTML=String(html);
+  var t=d.textContent||d.innerText||"";
+  return t.replace(/\s+/g," ").replace(/^ | $/g,"");
+}
+function fala(txt){
+  if(!txt) return;
+  var t=textoDe(txt);
+  if(!t) return;
+  if(typeof diz==="function") diz(t);
+}
+/* ⭐ A SEGUNDA VOZ ESPERA A PRIMEIRA. O enunciado e a palavra tocam na mesma
+   tela, um atras do outro; com relogio fixo a palavra entrava POR CIMA do
+   enunciado e a crianca perdia os dois. Aqui a peca olha o tocador do motor e
+   so segue quando ele cala. Na bancada nao ha tocador: cai no relogio, e nada
+   e cortado porque nada esta tocando. */
+function falaEmSeguida(txt,espera){
+  var g=ger, gasto=0;
+  /* ⚠️ LICAO PAGA (ago/2026): voz atrasada que espera o motor calar por ate 9s.
+     Se o MOTOR troca de fase nesse meio, o `ger` da peca nao muda e a voz caia
+     numa fase seguinte (banca voz-dupla). Guardo tambem a fase do motor. */
+  var _if=(typeof IFASE!=="undefined")?IFASE:null;
+  function som(){ try{ return document.getElementById("vz")||document.getElementById("narr"); }catch(e){ return null; } }
+  function tenta(){
+    if(g!==ger) return;
+    if(_if!==null && typeof IFASE!=="undefined" && IFASE!==_if) return;
+    var s=som();
+    if(s&&!s.paused&&!s.ended&&gasto<9000){ gasto+=240; setTimeout(tenta,240); return; }
+    fala(txt);
+  }
+  setTimeout(tenta,espera||900);
+}
+/* a palavra inteira: e o que o botao GRANDE diz. `fala` na rodada permite a
+   fase escolher outra pronuncia sem mexer no que esta escrito na tela. */
+function palavraFalada(r){ return (r&&r.fala) || (r&&r.pal) || ""; }
+/* a palavra ESTICADA, som a som: e o que o alto-falante da palavra escrita diz,
+   e e o gesto que esta mecanica ensina ("diga devagar"). A fase pode escrever a
+   versao dela em `lenta`; sem isso, vale a palavra inteira — nenhuma atividade
+   antiga quebra por falta do campo novo. */
+function palavraLenta(r){ return (r&&r.lenta) || palavraFalada(r); }
+/* o botao acende enquanto a voz sai: e assim que a crianca liga o som ao lugar
+   onde ele se repete. Some sozinho — nao e estado, e um aceno. */
+function acendeOuvir(){
+  var b=app.getElementsByClassName("csOuvir")[0];
+  if(!b) return;
+  var g=ger;
+  b.className="csOuvir tocando";
+  setTimeout(function(){ if(g!==ger) return;
+    var x=app.getElementsByClassName("csOuvir")[0]; if(x) x.className="csOuvir"; },900);
+}
+/* ⭐ REPETIR E DIREITO DA CRIANCA: sem custo, sem contar tentativa, sem tirar
+   andaime. Quem ainda nao segura a palavra na cabeca precisa ouvir tres, quatro
+   vezes — e e ouvindo de novo que ela aprende a ouvir. */
+function tocaPalavra(){
+  var r=PALAVRAS[rodada];
+  sTap();
+  fala(palavraFalada(r));
+  acendeOuvir();
+}
+
+function pecaCaixas(){
+  posta=0; erros=0; travada=false; marcada=null; pegou=null; arrastando=false; ger++;
+  var r=PALAVRAS[rodada];
+  limpa();
+  var t=el("div","tela");
+  setProg(t, Math.round(rodada*100/PALAVRAS.length));
+  var c=el("div","centro");
+  c.appendChild(el("div","selo","CAIXAS DE SOM"));
+  c.appendChild(el("div","balao",ENUN));
+
+  /* ⭐ A PALAVRA: figura (se houver) + o botao GRANDE de ouvir + a palavra
+     ESCRITA com o alto-falante dela. O gemeo visual do som continua sendo a
+     palavra escrita — quem nao tem caixa de som LE e empurra do mesmo jeito. */
+  var pv=el("div","csPal");
+  if(r.img){
+    var f=el("div","csFig");
+    /* ⚠️ dentro da atividade a figura vem do motor (`imgEl`), que sabe a pasta
+       e ja marca `alt`/`draggable`. O caminho direto fica so como reserva. */
+    if(imgEl){ f.appendChild(imgEl(r.img)); }
+    else { var im=el("img"); im.src="img/"+r.img+".png"; im.alt=""; f.appendChild(im); }
+    pv.appendChild(f);
+  }
+  var bo=el("button","csOuvir","");
+  bo.type="button";
+  bo.appendChild(el("i","fone",""));
+  bo.appendChild(document.createTextNode(TEXTOS.ouvir));
+  bo.setAttribute("aria-label",TEXTOS.ouvirLeitor);
+  bo.onclick=function(){ tocaPalavra(); };
+  pv.appendChild(bo);
+  pv.appendChild(el("div","csDiz",TEXTOS.devagar));
+  var lin=el("div","csLin","");
+  lin.appendChild(el("span","csEsc", r.pal));
+  var z=el("button","zap","");
+  z.type="button";
+  z.appendChild(el("i","fone",""));
+  z.setAttribute("aria-label",TEXTOS.devagarLeitor);
+  z.onclick=function(ev){
+    var e=ev||window.event;
+    if(e.stopPropagation) e.stopPropagation(); else e.cancelBubble=true;
+    sTap(); fala(palavraLenta(r));
+  };
+  lin.appendChild(z);
+  pv.appendChild(lin);
+  c.appendChild(pv);
+
+  /* as caixas, uma por som */
+  var cxs=el("div","csCx"), i, b;
+  for(i=0;i<r.sons;i++){
+    b=el("div","csb","");
+    b.idx=i;
+    b.onclick=fazToqueCaixa(b);
+    cxs.appendChild(b);
+  }
+  c.appendChild(cxs);
+
+  /* o estoque de fichas: uma por som */
+  var fs=el("div","csFic");
+  for(i=0;i<r.sons;i++){
+    var q=el("div","fichaq","");
+    q.onclick=fazToqueFicha(q);
+    q.onmousedown=fazPega(q);
+    q.addEventListener("touchstart",fazToca(q),false);
+    fs.appendChild(q);
+  }
+  c.appendChild(fs);
+
+  c.appendChild(el("div","csConta","0 de "+r.sons+" sons"));
+  c.appendChild(el("div","hint",TEXTOS.ajuda));
+  t.appendChild(c);
+  app.appendChild(t);
+  marcaProxima();
+  /* ⭐⭐ A FASE FALA SOZINHA AO ABRIR. No 1o ano a crianca nao sabe que existe
+     um botao para apertar: se a tela nasce calada, ela olha e espera. Primeiro
+     o que e para fazer; assim que o enunciado cala, a PALAVRA — e o botao
+     acende junto, para ela saber onde repetir sozinha. */
+  fala(ENUN);
+  falaEmSeguida(palavraFalada(r),1100);
+  var gi=ger;
+  setTimeout(function(){ if(gi===ger) acendeOuvir(); },1100);
+}
+
+/* ⚠️ `data-qa` diz qual caixa serve AGORA — e SÓ o auditor-jogador olha para
+   isto. A criança não vê nada: se ela visse, a ordem deixaria de ser o
+   conteúdo e viraria "siga a marca". */
+function marcaProxima(){
+  var cx=app.getElementsByClassName("csb"), i;
+  for(i=0;i<cx.length;i++) cx[i].setAttribute("data-qa", i===posta ? "1" : "0");
+}
+function contaNaTela(){
+  var d=app.getElementsByClassName("csConta")[0];
+  if(d) d.innerHTML = posta+" de "+PALAVRAS[rodada].sons+" sons";
+}
+function proximaFichaLivre(){
+  var q=app.getElementsByClassName("fichaq"), i;
+  for(i=0;i<q.length;i++) if(q[i].className.indexOf("gasta")<0) return q[i];
+  return null;
+}
+
+/* ---- as DUAS PORTAS: tocar a caixa, ou arrastar a ficha até ela ---------- */
+function fazToqueFicha(q){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;      /* este clique e o rabo do arrasto */
+    if(q.className.indexOf("gasta")>=0) return;
+    sTap();
+    var todas=app.getElementsByClassName("fichaq"), i;
+    for(i=0;i<todas.length;i++)
+      if(todas[i].className.indexOf("gasta")<0) todas[i].className="fichaq";
+    q.className="fichaq sel"; marcada=q;
+  };
+}
+function fazToqueCaixa(b){
+  return function(){
+    if(travada) return;
+    if(cliqueDeArrasto()) return;
+    /* ⭐ tocar a caixa SEM ter escolhido ficha já empurra a próxima: no 1º ano
+       exigir dois toques onde um basta é atrito puro. A ficha marcada continua
+       valendo para quem gosta de escolher primeiro. */
+    poe(b, marcada || proximaFichaLivre());
+  };
+}
+function fazPega(q){
+  return function(ev){
+    if(souDedo()) return;              /* mouse FANTASMA do celular: ignora */
+    comeca(q, ev.clientX, ev.clientY);
+  };
+}
+function fazToca(q){
+  /* ⚠️ NUNCA `preventDefault` aqui — mata o toque no celular. Ele mora no
+     touchmove, e só enquanto há ficha na mão. */
+  return function(ev){
+    ultimoToque=agora();
+    var d=ev.touches[0];
+    comeca(q, d.clientX, d.clientY);
+  };
+}
+function comeca(q,x,y){
+  if(travada) return;
+  if(q.className.indexOf("gasta")>=0) return;
+  pegou=q; x0=x; y0=y; arrastando=false;
+}
+function move(x,y){
+  if(!pegou) return;
+  if(!arrastando){
+    if(Math.abs(x-x0)+Math.abs(y-y0)<10) return;
+    arrastando=true;
+    fantasma=el("div","fant","");
+    document.body.appendChild(fantasma);
+  }
+  /* ⚠️ metade da ficha, para ela ficar SOB o dedo e nao ao lado dele. O numero
+     acompanha o tamanho da ficha (46px) — quem mexer num tem que mexer no
+     outro, senao a peca "escapa" da mao no meio do arrasto. */
+  fantasma.style.left=(x-23)+"px";
+  fantasma.style.top=(y-23)+"px";
+}
+function solta(x,y){
+  if(fantasma&&fantasma.parentNode) fantasma.parentNode.removeChild(fantasma);
+  fantasma=null;
+  if(!pegou){ arrastando=false; return; }
+  var q=pegou; pegou=null;
+  if(!arrastando) return;
+  arrastando=false; fimArrasto=agora();
+  var alvo=document.elementFromPoint(x,y), i;
+  while(alvo && alvo!==document.body){
+    if(alvo.className && String(alvo.className).indexOf("csb")===0){ poe(alvo,q); return; }
+    alvo=alvo.parentNode;
+  }
+}
+document.onmousemove=function(ev){ if(souDedo()) return; move(ev.clientX,ev.clientY); };
+document.onmouseup=function(ev){ if(souDedo()) return; solta(ev.clientX,ev.clientY); };
+document.addEventListener("touchmove",function(ev){
+  if(!pegou) return;
+  ev.preventDefault();
+  var d=ev.touches[0]; move(d.clientX,d.clientY);
+},{passive:false});
+document.addEventListener("touchend",function(ev){
+  ultimoToque=agora();
+  var d=ev.changedTouches[0];
+  solta(d.clientX,d.clientY);
+},false);
+
+/* ---- o coração: a ficha entra na caixa CERTA, na ORDEM certa ------------- */
+function poe(b,q){
+  if(travada||!b||!q) return;
+  if(b.className.indexOf("cheia")>=0) return;
+  var r=PALAVRAS[rodada], ge=ger;
+
+  if(b.idx!==posta){
+    /* ORDEM ERRADA: não é "erro de sistema", é o conteúdo da peça. */
+    sErro();
+    b.className="csb treme";
+    setTimeout(function(){ if(ge!==ger) return;
+      if(b.className.indexOf("cheia")<0) b.className="csb"; },340);
+    erros++;
+    var dica=r.dicas[Math.min(erros,r.dicas.length)-1];
+    mostraDica(dica);
+    /* ⚠️ a dica FALADA e a mesma que esta ESCRITA — quem nao le depende dela
+       inteira, e dica falada diferente da escrita e instrucao diferente (e o
+       que os portoes `vozdica`/`vozigual` medem na atividade montada). */
+    fala(dica);
+    if(erros>=3) revela();
+    return;
+  }
+
+  sTap();
+  q.className="fichaq gasta";
+  marcada=null;
+  b.className="csb cheia";
+  b.appendChild(el("div","fic",""));
+  posta++;
+  contaNaTela();
+  marcaProxima();
+
+  if(posta>=r.sons){
+    travada=true;
+    /* ⭐ AGORA, e só agora, as LETRAS aparecem: primeiro o som, depois a letra.
+       É este o degrau que liga o que ela ouve ao que ela vai escrever. */
+    setTimeout(function(){
+      if(ge!==ger) return;
+      var cx=app.getElementsByClassName("csb"), i;
+      for(i=0;i<cx.length;i++){
+        var f=cx[i].getElementsByClassName("fic")[0];
+        if(f&&f.parentNode) f.parentNode.removeChild(f);
+        cx[i].appendChild(el("div","let", (r.letras&&r.letras[i]) || ""));
+      }
+      sCerto();
+      /* ⭐ a festa corre da ESQUERDA para a DIREITA, na mesma ordem que a peca
+         inteira ensina — e e o CSS que anima, um atraso por caixa. */
+      for(i=0;i<cx.length;i++){
+        (function(bx,n){
+          setTimeout(function(){ if(ge!==ger) return;
+            if(bx.className.indexOf("festa")<0) bx.className=bx.className+" festa"; },n*110);
+        })(cx[i],i);
+      }
+      var msg=TEXTOS.certo.replace("%P%",r.pal).replace("%N%",r.sons);
+      fala(msg);
+      setTimeout(function(){
+        if(ge!==ger) return;
+        rodada++;
+        if(rodada>=PALAVRAS.length) mostraBanner(TEXTOS.fim, fimDaPeca);
+        else mostraBanner(msg, pecaCaixas);
+      },1400);
+    },380);
+  }
+}
+
+/* 3º erro: acende a próxima caixa e DEIXA seguir — é o que garante que a peça
+   nunca trava. A informação também vai escrita na dica (nada só na cor). */
+function revela(){
+  var cx=app.getElementsByClassName("csb"), i;
+  for(i=0;i<cx.length;i++)
+    if(cx[i].className.indexOf("cheia")<0)
+      cx[i].className = (i===posta) ? "csb alvo" : "csb";
+}
+
+function fimDaPeca(){
+  ger++;
+  limpa();
+  var t=el("div","tela"); setProg(t,100);
+  var c=el("div","centro");
+  c.appendChild(el("div","medal",""));
+  c.appendChild(el("div","balao",TEXTOS.medalha));
+  t.appendChild(c); app.appendChild(t);
+  fala(TEXTOS.medalha);
+}
+
+pecaCaixas();
+</script>
+</body></html>
