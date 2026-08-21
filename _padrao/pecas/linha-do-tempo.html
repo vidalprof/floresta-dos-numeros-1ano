@@ -438,11 +438,16 @@ function marcaQualServe(){
 function fechaFase(){
   setTimeout(function(){
     if(!telaAtual||!telaAtual.parentNode) return;
-    mostraBanner("A hist&#243;ria ficou em ordem, do come&#231;o ao fim!",telaFimLinha);
+    mostraBanner("A hist&#243;ria ficou em ordem, do come&#231;o ao fim!",fimDaPeca);
   },420);
 }
 
-function telaFimLinha(){
+/* ⚠️ LICAO PAGA (ago/2026, pego no Detetive — 1a atividade a usar esta peca):
+   o fim tem que se chamar `fimDaPeca` (como no escolher), senao o integrador
+   nao o reaponta para a continuacao do motor (`fimDaPeca = _seguir`) e a
+   crianca cai na tela de bancada da peca — um BECO. O nome antigo do fim so
+   vivia aqui; era invisivel ate a peca entrar num jogo de verdade. */
+function fimDaPeca(){
   limpa(); document.onkeydown=null; soltaSombra();
   var t=el("div","tela"); telaAtual=t; setProg(t,100);
   var c=el("div","centro");
