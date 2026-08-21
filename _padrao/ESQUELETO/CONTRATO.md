@@ -4016,3 +4016,22 @@ montador grava tudo do `dados`); faltava só o alto-falante. Bastou pôr `.ptxt`
 (o texto da pista) no `ZAPSEL` do motor — o observador põe o botão sozinho em
 todo elemento cujo texto tenha voz. Lição: antes de "gerar voz", conferir se ela
 já existe e só falta o elemento entrar no ZAPSEL.
+
+## 🔘 BOTÃO PRÓXIMO QUE "NÃO FAZ NADA" (motor, ago/2026)
+O Marcos: "às vezes aparece o Próximo, clico e não faz nada". O onclick do banner
+era `arma();banner.className="banner";cb();` SEM guarda: se `cb` fosse indefinido,
+ou `cb()`/`arma()` estourasse (fase seguinte com problema, AudioContext num PC),
+o clique morria no meio e a fase não andava — intermitente, só em algumas
+máquinas/fases. Conserto: cada passo em try/catch e o AVANÇO (cb) roda de todo
+jeito. Lição: o clique que faz a fase andar é sagrado — nunca deixar um passo
+anterior (som, animação) poder abortá-lo.
+
+## 🪟 PADRÃO DA CASA: opções em vidros na horizontal + figura limpa no vidro (ago/2026)
+Decisão do Marcos: "torne isso padrão, fica mais bonito" + "opções na horizontal
+torne padrão". Promovido das peças (escolher, quem-sou-eu, digitar) para o
+motor/peças, valendo para toda atividade: (1) opções na HORIZONTAL, em vidros
+SEPARADOS, cada uma no seu `.opt`; (2) tamanho enxuto (flex 1 1 96px) para as 4
+caberem numa LINHA quando a tela permite, quebrando só nas estreitas; (3) a FIGURA
+fica LIMPA (sem fundo branco/borda/sombra) dentro do vidro, com o brilho que já
+existia (`.opfig:before`); (4) o `.dgfig` do digitar vira o mesmo vidro com brilho.
+Atividade pode sobrescrever no seu `tema.css` (a Cidade dos Sólidos tem o dela).
