@@ -114,10 +114,10 @@ def esc(p, c, e, d):
 add(id=u"f05", mec=u"caca-palavras", selo=u"CASO 1: PRONOMES ESCONDIDOS", conceito=u"objetivo1",
     enunciado=u"Ache os <b>pronomes</b> escondidos no quadro.",
     dica=u"Estão deitados (→) e em pé (↓): EU, ELE, ELA, MEU, ESTE.",
-    dados=[u"EU", u"ELE", u"ELA", u"MEU", u"ESTE", u"TEU", u"NOSSO", u"ELES", u"ESSA", u"ISTO", u"ELAS"],
+    dados=[u"EU", u"ELE", u"ELA", u"MEU", u"ESTE", u"TEU", u"NOSSO", u"ELES", u"ESSA", u"ISTO", u"ELAS", u"TUA", u"SUA"],
     dadosExtra={u"MODO":u"lista", u"TITULO":u"PRONOMES ESCONDIDOS",
                 u"LETRAS":u"ABCDEHILMNOPRSTU", u"DIFICIL":u"",
-                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5", u"p6", u"p7", u"p8", u"p9", u"p1", u"p2"]})
+                u"CORP":[u"p1", u"p2", u"p3", u"p4", u"p5", u"p6", u"p7", u"p8", u"p9", u"p1", u"p2", u"p3", u"p4"]})
 
 # idx1 — LIGAR: pronome <-> a palavra que ele substitui
 add(id=u"f02", mec=u"ligar", selo=u"CASO 1: LIGUE AS PISTAS", conceito=u"objetivo1",
@@ -128,7 +128,9 @@ add(id=u"f02", mec=u"ligar", selo=u"CASO 1: LIGUE AS PISTAS", conceito=u"objetiv
            {u"k":u"p2", u"t":u"ELES", u"s":u"os meninos"},
            {u"k":u"p3", u"t":u"NÓS", u"s":u"eu e você"},
            {u"k":u"p4", u"t":u"ELAS", u"s":u"as detetives"},
-           {u"k":u"p5", u"t":u"EU", u"s":u"quem está falando"}],
+           {u"k":u"p5", u"t":u"EU", u"s":u"quem está falando"},
+           {u"k":u"p6", u"t":u"VOCÊ", u"s":u"quem está ouvindo"},
+           {u"k":u"p7", u"t":u"ELE", u"s":u"o carteiro"}],
     dadosExtra={u"DICAS":[u"Pense em quantos são e se é menino ou menina.",
                           u"ELA = uma menina; ELES = vários; NÓS = eu + você.",
                           u"A resposta certa acende no fim da linha. Toque nela."],
@@ -150,7 +152,9 @@ add(id=u"f03", mec=u"classificar", selo=u"CASO 1: SEPARE OS PRONOMES", conceito=
       {u"t":u"ESTE", u"alvo":u"dem"}, {u"t":u"AQUELE", u"alvo":u"dem"},
       {u"t":u"ESSE", u"alvo":u"dem"},
       {u"t":u"ELA", u"alvo":u"pes"}, {u"t":u"MINHA", u"alvo":u"pos"},
-      {u"t":u"AQUILO", u"alvo":u"dem"}],
+      {u"t":u"AQUILO", u"alvo":u"dem"},
+      {u"t":u"NÓS", u"alvo":u"pes"}, {u"t":u"SUA", u"alvo":u"pos"},
+      {u"t":u"ISSO", u"alvo":u"dem"}],
       u"DICAS":[u"EU e ELE dizem QUEM; MEU e NOSSO dizem DE QUEM; ESTE e AQUELE dizem ONDE.",
                 u"Possessivo combina com 'é meu, é nosso'. Demonstrativo com 'este aqui, aquele lá'.",
                 u"Olhe a gaveta com a borda amarela: é ali que esta ficha mora."],
@@ -227,6 +231,28 @@ add(id=u"f04", mec=u"conserte-o-erro", selo=u"CASO 1: CONSERTE A PISTA", conceit
        u"dicas2":[u"Feminino singular.",
                   u"Combina com 'a' = ELA.",
                   u"Era <b>ELA</b>. Eu troquei para a frase ficar certa."]},
+      {u"selo":u"A PISTA DAS PEGADAS", u"cab":u"O PRONOME CERTO",
+       u"bal":u"Ache a palavra trocada e conserte.",
+       u"pecas":[u"AS PEGADAS", u"ERAM FUNDAS.", u"ELE", u"LEVAVAM AO QUINTAL."],
+       u"erro":2, u"certa":u"ELAS", u"ops":[u"ELAS", u"ELE", u"ELA"],
+       u"por":u"Pegadas s&#227;o 'as' (feminino, plural): <b>ELAS</b> levavam ao quintal.",
+       u"dicas":[u"O pronome fala das PEGADAS. Quantas s&#227;o?",
+                 u"S&#227;o v&#225;rias e femininas.",
+                 u"Era este. Eu marquei para voc&#234;."],
+       u"dicas2":[u"Feminino e plural.",
+                  u"Plural feminino = ELAS.",
+                  u"Era <b>ELAS</b>. Eu troquei para a frase ficar certa."]},
+      {u"selo":u"A PISTA DO BILHETE", u"cab":u"O PRONOME CERTO",
+       u"bal":u"Uma palavra n&#227;o combina. Ache e conserte.",
+       u"pecas":[u"O BILHETE", u"SUMIU.", u"ELA", u"TINHA A ASSINATURA."],
+       u"erro":2, u"certa":u"ELE", u"ops":[u"ELE", u"ELA", u"ELES"],
+       u"por":u"Bilhete &#233; 'o' (masculino, singular): <b>ELE</b> tinha a assinatura.",
+       u"dicas":[u"O pronome fala do BILHETE. &#201; 'o' ou 'a'?",
+                 u"Bilhete &#233; masculino, um s&#243;.",
+                 u"Era este. Eu marquei para voc&#234;."],
+       u"dicas2":[u"Masculino singular.",
+                  u"Combina com 'o' = ELE.",
+                  u"Era <b>ELE</b>. Eu troquei para voc&#234; ler a frase certa."]},
     ])
 
 # idx4 — ESCOLHER: qual pronome PESSOAL substitui o nome (abre o bloco de leitura)
@@ -380,6 +406,16 @@ add(id=u"f08", mec=u"quem-sou-eu", selo=u"CASO 2: QUEM É O PERSONAGEM?", concei
          u"Subo na <b>escada</b> alta do caminh&#227;o vermelho.",
          u"Fui eu que salvei o gato do <b>telhado</b> do primeiro caso."],
        u"outros":[u"O CARTEIRO", u"O PADEIRO", u"O DENTISTA"]},
+      {u"resp":u"A COZINHEIRA", u"pistas":[
+         u"Eu trabalho perto do <b>fog&#227;o</b> o dia inteiro.",
+         u"Uso <b>avental</b> e um chap&#233;u branco bem alto.",
+         u"A pista estava grudada na minha <b>panela</b> favorita."],
+       u"outros":[u"A CANTORA", u"A PINTORA", u"A DENTISTA"]},
+      {u"resp":u"O RELOJOEIRO", u"pistas":[
+         u"Eu conserto <b>rel&#243;gios</b> parados.",
+         u"Uso uma <b>lupa</b> no olho para ver as pe&#231;as pequenas.",
+         u"Foi eu que notei a <b>hora</b> errada no rel&#243;gio do caso."],
+       u"outros":[u"O JARDINEIRO", u"O SAPATEIRO", u"O A&#199;OUGUEIRO"]},
     ])
 
 # idx9 — LINHA DO TEMPO: pôr os FATOS da história na ordem (abre bloco 'ordenar')
